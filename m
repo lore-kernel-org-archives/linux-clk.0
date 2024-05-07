@@ -1,136 +1,126 @@
-Received: from wfout1-smtp.messagingengine.com (wfout1-smtp.messagingengine.com [64.147.123.144])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B696479CF;
-	Tue,  7 May 2024 20:53:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0BC954BDE
+	for <linux-clk@vger.kernel.org>; Tue,  7 May 2024 21:17:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715115203; cv=none; b=PjjB0BnRROyDq6AlQxcBPKM4OxePB4MtZKnugJSqubSewba67nEMGJxtYDZnyVdxGmz/No20b1AGnU3+D4zGFe5D9rxVknl/4ZKS4v+2mJWBEVqk+wse7ti8BIhUy4YiJyKOw/8DFsKkdpv9LfSsGWNR2vcgoDohj2Y1FLvuLaQ=
+	t=1715116626; cv=none; b=b0PH86IZ365MxSMTYZZbu1OMDWkCEkbU/sUD1ZiBuUgj80EvMoFrDb8j7vbwn+n0O+z6SooOfN5wm3CmKwJdXWKTYgdXPjkeQtZhdwt1bp+nwRcQ/rqvYvg9wDE7ez3Cd/Gy93K3hJxGsFOEl0wNEv3sx4HOg9M+dg7rrlhlS1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715115203; c=relaxed/simple;
-	bh=QT6rlQem4K0cBiuJlPrc72yqzW+2FdpcJ3xEIfA5RXs=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=j4Vs5TWQj0IUzD/cX3Y0oEyCuZRL7nRx2TOdrx+Y1zaRncu14iV+M22fSydE4pPQ6BFTHuTH22bZxvSCOCtiHC/gOGDi0o2dAh1k3HJMbKW+kh1tJjuxIkfla7F+pwsuT9JeAlIwAMv+IheGQyNgULlTOjth/z+x80LFczbAQKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=q/C3Dsnb; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ArRExtQ5; arc=none smtp.client-ip=64.147.123.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+	s=arc-20240116; t=1715116626; c=relaxed/simple;
+	bh=Ecwjg3T8TYwyg2JlRh7RQ8tIIO5urNWWdj17N5ZVd2Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CUGLvKNZV/93RyyQOUpbPSLxFDHE8P9fCeiZrCuglOiRBadtmwLbra/KuxgcNJv7kT12TWssVbAJ7mc7QOv2a+GN7b9YS/e2wEc2NJZDqCUy+DSE+aN0syWU8iet+GJ8R32zfPMmOouP6IESo4lOHmYxNUqUPNS4jiAnI3A+52A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FX0U+vNB; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="q/C3Dsnb";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ArRExtQ5"
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.west.internal (Postfix) with ESMTP id 4323F1C000B9;
-	Tue,  7 May 2024 16:53:20 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Tue, 07 May 2024 16:53:21 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1715115199; x=1715201599; bh=UafRVQ7xw7
-	cygAYylCOVgFjlvkwiscSglHTE53mJ0OY=; b=q/C3Dsnbm7E/JV3fCuw1PDrQcw
-	HA/oh6aI9toEOwAS5YLndn32HSnDVixRsdx2/U6oMWwz9+S7t/rodklKRuD+Je5u
-	+9YP+TAtK3xoLzlbZ6hVclJ8oip2y40E3Nafl512UNTy7OYce65GvlypbFqz4nr8
-	XfBWjwWO6TnljXAyzjt3OHmElJ4IcisYhqORrUTpkkk2imf56fOQCy1QVfeYvV4Y
-	PrevypsEV7t5vVN4gC6NyezZ/nLu3Hsq8okP1D9PDy5eyHnnrFmFsK88hei/Hm5U
-	4yaB90LszHpjQ8nfF9DrbbF88lGNVmSm5WkLvLNarHrW7nsWn+wagHgQaOLw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1715115199; x=1715201599; bh=UafRVQ7xw7cygAYylCOVgFjlvkwi
-	scSglHTE53mJ0OY=; b=ArRExtQ5IUH0Na9nEjjm9KMcHmunuDg1wJgDqTHBT58f
-	uTSftQvEmscGM6EHwwW6Uf3lWg5xKKkBoa4YCC5RyHGqTOT/imBDOxSUnmyDZxdV
-	6Q7mM8bR9mx359oHLnYcool851ghHeKHZ3MjU1A+mMmFyAI0Q3VEyCr+Yghliy01
-	/IsJ4yr9/8IlxIAVndlqYz87+P+YaTMHs/qnRJ0+fS5eDjoeK6+ijgCf8YWyHk/X
-	Tn5t+FDQ+xoRXmhcmv8lz8G4V7IpTlPfYRQOKBFW2vVBekwsGLSZ9HElWCbSAXvC
-	FQeOJbD+Qvj3C+v7uov9nKkmMsKbMlKsGDy1MDw9DA==
-X-ME-Sender: <xms:v5Q6ZvQuIHHZeRVLOyhAbccudcN7GL-BZkPcJjPOSr2fw55HHJUV7A>
-    <xme:v5Q6ZgxSyT2jYsEuKOLXp4xq1fbpt30omce9fnwBB_9ZPYIRQ-23ZnlyeAgPh5pCk
-    -nb_y9W9BOpH3G9m94>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvddvkedgudehvdcutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
-    enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdet
-    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
-    htthgvrhhnpeevhfffledtgeehfeffhfdtgedvheejtdfgkeeuvefgudffteettdekkeeu
-    feehudenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivg
-    eptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvg
-X-ME-Proxy: <xmx:v5Q6Zk0P3zDwcfFRIGzr4MV8HmP5w9_JSLCS5Zl5OkSLY9R-ye-eMg>
-    <xmx:v5Q6ZvAdmFzCR3FzLIpvSDHfmg9aVNGNDK_Z5IgGeizvY1hG8MghAQ>
-    <xmx:v5Q6ZogjLg2qcOW_sBXLWBxHrRyPQf1vs9ewkg3BJSFGhBH6c3daVQ>
-    <xmx:v5Q6Zjrt10LNhArBp5fx_ioekBocovlhyS6QiiGH9TWOwthYHxk73Q>
-    <xmx:v5Q6ZtanBF80sYCSsSOxxByV_twdAh5IAUoLjpH_Ajti8xkUVV9yrifj>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 63A4CB6008D; Tue,  7 May 2024 16:53:19 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-443-g0dc955c2a-fm-20240507.001-g0dc955c2
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FX0U+vNB"
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-518931f8d23so3551063e87.3
+        for <linux-clk@vger.kernel.org>; Tue, 07 May 2024 14:17:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715116623; x=1715721423; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JmKM6X6SN+uqrqOzykz1rBJY+bzWqLEMd29Ir34tYUg=;
+        b=FX0U+vNBG4DXc5qqtxWmyZH/y9WJbfnHuZpzqcXWDhOO0hiR1AUAUXtJIMuw5kMi4k
+         OXBP0bIQROnv3dfe4f0pEiT2Jhix1ez6U0G7g7e7CG4lnqR10jW7MAwXPAWG3Qriohso
+         tONwAOnvFKVGeA58EjQIGP3AyX7fIGVvkdZ0q+XQpNXSHjuH7Wa7m4ymNNbg66H1/JVe
+         71oH3EFxBazoXaxXP1dATFqlIER5dobOC5JEGZfhOJH2p/dm4Gq7vkpTSJ0/EsNmE4U4
+         Enbsv8FfsypIZ/EsWQ912qevbcFMk0+V5rPiuabDXyiwm5KJfEblWRjnm1y3H6fjX/0U
+         SWOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715116623; x=1715721423;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JmKM6X6SN+uqrqOzykz1rBJY+bzWqLEMd29Ir34tYUg=;
+        b=IqLWtVu8TaRxVeWK6LdX6F0Urqhi3uL5HESCu2TSEPig+Wd5ont2+phjjOL7fxK4Bs
+         vj6bdz7SLt88rGDV+7bymCPcaPA/9L1f/SvNVGT22dT7KugRsOYuBTsGQ9d3vDzqSrxl
+         fe6gN1mAozlRM/BAd2wvUvDBYX0Q9Xgo6y1hdHY1ewQlrtE62pUb0/wLFUi5rauCdwuN
+         VUkO5rjxGCz3dvgvAb+OUYQzrncKQGk7e6lY2fQ8vaMfrxw9FbzHhExspm7GOTu0zCnn
+         6BdtgRuMOqKMLDfEAaBo+QSnkpP8jjEQbmkGPzlvcfayyOot5uPt9Y5H6lmvHitNoskq
+         EwvA==
+X-Forwarded-Encrypted: i=1; AJvYcCXD6kJF87wJQc15TJWp7raXIgOZnJoKCDREVDwLzx1HS4iZE9whPE/X7UstYQPA5d8ch6WtGMH0bOimlQ5CTooIi/SlaJOE3uFS
+X-Gm-Message-State: AOJu0YwMQkfH+2Fnkp8gQ92oyzO2ABZztqv0gr1Wf0n5IgO4LlU1zp+p
+	lAi6Swdcyrtsc4X57fy9CKOHVarafseWbKRT4QkrApM+8yLng3RBG0BJRBx8O8o=
+X-Google-Smtp-Source: AGHT+IGsDXymga87QLgW1PlqoDkL0AzaLEBDCB8pfA6cofTQrcvYSqjGPhXiFyn+uwX/y4y+GSm6mg==
+X-Received: by 2002:a05:6512:4845:b0:51d:162e:bf9e with SMTP id 2adb3069b0e04-5217c46c382mr454259e87.15.1715116622848;
+        Tue, 07 May 2024 14:17:02 -0700 (PDT)
+Received: from [172.30.204.63] (UNUSED.212-182-62-129.lubman.net.pl. [212.182.62.129])
+        by smtp.gmail.com with ESMTPSA id c3-20020ac244a3000000b00515bad4cd0asm2237431lfm.155.2024.05.07.14.17.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 May 2024 14:17:02 -0700 (PDT)
+Message-ID: <aeaa72f6-b227-4b54-9836-0b8f4dba6ffb@linaro.org>
+Date: Tue, 7 May 2024 23:17:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <e93acd4c-20f7-4b46-bb9c-84fac451c894@app.fastmail.com>
-In-Reply-To: <820ddc2ec70780ae1ecd3af864dc8bd6.sboyd@kernel.org>
-References: 
- <CA+G9fYuZd_ur56H8fwDSvUywopvn_b7ogprGkjEatQ7EPTLwYQ@mail.gmail.com>
- <11be44d3-0f32-49c6-b4ae-ba97a9f97763@app.fastmail.com>
- <820ddc2ec70780ae1ecd3af864dc8bd6.sboyd@kernel.org>
-Date: Tue, 07 May 2024 22:52:59 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Stephen Boyd" <sboyd@kernel.org>,
- "Linux ARM" <linux-arm-kernel@lists.infradead.org>,
- "Naresh Kamboju" <naresh.kamboju@linaro.org>,
- linux-clk <linux-clk@vger.kernel.org>, lkft-triage@lists.linaro.org,
- "open list" <linux-kernel@vger.kernel.org>
-Cc: "Russell King" <linux@armlinux.org.uk>,
- "Anders Roxell" <anders.roxell@linaro.org>,
- "Dan Carpenter" <dan.carpenter@linaro.org>,
- "Michael Turquette" <mturquette@baylibre.com>,
- "Marek Szyprowski" <m.szyprowski@samsung.com>
-Subject: Re: clkdev: report over-sized strings when creating clkdev entries
-Content-Type: text/plain
-
-On Tue, May 7, 2024, at 22:26, Stephen Boyd wrote:
-> Quoting Arnd Bergmann (2024-05-07 00:44:15)
->> On Tue, May 7, 2024, at 09:20, Naresh Kamboju wrote:
->> > The WinLink E850-96 board boot failed with Linux next-20240506 but there
->> > is no kernel crash log on the serial [1].
->> >
->> > Anders bisection results pointing to this commit,
->> > # first bad commit:
->> >   [4d11c62ca8d77cb1f79054844b598e0f4e92dabe]
->> >   clkdev: report over-sized strings when creating clkdev entrie
->> >
->> > After reverting the above patch the boot test passed [2].
->> >
->> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
->> >
->
-> There are two fixes on the list: [1] and [2]. Perhaps one of those
-> resolves this?
->
-> [1] https://lore.kernel.org/r/20240507065317.3214186-1-m.szyprowski@samsung.com
-> [2] https://lore.kernel.org/r/20240507064434.3213933-1-m.szyprowski@samsung.com
-
-My guess is that either one avoids the crash, but we actually
-want both of them since the problem is a combination of the two
-issues.
-
-I think we also need this one on top, to have a va_end() for
-each return() statement:
-
---- a/drivers/clk/clkdev.c
-+++ b/drivers/clk/clkdev.c
-@@ -193,6 +193,7 @@ vclkdev_alloc(struct clk_hw *hw, const char *con_id, const char *dev_fmt,
-                cla->cl.dev_id = cla->dev_id;
-        }
- 
-+       va_end(ap_copy);
-        return &cla->cl;
- 
- fail:
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: qcom: gcc-sm8450: set OPS_PARENT_ENABLE on
+ gcc_sdcc2_apps_clk_src
+To: Stephen Boyd <sboyd@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Vinod Koul <vkoul@kernel.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+References: <20240427-topic-8450sdc2-v1-1-631cbb59e0e5@linaro.org>
+ <2337ba58adb3fb127710bead9b8665a9.sboyd@kernel.org>
+ <11bd7146-30cd-4b71-b2ca-d76875763731@linaro.org>
+ <6ba2967c6c9d24e3f1c9b76496176010.sboyd@kernel.org>
+ <3a3c4279-a254-48d0-91ad-70b7f1e3eb77@linaro.org>
+ <7baef7a173dc4d1ecf8b0dafde565b1a.sboyd@kernel.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <7baef7a173dc4d1ecf8b0dafde565b1a.sboyd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
-      Arnd
+
+On 5/7/24 22:28, Stephen Boyd wrote:
+> Quoting Konrad Dybcio (2024-05-07 06:51:04)
+>>
+>> without PARENT_OPS_ENABLE:
+>>
+>> [    3.326891] sdhci_msm 8804000.mmc: Got CD GPIO
+>> [    3.336839] scsi host0: ufshcd
+>> [    3.337105] gcc_sdcc2_apps_clk_src is DISABLED @ set_rate
+>> [    3.346339] ------------[ cut here ]------------
+>> [    3.351093] gcc_sdcc2_apps_clk_src: rcg didn't update its configuration.
+>> [    3.351114] WARNING: CPU: 1 PID: 11 at drivers/clk/qcom/clk-rcg2.c:133 update_config+0xc8/0xd8
+>>
+>> [...]
+>>
+>> [    3.610523] gcc_sdcc2_apps_clk_src is ENABLED @ set_rate
+>>
+>>
+>> with PARENT_OPS_ENABLE:
+>>
+>> [    3.331419] sdhci_msm 8804000.mmc: Got CD GPIO
+>> [    3.336569] gcc_sdcc2_apps_clk_src is DISABLED @ set_rate
+>> [    3.344795] scsi host0: ufshcd
+>> [    3.355122] qcrypto 1dfa000.crypto: Adding to iommu group 5
+>> [    3.363567] remoteproc remoteproc0: 2400000.remoteproc is available
+>> [    3.364729] gcc_sdcc2_apps_clk_src is ENABLED @ set_rate
+>>
+>> after testing it both ways, I realized it wasn't supposed to make a
+>> difference in this regard, but I suppose I can paste both results anyway..
+>>
+> 
+> Can you share your patch that prints the message? What bit are you
+> checking in the hardware to determine if the RCG is enabled? Do you also
+> print the enable count in software?
+
+I already reset-ed the tree state, but I added something like
+
+if (rcg->cmd_rcgr == the one in the declaration)
+	pr_err("gcc_sdcc2_apps_clk_src is %s\n", clk_is_enabled(hw) ? "ENABLED" : "DISABLED");
+
+to drivers/clk/qcom/clk-rcg2.c : __clk_rcg2_set_rate()
+
+Konrad
