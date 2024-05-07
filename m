@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 195757640E;
-	Tue,  7 May 2024 21:59:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B2A77658;
+	Tue,  7 May 2024 22:02:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715119166; cv=none; b=J47qmpNVk8qF7YTkt0SAFgpvgojc10n26EutiqfdrZ3UZlsSubBAf3eFkor0mSlUX0bLldv2bUCe9v0ggXgtLcicQaaO3sLRBM0rO3wLrBf6fsmlZsL+cFwc/Vt4YLAD2ueFz6uyDHUbtAriIAhLGFd1u4nMKtkBJp4Harh/I+U=
+	t=1715119370; cv=none; b=OQhxKOwUQa8QfZtAEwi3EM5xfnMI1Qq6cxe2a0s9h1kKIyDQX8kpMa/cUifr0A30djz1NGbo73euhliH49m37YODiKVt8EVYHEIC33umUVSwrTBep6tAb27WUGPG+bJ99o0axXhfeUgIBjubL4FRV2PYYl+pyfAi4E3UQP67peE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715119166; c=relaxed/simple;
-	bh=6Tx8Ao+c88e5pawNIUE7BBmPVhW/I8eksE19lk+ATSQ=;
+	s=arc-20240116; t=1715119370; c=relaxed/simple;
+	bh=ECDBXpA/C+eVvh+6xfhTbhth3yLG8cu9XKxgvKvqxOo=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=TpFJrZBbLSXGbXVtbq6N0bgRY5bx3vzxK+1KbW1L1DzvS5ALVGUmYhF5/ch3yeUpXNkQZRqD8dCLVDqmsi3dnQQlyuhrWtFU7AIOdf0JzHAFilF2N5cLj/wxgxH6UrAb+9t7+V9Ngv6l2MtY+UWFkObY2ClloYQbCEJRYzaqp2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=usY0vJvA; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=iUi3Yq4Fsp5OePfSz6JAdwEgjXbWw1uk0l/OznoSyK8CVhGNDmXzHIGttXWfLcAuP3c2TQmFID1sy6A1/CJNkOflvU2avGcRxEXv0EI+/blSq+k9Uxn9//HhyBr3E7XhIzd0QpVXqU+qSp723TIBml1wdhT4CYUcF1OLMRbc84k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gAgk5W1e; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="usY0vJvA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 844D2C2BBFC;
-	Tue,  7 May 2024 21:59:25 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gAgk5W1e"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3235C2BBFC;
+	Tue,  7 May 2024 22:02:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715119165;
-	bh=6Tx8Ao+c88e5pawNIUE7BBmPVhW/I8eksE19lk+ATSQ=;
+	s=k20201202; t=1715119369;
+	bh=ECDBXpA/C+eVvh+6xfhTbhth3yLG8cu9XKxgvKvqxOo=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=usY0vJvABlPssee3xoVzWRzL6N2TqDEtGQsy8HjAY0JGe4v6mn1Mr7Zy7wDjz4BWR
-	 4bGxp/3AnOzYCx8pS2mr85FtqgcegYk/OYxDVuDBCb/RCE24Eej521k6TPkZeAVsxM
-	 UDTYyrZlouGxS4FRW3fgeVbA6Hjv6dej6GIGk4BfzVovH+516EsTx4n2G1csJcfd35
-	 af9h43MHsYPD2XZyE44vx/9Z2yqB3gga5xjDnShwlh2imoM7KiQjCHA0Wu7fY1dwPc
-	 hMR9zj2aj83eVQy4TjXLIFRV8I/7T70nWgS6uvyMWy2l6FGYZRSYNkV49pyjQDqnQv
-	 EK807WczBp45g==
-Message-ID: <dab1901cc1de2688977340734c252e98.sboyd@kernel.org>
+	b=gAgk5W1e0tOEO9WlYzPLOCZ+9mCwBDvfyQTxMT4LvrHCji5I0WgltgrclRalG72pj
+	 WMuOyg0CXOXsp067YM5S7JkutAgSs0kD5O+0zBa6RNx/+/VMwNGExSAJgHSDpM4Gwj
+	 PHQcfg+MJpIDPACHsBAFqUYI0HGwYAefjvlNLRiMSCkziG7qCo7OPEZFdY4TOGyhAq
+	 JY9it3DU1wkY2LPQ6lujypdORiS/snyOk7+BvnYuSYbxptlSdUj/JJ6eZ+kgazNaVq
+	 todH6nHNaskpq3Em4qBytUT3yIm4I6rfL5/ZjY8cnr0N6hZVvtbIrnM9L0oKWsVT50
+	 dqson14uMhgZg==
+Message-ID: <332c845c17e24e2eb660e18680f2626f.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,24 +35,32 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240419152723.570159-2-gabriel.fernandez@foss.st.com>
-References: <20240419152723.570159-1-gabriel.fernandez@foss.st.com> <20240419152723.570159-2-gabriel.fernandez@foss.st.com>
-Subject: Re: [PATCH 1/4] dt-bindings: clocks: stm32mp25: add access-controllers description
+In-Reply-To: <20240419152723.570159-3-gabriel.fernandez@foss.st.com>
+References: <20240419152723.570159-1-gabriel.fernandez@foss.st.com> <20240419152723.570159-3-gabriel.fernandez@foss.st.com>
+Subject: Re: [PATCH 2/4] clk: stm32mp2: use of STM32 access controller
 From: Stephen Boyd <sboyd@kernel.org>
 Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 To: Alexandre Torgue <alexandre.torgue@foss.st.com>, Conor Dooley <conor+dt@kernel.org>, Gabriel Fernandez <gabriel.fernandez@foss.st.com>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>
-Date: Tue, 07 May 2024 14:59:23 -0700
+Date: Tue, 07 May 2024 15:02:47 -0700
 User-Agent: alot/0.10
 
-Quoting gabriel.fernandez@foss.st.com (2024-04-19 08:27:20)
-> From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
->=20
-> access-controllers is an optional property that allows to refer to
-> domain access controller.
-> The RCC driver will be able to check if we are allowed to register
-> clocks for a peripheral.
->=20
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-> ---
+Quoting gabriel.fernandez@foss.st.com (2024-04-19 08:27:21)
+> diff --git a/drivers/clk/stm32/clk-stm32mp25.c b/drivers/clk/stm32/clk-st=
+m32mp25.c
+> index 210b75b39e50..a37ee9f707e3 100644
+> --- a/drivers/clk/stm32/clk-stm32mp25.c
+> +++ b/drivers/clk/stm32/clk-stm32mp25.c
+> @@ -4,7 +4,9 @@
+>   * Author: Gabriel Fernandez <gabriel.fernandez@foss.st.com> for STMicro=
+electronics.
+>   */
+> =20
+> +#include <linux/bus/stm32_firewall_device.h>
 
-Applied to clk-next
+I don't have this include. I either need a signed tag or this needs to
+wait until next merge window.
+
+>  #include <linux/clk-provider.h>
+> +#include <linux/of_address.h>
+
+What is this include for?
