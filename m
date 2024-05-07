@@ -1,35 +1,35 @@
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B7EF15FCF0;
-	Tue,  7 May 2024 14:52:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5344716132A;
+	Tue,  7 May 2024 15:07:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715093575; cv=none; b=skNfStd2FyDIoD85YFKGJIb30qVfmzrEGAM8zCUynS6dFqFL2eFvDBrfuo23/fyXiNXon3RY0GEu3psiSD9Mm2gcczC39ABstTlVzpZxDp16VLxUYw7Wqa1hW4HBrJdB735sEiTaLIPq0mA+1jN8NmXUu/P1FOH8rQFz2dYLNGo=
+	t=1715094465; cv=none; b=S1BgAPq6jqVmeyWQvcLZ108eLAzTRv60W/syZNkAnprE5g4ZMZLHWENoSSoBDzJYtY9iV0suTHMr/XGYzHZKAHs/Cd17OPhFcEKJKJw3TbRiQkzVFzUNHJXu0DOFzHShpR+S5qZBwDtd7nW6zEVRR5EBm/RBaSZM2t0Prara3YE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715093575; c=relaxed/simple;
-	bh=MlQMJtQlUuf6lLca3bql80rz2yBaAuTOSQM7x4CO/+E=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
-	 References:In-Reply-To; b=YEie/5xLR5KGKMqFhvia7yN02pILKObNf3TAanbAQ/cpROO3pqtMdmW798mTZHZrb8cxQB1Ezp4KjeoG4BDG+5FlTivbBy1YrmeRURaOSSl8rmkik2SdM42GIK9l7EXIyOV6GNzYf0e9wFITSPSRLTXmnSN7mse6dKve7FFDGFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=BWWaekmb; arc=none smtp.client-ip=217.70.183.198
+	s=arc-20240116; t=1715094465; c=relaxed/simple;
+	bh=UaQVvlK7uFSTTAgQAcJhZCMHMi2rIAYqLbFWW1dKZpE=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
+	 References:In-Reply-To; b=j3hTHx/htf9+hgSgsHQ+Hn1ZTULO4qwIic/tOLnbw8bMSeM/7zEduAs1QRHMJvWsu/iNccS4xKeu7gcGZljyliNK+OYMJdkT3J2SILIul8u5wy8E8MecGOoCF2xLq1GmUpP78j2JcgpOTTkLiWWzhypDxFKt+641t/8S4cJuYRs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=IgSXrtIE; arc=none smtp.client-ip=217.70.183.193
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="BWWaekmb"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 5D8DBC0002;
-	Tue,  7 May 2024 14:52:49 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="IgSXrtIE"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 82A1C24000B;
+	Tue,  7 May 2024 15:07:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1715093570;
+	t=1715094460;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=UGenY7YAzUwlgiT73G7TaHalCSUU2X6AFVguS+ovgFw=;
-	b=BWWaekmbWtG3JQ8gcKhy7e0+HcN08YNNci5RJE5FZSeN+mPVBdOtCyww7UraBvBuBvNe4j
-	roYAhUgVdwh+j5vWIebRHxzomUrJwZcQ/rWk189pVSdKnmtnMoUiZQnH9uyhOUzhuFQfNP
-	LMPFRd2atO3kzm+eFRMubYigSEaCuE+BqOnl9Jc3yZtRx9YorACLWdx9KZJcOpAN0cXTK9
-	BpzVO+y3YCNj2AWGaxSiF8EnDdT9NWnes/ppIWSp+tMJw4iBuCmvMs2+q8ESc8VIzGX/61
-	KexeA06fv4ck3ADqNmciQ4qi8pZnbmmPuJ0WYduRP8DP0xw1NhkhKm3qPyDtBQ==
+	bh=UaQVvlK7uFSTTAgQAcJhZCMHMi2rIAYqLbFWW1dKZpE=;
+	b=IgSXrtIEG4/C+lOXqlsXePSOdnwI1SABeDG763VaWxy+S+JXj4runTgPnKwdcHfuXTtzba
+	yjZzI3rAwxFFAtc1tHjH3hSj8b0NJCCr8/fb5bQmLzH2do82wj6QKoj0IOc4+4AbdGMvBa
+	DGyTqXuROwkGduBJU4SSUeh5irlEVVXmMXyWt+KzZ03vETHcTZdXx2tnyRFDWYA4QtAais
+	n7y4ENDEWFfwGejQpba4RWN5ctoHl9jmDY6yPKNIIIxPNsNPbU4D26dINW+HsOKYznFdtU
+	TGP30EEV0j/YPSTEHa9+kQnCO0pYGHWOG2XfLoTqwxYA4CfLoibIYZhqMMKi2A==
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -38,11 +38,19 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Date: Tue, 07 May 2024 16:52:49 +0200
-Message-Id: <D13HXGJGMS76.XIIIZLZBCZ09@bootlin.com>
+Date: Tue, 07 May 2024 17:07:39 +0200
+Message-Id: <D13I8TFIF77X.2EFWZ14LM2H6N@bootlin.com>
+To: "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>, "Rob Herring"
+ <robh@kernel.org>, "Krzysztof Kozlowski"
+ <krzysztof.kozlowski+dt@linaro.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ "Michael Turquette" <mturquette@baylibre.com>, "Stephen Boyd"
+ <sboyd@kernel.org>, "Philipp Zabel" <p.zabel@pengutronix.de>, "Linus
+ Walleij" <linus.walleij@linaro.org>, "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, "Lee
+ Jones" <lee@kernel.org>, "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>
 From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Subject: Re: [PATCH v2 00/11] Add Mobileye EyeQ system controller support
- (clk, reset, pinctrl)
+Subject: Re: [PATCH v2 01/11] dt-bindings: clock: mobileye,eyeq5-clk: drop
+ bindings
 Cc: <linux-mips@vger.kernel.org>, <devicetree@vger.kernel.org>,
  <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
  <linux-gpio@vger.kernel.org>, "Vladimir Kondratiev"
@@ -50,77 +58,47 @@ Cc: <linux-mips@vger.kernel.org>, <devicetree@vger.kernel.org>,
  <gregory.clement@bootlin.com>, "Thomas Petazzoni"
  <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
  <tawfik.bayouk@mobileye.com>
-To: "Stephen Boyd" <sboyd@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Krzysztof Kozlowski"
- <krzysztof.kozlowski+dt@linaro.org>, "Lee Jones" <lee@kernel.org>, "Linus
- Walleij" <linus.walleij@linaro.org>, "Michael Turquette"
- <mturquette@baylibre.com>, "Philipp Zabel" <p.zabel@pengutronix.de>,
- "Rafael J. Wysocki" <rafael@kernel.org>, "Rob Herring" <robh@kernel.org>,
- "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>
 X-Mailer: aerc 0.17.0
 References: <20240503-mbly-olb-v2-0-95ce5a1e18fe@bootlin.com>
- <8dcdb1422cd144128c1dc6fff1c273d3.sboyd@kernel.org>
-In-Reply-To: <8dcdb1422cd144128c1dc6fff1c273d3.sboyd@kernel.org>
+ <20240503-mbly-olb-v2-1-95ce5a1e18fe@bootlin.com>
+ <ee278102-f4b8-4ca0-879e-f83cd54efbd0@linaro.org>
+ <13ed1865-d702-47b6-b186-d5f060103280@linaro.org>
+In-Reply-To: <13ed1865-d702-47b6-b186-d5f060103280@linaro.org>
 X-GND-Sasl: theo.lebrun@bootlin.com
 
 Hello,
 
-On Sat May 4, 2024 at 4:34 AM CEST, Stephen Boyd wrote:
-> Quoting Th=C3=A9o Lebrun (2024-05-03 07:20:45)
-> > This builds on previous EyeQ5 system-controller revisions[0], supportin=
-g
-> > EyeQ5, EyeQ6L and EyeQ6H. We expose a few OLB system-controller
-> > features here:
-> >  - Clocks: some read-only PLLs derived from main crystal and some
-> >    divider clocks based on PLLs.
-> >  - Resets.
-> >  - Pin controller, only on EyeQ5 (rest will use generic pinctrl-single)=
+On Fri May 3, 2024 at 6:05 PM CEST, Krzysztof Kozlowski wrote:
+> On 03/05/2024 17:57, Krzysztof Kozlowski wrote:
+> > On 03/05/2024 16:20, Th=C3=A9o Lebrun wrote:
+> >> Switch from sub-nodes in system-controller for each functionality to a
+> >> single node representing the entire OLB instance. dt-bindings is
+> >> unnecessary and soc/mobileye/mobileye,eyeq5-olb.yaml will inherit all
+> >> properties.
+> >=20
+> > Why changing this? You just added these bindings not so long time ago..=
 .
-> >=20
-> > EyeQ6H is special in that it has seven instances of this
-> > system-controller. Those are spread around and cannot be seen as a
-> > single device, hence are exposed as seven DT nodes and seven
-> > compatibles.
-> >=20
-> > This revision differs from previous in that it exposes all devices as a
-> > single DT node. Driver-wise, a MFD registers multiple cells for each
-> > device. Each driver is still in isolation from one another, each in
-> > their respective subsystem.
->
-> Why can't you use auxiliary device and driver APIs?
+> > This is very confusing to push bindings and then immediately ask to
+> > remove them.
 
-Good question. Reasons I see:
+See this revision as a proposal of something that has been asked
+multiple times in previous reviews. See message from Stephen Boyd on
+last revision [0], or discussion with Rob Herring on much earlier
+revision [1].
 
- - I didn't know about auxdev beforehand. I discussed the rework with a
-   few colleagues and none mentioned it either.
+Proposal from Stephen Boyd of using auxiliary devices makes sense, that
+could be the future direction of this series. It won't change the
+dt-bindings aspect of it, only the driver implementations.
 
- - It feels simpler to let each device access iomem resources. From my
-   understanding, an auxdev is supposed to make function calls to its
-   parent without inheriting iomem access. That sounds like it will put
-   the register logic/knowledge inside a single driver, which could or
-   could not be a better option.
+[0]: https://lore.kernel.org/lkml/daa732cb31d947c308513b535930c729.sboyd@ke=
+rnel.org/
+[1]: https://lore.kernel.org/lkml/20240124151405.GA930997-robh@kernel.org/
 
-   Implementing a function like this feels like cheating:
-      int olb_read(struct device *dev, u32 offset, u32 *val);
+> One more point - anyway this should be revert with clear explanation WHY
+> you are reverting bindings.
 
-   With an MFD, we hand over a part of the iomem resource to each child
-   and they deal with it however they like.
-
- - Syscon is what I picked to share parts of OLB to other devices that
-   need it. Currently that is only for I2C speed mode but other devices
-   have wrapping-related registers. MFD and syscon are deeply connected
-   so an MFD felt natural.
-
- - That would require picking one device that is platform driver, the
-   rest being all aux devices. Clock driver appears to be the one, same
-   as two existing mpfs and starfive-jh7110 that use auxdev for clk and
-   reset.
-
-Main reason I see for picking auxdev is that it forces devices to
-interact with a defined internal API. That can lead to nicer
-abstractions rather than inheriting resources as is being done in MFD.
-
-Are there other reasons?
+I'll make sure to use standard revert formatting and explain why it is
+being done.
 
 Thanks,
 
