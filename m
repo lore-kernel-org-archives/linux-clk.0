@@ -1,98 +1,136 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from wfout1-smtp.messagingengine.com (wfout1-smtp.messagingengine.com [64.147.123.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05EB0187330;
-	Tue,  7 May 2024 20:43:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B696479CF;
+	Tue,  7 May 2024 20:53:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715114604; cv=none; b=n6FLm3LG3gf5yvtbUTTZavNuoow19EBOTKSdFnlFO/HKTR6jrQeFIemG/j6Hetef75oD7qRjtu8Zqq6Y8BJvN3IZuFxJp7ZcOb8smSCcOU4L1PRjZV526FgpneTn9j3vKUBHzA8m45zj6g5JudhGpkv1D53VFCbcM4diz5asiV8=
+	t=1715115203; cv=none; b=PjjB0BnRROyDq6AlQxcBPKM4OxePB4MtZKnugJSqubSewba67nEMGJxtYDZnyVdxGmz/No20b1AGnU3+D4zGFe5D9rxVknl/4ZKS4v+2mJWBEVqk+wse7ti8BIhUy4YiJyKOw/8DFsKkdpv9LfSsGWNR2vcgoDohj2Y1FLvuLaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715114604; c=relaxed/simple;
-	bh=HXRsZkxS+ayWCNvb2KUtd+RjbkcIYEhK6dtv1mcsY7U=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=A9eT9H9VFxdSF+bEULdzORxnEi0WmhoLBEhWACQRdSGYcbK+xF2JFDq6dIfCawkbxSCDWq6iLaQUmw7dVTUvG12At9s7MJkVNhr0rv1E0LBmuaecdH/ierwbpf8cYgiLMyccJNujG/DolrVctTUn4ALWEWaAunoFGW3G5ALqtfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MT8jwcyT; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1715115203; c=relaxed/simple;
+	bh=QT6rlQem4K0cBiuJlPrc72yqzW+2FdpcJ3xEIfA5RXs=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=j4Vs5TWQj0IUzD/cX3Y0oEyCuZRL7nRx2TOdrx+Y1zaRncu14iV+M22fSydE4pPQ6BFTHuTH22bZxvSCOCtiHC/gOGDi0o2dAh1k3HJMbKW+kh1tJjuxIkfla7F+pwsuT9JeAlIwAMv+IheGQyNgULlTOjth/z+x80LFczbAQKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=q/C3Dsnb; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ArRExtQ5; arc=none smtp.client-ip=64.147.123.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MT8jwcyT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 880F6C2BBFC;
-	Tue,  7 May 2024 20:43:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715114603;
-	bh=HXRsZkxS+ayWCNvb2KUtd+RjbkcIYEhK6dtv1mcsY7U=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=MT8jwcyTzSKWbb+y2Camk4Jqm6WK5lJDfWK//yqNx0NxtIdvOgU6UyiiIeBzo0uSN
-	 SA8EJv3VAlxiAhS0zMrOLqpA5OwWD7RC/Ym4Vc+90vbU1reOgzeCXZXvelJfS4/8RW
-	 e2VQzttr+cSVsqX0nw3Wc9t246ng+u19syJjOrKaKaJtYIYi0+K/rWChJgv/7QhQhR
-	 8b+Djf9IkECGAkwW6nHyWmvpsQJuop2Z5BWX+bHZ2rxtagjBLZ3hjNy96B7T76wy1o
-	 zHRFpkVViVP7+5Y1DBH7ieN2LM200vyEc+1UCfMCWJR9yvpbpe062LgCG1Fyu36HzW
-	 3DONOBu8HdW2A==
-Message-ID: <b3e320ecb16320f88d7db566be51b1e9.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="q/C3Dsnb";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ArRExtQ5"
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.west.internal (Postfix) with ESMTP id 4323F1C000B9;
+	Tue,  7 May 2024 16:53:20 -0400 (EDT)
+Received: from imap51 ([10.202.2.101])
+  by compute5.internal (MEProxy); Tue, 07 May 2024 16:53:21 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1715115199; x=1715201599; bh=UafRVQ7xw7
+	cygAYylCOVgFjlvkwiscSglHTE53mJ0OY=; b=q/C3Dsnbm7E/JV3fCuw1PDrQcw
+	HA/oh6aI9toEOwAS5YLndn32HSnDVixRsdx2/U6oMWwz9+S7t/rodklKRuD+Je5u
+	+9YP+TAtK3xoLzlbZ6hVclJ8oip2y40E3Nafl512UNTy7OYce65GvlypbFqz4nr8
+	XfBWjwWO6TnljXAyzjt3OHmElJ4IcisYhqORrUTpkkk2imf56fOQCy1QVfeYvV4Y
+	PrevypsEV7t5vVN4gC6NyezZ/nLu3Hsq8okP1D9PDy5eyHnnrFmFsK88hei/Hm5U
+	4yaB90LszHpjQ8nfF9DrbbF88lGNVmSm5WkLvLNarHrW7nsWn+wagHgQaOLw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1715115199; x=1715201599; bh=UafRVQ7xw7cygAYylCOVgFjlvkwi
+	scSglHTE53mJ0OY=; b=ArRExtQ5IUH0Na9nEjjm9KMcHmunuDg1wJgDqTHBT58f
+	uTSftQvEmscGM6EHwwW6Uf3lWg5xKKkBoa4YCC5RyHGqTOT/imBDOxSUnmyDZxdV
+	6Q7mM8bR9mx359oHLnYcool851ghHeKHZ3MjU1A+mMmFyAI0Q3VEyCr+Yghliy01
+	/IsJ4yr9/8IlxIAVndlqYz87+P+YaTMHs/qnRJ0+fS5eDjoeK6+ijgCf8YWyHk/X
+	Tn5t+FDQ+xoRXmhcmv8lz8G4V7IpTlPfYRQOKBFW2vVBekwsGLSZ9HElWCbSAXvC
+	FQeOJbD+Qvj3C+v7uov9nKkmMsKbMlKsGDy1MDw9DA==
+X-ME-Sender: <xms:v5Q6ZvQuIHHZeRVLOyhAbccudcN7GL-BZkPcJjPOSr2fw55HHJUV7A>
+    <xme:v5Q6ZgxSyT2jYsEuKOLXp4xq1fbpt30omce9fnwBB_9ZPYIRQ-23ZnlyeAgPh5pCk
+    -nb_y9W9BOpH3G9m94>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvddvkedgudehvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmd
+    enucfjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdet
+    rhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrg
+    htthgvrhhnpeevhfffledtgeehfeffhfdtgedvheejtdfgkeeuvefgudffteettdekkeeu
+    feehudenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivg
+    eptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvg
+X-ME-Proxy: <xmx:v5Q6Zk0P3zDwcfFRIGzr4MV8HmP5w9_JSLCS5Zl5OkSLY9R-ye-eMg>
+    <xmx:v5Q6ZvAdmFzCR3FzLIpvSDHfmg9aVNGNDK_Z5IgGeizvY1hG8MghAQ>
+    <xmx:v5Q6ZogjLg2qcOW_sBXLWBxHrRyPQf1vs9ewkg3BJSFGhBH6c3daVQ>
+    <xmx:v5Q6Zjrt10LNhArBp5fx_ioekBocovlhyS6QiiGH9TWOwthYHxk73Q>
+    <xmx:v5Q6ZtanBF80sYCSsSOxxByV_twdAh5IAUoLjpH_Ajti8xkUVV9yrifj>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 63A4CB6008D; Tue,  7 May 2024 16:53:19 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-443-g0dc955c2a-fm-20240507.001-g0dc955c2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <b1fd9806-3e33-488a-a5a9-a156a2c735d2@kernel.org>
-References: <20240504120624.6574-1-krzysztof.kozlowski@linaro.org> <8bf65df598680f0785c3d6db70acfb9a.sboyd@kernel.org> <b1fd9806-3e33-488a-a5a9-a156a2c735d2@kernel.org>
-Subject: Re: [GIT PULL] clk: samsung: drivers for v6.10
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org, Sylwester Nawrocki <snawrocki@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-To: Krzysztof Kozlowski <krzk@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Michael Turquette <mturquette@baylibre.com>
-Date: Tue, 07 May 2024 13:43:21 -0700
-User-Agent: alot/0.10
+Message-Id: <e93acd4c-20f7-4b46-bb9c-84fac451c894@app.fastmail.com>
+In-Reply-To: <820ddc2ec70780ae1ecd3af864dc8bd6.sboyd@kernel.org>
+References: 
+ <CA+G9fYuZd_ur56H8fwDSvUywopvn_b7ogprGkjEatQ7EPTLwYQ@mail.gmail.com>
+ <11be44d3-0f32-49c6-b4ae-ba97a9f97763@app.fastmail.com>
+ <820ddc2ec70780ae1ecd3af864dc8bd6.sboyd@kernel.org>
+Date: Tue, 07 May 2024 22:52:59 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Stephen Boyd" <sboyd@kernel.org>,
+ "Linux ARM" <linux-arm-kernel@lists.infradead.org>,
+ "Naresh Kamboju" <naresh.kamboju@linaro.org>,
+ linux-clk <linux-clk@vger.kernel.org>, lkft-triage@lists.linaro.org,
+ "open list" <linux-kernel@vger.kernel.org>
+Cc: "Russell King" <linux@armlinux.org.uk>,
+ "Anders Roxell" <anders.roxell@linaro.org>,
+ "Dan Carpenter" <dan.carpenter@linaro.org>,
+ "Michael Turquette" <mturquette@baylibre.com>,
+ "Marek Szyprowski" <m.szyprowski@samsung.com>
+Subject: Re: clkdev: report over-sized strings when creating clkdev entries
+Content-Type: text/plain
 
-Quoting Krzysztof Kozlowski (2024-05-06 22:54:10)
-> On 07/05/2024 01:44, Stephen Boyd wrote:
-> > Quoting Krzysztof Kozlowski (2024-05-04 05:06:22)
-> >> The following changes since commit 4cece764965020c22cff7665b18a0120063=
-59095:
-> >>
-> >>   Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
-> >>
-> >> are available in the Git repository at:
-> >>
-> >>   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/=
-samsung-clk-6.10
-> >=20
-> > I'm getting compile warnings. Is there a pending fix? Also, why is GS101
->=20
-> I don't see any of these warnings. Neither local (W=3D1), nor on my CI,
-> nor reported by LKP (which reported build successes for this branch).
-> How can I reproduce it?
+On Tue, May 7, 2024, at 22:26, Stephen Boyd wrote:
+> Quoting Arnd Bergmann (2024-05-07 00:44:15)
+>> On Tue, May 7, 2024, at 09:20, Naresh Kamboju wrote:
+>> > The WinLink E850-96 board boot failed with Linux next-20240506 but there
+>> > is no kernel crash log on the serial [1].
+>> >
+>> > Anders bisection results pointing to this commit,
+>> > # first bad commit:
+>> >   [4d11c62ca8d77cb1f79054844b598e0f4e92dabe]
+>> >   clkdev: report over-sized strings when creating clkdev entrie
+>> >
+>> > After reverting the above patch the boot test passed [2].
+>> >
+>> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+>> >
+>
+> There are two fixes on the list: [1] and [2]. Perhaps one of those
+> resolves this?
+>
+> [1] https://lore.kernel.org/r/20240507065317.3214186-1-m.szyprowski@samsung.com
+> [2] https://lore.kernel.org/r/20240507064434.3213933-1-m.szyprowski@samsung.com
 
-I ran this command
+My guess is that either one avoids the crash, but we actually
+want both of them since the problem is a combination of the two
+issues.
 
- make W=3D1 ARCH=3Darm CROSS_COMPILE=3Darm-linux-gnueabi- drivers/clk/samsu=
-ng/clk-gs101.o
+I think we also need this one on top, to have a va_end() for
+each return() statement:
 
-and I see the warnings. They're actually upgraded to errors.
+--- a/drivers/clk/clkdev.c
++++ b/drivers/clk/clkdev.c
+@@ -193,6 +193,7 @@ vclkdev_alloc(struct clk_hw *hw, const char *con_id, const char *dev_fmt,
+                cla->cl.dev_id = cla->dev_id;
+        }
+ 
++       va_end(ap_copy);
+        return &cla->cl;
+ 
+ fail:
 
->=20
->=20
-> > describing clk parents with strings instead of using clk_parent_data?
->=20
-> GS101 uses existing Samsuung clock framework, so that's how it is done
-> there. There is nothing odd here, comparing to other Samsung clocks.
 
-Ok. Is anyone working on migrating Samsung clk drivers to the non-string
-way?
-
->=20
-> >=20
-> > In file included from drivers/clk/samsung/clk-gs101.c:16:
-> > drivers/clk/samsung/clk-gs101.c:2616:7: error: =E2=80=98mout_hsi2_mmc_c=
-ard_p=E2=80=99
-> > defined but not used [-Werror=3Dunused-const-variable=3D]
-> >  2616 | PNAME(mout_hsi2_mmc_card_p)     =3D { "fout_shared2_pll", "fout=
-_shared3_pll",
->=20
-> I see indeed some unused variables and I will drop them but your
-> warnings are not reproducible.
-
-Weird! I use gcc-12.2 if that helps. I've been meaning to upgrade but I
-also don't see much urgency.
-
-I'll wait for the next PR.
+      Arnd
