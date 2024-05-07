@@ -1,131 +1,136 @@
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06A1A14E2F0
-	for <linux-clk@vger.kernel.org>; Tue,  7 May 2024 10:13:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 976D315B12B;
+	Tue,  7 May 2024 12:51:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715076820; cv=none; b=DS3BEEQmgWk/MPW5rPbeVV+0QXjisHwE/PBS78wth2NFvsjHRjnRIxmzHuPGk6FE+iEMGUIT9YnQ42bx4L+viAi8Y7u71bVz3MTTsOqdorJi4wdmwfJJ2ZXGamLdNkYZHA4xevDoCbEqrCKlBEAiDmtEz1cclbG067XwLaJuQWc=
+	t=1715086315; cv=none; b=EJ7vIS8n6pddTFFIJWMYOgskVHeR2ivq0ibgYbgx0KrvGhLgTaOn8t8lxm2l5PuAoOJfmEl2r1dZ0ZfFPvYdHZ+bBfkF0j6WQ9t14J5HfO6sibpC9rkx68ZXQV4zPHDpbbJINp4Yk1Cjt3UDt6Rsi+dn8xNONnWFEYKt57K6Di0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715076820; c=relaxed/simple;
-	bh=m3tCofB4NMIGnHABhiBunpQUZgNSb7hU8zxpgMZ6Rz8=;
-	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dGrKADOYoVqtF3PjWgpvfZunBH0Y858FxgbDtGZPyNXPl6SZijFbyitEcP2Fq7uhQmM2xfAGLH4khwJLhul4dLwQCf2zQImHMOQWaACkaoeF5VMVgJ+wON34Y0VeXmW0ggExiJNzrJE9/GGtbBCZzjurTFcgjC/8J9IljG+Re0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=ronazVYD; arc=none smtp.client-ip=185.125.188.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+	s=arc-20240116; t=1715086315; c=relaxed/simple;
+	bh=YkrG41OUg30UlrJKdM2bXKdavDQXZarnRBrRAJenv4U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gMYeNzV63szQv+ZoaQ9fzc6TdJMniSSdwgGVn75+TJoMphCrm+JRI0oYMN8Rm6n37tb+PRgvQLs9PzLAsR6vRs2aQOFXWdM3QKLEAUz5SjgY3J/fIwwD1hFcTLDAPoXu56Mt/COfjjAkkq6nPskdirzuYNsnUOJD+5SY4+yP6sU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tGPbKqa1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="ronazVYD"
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id DC25540098
-	for <linux-clk@vger.kernel.org>; Tue,  7 May 2024 10:13:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1715076816;
-	bh=397X4zZ5qk6cmfxvJ66g5Oe/KXHQi7SbJr6mL/vXFTk=;
-	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=ronazVYDfRESfDFXThriTvfHZoKRxPX56aJndWDCsD1z5uV5mxyFZHJeDCrhmXkS0
-	 WkLuCqU2a1yFJXvV5NNiq5Me4ofaWwLtxladK+rwGJEOZJvmgfupqzyEJStrEJ0S/9
-	 VZIWjIwaqwDR4SRDflhUfrEidRSS/+OuhU8iLkYnaYGFzNXhR+LRiESis0a2BWw0g6
-	 bb3dfK87xEW3tkh5kV5DYLfCfYUOIsTZdyaKZVqIZjVPhwXuwLyqWPfz//ZmV0nMEq
-	 jiFloOdblr8AWRwSXB6yjBV3utsh5QpU10gaYsmaqqH+M6fSOTY5Amc7GQHaVNY246
-	 GCgiSUWEoKaQg==
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-43d245bfdb9so39132071cf.1
-        for <linux-clk@vger.kernel.org>; Tue, 07 May 2024 03:13:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715076816; x=1715681616;
-        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=397X4zZ5qk6cmfxvJ66g5Oe/KXHQi7SbJr6mL/vXFTk=;
-        b=XcqYb8d6LjUpH68HbLH3+mKr+xfUrztsLf9ROGOX86uUrxLGvY4HX+g36Q/UmGRbMA
-         bNzzFeG2WvlMPB2y8D1QHt3kLtvYsv0YBNbLVtIQ93uR6iy1keg1W6FubXDc1A8KfK3n
-         UtKYs7vtw2MnZfFrA9EbKlahoRC7Xz4KHJr9EIYy2CyZT7IjaJGd1XTGEz2GufSzHoY8
-         Dt1FOrJOloSJYyKlkFoJ/o6z4A5/mCJOxtPDIfwAr/QNW2yaj7PuHT+vVS6FkYCPzh0L
-         49rABq8XBHarmxXzwflLAHc7D4e8FJ1ZLM1DDmHjW5PUldNSyqoWDyrc52JBTY5N4UGP
-         SrGQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWwNAQmbWLjbxQ7DOR0h2Ekamf0vQelHGBVXVYwTun78hWb7PFMnJ/gn0imW52NNZJzL++YQ/F+MDWiQMwDSdwwGxz77uG7feBB
-X-Gm-Message-State: AOJu0YyCiv4N8iJV1p6QIc1sn5pwrwqj4yuSW7VX+4O+lu5Oq1btmpyI
-	IU/+mNBFDHgW0de8fEwA49IOueie3inS9zfJjSOBPdFH8scvTblEogkpMP1zClomwuD/I3T7tjV
-	65mdHLbCjcXoUbSZN9XjfJ85ZHtVzmRYlq2as4OZfQjWI8oI1Z3o3yt4D9Svx4dhioNP24uZr/m
-	oJubsB6fCKCwQrsAQ1ljyjMi3EfbmQx8n0LiOqj6ODMOzFPCMj
-X-Received: by 2002:a05:622a:4e0b:b0:43a:712a:bb97 with SMTP id dh11-20020a05622a4e0b00b0043a712abb97mr15579362qtb.7.1715076816027;
-        Tue, 07 May 2024 03:13:36 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEjgVEjWFG0Er1wzm6XME0OZo9sKv/t6H0/VJqg3xbQh7tYq4BfD/1KVLjHaQMTeCkQMWpcnkGoRTUTZ7VYW1c=
-X-Received: by 2002:a05:622a:4e0b:b0:43a:712a:bb97 with SMTP id
- dh11-20020a05622a4e0b00b0043a712abb97mr15579347qtb.7.1715076815802; Tue, 07
- May 2024 03:13:35 -0700 (PDT)
-Received: from 348282803490 named unknown by gmailapi.google.com with
- HTTPREST; Tue, 7 May 2024 03:13:35 -0700
-From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-In-Reply-To: <20240507065319.274976-3-xingyu.wu@starfivetech.com>
-References: <20240507065319.274976-1-xingyu.wu@starfivetech.com> <20240507065319.274976-3-xingyu.wu@starfivetech.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tGPbKqa1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23982C2BBFC;
+	Tue,  7 May 2024 12:51:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715086315;
+	bh=YkrG41OUg30UlrJKdM2bXKdavDQXZarnRBrRAJenv4U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tGPbKqa1QRN6Q8vFBcvwfLx5Wt0iXO2sD7KX/SqIxxdt7QCFRTz59ORppTJzP/E5E
+	 E+o5R2lTJKTnve0vuPp7cVVXZpzmLKXIOrZArK+Q6i6BeGTxTLNoaeobynnF1zW6pa
+	 pM1WTbYOysJHbgGRcD6z3H5idi+XFleUZu9ys5UFfGq503If2Ob2d2b7XpQsPM3a/a
+	 8q7Dj6g32Y+2DS+lXznIz4TvIhD3GdvEFdo5CyO1TwZs8vZxnqlpsymVbhUdvB7Lqk
+	 3fyNLOhyfENEckwYD0ia99Ne2XOAtcLZPo/G7tTHXEx474rUyeyQnlHsdZ7DosI1LZ
+	 LXSrzSxeS8jnw==
+Date: Tue, 7 May 2024 07:51:52 -0500
+From: Rob Herring <robh@kernel.org>
+To: =?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>, Lee Jones <lee@kernel.org>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+	Gregory CLEMENT <gregory.clement@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Tawfik Bayouk <tawfik.bayouk@mobileye.com>
+Subject: Re: [PATCH v2 03/11] dt-bindings: soc: mobileye: add EyeQ OLB system
+ controller
+Message-ID: <20240507125152.GA38845-robh@kernel.org>
+References: <20240503-mbly-olb-v2-0-95ce5a1e18fe@bootlin.com>
+ <20240503-mbly-olb-v2-3-95ce5a1e18fe@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Date: Tue, 7 May 2024 03:13:35 -0700
-Message-ID: <CAJM55Z-p9OLYCWHzhQ9HJ3vEt+u-qx0kxcWmGnO8FoarxJQiQQ@mail.gmail.com>
-Subject: Re: [PATCH v5 2/2] riscv: dts: starfive: visionfive-2: Fix lower rate
- of CPUfreq by setting PLL0 rate to 1.5GHz
-To: Xingyu Wu <xingyu.wu@starfivetech.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor@kernel.org>, 
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Hal Feng <hal.feng@starfivetech.com>, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240503-mbly-olb-v2-3-95ce5a1e18fe@bootlin.com>
 
-Xingyu Wu wrote:
-> CPUfreq supports 4 cpu frequency loads on 375/500/750/1500MHz.
-> But now PLL0 rate is 1GHz and the cpu frequency loads become
-> 333/500/500/1000MHz in fact.
->
-> The PLL0 rate should be default set to 1.5GHz and set the
-> cpu_core rate to 500MHz in safe.
->
-> Fixes: e2c510d6d630 ("riscv: dts: starfive: Add cpu scaling for JH7110 SoC")
-> Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
-
-This should really be based on Conor's riscv-dt-for-next branch, eg. the change
-should be to the new jh7110-common.dtsi instead since the Milk-V Mars board
-would most likely also benefit from this change.
-
-In any case:
-Reviewed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-
+On Fri, May 03, 2024 at 04:20:48PM +0200, Théo Lebrun wrote:
+> Add documentation to describe the "Other Logic Block" system-controller.
+> It deals with three platforms: EyeQ5, EyeQ6L and EyeQ6H. First two have
+> a single instance, whereas EyeQ6H has seven named instances.
+> 
+> Features provided are:
+>  - Clocks, children to main crystal. Some PLLs and divider clocks.
+>  - Resets. EyeQ6H central, south, DDR0 and DDR1 do not have resets.
+>  - Pinctrl. Only EyeQ5 has such feature.
+> 
+> Those are NOT the only registers exposed in OLB system-controllers! Many
+> individual registers, related to IP block integration, can be found.
+> 
+> We simplify devicetree references to OLB in two ways:
+>  - Compatibles exposing a single clock do not ask for a index argument.
+>  - Compatibles exposing a single reset domain do not ask for a domain
+>    index, only a reset index.
+> 
+> About pinctrl subnodes: all pins have two functionality, either GPIO or
+> something-else. The latter is pin dependent, we express constraints
+> using many if-then.
+> 
+> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
 > ---
->  .../boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi     | 6 ++++++
->  1 file changed, 6 insertions(+)
->
-> diff --git a/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
-> index 45b58b6f3df8..28981b267de4 100644
-> --- a/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
-> +++ b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
-> @@ -390,6 +390,12 @@ spi_dev0: spi@0 {
->  	};
->  };
->
-> +&syscrg {
-> +	assigned-clocks = <&syscrg JH7110_SYSCLK_CPU_CORE>,
-> +			  <&pllclk JH7110_PLLCLK_PLL0_OUT>;
-> +	assigned-clock-rates = <500000000>, <1500000000>;
-> +};
+>  .../bindings/soc/mobileye/mobileye,eyeq5-olb.yaml  | 375 +++++++++++++++++++++
+>  MAINTAINERS                                        |   2 +
+>  include/dt-bindings/clock/mobileye,eyeq5-clk.h     |  21 ++
+>  3 files changed, 398 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.yaml b/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.yaml
+> new file mode 100644
+> index 000000000000..bbd75b81166e
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/soc/mobileye/mobileye,eyeq5-olb.yaml
+> @@ -0,0 +1,375 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/soc/mobileye/mobileye,eyeq5-olb.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
->  &sysgpio {
->  	i2c0_pins: i2c0-0 {
->  		i2c-pins {
-> --
-> 2.25.1
->
->
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
+> +title: Mobileye EyeQ SoC system controller
+> +
+> +maintainers:
+> +  - Grégory Clement <gregory.clement@bootlin.com>
+> +  - Théo Lebrun <theo.lebrun@bootlin.com>
+> +  - Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>
+> +
+> +description:
+> +  OLB ("Other Logic Block") is a hardware block grouping smaller blocks. Clocks,
+> +  resets, pinctrl are being handled from here. EyeQ5 and EyeQ6L host a single
+> +  instance. EyeQ6H hosts seven instances.
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - mobileye,eyeq5-olb
+> +          - mobileye,eyeq6l-olb
+> +          - mobileye,eyeq6h-acc-olb
+> +          - mobileye,eyeq6h-central-olb
+> +          - mobileye,eyeq6h-east-olb
+> +          - mobileye,eyeq6h-west-olb
+> +          - mobileye,eyeq6h-south-olb
+> +          - mobileye,eyeq6h-ddr0-olb
+> +          - mobileye,eyeq6h-ddr1-olb
+> +      - const: syscon
+> +      - const: simple-mfd
+
+You are getting rid of the child nodes, so you shouldn't need simple-mfd 
+any more.
+
+Rob
