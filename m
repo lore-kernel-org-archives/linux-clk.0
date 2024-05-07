@@ -1,94 +1,101 @@
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D3F1607A7;
-	Tue,  7 May 2024 17:58:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E206916E880;
+	Tue,  7 May 2024 19:35:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715104707; cv=none; b=VcEJo5OG64Byg/B+LRu1aDj0j42JThpXToWPwdxmABBNdecETfyCN2kORzY1ZtvKVBBPXHyziSPnOYkgI2PP6oIojhu4TWsWGml1uB59jieWpqHCcB2DhwRqTD05MjTMx9OV81WEO2z9zbOwd2f0+CN4owX+i2uXkTah0Jd+60Q=
+	t=1715110560; cv=none; b=FOPCv9acc4y9H2QL6SAvb/4HOpkVc4sGj4I9WNLd1X33hGMTHPjcuEjgFq2EwjT+oe7PpMlmfO0uKOxyMvGEV6GR3+NFzR0PNzgftXRsHRuWUVSj/u4dJgLjRo/XXOmOvcIxD1yXio3DoHiU9YXJDP3ZKgt/AzKERNGv+drIWlk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715104707; c=relaxed/simple;
-	bh=cLhYMUfavX/is8oPA4vFjuYUvx4gHjw9s6GruuvD9E8=;
+	s=arc-20240116; t=1715110560; c=relaxed/simple;
+	bh=bRHbcYBsOau7RDjFb4TOtC+YEMb0oH2Rg3gRpr/6wGE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ceL2kv0ndzEKBWJ1aBZ92mH1vUOch7doof66vQ03WAJbYhDFqioEGP3ytwEPyV0X/uLz0TbzmUVNaj+uBydU/JZsOsiSY8a74AKgRc4QuTWxPk8K/dmyxkhzCuEo191QWQ6AybOzmpP4Ia6fhoMc5FlY8jzmZ0pkO7Afau7fAqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=j/g0CEmr; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+	 Content-Type:Content-Disposition:In-Reply-To; b=qHivMvC8ztl43sfCqx/Dteuc3hYin2EcWGWDPUXrTU6DF1WpXMMvPVOshMWgwtyOVrZaqA5owdEjuBcbeSCa3J5+6t8awlDgxI9Jsb7llhP0hg4GJoPs6DyJQnGyXNvgfREpvsAlu/KtpTUyqRa72lovMLKdEqCxUIBp8KWu9oM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hUhfyIqg; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="j/g0CEmr"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=jhtPKTCf2rAFUz3lZJnxmPbFv+4BaiLF1W7Jae20gYI=; b=j/g0CEmrxGRCGwQVYvHY/UrX8a
-	XrAAQ9UmOPxMRWI0rhRsrXX0d0Yx5EpPm8YrPkH34Svqe5xREnhckMam2p+ly12QRtE/hj2P03mtW
-	yorPSYlbnkg9sGDE9uPI/af7s7at75lwPgVmv9fwe10NeaFGzw0LNpVa2Qnd9GdyIRv8IoGQpGMrS
-	eIiwZEp98gf05AaM659uXZYcEhw2K9/c0+wO3x8okGCPWuDZ010R2hc1Xh50DLE+SpEfit90FAFVO
-	gKTqREa+2WvZJj3wEwmeNw7qtuGWldAE+/iZ8A7uKgOHS1L6a1EKFzbdeE022S0ggsI0vROkAeM02
-	MEVPSkcg==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:34370)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1s4P50-00047K-0H;
-	Tue, 07 May 2024 18:58:18 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1s4P4y-0000Vr-JX; Tue, 07 May 2024 18:58:16 +0100
-Date: Tue, 7 May 2024 18:58:16 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: =?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hUhfyIqg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27DFEC2BBFC;
+	Tue,  7 May 2024 19:35:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715110559;
+	bh=bRHbcYBsOau7RDjFb4TOtC+YEMb0oH2Rg3gRpr/6wGE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hUhfyIqgDc7kjRSbwQgC0OoI/RDBN9Ux6JALUaqshYxEFPa6wmQ2fkgPhNkgM2dtU
+	 QTzt1ROsrKQhB/LJi5Hei/I/nSEyAld3Iat/IbbGFHuFSQ2y2QvXtxAt3AX2lnHYAo
+	 J8YVu0/7vBFKKD+MDwLe3sj7V5tNZYNzOwgg/3taLFAdn7EHpDO13WIWeX2S7DI3UV
+	 hxWSrxgrulED+svg0ShBGgzKks8Kw3qd2z5KhpdgJyRR6SqRcNM+0PR4YDK+Eit0R/
+	 qQF7h5hPXbik8gNcWut6WxI045KzrabGMvqTlHsdza4HlMTJtpvEagRE4uT46RtBom
+	 RXmqb+qmu8bvA==
+Date: Tue, 7 May 2024 14:35:57 -0500
+From: Rob Herring <robh@kernel.org>
+To: Frank Wunderlich <frank-w@public-files.de>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Frank Wunderlich <linux@fw-web.de>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH] clkdev: fix potential NULL pointer dereference
-Message-ID: <ZjpruBO7iwcrz5ru@shell.armlinux.org.uk>
-References: <CGME20240507064445eucas1p1bfc17da4f824ef46567774634482f12f@eucas1p1.samsung.com>
- <20240507064434.3213933-1-m.szyprowski@samsung.com>
- <e4ad92b88556f0de05b6b7ae03da1e581d688ce5.camel@linaro.org>
+	Stephen Boyd <sboyd@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+	Lee Jones <lee@kernel.org>, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Eric Woudstra <ericwouds@gmail.com>,
+	Tianling Shen <cnsztl@immortalwrt.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-leds@vger.kernel.org, netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: Re: Aw: Re: [RFC v1 2/5] dt-bindings: clock: mediatek: add
+ address-cells and size-cells to ethsys
+Message-ID: <20240507193557.GA924525-robh@kernel.org>
+References: <20240505164549.65644-1-linux@fw-web.de>
+ <20240505164549.65644-3-linux@fw-web.de>
+ <9f8237c4-f603-459a-9d34-9cda556874b8@linaro.org>
+ <trinity-9ceb52ff-9a3b-4fe2-93f8-2e95b8ffb1ee-1715014303393@3c-app-gmx-bap23>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e4ad92b88556f0de05b6b7ae03da1e581d688ce5.camel@linaro.org>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <trinity-9ceb52ff-9a3b-4fe2-93f8-2e95b8ffb1ee-1715014303393@3c-app-gmx-bap23>
 
-On Tue, May 07, 2024 at 05:42:45PM +0100, André Draszik wrote:
-> Hi Marek,
+On Mon, May 06, 2024 at 06:51:43PM +0200, Frank Wunderlich wrote:
+> > Gesendet: Montag, 06. Mai 2024 um 10:18 Uhr
+> > Von: "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>
+> > On 05/05/2024 18:45, Frank Wunderlich wrote:
+> > > From: Frank Wunderlich <frank-w@public-files.de>
+> > >
+> > > Add missing properties already used in mt7986a.dtsi.
+> >
+> > Missing for what? Or why? Provide context, IOW, explain why they are
+> > missing.
 > 
-> On Tue, 2024-05-07 at 08:44 +0200, Marek Szyprowski wrote:
-> > diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
-> > index ddacab7863d0..d2801ae70e34 100644
-> > --- a/drivers/clk/clkdev.c
-> > +++ b/drivers/clk/clkdev.c
-> > @@ -194,10 +194,12 @@ vclkdev_alloc(struct clk_hw *hw, const char *con_id, const char *dev_fmt,
-> >  	return &cla->cl;
-> >  
-> >  fail:
-> > -	fmt.fmt = dev_fmt;
-> > -	fmt.va = &ap_copy;
-> > -	pr_err("%pV:%s: %s ID is greater than %zu\n",
-> > -	       &fmt, con_id, failure, max_size);
-> > +	if (dev_fmt) {
-> > +		fmt.fmt = dev_fmt;
-> > +		fmt.va = &ap_copy;
-> > +		pr_err("%pV:%s: %s ID is greater than %zu\n",
-> > +		       &fmt, con_id, failure, max_size);
-> > +	}
+> ethernet-node in mt7986a.dtsi hast reset-cells-property
 > 
-> It might be nice to still print the rest of the error, so it's easier to see which
-> clock is causing trouble.
+> https://elixir.bootlin.com/linux/v6.9-rc1/source/arch/arm64/boot/dts/mediatek/mt7986a.dtsi#L559
+> 
+> and
+> 
+> address-cells and size-cells are used here:
+> 
+> https://elixir.bootlin.com/linux/v6.9-rc1/source/arch/arm64/boot/dts/mediatek/mt7986a.dtsi#L495
+> 
+> i saw the warnings while checking my r3mini dts...
+> 
+> arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-mini.dtb: syscon@15000000: '#address-cells', '#size-cells' do not match any of the regexes: 'pinctrl-[0-9]+'
+> 	from schema $id: http://devicetree.org/schemas/clock/mediatek,ethsys.yaml#
+> arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-mini.dtb: ethernet@15100000: Unevaluated properties are not allowed ('#reset-cells' was unexpected)
+> 	from schema $id: http://devicetree.org/schemas/net/mediatek,net.yaml#
+> 
+> so i thought it is a good idea to fix this now ;)
 
-Good point. I'll fix the patch myself, merging the fix in.
+The dts is already fixed dropping these properties in linux-next.
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+If you don't have child nodes with reg/ranges, then you never need 
+#address-cells or #size-cells.
+
+Rob
