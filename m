@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BCA3187349;
-	Tue,  7 May 2024 20:26:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBE52187331;
+	Tue,  7 May 2024 20:28:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715113579; cv=none; b=MTSggWiWQWyucDGGQynLPoe00gKxI9VkLRfba++1tmHHn+QbHo4vi0SaW/E56T8juqe1vl9zLFODIfjsPlrCsCB8cN1HyasiQSivYFerELrdo1MRc2WgsT0vRJp1pP+xM9X+svpVEfbirBun1FScoF/plXmFpnrDjGc15q17Q/Q=
+	t=1715113722; cv=none; b=c5ozP3JB0y8UQ4fTf2XjJPo+fiuPMV6nWrYYyO440lZ/MVmsna9Y2a/tP8p+CP95gZRnjGeI3KcFED2QyYi7QGfl+SR+qPDI9LCWJli02c/HC35zKg75atnJjYTy8iP7QesFRgBADzZeIVA60U/5Ff8JBxnunCbR02bEDmXTttE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715113579; c=relaxed/simple;
-	bh=Jkp27+7iEZAczyVopDS/5uxqbBICAzoIBowJEK5GE3I=;
+	s=arc-20240116; t=1715113722; c=relaxed/simple;
+	bh=O+b6rMU8nBnrcErDZTJYAs1xK22Mbc0hwJnw71xIx2w=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=pkSNBau5Jdy/Uj5xDpM3ypenlnZDMMYkDokfokPnJ3TmxDrF/dJqQqbgYQdOqk2S5MAxm/qHnsVsBczDRUhOHJjN97PIef7fv3UILeRgNnxKNPdoO8LHzAAR5ltMnDRhL1OdSjMipc3aKKhcelO1cUNkJ1CSX6r083jDC5wjKh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cbh17CzC; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=P+mOCkR8weJAgOhuBfYSiJnbdZiYPy5fJuHjer1W+8bMj9SXhu4JlbDm45+DSbVzdY5BCOXiT0OIPZbYrYnom9IsA3ZcewwmuQJaI2gvpgO5oEzr2kUQwfswA1DNSaBVscRsFReAIgvl2lIiDX7V/2yJf+6G90jNcGPdL1P4cQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XRL1jzm6; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cbh17CzC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27E76C2BBFC;
-	Tue,  7 May 2024 20:26:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XRL1jzm6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45B24C2BBFC;
+	Tue,  7 May 2024 20:28:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715113579;
-	bh=Jkp27+7iEZAczyVopDS/5uxqbBICAzoIBowJEK5GE3I=;
+	s=k20201202; t=1715113722;
+	bh=O+b6rMU8nBnrcErDZTJYAs1xK22Mbc0hwJnw71xIx2w=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=cbh17CzCDmEwOgsnptt4Ye6NTQIA+dRLnckghXFPqJfX6PTrDEyKPeF/eGWq2XRHf
-	 RDXdulKcVlQ8x+T7/NJd16bt9gWUCvzvfKLA1bnZGO1Nlr4xy6SClpr41G/pmKgsAP
-	 ANJLioY6qIxXdxZV28Ia5REAgGlTok+7G669Euu2SkFY5X/rT1g/3vaxfetgPlxsbG
-	 N3N0lx050AiHhPuODaLmWlUg9P4vOhnx0pBkWtxXwwQ2dxqIrDST00VIAvFk5nOIGT
-	 K9S2eIezCRLlCysDFbFsaSPSxEF8BWvLrLlOP5d4dd/J3HxFOuT/gRbsyNwngRsHC0
-	 PwPAfpbN6xVzA==
-Message-ID: <820ddc2ec70780ae1ecd3af864dc8bd6.sboyd@kernel.org>
+	b=XRL1jzm6UDXsbnhoXOg5hrJWNhQFT08J2n9CRAaOo/wcSZYfByN4zJ8Sc0/ibjGSB
+	 oe2/Z+30Mj/qIoZi4xcK+99iCqOrCNpnRah1lM4Y5K/iaA7J53Ypm7vmUO0UiGUMqH
+	 kzSdBSnxh+6NpZGHnKNjLfmyQOEM1GhEqj0EhyVqfce59lsnq+Xx/ijZfpNUOqONH0
+	 AaHmHVTJehNRW/P8v/24p+v/i9ViSeGjYkYOEDBgF0/AgU3b37AYLsZlR2QozXBeZo
+	 LTZikVVzANBIgoMAEzRPkq4JFzihEe0DOHrDiRKNj0Pm+75VC+YJtemYd/rQ1dFlcj
+	 K1kdEWSAxAj7Q==
+Message-ID: <7baef7a173dc4d1ecf8b0dafde565b1a.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,34 +35,46 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <11be44d3-0f32-49c6-b4ae-ba97a9f97763@app.fastmail.com>
-References: <CA+G9fYuZd_ur56H8fwDSvUywopvn_b7ogprGkjEatQ7EPTLwYQ@mail.gmail.com> <11be44d3-0f32-49c6-b4ae-ba97a9f97763@app.fastmail.com>
-Subject: Re: clkdev: report over-sized strings when creating clkdev entries
+In-Reply-To: <3a3c4279-a254-48d0-91ad-70b7f1e3eb77@linaro.org>
+References: <20240427-topic-8450sdc2-v1-1-631cbb59e0e5@linaro.org> <2337ba58adb3fb127710bead9b8665a9.sboyd@kernel.org> <11bd7146-30cd-4b71-b2ca-d76875763731@linaro.org> <6ba2967c6c9d24e3f1c9b76496176010.sboyd@kernel.org> <3a3c4279-a254-48d0-91ad-70b7f1e3eb77@linaro.org>
+Subject: Re: [PATCH] clk: qcom: gcc-sm8450: set OPS_PARENT_ENABLE on gcc_sdcc2_apps_clk_src
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Russell King <linux@armlinux.org.uk>, Anders Roxell <anders.roxell@linaro.org>, Dan Carpenter <dan.carpenter@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Marek Szyprowski <m.szyprowski@samsung.com>
-To: Arnd Bergmann <arnd@arndb.de>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Naresh Kamboju <naresh.kamboju@linaro.org>, linux-clk <linux-clk@vger.kernel.org>, lkft-triage@lists.linaro.org, open list <linux-kernel@vger.kernel.org>
-Date: Tue, 07 May 2024 13:26:17 -0700
+Cc: Marijn Suijten <marijn.suijten@somainline.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Vinod Koul <vkoul@kernel.org>
+Date: Tue, 07 May 2024 13:28:40 -0700
 User-Agent: alot/0.10
 
-Quoting Arnd Bergmann (2024-05-07 00:44:15)
-> On Tue, May 7, 2024, at 09:20, Naresh Kamboju wrote:
-> > The WinLink E850-96 board boot failed with Linux next-20240506 but there
-> > is no kernel crash log on the serial [1].
-> >
-> > Anders bisection results pointing to this commit,
-> > # first bad commit:
-> >   [4d11c62ca8d77cb1f79054844b598e0f4e92dabe]
-> >   clkdev: report over-sized strings when creating clkdev entrie
-> >
-> > After reverting the above patch the boot test passed [2].
-> >
-> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> >
+Quoting Konrad Dybcio (2024-05-07 06:51:04)
+>=20
+> without PARENT_OPS_ENABLE:
+>=20
+> [    3.326891] sdhci_msm 8804000.mmc: Got CD GPIO
+> [    3.336839] scsi host0: ufshcd
+> [    3.337105] gcc_sdcc2_apps_clk_src is DISABLED @ set_rate
+> [    3.346339] ------------[ cut here ]------------
+> [    3.351093] gcc_sdcc2_apps_clk_src: rcg didn't update its configuratio=
+n.
+> [    3.351114] WARNING: CPU: 1 PID: 11 at drivers/clk/qcom/clk-rcg2.c:133=
+ update_config+0xc8/0xd8
+>=20
+> [...]
+>=20
+> [    3.610523] gcc_sdcc2_apps_clk_src is ENABLED @ set_rate
+>=20
+>=20
+> with PARENT_OPS_ENABLE:
+>=20
+> [    3.331419] sdhci_msm 8804000.mmc: Got CD GPIO
+> [    3.336569] gcc_sdcc2_apps_clk_src is DISABLED @ set_rate
+> [    3.344795] scsi host0: ufshcd
+> [    3.355122] qcrypto 1dfa000.crypto: Adding to iommu group 5
+> [    3.363567] remoteproc remoteproc0: 2400000.remoteproc is available
+> [    3.364729] gcc_sdcc2_apps_clk_src is ENABLED @ set_rate
+>=20
+> after testing it both ways, I realized it wasn't supposed to make a
+> difference in this regard, but I suppose I can paste both results anyway..
+>=20
 
-There are two fixes on the list: [1] and [2]. Perhaps one of those
-resolves this?
-
-[1] https://lore.kernel.org/r/20240507065317.3214186-1-m.szyprowski@samsung=
-.com
-[2] https://lore.kernel.org/r/20240507064434.3213933-1-m.szyprowski@samsung=
-.com
+Can you share your patch that prints the message? What bit are you
+checking in the hardware to determine if the RCG is enabled? Do you also
+print the enable count in software?
