@@ -1,110 +1,116 @@
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C178054BDE;
-	Tue,  7 May 2024 21:23:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A4C177658;
+	Tue,  7 May 2024 21:48:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715116992; cv=none; b=UunmMNjn5RDnCYq42mDaXLPSVnU7e371zr696Z2QxbxyGFW4x/MIBwd5aiwq6IvllGVjdspy4z5P9VyhOLEseM9ThN7k2lfHbKVzA6eLhr0kP2aQMYWb2TSGUN3eBvcLbXUleyd3kJ73Ey+V5mcYPIBCjZJQ3lwEVBhXmzCX7mY=
+	t=1715118517; cv=none; b=uzdZkBRnuO9/mMNFZzG9O95iqkfC2/5eWnbYyJ677iHrbSX6oPnXpZnwVuIxWavEqeqsXeZueMYC1q85K1to4Gl6A4WKyYiAoQB91ms8sk+7czAxOJut6fIkRAATkWMsCfditc1dBILHPYkMT3qLdymj++HDEAzDd5oYl8yJTGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715116992; c=relaxed/simple;
-	bh=MV44dzFlrz6ods5NuoQwWV90W5Uxc+Kx2sm6OddmSXI=;
-	h=MIME-Version:Message-ID:From:To:Cc:Subject:Content-Type:Date:
-	 In-Reply-To:References; b=tWLcxLzZzxtt5H3R2cUl29u9MKXCiLU4GdcQLrI4jgEX8otVppwerqwKJXRhBCZ++6GN3I9fz8KMvNj6TDbkIyVfxw55W/ixzi+MQPNViW88k8vBEX8iOQM4H8jMBXJ2ADUQJVo6dACgVeL2Tt7QuaTUJeefuHFa6Af0bNQihfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de; spf=pass smtp.mailfrom=public-files.de; dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b=CFnJjjXN; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=public-files.de
+	s=arc-20240116; t=1715118517; c=relaxed/simple;
+	bh=kYExVs3vNwZrtKx+Xy37TbIuGlIJdAuIbdrEdpK1v1w=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=tzLamFpbp+KPo/x+4UV/3OXVF0Uz5R7JooNRNfuHgQPQqiTXQqUNTg57HLfy6tEquLqfACodFy+jkKYL5xuVdKYWsLkuQXnrXnGzvuTREtT27KxpG2oHQDKd5IG06UO3UVexwJSuMPrmypbe+lwyt76C5DBLkT4I8ipHPn2uSSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M25IOCRZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b="CFnJjjXN"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=public-files.de;
-	s=s31663417; t=1715116960; x=1715721760; i=frank-w@public-files.de;
-	bh=MV44dzFlrz6ods5NuoQwWV90W5Uxc+Kx2sm6OddmSXI=;
-	h=X-UI-Sender-Class:MIME-Version:Message-ID:From:To:Cc:Subject:
-	 Content-Type:Date:In-Reply-To:References:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=CFnJjjXN1OZbj+P9i0tccPyHV/6gJ2bfEbpy2bK2MnXd7TO9tgChMit3wKNKE8wU
-	 lC/eNc5YQSEb7g1DEiWuAwbHIp7Mlr57m0XR27J3CnWP6MJLssJPhpiohWTLeFTHa
-	 gtmu6OPlnZlXj4m05U/x9jBgAehaQMxuu+y8SuVrLaVMNm6ittAAJZ5I5NHjEu+EU
-	 57N7cZ+gkandkn9pyO+iM6RN+GoY/o0BbcVRVSQQr0cdJuxkRb7mgSd8D3c8X6Hzr
-	 K/0D9gnoOFtHSetkaYtG3w/mGoQKeahVsd/MHu4Toz8DtJC7ZFSxlcoVqLYbi9C18
-	 oVyFa/kqUepGP/j2Pw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [80.245.78.164] ([80.245.78.164]) by web-mail.gmx.net
- (3c-app-gmx-bap12.server.lan [172.19.172.82]) (via HTTP); Tue, 7 May 2024
- 23:22:40 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M25IOCRZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8C75C2BBFC;
+	Tue,  7 May 2024 21:48:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715118516;
+	bh=kYExVs3vNwZrtKx+Xy37TbIuGlIJdAuIbdrEdpK1v1w=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=M25IOCRZTNR8OgIC66y02fXlHkoX8fDq82A9T1fvm2I0jY47iyDErvHoTEfFbchYl
+	 mSHHEfUmA1loX81Nbx+G0Y0kBF4uSlUF3mJbTr9ATPeCSLwLIFOzt66L8IcjtWLWr/
+	 EtJsZOkf5WVfpj0ug8T5jUyCG6EM5BOWL/bwWNhWOnhCElU8SR0Rf0GbwiaOl/cMgj
+	 hN9xwJJU5mwisMFd+/Ze4IN0bmph62tYR00qvhDPXmd3D5f/a8NFEgXtyqxFiEGcP5
+	 JuyEGh923mgDUcMVgFa2rNWUN2pd0NqCNttTvM9rIb2Hmoc/+S4UmNp7sF12wFeZ7Y
+	 okDaNLFtqTVbA==
+Message-ID: <62e1512be0bc44acae9afb34467753db.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <trinity-122794ca-3b8b-4609-b101-9550cb876acf-1715116960896@3c-app-gmx-bap12>
-From: Frank Wunderlich <frank-w@public-files.de>
-To: Rob Herring <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Frank Wunderlich
- <linux@fw-web.de>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Pavel Machek
- <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
- <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Matthias Brugger
- <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
- <angelogioacchino.delregno@collabora.com>, Eric Woudstra
- <ericwouds@gmail.com>, Tianling Shen <cnsztl@immortalwrt.org>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-leds@vger.kernel.org,
- netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-Subject: Aw: Re:  Re: [RFC v1 2/5] dt-bindings: clock: mediatek: add
- address-cells and size-cells to ethsys
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 7 May 2024 23:22:40 +0200
-Importance: normal
-Sensitivity: Normal
-In-Reply-To: <20240507193557.GA924525-robh@kernel.org>
-References: <20240505164549.65644-1-linux@fw-web.de>
- <20240505164549.65644-3-linux@fw-web.de>
- <9f8237c4-f603-459a-9d34-9cda556874b8@linaro.org>
- <trinity-9ceb52ff-9a3b-4fe2-93f8-2e95b8ffb1ee-1715014303393@3c-app-gmx-bap23>
- <20240507193557.GA924525-robh@kernel.org>
-X-UI-Message-Type: mail
-X-Priority: 3
-X-Provags-ID: V03:K1:lOjicJStoEZcBNfkrA1QWbzIQ4NNjFPQ8cpzR6gW4QiR+7EJh6RjwdVE3YYefeXOHDnBZ
- fpXIuCQU1BfhKqVuPUKwrkqaR1DCoavDO4uKE8Rk+YGYyqasvyKwJP/KZ8LewsqXNiVj1h7VtPTy
- qtM5hBPT8v4jEP3sBXbRwxl7OCVJ/X0GKbY856pCUyBoAtT6U+9hy44RN8xqUKlihW5m+kLDaln4
- Lc6uQdKWAVV4ACVM0Lr6CVzWC3lIbtUgdJAA0hJTBVv0dwVo1HSwjW7sFX+2xHx2L76UDJw64qtZ
- V0=
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:ZHnKS6tQk9U=;6uTXHbkwN5EHrut8Rcoawy77HMH
- 30XsiZh8MTBZKe3CVrFtSIsawDJlNIOWmz7UnJ8FjVYO6NKNdqzmcxUtWLyanlpcp9mvu9x/A
- 6tIkE0KajZXcjV+YVDIyLOEzODGelQGgNac+TzjM9N+LSqN6EcxPaturfBd3yLWbO/jKZGRyy
- QM6BFwk1WaPFALHV44r360RApZalAViReb4f7fA46MWjpBIA/2jw1wG4deSIVtScZGxH1txGi
- Ptdbjv6LG2o5sCAVyUaW2C5Siqq2DqHrpqAh7S7dUQClafoOpU0PgJNKXjzShRADxAbM4dIwa
- lXVYN9iJGKCS1qKQ9hjO8A01mrWuN3IIey+elFLTdQ0WQgffczN06E9dq5qf5Zkp240dtghLb
- PTgjiNwfjMbM4RD5Z8yDMYXKnnOc/NToUteUacFM/YTxMvZsKStQdot24rosEpD7qhNmVcKxY
- qp8gr7YxZZb/ShKKf6zyDSCXj7eS4z2iv76r0Sm74MaGUtRs7V29x6+/5PlEo1fKdX/XTtbi+
- AnSp61OK1P+bjCkG7N3uXesrLoZcJZxxO9UZ92aSgsKelbEIQRxyGIXKpJ98v3T7fSWmrgQ8l
- F8ZlTGwFTNQLWfILL3JNcc39RKChROgFqBM4hLGCDdndIGu44PV8QuNyUka7pLsgS/rQAEpqo
- CtgEGMbbngYW+2jaC63gfLTdJlhLoibq7x+AnKUrGdPmJJiVas+WE8KO/ImSZJM=
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <D13HXGJGMS76.XIIIZLZBCZ09@bootlin.com>
+References: <20240503-mbly-olb-v2-0-95ce5a1e18fe@bootlin.com> <8dcdb1422cd144128c1dc6fff1c273d3.sboyd@kernel.org> <D13HXGJGMS76.XIIIZLZBCZ09@bootlin.com>
+Subject: Re: [PATCH v2 00/11] Add Mobileye EyeQ system controller support (clk, reset, pinctrl)
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-mips@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, Gregory CLEMENT <gregory.clement@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Tawfik Bayouk <tawfik.bayouk@mobileye.com>
+To: Conor Dooley <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Lee Jones <lee@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Philipp Zabel <p.zabel@pengutronix.de>, Rafael J. Wysocki <rafael@kernel.org>, Rob Herring <robh@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, =?utf-8?q?Th=C3=A9o?= Lebrun <theo.lebrun@bootlin.com>
+Date: Tue, 07 May 2024 14:48:34 -0700
+User-Agent: alot/0.10
 
-Hi
+Quoting Th=C3=A9o Lebrun (2024-05-07 07:52:49)
+> On Sat May 4, 2024 at 4:34 AM CEST, Stephen Boyd wrote:
+> >
+> > Why can't you use auxiliary device and driver APIs?
+>=20
+> Good question. Reasons I see:
+>=20
+>  - I didn't know about auxdev beforehand. I discussed the rework with a
+>    few colleagues and none mentioned it either.
+>=20
+>  - It feels simpler to let each device access iomem resources. From my
+>    understanding, an auxdev is supposed to make function calls to its
+>    parent without inheriting iomem access. That sounds like it will put
+>    the register logic/knowledge inside a single driver, which could or
+>    could not be a better option.
 
-> Gesendet: Dienstag, 07. Mai 2024 um 21:35 Uhr
-> Von: "Rob Herring" <robh@kernel.org>
+You can pass the iomem pointer to the child device, either through the
+struct device platform_data void pointer or you can make a wrapper
+struct for struct auxiliary_device that the child device/driver, e.g.
+pinctrl, would know about. Or you can use a regmap and pass that through
+to the function that creates the auxiliary device.
 
-> The dts is already fixed dropping these properties in linux-next.
->
-> If you don't have child nodes with reg/ranges, then you never need
-> #address-cells or #size-cells.
+Either way, we don't want the iomem register logic inside a single
+driver. Conor recently made that change for mpfs. See this patch[1].
 
-thx for pointing to this,
+The syscon code uses a regmap so that register access uses a spinlock.
+Maybe you need that, or maybe you don't. I don't know. It depends on if
+the device has logical drivers that access some shared register. If that
+doesn't happen then letting the logical drivers map and access the
+registers with iomem accessors is fine. Otherwise, you want some sort of
+mediator function, where regmap helps make that easy to provide.
 
-so i only need part 4+5 when 6.10-rc1 is out (as i drop netdev trigger fro=
-m dts in v2).
+>=20
+>    Implementing a function like this feels like cheating:
+>       int olb_read(struct device *dev, u32 offset, u32 *val);
+>=20
+>    With an MFD, we hand over a part of the iomem resource to each child
+>    and they deal with it however they like.
+>=20
+>  - Syscon is what I picked to share parts of OLB to other devices that
+>    need it. Currently that is only for I2C speed mode but other devices
+>    have wrapping-related registers. MFD and syscon are deeply connected
+>    so an MFD felt natural.
+>=20
+>  - That would require picking one device that is platform driver, the
+>    rest being all aux devices. Clock driver appears to be the one, same
+>    as two existing mpfs and starfive-jh7110 that use auxdev for clk and
+>    reset.
+>=20
+> Main reason I see for picking auxdev is that it forces devices to
+> interact with a defined internal API. That can lead to nicer
+> abstractions rather than inheriting resources as is being done in MFD.
+>=20
 
-any comments for these?
+The simple-mfd binding encourages sub-nodes for drivers. This is an
+anti-pattern because we want nodes for devices, not drivers. We should
+discourage the use of that compatible in my opinion.
 
-regards Frank
+I could see the MFD subsystem gaining support for creating child
+auxiliary devices for some compatible string node, and passing those
+devices a regmap. Maybe that would be preferable to having to pick a
+driver subsystem to put the platform driver in. Outside of making a
+general purpose framework, you could put the platform driver in
+drivers/mfd and have that populate the child devices like clk, reset,
+pinctrl, etc.
+
+The overall goal is still the same. Don't make child nodes.
+
+[1] https://lore.kernel.org/linux-clk/20240424-strangle-sharpener-34755c5e6=
+e3e@spud/
