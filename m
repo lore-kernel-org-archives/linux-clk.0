@@ -1,149 +1,177 @@
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCB3215EFDE;
-	Tue,  7 May 2024 15:14:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 049CE1635B4
+	for <linux-clk@vger.kernel.org>; Tue,  7 May 2024 15:34:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715094872; cv=none; b=jei0tJAQv+AKVXcsphCaX7cXRbYLQkbU7e8YUcDZ+KFSI/v3YGlgfFyvmqQQUfFLFAXJQGnZI5HqitBOpmX/THc823iDLOV6VVdLJJy8Uyqzf7kKMFCbVyETRN2Y6WpZeFA9Q59xSrgzPRWePB2G3cJfRSN+Yl8RSK/FRpnNtok=
+	t=1715096070; cv=none; b=mflMagY0I0j4LrgwMmfkQNRwRYUCIwieWn4SuMqI5yyFBg2xsvZUDEXAK/c1atsaeQqvJPBkYBW/MSnwYtO3AshlfheNOT6Uc0OTbxPcWPX8Sk6MGjHlpIb8OJ9wKcvdbdMy/emllnWgiWSuCk0JuDj4bO7xEIhKDMwjcOx92ks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715094872; c=relaxed/simple;
-	bh=nB/cJv7IcDvCVPO18M+qfbJN1yWBxowX9QN+QZhjrR4=;
-	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
-	 References:In-Reply-To; b=H4khYe0h5U/qJ6NHesExnrc4F1L4uHtETnecZXQyP3l8FpBReFUQuvOzXk6g/HzzYJILtwP081Rulj0+v7k1VIXJQvyeu9BdrpodEHdKvfOZEAxygEUb0mry+A2J50huTSNIaCCJzqe8CCq6jxjv8tNfbk4kj61hPrbo42xxT90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ISpe8zWi; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1715096070; c=relaxed/simple;
+	bh=tu+2KsqH6Kw2kSlfjdVYv3BxFYp5x00TFFNEkPzGHcg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ITYvM14l/4ufMUh0L+8FSnXENVvh+b7raXz80ozFMMjQQ625mEfAvcoSof+rCa0eCYeEZc91a6x9z9z/DnT6pG6Kz/S9MprbM7BxUpCAqUG8A0C7W629Bj5zKwd1Lc7SDFljIsS7tRZNV48XSIN2Tad1DmKFtvg4TPCCDPNxgWk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gW00Oyc8; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ISpe8zWi"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E1D86E0005;
-	Tue,  7 May 2024 15:14:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1715094867;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=206gGNUNB5hA5ZcFAZ6jyveJ5RgZY1MARbRfGQUc+HM=;
-	b=ISpe8zWiQep2P8Frm93frtzWECPQK7E31QuFfs4MQwQGxwF1LFceQXULO98URfaceGT6Pa
-	jd4Zwu76vmRl0LoukyAE9I4K5l8c8SUb5DBZzHHcw3hrTHvqkYr2ajIoRqQ5xcZmBMsaoO
-	mNRJInwwjq8LXBtvcpKIP/bFFbFDdLjsLaWqrqqeLU8C4FBgvnvEkmqsG+PNicz8fn1Hon
-	Fndh/FnABacFn11AoTLhgl5WSfUw1ks8SZSeCAQWVu0BWwIpo2bknBUYO/DPHUQqjVScoI
-	ZBu3nmgXHXdEvbSPJoT7Z5PLlX5yPraMtGNFME/46CrnxcK7PhdX0+lnB1KFOg==
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gW00Oyc8"
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-51fb14816f6so4112298e87.0
+        for <linux-clk@vger.kernel.org>; Tue, 07 May 2024 08:34:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715096067; x=1715700867; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=BHoEecY35FMnmlhyVpSrsI+xWHMu8Vy09k8sd+/BChg=;
+        b=gW00Oyc8fLfPJID4YqM9e720ru5kWxlyfA1OnHKru9Y74tCJNW0bi7hzQy0U2ENcbZ
+         u8XaWeOgdfrnO72cKVQxcdPtEyAHNldFYd3Ibb3v73tQhEqqdGx9RuYhzUVLqQdw8SR+
+         aLrDYqrsLx2znhsjK+xdx5ibbH2sKV7FrGXixPd2RX6S3ela5RKS5hinnj16Z5yefmo0
+         LpYKUNhh9F/u8kUhtRbFhQ+6h4h1x8TOHG6Qb4ApUYfmk/LGdA95UcWNoHLdw3yuqMYk
+         Ln9c5fQL08E9tGJmONl076FUUVmfyF2pE9dhrSCIeGEEwKXqhPRCSBW62mD2cgMtcmMi
+         7XZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715096067; x=1715700867;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BHoEecY35FMnmlhyVpSrsI+xWHMu8Vy09k8sd+/BChg=;
+        b=fkvJhBzRTVympN9+o/YO0TDLimvIl69/XGghj5YCdBpI/r3JO6vbfc90Yr1zJg14FW
+         Ga3YKb2TpdlUFmqeUS+E+iSOF4nhTplg5gUA06GLvCUZwO7IdKbOJQCxEYLevPhrCv0S
+         IAhIfn6xpjNqOpuB1f2mpB96EFsWXQdUkFok2yG3VnqDR0E33dUToY930BnfWXvgY3EP
+         t80flyJRjWB6gWsC8fOJ9zF1k2RAouDqmbjOOhjBj7JQ79M7gFjTl5/qQAhmDKqlYvyV
+         1JU3mGYVKMSNQUOA7fzf3JVx0Li/+fpCY3UQas8HmMTd0+Prg8k8UOeHZur9u3ZbB1Wu
+         MzUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU6ZkRRK4QVz3iovucRo/mJ9/fVJsAYSvWakIyhgr/s6DjDBqKp9BqTSkx3O1lPi4EheAovjIbJfZ/k00QdHh1l3W5qlOeXaSWm
+X-Gm-Message-State: AOJu0YxjKwxcrsQeofhVAm6An2IXkd2UI52H7MqSq/3S7zlFvtwlutCu
+	ItLuzjGbpC7Exb7o/Xp9oBxa58/g5LqRXrEDjG+Z0V+Mx1WQIUX9cl2VtgL0emE=
+X-Google-Smtp-Source: AGHT+IEhWswRvXH88vuHJvUkIcH5ToHsgKLLHbQdBcNKmFn28UP+tHurJV3VIwnR15xNbDtbkI+YCg==
+X-Received: by 2002:a19:ac49:0:b0:51d:97e8:b780 with SMTP id r9-20020a19ac49000000b0051d97e8b780mr8499462lfc.44.1715096067213;
+        Tue, 07 May 2024 08:34:27 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.206.169])
+        by smtp.gmail.com with ESMTPSA id n4-20020aa7d044000000b005720e083878sm6440132edo.49.2024.05.07.08.34.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 07 May 2024 08:34:26 -0700 (PDT)
+Message-ID: <fd0228f2-2f41-4194-b804-7a90ea3a6091@linaro.org>
+Date: Tue, 7 May 2024 17:34:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 07 May 2024 17:14:25 +0200
-Message-Id: <D13IE06GUEJ9.UUNOU4QH2QN9@bootlin.com>
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Subject: Re: [PATCH v2 00/11] Add Mobileye EyeQ system controller support
- (clk, reset, pinctrl)
-Cc: <linux-mips@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
- <linux-gpio@vger.kernel.org>, "Vladimir Kondratiev"
- <vladimir.kondratiev@mobileye.com>, "Gregory CLEMENT"
- <gregory.clement@bootlin.com>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
- <tawfik.bayouk@mobileye.com>
-To: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, "Stephen Boyd"
- <sboyd@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, "Krzysztof Kozlowski"
- <krzysztof.kozlowski+dt@linaro.org>, "Lee Jones" <lee@kernel.org>, "Linus
- Walleij" <linus.walleij@linaro.org>, "Michael Turquette"
- <mturquette@baylibre.com>, "Philipp Zabel" <p.zabel@pengutronix.de>,
- "Rafael J. Wysocki" <rafael@kernel.org>, "Rob Herring" <robh@kernel.org>,
- "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>
-X-Mailer: aerc 0.17.0
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 01/11] dt-bindings: clock: mobileye,eyeq5-clk: drop
+ bindings
+To: =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
+ Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Lee Jones <lee@kernel.org>,
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: linux-mips@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-gpio@vger.kernel.org,
+ Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+ Gregory CLEMENT <gregory.clement@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>
 References: <20240503-mbly-olb-v2-0-95ce5a1e18fe@bootlin.com>
- <8dcdb1422cd144128c1dc6fff1c273d3.sboyd@kernel.org>
- <D13HXGJGMS76.XIIIZLZBCZ09@bootlin.com>
-In-Reply-To: <D13HXGJGMS76.XIIIZLZBCZ09@bootlin.com>
-X-GND-Sasl: theo.lebrun@bootlin.com
+ <20240503-mbly-olb-v2-1-95ce5a1e18fe@bootlin.com>
+ <ee278102-f4b8-4ca0-879e-f83cd54efbd0@linaro.org>
+ <13ed1865-d702-47b6-b186-d5f060103280@linaro.org>
+ <D13I8TFIF77X.2EFWZ14LM2H6N@bootlin.com>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <D13I8TFIF77X.2EFWZ14LM2H6N@bootlin.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello,
+On 07/05/2024 17:07, Théo Lebrun wrote:
+> Hello,
+> 
+> On Fri May 3, 2024 at 6:05 PM CEST, Krzysztof Kozlowski wrote:
+>> On 03/05/2024 17:57, Krzysztof Kozlowski wrote:
+>>> On 03/05/2024 16:20, Théo Lebrun wrote:
+>>>> Switch from sub-nodes in system-controller for each functionality to a
+>>>> single node representing the entire OLB instance. dt-bindings is
+>>>> unnecessary and soc/mobileye/mobileye,eyeq5-olb.yaml will inherit all
+>>>> properties.
+>>>
+>>> Why changing this? You just added these bindings not so long time ago...
+>>> This is very confusing to push bindings and then immediately ask to
+>>> remove them.
+> 
+> See this revision as a proposal of something that has been asked
+> multiple times in previous reviews. See message from Stephen Boyd on
 
-On Tue May 7, 2024 at 4:52 PM CEST, Th=C3=A9o Lebrun wrote:
-> On Sat May 4, 2024 at 4:34 AM CEST, Stephen Boyd wrote:
-> > Quoting Th=C3=A9o Lebrun (2024-05-03 07:20:45)
-> > > This builds on previous EyeQ5 system-controller revisions[0], support=
-ing
-> > > EyeQ5, EyeQ6L and EyeQ6H. We expose a few OLB system-controller
-> > > features here:
-> > >  - Clocks: some read-only PLLs derived from main crystal and some
-> > >    divider clocks based on PLLs.
-> > >  - Resets.
-> > >  - Pin controller, only on EyeQ5 (rest will use generic pinctrl-singl=
-e).
-> > >=20
-> > > EyeQ6H is special in that it has seven instances of this
-> > > system-controller. Those are spread around and cannot be seen as a
-> > > single device, hence are exposed as seven DT nodes and seven
-> > > compatibles.
-> > >=20
-> > > This revision differs from previous in that it exposes all devices as=
- a
-> > > single DT node. Driver-wise, a MFD registers multiple cells for each
-> > > device. Each driver is still in isolation from one another, each in
-> > > their respective subsystem.
-> >
-> > Why can't you use auxiliary device and driver APIs?
->
-> Good question. Reasons I see:
->
->  - I didn't know about auxdev beforehand. I discussed the rework with a
->    few colleagues and none mentioned it either.
->
->  - It feels simpler to let each device access iomem resources. From my
->    understanding, an auxdev is supposed to make function calls to its
->    parent without inheriting iomem access. That sounds like it will put
->    the register logic/knowledge inside a single driver, which could or
->    could not be a better option.
->
->    Implementing a function like this feels like cheating:
->       int olb_read(struct device *dev, u32 offset, u32 *val);
->
->    With an MFD, we hand over a part of the iomem resource to each child
->    and they deal with it however they like.
->
->  - Syscon is what I picked to share parts of OLB to other devices that
->    need it. Currently that is only for I2C speed mode but other devices
->    have wrapping-related registers. MFD and syscon are deeply connected
->    so an MFD felt natural.
->
->  - That would require picking one device that is platform driver, the
->    rest being all aux devices. Clock driver appears to be the one, same
->    as two existing mpfs and starfive-jh7110 that use auxdev for clk and
->    reset.
->
-> Main reason I see for picking auxdev is that it forces devices to
-> interact with a defined internal API. That can lead to nicer
-> abstractions rather than inheriting resources as is being done in MFD.
->
-> Are there other reasons?
+That's driver, we talk about bindings.
 
-Self replying myself. I gave myself some time to think about that but I
-still have more thought now that I've written the previous email, and
-re-read almost all old revisions of this series.
+> last revision [0], or discussion with Rob Herring on much earlier
+> revision [1].
+> 
+> Proposal from Stephen Boyd of using auxiliary devices makes sense, that
+> could be the future direction of this series. It won't change the
+> dt-bindings aspect of it, only the driver implementations.
+> 
+> [0]: https://lore.kernel.org/lkml/daa732cb31d947c308513b535930c729.sboyd@kernel.org/
+> [1]: https://lore.kernel.org/lkml/20240124151405.GA930997-robh@kernel.org/
 
-I do like this auxdev proposal. More so than current MFD revision. One
-really nice feature is that it centralises access to iomem. I've
-noticed recently a register that has most its fields for reset but one
-lost bit dealing with a clock mux. Logic to handle that would be in one
-location.
+So after Robs comment above, you still pushed the wrong approach and now
+you revert it?
 
-Also, I just noticed you hinted at auxiliary devices in previous emails,
-which I thought was a generic term. I did not see it as a specific
-kernel infrastructure to be used. Sorry about that.
+Why v7 was sent ignoring Rob's comments:
+https://lore.kernel.org/all/20240221-mbly-clk-v7-3-31d4ce3630c3@bootlin.com/
 
-Regards,
-
---
-Th=C3=A9o Lebrun, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Best regards,
+Krzysztof
 
