@@ -1,258 +1,198 @@
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2124.outbound.protection.partner.outlook.cn [139.219.146.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98AA46FE07;
-	Tue,  7 May 2024 08:04:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715069068; cv=none; b=pqAXwSvmn7WxqwxDnfpDcHdM3ITtSG2K0Csl4tgqfQFxyqaNfcSqrKaWlQZ+Z6Y4Lhlg+2JPc4smvpcKkOX97XekpPueLW+Id9FzP5sNJ3EcjaZxIk0W9jBcjhswZYYFNHGNFIFvYEno9mmXgnjlFJBjc205cbGEjDmAg3nQ7PI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715069068; c=relaxed/simple;
-	bh=9tAmf27Y2lOy6+TvLqyO2ksDnAlUMD7FrLDWgl6p75E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Y5LPaw0mgv/uOerrc8hgVsCkjC5VuYyFAh0fcJJ9OYAWmp46x17TzOM6+t++CyLqPcHDAeJtUy2Ez2F0SsZQG1p0cY3BuIJT7OiVytU+Hv5dBmOwMAyMfxb+CrJ4FbFbloFqwwMnWlIf6BjfQ9W1qOhv1mlTelTAbBjVp+jNUOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ext4PjDM; arc=none smtp.client-ip=209.85.166.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ext4PjDM"
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-36c791e9faaso11901515ab.1;
-        Tue, 07 May 2024 01:04:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715069066; x=1715673866; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=K41OfxbCyNHXXhyq/i9IuSY7OGGztCynWA3y3XEm3w8=;
-        b=Ext4PjDMajQMxMCSJ5ji+UTsoxCd8ykbMmHLPDAga2PSnRyhraL2eesjrwnNWF74RC
-         yx/vjkgSLSjYKxSiKc7CRa3smZwWmKhhCRmAL03mmO4FPcSaTMRvIUSr1hYlMHahCf3C
-         T/eRWqpXbD9whnqEgpO3inAQU9ogz4u9FAa8vWBzAijmtMYajqs2C8+3BXJz69ETljZ3
-         9Amx2o2AA9uh9/kLE1ev8M5BcjbGzYplSFaC8tgvmgygSZ8X3P4/OSkoNJdqMnsQzT7F
-         PeGR8AJvj9emA/Hxf1mZoTeDhiGqQGTqlxqmChTi/JvM2cs+ikYkdAP7uOdWhpFvrYT7
-         5Dow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715069066; x=1715673866;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=K41OfxbCyNHXXhyq/i9IuSY7OGGztCynWA3y3XEm3w8=;
-        b=qmF0bqN2PLGTawEYqvKUbW9uSBKEvfcMMQKvO+9mR0FFKMpTxIJQzgMlDQr7L3Pek/
-         c+zQaOZNj1QEyfQxAZ3oAbPCfkyuMJBIJaBtAdUJ8J9JLFWbKVkVJR7t+8hIuGPAREgp
-         RMDFKzhoij/zOJI3DpZ88xeibintWLyEqhBZIt30zae4sUImlOuAvjh7yZOqGY0NiT+f
-         s+SFCV4qBDp9n10pyrOc8eNFGUw+sMHSwp+XL8GeLGIF89D3/CZGXcbU72k+3F9oO4iP
-         vyrpkC1009rqFTobxTzTbulaj0DJUqc5m1RdMjZ26SVoTYl8GTgre9AjVBGXkzF3yL+t
-         Vs/w==
-X-Forwarded-Encrypted: i=1; AJvYcCWsW2u4B5n4qyzbdAhuJKNe2LIVgASH95tCVZVfgGrXcsP/SzEJj0XcnfDaOGlMOmw6wprx6y0t35KtwRgaNt5IKimRTjC7tH/aJqB7V/9WcmAaLbfQSMWyj39y+LcwRe9eTvCBBXFg
-X-Gm-Message-State: AOJu0YwnaHH7xKlGwdgMQ29nmQ2ir5EtmnazLDoR+hD1AaRYZ+9Fpd65
-	m5BTSVQMz4ZdDouLW1YFXqgOJzxrxhxnie1P2xSLXEQSDS5DTFPeudrDKztAWr2QpaCT+XmqkG3
-	V8X4rJecEvYOr29RpY/Hcc13hUCA=
-X-Google-Smtp-Source: AGHT+IHFTx36BmRSF+nMKKAziYlY+T/lnDKbeG921LVPeSXj3ZND1Th4a2f6WV0n0aVPW9JCSxhnvlOS/M9HwAUWBqE=
-X-Received: by 2002:a05:6e02:12ed:b0:36c:5154:8ce4 with SMTP id
- l13-20020a056e0212ed00b0036c51548ce4mr14448865iln.30.1715069065745; Tue, 07
- May 2024 01:04:25 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB69113C831;
+	Tue,  7 May 2024 08:25:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.124
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715070363; cv=fail; b=EXHTuzVLknGVK3ytIP8qxnyj2ZHxOgC7mXCXaVCqDeDy5OBMeK4JJLVxzo0JVcvB9WnGruQatW0kKyDKJfol2hsemaLLwiDnJeFeVeOTndeC1xbGZ0uM8v/Fx4a2TvQ8iUdIsndK0I//v5x8vMWVmPN8x5nc9q8WA7D3Owdez/E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715070363; c=relaxed/simple;
+	bh=+d1k85xv5nynBkPyXacwxSPEm1TgMXq7YLDTzM9QmM0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=eoRGd5BQ7+jo2VaUU6UcrShXRIgpJ8jbk/sWY/8wGWxaFhXqI6foTxLHM3hGH7DPQ8n2nSsRP6jGWI2dIsjaP3eSHZZQsK/992h3MWxOwtSauRH2RzUopR3UNmX6GBlw2dwAgJLmfp38mAAmP7kngBEsvp10c4SocWSJTvaNkuE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=LRIhjox5LY2IEuMSvjCeZWfEHC8bQMFUc/yBDfTXs0TVd5k2wEGQqX9nyJa7lp156InFEnLs4IuIN0bCh4LSGcKNTFSICmzDZO7HUn5aFR7kMs3Wy4QwzRzCPl6R5ygno3Y4NFiyGvxkvHo50NODCqoeAoyYXiCV/bu2K28Yk6y77/R2ZEZ52KdbTZjLPOExlN6HxgQL0mChDh76rZrmnqRsmjqdRo8EqY5XFPjltfjVd+EBkgysa93YD9bmQy5jsPIe3sh0jm+lqKdN0+Iby2E7UNGgOwhnGCdMDXUCOPdQFtF+GPpwP9egbLZAoTlAG3ALFuM92/9KKmnDR0GGMw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HsKXRjNxpLy5oL+nixW6k3X0zh3KH6nERM5pf9BfTh8=;
+ b=BPnvGKBRFwxNxJlIk06uU13caWlTc7RMEfaqaBWutSS7CaFS4MePKXWylGCq8ZNW21rv0m1xhoJ1Fh50qrhDMIyw7+1703jFRY81SGEr6aY+En4PonZ5DrYMOzEAAtasuiow7PhN0b/Mmvu7/xNZs0iHtxSrU7CcNTcuR6Fa5W7twQG1/RSgfEPyOraWLkanU8TXxSZM/NHrt07d0OLV02/hB8RzDBvKWeU9AXBYy2e9f32fI32m1/5ecHelYxqExQsVTIDv4VfjDucEerehD119Qt37gIQjoiu/pWLbvBSmYtt97kO4hj+/CeqoYV1EPog8ivkOurm6wtbgTvPagQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=starfivetech.com; dmarc=pass action=none
+ header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=starfivetech.com;
+Received: from NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c510:8::10) by NTZPR01MB1100.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c510:8::9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7472.44; Tue, 7 May
+ 2024 06:53:27 +0000
+Received: from NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn
+ ([fe80::e903:99a6:10b7:304d]) by
+ NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn ([fe80::e903:99a6:10b7:304d%6])
+ with mapi id 15.20.7472.044; Tue, 7 May 2024 06:53:27 +0000
+From: Xingyu Wu <xingyu.wu@starfivetech.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Conor Dooley <conor@kernel.org>,
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Hal Feng <hal.feng@starfivetech.com>,
+	Xingyu Wu <xingyu.wu@starfivetech.com>,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v5 1/2] clk: starfive: jh7110-sys: Add notifier for PLL0 clock
+Date: Tue,  7 May 2024 14:53:18 +0800
+Message-Id: <20240507065319.274976-2-xingyu.wu@starfivetech.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240507065319.274976-1-xingyu.wu@starfivetech.com>
+References: <20240507065319.274976-1-xingyu.wu@starfivetech.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SH0PR01CA0020.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c311:5::32) To NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c510:8::10)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1714966502-27784-1-git-send-email-shengjiu.wang@nxp.com>
- <Zjkftwr4/6KV39sD@lizhi-Precision-Tower-5810> <CAA+D8AN9kFdgojkrR0ORUyrtOW=JOn0AfbXFTJ70RE7JxgA2pA@mail.gmail.com>
- <Zjmi4Qc3C3OYJU5n@lizhi-Precision-Tower-5810> <CAA+D8AMC41oUEWLuHb-f=U9pEzqWYon22McvT4MucYK=ajNuFQ@mail.gmail.com>
- <Zjmn1jRW2E2kpSlI@lizhi-Precision-Tower-5810>
-In-Reply-To: <Zjmn1jRW2E2kpSlI@lizhi-Precision-Tower-5810>
-From: Shengjiu Wang <shengjiu.wang@gmail.com>
-Date: Tue, 7 May 2024 16:04:14 +0800
-Message-ID: <CAA+D8ANuNtaC90fHtGoYiofPTLQHcyCm0p_dcsYTVgT7gsKtMg@mail.gmail.com>
-Subject: Re: [PATCH v2] clk: imx: imx8mp: Add delay after power up
-To: Frank Li <Frank.li@nxp.com>
-Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org, peng.fan@nxp.com, 
-	mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org, 
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
-	imx@lists.linux.dev, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: NTZPR01MB0956:EE_|NTZPR01MB1100:EE_
+X-MS-Office365-Filtering-Correlation-Id: 97fd2099-bc7f-4544-9e83-08dc6e62658c
+X-MS-Exchange-SenderADCheck: 1
+X-Microsoft-Antispam: BCL:0;
+X-Microsoft-Antispam-Message-Info:
+	IQVtz3/8V3KM23kuRdpvR2kX5hbWve944w3IcDZGCt7lohn/JmBQHwMt2F5KVdJXu2a3hOLOoQmiq3uV37daexW5f0TLhH69aOblqlP/dPjq1R8Xq2QJH2laQzQZh50Z4T03kjdGbZ8n4pEcbreUQzKpT/05ZQ+OR1blxSVNDarUG7IOGDFTW9rCQWVldemqDLJ1RDpCq5Hjvb2dZQ9obWHCvYKC6xxkYw23+JDjAMH3ojBzsPth2v9ap5ozMqSQCHnKc4TiNy1jViypZG8uPpuUiClyZYdI6BVFwItT00SAhQiayPTowC2vFyM0cTY6RbUyjARxanXttCEtgWZDjaWFHx4MCgGI0K5kX05MRo4Rvb/SzCepP43TSUKZCZjtnD80LHUE6TRJQVorUhb1RAtL5Q+jDF8xn6pf4TPZtHnp+tKiZQwfSLriDKDnNzfKuvlPzo7DqhOBRQXeKWlGrYIBgcD9WwlWXBtkMEICB+Hmsb0kUJnWlnk32ks7aoW3fQ5BgvEv2tMD7GThp+kg4ZJKPqHuLwu9KityvO6wYegJAotmqawJwBeLKbcWSS13osEuuTprdXpA7y4KkwT/rIBYhfbWnsh5oYBn77kkWqB9jHsDgnn5QPcoA2600UdK
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(366007)(41320700004)(52116005)(7416005)(38350700005);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?+ATo7AylaMm9ZQu1vkp9C6qgbHozrZ7rN5pHYPD/0r84DoEJTE4vve0u1lCw?=
+ =?us-ascii?Q?zfcnh0nexpDsRSnjfGjUc2c/hpdQ6JMBiepqA+ChFZ2Jz5+RQE5/8/pg9Rp8?=
+ =?us-ascii?Q?dA5x3oQ80GjxohQuT6WnQL++zZjLsjVmkC28DsB8zEN4PbcjShHnWzF4zB5H?=
+ =?us-ascii?Q?hPv+Rsmf5bAR9UI5n9DbMdRvGVeAnK4rMQmERgoPkmVY8V8kTVrh/hK9kFTb?=
+ =?us-ascii?Q?Se8xPHz9L2sjm6CGGNNkJNo06I0AS/XkZScH3hpT7nIV77SYwrI2iJF1Fb+p?=
+ =?us-ascii?Q?BcPh+xkHV9OKQM0Bb0OXx2Ub5NUBcG49LQi+F9WVJqONuNP+K87R9cGESFsR?=
+ =?us-ascii?Q?NzjKKmEIJbo4OEaVB1efCMiFzVdku0aCvmASHNL10q8uN1Mri8ZZJtbBHwfT?=
+ =?us-ascii?Q?j1KulYb92Lw8/fiFsEINZ7oDWWWnpUdWLwQXf5hapLnPVQVicUJstXXf5KBv?=
+ =?us-ascii?Q?t/QU6x+i0L/agnaKDoVT93NC2cQ3womO1HFnQMgQI9ADXu25HJ+il8Q/UYy1?=
+ =?us-ascii?Q?8PanKPRAqguQfKyB0XCEPgtev3Arvdc/kuL2q22HyxNj6HPCZfM6lnZBKVY6?=
+ =?us-ascii?Q?mXP5CFsPuKbmfr9G8SVf6LVFQ047SzDwbcgr7AcieyGs7E0Wm9lJtVTFNY5B?=
+ =?us-ascii?Q?tFfmIyCnoWS1j9EhimACmI1+cRZHrbmwE7bKhQmVBJPOS+7TlEIbxs6sibB4?=
+ =?us-ascii?Q?ogLMC99mviIakBB31DEiphROmZUg3AkEsSGNOQAldFRcqZzo/80SjPVM39pE?=
+ =?us-ascii?Q?SQIoQFPD/Y4p3r4ks1EMIa8p5MR3gS4VPd0/mO0vELfgBBJsO/lx0LNS+cpw?=
+ =?us-ascii?Q?QvuJ8w1j+99xsUWxTsdPbVU0Yu9vsQncOPMF/MMlm8nckGj9AMp3vBUuclbK?=
+ =?us-ascii?Q?PHrupZK3h0vmgNTY7wyVJixXHsXj5OT+0rHZ2b6ScWnoTRL8a06+r0Nys+a/?=
+ =?us-ascii?Q?YdLgJzetlx4Yfv1faoBZaCLUeGC6UKxX8/BWpuQ6QYZL+FeiOTIfJuLCWSA2?=
+ =?us-ascii?Q?Q7uEwAWKaO/l0UFpGPOUfHZbTgpvueq3todx/FweHPsNSWiaHJXEMaq+XYlM?=
+ =?us-ascii?Q?7AgJJye1WuEyz2PnyXsdguMk86WUHSnems1TilWAQVNYn44eIXjZlsm63AE6?=
+ =?us-ascii?Q?s3dLcin9vN70fS5v5gaMzcHo6/v3Fu5PbQnyjDbpOJ87t/dFW1XoMPEuC5SA?=
+ =?us-ascii?Q?E5h6fmkOHLxpcK5HmR/O+8yLiWWnwzrkQW82vnkeYD2LWrI+KXGPb+Kj17w/?=
+ =?us-ascii?Q?A9kAEbQp1Fc68q6xwMUS+D4godei20whPY6sULNgCt73iTVGsoJX3X+gLug9?=
+ =?us-ascii?Q?Xnoeh92fqI432x81VSFs/Tc7W1bcT3jo4FXKZWJotHdouIRXnQ7ulBuHJoQM?=
+ =?us-ascii?Q?WdyEeBiozCxb65Zf02uJlnbJz3cSSHPO4OzXZM2wVDE7zqRckkSrWz5WOWXV?=
+ =?us-ascii?Q?79We9XmK69LyhpkybCSPRj9OTSGTzNextQNiCTNV83SLgDH2sask1EXK0WAL?=
+ =?us-ascii?Q?XWs/gJPL+hvDlXaYQj83OMxQ4P5EAVdjGU4Zws7dFZtblpHXfKZM4PxtHGBo?=
+ =?us-ascii?Q?A7wI6eyoZ8iDknkJy6EMql/fW2pA7gEsZWnH37KVJljUxTIuN0Y0xG1VymzC?=
+ =?us-ascii?Q?Ig=3D=3D?=
+X-OriginatorOrg: starfivetech.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 97fd2099-bc7f-4544-9e83-08dc6e62658c
+X-MS-Exchange-CrossTenant-AuthSource: NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 07 May 2024 06:53:27.0655
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 2b/6dNvnwep52ugACydxk34v0QdM1sIQRAKoXSuRZZji8BSl2wn6Lu9sOdnswx8WKJbj121J4ryl6pW2eSjcyIdJg28FhCktOjDzCOpyHPA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: NTZPR01MB1100
 
-On Tue, May 7, 2024 at 12:02=E2=80=AFPM Frank Li <Frank.li@nxp.com> wrote:
->
-> On Tue, May 07, 2024 at 11:44:32AM +0800, Shengjiu Wang wrote:
-> > On Tue, May 7, 2024 at 11:41=E2=80=AFAM Frank Li <Frank.li@nxp.com> wro=
-te:
-> > >
-> > > On Tue, May 07, 2024 at 09:44:19AM +0800, Shengjiu Wang wrote:
-> > > > On Tue, May 7, 2024 at 2:22=E2=80=AFAM Frank Li <Frank.li@nxp.com> =
-wrote:
-> > > > >
-> > > > > On Mon, May 06, 2024 at 11:35:02AM +0800, Shengjiu Wang wrote:
-> > > > > > According to comments in drivers/pmdomain/imx/gpcv2.c:
-> > > > > >
-> > > > > >       /* request the ADB400 to power up */
-> > > > > >       if (domain->bits.hskreq) {
-> > > > > >               regmap_update_bits(domain->regmap, domain->regs->=
-hsk,
-> > > > > >                                  domain->bits.hskreq, domain->b=
-its.hskreq);
-> > > > > >
-> > > > > >               /*
-> > > > > >                * ret =3D regmap_read_poll_timeout(domain->regma=
-p, domain->regs->hsk, reg_val,
-> > > > > >                *                                (reg_val & doma=
-in->bits.hskack), 0,
-> > > > > >                *                                USEC_PER_MSEC);
-> > > > > >                * Technically we need the commented code to wait=
- handshake. But that needs
-> > > > > >                * the BLK-CTL module BUS clk-en bit being set.
-> > > > > >                *
-> > > > > >                * There is a separate BLK-CTL module and we will=
- have such a driver for it,
-> > > > > >                * that driver will set the BUS clk-en bit and ha=
-ndshake will be triggered
-> > > > > >                * automatically there. Just add a delay and supp=
-ose the handshake finish
-> > > > > >                * after that.
-> > > > > >                */
-> > > > > >       }
-> > > > > >
-> > > > > > The BLK-CTL module needs to add delay to wait for a handshake r=
-equest finished
-> > > > > > before accessing registers, which is just after the enabling of=
- the power domain.
-> > > > > >
-> > > > > > Otherwise there is error:
-> > > > > >
-> > > > > > [    2.181035] Kernel panic - not syncing: Asynchronous SError =
-Interrupt
-> > > > > > [    2.181038] CPU: 1 PID: 48 Comm: kworker/u16:2 Not tainted 6=
-.9.0-rc5-next-20240424-00003-g21cec88845c6 #171
-> > > > > > [    2.181047] Hardware name: NXP i.MX8MPlus EVK board (DT)
-> > > > > > [    2.181050] Workqueue: events_unbound deferred_probe_work_fu=
-nc
-> > > > > > [    2.181064] Call trace:
-> > > > > > [...]
-> > > > > > [    2.181142]  arm64_serror_panic+0x6c/0x78
-> > > > > > [    2.181149]  do_serror+0x3c/0x70
-> > > > > > [    2.181157]  el1h_64_error_handler+0x30/0x48
-> > > > > > [    2.181164]  el1h_64_error+0x64/0x68
-> > > > > > [    2.181171]  clk_imx8mp_audiomix_runtime_resume+0x34/0x44
-> > > > > > [    2.181183]  __genpd_runtime_resume+0x30/0x80
-> > > > > > [    2.181195]  genpd_runtime_resume+0x110/0x244
-> > > > > > [    2.181205]  __rpm_callback+0x48/0x1d8
-> > > > > > [    2.181213]  rpm_callback+0x68/0x74
-> > > > > > [    2.181224]  rpm_resume+0x468/0x6c0
-> > > > > > [    2.181234]  __pm_runtime_resume+0x50/0x94
-> > > > > > [    2.181243]  pm_runtime_get_suppliers+0x60/0x8c
-> > > > > > [    2.181258]  __driver_probe_device+0x48/0x12c
-> > > > > > [    2.181268]  driver_probe_device+0xd8/0x15c
-> > > > > > [    2.181278]  __device_attach_driver+0xb8/0x134
-> > > > > > [    2.181290]  bus_for_each_drv+0x84/0xe0
-> > > > > > [    2.181302]  __device_attach+0x9c/0x188
-> > > > > > [    2.181312]  device_initial_probe+0x14/0x20
-> > > > > > [    2.181323]  bus_probe_device+0xac/0xb0
-> > > > > > [    2.181334]  deferred_probe_work_func+0x88/0xc0
-> > > > > > [    2.181344]  process_one_work+0x150/0x290
-> > > > > > [    2.181357]  worker_thread+0x2f8/0x408
-> > > > > > [    2.181370]  kthread+0x110/0x114
-> > > > > > [    2.181381]  ret_from_fork+0x10/0x20
-> > > > > > [    2.181391] SMP: stopping secondary CPUs
-> > > > > >
-> > > > > > Fixes: 1496dd413b2e ("clk: imx: imx8mp: Add pm_runtime support =
-for power saving")
-> > > > > > Reported-by: Francesco Dolcini <francesco@dolcini.it>
-> > > > > > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> > > > > > Revewied-by: Peng Fan <peng.fan@nxp.com>
-> > > > > > ---
-> > > > > > changes in v2:
-> > > > > > - reduce size of panic log in commit message
-> > > > > >
-> > > > > >  drivers/clk/imx/clk-imx8mp-audiomix.c | 7 +++++++
-> > > > > >  1 file changed, 7 insertions(+)
-> > > > > >
-> > > > > > diff --git a/drivers/clk/imx/clk-imx8mp-audiomix.c b/drivers/cl=
-k/imx/clk-imx8mp-audiomix.c
-> > > > > > index b381d6f784c8..ae2c0f254225 100644
-> > > > > > --- a/drivers/clk/imx/clk-imx8mp-audiomix.c
-> > > > > > +++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
-> > > > > > @@ -6,6 +6,7 @@
-> > > > > >   */
-> > > > > >
-> > > > > >  #include <linux/clk-provider.h>
-> > > > > > +#include <linux/delay.h>
-> > > > > >  #include <linux/device.h>
-> > > > > >  #include <linux/io.h>
-> > > > > >  #include <linux/mod_devicetable.h>
-> > > > > > @@ -360,6 +361,12 @@ static int clk_imx8mp_audiomix_runtime_sus=
-pend(struct device *dev)
-> > > > > >
-> > > > > >  static int clk_imx8mp_audiomix_runtime_resume(struct device *d=
-ev)
-> > > > > >  {
-> > > > > > +     /*
-> > > > > > +      * According to the drivers/pmdomain/imx/gpcv2.c
-> > > > > > +      * need to wait for handshake request to propagate
-> > > > > > +      */
-> > > > > > +     udelay(5);
-> > > > > > +
-> > > > >
-> > > > > Did you address the issue I comments at v1?
-> > > > > It should not fix at here, I think it should be gpcv2.c to delay =
-5us.
-> > > >
-> > > > Other BLK CTRL drivers already delay 5us in its own drivers, if
-> > > > add delay in gpcv2.c, for these drivers, it will delay 10us totally=
-.
-> > >
-> > > We should go forward as correct direction. If udelay should be gpcv2.=
-c,
-> > > it should be there and remove other udelay in BLK CTRL drivers gradua=
-lly.
-> > >
-> > With Peng's reply:
-> >
-> > "No. Because BLK CTRL enable BUS_EN, before enable BUS_EN, udelay does
-> > not help. For the audiomix, move to gpcv2 would work, but gpcv2 is
-> > not only for i.MX8MP audiomix. For mixes, default not enable BUS_EN
-> > after power on, the udelay must be in blk ctrl driver."
-> >
-> > So gpcv2.c is not correct place for all BLK CTRL drivers.
->
-> where BLK-CTRL driver source code?
+Add notifier function for PLL0 clock. In the function, the cpu_root clock
+should be operated by saving its current parent and setting a new safe
+parent (osc clock) before setting the PLL0 clock rate. After setting PLL0
+rate, it should be switched back to the original parent clock.
 
-drivers/pmdomain/imx/imx8m-blk-ctrl.c
-drivers/pmdomain/imx/imx8mp-blk-ctrl.c
-drivers/pmdomain/imx/imx93-blk-ctrl.c
+Fixes: e2c510d6d630 ("riscv: dts: starfive: Add cpu scaling for JH7110 SoC")
+Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
+---
+ .../clk/starfive/clk-starfive-jh7110-sys.c    | 31 ++++++++++++++++++-
+ drivers/clk/starfive/clk-starfive-jh71x0.h    |  2 ++
+ 2 files changed, 32 insertions(+), 1 deletion(-)
 
-Best regards
-Shengjiu Wang
->
-> even if put clk_imx8mp_audiomix_runtime_resume(), it need read any
-> register before udelay. all regiser read and write is strong ordered.
-> when get value from a register, all previous write must be done.
->
-> all udelay (5) in gpcv2 may not delay 5us at all.
->
-> Frank
-> >
-> > Best regards
-> > Shengjiu Wang
-> >
-> > > If sometime found 5us is not enough, need change to 6us, we just need
-> > > change at one place.
-> > >
-> > > Frank
-> > >
-> > > >
-> > > > Best regards
-> > > > Shengjiu Wang
-> > > >
-> > > >
-> > > >
-> > > > >
-> > > > > Frank
-> > > > >
-> > > > > >       clk_imx8mp_audiomix_save_restore(dev, false);
-> > > > > >
-> > > > > >       return 0;
-> > > > > > --
-> > > > > > 2.34.1
-> > > > > >
+diff --git a/drivers/clk/starfive/clk-starfive-jh7110-sys.c b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
+index 8f5e5abfa178..dafa3ae71751 100644
+--- a/drivers/clk/starfive/clk-starfive-jh7110-sys.c
++++ b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
+@@ -385,6 +385,32 @@ int jh7110_reset_controller_register(struct jh71x0_clk_priv *priv,
+ }
+ EXPORT_SYMBOL_GPL(jh7110_reset_controller_register);
+ 
++/*
++ * This clock notifier is called when the rate of PLL0 clock is to be changed.
++ * The cpu_root clock should save the curent parent clock and swicth its parent
++ * clock to osc before PLL0 rate will be changed. Then swicth its parent clock
++ * back after the PLL0 rate is completed.
++ */
++static int jh7110_pll0_clk_notifier_cb(struct notifier_block *nb,
++				       unsigned long action, void *data)
++{
++	struct jh71x0_clk_priv *priv = container_of(nb, struct jh71x0_clk_priv, pll_clk_nb);
++	struct clk *cpu_root = priv->reg[JH7110_SYSCLK_CPU_ROOT].hw.clk;
++	int ret = 0;
++
++	if (action == PRE_RATE_CHANGE) {
++		struct clk *osc = clk_get(priv->dev, "osc");
++
++		priv->original_clk = clk_get_parent(cpu_root);
++		ret = clk_set_parent(cpu_root, osc);
++		clk_put(osc);
++	} else if (action == POST_RATE_CHANGE) {
++		ret = clk_set_parent(cpu_root, priv->original_clk);
++	}
++
++	return notifier_from_errno(ret);
++}
++
+ static int __init jh7110_syscrg_probe(struct platform_device *pdev)
+ {
+ 	struct jh71x0_clk_priv *priv;
+@@ -413,7 +439,10 @@ static int __init jh7110_syscrg_probe(struct platform_device *pdev)
+ 		if (IS_ERR(priv->pll[0]))
+ 			return PTR_ERR(priv->pll[0]);
+ 	} else {
+-		clk_put(pllclk);
++		priv->pll_clk_nb.notifier_call = jh7110_pll0_clk_notifier_cb;
++		ret = clk_notifier_register(pllclk, &priv->pll_clk_nb);
++		if (ret)
++			return ret;
+ 		priv->pll[0] = NULL;
+ 	}
+ 
+diff --git a/drivers/clk/starfive/clk-starfive-jh71x0.h b/drivers/clk/starfive/clk-starfive-jh71x0.h
+index 23e052fc1549..e3f441393e48 100644
+--- a/drivers/clk/starfive/clk-starfive-jh71x0.h
++++ b/drivers/clk/starfive/clk-starfive-jh71x0.h
+@@ -114,6 +114,8 @@ struct jh71x0_clk_priv {
+ 	spinlock_t rmw_lock;
+ 	struct device *dev;
+ 	void __iomem *base;
++	struct clk *original_clk;
++	struct notifier_block pll_clk_nb;
+ 	struct clk_hw *pll[3];
+ 	struct jh71x0_clk reg[];
+ };
+-- 
+2.25.1
+
