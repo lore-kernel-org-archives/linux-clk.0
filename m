@@ -1,194 +1,186 @@
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F916EB49
-	for <linux-clk@vger.kernel.org>; Tue,  7 May 2024 06:10:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E569D78C74
+	for <linux-clk@vger.kernel.org>; Tue,  7 May 2024 06:44:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715062228; cv=none; b=FuU6dbfA16+h4jiLf7xFSccuD5NfdpJK7KmfiIJaisrVdLPyG9HGjGx40KS63LOXhgHAA66Oa6rszRHdBhQb/SHCwd6SzOSLHDXp5wMFPX2LxG9aoDdKOdHplFqpCMRJagxgesfp4lRoEYY4rdptVUwXDoayUydXrbehAr/LMcU=
+	t=1715064296; cv=none; b=df6dsHnJQzzA8eY7bjEhJGToQuZrzCLCDLDCOF4CnhvN/IxR2AcVVj0g/4Eb3Tt2ovovwGB2IgEYPZBjwB9KFnyoE5DpQ6aRg63pU4t5+2KigVuXx0JSLLS6Ns4+FC8CU4C5fiAaXc1DeKsT/48NXJ0ASGjEOON5i+4Ah1lyO5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715062228; c=relaxed/simple;
-	bh=NN37t59EsYaWpOfY6mIxVvawgYy1WxwgD7Dv5L4ULOg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oRnmWqa8w712XrxPMAwr60P4pIlHL6KbkJaUNPvHlvKyyHT1+2XypTtGBqmxEyHt7QsA9nJzlKPFO7KxM7hNXgYOW91mPOSlucOiAbwPd+/+siuifn92beHrf5DJ5+G5Oe2/E0O3tH3x+dDnPYlFK1E9alxQpUn8kHyhcZL8Gf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=I6Sgo6Oi; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1715064296; c=relaxed/simple;
+	bh=bIr96LxzE/mBBQAf30AeCPbs77++Uq1+5Mkr6CTLumk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
+	 References; b=bcno3dR5+5LCfVl1T21rjJIKb4gZ3lA9EpJ79uT0m3ojwq3Y7hhMsxLsJti+KB958WjU6eFO4Ovw4A+Wn1n3TRdULr/QHAQGBV53kp9nWxo5os6RiNU5j3w3NljOsinfYrzde8ZgZkSj61n5Ma9y2SevIOIOLV7AeGqm2Gy8fYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Q/TNNkzH; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I6Sgo6Oi"
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a59a934ad50so592833366b.1
-        for <linux-clk@vger.kernel.org>; Mon, 06 May 2024 23:10:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715062225; x=1715667025; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=MXjJi9Id2sTcJOhILmN1ky4B/45ar4n3Y4h1sMFH2gA=;
-        b=I6Sgo6Oi0tI1e1OvwJe607Twd2qVWLBld45zSG6wvw6c8Ro0TNuC4Uem7+WlXULGo6
-         Wln68zxocPZ/PguVTjDF/SiFOMWvj2CRjNeBnDEOb0p945mIQEb96plHqtOFEW9ao6dV
-         Izp9Q6pZzlN7ON8AxXFIIBoxRJYkXYNHw7BXkk3B3dyiOg7Hx5aqNErff0JZGc1uQkEL
-         L22Q/7YLEQeT07q7yO3jv8kb9/dcGoU3+zoJOKlX9tfMY7t+DqU490UNSpPBJU/fcqnD
-         xks3V/30ZVtnHYOzKvJcvCzzy9D9B8zgt7EY8Ki2pe0TUmcuj1NU3ZDDwOPdx9qzG5re
-         zfiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715062225; x=1715667025;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MXjJi9Id2sTcJOhILmN1ky4B/45ar4n3Y4h1sMFH2gA=;
-        b=iW+IBrts+MagaVggsdi7yObBgqT71LzG1vOOIewkBBxiFytKoOm6F6cSb+as81nHx3
-         VImxsnX/sI8Obj7FZ6Q6VanpvjSJQDQceBWFEoq0VswPvZFji2ecPFX3s8H5Zey3/kTZ
-         ZLcq+f0SB2surWUY7Gi/vjGU/CEKI/HM0+8hdf75Jce+jls8uDV1+4a14itFpMno24d/
-         obF1PJVoVOYkAac103Z9snibUJz1KrII4bZIHpeN3nXKhq5ky/2MNY1pjfL8BDaKqQ/W
-         5WjZHx+IZZT6S/tiuuyaHDtcnUxM0YVJ4CZUxCn0d9IAdU9+M1LB71LCIH5z5O7djKIX
-         YNgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXRrLvwk5CbEpJcNfRt4tnYw3jTVMN4e7jlAz1QjDBcKbIh9PzjMDn9bXMlCQPSluCT5TmkY/do+fJPAP6NVpsh85edppodEdU2
-X-Gm-Message-State: AOJu0YwzsImJ8DtUkvtT2cXWa4NFP75OYTXHDLrwlTrPLK0tL62fix+v
-	KbwtW+pqu7NhjSKb+n32X5Ma83uNrSEKX1n/HB+uYGrFDCkJxcE0p6CXCb68YnM=
-X-Google-Smtp-Source: AGHT+IFu8eR50FD/Gd28rJu3Vx/lNXa5WeyJ9YlaXosgaZ3mAvfhxHhCWRy7RjhvEshV0yDHDcXhhw==
-X-Received: by 2002:a50:bb0b:0:b0:56e:63d3:cb3e with SMTP id y11-20020a50bb0b000000b0056e63d3cb3emr7637147ede.41.1715062225320;
-        Mon, 06 May 2024 23:10:25 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.206.169])
-        by smtp.gmail.com with ESMTPSA id q11-20020a056402248b00b005726b83071esm6060147eda.4.2024.05.06.23.10.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 06 May 2024 23:10:24 -0700 (PDT)
-Message-ID: <d88e6d38-e7fd-4d06-8c54-e89948d568fd@linaro.org>
-Date: Tue, 7 May 2024 08:10:22 +0200
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Q/TNNkzH"
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240507064446euoutp02b32f06d2513e51e8810f4107adbdb920~NIeG0qnsI2615226152euoutp02N
+	for <linux-clk@vger.kernel.org>; Tue,  7 May 2024 06:44:46 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240507064446euoutp02b32f06d2513e51e8810f4107adbdb920~NIeG0qnsI2615226152euoutp02N
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1715064286;
+	bh=ihBifNfNyNRL0omOGoA7M6GHq/5MHdBh1bGVpG9xKZ4=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=Q/TNNkzHFq2zSySNEApGAX/2lUW10ua+mACP4COx20+7WTA4wBY/SsGOt0t59NFxQ
+	 gIqH5YLH21qYd8TYQhatRhrNNvIe1PG8Bo3bhMVMttiIb/Zz0bjCWDvwW8Au+AKocO
+	 VfuOBoF0k89pTTkY0NuFZKrD3FZVdZgIc01PwfEk=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20240507064445eucas1p2d506f698369c8b112c4e2bec500e492f~NIeGbY_n90938309383eucas1p2U;
+	Tue,  7 May 2024 06:44:45 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id EC.9D.09624.DDDC9366; Tue,  7
+	May 2024 07:44:45 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240507064445eucas1p1bfc17da4f824ef46567774634482f12f~NIeGL8hiY3062730627eucas1p1Q;
+	Tue,  7 May 2024 06:44:45 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240507064445eusmtrp28ab9f5c768f66e26c2a4b57a7f10f720~NIeGLS-sI2837728377eusmtrp2b;
+	Tue,  7 May 2024 06:44:45 +0000 (GMT)
+X-AuditID: cbfec7f2-c11ff70000002598-90-6639cddd8258
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms2.samsung.com (EUCPMTA) with SMTP id 78.33.09010.DDDC9366; Tue,  7
+	May 2024 07:44:45 +0100 (BST)
+Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240507064445eusmtip1792a0627ab86b07a87c5651e264d07d0~NIeFxK4Fq0479904799eusmtip1n;
+	Tue,  7 May 2024 06:44:45 +0000 (GMT)
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+To: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Russell King
+	<linux@armlinux.org.uk>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Subject: [PATCH] clkdev: fix potential NULL pointer dereference
+Date: Tue,  7 May 2024 08:44:34 +0200
+Message-Id: <20240507064434.3213933-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Aw: Re: [RFC v1 1/5] dt-bindings: leds: add led trigger netdev
-To: Frank Wunderlich <frank-w@public-files.de>
-Cc: Frank Wunderlich <linux@fw-web.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Eric Woudstra <ericwouds@gmail.com>, Tianling Shen <cnsztl@immortalwrt.org>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-leds@vger.kernel.org,
- netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-References: <20240505164549.65644-1-linux@fw-web.de>
- <20240505164549.65644-2-linux@fw-web.de>
- <8e9fd4c9-f537-4413-b8c8-988b001b64c0@linaro.org>
- <trinity-c7cd6e30-cb34-4405-9527-6e183179c302-1715015402906@3c-app-gmx-bap23>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+FiEE
- m9B+DgxR+NWWd7dUG5NDfTtBYpsFAmI+BxMCGwMFCRRfreEFCwkIBwIGFQoJCAsCBBYCAwEC
- HgECF4AACgkQG5NDfTtBYptgbhAAjAGunRoOTduBeC7V6GGOQMYIT5n3OuDSzG1oZyM4kyvO
- XeodvvYv49/ng473E8ZFhXfrre+c1olbr1A8pnz9vKVQs9JGVa6wwr/6ddH7/yvcaCQnHRPK
- mnXyP2BViBlyDWQ71UC3N12YCoHE2cVmfrn4JeyK/gHCvcW3hUW4i5rMd5M5WZAeiJj3rvYh
- v8WMKDJOtZFXxwaYGbvFJNDdvdTHc2x2fGaWwmXMJn2xs1ZyFAeHQvrp49mS6PBQZzcx0XL5
- cU9ZjhzOZDn6Apv45/C/lUJvPc3lo/pr5cmlOvPq1AsP6/xRXsEFX/SdvdxJ8w9KtGaxdJuf
- rpzLQ8Ht+H0lY2On1duYhmro8WglOypHy+TusYrDEry2qDNlc/bApQKtd9uqyDZ+rx8bGxyY
- qBP6bvsQx5YACI4p8R0J43tSqWwJTP/R5oPRQW2O1Ye1DEcdeyzZfifrQz58aoZrVQq+innR
- aDwu8qDB5UgmMQ7cjDSeAQABdghq7pqrA4P8lkA7qTG+aw8Z21OoAyZdUNm8NWJoQy8m4nUP
- gmeeQPRc0vjp5JkYPgTqwf08cluqO6vQuYL2YmwVBIbO7cE7LNGkPDA3RYMu+zPY9UUi/ln5
- dcKuEStFZ5eqVyqVoZ9eu3RTCGIXAHe1NcfcMT9HT0DPp3+ieTxFx6RjY3kYTGLOwU0EVUNc
- NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
- hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
- oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
- H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
- yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
- 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
- 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
- +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
- FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
- 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
- DFH41ZZ3t1Qbk0N9O0FimwUCYDzvagUJFF+UtgAKCRAbk0N9O0Fim9JzD/0auoGtUu4mgnna
- oEEpQEOjgT7l9TVuO3Qa/SeH+E0m55y5Fjpp6ZToc481za3xAcxK/BtIX5Wn1mQ6+szfrJQ6
- 59y2io437BeuWIRjQniSxHz1kgtFECiV30yHRgOoQlzUea7FgsnuWdstgfWi6LxstswEzxLZ
- Sj1EqpXYZE4uLjh6dW292sO+j4LEqPYr53hyV4I2LPmptPE9Rb9yCTAbSUlzgjiyyjuXhcwM
- qf3lzsm02y7Ooq+ERVKiJzlvLd9tSe4jRx6Z6LMXhB21fa5DGs/tHAcUF35hSJrvMJzPT/+u
- /oVmYDFZkbLlqs2XpWaVCo2jv8+iHxZZ9FL7F6AHFzqEFdqGnJQqmEApiRqH6b4jRBOgJ+cY
- qc+rJggwMQcJL9F+oDm3wX47nr6jIsEB5ZftdybIzpMZ5V9v45lUwmdnMrSzZVgC4jRGXzsU
- EViBQt2CopXtHtYfPAO5nAkIvKSNp3jmGxZw4aTc5xoAZBLo0OV+Ezo71pg3AYvq0a3/oGRG
- KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
- fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <trinity-c7cd6e30-cb34-4405-9527-6e183179c302-1715015402906@3c-app-gmx-bap23>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprOKsWRmVeSWpSXmKPExsWy7djP87p3z1qmGcx9b2ax6fE1VouPPfdY
+	LS7vmsNmcWjqXkaLtUfusltcPOVq8e/aRhYHdo/L1y4ye7y/0crusWlVJ5vH5iX1Hn1bVjF6
+	fN4kF8AWxWWTkpqTWZZapG+XwJVxfPVhloJnohUfXt9jbWCcLtTFyMkhIWAi0fb7OFMXIxeH
+	kMAKRok1O9+xQDhfGCW+9FxmhXA+M0pcffOODabl6dEOqJbljBKXv19ihmuZ/GISI0gVm4Ch
+	RNfbLrAOEYFkiQtfvoPNZQbpeH39LytIQljAXqLz/01mEJtFQFWi68c8dhCbFyi+8vpdRoh1
+	8hL7D55lhogLSpyc+YQFxGYGijdvnQ22WUJgKYfE+6cX2CEaXCSmfm2GahaWeHV8C1RcRuL/
+	zvlMEA3tjBILft+HciYwSjQ8vwXVYS1x59wvoLs5gFZoSqzfpQ8RdpT4tH4RI0hYQoBP4sZb
+	QYgj+CQmbZvODBHmlehog4aqmsSs4+vg1h68cIkZwvaQWPR0B5gtJBArce7AbZYJjAqzkLw2
+	C8lrsxBuWMDIvIpRPLW0ODc9tdgwL7Vcrzgxt7g0L10vOT93EyMw7Zz+d/zTDsa5rz7qHWJk
+	4mA8xCjBwawkwnu03TxNiDclsbIqtSg/vqg0J7X4EKM0B4uSOK9qinyqkEB6YklqdmpqQWoR
+	TJaJg1OqgUnnPR9H565H2XFp5sdjWq/Me56+VELBTfW7062uWZPqS1J3SksWxe6Xu/93qXLE
+	V6m1ISenXbvfP0dmbnZF1C8Tw3NxwTtXxJaKxGjG750VdTZK6HtAQs2uDa3XntdZel3dlbo2
+	XHrT/0yPZwvfys17H7yAzciWredWmq9iqIkZ88m6TL4rlaEbNy0umSma+Ts9c8fkxem5v+wb
+	zPfX+c/+5bP4D5etgvWLs9/XnRZayfT5vKbQd5u9G67rKU/bpf7kiW6ikaoIo5dB446H8rM8
+	Co7ZzFz7N8v0hmrIxkWnQ/zX399xX0r6Wnlk+Fnf45VuoU3iv8M57tzNPXrq09tPfZZZM8yM
+	xHqSfv85Ea/EUpyRaKjFXFScCACCjSr1qgMAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrDLMWRmVeSWpSXmKPExsVy+t/xu7p3z1qmGRx9oG6x6fE1VouPPfdY
+	LS7vmsNmcWjqXkaLtUfusltcPOVq8e/aRhYHdo/L1y4ye7y/0crusWlVJ5vH5iX1Hn1bVjF6
+	fN4kF8AWpWdTlF9akqqQkV9cYqsUbWhhpGdoaaFnZGKpZ2hsHmtlZKqkb2eTkpqTWZZapG+X
+	oJdxfPVhloJnohUfXt9jbWCcLtTFyMkhIWAi8fRoB1MXIxeHkMBSRolvt3rZIRIyEienNbBC
+	2MISf651sUEUfWKUuH7jFzNIgk3AUKLrLUiCk0NEIFVi/9GX7CBFzAIrGSXuzL8M1i0sYC/R
+	+f8mWAOLgKpE1495YBt4geIrr99lhNggL7H/4FlmiLigxMmZT1hAbGagePPW2cwTGPlmIUnN
+	QpJawMi0ilEktbQ4Nz232EivODG3uDQvXS85P3cTIzDYtx37uWUH48pXH/UOMTJxMB5ilOBg
+	VhLhPdpunibEm5JYWZValB9fVJqTWnyI0RTovonMUqLJ+cB4yyuJNzQzMDU0MbM0MLU0M1YS
+	5/Us6EgUEkhPLEnNTk0tSC2C6WPi4JRqYLI/OdHUJfF4hNz1K3+LHjyYWSwSKVexvkjq8K0b
+	Scrbnsu0BXA9XZzz1vDg4YREGxejBVz1fVcFLJNvcx/2vPNFueV/gHzbHSfV1T+W8Te9ELkZ
+	wPAv4egiV3OFzjbmrAV+a9663p98c1L8d9G5W1ceKP2yrfTvix+nvn3h0ffmZrn4/EnHaS9n
+	B7n23bMPTY0QusPYcSe0VNBr05npErybjqoLlv9rXJwos/WAFNONDedPxu4xbc/KfDxv6tXL
+	bcGyiSaHSiLu7F9vFpmY9Htd8bOi24+/XrCtVzWvM/TzKJTQdeWTfSNu4vq7z9U/7cCs664L
+	fnPK6lRx/m1La2w567L31t9na6Xrg17ntCixFGckGmoxFxUnAgD/eMoY/wIAAA==
+X-CMS-MailID: 20240507064445eucas1p1bfc17da4f824ef46567774634482f12f
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20240507064445eucas1p1bfc17da4f824ef46567774634482f12f
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240507064445eucas1p1bfc17da4f824ef46567774634482f12f
+References: <CGME20240507064445eucas1p1bfc17da4f824ef46567774634482f12f@eucas1p1.samsung.com>
 
-On 06/05/2024 19:10, Frank Wunderlich wrote:
-> Hi
-> 
->> Gesendet: Montag, 06. Mai 2024 um 10:18 Uhr
->> Von: "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>
->> An: "Frank Wunderlich" <linux@fw-web.de>, "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>, "Conor Dooley" <conor+dt@kernel.org>, "Michael Turquette" <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Pavel Machek" <pavel@ucw.cz>, "Lee Jones" <lee@kernel.org>, "David S. Miller" <davem@davemloft.net>, "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>, "Paolo Abeni" <pabeni@redhat.com>, "Matthias Brugger" <matthias.bgg@gmail.com>, "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>
->> Cc: "Frank Wunderlich" <frank-w@public-files.de>, "Eric Woudstra" <ericwouds@gmail.com>, "Tianling Shen" <cnsztl@immortalwrt.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-leds@vger.kernel.org, netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
->> Betreff: Re: [RFC v1 1/5] dt-bindings: leds: add led trigger netdev
->>
->> On 05/05/2024 18:45, Frank Wunderlich wrote:
->>> From: Frank Wunderlich <frank-w@public-files.de>
->>>
->>> Add led trigger implemented with config-symbol LEDS_TRIGGER_NETDEV to
->>> binding.
->>>
->>> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
->>> ---
->>>  Documentation/devicetree/bindings/leds/common.yaml | 2 ++
->>>  1 file changed, 2 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/leds/common.yaml b/Documentation/devicetree/bindings/leds/common.yaml
->>> index 8a3c2398b10c..bf9a101e4d42 100644
->>> --- a/Documentation/devicetree/bindings/leds/common.yaml
->>> +++ b/Documentation/devicetree/bindings/leds/common.yaml
->>> @@ -113,6 +113,8 @@ properties:
->>>              # LED indicates NAND memory activity (deprecated),
->>>              # in new implementations use "mtd"
->>>            - nand-disk
->>> +            # LED indicates network activity
->>> +          - netdev
->>
->> "dev" is redundant (there is no flash-dev or usb-host-dev). Two network
->> interfaces are already provided, so your commit msg must provide
->> rationale why this is not enough and why this is useful/needed.
-> 
-> i only see 1 network binding...and this is labeled/described with wlan and phy
-> 
->         # LED is triggered by WLAN activity
->       - pattern: "^phy[0-9]+tx$"
-> 
-> which second do you mean?
-> 
-> btw. usb + disk has 3 trigger and "netdev" is already used in some dts, so i thought adding the binding is a good idea
-> 
-> arch/arm/boot/dts/rockchip/rk3128-xpi-3128.dts:107:			 * linux,default-trigger = "netdev";
-> arch/arm/boot/dts/nxp/imx/imx53-m53menlo.dts:52:			linux,default-trigger = "netdev";
-> arch/arm/boot/dts/intel/ixp/intel-ixp42x-dlink-dsm-g600.dts:51:			linux,default-trigger = "netdev";
-> arch/arm/boot/dts/intel/ixp/intel-ixp42x-iomega-nas100d.dts:39:			linux,default-trigger = "netdev";
-> arch/arm/boot/dts/ti/omap/am5729-beagleboneai.dts:138:			linux,default-trigger = "netdev";
-> arch/arm/boot/dts/ti/omap/am335x-netcan-plus-1xx.dts:27:			linux,default-trigger = "netdev";
-> arch/mips/boot/dts/ralink/gardena_smart_gateway_mt7688.dts:107:			linux,default-trigger = "netdev";
-> arch/mips/boot/dts/ralink/gardena_smart_gateway_mt7688.dts:113:			linux,default-trigger = "netdev";
-> 
+dev_fmt argument is optional, so avoid dereferencing it unconditionally.
 
-Then please check previous discussions:
-https://lore.kernel.org/all/20230217230346.GA2217008-robh@kernel.org/
+Fixes: 4d11c62ca8d7 ("clkdev: report over-sized strings when creating clkdev entries")
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
 
-Best regards,
-Krzysztof
+This fixes the following kernel panic observed on Samsung Exynos542x
+SoCs family:
+
+8<--- cut here ---
+Unable to handle kernel NULL pointer dereference at virtual address 00000000 when read
+[00000000] *pgd=00000000
+Internal error: Oops: 5 [#1] PREEMPT SMP ARM
+Modules linked in:
+CPU: 0 PID: 0 Comm: swapper/0 Not tainted 6.8.0-00001-g4d11c62ca8d7 #14975
+Hardware name: Samsung Exynos (Flattened Device Tree)
+PC is at vsnprintf+0x4c/0x3c8
+LR is at init_stack+0x1dd6/0x2000
+pc : [<c0c09d3c>]    lr : [<c1301dd6>]    psr: 800000d3
+...
+Flags: Nzcv  IRQs off  FIQs off  Mode SVC_32  ISA ARM  Segment none
+Control: 10c5387d  Table: 4000406a  DAC: 00000051
+...
+Process swapper/0 (pid: 0, stack limit = 0x(ptrval))
+Stack: (0xc1301c70 to 0xc1302000)
+...
+ vsnprintf from va_format.constprop.0+0x70/0x160
+ va_format.constprop.0 from pointer+0x454/0x670
+ pointer from vsnprintf+0x228/0x3c8
+ vsnprintf from vprintk_store+0x100/0x428
+ vprintk_store from vprintk_emit+0x6c/0x328
+ vprintk_emit from vprintk_default+0x24/0x2c
+ vprintk_default from _printk+0x28/0x4c
+ _printk from vclkdev_alloc+0xf0/0x110
+ vclkdev_alloc from clkdev_hw_create+0x28/0x88
+ clkdev_hw_create from clk_hw_register_clkdev+0x38/0x3c
+ clk_hw_register_clkdev from samsung_clk_register_fixed_rate+0xa4/0xd4
+ samsung_clk_register_fixed_rate from exynos5x_clk_init+0xf0/0x2b0
+ exynos5x_clk_init from of_clk_init+0x15c/0x228
+ of_clk_init from time_init+0x24/0x30
+ time_init from start_kernel+0x4b8/0x620
+ start_kernel from 0x0
+Code: e09e9001 e1a05002 e28da01c 2a000086 (e5d50000)
+---[ end trace 0000000000000000 ]---
+Kernel panic - not syncing: Attempted to kill the idle task!
+---[ end Kernel panic - not syncing: Attempted to kill the idle task! ]---
+
+Best regards
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+---
+ drivers/clk/clkdev.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
+index ddacab7863d0..d2801ae70e34 100644
+--- a/drivers/clk/clkdev.c
++++ b/drivers/clk/clkdev.c
+@@ -194,10 +194,12 @@ vclkdev_alloc(struct clk_hw *hw, const char *con_id, const char *dev_fmt,
+ 	return &cla->cl;
+ 
+ fail:
+-	fmt.fmt = dev_fmt;
+-	fmt.va = &ap_copy;
+-	pr_err("%pV:%s: %s ID is greater than %zu\n",
+-	       &fmt, con_id, failure, max_size);
++	if (dev_fmt) {
++		fmt.fmt = dev_fmt;
++		fmt.va = &ap_copy;
++		pr_err("%pV:%s: %s ID is greater than %zu\n",
++		       &fmt, con_id, failure, max_size);
++	}
+ 	va_end(ap_copy);
+ 	kfree(cla);
+ 	return NULL;
+-- 
+2.34.1
 
