@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08EF671B5C;
-	Tue,  7 May 2024 21:52:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 247B779CF;
+	Tue,  7 May 2024 21:56:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715118731; cv=none; b=NintjaIYUNtPikyWY3ZjWeiItYBjAjBzefLb715EaGkkDs/b4yR7Z3jp4AMR51zi1GM/ogjxGH7ln0QX0rluSxqXPX0YiUixZl19LwnSAok8ZdTSdvRsY9pGluMkw+Vnet257bRKAglrOXxnnrhEI070gYFW5e4w85+J+FJBaTY=
+	t=1715118961; cv=none; b=MEKHmbgazCWTQKGwjuiz8BXW0aFsbbhHcy0va25LZh9cp6N1DBN39QvbNtLtcZphBspj5dgVBHbPYlFbEuLEu+iGneKXbkZEiOHsexYhqInRx3Fx4MbmSIFeF4Vw4aAZCfvpH/fbJ3PBU5crEgBKOkVnFPz198QPWobi9o064wk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715118731; c=relaxed/simple;
-	bh=DdIfWiVoX4WJikGmrYhiK9jfHI2XGJOD/rjGsuFWyHk=;
+	s=arc-20240116; t=1715118961; c=relaxed/simple;
+	bh=XtgmE7RW9wlahHyLbulcXNkQOJlK51jano8uieYSx1M=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=YfjB63MEedUVkYBEltsIQpV0FWVaw0E97LYjX8fJlYpm99f+U5MGwSDeyqN0VRAdFNSH+FQvQPiuG9Vn6hxvs1l3Ccyk/clqVdpgvzu56bqGQGkRaQgc5U7Jc1ZD8JmRsvBIZUWmt5vsVZ4GSwkuRPtRcRfLm4ETwNirZjoN3i0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lrv5QkKW; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=mP2ACx+tU0s/yAmqTF3OfKIqfYkH5tUmhUyw9Wc09X1h9I3Zz0nR20CcMHAoPuY9lD5uZ5KiVZUfzLWUnL2/xmGLXRRW7q3kD3WjyPkkeN376cXGeCj1jwZRka+S8uAfnGobMS0RDpVYfk3gZv0gCQTWMGzlwlJE+7335R7bLzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o/1KYOHB; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lrv5QkKW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67580C2BBFC;
-	Tue,  7 May 2024 21:52:09 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o/1KYOHB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F2EFC2BBFC;
+	Tue,  7 May 2024 21:56:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715118729;
-	bh=DdIfWiVoX4WJikGmrYhiK9jfHI2XGJOD/rjGsuFWyHk=;
+	s=k20201202; t=1715118960;
+	bh=XtgmE7RW9wlahHyLbulcXNkQOJlK51jano8uieYSx1M=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=lrv5QkKWbIh/dkdhC2UOxgdtXuRWXRpQUShbolM8ov4AmoYK7wSPa36uaNkS2SWSk
-	 mdVvLcBd7yoB8G6G7e6Fk4Yg4frrla2Ygye0JB+AauUqwpNhC0shgwuU6/Quewvxl7
-	 lzf729tCzGjQdUJkLDTIsRxT6GsrVdmZajMpSVzuJuletv+q/QiteKKDoDvVYHmgez
-	 mwlTZkIzjaZOEIr9+3+u1eTuCdP4BSBdux3L1YQoMp1KU/3t2wlMzX+oplUzUew6bz
-	 Xf+1VezXbMcoYlp8NIqspXHWSLu/oj5hNWaoZpaN6mUtliKLOrqrQjkj0AGava7TFr
-	 pXb5JrG/9I2fA==
-Message-ID: <9440dd954294db7c02a11a1807d75ad9.sboyd@kernel.org>
+	b=o/1KYOHBxv5ThCm7bKHpkGfGYlL/hc9Q1xusCkaGhRHjaKSjHSWuIlhPjNgxRc9UL
+	 ijiOTEpUsUO4UjDd/cYYg3+Zzp+9BLJrlnWYFS9sxYW0tjraVo7mgp2TAwIW8XEtGN
+	 fIEWXCfyD0BDL1k6f2lijsRUA5dmpitma+L1AMjbqn2jIxKAg7r4XxtbyYWvkckYl9
+	 xltMhH2LiarOsObd9yP4OpakImWbs4Q+8KkWx+Enbm1ulkY2PSrpf6QRzoBGMnwXoZ
+	 Z/BT8AV3zvKgIvtkJGQo0kf3HKBGGkWqdgry0FeRZYj4fhbt0UKoOsm9InY+6kSVSx
+	 MqETlDTIqJLVQ==
+Message-ID: <53d7ad338f4d3d8f5c6b29c5bb8f9088.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,38 +35,47 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <aeaa72f6-b227-4b54-9836-0b8f4dba6ffb@linaro.org>
-References: <20240427-topic-8450sdc2-v1-1-631cbb59e0e5@linaro.org> <2337ba58adb3fb127710bead9b8665a9.sboyd@kernel.org> <11bd7146-30cd-4b71-b2ca-d76875763731@linaro.org> <6ba2967c6c9d24e3f1c9b76496176010.sboyd@kernel.org> <3a3c4279-a254-48d0-91ad-70b7f1e3eb77@linaro.org> <7baef7a173dc4d1ecf8b0dafde565b1a.sboyd@kernel.org> <aeaa72f6-b227-4b54-9836-0b8f4dba6ffb@linaro.org>
-Subject: Re: [PATCH] clk: qcom: gcc-sm8450: set OPS_PARENT_ENABLE on gcc_sdcc2_apps_clk_src
+In-Reply-To: <e93acd4c-20f7-4b46-bb9c-84fac451c894@app.fastmail.com>
+References: <CA+G9fYuZd_ur56H8fwDSvUywopvn_b7ogprGkjEatQ7EPTLwYQ@mail.gmail.com> <11be44d3-0f32-49c6-b4ae-ba97a9f97763@app.fastmail.com> <820ddc2ec70780ae1ecd3af864dc8bd6.sboyd@kernel.org> <e93acd4c-20f7-4b46-bb9c-84fac451c894@app.fastmail.com>
+Subject: Re: clkdev: report over-sized strings when creating clkdev entries
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Vinod Koul <vkoul@kernel.org>
-Date: Tue, 07 May 2024 14:52:07 -0700
+Cc: Russell King <linux@armlinux.org.uk>, Anders Roxell <anders.roxell@linaro.org>, Dan Carpenter <dan.carpenter@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Marek Szyprowski <m.szyprowski@samsung.com>
+To: Arnd Bergmann <arnd@arndb.de>, Linux ARM <linux-arm-kernel@lists.infradead.org>, Naresh Kamboju <naresh.kamboju@linaro.org>, linux-clk <linux-clk@vger.kernel.org>, lkft-triage@lists.linaro.org, open list <linux-kernel@vger.kernel.org>
+Date: Tue, 07 May 2024 14:55:58 -0700
 User-Agent: alot/0.10
 
-Quoting Konrad Dybcio (2024-05-07 14:17:01)
+Quoting Arnd Bergmann (2024-05-07 13:52:59)
+> On Tue, May 7, 2024, at 22:26, Stephen Boyd wrote:
+> > Quoting Arnd Bergmann (2024-05-07 00:44:15)
+> >> On Tue, May 7, 2024, at 09:20, Naresh Kamboju wrote:
+> >> > The WinLink E850-96 board boot failed with Linux next-20240506 but t=
+here
+> >> > is no kernel crash log on the serial [1].
+> >> >
+> >> > Anders bisection results pointing to this commit,
+> >> > # first bad commit:
+> >> >   [4d11c62ca8d77cb1f79054844b598e0f4e92dabe]
+> >> >   clkdev: report over-sized strings when creating clkdev entrie
+> >> >
+> >> > After reverting the above patch the boot test passed [2].
+> >> >
+> >> > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> >> >
+> >
+> > There are two fixes on the list: [1] and [2]. Perhaps one of those
+> > resolves this?
+> >
+> > [1] https://lore.kernel.org/r/20240507065317.3214186-1-m.szyprowski@sam=
+sung.com
+> > [2] https://lore.kernel.org/r/20240507064434.3213933-1-m.szyprowski@sam=
+sung.com
 >=20
+> My guess is that either one avoids the crash, but we actually
+> want both of them since the problem is a combination of the two
+> issues.
 >=20
-> On 5/7/24 22:28, Stephen Boyd wrote:
-> >>
-> >=20
-> > Can you share your patch that prints the message? What bit are you
-> > checking in the hardware to determine if the RCG is enabled? Do you also
-> > print the enable count in software?
->=20
-> I already reset-ed the tree state, but I added something like
->=20
-> if (rcg->cmd_rcgr =3D=3D the one in the declaration)
->         pr_err("gcc_sdcc2_apps_clk_src is %s\n", clk_is_enabled(hw) ? "EN=
-ABLED" : "DISABLED");
->=20
-> to drivers/clk/qcom/clk-rcg2.c : __clk_rcg2_set_rate()
->=20
->=20
+> I think we also need this one on top, to have a va_end() for
+> each return() statement:
 
-Ok. You're reading the software state because there isn't an is_enabled
-clk_op for RCGs. Can you also read the CMD register (0x0 offset from
-base) and check for CMD_ROOT_EN (bit 1) being set? That's what I mean
-when I'm talking about the RCG being enabled in hardware. Similarly,
-read CMD_ROOT_OFF (bit 31) to see if some child branch of the RCG is
-enabled at this time.
+Makes sense. Hopefully Russell can fold that fix in as well, or you can
+send it to the patch tracker.
