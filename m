@@ -1,94 +1,98 @@
-Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BA0414EC6F
-	for <linux-clk@vger.kernel.org>; Tue,  7 May 2024 09:43:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE208150991
+	for <linux-clk@vger.kernel.org>; Tue,  7 May 2024 09:49:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715075024; cv=none; b=G2NFqyQucyh65ccgTvVkpeU9WEpZDg1HnYDWMPGKH+/M80N86wHdDKt1u9qrrQWJehYfQMNUbs/8W+nXnujzZ/kLmiGhErDLlGGC1RaGtvttbFJXKAsGUwTl1kImFA7sU8LZS9YM0T69OyMB3oPSjBULAh+e6ry5vDyE24F0Xuc=
+	t=1715075345; cv=none; b=YbCSKmd7EsruJlkObzQNydtKblRMHcUN5H0Mfkwfetdpzpv/e62HAwtukBqJxFhNp7oP5h8+QJqJfkawF/Qe2gCNVVUW2K2qs9dljYZXwZq17nsA+lwx5fpHb4HS4pgSb/zst97I408tlDIOAWDQbqKLwF5ZhYhBMqmU6iOV2WI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715075024; c=relaxed/simple;
-	bh=TIxu5CXQag5vSF552a9NObD/7GpXLUkpUNqx8KK1M5w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=T9PqIOKBd65Wh+B5J9K21ozs4RtvtTQNR2grR2v4RzcYjfWR4GC3eowLtcLFlyDC91E4B7C+YfUDbvS/G5ckgsZ0FTcF1qNN4zayrklMvVLvmEvXiurmv7sUEvCApe3fDlxQbJiFZPLbiIFa20lfiqhxhhGqrkO3rXqp9zTEOg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fbJ6et/U; arc=none smtp.client-ip=209.85.161.53
+	s=arc-20240116; t=1715075345; c=relaxed/simple;
+	bh=lxtT+tCI4jL059QQESghZnrZukScDPtHohLDdzuOYBk=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=NeVA0Q0QGRP3vGWyp31fHgDAImUk+ffZntG/1x4rctotg4br9rKpMiJ31mYkicjqaGAOYWXsRpE1vBqQU+4ur6PJ0a17iTRoLhSwIifOQXIOP+9jx/czCnpOIF1Duko1+wpic0kDSCk/LdAJEiWgyA8vO9Nr98owfSnKXy7In+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SFaB42SJ; arc=none smtp.client-ip=209.85.218.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fbJ6et/U"
-Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-5b2089a8154so941800eaf.0
-        for <linux-clk@vger.kernel.org>; Tue, 07 May 2024 02:43:42 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SFaB42SJ"
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a59ece5e18bso124644966b.2
+        for <linux-clk@vger.kernel.org>; Tue, 07 May 2024 02:49:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715075021; x=1715679821; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=WAXawuu5D8QQ2TYYAPKkUCb+rSNneu0ioxRT40xBXrI=;
-        b=fbJ6et/U+wc6TnrYH7HV/d2oc2jKp9K1xcbdpOypt0bcip/CRScFoVuuX98CInMHkO
-         uitpafeR9ZD0a/+b2jzpe6l/TchfI8hMGwEFib8s/K2NrFUwSsahE303GgB/Spe8gAIO
-         /Q87IgDf4Wjtt9ubfcFAXszSvzr6tmY2EW6lvBPopEIOcUDRbnddx8J46+UdkzbxvUql
-         DEGmxTIHL65yzLj6/44xW9ukc7lLnu/t+dzAemfTrXufxOa2IsAA3FNDRGTJlZQDF4yJ
-         Xn+7dyWjgOIspa7E5FOEKyTq+e2M4XqlitrTJ35q7QjqnoQ8xqjB+WKcbpPZfgabozKH
-         tEbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715075021; x=1715679821;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1715075342; x=1715680142; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=WAXawuu5D8QQ2TYYAPKkUCb+rSNneu0ioxRT40xBXrI=;
-        b=adZMBLSmkmsV5W5wQ7y1gAe134Yc3VADXRVY+SR4MZFH3X5CS535Nh2Kf54iK+zDx6
-         WRBmrp8p7ZIy3L5DLWKgZCcfBYbXJ1uO1n/1M7KtvPlytI0Tzs5+LAwd5KD/jFX6lntC
-         Joytt7uV2qIBnx5kuppE12TQR3t9IlmECzV6MaxzQdqLvwFP9hmyuaxoSUmjAKsS1Oae
-         rhz9RbtuK0su0mNVBM356ziGpCPjeHLBzwfz8P2kuOpbQoy+QJ+mxbc0fcO92W4ERtI+
-         BjxCOYhjcwM7EVJ9Jw1fO2Yp8IQOxkCdp4DCzjQ9u+bu+5+t/QSDsO0IyFYA34oR5Bnw
-         C7gw==
-X-Forwarded-Encrypted: i=1; AJvYcCW2JKb1As0JYbpmQ2i4LoKLjX2fnp9uvtXgu08wlhBipGKazS4FG4U6hd+G92ATXQcPolS+YDRYaiGoo4isgKIMUXQZvQSpsC0E
-X-Gm-Message-State: AOJu0YxehVv+MfYtfQ2soBEjktaIMwr6GKHg3JtPHy6yNd0Qha27wZDr
-	zKMCpPxiofUVnrSQNXEtsQ44+Jht3lnfQZkzwKkw06IgPoTO0ltfUHEZBlboUn5HMYDOCWzroy5
-	f1DTteF5s8zxes2KvyE/Bft5IJ8pDVVLZPjq6Ug==
-X-Google-Smtp-Source: AGHT+IEP48wfgx6CdP8hMqXLTcM/sINVEeKxbBEY+Ym2IiGsz9vT7W4IRWdx50FNfNNMTo400zHDOCxwnh6BJm9rM78=
-X-Received: by 2002:a4a:5ac1:0:b0:5b1:b8a4:bce4 with SMTP id
- v184-20020a4a5ac1000000b005b1b8a4bce4mr11914180ooa.8.1715075021361; Tue, 07
- May 2024 02:43:41 -0700 (PDT)
+        bh=+Bgg3zxtJYPnqt4NHW+d4WaRnGJUInrGr8+3LGqkJRo=;
+        b=SFaB42SJ4ZJqe83LnbntsQDR92mPyFHmciMGVa5r7emtZGLiBkt4Ije/ejct4OhpTm
+         e5eq0ngoPxw5nBvIsKnF7RwbgFF2Gdq0eWe+/OcvPtugrXCdLPLfn1hvcsGbSa1gOujw
+         aNrGY2LtDi77eWs4aM+l//8mG1Oes6lSwtHFJjyYDSauGIkxZIyUZ5xMzUxXyBisii09
+         AGODvaBHucq4vKeHgTwy7MLjFuqB7OXvbdfMSC0TrIOHd5vax9RGJZNHLbAu/o8oypOg
+         lUXEpYbjs/Dhcb/4seX1rl35hiLHYEt5NxF+7GdLqa7AmPpKzQNWz2EfDs6ekIdLG/9R
+         AWng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715075342; x=1715680142;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+Bgg3zxtJYPnqt4NHW+d4WaRnGJUInrGr8+3LGqkJRo=;
+        b=WiJ5FUuYOWNhxvqzWFAZLWUL2M4BRpnjr1oIdR/F6YMm/K9tlMfsS6XtxlV6eiBffI
+         B0cj+aj2mzuleE41y6hL+IQUkCJB9UB0tr4x2snP7HxCpfh+a8LGyrX1OZ31Vp9rUF2P
+         qFONudAcZvHeJMEcs2ukmE89/8OLS3zzZPSELgzXnFkwHzSspChM/w9ScSi8GJx9ocp1
+         wZAKYBvPyTy0Ysh1MR6cmSKFG0jTEh8/kUdZk0khHirNDSMGybyfaJV2p93v1of90AeP
+         gcJSIsxA571vZ36bhzU0D5kLP4mdWNNYgYGFcwrULzAh2M0ifTf36z+TzSpSGdCBonuM
+         DAvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVygutSQtx8s5k78AYo9XQPLRbHn+1YNAF0I75I5YntHveARfu2y5+A7jbNBlDFIFntY66fRQCr6OhOQBC7o5janGOU9+XpMZme
+X-Gm-Message-State: AOJu0YxW23XPrZO5ARYkU0GwRPphisFs9BCTYWFL9ZecxrH4wTa/UdNs
+	avhkmd8Hd/Nwqh3EkGJipkprBmF72vRQoNkEOrVlrhGfsX8YiA/KtzFgDGCOgDQ=
+X-Google-Smtp-Source: AGHT+IFmHeE3lcBLmnxClRQs4AEPEUnXv/IqNkBVg2rMNk4slmqta8jMmXGP+5KJreMBtiic3HfGHg==
+X-Received: by 2002:a17:906:b7c2:b0:a58:7c50:84e4 with SMTP id fy2-20020a170906b7c200b00a587c5084e4mr11565763ejb.2.1715075342136;
+        Tue, 07 May 2024 02:49:02 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.206.169])
+        by smtp.gmail.com with ESMTPSA id gh5-20020a170906e08500b00a59a9ffeea6sm3910824ejb.96.2024.05.07.02.49.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 07 May 2024 02:49:01 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Peter Griffin <peter.griffin@linaro.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20240507055948.34554-1-krzysztof.kozlowski@linaro.org>
+References: <20240507055948.34554-1-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH] clk: samsung: gs101: drop unused HSI2 clock parent
+ data
+Message-Id: <171507534100.608425.10238086621749823821.b4-ty@linaro.org>
+Date: Tue, 07 May 2024 11:49:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240507055948.34554-1-krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20240507055948.34554-1-krzysztof.kozlowski@linaro.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Tue, 7 May 2024 10:43:30 +0100
-Message-ID: <CADrjBPqp2ZaB0_J-rAZ2+A7BMHjW3o+rYSqMFgpdcbLausqL3g@mail.gmail.com>
-Subject: Re: [PATCH] clk: samsung: gs101: drop unused HSI2 clock parent data
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
-	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-Hi Krzysztof,
 
-On Tue, 7 May 2024 at 06:59, Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
+On Tue, 07 May 2024 07:59:48 +0200, Krzysztof Kozlowski wrote:
 > Drop static const arrays with HSI2 clocks parent data which are not
 > referenced by any clock.  This might cause -Werror=unused-const-variable
 > warnings.
->
-> Reported-by: Stephen Boyd <sboyd@kernel.org>
-> Closes: https://lore.kernel.org/all/8bf65df598680f0785c3d6db70acfb9a.sboyd@kernel.org/
-> Fixes: 093c290084a4 ("clk: samsung: gs101: add support for cmu_hsi2")
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
+> 
+> 
 
-Thanks for the fix! These are actually the cmu_top parents and
-shouldn't be defined here. They already have their own definitions in
-the cmu_top section.
+Applied, thanks!
 
-Reviewed-by:  Peter Griffin <peter.griffin@linaro.org>
+[1/1] clk: samsung: gs101: drop unused HSI2 clock parent data
+      https://git.kernel.org/krzk/linux/c/7c18b0a5aa46cc7e5d3a7ef3f9f8e3aa91bb780f
 
-Peter
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
