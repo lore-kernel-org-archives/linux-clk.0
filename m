@@ -1,120 +1,194 @@
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06BDE6CDAD
-	for <linux-clk@vger.kernel.org>; Tue,  7 May 2024 05:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F916EB49
+	for <linux-clk@vger.kernel.org>; Tue,  7 May 2024 06:10:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715061595; cv=none; b=I7VuV5klqYjpSW/x9dcVNoP6EYnoVYt+NTMyNHY6NMYKjKhe7Jm8r/RH8zTCBxeVZC+9R4z48aZzLxde3AyspfHUBXj2EtetOaA4u0WdKaDaZ6GABdLj4mcLdwxoD7+evUY0cIVjy6KnSi5jUZDOmKZlCoYI9Mqw6118joTHYbU=
+	t=1715062228; cv=none; b=FuU6dbfA16+h4jiLf7xFSccuD5NfdpJK7KmfiIJaisrVdLPyG9HGjGx40KS63LOXhgHAA66Oa6rszRHdBhQb/SHCwd6SzOSLHDXp5wMFPX2LxG9aoDdKOdHplFqpCMRJagxgesfp4lRoEYY4rdptVUwXDoayUydXrbehAr/LMcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715061595; c=relaxed/simple;
-	bh=Yguzo2c8YUB36SQvoM6wmMpm2FeEziBCRIGTv3E6rIY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AiQb/hk+I7uM1wmiByApZfZHO+85bYOlf5jJ+OPWhkOwxsIQnW/usyEFWvQDq0NWP7Qa6VyoyqErVfEydQORjT1qqZciRc8I/NjOj46nmG/Wnfj5v9JZfsPsi1jVWX0/xoL62pjCU4aRPgLOmZ+RFhEogsB55ThSFM9ao5fjpxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IItixv1P; arc=none smtp.client-ip=209.85.167.42
+	s=arc-20240116; t=1715062228; c=relaxed/simple;
+	bh=NN37t59EsYaWpOfY6mIxVvawgYy1WxwgD7Dv5L4ULOg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oRnmWqa8w712XrxPMAwr60P4pIlHL6KbkJaUNPvHlvKyyHT1+2XypTtGBqmxEyHt7QsA9nJzlKPFO7KxM7hNXgYOW91mPOSlucOiAbwPd+/+siuifn92beHrf5DJ5+G5Oe2/E0O3tH3x+dDnPYlFK1E9alxQpUn8kHyhcZL8Gf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=I6Sgo6Oi; arc=none smtp.client-ip=209.85.218.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IItixv1P"
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-51ffff16400so3790554e87.2
-        for <linux-clk@vger.kernel.org>; Mon, 06 May 2024 22:59:53 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I6Sgo6Oi"
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a59a934ad50so592833366b.1
+        for <linux-clk@vger.kernel.org>; Mon, 06 May 2024 23:10:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715061592; x=1715666392; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=V2DqXD03WzJThrTJ1Ryt0LAxq6uqFsgoSmVFQ8TUEf8=;
-        b=IItixv1PJ99VTcEpMTtQgZ0xKHqvcCVVoCuyJkD7FuUHF0PoQ6p9fxj5r9vhATGz2U
-         0h3KN+yEb7o7pd+3yLLTzYVR+UUADNefZ94Jy4g8V3hvBqvMU0j1AIQdg443FK7A2RQi
-         Wl2xH72wmtjb2Ew/zL7oBa0pnPz/ZFSI+nWYrBRYn8spT14+LfVn0jsy0YgRpLaqsRfy
-         FsQJVTpvB/W4apPzylMUDhKXYqtd13b1A2mEeR2hdXIMJOpDksjK1S621j7J8yhHoQU0
-         aXOff9Ch9oOFJL+zch1XDsSuaB4s//0L7RF1YS+ZxSZ3B7Wg4VjTVbTiMI5AjajNMA8u
-         3plQ==
+        d=linaro.org; s=google; t=1715062225; x=1715667025; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=MXjJi9Id2sTcJOhILmN1ky4B/45ar4n3Y4h1sMFH2gA=;
+        b=I6Sgo6Oi0tI1e1OvwJe607Twd2qVWLBld45zSG6wvw6c8Ro0TNuC4Uem7+WlXULGo6
+         Wln68zxocPZ/PguVTjDF/SiFOMWvj2CRjNeBnDEOb0p945mIQEb96plHqtOFEW9ao6dV
+         Izp9Q6pZzlN7ON8AxXFIIBoxRJYkXYNHw7BXkk3B3dyiOg7Hx5aqNErff0JZGc1uQkEL
+         L22Q/7YLEQeT07q7yO3jv8kb9/dcGoU3+zoJOKlX9tfMY7t+DqU490UNSpPBJU/fcqnD
+         xks3V/30ZVtnHYOzKvJcvCzzy9D9B8zgt7EY8Ki2pe0TUmcuj1NU3ZDDwOPdx9qzG5re
+         zfiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715061592; x=1715666392;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1715062225; x=1715667025;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=V2DqXD03WzJThrTJ1Ryt0LAxq6uqFsgoSmVFQ8TUEf8=;
-        b=iOOSRbcjrkcN/ArbpWYNMl+6j8tRGGYN3zFH7tF7t7CYwuLZA/1yBPm58hsh+j1KXQ
-         yIaqvIL39NmVo6G5nroAOZ8BWT1XWM5jzABPCwG83TRZk2PoZcGRqpox/4mV8rVL6QbV
-         BGnwGNNVnD7vsiAZM3RmwA9uyB2HtyYmVt+kf36CACMJX/KYyP0zQN4ScpEisohRLexm
-         hdBZiAoYh9N4tBcaFefqjIvA2DBFgs1LFmkxOmfo4Egdi4gpXI5rLCbKltBIalACiKN9
-         K4e8EbKCkD8T8cYdvmAthrixg1vNLWQRv5jzRaRJBt02iqR8cuKU/Z3FdlYdRN8R2Krv
-         BjyA==
-X-Forwarded-Encrypted: i=1; AJvYcCWwM0l8kjoJCWR2EzE4LjgDwL9AJEaWY2NvrZEqMiutpTBimCTcBEDoalnoN+inuT6RV2J9JARRhFsKFW8c3eEvd8xNlNgmDj1H
-X-Gm-Message-State: AOJu0Yy4YtGk7t8g4CxpS841u2Nbu2v95Moi1ag820Kvrp/qv2bT5UZ8
-	K68MImTy/RWPScFqzxz9la4oIDGPWs2mqOJFzM4b8A1tVBmG0SLggpctY4Gzeq2G2K9HZH6giMK
-	T
-X-Google-Smtp-Source: AGHT+IHAoEd1Vj8PO/OsWzB6VwiWyVdXfuzPDSC6+IUdzvwVU7M5dm88SzviPvIsnMQnSANGCGrSDw==
-X-Received: by 2002:a05:6512:6d5:b0:51f:6ab6:9e5b with SMTP id u21-20020a05651206d500b0051f6ab69e5bmr13524658lff.36.1715061592083;
-        Mon, 06 May 2024 22:59:52 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.206.169])
-        by smtp.gmail.com with ESMTPSA id z18-20020a1709060bf200b00a59cf813f34sm1975488ejg.144.2024.05.06.22.59.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 06 May 2024 22:59:51 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Peter Griffin <peter.griffin@linaro.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	=?UTF-8?q?Andr=C3=A9=20Draszik?= <andre.draszik@linaro.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] clk: samsung: gs101: drop unused HSI2 clock parent data
-Date: Tue,  7 May 2024 07:59:48 +0200
-Message-ID: <20240507055948.34554-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+        bh=MXjJi9Id2sTcJOhILmN1ky4B/45ar4n3Y4h1sMFH2gA=;
+        b=iW+IBrts+MagaVggsdi7yObBgqT71LzG1vOOIewkBBxiFytKoOm6F6cSb+as81nHx3
+         VImxsnX/sI8Obj7FZ6Q6VanpvjSJQDQceBWFEoq0VswPvZFji2ecPFX3s8H5Zey3/kTZ
+         ZLcq+f0SB2surWUY7Gi/vjGU/CEKI/HM0+8hdf75Jce+jls8uDV1+4a14itFpMno24d/
+         obF1PJVoVOYkAac103Z9snibUJz1KrII4bZIHpeN3nXKhq5ky/2MNY1pjfL8BDaKqQ/W
+         5WjZHx+IZZT6S/tiuuyaHDtcnUxM0YVJ4CZUxCn0d9IAdU9+M1LB71LCIH5z5O7djKIX
+         YNgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXRrLvwk5CbEpJcNfRt4tnYw3jTVMN4e7jlAz1QjDBcKbIh9PzjMDn9bXMlCQPSluCT5TmkY/do+fJPAP6NVpsh85edppodEdU2
+X-Gm-Message-State: AOJu0YwzsImJ8DtUkvtT2cXWa4NFP75OYTXHDLrwlTrPLK0tL62fix+v
+	KbwtW+pqu7NhjSKb+n32X5Ma83uNrSEKX1n/HB+uYGrFDCkJxcE0p6CXCb68YnM=
+X-Google-Smtp-Source: AGHT+IFu8eR50FD/Gd28rJu3Vx/lNXa5WeyJ9YlaXosgaZ3mAvfhxHhCWRy7RjhvEshV0yDHDcXhhw==
+X-Received: by 2002:a50:bb0b:0:b0:56e:63d3:cb3e with SMTP id y11-20020a50bb0b000000b0056e63d3cb3emr7637147ede.41.1715062225320;
+        Mon, 06 May 2024 23:10:25 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.206.169])
+        by smtp.gmail.com with ESMTPSA id q11-20020a056402248b00b005726b83071esm6060147eda.4.2024.05.06.23.10.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 06 May 2024 23:10:24 -0700 (PDT)
+Message-ID: <d88e6d38-e7fd-4d06-8c54-e89948d568fd@linaro.org>
+Date: Tue, 7 May 2024 08:10:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: Aw: Re: [RFC v1 1/5] dt-bindings: leds: add led trigger netdev
+To: Frank Wunderlich <frank-w@public-files.de>
+Cc: Frank Wunderlich <linux@fw-web.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Eric Woudstra <ericwouds@gmail.com>, Tianling Shen <cnsztl@immortalwrt.org>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-leds@vger.kernel.org,
+ netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+References: <20240505164549.65644-1-linux@fw-web.de>
+ <20240505164549.65644-2-linux@fw-web.de>
+ <8e9fd4c9-f537-4413-b8c8-988b001b64c0@linaro.org>
+ <trinity-c7cd6e30-cb34-4405-9527-6e183179c302-1715015402906@3c-app-gmx-bap23>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <trinity-c7cd6e30-cb34-4405-9527-6e183179c302-1715015402906@3c-app-gmx-bap23>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Drop static const arrays with HSI2 clocks parent data which are not
-referenced by any clock.  This might cause -Werror=unused-const-variable
-warnings.
+On 06/05/2024 19:10, Frank Wunderlich wrote:
+> Hi
+> 
+>> Gesendet: Montag, 06. Mai 2024 um 10:18 Uhr
+>> Von: "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>
+>> An: "Frank Wunderlich" <linux@fw-web.de>, "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>, "Conor Dooley" <conor+dt@kernel.org>, "Michael Turquette" <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Pavel Machek" <pavel@ucw.cz>, "Lee Jones" <lee@kernel.org>, "David S. Miller" <davem@davemloft.net>, "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>, "Paolo Abeni" <pabeni@redhat.com>, "Matthias Brugger" <matthias.bgg@gmail.com>, "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>
+>> Cc: "Frank Wunderlich" <frank-w@public-files.de>, "Eric Woudstra" <ericwouds@gmail.com>, "Tianling Shen" <cnsztl@immortalwrt.org>, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-leds@vger.kernel.org, netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+>> Betreff: Re: [RFC v1 1/5] dt-bindings: leds: add led trigger netdev
+>>
+>> On 05/05/2024 18:45, Frank Wunderlich wrote:
+>>> From: Frank Wunderlich <frank-w@public-files.de>
+>>>
+>>> Add led trigger implemented with config-symbol LEDS_TRIGGER_NETDEV to
+>>> binding.
+>>>
+>>> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+>>> ---
+>>>  Documentation/devicetree/bindings/leds/common.yaml | 2 ++
+>>>  1 file changed, 2 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/leds/common.yaml b/Documentation/devicetree/bindings/leds/common.yaml
+>>> index 8a3c2398b10c..bf9a101e4d42 100644
+>>> --- a/Documentation/devicetree/bindings/leds/common.yaml
+>>> +++ b/Documentation/devicetree/bindings/leds/common.yaml
+>>> @@ -113,6 +113,8 @@ properties:
+>>>              # LED indicates NAND memory activity (deprecated),
+>>>              # in new implementations use "mtd"
+>>>            - nand-disk
+>>> +            # LED indicates network activity
+>>> +          - netdev
+>>
+>> "dev" is redundant (there is no flash-dev or usb-host-dev). Two network
+>> interfaces are already provided, so your commit msg must provide
+>> rationale why this is not enough and why this is useful/needed.
+> 
+> i only see 1 network binding...and this is labeled/described with wlan and phy
+> 
+>         # LED is triggered by WLAN activity
+>       - pattern: "^phy[0-9]+tx$"
+> 
+> which second do you mean?
+> 
+> btw. usb + disk has 3 trigger and "netdev" is already used in some dts, so i thought adding the binding is a good idea
+> 
+> arch/arm/boot/dts/rockchip/rk3128-xpi-3128.dts:107:			 * linux,default-trigger = "netdev";
+> arch/arm/boot/dts/nxp/imx/imx53-m53menlo.dts:52:			linux,default-trigger = "netdev";
+> arch/arm/boot/dts/intel/ixp/intel-ixp42x-dlink-dsm-g600.dts:51:			linux,default-trigger = "netdev";
+> arch/arm/boot/dts/intel/ixp/intel-ixp42x-iomega-nas100d.dts:39:			linux,default-trigger = "netdev";
+> arch/arm/boot/dts/ti/omap/am5729-beagleboneai.dts:138:			linux,default-trigger = "netdev";
+> arch/arm/boot/dts/ti/omap/am335x-netcan-plus-1xx.dts:27:			linux,default-trigger = "netdev";
+> arch/mips/boot/dts/ralink/gardena_smart_gateway_mt7688.dts:107:			linux,default-trigger = "netdev";
+> arch/mips/boot/dts/ralink/gardena_smart_gateway_mt7688.dts:113:			linux,default-trigger = "netdev";
+> 
 
-Reported-by: Stephen Boyd <sboyd@kernel.org>
-Closes: https://lore.kernel.org/all/8bf65df598680f0785c3d6db70acfb9a.sboyd@kernel.org/
-Fixes: 093c290084a4 ("clk: samsung: gs101: add support for cmu_hsi2")
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- drivers/clk/samsung/clk-gs101.c | 15 ---------------
- 1 file changed, 15 deletions(-)
+Then please check previous discussions:
+https://lore.kernel.org/all/20230217230346.GA2217008-robh@kernel.org/
 
-diff --git a/drivers/clk/samsung/clk-gs101.c b/drivers/clk/samsung/clk-gs101.c
-index e2a6a1992505..ba9570f7a5fa 100644
---- a/drivers/clk/samsung/clk-gs101.c
-+++ b/drivers/clk/samsung/clk-gs101.c
-@@ -2601,21 +2601,6 @@ static const unsigned long cmu_hsi2_clk_regs[] __initconst = {
- 	QUEUE_CTRL_REG_BLK_HSI2_CMU_HSI2,
- };
- 
--PNAME(mout_hsi2_ufs_embd_p)	= { "oscclk", "dout_cmu_shared0_div4",
--				    "dout_cmu_shared2_div2", "fout_spare_pll" };
--
--PNAME(mout_hsi2_pcie_p)		= { "oscclk", "dout_cmu_shared2_div2" };
--
--PNAME(mout_hsi2_bus_p)		= { "dout_cmu_shared0_div4",
--				    "dout_cmu_shared1_div4",
--				    "dout_cmu_shared2_div2",
--				    "dout_cmu_shared3_div2",
--				    "fout_spare_pll", "oscclk", "oscclk",
--				    "oscclk" };
--
--PNAME(mout_hsi2_mmc_card_p)	= { "fout_shared2_pll", "fout_shared3_pll",
--				    "dout_cmu_shared0_div4", "fout_spare_pll" };
--
- PNAME(mout_hsi2_bus_user_p)	= { "oscclk", "dout_cmu_hsi2_bus" };
- PNAME(mout_hsi2_mmc_card_user_p) = { "oscclk", "dout_cmu_hsi2_mmc_card" };
- PNAME(mout_hsi2_pcie_user_p)	= { "oscclk", "dout_cmu_hsi2_pcie" };
--- 
-2.43.0
+Best regards,
+Krzysztof
 
