@@ -1,126 +1,110 @@
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0BC954BDE
-	for <linux-clk@vger.kernel.org>; Tue,  7 May 2024 21:17:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C178054BDE;
+	Tue,  7 May 2024 21:23:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715116626; cv=none; b=b0PH86IZ365MxSMTYZZbu1OMDWkCEkbU/sUD1ZiBuUgj80EvMoFrDb8j7vbwn+n0O+z6SooOfN5wm3CmKwJdXWKTYgdXPjkeQtZhdwt1bp+nwRcQ/rqvYvg9wDE7ez3Cd/Gy93K3hJxGsFOEl0wNEv3sx4HOg9M+dg7rrlhlS1g=
+	t=1715116992; cv=none; b=UunmMNjn5RDnCYq42mDaXLPSVnU7e371zr696Z2QxbxyGFW4x/MIBwd5aiwq6IvllGVjdspy4z5P9VyhOLEseM9ThN7k2lfHbKVzA6eLhr0kP2aQMYWb2TSGUN3eBvcLbXUleyd3kJ73Ey+V5mcYPIBCjZJQ3lwEVBhXmzCX7mY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715116626; c=relaxed/simple;
-	bh=Ecwjg3T8TYwyg2JlRh7RQ8tIIO5urNWWdj17N5ZVd2Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CUGLvKNZV/93RyyQOUpbPSLxFDHE8P9fCeiZrCuglOiRBadtmwLbra/KuxgcNJv7kT12TWssVbAJ7mc7QOv2a+GN7b9YS/e2wEc2NJZDqCUy+DSE+aN0syWU8iet+GJ8R32zfPMmOouP6IESo4lOHmYxNUqUPNS4jiAnI3A+52A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FX0U+vNB; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1715116992; c=relaxed/simple;
+	bh=MV44dzFlrz6ods5NuoQwWV90W5Uxc+Kx2sm6OddmSXI=;
+	h=MIME-Version:Message-ID:From:To:Cc:Subject:Content-Type:Date:
+	 In-Reply-To:References; b=tWLcxLzZzxtt5H3R2cUl29u9MKXCiLU4GdcQLrI4jgEX8otVppwerqwKJXRhBCZ++6GN3I9fz8KMvNj6TDbkIyVfxw55W/ixzi+MQPNViW88k8vBEX8iOQM4H8jMBXJ2ADUQJVo6dACgVeL2Tt7QuaTUJeefuHFa6Af0bNQihfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de; spf=pass smtp.mailfrom=public-files.de; dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b=CFnJjjXN; arc=none smtp.client-ip=212.227.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=public-files.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FX0U+vNB"
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-518931f8d23so3551063e87.3
-        for <linux-clk@vger.kernel.org>; Tue, 07 May 2024 14:17:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715116623; x=1715721423; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JmKM6X6SN+uqrqOzykz1rBJY+bzWqLEMd29Ir34tYUg=;
-        b=FX0U+vNBG4DXc5qqtxWmyZH/y9WJbfnHuZpzqcXWDhOO0hiR1AUAUXtJIMuw5kMi4k
-         OXBP0bIQROnv3dfe4f0pEiT2Jhix1ez6U0G7g7e7CG4lnqR10jW7MAwXPAWG3Qriohso
-         tONwAOnvFKVGeA58EjQIGP3AyX7fIGVvkdZ0q+XQpNXSHjuH7Wa7m4ymNNbg66H1/JVe
-         71oH3EFxBazoXaxXP1dATFqlIER5dobOC5JEGZfhOJH2p/dm4Gq7vkpTSJ0/EsNmE4U4
-         Enbsv8FfsypIZ/EsWQ912qevbcFMk0+V5rPiuabDXyiwm5KJfEblWRjnm1y3H6fjX/0U
-         SWOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715116623; x=1715721423;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JmKM6X6SN+uqrqOzykz1rBJY+bzWqLEMd29Ir34tYUg=;
-        b=IqLWtVu8TaRxVeWK6LdX6F0Urqhi3uL5HESCu2TSEPig+Wd5ont2+phjjOL7fxK4Bs
-         vj6bdz7SLt88rGDV+7bymCPcaPA/9L1f/SvNVGT22dT7KugRsOYuBTsGQ9d3vDzqSrxl
-         fe6gN1mAozlRM/BAd2wvUvDBYX0Q9Xgo6y1hdHY1ewQlrtE62pUb0/wLFUi5rauCdwuN
-         VUkO5rjxGCz3dvgvAb+OUYQzrncKQGk7e6lY2fQ8vaMfrxw9FbzHhExspm7GOTu0zCnn
-         6BdtgRuMOqKMLDfEAaBo+QSnkpP8jjEQbmkGPzlvcfayyOot5uPt9Y5H6lmvHitNoskq
-         EwvA==
-X-Forwarded-Encrypted: i=1; AJvYcCXD6kJF87wJQc15TJWp7raXIgOZnJoKCDREVDwLzx1HS4iZE9whPE/X7UstYQPA5d8ch6WtGMH0bOimlQ5CTooIi/SlaJOE3uFS
-X-Gm-Message-State: AOJu0YwMQkfH+2Fnkp8gQ92oyzO2ABZztqv0gr1Wf0n5IgO4LlU1zp+p
-	lAi6Swdcyrtsc4X57fy9CKOHVarafseWbKRT4QkrApM+8yLng3RBG0BJRBx8O8o=
-X-Google-Smtp-Source: AGHT+IGsDXymga87QLgW1PlqoDkL0AzaLEBDCB8pfA6cofTQrcvYSqjGPhXiFyn+uwX/y4y+GSm6mg==
-X-Received: by 2002:a05:6512:4845:b0:51d:162e:bf9e with SMTP id 2adb3069b0e04-5217c46c382mr454259e87.15.1715116622848;
-        Tue, 07 May 2024 14:17:02 -0700 (PDT)
-Received: from [172.30.204.63] (UNUSED.212-182-62-129.lubman.net.pl. [212.182.62.129])
-        by smtp.gmail.com with ESMTPSA id c3-20020ac244a3000000b00515bad4cd0asm2237431lfm.155.2024.05.07.14.17.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 May 2024 14:17:02 -0700 (PDT)
-Message-ID: <aeaa72f6-b227-4b54-9836-0b8f4dba6ffb@linaro.org>
-Date: Tue, 7 May 2024 23:17:01 +0200
+	dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b="CFnJjjXN"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=public-files.de;
+	s=s31663417; t=1715116960; x=1715721760; i=frank-w@public-files.de;
+	bh=MV44dzFlrz6ods5NuoQwWV90W5Uxc+Kx2sm6OddmSXI=;
+	h=X-UI-Sender-Class:MIME-Version:Message-ID:From:To:Cc:Subject:
+	 Content-Type:Date:In-Reply-To:References:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=CFnJjjXN1OZbj+P9i0tccPyHV/6gJ2bfEbpy2bK2MnXd7TO9tgChMit3wKNKE8wU
+	 lC/eNc5YQSEb7g1DEiWuAwbHIp7Mlr57m0XR27J3CnWP6MJLssJPhpiohWTLeFTHa
+	 gtmu6OPlnZlXj4m05U/x9jBgAehaQMxuu+y8SuVrLaVMNm6ittAAJZ5I5NHjEu+EU
+	 57N7cZ+gkandkn9pyO+iM6RN+GoY/o0BbcVRVSQQr0cdJuxkRb7mgSd8D3c8X6Hzr
+	 K/0D9gnoOFtHSetkaYtG3w/mGoQKeahVsd/MHu4Toz8DtJC7ZFSxlcoVqLYbi9C18
+	 oVyFa/kqUepGP/j2Pw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [80.245.78.164] ([80.245.78.164]) by web-mail.gmx.net
+ (3c-app-gmx-bap12.server.lan [172.19.172.82]) (via HTTP); Tue, 7 May 2024
+ 23:22:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: gcc-sm8450: set OPS_PARENT_ENABLE on
- gcc_sdcc2_apps_clk_src
-To: Stephen Boyd <sboyd@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Vinod Koul <vkoul@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-References: <20240427-topic-8450sdc2-v1-1-631cbb59e0e5@linaro.org>
- <2337ba58adb3fb127710bead9b8665a9.sboyd@kernel.org>
- <11bd7146-30cd-4b71-b2ca-d76875763731@linaro.org>
- <6ba2967c6c9d24e3f1c9b76496176010.sboyd@kernel.org>
- <3a3c4279-a254-48d0-91ad-70b7f1e3eb77@linaro.org>
- <7baef7a173dc4d1ecf8b0dafde565b1a.sboyd@kernel.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <7baef7a173dc4d1ecf8b0dafde565b1a.sboyd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Message-ID: <trinity-122794ca-3b8b-4609-b101-9550cb876acf-1715116960896@3c-app-gmx-bap12>
+From: Frank Wunderlich <frank-w@public-files.de>
+To: Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Frank Wunderlich
+ <linux@fw-web.de>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Pavel Machek
+ <pavel@ucw.cz>, Lee Jones <lee@kernel.org>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+ <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Matthias Brugger
+ <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+ <angelogioacchino.delregno@collabora.com>, Eric Woudstra
+ <ericwouds@gmail.com>, Tianling Shen <cnsztl@immortalwrt.org>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-leds@vger.kernel.org,
+ netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+Subject: Aw: Re:  Re: [RFC v1 2/5] dt-bindings: clock: mediatek: add
+ address-cells and size-cells to ethsys
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 7 May 2024 23:22:40 +0200
+Importance: normal
+Sensitivity: Normal
+In-Reply-To: <20240507193557.GA924525-robh@kernel.org>
+References: <20240505164549.65644-1-linux@fw-web.de>
+ <20240505164549.65644-3-linux@fw-web.de>
+ <9f8237c4-f603-459a-9d34-9cda556874b8@linaro.org>
+ <trinity-9ceb52ff-9a3b-4fe2-93f8-2e95b8ffb1ee-1715014303393@3c-app-gmx-bap23>
+ <20240507193557.GA924525-robh@kernel.org>
+X-UI-Message-Type: mail
+X-Priority: 3
+X-Provags-ID: V03:K1:lOjicJStoEZcBNfkrA1QWbzIQ4NNjFPQ8cpzR6gW4QiR+7EJh6RjwdVE3YYefeXOHDnBZ
+ fpXIuCQU1BfhKqVuPUKwrkqaR1DCoavDO4uKE8Rk+YGYyqasvyKwJP/KZ8LewsqXNiVj1h7VtPTy
+ qtM5hBPT8v4jEP3sBXbRwxl7OCVJ/X0GKbY856pCUyBoAtT6U+9hy44RN8xqUKlihW5m+kLDaln4
+ Lc6uQdKWAVV4ACVM0Lr6CVzWC3lIbtUgdJAA0hJTBVv0dwVo1HSwjW7sFX+2xHx2L76UDJw64qtZ
+ V0=
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:ZHnKS6tQk9U=;6uTXHbkwN5EHrut8Rcoawy77HMH
+ 30XsiZh8MTBZKe3CVrFtSIsawDJlNIOWmz7UnJ8FjVYO6NKNdqzmcxUtWLyanlpcp9mvu9x/A
+ 6tIkE0KajZXcjV+YVDIyLOEzODGelQGgNac+TzjM9N+LSqN6EcxPaturfBd3yLWbO/jKZGRyy
+ QM6BFwk1WaPFALHV44r360RApZalAViReb4f7fA46MWjpBIA/2jw1wG4deSIVtScZGxH1txGi
+ Ptdbjv6LG2o5sCAVyUaW2C5Siqq2DqHrpqAh7S7dUQClafoOpU0PgJNKXjzShRADxAbM4dIwa
+ lXVYN9iJGKCS1qKQ9hjO8A01mrWuN3IIey+elFLTdQ0WQgffczN06E9dq5qf5Zkp240dtghLb
+ PTgjiNwfjMbM4RD5Z8yDMYXKnnOc/NToUteUacFM/YTxMvZsKStQdot24rosEpD7qhNmVcKxY
+ qp8gr7YxZZb/ShKKf6zyDSCXj7eS4z2iv76r0Sm74MaGUtRs7V29x6+/5PlEo1fKdX/XTtbi+
+ AnSp61OK1P+bjCkG7N3uXesrLoZcJZxxO9UZ92aSgsKelbEIQRxyGIXKpJ98v3T7fSWmrgQ8l
+ F8ZlTGwFTNQLWfILL3JNcc39RKChROgFqBM4hLGCDdndIGu44PV8QuNyUka7pLsgS/rQAEpqo
+ CtgEGMbbngYW+2jaC63gfLTdJlhLoibq7x+AnKUrGdPmJJiVas+WE8KO/ImSZJM=
+Content-Transfer-Encoding: quoted-printable
 
+Hi
 
+> Gesendet: Dienstag, 07. Mai 2024 um 21:35 Uhr
+> Von: "Rob Herring" <robh@kernel.org>
 
-On 5/7/24 22:28, Stephen Boyd wrote:
-> Quoting Konrad Dybcio (2024-05-07 06:51:04)
->>
->> without PARENT_OPS_ENABLE:
->>
->> [    3.326891] sdhci_msm 8804000.mmc: Got CD GPIO
->> [    3.336839] scsi host0: ufshcd
->> [    3.337105] gcc_sdcc2_apps_clk_src is DISABLED @ set_rate
->> [    3.346339] ------------[ cut here ]------------
->> [    3.351093] gcc_sdcc2_apps_clk_src: rcg didn't update its configuration.
->> [    3.351114] WARNING: CPU: 1 PID: 11 at drivers/clk/qcom/clk-rcg2.c:133 update_config+0xc8/0xd8
->>
->> [...]
->>
->> [    3.610523] gcc_sdcc2_apps_clk_src is ENABLED @ set_rate
->>
->>
->> with PARENT_OPS_ENABLE:
->>
->> [    3.331419] sdhci_msm 8804000.mmc: Got CD GPIO
->> [    3.336569] gcc_sdcc2_apps_clk_src is DISABLED @ set_rate
->> [    3.344795] scsi host0: ufshcd
->> [    3.355122] qcrypto 1dfa000.crypto: Adding to iommu group 5
->> [    3.363567] remoteproc remoteproc0: 2400000.remoteproc is available
->> [    3.364729] gcc_sdcc2_apps_clk_src is ENABLED @ set_rate
->>
->> after testing it both ways, I realized it wasn't supposed to make a
->> difference in this regard, but I suppose I can paste both results anyway..
->>
-> 
-> Can you share your patch that prints the message? What bit are you
-> checking in the hardware to determine if the RCG is enabled? Do you also
-> print the enable count in software?
+> The dts is already fixed dropping these properties in linux-next.
+>
+> If you don't have child nodes with reg/ranges, then you never need
+> #address-cells or #size-cells.
 
-I already reset-ed the tree state, but I added something like
+thx for pointing to this,
 
-if (rcg->cmd_rcgr == the one in the declaration)
-	pr_err("gcc_sdcc2_apps_clk_src is %s\n", clk_is_enabled(hw) ? "ENABLED" : "DISABLED");
+so i only need part 4+5 when 6.10-rc1 is out (as i drop netdev trigger fro=
+m dts in v2).
 
-to drivers/clk/qcom/clk-rcg2.c : __clk_rcg2_set_rate()
+any comments for these?
 
-Konrad
+regards Frank
