@@ -1,153 +1,131 @@
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0471915ECFB
-	for <linux-clk@vger.kernel.org>; Tue,  7 May 2024 13:51:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B7EF15FCF0;
+	Tue,  7 May 2024 14:52:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715089871; cv=none; b=jaMKuYYysLg/PcvAPjwrHqD14JZQZlhfF5J0tIbymLZMc/7kYDzCikgyniYNIp/PVXCu9KP6ra0DyW8DJjJOSiYXknCl3DsEVf3ggESQCx6YslLn0otI+Zx9qIcqKANj4eV8k7+gfb/EjOc65kTEXrsB2VthjA6eZfiH3VV5PF4=
+	t=1715093575; cv=none; b=skNfStd2FyDIoD85YFKGJIb30qVfmzrEGAM8zCUynS6dFqFL2eFvDBrfuo23/fyXiNXon3RY0GEu3psiSD9Mm2gcczC39ABstTlVzpZxDp16VLxUYw7Wqa1hW4HBrJdB735sEiTaLIPq0mA+1jN8NmXUu/P1FOH8rQFz2dYLNGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715089871; c=relaxed/simple;
-	bh=CYOMBbl8ouu83jPSzPzk5sBy7BZZRj9DTxYtalItm/g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CFPj/E+lI+xBfoDD6BAWqBBWddNVVa02YKSpKm8qalNZge3OX+qbr3ATrjjMsjkq2Ezmz8wdOEhhTLihCwAnSD2OERUkMAxwmF10wmS8x+LBnFhnDn25MT/55E0JuyIJ75f+Xf9xVot7/Sqhvm/Klgwr8Qausz8w9jwuNGZLftk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=r0m/XD4n; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1715093575; c=relaxed/simple;
+	bh=MlQMJtQlUuf6lLca3bql80rz2yBaAuTOSQM7x4CO/+E=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:Subject:Cc:To:
+	 References:In-Reply-To; b=YEie/5xLR5KGKMqFhvia7yN02pILKObNf3TAanbAQ/cpROO3pqtMdmW798mTZHZrb8cxQB1Ezp4KjeoG4BDG+5FlTivbBy1YrmeRURaOSSl8rmkik2SdM42GIK9l7EXIyOV6GNzYf0e9wFITSPSRLTXmnSN7mse6dKve7FFDGFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=BWWaekmb; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="r0m/XD4n"
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2e1d6166521so44363281fa.1
-        for <linux-clk@vger.kernel.org>; Tue, 07 May 2024 06:51:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715089868; x=1715694668; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LYgXmNSeZ5uAXbZ42Wd8TdT7DuRGzZ+iejAjgC1sq8M=;
-        b=r0m/XD4nEyxoZxQPUI1mmK+HQkh2v5jkVYTj2t0nfvge7Rkp4Dfg7yiAzV9xdshnH6
-         YAT+K3ulB++nUXZLAdE9pQtDgdd89+fobjtenSLa0RGtXwwqfZ/9VRO/foFxQS/Uot6D
-         WmhApjK/Y5Do/CoRB+4APnlc9KuHT6tk0FRFmwoHZbPifHoXdAvTYX7mS5apG06+DZUE
-         7tL7beyzWa+sRiNEAmie5xJ47VJ1X65lXN6fRlkjwO5QhahJL1rUvn9LouBFZRZgmUD+
-         phmoe5rUG/d+ZxhsB2hRZON+YPZXCFyVIGCZ8xRlyjuVutSGiFakRnkd5Ta42CP/dDvF
-         QbBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715089868; x=1715694668;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LYgXmNSeZ5uAXbZ42Wd8TdT7DuRGzZ+iejAjgC1sq8M=;
-        b=VPuP2tjkIcSgOMccv50bIYB7yGbyCW9heGER3fuhH3ndMoEnbxhQFXg4uq7vtVdb1H
-         qThxAZgzh70i06MylgtHuQQEQR/+7DVChBNeYnA6iL6j4TEljfqtuZZUIcmz5YtM4H51
-         7HmV2gPpwfcFHNfyMNdkCgoPZxLzTDPbnFmk8ZO//e1rS1vv32/gJe/gxRRwAKfp9fjN
-         dKLqYwd3yzxqMoaezftlczvRH5zfCwA+ozqGJXUAwZLGQsFAerwadvfeJ2W9XU3LBQAD
-         u5A1lkO37xfQUgaJqQDNzbfNibZTxaL98LKDfnbWLL7uwAQZqSZmrOYwk8hNDiOJ2qtE
-         pTQA==
-X-Forwarded-Encrypted: i=1; AJvYcCXk8+Qrtu4xH8kPLlbaDerJUt99XfRsh4MH8U2m1xMrKFlJ/u37HzaRPDa9NDX+G87S5lAqKWeaMxz3RsoCy3sQsDaARevRLyKN
-X-Gm-Message-State: AOJu0YxDfn3yXPMEOPiTODX0us+XCFC49KC8MMVidTHcQjrgAkVgd9Sz
-	L50IhGiev3LjLS+TeiWy1qmMmXCkFxIDUHHiMk+FQjPbeY3axkKNrbDcxPxQQKY=
-X-Google-Smtp-Source: AGHT+IE5G66ioLy5Gd2DnM6KVQtr/z1w+ypEcQkiY8UjkEBgG9dAKVeYIY4NAzVBcYXBb0Fh6caMbQ==
-X-Received: by 2002:a2e:84d0:0:b0:2e2:6dd9:dd8a with SMTP id 38308e7fff4ca-2e3d811a8ebmr8385881fa.0.1715089868217;
-        Tue, 07 May 2024 06:51:08 -0700 (PDT)
-Received: from ?IPV6:2a00:f41:c0d:408:fa88:abdb:17c2:cf24? ([2a00:f41:c0d:408:fa88:abdb:17c2:cf24])
-        by smtp.gmail.com with ESMTPSA id e3-20020a2e9e03000000b002d6daf3b41fsm1952160ljk.101.2024.05.07.06.51.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 07 May 2024 06:51:07 -0700 (PDT)
-Message-ID: <3a3c4279-a254-48d0-91ad-70b7f1e3eb77@linaro.org>
-Date: Tue, 7 May 2024 15:51:04 +0200
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="BWWaekmb"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 5D8DBC0002;
+	Tue,  7 May 2024 14:52:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1715093570;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UGenY7YAzUwlgiT73G7TaHalCSUU2X6AFVguS+ovgFw=;
+	b=BWWaekmbWtG3JQ8gcKhy7e0+HcN08YNNci5RJE5FZSeN+mPVBdOtCyww7UraBvBuBvNe4j
+	roYAhUgVdwh+j5vWIebRHxzomUrJwZcQ/rWk189pVSdKnmtnMoUiZQnH9uyhOUzhuFQfNP
+	LMPFRd2atO3kzm+eFRMubYigSEaCuE+BqOnl9Jc3yZtRx9YorACLWdx9KZJcOpAN0cXTK9
+	BpzVO+y3YCNj2AWGaxSiF8EnDdT9NWnes/ppIWSp+tMJw4iBuCmvMs2+q8ESc8VIzGX/61
+	KexeA06fv4ck3ADqNmciQ4qi8pZnbmmPuJ0WYduRP8DP0xw1NhkhKm3qPyDtBQ==
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: gcc-sm8450: set OPS_PARENT_ENABLE on
- gcc_sdcc2_apps_clk_src
-To: Stephen Boyd <sboyd@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Vinod Koul <vkoul@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-References: <20240427-topic-8450sdc2-v1-1-631cbb59e0e5@linaro.org>
- <2337ba58adb3fb127710bead9b8665a9.sboyd@kernel.org>
- <11bd7146-30cd-4b71-b2ca-d76875763731@linaro.org>
- <6ba2967c6c9d24e3f1c9b76496176010.sboyd@kernel.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <6ba2967c6c9d24e3f1c9b76496176010.sboyd@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 07 May 2024 16:52:49 +0200
+Message-Id: <D13HXGJGMS76.XIIIZLZBCZ09@bootlin.com>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: Re: [PATCH v2 00/11] Add Mobileye EyeQ system controller support
+ (clk, reset, pinctrl)
+Cc: <linux-mips@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+ <linux-gpio@vger.kernel.org>, "Vladimir Kondratiev"
+ <vladimir.kondratiev@mobileye.com>, "Gregory CLEMENT"
+ <gregory.clement@bootlin.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
+ <tawfik.bayouk@mobileye.com>
+To: "Stephen Boyd" <sboyd@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>, "Krzysztof Kozlowski"
+ <krzysztof.kozlowski+dt@linaro.org>, "Lee Jones" <lee@kernel.org>, "Linus
+ Walleij" <linus.walleij@linaro.org>, "Michael Turquette"
+ <mturquette@baylibre.com>, "Philipp Zabel" <p.zabel@pengutronix.de>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, "Rob Herring" <robh@kernel.org>,
+ "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>
+X-Mailer: aerc 0.17.0
+References: <20240503-mbly-olb-v2-0-95ce5a1e18fe@bootlin.com>
+ <8dcdb1422cd144128c1dc6fff1c273d3.sboyd@kernel.org>
+In-Reply-To: <8dcdb1422cd144128c1dc6fff1c273d3.sboyd@kernel.org>
+X-GND-Sasl: theo.lebrun@bootlin.com
 
+Hello,
 
+On Sat May 4, 2024 at 4:34 AM CEST, Stephen Boyd wrote:
+> Quoting Th=C3=A9o Lebrun (2024-05-03 07:20:45)
+> > This builds on previous EyeQ5 system-controller revisions[0], supportin=
+g
+> > EyeQ5, EyeQ6L and EyeQ6H. We expose a few OLB system-controller
+> > features here:
+> >  - Clocks: some read-only PLLs derived from main crystal and some
+> >    divider clocks based on PLLs.
+> >  - Resets.
+> >  - Pin controller, only on EyeQ5 (rest will use generic pinctrl-single)=
+.
+> >=20
+> > EyeQ6H is special in that it has seven instances of this
+> > system-controller. Those are spread around and cannot be seen as a
+> > single device, hence are exposed as seven DT nodes and seven
+> > compatibles.
+> >=20
+> > This revision differs from previous in that it exposes all devices as a
+> > single DT node. Driver-wise, a MFD registers multiple cells for each
+> > device. Each driver is still in isolation from one another, each in
+> > their respective subsystem.
+>
+> Why can't you use auxiliary device and driver APIs?
 
-On 4/30/24 23:26, Stephen Boyd wrote:
-> Quoting Konrad Dybcio (2024-04-30 03:46:52)
->> On 30.04.2024 2:21 AM, Stephen Boyd wrote:
->>> Quoting Konrad Dybcio (2024-04-27 05:01:07)
->>>> Similar to how it works on other SoCs, the top frequency of the SDHCI2
->>>> core clock is generated by a separate PLL (peculiar design choice) that
->>>> is not guaranteed to be enabled (why does the clock framework not handle
->>>> this by default?).
->>>>
->>>> Add the CLK_OPS_PARENT_ENABLE flag to make sure we're not muxing the
->>>> RCG input to a dormant source.
->>>
->>> The RCG2 hardware hasn't required the parent to be enabled for clk
->>> operations besides for the glitch-free source switch. What scenario is
->>> happening here that's requiring this flag? Is the RCG forcibly enabled
->>> perhaps because the bootloader has left the root enable bit set
->>> (CMD_ROOT_EN)? Or are we changing the parent while the clk framework
->>> thinks the clk is off when it is actually on?
->>>
->>> TL;DR: This is papering over a bigger bug.
->>
->> Definitely.
->>
->>
->> Take a look at:
->>
->> static const struct freq_tbl ftbl_gcc_sdcc2_apps_clk_src[] = {
->>          F(400000, P_BI_TCXO, 12, 1, 4),
->>          F(25000000, P_GCC_GPLL0_OUT_EVEN, 12, 0, 0),
->>          F(50000000, P_GCC_GPLL0_OUT_EVEN, 6, 0, 0),
->>          F(100000000, P_GCC_GPLL0_OUT_EVEN, 3, 0, 0),
->>          F(202000000, P_GCC_GPLL9_OUT_MAIN, 4, 0, 0),
->>          { }
->> };
->>
->> XO and GPLL0 are more or less always on, but GPLL9 is described to only
->> be used for this specific clock for this specific frequency (perhaps it
->> feeds something else on the soc but that's besides the point).
->>
->> Then, the parent input is changed during set_rate, but GPLL9 seems to
->> never be enabled:
-> 
-> Is the sdcc2 RCG enabled during the set_rate?
+Good question. Reasons I see:
 
-without PARENT_OPS_ENABLE:
+ - I didn't know about auxdev beforehand. I discussed the rework with a
+   few colleagues and none mentioned it either.
 
-[    3.326891] sdhci_msm 8804000.mmc: Got CD GPIO
-[    3.336839] scsi host0: ufshcd
-[    3.337105] gcc_sdcc2_apps_clk_src is DISABLED @ set_rate
-[    3.346339] ------------[ cut here ]------------
-[    3.351093] gcc_sdcc2_apps_clk_src: rcg didn't update its configuration.
-[    3.351114] WARNING: CPU: 1 PID: 11 at drivers/clk/qcom/clk-rcg2.c:133 update_config+0xc8/0xd8
+ - It feels simpler to let each device access iomem resources. From my
+   understanding, an auxdev is supposed to make function calls to its
+   parent without inheriting iomem access. That sounds like it will put
+   the register logic/knowledge inside a single driver, which could or
+   could not be a better option.
 
-[...]
+   Implementing a function like this feels like cheating:
+      int olb_read(struct device *dev, u32 offset, u32 *val);
 
-[    3.610523] gcc_sdcc2_apps_clk_src is ENABLED @ set_rate
+   With an MFD, we hand over a part of the iomem resource to each child
+   and they deal with it however they like.
 
+ - Syscon is what I picked to share parts of OLB to other devices that
+   need it. Currently that is only for I2C speed mode but other devices
+   have wrapping-related registers. MFD and syscon are deeply connected
+   so an MFD felt natural.
 
-with PARENT_OPS_ENABLE:
+ - That would require picking one device that is platform driver, the
+   rest being all aux devices. Clock driver appears to be the one, same
+   as two existing mpfs and starfive-jh7110 that use auxdev for clk and
+   reset.
 
-[    3.331419] sdhci_msm 8804000.mmc: Got CD GPIO
-[    3.336569] gcc_sdcc2_apps_clk_src is DISABLED @ set_rate
-[    3.344795] scsi host0: ufshcd
-[    3.355122] qcrypto 1dfa000.crypto: Adding to iommu group 5
-[    3.363567] remoteproc remoteproc0: 2400000.remoteproc is available
-[    3.364729] gcc_sdcc2_apps_clk_src is ENABLED @ set_rate
+Main reason I see for picking auxdev is that it forces devices to
+interact with a defined internal API. That can lead to nicer
+abstractions rather than inheriting resources as is being done in MFD.
 
-after testing it both ways, I realized it wasn't supposed to make a
-difference in this regard, but I suppose I can paste both results anyway..
+Are there other reasons?
 
-Konrad
+Thanks,
+
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
