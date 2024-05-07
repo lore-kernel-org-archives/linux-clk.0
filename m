@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 164E6B642;
-	Tue,  7 May 2024 16:51:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB1917BA1;
+	Tue,  7 May 2024 16:52:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715100717; cv=none; b=opZQPmcWYNeWJjek3/SbgudLPJgU4z4atkEWyRLHWuSiB7tkI1JRP2ztzx47E+nb/EUyItWt9MidnUNbdt0Dg0KAYWCzwRYpEJCDFYCqkI6daPw0fegSTORCmZyXsgIIwmt0zcvI+ZNoCJRvPIxJZTM+0dZlmHOYF7U1jWW/8iI=
+	t=1715100749; cv=none; b=e24ROZ/8HJA1UbfuJ7oeiUy4Q/tcCGl0zssQ7TiPfVjxhugfRDYGVKwuKnrxl4o4KTjIe81Vyk16Z6y7C0re5F5pM1PN4xwfvkmCcgDY98EjNVVXJPm7jepb9B/Uh9wfbmZNcJHdIgIoeLGSuuAiux5E+kitrXB5L81gdirvVZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715100717; c=relaxed/simple;
-	bh=/Bkd2IwTGaLgZju05dzWdon64EKKSvHjfKDMLbB1/9o=;
+	s=arc-20240116; t=1715100749; c=relaxed/simple;
+	bh=EBegyrKIs9IsYSSriyOSaPz8FbhxduoJLnhVxNryoTk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qtlox+z1oTMXExOH1sFe6rkTsS/55khRyMebjZv3RXK1D5+1d5EOZcpde9M/jV0Tnb8/7stqTGb8KAXjhOXi9FFX7SxiCpOOpdbcS/A85ClQBcAdA3eKCfg6SkCC2qGZoq0fWbTwKTrLVleHu1g4412i+Byd4ZMcNiGp0Y59Nqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jVT4gjEb; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=UCiGtFutRZnSAqjINyQaGwrvfj1CzSIb75g4+cnQ7AjTLwsDk65cALCClFODD70ghQ/Rfzy1dRvOii5OdLhXaVdvXPxN+Y7OegKQBfFIIvixkygXSqBs7vsk/wplT6MXgxwUfqPaeQ8z7oNpp1+cOvcocuzWhLV3hsOwoxq0XqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XO7XZgIz; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jVT4gjEb"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7700C4AF63;
-	Tue,  7 May 2024 16:51:52 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XO7XZgIz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55EF0C2BBFC;
+	Tue,  7 May 2024 16:52:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715100716;
-	bh=/Bkd2IwTGaLgZju05dzWdon64EKKSvHjfKDMLbB1/9o=;
+	s=k20201202; t=1715100749;
+	bh=EBegyrKIs9IsYSSriyOSaPz8FbhxduoJLnhVxNryoTk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jVT4gjEb4Ki4lwgfVfMSSKV0FIB3ScF4nul0QK+99jzj5PVrZ3AtEeNPhY4pFU5Fz
-	 uoHE+fuhAU8AyEq0THAcQX62DyEiiih3bCSIgsxvRFyfmIQfPoJwjvCFN7nzin0gjr
-	 IIe3enl8vX1GyZb3/34PtMv2iV9FF1VIijBprcDnVIrdUbZAR7dfzOqvjbd+H1vvyP
-	 filpHMehhCOwzz65GnbEu7rM7EM7nq73GBrl2dEJ5ova65j3SaeVx/b8PUhDDV2EH9
-	 mtPcdnsVdHUnkTo4iGbgL+UokMvKKBFfM5EQTHkdBOKvjc0vaJLSE+xxMEq1yLLlTs
-	 Mzi9nuysRBvBQ==
-Date: Tue, 7 May 2024 17:51:50 +0100
+	b=XO7XZgIzvemyxCi2RURGMKL6uGpqeJtc/aJvHHs2u9K20CkJcikHjNrg/ok2fO8Le
+	 8aVtSyMBrnRfjPxx7X3xsZr+EITGhnVcZbF+xUmpnRfGOEEcNvE/ucs2WDEElZ7VSL
+	 2k8XXthmphV5XhVO/hY9P9GGrwU/sT/Os0219QiCGySo7Dmn8nt17SKNRyvedI8ilt
+	 0I+r/gXx8mDSfO0u0DnLdXlluPJHmGQh/5M82UaiPX0Og6fneW3kz2ZqUBYAeQwYGE
+	 Cpbvu+H9cjjlv4sSOwZhYJEBvBOGQgsiik/YSOHYGD65Sl7HUfi/UoRDp4u6gPyyL7
+	 mF9IpH/v2OE/g==
+Date: Tue, 7 May 2024 17:52:23 +0100
 From: Conor Dooley <conor@kernel.org>
 To: Alex Bee <knaerzche@gmail.com>
 Cc: Sandy Huang <hjc@rock-chips.com>,
@@ -44,10 +44,11 @@ Cc: Sandy Huang <hjc@rock-chips.com>,
 	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 2/7] dt-bindings: clock: rk3128: Add PCLK_MIPIPHY
-Message-ID: <20240507-cardiac-obsessed-89f3b0894bec@spud>
+Subject: Re: [PATCH 1/7] dt-bindings: display: rockchip,dw-mipi-dsi: Document
+ RK3128 DSI
+Message-ID: <20240507-buddhism-revivable-3cb51e6dbe96@spud>
 References: <20240506194343.282119-1-knaerzche@gmail.com>
- <20240506194343.282119-3-knaerzche@gmail.com>
+ <20240506194343.282119-2-knaerzche@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -55,33 +56,37 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="MJDZAnqOutdsOh4Y"
+	protocol="application/pgp-signature"; boundary="ggiKIBO6YyUKyAXI"
 Content-Disposition: inline
-In-Reply-To: <20240506194343.282119-3-knaerzche@gmail.com>
+In-Reply-To: <20240506194343.282119-2-knaerzche@gmail.com>
 
 
---MJDZAnqOutdsOh4Y
+--ggiKIBO6YyUKyAXI
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, May 06, 2024 at 09:43:37PM +0200, Alex Bee wrote:
-> The DPHY's APB clock is required to be exposed in order to be able to
-> enable it and access the phy's registers.
+On Mon, May 06, 2024 at 09:43:36PM +0200, Alex Bee wrote:
+> Document the MIPI DSI controller for Rockchip RK3128. The integration is
+> similar to PX30 so it's bindings-constraints can be re-used.
 >=20
 > Signed-off-by: Alex Bee <knaerzche@gmail.com>
 
 Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
---MJDZAnqOutdsOh4Y
+Cheers,
+Conor.
+
+
+--ggiKIBO6YyUKyAXI
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZjpcJgAKCRB4tDGHoIJi
-0s4UAQDtrMr/zcll7XLRlmogcgoAfSJQZq1AEQQeJxIADgIQwwEA+aBSIaagtafp
-+CaYRxpIvw/qSd+oMTrkzEpnz5opSg8=
-=o2x0
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZjpcRwAKCRB4tDGHoIJi
+0lM7AQCvbplIJz/h1RX6+gLccUZy7DZiRifU7S/pEFYX0WnQqwD7BNLAxWiT95Tt
+FkeFbO2gnRBBmZX4oS2RXJeiz1OEtgo=
+=r4ma
 -----END PGP SIGNATURE-----
 
---MJDZAnqOutdsOh4Y--
+--ggiKIBO6YyUKyAXI--
