@@ -1,54 +1,51 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4486115F3E6;
-	Tue,  7 May 2024 19:37:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC943187320;
+	Tue,  7 May 2024 20:16:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715110634; cv=none; b=bIelwTtK+hh/A7VMkEIqPNj7m1xlBFkJ8RR2sG8MhzxPrhu78LwmNCrza7/WL9bvezMRoArkarvIezeGPAC3BGX6q/IjKv5Vj6ABlzmsfOwfX7hLSrcT5yxqKWFNKrDSsU1T4XW0v3/Viz2BAEYtOWgZwawLS6qhHSLfOld38+0=
+	t=1715113011; cv=none; b=B+MEvJGG7kQIZghqXkkaWPWaJqiqnCuPVmIX27AeHnVpx0/AEY/FX7SL7IbRkPL5VydraUkXB2HS4vn6Qp47K7v1Gso8ZMUIX0ieFp0+N6UUAOWg7nJ8W2N+3nlWZ5nrAlVhzaMq80PiyuOHurAJuRKFtor8hsp0i12nMAfbQnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715110634; c=relaxed/simple;
-	bh=yHasmc7IXw0fuXXWeaKDZcjOs9eO4PtyDEOjKl8QIqE=;
+	s=arc-20240116; t=1715113011; c=relaxed/simple;
+	bh=cGaAkkEOXpEMKaanh5pAkmdxFKN5fg25gZkTzU10KXQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AN9/lN1sYpH/fYoxtim7X+bAI9QEAJ/IhXwPCC7hX5+0562u9abA6Mi8jVuJH8BroYp1UBtU9FNsvFRo5zh9CZjJCWtN2iDr27dtr+OHYIC4Dbpdxd3A37m3FFLQkjalI7swQ6/pJ6pwniy/BDyRBuqqcyWq8YBtMOA+nObN5AE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HuMAi3Uo; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=UHSlECtaKtj1cAkmpxHw0aMe5saAmJ1lj2ssWdmYQUpv5pt7TqEezsc2NBCOwXnM4z5d+D6jICOWpp7x9HxtefH2JlavWrDw1rtfdevU1wbg/OZo/L2shVrzOQiIgcbSLvSrXn/yretLgqmy3qyfaSG310fWnJNw08x22yU2lW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DzCd5kht; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HuMAi3Uo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98449C2BBFC;
-	Tue,  7 May 2024 19:37:13 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DzCd5kht"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4CBFAC2BBFC;
+	Tue,  7 May 2024 20:16:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715110633;
-	bh=yHasmc7IXw0fuXXWeaKDZcjOs9eO4PtyDEOjKl8QIqE=;
+	s=k20201202; t=1715113010;
+	bh=cGaAkkEOXpEMKaanh5pAkmdxFKN5fg25gZkTzU10KXQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HuMAi3Uo+48/zh7gwr6CF6sqB/AfQOyO29HbMEul4VDj+mQ7Cmo6jXTxix6coyh1i
-	 nLF1WL9TejJJAdr9tSIihlfXLYdae8f7or4pYSmnGCl7B30sQ5va/ZrAM/mGUvrzh+
-	 hVqgpj9vD86UYT85h9gB+9Qe6cnqHCunIIxxTNmzPH+lxCQsu9d1U1Izvs5OpZ8WDh
-	 5g+8QxxeBRBav46kWSBcptZJjbf3yw96B6LnZTyL0f0/Tbsh4HXD7XHH8QVq2MT62Q
-	 13S9SECt+eUSvdrfkUQHnch/t81uunAUy8i1JON93HEtJVlKWpCfyt2s138SOKa8Up
-	 eaxAfVokPa3uw==
-Date: Tue, 7 May 2024 14:37:11 -0500
-From: Rob Herring <robh@kernel.org>
-To: Frank Wunderlich <linux@fw-web.de>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
+	b=DzCd5kht5CJIc7xsbUMaE6HsmKbfChDDD1LJUcuBiK3Dl+rVaoYyxpGs8hZzE07Yj
+	 dLBXaoXx5Gq1PZ1KzqqDoCBnjNZqGc1D0LxU2t1Ee4zW9Jjo/Nz0eDs1o6kUO97Jmb
+	 tOKXF8acwihZSthw04n2tVCjY0niFo7R9e4iGQPMZ7E3t8eO7cvxtWEun7stK1KL+g
+	 vTcwg8eo5P1+Q1n9ZqDiAGZBToF3iZcbcnSfteaF8owH+28/SHfw9XMxBeyxP4Axkj
+	 Pjfzu9DUdhXHttJ2YMfT2jtHBGhR3FPHvkjWKeZqiKhVtUk5m2CxRQYV0AO/SPVbsU
+	 SYq7FfQx6p1wg==
+Date: Tue, 7 May 2024 15:16:48 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Drew Fustini <dfustini@tenstorrent.com>
+Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
+	Jisheng Zhang <jszhang@kernel.org>, linux-kernel@vger.kernel.org,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-	Lee Jones <lee@kernel.org>, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Frank Wunderlich <frank-w@public-files.de>,
-	Eric Woudstra <ericwouds@gmail.com>,
-	Tianling Shen <cnsztl@immortalwrt.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-leds@vger.kernel.org, netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [RFC v1 3/5] dt-bindings: net: mediatek,net: add reset-cells
-Message-ID: <20240507193711.GA933697-robh@kernel.org>
-References: <20240505164549.65644-1-linux@fw-web.de>
- <20240505164549.65644-4-linux@fw-web.de>
+	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Yangtao Li <frank.li@vivo.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+	devicetree@vger.kernel.org, Guo Ren <guoren@kernel.org>,
+	Albert Ou <aou@eecs.berkeley.edu>, Fu Wei <wefu@redhat.com>,
+	Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>
+Subject: Re: [PATCH RFC v3 2/7] dt-bindings: clock: Document T-Head TH1520
+ AP_SUBSYS controller
+Message-ID: <171511300571.994683.10040593951113632886.robh@kernel.org>
+References: <20240506-th1520-clk-v3-0-085a18a23a7f@tenstorrent.com>
+ <20240506-th1520-clk-v3-2-085a18a23a7f@tenstorrent.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -57,29 +54,22 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240505164549.65644-4-linux@fw-web.de>
+In-Reply-To: <20240506-th1520-clk-v3-2-085a18a23a7f@tenstorrent.com>
 
-On Sun, May 05, 2024 at 06:45:47PM +0200, Frank Wunderlich wrote:
-> From: Frank Wunderlich <frank-w@public-files.de>
+
+On Mon, 06 May 2024 21:55:15 -0700, Drew Fustini wrote:
+> Document bindings for the T-Head TH1520 AP sub-system clock controller.
 > 
-> Add missing binding for property used in mt7986a.dtsi.
-> 
-> Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+> Link: https://openbeagle.org/beaglev-ahead/beaglev-ahead/-/blob/main/docs/TH1520%20System%20User%20Manual.pdf
+> Co-developed-by: Yangtao Li <frank.li@vivo.com>
+> Signed-off-by: Yangtao Li <frank.li@vivo.com>
+> Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
 > ---
->  Documentation/devicetree/bindings/net/mediatek,net.yaml | 3 +++
->  1 file changed, 3 insertions(+)
+>  .../bindings/clock/thead,th1520-clk-ap.yaml        | 64 +++++++++++++++
+>  MAINTAINERS                                        |  2 +
+>  include/dt-bindings/clock/thead,th1520-clk-ap.h    | 96 ++++++++++++++++++++++
+>  3 files changed, 162 insertions(+)
 > 
-> diff --git a/Documentation/devicetree/bindings/net/mediatek,net.yaml b/Documentation/devicetree/bindings/net/mediatek,net.yaml
-> index e74502a0afe8..5214927c0fe8 100644
-> --- a/Documentation/devicetree/bindings/net/mediatek,net.yaml
-> +++ b/Documentation/devicetree/bindings/net/mediatek,net.yaml
-> @@ -101,6 +101,9 @@ properties:
->    "#address-cells":
->      const: 1
->  
-> +  "#reset-cells":
-> +    const: 1
 
-Also fixed already.
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-Rob
