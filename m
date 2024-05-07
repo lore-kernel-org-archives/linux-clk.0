@@ -1,73 +1,94 @@
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 476345B1E0;
-	Tue,  7 May 2024 09:34:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BA0414EC6F
+	for <linux-clk@vger.kernel.org>; Tue,  7 May 2024 09:43:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715074490; cv=none; b=F75cbIW8OD/CRvYw+6dM84BCdOQMakwZcUUf/BxhCqUL2Z4dd6qLKfgpMYrff3bUnImd8ha+wX+TXX2xbXBCpTokGqhknj48OySLQ7SdXrBbWfIBngQPYYaawt8AAuZxAxdq8cN35dIjDKw6Uj9ElgmXu3Q7pDR/AELq4oxE79s=
+	t=1715075024; cv=none; b=G2NFqyQucyh65ccgTvVkpeU9WEpZDg1HnYDWMPGKH+/M80N86wHdDKt1u9qrrQWJehYfQMNUbs/8W+nXnujzZ/kLmiGhErDLlGGC1RaGtvttbFJXKAsGUwTl1kImFA7sU8LZS9YM0T69OyMB3oPSjBULAh+e6ry5vDyE24F0Xuc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715074490; c=relaxed/simple;
-	bh=ohWuVrllZ49t4dkKQwrO5nd7MUNrk39VX+83CHV8kf4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kvskUdRX+RmvHNDeTrKyi8UtdaF7Gkkng3DV+krEUlJ7b05uswW605uGDz9hybnr0eppkadHvaLUlL62aoTPv4ffAJ0D5JukwZiDgtm6AGCjo1Kohug+2O/c5K12fHEdHA1V7Lz/wx8xEiZ2l/T1Wl7dz+zL7kwiXMleEdmEFR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=PziktTF1; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+	s=arc-20240116; t=1715075024; c=relaxed/simple;
+	bh=TIxu5CXQag5vSF552a9NObD/7GpXLUkpUNqx8KK1M5w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=T9PqIOKBd65Wh+B5J9K21ozs4RtvtTQNR2grR2v4RzcYjfWR4GC3eowLtcLFlyDC91E4B7C+YfUDbvS/G5ckgsZ0FTcF1qNN4zayrklMvVLvmEvXiurmv7sUEvCApe3fDlxQbJiFZPLbiIFa20lfiqhxhhGqrkO3rXqp9zTEOg0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fbJ6et/U; arc=none smtp.client-ip=209.85.161.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="PziktTF1"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=uarDHQ+a07tcRKI28LofQYYCslRlvc1XjILv15IA6C8=; b=PziktTF17Jc8u09/HMPR5DU/yy
-	zsrmYUqA5oWzK7ZXjFEDfMSDi9mTS9r/VZuTc/Nmg6YvkyLNcaPCsO7RToY6boQVSm0Zr5665Op5d
-	xQIGFlpmsEmgs4Vjo70G32RTwxNTDY7rQAznZ76/NlJOd7Jo09ese7Py2HSAEP3SYJxfnE5sQqSyw
-	1ENVU4Tv8sD0poPrbuBmD3yZmb/8UrWg0UMmHhuuAcOwX1dS8wa57sY4Jn5qZWMZDS8NrDiL5OP7T
-	UfIRvmHYa8ILi911uHTFxX/uK3gcoqHaVb6eM+R1FcOZy42XV+llzS856N2PY6T/DBgNvlQ0dQmjw
-	CCFuvLaA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:46068)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1s4HDe-0003VG-1C;
-	Tue, 07 May 2024 10:34:42 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1s4HDe-0000Da-Sh; Tue, 07 May 2024 10:34:42 +0100
-Date: Tue, 7 May 2024 10:34:42 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH] clkdev: fix potential NULL pointer dereference
-Message-ID: <Zjn1spDSBOkUD+qh@shell.armlinux.org.uk>
-References: <CGME20240507064445eucas1p1bfc17da4f824ef46567774634482f12f@eucas1p1.samsung.com>
- <20240507064434.3213933-1-m.szyprowski@samsung.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fbJ6et/U"
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-5b2089a8154so941800eaf.0
+        for <linux-clk@vger.kernel.org>; Tue, 07 May 2024 02:43:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715075021; x=1715679821; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=WAXawuu5D8QQ2TYYAPKkUCb+rSNneu0ioxRT40xBXrI=;
+        b=fbJ6et/U+wc6TnrYH7HV/d2oc2jKp9K1xcbdpOypt0bcip/CRScFoVuuX98CInMHkO
+         uitpafeR9ZD0a/+b2jzpe6l/TchfI8hMGwEFib8s/K2NrFUwSsahE303GgB/Spe8gAIO
+         /Q87IgDf4Wjtt9ubfcFAXszSvzr6tmY2EW6lvBPopEIOcUDRbnddx8J46+UdkzbxvUql
+         DEGmxTIHL65yzLj6/44xW9ukc7lLnu/t+dzAemfTrXufxOa2IsAA3FNDRGTJlZQDF4yJ
+         Xn+7dyWjgOIspa7E5FOEKyTq+e2M4XqlitrTJ35q7QjqnoQ8xqjB+WKcbpPZfgabozKH
+         tEbw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715075021; x=1715679821;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WAXawuu5D8QQ2TYYAPKkUCb+rSNneu0ioxRT40xBXrI=;
+        b=adZMBLSmkmsV5W5wQ7y1gAe134Yc3VADXRVY+SR4MZFH3X5CS535Nh2Kf54iK+zDx6
+         WRBmrp8p7ZIy3L5DLWKgZCcfBYbXJ1uO1n/1M7KtvPlytI0Tzs5+LAwd5KD/jFX6lntC
+         Joytt7uV2qIBnx5kuppE12TQR3t9IlmECzV6MaxzQdqLvwFP9hmyuaxoSUmjAKsS1Oae
+         rhz9RbtuK0su0mNVBM356ziGpCPjeHLBzwfz8P2kuOpbQoy+QJ+mxbc0fcO92W4ERtI+
+         BjxCOYhjcwM7EVJ9Jw1fO2Yp8IQOxkCdp4DCzjQ9u+bu+5+t/QSDsO0IyFYA34oR5Bnw
+         C7gw==
+X-Forwarded-Encrypted: i=1; AJvYcCW2JKb1As0JYbpmQ2i4LoKLjX2fnp9uvtXgu08wlhBipGKazS4FG4U6hd+G92ATXQcPolS+YDRYaiGoo4isgKIMUXQZvQSpsC0E
+X-Gm-Message-State: AOJu0YxehVv+MfYtfQ2soBEjktaIMwr6GKHg3JtPHy6yNd0Qha27wZDr
+	zKMCpPxiofUVnrSQNXEtsQ44+Jht3lnfQZkzwKkw06IgPoTO0ltfUHEZBlboUn5HMYDOCWzroy5
+	f1DTteF5s8zxes2KvyE/Bft5IJ8pDVVLZPjq6Ug==
+X-Google-Smtp-Source: AGHT+IEP48wfgx6CdP8hMqXLTcM/sINVEeKxbBEY+Ym2IiGsz9vT7W4IRWdx50FNfNNMTo400zHDOCxwnh6BJm9rM78=
+X-Received: by 2002:a4a:5ac1:0:b0:5b1:b8a4:bce4 with SMTP id
+ v184-20020a4a5ac1000000b005b1b8a4bce4mr11914180ooa.8.1715075021361; Tue, 07
+ May 2024 02:43:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240507064434.3213933-1-m.szyprowski@samsung.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+References: <20240507055948.34554-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20240507055948.34554-1-krzysztof.kozlowski@linaro.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Tue, 7 May 2024 10:43:30 +0100
+Message-ID: <CADrjBPqp2ZaB0_J-rAZ2+A7BMHjW3o+rYSqMFgpdcbLausqL3g@mail.gmail.com>
+Subject: Re: [PATCH] clk: samsung: gs101: drop unused HSI2 clock parent data
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	=?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, May 07, 2024 at 08:44:34AM +0200, Marek Szyprowski wrote:
-> dev_fmt argument is optional, so avoid dereferencing it unconditionally.
-> 
-> Fixes: 4d11c62ca8d7 ("clkdev: report over-sized strings when creating clkdev entries")
-> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Hi Krzysztof,
 
-Please put this in the patch system so it can be merged along with the
-change that created the problem. Thanks.
+On Tue, 7 May 2024 at 06:59, Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> Drop static const arrays with HSI2 clocks parent data which are not
+> referenced by any clock.  This might cause -Werror=unused-const-variable
+> warnings.
+>
+> Reported-by: Stephen Boyd <sboyd@kernel.org>
+> Closes: https://lore.kernel.org/all/8bf65df598680f0785c3d6db70acfb9a.sboyd@kernel.org/
+> Fixes: 093c290084a4 ("clk: samsung: gs101: add support for cmu_hsi2")
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Thanks for the fix! These are actually the cmu_top parents and
+shouldn't be defined here. They already have their own definitions in
+the cmu_top section.
+
+Reviewed-by:  Peter Griffin <peter.griffin@linaro.org>
+
+Peter
