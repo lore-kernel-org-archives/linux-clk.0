@@ -1,44 +1,44 @@
 Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9CDE126F05;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9CA4126F04;
 	Wed,  8 May 2024 14:43:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715179416; cv=none; b=RaYkQMQqKtJRbup4F+OxM4tsREq1y1biIVFNkO9ormhS1C/qz3dJaOCQl/Wxi1Ee1IbCELDIjvR4CaX3KPhaxNlKjRjm8pOoACm3kiqJhVR8SsDHW8/mUdceqnQYOWMl7ch+bPDhGYQztRTY9yALDDB2y1T7KgnbkE70v+9+Zkk=
+	t=1715179418; cv=none; b=su9h3t6nquw/wRqOzL1qBZh4ZFBOEFf9G718y2vnYJXVbebI6y4OUQbCR4y8loaq9ndt40CifniVAsFtkJnVB4R+aZaTDzs+TtOYkb/xSufkKYL3dwjXOHq7pqZrVf8UoP6rLzoNxpOWMhSt8Uop3ihroOgqGCKh5MF9MFYpIzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715179416; c=relaxed/simple;
-	bh=sdVj+zO8H4B/fvjouDoi7Nhc5dIxJ2GTTWp+LPjaQAA=;
+	s=arc-20240116; t=1715179418; c=relaxed/simple;
+	bh=/pNaP8r6O2rjSOvzUu0ZGpBl9BRmepDAtoRZE0MNbQI=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=CpcbX3sYbS4nuQkakOwopgDY18mreEjTq8Z7B9zGrSywovUPD5K40j1QVqDtgbrbplbG+gRgHkUhqbCyGiEm9xrXDzy74MPBy4ue6kqprRFxhl0eNHTsAUWLA8vbzotEJ0fOUKrRI6lBdHYBTDK4GURuwAQdkZul8QsIhO9mkfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=n4v9oMXI; arc=none smtp.client-ip=37.18.73.165
+	 MIME-Version:Content-Type; b=oPYP1WwaF7KCKHeSPYyMrpujvwJZ9IZS08Kg8ZwJq7D6HTm0CX5L0AxT/wJBZE0kanEiQGhkbeysW8sLErAsLI5YsgAV3AI8KVffA4N/BXjiTOYFqFWAdExbIrHRjd+V11HD0agrGtzqcsqu580u+gRJujrYpFhy8qYSRyJBImk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=TCjirRsj; arc=none smtp.client-ip=37.18.73.165
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sberdevices.ru
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="n4v9oMXI"
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="TCjirRsj"
 Received: from p-infra-ksmg-sc-msk01 (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 14952100003;
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 9A259100009;
 	Wed,  8 May 2024 17:43:31 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 14952100003
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 9A259100009
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
 	s=mail; t=1715179411;
-	bh=93FmlCSWH+YO/nmTOmSVLAybLAxTDRjCOeQkxoXUEKA=;
+	bh=/t4T1Gn29xONtCijQdxW+FDrT/VMYNoKocb3bZHcjMw=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=n4v9oMXI2cws0zW/bqF3Ci9N4/SH+JI1DfZeQfKJS82ftPNthf4fjNmgswCrACF7U
-	 toRMtV5pcfqNWBSro4FwL0o0Q4eKhSnxSwdphLR9H5VftPJCmsxm0GIVjcYF0NdKeo
-	 zgD5Lvxl4nXWlEg6K0qKtrBonq+eR33uaxo2ZOxDf3C5dxuCDYZVTcZovUb82965Ab
-	 yJnSSmgFJ8EK+Vq8C5vQIAnvACJkqZGEhVPBNL7VdnXbImvS6vRG+C/QOIWTpnp7St
-	 bGIpEaUakxHLAv8gh1t+TJRjWr+sxuMTdimzfcfj1sJK80iyLdHWYIemCCV5j2UUb1
-	 ZkgyHkrVV3/rA==
+	b=TCjirRsj402OcLnAi9D1jkkL7ixsg3iEaMa0Dko1BqB6GsRsE8prLuxj5hmOIpm9K
+	 b37rp6j/18RJ3Yg6hMb0goZZ5zZWUCPTYil6PtsRMjeKNHslRhfOM4pg/Jo6Ad67Zi
+	 pRDEkGB9cZYwgLGiXR+9Ed/A5tXUSSZBLwJy20IyV7n/fSUYiCzkVVXTUFm3P3/TRg
+	 PcRGLt55tCKeAVATk8eDL9BfjVT/PfwuVCm9ieYQk/ZOKibAVrE4TCbDNX7ATCcVNH
+	 cL95iobbS+qv1lfC8GZA9EGc6acOP/J5+HQFC9nZqssqkmFh0six+fV6eFyhyXnT8s
+	 wtBs93V/REw4A==
 Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
 	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Wed,  8 May 2024 17:43:30 +0300 (MSK)
+	Wed,  8 May 2024 17:43:31 +0300 (MSK)
 Received: from CAB-WSD-0003115.sberdevices.ru (100.64.160.123) by
  p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Wed, 8 May 2024 17:43:30 +0300
+ 15.2.1118.40; Wed, 8 May 2024 17:43:31 +0300
 From: Jan Dakinevich <jan.dakinevich@salutedevices.com>
 To: Jan Dakinevich <jan.dakinevich@salutedevices.com>, Conor Dooley
 	<conor+dt@kernel.org>, <devicetree@vger.kernel.org>, Jerome Brunet
@@ -49,9 +49,9 @@ To: Jan Dakinevich <jan.dakinevich@salutedevices.com>, Conor Dooley
  Blumenstingl <martin.blumenstingl@googlemail.com>, Michael Turquette
 	<mturquette@baylibre.com>, Neil Armstrong <neil.armstrong@linaro.org>, Rob
  Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>
-Subject: [APPROACH 1 1/1] dt-bindings: clock: meson: Convert axg-audio-clkc to YAML format
-Date: Wed, 8 May 2024 17:42:57 +0300
-Message-ID: <20240508144259.191843-2-jan.dakinevich@salutedevices.com>
+Subject: [APPROACH 2 2/2] dt-bindings: clock: meson: Convert axg-audio-clkc to YAML format
+Date: Wed, 8 May 2024 17:42:59 +0300
+Message-ID: <20240508144259.191843-4-jan.dakinevich@salutedevices.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20240508144259.191843-1-jan.dakinevich@salutedevices.com>
 References: <20240508144259.191843-1-jan.dakinevich@salutedevices.com>
@@ -82,16 +82,14 @@ X-KSMG-LinksScanning: Clean, bases: 2024/05/08 13:27:00
 X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/05/08 09:52:00 #25122865
 X-KSMG-AntiVirus-Status: Clean, skipped
 
-From: Alexander Stein <alexander.stein@mailbox.org>
-
 Convert Amlogic AXG Audio Clock Controller binding to yaml.
 
 Signed-off-by: Alexander Stein <alexander.stein@mailbox.org>
 Signed-off-by: Jan Dakinevich <jan.dakinevich@salutedevices.com>
 ---
- .../bindings/clock/amlogic,axg-audio-clkc.txt |  59 ---------
- .../clock/amlogic,axg-audio-clkc.yaml         | 115 ++++++++++++++++++
- 2 files changed, 115 insertions(+), 59 deletions(-)
+ .../bindings/clock/amlogic,axg-audio-clkc.txt |  59 ------
+ .../clock/amlogic,axg-audio-clkc.yaml         | 181 ++++++++++++++++++
+ 2 files changed, 181 insertions(+), 59 deletions(-)
  delete mode 100644 Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.txt
  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
 
@@ -162,10 +160,10 @@ index 3a8948c04bc9..000000000000
 -};
 diff --git a/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
 new file mode 100644
-index 000000000000..b683896e950a
+index 000000000000..9704bb78fca2
 --- /dev/null
 +++ b/Documentation/devicetree/bindings/clock/amlogic,axg-audio-clkc.yaml
-@@ -0,0 +1,115 @@
+@@ -0,0 +1,181 @@
 +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
 +%YAML 1.2
 +---
@@ -200,24 +198,68 @@ index 000000000000..b683896e950a
 +    maxItems: 1
 +
 +  clocks:
-+    maxItems: 28
 +    items:
 +      - description: main peripheral bus clock
-+    additionalItems:
-+      oneOf:
-+        - description: mst_in[0-7] - input plls to generate clock signals
-+        - description: slv_sclk[0-9] - slave bit clocks provided by external components
-+        - description: slv_lrclk[0-9]- slave sample clocks provided by external components
++      - description: input plls to generate clock signals N0
++      - description: input plls to generate clock signals N1
++      - description: input plls to generate clock signals N2
++      - description: input plls to generate clock signals N3
++      - description: input plls to generate clock signals N4
++      - description: input plls to generate clock signals N5
++      - description: input plls to generate clock signals N6
++      - description: input plls to generate clock signals N7
++      - description: slave bit clock N0 provided by external components
++      - description: slave bit clock N1 provided by external components
++      - description: slave bit clock N2 provided by external components
++      - description: slave bit clock N3 provided by external components
++      - description: slave bit clock N4 provided by external components
++      - description: slave bit clock N5 provided by external components
++      - description: slave bit clock N6 provided by external components
++      - description: slave bit clock N7 provided by external components
++      - description: slave bit clock N8 provided by external components
++      - description: slave bit clock N9 provided by external components
++      - description: slave sample clock N0 provided by external components
++      - description: slave sample clock N1 provided by external components
++      - description: slave sample clock N2 provided by external components
++      - description: slave sample clock N3 provided by external components
++      - description: slave sample clock N4 provided by external components
++      - description: slave sample clock N5 provided by external components
++      - description: slave sample clock N6 provided by external components
++      - description: slave sample clock N7 provided by external components
++      - description: slave sample clock N8 provided by external components
++      - description: slave sample clock N9 provided by external components
 +
 +  clock-names:
-+    maxItems: 28
 +    items:
 +      - const: pclk
-+    additionalItems:
-+      oneOf:
-+        - pattern: "^mst_in[0-7]$"
-+        - pattern: "^slv_sclk[0-9]$"
-+        - pattern: "^slv_lrclk[0-9]$"
++      - const: mst_in0
++      - const: mst_in1
++      - const: mst_in2
++      - const: mst_in3
++      - const: mst_in4
++      - const: mst_in5
++      - const: mst_in6
++      - const: mst_in7
++      - const: slv_sclk0
++      - const: slv_sclk1
++      - const: slv_sclk2
++      - const: slv_sclk3
++      - const: slv_sclk4
++      - const: slv_sclk5
++      - const: slv_sclk6
++      - const: slv_sclk7
++      - const: slv_sclk8
++      - const: slv_sclk9
++      - const: slv_lrclk0
++      - const: slv_lrclk1
++      - const: slv_lrclk2
++      - const: slv_lrclk3
++      - const: slv_lrclk4
++      - const: slv_lrclk5
++      - const: slv_lrclk6
++      - const: slv_lrclk7
++      - const: slv_lrclk8
++      - const: slv_lrclk9
 +
 +  resets:
 +    description: internal reset line
@@ -268,7 +310,9 @@ index 000000000000..b683896e950a
 +                     <&clkc CLKID_HIFI_PLL>,
 +                     <&clkc CLKID_FCLK_DIV3>,
 +                     <&clkc CLKID_FCLK_DIV4>,
-+                     <&clkc CLKID_GP0_PLL>;
++                     <&clkc CLKID_GP0_PLL>,
++                     <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>,
++                     <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>;
 +            clock-names = "pclk",
 +                          "mst_in0",
 +                          "mst_in1",
@@ -277,7 +321,27 @@ index 000000000000..b683896e950a
 +                          "mst_in4",
 +                          "mst_in5",
 +                          "mst_in6",
-+                          "mst_in7";
++                          "mst_in7",
++                          "slv_sclk0",
++                          "slv_sclk1",
++                          "slv_sclk2",
++                          "slv_sclk3",
++                          "slv_sclk4",
++                          "slv_sclk5",
++                          "slv_sclk6",
++                          "slv_sclk7",
++                          "slv_sclk8",
++                          "slv_sclk9",
++                          "slv_lrclk0",
++                          "slv_lrclk1",
++                          "slv_lrclk2",
++                          "slv_lrclk3",
++                          "slv_lrclk4",
++                          "slv_lrclk5",
++                          "slv_lrclk6",
++                          "slv_lrclk7",
++                          "slv_lrclk8",
++                          "slv_lrclk9";
 +            resets = <&reset RESET_AUDIO>;
 +        };
 +    };
