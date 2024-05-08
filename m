@@ -1,227 +1,152 @@
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89FE012AAE8;
-	Wed,  8 May 2024 14:43:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E65D1272C0
+	for <linux-clk@vger.kernel.org>; Wed,  8 May 2024 15:32:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715179420; cv=none; b=YYB/AXnGsJ4q1Mazmy6r8d9lBMUahx34xbW2MGj3T2IVUne86s0ztOlOp7EjhG+U5PVFsYJucZNvwQRgiwt7vhN/AQvGbO34x/dywa+mBHVnwfxlTILdbvfNQyyIxfPuTTlzCHEZ/7LOVo6orHtGihX9AEAzXukKJiOLMdghUDA=
+	t=1715182325; cv=none; b=szbNUwBbhDVhTmh8b5GMl/1SlBu2XQEvQDdYAkGamdOzmfvUel8Xb1Zhd4lwip924QnmqHRMpYbKODLe10mkGbTDpkpsNO822A+pnG8aCWGbruJQ76FmJ9SkdEqfOGQAJHKDGa4eAmWXLFQoa/ddv2q4xzFxz8vEU28avoYJLW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715179420; c=relaxed/simple;
-	bh=8fDEaHZkRK4IbIx+fYB1auelBe5XByxusmIoXmUAo0w=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hCsvd7/VpaH1q3hrZELkU9akyrUfbLmo2p28sq6BbQw3+YAcKaZ/rwwJBksTj9cTVYTrkamDns7UKh66YoidTRtmDFuQuU+MH3LEm0eY5ev2iQHP3gCaSxj5zQ8WQRRJxVtlRV6O8TYjJqQepGHylouHTarcwxqq/8N7cUo17wA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=kEUeKlv/; arc=none smtp.client-ip=45.89.224.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sberdevices.ru
+	s=arc-20240116; t=1715182325; c=relaxed/simple;
+	bh=d6A87ZdDShos4dPJ2y/3IA60bZ8PQJh++57xgXv9pFA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ORpF2PmFNROs/xaPXISNfVcuSq2iUk+/HqSogReeT3WZDYANQNZrBOyM/qYWnbP+Lo2YQynNHiGYsz5y0D7DQDjGvKdQzLbva9SfSoaGLX8S9IlMqguijlB05Aiz5UVp5i6bczInNbjziyKr5WMb+ysaD4ZSkhzq20VGBj6gG20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=J1IuKkWq; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="kEUeKlv/"
-Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 48865120009;
-	Wed,  8 May 2024 17:43:31 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 48865120009
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1715179411;
-	bh=dPTQ5jSK4GuvZkaC4CcDsLe0bIyiB7GSHolMaGJlw4o=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=kEUeKlv/yE2HEOyTPf0AVj8BR7EDRY/5Sah9zNduGC/k4g2zobGQT/Pqco29sEyuR
-	 jkBuv7IqoMsxp3koePxkDiY5gXLz7w1jxiWyJamYh2piLlrXga/0O7+uzWIZ3Z/ADr
-	 k6oU1J4BfIYHNOUzG3WCSe55fi1+1TO/bXr34UNxE/grVF9CJD7Ke6tSLic/c7bQkW
-	 bZ+AcWdxo1PXUahN5ms4aVhO+/31AByXZjhIlpJjjpUKz1LCcVdgYiKnBI/TwoF6Bz
-	 I9346z/qLO2QxMek1E5/ZP1tJdBYhHGVYm15Dq9j/6zYPSDgD7u/trNMYsmAoLJcAC
-	 MoJvcyy20eX3Q==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Wed,  8 May 2024 17:43:31 +0300 (MSK)
-Received: from CAB-WSD-0003115.sberdevices.ru (100.64.160.123) by
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Wed, 8 May 2024 17:43:30 +0300
-From: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-To: Jan Dakinevich <jan.dakinevich@salutedevices.com>, Conor Dooley
-	<conor+dt@kernel.org>, <devicetree@vger.kernel.org>, Jerome Brunet
-	<jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Krzysztof
- Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	<linux-amlogic@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Martin
- Blumenstingl <martin.blumenstingl@googlemail.com>, Michael Turquette
-	<mturquette@baylibre.com>, Neil Armstrong <neil.armstrong@linaro.org>, Rob
- Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>
-Subject: [APPROACH 2 1/2] arm64: dts: amlogic: list all slave clocks for audio clock controller
-Date: Wed, 8 May 2024 17:42:58 +0300
-Message-ID: <20240508144259.191843-3-jan.dakinevich@salutedevices.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240508144259.191843-1-jan.dakinevich@salutedevices.com>
-References: <20240508144259.191843-1-jan.dakinevich@salutedevices.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="J1IuKkWq"
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a599af16934so1143128166b.1
+        for <linux-clk@vger.kernel.org>; Wed, 08 May 2024 08:32:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715182322; x=1715787122; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xupSga4L31hmKfvqtY9DNqTyzYiKLL6jl7vTBAe7YEE=;
+        b=J1IuKkWq9O7msQM2GQRIHMkA3ijeplNea0j2LWASzHcp4DdL0d6/oQTd0JAYFU/0tk
+         UoMGdUxSDrQdqbGkeyyrpCZ7ZIsqIlq6LuoCDl415d5aTVGYoagpPTlyasHZZlTNl6+d
+         OIJoiT5DQ2ooij1crRv4EisfSdFNwWPyd1vjgmbsivoRp7aDtD3l6TIIgc9UA748o+ux
+         UED64QIxBgfYWGbR81LFAf0zNX2mAMh2B4VH7PKbSJ5JJNfMTaiOyNsmf0QZcxjaR37R
+         WKLpy2JWK2ZRd2fhw7dH6PrxgVoyxWCYeR0NYobQovnG7XHs5vmBsLCLnsdwrJAp0m7Z
+         fPag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715182322; x=1715787122;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xupSga4L31hmKfvqtY9DNqTyzYiKLL6jl7vTBAe7YEE=;
+        b=es3ROxlzC5nG+UgPQxykbCI7r757nbscRzXLBUGydLCob/g6PHGilNt7Noaxjsnbdy
+         JW6Z4ZYTphX77BB3zbEhLiiwmpzZsJ5eShCkhluS7U4kQ1DuhkU/8a+oi/hHz+RIGwxs
+         vjSXCdlAVFSRUhmYZU0UP7yjgop0eo4qBniiX351jkNOZK086JQplbapfR2CsgCCs6Oq
+         YxfmIxtyijol+WYeZz+PtqIkw18jga8hh1VnGF2FLnolJVfxM9sp/nbnutsm2KJkjuZS
+         v6U5aF67t/jwbvsZKwSEobfOSB1cJnaolt9Kvooe6J2OqS0a2HUtu+t4Kk8SSohLZlv7
+         pnsw==
+X-Forwarded-Encrypted: i=1; AJvYcCUKpmt6YIAvQF7mhrmYQ/ZLV8tbUEJpC9ZQjhr9UVnItaJ7wJRMAiMW999sp/4Wbdz4HreAiqmtyoHVoTFsPg8QI2/7gPpc7s99
+X-Gm-Message-State: AOJu0YwJnuvgNhG+1/UWPK6QMC2NXLjExriWPTSdRu8+zk0EAII5MYl+
+	btrBDcbOkwwPwlLWz8hOut9Ouu87h4k+QMw4ZbXFXUAdOm5NCQei6lwOsL/bjfc=
+X-Google-Smtp-Source: AGHT+IGGZtYVnHUZ4EcfX4aUj9KBc6+H6XRuZCyQOp65StXRn/5tu41dc3BooKDe9AlZc5DJGcUdoQ==
+X-Received: by 2002:a17:907:60e:b0:a59:a431:a8ce with SMTP id a640c23a62f3a-a59fb94a3fdmr209508866b.2.1715182322419;
+        Wed, 08 May 2024 08:32:02 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.206.169])
+        by smtp.gmail.com with ESMTPSA id em19-20020a170907289300b00a59c2da005csm4557320ejc.215.2024.05.08.08.32.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 May 2024 08:32:01 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	linux-clk@vger.kernel.org,
+	Sylwester Nawrocki <snawrocki@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [GIT PULL] clk: samsung: drivers for v6.10, fixed pull, 2nd try
+Date: Wed,  8 May 2024 17:31:56 +0200
+Message-ID: <20240508153158.496248-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 185143 [May 08 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: YVDakinevich@sberdevices.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 19 0.3.19 07c7fa124d1a1dc9662cdc5aace418c06ae99d2b, {Tracking_smtp_not_equal_from}, salutedevices.com:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;sberdevices.ru:5.0.1,7.1.1;smtp.sberdevices.ru:5.0.1,7.1.1;100.64.160.123:7.1.2, FromAlignment: n, {Tracking_smtp_domain_mismatch}, {Tracking_smtp_domain_2level_mismatch}, {Tracking_sender_alignment_int}, {Tracking_white_helo}, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/05/08 09:52:00 #25122865
-X-KSMG-AntiVirus-Status: Clean, skipped
 
-Signed-off-by: Jan Dakinevich <jan.dakinevich@salutedevices.com>
----
- arch/arm64/boot/dts/amlogic/meson-axg.dtsi | 27 ++++++++++++++++++++--
- arch/arm64/boot/dts/amlogic/meson-g12.dtsi | 26 +++++++++++++++++++--
- arch/arm64/boot/dts/amlogic/meson-sm1.dtsi | 26 +++++++++++++++++++--
- 3 files changed, 73 insertions(+), 6 deletions(-)
+Hi,
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-index 6d12b760b90f..28f4ec5f39b0 100644
---- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
-@@ -1342,7 +1342,9 @@ clkc_audio: clock-controller@0 {
- 					 <&clkc CLKID_HIFI_PLL>,
- 					 <&clkc CLKID_FCLK_DIV3>,
- 					 <&clkc CLKID_FCLK_DIV4>,
--					 <&clkc CLKID_GP0_PLL>;
-+					 <&clkc CLKID_GP0_PLL>,
-+					 <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>,
-+					 <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>;
- 				clock-names = "pclk",
- 					      "mst_in0",
- 					      "mst_in1",
-@@ -1351,7 +1353,28 @@ clkc_audio: clock-controller@0 {
- 					      "mst_in4",
- 					      "mst_in5",
- 					      "mst_in6",
--					      "mst_in7";
-+					      "mst_in7",
-+					      "slv_sclk0",
-+					      "slv_sclk1",
-+					      "slv_sclk2",
-+					      "slv_sclk3",
-+					      "slv_sclk4",
-+					      "slv_sclk5",
-+					      "slv_sclk6",
-+					      "slv_sclk7",
-+					      "slv_sclk8",
-+					      "slv_sclk9",
-+					      "slv_lrclk0",
-+					      "slv_lrclk1",
-+					      "slv_lrclk2",
-+					      "slv_lrclk3",
-+					      "slv_lrclk4",
-+					      "slv_lrclk5",
-+					      "slv_lrclk6",
-+					      "slv_lrclk7",
-+					      "slv_lrclk8",
-+					      "slv_lrclk9";
-+
- 
- 				resets = <&reset RESET_AUDIO>;
- 			};
-diff --git a/arch/arm64/boot/dts/amlogic/meson-g12.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12.dtsi
-index e732df3f3114..af99781f3c4e 100644
---- a/arch/arm64/boot/dts/amlogic/meson-g12.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-g12.dtsi
-@@ -82,7 +82,9 @@ clkc_audio: clock-controller@0 {
- 				 <&clkc CLKID_HIFI_PLL>,
- 				 <&clkc CLKID_FCLK_DIV3>,
- 				 <&clkc CLKID_FCLK_DIV4>,
--				 <&clkc CLKID_GP0_PLL>;
-+				 <&clkc CLKID_GP0_PLL>,
-+				 <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>,
-+				 <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>;
- 			clock-names = "pclk",
- 				      "mst_in0",
- 				      "mst_in1",
-@@ -91,7 +93,27 @@ clkc_audio: clock-controller@0 {
- 				      "mst_in4",
- 				      "mst_in5",
- 				      "mst_in6",
--				      "mst_in7";
-+				      "mst_in7",
-+				      "slv_sclk0",
-+				      "slv_sclk1",
-+				      "slv_sclk2",
-+				      "slv_sclk3",
-+				      "slv_sclk4",
-+				      "slv_sclk5",
-+				      "slv_sclk6",
-+				      "slv_sclk7",
-+				      "slv_sclk8",
-+				      "slv_sclk9",
-+				      "slv_lrclk0",
-+				      "slv_lrclk1",
-+				      "slv_lrclk2",
-+				      "slv_lrclk3",
-+				      "slv_lrclk4",
-+				      "slv_lrclk5",
-+				      "slv_lrclk6",
-+				      "slv_lrclk7",
-+				      "slv_lrclk8",
-+				      "slv_lrclk9";
- 
- 			resets = <&reset RESET_AUDIO>;
- 		};
-diff --git a/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi b/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi
-index 643f94d9d08e..24e520c3e2a6 100644
---- a/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi
-@@ -162,7 +162,9 @@ clkc_audio: clock-controller@0 {
- 				 <&clkc CLKID_HIFI_PLL>,
- 				 <&clkc CLKID_FCLK_DIV3>,
- 				 <&clkc CLKID_FCLK_DIV4>,
--				 <&clkc CLKID_FCLK_DIV5>;
-+				 <&clkc CLKID_FCLK_DIV5>,
-+				 <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>,
-+				 <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>;
- 			clock-names = "pclk",
- 				      "mst_in0",
- 				      "mst_in1",
-@@ -171,7 +173,27 @@ clkc_audio: clock-controller@0 {
- 				      "mst_in4",
- 				      "mst_in5",
- 				      "mst_in6",
--				      "mst_in7";
-+				      "mst_in7",
-+				      "slv_sclk0",
-+				      "slv_sclk1",
-+				      "slv_sclk2",
-+				      "slv_sclk3",
-+				      "slv_sclk4",
-+				      "slv_sclk5",
-+				      "slv_sclk6",
-+				      "slv_sclk7",
-+				      "slv_sclk8",
-+				      "slv_sclk9",
-+				      "slv_lrclk0",
-+				      "slv_lrclk1",
-+				      "slv_lrclk2",
-+				      "slv_lrclk3",
-+				      "slv_lrclk4",
-+				      "slv_lrclk5",
-+				      "slv_lrclk6",
-+				      "slv_lrclk7",
-+				      "slv_lrclk8",
-+				      "slv_lrclk9";
- 
- 			resets = <&reset RESET_AUDIO>;
- 		};
--- 
-2.34.1
+Updated pull request with fixed issue of non-used local const data.
 
+Best regards,
+Krzysztof
+
+
+The following changes since commit 4cece764965020c22cff7665b18a012006359095:
+
+  Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-clk-6.10-2
+
+for you to fetch changes up to 7c18b0a5aa46cc7e5d3a7ef3f9f8e3aa91bb780f:
+
+  clk: samsung: gs101: drop unused HSI2 clock parent data (2024-05-07 11:47:39 +0200)
+
+----------------------------------------------------------------
+Samsung SoC clock drivers changes for 6.10
+
+1. Allow choice of manual or firmware-driven control over PLLs, needed
+   to fully implement CPU clock controllers on Exynos850.
+
+2. Correct PLL clock IDs on ExynosAutov9.
+
+3. Google GS101:
+   - Propagate certain clock rates to allow setting proper SPI clock
+     rates.
+   - Add HSI0 and HSI2 clock controllers.
+   - Mark certain clocks critical.
+
+4. Convert old S3C64xx clock controller bindings to DT schema.
+
+----------------------------------------------------------------
+André Draszik (3):
+      dt-bindings: clock: google,gs101-clock: add HSI0 clock management unit
+      clk: samsung: gs101: add support for cmu_hsi0
+      clk: samsung: gs101: mark some apm UASC and XIU clocks critical
+
+Jaewon Kim (1):
+      clk: samsung: exynosautov9: fix wrong pll clock id value
+
+Krzysztof Kozlowski (3):
+      dt-bindings: clock: samsung,s3c6400-clock: convert to DT Schema
+      Merge branch 'for-v6.10/clk-gs101-bindings' into next/clk
+      clk: samsung: gs101: drop unused HSI2 clock parent data
+
+Peter Griffin (2):
+      dt-bindings: clock: google,gs101-clock: add HSI2 clock management unit
+      clk: samsung: gs101: add support for cmu_hsi2
+
+Sam Protsenko (2):
+      clk: samsung: Implement manual PLL control for ARM64 SoCs
+      clk: samsung: exynos850: Add CMU_CPUCL0 and CMU_CPUCL1
+
+Tudor Ambarus (2):
+      clk: samsung: gs101: propagate PERIC0 USI SPI clock rate
+      clk: samsung: gs101: propagate PERIC1 USI SPI clock rate
+
+ .../bindings/clock/google,gs101-clock.yaml         |   55 +-
+ .../bindings/clock/samsung,s3c6400-clock.yaml      |   57 +
+ .../bindings/clock/samsung,s3c64xx-clock.txt       |   76 --
+ drivers/clk/samsung/clk-exynos-arm64.c             |   56 +-
+ drivers/clk/samsung/clk-exynos850.c                |  440 +++++++-
+ drivers/clk/samsung/clk-exynosautov9.c             |    8 +-
+ drivers/clk/samsung/clk-gs101.c                    | 1192 ++++++++++++++++++--
+ drivers/clk/samsung/clk.h                          |   15 +-
+ include/dt-bindings/clock/google,gs101.h           |  116 ++
+ 9 files changed, 1807 insertions(+), 208 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/samsung,s3c6400-clock.yaml
+ delete mode 100644 Documentation/devicetree/bindings/clock/samsung,s3c64xx-clock.txt
