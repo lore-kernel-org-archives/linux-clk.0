@@ -1,48 +1,33 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0F0C22324;
-	Wed,  8 May 2024 06:21:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6975E28373;
+	Wed,  8 May 2024 06:24:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715149294; cv=none; b=ZM5nd2hrQrzy0KDCt1052sahT6QNfzfHQTCCoIE5SevLuU8ewD+RxpRSH1+g5ieYoRkl1T/Oen8wZp8gQUK3qyeYKOJ4ZouosM/OucRp5FVZP9/7VvMpBy1phDBY7+g29+w6AfMIwzFn0cBPoR4iLiJXxVuWr0TFZDe29Neh8Uw=
+	t=1715149489; cv=none; b=WAIZkswpkn/8tygVAraVbZ65LQ7snJJUOIZso2ZooiAGRgFV+BA73y5OXs+PliVYQxkWB+pJfNH/t90iWshE6tGS0+5bFfeZpNZ2XCnJu8efbVqHL3If0zuSzAJ4QR9DJr8BtSdhPnPGL0y4/gaS3q8Qk0t1PhEZ8yBSVQjlYy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715149294; c=relaxed/simple;
-	bh=koB9KjRCACYqvO5zQYyzJJVHaA/xr3oY+TisVzeadio=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=KnsAXIXN1+OgRr7ks0lDHbWhhBvjrfDZrpSgOdbV2FQXiSgH1V3YqtcBLzXP2BsL5mWQ4VvS+aYTP4RLZZ0+wKRHskz4j6yhx/W8eZE1x9CWXRFMlHeGlDdKpkrezyuLTuh7E0VLfrYxFw+kjFkhiY/kKkBAmyVZByMRGIxRi6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eDDk2Gc6; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1715149489; c=relaxed/simple;
+	bh=p6nrGwLvjeGOi1nMq/8XNnBJdlDdDoiGOZ2hZYq1OB4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZmeAaF6os5zVmR20MWvqCZ1gSGDY83YMsfLAugxMRsnToRMblghyYJv3NBdx/Q3VPTxU1HjmHnWEyVFnEqxcTQpYILIkNzB9X8Y2o0ARoaAjuv3EWZUPIdl/wOrBSyK7O5IXXgZux6F2hLnY2rvfwontQhwUkDp06BowlRauV3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NloDDEZo; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eDDk2Gc6"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4485fOw2022330;
-	Wed, 8 May 2024 06:21:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=S59UCkcML8LZV3YRENrW3zpbmlTqLI7XVn7wkHOw4Kw=; b=eD
-	Dk2Gc6K/n8eB8+HO3Z4pWDEwJRlxS9b/6dt/YNTm6aG494xosT/XdpH62Ggaxqmt
-	oDF0eDP7DS0UXb8JAbJjMrnB2Tv/6V4oakxoqdbw/wVWk/lwoqFbFdy9wSVvrVwI
-	Zf5LyvXBWYZg2iTDipMgnwYQqtIVmAMA2qgzTgBYwVnVGgZNsANth1a+T1CSbKuk
-	zUlko9r2/nso20OMaCRJIXMj0VTzTTyMMbhAnrVUjk9kPthuJhPpIVnZA3KXVHoN
-	tTqvQ+TfwCkUx/Y6/Nx0S+ch54+zLHlNFYiokUid6w2p1yGUWqVjvAr+mUCfK04X
-	hD5y1sy0GgXh1mVAJTSg==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3xyste12p0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 08 May 2024 06:21:28 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4486LR6O009667
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 8 May 2024 06:21:27 GMT
-Received: from [10.217.216.47] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 7 May 2024
- 23:21:21 -0700
-Message-ID: <fc1e0745-a226-4be4-9b08-379c81396a7e@quicinc.com>
-Date: Wed, 8 May 2024 11:51:04 +0530
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NloDDEZo"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F35BEC113CC;
+	Wed,  8 May 2024 06:24:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715149489;
+	bh=p6nrGwLvjeGOi1nMq/8XNnBJdlDdDoiGOZ2hZYq1OB4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=NloDDEZoQt+4vj2xEyVtrzlc+6LLFXQsPdQkB5GnnRGjieGHOnBJRFkwnz3iicEwd
+	 UYxLpbvF6/MHGK7Mg1IKlcu/mBkQAMaC8dNKg60SEX/lK8fRBSdn8gavHpP03kTNKp
+	 wd9xi/KNknlK1K1cUnTwvFg7ZMso7JbT5N+JGVDXl4gGxLKHlNufpsg3cn51zFtg5+
+	 cVlzixBzRvSxSPz64zJmdgMWQT5tlc+Kj5Y/zKeuRkXePdmaDdxlsJTk07YCdagaFe
+	 J68u++00l+KRQP/OOciwQtMC7pj7EqNiKP6ELLSoIcCKfQKYv2wlOQmBBn1F8MihIC
+	 vuufvBNW1/Meg==
+Message-ID: <49ff4f07-aaf9-4f29-ba97-b4b03b05f36d@kernel.org>
+Date: Wed, 8 May 2024 08:24:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,80 +35,127 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3 1/8] dt-bindings: clock: qcom: Fix SM8450 videocc
- incorrect header file name
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Stephen
- Boyd" <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        "Vladimir
- Zapolskiy" <vladimir.zapolskiy@linaro.org>
-CC: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Taniya Das
-	<quic_tdas@quicinc.com>,
-        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
-        Ajit Pandey <quic_ajipan@quicinc.com>,
-        Imran Shaik
-	<quic_imrashai@quicinc.com>
-References: <20240430142757.16872-1-quic_jkona@quicinc.com>
- <20240430142757.16872-2-quic_jkona@quicinc.com>
- <3951a7ea-b469-42dc-8240-a5c593bc536f@linaro.org>
+Subject: Re: [GIT PULL] clk: samsung: drivers for v6.10
+To: Stephen Boyd <sboyd@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org,
+ Sylwester Nawrocki <snawrocki@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240504120624.6574-1-krzysztof.kozlowski@linaro.org>
+ <8bf65df598680f0785c3d6db70acfb9a.sboyd@kernel.org>
+ <b1fd9806-3e33-488a-a5a9-a156a2c735d2@kernel.org>
+ <b3e320ecb16320f88d7db566be51b1e9.sboyd@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Jagadeesh Kona <quic_jkona@quicinc.com>
-In-Reply-To: <3951a7ea-b469-42dc-8240-a5c593bc536f@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 9iI8pudK4sYzzSV4ASYdvZeui-EJ4Gzj
-X-Proofpoint-ORIG-GUID: 9iI8pudK4sYzzSV4ASYdvZeui-EJ4Gzj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-08_02,2024-05-08_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 phishscore=0
- priorityscore=1501 malwarescore=0 mlxscore=0 bulkscore=0 clxscore=1015
- mlxlogscore=998 spamscore=0 adultscore=0 suspectscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405010000
- definitions=main-2405080045
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <b3e320ecb16320f88d7db566be51b1e9.sboyd@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-
-
-On 5/4/2024 6:15 PM, Krzysztof Kozlowski wrote:
-> On 30/04/2024 16:27, Jagadeesh Kona wrote:
->> Fix incorrect header file name in SM8450 videocc bindings.
+On 07/05/2024 22:43, Stephen Boyd wrote:
+> Quoting Krzysztof Kozlowski (2024-05-06 22:54:10)
+>> On 07/05/2024 01:44, Stephen Boyd wrote:
+>>> Quoting Krzysztof Kozlowski (2024-05-04 05:06:22)
+>>>> The following changes since commit 4cece764965020c22cff7665b18a012006359095:
+>>>>
+>>>>   Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
+>>>>
+>>>> are available in the Git repository at:
+>>>>
+>>>>   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-clk-6.10
+>>>
+>>> I'm getting compile warnings. Is there a pending fix? Also, why is GS101
 >>
->> Fixes: 1e910b2ba0ed ("dt-bindings: clock: qcom: Add SM8450 video clock controller")
->> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
->> ---
->>   .../devicetree/bindings/clock/qcom,sm8450-videocc.yaml          | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
+>> I don't see any of these warnings. Neither local (W=1), nor on my CI,
+>> nor reported by LKP (which reported build successes for this branch).
+>> How can I reproduce it?
+> 
+> I ran this command
+> 
+>  make W=1 ARCH=arm CROSS_COMPILE=arm-linux-gnueabi- drivers/clk/samsung/clk-gs101.o
+> 
+> and I see the warnings. They're actually upgraded to errors.
+
+So regular W=1 build... weird.
+
+> 
 >>
->> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
->> index bad8f019a8d3..78a1bb5be878 100644
->> --- a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
->> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
->> @@ -13,7 +13,7 @@ description: |
->>     Qualcomm video clock control module provides the clocks, resets and power
->>     domains on SM8450.
->>   
->> -  See also:: include/dt-bindings/clock/qcom,videocc-sm8450.h
->> +  See also:: include/dt-bindings/clock/qcom,sm8450-videocc.h
+>>
+>>> describing clk parents with strings instead of using clk_parent_data?
+>>
+>> GS101 uses existing Samsuung clock framework, so that's how it is done
+>> there. There is nothing odd here, comparing to other Samsung clocks.
 > 
-> Then also s/::/:/. It was a mistake to introduce it.
+> Ok. Is anyone working on migrating Samsung clk drivers to the non-string
+> way?
+
+I am not aware of it. There was no serious development for Samsung SoC
+in total for years.
+
 > 
+>>
+>>>
+>>> In file included from drivers/clk/samsung/clk-gs101.c:16:
+>>> drivers/clk/samsung/clk-gs101.c:2616:7: error: ‘mout_hsi2_mmc_card_p’
+>>> defined but not used [-Werror=unused-const-variable=]
+>>>  2616 | PNAME(mout_hsi2_mmc_card_p)     = { "fout_shared2_pll", "fout_shared3_pll",
+>>
+>> I see indeed some unused variables and I will drop them but your
+>> warnings are not reproducible.
+> 
+> Weird! I use gcc-12.2 if that helps. I've been meaning to upgrade but I
+> also don't see much urgency.
+> 
+> I'll wait for the next PR.
 
-Thanks Krzysztof for your review. Will update this in next series.
+Yes, patch is already in linux-next, so I'll wait a bit and send today.
 
-Thanks,
-Jagadeesh
+Best regards,
+Krzysztof
+
