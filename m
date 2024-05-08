@@ -1,120 +1,122 @@
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 511D212A17F;
-	Wed,  8 May 2024 20:34:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E64AC1E89A
+	for <linux-clk@vger.kernel.org>; Wed,  8 May 2024 20:46:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715200473; cv=none; b=mvEPxaNnncBy10JVaWOrzsTmUI4goab/U2A8F4jUAXCoh27ZSJycdaL2lqzczzfioP/iF08qvOz5Xt5DQxMW/ritnwfOli0TFG9PQiCPmBMtJTKPboVw1ORg66KO88d5RrF5VoFxb3d7ekftbJldbZj+9mRNRCoowvHLsEm7N/s=
+	t=1715201194; cv=none; b=hMi0wyKRoaY/JN6S1vc17XrQWDBi4r6xlRQlXn4mlnt1MKTR68kBw95P27O65EjPUFOFBBixT5XOxIUm9aLEXIMv1z247xtViDKgTUmJ79S+NTU4VKZaBszPVal1vZCgQemUVmJzvDW5FknlPAH8l/b8x5ShrZhXxC5hkA9MZyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715200473; c=relaxed/simple;
-	bh=TvcqRI5iA0Z7Bk1l+OWXxKVFjors/ms85nxBW0rJi3o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=HW7sUwbPXzf4YjQ5Ib9Bg9EycNjVQ4oKMz8a50YGa0se4F30cnKgLJQ9HvZDWft/LwPl2CnM4xaY1ni62fMTxdO9bINs5B4lFX3Syl5tSpYjzckZj0oF37OAb7B6VYjTW5MCv20a5y2gE/HvCBzD94qGxfMTRAZpNPrrJzLZ4I0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=heGND9F5; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1715201194; c=relaxed/simple;
+	bh=U+JJXdSyICqOC60nUmI2fkQ5vGZZspCCnV4ePaM9Zjc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fR68gJITeWQ3nRWUh8zzcC8CXHk7ixKOmJO6xsdq6UV5VQS2FFQN63nooaNXSDFioHzPLtQbVBSQ622zXJlVYytwe718VpaNAZlzEEW0uf+C1wVaSc86ol5kJG/UufTczljJV+hkxbHPVhP87IZhwQ3Zrufs5ldIAi94pwu8yD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hUSOlYER; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="heGND9F5"
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a5a0013d551so14623166b.2;
-        Wed, 08 May 2024 13:34:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hUSOlYER"
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-de5e74939fdso205954276.0
+        for <linux-clk@vger.kernel.org>; Wed, 08 May 2024 13:46:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715200469; x=1715805269; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4D/wsR/nZF2oU4cRe7wiG2sNbWufWK+ynmZknuVoK+I=;
-        b=heGND9F5cCt8hzhsSstCs7P7peuS3mQ0KWSOCXkBO+FSL0mmhTkDEzF7bdqFfSZPrW
-         7DKu7whf8FkPmPOUacZ++xXGQcaGRy2p42aiMqGDTyudkn674EL1K2wNvO96hPNBJIWH
-         wP1MjulOXPS0XpiywaOjdQoqmxFazgYflaaDoeGWzUeFyxk4OMwLXJkDq+JTYYO+RdAx
-         c1ZaH7j1AdNYlKgP/jtroQVM/JnjDw4ZasjgurKgbAmN8Nc8tpeb3zijY+k2slGqG45d
-         MUyPLZy5XvpH81t5b51KDzrVv2wEs/dC9NP9wvgb/jyQXSqzG/zTtQMj1PV9WVU2ML2w
-         w0Yw==
+        d=linaro.org; s=google; t=1715201191; x=1715805991; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qHxj1v+rFAJCX5c6BhRi3cdybi17vUj5Ix+LCyAtYMk=;
+        b=hUSOlYERSj4zOV3bjqh7WrbnlS83nvH+4OpSiRtqfoi7nrvkqNHU8J8/Ff5JrayowV
+         rpUghUsWVAtQ1ea8E6MimmtqNL9jcCy9NO/QY+v6K4/HaYYKz8B7yOK2l3mBSLP2rQWG
+         9FxO1BnTnx9JPoQU/Fm9T05kVKzoL8LNPJVILetRKHO1b7e8ty/pEVFfWw9djQGXhbwH
+         xgWYg5/KatWqgbNCoDlMebP2wlYTQrJK25dvnAdxqEfZg99nKj9WLwR2el/QvGk6byRY
+         hc258YFCsZEDKslhx63Qma39D9+03FKD2PIHFis8zdux5PYjMcclzmylSYS5JmmJaqCW
+         jISQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715200469; x=1715805269;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4D/wsR/nZF2oU4cRe7wiG2sNbWufWK+ynmZknuVoK+I=;
-        b=TGUySa2IHzpUiWnBBU56vhNuBQmwGDtIP5stZoavoiYq6OV8gKmxyQRCIN9MjryYhs
-         gdTHSa38Gya4obrWoTbyUE6lNAq5B3SOXL6lLsPzZlojNxHozZew9ugVPLR7V9MKKgcB
-         JNCpEFq8QXNrQrVbYCCVbeZ5O1NHzprOX9C+xkCh3H2JSt6rnIcQVpPy/B+XmgfzU2j1
-         BSBJAHz5ERBWQYKApl5gmJ613oWPibFq13Zrq44U+fwXYxN9ix7c4CFRjiqQJ3xPJnwj
-         rM6qBlPyBzpfJ7FCi0W35JaYWGvhSzTfp8CAUpnc4a2Y6cDaEjM2Lg9xbMCH9CXKa7O8
-         caiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUgUht1d7OxQyYd1O6/HU8DiroLjYCRyIviZk1ReLoKR631Tst2zK/ToavpNzFJh2/YA6SqQCINcoCVzVnNUJ4oQpl4S8TaeaRFpP5qHPPicl7vfdRWUf7WAw4M349wPk/rqHQHdaKl
-X-Gm-Message-State: AOJu0Yzk4GcBIL1hIYO04+hdU2t4qLZjPXQY7M5raSItnlDZohiA7CcD
-	rxHaqV+J2/XUfOth1UamenGc4p23GoQvokrMqqtqgpUVa3V4GAwnfaNUWGpc
-X-Google-Smtp-Source: AGHT+IGFdtRQoEDrS8EJZco1r9vOO7Jg+6Qm71hlZoviI+PSpW5TJeyzzley9AaHCQAAbfB7oOEXJw==
-X-Received: by 2002:a50:9353:0:b0:572:9d22:eb8c with SMTP id 4fb4d7f45d1cf-5731d9b62c4mr3334708a12.15.1715200469501;
-        Wed, 08 May 2024 13:34:29 -0700 (PDT)
-Received: from [169.254.60.140] (57657817.unconfigured.pool.telekom.hu. [87.101.120.23])
-        by smtp.googlemail.com with ESMTPSA id x2-20020a056402414200b00572cf08369asm7128233eda.23.2024.05.08.13.34.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 08 May 2024 13:34:29 -0700 (PDT)
-From: Gabor Juhos <j4g8y7@gmail.com>
-Date: Wed, 08 May 2024 22:34:14 +0200
-Subject: [PATCH] clk: qcom: clk-alpha-pll: set ALPHA_EN bit for Stromer
- Plus PLLs
+        d=1e100.net; s=20230601; t=1715201191; x=1715805991;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qHxj1v+rFAJCX5c6BhRi3cdybi17vUj5Ix+LCyAtYMk=;
+        b=LX7M+pDdBUVuN3doU0OymOAjJMSGresHXiah0zDLhwzMTeC5Wc7RJApIbJaKUhyu7x
+         y8eoGmmXiVxx9q/6BjXHocJq+6C5Il8pBRm68V9WBKxv+N5y/zJcGuyPJM6Nyj7NNKKG
+         wQX8NlUvh+xHHk1OOFwTQ24n1XrELCJfwVcDSJApVr1OiDJoNPvH/01ncYnx4VN8ecUR
+         jOct+4mt0r/HaBfAlFI4+A4S4voP7YhrPJ5HtD+GWhBXbskSVq+rgVKmwyQou9Fpg9cQ
+         jTKYiPLyoHJs9dlf/Pj0O+ktyHOSzF5ngAv5acv8LRkxzQ8TNraYkTBPgrUKzM5JUkfF
+         x19Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUzqJPxRVJiI1KiUVgOl643vnIRcqTy5ovUHAElceTocYiAMne/HFn9E/nHbPx/Qtw5Aw8txN6nW+b69NJHQmuCogtiRuflBVYq
+X-Gm-Message-State: AOJu0Yw2dHm8NdEOPiL9nRr2/YUEBJdj6x2WZ8EdtkIUWkWmbA6//mv+
+	E72d8D2CByUpGYSqP1LuPF5erb5WSUvlfj9JonRMo1ztGRsZg9q71GzdGskzfX1NQM6jVJYhh0P
+	gnvCOLPSO7h1dg6Wtd+TvpdbGRpIkdzUSo3MvwA==
+X-Google-Smtp-Source: AGHT+IF+nKOg/oxvvBseKMAcD7PQcQCKUYem6zIWSWwsVSBfv7UhB9pH6t8FEIwl47oXy3DTvLagu0RNYkWsFNtMCYs=
+X-Received: by 2002:a5b:981:0:b0:deb:a0a2:aad6 with SMTP id
+ 3f1490d57ef6-debb9db1fe3mr4178079276.28.1715201190873; Wed, 08 May 2024
+ 13:46:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240508-stromer-plus-alpha-en-v1-1-6639ce01ca5b@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAMXhO2YC/x3MwQqDMAyA4VeRnA3UUofsVWSHUNM14GpJpgzEd
- 1/x+B3+/wRjFTZ4dicoH2KylYah7yBmKm9GWZrBOx/c6Ca0r24fVqzrbkhrzYRc0FGgEB9L8lO
- E1lblJL/7O7+u6w+44sh4ZwAAAA==
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Kathiravan T <quic_kathirav@quicinc.com>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Gabor Juhos <j4g8y7@gmail.com>
-X-Mailer: b4 0.13.0
+References: <CGME20240507065329eucas1p1b26d68384a4f076b31223ed099fd3a48@eucas1p1.samsung.com>
+ <20240507065317.3214186-1-m.szyprowski@samsung.com>
+In-Reply-To: <20240507065317.3214186-1-m.szyprowski@samsung.com>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Wed, 8 May 2024 15:46:20 -0500
+Message-ID: <CAPLW+4nFp4AUpKdcsPTQ4gE3AByJU4WO+M34c3om+8AqTziAeg@mail.gmail.com>
+Subject: Re: [PATCH] clk: samsung: Don't register clkdev lookup for the fixed
+ rate clocks
+To: Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The clk_alpha_pll_stromer_plus_set_rate() function does not
-sets the ALPHA_EN bit in the USER_CTL register, so setting
-rates which requires using alpha mode works only if the bit
-gets set already prior calling the function.
+On Tue, May 7, 2024 at 1:53=E2=80=AFAM Marek Szyprowski
+<m.szyprowski@samsung.com> wrote:
+>
+> Commit 4d11c62ca8d7 ("clkdev: report over-sized strings when creating
+> clkdev entries") revealed that clock lookup is registered for all fixed
+> clocks. The mentioned commit added a check if the registered name is not
+> too long. This fails for some clocks registered for Exynos542x SoCs famil=
+y.
+> This lookup is a left-over from early common clock framework days, not
+> really needed nowadays, so remove it to avoid further issues.
+>
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> ---
+> Here is the fix for the mentioned 4d11c62ca8d7 commit, which fixes
+> booting of Exynos542x SoCs:
+> https://lore.kernel.org/all/20240507064434.3213933-1-m.szyprowski@samsung=
+.com/
+>
+> This change is independent fix. I've tested it on all Exynos based boards
+> I have in my test lab. It would be great if someone could test it on
+> s3c64xx and s3c24xx based boards.
+> ---
 
-Extend the function to set the ALPHA_EN bit in order to allow
-using fractional rates regardless whether the bit gets set
-previously or not.
+Thanks Marek, it fixes some warnings when booting the E850-96 board
+with current kernel-next (next-20240508), like:
 
-Fixes: 84da48921a97 ("clk: qcom: clk-alpha-pll: introduce stromer plus ops")
-Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
----
-Based on 'qcom-clk-for-6.10'
----
+    samsung_clk_register_fixed_rate: failed to register clock lookup
+for clk_rco_i3c_pmic
+    ...
 
----
- drivers/clk/qcom/clk-alpha-pll.c | 3 +++
- 1 file changed, 3 insertions(+)
+But I guess 'ret' variable should be removed now, I'm seeing this
+build warning after applying this patch:
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index d4227909d1fe..c51647e37df8 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -2574,6 +2574,9 @@ static int clk_alpha_pll_stromer_plus_set_rate(struct clk_hw *hw,
- 	regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL_U(pll),
- 					a >> ALPHA_BITWIDTH);
- 
-+	regmap_update_bits(pll->clkr.regmap, PLL_USER_CTL(pll),
-+			   PLL_ALPHA_EN, PLL_ALPHA_EN);
-+
- 	regmap_write(pll->clkr.regmap, PLL_MODE(pll), PLL_BYPASSNL);
- 
- 	/* Wait five micro seconds or more */
+    drivers/clk/samsung/clk.c: In function 'samsung_clk_register_fixed_rate=
+':
+    drivers/clk/samsung/clk.c:142:20: warning: unused variable 'ret'
+[-Wunused-variable]
 
----
-base-commit: 3c5b3e17b8fd1f1add5a9477306c355fab126977
-change-id: 20240508-stromer-plus-alpha-en-0a4a4c6df28c
+Also, maybe add corresponding "Fixes" tag?
 
-Best regards,
--- 
-Gabor Juhos <j4g8y7@gmail.com>
+Other than that:
 
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+Tested-by: Sam Protsenko <semen.protsenko@linaro.org>
+
+Thanks!
+
+[snip]
