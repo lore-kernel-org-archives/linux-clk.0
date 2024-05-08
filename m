@@ -1,204 +1,120 @@
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0ADE12BE9E;
-	Wed,  8 May 2024 18:26:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 511D212A17F;
+	Wed,  8 May 2024 20:34:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715192770; cv=none; b=nmAAYEj8UWZZrguFZcpM0r6AIeZqIo6rjyrViv0/6f1ncsLTn2NQtMxhRLZdW+JSHSKHSVMeswrKRe5kVzNrDmGCO9mZVDt0gkBiLzg+MI9CInPGWbDzl7UUM0sfQqPbNsew9xYYEL7o0DEYSjZji0KmbIX8kQ9kCDlGfs7geEc=
+	t=1715200473; cv=none; b=mvEPxaNnncBy10JVaWOrzsTmUI4goab/U2A8F4jUAXCoh27ZSJycdaL2lqzczzfioP/iF08qvOz5Xt5DQxMW/ritnwfOli0TFG9PQiCPmBMtJTKPboVw1ORg66KO88d5RrF5VoFxb3d7ekftbJldbZj+9mRNRCoowvHLsEm7N/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715192770; c=relaxed/simple;
-	bh=JP8VpdG+xqhGXpnZXCPTnLRTVXJ49yvvJJoskFFST1Q=;
-	h=MIME-Version:Message-ID:From:To:Cc:Subject:Content-Type:Date:
-	 In-Reply-To:References; b=QJRiaNUefN/s9ys4m7gsxOfJbOxn4DNj4Qy4RiiohFPnks1Z3TgrluO+jXU1eAfwZFDja+3YpLBc4N3qnZdjwT2GfOrK3pOicNWUEhOQfkOl4ka1s7VXW+ZGsoJrsxfzsk8KAZ1t17Ob4GTFgFJiPuW91CDgD02W4/vBz2OpxYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de; spf=pass smtp.mailfrom=public-files.de; dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b=YWqiOAZW; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=public-files.de
+	s=arc-20240116; t=1715200473; c=relaxed/simple;
+	bh=TvcqRI5iA0Z7Bk1l+OWXxKVFjors/ms85nxBW0rJi3o=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=HW7sUwbPXzf4YjQ5Ib9Bg9EycNjVQ4oKMz8a50YGa0se4F30cnKgLJQ9HvZDWft/LwPl2CnM4xaY1ni62fMTxdO9bINs5B4lFX3Syl5tSpYjzckZj0oF37OAb7B6VYjTW5MCv20a5y2gE/HvCBzD94qGxfMTRAZpNPrrJzLZ4I0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=heGND9F5; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b="YWqiOAZW"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=public-files.de;
-	s=s31663417; t=1715192732; x=1715797532; i=frank-w@public-files.de;
-	bh=8wpwOVnWMbAEATDi6P7jxqoYe5/Zc9mCOeyjYqVImqI=;
-	h=X-UI-Sender-Class:MIME-Version:Message-ID:From:To:Cc:Subject:
-	 Content-Type:Date:In-Reply-To:References:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=YWqiOAZWPMaeNYhFjc7Dl91wHa3AoK/8ndnZhRXkks2a7xnBfaEL9mEFdBx2ZHvj
-	 JF/BZvyGwnIQMqn/egivRa0xiSszgIhV9GVlTtXZlayE/ynpiAiEMqmiCktvL0IuP
-	 QsWt5iYLDWIJ6OfXkJBkBLTYIHiiW9txd4oHJC8tdiqalLyJEmVcZxLBEs3PbiorY
-	 nesZV3RKHBG0l3sYb/XQ0sB0BqqPsELRfKJ1giH+40euQ6PB2ABrGD6wEYxhNfod4
-	 qX4oQj6baDxpCoH5L2Ak5WdLKfvuqWmsTcW+uIO4i14Yef4QcPssu08ibZaLuec7O
-	 3va0pl4li7gEnTjbJw==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [217.61.153.232] ([217.61.153.232]) by web-mail.gmx.net
- (3c-app-gmx-bs02.server.lan [172.19.170.51]) (via HTTP); Wed, 8 May 2024
- 20:25:32 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="heGND9F5"
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a5a0013d551so14623166b.2;
+        Wed, 08 May 2024 13:34:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715200469; x=1715805269; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4D/wsR/nZF2oU4cRe7wiG2sNbWufWK+ynmZknuVoK+I=;
+        b=heGND9F5cCt8hzhsSstCs7P7peuS3mQ0KWSOCXkBO+FSL0mmhTkDEzF7bdqFfSZPrW
+         7DKu7whf8FkPmPOUacZ++xXGQcaGRy2p42aiMqGDTyudkn674EL1K2wNvO96hPNBJIWH
+         wP1MjulOXPS0XpiywaOjdQoqmxFazgYflaaDoeGWzUeFyxk4OMwLXJkDq+JTYYO+RdAx
+         c1ZaH7j1AdNYlKgP/jtroQVM/JnjDw4ZasjgurKgbAmN8Nc8tpeb3zijY+k2slGqG45d
+         MUyPLZy5XvpH81t5b51KDzrVv2wEs/dC9NP9wvgb/jyQXSqzG/zTtQMj1PV9WVU2ML2w
+         w0Yw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715200469; x=1715805269;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4D/wsR/nZF2oU4cRe7wiG2sNbWufWK+ynmZknuVoK+I=;
+        b=TGUySa2IHzpUiWnBBU56vhNuBQmwGDtIP5stZoavoiYq6OV8gKmxyQRCIN9MjryYhs
+         gdTHSa38Gya4obrWoTbyUE6lNAq5B3SOXL6lLsPzZlojNxHozZew9ugVPLR7V9MKKgcB
+         JNCpEFq8QXNrQrVbYCCVbeZ5O1NHzprOX9C+xkCh3H2JSt6rnIcQVpPy/B+XmgfzU2j1
+         BSBJAHz5ERBWQYKApl5gmJ613oWPibFq13Zrq44U+fwXYxN9ix7c4CFRjiqQJ3xPJnwj
+         rM6qBlPyBzpfJ7FCi0W35JaYWGvhSzTfp8CAUpnc4a2Y6cDaEjM2Lg9xbMCH9CXKa7O8
+         caiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUgUht1d7OxQyYd1O6/HU8DiroLjYCRyIviZk1ReLoKR631Tst2zK/ToavpNzFJh2/YA6SqQCINcoCVzVnNUJ4oQpl4S8TaeaRFpP5qHPPicl7vfdRWUf7WAw4M349wPk/rqHQHdaKl
+X-Gm-Message-State: AOJu0Yzk4GcBIL1hIYO04+hdU2t4qLZjPXQY7M5raSItnlDZohiA7CcD
+	rxHaqV+J2/XUfOth1UamenGc4p23GoQvokrMqqtqgpUVa3V4GAwnfaNUWGpc
+X-Google-Smtp-Source: AGHT+IGFdtRQoEDrS8EJZco1r9vOO7Jg+6Qm71hlZoviI+PSpW5TJeyzzley9AaHCQAAbfB7oOEXJw==
+X-Received: by 2002:a50:9353:0:b0:572:9d22:eb8c with SMTP id 4fb4d7f45d1cf-5731d9b62c4mr3334708a12.15.1715200469501;
+        Wed, 08 May 2024 13:34:29 -0700 (PDT)
+Received: from [169.254.60.140] (57657817.unconfigured.pool.telekom.hu. [87.101.120.23])
+        by smtp.googlemail.com with ESMTPSA id x2-20020a056402414200b00572cf08369asm7128233eda.23.2024.05.08.13.34.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 08 May 2024 13:34:29 -0700 (PDT)
+From: Gabor Juhos <j4g8y7@gmail.com>
+Date: Wed, 08 May 2024 22:34:14 +0200
+Subject: [PATCH] clk: qcom: clk-alpha-pll: set ALPHA_EN bit for Stromer
+ Plus PLLs
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <trinity-2158d675-7049-4432-b925-6ace44401aa0-1715192732273@3c-app-gmx-bs02>
-From: Frank Wunderlich <frank-w@public-files.de>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Frank Wunderlich <linux@fw-web.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley
- <conor+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Stephen
- Boyd <sboyd@kernel.org>, Pavel Machek <pavel@ucw.cz>, Lee Jones
- <lee@kernel.org>, "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>, Matthias Brugger <matthias.bgg@gmail.com>, Eric
- Woudstra <ericwouds@gmail.com>, Tianling Shen <cnsztl@immortalwrt.org>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-leds@vger.kernel.org,
- netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, Tianling Shen <cnsztl@gmail.com>
-Subject: Aw: Re: [RFC v1 5/5] arm64: dts: mediatek: Add mt7986 based
- Bananapi R3 Mini
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 8 May 2024 20:25:32 +0200
-Importance: normal
-Sensitivity: Normal
-In-Reply-To: <a18a10e5-42e1-4302-b9f3-43c6174e2cf9@collabora.com>
-References: <20240505164549.65644-1-linux@fw-web.de>
- <20240505164549.65644-6-linux@fw-web.de>
- <a4099612-a4ae-4211-9674-c7053d2a995a@collabora.com>
- <3E013BA7-0264-4AC3-B677-BDD16B1F8D90@public-files.de>
- <a18a10e5-42e1-4302-b9f3-43c6174e2cf9@collabora.com>
-X-UI-Message-Type: mail
-X-Priority: 3
-X-Provags-ID: V03:K1:/xOfloKHQgJmPgkc9fdvkCETd9KNf9I5dIewtuJxvNKD4cUM1xpAut+kcghfLa+0aHrjb
- kbd8cMSSRy0luf9H6RS1ic2JJEi1PO8E7Dr5edqyFkNa20wM8C45JFfO8Y8qo7SIUkz8f9AIEKmO
- ixvdAAYadRvtf7kdI4G8IwXZhdrkvHMskTAkpJgRhNYwipdg1o7tMuOU+Xmo1HllZVjaMrCIm0MV
- UYIX+aSs2gQhZBVYmubf2wb4EoTzURk6Y+M/otxM51V11Oq2shRoJIrGIqB4CyocCLik6bUloCIO
- j4=
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:mmBOuEib9cM=;Tw4zuQm8GkQB3y9mHlDqvBj6pZx
- 21YW6gdUBoTUn9pWWZZ1pRw91UVMm77D/oLRkUpmSeRXRE8322PK8anAOxv7S4R0zBYi4RSWJ
- fTFXpWp6shuJz9gxq9KuTxjCq5MSks9pt8g+UeSgRtdlgDRYDgmxdJbLfNZ3MNq6NCUkTZPxU
- zWF+dxgjiQDwk0n977Bmgnop0lI0rUC1KrAU2niFS+beo+Z7cESKsgqz4u195ShcMrmfdTtgW
- H47rdF6L3yhNBhvvWMwF0iQ5Kv+3WJixLJJV9i0kZRsaxhoq5QTJf+rwqEpuM7C2qChkLb07i
- twW0intWb6XaWKjiLvnUr7aehXKtFOguXka7AfoRauEc9RAdz5IJWbRqVjlvA8ZuK2jcPXroc
- H6fhT2rNPIneL91LAPJyEpAHVMiQ3esC2lLsAP4fngyBfDN8We+c8zWtJHUdBOncI3uPBhVzU
- aEupQ5h91DCJkhT+tm8F6XMqTQSWDtV////+OFAjJQTDCd+Xt2EVG5XvNoQoy4Ds7g8IukGuh
- YvdEuPLFbIDxt6wJkKM14BzC7gdjgO+H62Ggm72xx2owuTBllQ66/PXE2LcSp3jA1fNfq7Y47
- MxBmNg3Si9CZarNcAZYG5/+C9Ut8JsgxVLBmp7DABj9qwS9qfgITzQ3Z0Iq1PuoZkRYrY+Zql
- kNwtgPDDiy3/VKQCAQnEDqokNILxAzhb91Hykr2LfJFnKvXccMW8NBKKH8DHUqs=
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240508-stromer-plus-alpha-en-v1-1-6639ce01ca5b@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAMXhO2YC/x3MwQqDMAyA4VeRnA3UUofsVWSHUNM14GpJpgzEd
+ 1/x+B3+/wRjFTZ4dicoH2KylYah7yBmKm9GWZrBOx/c6Ca0r24fVqzrbkhrzYRc0FGgEB9L8lO
+ E1lblJL/7O7+u6w+44sh4ZwAAAA==
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Kathiravan T <quic_kathirav@quicinc.com>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ Varadarajan Narayanan <quic_varada@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Gabor Juhos <j4g8y7@gmail.com>
+X-Mailer: b4 0.13.0
 
-Hi
+The clk_alpha_pll_stromer_plus_set_rate() function does not
+sets the ALPHA_EN bit in the USER_CTL register, so setting
+rates which requires using alpha mode works only if the bit
+gets set already prior calling the function.
 
-> Gesendet: Dienstag, 07. Mai 2024 um 15:35 Uhr
-> Von: "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.c=
-om>
->
-> Il 06/05/24 18:00, Frank Wunderlich ha scritto:
+Extend the function to set the ALPHA_EN bit in order to allow
+using fractional rates regardless whether the bit gets set
+previously or not.
 
-> >>> +	fan: pwm-fan {
-> >>> +		compatible =3D "pwm-fan";
-> >>> +		#cooling-cells =3D <2>;
-> >>> +		/* cooling level (0, 1, 2) - pwm inverted */
-> >>> +		cooling-levels =3D <255 96 0>;
-> >>
-> >> Did you try to actually invert the PWM?
-> >>
-> >> Look for PWM_POLARITY_INVERTED ;-)
-> >
-> > Mtk pwm driver does not support it
-> >
-> > https://elixir.bootlin.com/linux/latest/source/drivers/pwm/pwm-mediate=
-k.c#L211
-> >
->
-> You're right, sorry - I confused the general purpose PWM controller with=
- the
-> rather specific DISP_PWM controller (which does support polarity inversi=
-on).
->
-> It's good - but I'd appreciate if you can please add a comment stating t=
-hat
-> the PWM values are inverted in SW because the controller does *not* supp=
-ort
-> polarity inversion... so that next time someone looks at this will immed=
-iately
-> understand what's going on and why :-)
+Fixes: 84da48921a97 ("clk: qcom: clk-alpha-pll: introduce stromer plus ops")
+Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
+---
+Based on 'qcom-clk-for-6.10'
+---
 
-so i would change comment like this:
+---
+ drivers/clk/qcom/clk-alpha-pll.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-		/* cooling level (0, 1, 2)
-		 * signal is inverted on board
-		 * mtk pwm driver does not support
-		 * PWM_POLARITY_INVERTED */
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index d4227909d1fe..c51647e37df8 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -2574,6 +2574,9 @@ static int clk_alpha_pll_stromer_plus_set_rate(struct clk_hw *hw,
+ 	regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL_U(pll),
+ 					a >> ALPHA_BITWIDTH);
+ 
++	regmap_update_bits(pll->clkr.regmap, PLL_USER_CTL(pll),
++			   PLL_ALPHA_EN, PLL_ALPHA_EN);
++
+ 	regmap_write(pll->clkr.regmap, PLL_MODE(pll), PLL_BYPASSNL);
+ 
+ 	/* Wait five micro seconds or more */
 
-> >>> +		pwms =3D <&pwm 0 10000>;
-> >>> +		status =3D "okay";
-> >>> +	};
-> >>> +
-> >>> +	phy14: ethernet-phy@14 {
-...
-> >>> +		interrupts-extended =3D <&pio 48 IRQ_TYPE_EDGE_FALLING>;
-> >>> +		reset-gpios =3D <&pio 49 GPIO_ACTIVE_LOW>;
-> >>> +		reset-assert-us =3D <10000>;
-> >>> +		reset-deassert-us =3D <20000>;
-> >>> +		phy-mode =3D "2500base-x";
-> >>> +		full-duplex;
-> >>> +		pause;
-> >>> +		airoha,pnswap-rx;
-> >>> +
-> >>> +		leds {
-> >>> +			#address-cells =3D <1>;
-> >>> +			#size-cells =3D <0>;
-> >>> +
-> >>> +			led@0 { /* en8811_a_gpio5 */
-> >>> +				reg =3D <0>;
-> >>> +				color =3D <LED_COLOR_ID_YELLOW>;
-> >>> +				function =3D LED_FUNCTION_LAN;
-> >>> +				function-enumerator =3D <1>;
-> >>
-> >> Why aren't you simply using a label?
-> >
-> > You mean the comment? I can add it of course like for regulators.
-> >
->
-> I mean in place of the function-enumerator... that's practically used to
-> distinguish between instances, it's not too common to see it, and usuall=
-y
-> "label" replaces exactly that - just that, instead of a different number=
-,
-> it gets a different name with no (usually) meaningless numbers :-)
+---
+base-commit: 3c5b3e17b8fd1f1add5a9477306c355fab126977
+change-id: 20240508-stromer-plus-alpha-en-0a4a4c6df28c
 
-as far as i understand using label also makes "function" property useless,=
- after discussing
-this with eric i would drop both on all 4 places by labels like these:
+Best regards,
+-- 
+Gabor Juhos <j4g8y7@gmail.com>
 
-label =3D "yellow-lan";
-label =3D "green-lan";
-...
-
-not sure if we should drop color property too...
-
-> >>> +				default-state =3D "keep";
-> >>> +				linux,default-trigger =3D "netdev";
-> >>> +			};
-> >>> +			led@1 { /* en8811_a_gpio4 */
-> >>> +				reg =3D <1>;
-> >>> +				color =3D <LED_COLOR_ID_GREEN>;
-> >>> +				function =3D LED_FUNCTION_LAN;
-> >>> +				function-enumerator =3D <2>;
-> >>> +				default-state =3D "keep";
-> >>> +				linux,default-trigger =3D "netdev";
-> >>> +			};
-> >>> +		};
-> >>> +	};
-> >>> +
-> >>> +	phy15: ethernet-phy@15 {
-> >>> +		reg =3D <15>;
-> >>
-> >> Same here.
-> >>
-> >> Cheers,
-> >> Angelo
-
-regards Frank
