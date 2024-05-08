@@ -1,148 +1,99 @@
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78C693A1AB
-	for <linux-clk@vger.kernel.org>; Wed,  8 May 2024 21:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEB77823B8;
+	Wed,  8 May 2024 21:33:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715202491; cv=none; b=ULnhUijHstBitF7o5LaGfZRz9Pr7v7BQ7O6d01yCCEWt3yH2B35BhXW/xeXt/8vJgwTM7UkF9UwExth9BTLlJ6pp2mMlj7oE8Q2S2lVx0mrilKp9VF+kpOwr0/A/Xn4T4Bzqu1B3p9GOd9H8bWRIvd+DsraJ4OyUcyCt9k8cy0I=
+	t=1715204018; cv=none; b=Cb/qQaGItGZ7TEUJgIm+EFBgiVt3oqR38e74aiuZCDcrNMdVf1fz4VIeFIQS6NSe4qU5Z08mPjKEkA6yDELmhtHKYY1EVQ4nuXQ9vuemaYb5CtF0B7R94VTsQKDN4UUXfRzsna06881XUSDNdKnu+t4pnmfjDr9dE4zZMvhNZ3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715202491; c=relaxed/simple;
-	bh=LKGV7xc5nr9ry+yJYOSLrex6y//3fq+gaLwkrTGdTHw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kEuzYwHFwjPor5COnHEwmsHxKir1RXrys/d20Tr5vJRG/uWHrSM9ZsG6rlCNV/TrjVU3B48npSoeeQeMSMxGOsaUJHdKD+tLg6PMJlBlVpWssrtBBL7XGmdkScl86hcaDKS/mx7uMmZWVqNBKPh/qId6Ylcbk7Eah9XZjGYBdXQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KiKw0h67; arc=none smtp.client-ip=209.85.219.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1715204018; c=relaxed/simple;
+	bh=dBWydrhX02YbGnsnhGjSVobHD8eSb5gTySir8O5N8vo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BNh9eqnRANPH5n4eNEgBztWN+EzXkn1SUl1+nxP/XgSWHllINvALkFXFua8YXAifGhcU+bsX8fo77+F2PP4XNu+PMtSjw0z4aBObJmJ+aQ7OJhiq7Hvhw6cVvZgod5puZ1cayAxhjkbYAAKpFEMkHRKA8FqPYaP9xaYCskxHYYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=utts5TQ5; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KiKw0h67"
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-de4665b4969so247188276.2
-        for <linux-clk@vger.kernel.org>; Wed, 08 May 2024 14:08:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715202488; x=1715807288; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uysWUhd+mFP/8DQDYwRCph49GuPMOosAxVLVtOn+vxk=;
-        b=KiKw0h67mgg/iES4fpkMXS4Kqd5ZsF9spsrAzS+GRxhjCiWzx1u21mMk4RHGCkOPhL
-         tdgPHZ4burejA7Le+BIPYZ8QB62B+eJzWigjo6NueGUOh9BAFBhqp5qIG1hKgchKjPaW
-         eLOTbzmoG+SvbPeVjyOLq/EbBH54OF+oRlnAMXhL/BKdTNYFomSWTV87HRIy6rFIIVQB
-         JskLBSfUX7chADfyf9DUo9cxG9yg3Bh1sICn7CMG8OHvZDWt4D0A6FpjWPBdmbNv/FLR
-         rAv9z/2W5BprkG8+8pr6ih7Z3c1HhrA4OjAmPGywvO8Wy5UpgHOLmsVw09uFs+gG9dEn
-         u8Zg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715202488; x=1715807288;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uysWUhd+mFP/8DQDYwRCph49GuPMOosAxVLVtOn+vxk=;
-        b=RqFzuzSPZbkjW3rW+LxsYGZdVO44R6fRmyJ1aNe/t6JSRWrI7c8ErobmHU28IxD8/s
-         Iks3a5deXiTi9gOu9gaydF+/Q++zFx5BmTA1xl/82ClxfArPhaSTCdtOU8I4g4kQAwMR
-         ANIYpGdEJhvCUhIUZOP8VShUJVjMrryKrTTGRHZt3QZJbhs8E9P4EBOh5RkZ4Cjrugao
-         LD7bdVEU8tpO6ca4Sdxmjd6Aq5K/HSd4pNLO8GIfeI/opccoCH3husVCTcB0bw3XVZ5G
-         j7PO0ceRqIxuxfEbAht2wy+Imq2p2z59UbDGQ6f7TVaTQ0tOtro7+B8pk3y4qvQ1NGaa
-         7Uiw==
-X-Forwarded-Encrypted: i=1; AJvYcCVI1DOrSSflr06lHW8pbR9qUEJ1yJNAwnctkwZ0y0esx4LMwVW2E6zXMCasuU7I3szfidsRpUm5CykNfyBCow3N3npBoy2l5GpM
-X-Gm-Message-State: AOJu0YwG4cldNTbPJq5pieZS7zfSOxgNfnC5wTIEsX/Bh4BeARrJXZ8d
-	ttFl6mVRzrtdEwK6xJw2xYBN1SMeTlnT1sAitELMUN9Nj30qQ5l2yWyDKCUe8nEnGLNufO3PKwh
-	zoQo0YuEaBvtcB8COtdz8z1Jug7SBEWRC7Nbl6g==
-X-Google-Smtp-Source: AGHT+IFDV9vpign+J+3aFpHjnKGm0GBvz+bXhGRnYqw8oJbUWijE1ChetzcaM/anIQ6KxPCGeplsDlczILq+pqIYhcI=
-X-Received: by 2002:a5b:811:0:b0:de5:4bb4:25b9 with SMTP id
- 3f1490d57ef6-debb9ce095dmr4532379276.12.1715202488456; Wed, 08 May 2024
- 14:08:08 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="utts5TQ5"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE55DC113CC;
+	Wed,  8 May 2024 21:33:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715204018;
+	bh=dBWydrhX02YbGnsnhGjSVobHD8eSb5gTySir8O5N8vo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=utts5TQ5RS+8E+11XLTySWAdvK4SSvw6Fcf8WimRYrwV3dUWS0bywUbIU0gPtDq/9
+	 BGmVjG/9bn/vvQ4sxl4RaTOfMpmwm+EnJpV8fHFoE2RB7u3tUmIAre9rq/ukZqUNOC
+	 jT0X42kMPt2hn/Wb8QkWWXaBXA/4vsB5woKs/AUMiL/cRlJh1wtacHd5YCPm4El8r3
+	 +Yk23RFbCpUvPnyP+1MAJBex8in3MI/yP1kqttFY6Z5wqB8lr/IQFRKSaCCean+x0C
+	 g9GHHlwTgse3fE0/c7QZjMrfUhQQ37TxpFGFROLCaSyyIqqs9BDiRSSnciHq7eENBK
+	 AkqNIXixhi2SA==
+From: Conor Dooley <conor@kernel.org>
+To: linux-clk@vger.kernel.org
+Cc: conor@kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>,
+	kernel test robot <lkp@intel.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v1] clk, reset: microchip: mpfs: fix incorrect preprocessor conditions
+Date: Wed,  8 May 2024 22:33:24 +0100
+Message-ID: <20240508-unabashed-cheese-8f645b4f69ba@spud>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+G9fYuZd_ur56H8fwDSvUywopvn_b7ogprGkjEatQ7EPTLwYQ@mail.gmail.com>
- <11be44d3-0f32-49c6-b4ae-ba97a9f97763@app.fastmail.com> <820ddc2ec70780ae1ecd3af864dc8bd6.sboyd@kernel.org>
-In-Reply-To: <820ddc2ec70780ae1ecd3af864dc8bd6.sboyd@kernel.org>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Wed, 8 May 2024 16:07:57 -0500
-Message-ID: <CAPLW+4=D_31Fy_W_7+_ko22y9_-8rZ9Logh6KyW8UPM3q58J0A@mail.gmail.com>
-Subject: Re: clkdev: report over-sized strings when creating clkdev entries
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Arnd Bergmann <arnd@arndb.de>, Linux ARM <linux-arm-kernel@lists.infradead.org>, 
-	Naresh Kamboju <naresh.kamboju@linaro.org>, linux-clk <linux-clk@vger.kernel.org>, 
-	lkft-triage@lists.linaro.org, open list <linux-kernel@vger.kernel.org>, 
-	Russell King <linux@armlinux.org.uk>, Anders Roxell <anders.roxell@linaro.org>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2271; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=9+wMvAaSUGcoI1wTiaH0YmLJKrjarvzY4RrG23q3Gts=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDGnW75ewzlizuXVy2rGlP873xPRLm2z2t1DkfejikMyk2 Nfns/pIRykLgxgHg6yYIkvi7b4WqfV/XHY497yFmcPKBDKEgYtTACaiG8HwP1nthUDM8gdPq2tC ni892fC1XfnH5i07Fa6+k7O7rClx+QYjw+yLR7oM3YuvXy7NcbO4V3awQ6hP9Mya1ffNZZao3ud n5AEA
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
+Content-Transfer-Encoding: 8bit
 
-On Tue, May 7, 2024 at 3:26=E2=80=AFPM Stephen Boyd <sboyd@kernel.org> wrot=
-e:
->
-> Quoting Arnd Bergmann (2024-05-07 00:44:15)
-> > On Tue, May 7, 2024, at 09:20, Naresh Kamboju wrote:
-> > > The WinLink E850-96 board boot failed with Linux next-20240506 but th=
-ere
-> > > is no kernel crash log on the serial [1].
-> > >
-> > > Anders bisection results pointing to this commit,
-> > > # first bad commit:
-> > >   [4d11c62ca8d77cb1f79054844b598e0f4e92dabe]
-> > >   clkdev: report over-sized strings when creating clkdev entrie
-> > >
-> > > After reverting the above patch the boot test passed [2].
-> > >
-> > > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> > >
->
-> There are two fixes on the list: [1] and [2]. Perhaps one of those
-> resolves this?
->
-> [1] https://lore.kernel.org/r/20240507065317.3214186-1-m.szyprowski@samsu=
-ng.com
-> [2] https://lore.kernel.org/r/20240507064434.3213933-1-m.szyprowski@samsu=
-ng.com
->
+From: Conor Dooley <conor.dooley@microchip.com>
 
-Late to the party, but FWIW here is my two cents. E850-96 board
-crashes on boot when running next-20240508. Enabling earlycon reveals
-the details. Here is the relevant excerpt from the backtrace:
+While moving all the reset code in the PolarFire SoC clock driver to the
+reset subsystem, I removed an `#if IS_ENABLED(RESET_CONTROLLER)` from
+the driver and moved it to the header, however this was not the correct
+thing to do. In the driver such a condition over-eagerly provided a
+complete implementation for mpfs_reset_{read,write}() when the reset
+subsystem was enabled without the PolarFire SoC reset driver, but in the
+header it meant that when the subsystem was enabled and the driver was
+not, no implementation for mpfs_reset_controller_register() was
+provided. Fix the condition so that the stub implementation of
+mpfs_reset_controller_register() is used when the reset driver is
+disabled.
 
-8<-------------------------------------------------------------------->8
-    Unable to handle kernel NULL pointer dereference
-    at virtual address 0000000000000000
+Fixes: 098c290a490d ("clock, reset: microchip: move all mpfs reset code to the reset subsystem")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202405082259.44DzHvaN-lkp@intel.com/
+Closes: https://lore.kernel.org/oe-kbuild-all/202405082200.tBrEs5CZ-lkp@intel.com/
+Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+---
+CC: Conor Dooley <conor.dooley@microchip.com>
+CC: Daire McNamara <daire.mcnamara@microchip.com>
+CC: Stephen Boyd <sboyd@kernel.org>
+CC: linux-clk@vger.kernel.org
+CC: linux-kernel@vger.kernel.org
+---
+ include/soc/microchip/mpfs.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-    Call trace:
-     vsnprintf+0x64/0x724
-     ...
-     _printk+0x60/0x84
-     vclkdev_alloc+0x118/0x13c
-     clkdev_hw_create+0x64/0x9c
-     do_clk_register_clkdev+0x58/0x7c
-     clk_hw_register_clkdev+0x30/0x54
-     samsung_clk_register_fixed_rate+0xac/0x104
-     samsung_cmu_register_clocks+0x78/0xb0
-     samsung_cmu_register_one+0x48/0xa4
-     exynos_arm64_register_cmu+0x3c/0x70
-     exynos850_cmu_probe+0x2c/0x40
-     ...
-8<-------------------------------------------------------------------->8
+diff --git a/include/soc/microchip/mpfs.h b/include/soc/microchip/mpfs.h
+index d7e612b5e22e..0bd67e10b704 100644
+--- a/include/soc/microchip/mpfs.h
++++ b/include/soc/microchip/mpfs.h
+@@ -43,11 +43,11 @@ struct mtd_info *mpfs_sys_controller_get_flash(struct mpfs_sys_controller *mpfs_
+ #endif /* if IS_ENABLED(CONFIG_POLARFIRE_SOC_SYS_CTRL) */
+ 
+ #if IS_ENABLED(CONFIG_MCHP_CLK_MPFS)
+-#if IS_ENABLED(CONFIG_RESET_CONTROLLER)
++#if IS_ENABLED(CONFIG_RESET_POLARFIRE_SOC)
+ int mpfs_reset_controller_register(struct device *clk_dev, void __iomem *base);
+ #else
+ static inline int mpfs_reset_controller_register(struct device *clk_dev, void __iomem *base) { return 0; }
+-#endif /* if IS_ENABLED(CONFIG_RESET_CONTROLLER) */
++#endif /* if IS_ENABLED(CONFIG_RESET_POLARFIRE_SOC) */
+ #endif /* if IS_ENABLED(CONFIG_MCHP_CLK_MPFS) */
+ 
+ #endif /* __SOC_MPFS_H__ */
+-- 
+2.43.0
 
-'addr2line' points at the end of vclkdev_alloc():
-
-    pr_err("%pV:%s: %s ID is greater than %zu\n",
-           &fmt, con_id, failure, max_size);
-
-Applying the forementioned patch [2] ("clkdev: fix potential NULL
-pointer dereference") fixes the boot for me.
-
-I can also observe a couple of warnings like these in the kernel log:
-
-    samsung_clk_register_fixed_rate: failed to register clock lookup
-for clk_rco_i3c_pmic
-    samsung_clk_register_fixed_rate: failed to register clock lookup
-for clk_rco_apm__alv
-    ...
-
-The patch [1] ("clk: samsung: Don't register clkdev lookup for the
-fixed rate clocks") fixes those. I think both have to be applied ASAP.
-In case of E850-96, I guess [1] is more critical.
-
-Thanks!
