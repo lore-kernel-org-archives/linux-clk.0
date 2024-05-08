@@ -1,99 +1,87 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEB77823B8;
-	Wed,  8 May 2024 21:33:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5178F132816;
+	Wed,  8 May 2024 22:29:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715204018; cv=none; b=Cb/qQaGItGZ7TEUJgIm+EFBgiVt3oqR38e74aiuZCDcrNMdVf1fz4VIeFIQS6NSe4qU5Z08mPjKEkA6yDELmhtHKYY1EVQ4nuXQ9vuemaYb5CtF0B7R94VTsQKDN4UUXfRzsna06881XUSDNdKnu+t4pnmfjDr9dE4zZMvhNZ3k=
+	t=1715207378; cv=none; b=NSPc7gN0fuS6Kjga9jVZC0b/cgLakxoSc9LU5BQdUYErqtSgYkh845gpa+FCwsBMpEp7IBf5+7W62GDxdAx4MztPuppfKeYZcoEC/oSNe8UqWMfUObignInI1TAI/DgiOt2fgY6k/JMfkmVPpzlQ4jfBGCMHMSIEfg0McaMyrf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715204018; c=relaxed/simple;
-	bh=dBWydrhX02YbGnsnhGjSVobHD8eSb5gTySir8O5N8vo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BNh9eqnRANPH5n4eNEgBztWN+EzXkn1SUl1+nxP/XgSWHllINvALkFXFua8YXAifGhcU+bsX8fo77+F2PP4XNu+PMtSjw0z4aBObJmJ+aQ7OJhiq7Hvhw6cVvZgod5puZ1cayAxhjkbYAAKpFEMkHRKA8FqPYaP9xaYCskxHYYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=utts5TQ5; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1715207378; c=relaxed/simple;
+	bh=8CFE89KQ1YCyvoNxJkTNQ2HS3pGySrvPKIrTF4hkP6Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MJHJ8C3UlIDOPdkfrhRTd4gdwKKCCUJXFXagB/A6MOkQKNxHQiJIsc058zFU4qPI1bOWlIviusRO7lHweh1eP9tkXpWTEhZrSD6BFuSQ7CedmoTo9f4ihL2polrt4jHIRtGlMMYz3UYfLM2rG2p9YH4GIW5SJu5pV+wiCKd6Uqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=FEtckNfX; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="utts5TQ5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE55DC113CC;
-	Wed,  8 May 2024 21:33:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715204018;
-	bh=dBWydrhX02YbGnsnhGjSVobHD8eSb5gTySir8O5N8vo=;
-	h=From:To:Cc:Subject:Date:From;
-	b=utts5TQ5RS+8E+11XLTySWAdvK4SSvw6Fcf8WimRYrwV3dUWS0bywUbIU0gPtDq/9
-	 BGmVjG/9bn/vvQ4sxl4RaTOfMpmwm+EnJpV8fHFoE2RB7u3tUmIAre9rq/ukZqUNOC
-	 jT0X42kMPt2hn/Wb8QkWWXaBXA/4vsB5woKs/AUMiL/cRlJh1wtacHd5YCPm4El8r3
-	 +Yk23RFbCpUvPnyP+1MAJBex8in3MI/yP1kqttFY6Z5wqB8lr/IQFRKSaCCean+x0C
-	 g9GHHlwTgse3fE0/c7QZjMrfUhQQ37TxpFGFROLCaSyyIqqs9BDiRSSnciHq7eENBK
-	 AkqNIXixhi2SA==
-From: Conor Dooley <conor@kernel.org>
-To: linux-clk@vger.kernel.org
-Cc: conor@kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>,
-	kernel test robot <lkp@intel.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v1] clk, reset: microchip: mpfs: fix incorrect preprocessor conditions
-Date: Wed,  8 May 2024 22:33:24 +0100
-Message-ID: <20240508-unabashed-cheese-8f645b4f69ba@spud>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="FEtckNfX"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Eb6h6lYO2Xj8IhPPKAoLKWE2vlA1ySJ+zUASlEJjoTU=; b=FEtckNfXCagMhx2pYvdo/RZKvJ
+	p+XTKA9wWiv4JnepfK8na49y4qvgRBuV6gu5VwTbHIpxtKv11fbkIu7CX4pNltuQG/kZ/9PDV9+RY
+	Pr9J9yyKsf91exZwtiK/iCuSFt8RoyQEQbBCpTT5NGnLlKv5RFuhq9b5DJxE0T2kt9037o8S9a7qs
+	zrVodNGW4wdEeB2S+N4Bx/2ZOhH44sveIZxPly0jFcPNMz7WbqGOXLf6/uOAs9pW1SVOa2fL4dXWE
+	kcXbOhFdYl7bUh0HLakR2Kdqn9TYuUehFv6e/eVHGZTvHg1MqQ331GwS2qHKP6gCpk+u5EsCsIbMD
+	yTWc6/Rw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:48902)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1s4pmv-0005h2-1q;
+	Wed, 08 May 2024 23:29:25 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1s4pmu-0001hI-UL; Wed, 08 May 2024 23:29:24 +0100
+Date: Wed, 8 May 2024 23:29:24 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Sam Protsenko <semen.protsenko@linaro.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	Naresh Kamboju <naresh.kamboju@linaro.org>,
+	linux-clk <linux-clk@vger.kernel.org>, lkft-triage@lists.linaro.org,
+	open list <linux-kernel@vger.kernel.org>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: clkdev: report over-sized strings when creating clkdev entries
+Message-ID: <Zjv8xBXcRnfShpvf@shell.armlinux.org.uk>
+References: <CA+G9fYuZd_ur56H8fwDSvUywopvn_b7ogprGkjEatQ7EPTLwYQ@mail.gmail.com>
+ <11be44d3-0f32-49c6-b4ae-ba97a9f97763@app.fastmail.com>
+ <820ddc2ec70780ae1ecd3af864dc8bd6.sboyd@kernel.org>
+ <CAPLW+4=D_31Fy_W_7+_ko22y9_-8rZ9Logh6KyW8UPM3q58J0A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2271; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=9+wMvAaSUGcoI1wTiaH0YmLJKrjarvzY4RrG23q3Gts=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDGnW75ewzlizuXVy2rGlP873xPRLm2z2t1DkfejikMyk2 Nfns/pIRykLgxgHg6yYIkvi7b4WqfV/XHY497yFmcPKBDKEgYtTACaiG8HwP1nthUDM8gdPq2tC ni892fC1XfnH5i07Fa6+k7O7rClx+QYjw+yLR7oM3YuvXy7NcbO4V3awQ6hP9Mya1ffNZZao3ud n5AEA
-X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPLW+4=D_31Fy_W_7+_ko22y9_-8rZ9Logh6KyW8UPM3q58J0A@mail.gmail.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-From: Conor Dooley <conor.dooley@microchip.com>
+On Wed, May 08, 2024 at 04:07:57PM -0500, Sam Protsenko wrote:
+> The patch [1] ("clk: samsung: Don't register clkdev lookup for the
+> fixed rate clocks") fixes those. I think both have to be applied ASAP.
+> In case of E850-96, I guess [1] is more critical.
 
-While moving all the reset code in the PolarFire SoC clock driver to the
-reset subsystem, I removed an `#if IS_ENABLED(RESET_CONTROLLER)` from
-the driver and moved it to the header, however this was not the correct
-thing to do. In the driver such a condition over-eagerly provided a
-complete implementation for mpfs_reset_{read,write}() when the reset
-subsystem was enabled without the PolarFire SoC reset driver, but in the
-header it meant that when the subsystem was enabled and the driver was
-not, no implementation for mpfs_reset_controller_register() was
-provided. Fix the condition so that the stub implementation of
-mpfs_reset_controller_register() is used when the reset driver is
-disabled.
+The fixes to clkdev.c have been pushed out for a while now, so I think
+you may need to update your tree. There's been one more fix to it more
+recently (because of the whole va_copy() debacle).
 
-Fixes: 098c290a490d ("clock, reset: microchip: move all mpfs reset code to the reset subsystem")
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202405082259.44DzHvaN-lkp@intel.com/
-Closes: https://lore.kernel.org/oe-kbuild-all/202405082200.tBrEs5CZ-lkp@intel.com/
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
----
-CC: Conor Dooley <conor.dooley@microchip.com>
-CC: Daire McNamara <daire.mcnamara@microchip.com>
-CC: Stephen Boyd <sboyd@kernel.org>
-CC: linux-clk@vger.kernel.org
-CC: linux-kernel@vger.kernel.org
----
- include/soc/microchip/mpfs.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Whether linux-next picks up the latest version depends when they pull
+in relation to me pushing the changes out, which can take 48 hours
+due to the timezone differences. linux-next tends not to pick stuff
+up quickly if one's in the UK and pushes stuff out in the late
+afternoon/evening. That said, the NULL fix has been pushed out for
+a few days now.
 
-diff --git a/include/soc/microchip/mpfs.h b/include/soc/microchip/mpfs.h
-index d7e612b5e22e..0bd67e10b704 100644
---- a/include/soc/microchip/mpfs.h
-+++ b/include/soc/microchip/mpfs.h
-@@ -43,11 +43,11 @@ struct mtd_info *mpfs_sys_controller_get_flash(struct mpfs_sys_controller *mpfs_
- #endif /* if IS_ENABLED(CONFIG_POLARFIRE_SOC_SYS_CTRL) */
- 
- #if IS_ENABLED(CONFIG_MCHP_CLK_MPFS)
--#if IS_ENABLED(CONFIG_RESET_CONTROLLER)
-+#if IS_ENABLED(CONFIG_RESET_POLARFIRE_SOC)
- int mpfs_reset_controller_register(struct device *clk_dev, void __iomem *base);
- #else
- static inline int mpfs_reset_controller_register(struct device *clk_dev, void __iomem *base) { return 0; }
--#endif /* if IS_ENABLED(CONFIG_RESET_CONTROLLER) */
-+#endif /* if IS_ENABLED(CONFIG_RESET_POLARFIRE_SOC) */
- #endif /* if IS_ENABLED(CONFIG_MCHP_CLK_MPFS) */
- 
- #endif /* __SOC_MPFS_H__ */
 -- 
-2.43.0
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
