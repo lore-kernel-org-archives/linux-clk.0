@@ -1,66 +1,177 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B2A77658;
-	Tue,  7 May 2024 22:02:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 790DB8F4E;
+	Wed,  8 May 2024 02:36:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715119370; cv=none; b=OQhxKOwUQa8QfZtAEwi3EM5xfnMI1Qq6cxe2a0s9h1kKIyDQX8kpMa/cUifr0A30djz1NGbo73euhliH49m37YODiKVt8EVYHEIC33umUVSwrTBep6tAb27WUGPG+bJ99o0axXhfeUgIBjubL4FRV2PYYl+pyfAi4E3UQP67peE=
+	t=1715135811; cv=none; b=sBi6QwkUU2a6hX3qao9IkEDNYr/RwLBjwNk4bxrmqz0Jnkw8ryBRR93aOxGJ3Lz9J7zfAk5qsJ6fE628RKe3N73ks0S5+e3wv4vH+X+MdS11eo68iXrI+BcVObPFLpje57GiU50KOVbAQvwBXhCMjUFZvfuFsU+tINvQTWae/mQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715119370; c=relaxed/simple;
-	bh=ECDBXpA/C+eVvh+6xfhTbhth3yLG8cu9XKxgvKvqxOo=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=iUi3Yq4Fsp5OePfSz6JAdwEgjXbWw1uk0l/OznoSyK8CVhGNDmXzHIGttXWfLcAuP3c2TQmFID1sy6A1/CJNkOflvU2avGcRxEXv0EI+/blSq+k9Uxn9//HhyBr3E7XhIzd0QpVXqU+qSp723TIBml1wdhT4CYUcF1OLMRbc84k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gAgk5W1e; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1715135811; c=relaxed/simple;
+	bh=2PPynveNL12tkUUj04gVs+3qBmnAvwSTucwddk4/zUw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=R2uhfJ/4IFTKiSxC72dync0RmAF8AhB8FY4zhwyXz/4Ozt3loThloYJScl3RNCcsSMKhj/jmzDrcHvH5BFTJVc7wjtbxtvPvtYS5BXm78YYZSYwsSMVL4wpJ4a3Qwv+/NY+UWSzoX3CiiT9nvNGVDTaxvOiArw02Z4QHWRipAhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ppM0+glt; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gAgk5W1e"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3235C2BBFC;
-	Tue,  7 May 2024 22:02:49 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ppM0+glt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E49E1C2BBFC;
+	Wed,  8 May 2024 02:36:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715119369;
-	bh=ECDBXpA/C+eVvh+6xfhTbhth3yLG8cu9XKxgvKvqxOo=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=gAgk5W1e0tOEO9WlYzPLOCZ+9mCwBDvfyQTxMT4LvrHCji5I0WgltgrclRalG72pj
-	 WMuOyg0CXOXsp067YM5S7JkutAgSs0kD5O+0zBa6RNx/+/VMwNGExSAJgHSDpM4Gwj
-	 PHQcfg+MJpIDPACHsBAFqUYI0HGwYAefjvlNLRiMSCkziG7qCo7OPEZFdY4TOGyhAq
-	 JY9it3DU1wkY2LPQ6lujypdORiS/snyOk7+BvnYuSYbxptlSdUj/JJ6eZ+kgazNaVq
-	 todH6nHNaskpq3Em4qBytUT3yIm4I6rfL5/ZjY8cnr0N6hZVvtbIrnM9L0oKWsVT50
-	 dqson14uMhgZg==
-Message-ID: <332c845c17e24e2eb660e18680f2626f.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1715135811;
+	bh=2PPynveNL12tkUUj04gVs+3qBmnAvwSTucwddk4/zUw=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ppM0+gltI/PmVr5TPjW+TlrwU5/HCkW7a+ycT9emGK5tH7zScrzfnipLXtl8DsgnY
+	 9g51Ki2Xo/CgZh9JQ6YekvgYpWndIA+te0ETkCWROIR45sJ/73RJE9EG2blV3CVMdM
+	 cIu2MThfYI35evKHuCr9CV0+CM4OLY3nJtpVI0QE0squZlTI/Lr0uN6VnJOH4J5Br8
+	 atO5NFcIfWWiqRG/F0+vR6Ob10p6i/Hv5UBr05uKKrStyxqDuqa5vJgl+/BPvrYeIt
+	 3SGZyxDBGlA8CI2ku0zXzW5/+4kWFFiwCtDqV7ywvfHiR/4lsEXZlmu6rxyVTcRQTR
+	 vyc8zgGD6fY0g==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Gabor Juhos <j4g8y7@gmail.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	Luca Weiss <luca@z3ntu.xyz>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Marc Gonzalez <mgonzalez@freebox.fr>,
+	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+Subject: [GIT PULL] Qualcomm clock updates for v6.10
+Date: Tue,  7 May 2024 21:36:48 -0500
+Message-ID: <20240508023648.207465-1-andersson@kernel.org>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240419152723.570159-3-gabriel.fernandez@foss.st.com>
-References: <20240419152723.570159-1-gabriel.fernandez@foss.st.com> <20240419152723.570159-3-gabriel.fernandez@foss.st.com>
-Subject: Re: [PATCH 2/4] clk: stm32mp2: use of STM32 access controller
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-To: Alexandre Torgue <alexandre.torgue@foss.st.com>, Conor Dooley <conor+dt@kernel.org>, Gabriel Fernandez <gabriel.fernandez@foss.st.com>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>
-Date: Tue, 07 May 2024 15:02:47 -0700
-User-Agent: alot/0.10
+Content-Transfer-Encoding: 8bit
 
-Quoting gabriel.fernandez@foss.st.com (2024-04-19 08:27:21)
-> diff --git a/drivers/clk/stm32/clk-stm32mp25.c b/drivers/clk/stm32/clk-st=
-m32mp25.c
-> index 210b75b39e50..a37ee9f707e3 100644
-> --- a/drivers/clk/stm32/clk-stm32mp25.c
-> +++ b/drivers/clk/stm32/clk-stm32mp25.c
-> @@ -4,7 +4,9 @@
->   * Author: Gabriel Fernandez <gabriel.fernandez@foss.st.com> for STMicro=
-electronics.
->   */
-> =20
-> +#include <linux/bus/stm32_firewall_device.h>
 
-I don't have this include. I either need a signed tag or this needs to
-wait until next merge window.
+The following changes since commit 4cece764965020c22cff7665b18a012006359095:
 
->  #include <linux/clk-provider.h>
-> +#include <linux/of_address.h>
+  Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
 
-What is this include for?
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git tags/qcom-clk-for-6.10
+
+for you to fetch changes up to 3c5b3e17b8fd1f1add5a9477306c355fab126977:
+
+  clk: qcom: clk-alpha-pll: fix rate setting for Stromer PLLs (2024-05-07 21:10:18 -0500)
+
+----------------------------------------------------------------
+Qualcomm clock updates for v6.10
+
+Support in RCG and RCG2 are added for supporting setups where the same
+frequency can be reached through multiple configurations. This is then
+used to rework the IPQ8074 NSS port 5 and 6 clocks to resolve issues
+with certain frequencies.
+
+The APSS IPQ5018 PLL type is corrected, to resolve an issue with some
+boards failing to boot. The configuration is further corrected, to
+reduce the max CPU frequency to its expected value. This comes with a
+few more cleanups and corrections for Stromer PLLs.
+
+Kconfig dependencies are corrected for SM8650 GPU and SC8280XP camera
+clock controllers.
+
+The MSM8998 Venus clocks are corrected, to make Venus functional.
+
+Downstream remnants related to DisplayPort are cleaned up across SM8450,
+SM6350, SM8550, and SM8650.
+
+The MSM8996 CBF PLL is cleaned up by reusing the Huayra APSS register
+map.
+
+The seemingly generic configuration of HFPLL is replaced by adding a
+QCS404-specific compatible.
+
+On SM8150 the CPUSS AHB clock source clock is removed, as this is not
+controlled by Linux.
+
+An unused field is removed in the RPM clock controller context. Missing
+MODULE_DEVICE_TABLE is added to MSM8917 and MSM8953 global clock
+controller drivers.
+
+----------------------------------------------------------------
+Abel Vesa (1):
+      clk: qcom: clk-alpha-pll: Skip reconfiguring the running Lucid Evo
+
+Bjorn Andersson (1):
+      Merge branch '20240315-apss-ipq-pll-ipq5018-hang-v2-1-6fe30ada2009@gmail.com' into clk-for-6.10
+
+Christian Marangi (3):
+      clk: qcom: clk-rcg: introduce support for multiple conf for same freq
+      clk: qcom: clk-rcg2: add support for rcg2 freq multi ops
+      clk: qcom: gcc-ipq8074: rework nss_port5/6 clock to multiple conf
+
+Christophe JAILLET (1):
+      clk: qcom: rpm: Remove an unused field in struct rpm_cc
+
+Dmitry Baryshkov (4):
+      clk: qcom: dispcc-sm8450: fix DisplayPort clocks
+      clk: qcom: dispcc-sm6350: fix DisplayPort clocks
+      clk: qcom: dispcc-sm8550: fix DisplayPort clocks
+      clk: qcom: dispcc-sm8650: fix DisplayPort clocks
+
+Gabor Juhos (11):
+      clk: qcom: clk-alpha-pll: remove invalid Stromer register offset
+      clk: qcom: clk-alpha-pll: reorder Stromer register offsets
+      clk: qcom: clk-alpha-pll: fix kerneldoc of struct clk_alpha_pll
+      clk: qcom: apss-ipq-pll: use stromer ops for IPQ5018 to fix boot failure
+      clk: qcom: apss-ipq-pll: reuse Stromer reg offsets from 'clk_alpha_pll_regs'
+      clk: qcom: apss-ipq-pll: move Huayra register map to 'clk_alpha_pll_regs'
+      clk: qcom: apss-ipq-pll: constify match data structures
+      clk: qcom: apss-ipq-pll: constify clk_init_data structures
+      clk: qcom: clk-cbf-8996: use HUAYRA_APSS register map for cbf_pll
+      clk: qcom: apss-ipq-pll: fix PLL rate for IPQ5018
+      clk: qcom: clk-alpha-pll: fix rate setting for Stromer PLLs
+
+Krzysztof Kozlowski (1):
+      clk: qcom: fix module autoloading
+
+Luca Weiss (2):
+      dt-bindings: clock: qcom,hfpll: Convert to YAML
+      clk: qcom: hfpll: Add QCS404-specific compatible
+
+Marc Gonzalez (1):
+      clk: qcom: mmcc-msm8998: fix venus clock issue
+
+Nathan Chancellor (2):
+      clk: qcom: Fix SC_CAMCC_8280XP dependencies
+      clk: qcom: Fix SM_GPUCC_8650 dependencies
+
+Satya Priya Kakitapalli (1):
+      clk: qcom: gcc-sm8150: De-register gcc_cpuss_ahb_clk_src
+
+ .../devicetree/bindings/clock/qcom,hfpll.txt       |  63 --------
+ .../devicetree/bindings/clock/qcom,hfpll.yaml      |  69 +++++++++
+ drivers/clk/qcom/Kconfig                           |   2 +
+ drivers/clk/qcom/apss-ipq-pll.c                    |  75 +++++-----
+ drivers/clk/qcom/clk-alpha-pll.c                   |  24 ++-
+ drivers/clk/qcom/clk-alpha-pll.h                   |   5 +-
+ drivers/clk/qcom/clk-cbf-8996.c                    |  13 +-
+ drivers/clk/qcom/clk-rcg.h                         |  24 ++-
+ drivers/clk/qcom/clk-rcg2.c                        | 166 +++++++++++++++++++++
+ drivers/clk/qcom/clk-rpm.c                         |   1 -
+ drivers/clk/qcom/common.c                          |  18 +++
+ drivers/clk/qcom/common.h                          |   2 +
+ drivers/clk/qcom/dispcc-sm6350.c                   |  11 +-
+ drivers/clk/qcom/dispcc-sm8450.c                   |  20 +--
+ drivers/clk/qcom/dispcc-sm8550.c                   |  20 +--
+ drivers/clk/qcom/dispcc-sm8650.c                   |  20 +--
+ drivers/clk/qcom/gcc-ipq8074.c                     | 120 +++++++++------
+ drivers/clk/qcom/gcc-msm8917.c                     |   1 +
+ drivers/clk/qcom/gcc-msm8953.c                     |   1 +
+ drivers/clk/qcom/gcc-sm8150.c                      |  61 --------
+ drivers/clk/qcom/hfpll.c                           |   6 +-
+ drivers/clk/qcom/mmcc-msm8998.c                    |   8 +
+ 22 files changed, 445 insertions(+), 285 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/qcom,hfpll.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,hfpll.yaml
