@@ -1,39 +1,40 @@
 Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 658D6127B7D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89FE012AAE8;
 	Wed,  8 May 2024 14:43:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715179420; cv=none; b=HwMKv6FtANBrsja4VeU8yHIeH7xH/fY7dprOSwDqrlMCaz5NZTEwOTdWZmMvIe55yKkj9/uklDaqO6rQVcJlRmtsxn8Hi8OmW7pK8GS7AMYSs6Cck+9mX8kfPcMvMzZiumT5cHGS2v+UophKLh/NFmscovn77D4HVuurRlYqKLM=
+	t=1715179420; cv=none; b=YYB/AXnGsJ4q1Mazmy6r8d9lBMUahx34xbW2MGj3T2IVUne86s0ztOlOp7EjhG+U5PVFsYJucZNvwQRgiwt7vhN/AQvGbO34x/dywa+mBHVnwfxlTILdbvfNQyyIxfPuTTlzCHEZ/7LOVo6orHtGihX9AEAzXukKJiOLMdghUDA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1715179420; c=relaxed/simple;
-	bh=gswKs53jkS41oULvg9VhAYsMQyN8wbsdJDS4kbBwULg=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Q4CvJQ3uft82cU2eiz2yk+S0fkNpWwkCqIxVlnvJYtIJleqrZof2SzktObuyOreZZJehYXV8kvv2hHaCNM5qj4gS86wbt8ZcTiPbKIlE7RLOcCEvFtcy7t3gG7zL7y2GULerhjRvHwbhyKFELXU2wku5h6GhSosLarbsA0Fe540=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=hbJjq/xO; arc=none smtp.client-ip=45.89.224.132
+	bh=8fDEaHZkRK4IbIx+fYB1auelBe5XByxusmIoXmUAo0w=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hCsvd7/VpaH1q3hrZELkU9akyrUfbLmo2p28sq6BbQw3+YAcKaZ/rwwJBksTj9cTVYTrkamDns7UKh66YoidTRtmDFuQuU+MH3LEm0eY5ev2iQHP3gCaSxj5zQ8WQRRJxVtlRV6O8TYjJqQepGHylouHTarcwxqq/8N7cUo17wA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=kEUeKlv/; arc=none smtp.client-ip=45.89.224.132
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sberdevices.ru
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="hbJjq/xO"
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="kEUeKlv/"
 Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id AC99E120008;
-	Wed,  8 May 2024 17:43:30 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru AC99E120008
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 48865120009;
+	Wed,  8 May 2024 17:43:31 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 48865120009
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1715179410;
-	bh=0jC9OmU53LLfwrewlLDVbsUks0O+ztvJHUVnwfXtnnc=;
+	s=mail; t=1715179411;
+	bh=dPTQ5jSK4GuvZkaC4CcDsLe0bIyiB7GSHolMaGJlw4o=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=hbJjq/xOsUZo4lq6NzU+mi2uH0Fa4xKbcDdoVehmhEvqdrge33F1MqIfwMpT6BHNn
-	 X+Dtopb7QTym6SHfQw0FoNwaEeLPBQGxlEaURt3CJv0k9rgqeVN+0dmPVyIlG+7R8v
-	 LJXMLBIlHD+ujEtO6ePzBBa60wVtOr425HQuYQ8/etDlYXpfYZOr0JMDq/b2Sdfl6n
-	 d1EhVyZCaEc6eUlIwpagQ7LQgU86vp9gduMl9dx+6OKWeSEFm6ybvZGD/urqMVeHn7
-	 qK9Xa/w/eqAWjG0Rm0iNWRcKhRqB7Sosi918x3E4NnqSVmGxAO7Cmjuxc+lIggGB3b
-	 ZQMmtnWtYx+VA==
+	b=kEUeKlv/yE2HEOyTPf0AVj8BR7EDRY/5Sah9zNduGC/k4g2zobGQT/Pqco29sEyuR
+	 jkBuv7IqoMsxp3koePxkDiY5gXLz7w1jxiWyJamYh2piLlrXga/0O7+uzWIZ3Z/ADr
+	 k6oU1J4BfIYHNOUzG3WCSe55fi1+1TO/bXr34UNxE/grVF9CJD7Ke6tSLic/c7bQkW
+	 bZ+AcWdxo1PXUahN5ms4aVhO+/31AByXZjhIlpJjjpUKz1LCcVdgYiKnBI/TwoF6Bz
+	 I9346z/qLO2QxMek1E5/ZP1tJdBYhHGVYm15Dq9j/6zYPSDgD7u/trNMYsmAoLJcAC
+	 MoJvcyy20eX3Q==
 Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
 	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Wed,  8 May 2024 17:43:30 +0300 (MSK)
+	Wed,  8 May 2024 17:43:31 +0300 (MSK)
 Received: from CAB-WSD-0003115.sberdevices.ru (100.64.160.123) by
  p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
@@ -48,10 +49,12 @@ To: Jan Dakinevich <jan.dakinevich@salutedevices.com>, Conor Dooley
  Blumenstingl <martin.blumenstingl@googlemail.com>, Michael Turquette
 	<mturquette@baylibre.com>, Neil Armstrong <neil.armstrong@linaro.org>, Rob
  Herring <robh+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>
-Subject: [QUESTION] Convert axg-audio-clkc to YAML format
-Date: Wed, 8 May 2024 17:42:56 +0300
-Message-ID: <20240508144259.191843-1-jan.dakinevich@salutedevices.com>
+Subject: [APPROACH 2 1/2] arm64: dts: amlogic: list all slave clocks for audio clock controller
+Date: Wed, 8 May 2024 17:42:58 +0300
+Message-ID: <20240508144259.191843-3-jan.dakinevich@salutedevices.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240508144259.191843-1-jan.dakinevich@salutedevices.com>
+References: <20240508144259.191843-1-jan.dakinevich@salutedevices.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -71,46 +74,154 @@ X-KSMG-AntiSpam-Rate: 0
 X-KSMG-AntiSpam-Status: not_detected
 X-KSMG-AntiSpam-Method: none
 X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 19 0.3.19 07c7fa124d1a1dc9662cdc5aace418c06ae99d2b, {Tracking_smtp_not_equal_from}, {Tracking_uf_ne_domains}, {Tracking_bl_eng_cat, c15}, salutedevices.com:7.1.1;lore.kernel.org:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;sberdevices.ru:5.0.1,7.1.1;smtp.sberdevices.ru:5.0.1,7.1.1;100.64.160.123:7.1.2, FromAlignment: n, {Tracking_smtp_domain_mismatch}, {Tracking_smtp_domain_2level_mismatch}, {Tracking_sender_alignment_int}, {Tracking_white_helo}, ApMailHostAddress: 100.64.160.123
+X-KSMG-AntiSpam-Info: LuaCore: 19 0.3.19 07c7fa124d1a1dc9662cdc5aace418c06ae99d2b, {Tracking_smtp_not_equal_from}, salutedevices.com:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;sberdevices.ru:5.0.1,7.1.1;smtp.sberdevices.ru:5.0.1,7.1.1;100.64.160.123:7.1.2, FromAlignment: n, {Tracking_smtp_domain_mismatch}, {Tracking_smtp_domain_2level_mismatch}, {Tracking_sender_alignment_int}, {Tracking_white_helo}, ApMailHostAddress: 100.64.160.123
 X-MS-Exchange-Organization-SCL: -1
 X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/05/08 13:27:00
-X-KSMG-LinksScanning: Clean, bases: 2024/05/08 13:27:00
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
 X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/05/08 09:52:00 #25122865
 X-KSMG-AntiVirus-Status: Clean, skipped
 
-Previously we discussed how to implement dt-schema for audio clock controller in
-Amlogic SoC [1]. Also, there was an earlier attempt to convert to yaml [2].
+Signed-off-by: Jan Dakinevich <jan.dakinevich@salutedevices.com>
+---
+ arch/arm64/boot/dts/amlogic/meson-axg.dtsi | 27 ++++++++++++++++++++--
+ arch/arm64/boot/dts/amlogic/meson-g12.dtsi | 26 +++++++++++++++++++--
+ arch/arm64/boot/dts/amlogic/meson-sm1.dtsi | 26 +++++++++++++++++++--
+ 3 files changed, 73 insertions(+), 6 deletions(-)
 
-Let me remind you that the problem is that only "pclk" clock of this controller.
-Other clocks are optional and they are allowed to be not routed.
-
-I can suggest two approaches how to deal with this. Could you please tell me
-which of them is more correct?
-
-Approach 1: use 'additionalItems' to declare optional clocks.
-Pros: 
- - it is short and simple;
- - no need to modify existing DTSIs.
-Cons:
- - checking works but 'additionalItems' doesn't expect no-boolean value [3]
- - there is reasoning that all clocks should be specified ragardless if they are
-   used or not [3][4].
-
-Approach 2: assume that all clocks are mandatory and declare all of them.
-Pros:
- - it is more common and compatible with existing meta-schemas;
- - may be architecturally it is more correct.
-Cons:
- - boilerplate in schema and in DTSIs;
- - requires modification of existing DTSIs.
-
-Links:
-[1] https://lore.kernel.org/lkml/20240419125812.983409-5-jan.dakinevich@salutedevices.com/
-[2] https://lore.kernel.org/linux-devicetree/20230808194811.113087-1-alexander.stein@mailbox.org/
-[3] https://lore.kernel.org/lkml/20240419210949.GA3979121-robh@kernel.org/
-[4] https://lore.kernel.org/lkml/07b1ca57-49a0-4151-99bf-caac053eaa01@kernel.org/
-
+diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+index 6d12b760b90f..28f4ec5f39b0 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+@@ -1342,7 +1342,9 @@ clkc_audio: clock-controller@0 {
+ 					 <&clkc CLKID_HIFI_PLL>,
+ 					 <&clkc CLKID_FCLK_DIV3>,
+ 					 <&clkc CLKID_FCLK_DIV4>,
+-					 <&clkc CLKID_GP0_PLL>;
++					 <&clkc CLKID_GP0_PLL>,
++					 <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>,
++					 <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>;
+ 				clock-names = "pclk",
+ 					      "mst_in0",
+ 					      "mst_in1",
+@@ -1351,7 +1353,28 @@ clkc_audio: clock-controller@0 {
+ 					      "mst_in4",
+ 					      "mst_in5",
+ 					      "mst_in6",
+-					      "mst_in7";
++					      "mst_in7",
++					      "slv_sclk0",
++					      "slv_sclk1",
++					      "slv_sclk2",
++					      "slv_sclk3",
++					      "slv_sclk4",
++					      "slv_sclk5",
++					      "slv_sclk6",
++					      "slv_sclk7",
++					      "slv_sclk8",
++					      "slv_sclk9",
++					      "slv_lrclk0",
++					      "slv_lrclk1",
++					      "slv_lrclk2",
++					      "slv_lrclk3",
++					      "slv_lrclk4",
++					      "slv_lrclk5",
++					      "slv_lrclk6",
++					      "slv_lrclk7",
++					      "slv_lrclk8",
++					      "slv_lrclk9";
++
+ 
+ 				resets = <&reset RESET_AUDIO>;
+ 			};
+diff --git a/arch/arm64/boot/dts/amlogic/meson-g12.dtsi b/arch/arm64/boot/dts/amlogic/meson-g12.dtsi
+index e732df3f3114..af99781f3c4e 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-g12.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-g12.dtsi
+@@ -82,7 +82,9 @@ clkc_audio: clock-controller@0 {
+ 				 <&clkc CLKID_HIFI_PLL>,
+ 				 <&clkc CLKID_FCLK_DIV3>,
+ 				 <&clkc CLKID_FCLK_DIV4>,
+-				 <&clkc CLKID_GP0_PLL>;
++				 <&clkc CLKID_GP0_PLL>,
++				 <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>,
++				 <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>;
+ 			clock-names = "pclk",
+ 				      "mst_in0",
+ 				      "mst_in1",
+@@ -91,7 +93,27 @@ clkc_audio: clock-controller@0 {
+ 				      "mst_in4",
+ 				      "mst_in5",
+ 				      "mst_in6",
+-				      "mst_in7";
++				      "mst_in7",
++				      "slv_sclk0",
++				      "slv_sclk1",
++				      "slv_sclk2",
++				      "slv_sclk3",
++				      "slv_sclk4",
++				      "slv_sclk5",
++				      "slv_sclk6",
++				      "slv_sclk7",
++				      "slv_sclk8",
++				      "slv_sclk9",
++				      "slv_lrclk0",
++				      "slv_lrclk1",
++				      "slv_lrclk2",
++				      "slv_lrclk3",
++				      "slv_lrclk4",
++				      "slv_lrclk5",
++				      "slv_lrclk6",
++				      "slv_lrclk7",
++				      "slv_lrclk8",
++				      "slv_lrclk9";
+ 
+ 			resets = <&reset RESET_AUDIO>;
+ 		};
+diff --git a/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi b/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi
+index 643f94d9d08e..24e520c3e2a6 100644
+--- a/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi
++++ b/arch/arm64/boot/dts/amlogic/meson-sm1.dtsi
+@@ -162,7 +162,9 @@ clkc_audio: clock-controller@0 {
+ 				 <&clkc CLKID_HIFI_PLL>,
+ 				 <&clkc CLKID_FCLK_DIV3>,
+ 				 <&clkc CLKID_FCLK_DIV4>,
+-				 <&clkc CLKID_FCLK_DIV5>;
++				 <&clkc CLKID_FCLK_DIV5>,
++				 <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>,
++				 <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>;
+ 			clock-names = "pclk",
+ 				      "mst_in0",
+ 				      "mst_in1",
+@@ -171,7 +173,27 @@ clkc_audio: clock-controller@0 {
+ 				      "mst_in4",
+ 				      "mst_in5",
+ 				      "mst_in6",
+-				      "mst_in7";
++				      "mst_in7",
++				      "slv_sclk0",
++				      "slv_sclk1",
++				      "slv_sclk2",
++				      "slv_sclk3",
++				      "slv_sclk4",
++				      "slv_sclk5",
++				      "slv_sclk6",
++				      "slv_sclk7",
++				      "slv_sclk8",
++				      "slv_sclk9",
++				      "slv_lrclk0",
++				      "slv_lrclk1",
++				      "slv_lrclk2",
++				      "slv_lrclk3",
++				      "slv_lrclk4",
++				      "slv_lrclk5",
++				      "slv_lrclk6",
++				      "slv_lrclk7",
++				      "slv_lrclk8",
++				      "slv_lrclk9";
+ 
+ 			resets = <&reset RESET_AUDIO>;
+ 		};
 -- 
 2.34.1
 
