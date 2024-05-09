@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4344C45BF0;
-	Thu,  9 May 2024 01:17:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A60F2BB12;
+	Thu,  9 May 2024 01:26:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715217471; cv=none; b=jQfH6phB4FpR2ZD1Mwx14O4YwgxOX/WNDMobD/MpK2XLroGmwUn7XlNVQVhnbbveQZ5MBQ/yUzva9bnaV+fU9YUOOswLfngdx6+JtIBlAKNKz6HzkF7eoIxmf/ENGFNLjBQyeWWynBn2V4cUQn88kPUewWBxp4SyoX+fkijatXk=
+	t=1715217989; cv=none; b=dqmLTUeO78NKcOqdkDUdOSO7IksIgpQYdhtDkl2kaL2ZUK9WEA8ZvS22zE8R4Xpy1DYF9u+deAHUHUH0EvF5UsSlkIyCJPriBOO4hA2XqvNMTrtC+VJRajt02VhOmCvUr3r9rcBdYwdpkhf8Cew5naazid11dVEfwR36FxTYPvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715217471; c=relaxed/simple;
-	bh=kV1VWqbr0RH6auTOE68NJ9vQgoBqmwiq6D1n/S8sNy0=;
+	s=arc-20240116; t=1715217989; c=relaxed/simple;
+	bh=F178WmldtkIwVeYOQABqKHM4vPoy8AbnJu1sSpFXEQc=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=Nhdcgx+efV6ziCACDB/rY6zwGnu4byWfV/SE9wxH7Hj4/f6mKYdS/KDzrpdWPeaFSath+jVfdz5GwjEfrHyXofRuHCG5QRN3V4/ZA35XV171L/jpnblsbfNOqGHCM5W1x6OHjMuMKwq3J+9iCkzCQP7gD/eJYqCUtVfoHOSJ80o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YksXqOMI; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=mU8NO3qWZepcD5NKm/x46tUIowbp4OTvEaN5/9qnMyp+R60F6IBpgqEk+gz6u+y+c99vEfdtKGW02jaGrbyAlD4RuquHD6QNfjirqaIvRoOBtozvrkC3eg187R99VsR2dWl6XBFtE2Ut87zQf68GNuLj7STHrOs1Vl3w/T+cgM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dVuvsQFz; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YksXqOMI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2CFCC113CC;
-	Thu,  9 May 2024 01:17:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dVuvsQFz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B78BBC113CC;
+	Thu,  9 May 2024 01:26:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715217470;
-	bh=kV1VWqbr0RH6auTOE68NJ9vQgoBqmwiq6D1n/S8sNy0=;
+	s=k20201202; t=1715217988;
+	bh=F178WmldtkIwVeYOQABqKHM4vPoy8AbnJu1sSpFXEQc=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=YksXqOMI4lsIaZqx0A5/i0JLSUHcsO6uruynoyRGSTcqWF903u/LNNb6O00rrl71F
-	 cJoCY9K10j5YsDpFFHaW+Q/GDTqNdnFWxJZYEJtbqXcGypoZ9L2+lfbeRhWCjdQ5Fc
-	 I2f/XBoH04xYOYY2Kv45HjT4EJgTKItrn6caanPg57Ooh/8V7a7CC8OeP8k5gXlVmk
-	 wSEbxqrnDWea86AU7J9YgABLuuA35vwEF8jtn2Y/GO18uMF9XLAmCYiNY11uWwmdnR
-	 aBt3zDugGxm3jz5EmWt6uOeJ0qm0hpePouEkYn/Q0TpQ4GSGlw3M9WAKm9hX28rbhj
-	 xS2d+YmPOdkQA==
-Message-ID: <9e2440caa122d05cfc0ee3cf64b46e48.sboyd@kernel.org>
+	b=dVuvsQFzCWdYoGOjin+3SauwzQJ2vJPMNetl3PSmvR+m4mNfqJQnjZbeJ+G/xwHvU
+	 OwZC9IQssxXjtIscDtJZ/HQuBQ0Acd4/o6AzXcgc2kWbIuWkNo2LTLXb7u/2/YFgl8
+	 WEENxMFfmm1f40JUKDnaAIKbIeyolEBxDnNN7hMRges1kIpFUiUt1B5TjpUaR61DFN
+	 QKHdqSt2URADBw0aVLN/bCLs7jl1aIpHSD2wOFqamkmjx7zUukUHu0/KRiObhZnNmT
+	 yKERafsQvMFS5pdn9YS+qUXRFy1k7WnadpVs1RRZXnJ70HyN0YPIQgeLLlpTbyc5IW
+	 P9Et6dbwynvWA==
+Message-ID: <4b24ab67d437b13ab27106e08aad68bf.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,23 +35,16 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240508153158.496248-1-krzysztof.kozlowski@linaro.org>
-References: <20240508153158.496248-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [GIT PULL] clk: samsung: drivers for v6.10, fixed pull, 2nd try
+In-Reply-To: <20240508023648.207465-1-andersson@kernel.org>
+References: <20240508023648.207465-1-andersson@kernel.org>
+Subject: Re: [GIT PULL] Qualcomm clock updates for v6.10
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org, Sylwester Nawrocki <snawrocki@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Michael Turquette <mturquette@baylibre.com>
-Date: Wed, 08 May 2024 18:17:48 -0700
+Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Gabor Juhos <j4g8y7@gmail.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Christian Marangi <ansuelsmth@gmail.com>, Luca Weiss <luca@z3ntu.xyz>, Nathan Chancellor <nathan@kernel.org>, Abel Vesa <abel.vesa@linaro.org>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Krzysztof Kozlowski <krzk@kernel.org>, Marc Gonzalez <mgonzalez@freebox.fr>, Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>, linux-clk@vger.kernel.org
+Date: Wed, 08 May 2024 18:26:26 -0700
 User-Agent: alot/0.10
 
-Quoting Krzysztof Kozlowski (2024-05-08 08:31:56)
-> Hi,
->=20
-> Updated pull request with fixed issue of non-used local const data.
->=20
-> Best regards,
-> Krzysztof
->=20
+Quoting Bjorn Andersson (2024-05-07 19:36:48)
 >=20
 > The following changes since commit 4cece764965020c22cff7665b18a0120063590=
 95:
@@ -60,13 +53,13 @@ Quoting Krzysztof Kozlowski (2024-05-08 08:31:56)
 >=20
 > are available in the Git repository at:
 >=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/sam=
-sung-clk-6.10-2
+>   https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git tags/qco=
+m-clk-for-6.10
 >=20
-> for you to fetch changes up to 7c18b0a5aa46cc7e5d3a7ef3f9f8e3aa91bb780f:
+> for you to fetch changes up to 3c5b3e17b8fd1f1add5a9477306c355fab126977:
 >=20
->   clk: samsung: gs101: drop unused HSI2 clock parent data (2024-05-07 11:=
-47:39 +0200)
+>   clk: qcom: clk-alpha-pll: fix rate setting for Stromer PLLs (2024-05-07=
+ 21:10:18 -0500)
 >=20
 > ----------------------------------------------------------------
 
