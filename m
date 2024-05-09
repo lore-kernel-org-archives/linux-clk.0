@@ -1,72 +1,75 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D68E513C806;
-	Thu,  9 May 2024 01:39:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 854A810A11;
+	Thu,  9 May 2024 02:03:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715218754; cv=none; b=Pd5OlxAUN7SLpCEPGp9cz8wdIDhN6f9uE7QpGchWkcbFusn/qXTXei+etVvpLpJdzpMdI6GOTNCm+befCxROCzi8c5Q9F8O9413nZPugWxkWhfzVhlhJppVdSjPlE1KEluemTzJbGbaxs5IR7fVA0YPc+2/GQMV4i1uOdRBa9RE=
+	t=1715220216; cv=none; b=m0f0mTDMq9mDuDea0RHUS9heishePI0pWG2h83uIefLQ/993T/IjmaHUbkEoBNwK13LBt78ep7M15esX5IxKE6xfuW9DvnUbzBhu1fjkK4GmkYUMitvCD/bdfoEzV2o+297ylHSjfTBiWFD2IuFrydW/INKlk8GB2ek+y8o4/h4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715218754; c=relaxed/simple;
-	bh=C59DV07EAbIh77RRqSpx0oC1Y+VhMFF3FPzCuCWRsNY=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=tOcSReQXtqqdcI2IIiwn0lSMPoFZBrP+VB/pIcl8qvzkrjxV5BFdgBQ9Hl6Kha57UEBuwKLyzXNuz1oJJdsCZ0Zpifbkk63ly3zeIHDJ93XjOfs3vufg5l5jZEzXeHPbURJdwr2DwoTBnRsNxOEO9qtouxKJu8NWBFpiR8/Ssj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jyqeTfDu; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jyqeTfDu"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 626AFC2BD11;
-	Thu,  9 May 2024 01:39:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715218754;
-	bh=C59DV07EAbIh77RRqSpx0oC1Y+VhMFF3FPzCuCWRsNY=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=jyqeTfDuxumlqe0iaFrrMby2E+2aU4/aySDp55xAR49+VmyATJZDcXj3vNKuqLnow
-	 5GxrPaRMPq0cyV2KpvACi127L3HBvCCmZ4A7DBgWp7W32Jyo/2ZxfRRrCz3L9Y2VDx
-	 8rRCOhLKGdrzublp7j++fu4LwlgFXxtsbXW7jL569LHNDENDzy2o+UPZ0QZa34eBpu
-	 o7Zor/vwSsWOXQiRLeXUgNHSxmo5u71V7IU+bMacuMLCpYyt+oTymJM7SSpSpWWgeK
-	 EFVFMrIcwmtBYaZcYeTm0+IPFVt+ARs0S9k16yJrjUFmgoJpfnzircTjvpERFMi/TM
-	 dCOESj352OGqw==
-Message-ID: <cf80c2e6ab5aee23c4425419324bca32.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1715220216; c=relaxed/simple;
+	bh=c6XIgSQ/dc58EUSEJ1tEuyH3zh/U7hLPp2W9pGYTvXA=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=EE/cDY3m0AlFoXrVK5wAyp8dkJ2Z9xd/C/TMhUuBrk2weos2QT3zZJWBXWNbnqrYqDJOnwINf1OpBtRlca6DFz7yrPOvnofg/mzeaAwX4Uaxy0mfgGU6jd7CsNiy5Shdo7mSwLYRRuUAweW5w8zvZYO/nidTK2qnqJIg4ESA62M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id ACFE2201857;
+	Thu,  9 May 2024 04:03:26 +0200 (CEST)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 718F0200A78;
+	Thu,  9 May 2024 04:03:26 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 5A849181D0FC;
+	Thu,  9 May 2024 10:03:24 +0800 (+08)
+From: Shengjiu Wang <shengjiu.wang@nxp.com>
+To: abelvesa@kernel.org,
+	peng.fan@nxp.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	marex@denx.de,
+	imx@lists.linux.dev,
+	shengjiu.wang@gmail.com
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v2 0/4] clk: imx: clk-audiomix: Improvement for audiomix
+Date: Thu,  9 May 2024 09:43:54 +0800
+Message-Id: <1715219038-32453-1-git-send-email-shengjiu.wang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240508-unabashed-cheese-8f645b4f69ba@spud>
-References: <20240508-unabashed-cheese-8f645b4f69ba@spud>
-Subject: Re: [PATCH v1] clk, reset: microchip: mpfs: fix incorrect preprocessor conditions
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: conor@kernel.org, Conor Dooley <conor.dooley@microchip.com>, kernel test robot <lkp@intel.com>, Daire McNamara <daire.mcnamara@microchip.com>, linux-kernel@vger.kernel.org
-To: Conor Dooley <conor@kernel.org>, linux-clk@vger.kernel.org
-Date: Wed, 08 May 2024 18:39:12 -0700
-User-Agent: alot/0.10
 
-Quoting Conor Dooley (2024-05-08 14:33:24)
-> From: Conor Dooley <conor.dooley@microchip.com>
->=20
-> While moving all the reset code in the PolarFire SoC clock driver to the
-> reset subsystem, I removed an `#if IS_ENABLED(RESET_CONTROLLER)` from
-> the driver and moved it to the header, however this was not the correct
-> thing to do. In the driver such a condition over-eagerly provided a
-> complete implementation for mpfs_reset_{read,write}() when the reset
-> subsystem was enabled without the PolarFire SoC reset driver, but in the
-> header it meant that when the subsystem was enabled and the driver was
-> not, no implementation for mpfs_reset_controller_register() was
-> provided. Fix the condition so that the stub implementation of
-> mpfs_reset_controller_register() is used when the reset driver is
-> disabled.
->=20
-> Fixes: 098c290a490d ("clock, reset: microchip: move all mpfs reset code t=
-o the reset subsystem")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202405082259.44DzHvaN-lkp@i=
-ntel.com/
-> Closes: https://lore.kernel.org/oe-kbuild-all/202405082200.tBrEs5CZ-lkp@i=
-ntel.com/
-> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-> ---
+Some improvement for audiomix driver:
+Add reset controller for EARC function
+Add CLK_SET_RATE_PARENT flags for clocks
+Corrent parent clock for earc_phy and audpll clocks.
 
-Applied to clk-next
+changes in v2:
+- add more info in commit messages.
+
+Shengjiu Wang (4):
+  dt-bindings: clock: imx8mp: Add #reset-cells property
+  clk: imx: clk-audiomix: Add reset controller
+  clk: imx: clk-audiomix: Add CLK_SET_RATE_PARENT flags for clocks
+  clk: imx: clk-audiomix: Corrent parent clock for earc_phy and audpll
+
+ .../bindings/clock/imx8mp-audiomix.yaml       |   3 +
+ drivers/clk/imx/clk-imx8mp-audiomix.c         | 105 +++++++++++++++++-
+ 2 files changed, 102 insertions(+), 6 deletions(-)
+
+-- 
+2.34.1
+
