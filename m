@@ -1,122 +1,172 @@
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17FD413C9C4;
-	Thu,  9 May 2024 08:08:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7113A1A2C37
+	for <linux-clk@vger.kernel.org>; Thu,  9 May 2024 08:11:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715242109; cv=none; b=R+2Kl7VXU5Is/6YTTve8ropHA82GJodYd+VzHSBZnjmtNPWIocMnEItm5zGcxbFBtxSSxwZw4c93vHV8VhYlygkIOubZGZ0N/eme4UHWNuByLSMSFGkOw4I8xji/fqZbZpVABCtCvJxEqbh7yxLa2tPyWgVTe7f/y7kj4Nurf08=
+	t=1715242278; cv=none; b=fjRy7b4NY6dFTgv+G4N3le/+oyPLRRTtjBiJH2aJlGvhRy+PBEKkVkHScO8CXfHs4VeZPkhbgDljhXYcz7M7Uj7iXEXkzunLk0bUMxykxUj2jcodsZCT//ZUV7djbGa++kUyVpC7tDEZesQjdckh1K/tqqIC1XlkRVmP49zm9Vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715242109; c=relaxed/simple;
-	bh=gGihO4uBNHk9osA5UTXwEkO6FL32D0ENpNDtkOv5YG4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=K6CtBOXdrJT2eYWsgjO/NZCzEV+4Ucenz01qDdXf2mv+gOGWotXTtJJbesGLwu7/k1Hhu6b6DISlMT0RtQfBnWcT9ZitLxikIYhol/gLjHJ3Ke268mHXUM7tsyytcJpeTpXb12bazmA9NrAFrRIeqv0R1ZSeFCXnkP/d+UTLttY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SBZjU86l; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1715242278; c=relaxed/simple;
+	bh=0ZFH4dlr6IWMylOJWeI16vKERqCC+bBYalFdqB7GxjM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=O7KL+hMhmkkmLKI+Ik10kNron1mRCBTlyeZP2DO7l6GApnLJ93rvTMn9y0IBJG73PZxaXoE0/Z7NMoGKEeKmT0rDvDAJdtuXgFQmUXKTeICLhUxXyp5nIeDCPZkQkA1M3/e3cahnCyz1EjgZOsTLPI1CWaOZsobEeqIpjGLmWqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=R+ToGNNH; arc=none smtp.client-ip=210.118.77.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SBZjU86l"
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2e3e1ad0b19so8239661fa.0;
-        Thu, 09 May 2024 01:08:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715242106; x=1715846906; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Va5CBhgS4YlEntgDj+lB7xMw3P3JCYpHFdQk9HzfcS0=;
-        b=SBZjU86lm6uSWDf2ZfXO+5AT9zYjHvbJvAjOrXQwII7BMozoSEN3PCa896561MSL+W
-         5+htEm94O4VTFkf5uaT/fMHbh4XcIGVcEA3jT0l4jlGzXkyzsAwfo4uTvyNDcydXFSAg
-         UuLvMQ8GC03br6DEoAULEqp9VgDCglI7/G3IblbiOCt0miZgBmhPOldyTXOiaeZTw96N
-         369oJ4GCd0aaNaAbS1B5R0rLrIH16nS9qRJX9bszfy6PwS5si8pbC4RzZAG2gcXkUXPB
-         u6tXVmtF7iYVwOQ90+760VHSDf1TzsCCgh/q00iwQuDh9NLif5GDUJYMEOczxmue//N7
-         V9sA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715242106; x=1715846906;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Va5CBhgS4YlEntgDj+lB7xMw3P3JCYpHFdQk9HzfcS0=;
-        b=bg59yyEIGAL09CEAbpQalfBX1LXNcaCnMOO/cbGLLzpYJQkzLFJ+PN+O5S/zjOxEF/
-         gtnEZalMWReqpd31VfLgL503bbrfE/lBtXer9YoMm3KBRR5ldcxVokMxqFCr2EKARWbS
-         VHdA976CgJRKwAxmZHVVvkceJNbDN3TdVGOvOS1FscX1nLWF3+94Ysf/xIjM9p6QkC5t
-         vlRWPsw5tDrZ5pLZ8cI+mrb4S8u/AJuBMiLYaha7bWfaoSDsu8xX+ocDsz9pV8c4WAmQ
-         qlF15lQj1G3sB0xpN4Z4LiMvAMPXiLNWcYPBbji30Grs5FKaeXUg3dKxL4fFA8Fn4TRs
-         rh1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX/sq7xly46ASiDcUNsXtzAoD/nRRLaxMw56UPadaSVcFI6qWX1JCx5jvLeM/b1+SK79Wa/qQ207DY519yPgFt6In78xNoFArfqjQ7QUgDMd4XgGIwanAEvoec2X/4bfs9zNg2EwNAf
-X-Gm-Message-State: AOJu0Ywq5ViXJW/ndUKkvDjofxDFrF1QBjCrUkxZXccOj4/7CWmfFd8b
-	uPYFLbOpnpyrDuLPzW0kcRKoqm+CPQzgxfUXjsSObOxf3tauEDCV9UgTI391
-X-Google-Smtp-Source: AGHT+IHw5kJvcuqlfuDNh48yh3D1+EoKZYjlJf5IGaHB4/GOviTBm0Q+n9TvIng/h2Z39xb/KSM1zQ==
-X-Received: by 2002:a2e:a613:0:b0:2d9:f7f8:3e87 with SMTP id 38308e7fff4ca-2e4475a0fcemr31361781fa.32.1715242105694;
-        Thu, 09 May 2024 01:08:25 -0700 (PDT)
-Received: from [169.254.60.140] (57657817.unconfigured.pool.telekom.hu. [87.101.120.23])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-41f9bc3b12fsm23029565e9.0.2024.05.09.01.08.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 May 2024 01:08:25 -0700 (PDT)
-From: Gabor Juhos <j4g8y7@gmail.com>
-Date: Thu, 09 May 2024 10:08:04 +0200
-Subject: [PATCH] clk: qcom: apss-ipq-pll: remove 'config_ctl_hi_val' from
- Stromer pll configs
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="R+ToGNNH"
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240509081113euoutp012b7e76a9fc4a500bdcf21676ab7f3eed~Nw8KItpiJ0239302393euoutp017
+	for <linux-clk@vger.kernel.org>; Thu,  9 May 2024 08:11:13 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240509081113euoutp012b7e76a9fc4a500bdcf21676ab7f3eed~Nw8KItpiJ0239302393euoutp017
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1715242273;
+	bh=VnaCj/QoXKHZlvEzBXbABmSPgNRsKSZ+UQEw4PzKI9c=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=R+ToGNNHrQbDmZwRJZA4RnnReyjbU27KTUoESOIcFbmBOIm2tLeakpyYL8+5tMzlg
+	 XiN7kec+AA2XsroEz16yw96Y9T9Eutjr5m144eATX0cpDD+zzSsijFPwagy+cbnsks
+	 0tSXg3DyQTcZbBQ3GY4ih4RJRAr0S9n2HCZit7fg=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20240509081112eucas1p2c04e3541436f1b4b3a975a7ecdb3d252~Nw8JskhdK2028820288eucas1p2o;
+	Thu,  9 May 2024 08:11:12 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges3new.samsung.com (EUCPMTA) with SMTP id 74.BE.09620.0258C366; Thu,  9
+	May 2024 09:11:12 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240509081112eucas1p1844f8e410d506f966f96b945aa0bcab5~Nw8JK_5VX2142921429eucas1p1e;
+	Thu,  9 May 2024 08:11:12 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240509081112eusmtrp20c450e4c119b376d8d42101f827b59dd~Nw8JKDloo1317013170eusmtrp2d;
+	Thu,  9 May 2024 08:11:12 +0000 (GMT)
+X-AuditID: cbfec7f5-d1bff70000002594-a0-663c8520119d
+Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id EF.12.08810.0258C366; Thu,  9
+	May 2024 09:11:12 +0100 (BST)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240509081111eusmtip23904339d79942c7443dcf18a4b1ed493~Nw8Ig1HV23008530085eusmtip2i;
+	Thu,  9 May 2024 08:11:11 +0000 (GMT)
+Message-ID: <920b5d58-b636-4084-8ea8-9981ecd5c270@samsung.com>
+Date: Thu, 9 May 2024 10:11:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: samsung: Don't register clkdev lookup for the
+ fixed rate clocks
+To: Sam Protsenko <semen.protsenko@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, Krzysztof
+	Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Content-Language: en-US
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <CAPLW+4nFp4AUpKdcsPTQ4gE3AByJU4WO+M34c3om+8AqTziAeg@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrBKsWRmVeSWpSXmKPExsWy7djPc7oKrTZpBo8PGls8mLeNzeL6l+es
+	FufPb2C3+Nhzj9Vixvl9TBYXT7laHH7Tzmrx79pGFovnffuYHDg93t9oZffYtKqTzePOtT1s
+	Hn1bVjF6fN4kF8AaxWWTkpqTWZZapG+XwJXx4exN5oLVghXrZh9mb2CcztfFyMkhIWAi0di9
+	lbGLkYtDSGAFo8Sdc6eZIJwvjBJHrh5ggXA+M0p0NH1ghGn5sKkZKrGcUWLS279QLR8ZJab2
+	LgCr4hWwkzh3eS2YzSKgInF+2TsWiLigxMmZT8BsUQF5ifu3ZrCD2MIC0RKfWjawgtgiAnoS
+	62a+YgcZyiywlUni8O5vYEXMAuISt57MZwKx2QQMJbredrGB2JwCgRIH5j1hhqiRl2jeOpsZ
+	pFlC4A2HxOVpvUDNHECOi0TnhgKIF4QlXh3fwg5hy0j83zmfCaK+nVFiwe/7UM4ERomG57eg
+	nrYGBs0vNpBBzAKaEut36UOEHSWuL77EBjGfT+LGW0GIG/gkJm2bzgwR5pXoaBOCqFaTmHV8
+	HdzagxcuMU9gVJqFFCyzkHw5C8k3sxD2LmBkWcUonlpanJueWmycl1quV5yYW1yal66XnJ+7
+	iRGYmE7/O/51B+OKVx/1DjEycTAeYpTgYFYS4a2qsU4T4k1JrKxKLcqPLyrNSS0+xCjNwaIk
+	zquaIp8qJJCeWJKanZpakFoEk2Xi4JRqYJpyTYsjabNYqxHHg54jN9PDT3FIzKjTKLro0FQY
+	8aw17oFck8WLp9n1y3V6Hm559qxG7FtP7wFjtrNbmM78i1p2xpEv5HxtHPOHq4tmvUmbuCA/
+	peboskVJRUzPbs9qDquyOP/rOFdT3+3JN/o/mq11M1Fwjeh43Zo8S/Hr9OqLS9TMLZPbPhZP
+	TvPweC9tYljV/Um4dusOV/YarXkJJ/VPrX23bP21W2/ZvS1/tUbbCnBoGCZasSrsmdTA+Y7P
+	ZoHv3BtRRXI2k2xKJujv/6nwMO6pkdDRYvWmlytKr3varBVzt4rRaa3eO0No/bVVi8o/2D9d
+	skxsQ+HECbdzZp0T+7jtj5mBl8cBhe99F5RYijMSDbWYi4oTAe/KaEW7AwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrJIsWRmVeSWpSXmKPExsVy+t/xe7oKrTZpBr9XC1g8mLeNzeL6l+es
+	FufPb2C3+Nhzj9Vixvl9TBYXT7laHH7Tzmrx79pGFovnffuYHDg93t9oZffYtKqTzePOtT1s
+	Hn1bVjF6fN4kF8AapWdTlF9akqqQkV9cYqsUbWhhpGdoaaFnZGKpZ2hsHmtlZKqkb2eTkpqT
+	WZZapG+XoJfx4exN5oLVghXrZh9mb2CcztfFyMkhIWAi8WFTM0sXIxeHkMBSRokjXQuZIRIy
+	EienNbBC2MISf651sYHYQgLvGSV6V7uD2LwCdhLnLq9lBLFZBFQkzi97xwIRF5Q4OfMJmC0q
+	IC9x/9YMdhBbWCBaovPmc7C4iICexLqZr9hBFjMLbGeSePLwGiPEgluMEr/vyoLYzALiEree
+	zGcCsdkEDCW63kIcwSkQKHFg3hNmiBozia6tXYwQtrxE89bZzBMYhWYhuWMWklGzkLTMQtKy
+	gJFlFaNIamlxbnpusaFecWJucWleul5yfu4mRmAcbjv2c/MOxnmvPuodYmTiYDzEKMHBrCTC
+	W1VjnSbEm5JYWZValB9fVJqTWnyI0RQYGBOZpUST84GJIK8k3tDMwNTQxMzSwNTSzFhJnNez
+	oCNRSCA9sSQ1OzW1ILUIpo+Jg1OqgUnya97Jn5OdWF/czU/0f1XibXtQ6fkXk5+iQiZReZ+z
+	DX58N5QW2yuzeOGC50oX9vrosj5+kszofFv/81/VNaINp57+6bYoWuOktPmVoJkg/xbFW2Lp
+	tawPjIt4I6de7d8xf1FCUekhv5pthXPigiZd3Ct1RP19N/vHsKuV2yXtp+wJ5vR+FZqePTGK
+	Ze+dvde+Xz5Qs/iT5BKnn05H1OsOMCfWzzwovvMZh5Sxi4PakyrFJyKKAhoSGbH3noqs991j
+	KMe7bOLsL4dORjRcEOoWNsgo3Z665sHFUmWOsGWXlvBsTmpo9nxhU1kxZZ7ond/CEdJPbDmV
+	m79tMnhXeG9p3vF1cm3zJx5e5yczX1aJpTgj0VCLuag4EQDMiAy6TAMAAA==
+X-CMS-MailID: 20240509081112eucas1p1844f8e410d506f966f96b945aa0bcab5
+X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240509-stromer-config-ctl-v1-1-6034e17b28d5@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAGOEPGYC/x3MSwqEMBBF0a1Ijbsg/jDtVhoHEp9aYCdSCSKIe
- zc4PIN7L4pQQaS+uEhxSJTgM8pPQW4d/QKWKZsqUzWmNV+OScMfyi74WRZ2aWPrAAvbdihryuG
- umOV8p7/hvh+7Qv6QZAAAAA==
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Varadarajan Narayanan <quic_varada@quicinc.com>, 
- Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>, 
- Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>, 
- Gabor Juhos <j4g8y7@gmail.com>
-X-Mailer: b4 0.13.0
+X-RootMTR: 20240507065329eucas1p1b26d68384a4f076b31223ed099fd3a48
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240507065329eucas1p1b26d68384a4f076b31223ed099fd3a48
+References: <CGME20240507065329eucas1p1b26d68384a4f076b31223ed099fd3a48@eucas1p1.samsung.com>
+	<20240507065317.3214186-1-m.szyprowski@samsung.com>
+	<CAPLW+4nFp4AUpKdcsPTQ4gE3AByJU4WO+M34c3om+8AqTziAeg@mail.gmail.com>
 
-Since the CONFIG_CTL register is only 32 bits wide in the Stromer
-and Stromer Plus PLLs , the 'config_ctl_hi_val' values from the
-IPQ5018 and IPQ5332 configurations are not used so remove those.
+On 08.05.2024 22:46, Sam Protsenko wrote:
+> On Tue, May 7, 2024 at 1:53 AM Marek Szyprowski
+> <m.szyprowski@samsung.com> wrote:
+>> Commit 4d11c62ca8d7 ("clkdev: report over-sized strings when creating
+>> clkdev entries") revealed that clock lookup is registered for all fixed
+>> clocks. The mentioned commit added a check if the registered name is not
+>> too long. This fails for some clocks registered for Exynos542x SoCs family.
+>> This lookup is a left-over from early common clock framework days, not
+>> really needed nowadays, so remove it to avoid further issues.
+>>
+>> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> ---
+>> Here is the fix for the mentioned 4d11c62ca8d7 commit, which fixes
+>> booting of Exynos542x SoCs:
+>> https://lore.kernel.org/all/20240507064434.3213933-1-m.szyprowski@samsung.com/
+>>
+>> This change is independent fix. I've tested it on all Exynos based boards
+>> I have in my test lab. It would be great if someone could test it on
+>> s3c64xx and s3c24xx based boards.
+>> ---
+> Thanks Marek, it fixes some warnings when booting the E850-96 board
+> with current kernel-next (next-20240508), like:
+>
+>      samsung_clk_register_fixed_rate: failed to register clock lookup
+> for clk_rco_i3c_pmic
+>      ...
+>
+> But I guess 'ret' variable should be removed now, I'm seeing this
+> build warning after applying this patch:
+>
+>      drivers/clk/samsung/clk.c: In function 'samsung_clk_register_fixed_rate':
+>      drivers/clk/samsung/clk.c:142:20: warning: unused variable 'ret'
+> [-Wunused-variable]
 
-No functional changes.
+Indeed I've missed that. I will send v2 then.
 
-Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
----
-Based on 'qcom-clk-for-6.10'
----
- drivers/clk/qcom/apss-ipq-pll.c | 2 --
- 1 file changed, 2 deletions(-)
+> Also, maybe add corresponding "Fixes" tag?
 
-diff --git a/drivers/clk/qcom/apss-ipq-pll.c b/drivers/clk/qcom/apss-ipq-pll.c
-index 5f7f537e4ecb..e8632db2c542 100644
---- a/drivers/clk/qcom/apss-ipq-pll.c
-+++ b/drivers/clk/qcom/apss-ipq-pll.c
-@@ -70,7 +70,6 @@ static struct clk_alpha_pll ipq_pll_stromer_plus = {
- static const struct alpha_pll_config ipq5018_pll_config = {
- 	.l = 0x2a,
- 	.config_ctl_val = 0x4001075b,
--	.config_ctl_hi_val = 0x304,
- 	.main_output_mask = BIT(0),
- 	.aux_output_mask = BIT(1),
- 	.early_output_mask = BIT(3),
-@@ -84,7 +83,6 @@ static const struct alpha_pll_config ipq5018_pll_config = {
- static const struct alpha_pll_config ipq5332_pll_config = {
- 	.l = 0x2d,
- 	.config_ctl_val = 0x4001075b,
--	.config_ctl_hi_val = 0x304,
- 	.main_output_mask = BIT(0),
- 	.aux_output_mask = BIT(1),
- 	.early_output_mask = BIT(3),
+The problem is which commit should be pointed there. The removed code 
+originates from commit 721c42a351b1 ("clk: samsung: add common clock 
+framework helper functions for Samsung platforms"), but that time such 
+workaround might have been required, so this doesn't match the 'Fixes' 
+tag usage.
 
----
-base-commit: 3c5b3e17b8fd1f1add5a9477306c355fab126977
-change-id: 20240509-stromer-config-ctl-8cee8e857e13
-
-Best regards,
+> Other than that:
+>
+> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+> Tested-by: Sam Protsenko <semen.protsenko@linaro.org>
+>
+> Thanks!
+>
+> [snip]
+>
+Best regards
 -- 
-Gabor Juhos <j4g8y7@gmail.com>
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
 
