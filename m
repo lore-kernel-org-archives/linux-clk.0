@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A60F2BB12;
-	Thu,  9 May 2024 01:26:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D68E513C806;
+	Thu,  9 May 2024 01:39:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715217989; cv=none; b=dqmLTUeO78NKcOqdkDUdOSO7IksIgpQYdhtDkl2kaL2ZUK9WEA8ZvS22zE8R4Xpy1DYF9u+deAHUHUH0EvF5UsSlkIyCJPriBOO4hA2XqvNMTrtC+VJRajt02VhOmCvUr3r9rcBdYwdpkhf8Cew5naazid11dVEfwR36FxTYPvE=
+	t=1715218754; cv=none; b=Pd5OlxAUN7SLpCEPGp9cz8wdIDhN6f9uE7QpGchWkcbFusn/qXTXei+etVvpLpJdzpMdI6GOTNCm+befCxROCzi8c5Q9F8O9413nZPugWxkWhfzVhlhJppVdSjPlE1KEluemTzJbGbaxs5IR7fVA0YPc+2/GQMV4i1uOdRBa9RE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715217989; c=relaxed/simple;
-	bh=F178WmldtkIwVeYOQABqKHM4vPoy8AbnJu1sSpFXEQc=;
+	s=arc-20240116; t=1715218754; c=relaxed/simple;
+	bh=C59DV07EAbIh77RRqSpx0oC1Y+VhMFF3FPzCuCWRsNY=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=mU8NO3qWZepcD5NKm/x46tUIowbp4OTvEaN5/9qnMyp+R60F6IBpgqEk+gz6u+y+c99vEfdtKGW02jaGrbyAlD4RuquHD6QNfjirqaIvRoOBtozvrkC3eg187R99VsR2dWl6XBFtE2Ut87zQf68GNuLj7STHrOs1Vl3w/T+cgM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dVuvsQFz; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=tOcSReQXtqqdcI2IIiwn0lSMPoFZBrP+VB/pIcl8qvzkrjxV5BFdgBQ9Hl6Kha57UEBuwKLyzXNuz1oJJdsCZ0Zpifbkk63ly3zeIHDJ93XjOfs3vufg5l5jZEzXeHPbURJdwr2DwoTBnRsNxOEO9qtouxKJu8NWBFpiR8/Ssj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jyqeTfDu; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dVuvsQFz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B78BBC113CC;
-	Thu,  9 May 2024 01:26:28 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jyqeTfDu"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 626AFC2BD11;
+	Thu,  9 May 2024 01:39:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715217988;
-	bh=F178WmldtkIwVeYOQABqKHM4vPoy8AbnJu1sSpFXEQc=;
+	s=k20201202; t=1715218754;
+	bh=C59DV07EAbIh77RRqSpx0oC1Y+VhMFF3FPzCuCWRsNY=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=dVuvsQFzCWdYoGOjin+3SauwzQJ2vJPMNetl3PSmvR+m4mNfqJQnjZbeJ+G/xwHvU
-	 OwZC9IQssxXjtIscDtJZ/HQuBQ0Acd4/o6AzXcgc2kWbIuWkNo2LTLXb7u/2/YFgl8
-	 WEENxMFfmm1f40JUKDnaAIKbIeyolEBxDnNN7hMRges1kIpFUiUt1B5TjpUaR61DFN
-	 QKHdqSt2URADBw0aVLN/bCLs7jl1aIpHSD2wOFqamkmjx7zUukUHu0/KRiObhZnNmT
-	 yKERafsQvMFS5pdn9YS+qUXRFy1k7WnadpVs1RRZXnJ70HyN0YPIQgeLLlpTbyc5IW
-	 P9Et6dbwynvWA==
-Message-ID: <4b24ab67d437b13ab27106e08aad68bf.sboyd@kernel.org>
+	b=jyqeTfDuxumlqe0iaFrrMby2E+2aU4/aySDp55xAR49+VmyATJZDcXj3vNKuqLnow
+	 5GxrPaRMPq0cyV2KpvACi127L3HBvCCmZ4A7DBgWp7W32Jyo/2ZxfRRrCz3L9Y2VDx
+	 8rRCOhLKGdrzublp7j++fu4LwlgFXxtsbXW7jL569LHNDENDzy2o+UPZ0QZa34eBpu
+	 o7Zor/vwSsWOXQiRLeXUgNHSxmo5u71V7IU+bMacuMLCpYyt+oTymJM7SSpSpWWgeK
+	 EFVFMrIcwmtBYaZcYeTm0+IPFVt+ARs0S9k16yJrjUFmgoJpfnzircTjvpERFMi/TM
+	 dCOESj352OGqw==
+Message-ID: <cf80c2e6ab5aee23c4425419324bca32.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,32 +35,38 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240508023648.207465-1-andersson@kernel.org>
-References: <20240508023648.207465-1-andersson@kernel.org>
-Subject: Re: [GIT PULL] Qualcomm clock updates for v6.10
+In-Reply-To: <20240508-unabashed-cheese-8f645b4f69ba@spud>
+References: <20240508-unabashed-cheese-8f645b4f69ba@spud>
+Subject: Re: [PATCH v1] clk, reset: microchip: mpfs: fix incorrect preprocessor conditions
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Gabor Juhos <j4g8y7@gmail.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Christian Marangi <ansuelsmth@gmail.com>, Luca Weiss <luca@z3ntu.xyz>, Nathan Chancellor <nathan@kernel.org>, Abel Vesa <abel.vesa@linaro.org>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Krzysztof Kozlowski <krzk@kernel.org>, Marc Gonzalez <mgonzalez@freebox.fr>, Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>, linux-clk@vger.kernel.org
-Date: Wed, 08 May 2024 18:26:26 -0700
+Cc: conor@kernel.org, Conor Dooley <conor.dooley@microchip.com>, kernel test robot <lkp@intel.com>, Daire McNamara <daire.mcnamara@microchip.com>, linux-kernel@vger.kernel.org
+To: Conor Dooley <conor@kernel.org>, linux-clk@vger.kernel.org
+Date: Wed, 08 May 2024 18:39:12 -0700
 User-Agent: alot/0.10
 
-Quoting Bjorn Andersson (2024-05-07 19:36:48)
+Quoting Conor Dooley (2024-05-08 14:33:24)
+> From: Conor Dooley <conor.dooley@microchip.com>
 >=20
-> The following changes since commit 4cece764965020c22cff7665b18a0120063590=
-95:
+> While moving all the reset code in the PolarFire SoC clock driver to the
+> reset subsystem, I removed an `#if IS_ENABLED(RESET_CONTROLLER)` from
+> the driver and moved it to the header, however this was not the correct
+> thing to do. In the driver such a condition over-eagerly provided a
+> complete implementation for mpfs_reset_{read,write}() when the reset
+> subsystem was enabled without the PolarFire SoC reset driver, but in the
+> header it meant that when the subsystem was enabled and the driver was
+> not, no implementation for mpfs_reset_controller_register() was
+> provided. Fix the condition so that the stub implementation of
+> mpfs_reset_controller_register() is used when the reset driver is
+> disabled.
 >=20
->   Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
->=20
-> are available in the Git repository at:
->=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git tags/qco=
-m-clk-for-6.10
->=20
-> for you to fetch changes up to 3c5b3e17b8fd1f1add5a9477306c355fab126977:
->=20
->   clk: qcom: clk-alpha-pll: fix rate setting for Stromer PLLs (2024-05-07=
- 21:10:18 -0500)
->=20
-> ----------------------------------------------------------------
+> Fixes: 098c290a490d ("clock, reset: microchip: move all mpfs reset code t=
+o the reset subsystem")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202405082259.44DzHvaN-lkp@i=
+ntel.com/
+> Closes: https://lore.kernel.org/oe-kbuild-all/202405082200.tBrEs5CZ-lkp@i=
+ntel.com/
+> Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
+> ---
 
-Thanks. Pulled into clk-next
+Applied to clk-next
