@@ -1,87 +1,87 @@
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5178F132816;
-	Wed,  8 May 2024 22:29:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE26636C;
+	Thu,  9 May 2024 00:15:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715207378; cv=none; b=NSPc7gN0fuS6Kjga9jVZC0b/cgLakxoSc9LU5BQdUYErqtSgYkh845gpa+FCwsBMpEp7IBf5+7W62GDxdAx4MztPuppfKeYZcoEC/oSNe8UqWMfUObignInI1TAI/DgiOt2fgY6k/JMfkmVPpzlQ4jfBGCMHMSIEfg0McaMyrf0=
+	t=1715213752; cv=none; b=S01ce4y9B5Lieup+R9N1/zYPJSiKJD6srRdAzk84XhL6/SDLl0FOnJyawJcenPJegZ/+6KLszD30MVJV1DJVtpoxtCiVu+l7c+mUQkZOdbF6mCD2xw9aVI8EhMfW6aE2/KPWin+cuh7yHGymmEO1P3mW7nPlUGqfZ2vRPBywHsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715207378; c=relaxed/simple;
-	bh=8CFE89KQ1YCyvoNxJkTNQ2HS3pGySrvPKIrTF4hkP6Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MJHJ8C3UlIDOPdkfrhRTd4gdwKKCCUJXFXagB/A6MOkQKNxHQiJIsc058zFU4qPI1bOWlIviusRO7lHweh1eP9tkXpWTEhZrSD6BFuSQ7CedmoTo9f4ihL2polrt4jHIRtGlMMYz3UYfLM2rG2p9YH4GIW5SJu5pV+wiCKd6Uqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=FEtckNfX; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+	s=arc-20240116; t=1715213752; c=relaxed/simple;
+	bh=6vXRJoAQSDtzDhQsqX1drAJZ/gtmojMtCJOwd2W/7k8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=In2m1icJ1RZzQ9FgVmpOJhvW6wywnbLPHKMhLiRijCsvlAy0a47DkEgBigcG7eE9bQXzJ9qfxZpwlr2rp/XugcZHnqAP/BKB89TFUWKOaJqdc0HMe3Mkr5NLxrnI8nIkG8gu05jM0tnkhL/4K+64TaZUAdzjfYD4YrdRJ5r65fU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=qReoNlXS; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="FEtckNfX"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=Eb6h6lYO2Xj8IhPPKAoLKWE2vlA1ySJ+zUASlEJjoTU=; b=FEtckNfXCagMhx2pYvdo/RZKvJ
-	p+XTKA9wWiv4JnepfK8na49y4qvgRBuV6gu5VwTbHIpxtKv11fbkIu7CX4pNltuQG/kZ/9PDV9+RY
-	Pr9J9yyKsf91exZwtiK/iCuSFt8RoyQEQbBCpTT5NGnLlKv5RFuhq9b5DJxE0T2kt9037o8S9a7qs
-	zrVodNGW4wdEeB2S+N4Bx/2ZOhH44sveIZxPly0jFcPNMz7WbqGOXLf6/uOAs9pW1SVOa2fL4dXWE
-	kcXbOhFdYl7bUh0HLakR2Kdqn9TYuUehFv6e/eVHGZTvHg1MqQ331GwS2qHKP6gCpk+u5EsCsIbMD
-	yTWc6/Rw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:48902)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1s4pmv-0005h2-1q;
-	Wed, 08 May 2024 23:29:25 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1s4pmu-0001hI-UL; Wed, 08 May 2024 23:29:24 +0100
-Date: Wed, 8 May 2024 23:29:24 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Sam Protsenko <semen.protsenko@linaro.org>
-Cc: Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	Naresh Kamboju <naresh.kamboju@linaro.org>,
-	linux-clk <linux-clk@vger.kernel.org>, lkft-triage@lists.linaro.org,
-	open list <linux-kernel@vger.kernel.org>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: clkdev: report over-sized strings when creating clkdev entries
-Message-ID: <Zjv8xBXcRnfShpvf@shell.armlinux.org.uk>
-References: <CA+G9fYuZd_ur56H8fwDSvUywopvn_b7ogprGkjEatQ7EPTLwYQ@mail.gmail.com>
- <11be44d3-0f32-49c6-b4ae-ba97a9f97763@app.fastmail.com>
- <820ddc2ec70780ae1ecd3af864dc8bd6.sboyd@kernel.org>
- <CAPLW+4=D_31Fy_W_7+_ko22y9_-8rZ9Logh6KyW8UPM3q58J0A@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="qReoNlXS"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=ibZmhWOcAPt5MRyyHxS6k6eiW0UrUpeBxWHVWTgQMZI=; b=qReoNlXSvSpRc1oG
+	HKfjcTA3QJ6Fe4yfw9n71QiiNt1heHEfx/WBhH4boIUqgyxFgBtFn54/Qc3qYJ+Gn5jHdbKzQyPZ6
+	SnsuWWWv13JZFBcRrs4tTID/RM25NN4WXlGJHLK32Z9K12T4WwHH/sW5kTPYsA5M1QF0WoHaQurZv
+	Yo9XxLhn9XRO/vOCEc9w2EjpgCYcDCf+DkcHSa1/Vd+Cg5zWGdlXhW3OuizeS6+eCUSNT+O1lZ8bA
+	LF78ovlTsEzf86SiuCPg7rCXjqCaUd1rjBVZcNe91+zxmH9Xr62MM3ZqjGCVfj4byM9RF1PT461HG
+	DW5M61SBRRfo30L9/w==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1s4rRf-00074W-0w;
+	Thu, 09 May 2024 00:15:35 +0000
+From: linux@treblig.org
+To: emilio@elopez.com.ar,
+	mturquette@baylibre.com,
+	wens@csie.org
+Cc: linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] clk: sunxi: Remove unused struct 'gates_data'
+Date: Thu,  9 May 2024 01:14:52 +0100
+Message-ID: <20240509001452.204929-1-linux@treblig.org>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPLW+4=D_31Fy_W_7+_ko22y9_-8rZ9Logh6KyW8UPM3q58J0A@mail.gmail.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 08, 2024 at 04:07:57PM -0500, Sam Protsenko wrote:
-> The patch [1] ("clk: samsung: Don't register clkdev lookup for the
-> fixed rate clocks") fixes those. I think both have to be applied ASAP.
-> In case of E850-96, I guess [1] is more critical.
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-The fixes to clkdev.c have been pushed out for a while now, so I think
-you may need to update your tree. There's been one more fix to it more
-recently (because of the whole va_copy() debacle).
+'gates_data' (and it's associated define) are unused since
+Commit ee38b2698ae2 ("clk: sunxi: Add a simple gates driver").
+Remove them.
 
-Whether linux-next picks up the latest version depends when they pull
-in relation to me pushing the changes out, which can take 48 hours
-due to the timezone differences. linux-next tends not to pick stuff
-up quickly if one's in the UK and pushes stuff out in the late
-afternoon/evening. That said, the NULL fix has been pushed out for
-a few days now.
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ drivers/clk/sunxi/clk-sunxi.c | 11 -----------
+ 1 file changed, 11 deletions(-)
 
+diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
+index 5fe7049ea693a..4999504f7e60d 100644
+--- a/drivers/clk/sunxi/clk-sunxi.c
++++ b/drivers/clk/sunxi/clk-sunxi.c
+@@ -852,17 +852,6 @@ CLK_OF_DECLARE(sun8i_axi, "allwinner,sun8i-a23-axi-clk",
+ 	       sun8i_axi_clk_setup);
+ 
+ 
+-
+-/*
+- * sunxi_gates_clk_setup() - Setup function for leaf gates on clocks
+- */
+-
+-#define SUNXI_GATES_MAX_SIZE	64
+-
+-struct gates_data {
+-	DECLARE_BITMAP(mask, SUNXI_GATES_MAX_SIZE);
+-};
+-
+ /*
+  * sunxi_divs_clk_setup() helper data
+  */
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+2.45.0
+
