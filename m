@@ -1,113 +1,122 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA21013C9A4;
-	Thu,  9 May 2024 07:02:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17FD413C9C4;
+	Thu,  9 May 2024 08:08:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715238124; cv=none; b=hN4LT53VRfBpqRO7GtgQdD06tRhK3w/FcZ04TCwLjtzYhoHjk+F8GMTEZVmpqjVWh9DnGtRFnAmrYDKWjoH7cemZLY1M2kvtmb3WtY2g3ll7VpQVrPNwYqRDHB2TpfoSRAKDF0W0zrgV4OYS8SUKF5XJpXxHq6wRWjj8ir3wCVU=
+	t=1715242109; cv=none; b=R+2Kl7VXU5Is/6YTTve8ropHA82GJodYd+VzHSBZnjmtNPWIocMnEItm5zGcxbFBtxSSxwZw4c93vHV8VhYlygkIOubZGZ0N/eme4UHWNuByLSMSFGkOw4I8xji/fqZbZpVABCtCvJxEqbh7yxLa2tPyWgVTe7f/y7kj4Nurf08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715238124; c=relaxed/simple;
-	bh=HHUwATgsQkm4exkktBSGDqLQb41I/ScfpBMZ1OFL9As=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g0J5d9fPrQe8yVaV3oYuGIIkYfmzCPVRUbEKW7k+F5uxmpYxM6nk8LT3bHqZpRlV8lzXLq29D/16bjQGsLE8rIecUxcDlycsRtlozdRSodEVneU20XqhfExDQ2SUj9Mqrucwy2km26Mj9oV2QgclmMva8ILN+nuwLOWCjSbDIyM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bo00cS1t; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1715242109; c=relaxed/simple;
+	bh=gGihO4uBNHk9osA5UTXwEkO6FL32D0ENpNDtkOv5YG4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=K6CtBOXdrJT2eYWsgjO/NZCzEV+4Ucenz01qDdXf2mv+gOGWotXTtJJbesGLwu7/k1Hhu6b6DISlMT0RtQfBnWcT9ZitLxikIYhol/gLjHJ3Ke268mHXUM7tsyytcJpeTpXb12bazmA9NrAFrRIeqv0R1ZSeFCXnkP/d+UTLttY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SBZjU86l; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bo00cS1t"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 160E0C2BBFC;
-	Thu,  9 May 2024 07:01:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715238123;
-	bh=HHUwATgsQkm4exkktBSGDqLQb41I/ScfpBMZ1OFL9As=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bo00cS1t802h1N0emnQnDEt2+DH5ItaIWlezkP+yHKJtxSPp8bLogwwVuhDf0BFCY
-	 zXFhW0xJlui7ZcQWfd3kXf1aWkKxRTIJFJSh/Yx+PN3XupJeH++mFUUWTDl0JAvXI1
-	 9LAxvDNdQ7iJfd5niciOmsQIRFlHOxhkaTOe4uzijTdYdL/s99jRVWlChiPgnw2LGY
-	 HIsRwn1p2CUOEEuVLjtTZT0T1CI92Z/Ce6mcxRbHocj7uvtq0/D2/ozCNSNVt0yPBR
-	 Sa7m/iPaRS3n84SONW4NVfb/T1ya2chpGGH4miK/jyoRjZQ3c05LRzyaGtIa8LKDFJ
-	 j+2zgB2VFwKTA==
-Message-ID: <7505562d-ba61-48c2-ad30-d03499b95166@kernel.org>
-Date: Thu, 9 May 2024 09:01:54 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SBZjU86l"
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2e3e1ad0b19so8239661fa.0;
+        Thu, 09 May 2024 01:08:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715242106; x=1715846906; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Va5CBhgS4YlEntgDj+lB7xMw3P3JCYpHFdQk9HzfcS0=;
+        b=SBZjU86lm6uSWDf2ZfXO+5AT9zYjHvbJvAjOrXQwII7BMozoSEN3PCa896561MSL+W
+         5+htEm94O4VTFkf5uaT/fMHbh4XcIGVcEA3jT0l4jlGzXkyzsAwfo4uTvyNDcydXFSAg
+         UuLvMQ8GC03br6DEoAULEqp9VgDCglI7/G3IblbiOCt0miZgBmhPOldyTXOiaeZTw96N
+         369oJ4GCd0aaNaAbS1B5R0rLrIH16nS9qRJX9bszfy6PwS5si8pbC4RzZAG2gcXkUXPB
+         u6tXVmtF7iYVwOQ90+760VHSDf1TzsCCgh/q00iwQuDh9NLif5GDUJYMEOczxmue//N7
+         V9sA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715242106; x=1715846906;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Va5CBhgS4YlEntgDj+lB7xMw3P3JCYpHFdQk9HzfcS0=;
+        b=bg59yyEIGAL09CEAbpQalfBX1LXNcaCnMOO/cbGLLzpYJQkzLFJ+PN+O5S/zjOxEF/
+         gtnEZalMWReqpd31VfLgL503bbrfE/lBtXer9YoMm3KBRR5ldcxVokMxqFCr2EKARWbS
+         VHdA976CgJRKwAxmZHVVvkceJNbDN3TdVGOvOS1FscX1nLWF3+94Ysf/xIjM9p6QkC5t
+         vlRWPsw5tDrZ5pLZ8cI+mrb4S8u/AJuBMiLYaha7bWfaoSDsu8xX+ocDsz9pV8c4WAmQ
+         qlF15lQj1G3sB0xpN4Z4LiMvAMPXiLNWcYPBbji30Grs5FKaeXUg3dKxL4fFA8Fn4TRs
+         rh1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX/sq7xly46ASiDcUNsXtzAoD/nRRLaxMw56UPadaSVcFI6qWX1JCx5jvLeM/b1+SK79Wa/qQ207DY519yPgFt6In78xNoFArfqjQ7QUgDMd4XgGIwanAEvoec2X/4bfs9zNg2EwNAf
+X-Gm-Message-State: AOJu0Ywq5ViXJW/ndUKkvDjofxDFrF1QBjCrUkxZXccOj4/7CWmfFd8b
+	uPYFLbOpnpyrDuLPzW0kcRKoqm+CPQzgxfUXjsSObOxf3tauEDCV9UgTI391
+X-Google-Smtp-Source: AGHT+IHw5kJvcuqlfuDNh48yh3D1+EoKZYjlJf5IGaHB4/GOviTBm0Q+n9TvIng/h2Z39xb/KSM1zQ==
+X-Received: by 2002:a2e:a613:0:b0:2d9:f7f8:3e87 with SMTP id 38308e7fff4ca-2e4475a0fcemr31361781fa.32.1715242105694;
+        Thu, 09 May 2024 01:08:25 -0700 (PDT)
+Received: from [169.254.60.140] (57657817.unconfigured.pool.telekom.hu. [87.101.120.23])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-41f9bc3b12fsm23029565e9.0.2024.05.09.01.08.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 09 May 2024 01:08:25 -0700 (PDT)
+From: Gabor Juhos <j4g8y7@gmail.com>
+Date: Thu, 09 May 2024 10:08:04 +0200
+Subject: [PATCH] clk: qcom: apss-ipq-pll: remove 'config_ctl_hi_val' from
+ Stromer pll configs
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] dt-bindings: clock: imx8mp: Add #reset-cells
- property
-To: Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org,
- peng.fan@nxp.com, mturquette@baylibre.com, sboyd@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
- festevam@gmail.com, marex@denx.de, imx@lists.linux.dev,
- shengjiu.wang@gmail.com
-Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <1715219038-32453-1-git-send-email-shengjiu.wang@nxp.com>
- <1715219038-32453-2-git-send-email-shengjiu.wang@nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <1715219038-32453-2-git-send-email-shengjiu.wang@nxp.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20240509-stromer-config-ctl-v1-1-6034e17b28d5@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAGOEPGYC/x3MSwqEMBBF0a1Ijbsg/jDtVhoHEp9aYCdSCSKIe
+ zc4PIN7L4pQQaS+uEhxSJTgM8pPQW4d/QKWKZsqUzWmNV+OScMfyi74WRZ2aWPrAAvbdihryuG
+ umOV8p7/hvh+7Qv6QZAAAAA==
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Varadarajan Narayanan <quic_varada@quicinc.com>, 
+ Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>, 
+ Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>, 
+ Gabor Juhos <j4g8y7@gmail.com>
+X-Mailer: b4 0.13.0
 
-On 09/05/2024 03:43, Shengjiu Wang wrote:
-> The Audio Block Control contains clock distribution and gating
-> controls, as well as reset handling to several of the AUDIOMIX
-> peripherals. Especially the reset controls for Enhanced Audio
-> Return Channel (EARC) PHY and Controller.
-> 
-> So make Audio Block Control a reset provider for EARC, which
-> is one of modules in this audio subsystem.
-> 
+Since the CONFIG_CTL register is only 32 bits wide in the Stromer
+and Stromer Plus PLLs , the 'config_ctl_hi_val' values from the
+IPQ5018 and IPQ5332 configurations are not used so remove those.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+No functional changes.
+
+Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
+---
+Based on 'qcom-clk-for-6.10'
+---
+ drivers/clk/qcom/apss-ipq-pll.c | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/drivers/clk/qcom/apss-ipq-pll.c b/drivers/clk/qcom/apss-ipq-pll.c
+index 5f7f537e4ecb..e8632db2c542 100644
+--- a/drivers/clk/qcom/apss-ipq-pll.c
++++ b/drivers/clk/qcom/apss-ipq-pll.c
+@@ -70,7 +70,6 @@ static struct clk_alpha_pll ipq_pll_stromer_plus = {
+ static const struct alpha_pll_config ipq5018_pll_config = {
+ 	.l = 0x2a,
+ 	.config_ctl_val = 0x4001075b,
+-	.config_ctl_hi_val = 0x304,
+ 	.main_output_mask = BIT(0),
+ 	.aux_output_mask = BIT(1),
+ 	.early_output_mask = BIT(3),
+@@ -84,7 +83,6 @@ static const struct alpha_pll_config ipq5018_pll_config = {
+ static const struct alpha_pll_config ipq5332_pll_config = {
+ 	.l = 0x2d,
+ 	.config_ctl_val = 0x4001075b,
+-	.config_ctl_hi_val = 0x304,
+ 	.main_output_mask = BIT(0),
+ 	.aux_output_mask = BIT(1),
+ 	.early_output_mask = BIT(3),
+
+---
+base-commit: 3c5b3e17b8fd1f1add5a9477306c355fab126977
+change-id: 20240509-stromer-config-ctl-8cee8e857e13
 
 Best regards,
-Krzysztof
+-- 
+Gabor Juhos <j4g8y7@gmail.com>
 
