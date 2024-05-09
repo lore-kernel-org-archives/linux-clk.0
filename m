@@ -1,87 +1,73 @@
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE26636C;
-	Thu,  9 May 2024 00:15:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4344C45BF0;
+	Thu,  9 May 2024 01:17:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715213752; cv=none; b=S01ce4y9B5Lieup+R9N1/zYPJSiKJD6srRdAzk84XhL6/SDLl0FOnJyawJcenPJegZ/+6KLszD30MVJV1DJVtpoxtCiVu+l7c+mUQkZOdbF6mCD2xw9aVI8EhMfW6aE2/KPWin+cuh7yHGymmEO1P3mW7nPlUGqfZ2vRPBywHsg=
+	t=1715217471; cv=none; b=jQfH6phB4FpR2ZD1Mwx14O4YwgxOX/WNDMobD/MpK2XLroGmwUn7XlNVQVhnbbveQZ5MBQ/yUzva9bnaV+fU9YUOOswLfngdx6+JtIBlAKNKz6HzkF7eoIxmf/ENGFNLjBQyeWWynBn2V4cUQn88kPUewWBxp4SyoX+fkijatXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715213752; c=relaxed/simple;
-	bh=6vXRJoAQSDtzDhQsqX1drAJZ/gtmojMtCJOwd2W/7k8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=In2m1icJ1RZzQ9FgVmpOJhvW6wywnbLPHKMhLiRijCsvlAy0a47DkEgBigcG7eE9bQXzJ9qfxZpwlr2rp/XugcZHnqAP/BKB89TFUWKOaJqdc0HMe3Mkr5NLxrnI8nIkG8gu05jM0tnkhL/4K+64TaZUAdzjfYD4YrdRJ5r65fU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=qReoNlXS; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+	s=arc-20240116; t=1715217471; c=relaxed/simple;
+	bh=kV1VWqbr0RH6auTOE68NJ9vQgoBqmwiq6D1n/S8sNy0=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=Nhdcgx+efV6ziCACDB/rY6zwGnu4byWfV/SE9wxH7Hj4/f6mKYdS/KDzrpdWPeaFSath+jVfdz5GwjEfrHyXofRuHCG5QRN3V4/ZA35XV171L/jpnblsbfNOqGHCM5W1x6OHjMuMKwq3J+9iCkzCQP7gD/eJYqCUtVfoHOSJ80o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YksXqOMI; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="qReoNlXS"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=ibZmhWOcAPt5MRyyHxS6k6eiW0UrUpeBxWHVWTgQMZI=; b=qReoNlXSvSpRc1oG
-	HKfjcTA3QJ6Fe4yfw9n71QiiNt1heHEfx/WBhH4boIUqgyxFgBtFn54/Qc3qYJ+Gn5jHdbKzQyPZ6
-	SnsuWWWv13JZFBcRrs4tTID/RM25NN4WXlGJHLK32Z9K12T4WwHH/sW5kTPYsA5M1QF0WoHaQurZv
-	Yo9XxLhn9XRO/vOCEc9w2EjpgCYcDCf+DkcHSa1/Vd+Cg5zWGdlXhW3OuizeS6+eCUSNT+O1lZ8bA
-	LF78ovlTsEzf86SiuCPg7rCXjqCaUd1rjBVZcNe91+zxmH9Xr62MM3ZqjGCVfj4byM9RF1PT461HG
-	DW5M61SBRRfo30L9/w==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1s4rRf-00074W-0w;
-	Thu, 09 May 2024 00:15:35 +0000
-From: linux@treblig.org
-To: emilio@elopez.com.ar,
-	mturquette@baylibre.com,
-	wens@csie.org
-Cc: linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] clk: sunxi: Remove unused struct 'gates_data'
-Date: Thu,  9 May 2024 01:14:52 +0100
-Message-ID: <20240509001452.204929-1-linux@treblig.org>
-X-Mailer: git-send-email 2.45.0
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YksXqOMI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2CFCC113CC;
+	Thu,  9 May 2024 01:17:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715217470;
+	bh=kV1VWqbr0RH6auTOE68NJ9vQgoBqmwiq6D1n/S8sNy0=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=YksXqOMI4lsIaZqx0A5/i0JLSUHcsO6uruynoyRGSTcqWF903u/LNNb6O00rrl71F
+	 cJoCY9K10j5YsDpFFHaW+Q/GDTqNdnFWxJZYEJtbqXcGypoZ9L2+lfbeRhWCjdQ5Fc
+	 I2f/XBoH04xYOYY2Kv45HjT4EJgTKItrn6caanPg57Ooh/8V7a7CC8OeP8k5gXlVmk
+	 wSEbxqrnDWea86AU7J9YgABLuuA35vwEF8jtn2Y/GO18uMF9XLAmCYiNY11uWwmdnR
+	 aBt3zDugGxm3jz5EmWt6uOeJ0qm0hpePouEkYn/Q0TpQ4GSGlw3M9WAKm9hX28rbhj
+	 xS2d+YmPOdkQA==
+Message-ID: <9e2440caa122d05cfc0ee3cf64b46e48.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240508153158.496248-1-krzysztof.kozlowski@linaro.org>
+References: <20240508153158.496248-1-krzysztof.kozlowski@linaro.org>
+Subject: Re: [GIT PULL] clk: samsung: drivers for v6.10, fixed pull, 2nd try
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, linux-clk@vger.kernel.org, Sylwester Nawrocki <snawrocki@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, Peter Griffin <peter.griffin@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Michael Turquette <mturquette@baylibre.com>
+Date: Wed, 08 May 2024 18:17:48 -0700
+User-Agent: alot/0.10
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+Quoting Krzysztof Kozlowski (2024-05-08 08:31:56)
+> Hi,
+>=20
+> Updated pull request with fixed issue of non-used local const data.
+>=20
+> Best regards,
+> Krzysztof
+>=20
+>=20
+> The following changes since commit 4cece764965020c22cff7665b18a0120063590=
+95:
+>=20
+>   Linux 6.9-rc1 (2024-03-24 14:10:05 -0700)
+>=20
+> are available in the Git repository at:
+>=20
+>   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/sam=
+sung-clk-6.10-2
+>=20
+> for you to fetch changes up to 7c18b0a5aa46cc7e5d3a7ef3f9f8e3aa91bb780f:
+>=20
+>   clk: samsung: gs101: drop unused HSI2 clock parent data (2024-05-07 11:=
+47:39 +0200)
+>=20
+> ----------------------------------------------------------------
 
-'gates_data' (and it's associated define) are unused since
-Commit ee38b2698ae2 ("clk: sunxi: Add a simple gates driver").
-Remove them.
-
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- drivers/clk/sunxi/clk-sunxi.c | 11 -----------
- 1 file changed, 11 deletions(-)
-
-diff --git a/drivers/clk/sunxi/clk-sunxi.c b/drivers/clk/sunxi/clk-sunxi.c
-index 5fe7049ea693a..4999504f7e60d 100644
---- a/drivers/clk/sunxi/clk-sunxi.c
-+++ b/drivers/clk/sunxi/clk-sunxi.c
-@@ -852,17 +852,6 @@ CLK_OF_DECLARE(sun8i_axi, "allwinner,sun8i-a23-axi-clk",
- 	       sun8i_axi_clk_setup);
- 
- 
--
--/*
-- * sunxi_gates_clk_setup() - Setup function for leaf gates on clocks
-- */
--
--#define SUNXI_GATES_MAX_SIZE	64
--
--struct gates_data {
--	DECLARE_BITMAP(mask, SUNXI_GATES_MAX_SIZE);
--};
--
- /*
-  * sunxi_divs_clk_setup() helper data
-  */
--- 
-2.45.0
-
+Thanks. Pulled into clk-next
