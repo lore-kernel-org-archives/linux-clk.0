@@ -1,152 +1,100 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mxout2.routing.net (mxout2.routing.net [134.0.28.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8922815FCF5;
-	Thu,  9 May 2024 14:07:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF20015279B;
+	Thu,  9 May 2024 15:22:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715263629; cv=none; b=csj3q9jObOUOSWM3nfGZqKDVRHITRx0hBEGJZq2UOzh4KXHdehXkGVHGgJMGmdz7x5+LSaktsxoZK178TG2y8ImcjBhlBuf/nHAPnYVgjVppuaWO6ynmdwX3wfcQb5GV4vM3zgQF6rNf6Pt090sS1vHkbXV/CJ6UW8y2ynZ7+XI=
+	t=1715268132; cv=none; b=J2xz7SNOTadkEYGDnqG48NB5VC8hmhsR594TepZNVmOGgmGgGFwR/tTakB9iRsXSXhEjP7nMsO9TQefHXvdtWy7coMtbJOxS/rBKGyKEk1yeUjoLyUo6k9g8AxMGK+kIn4Y2W97lCqgHZA4RQqYcr7tDMP9eb1iJoapdCu3W3vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715263629; c=relaxed/simple;
-	bh=4iw+1FN3xerg0geYMZmU/8ZVwOpVnO3MzjaALXgnI+A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=lyOSgKwA9r7SWHov5YKfX1f1tOavaeRWd5/PMbo5rMGtoEhRRoYzm0xlaRM3qgMUzp3tnkZpLe8uC9xVg/u8itmCyt25mEKcSjOEycGy21X+YQjHn03aVT2LOkjc+ojQftvnsWX+ENZeN5nmd7nocmCLdiBTZQUVUv+mYFhNneU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HauHQHsB; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1715268132; c=relaxed/simple;
+	bh=Ws8I3Ql5U94+kEXDdzcb5l55Jyb/IE5FKK+9XzxVTjI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=V8RLvE6rWUyfcpfE1Ls7nsU4IZvKsmvI05gAdzlFs1+sctuOKGUTWS+vPR4MaCQ9RovHorSExrMBVK8qT+xJKBwLAlLAngDjmTypWXLtfRyBXTbeFSlaXKJAgMNVGkyJ44G+XZmAcBbfYkuC6xniezR3jp/du1wL5dv23WzOAP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=pZGwikcb; arc=none smtp.client-ip=134.0.28.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HauHQHsB"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-34d7b0dac54so538993f8f.0;
-        Thu, 09 May 2024 07:07:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715263626; x=1715868426; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nuIg0rxmudwavGYdewcr3VwDoFHinfP7P23xo/y6UpU=;
-        b=HauHQHsBhH2hsobMWO7Sv28uA2N3mi28xF8mMp+e369xwq+ODyUPzr2uKZY+ma4n7k
-         u1atdGiFLInoduJaJARJOOaI0vDQi+qxZLP/kEbSCxyFoiQihEPrkOwvzxbKKPfnDAUY
-         t3WUHgOb7d/X7O2KoLa/Sgdt8A7QheiSqRaWsNKkbYkfsUKh9Rive4Sz+FZL4TyzHHzS
-         laqksPKVJB0R9ldQ21Q+9uLgkQhb6UZaA+VK1RKO67ossVoJjfADjQ/VAHerlB3vmMXl
-         Z2u0ikRVfe+G3t6q62AXAN2H+uSYFLZpJonHuHliu2M8vU7GDV1fDFX8xTn9JNlDzBjY
-         it/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715263626; x=1715868426;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nuIg0rxmudwavGYdewcr3VwDoFHinfP7P23xo/y6UpU=;
-        b=anNgrxNm98KkuqJ+iRq1qC2jndP95NS0YEXxVgy+2i+t2IYMwyffyn/XkeP5yNw2xp
-         oTNWPr3RbEPGP8zTBThbZdEuppVqMj1iPXGAh+bLvKCbFI9BvK01jFuit8oasVpfUrN3
-         wcczm8xmHYn6xCNldWZkYwVeTTjSbXoHiq+CbuMZyGkttVsy8vikewQlPCQMKi3qEna3
-         QhUXg4XB8hMkiTKPWXNEpDk/Gjk9vrMf5ysq0MervdAXg3SLXQcr0EnEi3aOgeUytAl5
-         VA6PaBhSMWl1QRk1zY8Idz7Df+38xHZGy3M3XNK3KiBW8fPsEidiUJsUG4CUaZhlH/NK
-         fjag==
-X-Forwarded-Encrypted: i=1; AJvYcCWL3ThgAI9c05bdkdYA0Z+/2R+GgUaPLN6micCueSeIsGYV0ql/uT+zXROFnVRO7WGaiYXgNW6kD5ZjdYXWLrFqTM5jXe330DKU4D6XEcEzgolWIbLDuzObf3kyDHhrvVDNwAFe0kAj4bduurU7DXdIAsYNKERBhmP4Xvm46HcPSehcVA==
-X-Gm-Message-State: AOJu0Yz/hqXhzTH8FvAvKk/I/1yLAZRFuiXWAXD8xo0ROg5pyU1L0Dmy
-	TENMheQOf5WS6FCVv2RnNo5QhJFKijqTRatVJRMazIX3y3DYuOE=
-X-Google-Smtp-Source: AGHT+IGrYuifyNXu2UQb3DwjWFh9xvmk2vwwMGUSyNdVTWC6BwXLa/x62uQHm8HbCp9cEY6jEZx1eA==
-X-Received: by 2002:a5d:5604:0:b0:34a:6fac:6dab with SMTP id ffacd0b85a97d-3501812650emr2546256f8f.12.1715263625950;
-        Thu, 09 May 2024 07:07:05 -0700 (PDT)
-Received: from U4.lan ([2a02:810b:f40:4600:b44:d8c3:6fa8:c46f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502baad058sm1793311f8f.66.2024.05.09.07.07.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 09 May 2024 07:07:05 -0700 (PDT)
-From: Alex Bee <knaerzche@gmail.com>
-To: Sandy Huang <hjc@rock-chips.com>,
-	=?UTF-8?q?Heiko=20St=C3=BCbner?= <heiko@sntech.de>,
-	Andy Yan <andy.yan@rock-chips.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
+	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="pZGwikcb"
+Received: from mxbox3.masterlogin.de (unknown [192.168.10.78])
+	by mxout2.routing.net (Postfix) with ESMTP id 591226024A;
+	Thu,  9 May 2024 15:22:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
+	s=20200217; t=1715268126;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=fotgTM148ZqesmSfyYXvxrplZmNhg1acut380A13LMw=;
+	b=pZGwikcb0fsbAnFSwhOmJmJNL+0A2wQOMwfNjjzcAj22oltjQL3GjN20xnOEnqYHVNOoVV
+	REm5ejw0Mgx31iV60ZmucqomylPsXnLM0aTrabFSw0IBcbmX/Q+46paSNjj2BZWKaI0zrV
+	OotCNlOIyCPo3WMRuYr0/9V0+VI8CA8=
+Received: from frank-G5.. (fttx-pool-217.61.150.116.bambit.de [217.61.150.116])
+	by mxbox3.masterlogin.de (Postfix) with ESMTPSA id 0BF403604D4;
+	Thu,  9 May 2024 15:22:05 +0000 (UTC)
+From: Frank Wunderlich <linux@fw-web.de>
+To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
 	Conor Dooley <conor+dt@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: dri-devel@lists.freedesktop.org,
+	Stephen Boyd <sboyd@kernel.org>,
+	Pavel Machek <pavel@ucw.cz>,
+	Lee Jones <lee@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Frank Wunderlich <frank-w@public-files.de>,
+	Eric Woudstra <ericwouds@gmail.com>,
+	Tianling Shen <cnsztl@immortalwrt.org>,
 	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	Alex Bee <knaerzche@gmail.com>
-Subject: [PATCH v3 7/7] ARM: dts: rockchip: Add DSI for RK3128
-Date: Thu,  9 May 2024 16:06:53 +0200
-Message-ID: <20240509140653.168591-8-knaerzche@gmail.com>
-X-Mailer: git-send-email 2.43.2
-In-Reply-To: <20240509140653.168591-1-knaerzche@gmail.com>
-References: <20240509140653.168591-1-knaerzche@gmail.com>
+	linux-leds@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH v2 0/2] Add Bananapi R3 Mini
+Date: Thu,  9 May 2024 17:21:55 +0200
+Message-Id: <20240509152157.10162-1-linux@fw-web.de>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Mail-ID: 576f1382-99ca-463f-b168-02acee2867b6
 
-Add the Designware MIPI DSI controller and it's port nodes.
+From: Frank Wunderlich <frank-w@public-files.de>
 
-Signed-off-by: Alex Bee <knaerzche@gmail.com>
----
-changes since v1:
- - added HCLK_VIO_H2P as ahb clock
+Add mt7986 based BananaPi R3 Mini SBC.
 
-changes since v2:
- - dropped ahb clock again
+changes in v2:
+- dropped patches for unrealated binding fixes which are already fixed in next.
+- add missing node for nand
+- add some information about the board in description
+    
+change dts based on review from angelo+krzysztof
+    
+ - drop fan status
+ - rename phy14 to phy0 and phy15 to phy1
+ - drop default-trigger from phys and so also the binding-patch
+ - use regulator names based on regexp regulator-[0-9]+v[0-9]+
+ - add comment for pwm
 
- arch/arm/boot/dts/rockchip/rk3128.dtsi | 36 ++++++++++++++++++++++++++
- 1 file changed, 36 insertions(+)
+Frank Wunderlich (2):
+  dt-bindings: arm64: dts: mediatek: add BananaPi R3 Mini
+  arm64: dts: mediatek: Add  mt7986 based Bananapi R3 Mini
 
-diff --git a/arch/arm/boot/dts/rockchip/rk3128.dtsi b/arch/arm/boot/dts/rockchip/rk3128.dtsi
-index fbd95bb08cd3..7f2bf3e51082 100644
---- a/arch/arm/boot/dts/rockchip/rk3128.dtsi
-+++ b/arch/arm/boot/dts/rockchip/rk3128.dtsi
-@@ -277,6 +277,42 @@ vop_out_hdmi: endpoint@0 {
- 				reg = <0>;
- 				remote-endpoint = <&hdmi_in_vop>;
- 			};
-+
-+			vop_out_dsi: endpoint@1 {
-+				reg = <1>;
-+				remote-endpoint = <&dsi_in_vop>;
-+			};
-+		};
-+	};
-+
-+	dsi: dsi@10110000 {
-+		compatible = "rockchip,rk3128-mipi-dsi", "snps,dw-mipi-dsi";
-+		reg = <0x10110000 0x4000>;
-+		interrupts = <GIC_SPI 33 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&cru PCLK_MIPI>;
-+		clock-names = "pclk";
-+		phys = <&dphy>;
-+		phy-names = "dphy";
-+		resets = <&cru SRST_VIO_MIPI_DSI>;
-+		reset-names = "apb";
-+		rockchip,grf = <&grf>;
-+		power-domains = <&power RK3128_PD_VIO>;
-+		status = "disabled";
-+
-+		ports {
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+
-+			dsi_in: port@0 {
-+				reg = <0>;
-+				dsi_in_vop: endpoint {
-+					remote-endpoint = <&vop_out_dsi>;
-+				};
-+			};
-+
-+			dsi_out: port@1 {
-+				reg = <1>;
-+			};
- 		};
- 	};
- 
+ .../devicetree/bindings/arm/mediatek.yaml     |   1 +
+ arch/arm64/boot/dts/mediatek/Makefile         |   1 +
+ .../mediatek/mt7986a-bananapi-bpi-r3-mini.dts | 493 ++++++++++++++++++
+ 3 files changed, 495 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-mini.dts
+
 -- 
-2.43.2
+2.34.1
 
