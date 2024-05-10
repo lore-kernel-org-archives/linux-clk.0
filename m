@@ -1,53 +1,53 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A206C55C3B;
-	Fri, 10 May 2024 10:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EB6E1649CF;
+	Fri, 10 May 2024 11:26:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715337247; cv=none; b=ZQfsEwDtmhlArChx+HGGqPEuwoA7NKsmGqbbJZZnU+HLkQ3lJyrpgeX0oqfCz19v4xAGW7xPT/fAwNlkz0MXs4aOeKO+xI6Acj1dl6tT9HykmIS9jKHJh617EzM1gDOmr0ccq1mkt570JyuxlzSmROjtAQrk2Gy3dXfBqYyGqI8=
+	t=1715340369; cv=none; b=g2YknDLfkQ8Cs2NhYQwMT97iNY4jEt4nADxkA6AjruXkBMd8ulcQMwHgudrkQzhurfYQ98aifEhJrgz04bL4DtRTWhAcgJqRWScAKOGnevZlEP4gc7PrOkPYCdacc7MWChiqlUPzbuwBNQFKs+/spuG/Tg7n/wJK4dz8BJrTbmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715337247; c=relaxed/simple;
-	bh=X0ZOJpUlqcwr+U8LRJn7Zd0g5ybOZZdwIG5yRD8/Ono=;
+	s=arc-20240116; t=1715340369; c=relaxed/simple;
+	bh=X8Q8fkJcctofAMJGn3mjJGBdHGpHACK6lBQIiokJ8Hc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mw4EWhW/74Lv6BAhrr9mVMG1dIRom0LosaqTPPihDD1Xtys9/9/opbVDdkuuwgc5HgF6gmhKLndfPEEkDJWp3RsG++bKQB+VuCEdkzKnCjilDh7a3mETNy5uKQ22XMRw0o2UIs5lq7lTrBEyVF6307Wotx23o28ZDtPageoMbtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MZ5A5NmG; arc=none smtp.client-ip=192.198.163.10
+	 Content-Type:Content-Disposition:In-Reply-To; b=UPXWfbLGF3jgRxHapPnzBlsD15U6nuevlZIXQM1b4fpYKO7wGkm1f9SfRbqvdxY3ToCMDXv2qzqW/xxUaaXuoeXtGjyAPPcidughAX4faH/lWq4pWItc3shlvcvhFVnYXM20E7g1r5x+h+N3S1gM9clln2FfktmmKLfvZv6u3XY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HXpj89kT; arc=none smtp.client-ip=198.175.65.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MZ5A5NmG"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HXpj89kT"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1715337246; x=1746873246;
+  t=1715340368; x=1746876368;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=X0ZOJpUlqcwr+U8LRJn7Zd0g5ybOZZdwIG5yRD8/Ono=;
-  b=MZ5A5NmGI1EbTYICWcaUGpzeh2FN+heAwEVJySkjlUqDiw/ApsFSGtbX
-   DSe2jw4QqLYE4PbeM6bUgcFZS3LEIWggactF/Yq6eaCqgmsS/hSxDW8Om
-   mPCrc6N12ZJCQlZReFPjl8Oe4jByEYe5HFFaC+qU9szJgy0beilFDX+Jn
-   VSaUhyWNd1WFugVYjp8y8hCw4PR74lEF/lIv31axv3y2IUw6/fJyfK3PW
-   FtDKVOwX8qQXzJlq9oS2OuiDDORXKSiVI99N/8+MkYEZbHBvpvruU+L/e
-   rtlArU4M8KwnnYv39DaJjPCeeQabQ85ko7bQcURWllu74b7OIBUj/j2nt
-   w==;
-X-CSE-ConnectionGUID: YmV3jzuOS9uXLNxbiJAGWA==
-X-CSE-MsgGUID: D15JaaiFSRWx668yDGB5Og==
-X-IronPort-AV: E=McAfee;i="6600,9927,11068"; a="22709432"
+  bh=X8Q8fkJcctofAMJGn3mjJGBdHGpHACK6lBQIiokJ8Hc=;
+  b=HXpj89kTFdfhU83u7VCLaWI7N/WZZIa/TYEY3wdSE/E2LizW94kcVvZ7
+   0Awx8d3lprB0lCD4maouDDDfxjkUOGudHryzeN6aREyM6f28rgwGM2jcx
+   TqQfWWTBJwOsXa5rhyH1huRp7leaOlriqURBUwDvx5SYeqjEdDjMcuaJo
+   fiPT88hat1PJPDauOVRd3AJNLeGa/1XJgvyufqQoNgexE7W7C9zbovUHR
+   g+bbsp/m5UuV73zpXN1etqNbOzEGC7SsbeWbaq6sBgKR9zqVBNazS0wl/
+   gw21WhEp6C+2OWZ9mOb9vJxNw9Osla3IP5gHTun75zS1Lnu9QIPqJPZSu
+   A==;
+X-CSE-ConnectionGUID: Tgm3llhMRHi78V4eo73Qfg==
+X-CSE-MsgGUID: 4H/cnT10TOC1+uF4IZ9WZw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11068"; a="11442912"
 X-IronPort-AV: E=Sophos;i="6.08,150,1712646000"; 
-   d="scan'208";a="22709432"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 03:34:05 -0700
-X-CSE-ConnectionGUID: yXrnVpWQRJ22BfscS7ipVg==
-X-CSE-MsgGUID: n46WO3hYSjiRU/eZffXjfA==
+   d="scan'208";a="11442912"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 May 2024 04:26:08 -0700
+X-CSE-ConnectionGUID: 7lw1taQOQbGuQrWQRq9ZYg==
+X-CSE-MsgGUID: CLH43sCVSzqVL1gLyg/3Vw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.08,150,1712646000"; 
-   d="scan'208";a="52779431"
+   d="scan'208";a="34235748"
 Received: from lkp-server01.sh.intel.com (HELO f8b243fe6e68) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 10 May 2024 03:34:01 -0700
+  by orviesa003.jf.intel.com with ESMTP; 10 May 2024 04:26:04 -0700
 Received: from kbuild by f8b243fe6e68 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1s5NZe-0005zz-2e;
-	Fri, 10 May 2024 10:33:58 +0000
-Date: Fri, 10 May 2024 18:33:43 +0800
+	id 1s5OO1-00063V-0t;
+	Fri, 10 May 2024 11:26:01 +0000
+Date: Fri, 10 May 2024 19:25:56 +0800
 From: kernel test robot <lkp@intel.com>
 To: Tomer Maimon <tmaimon77@gmail.com>, mturquette@baylibre.com,
 	sboyd@kernel.org, p.zabel@pengutronix.de, robh+dt@kernel.org,
@@ -59,7 +59,7 @@ Cc: oe-kbuild-all@lists.linux.dev, devicetree@vger.kernel.org,
 	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH v24 2/4] reset: npcm: register npcm8xx clock auxiliary
  bus device
-Message-ID: <202405101852.gDDWbzsx-lkp@intel.com>
+Message-ID: <202405101846.avdHTXi3-lkp@intel.com>
 References: <20240509192411.2432066-3-tmaimon77@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -86,35 +86,43 @@ url:    https://github.com/intel-lab-lkp/linux/commits/Tomer-Maimon/dt-bindings-
 base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
 patch link:    https://lore.kernel.org/r/20240509192411.2432066-3-tmaimon77%40gmail.com
 patch subject: [PATCH v24 2/4] reset: npcm: register npcm8xx clock auxiliary bus device
-config: arm-wpcm450_defconfig (https://download.01.org/0day-ci/archive/20240510/202405101852.gDDWbzsx-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240510/202405101852.gDDWbzsx-lkp@intel.com/reproduce)
+config: i386-buildonly-randconfig-002-20240510 (https://download.01.org/0day-ci/archive/20240510/202405101846.avdHTXi3-lkp@intel.com/config)
+compiler: gcc-7 (Ubuntu 7.5.0-6ubuntu2) 7.5.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240510/202405101846.avdHTXi3-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202405101852.gDDWbzsx-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405101846.avdHTXi3-lkp@intel.com/
 
 All warnings (new ones prefixed by >>):
 
    drivers/reset/reset-npcm.c: In function 'npcm_clock_adev_release':
-   drivers/reset/reset-npcm.c:391:9: error: implicit declaration of function 'kfree'; did you mean 'vfree'? [-Werror=implicit-function-declaration]
-     391 |         kfree(rdev);
-         |         ^~~~~
-         |         vfree
+   drivers/reset/reset-npcm.c:391:2: error: implicit declaration of function 'kfree'; did you mean 'vfree'? [-Werror=implicit-function-declaration]
+     kfree(rdev);
+     ^~~~~
+     vfree
    drivers/reset/reset-npcm.c: In function 'npcm_clock_adev_alloc':
-   drivers/reset/reset-npcm.c:400:16: error: implicit declaration of function 'kzalloc'; did you mean 'vzalloc'? [-Werror=implicit-function-declaration]
-     400 |         rdev = kzalloc(sizeof(*rdev), GFP_KERNEL);
-         |                ^~~~~~~
-         |                vzalloc
->> drivers/reset/reset-npcm.c:400:14: warning: assignment to 'struct npcm_clock_adev *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
-     400 |         rdev = kzalloc(sizeof(*rdev), GFP_KERNEL);
-         |              ^
+   drivers/reset/reset-npcm.c:400:9: error: implicit declaration of function 'kzalloc'; did you mean 'vzalloc'? [-Werror=implicit-function-declaration]
+     rdev = kzalloc(sizeof(*rdev), GFP_KERNEL);
+            ^~~~~~~
+            vzalloc
+>> drivers/reset/reset-npcm.c:400:7: warning: assignment makes pointer from integer without a cast [-Wint-conversion]
+     rdev = kzalloc(sizeof(*rdev), GFP_KERNEL);
+          ^
    cc1: some warnings being treated as errors
 
 
 vim +400 drivers/reset/reset-npcm.c
 
+   385	
+   386	static void npcm_clock_adev_release(struct device *dev)
+   387	{
+   388		struct auxiliary_device *adev = to_auxiliary_dev(dev);
+   389		struct npcm_clock_adev *rdev = to_npcm_clock_adev(adev);
+   390	
+ > 391		kfree(rdev);
+   392	}
    393	
    394	static struct auxiliary_device *npcm_clock_adev_alloc(struct npcm_rc_data *rst_data, char *clk_name)
    395	{
