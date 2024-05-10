@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C77567D;
-	Fri, 10 May 2024 20:16:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD9704D9EA;
+	Fri, 10 May 2024 20:18:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715372163; cv=none; b=lo5eYCzoi/yWSxdE5FhrlCAbNDWeJnA4idtTOHQX/PHX1jszcvR3C6Kx4kNCRygqSrkM1ZdijIsYyCRgjBzEFR1Udrlh1AzrzE5Sfksgz5xx6h/WEkMiOlsugU9JRD5ZQN0m/iEnXfBgtHFYKyMJZ+zGO0pH59LwtTYsDH4A3PE=
+	t=1715372284; cv=none; b=m0ZZf0JozR8XhFVS6NJLAiZ0ANvqoeihnHF1FxBUbaN5NkUN/HByM5K6tzuerkJGhpK0Yg0RBCGpnSldoWWvGnXfyC8wOPcY/XeVnyK7AJm5h7xVJ1GiEyh7AkNdLnAK49yjWpoe63+zuFKso1RXfJOP2LwYvf9v0G2kTEtGdxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715372163; c=relaxed/simple;
-	bh=pmQ9AQITJFZy+youh/0jj+z+qY75g9ys3kkz/LOAbwo=;
+	s=arc-20240116; t=1715372284; c=relaxed/simple;
+	bh=KPf7sNe64S2Z/jANXPMUCv5hsHsruu3JjDnjvZm92fE=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=iPaudrB2+7c5f8tLTCvof0ZxX1OFxqzXwjXHYPtUqLsyw5ZxY0iUno1u7MoTrgf9rCcHfMBA+wVygqW7jF10jGPlvLF5mUsat5kxHU6CHLs1x0jS9MUsxOkyQwQ4ZJUbCd25XA+h8Z0xT5bPZeNESUPLSNSV6VWYBW6QXWZY1Rw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eq3rLu84; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=Nx+D9oMaJR5KZ4BAvvxbfSqlvoSzKAnfgrnAag+/Xlnwd2BgI6WdvmPmDWvSD8rXQMOLonMd5YN76MC437d4sXK8ys3hRxW9D/jGmIdn6KGv7qUt+bFbeT8hQmaP0W+LNmSoHHx4lpIOJ/YNt9Tld5y97qcxsUYC/r/LTuIUH6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KS+oDt/u; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eq3rLu84"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F648C113CC;
-	Fri, 10 May 2024 20:16:02 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KS+oDt/u"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48D81C113CC;
+	Fri, 10 May 2024 20:18:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715372162;
-	bh=pmQ9AQITJFZy+youh/0jj+z+qY75g9ys3kkz/LOAbwo=;
+	s=k20201202; t=1715372283;
+	bh=KPf7sNe64S2Z/jANXPMUCv5hsHsruu3JjDnjvZm92fE=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=eq3rLu842lVFGjL//lACe/xYhdPHq7+5jm7/PIJyXOvBAhxNq1hQatlizQKAcrHbe
-	 e/vEDsQZTCS/ZmxHhuTtCMzeNq79kJGrvFaTD+gRETEoufZVFr08eE9EfVestsNmcN
-	 pF7shYpzPmHWAwgbLxc5ljRjOYRkx3FMfs4z/O4cMxHRWvDeT/s/mUvbTW1Bpze/5W
-	 d3cYj8uwV3aLkeZrSbJOM8OkAYgmLD6mxnLbTcvY6/QSpTeFSoRW1PnSB36SwLPkTC
-	 7b0Rf5HhPkPZMTsvEcCQ80Tg/FpL5PQSAQoSYqZ+iku9NbXqOOcRk89jVzxpF+DlbY
-	 0S9lyaZBIk4Iw==
-Message-ID: <d7ce7ea6b13f2da8e07a345365d8f2b3.sboyd@kernel.org>
+	b=KS+oDt/uWR3AkeaUBEz+7UO3hY9/HqG2NO/aCpQsTEORpcRsbY67un7BLUjizfbxs
+	 oGQDkiL8fDDO7msiqWFlaOgdV+tIHiY/hLqIv8UdRe1Yi9uItRWulaGbBoBvUY+HfR
+	 QCJ9VCLZmu1OAQSOPSjWf93b96U8PLqMhJTm+sSyA/+RKwuwOKaESUSMRB+K/AQt61
+	 HFeq8dk/7vpOtEvhudt+LZuVqtkSuygKTYoCzUHwGonkv6XHanOCjGAa4+zutRhrmP
+	 LlADgnRJANp89REzsz6nSTRMNBcn8kVj3PGIwWeDTzzJOLGfFeDs4W5CCJ+Bp116bz
+	 N0x1PRCrDBquQ==
+Message-ID: <c25dd5216b66948e6842326db67a8e83.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,21 +35,23 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240510123018.3902184-1-robh@kernel.org>
-References: <20240510123018.3902184-1-robh@kernel.org>
-Subject: Re: [PATCH] dt-bindings: mfd: syscon: Add more simple compatibles
+In-Reply-To: <20240509230516.86023-1-linux@treblig.org>
+References: <20240509230516.86023-1-linux@treblig.org>
+Subject: Re: [PATCH v2] clk: sunxi: Remove unused struct 'gates_data'
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-mips@vger.kernel.org, linux-mtd@lists.infradead.org, netdev@vger.kernel.org, linux-mediatek@lists.infradead.org
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>, Andrew Lunn <andrew@lunn.ch>, AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, Conor Dooley <conor+dt@kernel.org>, David S. Miller <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Gregory Clement <gregory.clement@bootlin.com>, Jakub Kicinski <kuba@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Lee Jones <lee@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Miquel Raynal <miquel.raynal@bootlin.com>, Nicolas Ferre <nicolas.ferre@microchip.com>, Paolo Abeni <pabeni@redhat.com>, Richard Weinberger <richard@nod.at>, Rob Herring (Arm) <robh@kernel.org>, Salil Mehta <salil.mehta@huawei.com>, Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, UNGLinuxDriver@microchip.com, Vignesh Raghavendra <vigneshr@ti.com>, Yisen Zhuang <yisen.zhuang@huawei.com>
-Date: Fri, 10 May 2024 13:16:00 -0700
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, Dr. David Alan Gilbert <linux@treblig.org>
+To: emilio@elopez.com.ar, linux@treblig.org, mturquette@baylibre.com, wens@csie.org
+Date: Fri, 10 May 2024 13:18:01 -0700
 User-Agent: alot/0.10
 
-Quoting Rob Herring (Arm) (2024-05-10 05:30:14)
-> Add another batch of various "simple" syscon compatibles which were
-> undocumented or still documented with old text bindings. Remove the old
-> text binding docs for the ones which were documented.
+Quoting linux@treblig.org (2024-05-09 16:05:16)
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
 >=20
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> 'gates_data' (and it's associated define) are unused since
+> commit ee38b2698ae2 ("clk: sunxi: Add a simple gates driver").
+> Remove them.
+>=20
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 > ---
 
 Acked-by: Stephen Boyd <sboyd@kernel.org>
