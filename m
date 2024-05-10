@@ -1,143 +1,124 @@
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 484C9127E15
-	for <linux-clk@vger.kernel.org>; Fri, 10 May 2024 13:01:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8D3912C46B;
+	Fri, 10 May 2024 13:53:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715346081; cv=none; b=BcyqHLvVNTuzZ3+1fNFUhnTSkXCeZ8RY2XEAQ4/Pdj8dqyFgn4GVEmN0UdhE0LBGLWjkysu3B3cyo1R07tbb4jX0SdnLmQFhXaOrb8KtGmAhVCVpl5qOOFyXCf5SPgb2d1/RO2p0BYLcLZd+i/4+qKIOSp6Rm7GLvWYNjgJ6pJ8=
+	t=1715349188; cv=none; b=VhxhDAVhVc/Mfum4O+enlE6Mf3cdWb2X+ApqGsKpnE74e9zgBXv6mhMhpP7XdEFf7mW2PPMsUPfiNosi1i10R+0L/2HAIyUaHb1SY4iJw1rN56fhRRXemgSTCp3Xc2CnmieQZhLMPuMUA6X8wxOehUbI5NR7yIaAwVGWR+/Qcw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715346081; c=relaxed/simple;
-	bh=xsCgUTQujSpA87EGwezOFO4IkwKTUzAnJXwXCKepl10=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=JiWTctq0wyibtiHX+JGsG+qlpn5LXZ92kzjiadLmlUQBLhusAjB7hBJNJg/SBpmI6Dgjrod6IbJ6k03h14l7UYNYRZwMyb7unlVcK+98NA6fTqf8U1MfKUAmfoHNQISQO3aR7l1WFKeXfAx1rKToMjteSGHAZBtWNu91KGTplSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=crVkqiIA; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1715349188; c=relaxed/simple;
+	bh=6KpXMrLeritzB8bNaBffhCqm+rUB+tqQRQjkCVrSwOg=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=PbR+04Fg5EPhbPTqKcmH1+cFFA6wW3IRzCYhQjOoIh2+gW88pPn3YRRuaiykdW06od2GhGEyZHBw5/FKCcfs3v5oawVnxGBCcA5F/cUzm0RsSM9Eur4Lm+eWb908rdZxCFj7TdWm/Sphib5WfAgLCvI7ttHPsok/1i2XWYLwzCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A64OWzCE; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="crVkqiIA"
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-34d8d11a523so1290614f8f.2
-        for <linux-clk@vger.kernel.org>; Fri, 10 May 2024 06:01:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715346076; x=1715950876; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=EuOqAb8ZpUuVP1mrlb2cKpurEJ0bRaZYBd2TNR0xxGs=;
-        b=crVkqiIAkpGhPg2PhxnH0MUtf8I7DlEpb8NReO57skFh+IvC+Yjv6AktbtO9kx9haU
-         4vhDBC262Gz9JSV2G72rTPyM5tisB8lO1NvoteP4ZGlxqFygM13S+5AKjwtl8da6Pw/j
-         WkCc3d5Gh9lNkBxE3x4eeGwWhT5cevrdkJ/3Es7Y6ZYjQ+DrtE/QJ4ynVVLq334rRviT
-         Yy2KJJ2bUI8bV50DjDnHyw9PMOnnu7w1sNzccwyTTYL87vUgKXNfIBlKjcOqgQ0BITAP
-         AtdowtOyXSedQF89v33akaewvf/M9E+p2fi1Ohwd5Qqsx4IokQe9RnpqwFzb1Ecgs/1O
-         Zrmw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715346076; x=1715950876;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EuOqAb8ZpUuVP1mrlb2cKpurEJ0bRaZYBd2TNR0xxGs=;
-        b=jtqTR3hMnJHshilYbtZsP5NyCWhrOBm57UbqISGc7XfOXUldtNQDC2jUkvjgoQdlTO
-         BLQchYI+ecVwwr7acYEhx+YDM5VmOTun1lzy1JhkfhcDSd6d6lW+CEuajJuSyTCLJcVP
-         gimpMFqkzMrjneMnEnxdwK0zenJ/jysFZvRLXMqjRAo0tOVg9ZnwqK6JCf1J/G8/fGHp
-         kO/+ojuMieZzcx0mCgVrBTn7Iu/XFqBCLu9cWgFLmXp+wWAJswbNKtUUvBBYKDo3sSgV
-         kUGZFljmMVejy78UINiN3yreNKXvU+QBbxN0y0i2wtD+RFP07HrmrlaYPsmddiDQHn0/
-         NYfA==
-X-Forwarded-Encrypted: i=1; AJvYcCXDSLSw8J6KolugtYApnn7LyDTVQXzPyq8nHm4jPFTpGaDmBzQJWQEOFt2nH4a862j32yBo5OUOU0yv5PRK1NzMfs5jh55HCPyW
-X-Gm-Message-State: AOJu0YzR6azux8mOtKBFdj0VD3zxRNaSiBJbEYdjsM7Ijl/xwY/EwK9/
-	AKBMQudfRiVaC+Zn8+XTUlOJf5wYQV+5N2T8hU3Jf9K8b0JfZuzhlzoV7sTIqZw=
-X-Google-Smtp-Source: AGHT+IH4l5dMeOQQ9CIlOmZviv3DR34gB+WFmPnfVAb0EORzuTaQVImXvg2bsbUFlg3yyxbsNPswOQ==
-X-Received: by 2002:a05:6000:440e:b0:350:4c83:d669 with SMTP id ffacd0b85a97d-3504c83d8d8mr1455017f8f.1.1715346075781;
-        Fri, 10 May 2024 06:01:15 -0700 (PDT)
-Received: from [192.168.0.3] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502baad04dsm4512060f8f.81.2024.05.10.06.01.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 10 May 2024 06:01:15 -0700 (PDT)
-Message-ID: <d2e55523-f8fd-4cbe-909c-57de241107e8@linaro.org>
-Date: Fri, 10 May 2024 14:01:13 +0100
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A64OWzCE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D53BC113CC;
+	Fri, 10 May 2024 13:53:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715349188;
+	bh=6KpXMrLeritzB8bNaBffhCqm+rUB+tqQRQjkCVrSwOg=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=A64OWzCEMg4DcJItwWnY/nQEN6c08na6QOnzyyA16EkwyYPWJ0jqdPmypqBP4bPWm
+	 aMs0AL9rwpbVHg1YxLozM2876hLrD+tfiPoHgmt33/rS4iubuU2khWvDeLwHFJCu0C
+	 iNJIv9QfrfvN6SO6RMmb348ykhR/eLLtTsby5SoNDTiz+c0/AHSdlTBHKygkAsTUdQ
+	 FGbRxxawWdHBachzf/P47ZiJ9ealbDgrhjRXW7J6EQIQzlGh+Aa8PTHNVuCak4A4eD
+	 6ML1uJJeDIl7bSuY1ckxngyoXYlQWIl6VeL6FvID6dQP+HGn/8bZTOzPZgWA4QnVB0
+	 FFIvO/XokF11A==
+Date: Fri, 10 May 2024 08:53:06 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V5 RESEND 5/5] venus: pm_helpers: Use
- dev_pm_genpd_set_hwmode to switch GDSC mode on V6
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-To: Konrad Dybcio <konrad.dybcio@linaro.org>,
- Jagadeesh Kona <quic_jkona@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J . Wysocki"
- <rafael@kernel.org>, Kevin Hilman <khilman@kernel.org>,
- Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Andy Gross <agross@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Abel Vesa <abel.vesa@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
- linux-pm@vger.kernel.org, Taniya Das <quic_tdas@quicinc.com>,
- Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
- Imran Shaik <quic_imrashai@quicinc.com>,
- Ajit Pandey <quic_ajipan@quicinc.com>
-References: <20240413152013.22307-1-quic_jkona@quicinc.com>
- <20240413152013.22307-6-quic_jkona@quicinc.com>
- <5c78ad52-524b-4ad7-b149-0e7252abc2ee@linaro.org>
- <b96ef82c-4033-43e0-9c1e-347ffb500751@quicinc.com>
- <a522f25f-bb38-4ae1-8f13-8e56934e5ef5@linaro.org>
- <dbd1b86c-7b5f-4b92-ab1f-fecfe1486cfc@quicinc.com>
- <621dbaaa-6b86-45b5-988e-a6d9c39b13d7@linaro.org>
- <d36c1163-a3f0-4034-a430-91986e5bbce8@linaro.org>
- <ef194e5c-f136-4dba-bfe0-2c6439892e34@linaro.org>
-Content-Language: en-US
-In-Reply-To: <ef194e5c-f136-4dba-bfe0-2c6439892e34@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Frank Wunderlich <linux@fw-web.de>
+Cc: devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+ Stephen Boyd <sboyd@kernel.org>, linux-leds@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, 
+ Frank Wunderlich <frank-w@public-files.de>, 
+ Eric Woudstra <ericwouds@gmail.com>, Tianling Shen <cnsztl@immortalwrt.org>, 
+ Jakub Kicinski <kuba@kernel.org>, linux-arm-kernel@lists.infradead.org, 
+ Pavel Machek <pavel@ucw.cz>, Conor Dooley <conor+dt@kernel.org>, 
+ "David S. Miller" <davem@davemloft.net>, 
+ Michael Turquette <mturquette@baylibre.com>, Lee Jones <lee@kernel.org>, 
+ Eric Dumazet <edumazet@google.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, netdev@vger.kernel.org, 
+ Paolo Abeni <pabeni@redhat.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+In-Reply-To: <20240510095707.6895-1-linux@fw-web.de>
+References: <20240510095707.6895-1-linux@fw-web.de>
+Message-Id: <171534910744.4114753.13367969845540831259.robh@kernel.org>
+Subject: Re: [PATCH v3 0/2] Add Bananapi R3 Mini
 
-On 01/05/2024 10:14, Bryan O'Donoghue wrote:
-> On 30/04/2024 21:01, Konrad Dybcio wrote:
->> On 24.04.2024 11:50 AM, Bryan O'Donoghue wrote:
->>> On 24/04/2024 10:45, Jagadeesh Kona wrote:
->>>>
->>>> Thanks Bryan for testing this series. Can you please confirm if this 
->>>> issue is observed in every run or only seen during the first run? 
->>>> Also please let me know on which platform this issue is observed?
->>>>
->>>> Thanks,
->>>> Jagadeesh
->>>
->>> rb5/sm8250
->>>
->>> My observation was on a previous _boot_ the stuttering was worse. 
->>> There is in the video capture three times that I count where the 
->>> video halts briefly, I guess we need to vote or set an OPP so the 
->>> firmware knows not to power-collapse quite so aggressively.
->>
->> We seem to be having some qualcomm-wide variance on perf/pwr usage on 
->> some
->> odd boots.. Any chance you could try like 5 times and see if it was a 
->> fluke?
->>
->> Konrad
-> 
-> Sure.
-> 
-> The first time I tried it, it was much worse.
-> 
-> The second time, captured in the video is only noticeable because I was 
-> *looking* for this specific error i.e. I don't think I would have 
-> noticed the error on the second run, had I not seen the first run.
-> 
-> I'll find some time to do 5x with and 5x without.
-> 
-> ---
-> bod
 
-ping bod please remember to do this thanks
+On Fri, 10 May 2024 11:57:05 +0200, Frank Wunderlich wrote:
+> From: Frank Wunderlich <frank-w@public-files.de>
+> 
+> Add mt7986 based BananaPi R3 Mini SBC.
+> 
+> changes in v3:
+> - fixed unicde parenthesis in commit description of dts patch
+> - dropped "dts:" from title of binding patch
+> - added AB to binding and RB to dts patch
+> 
+> changes in v2:
+> - dropped patches for unrealated binding fixes which are already fixed in next.
+> - add missing node for nand
+> - add some information about the board in description
+> 
+> change dts based on review from angelo+krzysztof
+> 
+>  - drop fan status
+>  - rename phy14 to phy0 and phy15 to phy1
+>  - drop default-trigger from phys and so also the binding-patch
+>  - use regulator names based on regexp regulator-[0-9]+v[0-9]+
+>  - add comment for pwm
+> 
+> Frank Wunderlich (2):
+>   dt-bindings: arm64: mediatek: add BananaPi R3 Mini
+>   arm64: dts: mediatek: Add  mt7986 based Bananapi R3 Mini
+> 
+>  .../devicetree/bindings/arm/mediatek.yaml     |   1 +
+>  arch/arm64/boot/dts/mediatek/Makefile         |   1 +
+>  .../mediatek/mt7986a-bananapi-bpi-r3-mini.dts | 493 ++++++++++++++++++
+>  3 files changed, 495 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-mini.dts
+> 
+> --
+> 2.34.1
+> 
+> 
+> 
 
----
-bod
+
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+New warnings running 'make CHECK_DTBS=y mediatek/mt7986a-bananapi-bpi-r3-mini.dtb' for 20240510095707.6895-1-linux@fw-web.de:
+
+arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-mini.dtb: crypto@10320000: interrupts: [[0, 116, 4], [0, 117, 4], [0, 118, 4], [0, 119, 4]] is too short
+	from schema $id: http://devicetree.org/schemas/crypto/inside-secure,safexcel.yaml#
+arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-mini.dtb: crypto@10320000: interrupt-names: ['ring0', 'ring1', 'ring2', 'ring3'] is too short
+	from schema $id: http://devicetree.org/schemas/crypto/inside-secure,safexcel.yaml#
+
+
+
+
+
