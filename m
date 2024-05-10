@@ -1,60 +1,63 @@
-Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
+Received: from mxout2.routing.net (mxout2.routing.net [134.0.28.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A857B171E4C;
-	Fri, 10 May 2024 09:13:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92FCB15FCE1;
+	Fri, 10 May 2024 09:57:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=134.0.28.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715332387; cv=none; b=k+XsD8vEUv33FEPUfIajKBIfCFarXAfeQlvUxRZ2hynrvvYd/1yfxjsY2dDizobvAZYc+Y0Oo6fuZUyhWQo7ixlgwosKoKlr31J+iBELSPWKxPufhyiMgwwRFy+lb50Wr/qh6oLHsVd1HXTn05FvYlKwgyZL1yD/uQ7DLbeX9uA=
+	t=1715335039; cv=none; b=ncf0bIO7Tpt9SiizIU3EKDMgZVwmIiwuwq7+neSQ1oh2ZpLrLFBM2QvRjIr45jIPD6383ss9HxUwENNKsUo8jT50QNV0FTsK81ActpU0LkEHpoR/paTeGGtTh27CcwtrFFVl4365e0DkgbYwmmIY/oUuT6bWGNXoZxNmRPm1v8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715332387; c=relaxed/simple;
-	bh=DqgdDwQx+sQAdIg4ZpduqD7G6PmhfwcD69dKKDM0ns8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WB3DxDAmaosZZW6w2iwIS7lvNy5HlcbGO8WzYm7HJLW1eHuedkRDNLCx48AQ/hfpj7EAo6xxXwdokdqXifjDElAPiFBlaqhIgYkzO703VdzqbjHVQkCaekZo5blChHl29n+a67cVtb+9cfMc8VuEw9RCwtvu1Bs/M+9mKBrbfYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=c2Nd7E7u; arc=none smtp.client-ip=37.18.73.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
+	s=arc-20240116; t=1715335039; c=relaxed/simple;
+	bh=uwKaZyMTFC2jPmMy7DLyjkOrP7HT743tJh/Qj4vTTEo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rYNElMr5P+wAiobWwKV5H3wL9UpNfcOXJkXTdpGyfZdXsl7Vx8b44YwkLFkW8vtgGT/kgVo1jRwHjanZQRWwhlaAECEUAb66NSI4OG99EC2BDnvgXLbms9qtENAbmnYvgD7MDYWQ4w5WsWnPewAYOKZ7/LfSX4Akk+DedLTIXX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de; spf=pass smtp.mailfrom=fw-web.de; dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b=kf2YVc0h; arc=none smtp.client-ip=134.0.28.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fw-web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fw-web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="c2Nd7E7u"
-Received: from p-infra-ksmg-sc-msk01 (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id E482F100008;
-	Fri, 10 May 2024 12:13:02 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru E482F100008
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1715332382;
-	bh=Fgx6gQIor5JitCoDjzvWGDmT9ExA7zZtNp1uC41L0go=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=c2Nd7E7uGvrXOgdY9eSJUhXW4bdjT1KQool6/k4iHkFKTlN9K47zlQsgmignDLsv8
-	 LvHpdLGop2FuWRoPziZQpIJ1UedD+ePJ3eDsdySB+YAnUxkUy7el75vZxovkCBjNwi
-	 I1fsAGT71YvmDZBL7ltJ0Nie7UvvTyuMykPZz0/6wjs8rdtjhazxfh3JAa4Qsy9JV4
-	 KxQAxbVW2vYa4jUvYPTqHUt4nWcdisoxEdUwZ/OvRp9rl0XGZeg5MAAULDSRG5xBYA
-	 2Ac/Q8656802wkS1JK+p59sds3QvC2YnyKuZutibXjr3jQcVbYXqj5SF4bYi7LpdqB
-	 hwy/ZFQP2kTPQ==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Fri, 10 May 2024 12:13:02 +0300 (MSK)
-Received: from CAB-WSD-L081021.sberdevices.ru (100.64.160.123) by
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Fri, 10 May 2024 12:13:02 +0300
-From: Dmitry Rokosov <ddrokosov@salutedevices.com>
-To: <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
-	<mturquette@baylibre.com>, <sboyd@kernel.org>, <robh+dt@kernel.org>,
-	<krzysztof.kozlowski+dt@linaro.org>, <khilman@baylibre.com>,
-	<martin.blumenstingl@googlemail.com>
-CC: <kernel@salutedevices.com>, <rockosov@gmail.com>,
-	<linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, Dmitry Rokosov
-	<ddrokosov@salutedevices.com>
-Subject: [PATCH v2 4/4] arm64: dts: amlogic: a1: setup CPU power management
-Date: Fri, 10 May 2024 12:12:26 +0300
-Message-ID: <20240510091251.20086-5-ddrokosov@salutedevices.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240510091251.20086-1-ddrokosov@salutedevices.com>
-References: <20240510091251.20086-1-ddrokosov@salutedevices.com>
+	dkim=pass (1024-bit key) header.d=mailerdienst.de header.i=@mailerdienst.de header.b="kf2YVc0h"
+Received: from mxbox1.masterlogin.de (unknown [192.168.10.88])
+	by mxout2.routing.net (Postfix) with ESMTP id 5202B601EA;
+	Fri, 10 May 2024 09:57:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailerdienst.de;
+	s=20200217; t=1715335034;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=IVfreqw0uH1zijg8e8Ue3UOGCbiqwXXFS7aG6Qf97+s=;
+	b=kf2YVc0heVGoBZ53oLQl/aIWN0YfO6Btzz2ymGfSLu5TcJjA9CUbRcjTEDh1mdLmzTOW9h
+	6kUa7GHs8sRbYcSciagYZwUSiX5kZKZV4vUBFzAthz9P+UOkTZbOa8QL1wGeDP4wg1Anx8
+	w5VS1dTPbFnht8wPbrw7kBW/SQP3Ejc=
+Received: from frank-G5.. (fttx-pool-217.61.152.152.bambit.de [217.61.152.152])
+	by mxbox1.masterlogin.de (Postfix) with ESMTPSA id 086F640029;
+	Fri, 10 May 2024 09:57:12 +0000 (UTC)
+From: Frank Wunderlich <linux@fw-web.de>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Pavel Machek <pavel@ucw.cz>,
+	Lee Jones <lee@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Frank Wunderlich <frank-w@public-files.de>,
+	Eric Woudstra <ericwouds@gmail.com>,
+	Tianling Shen <cnsztl@immortalwrt.org>,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-leds@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org
+Subject: [PATCH v3 0/2] Add Bananapi R3 Mini
+Date: Fri, 10 May 2024 11:57:05 +0200
+Message-Id: <20240510095707.6895-1-linux@fw-web.de>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -62,110 +65,40 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 185158 [May 10 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: ddrokosov@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 19 0.3.19 07c7fa124d1a1dc9662cdc5aace418c06ae99d2b, {Tracking_from_domain_doesnt_match_to}, d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;smtp.sberdevices.ru:5.0.1,7.1.1;100.64.160.123:7.1.2;salutedevices.com:7.1.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/05/10 07:36:00 #25144647
-X-KSMG-AntiVirus-Status: Clean, skipped
+X-Mail-ID: ec672c86-1632-4f96-8758-6e1f268feb06
 
-The Amlogic A1 SoC family utilizes static operating points and a
-PWM-controlled core voltage regulator, which is specific to the board.
-As the main CPU clock input, the SoC uses CLKID_CPU_CLK from the CPU
-clock controller, which can be inherited from the system PLL (syspll) or
-a fixed CPU clock.
+From: Frank Wunderlich <frank-w@public-files.de>
 
-Currently, the stable operating points at all frequencies are set to
-800mV. This value is obtained from the vendor setup of several A1
-boards.
+Add mt7986 based BananaPi R3 Mini SBC.
 
-Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
----
- arch/arm64/boot/dts/amlogic/meson-a1.dtsi | 44 +++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
+changes in v3:
+- fixed unicde parenthesis in commit description of dts patch
+- dropped "dts:" from title of binding patch
+- added AB to binding and RB to dts patch
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-index 785778f3a7da..fa13dd6ed03d 100644
---- a/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/meson-a1.dtsi
-@@ -33,6 +33,13 @@ cpu0: cpu@0 {
- 			reg = <0x0 0x0>;
- 			enable-method = "psci";
- 			next-level-cache = <&l2>;
-+			clocks = <&clkc_cpu CLKID_CPU_CLK>;
-+			clock-names = "core_clk";
-+			operating-points-v2 = <&cpu_opp_table0>;
-+			voltage-tolerance = <0>;
-+			clock-latency = <50000>;
-+			capacity-dmips-mhz = <400>;
-+			dynamic-power-coefficient = <80>;
- 			#cooling-cells = <2>;
- 		};
- 
-@@ -42,6 +49,13 @@ cpu1: cpu@1 {
- 			reg = <0x0 0x1>;
- 			enable-method = "psci";
- 			next-level-cache = <&l2>;
-+			clocks = <&clkc_cpu CLKID_CPU_CLK>;
-+			clock-names = "core_clk";
-+			operating-points-v2 = <&cpu_opp_table0>;
-+			voltage-tolerance = <0>;
-+			clock-latency = <50000>;
-+			capacity-dmips-mhz = <400>;
-+			dynamic-power-coefficient = <80>;
- 			#cooling-cells = <2>;
- 		};
- 
-@@ -52,6 +66,36 @@ l2: l2-cache0 {
- 		};
- 	};
- 
-+	cpu_opp_table0: cpu_opp_table0 {
-+		compatible = "operating-points-v2";
-+		opp-shared;
-+
-+		opp00 {
-+			opp-hz = /bits/ 64 <128000000>;
-+			opp-microvolt = <800000>;
-+		};
-+		opp01 {
-+			opp-hz = /bits/ 64 <256000000>;
-+			opp-microvolt = <800000>;
-+		};
-+		opp02 {
-+			opp-hz = /bits/ 64 <512000000>;
-+			opp-microvolt = <800000>;
-+		};
-+		opp03 {
-+			opp-hz = /bits/ 64 <768000000>;
-+			opp-microvolt = <800000>;
-+		};
-+		opp04 {
-+			opp-hz = /bits/ 64 <1008000000>;
-+			opp-microvolt = <800000>;
-+		};
-+		opp05 {
-+			opp-hz = /bits/ 64 <1200000000>;
-+			opp-microvolt = <800000>;
-+		};
-+	};
-+
- 	efuse: efuse {
- 		compatible = "amlogic,meson-gxbb-efuse";
- 		clocks = <&clkc_periphs CLKID_OTP>;
+changes in v2:
+- dropped patches for unrealated binding fixes which are already fixed in next.
+- add missing node for nand
+- add some information about the board in description
+    
+change dts based on review from angelo+krzysztof
+    
+ - drop fan status
+ - rename phy14 to phy0 and phy15 to phy1
+ - drop default-trigger from phys and so also the binding-patch
+ - use regulator names based on regexp regulator-[0-9]+v[0-9]+
+ - add comment for pwm
+
+Frank Wunderlich (2):
+  dt-bindings: arm64: mediatek: add BananaPi R3 Mini
+  arm64: dts: mediatek: Add  mt7986 based Bananapi R3 Mini
+
+ .../devicetree/bindings/arm/mediatek.yaml     |   1 +
+ arch/arm64/boot/dts/mediatek/Makefile         |   1 +
+ .../mediatek/mt7986a-bananapi-bpi-r3-mini.dts | 493 ++++++++++++++++++
+ 3 files changed, 495 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/mediatek/mt7986a-bananapi-bpi-r3-mini.dts
+
 -- 
-2.43.0
+2.34.1
 
