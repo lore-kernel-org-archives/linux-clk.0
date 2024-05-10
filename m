@@ -1,475 +1,252 @@
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2064.outbound.protection.outlook.com [40.107.241.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ECB81635CA;
-	Fri, 10 May 2024 09:09:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715332197; cv=none; b=JczbFuu7WLO5tAObD6War6L/E4FTU9tGaoHa2R1QGDZ+gHCLM1WaiNBEeqVUb9qw0WdEsiVfXvkhmnif8c5lNhCyp8i9Ode9NDhFANAioqpFB9iklxa2trgLMUbvGtz3GPfPR3FHOcVssSl1iJbXvaveIDMZgt6wNUxsXgVkfYo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715332197; c=relaxed/simple;
-	bh=m/mGEoNEHrMXKlVRGWGRbnzLOl5oWYxY2hcPwWeFD8A=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TEk7Bol5srgmVxUdhCv5NClsfGUWngOhVAqHFm58uFvphb87sa09vlI5gGQECjncN2aNUqOaOVxjDpbisZqpTFjxv4NvSGsOP/nV/f80jSb0xgl6AG3YAwIKlUJhovtOqzdpOzMBL82MeFkjiJEpK6MDRC19nc2F8dIpopkAfCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=rf1rJCgs; arc=none smtp.client-ip=45.89.224.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E1516087B;
+	Fri, 10 May 2024 09:11:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.64
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715332272; cv=fail; b=bLpzrEovM8o9IFw8uiJIITGlWLpYOuYze1mSjLz5TF0nzT4Gd5jzF9zcVKJWFuMTW6xO6R0zi3GWUo9h+pMCJOk65DXUQWMLnhzZicWESIXabpZFNR0aEP6TRYAmvvt7ySyt1UjQpLh1I1ZkbrMdz8GNYvaMs+Pho+yIkium1BQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715332272; c=relaxed/simple;
+	bh=6/uXzMe9ujeP8ExVd72jKCKMGDAeu5lzc8+vYoPu7XU=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=OsAquzYSRGKeNBu58rdjP7CHhLfa6PZVaVB5QuYQrDslJ1YoZqtVyRhDLFd1euYsw3I8CHaH9elabWKjbiwHKc0Tn/a3m+kPh/mryBqr1BoJSjizi4hiqLpd/OWH63yn3pvprsNa4mMLUtwFe+K5AJaqZUpNVMQGDCHgozDhuhg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (1024-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=aUR+dNVz; arc=fail smtp.client-ip=40.107.241.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="rf1rJCgs"
-Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id A73D9120008;
-	Fri, 10 May 2024 12:09:46 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru A73D9120008
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1715332186;
-	bh=SmdMrw/p8e6szSRa+4BtLFr31j+jV1j69OFcWCrisJU=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=rf1rJCgshX3NBdeU7s68ZSWtgeJSJFjcehvZpQ85JOo0niZzny4/ljxaE22DMXAlk
-	 6/ymU7ZnzqizVY3oP4TceId1a1n5LdgrIwTf0ADz2F+G54TFEuPk40B+9GU0nahoyv
-	 5mKTX/7Ur1JhtPhV3YNN8Fuafeo49fF7iFdxu3IbExgA0Ce5L6MaANF5Nma9bkZ94w
-	 S4oHFBBkoG7rhrL2VSYcId9JthrqpqfR9EWxfDjdtWZXtlNNhRdjScZRMEsDgKr6Eg
-	 QYH3gNs4n3iQBBBf4HQ0YWu+yqZEYpjuxowiBRylbq15hivX//kiNTNh2SEPA3yqWe
-	 xy1lSpJoj7yfg==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Fri, 10 May 2024 12:09:46 +0300 (MSK)
-Received: from CAB-WSD-L081021.sberdevices.ru (100.64.160.123) by
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Fri, 10 May 2024 12:09:46 +0300
-From: Dmitry Rokosov <ddrokosov@salutedevices.com>
-To: <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
-	<mturquette@baylibre.com>, <sboyd@kernel.org>, <robh+dt@kernel.org>,
-	<krzysztof.kozlowski+dt@linaro.org>, <khilman@baylibre.com>,
-	<martin.blumenstingl@googlemail.com>
-CC: <jian.hu@amlogic.com>, <kernel@sberdevices.ru>, <rockosov@gmail.com>,
-	<linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, Dmitry Rokosov
-	<ddrokosov@salutedevices.com>
-Subject: [PATCH v2 7/7] clk: meson: a1: add Amlogic A1 CPU clock controller driver
-Date: Fri, 10 May 2024 12:08:59 +0300
-Message-ID: <20240510090933.19464-8-ddrokosov@salutedevices.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240510090933.19464-1-ddrokosov@salutedevices.com>
-References: <20240510090933.19464-1-ddrokosov@salutedevices.com>
+	dkim=pass (1024-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="aUR+dNVz"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=d8+uRgcGbiXULNr24E7eI1/4ZbnwAAGTKbIfmSHgRHA+ZYAitmRbBf6O0UTlM4u7WE4ANoLVG8mx8RcWbU30VGbdKeSMFyG07caWqYvYK3PHfjKO8aq4nujEkXcfydCi1yMmIetBjvnMotGmdfZPHuDhSdn8WB34Gh+YlMB2R3UbOsjLOpNQKgi1fNh2ZzOQhPZkpxSQ7+T5MFAeMvWCcQqDFENQNH8TSqsL2CkpSAKMkPgAFVF/nK+W0qQnHJAXkgSloW5hXGYCPi7WVssueZ6y7jL50w8JvVjM4kb+fryy+lq51n/lduzaQFRDkNTaIQFX2Ggi6t1GnjU4oPDWOg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=6Xr03dJM24GJnBJL0BZl+PxyGfRDkQlPluHxvztgIjc=;
+ b=jR2FI3ka6kSVzhapbCmsUfhQBxYnxti/lR51fs/Oc+iCfT/e5RPG3OJ6gnDM6c8iB/DKn32pQXFmeC4MtmjWzDCam+uj35ysNA8ThptxOIl163T+05WuFSLcRKWXWWnMM4pazuzaAf0eNznGL+S+qocNSiT+pXGAv74pwW6TbYwKRZdmyAqnwgkdnPFrC5J+jNsntA4G6IXasognmjcVL1ixGd/qFoylm+9RjUEgOjDDIwo6ovn+SShdK5SqFiCNEsAVDpx9eGwd0SY3NKGaMyeNxxlIChZGmHlazskiFyoQWRWmcg3Ar8Ao3mvzKKQnc6oHDmaaJvlVl3/vMH8CGg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector2-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=6Xr03dJM24GJnBJL0BZl+PxyGfRDkQlPluHxvztgIjc=;
+ b=aUR+dNVz5N1aTed4QG6Q2Zo+x1k+g8XOK1+Iv6BUUGT+sz60D4GqJg1cVl/bzsUV1KBRDPB4Ny1AKDm7PPUZ+Lyt+NBTPOvmsSGH5HPKVhkMvHKmopMoMV7HrZdyqba0oHUxcZwjJRJA2838HV92Nrb9zCJ61/wR1CqADXc+wWU=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
+ by AM9PR04MB8065.eurprd04.prod.outlook.com (2603:10a6:20b:3ee::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.49; Fri, 10 May
+ 2024 09:11:04 +0000
+Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::d30b:44e7:e78e:662d]) by DU0PR04MB9417.eurprd04.prod.outlook.com
+ ([fe80::d30b:44e7:e78e:662d%4]) with mapi id 15.20.7544.046; Fri, 10 May 2024
+ 09:11:04 +0000
+From: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Subject: [PATCH v2 00/17] clk: imx: misc update/fix
+Date: Fri, 10 May 2024 17:18:55 +0800
+Message-Id: <20240510-imx-clk-v2-0-c998f315d29c@nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAH/mPWYC/z3MSw7CIBSF4a00dywGEOxj5D5MBwjU3mihAUMwD
+ XsXm+jwPzn5Nog2oI0wNBsEmzCidzX4oQE9K3e3BE1t4JQLKumJ4JKJfj6IEvJ21rbVTCqo7zX
+ YCfMuXcfaM8aXD+8dTuy7/gzxNxIjlExtz6ToeiM7c3F5PWq/wFhK+QCYAqu5nAAAAA==
+To: Abel Vesa <abelvesa@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, Jacky Bai <ping.bai@nxp.com>, 
+ Ye Li <ye.li@nxp.com>, Dong Aisheng <aisheng.dong@nxp.com>
+Cc: linux-clk@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Abel Vesa <abel.vesa@linaro.org>, Peng Fan <peng.fan@nxp.com>, 
+ Chancel Liu <chancel.liu@nxp.com>, Pengfei Li <pengfei.li_1@nxp.com>, 
+ Shengjiu Wang <shengjiu.wang@nxp.com>, 
+ Zhipeng Wang <zhipeng.wang_1@nxp.com>, 
+ Adrian Alonso <adrian.alonso@nxp.com>, 
+ Ranjani Vaidyanathan <ranjani.vaidyanathan@nxp.com>, 
+ "Oliver F. Brown" <oliver.brown@oss.nxp.com>, 
+ Robert Chiras <robert.chiras@nxp.com>
+X-Mailer: b4 0.12.3
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1715332748; l=2757;
+ i=peng.fan@nxp.com; s=20230812; h=from:subject:message-id;
+ bh=6/uXzMe9ujeP8ExVd72jKCKMGDAeu5lzc8+vYoPu7XU=;
+ b=p9LrtTmXpB16gTcCDLHDo+1i4HEtoe3UoziqVXGii1gTotcS+wyVis3un8x2tSp6tOMWwmdmO
+ xBEvrPudLHTDQD3ka8xAvn4RSeC6DpSWWBt3ZgyKd9lCW8q8vYUMfBz
+X-Developer-Key: i=peng.fan@nxp.com; a=ed25519;
+ pk=I4sJg7atIT1g63H7bb5lDRGR2gJW14RKDD0wFL8TT1g=
+X-ClientProxiedBy: SI2PR02CA0008.apcprd02.prod.outlook.com
+ (2603:1096:4:194::12) To DU0PR04MB9417.eurprd04.prod.outlook.com
+ (2603:10a6:10:358::11)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) To
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 185158 [May 10 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: ddrokosov@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 19 0.3.19 07c7fa124d1a1dc9662cdc5aace418c06ae99d2b, {Tracking_from_domain_doesnt_match_to}, 100.64.160.123:7.1.2;salutedevices.com:7.1.1;smtp.sberdevices.ru:5.0.1,7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2, FromAlignment: s, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/05/10 07:36:00 #25144647
-X-KSMG-AntiVirus-Status: Clean, skipped
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU0PR04MB9417:EE_|AM9PR04MB8065:EE_
+X-MS-Office365-Filtering-Correlation-Id: 70808022-cb0f-411b-e814-08dc70d11e47
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|52116005|366007|1800799015|376005|7416005|921011|38350700005;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?YzRIMWVUaEM1V08yZndTUzBVL2VYa2N0UlRzd2ZUT0tGTDM1ZWUwRGV6aUxn?=
+ =?utf-8?B?ekJDYzh5aXl1S0FwZU1iT0Q5VmpHNTQxb0pJQUZ0dXVIYnliSmg0STRGVjlw?=
+ =?utf-8?B?YjBRblBVMDIwODhieGxjZkhhMlJaR1NwbERPWEZXWWJOTnlzNWJpYVNNUElV?=
+ =?utf-8?B?MXpZV294NXBoeXNxMTRYREJzaW1qMUtBRzl5UVlwelo5S2xoZitzTWxKVEZk?=
+ =?utf-8?B?YmRoLzc4MjFBakN0azVGVGgzY2dFRGEyb1JGUkk5V0JPK1dlSDRxaVFYWitu?=
+ =?utf-8?B?a1VxMmUzanhQOW5GT3d5bHRmUGxreGYycmJTUS9VbVVWLzU0WVlPekh5UXRr?=
+ =?utf-8?B?T2ZwUk53dXJ0V0xnWjZ2cHI4S0tnWEg1aHhqUkVobFdCQy9pQjFiUFE1YkxO?=
+ =?utf-8?B?S1ZOYTRkTVdDdFR5ZWV1M0dTbyt4djA3VERtWllNWi8vaFl5d1h6ckdvcEhv?=
+ =?utf-8?B?bmw0SnJieFg5dmphc05yZ0FjbGM5a2ZiYTR3YlRBUHRlR0VlbTRwdC9QakRK?=
+ =?utf-8?B?R2xVY2tVbE5uTDI5ak93QXhReDhtWGc1eDMwWEpHQ2ZXUnVhWGt5Mi9uL3Zi?=
+ =?utf-8?B?Zm1FQW9RWG4wWDJYd29JZmxnWjY4QWEvc09EWnRGbUxUb09TelhJQXMvcFB3?=
+ =?utf-8?B?UGE3QXFOaHNFOXRLVStjVm10R3dwS1A3QUllVzVmdXNJckZuU3FPbUtrYkQw?=
+ =?utf-8?B?bUhrcUgxZExuM1gyNHJ2U3JsZmlsczMvclZHdmVHMUJJRE41eFNnZnhqMjhM?=
+ =?utf-8?B?UzdIbjZUSDVwOStqU05xdkRFdVZxM0tPdDZMSHN0TFJMY1FOaTdnYWR6OVpD?=
+ =?utf-8?B?eUJLNTlFcW1zNE1DVmtQeXZ1N21IcGxEZ2lXWkEzdEl1b1RObkxlT2lEY1ZM?=
+ =?utf-8?B?MGQ4RVY4WFZNbHBFeVV6U3lMeWlnYUh0L3k1b05KTWxuQm1uVWN5dERsQi9q?=
+ =?utf-8?B?aWFMekpuOXdzV3hQRFhtSnBLVU5uN3Z1QldXTGRibXNxSFlGSFU3K0Y3NVll?=
+ =?utf-8?B?ME85SGMzVUtXNjBlbTl5V0Z2dEdxc0xGdTRzK2lLSTBkM3NNbmxsRnk1V3l4?=
+ =?utf-8?B?RnM4YW1DSjBIQXZ2bWV5ZndxbGZEM3R1U1BnVUY4aGxIU1JLcHZVc3l3OW5y?=
+ =?utf-8?B?K2FlRlExVXdZZllNRGhvU1JkcEVWak5TK0ZXL0NuT1lWWkROVkVKazB1S3cw?=
+ =?utf-8?B?eTNGSmdOQjkwNkJKTDVUTHV6b045VFBObENYeW8wSVMwT2RJbE5KMkRHdUNr?=
+ =?utf-8?B?eEppWmYxKzZuU0pSN2FvUUowUGkzUU56cGdtK0pYUnRmL0JaVHYrU0hKZU4r?=
+ =?utf-8?B?bCtVb1lCbzlKQURGd2ZHSGpQRGhIYmxiUUtvbFAyLy8wMTU1OWZCcjN6MkdR?=
+ =?utf-8?B?dFJRdm1JbU1CcitVVWhoaEp3L1A4NGRFb2hyVlpBRmN6bDVKV0FFWHlDYy9I?=
+ =?utf-8?B?a3hsSzNSaVhXTDhxSk1mMFZ3VUxHaUxzUm1BMFRmcTFwdzBlUi9DNEtVRlFu?=
+ =?utf-8?B?ekJCVzE3WlFNWXd5ejlDZEZzVWpIdXdUYnJicG81QXdjaTJGdXBwclNEc2hq?=
+ =?utf-8?B?bnB2TVlzenhtQmxzcGRSWHVBeDVabkxVekJPaGR3MjRtRFVVbGE4WDQ4TEU1?=
+ =?utf-8?B?L2VDazgzMEVoTzMxaUhDWGdodFZLT0lBUXNYZnZrTDNKZkhOLy9iZmR2RXRT?=
+ =?utf-8?B?ZGE3YTZVZVZnT3NZYTJvNlBjYStINXpmb2FNNk45eE5COTJNYVdqVFZtYUpW?=
+ =?utf-8?Q?Y/n77D5fftoaXZER14=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(52116005)(366007)(1800799015)(376005)(7416005)(921011)(38350700005);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?eFhqZkVHMWsvSG9IS1JKM0lZbW1ZS2hjNkhySkx5czFOTUQ1TGtaUEJDNDkx?=
+ =?utf-8?B?UTRzU3BRTzJEaGgyTmxRR2RFb0ljUXJWMVltQ0paV1B4MGNQcnJzM0x1WVU4?=
+ =?utf-8?B?eVkyR3pjSi9EZy9HNnRPOGI3eGllZlFtdkJYMHNQQnYzQ1RpVktqdFR2Yit1?=
+ =?utf-8?B?ZjlPR0hNQ3JLbGFNd3NCaUVGaUgvR2EzOVhaOW5TRjk3SE95VnVydGpqZVNH?=
+ =?utf-8?B?azhxeWFHMGdyamdKS2xNaEh6N3NhN1JobzBSd2REMU5XMjN1SE11T2ZrMkht?=
+ =?utf-8?B?MUdrWW9aYVNrQVV6RDZTNFpZQUdhUVYwN3lBSlBlWGFMZmEwUjVoeVNYV0Fk?=
+ =?utf-8?B?RzB6THpnaDhNWTRiK3UyUVFsMVR0V1BtZWVmQi9lbXZKRXRoNkYvYUF3UG15?=
+ =?utf-8?B?QzVGTFZIM0V3ZWxqaG0xd0VsNFlEb3B1Um5qRHFjWVB4V0VtMkNSNytpNW5T?=
+ =?utf-8?B?VFdFRWhYMG1VcWt0QkN2SEc4OTNrQkxjRm1OM2hLMjg2R0NxdnVRaFBxNkRu?=
+ =?utf-8?B?Y01JeHl3SEZkLyswRHF0Y3FWVHk4OVo0bnlJYkduWHpwRzU5bVRxc1lUT2xj?=
+ =?utf-8?B?OXpkUjdGVUJvY1g0RHNHQ3ZlaDYyNXpvZnNjWmhNTHdGRDBERlpwTXFzTi80?=
+ =?utf-8?B?VE9wTUdROWhla3NzcHVSclJxUjErZ1kxeUgyYWRHU3R2cnhXWVMyZDhCVmxT?=
+ =?utf-8?B?QTk3YmZoNm5qQXh4bnRuZWJXVDlRZWRqdmdLQlpXMWF1aHQwR0VOUFJlUklE?=
+ =?utf-8?B?aTB3MElldTFjVUdVT1JHSWpjM3N6Q05IS09OdjU3NE5HcEx2ZVB6bHY5RVZS?=
+ =?utf-8?B?S1hRWGRJZUl0SWUvK3VXNE5HeEQrMlNtdEFxektzekE1anhPbm9vWmtCNXNZ?=
+ =?utf-8?B?cFA2LzRuNjhWbmFPWmpkSk1LbnByN2sxSjYraFVuZWFnVnFOaGd5RVJPdGxi?=
+ =?utf-8?B?VkhaM0hGYWFNRXZZMU13WDZnTmRkYkh1MFRsQ1FUVk9ZWXhBWkw4NUhaeHZX?=
+ =?utf-8?B?N28yWnN3V3RKWW9uL2szK2k1a09XRGZ0Z0I5VjV6ZldFVlpYdVFXL09JKzl3?=
+ =?utf-8?B?RWhPbklYUzByUkhNcUcvVk5pUkFmMUVwTFlYd1FhSG1HdUxJRkJGYkVYVUF1?=
+ =?utf-8?B?TllEWHEvZHdPVldmNGpMWTMySHozeFBLZ2ZWdFE2b1FPVVI0eEErbTI1cis2?=
+ =?utf-8?B?Zytzekxta2hKc3FTeEtQaGtMWEUrdHpLeTNaeVZUUWtPMmtyZUl3SVAyNDJ1?=
+ =?utf-8?B?SlVmZDU2Ukl0S1VWOERLVXVXWFczbEhjZUo4cmFhUkhROFR5akNxTnBMTFVD?=
+ =?utf-8?B?Ui83SVp2dVpnSVcvMVIyMDlEeGtNNU9rbWdnTUxkb2pkdzk3bGNZVHM0Ynlw?=
+ =?utf-8?B?bTMvYWl3cHU5YVV0VVI0bWRvMC9ET3FaS0tvY2xEM2ZnVHBLUUgwUlRTc1dx?=
+ =?utf-8?B?b1IrWlRnQk1yd1FhOTZMNURCNTRnbWdzc2p6ajJnN2lMcDNrLzUxQjhtdE5i?=
+ =?utf-8?B?ajZON0hxOEs2VUtkUWRpNmYxRmtTTDNGNS9aSWtBcUExQ2F6U0syNktFcGU0?=
+ =?utf-8?B?eWpBSktVN2Iwa05XZm1SZEhTQ0d0QU9KbFhXdjhpVEJKeGF4WDRFWEhTS2dF?=
+ =?utf-8?B?U1IyZTlaWE1weE10UWNxcGZMMTMrS2NjTVlXazFVMDB6L3pLU09HcEk4bmgz?=
+ =?utf-8?B?RTlsbm5Nd2s5N3ZUbHdoU3VrandOQTFCMVc2OXBUSjhHM3pLY2pLei9oMUdw?=
+ =?utf-8?B?N2c1bkhLZDFpai9xalFFSk1zVlBBdlY3cHM5NXNpVDIxYVprbmRicG1WcUtF?=
+ =?utf-8?B?S0UrQS9SK2ljOG5veVBWSkptdVZITEw0azh2UjV1NWRPQUo2VXIxSTlXbWFh?=
+ =?utf-8?B?TkVQS1pjU2xjc2htNGVTMmx1Z2o2azRLUXprSnFuM1lieHYxbUw1cGdpa3Bx?=
+ =?utf-8?B?YWo3dmVYQkRuUStCenRJb3FZdXk3NkVKTENocks0V3EyWjJVY3ZFMGdYdHlJ?=
+ =?utf-8?B?VnlJbmYwUCtBRE1tVndKbjRhTDBQdEtJaXAyVHdGeWJMOE1nMDNNbTJYZ2Qv?=
+ =?utf-8?B?WWg3czIzNFdyeHpZTy93Z01NbmNjbWxEaVZkREZUL0t1UEVhWlRqdDNLS2o2?=
+ =?utf-8?Q?9KN1jbUF9LllvHRRlJECqVmPT?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 70808022-cb0f-411b-e814-08dc70d11e47
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 May 2024 09:11:04.0104
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: sqcAPZxnS52MY0EMjskmpNGP3a+OFxsjViEweQHkm58RBH9nOpc7FiNZnb388lcukl3UsTzIf140hrOE3UUsGw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8065
 
-The CPU clock controller plays a general role in the Amlogic A1 SoC
-family by generating CPU clocks. As an APB slave module, it offers the
-capability to inherit the CPU clock from two sources: the internal fixed
-clock known as 'cpu fixed clock' and the external input provided by the
-A1 PLL clock controller, referred to as 'syspll'.
+Upstream several patches landed in NXP downstream repo for some time.
+- i.MX8M/93/7ULP composite clk update
+- Fix Fracn-gppll MFN got lost
+- PLL14xx update
+- i.MX8MP DRAM CLK fix
+- i.MX8MM/N misc update
+- Init i.MX8QXP parent clk before child clk
 
-It is important for the driver to handle cpu_clk rate switching
-effectively by transitioning to the CPU fixed clock to avoid any
-potential execution freezes.
+Downstream tags are kept for the patches got R-b
 
-Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
+Although there are a few fixes, non-urgent for 6.9.
+
+Signed-off-by: Peng Fan <peng.fan@nxp.com>
 ---
- drivers/clk/meson/Kconfig  |  10 ++
- drivers/clk/meson/Makefile |   1 +
- drivers/clk/meson/a1-cpu.c | 331 +++++++++++++++++++++++++++++++++++++
- 3 files changed, 342 insertions(+)
- create mode 100644 drivers/clk/meson/a1-cpu.c
+Changes in v2:
+- Drop "clk: imx: pll14xx: potential integer overflow eliminated by
+       casting to u64"
+- Add Fixes tag  "clk: imx: imx8mp-audiomix: remove sdma root clock"
+- Link to v1: https://lore.kernel.org/r/20240504-imx-clk-v1-0-f7915489d58d@nxp.com
 
-diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-index 80c4a18c83d2..148d4495eee3 100644
---- a/drivers/clk/meson/Kconfig
-+++ b/drivers/clk/meson/Kconfig
-@@ -111,6 +111,16 @@ config COMMON_CLK_AXG_AUDIO
- 	  Support for the audio clock controller on AmLogic A113D devices,
- 	  aka axg, Say Y if you want audio subsystem to work.
- 
-+config COMMON_CLK_A1_CPU
-+	tristate "Amlogic A1 SoC CPU controller support"
-+	depends on ARM64
-+	select COMMON_CLK_MESON_REGMAP
-+	select COMMON_CLK_MESON_CLKC_UTILS
-+	help
-+	  Support for the CPU clock controller on Amlogic A113L based
-+	  device, A1 SoC Family. Say Y if you want A1 CPU clock controller
-+	  to work.
-+
- config COMMON_CLK_A1_PLL
- 	tristate "Amlogic A1 SoC PLL controller support"
- 	depends on ARM64
-diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-index 4968fc7ad555..2a06eb0303d6 100644
---- a/drivers/clk/meson/Makefile
-+++ b/drivers/clk/meson/Makefile
-@@ -18,6 +18,7 @@ obj-$(CONFIG_COMMON_CLK_MESON_AUDIO_RSTC) += meson-audio-rstc.o
- 
- obj-$(CONFIG_COMMON_CLK_AXG) += axg.o axg-aoclk.o
- obj-$(CONFIG_COMMON_CLK_AXG_AUDIO) += axg-audio.o
-+obj-$(CONFIG_COMMON_CLK_A1_CPU) += a1-cpu.o
- obj-$(CONFIG_COMMON_CLK_A1_PLL) += a1-pll.o
- obj-$(CONFIG_COMMON_CLK_A1_PERIPHERALS) += a1-peripherals.o
- obj-$(CONFIG_COMMON_CLK_A1_AUDIO) += a1-audio.o
-diff --git a/drivers/clk/meson/a1-cpu.c b/drivers/clk/meson/a1-cpu.c
-new file mode 100644
-index 000000000000..a9edabeafea9
---- /dev/null
-+++ b/drivers/clk/meson/a1-cpu.c
-@@ -0,0 +1,331 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Amlogic A1 SoC family CPU Clock Controller driver.
-+ *
-+ * Copyright (c) 2024, SaluteDevices. All Rights Reserved.
-+ * Author: Dmitry Rokosov <ddrokosov@salutedevices.com>
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/clk-provider.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/platform_device.h>
-+#include "clk-regmap.h"
-+#include "meson-clkc-utils.h"
-+
-+#include <dt-bindings/clock/amlogic,a1-cpu-clkc.h>
-+
-+/* CPU Clock Controller register offset */
-+#define CPUCTRL_CLK_CTRL0	0x0
-+#define CPUCTRL_CLK_CTRL1	0x4
-+
-+static u32 cpu_fsource_sel_table[] = { 0, 1, 2 };
-+static const struct clk_parent_data cpu_fsource_sel_parents[] = {
-+	{ .fw_name = "xtal" },
-+	{ .fw_name = "fclk_div2" },
-+	{ .fw_name = "fclk_div3" },
-+};
-+
-+static struct clk_regmap cpu_fsource_sel0 = {
-+	.data = &(struct clk_regmap_mux_data) {
-+		.offset = CPUCTRL_CLK_CTRL0,
-+		.mask = 0x3,
-+		.shift = 0,
-+		.table = cpu_fsource_sel_table,
-+	},
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "cpu_fsource_sel0",
-+		.ops = &clk_regmap_mux_ops,
-+		.parent_data = cpu_fsource_sel_parents,
-+		.num_parents = ARRAY_SIZE(cpu_fsource_sel_parents),
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap cpu_fsource_div0 = {
-+	.data = &(struct clk_regmap_div_data) {
-+		.offset = CPUCTRL_CLK_CTRL0,
-+		.shift = 4,
-+		.width = 6,
-+	},
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "cpu_fsource_div0",
-+		.ops = &clk_regmap_divider_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&cpu_fsource_sel0.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap cpu_fsel0 = {
-+	.data = &(struct clk_regmap_mux_data) {
-+		.offset = CPUCTRL_CLK_CTRL0,
-+		.mask = 0x1,
-+		.shift = 2,
-+	},
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "cpu_fsel0",
-+		.ops = &clk_regmap_mux_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&cpu_fsource_sel0.hw,
-+			&cpu_fsource_div0.hw,
-+		},
-+		.num_parents = 2,
-+		.flags = CLK_SET_RATE_GATE | CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap cpu_fsource_sel1 = {
-+	.data = &(struct clk_regmap_mux_data) {
-+		.offset = CPUCTRL_CLK_CTRL0,
-+		.mask = 0x3,
-+		.shift = 16,
-+		.table = cpu_fsource_sel_table,
-+	},
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "cpu_fsource_sel1",
-+		.ops = &clk_regmap_mux_ops,
-+		.parent_data = cpu_fsource_sel_parents,
-+		.num_parents = ARRAY_SIZE(cpu_fsource_sel_parents),
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap cpu_fsource_div1 = {
-+	.data = &(struct clk_regmap_div_data) {
-+		.offset = CPUCTRL_CLK_CTRL0,
-+		.shift = 20,
-+		.width = 6,
-+	},
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "cpu_fsource_div1",
-+		.ops = &clk_regmap_divider_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&cpu_fsource_sel1.hw
-+		},
-+		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap cpu_fsel1 = {
-+	.data = &(struct clk_regmap_mux_data) {
-+		.offset = CPUCTRL_CLK_CTRL0,
-+		.mask = 0x1,
-+		.shift = 18,
-+	},
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "cpu_fsel1",
-+		.ops = &clk_regmap_mux_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&cpu_fsource_sel1.hw,
-+			&cpu_fsource_div1.hw,
-+		},
-+		.num_parents = 2,
-+		.flags = CLK_SET_RATE_GATE | CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap cpu_fclk = {
-+	.data = &(struct clk_regmap_mux_data) {
-+		.offset = CPUCTRL_CLK_CTRL0,
-+		.mask = 0x1,
-+		.shift = 10,
-+	},
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "cpu_fclk",
-+		.ops = &clk_regmap_mux_ops,
-+		.parent_hws = (const struct clk_hw *[]) {
-+			&cpu_fsel0.hw,
-+			&cpu_fsel1.hw,
-+		},
-+		.num_parents = 2,
-+		.flags = CLK_SET_RATE_PARENT,
-+	},
-+};
-+
-+static struct clk_regmap cpu_clk = {
-+	.data = &(struct clk_regmap_mux_data) {
-+		.offset = CPUCTRL_CLK_CTRL0,
-+		.mask = 0x1,
-+		.shift = 11,
-+	},
-+	.hw.init = &(struct clk_init_data) {
-+		.name = "cpu_clk",
-+		.ops = &clk_regmap_mux_ops,
-+		.parent_data = (const struct clk_parent_data []) {
-+			{ .hw = &cpu_fclk.hw },
-+			{ .fw_name = "sys_pll", },
-+		},
-+		.num_parents = 2,
-+		.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
-+	},
-+};
-+
-+/* Array of all clocks registered by this provider */
-+static struct clk_hw *a1_cpu_hw_clks[] = {
-+	[CLKID_CPU_FSOURCE_SEL0]	= &cpu_fsource_sel0.hw,
-+	[CLKID_CPU_FSOURCE_DIV0]	= &cpu_fsource_div0.hw,
-+	[CLKID_CPU_FSEL0]		= &cpu_fsel0.hw,
-+	[CLKID_CPU_FSOURCE_SEL1]	= &cpu_fsource_sel1.hw,
-+	[CLKID_CPU_FSOURCE_DIV1]	= &cpu_fsource_div1.hw,
-+	[CLKID_CPU_FSEL1]		= &cpu_fsel1.hw,
-+	[CLKID_CPU_FCLK]		= &cpu_fclk.hw,
-+	[CLKID_CPU_CLK]			= &cpu_clk.hw,
-+};
-+
-+static struct clk_regmap *const a1_cpu_regmaps[] = {
-+	&cpu_fsource_sel0,
-+	&cpu_fsource_div0,
-+	&cpu_fsel0,
-+	&cpu_fsource_sel1,
-+	&cpu_fsource_div1,
-+	&cpu_fsel1,
-+	&cpu_fclk,
-+	&cpu_clk,
-+};
-+
-+static struct regmap_config a1_cpu_regmap_cfg = {
-+	.reg_bits   = 32,
-+	.val_bits   = 32,
-+	.reg_stride = 4,
-+	.max_register = CPUCTRL_CLK_CTRL1,
-+};
-+
-+static struct meson_clk_hw_data a1_cpu_clks = {
-+	.hws = a1_cpu_hw_clks,
-+	.num = ARRAY_SIZE(a1_cpu_hw_clks),
-+};
-+
-+struct a1_sys_pll_nb_data {
-+	struct notifier_block nb;
-+	struct clk_hw *cpu_clk;
-+	struct clk_hw *cpu_fclk;
-+	struct clk *sys_pll;
-+};
-+
-+static int meson_a1_sys_pll_notifier_cb(struct notifier_block *nb,
-+					unsigned long event, void *data)
-+{
-+	struct a1_sys_pll_nb_data *nbd;
-+	int ret = 0;
-+
-+	nbd = container_of(nb, struct a1_sys_pll_nb_data, nb);
-+
-+	switch (event) {
-+	case PRE_RATE_CHANGE:
-+		/*
-+		 * Clock sys_pll will be changed to feed cpu_clk,
-+		 * configure cpu_clk to use cpu_fclk fixed clock.
-+		 */
-+		ret = clk_hw_set_parent(nbd->cpu_clk, nbd->cpu_fclk);
-+
-+		/* Wait for clock propagation */
-+		if (!ret)
-+			udelay(100);
-+
-+		break;
-+
-+	case POST_RATE_CHANGE:
-+		 /*
-+		  * Clock sys_pll rate has ben calculated,
-+		  * switch back cpu_clk to sys_pll
-+		  */
-+		ret = clk_set_parent(nbd->cpu_clk->clk, nbd->sys_pll);
-+
-+		/* Wait for clock propagation */
-+		if (!ret)
-+			udelay(100);
-+		break;
-+
-+	default:
-+		pr_warn("Unknown event %lu for sys_pll notifier\n", event);
-+		break;
-+	}
-+
-+	return notifier_from_errno(ret);
-+}
-+
-+static struct a1_sys_pll_nb_data a1_sys_pll_nb_data = {
-+	.nb.notifier_call = meson_a1_sys_pll_notifier_cb,
-+	.cpu_clk = &cpu_clk.hw,
-+	.cpu_fclk = &cpu_fclk.hw,
-+};
-+
-+static int meson_a1_dvfs_setup(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct clk *sys_pll;
-+	int ret;
-+
-+	/* Setup clock notifier for sys_pll clk */
-+	sys_pll = devm_clk_get(dev, "sys_pll");
-+	if (IS_ERR(sys_pll))
-+		return dev_err_probe(dev, PTR_ERR(sys_pll),
-+				     "can't get sys_pll as notifier clock\n");
-+
-+	a1_sys_pll_nb_data.sys_pll = sys_pll;
-+	ret = devm_clk_notifier_register(dev, sys_pll,
-+					 &a1_sys_pll_nb_data.nb);
-+	if (ret)
-+		return dev_err_probe(dev, ret,
-+				     "can't register sys_pll notifier\n");
-+
-+	return ret;
-+}
-+
-+static int meson_a1_cpu_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	void __iomem *base;
-+	struct regmap *map;
-+	int clkid, i, err;
-+
-+	base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(base))
-+		return dev_err_probe(dev, PTR_ERR(base),
-+				     "can't ioremap resource\n");
-+
-+	map = devm_regmap_init_mmio(dev, base, &a1_cpu_regmap_cfg);
-+	if (IS_ERR(map))
-+		return dev_err_probe(dev, PTR_ERR(map),
-+				     "can't init regmap mmio region\n");
-+
-+	/* Populate regmap for the regmap backed clocks */
-+	for (i = 0; i < ARRAY_SIZE(a1_cpu_regmaps); i++)
-+		a1_cpu_regmaps[i]->map = map;
-+
-+	for (clkid = 0; clkid < a1_cpu_clks.num; clkid++) {
-+		err = devm_clk_hw_register(dev, a1_cpu_clks.hws[clkid]);
-+		if (err)
-+			return dev_err_probe(dev, err,
-+					     "clock[%d] registration failed\n",
-+					     clkid);
-+	}
-+
-+	err = devm_of_clk_add_hw_provider(dev, meson_clk_hw_get, &a1_cpu_clks);
-+	if (err)
-+		return dev_err_probe(dev, err, "can't add clk hw provider\n");
-+
-+	return meson_a1_dvfs_setup(pdev);
-+}
-+
-+static const struct of_device_id a1_cpu_clkc_match_table[] = {
-+	{ .compatible = "amlogic,a1-cpu-clkc", },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, a1_cpu_clkc_match_table);
-+
-+static struct platform_driver a1_cpu_clkc_driver = {
-+	.probe = meson_a1_cpu_probe,
-+	.driver = {
-+		.name = "a1-cpu-clkc",
-+		.of_match_table = a1_cpu_clkc_match_table,
-+	},
-+};
-+
-+module_platform_driver(a1_cpu_clkc_driver);
-+MODULE_AUTHOR("Dmitry Rokosov <ddrokosov@salutedevices.com>");
-+MODULE_LICENSE("GPL");
+---
+Adrian Alonso (1):
+      clk: imx: imx8mn: add sai7_ipg_clk clock settings
+
+Jacky Bai (2):
+      clk: imx: composite-93: keep root clock on when mcore enabled
+      clk: imx: imx8mm: Change the 'nand_usdhc_bus' clock to non-critical one
+
+Oliver F. Brown (1):
+      clk: imx: imx8qxp: Add clock muxes for MIPI and PHY ref clocks
+
+Peng Fan (8):
+      clk: imx: composite-8m: Enable gate clk with mcore_booted
+      clk: imx: imx8mp-audiomix: remove sdma root clock
+      clk: imx: Remove CLK_SET_PARENT_GATE for DRAM mux for i.MX7D
+      clk: imx: add CLK_SET_RATE_PARENT for lcdif_pixel_src for i.MX7D
+      clk: imx: imx8qxp: Add LVDS bypass clocks
+      clk: imx: imx8qxp: Register dc0_bypass0_clk before disp clk
+      clk: imx: imx8qxp: Parent should be initialized earlier than the clock
+      clk: imx: fracn-gppll: update rate table
+
+Pengfei Li (1):
+      clk: imx: fracn-gppll: fix fractional part of PLL getting lost
+
+Shengjiu Wang (2):
+      clk: imx: pll14xx: Add constraint for fvco frequency
+      clk: imx: pll14xx: use rate_table for audio plls
+
+Ye Li (1):
+      clk: imx: composite-7ulp: Check the PCC present bit
+
+Zhipeng Wang (1):
+      clk: imx: imx8mp: fix clock tree update of TF-A managed clocks
+
+ drivers/clk/imx/clk-composite-7ulp.c  |  5 ++++
+ drivers/clk/imx/clk-composite-8m.c    | 53 +++++++++++++++++++++++++++--------
+ drivers/clk/imx/clk-composite-93.c    | 15 +++++-----
+ drivers/clk/imx/clk-fracn-gppll.c     |  6 ++++
+ drivers/clk/imx/clk-imx7d.c           |  6 ++--
+ drivers/clk/imx/clk-imx8mm.c          |  2 +-
+ drivers/clk/imx/clk-imx8mn.c          |  1 +
+ drivers/clk/imx/clk-imx8mp-audiomix.c |  1 -
+ drivers/clk/imx/clk-imx8mp.c          |  4 +--
+ drivers/clk/imx/clk-imx8qxp.c         | 51 +++++++++++++++++++++------------
+ drivers/clk/imx/clk-pll14xx.c         | 19 ++++++++++++-
+ 11 files changed, 119 insertions(+), 44 deletions(-)
+---
+base-commit: 9221b2819b8a4196eecf5476d66201be60fbcf29
+change-id: 20240503-imx-clk-a45b6ce7c15a
+
+Best regards,
 -- 
-2.43.0
+Peng Fan <peng.fan@nxp.com>
 
