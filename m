@@ -1,70 +1,60 @@
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7054615217A
-	for <linux-clk@vger.kernel.org>; Fri, 10 May 2024 07:07:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23E3415FA87;
+	Fri, 10 May 2024 09:09:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715324827; cv=none; b=ZKRyc6SvXrkVxQZcb9Bs/RgZ8dtCxFTSic6e/XX+h8aKIbuaiDR6Uyhou5t2HOTYV4E7vt3KPid8d0IiJDUXEeayXcTngkNARWCaHHpZrG5atD63tuQGPiBs8n15UzAISQFLqzi7XOgN9EmZ6BPMug6kqMBtk7fF/+c978JC77c=
+	t=1715332194; cv=none; b=sluVcPXJOyroml6h+kMkBdXKRRFD+cVPvySK5FpYrVsc40OHRude99oaC9eJDKSjCJsMjOaUXxzDaDkxTrvSaW7gq07eagTDL/HImF0NjykAeFHC9jsywroN/MclOkBrM72E6YrLH2eRr7jUAoBmFBjxnU73JStUKzReqyNzLcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715324827; c=relaxed/simple;
-	bh=Zpf5INKjjYukVz8DFvQHW5RI3khhh5ez19lfJSwnlno=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=IqT7FKuP5eLM/JXSBQzUDNf1R1PhfMFba0n+HjqB2fkuZINBqWoLD0u0h5Ckio49oSCiUAKEkgCiFlMjmhSj/bxWTXmCAdkTWJgaujaCN8M09Hsju7hB9RkgZ0oz7A2pgwbUCJ3HftK1EjjQiq1hv1jFuy9lwvtMyUAbI00W4JY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=VOP9xweU; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1715332194; c=relaxed/simple;
+	bh=R/flUDjC7E45Ro1CLhuh7HLFvXuauotSCCK43gootl4=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=O0vRCepROKZcESSp1crqvYVjSak0CDV0YPPHEF4YF05GVb0e/0X7HXIfLYsKHAluEWSF8oLHHrpD00kzI5ITknIYgkBcgbdkqC1kriCjFIyg02KX9u+9twcNQlNsUClvfVeg4eMe8rwV0MF2fgweItv+2bjc7DoUdc6lylBF/VQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=a83TjLka; arc=none smtp.client-ip=37.18.73.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="VOP9xweU"
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20240510070701euoutp01f6b0271004b3fb2375d9cd69cebb9b6d~ODtZcy2ft0225202252euoutp01n
-	for <linux-clk@vger.kernel.org>; Fri, 10 May 2024 07:07:01 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20240510070701euoutp01f6b0271004b3fb2375d9cd69cebb9b6d~ODtZcy2ft0225202252euoutp01n
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1715324821;
-	bh=t+PIfFfAc5pe3zy981eBoXzF/9A+OKFYmnFUbGNUeVI=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=VOP9xweUee4qMLc8Uc12tk6T1IKUSbZGtuJymR+UJ5xRweV2RBexh8MZEWUy2ifh7
-	 hIEiOR2cXsIYGAQqN5KXbUxHsig/8BBx3ETvo1o1bxUcZdcUYmSofgqMCjXJtzC971
-	 6iORRHb+5ktu5J71HIn/EC2bEcTkclInjFTO1K5w=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20240510070701eucas1p2ddc55ce2a208c66be256d89a2977332d~ODtY0xl7-1394813948eucas1p2q;
-	Fri, 10 May 2024 07:07:01 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges3new.samsung.com (EUCPMTA) with SMTP id 04.D4.09620.597CD366; Fri, 10
-	May 2024 08:07:01 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240510070700eucas1p10ed1c978c78366b412770fdae6d4f384~ODtYasfIy0179901799eucas1p1g;
-	Fri, 10 May 2024 07:07:00 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240510070700eusmtrp2c63f09c715f6b9c1f234b20a8e8ae51b~ODtYaCXQb0925609256eusmtrp21;
-	Fri, 10 May 2024 07:07:00 +0000 (GMT)
-X-AuditID: cbfec7f5-d31ff70000002594-06-663dc7954fd2
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id DE.67.08810.497CD366; Fri, 10
-	May 2024 08:07:00 +0100 (BST)
-Received: from AMDC4653.digital.local (unknown [106.120.51.32]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240510070659eusmtip1f2b55a52fce4729afab679c8d7c2f9f8~ODtXkPf-V0225802258eusmtip16;
-	Fri, 10 May 2024 07:06:59 +0000 (GMT)
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-To: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski
-	<krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi
-	<cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Michael
-	Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob
-	Herring <robh@kernel.org>, David Lechner <david@lechnology.com>, Bjorn
-	Andersson <andersson@kernel.org>, Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>, William McVicker <willmcvicker@google.com>
-Subject: [PATCH v3] clk: samsung: exynos-clkout: Remove misleading
- of_match_table/MODULE_DEVICE_TABLE
-Date: Fri, 10 May 2024 09:06:53 +0200
-Message-Id: <20240510070653.537089-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="a83TjLka"
+Received: from p-infra-ksmg-sc-msk01 (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 7E08A100007;
+	Fri, 10 May 2024 12:09:43 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 7E08A100007
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1715332183;
+	bh=4LAsdWdLoSRoUuNtF2xx6rhDpJfhCRjC9Ooyt36Hl4E=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=a83TjLkaZb+KyKIRUnbjAb073bX0NvqCZ0eZx/EoWJ9iVdnqeYV3yyPDaTkV9KMQL
+	 Tj756QY1ziPxQefJr4yL+/owW3IXH6XjSR0212QJZx9lxtbgI+u8RKG/9tnEY9yf8+
+	 i4Set7Hs++qZi9XMJck9nZdWSquEvTMuCakWwHODNk9lv1hcSBmhMVkCfkKU/VulRB
+	 WH4DVLKDByr/NLB0FvZih6C1o47hBMvc8ctsEpSIoB9lIq5yBfhXBsXsbu3rgei/x9
+	 QjXyaA9Ecgus9UvVPQdyXNqwnd06GF1O37fzGytsxruaa4WZTAhDVdCQkatN2+mtG6
+	 ssJRWWR/vfmLg==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Fri, 10 May 2024 12:09:43 +0300 (MSK)
+Received: from CAB-WSD-L081021.sberdevices.ru (100.64.160.123) by
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Fri, 10 May 2024 12:09:42 +0300
+From: Dmitry Rokosov <ddrokosov@salutedevices.com>
+To: <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
+	<mturquette@baylibre.com>, <sboyd@kernel.org>, <robh+dt@kernel.org>,
+	<krzysztof.kozlowski+dt@linaro.org>, <khilman@baylibre.com>,
+	<martin.blumenstingl@googlemail.com>
+CC: <jian.hu@amlogic.com>, <kernel@sberdevices.ru>, <rockosov@gmail.com>,
+	<linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, Dmitry Rokosov
+	<ddrokosov@salutedevices.com>
+Subject: [PATCH v2 2/7] dt-bindings: clock: meson: a1: pll: introduce new syspll bindings
+Date: Fri, 10 May 2024 12:08:54 +0300
+Message-ID: <20240510090933.19464-3-ddrokosov@salutedevices.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240510090933.19464-1-ddrokosov@salutedevices.com>
+References: <20240510090933.19464-1-ddrokosov@salutedevices.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -72,104 +62,82 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrMKsWRmVeSWpSXmKPExsWy7djPc7pTj9umGcz9ym3xYN42NottHTYW
-	1788Z7VY1CBmMfH8TzaL8+c3sFtsenyN1eJjzz1Wixnn9zFZrD1yl93i4ilXi/97drBbHH7T
-	zmrx79pGFotVn/4zOvB7vL/Ryu6xYFOpx6ZVnWwen/pPsnrcubaHzWPzknqPvi2rGD0+b5IL
-	4IjisklJzcksSy3St0vgymj4uYCl4KFARePWG6wNjD18XYycHBICJhInf01kBbGFBFYwStw9
-	HtDFyAVkf2GUOPfjHiOE85lRYuWx88wwHX2XJ7FAJJYzSqxeeI8VrqXr/HywWWwChhJdb7vY
-	QGwRgQyJm3f3s4MUMQt8ZpaYdPk9I0hCWCBdYtLV9WANLAKqEpdPfwEay8HBK2AncWebH8Q2
-	eYn9B8+CbeYVEJQ4OfMJC4jNDBRv3jqbGWSmhMAbDokZ2w8yQjS4SJw/tQDKFpZ4dXwLO4Qt
-	I/F/53wmiIZ2RokFv+9DORMYJRqe34LqsJa4c+4XG8gVzAKaEut36UOEHSU2vpnCDBKWEOCT
-	uPFWEOIIPolJ26ZDhXklOtqEIKrVJGYdXwe39uCFS1AlHhIdR4MgQR0r0X99A/sERoVZSD6b
-	heSzWQgnLGBkXsUonlpanJueWmycl1quV5yYW1yal66XnJ+7iRGYzk7/O/51B+OKVx/1DjEy
-	cTAeYpTgYFYS4a2qsU4T4k1JrKxKLcqPLyrNSS0+xCjNwaIkzquaIp8qJJCeWJKanZpakFoE
-	k2Xi4JRqYHL24LS8+1n31+ltjdpX489/nh25I3PRrNN7bGqVvx97b3rkyItWA6/Nb+fv0/qz
-	39LhdL3Fxdt+k4SsZSelK//7cnemQ9pj7yj2eK8Tp6Ofa90W/1PZ47Hk0fTO5a1Fq9PW8WSd
-	/5aQWzQt7+OXxtCf37TFJ0W4Sx183dd6V+r70d1uAdvitx8TmdQW72m8qnjtelGev/0/Vc0e
-	OpT9zMt7u2jB0oiDq/Y4bC+VOXHj/c2KfawlzI6tudL1+6WLrnw5mmr8Ns733d7TW53f7Fm6
-	wm1e31M3/S6rrh/eD013hfyPZe+UvCY0aWZQX57mrAs6Vp/Y1/K+latd1yBh1djGHpTUsFZh
-	49uKwoi2wD4lluKMREMt5qLiRAAwYut81gMAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprJIsWRmVeSWpSXmKPExsVy+t/xu7pTjtumGVz/qG7xYN42NottHTYW
-	1788Z7VY1CBmMfH8TzaL8+c3sFtsenyN1eJjzz1Wixnn9zFZrD1yl93i4ilXi/97drBbHH7T
-	zmrx79pGFotVn/4zOvB7vL/Ryu6xYFOpx6ZVnWwen/pPsnrcubaHzWPzknqPvi2rGD0+b5IL
-	4IjSsynKLy1JVcjILy6xVYo2tDDSM7S00DMysdQzNDaPtTIyVdK3s0lJzcksSy3St0vQy2j4
-	uYCl4KFARePWG6wNjD18XYycHBICJhJ9lyexdDFycQgJLGWUaDu+ih0iISNxcloDK4QtLPHn
-	WhcbiC0k8IlR4uIPQxCbTcBQoustRFxEIEti3oQ7TCCDmAX+Mkss/9IElhAWSJXofDqbBcRm
-	EVCVuHz6C5DNwcErYCdxZ5sfxHx5if0HzzKD2LwCghInZz4BK2cGijdvnc08gZFvFpLULCSp
-	BYxMqxhFUkuLc9Nziw31ihNzi0vz0vWS83M3MQLjaNuxn5t3MM579VHvECMTB+MhRgkOZiUR
-	3qoa6zQh3pTEyqrUovz4otKc1OJDjKZA501klhJNzgdGcl5JvKGZgamhiZmlgamlmbGSOK9n
-	QUeikEB6YklqdmpqQWoRTB8TB6dUAxNrVLnb+olP/ohJTufumuUr4TmjlefL7z0W77zcDzex
-	JzWe+Z4QU666WengmRbOT0mXDxe+FenaOr3qWnbrpu3aKmqpQvH3EhQdl21f6rBq9/5W5hmL
-	TuYuFEuc/25VQ7r07dCej8dOmZ3NCtgZm304sPhH28TiF0FN1xb3ikw/En04Uyx6trbTzMM8
-	09OkOYJDHVv2f54jwvTVcsmHLk2u7Y+tBbZ9dUn6/mXNJVal37GFE77NCPdfJ9K3XmzzpPUp
-	C15cm3i353KJzFqG8184zqi8f3bgw9toVs7j55geTE447NzxYPfbRul7vjYH/iTdWMA+Meln
-	ns/JW3lbBKTmnOU7uGOP/PY3O7Or9z43V2Ipzkg01GIuKk4EAPL6Ek4sAwAA
-X-CMS-MailID: 20240510070700eucas1p10ed1c978c78366b412770fdae6d4f384
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20240510070700eucas1p10ed1c978c78366b412770fdae6d4f384
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240510070700eucas1p10ed1c978c78366b412770fdae6d4f384
-References: <CGME20240510070700eucas1p10ed1c978c78366b412770fdae6d4f384@eucas1p1.samsung.com>
+Content-Type: text/plain
+X-ClientProxiedBy: p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) To
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 185158 [May 10 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: ddrokosov@salutedevices.com
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 19 0.3.19 07c7fa124d1a1dc9662cdc5aace418c06ae99d2b, {Tracking_from_domain_doesnt_match_to}, 100.64.160.123:7.1.2;salutedevices.com:7.1.1;smtp.sberdevices.ru:5.0.1,7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/05/10 07:36:00 #25144647
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-Since commit 9484f2cb8332 ("clk: samsung: exynos-clkout: convert to
-module driver") this driver is instantiated as MFD-cell (matched by
-platform device name) not as a real platform device created by OF code.
-Remove then of_match_table and change related MODULE_DEVICE_TABLE to
-simple MODULE_ALIAS to avoid further confusion.
+The 'syspll' PLL is a general-purpose PLL designed specifically for the
+CPU clock. It is capable of producing output frequencies within the
+range of 768MHz to 1536MHz.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+The clock source sys_pll_div16, being one of the GEN clock parents,
+plays a crucial role and cannot be tagged as "optional". Unfortunately,
+it was not implemented earlier due to the cpu clock ctrl driver's
+pending status on the TODO list.
+
+Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
 ---
-v3:
-- Use '#define DRV_NAME' based alias. I see no point bloating the driver
-with another platform device IDs array, as I don't expect this driver to
-be used with any other platform device ID. Driver variants are already
-selected based on the parent PMU device compatible.
+ .../devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml     | 7 +++++--
+ include/dt-bindings/clock/amlogic,a1-pll-clkc.h            | 2 ++
+ 2 files changed, 7 insertions(+), 2 deletions(-)
 
-v2:
-- added MODULE_ALIAS
----
- drivers/clk/samsung/clk-exynos-clkout.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/clk/samsung/clk-exynos-clkout.c b/drivers/clk/samsung/clk-exynos-clkout.c
-index 503c6f5b20d5..89cf2000884f 100644
---- a/drivers/clk/samsung/clk-exynos-clkout.c
-+++ b/drivers/clk/samsung/clk-exynos-clkout.c
-@@ -17,6 +17,8 @@
- #include <linux/platform_device.h>
- #include <linux/pm.h>
+diff --git a/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
+index a59b188a8bf5..fbba57031278 100644
+--- a/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
++++ b/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
+@@ -26,11 +26,13 @@ properties:
+     items:
+       - description: input fixpll_in
+       - description: input hifipll_in
++      - description: input syspll_in
  
-+#define DRV_NAME			"exynos-clkout"
-+
- #define EXYNOS_CLKOUT_NR_CLKS		1
- #define EXYNOS_CLKOUT_PARENTS		32
+   clock-names:
+     items:
+       - const: fixpll_in
+       - const: hifipll_in
++      - const: syspll_in
  
-@@ -75,7 +77,6 @@ static const struct of_device_id exynos_clkout_ids[] = {
- 		.data = &exynos_clkout_exynos5,
- 	}, { }
- };
--MODULE_DEVICE_TABLE(of, exynos_clkout_ids);
+ required:
+   - compatible
+@@ -53,7 +55,8 @@ examples:
+             reg = <0 0x7c80 0 0x18c>;
+             #clock-cells = <1>;
+             clocks = <&clkc_periphs CLKID_FIXPLL_IN>,
+-                     <&clkc_periphs CLKID_HIFIPLL_IN>;
+-            clock-names = "fixpll_in", "hifipll_in";
++                     <&clkc_periphs CLKID_HIFIPLL_IN>,
++                     <&clkc_periphs CLKID_SYSPLL_IN>;
++            clock-names = "fixpll_in", "hifipll_in", "syspll_in";
+         };
+     };
+diff --git a/include/dt-bindings/clock/amlogic,a1-pll-clkc.h b/include/dt-bindings/clock/amlogic,a1-pll-clkc.h
+index 2b660c0f2c9f..a702d610589c 100644
+--- a/include/dt-bindings/clock/amlogic,a1-pll-clkc.h
++++ b/include/dt-bindings/clock/amlogic,a1-pll-clkc.h
+@@ -21,5 +21,7 @@
+ #define CLKID_FCLK_DIV5		8
+ #define CLKID_FCLK_DIV7		9
+ #define CLKID_HIFI_PLL		10
++#define CLKID_SYS_PLL		11
++#define CLKID_SYS_PLL_DIV16	12
  
- /*
-  * Device will be instantiated as child of PMU device without its own
-@@ -236,8 +237,7 @@ static SIMPLE_DEV_PM_OPS(exynos_clkout_pm_ops, exynos_clkout_suspend,
- 
- static struct platform_driver exynos_clkout_driver = {
- 	.driver = {
--		.name = "exynos-clkout",
--		.of_match_table = exynos_clkout_ids,
-+		.name = DRV_NAME,
- 		.pm = &exynos_clkout_pm_ops,
- 	},
- 	.probe = exynos_clkout_probe,
-@@ -248,4 +248,5 @@ module_platform_driver(exynos_clkout_driver);
- MODULE_AUTHOR("Krzysztof Kozlowski <krzk@kernel.org>");
- MODULE_AUTHOR("Tomasz Figa <tomasz.figa@gmail.com>");
- MODULE_DESCRIPTION("Samsung Exynos clock output driver");
-+MODULE_ALIAS("platform:" DRV_NAME);
- MODULE_LICENSE("GPL");
+ #endif /* __A1_PLL_CLKC_H */
 -- 
-2.34.1
+2.43.0
 
