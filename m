@@ -1,149 +1,123 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6C374F5ED;
-	Sat, 11 May 2024 13:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5985C1B966
+	for <linux-clk@vger.kernel.org>; Sat, 11 May 2024 18:47:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715432889; cv=none; b=S+eWDeuwZTI4d/ZdAqG9pzWRqfnCFYHvGnW7Wm91w48JWi9c7mSWAZPVQ3QiTp/e8xP9EvYoIuLKjO0LhpGMkg5GGWTm3de9Gwlufzlwz8NTJHtf2hzgaKosGIIi0YY0lvxPK1LvNg+ip9ywAH2AoLWGvNz6wHswXU+JOxa3/0o=
+	t=1715453234; cv=none; b=mA6AQdbHx2tQh31tP49uejO5NO7WIXuuMWPdzCS6SYO5jDtYD2Ovt6nwh2wVC13qH5HesduRPk4zdFDozWkU41zTTY/d/977tMAgcGQFVgXL81KjaPRPtrE8jhBDbw5AjFIcp78ZgZZuTVTR8MUtJoQ7fi7zKvITGO8VTaNrw/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715432889; c=relaxed/simple;
-	bh=nn5CCGqDXRDW0kal5/Z0nExGsCcCmd7RqOdWPQZZ+Fs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GJzxrj/c/3RFCbTChuRcPipoaQ2OHONumAUyXR1FkzqSALYbslUSfGdh8z8XSMTk/uNu2rYeZAMjfgirBz7S73XSHg04xtC7Qra1GdHn/mTPM77fSHj/oob6m4rQic4/O55AEaS/dffk5C5MFc/ySlyKmbl/JW2B2YO4VcMEiuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DMBV/L0R; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1715453234; c=relaxed/simple;
+	bh=RkYbKEtD1/5EPSQ08qO6Axb20Vidm+kcYe5zuMyRkLk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SLpZUgGfQmoVyj2H1Olj7lyauZv+25u/lzQTOSoaE1nxmOUBX5V/BfgaOatSrgxcqsIb+YAkCKTEBst7JSxUYm1IR4YwKunWPnmcPNx/hCJ5SVfP9FYooW2sfzMzmK7/8+aUUHwBC5kE48Z7dyiQHIXSghoJaahGCSNr14B4bpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=NmqUghk/; arc=none smtp.client-ip=209.85.166.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DMBV/L0R"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08707C2BBFC;
-	Sat, 11 May 2024 13:08:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715432889;
-	bh=nn5CCGqDXRDW0kal5/Z0nExGsCcCmd7RqOdWPQZZ+Fs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DMBV/L0Rf02+pxMLC/ZTNs8StcL5fKgQTU5ppq5oaWJDipa8ukbCHuu/An38u5vZU
-	 NnvuNdjhyXgdTFMGWo8KlgW8zLJmi3r7tGype6lRozJK8NjdT6VfopQtHp/fe1MEnX
-	 SNlppIGviW72sy/N86tNc1o4u9AfAZcoo4x96htViPYEdUyh/egQzsQtT/0S6IIlND
-	 TFqDsQ2KaXVatNx1bFwXu6QFyGvbnmYHwoV42p57DbnAQdI7Hri0K8vHJzciBLqfvz
-	 +CRGOg8oJbrFXEHKBNvNDKDvLyF8imNkO+DwfSnPqPPxj4sWLcOAAAymdDRm15AbLo
-	 LZgR1LdLH6XtQ==
-Date: Sat, 11 May 2024 14:08:03 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Dmitry Rokosov <ddrokosov@salutedevices.com>
-Cc: neil.armstrong@linaro.org, jbrunet@baylibre.com,
-	mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, khilman@baylibre.com,
-	martin.blumenstingl@googlemail.com, jian.hu@amlogic.com,
-	kernel@sberdevices.ru, rockosov@gmail.com,
-	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 2/7] dt-bindings: clock: meson: a1: pll: introduce new
- syspll bindings
-Message-ID: <20240511-secret-barcode-e25c722ddf1d@spud>
-References: <20240510090933.19464-1-ddrokosov@salutedevices.com>
- <20240510090933.19464-3-ddrokosov@salutedevices.com>
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="NmqUghk/"
+Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-36c826d6edeso14536225ab.0
+        for <linux-clk@vger.kernel.org>; Sat, 11 May 2024 11:47:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1715453232; x=1716058032; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aOG++vk1i0/Hd88Qn0YDT0yQo3hdTXW2k/18QZW7zOU=;
+        b=NmqUghk/7lRhkouroZ7sZBnZbcrrkbiCwfhBvADMrhUQ3t3WOF/5Ka5G+iioja/kP3
+         byE/ThF/ZpjVVseti9VkVF8/k9Jvlc+BMf/toU8m4sKKyWE5JG7OXJ/xGb46khB63idl
+         oxzjtcU9xlWV+DcAxNKhqfEfcP5KgIZaPAS17S076KGBzGafhPKPLP0tuorPFJpTAavj
+         3g7wMFltckS/BplnnJ9dS5tHb+iMj7+PlAr0/Vz27SXRivA8gjCIEG7pzMyfNS6obzhx
+         BicZyT+b/pxUVVofCNmrJ015C0f/dvt0GUCfbtcERxOyW/QO2WLoP53VI7RAMAYtB7Cf
+         EB0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715453232; x=1716058032;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aOG++vk1i0/Hd88Qn0YDT0yQo3hdTXW2k/18QZW7zOU=;
+        b=r+QA9wzxP9jKGJLfz3/PvosoJdmQsxTKdTOmybCix3WdhX2GfJXTMQ7WGVDcSd99cN
+         b9aA711J13lt5xGwdGPxYcyvNl6gBckJ0XifVk1XIqcfCPYt4RjaRT8+mPpELq4FnRqO
+         vKt8x10B1ZTOpe7jZmDhamn9yuYpDpKwdVK6nPuwz5GtGRdtgPCtipfCrsZ+z1CBT8c7
+         7dOEKb6yoZhqyidXszqbo87Z4YBJL+g1T52cxSWgEdc4s8IZYE4cizMzfW288ekQmMHY
+         yxBHYxQCXAWdh9ScR4c3netP2CbDPz7p0n8IioQLsvDoqaw8tzcIr9vkeukjCFnj4HjE
+         lOnw==
+X-Forwarded-Encrypted: i=1; AJvYcCWgU6pYEsfeqT6ObCZSGJFajIc/8Hgqe2a4ulFyV1fnkdcePSqp5dh+HQ3m3kxogV9DuBIXvO4a7bFa8px8rr+XGy2JGF3nc7R/
+X-Gm-Message-State: AOJu0YysHbGjFQFjZ57y/+K4JxrM6qBujksPc/8YHTrdLajOKEl1iEnj
+	U4BeaUhGy+BKIbvburgcj64DlMnZvAUB8p307eo58RsifLlELqkM0ioY2wdjCmU=
+X-Google-Smtp-Source: AGHT+IFupAf3+PzUtciCUtAMd59M9Bh2uNrFENRRy+veiFORUG52P2gIZyNwUtsiccta6zle1s1HIQ==
+X-Received: by 2002:a92:cda1:0:b0:36c:c6d:54ba with SMTP id e9e14a558f8ab-36cc1487041mr73054875ab.9.1715453232512;
+        Sat, 11 May 2024 11:47:12 -0700 (PDT)
+Received: from [100.64.0.1] ([170.85.6.179])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4893700de56sm1575232173.22.2024.05.11.11.47.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 11 May 2024 11:47:11 -0700 (PDT)
+Message-ID: <b970012b-c078-4c8d-995d-e2789afa3e4c@sifive.com>
+Date: Sat, 11 May 2024 13:47:08 -0500
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="BapyMlBTqqZEbUPF"
-Content-Disposition: inline
-In-Reply-To: <20240510090933.19464-3-ddrokosov@salutedevices.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 2/2] riscv: dts: starfive: visionfive-2: Fix lower rate
+ of CPUfreq by setting PLL0 rate to 1.5GHz
+To: Xingyu Wu <xingyu.wu@starfivetech.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Conor Dooley <conor@kernel.org>,
+ Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+ Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Hal Feng <hal.feng@starfivetech.com>, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
+ devicetree@vger.kernel.org
+References: <20240507065319.274976-1-xingyu.wu@starfivetech.com>
+ <20240507065319.274976-3-xingyu.wu@starfivetech.com>
+Content-Language: en-US
+From: Samuel Holland <samuel.holland@sifive.com>
+In-Reply-To: <20240507065319.274976-3-xingyu.wu@starfivetech.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 2024-05-07 1:53 AM, Xingyu Wu wrote:
+> CPUfreq supports 4 cpu frequency loads on 375/500/750/1500MHz.
+> But now PLL0 rate is 1GHz and the cpu frequency loads become
+> 333/500/500/1000MHz in fact.
+> 
+> The PLL0 rate should be default set to 1.5GHz and set the
+> cpu_core rate to 500MHz in safe.
 
---BapyMlBTqqZEbUPF
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Can this be accomplished by instead setting the CLK_SET_RATE_PARENT flag on the
+CPU_CORE clock? That way PLL0 is automatically set when cpufreq tries to change
+the CPU core frequency. Then there is no DT change and no compatibility issue.
 
-On Fri, May 10, 2024 at 12:08:54PM +0300, Dmitry Rokosov wrote:
-> The 'syspll' PLL is a general-purpose PLL designed specifically for the
-> CPU clock. It is capable of producing output frequencies within the
-> range of 768MHz to 1536MHz.
->=20
-> The clock source sys_pll_div16, being one of the GEN clock parents,
-> plays a crucial role and cannot be tagged as "optional". Unfortunately,
-> it was not implemented earlier due to the cpu clock ctrl driver's
-> pending status on the TODO list.
+Regards,
+Samuel
 
-It's fine to not mark it optional in the binding, but it should be
-optional in the driver as otherwise backwards compatibility will be
-broken. Given this is an integral clock driver, sounds like it would
-quite likely break booting on these devices if the driver doesn't treat
-syspll_in as optional.
-A lesson perhaps in describing the hardware entirely, even if the
-drivers don't make use of all the information yet?
-
-Cheers,
-Conor.
-
->=20
-> Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
+> Fixes: e2c510d6d630 ("riscv: dts: starfive: Add cpu scaling for JH7110 SoC")
+> Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
 > ---
->  .../devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml     | 7 +++++--
->  include/dt-bindings/clock/amlogic,a1-pll-clkc.h            | 2 ++
->  2 files changed, 7 insertions(+), 2 deletions(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.=
-yaml b/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
-> index a59b188a8bf5..fbba57031278 100644
-> --- a/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
-> @@ -26,11 +26,13 @@ properties:
->      items:
->        - description: input fixpll_in
->        - description: input hifipll_in
-> +      - description: input syspll_in
-> =20
->    clock-names:
->      items:
->        - const: fixpll_in
->        - const: hifipll_in
-> +      - const: syspll_in
-> =20
->  required:
->    - compatible
-> @@ -53,7 +55,8 @@ examples:
->              reg =3D <0 0x7c80 0 0x18c>;
->              #clock-cells =3D <1>;
->              clocks =3D <&clkc_periphs CLKID_FIXPLL_IN>,
-> -                     <&clkc_periphs CLKID_HIFIPLL_IN>;
-> -            clock-names =3D "fixpll_in", "hifipll_in";
-> +                     <&clkc_periphs CLKID_HIFIPLL_IN>,
-> +                     <&clkc_periphs CLKID_SYSPLL_IN>;
-> +            clock-names =3D "fixpll_in", "hifipll_in", "syspll_in";
->          };
->      };
-> diff --git a/include/dt-bindings/clock/amlogic,a1-pll-clkc.h b/include/dt=
--bindings/clock/amlogic,a1-pll-clkc.h
-> index 2b660c0f2c9f..a702d610589c 100644
-> --- a/include/dt-bindings/clock/amlogic,a1-pll-clkc.h
-> +++ b/include/dt-bindings/clock/amlogic,a1-pll-clkc.h
-> @@ -21,5 +21,7 @@
->  #define CLKID_FCLK_DIV5		8
->  #define CLKID_FCLK_DIV7		9
->  #define CLKID_HIFI_PLL		10
-> +#define CLKID_SYS_PLL		11
-> +#define CLKID_SYS_PLL_DIV16	12
-> =20
->  #endif /* __A1_PLL_CLKC_H */
-> --=20
-> 2.43.0
->=20
->=20
+>  .../boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi     | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
+> index 45b58b6f3df8..28981b267de4 100644
+> --- a/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
+> +++ b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
+> @@ -390,6 +390,12 @@ spi_dev0: spi@0 {
+>  	};
+>  };
+>  
+> +&syscrg {
+> +	assigned-clocks = <&syscrg JH7110_SYSCLK_CPU_CORE>,
+> +			  <&pllclk JH7110_PLLCLK_PLL0_OUT>;
+> +	assigned-clock-rates = <500000000>, <1500000000>;
+> +};
+> +
+>  &sysgpio {
+>  	i2c0_pins: i2c0-0 {
+>  		i2c-pins {
 
---BapyMlBTqqZEbUPF
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZj9tswAKCRB4tDGHoIJi
-0pj2AP9o4HZKD5fAbbwEJlMifsTMl/7hSOmkyRbcNK3IJjs/IwEAovKPd0n+svw5
-TYMMJ7Bah8z91bGRNWgo/Zn/yyRxdw8=
-=ohus
------END PGP SIGNATURE-----
-
---BapyMlBTqqZEbUPF--
