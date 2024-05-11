@@ -1,126 +1,160 @@
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2134.outbound.protection.partner.outlook.cn [139.219.146.134])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BDF5ECF
-	for <linux-clk@vger.kernel.org>; Sat, 11 May 2024 06:39:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715409579; cv=none; b=m4NwSBp7ADrBSPCSDP1vtIGMacb/j0BMC3l4ixA6FQ9IQNq6N9Gxq1xGJv6NM3cPa/DnaQN/3TtuutkgHQuB6SA+UhQpFdYgv6FLuAB+VrS3lH/BzlQaBQYH49+H/ph8jeze594iAWOznhblaHF3JffYPGPJ8B+/+0GI/V1quR0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715409579; c=relaxed/simple;
-	bh=ohIU0BNbyMtZNdVZlUNr4IqV8gPhaMqQ1agVuP69fhM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SxXh3Kk3fxQSBkrf9i5/HKy4wsz4e/7DEgqd2CbboNPH4CLXfUqFwow2pKdj7rmjqHy7q3RH+aRItY64EwPTod4/wJEBrZNSdL7nxrcvEU39fwHIbvo+RuTE7/3IJCjiHSXrT7ybAO9sW0L+lYaPvMaOhRPt2MtJN2wu2mz0IME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=g6QWFToX; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="g6QWFToX"
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-53fbf2c42bfso1952077a12.3
-        for <linux-clk@vger.kernel.org>; Fri, 10 May 2024 23:39:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715409575; x=1716014375; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=8ZGOyYQlPMjCo7NoBFPkuXTj+4higrK3cJrWnMzKiEg=;
-        b=g6QWFToXQok+V3jhWb2TA3WU/cfN+txc45PKhItOMk96vdRAEaANIWx+gFttgrZYl+
-         FaI0gNYJJUlNVBsU0WD281elonouHMH79bVjcJIcikEn7fIQq+1qOAg7Oyvqny8ZxMB5
-         UcM/tzNUBRzotnXfpSVPX9quL1B3mOqbutzAuG5Wrt+3AXVoayqJf6ylehJpcRzJu5fd
-         qJVZl66V3RmCFsyB3I0stWXqVJg3DXjGQyIy5APlEfcU179nQ2E5nYyP5RHRbvbKn+dW
-         EbWLXROGUq5dwKFMtKiMiVJu7m3KL6nm00/lA8Yx6c6eyL9A+Xp7pBdaZWNtUd8iCsmH
-         QoWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715409575; x=1716014375;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8ZGOyYQlPMjCo7NoBFPkuXTj+4higrK3cJrWnMzKiEg=;
-        b=v89eNu64ygDXl4AMgR0JzoSN+vby3Tg6ee3PXba2noRxcUnp+8hmBJ+fT2ylnxYkSz
-         YNYQ/A5caAwIVEatX9+5o+NhM75dM4CWI32thIzUHJ1EpOMSryR4kkF1PioEg6ve2sKo
-         gciSlI2XXN71TUxwU1Ll+CDnvMjM/gGMrzxYEuRQ24szxhkN+7u9d3nZOtHvSa0JnggH
-         RaL4GAbIrkyvzoF+L+5ZG9DXdzTSY2Fxls9xWwZADMbv559XGRbGEYqnf2RX5aZwMvem
-         5jSQUuv2AxSQCy30lKNACjg+WPkaAqOOI/TJKkSPn6uW6rTQKFx/0HNQKBRowK43thw+
-         xkfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV2rCAVjnAYcLpXTH8hoTusVImDMu9wL/tMJJNut5bCBx6wnRyWO8A4epyWUfTZc0zQvbto3E8qc8wfztgq9BUMGMa0O9H0L722
-X-Gm-Message-State: AOJu0YxXfrXn9DmRHAZhjPY/h8+7Q0chBhxFPRmLURIANzlWTQvdgBmt
-	BFaXQi2sPHanKbLqT3Vzss2QlwfZ0y2lcjkQjvDuPeJBiCk7ZZlpT9Zw2FRSBg==
-X-Google-Smtp-Source: AGHT+IFcPHdwaLWt2eocdN1RJhFnTd98pYEBepeLkuj7kAaEyXPW4pVze6C7JF/k2OT36e+fxjw+tA==
-X-Received: by 2002:a05:6a20:dc95:b0:1a7:60d8:a6dd with SMTP id adf61e73a8af0-1afde1df3b4mr5538644637.53.1715409575282;
-        Fri, 10 May 2024 23:39:35 -0700 (PDT)
-Received: from thinkpad ([220.158.156.38])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2b671056629sm4242175a91.7.2024.05.10.23.39.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 10 May 2024 23:39:34 -0700 (PDT)
-Date: Sat, 11 May 2024 12:09:29 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 RESEND 5/8] PCI: qcom: Add support for IPQ9574
-Message-ID: <20240511063929.GB6672@thinkpad>
-References: <20240501042847.1545145-1-mr.nuke.me@gmail.com>
- <20240501042847.1545145-6-mr.nuke.me@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A896EC2ED;
+	Sat, 11 May 2024 07:37:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.134
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715413032; cv=fail; b=Tirw4RuIGpJyjsfkL3dCf3RTX3jIEkxsiV7SLs4IpCipjRkCumwpL6BzvWJ4JDDvsqZVI9+S/Tu1ZiqCKj2vpclesRu01y2VVCKkI+ij4p9brXquTcnEwAYLJ6JOgzMnTv9B8utwN2SM39eik/SgnDYlFxnAbhL9RSHf7+eoKEM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715413032; c=relaxed/simple;
+	bh=JCFDNBP8NP8wLWIr/ArFvm50MKjshvsYTDVZ86AtkkU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=RUFevTALU3HxjymxjRrqQnWbRWSxfo8p60+jZn3glNG1JNbZXBL/KbCyMYLjl9eIHkpviPbV48i06kbEDvvmmH7y8oIncsWzgua83VdU/k1YYc6xcBZCVyvDTwPi8BftBlOEXZZhsuO9arhl1c7jranvzykgrvyg69MfsOQbQ08=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=l7DSXLCv3HF7EKVZRZFN7Lozk1EKBLXObnejh4s/BpVoCSOfFD8hVb9z0+peN1PRNtqwXujF10xzQYGLrbxEFXdtM9W/y+0bPNsxB8Gtst7QCpmadg7E3/VkFFkiigRiYEBfFDzW0WJ11TArMYJNIkFJVcYOxLEerDXOoYtK7ELOUQchX2UFLScrxcED9D345QkVbVUSDb5ohJ4G3fpYrw3jteo+FahELwfSHqA20vu5T+CEKgppv5G73YnWZ6n4CxHSXyGQhR41EWm6feq+N6lxCHjhplYEvcIiwW2LVkMEgnmEKMO0EsCOgyZGJO8FvpsA6tTf0JHTlVaTkbueKA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=JCFDNBP8NP8wLWIr/ArFvm50MKjshvsYTDVZ86AtkkU=;
+ b=PzJi7dipg56/yODSpAQyubSn/og/ZDU8UBiYMt4Wg9AcW9bQ2z0PgUwfEla62x455hKGVwzUFj9KQyU4RG5uQmMImycQeChVajXntxJ+//dtl7FqzayqaECIgSATE7My83eEGorA5zsYeTVjuWms+egFGS2QgtO2InyVNOJTF0CBO1mMJ51jytozpCq2wzIVXEvwCkIWeUIyARtcV9AxJep7gmmNigmgwOUk+F6HcB1u5SRZnn/7Cs2jViHU0ZZOe6E8oq1i+sizlWc6a+mxHsvWqGmveiFAGfm79zHhjXwJiFwzPDgh1kXui7MM1mwALV6kspp7/5nV4NLZ+39i9g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=starfivetech.com; dmarc=pass action=none
+ header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
+Received: from NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c510:8::10) by NTZPR01MB1113.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c510:a::6) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7472.44; Sat, 11 May
+ 2024 03:02:56 +0000
+Received: from NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn
+ ([fe80::e903:99a6:10b7:304d]) by
+ NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn ([fe80::e903:99a6:10b7:304d%6])
+ with mapi id 15.20.7472.044; Sat, 11 May 2024 03:02:56 +0000
+From: Xingyu Wu <xingyu.wu@starfivetech.com>
+To: Conor Dooley <conor@kernel.org>
+CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@kernel.org>, Emil Renner Berthing
+	<emil.renner.berthing@canonical.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Paul Walmsley
+	<paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
+	<aou@eecs.berkeley.edu>, Hal Feng <hal.feng@starfivetech.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: RE: [PATCH v5 0/2] Add notifier for PLL0 clock and set it 1.5GHz on
+Thread-Topic: [PATCH v5 0/2] Add notifier for PLL0 clock and set it 1.5GHz on
+Thread-Index: AQHaoEtCPDK2HwhwXUSWjcDZE/pIQ7GQ+umAgABXAkA=
+Date: Sat, 11 May 2024 03:02:56 +0000
+Message-ID:
+ <NTZPR01MB0956D48361098E8AA4B3930A9FE02@NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn>
+References: <20240507065319.274976-1-xingyu.wu@starfivetech.com>
+ <20240510-unfounded-syrup-d1263d57d05a@spud>
+In-Reply-To: <20240510-unfounded-syrup-d1263d57d05a@spud>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=starfivetech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: NTZPR01MB0956:EE_|NTZPR01MB1113:EE_
+x-ms-office365-filtering-correlation-id: 0a7f2ce1-10d1-4a7e-96c6-08dc7166db6a
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info:
+ aMrQmWIhWxwcKlwvwU2xvOhfo1zpwD7V1AM4iGsjxyJI5RyPhyqV4wcSDyWVHc2GrVpR4EryD/iEjC1w4egHHM6uz4T5fWQw+OCCBIqDLNlvZSDyV8Gs/Q9MlvTRV9pGAfNKLvOlKhsLfUbiGUe1x89tstIZXInDfwv4TKeZsOL57jxbOIZDfMw03avb2GvSjgEH9yhJNOHvyhbagvyracj43lusIakElpLQX8b64Ah6zwvwf0HcBVQHSuwwYtPXR8nKQz4sUvoTh9sQ8nMEWVTcv5qgg1oqCbft6bTRgBKacxlUdmuBoLOZ8qcwTYiBqv46YtkXij4nTELAVqeGgOLJAX1g4zp3RHsgm0P4lqNCVhwkvBmC/aPxML14hJKLdSOTI6g7xA3zawE6MC1NF/fFKDFKXB5ZrrWMS0ZzPpw9xVSpbPRFQMYoT6YZFzo3ByR8kUEpaqPr7/ZAGaLAOaQwAkly1zEcHT2y0EDNPRRsq96A/zyUeyZ9DoItBeEJpYGakklU4152Iry6SwadWoOXxOdp7E369JCW2tud6mc8/f9YsigvZBocdWbYHokt8/S0GM+XmKHXw26l/yV9yXRdttQME/93cZnwpCxNUVM2ecy912+9Tu2jVga9CXo9
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230031)(41320700004)(366007)(7416005)(1800799015)(38070700009);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?/DbM0m6tNMF/YY7c84L8dkem20pVWyQmkgHDjys+10odUupbHTBfXXqR082v?=
+ =?us-ascii?Q?cybqJu0jdPTDcOV0ZpRkmcwpMJ2Zz0XGpdZOjIdVPzcyFuEnQZ4K9jheUptj?=
+ =?us-ascii?Q?zsv6ekgB1OZZO6RtpUAymztgAAFs9CleW38voupMaoMwUHOUgOSQ5MRFHhKK?=
+ =?us-ascii?Q?2GJNfFK+kD5Bf2bcBU5kCH0HUr3qDY33FF1Z417iHrAp92OykJGV37quDCcT?=
+ =?us-ascii?Q?Tjni+fE+Qk7l0bcNjLm1s50kBjBUwpeR4lgWxWlXDHgt04xc4h0mN++bDRBh?=
+ =?us-ascii?Q?mRYVgaA4yYBVqBNWGRI+Ezj4Q/W3q2g20hgdBHcIE2Op0Af6qnyGpYt//1us?=
+ =?us-ascii?Q?mCw/JcoGX3ftoPnSgSX0W68pKX/1TUl58NteTSbGZWMBHDMJfDs+2he0TSVd?=
+ =?us-ascii?Q?oNSItlBBL7Sphx7kOR28SpKFypwaDk1B0Zlw5fhAHONSr005NZzZVz72E4TX?=
+ =?us-ascii?Q?9Krbb0X8oOtWIcATdgcHysKtcJGkhZxs5YgqwVOn3648Kagayj24ANQVQsYr?=
+ =?us-ascii?Q?VC3xwsw2wDhLn+MziKgeHfi2ZrD+z/5zDx7Y652hvC1iMNca2fvPoJUF1xZ1?=
+ =?us-ascii?Q?cSrbeesocqZFt6xSqtGJBNY3nhbaWJOC75rR4R1+M7YOe4+1Sfrpjcp48fTx?=
+ =?us-ascii?Q?lPiCij/40IUW0JyY8h67JsruFJtVeqQ0AcEXKWjyMwvY1PsKu3KxSeF/9clK?=
+ =?us-ascii?Q?DRktjUp593SFtdwH6NWU2h4Ae0rzsXMHSotY37Wr7WAkMf5pNpttGUOuWMtU?=
+ =?us-ascii?Q?BSJQUx0EKPEH9dcJLIESFchWcJxmk5LsfGhcWTcMJnzTXuYLzv9WjL7VHdE5?=
+ =?us-ascii?Q?gHI3NSWWja6229Lu13t4PYIgovgXKpT8P8S9w2rT0joF4NFDQt6GhBX9ZeTf?=
+ =?us-ascii?Q?ynLla6I9Q2JkVAGmTbRvCDjjg4AanahDfXxsI8UYEGD0JdTWMDUaEVmoIpj5?=
+ =?us-ascii?Q?4x63bQ7gbaTNVZKzYXzPlZa+zXLHcJzhGT/LwrAvEmvNGHEJchiSDD/0tspX?=
+ =?us-ascii?Q?PTvkFweEv5Kh77rEMn5Usx6Ixis5fa0xwVeOtz41sz35WCb8Zy2fQg7o9cWY?=
+ =?us-ascii?Q?KczvbciXk1YsAO/fy31CBauPchakE8lrNHSUpUY9s5b/vtHHG0c6dgdVx8mf?=
+ =?us-ascii?Q?6CTlstM+k2UQWRQutJ+tJimHd3mmc0L4hYUXmeE8eZuQkpQogOBeiyLDJKcX?=
+ =?us-ascii?Q?BqgYhl/pqov3rwY945/4jRdZpPqMnEZu+kM8FbmPVfUW2MvNxmFan9txMkYt?=
+ =?us-ascii?Q?axxLHoQHl1OYicAARY4RQ2H4VeCp1jQBxpFahr/I+MPzuTcyjkfOOa1NZIDG?=
+ =?us-ascii?Q?Y86eH4Xz13HDvFQFXIQHraq0mkG7E1RVXYRW7AaWrG3yZ74Kp0jmfYgEo+nJ?=
+ =?us-ascii?Q?kbL9yRY2mQv3pef5uc//bn64g0CSG8BubLzjdXEcI4LtRuDHrOMiAcD3AkgI?=
+ =?us-ascii?Q?ATxVLQoz83uYZPVi/VXq0feu4A5p3pafIJLpoY1GPz3td8s6btr1beyBSXfh?=
+ =?us-ascii?Q?ZdbXnah9IjsNCJb9tqF87+UE5trg9f/qYWcxE8iZQfAyURDzNUaf6jA3tI5I?=
+ =?us-ascii?Q?L6FbVFWM2Gq+TzXlloSabaGP+u5ee/qw/m5W0vl0?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240501042847.1545145-6-mr.nuke.me@gmail.com>
+X-OriginatorOrg: starfivetech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0a7f2ce1-10d1-4a7e-96c6-08dc7166db6a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 May 2024 03:02:56.1492
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: BX4E6/8rlyJExq4/kQd0xRCVAlcUEBhuB3CvLspPwdrkRZyx0qP87oBHYd57TV379L/JOxbkxz6z3KTfuXkkOuWwXOTUunsQPySbetbLE1o=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: NTZPR01MB1113
 
-On Tue, Apr 30, 2024 at 11:28:44PM -0500, Alexandru Gagniuc wrote:
-> IPQ9574 has four PCIe controllers: two single-lane Gen3, and two
-> dual-lane Gen3. The controllers are identical from a software
+On 11/05/2024 05:05, Conor Dooley wrote:
+>=20
+> On Tue, May 07, 2024 at 02:53:17PM +0800, Xingyu Wu wrote:
+> > This patch is to add the notifier for PLL0 clock and set the PLL0 rate
+> > to 1.5GHz to fix the lower rate of CPUfreq on the JH7110 SoC.
+> >
+> > The first patch is to add the notifier for PLL0 clock. Setting the
+> > PLL0 rate need the son clock (cpu_root) to switch its parent clock to
+> > OSC clock and switch it back after setting PLL0 rate. It need to use
+> > the cpu_root clock from SYSCRG and register the notifier in the SYSCRG
+> > driver.
+> >
+> > The second patch is to set cpu_core rate to 500MHz and PLL0 rate to
+> > 1.5GHz to fix the problem about the lower rate of CPUfreq on the
+> > visionfive board. The cpu_core clock rate is set to 500MHz first to
+> > ensure that the cpu frequency will not suddenly become high and the
+> > cpu voltage is not enough to cause a crash when the PLL0 is set to 1.5G=
+Hz.
+> > The cpu voltage and frequency are then adjusted together by CPUfreq.
+>=20
+> Hmm, how does sequencing work here? If we split the patches between trees=
+ it
+> sounds like without the dts patch, the clock tree would (or
+> could) crash, or mainline if the clock changes there before the dts ones =
+do. Am I
+> misunderstanding that?
 
-You mean to say, 'identical to IPQ8074 Gen3 platform' since you are reusing the
-2_9_0 cfg?
+Oh, I think you misunderstood it. Patch 1 (clock driver patch) does not cau=
+se the
+clock tree crash without the patch 2 (dts patch), and it just provides the =
+correct
+flow of how to change the PLL0 rate. The patch 2 is to set the clock rate o=
+f
+cpu_core and PLL0 rate, which causes the crash without patch 1. Setting cpu=
+_core
+rate is to avoid crashes by insufficient cpu voltage when setting PLL0 rate=
+.
 
-> perspective, with the differences appearing in the PHYs.
-> 
-> Add a compatible for the PCIe on IPQ9574.
-> 
-> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
-
-But the change looks good to me.
-
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-
-- Mani
-
-> ---
->  drivers/pci/controller/dwc/pcie-qcom.c | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
-> index ea81ff68d433..e61888e6c63d 100644
-> --- a/drivers/pci/controller/dwc/pcie-qcom.c
-> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
-> @@ -1551,6 +1551,7 @@ static const struct of_device_id qcom_pcie_match[] = {
->  	{ .compatible = "qcom,pcie-ipq8064-v2", .data = &cfg_2_1_0 },
->  	{ .compatible = "qcom,pcie-ipq8074", .data = &cfg_2_3_3 },
->  	{ .compatible = "qcom,pcie-ipq8074-gen3", .data = &cfg_2_9_0 },
-> +	{ .compatible = "qcom,pcie-ipq9574", .data = &cfg_2_9_0 },
->  	{ .compatible = "qcom,pcie-msm8996", .data = &cfg_2_3_2 },
->  	{ .compatible = "qcom,pcie-qcs404", .data = &cfg_2_4_0 },
->  	{ .compatible = "qcom,pcie-sa8540p", .data = &cfg_sc8280xp },
-> -- 
-> 2.40.1
-> 
-
--- 
-மணிவண்ணன் சதாசிவம்
+Best regards,
+Xingyu Wu
