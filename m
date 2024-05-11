@@ -1,63 +1,47 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79230468E;
-	Sat, 11 May 2024 12:43:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 220218C15;
+	Sat, 11 May 2024 13:03:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715431412; cv=none; b=RCfBZr9Wh0YAdungpsm1S00PqTffF261sDQLE7+yWXrc9xkChC0EtEJsKjEFdiemIaR/SthR4aQoVxJNzeG7ypGFi6L65+slBSF0cx6pkTKGobEBv0z2ztMxec2Y2OtNmIReX5xFZaDncPZQ3xb7tt3OusM6c5q01idMYhewt3Q=
+	t=1715432606; cv=none; b=ENmwy1F1pxc69qsvSMyMUNsl/IXIGsjrDl4ZSB49ySU+o92kOlVuY83ipbOomjzK+ktKA0fWK/Yaxj9e6pUHCj0ttVthwKQBl+vqK+WHUnqGpL6qZO4bxr4HGjHiryX8aRk53YAWPt/YZldcdVhUc3WnXunSa7bsu4BuL7wMqi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715431412; c=relaxed/simple;
-	bh=d4VKieaSxJD4O9fan0sp4G+844Bs3wrwI3hZbLLfkXY=;
+	s=arc-20240116; t=1715432606; c=relaxed/simple;
+	bh=nmhW8quEOj7e8lsF6Vgn3FxigiWdqJzbbfjcHiI4FF4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ci4kpOEEZJtIfJQZ8sT9HDcavImR/WksHjECoj4RwABuRB3XQhGkDTnMw2+KJVLYDU8BYVntKE3KQBAnNSejVje6zWUG+/x/DCP2mEabMnBBmw4R+GlhFQQ9UNboFmTcYzyShnGZEpHwVykXk8XwV/YxLqeDQXJwbfXyqwyqQcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IMvdel0D; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=W3F9Q2sQGYTPahCjUeYUjNHhwGFQ4afNboHIbPugo/ry3LGiIblceYGsBpJJ8ksyOFmUMwpM2N4VBppt9o5qeT6L9mLTGQhOUbUkLK+h2QgyOKZQoouhWiZCVWsrgOc0s98eylRVXtAuZf7b3F9aiDJsoDAVk9e00VS6nN/ZX58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p8Z/hvEH; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IMvdel0D"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56CA8C2BBFC;
-	Sat, 11 May 2024 12:43:26 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p8Z/hvEH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BAD50C32781;
+	Sat, 11 May 2024 13:03:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715431412;
-	bh=d4VKieaSxJD4O9fan0sp4G+844Bs3wrwI3hZbLLfkXY=;
+	s=k20201202; t=1715432606;
+	bh=nmhW8quEOj7e8lsF6Vgn3FxigiWdqJzbbfjcHiI4FF4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IMvdel0DY2pBVYj1A7coO/B+rMIO47XYcatES8h6dp3q/a0wHnEdYkkQhKc0kHM6F
-	 R5siUi5TNnYhyvsFZ3ct4vYXvIO//GNTkmIVazERoyp2vZdrDSPeZwuFlzD5viOLZF
-	 qu51GpXkvw7//RsxRf0s+wfmt9GuzAx/faZwnoCK0QODpe4erqsiy51Fu8KCroI9Er
-	 SXWB3N9Bzm3bkRLX+vpX3xIb+298XdKui2spF938GLhwbl3bb8edtYKBLnA8JzMxcc
-	 nXEESPNyPUFg8xwI6zZxJpcq4fhBlUvadsbA95jMtmYdMdcaijYUFF6T1DLpx9XJ8q
-	 tOTHuogfZFawA==
-Date: Sat, 11 May 2024 13:43:24 +0100
+	b=p8Z/hvEH0Tz1Wsjzc/s0tw6Uk0zCa+ZRb2ykAVHUAAiicT+RL/2IHtFXpl9nOYA8y
+	 1nYGa04Pr6qqXAZOzxQC36PT0UNXhJLEb+CXlbAGAoCjnh0ksm1dsDjZnPZtkqVN8/
+	 TaJ4mpR7fvKC0jJpcBNWzg6oZRZTlgxnKVL6hK3UTV2xjGDmcawxm2CYozyH254u7i
+	 WJx3LP/8IWIrb5k1runTAru/m4IXfWTTxDmTGa7BiHyEDrjkLqS8ytPd19VNNaUDU3
+	 JazlPNSUrmoJ34YYBloFSLuWxAOSeKJzDYTMHbEfvHqE1kvKCsn1BNTtj9HGTk8Q51
+	 5jrBl4gUZoUUw==
+Date: Sat, 11 May 2024 14:03:20 +0100
 From: Conor Dooley <conor@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Gregory Clement <gregory.clement@bootlin.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Lee Jones <lee@kernel.org>,
-	UNGLinuxDriver@microchip.com,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Yisen Zhuang <yisen.zhuang@huawei.com>,
-	Salil Mehta <salil.mehta@huawei.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+To: Dmitry Rokosov <ddrokosov@salutedevices.com>
+Cc: neil.armstrong@linaro.org, jbrunet@baylibre.com,
+	mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, khilman@baylibre.com,
+	martin.blumenstingl@googlemail.com, jian.hu@amlogic.com,
+	kernel@sberdevices.ru, rockosov@gmail.com,
+	linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	linux-mips@vger.kernel.org, linux-mtd@lists.infradead.org,
-	netdev@vger.kernel.org, linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] dt-bindings: mfd: syscon: Add more simple compatibles
-Message-ID: <20240511-trailing-confiding-93e4c97f2adf@spud>
-References: <20240510123018.3902184-1-robh@kernel.org>
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 4/7] dt-bindings: clock: meson: a1: peripherals:
+ support sys_pll_div16 input
+Message-ID: <20240511-courier-afflicted-e351af5cded2@spud>
+References: <20240510090933.19464-1-ddrokosov@salutedevices.com>
+ <20240510090933.19464-5-ddrokosov@salutedevices.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -65,39 +49,83 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="BSbcBdeN2vnKatp0"
+	protocol="application/pgp-signature"; boundary="TNx0su8gnKIgNzEa"
 Content-Disposition: inline
-In-Reply-To: <20240510123018.3902184-1-robh@kernel.org>
+In-Reply-To: <20240510090933.19464-5-ddrokosov@salutedevices.com>
 
 
---BSbcBdeN2vnKatp0
+--TNx0su8gnKIgNzEa
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 10, 2024 at 07:30:14AM -0500, Rob Herring (Arm) wrote:
-> Add another batch of various "simple" syscon compatibles which were
-> undocumented or still documented with old text bindings. Remove the old
-> text binding docs for the ones which were documented.
+On Fri, May 10, 2024 at 12:08:56PM +0300, Dmitry Rokosov wrote:
+> The 'sys_pll_div16' input clock is used as one of the sources for the
+> GEN clock.
 >=20
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
-> This batch is mostly from arm32 platforms.
+> Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
 
+Provided that this new clock is optional in the driver,
 Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
 Cheers,
 Conor.
 
---BSbcBdeN2vnKatp0
+> ---
+>  .../bindings/clock/amlogic,a1-peripherals-clkc.yaml        | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/clock/amlogic,a1-periphera=
+ls-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,a1-periphera=
+ls-clkc.yaml
+> index 6d84cee1bd75..11862746ba44 100644
+> --- a/Documentation/devicetree/bindings/clock/amlogic,a1-peripherals-clkc=
+=2Eyaml
+> +++ b/Documentation/devicetree/bindings/clock/amlogic,a1-peripherals-clkc=
+=2Eyaml
+> @@ -30,6 +30,7 @@ properties:
+>        - description: input fixed pll div7
+>        - description: input hifi pll
+>        - description: input oscillator (usually at 24MHz)
+> +      - description: input sys pll div16
+> =20
+>    clock-names:
+>      items:
+> @@ -39,6 +40,7 @@ properties:
+>        - const: fclk_div7
+>        - const: hifi_pll
+>        - const: xtal
+> +      - const: sys_pll_div16
+> =20
+>  required:
+>    - compatible
+> @@ -65,9 +67,10 @@ examples:
+>                       <&clkc_pll CLKID_FCLK_DIV5>,
+>                       <&clkc_pll CLKID_FCLK_DIV7>,
+>                       <&clkc_pll CLKID_HIFI_PLL>,
+> -                     <&xtal>;
+> +                     <&xtal>,
+> +                     <&clkc_pll CLKID_SYS_PLL_DIV16>;
+>              clock-names =3D "fclk_div2", "fclk_div3",
+>                            "fclk_div5", "fclk_div7",
+> -                          "hifi_pll", "xtal";
+> +                          "hifi_pll", "xtal", "sys_pll_div16";
+>          };
+>      };
+> --=20
+> 2.43.0
+>=20
+>=20
+
+--TNx0su8gnKIgNzEa
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHQEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZj9n7AAKCRB4tDGHoIJi
-0gG1AP47sdu3A8RqntUv+sHeomfUnc/kOanj3aHZojsdbapUpAD0DOQrlhFkp8Gc
-XbFn8V4hiQpWfuV/HoEcegLy+fB9DQ==
-=jck4
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZj9smAAKCRB4tDGHoIJi
+0sVPAP4qBtz3ATp9etCU/S5CukAKn4AJFaAGHLtaVCEhh9TnJwEApgjVh2zKcIAl
+WlAU5kVo+VO3uM0AxaBrQrhxsiADUQA=
+=31o0
 -----END PGP SIGNATURE-----
 
---BSbcBdeN2vnKatp0--
+--TNx0su8gnKIgNzEa--
