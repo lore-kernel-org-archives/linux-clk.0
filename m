@@ -1,501 +1,195 @@
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C260329429;
-	Sun, 12 May 2024 08:29:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B54CA40;
+	Sun, 12 May 2024 08:35:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715502569; cv=none; b=fr1fPT8QKLN1x7BFyIE00Ry2MQuxN+7Hb5Yae5bbLXEsKk8XAAIGiI0wfLvAD3ApHS6+2qR0lWz58V7vAgv0Nd4iRsrCuZFF2RACJIjRF/f3aqVt1Pr4zYYZjHxEHYSmmFuGM4CJiKx0EH9wO0HpnyRp5rHek4T4zC4GlB76mFE=
+	t=1715502954; cv=none; b=YVUlREDDeiUQmf1Ojxj/GmOgtUwQEbM9JbzlQBBY4oqEZVasY80lD8NV01H3M9VqZGWe+6CYUCM9MvabeHmTvCBQLflxXuzpPiIPset2+K6kxFdGJ9okzYnYscOENdmlEhyQG/PDVXnZD4nPxity9OqsIvV43O2wiEI0HSjiPI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715502569; c=relaxed/simple;
-	bh=VKbd0J86Pve4kwV3BxkeldSOt7dBzUtYpPjyCtX0aNg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=j7nymzh83U1y1zl8sjQQbZx84LrqyBK8yHqxfCDytgf5l/X7AaDHVkR5R5jKGpyuT1jdvdy2tLAhZH2bjOTDWoK2KKvprTQHphcIJ/c83vu50BwGKR0hVV3VXCrHIWw0KLo9QZZ7jTRlUm58+T1bTYz1LjcgMqoxl87FSSSiy34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PCoRUC9r; arc=none smtp.client-ip=205.220.180.131
+	s=arc-20240116; t=1715502954; c=relaxed/simple;
+	bh=AYAOGX2iykH9oRAdYbACeysu3pcN+xhSPwvPYtAF/u4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=ktk4c7LYWGvDLddpahZEgMQXNUvceO0g1jg5vp64HyQ6Ax+JzX2oyV0HmVdp/tW3U2lF1EWHLLxqog2622i/34b3u1VagPO5cyl2rqUwACHCzvnue9OPCkqLmN1gFRVFSvvyuQQZIt23eDibts+qiFZoG1ckoFgC3hhNAN7d3qk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=askoPFk3; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PCoRUC9r"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44C7vwRB011598;
-	Sun, 12 May 2024 08:29:03 GMT
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="askoPFk3"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44C7l93p030917;
+	Sun, 12 May 2024 08:35:36 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	from:to:cc:subject:date:message-id:in-reply-to:references
-	:mime-version:content-transfer-encoding; s=qcppdkim1; bh=eL7bW++
-	5CWoS+QQmfykvPdZvCJHM3dVl0TwQFGuatnI=; b=PCoRUC9rDn9pdXsRivZJESz
-	U9tC0HCV1UEe0wSIJ3YcHIzhGLK7MgOqB+IbBTdbqaG10fG0um6yYDS3VSePDGbT
-	6bBW7FFD6+5pdz3JAuirNWY84cEgzL/OCeRxxfe22e7dn3HPG8TwglYnQ7sZ6VCg
-	st0UdAkMW5JNEBO4pYhCUz736ZqFwvnLggln/guaWFU8S8kZWXXKLUQYLK/y5cR6
-	2mqPK2YiDIDMpUKCXW3d6dUuBzox6KwyCwYr1juRXbpTouNkkapzimEiPoq/+fv2
-	b+6ybdb0BB49WeMf1b7TNRinMPTdb8MlbRkljlaAMR5zyakGjoAENkhHZuyszoA=
-	=
-Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y1y9m9m8g-1
+	message-id:date:mime-version:subject:to:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	qcppdkim1; bh=Fofzy2llsdid6StBXTMQNjdLNqsuy2vO0XIxoDRwRQU=; b=as
+	koPFk3XB0DgMlPA3842tl2FyFadbf596uEyEaiLHR5ngGr/aASQZKrCFs05ftQ+e
+	KzbPe9I2HsPbKoR+VOZ5yDNGNFjCGkvNdmlAWsxU4aZEdC879A3sck6vU4PM+1Oi
+	0tYGF/aC0AtV1AxkrnNl3pXQuaMMvwlrQof7OlQasOhZroN5/XGMwyxMuFI8P1eT
+	uAMqk4SYI8pSTIjk2MD70BEpH+vTPzsu2rHYWkd+1/vd3YCIYQtjAJM3Z3Nx4RsM
+	vQMk08W4oeBwGZuf7jmC+swHPCj3mU5l/a6ZIZXZHguU8mq8CQcb25ZeXaTuUCm5
+	eYpPg9NlT3UmjjCh9ukA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y20rt9gyw-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 12 May 2024 08:29:02 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTP id 44C8PiqE005100;
-	Sun, 12 May 2024 08:28:59 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 3y21rkna3j-1
+	Sun, 12 May 2024 08:35:35 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44C8ZY6A015767
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 12 May 2024 08:28:59 +0000
-Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44C8SxVK009762;
-	Sun, 12 May 2024 08:28:59 GMT
-Received: from hu-devc-blr-u22-a.qualcomm.com (hu-devipriy-blr.qualcomm.com [10.131.37.37])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 44C8SwpM009757
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 12 May 2024 08:28:59 +0000
-Received: by hu-devc-blr-u22-a.qualcomm.com (Postfix, from userid 4059087)
-	id 1C47A4198A; Sun, 12 May 2024 13:58:58 +0530 (+0530)
-From: devi priya <quic_devipriy@quicinc.com>
-To: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
-        konrad.dybcio@linaro.org, mturquette@baylibre.com, sboyd@kernel.org,
-        manivannan.sadhasivam@linaro.org, linux-arm-msm@vger.kernel.org,
-        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Cc: quic_devipriy@quicinc.com
-Subject: [PATCH V5 4/6] arm64: dts: qcom: ipq9574: Add PCIe PHYs and controller nodes
-Date: Sun, 12 May 2024 13:58:56 +0530
-Message-Id: <20240512082858.1806694-5-quic_devipriy@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240512082858.1806694-1-quic_devipriy@quicinc.com>
-References: <20240512082858.1806694-1-quic_devipriy@quicinc.com>
+	Sun, 12 May 2024 08:35:34 GMT
+Received: from [10.216.17.219] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 12 May
+ 2024 01:35:26 -0700
+Message-ID: <d283bf55-8b7b-4873-b2e3-aade4231dc78@quicinc.com>
+Date: Sun, 12 May 2024 14:05:18 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 RESEND 0/8] ipq9574: Enable PCI-Express support
+To: <mr.nuke.me@gmail.com>, Bjorn Andersson <andersson@kernel.org>,
+        Konrad
+ Dybcio <konrad.dybcio@linaro.org>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
+        Rob Herring
+	<robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Vinod Koul
+	<vkoul@kernel.org>,
+        Kishon Vijay Abraham I <kishon@kernel.org>,
+        Michael
+ Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <linux-clk@vger.kernel.org>
+References: <20240501042847.1545145-1-mr.nuke.me@gmail.com>
+ <569087fe-e675-41a4-b975-2d01d95b6d3c@quicinc.com>
+ <c3f99ece-7f66-4c6f-a262-4d8894154ae9@gmail.com>
+Content-Language: en-US
+From: Devi Priya <quic_devipriy@quicinc.com>
+In-Reply-To: <c3f99ece-7f66-4c6f-a262-4d8894154ae9@gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: DFxju643ej2s4xi7k5_j69ck04fJBPbI
-X-Proofpoint-ORIG-GUID: DFxju643ej2s4xi7k5_j69ck04fJBPbI
+X-Proofpoint-ORIG-GUID: aATPM805tWjekuvXtQyCUttm-CIsjzFz
+X-Proofpoint-GUID: aATPM805tWjekuvXtQyCUttm-CIsjzFz
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
  definitions=2024-05-12_05,2024-05-10_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 adultscore=0
- priorityscore=1501 lowpriorityscore=0 spamscore=0 phishscore=0
- malwarescore=0 suspectscore=0 impostorscore=0 clxscore=1015 bulkscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405010000 definitions=main-2405120063
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ suspectscore=0 bulkscore=0 clxscore=1015 mlxscore=0 malwarescore=0
+ adultscore=0 spamscore=0 priorityscore=1501 phishscore=0 mlxlogscore=999
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405120064
 
-Add PCIe0, PCIe1, PCIe2, PCIe3 (and corresponding PHY) devices
-found on IPQ9574 platform. The PCIe0 & PCIe1 are 1-lane Gen3
-host whereas PCIe2 & PCIe3 are 2-lane Gen3 host.
 
-Signed-off-by: devi priya <quic_devipriy@quicinc.com>
----
- Changes in V5:
-	- Dropped anoc and snoc lane clocks from Phy nodes and enabled them
-	  via interconnect.
-	- Dropped msi-parent as it is handled via msi IRQ
 
- arch/arm64/boot/dts/qcom/ipq9574.dtsi | 365 +++++++++++++++++++++++++-
- 1 file changed, 361 insertions(+), 4 deletions(-)
+On 5/8/2024 10:40 PM, mr.nuke.me@gmail.com wrote:
+> On 5/8/24 1:16 AM, Devi Priya wrote:
+>>
+>>
+>> On 5/1/2024 9:58 AM, Alexandru Gagniuc wrote:
+>>> There are four PCIe ports on IPQ9574, pcie0 thru pcie3. This series
+>>> addresses pcie2, which is a gen3x2 port. The board I have only uses
+>>> pcie2, and that's the only one enabled in this series. pcie3 is added
+>>> as a special request, but is untested.
+>>>
+>>> I believe this makes sense as a monolithic series, as the individual
+>>> pieces are not that useful by themselves.
+>>
+>> Hi Alexandru,
+>>
+>> As Dmitry suggested, we are working on enabling the PCIe NOC clocks
+>> via Interconnect. We will be posting the PCIe series with
+>> Interconnect support [1] shortly.
+> 
+> I am generally very hesitant to depend on unmerged series, as this can 
+> cause undue delays. In this particular case, I considered that both 
+> series can continue to stay independent, with the ability to convert the 
+> PCIe users to the new clock scheme when the time is right.
+> 
+>> [1] - 
+>> https://lore.kernel.org/linux-arm-msm/20240430064214.2030013-1-quic_varada@quicinc.com/
+> 
+> What changes would be needed to this series to make use of this? How 
+> does one use the "interconnected" clocks?
+> 
+> Alex
+Hi Alex,
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-index 5b3e69379b1f..da6418c9d52b 100644
---- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-@@ -226,6 +226,52 @@ rpm_msg_ram: sram@60000 {
- 			reg = <0x00060000 0x6000>;
- 		};
- 
-+		pcie0_phy: phy@84000 {
-+			compatible = "qcom,ipq9574-qmp-gen3x1-pcie-phy";
-+			reg = <0x00084000 0x1000>;
-+
-+			clocks = <&gcc GCC_PCIE0_AUX_CLK>,
-+				 <&gcc GCC_PCIE0_AHB_CLK>,
-+				 <&gcc GCC_PCIE0_PIPE_CLK>;
-+			clock-names = "aux", "cfg_ahb", "pipe";
-+
-+			assigned-clocks = <&gcc GCC_PCIE0_AUX_CLK>;
-+			assigned-clock-rates = <20000000>;
-+
-+			resets = <&gcc GCC_PCIE0_PHY_BCR>,
-+				 <&gcc GCC_PCIE0PHY_PHY_BCR>;
-+			reset-names = "phy", "common";
-+
-+			#clock-cells = <0>;
-+			clock-output-names = "gcc_pcie0_pipe_clk_src";
-+
-+			#phy-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		pcie2_phy: phy@8c000 {
-+			compatible = "qcom,ipq9574-qmp-gen3x2-pcie-phy";
-+			reg = <0x0008c000 0x2000>;
-+
-+			clocks = <&gcc GCC_PCIE2_AUX_CLK>,
-+				 <&gcc GCC_PCIE2_AHB_CLK>,
-+				 <&gcc GCC_PCIE2_PIPE_CLK>;
-+			clock-names = "aux", "cfg_ahb", "pipe";
-+
-+			assigned-clocks = <&gcc GCC_PCIE2_AUX_CLK>;
-+			assigned-clock-rates = <20000000>;
-+
-+			resets = <&gcc GCC_PCIE2_PHY_BCR>,
-+				 <&gcc GCC_PCIE2PHY_PHY_BCR>;
-+			reset-names = "phy", "common";
-+
-+			#clock-cells = <0>;
-+			clock-output-names = "gcc_pcie2_pipe_clk_src";
-+
-+			#phy-cells = <0>;
-+			status = "disabled";
-+		};
-+
- 		rng: rng@e3000 {
- 			compatible = "qcom,prng-ee";
- 			reg = <0x000e3000 0x1000>;
-@@ -233,6 +279,52 @@ rng: rng@e3000 {
- 			clock-names = "core";
- 		};
- 
-+		pcie3_phy: phy@f4000 {
-+			compatible = "qcom,ipq9574-qmp-gen3x2-pcie-phy";
-+			reg = <0x000f4000 0x2000>;
-+
-+			clocks = <&gcc GCC_PCIE3_AUX_CLK>,
-+				 <&gcc GCC_PCIE3_AHB_CLK>,
-+				 <&gcc GCC_PCIE3_PIPE_CLK>;
-+			clock-names = "aux", "cfg_ahb", "pipe";
-+
-+			assigned-clocks = <&gcc GCC_PCIE3_AUX_CLK>;
-+			assigned-clock-rates = <20000000>;
-+
-+			resets = <&gcc GCC_PCIE3_PHY_BCR>,
-+				 <&gcc GCC_PCIE3PHY_PHY_BCR>;
-+			reset-names = "phy", "common";
-+
-+			#clock-cells = <0>;
-+			clock-output-names = "gcc_pcie3_pipe_clk_src";
-+
-+			#phy-cells = <0>;
-+			status = "disabled";
-+		};
-+
-+		pcie1_phy: phy@fc000 {
-+			compatible = "qcom,ipq9574-qmp-gen3x1-pcie-phy";
-+			reg = <0x000fc000 0x1000>;
-+
-+			clocks = <&gcc GCC_PCIE1_AUX_CLK>,
-+				 <&gcc GCC_PCIE1_AHB_CLK>,
-+				 <&gcc GCC_PCIE1_PIPE_CLK>;
-+			clock-names = "aux", "cfg_ahb", "pipe";
-+
-+			assigned-clocks = <&gcc GCC_PCIE1_AUX_CLK>;
-+			assigned-clock-rates = <20000000>;
-+
-+			resets = <&gcc GCC_PCIE1_PHY_BCR>,
-+				 <&gcc GCC_PCIE1PHY_PHY_BCR>;
-+			reset-names = "phy", "common";
-+
-+			#clock-cells = <0>;
-+			clock-output-names = "gcc_pcie1_pipe_clk_src";
-+
-+			#phy-cells = <0>;
-+			status = "disabled";
-+		};
-+
- 		qfprom: efuse@a4000 {
- 			compatible = "qcom,ipq9574-qfprom", "qcom,qfprom";
- 			reg = <0x000a4000 0x5a1>;
-@@ -299,10 +391,10 @@ gcc: clock-controller@1800000 {
- 			clocks = <&xo_board_clk>,
- 				 <&sleep_clk>,
- 				 <0>,
--				 <0>,
--				 <0>,
--				 <0>,
--				 <0>,
-+				 <&pcie0_phy>,
-+				 <&pcie1_phy>,
-+				 <&pcie2_phy>,
-+				 <&pcie3_phy>,
- 				 <0>;
- 			#clock-cells = <1>;
- 			#reset-cells = <1>;
-@@ -747,6 +839,271 @@ frame@b128000 {
- 				status = "disabled";
- 			};
- 		};
-+
-+		pcie1: pci@10000000 {
-+			compatible = "qcom,pcie-ipq9574";
-+			reg =  <0x10000000 0xf1d>,
-+			       <0x10000F20 0xa8>,
-+			       <0x10001000 0x1000>,
-+			       <0x000F8000 0x4000>,
-+			       <0x10100000 0x1000>;
-+			reg-names = "dbi", "elbi", "atu", "parf", "config";
-+			device_type = "pci";
-+			linux,pci-domain = <2>;
-+			bus-range = <0x00 0xff>;
-+			num-lanes = <1>;
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+
-+			ranges = <0x01000000 0x0 0x00000000 0x10200000 0x0 0x100000>,  /* I/O */
-+				 <0x02000000 0x0 0x10300000 0x10300000 0x0 0x7d00000>; /* MEM */
-+
-+			interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "msi";
-+			#interrupt-cells = <1>;
-+			interrupt-map-mask = <0 0 0 0x7>;
-+			interrupt-map = <0 0 0 1 &intc 0 0 35 IRQ_TYPE_LEVEL_HIGH>, /* int_a */
-+					<0 0 0 2 &intc 0 0 49 IRQ_TYPE_LEVEL_HIGH>, /* int_b */
-+					<0 0 0 3 &intc 0 0 84 IRQ_TYPE_LEVEL_HIGH>, /* int_c */
-+					<0 0 0 4 &intc 0 0 85 IRQ_TYPE_LEVEL_HIGH>; /* int_d */
-+
-+			/* clocks and clock-names are used to enable the clock in CBCR */
-+			clocks = <&gcc GCC_PCIE1_AHB_CLK>,
-+				 <&gcc GCC_PCIE1_AUX_CLK>,
-+				 <&gcc GCC_PCIE1_AXI_M_CLK>,
-+				 <&gcc GCC_PCIE1_AXI_S_CLK>,
-+				 <&gcc GCC_PCIE1_AXI_S_BRIDGE_CLK>,
-+				 <&gcc GCC_PCIE1_RCHNG_CLK>;
-+			clock-names = "ahb",
-+				      "aux",
-+				      "axi_m",
-+				      "axi_s",
-+				      "axi_bridge",
-+				      "rchng";
-+
-+			resets = <&gcc GCC_PCIE1_PIPE_ARES>,
-+				 <&gcc GCC_PCIE1_CORE_STICKY_ARES>,
-+				 <&gcc GCC_PCIE1_AXI_S_STICKY_ARES>,
-+				 <&gcc GCC_PCIE1_AXI_S_ARES>,
-+				 <&gcc GCC_PCIE1_AXI_M_STICKY_ARES>,
-+				 <&gcc GCC_PCIE1_AXI_M_ARES>,
-+				 <&gcc GCC_PCIE1_AUX_ARES>,
-+				 <&gcc GCC_PCIE1_AHB_ARES>;
-+			reset-names = "pipe",
-+				      "sticky",
-+				      "axi_s_sticky",
-+				      "axi_s",
-+				      "axi_m_sticky",
-+				      "axi_m",
-+				      "aux",
-+				      "ahb";
-+
-+			phys = <&pcie1_phy>;
-+			phy-names = "pciephy";
-+			interconnects = <&gcc MASTER_ANOC_PCIE1 &gcc SLAVE_ANOC_PCIE1>,
-+					<&gcc MASTER_SNOC_PCIE1 &gcc SLAVE_SNOC_PCIE1>;
-+			interconnect-names = "pcie-mem", "cpu-pcie";
-+			status = "disabled";
-+		};
-+
-+		pcie3: pci@18000000 {
-+			compatible = "qcom,pcie-ipq9574";
-+			reg =  <0x18000000 0xf1d>,
-+			       <0x18000F20 0xa8>,
-+			       <0x18001000 0x1000>,
-+			       <0x000F0000 0x4000>,
-+			       <0x18100000 0x1000>;
-+			reg-names = "dbi", "elbi", "atu", "parf", "config";
-+			device_type = "pci";
-+			linux,pci-domain = <4>;
-+			bus-range = <0x00 0xff>;
-+			num-lanes = <2>;
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+
-+			ranges = <0x01000000 0x0 0x00000000 0x18200000 0x0 0x100000>,  /* I/O */
-+				 <0x02000000 0x0 0x18300000 0x18300000 0x0 0x7d00000>; /* MEM */
-+
-+			interrupts = <GIC_SPI 221 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "msi";
-+			#interrupt-cells = <1>;
-+			interrupt-map-mask = <0 0 0 0x7>;
-+			interrupt-map = <0 0 0 1 &intc 0 0 189 IRQ_TYPE_LEVEL_HIGH>, /* int_a */
-+					<0 0 0 2 &intc 0 0 190 IRQ_TYPE_LEVEL_HIGH>, /* int_b */
-+					<0 0 0 3 &intc 0 0 191 IRQ_TYPE_LEVEL_HIGH>, /* int_c */
-+					<0 0 0 4 &intc 0 0 192 IRQ_TYPE_LEVEL_HIGH>; /* int_d */
-+
-+			/* clocks and clock-names are used to enable the clock in CBCR */
-+			clocks = <&gcc GCC_PCIE3_AHB_CLK>,
-+				 <&gcc GCC_PCIE3_AUX_CLK>,
-+				 <&gcc GCC_PCIE3_AXI_M_CLK>,
-+				 <&gcc GCC_PCIE3_AXI_S_CLK>,
-+				 <&gcc GCC_PCIE3_AXI_S_BRIDGE_CLK>,
-+				 <&gcc GCC_PCIE3_RCHNG_CLK>;
-+			clock-names = "ahb",
-+				      "aux",
-+				      "axi_m",
-+				      "axi_s",
-+				      "axi_bridge",
-+				      "rchng";
-+
-+			resets = <&gcc GCC_PCIE3_PIPE_ARES>,
-+				 <&gcc GCC_PCIE3_CORE_STICKY_ARES>,
-+				 <&gcc GCC_PCIE3_AXI_S_STICKY_ARES>,
-+				 <&gcc GCC_PCIE3_AXI_S_ARES>,
-+				 <&gcc GCC_PCIE3_AXI_M_STICKY_ARES>,
-+				 <&gcc GCC_PCIE3_AXI_M_ARES>,
-+				 <&gcc GCC_PCIE3_AUX_ARES>,
-+				 <&gcc GCC_PCIE3_AHB_ARES>;
-+			reset-names = "pipe",
-+				      "sticky",
-+				      "axi_s_sticky",
-+				      "axi_s",
-+				      "axi_m_sticky",
-+				      "axi_m",
-+				      "aux",
-+				      "ahb";
-+
-+			phys = <&pcie3_phy>;
-+			phy-names = "pciephy";
-+			interconnects = <&gcc MASTER_ANOC_PCIE3 &gcc SLAVE_ANOC_PCIE3>,
-+					<&gcc MASTER_SNOC_PCIE3 &gcc SLAVE_SNOC_PCIE3>;
-+			interconnect-names = "pcie-mem", "cpu-pcie";
-+			status = "disabled";
-+		};
-+
-+		pcie2: pci@20000000 {
-+			compatible = "qcom,pcie-ipq9574";
-+			reg =  <0x20000000 0xf1d>,
-+			       <0x20000F20 0xa8>,
-+			       <0x20001000 0x1000>,
-+			       <0x00088000 0x4000>,
-+			       <0x20100000 0x1000>;
-+			reg-names = "dbi", "elbi", "atu", "parf", "config";
-+			device_type = "pci";
-+			linux,pci-domain = <3>;
-+			bus-range = <0x00 0xff>;
-+			num-lanes = <2>;
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+
-+			ranges = <0x01000000 0x0 0x00000000 0x20200000 0x0 0x100000>,  /* I/O */
-+				 <0x02000000 0x0 0x20300000 0x20300000 0x0 0x7d00000>; /* MEM */
-+
-+			interrupts = <GIC_SPI 126 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "msi";
-+			#interrupt-cells = <1>;
-+			interrupt-map-mask = <0 0 0 0x7>;
-+			interrupt-map = <0 0 0 1 &intc 0 0 164 IRQ_TYPE_LEVEL_HIGH>, /* int_a */
-+					<0 0 0 2 &intc 0 0 165 IRQ_TYPE_LEVEL_HIGH>, /* int_b */
-+					<0 0 0 3 &intc 0 0 186 IRQ_TYPE_LEVEL_HIGH>, /* int_c */
-+					<0 0 0 4 &intc 0 0 187 IRQ_TYPE_LEVEL_HIGH>; /* int_d */
-+
-+			/* clocks and clock-names are used to enable the clock in CBCR */
-+			clocks = <&gcc GCC_PCIE2_AHB_CLK>,
-+				 <&gcc GCC_PCIE2_AUX_CLK>,
-+				 <&gcc GCC_PCIE2_AXI_M_CLK>,
-+				 <&gcc GCC_PCIE2_AXI_S_CLK>,
-+				 <&gcc GCC_PCIE2_AXI_S_BRIDGE_CLK>,
-+				 <&gcc GCC_PCIE2_RCHNG_CLK>;
-+			clock-names = "ahb",
-+				      "aux",
-+				      "axi_m",
-+				      "axi_s",
-+				      "axi_bridge",
-+				      "rchng";
-+
-+			resets = <&gcc GCC_PCIE2_PIPE_ARES>,
-+				 <&gcc GCC_PCIE2_CORE_STICKY_ARES>,
-+				 <&gcc GCC_PCIE2_AXI_S_STICKY_ARES>,
-+				 <&gcc GCC_PCIE2_AXI_S_ARES>,
-+				 <&gcc GCC_PCIE2_AXI_M_STICKY_ARES>,
-+				 <&gcc GCC_PCIE2_AXI_M_ARES>,
-+				 <&gcc GCC_PCIE2_AUX_ARES>,
-+				 <&gcc GCC_PCIE2_AHB_ARES>;
-+			reset-names = "pipe",
-+				      "sticky",
-+				      "axi_s_sticky",
-+				      "axi_s",
-+				      "axi_m_sticky",
-+				      "axi_m",
-+				      "aux",
-+				      "ahb";
-+
-+			phys = <&pcie2_phy>;
-+			phy-names = "pciephy";
-+			interconnects = <&gcc MASTER_ANOC_PCIE2 &gcc SLAVE_ANOC_PCIE2>,
-+					<&gcc MASTER_SNOC_PCIE2 &gcc SLAVE_SNOC_PCIE2>;
-+			interconnect-names = "pcie-mem", "cpu-pcie";
-+			status = "disabled";
-+		};
-+
-+		pcie0: pci@28000000 {
-+			compatible = "qcom,pcie-ipq9574";
-+			reg =  <0x28000000 0xf1d>,
-+			       <0x28000F20 0xa8>,
-+			       <0x28001000 0x1000>,
-+			       <0x00080000 0x4000>,
-+			       <0x28100000 0x1000>;
-+			reg-names = "dbi", "elbi", "atu", "parf", "config";
-+			device_type = "pci";
-+			linux,pci-domain = <1>;
-+			bus-range = <0x00 0xff>;
-+			num-lanes = <1>;
-+			#address-cells = <3>;
-+			#size-cells = <2>;
-+
-+			ranges = <0x01000000 0x0 0x00000000 0x28200000 0x0 0x100000>,  /* I/O */
-+				 <0x02000000 0x0 0x28300000 0x28300000 0x0 0x7d00000>; /* MEM */
-+
-+			interrupts = <GIC_SPI 52 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "msi";
-+			#interrupt-cells = <1>;
-+			interrupt-map-mask = <0 0 0 0x7>;
-+			interrupt-map = <0 0 0 1 &intc 0 0 75 IRQ_TYPE_LEVEL_HIGH>, /* int_a */
-+					<0 0 0 2 &intc 0 0 78 IRQ_TYPE_LEVEL_HIGH>, /* int_b */
-+					<0 0 0 3 &intc 0 0 79 IRQ_TYPE_LEVEL_HIGH>, /* int_c */
-+					<0 0 0 4 &intc 0 0 83 IRQ_TYPE_LEVEL_HIGH>; /* int_d */
-+
-+			/* clocks and clock-names are used to enable the clock in CBCR */
-+			clocks = <&gcc GCC_PCIE0_AHB_CLK>,
-+				 <&gcc GCC_PCIE0_AUX_CLK>,
-+				 <&gcc GCC_PCIE0_AXI_M_CLK>,
-+				 <&gcc GCC_PCIE0_AXI_S_CLK>,
-+				 <&gcc GCC_PCIE0_AXI_S_BRIDGE_CLK>,
-+				 <&gcc GCC_PCIE0_RCHNG_CLK>;
-+			clock-names = "ahb",
-+				      "aux",
-+				      "axi_m",
-+				      "axi_s",
-+				      "axi_bridge",
-+				      "rchng";
-+
-+			resets = <&gcc GCC_PCIE0_PIPE_ARES>,
-+				 <&gcc GCC_PCIE0_CORE_STICKY_ARES>,
-+				 <&gcc GCC_PCIE0_AXI_S_STICKY_ARES>,
-+				 <&gcc GCC_PCIE0_AXI_S_ARES>,
-+				 <&gcc GCC_PCIE0_AXI_M_STICKY_ARES>,
-+				 <&gcc GCC_PCIE0_AXI_M_ARES>,
-+				 <&gcc GCC_PCIE0_AUX_ARES>,
-+				 <&gcc GCC_PCIE0_AHB_ARES>;
-+			reset-names = "pipe",
-+				      "sticky",
-+				      "axi_s_sticky",
-+				      "axi_s",
-+				      "axi_m_sticky",
-+				      "axi_m",
-+				      "aux",
-+				      "ahb";
-+
-+			phys = <&pcie0_phy>;
-+			phy-names = "pciephy";
-+			interconnects = <&gcc MASTER_ANOC_PCIE0 &gcc SLAVE_ANOC_PCIE0>,
-+					<&gcc MASTER_SNOC_PCIE0 &gcc SLAVE_SNOC_PCIE0>;
-+			interconnect-names = "pcie-mem", "cpu-pcie";
-+			status = "disabled";
-+		};
-+
- 	};
- 
- 	thermal-zones {
--- 
-2.34.1
+Please refer to the latest PCIe series which adds support for enabling
+the NoC clocks via interconnect.
 
+https://lore.kernel.org/linux-arm-msm/20240512082858.1806694-1-quic_devipriy@quicinc.com/
+
+Thanks & Regards,
+S.Devi Priya
+> 
+>> Thanks,
+>> S.Devi Priya
+>>>
+>>> In v2, I've had some issues regarding the dt schema checks. For
+>>> transparency, I used the following test invocations to test:
+>>>
+>>>        make dt_binding_check 
+>>> DT_SCHEMA_FILES=qcom,pcie.yaml:qcom,ipq8074-qmp-pcie-phy.yaml
+>>>        make dtbs_check 
+>>> DT_SCHEMA_FILES=qcom,pcie.yaml:qcom,ipq8074-qmp-pcie-phy.yaml
+>>>
+>>> Changes since v3:
+>>>   - "const"ify .hw.init fields for the PCIE pipe clocks
+>>>   - Used pciephy_v5_regs_layout instead of v4 in phy-qcom-qmp-pcie.c
+>>>   - Included Manivannan's patch for qcom-pcie.c clocks
+>>>   - Dropped redundant comments in "ranges" and "interrupt-map" of pcie2.
+>>>   - Added pcie3 and pcie3_phy dts nodes
+>>>   - Moved snoc and anoc clocks to PCIe controller from PHY
+>>>
+>>> Changes since v2:
+>>>   - reworked resets in qcom,pcie.yaml to resolve dt schema errors
+>>>   - constrained "reg" in qcom,pcie.yaml
+>>>   - reworked min/max intems in qcom,ipq8074-qmp-pcie-phy.yaml
+>>>   - dropped msi-parent for pcie node, as it is handled by "msi" IRQ
+>>>
+>>> Changes since v1:
+>>>   - updated new tables in phy-qcom-qmp-pcie.c to use lowercase hex 
+>>> numbers
+>>>   - reorganized qcom,ipq8074-qmp-pcie-phy.yaml to use a single list 
+>>> of clocks
+>>>   - reorganized qcom,pcie.yaml to include clocks+resets per compatible
+>>>   - Renamed "pcie2_qmp_phy" label to "pcie2_phy"
+>>>   - moved "ranges" property of pcie@20000000 higher up
+>>>
+>>> Alexandru Gagniuc (7):
+>>>    dt-bindings: clock: Add PCIe pipe related clocks for IPQ9574
+>>>    clk: qcom: gcc-ipq9574: Add PCIe pipe clocks
+>>>    dt-bindings: PCI: qcom: Add IPQ9574 PCIe controller
+>>>    PCI: qcom: Add support for IPQ9574
+>>>    dt-bindings: phy: qcom,ipq8074-qmp-pcie: add ipq9574 gen3x2 PHY
+>>>    phy: qcom-qmp-pcie: add support for ipq9574 gen3x2 PHY
+>>>    arm64: dts: qcom: ipq9574: add PCIe2 and PCIe3 nodes
+>>>
+>>> Manivannan Sadhasivam (1):
+>>>    PCI: qcom: Switch to devm_clk_bulk_get_all() API to get the clocks
+>>>      from Devicetree
+>>>
+>>>   .../devicetree/bindings/pci/qcom,pcie.yaml    |  37 ++++
+>>>   .../phy/qcom,ipq8074-qmp-pcie-phy.yaml        |   1 +
+>>>   arch/arm64/boot/dts/qcom/ipq9574.dtsi         | 178 +++++++++++++++++-
+>>>   drivers/clk/qcom/gcc-ipq9574.c                |  76 ++++++++
+>>>   drivers/pci/controller/dwc/pcie-qcom.c        | 164 +++-------------
+>>>   drivers/phy/qualcomm/phy-qcom-qmp-pcie.c      | 136 ++++++++++++-
+>>>   .../phy/qualcomm/phy-qcom-qmp-pcs-pcie-v5.h   |  14 ++
+>>>   include/dt-bindings/clock/qcom,ipq9574-gcc.h  |   4 +
+>>>   8 files changed, 469 insertions(+), 141 deletions(-)
+>>>
