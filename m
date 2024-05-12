@@ -1,123 +1,115 @@
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5985C1B966
-	for <linux-clk@vger.kernel.org>; Sat, 11 May 2024 18:47:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E07112E71;
+	Sun, 12 May 2024 08:29:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715453234; cv=none; b=mA6AQdbHx2tQh31tP49uejO5NO7WIXuuMWPdzCS6SYO5jDtYD2Ovt6nwh2wVC13qH5HesduRPk4zdFDozWkU41zTTY/d/977tMAgcGQFVgXL81KjaPRPtrE8jhBDbw5AjFIcp78ZgZZuTVTR8MUtJoQ7fi7zKvITGO8VTaNrw/M=
+	t=1715502564; cv=none; b=OWTqSgwo+DngU/3T3E0tNne7dTxTj1zQCcoR7tZlNOLfkaupZcwKpode9y0ECv4KC+mdW+vaGKBb69JVeT7dIbeZX8XGde8EHZRTKvBczN+RDHpRgvEWZ9x+wO88oGHXjv1XhsJiiauzxrTO2YFiv/TJUoA9N8b6Fxxdf+Y6AsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715453234; c=relaxed/simple;
-	bh=RkYbKEtD1/5EPSQ08qO6Axb20Vidm+kcYe5zuMyRkLk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SLpZUgGfQmoVyj2H1Olj7lyauZv+25u/lzQTOSoaE1nxmOUBX5V/BfgaOatSrgxcqsIb+YAkCKTEBst7JSxUYm1IR4YwKunWPnmcPNx/hCJ5SVfP9FYooW2sfzMzmK7/8+aUUHwBC5kE48Z7dyiQHIXSghoJaahGCSNr14B4bpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=NmqUghk/; arc=none smtp.client-ip=209.85.166.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+	s=arc-20240116; t=1715502564; c=relaxed/simple;
+	bh=hkRcLNpi4Lp6ijSDG6LJlaGMQFI9QGMsz7AEzoplLvQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=QY0yk4pvD6lOEvrqsrWt8pwIGj9y3YpjCUp1rz70qW5yPYEreAh3ogsESD2L1mEBkMfMZOD1fmFtClFS1cN9urQsdzSBv8hEpkn1VSs8E5Frwagw4GwhoOOVLbZqpR4eR357rHSQPbqkt5BXKA4fuyrRAa0LW8Q/zUcn+Wa5Ekk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fwxA5AuE; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="NmqUghk/"
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-36c826d6edeso14536225ab.0
-        for <linux-clk@vger.kernel.org>; Sat, 11 May 2024 11:47:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1715453232; x=1716058032; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aOG++vk1i0/Hd88Qn0YDT0yQo3hdTXW2k/18QZW7zOU=;
-        b=NmqUghk/7lRhkouroZ7sZBnZbcrrkbiCwfhBvADMrhUQ3t3WOF/5Ka5G+iioja/kP3
-         byE/ThF/ZpjVVseti9VkVF8/k9Jvlc+BMf/toU8m4sKKyWE5JG7OXJ/xGb46khB63idl
-         oxzjtcU9xlWV+DcAxNKhqfEfcP5KgIZaPAS17S076KGBzGafhPKPLP0tuorPFJpTAavj
-         3g7wMFltckS/BplnnJ9dS5tHb+iMj7+PlAr0/Vz27SXRivA8gjCIEG7pzMyfNS6obzhx
-         BicZyT+b/pxUVVofCNmrJ015C0f/dvt0GUCfbtcERxOyW/QO2WLoP53VI7RAMAYtB7Cf
-         EB0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715453232; x=1716058032;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aOG++vk1i0/Hd88Qn0YDT0yQo3hdTXW2k/18QZW7zOU=;
-        b=r+QA9wzxP9jKGJLfz3/PvosoJdmQsxTKdTOmybCix3WdhX2GfJXTMQ7WGVDcSd99cN
-         b9aA711J13lt5xGwdGPxYcyvNl6gBckJ0XifVk1XIqcfCPYt4RjaRT8+mPpELq4FnRqO
-         vKt8x10B1ZTOpe7jZmDhamn9yuYpDpKwdVK6nPuwz5GtGRdtgPCtipfCrsZ+z1CBT8c7
-         7dOEKb6yoZhqyidXszqbo87Z4YBJL+g1T52cxSWgEdc4s8IZYE4cizMzfW288ekQmMHY
-         yxBHYxQCXAWdh9ScR4c3netP2CbDPz7p0n8IioQLsvDoqaw8tzcIr9vkeukjCFnj4HjE
-         lOnw==
-X-Forwarded-Encrypted: i=1; AJvYcCWgU6pYEsfeqT6ObCZSGJFajIc/8Hgqe2a4ulFyV1fnkdcePSqp5dh+HQ3m3kxogV9DuBIXvO4a7bFa8px8rr+XGy2JGF3nc7R/
-X-Gm-Message-State: AOJu0YysHbGjFQFjZ57y/+K4JxrM6qBujksPc/8YHTrdLajOKEl1iEnj
-	U4BeaUhGy+BKIbvburgcj64DlMnZvAUB8p307eo58RsifLlELqkM0ioY2wdjCmU=
-X-Google-Smtp-Source: AGHT+IFupAf3+PzUtciCUtAMd59M9Bh2uNrFENRRy+veiFORUG52P2gIZyNwUtsiccta6zle1s1HIQ==
-X-Received: by 2002:a92:cda1:0:b0:36c:c6d:54ba with SMTP id e9e14a558f8ab-36cc1487041mr73054875ab.9.1715453232512;
-        Sat, 11 May 2024 11:47:12 -0700 (PDT)
-Received: from [100.64.0.1] ([170.85.6.179])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4893700de56sm1575232173.22.2024.05.11.11.47.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 11 May 2024 11:47:11 -0700 (PDT)
-Message-ID: <b970012b-c078-4c8d-995d-e2789afa3e4c@sifive.com>
-Date: Sat, 11 May 2024 13:47:08 -0500
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fwxA5AuE"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44C6wAgA017175;
+	Sun, 12 May 2024 08:29:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	from:to:cc:subject:date:message-id:in-reply-to:references
+	:mime-version:content-transfer-encoding; s=qcppdkim1; bh=9grXqED
+	j9b6Vod/joeuSG+eZOG7oD6vV6i9bV40dO2A=; b=fwxA5AuEAJPXh6Y8OSUwGEv
+	D1wQYSxB0MN9vTsoiZOUtM9P38dFChYs4JamBu+W0VUz1ydU7cd9KGZ7JhvjFqrU
+	Ggvy12oxuPJSqVFl8vyz/5yLVWredxA9sTX3tLbBu30MUZ6j6EQSqwbL8qTD9qDj
+	7y7gczKWiIGfD+VtVNpFOmTjBBFvQFCMG0+CZ3zipbHpg8dCQwoC+fEDt5hPT+6Q
+	6yaY5jFgBZ4A9VRvaFcFNuzYyLCrtywAYchVBuvAHrtn/fWGaMIOKgXEOgQ5GEwi
+	3o03RRVsvtmy4xbfT/xT0Ricub2kBZDRy8nI+RYH5Y1ws+91KgMXFC/DUe0f17g=
+	=
+Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y208vshdh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 12 May 2024 08:29:02 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTP id 44C8Sxn0009791;
+	Sun, 12 May 2024 08:28:59 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 3y21rkna3f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 12 May 2024 08:28:59 +0000
+Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 44C8SxbD009761;
+	Sun, 12 May 2024 08:28:59 GMT
+Received: from hu-devc-blr-u22-a.qualcomm.com (hu-devipriy-blr.qualcomm.com [10.131.37.37])
+	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 44C8Sw6i009755
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 12 May 2024 08:28:59 +0000
+Received: by hu-devc-blr-u22-a.qualcomm.com (Postfix, from userid 4059087)
+	id 1065A41042; Sun, 12 May 2024 13:58:58 +0530 (+0530)
+From: devi priya <quic_devipriy@quicinc.com>
+To: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
+        konrad.dybcio@linaro.org, mturquette@baylibre.com, sboyd@kernel.org,
+        manivannan.sadhasivam@linaro.org, linux-arm-msm@vger.kernel.org,
+        linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: quic_devipriy@quicinc.com
+Subject: [PATCH V5 1/6] Add PCIe pipe clock definitions for IPQ9574 SoC.
+Date: Sun, 12 May 2024 13:58:53 +0530
+Message-Id: <20240512082858.1806694-2-quic_devipriy@quicinc.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240512082858.1806694-1-quic_devipriy@quicinc.com>
+References: <20240512082858.1806694-1-quic_devipriy@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/2] riscv: dts: starfive: visionfive-2: Fix lower rate
- of CPUfreq by setting PLL0 rate to 1.5GHz
-To: Xingyu Wu <xingyu.wu@starfivetech.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Conor Dooley <conor@kernel.org>,
- Emil Renner Berthing <emil.renner.berthing@canonical.com>,
- Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Hal Feng <hal.feng@starfivetech.com>, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
- devicetree@vger.kernel.org
-References: <20240507065319.274976-1-xingyu.wu@starfivetech.com>
- <20240507065319.274976-3-xingyu.wu@starfivetech.com>
-Content-Language: en-US
-From: Samuel Holland <samuel.holland@sifive.com>
-In-Reply-To: <20240507065319.274976-3-xingyu.wu@starfivetech.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: nV2XN6COcDa1D59cfnw-ocsatfbB5Nkw
+X-Proofpoint-GUID: nV2XN6COcDa1D59cfnw-ocsatfbB5Nkw
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-12_05,2024-05-10_02,2023-05-22_02
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
+ lowpriorityscore=0 phishscore=0 impostorscore=0 mlxlogscore=999
+ clxscore=1015 malwarescore=0 suspectscore=0 priorityscore=1501 spamscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405010000 definitions=main-2405120061
 
-On 2024-05-07 1:53 AM, Xingyu Wu wrote:
-> CPUfreq supports 4 cpu frequency loads on 375/500/750/1500MHz.
-> But now PLL0 rate is 1GHz and the cpu frequency loads become
-> 333/500/500/1000MHz in fact.
-> 
-> The PLL0 rate should be default set to 1.5GHz and set the
-> cpu_core rate to 500MHz in safe.
+Acked-by: Stephen Boyd <sboyd@kernel.org>
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
+Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
+Signed-off-by: devi priya <quic_devipriy@quicinc.com>
+---
+ Changes in V5:
+	- No changes
 
-Can this be accomplished by instead setting the CLK_SET_RATE_PARENT flag on the
-CPU_CORE clock? That way PLL0 is automatically set when cpufreq tries to change
-the CPU core frequency. Then there is no DT change and no compatibility issue.
+ include/dt-bindings/clock/qcom,ipq9574-gcc.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Regards,
-Samuel
-
-> Fixes: e2c510d6d630 ("riscv: dts: starfive: Add cpu scaling for JH7110 SoC")
-> Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
-> ---
->  .../boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi     | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
-> index 45b58b6f3df8..28981b267de4 100644
-> --- a/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
-> +++ b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
-> @@ -390,6 +390,12 @@ spi_dev0: spi@0 {
->  	};
->  };
->  
-> +&syscrg {
-> +	assigned-clocks = <&syscrg JH7110_SYSCLK_CPU_CORE>,
-> +			  <&pllclk JH7110_PLLCLK_PLL0_OUT>;
-> +	assigned-clock-rates = <500000000>, <1500000000>;
-> +};
-> +
->  &sysgpio {
->  	i2c0_pins: i2c0-0 {
->  		i2c-pins {
+diff --git a/include/dt-bindings/clock/qcom,ipq9574-gcc.h b/include/dt-bindings/clock/qcom,ipq9574-gcc.h
+index 08fd3a37acaa..52123c5a09fa 100644
+--- a/include/dt-bindings/clock/qcom,ipq9574-gcc.h
++++ b/include/dt-bindings/clock/qcom,ipq9574-gcc.h
+@@ -216,4 +216,8 @@
+ #define GCC_CRYPTO_AHB_CLK				207
+ #define GCC_USB0_PIPE_CLK				208
+ #define GCC_USB0_SLEEP_CLK				209
++#define GCC_PCIE0_PIPE_CLK				210
++#define GCC_PCIE1_PIPE_CLK				211
++#define GCC_PCIE2_PIPE_CLK				212
++#define GCC_PCIE3_PIPE_CLK				213
+ #endif
+-- 
+2.34.1
 
