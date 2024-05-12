@@ -1,48 +1,46 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B54CA40;
-	Sun, 12 May 2024 08:35:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA855102E;
+	Sun, 12 May 2024 19:07:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715502954; cv=none; b=YVUlREDDeiUQmf1Ojxj/GmOgtUwQEbM9JbzlQBBY4oqEZVasY80lD8NV01H3M9VqZGWe+6CYUCM9MvabeHmTvCBQLflxXuzpPiIPset2+K6kxFdGJ9okzYnYscOENdmlEhyQG/PDVXnZD4nPxity9OqsIvV43O2wiEI0HSjiPI8=
+	t=1715540855; cv=none; b=q5Cj0KuEQLp4NM8qgO1O2VZCCfeDFstTWU5FU4b2PeyDa318X/HvTxptUYKOLdJ9RM6rlwDaAYz+Ab6vafOst608+8bhYx5jnGHHaMsqb5acDP4aKhPA/TIhNDxAv5Ndu9/Z+C8pkOxDHM887XsG5IUGB/lJQgv5Z1qDXt7Bq2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715502954; c=relaxed/simple;
-	bh=AYAOGX2iykH9oRAdYbACeysu3pcN+xhSPwvPYtAF/u4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ktk4c7LYWGvDLddpahZEgMQXNUvceO0g1jg5vp64HyQ6Ax+JzX2oyV0HmVdp/tW3U2lF1EWHLLxqog2622i/34b3u1VagPO5cyl2rqUwACHCzvnue9OPCkqLmN1gFRVFSvvyuQQZIt23eDibts+qiFZoG1ckoFgC3hhNAN7d3qk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=askoPFk3; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1715540855; c=relaxed/simple;
+	bh=to6jmO+EBhSNRP4yMtY2wwECbwS2E9PNoQd42aJjGrg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=VkCXVYuxQViRc5IW0eaey3juM5koLdTJza+3bz88m7UAAsM7W5Z3vaRlcFgGqPstmIUiKFoinOick9MCuCjzwaZVCaP7KaREr6ZKxRF8zreBPTBDYaF3TNX6OPXF1ALS9VYNzDAts2vO4bj+VFPiNaMoC+5PQjTqA8uCc1NPifo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=k6xk3aN1; arc=none smtp.client-ip=45.89.224.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sberdevices.ru
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="askoPFk3"
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44C7l93p030917;
-	Sun, 12 May 2024 08:35:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	message-id:date:mime-version:subject:to:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	qcppdkim1; bh=Fofzy2llsdid6StBXTMQNjdLNqsuy2vO0XIxoDRwRQU=; b=as
-	koPFk3XB0DgMlPA3842tl2FyFadbf596uEyEaiLHR5ngGr/aASQZKrCFs05ftQ+e
-	KzbPe9I2HsPbKoR+VOZ5yDNGNFjCGkvNdmlAWsxU4aZEdC879A3sck6vU4PM+1Oi
-	0tYGF/aC0AtV1AxkrnNl3pXQuaMMvwlrQof7OlQasOhZroN5/XGMwyxMuFI8P1eT
-	uAMqk4SYI8pSTIjk2MD70BEpH+vTPzsu2rHYWkd+1/vd3YCIYQtjAJM3Z3Nx4RsM
-	vQMk08W4oeBwGZuf7jmC+swHPCj3mU5l/a6ZIZXZHguU8mq8CQcb25ZeXaTuUCm5
-	eYpPg9NlT3UmjjCh9ukA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y20rt9gyw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 12 May 2024 08:35:35 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44C8ZY6A015767
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 12 May 2024 08:35:34 GMT
-Received: from [10.216.17.219] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 12 May
- 2024 01:35:26 -0700
-Message-ID: <d283bf55-8b7b-4873-b2e3-aade4231dc78@quicinc.com>
-Date: Sun, 12 May 2024 14:05:18 +0530
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="k6xk3aN1"
+Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 84E37120003;
+	Sun, 12 May 2024 22:07:25 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 84E37120003
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1715540845;
+	bh=2rLH5TzP+km5UCLaOhbG3t3/0duKaiLCAy3iw53i790=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
+	b=k6xk3aN1sH9YnprLNrA0TrGzy+pVwxtShIrPAHyKUyGn5V7eBIURawthug715H4O8
+	 8bzbaLRl3JXui/ROukePFD3A/QHqUOIYGwhLbogg+gXGZ//ngX4gkghaWjP7YlONAr
+	 1FB+O2eSxFUGUfbZl8D2oTdVkAlEMTrKzJZK/drYvPP8YWDRPiOAVfMGbLyLPnj/cS
+	 TgnSI00sivc8BHlr/+L0uVgbTCQmc9R8xYJ0/2j67w7RwN/kB4pZ1jKOE4wYHbnxE2
+	 I2ptCygTTK9xfyNm7rpXTjV7BL+ve0n6qsSLP5rq8a1QbDLR8lMq6MIHVLlT8pvu5Y
+	 yphCnkiyFOg0A==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Sun, 12 May 2024 22:07:25 +0300 (MSK)
+Received: from [172.28.66.92] (100.64.160.123) by
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Sun, 12 May 2024 22:07:24 +0300
+Message-ID: <3fa610c2-1f69-41d4-b06a-035980483b3c@salutedevices.com>
+Date: Sun, 12 May 2024 22:06:23 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,146 +48,82 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 RESEND 0/8] ipq9574: Enable PCI-Express support
-To: <mr.nuke.me@gmail.com>, Bjorn Andersson <andersson@kernel.org>,
-        Konrad
- Dybcio <konrad.dybcio@linaro.org>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
-        Rob Herring
-	<robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Vinod Koul
-	<vkoul@kernel.org>,
-        Kishon Vijay Abraham I <kishon@kernel.org>,
-        Michael
- Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>, <linux-clk@vger.kernel.org>
-References: <20240501042847.1545145-1-mr.nuke.me@gmail.com>
- <569087fe-e675-41a4-b975-2d01d95b6d3c@quicinc.com>
- <c3f99ece-7f66-4c6f-a262-4d8894154ae9@gmail.com>
+Subject: Re: [APPROACH 2 1/2] arm64: dts: amlogic: list all slave clocks for
+ audio clock controller
 Content-Language: en-US
-From: Devi Priya <quic_devipriy@quicinc.com>
-In-Reply-To: <c3f99ece-7f66-4c6f-a262-4d8894154ae9@gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: aATPM805tWjekuvXtQyCUttm-CIsjzFz
-X-Proofpoint-GUID: aATPM805tWjekuvXtQyCUttm-CIsjzFz
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-12_05,2024-05-10_02,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- suspectscore=0 bulkscore=0 clxscore=1015 mlxscore=0 malwarescore=0
- adultscore=0 spamscore=0 priorityscore=1501 phishscore=0 mlxlogscore=999
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405010000 definitions=main-2405120064
+To: Rob Herring <robh@kernel.org>
+CC: Conor Dooley <conor+dt@kernel.org>, <devicetree@vger.kernel.org>, Jerome
+ Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Krzysztof
+ Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	<linux-amlogic@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Martin
+ Blumenstingl <martin.blumenstingl@googlemail.com>, Michael Turquette
+	<mturquette@baylibre.com>, Neil Armstrong <neil.armstrong@linaro.org>,
+	Stephen Boyd <sboyd@kernel.org>
+References: <20240508144259.191843-1-jan.dakinevich@salutedevices.com>
+ <20240508144259.191843-3-jan.dakinevich@salutedevices.com>
+ <20240508175013.GA2244257-robh@kernel.org>
+From: Jan Dakinevich <jan.dakinevich@salutedevices.com>
+In-Reply-To: <20240508175013.GA2244257-robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) To
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 185167 [May 11 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: YVDakinevich@sberdevices.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 19 0.3.19 07c7fa124d1a1dc9662cdc5aace418c06ae99d2b, {Tracking_smtp_not_equal_from}, {Tracking_from_domain_doesnt_match_to}, sberdevices.ru:5.0.1,7.1.1;100.64.160.123:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;salutedevices.com:7.1.1;127.0.0.199:7.1.2;smtp.sberdevices.ru:5.0.1,7.1.1, FromAlignment: n, {Tracking_smtp_domain_mismatch}, {Tracking_smtp_domain_2level_mismatch}, {Tracking_white_helo}, ApMailHostAddress: 100.64.160.123
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/05/12 16:13:00 #25178084
+X-KSMG-AntiVirus-Status: Clean, skipped
 
 
 
-On 5/8/2024 10:40 PM, mr.nuke.me@gmail.com wrote:
-> On 5/8/24 1:16 AM, Devi Priya wrote:
+On 5/8/24 20:50, Rob Herring wrote:
+> On Wed, May 08, 2024 at 05:42:58PM +0300, Jan Dakinevich wrote:
+>> Signed-off-by: Jan Dakinevich <jan.dakinevich@salutedevices.com>
+>> ---
+>>  arch/arm64/boot/dts/amlogic/meson-axg.dtsi | 27 ++++++++++++++++++++--
+>>  arch/arm64/boot/dts/amlogic/meson-g12.dtsi | 26 +++++++++++++++++++--
+>>  arch/arm64/boot/dts/amlogic/meson-sm1.dtsi | 26 +++++++++++++++++++--
+>>  3 files changed, 73 insertions(+), 6 deletions(-)
 >>
->>
->> On 5/1/2024 9:58 AM, Alexandru Gagniuc wrote:
->>> There are four PCIe ports on IPQ9574, pcie0 thru pcie3. This series
->>> addresses pcie2, which is a gen3x2 port. The board I have only uses
->>> pcie2, and that's the only one enabled in this series. pcie3 is added
->>> as a special request, but is untested.
->>>
->>> I believe this makes sense as a monolithic series, as the individual
->>> pieces are not that useful by themselves.
->>
->> Hi Alexandru,
->>
->> As Dmitry suggested, we are working on enabling the PCIe NOC clocks
->> via Interconnect. We will be posting the PCIe series with
->> Interconnect support [1] shortly.
+>> diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+>> index 6d12b760b90f..28f4ec5f39b0 100644
+>> --- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+>> +++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
+>> @@ -1342,7 +1342,9 @@ clkc_audio: clock-controller@0 {
+>>  					 <&clkc CLKID_HIFI_PLL>,
+>>  					 <&clkc CLKID_FCLK_DIV3>,
+>>  					 <&clkc CLKID_FCLK_DIV4>,
+>> -					 <&clkc CLKID_GP0_PLL>;
+>> +					 <&clkc CLKID_GP0_PLL>,
+>> +					 <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>,
+>> +					 <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>;
 > 
-> I am generally very hesitant to depend on unmerged series, as this can 
-> cause undue delays. In this particular case, I considered that both 
-> series can continue to stay independent, with the ability to convert the 
-> PCIe users to the new clock scheme when the time is right.
+> All 3 cases are just unused clocks on the end. I suppose that's not 
+> always the case. You could just set 'minItems' in the binding to 
+> avoid needing to pad the end and the dts changes.
 > 
->> [1] - 
->> https://lore.kernel.org/linux-arm-msm/20240430064214.2030013-1-quic_varada@quicinc.com/
-> 
-> What changes would be needed to this series to make use of this? How 
-> does one use the "interconnected" clocks?
-> 
-> Alex
-Hi Alex,
 
-Please refer to the latest PCIe series which adds support for enabling
-the NoC clocks via interconnect.
+You are right. I mistakenly thought that 'minItems' can not be
+redefined. But not, it is allowed to redefine it and it works. Thus,
+this patch is not needed for this approach.
 
-https://lore.kernel.org/linux-arm-msm/20240512082858.1806694-1-quic_devipriy@quicinc.com/
+Anyway, what do you think about first approach? As for me, it is more
+simple and readable.
 
-Thanks & Regards,
-S.Devi Priya
-> 
->> Thanks,
->> S.Devi Priya
->>>
->>> In v2, I've had some issues regarding the dt schema checks. For
->>> transparency, I used the following test invocations to test:
->>>
->>>        make dt_binding_check 
->>> DT_SCHEMA_FILES=qcom,pcie.yaml:qcom,ipq8074-qmp-pcie-phy.yaml
->>>        make dtbs_check 
->>> DT_SCHEMA_FILES=qcom,pcie.yaml:qcom,ipq8074-qmp-pcie-phy.yaml
->>>
->>> Changes since v3:
->>>   - "const"ify .hw.init fields for the PCIE pipe clocks
->>>   - Used pciephy_v5_regs_layout instead of v4 in phy-qcom-qmp-pcie.c
->>>   - Included Manivannan's patch for qcom-pcie.c clocks
->>>   - Dropped redundant comments in "ranges" and "interrupt-map" of pcie2.
->>>   - Added pcie3 and pcie3_phy dts nodes
->>>   - Moved snoc and anoc clocks to PCIe controller from PHY
->>>
->>> Changes since v2:
->>>   - reworked resets in qcom,pcie.yaml to resolve dt schema errors
->>>   - constrained "reg" in qcom,pcie.yaml
->>>   - reworked min/max intems in qcom,ipq8074-qmp-pcie-phy.yaml
->>>   - dropped msi-parent for pcie node, as it is handled by "msi" IRQ
->>>
->>> Changes since v1:
->>>   - updated new tables in phy-qcom-qmp-pcie.c to use lowercase hex 
->>> numbers
->>>   - reorganized qcom,ipq8074-qmp-pcie-phy.yaml to use a single list 
->>> of clocks
->>>   - reorganized qcom,pcie.yaml to include clocks+resets per compatible
->>>   - Renamed "pcie2_qmp_phy" label to "pcie2_phy"
->>>   - moved "ranges" property of pcie@20000000 higher up
->>>
->>> Alexandru Gagniuc (7):
->>>    dt-bindings: clock: Add PCIe pipe related clocks for IPQ9574
->>>    clk: qcom: gcc-ipq9574: Add PCIe pipe clocks
->>>    dt-bindings: PCI: qcom: Add IPQ9574 PCIe controller
->>>    PCI: qcom: Add support for IPQ9574
->>>    dt-bindings: phy: qcom,ipq8074-qmp-pcie: add ipq9574 gen3x2 PHY
->>>    phy: qcom-qmp-pcie: add support for ipq9574 gen3x2 PHY
->>>    arm64: dts: qcom: ipq9574: add PCIe2 and PCIe3 nodes
->>>
->>> Manivannan Sadhasivam (1):
->>>    PCI: qcom: Switch to devm_clk_bulk_get_all() API to get the clocks
->>>      from Devicetree
->>>
->>>   .../devicetree/bindings/pci/qcom,pcie.yaml    |  37 ++++
->>>   .../phy/qcom,ipq8074-qmp-pcie-phy.yaml        |   1 +
->>>   arch/arm64/boot/dts/qcom/ipq9574.dtsi         | 178 +++++++++++++++++-
->>>   drivers/clk/qcom/gcc-ipq9574.c                |  76 ++++++++
->>>   drivers/pci/controller/dwc/pcie-qcom.c        | 164 +++-------------
->>>   drivers/phy/qualcomm/phy-qcom-qmp-pcie.c      | 136 ++++++++++++-
->>>   .../phy/qualcomm/phy-qcom-qmp-pcs-pcie-v5.h   |  14 ++
->>>   include/dt-bindings/clock/qcom,ipq9574-gcc.h  |   4 +
->>>   8 files changed, 469 insertions(+), 141 deletions(-)
->>>
+> Rob
+
+-- 
+Best regards
+Jan Dakinevich
