@@ -1,52 +1,34 @@
-Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2074.outbound.protection.outlook.com [40.107.105.74])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE0E114AD02;
-	Mon, 13 May 2024 12:13:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.105.74
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715602435; cv=fail; b=IkUjUWOfoJT+YDhdfCVCHgaNEAt7E1DdowfRabsAU04H6tQ/GxfS7P/WG4aBMrqCfp6IBDQTD+VT7o8KHY+qj6IV4ffTPkslA9Uzuwo5KnAAyZTEAdI2YANEmuBNSXYp1cmfrQsNB+27kSNQMQN3QXF5ePvK26FqaqssQHkRjYY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715602435; c=relaxed/simple;
-	bh=25CNK9ozuwLnn9ixmVLEPRQ9prY3nVebV9iMeWWTmqA=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=u0tIlOBSEcNWwrn7igjByev2pgfYnIMnNCQSEfYU81X76+vZIlD6hDzfc/Yi9vY82HSj3an2aig+ZFBczFBudfcBvm9L2pY4uBRAOH6zKoCx3lE6HgJXuLSonr5omCK9HMPM0GVvgo8pJyJKV3638J+rt1B4jwyOZCEY3nJKTGA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prevas.dk; spf=pass smtp.mailfrom=prevas.dk; dkim=pass (1024-bit key) header.d=prevas.dk header.i=@prevas.dk header.b=Wf1eFSjt; arc=fail smtp.client-ip=40.107.105.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prevas.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prevas.dk
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=prevas.dk header.i=@prevas.dk header.b="Wf1eFSjt"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=U7RzOBr2SSaz46MUWFcDUWTxPWdbs84xgJp/WsR48khbfehSZw3k7Q4Eupv9YMipfJd4sM6MYLI5hE0n/wIk3al/uulk5lcOUIXDwyQvvjmMnV6ShtvglSW/pkCK5FIemM+kQ1qO+AcZWjf7zuEaBfnkR35zQ3fYNjMVctFXVf6PJhbgb+ipESZsAUT8A+Gxpr0MVaqXckLdYkIOO2PXZwIJilIfgGzV5HORrBihVHwMR/0qZ2M1pbcZPJZOIHyb/t4BSF4TrEJ4rqln8Hb0kFRt8bLvx1BQUCjfXWizvgwkbekFeKiMSDmUyDNzDMPnTS+VGzfaviivFZO5jQOZkA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=QfwKxDL7jppSiDvnWDWjLj39lVp6UCWmSqklXW8Jtr4=;
- b=H99J5QNrf2rULMomydgQc7eNlpEtpt/0+UBqg0CCCWau1cgyKDSmQFS5zz41K9KYHZP6T5V2uVei7kDAAvtWcBRZgOM406XRwkDqj0/DKdz9Pt/YLFFpxgoJ1AL7M9UgIzEhsI9ajIbLn2vXczB99Rp+dwmglbXpc2MVHhzEs7c7h9Ie5AbsEt5dkEyBg3kPxd+X8IhJzt5s6Vl2DdUaoxdReEPNauHsyanXi9F4iaivRNAr20UhkHn4/nBqz9Jyfj51DZenteQkgrdeX2cxoxAv0/202XCRSAzdwP5MkFjocHCc4AYsCNCId1TTYbktlhP3TEx356rtOxw1vJ0x9w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=prevas.dk; dmarc=pass action=none header.from=prevas.dk;
- dkim=pass header.d=prevas.dk; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prevas.dk;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=QfwKxDL7jppSiDvnWDWjLj39lVp6UCWmSqklXW8Jtr4=;
- b=Wf1eFSjtWi5deUA0v7SHkGOJfNCsk4jmxZ+FnMKgNNdeIB+is15fD2TfcSxhk0EESPfyTstmY+eVGiPagiUdDPPmWzBj3S/9CT9kcRwGINJ+Dk7Dlyk4+MJ/QxbmZq0onlJCTP836uLMR+IsGdYkVQ6J+/FXNLfPRXFgCKAXHT8=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=prevas.dk;
-Received: from DB9PR10MB7100.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:45a::14)
- by PAWPR10MB7344.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:2ea::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Mon, 13 May
- 2024 12:13:48 +0000
-Received: from DB9PR10MB7100.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::9fcc:5df3:197:6691]) by DB9PR10MB7100.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::9fcc:5df3:197:6691%3]) with mapi id 15.20.7544.052; Mon, 13 May 2024
- 12:13:48 +0000
-Message-ID: <557d219a-dc00-4595-a3ff-a464908d5e03@prevas.dk>
-Date: Mon, 13 May 2024 14:13:45 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86FA314F9C6
+	for <linux-clk@vger.kernel.org>; Mon, 13 May 2024 12:26:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715603212; cv=none; b=MOPRfylydwdf0Q8fqk4lQSOJcuur66M0Yt9jZYNBwbovQ4LoJAypahXOYEo4Nse5dHuEwpTuhvIoeDLn5Y5TApFyKVXFJ3QsVm7I/JzxAIhJ0gNag6VGNBhQMx0w9NJiK7x9Ekq5aPomC3yXcCJZWLhzEFS+ozQGkW3NfRFlHj0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715603212; c=relaxed/simple;
+	bh=QqDCC4k0NPdJbIRo5g2C9AZNgV71fSbSWfaOiOVXx8o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VU3zbTMnVViA28EMlgH/XsPD8Rffr4oZCuhRQ1KSSQJ3ZJqpdFfEw/CcZVi/Km5U5LxGF75rZ7fcRASPgEAzFTjYG4W0WXvCXpurm88AZR9yfWZ11jSsd+0F6a5JS8op72UWQCvhdpV0ONc+XlFC0eo0QZv4qGWwd1DzLVHzU6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <a.fatoum@pengutronix.de>)
+	id 1s6Ul4-0006Rd-I3; Mon, 13 May 2024 14:26:22 +0200
+Message-ID: <3ecbba68-d8c8-4700-b438-b47e9b8a4525@pengutronix.de>
+Date: Mon, 13 May 2024 14:26:20 +0200
+Precedence: bulk
+X-Mailing-List: linux-clk@vger.kernel.org
+List-Id: <linux-clk.vger.kernel.org>
+List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
+List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 05/17] clk: imx: pll14xx: Add constraint for fvco
- frequency
+Subject: Re: [PATCH v2 08/17] clk: imx: imx8mp: fix clock tree update of TF-A
+ managed clocks
 To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Abel Vesa <abelvesa@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
@@ -54,143 +36,93 @@ To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Abel Vesa <abelvesa@kernel.org>,
  Pengutronix Kernel Team <kernel@pengutronix.de>,
  Fabio Estevam <festevam@gmail.com>, Jacky Bai <ping.bai@nxp.com>,
  Ye Li <ye.li@nxp.com>, Dong Aisheng <aisheng.dong@nxp.com>
-Cc: linux-clk@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Abel Vesa <abel.vesa@linaro.org>, Peng Fan <peng.fan@nxp.com>,
- Shengjiu Wang <shengjiu.wang@nxp.com>, Chancel Liu <chancel.liu@nxp.com>
+Cc: imx@lists.linux.dev, Peng Fan <peng.fan@nxp.com>,
+ linux-kernel@vger.kernel.org, Zhipeng Wang <zhipeng.wang_1@nxp.com>,
+ Abel Vesa <abel.vesa@linaro.org>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
 References: <20240510-imx-clk-v2-0-c998f315d29c@nxp.com>
- <20240510-imx-clk-v2-5-c998f315d29c@nxp.com>
-Content-Language: en-US, da
-From: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-In-Reply-To: <20240510-imx-clk-v2-5-c998f315d29c@nxp.com>
+ <20240510-imx-clk-v2-8-c998f315d29c@nxp.com>
+Content-Language: en-US
+From: Ahmad Fatoum <a.fatoum@pengutronix.de>
+In-Reply-To: <20240510-imx-clk-v2-8-c998f315d29c@nxp.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MM0P280CA0003.SWEP280.PROD.OUTLOOK.COM
- (2603:10a6:190:a::14) To DB9PR10MB7100.EURPRD10.PROD.OUTLOOK.COM
- (2603:10a6:10:45a::14)
-Precedence: bulk
-X-Mailing-List: linux-clk@vger.kernel.org
-List-Id: <linux-clk.vger.kernel.org>
-List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
-List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB9PR10MB7100:EE_|PAWPR10MB7344:EE_
-X-MS-Office365-Filtering-Correlation-Id: ed1a9ec9-98ee-49c8-c538-08dc734624a6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|376005|7416005|366007|1800799015|921011;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?SVBieFFLb3hUMkdRQWF4b281dlNERG1COWFGdjd0Y1ZxdXNKdVNHeDhqZWpi?=
- =?utf-8?B?bldIYW5kYnR2TmFWZ2l3MjRMS2txRDNnQk9tMG50MW10Rm9neDUvZzJYSlAr?=
- =?utf-8?B?YlhHLzcwcWNWajMrOGRPYjVYR09JWitSUTRvWjFRV01hdXNuVFZjUlFxNzd5?=
- =?utf-8?B?blUrTnNKbENCUVp0MExhVVJQTlY1ZUVZYS9SeTNnTVdVVnlxQUZtcVFlYm1L?=
- =?utf-8?B?ZmlQVS9rMC9XOGFQZmJ0UmRvZEVIRlBHdU1SKzlOcGkxWTZlUzBRSGtJUWNJ?=
- =?utf-8?B?VVJ6dVl6T0V3MlpiY0RUU0tPMGMyN0JzM21ab1RYZjRFMDZzbk14SHJGd0Zo?=
- =?utf-8?B?N2JvaHFRY2V4c3ZvcEtZcDJzYjZtSEkwWGpBMTNLUjZ6aWFtRWphY3VxUVVP?=
- =?utf-8?B?NmRKTVQ0bk9KdUZ5YXh2TkJEMElaSEFVTHBZYWxvdXRWTkFyTzhiWGxCVnR1?=
- =?utf-8?B?bUpIaGJaREVzM214VFFDMUlKOEpMQ0NoODVKdlNiMW1Lam8vWXBsVm8rRU1r?=
- =?utf-8?B?dVNoK291RzVlZTRhRUp2RTVMYktRS1RoVUVyVU56Si85bHRxS20vamx2QXBS?=
- =?utf-8?B?Tkkra2czbUhtbkhyemc4b0srdDBDY0RXa09NekFBTVlxNTlsMnNVVEZ4ZVFa?=
- =?utf-8?B?K3pFeTRTVkluNzBGejlzYno5ZUU5bEhVSUtBMW90KzRjSjVBMzJNQnRxSGJz?=
- =?utf-8?B?SUttSmNFdjJlYUdzUzg4cCtzWUlzMFN0d1JrSkx1cjJ6U2JSdy9KOEl0Z3Jk?=
- =?utf-8?B?aE1LMGNnQ1VLaUh5d0diOUU0OTEzcGZ6RDRWTjFVdWd0MzRqQy9Zc0ROdUo2?=
- =?utf-8?B?WXB2Q0ZVYm5mNE1SbGNqeklLbW5iRlJtQWVYcVdyVzNKaThxN2lnRHlWaVQx?=
- =?utf-8?B?YUR4NUhYZDhaeHVlZjM5SnFNNkJxZi9CR21YQ0srUHkwMWkxMklCYThPMUUr?=
- =?utf-8?B?cDA3U21hejVDNTVYSTlIb0MveXRIU1JMMGlwMTJqOW9sZFl5UlJHekNYUTV5?=
- =?utf-8?B?dDN4eXdnQlRYZmVZR2o0T2RqcjdkZnZnUW1CUWM1NWFtZ2xzY1dCbEJJZUk0?=
- =?utf-8?B?VC9vT3hPTHVNdnVTellxbW8yb29CZXZ5TkFxd1NDMGVZVnNnSmtDZ254TkxH?=
- =?utf-8?B?WnZqK2FTVWxCWU14MXdoeGZLRlhSRjZNQlB5SWY2aFllVEsyZlpmbzl4bXpq?=
- =?utf-8?B?SjcwbWFQRWJsckFCMWUxamxPUTNXNTlPWmRCZjgrV2Vtb2lFcVFQTU5FK1dS?=
- =?utf-8?B?cGhEYWdIQmFhdXVJTWhXemE5Mzl1eG9UT1BzRnNBajBFT0JRMEZ5NzRMZUZj?=
- =?utf-8?B?aGVxN0Z4TjBocnF5Qm5xbE8wUlpUVDRlNXB2a0d6L1ZFQ2t5eFF1dGJydkhl?=
- =?utf-8?B?TWk0MmpCTHdZWmNKanUvcTZsaER5NExqWlVSc09qdFRZSkUvSmtSRHVMelRG?=
- =?utf-8?B?TURBZGFKWDIrZzhKakhMbHlyMHZGTkxnOTdHM0t3UlFzY0Rmd2FkeHR1eURI?=
- =?utf-8?B?R0xGVzJ0TkJPZUM3WExtWGpEdFNEUHJDRkJrLy9xMmFHZGdVWjhDSmc3aE41?=
- =?utf-8?B?eThraUJ0R2U1RFF4cVVXTjVBUlVwWmsrcU9uYVFmdkRFZjFyNThTZUNhbmd2?=
- =?utf-8?B?TzNaVXBrM3FyV2dsS0hEYTREWFN2eDc5V28vZGhweDhQOFBOOEw0UVRJVFpl?=
- =?utf-8?B?ejlGVk1PMzJDY3hOVWhDS2YyMzhFUHBNQWs0dGdYL0pORmwwZzU5NEhuQnNP?=
- =?utf-8?Q?vJRtU3TgfWqRmyqOi1O8NwVDRI2Wc3kUzaUIiUT?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR10MB7100.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(376005)(7416005)(366007)(1800799015)(921011);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SmcwSjllbE5NaFovNnEybi84QjMyMzZ4ZVd4a3JJNnhTbWdrUi9NNXY1N2xR?=
- =?utf-8?B?UzRwa0piSjY1WUxkQjNYZEI2TzNKT2xLazBrTDI5bmR1QjNuK1FZTjRjTUhs?=
- =?utf-8?B?dTdkS3UrVlFuTEsxWm9Dc0owWGxibjY3VjFSUHRDZjZ0QUE4cnV5Y0ZyRFBN?=
- =?utf-8?B?VTVoekwxYUQzQ1FsRUFkSmVJcW5RaEpKWTBxM0NzNE9tN2dSNS9yME9KQTV6?=
- =?utf-8?B?WGpzdEg3WjlGb1hCRnZDeVV1VWdKS0t0R1hnSGQ4eXY4cVlFNXhHeG9HMTZF?=
- =?utf-8?B?UTZMYmNyNkhwU25ldXJES2tRekRMM25pWm5kbzBqbTNZSFlWQWlreHp4NnN2?=
- =?utf-8?B?eG5ONUcvbEtaRDJsc2FVTHFiU2RXN2FBSjJsbjN3Rk1hTlF2dmUzc05rRExq?=
- =?utf-8?B?dkhqak1obWFjbkNyUEhrM1B1ZWdUdVg3QXhJRUZVT01QS2ZKa1NjSzhnT21k?=
- =?utf-8?B?K2NkcjBCdWpsWEN5clR3UlgzVE5DbXVJemhJazN4UEdRL1YrbnBmRDFiZmRm?=
- =?utf-8?B?OUZpSHIrVEhmbFNKYnUvRXhMMmhBWFp1RnlzUjlqUkQ4Z1RHYnFyQUttUlMr?=
- =?utf-8?B?b0Y1ZkFrUWlGVnk4TStOaWxVd1k4MmVvcXlIclQrSmhwak5BUDRXWWp6blBh?=
- =?utf-8?B?aVBKTXB0Um0xa3lmKzI0Q1VHeWJRc0N3dTJwOHp1RXFqMVczdStvNlgxeGxO?=
- =?utf-8?B?ODYzQjBKQ3B2Qy8raTdGMjRhSkFnZlFrOUFIYmk4cXVuKzFiQVNDcFJYQUZW?=
- =?utf-8?B?djFSOVNzNkxCd0djSUVyc2pYdlBOK0o2WjlxaE01TEVxRmdyTnEvN0JJRUJU?=
- =?utf-8?B?b1Q2QzR5V0lsRGpmTS8yazJ0d1BJVXBTUENMRTU5SmlrK2FtalZTRHJ4SUg4?=
- =?utf-8?B?T2pMNUtvWkVUblNjWTJyUnJ2SDhCcVdlTVAzeEYwWXU5c1M3V0tZNTl6MXVi?=
- =?utf-8?B?cE0rOGtSTlgxNGZkR1NvWHVjVjhxQU1CelJqdVYrQnFwVk5KWTNFZkFDaEZJ?=
- =?utf-8?B?eUgvMnVRd1kyQjZNOXA2ZlIxOVpvTE9mK3lySHp2c0NSM1RuSERSaVBHd0h5?=
- =?utf-8?B?VTB3amp0cE4xbEt3dEVZc0xzaFoxRCtqM3BGWlBCYWRvblNvUGhVa0p5clpp?=
- =?utf-8?B?K3hEZEJXN1RvY1RQV29xRStKWCttei9XSFBLcmhvZHdSOXNmRFAvcmxQMUdP?=
- =?utf-8?B?cDVSTkZ1S2xvdXpSK2pIbGM5c1dMNC95Mk9UVHFsTmVna0ZPODgxKzl3MWpC?=
- =?utf-8?B?bWphL0prNlJwQ2JFYWF2NG15amdnOWl0b1hUQXZ3aE5zYzFMcWNwRGN6VWhY?=
- =?utf-8?B?OFQzYVNBNUtqS2hhbGFMTFp1ZnVtVFZFbXVWL3N4eDI2UDYwSE52aDhJejEx?=
- =?utf-8?B?NmNvaE5IbkdVWFRZT3hXTU9RSlBBc3AwZ3BmV2FwSEJnL0F4dUFTS0E1N0VL?=
- =?utf-8?B?UDloMzZSbS9ac1hOQjMzaW0xTFZBN1RITHBVUW8wOFYwVzBQNi9mR1l3cFBD?=
- =?utf-8?B?ckRGOTFlYmpYTEpBQWo0UjhvWGhmQktvTWpLQkUwa2Y1Tk5jQU8zZ0Z2b2Fz?=
- =?utf-8?B?dUJWRmh0TURGc3J2SFdxb1JCUFpYamxNQXlPL01hS0tLUnNqSUpoWXJWdDRz?=
- =?utf-8?B?U1g3TFV4ZFlMWE5BZ2RvTFBtcGsyTkUrQnBBdFcyVkNRUUZwZ09RQ1ljYWFl?=
- =?utf-8?B?MjY0dmJpRmxRYXplaHhtbVJpVzFuZmQ0UEZrUFRBMTlrK2JQbWZwWTNxdU1h?=
- =?utf-8?B?TExMMXEvNExZNmlOY1pCSllxZmtsSS9vSXdsSWl0RDFaL3hXNk4zOSttR1I2?=
- =?utf-8?B?OE9XRjJpWllsUW5BR0d1R05Dcmh3MUJRSG56cXQwZkZFTUxwbzloZTNIeFg1?=
- =?utf-8?B?L3lWdFIyOE5tMnREL055ZnVuaHU5OUhFd0V5RzROTXVtTTJFMjB2ZVNtdzNV?=
- =?utf-8?B?blVSVU01UG45WWZQeHN5RTlWKy9PYW5zL2dENCs1UzFOS3ZWZUFzeU85d3g2?=
- =?utf-8?B?YTFqdlgrZ25FSXZIMmtLOHU4SXlYbFVEckNWSW9FRXV2VlErck95M3FiK2JL?=
- =?utf-8?B?UGVxa2VyNzVha25xa2FHbnI0WXlFbkl4T3NGM3lremJ2ZzE3Z1o3NkJmTnZH?=
- =?utf-8?B?VGd2ZnRIcHl4R1J4NWxVYldqSHFmTVJaNlYvRFk1R1BqakxpRmhCaG5IM0Z5?=
- =?utf-8?B?UXc9PQ==?=
-X-OriginatorOrg: prevas.dk
-X-MS-Exchange-CrossTenant-Network-Message-Id: ed1a9ec9-98ee-49c8-c538-08dc734624a6
-X-MS-Exchange-CrossTenant-AuthSource: DB9PR10MB7100.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 May 2024 12:13:48.0940
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: d350cf71-778d-4780-88f5-071a4cb1ed61
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: InY616YlwNtrZmCvUEY247KNVIszwaiuFk22hoj0+mKlsm8ztOoIg+bXT9yNcASxW9oxJU6bJAIwH2+OJNNVb7v5b/U91LNM25fkQ2qSIUk=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAWPR10MB7344
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-On 10/05/2024 11.19, Peng Fan (OSS) wrote:
-> From: Shengjiu Wang <shengjiu.wang@nxp.com>
+Hello Peng,
+
+The commit message looks eerily familiar ;)
+Small correction below.
+
+On 10.05.24 11:19, Peng Fan (OSS) wrote:
+> From: Zhipeng Wang <zhipeng.wang_1@nxp.com>
 > 
-> The fvco frequency range is between 1600MHz and 3200MHz, without
-> this constraint the fvco may out of range, the real output
-> frequency is no accurate.
+> On the i.MX8M*, the TF-A exposes a SiP (Silicon Provider) service
+> for DDR frequency scaling. The imx8m-ddrc-devfreq driver calls the
+> SiP and then does clk_set_parent on the DDR muxes to synchronize
+> the clock tree.
+> 
+> since commit 936c383673b9 ("clk: imx: fix composite peripheral flags"),
+> these TF-A managed muxes have SET_PARENT_GATE set, which results
+> in imx8m-ddrc-devfreq's clk_set_parent after SiP failing with -EBUSY:
+> 
+> clk_set_parent(dram_apb_src, sys1_pll_40m);(busfreq-imx8mq.c)
+> 
+> This is safe to do, because updating the Linux clock tree to reflect
+> reality will always be glitch-free.
 
-Could you please point everybody in the direction of where that
-requirement is stated? The imx8mp reference manual, for example, merely
-lists constraints for p, m, s and k.
+This refers to the next sentence, thus swap position of this sentence
+with the next one:
 
+> 
+> commit 926bf91248dd
+> ("clk: imx8m: fix clock tree update of TF-A managed clocks") adds this
+> method and enables 8mm, 8mn and 8mq. i.MX8MP also needs it.
+s/this method/imx8m_clk_hw_fw_managed_composite which sets the SET_PARENT_GATE flag/
 
+> 
+> Another reason to this patch is that powersave image BT music
+> requires dram to be 400MTS, so clk_set_parent(dram_alt_src,
+> sys1_pll_800m); is required. Without this patch, it will not succeed.
+> 
+> Fixes: 936c383673b9 ("clk: imx: fix composite peripheral flags")
+> Signed-off-by: Zhipeng Wang <zhipeng.wang_1@nxp.com>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+
+With commit message adjusted:
+
+Reviewed-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+
+Thanks,
+Ahmad
+
+> ---
+>  drivers/clk/imx/clk-imx8mp.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
+> index 670aa2bab301..e561ff7b135f 100644
+> --- a/drivers/clk/imx/clk-imx8mp.c
+> +++ b/drivers/clk/imx/clk-imx8mp.c
+> @@ -551,8 +551,8 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
 >  
->  	/* First try if we can get the desired rate from one of the static entries */
-> @@ -193,6 +195,10 @@ static void imx_pll14xx_calc_settings(struct clk_pll14xx *pll, unsigned long rat
->  			kdiv = pll1443x_calc_kdiv(mdiv, pdiv, sdiv, rate, prate);
->  			fout = pll14xx_calc_rate(pll, mdiv, pdiv, sdiv, kdiv, prate);
+>  	hws[IMX8MP_CLK_IPG_ROOT] = imx_clk_hw_divider2("ipg_root", "ahb_root", ccm_base + 0x9080, 0, 1);
 >  
-> +			fvco = fout << sdiv;
-> +
-> +			if (fvco < 1600000000 || fvco > 3200000000)
-> +				continue;
+> -	hws[IMX8MP_CLK_DRAM_ALT] = imx8m_clk_hw_composite("dram_alt", imx8mp_dram_alt_sels, ccm_base + 0xa000);
+> -	hws[IMX8MP_CLK_DRAM_APB] = imx8m_clk_hw_composite_critical("dram_apb", imx8mp_dram_apb_sels, ccm_base + 0xa080);
+> +	hws[IMX8MP_CLK_DRAM_ALT] = imx8m_clk_hw_fw_managed_composite("dram_alt", imx8mp_dram_alt_sels, ccm_base + 0xa000);
+> +	hws[IMX8MP_CLK_DRAM_APB] = imx8m_clk_hw_fw_managed_composite_critical("dram_apb", imx8mp_dram_apb_sels, ccm_base + 0xa080);
+>  	hws[IMX8MP_CLK_VPU_G1] = imx8m_clk_hw_composite("vpu_g1", imx8mp_vpu_g1_sels, ccm_base + 0xa100);
+>  	hws[IMX8MP_CLK_VPU_G2] = imx8m_clk_hw_composite("vpu_g2", imx8mp_vpu_g2_sels, ccm_base + 0xa180);
+>  	hws[IMX8MP_CLK_CAN1] = imx8m_clk_hw_composite("can1", imx8mp_can1_sels, ccm_base + 0xa200);
+> 
 
-If this is really a necessary constraint, it seems that one could just
-up-front compute the only possible value of s, or at least change the
-logic so that one loops over a smaller range of possible values of s.
-
-Rasmus
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
