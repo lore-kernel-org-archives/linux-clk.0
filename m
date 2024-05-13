@@ -1,179 +1,185 @@
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2058.outbound.protection.outlook.com [40.107.21.58])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 100A714F119;
-	Mon, 13 May 2024 12:28:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.58
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715603292; cv=fail; b=nyYolimizZkuRjVFzsUahoZIIf+lRrxNuvaM9lE9lMd6aMHsdxDP+AwrGv+ykvvxKNKgnt7LvTjGFP0FwH0jtAMTkR4QmoBchpv0PRFr4/yfgotJVjcYRhQd21/Yjj6p2+4d+StaG7c28xW1u1NwTrnsUHPcziGy0DY36t4OXlo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715603292; c=relaxed/simple;
-	bh=qoMY1LtxHg/1wJOL2q6ImO4mcP6o1DhHD+epdR02FQI=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Vjzsr/YckZ4+5YYruDs9H7Ss7ilSt7G5eRoY0KfXfs09HHFCXoSbopb2VdutIxKttWTsC+cVPPiAbmg4dMbNMsaKHXSGTplDEH3ebyie3WKOkskf02hKhKAhNesA7x9IT8u0bSYNuVK5tTT036laQJEiiVmjAza1cFaFPvbU43o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prevas.dk; spf=pass smtp.mailfrom=prevas.dk; dkim=pass (1024-bit key) header.d=prevas.dk header.i=@prevas.dk header.b=Varx3K9N; arc=fail smtp.client-ip=40.107.21.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prevas.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prevas.dk
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 760B9433A4
+	for <linux-clk@vger.kernel.org>; Mon, 13 May 2024 12:37:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715603849; cv=none; b=G0ESzgaFqV6wwOCylMAFXc/rQxWZ/hGQiozO/132Lyx7+WouYS6uO1afbh2K2HGlzG6kPYKWaCSOh8+UdQbibpJhTaWP36HGDr2eGIcvAzpSzf1MhwQEwrVwwdOS2LwXUHmM+9l4jG5OFt51jr7ruzKYE5qax7ozADbaJ5k+qOo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715603849; c=relaxed/simple;
+	bh=lH2P3VpqXlcWVSGVwRn1kZDQIWe0cm6xyew/RScYB0I=;
+	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
+	 MIME-Version:Content-Type; b=RQu3ENt63J0GjLgsUeY50VM1lRupWu5Y20TQF0Ktvno04/6LPSR3hyy4R9D2yaYQtDSJNIrGmVwdgCqMlUxnkImmp2AwkLaGH9jqBkT/Ijpm1062xlMY9BkG9HPmO5GjJBXCtvaaZrN13wWUfd0qMWAa59DGJ91fCqhQtNXGnmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=J7be9N4h; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=prevas.dk header.i=@prevas.dk header.b="Varx3K9N"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=WoCSE1f4iFTrwbZHC+dlfkIQZzpJT3ziHDCUJQurCWME+owfIeR9vzvqaCHSNF/mKs6gPmQBwIJM5Zk3q/C4BSPsd6I8ucoKCDyFXTyMAM+Bj+g4ZoXkfwHhKMW2djEOAE57o6rehQH6ZSn2mA60ahBxJSn/fdNjahYBZf4jsjG24sus4nqaY/pM3z619ovxXWD0TYskmTgqlcZk+XvYE0lK1AW1md6BFeN31myK49jG7ATIAb8VdSvMFDskxBulm88ylHCYCucvENoU0m3W5D1jARosYg4DGlR03339t6ByzHCVijZMItT04RhuT6UENL6swKB7woY8UatFiPSwew==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LhAlsmrpS9BNXiixBg0heyh/somd7KSQjbQS3c2ZQY0=;
- b=ZKog1tkzfKBLzdEWeWWzF6++6eONOljpWErS+/h6RwyFZUvLacWr3gpuJzWJXB7Au7TPqUpLDESvjVKts13ZzrtWk2WSuRNKXt+oXHAYpXSfOGOjj+vNm+p5yDW9tcgnDP5fY7fCD4W4s+n4kbsUxTRw1hNJfybxUAzipzxmN01SQIaX+XIB9w1muMSSTdMeeE7vpsV8bpgriPoocTTVKa3Z/CDtbHVRKeTTu9SoycgkGkPTsiwcwJ0bAzcE70xtx6s9ZrhUmrhV468TvSwOZnrFhN+Qsyz9UT1BULqh6wjp18SJab2AF+Ag4VfmZeR/Fg0zHRCw0vPdsBLRR6BKfg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=prevas.dk; dmarc=pass action=none header.from=prevas.dk;
- dkim=pass header.d=prevas.dk; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prevas.dk;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LhAlsmrpS9BNXiixBg0heyh/somd7KSQjbQS3c2ZQY0=;
- b=Varx3K9NjSUyz1YwMlyzpXbiU5ig/pmEy5YRpR6a8XuBF2ZoggOD8YJAnwYrOVjiBP5Szx9Clc/+kRgXvjpxeY5vTUM+U73TNrJWTjnO/BXilGVD6qrCcZ56gTkknaABagPunjDasGepvh5hd5L7PoMWbuCmiD2MZtgqLdBoaxA=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=prevas.dk;
-Received: from DB9PR10MB7100.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:45a::14)
- by PA2PR10MB8678.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:41e::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Mon, 13 May
- 2024 12:28:07 +0000
-Received: from DB9PR10MB7100.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::9fcc:5df3:197:6691]) by DB9PR10MB7100.EURPRD10.PROD.OUTLOOK.COM
- ([fe80::9fcc:5df3:197:6691%3]) with mapi id 15.20.7544.052; Mon, 13 May 2024
- 12:28:07 +0000
-Message-ID: <2867ae55-ab4e-4a69-b24b-0535bc77ef31@prevas.dk>
-Date: Mon, 13 May 2024 14:28:04 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 05/17] clk: imx: pll14xx: Add constraint for fvco
- frequency
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Abel Vesa <abelvesa@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Jacky Bai <ping.bai@nxp.com>,
- Ye Li <ye.li@nxp.com>, Dong Aisheng <aisheng.dong@nxp.com>
-Cc: linux-clk@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Abel Vesa <abel.vesa@linaro.org>, Peng Fan <peng.fan@nxp.com>,
- Shengjiu Wang <shengjiu.wang@nxp.com>, Chancel Liu <chancel.liu@nxp.com>
-References: <20240510-imx-clk-v2-0-c998f315d29c@nxp.com>
- <20240510-imx-clk-v2-5-c998f315d29c@nxp.com>
-Content-Language: en-US, da
-From: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-In-Reply-To: <20240510-imx-clk-v2-5-c998f315d29c@nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: MM0P280CA0023.SWEP280.PROD.OUTLOOK.COM (2603:10a6:190:a::9)
- To DB9PR10MB7100.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:45a::14)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="J7be9N4h"
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-420180b5922so6302505e9.2
+        for <linux-clk@vger.kernel.org>; Mon, 13 May 2024 05:37:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1715603844; x=1716208644; darn=vger.kernel.org;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
+        bh=q8zF+CwTJwmT8VWgpfibQL6tO7taDX8lcb6Oh133Ym0=;
+        b=J7be9N4hIo+S02n/EVA6Yhkym/jwFN6zEwIwco6Eu6rge+Ikqaq6wBz39Nh95IqQeB
+         znhl+v0h9i5SIZEuqHzHOKkMpig9DnInFV8ywdoWpiBF6uCi0Icszz0K9rrMg4/hZhaP
+         B+hq4zBtfTo0a8WY7ArfwZnX3EIPdz6r0l5F351HjrF20Rqsuj0C+hK4RMUchG6JWg/N
+         xYjgBfDM58+nVkoHwrfrX+fsbsp5a3s8MIEigePPcBePI5xQiwKtcd5vj/sg/IFswCxb
+         KEzhzNu6ZASLFTmtybwFyoAko4+BtvxojvCZllSrJ9FRUsmlw6TTZZIy772cAgFPcra9
+         WPXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715603844; x=1716208644;
+        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
+         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=q8zF+CwTJwmT8VWgpfibQL6tO7taDX8lcb6Oh133Ym0=;
+        b=KaeixLS45GMJbHmbMh1aX/YGrCNYJxg8M9OPcV3OUMUfMvRoDZLOQP9IGNql+FsPqi
+         XIC1dBzv0nevD6JzzyWYT2851hFotUVOBux6vXjCbYbQJSahy1JbXabtkdgBtSsCh6Fo
+         Bb0UhnDDo+eWaX2JSHTasWuOXUoi1hCqrY0RwGSSXeei/k4K/G2D9oD+9cq137lBJLRJ
+         fb4V1Gu1Feo71Dp9TWdyJp17IN7narVmMUue0egWVI5LLbodwS54OXbOhaVYhVjUiH3M
+         U0+uCRRHbGTD401FG/EzImVH9ET5cUaPq9uFLPCNaY/K8QmyAPTQFwggat21Bzn0q2/a
+         Ijtg==
+X-Forwarded-Encrypted: i=1; AJvYcCXXTzvz15FqCcMpDnFVPbKlfv9xBs3oFY0KFa2XMM9W7KSiGrwjc8YnZjD87g9PohKqgpbPyBkjVyfcI0TVVPAS/HJ4E7QnPCpo
+X-Gm-Message-State: AOJu0YxVbXHjo6qfbmOLJ4HvbEfLfcs/+uOjjPJe6vKWYC7HBBISCg6S
+	7LeUqy+nVRGMrZJiRPGvsHOGyvkUDzzs4G9aAFi1e7c9aWrIchhdpPt93mu/i7E=
+X-Google-Smtp-Source: AGHT+IFsHz1EpicfNBa8SK5EZAZ1T5+dy4IspYfwOFlNMLVrJU9DmGujRx+HhvdOUVgWsVRH7gZz6w==
+X-Received: by 2002:a05:600c:6a14:b0:41b:f577:373 with SMTP id 5b1f17b1804b1-41feaa38e45mr94830085e9.15.1715603843566;
+        Mon, 13 May 2024 05:37:23 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:5b77:3e5a:a808:339a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42015deac1asm37075625e9.17.2024.05.13.05.37.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 13 May 2024 05:37:23 -0700 (PDT)
+References: <20240510090933.19464-1-ddrokosov@salutedevices.com>
+ <20240510090933.19464-3-ddrokosov@salutedevices.com>
+ <20240511-secret-barcode-e25c722ddf1d@spud>
+User-agent: mu4e 1.10.8; emacs 29.2
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: Dmitry Rokosov <ddrokosov@salutedevices.com>, neil.armstrong@linaro.org,
+ jbrunet@baylibre.com, mturquette@baylibre.com, sboyd@kernel.org,
+ robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+ khilman@baylibre.com, martin.blumenstingl@googlemail.com,
+ jian.hu@amlogic.com, kernel@sberdevices.ru, rockosov@gmail.com,
+ linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 2/7] dt-bindings: clock: meson: a1: pll: introduce
+ new syspll bindings
+Date: Mon, 13 May 2024 14:04:41 +0200
+In-reply-to: <20240511-secret-barcode-e25c722ddf1d@spud>
+Message-ID: <1jjzjxzy4d.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB9PR10MB7100:EE_|PA2PR10MB8678:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9fda2633-5723-472a-4fc6-08dc734824cc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|7416005|366007|1800799015|376005|921011;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZWdJT25kYTE0U3lxUjE1cUwvRkJyU0ZPckZtMmFQdlVZNU83cHZ2aFJ1MG9V?=
- =?utf-8?B?KzEzd2QrSlg3RFFYU1laZnlXNStyVmhYZlJ0Sys2Vy8zUzBmZ1lnbHpNSW0r?=
- =?utf-8?B?MDByRW8zenc0N0k5VWtrdVd5RXFrQ2I3OFdQZG5uWml4emhkcTZSd3Y5NHlw?=
- =?utf-8?B?bXM4SzdYN3VOQlpERS9uMnpySXRNSmxLdVJSSlV2WDdYWElYc3E1a3RmUVF1?=
- =?utf-8?B?L25nNXM4a1loZTVxZU05NFozVzhkNE0yeVdJUkRRQXBlU043WUFHN25mdTY3?=
- =?utf-8?B?NkQzZEd3Q2RSVi9rYVF5U2hRSTZtbjdZTGIzejVrbHlFOEhQbVloNU45SUJt?=
- =?utf-8?B?WmkzYW1QamIvU0NnU0ZEZzdveDBCblhxcGMwcytVOXBxUXFWbmw4VEpSeTk3?=
- =?utf-8?B?UVJ3aXJudm9pd0x6VVVNN2F1OVQ1YjlxQWdWYlMvek1vRWIydTRrbTBaeXV2?=
- =?utf-8?B?UTluais3dW5hQXoydkR6NXFzM3U3bkRRZ3hQNlFrVlhKWTQ5UENtd2tvSjNI?=
- =?utf-8?B?YVNQa2dOY1hlNnBNRHVFNnNERm5HNFVOV0lDSDkrM3c2T1ZCaEFnTXRjYUZt?=
- =?utf-8?B?cDJjYXVCL2RaZVJpZDFvQzBqQ1MwaU5zcHhjMEt6b0djK05aQnJqbzhWeXVL?=
- =?utf-8?B?ZTEzT2xwS2RueXlCRFlNd0ovVWFDak1VQVVXVEwrbnkzWmxHMVNvbHlmblBo?=
- =?utf-8?B?MVdxaURHeEJXeURNeFZVcE41VkcvaE11Y3M4cnlWZXNuVU1IZWp1WGdTR1RW?=
- =?utf-8?B?d3h0UU9rQ0E1RmRxUC9lQTg1Z1lWajR5QWE3cFdKV1YyVFRTNzZXT2FIekRO?=
- =?utf-8?B?Wjd5YkxUWVp6ckUrL2kvVFVDNHc0QUdEWkI2N0VPR3ZPcHJwcGkvd21Xa3FG?=
- =?utf-8?B?a3JVTTE0bFFGNlNCTGY0RlZHZXZoTmZNZEx4ZUtyQmxMZVBsaDlRcWNCRzl5?=
- =?utf-8?B?ODM4UU96WXF0OUFkdFBVQ1BZR1pESWtUTE9JZzdxczZZdUp2Wjk3NUF1UDVH?=
- =?utf-8?B?a1RCYkNFQ29nalkxa3NoaThXakIwRFJHdUtPdStpRlovaFNaU1psWm9SS1ov?=
- =?utf-8?B?MGltN0RNVThPdUVZYTZHYm9GeVlMK3dLWCtqcGVoamUyTWp1Z0RNTUcvSS9k?=
- =?utf-8?B?bkRzS1pubXNUcHdiYWcySE51WXdhUXdpYnhVSzc4UUpCZlkrNk1vVFVXSzc1?=
- =?utf-8?B?REhZYWtBRHpLTnFsREd2UVBiK3dqMjRVaHBVOUt4MlVnUnhBRklJdm9WZXJ5?=
- =?utf-8?B?Y3lFMnRxTzlDOFcwMGM5RnV2MGZwMm5GejQ2NlhkMG9xa0l2Z2RJYkxuSjR2?=
- =?utf-8?B?ejIzeDhxVDQ0YzBvR1REeks2MHBCQmltMVU2SThBQi9zeE0rSFIvSXZQM2Z6?=
- =?utf-8?B?bXpnSUdoOExzZmt2UlBXbE8xWHhYSTdvdEtVRXJySndsYzlGLzYvRzczMzNr?=
- =?utf-8?B?eGRWOFlqQlNVeWxhVFFTemhhc0tHWUl2RUNmTGc4eHFhL0IreWtHSXQ4ZFFZ?=
- =?utf-8?B?UkZoRm8yNnJZWG9GelMvTTl6ODF3Q1FCb0xvQ1lPVlJWOTk4VGhkMzgva0c3?=
- =?utf-8?B?cWhkYnBDenpFZzZ4b25FakppUkp1Mmd3aGlpcXVIMzZHQ0IxUVd1b0hCTFFO?=
- =?utf-8?B?OUMzL01SMXNYYnh1TTM5WG05SGRaQnZnaVM4enM1Z1RmWElwbXN6UjBObTY4?=
- =?utf-8?B?RjY4Vysxd1NWYVlUM2RWTjZQRk5YcWVtUjdYc1NYRFhRT2hkRktmZmxYUWJl?=
- =?utf-8?Q?ME1Y3GXpGA3vU2ZTWrb0efRRBD0tbA0Qe7dI4Xz?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR10MB7100.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(7416005)(366007)(1800799015)(376005)(921011);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?S2hXRG9KeTFuUEJlc0M0dFUvV3RIZFM0RHRsaWI2RHJDZXdsOXc0aWJFbyt1?=
- =?utf-8?B?QkdrdFNZVndPejZsY0lLaTJLRnhZcVE3dFcxbXBzQ1VqTnZJWmtaUW5wRFBG?=
- =?utf-8?B?RGEwZHo0YlJkV3dLcDRnNGREMVM4MkMyYVZENTJHc1kzY1BGUWNnQ01samlh?=
- =?utf-8?B?SHNlTlZxaWxWUGRDUVJSNkFqY1lQK05zT2pBNHJ5TmZVQkFHbTluV3RZQUh2?=
- =?utf-8?B?dEgvK29BeTdUYVZJQi91a0czbGxUalEzSFJpbGRGdGlvSzVXMEVTdzd3RHVM?=
- =?utf-8?B?bWpJNDB3S2kxNndQY0lqaVN6ckpGZllyWnNXcTJNYjRZWmhYcHJDWDlHQXBE?=
- =?utf-8?B?eEpwMTNBSlJ6N25adGhEQ3pUV1RQdDJFamNXRmdoL3dmYlp6YkF0Y2dmd1RR?=
- =?utf-8?B?SnJ0SHh2VFNlYkljQWRxZjlaTE9uc0RoY0tha1NSVk5jQy95bzZVbDJPTkN5?=
- =?utf-8?B?UkplR3B6VnZzQUowN3VNTC9IV3Q5SzRheWxBbmJtUUZYT1VESFlhQURDTysx?=
- =?utf-8?B?OHZ4NlZtclJTUzVqWWZJREN3WmtwN0dnZ21LTHJIeHd3K2s1MkF5K2lsaEg3?=
- =?utf-8?B?S1dYaTNWakxxSXpZZDNrUm9TcDAxM25DMDVuRjdaaDFGZ0pKSjZPQS9LNEYy?=
- =?utf-8?B?RmFadDFUdGNONk9wRzBmUEptMGxRK3d2VnJNTHVCcnFJSU4wSTVsdVBtSTY5?=
- =?utf-8?B?OTFiZGt5UkNCM2tZblRUdkttSWhCVVcyVG95OUV2MSs0cVdQRHBpTUxZR1hI?=
- =?utf-8?B?UzdtQllBbStsbUI4N0ErdTJWYzI4TFhIN0hMR09XdmNEdFpmWlVmVVd6WWFw?=
- =?utf-8?B?Tm16MFo4K01OSzI5S2hFMHpSZ24zNFpjdDlNak12cHJTcmtYWm4zc29aNWtH?=
- =?utf-8?B?clhibVAvU1pUaThZdldEc1ZxN3gxZjNpUjI4UUxHekNDWlo3dG1vOHY0a01H?=
- =?utf-8?B?N3RkYlJnZWlNWHJwRlBpY0duMkpGUXVaMWtxaU1PQk5WeVoySlRMQXVNQmVz?=
- =?utf-8?B?ejNlVXZEU2FLL2d3dTUxUmF0WXJ2QThoMlUwLy96VDdVNmwvRkZDckppbjIx?=
- =?utf-8?B?SHFOdUVnVCtucUZQWXBLaGpQTUYzSFB4dTUyYlh0a1d1aE1tUEpzc2t6UU8y?=
- =?utf-8?B?cWg3aEhrRm9jUVNVajNkZHZ6aWdpemx4TEUwZDVhVFllNjdjSTVISEE5WGNs?=
- =?utf-8?B?a2hIQzBHTXErSGhvcUtNU29lbUpCUWo4UlpEOUs5NzZOS01oc3NUeklZd0pm?=
- =?utf-8?B?TzFINFc2Q3RsdkEzcVlLTVMrQ29lbmdWTUNUd0Y3aEsrNkV0clh1M2MvOENQ?=
- =?utf-8?B?U2thWkQ4YjhOKzg0VFdMU1lzWm8yM1VScVVyY0VCcnU0ZW9iUHN3N0VJVnVm?=
- =?utf-8?B?UlNnSnAxUHpiZ3ArNWc2SW9XRGF4dGVXS3FaclQvN2c0U3ZFWVJFQW9zL0JW?=
- =?utf-8?B?SEUzSUwrUVFyanp1bHFBbTdSMjBTamk1czZiVTVhanBxeXNyd1dNdUYyT0Y2?=
- =?utf-8?B?SDZWL0VsZVR3MWVhMHMxWW43dEs0YzdSYkFsTUtXY1FtaG5uRXBldmZDZ3Z0?=
- =?utf-8?B?VWdXalBQcTJZTmFJbnRZNVFzRlFQVFFSYmRzemdEQkFkZTVua0VoamNEcmc5?=
- =?utf-8?B?UnJrNzgzY0g1Z3phT055K0JyRDI4WWU1Wk9zMGJyZWt0U3RDRDJSRCtJUFNm?=
- =?utf-8?B?WnROZmJ3bUh6K1plOU5NU3NwczZGK2VUSE5RUGJrWkdBc1d0SUVkS2dGdEQz?=
- =?utf-8?B?aExxT2lsaTZsVUFJMnllTXBlMWZUN3ZFY081cGtjaVVqYTJpN1Q1WEhZQTk0?=
- =?utf-8?B?bHNIL3h4amFEU1d2S2ZzUDFCZDNoU1hvYjR2Y0VWMFVHS1hYUmpGR3ZWckVo?=
- =?utf-8?B?YWF6dHRScjYrVmVMSEgxUmdVdEhqUkJiVy9mSHR4V1loRE81RmFta09iYVR2?=
- =?utf-8?B?ZWRweER0TitPKysrc3Rod2NJZzRPQVl1S3N6YU5hUVdpdERWV3dFYThBQVUz?=
- =?utf-8?B?VXZHYjlEUEpwZjUrNE5xUlRraXhaWWpXcHVUeDFuWjJzeFErZUlDTFp2ei9O?=
- =?utf-8?B?RDNhZzVHOUJuRkJmQmorT2ZiN0FtSW84b2pyay9yN29TUlZWdE5PMjF2S1h5?=
- =?utf-8?B?STJLQU1jbVcraGdHWVlDa2gxOHdyUWpaS2ZFSVIyTkwzNmxCN2hJMVBUS2t1?=
- =?utf-8?B?SWc9PQ==?=
-X-OriginatorOrg: prevas.dk
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9fda2633-5723-472a-4fc6-08dc734824cc
-X-MS-Exchange-CrossTenant-AuthSource: DB9PR10MB7100.EURPRD10.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 May 2024 12:28:07.3837
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: d350cf71-778d-4780-88f5-071a4cb1ed61
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: cdDayhYy/f57SqeyzDL8qFbtcOiRItr6oMFSA1B35+94o/qV5CHA6r9FTt9AXV0l3beY231WIknPLmwJfya0jfkxS6ABv8/u/85wxUO1LUM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA2PR10MB8678
+Content-Type: text/plain
 
-On 10/05/2024 11.19, Peng Fan (OSS) wrote:
-> 
-> Aslo correct the name for fvco and fout clock.
 
-Btw., that part of the commit log is misleading. The patch does no such
-thing, as that part is already done in f52f00069888 that went into v6.8.
+On Sat 11 May 2024 at 14:08, Conor Dooley <conor@kernel.org> wrote:
 
-Please don't mindlessly cherry-pick stuff from the NXP fork and fixup
-stuff so it builds and just ignore whether the commit log still makes
-sense.
+> [[PGP Signed Part:Undecided]]
+> On Fri, May 10, 2024 at 12:08:54PM +0300, Dmitry Rokosov wrote:
+>> The 'syspll' PLL is a general-purpose PLL designed specifically for the
+>> CPU clock. It is capable of producing output frequencies within the
+>> range of 768MHz to 1536MHz.
+>> 
+>> The clock source sys_pll_div16, being one of the GEN clock parents,
+>> plays a crucial role and cannot be tagged as "optional". Unfortunately,
+>> it was not implemented earlier due to the cpu clock ctrl driver's
+>> pending status on the TODO list.
+>
+> It's fine to not mark it optional in the binding, but it should be
+> optional in the driver as otherwise backwards compatibility will be
+> broken. Given this is an integral clock driver, sounds like it would
+> quite likely break booting on these devices if the driver doesn't treat
+> syspll_in as optional.
+> A lesson perhaps in describing the hardware entirely, even if the
+> drivers don't make use of all the information yet?
 
-Rasmus
+That is nice but it is only possible if/when we have perfect knowledge
+of the HW being implemented. I don't know about you, but I rarely get
+perfect documentation for HW, let alone a public one.
 
+Those things are bound to happen as we implement support for the HW and
+discover how it works, not to mention the mistakes humans will
+inevitably do. If Linux was only supporting perfectly documented HW, it
+would not be supporting much of them I suspect.
+
+Stable API is already hard with ioctl but there, both sides are
+perfectly known. That is a fundamental difference with the 'DT ABI'
+
+Getting it right on day 1, every time - because things are set in stone
+afterwards - is unrealistic. As a maintainer, I do spend a
+disproportionate amount of time checking the bindings submission because
+I know how painful it gets to fix things up down the line.
+
+Unless I missed the simple solution to this problem, we can expect the
+problem keep happening again and again, no matter the number of lessons
+learned.
+
+>
+> Cheers,
+> Conor.
+>
+>> 
+>> Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
+>> ---
+>>  .../devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml     | 7 +++++--
+>>  include/dt-bindings/clock/amlogic,a1-pll-clkc.h            | 2 ++
+>>  2 files changed, 7 insertions(+), 2 deletions(-)
+>> 
+>> diff --git a/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
+>> index a59b188a8bf5..fbba57031278 100644
+>> --- a/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
+>> +++ b/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
+>> @@ -26,11 +26,13 @@ properties:
+>>      items:
+>>        - description: input fixpll_in
+>>        - description: input hifipll_in
+>> +      - description: input syspll_in
+>>  
+>>    clock-names:
+>>      items:
+>>        - const: fixpll_in
+>>        - const: hifipll_in
+>> +      - const: syspll_in
+>>  
+>>  required:
+>>    - compatible
+>> @@ -53,7 +55,8 @@ examples:
+>>              reg = <0 0x7c80 0 0x18c>;
+>>              #clock-cells = <1>;
+>>              clocks = <&clkc_periphs CLKID_FIXPLL_IN>,
+>> -                     <&clkc_periphs CLKID_HIFIPLL_IN>;
+>> -            clock-names = "fixpll_in", "hifipll_in";
+>> +                     <&clkc_periphs CLKID_HIFIPLL_IN>,
+>> +                     <&clkc_periphs CLKID_SYSPLL_IN>;
+>> +            clock-names = "fixpll_in", "hifipll_in", "syspll_in";
+>>          };
+>>      };
+>> diff --git a/include/dt-bindings/clock/amlogic,a1-pll-clkc.h b/include/dt-bindings/clock/amlogic,a1-pll-clkc.h
+>> index 2b660c0f2c9f..a702d610589c 100644
+>> --- a/include/dt-bindings/clock/amlogic,a1-pll-clkc.h
+>> +++ b/include/dt-bindings/clock/amlogic,a1-pll-clkc.h
+>> @@ -21,5 +21,7 @@
+>>  #define CLKID_FCLK_DIV5		8
+>>  #define CLKID_FCLK_DIV7		9
+>>  #define CLKID_HIFI_PLL		10
+>> +#define CLKID_SYS_PLL		11
+>> +#define CLKID_SYS_PLL_DIV16	12
+>>  
+>>  #endif /* __A1_PLL_CLKC_H */
+>> -- 
+>> 2.43.0
+>> 
+>> 
+>
+> [[End of PGP Signed Part]]
+
+
+-- 
+Jerome
