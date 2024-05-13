@@ -1,60 +1,127 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDF841552E8;
-	Mon, 13 May 2024 15:53:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D26C42EAF9;
+	Mon, 13 May 2024 18:30:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715615611; cv=none; b=he2nn+pxgIsg4bCrCbTF2SoL5OR4/G57602Ju793+5GaIVCtl78vBlShj/FtQ17mv1Gkgl3b20vh9Voirn4Om7/rpYuRfTLpk6vY+YrWMgeslZDKt+7keSmqQf7baHpJciZVBiNbi3iLPq6SrBxLPVHvQoA5+AQayW5LlQqYOs8=
+	t=1715625020; cv=none; b=kQ3vQtiL9LY82DIN+nFyvlHKnxNFff3WCvUTmdVujD+Wkm8iYLuHzyvFrvafd9kBRTGAP1P/MPN1bT7XJ0uCTj4IT0IQMpB9e0Gj/wLUYrWZBBuvhTGLEBJdfdKz4yN1pXhN5/DwnKw6u6a5ajNnDd6E/oG11kPU3wyuYCbSL7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715615611; c=relaxed/simple;
-	bh=QSJ9adYiyENvXrlQE+wO4TcEhBc9/Ph17/BE6YNfe6U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XYWGajgCxbPxmW33iGRvgKhWalmar3nvot3WPs/OM45BY4k8YppQKGarpBgTcVEtnugSxSub2lSZOea3XkfkJMIOPMtQNDnTiRjkGt/JDioJzhf1kPxOoXpKUR4RDWglJYqt1RDMHYHvMAK05SrsQq2aPU2JMv50RBFZGzGYjas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ieDlxfXp; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1715625020; c=relaxed/simple;
+	bh=VgGXcLWnnMXQFQNobbGLl/kzDnjLyWMMo5USBpwuUMw=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RvnGMxupTTyqurC/5RzQmDqvrhGaCXuwthWgvOEBHVQEnbwAieAcU4M+FBJ6hDG0LUqILHOMJ0twJTrsQ8dh2WOwTt5NNIz5V3A7XiNepnO6/UNBWpEX8msl5anUa2vBr8UBoqRgaMBqwf09prsUSqBjdAsBgT90CkFiPYmlsYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=IGyvOIy9; arc=none smtp.client-ip=37.18.73.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ieDlxfXp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25109C32782;
-	Mon, 13 May 2024 15:53:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715615611;
-	bh=QSJ9adYiyENvXrlQE+wO4TcEhBc9/Ph17/BE6YNfe6U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ieDlxfXpA9mxINnKrBrM2GCwrkLA9HNJPKbLm9C/lqpQFq0LO17JxHQ5uZA+KL6rT
-	 fJyNrr4u65gmS8FFm3lb5931uxXg2yS9xUTJoCWACUw6M/nAKyrIP8HaZmVGIvIaQ+
-	 bfOQZ2bKhDtjDd5XX23odoR30gx6gTCdsLQ3ZWzdH1SSBSKBM/fR7wTnddJ42JOgC+
-	 baHJi9lP2OF4w6InqIIQnayFq9bNTna2TackQajsyBnp0ql54m+U08BEocIAcTCzIX
-	 3c9N+3FvSE8SxUcuaUm0v3ONTToHAGatMO9OikwYDDGZhIaDGKNSwVOP+ZUQs1UGik
-	 E6oy83RDLePNg==
-Date: Mon, 13 May 2024 10:53:30 -0500
-From: Rob Herring <robh@kernel.org>
-To: Tomer Maimon <tmaimon77@gmail.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
-	krzysztof.kozlowski+dt@linaro.org, tali.perry1@gmail.com,
-	joel@jms.id.au, venture@google.com, yuenn@google.com,
-	benjaminfair@google.com, openbmc@lists.ozlabs.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v24 4/4] dt-binding: clock: remove nuvoton npcm845-clk
- bindings
-Message-ID: <20240513155330.GA2676859-robh@kernel.org>
-References: <20240509192411.2432066-1-tmaimon77@gmail.com>
- <20240509192411.2432066-5-tmaimon77@gmail.com>
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="IGyvOIy9"
+Received: from p-infra-ksmg-sc-msk01 (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 29E4510000F;
+	Mon, 13 May 2024 21:30:13 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 29E4510000F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1715625013;
+	bh=MSCcfNbXWZaqZvB3X6GEwhWjmXjAmNyUMbI+WpgElwY=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:From;
+	b=IGyvOIy9SYouzwG+kAf3q6T1b8wbTz8TTr2Cfx5P4miFmZKykKjTBtblkWilS3cOI
+	 ZaUFxM4aIOhikj9T486T2Tuya1L3mIehaLwtMsPhd/gukFAiVPwpRiczI6lBHxq79D
+	 OupNDiBwBbN20hqrp7FNptmussy1wFDaGsgWbsHmRvVcON61blhWVxCA8fJOhxT2cR
+	 ZKfExdYYmdAzngdzYnI79O+7FoslbC3q7IfP5EhK6YRdKbo0JiTTlmyXj8fKpCitiC
+	 bFD8upMp/Jcd7FAur51hqHJCfpulz4jYdY6CR6p6zIlcUJ7VpE9xDN3j/ZAuszCOXR
+	 EJwW7+EPflM8A==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Mon, 13 May 2024 21:30:12 +0300 (MSK)
+Received: from localhost (100.64.160.123) by p-i-exch-sc-m02.sberdevices.ru
+ (172.16.192.103) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Mon, 13 May
+ 2024 21:30:12 +0300
+Date: Mon, 13 May 2024 21:30:12 +0300
+From: Dmitry Rokosov <ddrokosov@salutedevices.com>
+To: Conor Dooley <conor@kernel.org>
+CC: <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
+	<mturquette@baylibre.com>, <sboyd@kernel.org>, <robh+dt@kernel.org>,
+	<krzysztof.kozlowski+dt@linaro.org>, <khilman@baylibre.com>,
+	<martin.blumenstingl@googlemail.com>, <jian.hu@amlogic.com>,
+	<kernel@sberdevices.ru>, <rockosov@gmail.com>,
+	<linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2 2/7] dt-bindings: clock: meson: a1: pll: introduce new
+ syspll bindings
+Message-ID: <20240513183012.652mwhivasqihiqc@CAB-WSD-L081021>
+References: <20240510090933.19464-1-ddrokosov@salutedevices.com>
+ <20240510090933.19464-3-ddrokosov@salutedevices.com>
+ <20240511-secret-barcode-e25c722ddf1d@spud>
+ <20240513091735.l3uewwzfrdd6qwbl@CAB-WSD-L081021>
+ <20240513-epic-magnifier-8dd83db81c4c@spud>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20240509192411.2432066-5-tmaimon77@gmail.com>
+In-Reply-To: <20240513-epic-magnifier-8dd83db81c4c@spud>
+User-Agent: NeoMutt/20220415
+X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 185196 [May 13 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: ddrokosov@salutedevices.com
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 20 0.3.20 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f, {Track_E25351}, {Tracking_from_domain_doesnt_match_to}, 100.64.160.123:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;smtp.sberdevices.ru:7.1.1,5.0.1;salutedevices.com:7.1.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/05/13 16:04:00 #25186646
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-On Thu, May 09, 2024 at 10:24:11PM +0300, Tomer Maimon wrote:
-> Remove nuvoton,npcm845-clk binding since the NPCM8xx clock driver
-> using the auxiliary device framework and not the device tree framework.
+On Mon, May 13, 2024 at 04:48:33PM +0100, Conor Dooley wrote:
+> On Mon, May 13, 2024 at 12:18:02PM +0300, Dmitry Rokosov wrote:
+> > Hello Conor,
+> > 
+> > Thank you for quick review!
+> > 
+> > On Sat, May 11, 2024 at 02:08:03PM +0100, Conor Dooley wrote:
+> > > On Fri, May 10, 2024 at 12:08:54PM +0300, Dmitry Rokosov wrote:
+> > > > The 'syspll' PLL is a general-purpose PLL designed specifically for the
+> > > > CPU clock. It is capable of producing output frequencies within the
+> > > > range of 768MHz to 1536MHz.
+> > > > 
+> > > > The clock source sys_pll_div16, being one of the GEN clock parents,
+> > > > plays a crucial role and cannot be tagged as "optional". Unfortunately,
+> > > > it was not implemented earlier due to the cpu clock ctrl driver's
+> > > > pending status on the TODO list.
+> > > 
+> > > It's fine to not mark it optional in the binding, but it should be
+> > > optional in the driver as otherwise backwards compatibility will be
+> > > broken. Given this is an integral clock driver, sounds like it would
+> > > quite likely break booting on these devices if the driver doesn't treat
+> > > syspll_in as optional.
+> > > A lesson perhaps in describing the hardware entirely, even if the
+> > > drivers don't make use of all the information yet?
+> > 
+> > Yes, it's definitely the right lesson for me. However, without syspll or
+> > syspll_in, we cannot utilize CPU power management at all.
+> 
+> That's the status-quo, right? The incorrect dts would continue to not
+> support CPU power management and the new one with the correct description
+> would?
 
-Again, this is an ABI break. Changing driver architecture for 1 OS is 
-not a reason to change DT.
+Hmmm, correct. Okay, I see, I will support sys_pll as optional
+connection :)
 
-Rob
+-- 
+Thank you,
+Dmitry
