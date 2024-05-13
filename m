@@ -1,72 +1,131 @@
-Received: from mail.usk4.lublin.pl (mail.usk4.lublin.pl [94.230.25.92])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55B7751016
-	for <linux-clk@vger.kernel.org>; Mon, 13 May 2024 06:43:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.230.25.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 919E250291;
+	Mon, 13 May 2024 06:48:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715582599; cv=none; b=M/G9Hk4BE7Kdn1ZFNivXIC5FJ3bB2StUbAH5hVy7+XPzQNnYXyxaWwDCUOYtFAn0sBJDwW0mu8bW+Y+F2okr522yq0/TKxBgTDBIz3gbCkUDR4tXsD84QQf681azPvvqiQ5bMC1fAkWfnGIAlg8fDD5BE7JdCUHm8CbUXHsq4Sg=
+	t=1715582905; cv=none; b=uqaR/a/jqpSk+t/yohynXh+6oCLuxLZFD9euXSRoFUe9JLY5RTuXCDdYTsXOqU4L76Pcmf6hfGjPCxRdwyvixPCS/gjbjMQIGGGwIhp0CyBl4B2DjiN+hYPYxM9LiOvlnCc5uV1+7f6OZO3GWrHWz3cR6h4PoVz+rSpBxkMnEHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715582599; c=relaxed/simple;
-	bh=jgnIKv8sELMl1Mm7eOGHnw/dPfkybicY98vD/ifLhkA=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ToVxTmehaZejI3hGRloJThyuVA+iQItcSpJb5WyXGL7RaicpQr5ziCb2wUnge2h3JgmyerIMcC4E5luzO04HMNuCU4qtmBOtNor4PTpknsC98G6p/cplUTYwVeChShb15UdUm+gdqqcCJxfZC4vp7qAGwwyfDJRx2uD1V0UsPLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=usk4.lublin.pl; spf=pass smtp.mailfrom=usk4.lublin.pl; dkim=pass (2048-bit key) header.d=usk4.lublin.pl header.i=@usk4.lublin.pl header.b=YPwZOKtH; arc=none smtp.client-ip=94.230.25.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=usk4.lublin.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=usk4.lublin.pl
+	s=arc-20240116; t=1715582905; c=relaxed/simple;
+	bh=YMe5rjfi2aJHY/Jb4QOx03hySKCxFSlYAqn1DwApzYY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=qjEDyOjE1HCNfcil2/ENybQ3uxmGMCAuyUf/vT9Fyali+blN2buxSs80+BXOtcC7YpYskRD8smg76TyXy49B3B9sW3o12sQiCnuvsrlLG6hJDf3Bxje+AOWQRhBUOaSqSCmYdrlW73ZWtnquox1+qFWPnsK6ahu/OCO5jvtMBUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Uk4tmBt7; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=usk4.lublin.pl header.i=@usk4.lublin.pl header.b="YPwZOKtH"
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.spsk4.lublin.pl (Postfix) with ESMTP id 1F7A925ABF
-	for <linux-clk@vger.kernel.org>; Mon, 13 May 2024 08:34:54 +0200 (CEST)
-Received: from mail.spsk4.lublin.pl ([127.0.0.1])
- by localhost (zimbra-mta.spsk4.lublin.pl [127.0.0.1]) (amavis, port 10032)
- with ESMTP id qPjPgkqtGhjF for <linux-clk@vger.kernel.org>;
- Mon, 13 May 2024 08:34:49 +0200 (CEST)
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.spsk4.lublin.pl (Postfix) with ESMTP id A745226A9B
-	for <linux-clk@vger.kernel.org>; Mon, 13 May 2024 08:34:49 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.spsk4.lublin.pl A745226A9B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=usk4.lublin.pl;
-	s=A89D793C-063F-11EF-AB86-9981EDAD7C0D; t=1715582089;
-	bh=qSLENA7SohRsCXFbqQq06JQ7CedKOuFZFwSQHq2OOq0=;
-	h=From:To:Date:Message-ID:MIME-Version;
-	b=YPwZOKtH6GXi4HZU0CXzPwo3bE7bB0xkrbwXimga7RWuxqgwRkm2w96+TEumV0Sh7
-	 7GUJnM6idcVWsQ7lcDzD8vk6HAXE+ekoARonKIBTwVp2mzzozFWZOZiFeHm+VanJUE
-	 RHkqCZ4njrmvGNaj80kQ7fra7VnzZgEDUuYuP9WvjX+jewA5ihHT+6M9A3Eldmoas2
-	 CbT++QxSMNCEo8LbMpdniYq+tc4pINVHZkMCBcRZ0u0pHMON5rYWZ1hyzJe5xk2uPf
-	 p0cUhyZEH7bKgy9w67izIRWwgkEso9KrBc4xQ+MkuxhHDY1JEmiwamN2p6xUP/fdka
-	 3px0KpN1tTqlg==
-X-Virus-Scanned: amavis at 
-Received: from mail.spsk4.lublin.pl ([127.0.0.1])
- by localhost (zimbra-mta.spsk4.lublin.pl [127.0.0.1]) (amavis, port 10026)
- with ESMTP id yTnqeFU75pzj for <linux-clk@vger.kernel.org>;
- Mon, 13 May 2024 08:34:49 +0200 (CEST)
-Received: from usk4.lublin.pl (unknown [69.67.148.89])
-	by mail.spsk4.lublin.pl (Postfix) with ESMTPSA id 9FBD425ABF
-	for <linux-clk@vger.kernel.org>; Mon, 13 May 2024 08:34:47 +0200 (CEST)
-Reply-To: mitler.scott@freelance-stickr.com
-From: "Mitler Scott"<bozena.danys@usk4.lublin.pl>
-To: linux-clk@vger.kernel.org
-Subject: Re: Auto Wrap
-Date: 13 May 2024 01:32:37 -0500
-Message-ID: <20240513013230.BD62333BC39DC8B7@usk4.lublin.pl>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Uk4tmBt7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52F0CC32783;
+	Mon, 13 May 2024 06:48:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715582905;
+	bh=YMe5rjfi2aJHY/Jb4QOx03hySKCxFSlYAqn1DwApzYY=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=Uk4tmBt71qel/8b6gDlcsnQobU3M93/uEqsvejmx/B4ZfRCrC2viGzJNvn00A/Xcw
+	 X3DWVbBwabZa18PaPN82gLqyIC+Ya4WNHszI3DtaJ+ICxO3ASO78xfVHZRHxWVRW3a
+	 Ck2Kn2djxDlcY+b9hr82/48ZBrqhpXOzrfJfYSEjqAA9B/MkA01zhuMXKNGXDfMrfM
+	 Y4YGRYOFQghPG1Pm6zDjj+MmX2cQhCkvrVdrMO4Lwke+MOIO0tl6pQowAYfAvVKB8U
+	 +rBbGOcfG3rBrTOlBToTEiLR0V/iKofG8EXaApXrIISXDLfG/hXRQQeQkfMoUi1HA1
+	 5s0f4orUUAoXQ==
+Message-ID: <b3199f40-0983-4185-bd0c-2e2d45d690ad@kernel.org>
+Date: Mon, 13 May 2024 08:48:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
-	charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V5 3/6] dt-bindings: PCI: qcom: Document the IPQ9574 PCIe
+ controller.
+To: devi priya <quic_devipriy@quicinc.com>, bhelgaas@google.com,
+ lpieralisi@kernel.org, kw@linux.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, andersson@kernel.org, konrad.dybcio@linaro.org,
+ mturquette@baylibre.com, sboyd@kernel.org, manivannan.sadhasivam@linaro.org,
+ linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <20240512082858.1806694-1-quic_devipriy@quicinc.com>
+ <20240512082858.1806694-4-quic_devipriy@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240512082858.1806694-4-quic_devipriy@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On 12/05/2024 10:28, devi priya wrote:
 
-I am Mitler Scott, a freelance marketing agent for Stickr. Would=20
-you like to earn 400 dollars per week by wrapping your car in an=20
-ad? 
+>  
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - qcom,pcie-ipq9574
+> +    then:
+> +      properties:
+> +        clocks:
+> +          minItems: 6
+> +          maxItems: 6
+> +        clock-names:
+> +          items:
+> +            - const: ahb  # AHB clock
+> +            - const: aux  # Auxiliary clock
+> +            - const: axi_m # AXI Master clock
+> +            - const: axi_s # AXI Slave clock
+> +            - const: axi_bridge # AXI bridge clock
+> +            - const: rchng
 
-Best Regards,
+That's introducing one more order of clocks... Please keep it
+consistent. The only existing case with ahb has it at after axi_m and
+others. Why making things everytime differently?
 
-Mitler Scott
+I also to propose to finally drop the obvious comments, like "AHB
+clock". It cannot be anything else. AXI Master / slave are descriptive,
+so should stay.
+
+Best regards,
+Krzysztof
 
