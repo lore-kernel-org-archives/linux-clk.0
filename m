@@ -1,128 +1,254 @@
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 759E640849;
-	Mon, 13 May 2024 18:44:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AD978286D;
+	Mon, 13 May 2024 21:25:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715625881; cv=none; b=VbR+/GYF0cDqEk2hArXK/hFEFd71qycf9sfX/t53YZqr+iIaYR1dhWs5fKdMpKyBxxuutCTOwJ+yDXxJ5WrCxw3qM2QPUvc3Cse9XRhZIysttS0ADDw7WxIrVA3+zSLdalYpet0YSorrxBDByr/51giWe3BMvyWZ3Ngz3aKEE2A=
+	t=1715635543; cv=none; b=kCz7vmaasdda0mtPQqiHGTuheM6puTICV0ykxgZ072DedSBj+VjnMEaVKxnG10T3venpTF2rVTsrHwOxgVxzSC02feZgo6nUrWeVq0c0UwvNam3g239V3pZaYaQQo+rUV9+tAUXUKswi3YC2KED14rp0jlNVNrHT2tnTZIdzKEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715625881; c=relaxed/simple;
-	bh=V+isaCSZhCjRM6q/lNr4SqvHnAMAfUr4V2ylici215w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BSMD2pjONzrSNSiZu3XTM+7E6eeEW4SsjfVkuzI/pCrkcSsMO+O/txjFTR6IcBR3kl9wLwdRR4Ag5gWzPTczPMyAsimQ73hH+JAJtW8zWSe+CjLkdPdhFy4lVqwTURmyOx75DJ7DzZpwxUL8Z3voxtpu8dz/JsyTWuLe4opi3og=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RyfEyhzi; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1715635543; c=relaxed/simple;
+	bh=MzhTbprSQLqOI+laf2qD+RvVg0d6t/v5yVZZpJ5h5/M=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aP0Ws0SovJXCWQu4u44RgGQPJEc7yNR9SsW/IY/yDEKzSOCq1m4SJz2C2Lov4NYXVjNM+CorwFHFy7LbOPoRmH5S0RS5X0VN03SjoHOWVaps7pJlo7B5tnxaKxj1M3/XjW/f/4/tjvLSSKgth2W44uYbBC86VQoiT0VFgYCLhqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=I0ZW+RNp; arc=none smtp.client-ip=37.18.73.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RyfEyhzi"
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-41ff5e3dc3bso23688475e9.1;
-        Mon, 13 May 2024 11:44:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715625878; x=1716230678; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=S7YHwZGAPlAJfMZbQVg4rYz7guv/kQNSmsLj5uQr7xE=;
-        b=RyfEyhzi6T162kF8oQO6oZkO4QR1Z/28PfbiOYZ+FdawSp3rBctuTaA35YJ7DIucme
-         R4SJoitrZOP8eLswacgbjaBwC6UqLfkIdMgYP93UW3vzv9Jj6OvZ4/jTwYbG5obMcznc
-         csNM95D+gwE2jizptx4BHEdPndmbmaxUbtDEQcvYWgAgxpBgAfdQwz9gpiQ3tuiCNaQM
-         v6HufRExb3nm3/e5dEXOCPcQ8YYa2e9DRTGsYqeBo1VN+xjG3+I8H4sRc42EGi+WKRrZ
-         +RPnw8TdxPSnd/B5UiehH9UqSsfy1pdgE9Pbx4H7YQ6HPqwWRuEL/4wSIcSbqXwgxqAO
-         zevQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715625878; x=1716230678;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=S7YHwZGAPlAJfMZbQVg4rYz7guv/kQNSmsLj5uQr7xE=;
-        b=wDBGYQSFnP3kudJBHSLddmb/p47tllG23ro6h3UqNobFwnsuExjrF2rV0NNqdVnY8f
-         1UTZh4FVqdv1rNdQLV7YSjM9Falal6tbHx2xXWh1TAb3gzwKeXOANLfZ1ipezshSw9QR
-         dau9MMCe+LoLReVsorOlfN3SCt7yovRGnQ9hC+rEO1PRdPQy4vOlTnWSWa8i1qqbAd0r
-         4VzIAPfNpcKGlxB4OBJqKdN2C4wgbLWgSQYfk2xGcDO107ImhrJ+Zbu/0Sv1OKL+RAIm
-         khJ2bIXDIgM46YQ65XHF8TZQMVcB156u3OAecW5edvSVn9v5+WeuY90mEnOMQFXW909/
-         Ug2A==
-X-Forwarded-Encrypted: i=1; AJvYcCUHFyGwgBWHg26G61L6L1bDy1QX+7IoD6By49rurb/N8kt0Ol0GXLyJ5jUw5wx2dKMGHAIRFvUjJomybEHNvgTiVFe6HhVVjd6SuTytXdFSPqWG/DYRlqUET5C4z6trMey4rcZvgqN2
-X-Gm-Message-State: AOJu0YyJysE+X1b9KJliNc8btvv7RKDiidqi0af5rsAD4YQMifc54slm
-	UWvxA06+8aX3r7hT2nCndwxy6mxuab+4vHpVeF0sUV1z1jZd87Am
-X-Google-Smtp-Source: AGHT+IF7zBTcIFLiTi46x3uVkADC+UX2XcNcYdPPZ8YgAghzbFRye/FiXNHlf9LviG5sOZkNNQzTbQ==
-X-Received: by 2002:a05:600c:1d21:b0:41b:97c5:ccc7 with SMTP id 5b1f17b1804b1-41fea9320bbmr69197895e9.8.1715625877429;
-        Mon, 13 May 2024 11:44:37 -0700 (PDT)
-Received: from [192.168.20.170] (57657817.unconfigured.pool.telekom.hu. [87.101.120.23])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41fccce9426sm164700615e9.25.2024.05.13.11.44.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 13 May 2024 11:44:36 -0700 (PDT)
-Message-ID: <01889053-bcf2-40cb-86ad-2f2bff56f24b@gmail.com>
-Date: Mon, 13 May 2024 20:44:33 +0200
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="I0ZW+RNp"
+Received: from p-infra-ksmg-sc-msk01 (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 57F4B100011;
+	Tue, 14 May 2024 00:25:36 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 57F4B100011
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1715635536;
+	bh=r7SrJKEdQaaLZ05rUgArc6iICQjCjkK9+wcS/jo51HY=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:From;
+	b=I0ZW+RNpOUgCHib9lsfv9K0l8cDHtIVVHW3wYar+df68uIjJRogr+Gvu7sv/mmHd3
+	 nhgXfqORX1AuwdZiTKcg5A6ApvJjOePH6c8r6csQyQiJTvc05tif/+Xz2GSCm4ZkL/
+	 RKAXQqbxc7b5J4lT+0Ook9EblY06AcIwvQK/C+pCyvnVEBIDhND8VPHe4OlPoUtuHU
+	 9ZgQC/bitP0GgmejwSfXRv0c3ZBkNUxnxDubNprWRhFNJ2CseN7xQT5seiWO1RDWmZ
+	 O+9JVF0AEcWh/Ew6DZDFYu+nhsIu1aXb5uzGepAWdVNdStsKlLikEsY++kvDJzqmap
+	 OrDCL9g7v5CGA==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Tue, 14 May 2024 00:25:36 +0300 (MSK)
+Received: from localhost (100.64.160.123) by p-i-exch-sc-m02.sberdevices.ru
+ (172.16.192.103) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Tue, 14 May
+ 2024 00:25:35 +0300
+Date: Tue, 14 May 2024 00:25:35 +0300
+From: Dmitry Rokosov <ddrokosov@salutedevices.com>
+To: Jerome Brunet <jbrunet@baylibre.com>
+CC: <neil.armstrong@linaro.org>, <mturquette@baylibre.com>,
+	<sboyd@kernel.org>, <robh+dt@kernel.org>,
+	<krzysztof.kozlowski+dt@linaro.org>, <khilman@baylibre.com>,
+	<martin.blumenstingl@googlemail.com>, <jian.hu@amlogic.com>,
+	<kernel@sberdevices.ru>, <rockosov@gmail.com>,
+	<linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v2 3/7] clk: meson: a1: pll: support 'syspll'
+ general-purpose PLL for CPU clock
+Message-ID: <20240513212535.rql55fdrvy2mdsrl@CAB-WSD-L081021>
+References: <20240510090933.19464-1-ddrokosov@salutedevices.com>
+ <20240510090933.19464-4-ddrokosov@salutedevices.com>
+ <1jbk59zx4g.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: apss-ipq-pll: remove 'config_ctl_hi_val' from
- Stromer pll configs
-Content-Language: hu
-To: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Varadarajan Narayanan
- <quic_varada@quicinc.com>,
- Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
-References: <20240509-stromer-config-ctl-v1-1-6034e17b28d5@gmail.com>
- <baa81202-f129-4ec2-baca-6ca8b476a37d@linaro.org>
- <21cedacd-f454-4eb8-9b2b-33a14592a6c1@quicinc.com>
-From: Gabor Juhos <j4g8y7@gmail.com>
-In-Reply-To: <21cedacd-f454-4eb8-9b2b-33a14592a6c1@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <1jbk59zx4g.fsf@starbuckisacylon.baylibre.com>
+User-Agent: NeoMutt/20220415
+X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 185198 [May 13 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: ddrokosov@salutedevices.com
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 20 0.3.20 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f, {Track_E25351}, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;salutedevices.com:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;100.64.160.123:7.1.2;smtp.sberdevices.ru:7.1.1,5.0.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/05/13 16:04:00 #25186646
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-2024. 05. 10. 18:25 keltezéssel, Kathiravan Thirumoorthy írta:
+On Mon, May 13, 2024 at 02:48:58PM +0200, Jerome Brunet wrote:
+> 
+> On Fri 10 May 2024 at 12:08, Dmitry Rokosov <ddrokosov@salutedevices.com> wrote:
+> 
+> > The 'syspll' PLL, also known as the system PLL, is a general and
+> > essential PLL responsible for generating the CPU clock frequency.
+> > With its wide-ranging capabilities, it is designed to accommodate
+> > frequencies within the range of 768MHz to 1536MHz.
+> >
+> > Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
+> > ---
+> >  drivers/clk/meson/a1-pll.c | 79 ++++++++++++++++++++++++++++++++++++++
+> >  drivers/clk/meson/a1-pll.h |  6 +++
+> >  2 files changed, 85 insertions(+)
+> >
+> > diff --git a/drivers/clk/meson/a1-pll.c b/drivers/clk/meson/a1-pll.c
+> > index 60b2e53e7e51..af47ba308bbe 100644
+> > --- a/drivers/clk/meson/a1-pll.c
+> > +++ b/drivers/clk/meson/a1-pll.c
+> > @@ -138,6 +138,82 @@ static struct clk_regmap hifi_pll = {
+> >  	},
+> >  };
+> >  
+> > +static const struct pll_mult_range sys_pll_mult_range = {
+> > +	.min = 32,
+> > +	.max = 64,
+> > +};
+> > +
+> > +static const struct reg_sequence sys_pll_init_regs[] = {
+> > +	{ .reg = ANACTRL_SYSPLL_CTRL1, .def = 0x01800000 },
+> > +	{ .reg = ANACTRL_SYSPLL_CTRL2, .def = 0x00001100 },
+> > +	{ .reg = ANACTRL_SYSPLL_CTRL3, .def = 0x10022300 },
+> > +	{ .reg = ANACTRL_SYSPLL_CTRL4, .def = 0x00300000 },
+> > +	{ .reg = ANACTRL_SYSPLL_CTRL0, .def = 0x01f18432 },
+> > +};
+> > +
+> > +static struct clk_regmap sys_pll = {
+> > +	.data = &(struct meson_clk_pll_data){
+> > +		.en = {
+> > +			.reg_off = ANACTRL_SYSPLL_CTRL0,
+> > +			.shift   = 28,
+> > +			.width   = 1,
+> > +		},
+> > +		.m = {
+> > +			.reg_off = ANACTRL_SYSPLL_CTRL0,
+> > +			.shift   = 0,
+> > +			.width   = 8,
+> > +		},
+> > +		.n = {
+> > +			.reg_off = ANACTRL_SYSPLL_CTRL0,
+> > +			.shift   = 10,
+> > +			.width   = 5,
+> > +		},
+> > +		.frac = {
+> > +			.reg_off = ANACTRL_SYSPLL_CTRL1,
+> > +			.shift   = 0,
+> > +			.width   = 19,
+> > +		},
+> > +		.l = {
+> > +			.reg_off = ANACTRL_SYSPLL_STS,
+> > +			.shift   = 31,
+> > +			.width   = 1,
+> > +		},
+> > +		.current_en = {
+> > +			.reg_off = ANACTRL_SYSPLL_CTRL0,
+> > +			.shift   = 26,
+> > +			.width   = 1,
+> > +		},
+> > +		.l_detect = {
+> > +			.reg_off = ANACTRL_SYSPLL_CTRL2,
+> > +			.shift   = 6,
+> > +			.width   = 1,
+> > +		},
+> > +		.range = &sys_pll_mult_range,
+> > +		.init_regs = sys_pll_init_regs,
+> > +		.init_count = ARRAY_SIZE(sys_pll_init_regs),
+> 
+> Like other 'fishy' flags, I would like a clear comment why this flag is
+> required so, 2y from now, we will know why it was put there and how we
+> can deal with it.
+> 
+
+Yep, you are totally correct. The proper comment is required for that.
+
+> > +		.flags = CLK_MESON_PLL_INIT_ONCE,
+> > +	},
+> > +	.hw.init = &(struct clk_init_data){
+> > +		.name = "sys_pll",
+> > +		.ops = &meson_clk_pll_ops,
+> > +		.parent_names = (const char *[]){ "syspll_in" },
+> > +		.num_parents = 1,
+> > +	},
+> > +};
+> > +
+> > +static struct clk_fixed_factor sys_pll_div16 = {
+> > +	.mult = 1,
+> > +	.div = 16,
+> > +	.hw.init = &(struct clk_init_data){
+> > +		.name = "sys_pll_div16",
+> > +		.ops = &clk_fixed_factor_ops,
+> > +		.parent_hws = (const struct clk_hw *[]) {
+> > +			&sys_pll.hw
+> > +		},
+> > +		.num_parents = 1,
+> > +	},
+> > +};
+> 
+> Unlike the fdivs, this fixed divider is not part of the diagram
+> describing the syspll clock.
+> 
+> IMO, it could as well be in peripheral controller because it exists
+> (from what I can see) just testing purposes, to make the sys pll
+> observable through tst_out or gen_clk.
+> 
+> It also looks less awkward in the bindings.
+> 
+
+In any case, it is necessary to introduce a new connection. Instead of
+using 'sys_pll_div16', it will now be called 'sys_pll'. I agree with you
+that this change will make the code more elegant.
+
+> > +
+> >  static struct clk_fixed_factor fclk_div2_div = {
+> >  	.mult = 1,
+> >  	.div = 2,
+> > @@ -283,6 +359,8 @@ static struct clk_hw *a1_pll_hw_clks[] = {
+> >  	[CLKID_FCLK_DIV5]	= &fclk_div5.hw,
+> >  	[CLKID_FCLK_DIV7]	= &fclk_div7.hw,
+> >  	[CLKID_HIFI_PLL]	= &hifi_pll.hw,
+> > +	[CLKID_SYS_PLL]		= &sys_pll.hw,
+> > +	[CLKID_SYS_PLL_DIV16]	= &sys_pll_div16.hw,
+> >  };
+> >  
+> >  static struct clk_regmap *const a1_pll_regmaps[] = {
+> > @@ -293,6 +371,7 @@ static struct clk_regmap *const a1_pll_regmaps[] = {
+> >  	&fclk_div5,
+> >  	&fclk_div7,
+> >  	&hifi_pll,
+> > +	&sys_pll,
+> >  };
+> >  
+> >  static struct regmap_config a1_pll_regmap_cfg = {
+> > diff --git a/drivers/clk/meson/a1-pll.h b/drivers/clk/meson/a1-pll.h
+> > index 4be17b2bf383..666d9b2137e9 100644
+> > --- a/drivers/clk/meson/a1-pll.h
+> > +++ b/drivers/clk/meson/a1-pll.h
+> > @@ -18,6 +18,12 @@
+> >  #define ANACTRL_FIXPLL_CTRL0	0x0
+> >  #define ANACTRL_FIXPLL_CTRL1	0x4
+> >  #define ANACTRL_FIXPLL_STS	0x14
+> > +#define ANACTRL_SYSPLL_CTRL0	0x80
+> > +#define ANACTRL_SYSPLL_CTRL1	0x84
+> > +#define ANACTRL_SYSPLL_CTRL2	0x88
+> > +#define ANACTRL_SYSPLL_CTRL3	0x8c
+> > +#define ANACTRL_SYSPLL_CTRL4	0x90
+> > +#define ANACTRL_SYSPLL_STS	0x94
+> >  #define ANACTRL_HIFIPLL_CTRL0	0xc0
+> >  #define ANACTRL_HIFIPLL_CTRL1	0xc4
+> >  #define ANACTRL_HIFIPLL_CTRL2	0xc8
 > 
 > 
-> On 5/10/2024 12:23 AM, Konrad Dybcio wrote:
->> On 9.05.2024 10:08 AM, Gabor Juhos wrote:
->>> Since the CONFIG_CTL register is only 32 bits wide in the Stromer
->>> and Stromer Plus PLLs , the 'config_ctl_hi_val' values from the
->>> IPQ5018 and IPQ5332 configurations are not used so remove those.
->>>
->>> No functional changes.
->>>
->>> Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
->>> ---
->>
->> Hm, it sounds suspicious that we'd have these settings then.. Could somebody from
->> QC please confirm that everything's alright here?
-> 
-> 
-> I checked the HW doc and yes in both IPQ5018 and IPQ5332 CONFIG_CTL_U register
-> is not implemented. I see offset of CONFIG_CTL_U register is removed in the
-> change[1] by Gabor.
+> -- 
+> Jerome
 
-Thanks for confirming!
-
-> 
-> Given that, should we also drop the pll_has_64bit_config() if block from
-> clk_stromer_pll_configure function?
-
-If we can be sure, that there will be no Stromer PLLs which implements that
-register we can drop the check. Also, since the SUPPORTS_FSM_MODE flag is not
-set for any of the Stromer (Plus) Plls supported currently, the related check
-can be dropped as well.
-
-However I would keep that as is for now. I'm planning to remove the
-clk_stromer_pll_configure() function entirely but that needs a bunch of
-preparatory patches which I'm working on at the moment.
-
-> 
-> Nevertheless, for this patch
-> 
-> Reviewed-by: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
-
-Thank you!
-
-Regards,
-Gabor
+-- 
+Thank you,
+Dmitry
