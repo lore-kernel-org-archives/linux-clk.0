@@ -1,129 +1,174 @@
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BA855102E;
-	Sun, 12 May 2024 19:07:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED8DA8468
+	for <linux-clk@vger.kernel.org>; Mon, 13 May 2024 06:39:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715540855; cv=none; b=q5Cj0KuEQLp4NM8qgO1O2VZCCfeDFstTWU5FU4b2PeyDa318X/HvTxptUYKOLdJ9RM6rlwDaAYz+Ab6vafOst608+8bhYx5jnGHHaMsqb5acDP4aKhPA/TIhNDxAv5Ndu9/Z+C8pkOxDHM887XsG5IUGB/lJQgv5Z1qDXt7Bq2M=
+	t=1715582390; cv=none; b=gDIWSAqVBH6uQDCvXPovq7HU5DIXM2YRRLQpL1+/sLbCT67XIkQwa0BkSrF7EEZuhtdlDh2bYBmRcUA8VatIrLLdjeIyuxWAVkQvG0uCaaNRuGe7t+AjtagJ4fua/QFzj4eoM10zyE/DrxmRD0xiNbE0p3psQgaLi1PkQymWrrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715540855; c=relaxed/simple;
-	bh=to6jmO+EBhSNRP4yMtY2wwECbwS2E9PNoQd42aJjGrg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=VkCXVYuxQViRc5IW0eaey3juM5koLdTJza+3bz88m7UAAsM7W5Z3vaRlcFgGqPstmIUiKFoinOick9MCuCjzwaZVCaP7KaREr6ZKxRF8zreBPTBDYaF3TNX6OPXF1ALS9VYNzDAts2vO4bj+VFPiNaMoC+5PQjTqA8uCc1NPifo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=k6xk3aN1; arc=none smtp.client-ip=45.89.224.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sberdevices.ru
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="k6xk3aN1"
-Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 84E37120003;
-	Sun, 12 May 2024 22:07:25 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 84E37120003
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1715540845;
-	bh=2rLH5TzP+km5UCLaOhbG3t3/0duKaiLCAy3iw53i790=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
-	b=k6xk3aN1sH9YnprLNrA0TrGzy+pVwxtShIrPAHyKUyGn5V7eBIURawthug715H4O8
-	 8bzbaLRl3JXui/ROukePFD3A/QHqUOIYGwhLbogg+gXGZ//ngX4gkghaWjP7YlONAr
-	 1FB+O2eSxFUGUfbZl8D2oTdVkAlEMTrKzJZK/drYvPP8YWDRPiOAVfMGbLyLPnj/cS
-	 TgnSI00sivc8BHlr/+L0uVgbTCQmc9R8xYJ0/2j67w7RwN/kB4pZ1jKOE4wYHbnxE2
-	 I2ptCygTTK9xfyNm7rpXTjV7BL+ve0n6qsSLP5rq8a1QbDLR8lMq6MIHVLlT8pvu5Y
-	 yphCnkiyFOg0A==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Sun, 12 May 2024 22:07:25 +0300 (MSK)
-Received: from [172.28.66.92] (100.64.160.123) by
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Sun, 12 May 2024 22:07:24 +0300
-Message-ID: <3fa610c2-1f69-41d4-b06a-035980483b3c@salutedevices.com>
-Date: Sun, 12 May 2024 22:06:23 +0300
+	s=arc-20240116; t=1715582390; c=relaxed/simple;
+	bh=qWUVcFOckM2mzHpQ2EXaxk0W1FsPXBRLNnFXKDxYnZY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LAkGy6WbSQGh6At9mGOWRPU01SRk0TYbsVDioKVvZRV1LkJRAlI5JV2NckC7pB7E8zB7WRfjf149lussYL7hDd9pk045nOlLtCWpRHrRbjuOCexwHcTLPVMK8tptmXikLu6Zy9muc9FV0pCoh9t6x6gyK6+3OVsNoAt4l8KC0Nw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <sha@pengutronix.de>)
+	id 1s6PLT-0004Yo-2g; Mon, 13 May 2024 08:39:35 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <sha@pengutronix.de>)
+	id 1s6PLS-0017Sf-4l; Mon, 13 May 2024 08:39:34 +0200
+Received: from sha by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <sha@pengutronix.de>)
+	id 1s6PLS-009O2c-07;
+	Mon, 13 May 2024 08:39:34 +0200
+Date: Mon, 13 May 2024 08:39:34 +0200
+From: Sascha Hauer <s.hauer@pengutronix.de>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Abel Vesa <abelvesa@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Jacky Bai <ping.bai@nxp.com>,
+	Ye Li <ye.li@nxp.com>, Dong Aisheng <aisheng.dong@nxp.com>,
+	linux-clk@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Abel Vesa <abel.vesa@linaro.org>, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH v2 01/17] clk: imx: composite-8m: Enable gate clk with
+ mcore_booted
+Message-ID: <ZkG1put2k33K4c_b@pengutronix.de>
+References: <20240510-imx-clk-v2-0-c998f315d29c@nxp.com>
+ <20240510-imx-clk-v2-1-c998f315d29c@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [APPROACH 2 1/2] arm64: dts: amlogic: list all slave clocks for
- audio clock controller
-Content-Language: en-US
-To: Rob Herring <robh@kernel.org>
-CC: Conor Dooley <conor+dt@kernel.org>, <devicetree@vger.kernel.org>, Jerome
- Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Krzysztof
- Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	<linux-amlogic@lists.infradead.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Martin
- Blumenstingl <martin.blumenstingl@googlemail.com>, Michael Turquette
-	<mturquette@baylibre.com>, Neil Armstrong <neil.armstrong@linaro.org>,
-	Stephen Boyd <sboyd@kernel.org>
-References: <20240508144259.191843-1-jan.dakinevich@salutedevices.com>
- <20240508144259.191843-3-jan.dakinevich@salutedevices.com>
- <20240508175013.GA2244257-robh@kernel.org>
-From: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-In-Reply-To: <20240508175013.GA2244257-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) To
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 185167 [May 11 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: YVDakinevich@sberdevices.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 19 0.3.19 07c7fa124d1a1dc9662cdc5aace418c06ae99d2b, {Tracking_smtp_not_equal_from}, {Tracking_from_domain_doesnt_match_to}, sberdevices.ru:5.0.1,7.1.1;100.64.160.123:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;salutedevices.com:7.1.1;127.0.0.199:7.1.2;smtp.sberdevices.ru:5.0.1,7.1.1, FromAlignment: n, {Tracking_smtp_domain_mismatch}, {Tracking_smtp_domain_2level_mismatch}, {Tracking_white_helo}, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/05/12 16:13:00 #25178084
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240510-imx-clk-v2-1-c998f315d29c@nxp.com>
+X-Sent-From: Pengutronix Hildesheim
+X-URL: http://www.pengutronix.de/
+X-Accept-Language: de,en
+X-Accept-Content-Type: text/plain
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: sha@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-
-
-On 5/8/24 20:50, Rob Herring wrote:
-> On Wed, May 08, 2024 at 05:42:58PM +0300, Jan Dakinevich wrote:
->> Signed-off-by: Jan Dakinevich <jan.dakinevich@salutedevices.com>
->> ---
->>  arch/arm64/boot/dts/amlogic/meson-axg.dtsi | 27 ++++++++++++++++++++--
->>  arch/arm64/boot/dts/amlogic/meson-g12.dtsi | 26 +++++++++++++++++++--
->>  arch/arm64/boot/dts/amlogic/meson-sm1.dtsi | 26 +++++++++++++++++++--
->>  3 files changed, 73 insertions(+), 6 deletions(-)
->>
->> diff --git a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
->> index 6d12b760b90f..28f4ec5f39b0 100644
->> --- a/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
->> +++ b/arch/arm64/boot/dts/amlogic/meson-axg.dtsi
->> @@ -1342,7 +1342,9 @@ clkc_audio: clock-controller@0 {
->>  					 <&clkc CLKID_HIFI_PLL>,
->>  					 <&clkc CLKID_FCLK_DIV3>,
->>  					 <&clkc CLKID_FCLK_DIV4>,
->> -					 <&clkc CLKID_GP0_PLL>;
->> +					 <&clkc CLKID_GP0_PLL>,
->> +					 <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>,
->> +					 <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>, <0>;
+On Fri, May 10, 2024 at 05:18:56PM +0800, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
 > 
-> All 3 cases are just unused clocks on the end. I suppose that's not 
-> always the case. You could just set 'minItems' in the binding to 
-> avoid needing to pad the end and the dts changes.
+> Bootloader might disable some CCM ROOT Slices. So if mcore_booted set with
+> display CCM ROOT disabled by Bootloader, kernel display BLK CTRL driver
+> imx8m_blk_ctrl_driver_init may hang the system because the BUS clk is
+> disabled.
 > 
+> Add back gate ops, but with disable doing nothing, then the CCM ROOT
+> will be enabled when used.
+> 
+> Fixes: 489bbee0c983 ("clk: imx: composite-8m: Enable gate clk with mcore_booted")
 
-You are right. I mistakenly thought that 'minItems' can not be
-redefined. But not, it is allowed to redefine it and it works. Thus,
-this patch is not needed for this approach.
+I can't find this commitish anywhere, also the subject looks like this
+patch fixes itself.
 
-Anyway, what do you think about first approach? As for me, it is more
-simple and readable.
+> Reviewed-by: Ye Li <ye.li@nxp.com>
+> Reviewed-by: Jacky Bai <ping.bai@nxp.com>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  drivers/clk/imx/clk-composite-8m.c | 53 ++++++++++++++++++++++++++++++--------
+>  1 file changed, 42 insertions(+), 11 deletions(-)
+> 
+> diff --git a/drivers/clk/imx/clk-composite-8m.c b/drivers/clk/imx/clk-composite-8m.c
+> index 8cc07d056a83..f187582ba491 100644
+> --- a/drivers/clk/imx/clk-composite-8m.c
+> +++ b/drivers/clk/imx/clk-composite-8m.c
+> @@ -204,6 +204,34 @@ static const struct clk_ops imx8m_clk_composite_mux_ops = {
+>  	.determine_rate = imx8m_clk_composite_mux_determine_rate,
+>  };
+>  
+> +static int imx8m_clk_composite_gate_enable(struct clk_hw *hw)
+> +{
+> +	struct clk_gate *gate = to_clk_gate(hw);
+> +	unsigned long flags;
+> +	u32 val;
+> +
+> +	spin_lock_irqsave(gate->lock, flags);
+> +
+> +	val = readl(gate->reg);
+> +	val |= BIT(gate->bit_idx);
+> +	writel(val, gate->reg);
+> +
+> +	spin_unlock_irqrestore(gate->lock, flags);
+> +
+> +	return 0;
+> +}
+> +
+> +static void imx8m_clk_composite_gate_disable(struct clk_hw *hw)
+> +{
+> +	/* composite clk requires the disable hook */
+> +}
+> +
+> +static const struct clk_ops imx8m_clk_composite_gate_ops = {
+> +	.enable = imx8m_clk_composite_gate_enable,
+> +	.disable = imx8m_clk_composite_gate_disable,
+> +	.is_enabled = clk_gate_is_enabled,
+> +};
+> +
+>  struct clk_hw *__imx8m_clk_hw_composite(const char *name,
+>  					const char * const *parent_names,
+>  					int num_parents, void __iomem *reg,
+> @@ -217,6 +245,7 @@ struct clk_hw *__imx8m_clk_hw_composite(const char *name,
+>  	struct clk_mux *mux;
+>  	const struct clk_ops *divider_ops;
+>  	const struct clk_ops *mux_ops;
+> +	const struct clk_ops *gate_ops;
+>  
+>  	mux = kzalloc(sizeof(*mux), GFP_KERNEL);
+>  	if (!mux)
+> @@ -257,20 +286,22 @@ struct clk_hw *__imx8m_clk_hw_composite(const char *name,
+>  	div->flags = CLK_DIVIDER_ROUND_CLOSEST;
+>  
+>  	/* skip registering the gate ops if M4 is enabled */
 
-> Rob
+This comment doesn't seems to become inaccurate with this patch.
+
+> -	if (!mcore_booted) {
+> -		gate = kzalloc(sizeof(*gate), GFP_KERNEL);
+> -		if (!gate)
+> -			goto free_div;
+> -
+> -		gate_hw = &gate->hw;
+> -		gate->reg = reg;
+> -		gate->bit_idx = PCG_CGC_SHIFT;
+> -		gate->lock = &imx_ccm_lock;
+> -	}
+> +	gate = kzalloc(sizeof(*gate), GFP_KERNEL);
+> +	if (!gate)
+> +		goto free_div;
+> +
+> +	gate_hw = &gate->hw;
+> +	gate->reg = reg;
+> +	gate->bit_idx = PCG_CGC_SHIFT;
+> +	gate->lock = &imx_ccm_lock;
+> +	if (!mcore_booted)
+> +		gate_ops = &clk_gate_ops;
+> +	else
+> +		gate_ops = &imx8m_clk_composite_gate_ops;
+
+Please use positive logic. It's easier to read.
+
+Sascha
 
 -- 
-Best regards
-Jan Dakinevich
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
