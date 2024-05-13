@@ -1,174 +1,201 @@
-Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
+Received: from EUR04-DB3-obe.outbound.protection.outlook.com (mail-db3eur04on2045.outbound.protection.outlook.com [40.107.6.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D35F14830A;
-	Mon, 13 May 2024 09:18:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715591895; cv=none; b=e7djJwwT45ENu6agpFWVlvpnJNyC8sLsFeRvJghs88ZCgDsqP3U3GGS8qhgjOuHHSLAf9W4FxT2EgOcyaCwQ0DBsP8tawSK6x7sf0boBy2auQKDkxdtZyhlylDsu3tGVQCMPE2+6syZ13fbyceRvBjfQVBYU65eRLsK8ivw/FTM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715591895; c=relaxed/simple;
-	bh=H1wRpQDhNndfntcESpVSTwVBpeN3BYzfKza8GvHYZb8=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=okjpaOcDAYIp9PaaIA47Cw+2b+UzyMNVALgSNoREALHMnRzgFNRyltxKDYG6ANUNlNJRgshBLInrAxFri+CUWCGTEpLMU3k8skQcQSsETcit8S/ChWdoaHKehNEWIVwQ8o+9W/yuzOnMj58zQyi9XteoxqQa3FH7nMqNLdheh1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=M4ZTeLUT; arc=none smtp.client-ip=37.18.73.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 399E243AAB;
+	Mon, 13 May 2024 11:49:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.6.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715600962; cv=fail; b=eiM2uQ7cx0Ldjnl9IhEQuc2GL6sEIKVeGl7OgaERPBPmudtzVnZP1sT1eERMLGOk8EhHSQTDUeWYPN4Cnq+GaKIjzdpL4IBIglKuVu2ebhMf87ZpN/dPNmnaXKORiIxTrlNGoSi00sjjkFy3QPO3AKM83pK7+Sj9nHn+Tz2ZE8c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715600962; c=relaxed/simple;
+	bh=UsmkF+WSBAk8aCGjwKZ/3s+hCUV6uhVUz39MnURhfqU=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=nqRTYek5ClxLZaI4W4/j7ORGOmULYgWV+W1dNmbhuadly0AGjUEcr8axw34BoQE+XObnj1VTIEkPZxZVpderFK1QJu1P3XnBDCtFQBdPMVlzPn6ufK4ywn0u0+RWew8hVXQKjMBjyaDmH7Z08QlE/v5Y83JyvchT80Wv+xQSFlU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prevas.dk; spf=pass smtp.mailfrom=prevas.dk; dkim=pass (1024-bit key) header.d=prevas.dk header.i=@prevas.dk header.b=Z8Ota244; arc=fail smtp.client-ip=40.107.6.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prevas.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prevas.dk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="M4ZTeLUT"
-Received: from p-infra-ksmg-sc-msk01 (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 5634D100011;
-	Mon, 13 May 2024 12:18:03 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 5634D100011
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1715591883;
-	bh=wZapPsm81sWCiMCo2QOM0XD4ZqQCOsyN3/ap/NfoDK0=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:From;
-	b=M4ZTeLUTnHAGKbsi8EMyDgPJ+KMRa5UGWyVdXe8U6TMkQsSIO3QwhnKaU8rvM/HIl
-	 U0EO286kdWajQoTUbv+X9Sip2TtVRFHF0nDVv/ldOpzvtn/3uPbq+VWzKsusvWSlJb
-	 6j33k8ws58WecZJa7GBZjopoQCLnM2yfHpJUHkDkFJwBTy3CgD77DPHj4jsPWnQeoj
-	 GmOksgLAivMk4/TS6D2oYcWv/zbSbx+4u5oJG9Fy3+wa5R8UfG/dD+8JqOY8kG2zck
-	 iWRQgK2NHRPP+cqPCEDMjs2vjjf06K31lvMJuWjFxxTfQIERRCO20rkK2gaH6U9auY
-	 h8JuL38054OEQ==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Mon, 13 May 2024 12:18:03 +0300 (MSK)
-Received: from localhost (100.64.160.123) by p-i-exch-sc-m02.sberdevices.ru
- (172.16.192.103) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Mon, 13 May
- 2024 12:18:02 +0300
-Date: Mon, 13 May 2024 12:18:02 +0300
-From: Dmitry Rokosov <ddrokosov@salutedevices.com>
-To: Conor Dooley <conor@kernel.org>
-CC: <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
-	<mturquette@baylibre.com>, <sboyd@kernel.org>, <robh+dt@kernel.org>,
-	<krzysztof.kozlowski+dt@linaro.org>, <khilman@baylibre.com>,
-	<martin.blumenstingl@googlemail.com>, <jian.hu@amlogic.com>,
-	<kernel@sberdevices.ru>, <rockosov@gmail.com>,
-	<linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2 2/7] dt-bindings: clock: meson: a1: pll: introduce new
- syspll bindings
-Message-ID: <20240513091735.l3uewwzfrdd6qwbl@CAB-WSD-L081021>
-References: <20240510090933.19464-1-ddrokosov@salutedevices.com>
- <20240510090933.19464-3-ddrokosov@salutedevices.com>
- <20240511-secret-barcode-e25c722ddf1d@spud>
+	dkim=pass (1024-bit key) header.d=prevas.dk header.i=@prevas.dk header.b="Z8Ota244"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=DzirSeos+fYaaLePDrvL4EGd4bCTbFt/50OKpJAD1HW4TzVs8VPz/7iMRGKxkQgA/OBOi9nBA0/c0+O3bGlNjiSO2454YHNjRVgSRAWZRdv3nsbz5dG7powioSmpabMie8e3F0X411iZQJBIFkpqNq+NBMNf53jc39U2wpCgqKtQr8IkaS6zxOKDjKKt82H61fX+nNxiIH5rCwaNjkWST2tsGUpCS52iIWH7lBcmLkif8S6GhY3CDFiIZQCnPAIp02y7nMkQDrRSzge86PabvfcOPchvlz4WASkO1Oq/bkd4VGlWIaYWsUkR7tFrU7h/gr0TYD7DDG0TyUa0eD7MOw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=nPsQc+qF3ZSKhZ0eETmnwIrTyPjESplZkibZ2fnliGM=;
+ b=dPDJawSXDm63Yj7FInoAkB9SgYuFz8iPf6GI28YMWpdQWm1uDDz3v1VgJLBDD4q+DTiFcxZKPJCOPPNqQvjeHImzyeGPp0rPZDmAnX0jUaFpdSAWM3DOZVBeWtWga/UbxLrONFFx0uP9B+3wVuzzPQP9+iQ65Kxt103beKc4clmXsHr2zkEZty8eG3gSXt3gSza88vRLkcvbGlDCGOXJ28ObNFcgyVQkMRbVH4Q+xexnxqlRe8yXwWkTVUK3FSwjpa10YjDR+j7NAZlNNCP5H2pF4aNdTFsRcyc9GPw3bEqQJqKewXBb9de0YuBH00V/R8asqoyjVAIkJbb6aKwDuA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=prevas.dk; dmarc=pass action=none header.from=prevas.dk;
+ dkim=pass header.d=prevas.dk; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prevas.dk;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=nPsQc+qF3ZSKhZ0eETmnwIrTyPjESplZkibZ2fnliGM=;
+ b=Z8Ota244jhpk0dubZYB9TK+CfAlnRprelFHLLJe8aEwK3jPRLNHyU8JjgtVNyxtFGBTJtYFVd/QnBJFfRWULipEEl6s0fiDvQT3HtcIP0H5jDqJJlrxMC5v0l+27KIJ17Q4dRcG3mFF3s4mGKSC+zAOOm2IvwAEmfG23rEIkx7I=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=prevas.dk;
+Received: from DB9PR10MB7100.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:45a::14)
+ by VI0PR10MB9009.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:800:214::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Mon, 13 May
+ 2024 11:49:14 +0000
+Received: from DB9PR10MB7100.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::9fcc:5df3:197:6691]) by DB9PR10MB7100.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::9fcc:5df3:197:6691%3]) with mapi id 15.20.7544.052; Mon, 13 May 2024
+ 11:49:14 +0000
+Message-ID: <cfceb49f-ffe9-4473-9877-ed92ab0ace1a@prevas.dk>
+Date: Mon, 13 May 2024 13:49:10 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 06/17] clk: imx: pll14xx: use rate_table for audio plls
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Abel Vesa <abelvesa@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Jacky Bai <ping.bai@nxp.com>,
+ Ye Li <ye.li@nxp.com>, Dong Aisheng <aisheng.dong@nxp.com>
+Cc: linux-clk@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Abel Vesa <abel.vesa@linaro.org>, Peng Fan <peng.fan@nxp.com>,
+ Shengjiu Wang <shengjiu.wang@nxp.com>
+References: <20240510-imx-clk-v2-0-c998f315d29c@nxp.com>
+ <20240510-imx-clk-v2-6-c998f315d29c@nxp.com>
+Content-Language: en-US, da
+From: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+In-Reply-To: <20240510-imx-clk-v2-6-c998f315d29c@nxp.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MM0P280CA0005.SWEP280.PROD.OUTLOOK.COM
+ (2603:10a6:190:a::35) To DB9PR10MB7100.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:10:45a::14)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240511-secret-barcode-e25c722ddf1d@spud>
-User-Agent: NeoMutt/20220415
-X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 185177 [May 13 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: ddrokosov@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 19 0.3.19 07c7fa124d1a1dc9662cdc5aace418c06ae99d2b, {Track_E25351}, {Tracking_from_domain_doesnt_match_to}, salutedevices.com:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;smtp.sberdevices.ru:7.1.1,5.0.1;127.0.0.199:7.1.2;100.64.160.123:7.1.2, FromAlignment: s, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/05/13 04:27:00 #25181647
-X-KSMG-AntiVirus-Status: Clean, skipped
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB9PR10MB7100:EE_|VI0PR10MB9009:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1b0e257b-751d-4413-c616-08dc7342b637
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|376005|7416005|1800799015|366007|921011;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VFZMYnpTVEZqTmxzUjBrT1ZEVEpHTkZDUVY0ZUpqcXZ2cW50RU1ESlFXNFlu?=
+ =?utf-8?B?T1B0V2FwM2o3WlgrUld1azFwMXdOQVhJN0dBUnpnYVRHekdYcmNHSVBpOGxn?=
+ =?utf-8?B?cGt2ZmFXRHJ5YnhDeTVrR3kxeHRkYzBiMEdsc3BkSzZrcGxiRDNoUldQMlBm?=
+ =?utf-8?B?dlhsb0FTTWYrVzYzNjZYT0lEUmRraVhEbnVlaTFyL1V4MzVDWGVNMi9XRlhU?=
+ =?utf-8?B?V2hWamcwVUoybVBEZ3ZLb29yQTVoNVYvVVBVcWhzT2RJUmhWY3V3U2EyWkRu?=
+ =?utf-8?B?NzdDQWFFOUR5aW9YenFuWU93Z3F4OG93dFBEdURURFZWNTQyaVNuTUNYT0l2?=
+ =?utf-8?B?a2hjZjF4OUdEc2owTVBnNXNIUjMwVXhPbXU0SjVmRldZdjhOT2liUi9uQmlD?=
+ =?utf-8?B?b2tkR3RIOUUwazRkZU1XMFlLYjBlN0l2WmV3a0JsU3QxS3d3ZmYzUDNKMERq?=
+ =?utf-8?B?WER1Sjh6eTFFdEM2cTlHN2k1TzIwUS8wNjZ6UkRjNWduTmpBaVN3U0VPaFBY?=
+ =?utf-8?B?TXlkSTdhTWVDc1hZSlhPbUtCTFdlSWZtNTBuU1Ewdzk0VHhjWTJtWmR6Y0hR?=
+ =?utf-8?B?MnN1d2RoRHpFWlBkZys5TVU5QmhxOHJhTFYyUjhpazNwZDlSOHRmOXJmL0Iy?=
+ =?utf-8?B?bG5JbWswek5pWm5lZjFkVEh5WVYraHM2SkNibmgzdk8wL1orQkdzdXpRcy9Z?=
+ =?utf-8?B?WW9HeXBEblpnSytVSkpuZHZUREp6bzR3WWdiaVlZaFVYd0JFak9TTGxYYzcw?=
+ =?utf-8?B?ekM2c2V0UGVsaW1MRjdYSnFPYlRJUkRQNnpkcTBHcjlINXBGZkVCZFY2bWtW?=
+ =?utf-8?B?dEVjUXZ2c3A0MUV0dEpzZXhVeVc5dVZqbXIvaHBiM3RwcjMvZlg4MDRBQllo?=
+ =?utf-8?B?OUo3c2puaVdtRVhDR1J6YXVVTzhoeVBpOUZ6VzZYT25IS3V2SzllcGJsMnBt?=
+ =?utf-8?B?bEtMNnFxL21FYUtsNEJ3WFVITVhTYXFLTU1NR3NoSmJlUzk1L0g2NTRGZE9Y?=
+ =?utf-8?B?UWxzWkVpWnR2dFlCZ0QrKzlpN1k0NjdzL2tQdkwwQmVXOXppOUtOMmNjOHdU?=
+ =?utf-8?B?OHhnZ2ZlRWthcTlOVG1rM2VGYVlsUWJCQk9VejkyWGNSVlNFRTJHbVpYSExv?=
+ =?utf-8?B?NjZFQUZSa3plL3Z0VzQ1TTJ0Qis1UkJYRjUwOHNyb1RhS0RUTXNqMnpQSW9x?=
+ =?utf-8?B?eGczM1RCckFRLzlNWXRXeDhHelJZeVZwaFdXQlFmNHMreHFhZEU0WEpma0xL?=
+ =?utf-8?B?OTFOZmRZUXU2Qk52dmROUGZtMGJOUldYTXROSGVYVVlOVXBOMU1ab2tMeXJJ?=
+ =?utf-8?B?N0RUY1lRUzJ0TTVYcEg0T3NJamJ4NkF1N2lpdlpVa2dON2V0anBCZ3hEZzUy?=
+ =?utf-8?B?S3hFcFZQZDJDMXc4SUJybWcrbE1ncVhoZC9mTmtaY1Zjc1J1b1RCeFRuM3FV?=
+ =?utf-8?B?enU1b2VGZjkrWjN4S2sxblB2d2VBcDJ0dVpDZGU0OHVDZjMxaXFhYzBVZ2Vn?=
+ =?utf-8?B?QldyQlR5VjFJM1kwUUM2WUczdFNtQXk3aXVVWlN0ampHN2pibXRZYjFxYmJk?=
+ =?utf-8?B?S3MrRGgzMU5XOHJpcWdtU3Q1UDJjZDlQY3Uvb1QreHdQZEw2QmRaQXpRUGd0?=
+ =?utf-8?B?OW9FWGdsZ0RxemlacTdvOVF6T1Vjc2NReGxpayt6d2lmMzh2ZElqSktUZVNr?=
+ =?utf-8?B?cDZTL3FnSjZQVDZHMHNYZ3JjdTlGVzhBZFhBS25LU3FzWmpSWlNsOThiWm1N?=
+ =?utf-8?Q?48Ou4D/aMAJklu+PfCaSvsxrhHScjEkQUFetRHl?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR10MB7100.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(376005)(7416005)(1800799015)(366007)(921011);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?OUlWRnF4SGtxZGlUaGVReUhId1h3a1hzL0N0ZXR1T1RtaUcrWWp4R0gvUWhl?=
+ =?utf-8?B?YUszR2grK09OaHJ1NXpQclQ5dXhHYzgvNGRkb3gyUmlUUHJweFpYcWdmbmxZ?=
+ =?utf-8?B?bkxGSHR1UnNRbzgvWDMvTVc3cWNtZFFKMm40QnQ5aVBTOHE1RURoa3JHNU5U?=
+ =?utf-8?B?OHppeTdySUlrQ2NJcmxRa0xQSSt0QjZCTTVweEhqVEVzKzk4RFFOL3RMVzJl?=
+ =?utf-8?B?M0wxanBQSjgrMjdSSlJkcjlwcWZlL3hkUlFndTBNMWYrSFN2cC9hQ3Z6T0RZ?=
+ =?utf-8?B?WDJ6R09QdGg1UmhpNUZBZjc0bHRyRXhCbUF6STlYN0NRVXVmZW9tWUZkWVp3?=
+ =?utf-8?B?MUZtZ2NNdDIyVGlyZkYrb0FJeUtmRVY5Z1Bodllwb3FNSko5WWFPbmtzTWMv?=
+ =?utf-8?B?dkd6QmZ6cktpSGNoOXNHQmQ4RUJTZTM2YVlOdFl1WjBhYlRIRlJ4dWZrdEZL?=
+ =?utf-8?B?bVJNa1h6TDZnbW1jbmdkVjNyNVEzd1dJWEViazNYWGhHa0FiYU1VKzJQRlU3?=
+ =?utf-8?B?ZWkvSnRXazlCR1owaXExTmI2am44TGRhSk9yVTdYTHZhM1VNVGE1b0s3aURM?=
+ =?utf-8?B?bnlDbURKWHcvcjE2dG5VQ3RBTjVQY0I4Vk95RFBFS0VudzZzeS9MVENkYW9Q?=
+ =?utf-8?B?Ym9saldTcjRnaGJMcnYxc0plcDd0TU01Sjc2YXJvTG0rM3E5cXdYNFpjQ3BZ?=
+ =?utf-8?B?S2p4dy84VU94bXlCNmw5WUM5eVhNYWxQUU5FSnp0Qjk0V2F5TkZmcmtTcll0?=
+ =?utf-8?B?c056aG9sT1gySnN2WTFyU1hxZ2ZGRUtQZWFtc3FveGlLQktXNWNmLzdZMjZ2?=
+ =?utf-8?B?RnhQNU41Q3k5cSt0ODVtZDc0R1B0SXRTNXZCSnRCR3QwQnljaGFlcHdiWjkv?=
+ =?utf-8?B?YUdyd0owbGw2ZThSQTJpRjN1Z1FYQ1B4bEFBcFk4eXlSRHFxS2pweE96enZF?=
+ =?utf-8?B?a1lzZ3I2R2YxY2VLT1RMYzBoRlQ5RWZ3Z0k5SjR5andGWWJDaFk1eU9SR1dX?=
+ =?utf-8?B?MjlMbmR5bjlVZlJnVmtXV2RXaVVwM21iR1h4TDBFWnVWZTl0dFl1UWNYQ1FJ?=
+ =?utf-8?B?ZEN0VFNuM0tncndJTjZaenZtUnVpL3VTcVd1OE45MzdEekZxbXVIMFhZdUR1?=
+ =?utf-8?B?RDgrSlFrM2plV3pxQmF3V2hqUUxJazBoUEM1MlVOeEhMbjVBS09wT0JlbWk3?=
+ =?utf-8?B?ZHZZZjZoL1RXYjE2bG9iUk5iVTNGcU4yekRBTkJpM0VZYkdUcHQ2akFMN3RX?=
+ =?utf-8?B?Qm45STk1ZmF2TUFqSk1scmpJVE1rT3l2ekdNK0tZdmtPZzNpWnFHMVdEWG5M?=
+ =?utf-8?B?NUZUaktTb3BORnZFclhnNURSd0FiQmJMQWdSaDBKYTV6T1piKy8zcFRYUVU2?=
+ =?utf-8?B?a1cxaGtSSG1Uak9OZDhPNUllZVlZZXVMSHJzYXdQcitYamxLckFyc1Y3dFhl?=
+ =?utf-8?B?QTUxZjRQaXlFOFR1SU5UeDcyZm51UFJGdklHR1BrS2ZDdDhoLzZ3RytNSjRP?=
+ =?utf-8?B?RnZsa2Y1MEo4VndWZE5waUs5OG9tSk5RNWJUNTB2amF6ZXJ2T20zcVRlV2Ra?=
+ =?utf-8?B?Wm1BT0RtNE9ESjZ3RGRhKy9od1MxNnlENmtLVWpRUlpZZ01QYnhxUEFqU3Z5?=
+ =?utf-8?B?V0tCK2lIN1IzNkhZT0l5U1NSb3E3d3lGaDR2cUQ0cFp2WGVxZzdzbUx3dnZu?=
+ =?utf-8?B?Z3hnbTN5ZndHOFVYZURPbTRSdC9OVDNzOTJuTXI0czRteTl6MlBiUWJRS3lt?=
+ =?utf-8?B?dG5LaEdJOUZKc2FUa0pJRkVuWjRNdS85Vk82aEV1Sm4yb09TYllPdkIzbnpq?=
+ =?utf-8?B?SDlGY1J4dENpdnUvL1AzOXFyY01BOHpKQlo5WnJIT2g2QWVCdmZTZ3pERzd4?=
+ =?utf-8?B?bEs5MWJwcGRHdldIRjVZTERyVTBhRVI4c1p6ckNOcE9GVHlzVHQ5NEVsd0U2?=
+ =?utf-8?B?T2thQzVrVG55MjJYZ2Rlay9ObzJITXRHd2xiUUxkYm1kVDRMZkx6aVJBcS9V?=
+ =?utf-8?B?cXVCTFVvR2tvNFp0dGlhNCtqWGR4QzZ4S2hrNWp2QUR6c0cxMkJxRWI4ZXJG?=
+ =?utf-8?B?VCtjZ2UvMUhmcnVjRmZxQVQxOXQvUGdlcG9NVDdtOU5SaTdXRW42eDh0QWVD?=
+ =?utf-8?B?WXZrTlI2R1ZMdWZ0cmNBblVFZHo5dUZaeWZjeGdRRWdZTlphTmJMd2Ztc0xU?=
+ =?utf-8?B?Vmc9PQ==?=
+X-OriginatorOrg: prevas.dk
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1b0e257b-751d-4413-c616-08dc7342b637
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR10MB7100.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 May 2024 11:49:14.3363
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: d350cf71-778d-4780-88f5-071a4cb1ed61
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: iMQbgRCQ1DOM7HPoyp/omA9zP7a6dOL0Gt9lSkuqdhLfMENqxynJ/PLjTbS7vGBFL+XFbwTIu1X9uuiJFg/sjM11YWv0YKpycrYZgvp6/+Q=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR10MB9009
 
-Hello Conor,
-
-Thank you for quick review!
-
-On Sat, May 11, 2024 at 02:08:03PM +0100, Conor Dooley wrote:
-> On Fri, May 10, 2024 at 12:08:54PM +0300, Dmitry Rokosov wrote:
-> > The 'syspll' PLL is a general-purpose PLL designed specifically for the
-> > CPU clock. It is capable of producing output frequencies within the
-> > range of 768MHz to 1536MHz.
-> > 
-> > The clock source sys_pll_div16, being one of the GEN clock parents,
-> > plays a crucial role and cannot be tagged as "optional". Unfortunately,
-> > it was not implemented earlier due to the cpu clock ctrl driver's
-> > pending status on the TODO list.
+On 10/05/2024 11.19, Peng Fan (OSS) wrote:
+> From: Shengjiu Wang <shengjiu.wang@nxp.com>
 > 
-> It's fine to not mark it optional in the binding, but it should be
-> optional in the driver as otherwise backwards compatibility will be
-> broken. Given this is an integral clock driver, sounds like it would
-> quite likely break booting on these devices if the driver doesn't treat
-> syspll_in as optional.
-> A lesson perhaps in describing the hardware entirely, even if the
-> drivers don't make use of all the information yet?
+> The generated clock frequency may not accurate, for example
+> the expected rate is 361267200U, but result is 361267199U.
+> Add rate_table for audio clocks to avoid such issue.
+> 
+> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> Reviewed-by: Jacky Bai <ping.bai@nxp.com>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  drivers/clk/imx/clk-pll14xx.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/drivers/clk/imx/clk-pll14xx.c b/drivers/clk/imx/clk-pll14xx.c
+> index 55812bfb9ec2..6b2c849f8b71 100644
+> --- a/drivers/clk/imx/clk-pll14xx.c
+> +++ b/drivers/clk/imx/clk-pll14xx.c
+> @@ -64,6 +64,17 @@ static const struct imx_pll14xx_rate_table imx_pll1443x_tbl[] = {
+>  	PLL_1443X_RATE(650000000U, 325, 3, 2, 0),
+>  	PLL_1443X_RATE(594000000U, 198, 2, 2, 0),
+>  	PLL_1443X_RATE(519750000U, 173, 2, 2, 16384),
+> +	PLL_1443X_RATE(393216000U, 262, 2, 3, 9437),
+> +	PLL_1443X_RATE(361267200U, 361, 3, 3, 17511),
 
-Yes, it's definitely the right lesson for me. However, without syspll or
-syspll_in, we cannot utilize CPU power management at all. I will attempt
-to make it an optional feature on the driver side, but it might
-necessitate additional conditions to disable CPU clock handling when
-syspll is unavailable.
+Sorry, what? This reintroduces the two entries that were removed in
+72d00e560d10, claiming that this produces an exact output, whereas that
+commit very clearly states (and it's easy to do the math and verify)
+that those entries actually resulted in output values of 393215995 and
+361267196. So even if the dynamic computation would result in 361267199
+(it doesn't, it gives an exact output), that would still be better than
+what these hard-coded entries achieve.
 
-> > 
-> > Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
-> > ---
-> >  .../devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml     | 7 +++++--
-> >  include/dt-bindings/clock/amlogic,a1-pll-clkc.h            | 2 ++
-> >  2 files changed, 7 insertions(+), 2 deletions(-)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
-> > index a59b188a8bf5..fbba57031278 100644
-> > --- a/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
-> > +++ b/Documentation/devicetree/bindings/clock/amlogic,a1-pll-clkc.yaml
-> > @@ -26,11 +26,13 @@ properties:
-> >      items:
-> >        - description: input fixpll_in
-> >        - description: input hifipll_in
-> > +      - description: input syspll_in
-> >  
-> >    clock-names:
-> >      items:
-> >        - const: fixpll_in
-> >        - const: hifipll_in
-> > +      - const: syspll_in
-> >  
-> >  required:
-> >    - compatible
-> > @@ -53,7 +55,8 @@ examples:
-> >              reg = <0 0x7c80 0 0x18c>;
-> >              #clock-cells = <1>;
-> >              clocks = <&clkc_periphs CLKID_FIXPLL_IN>,
-> > -                     <&clkc_periphs CLKID_HIFIPLL_IN>;
-> > -            clock-names = "fixpll_in", "hifipll_in";
-> > +                     <&clkc_periphs CLKID_HIFIPLL_IN>,
-> > +                     <&clkc_periphs CLKID_SYSPLL_IN>;
-> > +            clock-names = "fixpll_in", "hifipll_in", "syspll_in";
-> >          };
-> >      };
-> > diff --git a/include/dt-bindings/clock/amlogic,a1-pll-clkc.h b/include/dt-bindings/clock/amlogic,a1-pll-clkc.h
-> > index 2b660c0f2c9f..a702d610589c 100644
-> > --- a/include/dt-bindings/clock/amlogic,a1-pll-clkc.h
-> > +++ b/include/dt-bindings/clock/amlogic,a1-pll-clkc.h
-> > @@ -21,5 +21,7 @@
-> >  #define CLKID_FCLK_DIV5		8
-> >  #define CLKID_FCLK_DIV7		9
-> >  #define CLKID_HIFI_PLL		10
-> > +#define CLKID_SYS_PLL		11
-> > +#define CLKID_SYS_PLL_DIV16	12
-> >  
-> >  #endif /* __A1_PLL_CLKC_H */
-> > -- 
-> > 2.43.0
-> > 
-> > 
+Rasmus
 
-
-
--- 
-Thank you,
-Dmitry
