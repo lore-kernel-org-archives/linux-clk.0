@@ -1,127 +1,128 @@
-Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D26C42EAF9;
-	Mon, 13 May 2024 18:30:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 759E640849;
+	Mon, 13 May 2024 18:44:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715625020; cv=none; b=kQ3vQtiL9LY82DIN+nFyvlHKnxNFff3WCvUTmdVujD+Wkm8iYLuHzyvFrvafd9kBRTGAP1P/MPN1bT7XJ0uCTj4IT0IQMpB9e0Gj/wLUYrWZBBuvhTGLEBJdfdKz4yN1pXhN5/DwnKw6u6a5ajNnDd6E/oG11kPU3wyuYCbSL7U=
+	t=1715625881; cv=none; b=VbR+/GYF0cDqEk2hArXK/hFEFd71qycf9sfX/t53YZqr+iIaYR1dhWs5fKdMpKyBxxuutCTOwJ+yDXxJ5WrCxw3qM2QPUvc3Cse9XRhZIysttS0ADDw7WxIrVA3+zSLdalYpet0YSorrxBDByr/51giWe3BMvyWZ3Ngz3aKEE2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715625020; c=relaxed/simple;
-	bh=VgGXcLWnnMXQFQNobbGLl/kzDnjLyWMMo5USBpwuUMw=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RvnGMxupTTyqurC/5RzQmDqvrhGaCXuwthWgvOEBHVQEnbwAieAcU4M+FBJ6hDG0LUqILHOMJ0twJTrsQ8dh2WOwTt5NNIz5V3A7XiNepnO6/UNBWpEX8msl5anUa2vBr8UBoqRgaMBqwf09prsUSqBjdAsBgT90CkFiPYmlsYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=IGyvOIy9; arc=none smtp.client-ip=37.18.73.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
+	s=arc-20240116; t=1715625881; c=relaxed/simple;
+	bh=V+isaCSZhCjRM6q/lNr4SqvHnAMAfUr4V2ylici215w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BSMD2pjONzrSNSiZu3XTM+7E6eeEW4SsjfVkuzI/pCrkcSsMO+O/txjFTR6IcBR3kl9wLwdRR4Ag5gWzPTczPMyAsimQ73hH+JAJtW8zWSe+CjLkdPdhFy4lVqwTURmyOx75DJ7DzZpwxUL8Z3voxtpu8dz/JsyTWuLe4opi3og=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RyfEyhzi; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="IGyvOIy9"
-Received: from p-infra-ksmg-sc-msk01 (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 29E4510000F;
-	Mon, 13 May 2024 21:30:13 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 29E4510000F
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1715625013;
-	bh=MSCcfNbXWZaqZvB3X6GEwhWjmXjAmNyUMbI+WpgElwY=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:From;
-	b=IGyvOIy9SYouzwG+kAf3q6T1b8wbTz8TTr2Cfx5P4miFmZKykKjTBtblkWilS3cOI
-	 ZaUFxM4aIOhikj9T486T2Tuya1L3mIehaLwtMsPhd/gukFAiVPwpRiczI6lBHxq79D
-	 OupNDiBwBbN20hqrp7FNptmussy1wFDaGsgWbsHmRvVcON61blhWVxCA8fJOhxT2cR
-	 ZKfExdYYmdAzngdzYnI79O+7FoslbC3q7IfP5EhK6YRdKbo0JiTTlmyXj8fKpCitiC
-	 bFD8upMp/Jcd7FAur51hqHJCfpulz4jYdY6CR6p6zIlcUJ7VpE9xDN3j/ZAuszCOXR
-	 EJwW7+EPflM8A==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Mon, 13 May 2024 21:30:12 +0300 (MSK)
-Received: from localhost (100.64.160.123) by p-i-exch-sc-m02.sberdevices.ru
- (172.16.192.103) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Mon, 13 May
- 2024 21:30:12 +0300
-Date: Mon, 13 May 2024 21:30:12 +0300
-From: Dmitry Rokosov <ddrokosov@salutedevices.com>
-To: Conor Dooley <conor@kernel.org>
-CC: <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
-	<mturquette@baylibre.com>, <sboyd@kernel.org>, <robh+dt@kernel.org>,
-	<krzysztof.kozlowski+dt@linaro.org>, <khilman@baylibre.com>,
-	<martin.blumenstingl@googlemail.com>, <jian.hu@amlogic.com>,
-	<kernel@sberdevices.ru>, <rockosov@gmail.com>,
-	<linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2 2/7] dt-bindings: clock: meson: a1: pll: introduce new
- syspll bindings
-Message-ID: <20240513183012.652mwhivasqihiqc@CAB-WSD-L081021>
-References: <20240510090933.19464-1-ddrokosov@salutedevices.com>
- <20240510090933.19464-3-ddrokosov@salutedevices.com>
- <20240511-secret-barcode-e25c722ddf1d@spud>
- <20240513091735.l3uewwzfrdd6qwbl@CAB-WSD-L081021>
- <20240513-epic-magnifier-8dd83db81c4c@spud>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RyfEyhzi"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-41ff5e3dc3bso23688475e9.1;
+        Mon, 13 May 2024 11:44:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715625878; x=1716230678; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=S7YHwZGAPlAJfMZbQVg4rYz7guv/kQNSmsLj5uQr7xE=;
+        b=RyfEyhzi6T162kF8oQO6oZkO4QR1Z/28PfbiOYZ+FdawSp3rBctuTaA35YJ7DIucme
+         R4SJoitrZOP8eLswacgbjaBwC6UqLfkIdMgYP93UW3vzv9Jj6OvZ4/jTwYbG5obMcznc
+         csNM95D+gwE2jizptx4BHEdPndmbmaxUbtDEQcvYWgAgxpBgAfdQwz9gpiQ3tuiCNaQM
+         v6HufRExb3nm3/e5dEXOCPcQ8YYa2e9DRTGsYqeBo1VN+xjG3+I8H4sRc42EGi+WKRrZ
+         +RPnw8TdxPSnd/B5UiehH9UqSsfy1pdgE9Pbx4H7YQ6HPqwWRuEL/4wSIcSbqXwgxqAO
+         zevQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715625878; x=1716230678;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=S7YHwZGAPlAJfMZbQVg4rYz7guv/kQNSmsLj5uQr7xE=;
+        b=wDBGYQSFnP3kudJBHSLddmb/p47tllG23ro6h3UqNobFwnsuExjrF2rV0NNqdVnY8f
+         1UTZh4FVqdv1rNdQLV7YSjM9Falal6tbHx2xXWh1TAb3gzwKeXOANLfZ1ipezshSw9QR
+         dau9MMCe+LoLReVsorOlfN3SCt7yovRGnQ9hC+rEO1PRdPQy4vOlTnWSWa8i1qqbAd0r
+         4VzIAPfNpcKGlxB4OBJqKdN2C4wgbLWgSQYfk2xGcDO107ImhrJ+Zbu/0Sv1OKL+RAIm
+         khJ2bIXDIgM46YQ65XHF8TZQMVcB156u3OAecW5edvSVn9v5+WeuY90mEnOMQFXW909/
+         Ug2A==
+X-Forwarded-Encrypted: i=1; AJvYcCUHFyGwgBWHg26G61L6L1bDy1QX+7IoD6By49rurb/N8kt0Ol0GXLyJ5jUw5wx2dKMGHAIRFvUjJomybEHNvgTiVFe6HhVVjd6SuTytXdFSPqWG/DYRlqUET5C4z6trMey4rcZvgqN2
+X-Gm-Message-State: AOJu0YyJysE+X1b9KJliNc8btvv7RKDiidqi0af5rsAD4YQMifc54slm
+	UWvxA06+8aX3r7hT2nCndwxy6mxuab+4vHpVeF0sUV1z1jZd87Am
+X-Google-Smtp-Source: AGHT+IF7zBTcIFLiTi46x3uVkADC+UX2XcNcYdPPZ8YgAghzbFRye/FiXNHlf9LviG5sOZkNNQzTbQ==
+X-Received: by 2002:a05:600c:1d21:b0:41b:97c5:ccc7 with SMTP id 5b1f17b1804b1-41fea9320bbmr69197895e9.8.1715625877429;
+        Mon, 13 May 2024 11:44:37 -0700 (PDT)
+Received: from [192.168.20.170] (57657817.unconfigured.pool.telekom.hu. [87.101.120.23])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41fccce9426sm164700615e9.25.2024.05.13.11.44.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 13 May 2024 11:44:36 -0700 (PDT)
+Message-ID: <01889053-bcf2-40cb-86ad-2f2bff56f24b@gmail.com>
+Date: Mon, 13 May 2024 20:44:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240513-epic-magnifier-8dd83db81c4c@spud>
-User-Agent: NeoMutt/20220415
-X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 185196 [May 13 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: ddrokosov@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 20 0.3.20 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f, {Track_E25351}, {Tracking_from_domain_doesnt_match_to}, 100.64.160.123:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;smtp.sberdevices.ru:7.1.1,5.0.1;salutedevices.com:7.1.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/05/13 16:04:00 #25186646
-X-KSMG-AntiVirus-Status: Clean, skipped
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: qcom: apss-ipq-pll: remove 'config_ctl_hi_val' from
+ Stromer pll configs
+Content-Language: hu
+To: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Varadarajan Narayanan
+ <quic_varada@quicinc.com>,
+ Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
+References: <20240509-stromer-config-ctl-v1-1-6034e17b28d5@gmail.com>
+ <baa81202-f129-4ec2-baca-6ca8b476a37d@linaro.org>
+ <21cedacd-f454-4eb8-9b2b-33a14592a6c1@quicinc.com>
+From: Gabor Juhos <j4g8y7@gmail.com>
+In-Reply-To: <21cedacd-f454-4eb8-9b2b-33a14592a6c1@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, May 13, 2024 at 04:48:33PM +0100, Conor Dooley wrote:
-> On Mon, May 13, 2024 at 12:18:02PM +0300, Dmitry Rokosov wrote:
-> > Hello Conor,
-> > 
-> > Thank you for quick review!
-> > 
-> > On Sat, May 11, 2024 at 02:08:03PM +0100, Conor Dooley wrote:
-> > > On Fri, May 10, 2024 at 12:08:54PM +0300, Dmitry Rokosov wrote:
-> > > > The 'syspll' PLL is a general-purpose PLL designed specifically for the
-> > > > CPU clock. It is capable of producing output frequencies within the
-> > > > range of 768MHz to 1536MHz.
-> > > > 
-> > > > The clock source sys_pll_div16, being one of the GEN clock parents,
-> > > > plays a crucial role and cannot be tagged as "optional". Unfortunately,
-> > > > it was not implemented earlier due to the cpu clock ctrl driver's
-> > > > pending status on the TODO list.
-> > > 
-> > > It's fine to not mark it optional in the binding, but it should be
-> > > optional in the driver as otherwise backwards compatibility will be
-> > > broken. Given this is an integral clock driver, sounds like it would
-> > > quite likely break booting on these devices if the driver doesn't treat
-> > > syspll_in as optional.
-> > > A lesson perhaps in describing the hardware entirely, even if the
-> > > drivers don't make use of all the information yet?
-> > 
-> > Yes, it's definitely the right lesson for me. However, without syspll or
-> > syspll_in, we cannot utilize CPU power management at all.
+2024. 05. 10. 18:25 keltezéssel, Kathiravan Thirumoorthy írta:
 > 
-> That's the status-quo, right? The incorrect dts would continue to not
-> support CPU power management and the new one with the correct description
-> would?
+> 
+> On 5/10/2024 12:23 AM, Konrad Dybcio wrote:
+>> On 9.05.2024 10:08 AM, Gabor Juhos wrote:
+>>> Since the CONFIG_CTL register is only 32 bits wide in the Stromer
+>>> and Stromer Plus PLLs , the 'config_ctl_hi_val' values from the
+>>> IPQ5018 and IPQ5332 configurations are not used so remove those.
+>>>
+>>> No functional changes.
+>>>
+>>> Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
+>>> ---
+>>
+>> Hm, it sounds suspicious that we'd have these settings then.. Could somebody from
+>> QC please confirm that everything's alright here?
+> 
+> 
+> I checked the HW doc and yes in both IPQ5018 and IPQ5332 CONFIG_CTL_U register
+> is not implemented. I see offset of CONFIG_CTL_U register is removed in the
+> change[1] by Gabor.
 
-Hmmm, correct. Okay, I see, I will support sys_pll as optional
-connection :)
+Thanks for confirming!
 
--- 
-Thank you,
-Dmitry
+> 
+> Given that, should we also drop the pll_has_64bit_config() if block from
+> clk_stromer_pll_configure function?
+
+If we can be sure, that there will be no Stromer PLLs which implements that
+register we can drop the check. Also, since the SUPPORTS_FSM_MODE flag is not
+set for any of the Stromer (Plus) Plls supported currently, the related check
+can be dropped as well.
+
+However I would keep that as is for now. I'm planning to remove the
+clk_stromer_pll_configure() function entirely but that needs a bunch of
+preparatory patches which I'm working on at the moment.
+
+> 
+> Nevertheless, for this patch
+> 
+> Reviewed-by: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+
+Thank you!
+
+Regards,
+Gabor
