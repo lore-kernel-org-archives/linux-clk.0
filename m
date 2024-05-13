@@ -1,34 +1,52 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2058.outbound.protection.outlook.com [40.107.21.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86FA314F9C6
-	for <linux-clk@vger.kernel.org>; Mon, 13 May 2024 12:26:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715603212; cv=none; b=MOPRfylydwdf0Q8fqk4lQSOJcuur66M0Yt9jZYNBwbovQ4LoJAypahXOYEo4Nse5dHuEwpTuhvIoeDLn5Y5TApFyKVXFJ3QsVm7I/JzxAIhJ0gNag6VGNBhQMx0w9NJiK7x9Ekq5aPomC3yXcCJZWLhzEFS+ozQGkW3NfRFlHj0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715603212; c=relaxed/simple;
-	bh=QqDCC4k0NPdJbIRo5g2C9AZNgV71fSbSWfaOiOVXx8o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VU3zbTMnVViA28EMlgH/XsPD8Rffr4oZCuhRQ1KSSQJ3ZJqpdFfEw/CcZVi/Km5U5LxGF75rZ7fcRASPgEAzFTjYG4W0WXvCXpurm88AZR9yfWZ11jSsd+0F6a5JS8op72UWQCvhdpV0ONc+XlFC0eo0QZv4qGWwd1DzLVHzU6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1s6Ul4-0006Rd-I3; Mon, 13 May 2024 14:26:22 +0200
-Message-ID: <3ecbba68-d8c8-4700-b438-b47e9b8a4525@pengutronix.de>
-Date: Mon, 13 May 2024 14:26:20 +0200
-Precedence: bulk
-X-Mailing-List: linux-clk@vger.kernel.org
-List-Id: <linux-clk.vger.kernel.org>
-List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
-List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 100A714F119;
+	Mon, 13 May 2024 12:28:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.58
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715603292; cv=fail; b=nyYolimizZkuRjVFzsUahoZIIf+lRrxNuvaM9lE9lMd6aMHsdxDP+AwrGv+ykvvxKNKgnt7LvTjGFP0FwH0jtAMTkR4QmoBchpv0PRFr4/yfgotJVjcYRhQd21/Yjj6p2+4d+StaG7c28xW1u1NwTrnsUHPcziGy0DY36t4OXlo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715603292; c=relaxed/simple;
+	bh=qoMY1LtxHg/1wJOL2q6ImO4mcP6o1DhHD+epdR02FQI=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Vjzsr/YckZ4+5YYruDs9H7Ss7ilSt7G5eRoY0KfXfs09HHFCXoSbopb2VdutIxKttWTsC+cVPPiAbmg4dMbNMsaKHXSGTplDEH3ebyie3WKOkskf02hKhKAhNesA7x9IT8u0bSYNuVK5tTT036laQJEiiVmjAza1cFaFPvbU43o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prevas.dk; spf=pass smtp.mailfrom=prevas.dk; dkim=pass (1024-bit key) header.d=prevas.dk header.i=@prevas.dk header.b=Varx3K9N; arc=fail smtp.client-ip=40.107.21.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=prevas.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prevas.dk
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=prevas.dk header.i=@prevas.dk header.b="Varx3K9N"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=WoCSE1f4iFTrwbZHC+dlfkIQZzpJT3ziHDCUJQurCWME+owfIeR9vzvqaCHSNF/mKs6gPmQBwIJM5Zk3q/C4BSPsd6I8ucoKCDyFXTyMAM+Bj+g4ZoXkfwHhKMW2djEOAE57o6rehQH6ZSn2mA60ahBxJSn/fdNjahYBZf4jsjG24sus4nqaY/pM3z619ovxXWD0TYskmTgqlcZk+XvYE0lK1AW1md6BFeN31myK49jG7ATIAb8VdSvMFDskxBulm88ylHCYCucvENoU0m3W5D1jARosYg4DGlR03339t6ByzHCVijZMItT04RhuT6UENL6swKB7woY8UatFiPSwew==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LhAlsmrpS9BNXiixBg0heyh/somd7KSQjbQS3c2ZQY0=;
+ b=ZKog1tkzfKBLzdEWeWWzF6++6eONOljpWErS+/h6RwyFZUvLacWr3gpuJzWJXB7Au7TPqUpLDESvjVKts13ZzrtWk2WSuRNKXt+oXHAYpXSfOGOjj+vNm+p5yDW9tcgnDP5fY7fCD4W4s+n4kbsUxTRw1hNJfybxUAzipzxmN01SQIaX+XIB9w1muMSSTdMeeE7vpsV8bpgriPoocTTVKa3Z/CDtbHVRKeTTu9SoycgkGkPTsiwcwJ0bAzcE70xtx6s9ZrhUmrhV468TvSwOZnrFhN+Qsyz9UT1BULqh6wjp18SJab2AF+Ag4VfmZeR/Fg0zHRCw0vPdsBLRR6BKfg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=prevas.dk; dmarc=pass action=none header.from=prevas.dk;
+ dkim=pass header.d=prevas.dk; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prevas.dk;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LhAlsmrpS9BNXiixBg0heyh/somd7KSQjbQS3c2ZQY0=;
+ b=Varx3K9NjSUyz1YwMlyzpXbiU5ig/pmEy5YRpR6a8XuBF2ZoggOD8YJAnwYrOVjiBP5Szx9Clc/+kRgXvjpxeY5vTUM+U73TNrJWTjnO/BXilGVD6qrCcZ56gTkknaABagPunjDasGepvh5hd5L7PoMWbuCmiD2MZtgqLdBoaxA=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=prevas.dk;
+Received: from DB9PR10MB7100.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:45a::14)
+ by PA2PR10MB8678.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:102:41e::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7544.55; Mon, 13 May
+ 2024 12:28:07 +0000
+Received: from DB9PR10MB7100.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::9fcc:5df3:197:6691]) by DB9PR10MB7100.EURPRD10.PROD.OUTLOOK.COM
+ ([fe80::9fcc:5df3:197:6691%3]) with mapi id 15.20.7544.052; Mon, 13 May 2024
+ 12:28:07 +0000
+Message-ID: <2867ae55-ab4e-4a69-b24b-0535bc77ef31@prevas.dk>
+Date: Mon, 13 May 2024 14:28:04 +0200
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 08/17] clk: imx: imx8mp: fix clock tree update of TF-A
- managed clocks
+Subject: Re: [PATCH v2 05/17] clk: imx: pll14xx: Add constraint for fvco
+ frequency
 To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Abel Vesa <abelvesa@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
@@ -36,93 +54,126 @@ To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Abel Vesa <abelvesa@kernel.org>,
  Pengutronix Kernel Team <kernel@pengutronix.de>,
  Fabio Estevam <festevam@gmail.com>, Jacky Bai <ping.bai@nxp.com>,
  Ye Li <ye.li@nxp.com>, Dong Aisheng <aisheng.dong@nxp.com>
-Cc: imx@lists.linux.dev, Peng Fan <peng.fan@nxp.com>,
- linux-kernel@vger.kernel.org, Zhipeng Wang <zhipeng.wang_1@nxp.com>,
- Abel Vesa <abel.vesa@linaro.org>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
+Cc: linux-clk@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Abel Vesa <abel.vesa@linaro.org>, Peng Fan <peng.fan@nxp.com>,
+ Shengjiu Wang <shengjiu.wang@nxp.com>, Chancel Liu <chancel.liu@nxp.com>
 References: <20240510-imx-clk-v2-0-c998f315d29c@nxp.com>
- <20240510-imx-clk-v2-8-c998f315d29c@nxp.com>
-Content-Language: en-US
-From: Ahmad Fatoum <a.fatoum@pengutronix.de>
-In-Reply-To: <20240510-imx-clk-v2-8-c998f315d29c@nxp.com>
+ <20240510-imx-clk-v2-5-c998f315d29c@nxp.com>
+Content-Language: en-US, da
+From: Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+In-Reply-To: <20240510-imx-clk-v2-5-c998f315d29c@nxp.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+X-ClientProxiedBy: MM0P280CA0023.SWEP280.PROD.OUTLOOK.COM (2603:10a6:190:a::9)
+ To DB9PR10MB7100.EURPRD10.PROD.OUTLOOK.COM (2603:10a6:10:45a::14)
+Precedence: bulk
+X-Mailing-List: linux-clk@vger.kernel.org
+List-Id: <linux-clk.vger.kernel.org>
+List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
+List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DB9PR10MB7100:EE_|PA2PR10MB8678:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9fda2633-5723-472a-4fc6-08dc734824cc
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230031|7416005|366007|1800799015|376005|921011;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?ZWdJT25kYTE0U3lxUjE1cUwvRkJyU0ZPckZtMmFQdlVZNU83cHZ2aFJ1MG9V?=
+ =?utf-8?B?KzEzd2QrSlg3RFFYU1laZnlXNStyVmhYZlJ0Sys2Vy8zUzBmZ1lnbHpNSW0r?=
+ =?utf-8?B?MDByRW8zenc0N0k5VWtrdVd5RXFrQ2I3OFdQZG5uWml4emhkcTZSd3Y5NHlw?=
+ =?utf-8?B?bXM4SzdYN3VOQlpERS9uMnpySXRNSmxLdVJSSlV2WDdYWElYc3E1a3RmUVF1?=
+ =?utf-8?B?L25nNXM4a1loZTVxZU05NFozVzhkNE0yeVdJUkRRQXBlU043WUFHN25mdTY3?=
+ =?utf-8?B?NkQzZEd3Q2RSVi9rYVF5U2hRSTZtbjdZTGIzejVrbHlFOEhQbVloNU45SUJt?=
+ =?utf-8?B?WmkzYW1QamIvU0NnU0ZEZzdveDBCblhxcGMwcytVOXBxUXFWbmw4VEpSeTk3?=
+ =?utf-8?B?UVJ3aXJudm9pd0x6VVVNN2F1OVQ1YjlxQWdWYlMvek1vRWIydTRrbTBaeXV2?=
+ =?utf-8?B?UTluais3dW5hQXoydkR6NXFzM3U3bkRRZ3hQNlFrVlhKWTQ5UENtd2tvSjNI?=
+ =?utf-8?B?YVNQa2dOY1hlNnBNRHVFNnNERm5HNFVOV0lDSDkrM3c2T1ZCaEFnTXRjYUZt?=
+ =?utf-8?B?cDJjYXVCL2RaZVJpZDFvQzBqQ1MwaU5zcHhjMEt6b0djK05aQnJqbzhWeXVL?=
+ =?utf-8?B?ZTEzT2xwS2RueXlCRFlNd0ovVWFDak1VQVVXVEwrbnkzWmxHMVNvbHlmblBo?=
+ =?utf-8?B?MVdxaURHeEJXeURNeFZVcE41VkcvaE11Y3M4cnlWZXNuVU1IZWp1WGdTR1RW?=
+ =?utf-8?B?d3h0UU9rQ0E1RmRxUC9lQTg1Z1lWajR5QWE3cFdKV1YyVFRTNzZXT2FIekRO?=
+ =?utf-8?B?Wjd5YkxUWVp6ckUrL2kvVFVDNHc0QUdEWkI2N0VPR3ZPcHJwcGkvd21Xa3FG?=
+ =?utf-8?B?a3JVTTE0bFFGNlNCTGY0RlZHZXZoTmZNZEx4ZUtyQmxMZVBsaDlRcWNCRzl5?=
+ =?utf-8?B?ODM4UU96WXF0OUFkdFBVQ1BZR1pESWtUTE9JZzdxczZZdUp2Wjk3NUF1UDVH?=
+ =?utf-8?B?a1RCYkNFQ29nalkxa3NoaThXakIwRFJHdUtPdStpRlovaFNaU1psWm9SS1ov?=
+ =?utf-8?B?MGltN0RNVThPdUVZYTZHYm9GeVlMK3dLWCtqcGVoamUyTWp1Z0RNTUcvSS9k?=
+ =?utf-8?B?bkRzS1pubXNUcHdiYWcySE51WXdhUXdpYnhVSzc4UUpCZlkrNk1vVFVXSzc1?=
+ =?utf-8?B?REhZYWtBRHpLTnFsREd2UVBiK3dqMjRVaHBVOUt4MlVnUnhBRklJdm9WZXJ5?=
+ =?utf-8?B?Y3lFMnRxTzlDOFcwMGM5RnV2MGZwMm5GejQ2NlhkMG9xa0l2Z2RJYkxuSjR2?=
+ =?utf-8?B?ejIzeDhxVDQ0YzBvR1REeks2MHBCQmltMVU2SThBQi9zeE0rSFIvSXZQM2Z6?=
+ =?utf-8?B?bXpnSUdoOExzZmt2UlBXbE8xWHhYSTdvdEtVRXJySndsYzlGLzYvRzczMzNr?=
+ =?utf-8?B?eGRWOFlqQlNVeWxhVFFTemhhc0tHWUl2RUNmTGc4eHFhL0IreWtHSXQ4ZFFZ?=
+ =?utf-8?B?UkZoRm8yNnJZWG9GelMvTTl6ODF3Q1FCb0xvQ1lPVlJWOTk4VGhkMzgva0c3?=
+ =?utf-8?B?cWhkYnBDenpFZzZ4b25FakppUkp1Mmd3aGlpcXVIMzZHQ0IxUVd1b0hCTFFO?=
+ =?utf-8?B?OUMzL01SMXNYYnh1TTM5WG05SGRaQnZnaVM4enM1Z1RmWElwbXN6UjBObTY4?=
+ =?utf-8?B?RjY4Vysxd1NWYVlUM2RWTjZQRk5YcWVtUjdYc1NYRFhRT2hkRktmZmxYUWJl?=
+ =?utf-8?Q?ME1Y3GXpGA3vU2ZTWrb0efRRBD0tbA0Qe7dI4Xz?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR10MB7100.EURPRD10.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230031)(7416005)(366007)(1800799015)(376005)(921011);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?S2hXRG9KeTFuUEJlc0M0dFUvV3RIZFM0RHRsaWI2RHJDZXdsOXc0aWJFbyt1?=
+ =?utf-8?B?QkdrdFNZVndPejZsY0lLaTJLRnhZcVE3dFcxbXBzQ1VqTnZJWmtaUW5wRFBG?=
+ =?utf-8?B?RGEwZHo0YlJkV3dLcDRnNGREMVM4MkMyYVZENTJHc1kzY1BGUWNnQ01samlh?=
+ =?utf-8?B?SHNlTlZxaWxWUGRDUVJSNkFqY1lQK05zT2pBNHJ5TmZVQkFHbTluV3RZQUh2?=
+ =?utf-8?B?dEgvK29BeTdUYVZJQi91a0czbGxUalEzSFJpbGRGdGlvSzVXMEVTdzd3RHVM?=
+ =?utf-8?B?bWpJNDB3S2kxNndQY0lqaVN6ckpGZllyWnNXcTJNYjRZWmhYcHJDWDlHQXBE?=
+ =?utf-8?B?eEpwMTNBSlJ6N25adGhEQ3pUV1RQdDJFamNXRmdoL3dmYlp6YkF0Y2dmd1RR?=
+ =?utf-8?B?SnJ0SHh2VFNlYkljQWRxZjlaTE9uc0RoY0tha1NSVk5jQy95bzZVbDJPTkN5?=
+ =?utf-8?B?UkplR3B6VnZzQUowN3VNTC9IV3Q5SzRheWxBbmJtUUZYT1VESFlhQURDTysx?=
+ =?utf-8?B?OHZ4NlZtclJTUzVqWWZJREN3WmtwN0dnZ21LTHJIeHd3K2s1MkF5K2lsaEg3?=
+ =?utf-8?B?S1dYaTNWakxxSXpZZDNrUm9TcDAxM25DMDVuRjdaaDFGZ0pKSjZPQS9LNEYy?=
+ =?utf-8?B?RmFadDFUdGNONk9wRzBmUEptMGxRK3d2VnJNTHVCcnFJSU4wSTVsdVBtSTY5?=
+ =?utf-8?B?OTFiZGt5UkNCM2tZblRUdkttSWhCVVcyVG95OUV2MSs0cVdQRHBpTUxZR1hI?=
+ =?utf-8?B?UzdtQllBbStsbUI4N0ErdTJWYzI4TFhIN0hMR09XdmNEdFpmWlVmVVd6WWFw?=
+ =?utf-8?B?Tm16MFo4K01OSzI5S2hFMHpSZ24zNFpjdDlNak12cHJTcmtYWm4zc29aNWtH?=
+ =?utf-8?B?clhibVAvU1pUaThZdldEc1ZxN3gxZjNpUjI4UUxHekNDWlo3dG1vOHY0a01H?=
+ =?utf-8?B?N3RkYlJnZWlNWHJwRlBpY0duMkpGUXVaMWtxaU1PQk5WeVoySlRMQXVNQmVz?=
+ =?utf-8?B?ejNlVXZEU2FLL2d3dTUxUmF0WXJ2QThoMlUwLy96VDdVNmwvRkZDckppbjIx?=
+ =?utf-8?B?SHFOdUVnVCtucUZQWXBLaGpQTUYzSFB4dTUyYlh0a1d1aE1tUEpzc2t6UU8y?=
+ =?utf-8?B?cWg3aEhrRm9jUVNVajNkZHZ6aWdpemx4TEUwZDVhVFllNjdjSTVISEE5WGNs?=
+ =?utf-8?B?a2hIQzBHTXErSGhvcUtNU29lbUpCUWo4UlpEOUs5NzZOS01oc3NUeklZd0pm?=
+ =?utf-8?B?TzFINFc2Q3RsdkEzcVlLTVMrQ29lbmdWTUNUd0Y3aEsrNkV0clh1M2MvOENQ?=
+ =?utf-8?B?U2thWkQ4YjhOKzg0VFdMU1lzWm8yM1VScVVyY0VCcnU0ZW9iUHN3N0VJVnVm?=
+ =?utf-8?B?UlNnSnAxUHpiZ3ArNWc2SW9XRGF4dGVXS3FaclQvN2c0U3ZFWVJFQW9zL0JW?=
+ =?utf-8?B?SEUzSUwrUVFyanp1bHFBbTdSMjBTamk1czZiVTVhanBxeXNyd1dNdUYyT0Y2?=
+ =?utf-8?B?SDZWL0VsZVR3MWVhMHMxWW43dEs0YzdSYkFsTUtXY1FtaG5uRXBldmZDZ3Z0?=
+ =?utf-8?B?VWdXalBQcTJZTmFJbnRZNVFzRlFQVFFSYmRzemdEQkFkZTVua0VoamNEcmc5?=
+ =?utf-8?B?UnJrNzgzY0g1Z3phT055K0JyRDI4WWU1Wk9zMGJyZWt0U3RDRDJSRCtJUFNm?=
+ =?utf-8?B?WnROZmJ3bUh6K1plOU5NU3NwczZGK2VUSE5RUGJrWkdBc1d0SUVkS2dGdEQz?=
+ =?utf-8?B?aExxT2lsaTZsVUFJMnllTXBlMWZUN3ZFY081cGtjaVVqYTJpN1Q1WEhZQTk0?=
+ =?utf-8?B?bHNIL3h4amFEU1d2S2ZzUDFCZDNoU1hvYjR2Y0VWMFVHS1hYUmpGR3ZWckVo?=
+ =?utf-8?B?YWF6dHRScjYrVmVMSEgxUmdVdEhqUkJiVy9mSHR4V1loRE81RmFta09iYVR2?=
+ =?utf-8?B?ZWRweER0TitPKysrc3Rod2NJZzRPQVl1S3N6YU5hUVdpdERWV3dFYThBQVUz?=
+ =?utf-8?B?VXZHYjlEUEpwZjUrNE5xUlRraXhaWWpXcHVUeDFuWjJzeFErZUlDTFp2ei9O?=
+ =?utf-8?B?RDNhZzVHOUJuRkJmQmorT2ZiN0FtSW84b2pyay9yN29TUlZWdE5PMjF2S1h5?=
+ =?utf-8?B?STJLQU1jbVcraGdHWVlDa2gxOHdyUWpaS2ZFSVIyTkwzNmxCN2hJMVBUS2t1?=
+ =?utf-8?B?SWc9PQ==?=
+X-OriginatorOrg: prevas.dk
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9fda2633-5723-472a-4fc6-08dc734824cc
+X-MS-Exchange-CrossTenant-AuthSource: DB9PR10MB7100.EURPRD10.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 May 2024 12:28:07.3837
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: d350cf71-778d-4780-88f5-071a4cb1ed61
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: cdDayhYy/f57SqeyzDL8qFbtcOiRItr6oMFSA1B35+94o/qV5CHA6r9FTt9AXV0l3beY231WIknPLmwJfya0jfkxS6ABv8/u/85wxUO1LUM=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA2PR10MB8678
 
-Hello Peng,
-
-The commit message looks eerily familiar ;)
-Small correction below.
-
-On 10.05.24 11:19, Peng Fan (OSS) wrote:
-> From: Zhipeng Wang <zhipeng.wang_1@nxp.com>
+On 10/05/2024 11.19, Peng Fan (OSS) wrote:
 > 
-> On the i.MX8M*, the TF-A exposes a SiP (Silicon Provider) service
-> for DDR frequency scaling. The imx8m-ddrc-devfreq driver calls the
-> SiP and then does clk_set_parent on the DDR muxes to synchronize
-> the clock tree.
-> 
-> since commit 936c383673b9 ("clk: imx: fix composite peripheral flags"),
-> these TF-A managed muxes have SET_PARENT_GATE set, which results
-> in imx8m-ddrc-devfreq's clk_set_parent after SiP failing with -EBUSY:
-> 
-> clk_set_parent(dram_apb_src, sys1_pll_40m);(busfreq-imx8mq.c)
-> 
-> This is safe to do, because updating the Linux clock tree to reflect
-> reality will always be glitch-free.
+> Aslo correct the name for fvco and fout clock.
 
-This refers to the next sentence, thus swap position of this sentence
-with the next one:
+Btw., that part of the commit log is misleading. The patch does no such
+thing, as that part is already done in f52f00069888 that went into v6.8.
 
-> 
-> commit 926bf91248dd
-> ("clk: imx8m: fix clock tree update of TF-A managed clocks") adds this
-> method and enables 8mm, 8mn and 8mq. i.MX8MP also needs it.
-s/this method/imx8m_clk_hw_fw_managed_composite which sets the SET_PARENT_GATE flag/
+Please don't mindlessly cherry-pick stuff from the NXP fork and fixup
+stuff so it builds and just ignore whether the commit log still makes
+sense.
 
-> 
-> Another reason to this patch is that powersave image BT music
-> requires dram to be 400MTS, so clk_set_parent(dram_alt_src,
-> sys1_pll_800m); is required. Without this patch, it will not succeed.
-> 
-> Fixes: 936c383673b9 ("clk: imx: fix composite peripheral flags")
-> Signed-off-by: Zhipeng Wang <zhipeng.wang_1@nxp.com>
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-
-With commit message adjusted:
-
-Reviewed-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
-
-Thanks,
-Ahmad
-
-> ---
->  drivers/clk/imx/clk-imx8mp.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
-> index 670aa2bab301..e561ff7b135f 100644
-> --- a/drivers/clk/imx/clk-imx8mp.c
-> +++ b/drivers/clk/imx/clk-imx8mp.c
-> @@ -551,8 +551,8 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
->  
->  	hws[IMX8MP_CLK_IPG_ROOT] = imx_clk_hw_divider2("ipg_root", "ahb_root", ccm_base + 0x9080, 0, 1);
->  
-> -	hws[IMX8MP_CLK_DRAM_ALT] = imx8m_clk_hw_composite("dram_alt", imx8mp_dram_alt_sels, ccm_base + 0xa000);
-> -	hws[IMX8MP_CLK_DRAM_APB] = imx8m_clk_hw_composite_critical("dram_apb", imx8mp_dram_apb_sels, ccm_base + 0xa080);
-> +	hws[IMX8MP_CLK_DRAM_ALT] = imx8m_clk_hw_fw_managed_composite("dram_alt", imx8mp_dram_alt_sels, ccm_base + 0xa000);
-> +	hws[IMX8MP_CLK_DRAM_APB] = imx8m_clk_hw_fw_managed_composite_critical("dram_apb", imx8mp_dram_apb_sels, ccm_base + 0xa080);
->  	hws[IMX8MP_CLK_VPU_G1] = imx8m_clk_hw_composite("vpu_g1", imx8mp_vpu_g1_sels, ccm_base + 0xa100);
->  	hws[IMX8MP_CLK_VPU_G2] = imx8m_clk_hw_composite("vpu_g2", imx8mp_vpu_g2_sels, ccm_base + 0xa180);
->  	hws[IMX8MP_CLK_CAN1] = imx8m_clk_hw_composite("can1", imx8mp_can1_sels, ccm_base + 0xa200);
-> 
-
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+Rasmus
 
