@@ -1,84 +1,111 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E23D1514E5;
-	Mon, 13 May 2024 13:12:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B693B59164;
+	Mon, 13 May 2024 13:20:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715605938; cv=none; b=JRvY15dQqrRrbqB++ekMmfyXG61yF3wbOgytU+RnV/efVsZj1W58dNLGsbO0emfKx3H9lStp0TgkitarXxFebOgDf4S68qJP/FVI38UYZ32xgfPVoU5pMgOeIVE8iti2qaRSz+VwCqLUmPmDkYjBJc38ZIL7xeOo+toHZFzVx2g=
+	t=1715606403; cv=none; b=czBROKtje/w+TeToV4DWk/+WeqdZjTccw6zk76AgRyatuA+nA82m9MISmADM6CUijNWqPJTH58vkRFOpRxRw1ts4XqDWKk8QhyLGnrW0iGyBxzdh/ipY4xKWOxa60MPHTgXxbHyPnNF1Bnamn55/GmEIdRhkU+xSZrvSU+pM1wA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715605938; c=relaxed/simple;
-	bh=iGwqCXIPo5Sz/mVwtdsEoVu5uuBlckkioU0/F3+rFJM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Zr8VRhpKU08Z5CLgw+EqFoNohjPOzWXT0ZzCLu1bF0PNDN/7CFugp9eBgS28bYt06ktMWwWyuLrvp8w1rr1lUyszWEax4j/JE9oVQlKXZazbjqyxvEtpJaM0X4QRAQvpIH92g95FOk6wcGU5lhz7/Wtq32s17TVSrhcyqlvcLoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=wP4V4wRD; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1715606403; c=relaxed/simple;
+	bh=BjpNrBf8xUWY5HdIXv/CHqnmjNgz1AFEpMF+3oZD9OM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fj4mfUNWA846zvRnuT7CmAroO/j/0pgQc5rvEB74Y0YIJ+7NpjVDgHqZTGArMnz3lzNMADxTqcCX9bmaFAOO0pyQYE/6IhEqkUMym+WDOq2Y5sd5AxPKd2bMmmyL3HjLERlLe18bCTqRJHYOtv+Ssovfn6bv1tPqga6vzsWGujY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OjATwxOc; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="wP4V4wRD"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1715605935;
-	bh=iGwqCXIPo5Sz/mVwtdsEoVu5uuBlckkioU0/F3+rFJM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=wP4V4wRD3bgtkqQVaTg10pjSetuDkdLdu8u+Xm46+KGCWbUbEeETjSVCBADEVn3fH
-	 5ONQmZ70MG6ygHnm46zi/Pi8HOrdgBWGe0HomQUvnqwcRJO38IxFF8GkkZrecDGHsc
-	 FN/NQHFV1WRuXQkLBQDdb5RAENk/TVRsH7RZLLwN+DLcgi8rTAmHcONOb35dybZdfE
-	 /79ktkbLNe4UW7oxoVgeFqQcoNtrnyw6zll/ILwHuotrt4/gSQTc8Ya/N/37Lue3Zk
-	 jOzF4liFus2SVMYo5aqP3RWGFt+aqquKqsOro4PyXJexL3+2zxSHex5q91CHHwjLMr
-	 34XuAB1Rl0PoA==
-Received: from [IPV6:fd00::2a:39ce] (cola.collaboradmins.com [IPv6:2a01:4f8:1c1c:5717::1])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 7867A3782167;
-	Mon, 13 May 2024 13:12:13 +0000 (UTC)
-Message-ID: <debde564-eac8-4d07-8e25-75e321150df7@collabora.com>
-Date: Mon, 13 May 2024 15:12:12 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OjATwxOc"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E700C113CC;
+	Mon, 13 May 2024 13:20:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715606403;
+	bh=BjpNrBf8xUWY5HdIXv/CHqnmjNgz1AFEpMF+3oZD9OM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OjATwxOcxE557ut6FtoTfM6PpRJDPrRlPU/al+dv5Klyw2dNvIZvdyKHXSYYkXY0/
+	 8bhBMvZSPvuej0IPQCbZ5pzM+FfuN/bDVQKHUEA7/eE/FLv+QF//U3kyt2ArZj+0Eu
+	 dSPmZC+LcMxapYSlFC1OuR+iVjCC35fDZknl9C0ydmBw0vv2AZqfhSaVwpABfJBhxu
+	 6jahv5FmUlAHo7BeVD75z0KrFib4iaHHvamocBJVvlY0ppofqSe1cPn/vZit3+C2sg
+	 kl/00P294uoj+B0lPpQj8QH3arjHPY52k7iBo/IAkapUSLnTaQjPKFbUu+wMtRqSf3
+	 +ok8tYJNY3BJQ==
+Date: Mon, 13 May 2024 08:20:01 -0500
+From: Rob Herring <robh@kernel.org>
+To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Taniya Das <quic_tdas@quicinc.com>,
+	Jonathan Marek <jonathan@marek.ca>, linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Ajit Pandey <quic_ajipan@quicinc.com>,
+	Imran Shaik <quic_imrashai@quicinc.com>,
+	Jagadeesh Kona <quic_jkona@quicinc.com>
+Subject: Re: [PATCH v4 1/2] dt-bindings: clock: qcom: Add AHB clock for SM8150
+Message-ID: <20240513132001.GA2421461-robh@kernel.org>
+References: <20240509-videocc-sm8150-dt-node-v4-0-e9617f65e946@quicinc.com>
+ <20240509-videocc-sm8150-dt-node-v4-1-e9617f65e946@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: mfd: syscon: Add more simple compatibles
-To: "Rob Herring (Arm)" <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, Andrew Lunn <andrew@lunn.ch>,
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
- Gregory Clement <gregory.clement@bootlin.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Lee Jones <lee@kernel.org>,
- UNGLinuxDriver@microchip.com, Thomas Bogendoerfer
- <tsbogend@alpha.franken.de>, Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
- Yisen Zhuang <yisen.zhuang@huawei.com>, Salil Mehta
- <salil.mehta@huawei.com>, "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Matthias Brugger <matthias.bgg@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-mtd@lists.infradead.org,
- netdev@vger.kernel.org, linux-mediatek@lists.infradead.org
-References: <20240510123018.3902184-1-robh@kernel.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240510123018.3902184-1-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240509-videocc-sm8150-dt-node-v4-1-e9617f65e946@quicinc.com>
 
-Il 10/05/24 14:30, Rob Herring (Arm) ha scritto:
-> Add another batch of various "simple" syscon compatibles which were
-> undocumented or still documented with old text bindings. Remove the old
-> text binding docs for the ones which were documented.
+On Thu, May 09, 2024 at 03:54:03PM +0530, Satya Priya Kakitapalli wrote:
+> SM8150 videocc needs AHB clock, so update the bindings for sm8150
+> to add the AHB clock.
+
+Breaking the ABI is fine because ____.
+
 > 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-
-For MediaTek
-
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-
-
+> Fixes: df3f61d2cdc9 ("dt-bindings: clock: add SM8150 QCOM video clock bindings")
+> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+> ---
+>  .../devicetree/bindings/clock/qcom,videocc.yaml         | 17 ++++++++++++++++-
+>  1 file changed, 16 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
+> index 6999e36ace1b..68bac801adb0 100644
+> --- a/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/qcom,videocc.yaml
+> @@ -75,7 +75,6 @@ allOf:
+>            enum:
+>              - qcom,sc7180-videocc
+>              - qcom,sdm845-videocc
+> -            - qcom,sm8150-videocc
+>      then:
+>        properties:
+>          clocks:
+> @@ -101,6 +100,22 @@ allOf:
+>              - const: bi_tcxo
+>              - const: bi_tcxo_ao
+>  
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          enum:
+> +            - qcom,sm8150-videocc
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: AHB
+> +            - description: Board XO source
+> +        clock-names:
+> +          items:
+> +            - const: iface
+> +            - const: bi_tcxo
+> +
+>    - if:
+>        properties:
+>          compatible:
+> 
+> -- 
+> 2.25.1
+> 
