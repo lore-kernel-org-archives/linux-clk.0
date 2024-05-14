@@ -1,184 +1,179 @@
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2090.outbound.protection.partner.outlook.cn [139.219.146.90])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98AE41BC5C;
-	Tue, 14 May 2024 08:12:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715674349; cv=none; b=HHpmGMyGcdVI0Xdv2ApsPPTYM/S4FxJNQJNbKUOd1YK4HlHgMZyaKrixBjZlIfXKsBGfp4DNZocR+10X9pL79B3BtvYMmukGtOzcew0apUzt8DPMu05iXrVxW94y1MSt88MTOZpbBuyufX63SQnEGwh/HWmNIeJeFMboRpqfHDI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715674349; c=relaxed/simple;
-	bh=4eu0K4O0pXHy1GVv+320fmDpTOfwDsSkO/XqXyUf8Pc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=MZDv9Y3xFa2NFsSQC3kZlP6NmtAhdpDlzriyrgGPxZRNJ2rvvdtHhq/kW0vuOylXxIGIhSCrrtak6OLaF0wlQ7qW50e44H/O2oOozqWWLPrbyH4qRgUqPCRxgPKhp9IoKdSuspZOj26aV3mxTZB9bj2V1NSgdkiRd9Epyonee6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=Flm7kXu1; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="Flm7kXu1"
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44E86TOX006213;
-	Tue, 14 May 2024 10:11:33 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	selector1; bh=lThsbPGMcYjilyPz6OizppQDy6cRiA+jMAQjjoltJrU=; b=Fl
-	m7kXu14EIS5QV8SYKupYVmoGvNh1cB1ld+zKPVmt5FzlcvYwOuaRCM6LrZjrm0LX
-	W9H0Vu/8CoaIzlz29wB76g1hTsjHkJdfsCEFN/gVEttGy1su1uwUveXzljpVWICw
-	RH3jiDX5kTCngHUnrpCPsbiJjqyhVXEcqPn5vTqDzOhHkq3l1JRHunwvvP9Q5oVX
-	q4zMEDhUTPDoIvJuHiuD22Y+l9HxeAxT8p+SxQf5S3UnWPBBQazLT9qisy8oiw1Z
-	DHe0qWq1gzrGEj48Uf9/ZeElTqmNf5sV9JM7HLjbVXeNXE2ijsqpOb1aDZR0a3fL
-	qpXU672qnJ1jmV4Rmdtg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3y1y8na1yu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 14 May 2024 10:11:33 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id CB34440044;
-	Tue, 14 May 2024 10:11:24 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 34B1D20DD7C;
-	Tue, 14 May 2024 10:10:26 +0200 (CEST)
-Received: from [10.48.87.204] (10.48.87.204) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Tue, 14 May
- 2024 10:10:25 +0200
-Message-ID: <b2d0dfcb-37d6-4375-a4ad-ca96a5339840@foss.st.com>
-Date: Tue, 14 May 2024 10:10:16 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC85323763;
+	Tue, 14 May 2024 09:13:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.90
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1715678015; cv=fail; b=hBwwOjGztGZEp4FbF7DJP7XxLks+Ey24fFQLIteoilivXBjhUV72VfwS4ofHdQT89OuOup7PEFWHJgsC9j8eHXDvkanR4WiY8iaWfxc23o/hucxT6En775gotSx0bZwCNOSMcpVUctJjQ+stLbKQRDUY2ycNZ+Fcav+bcd0Wgj0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1715678015; c=relaxed/simple;
+	bh=XcIdD0Ev4gpHLC2xbiBnygH6iDqeWbRLm6uGgpswxeY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=OAqba886gf83cyHImnztPq5WP4tNWh//LdE/V4fSwoYFmVM7Fomq705LGE4ScKR0L2ogt8rqjHtsQAnnQvIVCKXhEx8IaR4jM4TGta4HD94a7nFGqyydrY7a1TGeHKnS7e/p8kl1zhxPumdltO2Md2KkK+jasqKjMyJAUnvWypc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.90
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=nLK12ondh2aaBPXPJHEIuYF4aMPOJ/o1/pndXQ3Qqu+aq/ggm51gHScUlw2QuQGJawumplE59K1AbDXQazVo2nSQfNjjEmW6u4E5RlKJQJuknXEzOB/99okWaFkzxIRCGQv32hG5VvO7OpoFq4NEI7L7i/zAFAeZQHZlw3MZ4xC9wHhO9xb+q44HQEs/l6YzKi5XAQ5UmlPVwA7FeFvHrQgIetP99PrV1fAPd4c0hVvB7rTnVPQ3Hoze/kaD7uVuAyOzYs2orpyPzcwECQNpVemp1iqoIRnG69bhQmeSXSCXXVAGGXLGfGhaMR+7t+NUH+5F7+sExI8AiNUKwUDXOQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XcIdD0Ev4gpHLC2xbiBnygH6iDqeWbRLm6uGgpswxeY=;
+ b=hTQ84przq7UMrOBTASEiQjsQmW1lHDno/QBdhVPMnhoyLhOT5mLQ3n8lUTTYF+Fuxno81Jg5HYnVZ0JAGI767c21+mt11lwLxHkiuw/mzq9oowG5G5o2QmZ0HmAhd5A+NvexoDdObRO/u4N15Y+ZvXg3AJhft0MfAmWP/xVYnUN7mkRvXUw9wrwKRTmFiOUizH2/JpwptY1UV6EJtLGePzgU3sHcV+exPurEJYMjBVHTshkikNsPZAIGzW9jzckHiS6KroMJV0L5wVXTXZNJsLo6tCNgIWpQri0lfOzlJq64n1PePuktNlFdwZdRbD0bfVRXSSnEZYktRv78FFgTFA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=starfivetech.com; dmarc=pass action=none
+ header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
+Received: from NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c510:8::10) by NTZPR01MB1003.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c510:1::7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7472.33; Tue, 14 May
+ 2024 07:40:03 +0000
+Received: from NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn
+ ([fe80::e903:99a6:10b7:304d]) by
+ NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn ([fe80::e903:99a6:10b7:304d%6])
+ with mapi id 15.20.7472.044; Tue, 14 May 2024 07:40:03 +0000
+From: Xingyu Wu <xingyu.wu@starfivetech.com>
+To: Conor Dooley <conor@kernel.org>
+CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@kernel.org>, Emil Renner Berthing
+	<emil.renner.berthing@canonical.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Paul Walmsley
+	<paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou
+	<aou@eecs.berkeley.edu>, Hal Feng <hal.feng@starfivetech.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: RE: [PATCH v5 0/2] Add notifier for PLL0 clock and set it 1.5GHz on
+Thread-Topic: [PATCH v5 0/2] Add notifier for PLL0 clock and set it 1.5GHz on
+Thread-Index: AQHaoEtCPDK2HwhwXUSWjcDZE/pIQ7GQ+umAgABXAkCAAKg2gIAEWZ+w
+Date: Tue, 14 May 2024 07:40:02 +0000
+Message-ID:
+ <NTZPR01MB0956A7393097129D3CD048EB9FE32@NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn>
+References: <20240507065319.274976-1-xingyu.wu@starfivetech.com>
+ <20240510-unfounded-syrup-d1263d57d05a@spud>
+ <NTZPR01MB0956D48361098E8AA4B3930A9FE02@NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn>
+ <20240511-unbiased-dainty-ccb5ece9b1b9@spud>
+In-Reply-To: <20240511-unbiased-dainty-ccb5ece9b1b9@spud>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=starfivetech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: NTZPR01MB0956:EE_|NTZPR01MB1003:EE_
+x-ms-office365-filtering-correlation-id: 9fea678b-8ae3-4c0c-381c-08dc73e910fd
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam: BCL:0;
+x-microsoft-antispam-message-info:
+ BQOgBIxEWID32f5nQZsBJr6MWbtq+iKQpJr96dA00ETrp5mHkoNZSJE2EAXV+ImZD+ZrT/rbVTE/zi4c8fH8ksQN1PrNH47SJhcj7UW0k2vwoNV8Hv9F2Z7QQ+Y8KCcFFFxatjtmLem7vKDc+n9JRYP5hRO0OCs+BnIjaCZQXvn1wG279VCBXd+ML43AgDaL5cCcoRlL0B6vf/3IWN3X5mIsSsq0TtHeEzSrijvHwI7+JUjEx5K7DQTdp2gAntikWuJUOGi/tpzC0r9OWFtZu6MvxSsV0WXH9dIrPbY6KSVNo8S21A3UwiZtb4UvNVmAelXvUMuFhlQIYg5DtBsYVDO7OJc+JVionZwZ4Ig4yosSs/pPx5d8ux8JyXJdWtjnM9AaqH5oRVNSIUEjWoY+/cI/57nCtpRJrXEIQoP9QsOP/tQaFO7H349RYm3di6Tcb9PPLoB0+1G1Pw6lauAh7IK58lrp7+zCiUoKLjCKSqgBsZaUk4w0RbFe4x9jmZ9L+V7NV2NEqnb759mxMpDYMLAERlyEK6LolnZUjQwSmhjCaKBlTJ7fMsl/mZfvSUb9Gy2t1jiHPvLbxAO9pwL/31FG0BSANfnSwCeUhFqtIE3fLu+yAZF87h8gX6DWI2E/
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230031)(1800799015)(7416005)(366007)(41320700004)(38070700009);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?xEKKK8uwB3urTPd/RPalwR9qWmSmbZnBl/D+/qhk/eBjco5/l3xlQ0kWwBTW?=
+ =?us-ascii?Q?Xxhw9bmiKajoaP7ZrL4UYQemhUmOjby9RI1LfZmNt4CVK16FnnsUpSgeU+un?=
+ =?us-ascii?Q?vqcvsAlyU7mlORsOGxs8SxJAmW0fPtPGyOuVlvJKucZXRIUre1Wz6+qpoisN?=
+ =?us-ascii?Q?R9hBfvo/rBt6QjmiWbGtrOGmI1uw1rDU6I6GxrNhnp5cqBQc70YgczbkFRdU?=
+ =?us-ascii?Q?vktPpGhYkIOgvCq4j1bqDjAxK0tOn8rKwLrfltJg35LtpC9MFWjaGkqbLCDe?=
+ =?us-ascii?Q?uPD3izB29TDWi5acckMRdp4KJsYo/0dmf8uU9trhSQcBFPL2vXYzMnSh0KzE?=
+ =?us-ascii?Q?sC9TXDunAsaqp5Wfds0q3Gqz/sHMnO+tXOw/40c5DL5FPGyZkQCgd84OW5ZZ?=
+ =?us-ascii?Q?nh0Yqzt6LmgGdi0y9AgiQvvD39WdQvn7lJqaiXTgazfQTgofx0xwuyhRtA/s?=
+ =?us-ascii?Q?JL92x3zrCn4Ocx4mfWt9KIOudsAleEnI0ORPn7w6FKCy+U0pkJpW1nFMtGje?=
+ =?us-ascii?Q?EQ/1mkQ7vGKzjHXOMpQcjhERVb4OOgUNd9l2vYS5SnSoCVsMfnYCFokx+ulO?=
+ =?us-ascii?Q?OLJSyQlUYFdB1kWcaiCRBYrRT8xhv5w32q3+T4EduWavd4jo5k7b/0cdSbO4?=
+ =?us-ascii?Q?GVWs7BlUdweMi7CyTD3TvFyZo2yh7Nv4/I3PQ4zQ9HO8L8Znh81i+aiKWoRP?=
+ =?us-ascii?Q?CfClOqevJpN/vK7y4jzJaKG9D738DpKMt29Q0SkJRLOe1MXkzk94NcotB+bX?=
+ =?us-ascii?Q?fZn6PcHJSf6Tq5DhpZecA6WCtsQLWdIGrmBQKRxpmKyWx5jQ6tSFsx7SKaOr?=
+ =?us-ascii?Q?m0fnZpyM19MWZq10640VWFI7OnlGDoPrlxrQnSDQwmYjCcK5vL8R30Hg561L?=
+ =?us-ascii?Q?Ey3u61ZF7SWh/Wove4AN/EeRAmR6g6mMF0VkKVFC+ytUdKGxcqAyS2yd3Grd?=
+ =?us-ascii?Q?FQaeHiJziYFkfVSqZcqqibVmcm0x3g2RacCBnXO8ckzgOW80uGMF9VskXPHx?=
+ =?us-ascii?Q?04ZmgiWo9FxHhebmiuWkBWXzSdzYAXGxxjlJvCLTZlYHKuY3Se3MHM/Uf36r?=
+ =?us-ascii?Q?26eYy76U/BjPkPLmxS3+IDzP21YDj9tLTmbeejN5rfshqeazk4a/0hW58F9G?=
+ =?us-ascii?Q?107yl4lTFta455t/SS+gGCdIp38lM3AJdtbPomiIMBG0RSF0DiC874qJHLFu?=
+ =?us-ascii?Q?CffRWc9jNU/jOypgoDjayrRBjAPStvXSweZn/610tLQozZpJwXd/iu/boMYI?=
+ =?us-ascii?Q?P8dIQzEz52TrtnpGStlPjiGbZ6E/SNOCzQ6mMg+IkVfPY55KErIqmOjRMW+W?=
+ =?us-ascii?Q?lYAa2Ju1+0ayFGjzZMZFJuFzNJsrOHPIFaD6CnR6+aBFDJI+voNI8jSIzLJw?=
+ =?us-ascii?Q?2gQ0nBdDBtapKVfSQ8hXauGTjNbOq0O2rVkbApwnFWENorUo+ykPdedP448d?=
+ =?us-ascii?Q?hTHpqvysWuoSu8AhRhThm9amF14n5jxJUu520RYQfLgbKScp/7gM/wvJwIth?=
+ =?us-ascii?Q?u1RkUygdoYpblnni5C6cMHRsqGQEe6GZYuN196TgyRIHLsLbCx7Zzheuhiu0?=
+ =?us-ascii?Q?pu+YJ9mq6BaHLYP2fJ9kNpupKvmC6c8WsBjjQSLJ?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] [RFC] clk: stm32mp1: Keep RNG1 clock always running
-To: Marek Vasut <marex@denx.de>, <linux-crypto@vger.kernel.org>
-CC: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Gabriel Fernandez
-	<gabriel.fernandez@foss.st.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Olivia Mackall <olivia@selenic.com>, Rob Herring
-	<robh@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Yang Yingliang
-	<yangyingliang@huawei.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <20240513220349.183568-1-marex@denx.de>
-Content-Language: en-US
-From: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>
-In-Reply-To: <20240513220349.183568-1-marex@denx.de>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-14_03,2024-05-10_02,2023-05-22_02
+X-OriginatorOrg: starfivetech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9fea678b-8ae3-4c0c-381c-08dc73e910fd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 May 2024 07:40:02.9101
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: U5U++6IwC9bjV3E6eM5/q53Oz1PUPDKmNPB6rOiLQ1HG24X8D9Vsc3cMKbL8zfzqa4Y1nZzOLuipFaRJBk0DkAgJvkIZpCNHiFixEmMGWLs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: NTZPR01MB1003
 
-Hi Marek,
+On 11/05/2024 20:19, Conor Dooley wrote:
+>=20
+> On Sat, May 11, 2024 at 03:02:56AM +0000, Xingyu Wu wrote:
+> > On 11/05/2024 05:05, Conor Dooley wrote:
+> > >
+> > > On Tue, May 07, 2024 at 02:53:17PM +0800, Xingyu Wu wrote:
+> > > > This patch is to add the notifier for PLL0 clock and set the PLL0
+> > > > rate to 1.5GHz to fix the lower rate of CPUfreq on the JH7110 SoC.
+> > > >
+> > > > The first patch is to add the notifier for PLL0 clock. Setting the
+> > > > PLL0 rate need the son clock (cpu_root) to switch its parent clock
+> > > > to OSC clock and switch it back after setting PLL0 rate. It need
+> > > > to use the cpu_root clock from SYSCRG and register the notifier in
+> > > > the SYSCRG driver.
+> > > >
+> > > > The second patch is to set cpu_core rate to 500MHz and PLL0 rate
+> > > > to 1.5GHz to fix the problem about the lower rate of CPUfreq on
+> > > > the visionfive board. The cpu_core clock rate is set to 500MHz
+> > > > first to ensure that the cpu frequency will not suddenly become
+> > > > high and the cpu voltage is not enough to cause a crash when the PL=
+L0 is set
+> to 1.5GHz.
+> > > > The cpu voltage and frequency are then adjusted together by CPUfreq=
+.
+> > >
+> > > Hmm, how does sequencing work here? If we split the patches between
+> > > trees it sounds like without the dts patch, the clock tree would (or
+> > > could) crash, or mainline if the clock changes there before the dts
+> > > ones do. Am I misunderstanding that?
+> >
+> > Oh, I think you misunderstood it. Patch 1 (clock driver patch) does
+> > not cause the clock tree crash without the patch 2 (dts patch), and it
+> > just provides the correct flow of how to change the PLL0 rate. The
+> > patch 2 is to set the clock rate of cpu_core and PLL0 rate, which
+> > causes the crash without patch 1. Setting cpu_core rate is to avoid cra=
+shes by
+> insufficient cpu voltage when setting PLL0 rate.
+>=20
+> So is the problem in the other direction then? My dts tree will crash if =
+I apply the
+> dts change without the clock patch?
 
-Strange indeed.
-A potential reason that comes to my mind would be that something tries 
-to get a random number after the driver suspended and fails to do so.
-Else it might just be a bad clock balance.
+Sorry, I tested it and it could not crash using only dts patch. It can sepa=
+rate the
+patches and use it individually.
 
-Can you describe the software ecosystem that you're running please?
-(SCMI/no SCMI)?
+> Additionally, what about U-Boot? Will it have problems if the dts is impo=
+rted
+> there without changes to its clock driver?
+>=20
 
-Do you have the 3 fixes of stm32_rng.c that you've sent recently in your
-software when testing?
+It is not apply to U-Boot. In the U-Boot, the PLL0 rate should be 1GHz to f=
+or GMAC
+and PMIC to work. But now the PLL0 rate should be 1.5GHz in the Linux.
 
-What if you add a trace in a random generation function in random.c?
-
-After this, I'll try to reproduce the issue.
-
-Thanks,
-Gatien
-
-
-On 5/14/24 00:02, Marek Vasut wrote:
-> In case of STM32MP15xC/F SoC, in case the RNG1 is enabled in DT, the RNG1
-> clock are managed by the driver. The RNG1 clock are toggled off on entry
-> to suspend and back on on resume. For reason thus far unknown (could this
-> be some chip issue?), when the system goes through repeated suspend/resume
-> cycles, the system eventually hangs after a few such cycles.
-> 
-> This can be reproduced with CONFIG_PM_DEBUG 'pm_test' this way:
-> "
-> echo core > /sys/power/pm_test
-> while true ; do
->      echo mem > /sys/power/state
->      sleep 2 ;
-> done
-> "
-> The system locks up after about a minute and if WDT is active, resets.
-> 
-> If the RNG1 clock are kept enabled across suspend/resume, either using
-> this change, or by keeping the clock enabled in RNG driver suspend/resume
-> callbacks, the system does not lock up.
-> 
-> NOTE: This patch is a workaround. It would be good to know why does this
->        change make the hang go away, whether this is a chip issue or some
->        other problem ?
-> 
-> Signed-off-by: Marek Vasut <marex@denx.de>
-> ---
-> Cc: "Uwe Kleine-König" <u.kleine-koenig@pengutronix.de>
-> Cc: Alexandre Torgue <alexandre.torgue@foss.st.com>
-> Cc: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-> Cc: Gatien Chevallier <gatien.chevallier@foss.st.com>
-> Cc: Herbert Xu <herbert@gondor.apana.org.au>
-> Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Olivia Mackall <olivia@selenic.com>
-> Cc: Rob Herring <robh@kernel.org>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: Yang Yingliang <yangyingliang@huawei.com>
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-clk@vger.kernel.org
-> Cc: linux-crypto@vger.kernel.org
-> Cc: linux-stm32@st-md-mailman.stormreply.com
-> ---
->   drivers/char/hw_random/stm32-rng.c | 2 ++
->   drivers/clk/stm32/clk-stm32mp1.c   | 2 +-
->   2 files changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/char/hw_random/stm32-rng.c b/drivers/char/hw_random/stm32-rng.c
-> index 7d0de8ab5e7f5..ec0314f05ff3e 100644
-> --- a/drivers/char/hw_random/stm32-rng.c
-> +++ b/drivers/char/hw_random/stm32-rng.c
-> @@ -403,6 +403,7 @@ static int __maybe_unused stm32_rng_suspend(struct device *dev)
->   
->   	writel_relaxed(priv->pm_conf.cr, priv->base + RNG_CR);
->   
-> +	// Keeping the clock enabled across suspend/resume helps too
->   	clk_disable_unprepare(priv->clk);
->   
->   	return 0;
-> @@ -434,6 +435,7 @@ static int __maybe_unused stm32_rng_resume(struct device *dev)
->   	int err;
->   	u32 reg;
->   
-> +	// Keeping the clock enabled across suspend/resume helps too
->   	err = clk_prepare_enable(priv->clk);
->   	if (err)
->   		return err;
-> diff --git a/drivers/clk/stm32/clk-stm32mp1.c b/drivers/clk/stm32/clk-stm32mp1.c
-> index 7e2337297402a..1a6e853d935fa 100644
-> --- a/drivers/clk/stm32/clk-stm32mp1.c
-> +++ b/drivers/clk/stm32/clk-stm32mp1.c
-> @@ -2000,7 +2000,7 @@ static const struct clock_config stm32mp1_clock_cfg[] = {
->   	KCLK(SDMMC3_K, "sdmmc3_k", sdmmc3_src, 0, G_SDMMC3, M_SDMMC3),
->   	KCLK(FMC_K, "fmc_k", fmc_src, 0, G_FMC, M_FMC),
->   	KCLK(QSPI_K, "qspi_k", qspi_src, 0, G_QSPI, M_QSPI),
-> -	KCLK(RNG1_K, "rng1_k", rng_src, 0, G_RNG1, M_RNG1),
-> +	KCLK(RNG1_K, "rng1_k", rng_src, CLK_IS_CRITICAL, G_RNG1, M_RNG1),
->   	KCLK(RNG2_K, "rng2_k", rng_src, 0, G_RNG2, M_RNG2),
->   	KCLK(USBPHY_K, "usbphy_k", usbphy_src, 0, G_USBPHY, M_USBPHY),
->   	KCLK(STGEN_K, "stgen_k", stgen_src, CLK_IS_CRITICAL, G_STGEN, M_STGEN),
+Best regards,
+Xingyu Wu
