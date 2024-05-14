@@ -1,157 +1,130 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3133FA93A
-	for <linux-clk@vger.kernel.org>; Tue, 14 May 2024 01:15:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89DC3AD53;
+	Tue, 14 May 2024 03:35:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715649313; cv=none; b=IGb4RY6n5X5mSzJQ5zLk/vZI0hXG1iRfMfITrN+JKDrh5AVuvW8o49HBkW4qem57c3/b/pStwC7hjTbFN1mgtjoEGmurlN+RVzzPNOrk+AdS5L3QmamU7c8XwMDPRukGZAbcsG5co86xhweE1YNPwe2bAiLKLa2Ntkiz8XTMQd4=
+	t=1715657751; cv=none; b=HPO42QaS7A0t7+1/FRasS7zqC+9U+HcoudA72MBtrEF/JFMjNaJiO+mENpnsvPoI/aZAb+47RQ9GmiHuYhE1XNxdSE52yWtCSbRvQn9MY93RFsp4g5zye5DKLm/L12ZxKJOLC+Z4rhfTir/l6/Krtuw5jK05WPH1pQpWfqqdD6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715649313; c=relaxed/simple;
-	bh=X9rJ4eIhwGwFYhM+y7NgLIstnavfTfEL8P5zFiG8V4g=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=egS7a6GhcngVE3oSDdh1ZTmYy83XTX1V3eVG5DaajoIEmj3nqWzZrqwOGObg7/QSbV7WG3oVHXCppwCfINXX1EhZ8MpY9529yKdCVtM9+zWNMA9z+2rjCThj97O8AjW690jMSn+uzy4sCLdSjCX+3WhBDiNqGLNi2AN6fpACnC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=B8A8b7xH; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	s=arc-20240116; t=1715657751; c=relaxed/simple;
+	bh=2g51WnteVbDW6Xw9cHo8bze8u9qoK08M7PEKoTNl//U=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=i5QPuNqmTH+TZ7Nbmu5T9mEyb4i31vq4UFthc7biMNPjC/DT2LM5aGD32NFHiGEy9N9PfcySKapVH270nriVUn3qlWNlbzM8gKuPidfKwkufhHeoMkWX6TmMQkZ8cbAugOTm70nyZ+kwEXGDTikA79S+cKUajXUJ24paxRQ3M1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RWhj5WyH; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="B8A8b7xH"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715649310;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type;
-	bh=VaTSK7maH96cyUOzuTwcGlk4eMVZqUirsxqVchpZK9M=;
-	b=B8A8b7xHq1y9+SRWldz3hVnsvZgzISFeh+tJus4b6saQb4LiW334+05oGZVxVPVkfyj2Nm
-	lf3h5tFRSicbP0tiFm5KkWki3MBH9IJExKLSfk7zc/XwU5HlhRUzkKENV2GgpLyt2HCoy8
-	dC0x7uTSCgcTFYpQIO1aDWWHgq89pb8=
-Received: from mail-yw1-f198.google.com (mail-yw1-f198.google.com
- [209.85.128.198]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-695-iiUdy8-8PHWWazPjfTfyUQ-1; Mon, 13 May 2024 21:09:07 -0400
-X-MC-Unique: iiUdy8-8PHWWazPjfTfyUQ-1
-Received: by mail-yw1-f198.google.com with SMTP id 00721157ae682-61be4601434so101242167b3.3
-        for <linux-clk@vger.kernel.org>; Mon, 13 May 2024 18:09:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715648946; x=1716253746;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VaTSK7maH96cyUOzuTwcGlk4eMVZqUirsxqVchpZK9M=;
-        b=iSBvf4/cX/xMoF+utjVVeqvdX9Yer1ZTSSqaREufI/fc9uXn3i33KlWb3F4AIDjL4U
-         Fn06tAk1IbBkluvfEr2HLZGvK50mr1twfafuRaE9o3INbDdf21ya404Dm3r+mmh+KsuW
-         sjDwKEXNr+3CvA5Uz/l7bzu/eC+isrbGtONLESt1bDaALo/lsmZw7ZDy2E/xY7JSGo9Z
-         9T1ada2+HsflnfqkBE2ljLsAYZf4YZbh3t7TwUodZW4BXL6cLqdQPKdupBMeCrmcpFQ/
-         z2w3CLiilq2RG8445iuOuTRGJTSfW7dafrlt2M+36Y8a88o0YZFsSiXaD0OyJt7rre4/
-         bxIw==
-X-Forwarded-Encrypted: i=1; AJvYcCV3x8PLADDQ+Zhj5oznTIzlfOe+5OUb6ALQ6hIDrVXp2SQtgGjnB+h5hwR9PSFimjxW50wZQeBrEdoxol/wYDN40rbizpyWKpnO
-X-Gm-Message-State: AOJu0YzJIQlSENj+/e0rBQSnhufPtJjaeU5ftbKAthCYV4bkxAP/YMtX
-	+nG8qPfIsAsJfjmdk5X7D+OgSWaXeXwf6Rf6GLtQDqY3Bvlu3YAHoLciZ+12dgb7Qf52Ba4P9I8
-	MdJP/KpnpuzEGa84SQ2opcul7V4lEc4UIPbEnIXuHgR3Dqi9ir5NyJHa5xMs3z/h6+/VvJVa0sY
-	H+q+icv2VarsMS91QQDTNelHjM3vvBINkI
-X-Received: by 2002:a0d:d451:0:b0:620:5182:4790 with SMTP id 00721157ae682-622b014c2a8mr107151327b3.42.1715648946327;
-        Mon, 13 May 2024 18:09:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHIbySwX9BuiEfufQfGqT/Lujt0vSbeE8LkDxNI7EvRLBfkQBIJ3POQ/KzPw64K1QwAyWSEDsc6jUWCFosi75E=
-X-Received: by 2002:a0d:d451:0:b0:620:5182:4790 with SMTP id
- 00721157ae682-622b014c2a8mr107151237b3.42.1715648946005; Mon, 13 May 2024
- 18:09:06 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RWhj5WyH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4913AC2BD10;
+	Tue, 14 May 2024 03:35:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715657751;
+	bh=2g51WnteVbDW6Xw9cHo8bze8u9qoK08M7PEKoTNl//U=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=RWhj5WyH38Woqr+5eMMlmko6m4W28FqTOEvMn2vnCfh/yJHDfSelrHDdq8V296J2s
+	 ZaDecWJebiToXuNeDOHk8hkAqC0FezOcUWj3+1oEtpAevdnjdHYub5zHelCHV+44sP
+	 sY8B02t11x5Gt58+t0omv/OQ/jp/9HsU7dCOHyrLxej3fMwMunVBzZpc6m1le3F26m
+	 g027xhP7NXsTyu3Uy5iaRfbIQWnwjxHS1vTrUPnzOCbjhqtmU4cmP4ffBK3evUqzSZ
+	 p3b4TXgHAQssXm6Nx/ikd6fGoui/EKPwhF4lWm0v5bRa8FnTkj+tje5PB04f8XHZ47
+	 9b53bYw7AT5Qw==
+Message-ID: <31d4dfdf8bc4b866a2b6d45fc4de0c2d.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Nico Pache <npache@redhat.com>
-Date: Mon, 13 May 2024 19:08:40 -0600
-Message-ID: <CAA1CXcBhABB60JG-sT1qRysD1AP+bN=wo=5vwbeTv13Gj72EzA@mail.gmail.com>
-Subject: [Bug Report] Multiple S390x KUNIT clk failures
-To: KUnit Development <kunit-dev@googlegroups.com>, linux-clk@vger.kernel.org, sboyd@kernel.org
-Cc: Shuah Khan <skhan@linuxfoundation.org>, Audra Mitchell <aubaker@redhat.com>, 
-	Donald Zickus <dzickus@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240422232404.213174-6-sboyd@kernel.org>
+References: <20240422232404.213174-1-sboyd@kernel.org> <20240422232404.213174-6-sboyd@kernel.org>
+Subject: Re: [PATCH v4 05/10] platform: Add test managed platform_device/driver APIs
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, patches@lists.linux.dev, kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org, devicetree@vger.kernel.org, Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rafael J . Wysocki <rafael@kernel.org>, Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, Daniel Latypov <dlatypov@google.com>, Christian Marangi <ansuelsmth@gmail.com>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Maxime Ripard <maxime@cerno.tech>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Date: Mon, 13 May 2024 20:35:49 -0700
+User-Agent: alot/0.10
 
-Hi,
+Quoting Stephen Boyd (2024-04-22 16:23:58)
+> diff --git a/drivers/base/test/platform_kunit.c b/drivers/base/test/platf=
+orm_kunit.c
+> new file mode 100644
+> index 000000000000..54af6db2a6d8
+> --- /dev/null
+> +++ b/drivers/base/test/platform_kunit.c
+> @@ -0,0 +1,174 @@
+[...]
+> +struct platform_device *
+> +platform_device_alloc_kunit(struct kunit *test, const char *name, int id)
+> +{
+> +       struct platform_device *pdev;
+> +
+> +       pdev =3D platform_device_alloc(name, id);
+> +       if (!pdev)
+> +               return NULL;
+> +
+> +       if (kunit_add_action_or_reset(test, (kunit_action_t *)&platform_d=
+evice_put, pdev))
+> +               return NULL;
+> +
+> +       return pdev;
+> +}
+> +EXPORT_SYMBOL_GPL(platform_device_alloc_kunit);
+> +
+> +static void platform_device_add_kunit_exit(struct kunit_resource *res)
+> +{
+> +       struct platform_device *pdev =3D res->data;
+> +
+> +       platform_device_unregister(pdev);
+> +}
+> +
+> +static bool
+> +platform_device_alloc_kunit_match(struct kunit *test,
+> +                                 struct kunit_resource *res, void *match=
+_data)
+> +{
+> +       struct platform_device *pdev =3D match_data;
+> +
+> +       return res->data =3D=3D pdev;
+> +}
+> +
+> +/**
+> + * platform_device_add_kunit() - Register a KUnit test managed platform =
+device
+> + * @test: test context
+> + * @pdev: platform device to add
+> + *
+> + * Register a test managed platform device. The device is unregistered w=
+hen the
+> + * test completes.
+> + *
+> + * Return: 0 on success, negative errno on failure.
+> + */
+> +int platform_device_add_kunit(struct kunit *test, struct platform_device=
+ *pdev)
+> +{
+> +       struct kunit_resource *res;
+> +       int ret;
+> +
+> +       ret =3D platform_device_add(pdev);
+> +       if (ret)
+> +               return ret;
+> +
+> +       res =3D kunit_find_resource(test, platform_device_alloc_kunit_mat=
+ch, pdev);
 
-We are seeing a number of the CLK kunit tests failing on S390x. This
-has been occurring for some time now (as early as v6.1). We run these
-tests as modules (without the UML wrappers), and have not seen these
-failures on any other architectures.
+This doesn't work because platform_device_alloc_kunit() used
+kunit_add_action_or_reset() which has a chained free routine and data
+pointer. I've added a test to make sure the platform device is removed
+from the bus. It's not super great though because when this code fails
+to find a match it will still remove the device by calling
+platform_device_unregister() when the test ends. It will follow that up
+with a call to platform_device_put(), which is the problem as that
+causes an underflow and operates on an already freed device.
 
-The failing tests are:
-
-clk-gate-hiword-test
-------------------------------
-    # clk_gate_test_hiword_enable: EXPECTATION FAILED at
-drivers/clk/clk-gate_test.c:322
-    Expected enable_val == (__u32)__builtin_bswap32((__u32)((
-__u32)(__le32)(ctx->fake_reg))), but
-        enable_val == 33554944 (0x2000200)
-        (__u32)__builtin_bswap32((__u32)((
-__u32)(__le32)(ctx->fake_reg))) == 0 (0x0)
-    not ok 1 clk_gate_test_hiword_enable
-    # clk_gate_test_hiword_disable: ASSERTION FAILED at
-drivers/clk/clk-gate_test.c:339
-    Expected enable_val == (__u32)__builtin_bswap32((__u32)((
-__u32)(__le32)(ctx->fake_reg))), but
-        enable_val == 33554944 (0x2000200)
-        (__u32)__builtin_bswap32((__u32)((
-__u32)(__le32)(ctx->fake_reg))) == 0 (0x0)
-    not ok 2 clk_gate_test_hiword_disable
-
-
-clk-gate-invert-test
-------------------------------
-# clk_gate_test_invert_enable: EXPECTATION FAILED at
-drivers/clk/clk-gate_test.c:249
-    Expected enable_val == (__u32)__builtin_bswap32((__u32)((
-__u32)(__le32)(ctx->fake_reg))), but
-        enable_val == 0 (0x0)
-        (__u32)__builtin_bswap32((__u32)((
-__u32)(__le32)(ctx->fake_reg))) == 32768 (0x8000)
-    # clk_gate_test_invert_enable: EXPECTATION FAILED at
-drivers/clk/clk-gate_test.c:250
-    Expected clk_hw_is_enabled(hw) to be true, but is false
-    not ok 1 clk_gate_test_invert_enable
-    # clk_gate_test_invert_disable: ASSERTION FAILED at
-drivers/clk/clk-gate_test.c:266
-    Expected enable_val == (__u32)__builtin_bswap32((__u32)((
-__u32)(__le32)(ctx->fake_reg))), but
-        enable_val == 0 (0x0)
-        (__u32)__builtin_bswap32((__u32)((
-__u32)(__le32)(ctx->fake_reg))) == 32768 (0x8000)
-    not ok 2 clk_gate_test_invert_disable
-
-
-clk-gate-is_enabled-test
-------------------------------
-    ok 1 clk_gate_test_is_enabled
-    # clk_gate_test_is_disabled: ASSERTION FAILED at
-drivers/clk/clk-gate_test.c:409
-    Expected clk_hw_is_enabled(hw) to be false, but is true
-    not ok 2 clk_gate_test_is_disabled
-    # clk_gate_test_is_enabled_inverted: ASSERTION FAILED at
-drivers/clk/clk-gate_test.c:423
-    Expected hw is not error, but is: -17
-    not ok 3 clk_gate_test_is_enabled_inverted
-    # clk_gate_test_is_disabled_inverted: ASSERTION FAILED at
-drivers/clk/clk-gate_test.c:438
-    Expected hw is not error, but is: -17
-    not ok 4 clk_gate_test_is_disabled_inverted
-
-
-clk-gate-test
-------------------------------
-    ok 1 clk_gate_test_parent_rate
-    # clk_gate_test_enable: EXPECTATION FAILED at
-drivers/clk/clk-gate_test.c:169
-    Expected enable_val == (__u32)__builtin_bswap32((__u32)((
-__u32)(__le32)(ctx->fake_reg))), but
-        enable_val == 32 (0x20)
-        (__u32)__builtin_bswap32((__u32)((
-__u32)(__le32)(ctx->fake_reg))) == 0 (0x0)
-    not ok 2 clk_gate_test_enable
-    # clk_gate_test_disable: ASSERTION FAILED at drivers/clk/clk-gate_test.c:186
-    Expected enable_val == (__u32)__builtin_bswap32((__u32)((
-__u32)(__le32)(ctx->fake_reg))), but
-        enable_val == 32 (0x20)
-        (__u32)__builtin_bswap32((__u32)((
-__u32)(__le32)(ctx->fake_reg))) == 0 (0x0)
-    not ok 3 clk_gate_test_disable
-
+I couldn't come up with anything better than searching the platform bus.
+Maybe if there was a way to allocate the memory or redirect where
+platform_device_alloc_kunit() got memory from we could hold the device
+memory around after it should have been freed and make sure the kref for
+the device kobject is 0. That seems pretty invasive to do though so I'm
+just going to leave it for now and add this test to make sure it cleans
+up.
