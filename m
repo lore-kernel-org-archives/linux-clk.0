@@ -1,102 +1,111 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C8CE10A1C
-	for <linux-clk@vger.kernel.org>; Tue, 14 May 2024 07:15:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8778710949;
+	Tue, 14 May 2024 07:22:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715670958; cv=none; b=RR4ixyTm+PTN8kbk7x0BprP9r/T8Dgt4JtMUYcWbzqUe8g99zf57BETBPzY9s4WK+C9fCasdDpibQb465GAWQKkh6eZMUnfJyS3pqE6JuUKN1y3WdsTHRKNa2XcFvI3nRLg9zCn6k93+FGCcLm2ivFwyD+9hQHVuXC9ppWpj3h4=
+	t=1715671345; cv=none; b=IzR77fu3sj2s0rWF173dSV3K1mz9/DEg7rWNBaOGB02PeBEE+xG3830CYVLOSiRz+6VEPaFQ+zc78oI5QsJY1wevtFqDhvIbSe5UEVOfP1tru8+dwKgb3JW7J5dG9tm8MQ21a8KVKAdn0OUnhOiONX+uLywCrVUHAo82DqJtJNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715670958; c=relaxed/simple;
-	bh=q8zjG5QCQxQ+DRzV5oNwvqJTNBdPlcr2jgw89b4Gzd0=;
+	s=arc-20240116; t=1715671345; c=relaxed/simple;
+	bh=JzVYEOFYJs0vaOsSEbpguUeyRllA43s34MwtB1FYfVQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bCuTOYAob4uTcYE8/RF5507mNkdO4HmvJKizQn5wyzbxJ6/tnK7guc6dpk9ch9YrBsbQLbc/cwtn0cwSLU4u2wMRRwGVtOMdDj/YW70pGQvkN+ebDNZEiisPYbucRhal76sofrDjJ2oNC9WNLbu7V5ckOwsbtWHTnw9divK+Kvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HAW5yMsi; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	 To:Cc:Content-Type; b=vC6AQp4O+sKyIO77LehQZUGxXFM4t39zfs30fYgYxZY34RXhvxhN58d/UI7zFBToAaidxeem7PgIXjeZLo5BQsgD+H1/xwUYa2AcAFRc+AJVRyYq+cglDzsxCVr+mvd5+ZQYowVQDcdSoakleqazS2eEKGq6wp37NHWmJdFqXwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mUqmRHK8; arc=none smtp.client-ip=209.85.166.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HAW5yMsi"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1715670955;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=q8zjG5QCQxQ+DRzV5oNwvqJTNBdPlcr2jgw89b4Gzd0=;
-	b=HAW5yMsi8MOzSI4AGhlk0rJ/D2xO1z3HnEOayb1uKNogrpcW6HHyerAgms3wCUX03HBz1N
-	rwcRUhfUuugMMdbmH0iT9AZMAPZ1BRJ1IdaAXfZ/NHsam3HywZ8g/CS/qdlhS9KNd9Dj3L
-	n0vREYpJRRCEXqpFm4ZKkGIVtjGgQu0=
-Received: from mail-yw1-f199.google.com (mail-yw1-f199.google.com
- [209.85.128.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-358-3cqB2fhDNtqBAbDyUIAlxQ-1; Tue, 14 May 2024 03:14:51 -0400
-X-MC-Unique: 3cqB2fhDNtqBAbDyUIAlxQ-1
-Received: by mail-yw1-f199.google.com with SMTP id 00721157ae682-61510f72bb3so100697827b3.0
-        for <linux-clk@vger.kernel.org>; Tue, 14 May 2024 00:14:51 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mUqmRHK8"
+Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-36c80f9c86bso25177375ab.0;
+        Tue, 14 May 2024 00:22:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715671344; x=1716276144; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9WNa+3eLjaxowCpV/iLa2mMgq8zXzxRscxKrC3IUfjs=;
+        b=mUqmRHK8n8W6fAKPFBygxVO3CtLivR/mkbwcJ+5jsFeZLHl1j5lY/ImTBbIhav5owZ
+         JVEX+Jeen5jnwFtXP38VO06QZt4I8XGL4LoZNVc+m5OquPaRn8oa9Durwga9l72xFjB5
+         wP6gj6QwmWJBpR+BZHV04pEmtVn2sDR2yQizKBNFhuaFCOdPzRXRCNsNAPkI8Razi4zQ
+         g86DzP4c7TE3pLCqLuaqbHRVTxkCStq2EaIfHSnGrA1NQ25sdrEJlTzMjbxAnhudHYHS
+         AOhssVAUEeFFSi6YKu0OILxwiuwJhETWEPt9KY59huh1TsmnMZkODV6Qnk2AcQQtjMID
+         RxmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715670890; x=1716275690;
+        d=1e100.net; s=20230601; t=1715671344; x=1716276144;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=q8zjG5QCQxQ+DRzV5oNwvqJTNBdPlcr2jgw89b4Gzd0=;
-        b=bYWX/hkAhgxNaJ1DD/Hb1aop1C09kitfRu0h1hWXeiJPP1lVEG0ZczX++bOTBdQIbr
-         oC+Vx91/LzUM6q6zGvDDlFZ+a8Qv3fyem8+QzUqZGGmsZ7fTt8BSjCot+cDtTvyiS/ix
-         ysJmsL++T4rlPih6VECF9IihZasR4B5quGaocmU52i0a2e/jnwd3hoAewpdSLhee7osL
-         AmKow92X4VZl510hd0+2N4I7JoUhoOow2FEZxhgDUTGVvJ1R+TDUu+0pK9R8sdlBaEXZ
-         hgO6DE70n5DQ5m+OMsR0R9xhVNr9RT0/EMvm/zRCJ68FbQ5rBkJKVF7WZ0PFIoSCE9eG
-         o4jQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW5loAJSCbt0zwLtd12eGTZblLED04fu5ncqUIFiMqpcpUNfBjf1SiEguWeeFe0klagIIa1SBlHy/oGbxLxyz4BtvXIDY9sdtBk
-X-Gm-Message-State: AOJu0YzFQ3UzR9nzqP+39amqydolBAKELNFC21kAGkAlKNWdrYVWK5er
-	ZHiaLV5Pa8F1gJltl6mC+GFUH4BftCjbneH8/2W+yKyx8TcY9FndxA8ww6MB5CQlNHmjZvkP4ty
-	AalJwn6UgIzcxR1l9ufN33hWFWvTca5X0CbdM7aHwfoFwOnFN2TYgAmnfFUZ3BphVZnLMMAmt0c
-	sOEKjcMjeZxuc0Cczn5ZHEoSo8OjU7s4ee
-X-Received: by 2002:a05:690c:660e:b0:61b:33fb:5759 with SMTP id 00721157ae682-622aff923ebmr146785507b3.1.1715670890416;
-        Tue, 14 May 2024 00:14:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEnO5dkSr6TP0rQ/LVeOnvGSi+Q3dNJUXCcWp6CoGWF5snWhQl9JwDSkczYkgUxZbuJI8lI9zQOS3yQU0ewsT4=
-X-Received: by 2002:a05:690c:660e:b0:61b:33fb:5759 with SMTP id
- 00721157ae682-622aff923ebmr146785367b3.1.1715670890078; Tue, 14 May 2024
- 00:14:50 -0700 (PDT)
+        bh=9WNa+3eLjaxowCpV/iLa2mMgq8zXzxRscxKrC3IUfjs=;
+        b=Vp4OAHhqr3zO0ZAE2zAXnSisEZ49GZYja9UatRPKe6QgOikIz6Obw7u8RIZBpLK+Tn
+         JmKWOTvZEb4d0xp4ad7yQszEZdOd+9PEDyEHX4kUX9Q1TPIWGUjxCiuUb4KqYQYsRKVu
+         Q1rcOtFE+cfFyg+9J+BY/JbME7//yrMwiuV53JMa7K4QKifLFUunKBLqY7kggcZCKpMF
+         n83Bhp4fyaYLkxKzF1phHNzf4Oqs4N5av4UvsXm97FJQX2eQGVPckJYJ6/nVCCKWd9DX
+         LgbkhJ0Pv5u2uTYY+J2Ppmmu3zTmtT/oZ0RV1aSXJI2Rg5Y6OFBb4xPth3d6SzAnWQG6
+         tR1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUo3W85dheKzzg41LynFF3wKTr6FBNX9lHkz7y2L/RGF3Kl6Imj4NQtZoBSpsYef2PTxQiHPUqHLcU+QHw5o/uA1ZzE6kRcpWRYBLFHV7icvbYgNI5qwcDbFdKDft7AS2vDBCCYgM3Haun0aeIv/dY5Gi3edzN2qE8e2x2Vazc9u5EjBw==
+X-Gm-Message-State: AOJu0YyTPfgYFhteclpQJUgD1vozj5jtaGoqnvHPQZ2FmhcjcJkQ4URS
+	LOsbAwPrpME6zN6N74OeoYwHQB12nkrh9VOCBuznOGnAKdYSUM8jVrZZBqyBqvttBvhUczynSph
+	1tokWkiyDYJhhqrVi3MX9YJ2iQaE=
+X-Google-Smtp-Source: AGHT+IHz7rxMKPw4QcPFf9e3+rPk6L5/ivfWPbNHVCV7og1/nXbe/V3wGrxTTVUvZ2OU/ikTt9tJestH0UovLmH6h3c=
+X-Received: by 2002:a05:6e02:17ca:b0:36b:85e:7d69 with SMTP id
+ e9e14a558f8ab-36cc144b718mr211747815ab.10.1715671343660; Tue, 14 May 2024
+ 00:22:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAA1CXcBhABB60JG-sT1qRysD1AP+bN=wo=5vwbeTv13Gj72EzA@mail.gmail.com>
- <301cd41e6283c12ac67fb8c0f8d5c929.sboyd@kernel.org>
-In-Reply-To: <301cd41e6283c12ac67fb8c0f8d5c929.sboyd@kernel.org>
-From: Nico Pache <npache@redhat.com>
-Date: Tue, 14 May 2024 01:14:24 -0600
-Message-ID: <CAA1CXcALWqxfoWsv_wuiu-hAmX=AosvEedheGJUQHAhDCZf2Sg@mail.gmail.com>
-Subject: Re: [Bug Report] Multiple S390x KUNIT clk failures
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: KUnit Development <kunit-dev@googlegroups.com>, linux-clk@vger.kernel.org, 
-	Shuah Khan <skhan@linuxfoundation.org>, Audra Mitchell <aubaker@redhat.com>, 
-	Donald Zickus <dzickus@redhat.com>
+References: <1715219038-32453-1-git-send-email-shengjiu.wang@nxp.com>
+ <1715219038-32453-3-git-send-email-shengjiu.wang@nxp.com> <0d10a689504be61c50b186d89ddbf9d1.sboyd@kernel.org>
+ <CAA+D8AP9uS1ePxSeSUPGCGe42U5sNguZYQS3d-9T305d2iVbhQ@mail.gmail.com>
+In-Reply-To: <CAA+D8AP9uS1ePxSeSUPGCGe42U5sNguZYQS3d-9T305d2iVbhQ@mail.gmail.com>
+From: Shengjiu Wang <shengjiu.wang@gmail.com>
+Date: Tue, 14 May 2024 15:22:12 +0800
+Message-ID: <CAA+D8ANZYB2ec8qEzub8++Rz76zwn10Bt9c7cZ3tSTUbbQfwGA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/4] clk: imx: clk-audiomix: Add reset controller
+To: Stephen Boyd <sboyd@kernel.org>, p.zabel@pengutronix.de
+Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org, conor+dt@kernel.org, 
+	festevam@gmail.com, imx@lists.linux.dev, kernel@pengutronix.de, 
+	krzk+dt@kernel.org, marex@denx.de, mturquette@baylibre.com, peng.fan@nxp.com, 
+	robh@kernel.org, s.hauer@pengutronix.de, shawnguo@kernel.org, 
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Stephen,
-
-Yes, we have that commit. This is failing on fedora-ark, so it's
-constantly updated to match upstream, and the earliest recorded
-instance of it failing in our environment is v6.1.
-
-Cheers,
--- Nico
-
-On Mon, May 13, 2024 at 9:44=E2=80=AFPM Stephen Boyd <sboyd@kernel.org> wro=
-te:
+On Fri, May 10, 2024 at 12:02=E2=80=AFPM Shengjiu Wang <shengjiu.wang@gmail=
+.com> wrote:
 >
-> Quoting Nico Pache (2024-05-13 18:08:40)
-> > Hi,
+> On Fri, May 10, 2024 at 6:04=E2=80=AFAM Stephen Boyd <sboyd@kernel.org> w=
+rote:
 > >
-> > We are seeing a number of the CLK kunit tests failing on S390x. This
-> > has been occurring for some time now (as early as v6.1). We run these
-> > tests as modules (without the UML wrappers), and have not seen these
-> > failures on any other architectures.
+> > Quoting Shengjiu Wang (2024-05-08 18:43:56)
+> > > Audiomix block control can be a reset controller for
+> > > Enhanced Audio Return Channel (EARC), which is one of
+> > > modules in this audiomix subsystem.
+> > >
+> > > The EARC PHY software reset and EARC controller software
+> > > reset need to be supported.
+> >
+> > Can you move this to drivers/reset and use auxiliary device APIs to do
+> > that? The idea would be to have reset maintainers review reset code.
 >
-> Do you have commit 75357829cc8e ("clk: Fix clk gate kunit test on
-> big-endian CPUs"). What is the kernel version?
+> Thanks for your comments.
+>
+> This is a minor reset control only for XCVR devices, two reset bits
+> are accessed.
+>
+> If we move to an auxiliary device,  we need to define a new header file
+> and a new driver, which will bring more code size and complexity.
+>
+> So is it necessary to separate it to another auxiliary driver/device?
+>
+> And add Philipp Zabel in loop for review.
 >
 
+I will use syscon and simple-mfd to separate the reset function to
+a new driver,  which will be a child node of the audiomix device.
+
+Best regards
+Shengjiu Wang
