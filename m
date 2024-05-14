@@ -1,290 +1,214 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83D62181BBF
-	for <linux-clk@vger.kernel.org>; Tue, 14 May 2024 22:04:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAB60181333;
+	Tue, 14 May 2024 22:08:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715724254; cv=none; b=gM1TQvo6ffuwffUGFyJdRNpWjL2fX0UfwE/riDhZeKnoAm+xT28DeEYWrOGJ9/nU7LANhw6XW1b+h1+PiiCs3HnxuOM5tZiVMmDWV+7JF9uXc6LOBRSLjwQU7yy8tC5DrqsqZJxh/8G8ATfZzSNOhW6AhoCQ9XzRNLwgGfg5R4E=
+	t=1715724516; cv=none; b=knr0KrPiEZPc4ohx4Bh+p2xBfLGwzS6vDkbhpedMjMppfBGfQwgWtbeFWjD/IGgxxHtbr8qZF0ifBg03gZgSz+6dTvUlsTSOPfb7h2HwVARmSewlRxDkhwh+IFC2iTHKxhU/gLkOefk6pURzcoOiREv03BPDRwOe7pRdyDD9/rc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715724254; c=relaxed/simple;
-	bh=/sEZTtYji0CM+5KTJwPtfH5Dc6EqMAwSyWQb29nAG8c=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=p2JXoLkTQwxks297As4PWzPQYdxmcex3v82VmEGh8zR45PIyj8TdRU7H7UeRRHEEQHcDGsTZ65UpOD452SoYqzQEY9fgeQm/EklP4TKgNnoVMf4DZGPTRxQgSATNoR4JYO5SEoS6iCixxkl4IebL0CYdLJSQoXxM/XiS+WYNNbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hCq0S630; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1715724516; c=relaxed/simple;
+	bh=3mV67Ormp7F5oiTt1MWDRh8eXDI7s+aKtl2sVrW4Khg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Nk9WEVV4Q7KEUs1oqmQ1DR4Z0yUut6/JHz9cTSsGEHr2mK22Z0crgLOUwWQJpLNajzL75KaQiM7Ir/jNXjta7a/u2xVw7VaTHGEW2DgMbb6Oh67Xe2ePt9UrcMzHokA7oIO1P4kADsAzFbR/7qi3F79j8OYGyCDvHG6NN1xSxvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dkv8/6lO; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hCq0S630"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DF4CC32782;
-	Tue, 14 May 2024 22:04:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715724254;
-	bh=/sEZTtYji0CM+5KTJwPtfH5Dc6EqMAwSyWQb29nAG8c=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=hCq0S630Q7exWHcrQ8URsKMchUkRxv8K0pzU6RxWQpz4Y57Rct+/fB89LHZ/krmqk
-	 QmHaTMo+9K0Vh4TS0tBOJ1MSbW5zVMD29oM+tDy+hMpaH/L2Ft6YaUBCKcTF6mq5ou
-	 5kys8SmuxwMAhEW98ls7ttdhXWFMwUrGGbfnfvsWBrGk59RSA4YPrY1IJkkuHZ3AGW
-	 Myyp9chameT19x0bzPmYVR+upKYReVsd4q4LXtUPFa4ClcxrM7q813JyZ2rDptpE3k
-	 DR9Nb7DxQF8xr+9WaFhs+YSJdCGXm+rddL9lAKjHTRXX/Bh8XTxd9RUYVGcrqu//JX
-	 /OoK/yXuQU8kw==
-Message-ID: <9be47cd74b62ba8e4a36f3139fc8d275.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dkv8/6lO"
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-5f415fd71f8so4756451a12.3;
+        Tue, 14 May 2024 15:08:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715724513; x=1716329313; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XuRLCp8VtYUQRATbO4IEMxwbmMHW0kcBJ0ksfK6yUzU=;
+        b=dkv8/6lOyO5EZ2R/F42pVaioWyl+p+gpu+wXSkSo6vlunT4qJ8m34kYWytGM8sBqkV
+         nuydT5sg7WjtMmlVadA6RAJztLacbs4//3gVPlUBu91iYi0g5dAUvTMD4ZzQe4fHGTXw
+         7wiajhTK7behKt8+X4CoUKjbnP/Cp1R6ZhUgYG4RjZAWwHMJT0j6WIeua/63CxGOjAYL
+         B4lt607BmwJCCZSZ85zKAZkZYO+kvbsxsPJW/g5OUBoMmbcE0hCCrL1YSlTF5c10Pg/y
+         sOGPQur4WsjjL9sUJlkxsV80pqnysJY1fymkfA378teoFov22zBY+jWzXq6tKSFBJRu/
+         sEvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715724513; x=1716329313;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XuRLCp8VtYUQRATbO4IEMxwbmMHW0kcBJ0ksfK6yUzU=;
+        b=OgTtTU6Rai534GIlF0yZWnCeNc1/EyJAUQJgezNHU6uOQ6Fi7BiFKsYUxbpGaKukLe
+         e4YOxoOvM4xnaddWvSDhLFcI3oRI4IwnI3nxH5WfdjZOs2qwXRdmD84hBi7r46klNMKp
+         V2Wp3+sOXJphIdK26txBmh/EZ1zIucDoOdhicR5fE3wzxKCQ3ubhQa1rSHJpKcYnQ1B9
+         Q0j0ElLF1czpT5QVHAfV24RwbaSPjtAunPQYJRzs5K2K4MdlLL854pkRmN/7ZjaLR9EX
+         jrHJImDov92bidhE1QbS/O86hXVz7fXQDHfiqHm8ql2ctDCNzTO2Uqx/kSZ+aTkSi+vw
+         /PfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXIdEiwMyUnVSxNOCHAP2LIaTVgG5lgknYe5VUVULPz2CCbMqbwu5EqZjO6C3P037kfAyfYzuV+PIUMiMnTBUScijj0IQ5NyBpGs6EvXQj+7ocTtxHMHZ5Qs/m8uLWGqHtXgwUAMJ8lLZHciHNZrHLjxMadO3TOhGQA70W/2Cfe3Hg=
+X-Gm-Message-State: AOJu0Ywdu5XQuMVQbX4CzRGz7xOHCcQKI2EfwUPx4H3DwRPW9WaAaO+0
+	wyQYU2OMqZQqFc9DDtRvP0N7s0Kn9mIHdViId2cjnVq2kOaoKwwb/pS4m6Q36k8pF4pW9n5wDHD
+	cqaW+n1XssmNwTRtYXbmBVcteV3ejWw==
+X-Google-Smtp-Source: AGHT+IFNb7Lyxt+AmA9hK0cAEPKXsq+F7bj3UYaUaS25Vr8EtpIoVNPce7DtM5S+0ADADXeItV979+3908GXTlM0xjw=
+X-Received: by 2002:a17:90a:db54:b0:2b6:3034:4ae9 with SMTP id
+ 98e67ed59e1d1-2b6ccd6bceemr11216551a91.35.1715724512886; Tue, 14 May 2024
+ 15:08:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <1715396125-3724-1-git-send-email-shengjiu.wang@nxp.com>
+In-Reply-To: <1715396125-3724-1-git-send-email-shengjiu.wang@nxp.com>
+From: Adam Ford <aford173@gmail.com>
+Date: Tue, 14 May 2024 17:08:21 -0500
+Message-ID: <CAHCN7xLoW2Nydhc3y-X1ieb7-UZTm=ap1O1eSLE31LawmfRZOg@mail.gmail.com>
+Subject: Re: [PATCH v3] pmdomain: imx: gpcv2: Add delay after power up handshake
+To: Shengjiu Wang <shengjiu.wang@nxp.com>
+Cc: ulf.hansson@linaro.org, heiko@sntech.de, u.kleine-koenig@pengutronix.de, 
+	geert+renesas@glider.be, rafael@kernel.org, linux-pm@vger.kernel.org, 
+	abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com, 
+	sboyd@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, 
+	kernel@pengutronix.de, festevam@gmail.com, imx@lists.linux.dev, 
+	shengjiu.wang@gmail.com, frank.li@nxp.com, mkl@pengutronix.de, 
+	linus.walleij@linaro.org, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAA1CXcALWqxfoWsv_wuiu-hAmX=AosvEedheGJUQHAhDCZf2Sg@mail.gmail.com>
-References: <CAA1CXcBhABB60JG-sT1qRysD1AP+bN=wo=5vwbeTv13Gj72EzA@mail.gmail.com> <301cd41e6283c12ac67fb8c0f8d5c929.sboyd@kernel.org> <CAA1CXcALWqxfoWsv_wuiu-hAmX=AosvEedheGJUQHAhDCZf2Sg@mail.gmail.com>
-Subject: Re: [Bug Report] Multiple S390x KUNIT clk failures
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: KUnit Development <kunit-dev@googlegroups.com>, linux-clk@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>, Audra Mitchell <aubaker@redhat.com>, Donald Zickus <dzickus@redhat.com>
-To: Nico Pache <npache@redhat.com>
-Date: Tue, 14 May 2024 15:04:12 -0700
-User-Agent: alot/0.10
 
-Quoting Nico Pache (2024-05-14 00:14:24)
-> Hi Stephen,
->=20
-> Yes, we have that commit. This is failing on fedora-ark, so it's
-> constantly updated to match upstream, and the earliest recorded
-> instance of it failing in our environment is v6.1.
->=20
+On Fri, May 10, 2024 at 10:15=E2=80=AFPM Shengjiu Wang <shengjiu.wang@nxp.c=
+om> wrote:
+>
+> AudioMix BLK-CTRL on i.MX8MP encountered an accessing register issue
+> after power up.
+>
+> [    2.181035] Kernel panic - not syncing: Asynchronous SError Interrupt
+> [    2.181038] CPU: 1 PID: 48 Comm: kworker/u16:2 Not tainted 6.9.0-rc5-n=
+ext-20240424-00003-g21cec88845c6 #171
+> [    2.181047] Hardware name: NXP i.MX8MPlus EVK board (DT)
+> [    2.181050] Workqueue: events_unbound deferred_probe_work_func
+> [    2.181064] Call trace:
+> [...]
+> [    2.181142]  arm64_serror_panic+0x6c/0x78
+> [    2.181149]  do_serror+0x3c/0x70
+> [    2.181157]  el1h_64_error_handler+0x30/0x48
+> [    2.181164]  el1h_64_error+0x64/0x68
+> [    2.181171]  clk_imx8mp_audiomix_runtime_resume+0x34/0x44
+> [    2.181183]  __genpd_runtime_resume+0x30/0x80
+> [    2.181195]  genpd_runtime_resume+0x110/0x244
+> [    2.181205]  __rpm_callback+0x48/0x1d8
+> [    2.181213]  rpm_callback+0x68/0x74
+> [    2.181224]  rpm_resume+0x468/0x6c0
+> [    2.181234]  __pm_runtime_resume+0x50/0x94
+> [    2.181243]  pm_runtime_get_suppliers+0x60/0x8c
+> [    2.181258]  __driver_probe_device+0x48/0x12c
+> [    2.181268]  driver_probe_device+0xd8/0x15c
+> [    2.181278]  __device_attach_driver+0xb8/0x134
+> [    2.181290]  bus_for_each_drv+0x84/0xe0
+> [    2.181302]  __device_attach+0x9c/0x188
+> [    2.181312]  device_initial_probe+0x14/0x20
+> [    2.181323]  bus_probe_device+0xac/0xb0
+> [    2.181334]  deferred_probe_work_func+0x88/0xc0
+> [    2.181344]  process_one_work+0x150/0x290
+> [    2.181357]  worker_thread+0x2f8/0x408
+> [    2.181370]  kthread+0x110/0x114
+> [    2.181381]  ret_from_fork+0x10/0x20
+> [    2.181391] SMP: stopping secondary CPUs
+>
 
-Please don't top post. I'm unable to run s390 kunit tests in qemu. They
-seem to crash before finishing.
+The imx8mp-beacon board suffers from this as well, and I can confirm
+the patch also fixes it.  It might be a coincidence, but the etnaviv
+NPU also enumerates more reliably now too.
 
- ./tools/testing/kunit/kunit.py run --kunitconfig=3Dlib/kunit --arch=3Ds390=
- --cross_compile=3D/path/to/s390-linux-
+adam
 
-[14:55:10] Starting KUnit Kernel (1/1)...
-[14:55:10] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-Running tests with:
-$ qemu-system-s390x -nodefaults -m 1024 -kernel .kunit/arch/s390/boot/bzIma=
-ge -append 'kunit.enable=3D1 console=3DttyS0 kunit_shutdown=3Dreboot' -no-r=
-eboot -nographic -serial stdio -machine s390-ccw-virtio -cpu qemu
-[14:55:11] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[14:55:11] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D example_init=
- (1 subtest) =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[14:55:11] [PASSED] example_init_test
-[14:55:11] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D [PASSED] =
-example_init =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[14:55:11] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[14:55:11] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D kunit_executor_test (8 s=
-ubtests) =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[14:55:11] [PASSED] parse_filter_test
-[14:55:11] [PASSED] filter_suites_test
-[14:55:11] [PASSED] filter_suites_test_glob_test
-[14:55:11] [PASSED] filter_suites_to_empty_test
-[14:55:11] [PASSED] parse_filter_attr_test
-[14:55:11] [PASSED] filter_attr_test
-[14:55:11] [PASSED] filter_attr_empty_test
-[14:55:11] [PASSED] filter_attr_skip_test
-[14:55:11] [ERROR] Test: kunit_executor_test: Expected test number 1 but fo=
-und 2
-[14:55:11] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D [PASSED] kunit_exe=
-cutor_test =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[14:55:11] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[14:55:11] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D kunit-try-catch-test (2 sub=
-tests) =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[14:55:11] [PASSED] kunit_test_try_catch_successful_try_no_catch
-[14:55:11] [PASSED] kunit_test_try_catch_unsuccessful_try_does_catch
-[14:55:11] [ERROR] Test: kunit-try-catch-test: Expected test number 1 but f=
-ound 3
-[14:55:11] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D [PASSED] kunit-try-ca=
-tch-test =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[14:55:11] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[14:55:11] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D kunit-resource-test (12 sub=
-tests) =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[14:55:11] [PASSED] kunit_resource_test_init_resources
-[14:55:11] [PASSED] kunit_resource_test_alloc_resource
-[14:55:11] [PASSED] kunit_resource_test_destroy_resource
-[14:55:11] [PASSED] kunit_resource_test_remove_resource
-[14:55:11] [PASSED] kunit_resource_test_cleanup_resources
-[14:55:11] [PASSED] kunit_resource_test_proper_free_ordering
-[14:55:11] [PASSED] kunit_resource_test_static
-[14:55:11] [PASSED] kunit_resource_test_named
-[14:55:11] [PASSED] kunit_resource_test_action
-[14:55:11] [PASSED] kunit_resource_test_remove_action
-[14:55:11] [PASSED] kunit_resource_test_release_action
-[14:55:11] [PASSED] kunit_resource_test_action_ordering
-[14:55:11] [ERROR] Test: kunit-resource-test: Expected test number 1 but fo=
-und 4
-[14:55:11] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D [PASSED] kunit-res=
-ource-test =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[14:55:11] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[14:55:11] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D kunit-log-test (2 =
-subtests) =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[14:55:11] [PASSED] kunit_log_test
-[14:55:11] [SKIPPED] kunit_log_newline_test
-[14:55:11] [ERROR] Test: kunit-log-test: Expected test number 1 but found 5
-[14:55:11] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D [PASSED] kun=
-it-log-test =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[14:55:11] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[14:55:11] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D kunit_status (2=
- subtests) =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[14:55:11] [PASSED] kunit_status_set_failure_test
-[14:55:11] [PASSED] kunit_status_mark_skipped_test
-[14:55:11] [ERROR] Test: kunit_status: Expected test number 1 but found 6
-[14:55:11] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D [PASSED] =
-kunit_status =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[14:55:11] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[14:55:11] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D kunit_current (=
-2 subtests) =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[14:55:11] [PASSED] kunit_current_test
-[14:55:11] [PASSED] kunit_current_fail_test
-[14:55:11] [ERROR] Test: kunit_current: Expected test number 1 but found 7
-[14:55:11] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D [PASSED] =
-kunit_current =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[14:55:11] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[14:55:11] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D kunit_device (3=
- subtests) =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[14:55:11] [PASSED] kunit_device_test
-[14:55:11] [PASSED] kunit_device_cleanup_test
-[14:55:11] [PASSED] kunit_device_driver_test
-[14:55:11] [ERROR] Test: kunit_device: Expected test number 1 but found 8
-[14:55:11] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D [PASSED] =
-kunit_device =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[14:55:11] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[14:55:11] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D string-stream-test (12 s=
-ubtests) =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[14:55:11] [PASSED] string_stream_managed_init_test
-[14:55:11] [PASSED] string_stream_unmanaged_init_test
-[14:55:11] [PASSED] string_stream_managed_free_test
-[14:55:11] [PASSED] string_stream_resource_free_test
-[14:55:11] [PASSED] string_stream_line_add_test
-[14:55:11] [PASSED] string_stream_variable_length_line_test
-[14:55:11] [PASSED] string_stream_append_test
-[14:55:11] [PASSED] string_stream_append_auto_newline_test
-[14:55:11] [PASSED] string_stream_append_empty_string_test
-[14:55:11] [PASSED] string_stream_no_auto_newline_test
-[14:55:11] [PASSED] string_stream_auto_newline_test
-[14:55:11] [PASSED] string_stream_performance_test
-[14:55:11] [ERROR] Test: string-stream-test: Expected test number 1 but fou=
-nd 9
-[14:55:11] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D [PASSED] string-st=
-ream-test =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[14:55:11] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[14:55:11] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D exampl=
-e (9 subtests) =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[14:55:11] [PASSED] example_simple_test
-[14:55:11] [SKIPPED] example_skip_test
-[14:55:11] [ERROR] Test: example: missing expected subtest!
-[14:55:11]
-[14:55:11] # example_mark_skipped_test: initializing
-[14:55:11]
-[14:55:11] # example_mark_skipped_test: You should see a line below.
-[14:55:11] [CRASHED]
-[14:55:11] [ERROR] Test: example: missing expected subtest!
-[14:55:11] [CRASHED]
-[14:55:11] [ERROR] Test: example: missing expected subtest!
-[14:55:11] [CRASHED]
-[14:55:11] [ERROR] Test: example: missing expected subtest!
-[14:55:11] [CRASHED]
-[14:55:11] [ERROR] Test: example: missing expected subtest!
-[14:55:11] [CRASHED]
-[14:55:11] [ERROR] Test: example: missing expected subtest!
-[14:55:11] [CRASHED]
-[14:55:11] [ERROR] Test: example: missing expected subtest!
-[14:55:11] [CRASHED]
-[14:55:11] [ERROR] Test: example: missing subtest result line!
-[14:55:11]
-[14:55:11] # module: kunit_example_test
-[14:55:11] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D [CR=
-ASHED] example =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D
-[14:55:11]
-[14:55:11] # example: initializing suite
-[14:55:11]
-[14:55:11] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D [CRASHED]  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
-[14:55:11]
-[14:55:11] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D [CRASHED]  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
-[14:55:11]
-[14:55:11] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D [CRASHED]  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
-[14:55:11]
-[14:55:11] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D [CRASHED]  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
-[14:55:11]
-[14:55:11] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D [CRASHED]  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
-[14:55:11]
-[14:55:11] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D [CRASHED]  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
-[14:55:11]
-[14:55:11] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D [CRASHED]  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
-[14:55:11]
-[14:55:11] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D [CRASHED]  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
-[14:55:11]
-[14:55:11] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D [CRASHED]  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
-[14:55:11]
-[14:55:11] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D [CRASHED]  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D
-[14:55:11] [ERROR] Test: main: missing expected subtest!
-[14:55:11] [CRASHED]
-[14:55:11] [ERROR] Test: main: missing expected subtest!
-[14:55:11] [CRASHED]
-[14:55:11] [ERROR] Test: main: missing expected subtest!
-[14:55:11] [CRASHED]
-[14:55:11] [ERROR] Test: main: missing expected subtest!
-[14:55:11] [CRASHED]
-[14:55:11] [ERROR] Test: main: missing expected subtest!
-[14:55:11] [CRASHED]
-[14:55:11] [ERROR] Test: main: missing expected subtest!
-[14:55:11] [CRASHED]
-[14:55:11] [ERROR] Test: main: missing expected subtest!
-[14:55:11] [CRASHED]
-[14:55:11] [ERROR] Test: main: missing expected subtest!
-[14:55:11] [CRASHED]
-[14:55:11] [ERROR] Test: main: missing expected subtest!
-[14:55:11] [CRASHED]
-[14:55:11] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-[14:55:11] Testing complete. Ran 62 tests: passed: 44, crashed: 16, skipped=
-: 2, errors: 25
-The kernel seems to have crashed; you can decode the stack traces with:
-$ scripts/decode_stacktrace.sh .kunit/vmlinux .kunit < .kunit/test.log | te=
-e .kunit/decoded.log | ./tools/testing/kunit/kunit.py parse
-[14:55:11] Elapsed time: 16.240s total, 1.476s configuring, 14.294s buildin=
-g, 0.469s running
+> According to comments in power up handshake:
+>
+>         /* request the ADB400 to power up */
+>         if (domain->bits.hskreq) {
+>                 regmap_update_bits(domain->regmap, domain->regs->hsk,
+>                                    domain->bits.hskreq, domain->bits.hskr=
+eq);
+>
+>                 /*
+>                  * ret =3D regmap_read_poll_timeout(domain->regmap, domai=
+n->regs->hsk, reg_val,
+>                  *                                (reg_val & domain->bits=
+.hskack), 0,
+>                  *                                USEC_PER_MSEC);
+>                  * Technically we need the commented code to wait handsha=
+ke. But that needs
+>                  * the BLK-CTL module BUS clk-en bit being set.
+>                  *
+>                  * There is a separate BLK-CTL module and we will have su=
+ch a driver for it,
+>                  * that driver will set the BUS clk-en bit and handshake =
+will be triggered
+>                  * automatically there. Just add a delay and suppose the =
+handshake finish
+>                  * after that.
+>                  */
+>         }
+>
+> The BLK-CTL module needs to add delay to wait for a handshake request fin=
+ished.
+> For some BLK-CTL module (eg. AudioMix on i.MX8MP) doesn't have BUS clk-en
+> bit, it is better to add delay in this driver, as the BLK-CTL module does=
+n't
+> need to care about how it is powered up.
+>
+> regmap_read_bypassed() is to make sure the above write IO transaction alr=
+eady
+> reaches target before udelay().
+>
+> Fixes: 1496dd413b2e ("clk: imx: imx8mp: Add pm_runtime support for power =
+saving")
+> Reported-by: Francesco Dolcini <francesco@dolcini.it>
+> Closes: https://lore.kernel.org/all/66293535.170a0220.21fe.a2e7@mx.google=
+.com/
+> Suggested-by: Frank Li <frank.li@nxp.com>
+> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
 
-I wonder if something with my local environment is causing troubles.
+Tested-by:  Adam Ford <aford173@gmail.com>
+
+> ---
+> changes in v3:
+> - move change to gpcv2.c, as it is more reasonable to let power driver
+>   to handle such power issue, suggested by Frank Li
+>
+> changes in v2:
+> - reduce size of panic log in commit message
+>
+>  drivers/pmdomain/imx/gpcv2.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+>
+> diff --git a/drivers/pmdomain/imx/gpcv2.c b/drivers/pmdomain/imx/gpcv2.c
+> index 4b828d74a606..856eaac0ec14 100644
+> --- a/drivers/pmdomain/imx/gpcv2.c
+> +++ b/drivers/pmdomain/imx/gpcv2.c
+> @@ -393,6 +393,17 @@ static int imx_pgc_power_up(struct generic_pm_domain=
+ *genpd)
+>                  * automatically there. Just add a delay and suppose the =
+handshake finish
+>                  * after that.
+>                  */
+> +
+> +               /*
+> +                * For some BLK-CTL module (eg. AudioMix on i.MX8MP) does=
+n't have BUS
+> +                * clk-en bit, it is better to add delay here, as the BLK=
+-CTL module
+> +                * doesn't need to care about how it is powered up.
+> +                *
+> +                * regmap_read_bypassed() is to make sure the above write=
+ IO transaction
+> +                * already reaches target before udelay()
+> +                */
+> +               regmap_read_bypassed(domain->regmap, domain->regs->hsk, &=
+reg_val);
+> +               udelay(5);
+>         }
+>
+>         /* Disable reset clocks for all devices in the domain */
+> --
+> 2.34.1
+>
+>
