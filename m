@@ -1,117 +1,521 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B31A81DDF6;
-	Tue, 14 May 2024 07:39:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB91814277
+	for <linux-clk@vger.kernel.org>; Tue, 14 May 2024 07:51:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715672389; cv=none; b=CcyFvnHYqUprYCB4kzTN1b6vnhcpvO81KLHq1sMNXw3zLkhOfuFgD3ertjXQ5J71NEdi6wlnRcUzbp8iuBgXD+tOyAuBHLxu0H/o1oajormO6YpzthOP6cxpZEC0UNhxBzxWcxIoBThMpDgf5bnCzTOdq3pjeU2do8V6saybv6o=
+	t=1715673069; cv=none; b=Diw46/B3GnsibagRk9gqDsOKz0L9xUrd24AAQS1XabeRYnL2uV4a66UcqLQAfUc16/S1+zN8Yve+5fHfTqEPjz6CUtyv+1wnyCu298/qLkPlyNdfhC79A0/fZoYytRa9zOTotoVqmfedjrgUFNfMrQZ0PhV/bqBU/0guSwrM42A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715672389; c=relaxed/simple;
-	bh=SWbGqPIqowbFIN53jl9RELvguCAd57M714knD8HLmE8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=P2FXZ8zyo+FNzeObksWT2oWQc0um/eITk4i81OsOOUpDJvLRCjyv2MX0Cg3vEvOuiqlZM5oD1wFdZv2qkr8ijO153IrOyIlhrDLKfbBVLxUN6jlbIK04W9LsxrjBKcEAl5+Qn9YQkfifoqkChlGPvf+KjMj0Bd1UYJi4sUenpJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PCi5HuRd; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1715673069; c=relaxed/simple;
+	bh=krG1zVaK3l/29Cmol8z1CCc8GFVbvQaFOBN40o6k7w0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e+k1GLqsYdLCkolBbh83om+UqcxA9ch/e/8hJPLc5AeR4CiKPine1F0YXmtT7BnV7JfSl7SpjgBX/wv3qBzP2lM1glzXA8BlzozBFe5ciFCuZM+DDAW3RpKUpaAZhcEDb/19w5yuHG2honqI58CMJ7e7Dcrilj80FR2YlIMoqzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=n+02EKDX; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PCi5HuRd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48CF0C2BD10;
-	Tue, 14 May 2024 07:39:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715672389;
-	bh=SWbGqPIqowbFIN53jl9RELvguCAd57M714knD8HLmE8=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=PCi5HuRdYAC70UK5sa6g8DvSwsoyAYhViF8n9nHHLaMwhVUjBFs7I09yAny/C6rF0
-	 YreGHzays/nDC9G7HRK0E5J4dgjdV8NAbkoj6FrlJJ21wFe3ysEcHb1cTZI/+/zrHa
-	 8S7K3M1eXCoGbBoIxF4Ypm3KLdx1NoK0NnpJVAwar/GvSVPGeMZBxc0HHXdQ4i1LD8
-	 1tyXFRWBnDT7xqzFmHJLeI9dM7vESn6lw+SoCaBGECtBTssRDhSDWnuABiT2j/wBfk
-	 9Nxg74iwhTcGcaOUnBgIUBQt4VJXFeSS6vBay9G+G+NQlJPvQzlfrxMqxFBeRAaANH
-	 QDV2fOxEmfozQ==
-Message-ID: <146476f1-496a-4fa1-9822-4b17254685f9@kernel.org>
-Date: Tue, 14 May 2024 09:39:44 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="n+02EKDX"
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a5a89787ea4so42075866b.2
+        for <linux-clk@vger.kernel.org>; Tue, 14 May 2024 00:51:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715673066; x=1716277866; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=8BO15yDmXpBmEarxhd2q42jHVox3qmbWZ3jkNFDgX8g=;
+        b=n+02EKDX4aYaz2vVM7OUNUQ+1V7r/lcX/XwTeiBbBKfnCzZE+iA18MGFbt3X3+YGV2
+         Ywa9AYXw0TUmiQ00NH3nOdM7GiPIzJLf4/uCjUM5OwQ3Oj3WcDVB4Eis62AmX15/oTGy
+         5DtCfvEcSn+eDxLxxfVHke1yfsbVCe2vFmQkevx7uI0hOd2qDdBKbRTIBhsP3EhZaFnq
+         5V71v6GI9oZv48tiaHV1918k7LQ8WPLmhKd4rzVjkou7E8ypbhFEbTIfhkJl51Fv5ctA
+         r1BzZ0qLvDEXOBnwfL1KiCLetTIALWIwDHIUdSjevkZJA6GgAhge+iGC1DmQi6gYwNqA
+         +bKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715673066; x=1716277866;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8BO15yDmXpBmEarxhd2q42jHVox3qmbWZ3jkNFDgX8g=;
+        b=MQtgObr4vQKEzytjEEBy/dB88TmuYTZk6R2JIJ8r3BdFflvszoUnmOFLnNx6nfeRHN
+         IHa1aKvrBzSHuhECCSomKk+S+Q/7OkTk8ZhgBcuZxPtO73uTiesjk9nxGr4FmIhc5avf
+         XEoYZLnx5G/2QGAzqbu77Jr3omt5z8i5TRXVW8uOR/mBqZilA/cft+2gkT08VmkBMhR2
+         BCYPIrNmMOf0segAKgupRcVXtUatyZFjJ/V2IlvlyTA1NPmqxiL4yvHx+Z6Aoqlcx4vg
+         6RQdjI1PO7QKTz0URQp8FstS8o0yt8HRWyYqP1A3lJ3JLa7j30ZwDFBivBg2wkKorKqg
+         LPog==
+X-Forwarded-Encrypted: i=1; AJvYcCUCxKpPThhVsTM/POojt5cJCeXr42T0JV3cIICEz5WahDlsizX3KouKqDtatVxcw0zNmYL1uS1RqK46VJUexIYBL8DX97RytOv9
+X-Gm-Message-State: AOJu0Yyg2VkaiHROyqJobsVCWPS1jEn0SO9DkUF17RPIl+gaVX85ts8m
+	2u7+AcCU7/rcxxgbForOwqP9WUOUcAllNWqAB/7RFCzGoI7Yy0cFFmHUc+jaDg==
+X-Google-Smtp-Source: AGHT+IHUaJLFnIiuyoFrpGYTc0NWLuj5PD6zueiu7Svp/b7aCdLGs7X2LzBVH8yZwX48aFr540/JLA==
+X-Received: by 2002:a50:d516:0:b0:56f:e75b:83aa with SMTP id 4fb4d7f45d1cf-5734d5c17b7mr8876915a12.6.1715673065886;
+        Tue, 14 May 2024 00:51:05 -0700 (PDT)
+Received: from thinkpad ([149.14.240.163])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5733bed000esm7215529a12.54.2024.05.14.00.51.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 May 2024 00:51:05 -0700 (PDT)
+Date: Tue, 14 May 2024 09:51:04 +0200
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4 RESEND 4/8] PCI: qcom: Switch to
+ devm_clk_bulk_get_all() API to get the clocks from Devicetree
+Message-ID: <20240514075104.GC2463@thinkpad>
+References: <20240501042847.1545145-1-mr.nuke.me@gmail.com>
+ <20240501042847.1545145-5-mr.nuke.me@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dt-bindings: clock: meson: Convert axg-audio-clkc to
- YAML format
-To: Jan Dakinevich <jan.dakinevich@salutedevices.com>,
- Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
- Jerome Brunet <jbrunet@baylibre.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-amlogic@lists.infradead.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- Michael Turquette <mturquette@baylibre.com>,
- Neil Armstrong <neil.armstrong@linaro.org>, Rob Herring <robh@kernel.org>,
- Stephen Boyd <sboyd@kernel.org>
-References: <20240513224552.800153-1-jan.dakinevich@salutedevices.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240513224552.800153-1-jan.dakinevich@salutedevices.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240501042847.1545145-5-mr.nuke.me@gmail.com>
 
-On 14/05/2024 00:45, Jan Dakinevich wrote:
-> From: Alexander Stein <alexander.stein@mailbox.org>
+On Tue, Apr 30, 2024 at 11:28:43PM -0500, Alexandru Gagniuc wrote:
+> From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 > 
-> Convert Amlogic AXG Audio Clock Controller binding to yaml.
+> There is no need for the device drivers to validate the clocks defined in
+> Devicetree. The validation should be performed by the DT schema and the
+> drivers should just get all the clocks from DT. Right now the driver
+> hardcodes the clock info and validates them against DT which is redundant.
 > 
-> Signed-off-by: Alexander Stein <alexander.stein@mailbox.org>
-> Signed-off-by: Jan Dakinevich <jan.dakinevich@salutedevices.com>
+> So use devm_clk_bulk_get_all() that just gets all the clocks defined in DT
+> and get rid of all static clocks info from the driver. This simplifies the
+> driver.
+> 
+> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+> [moved clks to struct qcom_pcie to reduce code duplication]
+
+This patch is already applied to pci tree. So hopefully you can just rebase it
+on top of pci/next for next version (it should get updated soon).
+
+- Mani
+
 > ---
+>  drivers/pci/controller/dwc/pcie-qcom.c | 163 ++++---------------------
+>  1 file changed, 25 insertions(+), 138 deletions(-)
 > 
-> Also, this patch was discussed at [1].
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> index 14772edcf0d3..ea81ff68d433 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> @@ -154,58 +154,42 @@
+>  #define QCOM_PCIE_LINK_SPEED_TO_BW(speed) \
+>  		Mbps_to_icc(PCIE_SPEED2MBS_ENC(pcie_link_speed[speed]))
+>  
+> -#define QCOM_PCIE_1_0_0_MAX_CLOCKS		4
+>  struct qcom_pcie_resources_1_0_0 {
+> -	struct clk_bulk_data clks[QCOM_PCIE_1_0_0_MAX_CLOCKS];
+>  	struct reset_control *core;
+>  	struct regulator *vdda;
+>  };
+>  
+> -#define QCOM_PCIE_2_1_0_MAX_CLOCKS		5
+>  #define QCOM_PCIE_2_1_0_MAX_RESETS		6
+>  #define QCOM_PCIE_2_1_0_MAX_SUPPLY		3
+>  struct qcom_pcie_resources_2_1_0 {
+> -	struct clk_bulk_data clks[QCOM_PCIE_2_1_0_MAX_CLOCKS];
+>  	struct reset_control_bulk_data resets[QCOM_PCIE_2_1_0_MAX_RESETS];
+>  	int num_resets;
+>  	struct regulator_bulk_data supplies[QCOM_PCIE_2_1_0_MAX_SUPPLY];
+>  };
+>  
+> -#define QCOM_PCIE_2_3_2_MAX_CLOCKS		4
+>  #define QCOM_PCIE_2_3_2_MAX_SUPPLY		2
+>  struct qcom_pcie_resources_2_3_2 {
+> -	struct clk_bulk_data clks[QCOM_PCIE_2_3_2_MAX_CLOCKS];
+>  	struct regulator_bulk_data supplies[QCOM_PCIE_2_3_2_MAX_SUPPLY];
+>  };
+>  
+> -#define QCOM_PCIE_2_3_3_MAX_CLOCKS		5
+>  #define QCOM_PCIE_2_3_3_MAX_RESETS		7
+>  struct qcom_pcie_resources_2_3_3 {
+> -	struct clk_bulk_data clks[QCOM_PCIE_2_3_3_MAX_CLOCKS];
+>  	struct reset_control_bulk_data rst[QCOM_PCIE_2_3_3_MAX_RESETS];
+>  };
+>  
+> -#define QCOM_PCIE_2_4_0_MAX_CLOCKS		4
+>  #define QCOM_PCIE_2_4_0_MAX_RESETS		12
+>  struct qcom_pcie_resources_2_4_0 {
+> -	struct clk_bulk_data clks[QCOM_PCIE_2_4_0_MAX_CLOCKS];
+> -	int num_clks;
+>  	struct reset_control_bulk_data resets[QCOM_PCIE_2_4_0_MAX_RESETS];
+>  	int num_resets;
+>  };
+>  
+> -#define QCOM_PCIE_2_7_0_MAX_CLOCKS		15
+>  #define QCOM_PCIE_2_7_0_MAX_SUPPLIES		2
+>  struct qcom_pcie_resources_2_7_0 {
+> -	struct clk_bulk_data clks[QCOM_PCIE_2_7_0_MAX_CLOCKS];
+> -	int num_clks;
+>  	struct regulator_bulk_data supplies[QCOM_PCIE_2_7_0_MAX_SUPPLIES];
+>  	struct reset_control *rst;
+>  };
+>  
+> -#define QCOM_PCIE_2_9_0_MAX_CLOCKS		5
+>  struct qcom_pcie_resources_2_9_0 {
+> -	struct clk_bulk_data clks[QCOM_PCIE_2_9_0_MAX_CLOCKS];
+>  	struct reset_control *rst;
+>  };
+>  
+> @@ -247,6 +231,8 @@ struct qcom_pcie {
+>  	struct icc_path *icc_mem;
+>  	const struct qcom_pcie_cfg *cfg;
+>  	struct dentry *debugfs;
+> +	struct clk_bulk_data *clks;
+> +	int num_clks;
+>  	bool suspended;
+>  };
+>  
+> @@ -337,22 +323,6 @@ static int qcom_pcie_get_resources_2_1_0(struct qcom_pcie *pcie)
+>  	if (ret)
+>  		return ret;
+>  
+> -	res->clks[0].id = "iface";
+> -	res->clks[1].id = "core";
+> -	res->clks[2].id = "phy";
+> -	res->clks[3].id = "aux";
+> -	res->clks[4].id = "ref";
+> -
+> -	/* iface, core, phy are required */
+> -	ret = devm_clk_bulk_get(dev, 3, res->clks);
+> -	if (ret < 0)
+> -		return ret;
+> -
+> -	/* aux, ref are optional */
+> -	ret = devm_clk_bulk_get_optional(dev, 2, res->clks + 3);
+> -	if (ret < 0)
+> -		return ret;
+> -
+>  	res->resets[0].id = "pci";
+>  	res->resets[1].id = "axi";
+>  	res->resets[2].id = "ahb";
+> @@ -373,7 +343,7 @@ static void qcom_pcie_deinit_2_1_0(struct qcom_pcie *pcie)
+>  {
+>  	struct qcom_pcie_resources_2_1_0 *res = &pcie->res.v2_1_0;
+>  
+> -	clk_bulk_disable_unprepare(ARRAY_SIZE(res->clks), res->clks);
+> +	clk_bulk_disable_unprepare(pcie->num_clks, pcie->clks);
+>  	reset_control_bulk_assert(res->num_resets, res->resets);
+>  
+>  	writel(1, pcie->parf + PARF_PHY_CTRL);
+> @@ -413,7 +383,6 @@ static int qcom_pcie_init_2_1_0(struct qcom_pcie *pcie)
+>  
+>  static int qcom_pcie_post_init_2_1_0(struct qcom_pcie *pcie)
+>  {
+> -	struct qcom_pcie_resources_2_1_0 *res = &pcie->res.v2_1_0;
+>  	struct dw_pcie *pci = pcie->pci;
+>  	struct device *dev = pci->dev;
+>  	struct device_node *node = dev->of_node;
+> @@ -425,7 +394,7 @@ static int qcom_pcie_post_init_2_1_0(struct qcom_pcie *pcie)
+>  	val &= ~PHY_TEST_PWR_DOWN;
+>  	writel(val, pcie->parf + PARF_PHY_CTRL);
+>  
+> -	ret = clk_bulk_prepare_enable(ARRAY_SIZE(res->clks), res->clks);
+> +	ret = clk_bulk_prepare_enable(pcie->num_clks, pcie->clks);
+>  	if (ret)
+>  		return ret;
+>  
+> @@ -476,21 +445,11 @@ static int qcom_pcie_get_resources_1_0_0(struct qcom_pcie *pcie)
+>  	struct qcom_pcie_resources_1_0_0 *res = &pcie->res.v1_0_0;
+>  	struct dw_pcie *pci = pcie->pci;
+>  	struct device *dev = pci->dev;
+> -	int ret;
+>  
+>  	res->vdda = devm_regulator_get(dev, "vdda");
+>  	if (IS_ERR(res->vdda))
+>  		return PTR_ERR(res->vdda);
+>  
+> -	res->clks[0].id = "iface";
+> -	res->clks[1].id = "aux";
+> -	res->clks[2].id = "master_bus";
+> -	res->clks[3].id = "slave_bus";
+> -
+> -	ret = devm_clk_bulk_get(dev, ARRAY_SIZE(res->clks), res->clks);
+> -	if (ret < 0)
+> -		return ret;
+> -
+>  	res->core = devm_reset_control_get_exclusive(dev, "core");
+>  	return PTR_ERR_OR_ZERO(res->core);
+>  }
+> @@ -500,7 +459,7 @@ static void qcom_pcie_deinit_1_0_0(struct qcom_pcie *pcie)
+>  	struct qcom_pcie_resources_1_0_0 *res = &pcie->res.v1_0_0;
+>  
+>  	reset_control_assert(res->core);
+> -	clk_bulk_disable_unprepare(ARRAY_SIZE(res->clks), res->clks);
+> +	clk_bulk_disable_unprepare(pcie->num_clks, pcie->clks);
+>  	regulator_disable(res->vdda);
+>  }
+>  
+> @@ -517,7 +476,7 @@ static int qcom_pcie_init_1_0_0(struct qcom_pcie *pcie)
+>  		return ret;
+>  	}
+>  
+> -	ret = clk_bulk_prepare_enable(ARRAY_SIZE(res->clks), res->clks);
+> +	ret = clk_bulk_prepare_enable(pcie->num_clks, pcie->clks);
+>  	if (ret) {
+>  		dev_err(dev, "cannot prepare/enable clocks\n");
+>  		goto err_assert_reset;
+> @@ -532,7 +491,7 @@ static int qcom_pcie_init_1_0_0(struct qcom_pcie *pcie)
+>  	return 0;
+>  
+>  err_disable_clks:
+> -	clk_bulk_disable_unprepare(ARRAY_SIZE(res->clks), res->clks);
+> +	clk_bulk_disable_unprepare(pcie->num_clks, pcie->clks);
+>  err_assert_reset:
+>  	reset_control_assert(res->core);
+>  
+> @@ -580,15 +539,6 @@ static int qcom_pcie_get_resources_2_3_2(struct qcom_pcie *pcie)
+>  	if (ret)
+>  		return ret;
+>  
+> -	res->clks[0].id = "aux";
+> -	res->clks[1].id = "cfg";
+> -	res->clks[2].id = "bus_master";
+> -	res->clks[3].id = "bus_slave";
+> -
+> -	ret = devm_clk_bulk_get(dev, ARRAY_SIZE(res->clks), res->clks);
+> -	if (ret < 0)
+> -		return ret;
+> -
+>  	return 0;
+>  }
+>  
+> @@ -596,7 +546,7 @@ static void qcom_pcie_deinit_2_3_2(struct qcom_pcie *pcie)
+>  {
+>  	struct qcom_pcie_resources_2_3_2 *res = &pcie->res.v2_3_2;
+>  
+> -	clk_bulk_disable_unprepare(ARRAY_SIZE(res->clks), res->clks);
+> +	clk_bulk_disable_unprepare(pcie->num_clks, pcie->clks);
+>  	regulator_bulk_disable(ARRAY_SIZE(res->supplies), res->supplies);
+>  }
+>  
+> @@ -613,7 +563,7 @@ static int qcom_pcie_init_2_3_2(struct qcom_pcie *pcie)
+>  		return ret;
+>  	}
+>  
+> -	ret = clk_bulk_prepare_enable(ARRAY_SIZE(res->clks), res->clks);
+> +	ret = clk_bulk_prepare_enable(pcie->num_clks, pcie->clks);
+>  	if (ret) {
+>  		dev_err(dev, "cannot prepare/enable clocks\n");
+>  		regulator_bulk_disable(ARRAY_SIZE(res->supplies), res->supplies);
+> @@ -661,18 +611,6 @@ static int qcom_pcie_get_resources_2_4_0(struct qcom_pcie *pcie)
+>  	bool is_ipq = of_device_is_compatible(dev->of_node, "qcom,pcie-ipq4019");
+>  	int ret;
+>  
+> -	res->clks[0].id = "aux";
+> -	res->clks[1].id = "master_bus";
+> -	res->clks[2].id = "slave_bus";
+> -	res->clks[3].id = "iface";
+> -
+> -	/* qcom,pcie-ipq4019 is defined without "iface" */
+> -	res->num_clks = is_ipq ? 3 : 4;
+> -
+> -	ret = devm_clk_bulk_get(dev, res->num_clks, res->clks);
+> -	if (ret < 0)
+> -		return ret;
+> -
+>  	res->resets[0].id = "axi_m";
+>  	res->resets[1].id = "axi_s";
+>  	res->resets[2].id = "axi_m_sticky";
+> @@ -700,7 +638,7 @@ static void qcom_pcie_deinit_2_4_0(struct qcom_pcie *pcie)
+>  	struct qcom_pcie_resources_2_4_0 *res = &pcie->res.v2_4_0;
+>  
+>  	reset_control_bulk_assert(res->num_resets, res->resets);
+> -	clk_bulk_disable_unprepare(res->num_clks, res->clks);
+> +	clk_bulk_disable_unprepare(pcie->num_clks, pcie->clks);
+>  }
+>  
+>  static int qcom_pcie_init_2_4_0(struct qcom_pcie *pcie)
+> @@ -726,7 +664,7 @@ static int qcom_pcie_init_2_4_0(struct qcom_pcie *pcie)
+>  
+>  	usleep_range(10000, 12000);
+>  
+> -	ret = clk_bulk_prepare_enable(res->num_clks, res->clks);
+> +	ret = clk_bulk_prepare_enable(pcie->num_clks, pcie->clks);
+>  	if (ret) {
+>  		reset_control_bulk_assert(res->num_resets, res->resets);
+>  		return ret;
+> @@ -742,16 +680,6 @@ static int qcom_pcie_get_resources_2_3_3(struct qcom_pcie *pcie)
+>  	struct device *dev = pci->dev;
+>  	int ret;
+>  
+> -	res->clks[0].id = "iface";
+> -	res->clks[1].id = "axi_m";
+> -	res->clks[2].id = "axi_s";
+> -	res->clks[3].id = "ahb";
+> -	res->clks[4].id = "aux";
+> -
+> -	ret = devm_clk_bulk_get(dev, ARRAY_SIZE(res->clks), res->clks);
+> -	if (ret < 0)
+> -		return ret;
+> -
+>  	res->rst[0].id = "axi_m";
+>  	res->rst[1].id = "axi_s";
+>  	res->rst[2].id = "pipe";
+> @@ -769,9 +697,7 @@ static int qcom_pcie_get_resources_2_3_3(struct qcom_pcie *pcie)
+>  
+>  static void qcom_pcie_deinit_2_3_3(struct qcom_pcie *pcie)
+>  {
+> -	struct qcom_pcie_resources_2_3_3 *res = &pcie->res.v2_3_3;
+> -
+> -	clk_bulk_disable_unprepare(ARRAY_SIZE(res->clks), res->clks);
+> +	clk_bulk_disable_unprepare(pcie->num_clks, pcie->clks);
+>  }
+>  
+>  static int qcom_pcie_init_2_3_3(struct qcom_pcie *pcie)
+> @@ -801,7 +727,7 @@ static int qcom_pcie_init_2_3_3(struct qcom_pcie *pcie)
+>  	 */
+>  	usleep_range(2000, 2500);
+>  
+> -	ret = clk_bulk_prepare_enable(ARRAY_SIZE(res->clks), res->clks);
+> +	ret = clk_bulk_prepare_enable(pcie->num_clks, pcie->clks);
+>  	if (ret) {
+>  		dev_err(dev, "cannot prepare/enable clocks\n");
+>  		goto err_assert_resets;
+> @@ -862,8 +788,6 @@ static int qcom_pcie_get_resources_2_7_0(struct qcom_pcie *pcie)
+>  	struct qcom_pcie_resources_2_7_0 *res = &pcie->res.v2_7_0;
+>  	struct dw_pcie *pci = pcie->pci;
+>  	struct device *dev = pci->dev;
+> -	unsigned int num_clks, num_opt_clks;
+> -	unsigned int idx;
+>  	int ret;
+>  
+>  	res->rst = devm_reset_control_array_get_exclusive(dev);
+> @@ -877,37 +801,6 @@ static int qcom_pcie_get_resources_2_7_0(struct qcom_pcie *pcie)
+>  	if (ret)
+>  		return ret;
+>  
+> -	idx = 0;
+> -	res->clks[idx++].id = "aux";
+> -	res->clks[idx++].id = "cfg";
+> -	res->clks[idx++].id = "bus_master";
+> -	res->clks[idx++].id = "bus_slave";
+> -	res->clks[idx++].id = "slave_q2a";
+> -
+> -	num_clks = idx;
+> -
+> -	ret = devm_clk_bulk_get(dev, num_clks, res->clks);
+> -	if (ret < 0)
+> -		return ret;
+> -
+> -	res->clks[idx++].id = "tbu";
+> -	res->clks[idx++].id = "ddrss_sf_tbu";
+> -	res->clks[idx++].id = "aggre0";
+> -	res->clks[idx++].id = "aggre1";
+> -	res->clks[idx++].id = "noc_aggr";
+> -	res->clks[idx++].id = "noc_aggr_4";
+> -	res->clks[idx++].id = "noc_aggr_south_sf";
+> -	res->clks[idx++].id = "cnoc_qx";
+> -	res->clks[idx++].id = "sleep";
+> -	res->clks[idx++].id = "cnoc_sf_axi";
+> -
+> -	num_opt_clks = idx - num_clks;
+> -	res->num_clks = idx;
+> -
+> -	ret = devm_clk_bulk_get_optional(dev, num_opt_clks, res->clks + num_clks);
+> -	if (ret < 0)
+> -		return ret;
+> -
+>  	return 0;
+>  }
+>  
+> @@ -925,7 +818,7 @@ static int qcom_pcie_init_2_7_0(struct qcom_pcie *pcie)
+>  		return ret;
+>  	}
+>  
+> -	ret = clk_bulk_prepare_enable(res->num_clks, res->clks);
+> +	ret = clk_bulk_prepare_enable(pcie->num_clks, pcie->clks);
+>  	if (ret < 0)
+>  		goto err_disable_regulators;
+>  
+> @@ -977,7 +870,7 @@ static int qcom_pcie_init_2_7_0(struct qcom_pcie *pcie)
+>  
+>  	return 0;
+>  err_disable_clocks:
+> -	clk_bulk_disable_unprepare(res->num_clks, res->clks);
+> +	clk_bulk_disable_unprepare(pcie->num_clks, pcie->clks);
+>  err_disable_regulators:
+>  	regulator_bulk_disable(ARRAY_SIZE(res->supplies), res->supplies);
+>  
+> @@ -1015,7 +908,7 @@ static void qcom_pcie_deinit_2_7_0(struct qcom_pcie *pcie)
+>  {
+>  	struct qcom_pcie_resources_2_7_0 *res = &pcie->res.v2_7_0;
+>  
+> -	clk_bulk_disable_unprepare(res->num_clks, res->clks);
+> +	clk_bulk_disable_unprepare(pcie->num_clks, pcie->clks);
+>  
+>  	regulator_bulk_disable(ARRAY_SIZE(res->supplies), res->supplies);
+>  }
+> @@ -1101,17 +994,6 @@ static int qcom_pcie_get_resources_2_9_0(struct qcom_pcie *pcie)
+>  	struct qcom_pcie_resources_2_9_0 *res = &pcie->res.v2_9_0;
+>  	struct dw_pcie *pci = pcie->pci;
+>  	struct device *dev = pci->dev;
+> -	int ret;
+> -
+> -	res->clks[0].id = "iface";
+> -	res->clks[1].id = "axi_m";
+> -	res->clks[2].id = "axi_s";
+> -	res->clks[3].id = "axi_bridge";
+> -	res->clks[4].id = "rchng";
+> -
+> -	ret = devm_clk_bulk_get(dev, ARRAY_SIZE(res->clks), res->clks);
+> -	if (ret < 0)
+> -		return ret;
+>  
+>  	res->rst = devm_reset_control_array_get_exclusive(dev);
+>  	if (IS_ERR(res->rst))
+> @@ -1122,9 +1004,7 @@ static int qcom_pcie_get_resources_2_9_0(struct qcom_pcie *pcie)
+>  
+>  static void qcom_pcie_deinit_2_9_0(struct qcom_pcie *pcie)
+>  {
+> -	struct qcom_pcie_resources_2_9_0 *res = &pcie->res.v2_9_0;
+> -
+> -	clk_bulk_disable_unprepare(ARRAY_SIZE(res->clks), res->clks);
+> +	clk_bulk_disable_unprepare(pcie->num_clks, pcie->clks);
+>  }
+>  
+>  static int qcom_pcie_init_2_9_0(struct qcom_pcie *pcie)
+> @@ -1153,7 +1033,7 @@ static int qcom_pcie_init_2_9_0(struct qcom_pcie *pcie)
+>  
+>  	usleep_range(2000, 2500);
+>  
+> -	return clk_bulk_prepare_enable(ARRAY_SIZE(res->clks), res->clks);
+> +	return clk_bulk_prepare_enable(pcie->num_clks, pcie->clks);
+>  }
+>  
+>  static int qcom_pcie_post_init_2_9_0(struct qcom_pcie *pcie)
+> @@ -1561,6 +1441,13 @@ static int qcom_pcie_probe(struct platform_device *pdev)
+>  		goto err_pm_runtime_put;
+>  	}
+>  
+> +	pcie->num_clks = devm_clk_bulk_get_all(dev, &pcie->clks);
+> +	if (pcie->num_clks < 0) {
+> +		ret = pcie->num_clks;
+> +		dev_err(dev, "Failed to get clocks\n");
+> +		goto err_pm_runtime_put;
+> +	}
+> +
+>  	ret = qcom_pcie_icc_init(pcie);
+>  	if (ret)
+>  		goto err_pm_runtime_put;
+> -- 
+> 2.40.1
 > 
-> Changes v1 -> v2 [2]
->  - Stop using conditionals and list all clocks;
->  - Cosmetics.
-> 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Best regards,
-Krzysztof
-
+-- 
+மணிவண்ணன் சதாசிவம்
