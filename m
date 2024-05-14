@@ -1,111 +1,120 @@
-Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8778710949;
-	Tue, 14 May 2024 07:22:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0855E374FF
+	for <linux-clk@vger.kernel.org>; Tue, 14 May 2024 07:25:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715671345; cv=none; b=IzR77fu3sj2s0rWF173dSV3K1mz9/DEg7rWNBaOGB02PeBEE+xG3830CYVLOSiRz+6VEPaFQ+zc78oI5QsJY1wevtFqDhvIbSe5UEVOfP1tru8+dwKgb3JW7J5dG9tm8MQ21a8KVKAdn0OUnhOiONX+uLywCrVUHAo82DqJtJNI=
+	t=1715671507; cv=none; b=kaQG2M7oI6wOF4W96JSLDKLhBIZvTXHEmhceepGVJM8t4uAK0rdaOh/wuTe+k/csrftgg8OxHMZ9TAqrd9Y7il/g4ZQ7Lh2cSvQ5OBjEzoJikRgCJzkPnD5sQIzKcLhocddHz6lfNrQGP8NpvFFFIs3Rxq7UikuyfU5HXD7qOSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715671345; c=relaxed/simple;
-	bh=JzVYEOFYJs0vaOsSEbpguUeyRllA43s34MwtB1FYfVQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=vC6AQp4O+sKyIO77LehQZUGxXFM4t39zfs30fYgYxZY34RXhvxhN58d/UI7zFBToAaidxeem7PgIXjeZLo5BQsgD+H1/xwUYa2AcAFRc+AJVRyYq+cglDzsxCVr+mvd5+ZQYowVQDcdSoakleqazS2eEKGq6wp37NHWmJdFqXwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mUqmRHK8; arc=none smtp.client-ip=209.85.166.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1715671507; c=relaxed/simple;
+	bh=MrsK/SOAFyvJ5rW6noiqY2i2AWXHF7hXaxT2Iuly1Kw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QbOkW4z+/Fdz+HqajQecD5VEY0N3K2HtOy3729/pD1Fd/9byfYacLn4TLMOwKY/bqzm3iPlc3Srs8fDVXEkfupbXkSp8xuQRyvYAv4IyUx74Ygx4L7HDUBu/+xw7xXpwx29eMvrD01UvN9oaYcNE6Pka6MPg6WPcx5KfpbgRfFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VFnuYnPi; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mUqmRHK8"
-Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-36c80f9c86bso25177375ab.0;
-        Tue, 14 May 2024 00:22:24 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VFnuYnPi"
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a59b097b202so1117056466b.0
+        for <linux-clk@vger.kernel.org>; Tue, 14 May 2024 00:25:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715671344; x=1716276144; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9WNa+3eLjaxowCpV/iLa2mMgq8zXzxRscxKrC3IUfjs=;
-        b=mUqmRHK8n8W6fAKPFBygxVO3CtLivR/mkbwcJ+5jsFeZLHl1j5lY/ImTBbIhav5owZ
-         JVEX+Jeen5jnwFtXP38VO06QZt4I8XGL4LoZNVc+m5OquPaRn8oa9Durwga9l72xFjB5
-         wP6gj6QwmWJBpR+BZHV04pEmtVn2sDR2yQizKBNFhuaFCOdPzRXRCNsNAPkI8Razi4zQ
-         g86DzP4c7TE3pLCqLuaqbHRVTxkCStq2EaIfHSnGrA1NQ25sdrEJlTzMjbxAnhudHYHS
-         AOhssVAUEeFFSi6YKu0OILxwiuwJhETWEPt9KY59huh1TsmnMZkODV6Qnk2AcQQtjMID
-         RxmA==
+        d=linaro.org; s=google; t=1715671504; x=1716276304; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=JB+Z0CRSJcLUU9yXDS+6zp2SY8ySyHlLC8dbiqLhtlQ=;
+        b=VFnuYnPijUKB5OvXDY4k+InVPo5hmPze9ahmz5tkhJUqO7fsoeww5VCnnSCFttYCwU
+         zcRnuUzTc0WaHbUp03SF28XAAbAaMvDY77hYTr8pVB2nCUfgwtZmN3hb7S0uNp0FrE4R
+         ogOw1rNBSlcUrt6HzNMJEkq1qwAANH0bZMLBpyPvJKg6NdkctCoNbx5ieROcTDHE9ZOK
+         OYbZ8tvx8YLKE/mHQ6yz4+kg/ch95kQuL7LmmsSZcuUg5VemintQU+s42IkTSIAbcZvV
+         CwBdjJrFz1/eroLQ78WGb3KhYpTLgy7vpJXolTI140gMdYwsmZKxccYLggzpmEgE/Kww
+         oKNg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715671344; x=1716276144;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9WNa+3eLjaxowCpV/iLa2mMgq8zXzxRscxKrC3IUfjs=;
-        b=Vp4OAHhqr3zO0ZAE2zAXnSisEZ49GZYja9UatRPKe6QgOikIz6Obw7u8RIZBpLK+Tn
-         JmKWOTvZEb4d0xp4ad7yQszEZdOd+9PEDyEHX4kUX9Q1TPIWGUjxCiuUb4KqYQYsRKVu
-         Q1rcOtFE+cfFyg+9J+BY/JbME7//yrMwiuV53JMa7K4QKifLFUunKBLqY7kggcZCKpMF
-         n83Bhp4fyaYLkxKzF1phHNzf4Oqs4N5av4UvsXm97FJQX2eQGVPckJYJ6/nVCCKWd9DX
-         LgbkhJ0Pv5u2uTYY+J2Ppmmu3zTmtT/oZ0RV1aSXJI2Rg5Y6OFBb4xPth3d6SzAnWQG6
-         tR1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUo3W85dheKzzg41LynFF3wKTr6FBNX9lHkz7y2L/RGF3Kl6Imj4NQtZoBSpsYef2PTxQiHPUqHLcU+QHw5o/uA1ZzE6kRcpWRYBLFHV7icvbYgNI5qwcDbFdKDft7AS2vDBCCYgM3Haun0aeIv/dY5Gi3edzN2qE8e2x2Vazc9u5EjBw==
-X-Gm-Message-State: AOJu0YyTPfgYFhteclpQJUgD1vozj5jtaGoqnvHPQZ2FmhcjcJkQ4URS
-	LOsbAwPrpME6zN6N74OeoYwHQB12nkrh9VOCBuznOGnAKdYSUM8jVrZZBqyBqvttBvhUczynSph
-	1tokWkiyDYJhhqrVi3MX9YJ2iQaE=
-X-Google-Smtp-Source: AGHT+IHz7rxMKPw4QcPFf9e3+rPk6L5/ivfWPbNHVCV7og1/nXbe/V3wGrxTTVUvZ2OU/ikTt9tJestH0UovLmH6h3c=
-X-Received: by 2002:a05:6e02:17ca:b0:36b:85e:7d69 with SMTP id
- e9e14a558f8ab-36cc144b718mr211747815ab.10.1715671343660; Tue, 14 May 2024
- 00:22:23 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715671504; x=1716276304;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JB+Z0CRSJcLUU9yXDS+6zp2SY8ySyHlLC8dbiqLhtlQ=;
+        b=C/ale/d3HO1StIaLobyT2IEcmQYrXDyhI8JFgAH5IhDoTkRh7dGQ2NZYNuk6Y62Tnb
+         M8IeNQ96/bQId249kMGMPUhXxIt3oRmKluslWldnmakwbSUYKEbv+FFCUgqlai5YGmGa
+         YHRre5XArMr5sIGZ1S7WSuyn/UyE6c8V8sth4fvb0+CkzuER7oQSik0+TIhyvlxvvjY6
+         n4R+w8E/qoTCa2YrI7uZ/BhuIUlcpl838jYiLKMeB1qerAzU8cBY4STpTcccq2Kme+9x
+         yje9SmQ9cBoDcBVCzLhP9imELrOsvfH96gwo5eEHC2mjngVyGwAlk4SjYYUicsph51UC
+         x8bw==
+X-Forwarded-Encrypted: i=1; AJvYcCWOIahnu1DBrhQBIl9amHdG0sd1m5TrJAn5GQ34x46kSMojBt8Ov048CVq5B3cWIBFXgmb1BrlxrvLoiI3vugYysbkg5lLNTzYr
+X-Gm-Message-State: AOJu0YxTAZYerYpcxzIwXvZQhlBJgsjes+kY1/aeL4W30JbhCUiLod67
+	Y2dJj5MWfaGVquit+66XlQxOuhiSNoBqMtr0mvns59aj+h3gW7KmrHZ28/843A==
+X-Google-Smtp-Source: AGHT+IEQTQ5t33iG1QpTljAk13ZjKCJq2arLVGhz/pfUDhGt2rL8ANrYeLV7xamqA3YFh7dM+6YrzA==
+X-Received: by 2002:a17:906:ee86:b0:a59:aae5:5840 with SMTP id a640c23a62f3a-a5a2d6759e5mr1063776566b.75.1715671504270;
+        Tue, 14 May 2024 00:25:04 -0700 (PDT)
+Received: from thinkpad ([149.14.240.163])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a5a1781d2ecsm703097166b.16.2024.05.14.00.25.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 14 May 2024 00:25:03 -0700 (PDT)
+Date: Tue, 14 May 2024 09:25:02 +0200
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: devi priya <quic_devipriy@quicinc.com>, bhelgaas@google.com,
+	lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
+	konrad.dybcio@linaro.org, mturquette@baylibre.com, sboyd@kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH V5 3/6] dt-bindings: PCI: qcom: Document the IPQ9574 PCIe
+ controller.
+Message-ID: <20240514072502.GA2463@thinkpad>
+References: <20240512082858.1806694-1-quic_devipriy@quicinc.com>
+ <20240512082858.1806694-4-quic_devipriy@quicinc.com>
+ <b3199f40-0983-4185-bd0c-2e2d45d690ad@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1715219038-32453-1-git-send-email-shengjiu.wang@nxp.com>
- <1715219038-32453-3-git-send-email-shengjiu.wang@nxp.com> <0d10a689504be61c50b186d89ddbf9d1.sboyd@kernel.org>
- <CAA+D8AP9uS1ePxSeSUPGCGe42U5sNguZYQS3d-9T305d2iVbhQ@mail.gmail.com>
-In-Reply-To: <CAA+D8AP9uS1ePxSeSUPGCGe42U5sNguZYQS3d-9T305d2iVbhQ@mail.gmail.com>
-From: Shengjiu Wang <shengjiu.wang@gmail.com>
-Date: Tue, 14 May 2024 15:22:12 +0800
-Message-ID: <CAA+D8ANZYB2ec8qEzub8++Rz76zwn10Bt9c7cZ3tSTUbbQfwGA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/4] clk: imx: clk-audiomix: Add reset controller
-To: Stephen Boyd <sboyd@kernel.org>, p.zabel@pengutronix.de
-Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org, conor+dt@kernel.org, 
-	festevam@gmail.com, imx@lists.linux.dev, kernel@pengutronix.de, 
-	krzk+dt@kernel.org, marex@denx.de, mturquette@baylibre.com, peng.fan@nxp.com, 
-	robh@kernel.org, s.hauer@pengutronix.de, shawnguo@kernel.org, 
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <b3199f40-0983-4185-bd0c-2e2d45d690ad@kernel.org>
 
-On Fri, May 10, 2024 at 12:02=E2=80=AFPM Shengjiu Wang <shengjiu.wang@gmail=
-.com> wrote:
->
-> On Fri, May 10, 2024 at 6:04=E2=80=AFAM Stephen Boyd <sboyd@kernel.org> w=
-rote:
-> >
-> > Quoting Shengjiu Wang (2024-05-08 18:43:56)
-> > > Audiomix block control can be a reset controller for
-> > > Enhanced Audio Return Channel (EARC), which is one of
-> > > modules in this audiomix subsystem.
-> > >
-> > > The EARC PHY software reset and EARC controller software
-> > > reset need to be supported.
-> >
-> > Can you move this to drivers/reset and use auxiliary device APIs to do
-> > that? The idea would be to have reset maintainers review reset code.
->
-> Thanks for your comments.
->
-> This is a minor reset control only for XCVR devices, two reset bits
-> are accessed.
->
-> If we move to an auxiliary device,  we need to define a new header file
-> and a new driver, which will bring more code size and complexity.
->
-> So is it necessary to separate it to another auxiliary driver/device?
->
-> And add Philipp Zabel in loop for review.
->
+On Mon, May 13, 2024 at 08:48:19AM +0200, Krzysztof Kozlowski wrote:
+> On 12/05/2024 10:28, devi priya wrote:
+> 
+> >  
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            enum:
+> > +              - qcom,pcie-ipq9574
+> > +    then:
+> > +      properties:
+> > +        clocks:
+> > +          minItems: 6
+> > +          maxItems: 6
+> > +        clock-names:
+> > +          items:
+> > +            - const: ahb  # AHB clock
+> > +            - const: aux  # Auxiliary clock
+> > +            - const: axi_m # AXI Master clock
+> > +            - const: axi_s # AXI Slave clock
+> > +            - const: axi_bridge # AXI bridge clock
+> > +            - const: rchng
+> 
+> That's introducing one more order of clocks... Please keep it
+> consistent. The only existing case with ahb has it at after axi_m and
+> others. Why making things everytime differently?
+> 
+> I also to propose to finally drop the obvious comments, like "AHB
+> clock". It cannot be anything else. AXI Master / slave are descriptive,
+> so should stay.
+> 
 
-I will use syscon and simple-mfd to separate the reset function to
-a new driver,  which will be a child node of the audiomix device.
++1 to drop the names.
 
-Best regards
-Shengjiu Wang
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
