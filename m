@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27F921DFD1;
-	Tue, 14 May 2024 21:09:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DAAC1DFD1;
+	Tue, 14 May 2024 21:12:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715720952; cv=none; b=LCS0GAuzUihOAZ21vH/2cwzUxA9ZhZTUTMfSqyUAap0c/ioZLES+k7wo8rG5eQRNW4Bmgky5AjGnj2npC51iYqGQmY/aIqZzvtHReK7y5eIj+n4LR4QbR2mknjkdCmB4GQKrW/6FjAoVAK8HYkm5a+3lPWIlcBhtixFRa6TgAK8=
+	t=1715721138; cv=none; b=kRITa4qBiLgzwxLNEulhsHQ7T1uOlWnIdImOnIavcB9bGkneu9gkw9pzRH8YDf5PSeKlGI/0gTrCuuS0EkQzDpn6jVrHXjv9EKKUvwn4uKDpm2SXimFsvKCgWdHMHyhNknMiY8wRFRmi8vO0ZdUeZtE0idEgBsmAPiHJWeTc2kw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715720952; c=relaxed/simple;
-	bh=iBQGtyPRNxJ3b5eCicElCWKrOiKS02iKAvulYWm1oUU=;
+	s=arc-20240116; t=1715721138; c=relaxed/simple;
+	bh=UyCf2gxOf2W6QtrpR8rjzzIMkckYknSHaNnua2jwqXY=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=JIlrkKL/LaRQewntYGEyDj/vEoSY0eWpHAfAdR8aYhGNSlne5wvfYdHT/mZdiZNuFMIULhlRL739AIh6r4roi/R+1PyzmOgkuaXMBRaHoBYxMYx98IbFLd3UVuHxJw1JZXndXtGUDYc/EjkLFP+r6QufWF8sUTW3j1QnzHCi03Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=geFwaALR; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=g6SNLVysu5nt8nyhsm4Qp8NLYJNhKxpKG1WyyJQ98po5IQ/HwqrfLfBwfUJzBwsnZ7RYM0ORTigNduRAP9jZdrYnWC0S6uUZTIc9NCxbmraPMX4d8Bw6mAluQMcVpzN1BNXW7iYU68EjVY7etoCdzDP2IuRJiNeEAJS5EOiANFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VPKdMNGg; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="geFwaALR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BE4BC2BD10;
-	Tue, 14 May 2024 21:09:11 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VPKdMNGg"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E99A7C2BD10;
+	Tue, 14 May 2024 21:12:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715720951;
-	bh=iBQGtyPRNxJ3b5eCicElCWKrOiKS02iKAvulYWm1oUU=;
+	s=k20201202; t=1715721138;
+	bh=UyCf2gxOf2W6QtrpR8rjzzIMkckYknSHaNnua2jwqXY=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=geFwaALR6vbhzVKzofNk1wS80bfk5LIQWAfWAgkQV6OL0DagMP9T+RwSQa2s0bz6N
-	 89LSgb4bi7I0aAtPTZMwye1uz3OMNaZja+SJaf+dki+W1UZC14FmzFuPbXRwBeHAFG
-	 sVZUuKIeSNTU0FmHftWNp50QfMXnv/CQBXommIolqyx3czSfcJnEWMDPQOPJd9y+t2
-	 jWVLHciqhkaiCdBtCoB1eLVOd3zfS4vvukwhXYTvw0ziGkgbrCEUNNefdofDyJTt54
-	 NkoEzS6VTHACXS/ONZ3OZf/+4dIjsVc00Pj7AMJx3dbXGU85MJlLT5zzdH0Q8Mh/Bx
-	 DkXZ1i3E8sX4Q==
-Message-ID: <b86c83a520f0c45a60249468fa92b1de.sboyd@kernel.org>
+	b=VPKdMNGg57box3oUqpj3v6ptKzrzMoRedpLF40dxQ+kX2ZLXy45By60FwRBz7A8gd
+	 5/WD0iXxHtC+QknUO88wLAv2eW5HloxoJlFSNM2hsply/cE5OTCv3pO6YWQhrPmTiv
+	 fZcZjS93mYEzwYohGxZXoPxKmv/jxorf2YEzidmudtFCvRjbNqz2nWQmUShv7xjCKa
+	 WgP+lBrm6c9B4QB9wWmP7+O3W7U19VQEQV0jR/qhAgZkctaimuRe6vxrKeT7LE+4Kl
+	 pVuqSp0OIY7ctAmdxEOR/45ToDF6/OE3UbRyMNWkaFme4rr6M02QYBCIZBw1G3VqGP
+	 rVs27JSb74xqA==
+Message-ID: <f7a877622829db499bf2bc65fe9ffbff.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,46 +35,27 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240514-campus-sibling-21cdf4c78366@spud>
-References: <1715679210-9588-1-git-send-email-shengjiu.wang@nxp.com> <1715679210-9588-4-git-send-email-shengjiu.wang@nxp.com> <20240514-campus-sibling-21cdf4c78366@spud>
-Subject: Re: [PATCH v3 3/6] dt-bindings: clock: imx8mp: Add reset-controller sub-node
+In-Reply-To: <20240510065901.535124-1-m.szyprowski@samsung.com>
+References: <CGME20240510065909eucas1p20067042a45b26e0a58110ff439dcc1b8@eucas1p2.samsung.com> <20240510065901.535124-1-m.szyprowski@samsung.com>
+Subject: Re: [PATCH v2] clk: samsung: Don't register clkdev lookup for the fixed rate clocks
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, marex@denx.de, linux-clk@vger.kernel.org, imx@lists.linux.dev, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, p.zabel@pengutronix.de, shengjiu.wang@gmail.com
-To: Conor Dooley <conor@kernel.org>, Shengjiu Wang <shengjiu.wang@nxp.com>
-Date: Tue, 14 May 2024 14:09:09 -0700
+Cc: Marek Szyprowski <m.szyprowski@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Sam Protsenko <semen.protsenko@linaro.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, linux-clk@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Date: Tue, 14 May 2024 14:12:15 -0700
 User-Agent: alot/0.10
 
-Quoting Conor Dooley (2024-05-14 11:06:14)
-> On Tue, May 14, 2024 at 05:33:27PM +0800, Shengjiu Wang wrote:
-> > diff --git a/Documentation/devicetree/bindings/clock/imx8mp-audiomix.ya=
-ml b/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
-> > index 0a6dc1a6e122..a403ace4d11f 100644
-> > --- a/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
-> > +++ b/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
-> > @@ -15,7 +15,10 @@ description: |
-> > =20
-> >  properties:
-> >    compatible:
-> > -    const: fsl,imx8mp-audio-blk-ctrl
-> > +    items:
-> > +      - const: fsl,imx8mp-audio-blk-ctrl
-> > +      - const: syscon
-> > +      - const: simple-mfd
-> > =20
-> >    reg:
-> >      maxItems: 1
-> > @@ -44,6 +47,11 @@ properties:
-> >        ID in its "clocks" phandle cell. See include/dt-bindings/clock/i=
-mx8mp-clock.h
-> >        for the full list of i.MX8MP IMX8MP_CLK_AUDIOMIX_ clock IDs.
-> > =20
-> > +  reset-controller:
-> > +    type: object
-> > +    $ref: /schemas/reset/fsl,imx8mp-audiomix-reset.yaml#
-> > +    description: The child reset devices of AudioMIX Block Control.
+Quoting Marek Szyprowski (2024-05-09 23:59:01)
+> Commit 4d11c62ca8d7 ("clkdev: report over-sized strings when creating
+> clkdev entries") revealed that clock lookup is registered for all fixed
+> clocks. The mentioned commit added a check if the registered name is not
+> too long. This fails for some clocks registered for Exynos542x SoCs famil=
+y.
+> This lookup is a left-over from early common clock framework days, not
+> really needed nowadays, so remove it to avoid further issues.
 >=20
-> Why not just set #reset-cells =3D <1> in the existing node? IIRC it was
-> already suggested to you to do that and use auxdev to set up the reset
-> driver.
+> Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+> Tested-by: Sam Protsenko <semen.protsenko@linaro.org>
+> ---
 
-Yes, do that.
+Applied to clk-next
