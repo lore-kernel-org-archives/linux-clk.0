@@ -1,97 +1,116 @@
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E91764CCC;
-	Tue, 14 May 2024 10:08:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 908542B9B3;
+	Tue, 14 May 2024 12:29:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715681287; cv=none; b=Fa5RZAOkveMdiIMzRI4/whnjMQW+6i/AHwsXV3basJidtGy5hK66pbwVkJpkVnaPFFT87y7J8+yjG8m6vTJsHV84z7ZAk8/WflllJwaieNtgZ89kSiKpJej1J27xpdiYhhQCTh3tUzNelY3lTK31gOy+Z1nLh2uBTORWI9ewy9M=
+	t=1715689789; cv=none; b=qmSbLz98mbI30Cj5nwGMxcygP7ZdkVvcY5zj3Ieo13KqFZy9U/Iby1loruuzUC31IIwacoZdO9h2opDwB3mSqaaOmtC3wNcSvfnFRjWFzDHXJALYHrHSJM57OBk20RX/zjwm65409do09wfon54M/1TN1vgIZ/VrFm1AwwoiC+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715681287; c=relaxed/simple;
-	bh=xjDz2Izt0vEcEs30HE8QpAJZW65ZIRs1wI1ol9QNFdU=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References; b=HNqH4sM5gDYYTzUqqhYAScmi0SwklvMLjWdess8tyO4wPyHxaE6i1dgTX4haH5jBpYgNkQzWhltS9/JsxQfpMNHCvx0UcZKi7AczJ68CWFVz2jO4V9QW6RMZSIzu63ys+RkrFXHSyNV0r1c9JXkMJUOZyrHeekuvE44EiiYxAlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 38CCD1A1D45;
-	Tue, 14 May 2024 11:53:05 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id E53A51A1910;
-	Tue, 14 May 2024 11:53:04 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 93FDF180222F;
-	Tue, 14 May 2024 17:53:02 +0800 (+08)
-From: Shengjiu Wang <shengjiu.wang@nxp.com>
-To: abelvesa@kernel.org,
-	peng.fan@nxp.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	marex@denx.de,
-	linux-clk@vger.kernel.org,
-	imx@lists.linux.dev,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	p.zabel@pengutronix.de,
-	shengjiu.wang@gmail.com
-Subject: [PATCH v3 6/6] arm64: dts: imx8mp: Add reset-controller sub node for audio_blk_ctrl
-Date: Tue, 14 May 2024 17:33:30 +0800
-Message-Id: <1715679210-9588-7-git-send-email-shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1715679210-9588-1-git-send-email-shengjiu.wang@nxp.com>
-References: <1715679210-9588-1-git-send-email-shengjiu.wang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+	s=arc-20240116; t=1715689789; c=relaxed/simple;
+	bh=6cPrpE0EOmonSqbDlomNuzEI4XBK54BEpKNy1lBWCU4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DqZ11bsga68dRKjbz145A6Wzr/7wygGggkXjldUO1XDHUf+oa1VEw81gRXmNJerF5S/yXk34jm8PslSmw8jMzYvEEEct4zZVckokuw5YFBWHOeW3piZnkCZxIJ+DfW4C/KpWzXmXIuJLihq1/G2+IHhJGxHLt8QYgUEqbGo0NUM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qI0k5HvL; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qI0k5HvL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 06663C2BD10;
+	Tue, 14 May 2024 12:29:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715689789;
+	bh=6cPrpE0EOmonSqbDlomNuzEI4XBK54BEpKNy1lBWCU4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=qI0k5HvLfn1CfWJxRrdpit474Aa9aUxoOG7lKfDGJZ4mH86QzX3tmCOKcHdYhEspa
+	 Z81olAP9T5jKFCeYEubMWE6uWxP31811HsJnrqjSwJF9thfFSeATGhHwi4ckomsIch
+	 tO3lrlIV8++649cRA9gyRmBnhHTOunHMMw3OQLCy8EJFoPwXUqRwN3+xSorBEBpYl7
+	 vQD++G3Tkyx5/MrdedtUejyEoqkgfIVtYjOjefsyId/95tPIFGH2TDeK2jb9FjjF7S
+	 aqF84E3Z/R2vVis3YdJjmzv9+FOU/I6aVtD8FSdttZSNrNy3FP/GgTYISNilqIw26E
+	 iAKRAmiemJkLw==
+Date: Tue, 14 May 2024 13:29:43 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: linux-arm-kernel@lists.infradead.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Bjorn Andersson <quic_bjorande@quicinc.com>,
+	Maximilian Luz <luzmaximilian@gmail.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	"Michael S. Tsirkin" <mst@redhat.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>
+Subject: Re: [PATCH 1/3] mailbox: Make BCM2835_MBOX default to ARCH_BCM2835
+Message-ID: <20240514-amiable-unequal-d4133956c80c@spud>
+References: <20240513235234.1474619-1-florian.fainelli@broadcom.com>
+ <20240513235234.1474619-2-florian.fainelli@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ZF82ErRhEId7DTVg"
+Content-Disposition: inline
+In-Reply-To: <20240513235234.1474619-2-florian.fainelli@broadcom.com>
 
-The Audio Block Control contains clock distribution and gating
-controls, as well as reset handling to several of the AUDIOMIX
-peripherals. Especially the reset controls for Enhanced Audio
-Return Channel (EARC) PHY and Controller
 
-Add reset-controller sub-node for audio_blk_ctrl.
+--ZF82ErRhEId7DTVg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
----
- arch/arm64/boot/dts/freescale/imx8mp.dtsi | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+On Mon, May 13, 2024 at 04:52:32PM -0700, Florian Fainelli wrote:
+> This driver is depended on by CONFIG_FIRMWARE_RASPBERRYPI which provides
+> a number of essential services, including but not limited to a Linux
+> common clock framework provider. Make sure that enable
+> CONFIG_ARCH_BCM2835 does enable the corresponding mailbox driver.
+>=20
+> Signed-off-by: Florian Fainelli <florian.fainelli@broadcom.com>
+> ---
+>  drivers/mailbox/Kconfig | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig
+> index 42940108a187..2b4cde562a90 100644
+> --- a/drivers/mailbox/Kconfig
+> +++ b/drivers/mailbox/Kconfig
+> @@ -109,6 +109,7 @@ config ALTERA_MBOX
+>  config BCM2835_MBOX
+>  	tristate "BCM2835 Mailbox"
+>  	depends on ARCH_BCM2835
+> +	default ARCH_BCM2835
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp.dtsi b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-index 459c4a54d30e..f94702ad4210 100644
---- a/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mp.dtsi
-@@ -1565,7 +1565,7 @@ sdma2: dma-controller@30e10000 {
- 			};
- 
- 			audio_blk_ctrl: clock-controller@30e20000 {
--				compatible = "fsl,imx8mp-audio-blk-ctrl";
-+				compatible = "fsl,imx8mp-audio-blk-ctrl", "syscon", "simple-mfd";
- 				reg = <0x30e20000 0x10000>;
- 				#clock-cells = <1>;
- 				clocks = <&clk IMX8MP_CLK_AUDIO_ROOT>,
-@@ -1582,6 +1582,11 @@ audio_blk_ctrl: clock-controller@30e20000 {
- 				assigned-clocks = <&clk IMX8MP_AUDIO_PLL1>,
- 						  <&clk IMX8MP_AUDIO_PLL2>;
- 				assigned-clock-rates = <393216000>, <361267200>;
-+
-+				audio_blk_ctrl_rst: reset-controller {
-+					compatible = "fsl,imx8mp-audiomix-reset";
-+					#reset-cells = <1>;
-+				};
- 			};
- 		};
- 
--- 
-2.34.1
+This is just "default y", since I doubt ARCH_BCM2835 can be a module?
 
+If so, patch 2 could also just be "default y" and I think patch 3 can
+have the same logic applied to it, given you're defaulting it to a
+dependency also?
+
+Thanks,
+Conor.
+
+>  	help
+>  	  An implementation of the BCM2385 Mailbox.  It is used to invoke
+>  	  the services of the Videocore. Say Y here if you want to use the
+> --=20
+> 2.34.1
+>=20
+
+--ZF82ErRhEId7DTVg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkNZNwAKCRB4tDGHoIJi
+0g9yAQCQfW/zAiGbZezyBzVcnkHGAEnFDwul79aAYPQZhc0dGAD9H+asSEG/ICHL
+HtOFDWlh1G+Pmy1k37sMldVMk4wZfAI=
+=1AwS
+-----END PGP SIGNATURE-----
+
+--ZF82ErRhEId7DTVg--
