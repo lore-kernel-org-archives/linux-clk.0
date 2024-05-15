@@ -1,127 +1,132 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A54DA127E12
-	for <linux-clk@vger.kernel.org>; Wed, 15 May 2024 13:17:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE31F156230;
+	Wed, 15 May 2024 16:04:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715779056; cv=none; b=RmnsXMrOQXbhgE7jyCb0Zz49DkmK4fGeVUZMNaGifbJ3QFt9IubQWJwsD1CXnoyGfVFNv8++v9z12DYjL1cgKSwUz/kgBsorLErDpWOxQwxuTWk1bSYn/w3hCqk0C6DLYNIvBoCeVE6rcD5fw1kBI8I+8ua5IVSJZS5lWoop0Ss=
+	t=1715789095; cv=none; b=OczOJo4lCs0JXWHcVr4gXqDcHQK5eBcK1cwaIRHMeilKQd2/JDAk5LbUIFiN4tBEqjupXx/gtyc3TmYm2yk5I9KHtitjMlJp7F9KsAVKshjqPPIkf0+3UNAaPGe9POgm2T0fqZugmAGfM3eNsOdye1GSuTOvVx/199/agKlfYy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715779056; c=relaxed/simple;
-	bh=IKDt0+fluY20ds2F3whtuDQEpT+RYSV83TYvQF9ISsU=;
-	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
-	 MIME-Version:Content-Type; b=T7f4QC7E+KzzJ5cb51V3q0IZ2xjEIFQofwPRq4arUY3Geg5UvFsc/nTuE4Ucl7pTtv2TX3s21QkI35rmyIaHJ2OIL4XdyMoFJsiCnSmho4E91S6xh0qBDz2l1+8T0xnVI0Xew8hGcPmItbZcvXs0HQK+hWe8OUeOstnY3YwHe14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=y8yWBySO; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1715789095; c=relaxed/simple;
+	bh=kycUkpRBcEikOS2uUOytIdiW0vootLzo+kRSUZqPy74=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cpYCrJOPxRWOiSKwaW6iFmh3kvcSNhHOgZu/tLyknD1f9qZLtSLBAnbigJwBsaVKZeka7A7oWUsitj3SPhNo3Q0VCRHInf4KMZhdSwHRRe+R+Pjts0I/Y1Kkpjqh1IbIERFMSmuYb306E28riC7MhSxubYONr6it66fIvru9TKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GCcSlwu0; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="y8yWBySO"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-34da04e44a2so5364083f8f.1
-        for <linux-clk@vger.kernel.org>; Wed, 15 May 2024 06:17:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1715779053; x=1716383853; darn=vger.kernel.org;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wkq99nuMEm3sK6ZhmvF3R71byoY0ssDC9KdU6I8CK5A=;
-        b=y8yWBySODzKOrXTocmOTOkT9K7sz8VjJJdJUqW00F6S01xgEYlhaTyZo9X8xDvXXx8
-         kmUHdEA058pmcFnGYYIWwXTGPCDP81V4y7MnENqq5xpyOOsH0lGB/hXyEmfN0PsggY82
-         +illVCzmjdLWurdwn4Dald6+B/lnJz+b9mTR0bHZX3ebRbVRCYHSpG0bBl70Ny/zGMvl
-         PXslhgPemaDy1Xy/StcT3hYm8crnLeBSAKutFM88teBVqhlp9gqU+4ysnD/fCywXwrdP
-         VROEnKBDHQ1tpE8cpGk1KxN9HG28Qc3p7rvwa7FyTCZ9zMBFe9b9J5RfbYkAa8/sOGH8
-         PkMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715779053; x=1716383853;
-        h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
-         :user-agent:references:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Wkq99nuMEm3sK6ZhmvF3R71byoY0ssDC9KdU6I8CK5A=;
-        b=pLX0bXKJyPCo+bvIW4TS0X7SABzs7vguSuzbPTYdphasxGK90OEXypmWhIWttgVQFl
-         jO2CrqgUTUo7jOUVtsG+U1RlKjwwptCoIj0Ihv4dQm3eKKHxpSirSwAK6Uvh5ggC2l24
-         5QQaGYkjGtcBQRkBfSK1rq8FS7oDnmHVACL3gPlC7UltR89cKDErIVE67FqiuvV4M6aP
-         y8/9OEBvGoErOgln5ZSflhcb5t81r17PGJ16TYmy+nFvCMqRwHqNrXcVWLEqQZle642y
-         4MNXlkz6aNEF4JmCT8qE9IBtVvzMASIKOJaH5lT3IAxUbx6/lRyl/+jjO0l7bSzFITA2
-         SHlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV3B9eNNZi8FyRF17jsCjP5jLUnNxvfDRoFWn512QRadi9ND4AN/al5rYaBZiH/oo7q1AOCgiUAm8XwwlDspRMTcrlMlXWrnGc5
-X-Gm-Message-State: AOJu0YwsQFhdx8B3kwxKtgwxmUJqFwH7SKolufwZwQrpb9KzX8+NubKY
-	sVzLg0cy0BPDRpdLKEGe1Qgx+VzcfN4SfBMsSXM32EeqYgTEfaocsC4+JSA8KNI=
-X-Google-Smtp-Source: AGHT+IE4YYUxY5plTBCwY46ojRAymJdS+bbjFNA9B11hQIBGI59XYOMg6b3oSsFO4BCii/+Aekb4iA==
-X-Received: by 2002:adf:fe8c:0:b0:351:c7c7:985f with SMTP id ffacd0b85a97d-351c7c79963mr3745116f8f.53.1715779052826;
-        Wed, 15 May 2024 06:17:32 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:2893:1a8f:5988:776a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502bbbbefdsm16424209f8f.94.2024.05.15.06.17.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 May 2024 06:17:32 -0700 (PDT)
-References: <20240510090933.19464-1-ddrokosov@salutedevices.com>
- <20240510090933.19464-3-ddrokosov@salutedevices.com>
- <20240511-secret-barcode-e25c722ddf1d@spud>
- <20240513091735.l3uewwzfrdd6qwbl@CAB-WSD-L081021>
- <20240513-epic-magnifier-8dd83db81c4c@spud>
- <20240513183012.652mwhivasqihiqc@CAB-WSD-L081021>
-User-agent: mu4e 1.10.8; emacs 29.2
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Dmitry Rokosov <ddrokosov@salutedevices.com>
-Cc: Conor Dooley <conor@kernel.org>, neil.armstrong@linaro.org,
- jbrunet@baylibre.com, mturquette@baylibre.com, sboyd@kernel.org,
- robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
- khilman@baylibre.com, martin.blumenstingl@googlemail.com,
- jian.hu@amlogic.com, kernel@sberdevices.ru, rockosov@gmail.com,
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 2/7] dt-bindings: clock: meson: a1: pll: introduce
- new syspll bindings
-Date: Wed, 15 May 2024 15:15:35 +0200
-In-reply-to: <20240513183012.652mwhivasqihiqc@CAB-WSD-L081021>
-Message-ID: <1jh6ezxlhw.fsf@starbuckisacylon.baylibre.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GCcSlwu0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E32CDC116B1;
+	Wed, 15 May 2024 16:04:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715789094;
+	bh=kycUkpRBcEikOS2uUOytIdiW0vootLzo+kRSUZqPy74=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GCcSlwu0Q1/BIvPguL9ykFpvGDB2rB0mNxZugMR4JErdsSybEMwsnH+kD4jm55LOV
+	 S57Vv9wDidtYn/yVdM6wZD0NURFEddwGlz3slZ02HIR/giNMbynTMgxVnCVGW6WSbF
+	 ICWck8njLb+XWO79UraQpW/k6zSJDzw3CefFySezm7wWZVhw2Cqk1WsB60ixo7rrwK
+	 yK+IPO3c1UTjfm1S2w3SIAsOR+notDXFoyRpbxX/mYAhE1Nj0LWepFnsw52LJDWASe
+	 Uvnh/kNRZQpy0gzQo1refhavCN8Hk8CljYYjQhj1gzZdzFBCc2eyxkGQkK9RD5Wcj6
+	 6htRJ70HCYbGg==
+Date: Wed, 15 May 2024 17:04:48 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Shengjiu Wang <shengjiu.wang@gmail.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, Shengjiu Wang <shengjiu.wang@nxp.com>,
+	abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+	festevam@gmail.com, marex@denx.de, linux-clk@vger.kernel.org,
+	imx@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	p.zabel@pengutronix.de
+Subject: Re: [PATCH v3 3/6] dt-bindings: clock: imx8mp: Add reset-controller
+ sub-node
+Message-ID: <20240515-unbundle-bubble-8623b495a4f1@spud>
+References: <1715679210-9588-1-git-send-email-shengjiu.wang@nxp.com>
+ <1715679210-9588-4-git-send-email-shengjiu.wang@nxp.com>
+ <20240514-campus-sibling-21cdf4c78366@spud>
+ <b86c83a520f0c45a60249468fa92b1de.sboyd@kernel.org>
+ <CAA+D8ANTdvQJVtniyMtqjnJdT4qX+LDGjVuFO6H0RSO+GDw+ng@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="GkjvzzTYbAGBWol4"
+Content-Disposition: inline
+In-Reply-To: <CAA+D8ANTdvQJVtniyMtqjnJdT4qX+LDGjVuFO6H0RSO+GDw+ng@mail.gmail.com>
 
 
-On Mon 13 May 2024 at 21:30, Dmitry Rokosov <ddrokosov@salutedevices.com> wrote:
+--GkjvzzTYbAGBWol4
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On Mon, May 13, 2024 at 04:48:33PM +0100, Conor Dooley wrote:
->> On Mon, May 13, 2024 at 12:18:02PM +0300, Dmitry Rokosov wrote:
->> > Hello Conor,
->> > 
->> > Thank you for quick review!
->> > 
->> > On Sat, May 11, 2024 at 02:08:03PM +0100, Conor Dooley wrote:
->> > > On Fri, May 10, 2024 at 12:08:54PM +0300, Dmitry Rokosov wrote:
->> > > > The 'syspll' PLL is a general-purpose PLL designed specifically for the
->> > > > CPU clock. It is capable of producing output frequencies within the
->> > > > range of 768MHz to 1536MHz.
->> > > > 
->> > > > The clock source sys_pll_div16, being one of the GEN clock parents,
->> > > > plays a crucial role and cannot be tagged as "optional". Unfortunately,
->> > > > it was not implemented earlier due to the cpu clock ctrl driver's
->> > > > pending status on the TODO list.
->> > > 
->> > > It's fine to not mark it optional in the binding, but it should be
->> > > optional in the driver as otherwise backwards compatibility will be
->> > > broken. Given this is an integral clock driver, sounds like it would
->> > > quite likely break booting on these devices if the driver doesn't treat
->> > > syspll_in as optional.
->> > > A lesson perhaps in describing the hardware entirely, even if the
->> > > drivers don't make use of all the information yet?
->> > 
->> > Yes, it's definitely the right lesson for me. However, without syspll or
->> > syspll_in, we cannot utilize CPU power management at all.
->> 
->> That's the status-quo, right? The incorrect dts would continue to not
->> support CPU power management and the new one with the correct description
->> would?
->
-> Hmmm, correct. Okay, I see, I will support sys_pll as optional
-> connection :)
+On Wed, May 15, 2024 at 10:47:57AM +0800, Shengjiu Wang wrote:
+> On Wed, May 15, 2024 at 5:09=E2=80=AFAM Stephen Boyd <sboyd@kernel.org> w=
+rote:
+> >
+> > Quoting Conor Dooley (2024-05-14 11:06:14)
+> > > On Tue, May 14, 2024 at 05:33:27PM +0800, Shengjiu Wang wrote:
+> > > > diff --git a/Documentation/devicetree/bindings/clock/imx8mp-audiomi=
+x.yaml b/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
+> > > > index 0a6dc1a6e122..a403ace4d11f 100644
+> > > > --- a/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
+> > > > +++ b/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
+> > > > @@ -15,7 +15,10 @@ description: |
+> > > >
+> > > >  properties:
+> > > >    compatible:
+> > > > -    const: fsl,imx8mp-audio-blk-ctrl
+> > > > +    items:
+> > > > +      - const: fsl,imx8mp-audio-blk-ctrl
+> > > > +      - const: syscon
+> > > > +      - const: simple-mfd
+> > > >
+> > > >    reg:
+> > > >      maxItems: 1
+> > > > @@ -44,6 +47,11 @@ properties:
+> > > >        ID in its "clocks" phandle cell. See include/dt-bindings/clo=
+ck/imx8mp-clock.h
+> > > >        for the full list of i.MX8MP IMX8MP_CLK_AUDIOMIX_ clock IDs.
+> > > >
+> > > > +  reset-controller:
+> > > > +    type: object
+> > > > +    $ref: /schemas/reset/fsl,imx8mp-audiomix-reset.yaml#
+> > > > +    description: The child reset devices of AudioMIX Block Control.
+> > >
+> > > Why not just set #reset-cells =3D <1> in the existing node? IIRC it w=
+as
+> > > already suggested to you to do that and use auxdev to set up the reset
+> > > driver.
+> >
+> > Yes, do that.
+>=20
+> Can I know why sub nodes can't be used? the relationship of parent and
+> child devices looks better with sub nodes.
 
-Again, the way controller is written, all inputs are actually optional.
-The controller does not error out if an input is missing, it behave as
-if the input is disconnected
+That's pretty subjective. I don't think it looks better to have a clock
+node that is also a syscon with a reset child node as it is rather
+inconsistent.
+>=20
+> A further question is can I use the reset-ti-syscon? which is a generic r=
+eset
+> device for SoCs.  with it I don't even need to write a new reset device d=
+river.
+> it is more simple.
 
--- 
-Jerome
+That is for a TI SoC. You're working on an imx. I don't think that you
+should be using that...
+
+--GkjvzzTYbAGBWol4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkTdIAAKCRB4tDGHoIJi
+0m6SAP9agCG57rgGJON9yd0a66dM6NoL7HfdAEzVst0qNsrwUwD+PuKQSxOna4Jj
+BC+nCXgi21EE+l22nlaOgorkcGibTA4=
+=3gXG
+-----END PGP SIGNATURE-----
+
+--GkjvzzTYbAGBWol4--
