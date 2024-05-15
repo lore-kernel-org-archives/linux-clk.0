@@ -1,50 +1,47 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE31F156230;
-	Wed, 15 May 2024 16:04:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13B0715625D;
+	Wed, 15 May 2024 16:23:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715789095; cv=none; b=OczOJo4lCs0JXWHcVr4gXqDcHQK5eBcK1cwaIRHMeilKQd2/JDAk5LbUIFiN4tBEqjupXx/gtyc3TmYm2yk5I9KHtitjMlJp7F9KsAVKshjqPPIkf0+3UNAaPGe9POgm2T0fqZugmAGfM3eNsOdye1GSuTOvVx/199/agKlfYy4=
+	t=1715790226; cv=none; b=rUxCCQ+Sc0rWNKWBApg/Sfj9CuYWmli7VntxQHJ3i6jxef0KNA+P3Hbvm2XYEf5xfWVWUbQEin87MbLj4KEUG8f6I19kIgRMsRhEaFiVEkk1dqksMKt70W0h3PH6RTjv+XqSDNIe/f+1SPm3q3i1hooQb3d/e7D4rc/UzH0y+1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715789095; c=relaxed/simple;
-	bh=kycUkpRBcEikOS2uUOytIdiW0vootLzo+kRSUZqPy74=;
+	s=arc-20240116; t=1715790226; c=relaxed/simple;
+	bh=YjDMjOj3t7nlqXXWdUrOCaRvlCnaAXkwCVDnWuIs0lE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cpYCrJOPxRWOiSKwaW6iFmh3kvcSNhHOgZu/tLyknD1f9qZLtSLBAnbigJwBsaVKZeka7A7oWUsitj3SPhNo3Q0VCRHInf4KMZhdSwHRRe+R+Pjts0I/Y1Kkpjqh1IbIERFMSmuYb306E28riC7MhSxubYONr6it66fIvru9TKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GCcSlwu0; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=rzebL0HBifVbcM4SqGIG61KIJX/QpCoMhcEfgoi9zGlh4XUAXRkmAFc2PgoM0M0sEk1LJRTKFlnCFd27vMuBjqITavzyN8t7U25DlavH00SvzSjeeoe1oijsKC7ZQQx8/ahf7aarOoSsPjHIOeqecVFlDXeEcMtjsrACS1EhKc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a+aEZCGE; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GCcSlwu0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E32CDC116B1;
-	Wed, 15 May 2024 16:04:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a+aEZCGE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85BB9C116B1;
+	Wed, 15 May 2024 16:23:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715789094;
-	bh=kycUkpRBcEikOS2uUOytIdiW0vootLzo+kRSUZqPy74=;
+	s=k20201202; t=1715790225;
+	bh=YjDMjOj3t7nlqXXWdUrOCaRvlCnaAXkwCVDnWuIs0lE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GCcSlwu0Q1/BIvPguL9ykFpvGDB2rB0mNxZugMR4JErdsSybEMwsnH+kD4jm55LOV
-	 S57Vv9wDidtYn/yVdM6wZD0NURFEddwGlz3slZ02HIR/giNMbynTMgxVnCVGW6WSbF
-	 ICWck8njLb+XWO79UraQpW/k6zSJDzw3CefFySezm7wWZVhw2Cqk1WsB60ixo7rrwK
-	 yK+IPO3c1UTjfm1S2w3SIAsOR+notDXFoyRpbxX/mYAhE1Nj0LWepFnsw52LJDWASe
-	 Uvnh/kNRZQpy0gzQo1refhavCN8Hk8CljYYjQhj1gzZdzFBCc2eyxkGQkK9RD5Wcj6
-	 6htRJ70HCYbGg==
-Date: Wed, 15 May 2024 17:04:48 +0100
+	b=a+aEZCGEd0sNnwNCNE3ADWqTtrugwLCBRnpvJwLHPwu5hNEMa/bNbnZUa3yAaIih6
+	 AqeykLP8/sm7Va9Z2o1psLTCWGtBjytq2LVqdzF51Vep+J+cv+2U2cqFp5nHT02JRJ
+	 qWjQN8vWMmTd+zg1JSM0gSwwIoMIQw/iRET3DeHe9IlFElY8Z1Rue88FoqZMy6MJSO
+	 sW4oqsWRY1D33GFaQ6wiktVIiufVaG2wq39pkmez3rfqGUT5ZZVES7jUW687Thp0Nd
+	 4Ts0KecCsLnP6O6D9B/vC64FTF7xN2VgcdlwGSuWWLfDYsTKw2W6JCgvhDT/ijZ23d
+	 55kFS7yKPcdnw==
+Date: Wed, 15 May 2024 17:23:40 +0100
 From: Conor Dooley <conor@kernel.org>
-To: Shengjiu Wang <shengjiu.wang@gmail.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Shengjiu Wang <shengjiu.wang@nxp.com>,
-	abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-	festevam@gmail.com, marex@denx.de, linux-clk@vger.kernel.org,
-	imx@lists.linux.dev, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	p.zabel@pengutronix.de
-Subject: Re: [PATCH v3 3/6] dt-bindings: clock: imx8mp: Add reset-controller
- sub-node
-Message-ID: <20240515-unbundle-bubble-8623b495a4f1@spud>
-References: <1715679210-9588-1-git-send-email-shengjiu.wang@nxp.com>
- <1715679210-9588-4-git-send-email-shengjiu.wang@nxp.com>
- <20240514-campus-sibling-21cdf4c78366@spud>
- <b86c83a520f0c45a60249468fa92b1de.sboyd@kernel.org>
- <CAA+D8ANTdvQJVtniyMtqjnJdT4qX+LDGjVuFO6H0RSO+GDw+ng@mail.gmail.com>
+To: Lorenzo Bianconi <lorenzo@kernel.org>
+Cc: linux-clk@vger.kernel.org, p.zabel@pengutronix.de,
+	mturquette@baylibre.com, sboyd@kernel.org,
+	lorenzo.bianconi83@gmail.com, linux-arm-kernel@lists.infradead.org,
+	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+	conor+dt@kernel.org, devicetree@vger.kernel.org, nbd@nbd.name,
+	john@phrozen.org, dd@embedd.com, catalin.marinas@arm.com,
+	will@kernel.org, upstream@airoha.com,
+	angelogioacchino.delregno@collabora.com
+Subject: Re: [PATCH 1/5] dt-bindings: clock: airoha: Add reset support to
+ EN7581 clock binding
+Message-ID: <20240515-delegate-glancing-188fd99a95ff@spud>
+References: <cover.1715777643.git.lorenzo@kernel.org>
+ <faaa220be22abcedecb0a63d5734f821167eb8b7.1715777643.git.lorenzo@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -52,81 +49,37 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="GkjvzzTYbAGBWol4"
+	protocol="application/pgp-signature"; boundary="sr0wYddpRpyzyAXT"
 Content-Disposition: inline
-In-Reply-To: <CAA+D8ANTdvQJVtniyMtqjnJdT4qX+LDGjVuFO6H0RSO+GDw+ng@mail.gmail.com>
+In-Reply-To: <faaa220be22abcedecb0a63d5734f821167eb8b7.1715777643.git.lorenzo@kernel.org>
 
 
---GkjvzzTYbAGBWol4
-Content-Type: text/plain; charset=utf-8
+--sr0wYddpRpyzyAXT
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 15, 2024 at 10:47:57AM +0800, Shengjiu Wang wrote:
-> On Wed, May 15, 2024 at 5:09=E2=80=AFAM Stephen Boyd <sboyd@kernel.org> w=
-rote:
-> >
-> > Quoting Conor Dooley (2024-05-14 11:06:14)
-> > > On Tue, May 14, 2024 at 05:33:27PM +0800, Shengjiu Wang wrote:
-> > > > diff --git a/Documentation/devicetree/bindings/clock/imx8mp-audiomi=
-x.yaml b/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
-> > > > index 0a6dc1a6e122..a403ace4d11f 100644
-> > > > --- a/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
-> > > > +++ b/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
-> > > > @@ -15,7 +15,10 @@ description: |
-> > > >
-> > > >  properties:
-> > > >    compatible:
-> > > > -    const: fsl,imx8mp-audio-blk-ctrl
-> > > > +    items:
-> > > > +      - const: fsl,imx8mp-audio-blk-ctrl
-> > > > +      - const: syscon
-> > > > +      - const: simple-mfd
-> > > >
-> > > >    reg:
-> > > >      maxItems: 1
-> > > > @@ -44,6 +47,11 @@ properties:
-> > > >        ID in its "clocks" phandle cell. See include/dt-bindings/clo=
-ck/imx8mp-clock.h
-> > > >        for the full list of i.MX8MP IMX8MP_CLK_AUDIOMIX_ clock IDs.
-> > > >
-> > > > +  reset-controller:
-> > > > +    type: object
-> > > > +    $ref: /schemas/reset/fsl,imx8mp-audiomix-reset.yaml#
-> > > > +    description: The child reset devices of AudioMIX Block Control.
-> > >
-> > > Why not just set #reset-cells =3D <1> in the existing node? IIRC it w=
-as
-> > > already suggested to you to do that and use auxdev to set up the reset
-> > > driver.
-> >
-> > Yes, do that.
+On Wed, May 15, 2024 at 02:58:47PM +0200, Lorenzo Bianconi wrote:
+> Introduce reset capability to EN7581 device-tree clock binding
+> documentation.
 >=20
-> Can I know why sub nodes can't be used? the relationship of parent and
-> child devices looks better with sub nodes.
+> Tested-by: Zhengping Zhang <zhengping.zhang@airoha.com>
+> Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
 
-That's pretty subjective. I don't think it looks better to have a clock
-node that is also a syscon with a reset child node as it is rather
-inconsistent.
->=20
-> A further question is can I use the reset-ti-syscon? which is a generic r=
-eset
-> device for SoCs.  with it I don't even need to write a new reset device d=
-river.
-> it is more simple.
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-That is for a TI SoC. You're working on an imx. I don't think that you
-should be using that...
+Cheers,
+Conor.
 
---GkjvzzTYbAGBWol4
+--sr0wYddpRpyzyAXT
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkTdIAAKCRB4tDGHoIJi
-0m6SAP9agCG57rgGJON9yd0a66dM6NoL7HfdAEzVst0qNsrwUwD+PuKQSxOna4Jj
-BC+nCXgi21EE+l22nlaOgorkcGibTA4=
-=3gXG
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkThjAAKCRB4tDGHoIJi
+0gLAAP98WPbIRNY0Yr+8X4xU8mgV5mIZNfpP+CfJJ7StNTt5ngD+INgo4mec3PYr
+f2P9Lvt1uJxdGokiRGfff08q/TzxFwM=
+=r6gg
 -----END PGP SIGNATURE-----
 
---GkjvzzTYbAGBWol4--
+--sr0wYddpRpyzyAXT--
