@@ -1,76 +1,78 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67D1B12B14A
-	for <linux-clk@vger.kernel.org>; Wed, 15 May 2024 13:13:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A54DA127E12
+	for <linux-clk@vger.kernel.org>; Wed, 15 May 2024 13:17:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715778823; cv=none; b=XdwwxNau6xfmVntPs0ewTsvzmXL6aoIkMeER4ZIfOgtmpjHwiPXRmLyLgvqv35v4d3g/ffCimBncIR0bRYlczK73074nXJorHYHef3w+2X77nTh8g15qvGZkUC0AiuTthK5NdQTjE2cnfsAdWV4eWuzd5vLg2lhyLo2XyC3Gu88=
+	t=1715779056; cv=none; b=RmnsXMrOQXbhgE7jyCb0Zz49DkmK4fGeVUZMNaGifbJ3QFt9IubQWJwsD1CXnoyGfVFNv8++v9z12DYjL1cgKSwUz/kgBsorLErDpWOxQwxuTWk1bSYn/w3hCqk0C6DLYNIvBoCeVE6rcD5fw1kBI8I+8ua5IVSJZS5lWoop0Ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715778823; c=relaxed/simple;
-	bh=t1GL/VLTmYGsAxw6mUtAF631CxA1tvSVOImVMs6ckaQ=;
+	s=arc-20240116; t=1715779056; c=relaxed/simple;
+	bh=IKDt0+fluY20ds2F3whtuDQEpT+RYSV83TYvQF9ISsU=;
 	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
-	 MIME-Version:Content-Type; b=bs1QgMteyUM6L1iCHt0b4b9lYG3xKirWNNFkCie6hpWGmtXR102NvJmw8ePzEYdzSoW62smROoW+gtqhC/CTHngq5QYVnyAwunsCF/am9ZmT4WH+172kOBFfoxjOkfa33IAlBs21wTLS/NTr4n7yAci7HE9AInqmNq8mMXOlnGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=v+12ub72; arc=none smtp.client-ip=209.85.128.45
+	 MIME-Version:Content-Type; b=T7f4QC7E+KzzJ5cb51V3q0IZ2xjEIFQofwPRq4arUY3Geg5UvFsc/nTuE4Ucl7pTtv2TX3s21QkI35rmyIaHJ2OIL4XdyMoFJsiCnSmho4E91S6xh0qBDz2l1+8T0xnVI0Xew8hGcPmItbZcvXs0HQK+hWe8OUeOstnY3YwHe14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=y8yWBySO; arc=none smtp.client-ip=209.85.221.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="v+12ub72"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-41ffad242c8so36785185e9.3
-        for <linux-clk@vger.kernel.org>; Wed, 15 May 2024 06:13:41 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="y8yWBySO"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-34da04e44a2so5364083f8f.1
+        for <linux-clk@vger.kernel.org>; Wed, 15 May 2024 06:17:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1715778820; x=1716383620; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1715779053; x=1716383853; darn=vger.kernel.org;
         h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
          :user-agent:references:from:to:cc:subject:date:message-id:reply-to;
-        bh=M91H+nHHqkLBLg1QqXRG3fezduhANXnoUy1GZJinJLM=;
-        b=v+12ub72VVs+HLnmCjwXLVOm4QNJ+vIQGJbxKnI+CIv/3UgDf8KEaMYg2Zw10RQANg
-         dbdoK44j3YA6VB0uX8B4fCZDIjTM3MkkuLeXBXJCk66hmWmVRIA933aPMmR66CC8gual
-         PqPlepbZhzO5Hu1J7J4qhxjO3uumAmeV/zQnnFXDQJ0Q/W7CU+a4JdKCF64WJbni0NKA
-         agyHdHjCcoAoTQPK81BEqxI9sUdemjYEQG1GPrLnRHEsz3CkJV6MQ+hga2bAvu/gX5mO
-         HNcO3FPdueoINsncm4lK2xChJm8BgXcB3F3rtBjYfi89MDpKg8K83xfUwK3HWuOnxhsd
-         iNSQ==
+        bh=Wkq99nuMEm3sK6ZhmvF3R71byoY0ssDC9KdU6I8CK5A=;
+        b=y8yWBySODzKOrXTocmOTOkT9K7sz8VjJJdJUqW00F6S01xgEYlhaTyZo9X8xDvXXx8
+         kmUHdEA058pmcFnGYYIWwXTGPCDP81V4y7MnENqq5xpyOOsH0lGB/hXyEmfN0PsggY82
+         +illVCzmjdLWurdwn4Dald6+B/lnJz+b9mTR0bHZX3ebRbVRCYHSpG0bBl70Ny/zGMvl
+         PXslhgPemaDy1Xy/StcT3hYm8crnLeBSAKutFM88teBVqhlp9gqU+4ysnD/fCywXwrdP
+         VROEnKBDHQ1tpE8cpGk1KxN9HG28Qc3p7rvwa7FyTCZ9zMBFe9b9J5RfbYkAa8/sOGH8
+         PkMw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715778820; x=1716383620;
+        d=1e100.net; s=20230601; t=1715779053; x=1716383853;
         h=mime-version:message-id:in-reply-to:date:subject:cc:to:from
          :user-agent:references:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=M91H+nHHqkLBLg1QqXRG3fezduhANXnoUy1GZJinJLM=;
-        b=YCwwgTphnlDdQOT2/j8cyAJxKHW6W4jHkzWq8U1ergLrDV68nrjrYPWK3QpTX0+ERO
-         ZJc/j4DaDZIlsXU/Gt+qrEEkQ7eiuENxjxxtyAGG+gdcoavpSj/RkE5nutef19ZEJ6ZU
-         veUgyqI5kbbbCJ72HogxXzODyDttV+mlrA97z7nMib4mR3jl2O1bSC3QKlIknTjWE2ai
-         7JSWperxRxMTv+Kcy+J2pCY+Z516kHecGqEmgF0iOYOTlmOnYd2KAJAXpH6WCXJm6SfM
-         ecs2jZ/BJrEVD1ZvBw00fc0RPPSDG3OhcRz8TEL1GRwLokl+xLuoy8xBPZm085Pubm/c
-         +qow==
-X-Forwarded-Encrypted: i=1; AJvYcCWK8GrxrkXQoKbcun8lvKdTB7hIZjD6l0Lv8HPEM2YIuQf60CbWFeTYVaXHjSuz3HB2GR32S6Jao7w67hm+rkc9936ZCZO2l1CP
-X-Gm-Message-State: AOJu0YwjfowEipCwTsxDEIFhsS8kAEODvV5TiUBBE+OeXi2okaztGigw
-	Mszq93l6BVrQt0qR1UEQAiMYnffJdXMO+hg25Wvt777mERxnijT26zfntNvJ9sA=
-X-Google-Smtp-Source: AGHT+IFGKx5BSWfW3mhzW8qqzYmSwVybzwb9nvOAxYK14fvZAmTCWSio0KnxCN2xyBvzkP9/4QqX4Q==
-X-Received: by 2002:a05:600c:1c9f:b0:41f:aef0:9349 with SMTP id 5b1f17b1804b1-41feac556f1mr169219155e9.25.1715778818567;
-        Wed, 15 May 2024 06:13:38 -0700 (PDT)
+        bh=Wkq99nuMEm3sK6ZhmvF3R71byoY0ssDC9KdU6I8CK5A=;
+        b=pLX0bXKJyPCo+bvIW4TS0X7SABzs7vguSuzbPTYdphasxGK90OEXypmWhIWttgVQFl
+         jO2CrqgUTUo7jOUVtsG+U1RlKjwwptCoIj0Ihv4dQm3eKKHxpSirSwAK6Uvh5ggC2l24
+         5QQaGYkjGtcBQRkBfSK1rq8FS7oDnmHVACL3gPlC7UltR89cKDErIVE67FqiuvV4M6aP
+         y8/9OEBvGoErOgln5ZSflhcb5t81r17PGJ16TYmy+nFvCMqRwHqNrXcVWLEqQZle642y
+         4MNXlkz6aNEF4JmCT8qE9IBtVvzMASIKOJaH5lT3IAxUbx6/lRyl/+jjO0l7bSzFITA2
+         SHlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV3B9eNNZi8FyRF17jsCjP5jLUnNxvfDRoFWn512QRadi9ND4AN/al5rYaBZiH/oo7q1AOCgiUAm8XwwlDspRMTcrlMlXWrnGc5
+X-Gm-Message-State: AOJu0YwsQFhdx8B3kwxKtgwxmUJqFwH7SKolufwZwQrpb9KzX8+NubKY
+	sVzLg0cy0BPDRpdLKEGe1Qgx+VzcfN4SfBMsSXM32EeqYgTEfaocsC4+JSA8KNI=
+X-Google-Smtp-Source: AGHT+IE4YYUxY5plTBCwY46ojRAymJdS+bbjFNA9B11hQIBGI59XYOMg6b3oSsFO4BCii/+Aekb4iA==
+X-Received: by 2002:adf:fe8c:0:b0:351:c7c7:985f with SMTP id ffacd0b85a97d-351c7c79963mr3745116f8f.53.1715779052826;
+        Wed, 15 May 2024 06:17:32 -0700 (PDT)
 Received: from localhost ([2a01:e0a:3c5:5fb1:2893:1a8f:5988:776a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-41f88110fedsm270535765e9.31.2024.05.15.06.13.38
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502bbbbefdsm16424209f8f.94.2024.05.15.06.17.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 May 2024 06:13:38 -0700 (PDT)
+        Wed, 15 May 2024 06:17:32 -0700 (PDT)
 References: <20240510090933.19464-1-ddrokosov@salutedevices.com>
- <20240510090933.19464-2-ddrokosov@salutedevices.com>
- <1jfrulzxms.fsf@starbuckisacylon.baylibre.com>
- <20240513214728.g4isbfisifxalqxy@CAB-WSD-L081021>
+ <20240510090933.19464-3-ddrokosov@salutedevices.com>
+ <20240511-secret-barcode-e25c722ddf1d@spud>
+ <20240513091735.l3uewwzfrdd6qwbl@CAB-WSD-L081021>
+ <20240513-epic-magnifier-8dd83db81c4c@spud>
+ <20240513183012.652mwhivasqihiqc@CAB-WSD-L081021>
 User-agent: mu4e 1.10.8; emacs 29.2
 From: Jerome Brunet <jbrunet@baylibre.com>
 To: Dmitry Rokosov <ddrokosov@salutedevices.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, neil.armstrong@linaro.org,
- mturquette@baylibre.com, sboyd@kernel.org, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, khilman@baylibre.com,
- martin.blumenstingl@googlemail.com, jian.hu@amlogic.com,
- kernel@sberdevices.ru, rockosov@gmail.com,
+Cc: Conor Dooley <conor@kernel.org>, neil.armstrong@linaro.org,
+ jbrunet@baylibre.com, mturquette@baylibre.com, sboyd@kernel.org,
+ robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+ khilman@baylibre.com, martin.blumenstingl@googlemail.com,
+ jian.hu@amlogic.com, kernel@sberdevices.ru, rockosov@gmail.com,
  linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 1/7] clk: meson: introduce 'INIT_ONCE' flag to
- eliminate init for enabled PLL
-Date: Wed, 15 May 2024 15:12:02 +0200
-In-reply-to: <20240513214728.g4isbfisifxalqxy@CAB-WSD-L081021>
-Message-ID: <1jle4bxloe.fsf@starbuckisacylon.baylibre.com>
+Subject: Re: [PATCH v2 2/7] dt-bindings: clock: meson: a1: pll: introduce
+ new syspll bindings
+Date: Wed, 15 May 2024 15:15:35 +0200
+In-reply-to: <20240513183012.652mwhivasqihiqc@CAB-WSD-L081021>
+Message-ID: <1jh6ezxlhw.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -80,20 +82,46 @@ MIME-Version: 1.0
 Content-Type: text/plain
 
 
-On Tue 14 May 2024 at 00:47, Dmitry Rokosov <ddrokosov@salutedevices.com> wrote:
+On Mon 13 May 2024 at 21:30, Dmitry Rokosov <ddrokosov@salutedevices.com> wrote:
 
+> On Mon, May 13, 2024 at 04:48:33PM +0100, Conor Dooley wrote:
+>> On Mon, May 13, 2024 at 12:18:02PM +0300, Dmitry Rokosov wrote:
+>> > Hello Conor,
+>> > 
+>> > Thank you for quick review!
+>> > 
+>> > On Sat, May 11, 2024 at 02:08:03PM +0100, Conor Dooley wrote:
+>> > > On Fri, May 10, 2024 at 12:08:54PM +0300, Dmitry Rokosov wrote:
+>> > > > The 'syspll' PLL is a general-purpose PLL designed specifically for the
+>> > > > CPU clock. It is capable of producing output frequencies within the
+>> > > > range of 768MHz to 1536MHz.
+>> > > > 
+>> > > > The clock source sys_pll_div16, being one of the GEN clock parents,
+>> > > > plays a crucial role and cannot be tagged as "optional". Unfortunately,
+>> > > > it was not implemented earlier due to the cpu clock ctrl driver's
+>> > > > pending status on the TODO list.
+>> > > 
+>> > > It's fine to not mark it optional in the binding, but it should be
+>> > > optional in the driver as otherwise backwards compatibility will be
+>> > > broken. Given this is an integral clock driver, sounds like it would
+>> > > quite likely break booting on these devices if the driver doesn't treat
+>> > > syspll_in as optional.
+>> > > A lesson perhaps in describing the hardware entirely, even if the
+>> > > drivers don't make use of all the information yet?
+>> > 
+>> > Yes, it's definitely the right lesson for me. However, without syspll or
+>> > syspll_in, we cannot utilize CPU power management at all.
 >> 
->> I agree that currently that carefully reading the code clears that up
->> but it is misleading
->> 
->> CLK_MESON_PLL_EN_NOINIT ?
->>                         
+>> That's the status-quo, right? The incorrect dts would continue to not
+>> support CPU power management and the new one with the correct description
+>> would?
 >
-> I have been considering this name and its derivatives, such as:
->
->     CLK_MESON_PLL_SKIP_ENABLED
+> Hmmm, correct. Okay, I see, I will support sys_pll as optional
+> connection :)
 
->     CLK_MESON_PLL_NOINIT_ENABLED
+Again, the way controller is written, all inputs are actually optional.
+The controller does not error out if an input is missing, it behave as
+if the input is disconnected
 
-That one accurately describes what you do.
-Use this one please
+-- 
+Jerome
