@@ -1,44 +1,44 @@
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA054158DCF;
-	Wed, 15 May 2024 18:51:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BABC33BBF6;
+	Wed, 15 May 2024 18:51:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715799084; cv=none; b=ms4U/vOXDCq8UAJ4yL2o68/9knHvHgclJDnGC5UHmmion7kK/FJXAQGT14VEOQTX6qDaJNYPfrTGFptAEU3FX67hEtBr3ECS7s7zfG6+4WHqiTmqZ+2/YFMSLAHCxKUhdqLnFMPytgFbXahJdFKlcS3MNBp3vpCdpXT8Nhoxg3M=
+	t=1715799084; cv=none; b=QTineZaFxPMLWVWccwAJYASakjNlCuz3JuqOBH9xdcGgO2p1Z1gSzdQXHxyoxrXORFcfTQjLtlXcsjcKf9Mcf6jfh8OsKLq9J36R06VzOzAeTA06uVK2bldHYO4j40JajLE9k342XijGLv9pFW5dLEzsP5nl/GuIgrHXxhaRYcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1715799084; c=relaxed/simple;
-	bh=7Quj1jKN7W7Z2LOoywxjlY+O04XG7qbDXZRojsPpPvU=;
+	bh=1Xm0mqkdVgYKrfnpqTqMp2D6Bm4nYavxuLWU7KsUQfU=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=au+gUad8sVADE6nzCuY+aDrKWvcEs2RGeTqaeHLLxSAFzBRNPd853qm3Hb1hfeieUaIQfCosHYRTM1Ki4IK0e1MehBAP75NTKNrAmOnpzWEQ+h6e43lDsg8eLhAq92K3CaOlDr7HfeUilWmbZdgCGqxOHUZaZu+R33/iKyueav4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=c4p6wLPw; arc=none smtp.client-ip=45.89.224.132
+	 MIME-Version:Content-Type; b=rCl26sHFt9ghEUhKivPosDvoOw5wIV6VwpTClT+Fxfov8ieWkEIjK7l1LVtXZ9qMZb2XFTRYEcT7SwsIPuEbkNWkuz2SChMsFKCC9sTViUgfLJLJntr01aLNSjT7fxueVz8RK0w+PPCp4ukFKclpoDYmEFBTvIVbft0k5wP9Ppk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=CHRrHs1l; arc=none smtp.client-ip=37.18.73.165
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="c4p6wLPw"
-Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 45DE312002F;
-	Wed, 15 May 2024 21:51:15 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 45DE312002F
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="CHRrHs1l"
+Received: from p-infra-ksmg-sc-msk01 (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 4383710002F;
+	Wed, 15 May 2024 21:51:13 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 4383710002F
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1715799075;
-	bh=GVAW5JWcD01T1J+UtljJWyAOeYhpdOcLrFBEHbZTD0E=;
+	s=mail; t=1715799073;
+	bh=R/Rk7IMA2QAbG9QFamVg+DaNOx10zL198u6wx8WO48M=;
 	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=c4p6wLPwp+qppXMRa7k/HpOAs365SYc2QacSfhVG5r8Go0Arss4mAh37jJYiJ0swn
-	 0etdyIziGy9Ymm2aza/QVaLjWwYkF4qOUCQBbhhSDsoIFZc+G30msTXwUYQQiPwj28
-	 6g/MVGTBkoiyKqUlZdLBC7sMr0fKVhtJZavHlEhWyNSJ73rQ4XU1qNlsJSTHKJa5eS
-	 P902Sic9E2D0h+YxhFj5sJumYCMZk2onam/FxE4ut7ow5ewBmXJQuNtF4bkNNwZAT3
-	 ShRitzinb9BW2GmJ3g/SF0wqOH0Lr7hGOA03PPRuY72L0MKiCshFWMd5SDxfxEmH1c
-	 WEZdfsTUP0QCQ==
+	b=CHRrHs1l2+RBf7ujaiAfGVa7EQ248ugO5dmJzULBtWkYFxQBBVj4p8StmndROxBA2
+	 OxAiQsNpsdKgiRYKR9KLLkZquYw5qQZ8VK8u44wENzqx1kFuHyWPFFLoLo5a/cRlrF
+	 daNuUbaeFVos15jH4AmiyP95ZdgHt49e7D936MWJ+VPiIoaODTKm3fQ8iJP8+B5u5v
+	 KtkWsmahks3WD+7HhfCJC1fczXUeqT5XwLI5Un+2aAJroTQ4vVN40/zOq2wzoO/Opu
+	 DJ9rEFB+JpyYpIO6ks8jTeyfCdOczPMrJy5kLVvFuCi6OxuevrbLZyNG/H4OM8VUyl
+	 3ElrEekLKu19A==
 Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
 	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Wed, 15 May 2024 21:51:15 +0300 (MSK)
+	Wed, 15 May 2024 21:51:13 +0300 (MSK)
 Received: from CAB-WSD-L081021.sberdevices.ru (100.64.160.123) by
  p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Wed, 15 May 2024 21:51:14 +0300
+ 15.2.1118.40; Wed, 15 May 2024 21:51:12 +0300
 From: Dmitry Rokosov <ddrokosov@salutedevices.com>
 To: <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
 	<mturquette@baylibre.com>, <sboyd@kernel.org>, <robh+dt@kernel.org>,
@@ -49,9 +49,9 @@ CC: <jian.hu@amlogic.com>, <kernel@sberdevices.ru>, <rockosov@gmail.com>,
 	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
 	<linux-arm-kernel@lists.infradead.org>, Dmitry Rokosov
 	<ddrokosov@salutedevices.com>
-Subject: [PATCH v3 4/7] dt-bindings: clock: meson: a1: peripherals: support sys_pll input
-Date: Wed, 15 May 2024 21:47:27 +0300
-Message-ID: <20240515185103.20256-5-ddrokosov@salutedevices.com>
+Subject: [PATCH v3 1/7] clk: meson: add 'NOINIT_ENABLED' flag to eliminate init for enabled PLL
+Date: Wed, 15 May 2024 21:47:24 +0300
+Message-ID: <20240515185103.20256-2-ddrokosov@salutedevices.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240515185103.20256-1-ddrokosov@salutedevices.com>
 References: <20240515185103.20256-1-ddrokosov@salutedevices.com>
@@ -74,7 +74,7 @@ X-KSMG-AntiSpam-Rate: 0
 X-KSMG-AntiSpam-Status: not_detected
 X-KSMG-AntiSpam-Method: none
 X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 20 0.3.20 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;100.64.160.123:7.1.2;smtp.sberdevices.ru:5.0.1,7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;salutedevices.com:7.1.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
+X-KSMG-AntiSpam-Info: LuaCore: 20 0.3.20 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;smtp.sberdevices.ru:7.1.1,5.0.1;100.64.160.123:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;salutedevices.com:7.1.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
 X-MS-Exchange-Organization-SCL: -1
 X-KSMG-AntiSpam-Interceptor-Info: scan successful
 X-KSMG-AntiPhishing: Clean
@@ -82,61 +82,93 @@ X-KSMG-LinksScanning: Clean
 X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/05/15 13:12:00 #25231738
 X-KSMG-AntiVirus-Status: Clean, skipped
 
-The 'sys_pll' input is an optional clock that can be used to generate
-'sys_pll_div16', which serves as one of the sources for the GEN clock.
+When dealing with certain PLLs, it is necessary to avoid modifying them
+if they have already been initialized by lower levels. For instance, in
+the A1 SoC Family, the sys_pll is enabled as the parent for the cpuclk,
+and it cannot be disabled during the initialization sequence. Therefore,
+initialization phase must be skipped.
 
 Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
 ---
- .../bindings/clock/amlogic,a1-peripherals-clkc.yaml      | 9 +++++++--
- include/dt-bindings/clock/amlogic,a1-peripherals-clkc.h  | 1 +
- 2 files changed, 8 insertions(+), 2 deletions(-)
+ drivers/clk/meson/clk-pll.c | 40 ++++++++++++++++++++++---------------
+ drivers/clk/meson/clk-pll.h |  1 +
+ 2 files changed, 25 insertions(+), 16 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/amlogic,a1-peripherals-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,a1-peripherals-clkc.yaml
-index 6d84cee1bd75..2568ad7dd0ac 100644
---- a/Documentation/devicetree/bindings/clock/amlogic,a1-peripherals-clkc.yaml
-+++ b/Documentation/devicetree/bindings/clock/amlogic,a1-peripherals-clkc.yaml
-@@ -30,6 +30,8 @@ properties:
-       - description: input fixed pll div7
-       - description: input hifi pll
-       - description: input oscillator (usually at 24MHz)
-+      - description: input sys pll
-+    minItems: 6 # sys_pll is optional
+diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
+index 78d17b2415af..e1132a110aab 100644
+--- a/drivers/clk/meson/clk-pll.c
++++ b/drivers/clk/meson/clk-pll.c
+@@ -289,11 +289,35 @@ static int meson_clk_pll_wait_lock(struct clk_hw *hw)
+ 	return -ETIMEDOUT;
+ }
  
-   clock-names:
-     items:
-@@ -39,6 +41,8 @@ properties:
-       - const: fclk_div7
-       - const: hifi_pll
-       - const: xtal
-+      - const: sys_pll
-+    minItems: 6 # sys_pll is optional
++static int meson_clk_pll_is_enabled(struct clk_hw *hw)
++{
++	struct clk_regmap *clk = to_clk_regmap(hw);
++	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
++
++	if (MESON_PARM_APPLICABLE(&pll->rst) &&
++	    meson_parm_read(clk->map, &pll->rst))
++		return 0;
++
++	if (!meson_parm_read(clk->map, &pll->en) ||
++	    !meson_parm_read(clk->map, &pll->l))
++		return 0;
++
++	return 1;
++}
++
+ static int meson_clk_pll_init(struct clk_hw *hw)
+ {
+ 	struct clk_regmap *clk = to_clk_regmap(hw);
+ 	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
  
- required:
-   - compatible
-@@ -65,9 +69,10 @@ examples:
-                      <&clkc_pll CLKID_FCLK_DIV5>,
-                      <&clkc_pll CLKID_FCLK_DIV7>,
-                      <&clkc_pll CLKID_HIFI_PLL>,
--                     <&xtal>;
-+                     <&xtal>,
-+                     <&clkc_pll CLKID_SYS_PLL>;
-             clock-names = "fclk_div2", "fclk_div3",
-                           "fclk_div5", "fclk_div7",
--                          "hifi_pll", "xtal";
-+                          "hifi_pll", "xtal", "sys_pll";
-         };
-     };
-diff --git a/include/dt-bindings/clock/amlogic,a1-peripherals-clkc.h b/include/dt-bindings/clock/amlogic,a1-peripherals-clkc.h
-index 06f198ee7623..2ce1a06dc735 100644
---- a/include/dt-bindings/clock/amlogic,a1-peripherals-clkc.h
-+++ b/include/dt-bindings/clock/amlogic,a1-peripherals-clkc.h
-@@ -164,5 +164,6 @@
- #define CLKID_DMC_SEL		151
- #define CLKID_DMC_DIV		152
- #define CLKID_DMC_SEL2		153
-+#define CLKID_SYS_PLL_DIV16	154
++	/*
++	 * Keep the clock running, which was already initialized and enabled
++	 * from the bootloader stage, to avoid any glitches.
++	 */
++	if ((pll->flags & CLK_MESON_PLL_NOINIT_ENABLED) &&
++	    meson_clk_pll_is_enabled(hw))
++		return 0;
++
+ 	if (pll->init_count) {
+ 		if (MESON_PARM_APPLICABLE(&pll->rst))
+ 			meson_parm_write(clk->map, &pll->rst, 1);
+@@ -308,22 +332,6 @@ static int meson_clk_pll_init(struct clk_hw *hw)
+ 	return 0;
+ }
  
- #endif /* __A1_PERIPHERALS_CLKC_H */
+-static int meson_clk_pll_is_enabled(struct clk_hw *hw)
+-{
+-	struct clk_regmap *clk = to_clk_regmap(hw);
+-	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
+-
+-	if (MESON_PARM_APPLICABLE(&pll->rst) &&
+-	    meson_parm_read(clk->map, &pll->rst))
+-		return 0;
+-
+-	if (!meson_parm_read(clk->map, &pll->en) ||
+-	    !meson_parm_read(clk->map, &pll->l))
+-		return 0;
+-
+-	return 1;
+-}
+-
+ static int meson_clk_pcie_pll_enable(struct clk_hw *hw)
+ {
+ 	int retries = 10;
+diff --git a/drivers/clk/meson/clk-pll.h b/drivers/clk/meson/clk-pll.h
+index a2228c0fdce5..7b6b87274073 100644
+--- a/drivers/clk/meson/clk-pll.h
++++ b/drivers/clk/meson/clk-pll.h
+@@ -28,6 +28,7 @@ struct pll_mult_range {
+ 	}
+ 
+ #define CLK_MESON_PLL_ROUND_CLOSEST	BIT(0)
++#define CLK_MESON_PLL_NOINIT_ENABLED	BIT(1)
+ 
+ struct meson_clk_pll_data {
+ 	struct parm en;
 -- 
 2.43.0
 
