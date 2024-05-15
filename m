@@ -1,71 +1,66 @@
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 157463BBF6;
-	Wed, 15 May 2024 19:00:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 687A1446AC;
+	Wed, 15 May 2024 19:14:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715799623; cv=none; b=Qs8XzCvAjFCqwjxqgpgX6MfBLbyCj4aZY1qQ3QwKXz9oq5IWJkBzvvhqreR+u0PyNWAixaOcYHZHttXIbBuQEZ+Vper3Lh03pXKzUgRK2h64qYQxdFoyfUubhz9zihC1gueK6HuBruCdVcjWyZx0QdSNqoTWL06ckDeC2/mlRf8=
+	t=1715800457; cv=none; b=oG/szs1Y8E/yeIDGr09Jk6gTRyJd9bR/JO9RzTfvxzSeQpBMEkqXaShWzGwKhTkKifdG1+vmJSpSXv6vALbakJi1vl3oAollk4AF9Dn6CXurjZZhB5WQrrHoMz0eZEFnmO3iqC2K4dKN977OSWMMy/cRIY0L42usY+W/nmwiaEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715799623; c=relaxed/simple;
-	bh=+CdgUsXw1OhIz25aaCIoQRzZkGyYOFy1X/rExwEpLhQ=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fnqTi4KIynLhx25BQ5BFOrvwK3GPBVMyEol812qyObGJ2cWGIbz7dyD1V05gaC9C4XzY4Bza0ILhVX2bIvF2sTDTkW+nEbgaOXrd+htJ4cM2k9qyKd1d3ygChkXJnJ5hBOCi7W7nKlWWNJxlWiRFzKffdiXZl/+XGswew4in/E4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=G9h+Yh3V; arc=none smtp.client-ip=45.89.224.132
+	s=arc-20240116; t=1715800457; c=relaxed/simple;
+	bh=SIaYPtAmZYzaVPwYzy+qBnZV2xxtM7JyJlPkIEJKfyc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CvPfi6UU1JPpyH76JSOLk6x1YknaOb5WH6S/6YPvZI/E+RoHI8vNoTazH2ZO4Jdf6HukELv0Ou4NFTDL+3tHtkdnNcVg7baBVLRg/iA//GgUy9+a5PflOWsS/rtCXoxawms/NGe94qIGYrxfsRxEB/lzup0DJK+zvLtqldEP+MI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=ogkPrCcr; arc=none smtp.client-ip=37.18.73.165
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="G9h+Yh3V"
-Received: from p-infra-ksmg-sc-msk02 (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 043FE120027;
-	Wed, 15 May 2024 22:00:09 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 043FE120027
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="ogkPrCcr"
+Received: from p-infra-ksmg-sc-msk01 (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 3791610002D;
+	Wed, 15 May 2024 22:14:12 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 3791610002D
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1715799609;
-	bh=ckMuf6MQpe0iaEm+Ee1bWyCe6cbGhXBFqyXa+u+DXDg=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:From;
-	b=G9h+Yh3V6+EoUpaCL8Gx2lI6b1PAKwPVu4jv+o5GSnstdVQRIsZtZTDfZIF/Gx62e
-	 unpe5MWUmH102RY8ptwZ43jwEr1D6ftLkN5iDLMM768Jp8mUn1JoviQL9nLFVJptn/
-	 JKIrWOT0m4j/B2Fx1XBv+hZnbKhw4oUY4Jq1PRYNzF633XkHNAFpPtANax8uvlGGT6
-	 K8l18vtp0Ya6OHmu7yslcvY4nozwY908gGSpQMRV1b/8cB0ovj12RpcautQr9xFf1w
-	 QKbZXNaA7Lk4W/GNaFRJhaBVV4sSEqV91qIjubBVcbQdFJ7RPj1q2DH6wPPQEbNLuG
-	 l8MNx3y5IuX3g==
+	s=mail; t=1715800452;
+	bh=yh36czi3oiCiH74hnOG7P+ArHnzezMkpMG45lt+1orI=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=ogkPrCcrKyO61s28WFqtpPmAzLZ+8RRCcNyLeipRWtiAB9OgSZHEjhx+nxfVZP2Yo
+	 2Jc3u0nVSA06D379coLls8r/YC4trQbkLdIk3gnkZtyG/W33mD6bKJ+Jf5OIvfqWgB
+	 /pW9qJDa0iIcD3W77VwcICQI86RnnxsByZtS4YC9kC/blMxg9GV4hw3jbDvYhNHxOh
+	 bRjuAtV5Z9TB8EIaClVXUfaiX4AKjJ8LidnYjwRTDkoJQX83pQXezWIj1G9Z0uhQsR
+	 +YrY/Sqlfx0K3GrU5WA0gaJ1eE0yUHuA4KrrMRZPML590LSNOggar3L/qSjUfh8zrp
+	 hgJ5+yhJIf8zg==
 Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
 	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Wed, 15 May 2024 22:00:08 +0300 (MSK)
-Received: from localhost (100.64.160.123) by p-i-exch-sc-m02.sberdevices.ru
- (172.16.192.103) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Wed, 15 May
- 2024 22:00:08 +0300
-Date: Wed, 15 May 2024 22:00:08 +0300
+	Wed, 15 May 2024 22:14:12 +0300 (MSK)
+Received: from CAB-WSD-L081021.sberdevices.ru (100.64.160.123) by
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Wed, 15 May 2024 22:14:11 +0300
 From: Dmitry Rokosov <ddrokosov@salutedevices.com>
-To: <conor@kernel.org>
-CC: <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
+To: <neil.armstrong@linaro.org>, <jbrunet@baylibre.com>,
 	<mturquette@baylibre.com>, <sboyd@kernel.org>, <robh+dt@kernel.org>,
 	<krzysztof.kozlowski+dt@linaro.org>, <khilman@baylibre.com>,
-	<martin.blumenstingl@googlemail.com>, <jian.hu@amlogic.com>,
-	<kernel@sberdevices.ru>, <rockosov@gmail.com>,
+	<martin.blumenstingl@googlemail.com>
+CC: <kernel@salutedevices.com>, <rockosov@gmail.com>,
 	<linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
 	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3 4/7] dt-bindings: clock: meson: a1: peripherals:
- support sys_pll input
-Message-ID: <20240515190008.cbv4kj4inkg2bm56@CAB-WSD-L081021>
-References: <20240515185103.20256-1-ddrokosov@salutedevices.com>
- <20240515185103.20256-5-ddrokosov@salutedevices.com>
+	<linux-arm-kernel@lists.infradead.org>, Dmitry Rokosov
+	<ddrokosov@salutedevices.com>
+Subject: [PATCH v3 0/4] arm64: dts: amlogic: a1: Support CPU Power Management
+Date: Wed, 15 May 2024 22:13:49 +0300
+Message-ID: <20240515191405.25395-1-ddrokosov@salutedevices.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240515185103.20256-5-ddrokosov@salutedevices.com>
-User-Agent: NeoMutt/20220415
-X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) To
  p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
 X-KSMG-Rule-ID: 10
 X-KSMG-Message-Action: clean
@@ -76,83 +71,114 @@ X-KSMG-AntiSpam-Rate: 0
 X-KSMG-AntiSpam-Status: not_detected
 X-KSMG-AntiSpam-Method: none
 X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 20 0.3.20 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f, {Track_E25351}, {Tracking_from_domain_doesnt_match_to}, 127.0.0.199:7.1.2;smtp.sberdevices.ru:7.1.1,5.0.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;100.64.160.123:7.1.2;salutedevices.com:7.1.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
+X-KSMG-AntiSpam-Info: LuaCore: 20 0.3.20 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, smtp.sberdevices.ru:7.1.1,5.0.1;127.0.0.199:7.1.2;100.64.160.123:7.1.2;lore.kernel.org:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;salutedevices.com:7.1.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
 X-MS-Exchange-Organization-SCL: -1
 X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
+X-KSMG-AntiPhishing: Clean, bases: 2024/05/15 12:35:00
+X-KSMG-LinksScanning: Clean, bases: 2024/05/15 18:39:00
 X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/05/15 13:12:00 #25231738
 X-KSMG-AntiVirus-Status: Clean, skipped
 
-Hello Conor,
+The Amlogic A1 SoC family utilizes static operating points and a
+PWM-controlled core voltage regulator that is specific to the board. As
+the main CPU clock input, the SoC uses CLKID_CPU_CLK from the CPU clock
+controller, which can be inherited from the system PLL (syspll) or a
+fixed CPU clock.
 
-On Wed, May 15, 2024 at 09:47:27PM +0300, Dmitry Rokosov wrote:
-> The 'sys_pll' input is an optional clock that can be used to generate
-> 'sys_pll_div16', which serves as one of the sources for the GEN clock.
-> 
-> Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
+Currently, the stable operating points at all frequencies are set to
+800mV. This value is obtained from the vendor setup of several A1
+boards.
 
-I didn't tag this patch with your Acked-by because I've changed the
-connection between the A1 PLL and the A1 peripherals controllers from
-'sys_pll_div16' to 'sys_pll'.
+The current patch series includes:
+    * CPU clock controller declaration
+    * syspll setup in the PLL controller
+    * operating points
+    * CPU special power parameters: voltage-tolerance, clock-latency,
+      capacity-dmips-mhz, dynamic-power-coefficient
 
-Please review this patch again, if possible.
+Please be informed that the AD402 vddcpu PWM regulator does not exist in
+this patch series because currently PWM A1 support is under development.
+However, it should look like:
 
-> ---
->  .../bindings/clock/amlogic,a1-peripherals-clkc.yaml      | 9 +++++++--
->  include/dt-bindings/clock/amlogic,a1-peripherals-clkc.h  | 1 +
->  2 files changed, 8 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/amlogic,a1-peripherals-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,a1-peripherals-clkc.yaml
-> index 6d84cee1bd75..2568ad7dd0ac 100644
-> --- a/Documentation/devicetree/bindings/clock/amlogic,a1-peripherals-clkc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/amlogic,a1-peripherals-clkc.yaml
-> @@ -30,6 +30,8 @@ properties:
->        - description: input fixed pll div7
->        - description: input hifi pll
->        - description: input oscillator (usually at 24MHz)
-> +      - description: input sys pll
-> +    minItems: 6 # sys_pll is optional
->  
->    clock-names:
->      items:
-> @@ -39,6 +41,8 @@ properties:
->        - const: fclk_div7
->        - const: hifi_pll
->        - const: xtal
-> +      - const: sys_pll
-> +    minItems: 6 # sys_pll is optional
->  
->  required:
->    - compatible
-> @@ -65,9 +69,10 @@ examples:
->                       <&clkc_pll CLKID_FCLK_DIV5>,
->                       <&clkc_pll CLKID_FCLK_DIV7>,
->                       <&clkc_pll CLKID_HIFI_PLL>,
-> -                     <&xtal>;
-> +                     <&xtal>,
-> +                     <&clkc_pll CLKID_SYS_PLL>;
->              clock-names = "fclk_div2", "fclk_div3",
->                            "fclk_div5", "fclk_div7",
-> -                          "hifi_pll", "xtal";
-> +                          "hifi_pll", "xtal", "sys_pll";
->          };
->      };
-> diff --git a/include/dt-bindings/clock/amlogic,a1-peripherals-clkc.h b/include/dt-bindings/clock/amlogic,a1-peripherals-clkc.h
-> index 06f198ee7623..2ce1a06dc735 100644
-> --- a/include/dt-bindings/clock/amlogic,a1-peripherals-clkc.h
-> +++ b/include/dt-bindings/clock/amlogic,a1-peripherals-clkc.h
-> @@ -164,5 +164,6 @@
->  #define CLKID_DMC_SEL		151
->  #define CLKID_DMC_DIV		152
->  #define CLKID_DMC_SEL2		153
-> +#define CLKID_SYS_PLL_DIV16	154
->  
->  #endif /* __A1_PERIPHERALS_CLKC_H */
-> -- 
-> 2.43.0
-> 
+```
+vddcpu: regulator-vddcpu {
+	compatible = "pwm-regulator";
+	pinctrl-0 = <&pwm_f_pins4>;
+	pinctrl-names = "default";
+	regulator-name = "VDDCPU";
+	regulator-min-microvolt = <690000>;
+	regulator-max-microvolt = <1050000>;
+	pwm-supply = <&dc_12v_in>;
+	pwms = <&pwm_ef 1 1500 0>; // 667kHz
+	voltage-table = <1050000 0>,
+			<1040000 3>,
+			<1030000 6>,
+			<1020000 8>,
+			<1010000 11>,
+			<1000000 14>,
+			<990000 17>,
+			<980000 20>,
+			<970000 23>,
+			<960000 26>,
+			<950000 29>,
+			<940000 31>,
+			<930000 34>,
+			<920000 37>,
+			<910000 40>,
+			<900000 43>,
+			<890000 45>,
+			<880000 48>,
+			<870000 51>,
+			<860000 54>,
+			<850000 56>,
+			<840000 59>,
+			<830000 62>,
+			<820000 65>,
+			<810000 68>,
+			<800000 70>,
+			<790000 73>,
+			<780000 76>,
+			<770000 79>,
+			<760000 81>,
+			<750000 84>,
+			<740000 87>,
+			<730000 89>,
+			<720000 92>,
+			<710000 95>,
+			<700000 98>,
+			<690000 100>;
+	regulator-boot-on;
+	regulator-always-on;
+};
+```
+
+This patch series depends on [1].
+
+Changes v3 since v2 at [3]:
+    - move sys_pll_div16 clock from a1-pll clkc to a1-peripherals clkc
+      as Jerome suggested, so dt connection is changed too
+
+Changes v2 since v1 at [2]:
+    - remove holes from the beginning of cpu clock controller regmap
+    - move sys_pll_div16 to the end of the clocks list
+
+Links:
+    [1] https://lore.kernel.org/all/20240515185103.20256-1-ddrokosov@salutedevices.com/
+    [2] https://lore.kernel.org/all/20240329210453.27530-1-ddrokosov@salutedevices.com/
+    [3] https://lore.kernel.org/all/20240510091251.20086-1-ddrokosov@salutedevices.com/
+
+Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
+
+Dmitry Rokosov (4):
+  arm64: dts: amlogic: a1: add new syspll_in input for clkc_pll
+    controller
+  arm64: dts: amlogic: a1: declare cpu clock controller
+  arm64: dts: amlogic: a1: add new input clock 'sys_pll' to clkc_periphs
+  arm64: dts: amlogic: a1: setup CPU power management
+
+ arch/arm64/boot/dts/amlogic/meson-a1.dtsi | 70 +++++++++++++++++++++--
+ 1 file changed, 66 insertions(+), 4 deletions(-)
 
 -- 
-Thank you,
-Dmitry
+2.43.0
+
