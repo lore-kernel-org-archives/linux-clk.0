@@ -1,143 +1,198 @@
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B7224EB2C;
-	Wed, 15 May 2024 08:51:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C47FF56458;
+	Wed, 15 May 2024 09:18:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715763121; cv=none; b=dKE3XndicLvjYMs2vYF4/whqJmVRg7/gJlQvtwFgrruVO/Srajr5y+6Sxae7QZYA7pDQEWPdyH3fwbnKPl+RSKHmBOx2YkSCSVEiCCf0lQWj1TMqjD55u3DGiIuSt511wBVJKRubzH0d5bCQIptkuDXMmKln3J8rEu9PTfBjDno=
+	t=1715764732; cv=none; b=SazW6IgepcpSe7GmJbf9fuoRJWm6Mn/AjF8WBD9ErMT+vYA/cNKKuG9PnwepAxp/ieSBkQlLsvxR0sBbIBHUHrZTtjfozFNf01PUNVpieLfamE3Zk/oCU4jyi0ouWKHr81f17H64UXBGih88dc8n+7GrK/Pb3igj/GZUCsbPKOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715763121; c=relaxed/simple;
-	bh=oTabfecnA5D6rgAYnH/cITmgBhG9NMBzhJBXZpNVt9U=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YVuxA94TSepeaZNFn1dxD40WrTMUQlpidBqoKPsJIBKQGUtd9rOewiGCHxdMJesnmG7JLUj+WNZs34VeWm8Ds12Kgr5ad+eR/KBxtT3qxLNtyjIeew1GcH4LKCazUa/HVpdYCQ2xGmRQ4ebcmD1dEkXk/D3PpIqHitZdsafXBac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ehau8T/9; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1715764732; c=relaxed/simple;
+	bh=3kpZN3+gpG+3pWQ9Ub6m1a/EpCdt/xYM2Cy8NlRGPDI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=o+aT290zvrV1KH1nnboOD+kfPTeUdTY+qWZ60Hpb2cV6TRFcqXkcgZjstBingts1nqjivzxo2R5xUCTF4e8u8h7V+L7wQaFiPRHWtJNFxAV/j1jNzBtFb5kaQj0LMjYvIthFgmf+UxsIYYLFdvloR1+7xlpmnwz5LxQCY8huBo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=bCaJ0EHa; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ehau8T/9"
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3504f34a086so4123575f8f.1;
-        Wed, 15 May 2024 01:51:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715763118; x=1716367918; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FPZC2tLZzoMwQUMQ/NsgDeMOgcmg6uOukKnCCk0Jz0k=;
-        b=ehau8T/9aqP24xoVvkdyLfjY72TLtg2sqIZzglkBztULwZWHgZzx2ZX9M/7LDH4w57
-         qEFXaLtHrygpeimU7vx8TbdMpcfF05SQ2Vpl0KarOlhN0MJaaq3Ei6otaT0oHVSWdyBY
-         9KVOSW55K//WW8anXsLPfHE/+Afyfff1mUb0qohFPEE3hrl4dN9zKR93o2bk8bmd2eUs
-         EgoGtMbhpVu8W+jBsMdwgNH7h3sy/PNTE/89ZtVt3mtCwmZDxm2HVrHnFXiO/j26N1ua
-         mEYSVDxxGYwsfx0ORBZZK+D5nrU4TxMAFAFuasgTt9AQJbxQmr+6uDEQ6ZDja8FbIbi3
-         WLww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715763118; x=1716367918;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FPZC2tLZzoMwQUMQ/NsgDeMOgcmg6uOukKnCCk0Jz0k=;
-        b=ipS0YFsrR87xpxubAWnon6b7yJMwwOcntdZWJM1bu5XgBSg2JPHLfMBH7AnxG3bGed
-         mftdAJ59nkkDMrOcJOwGQ9Q3Ph8dlH7m4Y09udH2VoK5Ety+ZlWx6YgbGLwkW/KODMWt
-         bYS/3MWZGqA0GNcst9yCKjZ1Lmkg+N6R3D1A1ixx0ruDYxpIou8D+2ckWognBj+j6QKR
-         A65D5cXRurSVG6K6Y82ElaG3MLy3iAB95Z0OHjGG+9wtxKzQgFFZdaSRBciwMWGAexT3
-         SDJtYzeJBsI18391jEPy7swGBWkrAW/lkZFrcwcweHqwxX5vGwvPl59TdVoxka9XO6rW
-         G8vQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWTTxbJ9NB3PddSdUakpR7fcyXr7FRl3T8r5DRnezRDomRhO5ptJCE8PpTrXm7fyXOG7GDfeMp+NmlKvkxOYI3bL5OwmevDxk14tEapfk72eMnyT9mP16XRsQiRIA20Jy5V6C/a3Q==
-X-Gm-Message-State: AOJu0YyMdlxBiZwy8erGY2DCs607jDwMQHkCa4m97+eTkh9uveY406dt
-	YCL1MBU+iAxSld6dyOcRIpcBlhKAppZnTwceQAIt92GD1zkTrty2hlADpw==
-X-Google-Smtp-Source: AGHT+IG0SgB8ilO2X7vWlAcw0j1o8wIr1Ltsv+huCeg2g2aeWDyRUcSAab3sNsKxpfx63E9tmVfbbg==
-X-Received: by 2002:adf:fc08:0:b0:34c:cca6:3d18 with SMTP id ffacd0b85a97d-3504aa66a33mr10191172f8f.68.1715763113485;
-        Wed, 15 May 2024 01:51:53 -0700 (PDT)
-Received: from ALPER-PC.. ([178.233.24.52])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3502b8a8454sm15825034f8f.56.2024.05.15.01.51.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 15 May 2024 01:51:53 -0700 (PDT)
-From: Alper Nebi Yasak <alpernebiyasak@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Rob Herring <robh@kernel.org>,
-	linux-clk@vger.kernel.org,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	linux-mediatek@lists.infradead.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Chen-Yu Tsai <wenst@chromium.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	devicetree@vger.kernel.org,
-	Alper Nebi Yasak <alpernebiyasak@gmail.com>
-Subject: [RESEND PATCH v2 2/2] arm64: dts: mediatek: mt8173: Fix timer 13 MHz clock description
-Date: Wed, 15 May 2024 11:51:05 +0300
-Message-ID: <20240515085137.2842804-2-alpernebiyasak@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240515085137.2842804-1-alpernebiyasak@gmail.com>
-References: <20240515085137.2842804-1-alpernebiyasak@gmail.com>
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="bCaJ0EHa"
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44F8vps7015034;
+	Wed, 15 May 2024 11:17:59 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=
+	selector1; bh=P9HRaZf/HRKRXBcbWf8Sn90169F5hwUmhun9zIpDsWM=; b=bC
+	aJ0EHaE+ojA0V//atzBk13ngDco8uuvmuN+y9BFUod9zjThwH1UaqjldeeiA+cii
+	1lfbdDm4DMvb8qY03rJiohJtiJIK8Xu0u+J7b4YlADMfrrOnrCbaT2PLuE7vEjZQ
+	nazJ8mlv9O5uORtlqV+wgcdgKTIHyIM3Atsy0NLT7CbWbqTTd4naVhGaKansTTML
+	7sAwpQVMdyPbtafbLTG9J8fCMkyHa5za/o09TgFx4ml8w33YhBIqya9s0WkQ4byy
+	QsxZ2jwmRr/PxLChuDZ60cq9t932VQ3SaHGkRYf2JpgUbicCWCWpca1U5dM56Uyo
+	m9m6eAGXIuvwMlTbgeaA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3y4sxv0420-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 15 May 2024 11:17:58 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 421864002D;
+	Wed, 15 May 2024 11:17:48 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 1B8DB214D3B;
+	Wed, 15 May 2024 11:16:52 +0200 (CEST)
+Received: from [10.48.87.204] (10.48.87.204) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Wed, 15 May
+ 2024 11:16:51 +0200
+Message-ID: <51951dd4-8e8c-4e67-89f6-6a710022e34f@foss.st.com>
+Date: Wed, 15 May 2024 11:16:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] [RFC] clk: stm32mp1: Keep RNG1 clock always running
+To: Marek Vasut <marex@denx.de>, <linux-crypto@vger.kernel.org>
+CC: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Gabriel Fernandez
+	<gabriel.fernandez@foss.st.com>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Olivia Mackall <olivia@selenic.com>, Rob Herring
+	<robh@kernel.org>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Yang Yingliang
+	<yangyingliang@huawei.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+References: <20240513220349.183568-1-marex@denx.de>
+ <b2d0dfcb-37d6-4375-a4ad-ca96a5339840@foss.st.com>
+ <cc6f98eb-f6b2-4a34-a8ed-c0f759fa4c79@denx.de>
+Content-Language: en-US
+From: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>
+In-Reply-To: <cc6f98eb-f6b2-4a34-a8ed-c0f759fa4c79@denx.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
+ definitions=2024-05-15_04,2024-05-14_01,2023-05-22_02
 
-A previous patch fixes an issue with the mt8173-infracfg clock driver
-when working as a module, but has the side effect of skipping set up of
-CLK_INFRA_CLK_13M in that case. This clock is used by the timer device.
+Hi Marek,
 
-Similar to the MT8183, MT8192, MT8195 and MT8186 cases [1], change the
-input clock of the timer block a fixed factor divide-by-2 clock that
-takes the 26 MHz oscillator as its input.
+On 5/14/24 16:37, Marek Vasut wrote:
+> On 5/14/24 10:10 AM, Gatien CHEVALLIER wrote:
+>> Hi Marek,
+> 
+> Hi,
+> 
+>> Strange indeed.
+> 
+> Yes.
+> 
+>> A potential reason that comes to my mind would be that something tries 
+>> to get a random number after the driver suspended and fails to do so.
+> 
+> Possibly.
+> 
+>> Else it might just be a bad clock balance.
+> 
+> I don't think so, this would be reported by the kernel and it would show 
+> up in /sys/kernel/debug/clk/clk_summary as incrementing use count. It 
+> would also not happen in a non-deterministic manner like this happens 
+> here, the hang doesn't always happen after well defined suspend/resume 
+> cycle count.
+> 
+>> Can you describe the software ecosystem that you're running please?
+>> (SCMI/no SCMI)?
+> 
+> STM32MP157C DHCOM PDK2 with mainline U-Boot 2024.07-rc2 , no SCMI.
+> 
+>> Do you have the 3 fixes of stm32_rng.c that you've sent recently in your
+>> software when testing?
+> 
+> Yes, but this happens even without them.
+> 
+>> What if you add a trace in a random generation function in random.c?
+> 
+> Do you have a function name or line number for me ?
 
-Also remove the RTC clock from the timer node while we're here. According
-to commit 59311b19d7f63 ("clocksource/drivers/timer-mediatek: Add system
-timer bindings") it is no longer used.
+I put a trace in _get_random_bytes() in drivers/char/random.c. I'm not
+100% sure but this should be the entry point when getting a random number.
 
-[1] https://lore.kernel.org/all/20221201084229.3464449-1-wenst@chromium.org/
+> 
+>> After this, I'll try to reproduce the issue.
+> 
+> If you have a minute to test it on some ST MP15 board, that would be 
+> real nice. Thanks !
 
-Signed-off-by: Alper Nebi Yasak <alpernebiyasak@gmail.com>
----
-Tested on a MT8173 Chromebook. But I'm not sure I understand all of
-this, so review with a pinch of salt.
+I tried to reproduce the issue you're facing on a STM32MP157C-DK2 no
+SCMI on the 6.9-rc7 kernel tag. I uses OP-TEE and TF-A in the bootchain
+but this should not have an impact here.
 
-Changes in v2:
-- Add this patch
+How did you manage to test using "echo core > /sys/power/pm_test"?
+In kernel/power/suspend.c, enter_state(). If the pm_test_level is core,
+then an error is fired with the following trace:
+"Unsupported test mode for suspend to idle, please choose 
+none/freezer/devices/platform."
 
- arch/arm64/boot/dts/mediatek/mt8173.dtsi | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+I've tried using "echo devices > /sys/power/pm_test" so that I can at 
+least test that the driver is put to sleep then wakes up. I do not
+reproduce your issue.
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-index 3458be7f7f61..809b379b6818 100644
---- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-@@ -244,6 +244,15 @@ psci {
- 		cpu_on	 = <0x84000003>;
- 	};
- 
-+	clk13m: fixed-factor-clock-13m {
-+		compatible = "fixed-factor-clock";
-+		#clock-cells = <0>;
-+		clocks = <&clk26m>;
-+		clock-div = <2>;
-+		clock-mult = <1>;
-+		clock-output-names = "clk13m";
-+	};
-+
- 	clk26m: oscillator0 {
- 		compatible = "fixed-clock";
- 		#clock-cells = <0>;
-@@ -530,8 +539,7 @@ timer: timer@10008000 {
- 				     "mediatek,mt6577-timer";
- 			reg = <0 0x10008000 0 0x1000>;
- 			interrupts = <GIC_SPI 144 IRQ_TYPE_LEVEL_LOW>;
--			clocks = <&infracfg CLK_INFRA_CLK_13M>,
--				 <&topckgen CLK_TOP_RTC_SEL>;
-+			clocks = <&clk13m>;
- 		};
- 
- 		pwrap: pwrap@1000d000 {
--- 
-2.43.0
+[  169.026421] Filesystems sync: 0.013 seconds
+[  169.031087] Freezing user space processes
+[  169.036562] Freezing user space processes completed (elapsed 0.002 
+seconds)
+[  169.042238] OOM killer disabled.
+[  169.045383] Freezing remaining freezable tasks
+[  169.051408] Freezing remaining freezable tasks completed (elapsed 
+0.001 seconds)
+[  169.238226] dwc2 49000000.usb-otg: suspending usb gadget 
+configfs-gadget.g1
+[  169.270236] In stm32_rng_suspend
+[  169.275501] PM: suspend debug: Waiting for 5 second(s).
+[  174.283418] In stm32_rng_resume
+[  174.284291] stm32-dwmac 5800a000.ethernet end0: configuring for 
+phy/rgmii-id link mode
+[  174.337714] dwmac4: Master AXI performs any burst length
+[  174.341699] stm32-dwmac 5800a000.ethernet end0: No Safety Features 
+support found
+[  174.349138] stm32-dwmac 5800a000.ethernet end0: IEEE 1588-2008 
+Advanced Timestamp supported
+[  174.363442] dwc2 49000000.usb-otg: resuming usb gadget configfs-gadget.g1
+[  174.667669] onboard-usb-hub 2-1: reset high-speed USB device number 2 
+using ehci-platform
+[  174.989075] OOM killer enabled.
+[  174.990848] Restarting tasks ... done.
+[  175.003976] random: crng reseeded on system resumption
+[  175.009464] PM: suspend exit
+[  175.011473] random: ASKING FOR 96 BYTES
+[  175.011468] random: ASKING FOR 96 BYTES
+[  175.015747] random: ASKING FOR 16 BYTES
+[  175.044933] random: ASKING FOR 96 BYTES
+[  175.059399] random: ASKING FOR 96 BYTES
+[  175.070925] random: ASKING FOR 16 BYTES
+[  175.079285] random: ASKING FOR 96 BYTES
+[  175.082113] random: ASKING FOR 16 BYTES
+[  175.096759] random: ASKING FOR 16 BYTES
+[  175.098674] random: ASKING FOR 96 BYTES
+[  175.295584] random: ASKING FOR 16 BYTES
+[  175.302357] random: ASKING FOR 96 BYTES
+[  175.311525] random: ASKING FOR 16 BYTES
+[  175.312989] random: ASKING FOR 16 BYTES
+
+
+Can you give it another shot with the trace so that we can ensure that
+no random is asked after the driver is suspended in your case please?
+
+Thanks,
+Gatien
+
+
 
