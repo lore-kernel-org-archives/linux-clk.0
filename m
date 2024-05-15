@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7792284DF1;
-	Wed, 15 May 2024 12:59:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D886757E0;
+	Wed, 15 May 2024 12:59:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715777949; cv=none; b=uiFbJydbp2cGhAonp59k2uIpd3cYefG2RDcfJMYdi2CeXAyvQ8hgLOoq8mEOudUsHHFPNESoH2EazvkTYofG31SC2YSmmIeBI5irDVUlJbPEY6V5PzlN4ot8ad8NaUPzgl2OrJydc11raOmjuwf3zXVoNMVIvI3gbQPMr6Lq7ew=
+	t=1715777953; cv=none; b=hixCWGMZWYIxzYh2ZfrMwhPzczjbTF8heGzCkxCeUbwHHfrg8+cUq6oIGdo4TTIMz8jH79czEahZevfYe6YLp0eqn2DMRoswWM665lvXzpg3ay4+c40U3crfpH2Rc40rMgerQbyTUc+WvCVEKXFo19rsQdqFi3xNpOjTBhdeAG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715777949; c=relaxed/simple;
-	bh=QibeM2F1gzpesVZ5F/kxf0b9lNU3TuD+OPRRNfvg/0I=;
+	s=arc-20240116; t=1715777953; c=relaxed/simple;
+	bh=epj2XTyHV0DM4jDls6ECBOh89BAXVZ99Xrhk4jkYb+o=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=DOKEC6Krq0+AfQFvsX3MhNTxg3fTN74LW3YFMm1w5m98ikWxoUYzgun6HIJ8Qm4dmqFKCikchGd3zMT+Xi4pMovibVjP3DJ3LNuMnMfPPlcVM6vLSPMkElBlRSkcsjqddz+IDVsFmYh74swOJPGiflMiPhb7LKAU0YtmbrdfJ0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CVSUmrCs; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=f9KjvIEWt2toRuKuzy6jOu7Zy+2D9F4a5sPXzXmlhsdBuYvTNV+8K4+ggi+v7DVzVYK7d3CiH5BbqTPqlH3D+jmCucA4MT1Jw+54FlmA2jrYRMp+MZ6MnQfUw9SXXcIGDL0Xh+ihBj9f16Th1iiL+UhAnNxAtqzMm7IcCXEay20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IQBM0ynz; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CVSUmrCs"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C61ABC4AF0B;
-	Wed, 15 May 2024 12:59:08 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IQBM0ynz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80B4FC32782;
+	Wed, 15 May 2024 12:59:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715777949;
-	bh=QibeM2F1gzpesVZ5F/kxf0b9lNU3TuD+OPRRNfvg/0I=;
+	s=k20201202; t=1715777952;
+	bh=epj2XTyHV0DM4jDls6ECBOh89BAXVZ99Xrhk4jkYb+o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=CVSUmrCszwvXqMvZ6o/KZe4Rnhjezo9mSbtvHGWprvyjHq7l8kaSEDKrm5EA7kEwe
-	 oUeQxBEAS1diSLW1/jTxR72cWqAlbtuuSctFnywZ0iqfx4g8mc3R6ecNBVc7QgT8x7
-	 GI+0l4Kc9WEqZrR09r/Mf5DPWjGicRaCHTVha5R9GDpo84sg+x74Ckg8w0wfq3ICRi
-	 xHNjxsWWkcTD+SZdBzjVG40ud9UrWtlCKB1gSnMmGI5p6kWKHcMKeo9QedOJRsPIhr
-	 mED323XijE9qlueWyzWoTfIb+YchgET7+vM7xIkaBxjx0mrqFm3Y3+cewQqSlXDUR1
-	 /sWLRgecANCYg==
+	b=IQBM0ynzMTcS7seNAXo/ysDIRpiyMuJNQoVcmzdIg3fnqhUA4xYFwNRd2Z5iOU9pA
+	 u/xZFeLc5Jie+orK0zFWFdzIu9FYjRgUdPm3n872mX0POvVb8P0DefaKj6cJgdlYjF
+	 2CxZrYxSB+okXkPhWeZxJtkDHr/JuMp5CRq5E98GFI+jTMkWFhFiJ+1cD7vC5f/CYT
+	 lXnKhlqsv6H8vwWBr9x5wISVIXbmAjlzL3/hASs56AcDtuYZMKhtc71AMHDuWgCYwP
+	 GR2j8sDu+OLdEXqBEFEgETAoXTLbkxN4ppbpXZjOribiRR7WEiCe/vvlCQealuZUyX
+	 4AY3FiDu+A9yA==
 From: Lorenzo Bianconi <lorenzo@kernel.org>
 To: linux-clk@vger.kernel.org
 Cc: p.zabel@pengutronix.de,
@@ -45,9 +45,9 @@ Cc: p.zabel@pengutronix.de,
 	will@kernel.org,
 	upstream@airoha.com,
 	angelogioacchino.delregno@collabora.com
-Subject: [PATCH 2/5] dt-bindings: reset: Add reset definitions for EN7581 SoC.
-Date: Wed, 15 May 2024 14:58:48 +0200
-Message-ID: <acb6aa6fe473c485605c108e551d6d28ceb27a60.1715777643.git.lorenzo@kernel.org>
+Subject: [PATCH 3/5] arm64: dts: airoha: Add reset-controller support to EN7581 clock node
+Date: Wed, 15 May 2024 14:58:49 +0200
+Message-ID: <7c3cff0bb3fd93efc53500c51e5e28b645e56710.1715777643.git.lorenzo@kernel.org>
 X-Mailer: git-send-email 2.45.0
 In-Reply-To: <cover.1715777643.git.lorenzo@kernel.org>
 References: <cover.1715777643.git.lorenzo@kernel.org>
@@ -59,88 +59,35 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Introduce reset binding definitions for reset controller available in
-the Airoha EN7581 clock module.
+Introduce reset capability to scuclk clock-controller device-tree node
+for EN7581 SoC.
 
 Tested-by: Zhengping Zhang <zhengping.zhang@airoha.com>
 Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
 ---
- .../dt-bindings/reset/airoha,en7581-reset.h   | 66 +++++++++++++++++++
- 1 file changed, 66 insertions(+)
- create mode 100644 include/dt-bindings/reset/airoha,en7581-reset.h
+ arch/arm64/boot/dts/airoha/en7581.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/include/dt-bindings/reset/airoha,en7581-reset.h b/include/dt-bindings/reset/airoha,en7581-reset.h
-new file mode 100644
-index 000000000000..1b7ee62ed164
---- /dev/null
-+++ b/include/dt-bindings/reset/airoha,en7581-reset.h
-@@ -0,0 +1,66 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) 2024 AIROHA Inc
-+ * Author: Lorenzo Bianconi <lorenzo@kernel.org>
-+ */
-+
-+#ifndef __DT_BINDINGS_RESET_CONTROLLER_AIROHA_EN7581_H_
-+#define __DT_BINDINGS_RESET_CONTROLLER_AIROHA_EN7581_H_
-+
-+/* RST_CTRL2 */
-+#define EN7581_XPON_PHY_RST		0
-+#define EN7581_CPU_TIMER2_RST		2
-+#define EN7581_HSUART_RST		3
-+#define EN7581_UART4_RST		4
-+#define EN7581_UART5_RST		5
-+#define EN7581_I2C2_RST			6
-+#define EN7581_XSI_MAC_RST		7
-+#define EN7581_XSI_PHY_RST		8
-+#define EN7581_NPU_RST			9
-+#define EN7581_I2S_RST			10
-+#define EN7581_TRNG_RST			11
-+#define EN7581_TRNG_MSTART_RST		12
-+#define EN7581_DUAL_HSI0_RST		13
-+#define EN7581_DUAL_HSI1_RST		14
-+#define EN7581_HSI_RST			15
-+#define EN7581_DUAL_HSI0_MAC_RST	16
-+#define EN7581_DUAL_HSI1_MAC_RST	17
-+#define EN7581_HSI_MAC_RST		18
-+#define EN7581_WDMA_RST			19
-+#define EN7581_WOE0_RST			20
-+#define EN7581_WOE1_RST			21
-+#define EN7581_HSDMA_RST		22
-+#define EN7581_TDMA_RST			24
-+#define EN7581_EMMC_RST			25
-+#define EN7581_SOE_RST			26
-+#define EN7581_PCIE2_RST		27
-+#define EN7581_XFP_MAC_RST		28
-+#define EN7581_USB_HOST_P1_RST		29
-+#define EN7581_USB_HOST_P1_U3_PHY_RST	30
-+/* RST_CTRL1 */
-+#define EN7581_PCM1_ZSI_ISI_RST		32
-+#define EN7581_FE_PDMA_RST		33
-+#define EN7581_FE_QDMA_RST		34
-+#define EN7581_PCM_SPIWP_RST		36
-+#define EN7581_CRYPTO_RST		38
-+#define EN7581_TIMER_RST		40
-+#define EN7581_PCM1_RST			43
-+#define EN7581_UART_RST			44
-+#define EN7581_GPIO_RST			45
-+#define EN7581_GDMA_RST			46
-+#define EN7581_I2C_MASTER_RST		48
-+#define EN7581_PCM2_ZSI_ISI_RST		49
-+#define EN7581_SFC_RST			50
-+#define EN7581_UART2_RST		51
-+#define EN7581_GDMP_RST			52
-+#define EN7581_FE_RST			53
-+#define EN7581_USB_HOST_P0_RST		54
-+#define EN7581_GSW_RST			55
-+#define EN7581_SFC2_PCM_RST		57
-+#define EN7581_PCIE0_RST		58
-+#define EN7581_PCIE1_RST		59
-+#define EN7581_CPU_TIMER_RST		60
-+#define EN7581_PCIE_HB_RST		61
-+#define EN7581_XPON_MAC_RST		63
-+
-+#endif /* __DT_BINDINGS_RESET_CONTROLLER_AIROHA_EN7581_H_ */
+diff --git a/arch/arm64/boot/dts/airoha/en7581.dtsi b/arch/arm64/boot/dts/airoha/en7581.dtsi
+index 77fd37222a6a..f4d41b22e505 100644
+--- a/arch/arm64/boot/dts/airoha/en7581.dtsi
++++ b/arch/arm64/boot/dts/airoha/en7581.dtsi
+@@ -3,6 +3,7 @@
+ #include <dt-bindings/interrupt-controller/irq.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/clock/en7523-clk.h>
++#include <dt-bindings/reset/airoha,en7581-reset.h>
+ 
+ / {
+ 	interrupt-parent = <&gic>;
+@@ -158,6 +159,7 @@ scuclk: clock-controller@1fa20000 {
+ 			      <0x0 0x1fb00000 0x0 0x1000>,
+ 			      <0x0 0x1fbe3400 0x0 0xfc>;
+ 			#clock-cells = <1>;
++			#reset-cells = <1>;
+ 		};
+ 
+ 		snfi: spi@1fa10000 {
 -- 
 2.45.0
 
