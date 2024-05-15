@@ -1,55 +1,55 @@
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
+Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2012381A4;
-	Wed, 15 May 2024 02:48:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7E0D38F98;
+	Wed, 15 May 2024 03:46:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715741292; cv=none; b=smnh+LYoXmn1wC4EMRrTa4SWb9dEHVqIW+NVi//epqomQAd9qTgQ0lbjkSPvLaQGw25XWxUE9qgS0RvkVXvNIwqb56FI+47r+2ltOB8rtKAI5JbJezw4BAPM7pB45saQ47zdrzDX90ZKtvP4U8iMdmTXJOEU8U2bqKenpSO4ow8=
+	t=1715744775; cv=none; b=MGSawe8CX/HLe9S+R/ZGfv1Vwjfepq2vZMFSgOa/v/nx4vvCYkU2qN8WDizal/y6qyvCnr1vwDawFBzVUm3jJrRQ+vFI+e1nywnTy8Iab3xtbiEoTp3b16whGDI/OzZGHuZeEZRmzA7M+MbBMIUeOfm+3ktfllNzLo/DaweGGR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715741292; c=relaxed/simple;
-	bh=Zm/aWD0cPpxYKvZkG11YI0/Q+FB2yEFE0LiK+B1PVHY=;
+	s=arc-20240116; t=1715744775; c=relaxed/simple;
+	bh=f0+RAJNpD4xwzDxXJtu5/ftCqWzFGWvy6Jlsa7uUy3Y=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BfrWOUAq9K6rjX9jxMlkWdLv7ycRJJJpe/9AsCrtzaQkM2mzVJ+P5blcxT14hLOGIKVitbTP2BuOs+exS5/mJh1Pebu5SV4iDXr6GI/dsSAKEaxLT14J/kXlz84gn5XIg5QI8GE9eR0objk8Ut2uebGe3mNV7Di/PFGI1ml/kW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KqwutLph; arc=none smtp.client-ip=209.85.166.174
+	 To:Cc:Content-Type; b=s/s9bXNuNdqEUoVrwc7GAiwO4j57Usix0x83YsfvR8cI0eIaMi5uiz1oPyDEnBfBccfD2KHPRCIhExACmZp7fjuDhxSLW58atZxJcUiNJFmvs82+hrVD6HPhKBi5vHtwOH0gRBHWSKmYj4UIOCFQaRMlWpzRYSeO8sDzZmTPins=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LONrvopU; arc=none smtp.client-ip=209.85.166.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KqwutLph"
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-36da84df7adso6805995ab.1;
-        Tue, 14 May 2024 19:48:09 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LONrvopU"
+Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-36db3304053so4848845ab.2;
+        Tue, 14 May 2024 20:46:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715741289; x=1716346089; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1715744772; x=1716349572; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KIDhweI0h5UXcyTSp+TP3eWf/lMbo5o/HSpNa1VAcs0=;
-        b=KqwutLphAbdHAKqhlyCzS7G7eP4R0z7BFsSyzy2sI8+Ueu6WfjqH30E7dQWuJ3DpNY
-         BOwYmjVA34E6YMJks2kPxaZk4Bupd6wIYIdDXeLhTVhyNPCDDC4OfBZ2tKVJJ2qyqu2M
-         4z/dpMqQ6o8AZZ2JVqTqmYoEZDv0LQV0TxT6ayN9tqqr+r+8eRZLNDnPV5PTalxF+yvi
-         GmLLMQLV/H/euaJW584v7Cuc2HbvzMuJLuY9zVjOQzLQ9Iq/WoU3ziDkJCkzbiIF3IJ3
-         9zy1F8xEoYN/sV+eO5N2YOvtGBhENRnii+uWb6nXxaVfZwiJYQzwN/50ZMNM6F+VioPe
-         SvFg==
+        bh=IK7QXti6gMaWIx9kOf1v+tHDmKiZibD5iL04jzdGCEc=;
+        b=LONrvopUYMM3QAm+y/b47vtN7lltEA51qsKpuvU0LY40IwEKd8uE9s4IpECJC/Gype
+         6X+mCYqhTLZRHQOP6H5e2lO4KB4wJM5uFVQ+wjvcbIDXR6m0+AjX0ZpVTXKXYUaKQ6vz
+         KZqMAHvN7wM45rzx8YJNDPz9KOf48Z4skhHVCOPfmIztQSFpHVaXcFFwVOLlKgQUq0/i
+         243Wd515s+zfNTkQcGmNGbdLuuVy9jKzeH7ijT8AZNDdBYUjbP3kBv16fU3MP7VDe9Zt
+         tv4PnBIQ80Xg3z12eQBM14DXEByU2V2hKxNgnGA/fDgiuz85ErdrPj7ZePPKUzZOPH5P
+         mFbA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715741289; x=1716346089;
+        d=1e100.net; s=20230601; t=1715744772; x=1716349572;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=KIDhweI0h5UXcyTSp+TP3eWf/lMbo5o/HSpNa1VAcs0=;
-        b=ZP3vh7EHSToWMmlTKE0WeuT28Hn3UoJ3SR2gjysGRHL4xlz9xNaknpvxSVs98d6V1L
-         JjEVzD0qXN9zitu8eZoNboPLmoBVQR46+r/dTHxurnd/1+m1rgvCrrXu0v/03ZAnxZhF
-         Dw3x8Pcmj/iCSx3SgnvrOt8FPD841mNAACopZGR0699SW0yoY1arcnsfBNx9gjF9mXS1
-         zzNFaW/yq+E83zqqsV4tquT5ahgLwPyW8QG1NPgpeQTdBEA05qZI1gvn1IIuUK3WhFTw
-         mTWgaLf+sxBxDr31JHzc3C/rvFQZ3GLYuV+e+vTUWiufudbnvuZ47EML0vflbmtf7Gag
-         FZRg==
-X-Forwarded-Encrypted: i=1; AJvYcCW98HaLEwTcaQ4cSVkQhoRDYHz/zRP4H2oPWWkpdmDE0pbaTMYqhOvw9p8RosJcVy1BqA2hd+XqmkjLBxPj6AGvzdvuQSEsRkiMKDyjfvEITsiywMlNTd90GG4/NUmpeERXBP/AppU4gAtZUGdLi2Hfu6j8+snbb5XEMqaspqDHWSD2vw==
-X-Gm-Message-State: AOJu0YyCW3bGnhVT/SnRfGJ/QhmzF21pktduzUuNS0DvLaxUA3nrHZ2/
-	M5JfTy/w+pbeeB5LCX3PZeDj21M6QRuLRP0RtOd7XqMW4s7XynY5aR70Lcjgp0hkbIJOlfNWwKD
-	s51IsRU8/2e5k5KMn+lKb8p6ZbeI=
-X-Google-Smtp-Source: AGHT+IHzVUc9KZPaSMitplhr5eOK7tggKIv03qnC7VHPuAL+ASkz3/IadH5Ux+z2PF/krzlmkYV1zomwI11/ywZHr4g=
-X-Received: by 2002:a05:6e02:17c5:b0:368:920b:e211 with SMTP id
- e9e14a558f8ab-36cc12a36a3mr120484205ab.5.1715741288898; Tue, 14 May 2024
- 19:48:08 -0700 (PDT)
+        bh=IK7QXti6gMaWIx9kOf1v+tHDmKiZibD5iL04jzdGCEc=;
+        b=q9FMjnqFBAnjMTsfPZ/wiEO+Hsz7fsLBttD84l+3MMEricvOqc6JYELJc7Uy47EpOc
+         q5Riyl66lNKSHgaCH5XgqsJbOzeiaf7JMdE2JbRl9QNfPsoi7y/Y95K858+HCtKucIMS
+         DZ+ViNq5+Ed1bBdvtiWSWyZXtYs/Pr8RSiWdsaNazqOhgveLh+gdY9wjRuAEsskzwxuU
+         Smku2M9HjmjkiSLLuyEmHmKFPz4zhsu0Q2LXy3l/PDKJW0x418qneMyG3H0EOy5K2AFH
+         28/yJePXQ8WabAuvD/HZuBnE5Av04UX4TPzUrzfwOjoEv7jIMSDgjiCg5PFZr4VHLXG3
+         7lfg==
+X-Forwarded-Encrypted: i=1; AJvYcCWn/vI6RCv3NttF+uFjt45pH0QEjwwxRdeMJdVRE7m5DakE3QLm5tfUCbBhYDpayRhcBzxNv0VeKs59McWD0DHPXQMFYui3phJUs5WwVpk74IqS9cLF3FZETpnXkVjEqQG5LllnUYxV/n+qWbv3oN6k6doqdpO/lPVnVlBHHZDp0M78bQ==
+X-Gm-Message-State: AOJu0YxC9y3Jrg4GLhDsA5ZJ3tEOrG9lr9X1tRhQpV5p+43vem5hy9Kh
+	IHO/dViH/NKzudaF0Y+79l9tgJkL8rhNDcauOf8m19ejg712KhVW1CCGaZ6TlP5vOeXTQw7pC/B
+	62ZEUJu7+8b9ivR/5uYNCHU4zUx0=
+X-Google-Smtp-Source: AGHT+IGZ+P53lPWGkktNPznbZTqmgsikuFuzx6bUIb82YiQyAOuspBc445HOheK/8XONNLi1B1dXlpKVb5ds0xBfnxE=
+X-Received: by 2002:a92:c269:0:b0:36a:f9e8:5e7d with SMTP id
+ e9e14a558f8ab-36cc14684f7mr178877585ab.7.1715744771891; Tue, 14 May 2024
+ 20:46:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -58,11 +58,11 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <1715679210-9588-1-git-send-email-shengjiu.wang@nxp.com>
  <1715679210-9588-4-git-send-email-shengjiu.wang@nxp.com> <20240514-campus-sibling-21cdf4c78366@spud>
- <b86c83a520f0c45a60249468fa92b1de.sboyd@kernel.org>
-In-Reply-To: <b86c83a520f0c45a60249468fa92b1de.sboyd@kernel.org>
+ <b86c83a520f0c45a60249468fa92b1de.sboyd@kernel.org> <CAA+D8ANTdvQJVtniyMtqjnJdT4qX+LDGjVuFO6H0RSO+GDw+ng@mail.gmail.com>
+In-Reply-To: <CAA+D8ANTdvQJVtniyMtqjnJdT4qX+LDGjVuFO6H0RSO+GDw+ng@mail.gmail.com>
 From: Shengjiu Wang <shengjiu.wang@gmail.com>
-Date: Wed, 15 May 2024 10:47:57 +0800
-Message-ID: <CAA+D8ANTdvQJVtniyMtqjnJdT4qX+LDGjVuFO6H0RSO+GDw+ng@mail.gmail.com>
+Date: Wed, 15 May 2024 11:46:00 +0800
+Message-ID: <CAA+D8AMaEEMk9F4bFYqYNez=XPhtF9VR8F-hcqYp_C2QKFq-4Q@mail.gmail.com>
 Subject: Re: [PATCH v3 3/6] dt-bindings: clock: imx8mp: Add reset-controller sub-node
 To: Stephen Boyd <sboyd@kernel.org>
 Cc: Conor Dooley <conor@kernel.org>, Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org, 
@@ -75,52 +75,97 @@ Cc: Conor Dooley <conor@kernel.org>, Shengjiu Wang <shengjiu.wang@nxp.com>, abel
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, May 15, 2024 at 5:09=E2=80=AFAM Stephen Boyd <sboyd@kernel.org> wro=
-te:
+On Wed, May 15, 2024 at 10:47=E2=80=AFAM Shengjiu Wang <shengjiu.wang@gmail=
+.com> wrote:
 >
-> Quoting Conor Dooley (2024-05-14 11:06:14)
-> > On Tue, May 14, 2024 at 05:33:27PM +0800, Shengjiu Wang wrote:
-> > > diff --git a/Documentation/devicetree/bindings/clock/imx8mp-audiomix.=
-yaml b/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
-> > > index 0a6dc1a6e122..a403ace4d11f 100644
-> > > --- a/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
-> > > +++ b/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
-> > > @@ -15,7 +15,10 @@ description: |
-> > >
-> > >  properties:
-> > >    compatible:
-> > > -    const: fsl,imx8mp-audio-blk-ctrl
-> > > +    items:
-> > > +      - const: fsl,imx8mp-audio-blk-ctrl
-> > > +      - const: syscon
-> > > +      - const: simple-mfd
-> > >
-> > >    reg:
-> > >      maxItems: 1
-> > > @@ -44,6 +47,11 @@ properties:
-> > >        ID in its "clocks" phandle cell. See include/dt-bindings/clock=
-/imx8mp-clock.h
-> > >        for the full list of i.MX8MP IMX8MP_CLK_AUDIOMIX_ clock IDs.
-> > >
-> > > +  reset-controller:
-> > > +    type: object
-> > > +    $ref: /schemas/reset/fsl,imx8mp-audiomix-reset.yaml#
-> > > +    description: The child reset devices of AudioMIX Block Control.
+> On Wed, May 15, 2024 at 5:09=E2=80=AFAM Stephen Boyd <sboyd@kernel.org> w=
+rote:
 > >
-> > Why not just set #reset-cells =3D <1> in the existing node? IIRC it was
-> > already suggested to you to do that and use auxdev to set up the reset
-> > driver.
+> > Quoting Conor Dooley (2024-05-14 11:06:14)
+> > > On Tue, May 14, 2024 at 05:33:27PM +0800, Shengjiu Wang wrote:
+> > > > diff --git a/Documentation/devicetree/bindings/clock/imx8mp-audiomi=
+x.yaml b/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
+> > > > index 0a6dc1a6e122..a403ace4d11f 100644
+> > > > --- a/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
+> > > > +++ b/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
+> > > > @@ -15,7 +15,10 @@ description: |
+> > > >
+> > > >  properties:
+> > > >    compatible:
+> > > > -    const: fsl,imx8mp-audio-blk-ctrl
+> > > > +    items:
+> > > > +      - const: fsl,imx8mp-audio-blk-ctrl
+> > > > +      - const: syscon
+> > > > +      - const: simple-mfd
+> > > >
+> > > >    reg:
+> > > >      maxItems: 1
+> > > > @@ -44,6 +47,11 @@ properties:
+> > > >        ID in its "clocks" phandle cell. See include/dt-bindings/clo=
+ck/imx8mp-clock.h
+> > > >        for the full list of i.MX8MP IMX8MP_CLK_AUDIOMIX_ clock IDs.
+> > > >
+> > > > +  reset-controller:
+> > > > +    type: object
+> > > > +    $ref: /schemas/reset/fsl,imx8mp-audiomix-reset.yaml#
+> > > > +    description: The child reset devices of AudioMIX Block Control=
+.
+> > >
+> > > Why not just set #reset-cells =3D <1> in the existing node? IIRC it w=
+as
+> > > already suggested to you to do that and use auxdev to set up the rese=
+t
+> > > driver.
+> >
+> > Yes, do that.
 >
-> Yes, do that.
+> Can I know why sub nodes can't be used? the relationship of parent and
+> child devices looks better with sub nodes.
+>
+> A further question is can I use the reset-ti-syscon? which is a generic r=
+eset
+> device for SoCs.  with it I don't even need to write a new reset device d=
+river.
+> it is more simple.
+>
+The document link is:
+https://www.kernel.org/doc/Documentation/devicetree/bindings/reset/ti-sysco=
+n-reset.txt
 
-Can I know why sub nodes can't be used? the relationship of parent and
-child devices looks better with sub nodes.
+Then example is:
+examples:
+  # Clock Control Module node:
+  - |
+    #include <dt-bindings/clock/imx8mp-clock.h>
+    #include <dt-bindings/reset/ti-syscon.h>
 
-A further question is can I use the reset-ti-syscon? which is a generic res=
-et
-device for SoCs.  with it I don't even need to write a new reset device dri=
-ver.
-it is more simple.
+    clock-controller@30e20000 {
+        compatible =3D "fsl,imx8mp-audio-blk-ctrl", "syscon", "simple-mfd";
+        reg =3D <0x30e20000 0x10000>;
+        #clock-cells =3D <1>;
+        clocks =3D <&clk IMX8MP_CLK_AUDIO_ROOT>,
+                 <&clk IMX8MP_CLK_SAI1>,
+                 <&clk IMX8MP_CLK_SAI2>,
+                 <&clk IMX8MP_CLK_SAI3>,
+                 <&clk IMX8MP_CLK_SAI5>,
+                 <&clk IMX8MP_CLK_SAI6>,
+                 <&clk IMX8MP_CLK_SAI7>;
+        clock-names =3D "ahb",
+                      "sai1", "sai2", "sai3",
+                      "sai5", "sai6", "sai7";
+        power-domains =3D <&pgc_audio>;
+
+        reset-controller {
+            compatible =3D "ti,syscon-reset";
+            #reset-cells =3D <1>;
+            ti,reset-bits =3D <
+                0x200 0 0x200 0 0 0 (ASSERT_CLEAR | DEASSERT_SET | STATUS_N=
+ONE)
+                0x200 1 0x200 1 0 0 (ASSERT_CLEAR | DEASSERT_SET | STATUS_N=
+ONE)
+            >;
+        };
+    };
 
 Best regards
 Shengjiu Wang
