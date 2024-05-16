@@ -1,100 +1,160 @@
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02754206C;
-	Thu, 16 May 2024 09:44:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7571414293;
+	Thu, 16 May 2024 09:46:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715852691; cv=none; b=ER6MBbgvkXSojk11y4Mu2PTdqRC5V8J8BePnIz+YTIQcIaX6Yc1QbXqZB6eX8XONUrXsLJrvzbtF6QFN5k2898KLNjbzeewVSSxJgZ60Q+8wk4lchEpFP6+1qLaIou5pdemMNuj0uecWyB8Qq7T9v0u+bqJgc3DkiXbwGO6vBBI=
+	t=1715852813; cv=none; b=DwoGwmxWivz4KHzDvvVljnhp9ZxZM/tQA5MnojSAscKzPsjLoZtpj+MZIPYRySbocbOWnDlQO6pvhdyNit/A3mkdYSW8WyCO4ohcN/GsP0EuBnE8XxnIpagZOps4lPyOWWRH3Gyo+Yr7tzvPMulc4R3kQfUFHRadgAkI/SgHkNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715852691; c=relaxed/simple;
-	bh=Mv4lNrglqS4nAOAX/673bvBVveCRgVuJ/fLlNsqmFkY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NiOlo9gfQQyHNXArjd254twrqCphuQYot6wMyGaqVe7gXF2nUfxh0imNfPgcHZffjTux2Ztvzi5PujOgryxtnGGcX1DmqEyxm2BFCuXBCRgMnrwCdHsgjrD/F5bAMzeI3LLuQ9FiMgR7KVRQGkdTNy/OoAorjAlVMnCTxA9PnTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iiJCit0q; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1715852813; c=relaxed/simple;
+	bh=HXKXiKah+AVVQ6aEeMPGqKFZCuvfixilkjP1ZnbURsM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r1BlQJjX2YD7s1Z2cp164mPPuEqTrYIn8Jstket7zTyt4Rq/5/To2XIf2K7q0J/xD6FinTIuCM256zV5wvq/n8onKyYbcTAtG10hgC+BYnvb+HYx/ACpLJn0IDRzpzJvJ+5onzVbbhRfoHxnHi+ln+nJXNcrwp7kFM7w4PzpnwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=QeOzmZFk; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iiJCit0q"
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-deb99fa47c3so8054877276.2;
-        Thu, 16 May 2024 02:44:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1715852688; x=1716457488; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Mv4lNrglqS4nAOAX/673bvBVveCRgVuJ/fLlNsqmFkY=;
-        b=iiJCit0qk7w3p7zytFdclCSYDlrMSZbeoyhUYKtq3UcuOZyUunyZYFQMDqrx37NKkx
-         0Yc3cUfh/3L+UwXAxuZQbOglFrugy8cSjzt6wj6sVOZtJaavDYDGL6V/5I/NMGrnHBuR
-         Lzgp9z2rzYdvfAIdj6YQM0dLeVbqME/OF3e+G+n9mtVnfyvo2z+s+SrfyXVfyre6tHqc
-         Z85HjN1gOp1kBk3cK7nP0N8Mzkf2XqjIbgBI7JIQCVS7yatwsGxD9EMP/JmPtI2qaH95
-         4lfvcfdxdoS7RtX1ajs/GgsB/LrIUnk501YWfpImB5b+bzRL6f6MA7Kdm4rY+NJ9wX6o
-         lTdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715852688; x=1716457488;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Mv4lNrglqS4nAOAX/673bvBVveCRgVuJ/fLlNsqmFkY=;
-        b=qnaQT/O3kC+Z3fkTeoYn9sTgig3JG1k2xwtKmMREoR8pddttz7Qbhtw11IUNWlvBmZ
-         H4bnD+LfGmArlX5wGASmHJAlpLLg0tjrnGIBni77TpxXpBT8pSGTUVS0Zebumt8gRQhi
-         +eHlFT19ozZob36qKH/nqG4RR+RaOMIBzw/81oO+05KjC9nwzidtJXM9s6nyjQmf9A54
-         bJsDOhUTFbt50g7C6WKg1HlYoVxLnIo2F3AO0Bujv59eQ9u2OiYh/HDN09hxtdQ+6nEo
-         ylxX/2CGGKqWGFNGBV79WrZYT1In8AdgFueYXTpYqpmfzuf5HPcXYVqaTfxi35oVw2o9
-         dwHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVUU9BOrXfQIDyWw1fjWhgpVU8WYLQB3pu1M7FytGVqTajd+2blq2aZhAQB8DS9BcoUhTnlWPekFuwwOY8CdbnHLOrhXCcN3y5KcbtukXuo4xIXzBCKWbzYghVJqUntEa7r0MjcpQnfu6fxu8VILrVJBmMcQVxvXZhg4AZURgz+JSO54A==
-X-Gm-Message-State: AOJu0YxIQK3CiHbDNSXyZMK6b6JboXWu69LIi4wnyx9GCMxHFibqwIrz
-	hsJiKo1D+aJyHiREwyQIh9vnkGfajlfzQro4t/oG19Dcotia6b/clnEARWJOi3SfuzRKmbnKeHZ
-	hipXw2V9Z3Dn2JIU6KgAJgeZAmlk=
-X-Google-Smtp-Source: AGHT+IGt4GOJGeaaemGwA4Ckt+18xxZfU1hLBTK3dGN/PrXCsjugWmUU80kcg1X7vu7MfI7i+fk+lUadWbYn6YM/PMQ=
-X-Received: by 2002:a25:c70d:0:b0:de6:4ff:3155 with SMTP id
- 3f1490d57ef6-dee4f2dae9fmr19813993276.16.1715852688597; Thu, 16 May 2024
- 02:44:48 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="QeOzmZFk"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1715852810;
+	bh=HXKXiKah+AVVQ6aEeMPGqKFZCuvfixilkjP1ZnbURsM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=QeOzmZFkRjesJ22q0DiQIq0i48oG3kpyLTpp0SaNQg46iCKfWSkWi5tzhBEP7soYF
+	 RrCihrW1qBkEIqlsYNh6tulQrVKy9yTvA8Kr0vpP2KJ1h8VWxM1B6W0SzVG9f5vQdS
+	 WIg8bu9ccCoYDEymHqMNUfUHzjnWkzscrhc0yA3qDY0B7Sy170jKTJlW/BdjtMZe+H
+	 VKe7QicT41a19Bqj7Aiv2gHH85MAt/Un4UYBQG948uQJG/RpXyUS+02tKWqSgYDRFU
+	 DcVmAHlFpgMDqeLbAAJNuTJweCv5PixLhlF4zykYVve88b/6l1V6VwGvX6MlpirOUP
+	 D6N610XakuNGw==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 8B15F37821A9;
+	Thu, 16 May 2024 09:46:49 +0000 (UTC)
+Message-ID: <b1e0db1a-2bcb-4d11-a386-e395c2946591@collabora.com>
+Date: Thu, 16 May 2024 11:46:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240509192411.2432066-1-tmaimon77@gmail.com> <20240509192411.2432066-5-tmaimon77@gmail.com>
- <20240513155330.GA2676859-robh@kernel.org>
-In-Reply-To: <20240513155330.GA2676859-robh@kernel.org>
-From: Tomer Maimon <tmaimon77@gmail.com>
-Date: Thu, 16 May 2024 12:44:36 +0300
-Message-ID: <CAP6Zq1hRw6xfNKKfBFGuKbZk0su3ys6+hnMzqRWrZeKzDoKLEw@mail.gmail.com>
-Subject: Re: [PATCH v24 4/4] dt-binding: clock: remove nuvoton npcm845-clk bindings
-To: Rob Herring <robh@kernel.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, 
-	krzysztof.kozlowski+dt@linaro.org, tali.perry1@gmail.com, joel@jms.id.au, 
-	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
-	openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/5] dt-bindings: reset: Add reset definitions for EN7581
+ SoC.
+To: Lorenzo Bianconi <lorenzo@kernel.org>, linux-clk@vger.kernel.org
+Cc: p.zabel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org,
+ lorenzo.bianconi83@gmail.com, conor@kernel.org,
+ linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ devicetree@vger.kernel.org, nbd@nbd.name, john@phrozen.org, dd@embedd.com,
+ catalin.marinas@arm.com, will@kernel.org, upstream@airoha.com
+References: <cover.1715777643.git.lorenzo@kernel.org>
+ <acb6aa6fe473c485605c108e551d6d28ceb27a60.1715777643.git.lorenzo@kernel.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <acb6aa6fe473c485605c108e551d6d28ceb27a60.1715777643.git.lorenzo@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Rob,
+Il 15/05/24 14:58, Lorenzo Bianconi ha scritto:
+> Introduce reset binding definitions for reset controller available in
+> the Airoha EN7581 clock module.
+> 
+> Tested-by: Zhengping Zhang <zhengping.zhang@airoha.com>
+> Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
+> ---
+>   .../dt-bindings/reset/airoha,en7581-reset.h   | 66 +++++++++++++++++++
+>   1 file changed, 66 insertions(+)
+>   create mode 100644 include/dt-bindings/reset/airoha,en7581-reset.h
+> 
+> diff --git a/include/dt-bindings/reset/airoha,en7581-reset.h b/include/dt-bindings/reset/airoha,en7581-reset.h
+> new file mode 100644
+> index 000000000000..1b7ee62ed164
+> --- /dev/null
+> +++ b/include/dt-bindings/reset/airoha,en7581-reset.h
+> @@ -0,0 +1,66 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (c) 2024 AIROHA Inc
+> + * Author: Lorenzo Bianconi <lorenzo@kernel.org>
+> + */
+> +
+> +#ifndef __DT_BINDINGS_RESET_CONTROLLER_AIROHA_EN7581_H_
+> +#define __DT_BINDINGS_RESET_CONTROLLER_AIROHA_EN7581_H_
+> +
+> +/* RST_CTRL2 */
+> +#define EN7581_XPON_PHY_RST		0
 
-Thanks for your comment.
+** sarcasm mode on **
 
-On Mon, 13 May 2024 at 18:53, Rob Herring <robh@kernel.org> wrote:
->
-> On Thu, May 09, 2024 at 10:24:11PM +0300, Tomer Maimon wrote:
-> > Remove nuvoton,npcm845-clk binding since the NPCM8xx clock driver
-> > using the auxiliary device framework and not the device tree framework.
->
-> Again, this is an ABI break. Changing driver architecture for 1 OS is
-> not a reason to change DT.
-Is it an ABI break even if the NPCM8xx clock driver hasn't upstream
-the kernel vanilla yet?
+Count with me: 0... 1... 2...
 
-I thought that since the NPCM8xx clock driver hasn't upstream the
-kernel vanilla yet and and in the latest NPCM8xx clock driver patch
-the NPCM8xx clock driver.
-using auxiliary device framework instead of DT we should remove the
-nuvoton,npcm845-clk.yaml file.
-https://patchwork.kernel.org/project/linux-clk/patch/20240509192411.2432066-4-tmaimon77@gmail.com/
+** sarcasm mode off **
 
->
-> Rob
+There's a jump here, you have a reset index 0 and an index 2,
+but you're missing index 1, that's not right :-)
 
-Thanks,
+Please fix.
 
-Tomer
+Cheers,
+Angelo
+
+> +#define EN7581_CPU_TIMER2_RST		2
+> +#define EN7581_HSUART_RST		3
+> +#define EN7581_UART4_RST		4
+> +#define EN7581_UART5_RST		5
+> +#define EN7581_I2C2_RST			6
+> +#define EN7581_XSI_MAC_RST		7
+> +#define EN7581_XSI_PHY_RST		8
+> +#define EN7581_NPU_RST			9
+> +#define EN7581_I2S_RST			10
+> +#define EN7581_TRNG_RST			11
+> +#define EN7581_TRNG_MSTART_RST		12
+> +#define EN7581_DUAL_HSI0_RST		13
+> +#define EN7581_DUAL_HSI1_RST		14
+> +#define EN7581_HSI_RST			15
+> +#define EN7581_DUAL_HSI0_MAC_RST	16
+> +#define EN7581_DUAL_HSI1_MAC_RST	17
+> +#define EN7581_HSI_MAC_RST		18
+> +#define EN7581_WDMA_RST			19
+> +#define EN7581_WOE0_RST			20
+> +#define EN7581_WOE1_RST			21
+> +#define EN7581_HSDMA_RST		22
+> +#define EN7581_TDMA_RST			24
+> +#define EN7581_EMMC_RST			25
+> +#define EN7581_SOE_RST			26
+> +#define EN7581_PCIE2_RST		27
+> +#define EN7581_XFP_MAC_RST		28
+> +#define EN7581_USB_HOST_P1_RST		29
+> +#define EN7581_USB_HOST_P1_U3_PHY_RST	30
+> +/* RST_CTRL1 */
+> +#define EN7581_PCM1_ZSI_ISI_RST		32
+> +#define EN7581_FE_PDMA_RST		33
+> +#define EN7581_FE_QDMA_RST		34
+> +#define EN7581_PCM_SPIWP_RST		36
+> +#define EN7581_CRYPTO_RST		38
+> +#define EN7581_TIMER_RST		40
+> +#define EN7581_PCM1_RST			43
+> +#define EN7581_UART_RST			44
+> +#define EN7581_GPIO_RST			45
+> +#define EN7581_GDMA_RST			46
+> +#define EN7581_I2C_MASTER_RST		48
+> +#define EN7581_PCM2_ZSI_ISI_RST		49
+> +#define EN7581_SFC_RST			50
+> +#define EN7581_UART2_RST		51
+> +#define EN7581_GDMP_RST			52
+> +#define EN7581_FE_RST			53
+> +#define EN7581_USB_HOST_P0_RST		54
+> +#define EN7581_GSW_RST			55
+> +#define EN7581_SFC2_PCM_RST		57
+> +#define EN7581_PCIE0_RST		58
+> +#define EN7581_PCIE1_RST		59
+> +#define EN7581_CPU_TIMER_RST		60
+> +#define EN7581_PCIE_HB_RST		61
+> +#define EN7581_XPON_MAC_RST		63
+> +
+> +#endif /* __DT_BINDINGS_RESET_CONTROLLER_AIROHA_EN7581_H_ */
+
