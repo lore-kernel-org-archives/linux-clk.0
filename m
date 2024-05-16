@@ -1,55 +1,55 @@
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 290E414B97C
-	for <linux-clk@vger.kernel.org>; Thu, 16 May 2024 15:08:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F116014B97E
+	for <linux-clk@vger.kernel.org>; Thu, 16 May 2024 15:08:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715872132; cv=none; b=jOJBdM+uzzYbw4zq+hIlqeQ9BtBgviX44dDB8QlF48sT7FeeVnRX8qwK0qAX7UH1vHr6o9Ae6ZiwS25RoWQweOawOtL+TXdb9yn5hiLxPyBUWS4XBBc4lTIwtxzucbfnq8mtDDvlJDI1SkvWH16XVNHraZjjBQ095RXwAZ8r9nU=
+	t=1715872132; cv=none; b=HiAYLWOGOu3vkIg1ilVPvUFmjsfkjM6O7xxJ16F5tbsiZD3TmxJbM+uuZlT8IpFzVg+cAtinoRTlEtHXvBHU9+HHUy6pIO13vF2LsBqVItXne8PhdYiGA+ABORdJHCn1TEB8xXJdmwSqAhlsP8nK4lOsAoUzzdGJhr8qEQqkdgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1715872132; c=relaxed/simple;
-	bh=cxaqUoQ9aguHyFdmx85j2AoRbVwkuszVVEgKQCGMEX8=;
+	bh=XhLKaJpFjJZQj7yn2g+fkx1VUJf2EFpLz+SlbAbTNhQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cmdWBYvMTgl3lYeGPRPle6riVBp8rREKpqw5sC5l4Ko21VVNA4YCJpBmFVmsVF7Qsf71tAkGrY/VNt6kv+K+c4cB+JYG+PFWVmG7OqpFKawrde/6Z39LxuKmxC2pnF/tgLIq7UzgBfVZtK1hcXBIixUsbeUg8kAKUnFqBVf/anE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=qiT2ujII; arc=none smtp.client-ip=209.85.128.44
+	 MIME-Version; b=nYiNWivm8+94B+DbBU8XM1p4+Be84C7/1ohhm0OXIKpt9SIdXcq3yfrCw+4/tjoECVfbvhysuaf4uQ9j2Qht01YZq5Fq5J17NJSQih/O9j9IH7II/tujuHdlYvLiH4IXT17F0KLuCFQ7xDnLQNJ/mNvlFRWQeWUXwz6ZO8lkVWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=iLjE3YM6; arc=none smtp.client-ip=209.85.208.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="qiT2ujII"
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4202dd90dcfso2629015e9.0
-        for <linux-clk@vger.kernel.org>; Thu, 16 May 2024 08:08:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="iLjE3YM6"
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2e34e85ebf4so7685021fa.2
+        for <linux-clk@vger.kernel.org>; Thu, 16 May 2024 08:08:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1715872128; x=1716476928; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1715872129; x=1716476929; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=+f/3bReYMesF4TJq9BOi7hv3PG6ArjPAwHRzmWrlWAw=;
-        b=qiT2ujIIVGhrnuqOh3+FX8h23MZkpHqzNIhTFqsgLttZUVWi9NhtGcq7sh/HCpXPqS
-         HnSdeWHSUiunY81T+sjuCYgvD9h44XvslU2HzSRxEA3PckF+6W+k7WauDx8JhvUnKN6L
-         3td+XdAWwgn2DkqL3cEBi8NbXX6ZVAKYSf1gdJaPWiRcCYIxc2n+XhjFXMgo+Wq23yvc
-         jSGCrTrRgzmW+1impZgD9sP3WLKwHe4tgrA0w/hNNUceQcTfc8/BkdOGUaQNHYeP9ZUY
-         2MmiAwZXqVDOI0wzi9DGJqllfEJF8AhX5x9TPxfO9G2hG4LlKpoGQk8swM9zzSiGv/IY
-         eYTg==
+        bh=QEvOpWPnO+AdwLbOiUNmMA/qUdgyKNblxOI/csLZzos=;
+        b=iLjE3YM6SqyFFYnVIJaEEKR/FT5pz6Lpbqi+8nFRWPD0qfNHvlKcJkW+Cs5EC2AfTL
+         9LMWRTnc3QiWO9Cdqg05iFfli8BcmK9Szz6gTWksH5yosbWWSfCC8PIb28JJHBZh/3Uj
+         Yh1OPE22by7518eAMO91u2Qn9gP73M9NuKHMPz4RCJQNNOsGAgfuKaSX2pI9W6sdcOEM
+         R2Qm17PBTrd0GM1FXPoSthomDvesVOeahhH+JL7Ol4ayJqK9IwaTIewgMN9wiDx7Ob0F
+         eTS6hk59JBYh0R1D6LU7U0g6YNTTJlQg1lNQEBrpz4/mQ6dYdTLjU+imEOFJ0vuClA/O
+         tyQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715872128; x=1716476928;
+        d=1e100.net; s=20230601; t=1715872129; x=1716476929;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=+f/3bReYMesF4TJq9BOi7hv3PG6ArjPAwHRzmWrlWAw=;
-        b=V4gvYk1yAOzoIYL+rsmh4sj8gGGuoLHrbVwzwrUsIsYueV1Yf0IzkaMZzSzf4cpJgg
-         zkDbsQ52yscYnohRHLVF1IbWlbmDN7zSacf8xHUyLsD8ZBJFDM/UF3PGRc2D+9bQTOMX
-         2FEDFDPuzy8Rlibl9sXgD7v6nCAiIlqoMtnZC/ZuB2CxbrnHISC8IOMQNFvxSiC5a8Pt
-         1IpCZoAGIwOMdXb8q7h3H1xJCbNDElIydTqFRicOWAEqq5ixSO46sEIuBBvM3CkDhDm9
-         l5/pfcW8+FzBErAxYhS0TXNbJXPQdDW4x+7sySnS96huHvDYktQ2hHjIYDLwJ3OabanJ
-         BClg==
-X-Forwarded-Encrypted: i=1; AJvYcCWgIRMh6FIHInnYl7C/0YVpYrWimKy5lroWh8kdHUzkzO3Mh5W6G3ED8chFOeK5+johLpaWjBVF9IfrDDCQMHiwZWFon8cXpbuJ
-X-Gm-Message-State: AOJu0Yz+0q2l1gf+cmOqggMB2izKVYqCsDwAr6TXBErb6MRHkfX2aQOU
-	aXlrYhNtWKg9sOup2jyeqGiolgjg4X0a6gNltvzqLM4p8X9f4os7bCLV+0zyGlw=
-X-Google-Smtp-Source: AGHT+IEYZF+5ejklYa8gOutFOpqH9vmFIkmi4oDHndgWrV0jEKKooJucmjXLHzEaKGqSFHUhay2i4Q==
-X-Received: by 2002:a05:600c:5008:b0:41f:e7ac:cc72 with SMTP id 5b1f17b1804b1-41fead643a0mr145586765e9.40.1715872128318;
-        Thu, 16 May 2024 08:08:48 -0700 (PDT)
+        bh=QEvOpWPnO+AdwLbOiUNmMA/qUdgyKNblxOI/csLZzos=;
+        b=fgmc9L+im7bJp6Z/4jFzO5CRToZGvuauKDZSiTgsPjcdnvtG6sG+5lkrohHhPQOYNQ
+         yYdXcDCVgu7IMTGNK0dkyM8IGIiPdCIKuGQzEmbzBYevGYLuNoReAJwrHZbqpZhUOvXB
+         jowjMTPcu5ukfDEiehogiDOwfqYoUIyduIISxVWvcm7bs1SwSFpfHsoFG+TaUQpaMhgD
+         4H4Zpax7M1JepPx5sheJ5u8lIFpOqEm0F7N6YQWdzE4+Z6ZuQ3JVZcIPfgGoZywLO63e
+         ltnwG7+vDJHKMLpdc6Dzs0F8SzZ3bd++JXjQhUlZFmZn8/2KGJTNGW0tfvsfXbph6BqN
+         yizA==
+X-Forwarded-Encrypted: i=1; AJvYcCVDRYZzII5t3n3lOFoDeeqBT9qSkUCv0TyAUa31Kf3O5QGyhzvYxREgOItTO6RVDYzKC8jQsDvBG+nFOfmQflTwjPYFLvZzV7Bb
+X-Gm-Message-State: AOJu0Yw82K5Lec2qrYbQJRxAtTCuivEvvltZJmW3NlXhH6HO9jraEui8
+	fbwoZukTDvyOncF6zUoyJmzJm6ZbXYjVUA5WEbLSNVEGD3EqOL5yxqDudAZCdSo=
+X-Google-Smtp-Source: AGHT+IGYAck85LsbcTOvXFQY8nZM3fKLyOR5JchkAjsB3ueKLHe+uoUsgS+o6TUKMWmJKolx9ml/0A==
+X-Received: by 2002:a2e:a412:0:b0:2e4:e15d:40b0 with SMTP id 38308e7fff4ca-2e52028aefemr120909581fa.32.1715872129220;
+        Thu, 16 May 2024 08:08:49 -0700 (PDT)
 Received: from toaster.lan ([2a01:e0a:3c5:5fb1:1fce:7e5a:e201:edd5])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-41f87c25459sm309351725e9.18.2024.05.16.08.08.47
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-41f87c25459sm309351725e9.18.2024.05.16.08.08.48
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Thu, 16 May 2024 08:08:48 -0700 (PDT)
 From: Jerome Brunet <jbrunet@baylibre.com>
@@ -61,9 +61,9 @@ Cc: Jerome Brunet <jbrunet@baylibre.com>,
 	linux-kernel@vger.kernel.org,
 	linux-amlogic@lists.infradead.org,
 	linux-clk@vger.kernel.org
-Subject: [RFC PATCH 1/9] reset: amlogic: convert driver to regmap
-Date: Thu, 16 May 2024 17:08:31 +0200
-Message-ID: <20240516150842.705844-2-jbrunet@baylibre.com>
+Subject: [RFC PATCH 2/9] reset: amlogic: add driver parameters
+Date: Thu, 16 May 2024 17:08:32 +0200
+Message-ID: <20240516150842.705844-3-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240516150842.705844-1-jbrunet@baylibre.com>
 References: <20240516150842.705844-1-jbrunet@baylibre.com>
@@ -77,156 +77,73 @@ X-Patchwork-Bot: notify
 Content-Transfer-Encoding: 8bit
 
 To allow using the same driver for the main reset controller and the
-auxiliary ones embedded in the clock controllers, convert the
-the Amlogic reset driver to regmap.
+auxiliary ones embedded in the clock controllers, allow to customise
+the reset offset, same as the level offset. Also add an option to make
+the level reset active low or high.
 
 Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/reset/reset-meson.c | 80 ++++++++++++++++++++-----------------
- 1 file changed, 44 insertions(+), 36 deletions(-)
+ drivers/reset/reset-meson.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/reset/reset-meson.c b/drivers/reset/reset-meson.c
-index f78be97898bc..8f3d6e9df235 100644
+index 8f3d6e9df235..59126c9f194a 100644
 --- a/drivers/reset/reset-meson.c
 +++ b/drivers/reset/reset-meson.c
-@@ -11,36 +11,44 @@
- #include <linux/of.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
-+#include <linux/regmap.h>
- #include <linux/reset-controller.h>
- #include <linux/slab.h>
- #include <linux/types.h>
+@@ -18,7 +18,9 @@
  
--#define BITS_PER_REG	32
--
  struct meson_reset_param {
  	int reg_count;
++	int reset_offset;
  	int level_offset;
++	bool level_low_reset;
  };
  
  struct meson_reset {
--	void __iomem *reg_base;
- 	const struct meson_reset_param *param;
- 	struct reset_controller_dev rcdev;
--	spinlock_t lock;
-+	struct regmap *map;
- };
+@@ -46,6 +48,7 @@ static int meson_reset_reset(struct reset_controller_dev *rcdev,
+ 	unsigned int offset, bit;
  
-+static void meson_reset_offset_and_bit(struct meson_reset *data,
-+				       unsigned long id,
-+				       unsigned int *offset,
-+				       unsigned int *bit)
-+{
-+	unsigned int stride = regmap_get_reg_stride(data->map);
-+
-+	*offset = (id / (stride * BITS_PER_BYTE)) * stride;
-+	*bit = id % (stride * BITS_PER_BYTE);
-+}
-+
- static int meson_reset_reset(struct reset_controller_dev *rcdev,
--			      unsigned long id)
-+			     unsigned long id)
- {
- 	struct meson_reset *data =
- 		container_of(rcdev, struct meson_reset, rcdev);
--	unsigned int bank = id / BITS_PER_REG;
--	unsigned int offset = id % BITS_PER_REG;
--	void __iomem *reg_addr = data->reg_base + (bank << 2);
-+	unsigned int offset, bit;
+ 	meson_reset_offset_and_bit(data, id, &offset, &bit);
++	offset += data->param->reset_offset;
  
--	writel(BIT(offset), reg_addr);
-+	meson_reset_offset_and_bit(data, id, &offset, &bit);
+ 	return regmap_update_bits(data->map, offset,
+ 				  BIT(bit), BIT(bit));
+@@ -60,9 +63,10 @@ static int meson_reset_level(struct reset_controller_dev *rcdev,
  
--	return 0;
-+	return regmap_update_bits(data->map, offset,
-+				  BIT(bit), BIT(bit));
- }
+ 	meson_reset_offset_and_bit(data, id, &offset, &bit);
+ 	offset += data->param->level_offset;
++	assert ^= data->param->level_low_reset;
  
- static int meson_reset_level(struct reset_controller_dev *rcdev,
-@@ -48,25 +56,13 @@ static int meson_reset_level(struct reset_controller_dev *rcdev,
- {
- 	struct meson_reset *data =
- 		container_of(rcdev, struct meson_reset, rcdev);
--	unsigned int bank = id / BITS_PER_REG;
--	unsigned int offset = id % BITS_PER_REG;
--	void __iomem *reg_addr;
--	unsigned long flags;
--	u32 reg;
-+	unsigned int offset, bit;
- 
--	reg_addr = data->reg_base + data->param->level_offset + (bank << 2);
-+	meson_reset_offset_and_bit(data, id, &offset, &bit);
-+	offset += data->param->level_offset;
- 
--	spin_lock_irqsave(&data->lock, flags);
--
--	reg = readl(reg_addr);
--	if (assert)
--		writel(reg & ~BIT(offset), reg_addr);
--	else
--		writel(reg | BIT(offset), reg_addr);
--
--	spin_unlock_irqrestore(&data->lock, flags);
--
--	return 0;
-+	return regmap_update_bits(data->map, offset,
-+				  BIT(bit), assert ? 0 : BIT(bit));
+ 	return regmap_update_bits(data->map, offset,
+-				  BIT(bit), assert ? 0 : BIT(bit));
++				  BIT(bit), assert ? BIT(bit) : 0);
  }
  
  static int meson_reset_assert(struct reset_controller_dev *rcdev,
-@@ -113,30 +109,42 @@ static const struct of_device_id meson_reset_dt_ids[] = {
+@@ -85,17 +89,23 @@ static const struct reset_control_ops meson_reset_ops = {
+ 
+ static const struct meson_reset_param meson8b_param = {
+ 	.reg_count	= 8,
++	.reset_offset	= 0x0,
+ 	.level_offset	= 0x7c,
++	.level_low_reset = true,
  };
- MODULE_DEVICE_TABLE(of, meson_reset_dt_ids);
  
-+static const struct regmap_config regmap_config = {
-+	.reg_bits   = 32,
-+	.val_bits   = 32,
-+	.reg_stride = 4,
-+};
-+
- static int meson_reset_probe(struct platform_device *pdev)
- {
-+	struct device *dev = &pdev->dev;
- 	struct meson_reset *data;
-+	void __iomem *base;
+ static const struct meson_reset_param meson_a1_param = {
+ 	.reg_count	= 3,
++	.reset_offset	= 0x0,
+ 	.level_offset	= 0x40,
++	.level_low_reset = true,
+ };
  
--	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
-+	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
- 	if (!data)
- 		return -ENOMEM;
+ static const struct meson_reset_param meson_s4_param = {
+ 	.reg_count	= 6,
++	.reset_offset	= 0x0,
+ 	.level_offset	= 0x40,
++	.level_low_reset = true,
+ };
  
--	data->reg_base = devm_platform_ioremap_resource(pdev, 0);
--	if (IS_ERR(data->reg_base))
--		return PTR_ERR(data->reg_base);
-+	base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(base))
-+		return PTR_ERR(base);
- 
--	data->param = of_device_get_match_data(&pdev->dev);
-+	data->param = of_device_get_match_data(dev);
- 	if (!data->param)
- 		return -ENODEV;
- 
--	spin_lock_init(&data->lock);
-+	data->map = devm_regmap_init_mmio(dev, base, &regmap_config);
-+	if (IS_ERR(data->map))
-+		return dev_err_probe(dev, PTR_ERR(data->map),
-+				     "can't init regmap mmio region\n");
- 
- 	data->rcdev.owner = THIS_MODULE;
--	data->rcdev.nr_resets = data->param->reg_count * BITS_PER_REG;
-+	data->rcdev.nr_resets = data->param->reg_count * BITS_PER_BYTE
-+		* regmap_config.reg_stride;
- 	data->rcdev.ops = &meson_reset_ops;
--	data->rcdev.of_node = pdev->dev.of_node;
-+	data->rcdev.of_node = dev->of_node;
- 
--	return devm_reset_controller_register(&pdev->dev, &data->rcdev);
-+	return devm_reset_controller_register(dev, &data->rcdev);
- }
- 
- static struct platform_driver meson_reset_driver = {
+ static const struct of_device_id meson_reset_dt_ids[] = {
 -- 
 2.43.0
 
