@@ -1,72 +1,118 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90A7214293;
-	Thu, 16 May 2024 09:51:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4C6143893
+	for <linux-clk@vger.kernel.org>; Thu, 16 May 2024 10:27:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715853104; cv=none; b=tA8ulHI9rCKj2U3fu+bV6YofB66r6jDyZJtaqvHlor6jmihtqyyGzXodDjSkoR5Sw2jDUKwqqxw0yOhGAKfj2SppSurT5PYNVuMz3aOMPmMIuls8oDewio5M641lFYbCgDCobufoGOw8mqdJxlxpyOS/SiQpiXIyed1H3DF0yG4=
+	t=1715855255; cv=none; b=c5wwJTLArDELXQzam+GuF3bIVTQtdPAuJCcZSgdLmhXuf07yckSLqvoj85cgo/v4s9/GPksobAaqrlXFU7UtksppmCIuIPFUHYgemGGwcXGy3sJBb6YfpCDBmzDXfdSxFfuxiedra3m/opYGLfvY+ouqesC7lCCamv07i/F9m2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715853104; c=relaxed/simple;
-	bh=0aW/ZJWAL54Ox3irduYBONLt8QhfNVL4HCdbv2iUix4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=orS2JrAG0ESCc0iNff3O58DZwWrg1ROimKP/YJDfGpmWYkFRLzu6PKJ23RdqN5NmrsdXoWiWIOlBdlpSsf2xQfzQdHXM/xGsmm4Rl6+PqAzfBX0RKxlT0ApmOh4RXIMyZMBizLiue/eBHiHIw0y+AXDN+aLSZk/PZMGhV5VB3NI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=hUTsbblX; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1715855255; c=relaxed/simple;
+	bh=kBASHLh2eyH3I0mizgz8GzGzaOda0gqP4B/VWaD/CaQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=L+rIFvopDrMByzW/FJ2AMrqPSnaUuXQHvdVQGrGHRBMYVLim9nlJYT0bgbkd8uCr/vnFv1GGQzs6PaMqZIQ3n21nQT4/cIlkkT9MIUBbAq5kIikrVzmPDMCietS3EIRxsWdNpsNjh7Y4CQ+25MA3HED69JxDKz8u/AQ0V6QV6N4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IVnLRMNM; arc=none smtp.client-ip=209.85.222.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="hUTsbblX"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1715853100;
-	bh=0aW/ZJWAL54Ox3irduYBONLt8QhfNVL4HCdbv2iUix4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=hUTsbblX5xoRIM2J3J8BokKruufY/2FDy7KUR45fcF53eNdHNaeN87L+fGHf6j8ww
-	 VKVUOoxEAhR/ymyAXwBzBDPcHtJYOIK1ar4bu0V3uHMrvl8XtMBeV41SZWrXd6PzCh
-	 bACS/YzeqIFLAW2pz2i1n7SPHVlH3rdue7b8EBAeEYZBx6woLde10cTaA+bFzOM3vU
-	 CN6mGUoEld/s+tyneOW2aTMK8Cx0hgRoX0kWfA+JY1YTzgU/Xx4fY/kCpb5aZtolCw
-	 JriK0AVqiMbTM/avw8/WFZLBX1xCvYKYthkCF8PUORruebDCBjhRoSE8/e9V/rE5CY
-	 61qSS6rf1yd8w==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id BEDDD37821AA;
-	Thu, 16 May 2024 09:51:39 +0000 (UTC)
-Message-ID: <807687b0-5da8-4ea5-a712-d121f5188edf@collabora.com>
-Date: Thu, 16 May 2024 11:51:39 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IVnLRMNM"
+Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-7f919bc2e1cso3866245241.1
+        for <linux-clk@vger.kernel.org>; Thu, 16 May 2024 03:27:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1715855253; x=1716460053; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wr/BX8NF3zifG/NDTQUbMR51wrpA+K5HDZ0+1mCSbgg=;
+        b=IVnLRMNMadF/4dU0qEl+RlajbVlNal3GHavEfSz1MQ8n4ZNMwk3j79ajhAVG8jDCqd
+         Dexo2TcApqG1AhwshoNiQMlpm54ZuT/7N0RxxXD8wZIVDZuhwvQt8buPgvZukeq5nklb
+         MvM6JBZqz685Qdb6awErt5lNWsaaGv++kAQ6nfAaurRkpFt3VzEECK8KhBMCVmn1mouX
+         GIoCynCCxX95iF54oN8BjOy2JkrVDP5MfFCJp256nsWJxeBreSwPpKJQq1wur+Ij2jV3
+         PzrvIMaNfz7wSESFNBMGKfRIVB9QX7PcgyJaTf25+GAKikUIcU+ZL6lGILkOb9cAHHDv
+         0BQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715855253; x=1716460053;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Wr/BX8NF3zifG/NDTQUbMR51wrpA+K5HDZ0+1mCSbgg=;
+        b=NHqECiCDcnX8kvG1eTW+r54sUPSOuC61FebQGWw6B8dfP1zm5BC3tj+pvF+olq+p5U
+         X/3pjqRWgKhwafMllt19PUaCVm1U+Ttr8nUuJqfjV1PDQ59BteGsPkmApz28w4Z4/ots
+         ZmjRNmry0xRikXZo0oZYjbS010daUEAsgnzoYrsQ/UT+GRfvxcUycjVXqeaI5ABmQHLn
+         rzvFYgD+5bcP4JikqWV9Yq1MUEAMIM9s9T27AIGDGqBOzGszUNTBXomkR8r/v/yiZCXd
+         iJjzMOgu4yERcT2Ik3T/Nipev1G2ERdQphosrF+02qLa5Yr6O2PuyEVN1uSScuTWfv9h
+         F4mQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUdaEDhOkeinC0Bgby7Vrg/0qlpRCqObEtRP0LmtUr+tjPXa3Vn2o8S3W0+12/seOpKHRzhwrW8RlHO9/nxwJyDv51oayzT40rj
+X-Gm-Message-State: AOJu0YzNGpB8wQWxgB2V3glPv69cotiNOc+zh7TAZPatt/F47GcbaH6h
+	QKpOHuDNZtr4+/6yoACuyChjDs+yAJ4OTmLxLMMlrAsQMEJ6uS/cKOixd/bidsEItFPLP11rXpm
+	WKoq5UnsCxbhMdavt4GRGeLH4wpxaNYTH65aKHQ==
+X-Google-Smtp-Source: AGHT+IGWpVZvSMUt20NSMuau/tfLKHpp/+EepllazSc5v5QmheoZd7J0sjLY5dmSCxrLYl3d79vmIUTSg2jw7h7stwc=
+X-Received: by 2002:a05:6102:117b:b0:47c:254:2919 with SMTP id
+ ada2fe7eead31-47fb6c62c31mr15440141137.13.1715855252928; Thu, 16 May 2024
+ 03:27:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/5] clk: en7523: Remove pcie prepare/unpreare callbacks
- for EN7581 SoC
-To: Lorenzo Bianconi <lorenzo@kernel.org>, linux-clk@vger.kernel.org
-Cc: p.zabel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org,
- lorenzo.bianconi83@gmail.com, conor@kernel.org,
- linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
- devicetree@vger.kernel.org, nbd@nbd.name, john@phrozen.org, dd@embedd.com,
- catalin.marinas@arm.com, will@kernel.org, upstream@airoha.com
-References: <cover.1715777643.git.lorenzo@kernel.org>
- <92afb628058a31357e0c85ed7e41eed0a780bc0f.1715777643.git.lorenzo@kernel.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <92afb628058a31357e0c85ed7e41eed0a780bc0f.1715777643.git.lorenzo@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <CA+G9fYuZd_ur56H8fwDSvUywopvn_b7ogprGkjEatQ7EPTLwYQ@mail.gmail.com>
+ <11be44d3-0f32-49c6-b4ae-ba97a9f97763@app.fastmail.com> <820ddc2ec70780ae1ecd3af864dc8bd6.sboyd@kernel.org>
+ <ZkUgqzUn1EmjrPdl@shell.armlinux.org.uk>
+In-Reply-To: <ZkUgqzUn1EmjrPdl@shell.armlinux.org.uk>
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Thu, 16 May 2024 12:27:20 +0200
+Message-ID: <CA+G9fYurPNaW=u2E+h+segnXhY3cfWo3BJpfYDJxKRFPY4epsQ@mail.gmail.com>
+Subject: Re: clkdev: report over-sized strings when creating clkdev entries
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Linux ARM <linux-arm-kernel@lists.infradead.org>, 
+	linux-clk <linux-clk@vger.kernel.org>, lkft-triage@lists.linaro.org, 
+	open list <linux-kernel@vger.kernel.org>, Anders Roxell <anders.roxell@linaro.org>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Marek Szyprowski <m.szyprowski@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Il 15/05/24 14:58, Lorenzo Bianconi ha scritto:
-> Get rid of prepare and unpreare callbacks for PCIe clock since they can
-> be modeled as a reset line cosumed by the PCIe driver
-> (pcie-mediatek-gen3)
-> 
-> Tested-by: Zhengping Zhang <zhengping.zhang@airoha.com>
-> Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
+On Wed, 15 May 2024 at 22:53, Russell King (Oracle)
+<linux@armlinux.org.uk> wrote:
+>
+> On Tue, May 07, 2024 at 01:26:17PM -0700, Stephen Boyd wrote:
+> > Quoting Arnd Bergmann (2024-05-07 00:44:15)
+> > > On Tue, May 7, 2024, at 09:20, Naresh Kamboju wrote:
+> > > > The WinLink E850-96 board boot failed with Linux next-20240506 but there
+> > > > is no kernel crash log on the serial [1].
+> > > >
+> > > > Anders bisection results pointing to this commit,
+> > > > # first bad commit:
+> > > >   [4d11c62ca8d77cb1f79054844b598e0f4e92dabe]
+> > > >   clkdev: report over-sized strings when creating clkdev entrie
+> > > >
+> > > > After reverting the above patch the boot test passed [2].
+> > > >
+> > > > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> > > >
+> >
+> > There are two fixes on the list: [1] and [2]. Perhaps one of those
+> > resolves this?
+> >
+> > [1] https://lore.kernel.org/r/20240507065317.3214186-1-m.szyprowski@samsung.com
+>
+> This one has (I think) ended up in the patch system last week, but it's
+> not clkdev, it's only related. I'm also not Cc'd on its posting, and
+> it's not posted to any mailing list that I'm a part of. So I've not
+> been following any discussion on it.
+>
+> Digging in to the discussion, I see various attributations, and a final
+> message reporting an unused variable, and a promise to send v2. So,
+> I'm guessing that
+> http://www.home.armlinux.org.uk/developer/patches/viewpatch.php?id=9397/1
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+I do not have access to this link ^.
 
+> is now superseded in some way... I wouldn't have known without locating
+> this email and checking the links.
+>
+> --
+> RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+> FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
+- Naresh
