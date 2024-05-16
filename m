@@ -1,185 +1,169 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5DAB155388;
-	Thu, 16 May 2024 17:15:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90002147C74;
+	Thu, 16 May 2024 21:24:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715879725; cv=none; b=JCHHo8XGYWxUj1eciE8RgOsm9GN4kiEBIseTEuPPBk1eI3ufOTTJorLrkYXNTWVRr7OZ7pubfo44Utjj/OLKuG2flSAvj/tgz/1VnC5M4to0DKZ7y1zaZMCy6wAqEkP1IyGzlFJAOLEMTu63M6V0zeDdzf/qXGURljm6l4aCjU0=
+	t=1715894663; cv=none; b=QlBAsUxHWVVq1T7xRlq6gLDljqN6B3e0HTEqBM7hZlic0b9JwYK4TSonN+cUVPTJ7jTfILB24jN+bhBv37/cY7ktnxh1ib3YWy5k9r+zgDGWyEcuSs4egcJpp7yaqEM3+1eohJi/89iFnmzj99ZCxoMwA3+wk6yfMsXlQ846+bk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715879725; c=relaxed/simple;
-	bh=tJHICD/Spu7eyWw+3JsUCt45YC1BDTTlj6WiULrpyjo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hwUfRCDiETqxM1cks92ApVFgZ68Z8zMxhgmHlqzOo5TAEmlTLcwNY2LKnPqyjBWw9988Ho+ckK445WNbyd/Siy19bI5YqQFKVcH3uGJ1TqZmJsNkbc09eM6+XeanH+bmglSPfqshuFspeMchEeELokToIEO300xy57q3A2UefBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ta6k+4xH; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1715894663; c=relaxed/simple;
+	bh=fhbU3an/e15PDwjFnQlpO/iVx9HuaXgCMdaYynBMhVk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e+B4/J2pGlZqdUREPYJsEQYmU7aLs8XiwQxdZsXA4J0SSd+aH0oFs5rRvNEvrLj/V4Hhp9kq+og3rqFYID7H27ZJK0yUfJ7xhtJXra4GOQa1BbXltKFTQKA56bY8j1/y3sZQEi4HNwvY72JuPjIlbYq1DSXnyzcixF2LIhiyXhs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=h17qqsgo; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ta6k+4xH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71BC2C113CC;
-	Thu, 16 May 2024 17:15:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715879724;
-	bh=tJHICD/Spu7eyWw+3JsUCt45YC1BDTTlj6WiULrpyjo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ta6k+4xHFjq8OMAL8mQH/vxXeT08gJX4KhTtsBpFPKWTUhfZY8hLfhV33XVBe72r7
-	 PokO8N81kRVzAFYmolhItHrFfsih4DSGPiyfmGKxNrjiUxEMF8pqCW5tVSguH+IaNi
-	 M1ekGqPXV3U9g1jmNJzaPwG1GAorYN/g+fsQHo+X42EUgErNrZmthTHpm5VDogt1D+
-	 a3JMvwY5oVrQF5eHKcTJlzvhkRg2RJwUVRaVmQoItmjvCnTIuOKqtYm/XdANZMBHTq
-	 llyeZ3Wqq8Mfrhn5DMlSWrBqo3p4F4cqwgJyMz2qMf4tzl9xawmY2hC3X4BZfPup64
-	 XNKCxcoznr2CA==
-Date: Thu, 16 May 2024 18:15:18 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Shengjiu Wang <shengjiu.wang@gmail.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org,
-	peng.fan@nxp.com, mturquette@baylibre.com, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org,
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-	marex@denx.de, linux-clk@vger.kernel.org, imx@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, p.zabel@pengutronix.de
-Subject: Re: [PATCH v3 3/6] dt-bindings: clock: imx8mp: Add reset-controller
- sub-node
-Message-ID: <20240516-reversing-demeanor-def651bc82ac@spud>
-References: <1715679210-9588-1-git-send-email-shengjiu.wang@nxp.com>
- <1715679210-9588-4-git-send-email-shengjiu.wang@nxp.com>
- <20240514-campus-sibling-21cdf4c78366@spud>
- <b86c83a520f0c45a60249468fa92b1de.sboyd@kernel.org>
- <CAA+D8ANTdvQJVtniyMtqjnJdT4qX+LDGjVuFO6H0RSO+GDw+ng@mail.gmail.com>
- <20240515-unbundle-bubble-8623b495a4f1@spud>
- <ZkT+4yUgcUdB/i2t@lizhi-Precision-Tower-5810>
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="h17qqsgo"
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id BF38988410;
+	Thu, 16 May 2024 23:24:17 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1715894659;
+	bh=0io0g3AWBQsg1lVWjX0OfURgfAbrBcVZSYkBGvi99/E=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=h17qqsgof+PMaZHBzXY7LZAtE3I3o/cIG5/yp+yPp0HIrVmE5NxXmFKCI6dTMdSnt
+	 IKOrAGM8TJQAcvpVpbOzZYqOGzeGZnqF5QGYwtjbUIyDBuJLStjxl/8BoRzhcvFpv2
+	 NDQYZjWtgLpWpfFWPriTS1VffovMM5X8WZRNadeMQzLsSGcclxQgMDnglUt7Qdhsy3
+	 5MLJunCFGwE5D35hlU5glrl5/WD2qxcjCStNOloAlVdAiWufeLcK19Ajl8FZTGO5V2
+	 WDjwGm7gb0uwOgMNPWrXlPFajtqLNuQs7sUUwIZbTQjhtfReJBXcvwR8m1dfShTu7o
+	 lopIPNzcDJ8ag==
+Message-ID: <c28e39e3-64d8-4ed7-a2e5-48ee124ef8e3@denx.de>
+Date: Thu, 16 May 2024 22:01:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="U2yG7SBZt5e06VSB"
-Content-Disposition: inline
-In-Reply-To: <ZkT+4yUgcUdB/i2t@lizhi-Precision-Tower-5810>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] [RFC] clk: stm32mp1: Keep RNG1 clock always running
+To: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>,
+ linux-crypto@vger.kernel.org
+Cc: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Olivia Mackall <olivia@selenic.com>, Rob Herring <robh@kernel.org>,
+ Stephen Boyd <sboyd@kernel.org>, Yang Yingliang <yangyingliang@huawei.com>,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com
+References: <20240513220349.183568-1-marex@denx.de>
+ <b2d0dfcb-37d6-4375-a4ad-ca96a5339840@foss.st.com>
+ <cc6f98eb-f6b2-4a34-a8ed-c0f759fa4c79@denx.de>
+ <51951dd4-8e8c-4e67-89f6-6a710022e34f@foss.st.com>
+ <3257e8f8-5bb0-4c75-a3a3-e5685b65de2a@denx.de>
+ <5b39b5b6-7008-4362-a578-3faab87cd23b@foss.st.com>
+ <2eb2b80e-8650-46cf-9d8f-6dd6a884558a@denx.de>
+ <eb3a2581-efc6-40c3-a7ea-551865017d40@foss.st.com>
+Content-Language: en-US
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <eb3a2581-efc6-40c3-a7ea-551865017d40@foss.st.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
+On 5/16/24 4:35 PM, Gatien CHEVALLIER wrote:
 
---U2yG7SBZt5e06VSB
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi,
 
-On Wed, May 15, 2024 at 02:28:51PM -0400, Frank Li wrote:
-> On Wed, May 15, 2024 at 05:04:48PM +0100, Conor Dooley wrote:
-> > On Wed, May 15, 2024 at 10:47:57AM +0800, Shengjiu Wang wrote:
-> > > On Wed, May 15, 2024 at 5:09=E2=80=AFAM Stephen Boyd <sboyd@kernel.or=
-g> wrote:
-> > > >
-> > > > Quoting Conor Dooley (2024-05-14 11:06:14)
-> > > > > On Tue, May 14, 2024 at 05:33:27PM +0800, Shengjiu Wang wrote:
-> > > > > > diff --git a/Documentation/devicetree/bindings/clock/imx8mp-aud=
-iomix.yaml b/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
-> > > > > > index 0a6dc1a6e122..a403ace4d11f 100644
-> > > > > > --- a/Documentation/devicetree/bindings/clock/imx8mp-audiomix.y=
-aml
-> > > > > > +++ b/Documentation/devicetree/bindings/clock/imx8mp-audiomix.y=
-aml
-> > > > > > @@ -15,7 +15,10 @@ description: |
-> > > > > >
-> > > > > >  properties:
-> > > > > >    compatible:
-> > > > > > -    const: fsl,imx8mp-audio-blk-ctrl
-> > > > > > +    items:
-> > > > > > +      - const: fsl,imx8mp-audio-blk-ctrl
-> > > > > > +      - const: syscon
-> > > > > > +      - const: simple-mfd
-> > > > > >
-> > > > > >    reg:
-> > > > > >      maxItems: 1
-> > > > > > @@ -44,6 +47,11 @@ properties:
-> > > > > >        ID in its "clocks" phandle cell. See include/dt-bindings=
-/clock/imx8mp-clock.h
-> > > > > >        for the full list of i.MX8MP IMX8MP_CLK_AUDIOMIX_ clock =
-IDs.
-> > > > > >
-> > > > > > +  reset-controller:
-> > > > > > +    type: object
-> > > > > > +    $ref: /schemas/reset/fsl,imx8mp-audiomix-reset.yaml#
-> > > > > > +    description: The child reset devices of AudioMIX Block Con=
-trol.
-> > > > >
-> > > > > Why not just set #reset-cells =3D <1> in the existing node? IIRC =
-it was
-> > > > > already suggested to you to do that and use auxdev to set up the =
-reset
-> > > > > driver.
-> > > >
-> > > > Yes, do that.
-> > >=20
-> > > Can I know why sub nodes can't be used? the relationship of parent and
-> > > child devices looks better with sub nodes.
-> >=20
-> > That's pretty subjective. I don't think it looks better to have a clock
-> > node that is also a syscon with a reset child node as it is rather
-> > inconsistent.
->=20
-> I think it is multi function device syscon node. it should be like
->=20
-> mfd
-> {
-> 	clock
-> 	{
-> 		...
-> 	}
->=20
-> 	reset
-> 	{
-> 		...
-> 	}
-> }
->=20
-> clock and reset are difference device node with totally difference's
-> compatible string.
+>>>>>>> What if you add a trace in a random generation function in random.c?
+>>>>>>
+>>>>>> Do you have a function name or line number for me ?
+>>>>>
+>>>>> I put a trace in _get_random_bytes() in drivers/char/random.c. I'm not
+>>>>> 100% sure but this should be the entry point when getting a random 
+>>>>> number.
+>>>>
+>>>> You're right, there is a read attempt right before the hang, and 
+>>>> __clk_is_enabled() returns 0 in stm32_read_rng() . In fact, it is 
+>>>> the pm_runtime_get_sync() which is returning -EACCES instead of 
+>>>> zero, and this is currently not checked so the failure is not 
+>>>> detected before register access takes place, to register file with 
+>>>> clock disabled, which triggers a hard hang.
+>>>>
+>>>> I'll be sending a patch shortly, thanks for this hint !
+>>>>
+>>>
+>>> Great news, indeed the return code isn't checked. Let's use
+>>> pm_runtime_resume_and_get().
+>>
+>> Yes please.
+>>
+>> I will wonder why we get EACCES though, that basically means we are 
+>> suspending already. Is it safe to return -errno from rng read function 
+>> in that case ?
+> 
+> The framework expects a function that can return an error code so I
+> don't see why not. Else the framework would have an issue.
+> 
+> I still haven't figured out what is happening.
+> 
+> Could it be that the kernel is getting entropy with hwrng_fillfn()
+> like it does periodically to feed the entropy pool and it happens at the
+> same time as your pm test sequence?
 
-Which is I suspect is gonna require a change to your clock driver,
-because the range in the existing clock nodes:
-	audio_blk_ctrl: clock-controller@30e20000 {
-		compatible =3D "fsl,imx8mp-audio-blk-ctrl";
-		reg =3D <0x30e20000 0x10000>;
-	};
-would then have to move to the mfd parent node, and your clock child
-would have a reg property that overlaps the reset region. You'd need to
-then define a new binding that splits the range in two - obviously
-doable, but significantly more work and more disruptive than using an
-auxdev.
+Possibly. I use script as init which contains basically #!/bin/sh , 
+mount of a few filesystems like dev, proc, sys, and then the pm_test 
+sequence to avoid wasting time booting full userspace.
 
-> > > A further question is can I use the reset-ti-syscon? which is a gener=
-ic reset
-> > > device for SoCs.  with it I don't even need to write a new reset devi=
-ce driver.
-> > > it is more simple.
-> >=20
-> > That is for a TI SoC. You're working on an imx. I don't think that you
-> > should be using that...
->=20
-> I think this statement violate the linux basic reuse prinicple. If the
-> code logic are the same why need duplicate it just because it is differen=
-ce
-> company. Of coures, if it is generic enough, it'd better to add a more
-> generic compatible string.
+> FYI, I have been running your script with (echo devices > 
+> /sys/power/pm_test) for 5 hours now and haven't been able to reproduce 
+> the issue.
 
-That's true, but I suspect it only works because only through (ab)use
-of the ti,reset-bits property not because you're actually compatible
-with TI's reset hardware.
+Maybe the 'devices' test is not enough and the deeper pm_test states 
+have some sort of impact ?
 
-Cheers,
-Conor.
+>>>>>>> After this, I'll try to reproduce the issue.
+>>>>>>
+>>>>>> If you have a minute to test it on some ST MP15 board, that would 
+>>>>>> be real nice. Thanks !
+>>>>>
+>>>>> I tried to reproduce the issue you're facing on a STM32MP157C-DK2 no
+>>>>> SCMI on the 6.9-rc7 kernel tag. I uses OP-TEE and TF-A in the 
+>>>>> bootchain
+>>>>> but this should not have an impact here.
+>>>>>
+>>>>> How did you manage to test using "echo core > /sys/power/pm_test"?
+>>>>> In kernel/power/suspend.c, enter_state(). If the pm_test_level is 
+>>>>> core,
+>>>>> then an error is fired with the following trace:
+>>>>> "Unsupported test mode for suspend to idle, please choose 
+>>>>> none/freezer/devices/platform."
+>>>>
+>>>> Could this be firmware related ?
+>>>>
+>>>>> I've tried using "echo devices > /sys/power/pm_test" so that I can 
+>>>>> at least test that the driver is put to sleep then wakes up. I do not
+>>>>> reproduce your issue.
+>>>>
+>>>> Can you try 'processors' ?
+>>>>
+>>>
+>>> Given this:
+>>> #ifdef CONFIG_PM_DEBUG
+>>>          if (pm_test_level != TEST_NONE && pm_test_level <= TEST_CPUS) {
+>>>              pr_warn("Unsupported test mode for suspend to idle
+>>
+>> You're supposed to be suspending to 'mem' , not 'idle' . Could that be 
+>> it ?
+> 
+> Yes you're right, I've been missing that. I do not have "deep" available
+> in /sys/power/mem_sleep... not upstreamed yet maybe... Have you coded a
+> PSCI service for this in U-Boot?
+> 
+> I'm either missing something or I can't reproduce your setup.
 
---U2yG7SBZt5e06VSB
-Content-Type: application/pgp-signature; name="signature.asc"
+The PSCI provider in U-Boot has been in place for years, there's no need 
+to code anything, just compile it and that's all:
 
------BEGIN PGP SIGNATURE-----
+$ make stm32mp15_basic_defconfig && make -j`nproc`
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkY/JgAKCRB4tDGHoIJi
-0q+6AQCaCdwhlVdXFZP7SLpIqoKwLTKzXYkUuCLzJaLFquKGEQD9Gnc2Qf41W7Rp
-SFmFc2JvIqe5qBGdEVUNt25VHvyqsgA=
-=A/oq
------END PGP SIGNATURE-----
-
---U2yG7SBZt5e06VSB--
+This gets you u-boot-spl.stm32 and u-boot.itb as FSBL/SSBL .
