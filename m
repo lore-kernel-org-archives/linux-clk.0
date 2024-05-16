@@ -1,174 +1,100 @@
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A61882031D;
-	Thu, 16 May 2024 07:45:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B02754206C;
+	Thu, 16 May 2024 09:44:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715845508; cv=none; b=E0cXU0q5Z9F7q8zAWHCt90dM9A1d+roKZ1cXFkPD3utXNm5ceyqhW/rFZBXJR/oEPlEhBqbU6f1N29VmX5x4hbT5v0HLlOMJmcWR0M6Oe1FO7mu/nW+roc28vScZEq5OKDAsNEPOma5oeCcQVbpTjVL7pE7f0r4sc4cOCYeM9Jg=
+	t=1715852691; cv=none; b=ER6MBbgvkXSojk11y4Mu2PTdqRC5V8J8BePnIz+YTIQcIaX6Yc1QbXqZB6eX8XONUrXsLJrvzbtF6QFN5k2898KLNjbzeewVSSxJgZ60Q+8wk4lchEpFP6+1qLaIou5pdemMNuj0uecWyB8Qq7T9v0u+bqJgc3DkiXbwGO6vBBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715845508; c=relaxed/simple;
-	bh=qfYpAbbXpjEyYh4WRvM9+5NG8w1h1rMukIJoCgIKlMA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=hLTKOt6ZExE8adkTxucWg+Xm91PAAODtfLyKu94M/AGupSsduphWnzgoSncIARMwmG4AioliUaEyAYr6wUaBIxf4lHUtxA2LoNTuumzqIxZ0W3AySulv0QF2WVKtOTTd6fFkt0+Jj8HQujoVUHwPIgVt2dd9oiiElw228wiojCk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=oYqfZv8r; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	s=arc-20240116; t=1715852691; c=relaxed/simple;
+	bh=Mv4lNrglqS4nAOAX/673bvBVveCRgVuJ/fLlNsqmFkY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NiOlo9gfQQyHNXArjd254twrqCphuQYot6wMyGaqVe7gXF2nUfxh0imNfPgcHZffjTux2Ztvzi5PujOgryxtnGGcX1DmqEyxm2BFCuXBCRgMnrwCdHsgjrD/F5bAMzeI3LLuQ9FiMgR7KVRQGkdTNy/OoAorjAlVMnCTxA9PnTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iiJCit0q; arc=none smtp.client-ip=209.85.219.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="oYqfZv8r"
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44FLuDT2005399;
-	Thu, 16 May 2024 09:43:59 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=
-	selector1; bh=fGbR8sYV9QIn7SFPWuDEizW7wFbyJ157IMhZGWfECk8=; b=oY
-	qfZv8rDdRNbMc7CuGM5totYTdN9MafA0OvTOD5Bg8sANV7hrr5gE+FzkxDU36Waj
-	GZgSqPWrLU9QEO0tgCZh9XoJSVUXHGvM4veRgE+AphbOHcaWPUr46euV2l67MbY3
-	79iR7SfUEbRcjoNwffonPiTxIhlRchgK3KbHRHkINnZeOcIYYKRAVfbZR0BSBZ7H
-	OC7hJx5YYF/kslkbMKZfXNw8OSEFmLEg4mlJzvOX/1hq4zjC8LdgMs6ClFejYjMd
-	mqX3Uxp6rN62bL09ZKrBStE0nXilBa5dETimsczq3HDcs2fuJuk6ugVHm07GaVhO
-	PiS051HwTsAgndN36Wkg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3y4symc615-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 16 May 2024 09:43:59 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 494D140046;
-	Thu, 16 May 2024 09:43:51 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 1F791211958;
-	Thu, 16 May 2024 09:42:57 +0200 (CEST)
-Received: from [10.48.87.204] (10.48.87.204) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Thu, 16 May
- 2024 09:42:55 +0200
-Message-ID: <5b39b5b6-7008-4362-a578-3faab87cd23b@foss.st.com>
-Date: Thu, 16 May 2024 09:42:51 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iiJCit0q"
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-deb99fa47c3so8054877276.2;
+        Thu, 16 May 2024 02:44:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1715852688; x=1716457488; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=Mv4lNrglqS4nAOAX/673bvBVveCRgVuJ/fLlNsqmFkY=;
+        b=iiJCit0qk7w3p7zytFdclCSYDlrMSZbeoyhUYKtq3UcuOZyUunyZYFQMDqrx37NKkx
+         0Yc3cUfh/3L+UwXAxuZQbOglFrugy8cSjzt6wj6sVOZtJaavDYDGL6V/5I/NMGrnHBuR
+         Lzgp9z2rzYdvfAIdj6YQM0dLeVbqME/OF3e+G+n9mtVnfyvo2z+s+SrfyXVfyre6tHqc
+         Z85HjN1gOp1kBk3cK7nP0N8Mzkf2XqjIbgBI7JIQCVS7yatwsGxD9EMP/JmPtI2qaH95
+         4lfvcfdxdoS7RtX1ajs/GgsB/LrIUnk501YWfpImB5b+bzRL6f6MA7Kdm4rY+NJ9wX6o
+         lTdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715852688; x=1716457488;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Mv4lNrglqS4nAOAX/673bvBVveCRgVuJ/fLlNsqmFkY=;
+        b=qnaQT/O3kC+Z3fkTeoYn9sTgig3JG1k2xwtKmMREoR8pddttz7Qbhtw11IUNWlvBmZ
+         H4bnD+LfGmArlX5wGASmHJAlpLLg0tjrnGIBni77TpxXpBT8pSGTUVS0Zebumt8gRQhi
+         +eHlFT19ozZob36qKH/nqG4RR+RaOMIBzw/81oO+05KjC9nwzidtJXM9s6nyjQmf9A54
+         bJsDOhUTFbt50g7C6WKg1HlYoVxLnIo2F3AO0Bujv59eQ9u2OiYh/HDN09hxtdQ+6nEo
+         ylxX/2CGGKqWGFNGBV79WrZYT1In8AdgFueYXTpYqpmfzuf5HPcXYVqaTfxi35oVw2o9
+         dwHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVUU9BOrXfQIDyWw1fjWhgpVU8WYLQB3pu1M7FytGVqTajd+2blq2aZhAQB8DS9BcoUhTnlWPekFuwwOY8CdbnHLOrhXCcN3y5KcbtukXuo4xIXzBCKWbzYghVJqUntEa7r0MjcpQnfu6fxu8VILrVJBmMcQVxvXZhg4AZURgz+JSO54A==
+X-Gm-Message-State: AOJu0YxIQK3CiHbDNSXyZMK6b6JboXWu69LIi4wnyx9GCMxHFibqwIrz
+	hsJiKo1D+aJyHiREwyQIh9vnkGfajlfzQro4t/oG19Dcotia6b/clnEARWJOi3SfuzRKmbnKeHZ
+	hipXw2V9Z3Dn2JIU6KgAJgeZAmlk=
+X-Google-Smtp-Source: AGHT+IGt4GOJGeaaemGwA4Ckt+18xxZfU1hLBTK3dGN/PrXCsjugWmUU80kcg1X7vu7MfI7i+fk+lUadWbYn6YM/PMQ=
+X-Received: by 2002:a25:c70d:0:b0:de6:4ff:3155 with SMTP id
+ 3f1490d57ef6-dee4f2dae9fmr19813993276.16.1715852688597; Thu, 16 May 2024
+ 02:44:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] [RFC] clk: stm32mp1: Keep RNG1 clock always running
-To: Marek Vasut <marex@denx.de>, <linux-crypto@vger.kernel.org>
-CC: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Gabriel Fernandez
-	<gabriel.fernandez@foss.st.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Olivia Mackall <olivia@selenic.com>, Rob Herring
-	<robh@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Yang Yingliang
-	<yangyingliang@huawei.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <20240513220349.183568-1-marex@denx.de>
- <b2d0dfcb-37d6-4375-a4ad-ca96a5339840@foss.st.com>
- <cc6f98eb-f6b2-4a34-a8ed-c0f759fa4c79@denx.de>
- <51951dd4-8e8c-4e67-89f6-6a710022e34f@foss.st.com>
- <3257e8f8-5bb0-4c75-a3a3-e5685b65de2a@denx.de>
-Content-Language: en-US
-From: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>
-In-Reply-To: <3257e8f8-5bb0-4c75-a3a3-e5685b65de2a@denx.de>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-16_03,2024-05-15_01,2023-05-22_02
+References: <20240509192411.2432066-1-tmaimon77@gmail.com> <20240509192411.2432066-5-tmaimon77@gmail.com>
+ <20240513155330.GA2676859-robh@kernel.org>
+In-Reply-To: <20240513155330.GA2676859-robh@kernel.org>
+From: Tomer Maimon <tmaimon77@gmail.com>
+Date: Thu, 16 May 2024 12:44:36 +0300
+Message-ID: <CAP6Zq1hRw6xfNKKfBFGuKbZk0su3ys6+hnMzqRWrZeKzDoKLEw@mail.gmail.com>
+Subject: Re: [PATCH v24 4/4] dt-binding: clock: remove nuvoton npcm845-clk bindings
+To: Rob Herring <robh@kernel.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, 
+	krzysztof.kozlowski+dt@linaro.org, tali.perry1@gmail.com, joel@jms.id.au, 
+	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
+	openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Marek
+Hi Rob,
 
-On 5/16/24 03:06, Marek Vasut wrote:
-> On 5/15/24 11:16 AM, Gatien CHEVALLIER wrote:
-> 
-> Hi,
-> 
->>>> What if you add a trace in a random generation function in random.c?
->>>
->>> Do you have a function name or line number for me ?
->>
->> I put a trace in _get_random_bytes() in drivers/char/random.c. I'm not
->> 100% sure but this should be the entry point when getting a random 
->> number.
-> 
-> You're right, there is a read attempt right before the hang, and 
-> __clk_is_enabled() returns 0 in stm32_read_rng() . In fact, it is the 
-> pm_runtime_get_sync() which is returning -EACCES instead of zero, and 
-> this is currently not checked so the failure is not detected before 
-> register access takes place, to register file with clock disabled, which 
-> triggers a hard hang.
-> 
-> I'll be sending a patch shortly, thanks for this hint !
-> 
+Thanks for your comment.
 
-Great news, indeed the return code isn't checked. Let's use
-pm_runtime_resume_and_get().
+On Mon, 13 May 2024 at 18:53, Rob Herring <robh@kernel.org> wrote:
+>
+> On Thu, May 09, 2024 at 10:24:11PM +0300, Tomer Maimon wrote:
+> > Remove nuvoton,npcm845-clk binding since the NPCM8xx clock driver
+> > using the auxiliary device framework and not the device tree framework.
+>
+> Again, this is an ABI break. Changing driver architecture for 1 OS is
+> not a reason to change DT.
+Is it an ABI break even if the NPCM8xx clock driver hasn't upstream
+the kernel vanilla yet?
 
->>>> After this, I'll try to reproduce the issue.
->>>
->>> If you have a minute to test it on some ST MP15 board, that would be 
->>> real nice. Thanks !
->>
->> I tried to reproduce the issue you're facing on a STM32MP157C-DK2 no
->> SCMI on the 6.9-rc7 kernel tag. I uses OP-TEE and TF-A in the bootchain
->> but this should not have an impact here.
->>
->> How did you manage to test using "echo core > /sys/power/pm_test"?
->> In kernel/power/suspend.c, enter_state(). If the pm_test_level is core,
->> then an error is fired with the following trace:
->> "Unsupported test mode for suspend to idle, please choose 
->> none/freezer/devices/platform."
-> 
-> Could this be firmware related ?
-> 
->> I've tried using "echo devices > /sys/power/pm_test" so that I can at 
->> least test that the driver is put to sleep then wakes up. I do not
->> reproduce your issue.
-> 
-> Can you try 'processors' ?
-> 
+I thought that since the NPCM8xx clock driver hasn't upstream the
+kernel vanilla yet and and in the latest NPCM8xx clock driver patch
+the NPCM8xx clock driver.
+using auxiliary device framework instead of DT we should remove the
+nuvoton,npcm845-clk.yaml file.
+https://patchwork.kernel.org/project/linux-clk/patch/20240509192411.2432066-4-tmaimon77@gmail.com/
 
-Given this:
-#ifdef CONFIG_PM_DEBUG
-		if (pm_test_level != TEST_NONE && pm_test_level <= TEST_CPUS) {
-			pr_warn("Unsupported test mode for suspend to idle, please choose 
-none/freezer/devices/platform.\n");
-			return -EAGAIN;
-		}
-#endif
+>
+> Rob
 
-and this
+Thanks,
 
-static const char * const pm_tests[__TEST_AFTER_LAST] = {
-	[TEST_NONE] = "none",
-	[TEST_CORE] = "core",
-	[TEST_CPUS] = "processors",
-	[TEST_PLATFORM] = "platform",
-	[TEST_DEVICES] = "devices",
-	[TEST_FREEZER] = "freezer",
-};
-
-I'm getting the error as well.
-
-> I did also notice it sometimes takes much longer than a minute to hang, 
-> but eventually it does hang. Maybe let it cycle for an hour or a few ?
-> 
-
-I'll let it loop for some time then for device pm state.
-
-> [...]
-> 
-
-Thanks for investigating this.
-
-Cheers,
-Gatien
+Tomer
