@@ -1,167 +1,186 @@
-Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71C44143898
-	for <linux-clk@vger.kernel.org>; Thu, 16 May 2024 10:58:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 898A914534B;
+	Thu, 16 May 2024 11:14:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715857088; cv=none; b=ebS+ETxmwIDsI1zJnvJZez8+rTqkOlY8abs4Q1LSz21lau/sif1IGeZs6mA0OK2JsTqFkqsEqIgOTUx+dF2267Z79dAlpb1jNbjpMeuEoF8uVc9c2uuBr4HaHzgdW0RUhTKuMqu6Aj6s4jZvrif7mBGs5ddwBwL3gKyDJGjl9p8=
+	t=1715858084; cv=none; b=FChHfnEUdOmBtq9NJNGDvFKwYwzhdGGG7vU3DDVXoK83FC37x0CoENtPDibVsMYZYKESL/vaXoX3WKNYl2yU1MYzMl75jKTmqjvtkEkXS0LPKMF51+nMLthXJVvLcAE0VW1vLO2q/rHSODMTQ42dSSZxg1rK2KAsblRIaalgQz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715857088; c=relaxed/simple;
-	bh=14XKAqGJJ7efuAKjdOGKIrcSj/dQ64odSwJbyfxAhjI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=rM+DMmHzL+MG5vj41XXf/4sX+zx6u34ZV8KK/SmFwiexitEq4xYpwyAtg0B/AmadAzoGjYXb1v1TaDZxQNKXG36I3RbxlcJwJpoxyS3BxHwbhxy7GOCvnjbXXlssbsH1ZVplv01syNnpIzkWJX1H6/2DZ6CIwZCcQKMMOjLqFwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=OpWVdIwJ; arc=none smtp.client-ip=210.118.77.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1715858084; c=relaxed/simple;
+	bh=f3m3tpKfjEj+h303wNF7d1vDkKKiGrQRJ0cjVD8zqPM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QTuEzLGY3ZKU0gTx+MezQ1TGShDsoBksdNOwqFdob6ynlSQLxhn5EaYS+glT1oGubbBKskPV5HSJjNkB95DCbf8KsWIf844Qhx5Kjf+Ll3FL7f+utnskXcuw4uX/Qqm2HN1KbORRN5R7rTR2WUWILaYYa9uCYw2tl7luEVp1wcw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ujI5xr1F; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="OpWVdIwJ"
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240516105755euoutp02c13543d439e858b08786da24b647b4d3~P8us6uwV72689426894euoutp02I
-	for <linux-clk@vger.kernel.org>; Thu, 16 May 2024 10:57:55 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240516105755euoutp02c13543d439e858b08786da24b647b4d3~P8us6uwV72689426894euoutp02I
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1715857075;
-	bh=AzsFVgT9ZtACfhnjkNzCBMnfOWVmsAJhweMEuyRHJwk=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=OpWVdIwJFLqtMY3OmhJQ7w9tJIUFY5ZhXiWudFtjcVDyMQdpIWFFuy59b04SHBWh0
-	 FhpPWRfheAPSWIoNWc164Mn4WH2HSh2WLx25YtMvdQgxDHuitfEl2TPDENeVaTD28h
-	 pyN1ioWu5mI+wZ3AApbnwsi61pBVTOTGtbZZBj0A=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20240516105754eucas1p14aafa43dc59b01537ccdb54aea7c98c6~P8usjh2yv0654806548eucas1p1R;
-	Thu, 16 May 2024 10:57:54 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges3new.samsung.com (EUCPMTA) with SMTP id 19.31.09620.2B6E5466; Thu, 16
-	May 2024 11:57:54 +0100 (BST)
-Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240516105754eucas1p29073691f41788465de22d59008b95932~P8usGPH5T1610316103eucas1p21;
-	Thu, 16 May 2024 10:57:54 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240516105754eusmtrp2d0427052643d706bbe2dcc5712ec3586~P8usE_r9h1817218172eusmtrp2J;
-	Thu, 16 May 2024 10:57:54 +0000 (GMT)
-X-AuditID: cbfec7f5-d31ff70000002594-cc-6645e6b22a39
-Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
-	eusmgms1.samsung.com (EUCPMTA) with SMTP id 8E.3D.08810.2B6E5466; Thu, 16
-	May 2024 11:57:54 +0100 (BST)
-Received: from [106.210.134.192] (unknown [106.210.134.192]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240516105753eusmtip1c6ced12055351978f721781ff4dd75e1~P8urc3BYk0913809138eusmtip19;
-	Thu, 16 May 2024 10:57:53 +0000 (GMT)
-Message-ID: <29f30eda-deba-4092-9b4c-8cb101b8691d@samsung.com>
-Date: Thu, 16 May 2024 12:57:53 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ujI5xr1F"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BDE3C113CC;
+	Thu, 16 May 2024 11:14:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715858084;
+	bh=f3m3tpKfjEj+h303wNF7d1vDkKKiGrQRJ0cjVD8zqPM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ujI5xr1FKF49y0M3ABHaKP0TpajZrmtan6Z0RcRQCrphdhgUmfnFLWXkqD+fdn3lt
+	 KSUs+cnLgffV+MzDufxu+2nc+Y52PJV033aDY4N+eagsfa6Fss4ZLIIVlORE+U+RuD
+	 t0e/mJh9ZDcg7+HaN7HV0xijkNl+vLa5L7i3Mc/m5CNZT7BMseb+PwdO0NUbGCc5kx
+	 2mXc47g3aUpng5pZKm1cWy/wxi8JCKwwuGkByIXclUMhTEK4VsvznMNgH/fu7tEBSx
+	 Bh0Q+S/MSz+fHeY3/AjqfzlRIYVla6YhDQDfh2pCaIrqwu3u3XjBWbaXctsk+hwv1z
+	 ryRJQJJSCnKDQ==
+Date: Thu, 16 May 2024 13:14:40 +0200
+From: Lorenzo Bianconi <lorenzo@kernel.org>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: linux-clk@vger.kernel.org, p.zabel@pengutronix.de,
+	mturquette@baylibre.com, sboyd@kernel.org,
+	lorenzo.bianconi83@gmail.com, conor@kernel.org,
+	linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+	devicetree@vger.kernel.org, nbd@nbd.name, john@phrozen.org,
+	dd@embedd.com, catalin.marinas@arm.com, will@kernel.org,
+	upstream@airoha.com
+Subject: Re: [PATCH 2/5] dt-bindings: reset: Add reset definitions for EN7581
+ SoC.
+Message-ID: <ZkXqoG6xIsrrLyh4@lore-desk>
+References: <cover.1715777643.git.lorenzo@kernel.org>
+ <acb6aa6fe473c485605c108e551d6d28ceb27a60.1715777643.git.lorenzo@kernel.org>
+ <b1e0db1a-2bcb-4d11-a386-e395c2946591@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: clkdev: report over-sized strings when creating clkdev entries
-To: Naresh Kamboju <naresh.kamboju@linaro.org>, "Russell King (Oracle)"
-	<linux@armlinux.org.uk>
-Cc: Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Linux
-	ARM <linux-arm-kernel@lists.infradead.org>, linux-clk
-	<linux-clk@vger.kernel.org>, lkft-triage@lists.linaro.org, open list
-	<linux-kernel@vger.kernel.org>, Anders Roxell <anders.roxell@linaro.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>, Michael Turquette
-	<mturquette@baylibre.com>
-Content-Language: en-US
-From: Marek Szyprowski <m.szyprowski@samsung.com>
-In-Reply-To: <CA+G9fYurPNaW=u2E+h+segnXhY3cfWo3BJpfYDJxKRFPY4epsQ@mail.gmail.com>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrAKsWRmVeSWpSXmKPExsWy7djPc7qbnrmmGeyYrm5xa8pvJou/k46x
-	W3yY18pusenxNVaLjz33WC0u75rDZnFo6l5Gi633prFbXDzlanHrE7/Fv2sbWRy4PS5fu8js
-	8fvXJEaP9zda2T02repk87hzbQ+bx+Yl9R63/z1m9vi8SS6AI4rLJiU1J7MstUjfLoErY+KX
-	SYwFnQIV14/8Y2lg3MXbxcjJISFgItGzqZW5i5GLQ0hgBaPEuVlL2CGcL4wSHS9PsEI4nxkl
-	LjbuZYZpedv0FKpqOVDVtDmMEM5HRolFh+aAVfEK2Emsn7+aFcRmEVCV+PVyOhNEXFDi5Mwn
-	LCC2qIC8xP1bM9hBbGEBb4m+e71gvSICiRKPV/0E28As8I5J4vynHrAGZgFxiVtP5oMNYhMw
-	lOh628UGYnMKBEr8ftrJBFEjL7H97RywjyQEujkljl09yQRxt4vEotdvoGxhiVfHt7BD2DIS
-	/3eCDAVpaGeUWPD7PpQzgVGi4fktRogqa4k7534BreMAWqEpsX6XPkTYUeLX/y52kLCEAJ/E
-	jbeCEEfwSUzaNp0ZIswr0dEmBFGtJjHr+Dq4tQcvXGKewKg0CylcZiF5cxaSd2Yh7F3AyLKK
-	UTy1tDg3PbXYOC+1XK84Mbe4NC9dLzk/dxMjMJGd/nf86w7GFa8+6h1iZOJgPMQowcGsJMIr
-	kuacJsSbklhZlVqUH19UmpNafIhRmoNFSZxXNUU+VUggPbEkNTs1tSC1CCbLxMEp1cBU8uev
-	/OcrSysP72zJmjNjWiLvl1/cfsUuX51Kkz5ov7FfnHQhTuWf6qyMKwyHHjb6M//89JSL70/K
-	50d7ri8ydbl2n3Vnu93SFR7l7D/bxYs+z7/rI2D69Zn0uwwLvycKk/L/CDGtObj10h+3mRdD
-	3n1bEOHGeoJ/mkL4jNdpd8JXBd5WWHoye6KmxdFPH9kYEn443JV83PngZt2On4zfdLU1vYVW
-	JP1evfH2tkXbNH64XMvb9CZTOlRFIGfTt64Fj+uS2X+pfZ+xJ+YzE6/BTrYu0ZOTqvcvP3jF
-	hNEw2H3zl/iY0A9LPZqta5g8tQMWiIYEBoVIxTha3Co8wBNaasXN/Xuu34aEmu62w4ouSizF
-	GYmGWsxFxYkAdX0GNdMDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrAIsWRmVeSWpSXmKPExsVy+t/xu7qbnrmmGezYzmlxa8pvJou/k46x
-	W3yY18pusenxNVaLjz33WC0u75rDZnFo6l5Gi633prFbXDzlanHrE7/Fv2sbWRy4PS5fu8js
-	8fvXJEaP9zda2T02repk87hzbQ+bx+Yl9R63/z1m9vi8SS6AI0rPpii/tCRVISO/uMRWKdrQ
-	wkjP0NJCz8jEUs/Q2DzWyshUSd/OJiU1J7MstUjfLkEvY+KXSYwFnQIV14/8Y2lg3MXbxcjJ
-	ISFgIvG26Sl7FyMXh5DAUkaJr983sUIkZCROTmuAsoUl/lzrYoMoes8ocafvLRNIglfATmL9
-	/NVgRSwCqhK/Xk6HigtKnJz5hAXEFhWQl7h/awY7iC0s4C3Rd6+XuYuRg0NEIFHi138TkDCz
-	wAcmiU/XNCDmtzFL3H/QyQiREJe49WQ+2Ew2AUOJrrcgR3BycAoESvx+2skEUWMm0bW1C6pe
-	XmL72znMExiFZiE5YxaSUbOQtMxC0rKAkWUVo0hqaXFuem6xoV5xYm5xaV66XnJ+7iZGYNRu
-	O/Zz8w7Gea8+6h1iZOJgPMQowcGsJMIrkuacJsSbklhZlVqUH19UmpNafIjRFBgWE5mlRJPz
-	gWkjryTe0MzA1NDEzNLA1NLMWEmc17OgI1FIID2xJDU7NbUgtQimj4mDU6qBSXTqUj+R7H89
-	i7ysjqmdffCJ3cQ6XctzeaLSxQqB71bt64zf+z/efMHP4s2UO6vzEw2YdPW/PnodnbpOafVB
-	sfz8OdlZHAbm8i8OMwokLX3+tu1UwMIo4z0J/bsaP+qbeqR8t11vGG47aVfn8VfX3Q5HpH14
-	6dYxuze7Vt05odF5lc7WwOclrHvc4vcsZPRlL3NhscldVxNwuTlznVi1vr/qoVMTzndUu5mu
-	MvkYX8c5Ya7fjU9X1MT7Jv/XPrRu24S+MPvHJ66Yv+ktjmq6YXv+2LuoRVOfll6cXR79tNY+
-	T+aFQoj51QVsbPoX43ZdZJK7/6w/29zkO8eSNVYfN35bLV1QN8Xyj9t/v+W/lViKMxINtZiL
-	ihMB9h02VmMDAAA=
-X-CMS-MailID: 20240516105754eucas1p29073691f41788465de22d59008b95932
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20240516102738eucas1p2eee547d4b78c347308b0979fa98ede39
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20240516102738eucas1p2eee547d4b78c347308b0979fa98ede39
-References: <CA+G9fYuZd_ur56H8fwDSvUywopvn_b7ogprGkjEatQ7EPTLwYQ@mail.gmail.com>
-	<11be44d3-0f32-49c6-b4ae-ba97a9f97763@app.fastmail.com>
-	<820ddc2ec70780ae1ecd3af864dc8bd6.sboyd@kernel.org>
-	<ZkUgqzUn1EmjrPdl@shell.armlinux.org.uk>
-	<CGME20240516102738eucas1p2eee547d4b78c347308b0979fa98ede39@eucas1p2.samsung.com>
-	<CA+G9fYurPNaW=u2E+h+segnXhY3cfWo3BJpfYDJxKRFPY4epsQ@mail.gmail.com>
-
-On 16.05.2024 12:27, Naresh Kamboju wrote:
-> On Wed, 15 May 2024 at 22:53, Russell King (Oracle)
-> <linux@armlinux.org.uk> wrote:
->> On Tue, May 07, 2024 at 01:26:17PM -0700, Stephen Boyd wrote:
->>> Quoting Arnd Bergmann (2024-05-07 00:44:15)
->>>> On Tue, May 7, 2024, at 09:20, Naresh Kamboju wrote:
->>>>> The WinLink E850-96 board boot failed with Linux next-20240506 but there
->>>>> is no kernel crash log on the serial [1].
->>>>>
->>>>> Anders bisection results pointing to this commit,
->>>>> # first bad commit:
->>>>>    [4d11c62ca8d77cb1f79054844b598e0f4e92dabe]
->>>>>    clkdev: report over-sized strings when creating clkdev entrie
->>>>>
->>>>> After reverting the above patch the boot test passed [2].
->>>>>
->>>>> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
->>>>>
->>> There are two fixes on the list: [1] and [2]. Perhaps one of those
->>> resolves this?
->>>
->>> [1] https://lore.kernel.org/r/20240507065317.3214186-1-m.szyprowski@samsung.com
->> This one has (I think) ended up in the patch system last week, but it's
->> not clkdev, it's only related. I'm also not Cc'd on its posting, and
->> it's not posted to any mailing list that I'm a part of. So I've not
->> been following any discussion on it.
->>
->> Digging in to the discussion, I see various attributations, and a final
->> message reporting an unused variable, and a promise to send v2. So,
->> I'm guessing that
->> https://protect2.fireeye.com/v1/url?k=946226d9-f5e933ef-9463ad96-74fe485fffe0-28286a0026513387&q=1&e=a16c1c53-9c99-475a-b144-8adf7852ebc0&u=http%3A%2F%2Fwww.home.armlinux.org.uk%2Fdeveloper%2Fpatches%2Fviewpatch.php%3Fid%3D9397%2F1
-> I do not have access to this link ^.
->
->> is now superseded in some way... I wouldn't have known without locating
->> this email and checking the links.
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="RpZgGcsqwUws+u1I"
+Content-Disposition: inline
+In-Reply-To: <b1e0db1a-2bcb-4d11-a386-e395c2946591@collabora.com>
 
 
-The fix for drivers/clk/samsung/clk.c driver has been merged to clk-next:
+--RpZgGcsqwUws+u1I
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-https://lore.kernel.org/all/f7a877622829db499bf2bc65fe9ffbff.sboyd@kernel.org/
+> Il 15/05/24 14:58, Lorenzo Bianconi ha scritto:
+> > Introduce reset binding definitions for reset controller available in
+> > the Airoha EN7581 clock module.
+> >=20
+> > Tested-by: Zhengping Zhang <zhengping.zhang@airoha.com>
+> > Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
+> > ---
+> >   .../dt-bindings/reset/airoha,en7581-reset.h   | 66 +++++++++++++++++++
+> >   1 file changed, 66 insertions(+)
+> >   create mode 100644 include/dt-bindings/reset/airoha,en7581-reset.h
+> >=20
+> > diff --git a/include/dt-bindings/reset/airoha,en7581-reset.h b/include/=
+dt-bindings/reset/airoha,en7581-reset.h
+> > new file mode 100644
+> > index 000000000000..1b7ee62ed164
+> > --- /dev/null
+> > +++ b/include/dt-bindings/reset/airoha,en7581-reset.h
+> > @@ -0,0 +1,66 @@
+> > +// SPDX-License-Identifier: GPL-2.0-only
+> > +/*
+> > + * Copyright (c) 2024 AIROHA Inc
+> > + * Author: Lorenzo Bianconi <lorenzo@kernel.org>
+> > + */
+> > +
+> > +#ifndef __DT_BINDINGS_RESET_CONTROLLER_AIROHA_EN7581_H_
+> > +#define __DT_BINDINGS_RESET_CONTROLLER_AIROHA_EN7581_H_
+> > +
+> > +/* RST_CTRL2 */
+> > +#define EN7581_XPON_PHY_RST		0
+>=20
+> ** sarcasm mode on **
+>=20
+> Count with me: 0... 1... 2...
 
-Best regards
--- 
-Marek Szyprowski, PhD
-Samsung R&D Institute Poland
+:)
 
+>=20
+> ** sarcasm mode off **
+>=20
+> There's a jump here, you have a reset index 0 and an index 2,
+> but you're missing index 1, that's not right :-)
+>=20
+> Please fix.
+
+it is because BIT(1) is marked as 'reserved' in the documentation so I skip=
+ped it.
+Do you prefer to have it in that way?
+
+Regards,
+Lorenzo
+
+>=20
+> Cheers,
+> Angelo
+>=20
+> > +#define EN7581_CPU_TIMER2_RST		2
+> > +#define EN7581_HSUART_RST		3
+> > +#define EN7581_UART4_RST		4
+> > +#define EN7581_UART5_RST		5
+> > +#define EN7581_I2C2_RST			6
+> > +#define EN7581_XSI_MAC_RST		7
+> > +#define EN7581_XSI_PHY_RST		8
+> > +#define EN7581_NPU_RST			9
+> > +#define EN7581_I2S_RST			10
+> > +#define EN7581_TRNG_RST			11
+> > +#define EN7581_TRNG_MSTART_RST		12
+> > +#define EN7581_DUAL_HSI0_RST		13
+> > +#define EN7581_DUAL_HSI1_RST		14
+> > +#define EN7581_HSI_RST			15
+> > +#define EN7581_DUAL_HSI0_MAC_RST	16
+> > +#define EN7581_DUAL_HSI1_MAC_RST	17
+> > +#define EN7581_HSI_MAC_RST		18
+> > +#define EN7581_WDMA_RST			19
+> > +#define EN7581_WOE0_RST			20
+> > +#define EN7581_WOE1_RST			21
+> > +#define EN7581_HSDMA_RST		22
+> > +#define EN7581_TDMA_RST			24
+> > +#define EN7581_EMMC_RST			25
+> > +#define EN7581_SOE_RST			26
+> > +#define EN7581_PCIE2_RST		27
+> > +#define EN7581_XFP_MAC_RST		28
+> > +#define EN7581_USB_HOST_P1_RST		29
+> > +#define EN7581_USB_HOST_P1_U3_PHY_RST	30
+> > +/* RST_CTRL1 */
+> > +#define EN7581_PCM1_ZSI_ISI_RST		32
+> > +#define EN7581_FE_PDMA_RST		33
+> > +#define EN7581_FE_QDMA_RST		34
+> > +#define EN7581_PCM_SPIWP_RST		36
+> > +#define EN7581_CRYPTO_RST		38
+> > +#define EN7581_TIMER_RST		40
+> > +#define EN7581_PCM1_RST			43
+> > +#define EN7581_UART_RST			44
+> > +#define EN7581_GPIO_RST			45
+> > +#define EN7581_GDMA_RST			46
+> > +#define EN7581_I2C_MASTER_RST		48
+> > +#define EN7581_PCM2_ZSI_ISI_RST		49
+> > +#define EN7581_SFC_RST			50
+> > +#define EN7581_UART2_RST		51
+> > +#define EN7581_GDMP_RST			52
+> > +#define EN7581_FE_RST			53
+> > +#define EN7581_USB_HOST_P0_RST		54
+> > +#define EN7581_GSW_RST			55
+> > +#define EN7581_SFC2_PCM_RST		57
+> > +#define EN7581_PCIE0_RST		58
+> > +#define EN7581_PCIE1_RST		59
+> > +#define EN7581_CPU_TIMER_RST		60
+> > +#define EN7581_PCIE_HB_RST		61
+> > +#define EN7581_XPON_MAC_RST		63
+> > +
+> > +#endif /* __DT_BINDINGS_RESET_CONTROLLER_AIROHA_EN7581_H_ */
+>=20
+
+--RpZgGcsqwUws+u1I
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCZkXqoAAKCRA6cBh0uS2t
+rCueAP9MHJO7lt6I/1ogxtDK7sBU5a3Asb4kFHCnT/6Htx1s6wEAk4sLUHj4feFl
+yuDrUp3NGJIBhOpJPHZ7fvvM/Jgakwo=
+=ftcA
+-----END PGP SIGNATURE-----
+
+--RpZgGcsqwUws+u1I--
