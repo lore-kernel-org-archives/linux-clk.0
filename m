@@ -1,154 +1,112 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D5E8143747;
-	Thu, 16 May 2024 11:22:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF2171459E2;
+	Thu, 16 May 2024 11:33:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715858541; cv=none; b=dSCGsGp2hc6oaBYPXAgsZVwx707bE+IWVcXvGCJJhufiYwnkrdAJrm39LddLS9uwIWsf+mIJcfW1cy8Iek080+gRSiORSEAKU8ivF5O8t10geA6QCwcOlyKF3nuMdqKpZtVlVR5OLqO3/JB/8TGEJAnWzFpzfgTYP6DuLv5Djtc=
+	t=1715859185; cv=none; b=rZtBQObEIrAOav40qN9t4Bkfr82s493RvawncDV1dNc4rWvfCyQPO0dpNT13ipZd7RbHRDbyOeNHy4u3AQN1lJAO50pc+99Z5H98VTNEAj6fkQe3FGaXQNUkk7yBMRgY6BgJwkjy8r5FNOEV9+sYY8h5FTMhfEMGx9M+1qEqmWc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715858541; c=relaxed/simple;
-	bh=gkue31XZB7soLiC173LtvdoK5m2Qi3X/p+NB90MIVPI=;
+	s=arc-20240116; t=1715859185; c=relaxed/simple;
+	bh=vJ1dXf3D1QyoUryoyq2MHmEWi0/eC/n822cq45EZbpA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jmz1HHKlSC1ofHnsIUy3EWxEIx1MnoV8dOKTJ8Dd3h5fmhTnEPrINRj6GrZFwm5cO4ak7VUnhHSgEpXWGBTFVhrpPT1Xfq7oFZ9ZaOUQdKGtB1veKS0erAGQWXqNuyLqrWI05F1JUw6/CNtLRzQfaulRqqI51/9wnuQRgtSj4oU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HCtlEfTl; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=bSSwFru/DTpwcJYMviCSRgWDHD3MTXYncM1QtgWEIxZQhKdlUhJcg94L2uZaGqyne9P3y6Kr0DBnjnwVI36B+UUa+/PgqJfHzJ08icQGs+wx8telgUxHIK9Je5m60ZeJ5nvBkrSxtX1uMvWhCfP0AHSuHXwGEd4F9CVGNBbTgNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=kH78TWg9; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HCtlEfTl"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DA6DC113CC;
-	Thu, 16 May 2024 11:22:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715858540;
-	bh=gkue31XZB7soLiC173LtvdoK5m2Qi3X/p+NB90MIVPI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HCtlEfTl6j2d0A1k5vyrf0BKB+9HE+wrFN9Z0GmCGQiafs9bFV4ireltLBVZravjY
-	 6/GB+oQKmcLf+N8PoNtWKhxqWOPUku3cJtnPbb7y0WCng+zg4yMo4AogjdvOk7S/RD
-	 Mb56XiuLcOQrCpeB/4L9VM0efH7u+0o8f816ojKEZLrqvCWdYPTJhfyS5QgPRQSHwp
-	 ONnH8Tnk+4gn1nvVMTT85cZ/O0bOpatWYAm2Tsw3nvD+LTLdbNHTFJOys/f633dyE9
-	 z+R5j0F9uVNs6zeuxieWK5KupYQHS8kRv1nc1hNjPJpVhQW2ds3EfnLVr9gERF0Rnc
-	 EhhPAxfCe260w==
-Date: Thu, 16 May 2024 13:22:16 +0200
-From: Lorenzo Bianconi <lorenzo@kernel.org>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-clk@vger.kernel.org, p.zabel@pengutronix.de,
-	mturquette@baylibre.com, sboyd@kernel.org,
-	lorenzo.bianconi83@gmail.com, conor@kernel.org,
-	linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-	devicetree@vger.kernel.org, nbd@nbd.name, john@phrozen.org,
-	dd@embedd.com, catalin.marinas@arm.com, will@kernel.org,
-	upstream@airoha.com
-Subject: Re: [PATCH 4/5] clk: en7523: Add reset-controller support for EN7581
- SoC
-Message-ID: <ZkXsaLylQOTis_wF@lore-desk>
-References: <cover.1715777643.git.lorenzo@kernel.org>
- <0f7b04c2101db1a974dc45017bee285ffb25d80f.1715777643.git.lorenzo@kernel.org>
- <97b1fbfc-e059-46c7-9bb1-75cdaa2d2159@collabora.com>
+	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="kH78TWg9"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=FtaIYOu5+dNz/ZMQJk5S85cXvl1SZa5DjNYpIAT6Axw=; b=kH78TWg9Y1Ej/jEYMWiGgnfT9u
+	WyeiZ2z2GnV/cDp4x8JK9qV2JTnPaAagZhVm0UuMdRRNWlAIyL8Jr+TH4u+rpxc84MZNaKu0LVBXE
+	s4iHSmQ0L6UwB2YzpmMaHiVqs1RkgEF+gi1V8h4hq74ZaU+NhlkIQjyr8WIUTs0+ug2FdhnpCd0Xo
+	Ft1whsCDOYeIlDnXYUkPTYgFRBydZ/ed4eD/MSDUfKKO0TLkHfUjS6pRpDu6LwgCxZ9iJHj0KerwY
+	0rMIZDkWi8iRwgU+qiHy+aBqEvK8qP90M1835ifzfO0m1RTGoy0nN3djybw+rWr08uheH8NILZ8FQ
+	FEfsz3yg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:55876)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1s7ZLp-0004ls-0M;
+	Thu, 16 May 2024 12:32:45 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1s7ZLp-0000Zk-5j; Thu, 16 May 2024 12:32:45 +0100
+Date: Thu, 16 May 2024 12:32:45 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Naresh Kamboju <naresh.kamboju@linaro.org>
+Cc: Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Linux ARM <linux-arm-kernel@lists.infradead.org>,
+	linux-clk <linux-clk@vger.kernel.org>, lkft-triage@lists.linaro.org,
+	open list <linux-kernel@vger.kernel.org>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: clkdev: report over-sized strings when creating clkdev entries
+Message-ID: <ZkXu3XNVLhTuRRNt@shell.armlinux.org.uk>
+References: <CA+G9fYuZd_ur56H8fwDSvUywopvn_b7ogprGkjEatQ7EPTLwYQ@mail.gmail.com>
+ <11be44d3-0f32-49c6-b4ae-ba97a9f97763@app.fastmail.com>
+ <820ddc2ec70780ae1ecd3af864dc8bd6.sboyd@kernel.org>
+ <ZkUgqzUn1EmjrPdl@shell.armlinux.org.uk>
+ <CA+G9fYurPNaW=u2E+h+segnXhY3cfWo3BJpfYDJxKRFPY4epsQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="1IzpTw6hbx1Q6+He"
-Content-Disposition: inline
-In-Reply-To: <97b1fbfc-e059-46c7-9bb1-75cdaa2d2159@collabora.com>
-
-
---1IzpTw6hbx1Q6+He
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CA+G9fYurPNaW=u2E+h+segnXhY3cfWo3BJpfYDJxKRFPY4epsQ@mail.gmail.com>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-> Il 15/05/24 14:58, Lorenzo Bianconi ha scritto:
-> > Introduce reset API support to EN7581 clock driver.
-> >=20
-> > Tested-by: Zhengping Zhang <zhengping.zhang@airoha.com>
-> > Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
->=20
-> Heh, that's exactly the usual MediaTek reset controller :-D
->=20
-> > ---
-> >   drivers/clk/clk-en7523.c | 96 +++++++++++++++++++++++++++++++++++++++-
-> >   1 file changed, 94 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
-> > index 381605be333f..18798b692b68 100644
-> > --- a/drivers/clk/clk-en7523.c
-> > +++ b/drivers/clk/clk-en7523.c
-> > @@ -6,6 +6,7 @@
-> >   #include <linux/of.h>
-> >   #include <linux/of_device.h>
-> >   #include <linux/platform_device.h>
-> > +#include <linux/reset-controller.h>
-> >   #include <dt-bindings/clock/en7523-clk.h>
-> >   #define REG_PCI_CONTROL			0x88
-> > @@ -65,8 +66,18 @@ struct en_clk_gate {
-> >   	struct clk_hw hw;
-> >   };
-> > +#define RST_NR_PER_BANK		32
->=20
-> Please move this definition at the beginning of this file, grouping that =
-with
-> the others.
+On Thu, May 16, 2024 at 12:27:20PM +0200, Naresh Kamboju wrote:
+> On Wed, 15 May 2024 at 22:53, Russell King (Oracle)
+> <linux@armlinux.org.uk> wrote:
+> >
+> > On Tue, May 07, 2024 at 01:26:17PM -0700, Stephen Boyd wrote:
+> > > Quoting Arnd Bergmann (2024-05-07 00:44:15)
+> > > > On Tue, May 7, 2024, at 09:20, Naresh Kamboju wrote:
+> > > > > The WinLink E850-96 board boot failed with Linux next-20240506 but there
+> > > > > is no kernel crash log on the serial [1].
+> > > > >
+> > > > > Anders bisection results pointing to this commit,
+> > > > > # first bad commit:
+> > > > >   [4d11c62ca8d77cb1f79054844b598e0f4e92dabe]
+> > > > >   clkdev: report over-sized strings when creating clkdev entrie
+> > > > >
+> > > > > After reverting the above patch the boot test passed [2].
+> > > > >
+> > > > > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+> > > > >
+> > >
+> > > There are two fixes on the list: [1] and [2]. Perhaps one of those
+> > > resolves this?
+> > >
+> > > [1] https://lore.kernel.org/r/20240507065317.3214186-1-m.szyprowski@samsung.com
+> >
+> > This one has (I think) ended up in the patch system last week, but it's
+> > not clkdev, it's only related. I'm also not Cc'd on its posting, and
+> > it's not posted to any mailing list that I'm a part of. So I've not
+> > been following any discussion on it.
+> >
+> > Digging in to the discussion, I see various attributations, and a final
+> > message reporting an unused variable, and a promise to send v2. So,
+> > I'm guessing that
+> > http://www.home.armlinux.org.uk/developer/patches/viewpatch.php?id=9397/1
+> 
+> I do not have access to this link ^.
 
-ack, I will fix it.
+Sorry, that's my internal link, the external one is:
 
->=20
-> ..snip...
->=20
-> > @@ -456,12 +542,14 @@ static int en7523_clk_probe(struct platform_devic=
-e *pdev)
-> >   	en7523_register_clocks(&pdev->dev, clk_data, base, np_base);
-> >   	r =3D of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
-> > -	if (r)
-> > +	if (r) {
-> >   		dev_err(&pdev->dev,
-> >   			"could not register clock provider: %s: %d\n",
-> >   			pdev->name, r);
-> > +		return r;
-> > +	}
-> > -	return r;
-> > +	return en7523_reset_register(&pdev->dev, np_base, soc_data);
->=20
-> If en7523_reset_register fails, you want to call of_clk_del_provider(), so
-> you can't just return like this...
+http://www.armlinux.org.uk/developer/patches/viewpatch.php?id=9397/1
 
-ack, I will fix it.
-
-Regards,
-Lorenzo
-
->=20
-> Cheers,
-> Angelo
->=20
-> >   }
-> >   static const struct en_clk_soc_data en7523_data =3D {
-> > @@ -480,6 +568,10 @@ static const struct en_clk_soc_data en7581_data =
-=3D {
-> >   		.unprepare =3D en7581_pci_unprepare,
-> >   		.disable =3D en7581_pci_disable,
-> >   	},
-> > +	.reset_data =3D {
-> > +		.base_addr =3D REG_RESET_CONTROL2,
-> > +		.n_banks =3D 2,
-> > +	},
-> >   	.hw_init =3D en7581_clk_hw_init,
-> >   };
->=20
->=20
->=20
-
---1IzpTw6hbx1Q6+He
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCZkXsaAAKCRA6cBh0uS2t
-rGMtAP42ShUJqdRmjCR450t85MAH7GQu7725+THcJN3P1i9EYQD+MV2tuolsxmA3
-QmzsQdg94EMSnDH6veNPqwaLnoUdGwE=
-=eOOs
------END PGP SIGNATURE-----
-
---1IzpTw6hbx1Q6+He--
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
