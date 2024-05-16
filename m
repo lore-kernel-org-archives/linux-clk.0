@@ -1,210 +1,185 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE94114D431;
-	Thu, 16 May 2024 16:00:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5DAB155388;
+	Thu, 16 May 2024 17:15:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715875200; cv=none; b=ZbZJicmGIDU6H24Akrwd5dmp+kniyHQA4dIOXqH/P3bzNLxHwwRSfP9cQ3e13wF+sQ4ZQ+9YFSfOCisjeHQhcSjLiNDXxusz6AM3dCR8TG2EUsr/iLXzLZyX2xVL56J+aPh15uFayAh9IhaYa3wRFcrXrfqHJDDKrwIkkrIGInI=
+	t=1715879725; cv=none; b=JCHHo8XGYWxUj1eciE8RgOsm9GN4kiEBIseTEuPPBk1eI3ufOTTJorLrkYXNTWVRr7OZ7pubfo44Utjj/OLKuG2flSAvj/tgz/1VnC5M4to0DKZ7y1zaZMCy6wAqEkP1IyGzlFJAOLEMTu63M6V0zeDdzf/qXGURljm6l4aCjU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715875200; c=relaxed/simple;
-	bh=4/gi6rbxuk3sno82iZjHcKkwDvcnwcT2fdJHUnfyx4s=;
+	s=arc-20240116; t=1715879725; c=relaxed/simple;
+	bh=tJHICD/Spu7eyWw+3JsUCt45YC1BDTTlj6WiULrpyjo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KZoamZnhQBa3UWLBvvVmf8JT02PVNYC35ajbKVXwkGqyD8o0oxEx1feXZRmO+ifJRLt2/E62wEM+jG88yE/btRjXxypwvZvnlztHDaroef07+c+80RjRWcK24Fs4l3TcAldRJWhGZSJ5vlvpSHtPHrgIFgbUSo5+P3u/eflEXSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R/fbyDWI; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=hwUfRCDiETqxM1cks92ApVFgZ68Z8zMxhgmHlqzOo5TAEmlTLcwNY2LKnPqyjBWw9988Ho+ckK445WNbyd/Siy19bI5YqQFKVcH3uGJ1TqZmJsNkbc09eM6+XeanH+bmglSPfqshuFspeMchEeELokToIEO300xy57q3A2UefBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ta6k+4xH; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R/fbyDWI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3A69C113CC;
-	Thu, 16 May 2024 15:59:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ta6k+4xH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71BC2C113CC;
+	Thu, 16 May 2024 17:15:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715875200;
-	bh=4/gi6rbxuk3sno82iZjHcKkwDvcnwcT2fdJHUnfyx4s=;
+	s=k20201202; t=1715879724;
+	bh=tJHICD/Spu7eyWw+3JsUCt45YC1BDTTlj6WiULrpyjo=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R/fbyDWIdw/BlYva1qA8M7jHYRc2BbLagdyT8ozD04xSBrvT+rIdFxIBzewHLZPdv
-	 quPuDIZsgxW99btEGdZSwOF8KbLJOmAj8LPZ6u+xgD9DFjlvXVKmuDgrrHq8/ymMjT
-	 cTdubTUXJWz39X5hBYl02/9L8X9pIb+qP8zGRqJccw8GE2vvuJbruEX/roO11P+sEQ
-	 NaxKEhI7MvSmge6pJNXskqLKZfDGqm6OsvGfoHAI+U7yXt2znBlFJqJx7Cu/Ta+lc4
-	 37jH+RcBgG81ULOdluy69/5J+FDB6VXqzcn3Gi2W6RJ+eiqSOAIuFKEO/x+mSm+G6o
-	 5OglkRznj34Tg==
-Date: Thu, 16 May 2024 17:59:56 +0200
-From: Lorenzo Bianconi <lorenzo@kernel.org>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-clk@vger.kernel.org, p.zabel@pengutronix.de,
-	mturquette@baylibre.com, sboyd@kernel.org,
-	lorenzo.bianconi83@gmail.com, conor@kernel.org,
-	linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
-	devicetree@vger.kernel.org, nbd@nbd.name, john@phrozen.org,
-	dd@embedd.com, catalin.marinas@arm.com, will@kernel.org,
-	upstream@airoha.com
-Subject: Re: [PATCH 2/5] dt-bindings: reset: Add reset definitions for EN7581
- SoC.
-Message-ID: <ZkYtfJJHIL1z2-vv@lore-desk>
-References: <cover.1715777643.git.lorenzo@kernel.org>
- <acb6aa6fe473c485605c108e551d6d28ceb27a60.1715777643.git.lorenzo@kernel.org>
- <b1e0db1a-2bcb-4d11-a386-e395c2946591@collabora.com>
- <ZkXqoG6xIsrrLyh4@lore-desk>
- <d6b7aa1e-ce0d-4ea3-9f2d-c256a296dd1f@collabora.com>
+	b=ta6k+4xHFjq8OMAL8mQH/vxXeT08gJX4KhTtsBpFPKWTUhfZY8hLfhV33XVBe72r7
+	 PokO8N81kRVzAFYmolhItHrFfsih4DSGPiyfmGKxNrjiUxEMF8pqCW5tVSguH+IaNi
+	 M1ekGqPXV3U9g1jmNJzaPwG1GAorYN/g+fsQHo+X42EUgErNrZmthTHpm5VDogt1D+
+	 a3JMvwY5oVrQF5eHKcTJlzvhkRg2RJwUVRaVmQoItmjvCnTIuOKqtYm/XdANZMBHTq
+	 llyeZ3Wqq8Mfrhn5DMlSWrBqo3p4F4cqwgJyMz2qMf4tzl9xawmY2hC3X4BZfPup64
+	 XNKCxcoznr2CA==
+Date: Thu, 16 May 2024 18:15:18 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Shengjiu Wang <shengjiu.wang@gmail.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org,
+	peng.fan@nxp.com, mturquette@baylibre.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org,
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+	marex@denx.de, linux-clk@vger.kernel.org, imx@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, p.zabel@pengutronix.de
+Subject: Re: [PATCH v3 3/6] dt-bindings: clock: imx8mp: Add reset-controller
+ sub-node
+Message-ID: <20240516-reversing-demeanor-def651bc82ac@spud>
+References: <1715679210-9588-1-git-send-email-shengjiu.wang@nxp.com>
+ <1715679210-9588-4-git-send-email-shengjiu.wang@nxp.com>
+ <20240514-campus-sibling-21cdf4c78366@spud>
+ <b86c83a520f0c45a60249468fa92b1de.sboyd@kernel.org>
+ <CAA+D8ANTdvQJVtniyMtqjnJdT4qX+LDGjVuFO6H0RSO+GDw+ng@mail.gmail.com>
+ <20240515-unbundle-bubble-8623b495a4f1@spud>
+ <ZkT+4yUgcUdB/i2t@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="UFOJValw8646IkIF"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="U2yG7SBZt5e06VSB"
 Content-Disposition: inline
-In-Reply-To: <d6b7aa1e-ce0d-4ea3-9f2d-c256a296dd1f@collabora.com>
+In-Reply-To: <ZkT+4yUgcUdB/i2t@lizhi-Precision-Tower-5810>
 
 
---UFOJValw8646IkIF
-Content-Type: text/plain; charset=us-ascii
+--U2yG7SBZt5e06VSB
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-> Il 16/05/24 13:14, Lorenzo Bianconi ha scritto:
-> > > Il 15/05/24 14:58, Lorenzo Bianconi ha scritto:
-> > > > Introduce reset binding definitions for reset controller available =
-in
-> > > > the Airoha EN7581 clock module.
-> > > >=20
-> > > > Tested-by: Zhengping Zhang <zhengping.zhang@airoha.com>
-> > > > Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
-> > > > ---
-> > > >    .../dt-bindings/reset/airoha,en7581-reset.h   | 66 +++++++++++++=
-++++++
-> > > >    1 file changed, 66 insertions(+)
-> > > >    create mode 100644 include/dt-bindings/reset/airoha,en7581-reset=
-=2Eh
-> > > >=20
-> > > > diff --git a/include/dt-bindings/reset/airoha,en7581-reset.h b/incl=
-ude/dt-bindings/reset/airoha,en7581-reset.h
-> > > > new file mode 100644
-> > > > index 000000000000..1b7ee62ed164
-> > > > --- /dev/null
-> > > > +++ b/include/dt-bindings/reset/airoha,en7581-reset.h
-> > > > @@ -0,0 +1,66 @@
-> > > > +// SPDX-License-Identifier: GPL-2.0-only
-> > > > +/*
-> > > > + * Copyright (c) 2024 AIROHA Inc
-> > > > + * Author: Lorenzo Bianconi <lorenzo@kernel.org>
-> > > > + */
-> > > > +
-> > > > +#ifndef __DT_BINDINGS_RESET_CONTROLLER_AIROHA_EN7581_H_
-> > > > +#define __DT_BINDINGS_RESET_CONTROLLER_AIROHA_EN7581_H_
-> > > > +
-> > > > +/* RST_CTRL2 */
-> > > > +#define EN7581_XPON_PHY_RST		0
+On Wed, May 15, 2024 at 02:28:51PM -0400, Frank Li wrote:
+> On Wed, May 15, 2024 at 05:04:48PM +0100, Conor Dooley wrote:
+> > On Wed, May 15, 2024 at 10:47:57AM +0800, Shengjiu Wang wrote:
+> > > On Wed, May 15, 2024 at 5:09=E2=80=AFAM Stephen Boyd <sboyd@kernel.or=
+g> wrote:
+> > > >
+> > > > Quoting Conor Dooley (2024-05-14 11:06:14)
+> > > > > On Tue, May 14, 2024 at 05:33:27PM +0800, Shengjiu Wang wrote:
+> > > > > > diff --git a/Documentation/devicetree/bindings/clock/imx8mp-aud=
+iomix.yaml b/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
+> > > > > > index 0a6dc1a6e122..a403ace4d11f 100644
+> > > > > > --- a/Documentation/devicetree/bindings/clock/imx8mp-audiomix.y=
+aml
+> > > > > > +++ b/Documentation/devicetree/bindings/clock/imx8mp-audiomix.y=
+aml
+> > > > > > @@ -15,7 +15,10 @@ description: |
+> > > > > >
+> > > > > >  properties:
+> > > > > >    compatible:
+> > > > > > -    const: fsl,imx8mp-audio-blk-ctrl
+> > > > > > +    items:
+> > > > > > +      - const: fsl,imx8mp-audio-blk-ctrl
+> > > > > > +      - const: syscon
+> > > > > > +      - const: simple-mfd
+> > > > > >
+> > > > > >    reg:
+> > > > > >      maxItems: 1
+> > > > > > @@ -44,6 +47,11 @@ properties:
+> > > > > >        ID in its "clocks" phandle cell. See include/dt-bindings=
+/clock/imx8mp-clock.h
+> > > > > >        for the full list of i.MX8MP IMX8MP_CLK_AUDIOMIX_ clock =
+IDs.
+> > > > > >
+> > > > > > +  reset-controller:
+> > > > > > +    type: object
+> > > > > > +    $ref: /schemas/reset/fsl,imx8mp-audiomix-reset.yaml#
+> > > > > > +    description: The child reset devices of AudioMIX Block Con=
+trol.
+> > > > >
+> > > > > Why not just set #reset-cells =3D <1> in the existing node? IIRC =
+it was
+> > > > > already suggested to you to do that and use auxdev to set up the =
+reset
+> > > > > driver.
+> > > >
+> > > > Yes, do that.
 > > >=20
-> > > ** sarcasm mode on **
-> > >=20
-> > > Count with me: 0... 1... 2...
+> > > Can I know why sub nodes can't be used? the relationship of parent and
+> > > child devices looks better with sub nodes.
 > >=20
-> > :)
-> >=20
-> > >=20
-> > > ** sarcasm mode off **
-> > >=20
-> > > There's a jump here, you have a reset index 0 and an index 2,
-> > > but you're missing index 1, that's not right :-)
-> > >=20
-> > > Please fix.
-> >=20
-> > it is because BIT(1) is marked as 'reserved' in the documentation so I =
-skipped it.
-> > Do you prefer to have it in that way?
-> >=20
+> > That's pretty subjective. I don't think it looks better to have a clock
+> > node that is also a syscon with a reset child node as it is rather
+> > inconsistent.
 >=20
-> This is not my preference, it's rather a requirement for the bindings...
+> I think it is multi function device syscon node. it should be like
 >=20
-> That's why in the MediaTek reset controller part of the clk driver there =
-is
-> a way to map those numbers (which are always sequential) to actual reset =
-bits
-> in the controller...
+> mfd
+> {
+> 	clock
+> 	{
+> 		...
+> 	}
+>=20
+> 	reset
+> 	{
+> 		...
+> 	}
+> }
+>=20
+> clock and reset are difference device node with totally difference's
+> compatible string.
 
-ack, fine. I will look into it. Thx for the pointer.
+Which is I suspect is gonna require a change to your clock driver,
+because the range in the existing clock nodes:
+	audio_blk_ctrl: clock-controller@30e20000 {
+		compatible =3D "fsl,imx8mp-audio-blk-ctrl";
+		reg =3D <0x30e20000 0x10000>;
+	};
+would then have to move to the mfd parent node, and your clock child
+would have a reg property that overlaps the reset region. You'd need to
+then define a new binding that splits the range in two - obviously
+doable, but significantly more work and more disruptive than using an
+auxdev.
 
-Regards,
-Lorenzo
-
->=20
-> Cheers!
->=20
-> > Regards,
-> > Lorenzo
+> > > A further question is can I use the reset-ti-syscon? which is a gener=
+ic reset
+> > > device for SoCs.  with it I don't even need to write a new reset devi=
+ce driver.
+> > > it is more simple.
 > >=20
-> > >=20
-> > > Cheers,
-> > > Angelo
-> > >=20
-> > > > +#define EN7581_CPU_TIMER2_RST		2
-> > > > +#define EN7581_HSUART_RST		3
-> > > > +#define EN7581_UART4_RST		4
-> > > > +#define EN7581_UART5_RST		5
-> > > > +#define EN7581_I2C2_RST			6
-> > > > +#define EN7581_XSI_MAC_RST		7
-> > > > +#define EN7581_XSI_PHY_RST		8
-> > > > +#define EN7581_NPU_RST			9
-> > > > +#define EN7581_I2S_RST			10
-> > > > +#define EN7581_TRNG_RST			11
-> > > > +#define EN7581_TRNG_MSTART_RST		12
-> > > > +#define EN7581_DUAL_HSI0_RST		13
-> > > > +#define EN7581_DUAL_HSI1_RST		14
-> > > > +#define EN7581_HSI_RST			15
-> > > > +#define EN7581_DUAL_HSI0_MAC_RST	16
-> > > > +#define EN7581_DUAL_HSI1_MAC_RST	17
-> > > > +#define EN7581_HSI_MAC_RST		18
-> > > > +#define EN7581_WDMA_RST			19
-> > > > +#define EN7581_WOE0_RST			20
-> > > > +#define EN7581_WOE1_RST			21
-> > > > +#define EN7581_HSDMA_RST		22
-> > > > +#define EN7581_TDMA_RST			24
-> > > > +#define EN7581_EMMC_RST			25
-> > > > +#define EN7581_SOE_RST			26
-> > > > +#define EN7581_PCIE2_RST		27
-> > > > +#define EN7581_XFP_MAC_RST		28
-> > > > +#define EN7581_USB_HOST_P1_RST		29
-> > > > +#define EN7581_USB_HOST_P1_U3_PHY_RST	30
-> > > > +/* RST_CTRL1 */
-> > > > +#define EN7581_PCM1_ZSI_ISI_RST		32
-> > > > +#define EN7581_FE_PDMA_RST		33
-> > > > +#define EN7581_FE_QDMA_RST		34
-> > > > +#define EN7581_PCM_SPIWP_RST		36
-> > > > +#define EN7581_CRYPTO_RST		38
-> > > > +#define EN7581_TIMER_RST		40
-> > > > +#define EN7581_PCM1_RST			43
-> > > > +#define EN7581_UART_RST			44
-> > > > +#define EN7581_GPIO_RST			45
-> > > > +#define EN7581_GDMA_RST			46
-> > > > +#define EN7581_I2C_MASTER_RST		48
-> > > > +#define EN7581_PCM2_ZSI_ISI_RST		49
-> > > > +#define EN7581_SFC_RST			50
-> > > > +#define EN7581_UART2_RST		51
-> > > > +#define EN7581_GDMP_RST			52
-> > > > +#define EN7581_FE_RST			53
-> > > > +#define EN7581_USB_HOST_P0_RST		54
-> > > > +#define EN7581_GSW_RST			55
-> > > > +#define EN7581_SFC2_PCM_RST		57
-> > > > +#define EN7581_PCIE0_RST		58
-> > > > +#define EN7581_PCIE1_RST		59
-> > > > +#define EN7581_CPU_TIMER_RST		60
-> > > > +#define EN7581_PCIE_HB_RST		61
-> > > > +#define EN7581_XPON_MAC_RST		63
-> > > > +
-> > > > +#endif /* __DT_BINDINGS_RESET_CONTROLLER_AIROHA_EN7581_H_ */
-> > >=20
+> > That is for a TI SoC. You're working on an imx. I don't think that you
+> > should be using that...
 >=20
+> I think this statement violate the linux basic reuse prinicple. If the
+> code logic are the same why need duplicate it just because it is differen=
+ce
+> company. Of coures, if it is generic enough, it'd better to add a more
+> generic compatible string.
 
---UFOJValw8646IkIF
+That's true, but I suspect it only works because only through (ab)use
+of the ti,reset-bits property not because you're actually compatible
+with TI's reset hardware.
+
+Cheers,
+Conor.
+
+--U2yG7SBZt5e06VSB
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCZkYtfAAKCRA6cBh0uS2t
-rGFhAQDAYBya1TZrQ7qULTFv41plUuJk73mvvx61a908F//wDAD/UvJzzr1aPkzR
-5We0gdkRDcqRGucjOeWf3Yen0jl39Qs=
-=Nrb/
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZkY/JgAKCRB4tDGHoIJi
+0q+6AQCaCdwhlVdXFZP7SLpIqoKwLTKzXYkUuCLzJaLFquKGEQD9Gnc2Qf41W7Rp
+SFmFc2JvIqe5qBGdEVUNt25VHvyqsgA=
+=A/oq
 -----END PGP SIGNATURE-----
 
---UFOJValw8646IkIF--
+--U2yG7SBZt5e06VSB--
