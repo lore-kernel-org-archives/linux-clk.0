@@ -1,118 +1,131 @@
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com [209.85.222.41])
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C4C6143893
-	for <linux-clk@vger.kernel.org>; Thu, 16 May 2024 10:27:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85825143866;
+	Thu, 16 May 2024 10:55:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715855255; cv=none; b=c5wwJTLArDELXQzam+GuF3bIVTQtdPAuJCcZSgdLmhXuf07yckSLqvoj85cgo/v4s9/GPksobAaqrlXFU7UtksppmCIuIPFUHYgemGGwcXGy3sJBb6YfpCDBmzDXfdSxFfuxiedra3m/opYGLfvY+ouqesC7lCCamv07i/F9m2M=
+	t=1715856928; cv=none; b=OHU6/yfJocXWg+83oHewrwhz26q8ieQojJHuL06oqEi/FF3qkrtvIwEh4JOY69uTNPhSuklem/KUv6mYpq9VdlTWiolkEFyLR2CJXCPCdyCWAMhXSw7/M6kDJ9G0s16Z2zK6HR5ZKkKxW47uP6ssEhRhqwV7oRCZgtPQVfWPfaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715855255; c=relaxed/simple;
-	bh=kBASHLh2eyH3I0mizgz8GzGzaOda0gqP4B/VWaD/CaQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L+rIFvopDrMByzW/FJ2AMrqPSnaUuXQHvdVQGrGHRBMYVLim9nlJYT0bgbkd8uCr/vnFv1GGQzs6PaMqZIQ3n21nQT4/cIlkkT9MIUBbAq5kIikrVzmPDMCietS3EIRxsWdNpsNjh7Y4CQ+25MA3HED69JxDKz8u/AQ0V6QV6N4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IVnLRMNM; arc=none smtp.client-ip=209.85.222.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1715856928; c=relaxed/simple;
+	bh=JB2NL1M7O1RecxQD/u46GgqoKdAGIcDBhLLcytjCGwI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GF1NOuWGRrmutsLSWx6wqu9mBFFT5PqD/65WaTceQk6Zf11keeIHqhV9hwgVym06n5uJzwFWmvjAYNmJgjyf3KnAnEQ7om0jLULg17387baUYqOBd1Mxlj3ohlEAIDNESFRObYRGgW6Ei70PsrDbDyJRDCdrsoXOQ9fCFS+HqiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=dhGZfzCL; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IVnLRMNM"
-Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-7f919bc2e1cso3866245241.1
-        for <linux-clk@vger.kernel.org>; Thu, 16 May 2024 03:27:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1715855253; x=1716460053; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Wr/BX8NF3zifG/NDTQUbMR51wrpA+K5HDZ0+1mCSbgg=;
-        b=IVnLRMNMadF/4dU0qEl+RlajbVlNal3GHavEfSz1MQ8n4ZNMwk3j79ajhAVG8jDCqd
-         Dexo2TcApqG1AhwshoNiQMlpm54ZuT/7N0RxxXD8wZIVDZuhwvQt8buPgvZukeq5nklb
-         MvM6JBZqz685Qdb6awErt5lNWsaaGv++kAQ6nfAaurRkpFt3VzEECK8KhBMCVmn1mouX
-         GIoCynCCxX95iF54oN8BjOy2JkrVDP5MfFCJp256nsWJxeBreSwPpKJQq1wur+Ij2jV3
-         PzrvIMaNfz7wSESFNBMGKfRIVB9QX7PcgyJaTf25+GAKikUIcU+ZL6lGILkOb9cAHHDv
-         0BQg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715855253; x=1716460053;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Wr/BX8NF3zifG/NDTQUbMR51wrpA+K5HDZ0+1mCSbgg=;
-        b=NHqECiCDcnX8kvG1eTW+r54sUPSOuC61FebQGWw6B8dfP1zm5BC3tj+pvF+olq+p5U
-         X/3pjqRWgKhwafMllt19PUaCVm1U+Ttr8nUuJqfjV1PDQ59BteGsPkmApz28w4Z4/ots
-         ZmjRNmry0xRikXZo0oZYjbS010daUEAsgnzoYrsQ/UT+GRfvxcUycjVXqeaI5ABmQHLn
-         rzvFYgD+5bcP4JikqWV9Yq1MUEAMIM9s9T27AIGDGqBOzGszUNTBXomkR8r/v/yiZCXd
-         iJjzMOgu4yERcT2Ik3T/Nipev1G2ERdQphosrF+02qLa5Yr6O2PuyEVN1uSScuTWfv9h
-         F4mQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUdaEDhOkeinC0Bgby7Vrg/0qlpRCqObEtRP0LmtUr+tjPXa3Vn2o8S3W0+12/seOpKHRzhwrW8RlHO9/nxwJyDv51oayzT40rj
-X-Gm-Message-State: AOJu0YzNGpB8wQWxgB2V3glPv69cotiNOc+zh7TAZPatt/F47GcbaH6h
-	QKpOHuDNZtr4+/6yoACuyChjDs+yAJ4OTmLxLMMlrAsQMEJ6uS/cKOixd/bidsEItFPLP11rXpm
-	WKoq5UnsCxbhMdavt4GRGeLH4wpxaNYTH65aKHQ==
-X-Google-Smtp-Source: AGHT+IGWpVZvSMUt20NSMuau/tfLKHpp/+EepllazSc5v5QmheoZd7J0sjLY5dmSCxrLYl3d79vmIUTSg2jw7h7stwc=
-X-Received: by 2002:a05:6102:117b:b0:47c:254:2919 with SMTP id
- ada2fe7eead31-47fb6c62c31mr15440141137.13.1715855252928; Thu, 16 May 2024
- 03:27:32 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="dhGZfzCL"
+Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
+	(No client certificate requested)
+	(Authenticated sender: marex@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 62348882A2;
+	Thu, 16 May 2024 12:55:23 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1715856924;
+	bh=5GO3dsCEhV/yq/JtclRgIUNkt8t13jadvqCsqEkQTgo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=dhGZfzCLZhH3cWcNek5v0vG0MzZ3LLEDx4qKsUGBl++JYd79Czp1VdlloPXMKdaI+
+	 1YfiLBkfnd/BHPuMWJKN3u+OLKZVXgRZHcX/m1zngwRrkUBheRmenOj9AmmEx9bhLa
+	 7upWN/JH5VaBjw/XXckY5ZA7vXbcm1JUOXYU3cqJupPxeTVZPaO8E+id46ys28+Ssu
+	 F69W3W0IUyl3f6Or1JtzcY7Z5KaEUfEsXw1K1MTo9FR0qgKw3ve7RpYkP4G4tdH5L3
+	 Jt3ffRYYUE8EOingMMQ/QsRqIYn3VN865JjeLRRAXPDLdaXrZ3kJ+PgmHeNJ5aVAZl
+	 nmtlZQjd+SwmQ==
+Message-ID: <2eb2b80e-8650-46cf-9d8f-6dd6a884558a@denx.de>
+Date: Thu, 16 May 2024 12:43:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+G9fYuZd_ur56H8fwDSvUywopvn_b7ogprGkjEatQ7EPTLwYQ@mail.gmail.com>
- <11be44d3-0f32-49c6-b4ae-ba97a9f97763@app.fastmail.com> <820ddc2ec70780ae1ecd3af864dc8bd6.sboyd@kernel.org>
- <ZkUgqzUn1EmjrPdl@shell.armlinux.org.uk>
-In-Reply-To: <ZkUgqzUn1EmjrPdl@shell.armlinux.org.uk>
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Thu, 16 May 2024 12:27:20 +0200
-Message-ID: <CA+G9fYurPNaW=u2E+h+segnXhY3cfWo3BJpfYDJxKRFPY4epsQ@mail.gmail.com>
-Subject: Re: clkdev: report over-sized strings when creating clkdev entries
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Linux ARM <linux-arm-kernel@lists.infradead.org>, 
-	linux-clk <linux-clk@vger.kernel.org>, lkft-triage@lists.linaro.org, 
-	open list <linux-kernel@vger.kernel.org>, Anders Roxell <anders.roxell@linaro.org>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] [RFC] clk: stm32mp1: Keep RNG1 clock always running
+To: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>,
+ linux-crypto@vger.kernel.org
+Cc: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Olivia Mackall <olivia@selenic.com>, Rob Herring <robh@kernel.org>,
+ Stephen Boyd <sboyd@kernel.org>, Yang Yingliang <yangyingliang@huawei.com>,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com
+References: <20240513220349.183568-1-marex@denx.de>
+ <b2d0dfcb-37d6-4375-a4ad-ca96a5339840@foss.st.com>
+ <cc6f98eb-f6b2-4a34-a8ed-c0f759fa4c79@denx.de>
+ <51951dd4-8e8c-4e67-89f6-6a710022e34f@foss.st.com>
+ <3257e8f8-5bb0-4c75-a3a3-e5685b65de2a@denx.de>
+ <5b39b5b6-7008-4362-a578-3faab87cd23b@foss.st.com>
+Content-Language: en-US
+From: Marek Vasut <marex@denx.de>
+In-Reply-To: <5b39b5b6-7008-4362-a578-3faab87cd23b@foss.st.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-On Wed, 15 May 2024 at 22:53, Russell King (Oracle)
-<linux@armlinux.org.uk> wrote:
->
-> On Tue, May 07, 2024 at 01:26:17PM -0700, Stephen Boyd wrote:
-> > Quoting Arnd Bergmann (2024-05-07 00:44:15)
-> > > On Tue, May 7, 2024, at 09:20, Naresh Kamboju wrote:
-> > > > The WinLink E850-96 board boot failed with Linux next-20240506 but there
-> > > > is no kernel crash log on the serial [1].
-> > > >
-> > > > Anders bisection results pointing to this commit,
-> > > > # first bad commit:
-> > > >   [4d11c62ca8d77cb1f79054844b598e0f4e92dabe]
-> > > >   clkdev: report over-sized strings when creating clkdev entrie
-> > > >
-> > > > After reverting the above patch the boot test passed [2].
-> > > >
-> > > > Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
-> > > >
-> >
-> > There are two fixes on the list: [1] and [2]. Perhaps one of those
-> > resolves this?
-> >
-> > [1] https://lore.kernel.org/r/20240507065317.3214186-1-m.szyprowski@samsung.com
->
-> This one has (I think) ended up in the patch system last week, but it's
-> not clkdev, it's only related. I'm also not Cc'd on its posting, and
-> it's not posted to any mailing list that I'm a part of. So I've not
-> been following any discussion on it.
->
-> Digging in to the discussion, I see various attributations, and a final
-> message reporting an unused variable, and a promise to send v2. So,
-> I'm guessing that
-> http://www.home.armlinux.org.uk/developer/patches/viewpatch.php?id=9397/1
+On 5/16/24 9:42 AM, Gatien CHEVALLIER wrote:
 
-I do not have access to this link ^.
+Hi,
 
-> is now superseded in some way... I wouldn't have known without locating
-> this email and checking the links.
->
-> --
-> RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-> FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+>>>>> What if you add a trace in a random generation function in random.c?
+>>>>
+>>>> Do you have a function name or line number for me ?
+>>>
+>>> I put a trace in _get_random_bytes() in drivers/char/random.c. I'm not
+>>> 100% sure but this should be the entry point when getting a random 
+>>> number.
+>>
+>> You're right, there is a read attempt right before the hang, and 
+>> __clk_is_enabled() returns 0 in stm32_read_rng() . In fact, it is the 
+>> pm_runtime_get_sync() which is returning -EACCES instead of zero, and 
+>> this is currently not checked so the failure is not detected before 
+>> register access takes place, to register file with clock disabled, 
+>> which triggers a hard hang.
+>>
+>> I'll be sending a patch shortly, thanks for this hint !
+>>
+> 
+> Great news, indeed the return code isn't checked. Let's use
+> pm_runtime_resume_and_get().
 
-- Naresh
+Yes please.
+
+I will wonder why we get EACCES though, that basically means we are 
+suspending already. Is it safe to return -errno from rng read function 
+in that case ?
+
+>>>>> After this, I'll try to reproduce the issue.
+>>>>
+>>>> If you have a minute to test it on some ST MP15 board, that would be 
+>>>> real nice. Thanks !
+>>>
+>>> I tried to reproduce the issue you're facing on a STM32MP157C-DK2 no
+>>> SCMI on the 6.9-rc7 kernel tag. I uses OP-TEE and TF-A in the bootchain
+>>> but this should not have an impact here.
+>>>
+>>> How did you manage to test using "echo core > /sys/power/pm_test"?
+>>> In kernel/power/suspend.c, enter_state(). If the pm_test_level is core,
+>>> then an error is fired with the following trace:
+>>> "Unsupported test mode for suspend to idle, please choose 
+>>> none/freezer/devices/platform."
+>>
+>> Could this be firmware related ?
+>>
+>>> I've tried using "echo devices > /sys/power/pm_test" so that I can at 
+>>> least test that the driver is put to sleep then wakes up. I do not
+>>> reproduce your issue.
+>>
+>> Can you try 'processors' ?
+>>
+> 
+> Given this:
+> #ifdef CONFIG_PM_DEBUG
+>          if (pm_test_level != TEST_NONE && pm_test_level <= TEST_CPUS) {
+>              pr_warn("Unsupported test mode for suspend to idle
+
+You're supposed to be suspending to 'mem' , not 'idle' . Could that be it ?
