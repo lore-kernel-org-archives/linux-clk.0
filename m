@@ -1,81 +1,183 @@
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 179D61459E2;
-	Thu, 16 May 2024 11:34:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B87221DFCB;
+	Thu, 16 May 2024 11:38:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715859246; cv=none; b=K0Xig2tY3vTi4HpJ20mvQdXSaK3QRXfNEVIJ6ogK/kCW+23Boq/tWU+aXGn/0qj6vVO6OxMWB2vaUIyHh2FUuBC6n6UsoQcUNYiOIrjJcWJP2bDwd/VvFKlYeGFROEA159d1cvlBsuK5eQYpQkNrcXAMfZr4BPsy+ZeN+43SEI4=
+	t=1715859517; cv=none; b=jlMs+4cqIJsq5HgSeIdFRSVvSoGRdmdJGOurQ6V5DqMDo9RM4n5Mvh+l1Su5V7PPrOhf/0Cvp16eYlERGB3H6PxBjLkR6JtuO8mk4jui52S/22/JXgkohqkYSgaQG4CLoqnLgGNuGSBj2iFX5LdyZthALXlsZpL7syrfGYlzO1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715859246; c=relaxed/simple;
-	bh=WOf2leyhgMuRezn+1sQ8Gbe03Kn4oCimAqgdwwfMg5E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=akTxuU4uFuLocwhILJFi0GAHn1OpOhZrVPNDWryXwTBCdkHvH2WbYFbvxUsmcwYcAKqJYsAv2q+z0uiySnjLArCOCIsh4d4FCFutQuk6SQzjM3p6vOB/pyvn4BfapyMrrmjA8RVRxeIXYCkoymlzCN5chi7CRNdCZEJaFQlkJWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=IQEiFTbk; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+	s=arc-20240116; t=1715859517; c=relaxed/simple;
+	bh=6YlANbTSJp+DD89N4n3iOkjqTuHNDTJa4CMV9yVdZkM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E7u7bATG85IhO8//wX90UYZGx82bceZ6DwDNudc4Wmmm/+wFMOEYqBGjNfmvbxYjJ1+n8WyJRwt083ETECs6/5nYJNZt4tf8xSUy9v0ODjAvuXpxNbZqEf8inCql0YuZr6CZll23v5rt/fgBOpdZoO6cn0VDf6TkOAwRrWQz9E8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=EnW+unrU; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="IQEiFTbk"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=CXEnYn+n/oPUwvw8XY2bU5Doe0EGHASmi9eJ//nBzoo=; b=IQEiFTbkAL6mW74WuXn8eQ0T4p
-	DbFAFRVc/6P6DGKfS4mRVaA1+Nb+es07n+jGFcVRZkonW+pNtmGuTlw81YgdrzQ5cJ6EtjaWZeuTC
-	BwdbC2F+dvbEqJ74E1kfA08S4h38IRt6Hkh1KzAssSpWVehAnYpfhAVnm7vWnRPafxKUyJ94dDAqb
-	+9O1NSu2DDs/gh9SMLiQLEENPW4WKxMfBUnjZkPApNIk5JvJTrnXRO07Jkue2n/HK3AHX9WaJOqcq
-	PXQ/in7Iw+eFOsi2OViKDrwIX4ZAjtqxfNd5M/Ib5diSx/TNXdRC9Ngfx/b+Tr5JiUdPvPIZ+fasd
-	2gLU5+AQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:42986)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1s7ZMv-0004mH-2r;
-	Thu, 16 May 2024 12:33:53 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1s7ZMx-0000Zt-J5; Thu, 16 May 2024 12:33:55 +0100
-Date: Thu, 16 May 2024 12:33:55 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>,
-	Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Linux ARM <linux-arm-kernel@lists.infradead.org>,
-	linux-clk <linux-clk@vger.kernel.org>, lkft-triage@lists.linaro.org,
-	open list <linux-kernel@vger.kernel.org>,
-	Anders Roxell <anders.roxell@linaro.org>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>
-Subject: Re: clkdev: report over-sized strings when creating clkdev entries
-Message-ID: <ZkXvI2D8tH0aG/Cl@shell.armlinux.org.uk>
-References: <CA+G9fYuZd_ur56H8fwDSvUywopvn_b7ogprGkjEatQ7EPTLwYQ@mail.gmail.com>
- <11be44d3-0f32-49c6-b4ae-ba97a9f97763@app.fastmail.com>
- <820ddc2ec70780ae1ecd3af864dc8bd6.sboyd@kernel.org>
- <ZkUgqzUn1EmjrPdl@shell.armlinux.org.uk>
- <CGME20240516102738eucas1p2eee547d4b78c347308b0979fa98ede39@eucas1p2.samsung.com>
- <CA+G9fYurPNaW=u2E+h+segnXhY3cfWo3BJpfYDJxKRFPY4epsQ@mail.gmail.com>
- <29f30eda-deba-4092-9b4c-8cb101b8691d@samsung.com>
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="EnW+unrU"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1715859513;
+	bh=6YlANbTSJp+DD89N4n3iOkjqTuHNDTJa4CMV9yVdZkM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=EnW+unrUCcxibLwEbfR1jJVHOgS3THUQZzkyGgnVBV2r8SX3rWjQ5hjDbDaeep5uc
+	 nuO/SOHzZ1g3XKmounte9suRLuquEUfoX+mMZRKKFv7f0VP4kr/Ui4UW9IWOmD/NxH
+	 3s4rqZlKExzQ+vTdC0ZprCl1JgIvBCzcZCLC1g54BtTzekmkqKNI5cwMBx1RSuv4Rw
+	 s1Nmb0phK8jnffAlbg3Yi0rslYT8Twphh1cbYANvEZt3avsIhFYESj6Xy5isK4Mj/w
+	 W6H2PQUVjYCAyLFajFQi3vQc4eKFfYV8SWdTfk/fVSBBdCHq8EZVwTf9d27ZKMRvEG
+	 h9lOwBaTP0knA==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 898683782186;
+	Thu, 16 May 2024 11:38:32 +0000 (UTC)
+Message-ID: <d6b7aa1e-ce0d-4ea3-9f2d-c256a296dd1f@collabora.com>
+Date: Thu, 16 May 2024 13:38:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <29f30eda-deba-4092-9b4c-8cb101b8691d@samsung.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/5] dt-bindings: reset: Add reset definitions for EN7581
+ SoC.
+To: Lorenzo Bianconi <lorenzo@kernel.org>
+Cc: linux-clk@vger.kernel.org, p.zabel@pengutronix.de,
+ mturquette@baylibre.com, sboyd@kernel.org, lorenzo.bianconi83@gmail.com,
+ conor@kernel.org, linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ devicetree@vger.kernel.org, nbd@nbd.name, john@phrozen.org, dd@embedd.com,
+ catalin.marinas@arm.com, will@kernel.org, upstream@airoha.com
+References: <cover.1715777643.git.lorenzo@kernel.org>
+ <acb6aa6fe473c485605c108e551d6d28ceb27a60.1715777643.git.lorenzo@kernel.org>
+ <b1e0db1a-2bcb-4d11-a386-e395c2946591@collabora.com>
+ <ZkXqoG6xIsrrLyh4@lore-desk>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <ZkXqoG6xIsrrLyh4@lore-desk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, May 16, 2024 at 12:57:53PM +0200, Marek Szyprowski wrote:
-> The fix for drivers/clk/samsung/clk.c driver has been merged to clk-next:
+Il 16/05/24 13:14, Lorenzo Bianconi ha scritto:
+>> Il 15/05/24 14:58, Lorenzo Bianconi ha scritto:
+>>> Introduce reset binding definitions for reset controller available in
+>>> the Airoha EN7581 clock module.
+>>>
+>>> Tested-by: Zhengping Zhang <zhengping.zhang@airoha.com>
+>>> Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
+>>> ---
+>>>    .../dt-bindings/reset/airoha,en7581-reset.h   | 66 +++++++++++++++++++
+>>>    1 file changed, 66 insertions(+)
+>>>    create mode 100644 include/dt-bindings/reset/airoha,en7581-reset.h
+>>>
+>>> diff --git a/include/dt-bindings/reset/airoha,en7581-reset.h b/include/dt-bindings/reset/airoha,en7581-reset.h
+>>> new file mode 100644
+>>> index 000000000000..1b7ee62ed164
+>>> --- /dev/null
+>>> +++ b/include/dt-bindings/reset/airoha,en7581-reset.h
+>>> @@ -0,0 +1,66 @@
+>>> +// SPDX-License-Identifier: GPL-2.0-only
+>>> +/*
+>>> + * Copyright (c) 2024 AIROHA Inc
+>>> + * Author: Lorenzo Bianconi <lorenzo@kernel.org>
+>>> + */
+>>> +
+>>> +#ifndef __DT_BINDINGS_RESET_CONTROLLER_AIROHA_EN7581_H_
+>>> +#define __DT_BINDINGS_RESET_CONTROLLER_AIROHA_EN7581_H_
+>>> +
+>>> +/* RST_CTRL2 */
+>>> +#define EN7581_XPON_PHY_RST		0
+>>
+>> ** sarcasm mode on **
+>>
+>> Count with me: 0... 1... 2...
 > 
-> https://lore.kernel.org/all/f7a877622829db499bf2bc65fe9ffbff.sboyd@kernel.org/
+> :)
+> 
+>>
+>> ** sarcasm mode off **
+>>
+>> There's a jump here, you have a reset index 0 and an index 2,
+>> but you're missing index 1, that's not right :-)
+>>
+>> Please fix.
+> 
+> it is because BIT(1) is marked as 'reserved' in the documentation so I skipped it.
+> Do you prefer to have it in that way?
+> 
 
-Good to know, would be nice to be kept in the loop though, especially
-as the first version was submitted to me.
+This is not my preference, it's rather a requirement for the bindings...
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+That's why in the MediaTek reset controller part of the clk driver there is
+a way to map those numbers (which are always sequential) to actual reset bits
+in the controller...
+
+Cheers!
+
+> Regards,
+> Lorenzo
+> 
+>>
+>> Cheers,
+>> Angelo
+>>
+>>> +#define EN7581_CPU_TIMER2_RST		2
+>>> +#define EN7581_HSUART_RST		3
+>>> +#define EN7581_UART4_RST		4
+>>> +#define EN7581_UART5_RST		5
+>>> +#define EN7581_I2C2_RST			6
+>>> +#define EN7581_XSI_MAC_RST		7
+>>> +#define EN7581_XSI_PHY_RST		8
+>>> +#define EN7581_NPU_RST			9
+>>> +#define EN7581_I2S_RST			10
+>>> +#define EN7581_TRNG_RST			11
+>>> +#define EN7581_TRNG_MSTART_RST		12
+>>> +#define EN7581_DUAL_HSI0_RST		13
+>>> +#define EN7581_DUAL_HSI1_RST		14
+>>> +#define EN7581_HSI_RST			15
+>>> +#define EN7581_DUAL_HSI0_MAC_RST	16
+>>> +#define EN7581_DUAL_HSI1_MAC_RST	17
+>>> +#define EN7581_HSI_MAC_RST		18
+>>> +#define EN7581_WDMA_RST			19
+>>> +#define EN7581_WOE0_RST			20
+>>> +#define EN7581_WOE1_RST			21
+>>> +#define EN7581_HSDMA_RST		22
+>>> +#define EN7581_TDMA_RST			24
+>>> +#define EN7581_EMMC_RST			25
+>>> +#define EN7581_SOE_RST			26
+>>> +#define EN7581_PCIE2_RST		27
+>>> +#define EN7581_XFP_MAC_RST		28
+>>> +#define EN7581_USB_HOST_P1_RST		29
+>>> +#define EN7581_USB_HOST_P1_U3_PHY_RST	30
+>>> +/* RST_CTRL1 */
+>>> +#define EN7581_PCM1_ZSI_ISI_RST		32
+>>> +#define EN7581_FE_PDMA_RST		33
+>>> +#define EN7581_FE_QDMA_RST		34
+>>> +#define EN7581_PCM_SPIWP_RST		36
+>>> +#define EN7581_CRYPTO_RST		38
+>>> +#define EN7581_TIMER_RST		40
+>>> +#define EN7581_PCM1_RST			43
+>>> +#define EN7581_UART_RST			44
+>>> +#define EN7581_GPIO_RST			45
+>>> +#define EN7581_GDMA_RST			46
+>>> +#define EN7581_I2C_MASTER_RST		48
+>>> +#define EN7581_PCM2_ZSI_ISI_RST		49
+>>> +#define EN7581_SFC_RST			50
+>>> +#define EN7581_UART2_RST		51
+>>> +#define EN7581_GDMP_RST			52
+>>> +#define EN7581_FE_RST			53
+>>> +#define EN7581_USB_HOST_P0_RST		54
+>>> +#define EN7581_GSW_RST			55
+>>> +#define EN7581_SFC2_PCM_RST		57
+>>> +#define EN7581_PCIE0_RST		58
+>>> +#define EN7581_PCIE1_RST		59
+>>> +#define EN7581_CPU_TIMER_RST		60
+>>> +#define EN7581_PCIE_HB_RST		61
+>>> +#define EN7581_XPON_MAC_RST		63
+>>> +
+>>> +#endif /* __DT_BINDINGS_RESET_CONTROLLER_AIROHA_EN7581_H_ */
+>>
+
