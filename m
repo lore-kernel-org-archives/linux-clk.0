@@ -1,57 +1,55 @@
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F116014B97E
-	for <linux-clk@vger.kernel.org>; Thu, 16 May 2024 15:08:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB1F1459F3
+	for <linux-clk@vger.kernel.org>; Thu, 16 May 2024 15:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715872132; cv=none; b=HiAYLWOGOu3vkIg1ilVPvUFmjsfkjM6O7xxJ16F5tbsiZD3TmxJbM+uuZlT8IpFzVg+cAtinoRTlEtHXvBHU9+HHUy6pIO13vF2LsBqVItXne8PhdYiGA+ABORdJHCn1TEB8xXJdmwSqAhlsP8nK4lOsAoUzzdGJhr8qEQqkdgw=
+	t=1715872133; cv=none; b=rvTSFfVk7KclZbQlJ1Np4fDaFQdwkeLJRCXcWaKclhLVrVCo4a3jI4uBBYT/wjYxjlaD/FFg6Y1z+detVHr8RNKI2XGZDN1T7BfHF8as02t2QGdwaICjmVaR+7mZH46AsYcfL51a+jiTVX8izkmMG+tnDisU9HY7C0jaWxaJens=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715872132; c=relaxed/simple;
-	bh=XhLKaJpFjJZQj7yn2g+fkx1VUJf2EFpLz+SlbAbTNhQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nYiNWivm8+94B+DbBU8XM1p4+Be84C7/1ohhm0OXIKpt9SIdXcq3yfrCw+4/tjoECVfbvhysuaf4uQ9j2Qht01YZq5Fq5J17NJSQih/O9j9IH7II/tujuHdlYvLiH4IXT17F0KLuCFQ7xDnLQNJ/mNvlFRWQeWUXwz6ZO8lkVWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=iLjE3YM6; arc=none smtp.client-ip=209.85.208.171
+	s=arc-20240116; t=1715872133; c=relaxed/simple;
+	bh=we6lbVPR1oC6Gjni/0inzK6tb5qWDsUccHkewq+P1B4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rA+L/gT7tR5LqeB4go2vrd3ipoG2W/nqrIrKXODxyaLV76Eu2O5pwmFYN18JABvInfO8bu6Emnd/Rsfc0d0EjQDXTg36xyC56Df8DgtLYthFOSy9UumGwv4HnvpP6lhgv/Ww0PnZle3cYmWa4qZ6UcJHpFX55vl1xof9FO/1+6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=tLq3oeZx; arc=none smtp.client-ip=209.85.208.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="iLjE3YM6"
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2e34e85ebf4so7685021fa.2
-        for <linux-clk@vger.kernel.org>; Thu, 16 May 2024 08:08:50 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="tLq3oeZx"
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2e43c481b53so10197701fa.2
+        for <linux-clk@vger.kernel.org>; Thu, 16 May 2024 08:08:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1715872129; x=1716476929; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QEvOpWPnO+AdwLbOiUNmMA/qUdgyKNblxOI/csLZzos=;
-        b=iLjE3YM6SqyFFYnVIJaEEKR/FT5pz6Lpbqi+8nFRWPD0qfNHvlKcJkW+Cs5EC2AfTL
-         9LMWRTnc3QiWO9Cdqg05iFfli8BcmK9Szz6gTWksH5yosbWWSfCC8PIb28JJHBZh/3Uj
-         Yh1OPE22by7518eAMO91u2Qn9gP73M9NuKHMPz4RCJQNNOsGAgfuKaSX2pI9W6sdcOEM
-         R2Qm17PBTrd0GM1FXPoSthomDvesVOeahhH+JL7Ol4ayJqK9IwaTIewgMN9wiDx7Ob0F
-         eTS6hk59JBYh0R1D6LU7U0g6YNTTJlQg1lNQEBrpz4/mQ6dYdTLjU+imEOFJ0vuClA/O
-         tyQg==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1715872128; x=1716476928; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7ioxEy7SZPKbhBowmAqXOs3HJ/6GyUDvxxnPo9F3uNU=;
+        b=tLq3oeZxCaCNzKGURu5K7x5Ai0VxzLyGpn5p2sR0zr8s7gc+2/sM0b5ogjvVDY3vNT
+         xp2y9NhdZRzGWHLuOpiVXM+7EypwGqEHMVjWlh3YzXjGap6Hq86fXuLPOEK/3eKYit+c
+         q+6y4N7gt05tnR8ZitYVsRIb5kgRV3PMtnC2/rhkOroR+AVjt3H9TGjawqCGtHSIuImH
+         lLvJZmU6ExW4vqpUD3ppeQmdj1kvnGkGQG+7sN7kJKS997QKTFBSRsxqWPtI9VCVxDrA
+         rL+qpEXx023uS8v6kT7kwc+kjOrGKgqZwktPQdnva2CG1v4HmTUvRP2GUGZDKqxsSSto
+         ZLsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1715872129; x=1716476929;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QEvOpWPnO+AdwLbOiUNmMA/qUdgyKNblxOI/csLZzos=;
-        b=fgmc9L+im7bJp6Z/4jFzO5CRToZGvuauKDZSiTgsPjcdnvtG6sG+5lkrohHhPQOYNQ
-         yYdXcDCVgu7IMTGNK0dkyM8IGIiPdCIKuGQzEmbzBYevGYLuNoReAJwrHZbqpZhUOvXB
-         jowjMTPcu5ukfDEiehogiDOwfqYoUIyduIISxVWvcm7bs1SwSFpfHsoFG+TaUQpaMhgD
-         4H4Zpax7M1JepPx5sheJ5u8lIFpOqEm0F7N6YQWdzE4+Z6ZuQ3JVZcIPfgGoZywLO63e
-         ltnwG7+vDJHKMLpdc6Dzs0F8SzZ3bd++JXjQhUlZFmZn8/2KGJTNGW0tfvsfXbph6BqN
-         yizA==
-X-Forwarded-Encrypted: i=1; AJvYcCVDRYZzII5t3n3lOFoDeeqBT9qSkUCv0TyAUa31Kf3O5QGyhzvYxREgOItTO6RVDYzKC8jQsDvBG+nFOfmQflTwjPYFLvZzV7Bb
-X-Gm-Message-State: AOJu0Yw82K5Lec2qrYbQJRxAtTCuivEvvltZJmW3NlXhH6HO9jraEui8
-	fbwoZukTDvyOncF6zUoyJmzJm6ZbXYjVUA5WEbLSNVEGD3EqOL5yxqDudAZCdSo=
-X-Google-Smtp-Source: AGHT+IGYAck85LsbcTOvXFQY8nZM3fKLyOR5JchkAjsB3ueKLHe+uoUsgS+o6TUKMWmJKolx9ml/0A==
-X-Received: by 2002:a2e:a412:0:b0:2e4:e15d:40b0 with SMTP id 38308e7fff4ca-2e52028aefemr120909581fa.32.1715872129220;
-        Thu, 16 May 2024 08:08:49 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1715872128; x=1716476928;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7ioxEy7SZPKbhBowmAqXOs3HJ/6GyUDvxxnPo9F3uNU=;
+        b=ZIoOufggpjPFGdzXvsAl3FqPMSekY2Tyowx9Wz/+zHfbObb6plDv7JC95UiVCh66NC
+         ZC4ArJV6VFzbr7NpLyBdfQY574zKt7y1DFkoOyuOnPHgoRi70RA+W5Lh+9lU29BHOMlu
+         pBswS5Za8JLgOD6oBmLJi5cOTWoxxhIZVgFeKdRH4XR5DRGhbNatUY3yQHKXh8ia5HXh
+         00FFrSo6aR1TgLilxjTVVwdMNrQM8U4Fg54Nj3hVK3XKI22/Fw+r622Vz0Ou96flJw+Q
+         JCmqjhGRDuN4up02Htsy3RNkls8HiYFrlOIBCAgF9AwcMPsRqKxhCpSdl9IipBGfsr+A
+         AcpA==
+X-Forwarded-Encrypted: i=1; AJvYcCXqWclIw5dFh93db7BkQigk2Ywok665MgLA0j9/fREaWKrpWKBqRmsV4DEXenAzy6NvkFpMCoVLHVK/IKBLhH9GP/3IV4ARz2wW
+X-Gm-Message-State: AOJu0YwrzmLAbQb1lPsKWZMifryTPmBD/0TdtAYyA6tOC+fcduAPUY8n
+	qK9BiZ618GJ96FTeOMFZ+lWFBdp95fssHExyhXbter/FW86esKXzp/tdloallRM=
+X-Google-Smtp-Source: AGHT+IGKctbnPBmcJ2QPLjHUp6edy8mIEVUT9pkFFtdxGM+N329/NRHhlQe7LdHxvECgOEtFtlKB4A==
+X-Received: by 2002:a2e:4a11:0:b0:2e5:8720:50d2 with SMTP id 38308e7fff4ca-2e5891d3b9dmr83515781fa.0.1715872127572;
+        Thu, 16 May 2024 08:08:47 -0700 (PDT)
 Received: from toaster.lan ([2a01:e0a:3c5:5fb1:1fce:7e5a:e201:edd5])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-41f87c25459sm309351725e9.18.2024.05.16.08.08.48
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-41f87c25459sm309351725e9.18.2024.05.16.08.08.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 16 May 2024 08:08:48 -0700 (PDT)
+        Thu, 16 May 2024 08:08:47 -0700 (PDT)
 From: Jerome Brunet <jbrunet@baylibre.com>
 To: Philipp Zabel <p.zabel@pengutronix.de>,
 	Stephen Boyd <sboyd@kernel.org>,
@@ -61,12 +59,10 @@ Cc: Jerome Brunet <jbrunet@baylibre.com>,
 	linux-kernel@vger.kernel.org,
 	linux-amlogic@lists.infradead.org,
 	linux-clk@vger.kernel.org
-Subject: [RFC PATCH 2/9] reset: amlogic: add driver parameters
-Date: Thu, 16 May 2024 17:08:32 +0200
-Message-ID: <20240516150842.705844-3-jbrunet@baylibre.com>
+Subject: [RFC PATCH 0/9] reset: amlogic: move reset drivers out of CCF
+Date: Thu, 16 May 2024 17:08:30 +0200
+Message-ID: <20240516150842.705844-1-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240516150842.705844-1-jbrunet@baylibre.com>
-References: <20240516150842.705844-1-jbrunet@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -76,74 +72,45 @@ MIME-Version: 1.0
 X-Patchwork-Bot: notify
 Content-Transfer-Encoding: 8bit
 
-To allow using the same driver for the main reset controller and the
-auxiliary ones embedded in the clock controllers, allow to customise
-the reset offset, same as the level offset. Also add an option to make
-the level reset active low or high.
+This RFC follows the discussion about having reset driver in the clock tree
+[1]. Ideally those should reside in the reset part of tree.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/reset/reset-meson.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+Also the code of the amlogic reset driver is very similar between the 2 trees
+and could use the same driver code.
 
-diff --git a/drivers/reset/reset-meson.c b/drivers/reset/reset-meson.c
-index 8f3d6e9df235..59126c9f194a 100644
---- a/drivers/reset/reset-meson.c
-+++ b/drivers/reset/reset-meson.c
-@@ -18,7 +18,9 @@
- 
- struct meson_reset_param {
- 	int reg_count;
-+	int reset_offset;
- 	int level_offset;
-+	bool level_low_reset;
- };
- 
- struct meson_reset {
-@@ -46,6 +48,7 @@ static int meson_reset_reset(struct reset_controller_dev *rcdev,
- 	unsigned int offset, bit;
- 
- 	meson_reset_offset_and_bit(data, id, &offset, &bit);
-+	offset += data->param->reset_offset;
- 
- 	return regmap_update_bits(data->map, offset,
- 				  BIT(bit), BIT(bit));
-@@ -60,9 +63,10 @@ static int meson_reset_level(struct reset_controller_dev *rcdev,
- 
- 	meson_reset_offset_and_bit(data, id, &offset, &bit);
- 	offset += data->param->level_offset;
-+	assert ^= data->param->level_low_reset;
- 
- 	return regmap_update_bits(data->map, offset,
--				  BIT(bit), assert ? 0 : BIT(bit));
-+				  BIT(bit), assert ? BIT(bit) : 0);
- }
- 
- static int meson_reset_assert(struct reset_controller_dev *rcdev,
-@@ -85,17 +89,23 @@ static const struct reset_control_ops meson_reset_ops = {
- 
- static const struct meson_reset_param meson8b_param = {
- 	.reg_count	= 8,
-+	.reset_offset	= 0x0,
- 	.level_offset	= 0x7c,
-+	.level_low_reset = true,
- };
- 
- static const struct meson_reset_param meson_a1_param = {
- 	.reg_count	= 3,
-+	.reset_offset	= 0x0,
- 	.level_offset	= 0x40,
-+	.level_low_reset = true,
- };
- 
- static const struct meson_reset_param meson_s4_param = {
- 	.reg_count	= 6,
-+	.reset_offset	= 0x0,
- 	.level_offset	= 0x40,
-+	.level_low_reset = true,
- };
- 
- static const struct of_device_id meson_reset_dt_ids[] = {
+This RFC moves the reset driver of audio clock controller of the g12 and
+sm1 SoC family to the reset tree, using the auxiliary bus.
+
+The infrastructure put in place is meant to be generic enough so we may
+eventually also move the reset drivers in the meson8b and aoclk clock
+controllers.
+
+[1] https://lore.kernel.org/linux-clk/e3a85852b911fdf16dd9ae158f42b3ef.sboyd@kernel.org
+
+Jerome Brunet (9):
+  reset: amlogic: convert driver to regmap
+  reset: amlogic: add driver parameters
+  reset: amlogic: split the device and platform probe
+  reset: amlogic: use reset number instead of register count
+  reset: amlogic: add reset status support
+  reset: amlogic: add toggle reset support
+  reset: amlogic: add auxiliary reset driver support
+  clk: meson: add auxiliary reset helper driver
+  clk: amlogic: axg-audio: use the auxiliary reset driver
+
+ drivers/clk/meson/Kconfig                     |   6 +
+ drivers/clk/meson/Makefile                    |   1 +
+ drivers/clk/meson/axg-audio.c                 | 108 +--------
+ drivers/clk/meson/meson-clk-rst-aux.c         |  84 +++++++
+ drivers/clk/meson/meson-clk-rst-aux.h         |  14 ++
+ drivers/reset/Kconfig                         |   1 +
+ drivers/reset/reset-meson.c                   | 210 ++++++++++++++----
+ include/soc/amlogic/meson8b-auxiliary-reset.h |  17 ++
+ 8 files changed, 293 insertions(+), 148 deletions(-)
+ create mode 100644 drivers/clk/meson/meson-clk-rst-aux.c
+ create mode 100644 drivers/clk/meson/meson-clk-rst-aux.h
+ create mode 100644 include/soc/amlogic/meson8b-auxiliary-reset.h
+
 -- 
 2.43.0
 
