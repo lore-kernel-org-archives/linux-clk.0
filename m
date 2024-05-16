@@ -1,39 +1,57 @@
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85825143866;
-	Thu, 16 May 2024 10:55:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71C44143898
+	for <linux-clk@vger.kernel.org>; Thu, 16 May 2024 10:58:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715856928; cv=none; b=OHU6/yfJocXWg+83oHewrwhz26q8ieQojJHuL06oqEi/FF3qkrtvIwEh4JOY69uTNPhSuklem/KUv6mYpq9VdlTWiolkEFyLR2CJXCPCdyCWAMhXSw7/M6kDJ9G0s16Z2zK6HR5ZKkKxW47uP6ssEhRhqwV7oRCZgtPQVfWPfaY=
+	t=1715857088; cv=none; b=ebS+ETxmwIDsI1zJnvJZez8+rTqkOlY8abs4Q1LSz21lau/sif1IGeZs6mA0OK2JsTqFkqsEqIgOTUx+dF2267Z79dAlpb1jNbjpMeuEoF8uVc9c2uuBr4HaHzgdW0RUhTKuMqu6Aj6s4jZvrif7mBGs5ddwBwL3gKyDJGjl9p8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715856928; c=relaxed/simple;
-	bh=JB2NL1M7O1RecxQD/u46GgqoKdAGIcDBhLLcytjCGwI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GF1NOuWGRrmutsLSWx6wqu9mBFFT5PqD/65WaTceQk6Zf11keeIHqhV9hwgVym06n5uJzwFWmvjAYNmJgjyf3KnAnEQ7om0jLULg17387baUYqOBd1Mxlj3ohlEAIDNESFRObYRGgW6Ei70PsrDbDyJRDCdrsoXOQ9fCFS+HqiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=dhGZfzCL; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+	s=arc-20240116; t=1715857088; c=relaxed/simple;
+	bh=14XKAqGJJ7efuAKjdOGKIrcSj/dQ64odSwJbyfxAhjI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=rM+DMmHzL+MG5vj41XXf/4sX+zx6u34ZV8KK/SmFwiexitEq4xYpwyAtg0B/AmadAzoGjYXb1v1TaDZxQNKXG36I3RbxlcJwJpoxyS3BxHwbhxy7GOCvnjbXXlssbsH1ZVplv01syNnpIzkWJX1H6/2DZ6CIwZCcQKMMOjLqFwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=OpWVdIwJ; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="dhGZfzCL"
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id 62348882A2;
-	Thu, 16 May 2024 12:55:23 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1715856924;
-	bh=5GO3dsCEhV/yq/JtclRgIUNkt8t13jadvqCsqEkQTgo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dhGZfzCLZhH3cWcNek5v0vG0MzZ3LLEDx4qKsUGBl++JYd79Czp1VdlloPXMKdaI+
-	 1YfiLBkfnd/BHPuMWJKN3u+OLKZVXgRZHcX/m1zngwRrkUBheRmenOj9AmmEx9bhLa
-	 7upWN/JH5VaBjw/XXckY5ZA7vXbcm1JUOXYU3cqJupPxeTVZPaO8E+id46ys28+Ssu
-	 F69W3W0IUyl3f6Or1JtzcY7Z5KaEUfEsXw1K1MTo9FR0qgKw3ve7RpYkP4G4tdH5L3
-	 Jt3ffRYYUE8EOingMMQ/QsRqIYn3VN865JjeLRRAXPDLdaXrZ3kJ+PgmHeNJ5aVAZl
-	 nmtlZQjd+SwmQ==
-Message-ID: <2eb2b80e-8650-46cf-9d8f-6dd6a884558a@denx.de>
-Date: Thu, 16 May 2024 12:43:30 +0200
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="OpWVdIwJ"
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20240516105755euoutp02c13543d439e858b08786da24b647b4d3~P8us6uwV72689426894euoutp02I
+	for <linux-clk@vger.kernel.org>; Thu, 16 May 2024 10:57:55 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20240516105755euoutp02c13543d439e858b08786da24b647b4d3~P8us6uwV72689426894euoutp02I
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1715857075;
+	bh=AzsFVgT9ZtACfhnjkNzCBMnfOWVmsAJhweMEuyRHJwk=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=OpWVdIwJFLqtMY3OmhJQ7w9tJIUFY5ZhXiWudFtjcVDyMQdpIWFFuy59b04SHBWh0
+	 FhpPWRfheAPSWIoNWc164Mn4WH2HSh2WLx25YtMvdQgxDHuitfEl2TPDENeVaTD28h
+	 pyN1ioWu5mI+wZ3AApbnwsi61pBVTOTGtbZZBj0A=
+Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20240516105754eucas1p14aafa43dc59b01537ccdb54aea7c98c6~P8usjh2yv0654806548eucas1p1R;
+	Thu, 16 May 2024 10:57:54 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges3new.samsung.com (EUCPMTA) with SMTP id 19.31.09620.2B6E5466; Thu, 16
+	May 2024 11:57:54 +0100 (BST)
+Received: from eusmtrp2.samsung.com (unknown [182.198.249.139]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240516105754eucas1p29073691f41788465de22d59008b95932~P8usGPH5T1610316103eucas1p21;
+	Thu, 16 May 2024 10:57:54 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240516105754eusmtrp2d0427052643d706bbe2dcc5712ec3586~P8usE_r9h1817218172eusmtrp2J;
+	Thu, 16 May 2024 10:57:54 +0000 (GMT)
+X-AuditID: cbfec7f5-d31ff70000002594-cc-6645e6b22a39
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id 8E.3D.08810.2B6E5466; Thu, 16
+	May 2024 11:57:54 +0100 (BST)
+Received: from [106.210.134.192] (unknown [106.210.134.192]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240516105753eusmtip1c6ced12055351978f721781ff4dd75e1~P8urc3BYk0913809138eusmtip19;
+	Thu, 16 May 2024 10:57:53 +0000 (GMT)
+Message-ID: <29f30eda-deba-4092-9b4c-8cb101b8691d@samsung.com>
+Date: Thu, 16 May 2024 12:57:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -41,91 +59,109 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] [RFC] clk: stm32mp1: Keep RNG1 clock always running
-To: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>,
- linux-crypto@vger.kernel.org
-Cc: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
- Herbert Xu <herbert@gondor.apana.org.au>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- Olivia Mackall <olivia@selenic.com>, Rob Herring <robh@kernel.org>,
- Stephen Boyd <sboyd@kernel.org>, Yang Yingliang <yangyingliang@huawei.com>,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com
-References: <20240513220349.183568-1-marex@denx.de>
- <b2d0dfcb-37d6-4375-a4ad-ca96a5339840@foss.st.com>
- <cc6f98eb-f6b2-4a34-a8ed-c0f759fa4c79@denx.de>
- <51951dd4-8e8c-4e67-89f6-6a710022e34f@foss.st.com>
- <3257e8f8-5bb0-4c75-a3a3-e5685b65de2a@denx.de>
- <5b39b5b6-7008-4362-a578-3faab87cd23b@foss.st.com>
+Subject: Re: clkdev: report over-sized strings when creating clkdev entries
+To: Naresh Kamboju <naresh.kamboju@linaro.org>, "Russell King (Oracle)"
+	<linux@armlinux.org.uk>
+Cc: Stephen Boyd <sboyd@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Linux
+	ARM <linux-arm-kernel@lists.infradead.org>, linux-clk
+	<linux-clk@vger.kernel.org>, lkft-triage@lists.linaro.org, open list
+	<linux-kernel@vger.kernel.org>, Anders Roxell <anders.roxell@linaro.org>,
+	Dan Carpenter <dan.carpenter@linaro.org>, Michael Turquette
+	<mturquette@baylibre.com>
 Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <5b39b5b6-7008-4362-a578-3faab87cd23b@foss.st.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+From: Marek Szyprowski <m.szyprowski@samsung.com>
+In-Reply-To: <CA+G9fYurPNaW=u2E+h+segnXhY3cfWo3BJpfYDJxKRFPY4epsQ@mail.gmail.com>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrAKsWRmVeSWpSXmKPExsWy7djPc7qbnrmmGeyYrm5xa8pvJou/k46x
+	W3yY18pusenxNVaLjz33WC0u75rDZnFo6l5Gi633prFbXDzlanHrE7/Fv2sbWRy4PS5fu8js
+	8fvXJEaP9zda2T02repk87hzbQ+bx+Yl9R63/z1m9vi8SS6AI4rLJiU1J7MstUjfLoErY+KX
+	SYwFnQIV14/8Y2lg3MXbxcjJISFgItGzqZW5i5GLQ0hgBaPEuVlL2CGcL4wSHS9PsEI4nxkl
+	LjbuZYZpedv0FKpqOVDVtDmMEM5HRolFh+aAVfEK2Emsn7+aFcRmEVCV+PVyOhNEXFDi5Mwn
+	LCC2qIC8xP1bM9hBbGEBb4m+e71gvSICiRKPV/0E28As8I5J4vynHrAGZgFxiVtP5oMNYhMw
+	lOh628UGYnMKBEr8ftrJBFEjL7H97RywjyQEujkljl09yQRxt4vEotdvoGxhiVfHt7BD2DIS
+	/3eCDAVpaGeUWPD7PpQzgVGi4fktRogqa4k7534BreMAWqEpsX6XPkTYUeLX/y52kLCEAJ/E
+	jbeCEEfwSUzaNp0ZIswr0dEmBFGtJjHr+Dq4tQcvXGKewKg0CylcZiF5cxaSd2Yh7F3AyLKK
+	UTy1tDg3PbXYOC+1XK84Mbe4NC9dLzk/dxMjMJGd/nf86w7GFa8+6h1iZOJgPMQowcGsJMIr
+	kuacJsSbklhZlVqUH19UmpNafIhRmoNFSZxXNUU+VUggPbEkNTs1tSC1CCbLxMEp1cBU8uev
+	/OcrSysP72zJmjNjWiLvl1/cfsUuX51Kkz5ov7FfnHQhTuWf6qyMKwyHHjb6M//89JSL70/K
+	50d7ri8ydbl2n3Vnu93SFR7l7D/bxYs+z7/rI2D69Zn0uwwLvycKk/L/CDGtObj10h+3mRdD
+	3n1bEOHGeoJ/mkL4jNdpd8JXBd5WWHoye6KmxdFPH9kYEn443JV83PngZt2On4zfdLU1vYVW
+	JP1evfH2tkXbNH64XMvb9CZTOlRFIGfTt64Fj+uS2X+pfZ+xJ+YzE6/BTrYu0ZOTqvcvP3jF
+	hNEw2H3zl/iY0A9LPZqta5g8tQMWiIYEBoVIxTha3Co8wBNaasXN/Xuu34aEmu62w4ouSizF
+	GYmGWsxFxYkAdX0GNdMDAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrAIsWRmVeSWpSXmKPExsVy+t/xu7qbnrmmGezYzmlxa8pvJou/k46x
+	W3yY18pusenxNVaLjz33WC0u75rDZnFo6l5Gi633prFbXDzlanHrE7/Fv2sbWRy4PS5fu8js
+	8fvXJEaP9zda2T02repk87hzbQ+bx+Yl9R63/z1m9vi8SS6AI0rPpii/tCRVISO/uMRWKdrQ
+	wkjP0NJCz8jEUs/Q2DzWyshUSd/OJiU1J7MstUjfLkEvY+KXSYwFnQIV14/8Y2lg3MXbxcjJ
+	ISFgIvG26Sl7FyMXh5DAUkaJr983sUIkZCROTmuAsoUl/lzrYoMoes8ocafvLRNIglfATmL9
+	/NVgRSwCqhK/Xk6HigtKnJz5hAXEFhWQl7h/awY7iC0s4C3Rd6+XuYuRg0NEIFHi138TkDCz
+	wAcmiU/XNCDmtzFL3H/QyQiREJe49WQ+2Ew2AUOJrrcgR3BycAoESvx+2skEUWMm0bW1C6pe
+	XmL72znMExiFZiE5YxaSUbOQtMxC0rKAkWUVo0hqaXFuem6xoV5xYm5xaV66XnJ+7iZGYNRu
+	O/Zz8w7Gea8+6h1iZOJgPMQowcGsJMIrkuacJsSbklhZlVqUH19UmpNafIjRFBgWE5mlRJPz
+	gWkjryTe0MzA1NDEzNLA1NLMWEmc17OgI1FIID2xJDU7NbUgtQimj4mDU6qBSXTqUj+R7H89
+	i7ysjqmdffCJ3cQ6XctzeaLSxQqB71bt64zf+z/efMHP4s2UO6vzEw2YdPW/PnodnbpOafVB
+	sfz8OdlZHAbm8i8OMwokLX3+tu1UwMIo4z0J/bsaP+qbeqR8t11vGG47aVfn8VfX3Q5HpH14
+	6dYxuze7Vt05odF5lc7WwOclrHvc4vcsZPRlL3NhscldVxNwuTlznVi1vr/qoVMTzndUu5mu
+	MvkYX8c5Ya7fjU9X1MT7Jv/XPrRu24S+MPvHJ66Yv+ktjmq6YXv+2LuoRVOfll6cXR79tNY+
+	T+aFQoj51QVsbPoX43ZdZJK7/6w/29zkO8eSNVYfN35bLV1QN8Xyj9t/v+W/lViKMxINtZiL
+	ihMB9h02VmMDAAA=
+X-CMS-MailID: 20240516105754eucas1p29073691f41788465de22d59008b95932
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20240516102738eucas1p2eee547d4b78c347308b0979fa98ede39
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20240516102738eucas1p2eee547d4b78c347308b0979fa98ede39
+References: <CA+G9fYuZd_ur56H8fwDSvUywopvn_b7ogprGkjEatQ7EPTLwYQ@mail.gmail.com>
+	<11be44d3-0f32-49c6-b4ae-ba97a9f97763@app.fastmail.com>
+	<820ddc2ec70780ae1ecd3af864dc8bd6.sboyd@kernel.org>
+	<ZkUgqzUn1EmjrPdl@shell.armlinux.org.uk>
+	<CGME20240516102738eucas1p2eee547d4b78c347308b0979fa98ede39@eucas1p2.samsung.com>
+	<CA+G9fYurPNaW=u2E+h+segnXhY3cfWo3BJpfYDJxKRFPY4epsQ@mail.gmail.com>
 
-On 5/16/24 9:42 AM, Gatien CHEVALLIER wrote:
-
-Hi,
-
->>>>> What if you add a trace in a random generation function in random.c?
->>>>
->>>> Do you have a function name or line number for me ?
+On 16.05.2024 12:27, Naresh Kamboju wrote:
+> On Wed, 15 May 2024 at 22:53, Russell King (Oracle)
+> <linux@armlinux.org.uk> wrote:
+>> On Tue, May 07, 2024 at 01:26:17PM -0700, Stephen Boyd wrote:
+>>> Quoting Arnd Bergmann (2024-05-07 00:44:15)
+>>>> On Tue, May 7, 2024, at 09:20, Naresh Kamboju wrote:
+>>>>> The WinLink E850-96 board boot failed with Linux next-20240506 but there
+>>>>> is no kernel crash log on the serial [1].
+>>>>>
+>>>>> Anders bisection results pointing to this commit,
+>>>>> # first bad commit:
+>>>>>    [4d11c62ca8d77cb1f79054844b598e0f4e92dabe]
+>>>>>    clkdev: report over-sized strings when creating clkdev entrie
+>>>>>
+>>>>> After reverting the above patch the boot test passed [2].
+>>>>>
+>>>>> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+>>>>>
+>>> There are two fixes on the list: [1] and [2]. Perhaps one of those
+>>> resolves this?
 >>>
->>> I put a trace in _get_random_bytes() in drivers/char/random.c. I'm not
->>> 100% sure but this should be the entry point when getting a random 
->>> number.
+>>> [1] https://lore.kernel.org/r/20240507065317.3214186-1-m.szyprowski@samsung.com
+>> This one has (I think) ended up in the patch system last week, but it's
+>> not clkdev, it's only related. I'm also not Cc'd on its posting, and
+>> it's not posted to any mailing list that I'm a part of. So I've not
+>> been following any discussion on it.
 >>
->> You're right, there is a read attempt right before the hang, and 
->> __clk_is_enabled() returns 0 in stm32_read_rng() . In fact, it is the 
->> pm_runtime_get_sync() which is returning -EACCES instead of zero, and 
->> this is currently not checked so the failure is not detected before 
->> register access takes place, to register file with clock disabled, 
->> which triggers a hard hang.
->>
->> I'll be sending a patch shortly, thanks for this hint !
->>
-> 
-> Great news, indeed the return code isn't checked. Let's use
-> pm_runtime_resume_and_get().
+>> Digging in to the discussion, I see various attributations, and a final
+>> message reporting an unused variable, and a promise to send v2. So,
+>> I'm guessing that
+>> https://protect2.fireeye.com/v1/url?k=946226d9-f5e933ef-9463ad96-74fe485fffe0-28286a0026513387&q=1&e=a16c1c53-9c99-475a-b144-8adf7852ebc0&u=http%3A%2F%2Fwww.home.armlinux.org.uk%2Fdeveloper%2Fpatches%2Fviewpatch.php%3Fid%3D9397%2F1
+> I do not have access to this link ^.
+>
+>> is now superseded in some way... I wouldn't have known without locating
+>> this email and checking the links.
 
-Yes please.
 
-I will wonder why we get EACCES though, that basically means we are 
-suspending already. Is it safe to return -errno from rng read function 
-in that case ?
+The fix for drivers/clk/samsung/clk.c driver has been merged to clk-next:
 
->>>>> After this, I'll try to reproduce the issue.
->>>>
->>>> If you have a minute to test it on some ST MP15 board, that would be 
->>>> real nice. Thanks !
->>>
->>> I tried to reproduce the issue you're facing on a STM32MP157C-DK2 no
->>> SCMI on the 6.9-rc7 kernel tag. I uses OP-TEE and TF-A in the bootchain
->>> but this should not have an impact here.
->>>
->>> How did you manage to test using "echo core > /sys/power/pm_test"?
->>> In kernel/power/suspend.c, enter_state(). If the pm_test_level is core,
->>> then an error is fired with the following trace:
->>> "Unsupported test mode for suspend to idle, please choose 
->>> none/freezer/devices/platform."
->>
->> Could this be firmware related ?
->>
->>> I've tried using "echo devices > /sys/power/pm_test" so that I can at 
->>> least test that the driver is put to sleep then wakes up. I do not
->>> reproduce your issue.
->>
->> Can you try 'processors' ?
->>
-> 
-> Given this:
-> #ifdef CONFIG_PM_DEBUG
->          if (pm_test_level != TEST_NONE && pm_test_level <= TEST_CPUS) {
->              pr_warn("Unsupported test mode for suspend to idle
+https://lore.kernel.org/all/f7a877622829db499bf2bc65fe9ffbff.sboyd@kernel.org/
 
-You're supposed to be suspending to 'mem' , not 'idle' . Could that be it ?
+Best regards
+-- 
+Marek Szyprowski, PhD
+Samsung R&D Institute Poland
+
