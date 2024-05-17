@@ -1,138 +1,97 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0FE43C24;
-	Fri, 17 May 2024 00:19:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12283389;
+	Fri, 17 May 2024 00:33:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715905161; cv=none; b=PfD5t+wRPhZ3Z8HQmL+NBjFJFKkn8hQpgxAKUlGEEpPwcs4LRWHODNgBv7bb499HHutriXQRR0wdtLI6RG4IdpvBY93prcSF4ZOksu4m5I4ewtF8PInUJaqeZk22qxMC30p0WLnShddFubtup/swWMmURRjef8nGUdl3WJOscZo=
+	t=1715906014; cv=none; b=oWdY8+o8vM+DIBMjeNWAzFz7YZIFcemQJVKQTzZPYp6EG7XFAz7NzFDOd/yQVj7pRCe8sYTjpB9TlESckmzG/2dmuI9V8QduACyY3zrkCW6IhJE+CmERJvwpvRYsrLErOztjY/kM1tzxaJfwv9RgcMcMJmfX7h59Q4TS7M6RaAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715905161; c=relaxed/simple;
-	bh=8XzY2YB1aKCfaZ6jGaLgRfuz2R2bewKIkz1trKzNkkY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=vBFATlutyF/cgs4X2D3OsJmR4Dtv9uGMQ3XC8vj32yq1KW5A91vrgO/RQuGwUOGeuw+f4en1p8dTcErTRjI6SZ21kvQr25AOS7pYrHPNSRlNH4Qx7ektb8jMHXZLb7gz2CvBFZ1zGCDwhTZn0vEvJRFF49Doow1U+MeIDRRgj5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Sc/esD6j; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1715906014; c=relaxed/simple;
+	bh=NtdMFwjCCg6DRe8jJko5fsFCy+aStnuV7IT8PB1A13Y=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=QH93JmupedKdsukGr94Z+8CWlw//qBNegTkGO0UCvdSU8NZC2M5nnlnM4e1Yka5bfrFs1wUDeQEeEuqYAEFRSrtygLELhq1GuONS9YKjFAxucLHTCf/IHxQcPLJ+tuNw2ZSbaJyThPRZs2I6fOhJ9HLNFnqSY4VEA7yaEoFFx9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HD7Szvyn; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Sc/esD6j"
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44GKN3f1007325;
-	Fri, 17 May 2024 00:19:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	from:date:subject:mime-version:content-type
-	:content-transfer-encoding:message-id:to:cc; s=qcppdkim1; bh=YCp
-	P6Vu1yUGpMEN0G7p7iGWIYo+0Wxg88rvHSvAzPqw=; b=Sc/esD6jlcKmgMuDrvd
-	R8JLKBwj4rUNksPDMFmSgsY/rkq2qUk5bzosIbpM8Xyw5m2/+ZamIUQHvYxW0MxC
-	d7cWdXki9TAJH0RHJu9u5sBYTqVLGf3a1kUMs+amJGxQv7a+cR/AylDrzO0l74IH
-	SmK73zDUMbHlnPzBde4W1ZjEAW8RlgQMECwGxS9h9qAVnzAOyaFuPc85FhS//IUE
-	RrOiikMD+MoC+GPBY80l0i3OJ3ZlJPUSA0i1zzI2ImwJ8uajCQ+aXXV88ZGqf0Fj
-	KseIiSE/qLnYfDaWcfCfXImhBDjxDVydGXKpQSC0pQHX5i82sUrrlfkYLRYm+lNd
-	FRA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3y47f46wy4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 17 May 2024 00:19:15 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44H0JDbw025496
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 17 May 2024 00:19:13 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 16 May
- 2024 17:19:10 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Thu, 16 May 2024 17:19:10 -0700
-Subject: [PATCH] clk: qcom: add missing MODULE_DESCRIPTION() macros
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HD7Szvyn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7095DC113CC;
+	Fri, 17 May 2024 00:33:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1715906013;
+	bh=NtdMFwjCCg6DRe8jJko5fsFCy+aStnuV7IT8PB1A13Y=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=HD7SzvynKcjYOsvcvN/G2QU4qpCjqTri3qEAUXZJKLDZd8DaMG3OHyjJWQvd/PNSN
+	 Hp3G5XPAdtvJsu/IhGFHIdDEP2qwIMy4G3HWe3wmKLvS+77nMDzpRF/H7juYwzhCcq
+	 LGYLU2dy6v05RtemPVjwjMaeiojcS/Ic8eojFv8JE+gKUbdF69Pbpkr13ptXIlpgBb
+	 1vc6a+nFcvDpsnmOhOSw7xMZ/50XnFVYsNWeU9GCgkfaUDR53tPeRIlPGD9gpFI+ZI
+	 6R4pkCX9kR4SJYk04QKvI8BF6y67hgnec7XugZyYDBNO47GSXeReF5OSF4XIhCiqNk
+	 fHuH7AyWjgkQQ==
+Message-ID: <a5a821acebb8f447e3f17a0b5ba7f4e2.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240516-qcom-clk-md-v1-1-baca27dd2fb2@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAH2iRmYC/22NwQ6DIBAFf8XsudsAEWx66n80HgChbqpYQY2N8
- d+Lnnuc5M2bDZKL5BLciw2iWyjREDLwSwG21eHlkJrMIJgomeQSRzv0aLs39g0qaaRqvPaa3SA
- bn+g8refbs85sdHJoog62PT46CvOKvU6Ti8e8pTQN8Xu2F35I/zMLR47SV0zJUhhVVY9xJkvBX
- vMI6n3ffzds4oHHAAAA
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 6ac_nO1t1Fwp_iXxctSM3KF2i-KRgX4d
-X-Proofpoint-ORIG-GUID: 6ac_nO1t1Fwp_iXxctSM3KF2i-KRgX4d
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.11.176.26
- definitions=2024-05-16_07,2024-05-15_01,2023-05-22_02
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- phishscore=0 bulkscore=0 clxscore=1011 malwarescore=0 adultscore=0
- lowpriorityscore=0 impostorscore=0 suspectscore=0 mlxlogscore=891
- mlxscore=0 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405010000 definitions=main-2405170000
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAL_Jsq+M953w4FdOHmDWByqUbJmB+g_G=KxAuZ04zFqV6zBmzg@mail.gmail.com>
+References: <20240422232404.213174-1-sboyd@kernel.org> <CABVgOSmgUJp3FijpYGCphi1OzRUNvmYQmPDdL6mN59YnbkR2iQ@mail.gmail.com> <b822c6a5488c4098059b6d3c35eecbbd.sboyd@kernel.org> <5c919f0d3d72fe1592a11c45545e8a60.sboyd@kernel.org> <CAL_JsqK4EZ0RhYCw6ZaeYSJu5Ps1J+J25vjwQy2XvNa5F5d7Pw@mail.gmail.com> <f6d7574582592f3bfa50fc45fefc53be.sboyd@kernel.org> <CAL_Jsq+M953w4FdOHmDWByqUbJmB+g_G=KxAuZ04zFqV6zBmzg@mail.gmail.com>
+Subject: Re: [PATCH v4 00/10] clk: Add kunit tests for fixed rate and parent data
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: David Gow <davidgow@google.com>, Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, patches@lists.linux.dev, kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org, devicetree@vger.kernel.org, Brendan Higgins <brendan.higgins@linux.dev>, Rae Moar <rmoar@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rafael J . Wysocki <rafael@kernel.org>, Saravana Kannan <saravanak@google.com>, Daniel Latypov <dlatypov@google.com>, Christian Marangi <ansuelsmth@gmail.com>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Maxime Ripard <maxime@cerno.tech>
+To: Rob Herring <robh@kernel.org>
+Date: Thu, 16 May 2024 17:33:31 -0700
+User-Agent: alot/0.10
 
-Fix the following from 'make W=1' with allmodconfig:
+Quoting Rob Herring (2024-05-15 15:08:47)
+> On Wed, May 15, 2024 at 4:15=E2=80=AFPM Stephen Boyd <sboyd@kernel.org> w=
+rote:
+> > diff --git a/drivers/of/platform.c b/drivers/of/platform.c
+> > index 389d4ea6bfc1..acecefcfdba7 100644
+> > --- a/drivers/of/platform.c
+> > +++ b/drivers/of/platform.c
+> > @@ -421,6 +421,7 @@ int of_platform_bus_probe(struct device_node *root,
+> >         if (of_match_node(matches, root)) {
+> >                 rc =3D of_platform_bus_create(root, matches, NULL, pare=
+nt, false);
+> >         } else for_each_child_of_node(root, child) {
+> > +               of_node_set_flag(root, OF_POPULATED_BUS);
+>=20
+> No, the same spot as of_platform_populate has it. I guess this would
+> be the same, but no reason to do this in the for_each_child_of_node
+> loop...
 
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/qcom/clk-qcom.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/qcom/gcc-msm8976.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/qcom/lpass-gfm-sm8250.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/qcom/videocc-sdm845.o
+Ok. I'm not intending to send this patch.
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/clk/qcom/common.c           | 1 +
- drivers/clk/qcom/gcc-msm8976.c      | 1 +
- drivers/clk/qcom/lpass-gfm-sm8250.c | 1 +
- drivers/clk/qcom/videocc-sdm845.c   | 1 +
- 4 files changed, 4 insertions(+)
+>=20
+> >                 if (!of_match_node(matches, child))
+> >                         continue;
+> >                 rc =3D of_platform_bus_create(child, matches, NULL, par=
+ent, false);
+> >
+> >
+> > This doesn't work though. I see that prom_init() is called, which
+> > constructs a DTB and flattens it to be unflattened by
+> > unflatten_device_tree(). The powerpc machine type used by qemu is
+> > PLATFORM_PSERIES_LPAR. It looks like it never calls
+> > of_platform_bus_probe() from the pseries platform code.
+>=20
+> Huh. Maybe pseries doesn't have any platform devices?
 
-diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
-index 75f09e6e057e..135e1d51f6fe 100644
---- a/drivers/clk/qcom/common.c
-+++ b/drivers/clk/qcom/common.c
-@@ -338,3 +338,4 @@ int qcom_cc_probe_by_index(struct platform_device *pdev, int index,
- EXPORT_SYMBOL_GPL(qcom_cc_probe_by_index);
- 
- MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("QTI Common Clock module");
-diff --git a/drivers/clk/qcom/gcc-msm8976.c b/drivers/clk/qcom/gcc-msm8976.c
-index f60a8171972b..7fac0ca594aa 100644
---- a/drivers/clk/qcom/gcc-msm8976.c
-+++ b/drivers/clk/qcom/gcc-msm8976.c
-@@ -4154,3 +4154,4 @@ module_exit(gcc_msm8976_exit);
- 
- MODULE_AUTHOR("AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>");
- MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("QTI MSM8996 Global Clock Controller");
-diff --git a/drivers/clk/qcom/lpass-gfm-sm8250.c b/drivers/clk/qcom/lpass-gfm-sm8250.c
-index 8a1ee52cbcc3..65d380e30eed 100644
---- a/drivers/clk/qcom/lpass-gfm-sm8250.c
-+++ b/drivers/clk/qcom/lpass-gfm-sm8250.c
-@@ -315,3 +315,4 @@ static struct platform_driver lpass_gfm_clk_driver = {
- };
- module_platform_driver(lpass_gfm_clk_driver);
- MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("QTI SM8250 LPASS Glitch Free Mux clock driver");
-diff --git a/drivers/clk/qcom/videocc-sdm845.c b/drivers/clk/qcom/videocc-sdm845.c
-index b7f21ecad961..80095a283a86 100644
---- a/drivers/clk/qcom/videocc-sdm845.c
-+++ b/drivers/clk/qcom/videocc-sdm845.c
-@@ -343,3 +343,4 @@ static struct platform_driver video_cc_sdm845_driver = {
- module_platform_driver(video_cc_sdm845_driver);
- 
- MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("QTI SDM845 VIDEOCC Driver");
+Looks like it.
 
----
-base-commit: 8c06da67d0bd3139a97f301b4aa9c482b9d4f29e
-change-id: 20240515-qcom-clk-md-65b56dfafa08
+>=20
+> Ideally, we'd still do it in of_platform_default_populate_init(), but
+> if you look at the history, you'll see that broke some PPC boards
+> (damn initcall ordering).
+>=20
+> > What about skipping the OF_POPULATED_BUS check, or skipping the check
+> > when the parent is the root node? This is the if condition that's
+> > giving the headache.
+>=20
+> I don't think we should just remove it, but a root node check seems fine.
+>=20
 
+Alright. I've added a check to see if the root node is the parent to
+allow it. That works well enough, so I'll send that in v5.
