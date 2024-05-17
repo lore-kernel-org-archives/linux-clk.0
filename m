@@ -1,34 +1,34 @@
-Received: from out-185.mta1.migadu.com (out-185.mta1.migadu.com [95.215.58.185])
+Received: from out-173.mta1.migadu.com (out-173.mta1.migadu.com [95.215.58.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BCF74F608;
-	Fri, 17 May 2024 12:58:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBC9252F9A;
+	Fri, 17 May 2024 12:58:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715950734; cv=none; b=Ycn5yU5aFMENag8jwcTlXrh8t0pNY2ISO3Ko/kXcqxivxR4kgNVLMyL535km1q9F3nm3bFvcZ8judilflMg1ku4LPtqhgLA+L77VZvTawhdZGGq5z7qIUU74yE3yptY1vprQfzWGHUkMMZfFyO6pXg0D+ERuw05ltk8dpEV1+gw=
+	t=1715950736; cv=none; b=iaZNSIO5vY23mqQZcyy6orr4o7HnKNrSj5alTLPht85i8zokrzPZ7N6aVkMJLTXUSOBLYaBCs1PiA2pBPHMzPwzD4xBAQ0EDce/OeiFk9v7Pm+jbzmO5BkvsP4OU0vFt2hmqqfO8uf+hYdZTl3n0JBbbtFSIhDrI3QvfR3g6QYY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715950734; c=relaxed/simple;
-	bh=zhEWBrawvMbizC57yXlsDphblOxGvShm0hH9a8UM0cE=;
+	s=arc-20240116; t=1715950736; c=relaxed/simple;
+	bh=0XOMm+ge0CG1rMR477UJBe3byaxH6SnO+N8jfBfoTS4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GzmfLVjGl6lhk5mQ/zYYCSpd+nl56a2mOgKYOvcMLTknBL2HctKsQNjGRsCZg+3Aj/XZYQ4niNiKUUln6bC9zTAH73HjSVYVaUgkFEfjKfr4/6w5HogETNj10gzRphNkp7Yd8lUyKZxhDQHZkCD8NgyD/W1GDJXUO49clv6Sd9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pqrs.dk; spf=pass smtp.mailfrom=pqrs.dk; dkim=pass (2048-bit key) header.d=pqrs.dk header.i=@pqrs.dk header.b=DistQRgE; arc=none smtp.client-ip=95.215.58.185
+	 In-Reply-To:To:Cc; b=TV29b8QM7CB5DqUYNd9QkkJZcdOphMu59ZKJHYbhxZbxu+8x5t+OGnZkbjwXEYQp91DgtkiOwg6mlUBvVvNtkMl7uw27NAmLe/kh1ZnS2FECmo6AFfhAsZTC+XjjLP+fkoA9u2W7gEhcbCNqzkxaGpTqX9fvMJwfW6FLE3cBGsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pqrs.dk; spf=pass smtp.mailfrom=pqrs.dk; dkim=pass (2048-bit key) header.d=pqrs.dk header.i=@pqrs.dk header.b=t+hKGjVy; arc=none smtp.client-ip=95.215.58.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pqrs.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pqrs.dk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pqrs.dk header.i=@pqrs.dk header.b="DistQRgE"
+	dkim=pass (2048-bit key) header.d=pqrs.dk header.i=@pqrs.dk header.b="t+hKGjVy"
 X-Envelope-To: linux-i2c@vger.kernel.org
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pqrs.dk; s=key1;
-	t=1715950727;
+	t=1715950730;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=JJGBX33aY0n80azEn4ipwIvrPzKLZvbe5lsXykY8yrk=;
-	b=DistQRgEInbSJ+T5Tl0tJuLA4B6kO3oXQvYWjlwdenBXa7km9R5i1fL7dm/95XUweTxryY
-	Wpwdrde35+5HfosjaYrQPLTGyTBy0HDzEyJS8XKZepBOfj2rTFSIWRRqK5Jirtbmd/+j8V
-	nQYc66rjh/EGooc/jD1XX6QbN4yf5ZWVNNQ54iKgepTQFC7tpbbs0fD0X+fXzN2CzVvNO5
-	emNoSUEvq4+tsG/iI2hEoytfBqVheXUXpV+RHtDqq93so1bjkkBvBmCK4ZJE/BnZfvlVZF
-	zN/WMJebSpHXB5KKNC9Mrm6e8Y+BLuLnHfw62japUz1BmUCsVxLncZKJa3b0FA==
+	bh=BKi9dQbr0T+uVxmbTMIarChYf6vJF2b8+XfTd+iLTkI=;
+	b=t+hKGjVy72mnGQfVQXGD2Ss4kQdbuvoKZ3LkaVJJ13ZBKIqKH7WJqRNu6/AhgLJ0aFQcWv
+	/dOzAdAZOO4pstDh3a1PLPzzv+QEOuzuphNU0NalyGPOCSGUov2cD9yny9IFVWsoyBwv0W
+	PIQi2eljSfZqvMIaEDLvb4CTWp/q8dahR8n1s0fjV1G1o3QD62Wdkf3phMsUNOSeONdsWq
+	Px07v9/e5I9TSYJfPRf1yhRPnkfEyJrt01W/iacidEQPvZTAX6Jfao+DKfC3MvV9R/5lao
+	LKVvunhbIn3a2YvQ+JPDl4ed9L/PEsaijBnFaeOtl5j5XhMWR1POGSqkx/2yAQ==
 X-Envelope-To: linux-gpio@vger.kernel.org
 X-Envelope-To: conor+dt@kernel.org
 X-Envelope-To: linus.walleij@linaro.org
@@ -53,8 +53,8 @@ X-Envelope-To: andi.shyti@kernel.org
 X-Envelope-To: brgl@bgdev.pl
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 From: =?utf-8?q?Alvin_=C5=A0ipraga?= <alvin@pqrs.dk>
-Date: Fri, 17 May 2024 14:58:00 +0200
-Subject: [PATCH 02/13] regmap: add A2B support
+Date: Fri, 17 May 2024 14:58:04 +0200
+Subject: [PATCH 06/13] gpio: add AD24xx GPIO driver
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -63,7 +63,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240517-a2b-v1-2-b8647554c67b@bang-olufsen.dk>
+Message-Id: <20240517-a2b-v1-6-b8647554c67b@bang-olufsen.dk>
 References: <20240517-a2b-v1-0-b8647554c67b@bang-olufsen.dk>
 In-Reply-To: <20240517-a2b-v1-0-b8647554c67b@bang-olufsen.dk>
 To: Mark Brown <broonie@kernel.org>, 
@@ -86,197 +86,369 @@ X-Migadu-Flow: FLOW_OUT
 
 From: Alvin Šipraga <alsi@bang-olufsen.dk>
 
-Add regmap support for A2B drivers.
+This driver adds GPIO function support for AD24xx A2B transceiver chips.
+When a GPIO is requested, the relevant pin is automatically muxed to
+GPIO mode. The device tree property gpio-reserved-ranges can be used to
+protect certain pins which are reserved for other functionality such as
+I2S/TDM data.
 
 Signed-off-by: Alvin Šipraga <alsi@bang-olufsen.dk>
 ---
- drivers/base/regmap/Kconfig      |  6 ++-
- drivers/base/regmap/Makefile     |  1 +
- drivers/base/regmap/regmap-a2b.c | 82 ++++++++++++++++++++++++++++++++++++++++
- include/linux/regmap.h           | 38 +++++++++++++++++++
- 4 files changed, 126 insertions(+), 1 deletion(-)
+ drivers/a2b/Kconfig        |   1 +
+ drivers/gpio/Kconfig       |   6 +
+ drivers/gpio/Makefile      |   1 +
+ drivers/gpio/gpio-ad24xx.c | 302 +++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 310 insertions(+)
 
-diff --git a/drivers/base/regmap/Kconfig b/drivers/base/regmap/Kconfig
-index b1affac70d5d..df9ad0c9a338 100644
---- a/drivers/base/regmap/Kconfig
-+++ b/drivers/base/regmap/Kconfig
-@@ -5,7 +5,7 @@
+diff --git a/drivers/a2b/Kconfig b/drivers/a2b/Kconfig
+index 1f6d836463f3..8c894579e2fc 100644
+--- a/drivers/a2b/Kconfig
++++ b/drivers/a2b/Kconfig
+@@ -32,6 +32,7 @@ config A2B_AD24XX_I2C
+ config A2B_AD24XX_NODE
+        tristate "Analog Devices Inc. AD24xx node support"
+        select REGMAP_A2B
++       imply GPIO_AD24XX
+        help
+          Say Y here to enable support for AD24xx A2B transceiver nodes. This
+          applies to both main nodes and subordinate nodes. Supported models
+diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
+index 3dbddec07028..72bd0d88d6b3 100644
+--- a/drivers/gpio/Kconfig
++++ b/drivers/gpio/Kconfig
+@@ -1241,6 +1241,12 @@ config GPIO_ALTERA_A10SR
+ 	  includes reads of pushbuttons and DIP switches as well
+ 	  as writes to LEDs.
  
- config REGMAP
- 	bool
--	default y if (REGMAP_I2C || REGMAP_SPI || REGMAP_SPMI || REGMAP_W1 || REGMAP_AC97 || REGMAP_MMIO || REGMAP_IRQ || REGMAP_SOUNDWIRE || REGMAP_SOUNDWIRE_MBQ || REGMAP_SCCB || REGMAP_I3C || REGMAP_SPI_AVMM || REGMAP_MDIO || REGMAP_FSI)
-+	default y if (REGMAP_I2C || REGMAP_SPI || REGMAP_SPMI || REGMAP_W1 || REGMAP_AC97 || REGMAP_MMIO || REGMAP_IRQ || REGMAP_SOUNDWIRE || REGMAP_SOUNDWIRE_MBQ || REGMAP_SCCB || REGMAP_I3C || REGMAP_SPI_AVMM || REGMAP_MDIO || REGMAP_FSI || REGMAP_A2B)
- 	select IRQ_DOMAIN if REGMAP_IRQ
- 	select MDIO_BUS if REGMAP_MDIO
- 	help
-@@ -91,3 +91,7 @@ config REGMAP_SPI_AVMM
- config REGMAP_FSI
- 	tristate
- 	depends on FSI
++config GPIO_AD24XX
++	tristate "Analog Devies Inc. AD24xx GPIO support"
++	depends on A2B_AD24XX_NODE
++	help
++	  Say Y here to enable GPIO support for AD24xx A2B transceivers.
 +
-+config REGMAP_A2B
-+	tristate
-+	depends on A2B
-diff --git a/drivers/base/regmap/Makefile b/drivers/base/regmap/Makefile
-index 5fdd0845b45e..979e10419f8f 100644
---- a/drivers/base/regmap/Makefile
-+++ b/drivers/base/regmap/Makefile
-@@ -22,3 +22,4 @@ obj-$(CONFIG_REGMAP_I3C) += regmap-i3c.o
- obj-$(CONFIG_REGMAP_SPI_AVMM) += regmap-spi-avmm.o
- obj-$(CONFIG_REGMAP_MDIO) += regmap-mdio.o
- obj-$(CONFIG_REGMAP_FSI) += regmap-fsi.o
-+obj-$(CONFIG_REGMAP_A2B) += regmap-a2b.o
-diff --git a/drivers/base/regmap/regmap-a2b.c b/drivers/base/regmap/regmap-a2b.c
+ config GPIO_ARIZONA
+ 	tristate "Wolfson Microelectronics Arizona class devices"
+ 	depends on MFD_ARIZONA
+diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
+index e2a53013780e..f625bb140143 100644
+--- a/drivers/gpio/Makefile
++++ b/drivers/gpio/Makefile
+@@ -24,6 +24,7 @@ obj-$(CONFIG_GPIO_104_IDI_48)		+= gpio-104-idi-48.o
+ obj-$(CONFIG_GPIO_104_IDIO_16)		+= gpio-104-idio-16.o
+ obj-$(CONFIG_GPIO_74X164)		+= gpio-74x164.o
+ obj-$(CONFIG_GPIO_74XX_MMIO)		+= gpio-74xx-mmio.o
++obj-$(CONFIG_GPIO_AD24XX)		+= gpio-ad24xx.o
+ obj-$(CONFIG_GPIO_ADNP)			+= gpio-adnp.o
+ obj-$(CONFIG_GPIO_ADP5520)		+= gpio-adp5520.o
+ obj-$(CONFIG_GPIO_AGGREGATOR)		+= gpio-aggregator.o
+diff --git a/drivers/gpio/gpio-ad24xx.c b/drivers/gpio/gpio-ad24xx.c
 new file mode 100644
-index 000000000000..ba5fbc5ed6eb
+index 000000000000..097ea9e2d629
 --- /dev/null
-+++ b/drivers/base/regmap/regmap-a2b.c
-@@ -0,0 +1,82 @@
++++ b/drivers/gpio/gpio-ad24xx.c
+@@ -0,0 +1,302 @@
 +// SPDX-License-Identifier: GPL-2.0-only
-+//
-+// Register map access API - A2B support
-+//
-+// Copyright (c) 2023-2024 Alvin Šipraga <alsi@bang-olufsen.dk>
++/*
++ * AD24xx GPIO driver
++ *
++ * Copyright (c) 2023-2024 Alvin Šipraga <alsi@bang-olufsen.dk>
++ */
 +
-+#include <linux/regmap.h>
 +#include <linux/a2b/a2b.h>
++#include <linux/a2b/ad24xx.h>
++#include <linux/gpio/driver.h>
++#include <linux/interrupt.h>
++#include <linux/module.h>
++#include <linux/of_irq.h>
++#include <linux/regmap.h>
 +
-+static int regmap_a2b_write(void *context, const void *data, size_t count)
-+{
-+	struct a2b_node *node = context;
-+	struct a2b_bus *bus = node->bus;
-+	const u8 *d = data;
-+	u8 reg;
-+	int ret;
-+	int i;
-+
-+	reg = d[0];
-+
-+	for (i = 0; i < count - 1; i++) {
-+		ret = bus->ops->write(bus, node, reg + i, d[i + 1]);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int regmap_a2b_read(void *context, const void *reg_buf, size_t reg_size,
-+			   void *val_buf, size_t val_size)
-+{
-+	struct a2b_node *node = context;
-+	struct a2b_bus *bus = node->bus;
-+	u8 reg = ((u8 *)reg_buf)[0];
-+	u8 *v = val_buf;
-+	int ret;
-+	int i;
-+
-+	if (reg_size != 1)
-+		return -EINVAL;
-+
-+	for (i = 0; i < val_size; i++) {
-+		unsigned int tmp;
-+
-+		ret = bus->ops->read(bus, node, reg + i, &tmp);
-+		if (ret)
-+			return ret;
-+
-+		v[i] = tmp & 0xFF;
-+	}
-+
-+	return 0;
-+}
-+
-+static const struct regmap_bus regmap_a2b = {
-+	.write = regmap_a2b_write,
-+	.read = regmap_a2b_read,
-+	.val_format_endian_default = REGMAP_ENDIAN_BIG,
++struct ad24xx_gpio {
++	struct device *dev;
++	struct a2b_func *func;
++	struct a2b_node *node;
++	struct regmap *regmap;
++	int irqs[AD24XX_MAX_GPIOS];
++	struct gpio_chip gpio_chip;
++	struct irq_chip irq_chip;
++	struct mutex mutex;
++	unsigned int irq_invert : AD24XX_MAX_GPIOS;
++	unsigned int irq_enable : AD24XX_MAX_GPIOS;
 +};
 +
-+struct regmap *__devm_regmap_init_a2b_node(struct a2b_node *node,
-+					   const struct regmap_config *config,
-+					   struct lock_class_key *lock_key,
-+					   const char *lock_name)
++static int ad24xx_gpio_get_direction(struct gpio_chip *gc, unsigned int offset)
 +{
-+	return __devm_regmap_init(&node->dev, &regmap_a2b, node, config,
-+				  lock_key, lock_name);
-+}
-+EXPORT_SYMBOL_GPL(__devm_regmap_init_a2b_node);
++	struct ad24xx_gpio *adg = gpiochip_get_data(gc);
++	unsigned int val;
++	int ret;
 +
-+struct regmap *__devm_regmap_init_a2b_func(struct a2b_func *func,
-+					   const struct regmap_config *config,
-+					   struct lock_class_key *lock_key,
-+					   const char *lock_name)
++	ret = regmap_read(adg->regmap, A2B_GPIOOEN, &val);
++	if (ret)
++		return ret;
++
++	if (val & BIT(offset))
++		return 0; /* output */
++
++	return 1; /* input */
++}
++
++static int ad24xx_gpio_get(struct gpio_chip *gc, unsigned int offset)
 +{
-+	return __devm_regmap_init(&func->dev, &regmap_a2b, func->node, config,
-+				  lock_key, lock_name);
-+}
-+EXPORT_SYMBOL_GPL(__devm_regmap_init_a2b_func);
++	struct ad24xx_gpio *adg = gpiochip_get_data(gc);
++	unsigned int val;
++	int ret;
 +
++	ret = regmap_read(adg->regmap, A2B_GPIOIN, &val);
++	if (ret)
++		return ret;
++
++	if (val & BIT(offset))
++		return 1; /* high */
++
++	return 0; /* low */
++}
++
++static void ad24xx_gpio_set(struct gpio_chip *gc, unsigned int offset,
++			    int value)
++{
++	struct ad24xx_gpio *adg = gpiochip_get_data(gc);
++	unsigned int reg = value ? A2B_GPIODATSET : A2B_GPIODATCLR;
++
++	regmap_write(adg->regmap, reg, BIT(offset));
++}
++
++static int ad24xx_gpio_set_direction(struct ad24xx_gpio *adg,
++				     unsigned int offset,
++				     unsigned int direction)
++{
++	unsigned int mask = BIT(offset);
++	unsigned int ival = direction ? BIT(offset) : 0;
++	int ret;
++
++	ret = regmap_update_bits(adg->regmap, A2B_GPIOIEN, mask, ival);
++	if (ret)
++		return ret;
++
++	ret = regmap_update_bits(adg->regmap, A2B_GPIOOEN, mask, ~ival);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++
++static int ad24xx_gpio_direction_input(struct gpio_chip *gc,
++				       unsigned int offset)
++{
++	struct ad24xx_gpio *adg = gpiochip_get_data(gc);
++
++	return ad24xx_gpio_set_direction(adg, offset, 1);
++}
++
++static int ad24xx_gpio_direction_output(struct gpio_chip *gc,
++					unsigned int offset, int value)
++{
++	struct ad24xx_gpio *adg = gpiochip_get_data(gc);
++
++	/* For atomicity, write the output value before setting the direction */
++	ad24xx_gpio_set(gc, offset, value);
++
++	return ad24xx_gpio_set_direction(adg, offset, 0);
++}
++
++static int ad24xx_gpio_child_to_parent_hwirq(struct gpio_chip *gc,
++					     unsigned int child,
++					     unsigned int child_type,
++					     unsigned int *parent,
++					     unsigned int *parent_type)
++{
++	*parent = child;
++	return 0;
++}
++
++static void ad24xx_gpio_irq_mask(struct irq_data *d)
++{
++	struct gpio_chip *gpio_chip = irq_data_get_irq_chip_data(d);
++	struct ad24xx_gpio *adg = gpiochip_get_data(gpio_chip);
++	irq_hw_number_t hwirq = irqd_to_hwirq(d);
++
++	adg->irq_enable &= ~BIT(hwirq);
++	gpiochip_disable_irq(gpio_chip, hwirq);
++}
++
++static void ad24xx_gpio_irq_unmask(struct irq_data *d)
++{
++	struct gpio_chip *gpio_chip = irq_data_get_irq_chip_data(d);
++	struct ad24xx_gpio *adg = gpiochip_get_data(gpio_chip);
++	irq_hw_number_t hwirq = irqd_to_hwirq(d);
++
++	gpiochip_disable_irq(gpio_chip, hwirq);
++	adg->irq_enable |= BIT(hwirq);
++}
++
++static int ad24xx_gpio_irq_set_type(struct irq_data *d, unsigned int type)
++{
++	struct gpio_chip *gpio_chip = irq_data_get_irq_chip_data(d);
++	struct ad24xx_gpio *adg = gpiochip_get_data(gpio_chip);
++	irq_hw_number_t hwirq = irqd_to_hwirq(d);
++
++	switch (type) {
++	case IRQ_TYPE_EDGE_RISING:
++		adg->irq_invert &= ~BIT(hwirq);
++		break;
++	case IRQ_TYPE_EDGE_FALLING:
++		adg->irq_invert |= BIT(hwirq);
++		break;
++	default:
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
++static void ad24xx_gpio_irq_bus_lock(struct irq_data *d)
++{
++	struct gpio_chip *gpio_chip = irq_data_get_irq_chip_data(d);
++	struct ad24xx_gpio *adg = gpiochip_get_data(gpio_chip);
++
++	mutex_lock(&adg->mutex);
++}
++
++static void ad24xx_gpio_irq_bus_sync_unlock(struct irq_data *d)
++{
++	struct gpio_chip *gpio_chip = irq_data_get_irq_chip_data(d);
++	struct ad24xx_gpio *adg = gpiochip_get_data(gpio_chip);
++	int ret;
++
++	ret = regmap_write(adg->regmap, A2B_PINTINV, adg->irq_invert);
++	if (ret)
++		goto out;
++
++	ret = regmap_write(adg->regmap, A2B_PINTEN, adg->irq_enable);
++	if (ret)
++		goto out;
++
++out:
++	mutex_unlock(&adg->mutex);
++
++	if (ret)
++		dev_err(adg->dev,
++			"failed to update interrupt configuration: %d\n", ret);
++}
++
++static const struct irq_chip ad24xx_gpio_irq_chip = {
++	.name = "ad24xx-gpio",
++	.flags = IRQCHIP_IMMUTABLE,
++	.irq_mask = ad24xx_gpio_irq_mask,
++	.irq_unmask = ad24xx_gpio_irq_unmask,
++	.irq_set_type = ad24xx_gpio_irq_set_type,
++	.irq_bus_lock = ad24xx_gpio_irq_bus_lock,
++	.irq_bus_sync_unlock = ad24xx_gpio_irq_bus_sync_unlock,
++	GPIOCHIP_IRQ_RESOURCE_HELPERS,
++};
++
++static const struct regmap_config ad24xx_gpio_regmap_config = {
++	.reg_bits = 8,
++	.val_bits = 8,
++};
++
++static int ad24xx_gpio_probe(struct device *dev)
++{
++	struct a2b_func *func = to_a2b_func(dev);
++	struct a2b_node *node = func->node;
++	struct fwnode_handle *fwnode = of_node_to_fwnode(dev->of_node);
++	struct gpio_chip *gpio_chip;
++	struct gpio_irq_chip *irq_chip;
++	struct irq_domain *parent_domain;
++	struct ad24xx_gpio *adg;
++	struct device_node *np;
++	int ret;
++
++	adg = devm_kzalloc(dev, sizeof(*adg), GFP_KERNEL);
++	if (!adg)
++		return -ENOMEM;
++
++	adg->regmap =
++		devm_regmap_init_a2b_func(func, &ad24xx_gpio_regmap_config);
++	if (IS_ERR(adg->regmap))
++		return PTR_ERR(adg->regmap);
++
++	adg->dev = dev;
++	adg->func = func;
++	adg->node = node;
++	mutex_init(&adg->mutex);
++
++	np = of_irq_find_parent(dev->of_node);
++	if (!np)
++		return -ENOENT;
++
++	parent_domain = irq_find_host(np);
++	of_node_put(np);
++	if (!parent_domain)
++		return -ENOENT;
++
++	gpio_chip = &adg->gpio_chip;
++	gpio_chip->label = dev_name(dev);
++	gpio_chip->parent = dev;
++	gpio_chip->fwnode = fwnode;
++	gpio_chip->owner = THIS_MODULE;
++	gpio_chip->get_direction = ad24xx_gpio_get_direction;
++	gpio_chip->direction_input = ad24xx_gpio_direction_input;
++	gpio_chip->direction_output = ad24xx_gpio_direction_output;
++	gpio_chip->get = ad24xx_gpio_get;
++	gpio_chip->set = ad24xx_gpio_set;
++	gpio_chip->base = -1;
++	gpio_chip->ngpio = node->chip_info->max_gpios;
++	gpio_chip->can_sleep = true;
++
++	irq_chip = &gpio_chip->irq;
++	gpio_irq_chip_set_chip(irq_chip, &ad24xx_gpio_irq_chip);
++	irq_chip->fwnode = fwnode;
++	irq_chip->parent_domain = parent_domain;
++	irq_chip->child_to_parent_hwirq = ad24xx_gpio_child_to_parent_hwirq;
++	irq_chip->handler = handle_bad_irq;
++	irq_chip->default_type = IRQ_TYPE_NONE;
++
++	/* Initialize all GPIOs as inputs for high impedance state */
++	ret = regmap_write(adg->regmap, A2B_GPIOIEN, 0xFF);
++	if (ret)
++		return ret;
++
++	ret = devm_gpiochip_add_data(dev, gpio_chip, adg);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++
++static const struct of_device_id ad24xx_gpio_of_match_table[] = {
++	{ .compatible = "adi,ad2401-gpio" },
++	{ .compatible = "adi,ad2402-gpio" },
++	{ .compatible = "adi,ad2403-gpio" },
++	{ .compatible = "adi,ad2410-gpio" },
++	{ .compatible = "adi,ad2420-gpio" },
++	{ .compatible = "adi,ad2421-gpio" },
++	{ .compatible = "adi,ad2422-gpio" },
++	{ .compatible = "adi,ad2425-gpio" },
++	{ .compatible = "adi,ad2426-gpio" },
++	{ .compatible = "adi,ad2427-gpio" },
++	{ .compatible = "adi,ad2428-gpio" },
++	{ .compatible = "adi,ad2429-gpio" },
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(of, ad24xx_gpio_of_match_table);
++
++static struct a2b_driver ad24xx_gpio_driver = {
++	.driver = {
++		.name = "ad24xx-gpio",
++		.of_match_table = ad24xx_gpio_of_match_table,
++		.probe_type = PROBE_PREFER_ASYNCHRONOUS,
++	},
++	.probe = ad24xx_gpio_probe,
++};
++module_a2b_driver(ad24xx_gpio_driver);
++
++MODULE_AUTHOR("Alvin Šipraga <alsi@bang-olufsen.dk>");
++MODULE_DESCRIPTION("AD24xx GPIO driver");
 +MODULE_LICENSE("GPL");
-diff --git a/include/linux/regmap.h b/include/linux/regmap.h
-index a6bc2980a98b..742bcc110a95 100644
---- a/include/linux/regmap.h
-+++ b/include/linux/regmap.h
-@@ -37,6 +37,8 @@ struct regmap_range_cfg;
- struct regmap_field;
- struct snd_ac97;
- struct sdw_slave;
-+struct a2b_node;
-+struct a2b_func;
- 
- /*
-  * regmap_mdio address encoding. IEEE 802.3ae clause 45 addresses consist of a
-@@ -655,6 +657,14 @@ struct regmap *__regmap_init_fsi(struct fsi_device *fsi_dev,
- 				 const struct regmap_config *config,
- 				 struct lock_class_key *lock_key,
- 				 const char *lock_name);
-+struct regmap *__devm_regmap_init_a2b_node(struct a2b_node *node,
-+					   const struct regmap_config *config,
-+					   struct lock_class_key *lock_key,
-+					   const char *lock_name);
-+struct regmap *__devm_regmap_init_a2b_func(struct a2b_func *func,
-+					   const struct regmap_config *config,
-+					   struct lock_class_key *lock_key,
-+					   const char *lock_name);
- 
- struct regmap *__devm_regmap_init(struct device *dev,
- 				  const struct regmap_bus *bus,
-@@ -1207,6 +1217,34 @@ bool regmap_ac97_default_volatile(struct device *dev, unsigned int reg);
- 	__regmap_lockdep_wrapper(__devm_regmap_init_fsi, #config,	\
- 				 fsi_dev, config)
- 
-+/**
-+ * devm_regmap_init_a2b_node() - Initialise managed register map for A2B node
-+ *
-+ * @node: Device that will be interacted with
-+ * @config: Configuration for register map
-+ *
-+ * The return value will be an ERR_PTR() on error or a valid pointer
-+ * to a struct regmap.  The regmap will be automatically freed by the
-+ * device management code.
-+ */
-+#define devm_regmap_init_a2b_node(node, config)                              \
-+	__regmap_lockdep_wrapper(__devm_regmap_init_a2b_node, #config, node, \
-+				 config)
-+
-+/**
-+ * devm_regmap_init_a2b_func() - Initialise managed register map for A2B func
-+ *
-+ * @func: Device that will be interacted with
-+ * @config: Configuration for register map
-+ *
-+ * The return value will be an ERR_PTR() on error or a valid pointer
-+ * to a struct regmap.  The regmap will be automatically freed by the
-+ * device management code.
-+ */
-+#define devm_regmap_init_a2b_func(func, config)                              \
-+	__regmap_lockdep_wrapper(__devm_regmap_init_a2b_func, #config, func, \
-+				 config)
-+
- int regmap_mmio_attach_clk(struct regmap *map, struct clk *clk);
- void regmap_mmio_detach_clk(struct regmap *map);
- void regmap_exit(struct regmap *map);
 
 -- 
 2.44.0
