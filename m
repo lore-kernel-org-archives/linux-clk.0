@@ -1,34 +1,34 @@
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F0034EB44
-	for <linux-clk@vger.kernel.org>; Fri, 17 May 2024 13:06:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F29FC548F2;
+	Fri, 17 May 2024 13:14:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715951190; cv=none; b=qmCgC1NqxflVALIPb02lo3/REe4ZmlH+a5+AeGM/xcpzH9mPGagnmK1E/xDgkeieQWv6MPNM5WEz7WHeq98ID+PhY7vYSH47B/rejpw5yt6mThPfb0+itAZZKqpEuaq+ea+epM5aRbprjgJKuqFo7n89KKrjx1dlX02u5Rj4ieo=
+	t=1715951683; cv=none; b=NEGiueF3Oel4Bhlypb9spus8wy09RhkcKdPcQR7I1QZ6bs8sz9DfREx+n8zvRvdkVGYlrOHUPkriY/JCQo0C52WKZVxanmFOY/7X5gddeD4Rrfi2cG/6rYgIpbX27b87tTT7kSWmnZgczTm1JFKsnEGX0RGxbZLnpbOiw0+GRjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715951190; c=relaxed/simple;
+	s=arc-20240116; t=1715951683; c=relaxed/simple;
 	bh=+BQrjQj8fvQHF8fbbT0PBaakRFsdp/Ftmf8qaj4dRD4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=gZMtArNG6lv7s9c/v9sshUMYTb9h9Cgdb5w5HAcYQRSof8TLZoorSX+vleqGVaAClED6/kjGjEutGep3ZdSjbbbCuKqvYkYQnNKs9i8oyPpV/FqrgeoLwBH781N3kXe207AtiUhW+MkdSClEVtIAOeapdzmYTmZj3THAtt5HVn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pqrs.dk; spf=pass smtp.mailfrom=pqrs.dk; dkim=pass (2048-bit key) header.d=pqrs.dk header.i=@pqrs.dk header.b=dOTaOKOX; arc=none smtp.client-ip=91.218.175.178
+	 In-Reply-To:To:Cc; b=lSDc0kE7BRWIQhvhNMNBoZouHV2L1QAstUcEuSiiErucOfDwyeGqs25JHk/jYNnHWrtEsq+OT/xUhkRobHrPurKFG6JfD5BhNZbD5lcWmU5M0++jy2GY4pVUWUFaWeIu5Ts0OatFmkHWY53712siyIX0WoxfOeix8E/nQLOvfMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pqrs.dk; spf=pass smtp.mailfrom=pqrs.dk; dkim=pass (2048-bit key) header.d=pqrs.dk header.i=@pqrs.dk header.b=estYxcPJ; arc=none smtp.client-ip=95.215.58.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pqrs.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pqrs.dk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pqrs.dk header.i=@pqrs.dk header.b="dOTaOKOX"
+	dkim=pass (2048-bit key) header.d=pqrs.dk header.i=@pqrs.dk header.b="estYxcPJ"
 X-Envelope-To: broonie@kernel.org
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pqrs.dk; s=key1;
-	t=1715951186;
+	t=1715951679;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
 	bh=KGwqzFatac3SdyxB8/u13aV/YQxtNfiylkMZnmEN/dw=;
-	b=dOTaOKOXRY1/J9FXikk6Plm0TjP7QZu6iKqVOOSxBpP7jNKFg+rZoZNSIJ4SBzuxrfv6S4
-	Txzj3GF4F4fLeAIOv8y6WrFGLTAft5DKHIRpn4KPbj26f7zEjh8b7CKvKVXkdalN6FU8FE
-	rv6/nbPPMzwtJjBN8eriUY89iZQYM9H8RnU9y24aeLEb1ITyn1vkqbhW4/2u6WS0kVrfqD
-	2/TfL3RD5lBAJ0SZs0vFiwc8DQzE2xDA61ctozaRV2fMSAwvyp2HetdPqS3y8tUcP/MOtL
-	TrbECBNI6PEVyMzBKKSknGnjGCYWB1PxwRW2NneQQF/zNjI4x7UtVcOwuJrdiw==
+	b=estYxcPJm2tGc9LCnhQIwaTlvZ9mIP7xAf+KWFFcnH55yBaAN0jvXjWwUXf5WctD2UUHLY
+	rHQLlsZNacEIrdY3BGMfskH9SDtgwbqBZu5sA9DR/87Jo3pBkcAriJ++4MLMzDdSm9ilX8
+	L5CXeSpw1ywI7vQIWJEOBMgW76R1shvA6OPqiQ8nXA7/pczqux9FhRBvc7lKzCxhN7p5Av
+	lZ8Rch2B7ntAV7xZjYOQEnEqOyeY5zqFS+cLxWztfDBw3zrNOGqqIp7ViVs7NNDXsT3OFI
+	PjOrv14b+lydrSVA09CBYGiZhkDs0TEZLZ6HEMxyFjrRQ8Foo1hzGZQ3Clnbew==
 X-Envelope-To: gregkh@linuxfoundation.org
 X-Envelope-To: rafael@kernel.org
 X-Envelope-To: robh@kernel.org
@@ -63,9 +63,9 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240517-a2b-v1-8-7e776c784e02@bang-olufsen.dk>
-References: <20240517-a2b-v1-0-7e776c784e02@bang-olufsen.dk>
-In-Reply-To: <20240517-a2b-v1-0-7e776c784e02@bang-olufsen.dk>
+Message-Id: <20240517-a2b-v1-8-b8647554c67b@bang-olufsen.dk>
+References: <20240517-a2b-v1-0-b8647554c67b@bang-olufsen.dk>
+In-Reply-To: <20240517-a2b-v1-0-b8647554c67b@bang-olufsen.dk>
 To: Mark Brown <broonie@kernel.org>, 
  Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
  "Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, 
