@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73B95622;
-	Fri, 17 May 2024 00:34:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 616107E2;
+	Fri, 17 May 2024 00:39:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715906084; cv=none; b=n2HDn/4+WoYnuZ9VD5OB0kRrEFaOc9oTBT7l/6fsyvtMO65kXrudK+Y/Hli2zzgBTnrWPqMGm5gII/obkuUYE6MAB+QwkwOZ1O3c8UO8s6K9+D+ZGsnvuZyaigZfxCR2hH5tzIfTU9+SOxnmr/O3fIFRPks/W09kWppr901amRs=
+	t=1715906348; cv=none; b=Ir7MkpLVcP6LDpfX9nCtmxGg/v4J0yQ4fmBDfpf470+mIXt3Aj01ip8dtXRLLjRc1aYmamhzuxVf4JG6NeR8xb0IO12lH9bhegqD/5hke1/B3LYmSmy/zDGdgWRmuzqs/1YnOj6vJBW9O9CQdPSbG3iARAOxqGia3UN2Uj44eGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715906084; c=relaxed/simple;
-	bh=NxT1fDiRetTAEkEf4wcSp/6bnfFWtJKyN4JFKJ+uVsQ=;
+	s=arc-20240116; t=1715906348; c=relaxed/simple;
+	bh=gG0rBTgAalNSQOb8EKbB7cQc3gWTqoJxB0I5m2D5WKk=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=P9pD4nVdODyIOQy8cfnBhwxi1sOZHVIS9ZEnD+HI3huHtFng3gKkgF4oIVqLsd24uKL9IwhjcilDodSk9SDll2x6vdy0BartmNCOsH83hTcY/+MvZ8HQ0k8RzkUNu7nxz3Yr1STnCT5e5BB3anuYpwsI9mco7VTfoEyDBjVfk7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cMYTELw9; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=IYTf7xa1Zegm0miC4TEcHJA6xwEGVOIYSbxtV2gjp7c+RgwAWsEIPv1qIpUlz4z6dXRMYkuDYNeig+u1INkjK/x8zbPpTBlPe1VMadh4E4Q6kGP9xkCSkuaNLALRsZuObmyIaZcWRt0Kd+Tqieth+AAibTCeLzrASatc4b0IEGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oCYkYbWW; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cMYTELw9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C89E0C113CC;
-	Fri, 17 May 2024 00:34:43 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oCYkYbWW"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA5AEC113CC;
+	Fri, 17 May 2024 00:39:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1715906083;
-	bh=NxT1fDiRetTAEkEf4wcSp/6bnfFWtJKyN4JFKJ+uVsQ=;
+	s=k20201202; t=1715906347;
+	bh=gG0rBTgAalNSQOb8EKbB7cQc3gWTqoJxB0I5m2D5WKk=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=cMYTELw96iYyprniezpbpuN/KS2c5FO38U+zmTtHpgblOFoyCiNRNBcSOhGhjUQFS
-	 ctNi73VzlE0everJqBnmEk3TEmCu6VYJ9t8SN2FHznE2EiukRoJ5DMfIr0BfoGXJUd
-	 q5e4CUJPLKDi8Q7saQp8twXSOdXNeBqS0VKgcZFo4x0S29QWycUy2OGmKrAYQ4JSLU
-	 XADHeLPKRN+NCqZ3238XYjbI8PKK4Soj/CyzCQKOzF7r06OooC83rKsYl4JWc4Ramz
-	 xkr5wtXVBiAH1BmybG5YhxdH3WEyMDKodfSPMtiHe7NtoYc4DsK+ZlxkZZeEbw52mF
-	 f0D55NzEVZacw==
-Message-ID: <5cceccdba7297d84e948a85f533f3189.sboyd@kernel.org>
+	b=oCYkYbWWJrT/g+j+licSCJUG9wbvqC7HbhZH4ZCD25oWKeU6B3cbmxH7gN6bi/f2h
+	 89cpqVIVSUYYxUP9IH3kJnVkdlp6vxXBRdTNEom3nAFWkHcFUBmxEkRIOo7lXt+Ff0
+	 uz+Umd7NWSQW2hEkiQvCTUyp7c1ln0z32zQQE5MggQogEzO352UV4PfKavAYt6cB6Q
+	 82b2T1oHS19T0HvxE1ZAY0ov6haZRAmmpbznRCdJoCeTDNBrIL+wAJ73WKygsA6wrm
+	 kKt+iOqhmnSV0tp1UBWqqs5YJJzIfFJ4SaDf2jo3lU6G1CViMIC+bUpAe1tbDrkUkj
+	 HKDX9N/V9sYIA==
+Message-ID: <b91dbdad0beb145a0797459c4ba9a98b.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,42 +35,57 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <73a9d56c-9e8d-4859-b3a2-dba1531b57e5@foss.st.com>
-References: <20240419152723.570159-1-gabriel.fernandez@foss.st.com> <20240419152723.570159-3-gabriel.fernandez@foss.st.com> <332c845c17e24e2eb660e18680f2626f.sboyd@kernel.org> <73a9d56c-9e8d-4859-b3a2-dba1531b57e5@foss.st.com>
-Subject: Re: [PATCH 2/4] clk: stm32mp2: use of STM32 access controller
+In-Reply-To: <CAA+D8ANTdvQJVtniyMtqjnJdT4qX+LDGjVuFO6H0RSO+GDw+ng@mail.gmail.com>
+References: <1715679210-9588-1-git-send-email-shengjiu.wang@nxp.com> <1715679210-9588-4-git-send-email-shengjiu.wang@nxp.com> <20240514-campus-sibling-21cdf4c78366@spud> <b86c83a520f0c45a60249468fa92b1de.sboyd@kernel.org> <CAA+D8ANTdvQJVtniyMtqjnJdT4qX+LDGjVuFO6H0RSO+GDw+ng@mail.gmail.com>
+Subject: Re: [PATCH v3 3/6] dt-bindings: clock: imx8mp: Add reset-controller sub-node
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-To: Alexandre Torgue <alexandre.torgue@foss.st.com>, Conor Dooley <conor+dt@kernel.org>, Gabriel FERNANDEZ <gabriel.fernandez@foss.st.com>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Philipp Zabel <p.zabel@pengutronix.de>, Rob Herring <robh+dt@kernel.org>
-Date: Thu, 16 May 2024 17:34:41 -0700
+Cc: Conor Dooley <conor@kernel.org>, Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, marex@denx.de, linux-clk@vger.kernel.org, imx@lists.linux.dev, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, p.zabel@pengutronix.de
+To: Shengjiu Wang <shengjiu.wang@gmail.com>
+Date: Thu, 16 May 2024 17:39:05 -0700
 User-Agent: alot/0.10
 
-Quoting Gabriel FERNANDEZ (2024-05-14 23:41:17)
+Quoting Shengjiu Wang (2024-05-14 19:47:57)
+> On Wed, May 15, 2024 at 5:09=E2=80=AFAM Stephen Boyd <sboyd@kernel.org> w=
+rote:
+> >
+> > Quoting Conor Dooley (2024-05-14 11:06:14)
+> > > On Tue, May 14, 2024 at 05:33:27PM +0800, Shengjiu Wang wrote:
+> > > > diff --git a/Documentation/devicetree/bindings/clock/imx8mp-audiomi=
+x.yaml b/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
+> > > > index 0a6dc1a6e122..a403ace4d11f 100644
+> > > > --- a/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
+> > > > +++ b/Documentation/devicetree/bindings/clock/imx8mp-audiomix.yaml
+> > > > @@ -15,7 +15,10 @@ description: |
+> > > >
+> > > >  properties:
+> > > >    compatible:
+> > > > -    const: fsl,imx8mp-audio-blk-ctrl
+> > > > +    items:
+> > > > +      - const: fsl,imx8mp-audio-blk-ctrl
+> > > > +      - const: syscon
+> > > > +      - const: simple-mfd
+> > > >
+> > > >    reg:
+> > > >      maxItems: 1
+> > > > @@ -44,6 +47,11 @@ properties:
+> > > >        ID in its "clocks" phandle cell. See include/dt-bindings/clo=
+ck/imx8mp-clock.h
+> > > >        for the full list of i.MX8MP IMX8MP_CLK_AUDIOMIX_ clock IDs.
+> > > >
+> > > > +  reset-controller:
+> > > > +    type: object
+> > > > +    $ref: /schemas/reset/fsl,imx8mp-audiomix-reset.yaml#
+> > > > +    description: The child reset devices of AudioMIX Block Control.
+> > >
+> > > Why not just set #reset-cells =3D <1> in the existing node? IIRC it w=
+as
+> > > already suggested to you to do that and use auxdev to set up the reset
+> > > driver.
+> >
+> > Yes, do that.
 >=20
-> On 5/8/24 00:02, Stephen Boyd wrote:
-> > Quoting gabriel.fernandez@foss.st.com (2024-04-19 08:27:21)
-> >> diff --git a/drivers/clk/stm32/clk-stm32mp25.c b/drivers/clk/stm32/clk=
--stm32mp25.c
-> >> index 210b75b39e50..a37ee9f707e3 100644
-> >> --- a/drivers/clk/stm32/clk-stm32mp25.c
-> >> +++ b/drivers/clk/stm32/clk-stm32mp25.c
-> >> @@ -4,7 +4,9 @@
-> >>    * Author: Gabriel Fernandez <gabriel.fernandez@foss.st.com> for STM=
-icroelectronics.
-> >>    */
-> >>  =20
-> >> +#include <linux/bus/stm32_firewall_device.h>
-> > I don't have this include. I either need a signed tag or this needs to
-> > wait until next merge window.
->=20
-> Sorry for the delay, i was off.
->=20
-> I was based on tag next-20240419
->=20
-> >>   #include <linux/clk-provider.h>
-> >> +#include <linux/of_address.h>
-> > What is this include for?
->=20
-> yes #include <linux/io.h> is more appropriate.
->=20
+> Can I know why sub nodes can't be used? the relationship of parent and
+> child devices looks better with sub nodes.
 
-Ok. Please resend after the merge window.
+Don't make nodes for drivers. Only make nodes for devices. This device
+is multi-function, but is still only a single device.
