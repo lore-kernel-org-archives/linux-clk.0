@@ -1,105 +1,81 @@
-Received: from forward500c.mail.yandex.net (forward500c.mail.yandex.net [178.154.239.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 915B7175BF;
-	Fri, 17 May 2024 07:40:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BE3C3EA96;
+	Fri, 17 May 2024 11:25:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715931662; cv=none; b=SCHjlgRTd5o/iXVY7FgIJx0DNIPVc5UAlppaQ1D/r4BhY5ETErWzfUn/QqRYB0NeD6+IZd6wDh32aAgelFLJQDETErHyq8PNQl6vO5qNRPqQ+5SwUyiJquBDqYQfGHLIhKGW1cUDYsXETd6C0UxkyxFOCgnoJ7/zDA7GNAtVh6Q=
+	t=1715945154; cv=none; b=p8xtTDjjqrcLult0bYcMblAG073afedfHeF6ZnTE2mFy4TkBKiTEj9VlSCA1+xM5o2z637uXhNQGw4OA1lv5OmwMsXMLvNkFS0Bcib0lzj4U+YQT+M99rDLjFgrbzDIVtidA6P7ROh3FSOvD739bsfubecws3rCwWGHYZpRVeXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715931662; c=relaxed/simple;
-	bh=J97GZRaSqLPWbPf3+YaWORGJ0+sSFLi/U4nH7DMccVc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Fakw1S2ePA6/0tdZDgZ9ROsCcDT0OnrGn/TE9fqUvXyM5qsms/lX1E5UHyf7meUoMjmHutcX63ccGaiLdjl3AQ0Ks6MbtxyxDLXxTvf/W4jq7ebnXxgOX+IWyWGkr7CF0uk62VtdGWrk68XGKXVnAnPQMjv34oxOqDJp2f8LgGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me; spf=pass smtp.mailfrom=maquefel.me; dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b=dtmJoL0N; arc=none smtp.client-ip=178.154.239.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maquefel.me
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b="dtmJoL0N"
-Received: from mail-nwsmtp-smtp-production-main-39.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-39.sas.yp-c.yandex.net [IPv6:2a02:6b8:c08:f220:0:640:b85:0])
-	by forward500c.mail.yandex.net (Yandex) with ESMTPS id 6142060B37;
-	Fri, 17 May 2024 10:39:22 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-39.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id Kd93B89oEuQ0-PILK6Det;
-	Fri, 17 May 2024 10:39:21 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail;
-	t=1715931561; bh=J97GZRaSqLPWbPf3+YaWORGJ0+sSFLi/U4nH7DMccVc=;
-	h=References:Date:In-Reply-To:Cc:To:From:Subject:Message-ID;
-	b=dtmJoL0NgdGVNE6UEfieFdmPOp47XOUlKja8M2BM2N7iLZCzCvGy53f9eJ4Fe+QGG
-	 mmTII9p01rktX9DXZ+fknVs2i3NdzI+XhNXAGs7jRu5pABUweSh4Gh+Sp9n44xBA/m
-	 Xlf+dQFU67wE+iBFQUVoH0Nyg14hmtfLG5Mezp2E=
-Authentication-Results: mail-nwsmtp-smtp-production-main-39.sas.yp-c.yandex.net; dkim=pass header.i=@maquefel.me
-Message-ID: <96df565e5821b5dc2b777cba21964d3c0c221983.camel@maquefel.me>
-Subject: Re: [PATCH RESEND v2 0/4] DONOTMERGE: ep93xx-clk from ep93xx device
- tree conversion
-From: Nikita Shubin <nikita.shubin@maquefel.me>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, Linus Walleij
- <linus.walleij@linaro.org>, Krzysztof Kozlowski
- <krzysztof.kozlowski@linaro.org>,  Michael Turquette
- <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley
- <conor+dt@kernel.org>,  Alexander Sverdlin <alexander.sverdlin@gmail.com>
-Date: Fri, 17 May 2024 10:39:21 +0300
-In-Reply-To: <20240408-ep93xx-clk-v2-0-adcd68c13753@maquefel.me>
-References: <20240408-ep93xx-clk-v2-0-adcd68c13753@maquefel.me>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: base64
-User-Agent: Evolution 3.48.4 
+	s=arc-20240116; t=1715945154; c=relaxed/simple;
+	bh=YQD6Oa1cvhYYwr0pr6C99jnus7JsR3UQ5GTpM2jcU0A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ORCLnid006ZfpUoR1jcF4lO3Ims190sd+HbAnP7zdSxHeGx02QFcKIAa6blN9X/WVmyfHa5rtG9zegA66805wIG/J+WfWnardjcQL26RmrUrQbj+HtzYigr9cc7cegnYKoztFqpMS0/H2Qd6sL0bvKe1PtqWbZG8P0TD6qgt+yo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-1e651a9f3ffso3663005ad.1;
+        Fri, 17 May 2024 04:25:53 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1715945152; x=1716549952;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=t4GCEW7v7eGQqDO26j+0ZU9xZzL+oZKID2CvFQ0zRWY=;
+        b=M5UetKMpp8LBV172ZAqcMcwHXz0y3YHB61zKda/9Boj7Lsu7qCbqRBlPRHmn2G1yu4
+         rnlRDZLW+vCvPYlvW2dC5DMzCEWUDMjyCtXfvWpQeThwf3qxCInpNxyRkTVlZz4iRHKR
+         ouLuK5/h9HP0y8tv94urhT01UzHp/DodjUTN3TNBVg8lLLZ0d5fHX31LP2057cnibM0w
+         kiABkgbjIJXuGg5V/RKE4l1mC7pMbHyG6sI/LUXB/NFl/iULzSt5ApJ3gqnYyAxUJSoY
+         MEfXKjXafPXHxPAF+tmHBCaY3/jf9MFehV8fKW4YdTPnLsjzBFmOER5Pdbc2e5pB4kWy
+         eSyw==
+X-Forwarded-Encrypted: i=1; AJvYcCVQdX4GXkV/DCKMSsSSbFu8y/N1CwjIpzAbgl+zinUqCo1PzZjkevMu+a15sjRGmahBXO2nznhgpyWJriEk22rQ8g/DvY8vWdDHwtaexkYlshjFhVSLJ4lKXCRaj92WX5l2i4gTXYV+MhcZhfZqiZTs+iEAIzWHoELhSY1rhu158cdmZOBsc+lLdOc=
+X-Gm-Message-State: AOJu0YzcN2l31VhHly8VWwhhl7kCCpo+PcUKxhWIKxLAHW7nH7QnwWNG
+	ZqwbrHD3TK+GcEKt7tqTuPbCbUBJHfq6rmbdsby6zzJxPZsvb2qI
+X-Google-Smtp-Source: AGHT+IGPMFl/9tHC0W4aLrDbJxxtvZ3LF8vKCdbg3fSTX9TNDbvUg3HTztrjjFNchvAnQVoYDZNYeA==
+X-Received: by 2002:a17:902:fc4f:b0:1e8:c962:4f6e with SMTP id d9443c01a7336-1ef43d27f6fmr242204245ad.20.1715945152598;
+        Fri, 17 May 2024 04:25:52 -0700 (PDT)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1ef0bf31a93sm157485665ad.134.2024.05.17.04.25.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 17 May 2024 04:25:52 -0700 (PDT)
+Date: Fri, 17 May 2024 20:25:50 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Shradha Todi <shradha.t@samsung.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org, mturquette@baylibre.com,
+	sboyd@kernel.org, jingoohan1@gmail.com, lpieralisi@kernel.org,
+	robh@kernel.org, bhelgaas@google.com,
+	krzysztof.kozlowski@linaro.org, alim.akhtar@samsung.com,
+	linux@armlinux.org.uk, m.szyprowski@samsung.com,
+	manivannan.sadhasivam@linaro.org, pankaj.dubey@samsung.com,
+	gost.dev@samsung.com
+Subject: Re: [PATCH v6 2/2] PCI: exynos: Adapt to clk_bulk_* APIs
+Message-ID: <20240517112550.GW202520@rocinante>
+References: <20240220084046.23786-1-shradha.t@samsung.com>
+ <CGME20240220084125epcas5p28c6d886685006800fc26c11918d5d1dd@epcas5p2.samsung.com>
+ <20240220084046.23786-3-shradha.t@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240220084046.23786-3-shradha.t@samsung.com>
 
-SGVsbG8gU3RlcGhlbiEKCkEgZ2VudGxlIHJlbWFpbmRlciwgY2FuIGkgaG9wZSB5b3UnbGwgbG9v
-ayBpbnRvIG15IGNoYW5nZXMgZm9yIHYyID8KCk9uIE1vbiwgMjAyNC0wNS0wNiBhdCAxMjo0OSAr
-MDMwMCwgTmlraXRhIFNodWJpbiB2aWEgQjQgUmVsYXkgd3JvdGU6Cj4gVGhlIGdvYWwgaXMgdG8g
-cmVjaWV2ZSBBQ0tzLgo+IAo+IFRoaXMgaXMgYSBmcmFjdGlvbiBvZiB2OSAiZXA5M3h4IGRldmlj
-ZSB0cmVlIGNvbnZlcnNpb24iIHNlcmllczoKPiAKPiBodHRwczovL2xvcmUua2VybmVsLm9yZy9h
-bGwvMjAyNDAzMjYtZXA5M3h4LXY5LTAtMTU2ZTJhZTVkZmM4QG1hcXVlZmVsLm1lLwo+IAo+IFRo
-ZSBjbGsgZHJpdmVyIGZvciBlcDkzeHggd2FzIGNvbnZlcnRlZCB0byBBVVggZGV2aWNlLCBhcyBz
-dWdnZXN0ZWQKPiBvcmlnaW5hbGx5IGJ5IFN0ZXBoZW4gQm95ZC4KPiAKPiBTaWduZWQtb2ZmLWJ5
-OiBOaWtpdGEgU2h1YmluIDxuaWtpdGEuc2h1YmluQG1hcXVlZmVsLm1lPgo+IC0tLQo+IENoYW5n
-ZXMgaW4gdjI6Cj4gLSBzb2M6IEFkZCBTb0MgZHJpdmVyIGZvciBDaXJydXMgZXA5M3h4Ogo+IMKg
-IC0gYWRkZWQgX19pbml0IGZvciBlcDkzeHhfYWRldl9hbGxvYygpLAo+IGVwOTN4eF9jb250cm9s
-bGVyX3JlZ2lzdGVyKCkKPiDCoCAtIGFkZGVkIHN0YXRpYywgX19pbml0Y29uc3QgZm9yIHBpbmN0
-cmxfbmFtZXNbXQo+IMKgIC0gY2xrIHJldmlzaW9uIGZvciBTUEkgaXMgbm93IHJlc29sdmVkIGhl
-cmUgdGhyb3VnaCBkaWZmZXJlbnRseQo+IG5hbWVkCj4gwqDCoMKgIGNsayBkZXZpY2UKPiDCoCAt
-IG1vcmUgdmVyYm9zZSBLY29uZmlnIGRlc2NyaXB0aW9uCj4gCj4gwqAgTk9URTogIm9mIiBpbmNs
-dWRlcyBhcmUgcmVxdWlyZWQgdW5mb3J0dW5hdGVseS4KPiAKPiAtIGNsazogZXA5M3h4OiBhZGQg
-RFQgc3VwcG9ydCBmb3IgQ2lycnVzIEVQOTN4eDoKPiDCoCAtIGRyb3BwZWQgaW5jbHVkZXMKPiDC
-oCAtIGRyb3BwZWQgZXA5M3h4X3NvY190YWJsZVtdCj4gwqAgLSBhZGQgZGlmZmVyZW50IG5hbWVk
-IGNsayBhbmQgZHJvcHBlZCBpbnZvbHZlZCBpbmNsdWRlcwo+IMKgIC0gbW92ZWQgcGxsJ3MgYW5k
-IGZjbGssIGhjbGssIHBjbGsgaW5pdCB0byBzZXBhcmF0ZSBmdW5jdGlvbgo+IMKgIC0gZml4ZWQg
-ZXA5M3h4X2Nsa19pZHNbXSBleHBsaWNpdCBsaW5lcwo+IAo+IMKgIE5PVEU6IGNsa19od19yZWdp
-c3Rlcl9kaXYoKSBpcyBjbGstZXA5eHggaW50ZXJuYWwgZnVuY3Rpb24gd2hpY2gKPiB1c2VzCj4g
-wqAgZGV2bS4KPiAKPiAtLS0KPiBOaWtpdGEgU2h1YmluICg0KToKPiDCoMKgwqDCoMKgIEFSTTog
-ZXA5M3h4OiBhZGQgcmVnbWFwIGF1eF9kZXYKPiDCoMKgwqDCoMKgIGNsazogZXA5M3h4OiBhZGQg
-RFQgc3VwcG9ydCBmb3IgQ2lycnVzIEVQOTN4eAo+IMKgwqDCoMKgwqAgZHQtYmluZGluZ3M6IHNv
-YzogQWRkIENpcnJ1cyBFUDkzeHgKPiDCoMKgwqDCoMKgIHNvYzogQWRkIFNvQyBkcml2ZXIgZm9y
-IENpcnJ1cyBlcDkzeHgKPiAKPiDCoC4uLi9iaW5kaW5ncy9hcm0vY2lycnVzL2NpcnJ1cyxlcDkz
-MDEueWFtbMKgwqDCoMKgwqDCoMKgwqAgfMKgIDM4ICsKPiDCoC4uLi9iaW5kaW5ncy9zb2MvY2ly
-cnVzL2NpcnJ1cyxlcDkzMDEtc3lzY29uLnlhbWzCoCB8wqAgOTQgKysrCj4gwqBkcml2ZXJzL2Ns
-ay9LY29uZmlnwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqAgfMKgwqAgOCArCj4gwqBkcml2ZXJzL2Nsay9NYWtlZmlsZcKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8wqDC
-oCAxICsKPiDCoGRyaXZlcnMvY2xrL2Nsay1lcDkzeHguY8KgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfCA4MzQKPiArKysrKysrKysrKysrKysrKysr
-KysKPiDCoGRyaXZlcnMvc29jL0tjb25maWfCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCB8wqDCoCAxICsKPiDCoGRyaXZlcnMvc29j
-L01ha2VmaWxlwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqDCoMKgwqDCoMKgIHzCoMKgIDEgKwo+IMKgZHJpdmVycy9zb2MvY2lycnVzL0tjb25maWfCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfMKgIDE3ICsKPiDC
-oGRyaXZlcnMvc29jL2NpcnJ1cy9NYWtlZmlsZcKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqAgfMKgwqAgMiArCj4gwqBkcml2ZXJzL3NvYy9jaXJydXMvc29jLWVw
-OTN4eC5jwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfCAyNTIgKysrKysr
-Kwo+IMKgaW5jbHVkZS9kdC1iaW5kaW5ncy9jbG9jay9jaXJydXMsZXA5MzAxLXN5c2Nvbi5owqDC
-oCB8wqAgNDYgKysKPiDCoGluY2x1ZGUvbGludXgvc29jL2NpcnJ1cy9lcDkzeHguaMKgwqDCoMKg
-wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgfMKgIDI2ICsKPiDCoDEyIGZpbGVzIGNoYW5nZWQs
-IDEzMjAgaW5zZXJ0aW9ucygrKQo+IC0tLQo+IGJhc2UtY29tbWl0OiBmZWM1MGRiNzAzM2VhNDc4
-NzczYjE1OWUwZTJlZmIxMzUyNzBlM2I3Cj4gY2hhbmdlLWlkOiAyMDI0MDQwOC1lcDkzeHgtY2xr
-LTY1N2ExMzU3ZGU2Nwo+IAo+IEJlc3QgcmVnYXJkcywKCg==
+Hello,
 
+> There is no need to hardcode the clock info in the driver as driver can
+> rely on the devicetree to supply the clocks required for the functioning
+> of the peripheral. Get rid of the static clock info and obtain the
+> platform supplied clocks. All the clocks supplied is obtained and enabled
+> using the devm_clk_bulk_get_all_enable() API.
+
+Applied to controller/exynos, thank you!
+
+[1/1] PCI: exynos: Adapt to use bulk clock APIs
+      https://git.kernel.org/pci/pci/c/358e579a9da2
+
+	Krzysztof
