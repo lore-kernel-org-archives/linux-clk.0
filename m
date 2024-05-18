@@ -1,131 +1,179 @@
-Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58337C8D1;
-	Sat, 18 May 2024 09:08:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E558D3AC2B;
+	Sat, 18 May 2024 12:47:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716023334; cv=none; b=Mf3ugzPE8j8UldbYwNSdm/4Eqq9n/tXVOt7ZkbgIbnpUwgZjWVsTP24mT/1UNuI1++6gc2w+dEoD7ykgS5tSaZ/rvYgTZpM+nS8eetV/PddhIGJ6f2KayAatSgFKF+6HJuRYVVENP1NM6qI1vw8nR6REot0fRe1KN0QC09Y3F2s=
+	t=1716036439; cv=none; b=Bsb3+1nLCIOR8qtI6b8LtNNPR+fxpOSUtdYzO8jH96KFGvM6/5g2WHiYYHMagG1DRqLPaYaY5dglxrMykl+3w3w8CunqS9kXuL0IN2pFhiSic9tw4wKQ3RQtumA/rPa9OWtDmJ64oqNIrj7q0mYJYqs4aFqZ6uak59ZUWuHwuVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716023334; c=relaxed/simple;
-	bh=bVysb/cwrM9Pn6QGUWbl+Ro5RzhkM5yqNN7jrETzyyA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=hzi8UEq1HgrIRhFvMWjJJEhZGpAggC1EABncXm70uas0u6kgENz6mvwS+kksvCBfHtDGeWSWGdmPeF5mcYjZP8l8/ULYI241RUD79bMps69JGWhaOVvdNfUFBdCk0dXSN9C08cXePOpsmk1mW01+R36jXKt3gxQBxF7X3082B9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=JIXWx0jc; arc=none smtp.client-ip=130.133.4.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+	s=arc-20240116; t=1716036439; c=relaxed/simple;
+	bh=XX9dAoIEEtVahs7jrjX3M3GFmseeMUdvSbn5U3vwvgk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jsrc3b2EVWU2XIoqnkXI34U2pMQ9voHk8DC63u4YKjpL7rLylT20z2FkHEZz8J9t7OCWv7saFA0jfdveGEv5Mdydz4G07eTVn1FuXRbkFykcNi6IPg1HzHOe+4zsFnC4bAK5P+cOVb5xSWXE8ACnWAgpqiLjXzy7BO2QU6rO8iQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f892wXxQ; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="JIXWx0jc"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=1a0C79DkdyNfWuSIhpXXfpQISUKfKWxaR+an4LJg0Cw=; t=1716023330; x=1716628130; 
-	b=JIXWx0jctZvXnqcErr+3sSV5apKLlSgTQjonmBZVS45oZcpMNbwEebER5UZJBEzSMGhZDCP7PJN
-	h5jiab7J2xtO7IWJdAdJ1aBJr82y6tZpQ8r7xy+H5ViKn9mzObyFUNO/F9FgWOGFMOhRz2gR0vVr5
-	0/zNv4s2F8amm03ZFsrEnj/EfmsVG+ExiraqgiYRrKam9IKGg+UCC0i2EQDexL4Qz77kXbesE6eUx
-	itj9aMYp28rMvdB7y5sbfMwyGk4kMm6XSyjPdpG9H8EhFTS66NPvRGkOA2beiqLBDPiFkqLGgBQsI
-	L4gAr4tS2+2d1U/BI1N6cAKfkJZU1xRUxXMQ==;
-Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
-          by outpost.zedat.fu-berlin.de (Exim 4.97)
-          with esmtps (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@zedat.fu-berlin.de>)
-          id 1s8G3N-00000002L83-1Dc1; Sat, 18 May 2024 11:08:33 +0200
-Received: from dynamic-077-188-054-221.77.188.pool.telefonica.de ([77.188.54.221] helo=[192.168.178.20])
-          by inpost2.zedat.fu-berlin.de (Exim 4.97)
-          with esmtpsa (TLS1.3)
-          tls TLS_AES_256_GCM_SHA384
-          (envelope-from <glaubitz@physik.fu-berlin.de>)
-          id 1s8G3M-00000003h1e-3i5d; Sat, 18 May 2024 11:08:33 +0200
-Message-ID: <455e40c03314294f9c2e64480aa69f8261a3f2d5.camel@physik.fu-berlin.de>
-Subject: Re: [RESEND v7 00/37] Device Tree support for SH7751 based board
-From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
-To: Yoshinori Sato <ysato@users.sourceforge.jp>, linux-sh@vger.kernel.org
-Cc: Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, David Airlie
- <airlied@gmail.com>,  Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
- Thomas Zimmermann <tzimmermann@suse.de>, Thomas Gleixner
- <tglx@linutronix.de>, Bjorn Helgaas <bhelgaas@google.com>, Lorenzo
- Pieralisi <lpieralisi@kernel.org>, Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?=
- <kw@linux.com>,  Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri
- Slaby <jirislaby@kernel.org>, Magnus Damm <magnus.damm@gmail.com>,  Daniel
- Lezcano <daniel.lezcano@linaro.org>, Rich Felker <dalias@libc.org>, Lee
- Jones <lee@kernel.org>, Helge Deller <deller@gmx.de>, Heiko Stuebner
- <heiko.stuebner@cherry.de>, Shawn Guo <shawnguo@kernel.org>,  Sebastian
- Reichel <sre@kernel.org>, Chris Morgan <macromorgan@hotmail.com>, Linus
- Walleij <linus.walleij@linaro.org>, Arnd Bergmann <arnd@arndb.de>, David
- Rientjes <rientjes@google.com>, Hyeonggon Yoo <42.hyeyoo@gmail.com>,
- Vlastimil Babka <vbabka@suse.cz>, Baoquan He <bhe@redhat.com>, Andrew
- Morton <akpm@linux-foundation.org>, Guenter Roeck <linux@roeck-us.net>,
- Kefeng Wang <wangkefeng.wang@huawei.com>, Stephen Rothwell
- <sfr@canb.auug.org.au>,  Javier Martinez Canillas <javierm@redhat.com>, Guo
- Ren <guoren@kernel.org>, Azeem Shaikh <azeemshaikh38@gmail.com>, Max
- Filippov <jcmvbkbc@gmail.com>, Jonathan Corbet <corbet@lwn.net>, Jacky
- Huang <ychuang3@nuvoton.com>, Herve Codina <herve.codina@bootlin.com>,
- Manikanta Guntupalli <manikanta.guntupalli@amd.com>,  Anup Patel
- <apatel@ventanamicro.com>, Biju Das <biju.das.jz@bp.renesas.com>, Uwe
- =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, Sam
- Ravnborg <sam@ravnborg.org>, Sergey Shtylyov <s.shtylyov@omp.ru>, Laurent
- Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
- linux-ide@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
- linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- linux-pci@vger.kernel.org, linux-serial@vger.kernel.org, 
- linux-fbdev@vger.kernel.org
-Date: Sat, 18 May 2024 11:08:30 +0200
-In-Reply-To: <cover.1712205900.git.ysato@users.sourceforge.jp>
-References: <cover.1712205900.git.ysato@users.sourceforge.jp>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.1 
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f892wXxQ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716036438; x=1747572438;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=XX9dAoIEEtVahs7jrjX3M3GFmseeMUdvSbn5U3vwvgk=;
+  b=f892wXxQNae2+OOhYzU7HY/+MvWeaMMTr5xbEFXJxljUHUoAFqhj2/8n
+   5N1hRy7U3tj/OL0fgj6uZxv1hQmdDTl3jBRWUK6zUoPQ+tHW/m8EaUZg9
+   csRVxZl1tlFs7ll/Pfsfw+V+elecE4EOgfNWzFVdmLSmKzsLOzLA3+Tog
+   RMuo8B9IW8kMLTZf87jri2FJm4pBGrBnnSOk6ghGxQCPC3Mnth7iPO9Fg
+   6jw49eTLLzvhvjLoeSzxTfp/7TWXuPJJSgTrndWPTtI48hNfKNr4SeuL1
+   2lvj6g447KyFSCgCha5ejAzhUyuPToyaW2wTOfizQyYlc9BSuB9Tmd0b6
+   Q==;
+X-CSE-ConnectionGUID: mIQQ6loUSvWPQeAlGHqkag==
+X-CSE-MsgGUID: Qmp6sqfTTOOzKd1YEjd2Pw==
+X-IronPort-AV: E=McAfee;i="6600,9927,11075"; a="12327501"
+X-IronPort-AV: E=Sophos;i="6.08,170,1712646000"; 
+   d="scan'208";a="12327501"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 May 2024 05:47:17 -0700
+X-CSE-ConnectionGUID: 6v6MMXvNR/WRLeM4tPVn7g==
+X-CSE-MsgGUID: F9la2JkXQsyzcukD209rTQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,170,1712646000"; 
+   d="scan'208";a="36978444"
+Received: from unknown (HELO 108735ec233b) ([10.239.97.151])
+  by orviesa004.jf.intel.com with ESMTP; 18 May 2024 05:47:10 -0700
+Received: from kbuild by 108735ec233b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s8JSu-0002CW-0P;
+	Sat, 18 May 2024 12:47:08 +0000
+Date: Sat, 18 May 2024 20:46:13 +0800
+From: kernel test robot <lkp@intel.com>
+To: Alvin =?utf-8?Q?=C5=A0ipraga?= <alvin@pqrs.dk>,
+	Mark Brown <broonie@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+	Saravana Kannan <saravanak@google.com>
+Cc: oe-kbuild-all@lists.linux.dev, Emil Svendsen <emas@bang-olufsen.dk>,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-sound@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
+	Alvin =?utf-8?Q?=C5=A0ipraga?= <alsi@bang-olufsen.dk>
+Subject: Re: [PATCH 01/13] a2b: add A2B driver core
+Message-ID: <202405182008.zWMVYQ6g-lkp@intel.com>
+References: <20240517-a2b-v1-1-b8647554c67b@bang-olufsen.dk>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Original-Sender: glaubitz@physik.fu-berlin.de
-X-ZEDAT-Hint: PO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240517-a2b-v1-1-b8647554c67b@bang-olufsen.dk>
 
-Hi Yoshinori,
+Hi Alvin,
 
-On Thu, 2024-04-04 at 14:14 +0900, Yoshinori Sato wrote:
-> Sorry. previus mail is thread broken.
->=20
-> This is an updated version of something I wrote about 7 years ago.
-> Minimum support for R2D-plus and LANDISK.
-> I think R2D-1 will work if you add AX88796 to dts.
-> And board-specific functions and SCI's SPI functions are not supported.
->=20
-> You can get it working with qemu found here.
-> https://gitlab.com/yoshinori.sato/qemu/-/tree/landisk
->=20
-> v7 changes.
-> - sh/kernel/setup.c: fix kernel parameter handling.
-> - clk-sh7750.c: cleanup.
-> - sh_tmu.c: cleanup.
-> - irq-renesas-sh7751.c: IPR definition move to code.
-> - irq-renesas-sh7751irl.c: update register definition.
-> - pci-sh7751.c: Register initialization fix.=20
-> - sm501 and sm501fb: Re-design Device Tree properties.
+kernel test robot noticed the following build errors:
 
-Could you push your v7 version to your Gitlab [1] repository so I can fetch
-it from there?
+[auto build test ERROR on c75962170e49f24399141276ae119e6a879f36dc]
 
-Thanks,
-Adrian
+url:    https://github.com/intel-lab-lkp/linux/commits/Alvin-ipraga/a2b-add-A2B-driver-core/20240517-211849
+base:   c75962170e49f24399141276ae119e6a879f36dc
+patch link:    https://lore.kernel.org/r/20240517-a2b-v1-1-b8647554c67b%40bang-olufsen.dk
+patch subject: [PATCH 01/13] a2b: add A2B driver core
+config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20240518/202405182008.zWMVYQ6g-lkp@intel.com/config)
+compiler: gcc-13 (Ubuntu 13.2.0-4ubuntu3) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240518/202405182008.zWMVYQ6g-lkp@intel.com/reproduce)
 
-> [1] https://gitlab.com/yoshinori.sato/linux
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405182008.zWMVYQ6g-lkp@intel.com/
 
---=20
- .''`.  John Paul Adrian Glaubitz
-: :' :  Debian Developer
-`. `'   Physicist
-  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
+All error/warnings (new ones prefixed by >>):
+
+   drivers/a2b/a2b.c: In function 'a2b_bus_of_add_node':
+>> drivers/a2b/a2b.c:463:16: error: implicit declaration of function 'kzalloc' [-Werror=implicit-function-declaration]
+     463 |         node = kzalloc(sizeof(*node), GFP_KERNEL);
+         |                ^~~~~~~
+>> drivers/a2b/a2b.c:463:14: warning: assignment to 'struct a2b_node *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+     463 |         node = kzalloc(sizeof(*node), GFP_KERNEL);
+         |              ^
+   drivers/a2b/a2b.c: In function 'a2b_node_of_add_func':
+>> drivers/a2b/a2b.c:1017:14: warning: assignment to 'struct a2b_func *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+    1017 |         func = kzalloc(sizeof(*func), GFP_KERNEL);
+         |              ^
+   drivers/a2b/a2b.c: In function 'a2b_node_release':
+>> drivers/a2b/a2b.c:1112:9: error: implicit declaration of function 'kfree' [-Werror=implicit-function-declaration]
+    1112 |         kfree(node);
+         |         ^~~~~
+   cc1: some warnings being treated as errors
+
+
+vim +/kzalloc +463 drivers/a2b/a2b.c
+
+   444	
+   445	static int a2b_bus_of_add_node(struct a2b_bus *bus, struct device_node *np,
+   446				       unsigned int addr)
+   447	{
+   448		struct a2b_node *node;
+   449		int ret = 0;
+   450	
+   451		if (!bus || !np)
+   452			return -EINVAL;
+   453	
+   454		if (addr >= A2B_MAX_NODES)
+   455			return -EINVAL;
+   456	
+   457		if (!of_device_is_available(np))
+   458			return -ENODEV;
+   459	
+   460		if (of_node_test_and_set_flag(np, OF_POPULATED))
+   461			return -EBUSY;
+   462	
+ > 463		node = kzalloc(sizeof(*node), GFP_KERNEL);
+   464		if (IS_ERR(node))
+   465			return -ENOMEM;
+   466	
+   467		node->dev.bus = &a2b_bus;
+   468		node->dev.type = &a2b_node_type;
+   469		node->dev.parent = &bus->dev;
+   470		node->dev.of_node = np;
+   471		node->dev.fwnode = of_fwnode_handle(np);
+   472		dev_set_name(&node->dev, "a2b-%d.%d", bus->id, addr);
+   473	
+   474		node->bus = bus;
+   475		node->addr = addr;
+   476	
+   477		/*
+   478		 * Register the node device. Note that due to asynchronous probing,
+   479		 * there is no guarantee that the node driver's probe function has been
+   480		 * called just yet. The synchronization point is a2b_register_node(),
+   481		 * which should be called unconditionally by node drivers.
+   482		 */
+   483		ret = device_register(&node->dev);
+   484		if (ret)
+   485			goto err_put_device;
+   486	
+   487		return 0;
+   488	
+   489	err_put_device:
+   490		put_device(&node->dev);
+   491	
+   492		return ret;
+   493	}
+   494	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
