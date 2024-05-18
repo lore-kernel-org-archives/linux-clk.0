@@ -1,46 +1,61 @@
-Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB0181373;
-	Sat, 18 May 2024 01:43:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84C5A1A2C09;
+	Sat, 18 May 2024 03:24:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1715996641; cv=none; b=Ut/Wq9iUlNt8g4/JC358DNfrhpneX64XiHaX9Hm/WPvvr7FK3wIDpbcZjYxTqIW4dNf6Ivzr7sYTDxgHQwNxk+JZ69/ilJjZxGEEDVcHBwtE0QpU2LRbCWYy4qR1bkZgZWulj9UuNUXEWEFKWh3X0WGTLp1yIvc7k8QdrwTnRaQ=
+	t=1716002664; cv=none; b=C8btf1BVUCE+gxK0geSVBtH9soQ078gOj2aOt4OaQKyj2DcrMEZWAIhUqEqWsbeHwMVUbWO9cYWr1avKeg0uZmCZc9PQvGn1WJrmE2Ft63mOV382VwIbijI9SdD3wPhbTBsHehilkMH6zxJUhKWnlRr8T3ZYBrDTp+ix/CwPU1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1715996641; c=relaxed/simple;
-	bh=HsKsucMsmS6BafeRf0/gX3JGyFGFDkR+bzzDzyWfx6Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=aznWy1aetaq9paASBC/XZpw6gFWaaT7H0ofCRxsLgDGPtG2hLnuAw4gNV69dSqV0d4TtfW7222vFys75kj5fU5S5PP4scLCyGwb+1d2gykTQqWjZ/L5jjAj6nZ2yMXaTjNqjBtA+wDxnu+pVKd4zdht0/KXpSEsh3Sj0qD7BIwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=IMf90iAc; arc=none smtp.client-ip=37.18.73.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sberdevices.ru
+	s=arc-20240116; t=1716002664; c=relaxed/simple;
+	bh=QVAFCgNiSOMq9ybcX9XhjXeNxGnPjWIffURrI1sFuEE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OD+s3Hy+t+5UzGXYvgZea9bkdHmEJnPtqS7QerdKioDA9+k6iQAxfPrJ7RAJIQrzlt+xfvzn3uNsJoec47bdG8jqxrI2UMNwnzfTM//KdjqxdpHvjh5lI3EzRp9oDVbWV4E3wHJYj+8CEflARPf5Za6q2zprO+ijfS/zCRmK2jw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZzjYhXnF; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="IMf90iAc"
-Received: from p-infra-ksmg-sc-msk01 (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id BB146100008;
-	Sat, 18 May 2024 04:43:54 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru BB146100008
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1715996634;
-	bh=ciRY/oNH7Pr9VAZ4Mv/e3qGv1izWj9doEd37rAcP5cM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
-	b=IMf90iAcoSN85RZyksX59dlMj9rPJKI1jtqcZgaIRUrqVMj+wTg42Ws8be2pJG7oA
-	 18W2bAU12HxBvhxLOY07WeSIBO5ezTql8gIFvhkVGZ9Chh/ej9De7eFRJL4o/3AiQR
-	 2mQUtooEDPzLjYvShSLKVNdagcYmF1gdjsBKWGxH5qEiUi2ne9CYhMPEqHbs/waSoe
-	 QEdiy6xcttSndUVD8hBKXzcoRS1uvEozFjjr3kXgFQra8AdK7RNTFPn0At0velRA0J
-	 uW8rFYg69KnO7Ug36X/awf8NIN1XxDKXgUr6OXvcXieUHMDeB48iEUfNBWvVp9XuuP
-	 SFxHs/OOCskFg==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Sat, 18 May 2024 04:43:54 +0300 (MSK)
-Received: from [192.168.20.2] (100.64.160.123) by
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Sat, 18 May 2024 04:43:54 +0300
-Message-ID: <f09ae219-dec6-425a-b6f4-12732b186a05@salutedevices.com>
-Date: Sat, 18 May 2024 04:43:02 +0300
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZzjYhXnF"
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-1eca195a7c8so27644865ad.2;
+        Fri, 17 May 2024 20:24:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716002662; x=1716607462; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=y6zcJkIEIHijrvoQJ7XfUTTKO+Oh0qbpF3b1v1a1cbY=;
+        b=ZzjYhXnFkPx40t+Prt5eK9+2qxhI9IU18aKS6qQa7C1SPrlB8pamRPCdCWJY/KCVje
+         UEfDU8rXAhrcoTFhGXXfpoMyhRtsmWSyM/THcZQsD6BPJXXyBvx3P1gizqtiR9HXBOVs
+         fUqNwHVVlGI4uwj0ohKaMZX4YIYnB/3DONzxfZueERyFYtPJTTbTddhrvUmBGRuLIk3L
+         1MrmwulAic62P4ngN6g0ASHuh9sI3wSSCri0oTzzh/fl97n8UfrAQIgvX65yEx3S718a
+         LvYCimQeoDA6bSpkfe5QPbsTb9RjVRKPONgbT+LO0wc6nv5kFNg92U8yAwjAT7QQY2wt
+         dDJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716002662; x=1716607462;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=y6zcJkIEIHijrvoQJ7XfUTTKO+Oh0qbpF3b1v1a1cbY=;
+        b=gm5TsyVIWld8UQWpEK45E5HmRl9k6wH7D3mELOuw17UNo3gSED+5N2a0qOybDAuDFl
+         6RYR2hb7ac4OtBFRSzczcpu2phKw3GbVDKTuraGoOHhOHVWYvRenI0d/w/YA9p0euCN8
+         dJB9A3HHdemTjyN/moG4XSqrStdyfl654/zhipYiwA21OgUvsLr+8KBEhckTrY9ly8r9
+         Y23jaHK+3YUgiuPVlfQwWN+vG1gWRKbNoy22tvH3X0/XYLPc57cl9deltZ448WasmwRy
+         cyZOV+OPb+u1HVzYvElZQIq6Dy1K9OZoXRNU975u2j6gwF4OWCC5lKXXOH828XzyFiUd
+         cpcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWGvbuJE6BWzfkF9xr7R0EVfEa5jGLr1X7lKVrmsQvDOLnUQ+2zQO4X6fuJtec78J9/Rrkbu3DT6wi+ct+w6haFKa6mYv9SxL4xDZ46nrNYtn8NdeHibLV+hQAEYQaKFUg7DAjspM9+
+X-Gm-Message-State: AOJu0YxOfpGizT1e8T4AB0mppAeEDMQwpGFyI2gSm1HE4WotgSUwOiDn
+	MtVRIhMz51BP8PLulWb3OVK6wKhx7bQfoX3LCm9PeapvoawnFuSmTUz/MQ==
+X-Google-Smtp-Source: AGHT+IGD4lrJtUCOfOQbNnLjWm8Y6D1d7Bv7FoHfyQfVK+EGJxuwKmjqOHoaR3F4VJ5YHp/HigzWXw==
+X-Received: by 2002:a17:90a:17a3:b0:2b5:af18:5f8c with SMTP id 98e67ed59e1d1-2b6cc342849mr19310914a91.13.1716002661581;
+        Fri, 17 May 2024 20:24:21 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2b628ca53c3sm17981567a91.46.2024.05.17.20.24.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 17 May 2024 20:24:20 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <646bd149-f29a-4c91-ab00-4f6d2fce23fd@roeck-us.net>
+Date: Fri, 17 May 2024 20:24:19 -0700
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -48,82 +63,149 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/9] reset: amlogic: move reset drivers out of CCF
+Subject: Re: [PATCH] clkdev: report over-sized strings when creating clkdev
+ entries
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org,
+ Duanqiang Wen <duanqiangwen@net-swift.com>, mturquette@baylibre.com,
+ sboyd@kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <E1rl62V-004UFh-Te@rmk-PC.armlinux.org.uk>
+ <7eda7621-0dde-4153-89e4-172e4c095d01@roeck-us.net>
+ <ZkfYqj+OcAxd9O2t@shell.armlinux.org.uk>
+ <4ea9cc83-c7ca-47b8-8d43-dab16193108f@roeck-us.net>
+ <ZkfqKMqkUc/Sr7U2@shell.armlinux.org.uk>
 Content-Language: en-US
-To: Jerome Brunet <jbrunet@baylibre.com>, Philipp Zabel
-	<p.zabel@pengutronix.de>, Stephen Boyd <sboyd@kernel.org>, Neil Armstrong
-	<neil.armstrong@linaro.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>
-References: <20240516150842.705844-1-jbrunet@baylibre.com>
-From: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-In-Reply-To: <20240516150842.705844-1-jbrunet@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ xsFNBE6H1WcBEACu6jIcw5kZ5dGeJ7E7B2uweQR/4FGxH10/H1O1+ApmcQ9i87XdZQiB9cpN
+ RYHA7RCEK2dh6dDccykQk3bC90xXMPg+O3R+C/SkwcnUak1UZaeK/SwQbq/t0tkMzYDRxfJ7
+ nyFiKxUehbNF3r9qlJgPqONwX5vJy4/GvDHdddSCxV41P/ejsZ8PykxyJs98UWhF54tGRWFl
+ 7i1xvaDB9lN5WTLRKSO7wICuLiSz5WZHXMkyF4d+/O5ll7yz/o/JxK5vO/sduYDIlFTvBZDh
+ gzaEtNf5tQjsjG4io8E0Yq0ViobLkS2RTNZT8ICq/Jmvl0SpbHRvYwa2DhNsK0YjHFQBB0FX
+ IdhdUEzNefcNcYvqigJpdICoP2e4yJSyflHFO4dr0OrdnGLe1Zi/8Xo/2+M1dSSEt196rXaC
+ kwu2KgIgmkRBb3cp2vIBBIIowU8W3qC1+w+RdMUrZxKGWJ3juwcgveJlzMpMZNyM1jobSXZ0
+ VHGMNJ3MwXlrEFPXaYJgibcg6brM6wGfX/LBvc/haWw4yO24lT5eitm4UBdIy9pKkKmHHh7s
+ jfZJkB5fWKVdoCv/omy6UyH6ykLOPFugl+hVL2Prf8xrXuZe1CMS7ID9Lc8FaL1ROIN/W8Vk
+ BIsJMaWOhks//7d92Uf3EArDlDShwR2+D+AMon8NULuLBHiEUQARAQABzTJHdWVudGVyIFJv
+ ZWNrIChMaW51eCBhY2NvdW50KSA8bGludXhAcm9lY2stdXMubmV0PsLBgQQTAQIAKwIbAwYL
+ CQgHAwIGFQgCCQoLBBYCAwECHgECF4ACGQEFAlVcphcFCRmg06EACgkQyx8mb86fmYFg0RAA
+ nzXJzuPkLJaOmSIzPAqqnutACchT/meCOgMEpS5oLf6xn5ySZkl23OxuhpMZTVX+49c9pvBx
+ hpvl5bCWFu5qC1jC2eWRYU+aZZE4sxMaAGeWenQJsiG9lP8wkfCJP3ockNu0ZXXAXwIbY1O1
+ c+l11zQkZw89zNgWgKobKzrDMBFOYtAh0pAInZ9TSn7oA4Ctejouo5wUugmk8MrDtUVXmEA9
+ 7f9fgKYSwl/H7dfKKsS1bDOpyJlqhEAH94BHJdK/b1tzwJCFAXFhMlmlbYEk8kWjcxQgDWMu
+ GAthQzSuAyhqyZwFcOlMCNbAcTSQawSo3B9yM9mHJne5RrAbVz4TWLnEaX8gA5xK3uCNCeyI
+ sqYuzA4OzcMwnnTASvzsGZoYHTFP3DQwf2nzxD6yBGCfwNGIYfS0i8YN8XcBgEcDFMWpOQhT
+ Pu3HeztMnF3HXrc0t7e5rDW9zCh3k2PA6D2NV4fews9KDFhLlTfCVzf0PS1dRVVWM+4jVl6l
+ HRIAgWp+2/f8dx5vPc4Ycp4IsZN0l1h9uT7qm1KTwz+sSl1zOqKD/BpfGNZfLRRxrXthvvY8
+ BltcuZ4+PGFTcRkMytUbMDFMF9Cjd2W9dXD35PEtvj8wnEyzIos8bbgtLrGTv/SYhmPpahJA
+ l8hPhYvmAvpOmusUUyB30StsHIU2LLccUPPOwU0ETofVZwEQALlLbQeBDTDbwQYrj0gbx3bq
+ 7kpKABxN2MqeuqGr02DpS9883d/t7ontxasXoEz2GTioevvRmllJlPQERVxM8gQoNg22twF7
+ pB/zsrIjxkE9heE4wYfN1AyzT+AxgYN6f8hVQ7Nrc9XgZZe+8IkuW/Nf64KzNJXnSH4u6nJM
+ J2+Dt274YoFcXR1nG76Q259mKwzbCukKbd6piL+VsT/qBrLhZe9Ivbjq5WMdkQKnP7gYKCAi
+ pNVJC4enWfivZsYupMd9qn7Uv/oCZDYoBTdMSBUblaLMwlcjnPpOYK5rfHvC4opxl+P/Vzyz
+ 6WC2TLkPtKvYvXmdsI6rnEI4Uucg0Au/Ulg7aqqKhzGPIbVaL+U0Wk82nz6hz+WP2ggTrY1w
+ ZlPlRt8WM9w6WfLf2j+PuGklj37m+KvaOEfLsF1v464dSpy1tQVHhhp8LFTxh/6RWkRIR2uF
+ I4v3Xu/k5D0LhaZHpQ4C+xKsQxpTGuYh2tnRaRL14YMW1dlI3HfeB2gj7Yc8XdHh9vkpPyuT
+ nY/ZsFbnvBtiw7GchKKri2gDhRb2QNNDyBnQn5mRFw7CyuFclAksOdV/sdpQnYlYcRQWOUGY
+ HhQ5eqTRZjm9z+qQe/T0HQpmiPTqQcIaG/edgKVTUjITfA7AJMKLQHgp04Vylb+G6jocnQQX
+ JqvvP09whbqrABEBAAHCwWUEGAECAA8CGwwFAlVcpi8FCRmg08MACgkQyx8mb86fmYHNRQ/+
+ J0OZsBYP4leJvQF8lx9zif+v4ZY/6C9tTcUv/KNAE5leyrD4IKbnV4PnbrVhjq861it/zRQW
+ cFpWQszZyWRwNPWUUz7ejmm9lAwPbr8xWT4qMSA43VKQ7ZCeTQJ4TC8kjqtcbw41SjkjrcTG
+ wF52zFO4bOWyovVAPncvV9eGA/vtnd3xEZXQiSt91kBSqK28yjxAqK/c3G6i7IX2rg6pzgqh
+ hiH3/1qM2M/LSuqAv0Rwrt/k+pZXE+B4Ud42hwmMr0TfhNxG+X7YKvjKC+SjPjqp0CaztQ0H
+ nsDLSLElVROxCd9m8CAUuHplgmR3seYCOrT4jriMFBtKNPtj2EE4DNV4s7k0Zy+6iRQ8G8ng
+ QjsSqYJx8iAR8JRB7Gm2rQOMv8lSRdjva++GT0VLXtHULdlzg8VjDnFZ3lfz5PWEOeIMk7Rj
+ trjv82EZtrhLuLjHRCaG50OOm0hwPSk1J64R8O3HjSLdertmw7eyAYOo4RuWJguYMg5DRnBk
+ WkRwrSuCn7UG+qVWZeKEsFKFOkynOs3pVbcbq1pxbhk3TRWCGRU5JolI4ohy/7JV1TVbjiDI
+ HP/aVnm6NC8of26P40Pg8EdAhajZnHHjA7FrJXsy3cyIGqvg9os4rNkUWmrCfLLsZDHD8FnU
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <ZkfqKMqkUc/Sr7U2@shell.armlinux.org.uk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) To
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 185325 [May 18 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: YVDakinevich@sberdevices.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 20 0.3.20 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f, {Tracking_smtp_not_equal_from}, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;sberdevices.ru:7.1.1,5.0.1;smtp.sberdevices.ru:7.1.1,5.0.1;100.64.160.123:7.1.2;salutedevices.com:7.1.1;lore.kernel.org:7.1.1, FromAlignment: n, {Tracking_smtp_domain_mismatch}, {Tracking_smtp_domain_2level_mismatch}, {Tracking_white_helo}, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/05/18 00:39:00
-X-KSMG-LinksScanning: Clean, bases: 2024/05/18 00:41:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/05/17 20:54:00 #25244128
-X-KSMG-AntiVirus-Status: Clean, skipped
 
-This is a nice rework! But unfortunately after applying these patches at
-least USB doesn't work on A1 SoC. My assumption it is because
-RESET_MESON is now unselected due to dependency on AUXILIARY_BUS.
+On 5/17/24 16:37, Russell King (Oracle) wrote:
+> On Fri, May 17, 2024 at 04:34:06PM -0700, Guenter Roeck wrote:
+>> On 5/17/24 15:22, Russell King (Oracle) wrote:
+>>> On Fri, May 17, 2024 at 03:09:12PM -0700, Guenter Roeck wrote:
+>>>> Hi,
+>>>>
+>>>> On Fri, Mar 15, 2024 at 11:47:55AM +0000, Russell King (Oracle) wrote:
+>>>>> Report an error when an attempt to register a clkdev entry results in a
+>>>>> truncated string so the problem can be easily spotted.
+>>>>>
+>>>>> Reported by: Duanqiang Wen <duanqiangwen@net-swift.com>
+>>>>> Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+>>>>> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+>>>>
+>>>> With this patch in the mainline kernel, I get
+>>>>
+>>>> 10000000.clock-controller:corepll: device ID is greater than 24
+>>>> sifive-clk-prci 10000000.clock-controller: Failed to register clkdev for corepll: -12
+>>>> sifive-clk-prci 10000000.clock-controller: could not register clocks: -12
+>>>> sifive-clk-prci 10000000.clock-controller: probe with driver sifive-clk-prci failed with error -12
+>>>> ...
+>>>> platform 10060000.gpio: deferred probe pending: platform: supplier 10000000.clock-controller not ready
+>>>> platform 10010000.serial: deferred probe pending: platform: supplier 10000000.clock-controller not ready
+>>>> platform 10011000.serial: deferred probe pending: platform: supplier 10000000.clock-controller not ready
+>>>> platform 10040000.spi: deferred probe pending: platform: supplier 10000000.clock-controller not ready
+>>>> platform 10050000.spi: deferred probe pending: platform: supplier 10000000.clock-controller not ready
+>>>> platform 10090000.ethernet: deferred probe pending: platform: supplier 10000000.clock-controller not ready
+>>>>
+>>>> when trying to boot sifive_u in qemu.
+>>>>
+>>>> Apparently, "10000000.clock-controller" is too long. Any suggestion on
+>>>> how to solve the problem ? I guess using dev_name(dev) as dev_id parameter
+>>>> for clk_hw_register_clkdev() is not or no longer a good idea.
+>>>> What else should be used instead ?
+>>>
+>>> It was *never* a good idea. clkdev uses a fixed buffer size of 20
+>>> characters including the NUL character, and "10000000.clock-controller"
+>>> would have been silently truncated to "10000000.clock-cont", and thus
+>>>
+>>>                           if (!dev_id || strcmp(p->dev_id, dev_id))
+>>>
+>>> would never have matched.
+>>>
+>>> We need to think about (a) whether your use of clk_hw_register_clkdev()
+>>> is still appropriate, and (b) whether we need to increase the size of
+>>> the strings.
+>>>
+>>
+>> It isn't _my_ use, really. I only run a variety of boot tests with qemu.
+>> I expect we'll see reports from others trying to boot the mainline kernel
+>> on real sifive_u hardware or other hardware using the same driver or other
+>> drivers using dev_name() as dev_id parameter. Coccinelle finds the
+>> following callers:
+> 
+> Using dev_name() is not an issue. It's when dev_name() exceeds 19
+> characters that it becomes an issue (and always has been an issue
+> due to the truncation.) clk_get(dev, ...) uses dev_name(dev) to match
+> against its entry in the table.
+> 
+> As I say, dev_name() itself is not an issue. The length used for the
+> name is.
+> 
 
-On 5/16/24 18:08, Jerome Brunet wrote:
-> This RFC follows the discussion about having reset driver in the clock tree
-> [1]. Ideally those should reside in the reset part of tree.
-> 
-> Also the code of the amlogic reset driver is very similar between the 2 trees
-> and could use the same driver code.
-> 
-> This RFC moves the reset driver of audio clock controller of the g12 and
-> sm1 SoC family to the reset tree, using the auxiliary bus.
-> 
-> The infrastructure put in place is meant to be generic enough so we may
-> eventually also move the reset drivers in the meson8b and aoclk clock
-> controllers.
-> 
-> [1] https://lore.kernel.org/linux-clk/e3a85852b911fdf16dd9ae158f42b3ef.sboyd@kernel.org
-> 
-> Jerome Brunet (9):
->   reset: amlogic: convert driver to regmap
->   reset: amlogic: add driver parameters
->   reset: amlogic: split the device and platform probe
->   reset: amlogic: use reset number instead of register count
->   reset: amlogic: add reset status support
->   reset: amlogic: add toggle reset support
->   reset: amlogic: add auxiliary reset driver support
->   clk: meson: add auxiliary reset helper driver
->   clk: amlogic: axg-audio: use the auxiliary reset driver
-> 
->  drivers/clk/meson/Kconfig                     |   6 +
->  drivers/clk/meson/Makefile                    |   1 +
->  drivers/clk/meson/axg-audio.c                 | 108 +--------
->  drivers/clk/meson/meson-clk-rst-aux.c         |  84 +++++++
->  drivers/clk/meson/meson-clk-rst-aux.h         |  14 ++
->  drivers/reset/Kconfig                         |   1 +
->  drivers/reset/reset-meson.c                   | 210 ++++++++++++++----
->  include/soc/amlogic/meson8b-auxiliary-reset.h |  17 ++
->  8 files changed, 293 insertions(+), 148 deletions(-)
->  create mode 100644 drivers/clk/meson/meson-clk-rst-aux.c
->  create mode 100644 drivers/clk/meson/meson-clk-rst-aux.h
->  create mode 100644 include/soc/amlogic/meson8b-auxiliary-reset.h
-> 
+Maybe, but the existence of best_dev_name() suggests that this has been seen
+before and that, as you mentioned, it is not a good idea. Anyway, the patch
+below fixes the problem for me. I don't know if it is acceptable / correct,
+so it might serve as guidance for others when fixing the problem for real.
 
--- 
-Best regards
-Jan Dakinevich
+Thanks,
+Guenter
+
+---
+diff --git a/drivers/clk/sifive/sifive-prci.c b/drivers/clk/sifive/sifive-prci.c
+index 25b8e1a80ddc..20cc8f42d9eb 100644
+--- a/drivers/clk/sifive/sifive-prci.c
++++ b/drivers/clk/sifive/sifive-prci.c
+@@ -537,7 +537,7 @@ static int __prci_register_clocks(struct device *dev, struct __prci_data *pd,
+                         return r;
+                 }
+
+-               r = clk_hw_register_clkdev(&pic->hw, pic->name, dev_name(dev));
++               r = clk_hw_register_clkdev(&pic->hw, pic->name, "prci");
+                 if (r) {
+                         dev_warn(dev, "Failed to register clkdev for %s: %d\n",
+                                  init.name, r);
+
