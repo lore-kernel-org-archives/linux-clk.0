@@ -1,141 +1,131 @@
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91A452F4A;
-	Sat, 18 May 2024 07:01:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58337C8D1;
+	Sat, 18 May 2024 09:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716015703; cv=none; b=QKNdrd9yytREM7TELGBF9MGC6QSMQDnuKZv/7jnJY53/yNRUsCUsaqYWiWw9TnbqIfn4pxd7AvmGLjiE2LBxZXes5fWVer1GhWvI4lFcbsuVjM5L7Yq7HLvXRXDOa3mAKVfvFXyvGY4ZGyU0/5iG2W2e3EKNdScfogR5sKdQ1Nc=
+	t=1716023334; cv=none; b=Mf3ugzPE8j8UldbYwNSdm/4Eqq9n/tXVOt7ZkbgIbnpUwgZjWVsTP24mT/1UNuI1++6gc2w+dEoD7ykgS5tSaZ/rvYgTZpM+nS8eetV/PddhIGJ6f2KayAatSgFKF+6HJuRYVVENP1NM6qI1vw8nR6REot0fRe1KN0QC09Y3F2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716015703; c=relaxed/simple;
-	bh=7gJcAObcPbQw9XW+LduiP1Y3FVVW2Ym0ZJq4JI+/q94=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bmdkMdeFRdldLAQlEzT1MRjcQhQzw3O5o2jCqxSPzICC+Y9W1JFpJqp+t7vZ9WMM9iU4koWks40DVnm0KrgivTJN3Ur33edBJcNcSz/n3Nle4lg+6MunQkAEaTm3H9W7MZhnk/r+G9sbC7SVaM4BnFpmm/eWhQ1xGPoU9PA/2UI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=GvwBS/lG; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+	s=arc-20240116; t=1716023334; c=relaxed/simple;
+	bh=bVysb/cwrM9Pn6QGUWbl+Ro5RzhkM5yqNN7jrETzyyA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=hzi8UEq1HgrIRhFvMWjJJEhZGpAggC1EABncXm70uas0u6kgENz6mvwS+kksvCBfHtDGeWSWGdmPeF5mcYjZP8l8/ULYI241RUD79bMps69JGWhaOVvdNfUFBdCk0dXSN9C08cXePOpsmk1mW01+R36jXKt3gxQBxF7X3082B9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=JIXWx0jc; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="GvwBS/lG"
+	dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="JIXWx0jc"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=r277yi+Nyo+3nifP8z4BGCRO8hmMLsoW+s546ZKtUG0=; b=GvwBS/lGRWXZq4bL7YXwfpOBIR
-	E0RJEWCEOPhfghLmzPhcIItXA8XtN9/0t1NpfWOKBKqp6j/9fgFMlAr0F7yIquJ2pLQhAEAVjIug5
-	wtGsQtV5w6GCrv7tSRha7MnNRFCDXxN+Q2coKSOIrVLEfeU17RPmTiXxOpfqerDdBBtENgw1hCrIi
-	BLwQawXSug27i/O+UwvZ7r82hzcNR8aj1pq91FiYflk2BQxXCVdC5qGOI477KbSmgZYLbSkvAAgLG
-	TZVoEDe4VkaTUwFB/L09s/Mm1LNHMLEHJsoJvtn7/h7Fd0kyh3D7VMJMPIxWRBAomEzoshnDGNDpe
-	zy96AYqw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:57026)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1s8E4F-0008BX-2v;
-	Sat, 18 May 2024 08:01:21 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1s8E4B-0002JK-0a; Sat, 18 May 2024 08:01:15 +0100
-Date: Sat, 18 May 2024 08:01:14 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: linux-arm-kernel@lists.infradead.org,
-	Duanqiang Wen <duanqiangwen@net-swift.com>, mturquette@baylibre.com,
-	sboyd@kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clkdev: report over-sized strings when creating clkdev
- entries
-Message-ID: <ZkhSOvkaAwsTe7Dm@shell.armlinux.org.uk>
-References: <E1rl62V-004UFh-Te@rmk-PC.armlinux.org.uk>
- <7eda7621-0dde-4153-89e4-172e4c095d01@roeck-us.net>
- <ZkfYqj+OcAxd9O2t@shell.armlinux.org.uk>
- <4ea9cc83-c7ca-47b8-8d43-dab16193108f@roeck-us.net>
- <ZkfqKMqkUc/Sr7U2@shell.armlinux.org.uk>
- <646bd149-f29a-4c91-ab00-4f6d2fce23fd@roeck-us.net>
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=1a0C79DkdyNfWuSIhpXXfpQISUKfKWxaR+an4LJg0Cw=; t=1716023330; x=1716628130; 
+	b=JIXWx0jctZvXnqcErr+3sSV5apKLlSgTQjonmBZVS45oZcpMNbwEebER5UZJBEzSMGhZDCP7PJN
+	h5jiab7J2xtO7IWJdAdJ1aBJr82y6tZpQ8r7xy+H5ViKn9mzObyFUNO/F9FgWOGFMOhRz2gR0vVr5
+	0/zNv4s2F8amm03ZFsrEnj/EfmsVG+ExiraqgiYRrKam9IKGg+UCC0i2EQDexL4Qz77kXbesE6eUx
+	itj9aMYp28rMvdB7y5sbfMwyGk4kMm6XSyjPdpG9H8EhFTS66NPvRGkOA2beiqLBDPiFkqLGgBQsI
+	L4gAr4tS2+2d1U/BI1N6cAKfkJZU1xRUxXMQ==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.97)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1s8G3N-00000002L83-1Dc1; Sat, 18 May 2024 11:08:33 +0200
+Received: from dynamic-077-188-054-221.77.188.pool.telefonica.de ([77.188.54.221] helo=[192.168.178.20])
+          by inpost2.zedat.fu-berlin.de (Exim 4.97)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1s8G3M-00000003h1e-3i5d; Sat, 18 May 2024 11:08:33 +0200
+Message-ID: <455e40c03314294f9c2e64480aa69f8261a3f2d5.camel@physik.fu-berlin.de>
+Subject: Re: [RESEND v7 00/37] Device Tree support for SH7751 based board
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Yoshinori Sato <ysato@users.sourceforge.jp>, linux-sh@vger.kernel.org
+Cc: Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, David Airlie
+ <airlied@gmail.com>,  Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+ Thomas Zimmermann <tzimmermann@suse.de>, Thomas Gleixner
+ <tglx@linutronix.de>, Bjorn Helgaas <bhelgaas@google.com>, Lorenzo
+ Pieralisi <lpieralisi@kernel.org>, Krzysztof =?UTF-8?Q?Wilczy=C5=84ski?=
+ <kw@linux.com>,  Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri
+ Slaby <jirislaby@kernel.org>, Magnus Damm <magnus.damm@gmail.com>,  Daniel
+ Lezcano <daniel.lezcano@linaro.org>, Rich Felker <dalias@libc.org>, Lee
+ Jones <lee@kernel.org>, Helge Deller <deller@gmx.de>, Heiko Stuebner
+ <heiko.stuebner@cherry.de>, Shawn Guo <shawnguo@kernel.org>,  Sebastian
+ Reichel <sre@kernel.org>, Chris Morgan <macromorgan@hotmail.com>, Linus
+ Walleij <linus.walleij@linaro.org>, Arnd Bergmann <arnd@arndb.de>, David
+ Rientjes <rientjes@google.com>, Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Baoquan He <bhe@redhat.com>, Andrew
+ Morton <akpm@linux-foundation.org>, Guenter Roeck <linux@roeck-us.net>,
+ Kefeng Wang <wangkefeng.wang@huawei.com>, Stephen Rothwell
+ <sfr@canb.auug.org.au>,  Javier Martinez Canillas <javierm@redhat.com>, Guo
+ Ren <guoren@kernel.org>, Azeem Shaikh <azeemshaikh38@gmail.com>, Max
+ Filippov <jcmvbkbc@gmail.com>, Jonathan Corbet <corbet@lwn.net>, Jacky
+ Huang <ychuang3@nuvoton.com>, Herve Codina <herve.codina@bootlin.com>,
+ Manikanta Guntupalli <manikanta.guntupalli@amd.com>,  Anup Patel
+ <apatel@ventanamicro.com>, Biju Das <biju.das.jz@bp.renesas.com>, Uwe
+ =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>, Sam
+ Ravnborg <sam@ravnborg.org>, Sergey Shtylyov <s.shtylyov@omp.ru>, Laurent
+ Pinchart <laurent.pinchart+renesas@ideasonboard.com>, 
+ linux-ide@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+ linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ linux-pci@vger.kernel.org, linux-serial@vger.kernel.org, 
+ linux-fbdev@vger.kernel.org
+Date: Sat, 18 May 2024 11:08:30 +0200
+In-Reply-To: <cover.1712205900.git.ysato@users.sourceforge.jp>
+References: <cover.1712205900.git.ysato@users.sourceforge.jp>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.1 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <646bd149-f29a-4c91-ab00-4f6d2fce23fd@roeck-us.net>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-On Fri, May 17, 2024 at 08:24:19PM -0700, Guenter Roeck wrote:
-> On 5/17/24 16:37, Russell King (Oracle) wrote:
-> > On Fri, May 17, 2024 at 04:34:06PM -0700, Guenter Roeck wrote:
-> > > On 5/17/24 15:22, Russell King (Oracle) wrote:
-> > > > On Fri, May 17, 2024 at 03:09:12PM -0700, Guenter Roeck wrote:
-> > > > > Hi,
-> > > > > 
-> > > > > On Fri, Mar 15, 2024 at 11:47:55AM +0000, Russell King (Oracle) wrote:
-> > > > > > Report an error when an attempt to register a clkdev entry results in a
-> > > > > > truncated string so the problem can be easily spotted.
-> > > > > > 
-> > > > > > Reported by: Duanqiang Wen <duanqiangwen@net-swift.com>
-> > > > > > Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-> > > > > > Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-> > > > > 
-> > > > > With this patch in the mainline kernel, I get
-> > > > > 
-> > > > > 10000000.clock-controller:corepll: device ID is greater than 24
-> > > > > sifive-clk-prci 10000000.clock-controller: Failed to register clkdev for corepll: -12
-> > > > > sifive-clk-prci 10000000.clock-controller: could not register clocks: -12
-> > > > > sifive-clk-prci 10000000.clock-controller: probe with driver sifive-clk-prci failed with error -12
-> > > > > ...
-> > > > > platform 10060000.gpio: deferred probe pending: platform: supplier 10000000.clock-controller not ready
-> > > > > platform 10010000.serial: deferred probe pending: platform: supplier 10000000.clock-controller not ready
-> > > > > platform 10011000.serial: deferred probe pending: platform: supplier 10000000.clock-controller not ready
-> > > > > platform 10040000.spi: deferred probe pending: platform: supplier 10000000.clock-controller not ready
-> > > > > platform 10050000.spi: deferred probe pending: platform: supplier 10000000.clock-controller not ready
-> > > > > platform 10090000.ethernet: deferred probe pending: platform: supplier 10000000.clock-controller not ready
-> > > > > 
-> > > > > when trying to boot sifive_u in qemu.
-> > > > > 
-> > > > > Apparently, "10000000.clock-controller" is too long. Any suggestion on
-> > > > > how to solve the problem ? I guess using dev_name(dev) as dev_id parameter
-> > > > > for clk_hw_register_clkdev() is not or no longer a good idea.
-> > > > > What else should be used instead ?
-> > > > 
-> > > > It was *never* a good idea. clkdev uses a fixed buffer size of 20
-> > > > characters including the NUL character, and "10000000.clock-controller"
-> > > > would have been silently truncated to "10000000.clock-cont", and thus
-> > > > 
-> > > >                           if (!dev_id || strcmp(p->dev_id, dev_id))
-> > > > 
-> > > > would never have matched.
-> > > > 
-> > > > We need to think about (a) whether your use of clk_hw_register_clkdev()
-> > > > is still appropriate, and (b) whether we need to increase the size of
-> > > > the strings.
-> > > > 
-> > > 
-> > > It isn't _my_ use, really. I only run a variety of boot tests with qemu.
-> > > I expect we'll see reports from others trying to boot the mainline kernel
-> > > on real sifive_u hardware or other hardware using the same driver or other
-> > > drivers using dev_name() as dev_id parameter. Coccinelle finds the
-> > > following callers:
-> > 
-> > Using dev_name() is not an issue. It's when dev_name() exceeds 19
-> > characters that it becomes an issue (and always has been an issue
-> > due to the truncation.) clk_get(dev, ...) uses dev_name(dev) to match
-> > against its entry in the table.
-> > 
-> > As I say, dev_name() itself is not an issue. The length used for the
-> > name is.
-> > 
-> 
-> Maybe, but the existence of best_dev_name() suggests that this has been seen
-> before and that, as you mentioned, it is not a good idea. Anyway, the patch
-> below fixes the problem for me. I don't know if it is acceptable / correct,
-> so it might serve as guidance for others when fixing the problem for real.
+Hi Yoshinori,
 
-I get the impression that there's a communication problem here, so I'm
-not going to continue replying. Thanks.
+On Thu, 2024-04-04 at 14:14 +0900, Yoshinori Sato wrote:
+> Sorry. previus mail is thread broken.
+>=20
+> This is an updated version of something I wrote about 7 years ago.
+> Minimum support for R2D-plus and LANDISK.
+> I think R2D-1 will work if you add AX88796 to dts.
+> And board-specific functions and SCI's SPI functions are not supported.
+>=20
+> You can get it working with qemu found here.
+> https://gitlab.com/yoshinori.sato/qemu/-/tree/landisk
+>=20
+> v7 changes.
+> - sh/kernel/setup.c: fix kernel parameter handling.
+> - clk-sh7750.c: cleanup.
+> - sh_tmu.c: cleanup.
+> - irq-renesas-sh7751.c: IPR definition move to code.
+> - irq-renesas-sh7751irl.c: update register definition.
+> - pci-sh7751.c: Register initialization fix.=20
+> - sm501 and sm501fb: Re-design Device Tree properties.
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Could you push your v7 version to your Gitlab [1] repository so I can fetch
+it from there?
+
+Thanks,
+Adrian
+
+> [1] https://gitlab.com/yoshinori.sato/linux
+
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
