@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 835431401B;
-	Sun, 19 May 2024 11:44:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 987D16D1B9;
+	Sun, 19 May 2024 18:43:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716119050; cv=none; b=ahY+bke/kWDfO4UcC6uDtmJcT0eRpTlNyP/T9S+SOIiX9ZzuuwX+5fqzl7KOmhD8s7pRUWNzCuZbrNfOJwQz9s7FkVUpdrxYN5JYCHj04+xZuoSKyWcLoYGc9KZJJb+abbde0lKsaEGquv52QSG27NU/vg5UzZgofLbXpUKM534=
+	t=1716144235; cv=none; b=bAuYdzxna5e0C9M3exGLsLxfvArhS6W2J5gWzLwGMiRhh5A9pVz9RatIHC86ZjdW0iDZLB8BUBwkbkTncf+YeQPQorjtnjzqDig9j0IIg13HQDz2N5liP2+3Lm97cvC7BjhyJ0hNfvkgb+/zlFodeLHt2UoUFls6PRZ+4VHUIGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716119050; c=relaxed/simple;
-	bh=pLG4xOOSd/VdrFGicflX0jEABc52gpetmo53inC26Nk=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=E4ABkJnKKSvYtwKKA3qYMRygZMPZxS6deVWXtJOsO6LyDlSD+a+MGQPM6CWZ2QdyRQ03t5dJHea5546z10mwKMVNQtYlF5cdw/D3TVzdDPXtR3ydFojZkjb5HLEWGK+m7XHusOgfm5YH7vDSNsNm/5hbkpqyg4+utV/79tGRKyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=htABLW6c; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1716144235; c=relaxed/simple;
+	bh=Z64QIpvqXdl7muS6/ZZuI9SyD5ANwufO0lUkLdugi2Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FnH+DBNenv1i1xeUjru/36uDJkdoyf81K61tXLQaDsDtKo2FgiQ1iSeqqGtHWrECvQCKQhMqDoYY7wjOh3VDIsxXH51lyaO6zQPYLkZc3t0c36fdntiWGB4+CoAKLwToEAFMAOWG2qNfoiGM0utMSq3PVDMRUXLmlfkchPAdF2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RMEh+3g8; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="htABLW6c"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB301C32781;
-	Sun, 19 May 2024 11:44:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RMEh+3g8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7730EC32781;
+	Sun, 19 May 2024 18:43:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716119049;
-	bh=pLG4xOOSd/VdrFGicflX0jEABc52gpetmo53inC26Nk=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=htABLW6cCkXMfHDoiA96KGV8rtUh2F3lGjQ8Oig0JbqABwZaYNF2WXISpx/UV9SsX
-	 dmTmDoqa41WCAsQjXCA1AAfV5Wvp1+atQ6cKI9KxHTwQtTYedew22w4/seFPAIe9EN
-	 EXNa/nf+xeQMtvBX+75GgBfRhnSuYQZG9r8d2EprIVvVR07mxodGUVuglxla0e5Veo
-	 61vGelUGVRRvgAiXdpXlJHYjqFp+f+O35f9HBm9YbNlBKvxuN7adxh6/0l2l3/DoKj
-	 H0kf39f2D19QZCXPO0PAFPW81eQZgAtLa2TMUXxvbZyqVQitiLOA5LklE8xTyg0GJU
-	 U1qmX/gY5zjMg==
-Message-ID: <d4e5d11d-9b71-4caa-a55b-f3accd7185ce@kernel.org>
-Date: Sun, 19 May 2024 13:44:02 +0200
+	s=k20201202; t=1716144235;
+	bh=Z64QIpvqXdl7muS6/ZZuI9SyD5ANwufO0lUkLdugi2Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=RMEh+3g8XQyK6rjiZUSCTCYPIyk9FpkDhV7ISReUlZDmNB6lLwK/VYNzwpEC2ShGz
+	 zq5hYbdMeYWafC+nh/aelaqTeAAiIUggqG7knY5IuiSXpzohhsAUKDJ/Xu8pKOa7j7
+	 8Skr4ZDquy2AUAaGIcdfoMvC2Etf2ii1rQL9LczlKcULAak8PBxy+GdJ8NdcUQ8MnS
+	 X5jU01b09eHIJpw95Hq08v8+Y/meKqvKPEULr+QIdeh4OO+lF7NHhtqFR1aQs+gP+5
+	 w2WWBpl1i/+AYnwMtC4piLpwN0woUkq6ZsmtFSv/ILHWFFv83Y/eKvkHwgosZ0Q4u8
+	 MH5gVF1Qi+Fbg==
+Message-ID: <7b3cd3a1-1fcf-48b7-a4ed-b110ecdce9bf@kernel.org>
+Date: Sun, 19 May 2024 20:43:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,27 +35,30 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 03/13] dt-bindings: a2b: Analog Devices AD24xx devices
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: =?UTF-8?Q?Alvin_=C5=A0ipraga?= <alvin@pqrs.dk>,
- Mark Brown <broonie@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>,
+Subject: Re: [PATCH] dt-bindings: mfd: syscon: Add more simple compatibles
+To: "Rob Herring (Arm)" <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Liam Girdwood <lgirdwood@gmail.com>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ <conor+dt@kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>, Andrew Lunn <andrew@lunn.ch>,
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+ Gregory Clement <gregory.clement@bootlin.com>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
- Saravana Kannan <saravanak@google.com>
-Cc: Emil Svendsen <emas@bang-olufsen.dk>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-sound@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-i2c@vger.kernel.org, =?UTF-8?Q?Alvin_=C5=A0ipraga?=
- <alsi@bang-olufsen.dk>
-References: <20240517-a2b-v1-0-b8647554c67b@bang-olufsen.dk>
- <20240517-a2b-v1-3-b8647554c67b@bang-olufsen.dk>
- <f1605873-c36c-4e61-8076-13a7094dc13b@kernel.org>
+ <sboyd@kernel.org>, Lee Jones <lee@kernel.org>,
+ UNGLinuxDriver@microchip.com, Thomas Bogendoerfer
+ <tsbogend@alpha.franken.de>, Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Yisen Zhuang <yisen.zhuang@huawei.com>, Salil Mehta
+ <salil.mehta@huawei.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-mtd@lists.infradead.org,
+ netdev@vger.kernel.org, linux-mediatek@lists.infradead.org
+References: <20240510123018.3902184-1-robh@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -100,29 +103,24 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <f1605873-c36c-4e61-8076-13a7094dc13b@kernel.org>
+In-Reply-To: <20240510123018.3902184-1-robh@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 19/05/2024 13:40, Krzysztof Kozlowski wrote:
-> On 17/05/2024 14:58, Alvin Šipraga wrote:
->> From: Alvin Šipraga <alsi@bang-olufsen.dk>
->>
->> Add device tree bindings for the AD24xx series A2B transceiver chips,
->> including their functional blocks.
->>
->> Signed-off-by: Alvin Šipraga <alsi@bang-olufsen.dk>
->> ---
->>  .../devicetree/bindings/a2b/adi,ad24xx-clk.yaml    |  53 +++++
+On 10/05/2024 14:30, Rob Herring (Arm) wrote:
+> Add another batch of various "simple" syscon compatibles which were
+> undocumented or still documented with old text bindings. Remove the old
+> text binding docs for the ones which were documented.
 > 
-> What is a2b and why clock bindings are not in clock?
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+> This batch is mostly from arm32 platforms.
+> ---
 
-Just in case you reply "but I have cover letter", so no, it does not
-matter really. This is the patch describing hardware, so here you
-describe hardware. Not in cover letter which often is ignored. Many
-people, including myself, skip cover letters.
+Cool! I have a followup (on top):
+https://lore.kernel.org/r/20240519-dt-bindings-mfd-syscon-split-v1-0-aaf996e2313a@linaro.org
 
-Provide *hardware* description here.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
