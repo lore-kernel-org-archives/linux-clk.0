@@ -1,278 +1,202 @@
-Received: from EUR03-DBA-obe.outbound.protection.outlook.com (mail-dbaeur03on2072.outbound.protection.outlook.com [40.107.104.72])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91C1E13791F;
-	Mon, 20 May 2024 15:44:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.104.72
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716219884; cv=fail; b=YE7oaDOs3Lsepo5lJxUgjhT27sZlRywJWxyFNmnFlf2SRwv8NvOYtbD21vtO2bX2cudeyhCBIwvXlQFAnpxNZvO7RkBEfq5Co3z9DiWsf/y/Yr2FzUXGbx3koXA4zc/4wQQK5WrF5yajpfvOsfc56wHNr2tJ/XQZjM1gX2RxXvo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716219884; c=relaxed/simple;
-	bh=GHMBgasvbe9I4qb42G22z721lmtl683Ltn7M68ms+7Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=IrQ5HW9F+qqBqDruQheivFNdUclDIeD1ud0u/6e6AFrMKJj8C8PG8D/5RROa9zlmH/EBWyvJ+6kNphE9KA2fEmFGnf7NidrzMzg1sRVhriSYNiDfdiICxw+vjhFQZT3OQirHz44MxT8FDEoqIu4lGUqyd0k2frKPsY0IE4yzN3I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=AHWSK9TD; arc=fail smtp.client-ip=40.107.104.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDF2F137930;
+	Mon, 20 May 2024 17:04:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716224689; cv=none; b=ktoLCP76x32KqEkxqYD5+yBbuTI0Eek5+zwJGAp+9pgp6ky8jt6thZMQzAcxj7eiy74AexU6rKQxzbNc6RzvOTZ1cBniL/lZ/JT4i5KtZcPQcD2wL1UBP9PstKWLgJcO5xrcybZgV00fHngf78v42lJRVg9scQiKu1lz+pCxAno=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716224689; c=relaxed/simple;
+	bh=lYZdxF7vHXYI37d+JuoV5KIDqrDVCRlsGP24iqU8REU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=InFaVNBYA91E/k8OPwSVvpHmc4EVTPNB3b+qmNiLOyA2ZYHk4Msa/pgy6xhNTFxsOcoh6J71Sml00y/s839BRDBzi5sNAnmwIR+N3JLD8oRwBaYdb1BqJnk1xhLJ9iGEGfmsPqvKPptGAZGVZh99b7KceK+opEa78BxnFi9eUL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BtKSLB/q; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="AHWSK9TD"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=mWEeH4bE9uRnPNA7ls5ST2+CHOdRramSTvqt6cSh3WIQsSTN22FN6b6DBNeHtDJHpMtPXULuV8UEqxqZEVLvsSAjd7hJq4ZCmAQhWV9Rd2KXv8Oufi4rbLTpZfbjAxgaEwpu6SVhw8cwcmXGfBYZ03PpyRDVsdQiWf0rCcIIhElYEdNTnfY601KbpIak2+FDx2yZJcb8ut5r1ABQxhQK/HWczg0oCbc/vvaSEVxpkkRUEo0B1iLWf/+1OFPpnU/aWeSRkhpKKgBY7FbvaIGJ2M5A5nw6d+F0UGkL5+MLPCVlKraDCCPVpxmOOH+qJ0NHTZqgMLfBbqzyACHr/FRvmA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=h3dSTccWiVFO5uW8KhqNCmZpfiPtc0LPiyweWivA0ls=;
- b=SdF6vGsFR/Prw4GpodVWNY9eo0RFheDD0Ca7w4M9kvs51eEwCPGl3Eyl+NJ7k0iDxaCYQjVnyBU7ZVr8o5BmjPJpDbwBXm8myFwewxpA9tKdJGu7akZzANHysHbIS1GXbJs652tDLORjuzhCq0oOSgr3wtjSdai9HybnpeS4/pK3co6GRWfhVESVZjxTqeFD4HX0/1M6BoP4BHqkRBXAZhEi9NB6Z+IPnMdk9i7zwGhuopYHPY4LA3evP0GIqBt7rjz8eb9wpsXiBoCmTDxkPP9lp9Z8Zp/8vZD4k4YZDbwppzlJWkFnhiD1+PxGAsAqiVBZaq2eIH8qSAhGFZSPgA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=h3dSTccWiVFO5uW8KhqNCmZpfiPtc0LPiyweWivA0ls=;
- b=AHWSK9TDl0bpeXBasCJCEUSIWb4iT162ojjZzRrXyNzMwD4VRraQMxqFjwa6m0LhlMk3ss3yZsZB0Su/B3A27uiA0zZyK490CwEpkYfEsKXTTjPBy4JfKJ22pK2zHJwMW8J9jFCP+t1m4aJ1VL880FpwktHFjtuUx/K5G9kwwUs=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by DU0PR04MB9370.eurprd04.prod.outlook.com (2603:10a6:10:359::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7587.35; Mon, 20 May
- 2024 15:44:39 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::1e67:dfc9:d0c1:fe58]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::1e67:dfc9:d0c1:fe58%7]) with mapi id 15.20.7587.030; Mon, 20 May 2024
- 15:44:39 +0000
-Date: Mon, 20 May 2024 11:44:28 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc: abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com,
-	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-	kernel@pengutronix.de, festevam@gmail.com, marex@denx.de,
-	linux-clk@vger.kernel.org, imx@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, p.zabel@pengutronix.de,
-	shengjiu.wang@gmail.com
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BtKSLB/q"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1716224688; x=1747760688;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=lYZdxF7vHXYI37d+JuoV5KIDqrDVCRlsGP24iqU8REU=;
+  b=BtKSLB/qxFO37djOyTCUr3jZy045DRkahSpRM9OHoWnYgHGBZHpi35By
+   QZhegEQqgadgKIuEkSdAXIsdJpwzUcFTNULZKlr9lBCAED2gGdyucafBV
+   oxbvUDd+fbbkVAg/WDgV7ABR5Kug2s9yilpIUxqFXrLI6ism7sLS47yC5
+   N0l6wICGXRpv3jOuaj8nsTo10hMELHu4EgWm32sDWo9Hqxa6V/OBryuLT
+   NARbj16n29vitqtoKoXW8AbG7jYnZvW5m6tPCFdbnFF6iuTDiBdlGwrCh
+   /6u7D7gnwN8674+bB5tJaoJzNB92BEHceS6efX5yb0ZzyPneiDhFJu76o
+   g==;
+X-CSE-ConnectionGUID: f88ccsDPQ1G/Lf5XBTSgdw==
+X-CSE-MsgGUID: 2CYgAhLjRLKVZ72JvMjazA==
+X-IronPort-AV: E=McAfee;i="6600,9927,11078"; a="23036919"
+X-IronPort-AV: E=Sophos;i="6.08,175,1712646000"; 
+   d="scan'208";a="23036919"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 20 May 2024 10:04:47 -0700
+X-CSE-ConnectionGUID: IsGF1I3PSKOfdMC+9IW4ag==
+X-CSE-MsgGUID: i1hjL61qSq+Ho/4jpl1hKw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,175,1712646000"; 
+   d="scan'208";a="33170094"
+Received: from unknown (HELO 108735ec233b) ([10.239.97.151])
+  by orviesa008.jf.intel.com with ESMTP; 20 May 2024 10:04:43 -0700
+Received: from kbuild by 108735ec233b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1s96RD-0004zo-1n;
+	Mon, 20 May 2024 17:04:39 +0000
+Date: Tue, 21 May 2024 01:04:00 +0800
+From: kernel test robot <lkp@intel.com>
+To: Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org,
+	peng.fan@nxp.com, mturquette@baylibre.com, sboyd@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+	festevam@gmail.com, marex@denx.de, linux-clk@vger.kernel.org,
+	imx@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	p.zabel@pengutronix.de, shengjiu.wang@gmail.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev
 Subject: Re: [PATCH v4 2/5] clk: imx: clk-audiomix: Add reset controller
-Message-ID: <Zktv3OcDbV1cggP1@lizhi-Precision-Tower-5810>
-References: <1716188963-16175-1-git-send-email-shengjiu.wang@nxp.com>
- <1716188963-16175-3-git-send-email-shengjiu.wang@nxp.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1716188963-16175-3-git-send-email-shengjiu.wang@nxp.com>
-X-ClientProxiedBy: BYAPR08CA0060.namprd08.prod.outlook.com
- (2603:10b6:a03:117::37) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+Message-ID: <202405210036.hMLQ7OGl-lkp@intel.com>
+References: <1716188963-16175-3-git-send-email-shengjiu.wang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|DU0PR04MB9370:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9b8e66e2-79f7-402b-5e81-08dc78e3c271
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230031|376005|52116005|7416005|366007|1800799015|38350700005;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?GBt05SBQvIQx/sOM3J6IREW86mGW/bvk3XOp5PhYNRVUk/lNTLEipmi1lFq+?=
- =?us-ascii?Q?3irnbIAbA6hsTNxcQGP3WyQq8JR4tdmC0FFspDn0njG5Uav8uAEhHwpERYbW?=
- =?us-ascii?Q?OFNdWMU/KJbhQP0xm2CWxnvgMg3eR0TZX9U2dj97WuodusMfyhxUAepJl7Vc?=
- =?us-ascii?Q?WYbv55RSa23KkaSIWD2R/9hrEWMQpi++eRyPqS2QtONKrEt0tM1g3oEQESp9?=
- =?us-ascii?Q?E/jDrU1Ez0kPkpuWeoswOwQ1Yi7JSpmnyJb6MRm5mYjEUDG0w+lSQzYI8ewB?=
- =?us-ascii?Q?g7Q9HaIqB2T+XXmcxE3xEMWFBM9kTGsrsdxggTWd33uruoZ2ttXSA+KBAFsD?=
- =?us-ascii?Q?a6KwGdexpY8tK6kSewSvLVylWyrEhKv70UBxPyg8HsWibcZJ408+ctjr/bp4?=
- =?us-ascii?Q?3Xp2egCO1X7uwvwsYN66Ob1WFvzwDKJHG2F0RXm3sCrvWF8tjIEQcDDeRAkE?=
- =?us-ascii?Q?cH6sNuEN4dUn842ApAvsZrzRk1ATp70uq1haiZDTHG4ccLvKRd/hMk4VxGAc?=
- =?us-ascii?Q?Y/+puTJkThCjZJlMTPYxLZkc4OhP0xU6Wf8QaOCJBaf4qo7nIySYvRlbnnYb?=
- =?us-ascii?Q?IfniA6oixxRcNQX6SrcM3KZe2LvJn9M37g7gsHpLnbKwka5iK+h0Xh1HWb/6?=
- =?us-ascii?Q?o4zRAmWCfiDItK5uh3S/vAYOCGqHcyX5BTaRdq/NLBKZbL5fL/Tldl9OTzgm?=
- =?us-ascii?Q?6AorYXXpOt7yE1ZTGatEwdfPu95aSD6xOJEgSHB4dnwyFtPCp1EfLJOiSEHF?=
- =?us-ascii?Q?smCYryA/pGvme71fLCj+WaLW4pwzyRwZ1fMr+NtllIDTpck6XcUOmWIssIGR?=
- =?us-ascii?Q?xt/d7RjJgbrVgqHov1p8bCKV4Y5/3VjA6lYNRyIMRbpV2SwIXhCxWFHy8FVK?=
- =?us-ascii?Q?GD4V548JUjBEiF0fLZkd8g4ZLEq1Innx0uV5KdM2HJyNGdmO+ZNFsz1IJFUY?=
- =?us-ascii?Q?30U3fymGJkH1J/55afJzrFD8n/GwMXaI34sZnQ/pt/hn24t9EZTZDHupCsNj?=
- =?us-ascii?Q?nN9icFsdhnT8cdw7AVufXmrH8+enZFMvGQGoOhUW9NHyUrUZyDApOtx/Fgh7?=
- =?us-ascii?Q?EFxT1WSSRcOk17erdjC5Wz1cVb0zh5sFT7VPVRwD8BkJSdGBHfI7O/FKDc1s?=
- =?us-ascii?Q?2pQLZUAgFwzztn+y/z0vyPy7znkCefJqGYQItz4RbEV1LJLJwq0pzPhzT8P7?=
- =?us-ascii?Q?+sg4OMVlUBLTFhl6E4iVIc1yhOMrquVW7FhYnygQn9v5ZDl1AiYF5s82XEZm?=
- =?us-ascii?Q?WStU/16BoPU7YSypZOGLLLR2aNnX2ogODjn12z0z6i1BcUU3yajPyULexEMg?=
- =?us-ascii?Q?1PyFylyQOwPf6MbKghs0jwxxiHGL3cRjK8k5ZN+n6u8whg=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(376005)(52116005)(7416005)(366007)(1800799015)(38350700005);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?5GtSpWwmTcnFNlcTaliMC3o/kmPSEzmrdZYcY+9JU/eu9n8ghumUuXdB9/Nf?=
- =?us-ascii?Q?S9KfqCCf3jJdZYUOs35ntmSpLtXNhO+/MUI2xgT1O/jN/cgxKJ5KaCD/vAsp?=
- =?us-ascii?Q?YflPy0Av8SPXWeIDz/U+J+mAfVHqxUaEDLImfEctTV9ygSsNzpaTJdJcc38D?=
- =?us-ascii?Q?MyGN1sSrkk9Q35YpFFs2pGYJq1JiLuChOfiPyRwHqJi/P+DtshaF4w1Pqjbz?=
- =?us-ascii?Q?75EXrSCvPzuHwmn7N3zAQKBhby5wC8VewyJd8TlaZYZAPUbzvDkEpZx5f2bJ?=
- =?us-ascii?Q?7nR90GYFAwp7c9WM8z8X0QyjoDR3zMiQ5/HM6atrTWx/lAbV/oerkVoZ59DE?=
- =?us-ascii?Q?X7KqIttodfhV8ioAopJs5CHrovcDvrv5DbSxqHinCpJCsBCqcbBEBunv3WPO?=
- =?us-ascii?Q?xBquE5SPJryAntq+vWQ3zaGRLPsAZJZUmYhtlrEDRor2u1gxhstt0TnQ6owC?=
- =?us-ascii?Q?Q5QngH9eIIeQktkQ+/lnoThlvBD2ha/NPxj61fyGlob1r1hqIDWP1j4YrMAy?=
- =?us-ascii?Q?opbZjtFKXOi5HXQBAtDrVq6bs6Amb8RHqb8i1pdujXyTCSVZtsVO/0QC9Hjf?=
- =?us-ascii?Q?tsxHUywIovemhRGB32iYkUDf22XfdXkq4ZTRkGvaHTrOyrsH1W9DZMx2xgYC?=
- =?us-ascii?Q?MN+G9zlNrnOd7L7FrlC8qVmWDaPe+Oz7KDq5YEc4ERmodIKQ3VLa/8A3COel?=
- =?us-ascii?Q?JVemwDZpZDh3FXJQ0roGhDCDppY/Sn0ItijGbQ6JuGxQnmHsKaHmEJcqNVlx?=
- =?us-ascii?Q?xONRZQEhDK15o28Z1M65UHsXxObq9NWmM5CSDVSkmEDkkzsd2piPROuxwttN?=
- =?us-ascii?Q?udPTgWsnw+Km80xVEF6ZZLsrkYmb2PM9vF199Wr8c2I6U25GO0IXcAZ9UA1J?=
- =?us-ascii?Q?pEqbNY1d0A3pKimYducJVh0MRQWIhAPn0YNrT9JmMM0WE0BcEGdzLa9powGd?=
- =?us-ascii?Q?CuHMdRHsb5qpLtIklMd79nJkw6KdqQaBIGaDs9jkxAijXMz1c+aYBhmUCkDF?=
- =?us-ascii?Q?xlKD8P2cuQDY/jP78hZgHxr5FuZ+95TBe9ENgczvAvQ/dHIp8e8ugyiW2hoi?=
- =?us-ascii?Q?BOz842q47DhHoEquTQqB+3o68/N6t6ictixNZkoPE+08JWNBGkd+mFZy6pf0?=
- =?us-ascii?Q?sLqRpDY+cNm8hNQlDsZWBt3G0ZA4g1wo9VCugecf0QYxxJVhx1eyVEwp4RBL?=
- =?us-ascii?Q?TGf6ZJG4LVVTOV+pdKLCNNcmC4FId4SatwaXMyyoCxhYayn9TRAczEBzytQC?=
- =?us-ascii?Q?o3BM1Dujlc5JkwFmifJy855FaA6lRKssuDDs/JWwWhghpEnH+FP/f9mEIwYb?=
- =?us-ascii?Q?XN44K5BI+T7lr1v7mmVeSqTDnkAs/o8wCagQlW+6O2Lfovi0tFuqTmJRIsFl?=
- =?us-ascii?Q?WfzdkBxkbjXyoJd1GnJGqRdfIv/VKi5Dv22oXcAhBlezXoqK76dggXbzRB5y?=
- =?us-ascii?Q?f2onCg5U819usUBcigJ3i4HSpJg+TxIr7shgi8v9V7IftGvY9Mf5Yf9ADsff?=
- =?us-ascii?Q?4lCdnH6jwCWMJobD8GrMW/FRwBsgi/C3/K4leHoVD8zXhbkXOF7EkwaZtc9O?=
- =?us-ascii?Q?NvwxxKs6poU+QxslwAt/BWO1kbOud4eYX3qTnezS?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9b8e66e2-79f7-402b-5e81-08dc78e3c271
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 20 May 2024 15:44:39.6136
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: k/TNDr1tHyQSn+pINnOAm7QnzKabc4c0k3skFH5rOMwWREtcclzPdFf6WUSiRpIJZe4un2Rl+UwyT3xS+VtoFg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU0PR04MB9370
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1716188963-16175-3-git-send-email-shengjiu.wang@nxp.com>
 
-On Mon, May 20, 2024 at 03:09:20PM +0800, Shengjiu Wang wrote:
-> Audiomix block control can be a reset controller for
-> Enhanced Audio Return Channel (EARC), which is one of
-> modules in this audiomix subsystem.
-> 
-> The reset controller is supported by the auxiliary device
-> framework.
-> 
-> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> ---
->  drivers/clk/imx/Kconfig               |  1 +
->  drivers/clk/imx/clk-imx8mp-audiomix.c | 61 +++++++++++++++++++++++++++
->  2 files changed, 62 insertions(+)
-> 
-> diff --git a/drivers/clk/imx/Kconfig b/drivers/clk/imx/Kconfig
-> index 6da0fba68225..9edfb030bea9 100644
-> --- a/drivers/clk/imx/Kconfig
-> +++ b/drivers/clk/imx/Kconfig
-> @@ -81,6 +81,7 @@ config CLK_IMX8MP
->  	tristate "IMX8MP CCM Clock Driver"
->  	depends on ARCH_MXC || COMPILE_TEST
->  	select MXC_CLK
-> +	select AUXILIARY_BUS
->  	help
->  	    Build the driver for i.MX8MP CCM Clock Driver
->  
-> diff --git a/drivers/clk/imx/clk-imx8mp-audiomix.c b/drivers/clk/imx/clk-imx8mp-audiomix.c
-> index b381d6f784c8..d2eaabe431cd 100644
-> --- a/drivers/clk/imx/clk-imx8mp-audiomix.c
-> +++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
-> @@ -5,6 +5,7 @@
->   * Copyright (C) 2022 Marek Vasut <marex@denx.de>
->   */
->  
-> +#include <linux/auxiliary_bus.h>
->  #include <linux/clk-provider.h>
->  #include <linux/device.h>
->  #include <linux/io.h>
-> @@ -217,6 +218,62 @@ struct clk_imx8mp_audiomix_priv {
->  	struct clk_hw_onecell_data clk_data;
->  };
->  
-> +#if IS_ENABLED(CONFIG_RESET_CONTROLLER)
-> +
-> +static void clk_imx8mp_audiomix_reset_unregister_adev(void *_adev)
-> +{
-> +	struct auxiliary_device *adev = _adev;
-> +
-> +	auxiliary_device_delete(adev);
-> +	auxiliary_device_uninit(adev);
-> +}
-> +
-> +static void clk_imx8mp_audiomix_reset_adev_release(struct device *dev)
-> +{
-> +	struct auxiliary_device *adev = to_auxiliary_dev(dev);
-> +
-> +	kfree(adev);
-> +}
-> +
-> +static int clk_imx8mp_audiomix_reset_controller_register(struct device *dev,
-> +							 struct clk_imx8mp_audiomix_priv *priv)
-> +{
-> +	struct auxiliary_device *adev;
-> +	int ret;
-> +
-> +	adev = kzalloc(sizeof(*adev), GFP_KERNEL);
+Hi Shengjiu,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on abelvesa/clk/imx]
+[also build test ERROR on linus/master next-20240520]
+[cannot apply to pza/reset/next shawnguo/for-next robh/for-next pza/imx-drm/next v6.9]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Shengjiu-Wang/dt-bindings-clock-imx8mp-Add-reset-cells-property/20240520-153230
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git clk/imx
+patch link:    https://lore.kernel.org/r/1716188963-16175-3-git-send-email-shengjiu.wang%40nxp.com
+patch subject: [PATCH v4 2/5] clk: imx: clk-audiomix: Add reset controller
+config: hexagon-allyesconfig (https://download.01.org/0day-ci/archive/20240521/202405210036.hMLQ7OGl-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project fa9b1be45088dce1e4b602d451f118128b94237b)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240521/202405210036.hMLQ7OGl-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202405210036.hMLQ7OGl-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from drivers/clk/imx/clk-imx8mp-audiomix.c:11:
+   In file included from include/linux/io.h:13:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:547:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     547 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:560:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     560 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
+         |                                                   ^
+   In file included from drivers/clk/imx/clk-imx8mp-audiomix.c:11:
+   In file included from include/linux/io.h:13:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:573:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     573 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
+         |                                                   ^
+   In file included from drivers/clk/imx/clk-imx8mp-audiomix.c:11:
+   In file included from include/linux/io.h:13:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:584:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     584 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:594:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     594 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:604:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     604 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+>> drivers/clk/imx/clk-imx8mp-audiomix.c:235:2: error: call to undeclared function 'kfree'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     235 |         kfree(adev);
+         |         ^
+   drivers/clk/imx/clk-imx8mp-audiomix.c:235:2: note: did you mean 'vfree'?
+   include/linux/vmalloc.h:162:13: note: 'vfree' declared here
+     162 | extern void vfree(const void *addr);
+         |             ^
+>> drivers/clk/imx/clk-imx8mp-audiomix.c:244:9: error: call to undeclared function 'kzalloc'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     244 |         adev = kzalloc(sizeof(*adev), GFP_KERNEL);
+         |                ^
+   drivers/clk/imx/clk-imx8mp-audiomix.c:244:9: note: did you mean 'vzalloc'?
+   include/linux/vmalloc.h:142:14: note: 'vzalloc' declared here
+     142 | extern void *vzalloc(unsigned long size) __alloc_size(1);
+         |              ^
+>> drivers/clk/imx/clk-imx8mp-audiomix.c:244:7: error: incompatible integer to pointer conversion assigning to 'struct auxiliary_device *' from 'int' [-Wint-conversion]
+     244 |         adev = kzalloc(sizeof(*adev), GFP_KERNEL);
+         |              ^ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   drivers/clk/imx/clk-imx8mp-audiomix.c:254:3: error: call to undeclared function 'kfree'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     254 |                 kfree(adev);
+         |                 ^
+   drivers/clk/imx/clk-imx8mp-audiomix.c:261:3: error: call to undeclared function 'kfree'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     261 |                 kfree(adev);
+         |                 ^
+   6 warnings and 5 errors generated.
 
 
-You may use scoped free
+vim +/kfree +235 drivers/clk/imx/clk-imx8mp-audiomix.c
 
-	struct auxiliary_device *adev __free(kfree) = kzalloc(sizeof(*adev), GFP_KERNEL);
+   230	
+   231	static void clk_imx8mp_audiomix_reset_adev_release(struct device *dev)
+   232	{
+   233		struct auxiliary_device *adev = to_auxiliary_dev(dev);
+   234	
+ > 235		kfree(adev);
+   236	}
+   237	
+   238	static int clk_imx8mp_audiomix_reset_controller_register(struct device *dev,
+   239								 struct clk_imx8mp_audiomix_priv *priv)
+   240	{
+   241		struct auxiliary_device *adev;
+   242		int ret;
+   243	
+ > 244		adev = kzalloc(sizeof(*adev), GFP_KERNEL);
+   245		if (!adev)
+   246			return -ENOMEM;
+   247	
+   248		adev->name = "reset";
+   249		adev->dev.parent = dev;
+   250		adev->dev.release = clk_imx8mp_audiomix_reset_adev_release;
+   251	
+   252		ret = auxiliary_device_init(adev);
+   253		if (ret) {
+   254			kfree(adev);
+   255			return ret;
+   256		}
+   257	
+   258		ret = auxiliary_device_add(adev);
+   259		if (ret) {
+   260			auxiliary_device_uninit(adev);
+   261			kfree(adev);
+   262			return ret;
+   263		}
+   264	
+   265		return devm_add_action_or_reset(dev, clk_imx8mp_audiomix_reset_unregister_adev, adev);
+   266	}
+   267	
 
-> +	if (!adev)
-> +		return -ENOMEM;
-> +
-> +	adev->name = "reset";
-> +	adev->dev.parent = dev;
-> +	adev->dev.release = clk_imx8mp_audiomix_reset_adev_release;
-> +
-> +	ret = auxiliary_device_init(adev);
-> +	if (ret) {
-> +		kfree(adev);
-> +		return ret;
-> +	}
-
-if use scoped free, 
-
-	if (ret)
-		return ret;
-
-> +
-> +	ret = auxiliary_device_add(adev);
-> +	if (ret) {
-> +		auxiliary_device_uninit(adev);
-> +		kfree(adev);
-> +		return ret;
-
-the same here. 
-
-> +	}
-> +
-> +	return devm_add_action_or_reset(dev, clk_imx8mp_audiomix_reset_unregister_adev, adev);
-
-if use scope free
-	return devm_add_action_or_reset(dev, clk_imx8mp_audiomix_reset_unregister_adev, no_free_ptr(adev));
-
-> +}
-> +
-> +#else /* !CONFIG_RESET_CONTROLLER */
-> +
-> +static int clk_imx8mp_audiomix_reset_controller_register(struct clk_imx8mp_audiomix_priv *priv)
-> +{
-> +	return 0;
-> +}
-> +
-> +#endif /* !CONFIG_RESET_CONTROLLER */
-> +
->  static void clk_imx8mp_audiomix_save_restore(struct device *dev, bool save)
->  {
->  	struct clk_imx8mp_audiomix_priv *priv = dev_get_drvdata(dev);
-> @@ -337,6 +394,10 @@ static int clk_imx8mp_audiomix_probe(struct platform_device *pdev)
->  	if (ret)
->  		goto err_clk_register;
->  
-> +	ret = clk_imx8mp_audiomix_reset_controller_register(dev, priv);
-> +	if (ret)
-> +		goto err_clk_register;
-> +
->  	pm_runtime_put_sync(dev);
->  	return 0;
->  
-> -- 
-> 2.34.1
-> 
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
