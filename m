@@ -1,40 +1,40 @@
 Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF9D143AC3;
-	Mon, 20 May 2024 09:47:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D32D433C2;
+	Mon, 20 May 2024 09:47:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716198437; cv=none; b=JDKTf24zN5/R2v551tnJW8XEjid+32MwYLC1agSMG2Zv36s1fwrY0+jcM8q5BdrVdbaNc+wh2m0SuvXpAbnAP+zx09Jw1Fr9WpLEH4dNf1AfkvZXseR0ej2aDl+Bec+WtQv0N/c+MLpe40r4WOC39luui/2cyF03vCSdXOJIHE4=
+	t=1716198439; cv=none; b=Xr43f6wh+pwRsoQYnmwiIozdIwa6SD+NP1qci2/zM14hjvOwI8SC0HK9dqYRTbsEnUnoJ/YQPEbUPhoh6RdGhomCIVkqxti6+GZtyjp/Z3/9IEKE6v7huHMDnZumiWY0ujy5rF2n7YHIGMX3ay3sW6/A964rPueSU3mlvZ/DfqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716198437; c=relaxed/simple;
-	bh=GDN0xtEiHNDbdJ5kosY4UN0gJVL08Jafz1DkF3NTeFQ=;
+	s=arc-20240116; t=1716198439; c=relaxed/simple;
+	bh=QS/4yx7usFdwTKWQvTuwXqgUlCZYHPUOUavgi0BvK74=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MJhw3/4FIZBEHclYYpUOjjacDZkZcKwhGYxW8123A/Py8ANLlW2zUEP9PiqCgnViwSKysO/JzyTO1V1EY784z1d1Nwy8C8UxblaguoEQiCDp2i3Esy+r2qPR2Wf0UrCCXlywjuJs2x/nVcMv2XE3Orf0IvOcWp3nr9Y/uPSm8Lw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=mN7qpwM4; arc=none smtp.client-ip=46.235.227.194
+	 In-Reply-To:Content-Type; b=NYXWxM8sWnB4qJuzvmI2/ohBUOn8Gun+JBI2GlTh+sjU4mYGqcqxDltWUAOx5wPSPKZ0LaGobTmvQz2mNIvBTVmddaRYcul3vKkTkSdHFY5R/tp/5fewejJ9uqjJpTEc5vaPL37XhYvygGyEWxaKdOpaR7ZTHvTLm5TLhwtauNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=FC+i2898; arc=none smtp.client-ip=46.235.227.194
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="mN7qpwM4"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="FC+i2898"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1716198434;
-	bh=GDN0xtEiHNDbdJ5kosY4UN0gJVL08Jafz1DkF3NTeFQ=;
+	s=mail; t=1716198435;
+	bh=QS/4yx7usFdwTKWQvTuwXqgUlCZYHPUOUavgi0BvK74=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mN7qpwM4jnqdrFTRxfbh6vKWxwLlPvNep/2hd/UG/Jx7QUKAXXI8nrxABZJq8kShd
-	 4roLTMrF2F+8tR7keij/GEcUWYvlx46kTk6rLhlVkrSRSRWXrGrNVEq1g7sTuOnG7K
-	 O/s6QP5CguJduUWOjkzFXgS93du7zedTwXKmZ4QTTPMZUkxs3kpcAZc3Ub/Bgnldt2
-	 iUS9+ltI9PNJsVAAoBhhQ+j1ke3itijGOiEc6UfIIyjfUBYVoFJqvOyIrN5xmZn6F+
-	 DvSj3qI8pynWmSp7ZsTZpnbRPrAz/8EAdzKiAEhkw7QMpwvv5ztCqzIFEqICZY7AwO
-	 Ua1WyKuFXgOTw==
+	b=FC+i2898dB+gLaVDYZFYl7bTP7Ds9pNmChgtam9JbN5bn1gv4cMCDsl/dYkbtJRuU
+	 y2Nyy8nZ1LJJvfVGKh1Rp69SboyY2IEpIxvsFmR5CsGy1rt6VRSYZVmiKR0Dcu2dtw
+	 MaG6e+ihUdm3xwhA89j9NbYTmG5KC2NgkvBOnLo9rP2QKIcQSNeAy0Z6nJB568niL6
+	 2X146OP2uWQX3fBr5tIH3Pt3A8HMqP3kXpHVUznGejOoSckTQk6aHiJ0BT3nR2mgfR
+	 39G9x4bZn1/czMht4LGlTQuj2XlR8QUQxJBo9xtA+V4wMzB4NvFJEzvgRajrRjtiUB
+	 QuCt2gzZwWaOQ==
 Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
 	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 18F50378218E;
-	Mon, 20 May 2024 09:47:13 +0000 (UTC)
-Message-ID: <a9d0da82-844e-4542-bba4-7d75abab0a34@collabora.com>
-Date: Mon, 20 May 2024 11:47:12 +0200
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 5E9F13782191;
+	Mon, 20 May 2024 09:47:14 +0000 (UTC)
+Message-ID: <4bc0dbe5-19aa-42b9-af6d-328fc8be1cb6@collabora.com>
+Date: Mon, 20 May 2024 11:47:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -42,8 +42,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] arm64: dts: airoha: Add reset-controller support
- to EN7581 clock node
+Subject: Re: [PATCH v2 1/4] dt-bindings: clock: airoha: Add reset support to
+ EN7581 clock binding
 To: Lorenzo Bianconi <lorenzo@kernel.org>, linux-clk@vger.kernel.org
 Cc: p.zabel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org,
  lorenzo.bianconi83@gmail.com, conor@kernel.org,
@@ -52,17 +52,18 @@ Cc: p.zabel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org,
  devicetree@vger.kernel.org, nbd@nbd.name, john@phrozen.org, dd@embedd.com,
  catalin.marinas@arm.com, will@kernel.org, upstream@airoha.com
 References: <cover.1715948628.git.lorenzo@kernel.org>
- <f4d0c98cc67cf6b299e685052e8737dc500c8b25.1715948628.git.lorenzo@kernel.org>
+ <2d8906a2aaeb4d80eaa6d06472735ed79c7c24f9.1715948628.git.lorenzo@kernel.org>
 From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 Content-Language: en-US
-In-Reply-To: <f4d0c98cc67cf6b299e685052e8737dc500c8b25.1715948628.git.lorenzo@kernel.org>
+In-Reply-To: <2d8906a2aaeb4d80eaa6d06472735ed79c7c24f9.1715948628.git.lorenzo@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 Il 17/05/24 14:28, Lorenzo Bianconi ha scritto:
-> Introduce reset capability to scuclk clock-controller device-tree node
-> for EN7581 SoC.
+> Introduce reset capability to EN7581 device-tree clock binding
+> documentation.
 > 
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
 > Tested-by: Zhengping Zhang <zhengping.zhang@airoha.com>
 > Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
 
