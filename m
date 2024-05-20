@@ -1,68 +1,107 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D508134CC;
-	Mon, 20 May 2024 19:18:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ECFB2137F;
+	Mon, 20 May 2024 22:27:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716232700; cv=none; b=nVMINjI+PXxExIWbz/GnVl/KWNi0JakbXZfH/iyWSQPbOwPYDDa8imSMU0U5fCiJiWRJoIXQ1ACupI4TPMC1tkOUmWvRFFrBrqG/2XGjZVC+1SnSwp4MkrrhkUxVuu2ASEU8n1k6LKuii475XJuIXR3XpFTzYMTKhOAiaR5AI8Q=
+	t=1716244022; cv=none; b=ms29MlTvgwSaLRuepm2l8gHKk3i53wlVApx+fEEVGDwTxS7xYgg2LhjYzM93aOpMRWTeQSzsgnuPNaFRNOjwE+rrmgzujsOtF9U9Kbuv+92TJc3u2gK2sT629l6pCPFmzcHexLQIMqPlN1LD7dksYhY8MJEK8+ftSWbIqkRPcCk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716232700; c=relaxed/simple;
-	bh=NsdyDPhe9XNdTyGY6aXb+OutlJY67HHrwCd3VMvCSek=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WQk37JSw+S7bXXpwCsnIcCLmmMGhCyX9I8b/BkGuWhi/H27irbzXekTCwmT5IWKYhFaldHxi0D0uIJXLw10sMNb/qzjOFGcicue0jsbuSAUZ/JypEhq0WqpBYGTtpvhomwCaBCMTEixrL3c/E4yxjtPeSAaWV/PeJ6BkJoRK9Ng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XHXdF8FM; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1716244022; c=relaxed/simple;
+	bh=7gWt7LsLSDaZc2+yYF/VnkLMLi3Ehjxm/3v59DcqnCE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JZjnGWDtqWhMgm1Y7NUElvFweCY9qU8c+51LPI1SK+fiDeV54eFiDlibcZhKio5qF5COA/B0YvuB7bdDYHKHr2pQRh/1KcpcDUY/2Xi6K5B9a33BW4+SaUF8pZIIcDMXiMmKtGHmiqLb1Jj7CP24tQz/BCGZpfZ1iQp4QJislFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fibF9cUo; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XHXdF8FM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA0ACC2BD10;
-	Mon, 20 May 2024 19:18:19 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fibF9cUo"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B796C2BD10;
+	Mon, 20 May 2024 22:27:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716232700;
-	bh=NsdyDPhe9XNdTyGY6aXb+OutlJY67HHrwCd3VMvCSek=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XHXdF8FMdVp7iBwZ9pPPBsDFyWzuWCSmStBF1zA2hnOFX16Qz1BLebp8ffvNRgpYv
-	 CWvl0izIHD6g3m7biIYQ9L3mUKcnWT9I6Du0rFCL207sOjdaO3NRUMKenZkQvlHHA2
-	 EpeV1duBfapg3dN0zNNDuKmAV0ZMvhjcG+bcPQJQ6iufIuZWdLfW5wKuWU9vvEkhpG
-	 aRJkUu9wZRsIgEPKP9UMBNysC7md7qCTFsymg+MPZ2jsAz5d4DwwImWNxZ/2SpWBKU
-	 1PbXJdu0/y9HGbsHc3ehjyoG85oY8wc2yLaE2PLTuwZvgzF4pZocg0OYwgkCSRuLka
-	 lXj522wiktF9w==
-Date: Mon, 20 May 2024 14:18:18 -0500
+	s=k20201202; t=1716244021;
+	bh=7gWt7LsLSDaZc2+yYF/VnkLMLi3Ehjxm/3v59DcqnCE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=fibF9cUofd3mzERt4Mz1GFfQtob0x1Mak33/LzXHHtwJ1bURMaAmMDwZ+Dq5S0U2P
+	 bYyrUekrdt9DFnSoxPA8Uax3Wj/hQ2xwceagSx3xMABkZDNzMtP6CDo5pQ8iY/Hgve
+	 3gG8j1GQNBgWsDVb0qUsmUiy3tnoNKebGEnaDTEKMVVIu/Hk668OIciOVimB6eH8GH
+	 /tZxplN22NMcb/tkKimGbTr46kzKMDJN2oM05dzrZKkzO6cUN9gi4lYUhWOdoeIJvb
+	 +CDtlqF8Zs6iz2jcgmc73TxN/PTeaMKFAyhFcQp83/UVnBajBDEqoyb1sZVoMnEzfg
+	 8PqazOu5GHyqA==
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Dmitry Rokosov <ddrokosov@salutedevices.com>
-Cc: linux-arm-kernel@lists.infradead.org,
-	martin.blumenstingl@googlemail.com, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, krzysztof.kozlowski+dt@linaro.org,
-	jian.hu@amlogic.com, rockosov@gmail.com, devicetree@vger.kernel.org,
-	linux-amlogic@lists.infradead.org, sboyd@kernel.org,
-	robh+dt@kernel.org, neil.armstrong@linaro.org, jbrunet@baylibre.com,
-	khilman@baylibre.com, kernel@sberdevices.ru,
-	mturquette@baylibre.com
-Subject: Re: [PATCH v3 4/7] dt-bindings: clock: meson: a1: peripherals:
- support sys_pll input
-Message-ID: <171623269646.1341930.17315530317168492239.robh@kernel.org>
-References: <20240515185103.20256-1-ddrokosov@salutedevices.com>
- <20240515185103.20256-5-ddrokosov@salutedevices.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Taichi Sugaya <sugaya.taichi@socionext.com>,
+	Takao Orito <orito.takao@socionext.com>
+Cc: linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: clock: milbeaut: Drop providers and consumers from example
+Date: Mon, 20 May 2024 17:26:45 -0500
+Message-ID: <20240520222646.1741958-1-robh@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240515185103.20256-5-ddrokosov@salutedevices.com>
+Content-Transfer-Encoding: 8bit
 
+Convention for examples is to only show what's covered by the binding,
+so drop the consumer "socionext,milbeaut-usio-uart" and input clock
+provider "fixed-clock" from the example. "socionext,milbeaut-usio-uart"
+is also not documented by a schema which caused a warning.
 
-On Wed, 15 May 2024 21:47:27 +0300, Dmitry Rokosov wrote:
-> The 'sys_pll' input is an optional clock that can be used to generate
-> 'sys_pll_div16', which serves as one of the sources for the GEN clock.
-> 
-> Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
-> ---
->  .../bindings/clock/amlogic,a1-peripherals-clkc.yaml      | 9 +++++++--
->  include/dt-bindings/clock/amlogic,a1-peripherals-clkc.h  | 1 +
->  2 files changed, 8 insertions(+), 2 deletions(-)
-> 
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ .../bindings/clock/milbeaut-clock.yaml        | 29 +------------------
+ 1 file changed, 1 insertion(+), 28 deletions(-)
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+diff --git a/Documentation/devicetree/bindings/clock/milbeaut-clock.yaml b/Documentation/devicetree/bindings/clock/milbeaut-clock.yaml
+index 0af1c569eb32..d786f1e2d007 100644
+--- a/Documentation/devicetree/bindings/clock/milbeaut-clock.yaml
++++ b/Documentation/devicetree/bindings/clock/milbeaut-clock.yaml
+@@ -40,38 +40,11 @@ required:
+ additionalProperties: false
+ 
+ examples:
+-  # Clock controller node:
+   - |
+-    m10v-clk-ctrl@1d021000 {
++    clock-controller@1d021000 {
+         compatible = "socionext,milbeaut-m10v-ccu";
+         reg = <0x1d021000 0x4000>;
+         #clock-cells = <1>;
+         clocks = <&clki40mhz>;
+     };
+-
+-  # Required an external clock for Clock controller node:
+-  - |
+-    clocks {
+-        clki40mhz: clki40mhz {
+-            compatible = "fixed-clock";
+-            #clock-cells = <0>;
+-            clock-frequency = <40000000>;
+-        };
+-        /* other clocks */
+-    };
+-
+-  # The clock consumer shall specify the desired clock-output of the clock
+-  # controller as below by specifying output-id in its "clk" phandle cell.
+-  # 2: uart
+-  # 4: 32-bit timer
+-  # 7: UHS-I/II
+-  - |
+-    serial@1e700010 {
+-        compatible = "socionext,milbeaut-usio-uart";
+-        reg = <0x1e700010 0x10>;
+-        interrupts = <0 141 0x4>, <0 149 0x4>;
+-        interrupt-names = "rx", "tx";
+-        clocks = <&clk 2>;
+-    };
+-
+ ...
+-- 
+2.43.0
 
