@@ -1,107 +1,70 @@
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 386F322626;
-	Mon, 20 May 2024 07:29:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD43243AC0;
+	Mon, 20 May 2024 09:47:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716190179; cv=none; b=ojGmHh0zSU+NA7kaud8bQ9qldNwD23uSX4Bowld+kSo0blSeGbzdCgz8zBZZZYjT6me7u99sP8Q9B5IWIPvxahXyTNGJjw2BBMffHHZhk25h70Gxi67L95CxrefszhmtLv0gbsyRzkDsey8F+Lm6sQAWSsOWx+P8sNYJ7KxOBdc=
+	t=1716198436; cv=none; b=B9lcug5Fvje03tM9P3ar1AjnD+zJzV6wRMWDS86w1Roil3rcFam9uyoujp4eaxLnyhEy5O/wAir8Zv3rb3WxTcmrHevNNv7HBDD2cKNtVPgSc+UyvTu+Gio3KQjlV4J0YtyI1Xe8Ek0q/K790SZkfSiDqKeMkLYc7mrhZ4PBlME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716190179; c=relaxed/simple;
-	bh=X8Y9zpe3xHraeXqs1+RHxyAPG/U8FB+IkN2/HUGcAZc=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References; b=gaW18Un/a7ZZbDu5QcMl/086SNpdYIN5Ykc9QZ+J5RVQuWiHD6+whUaG8qgnJUJp19QqO5rGxEVpRKNb1CgAhHgEAxcQC0mLam713R2BIirq8LHQUu3tvk8Td5pxIgNe2vUMkP2ZcMm3c+UJba8/IuMUg9Oc9924axlqcniya98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 4634E1A1A13;
-	Mon, 20 May 2024 09:29:30 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id EE4621A1A0B;
-	Mon, 20 May 2024 09:29:29 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 97D9D181D0F8;
-	Mon, 20 May 2024 15:29:27 +0800 (+08)
-From: Shengjiu Wang <shengjiu.wang@nxp.com>
-To: abelvesa@kernel.org,
-	peng.fan@nxp.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	marex@denx.de,
-	linux-clk@vger.kernel.org,
-	imx@lists.linux.dev,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	p.zabel@pengutronix.de,
-	shengjiu.wang@gmail.com
-Subject: [PATCH v4 4/5] clk: imx: clk-audiomix: Add CLK_SET_RATE_PARENT flags for clocks
-Date: Mon, 20 May 2024 15:09:22 +0800
-Message-Id: <1716188963-16175-5-git-send-email-shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1716188963-16175-1-git-send-email-shengjiu.wang@nxp.com>
-References: <1716188963-16175-1-git-send-email-shengjiu.wang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+	s=arc-20240116; t=1716198436; c=relaxed/simple;
+	bh=z6L9Up/vc/JzAq3WJ8Pd2qq7gNVGuAorYS/WUMcSFAY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=olsmDGFxqlFEuKIGnUA7fHZ/LXDcxKnfzqbPFYTm06zzrO0coLdcQueYRK5wnAScCKme079cTAcHIf/hJHj76xC04cmlYT6VjaibVwTWY1ucHRoIDFzCYFiyr1hjCEeiOjaAXEUZfON64gv3a4LxISC2UXgN+FBv1uN9memhNDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=PQrrz3HH; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="PQrrz3HH"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1716198432;
+	bh=z6L9Up/vc/JzAq3WJ8Pd2qq7gNVGuAorYS/WUMcSFAY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=PQrrz3HHiOaBXYfFFHIL4VebuLhQmXs/VNqmwUVwTwuZ0Sy9laH+LZh4miHRb3XDo
+	 b025OYLzHp/I8cbjnqhWiSg2RmA6n0K4SzhI9NAX9qmnhB5htwc0k7ynC6eC9Slg5d
+	 i5FIPJ9VvSYX4PIplD3T/Df6UG9GL0Z6G7uCgvcpLpQcbUiZ/QvRDVh3ndo5c6vJB+
+	 6fxKoPAv4szsPhbQUwyUGVADLQ4hxPyvU36c1tBsXYkqkiJWCv4z5u555geNQ71HgR
+	 kyyQFWOwAZy62vNNKCw4b+p/lNNybUnrG9feIWBcYfOEMbPTaYB/x3BTc4sXGrZzgs
+	 TYErMXcxJG28A==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id BFAE037820CD;
+	Mon, 20 May 2024 09:47:11 +0000 (UTC)
+Message-ID: <9f11dad7-164d-4bbe-846a-9915c21e5157@collabora.com>
+Date: Mon, 20 May 2024 11:47:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/4] clk: en7523: Add reset-controller support for
+ EN7581 SoC
+To: Lorenzo Bianconi <lorenzo@kernel.org>, linux-clk@vger.kernel.org
+Cc: p.zabel@pengutronix.de, mturquette@baylibre.com, sboyd@kernel.org,
+ lorenzo.bianconi83@gmail.com, conor@kernel.org,
+ linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
+ krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+ devicetree@vger.kernel.org, nbd@nbd.name, john@phrozen.org, dd@embedd.com,
+ catalin.marinas@arm.com, will@kernel.org, upstream@airoha.com
+References: <cover.1715948628.git.lorenzo@kernel.org>
+ <c3792ad7f8b6fabaec42efa4bb429582278aae26.1715948628.git.lorenzo@kernel.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <c3792ad7f8b6fabaec42efa4bb429582278aae26.1715948628.git.lorenzo@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add CLK_SET_RATE_PARENT flags that when the device driver sets the
-child clock rate, parent clock frequency can be refined accordingly.
+Il 17/05/24 14:28, Lorenzo Bianconi ha scritto:
+> Introduce reset API support to EN7581 clock driver.
+> 
+> Tested-by: Zhengping Zhang <zhengping.zhang@airoha.com>
+> Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
 
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
----
- drivers/clk/imx/clk-imx8mp-audiomix.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-diff --git a/drivers/clk/imx/clk-imx8mp-audiomix.c b/drivers/clk/imx/clk-imx8mp-audiomix.c
-index d2eaabe431cd..3d15405cedb8 100644
---- a/drivers/clk/imx/clk-imx8mp-audiomix.c
-+++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
-@@ -326,12 +326,12 @@ static int clk_imx8mp_audiomix_probe(struct platform_device *pdev)
- 	for (i = 0; i < ARRAY_SIZE(sels); i++) {
- 		if (sels[i].num_parents == 1) {
- 			hw = devm_clk_hw_register_gate_parent_data(dev,
--				sels[i].name, &sels[i].parent, 0,
-+				sels[i].name, &sels[i].parent, CLK_SET_RATE_PARENT,
- 				base + sels[i].reg, sels[i].shift, 0, NULL);
- 		} else {
- 			hw = devm_clk_hw_register_mux_parent_data_table(dev,
- 				sels[i].name, sels[i].parents,
--				sels[i].num_parents, 0,
-+				sels[i].num_parents, CLK_SET_RATE_PARENT,
- 				base + sels[i].reg,
- 				sels[i].shift, sels[i].width,
- 				0, NULL, NULL);
-@@ -374,7 +374,8 @@ static int clk_imx8mp_audiomix_probe(struct platform_device *pdev)
- 	clk_hw_data->hws[IMX8MP_CLK_AUDIOMIX_SAI_PLL_BYPASS] = hw;
- 
- 	hw = devm_clk_hw_register_gate(dev, "sai_pll_out", "sai_pll_bypass",
--				       0, base + SAI_PLL_GNRL_CTL, 13,
-+				       CLK_SET_RATE_PARENT,
-+				       base + SAI_PLL_GNRL_CTL, 13,
- 				       0, NULL);
- 	if (IS_ERR(hw)) {
- 		ret = PTR_ERR(hw);
-@@ -383,7 +384,8 @@ static int clk_imx8mp_audiomix_probe(struct platform_device *pdev)
- 	clk_hw_data->hws[IMX8MP_CLK_AUDIOMIX_SAI_PLL_OUT] = hw;
- 
- 	hw = devm_clk_hw_register_fixed_factor(dev, "sai_pll_out_div2",
--					       "sai_pll_out", 0, 1, 2);
-+					       "sai_pll_out",
-+					       CLK_SET_RATE_PARENT, 1, 2);
- 	if (IS_ERR(hw)) {
- 		ret = PTR_ERR(hw);
- 		goto err_clk_register;
--- 
-2.34.1
 
