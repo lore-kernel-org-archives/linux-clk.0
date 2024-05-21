@@ -1,153 +1,168 @@
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C5ED256A;
-	Tue, 21 May 2024 07:41:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDE2A42056;
+	Tue, 21 May 2024 07:48:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716277295; cv=none; b=EvFzVjXabgvQjvKYgcGihKQzAdbuTi8492Au87MxqFg7BUpQiKhdKgTOO32t90c84lgs1w5UguAiSnji7nTEgLx3c96iVbffKcAq3ONcPM4Iq9Vp+XFZy0QqhdJif2Tz3dT/kD5IotsQp4S2bf2o6Ybpz6IcrVmDEBfdxfAddlM=
+	t=1716277689; cv=none; b=KLLyFZq/jwgvTb2zbSizxFzCajYDzfOm9ktIecPxXIhJoCS+fOqQ5SX1laYYspGQWLDmG6b+1K8NrDfZvMXVZct94AS6tiOEWu4tjtel42Nx5A4SHQGo96JDiUaAf8vhg+6Uxn2vQTT2yo1eN+SZTjSEj2oeZCO6tlLXeeT1Jvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716277295; c=relaxed/simple;
-	bh=sQGLxa8ogX8RYZzuIg3igjIdlDpi7EPN50nm5hGFykw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EHNRS0VbNtkC9gzLBOiDY4htvo0Mvisd1/Ma7gv4sd0laIkysIySX2ebuDebqsLYOUIzbkfZeckxeZkQJoTkTKnM7WOzWTIcM51d0oeUGBRgPsrfWf6dS+6T5Y/k0BsLj9N0imuOmlpvL0l/k8valF4u8nCjsPv6gTXqVgd70C4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-61816fc256dso34082977b3.0;
-        Tue, 21 May 2024 00:41:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716277291; x=1716882091;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WETFSWDeBrd8hie/jL0FRiOzrF4PlBR3z9DNDu6qHzE=;
-        b=NzXOGItKNwuea+/+Tx+c9QHL4w3WMhoKgCDhoDgZS5pNrisCiwJfO+nwsfFwk32iqh
-         RJ2No4X+xQ03kYnNp34TUD5jXp5YNP0Y/sJ4N9Qvh1RtDGvZHJqykJDYituAPR291zg4
-         s3OwQcIac+wxy7OUOq6kekB/vqvyK4q+RrMe9ODORqkPfU5vRF3UX7H33CDzSgQQryzB
-         0/dbz4C9Jz1/iJGyBBvtJLruJdggVJK49EI8Dqv447nZetmu/zAi0V4s0mnvnFZLtWX4
-         fh1OhqYRQuJP89INEZGewJdGcJcKM4MHn2/mTPqZkgOAGn6eztFhFqm+ibN756fSiNkm
-         3Kvg==
-X-Forwarded-Encrypted: i=1; AJvYcCUitpllR0WMFEV48tBzT3Dz4fkXOwVl1rWIJe9PrBMqCuc5NOOoHOAlK3nMlzuGCN7UYWw72LlukEVVKmvKDNM+CLs2md3oT3QId4bC9HCUALjLgxL6L/6lJM0Ec1G42H3hm4asnZWmDK3OtZ2isNv+8JRwGVTZvNxCY6Gwq99nZ6H9LRaMwLNavKFVv76fEPA3NON/tj4hhA7lS1JZZ10wHV1JaCud7NDRQI8TeoNdQLxniCds7nBKakGDTVHF1vHedu8HVIbyA1kxG6B9pWhSPdfNMIgN2uzNsEifvL3GbeatSe+IfhtyRdBuA+wEmQMmvl3T4HxWntHqd1hwTN5j9qL4l+8lqxxJkPzA32QylEWyU2vCfE0=
-X-Gm-Message-State: AOJu0YwD+N3/mY6UTJ74Y/rpGzWRKs0YrrtJxenVHhWN29FGeL7MYcVx
-	1e3M7ajXVD580sX333Uk0AAqmY57AW3d79Fs/w9QgnkfqT9ubfMiYhysG/bN
-X-Google-Smtp-Source: AGHT+IGftlXaBmin9/8SVBcXlvn4iHcTs6DhlgBwChGLMxTccq7qrPkzijral7e9b9QrvepOUqlBIQ==
-X-Received: by 2002:a81:7b09:0:b0:618:b08:2ab6 with SMTP id 00721157ae682-627b5c795f7mr37818117b3.47.1716277290360;
-        Tue, 21 May 2024 00:41:30 -0700 (PDT)
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com. [209.85.219.176])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6209e3792f0sm53026447b3.123.2024.05.21.00.41.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 21 May 2024 00:41:29 -0700 (PDT)
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-dee9943a293so3333622276.0;
-        Tue, 21 May 2024 00:41:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUaR4ygibIAFqqaP3i98l+aX47/ywwBtnzyjST6haD+R5cmAqJJqK3DoRShPs+2O9hrPjgVg6btjOCouHTLAUr4sCcLAqdbCLko5DNOQj7xkOnQAE1mX70RoymksFWgrWBkqQupCdBwea4ic/+WGUsWdWb65dLIW/PD+e6fAZVUQHFQ5q6+KAUYGzqyQgGH3PnXGlRddWb73LbGkDj0p+urQeSziE7Nm8kfG053huC+kASso7oT8Bq+qVCFknEadUnzZD3K21Vvl/OgHB6JqlVBpF32y7T7RoJMzxu0rHHiuTNjQRLBcM4xbqIEPQiHPJc9cLHIEnUL0wliTOTyyxwfPYRA7aMtEJzbUNuuquim1gvkEeZAlSk=
-X-Received: by 2002:a05:6902:220c:b0:de8:a770:4812 with SMTP id
- 3f1490d57ef6-df4a41d6187mr6078081276.40.1716277288715; Tue, 21 May 2024
- 00:41:28 -0700 (PDT)
+	s=arc-20240116; t=1716277689; c=relaxed/simple;
+	bh=gxLCGJEZuzZ7JbeIMv/L4mu3/DeF9NXhElar8zGdsoc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hDjwVvYL1sa3X00yFwROd/23mhSvQn3QwiRg/5NjWWE++8OoicE+zILmVpqqN61qnxfIbEMPFhPATvVBrcteKVQDEk6TjbtLtc2OtGsEEI6rH39TJH86lvZtzXdxHtxCd1gVvupOBB6u1DTzFF+jcd78dsC0EJ/JSbkP4cpPRKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RAn2QiVf; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RAn2QiVf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 736D2C32782;
+	Tue, 21 May 2024 07:48:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716277688;
+	bh=gxLCGJEZuzZ7JbeIMv/L4mu3/DeF9NXhElar8zGdsoc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=RAn2QiVfHwTDDzyUjDxKdH13uu5Egupje0I/cobwJnMZZjZR3umf2HpMhaXOj2lOD
+	 lg1wXl187uyg9rOYZKIOHrFyIaFbehZIRL7s1PnRhouWN2T8dipEpG154auNUkcAeS
+	 I/dTwtzCOwjurkKt8p/uWEVIi5zOtkkVm/H2lwwUtDynbrE5tzhv+B0n23ow6GzF4B
+	 zFrMjQnCtOzVoJRoP9aWNWTiXDJJcgQuYSaQE2IwoJGG11sclQlrd7CsaaJxpTFP4R
+	 bkspNr+eDmLKYLxcflHaaQT0TQpJfAz70obZxMDDbvd7UM4FX/q1Da4BCsOS3SbA57
+	 dr/OPhApceJjw==
+Message-ID: <473dbd64-5479-47e0-9e5f-b0f623456b38@kernel.org>
+Date: Tue, 21 May 2024 09:47:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1712207606.git.ysato@users.sourceforge.jp> <0a30dbe6d096c38d612279349293162a2ccca149.1712207606.git.ysato@users.sourceforge.jp>
-In-Reply-To: <0a30dbe6d096c38d612279349293162a2ccca149.1712207606.git.ysato@users.sourceforge.jp>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 21 May 2024 09:41:17 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUQ4u2yiDbEobVqD5y_MtU+XU19cx_kWT66yv1jGZMk6Q@mail.gmail.com>
-Message-ID: <CAMuHMdUQ4u2yiDbEobVqD5y_MtU+XU19cx_kWT66yv1jGZMk6Q@mail.gmail.com>
-Subject: Re: [RESEND v7 15/37] clk: renesas: Add SH7750/7751 CPG Driver
-To: Yoshinori Sato <ysato@users.sourceforge.jp>
-Cc: linux-sh@vger.kernel.org, Damien Le Moal <dlemoal@kernel.org>, 
-	Niklas Cassel <cassel@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Thomas Gleixner <tglx@linutronix.de>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
-	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
-	Lee Jones <lee@kernel.org>, Helge Deller <deller@gmx.de>, 
-	Heiko Stuebner <heiko.stuebner@cherry.de>, Shawn Guo <shawnguo@kernel.org>, 
-	Sebastian Reichel <sre@kernel.org>, Chris Morgan <macromorgan@hotmail.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
-	David Rientjes <rientjes@google.com>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
-	Vlastimil Babka <vbabka@suse.cz>, Baoquan He <bhe@redhat.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Guenter Roeck <linux@roeck-us.net>, 
-	Kefeng Wang <wangkefeng.wang@huawei.com>, Stephen Rothwell <sfr@canb.auug.org.au>, 
-	Javier Martinez Canillas <javierm@redhat.com>, Guo Ren <guoren@kernel.org>, 
-	Azeem Shaikh <azeemshaikh38@gmail.com>, Max Filippov <jcmvbkbc@gmail.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Jacky Huang <ychuang3@nuvoton.com>, 
-	Herve Codina <herve.codina@bootlin.com>, 
-	Manikanta Guntupalli <manikanta.guntupalli@amd.com>, Anup Patel <apatel@ventanamicro.com>, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
-	Sam Ravnborg <sam@ravnborg.org>, Sergey Shtylyov <s.shtylyov@omp.ru>, 
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-ide@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-pci@vger.kernel.org, 
-	linux-serial@vger.kernel.org, linux-fbdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 03/13] dt-bindings: a2b: Analog Devices AD24xx devices
+To: =?UTF-8?Q?Alvin_=C5=A0ipraga?= <ALSI@bang-olufsen.dk>
+Cc: =?UTF-8?Q?Alvin_=C5=A0ipraga?= <alvin@pqrs.dk>,
+ Mark Brown <broonie@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Liam Girdwood <lgirdwood@gmail.com>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+ Saravana Kannan <saravanak@google.com>,
+ Emil Abildgaard Svendsen <EMAS@bang-olufsen.dk>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>,
+ "linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
+References: <20240517-a2b-v1-0-b8647554c67b@bang-olufsen.dk>
+ <20240517-a2b-v1-3-b8647554c67b@bang-olufsen.dk>
+ <f1605873-c36c-4e61-8076-13a7094dc13b@kernel.org>
+ <of6lnkarmtgxg7mhi7ofkfu6obhohkl3gpfycctpyty5dhx4qx@2nxwt3btybdi>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <of6lnkarmtgxg7mhi7ofkfu6obhohkl3gpfycctpyty5dhx4qx@2nxwt3btybdi>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Sato-san,
+On 21/05/2024 09:24, Alvin Šipraga wrote:
 
-On Thu, Apr 4, 2024 at 7:15=E2=80=AFAM Yoshinori Sato
-<ysato@users.sourceforge.jp> wrote:
-> Renesas SH7750 and SH7751 series CPG driver.
-> This driver supported frequency control and clock gating.
->
-> Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
+>>> +
+>>> +required:
+>>> +  - compatible
+>>> +
+>>> +unevaluatedProperties: false
+>>
+>> Sorry, but not. No resources, nothing here. Do not create bindings just
+>> to instantiate drivers.
+> 
+> Do you mean that there is no need to introduce a binding for this codec
+> if it has the same bindings as dai-common.yaml?
 
-Thanks for the update!
+No, I said you do not have absolutely any resources here, so your
+binding is empty. There is no need for such binding. You just want to
+treat DT as way to instantiate drivers, which is a no-go.
 
-As you plan to send a v8 soon, I'm sending you a comment from the
-(incomplete) review I started a while ago...
+> 
+> Basically that is the case, but #sound-dai-cells should be <0>. Is that
+> not enough?
+> 
+> I am OK to just drop the binding if you think so, but I would think that
+> the compatible string should be somewhere in the bindings. Could you
+> explain a little more what you mean?
 
-> --- /dev/null
-> +++ b/drivers/clk/renesas/clk-sh7750.c
+Why do you need compatible? Which piece of hardware, with its own
+resources, is being described here?
 
-> +static int register_pll(struct device_node *node, struct cpg_priv *cpg)
-> +{
-> +       const char *clk_name =3D node->name;
-> +       const char *parent_name;
-> +       struct clk_init_data init =3D {
-> +               .name =3D PLLOUT,
-> +               .ops =3D &pll_ops,
-> +               .flags =3D 0,
-> +               .num_parents =3D 1,
-> +       };
-> +       int ret;
-> +
-> +       parent_name =3D of_clk_get_parent_name(node, 0);
-> +       init.parent_names =3D &parent_name;
-> +       cpg->hw.init =3D &init;
-> +
-> +       ret =3D of_clk_hw_register(node, &cpg->hw);
-> +       if (ret < 0)
-> +               pr_err("%pOF: failed to add provider %s (%d)\n",
+Just put dai-cells in parent node.
 
-I think you retained the wrong error message?
-"%s: failed to register %s pll clock (%d)\n" sounds more suitable to me.
 
-> +                      node, clk_name, ret);
-> +       return ret;
-> +}
+...
 
-Gr{oetje,eeting}s,
 
-                        Geert
+>>> +
+>>> +examples:
+>>> +  - |
+>>> +    sync_clk: sync-clock {
+>>
+>> Drop, not related.
+> 
+> If the clock is required (as it is) then I have to reference some
+> phandle in the example, 
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+Why?
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+> else the example will fail the check (missing
+> required property 'clocks'). That's why I put it here. Please advise.
+
+Let me answer indirectly: do you see any binding doing this? No. There
+is almost none, so this should be a hint that it is not needed.
+
+
+
+Best regards,
+Krzysztof
+
