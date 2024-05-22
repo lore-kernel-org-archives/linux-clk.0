@@ -1,154 +1,132 @@
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-sh.amlogic.com (unknown [58.32.228.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CD7F74E3D;
-	Wed, 22 May 2024 06:53:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA9FA8063B;
+	Wed, 22 May 2024 08:27:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=58.32.228.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716360813; cv=none; b=sYhT41268BMXTp6JJ+XP8/0BzFSjENb8DhhojMq/50BcZxlI7sPqxcZ3rBW7fSnxEIpKMvaT/qryyb+k1BPotgNwdR6ZJ3zyREB5NbhhAcw3MjR0AsIIxUmahFePlxspnp4C4Ld5k1tm6GPg4TAk9vXg+VpfmQk5+T1CzmIU0lw=
+	t=1716366461; cv=none; b=T9LGg9YG7pjGouUcZ+RK4X7Yi57vyZuJO+r3+vaJGpEJTmdK+797lEFiWF1U2ZjOPTFl3e4zETNiKCvBwV3rTkyRiMIF1cVpMIIPwFd66ywgTn9HvZU53nGp7tvrSnF6qROROXwHkZ9ezkLtWIo7p0bsFSkKTkk8Uq9EBvlBmxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716360813; c=relaxed/simple;
-	bh=0mAkOOhMcbnebMfj3VoT6zoaOWdTvUepTjv2NCjvS8w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=e+12mBVH6hbR+/Vtnf+o97DLfkM4sjC38cWkiEdhsRxvRANLqc09aaOihb/rvYVxRLC8kHFiRTTkfcPpEGl4qbXZ4K9KVL0XchMv54K53Yf/gv+HGQf983VVoQ4N9ghjppDxMnJK9rjC1pbJK3Cif2n6XtgiQO280i4tGiXs2/I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=07PPa+uj; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="07PPa+uj"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:Reply-To:MIME-Version:Date:
-	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
-	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
-	In-Reply-To:References; bh=wCsD+31ajuIXtxvWN+GeqHb82CwWDjQT/JUQKKBx8cc=;
-	t=1716360811; x=1716792811; b=07PPa+ujrpvD6UaYCylsz8vC/xdLUMQjLuVopZkB5hEqOgn
-	XHiDqMzUz+nlVJcuNaSGP1NAPBPJc8HfrVPcrO6ZLEWNi8JGK8Lx97/4f6rEXoWzbAgF91Y6+Ssiq
-	Gyt3t2EKaNWiowdWYkq68X75eAbX0CZQunn3npGv4MjC5EmmojfFdbh79NuwYnudqbFUwOduUwFV2
-	k5qzSbCN4es2XM/X/KpmxOSsq1l3dc4SYeo1gyzOm8DM4vl+1WhWuHhQelM84dnp4lQXeL9pPwuVU
-	+/DOfhgjywGD6tT1Mda5Yl+c1oA188CuLcIX3uSnuG39rOt6lom9O6PuYjJnH/CA==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1s9fqh-0008O2-FW; Wed, 22 May 2024 08:53:19 +0200
-Message-ID: <44151fe7-1822-4b95-8981-9a1f1884d662@leemhuis.info>
-Date: Wed, 22 May 2024 08:53:18 +0200
+	s=arc-20240116; t=1716366461; c=relaxed/simple;
+	bh=4SLPJsqT08LVrwDTgJMLvNXsh0vWszWkori5CoGMTa4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=A2Y3Ra9e6UgY3DU/QjKCmbMhbe1STKEPWwZSuYIaHf8OnEQdEJv6Vh7L7a5XfeVctN3AWhyeFm34nskg+cDpaCRIjimY25lLuyaqrycugIGHjXQdBS+X341Ay+0ArlHChexJ3wA3P+zudDmLSBkTf9En+W69LS2igtWAauKXi5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; arc=none smtp.client-ip=58.32.228.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
+Received: from droid01-cd.amlogic.com (10.98.11.200) by mail-sh.amlogic.com
+ (10.18.11.5) with Microsoft SMTP Server id 15.1.2507.6; Wed, 22 May 2024
+ 16:27:30 +0800
+From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+To: <linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+CC: Neil Armstrong <neil.armstrong@linaro.org>, Jerome Brunet
+	<jbrunet@baylibre.com>, Michael Turquette <mturquette@baylibre.com>, "Stephen
+ Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
+	Kevin Hilman <khilman@baylibre.com>, Xianwei Zhao <xianwei.zhao@amlogic.com>
+Subject: [PATCH v9 0/5] Add C3 SoC PLLs and Peripheral clock
+Date: Wed, 22 May 2024 16:27:22 +0800
+Message-ID: <20240522082727.3029656-1-xianwei.zhao@amlogic.com>
+X-Mailer: git-send-email 2.37.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
-Subject: Re: [PATCH] clkdev: report over-sized strings when creating clkdev
- entries
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>,
- Guenter Roeck <linux@roeck-us.net>
-Cc: linux-arm-kernel@lists.infradead.org,
- Duanqiang Wen <duanqiangwen@net-swift.com>, mturquette@baylibre.com,
- sboyd@kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- Linux kernel regressions list <regressions@lists.linux.dev>
-References: <E1rl62V-004UFh-Te@rmk-PC.armlinux.org.uk>
- <7eda7621-0dde-4153-89e4-172e4c095d01@roeck-us.net>
- <ZkfYqj+OcAxd9O2t@shell.armlinux.org.uk>
- <4ea9cc83-c7ca-47b8-8d43-dab16193108f@roeck-us.net>
- <ZkfqKMqkUc/Sr7U2@shell.armlinux.org.uk>
- <646bd149-f29a-4c91-ab00-4f6d2fce23fd@roeck-us.net>
- <ZkhSOvkaAwsTe7Dm@shell.armlinux.org.uk>
-From: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-In-Reply-To: <ZkhSOvkaAwsTe7Dm@shell.armlinux.org.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1716360811;6e228e67;
-X-HE-SMSGID: 1s9fqh-0008O2-FW
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-[CCing the regression list, as it should be in the loop for regressions:
-https://docs.kernel.org/admin-guide/reporting-regressions.html]
+The patchset adds support for the peripheral and PLL clock controller
+found on the Amlogic C3 SoC family, such as C302X or C308L.
 
-On 18.05.24 09:01, Russell King (Oracle) wrote:
-> On Fri, May 17, 2024 at 08:24:19PM -0700, Guenter Roeck wrote:
->> On 5/17/24 16:37, Russell King (Oracle) wrote:
->>> On Fri, May 17, 2024 at 04:34:06PM -0700, Guenter Roeck wrote:
->>>> On 5/17/24 15:22, Russell King (Oracle) wrote:
->>>>> On Fri, May 17, 2024 at 03:09:12PM -0700, Guenter Roeck wrote:
->>>>>> On Fri, Mar 15, 2024 at 11:47:55AM +0000, Russell King (Oracle) wrote:
->>>>>>> Report an error when an attempt to register a clkdev entry results in a
->>>>>>> truncated string so the problem can be easily spotted.
->>>>>>>
->>>>>>> Reported by: Duanqiang Wen <duanqiangwen@net-swift.com>
->>>>>>> Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
->>>>>>> Reviewed-by: Stephen Boyd <sboyd@kernel.org>
->>>>>>
->>>>>> With this patch in the mainline kernel, I get
->>>>>>
->>>>>> 10000000.clock-controller:corepll: device ID is greater than 24
->>>>>> sifive-clk-prci 10000000.clock-controller: Failed to register clkdev for corepll: -12
->>>>>> sifive-clk-prci 10000000.clock-controller: could not register clocks: -12
->>>>>> sifive-clk-prci 10000000.clock-controller: probe with driver sifive-clk-prci failed with error -12
->>>>>> ...
->>>>>> platform 10060000.gpio: deferred probe pending: platform: supplier 10000000.clock-controller not ready
->>>>>> platform 10010000.serial: deferred probe pending: platform: supplier 10000000.clock-controller not ready
->>>>>> platform 10011000.serial: deferred probe pending: platform: supplier 10000000.clock-controller not ready
->>>>>> platform 10040000.spi: deferred probe pending: platform: supplier 10000000.clock-controller not ready
->>>>>> platform 10050000.spi: deferred probe pending: platform: supplier 10000000.clock-controller not ready
->>>>>> platform 10090000.ethernet: deferred probe pending: platform: supplier 10000000.clock-controller not ready
->>>>>>
->>>>>> when trying to boot sifive_u in qemu.
->>>>>>
->>>>>> Apparently, "10000000.clock-controller" is too long. Any suggestion on
->>>>>> how to solve the problem ? I guess using dev_name(dev) as dev_id parameter
->>>>>> for clk_hw_register_clkdev() is not or no longer a good idea.
->>>>>> What else should be used instead ?
->>>>>
->>>>> It was *never* a good idea. clkdev uses a fixed buffer size of 20
->>>>> characters including the NUL character, and "10000000.clock-controller"
->>>>> would have been silently truncated to "10000000.clock-cont", and thus
->>>>>
->>>>>                           if (!dev_id || strcmp(p->dev_id, dev_id))
->>>>>
->>>>> would never have matched.
->>>>>
->>>>> We need to think about (a) whether your use of clk_hw_register_clkdev()
->>>>> is still appropriate, and (b) whether we need to increase the size of
->>>>> the strings.
->>>>
->>>> It isn't _my_ use, really. I only run a variety of boot tests with qemu.
->>>> I expect we'll see reports from others trying to boot the mainline kernel
->>>> on real sifive_u hardware or other hardware using the same driver or other
->>>> drivers using dev_name() as dev_id parameter. Coccinelle finds the
->>>> following callers:
->>>
->>> Using dev_name() is not an issue. It's when dev_name() exceeds 19
->>> characters that it becomes an issue (and always has been an issue
->>> due to the truncation.) clk_get(dev, ...) uses dev_name(dev) to match
->>> against its entry in the table.
->>>
->>> As I say, dev_name() itself is not an issue. The length used for the
->>> name is.
->>>
->>
->> Maybe, but the existence of best_dev_name() suggests that this has been seen
->> before and that, as you mentioned, it is not a good idea. Anyway, the patch
->> below fixes the problem for me. I don't know if it is acceptable / correct,
->> so it might serve as guidance for others when fixing the problem for real.
-> 
-> I get the impression that there's a communication problem here, so I'm
-> not going to continue replying. Thanks.
+Some clocks are provided by security zones. These clock accessed
+througth SCMI driver in linux, inlcuding DDR_PLL,DDR_PHY, TOP_PLL,
+USB_PLL, MIPIISP_VOUT, MCLK_PLL, USB_CTRL, ETH_PLL, OSC, SYS_CLK,
+AXI_CLK, CPU_CLK, FIXED_PLL, GP1_PLL, SYS_PLL_DIV16, CPU_CLK_DIV14.
 
-Hmmm. Communication problem aside, this in the end seems to be a
-regression that is caused by a change of yours. Maybe not a major one
-that is making a fuzz about, but still one that would be good to get
-fixed. So who will take care of that? Alternatively:
+Changes since V8 [1]:
+ - Use imply in Kconfig.
+ - Link to v8: https://lore.kernel.org/all/20240430064438.2094701-1-xianwei.zhao@amlogic.com 
 
-Guenter, I assume we could simply fix this by reverting the culprit if
-Linus wanted to?
+Changes since V7 [1]:
+ - Remove included head file not used.
+ - Link to v7: https://lore.kernel.org/all/20240424050928.1997820-1-xianwei.zhao@amlogic.com
 
-Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
---
-Everything you wanna know about Linux kernel regression tracking:
-https://linux-regtracking.leemhuis.info/about/#tldr
-If I did something stupid, please tell me, as explained on that page.
+Changes since V6 [12]:
+ - Add pad src for rtc clock.
+ - Add SCMI clock controller support, move some clock node in SCMI,such as GP1 PLL DDR USB etc.
+ - Fix some spelling mistake.
+ - Use lower case for bindings and update some input clocks desc.
+ - Update some clock comments.
+ - Delete prefix "AML_" for macro definition.
+ - Addd some clock annotation and some clock flag CRITICAL.
+ - Add maximum for regmap_config.
+ - Delete some unused register definition and unused clock inputs. 
+ - Drop patch subject redundant "bindings". Suggested by Krzysztof.
+ - Not reference header file "clk.h" and replace comment. Suggested by Jerome.
+ - Modify description about board in Kconfig file help item. Suggested by Jerome.
+ - Link to v6: https://lore.kernel.org/all/20231106085554.3237511-1-xianwei.zhao@amlogic.com
 
-#regzbot poke
+Changes since V5 [3]:
+ - Fix some typo and modify formart for MARCO. Suggested by Jerome.
+ - Add pad clock for peripheral input clock in bindings.
+ - Add some description for explaining why ddr_dpll_pt_clk and cts_msr_clk are out of tree.
+Changes since V4 [10]:
+ - Change some fw_name of clocks. Suggested by Jerome.
+ - Delete minItem of clocks.
+ - Add CLk_GET_RATE_NOCACHE flags for gp1_pll
+ - Fix some format. and fix width as 8 for mclk_pll_dco.
+ - exchange gate and divder for fclk_50m clock.
+ - add CLK_SET_RATE_PARENT for axi_a_divder & axi_b_divder.
+ - add CLK_IS_CRITICAL for axi_clk
+ - Optimized macro define for pwm clk.
+ - add cts_oscin_clk mux between 24M and 32k
+ - add some missing gate clock, such as ddr_pll.
+Changes since V3 [7]:
+ - Modify Kconfig desc and PLL yaml clk desc.
+ - Fix some format.Suggested by Yixun and Jerome.
+ - Add flag CLK_GET_RATE_NOCACHE for sys_clk.
+ - Optimized macro define for pwm clk.
+ - Use flag CLK_IS_CRITICAL for axi_clk.
+ - Add some description for some clocks.
+ - Use FCLK_50M instead of FCLK_DIV40.
+Changes since V2 [4]:
+ - Modify some format, include clk name & inline, and so on.
+ - Define marco for pwm clock.
+ - Add GP1_PLL clock.
+ - Modify yaml use raw instead of macro.
+Changes since V1 [2]:
+ - Fix errors when check binding by using "make dt_binding_check".
+ - Delete macro definition.
+Xianwei Zhao (5):
+  dt-bindings: clock: add Amlogic C3 PLL clock controller
+  dt-bindings: clock: add Amlogic C3 SCMI clock controller support
+  dt-bindings: clock: add Amlogic C3 peripherals clock controller
+  clk: meson: c3: add support for the C3 SoC PLL clock
+  clk: meson: c3: add c3 clock peripherals controller driver
+
+ .../clock/amlogic,c3-peripherals-clkc.yaml    |  120 +
+ .../bindings/clock/amlogic,c3-pll-clkc.yaml   |   59 +
+ drivers/clk/meson/Kconfig                     |   27 +
+ drivers/clk/meson/Makefile                    |    2 +
+ drivers/clk/meson/c3-peripherals.c            | 2365 +++++++++++++++++
+ drivers/clk/meson/c3-pll.c                    |  746 ++++++
+ .../clock/amlogic,c3-peripherals-clkc.h       |  212 ++
+ .../dt-bindings/clock/amlogic,c3-pll-clkc.h   |   40 +
+ .../dt-bindings/clock/amlogic,c3-scmi-clkc.h  |   27 +
+ 9 files changed, 3598 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/amlogic,c3-peripherals-clkc.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/amlogic,c3-pll-clkc.yaml
+ create mode 100644 drivers/clk/meson/c3-peripherals.c
+ create mode 100644 drivers/clk/meson/c3-pll.c
+ create mode 100644 include/dt-bindings/clock/amlogic,c3-peripherals-clkc.h
+ create mode 100644 include/dt-bindings/clock/amlogic,c3-pll-clkc.h
+ create mode 100644 include/dt-bindings/clock/amlogic,c3-scmi-clkc.h
+
+
+base-commit: ba535bce57e71463a86f8b33a0ea88c26e3a6418
+-- 
+2.39.2
+
