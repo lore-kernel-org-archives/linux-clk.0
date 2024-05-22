@@ -1,245 +1,226 @@
-Received: from unicorn.mansr.com (unicorn.mansr.com [81.2.72.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 490677F46B;
-	Tue, 21 May 2024 13:43:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.2.72.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C7E1C680;
+	Wed, 22 May 2024 02:06:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716298988; cv=none; b=tVMXjhKjIzIzarKsRVNaIW4luU/qaEKOaGgEuRSbVMg5t20akBTvibiMrmLIGg/FTV74WmjHap99eyvoZAdslP3D1FoPZpbmzWu/SwGc/jHkYxA8eNBfgK94qlxLqfPqtUOSYQ98S7JYJ8MeNbRxDFW9XFzgATFty3XQmzjLaks=
+	t=1716343563; cv=none; b=dWKtdBacpue6kEUD+8ACUWU2BeWRihmoAod0g76gwfYLgdbRRc0M8qJGIAf3Em6L0z6j3joM2oxt1WZHLpa52kLHKzocjSECPxoHGGOHoE/imWl7IDBT/uYsnWkfsydajYgTzq/AIfLwjrJRZMv/UzikdrvL9REmCu26ikXUP5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716298988; c=relaxed/simple;
-	bh=zjB8v+NoVOfwtkTTGvRVzO2+JLMrRbv6D0wkhQKyrv0=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=TR2wMQ+K8g/IQNOkiSYHHM4Kb2qIOhWAXVi4eBowQVgsBTzHF4sjUUhGb0fMeV6fknrwmxVOzILQb3KoZ62svVFjWTPuF1PFHkYvIRvsk9EWXemaTgTFALAvyfosDgDTvPEsfCXNavTrZUIJDAm1JQOK06OWWWI/9YrbIhTgAYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mansr.com; spf=pass smtp.mailfrom=mansr.com; arc=none smtp.client-ip=81.2.72.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mansr.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mansr.com
-Received: from raven.mansr.com (raven.mansr.com [IPv6:2001:8b0:ca0d:1::3])
-	by unicorn.mansr.com (Postfix) with ESMTPS id 5E1C915362;
-	Tue, 21 May 2024 14:35:47 +0100 (BST)
-Received: by raven.mansr.com (Postfix, from userid 51770)
-	id 4E7CB219E4D; Tue, 21 May 2024 14:35:47 +0100 (BST)
-From: =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>
-To: Frank Oltmanns <frank@oltmanns.dev>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec
- <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, Guido
- =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>, Purism Kernel Team
- <kernel@puri.sm>, Ondrej
- Jirman <megi@xff.cz>, Neil Armstrong <neil.armstrong@linaro.org>, Jessica
- Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David
- Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Rob Herring
- <robh+dt@kernel.org>, Krzysztof Kozlowski
- <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- stable@vger.kernel.org
-Subject: Re: [PATCH v4 1/5] clk: sunxi-ng: common: Support minimum and
- maximum rate
-In-Reply-To: <20240310-pinephone-pll-fixes-v4-1-46fc80c83637@oltmanns.dev>
-	(Frank Oltmanns's message of "Sun, 10 Mar 2024 14:21:11 +0100")
-References: <20240310-pinephone-pll-fixes-v4-0-46fc80c83637@oltmanns.dev>
-	<20240310-pinephone-pll-fixes-v4-1-46fc80c83637@oltmanns.dev>
-Date: Tue, 21 May 2024 14:35:47 +0100
-Message-ID: <yw1xo78z8ez0.fsf@mansr.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/29.3 (gnu/linux)
+	s=arc-20240116; t=1716343563; c=relaxed/simple;
+	bh=cqKCSGQGjMNfM+jf3RsqKDf/P5FOZraL0UthYMFVnMU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ARDPuhkkua/W148N9kLQBiZLmjhG5zjVM+jGzDoAjyYXcnGO0HBeNYsMDsjIjk1lN4Oml11MpNbqT0idgakw75SmOGAaqhyXk++p6W8k7fJoVobj4DHfMvzYIz/1Z+MP1ctr1KNuZ9gVkiCUz4zze4wdBfzTEj1OnlDMAwiYyC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SZh18nux; arc=none smtp.client-ip=209.85.166.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SZh18nux"
+Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-36c5d26045bso18977795ab.0;
+        Tue, 21 May 2024 19:06:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716343560; x=1716948360; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xnv9v2c0E57wPW+4p8ZhEo1c9rdpxtiAjmB2vfpueB4=;
+        b=SZh18nuxZ8p9faag6txKxy+Jh+J/6SCAkbSixsfgcdKpGOgyJo15gN+eLaBzkxRVFK
+         uihcfyEM//C8Nm/7fQUJIDcaWWOBriwv4G9WQWFkQOizf+BeWSN53s/I+tDBXggF0W8M
+         9N5ZAab2LjqHa2C0zz5iiZ8p66k6vQjXmQk30mLSyx1HZituHYj5VuNyGKPOQ42lGCSP
+         AFRHECRb/VCk/1y1cL3RTREd4aqABGZRdTDwiEjop0NkCxBXxIgo6Am7ulW2ql22TjSQ
+         TuhdWk240hsq1KbBNHEDZRFpGZhMy+HC0NUT2FF6rouN92BlhMSO4VPWtGP0Lz8+h5Jw
+         DCow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716343560; x=1716948360;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xnv9v2c0E57wPW+4p8ZhEo1c9rdpxtiAjmB2vfpueB4=;
+        b=tdjK832r2w9HJGfNLKv1vJFshOwm0ojXzy221D0HUPb3/acwSgykydNUk8FjE8njKl
+         UZsesjFBjROTDT2xoo4kZXfdUDUghJNOdbT42Vv64RuzwDLGsKC87rtJcjitPQHyscO6
+         ruueXezaxYior8essI0bwWPVqL+1Dq4mdWa/3xjGeXXynjF7Jw4J30mSp7wk4o/MzUhy
+         K2EmUlgK45DorbKZZU6zqjIDF66P0u0guCHh02EGvjTYlinr38eN3wrbAl/yc23QwiEs
+         1U+sqw5dD70+J+o/DZGnlChpHRaKffvbNGFd0sKbIRf2uSXezt6aIxeEM8BuhmhkDlHM
+         Ge3g==
+X-Forwarded-Encrypted: i=1; AJvYcCUdCmEigaXvxFR4qXAigYuxyT4tA72ACnUXwBEoRoRNPRUK0rhEqgOERQ7o+zuiRyxbpSGidxZZX2kknCWDuUtVa4HmuilgABng8sIwN8/uGpQ//fNRIdpn1Xe+P3KNB5b/WTu1Au1gLepUYhZ+jbSmEkqfLpizJDy9+g+wBTH86x0ZlQ==
+X-Gm-Message-State: AOJu0Yz2wFMKmRaVuIXoaaBumTFMC1b5SoWhdbV9cTz9oyHtIDNCHCYB
+	Lc2b6lcVAt4AughXslnvAwmPXI2XhhUjMlmiGJNhCyFJqeHitVAPD+TdfiMs9FtWf4LHkgdD5JQ
+	HPhaFDQUTzHoxKSEXBHx3x/ciJqw=
+X-Google-Smtp-Source: AGHT+IGWau/e/rvvgASCHQCUf6H0cfZp5gpvIsVjqT1ymyJTnGmjRGx0xCNX0GDTJQt5yWuYjLGL7jucwJ/sMEV6Jms=
+X-Received: by 2002:a05:6e02:1c02:b0:36c:46bf:4afa with SMTP id
+ e9e14a558f8ab-371f99f5e32mr8121285ab.6.1716343559715; Tue, 21 May 2024
+ 19:05:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+References: <1716188963-16175-1-git-send-email-shengjiu.wang@nxp.com>
+ <1716188963-16175-3-git-send-email-shengjiu.wang@nxp.com> <Zktv3OcDbV1cggP1@lizhi-Precision-Tower-5810>
+In-Reply-To: <Zktv3OcDbV1cggP1@lizhi-Precision-Tower-5810>
+From: Shengjiu Wang <shengjiu.wang@gmail.com>
+Date: Wed, 22 May 2024 10:05:48 +0800
+Message-ID: <CAA+D8AMajQn37bH1qrvuUBoUUowMPPwVztRfkCdg5AR8KC0muQ@mail.gmail.com>
+Subject: Re: [PATCH v4 2/5] clk: imx: clk-audiomix: Add reset controller
+To: Frank Li <Frank.li@nxp.com>
+Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org, peng.fan@nxp.com, 
+	mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org, 
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
+	marex@denx.de, linux-clk@vger.kernel.org, imx@lists.linux.dev, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, p.zabel@pengutronix.de
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Frank Oltmanns <frank@oltmanns.dev> writes:
+On Mon, May 20, 2024 at 11:44=E2=80=AFPM Frank Li <Frank.li@nxp.com> wrote:
+>
+> On Mon, May 20, 2024 at 03:09:20PM +0800, Shengjiu Wang wrote:
+> > Audiomix block control can be a reset controller for
+> > Enhanced Audio Return Channel (EARC), which is one of
+> > modules in this audiomix subsystem.
+> >
+> > The reset controller is supported by the auxiliary device
+> > framework.
+> >
+> > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> > ---
+> >  drivers/clk/imx/Kconfig               |  1 +
+> >  drivers/clk/imx/clk-imx8mp-audiomix.c | 61 +++++++++++++++++++++++++++
+> >  2 files changed, 62 insertions(+)
+> >
+> > diff --git a/drivers/clk/imx/Kconfig b/drivers/clk/imx/Kconfig
+> > index 6da0fba68225..9edfb030bea9 100644
+> > --- a/drivers/clk/imx/Kconfig
+> > +++ b/drivers/clk/imx/Kconfig
+> > @@ -81,6 +81,7 @@ config CLK_IMX8MP
+> >       tristate "IMX8MP CCM Clock Driver"
+> >       depends on ARCH_MXC || COMPILE_TEST
+> >       select MXC_CLK
+> > +     select AUXILIARY_BUS
+> >       help
+> >           Build the driver for i.MX8MP CCM Clock Driver
+> >
+> > diff --git a/drivers/clk/imx/clk-imx8mp-audiomix.c b/drivers/clk/imx/cl=
+k-imx8mp-audiomix.c
+> > index b381d6f784c8..d2eaabe431cd 100644
+> > --- a/drivers/clk/imx/clk-imx8mp-audiomix.c
+> > +++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
+> > @@ -5,6 +5,7 @@
+> >   * Copyright (C) 2022 Marek Vasut <marex@denx.de>
+> >   */
+> >
+> > +#include <linux/auxiliary_bus.h>
+> >  #include <linux/clk-provider.h>
+> >  #include <linux/device.h>
+> >  #include <linux/io.h>
+> > @@ -217,6 +218,62 @@ struct clk_imx8mp_audiomix_priv {
+> >       struct clk_hw_onecell_data clk_data;
+> >  };
+> >
+> > +#if IS_ENABLED(CONFIG_RESET_CONTROLLER)
+> > +
+> > +static void clk_imx8mp_audiomix_reset_unregister_adev(void *_adev)
+> > +{
+> > +     struct auxiliary_device *adev =3D _adev;
+> > +
+> > +     auxiliary_device_delete(adev);
+> > +     auxiliary_device_uninit(adev);
+> > +}
+> > +
+> > +static void clk_imx8mp_audiomix_reset_adev_release(struct device *dev)
+> > +{
+> > +     struct auxiliary_device *adev =3D to_auxiliary_dev(dev);
+> > +
+> > +     kfree(adev);
+> > +}
+> > +
+> > +static int clk_imx8mp_audiomix_reset_controller_register(struct device=
+ *dev,
+> > +                                                      struct clk_imx8m=
+p_audiomix_priv *priv)
+> > +{
+> > +     struct auxiliary_device *adev;
+> > +     int ret;
+> > +
+> > +     adev =3D kzalloc(sizeof(*adev), GFP_KERNEL);
+>
+>
+> You may use scoped free
+>
+>         struct auxiliary_device *adev __free(kfree) =3D kzalloc(sizeof(*a=
+dev), GFP_KERNEL);
 
-> The Allwinner SoC's typically have an upper and lower limit for their
-> clocks' rates. Up until now, support for that has been implemented
-> separately for each clock type.
->
-> Implement that functionality in the sunxi-ng's common part making use of
-> the CCF rate liming capabilities, so that it is available for all clock
-> types.
->
-> Suggested-by: Maxime Ripard <mripard@kernel.org>
-> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
-> Cc: stable@vger.kernel.org
-> ---
->  drivers/clk/sunxi-ng/ccu_common.c | 19 +++++++++++++++++++
->  drivers/clk/sunxi-ng/ccu_common.h |  3 +++
->  2 files changed, 22 insertions(+)
+Ok, will update the code
 
-This just landed in 6.6 stable, and it broke HDMI output on an A20 based
-device, the clocks ending up all wrong as seen in this diff of
-/sys/kernel/debug/clk/clk_summary:
-
-@@ -70,16 +71,14 @@
-           apb1-i2c0                  0       0        0        24000000   =
- 0=20=20=20
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20
-        pll-gpu                       0       0        0        1200000000 =
- 0=20=20=20
--       pll-video1                    3       3        1        159000000  =
- 0=20=20=20
-+       pll-video1                    2       2        1        159000000  =
- 0=20=20=20
-           hdmi                       1       1        0        39750000   =
- 0=20=20=20
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20
-           tcon0-ch1-sclk2            1       1        1        39750000   =
- 0=20=20=20
-              tcon0-ch1-sclk1         1       1        1        39750000   =
- 0=20=20=20
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20
--          pll-video1-2x              1       1        0        318000000  =
- 0=20=20=20
-+          pll-video1-2x              0       0        0        318000000  =
- 0=20=20=20
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20
--             hdmi-tmds               2       2        0        39750000   =
- 0=20=20=20
--                hdmi-ddc             1       1        0        1987500    =
- 0=20=20=20
-        pll-periph-base               2       2        0        1200000000 =
- 0=20=20=20
-           mbus                       1       1        0        300000000  =
- 0=20=20=20
-           pll-periph-sata            0       0        0        100000000  =
- 0=20=20=20
-@@ -199,7 +198,7 @@
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20
-           ace                        0       0        0        384000000  =
- 0=20=20=20
-           ve                         0       0        0        384000000  =
- 0=20=20=20
--       pll-video0                    4       4        2        297000000  =
- 0=20=20=20
-+       pll-video0                    5       5        2        297000000  =
- 0=20=20=20
-           hdmi1                      0       0        0        297000000  =
- 0=20=20=20
-           tcon1-ch1-sclk2            0       0        0        297000000  =
- 0=20=20=20
-              tcon1-ch1-sclk1         0       0        0        297000000  =
- 0=20=20=20
-@@ -222,8 +221,10 @@
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20
-           de-be0                     1       1        1        297000000  =
- 0=20=20=20
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20
--          pll-video0-2x              0       0        0        594000000  =
- 0=20=20=20
-+          pll-video0-2x              1       1        0        594000000  =
- 0=20=20=20
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=20=
-=20=20=20=20=20
-+             hdmi-tmds               2       2        0        594000000  =
- 0=20=20=20
-+                hdmi-ddc             1       1        0        29700000   =
- 0=20=20=20
-        pll-audio-base                0       0        0        1500000    =
- 0=20=20=20
-           pll-audio-8x               0       0        0        3000000    =
- 0=20=20=20
-              i2s2                    0       0        0        3000000    =
- 0=20=20=20
-
-Reverting this commit makes it work again.
-
-> diff --git a/drivers/clk/sunxi-ng/ccu_common.c b/drivers/clk/sunxi-ng/ccu=
-_common.c
-> index 8babce55302f..ac0091b4ce24 100644
-> --- a/drivers/clk/sunxi-ng/ccu_common.c
-> +++ b/drivers/clk/sunxi-ng/ccu_common.c
-> @@ -44,6 +44,16 @@ bool ccu_is_better_rate(struct ccu_common *common,
->  			unsigned long current_rate,
->  			unsigned long best_rate)
->  {
-> +	unsigned long min_rate, max_rate;
-> +
-> +	clk_hw_get_rate_range(&common->hw, &min_rate, &max_rate);
-> +
-> +	if (current_rate > max_rate)
-> +		return false;
-> +
-> +	if (current_rate < min_rate)
-> +		return false;
-> +
->  	if (common->features & CCU_FEATURE_CLOSEST_RATE)
->  		return abs(current_rate - target_rate) < abs(best_rate - target_rate);
+best regards
+Shengjiu Wang
 >
-> @@ -122,6 +132,7 @@ static int sunxi_ccu_probe(struct sunxi_ccu *ccu, str=
-uct device *dev,
+> > +     if (!adev)
+> > +             return -ENOMEM;
+> > +
+> > +     adev->name =3D "reset";
+> > +     adev->dev.parent =3D dev;
+> > +     adev->dev.release =3D clk_imx8mp_audiomix_reset_adev_release;
+> > +
+> > +     ret =3D auxiliary_device_init(adev);
+> > +     if (ret) {
+> > +             kfree(adev);
+> > +             return ret;
+> > +     }
 >
->  	for (i =3D 0; i < desc->hw_clks->num ; i++) {
->  		struct clk_hw *hw =3D desc->hw_clks->hws[i];
-> +		struct ccu_common *common =3D hw_to_ccu_common(hw);
->  		const char *name;
+> if use scoped free,
 >
->  		if (!hw)
-> @@ -136,6 +147,14 @@ static int sunxi_ccu_probe(struct sunxi_ccu *ccu, st=
-ruct device *dev,
->  			pr_err("Couldn't register clock %d - %s\n", i, name);
->  			goto err_clk_unreg;
->  		}
-> +
-> +		if (common->max_rate)
-> +			clk_hw_set_rate_range(hw, common->min_rate,
-> +					      common->max_rate);
-> +		else
-> +			WARN(common->min_rate,
-> +			     "No max_rate, ignoring min_rate of clock %d - %s\n",
-> +			     i, name);
->  	}
+>         if (ret)
+>                 return ret;
 >
->  	ret =3D of_clk_add_hw_provider(node, of_clk_hw_onecell_get,
-> diff --git a/drivers/clk/sunxi-ng/ccu_common.h b/drivers/clk/sunxi-ng/ccu=
-_common.h
-> index 942a72c09437..329734f8cf42 100644
-> --- a/drivers/clk/sunxi-ng/ccu_common.h
-> +++ b/drivers/clk/sunxi-ng/ccu_common.h
-> @@ -31,6 +31,9 @@ struct ccu_common {
->  	u16		lock_reg;
->  	u32		prediv;
+> > +
+> > +     ret =3D auxiliary_device_add(adev);
+> > +     if (ret) {
+> > +             auxiliary_device_uninit(adev);
+> > +             kfree(adev);
+> > +             return ret;
 >
-> +	unsigned long	min_rate;
-> +	unsigned long	max_rate;
-> +
->  	unsigned long	features;
->  	spinlock_t	*lock;
->  	struct clk_hw	hw;
+> the same here.
 >
-> --=20
+> > +     }
+> > +
+> > +     return devm_add_action_or_reset(dev, clk_imx8mp_audiomix_reset_un=
+register_adev, adev);
 >
-> 2.44.0
+> if use scope free
+>         return devm_add_action_or_reset(dev, clk_imx8mp_audiomix_reset_un=
+register_adev, no_free_ptr(adev));
 >
-
---=20
-M=E5ns Rullg=E5rd
+> > +}
+> > +
+> > +#else /* !CONFIG_RESET_CONTROLLER */
+> > +
+> > +static int clk_imx8mp_audiomix_reset_controller_register(struct clk_im=
+x8mp_audiomix_priv *priv)
+> > +{
+> > +     return 0;
+> > +}
+> > +
+> > +#endif /* !CONFIG_RESET_CONTROLLER */
+> > +
+> >  static void clk_imx8mp_audiomix_save_restore(struct device *dev, bool =
+save)
+> >  {
+> >       struct clk_imx8mp_audiomix_priv *priv =3D dev_get_drvdata(dev);
+> > @@ -337,6 +394,10 @@ static int clk_imx8mp_audiomix_probe(struct platfo=
+rm_device *pdev)
+> >       if (ret)
+> >               goto err_clk_register;
+> >
+> > +     ret =3D clk_imx8mp_audiomix_reset_controller_register(dev, priv);
+> > +     if (ret)
+> > +             goto err_clk_register;
+> > +
+> >       pm_runtime_put_sync(dev);
+> >       return 0;
+> >
+> > --
+> > 2.34.1
+> >
