@@ -1,88 +1,133 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from unicorn.mansr.com (unicorn.mansr.com [81.2.72.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 457C76AAD;
-	Thu, 23 May 2024 15:03:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1761D4F602;
+	Thu, 23 May 2024 18:58:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.2.72.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716476631; cv=none; b=qsxJTUyZs3lEQK8VE3QCJyQ8t9g5YrSnxLRBsvw4iKd3Ys3/ClgjKIvN0Kmi2w7M+EpC34xVCMTW50zdYo90xaEAE22iNWVVyCMLtveI+wn2gZfCgnxFj3TIX5cAvHBhJglxE5+yZcm1EqJ9TP8yeZeOHpWw/Q05Y8oMGINCh3s=
+	t=1716490690; cv=none; b=gCpi9SJhTjyMGoA9O8LY0SDlYCRvTdkN4Kuz35CAaFKCvBH+pOjER5N9XzAdDoHotjY6AfmmL+hhcim5hNm9POj1aUnzsgO+x4qRuRuK8fUgvuKrjCxKDG/SkgJjfRfk9+AbmOhF6Oo152p8M8XlDAOY7QfUsVfNOym+sJpYrGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716476631; c=relaxed/simple;
-	bh=N9nB2TabRE0ILucieRrFr8EiEb/dKAQ/M2yQBgPFKY4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=Z87W8GHpVK5Vb9Qt8nD3q0GLVRLtWqgqKRCBpUqTjDUHPBl8VSp0THVKN+dYURbbjst5AlPp6vLUcGHZUFEuDRUWeG75eflg6j/fqFCfmXbGyAPvmigdkbiRQQLLcSVM+jLcUM4bKC0ZA3hCW/NSPxWDwS7dMLCYyRcalUcojHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gW2U8MdR; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gW2U8MdR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92849C32786;
-	Thu, 23 May 2024 15:03:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716476630;
-	bh=N9nB2TabRE0ILucieRrFr8EiEb/dKAQ/M2yQBgPFKY4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=gW2U8MdRupSPlhuIc29ggUoj8CTuq45vPyAXx5ABrUNtyXvTUbQSRF2zpB4eQouNp
-	 GlkNuZ4aBBLWujz1PHNOnhrFaNmZ1Fd69hmHs5ULylOlusqbVi46htoPXgEv1Ytkvc
-	 u6KwMlvcPJk6UfrvRuemSoDHsSYaSs8aTo2y2WN1qNXZtVmojFSlDKmMueuCquFvRn
-	 KtgmZg4QYYUunhZqmq8VDcs/KDde/9YVdwTkSDzEQE1PH7K/GKViOkcFT6Q88rL01g
-	 vtC+SRY9iD3M5CS8wx678JB2jCL4LcGYaSADnP3xUlM2M1jFQAAK9QWtqm+E07sqWc
-	 5p82lad0gqy9Q==
-Date: Thu, 23 May 2024 10:03:49 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: devi priya <quic_devipriy@quicinc.com>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	andersson@kernel.org, konrad.dybcio@linaro.org,
-	mturquette@baylibre.com, sboyd@kernel.org,
-	manivannan.sadhasivam@linaro.org, linux-arm-msm@vger.kernel.org,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH V5 1/6] Add PCIe pipe clock definitions for IPQ9574 SoC.
-Message-ID: <20240523150349.GA118633@bhelgaas>
+	s=arc-20240116; t=1716490690; c=relaxed/simple;
+	bh=QQNdtzoOdLf6SuKfsjdq8VOWrAdYs1aQG2dt+TDRoKM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Ls34WKFO/0TOGc7CjLU+ahs5Si74WilWqfomIzwfg7L8T+sOb/oUvpoI1uZmfTjrGnQDRvqZEySDAlmS86UTESvibwLB/lpGVlaLy9S4bq7otN7j5SiAVWYKd4Aksgj5XtcJSsyyWFn2vGfUPIMFSjV7IL4I5KTJxUP4rURNQjI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mansr.com; spf=pass smtp.mailfrom=mansr.com; arc=none smtp.client-ip=81.2.72.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mansr.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mansr.com
+Received: from raven.mansr.com (raven.mansr.com [IPv6:2001:8b0:ca0d:1::3])
+	by unicorn.mansr.com (Postfix) with ESMTPS id DA6A515364;
+	Thu, 23 May 2024 19:58:00 +0100 (BST)
+Received: by raven.mansr.com (Postfix, from userid 51770)
+	id CACE3219FCA; Thu, 23 May 2024 19:58:00 +0100 (BST)
+From: =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>
+To: Frank Oltmanns <frank@oltmanns.dev>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec
+ <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, Guido
+ =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>, Purism Kernel Team
+ <kernel@puri.sm>, Ondrej
+ Jirman <megi@xff.cz>, Neil Armstrong <neil.armstrong@linaro.org>, Jessica
+ Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
+ <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David
+ Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Rob Herring
+ <robh+dt@kernel.org>, Krzysztof Kozlowski
+ <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ stable@vger.kernel.org
+Subject: Re: [PATCH v4 1/5] clk: sunxi-ng: common: Support minimum and
+ maximum rate
+In-Reply-To: <yw1x4jap90va.fsf@mansr.com> (=?iso-8859-1?Q?=22M=E5ns_Rullg?=
+ =?iso-8859-1?Q?=E5rd=22's?= message of "Wed,
+	22 May 2024 19:07:21 +0100")
+References: <20240310-pinephone-pll-fixes-v4-0-46fc80c83637@oltmanns.dev>
+	<20240310-pinephone-pll-fixes-v4-1-46fc80c83637@oltmanns.dev>
+	<yw1xo78z8ez0.fsf@mansr.com>
+	<c4c1229c-1ed3-4b6e-a53a-e1ace2502ded@oltmanns.dev>
+	<yw1x4jap90va.fsf@mansr.com>
+Date: Thu, 23 May 2024 19:58:00 +0100
+Message-ID: <yw1xo78w73uv.fsf@mansr.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/29.3 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240512082858.1806694-2-quic_devipriy@quicinc.com>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, May 12, 2024 at 01:58:53PM +0530, devi priya wrote:
+M=E5ns Rullg=E5rd <mans@mansr.com> writes:
 
-Please run "git log --oneline include/dt-bindings/clock/qcom,ipq9574-gcc.h"
-and follow the subject line style there:
+> Frank Oltmanns <frank@oltmanns.dev> writes:
+>
+>> Hi M=E5ns,
+>>
+>> 21.05.2024 15:43:10 M=E5ns Rullg=E5rd <mans@mansr.com>:
+>>
+>>> Frank Oltmanns <frank@oltmanns.dev> writes:
+>>>
+>>>> The Allwinner SoC's typically have an upper and lower limit for their
+>>>> clocks' rates. Up until now, support for that has been implemented
+>>>> separately for each clock type.
+>>>>
+>>>> Implement that functionality in the sunxi-ng's common part making use =
+of
+>>>> the CCF rate liming capabilities, so that it is available for all clock
+>>>> types.
+>>>>
+>>>> Suggested-by: Maxime Ripard <mripard@kernel.org>
+>>>> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
+>>>> Cc: stable@vger.kernel.org
+>>>> ---
+>>>> drivers/clk/sunxi-ng/ccu_common.c | 19 +++++++++++++++++++
+>>>> drivers/clk/sunxi-ng/ccu_common.h |=A0 3 +++
+>>>> 2 files changed, 22 insertions(+)
+>>>
+>>> This just landed in 6.6 stable, and it broke HDMI output on an A20 based
+>>> device, the clocks ending up all wrong as seen in this diff of
+>>> /sys/kernel/debug/clk/clk_summary:
 
-  - prefix "dt-bindings: clock: "
-  - no trailing period
-  - perhaps add commit log text if there's anything else useful to put
-    there
+[...]
 
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
-> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
-> Signed-off-by: devi priya <quic_devipriy@quicinc.com>
-> ---
->  Changes in V5:
-> 	- No changes
-> 
->  include/dt-bindings/clock/qcom,ipq9574-gcc.h | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/include/dt-bindings/clock/qcom,ipq9574-gcc.h b/include/dt-bindings/clock/qcom,ipq9574-gcc.h
-> index 08fd3a37acaa..52123c5a09fa 100644
-> --- a/include/dt-bindings/clock/qcom,ipq9574-gcc.h
-> +++ b/include/dt-bindings/clock/qcom,ipq9574-gcc.h
-> @@ -216,4 +216,8 @@
->  #define GCC_CRYPTO_AHB_CLK				207
->  #define GCC_USB0_PIPE_CLK				208
->  #define GCC_USB0_SLEEP_CLK				209
-> +#define GCC_PCIE0_PIPE_CLK				210
-> +#define GCC_PCIE1_PIPE_CLK				211
-> +#define GCC_PCIE2_PIPE_CLK				212
-> +#define GCC_PCIE3_PIPE_CLK				213
->  #endif
-> -- 
-> 2.34.1
-> 
+>>> Reverting this commit makes it work again.
+>>
+>> Thank you for your detailed report!
+>>
+>> I've had a first look at hdmi-tmds and hdmi-ddc, and neither seems to
+>> be calling ccu_is_better_rate() in their determine_rate()
+>> functions. Their parents have the exact same rates in your diff, so,
+>> my current working assumption is that they can't be the cause either.
+>>
+>> I'll have a more detailed look over the weekend. Until then, if anyone
+>> has some ideas where I should have a look next, please share your
+>> thoughts.
+>
+> In case it's relevant, this system doesn't use the HDMI DDC, the
+> physical DDC pins being connected to a different I2C adapter for
+> various reasons.
+>
+> From the clk_summary diff, I see a few things:
+>
+> 1. hdmi-tmds has changed parent from pll-video1-2x to pll-video0-2x.
+> 2. The ratio of hdmi-tmds to its parent has changed from 1/8 to 1.
+> 3. The resulting rate bears no relation to the pixel clock from EDID.
+>
+> I tried kernel 6.9.1 as well, and that doesn't work either.  I'll keep
+> digging and try to narrow it down.
+
+It turns out HDMI output is broken in v6.9 for a different reason.
+However, this commit (b914ec33b391 clk: sunxi-ng: common: Support
+minimum and maximum rate) requires two others as well in order not
+to break things on the A20:
+
+cedb7dd193f6 drm/sun4i: hdmi: Convert encoder to atomic
+9ca6bc246035 drm/sun4i: hdmi: Move mode_set into enable
+
+With those two (the second depends on the first) cherry-picked on top of
+v6.6.31, the HDMI output is working again.  Likewise on v6.8.10.
+
+--=20
+M=E5ns Rullg=E5rd
