@@ -1,329 +1,389 @@
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18856145A19;
-	Thu, 23 May 2024 10:20:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8684A13EFFB;
+	Thu, 23 May 2024 12:14:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716459616; cv=none; b=q2c9O5ZIyDf8/11iabt5Ud06FuBAY6ExkHEmMfHL+OWHh8oUCBJ1CAuYJUUwXiVoa186m+XSFyTY7D+9HOBOMr9fEEL+julmx3ZYb37LLGUyxWokaKSEiUk6NuZYUhac+t9TOF5TwLv83PYijH9MMK84225U6pKYhAMoO8Z/xCI=
+	t=1716466481; cv=none; b=K6MZrSsHTqowEFRkkmoOm4PR9teXnk1SXdB5POgkCt6piB9hrxTU7UaScz4+LsQxYXrI9L6VDJswQ1465Qw+hkZvgU3Xwt3Mx1Qjb4U4xSamBzRx9k6dXvt4ysouKL7ej20ykqeLroxfqcVntpBFKCbWGTarlarMORdkTduS9B0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716459616; c=relaxed/simple;
-	bh=wt/GOZnaThkPLOIPNRYvzJYeVZnDF+uBQkfl7eOAiV0=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References; b=oBqt3tkoGLIsQVV/ImQtL8TRW3wrVJNSSgqTZUvOBZzdnioDL8iIgKcwj0HXK47S7jSADauGHDi+lbKAAUxOXECjL2PaoLz6NzzwJ989po8g055XbOhQAJb7XkZZ7UfFroSpEcminOhAfkZ2UxRyXjpiecFreOKf0kPAw7un8cc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id F07FF1A1269;
-	Thu, 23 May 2024 12:20:06 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 68CB51A11A5;
-	Thu, 23 May 2024 12:20:06 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 97D42183AC0C;
-	Thu, 23 May 2024 18:20:04 +0800 (+08)
-From: Shengjiu Wang <shengjiu.wang@nxp.com>
-To: abelvesa@kernel.org,
-	peng.fan@nxp.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	marex@denx.de,
-	linux-clk@vger.kernel.org,
-	imx@lists.linux.dev,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	p.zabel@pengutronix.de,
-	shengjiu.wang@gmail.com
-Subject: [PATCH v5 3/5] reset: imx-aux: Add i.MX auxiliary reset driver
-Date: Thu, 23 May 2024 17:59:48 +0800
-Message-Id: <1716458390-20120-4-git-send-email-shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1716458390-20120-1-git-send-email-shengjiu.wang@nxp.com>
-References: <1716458390-20120-1-git-send-email-shengjiu.wang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+	s=arc-20240116; t=1716466481; c=relaxed/simple;
+	bh=xZIpJivLu+N2qKC2v6ld7pqDHFIxvM1aDec54BJF83E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=INtuBuQ1hA872vQzxM5L8lsc0gGOJYcU2MtPr6tbfGfoCjvCfi25H+iBSk3TwfcOqFv2NK6f+5efm0LESW2CIWPQQQU5pYaqgoSNPx4BJwvzU4gd6+VbTwrWmYuHv0e4aHuS7ULWZdBl/0xB5BpjxTfqt0Apuwse6PfYr65hnu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A04jUYRV; arc=none smtp.client-ip=209.85.215.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A04jUYRV"
+Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-652fd0bb5e6so2132539a12.0;
+        Thu, 23 May 2024 05:14:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716466479; x=1717071279; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=S3oL0hJH9iQZa7HT6bN1XrGAdgrVd/JpkMuhPZJ+FSA=;
+        b=A04jUYRVfkecPE4juj+E73SWD9wyvOdkjOGW7vaRecaNkDOmHTFhcVjMk+Z0w6E/Be
+         pwcZrDvslDqUjrRhO+SWHqOoGEqjvD9KYiMKIWi2rWuWxg2jqekH3uOGXURXWTc1wzX8
+         wDnOsTOvXWYwKJWDweOdTulQJvIq6RhFfaRRGCLL54r5Xoyvpk1IvJajFMCWFAPMIDvH
+         tcLqoFN/HtFMT0P2GsFMtpmrkbbZYoLCGSb5mWxIgKwX5hoTCiiFSrDDlUtDbT1iTukL
+         F09dqGMo9GOzwiRYEpdRGfWozqWq/8+YLbMo8hwKy1kVUINZt2YLFPQhV5Vecl6k8dmz
+         Yu+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716466479; x=1717071279;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=S3oL0hJH9iQZa7HT6bN1XrGAdgrVd/JpkMuhPZJ+FSA=;
+        b=RtZGkGuPn0nSmyjXLvdf0U1SYH2DjpPDnszcYnwC13FrwbyoLC9tMKK/KyDbuihJul
+         g5BKi4TKao3UYfKi0gkK4zzN7G043sSC3VSbFyolJvJ066bq+XhbtdIqF9BXdB7HxB1H
+         1RjzMUYvR/+kHm9wd3cbymij/ahdmByPl6+8OjfC38MyZHNAPwbKhN+m/1ir2Qk6SSQx
+         EzGJvqYgYvfH7Nj4x4RV5d76INExHyE5r0BOMV81txE7bPNoJjShP6F+F+3P/vHJLgS+
+         PzpjW2O/15f4Oq74aPSHE8MqJqGhk3KvcL5edqaYh+hk3+TYnZpktydoDEcZRmzrZyVU
+         J+Cw==
+X-Forwarded-Encrypted: i=1; AJvYcCUPN1Si9bD6EyK1X11plpwbos4RCqkUY2o82twu1NRm/awE7UkA2RHuAE7PHygH6Nf6Z0+M2Cqu43TkrNXTDcY1Nzamena1+eJMS3X9gUjqLqVj4uAJlGd5vHD4qEKDkaDL+SFBcl1+XEbMnM6BJEBC4XuAEympXMz4xSGdu9FslqKKnILbIC6xr11WZAHOcqd0d8qneOBU54XNYPjuWPLVZNQ=
+X-Gm-Message-State: AOJu0Yw6MxxyHBgAS6atSPTSstktZ96hahiGjlAHNCQgs1SkGKlEfGqh
+	PKuotP1U9hSZRea5r7I1IC/sWnO7WDJmCyLA8piixL60XU7365+CKpLee9yG/VXZtd1zmYxl5Oy
+	QXmxXbVFvGhW/pkpB17KIC/m3dUw=
+X-Google-Smtp-Source: AGHT+IHw9ZZCHWpxNboaptDkdVdr8T+p7xebRwOl0Rjt8m+lhfKDa/C5Cw+D+Bez4Rundj6pGONwEyaKDtN6PK/SNng=
+X-Received: by 2002:a17:90a:c907:b0:2bd:edbe:4e1 with SMTP id
+ 98e67ed59e1d1-2bdedbe0512mr984702a91.31.1716466478558; Thu, 23 May 2024
+ 05:14:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20240219-topic-rb1_gpu-v2-0-2d3d6a0db040@linaro.org> <20240219-topic-rb1_gpu-v2-5-2d3d6a0db040@linaro.org>
+In-Reply-To: <20240219-topic-rb1_gpu-v2-5-2d3d6a0db040@linaro.org>
+From: Connor Abbott <cwabbott0@gmail.com>
+Date: Thu, 23 May 2024 13:14:26 +0100
+Message-ID: <CACu1E7FTN=kwaDJMNiTmFspALzj2+Q-nvsN5ugi=vz4RdUGvGw@mail.gmail.com>
+Subject: Re: [PATCH v2 5/7] drm/msm/adreno: Add A702 support
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>, 
+	Joerg Roedel <joro@8bytes.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Sean Paul <sean@poorly.run>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, linux-arm-kernel@lists.infradead.org, 
+	iommu@lists.linux.dev, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Konrad Dybcio <konradybcio@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add support for the resets on i.MX8MP Audio Block Control module.
-The reset controller is created using the auxiliary device framework
-and set up in the clock driver.
+On Fri, Feb 23, 2024 at 9:28=E2=80=AFPM Konrad Dybcio <konrad.dybcio@linaro=
+.org> wrote:
+>
+> The A702 is a weird mix of 600 and 700 series.. Perhaps even a
+> testing ground for some A7xx features with good ol' A6xx silicon.
+> It's basically A610 that's been beefed up with some new registers
+> and hw features (like APRIV!), that was then cut back in size,
+> memory bus and some other ways.
+>
+> Add support for it, tested with QCM2290 / RB1.
+>
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> ---
+>  drivers/gpu/drm/msm/adreno/a6xx_gpu.c      | 92 ++++++++++++++++++++++++=
++++---
+>  drivers/gpu/drm/msm/adreno/adreno_device.c | 18 ++++++
+>  drivers/gpu/drm/msm/adreno/adreno_gpu.h    | 16 +++++-
+>  3 files changed, 117 insertions(+), 9 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c b/drivers/gpu/drm/msm/=
+adreno/a6xx_gpu.c
+> index c9c55e2ea584..2a491a486ca1 100644
+> --- a/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> +++ b/drivers/gpu/drm/msm/adreno/a6xx_gpu.c
+> @@ -837,6 +837,65 @@ const struct adreno_reglist a690_hwcg[] =3D {
+>         {}
+>  };
+>
+> +const struct adreno_reglist a702_hwcg[] =3D {
+> +       { REG_A6XX_RBBM_CLOCK_CNTL_SP0, 0x22222222 },
+> +       { REG_A6XX_RBBM_CLOCK_CNTL2_SP0, 0x02222220 },
+> +       { REG_A6XX_RBBM_CLOCK_DELAY_SP0, 0x00000081 },
+> +       { REG_A6XX_RBBM_CLOCK_HYST_SP0, 0x0000f3cf },
+> +       { REG_A6XX_RBBM_CLOCK_CNTL_TP0, 0x22222222 },
+> +       { REG_A6XX_RBBM_CLOCK_CNTL2_TP0, 0x22222222 },
+> +       { REG_A6XX_RBBM_CLOCK_CNTL3_TP0, 0x22222222 },
+> +       { REG_A6XX_RBBM_CLOCK_CNTL4_TP0, 0x00022222 },
+> +       { REG_A6XX_RBBM_CLOCK_DELAY_TP0, 0x11111111 },
+> +       { REG_A6XX_RBBM_CLOCK_DELAY2_TP0, 0x11111111 },
+> +       { REG_A6XX_RBBM_CLOCK_DELAY3_TP0, 0x11111111 },
+> +       { REG_A6XX_RBBM_CLOCK_DELAY4_TP0, 0x00011111 },
+> +       { REG_A6XX_RBBM_CLOCK_HYST_TP0, 0x77777777 },
+> +       { REG_A6XX_RBBM_CLOCK_HYST2_TP0, 0x77777777 },
+> +       { REG_A6XX_RBBM_CLOCK_HYST3_TP0, 0x77777777 },
+> +       { REG_A6XX_RBBM_CLOCK_HYST4_TP0, 0x00077777 },
+> +       { REG_A6XX_RBBM_CLOCK_CNTL_RB0, 0x22222222 },
+> +       { REG_A6XX_RBBM_CLOCK_CNTL2_RB0, 0x01202222 },
+> +       { REG_A6XX_RBBM_CLOCK_CNTL_CCU0, 0x00002220 },
+> +       { REG_A6XX_RBBM_CLOCK_HYST_RB_CCU0, 0x00040f00 },
+> +       { REG_A6XX_RBBM_CLOCK_CNTL_RAC, 0x05522022 },
+> +       { REG_A6XX_RBBM_CLOCK_CNTL2_RAC, 0x00005555 },
+> +       { REG_A6XX_RBBM_CLOCK_DELAY_RAC, 0x00000011 },
+> +       { REG_A6XX_RBBM_CLOCK_HYST_RAC, 0x00445044 },
+> +       { REG_A6XX_RBBM_CLOCK_CNTL_TSE_RAS_RBBM, 0x04222222 },
+> +       { REG_A6XX_RBBM_CLOCK_MODE_VFD, 0x00002222 },
+> +       { REG_A6XX_RBBM_CLOCK_MODE_GPC, 0x02222222 },
+> +       { REG_A6XX_RBBM_CLOCK_DELAY_HLSQ_2, 0x00000002 },
+> +       { REG_A6XX_RBBM_CLOCK_MODE_HLSQ, 0x00002222 },
+> +       { REG_A6XX_RBBM_CLOCK_DELAY_TSE_RAS_RBBM, 0x00004000 },
+> +       { REG_A6XX_RBBM_CLOCK_DELAY_VFD, 0x00002222 },
+> +       { REG_A6XX_RBBM_CLOCK_DELAY_GPC, 0x00000200 },
+> +       { REG_A6XX_RBBM_CLOCK_DELAY_HLSQ, 0x00000000 },
+> +       { REG_A6XX_RBBM_CLOCK_HYST_TSE_RAS_RBBM, 0x00000000 },
+> +       { REG_A6XX_RBBM_CLOCK_HYST_VFD, 0x00000000 },
+> +       { REG_A6XX_RBBM_CLOCK_HYST_GPC, 0x04104004 },
+> +       { REG_A6XX_RBBM_CLOCK_HYST_HLSQ, 0x00000000 },
+> +       { REG_A6XX_RBBM_CLOCK_CNTL_UCHE, 0x22222222 },
+> +       { REG_A6XX_RBBM_CLOCK_HYST_UCHE, 0x00000004 },
+> +       { REG_A6XX_RBBM_CLOCK_DELAY_UCHE, 0x00000002 },
+> +       { REG_A6XX_RBBM_ISDB_CNT, 0x00000182 },
+> +       { REG_A6XX_RBBM_RAC_THRESHOLD_CNT, 0x00000000 },
+> +       { REG_A6XX_RBBM_SP_HYST_CNT, 0x00000000 },
+> +       { REG_A6XX_RBBM_CLOCK_CNTL_GMU_GX, 0x00000222 },
+> +       { REG_A6XX_RBBM_CLOCK_DELAY_GMU_GX, 0x00000111 },
+> +       { REG_A6XX_RBBM_CLOCK_HYST_GMU_GX, 0x00000555 },
+> +       { REG_A6XX_RBBM_CLOCK_CNTL_FCHE, 0x00000222 },
+> +       { REG_A6XX_RBBM_CLOCK_DELAY_FCHE, 0x00000000 },
+> +       { REG_A6XX_RBBM_CLOCK_HYST_FCHE, 0x00000000 },
+> +       { REG_A6XX_RBBM_CLOCK_CNTL_GLC, 0x00222222 },
+> +       { REG_A6XX_RBBM_CLOCK_DELAY_GLC, 0x00000000 },
+> +       { REG_A6XX_RBBM_CLOCK_HYST_GLC, 0x00000000 },
+> +       { REG_A6XX_RBBM_CLOCK_CNTL_MHUB, 0x00000002 },
+> +       { REG_A6XX_RBBM_CLOCK_DELAY_MHUB, 0x00000000 },
+> +       { REG_A6XX_RBBM_CLOCK_HYST_MHUB, 0x00000000 },
+> +       {}
+> +};
+> +
+>  const struct adreno_reglist a730_hwcg[] =3D {
+>         { REG_A6XX_RBBM_CLOCK_CNTL_SP0, 0x02222222 },
+>         { REG_A6XX_RBBM_CLOCK_CNTL2_SP0, 0x02022222 },
+> @@ -968,6 +1027,8 @@ static void a6xx_set_hwcg(struct msm_gpu *gpu, bool =
+state)
+>                 clock_cntl_on =3D 0x8aa8aa02;
+>         else if (adreno_is_a610(adreno_gpu))
+>                 clock_cntl_on =3D 0xaaa8aa82;
+> +       else if (adreno_is_a702(adreno_gpu))
+> +               clock_cntl_on =3D 0xaaaaaa82;
+>         else
+>                 clock_cntl_on =3D 0x8aa8aa82;
+>
+> @@ -989,14 +1050,14 @@ static void a6xx_set_hwcg(struct msm_gpu *gpu, boo=
+l state)
+>                 return;
+>
+>         /* Disable SP clock before programming HWCG registers */
+> -       if (!adreno_is_a610(adreno_gpu) && !adreno_is_a7xx(adreno_gpu))
+> +       if (!adreno_is_a610_family(adreno_gpu) && !adreno_is_a7xx(adreno_=
+gpu))
+>                 gmu_rmw(gmu, REG_A6XX_GPU_GMU_GX_SPTPRAC_CLOCK_CONTROL, 1=
+, 0);
+>
+>         for (i =3D 0; (reg =3D &adreno_gpu->info->hwcg[i], reg->offset); =
+i++)
+>                 gpu_write(gpu, reg->offset, state ? reg->value : 0);
+>
+>         /* Enable SP clock */
+> -       if (!adreno_is_a610(adreno_gpu) && !adreno_is_a7xx(adreno_gpu))
+> +       if (!adreno_is_a610_family(adreno_gpu) && !adreno_is_a7xx(adreno_=
+gpu))
+>                 gmu_rmw(gmu, REG_A6XX_GPU_GMU_GX_SPTPRAC_CLOCK_CONTROL, 0=
+, 1);
+>
+>         gpu_write(gpu, REG_A6XX_RBBM_CLOCK_CNTL, state ? clock_cntl_on : =
+0);
+> @@ -1224,7 +1285,7 @@ static void a6xx_set_cp_protect(struct msm_gpu *gpu=
+)
+>         const u32 *regs =3D a6xx_protect;
+>         unsigned i, count, count_max;
+>
+> -       if (adreno_is_a650(adreno_gpu)) {
+> +       if (adreno_is_a650(adreno_gpu) || adreno_is_a702(adreno_gpu)) {
+>                 regs =3D a650_protect;
+>                 count =3D ARRAY_SIZE(a650_protect);
+>                 count_max =3D 48;
+> @@ -1320,6 +1381,12 @@ static void a6xx_calc_ubwc_config(struct adreno_gp=
+u *gpu)
+>                 gpu->ubwc_config.rgb565_predicator =3D 1;
+>                 gpu->ubwc_config.uavflagprd_inv =3D 2;
+>         }
+> +
+> +       if (adreno_is_a702(gpu)) {
+> +               gpu->ubwc_config.highest_bank_bit =3D 14;
+> +               gpu->ubwc_config.min_acc_len =3D 1;
+> +               gpu->ubwc_config.ubwc_mode =3D 2;
 
-The EARC PHY software reset and EARC controller software
-reset can be supported.
+I just noticed, but this is wrong. ubwc_mode is a 1 bit field and what
+this is actually doing is overwriting hbb_lo, making the highest bank
+bit 15 instead of 14.
 
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
----
- drivers/reset/Kconfig         |   8 ++
- drivers/reset/Makefile        |   1 +
- drivers/reset/reset-imx-aux.c | 217 ++++++++++++++++++++++++++++++++++
- 3 files changed, 226 insertions(+)
- create mode 100644 drivers/reset/reset-imx-aux.c
-
-diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index 7112f5932609..38fdf05b326b 100644
---- a/drivers/reset/Kconfig
-+++ b/drivers/reset/Kconfig
-@@ -91,6 +91,14 @@ config RESET_IMX7
- 	help
- 	  This enables the reset controller driver for i.MX7 SoCs.
- 
-+config RESET_IMX_AUX
-+	tristate "i.MX Auxiliary Reset Driver"
-+	depends on CLK_IMX8MP
-+	select AUXILIARY_BUS
-+	default CLK_IMX8MP
-+	help
-+	  This enables the auxiliary reset controller driver for i.MX.
-+
- config RESET_INTEL_GW
- 	bool "Intel Reset Controller Driver"
- 	depends on X86 || COMPILE_TEST
-diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-index fd8b49fa46fc..f078da14c327 100644
---- a/drivers/reset/Makefile
-+++ b/drivers/reset/Makefile
-@@ -14,6 +14,7 @@ obj-$(CONFIG_RESET_BRCMSTB_RESCAL) += reset-brcmstb-rescal.o
- obj-$(CONFIG_RESET_GPIO) += reset-gpio.o
- obj-$(CONFIG_RESET_HSDK) += reset-hsdk.o
- obj-$(CONFIG_RESET_IMX7) += reset-imx7.o
-+obj-$(CONFIG_RESET_IMX_AUX) += reset-imx-aux.o
- obj-$(CONFIG_RESET_INTEL_GW) += reset-intel-gw.o
- obj-$(CONFIG_RESET_K210) += reset-k210.o
- obj-$(CONFIG_RESET_LANTIQ) += reset-lantiq.o
-diff --git a/drivers/reset/reset-imx-aux.c b/drivers/reset/reset-imx-aux.c
-new file mode 100644
-index 000000000000..61c353abc84e
---- /dev/null
-+++ b/drivers/reset/reset-imx-aux.c
-@@ -0,0 +1,217 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Copyright 2024 NXP
-+ */
-+
-+#include <linux/auxiliary_bus.h>
-+#include <linux/device.h>
-+#include <linux/io.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/of_address.h>
-+#include <linux/of_platform.h>
-+#include <linux/platform_device.h>
-+#include <linux/reset-controller.h>
-+
-+/*
-+ * The reset does not support the feature and corresponding
-+ * values are not valid
-+ */
-+#define ASSERT_NONE     BIT(0)
-+#define DEASSERT_NONE   BIT(1)
-+#define STATUS_NONE     BIT(2)
-+
-+/* When set this function is activated by setting(vs clearing) this bit */
-+#define ASSERT_SET      BIT(3)
-+#define DEASSERT_SET    BIT(4)
-+#define STATUS_SET      BIT(5)
-+
-+/* The following are the inverse of the above and are added for consistency */
-+#define ASSERT_CLEAR    (0 << 3)
-+#define DEASSERT_CLEAR  (0 << 4)
-+#define STATUS_CLEAR    (0 << 5)
-+
-+/**
-+ * struct imx_reset_ctrl - reset control structure
-+ * @assert_offset: reset assert control register offset
-+ * @assert_bit: reset assert bit in the reset assert control register
-+ * @deassert_offset: reset deassert control register offset
-+ * @deassert_bit: reset deassert bit in the reset deassert control register
-+ * @status_offset: reset status register offset
-+ * @status_bit: reset status bit in the reset status register
-+ * @flags: reset flag indicating how the (de)assert and status are handled
-+ */
-+struct imx_reset_ctrl {
-+	u32 assert_offset;
-+	u32 assert_bit;
-+	u32 deassert_offset;
-+	u32 deassert_bit;
-+	u32 status_offset;
-+	u32 status_bit;
-+	u32 flags;
-+};
-+
-+struct imx_reset_data {
-+	const struct imx_reset_ctrl *rst_ctrl;
-+	size_t rst_ctrl_num;
-+};
-+
-+struct imx_aux_reset_priv {
-+	struct reset_controller_dev rcdev;
-+	void __iomem *base;
-+	const struct imx_reset_data *data;
-+};
-+
-+static int imx_aux_reset_assert(struct reset_controller_dev *rcdev,
-+				unsigned long id)
-+{
-+	struct imx_aux_reset_priv *priv = container_of(rcdev,
-+					struct imx_aux_reset_priv, rcdev);
-+	const struct imx_reset_data *data = priv->data;
-+	void __iomem *reg_addr = priv->base;
-+	const struct imx_reset_ctrl *ctrl;
-+	unsigned int mask, value, reg;
-+
-+	if (id >= data->rst_ctrl_num)
-+		return -EINVAL;
-+
-+	ctrl = &data->rst_ctrl[id];
-+
-+	/* assert not supported for this reset */
-+	if (ctrl->flags & ASSERT_NONE)
-+		return -EOPNOTSUPP;
-+
-+	mask = BIT(ctrl->assert_bit);
-+	value = (ctrl->flags & ASSERT_SET) ? mask : 0x0;
-+
-+	reg = readl(reg_addr + ctrl->assert_offset);
-+	writel(reg | value, reg_addr + ctrl->assert_offset);
-+
-+	return 0;
-+}
-+
-+static int imx_aux_reset_deassert(struct reset_controller_dev *rcdev,
-+				  unsigned long id)
-+{
-+	struct imx_aux_reset_priv *priv = container_of(rcdev,
-+					struct imx_aux_reset_priv, rcdev);
-+	const struct imx_reset_data *data = priv->data;
-+	void __iomem *reg_addr = priv->base;
-+	const struct imx_reset_ctrl *ctrl;
-+	unsigned int mask, value, reg;
-+
-+	if (id >= data->rst_ctrl_num)
-+		return -EINVAL;
-+
-+	ctrl = &data->rst_ctrl[id];
-+
-+	/* deassert not supported for this reset */
-+	if (ctrl->flags & DEASSERT_NONE)
-+		return -EOPNOTSUPP;
-+
-+	mask = BIT(ctrl->deassert_bit);
-+	value = (ctrl->flags & DEASSERT_SET) ? mask : 0x0;
-+
-+	reg = readl(reg_addr + ctrl->deassert_offset);
-+	writel(reg | value, reg_addr + ctrl->deassert_offset);
-+
-+	return 0;
-+}
-+
-+static int imx_aux_reset_status(struct reset_controller_dev *rcdev,
-+				unsigned long id)
-+{
-+	struct imx_aux_reset_priv *priv = container_of(rcdev,
-+					struct imx_aux_reset_priv, rcdev);
-+	const struct imx_reset_data *data = priv->data;
-+	void __iomem *reg_addr = priv->base;
-+	const struct imx_reset_ctrl *ctrl;
-+	unsigned int reset_state;
-+
-+	if (id >= data->rst_ctrl_num)
-+		return -EINVAL;
-+
-+	ctrl = &data->rst_ctrl[id];
-+
-+	/* status not supported for this reset */
-+	if (ctrl->flags & STATUS_NONE)
-+		return -EOPNOTSUPP;
-+
-+	reset_state = readl(reg_addr + ctrl->status_offset);
-+
-+	return !(reset_state & BIT(ctrl->status_bit)) ==
-+		!(ctrl->flags & STATUS_SET);
-+}
-+
-+static const struct reset_control_ops imx_aux_reset_ops = {
-+	.assert   = imx_aux_reset_assert,
-+	.deassert = imx_aux_reset_deassert,
-+	.status	  = imx_aux_reset_status,
-+};
-+
-+static int imx_aux_reset_probe(struct auxiliary_device *adev,
-+			       const struct auxiliary_device_id *id)
-+{
-+	struct imx_reset_data *data = (struct imx_reset_data *)(id->driver_data);
-+	struct imx_aux_reset_priv *priv;
-+	struct device *dev = &adev->dev;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->rcdev.owner     = THIS_MODULE;
-+	priv->rcdev.nr_resets = data->rst_ctrl_num;
-+	priv->rcdev.ops       = &imx_aux_reset_ops;
-+	priv->rcdev.of_node   = dev->parent->of_node;
-+	priv->rcdev.dev	      = dev;
-+	priv->rcdev.of_reset_n_cells = 1;
-+	priv->base            = of_iomap(dev->parent->of_node, 0);
-+	priv->data            = data;
-+
-+	return devm_reset_controller_register(dev, &priv->rcdev);
-+}
-+
-+#define EARC  0x200
-+
-+static const struct imx_reset_ctrl imx8mp_audiomix_rst_ctrl[] = {
-+	{
-+		.assert_offset = EARC,
-+		.assert_bit = 0,
-+		.deassert_offset = EARC,
-+		.deassert_bit = 0,
-+		.flags  = ASSERT_CLEAR | DEASSERT_SET | STATUS_NONE,
-+	},
-+	{
-+		.assert_offset = EARC,
-+		.assert_bit = 1,
-+		.deassert_offset = EARC,
-+		.deassert_bit = 1,
-+		.flags  = ASSERT_CLEAR | DEASSERT_SET | STATUS_NONE,
-+	},
-+};
-+
-+static const struct imx_reset_data imx8mp_audiomix_rst_data = {
-+	.rst_ctrl = imx8mp_audiomix_rst_ctrl,
-+	.rst_ctrl_num = ARRAY_SIZE(imx8mp_audiomix_rst_ctrl),
-+};
-+
-+static const struct auxiliary_device_id imx_aux_reset_ids[] = {
-+	{
-+		.name = "clk_imx8mp_audiomix.reset",
-+		.driver_data = (kernel_ulong_t)&imx8mp_audiomix_rst_data,
-+	},
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(auxiliary, imx_aux_reset_ids);
-+
-+static struct auxiliary_driver imx_aux_reset_driver = {
-+	.probe		= imx_aux_reset_probe,
-+	.id_table	= imx_aux_reset_ids,
-+};
-+
-+module_auxiliary_driver(imx_aux_reset_driver);
-+
-+MODULE_AUTHOR("Shengjiu Wang <shengjiu.wang@nxp.com>");
-+MODULE_DESCRIPTION("Freescale i.MX auxiliary reset driver");
-+MODULE_LICENSE("GPL");
--- 
-2.34.1
-
+> +       }
+>  }
+>
+>  static void a6xx_set_ubwc_config(struct msm_gpu *gpu)
+> @@ -1453,7 +1520,7 @@ static bool a6xx_ucode_check_version(struct a6xx_gp=
+u *a6xx_gpu,
+>                 return false;
+>
+>         /* A7xx is safe! */
+> -       if (adreno_is_a7xx(adreno_gpu))
+> +       if (adreno_is_a7xx(adreno_gpu) || adreno_is_a702(adreno_gpu))
+>                 return true;
+>
+>         /*
+> @@ -1671,7 +1738,7 @@ static int hw_init(struct msm_gpu *gpu)
+>         a6xx_set_hwcg(gpu, true);
+>
+>         /* VBIF/GBIF start*/
+> -       if (adreno_is_a610(adreno_gpu) ||
+> +       if (adreno_is_a610_family(adreno_gpu) ||
+>             adreno_is_a640_family(adreno_gpu) ||
+>             adreno_is_a650_family(adreno_gpu) ||
+>             adreno_is_a7xx(adreno_gpu)) {
+> @@ -1705,6 +1772,7 @@ static int hw_init(struct msm_gpu *gpu)
+>         }
+>
+>         if (!(adreno_is_a650_family(adreno_gpu) ||
+> +             adreno_is_a702(adreno_gpu) ||
+>               adreno_is_a730(adreno_gpu))) {
+>                 gmem_range_min =3D adreno_is_a740_family(adreno_gpu) ? SZ=
+_16M : SZ_1M;
+>
+> @@ -1725,7 +1793,7 @@ static int hw_init(struct msm_gpu *gpu)
+>         if (adreno_is_a640_family(adreno_gpu) || adreno_is_a650_family(ad=
+reno_gpu)) {
+>                 gpu_write(gpu, REG_A6XX_CP_ROQ_THRESHOLDS_2, 0x02000140);
+>                 gpu_write(gpu, REG_A6XX_CP_ROQ_THRESHOLDS_1, 0x8040362c);
+> -       } else if (adreno_is_a610(adreno_gpu)) {
+> +       } else if (adreno_is_a610_family(adreno_gpu)) {
+>                 gpu_write(gpu, REG_A6XX_CP_ROQ_THRESHOLDS_2, 0x00800060);
+>                 gpu_write(gpu, REG_A6XX_CP_ROQ_THRESHOLDS_1, 0x40201b16);
+>         } else if (!adreno_is_a7xx(adreno_gpu)) {
+> @@ -1740,13 +1808,18 @@ static int hw_init(struct msm_gpu *gpu)
+>         if (adreno_is_a610(adreno_gpu)) {
+>                 gpu_write(gpu, REG_A6XX_CP_MEM_POOL_SIZE, 48);
+>                 gpu_write(gpu, REG_A6XX_CP_MEM_POOL_DBG_ADDR, 47);
+> +       } else if (adreno_is_a702(adreno_gpu)) {
+> +               gpu_write(gpu, REG_A6XX_CP_MEM_POOL_SIZE, 64);
+> +               gpu_write(gpu, REG_A6XX_CP_MEM_POOL_DBG_ADDR, 63);
+>         } else if (!adreno_is_a7xx(adreno_gpu))
+>                 gpu_write(gpu, REG_A6XX_CP_MEM_POOL_SIZE, 128);
+>
+>         /* Setting the primFifo thresholds default values,
+>          * and vccCacheSkipDis=3D1 bit (0x200) for A640 and newer
+>         */
+> -       if (adreno_is_a690(adreno_gpu))
+> +       if (adreno_is_a702(adreno_gpu))
+> +               gpu_write(gpu, REG_A6XX_PC_DBG_ECO_CNTL, 0x0000c000);
+> +       else if (adreno_is_a690(adreno_gpu))
+>                 gpu_write(gpu, REG_A6XX_PC_DBG_ECO_CNTL, 0x00800200);
+>         else if (adreno_is_a650(adreno_gpu) || adreno_is_a660(adreno_gpu)=
+)
+>                 gpu_write(gpu, REG_A6XX_PC_DBG_ECO_CNTL, 0x00300200);
+> @@ -1786,7 +1859,7 @@ static int hw_init(struct msm_gpu *gpu)
+>                 gpu_write(gpu, REG_A6XX_RBBM_INTERFACE_HANG_INT_CNTL, (1 =
+<< 30) | 0x4fffff);
+>         else if (adreno_is_a619(adreno_gpu))
+>                 gpu_write(gpu, REG_A6XX_RBBM_INTERFACE_HANG_INT_CNTL, (1 =
+<< 30) | 0x3fffff);
+> -       else if (adreno_is_a610(adreno_gpu))
+> +       else if (adreno_is_a610(adreno_gpu) || adreno_is_a702(adreno_gpu)=
+)
+>                 gpu_write(gpu, REG_A6XX_RBBM_INTERFACE_HANG_INT_CNTL, (1 =
+<< 30) | 0x3ffff);
+>         else
+>                 gpu_write(gpu, REG_A6XX_RBBM_INTERFACE_HANG_INT_CNTL, (1 =
+<< 30) | 0x1fffff);
+> @@ -1822,6 +1895,9 @@ static int hw_init(struct msm_gpu *gpu)
+>                 else
+>                         gpu_write(gpu, REG_A6XX_CP_CHICKEN_DBG, 0x1);
+>                 gpu_write(gpu, REG_A6XX_RBBM_GBIF_CLIENT_QOS_CNTL, 0x0);
+> +       } else if (adreno_is_a702(adreno_gpu)) {
+> +               /* Something to do with the HLSQ cluster */
+> +               gpu_write(gpu, REG_A6XX_CP_CHICKEN_DBG, BIT(24));
+>         }
+>
+>         if (adreno_is_a690(adreno_gpu))
+> diff --git a/drivers/gpu/drm/msm/adreno/adreno_device.c b/drivers/gpu/drm=
+/msm/adreno/adreno_device.c
+> index 2ce7d7b1690d..b121abc71338 100644
+> --- a/drivers/gpu/drm/msm/adreno/adreno_device.c
+> +++ b/drivers/gpu/drm/msm/adreno/adreno_device.c
+> @@ -492,6 +492,24 @@ static const struct adreno_info gpulist[] =3D {
+>                 .zapfw =3D "a690_zap.mdt",
+>                 .hwcg =3D a690_hwcg,
+>                 .address_space_size =3D SZ_16G,
+> +       }, {
+> +               .chip_ids =3D ADRENO_CHIP_IDS(0x07000200),
+> +               .family =3D ADRENO_6XX_GEN1, /* NOT a mistake! */
+> +               .fw =3D {
+> +                       [ADRENO_FW_SQE] =3D "a702_sqe.fw",
+> +               },
+> +               .gmem =3D SZ_128K,
+> +               .inactive_period =3D DRM_MSM_INACTIVE_PERIOD,
+> +               .quirks =3D ADRENO_QUIRK_HAS_HW_APRIV,
+> +               .init =3D a6xx_gpu_init,
+> +               .zapfw =3D "a702_zap.mbn",
+> +               .hwcg =3D a702_hwcg,
+> +               .speedbins =3D ADRENO_SPEEDBINS(
+> +                       { 0,   0 },
+> +                       { 236, 1 },
+> +                       { 178, 2 },
+> +                       { 142, 3 },
+> +               ),
+>         }, {
+>                 .chip_ids =3D ADRENO_CHIP_IDS(0x07030001),
+>                 .family =3D ADRENO_7XX_GEN1,
+> diff --git a/drivers/gpu/drm/msm/adreno/adreno_gpu.h b/drivers/gpu/drm/ms=
+m/adreno/adreno_gpu.h
+> index bc14df96feb0..f451881a6ddf 100644
+> --- a/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+> +++ b/drivers/gpu/drm/msm/adreno/adreno_gpu.h
+> @@ -77,7 +77,7 @@ struct adreno_reglist {
+>  };
+>
+>  extern const struct adreno_reglist a612_hwcg[], a615_hwcg[], a630_hwcg[]=
+, a640_hwcg[], a650_hwcg[];
+> -extern const struct adreno_reglist a660_hwcg[], a690_hwcg[], a730_hwcg[]=
+, a740_hwcg[];
+> +extern const struct adreno_reglist a660_hwcg[], a690_hwcg[], a702_hwcg[]=
+, a730_hwcg[], a740_hwcg[];
+>
+>  struct adreno_speedbin {
+>         uint16_t fuse;
+> @@ -382,6 +382,20 @@ static inline int adreno_is_a690(const struct adreno=
+_gpu *gpu)
+>         return gpu->info->chip_ids[0] =3D=3D 0x06090000;
+>  }
+>
+> +static inline int adreno_is_a702(const struct adreno_gpu *gpu)
+> +{
+> +       return gpu->info->chip_ids[0] =3D=3D 0x07000200;
+> +}
+> +
+> +static inline int adreno_is_a610_family(const struct adreno_gpu *gpu)
+> +{
+> +       if (WARN_ON_ONCE(!gpu->info))
+> +               return false;
+> +
+> +       /* TODO: A612 */
+> +       return adreno_is_a610(gpu) || adreno_is_a702(gpu);
+> +}
+> +
+>  /* check for a615, a616, a618, a619 or any a630 derivatives */
+>  static inline int adreno_is_a630_family(const struct adreno_gpu *gpu)
+>  {
+>
+> --
+> 2.43.2
+>
