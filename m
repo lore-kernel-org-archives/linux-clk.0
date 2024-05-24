@@ -1,169 +1,217 @@
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2042.outbound.protection.outlook.com [40.107.20.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f170.google.com (mail-il1-f170.google.com [209.85.166.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FBD16116;
-	Fri, 24 May 2024 01:06:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716512763; cv=fail; b=YXTWJ7kYA0LUZXY/7heKscIJg4C/nL5pjsL8N8i5b+PidF9OVgWbMfMc3ANkVCaFZZyECkJRzx8t4ePwttunm3LSxJsM4lDfwkBukPyvm9PO6GD+EfuKIC0hQrTZfJN0tPXNVBUqolenPHfeFmusFI9B4iPueYe14mK+G6aL1jk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716512763; c=relaxed/simple;
-	bh=f2OUotSbRZxBU/62t5KXd6Uhy1mZcCieaTg1f2r53qs=;
-	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=LG3cb+uD+Dh9E4CuuyPsZdIoMLw0oIeCQ81LeAn/9sAoU+NlVVtZd7KMASpj8nBB4tXvWHFtSUB2LSfpjAJmE1M08dZ4I+MkBwd/8fqLgrak2NytGI/rOae7xJFJsuc7riL1I8BeGFVY6V0Rk5Xnpcesy6+uiUSBxvtc+7ALZ1Q=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=RKcgIgQM; arc=fail smtp.client-ip=40.107.20.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28C163B8;
+	Fri, 24 May 2024 01:49:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1716515362; cv=none; b=MWGuHL1Bne6mIFKUSSXTg+rwwOhbxO/93KdV+IL5/fKQ9HsYl8gIEL7HyojxRfb7X8i9a1cLjxY0jnFMMCkmCm9Lsnja3tNSHELvC7bfeiffkR9nAzKojTU5Krkiy1U0i2weHvUUCbydWq8XaEFrSqGOovqYMxjQN6O77z1riig=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1716515362; c=relaxed/simple;
+	bh=fOK2TCE5oDIMbTwzI9DfT0ukFf7sfhp16ruyzkZnJtE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cylVhUSDAUJRRtOFtCn5K3NU1n6csuBbLbZLMdA1F05ysr9i6kM9AqeDeZohUM5Lhsfliun7rVmAyq+hE0QUUKQL2cV1IwK1On0Txr20SrSDIkGaiXMGH0t+42L+jyLzfhhKeVh8pNvIuheiJCH7eCJ5215GeS7GcxRhiNw8bzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X25gAqII; arc=none smtp.client-ip=209.85.166.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="RKcgIgQM"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=QwycXW0dAYI+rNFSfjnC26A5ZV9vR908o7di1CbfqJJnWPfq9uzzlzbmQyUhUTXIsNeBmeJNJ6Dy3+4ieRyE6BkPbBKqQIqffJXo4y2yaL4swrY2fGO71z5MwbIi1mpMbdnnfl/xIcHk50etdnbhPqAqYcUKIWBTpZwM3bBbBKt7vn561ezABRnemrCkqdz+2PlyqoOaPBsIPdJiQ+8YlKNujbzFYZTMoWQV5GEFZT9AZF9PNsqMkLfcnWe74c1Q/k3M79rp9lq0hEmEAL2wIaUu0bKk3r1eCXmKVKAD3pK3aj90HzIx/1Mp3k8BJQzd0dfMMOGhULVuGOiP2607ZQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=f2OUotSbRZxBU/62t5KXd6Uhy1mZcCieaTg1f2r53qs=;
- b=Nlo3zwTTo9b4BMwn0EppUjSlpWXaMAOa2ahbRn81uVxO/oL+WdpdPtULcp8x3ZrIPmqUUiJ+iX0w6xcSQqJwDVwtAJ/haXMxVquIW3lAHvLAGJUG6McBXO9bTaDBmZWJsAU+ZLcjpEUcW/3zcJ1uf4CMJK0zNG2bY29LizcKBsfGNndu0tgpagds1jpeWu0d8osqpDlTewcstXRRl06Xf0I5FVijUXMkrSy8Cpf5+gJg2/SSubb2GELl+iJRHZcmMCq8bNhGhHosOFzDGIWzflDLCQ3YDer6Q5HOa7XpoqrMH9vU/Y/AgrGQHOPB0WVp+i08+wPL/4XDkWyFBr5yZA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=f2OUotSbRZxBU/62t5KXd6Uhy1mZcCieaTg1f2r53qs=;
- b=RKcgIgQM9eOANQaXaIZh/4MgVQFgCGDXQLEAlm1SD8kzjGMX7MmVyz/x2RQOWs5BH1cjm0NkMdf8Nl8IzUOrQYj8+j2R8q1lLOFMVbMaIH97nZ67uQH3GyFQDslQnvaWLvy85SKNI58pP4RhpM+IhNq0GhplU3LkMreWBd8jNyg=
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com (2603:10a6:10:358::11)
- by VI1PR04MB9786.eurprd04.prod.outlook.com (2603:10a6:800:1e1::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7611.22; Fri, 24 May
- 2024 01:05:57 +0000
-Received: from DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::557f:6fcf:a5a7:981c]) by DU0PR04MB9417.eurprd04.prod.outlook.com
- ([fe80::557f:6fcf:a5a7:981c%7]) with mapi id 15.20.7611.016; Fri, 24 May 2024
- 01:05:57 +0000
-From: Peng Fan <peng.fan@nxp.com>
-To: "S.J. Wang" <shengjiu.wang@nxp.com>, "abelvesa@kernel.org"
-	<abelvesa@kernel.org>, "mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"sboyd@kernel.org" <sboyd@kernel.org>, "robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org"
-	<conor+dt@kernel.org>, "shawnguo@kernel.org" <shawnguo@kernel.org>,
-	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "kernel@pengutronix.de"
-	<kernel@pengutronix.de>, "festevam@gmail.com" <festevam@gmail.com>,
-	"marex@denx.de" <marex@denx.de>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "p.zabel@pengutronix.de"
-	<p.zabel@pengutronix.de>, "shengjiu.wang@gmail.com" <shengjiu.wang@gmail.com>
-Subject: RE: [PATCH v5 5/5] clk: imx: clk-audiomix: Corrent parent clock for
- earc_phy and audpll
-Thread-Topic: [PATCH v5 5/5] clk: imx: clk-audiomix: Corrent parent clock for
- earc_phy and audpll
-Thread-Index: AQHarPrLZnzBc9Ib/0SIM6sQKPG/EbGlkv3Q
-Date: Fri, 24 May 2024 01:05:57 +0000
-Message-ID:
- <DU0PR04MB941766059B38CCD517FDD27F88F52@DU0PR04MB9417.eurprd04.prod.outlook.com>
-References: <1716458390-20120-1-git-send-email-shengjiu.wang@nxp.com>
- <1716458390-20120-6-git-send-email-shengjiu.wang@nxp.com>
-In-Reply-To: <1716458390-20120-6-git-send-email-shengjiu.wang@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DU0PR04MB9417:EE_|VI1PR04MB9786:EE_
-x-ms-office365-filtering-correlation-id: 6f03d177-7a0b-4f90-8e49-08dc7b8dab45
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230031|7416005|1800799015|376005|366007|921011|38070700009;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?WXHwVrHaYCKAxrrc1bhUbWkXco+zclVuF7JtnZR+mC5v4mTDjzurNEmSPBMV?=
- =?us-ascii?Q?KwEM1a7vqrXDHA+hubac1rOszhCaYHfjiSII6h/MpxpqXNXYoE4G54sccn8V?=
- =?us-ascii?Q?5ymPNsS1sDRVMfZjwP2Vy4UoDJy38P35vHsoeJXSIPmXSew+Sxk/bABwAEok?=
- =?us-ascii?Q?iK+0XHjsPxn341HW9HrAH9HD0dhDzZfT0BZ9KEVEpHp4rLe6lPjrxX/Wd22/?=
- =?us-ascii?Q?TjsFbOHr15Ob6qAu6WRFiB3BXil7E2lr6vOs5zG7SJ3BlvUyrnt0vBaPYCJ7?=
- =?us-ascii?Q?7KgKkoZ4+aMDZ0rwKZgh2OIcCTO+C/lNixDQ9gWlOuPGslxsyMKK9u7vfpiQ?=
- =?us-ascii?Q?R1svj+iYWZPDffNKJxy6pj/TRoSkRhC9T/e4pyei5k95WMZt9l2btbQSno/W?=
- =?us-ascii?Q?A64xxYgCz8pVINI8kzjHiDTKwIVNirXallf4Xb52j7mhH/tax6FnK+ilY/AY?=
- =?us-ascii?Q?M6R/Olp+Bd+a5aUNf0DFVVYj9FdDas3zUady0hiSujG0M3R5IJV1SZyKkb27?=
- =?us-ascii?Q?UiucsLGnX4xWz4nosnslppB4lG9gfZJGUpmz3XByK3oMOZFDWqtaW3JF6y7J?=
- =?us-ascii?Q?La9HK6WwvfxfHzfWMqey++Hn3N+EcsmSrpLl8E1yvpvI+84SqcRD53I/oZeX?=
- =?us-ascii?Q?q8TSMoadNYylx6wVqCcD7ql0HqJjV3kPxjKUar4ileHWdxAFhxv7HIKUfrOS?=
- =?us-ascii?Q?UNnAOhlHrhfRixrdahPfgT7OmM3QDbkdtU5D8N7G1rB+foZTrg/rkXl9UMKs?=
- =?us-ascii?Q?G8AJTTb90Yfe5TmCeVgZtS5Rluh86b0PmNsT6MWbb+FiVV1Jr5w22y/hoYGS?=
- =?us-ascii?Q?uK3y/z809ocve6IoL09mBy+XeDEl60LQcfHVTub+9xFqRBRMjC8BOzb1Fprs?=
- =?us-ascii?Q?MdvKCSTyp1sehJz6TJ05CJA3UEwX8FSKkoDQXVoPrqlvX4g0zbAG63SSyOg+?=
- =?us-ascii?Q?C9mDqC0EJuu8U0lk1XiyQbA1T8/pCCQkDEi+NsGFzbOOpIe0OCtTOvA1aL82?=
- =?us-ascii?Q?GtFDUPPXCYU3Edr8dO9yHnE4D1lm9yF+TmKYknDF0BD3wCbrC0mtAxMY82f6?=
- =?us-ascii?Q?hEFYlB03wt+roY+aTCFPtaQiTXjPhAwfLUTNp55TK1pu8G++1NEcHMSaUo6u?=
- =?us-ascii?Q?gt7fKSJ7YWrl9QKxVHLoQXq0/q36naHLGJ2U5LGjL7AYdJlr7mTi9c6tn/+N?=
- =?us-ascii?Q?/14JfAFVFcJeIhOahkV6UWqgUrdP0yslkQ1fZqOzW7d51vMGeCeQNtG+C7/Y?=
- =?us-ascii?Q?j8ni2gvHzofPMUQ0pXJhIXIYvr7m/3mr4TtjbqX2cd1wrTfvSmqDW7ZFKx5J?=
- =?us-ascii?Q?7D7cGQcW5QI4WEbf4NkYYExjD/pDom0anYGrbaXFR1j3SJlx/J4L935ZeF0q?=
- =?us-ascii?Q?X/vS6S4=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9417.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230031)(7416005)(1800799015)(376005)(366007)(921011)(38070700009);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?r8ckciHohR2LAAdL4u3DJUZ2sgu6et2kIArAsc89QMDTLLvP4f0sAYz2w2Fs?=
- =?us-ascii?Q?FlTOv0IRzK7xc1ArJp1yqSMg50vUCacGHtovklU7LRl8BQ+ivFfvUFPb0Apu?=
- =?us-ascii?Q?pnTacIwTFeDdLyMFWjq1U2r9EaWHeeXe/PVHEB0Sxm3mmC2RSwkXAggJUs65?=
- =?us-ascii?Q?hWGGGdJgDwq9E4UxuQJHgpJAU8CFXxZ/cRNHrvF/gE0OIf2NCfUgpFQVEKPf?=
- =?us-ascii?Q?plpXsaBsIbErC3Jrkgm6bR3ysVDedHvAMXlNycClDk6RQej66QTdwmth4+nl?=
- =?us-ascii?Q?WqpEHG/grK3+OCIfj+2VERWiZK1YRdbKBS2XT3l1sc9r6vT66PEJ3fosH3kV?=
- =?us-ascii?Q?QvxEZAI6GDR0h8l3+BmEbtYt1ALe04JrFWdCMF6ioO/SX9eZBTXsjNFfy0kW?=
- =?us-ascii?Q?cg2TPHAzwbencAs4/afVyjU6ROR4NN19NeXJE8RSNjyNvqSV9twGQ64A2OZr?=
- =?us-ascii?Q?UuTYlAv6MjmOB1Jge+eCixMsLxd4JCVGVrBJSbwCTDbiIP1DtDWoHSPGuqtn?=
- =?us-ascii?Q?o+MmQvpL07Vyn05uVgyRAgVDAa5QyB8ldEWRgavQ9rqxN9/5VkFZwo0qTkwN?=
- =?us-ascii?Q?ABoO8tE/REAJEhJ6v7SmpApfHkxTblGsyjpsEx7zDcAhNWqJdaEwGMxUC+Ti?=
- =?us-ascii?Q?2GIOwWFd+su7IrR0GGZ5CB1Zh6y7BaxzcbwrtW8wwOzu5qkL/lbGe2IgDnZy?=
- =?us-ascii?Q?910LaIzaHQ3vZbzWGgdz6uwMaV1fvTF09Ekp6as8v1TJfMZFAN07FLyjX1P+?=
- =?us-ascii?Q?7ZaKOWTGnRnu3UdACEl8IUDAuN5PDxjBCbDYqkKYg+IHallaHsP90y1Xsbw/?=
- =?us-ascii?Q?2UO70zLD8CXNAjFU4N87D1Pr5HU+TAgS2Jt9PZwt7wNCRXPxgRzPjPUy6XEL?=
- =?us-ascii?Q?98+p8277Y9T1Kk7i3ue16iMzqQveWO1xbAAzD2dVBbYnCr8CloYsLW/BG5Xp?=
- =?us-ascii?Q?cWIFvWV6gEZXQ7qBYruZAIoWyBJAvuNwgqje0/Qpz45uvrmXld4mM86KrLDJ?=
- =?us-ascii?Q?RLtrh+qS+BUgu5S3qMyTfwwf6/xykBcNbtt3ShR+e7qYMp26+zkLYngQEYqt?=
- =?us-ascii?Q?OyW5G5b72tMs0lGXFjnMUkI2HG0/VuV5fSHvQv719ACcR0Xkj5CKEeFbHrZ4?=
- =?us-ascii?Q?punYjkOiXLo0u3+ynRxmuQYoz1yS5YMlUWZbIkWJ8S0Ws6seovUXr1cPlvjg?=
- =?us-ascii?Q?VDaC3CieeXfp1QLRT4toK5LCa4QfagX29TE1XC0urKqQJTB61aI2ZNe5W9ZD?=
- =?us-ascii?Q?qdBj/p3WC2yhiixCuNJi8DFwc6qTXPqUL1YQOz8C9pa3o/AFDJldU9ZpNv/O?=
- =?us-ascii?Q?It4/obpBEz5Vp9i3l9+dxb3ISy/o0lGjC0PYReoH1bj91Runbc5Qt8ZIa93m?=
- =?us-ascii?Q?fwllYzmngpsyVhIMUI0O7FaCjfbIEnqhV2IChLqTlZyYKm8z9ReM6pPkAJVe?=
- =?us-ascii?Q?vCKeq6454jK1YYUZKdclYdSs85B1BAN9kNauk+3dEVXW8wa3F+8B8RU5xclJ?=
- =?us-ascii?Q?k90+2kveTp+64KcM3rXqU1ZxxKyTl6dAinBQdu9T6YqbZASD5vm9gW1OSwqx?=
- =?us-ascii?Q?nspJk44pdTuPRpiyI0o=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X25gAqII"
+Received: by mail-il1-f170.google.com with SMTP id e9e14a558f8ab-3737b26657fso2162105ab.0;
+        Thu, 23 May 2024 18:49:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1716515360; x=1717120160; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QaHuh4+m6vv2JYkBPChLg2kvgbF787xvUsagVVKzGy4=;
+        b=X25gAqIIN1YjBYrwcAcD824tq3Tf2sO6EVWmrKsuimaKJR7WH/7pB0U2/cqp0xRKx2
+         29KEjdCiCx0JiY3qsD1me1sHOQhT5j2b1BoU4ck+rIL7RbxmT4m41DDiQcRaUwx3/PcZ
+         k5v2qUBs2GVDk3x/kU4Sbx3GrXxy3Y0vspHiVhx4TzT/gzTJOYFtR9nBL/kTOghT5hC5
+         /0P5SCp6prHrtQRjMdfO0/FqA3g6SWnpwAzJMoiDMDM0SaFPKRvrTLXH+o7E6+Dm49El
+         ERyn6w1ze541VBKwZvAiqABBhgyBdeskkR+sTOQOX05q0QEqr3ek6TIKkxHxzwwIgOR+
+         Yb0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716515360; x=1717120160;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QaHuh4+m6vv2JYkBPChLg2kvgbF787xvUsagVVKzGy4=;
+        b=ucg4UgtEl41KEftqejY6VLcBInETagLyAr+09Jb55zUJt/Yud5ecEXikrsyVb6xVkL
+         lXNbFgE8wgqRc/eOpTePnwJVLoUbJJl5l5VK/D7V66/u+LG8byBSqBgqgnGM+Ui+5YnJ
+         9WMttVsezVVEnxoNVK3RJYQ8Jp/GFWMN3xW8Vx8U1d+n6anfrL4EMyMigMvQvmeukEUp
+         Ov5UO6glQrREJQMZPJdR/aUj69KrN8g4/iaaMwCbM/0a79URfa5wZKSDPeoINnmd+r6C
+         RSrLPXjfjJzQf+upKWlTicLFPCCFjsF9EoMLvBBkI8/GO30B9v5KorM8zrceQXk1SDVw
+         Ne3A==
+X-Forwarded-Encrypted: i=1; AJvYcCXs0O0XIyUFyaSk7JqLVwNoKaFNX2cVF0nnDpWoYerfktF9F65OUgCGQE78c9909zPYRkuhLkBIwjRymPv6oKJabvC09fm5aBJN8cOzsTaVpLjE/eK8B11lmKqFRWRsOz2Wah/86cdX1w041p+HeTiXKwZOujKXzPgSTlrmNCHCydwcMQ==
+X-Gm-Message-State: AOJu0YzBXblQIds50KpvuglWCFSyPkycu9oOgSDSlsAZGvtJcR8MrjaT
+	7mCFt9bfGRjFzQAdQ61scDuC8KR7N8PeYpL8G5OkNPWJSTQpwsyE8fS6aNd8Lyv6b+HwjGDFR/y
+	hoeCyzA2gBhi4LGZdenBG+UH2Vjo=
+X-Google-Smtp-Source: AGHT+IEK9vmj8neF4F55N645JBC1EaRdY3npShutVz5Cv3dOxwoge7Qm5GttoeiQi1A3WlSKb4Zn6OT23sNlHff/HF4=
+X-Received: by 2002:a92:c249:0:b0:371:b5a7:e44c with SMTP id
+ e9e14a558f8ab-3737b35f477mr10159775ab.25.1716515359840; Thu, 23 May 2024
+ 18:49:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9417.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6f03d177-7a0b-4f90-8e49-08dc7b8dab45
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 May 2024 01:05:57.3815
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: gF61N6Gkp+rSNdpsKGyS85FpKcng0iXWNxS5c6zEQhcXiWa2WLa0ZeDI9DBBn17mJYzKsvjJRs1YC/C1sk8iZg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB9786
+References: <1716458390-20120-1-git-send-email-shengjiu.wang@nxp.com>
+ <1716458390-20120-3-git-send-email-shengjiu.wang@nxp.com> <Zk+oxAh9+c0RIQ/t@lizhi-Precision-Tower-5810>
+In-Reply-To: <Zk+oxAh9+c0RIQ/t@lizhi-Precision-Tower-5810>
+From: Shengjiu Wang <shengjiu.wang@gmail.com>
+Date: Fri, 24 May 2024 09:49:08 +0800
+Message-ID: <CAA+D8ANOQ8Pgt8QZWduZoVKCcb8Mdc=Xzotu4zAqakTjHO8pBQ@mail.gmail.com>
+Subject: Re: [PATCH v5 2/5] clk: imx: clk-audiomix: Add reset controller
+To: Frank Li <Frank.li@nxp.com>
+Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org, peng.fan@nxp.com, 
+	mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org, 
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
+	marex@denx.de, linux-clk@vger.kernel.org, imx@lists.linux.dev, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, p.zabel@pengutronix.de
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> Subject: [PATCH v5 5/5] clk: imx: clk-audiomix: Corrent parent clock for
-> earc_phy and audpll
->=20
-> According to Reference Manual of i.MX8MP The parent clock of "earc_phy" i=
-s
-> "sai_pll_out_div2", The parent clock of "audpll" is "osc_24m".
->=20
-> Add CLK_GATE_PARENT() macro for usage of specifying parent clock.
->=20
-> Fixes: 6cd95f7b151c ("clk: imx: imx8mp: Add audiomix block control")
-> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+On Fri, May 24, 2024 at 4:36=E2=80=AFAM Frank Li <Frank.li@nxp.com> wrote:
+>
+> On Thu, May 23, 2024 at 05:59:47PM +0800, Shengjiu Wang wrote:
+> > Audiomix block control can be a reset controller for
+> > Enhanced Audio Return Channel (EARC), which is one of
+> > modules in this audiomix subsystem.
+> >
+> > The reset controller is supported by the auxiliary device
+> > framework.
+> >
+> > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> > ---
+> >  drivers/clk/imx/Kconfig               |  1 +
+> >  drivers/clk/imx/clk-imx8mp-audiomix.c | 60 +++++++++++++++++++++++++++
+> >  2 files changed, 61 insertions(+)
+> >
+> > diff --git a/drivers/clk/imx/Kconfig b/drivers/clk/imx/Kconfig
+> > index 6da0fba68225..9edfb030bea9 100644
+> > --- a/drivers/clk/imx/Kconfig
+> > +++ b/drivers/clk/imx/Kconfig
+> > @@ -81,6 +81,7 @@ config CLK_IMX8MP
+> >       tristate "IMX8MP CCM Clock Driver"
+> >       depends on ARCH_MXC || COMPILE_TEST
+> >       select MXC_CLK
+> > +     select AUXILIARY_BUS
+> >       help
+> >           Build the driver for i.MX8MP CCM Clock Driver
+> >
+> > diff --git a/drivers/clk/imx/clk-imx8mp-audiomix.c b/drivers/clk/imx/cl=
+k-imx8mp-audiomix.c
+> > index b381d6f784c8..2ee68f518850 100644
+> > --- a/drivers/clk/imx/clk-imx8mp-audiomix.c
+> > +++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
+> > @@ -5,6 +5,7 @@
+> >   * Copyright (C) 2022 Marek Vasut <marex@denx.de>
+> >   */
+> >
+> > +#include <linux/auxiliary_bus.h>
+> >  #include <linux/clk-provider.h>
+> >  #include <linux/device.h>
+> >  #include <linux/io.h>
+> > @@ -13,6 +14,7 @@
+> >  #include <linux/of.h>
+> >  #include <linux/platform_device.h>
+> >  #include <linux/pm_runtime.h>
+> > +#include <linux/slab.h>
+> >
+> >  #include <dt-bindings/clock/imx8mp-clock.h>
+> >
+> > @@ -217,6 +219,60 @@ struct clk_imx8mp_audiomix_priv {
+> >       struct clk_hw_onecell_data clk_data;
+> >  };
+> >
+> > +#if IS_ENABLED(CONFIG_RESET_CONTROLLER)
+> > +
+> > +static void clk_imx8mp_audiomix_reset_unregister_adev(void *_adev)
+> > +{
+> > +     struct auxiliary_device *adev =3D _adev;
+> > +
+> > +     auxiliary_device_delete(adev);
+> > +     auxiliary_device_uninit(adev);
+> > +}
+> > +
+> > +static void clk_imx8mp_audiomix_reset_adev_release(struct device *dev)
+> > +{
+> > +     struct auxiliary_device *adev =3D to_auxiliary_dev(dev);
+> > +
+> > +     kfree(adev);
+> > +}
+> > +
+> > +static int clk_imx8mp_audiomix_reset_controller_register(struct device=
+ *dev,
+> > +                                                      struct clk_imx8m=
+p_audiomix_priv *priv)
+> > +{
+> > +     struct auxiliary_device __free(kfree) * adev =3D NULL;
+>
+> nit:  *adev =3D NULL;
 
-Reviewed-by: Peng Fan <peng.fan@nxp.com>
+Actually,  the checkpatch.pl told me need to have space after '*'...
+
+Best regards
+Shengjiu Wang
+
+>
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+>
+> > +     int ret;
+> > +
+> > +     adev =3D kzalloc(sizeof(*adev), GFP_KERNEL);
+> > +     if (!adev)
+> > +             return -ENOMEM;
+> > +
+> > +     adev->name =3D "reset";
+> > +     adev->dev.parent =3D dev;
+> > +     adev->dev.release =3D clk_imx8mp_audiomix_reset_adev_release;
+> > +
+> > +     ret =3D auxiliary_device_init(adev);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     ret =3D auxiliary_device_add(adev);
+> > +     if (ret) {
+> > +             auxiliary_device_uninit(adev);
+> > +             return ret;
+> > +     }
+> > +
+> > +     return devm_add_action_or_reset(dev, clk_imx8mp_audiomix_reset_un=
+register_adev,
+> > +                                     no_free_ptr(adev));
+> > +}
+> > +
+> > +#else /* !CONFIG_RESET_CONTROLLER */
+> > +
+> > +static int clk_imx8mp_audiomix_reset_controller_register(struct clk_im=
+x8mp_audiomix_priv *priv)
+> > +{
+> > +     return 0;
+> > +}
+> > +
+> > +#endif /* !CONFIG_RESET_CONTROLLER */
+> > +
+> >  static void clk_imx8mp_audiomix_save_restore(struct device *dev, bool =
+save)
+> >  {
+> >       struct clk_imx8mp_audiomix_priv *priv =3D dev_get_drvdata(dev);
+> > @@ -337,6 +393,10 @@ static int clk_imx8mp_audiomix_probe(struct platfo=
+rm_device *pdev)
+> >       if (ret)
+> >               goto err_clk_register;
+> >
+> > +     ret =3D clk_imx8mp_audiomix_reset_controller_register(dev, priv);
+> > +     if (ret)
+> > +             goto err_clk_register;
+> > +
+> >       pm_runtime_put_sync(dev);
+> >       return 0;
+> >
+> > --
+> > 2.34.1
+> >
