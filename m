@@ -1,132 +1,172 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96F951304A7;
-	Sat, 25 May 2024 17:59:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F0FD69959
+	for <linux-clk@vger.kernel.org>; Sat, 25 May 2024 18:58:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716659962; cv=none; b=VTi38brOf68ButwteMRc1YdP1gVdSFFSeorTsDRLXRLZiqf/WN/9ZOf8A7IrsRx3MxOpLOcmSNJ2TtSbOy/n0AvzLgqZg9y1iyP7kqfpFktC6kCNNXxEIOJfaOG/ehn39asGc7bCH6HqbUpoRXS/1ISdE1o5fMF3UcNxA7IWln0=
+	t=1716663523; cv=none; b=ZMno2Lj2VDAOnmvuUGk8Ixrw3+gg3d79Yqz7sVELBsqsgxEAM3lVf8CFajPWaVdrnJOFjuvUkKPX3EGtR40xpPuinr9F6njayZWUd2mqKN06DQ9xeeh6MeuX2Jod9GCy2OlZOKZipzpGKEPqkYh2EBYaQW5ApzWitPOQI4CHLjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716659962; c=relaxed/simple;
-	bh=x/A3qlHKSNksLYkJyamEvoUm6j0d2K1gDvbHogrpo0Q=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=uqy4GZOokWJR/GscXnZC8xCds2xxDDGN9+veAM97b6kh4cq5y8zNLST6QeKX4HAvPtz+elhD3BoAyHx6X7qdjNIEX6FLuvPEKQLL3WV9GKloCUBP6lVCuw5++dLvUrC8rUeHmRR0P4Lvy62yhWSO9Ta0q3gJV9wbQmuy95MSsoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dA5YG2ld; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1716663523; c=relaxed/simple;
+	bh=iKEIVO+4VmSS9Oc5MntKhaJZ/iGMcGlkEC+aUBukEHo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ixPY4pCgRqXrQEmSn/2Ya04/Xs5NDnDxyjYNmDOVgrCX+76wHBIAOOplW7BE6w3yEJMsGGQ8mBoEs6qQptgRy/h3F3L1aappjQa2g3M1PVhC/DLEMEICcgWEmq17ngFaFpY0DciWEsgSoP2a6OtmQ2X0XjObkJgjxVTUlqn3CYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wIgmQ2wD; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dA5YG2ld"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52574C4AF11;
-	Sat, 25 May 2024 17:59:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716659962;
-	bh=x/A3qlHKSNksLYkJyamEvoUm6j0d2K1gDvbHogrpo0Q=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=dA5YG2ldKuY07n1rg7kv83bweOx1o7532gHn4E3h6ldpV3PWfYE+K8D759V/hWkEm
-	 d5e9XCx8iUJkHOImcjZlNwzWhJusY58NtiPHf2F8l8QAvK+nV51o1ebigd7M+9tK+8
-	 5+21YARO5/JG53BJpigfvP4h/Q9QsPLn44dazPdqT6pgXabQK8GhZ/BWaQwQAXzXq5
-	 TTS2bet5Kej6E0i5e8rqOMTNtQ4GvCow8uqkok2BxGR367w3U0XSO9w8/lgnI8LZUB
-	 /KksqpX3OE1oFRLjT9gBbt3nqMLw94sS0NZSrGq5Ekf3hHdFHuL0CKWwG7hJT1vuPp
-	 vUwTjFrvhYZ2w==
-From: Bjorn Andersson <andersson@kernel.org>
-Date: Sat, 25 May 2024 11:04:03 -0700
-Subject: [PATCH 10/10] arm64: dts: qcom: sc8180x-lenovo-flex-5g: Enable USB
- multiport controller
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wIgmQ2wD"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4202959b060so71151165e9.2
+        for <linux-clk@vger.kernel.org>; Sat, 25 May 2024 11:58:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716663520; x=1717268320; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=t7he0sZ2GZcZ4jN7OuNxSgoGWU8clRyZzA1mrnUKwrw=;
+        b=wIgmQ2wD9cwXdPB00KF2TNgBPy2LfhiyvHlQwzrhihPP3mzT7nrG1YKd6cVJf4PrwC
+         z8XzH1viKmIDqk5nCRJPCFVxC8J1egiIcuihWH6XniW+2/6235r2YRpTimw840+lvOwg
+         iyHEggY1aBUwTK2Xv50ZuiEWIqU8POFI9kgu2vKTPXPKF+41avskEZ2uUp3GRg9JoMEz
+         c8nLH/v8zgA9ld9kUMWQ4ojo4RgJc4cscNWovY/ZfcOPLyXhMUzqpk5KdOnVmw6KmEM9
+         NkYVnpTzHW8jRA/goq7kPXmZ4erUvBVlcCzmixsq2JbfgFaPnNEVBIY97Sre26xIjR4c
+         9TbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716663520; x=1717268320;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=t7he0sZ2GZcZ4jN7OuNxSgoGWU8clRyZzA1mrnUKwrw=;
+        b=dfPUBe4v1vlIuVU9krm8wF9UViamANwWP8sxtjNcpEouDWmZivLTwieAwwZemLRoaf
+         fXu3Zbm1ALP5C70FTQbwdP/MSmwem2Zmt6qFAFDPMRwYqfF0nW2YmSOlUauqJoC3Iz7Q
+         +3c4XBI9o4FAOLvBc4It32ZLJec9pLjNCGybkKWkwkSIXdIvbu+1P5dtiZrqxwkVPBR6
+         npXCcZ4WtgzG09u/8dB3W2Lqe/YMRQOwTTef6T3E6cqxv+Y8gwwotJhnI42b7TOSOE7j
+         O2heGp304CkvHdlogN5EBEvydVeI+LfNapC41ObWRrOz2G82gt9s+DZyKJ2xm4Af1RDO
+         UT5g==
+X-Forwarded-Encrypted: i=1; AJvYcCUdDumz3NB6LxbuqBdtfJf/CDxmA1QJEriTQvYlrzxwH9CYwgxEupN6UZllL+mFkJ3WXy6nxA9JxTiDqMdz/uQLgjK/Cp/SlLGt
+X-Gm-Message-State: AOJu0YwRlM4BAw8PhV7HhRRDCK16CQWSa6gDBcKo9/l+BoIEf+dNkBHi
+	weIUMhOAWOkKw3FrTJ8/jjLqiNcGP+Qdlkwt7F8NZ5t/HWtYbyYWZHoXlsamEJQ=
+X-Google-Smtp-Source: AGHT+IG+6KpN0Pe/v3SLZ8mnBfNrJmJz9mBszytORzY3EJM2Uw7jCaB0GzXeJ11/zaPwbSB6qOj0kg==
+X-Received: by 2002:a05:600c:35c5:b0:420:1db0:53c1 with SMTP id 5b1f17b1804b1-42108a17b9fmr33015355e9.41.1716663519804;
+        Sat, 25 May 2024 11:58:39 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.206.169])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-356c8daef27sm2426626f8f.115.2024.05.25.11.58.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 25 May 2024 11:58:39 -0700 (PDT)
+Message-ID: <bdb78a67-ec6b-4178-81a0-212796f9738a@linaro.org>
+Date: Sat, 25 May 2024 20:58:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v24 4/4] dt-binding: clock: remove nuvoton npcm845-clk
+ bindings
+To: Tomer Maimon <tmaimon77@gmail.com>, Rob Herring <robh@kernel.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
+ krzysztof.kozlowski+dt@linaro.org, tali.perry1@gmail.com, joel@jms.id.au,
+ venture@google.com, yuenn@google.com, benjaminfair@google.com,
+ openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20240509192411.2432066-1-tmaimon77@gmail.com>
+ <20240509192411.2432066-5-tmaimon77@gmail.com>
+ <20240513155330.GA2676859-robh@kernel.org>
+ <CAP6Zq1hRw6xfNKKfBFGuKbZk0su3ys6+hnMzqRWrZeKzDoKLEw@mail.gmail.com>
+ <CAP6Zq1gKp+Hu93CK=78chvNk70WtKMKUv8ny0Mzkw47wn7Af2g@mail.gmail.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <CAP6Zq1gKp+Hu93CK=78chvNk70WtKMKUv8ny0Mzkw47wn7Af2g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240525-sc8180x-usb-mp-v1-10-60a904392438@quicinc.com>
-References: <20240525-sc8180x-usb-mp-v1-0-60a904392438@quicinc.com>
-In-Reply-To: <20240525-sc8180x-usb-mp-v1-0-60a904392438@quicinc.com>
-To: Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Wesley Cheng <quic_wcheng@quicinc.com>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-clk@vger.kernel.org, linux-usb@vger.kernel.org, 
- Bjorn Andersson <quic_bjorande@quicinc.com>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1388;
- i=quic_bjorande@quicinc.com; h=from:subject:message-id;
- bh=ApeqdvS88ACvmrMfc7ygIjzXVr8WNirPX8Y+Q+iz2qg=;
- b=owEBgwJ8/ZANAwAIAQsfOT8Nma3FAcsmYgBmUigNf7OPmC9AZV+nbwo2ZWqTekEW/mFXM//YE
- 76bMWBweBSJAkkEAAEIADMWIQQF3gPMXzXqTwlm1SULHzk/DZmtxQUCZlIoDRUcYW5kZXJzc29u
- QGtlcm5lbC5vcmcACgkQCx85Pw2ZrcXvxRAAiLS+lEqoMRKXifzpZgBqbQKahAwyZOa/z+B0HjV
- ATMhQP6UbO02H3tHJ6x+6nhC1uq2w6bTtoaOHCJvbdfJq+Bko3nsyk2M/TbDFeVPeFD0UXNaPpE
- NO6LtiLjcPXgXVEEaFqUfzrHv76P2dYXrvBZumeiNcK0oLjNaNQn9nqe+w9c5P6RCB928L3iA5A
- 73IaKXehwKa2kVBsPz4u3bfKcPB5HLecCIMMITIAjAdgcAp/+qGFHP4lh0hBYjxrggcGerQ2/SK
- IixzUjoP3AB/G2IlRXd8h5jS2tghqvsZ9PaHIbaqh4bMHgWuXxKRhlSpstZuSXR+L8o085tQw1D
- r3/X3gwY1J6Xbmb0rjR8aL5qAAQhQcDVCr7msLiIxSKrrqGR+73J5iPmzFtji1vSMedeJGfFIcU
- N1tZc9KjpClkZz50177Qcwjx/2Vt8TgbicEQuZSvQ1sKmw1QuYomO/gYrMjGnMxRplVRehvA0va
- 3eCt3e4JW7JfJSP+HXamS6i0dMX9Sgmj25gqE01lGE12axNnCUwr4PArGUxzmpzCFbLEUk04va1
- B6wXVmxUYKYN1oRA0bllHyaKki/ud+DoHQp9moS94dh2dUc3BX+keKtSuSDpGWAEvIu5ir+4sDr
- LhLiBCDzpogQcB0KF/l4JA0NbNlSK56hzPOvbZiG38HQ=
-X-Developer-Key: i=quic_bjorande@quicinc.com; a=openpgp;
- fpr=05DE03CC5F35EA4F0966D5250B1F393F0D99ADC5
 
-From: Bjorn Andersson <quic_bjorande@quicinc.com>
+On 22/05/2024 18:34, Tomer Maimon wrote:
+> Hi Rob,
+> 
+> Kind reminder about the question in the mail thread below.
+> Your response would be greatly appreciated.
+> 
+> Thanks,
+> 
+> Tomer
+> 
+> On Thu, 16 May 2024 at 12:44, Tomer Maimon <tmaimon77@gmail.com> wrote:
+>>
+>> Hi Rob,
+>>
+>> Thanks for your comment.
+>>
+>> On Mon, 13 May 2024 at 18:53, Rob Herring <robh@kernel.org> wrote:
+>>>
+>>> On Thu, May 09, 2024 at 10:24:11PM +0300, Tomer Maimon wrote:
+>>>> Remove nuvoton,npcm845-clk binding since the NPCM8xx clock driver
+>>>> using the auxiliary device framework and not the device tree framework.
+>>>
+>>> Again, this is an ABI break. Changing driver architecture for 1 OS is
+>>> not a reason to change DT.
+>> Is it an ABI break even if the NPCM8xx clock driver hasn't upstream
+>> the kernel vanilla yet?
+>>
+>> I thought that since the NPCM8xx clock driver hasn't upstream the
+>> kernel vanilla yet and and in the latest NPCM8xx clock driver patch
+>> the NPCM8xx clock driver.
+>> using auxiliary device framework instead of DT we should remove the
+>> nuvoton,npcm845-clk.yaml file.
+>> https://patchwork.kernel.org/project/linux-clk/patch/20240509192411.2432066-4-tmaimon77@gmail.com/
+>>
 
-The Lenovo Flex 5G has a camera attached to the multiport USB
-controller, enable the controller and the four phys to enable this.
+Binding goes with the driver, so I wonder how did it happen that driver
+is not in mainline but binding is?
 
-Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
----
- .../arm64/boot/dts/qcom/sc8180x-lenovo-flex-5g.dts | 32 ++++++++++++++++++++++
- 1 file changed, 32 insertions(+)
+Anyway, once binding is released other users might start to use it, so
+yeah, could still be ABI break.
 
-diff --git a/arch/arm64/boot/dts/qcom/sc8180x-lenovo-flex-5g.dts b/arch/arm64/boot/dts/qcom/sc8180x-lenovo-flex-5g.dts
-index 6af99116c715..daa3065bcfe5 100644
---- a/arch/arm64/boot/dts/qcom/sc8180x-lenovo-flex-5g.dts
-+++ b/arch/arm64/boot/dts/qcom/sc8180x-lenovo-flex-5g.dts
-@@ -557,6 +557,38 @@ &ufs_mem_phy {
- 	status = "okay";
- };
- 
-+&usb_mp {
-+	status = "okay";
-+};
-+
-+&usb_mp0_hsphy {
-+	status = "okay";
-+	vdda-pll-supply = <&vreg_l5e_0p88>;
-+	vdda18-supply = <&vreg_l12a_1p8>;
-+	vdda33-supply = <&vreg_l16e_3p0>;
-+};
-+
-+&usb_mp0_qmpphy {
-+	vdda-phy-supply = <&vreg_l3c_1p2>;
-+	vdda-pll-supply = <&vreg_l5e_0p88>;
-+
-+	status = "okay";
-+};
-+
-+&usb_mp1_hsphy {
-+	status = "okay";
-+	vdda-pll-supply = <&vreg_l5e_0p88>;
-+	vdda18-supply = <&vreg_l12a_1p8>;
-+	vdda33-supply = <&vreg_l16e_3p0>;
-+};
-+
-+&usb_mp1_qmpphy {
-+	vdda-phy-supply = <&vreg_l3c_1p2>;
-+	vdda-pll-supply = <&vreg_l5e_0p88>;
-+
-+	status = "okay";
-+};
-+
- &usb_prim_hsphy {
- 	vdda-pll-supply = <&vreg_l5e_0p88>;
- 	vdda18-supply = <&vreg_l12a_1p8>;
 
--- 
-2.43.0
+Best regards,
+Krzysztof
 
