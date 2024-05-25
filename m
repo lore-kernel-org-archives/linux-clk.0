@@ -1,40 +1,40 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+Received: from mout.web.de (mout.web.de [212.227.15.4])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E5A4101F4;
-	Sat, 25 May 2024 07:27:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 804A529A1;
+	Sat, 25 May 2024 07:55:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716622065; cv=none; b=nULokn2ZUU0czvwGXDUWSSvzZQ2PQBn5hQoOfbvn251fj/7yhvfPqDDCC1DgVFACCgiGDmiOmJOuhRgNR8W4oxzjUKV5MTqORaEOBMgGQ8cxVFqKS85O6xZ2wvr3lXoSr0JgSR3EoWhvB/Z9Nmr6gIIoJI7TjJDQC3HYxYjSHuE=
+	t=1716623761; cv=none; b=MNeTgCRY8ISL6eCQ4HVwETclA76/Jo1w7RksgxC94KdFyoUx4zj56QKwvCBXmU0xAUIfbz2WBJzpFSuZVX7NJjla9/rE/eW1OW1p0QId0QfytvQJ5p/iJCUtzQaV/v3QP61Kht9hHjn+FfvZ56jYXzqRkxGBqbudBBIbQ1AfHWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716622065; c=relaxed/simple;
-	bh=1vV2rcZq7Yv8cvgatVorPcVsxAzQmPjkjKoLUVSD/9s=;
+	s=arc-20240116; t=1716623761; c=relaxed/simple;
+	bh=zNvagCiFQlEBJ2V2WaqD1hNPPhtIuYBADiTXOIv4iXo=;
 	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=ed6/Dl8Nzuxe+qlXjU7q1ot4ksgvd5+pQ9/N+mIpAaZBxxLZQ+amFrg1Ws/PocXqoZyWdOhJ8+tQQ6Rmv4gAnwqiegTAyrJvn5Qc6dzn17M+b+KKTVeteTNv1tzAKTAUrmav5H3TEJgMDuZHUWcoAU1pW2Rth8kIuAXNS9EWizc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=d/QKjmuN; arc=none smtp.client-ip=212.227.15.3
+	 In-Reply-To:Content-Type; b=kzIc2X9FT23GNms4VH/2zzg6XNVKUftrR1kiEUEBoDuE5c0EqGq5h5m9wf3+dg5mN/VXPGmNcLxn+SUCyT4rNjApBFRnCCu8HLmS6vcNI8rAmgW+U6gLJPIDpsLpf8QDvkvyUOxEt4Ib41Omf6YlGDg/W3q/rX5DzT6xI9F1vtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=XQIGJ2wW; arc=none smtp.client-ip=212.227.15.4
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="d/QKjmuN"
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="XQIGJ2wW"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1716622028; x=1717226828; i=markus.elfring@web.de;
-	bh=6INwEjwgOCmGgOy8ZeWOLJOHl6t8dOZTr0bTagI6Hpo=;
+	s=s29768273; t=1716623731; x=1717228531; i=markus.elfring@web.de;
+	bh=zNvagCiFQlEBJ2V2WaqD1hNPPhtIuYBADiTXOIv4iXo=;
 	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
 	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
 	 cc:content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=d/QKjmuNUNl6skSonlt7xy84QrYC/aZ0HCBqQG4gmpdqxUSK84BhZD1yhSfvSlU+
-	 O64klxkS96ENhWSFFe7YZ4ONRBSLXxjG6ofmL/mMKMwWy4cBOA0ShKgoxbkCV1JK6
-	 OhqSbau51ESD5fyaVUrMmUZa3znhsRCECtrfDfDtlDzVw8dbHCrtsDpHzjvC0SPaN
-	 YdDIKSeceeeJRpIgSlkAgdS9PxX3t/OOmoSAoDTtDxApVeSidrISVtBDLWPUkvphY
-	 tZZCoInsRQXcRK1+2KWKXiec23+QW0LhgyPbCYgiEDsV8qOy7cuF24UPHOv9jQ7Bj
-	 rlizL3NhTPz/meEUow==
+	b=XQIGJ2wWNkooZLiH9ykL+s9D1Jp/h7XyOyIqB4B/ZF4156HUTr6t5/QoSOnPUP+i
+	 69tO954AV7XBmj8M1iIrJo3/G+KObqUk4qHrIxOXjWS8NE/c0ZMTkDwstITEVnPtk
+	 hZ3Bp6kzAnAE2aohz4iOJQiZdBPqpDpaTJagrTdKjgMIYXOSV2XO8P4/gQ1QzbYeL
+	 9Fvf0Plrka8SJfuG+1YWHYJSokJMR2qgA1PQ/DiwVHjW21mQckHdKtAzmPaFPhEI7
+	 3HOZT1XxVuhieJzGX9hPwsEJ718TLCrnoPHzmEmMzUjvQwth85u+rHPfBCXg2mnh9
+	 WpK/nE7TBQE8U6Iqwg==
 X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
 Received: from [192.168.178.21] ([94.31.83.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MMGyA-1rutLe2qpi-00JTf8; Sat, 25
- May 2024 09:27:08 +0200
-Message-ID: <4c53b063-ad12-405d-b088-9b992284ba08@web.de>
-Date: Sat, 25 May 2024 09:26:53 +0200
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N5CQT-1sbyAY01zR-01166w; Sat, 25
+ May 2024 09:55:31 +0200
+Message-ID: <9fe12ecc-c4c2-4adb-a62c-4c8fe91b6613@web.de>
+Date: Sat, 25 May 2024 09:55:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -54,61 +54,42 @@ To: Shengjiu Wang <shengjiu.wang@nxp.com>, linux-clk@vger.kernel.org,
  Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>
 Cc: LKML <linux-kernel@vger.kernel.org>, kernel@pengutronix.de,
  Shengjiu Wang <shengjiu.wang@gmail.com>
-References: <1716458390-20120-3-git-send-email-shengjiu.wang@nxp.com>
-Subject: Re: [PATCH v5 2/5] clk: imx: clk-audiomix: Add reset controller
+References: <1716458390-20120-6-git-send-email-shengjiu.wang@nxp.com>
+Subject: Re: [PATCH v5 5/5] clk: imx: clk-audiomix: Corrent parent clock for
+ earc_phy and audpll
 Content-Language: en-GB
 From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <1716458390-20120-3-git-send-email-shengjiu.wang@nxp.com>
+In-Reply-To: <1716458390-20120-6-git-send-email-shengjiu.wang@nxp.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:7xxTsM6Kf1mc/B2+VvsoIat3BsnLAt64foHiT/NelZ+ffJkbhTB
- jRZhxyhS/V83g6c87aCUT7I6AaL9YMRyuQb+mjx7nHxlo1ILCOYgD5SkAPBH5K236dRojH8
- DkLl0DLpgSDFicN/cR1Ou/JiQTCBCjOMtLzDjg4za1pLhDiuIPtheIBUamPhP4+9qKACOs/
- bEEQNF+ZAvhtPwcLVSO6w==
+X-Provags-ID: V03:K1:+Y8RZ2euW0PVsjjmirk2PPULrmxZDg8ex4ooenqfMi/uUTvAPbJ
+ 97nEDosbWPobp6ainbMMsYAxR/DSRSHyRVrqNoPpiPQ8W7nJDlC7hNa+O2dD3Yxx+SfZYI2
+ WaZIj2Z1bIO8c5T5GIaqtSw7g27d+0I5sQyS6ADMV/tuRHY5UI2iDweRETxL8KMVflWICpc
+ YGJznrb9DtsaDJOmL20oA==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:UOryPKNMsTk=;uYxEyA1BlH+rnEbdOgIk74ncs0l
- M6cbmCB5kSEPC2OR55JRYwah+nhOnwB6z8Fr5WvrcLlUHtV6S0edcGimlqIVtuDxp89HHtOOW
- WfrSntW2IVbigwWt244GTuRRf9zQTmdL5A1H7IVnNhGfhupT5MlEzQ74Wc6uRowrM1w5rXCN5
- 0HwhhCDJ+mj6UDnUY6NrGD+zof3NzOmzKZd3FaGctVxBmhbmimlHEpJYNLRc0DyFUoJpy6T0i
- Bpt2zFT82/TzCHWETZmecYCSQERCyOn77TMWe3X42WDb8MKp7YlwNEw/NcTjJ8tUnmaDmJTGV
- M+BnC/hZsblGTY3xcYQJ+K2aIWie/J8MmqjfhN+eX+MyGBejnXmkgWu5Xxn0NApsAimdh54Lk
- ozxurWtoqjMydj7PzVZ5anpl/4f2msb+szhJGD+LYp4Qbge23NIb2NmJMDvB2v+YIDKqWIqco
- ju528YTrrTUhIcWVXaxSSwhPeXCZTeYM9dq88bcahk27mzEjkoYJ0CMeQHL35K2BioaSLeBr0
- OX2Rf7LJv7+YkUmtL5rK3uuFactKgZT5oV8Fta+F0MMbfs/YoToXDY6VNvgtwvMtHKeCWZb8R
- N3HpW9mbiMUgyzw7p2yO85rOD09HT521s5yB9iknZavcZ5bOQr4mWnYFCIzfZ3a9lrcjJnssd
- Aw/H3r1yNyPsp+94J9KZwPh5FFgUDphqqlHj0vLRzlvt1sGQWWfY/13glClPpNscJe0blf2SO
- O14rVbN+L62Kmq9DsNfuO0kU651ZiCY6o1mXaTCopjTKizw4h3wLvIzkYseUAstv9bIREnhzD
- ORo7QH9ejyKjr0vo74zMw6ZEDT2pgYYo4CEgqsZLnXffc=
+UI-OutboundReport: notjunk:1;M01:P0:1d1X/haDOVk=;YgC1d6or9qyXrEPVXDekffAk5nE
+ xj2NyIa/QqjwbTI3z3wyAWSGSbiKebbbVBTiDB+2ysc7F00bHcnrX+WVY810vkXgVMrp1Iivx
+ l0dH480jOgsK1EeSJp0jV5PBB7YlxfGz4jtZW2uQopt2yc7v1YA7I8TtG2CfF8Z2p3oiKChno
+ jT++5rfnI4Nqfr41ekSXGap39/lxRUnDGqdP2fD6a3l8Ca/oIW2yBbD3qkSjCvnOu3eTkNMM8
+ m2gdjSpTf7PK0enARfGhaUT+nEmlwbNPFqpGxBwhR1yvbqmdaWN+Hjf51ns8QE3XxRXswYW0X
+ 0HbzcgcZOsK20+XFB6VwP+N2tbEZB8nX8HsKPm9mpDpc4rznXzoDH2gSZenIWVGpiRsPEl2o8
+ OTir4qDjYAvmTsZZZGrXGyBZfmyw3i0w3K6aVvNFNdDtFghNHtP2tQkzoqPVVp4vHnXdQdLUK
+ 0qTPq/Lqk7a56PlJsZkAAK02//pBCY/G+kNyW1FTrVn231BmJ+VKYgzY1IH0EB/J41ocBQanw
+ VjyutO7nEb+UiKJocyYq2N+oZ3DI0NRb7o7EN3sKfcQpPLR/OJg3nYa2d/mKUSfbltwZ9gUkQ
+ lG1TW33UZTMC7FlXxR6PObEsOpHP5QyJKVVDP6HAa8a00E8rpKlQtAjHPtlj6C7/QLzk4cpPS
+ OPXgI8VDfaMZBwNjWGXRJFmhtR4DGt9wW1zKtoitjkD0t8y0vfwXZBIslugoJDYE9CsAKjh6i
+ i5XwRrK2AupGJG8s/UuuCibG4YZVc5prnsRhE/3tE9zjkLk/NQanaFzX5b3IRQccZQrhafcul
+ 2y/T9RH4Yh0h5j+hMvkwnTd6cAHqiJnvndHsi/p8SDnxA=
 
+> According to Reference Manual of i.MX8MP
+> The parent clock of "earc_phy" is "sai_pll_out_div2",
+> The parent clock of "audpll" is "osc_24m".
 =E2=80=A6
-> The reset controller is supported by the auxiliary device
-> framework.
+> Fixes: 6cd95f7b151c ("clk: imx: imx8mp: Add audiomix block control")
 
-Would you like to add an imperative wording for an improved change descrip=
-tion?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.9#n94
-
-
-=E2=80=A6
-> +++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
-=E2=80=A6
-> +static int clk_imx8mp_audiomix_reset_controller_register(struct device =
-*dev,
-> +							 struct clk_imx8mp_audiomix_priv *priv)
-> +{
-> +	struct auxiliary_device __free(kfree) * adev =3D NULL;
-> +	int ret;
-> +
-> +	adev =3D kzalloc(sizeof(*adev), GFP_KERNEL);
-=E2=80=A6
-
-May the following source code variant be applied here?
-
-	int ret;
-	struct auxiliary_device __free(kfree) *adev =3D kzalloc(sizeof(*adev), GF=
-P_KERNEL);
-
+Does such information indicate that the word =E2=80=9CCorrect=E2=80=9D wou=
+ld be more appropriate
+(instead of =E2=80=9CCorrent=E2=80=9D) in the summary phrase?
 
 Regards,
 Markus
