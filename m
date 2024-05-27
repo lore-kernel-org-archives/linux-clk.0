@@ -1,113 +1,137 @@
-Received: from wfhigh1-smtp.messagingengine.com (wfhigh1-smtp.messagingengine.com [64.147.123.152])
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D9515E5CC;
-	Mon, 27 May 2024 13:16:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E96464EB55;
+	Mon, 27 May 2024 13:18:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716815789; cv=none; b=fTyWmJ1bU0wwg0IBSUjQ3T2gFoyEmA2/wPmAPkcIM9wbY9tpkLK637ZZMFldxpnrFwxkNrFS0ERPVvstvDvGCPeP5kDmvZav2df4vHk6Qj+5mTREgNLqsF6ky7UankQ5p0lQE9EFGs2HGDexdat45dbGeE6njdvvrFDG7k9DUnw=
+	t=1716815913; cv=none; b=JaU7x+I+YbdMe3jAPpaEBo56TKdO8EZGG1TIxxTF50G0UBYUYA28D0DnRfgkZjy6hEOb5kfm4L5M/N9RWLzuWm7QYnm6k8msP6BwTyX0F1FdlXBvyLuyhK+/656jJN/vresN2K9M466RZGGSMMFQLspZYWBAtf4OF0Tvl7sg5qk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716815789; c=relaxed/simple;
-	bh=pfkKwfAesPjbPA+DBzyvxysbqVrN9XtLL6+6ng0tEFc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lbVOS565FJpWqDpc5Xba3tBUJgc+qiW/VVnCZ8DurSHFI0NxMq5Re9MP9yeDBsNgwW2ZBYmPU530hc4VJiAwe3zcKDiOk06JBvVXH8EpZ94VyFmjAjKPJOasMJe6jbje6nREmACCCYsCrtUtAjfEbz6AG3Umcz9MJj2OhDfkMOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=uaY/f91B; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Vt3R6N06; arc=none smtp.client-ip=64.147.123.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+	s=arc-20240116; t=1716815913; c=relaxed/simple;
+	bh=vUZt2pGjbC5IUomB5cGvwvlW828f5yDbSKPZoklG+Nw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n+cEDhHm1Y99mnI2QR7syQDwltmJz3Y9wboNP3lBRROJjoER1pK8MwE9CjSLIB73iuSnhHOdM1RZRSabA17btin2Y5sgO7eW976qfr/lDQGvupoovq/s0+85zVwbKzxuLJqyz4V43N7w9QP2y+iDkPxdM/Rx+8kGc6OupuVmqAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=IyYzKcd3; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="uaY/f91B";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Vt3R6N06"
-Received: from compute7.internal (compute7.nyi.internal [10.202.2.48])
-	by mailfhigh.west.internal (Postfix) with ESMTP id C6E0D1800099;
-	Mon, 27 May 2024 09:16:26 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute7.internal (MEProxy); Mon, 27 May 2024 09:16:27 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1716815786;
-	 x=1716902186; bh=SBSHWsmn9JeFH4nhKYMj/9WTMloqHuXESttUyxbxUns=; b=
-	uaY/f91BsiG/GHh8WwW2pDnVC/izi1xRBdlVsUfRDBfZOuSMk/pgOL2D41fmDN+v
-	G8mq6QSxgPB67UYtjhfPw5nOGy2eU0hw768ALu8bSy9DQ4MGrZmrElv88UyuEQ4Z
-	Sa9jZoEI6NuuVLcG7zgvfbYPtomQ/8qRbturCigl3RWrUdBFMPLEStLa8rWPPDhu
-	K/DpJ2ZO0zGEuk3zzeXbFKuE/PZThx8fIgxq8/Qj4/1nAN+JET7a1H8szHYzK1vj
-	iW8ndiBt455z2zO0UvKEF9jq/n8rwlbYn5cAPTJzLXX27U/lp3EFmTbhfZ2xFSG3
-	eVl6UzfX5Wa8UMCw5seTJQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1716815786; x=
-	1716902186; bh=SBSHWsmn9JeFH4nhKYMj/9WTMloqHuXESttUyxbxUns=; b=V
-	t3R6N06+132pfeq5WykDzc77RqsW5DtANX69O7m6iAb1fFshc8HDQl8pu8l/C9w0
-	erUyQTT2u+LbH+7ssrsZySWkQCVFfjW6tmKCSp+igzzx0NRcRAybhhXSvR02zDPh
-	mdRfnhsrJRILzdCjww1ESfYrzYjChMK5rB8KJZg53LIxAjru5ixAtwSTejk8y5Jt
-	qg9lxakOk601shm60BEjg6O5VJ1KosBsjjRhF8WCd1apvoc8q3XOqCr9yebaVeJL
-	+0u2qYBe/GokYe0sH4ZuvMjd/lbb37+5+bPb+q/gM2nzgftVAEAhLgfQzhxWfYtZ
-	hFbJrgg/znintsbyrKHXA==
-X-ME-Sender: <xms:qodUZvnPPucq4cT9b9ei3tMRB8Au7ZK30MJnF9mQVy53ymbHexzeZg>
-    <xme:qodUZi1fGtQxLA2hVddq9lgdaAQ-paInmVz1ibxbJR8Iy-xA2W5JYNEVk6TbL4nXP
-    LHPzjE5UGc9ogoxeaE>
-X-ME-Received: <xmr:qodUZlpMmbv9xH6WW-Ml1OZZT9S6u98lKr11cHW0UJj0pt0Ak09xCjavVr7v703v7ZYDu9NNaY5OXbZ7o_RgZODVg2g_rzJJjP4b>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdejgedgieduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffojghfgggtgfesth
-    ekredtredtjeenucfhrhhomheppfhikhhlrghsucfunpguvghrlhhunhguuceonhhikhhl
-    rghsrdhsohguvghrlhhunhguodhrvghnvghsrghssehrrghgnhgrthgvtghhrdhsvgeqne
-    cuggftrfgrthhtvghrnhepheeigfeuveeutdefhfehgeekvedtleeuueekveefudehhffh
-    jeffgfegffelfeegnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilh
-    hfrhhomhepnhhikhhlrghsrdhsohguvghrlhhunhguodhrvghnvghsrghssehrrghgnhgr
-    thgvtghhrdhsvg
-X-ME-Proxy: <xmx:qodUZnnKuU44cHBCy-9kHJBCMg7MP19RESWty20qZBzB6GI5usGngA>
-    <xmx:qodUZt2v00IJj9Y_Nze0VBiFztjcemkY-HkTtvOrfu-CX8fruFLIcA>
-    <xmx:qodUZmsLxeo-3-bHOlsOdgg-f3knqdg3x0EEq0EJv4sVJZVgRmEHAg>
-    <xmx:qodUZhWQacERfUUhuV4OzS7nt1OjTqn6-qwGCLYQaQsvO0vjOkww4w>
-    <xmx:qodUZoQsE7LITnWGG-x4zNzSkTXYLRlYAeJfUq-qaB8d2D5cRXnd1i2H>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 27 May 2024 09:16:25 -0400 (EDT)
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH 3/3] clk: renesas: r8a779h0: Add CSI-2 clocks
-Date: Mon, 27 May 2024 15:15:41 +0200
-Message-ID: <20240527131541.1676525-4-niklas.soderlund+renesas@ragnatech.se>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240527131541.1676525-1-niklas.soderlund+renesas@ragnatech.se>
-References: <20240527131541.1676525-1-niklas.soderlund+renesas@ragnatech.se>
+	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="IyYzKcd3"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=noCvl7iZaiJJWOq4Lf6jhwKTiTVNLLZfuz+6oNNv/sQ=; b=IyYzKcd3Au6t2asqS8w2aUpEse
+	Gy/GZIRqxajxzRCNdRTepzYEGV3Dze8Xu5fNJQQZ1rHL/71TKzyi7W8t/0ZstXfWqeHfQiC8xoi6o
+	tGszKffg85qvnUh/d9jFVSQpWnvkqM/UopYeMGJeB6MNXIl1Tex17vzHzWGtTwVXTg2t9FN1D7c2v
+	aFn1CSkCdQVOtrMH3Q0DWi3mBw5KNQiVR2sdnd+PCOwipiH2FMg/orMlhBy7XgOlzFc6lG3uPcP6a
+	JtyWfL45AATySMI+v838EkOhJzBmzJm0zkpexVVhmPq5PJI1gEdyI8J+i/q/H+Vjejc2I5rPsODTt
+	LYBGYI+w==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:45962)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sBaF3-0003Yz-1X;
+	Mon, 27 May 2024 14:18:21 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sBaF5-0002Lp-Hm; Mon, 27 May 2024 14:18:23 +0100
+Date: Mon, 27 May 2024 14:18:23 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Ron Economos <re@w6rz.net>
+Cc: Guenter Roeck <linux@roeck-us.net>, regressions@lists.linux.dev,
+	linux-clk@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-riscv <linux-riscv@lists.infradead.org>
+Subject: Re: [PATCH] clkdev: report over-sized strings when creating clkdev
+Message-ID: <ZlSIH1/etwPQe+bQ@shell.armlinux.org.uk>
+References: <28114882-f8d7-21bf-4536-a186e8d7a22a@w6rz.net>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <28114882-f8d7-21bf-4536-a186e8d7a22a@w6rz.net>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Add the CSI40 and CSI41 module clocks, which are used by the CSI-2
-interfaces on the Renesas R-Car V4M (R8A779H0) SoC.
+On Mon, May 27, 2024 at 03:45:15AM -0700, Ron Economos wrote:
+> On Fri, May 17, 2024 at 03:09:14PM -0700, Guenter Roeck wrote:
+> > Hi,
+> >
+> > On Fri, Mar 15, 2024 at 11:47:55AM +0000, Russell King (Oracle) wrote:
+> > > Report an error when an attempt to register a clkdev entry results in a
+> > > truncated string so the problem can be easily spotted.
+> > >
+> > > Reported by: Duanqiang Wen <duanqiangwen@net-swift.com>
+> > > Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+> > > Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+> >
+> > With this patch in the mainline kernel, I get
+> >
+> > 10000000.clock-controller:corepll: device ID is greater than 24
+> > sifive-clk-prci 10000000.clock-controller: Failed to register clkdev for
+> corepll: -12
+> > sifive-clk-prci 10000000.clock-controller: could not register clocks: -12
+> > sifive-clk-prci 10000000.clock-controller: probe with driver
+> sifive-clk-prci failed with error -12
+> > ...
+> > platform 10060000.gpio: deferred probe pending: platform: supplier
+> 10000000.clock-controller not ready
+> > platform 10010000.serial: deferred probe pending: platform: supplier
+> 10000000.clock-controller not ready
+> > platform 10011000.serial: deferred probe pending: platform: supplier
+> 10000000.clock-controller not ready
+> > platform 10040000.spi: deferred probe pending: platform: supplier
+> 10000000.clock-controller not ready
+> > platform 10050000.spi: deferred probe pending: platform: supplier
+> 10000000.clock-controller not ready
+> > platform 10090000.ethernet: deferred probe pending: platform: supplier
+> 10000000.clock-controller not ready
+> >
+> > when trying to boot sifive_u in qemu.
+> >
+> > Apparently, "10000000.clock-controller" is too long. Any suggestion on
+> > how to solve the problem ? I guess using dev_name(dev) as dev_id parameter
+> > for clk_hw_register_clkdev() is not or no longer a good idea.
+> > What else should be used instead ?
+> 
+> This issue causes a complete boot failure on real hardware (SiFive
+> Unmatched). The boot only gets as far as "Starting kernel ..." with no other
+> indication of what's going on.
+> 
+> Guenter's suggested patch solves the issue.
+> 
+> diff --git a/drivers/clk/sifive/sifive-prci.c
+> b/drivers/clk/sifive/sifive-prci.c
+> index 25b8e1a80ddc..20cc8f42d9eb 100644
+> --- a/drivers/clk/sifive/sifive-prci.c
+> +++ b/drivers/clk/sifive/sifive-prci.c
+> @@ -537,7 +537,7 @@ static int __prci_register_clocks(struct device *dev,
+> struct __prci_data *pd,
+>                          return r;
+>                  }
+> 
+> -               r = clk_hw_register_clkdev(&pic->hw, pic->name,
+> dev_name(dev));
+> +               r = clk_hw_register_clkdev(&pic->hw, pic->name, "prci");
 
-Signed-off-by: Niklas SÃ¶derlund <niklas.soderlund+renesas@ragnatech.se>
----
- drivers/clk/renesas/r8a779h0-cpg-mssr.c | 2 ++
- 1 file changed, 2 insertions(+)
+How about just changing this to:
 
-diff --git a/drivers/clk/renesas/r8a779h0-cpg-mssr.c b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
-index 7f8e0e71a8b4..b3cc86bb36ec 100644
---- a/drivers/clk/renesas/r8a779h0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
-@@ -176,6 +176,8 @@ static const struct mssr_mod_clk r8a779h0_mod_clks[] = {
- 	DEF_MOD("avb0:rgmii0",	211,	R8A779H0_CLK_S0D8_HSC),
- 	DEF_MOD("avb1:rgmii1",	212,	R8A779H0_CLK_S0D8_HSC),
- 	DEF_MOD("avb2:rgmii2",	213,	R8A779H0_CLK_S0D8_HSC),
-+	DEF_MOD("csi40",	331,	R8A779H0_CLK_CSI),
-+	DEF_MOD("csi41",	400,	R8A779H0_CLK_CSI),
- 	DEF_MOD("hscif0",	514,	R8A779H0_CLK_SASYNCPERD1),
- 	DEF_MOD("hscif1",	515,	R8A779H0_CLK_SASYNCPERD1),
- 	DEF_MOD("hscif2",	516,	R8A779H0_CLK_SASYNCPERD1),
+		r = clk_hw_register(dev, &pic->hw);
+
+?
+
+Since, if the device name is over-sized and thus truncated in the clk
+lookup array that clkdev maintains, *nothing* will be able to match
+the entry. Hence, I suspect all those clkdev registrations are
+completely redundant for this driver (and do nothing other than
+waste memory!)
+
 -- 
-2.45.1
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
