@@ -1,104 +1,153 @@
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from omta36.uswest2.a.cloudfilter.net (omta36.uswest2.a.cloudfilter.net [35.89.44.35])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E90BE8BF0
-	for <linux-clk@vger.kernel.org>; Mon, 27 May 2024 09:20:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69E4E26AFA
+	for <linux-clk@vger.kernel.org>; Mon, 27 May 2024 10:45:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.89.44.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716801619; cv=none; b=CKo009S25r9a9MO7UhQX01SDUGHbxAJo4ESPiWSmziri/sY2vj8lhiKXTROY8zq+GCGcVt820VOIYtxtzUBuEErQN49HR7dBzQeaUPcG0UK2Cd4U+bDNo89zBBon4fH8Jw8efZzRB2M5UrHji7YhqHtbzhVtelDNgzEwgZon8gU=
+	t=1716806727; cv=none; b=Y0zjs+HOtNdtr3ymInMZG97JQyt8v4CzrKZy5ZC1hsd/yjKNoP5Wv/HrjnzjOyyo4OLc0VjM9/1JI9GSjHP099xBvAGNIE8Ws4lRwT/z1jUrWDc2xaDayLOFv2RcV+1KvH/ikb/xc/Xd7hrgpPDd+/tyVt+t7Mmz3wgGN7WqpHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716801619; c=relaxed/simple;
-	bh=UH6XxpGrxgXHal2Dcg5rY4RFy7ZlpRqCbIL894fO9gM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=s/228pDjgEOsy8Kx1CyimKPlFcEK/tC39U5S6N3w0weyRc9beAi865NrPOeKhmUgobERocBG6nNQIWWO3UnybiUTJ0qtIiAIqvIUgiF0gV2zf8MEZChuHF+koKH64sY46lEABHxNUKfjgzTwYWyfkTHB2wZUmJTL1Z7PqiKFPtM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mFegiXOr; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1716806727; c=relaxed/simple;
+	bh=rKvMLo7joCjKiFuHZ58luWYMNXJKJf8/fNkgpcBwjf8=;
+	h=To:From:Subject:Message-ID:Date:MIME-Version:Content-Type; b=jRWwuTaKHh5mHWTxUBUHfJ94bzqrClFjcudj/JIuPc5sgeOJBIkAtGMb6qXQ8UR7MJ4OJyz46jvvU1OxG1YpG85FD0TgvTKBztL73RW9pI+T4w4snxFWmLkYrGpsCjw5Oev+MHzGCJ8v4eFjMEiBxxdQchUh/YPQg7XWdezxnC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=AW08ziET; arc=none smtp.client-ip=35.89.44.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mFegiXOr"
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5785161b98cso1572879a12.1
-        for <linux-clk@vger.kernel.org>; Mon, 27 May 2024 02:20:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716801616; x=1717406416; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Bo3044s0QfZtv4pJle/cczhLo3E0k9R0oaHy3aD2XCI=;
-        b=mFegiXOr72g0mSO/R8HR9BDvcALnJ13Jcp7PO4GIef2EApwVfiZDuyMsEEbp2X6glf
-         wZ16PBjgMP7+K+Aq2LrqwtVtMy2cPzzCv/R6up78OFypZitQLLPRNPBLIdZFEl2KVYUG
-         9cONY8Fg693zS3QRfxVkUfDOST5oDXSTIbs3VHRuluZIZSDHj6eTeIHKCpzHn4hD8El+
-         2dERNDGTbYUBWm9k3Bo+4TzNiFuzo26yJ3Q2tUGkUUTkybvvlVfaA3UIOcDgAk1++Gtg
-         BE53mMlmt6aSRt1PE3s/gL4ofmLPKu5wK4tAsmHdtyn+yQzhUcxToQQIh0vvaLiopy48
-         n8zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716801616; x=1717406416;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Bo3044s0QfZtv4pJle/cczhLo3E0k9R0oaHy3aD2XCI=;
-        b=VyAPSisx/e6AmuaU7nqvU7/4kn7bfAeYusnPBEoIuY5qvVHpLnG/tSoEPkYL+ReFgi
-         0IGlv3dD8j7miVLrZFZImINnmNOIhCxODgHU0wXGC1JMyvA1ZAjDzZQabdemd9KITxyt
-         FMUbKdKu8vqvK2/as/k/fMM/OsgUY2tMyMPw9slB/VlyKhdJFxV/FrgtMyDK2Xwx3Stc
-         G8lly43wJgcfgXOivr5beEvc2bVwP/Q7Mg/FiqZOH+uBwld7A8sF8M/dp+b+jQtaDwhZ
-         kjjGahZPn2Idc+3cM1UqF3c7BqBOpcwXlPQbfyJYGKLFrAJLCvWGn3qjtJ3RIJvEJBZD
-         A28w==
-X-Forwarded-Encrypted: i=1; AJvYcCWTDcv+ZjR+hakHohQ4EqTDUFdD3t3eA7w6iyv13AU7ynu7M7gK2m77LC/aDhKBYPwCd4cA2rbLwZGVN+3Gu97MhHcLD16Do7Qd
-X-Gm-Message-State: AOJu0YzK3q/tpocXuZmfXBttKpyvYvhLkMGsP1X19s7038MPEWb3gKyG
-	TGYOF5WvkDGC84hcHWPYOM6PwRQC58QLLEpd0WfcBxQKLbhBVyEtuk/j/sUdEIk=
-X-Google-Smtp-Source: AGHT+IE8Y/dnrGRfPs1DKdUvz4jGIEanU5alTAStlbm2f/zWJdgZdTIaYjWNwshSkYgy5WqbqKyy9w==
-X-Received: by 2002:a50:d619:0:b0:578:5e84:87cb with SMTP id 4fb4d7f45d1cf-5785e848842mr7402597a12.27.1716801616261;
-        Mon, 27 May 2024 02:20:16 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.206.169])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-578524bb5ddsm5503036a12.93.2024.05.27.02.20.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 May 2024 02:20:15 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, 
- Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- David Lechner <david@lechnology.com>, 
- Bjorn Andersson <andersson@kernel.org>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- William McVicker <willmcvicker@google.com>
-In-Reply-To: <20240510070653.537089-1-m.szyprowski@samsung.com>
-References: <CGME20240510070700eucas1p10ed1c978c78366b412770fdae6d4f384@eucas1p1.samsung.com>
- <20240510070653.537089-1-m.szyprowski@samsung.com>
-Subject: Re: [PATCH v3] clk: samsung: exynos-clkout: Remove misleading
- of_match_table/MODULE_DEVICE_TABLE
-Message-Id: <171680161481.21651.14564564565582283866.b4-ty@linaro.org>
-Date: Mon, 27 May 2024 11:20:14 +0200
+	dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="AW08ziET"
+Received: from eig-obgw-5010a.ext.cloudfilter.net ([10.0.29.199])
+	by cmsmtp with ESMTPS
+	id BV4msRwZRJXoqBXqwsOB0S; Mon, 27 May 2024 10:45:18 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id BXqvs9jClzh2iBXqvsbv0j; Mon, 27 May 2024 10:45:17 +0000
+X-Authority-Analysis: v=2.4 cv=EdjOQumC c=1 sm=1 tr=0 ts=6654643d
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=TpHVaj0NuXgA:10 a=-Ou01B_BuAIA:10 a=thD_vAUaAAAA:8
+ a=PHq6YzTAAAAA:8 a=VwQbUJbxAAAA:8 a=q2727y1HDB8PbVJpZgoA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=Kl19cmx7V54we018lLRm:22 a=ZKzU8r6zoKMcqsNulkmm:22
+ a=AjGcO6oz07-iQ99wixmX:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
+	Message-ID:Subject:From:To:Sender:Reply-To:Cc:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=aUdqAH9GyHh2gGt9rAEDpDY6ZVQgxj4JgC7F5xnaUIY=; b=AW08ziETFpPq9nt3K5E4rg9qIb
+	TB8iJt/978hcyy9ZJMDZOLzFEdiWeCN0A1pFVYpc+WFqsx3ZAWz11DdCxkbws8zHXx6of35e0m0Ba
+	x8xa53VRegGuwEs7i/7rzZJjktPia6dFyec59HPHoDtvf3OQwUcAN7+CeJMUZk7/Ga123viY73W3c
+	BlGhixembTig/EKu5yBGKjcyaCsLt+UwD+qNkvUtz91DKI9CFLNBQaHDFOVtY+PVWpzBGhy0sZ2MJ
+	HMX/bvLLqcO8chkjzWzoJTCoqAWDCbw8rsmdld9AFRnW7qbWq+WDjr3rvvE6QTWqAAKY+nc/mY/om
+	SzXiD6pg==;
+Received: from c-98-207-139-8.hsd1.ca.comcast.net ([98.207.139.8]:40150 helo=[10.0.1.47])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <re@w6rz.net>)
+	id 1sBXqu-001gJc-2a;
+	Mon, 27 May 2024 04:45:16 -0600
+To: Guenter Roeck <linux@roeck-us.net>,
+ "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+ regressions@lists.linux.dev, linux-clk@vger.kernel.org,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ linux-riscv <linux-riscv@lists.infradead.org>
+From: Ron Economos <re@w6rz.net>
+Subject: Re: [PATCH] clkdev: report over-sized strings when creating clkdev
+Message-ID: <28114882-f8d7-21bf-4536-a186e8d7a22a@w6rz.net>
+Date: Mon, 27 May 2024 03:45:15 -0700
+User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 98.207.139.8
+X-Source-L: No
+X-Exim-ID: 1sBXqu-001gJc-2a
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-98-207-139-8.hsd1.ca.comcast.net ([10.0.1.47]) [98.207.139.8]:40150
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 4
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfLW34ndBW8zUgbbNPNT9Cl9ltEcHEdssZ4cgxOULX6B91yesLmcCH9M5C4gO1BpB89VPP0wn82UeGPxAlItqrgvFxnLhxmHMKwcvpflsfMGs57iZz0YN
+ 9hOE1Bw8UmeWxOs3yvKD0oNn2tuZroDABrGgIWZKOozkjLVw/p7O7qxR4sj/Bi1ii0tog/9e9DVh2GBMyymFRu0vTXPN60C0nak=
 
+On Fri, May 17, 2024 at 03:09:14PM -0700, Guenter Roeck wrote:
+ > Hi,
+ >
+ > On Fri, Mar 15, 2024 at 11:47:55AM +0000, Russell King (Oracle) wrote:
+ > > Report an error when an attempt to register a clkdev entry results in a
+ > > truncated string so the problem can be easily spotted.
+ > >
+ > > Reported by: Duanqiang Wen <duanqiangwen@net-swift.com>
+ > > Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+ > > Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+ >
+ > With this patch in the mainline kernel, I get
+ >
+ > 10000000.clock-controller:corepll: device ID is greater than 24
+ > sifive-clk-prci 10000000.clock-controller: Failed to register clkdev 
+for corepll: -12
+ > sifive-clk-prci 10000000.clock-controller: could not register clocks: -12
+ > sifive-clk-prci 10000000.clock-controller: probe with driver 
+sifive-clk-prci failed with error -12
+ > ...
+ > platform 10060000.gpio: deferred probe pending: platform: supplier 
+10000000.clock-controller not ready
+ > platform 10010000.serial: deferred probe pending: platform: supplier 
+10000000.clock-controller not ready
+ > platform 10011000.serial: deferred probe pending: platform: supplier 
+10000000.clock-controller not ready
+ > platform 10040000.spi: deferred probe pending: platform: supplier 
+10000000.clock-controller not ready
+ > platform 10050000.spi: deferred probe pending: platform: supplier 
+10000000.clock-controller not ready
+ > platform 10090000.ethernet: deferred probe pending: platform: 
+supplier 10000000.clock-controller not ready
+ >
+ > when trying to boot sifive_u in qemu.
+ >
+ > Apparently, "10000000.clock-controller" is too long. Any suggestion on
+ > how to solve the problem ? I guess using dev_name(dev) as dev_id 
+parameter
+ > for clk_hw_register_clkdev() is not or no longer a good idea.
+ > What else should be used instead ?
 
-On Fri, 10 May 2024 09:06:53 +0200, Marek Szyprowski wrote:
-> Since commit 9484f2cb8332 ("clk: samsung: exynos-clkout: convert to
-> module driver") this driver is instantiated as MFD-cell (matched by
-> platform device name) not as a real platform device created by OF code.
-> Remove then of_match_table and change related MODULE_DEVICE_TABLE to
-> simple MODULE_ALIAS to avoid further confusion.
-> 
-> 
-> [...]
+This issue causes a complete boot failure on real hardware (SiFive 
+Unmatched). The boot only gets as far as "Starting kernel ..." with no 
+other indication of what's going on.
 
-Applied, thanks!
+Guenter's suggested patch solves the issue.
 
-[1/1] clk: samsung: exynos-clkout: Remove misleading of_match_table/MODULE_DEVICE_TABLE
-      https://git.kernel.org/krzk/linux/c/b363a45913d211990b9a42123690518dd3f499c4
+diff --git a/drivers/clk/sifive/sifive-prci.c 
+b/drivers/clk/sifive/sifive-prci.c
+index 25b8e1a80ddc..20cc8f42d9eb 100644
+--- a/drivers/clk/sifive/sifive-prci.c
++++ b/drivers/clk/sifive/sifive-prci.c
+@@ -537,7 +537,7 @@ static int __prci_register_clocks(struct device 
+*dev, struct __prci_data *pd,
+                          return r;
+                  }
 
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+-               r = clk_hw_register_clkdev(&pic->hw, pic->name, 
+dev_name(dev));
++               r = clk_hw_register_clkdev(&pic->hw, pic->name, "prci");
+                  if (r) {
+                          dev_warn(dev, "Failed to register clkdev for 
+%s: %d\n",
+                                   init.name, r);
 
