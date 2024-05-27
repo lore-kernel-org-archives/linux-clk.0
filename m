@@ -1,131 +1,104 @@
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F8B8BF0;
-	Mon, 27 May 2024 09:18:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E90BE8BF0
+	for <linux-clk@vger.kernel.org>; Mon, 27 May 2024 09:20:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716801497; cv=none; b=Fnk4+rHD39MBEGzJ3VyWnZtfEbkGqtsaB/lnpT+2uFe3Ii3f21IEgnfgZltUkC3vfmal5EmFiaqYjtOu8RT3DnGBq8nLEhsoHWVTyWeMolje2UFODEVaibI46oe+4kqbwuecoqEYFj7wAxvrhLqLIrdT2BchrBo3NmpzQBjS0v8=
+	t=1716801619; cv=none; b=CKo009S25r9a9MO7UhQX01SDUGHbxAJo4ESPiWSmziri/sY2vj8lhiKXTROY8zq+GCGcVt820VOIYtxtzUBuEErQN49HR7dBzQeaUPcG0UK2Cd4U+bDNo89zBBon4fH8Jw8efZzRB2M5UrHji7YhqHtbzhVtelDNgzEwgZon8gU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716801497; c=relaxed/simple;
-	bh=06ov8LDF6C94yAWPdz3byY1cC7MZjQLNnXADs1Y3168=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jCY14G/zfR6Eh+d05QmMMJ8x4jaowWgJ4XwSu9Do3bP2EYGMHu7+fOBPHAUlTo6fv8A0k9q9CvGybaLMwJ8mM2KmwL23Bw3ePsQ1qRWRNkZVDSmNVy8SSsObZWjto1kG5AKqjBxxMcKeB/GjRVoS8fSGXumyBO4ahCP6lCSB6SM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-62a0809c805so31949007b3.0;
-        Mon, 27 May 2024 02:18:15 -0700 (PDT)
+	s=arc-20240116; t=1716801619; c=relaxed/simple;
+	bh=UH6XxpGrxgXHal2Dcg5rY4RFy7ZlpRqCbIL894fO9gM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=s/228pDjgEOsy8Kx1CyimKPlFcEK/tC39U5S6N3w0weyRc9beAi865NrPOeKhmUgobERocBG6nNQIWWO3UnybiUTJ0qtIiAIqvIUgiF0gV2zf8MEZChuHF+koKH64sY46lEABHxNUKfjgzTwYWyfkTHB2wZUmJTL1Z7PqiKFPtM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mFegiXOr; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mFegiXOr"
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5785161b98cso1572879a12.1
+        for <linux-clk@vger.kernel.org>; Mon, 27 May 2024 02:20:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716801616; x=1717406416; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Bo3044s0QfZtv4pJle/cczhLo3E0k9R0oaHy3aD2XCI=;
+        b=mFegiXOr72g0mSO/R8HR9BDvcALnJ13Jcp7PO4GIef2EApwVfiZDuyMsEEbp2X6glf
+         wZ16PBjgMP7+K+Aq2LrqwtVtMy2cPzzCv/R6up78OFypZitQLLPRNPBLIdZFEl2KVYUG
+         9cONY8Fg693zS3QRfxVkUfDOST5oDXSTIbs3VHRuluZIZSDHj6eTeIHKCpzHn4hD8El+
+         2dERNDGTbYUBWm9k3Bo+4TzNiFuzo26yJ3Q2tUGkUUTkybvvlVfaA3UIOcDgAk1++Gtg
+         BE53mMlmt6aSRt1PE3s/gL4ofmLPKu5wK4tAsmHdtyn+yQzhUcxToQQIh0vvaLiopy48
+         n8zw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716801494; x=1717406294;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1716801616; x=1717406416;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=T1bOMQpnCot1Q27PtbLkLD5PwnyVT+SP5xzT/2JZo+w=;
-        b=mawjDWl1xV1jPbO4ia8tEPVTF+Har/s6m5YjRrR4HrB9bP3mUKI8cdca+7m+Wgog13
-         9IrvUSLvNxqTcd9PuUiufV9t+4JOQS6woGyPhyVG0uVjft1CJ+AcW/R64IhXEM3+r/OI
-         vN7xhHuEwnS3X8CYl1Nv7S87T6M96eEY2q1/fNlnAFJdTfYiLWL9p2+c3C2JTz+XjZlO
-         Pxw3LsdWGrVkfElo3CGSUhO49lE6+JAKNLSa7uU2jAMjoOwY+mUcBHOHPST82RmJ31Th
-         NfBtM5yZwidfLDJJkNrOuwsyxlsDj/KAozi2AXaaHmW5B8Hy3s2TzsM1m6jWi42ltScB
-         rdvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWXql4lpZ8/HnTn4OMGeOcel9oPzFyKLStu38DP97PCtMSLmaExd/XIFr32oN/cMgrcsFs86fP7YQAemPWtSR2mKVwNwQ40zFz2fnPTW3eyKRd6poj9sRwuSfPf16f3HNCwUMViFrkFZTCjk1TIObZSCYTveOPGx3ejrV7NXT8rOPiieb0IK0wtex1535ePW+2L63tgKxl1XMmeJinGVJ1+YoOkszxg
-X-Gm-Message-State: AOJu0YwzQ1RmBxEQlDdV4c3tgNx9X2/hTEGPa2nvGS5fFzx5wasSsZrs
-	TW/AMFJ5GeSssiCWtwDFp+S9t38sg7fsdeU3x3aHcdD+WTcODtiT7nSspoWy
-X-Google-Smtp-Source: AGHT+IE9Lj3+8RNO8Lg1zFGWdi6XIwXNIUZWezZlbPLmFzYS+nnUL9IP9IDsYFEeXfITyQhpF4Cpqw==
-X-Received: by 2002:a81:6c04:0:b0:61b:df5:7876 with SMTP id 00721157ae682-62a08d7443amr81201407b3.6.1716801494081;
-        Mon, 27 May 2024 02:18:14 -0700 (PDT)
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com. [209.85.219.174])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-62a0a56c17csm15751687b3.131.2024.05.27.02.18.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 27 May 2024 02:18:12 -0700 (PDT)
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-df4e503983fso5168391276.2;
-        Mon, 27 May 2024 02:18:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXciuFRHdC5fTuENBxKqtuVlm+RKosNzV0B+hc4MWzsvZg0EqU8NPUtrBINsAB9G6ya7vp6oHgKx4X8dqjZNR8HKye8VkOXzcvG5Rq2ufS8D3RG+rlCrhe5FAZzwrMaLdikhJuKHucqizf0+8TkKJ/qwnFyUmZrjKvQ00V4H2JXRd4O5UmKPCvfGFrMUBiXhQ0y166n6xSRZTCmqljkHh9/tIXNCrT3
-X-Received: by 2002:a05:6902:528:b0:de6:4ff:3164 with SMTP id
- 3f1490d57ef6-df7721ad3dbmr8878974276.36.1716801492684; Mon, 27 May 2024
- 02:18:12 -0700 (PDT)
+        bh=Bo3044s0QfZtv4pJle/cczhLo3E0k9R0oaHy3aD2XCI=;
+        b=VyAPSisx/e6AmuaU7nqvU7/4kn7bfAeYusnPBEoIuY5qvVHpLnG/tSoEPkYL+ReFgi
+         0IGlv3dD8j7miVLrZFZImINnmNOIhCxODgHU0wXGC1JMyvA1ZAjDzZQabdemd9KITxyt
+         FMUbKdKu8vqvK2/as/k/fMM/OsgUY2tMyMPw9slB/VlyKhdJFxV/FrgtMyDK2Xwx3Stc
+         G8lly43wJgcfgXOivr5beEvc2bVwP/Q7Mg/FiqZOH+uBwld7A8sF8M/dp+b+jQtaDwhZ
+         kjjGahZPn2Idc+3cM1UqF3c7BqBOpcwXlPQbfyJYGKLFrAJLCvWGn3qjtJ3RIJvEJBZD
+         A28w==
+X-Forwarded-Encrypted: i=1; AJvYcCWTDcv+ZjR+hakHohQ4EqTDUFdD3t3eA7w6iyv13AU7ynu7M7gK2m77LC/aDhKBYPwCd4cA2rbLwZGVN+3Gu97MhHcLD16Do7Qd
+X-Gm-Message-State: AOJu0YzK3q/tpocXuZmfXBttKpyvYvhLkMGsP1X19s7038MPEWb3gKyG
+	TGYOF5WvkDGC84hcHWPYOM6PwRQC58QLLEpd0WfcBxQKLbhBVyEtuk/j/sUdEIk=
+X-Google-Smtp-Source: AGHT+IE8Y/dnrGRfPs1DKdUvz4jGIEanU5alTAStlbm2f/zWJdgZdTIaYjWNwshSkYgy5WqbqKyy9w==
+X-Received: by 2002:a50:d619:0:b0:578:5e84:87cb with SMTP id 4fb4d7f45d1cf-5785e848842mr7402597a12.27.1716801616261;
+        Mon, 27 May 2024 02:20:16 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.206.169])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-578524bb5ddsm5503036a12.93.2024.05.27.02.20.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 27 May 2024 02:20:15 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Marek Szyprowski <m.szyprowski@samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ David Lechner <david@lechnology.com>, 
+ Bjorn Andersson <andersson@kernel.org>, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+ William McVicker <willmcvicker@google.com>
+In-Reply-To: <20240510070653.537089-1-m.szyprowski@samsung.com>
+References: <CGME20240510070700eucas1p10ed1c978c78366b412770fdae6d4f384@eucas1p1.samsung.com>
+ <20240510070653.537089-1-m.szyprowski@samsung.com>
+Subject: Re: [PATCH v3] clk: samsung: exynos-clkout: Remove misleading
+ of_match_table/MODULE_DEVICE_TABLE
+Message-Id: <171680161481.21651.14564564565582283866.b4-ty@linaro.org>
+Date: Mon, 27 May 2024 11:20:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240524082800.333991-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240524082800.333991-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240524082800.333991-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 27 May 2024 11:18:00 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWzZP2d6kRw1oTkMYgzS46J68gR_bg14==HCvVpkp0sJA@mail.gmail.com>
-Message-ID: <CAMuHMdWzZP2d6kRw1oTkMYgzS46J68gR_bg14==HCvVpkp0sJA@mail.gmail.com>
-Subject: Re: [PATCH 2/4] dt-bindings: clock: Add R9A09G057 CPG Clock and Reset Definitions
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Magnus Damm <magnus.damm@gmail.com>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-Hi Prabhakar,
 
-On Fri, May 24, 2024 at 10:29=E2=80=AFAM Prabhakar <prabhakar.csengg@gmail.=
-com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Define RZ/V2H(P) (R9A09G057) Clock Pulse Generator module clock outputs
-> (CPG_CLK_ON* registers), and reset definitions (CPG_RST_* registers)
-> in Section 4.4.2 and 4.4.3 ("List of Clock/Reset Signals") of the RZ/V2H(=
-P)
-> Hardware User's Manual (Rev.1.01, Feb. 2024).
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Fri, 10 May 2024 09:06:53 +0200, Marek Szyprowski wrote:
+> Since commit 9484f2cb8332 ("clk: samsung: exynos-clkout: convert to
+> module driver") this driver is instantiated as MFD-cell (matched by
+> platform device name) not as a real platform device created by OF code.
+> Remove then of_match_table and change related MODULE_DEVICE_TABLE to
+> simple MODULE_ALIAS to avoid further confusion.
+> 
+> 
+> [...]
 
-Thanks for your patch!
+Applied, thanks!
 
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/r9a09g057-cpg.h
-> @@ -0,0 +1,644 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> + *
-> + * Copyright (C) 2024 Renesas Electronics Corp.
-> + */
-> +#ifndef __DT_BINDINGS_CLOCK_R9A09G057_CPG_H__
-> +#define __DT_BINDINGS_CLOCK_R9A09G057_CPG_H__
-> +
-> +#include <dt-bindings/clock/renesas-cpg-mssr.h>
-> +
-> +/* Clock list */
+[1/1] clk: samsung: exynos-clkout: Remove misleading of_match_table/MODULE_DEVICE_TABLE
+      https://git.kernel.org/krzk/linux/c/b363a45913d211990b9a42123690518dd3f499c4
 
-No distinction between Core and Module clocks?
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-> +#define R9A09G057_SYS_0_PCLK                           0
-> +#define R9A09G057_DMAC_0_ACLK                          1
-> +#define R9A09G057_DMAC_1_ACLK                          2
-> +#define R9A09G057_DMAC_2_ACLK                          3
-
-[...]
-
-> +/* Resets list */
-
-[...]
-
-No power domain specifiers, as mentioned in PATCH 1/4?
-
-> +
-> +#endif /* __DT_BINDINGS_CLOCK_R9A09G057_CPG_H__ */
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
