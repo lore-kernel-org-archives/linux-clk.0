@@ -1,117 +1,100 @@
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A080C13A259;
-	Mon, 27 May 2024 11:16:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23A011581E2;
+	Mon, 27 May 2024 12:24:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716808580; cv=none; b=HGtCGwR8Ix7YH8sl/fAYZlLbuumrp2mYHND2a3YhI4BXAgM8tfEO2yojKYr/LvJkWJA/9dFyNOVyEQTKUrNzMdHfJ2fy3rYCRJvumHQ/PvoJ+ua91vMfLra8kX+tKv9pXEcx4yIxP9S8qaVfEZcEv3CO2w08cU26NEdaPGL0MLk=
+	t=1716812684; cv=none; b=lvaaeN0UG787S6GJ1xRAsqWAEV/woSYr88q6nENSfTmvxUZyH56ge61uiyvmspxsjf3vmd5WClZ38junlRa/aUkARxG96v/9+iZTQzgWnXllA+Gw2AvTY8ZukWFRSwqxU+gSsWBma1kTZMsHyEc6iatt9Is7OsI/JLodn1Yn4us=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716808580; c=relaxed/simple;
-	bh=mwCYwCCjvL4nTs5rhRxkGA0LBcbSZqOtDLfeWOP6FlI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Rjqua2odXWZuydMoLZGQe9KbqILhvsz5WDr+DjRtpabSFP0D6FfbfKH8hT+8o9e0uTZzUWVnDVU0owCS19DAeZvmPyYEfEJXtmqaz7gjwnI9IIL26cfC+p2S8k/sVZgmdCH7dYUmbZG6lWL/b4ictcDLqgnWFiloYVlB5F4tPgQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=euVLF9yJ; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+	s=arc-20240116; t=1716812684; c=relaxed/simple;
+	bh=AC1H0aiKdZcdpc098PhYIZqVMQLoaF+pLuHEt1fMz98=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QtdsB8oBaZ2+iW+Fm7sAvdX7n7i4Ld7XNynJ4qjNloiqUFqKIVGOSViN0dui7aRWtyNiQwjlA9xqEE0A7OUIYct1qmJRlm+ddZUOlPEXOJ77s50shbooZCqWY/JVRqJBEYb/Uu2iVq0hZLsi1mbRan39qEVOtKiio3pCNFMDke8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c9KQmDxn; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="euVLF9yJ"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:Reply-To:From:References:To:Subject:MIME-Version:Date:Message-ID:
-	From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
-	References; bh=1SX+hjPO8iXzPnEmnZdrhvcBPehECadE4WnLUAtHG/s=; t=1716808578;
-	x=1717240578; b=euVLF9yJ6YWu2KNmkUZ1lyXFynOoZ3xTLXUw3AYhUJHWIIfglOx0bWpEZsmpx
-	YxRx4o4VMlsAglN6pix1mFmwEzDlLLwQEMp7/EmN8llM+AqO7tcbJU23m6sIdw4yLrD4mfNzJiMPp
-	unlWajG300Gea9yksytXZEmEJ5FXtrJUTMdnF6PUAHcD2mZNOXfKDAeMMTcS2J4licgvZYLewzjrX
-	f5xsVGDLFHJhYEayHJ4PL2vkA2mQ6LUX0lwPjUYXs3ULB4QjPxGnqslhpkgPO+nIxAC+OsTkaXrgF
-	kQkOCMLm7q1+s+B23ikP5N16YbMYstDcaSMke9rLIoIM4PIerw==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1sBYKk-0003Yd-SU; Mon, 27 May 2024 13:16:06 +0200
-Message-ID: <d7f0c16a-0d83-4060-8d95-95b293d95dfd@leemhuis.info>
-Date: Mon, 27 May 2024 13:16:06 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c9KQmDxn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B053C2BBFC;
+	Mon, 27 May 2024 12:24:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716812683;
+	bh=AC1H0aiKdZcdpc098PhYIZqVMQLoaF+pLuHEt1fMz98=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=c9KQmDxnOw5TGTXwGxEEcfbgKsoiOBfITuiBO/2/kWfxmcSEsdv5Lp41x3oJZPaYN
+	 Ilb4vd8afUoOfTHTjag/aFynY/CMZexYZ/iyjGy/p274N5D9ilvb0cfP3EdSDJ8ue0
+	 kgwCB8WJ3vurwnHhTo88smbCv3E09csXENZZRWPzfbMOUX1qM2nJJQ7C51TgJAjtbo
+	 XzIlu31EI+KeupJ1ecVMHFIewzSoLhO6/UA4PaiPJ/JqGZvlsN1M20SnaFQeQZec+e
+	 arnzHtXgUuCeLi6wvnyUEHqRj3FnOox/aO/vVb+44qa0CU2tRh3WGFY9sPSwGq2Dt9
+	 Wi7aV6VhIz8vA==
+Date: Mon, 27 May 2024 13:24:37 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Francesco Dolcini <francesco@dolcini.it>
+Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org,
+	peng.fan@nxp.com, mturquette@baylibre.com, sboyd@kernel.org,
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+	festevam@gmail.com, linux-imx@nxp.com, shengjiu.wang@gmail.com,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4] clk: imx: imx8mp: Add pm_runtime support for power
+ saving
+Message-ID: <f0a38df8-9197-452d-a46f-2bc2697c1186@sirena.org.uk>
+References: <1711026842-7268-1-git-send-email-shengjiu.wang@nxp.com>
+ <20240424164725.GA18760@francesco-nb>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clkdev: report over-sized strings when creating clkdev
-To: Ron Economos <re@w6rz.net>, Guenter Roeck <linux@roeck-us.net>,
- "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
- regressions@lists.linux.dev, linux-clk@vger.kernel.org,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- linux-riscv <linux-riscv@lists.infradead.org>
-References: <28114882-f8d7-21bf-4536-a186e8d7a22a@w6rz.net>
-From: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
-In-Reply-To: <28114882-f8d7-21bf-4536-a186e8d7a22a@w6rz.net>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1716808578;bfb9d9e0;
-X-HE-SMSGID: 1sBYKk-0003Yd-SU
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="9Jl/B1Q1Lia3QbBq"
+Content-Disposition: inline
+In-Reply-To: <20240424164725.GA18760@francesco-nb>
+X-Cookie: Not every question deserves an answer.
 
-On 27.05.24 12:45, Ron Economos wrote:
-> On Fri, May 17, 2024 at 03:09:14PM -0700, Guenter Roeck wrote:
->>
->> On Fri, Mar 15, 2024 at 11:47:55AM +0000, Russell King (Oracle) wrote:
->> > Report an error when an attempt to register a clkdev entry results in a
->> > truncated string so the problem can be easily spotted.
->> >
->> > Reported by: Duanqiang Wen <duanqiangwen@net-swift.com>
->> > Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
->> > Reviewed-by: Stephen Boyd <sboyd@kernel.org>
->>
->> With this patch in the mainline kernel, I get
->> [...]
->> when trying to boot sifive_u in qemu.
->>
->> Apparently, "10000000.clock-controller" is too long. Any suggestion on
->> how to solve the problem ? I guess using dev_name(dev) as dev_id
-> parameter
->> for clk_hw_register_clkdev() is not or no longer a good idea.
->> What else should be used instead ?
-> 
-> This issue causes a complete boot failure on real hardware (SiFive
-> Unmatched).
 
-Hmmm. That and because nobody afaics has time/motivation to fix this
-anytime soon (or am I mistaken there?) makes me wonder if we should
-revert this change for now (and remerge it later once the problem this
-change exposed was fixed). Or is another solution in sight somewhere?
+--9Jl/B1Q1Lia3QbBq
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Ciao, Thorsten
+On Wed, Apr 24, 2024 at 06:47:25PM +0200, Francesco Dolcini wrote:
+> On Thu, Mar 21, 2024 at 09:14:02PM +0800, Shengjiu Wang wrote:
+> > Add pm_runtime support for power saving. In pm runtime suspend
+> > state the registers will be reseted, so add registers save
+> > in pm runtime suspend and restore them in pm runtime resume.
+> >=20
+> > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> > Reviewed-by: Peng Fan <peng.fan@nxp.com>
+>=20
+> Is this introducing a regression?
+>=20
+>   800 13:50:19.713052  <6>[   16.531134] clk: Disabling unused clocks
+>   801 13:50:19.727524  <2>[   16.535413] SError Interrupt on CPU2, code 0=
+x00000000bf000002 -- SError
+>   802 13:50:19.731400  <4>[   16.535421] CPU: 2 PID: 1 Comm: swapper/0 No=
+t tainted 6.9.0-rc5-next-20240424 #1
+>   803 13:50:19.742514  <4>[   16.535428] Hardware name: Toradex Verdin iM=
+X8M Plus on Dahlia Board (DT)
 
-> The boot only gets as far as "Starting kernel ..." with no
-> other indication of what's going on.
-> 
-> Guenter's suggested patch solves the issue.
-> 
-> diff --git a/drivers/clk/sifive/sifive-prci.c
-> b/drivers/clk/sifive/sifive-prci.c
-> index 25b8e1a80ddc..20cc8f42d9eb 100644
-> --- a/drivers/clk/sifive/sifive-prci.c
-> +++ b/drivers/clk/sifive/sifive-prci.c
-> @@ -537,7 +537,7 @@ static int __prci_register_clocks(struct device
-> *dev, struct __prci_data *pd,
->                          return r;
->                  }
-> 
-> -               r = clk_hw_register_clkdev(&pic->hw, pic->name,
-> dev_name(dev));
-> +               r = clk_hw_register_clkdev(&pic->hw, pic->name, "prci");
->                  if (r) {
->                          dev_warn(dev, "Failed to register clkdev for
-> %s: %d\n",
->                                   init.name, r);
-> 
-> 
-> 
+I am now seeing this failure in mainline on both the above board and
+i.MX8MP-EVK.  There was a fix mentioned in the thread but it's not
+landed for -rc1, both boards crash as above.  What's the plan for
+getting this fixed, should the patch be reverted for now?
 
-#regzbot dup:
-https://lore.kernel.org/lkml/7eda7621-0dde-4153-89e4-172e4c095d01@roeck-us.net/
+--9Jl/B1Q1Lia3QbBq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZUe4QACgkQJNaLcl1U
+h9BZAAf/SwbkQw7xNK6oPYnkKBhetfwKUF87XHoq2QNLdmGrV1nAsXHA+HccQ4P1
+CGAxLSlJPtMNnZ4CvqPkNfWTmY61novb449w9cydqCmjeJt9XiR1lXmbskFryEMh
+Q/DROuRTtR8TKaSczQii6Cftc88XYTtqb8O1rhl7FLpLliEE6MwW+jDF9xfyq6gs
+y10D5yAmXsHxUjob+O5l/uxq64hZhoBF7RaqAGIwwKwTFF2ma7WOPYFar80BaYRg
+/Ujrvt+j0BsnLEmmbo0B6QPbeG6u/VhYWw8y2FJVk7FZt20uxSW36luHoKc9Zm/U
+f2DKhcL3jyMzwJpxOxxzCfHaF8+Kow==
+=QP7g
+-----END PGP SIGNATURE-----
+
+--9Jl/B1Q1Lia3QbBq--
