@@ -1,43 +1,43 @@
 Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E96464EB55;
-	Mon, 27 May 2024 13:18:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0109015ECEE;
+	Mon, 27 May 2024 13:24:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716815913; cv=none; b=JaU7x+I+YbdMe3jAPpaEBo56TKdO8EZGG1TIxxTF50G0UBYUYA28D0DnRfgkZjy6hEOb5kfm4L5M/N9RWLzuWm7QYnm6k8msP6BwTyX0F1FdlXBvyLuyhK+/656jJN/vresN2K9M466RZGGSMMFQLspZYWBAtf4OF0Tvl7sg5qk=
+	t=1716816284; cv=none; b=qrrBLG+8I5cMotipy34rv3/UFb+901rA0UNhsSYXb4ekysXtDTAS3hlZYwiCugHi70Dw+66oUowQPiCC7LYHATPQ9YgJk5yxjeoyEb1Ub4jPlFeFWceA48KbPuPR1/rCS2aGfX9jo5s5nXqK1toQVQfXsWoCYfo5JgfyKw42acw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716815913; c=relaxed/simple;
-	bh=vUZt2pGjbC5IUomB5cGvwvlW828f5yDbSKPZoklG+Nw=;
+	s=arc-20240116; t=1716816284; c=relaxed/simple;
+	bh=D6M0PlOsQaPe3TXGh+uEF0R7S6txV/OPg4LUJTirjEo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n+cEDhHm1Y99mnI2QR7syQDwltmJz3Y9wboNP3lBRROJjoER1pK8MwE9CjSLIB73iuSnhHOdM1RZRSabA17btin2Y5sgO7eW976qfr/lDQGvupoovq/s0+85zVwbKzxuLJqyz4V43N7w9QP2y+iDkPxdM/Rx+8kGc6OupuVmqAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=IyYzKcd3; arc=none smtp.client-ip=78.32.30.218
+	 Content-Type:Content-Disposition:In-Reply-To; b=F4saaYY59UdvcTING0hS6w4TqoykKMaHDAfUgDOrzyl1UCyiNzF3EkldBeTVpbskDgoJOGONT5GaJqNYkoiJgZQhy1JOW+GMnW0iWNyvHjwFqOWmpjMOdyno1OUg3AK0kFx/KOTMoD5am8GKaegHoDH1gZ+qeQadN7hD4gsYn1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=jz69g/WA; arc=none smtp.client-ip=78.32.30.218
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="IyYzKcd3"
+	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="jz69g/WA"
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
 	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
 	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
 	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
 	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
 	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=noCvl7iZaiJJWOq4Lf6jhwKTiTVNLLZfuz+6oNNv/sQ=; b=IyYzKcd3Au6t2asqS8w2aUpEse
-	Gy/GZIRqxajxzRCNdRTepzYEGV3Dze8Xu5fNJQQZ1rHL/71TKzyi7W8t/0ZstXfWqeHfQiC8xoi6o
-	tGszKffg85qvnUh/d9jFVSQpWnvkqM/UopYeMGJeB6MNXIl1Tex17vzHzWGtTwVXTg2t9FN1D7c2v
-	aFn1CSkCdQVOtrMH3Q0DWi3mBw5KNQiVR2sdnd+PCOwipiH2FMg/orMlhBy7XgOlzFc6lG3uPcP6a
-	JtyWfL45AATySMI+v838EkOhJzBmzJm0zkpexVVhmPq5PJI1gEdyI8J+i/q/H+Vjejc2I5rPsODTt
-	LYBGYI+w==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:45962)
+	bh=n1ipnm3Y455WZMPj6tDeABCvoBv8BPrn9gR9rhHmizM=; b=jz69g/WAk1zi5MWpS5PjDaExwf
+	uCZ84JlHFB4CH01TKTRVdNHLxv16w42RpemLfu3aMB3CI7ZW7g9qYV6kmdKAOT0pmPPdPMG3SKIMC
+	GOL4GD3F7ovWTPlZ1mkaV8LII52QiAXAOQJIFY1tlAAM8A9kDtcXSQVA6Y9vx+/BEsbo9FJb53wOi
+	0jbkyx6j9vOdahtbDwupatB+H3WApVG4/94vpCEQIsmR1QIKup4/6O+MgMtOWu5K7FWnv8CkpS53u
+	wD5bWiN31mGgQlXukQovhHf+Cp+00ir8lJL4caLN7CA6E7r1QRpxq1dxW7ajg7ofUZxnSLVaczyUv
+	C13xaDKQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:44934)
 	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.96)
 	(envelope-from <linux@armlinux.org.uk>)
-	id 1sBaF3-0003Yz-1X;
-	Mon, 27 May 2024 14:18:21 +0100
+	id 1sBaL0-0003ZN-0N;
+	Mon, 27 May 2024 14:24:30 +0100
 Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
 	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sBaF5-0002Lp-Hm; Mon, 27 May 2024 14:18:23 +0100
-Date: Mon, 27 May 2024 14:18:23 +0100
+	id 1sBaL2-0002M3-CW; Mon, 27 May 2024 14:24:32 +0100
+Date: Mon, 27 May 2024 14:24:32 +0100
 From: "Russell King (Oracle)" <linux@armlinux.org.uk>
 To: Ron Economos <re@w6rz.net>
 Cc: Guenter Roeck <linux@roeck-us.net>, regressions@lists.linux.dev,
@@ -45,8 +45,9 @@ Cc: Guenter Roeck <linux@roeck-us.net>, regressions@lists.linux.dev,
 	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
 	linux-riscv <linux-riscv@lists.infradead.org>
 Subject: Re: [PATCH] clkdev: report over-sized strings when creating clkdev
-Message-ID: <ZlSIH1/etwPQe+bQ@shell.armlinux.org.uk>
+Message-ID: <ZlSJkCtx6eYPCQwG@shell.armlinux.org.uk>
 References: <28114882-f8d7-21bf-4536-a186e8d7a22a@w6rz.net>
+ <ZlSIH1/etwPQe+bQ@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -56,81 +57,91 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <28114882-f8d7-21bf-4536-a186e8d7a22a@w6rz.net>
+In-Reply-To: <ZlSIH1/etwPQe+bQ@shell.armlinux.org.uk>
 Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Mon, May 27, 2024 at 03:45:15AM -0700, Ron Economos wrote:
-> On Fri, May 17, 2024 at 03:09:14PM -0700, Guenter Roeck wrote:
-> > Hi,
-> >
-> > On Fri, Mar 15, 2024 at 11:47:55AM +0000, Russell King (Oracle) wrote:
-> > > Report an error when an attempt to register a clkdev entry results in a
-> > > truncated string so the problem can be easily spotted.
+On Mon, May 27, 2024 at 02:18:23PM +0100, Russell King (Oracle) wrote:
+> On Mon, May 27, 2024 at 03:45:15AM -0700, Ron Economos wrote:
+> > On Fri, May 17, 2024 at 03:09:14PM -0700, Guenter Roeck wrote:
+> > > Hi,
 > > >
-> > > Reported by: Duanqiang Wen <duanqiangwen@net-swift.com>
-> > > Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-> > > Reviewed-by: Stephen Boyd <sboyd@kernel.org>
-> >
-> > With this patch in the mainline kernel, I get
-> >
-> > 10000000.clock-controller:corepll: device ID is greater than 24
-> > sifive-clk-prci 10000000.clock-controller: Failed to register clkdev for
-> corepll: -12
-> > sifive-clk-prci 10000000.clock-controller: could not register clocks: -12
-> > sifive-clk-prci 10000000.clock-controller: probe with driver
-> sifive-clk-prci failed with error -12
-> > ...
-> > platform 10060000.gpio: deferred probe pending: platform: supplier
-> 10000000.clock-controller not ready
-> > platform 10010000.serial: deferred probe pending: platform: supplier
-> 10000000.clock-controller not ready
-> > platform 10011000.serial: deferred probe pending: platform: supplier
-> 10000000.clock-controller not ready
-> > platform 10040000.spi: deferred probe pending: platform: supplier
-> 10000000.clock-controller not ready
-> > platform 10050000.spi: deferred probe pending: platform: supplier
-> 10000000.clock-controller not ready
-> > platform 10090000.ethernet: deferred probe pending: platform: supplier
-> 10000000.clock-controller not ready
-> >
-> > when trying to boot sifive_u in qemu.
-> >
-> > Apparently, "10000000.clock-controller" is too long. Any suggestion on
-> > how to solve the problem ? I guess using dev_name(dev) as dev_id parameter
-> > for clk_hw_register_clkdev() is not or no longer a good idea.
-> > What else should be used instead ?
+> > > On Fri, Mar 15, 2024 at 11:47:55AM +0000, Russell King (Oracle) wrote:
+> > > > Report an error when an attempt to register a clkdev entry results in a
+> > > > truncated string so the problem can be easily spotted.
+> > > >
+> > > > Reported by: Duanqiang Wen <duanqiangwen@net-swift.com>
+> > > > Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+> > > > Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+> > >
+> > > With this patch in the mainline kernel, I get
+> > >
+> > > 10000000.clock-controller:corepll: device ID is greater than 24
+> > > sifive-clk-prci 10000000.clock-controller: Failed to register clkdev for
+> > corepll: -12
+> > > sifive-clk-prci 10000000.clock-controller: could not register clocks: -12
+> > > sifive-clk-prci 10000000.clock-controller: probe with driver
+> > sifive-clk-prci failed with error -12
+> > > ...
+> > > platform 10060000.gpio: deferred probe pending: platform: supplier
+> > 10000000.clock-controller not ready
+> > > platform 10010000.serial: deferred probe pending: platform: supplier
+> > 10000000.clock-controller not ready
+> > > platform 10011000.serial: deferred probe pending: platform: supplier
+> > 10000000.clock-controller not ready
+> > > platform 10040000.spi: deferred probe pending: platform: supplier
+> > 10000000.clock-controller not ready
+> > > platform 10050000.spi: deferred probe pending: platform: supplier
+> > 10000000.clock-controller not ready
+> > > platform 10090000.ethernet: deferred probe pending: platform: supplier
+> > 10000000.clock-controller not ready
+> > >
+> > > when trying to boot sifive_u in qemu.
+> > >
+> > > Apparently, "10000000.clock-controller" is too long. Any suggestion on
+> > > how to solve the problem ? I guess using dev_name(dev) as dev_id parameter
+> > > for clk_hw_register_clkdev() is not or no longer a good idea.
+> > > What else should be used instead ?
+> > 
+> > This issue causes a complete boot failure on real hardware (SiFive
+> > Unmatched). The boot only gets as far as "Starting kernel ..." with no other
+> > indication of what's going on.
+> > 
+> > Guenter's suggested patch solves the issue.
+> > 
+> > diff --git a/drivers/clk/sifive/sifive-prci.c
+> > b/drivers/clk/sifive/sifive-prci.c
+> > index 25b8e1a80ddc..20cc8f42d9eb 100644
+> > --- a/drivers/clk/sifive/sifive-prci.c
+> > +++ b/drivers/clk/sifive/sifive-prci.c
+> > @@ -537,7 +537,7 @@ static int __prci_register_clocks(struct device *dev,
+> > struct __prci_data *pd,
+> >                          return r;
+> >                  }
+> > 
+> > -               r = clk_hw_register_clkdev(&pic->hw, pic->name,
+> > dev_name(dev));
+> > +               r = clk_hw_register_clkdev(&pic->hw, pic->name, "prci");
 > 
-> This issue causes a complete boot failure on real hardware (SiFive
-> Unmatched). The boot only gets as far as "Starting kernel ..." with no other
-> indication of what's going on.
+> How about just changing this to:
 > 
-> Guenter's suggested patch solves the issue.
+> 		r = clk_hw_register(dev, &pic->hw);
 > 
-> diff --git a/drivers/clk/sifive/sifive-prci.c
-> b/drivers/clk/sifive/sifive-prci.c
-> index 25b8e1a80ddc..20cc8f42d9eb 100644
-> --- a/drivers/clk/sifive/sifive-prci.c
-> +++ b/drivers/clk/sifive/sifive-prci.c
-> @@ -537,7 +537,7 @@ static int __prci_register_clocks(struct device *dev,
-> struct __prci_data *pd,
->                          return r;
->                  }
+> ?
 > 
-> -               r = clk_hw_register_clkdev(&pic->hw, pic->name,
-> dev_name(dev));
-> +               r = clk_hw_register_clkdev(&pic->hw, pic->name, "prci");
+> Since, if the device name is over-sized and thus truncated in the clk
+> lookup array that clkdev maintains, *nothing* will be able to match
+> the entry. Hence, I suspect all those clkdev registrations are
+> completely redundant for this driver (and do nothing other than
+> waste memory!)
 
-How about just changing this to:
+Note that I mentioned *exactly* this point in my first reply to the
+report of the regression in:
 
-		r = clk_hw_register(dev, &pic->hw);
+https://lore.kernel.org/r/ZkfYqj+OcAxd9O2t@shell.armlinux.org.uk
 
-?
-
-Since, if the device name is over-sized and thus truncated in the clk
-lookup array that clkdev maintains, *nothing* will be able to match
-the entry. Hence, I suspect all those clkdev registrations are
-completely redundant for this driver (and do nothing other than
-waste memory!)
+"We need to think about (a) whether your use of clk_hw_register_clkdev()
+is still appropriate, and (b) whether we need to increase the size of
+the strings."
 
 -- 
 RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
