@@ -1,109 +1,93 @@
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D23D038FA6;
-	Mon, 27 May 2024 12:37:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 501484D5A2;
+	Mon, 27 May 2024 12:49:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716813422; cv=none; b=dmbybSiBjYJNoaeRfUyVoCuy2ukqCKZ7zAMVti3ibYlwU76YTmNYiV4ZyYVKp/kWktNSetO39FyoHblCZ3l68xPQtB+5mhsStvWkUu3sZF0PgkLJbz/0M/CJEJ3cj7ZwxxLsET5fFaYzb++vgY1VQu+Pi7pw/95gx5865P8Nqxk=
+	t=1716814190; cv=none; b=lAvBW5Nkalq+dHCoKMbe54Yc6fRY9hDm1ER3RGG575FJbGevmw4O4wjp8DwEj1ov0BsSbAfYRpd/nZIoDSQ6htkEjhDyOOnglowDm6x/xOyr+p4ozWtFgaD0uRAOnAODDDdo23NaJa183qMegUxQygUHLr8YbjR24A3bEMTWR1g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716813422; c=relaxed/simple;
-	bh=wRFP8S2fE4xivjqQVPOI2HxthRP0YWGnVBSIpwhEIqA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=vDgq6TkBoEHMNlde6Np0YOgaZzouJtGKKYJXHJuQFF47IdTvMe9c+TDGhz9S/BlfVIf087ZOd4puEu0dBumHE/sFVAxSjkmpGbmDsSF74JBnqX19ByzLY2APqYzMG+fuzv8ZaUS+SzyimCUx5g4qRgjBpSQgXGfz8bZYk1R8sm4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hPKZxi1f; arc=none smtp.client-ip=209.85.166.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1716814190; c=relaxed/simple;
+	bh=kO9wIg+CtwT+6heTucB0udl6EgeL1JvmQsaJlESS0TU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XgAeHwrk6jKtNV6ESFbki9+OcEweBiH00U7qY7jflVgLQB6c7YggvcJsAtN68lce7s1IEhEgwSqkU83fZo+DfY3lc8OR8ZClfnOyojUdYFMf++aaiA/NBN/0vdKwuN8Z8fJ3SmQ8x54hF1lYkfxU251/OIIsX0anGRYgBJ6AshQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n1IaD3ke; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hPKZxi1f"
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-7e24b38c022so148751939f.0;
-        Mon, 27 May 2024 05:37:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1716813420; x=1717418220; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9xDxrXBc9LQxklL06A0LeabV2mZ6SgqSB+i2/2QkjT0=;
-        b=hPKZxi1fd31tfyGyZoqeuqQxFA9I1Iyi3UWutKdpe8zVX5xeEQikyl93fRjc3R3tgT
-         d5hjWDmTMigFWiEtk+Z+XcF1wAAuUODAv9m+F0Y1u6pjqEJmbSyCjsUyuU76O7/O+m09
-         yWDCIvhHFnEaV4SQhz3lpFylcchshJMkIs0/2CrNSGBnTeR9dbK7+SijKdxt7aTmEhsT
-         JhDtykKjNgouiX8x0NyN5J+I/rYgrP4Lh3a0hbDMT6s5okVkCBDQeww5sMPNb0fwnhZu
-         6EvksS/XtOQ0HwhM0tWz21ja9me9PbXq/tkvAlsIbFVoYdbarEDabKgQx1tU6RsVgpNW
-         TqRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716813420; x=1717418220;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9xDxrXBc9LQxklL06A0LeabV2mZ6SgqSB+i2/2QkjT0=;
-        b=RrII68Dejbq1HkF4fydL3l0VZhtEv8gCoDLKLUDXccotD4FRoUa7m9nBS/BaGLlKBQ
-         mEHtMmX/Au2gSKMXDbHXuFVbaYBOAjJihzZUEd78ZF9Gt4h81c05ghX8b9qLiIHvc1Yj
-         9yFZuuC0jO6Rxh4h4ynBb3F/w4RG3tT3DenYXINsKfpn2yL8qlyYTGwHkgnSbUqVp1iA
-         gc7fPzYe2QL0fMsRGqN2WnHiYnkFPrCp6+kUlHWx6kqAOPIYI/RbfsgkujcPoJOCzwQO
-         BST8vDrkQTac8c+0k4YRil5sNBpllW7GfA79XtFY9ITLHA2PxgrUUCrzWx5gB6IjE2HB
-         Jotg==
-X-Forwarded-Encrypted: i=1; AJvYcCVKuZDLZTnSxVXsONjJbkb6561ADMeArUcWrh3jB6C/oUcMY6mevPGugd1D5vpcmz6quVLLVqe/gblNAnwONLnKg8bloNRtB5pIkOXweY2S0x4CSXXevhncSgb7vYqLeNzmZD+CJWC9
-X-Gm-Message-State: AOJu0YwisCo0QUiBZYhStt0KNRjJ/gOpfvXJCwLp/8+qqK4qxLvgPvRD
-	6OGaHKEKeEE41b9AnjchzDtdQ1EOslNRumBcGImJqrrzyGP0qIUODgmq/SGPnoyypunhTV0ixto
-	4cgeb45AQJKEnJrgijpskPF5fLOM=
-X-Google-Smtp-Source: AGHT+IEbenEcD+K7Us/kByyWtAmMBYYHVQCv6uadqsaIVTfah+m3rW87L6fvsdS5x3c0A9QwWYL3fjR0c4Rd9rc00VY=
-X-Received: by 2002:a05:6e02:1c02:b0:372:1434:8241 with SMTP id
- e9e14a558f8ab-3734aaff46dmr95389355ab.13.1716813419885; Mon, 27 May 2024
- 05:36:59 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n1IaD3ke"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58186C2BBFC;
+	Mon, 27 May 2024 12:49:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716814189;
+	bh=kO9wIg+CtwT+6heTucB0udl6EgeL1JvmQsaJlESS0TU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=n1IaD3ke/1U9fQO7YdI8TsMSLanSmv+uyhSacUc/+ri475UKL25Jb4wR+C+JenB/y
+	 5q8RbYOz9pjYTFAg1cb7pjjEAbNbCP4g2ddLMf6XxckbIqVkYymyAcPkmHtPJp0v1s
+	 AVOMAFuTUF8jDJKVwo5Fmx+ymbynbXx9QnYqB2d4AQ9Ji+ixTTAarLwRbVmgh9vzgI
+	 1B4v7cWarbmPVk9+6pV8ITgfRXjRetwVte51AChQ97U1OIvN1ttJ1+4Q9HIcFyPhZ2
+	 HBeNfEZ+gs8qBIKoagkIVNWwNf5BNCM8Jkp/LBm8MVPFikQ63Ur9Ht3XHyV1MoXSb9
+	 WZqxGOZ6gBjbA==
+Date: Mon, 27 May 2024 13:49:42 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, heiko@sntech.de,
+	u.kleine-koenig@pengutronix.de, geert+renesas@glider.be,
+	rafael@kernel.org, linux-pm@vger.kernel.org, abelvesa@kernel.org,
+	peng.fan@nxp.com, mturquette@baylibre.com, sboyd@kernel.org,
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+	festevam@gmail.com, imx@lists.linux.dev, shengjiu.wang@gmail.com,
+	frank.li@nxp.com, mkl@pengutronix.de, linus.walleij@linaro.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] pmdomain: imx: gpcv2: Add delay after power up
+ handshake
+Message-ID: <a04b3939-081a-49e0-a063-5b50d3321ca7@sirena.org.uk>
+References: <1715396125-3724-1-git-send-email-shengjiu.wang@nxp.com>
+ <CAPDyKFp4V8f0iyeRASSEu4YaCSz0m56=8ssBJ9ogSvqG1dzMZA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1711026842-7268-1-git-send-email-shengjiu.wang@nxp.com>
- <20240424164725.GA18760@francesco-nb> <f0a38df8-9197-452d-a46f-2bc2697c1186@sirena.org.uk>
-In-Reply-To: <f0a38df8-9197-452d-a46f-2bc2697c1186@sirena.org.uk>
-From: Shengjiu Wang <shengjiu.wang@gmail.com>
-Date: Mon, 27 May 2024 20:36:48 +0800
-Message-ID: <CAA+D8APWGk6oJJsfLhcOfyzMo7uNFABFmeF51gerSC_16xj9uQ@mail.gmail.com>
-Subject: Re: [PATCH v4] clk: imx: imx8mp: Add pm_runtime support for power saving
-To: Mark Brown <broonie@kernel.org>
-Cc: Francesco Dolcini <francesco@dolcini.it>, Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org, 
-	peng.fan@nxp.com, mturquette@baylibre.com, sboyd@kernel.org, 
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
-	festevam@gmail.com, linux-imx@nxp.com, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="Oj5O7UC7qaae2W5K"
+Content-Disposition: inline
+In-Reply-To: <CAPDyKFp4V8f0iyeRASSEu4YaCSz0m56=8ssBJ9ogSvqG1dzMZA@mail.gmail.com>
+X-Cookie: The Moral Majority is neither.
 
-On Mon, May 27, 2024 at 8:24=E2=80=AFPM Mark Brown <broonie@kernel.org> wro=
-te:
->
-> On Wed, Apr 24, 2024 at 06:47:25PM +0200, Francesco Dolcini wrote:
-> > On Thu, Mar 21, 2024 at 09:14:02PM +0800, Shengjiu Wang wrote:
-> > > Add pm_runtime support for power saving. In pm runtime suspend
-> > > state the registers will be reseted, so add registers save
-> > > in pm runtime suspend and restore them in pm runtime resume.
-> > >
-> > > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> > > Reviewed-by: Peng Fan <peng.fan@nxp.com>
-> >
-> > Is this introducing a regression?
-> >
-> >   800 13:50:19.713052  <6>[   16.531134] clk: Disabling unused clocks
-> >   801 13:50:19.727524  <2>[   16.535413] SError Interrupt on CPU2, code=
- 0x00000000bf000002 -- SError
-> >   802 13:50:19.731400  <4>[   16.535421] CPU: 2 PID: 1 Comm: swapper/0 =
-Not tainted 6.9.0-rc5-next-20240424 #1
-> >   803 13:50:19.742514  <4>[   16.535428] Hardware name: Toradex Verdin =
-iMX8M Plus on Dahlia Board (DT)
->
-> I am now seeing this failure in mainline on both the above board and
-> i.MX8MP-EVK.  There was a fix mentioned in the thread but it's not
-> landed for -rc1, both boards crash as above.  What's the plan for
-> getting this fixed, should the patch be reverted for now?
 
-https://lore.kernel.org/all/CAPDyKFp4V8f0iyeRASSEu4YaCSz0m56=3D8ssBJ9ogSvqG=
-1dzMZA@mail.gmail.com/
+--Oj5O7UC7qaae2W5K
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-fixed is merged,  but may not in v6.10-rc1. Should anybody help to cherry-p=
-ick?
+On Tue, May 21, 2024 at 12:22:41PM +0200, Ulf Hansson wrote:
+> On Sat, 11 May 2024 at 05:15, Shengjiu Wang <shengjiu.wang@nxp.com> wrote:
 
-Best regards
-Shengjiu Wang
+> > The BLK-CTL module needs to add delay to wait for a handshake request finished.
+> > For some BLK-CTL module (eg. AudioMix on i.MX8MP) doesn't have BUS clk-en
+> > bit, it is better to add delay in this driver, as the BLK-CTL module doesn't
+> > need to care about how it is powered up.
+
+> Sorry for the delay!
+
+> Applied for fixes, thanks!
+
+I see this is in -next but mainline is currently broken for i.MX8
+platforms - could we get it in for -rc2?
+
+--Oj5O7UC7qaae2W5K
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZUgWUACgkQJNaLcl1U
+h9CSQQf+Mt9Bm1J3SOUbg3E3YrGKe269u9XMPX2/8mjaeJaQ4JKJOwfRqxjeiayG
+zthEIjLn5LqjBsaPDa7CgLfYSxfXOdpUmJ/DkebqpiUag367dyoxubuz8AizQass
+E4jD+KxnfFQR0KIo3WbQsgCJSiEmAVuwZvba8BA/DCLFe4QKXwv0g4j3J0zyqIWO
+PqWekRXAONlr0LF42HC9+dj+Y4hQvxaWCNL95ipKvTKKSJTPo6MIH/5Jt5S7OUQ9
+QqTMceS9gH90lhFt37utufxqQKEGPYR4qeceIlymtl2Ce0GqL/Nzd17VO7kCU13i
+6E9s7rzLOTFU9/eH1N87gf4Z0XnDfw==
+=u0Mu
+-----END PGP SIGNATURE-----
+
+--Oj5O7UC7qaae2W5K--
