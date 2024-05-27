@@ -1,99 +1,131 @@
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E39A22064
-	for <linux-clk@vger.kernel.org>; Mon, 27 May 2024 08:01:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F8B8BF0;
+	Mon, 27 May 2024 09:18:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716796877; cv=none; b=UV7CAvEESc/4x+3gIyiG31JGDL+6qrIPM+K6c8NREEdF/GpIVZixbbF925s1MwolSO2fu1X2GAp8/BKb/pNs5L/03fPaws05zWg6SG+ZnVwMOh607IVj1g34Apir8VuLqTmkAWCIPu/Rrcu7GhZJRV91NXH34UbQlAX3PSaWtDo=
+	t=1716801497; cv=none; b=Fnk4+rHD39MBEGzJ3VyWnZtfEbkGqtsaB/lnpT+2uFe3Ii3f21IEgnfgZltUkC3vfmal5EmFiaqYjtOu8RT3DnGBq8nLEhsoHWVTyWeMolje2UFODEVaibI46oe+4kqbwuecoqEYFj7wAxvrhLqLIrdT2BchrBo3NmpzQBjS0v8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716796877; c=relaxed/simple;
-	bh=KGYzo0d4ydTiDRoHwUaveUva4TGHCiqn07mQdn+93U8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mia0AYPrC9jYQsd5pGX1/qBCJmQqUkR3k1f4VvvRaTfoYTs1Km+yNVoBPyXUuBbXJXFsoHwAQKZ3bzm7JOhzY095dpDcpLtd7y+eoH7JKG5esJAWlxbci3GeJR716zCuZaasGrYhPHgKdOuiTZnuVQnJCPE3ZzNOt3Z/NQFyG64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VZGFnL1n; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VZGFnL1n"
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5785eab8d5dso3004901a12.3
-        for <linux-clk@vger.kernel.org>; Mon, 27 May 2024 01:01:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716796874; x=1717401674; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=JVF2aDiAwuR8zQRgdtvjMogqVM3XbukgpjZURs9F6bg=;
-        b=VZGFnL1nRoZOHkGqlMC5Cq295VlfVXIKQwieBkvr8Jrx/6OdVmn/sXBIyqOFQDElu2
-         t4LL1pXLg4Zc00coi0ct4iOolMU0xKEOGYqHDng7o/0M7iozNK32kDT1I58xYTdLFxfN
-         UEBstTxBAPIoU9vkgLbvbItBIY1JQ4+ajqj95Vy3V5eYN6fkCUrGYhe8o0vGWN9dRjqw
-         /gk6jrXeH2FZ+vYHj5fY09Hopcm+zxs95Qgxb2w7S2HXsqPZgPwkGbdCuLaMlK4jiqb9
-         ZMGn12lSJPT4/LJHBvQerCH+FLxLO0Z3VIpC7vuHbum0o6pudGhjtMvh0NRF7VA/uvNp
-         jhcg==
+	s=arc-20240116; t=1716801497; c=relaxed/simple;
+	bh=06ov8LDF6C94yAWPdz3byY1cC7MZjQLNnXADs1Y3168=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jCY14G/zfR6Eh+d05QmMMJ8x4jaowWgJ4XwSu9Do3bP2EYGMHu7+fOBPHAUlTo6fv8A0k9q9CvGybaLMwJ8mM2KmwL23Bw3ePsQ1qRWRNkZVDSmNVy8SSsObZWjto1kG5AKqjBxxMcKeB/GjRVoS8fSGXumyBO4ahCP6lCSB6SM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-62a0809c805so31949007b3.0;
+        Mon, 27 May 2024 02:18:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716796874; x=1717401674;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JVF2aDiAwuR8zQRgdtvjMogqVM3XbukgpjZURs9F6bg=;
-        b=OKEBqSq96HbR6olPtDcHf4mVPTd8q0ZYVkhe2fMoVoFqT7x9oNjivyus+ufyStxQCQ
-         PGRxvQK6m/O66cYu3rfGS8L1C+QM7fK/cFH27bnja96MmTgvXf5PS1FxceuMDrol7Rte
-         vAmGjaB1CnQUR5pLTSWRSDjJPuCecs3Kf8UI7m/NSC9XNDlHIGHxw9ty9vAKg02IXzhz
-         IhR2F8hTgkscRSCJT2e/KzBrfrpa6icTjNnmS2lQ0dglukUMLq1Dy0+Wz/D/7E+mRSj4
-         YStYQxd08s/EsRXBUV2ABpZ3AC2MsUb6zLCJ1RobttnkNZATiR/m/kn9URQojRG+AGaa
-         IIcg==
-X-Forwarded-Encrypted: i=1; AJvYcCWKzwPm4QPouJIe789I1A5TLeU+IchwId6rWNmUfzrPbk1iSk+MVTk8TtE6kH048vaHJrVgzGMlJtDeJJg3GsRdJYAmRwc3wZ2t
-X-Gm-Message-State: AOJu0YwJcpquu6VMHhy7dgeUK8cs+86SOkyReqzqASOhBp/XuJipv5uM
-	cpzG1YSytnK+r90e5nQJ6UKOsbBiWcvf6OCpW8X9BpT769+MHhaWl3VTJWYN5xI=
-X-Google-Smtp-Source: AGHT+IFQsIh5kK+9ePczG/hmYzE323NUpoIVFMaCMZbZuQdBUucEYG/RX82tMtIPJFmuC6hg8bvxxw==
-X-Received: by 2002:a50:a417:0:b0:579:c442:3684 with SMTP id 4fb4d7f45d1cf-579c44238e4mr2204315a12.24.1716796873691;
-        Mon, 27 May 2024 01:01:13 -0700 (PDT)
-Received: from localhost ([102.222.70.76])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-578523d2507sm5443603a12.40.2024.05.27.01.01.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 27 May 2024 01:01:13 -0700 (PDT)
-Date: Mon, 27 May 2024 11:01:09 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Shengjiu Wang <shengjiu.wang@gmail.com>
-Cc: Frank Li <Frank.li@nxp.com>, Shengjiu Wang <shengjiu.wang@nxp.com>,
-	abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com,
-	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-	kernel@pengutronix.de, festevam@gmail.com, marex@denx.de,
-	linux-clk@vger.kernel.org, imx@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, p.zabel@pengutronix.de
-Subject: Re: [PATCH v5 2/5] clk: imx: clk-audiomix: Add reset controller
-Message-ID: <7ee00c15-ed39-4092-be79-d4683d1c3ee2@moroto.mountain>
-References: <1716458390-20120-1-git-send-email-shengjiu.wang@nxp.com>
- <1716458390-20120-3-git-send-email-shengjiu.wang@nxp.com>
- <Zk+oxAh9+c0RIQ/t@lizhi-Precision-Tower-5810>
- <CAA+D8ANOQ8Pgt8QZWduZoVKCcb8Mdc=Xzotu4zAqakTjHO8pBQ@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1716801494; x=1717406294;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=T1bOMQpnCot1Q27PtbLkLD5PwnyVT+SP5xzT/2JZo+w=;
+        b=mawjDWl1xV1jPbO4ia8tEPVTF+Har/s6m5YjRrR4HrB9bP3mUKI8cdca+7m+Wgog13
+         9IrvUSLvNxqTcd9PuUiufV9t+4JOQS6woGyPhyVG0uVjft1CJ+AcW/R64IhXEM3+r/OI
+         vN7xhHuEwnS3X8CYl1Nv7S87T6M96eEY2q1/fNlnAFJdTfYiLWL9p2+c3C2JTz+XjZlO
+         Pxw3LsdWGrVkfElo3CGSUhO49lE6+JAKNLSa7uU2jAMjoOwY+mUcBHOHPST82RmJ31Th
+         NfBtM5yZwidfLDJJkNrOuwsyxlsDj/KAozi2AXaaHmW5B8Hy3s2TzsM1m6jWi42ltScB
+         rdvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWXql4lpZ8/HnTn4OMGeOcel9oPzFyKLStu38DP97PCtMSLmaExd/XIFr32oN/cMgrcsFs86fP7YQAemPWtSR2mKVwNwQ40zFz2fnPTW3eyKRd6poj9sRwuSfPf16f3HNCwUMViFrkFZTCjk1TIObZSCYTveOPGx3ejrV7NXT8rOPiieb0IK0wtex1535ePW+2L63tgKxl1XMmeJinGVJ1+YoOkszxg
+X-Gm-Message-State: AOJu0YwzQ1RmBxEQlDdV4c3tgNx9X2/hTEGPa2nvGS5fFzx5wasSsZrs
+	TW/AMFJ5GeSssiCWtwDFp+S9t38sg7fsdeU3x3aHcdD+WTcODtiT7nSspoWy
+X-Google-Smtp-Source: AGHT+IE9Lj3+8RNO8Lg1zFGWdi6XIwXNIUZWezZlbPLmFzYS+nnUL9IP9IDsYFEeXfITyQhpF4Cpqw==
+X-Received: by 2002:a81:6c04:0:b0:61b:df5:7876 with SMTP id 00721157ae682-62a08d7443amr81201407b3.6.1716801494081;
+        Mon, 27 May 2024 02:18:14 -0700 (PDT)
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com. [209.85.219.174])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-62a0a56c17csm15751687b3.131.2024.05.27.02.18.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 27 May 2024 02:18:12 -0700 (PDT)
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-df4e503983fso5168391276.2;
+        Mon, 27 May 2024 02:18:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXciuFRHdC5fTuENBxKqtuVlm+RKosNzV0B+hc4MWzsvZg0EqU8NPUtrBINsAB9G6ya7vp6oHgKx4X8dqjZNR8HKye8VkOXzcvG5Rq2ufS8D3RG+rlCrhe5FAZzwrMaLdikhJuKHucqizf0+8TkKJ/qwnFyUmZrjKvQ00V4H2JXRd4O5UmKPCvfGFrMUBiXhQ0y166n6xSRZTCmqljkHh9/tIXNCrT3
+X-Received: by 2002:a05:6902:528:b0:de6:4ff:3164 with SMTP id
+ 3f1490d57ef6-df7721ad3dbmr8878974276.36.1716801492684; Mon, 27 May 2024
+ 02:18:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAA+D8ANOQ8Pgt8QZWduZoVKCcb8Mdc=Xzotu4zAqakTjHO8pBQ@mail.gmail.com>
+References: <20240524082800.333991-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240524082800.333991-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240524082800.333991-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 27 May 2024 11:18:00 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWzZP2d6kRw1oTkMYgzS46J68gR_bg14==HCvVpkp0sJA@mail.gmail.com>
+Message-ID: <CAMuHMdWzZP2d6kRw1oTkMYgzS46J68gR_bg14==HCvVpkp0sJA@mail.gmail.com>
+Subject: Re: [PATCH 2/4] dt-bindings: clock: Add R9A09G057 CPG Clock and Reset Definitions
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Magnus Damm <magnus.damm@gmail.com>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 24, 2024 at 09:49:08AM +0800, Shengjiu Wang wrote:
-> On Fri, May 24, 2024 at 4:36 AM Frank Li <Frank.li@nxp.com> wrote:
-> > > +static int clk_imx8mp_audiomix_reset_controller_register(struct device *dev,
-> > > +                                                      struct clk_imx8mp_audiomix_priv *priv)
-> > > +{
-> > > +     struct auxiliary_device __free(kfree) * adev = NULL;
-> >
-> > nit:  *adev = NULL;
-> 
-> Actually,  the checkpatch.pl told me need to have space after '*'...
+Hi Prabhakar,
 
-Someone should fix checkpatch so that it knows that __free() is an
-attribute, not a function call.  (The cleanup.h stuff is quite new).
+On Fri, May 24, 2024 at 10:29=E2=80=AFAM Prabhakar <prabhakar.csengg@gmail.=
+com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Define RZ/V2H(P) (R9A09G057) Clock Pulse Generator module clock outputs
+> (CPG_CLK_ON* registers), and reset definitions (CPG_RST_* registers)
+> in Section 4.4.2 and 4.4.3 ("List of Clock/Reset Signals") of the RZ/V2H(=
+P)
+> Hardware User's Manual (Rev.1.01, Feb. 2024).
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-regards,
-dan carpenter
+Thanks for your patch!
 
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/r9a09g057-cpg.h
+> @@ -0,0 +1,644 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> + *
+> + * Copyright (C) 2024 Renesas Electronics Corp.
+> + */
+> +#ifndef __DT_BINDINGS_CLOCK_R9A09G057_CPG_H__
+> +#define __DT_BINDINGS_CLOCK_R9A09G057_CPG_H__
+> +
+> +#include <dt-bindings/clock/renesas-cpg-mssr.h>
+> +
+> +/* Clock list */
+
+No distinction between Core and Module clocks?
+
+> +#define R9A09G057_SYS_0_PCLK                           0
+> +#define R9A09G057_DMAC_0_ACLK                          1
+> +#define R9A09G057_DMAC_1_ACLK                          2
+> +#define R9A09G057_DMAC_2_ACLK                          3
+
+[...]
+
+> +/* Resets list */
+
+[...]
+
+No power domain specifiers, as mentioned in PATCH 1/4?
+
+> +
+> +#endif /* __DT_BINDINGS_CLOCK_R9A09G057_CPG_H__ */
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
