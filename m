@@ -1,93 +1,100 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 501484D5A2;
-	Mon, 27 May 2024 12:49:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E3615EFBE;
+	Mon, 27 May 2024 12:57:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716814190; cv=none; b=lAvBW5Nkalq+dHCoKMbe54Yc6fRY9hDm1ER3RGG575FJbGevmw4O4wjp8DwEj1ov0BsSbAfYRpd/nZIoDSQ6htkEjhDyOOnglowDm6x/xOyr+p4ozWtFgaD0uRAOnAODDDdo23NaJa183qMegUxQygUHLr8YbjR24A3bEMTWR1g=
+	t=1716814678; cv=none; b=BI/hVZK3BqCb0wnPygEbAUODEBrj//6yIxCoqv4bWyR/Ht2fwHQaKgJzEe1fbf0T6AGdgjLfymX81oNHJs7MWFAVVN7RCAuCJqFV/wiorfG1j79+p7MPpuGplnNdpPg2QdnyJTE/aXB33gTK4QP9/zfXNZzMqHPRlBakpjqv/xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716814190; c=relaxed/simple;
-	bh=kO9wIg+CtwT+6heTucB0udl6EgeL1JvmQsaJlESS0TU=;
+	s=arc-20240116; t=1716814678; c=relaxed/simple;
+	bh=8GCzunIMdlubOTXf0pyUHn8KPY2JZDD1cESnN8SAnis=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XgAeHwrk6jKtNV6ESFbki9+OcEweBiH00U7qY7jflVgLQB6c7YggvcJsAtN68lce7s1IEhEgwSqkU83fZo+DfY3lc8OR8ZClfnOyojUdYFMf++aaiA/NBN/0vdKwuN8Z8fJ3SmQ8x54hF1lYkfxU251/OIIsX0anGRYgBJ6AshQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n1IaD3ke; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=mxpEq9+pD+Vvv8J0BsDaSuUjY8F4cRa1A1fQX1AJdWDy/50DjjD8E0BFRA3g6KysSw/W1pNnLY85dBsB35NkTN9RQup986H8SqvQ7ESdatDq+ptozqEyx5jerM3t+2n+gcdUaV5CoFtZ9BQn+G3Kw45ZUNjNPJQXwGlQmZskniI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=BYiyBB3X; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n1IaD3ke"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58186C2BBFC;
-	Mon, 27 May 2024 12:49:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716814189;
-	bh=kO9wIg+CtwT+6heTucB0udl6EgeL1JvmQsaJlESS0TU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=n1IaD3ke/1U9fQO7YdI8TsMSLanSmv+uyhSacUc/+ri475UKL25Jb4wR+C+JenB/y
-	 5q8RbYOz9pjYTFAg1cb7pjjEAbNbCP4g2ddLMf6XxckbIqVkYymyAcPkmHtPJp0v1s
-	 AVOMAFuTUF8jDJKVwo5Fmx+ymbynbXx9QnYqB2d4AQ9Ji+ixTTAarLwRbVmgh9vzgI
-	 1B4v7cWarbmPVk9+6pV8ITgfRXjRetwVte51AChQ97U1OIvN1ttJ1+4Q9HIcFyPhZ2
-	 HBeNfEZ+gs8qBIKoagkIVNWwNf5BNCM8Jkp/LBm8MVPFikQ63Ur9Ht3XHyV1MoXSb9
-	 WZqxGOZ6gBjbA==
-Date: Mon, 27 May 2024 13:49:42 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, heiko@sntech.de,
-	u.kleine-koenig@pengutronix.de, geert+renesas@glider.be,
-	rafael@kernel.org, linux-pm@vger.kernel.org, abelvesa@kernel.org,
-	peng.fan@nxp.com, mturquette@baylibre.com, sboyd@kernel.org,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
-	festevam@gmail.com, imx@lists.linux.dev, shengjiu.wang@gmail.com,
-	frank.li@nxp.com, mkl@pengutronix.de, linus.walleij@linaro.org,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] pmdomain: imx: gpcv2: Add delay after power up
- handshake
-Message-ID: <a04b3939-081a-49e0-a063-5b50d3321ca7@sirena.org.uk>
-References: <1715396125-3724-1-git-send-email-shengjiu.wang@nxp.com>
- <CAPDyKFp4V8f0iyeRASSEu4YaCSz0m56=8ssBJ9ogSvqG1dzMZA@mail.gmail.com>
+	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="BYiyBB3X"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=rMFfpqCc+bc4O8mDHjvAEFD1eHUpLSCJjFslGtJ4svo=; b=BYiyBB3X8G1QiZKbh5RNNixyhN
+	/txB0NYAWfPSURQCARY+CvzFQfrT9NuzVsc6O7U0HqVcm7UzH5eeQa7BX0hQknfK1GBb//KsRn9Fl
+	I9q7M2N2KzZq/dv9EwvUhztgslecsFMmh69szcGzBA6ttSYVdu/OUF+hj/uHYrH5cvWhwKs7TYLke
+	3ztvLiZZVLuW8GeZfFpX7xYGM0faF2NtfNL/6U4Pr3Ncib88OQC7uA86dF8Om4ZBHGvhFcUxtqMRL
+	lWMyKoi5fgnxHG4p2Mf6qtHUsw1ksvbHxm1CrbiFAxIpsnEMzU0AmZCPEU/SVtk7kAiK70l0PPZkb
+	w66XC4Bw==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:37854)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1sBZuz-0003Wh-1b;
+	Mon, 27 May 2024 13:57:37 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1sBZv0-0002Kk-8F; Mon, 27 May 2024 13:57:38 +0100
+Date: Mon, 27 May 2024 13:57:38 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: "Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>
+Cc: Ron Economos <re@w6rz.net>, Guenter Roeck <linux@roeck-us.net>,
+	regressions@lists.linux.dev, linux-clk@vger.kernel.org,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	linux-riscv <linux-riscv@lists.infradead.org>
+Subject: Re: [PATCH] clkdev: report over-sized strings when creating clkdev
+Message-ID: <ZlSDQssA9I4LRjwM@shell.armlinux.org.uk>
+References: <28114882-f8d7-21bf-4536-a186e8d7a22a@w6rz.net>
+ <d7f0c16a-0d83-4060-8d95-95b293d95dfd@leemhuis.info>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="Oj5O7UC7qaae2W5K"
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFp4V8f0iyeRASSEu4YaCSz0m56=8ssBJ9ogSvqG1dzMZA@mail.gmail.com>
-X-Cookie: The Moral Majority is neither.
-
-
---Oj5O7UC7qaae2W5K
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <d7f0c16a-0d83-4060-8d95-95b293d95dfd@leemhuis.info>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Tue, May 21, 2024 at 12:22:41PM +0200, Ulf Hansson wrote:
-> On Sat, 11 May 2024 at 05:15, Shengjiu Wang <shengjiu.wang@nxp.com> wrote:
+On Mon, May 27, 2024 at 01:16:06PM +0200, Linux regression tracking (Thorsten Leemhuis) wrote:
+> On 27.05.24 12:45, Ron Economos wrote:
+> > On Fri, May 17, 2024 at 03:09:14PM -0700, Guenter Roeck wrote:
+> >>
+> >> On Fri, Mar 15, 2024 at 11:47:55AM +0000, Russell King (Oracle) wrote:
+> >> > Report an error when an attempt to register a clkdev entry results in a
+> >> > truncated string so the problem can be easily spotted.
+> >> >
+> >> > Reported by: Duanqiang Wen <duanqiangwen@net-swift.com>
+> >> > Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+> >> > Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+> >>
+> >> With this patch in the mainline kernel, I get
+> >> [...]
+> >> when trying to boot sifive_u in qemu.
+> >>
+> >> Apparently, "10000000.clock-controller" is too long. Any suggestion on
+> >> how to solve the problem ? I guess using dev_name(dev) as dev_id
+> > parameter
+> >> for clk_hw_register_clkdev() is not or no longer a good idea.
+> >> What else should be used instead ?
+> > 
+> > This issue causes a complete boot failure on real hardware (SiFive
+> > Unmatched).
+> 
+> Hmmm. That and because nobody afaics has time/motivation to fix this
+> anytime soon (or am I mistaken there?) makes me wonder if we should
+> revert this change for now (and remerge it later once the problem this
+> change exposed was fixed). Or is another solution in sight somewhere?
 
-> > The BLK-CTL module needs to add delay to wait for a handshake request finished.
-> > For some BLK-CTL module (eg. AudioMix on i.MX8MP) doesn't have BUS clk-en
-> > bit, it is better to add delay in this driver, as the BLK-CTL module doesn't
-> > need to care about how it is powered up.
+I'm sorry, but clearly I should tell my employer that I can't do work
+for them because there's been a mainline kernel regression, and of
+course I should be working on this bank holiday Monday...
 
-> Sorry for the delay!
+No, please wait a bit longer.
 
-> Applied for fixes, thanks!
-
-I see this is in -next but mainline is currently broken for i.MX8
-platforms - could we get it in for -rc2?
-
---Oj5O7UC7qaae2W5K
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZUgWUACgkQJNaLcl1U
-h9CSQQf+Mt9Bm1J3SOUbg3E3YrGKe269u9XMPX2/8mjaeJaQ4JKJOwfRqxjeiayG
-zthEIjLn5LqjBsaPDa7CgLfYSxfXOdpUmJ/DkebqpiUag367dyoxubuz8AizQass
-E4jD+KxnfFQR0KIo3WbQsgCJSiEmAVuwZvba8BA/DCLFe4QKXwv0g4j3J0zyqIWO
-PqWekRXAONlr0LF42HC9+dj+Y4hQvxaWCNL95ipKvTKKSJTPo6MIH/5Jt5S7OUQ9
-QqTMceS9gH90lhFt37utufxqQKEGPYR4qeceIlymtl2Ce0GqL/Nzd17VO7kCU13i
-6E9s7rzLOTFU9/eH1N87gf4Z0XnDfw==
-=u0Mu
------END PGP SIGNATURE-----
-
---Oj5O7UC7qaae2W5K--
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
