@@ -1,59 +1,59 @@
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 952C116D9BA
-	for <linux-clk@vger.kernel.org>; Tue, 28 May 2024 12:54:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B65E913AD30
+	for <linux-clk@vger.kernel.org>; Tue, 28 May 2024 12:56:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716900880; cv=none; b=FeAxgvb6WtWrR6EDLLFOAr2lR9GVHeScu0qX6F5UZ6DMcPfv9pTtCK2hN0oFo//3Se0nqfUdfPAJ0k5T6rtWbfkKmmydSVzdndKqalnYp+PDcZoq72AenrhXXW0iUEw/IyJfBEATfDayR+rSbPJ7BHP3HQYYBO23X3+9r8eKbxU=
+	t=1716900995; cv=none; b=JragQHvdPrWgKmrrVqfguoVUGOWXBhe+tzTBzq8SD8FzwbYI8MDKDk3bTI869TjUnQzoJRAZbjuql4qzV90+n32QmOVdA+RTsEXgm5jHZpLcuqb2V7qbNRu3huizD/0rVwyLazG3jmYY+mq+cNe/wbGi2W/x5gH75O+WSN8MTgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716900880; c=relaxed/simple;
-	bh=WHYs4O7Fu2CjoBdYG4P4R2/1sEZnwQQz0IAl+4b3tVU=;
+	s=arc-20240116; t=1716900995; c=relaxed/simple;
+	bh=c6bKxcXWNYjOOH0xRtK0KGI6gOon/19zEjgMhAayAqw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Gn1DI30RAx+zsgyFa8N1Kw/drDp7ZEhvye6dHFr7l1GmgJIk1KZdI5hlaMamvcEyS4lk3t6IpYfK2IMo6UzX1ZGJmVR3xvfUzs/Qnns/cuIrzMhRo295HHvcCcbjNnDXrjDNfbx4o9JTZUjedt/seGX1IdeW6P1kxiLd702rLAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UJ9tn6zT; arc=none smtp.client-ip=209.85.167.43
+	 In-Reply-To:Content-Type; b=UF5ozCOXnKujTtaAyA8QVUkUE9kQUeBVxVqpAS9R3NXaFU64GooYv85zN79Q4cA+8/UmrCnpJoPOelBgvx2SavraB1rq0LF1XT+b1WZAEJl90d6ON+//Ouy7dQEePf9OkLgP2QbmYyfhdaEhN7U4j9f0sxVYNqwvyruJhYRDZTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rfpQDhSw; arc=none smtp.client-ip=209.85.167.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UJ9tn6zT"
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-529614b8c29so1318094e87.2
-        for <linux-clk@vger.kernel.org>; Tue, 28 May 2024 05:54:38 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rfpQDhSw"
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52742fdd363so907242e87.1
+        for <linux-clk@vger.kernel.org>; Tue, 28 May 2024 05:56:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716900877; x=1717505677; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1716900992; x=1717505792; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=aSTrlh2SCKUUASbHMjU/dT8MYXK+NpaxB9pLENdcjzo=;
-        b=UJ9tn6zTZtjtDDJVKJOZNoN5vJLiF6HgDNi2dXGKtoh3QBCjF+mASVELB1MTDaM9Fy
-         kGgoeNJL95gXpwYTUTJvwCwTY1bebAYN+7IZHiVa5wltBwQJh6wpl2uoSVCppVpZizOk
-         cmW/1GS7YJD1eQJ8C16uehKC/akUI3L+R0tMniPIIG/UhDpmP44Um1GJZosCU7CqmD/v
-         +/YxlEZJRnIStyjyqACRCxuX3BjQEIMHZIfjO7NA+4YKKBaO2ssIth3nbau3Zd1pL7GW
-         bFZxBoUIRuFXkYvJOSh0XWCuwQAOG16/HSVVK3EEkL1L8c5j/NcLNcsnaR8SNsLDKyZ6
-         QcWw==
+        bh=UBJydv2oVIxF33glNXhfsH0j7NMZZydOoyfGkqd3Bng=;
+        b=rfpQDhSwEJGotNqLcxKrMS0y+28gjfTNNNHNkRA+UutyICUhBLYdckTobq8zgztGBf
+         qtqKcyHM+v2Jh4umHeIotadX3d9/ZONqddlBisRiwRSaSpOb/7xVnKeaGAE8RaKYVVL7
+         3HamyEo5WoOrbHTW8+4VtBob8j5GHwODjasLpuVS54zQ0Hw5cxBSoC9twYJIlJsYZGjw
+         x8e9NzWE6EZBOfvVxxrl8F7pfjy3ebvN7vvCBzmHA2VGW7hhrOnb7nDQHtaVJd5ilX8d
+         B4xkzwhLvV6EUWyoRvC9T1CFHvEf/VltbpviDc5xtDnME2Cfhgyu6y7NvEfdVqEP8dGE
+         7Udg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716900877; x=1717505677;
+        d=1e100.net; s=20230601; t=1716900992; x=1717505792;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aSTrlh2SCKUUASbHMjU/dT8MYXK+NpaxB9pLENdcjzo=;
-        b=klu/Duaxr+g+Gk6S+KGIHjAgmTteQ7mWFa/eRh7xhaflO9FFSyj48LCNUcGYi7KIL3
-         jCuBCWMPHXXebnpvfoHUTKwUd/WtOV0hvpSDFTL1AbcpqbtlUQ05a/IKkjvZYv0FvAsZ
-         glNUV9qJSYk/kzfdmbBGE9qa0kZgBRaozAUlc16c/E9onO8XY3HTqxHNl9qFQSluc2H+
-         D4gqc5sH7gcyMbMnu9/oKEBTH2o3wbkL923W5NEBqo6QlzQeUz8c7HVUl3mfNASorBX3
-         6cIaE/gVuM96b8pzH6x4GGLyHLe+CgOLcwhYZ+WRWYm4Q1VyiWhnA9/4PGHBip2NFfXW
-         9ysQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWZE7HXOjAShiw1GvTax/wv+WJeJYk49+IIhcH/Axp1GwfvztyjnFs+2M8n39LCAS9NJpHOeGsl2BVTjFY1KDcq/nxQiKg47LVl
-X-Gm-Message-State: AOJu0YzIhd0rZkpdrd6ofVEbCuDjGEgHRz8iAfm2YHc3YyslmI3xG+PQ
-	1UZwfkcQk5/B0Fmep1EIb2typ+3uJkqs1c/pq3h9zJdXNQiM8XxqvQ5oXJ40RJA=
-X-Google-Smtp-Source: AGHT+IGKzu2XIOmakywBVvQVCXPjCqQFFHQbzz7rGWhc+7VQYk4Q9VgfwbtHKoxlTZxsKpchLq1WnA==
-X-Received: by 2002:a19:ad07:0:b0:524:3ce:d4ca with SMTP id 2adb3069b0e04-52966005aadmr9313303e87.37.1716900876850;
-        Tue, 28 May 2024 05:54:36 -0700 (PDT)
+        bh=UBJydv2oVIxF33glNXhfsH0j7NMZZydOoyfGkqd3Bng=;
+        b=VannpKqUqKa0zu78rnFcXc4iehGoyN8ku6l3O2Jjx8Oh52dP7wd+xFjovj/lTnMmbf
+         N+WrCuYntVfXgYQv2f3vBdScJbt3U2k6i6OYlZyUyxEEAssQ7HKQ7Y/I6aDUmPq9x1md
+         i4O7BxC1Xz5WKHmv2T9XWHSOjzflUptWBpSLXslQ3lrsdi+dGTXus2TVfzbJOjt7UODI
+         MGOSv+J1JtdRT8ThI5vnZFEU/AEpb/MelZqUNxGZD9Gujy1TQxhepvcgpbwcB0HVzrSK
+         OdNmtz0sVwtxL6+5C6wqbOwnaANiIVjFDjBzyU6ExdFOy1q7S+JqZ0T8blSHyj9fjPvJ
+         KR4w==
+X-Forwarded-Encrypted: i=1; AJvYcCWd/ls2JMxkJJ1lNmke089v09xqZ/2Oh+T2ALfJAQwXIANuV8gXzmbgh5iFGb+tiCanPFh4/Vk7Erlj2GWUI+01193dXPxedSU8
+X-Gm-Message-State: AOJu0YxtCbeLKoWWqkGys1Bc/3y09klVeBeXDUjsVr+BPIABWjmDgCfe
+	O3B2axOnHAzbYbXd9CnyWmdgLePsSO1+/WcR3a1FIWH9d01qcy5nQrihzolscxg=
+X-Google-Smtp-Source: AGHT+IG0zOMeIXAZKtGkaGkYMDbA0TJClGnE+TMJJZXkxFvHDGGTT9Qi+laKp696WC+OBF1yN6ki/g==
+X-Received: by 2002:a05:6512:b9c:b0:51a:cafd:3872 with SMTP id 2adb3069b0e04-529644ec0cfmr9508409e87.3.1716900992046;
+        Tue, 28 May 2024 05:56:32 -0700 (PDT)
 Received: from ?IPV6:2a00:f41:c97:23a9:35bc:df2e:d894:2c76? ([2a00:f41:c97:23a9:35bc:df2e:d894:2c76])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5296e8877a3sm952106e87.36.2024.05.28.05.54.33
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5297066b885sm996984e87.127.2024.05.28.05.56.27
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 28 May 2024 05:54:35 -0700 (PDT)
-Message-ID: <68593878-fd39-4961-b7c2-cc33553d6fca@linaro.org>
-Date: Tue, 28 May 2024 14:54:32 +0200
+        Tue, 28 May 2024 05:56:31 -0700 (PDT)
+Message-ID: <39e8aa68-a68f-48d8-9845-0d273004e21b@linaro.org>
+Date: Tue, 28 May 2024 14:56:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -61,8 +61,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 09/10] arm64: dts: qcom: sc8180x-primus: Enable the two MP
- USB ports
+Subject: Re: [PATCH 10/10] arm64: dts: qcom: sc8180x-lenovo-flex-5g: Enable
+ USB multiport controller
 To: Bjorn Andersson <andersson@kernel.org>, Vinod Koul <vkoul@kernel.org>,
  Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
@@ -75,10 +75,10 @@ Cc: linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
  linux-clk@vger.kernel.org, linux-usb@vger.kernel.org,
  Bjorn Andersson <quic_bjorande@quicinc.com>
 References: <20240525-sc8180x-usb-mp-v1-0-60a904392438@quicinc.com>
- <20240525-sc8180x-usb-mp-v1-9-60a904392438@quicinc.com>
+ <20240525-sc8180x-usb-mp-v1-10-60a904392438@quicinc.com>
 Content-Language: en-US
 From: Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20240525-sc8180x-usb-mp-v1-9-60a904392438@quicinc.com>
+In-Reply-To: <20240525-sc8180x-usb-mp-v1-10-60a904392438@quicinc.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
@@ -87,39 +87,47 @@ Content-Transfer-Encoding: 7bit
 On 5/25/24 20:04, Bjorn Andersson wrote:
 > From: Bjorn Andersson <quic_bjorande@quicinc.com>
 > 
-> The SC8180X Primus comes with an AUX card with two USB ports, fed by the
-> two multiport ports.
-> 
-> Enable the involved nodes and define two always-on regulators to enable
-> VBUS for these ports.
-> 
-> Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
-> ---
+> The Lenovo Flex 5G has a camera attached to the multiport USB
+> controller, enable the controller and the four phys to enable this.
+
+Any chance you could leave a comment above each pair of PHYs that would
+say e.g.
+
+/* Left rear port */
+&usb_mp0_hsphy {
+
+...
+
+
+?
 
 [...]
 
-> +		gpio = <&pmc8180_1_gpios 9 0>;
+> +&usb_mp0_hsphy {
+> +	status = "okay";
+> +	vdda-pll-supply = <&vreg_l5e_0p88>;
+> +	vdda18-supply = <&vreg_l12a_1p8>;
+> +	vdda33-supply = <&vreg_l16e_3p0>;
 
-GPIO_ACTIVE_HIGH?
+status last
 
-> +		enable-active-high;
+
+> +};
 > +
-> +		regulator-always-on;
-> +	};
+> +&usb_mp0_qmpphy {
+> +	vdda-phy-supply = <&vreg_l3c_1p2>;
+> +	vdda-pll-supply = <&vreg_l5e_0p88>;
 > +
-> +	vreg_usb3_host_en: regulator-usb3-host-en {
-> +		compatible = "regulator-fixed";
-> +		regulator-name = "usb3_host_en";
+> +	status = "okay";
+> +};
 > +
-> +		regulator-min-microvolt = <5000000>;
-> +		regulator-max-microvolt = <5000000>;
-> +
-> +		gpio = <&pmc8180_2_gpios 9 0>;
+> +&usb_mp1_hsphy {
+> +	status = "okay";
+> +	vdda-pll-supply = <&vreg_l5e_0p88>;
+> +	vdda18-supply = <&vreg_l12a_1p8>;
+> +	vdda33-supply = <&vreg_l16e_3p0>;
 
-GPIO_ACTIVE_HIGH
+ditto
 
-with that:
-
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
 Konrad
