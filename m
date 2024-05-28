@@ -1,178 +1,135 @@
-Received: from fgw23-7.mail.saunalahti.fi (fgw23-7.mail.saunalahti.fi [62.142.5.84])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D220610A3E
-	for <linux-clk@vger.kernel.org>; Tue, 28 May 2024 20:02:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CDE317921D
+	for <linux-clk@vger.kernel.org>; Tue, 28 May 2024 20:43:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716926565; cv=none; b=Wcyq4Id1Bn8VSmpDayMTu8w4uj329a6sz41dJTKk78Px++VKZeHY5uPOhdDykLWHRDUS3LOsYBZgrI02bc/MzLVrGEMb4yH/xLBZS6aWLOFPbAUiyDYwWg1FAmxxDeC47jLxS2CDEJQl9oF81YCcEn//UUgY9UvkbpQvAqlVbkc=
+	t=1716929019; cv=none; b=URVjhYK79+cfLbp9LxBnwQbWJCnc6m7RTtFToVSRtCOYjUKWtU4Fl9EP/tySGK0kxGM6xhQ65Raj/whPPhqLjWqMe/ZfVoKDalwCtZy7mPDcqxDM0mErTDlIEeoumxho9r+VddEGIaTcU1l+c/rQKTQrLoQYT3f2znibnuC1v88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716926565; c=relaxed/simple;
-	bh=pTf2qUi734ES9Al085wTXfYC8mQU+J7CT38EpK7LQlk=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ncZ/ucebWaclToqAjNDTJiJ9yeONmJljV83KQAc6oO5uf2OfwVv2D7HsOdJyvxFinY0Rk/nWeAV52MaIFs/E6LUzz+ena3q/KtOqDTSQhaGFkqyjY9vc2uqQYzudztBZoLhb9REBkA46DpEOenvBuo1N1MMftLbzYt/LZgKFapU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-Received: from localhost (88-113-26-230.elisa-laajakaista.fi [88.113.26.230])
-	by fgw21.mail.saunalahti.fi (Halon) with ESMTP
-	id 3cab8281-1d2d-11ef-aaf5-005056bdd08f;
-	Tue, 28 May 2024 23:02:41 +0300 (EEST)
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Tue, 28 May 2024 23:02:39 +0300
-To: Alvin =?utf-8?Q?=C5=A0ipraga?= <alvin@pqrs.dk>
-Cc: Mark Brown <broonie@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Emil Svendsen <emas@bang-olufsen.dk>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-sound@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	Alvin =?utf-8?Q?=C5=A0ipraga?= <alsi@bang-olufsen.dk>
-Subject: Re: [PATCH 06/13] gpio: add AD24xx GPIO driver
-Message-ID: <ZlY4X2P1VpF0aqjM@surfacebook.localdomain>
-References: <20240517-a2b-v1-0-b8647554c67b@bang-olufsen.dk>
- <20240517-a2b-v1-6-b8647554c67b@bang-olufsen.dk>
+	s=arc-20240116; t=1716929019; c=relaxed/simple;
+	bh=KdOLoaqqPKKq6B+kbVp/zzlHPVbPXlpj0ygf6uQcA/g=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=SFVVy5Pa2HKEQlFcL3v8f4SPHF9EaDAoWY9vDcozl4cM+cITPAFFt0MoXWkfZ5283sQAz4nrY3K6lK7VwsowRtkrvhiH0BBT8onWjkdr+DrR1GnPSzcrw9oxDyIsL8XZZdN4xGkU+sTZav9zlDkUnPkv0iYmF4PIENhn9vKpZBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EbhlOrNy; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EbhlOrNy"
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2e78fe9fc2bso17614241fa.3
+        for <linux-clk@vger.kernel.org>; Tue, 28 May 2024 13:43:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1716929015; x=1717533815; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=s+CsOJCVlsOTrjqdtpqHMF6zfHlzSSq4GbM8W7t/KeU=;
+        b=EbhlOrNyNzLAm7kebFSFGtpuJvpeL+8sSM0oOKrWgclqHyjovsnRm0BmVmjcvVZyb1
+         xpM4EHenoQ7F7QzzsLPI2PH2wV8YNA5mvq2U2Q/lUpRzCMGy7X/oZ7DfunQqQ2U0t+ro
+         C6nPa5Id76sA4gtlANmQ9qqxeKrQigE1TEPAiXOOam7hBNS7IVBVPhTxMe1yimpsE98m
+         laUiDRr9q0aRuBghtl/ZeNSU6g9hBbszyM3AkLBptEHm5tF9LL22IqfId4b2a3+uJHXb
+         QKxfzyM46YVhyMGvFHKz5tcWPUbTWEaPWZZKNLBE2rHVCvYYI1sP5rR7ZjnpJx+6ZhCr
+         QEEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716929015; x=1717533815;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=s+CsOJCVlsOTrjqdtpqHMF6zfHlzSSq4GbM8W7t/KeU=;
+        b=GM2dXT3RHaA+SVghmgEopzNT/q2X+4v5B3Sb7cRFXaDRHJF5TJO5eH/RXrtHoQuKaW
+         LllW3UO8KmqWR2smMMY/oKMiqXzsBcdnE9bAubQm8ugiKpUiazeS8r8CcDTinoZ6Gm3l
+         gEp/Gmz+NW2u6X4WoFlHwpkJMI1snSwLT3lJPGI+reYooiXh+07JKD+8NG+FPdQoBH0Q
+         wnh2oBbfKOQs7fxN+uws5+qqfkc2o2UEjxRf+eCACx3lzWUCkz/DDekeWeTGHI9UFZ9B
+         h+j3r2gQSDb9CP4LJK1mGAqWlxLDHweZpQU0W1oIWARj/ErY8hLq6gagBnSB9VSIIErh
+         r6zQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV1nXO9PpdPpXWtOVcORUS8pf7NEojW/LgNHl8g3oEUfiQI0ktSzJY6yV9MTL3juUw3z2YlnUJauIWAA2bYiw7FL0u3B7S1SQ20
+X-Gm-Message-State: AOJu0YxUy1PfDCIzGmGoKyu8aRfvuFVGTFa/x/qGpyIExF+6W1YR9hRc
+	HoJRe8m0PotKj9zcDG6kIS1s+Oh12GYGJn8NZcU5y5C9Up+W03PYHmfiIzo9l8g=
+X-Google-Smtp-Source: AGHT+IEELxtRw01V0LSl1K8Y2/DYMfj51mt2ELV8DbnZI9JfaFo5hQZT9kn1UGbExnF8QONYnaKDaQ==
+X-Received: by 2002:ac2:52b4:0:b0:51f:601f:cbae with SMTP id 2adb3069b0e04-52966e9a44dmr8266092e87.56.1716929015036;
+        Tue, 28 May 2024 13:43:35 -0700 (PDT)
+Received: from umbar.lan ([192.130.178.91])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5297066b885sm1095493e87.127.2024.05.28.13.43.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 28 May 2024 13:43:34 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [PATCH 00/10] dt-bindings: clock: qcom,gcc: handle the controllers
+ without power domains
+Date: Tue, 28 May 2024 23:43:18 +0300
+Message-Id: <20240528-qcom-gdscs-v1-0-03cf1b102a4f@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240517-a2b-v1-6-b8647554c67b@bang-olufsen.dk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAOZBVmYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDUyML3cLk/Fzd9JTi5GLdJNNUs+TEtJTEJMsUJaCGgqLUtMwKsGHRsbW
+ 1APWqsyNcAAAA
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>, 
+ Robert Marko <robimarko@gmail.com>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2208;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=KdOLoaqqPKKq6B+kbVp/zzlHPVbPXlpj0ygf6uQcA/g=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmVkH0W8HCtV9FkP0Fi5jHzl6dxsTXhxkBImCsS
+ aBIyGEyz42JATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZlZB9AAKCRCLPIo+Aiko
+ 1Yk0B/4wRvE52sN2pOvvOSYjNFMz4MlTqAh8kJsoYWyP+Wn0qe6qheHvtmhVV4qilV5a16iAE/d
+ Onu9bkxcdaOROBgOgZ3VyagFbGEE+8zHXHTSBNaXcaeGOjsk2/6mSVy+m4ZRvLq6er1p0zEax2Z
+ fTJ7vP01NGZZNKqWK5KhwSifUtKEs0Y5fljV1t4eWJFlTdxKyJwhDzahSc8G+bzQQU8HPA9DeIn
+ dkLySM/gEkcNKwKSRuyxNcWHL8h7RPJxr8+yNoZNyOOiXz4rz0EyJ04kCYdegzOSrxjf2NDDos0
+ hwlQ23DBMqV8Sn9eIPSJg3DRa2IcdYx1p4nsTUfKPe1T1t9X
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-Fri, May 17, 2024 at 02:58:04PM +0200, Alvin Šipraga kirjoitti:
-> From: Alvin Šipraga <alsi@bang-olufsen.dk>
-> 
-> This driver adds GPIO function support for AD24xx A2B transceiver chips.
+On some of the Qualcomm platforms the Global Clock Controller doesn't
+provide power domains to the platform. However the existing
+qcom,gcc.yaml common schema requires the '#power-domain-cells' property.
+This results either in a platforms having incorrect property or in DT
+validation errors. Fix this by splitting the qcom,gcc-nopd.yaml schema,
+which doesn't define the offensive property and use it for such
+platforms.
 
-"Add GPIO..."
+Also, while we are at it, fix GCC node name for two platforms and
+enforce node name in the DT schema.
 
-> When a GPIO is requested, the relevant pin is automatically muxed to
-> GPIO mode. The device tree property gpio-reserved-ranges can be used to
-> protect certain pins which are reserved for other functionality such as
-> I2S/TDM data.
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+---
+Dmitry Baryshkov (10):
+      dt-bindings: clock: qcom: split the non-PD schema for GCC
+      dt-bindings: clock: qcom,gcc-apq8064: use non-power-domain version of GCC schema
+      dt-bindings: clock: qcom,gcc-msm8660: use non-power-domain version of GCC schema
+      dt-bindings: clock: qcom,gcc-ipq6018: use non-power-domain version of GCC schema
+      dt-bindings: clock: qcom,gcc-nopd.yaml: force node name
+      ARM: dts: qcom: apq8064: drop #power-domain-cells property of GCC
+      ARM: dts: qcom: msm8660: drop #power-domain-cells property of GCC
+      ARM: dts: qcom: msm8960: drop #power-domain-cells property of GCC
+      arm64: dts: qcom: ipq6018: fix GCC node name
+      arm64: dts: qcom: ipq8074: fix GCC node name
 
-Why this doesn't use gpio-regmap?
+ .../bindings/clock/qcom,gcc-apq8064.yaml           |  2 +-
+ .../bindings/clock/qcom,gcc-ipq6018.yaml           |  2 +-
+ .../bindings/clock/qcom,gcc-msm8660.yaml           |  2 +-
+ .../devicetree/bindings/clock/qcom,gcc-nopd.yaml   | 43 ++++++++++++++++++++++
+ .../devicetree/bindings/clock/qcom,gcc.yaml        | 19 ++--------
+ arch/arm/boot/dts/qcom/qcom-apq8064.dtsi           |  1 -
+ arch/arm/boot/dts/qcom/qcom-msm8660.dtsi           |  1 -
+ arch/arm/boot/dts/qcom/qcom-msm8960.dtsi           |  1 -
+ arch/arm64/boot/dts/qcom/ipq6018.dtsi              |  2 +-
+ arch/arm64/boot/dts/qcom/ipq8074.dtsi              |  2 +-
+ 10 files changed, 51 insertions(+), 24 deletions(-)
+---
+base-commit: ee3122766a21b81f4014bf7888dee5b9c5af15fa
+change-id: 20240528-qcom-gdscs-b5e6cafdab9d
 
-...
-
-> +config GPIO_AD24XX
-> +	tristate "Analog Devies Inc. AD24xx GPIO support"
-> +	depends on A2B_AD24XX_NODE
-> +	help
-> +	  Say Y here to enable GPIO support for AD24xx A2B transceivers.
-
-checkpatch probably complain about too short help text. You may extend it by
-explaining how module will be called.
-
-...
-
-> +#include <linux/a2b/a2b.h>
-> +#include <linux/a2b/ad24xx.h>
-
-This seems to me not so generic as below...
-
-+ bits.h
-+ device.h
-+ err.h
-
-> +#include <linux/gpio/driver.h>
-
-> +#include <linux/interrupt.h>
-
-+ mod_devicetable.h
-
-> +#include <linux/module.h>
-
-+ mutex.h
-
-> +#include <linux/of_irq.h>
-
-Please, can we avoid OF in a new code?
-
-> +#include <linux/regmap.h>
-
-...hence move that group here and put a blank line before.
-
-...
-
-> +struct ad24xx_gpio {
-> +	struct device *dev;
-> +	struct a2b_func *func;
-> +	struct a2b_node *node;
-> +	struct regmap *regmap;
-> +	int irqs[AD24XX_MAX_GPIOS];
-
-> +	struct gpio_chip gpio_chip;
-
-If you move this to be the first member, you might get less code being
-generated at compile time.
-
-> +	struct irq_chip irq_chip;
-
-Should not be here, but static.
-
-> +	struct mutex mutex;
-> +	unsigned int irq_invert : AD24XX_MAX_GPIOS;
-> +	unsigned int irq_enable : AD24XX_MAX_GPIOS;
-> +};
-
-...
-
-> +	if (ret)
-> +		dev_err(adg->dev,
-> +			"failed to update interrupt configuration: %d\n", ret);
-
-Why and how is this useful?
-
-...
-
-> +	struct fwnode_handle *fwnode = of_node_to_fwnode(dev->of_node);
-
-First of all it uses a wrong API (custom to IRQ core), second why do you need
-this?
-
-...
-
-> +	struct device_node *np;
-
-> +	np = of_irq_find_parent(dev->of_node);
-> +	if (!np)
-> +		return -ENOENT;
-> +
-> +	parent_domain = irq_find_host(np);
-> +	of_node_put(np);
-> +	if (!parent_domain)
-> +		return -ENOENT;
-
-Why is this magic needed?
-
-...
-
-> +	ret = devm_gpiochip_add_data(dev, gpio_chip, adg);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return 0;
-
-	return devm_gpiochip_add_data(...);
-
+Best regards,
 -- 
-With Best Regards,
-Andy Shevchenko
-
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
