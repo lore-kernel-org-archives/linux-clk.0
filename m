@@ -1,91 +1,78 @@
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E198E17E8F9;
-	Tue, 28 May 2024 08:17:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A35E451021;
+	Tue, 28 May 2024 10:03:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716884277; cv=none; b=Imeojv1CDUHc/Tnow0FPjry2Iap2bEZouCDnBnBLaOOQeAtPPEhCKCGbIcAf66vRT2A+QxSqZYbBQhLDblPZaOmP7KR0V6ml/smfiCJztPRHqswP6WjRFpqKMTdD0f7p1dl1OKULO04zfU5ULP9u1y+hJ82TFnjFwHpqHNFXqpI=
+	t=1716890615; cv=none; b=PZQaoKfJtgdP2cQOl0oGuS65cmvLH4W/uF/zMgq1/0+WeVxxqjTC9nX4RtQ+Uvp/ryOPeYRj34fpg5ImtRBhNBBvfEaIX1vbYp1AZc30TBKhRgtMoDr3ojrNJ6T7zjB9/179G6Dh3fmbwE4pzU8rGTLdNtXyAvVFLAA9CJnSQiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716884277; c=relaxed/simple;
-	bh=Zmj+JQNLsA96GI/qhGfukYbCSPLk5XeJ1/7kCCFGV4E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J2DBvsQut9FS+sz7fSl9bMbroYnCKouBNikgDmaG3+OEJh3feGwXBkN2bzcdijDc9Uhfy8tkeKE0Rr+9TNMlno7CtKpjYer7yQSJDMdrHeARFfFc95n1ZYRL+ghnNDVVaudFRbf+ImjbLbwUuAS7Vg2uVqQUf5MfC+rC59hSRXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=xi6QhMkz; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="xi6QhMkz"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=ptdRbhjrU2YQFZDIdErCpj8jdFAb7IMVbRAa0hSntoU=; b=xi6QhMkzi8MZAlFsG0qMB6gZNm
-	zcxFzAM2cfSsbE9P+TkNvq7CG2mdAEnO5Y/+m8EcvAzX7b+Rd0ziS5JekLB8WQhOMwUAqREQwX8Kp
-	eUduX/VeNECDR1NerQqUpLmMGGm5WcxvomQxAjSAUZbCDYy9SKLHG5iicwp0gfnOhkjvv94TooJBM
-	RFSlKSCszCHbn4/G6YYBq4rj4h/Uy+3bGS5aug9WGkKrkhc3RerMcKUWiPm2vGgejAC/7IYR9e4ti
-	m7BCXBpfO1xpI/EMhx2OiKFaNY96Wr8UocUqju/zi4IIb2+ePyxzGdrK6cbVE5o5g5KNQ3zVZ3OdX
-	42dJRckA==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:33574)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1sBs1e-0004Ri-3D;
-	Tue, 28 May 2024 09:17:43 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.94.2)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1sBs1f-000375-47; Tue, 28 May 2024 09:17:43 +0100
-Date: Tue, 28 May 2024 09:17:42 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Samuel Holland <samuel.holland@sifive.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Guenter Roeck <linux@roeck-us.net>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Dinh Nguyen <dinguyen@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	s=arc-20240116; t=1716890615; c=relaxed/simple;
+	bh=M0PLhgQcE1I1ycRccQEwm+xQfTN8vUyb9CgngkuTgbI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YoeZlGCr0IAbK0XbO2duZMRKiOSayqzdhnmuzmldbenAg9vMjAtoNJ49Tm2vW3NRPRbg9psQxrzGLE6u6sFTSr1uYof3vHGShBeLxdOhlL0iY1nishPEBxW7OzOKER2qa4+kTJb6+f1TUFmRlQrnU8b3jmaaSlX86sSy64JCIaE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Received: from i5e86193d.versanet.de ([94.134.25.61] helo=phil.lan)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sBtff-0002JN-4z; Tue, 28 May 2024 12:03:07 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Sandy Huang <hjc@rock-chips.com>,
+	Andy Yan <andy.yan@rock-chips.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Rob Herring <robh@kernel.org>, Yang Li <yang.lee@linux.alibaba.com>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH] clk: sifive: Do not register clkdevs for PRCI clocks
-Message-ID: <ZlWTJvvTSm2hH2ls@shell.armlinux.org.uk>
-References: <20240528001432.1200403-1-samuel.holland@sifive.com>
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Alex Bee <knaerzche@gmail.com>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: (subset) [PATCH v3 0/7] Add DSI support for RK3128
+Date: Tue, 28 May 2024 12:03:05 +0200
+Message-Id: <171689056747.1839363.13897096799987854374.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240509140653.168591-1-knaerzche@gmail.com>
+References: <20240509140653.168591-1-knaerzche@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240528001432.1200403-1-samuel.holland@sifive.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Mon, May 27, 2024 at 05:14:12PM -0700, Samuel Holland wrote:
-> These clkdevs were unnecessary, because systems using this driver always
-> look up clocks using the devicetree. And as Russell King points out[1],
-> since the provided device name was truncated, lookups via clkdev would
-> never match.
+On Thu, 9 May 2024 16:06:46 +0200, Alex Bee wrote:
+> This series aims to add support for the DesignWare MIPI DSI controller and
+> the Innoslicon D-PHY found in RK3128 SoCs. The code additions are rather
+> tiny: It only need some code in the Rockchip dw-mipi-dsi glue layer for
+> this SoC and do some changes in the SoC's clock driver. Support for the phy
+> was already added when the Innosilicon D-PHY driver was initially
+> submitted. I tested it with a 800x1280 DSI panel where all 4 lanes that are
+> supported are used.
 > 
-> Recently, commit 8d532528ff6a ("clkdev: report over-sized strings when
-> creating clkdev entries") caused clkdev registration to fail due to the
-> truncation, and this now prevents the driver from probing. Fix the
-> driver by removing the clkdev registration.
-> 
-> Link: https://lore.kernel.org/linux-clk/ZkfYqj+OcAxd9O2t@shell.armlinux.org.uk/ [1]
-> Fixes: 30b8e27e3b58 ("clk: sifive: add a driver for the SiFive FU540 PRCI IP block")
-> Fixes: 8d532528ff6a ("clkdev: report over-sized strings when creating clkdev entries")
+> [...]
 
-This doesn't really fix this commit, since if someone else is doing the
-same thing, then they too may also fail to boot, so I'd suggest that
-this Fixes tag is removed.
+Applied, thanks!
 
-See https://lore.kernel.org/r/E1sBrzn-00E8GK-Ue@rmk-PC.armlinux.org.uk
+[1/7] dt-bindings: display: rockchip,dw-mipi-dsi: Document RK3128 DSI
+      commit: 9bb3d9ad3e19f16efc34f427a58e480424c56a16
+[5/7] drm/rockchip: dsi: Add support for RK3128
+      commit: 62545c719e26ec9f62efab7e9582deb73265b6d0
 
-for a fix that solves the issue introduced by that commit.
-
+Best regards,
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Heiko Stuebner <heiko@sntech.de>
