@@ -1,198 +1,166 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+Received: from omta038.useast.a.cloudfilter.net (omta038.useast.a.cloudfilter.net [44.202.169.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DD2D16C43B
-	for <linux-clk@vger.kernel.org>; Tue, 28 May 2024 10:54:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FD6616133E
+	for <linux-clk@vger.kernel.org>; Tue, 28 May 2024 11:22:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716893699; cv=none; b=CgNtEdPpIidZ9UkyjSKbNDqusJ/GZSbKPfJTpbQn0MF3arJGF8WJyy6kb/fgLZVBQInkSlXObMTGqT4krSpcHKA8KMUbuQlxlbsJyegOCOpYrxpYxseyw1kyfm7VSHXqM+C+y7M4MYoPlAwZ8az4rFIb35UMzrXx12ohQ9/kVao=
+	t=1716895333; cv=none; b=lT7PPOncuMph1yF8MHPSKEX+wR08APOnLuuhVX76VTQh3LRG4Rt32gP4UptIFrHNbDVhLUAUs63q4KEI516AtDsltkvPEbnPcipkHhOhYAtW4E8i/sPmqo5rqliCAPuBnlKqClj8pwPI5DyCTEfL5ybaa+oIP1WHkmxfZv1ngls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716893699; c=relaxed/simple;
-	bh=GOWMxyN/F4oNh2ktrRZtSe+zgFmhuwQWtSAhncORZrU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sYfPIIXfBl7adG158WrIe9eIU1IVPdDYGlqsQdcm4qXppDVy93GGJ5Kb/544MMiWDqDjObKarF+kbof86M/C72vsLTp/xmAFn3FktM6nFqq90d+6uZ6fvl1WdBBJZd2OdfpSPmmnjkjUP9R0ew6zyhu5G6xN0VkXkHyXqMq9XDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Y/OVEXXx; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1716895333; c=relaxed/simple;
+	bh=P0Mx1FLXShH0Z5GfwxF5/6SGn4uCtX3vBpArnfROkcY=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=C06+Xmnr98pk9uRX5bzZm8pME9KHOcsMN1Kk8sAPVNC84xB9TllCgx/8Pt/ZG3SKNityJXvIKZz94zAuGJ82vlfcJ9P7MJqOgE0dI3/7CeqaUBVt3dKnL8atwzXjUElB+NOAp2aFWpIbx32MoJmdByv0pp7oNjgDS5SJ21cjdoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=Qm8HQ2lM; arc=none smtp.client-ip=44.202.169.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Y/OVEXXx"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1716893695;
-	bh=GOWMxyN/F4oNh2ktrRZtSe+zgFmhuwQWtSAhncORZrU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Y/OVEXXx15IgIAOvOaJontYPnTl81qrtgA1xK0VBrzJVdDslcePkmcXhGXcDDWyXU
-	 +T4Sm1JzylR2t8DA9SuI83+iDmMJHpSc+YJLF1A+eY54r2bwTVTTCTc2djHgnY/53L
-	 mgIBDqq3zwPZrVICYQYDjCk+xfuYivm+HeeRetqQYJ77r32fmrYmQrKHm0GkOMbIeo
-	 LADdEAdYzZYkiedMBO3mtmVjyUN8XyL29gQo+NXS+LDq7Be07jP7Mt6IlE+YkZyApj
-	 biWqOGxpt3UyL12S9+M73MTGKbRQ+5CyKoiYkKoA8Tz/TUEs4TPi2bSxTOLGgR3jrZ
-	 uEDBUh+nG1DGg==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 134CC3782113;
-	Tue, 28 May 2024 10:54:55 +0000 (UTC)
-Message-ID: <341c1d0e-95b8-4e0c-9129-7dbda0b4e2b3@collabora.com>
-Date: Tue, 28 May 2024 12:54:54 +0200
+	dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="Qm8HQ2lM"
+Received: from eig-obgw-5005a.ext.cloudfilter.net ([10.0.29.234])
+	by cmsmtp with ESMTPS
+	id BuI1saCN6jfBABuu4sJvME; Tue, 28 May 2024 11:22:04 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id Buu3shRfKYakKBuu3szZt4; Tue, 28 May 2024 11:22:03 +0000
+X-Authority-Analysis: v=2.4 cv=a4T79lSF c=1 sm=1 tr=0 ts=6655be5c
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=TpHVaj0NuXgA:10 a=-Ou01B_BuAIA:10 a=VwQbUJbxAAAA:8
+ a=_jlGtV7tAAAA:8 a=PHq6YzTAAAAA:8 a=HaFmDPmJAAAA:8 a=HUZBgE9acwSnwOzeVl8A:9
+ a=QEXdDO2ut3YA:10 a=AjGcO6oz07-iQ99wixmX:22 a=nlm17XC03S6CtCLSeiRr:22
+ a=ZKzU8r6zoKMcqsNulkmm:22 a=nmWuMzfKamIsx3l42hEX:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:MIME-Version:
+	Date:Message-ID:From:References:Cc:To:Subject:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=hw6FK+OS+RQG3VzJoQxH+zcl7pjy/9p2BHbiD1a6ayA=; b=Qm8HQ2lM9suyzWh9uYKVG9BMGy
+	CyiD3PoFh/66CXhFbxY4RD//aYD6j3QstwcuUFJ0dFQVBNPy47D0eDt7My2tu8p5nR1nfBPfFh1y9
+	woyFsBrY1vweaSLBgW3i9pwjtwuSPcXD1VMnNrmmSeuzxC8HDtPMVuY3kGxz0ntFdozcw/vAYKgpT
+	uIxsre7QWqsuawjcfOjp0BlFGbP1qv4g9bp6kQvHwc9Khz2R+Lme+WWm+FvdtS3fVEANSHu8j9hc6
+	2aE9WNK9Dex9cWKPcukdpohRD46Z61VQQZIUoVCQt6wAdrwDRoeylOaHSA9jJaTvkbZP60PG9ONl9
+	VyLld57w==;
+Received: from c-98-207-139-8.hsd1.ca.comcast.net ([98.207.139.8]:40542 helo=[10.0.1.47])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <re@w6rz.net>)
+	id 1sBuu1-002oBt-0z;
+	Tue, 28 May 2024 05:22:01 -0600
+Subject: Re: [PATCH] clk: clkdev: don't fail clkdev_alloc() if over-sized
+To: "Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+ linux-clk@vger.kernel.org
+Cc: Stephen Boyd <sboyd@kernel.org>,
+ Samuel Holland <samuel.holland@sifive.com>,
+ Guenter Roeck <linux@roeck-us.net>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Dinh Nguyen <dinguyen@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Rob Herring <robh@kernel.org>,
+ Yang Li <yang.lee@linux.alibaba.com>, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ regressions@lists.linux.dev
+References: <28114882-f8d7-21bf-4536-a186e8d7a22a@w6rz.net>
+ <E1sBrzn-00E8GK-Ue@rmk-PC.armlinux.org.uk>
+From: Ron Economos <re@w6rz.net>
+Message-ID: <37dae7f1-d11c-2793-796b-822cbc3d7a31@w6rz.net>
+Date: Tue, 28 May 2024 04:21:59 -0700
+User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Can someone at Mediatek add missing MODULE_DESCRIPTION()s?
-To: Jeff Johnson <quic_jjohnson@quicinc.com>, Sam Shih <sam.shih@mediatek.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-References: <4f0a78e8-d9cb-47c7-b748-b6cbd2ec1354@quicinc.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <4f0a78e8-d9cb-47c7-b748-b6cbd2ec1354@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <E1sBrzn-00E8GK-Ue@rmk-PC.armlinux.org.uk>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 98.207.139.8
+X-Source-L: No
+X-Exim-ID: 1sBuu1-002oBt-0z
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-98-207-139-8.hsd1.ca.comcast.net ([10.0.1.47]) [98.207.139.8]:40542
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 2
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfF2j5kgwgCZ6YR2sifh2pLvzlSGCMtY5KwOkS2ZEbKu7c3oSedKOZ6uj0EQkwB3gYUVeAesVICO0i+Sf9dBGJMm+qrJTu7+c1NHZ6Swx9UEiccMAumwm
+ +aja7nrGQfS5+KX3SBI4fa6rLozp7IbkYGyUbITy4KpNSw6exLGeEwjcMyB9iGEjGROwpBn3H3DHWlRy4cnRZRzYPSZPh7nabxQ=
 
-Il 27/05/24 22:00, Jeff Johnson ha scritto:
-> Hi Sam,
-> 
-> 'make W=1' causes modpost to warn if a module doesn't have a
-> MODULE_DESCRIPTION(). I've been slowly cleaning up these warnings tree-wide,
-> but there are a large number in drivers/clk/mediatek that I'd prefer Mediatek
-> to fix.
-> 
-> Can you drive that cleanup?
-> 
+On 5/28/24 1:15 AM, Russell King (Oracle) wrote:
+> Don't fail clkdev_alloc() if the strings are over-sized. In this case,
+> the entry will not match during lookup, so its useless. However, since
+> code fails if we return NULL leading to boot failure, return a dummy
+> entry with the connection and device IDs set to "bad".
+>
+> Leave the warning so these problems can be found, and the useless
+> wasteful clkdev registrations removed.
+>
+> Fixes: 8d532528ff6a ("clkdev: report over-sized strings when creating clkdev entries")
+> Closes: https://lore.kernel.org/linux-clk/7eda7621-0dde-4153-89e4-172e4c095d01@roeck-us.net.
+> Signed-off-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
+> ---
+>
+> Please try this patch, which should allow the platform to boot, bit will
+> intentionally issue lots of warnings. There is a separate patch posted
+> recently that removes the useless registration with clkdev.
+>
+>   drivers/clk/clkdev.c | 11 +++++++++--
+>   1 file changed, 9 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c
+> index 6a77d7e201a9..2f83fb97c6fb 100644
+> --- a/drivers/clk/clkdev.c
+> +++ b/drivers/clk/clkdev.c
+> @@ -204,8 +204,15 @@ vclkdev_alloc(struct clk_hw *hw, const char *con_id, const char *dev_fmt,
+>   	pr_err("%pV:%s: %s ID is greater than %zu\n",
+>   	       &vaf, con_id, failure, max_size);
+>   	va_end(ap_copy);
+> -	kfree(cla);
+> -	return NULL;
+> +
+> +	/*
+> +	 * Don't fail in this case, but as the entry won't ever match just
+> +	 * fill it with something that also won't match.
+> +	 */
+> +	strscpy(cla->con_id, "bad", sizeof(cla->con_id));
+> +	strscpy(cla->dev_id, "bad", sizeof(cla->dev_id));
+> +
+> +	return &cla->cl;
+>   }
+>   
+>   static struct clk_lookup *
 
-I'm doing it - expect a series soon.
+Works good. Here's what it looks like on HiFive Unmatched.
 
-Regards,
-Angelo
+[0.389138] riscv-plic c000000.interrupt-controller: mapped 69 interrupts 
+with 4 handlers for 9 contexts.
+[0.390710] shpchp: Standard Hot Plug PCI Controller Driver version: 0.4
+[0.392743] 10000000.clock-controller:corepll: device ID is greater than 24
+[0.392792] 10000000.clock-controller:ddrpll: device ID is greater than 24
+[0.392820] 10000000.clock-controller:gemgxlpll: device ID is greater 
+than 24
+[0.392847] 10000000.clock-controller:dvfscorepll: device ID is greater 
+than 24
+[0.392876] 10000000.clock-controller:hfpclkpll: device ID is greater 
+than 24
+[0.392903] 10000000.clock-controller:cltxpll: device ID is greater than 24
+[0.392929] 10000000.clock-controller:tlclk: device ID is greater than 24
+[0.392955] 10000000.clock-controller:pclk: device ID is greater than 24
+[0.392981] 10000000.clock-controller:pcie_aux: device ID is greater than 24
+[0.394620] Serial: 8250/16550 driver, 32 ports, IRQ sharing enabled
+[0.413222] SuperH (H)SCI(F) driver initialized
 
-> /jeff
-> 
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt6765-audio.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt6765-cam.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt6765-img.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt6765-mipi0a.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt6765-mm.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt6765-vcodec.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt6779.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt6779-mm.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt6779-img.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt6779-ipe.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt6779-cam.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt6779-vdec.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt6779-venc.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt6779-mfg.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt6779-aud.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt6797-img.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt6797-mm.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt6797-vdec.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt6797-venc.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt2712-apmixedsys.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt2712.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt2712-bdp.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt2712-img.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt2712-jpgdec.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt2712-mfg.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt2712-mm.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt2712-vdec.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt2712-venc.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt7622-eth.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt7622-hif.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt7622-aud.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt7981-eth.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt7986-apmixed.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt7986-topckgen.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt7988-apmixed.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt7988-topckgen.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt7988-infracfg.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8167-apmixedsys.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8167.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8167-aud.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8167-img.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8167-mfgcfg.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8167-mm.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8167-vdec.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8183-apmixedsys.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8183.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8183-audio.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8183-cam.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8183-img.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8183-ipu0.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8183-ipu1.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8183-ipu_adl.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8183-ipu_conn.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8183-mfgcfg.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8183-mm.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8183-vdec.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8183-venc.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8186-apmixedsys.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8186-topckgen.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8186-infra_ao.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8186-cam.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8186-img.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8186-imp_iic_wrap.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8186-ipe.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8186-mdp.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8186-mfg.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8186-mm.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8186-vdec.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8186-venc.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8186-wpe.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8188-apmixedsys.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8188-topckgen.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8188-peri_ao.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8188-infra_ao.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8188-adsp_audio26m.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8188-cam.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8188-ccu.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8188-img.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8188-imp_iic_wrap.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8188-ipe.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8188-mfg.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8188-vdec.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8188-vdo0.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8188-vdo1.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8188-venc.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8188-vpp0.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8188-vpp1.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8188-wpe.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8192.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8192-aud.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8192-cam.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8192-img.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8192-imp_iic_wrap.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8192-ipe.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8192-mdp.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8192-mfg.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8192-mm.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8192-msdc.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8192-scp_adsp.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8192-vdec.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8192-venc.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8195-apusys_pll.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8195-cam.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8195-ccu.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8195-img.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8195-imp_iic_wrap.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8195-ipe.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8195-mfg.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8195-scp_adsp.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8195-vdec.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8195-vdo0.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8195-vdo1.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8195-venc.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8195-vpp0.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8195-vpp1.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8195-wpe.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8365-apmixedsys.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8365.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8365-apu.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8365-cam.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8365-mfg.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8365-mm.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8365-vdec.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/mediatek/clk-mt8365-venc.o
+Tested-by: Ron Economos <re@w6rz.net>
 
