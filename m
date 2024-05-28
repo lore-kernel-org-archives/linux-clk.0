@@ -1,123 +1,122 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39AEF32C60;
-	Tue, 28 May 2024 16:07:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23E1C224D1;
+	Tue, 28 May 2024 17:41:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716912448; cv=none; b=qGHjQd6UYYtLNwayCxbt/809U0VdDao5iBh+kVQ2CsTKU0imIx9YMF57vm+MXVAjn+0AdjeqiDubO2IrhuQqftrdOmUgDQBLRcmG4TP+SH/73vuxbABgzWqFG2v/53dg0xGAjPbNGbX2uZZpae/hknSkGyBM2QCwNsYd+oqw8FY=
+	t=1716918100; cv=none; b=uNrm7s+EkP+mCISsXPIR2t83UEzjAyH/jP4Y9ogO0xk3j0BygjTLjH5vrGPQXaq8kjBL4xDQSlOzV04M2QjCVpkj+BRoY/V6FXx2s6ZNqWjucOvfe76Kmn89O7ftbSgPKHv8iMm67h+vu9pxdclWQa++Yv37XrU5dK6rAkoyXR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716912448; c=relaxed/simple;
-	bh=T049GCHKV7lJ9edpcjZl/SJH96Qnt0snWMhqxpAWVb0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fEaWhd8h5rbHh7oSqlYHuwNdCJ1APvHEXt8AnF5rb51KE5I/S1bomKBy+VS8MmpMtAa0zKSUIvtJCTPnKAFfjCsppGfix9BifqrefNI91EE6k0qg8qyauGsibJwWrbiggbWZbQ6sx4WjmE6uvO64f/zrJ3Vt8Z14KhRjallXL04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EIqPBOtW; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1716918100; c=relaxed/simple;
+	bh=/TVduV2ZbhY2J3w1XAChQvYpluvCRq1AayWS8C1G0NA=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=r5SdwB7FPxtQcXGbfZ/HglrXUNAZ6tPjzRyAUdbGpRUDkcHmJrtDZ1V4tO5i9Ayj7TdZR1LOQwstdy26ds/HwK0CcadBdLtPjlVJSTIDxBUhk18OJoWeM1RQDPFGBEpr5rfX03mLFIRgxafJN5JflI8/aHDh4HF5nke7kHtAh8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qrw1m/Mu; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EIqPBOtW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A9D2C3277B;
-	Tue, 28 May 2024 16:07:24 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qrw1m/Mu"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66164C3277B;
+	Tue, 28 May 2024 17:41:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716912447;
-	bh=T049GCHKV7lJ9edpcjZl/SJH96Qnt0snWMhqxpAWVb0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=EIqPBOtWCLPLQxpLbIiN5n3BBNqb6iQad1UMHYSLRy13VMGZkwlG+C8OEecPKb4LQ
-	 xhpf8RMhmDYBHzIB92fNfoAc/myKE5EDS+eV0qbHZyCTaLXNU4INcxoRN3fMjep8Hs
-	 6A66pigdKfOycPE9lWbbbEm2XStUeLBZdIMkYl1+Y8laWJFLou1z+Qz9S9J/QlXT7y
-	 wvju8BCNt8n9g+kB0uYBTQQgaZJT+2sniOpuJxH++/Stqh6DzuzFWIHARNHIWLpPSz
-	 BqvEpN4UUtMb59t6hoGMmThU6ySAZly6cvpWbP3TQSMs9wbo3sULSP8LtZnF3T0ZnX
-	 dDBwiwNUQULEg==
-Message-ID: <8f9d62c1-12f5-4d52-a511-602281857dbe@kernel.org>
-Date: Tue, 28 May 2024 18:07:22 +0200
+	s=k20201202; t=1716918099;
+	bh=/TVduV2ZbhY2J3w1XAChQvYpluvCRq1AayWS8C1G0NA=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=qrw1m/MuP3D+0ADSOQl2pR6tl/kLfl5zk/yTvtvHupE8yESkaXuqeVgwVCjU+C9bV
+	 QMIqbvEcGL9Y2RW15prtGxmGK3sDZTDoL9hERfT5ZIGw+o4T5QLQY8QIPUwMoDg7ye
+	 wX2fiMZvsOxqhm8ZltZbPwpBo/ixOWbTYWD4lHxFlxRB7a+82NIKPJ8wDxc40yy7MH
+	 8MKWP7ceB1eYUc6mtMnEViE4R9YNga0bIpkNhjhjvp6R9IhrC5OY8VmODayitW6yCS
+	 ZDFLV1haXsatv5BeLeAPvzdkKLbn6Qi9OizxvRoqOQO0crJAiz8rq6sdUCZnzy/jXD
+	 QiPNCZrAJhe+A==
+Date: Tue, 28 May 2024 12:41:38 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] clk: sunxi-ng: h616: Add clock/reset for GPADC
-To: wens@csie.org, Chris Morgan <macroalpha82@gmail.com>
-Cc: linux-sunxi@lists.linux.dev, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
- p.zabel@pengutronix.de, sboyd@kernel.org, mturquette@baylibre.com,
- samuel@sholland.org, jernej.skrabec@gmail.com, conor+dt@kernel.org,
- krzk+dt@kernel.org, robh@kernel.org, Chris Morgan <macromorgan@hotmail.com>
-References: <20240417170423.20640-1-macroalpha82@gmail.com>
- <20240417170423.20640-2-macroalpha82@gmail.com>
- <CAGb2v67rqiCA=fwk9USr4-xh3uRGxQ-p_f+--Ui5vVBnb10QQA@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <CAGb2v67rqiCA=fwk9USr4-xh3uRGxQ-p_f+--Ui5vVBnb10QQA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-usb@vger.kernel.org, 
+ Bjorn Andersson <quic_bjorande@quicinc.com>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-phy@lists.infradead.org, 
+ devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Wesley Cheng <quic_wcheng@quicinc.com>, Conor Dooley <conor+dt@kernel.org>, 
+ Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <20240525-sc8180x-usb-mp-v1-0-60a904392438@quicinc.com>
+References: <20240525-sc8180x-usb-mp-v1-0-60a904392438@quicinc.com>
+Message-Id: <171691793133.1180499.940663320144175999.robh@kernel.org>
+Subject: Re: [PATCH 00/10] arm64: dts: qcom: sc8180x: Enable the USB
+ multiport controller
 
-On 28/05/2024 18:02, Chen-Yu Tsai wrote:
-> On Thu, Apr 18, 2024 at 1:04 AM Chris Morgan <macroalpha82@gmail.com> wrote:
->>
->> From: Chris Morgan <macromorgan@hotmail.com>
->>
->> Add the GPADC required clock and reset which is used for the onboard
->> GPADC.
->>
->> Signed-off-by: Chris Morgan <macromorgan@hotmail.com>
->> ---
->>  drivers/clk/sunxi-ng/ccu-sun50i-h616.c      | 5 +++++
->>  drivers/clk/sunxi-ng/ccu-sun50i-h616.h      | 2 +-
+
+On Sat, 25 May 2024 11:03:53 -0700, Bjorn Andersson wrote:
+> The USB multiport controller found in SC8180X is used to driver the
+> camera in the Lenovo Flex 5G, and a couple of additional USB ports on
+> the Primus AUX board.
+> 
+> Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
+> ---
+> Bjorn Andersson (10):
+>       dt-bindings: phy: qcom,sc8280xp-qmp-usb3-uni: Add sc8180x USB3 compatible
+>       phy: qcom-qmp-usb: Add sc8180x USB UNIPHY
+>       dt-bindings: clock: qcom: Add missing USB MP resets
+>       clk: qcom: gcc-sc8180x: Add missing USB MP resets
+>       dt-bindings: usb: qcom,dwc3: Add SC8180X compatibles
+>       arm64: dts: qcom: sc8180x-pmics: Add second PMC8180 GPIO
+>       arm64: dts: qcom: sc8180x: Align USB nodes with binding
+>       arm64: dts: qcom: sc8180x: Add USB MP controller and phys
+>       arm64: dts: qcom: sc8180x-primus: Enable the two MP USB ports
+>       arm64: dts: qcom: sc8180x-lenovo-flex-5g: Enable USB multiport controller
+> 
+>  .../phy/qcom,sc8280xp-qmp-usb3-uni-phy.yaml        |   3 +
+>  .../devicetree/bindings/usb/qcom,dwc3.yaml         |  29 ++++
+>  .../arm64/boot/dts/qcom/sc8180x-lenovo-flex-5g.dts |  32 ++++
+>  arch/arm64/boot/dts/qcom/sc8180x-pmics.dtsi        |  16 +-
+>  arch/arm64/boot/dts/qcom/sc8180x-primus.dts        |  60 +++++++
+>  arch/arm64/boot/dts/qcom/sc8180x.dtsi              | 175 +++++++++++++++++++--
+>  drivers/clk/qcom/gcc-sc8180x.c                     |   4 +
+>  drivers/phy/qualcomm/phy-qcom-qmp-usb.c            |   3 +
+>  include/dt-bindings/clock/qcom,gcc-sc8180x.h       |   4 +
+>  9 files changed, 312 insertions(+), 14 deletions(-)
+> ---
+> base-commit: 3689b0ef08b70e4e03b82ebd37730a03a672853a
+> change-id: 20240524-sc8180x-usb-mp-4eb278df7ef1
+> 
+> Best regards,
+> --
+> Bjorn Andersson <quic_bjorande@quicinc.com>
 > 
 > 
->>  include/dt-bindings/clock/sun50i-h616-ccu.h | 1 +
->>  include/dt-bindings/reset/sun50i-h616-ccu.h | 1 +
 > 
-> These need an Ack from the DT binding maintainers. And it's better to
-> split these into a separate patch.
 
-I am surprised that they were combined... So usual comment: Please split
-the bindings, because we do not want bindings to be in the same commit
-as driver.
 
-Best regards,
-Krzysztof
+My bot found new DTB warnings on the .dts files added or changed in this
+series.
+
+Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+are fixed by another series. Ultimately, it is up to the platform
+maintainer whether these warnings are acceptable or not. No need to reply
+unless the platform maintainer has comments.
+
+If you already ran DT checks and didn't see these error(s), then
+make sure dt-schema is up to date:
+
+  pip3 install dtschema --upgrade
+
+
+New warnings running 'make CHECK_DTBS=y qcom/sc8180x-lenovo-flex-5g.dtb qcom/sc8180x-primus.dtb' for 20240525-sc8180x-usb-mp-v1-0-60a904392438@quicinc.com:
+
+arch/arm64/boot/dts/qcom/sc8180x-lenovo-flex-5g.dtb: clock-controller@af00000: clocks: [[41, 0], [42], [120, 0], [120, 1], [124, 0], [124, 1], [127, 0], [127, 1]] is too long
+	from schema $id: http://devicetree.org/schemas/clock/qcom,dispcc-sm8x50.yaml#
+arch/arm64/boot/dts/qcom/sc8180x-primus.dtb: clock-controller@af00000: clocks: [[41, 0], [42], [122, 0], [122, 1], [126, 0], [126, 1], [129, 0], [129, 1]] is too long
+	from schema $id: http://devicetree.org/schemas/clock/qcom,dispcc-sm8x50.yaml#
+
+
+
+
 
