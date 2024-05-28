@@ -1,50 +1,48 @@
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AD4D1DFEB;
-	Tue, 28 May 2024 13:57:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B5FF13A868;
+	Tue, 28 May 2024 14:03:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716904648; cv=none; b=Aa5kf08wY4LKdePBwGjxLF8x/GTg5kQX/G4sZBnQf6kweUAovSjAGPu/xZGw3NqkeaxA38IgOMNDnlo3/H8JKnMY7rt6Xr3eoOAtoYvwbbayHVcPM4dq9J+k7+DVF/qooPeoG2nmEF6KFpXypm2RSqIaLCGtpn95oUA0/hQMV3Q=
+	t=1716905010; cv=none; b=GAEroJL/9qquvnT/qGh21pyoA/rUMhZQY8uas9mBmr+48eX+Nr3mdDvSS6QAnw7JL2Ye1EKdnFMqA1ZEHEc9dttr/XSves7LldCerdlUs+94rmyGzscFTgVr0iWNP6Jpp+Fd3zwd5JQHJ+3C1Zyh36C/VCbkf1QsrassZkI0g2U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716904648; c=relaxed/simple;
-	bh=lvauc8lUfBZMFnljdZm+wq4srDvCwzjLTImIswTNMIA=;
+	s=arc-20240116; t=1716905010; c=relaxed/simple;
+	bh=5tCZb5kyea4NJagicMF6cpfIdlu0sHvXpdfA3Z03YnQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=dgMfyMwYTtcM7qKIZmR5ZRFv6HqWqaO17RlQXBQy2dEzq4SXxkxXbTytKxA6dSJYgQh2ltQLVmH7+T4R3CY0MolysLSv+gEKDTraIzcyZK9637FfN9al/zOAr7yCzpTftMSWgJIAMSwWc/bTc4Hjgbaiw3UqrvqI7QMsn1Evlfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=vEk1bhIc; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	 In-Reply-To:Content-Type; b=MHoug2yWm6i1KRSHsfHw7bAu5o23K5RQwVxV5T38AQT4tzzXFohYhc0EhXRuDTSY0wuMtt7JEEZ+qCKf7JnC+chSorVyGIsZl49X+VYD7WHn/a0fvXZCTQDSPnQ+a4iTptfqgVSbSvhaOk+470gks/cxhm0WoW58FiCYvCsr3fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lpd2Bp9v; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="vEk1bhIc"
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44SDcObZ029891;
-	Tue, 28 May 2024 15:56:36 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lpd2Bp9v"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44SBk8vv022220;
+	Tue, 28 May 2024 14:03:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	3iMyPRzAl6P/YSbrLht+RjqstDWVPqn81XuUkiZnR+I=; b=vEk1bhIc8n7CjGg5
-	x2HRcAASI53sQW4Pcc6zc9FV9e2nzcgQQPX7sUXXq9BYBepj3HtTXkaB3LvmgXZL
-	IkinWSTPRbA+pXMPuE8us9knYU+ciDlyF5RgTRinULTJans/MSjaNaDdQbt6cK//
-	vCjS5wXGjlVBdgMPQL4K6h83j/VmvbIE6t6+uKRYMWqvZ8jZ7HPODpq48n+h3C7E
-	WtuQG2U0/0m1N3GHVWN/yaC25PahAIdohjRloO16/0zW5KtyihJEm1tHD5n7G8UN
-	SGnj8JWqRjyvMhAsDC0REHgpLFCpxRVF49Ha9GsTMiOR9u1OUOj+P3fJWBHOeFMD
-	JNKvmg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 3yb9yjcdpd-1
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	qf2B6uaVwOzsoHSnptOmqBPxKS/mvVhhFLc7hn4ujoo=; b=lpd2Bp9vr4QSBIlh
+	DaKx7lGbc3rAM6mHbYohIazHhC5cGS34GLOmLeS/d93fwBKAI1XEg/KAlKyF4yXt
+	Eg525t0jjTM+yaVF2oB5DQVQna09y2EWLTSuAuDQ3DsqRvnAvr/yYKCA+uBvCTT+
+	Aze/MrNNzVVFx7e9W/orwCZMMjq0DaYAMH+tYRudg9/JiTs+tln9pZ4ZQWuNBx7N
+	lgQB6ArMKrZ1prSHP9CDarIBbfqQQ/yxLZ89ZfywLNX3/MwMycv+lGmvwdHpwYFk
+	8H5qayWedmBDpl9Iz+3VpsTlZtT2lJrB0my8qxQ1F+qqxWIEYPdkrh2RaYdpngTc
+	7Hj+lg==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yb9yj68tr-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 28 May 2024 15:56:36 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id A161240044;
-	Tue, 28 May 2024 15:56:25 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B107921A91B;
-	Tue, 28 May 2024 15:55:26 +0200 (CEST)
-Received: from [10.48.87.204] (10.48.87.204) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35; Tue, 28 May
- 2024 15:55:25 +0200
-Message-ID: <47ed8f22-fc8c-4fb4-89c5-7d8ef7e8e728@foss.st.com>
-Date: Tue, 28 May 2024 15:55:20 +0200
+	Tue, 28 May 2024 14:03:14 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44SE3DHl010926
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 28 May 2024 14:03:13 GMT
+Received: from [10.110.122.222] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 28 May
+ 2024 07:03:12 -0700
+Message-ID: <38842d90-f64d-410d-8ef5-6e1d09ff01a0@quicinc.com>
+Date: Tue, 28 May 2024 07:03:12 -0700
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -52,90 +50,41 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] [RFC] clk: stm32mp1: Keep RNG1 clock always running
-To: Marek Vasut <marex@denx.de>, <linux-crypto@vger.kernel.org>
-CC: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Gabriel Fernandez
-	<gabriel.fernandez@foss.st.com>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Olivia Mackall <olivia@selenic.com>, Rob Herring
-	<robh@kernel.org>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Yang Yingliang
-	<yangyingliang@huawei.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <20240513220349.183568-1-marex@denx.de>
- <b2d0dfcb-37d6-4375-a4ad-ca96a5339840@foss.st.com>
- <cc6f98eb-f6b2-4a34-a8ed-c0f759fa4c79@denx.de>
- <51951dd4-8e8c-4e67-89f6-6a710022e34f@foss.st.com>
- <3257e8f8-5bb0-4c75-a3a3-e5685b65de2a@denx.de>
- <5b39b5b6-7008-4362-a578-3faab87cd23b@foss.st.com>
- <2eb2b80e-8650-46cf-9d8f-6dd6a884558a@denx.de>
- <eb3a2581-efc6-40c3-a7ea-551865017d40@foss.st.com>
- <c28e39e3-64d8-4ed7-a2e5-48ee124ef8e3@denx.de>
- <07d54026-5d2a-49a3-9211-bfc6e62afec3@foss.st.com>
- <0a37659a-1c5e-4bff-ab8e-9c777c0520d5@denx.de>
+Subject: Re: [PATCH] clk: mediatek: Add a module description where missing
 Content-Language: en-US
-From: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>
-In-Reply-To: <0a37659a-1c5e-4bff-ab8e-9c777c0520d5@denx.de>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+        <sboyd@kernel.org>
+CC: <mturquette@baylibre.com>, <matthias.bgg@gmail.com>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <kernel@collabora.com>
+References: <20240528121320.160685-1-angelogioacchino.delregno@collabora.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <20240528121320.160685-1-angelogioacchino.delregno@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
- (10.75.129.69)
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 8ONwqeoyukzF1gfyG5FMT2wykvTPWjZW
+X-Proofpoint-ORIG-GUID: 8ONwqeoyukzF1gfyG5FMT2wykvTPWjZW
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-28_10,2024-05-28_01,2024-05-17_01
+ definitions=2024-05-28_09,2024-05-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ adultscore=0 mlxscore=0 phishscore=0 mlxlogscore=711 spamscore=0
+ clxscore=1011 impostorscore=0 bulkscore=0 suspectscore=0 malwarescore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405280104
 
-
-
-On 5/21/24 12:27, Marek Vasut wrote:
-> On 5/17/24 5:39 PM, Gatien CHEVALLIER wrote:
+On 5/28/2024 5:13 AM, AngeloGioacchino Del Regno wrote:
+> Add a MODULE_DESCRIPTION() on all drivers that miss it to avoid
+> modpost warnings.
 > 
-> Hi,
-> 
->>> Possibly. I use script as init which contains basically #!/bin/sh , 
->>> mount of a few filesystems like dev, proc, sys, and then the pm_test 
->>> sequence to avoid wasting time booting full userspace.
->>>
->> Ok,
->>
->> The strangest thing is not being to enable the clock, maybe there's
->> something on the clock driver side. Tracking clock enable/disable
->> may lead to something.
-> 
-> I suspect the problem is that rng_read and runtime suspend/resume can 
-> run in parallel, that's why this problem occurs.
-> 
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-Hum, this looks strange... This would need to be confirmed in your
-use case. That would mean that flags aren't synced at the entry of these
-functions?
+All drivers/clk/mediatek MODULE_DESCRIPTION warnings resolved :)
 
->>>> FYI, I have been running your script with (echo devices > 
->>>> /sys/power/pm_test) for 5 hours now and haven't been able to 
->>>> reproduce the issue.
->>>
->>> Maybe the 'devices' test is not enough and the deeper pm_test states 
->>> have some sort of impact ?
->>>
->>
->> Maybe, I don't have the knowledge to confirm or invalidate this.
->> Tasks should be frozen before drivers are put to sleep so my instinct
->> would say no but you can't take it for granted :)
-> 
-> Could it be the kernel that requires randomness ?
+Tested-by: Jeff Johnson <quic_jjohnson@quicinc.com>
 
-That can be confirmed by adding traces to the entry point in random.c.
-Maybe activating CONFIG_WARN_ALL_UNSEEDED_RANDOM will help investigate
-this. It will add verbosity if crng isn't ready.
-
-Or maybe try calling directely rng_is_initialized() to see if the crng
-is ready when your issue occurs.
-
-Best regards,
-Gatien
