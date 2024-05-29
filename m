@@ -1,51 +1,48 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37EF315B97C;
-	Wed, 29 May 2024 02:02:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0323D161935;
+	Wed, 29 May 2024 02:02:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716948135; cv=none; b=DebIv9vvNHPcqSzXKmRTngtXJcAX/xjkUd0H5+3+TdL/I2lRIdZD1s7CpgDKIkuUCL8oLuSAsS06HSLlkVEtrUVCN3+wjTtxaJTXt3QoeI6fX3rM1yD2le3pj6PmZEHsgjlBf4NY0rBg4+fvBgXuFt5Axwjb/cgSkGBxWrgsTi8=
+	t=1716948147; cv=none; b=kfzr940Z+SplqmvoDq5/EbCfOqTRemxrfF5JkGA1jmExBOrxCmVptseOk2MYngnJUtE3nfs5vzFIjAmnp4FPFlCdKPTGL/9+EU1mFqZu+e90X9fymmRk0njbhFHR2IapLK/36t82rZgqHRj7+xDQ1zVKlk2GQAgLog5CqKojZlc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716948135; c=relaxed/simple;
-	bh=Ht98n3uyX7/ET9LzMfbLEeZ6yp0xwk/rw4foIuFmNsw=;
+	s=arc-20240116; t=1716948147; c=relaxed/simple;
+	bh=XU5WPu1gwPIwO83oy0ulPSZYeOGgR4c91Iore08em+E=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=RpaSW49R/mEumFfGOpUh0gUoV1ppIv+3pHIMGxbsYOBC8BrjVTiiJc9e9oMlkkdAFzP54TtDW4sIb32PyElOsoHmXKcFkcYgeUi7IYcwfU0eRU2rzQh+TqUhxkuzz11lpG7d4KcZJ7vMS+7Tg+DiLOBCBvaJm6mEtApOohE0jf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BVsnwEk/; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=sFcs0kE8aNSX/EdVKf61WOBF5PGi6TQBo3XhRpeo1utiMQ2DQ+8e8QNcv8/wfMD+yx/ixdClq/43AIX64wlg+zRaMZT+akmbZz4Z0C7RKusMxhSgHA2+OWZFC9KPTpv4LbC6mQlD8j6zIIZ8yf4z6fBRWa/wMU41PZq/Hy46+UM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LevB1H/D; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BVsnwEk/"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AC7DC4AF07;
-	Wed, 29 May 2024 02:02:13 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LevB1H/D"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B652C4AF0C;
+	Wed, 29 May 2024 02:02:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716948134;
-	bh=Ht98n3uyX7/ET9LzMfbLEeZ6yp0xwk/rw4foIuFmNsw=;
+	s=k20201202; t=1716948146;
+	bh=XU5WPu1gwPIwO83oy0ulPSZYeOGgR4c91Iore08em+E=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=BVsnwEk/85Rc/xqcdVeJNV2FSVWKDLZvWv/YT1ZxnlWADsciI6kpbXQA8D1FPtTj2
-	 QXCo69FAwzFK9oARFMEChJjJVtE80AlDjz3blNAJrdbe6KMr3wXP6nCdEFvMpOlnhh
-	 zLBubSncSrKyWkPKsFjaMa2/wKE5VxuK4UcpOPFVDGYq8GLJgT5MGseXUmsonTpirA
-	 aP1hxkL3lEOkSukZCw5srS84mZ1qTn8BJ8GK94pDgj/2dCd7ETfoBoKUFGXDUZ5ux5
-	 BAgW53Qn6BvgZfmtY8agX08OwJqWFVMCkNpRYjQ4nuUtajVMK2FKb5FY8j5T657chq
-	 NlsjLsFhsSNjg==
+	b=LevB1H/DY2oRekSbRe0chbmFa1wqcS9dJT8sZekQfc3X4fg38oUtDid4cdomktYj9
+	 OH4l+eXdkD6t6zY2ExYtc4w3pm/eezXwEcTevtccpNDInvGvu5GDjZKcKLh1CPXRrz
+	 GaqPjFNQ3drDcTNaQfKzArk5XtQvGXHv6f5pGOYxFlBkAUXvcyr7pG5dXOpHg9Otwn
+	 /oFmloJ5QrQiKkBit67zDJVLf7kVa0yJ+qgraJQ15YfuYuSggeFg65wsb/LET+aYTj
+	 NLXyVN1Imv4VQraKJDB8rq18ugo2Ap16MM7efwcTAlPgImKuSmfMybFQRzhYhqOO0H
+	 Pa9k/2rwYLPmg==
 From: Bjorn Andersson <andersson@kernel.org>
-To: ~postmarketos/upstreaming@lists.sr.ht,
-	phone-devel@vger.kernel.org,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Luca Weiss <luca@z3ntu.xyz>
-Cc: linux-arm-msm@vger.kernel.org,
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	bhupesh.sharma@linaro.org,
+	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: (subset) [PATCH v2 0/3] Convert qcom,hfpll documentation to yaml + related changes
-Date: Tue, 28 May 2024 21:01:53 -0500
-Message-ID: <171694812070.574781.3127154907434506746.b4-ty@kernel.org>
+	linux-kernel@vger.kernel.org,
+	Md Sadre Alam <quic_mdalam@quicinc.com>
+Cc: quic_srichara@quicinc.com,
+	quic_varada@quicinc.com,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v3] clk: qcom: gcc-ipq9574: Add BRANCH_HALT_VOTED flag
+Date: Tue, 28 May 2024 21:02:00 -0500
+Message-ID: <171694812082.574781.5852055342473098003.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240218-hfpll-yaml-v2-0-31543e0d6261@z3ntu.xyz>
-References: <20240218-hfpll-yaml-v2-0-31543e0d6261@z3ntu.xyz>
+In-Reply-To: <20240509105405.1262369-1-quic_mdalam@quicinc.com>
+References: <20240509105405.1262369-1-quic_mdalam@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -56,16 +53,23 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Sun, 18 Feb 2024 21:57:24 +0100, Luca Weiss wrote:
-> Finally touch the hfpll doc and convert it to yaml, and do some related
-> changes along the way.
+On Thu, 09 May 2024 16:24:05 +0530, Md Sadre Alam wrote:
+> The crypto_ahb and crypto_axi clks are hardware voteable.
+> This means that the halt bit isn't reliable because some
+> other voter in the system, e.g. TrustZone, could be keeping
+> the clk enabled when the kernel turns it off from clk_disable().
+> Make these clks use voting mode by changing the halt check to
+> BRANCH_HALT_VOTED and toggle the voting bit in the voting register
+> instead of directly controlling the branch by writing to the branch
+> register. This fixes stuck clk warnings seen on ipq9574 and saves
+> power by actually turning the clk off.
 > 
-> 
+> [...]
 
 Applied, thanks!
 
-[3/3] arm64: dts: qcom: qcs404: Use qcs404-hfpll compatible for hfpll
-      commit: 839936d9676bdc2e4dde63631131feb8870fa4d2
+[1/1] clk: qcom: gcc-ipq9574: Add BRANCH_HALT_VOTED flag
+      commit: 72ceafb587a56e26c905472418c7dc2033c294d3
 
 Best regards,
 -- 
