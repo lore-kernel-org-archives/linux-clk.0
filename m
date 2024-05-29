@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D14AA1C2329;
-	Wed, 29 May 2024 19:48:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 940711C2339;
+	Wed, 29 May 2024 19:56:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717012096; cv=none; b=LsTTSLmxEuGnDZ4SwiHn0BkYZ6wfLIGAxc5Dn2TQg14IXUDlx+8UDijISPSnfJ9wN+t+oILWxTNl9QqbWU8s7rwtIduaNov2XpPekcdp7uZpozFT+nYRYJW1XIo3p+J5qiqLzz/DV9NC1Vcp909WU5TMiquk3R6YvIi9bNp8u8g=
+	t=1717012570; cv=none; b=ew90ObUUMOuyipPTgG+sSWK2dmv8IxBXGJnG6ZvihxYGZSomvcgQ9Jq6XZvoDZbHvRtzKO5Ifrw792Mn+65gl96wVNlazv4QfWZOKm03jIjiMJr59kBZmcVhXgDuOabtQGGFCEuBlHO3T6ib/HYSg2Q8BdJiHNC1kSiZtnZxOzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717012096; c=relaxed/simple;
-	bh=qWhEwAr6AYrSEXs8Gky9nRQSfZTamh+Ys9gijsMJcIk=;
+	s=arc-20240116; t=1717012570; c=relaxed/simple;
+	bh=TBklheaPOVSZbia8qZxB0VNyWBs0CAJRg+n/yZzg/ZY=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=ar3waaQHaUx+uIGPk9XtGNK4SbrrDhPG4nml+b/Qiosrk8nTTSOmaBLrKYjB8Qb/NywBG0+8+6z31nMVw6Crqax1CERl+GArDWLAvOwE7ITCJmL2ADe9Cz6VpkKzlWbhuxVWZWRumJ0T8UmqX93bmAGoP8Gg5uReh+iZrWrWlLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TLIfSfyz; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=RgR3T+/CVEqvFRx9JaURachK5aZowB2kEqAI8xNtWm+7Nt8J684wDGRDo564FONVcVYoRPCTa5YqcyUdX67PdLE05/rBCadCFmuTIVgL9FJVqnImyNTW8vcYrE+n6jEIwkbaovF9pHitgQ4x/CiWIoVltem3kJD53aaNJvshDfs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=noGkcr5h; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TLIfSfyz"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CD0BC32781;
-	Wed, 29 May 2024 19:48:16 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="noGkcr5h"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09A8BC113CC;
+	Wed, 29 May 2024 19:56:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717012096;
-	bh=qWhEwAr6AYrSEXs8Gky9nRQSfZTamh+Ys9gijsMJcIk=;
+	s=k20201202; t=1717012570;
+	bh=TBklheaPOVSZbia8qZxB0VNyWBs0CAJRg+n/yZzg/ZY=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=TLIfSfyzl/LE6/dXyGaWYNyxHPf99UPq9vGHjqcf4Xz+vTTQgX7DnBaKkN4hF7pb0
-	 VXrW8fvC6x5GHZGpAkeyktSF2Zyxpdi5GTrwFIFFucAj8Ay1uOnMKVRoJgzi0S7bNL
-	 1gQYp+E4Ee5ggdsvZcRzle1QikxlECZ+OZW/eXhZOQk1L91uSZhvYFeLpHz9Q21jYE
-	 wPa5ms2oLOz2eEF9e5diQhElr3D8ll0tEU22hCZvH+RcmU4cP6WW8eb95zLZ47XVWj
-	 /0BSsvItSDZ4Bbtm3Uc/d4YL0QIi8Hx/k0yZx7aIqNJmqxxIph0E5Qb6i3qZEeoshL
-	 AeJET7CYsl9Xw==
-Message-ID: <63d35ddacc113598f1822486b882552a.sboyd@kernel.org>
+	b=noGkcr5hN4wDQz28tlzVzx00cMEJdSilyR6Spv9eSDHNzUO3dFU9tmRNlp34aZIX7
+	 R0GVjymgCTfFqZGhTRDug+TW73N9jxD8sFQg1/WYFbXbu3Fxr5DLZpf6qcdx7zZN8p
+	 J+iqjNtOevuI//mE25WKPuEQy5ZlrxTEmGfS9K1+azTtl/LTgJezrdsnW2gpa3xreI
+	 mIsJpcW1aIjb7p4oGKOfp6gfP5YOofHbSWnkYgQdqQU/JThJY5ThbJ/rkFQTTF6+Bb
+	 VnuRGhb4eFaRlv2Z/ALoq7l7hY4Z8Z8uyqIrba+KCOlfZbrooyamG0ZsdBtbjJfIen
+	 d6Rj/DcZkLFkw==
+Message-ID: <20f4f283b9f842f3868363a3f078b2a4.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,38 +35,22 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <ssnyujhgz64mbxawb43okjkdidd3tbxwjob36ikgbogy64xuqv@ckvir5vfqo63>
-References: <20240528114254.3147988-1-quic_ajipan@quicinc.com> <20240528114254.3147988-8-quic_ajipan@quicinc.com> <ssnyujhgz64mbxawb43okjkdidd3tbxwjob36ikgbogy64xuqv@ckvir5vfqo63>
-Subject: Re: [PATCH V3 7/8] clk: qcom: Add GPUCC driver support for SM4450
+In-Reply-To: <9073a6bfb7791e492156331fa8a0ea87a7c7cef6.1716975021.git.geert+renesas@glider.be>
+References: <cover.1716975021.git.geert+renesas@glider.be> <9073a6bfb7791e492156331fa8a0ea87a7c7cef6.1716975021.git.geert+renesas@glider.be>
+Subject: Re: [PATCH 2/3] clk: renesas: cpg-lib: Use DEFINE_SPINLOCK() for global spinlock
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, Vinod Koul <vkoul@kernel.org>, Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Taniya Das <quic_tdas@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-To: Ajit Pandey <quic_ajipan@quicinc.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Wed, 29 May 2024 12:48:14 -0700
+Cc: Ye Bin <yebin10@huawei.com>, linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
+To: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>
+Date: Wed, 29 May 2024 12:56:07 -0700
 User-Agent: alot/0.10
 
-Quoting Dmitry Baryshkov (2024-05-28 06:23:27)
-> On Tue, May 28, 2024 at 05:12:53PM +0530, Ajit Pandey wrote:
-> > Add Graphics Clock Controller (GPUCC) support for SM4450 platform.
-> >=20
-> > Signed-off-by: Ajit Pandey <quic_ajipan@quicinc.com>
-> > ---
-> >  drivers/clk/qcom/Kconfig        |   9 +
-> >  drivers/clk/qcom/Makefile       |   1 +
-> >  drivers/clk/qcom/gpucc-sm4450.c | 805 ++++++++++++++++++++++++++++++++
-> >  3 files changed, 815 insertions(+)
-> >  create mode 100644 drivers/clk/qcom/gpucc-sm4450.c
+Quoting Geert Uytterhoeven (2024-05-29 02:35:09)
+> A global spinlock can be initialized automatically with
+> DEFINE_SPINLOCK() rather than explicitly calling spin_lock_init().
 >=20
-> [trimmed]
->=20
-> > +
-> > +     /* Keep some clocks always enabled */
-> > +     qcom_branch_set_clk_en(regmap, 0x93a4); /* GPU_CC_CB_CLK */
-> > +     qcom_branch_set_clk_en(regmap, 0x9004); /* GPU_CC_CXO_AON_CLK */
-> > +     qcom_branch_set_clk_en(regmap, 0x900c); /* GPU_CC_DEMET_CLK */
->=20
-> I pinged Stephen regarding these clocks. LGTM otherwise.
->=20
+> Suggested-by: Ye Bin <yebin10@huawei.com>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
 
-Looks OK to me. I assume that these clks don't get turned off when the
-GPU power domain is turned off. If that's the case then presumably we
-would need to turn these on and off during power transitions.
+Shouldn't this be first so that the previous patch can use the
+initialized spinlock?
