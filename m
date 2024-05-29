@@ -1,116 +1,124 @@
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDC34184112
-	for <linux-clk@vger.kernel.org>; Wed, 29 May 2024 14:47:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79EF85336F;
+	Wed, 29 May 2024 15:01:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716994038; cv=none; b=jHs5gvbuPx1jOagjaI+G6xdvJxlt0MiMME2WNQnhhIapULTYT8cxM4COUBS4P19mvj0auWc34XoXgepPCQ63OrlfPAs/dZg0R1Ow6wFMKzOGNb5PyWjV8GPvg7biRjKkWkyKAEK1OwE5ThmSqCY3MxQvaGRmfeFsvjPZoDtw98E=
+	t=1716994899; cv=none; b=jbLl8yvTpi1alLiHqEDnrCcHRTSy4+TBiSdCOGqBwbDhRHE78JUJmr6Ez4iTGboL5LPG2v/0fBvol5Ed99Jri7dXT5fsQC+u7QI30aFwZKOz/dEPGbQok64wcD6pYCvI2cE7yuMwSFJssPn18lw4TqJxPkq0ZF7ajEByqamh/tE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716994038; c=relaxed/simple;
-	bh=rRrgn9wRVOiElWPDaUjrdPE8GcJ80QnHEQvUPT4yYv8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=B8LQ1thT0SpjaoHRCa219HOPwbD6GtG/Dz7A27RvMtxffssPE/RTm5N5TURmljDayJmy4dIex4X7XnRY5zgbWLHinXSOTuigIZ34a5YFuS/G1GO4UJruPgovZ9PciwzTf81qQeLugbVsga6ADCVXUOXldJ2IgiGnP4lIsL7BzKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=y9HQNy8v; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="y9HQNy8v"
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2e73359b900so22835061fa.2
-        for <linux-clk@vger.kernel.org>; Wed, 29 May 2024 07:47:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1716994034; x=1717598834; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=X52tPGcJvxkBvOLIf8hl45B+JUSUGh3EW6f1yVnQtag=;
-        b=y9HQNy8vjmms9ec4u2tU3csXNSqHfnduv4gmIAkU136XgKGvxW5s00YuERwfKznhyK
-         La/FSXQ5SlPoD+3ROhWzDwe4Cuyq+3LGsHbexkdMYaRkPIK2MexIQqT5WLeVZTGcEP7J
-         kTQhFdgOVBLrBo30sfxxbFitqyypH8h6Oqr8/KpEkdfA0hbrt+v/X2rwxkld7UbqtHjz
-         02JuJ5+3H0nfWi88Q8qeqVFnoser5JGZjBY+LBAYr6DgssTvBvJlQ2fmapn3wTKafvbv
-         XrZiHbr8FfDEsvdgUBIlty35Q71tHkaxM3X0DY2HwXwZStZFLU/LdkLGghNHoOI/tULy
-         BkNQ==
+	s=arc-20240116; t=1716994899; c=relaxed/simple;
+	bh=5tDB9mcgpr0BHNJx76yFXc/GeR+vMOwGLGHMZ+RXE8U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QUutemnDqx6g2f6mmTTv6eK0Qd/kXB6cW0ANiwcG37Gmj6Fe/OwLFgPtk4TbWTlJ6gr2MyKBEPtI1U9WEBfVBBNRoCa0vWq3LBYs1PB0p7N5GbZ4fgVvaNWhW8k8UXY5TggO9iVGLNnsRda36JbX/5tpeOOw/FfZn+llHLEi7x4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-df7721eee79so64369276.0;
+        Wed, 29 May 2024 08:01:37 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716994034; x=1717598834;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1716994896; x=1717599696;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=X52tPGcJvxkBvOLIf8hl45B+JUSUGh3EW6f1yVnQtag=;
-        b=C6qJid/J/Zh3IcVwaCyldsDie90bNIXDwDMt7ozm55By6FjVKQvG38cxO4/AarIqb/
-         BRlvbRG4BoLC6oijKhM1t9fSNF4YIUmgML4NdziP6/2EB6bV7327nxuzq/1yfaQm6IzZ
-         Twi8cXuFbpKCn6taDR5qb7D6Ykk/+f1RaZLD4fiIbTEzjSXCyVynKfr1lACzVE8XGnKR
-         1r/Bvf98t5yXWQe5af1sj4hW/eLu3Z6SVHCJ026kh23zrVPao1lfusjRAftsPBc++sXS
-         Ju+BGPyw9qGKgB4m11aZT/Nhj0+c/sSIxsOWOqAKFX75xNpCuN5fgZubyq8izDe3DO2i
-         FeUw==
-X-Forwarded-Encrypted: i=1; AJvYcCWzGTnhl+c3LOfwI5jn2tEpfClH9jNfwaXN63rfM1QuDG5QWzCP3hexQx+UuiLPAC6nbK7gOZDLxqNN27lHUWRjc7DSq0ouNW6X
-X-Gm-Message-State: AOJu0YyXlCW+Y8O5C0264dMkfl8wFNvOw8sqjlXCcwjQhVIcVxdYxCtx
-	OHAfZ5jqAdsUnbeDtQU16OLVAX8S0HnKB9xc2dQQUxfeXLqSH56R81IEwvsVpYY=
-X-Google-Smtp-Source: AGHT+IGYEB+r/Y5PhcdO7PfWCYTe1vY0pU3giP2wNNgI2jwTx59a4are9xsNbtaMPNNW2G6p4t0D0w==
-X-Received: by 2002:a2e:3013:0:b0:2e9:84fc:32eb with SMTP id 38308e7fff4ca-2e984fc38afmr36284301fa.47.1716994034269;
-        Wed, 29 May 2024 07:47:14 -0700 (PDT)
-Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2e98c45df0csm3791951fa.68.2024.05.29.07.47.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 29 May 2024 07:47:13 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Wed, 29 May 2024 17:47:12 +0300
-Subject: [PATCH v2 14/14] arm64: dts: qcom: ipq8074: fix GCC node name
+        bh=jeKVUIkeDBALapGV5Rmuxw+WaOWpHpihAR7cLzV5Alo=;
+        b=ho6FEgK2YwJ0j0kOrDcpqDx7W1W4lRKFluNPNyN0C+Wx0dlVqlK7eMsJ12XdCQ2Y2N
+         QTgMdHYz2hGiz6nQ1GhZVivIN0D8lSWcrNFw97QcnanokdGgPHqbhBHAAEb8UsDc4E1C
+         w2Ig60oCC35KCY3UDrNzc+ESRabRcHKPgYLammUqphoBPQAZXjmpTefp/js2jFTJoef4
+         RS4oTfj+ORK3qhUs/DsrOnignbuSa+5HLpHOx6CYh5h7RlOU+Y87j2+tkgCZmZkPydIB
+         rxFuaZw9jQOzmw7D7D6iOAVCmkThgDWpnFriCdxunWSK96KHH+erzC05YyLtr+5X7CHk
+         k7Cg==
+X-Forwarded-Encrypted: i=1; AJvYcCXp5/W6OCAykXMS9TKU02KYjwHKTMCItnqc1tsWaMFRAm7noQa/p8DP1mwy70I0OxLtAguLrtuA/OnWZWjwIxZJ5ULV22N6AD3d
+X-Gm-Message-State: AOJu0YyCoLNweo4k9o4z5kH4pFB0R2YHrYsIHJVBfR2LB9DgKXcmVCzX
+	yHbwo/WgNkeKrG2wDHe8d/ih7Qv8k8ykY6JoRomP70nviCUMK/w3VWoQ4/O4
+X-Google-Smtp-Source: AGHT+IFRSgw72Iwpvc1mkvM2HjpOSdfZ2TtMFaf1v5sUgtg7dHQ4L/d8gE2QGgXDih8eT8SwLSVRxg==
+X-Received: by 2002:a25:d808:0:b0:df4:db70:c045 with SMTP id 3f1490d57ef6-dfa4646ca6fmr1703150276.13.1716994894606;
+        Wed, 29 May 2024 08:01:34 -0700 (PDT)
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com. [209.85.219.177])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-df7746ab768sm1604779276.31.2024.05.29.08.01.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 May 2024 08:01:34 -0700 (PDT)
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-df79380ffceso45998276.1;
+        Wed, 29 May 2024 08:01:34 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUTtKG0dOxskfD7upeZDAyOqkyxeMoBvsg1Z9KGSCgXrwrsrL48IW85dYgEDSuelDsIemBnSKbacY7NcUll/Eml7fi6hPr6rQnm
+X-Received: by 2002:a25:a28a:0:b0:df7:ab1b:671a with SMTP id
+ 3f1490d57ef6-dfa464b5f98mr1773684276.24.1716994893923; Wed, 29 May 2024
+ 08:01:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240529-qcom-gdscs-v2-14-69c63d0ae1e7@linaro.org>
-References: <20240529-qcom-gdscs-v2-0-69c63d0ae1e7@linaro.org>
-In-Reply-To: <20240529-qcom-gdscs-v2-0-69c63d0ae1e7@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Taniya Das <quic_tdas@quicinc.com>, 
- Robert Marko <robimarko@gmail.com>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=737;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=rRrgn9wRVOiElWPDaUjrdPE8GcJ80QnHEQvUPT4yYv8=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmVz/mI0ik9cKZl/9SuqJ+p8yQWhrIMDSNMV0OP
- fuaSU3f/BeJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZlc/5gAKCRCLPIo+Aiko
- 1WD+B/9euLN7JRxLEjwdqITHOmrE/YulvXTtO2q7Q/Jd+9OO3nBBX7EKmNtb1HVb5xaLjsm1sZm
- 1hJOcvuuyT+AcMaLiZ6SRKN8Yg1P6WBR1K0BCBc0P+mdoDJ1tM6n7QgatxD4TwlPm77HASxJ5LP
- WK93PR127/AEP0iq0og8tXg0Pc6oOLQ/+KwlxLHcDnngFWVVXZteTl/l39R5J7iJ9eY8SCoPCBD
- 5Eq7G/JvZkzHLPL5oJC7ur+F4ho/JcPKMFGafh1rKZnoQcxYjhSdVwp/fIpa7ePGpl+pUz6WsGp
- dUA6ex8ME/3qOH9U4UN4+6Qu8xl5Nr0TsUUtNgybI2TtRock
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+References: <20240527131541.1676525-1-niklas.soderlund+renesas@ragnatech.se> <20240527131541.1676525-2-niklas.soderlund+renesas@ragnatech.se>
+In-Reply-To: <20240527131541.1676525-2-niklas.soderlund+renesas@ragnatech.se>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 29 May 2024 17:01:20 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUyZGE6p2D-LRiZHOZn2wiB0=qK3n4DtOQSboc16-=KtA@mail.gmail.com>
+Message-ID: <CAMuHMdUyZGE6p2D-LRiZHOZn2wiB0=qK3n4DtOQSboc16-=KtA@mail.gmail.com>
+Subject: Re: [PATCH 1/3] clk: renesas: r8a779h0: Add VIN clocks
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Device nodes should have generic names. Use 'clock-controller@' as a GCC
-node name instead of a non-generic 'gcc@'.
+Hi Niklas,
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- arch/arm64/boot/dts/qcom/ipq8074.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Mon, May 27, 2024 at 3:16=E2=80=AFPM Niklas S=C3=B6derlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
+> Add the VIN module clocks, which are used by the VIN modules on the
+> Renesas R-Car V4M (R8A779H0) SoC.
+>
+> Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnatech.=
+se>
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq8074.dtsi b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
-index 5d42de829e75..27cf8d50f254 100644
---- a/arch/arm64/boot/dts/qcom/ipq8074.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq8074.dtsi
-@@ -363,7 +363,7 @@ qpic_pins: qpic-state {
- 			};
- 		};
- 
--		gcc: gcc@1800000 {
-+		gcc: clock-controller@1800000 {
- 			compatible = "qcom,gcc-ipq8074";
- 			reg = <0x01800000 0x80000>;
- 			clocks = <&xo>,
+Thanks for your patch!
 
--- 
-2.39.2
+> --- a/drivers/clk/renesas/r8a779h0-cpg-mssr.c
+> +++ b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
+> @@ -188,6 +188,22 @@ static const struct mssr_mod_clk r8a779h0_mod_clks[]=
+ =3D {
+>         DEF_MOD("sdhi0",        706,    R8A779H0_CLK_SD0),
+>         DEF_MOD("sydm1",        709,    R8A779H0_CLK_S0D6_PER),
+>         DEF_MOD("sydm2",        710,    R8A779H0_CLK_S0D6_PER),
+> +       DEF_MOD("vin0",         730,    R8A779H0_CLK_S0D1_VIO),
+> +       DEF_MOD("vin1",         731,    R8A779H0_CLK_S0D1_VIO),
+> +       DEF_MOD("vin2",         800,    R8A779H0_CLK_S0D1_VIO),
+> +       DEF_MOD("vin3",         801,    R8A779H0_CLK_S0D1_VIO),
+> +       DEF_MOD("vin4",         802,    R8A779H0_CLK_S0D1_VIO),
+> +       DEF_MOD("vin5",         803,    R8A779H0_CLK_S0D1_VIO),
+> +       DEF_MOD("vin6",         804,    R8A779H0_CLK_S0D1_VIO),
+> +       DEF_MOD("vin7",         805,    R8A779H0_CLK_S0D1_VIO),
 
+According to the documentation for the Module Stop Control Registers
+7 and 8, these are called "vin0[1-7]" instead of "vin[1-7]".
+
+> +       DEF_MOD("vin10",        806,    R8A779H0_CLK_S0D1_VIO),
+> +       DEF_MOD("vin11",        807,    R8A779H0_CLK_S0D1_VIO),
+> +       DEF_MOD("vin12",        808,    R8A779H0_CLK_S0D1_VIO),
+> +       DEF_MOD("vin13",        809,    R8A779H0_CLK_S0D1_VIO),
+> +       DEF_MOD("vin14",        810,    R8A779H0_CLK_S0D1_VIO),
+> +       DEF_MOD("vin15",        811,    R8A779H0_CLK_S0D1_VIO),
+> +       DEF_MOD("vin16",        812,    R8A779H0_CLK_S0D1_VIO),
+> +       DEF_MOD("vin17",        813,    R8A779H0_CLK_S0D1_VIO),
+
+According to Table 8.1.4a ("Lists of CPG clocks generated from PLL1")
+the parent clock is S0D4_VIO.
+
+>         DEF_MOD("wdt1:wdt0",    907,    R8A779H0_CLK_R),
+>         DEF_MOD("pfc0",         915,    R8A779H0_CLK_CP),
+>         DEF_MOD("pfc1",         916,    R8A779H0_CLK_CP),
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
