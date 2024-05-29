@@ -1,30 +1,30 @@
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [195.130.137.90])
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [195.130.137.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A35A169AE6
-	for <linux-clk@vger.kernel.org>; Wed, 29 May 2024 09:35:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E21E716A360
+	for <linux-clk@vger.kernel.org>; Wed, 29 May 2024 09:35:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716975319; cv=none; b=n2jQcCgF52sMQ/WyWeAwChyhJsuaE0X4fLl+QlJ/ucQBQ7BROyt/x1qZm/Fsthp4j8cI4X1r/erhADBUeSp82S5YrE4Bb1D9DUvKWqc2w0ccb/VEhhuXW1iGLCstQhtOJYvxxqZsUKQTvq4TT/K5lvHCvxvpU8zpAMYLIT8eQpE=
+	t=1716975325; cv=none; b=r+1MbSyhJpxrkyhaL6Rbc773WO12ZbtlKP+3piw0P+mnzMzsPW9hiVq+fJLQE37qIzGtNyE6ZV6nMeVt4kmxNmA7FNmsiOhLeA6VYiGGZX8HmBpQ4XkPA7jSqAUx/pQ6cUSBB10xT4VGIR4jcsXa0JNNWQzxFO+U4dj4pXoI86M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716975319; c=relaxed/simple;
-	bh=p0GwIFvIuNoiDhrfwoSepgtW0f3uoqrFum+m62dhXNY=;
+	s=arc-20240116; t=1716975325; c=relaxed/simple;
+	bh=DnWpyF+PBCTslYaCokf6Ls34+nQ1E77Jp4U1kForVio=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=nG5H0QHcSe1yLGu9s7tU1v2Rp5MgwvyqZtBexKak5eLTk29sldLpFo/PuuDOwwuj7hcQGTdvdUcHb6nu/k1r0FFParOzVygHudwT2NXwT4ADy8JbPAA0fSRNuPAOsYG2Ijo+E+J9DgCOQKuqM0bXmAw9fL7onnFHGNvLM+RehK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.90
+	 MIME-Version; b=ot7BhUDQkcyiMY29yN/1Ni9XWzjXRp4lExBus6OGyf2xCbhug3FneSOsfPJ+GF+Nnn8sKc3v1jOc+F5N6mWGD12G8L+mziDV59obxWFdxNkk8+h4+iqEmEw2sKrR4xXsUgUx7kRHL39qeZz91kD10gxkyUTfAOytLkTWb9oKvxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.89
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:1b01:1838:131c:4de4])
-	by albert.telenet-ops.be with bizsmtp
-	id UxbE2C00f3VPV9V06xbEpY; Wed, 29 May 2024 11:35:15 +0200
+	by laurent.telenet-ops.be with bizsmtp
+	id UxbE2C00a3VPV9V01xbErS; Wed, 29 May 2024 11:35:15 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sCFhI-00GI2X-8c;
+	id 1sCFhI-00GI2W-8d;
 	Wed, 29 May 2024 11:35:14 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sCFiE-008wVt-Gv;
+	id 1sCFiE-008wVq-GH;
 	Wed, 29 May 2024 11:35:14 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Michael Turquette <mturquette@baylibre.com>,
@@ -33,9 +33,9 @@ Cc: Ye Bin <yebin10@huawei.com>,
 	linux-renesas-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 2/3] clk: renesas: cpg-lib: Use DEFINE_SPINLOCK() for global spinlock
-Date: Wed, 29 May 2024 11:35:09 +0200
-Message-Id: <9073a6bfb7791e492156331fa8a0ea87a7c7cef6.1716975021.git.geert+renesas@glider.be>
+Subject: [PATCH 1/3] clk: renesas: r8a77970: Use common cpg_lock
+Date: Wed, 29 May 2024 11:35:08 +0200
+Message-Id: <0cd9b5ffbe986bd7dc4ffb3f13492123432ee2e1.1716975021.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1716975021.git.geert+renesas@glider.be>
 References: <cover.1716975021.git.geert+renesas@glider.be>
@@ -47,54 +47,45 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-A global spinlock can be initialized automatically with
-DEFINE_SPINLOCK() rather than explicitly calling spin_lock_init().
+R-Car Gen3 Socs use the common CPG/MSSR library functions in
+rcar-cpg-lib.c, so the R-Car V3M sub-driver can use the common cpg_lock
+instead of a driver-private lock.
 
-Suggested-by: Ye Bin <yebin10@huawei.com>
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/renesas/rcar-cpg-lib.c  | 2 +-
- drivers/clk/renesas/rcar-gen3-cpg.c | 2 --
- drivers/clk/renesas/rcar-gen4-cpg.c | 2 --
- 3 files changed, 1 insertion(+), 5 deletions(-)
+ drivers/clk/renesas/r8a77970-cpg-mssr.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-diff --git a/drivers/clk/renesas/rcar-cpg-lib.c b/drivers/clk/renesas/rcar-cpg-lib.c
-index 5a15f8788b9227d9..42b126ea3e1337c1 100644
---- a/drivers/clk/renesas/rcar-cpg-lib.c
-+++ b/drivers/clk/renesas/rcar-cpg-lib.c
-@@ -22,7 +22,7 @@
+diff --git a/drivers/clk/renesas/r8a77970-cpg-mssr.c b/drivers/clk/renesas/r8a77970-cpg-mssr.c
+index 7e90e94c4b68821b..3cec0f501b947eae 100644
+--- a/drivers/clk/renesas/r8a77970-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a77970-cpg-mssr.c
+@@ -18,6 +18,7 @@
+ #include <dt-bindings/clock/r8a77970-cpg-mssr.h>
  
- #include "rcar-cpg-lib.h"
+ #include "renesas-cpg-mssr.h"
++#include "rcar-cpg-lib.h"
+ #include "rcar-gen3-cpg.h"
  
--spinlock_t cpg_lock;
-+DEFINE_SPINLOCK(cpg_lock);
+ #define CPG_SD0CKCR		0x0074
+@@ -47,8 +48,6 @@ enum clk_ids {
+ 	MOD_CLK_BASE
+ };
  
- void cpg_reg_modify(void __iomem *reg, u32 clear, u32 set)
- {
-diff --git a/drivers/clk/renesas/rcar-gen3-cpg.c b/drivers/clk/renesas/rcar-gen3-cpg.c
-index d0129a6509411662..20b89eb6c35c1f07 100644
---- a/drivers/clk/renesas/rcar-gen3-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen3-cpg.c
-@@ -551,7 +551,5 @@ int __init rcar_gen3_cpg_init(const struct rcar_gen3_cpg_pll_config *config,
- 		cpg_quirks = (uintptr_t)attr->data;
- 	pr_debug("%s: mode = 0x%x quirks = 0x%x\n", __func__, mode, cpg_quirks);
+-static spinlock_t cpg_lock;
+-
+ static const struct clk_div_table cpg_sd0h_div_table[] = {
+ 	{  0,  2 }, {  1,  3 }, {  2,  4 }, {  3,  6 },
+ 	{  4,  8 }, {  5, 12 }, {  6, 16 }, {  7, 18 },
+@@ -213,8 +212,6 @@ static int __init r8a77970_cpg_mssr_init(struct device *dev)
+ 	if (error)
+ 		return error;
  
 -	spin_lock_init(&cpg_lock);
 -
- 	return 0;
- }
-diff --git a/drivers/clk/renesas/rcar-gen4-cpg.c b/drivers/clk/renesas/rcar-gen4-cpg.c
-index 8e4559fbb0bc3352..0e2c27adcfe784a0 100644
---- a/drivers/clk/renesas/rcar-gen4-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen4-cpg.c
-@@ -507,7 +507,5 @@ int __init rcar_gen4_cpg_init(const struct rcar_gen4_cpg_pll_config *config,
- 	cpg_clk_extalr = clk_extalr;
- 	cpg_mode = mode;
+ 	cpg_pll_config = &cpg_pll_configs[CPG_PLL_CONFIG_INDEX(cpg_mode)];
  
--	spin_lock_init(&cpg_lock);
--
- 	return 0;
- }
+ 	return rcar_gen3_cpg_init(cpg_pll_config, CLK_EXTALR, cpg_mode);
 -- 
 2.34.1
 
