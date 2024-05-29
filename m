@@ -1,48 +1,49 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CF9C15B0E1;
-	Wed, 29 May 2024 02:02:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24FCD15B0E5;
+	Wed, 29 May 2024 02:02:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716948131; cv=none; b=uIwxYvGula5DYHpL+eN80U0TReoUojPjVkKzba8XgEddwd57Me/8vE92fV3eoKsnVz+dGvkNk/6D5lGDiFtFqoqhH0TCq7hfCHofz/lvYfYueRtSHLGBFZcz7Ud29DnczEhlLEagTLjEDP4KNAX/v0gqOKAeN87hUg7hfMeYXO8=
+	t=1716948132; cv=none; b=ep/Dp+uYoWsr7E8N0IjrCg0hKhTL5rN4tGgxLC5rlni2zE9NfaKmr1DCZEqf2cHLMlitizpyfk1hH9EeXVSonz9P5DamDnrE/5Oe5x6UrWlnT46QfVM0Bn8A9jcAWRboNDGhmjFWFapTKGY3WAuoyKYDcjNiVQE56izsqYmzrOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716948131; c=relaxed/simple;
-	bh=+uMsDt5EmxdOC/OHxLc13z5QE0dgku/alf9Xw/YyhJg=;
+	s=arc-20240116; t=1716948132; c=relaxed/simple;
+	bh=TmRu5x9pN5U3/yknFxdQqIi0uFTPU6OGHMDNrBQ9eYk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ahG81Yf8TR9EShrLfQJyZQ+5cbEg+1KtilS/4SYRWle3AkCTOKoW8fSNoGLgn0UYaboWCA0GahpTizocT7tVOwZpCGShQlwn84ltR5z36tIZmGGfzRFs1TjZ/CVNRM0DLrY5RbZqVwKnQNExgkpR4JA+h0U/zU+rila/AS/e8PE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ek/w9WLG; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=MAy9K8wSo1MrJbAcuWkdY9BrjlIWC4XZasMYT0i7Xby2204szf6ovjy2aoLRSGYPfXEJ6CKLi4lsXUBXtMOvJfyvRmGMmqCWaDkDxY6Z8DeSgpJOl88w4ovv7Gc1JGPOg++KfZue200hiz4WhKRm1jVqrL39CLLlTkH0p7US+CE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dulBZi9y; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ek/w9WLG"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B63B2C32789;
-	Wed, 29 May 2024 02:02:08 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dulBZi9y"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07A6BC3277B;
+	Wed, 29 May 2024 02:02:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1716948129;
-	bh=+uMsDt5EmxdOC/OHxLc13z5QE0dgku/alf9Xw/YyhJg=;
+	s=k20201202; t=1716948132;
+	bh=TmRu5x9pN5U3/yknFxdQqIi0uFTPU6OGHMDNrBQ9eYk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Ek/w9WLGm4IXIUiYQov5MLxvm167sv5NlqggadCAZkaCCBGZBdvB1EcsYn7kqMwQP
-	 /H86rKECRm632y03+mfQCYvTgmEk7PTcFT1C0JJWMSUas7InmKAi2LMAbhsEWqRP9q
-	 XfT418MIbMEXJmXr3BUf4R3bp+TBkKUW5cseNcIk4aZT+a/99ukKCx2/TDCIDfnEGl
-	 2/hqk0IsC+23k+SpHtooQcBnsD1Tdcsk6iaZLYnGPyKeKdVIFcGsOR63OlimLl5Jxd
-	 ypYmNJIg0H9OdMzg+D26lSK0dhaGAalBF40Tc2/0voH2z3AZc+K6uA5KLAKS9dM9Vp
-	 9jXcForm4FvEA==
+	b=dulBZi9y0XtYq+DOvL3+gzB/3s8a0/HGFJkCkw4qpqpWQKHDcRo0Ru9a0O201ModW
+	 1fCpm/C+gW365hEI7xsycH8+bI9o4FQR8UHTfHHmzXT6aoQmuNwQLShohHTxx3++am
+	 pKj5E9mImHl902klIO2V9yi+TxMcfOJ699uuuIQrWf0JC3k/LxwqfC8AjEnD2Avi+I
+	 EwdqxuKtP0y5XDLIASHPsoFP+/K6KbUHv/s0U3J4CpcCxqwLct3zAGUceQTGF/Vprv
+	 Gr1E+boZAOxX0I93Zd/Ic4WO288nOyMIX8NXsrClnuiaDeSl5CGMnPTsLRCZLSldpu
+	 5leXlsHpPMg1A==
 From: Bjorn Andersson <andersson@kernel.org>
 To: Konrad Dybcio <konrad.dybcio@linaro.org>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Kathiravan T <quic_kathirav@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Varadarajan Narayanan <quic_varada@quicinc.com>,
-	Gabor Juhos <j4g8y7@gmail.com>
-Cc: linux-arm-msm@vger.kernel.org,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>,
+	Luca Weiss <luca.weiss@fairphone.com>
+Cc: ~postmarketos/upstreaming@lists.sr.ht,
+	phone-devel@vger.kernel.org,
+	Konrad Dybcio <konrad.dybcio@somainline.org>,
+	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: clk-alpha-pll: set ALPHA_EN bit for Stromer Plus PLLs
-Date: Tue, 28 May 2024 21:01:49 -0500
-Message-ID: <171694812080.574781.5750214161295750418.b4-ty@kernel.org>
+Subject: Re: [PATCH] clk: qcom: gcc-sm6350: Fix gpll6* & gpll7 parents
+Date: Tue, 28 May 2024 21:01:51 -0500
+Message-ID: <171694812079.574781.7010704103668864122.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240508-stromer-plus-alpha-en-v1-1-6639ce01ca5b@gmail.com>
-References: <20240508-stromer-plus-alpha-en-v1-1-6639ce01ca5b@gmail.com>
+In-Reply-To: <20240508-sm6350-gpll-fix-v1-1-e4ea34284a6d@fairphone.com>
+References: <20240508-sm6350-gpll-fix-v1-1-e4ea34284a6d@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -53,22 +54,20 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Wed, 08 May 2024 22:34:14 +0200, Gabor Juhos wrote:
-> The clk_alpha_pll_stromer_plus_set_rate() function does not
-> sets the ALPHA_EN bit in the USER_CTL register, so setting
-> rates which requires using alpha mode works only if the bit
-> gets set already prior calling the function.
+On Wed, 08 May 2024 10:12:53 +0200, Luca Weiss wrote:
+> Both gpll6 and gpll7 are parented to CXO at 19.2 MHz and not to GPLL0
+> which runs at 600 MHz. Also gpll6_out_even should have the parent gpll6
+> and not gpll0.
 > 
-> Extend the function to set the ALPHA_EN bit in order to allow
-> using fractional rates regardless whether the bit gets set
-> previously or not.
+> Adjust the parents of these clocks to make Linux report the correct rate
+> and not absurd numbers like gpll7 at ~25 GHz or gpll6 at 24 GHz.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] clk: qcom: clk-alpha-pll: set ALPHA_EN bit for Stromer Plus PLLs
-      commit: 5a33a64524e6381c399e5e42571d9363ffc0bed4
+[1/1] clk: qcom: gcc-sm6350: Fix gpll6* & gpll7 parents
+      commit: 3414f41a13eb41db15c558fbc695466203dca4fa
 
 Best regards,
 -- 
