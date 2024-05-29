@@ -1,135 +1,211 @@
-Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A7F1C8FA3;
-	Wed, 29 May 2024 21:10:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 845C729A0;
+	Wed, 29 May 2024 23:15:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717017036; cv=none; b=urSPS9qMNfQXsC4A8kEDoDw9gVxyXqln9oVTPvWY4SYo9H/mcBuDegojDOM5L+pyDvBVQPiWOGOcqq4oF5PuTWY08FneT9wRnc8+FgSn38VyMolWklI6F6iCLuHD6rMKX/fxml1zb7c77wSfZIbo88u7US1GiqNPh+YLUmR5dvo=
+	t=1717024522; cv=none; b=gX6zQ596nUTRegTyPf8uIagGEszOJ3sY3Djjbflw+4ayjGhS9Wf2PbRln9OQlaGjRZLvI+L0MoyUvvyI2xwsNQCWlTq9Gr9D48ydRL4gKTZ6a+QwKShL6t6syM4w9gHNxVL/UL4ISm3s9gcDh77DSYKT6ATBy0l2OOWJAcpms20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717017036; c=relaxed/simple;
-	bh=TExKMv+4EbRU2xpWl+6GrHNg8ZxwE5ZYEj2H6DGcaR8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jDvEu1ORy93dcq+IDWzyRztDjX+TMoOq8ZleBNu+6+uf5tnEhYe8VgTH86InREFO6CS00nLMpUCiXqLO4GjZDX+hxncs0oFC8o/Hz9/BMv0BQXQk1mK9aG6iaNhdpUE8Iywzbdy2oTrszDwl39jlfmbyP1VBtDr6oyejlVYOt8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QWSteaDg; arc=none smtp.client-ip=209.85.221.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1717024522; c=relaxed/simple;
+	bh=7HtHIBMnOSfXwlIN2FN4JThv0qqYOxoaXPTbFn/okcY=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=MFro4ks6n/KhLMlthy+Dh4FXMl2dtxt1qYkJa+RnrjEMR9S/cJl/UY5/1JCew3nJd9hCSEdL5vIfBOjad8KigGKBhNLxi5rMxtHww19v/aiohLdNNxyyBReU9L9AWLf8Q0Tdp3AtsufrktPoFjZAhFayg8tBE45zhZhDIctX9uM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OabscRPI; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QWSteaDg"
-Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-4eaef863a08so65167e0c.1;
-        Wed, 29 May 2024 14:10:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717017033; x=1717621833; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TeBhPfv3doSS7LHW7mFEHvT4SBZTyVzMD92UNoRgcAQ=;
-        b=QWSteaDge+gQWr85WPnZw+lNF+JMkGp2Xrcna3hgpxMpew8UHwirLj+AH+jNsW3P6g
-         A0KY+wDV9UihhCknFduXtF4ACo67Sga4zS3GfnQLVvsV2b/SaBjuCv5YcUxJsuUalI6s
-         EXKEr8FJKnr/SWzvXsZPlk/GvIcp40+895F4HOfR9StJg9lJ+SOV4ZBUllaPP7gnOQi/
-         70WWFAaiHr8hD8JkT67/atSaec+jdTSQmqcOPK1fK9ozUVJKAEg1ZmKepLP8m6NBMyGW
-         sQP8To7sVJwJmupQFlMG3h4jgSjQHOERssovu9jZENY9VNIEE1qKwJ3dtiU7VfqIhne+
-         TqPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717017033; x=1717621833;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TeBhPfv3doSS7LHW7mFEHvT4SBZTyVzMD92UNoRgcAQ=;
-        b=T7RmyzB0WgCijf2OCl3SPKH3ndwr7g9WzwrdW3LKGbWg3ubwHjFPIlhRrTnIRWkGax
-         sfuNT99EdVKiwZiIZvI+C3yCTF+zBRLqbp6KCVbWwpjaavYW4/QxKYkDgYCe/Q8rFqq+
-         dn/U5AOxHZ0MkNPvFu2MxwEWBsYj+8jYUAKBJQwhdo1FlW6ats/5WhnOsUm+HrC+69nU
-         Tf/BOWfLmQukcQffYqzDt2Y4NuFwHwWl6+w4v86q5Zc42L0UVUcrqF/fztk3iQblocMr
-         6Ikd3RKSs8eNiKowrMgOFpeWH2Q+DhQGKtIjTByS3FV/aYp/c/NkKIrg9n6httO51fvN
-         6avg==
-X-Forwarded-Encrypted: i=1; AJvYcCVqhbwyy9cAu9B4OFibVoKDpYG5239kSlAPxgwipI4xOyOV6ScNQov8G7ZOTKZauZ/m1zrRAmdBTJKB4wd8XhLCWH2TE9qPcaf2z3cS0l/YVFU08Weta9vTuoTYKjnGH1SH3k2Nn/rch/jMstnYwwGSwD7fat4xc6CFjv7YwF4HlEKyXTbL0rpVihkFfqRfP4zgIhqO5e24m6EkCQA2BbAOFwmbsm2M
-X-Gm-Message-State: AOJu0YzWHBdWSoPcZFc9mTtwhTIY7cgW06jbsAwx+4u4fpk3Pg1DDlfu
-	zwjwazZ4I2hBTO4MpmWHLlCjHhFLqG6sLVxcERBtGuOg4Q5VjTrn/hSVsYoEUNWoXieB+SZUKjY
-	v/hnYg64KY7tCbymJlwU/I9GhxRqJ+LzYOiY=
-X-Google-Smtp-Source: AGHT+IG3W0S3Z2Qe9a0+buJwHRoZAUEH7EgzRGQidkKafkzDX/o4tZaGyxUyz+m2abkLCU1Mb4Kwbf8Ewf5XjrfBUVY=
-X-Received: by 2002:a05:6122:91a:b0:4e4:e98a:7b02 with SMTP id
- 71dfb90a1353d-4eaf2186157mr318895e0c.4.1717017033385; Wed, 29 May 2024
- 14:10:33 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OabscRPI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDF6DC32781;
+	Wed, 29 May 2024 23:15:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717024522;
+	bh=7HtHIBMnOSfXwlIN2FN4JThv0qqYOxoaXPTbFn/okcY=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=OabscRPIEp57y8+0XlGk2MoMOeUdg3DFch7rE9IX08FLlS4oK8rykJtvab3sIEtiA
+	 bRKPiWK35XtvcazFBhiVQFUOddAQgdYj+QVCvdrPBzcU9X3d/30Gviua7TUav5HcVH
+	 ifDThHZQalm9753WBOnV8YV5lSp4qJgxmXRDfyTMrk2+eTjTsr1Tx0gsrPMLu8yfMp
+	 f4K/Uum4draifjed4IA71oYuDtsQwdkKU4U3aojjuTNeYziub9jTJi54QezxYVXe7/
+	 K4QJdoFY4b00+gH/sYrGVsHbk4NdQ+Hv/vn/al2ck+PIe7Q0n1ndrOSIs8/MUlVFzB
+	 UmKhhc3IAcIoA==
+Message-ID: <3280d9e3c7ba19f86b85a7fa89f5be25.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240524082800.333991-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240524082800.333991-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdWzZP2d6kRw1oTkMYgzS46J68gR_bg14==HCvVpkp0sJA@mail.gmail.com>
-In-Reply-To: <CAMuHMdWzZP2d6kRw1oTkMYgzS46J68gR_bg14==HCvVpkp0sJA@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Wed, 29 May 2024 22:09:14 +0100
-Message-ID: <CA+V-a8uxwiof-hLPRpYCnDkVs8tj+-+v8GQLSSkMFUP13cuoXQ@mail.gmail.com>
-Subject: Re: [PATCH 2/4] dt-bindings: clock: Add R9A09G057 CPG Clock and Reset Definitions
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Magnus Damm <magnus.damm@gmail.com>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <a3bed3c2940edc238afbc191d595a727944892f3.1716965617.git.ysato@users.sourceforge.jp>
+References: <cover.1716965617.git.ysato@users.sourceforge.jp> <a3bed3c2940edc238afbc191d595a727944892f3.1716965617.git.ysato@users.sourceforge.jp>
+Subject: Re: [DO NOT MERGE v8 14/36] clk: Compatible with narrow registers
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Yoshinori Sato <ysato@users.sourceforge.jp>, Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, Thomas Gleixner <tglx@linutronix.de>, Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, Krzysztof =?utf-8?q?Wilczy=C5=84ski?= <kw@linux.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, Magnus Damm <magnus.damm@gmail.com>, Daniel Lezcano <daniel.lezcano@linaro.org>, Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Lee Jones <lee@kernel.org>, Helge Deller <deller@gmx.de>, Heiko Stuebner <heiko.stuebner@cherry.de>, Neil Armstrong <neil.armstrong@linaro.org>, Chris Morgan <macromorgan@hotmail.com>, Sebastian Reichel <sre@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, Arnd Bergmann <arnd@arndb.de>, Masahiro Yamada <masahiroy@kernel.org>, Baoquan He <bhe@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, Guenter Roeck <linux@roeck-us.net>, Kefeng Wang <wangkefeng.wang@huawei.com>, Stephen Rothwell <sfr@canb.auug.org.au>, Azeem Shaikh <azeemshaikh38@gmail.com>, Guo Ren <guoren@kernel.org>, Max Filippov <jcmvbkbc@gmail.com>, Jernej Skrabec <jernej.skrabec@gmail.com>, Herve Codina <herve.codina@bootlin.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Anup Patel <apatel@ventanamicro.com>, Jacky Huang <ychuang3@nuvoton.com>, Hugo Villeneuve <hvilleneuve@dimonoff.com>, Jonathan Corbet <corbet@lwn.net>, Wolfram Sang <wsa+renesas@sang-engineering.com>, Uwe =?utf-8?q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Christophe JAILLET <christophe.jaillet@wanadoo.fr>, Sam Ravnborg <sam@ravnborg.org>, Javier Martinez Canillas <javierm@redhat.com>, Sergey Shtylyov <s.shtylyov@omp.ru>, Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>, linux-ide@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, linux-pci@vger.kernel.org, linux-serial@vger.kernel.org, linux-fbdev@vger.kernel.org
+To: Yoshinori Sato <ysato@users.sourceforge.jp>, linux-sh@vger.kernel.org
+Date: Wed, 29 May 2024 16:15:19 -0700
+User-Agent: alot/0.10
 
-Hi Geert,
+Quoting Yoshinori Sato (2024-05-29 01:01:00)
+> divider and gate only support 32-bit registers.
+> Older hardware uses narrower registers, so I want to be able to handle
+> 8-bit and 16-bit wide registers.
+>=20
+> Seven clk_divider flags are used, and if I add flags for 8bit access and
+> 16bit access, 8bit will not be enough, so I expanded it to u16.
+>=20
+> Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
+> ---
+>  drivers/clk/clk-divider.c    | 41 +++++++++++++++++++++---------
+>  drivers/clk/clk-gate.c       | 49 ++++++++++++++++++++++++++++++++----
+>  include/linux/clk-provider.h | 20 ++++++++++++---
+>  3 files changed, 89 insertions(+), 21 deletions(-)
+>=20
+> diff --git a/drivers/clk/clk-divider.c b/drivers/clk/clk-divider.c
+> index a2c2b5203b0a..abafcbbb6578 100644
+> --- a/drivers/clk/clk-divider.c
+> +++ b/drivers/clk/clk-divider.c
+> @@ -26,17 +26,34 @@
+>   * parent - fixed parent.  No clk_set_parent support
+>   */
+> =20
+> -static inline u32 clk_div_readl(struct clk_divider *divider)
+> -{
+> +static inline u32 clk_div_read(struct clk_divider *divider)
 
-Thank you for the review.
+Please don't change the name. The 'l' is for the return type, u32, which
+is not changed.
 
-On Mon, May 27, 2024 at 10:18=E2=80=AFAM Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
->
-> Hi Prabhakar,
->
-> On Fri, May 24, 2024 at 10:29=E2=80=AFAM Prabhakar <prabhakar.csengg@gmai=
-l.com> wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Define RZ/V2H(P) (R9A09G057) Clock Pulse Generator module clock outputs
-> > (CPG_CLK_ON* registers), and reset definitions (CPG_RST_* registers)
-> > in Section 4.4.2 and 4.4.3 ("List of Clock/Reset Signals") of the RZ/V2=
-H(P)
-> > Hardware User's Manual (Rev.1.01, Feb. 2024).
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Thanks for your patch!
->
-> > --- /dev/null
-> > +++ b/include/dt-bindings/clock/r9a09g057-cpg.h
-> > @@ -0,0 +1,644 @@
-> > +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > + *
-> > + * Copyright (C) 2024 Renesas Electronics Corp.
-> > + */
-> > +#ifndef __DT_BINDINGS_CLOCK_R9A09G057_CPG_H__
-> > +#define __DT_BINDINGS_CLOCK_R9A09G057_CPG_H__
-> > +
-> > +#include <dt-bindings/clock/renesas-cpg-mssr.h>
-> > +
-> > +/* Clock list */
->
-> No distinction between Core and Module clocks?
->
-I was in two minds here. Would you prefer clocks with no CGC support
-to be listed as core clocks?
+> +{
+> +       if (divider->flags & CLK_DIVIDER_REG_8BIT)
+> +               return readb(divider->reg);
+> +       if (divider->flags & CLK_DIVIDER_REG_16BIT) {
+> +               if (divider->flags & CLK_DIVIDER_BIG_ENDIAN) {
+> +                       return ioread16be(divider->reg);
+> +               } else {
+> +                       return readw(divider->reg);
+> +               }
+> +       }
+>         if (divider->flags & CLK_DIVIDER_BIG_ENDIAN)
+>                 return ioread32be(divider->reg);
+> =20
+>         return readl(divider->reg);
+>  }
+> =20
+> -static inline void clk_div_writel(struct clk_divider *divider, u32 val)
+> +static inline void clk_div_write(struct clk_divider *divider, u32 val)
 
-> > +#define R9A09G057_SYS_0_PCLK                           0
-> > +#define R9A09G057_DMAC_0_ACLK                          1
-> > +#define R9A09G057_DMAC_1_ACLK                          2
-> > +#define R9A09G057_DMAC_2_ACLK                          3
->
-> [...]
->
-> > +/* Resets list */
->
-> [...]
->
-> No power domain specifiers, as mentioned in PATCH 1/4?
->
-OK, I'll add the power domains in this patch.
+Same comment.
 
-Cheers,
-Prabhakar
+>  {
+> -       if (divider->flags & CLK_DIVIDER_BIG_ENDIAN)
+> +       if (divider->flags & CLK_DIVIDER_REG_8BIT)
+> +               writeb(val, divider->reg);
+> +       else if (divider->flags & CLK_DIVIDER_REG_16BIT) {
+> +               if (divider->flags & CLK_DIVIDER_BIG_ENDIAN) {
+> +                       iowrite16be(val, divider->reg);
+> +               } else {
+> +                       writew(val, divider->reg);
+> +               }
+> +       } else if (divider->flags & CLK_DIVIDER_BIG_ENDIAN)
+>                 iowrite32be(val, divider->reg);
+>         else
+>                 writel(val, divider->reg);
+> diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+> index 4a537260f655..25f61bd5b952 100644
+> --- a/include/linux/clk-provider.h
+> +++ b/include/linux/clk-provider.h
+> @@ -508,6 +508,10 @@ void of_fixed_clk_setup(struct device_node *np);
+>   * CLK_GATE_BIG_ENDIAN - by default little endian register accesses are =
+used for
+>   *     the gate register.  Setting this flag makes the register accesses=
+ big
+>   *     endian.
+> + * CLK_GATE_REG_8BIT - by default 32bit register accesses are used for
+> + *     the gate register.  Setting this flag makes the register accesses=
+ 8bit.
+> + * CLK_GATE_REG_16BIT - by default 32bit register accesses are used for
+> + *     the gate register.  Setting this flag makes the register accesses=
+ 16bit.
+>   */
+>  struct clk_gate {
+>         struct clk_hw hw;
+> @@ -522,6 +526,8 @@ struct clk_gate {
+>  #define CLK_GATE_SET_TO_DISABLE                BIT(0)
+>  #define CLK_GATE_HIWORD_MASK           BIT(1)
+>  #define CLK_GATE_BIG_ENDIAN            BIT(2)
+> +#define CLK_GATE_REG_8BIT              BIT(3)
+> +#define CLK_GATE_REG_16BIT             BIT(4)
+
+Please add kunit tests for the gate at least.
+
+> =20
+>  extern const struct clk_ops clk_gate_ops;
+>  struct clk_hw *__clk_hw_register_gate(struct device *dev,
+> @@ -675,13 +681,17 @@ struct clk_div_table {
+>   * CLK_DIVIDER_BIG_ENDIAN - By default little endian register accesses a=
+re used
+>   *     for the divider register.  Setting this flag makes the register a=
+ccesses
+>   *     big endian.
+> + * CLK_DIVIDER_REG_8BIT - by default 32bit register accesses are used for
+> + *     the gate register.  Setting this flag makes the register accesses=
+ 8bit.
+> + * CLK_DIVIDER_REG_16BIT - by default 32bit register accesses are used f=
+or
+> + *     the gate register.  Setting this flag makes the register accesses=
+ 16bit.
+>   */
+>  struct clk_divider {
+>         struct clk_hw   hw;
+>         void __iomem    *reg;
+>         u8              shift;
+>         u8              width;
+> -       u8              flags;
+> +       u16             flags;
+>         const struct clk_div_table      *table;
+>         spinlock_t      *lock;
+>  };
+> @@ -697,6 +707,8 @@ struct clk_divider {
+>  #define CLK_DIVIDER_READ_ONLY          BIT(5)
+>  #define CLK_DIVIDER_MAX_AT_ZERO                BIT(6)
+>  #define CLK_DIVIDER_BIG_ENDIAN         BIT(7)
+> +#define CLK_DIVIDER_REG_8BIT           BIT(8)
+> +#define CLK_DIVIDER_REG_16BIT          BIT(9)
+> =20
+>  extern const struct clk_ops clk_divider_ops;
+>  extern const struct clk_ops clk_divider_ro_ops;
+> @@ -726,18 +738,18 @@ struct clk_hw *__clk_hw_register_divider(struct dev=
+ice *dev,
+>                 struct device_node *np, const char *name,
+>                 const char *parent_name, const struct clk_hw *parent_hw,
+>                 const struct clk_parent_data *parent_data, unsigned long =
+flags,
+> -               void __iomem *reg, u8 shift, u8 width, u8 clk_divider_fla=
+gs,
+> +               void __iomem *reg, u8 shift, u8 width, u16 clk_divider_fl=
+ags,
+
+Let's just make this unsigned long for the flags. We don't need to
+specify a strict size like this for the callers.
+
+>                 const struct clk_div_table *table, spinlock_t *lock);
+>  struct clk_hw *__devm_clk_hw_register_divider(struct device *dev,
+>                 struct device_node *np, const char *name,
+>                 const char *parent_name, const struct clk_hw *parent_hw,
+>                 const struct clk_parent_data *parent_data, unsigned long =
+flags,
+> -               void __iomem *reg, u8 shift, u8 width, u8 clk_divider_fla=
+gs,
+> +               void __iomem *reg, u8 shift, u8 width, u16 clk_divider_fl=
+ags,
+
+Same here.
+
+>                 const struct clk_div_table *table, spinlock_t *lock);
+>  struct clk *clk_register_divider_table(struct device *dev, const char *n=
+ame,
+>                 const char *parent_name, unsigned long flags,
+>                 void __iomem *reg, u8 shift, u8 width,
+> -               u8 clk_divider_flags, const struct clk_div_table *table,
+> +               u16 clk_divider_flags, const struct clk_div_table *table,
+
+Same here. Preferably do that in another patch too.
