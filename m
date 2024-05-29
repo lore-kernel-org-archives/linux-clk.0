@@ -1,132 +1,167 @@
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C35FA180A80;
-	Wed, 29 May 2024 15:48:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D44141836DA;
+	Wed, 29 May 2024 16:25:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716997684; cv=none; b=D5QwXfO56qLtznZO7T+00QA0hOszPEMU+NuKBfT2Wr57AOd3DNzxSvbs3TPLpNNsz9VvTFe9RusEaQf9bkgeoPVlRXt2TbRRJ97Swhf68qRs9wH2CovaUOUKSXxCVV3U4ThR+6QtjmCMJyTb0r9Aetfs1a+DAuRQEHMeB49ALbc=
+	t=1716999934; cv=none; b=DyF1RvSsLXtZwRvtjzWb4vn8raCKXpd+KoKrD1ZIoUzcLrVjeujIAI0tbBD8w91iBJRQAREjLkIeKluSmlEuw9to8pXE5Bn8pHfIsttw2eN7IpuJazX40UIvs2yE2h8wQhmmolmZXsrWfprfBmeuYQrGbZN2BxUtMAPc9lhzOOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716997684; c=relaxed/simple;
-	bh=f0C0B4kzZLIjo6dch1+N9Dgh+xT+IoEGkwIFrOtQWpw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oWpIn3xy/062jskwBG5HjwE4kSVaHkGLM42bTfvnbduk/FmOJa/ZBulnhBCrJuyC7+bjuedLQ1K7BxHIZItv5U5vBtkf7DtSFTvvJoolgw21Ux/omTS/hC10jF74vGc9waifIsZ/0K4Rm5OzGQA72WCVVmK8sqyiDPkGADerBcM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-dfa48f505a3so871631276.1;
-        Wed, 29 May 2024 08:48:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1716997680; x=1717602480;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QSxOOa5iWnjtl+pFAwobVJfoHrYpn+lEWj9HAOR4mwE=;
-        b=KiLkncgoQ3Y8RL6fGkut9Ng3gx4wrHzkZeVq/p/l+Rb0c5iDLdabiunAGZP0lgeQRB
-         9GjXRpXRFbUg6GvGgHC7KvFC3QpQ3o7HcejA+9KCbHWQ5HJHVW6nQkzwFucNTb8QAdv0
-         HHxWSqF9Pwanic/ifZK9XzeCNLjILXVflrPMlgKzEP6gBYLcv5hPU4fMcjyj28ooN9hD
-         UVspE60yUg5AQz85UQfvqcX+Felofnklsv+rPgZWVA9cvTFm3uG5qXKzmQ3ekfgplNAJ
-         ZG8K8vvchEom3dgGQeeCXOh6xbN7g6aop5wRquG2hUpfbJZSQrXlOvLuLQ9u/icoFmSt
-         v1VQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUxenxtrokHpTFREK2JYnAPlbY02ZifcMzdW/6uGfjofuy2pU4SIXOutmuvu3zBF3nPp6CzWGM5s4g7KTf8U8WXtt9HJBeB92Y1
-X-Gm-Message-State: AOJu0YwcWb4aRMvVkczZMLTTs91p+CCtEqYkkanmUD8dDObbcPJcts/S
-	tcHgA14IondemsS3gmx3xz09QIeTT/TDF5TxWGCJ5K80ULkhse9VDRH7jWji
-X-Google-Smtp-Source: AGHT+IFmNUjU1LrF4d6jwNTha7eqJY9wBUdYktZksLghovtuopSU0rrNBDHrivENF2kcf14kSq33mw==
-X-Received: by 2002:a25:83c8:0:b0:df4:dff9:6c8c with SMTP id 3f1490d57ef6-df772168069mr14733241276.4.1716997680238;
-        Wed, 29 May 2024 08:48:00 -0700 (PDT)
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com. [209.85.219.181])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-df7746b127esm1447096276.33.2024.05.29.08.48.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 29 May 2024 08:48:00 -0700 (PDT)
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-df481bf6680so2209440276.3;
-        Wed, 29 May 2024 08:48:00 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVblRPyA3R0cFDa1qPh153ivfuri80xbTbacs4bPiKMbXrQoqCWR7825sEnQkLJed7C9b6TjqDlyEi0YsO2ZKbIY4lMdtU1Cv80
-X-Received: by 2002:a25:ef4a:0:b0:deb:cad4:796c with SMTP id
- 3f1490d57ef6-df7721a70d6mr15961345276.22.1716997679843; Wed, 29 May 2024
- 08:47:59 -0700 (PDT)
+	s=arc-20240116; t=1716999934; c=relaxed/simple;
+	bh=XWTvgOpa/ROLa55P7YiVGDQAHxuXZkHUHPhWeWr2A8M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hurRMpza75ysobGAbTsou1ieVHn/j7FD/qTr7BZUNgYtb51X/vqdefAS7j3y4uV0VUDri8n7jiyqDkXWBeNvuPuxzNnWVD4uX7a10cRJzdAZkv4DZn7poJ3bcK+HsEWqP/nnxEY5V1s1M/jC9niLqedETXizUX6AzkHY6+KvmIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ns2ZIr6V; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ns2ZIr6V"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B79A2C116B1;
+	Wed, 29 May 2024 16:25:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1716999933;
+	bh=XWTvgOpa/ROLa55P7YiVGDQAHxuXZkHUHPhWeWr2A8M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ns2ZIr6VvO8DHPaypxlYrKfLH9G+32HhMEMwz/5JSbWg0D6qa4LfRSxhqKONCYa0R
+	 El5E2QewPGDcyBtgrGO4tkwMqTN+3Jkp4f7g57lV1+0mb/SSgaRIoCQ0TsIOuUugUv
+	 ee7i9V20WwHOmybWFY2JFqFiSMTAyw+jyguINTU0H+RDKDomlq1x0YEdX6wZy8B4I6
+	 U/brKIm/WxSoAKYHXNsoKaALvFcMjVN4mVCG5tfctZ17jIFlgw/Yf0EGjkDtN0V9I+
+	 9uwDykhAK3o4VunkJZ0BSmHGUaZSSqaHLNkYzJ96Vojh+b/yogx4ZSvfnX4gpTEa5j
+	 rxXvfmWYGvmqA==
+Date: Wed, 29 May 2024 17:25:19 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: linux-sh@vger.kernel.org, Damien Le Moal <dlemoal@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Lee Jones <lee@kernel.org>, Helge Deller <deller@gmx.de>,
+	Heiko Stuebner <heiko.stuebner@cherry.de>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Chris Morgan <macromorgan@hotmail.com>,
+	Sebastian Reichel <sre@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Masahiro Yamada <masahiroy@kernel.org>, Baoquan He <bhe@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Kefeng Wang <wangkefeng.wang@huawei.com>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Azeem Shaikh <azeemshaikh38@gmail.com>, Guo Ren <guoren@kernel.org>,
+	Max Filippov <jcmvbkbc@gmail.com>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Anup Patel <apatel@ventanamicro.com>,
+	Jacky Huang <ychuang3@nuvoton.com>,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Sam Ravnborg <sam@ravnborg.org>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	Sergey Shtylyov <s.shtylyov@omp.ru>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	linux-ide@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-pci@vger.kernel.org, linux-serial@vger.kernel.org,
+	linux-fbdev@vger.kernel.org
+Subject: Re: [DO NOT MERGE v8 26/36] dt-bindings: ata: ata-generic: Add new
+ targets
+Message-ID: <20240529-arise-small-f3277feee4e4@spud>
+References: <cover.1716965617.git.ysato@users.sourceforge.jp>
+ <8ff46a90c7be5eea45984f60b9b0db99219c82e6.1716965617.git.ysato@users.sourceforge.jp>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240527131541.1676525-1-niklas.soderlund+renesas@ragnatech.se>
- <20240527131541.1676525-4-niklas.soderlund+renesas@ragnatech.se>
- <CAMuHMdVaXhLruaPWBGbpzQds0y03t9UJ-NxEtvtKma-5-WwooQ@mail.gmail.com> <20240529153025.GA710180@ragnatech.se>
-In-Reply-To: <20240529153025.GA710180@ragnatech.se>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 29 May 2024 17:47:46 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdVNLpZ+peJoO9XhBiZKOcV9CHp0RBsU27_QtWR5Q=5=yw@mail.gmail.com>
-Message-ID: <CAMuHMdVNLpZ+peJoO9XhBiZKOcV9CHp0RBsU27_QtWR5Q=5=yw@mail.gmail.com>
-Subject: Re: [PATCH 3/3] clk: renesas: r8a779h0: Add CSI-2 clocks
-To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="EwaFJRsUcMIAwW3R"
+Content-Disposition: inline
+In-Reply-To: <8ff46a90c7be5eea45984f60b9b0db99219c82e6.1716965617.git.ysato@users.sourceforge.jp>
+
+
+--EwaFJRsUcMIAwW3R
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Niklas,
+Hey,
 
-On Wed, May 29, 2024 at 5:30=E2=80=AFPM Niklas S=C3=B6derlund
-<niklas.soderlund+renesas@ragnatech.se> wrote:
-> On 2024-05-29 17:09:09 +0200, Geert Uytterhoeven wrote:
-> > On Mon, May 27, 2024 at 3:16=E2=80=AFPM Niklas S=C3=B6derlund
-> > <niklas.soderlund+renesas@ragnatech.se> wrote:
-> > > Add the CSI40 and CSI41 module clocks, which are used by the CSI-2
-> > > interfaces on the Renesas R-Car V4M (R8A779H0) SoC.
-> > >
-> > > Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnat=
-ech.se>
-> >
-> > Thanks for your patch!
-> >
-> > > --- a/drivers/clk/renesas/r8a779h0-cpg-mssr.c
-> > > +++ b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
-> > > @@ -176,6 +176,8 @@ static const struct mssr_mod_clk r8a779h0_mod_clk=
-s[] =3D {
-> > >         DEF_MOD("avb0:rgmii0",  211,    R8A779H0_CLK_S0D8_HSC),
-> > >         DEF_MOD("avb1:rgmii1",  212,    R8A779H0_CLK_S0D8_HSC),
-> > >         DEF_MOD("avb2:rgmii2",  213,    R8A779H0_CLK_S0D8_HSC),
-> > > +       DEF_MOD("csi40",        331,    R8A779H0_CLK_CSI),
-> > > +       DEF_MOD("csi41",        400,    R8A779H0_CLK_CSI),
-> >
-> > According to the documentation for the Module Stop Control Registers
-> > 3 and 4, these are called "csitop[01]".
->
-> I noticed that too, the issue is how they are named on V4H and I thought
-> aligning the Gen4 board was a good idea. I don't feel strongly about
-> this, but before I send a v2.
->
-> On V4H the bits are named SRT31 and SRT0, while the "Target Module for
-> Software Reset" lists them as "CSI40 (CSI-2-RX0)" and "CSI40
-> (CSI-2-RX1)". The later is the same for V4H and V4M, while the bit name
-> differs.
->
-> Should we rename the V4H modules as well, keep the names for V4M, or do
-> we not really care the same modules have different names on V4H and V4M?
+On Wed, May 29, 2024 at 05:01:12PM +0900, Yoshinori Sato wrote:
+> Added new ata-generic target.
+> - iodata,usl-5p-ata
+> - renesas,rts7751r2d-ata
+>=20
+> Each boards have simple IDE Interface. Use ATA generic driver.
+>=20
+> Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
 
-We already have other differences due to how the bits are named
-in (different revisions of) the different datasheets...
-Technically, nobody really cares about these clocks names, they just
-must be unique ;-)
+Why do you keep dropping tags? Damien and I acked this back in v6 and
+Krzysztof reminded you in v7:
+https://lore.kernel.org/all/06fdb2cf7927681acf3099b826390ef75ba321af.170478=
+8539.git.ysato@users.sourceforge.jp/
+https://lore.kernel.org/all/53f85cc2e124d1c2e7394458b73293d797817d6d.171220=
+7606.git.ysato@users.sourceforge.jp/
 
-And apparently older revisions of the R-Car V4H docs use "csitop[01]", too.
-Oh well...
+Dropping the tags just leads to wasted time re-reviewing patches that
+already got approved. I don't see any valid reason to drop them on a
+trivial patch like this :/ Please check back to previous revisions and
+make sure that you picked up applicable tags.
 
-I guess I'll just apply this as-is, unless someone screams...
+Thanks,
+Conor.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v6.11.
+> ---
+>  Documentation/devicetree/bindings/ata/ata-generic.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/ata/ata-generic.yaml b/Doc=
+umentation/devicetree/bindings/ata/ata-generic.yaml
+> index 0697927f3d7e..1025b3b351d0 100644
+> --- a/Documentation/devicetree/bindings/ata/ata-generic.yaml
+> +++ b/Documentation/devicetree/bindings/ata/ata-generic.yaml
+> @@ -18,6 +18,8 @@ properties:
+>        - enum:
+>            - arm,vexpress-cf
+>            - fsl,mpc8349emitx-pata
+> +          - iodata,usl-5p-ata
+> +          - renesas,rts7751r2d-ata
+>        - const: ata-generic
+> =20
+>    reg:
+> --=20
+> 2.39.2
+>=20
 
-Gr{oetje,eeting}s,
+--EwaFJRsUcMIAwW3R
+Content-Type: application/pgp-signature; name="signature.asc"
 
-                        Geert
+-----BEGIN PGP SIGNATURE-----
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZldW7wAKCRB4tDGHoIJi
+0rICAP9V1iNf3aedUZq4py3MAFbhxEMXF2XlH0Il+KuD+J/ZuAD9Eti+5ySYfFAX
+cxCmNqYe51qJCuNdyoXp6/hLh6B1JwY=
+=l0ak
+-----END PGP SIGNATURE-----
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+--EwaFJRsUcMIAwW3R--
