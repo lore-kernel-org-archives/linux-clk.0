@@ -1,159 +1,132 @@
-Received: from wfout5-smtp.messagingengine.com (wfout5-smtp.messagingengine.com [64.147.123.148])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A15A51591EC;
-	Wed, 29 May 2024 15:34:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=64.147.123.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C35FA180A80;
+	Wed, 29 May 2024 15:48:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1716996845; cv=none; b=T+6va54Y55h8MgSqoZWXn4KqpwAvlagi0gNKvQ7ad2dE6Df+JFq7zQBombQ+KgVwntfGfM9LdSlHBNsNS7bnm1H1+8RzdLRhn0fXbulM1K2756x3Aa9h2MmjCKMTyu5UVNXlNDi5AH2I09qFoKcyMifky7zl254H1Uo+kJlS604=
+	t=1716997684; cv=none; b=D5QwXfO56qLtznZO7T+00QA0hOszPEMU+NuKBfT2Wr57AOd3DNzxSvbs3TPLpNNsz9VvTFe9RusEaQf9bkgeoPVlRXt2TbRRJ97Swhf68qRs9wH2CovaUOUKSXxCVV3U4ThR+6QtjmCMJyTb0r9Aetfs1a+DAuRQEHMeB49ALbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1716996845; c=relaxed/simple;
-	bh=xy2CgRWU2cL/KLJYR9p+sU9xLeAPmS9Czd0hJlj8kUs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XBAMAGl6nYpUQTri9lNG53oZV42QBkte68upORwV5IfL1vTqcIOvAfxcWEQ/1uE7r2q7KlTntA1KR6PTWerEAO+oRYpt16OJ3cTZzwkLWpIkRP+U6+WsC472CqIctGNY+a853WH9WAfODLUJHw2vCaw9qnmEp6wn6yNHNflLhPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=FmfrGmOs; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=X7bxMkxN; arc=none smtp.client-ip=64.147.123.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="FmfrGmOs";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="X7bxMkxN"
-Received: from compute6.internal (compute6.nyi.internal [10.202.2.47])
-	by mailfout.west.internal (Postfix) with ESMTP id ADA3F1C00101;
-	Wed, 29 May 2024 11:34:01 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute6.internal (MEProxy); Wed, 29 May 2024 11:34:01 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1716996841;
-	 x=1717083241; bh=Vz4iRPJgNKY4N27uJG0KVDwrEYi1ulOBt0/1OZe3FG4=; b=
-	FmfrGmOsHrZhhVyFFM9702ba7wI70xs/FK/axv75rYDu5Cq2f+VYDbV6Lm80LBfJ
-	2Xptj/uA4zYbUu67uKFpNHqaG5DIsObL5BcTuLHBkjpM7NTLkE1hPUnV3MhyOpRx
-	vJqhgYe9gpj0gtVvp1e+WRktYJ/HHv382XEW4aYeMIBuEasN6iEflNLh2NuAAA5K
-	LCUuTGRFJbPmAuD0E13Blp2BpCNj8gqt2ExMFRrHkhRRI+GU7TZFQXi/D4m3/Af2
-	cj2xf4r3+2B4ry1/g9HClOX0yoKKMxkC6cad4H2I45h5Ojq0JzMgA9a7J4u83uLG
-	BmLZjblv1So/Kh9LfG8HIg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1716996841; x=
-	1717083241; bh=Vz4iRPJgNKY4N27uJG0KVDwrEYi1ulOBt0/1OZe3FG4=; b=X
-	7bxMkxNVQFbiTYhxx+UT2GgtTxR3WeCbsqOAqzfw6IOo+96eCi5FHEReH49yjB2I
-	BY9CTj5ifGDVUbSasvz2Xd0+8MA9apw2fVNjsYaeNpTcPU4qjWglhkwYOMMo4xKC
-	XaZEXDYBT5F3jwmDiTsaonEnIWEhIh3uKavMK2BuDemohE9ZFX+xwJhwdqNMXuzb
-	2oLJtRy8QxRvRQdC0M50/CTzlQcv5EXOBv4/EeBtbImxM0SO8D4uwktk0sOrCAnP
-	XwxWlbdrYaErj+d6p+ZkspCvgvpS5IDw9050B+eaA2z8HGKr0l0af6Kd8pK5jaL+
-	2ClvKqScUi5886B4JyKkQ==
-X-ME-Sender: <xms:6UpXZqwAfrF_L0bEHptZD_jtFyxedBS7yTc66LS109xyAfYjoA7sYg>
-    <xme:6UpXZmTtxtU7cqwY36-d1yPn3z4gQJxQqlkpwZC8ZSkQ21dzxjwjbSOvNfehlhjdh
-    AHxjzFW_SxnrqQBnyI>
-X-ME-Received: <xmr:6UpXZsVDi0a8cu50yV0eh3oEMAwk5r57Tttu9dhiDmGSUJSr8OV-O7Fe2GegpWOOJ-13hNxroQf6giHfvDSTp3lV5pen7Dc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdekuddgkeekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdejnecuhfhrohhmpefpihhk
-    lhgrshcuufpnuggvrhhluhhnugcuoehnihhklhgrshdrshhouggvrhhluhhnugdorhgvnh
-    gvshgrshesrhgrghhnrghtvggthhdrshgvqeenucggtffrrghtthgvrhhnpeefhfellefh
-    ffejgfefudfggeejlefhveehieekhfeulefgtdefueehffdtvdelieenucevlhhushhtvg
-    hrufhiiigvpedunecurfgrrhgrmhepmhgrihhlfhhrohhmpehnihhklhgrshdrshhouggv
-    rhhluhhnugdorhgvnhgvshgrshesrhgrghhnrghtvggthhdrshgv
-X-ME-Proxy: <xmx:6UpXZghFrrwuyMq77fgFlU9TeUDm_b_ykCr7v5KrLJPYR1Y55911Fw>
-    <xmx:6UpXZsBY3Ld0s46Wu5yBG-LK-Cx2yQ8PTBjx4KQBTSGCknhJdhkVSQ>
-    <xmx:6UpXZhLmdBKuVRHUz5erchYq1duAmqk4VZ590fmRGqkECIwOOfSOhg>
-    <xmx:6UpXZjCzrwkbZBUeOp1bTDcmgTmyV_ARztQLMvVfLnT6ahrF4jrpbg>
-    <xmx:6UpXZvM7OVCtuFDoZSayl9a8S73o7JC-P8b3RYQgso5cfXU4GiIowvNO>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 29 May 2024 11:34:00 -0400 (EDT)
-Date: Wed, 29 May 2024 17:33:59 +0200
-From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/3] clk: renesas: r8a779h0: Add VIN clocks
-Message-ID: <20240529153359.GB710180@ragnatech.se>
-References: <20240527131541.1676525-1-niklas.soderlund+renesas@ragnatech.se>
- <20240527131541.1676525-2-niklas.soderlund+renesas@ragnatech.se>
- <CAMuHMdUyZGE6p2D-LRiZHOZn2wiB0=qK3n4DtOQSboc16-=KtA@mail.gmail.com>
+	s=arc-20240116; t=1716997684; c=relaxed/simple;
+	bh=f0C0B4kzZLIjo6dch1+N9Dgh+xT+IoEGkwIFrOtQWpw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oWpIn3xy/062jskwBG5HjwE4kSVaHkGLM42bTfvnbduk/FmOJa/ZBulnhBCrJuyC7+bjuedLQ1K7BxHIZItv5U5vBtkf7DtSFTvvJoolgw21Ux/omTS/hC10jF74vGc9waifIsZ/0K4Rm5OzGQA72WCVVmK8sqyiDPkGADerBcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-dfa48f505a3so871631276.1;
+        Wed, 29 May 2024 08:48:01 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1716997680; x=1717602480;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QSxOOa5iWnjtl+pFAwobVJfoHrYpn+lEWj9HAOR4mwE=;
+        b=KiLkncgoQ3Y8RL6fGkut9Ng3gx4wrHzkZeVq/p/l+Rb0c5iDLdabiunAGZP0lgeQRB
+         9GjXRpXRFbUg6GvGgHC7KvFC3QpQ3o7HcejA+9KCbHWQ5HJHVW6nQkzwFucNTb8QAdv0
+         HHxWSqF9Pwanic/ifZK9XzeCNLjILXVflrPMlgKzEP6gBYLcv5hPU4fMcjyj28ooN9hD
+         UVspE60yUg5AQz85UQfvqcX+Felofnklsv+rPgZWVA9cvTFm3uG5qXKzmQ3ekfgplNAJ
+         ZG8K8vvchEom3dgGQeeCXOh6xbN7g6aop5wRquG2hUpfbJZSQrXlOvLuLQ9u/icoFmSt
+         v1VQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUxenxtrokHpTFREK2JYnAPlbY02ZifcMzdW/6uGfjofuy2pU4SIXOutmuvu3zBF3nPp6CzWGM5s4g7KTf8U8WXtt9HJBeB92Y1
+X-Gm-Message-State: AOJu0YwcWb4aRMvVkczZMLTTs91p+CCtEqYkkanmUD8dDObbcPJcts/S
+	tcHgA14IondemsS3gmx3xz09QIeTT/TDF5TxWGCJ5K80ULkhse9VDRH7jWji
+X-Google-Smtp-Source: AGHT+IFmNUjU1LrF4d6jwNTha7eqJY9wBUdYktZksLghovtuopSU0rrNBDHrivENF2kcf14kSq33mw==
+X-Received: by 2002:a25:83c8:0:b0:df4:dff9:6c8c with SMTP id 3f1490d57ef6-df772168069mr14733241276.4.1716997680238;
+        Wed, 29 May 2024 08:48:00 -0700 (PDT)
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com. [209.85.219.181])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-df7746b127esm1447096276.33.2024.05.29.08.48.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 May 2024 08:48:00 -0700 (PDT)
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-df481bf6680so2209440276.3;
+        Wed, 29 May 2024 08:48:00 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVblRPyA3R0cFDa1qPh153ivfuri80xbTbacs4bPiKMbXrQoqCWR7825sEnQkLJed7C9b6TjqDlyEi0YsO2ZKbIY4lMdtU1Cv80
+X-Received: by 2002:a25:ef4a:0:b0:deb:cad4:796c with SMTP id
+ 3f1490d57ef6-df7721a70d6mr15961345276.22.1716997679843; Wed, 29 May 2024
+ 08:47:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMuHMdUyZGE6p2D-LRiZHOZn2wiB0=qK3n4DtOQSboc16-=KtA@mail.gmail.com>
+References: <20240527131541.1676525-1-niklas.soderlund+renesas@ragnatech.se>
+ <20240527131541.1676525-4-niklas.soderlund+renesas@ragnatech.se>
+ <CAMuHMdVaXhLruaPWBGbpzQds0y03t9UJ-NxEtvtKma-5-WwooQ@mail.gmail.com> <20240529153025.GA710180@ragnatech.se>
+In-Reply-To: <20240529153025.GA710180@ragnatech.se>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 29 May 2024 17:47:46 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVNLpZ+peJoO9XhBiZKOcV9CHp0RBsU27_QtWR5Q=5=yw@mail.gmail.com>
+Message-ID: <CAMuHMdVNLpZ+peJoO9XhBiZKOcV9CHp0RBsU27_QtWR5Q=5=yw@mail.gmail.com>
+Subject: Re: [PATCH 3/3] clk: renesas: r8a779h0: Add CSI-2 clocks
+To: =?UTF-8?Q?Niklas_S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Geert,
+Hi Niklas,
 
-Thanks for your review.
-
-On 2024-05-29 17:01:20 +0200, Geert Uytterhoeven wrote:
-> Hi Niklas,
-> 
-> On Mon, May 27, 2024 at 3:16 PM Niklas Söderlund
-> <niklas.soderlund+renesas@ragnatech.se> wrote:
-> > Add the VIN module clocks, which are used by the VIN modules on the
-> > Renesas R-Car V4M (R8A779H0) SoC.
+On Wed, May 29, 2024 at 5:30=E2=80=AFPM Niklas S=C3=B6derlund
+<niklas.soderlund+renesas@ragnatech.se> wrote:
+> On 2024-05-29 17:09:09 +0200, Geert Uytterhoeven wrote:
+> > On Mon, May 27, 2024 at 3:16=E2=80=AFPM Niklas S=C3=B6derlund
+> > <niklas.soderlund+renesas@ragnatech.se> wrote:
+> > > Add the CSI40 and CSI41 module clocks, which are used by the CSI-2
+> > > interfaces on the Renesas R-Car V4M (R8A779H0) SoC.
+> > >
+> > > Signed-off-by: Niklas S=C3=B6derlund <niklas.soderlund+renesas@ragnat=
+ech.se>
 > >
-> > Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-> 
-> Thanks for your patch!
-> 
-> > --- a/drivers/clk/renesas/r8a779h0-cpg-mssr.c
-> > +++ b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
-> > @@ -188,6 +188,22 @@ static const struct mssr_mod_clk r8a779h0_mod_clks[] = {
-> >         DEF_MOD("sdhi0",        706,    R8A779H0_CLK_SD0),
-> >         DEF_MOD("sydm1",        709,    R8A779H0_CLK_S0D6_PER),
-> >         DEF_MOD("sydm2",        710,    R8A779H0_CLK_S0D6_PER),
-> > +       DEF_MOD("vin0",         730,    R8A779H0_CLK_S0D1_VIO),
-> > +       DEF_MOD("vin1",         731,    R8A779H0_CLK_S0D1_VIO),
-> > +       DEF_MOD("vin2",         800,    R8A779H0_CLK_S0D1_VIO),
-> > +       DEF_MOD("vin3",         801,    R8A779H0_CLK_S0D1_VIO),
-> > +       DEF_MOD("vin4",         802,    R8A779H0_CLK_S0D1_VIO),
-> > +       DEF_MOD("vin5",         803,    R8A779H0_CLK_S0D1_VIO),
-> > +       DEF_MOD("vin6",         804,    R8A779H0_CLK_S0D1_VIO),
-> > +       DEF_MOD("vin7",         805,    R8A779H0_CLK_S0D1_VIO),
-> 
-> According to the documentation for the Module Stop Control Registers
-> 7 and 8, these are called "vin0[1-7]" instead of "vin[1-7]".
+> > Thanks for your patch!
+> >
+> > > --- a/drivers/clk/renesas/r8a779h0-cpg-mssr.c
+> > > +++ b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
+> > > @@ -176,6 +176,8 @@ static const struct mssr_mod_clk r8a779h0_mod_clk=
+s[] =3D {
+> > >         DEF_MOD("avb0:rgmii0",  211,    R8A779H0_CLK_S0D8_HSC),
+> > >         DEF_MOD("avb1:rgmii1",  212,    R8A779H0_CLK_S0D8_HSC),
+> > >         DEF_MOD("avb2:rgmii2",  213,    R8A779H0_CLK_S0D8_HSC),
+> > > +       DEF_MOD("csi40",        331,    R8A779H0_CLK_CSI),
+> > > +       DEF_MOD("csi41",        400,    R8A779H0_CLK_CSI),
+> >
+> > According to the documentation for the Module Stop Control Registers
+> > 3 and 4, these are called "csitop[01]".
+>
+> I noticed that too, the issue is how they are named on V4H and I thought
+> aligning the Gen4 board was a good idea. I don't feel strongly about
+> this, but before I send a v2.
+>
+> On V4H the bits are named SRT31 and SRT0, while the "Target Module for
+> Software Reset" lists them as "CSI40 (CSI-2-RX0)" and "CSI40
+> (CSI-2-RX1)". The later is the same for V4H and V4M, while the bit name
+> differs.
+>
+> Should we rename the V4H modules as well, keep the names for V4M, or do
+> we not really care the same modules have different names on V4H and V4M?
 
-Will fix.
+We already have other differences due to how the bits are named
+in (different revisions of) the different datasheets...
+Technically, nobody really cares about these clocks names, they just
+must be unique ;-)
 
-> 
-> > +       DEF_MOD("vin10",        806,    R8A779H0_CLK_S0D1_VIO),
-> > +       DEF_MOD("vin11",        807,    R8A779H0_CLK_S0D1_VIO),
-> > +       DEF_MOD("vin12",        808,    R8A779H0_CLK_S0D1_VIO),
-> > +       DEF_MOD("vin13",        809,    R8A779H0_CLK_S0D1_VIO),
-> > +       DEF_MOD("vin14",        810,    R8A779H0_CLK_S0D1_VIO),
-> > +       DEF_MOD("vin15",        811,    R8A779H0_CLK_S0D1_VIO),
-> > +       DEF_MOD("vin16",        812,    R8A779H0_CLK_S0D1_VIO),
-> > +       DEF_MOD("vin17",        813,    R8A779H0_CLK_S0D1_VIO),
-> 
-> According to Table 8.1.4a ("Lists of CPG clocks generated from PLL1")
-> the parent clock is S0D4_VIO.
+And apparently older revisions of the R-Car V4H docs use "csitop[01]", too.
+Oh well...
 
-Will fix.
+I guess I'll just apply this as-is, unless someone screams...
 
-> 
-> >         DEF_MOD("wdt1:wdt0",    907,    R8A779H0_CLK_R),
-> >         DEF_MOD("pfc0",         915,    R8A779H0_CLK_CP),
-> >         DEF_MOD("pfc1",         916,    R8A779H0_CLK_CP),
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
-> -- 
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.11.
 
--- 
-Kind Regards,
-Niklas Söderlund
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
