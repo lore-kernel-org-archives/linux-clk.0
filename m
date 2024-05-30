@@ -1,54 +1,54 @@
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D002B3DAC08
-	for <linux-clk@vger.kernel.org>; Thu, 30 May 2024 08:35:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6ECBB6F315
+	for <linux-clk@vger.kernel.org>; Thu, 30 May 2024 08:35:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717058136; cv=none; b=uvoILNlx5JRAQHcj9MYsGBvZlZK/mLJnH7gQvPWVOnN0CPXxw2gUNToiqF0mFRn80iAoQodum84hL+Ny0+1sYGYJO3O9IVyrozHyHwu39McPc59vtbVYI9GrgEQb/ysyB5xNCNEGOYa0fvaGzc0tmN4TvH+ku69WrQ0IhFOrnXE=
+	t=1717058140; cv=none; b=rPn0Ww25N2arnKtRxRhaR/ShqcmzJjU+TTcJ+XPP0FPjWm3QaPocCMGwFsOd3ydFrw215khgg4oPL8dnkd9JNMtiOm2AuE/R+QIVS5VpmBnyBuim3VSKQoGyfzu0uZgIAwEQystnAOB2sVLX9ySWpcI6AEEVJ+UlPYcVeBQcxEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717058136; c=relaxed/simple;
-	bh=2jqS2JCggZmT/Bgw5cZ1HuqlhOXJkBLK/dNVeJwD90I=;
+	s=arc-20240116; t=1717058140; c=relaxed/simple;
+	bh=3pvDzOqGauCPupjcFSsY1hPMvPhsIclEecQbEFRd8VQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Rv/IXwt4G0lmBWaz4PKQh+ZV4nxcz3+gkRsrCQcewrkDiI46ct5ySvsxJUh5LzpV5goLeIGlb2Cx8cmk9LZHBwl30H7luozBmvJm29aoKx6tlfXqlW83xNsFW2VAyIo7iw4KcPsLVNuoYFsdy0tkz9qkzUCzyOLR+XIU2/pTU/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=mb7kFP4k; arc=none smtp.client-ip=209.85.214.170
+	 MIME-Version; b=mI69Xqq40Hp3He0I+MwL04eNZJUyxyhTC9ei547IL7Vn+E1EIGGc+XORoCo1aREf4sPC3pccsXuA2NTDP7xO7Fkq41bWe/AzS/4HYl6Q944E3Rg1quqZRrMN+Rg2WxSKnkTk4CecdT95w4SDfI0ImNzz9ewVvVe16q524UG8N3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=KOKixVyj; arc=none smtp.client-ip=209.85.214.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mb7kFP4k"
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1f48bd643a0so4457365ad.3
-        for <linux-clk@vger.kernel.org>; Thu, 30 May 2024 01:35:34 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KOKixVyj"
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1f4a52d2688so5307695ad.3
+        for <linux-clk@vger.kernel.org>; Thu, 30 May 2024 01:35:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1717058134; x=1717662934; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1717058138; x=1717662938; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=IHkwqtBAKIh1FT18Wf08tYxtDsD9mBo3yYE6cpTa5lo=;
-        b=mb7kFP4k07RT+0hqjti94eOC+fepMqNXnLQDy6aPVIElQIzcv6GHqSAijgaBmZp1ak
-         pxepHxhfiA7gG3LQAZfh/Dc/VDsTSQzrsqYtP036OYsswtaO/JQbdLLsE8uqt4miEeXc
-         Gl0AEhXWLLMOdQwroO55iN2TI68cL5VELo8Hk=
+        bh=SmWglR2Ij5/TGj5MHHzWjORF1jpZWpClgT/eZSAiwmw=;
+        b=KOKixVyjJyxXE/zGv6pVX+zYl6HzS3mUlRy1hUupdMnTF4Lq0/PM7kFcWgGO3XRIoR
+         x4VFaFRmweMuNeZBuUG1G+Tcas3eXDdflTmELrEPqjYBOFl/XmEeKjjMh7w/sGwC1/Sq
+         I9Rhxoe8nqyJAUzDVhazgmtcPfEMkvHFCzO84=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717058134; x=1717662934;
+        d=1e100.net; s=20230601; t=1717058138; x=1717662938;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=IHkwqtBAKIh1FT18Wf08tYxtDsD9mBo3yYE6cpTa5lo=;
-        b=vFAYoF49k8k2HkWtcpei0wQuCRDNDnhfOOaRflxuGyT895us32KD5w4Z30RFVtUJKh
-         27Y4uf+BjactotKGUK8JUxeU3VQx3bDcu4Luijdc/HK1Oqa4GZS5jpoYNEaMRfeAkwyc
-         xUqg7wb6VVt+5GOYTYO7+2vNO0mkgYh3rzMrBoHN8VC9Lic4h3NqUwp6AiH4byl+yEF1
-         3dSTB/foDJuNWZbD8VBFfdzN63stMHN3JpkQJIGGrtsh8N+/p5wz9wd9Zdr0TH9nzq7B
-         W9sh3ygF2hyqwFTOEWFqJgmpTfgNKPCTHaXvGa13foqcKp8xAvEGfEMZthIA36DsgaoH
-         M+xg==
-X-Forwarded-Encrypted: i=1; AJvYcCXbw2K0DgZ30NpM9aAUhixiGFKSVZeNxdl6n3PPOzx9v8bCAizuKiq1GAMJfixs8JAIzTu7jF1YX279so4NprduV4CkQ72X5SJI
-X-Gm-Message-State: AOJu0Yxkt/vGOcNmgPbPVGJGAzgd4isx/P74x+k4jT01JgrRK9QwsmcI
-	7EDF7ZkVPsG3UK20JNBdBICw6wmNNKEZ/G0ZG6JngY+7RhZ+lid1OJGGOOzF/A==
-X-Google-Smtp-Source: AGHT+IGaMXKlAuHj3tKDXFrEymwDvO07A1BRFroXZlN02EvX5mN7HsOfQHvylgHcYJoSPTNjRI9s+A==
-X-Received: by 2002:a17:903:2095:b0:1f4:768b:445e with SMTP id d9443c01a7336-1f619605ee4mr11933665ad.24.1717058134222;
-        Thu, 30 May 2024 01:35:34 -0700 (PDT)
+        bh=SmWglR2Ij5/TGj5MHHzWjORF1jpZWpClgT/eZSAiwmw=;
+        b=MGatBwqK6DT7hKdXzcMgWKirXX++jjstg9umoGuIopjlyYA5NkWg13iafugfVRKPxm
+         KquSaE0DUF4VmxOb+aOOW92EPHWvRwvTXu7lOalvd/MImZ3PJ5plrCXOWIg7Xl2qr89v
+         e8hjUEXFnT8WyN0sRYcnYxnMZU1WPKrF3Q//eStKUP7/8fq/A2dcpcbNqIgytuqnrARo
+         OO85NqYmdSOm/gWeCJtA0pIRZ6kqAAI0oqgOJEhqnAeoNd57jHegKOo9wtP7F3pSB5sc
+         ldb/G7ImU5Rj14HD69/6WNgo9/oZAYSmGIpTrJCRnDXWh0dSfvb2ttubqiTqB0vR8yrn
+         Gg8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWI3679cgJ5HuIR9a4txl09k5mGFQLGZR8rsID49RyZv72xnNuL9M+HVAJpUNrMcZ2XuxZ81TTpxt1V6CL2H2+wKX0nE1scWXEp
+X-Gm-Message-State: AOJu0YyO2SPPEKTJoidrPYTTgR1/ZWePkIt57wuGYiTZoumVdIOTtYdF
+	QqE1SM3p0yrGyT+qBuAZaibnCfGPytJPUb/BXjKzneouH6nGf0iZe459jsPYkg==
+X-Google-Smtp-Source: AGHT+IFpzoyjS8oEHpsPco6/0czovfTG+BgxZDwOvkJUGlKruUTXsaiUOVp8Alhb12YxLjpScrPXfA==
+X-Received: by 2002:a17:902:74c8:b0:1f4:7f18:6d7c with SMTP id d9443c01a7336-1f61a4db927mr16665575ad.61.1717058137709;
+        Thu, 30 May 2024 01:35:37 -0700 (PDT)
 Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:65f0:63a9:90bb:50b8])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f617390fe7sm10950635ad.146.2024.05.30.01.35.31
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f617390fe7sm10950635ad.146.2024.05.30.01.35.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 01:35:33 -0700 (PDT)
+        Thu, 30 May 2024 01:35:37 -0700 (PDT)
 From: Chen-Yu Tsai <wenst@chromium.org>
 To: Frank Binns <frank.binns@imgtec.com>,
 	Matt Coster <matt.coster@imgtec.com>,
@@ -70,9 +70,9 @@ Cc: Chen-Yu Tsai <wenst@chromium.org>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-mediatek@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 4/6] drm/imagination: Add compatible string entry for Series6XT
-Date: Thu, 30 May 2024 16:35:03 +0800
-Message-ID: <20240530083513.4135052-5-wenst@chromium.org>
+Subject: [PATCH 5/6] arm64: dts: mediatek: mt8173: Fix MFG_ASYNC power domain clock
+Date: Thu, 30 May 2024 16:35:04 +0800
+Message-ID: <20240530083513.4135052-6-wenst@chromium.org>
 X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
 In-Reply-To: <20240530083513.4135052-1-wenst@chromium.org>
 References: <20240530083513.4135052-1-wenst@chromium.org>
@@ -84,26 +84,35 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The MediaTek MT8173 comes with a PowerVR Rogue GX6250, which is part
-of the Series6XT, another variation of the Rogue family of GPUs.
+The MFG_ASYNC domain, which is likely associated to the whole MFG block,
+currently specifies clk26m as its domain clock. This is bogus, since the
+clock is an external crystal with no controls. Also, the MFG block has
+a independent CLK_TOP_AXI_MFG_IN_SEL clock, which according to the block
+diagram, gates access to the hardware registers. Having this one as the
+domain clock makes much more sense. This also fixes access to the MFGTOP
+registers.
 
+Change the MFG_ASYNC domain clock to CLK_TOP_AXI_MFG_IN_SEL.
+
+Fixes: 8b6562644df9 ("arm64: dts: mediatek: Add mt8173 power domain controller")
 Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 ---
- drivers/gpu/drm/imagination/pvr_drv.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/mediatek/mt8173.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/imagination/pvr_drv.c b/drivers/gpu/drm/imagination/pvr_drv.c
-index 5c3b2d58d766..3d1a933c8303 100644
---- a/drivers/gpu/drm/imagination/pvr_drv.c
-+++ b/drivers/gpu/drm/imagination/pvr_drv.c
-@@ -1475,6 +1475,7 @@ pvr_remove(struct platform_device *plat_dev)
- 
- static const struct of_device_id dt_match[] = {
- 	{ .compatible = "img,img-axe", .data = NULL },
-+	{ .compatible = "img,powervr-6xt", .data = NULL },
- 	{}
- };
- MODULE_DEVICE_TABLE(of, dt_match);
+diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
+index 3458be7f7f61..136b28f80cc2 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
+@@ -497,7 +497,7 @@ power-domain@MT8173_POWER_DOMAIN_USB {
+ 				};
+ 				mfg_async: power-domain@MT8173_POWER_DOMAIN_MFG_ASYNC {
+ 					reg = <MT8173_POWER_DOMAIN_MFG_ASYNC>;
+-					clocks = <&clk26m>;
++					clocks = <&topckgen CLK_TOP_AXI_MFG_IN_SEL>;
+ 					clock-names = "mfg";
+ 					#address-cells = <1>;
+ 					#size-cells = <0>;
 -- 
 2.45.1.288.g0e0cd299f1-goog
 
