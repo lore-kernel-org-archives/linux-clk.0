@@ -1,110 +1,101 @@
-Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDBA422F1C;
-	Thu, 30 May 2024 02:47:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29EFB3207;
+	Thu, 30 May 2024 06:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717037254; cv=none; b=qO//XQQdo7JOYOSbFxKdEWCmFRdLMriIwTd5pEY0RHl+p601cik8gAYWV3+BWwxjd7fDewT/gwFmOfqF1dpcpp3wLM6synE7bN/mJcR2tliKghuyc0jp5sY2+hABL9tGLr4H+xbAfgBR2UaiDkzD7eU7f0wxr5KPgvah4xlqVOc=
+	t=1717051590; cv=none; b=a368lq7HVI2eKFWmqbJ1+Ps8a/t8rB5Pjy4N9p9vGcfismlTd+GEb58Ov4LPL20YdCNNYUp6f0dc/cZvMazKmo6jtiAPVN0IhD0mPaL6cEtC32cpzKY/BmfBSgCLxwKgn6cZh9SrJV2CYayeF/GOl10wBj8WKOeyQw2+m/mGMNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717037254; c=relaxed/simple;
-	bh=w8xAIUi83lsZKRL5bpSZiBIuQ3x6BmRhIORMqXVYgZ8=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References; b=XyAYyb+dZEtzAgSxbWl27Z7I4uyI0x2G/46Iyd5zcNkjbhBLqMR/Aqdc0DTgvhKEdTaS+67jq+uguVbK5IskCJDxEgpUq1fNtNft4wNJqX9tk18syzYh8TLZ3dVcrJO5mXATbnFlKvPX8y3WOHk3Qh0gyt0DiYDVgp46417U59E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 5BC1D2017F3;
-	Thu, 30 May 2024 04:47:31 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 198462017F2;
-	Thu, 30 May 2024 04:47:31 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id BE4B41820F77;
-	Thu, 30 May 2024 10:47:28 +0800 (+08)
-From: Shengjiu Wang <shengjiu.wang@nxp.com>
-To: p.zabel@pengutronix.de,
-	abelvesa@kernel.org,
-	peng.fan@nxp.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	marex@denx.de,
-	linux-clk@vger.kernel.org,
-	imx@lists.linux.dev,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	shengjiu.wang@gmail.com
-Subject: [PATCH v6 5/5] clk: imx: clk-audiomix: Correct parent clock for earc_phy and audpll
-Date: Thu, 30 May 2024 10:31:18 +0800
-Message-Id: <1717036278-3515-6-git-send-email-shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1717036278-3515-1-git-send-email-shengjiu.wang@nxp.com>
-References: <1717036278-3515-1-git-send-email-shengjiu.wang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+	s=arc-20240116; t=1717051590; c=relaxed/simple;
+	bh=akZLQVA6UdnpnCZMef9LejJZkaRHTEc88xOUZ+UFV7g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lKmP08iUvKra3e/673hCMvS0JQi++mG8HAMp3rY39eeXO0WYBDhS5r8mKPGbXvwLPA7gxWDNW6PjWjcU2G7uu6cXOyXANByHX0YvzUYlXK8/hHtEO2DTxPGI0FSTCMpyu+YJEuLrAR6/5xaLTAljPZL0X4U8c7GffwXnCB3JGPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-62a2424ecdaso5014527b3.1;
+        Wed, 29 May 2024 23:46:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717051586; x=1717656386;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zn1OTt+XuEgtvOgdmab/UKCFiabii+gzE+Wp06XUO0g=;
+        b=aGBjArw+J7hY3ef9EJB59UXV4PesenqwB3Bgm/xcdd3mFOw6OMNMDejAczANwrZaYx
+         xN9ucL1p7rrB5FcpNwsC+n7DEP3ks7b66B98esscBX+IDxEJDRqDI379jX6uxAl3zDIT
+         SNPlkWsOckjw5b2ncrkxxUfy0BHW3MsTQB8bnH4rUn45g7SQa2M1CPaHpslh/r646EuI
+         6y5zNILJCVDQeT2lJcqkAnkjeS8HTJ5SP7A2GhvkALFMnBXgsm2XyqyA09T2J2PP2yxS
+         EVRJUPNjyUQT9XvptFlb3r2Q7z7ZWmAi7UlGgiJbgrU7uTBiirOFtWhVtjnyHpv1+f3v
+         Z42A==
+X-Forwarded-Encrypted: i=1; AJvYcCXNJDcA995ZCns4GIm/Sie0Fbg8g40TSMGESXaQ7smRWuGC2ATifjqeGOtRwIGovWSonqv9+QZZ35pkn1NKYGa8GeAqw+EviZSS3PByD5i6dbMmeS8B4a/9XlUmsKZsHJwE8yOwhmt3Muv41wI=
+X-Gm-Message-State: AOJu0Yw+Jdoj6cn1Z1hEji8dmO5+aQRMxAe4gXS4iZ4fM1EzgJgo1TQS
+	mHsfeZoNqgh9r0LsjCeMA5rReZVhhkr716nak9ImNQtVpGGp+pSornDT+Bqr
+X-Google-Smtp-Source: AGHT+IGuw9viPOXNEwk3gAXxviQXQHpLJp9DkBhhoQzbL81CO06pm6rTT4jK2yJmgAk/3VGNh4mCQQ==
+X-Received: by 2002:a81:d403:0:b0:627:788e:94c7 with SMTP id 00721157ae682-62c6bbce86emr12988937b3.6.1717051585895;
+        Wed, 29 May 2024 23:46:25 -0700 (PDT)
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com. [209.85.219.177])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-62a0a535bb8sm27033617b3.119.2024.05.29.23.46.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 29 May 2024 23:46:25 -0700 (PDT)
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-dfa4ad7f6dfso462463276.1;
+        Wed, 29 May 2024 23:46:25 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXXH0LHDUhDM7OpzfkhlZL3NJS+8bbupcU1+uW9srbPfJTgh/eKTY4Xr9VBbfS1VJ9cB1ugnAYidCy4gETcyU+/HYPDOdwWUqfj3rK8/rsZzZG/NmtauNxAGLLYACyr7b4CXwhU020ud7etkvY=
+X-Received: by 2002:a05:6902:2006:b0:de5:852f:6afe with SMTP id
+ 3f1490d57ef6-dfa5a6144a3mr1574524276.30.1717051585210; Wed, 29 May 2024
+ 23:46:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <cover.1716975021.git.geert+renesas@glider.be> <9073a6bfb7791e492156331fa8a0ea87a7c7cef6.1716975021.git.geert+renesas@glider.be>
+ <20f4f283b9f842f3868363a3f078b2a4.sboyd@kernel.org>
+In-Reply-To: <20f4f283b9f842f3868363a3f078b2a4.sboyd@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 30 May 2024 08:46:12 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdV_FywMD5yDtq_J=n2028=X26qhwE_9A72EuzCtwj931A@mail.gmail.com>
+Message-ID: <CAMuHMdV_FywMD5yDtq_J=n2028=X26qhwE_9A72EuzCtwj931A@mail.gmail.com>
+Subject: Re: [PATCH 2/3] clk: renesas: cpg-lib: Use DEFINE_SPINLOCK() for
+ global spinlock
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Ye Bin <yebin10@huawei.com>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-According to Reference Manual of i.MX8MP
-The parent clock of "earc_phy" is "sai_pll_out_div2",
-The parent clock of "audpll" is "osc_24m".
+Hi Stephen,
 
-Add CLK_GATE_PARENT() macro for usage of specifying parent clock.
+On Wed, May 29, 2024 at 9:56=E2=80=AFPM Stephen Boyd <sboyd@kernel.org> wro=
+te:
+> Quoting Geert Uytterhoeven (2024-05-29 02:35:09)
+> > A global spinlock can be initialized automatically with
+> > DEFINE_SPINLOCK() rather than explicitly calling spin_lock_init().
+> >
+> > Suggested-by: Ye Bin <yebin10@huawei.com>
+> > Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > ---
+>
+> Shouldn't this be first so that the previous patch can use the
+> initialized spinlock?
 
-Fixes: 6cd95f7b151c ("clk: imx: imx8mp: Add audiomix block control")
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-Reviewed-by: Peng Fan <peng.fan@nxp.com>
----
- drivers/clk/imx/clk-imx8mp-audiomix.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+Order of the patches doesn't matter.
 
-diff --git a/drivers/clk/imx/clk-imx8mp-audiomix.c b/drivers/clk/imx/clk-imx8mp-audiomix.c
-index ad6eceb419cc..d8678b3230e4 100644
---- a/drivers/clk/imx/clk-imx8mp-audiomix.c
-+++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
-@@ -156,6 +156,15 @@ static const struct clk_parent_data clk_imx8mp_audiomix_pll_bypass_sels[] = {
- 		PDM_SEL, 2, 0						\
- 	}
- 
-+#define CLK_GATE_PARENT(gname, cname, pname)						\
-+	{								\
-+		gname"_cg",						\
-+		IMX8MP_CLK_AUDIOMIX_##cname,				\
-+		{ .fw_name = pname, .name = pname }, NULL, 1,		\
-+		CLKEN0 + 4 * !!(IMX8MP_CLK_AUDIOMIX_##cname / 32),	\
-+		1, IMX8MP_CLK_AUDIOMIX_##cname % 32			\
-+	}
-+
- struct clk_imx8mp_audiomix_sel {
- 	const char			*name;
- 	int				clkid;
-@@ -173,14 +182,14 @@ static struct clk_imx8mp_audiomix_sel sels[] = {
- 	CLK_GATE("earc", EARC_IPG),
- 	CLK_GATE("ocrama", OCRAMA_IPG),
- 	CLK_GATE("aud2htx", AUD2HTX_IPG),
--	CLK_GATE("earc_phy", EARC_PHY),
-+	CLK_GATE_PARENT("earc_phy", EARC_PHY, "sai_pll_out_div2"),
- 	CLK_GATE("sdma2", SDMA2_ROOT),
- 	CLK_GATE("sdma3", SDMA3_ROOT),
- 	CLK_GATE("spba2", SPBA2_ROOT),
- 	CLK_GATE("dsp", DSP_ROOT),
- 	CLK_GATE("dspdbg", DSPDBG_ROOT),
- 	CLK_GATE("edma", EDMA_ROOT),
--	CLK_GATE("audpll", AUDPLL_ROOT),
-+	CLK_GATE_PARENT("audpll", AUDPLL_ROOT, "osc_24m"),
- 	CLK_GATE("mu2", MU2_ROOT),
- 	CLK_GATE("mu3", MU3_ROOT),
- 	CLK_PDM,
--- 
-2.34.1
+r8a77970_cpg_mssr_init() in the R-Car V3M sub-driver calls into
+rcar_gen3_cpg_init() in the Gen3 family sub-driver, which initialized
+the spinlock.
 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
