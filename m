@@ -1,137 +1,189 @@
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCE4B176196
-	for <linux-clk@vger.kernel.org>; Thu, 30 May 2024 08:35:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28F646F2F4
+	for <linux-clk@vger.kernel.org>; Thu, 30 May 2024 08:51:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717058143; cv=none; b=DI4jiaLOD/snDEKEWtaKarUFMDjhSsRLkHJJo0ZoL22NnyFoUUeB29xcy03/L7IfIxRhiO7qam1mmf+cAKD98pjBWqAmgHddr8jCe1ls+quWJkfifhjZDSpCaMXoYpRfiKlab0YTntvX82c0Wzp6jvLyw38SZrPkowNEI7MWXxA=
+	t=1717059102; cv=none; b=iwO+jN07IYaNnT6Vczg+WqP3KjxvnJkvT/gNGjAAnG6Jo2sPXrI0oPfhQdGWcJEb79TWwfBCXCf7GoRhdUBNX+1CmJVgCBkd3ZRp8n0Ml+32K/Ty8056ALEXa1wmDSFZNyvk+6DGln+FAl89r6IMcdHnCIvTvxq3fJOaXv844rY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717058143; c=relaxed/simple;
-	bh=3sS+9gSsossoY+rGrRHB96KNj3HXC+IUQnbd1IFwUWo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fWv4ycFV7vIMCUtG3cO/CA2j+c0sEb7Kqvxl2F6J1JD2/5Dq7M43ADIhdhFs/iPVtcZxuVjd26+DS8kxmWJ0ESdoyEZQzBbjdkiVfyAfFGT90jIGRyR2jfCm2h6K9wxfik4H3QYQQVBjbzPuCCrou+byPMOINUYVqNIAytCve7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=I64wiQ3U; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="I64wiQ3U"
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-6f8ea5e3812so539630b3a.2
-        for <linux-clk@vger.kernel.org>; Thu, 30 May 2024 01:35:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1717058141; x=1717662941; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=P3dPYP7w2xcwwD4ezxBwzChfzLxfVatZgNqWhWYFewg=;
-        b=I64wiQ3Ub+DvAtsc0QmifTY54MOf3Tm8Q8CG4wE3gJARTBLhbTMb0MU65Rg52+OHDB
-         BkrqLi07nIiPIDvle4VjDFDyrhhmGb7PoUJXZueHZyQngQh280nL1dG1svOKqKjC9K5/
-         qIyPxBruLj61waIabnYZlKTUG3PELMCspqlus=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717058141; x=1717662941;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=P3dPYP7w2xcwwD4ezxBwzChfzLxfVatZgNqWhWYFewg=;
-        b=oCwQTAix09UpsTs2CipWnZCKp3C0R9H/G+wpWV5aChCX6BU6iqzyME5H8Dh8Oe17MP
-         ZCYGcsD77184f73kz9k2o3qS723go883ZUmOL8Rq9hwwau9FiVrByRAi5aq8eakMTnwX
-         jTYycvKLG/9iyeltj3JoBuHbjR3uuewcMdAnAikYg3srC/tYaE9Q+ttCki/6dhkRYUHC
-         JBl88TBNpWR31zciPyvo9cZieMXrQj32GrdKFGNBMDVOblJmduRlZBxxoR4mDIeVR/lx
-         ljIOMUNUhmLxsxKJ7SePTFsxJGym11s888EgSCWbQWL/Gp8AzjsqmugoH6i9rIPhl2rp
-         ijww==
-X-Forwarded-Encrypted: i=1; AJvYcCV0VOL6d8dkN11I2hnVFbsU/PBZ6y4L72X9VrB9Cw8od/+qdmIiWAzOlslAEZp9GxORbMexCWIabppbLu/+jHp4viev2YvuISgu
-X-Gm-Message-State: AOJu0YxQ8mJ1Ln57D4r5fXdWQ7MYEQNhUaehVt3ClX9a7rtUUJdadJnb
-	paynlYEL8XI8TRX9CkVby+Ge0aAUXAH+lvDpJJKkvsQFwcK6Yxiol421pmXPFw==
-X-Google-Smtp-Source: AGHT+IFl9n7DktKEcpEJ4WGQz7AcjFouxFiRzMPk6dDKBcDqPpXqbxbt5Utw0hXKMF4XUXofIeg46w==
-X-Received: by 2002:a05:6a21:99a3:b0:1b1:ec17:e59c with SMTP id adf61e73a8af0-1b264618a95mr1679425637.61.1717058141165;
-        Thu, 30 May 2024 01:35:41 -0700 (PDT)
-Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:65f0:63a9:90bb:50b8])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f617390fe7sm10950635ad.146.2024.05.30.01.35.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 01:35:40 -0700 (PDT)
-From: Chen-Yu Tsai <wenst@chromium.org>
-To: Frank Binns <frank.binns@imgtec.com>,
-	Matt Coster <matt.coster@imgtec.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Chen-Yu Tsai <wenst@chromium.org>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 6/6] arm64: dts: mediatek: mt8173: Add GPU device nodes
-Date: Thu, 30 May 2024 16:35:05 +0800
-Message-ID: <20240530083513.4135052-7-wenst@chromium.org>
-X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
-In-Reply-To: <20240530083513.4135052-1-wenst@chromium.org>
-References: <20240530083513.4135052-1-wenst@chromium.org>
+	s=arc-20240116; t=1717059102; c=relaxed/simple;
+	bh=ldijqlRHr9EX+84TGvk38cU+KkmKKfH4BPsMyQjQM7U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AblV9R1EFbqycAJyQtnOi5TqdmHKJJDGnAVRPjiuEMJzYAbLLo4MwbOH2npErQ/uIPuzq1IYZkJ/NJfGh7Zvvs5l0lC/qLYfBHRekElsc3bmudE1jTjDiFm/dSEqe+cxJRGRV6fYV6TUmmAJK0jHXOy+eFrZ6RP3L6v3L4MAcqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1sCbVE-0006tG-Ko; Thu, 30 May 2024 10:51:16 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1sCbVD-003Zad-T7; Thu, 30 May 2024 10:51:15 +0200
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1sCbVD-00039q-2Z;
+	Thu, 30 May 2024 10:51:15 +0200
+Date: Thu, 30 May 2024 10:51:15 +0200
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Shengjiu Wang <shengjiu.wang@nxp.com>
+Cc: p.zabel@pengutronix.de, abelvesa@kernel.org, peng.fan@nxp.com,
+	mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org,
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+	marex@denx.de, linux-clk@vger.kernel.org, imx@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, shengjiu.wang@gmail.com
+Subject: Re: [PATCH v6 2/5] clk: imx: clk-audiomix: Add reset controller
+Message-ID: <20240530085115.ttmzx4dve4x6nep2@pengutronix.de>
+References: <1717036278-3515-1-git-send-email-shengjiu.wang@nxp.com>
+ <1717036278-3515-3-git-send-email-shengjiu.wang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1717036278-3515-3-git-send-email-shengjiu.wang@nxp.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
-The MediaTek MT8173 comes with a PowerVR Rogue GX6250, which is part
-of the Series6XT, another variation of the Rogue family of GPUs.
+On 24-05-30, Shengjiu Wang wrote:
+> Audiomix block control can be a reset controller for
+> Enhanced Audio Return Channel (EARC), which is one of
+> modules in this audiomix subsystem.
+> 
+> The reset controller is supported by the auxiliary device
+> framework.
+> 
+> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  drivers/clk/imx/Kconfig               |  1 +
+>  drivers/clk/imx/clk-imx8mp-audiomix.c | 60 +++++++++++++++++++++++++++
+>  2 files changed, 61 insertions(+)
+> 
+> diff --git a/drivers/clk/imx/Kconfig b/drivers/clk/imx/Kconfig
+> index 6da0fba68225..9edfb030bea9 100644
+> --- a/drivers/clk/imx/Kconfig
+> +++ b/drivers/clk/imx/Kconfig
+> @@ -81,6 +81,7 @@ config CLK_IMX8MP
+>  	tristate "IMX8MP CCM Clock Driver"
+>  	depends on ARCH_MXC || COMPILE_TEST
+>  	select MXC_CLK
+> +	select AUXILIARY_BUS
+>  	help
+>  	    Build the driver for i.MX8MP CCM Clock Driver
+>  
+> diff --git a/drivers/clk/imx/clk-imx8mp-audiomix.c b/drivers/clk/imx/clk-imx8mp-audiomix.c
+> index b381d6f784c8..a3dc2f3606ee 100644
+> --- a/drivers/clk/imx/clk-imx8mp-audiomix.c
+> +++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
+> @@ -5,6 +5,7 @@
+>   * Copyright (C) 2022 Marek Vasut <marex@denx.de>
+>   */
+>  
+> +#include <linux/auxiliary_bus.h>
+>  #include <linux/clk-provider.h>
+>  #include <linux/device.h>
+>  #include <linux/io.h>
+> @@ -13,6 +14,7 @@
+>  #include <linux/of.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/pm_runtime.h>
+> +#include <linux/slab.h>
+>  
+>  #include <dt-bindings/clock/imx8mp-clock.h>
+>  
+> @@ -217,6 +219,60 @@ struct clk_imx8mp_audiomix_priv {
+>  	struct clk_hw_onecell_data clk_data;
+>  };
+>  
+> +#if IS_ENABLED(CONFIG_RESET_CONTROLLER)
+> +
+> +static void clk_imx8mp_audiomix_reset_unregister_adev(void *_adev)
+> +{
+> +	struct auxiliary_device *adev = _adev;
+> +
+> +	auxiliary_device_delete(adev);
+> +	auxiliary_device_uninit(adev);
+> +}
+> +
+> +static void clk_imx8mp_audiomix_reset_adev_release(struct device *dev)
+> +{
+> +	struct auxiliary_device *adev = to_auxiliary_dev(dev);
+> +
+> +	kfree(adev);
+> +}
+> +
+> +static int clk_imx8mp_audiomix_reset_controller_register(struct device *dev,
+> +							 struct clk_imx8mp_audiomix_priv *priv)
+> +{
+> +	struct auxiliary_device *adev __free(kfree) = NULL;
+> +	int ret;
 
-On top of the GPU is a glue layer that handles some clock and power
-signals.
+Since the reset-controller is optional you need to check the existence
+of the '#reset-cells' property before you register it.
 
-Add device nodes for both.
+Regards,
+  Marco
 
-Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
----
- arch/arm64/boot/dts/mediatek/mt8173.dtsi | 24 ++++++++++++++++++++++++
- 1 file changed, 24 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-index 136b28f80cc2..3d7b9cc20a16 100644
---- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-+++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-@@ -993,6 +993,30 @@ u2port1: usb-phy@11291000 {
- 			};
- 		};
- 
-+		gpu: gpu@13000000 {
-+			compatible = "mediatek,mt8173-gpu", "img,powervr-6xt";
-+			reg = <0 0x13000000 0 0x10000>;
-+			interrupts = <GIC_SPI 217 IRQ_TYPE_LEVEL_LOW>;
-+			clocks = <&mfgtop CLK_MFG_G3D>,
-+				 <&mfgtop CLK_MFG_MEM>,
-+				 <&mfgtop CLK_MFG_AXI>;
-+			clock-names = "core", "mem", "sys";
-+			power-domains = <&mfgtop>;
-+		};
-+
-+		mfgtop: clock-controller@13fff000 {
-+			compatible = "mediatek,mt8173-mfgtop";
-+			reg = <0 0x13fff000 0 0x1000>;
-+			clocks = <&topckgen CLK_TOP_AXI_MFG_IN_SEL>,
-+				 <&topckgen CLK_TOP_MEM_MFG_IN_SEL>,
-+				 <&topckgen CLK_TOP_MFG_SEL>,
-+				 <&clk26m>;
-+			clock-names = "sys", "mem", "core", "clk26m";
-+			power-domains = <&spm MT8173_POWER_DOMAIN_MFG>;
-+			#clock-cells = <1>;
-+			#power-domain-cells = <0>;
-+		};
-+
- 		mmsys: syscon@14000000 {
- 			compatible = "mediatek,mt8173-mmsys", "syscon";
- 			reg = <0 0x14000000 0 0x1000>;
--- 
-2.45.1.288.g0e0cd299f1-goog
-
+> +
+> +	adev = kzalloc(sizeof(*adev), GFP_KERNEL);
+> +	if (!adev)
+> +		return -ENOMEM;
+> +
+> +	adev->name = "reset";
+> +	adev->dev.parent = dev;
+> +	adev->dev.release = clk_imx8mp_audiomix_reset_adev_release;
+> +
+> +	ret = auxiliary_device_init(adev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = auxiliary_device_add(adev);
+> +	if (ret) {
+> +		auxiliary_device_uninit(adev);
+> +		return ret;
+> +	}
+> +
+> +	return devm_add_action_or_reset(dev, clk_imx8mp_audiomix_reset_unregister_adev,
+> +					no_free_ptr(adev));
+> +}
+> +
+> +#else /* !CONFIG_RESET_CONTROLLER */
+> +
+> +static int clk_imx8mp_audiomix_reset_controller_register(struct clk_imx8mp_audiomix_priv *priv)
+> +{
+> +	return 0;
+> +}
+> +
+> +#endif /* !CONFIG_RESET_CONTROLLER */
+> +
+>  static void clk_imx8mp_audiomix_save_restore(struct device *dev, bool save)
+>  {
+>  	struct clk_imx8mp_audiomix_priv *priv = dev_get_drvdata(dev);
+> @@ -337,6 +393,10 @@ static int clk_imx8mp_audiomix_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		goto err_clk_register;
+>  
+> +	ret = clk_imx8mp_audiomix_reset_controller_register(dev, priv);
+> +	if (ret)
+> +		goto err_clk_register;
+> +
+>  	pm_runtime_put_sync(dev);
+>  	return 0;
+>  
+> -- 
+> 2.34.1
+> 
+> 
+> 
