@@ -1,45 +1,67 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF90036AF8;
-	Thu, 30 May 2024 16:53:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1A49335A7
+	for <linux-clk@vger.kernel.org>; Thu, 30 May 2024 17:04:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717088022; cv=none; b=Ckbs4O4NRF9YObozN2I+w/CA64y5NgObjcVK4UVUCECxa/3bc7iWW4VDVunMdQSM++GRL0slDeLI/FKt+MGzCtOuGuwKINDSVDUAR1HU4U5/izvyART6xL/nO+kwqfDWUUEVUtC/XXUZs+Dnj6Fhbo1KAuyNTttNQ+Nd4AF53Yw=
+	t=1717088663; cv=none; b=mIGECcMa26lV6OaYbv16twMI7sldCeDZ9hQxvsL4MR1a9P8MNXyyNxExpk/ixy482uVKR4lYsHN0fqjYNsGa0vu9fagMsbYks+HXNaceK057gqSsz/u/HPm4x7DzpKpqx2AmyjTh4dqd8RQ8yDgkU6kKa3v6LrhAn/twJSWd3zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717088022; c=relaxed/simple;
-	bh=csreo/Y/zB61/KT65YfRul5d1wWNhzkYFyul/L8HqhQ=;
+	s=arc-20240116; t=1717088663; c=relaxed/simple;
+	bh=GUhIFx0DxmQYYxaRlO+vduVq9JOab9d63Oldn8iPYSA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P5d2fYh3/Jf5+970nbphkODD/jNOW5lKX7zsFaOW8DQghzbHzpuUbwBtIk5TwRU4J54TUdtrI+nlJX5TIhQtpl+oCpGdpx9MCaDH+KtoCU1lGP11gwjd6k/V/6AgAz1wNEFeV3swaoMA/xSKNkIUAf6zHtm2zolu3xRzMOV7+j4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sixJYJKW; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=cVYGADo/+/CYp7cPcsmLzY3bLpY+eCfX55xsU+9A4RhZe++hYIpZZv5sN4oY+B+xpWljtO56Z/bZ4Is71IvbfSWEf3z2RJoE7P8V1RKk+EU+tHcibb7v14HYhQFstd+nk9DvkLBy8ib9Xqy5mxKFLunShU2F96veyB5iNxB23zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JjYQgEN4; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sixJYJKW"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DF57C2BBFC;
-	Thu, 30 May 2024 16:53:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717088022;
-	bh=csreo/Y/zB61/KT65YfRul5d1wWNhzkYFyul/L8HqhQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sixJYJKWs8HReCy7Tg16UifgqrjMgDVvixJBeAub/KuvifQBz1Xf5+POmNDgV3Mnq
-	 KzLdP0gPRLUp16g7RaYaF+gfZJhKyK3Xkyo8VpXO8hDbQmOJCeSIHclpysYtLIkvca
-	 CB2avUe5wOFTZSRhQZg1mik/iZq4bWuMGKtaZkQAN4L4OOk0UN4N8LNBnXXtHu/aU+
-	 RxUnjfLjT66r4mFHP10sX3skfw85sQgKd6RMCwHRKbcr8yjZD2DvB71Hk9sPfDx+6K
-	 1bnN76QaoAwFfdDMTbvwv/mpcpXlOQ+wDhs2zp8oTZ+G+rzlUMmTwXUk/WtOYlYkJM
-	 oc6fCpoNOmWbA==
-Date: Thu, 30 May 2024 22:23:35 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JjYQgEN4"
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ea80a18094so13087521fa.0
+        for <linux-clk@vger.kernel.org>; Thu, 30 May 2024 10:04:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717088660; x=1717693460; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HhpLPu9sBC2Dg4sX7rOAPkoVOjXa1NOeJfwNC7SE+Rc=;
+        b=JjYQgEN4WGAmLVrONxgCCVOyo0k8X6u43Bstd2AAbIVssErgZz3dpuM12HGDWdvLNH
+         MVrQm4ZSRQU8h1Z2/+rhlmYDxf03dPwzktlEs8onJZQsMEBOcDpeChyGQAiX7SrFQtE0
+         TCNec9c3gA+29H+xcYSnRkVP628u80SIDDPzzkJTsynEExEUbnffHi7FUNMvUqc/TC2S
+         ZVa9TQ6XA9c+Lyk1cPg9Q5TDMopkudSWtcAwT7zCDATL0WrrrQsOFixZ5EAEaznnDjkj
+         HHn5aEi8+db8si8hWppQd47Jt6YxXVSJIbw3wRi2pIn8RPep0LAVyEUVPXIsjh1z1m6p
+         A/vQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717088660; x=1717693460;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HhpLPu9sBC2Dg4sX7rOAPkoVOjXa1NOeJfwNC7SE+Rc=;
+        b=C/Ts3D1FfW2NvFxL5RvGJ+jv5/Yi1ZCddm/zu1WYCyjqnh1OL4rXxxvFnUVHUZRHbb
+         kvqmhJhNK0xwU5C7m1XiiP1mfIm+my2Ab6tArpl5iy2TcxMnCafJ0UlavQrboIOuanZi
+         TFXeDe730Ay9L8q/oxgfzDi4ekVK26UbwOhoDbLnz4nIG2V9rG27L4PHkQjYUb7/7NTA
+         r8BIsRY+mYs2onL0iP/XOdibQ+7fOYIJLZ+/bBYf/wHN1qIh+3cpmmXnPuvkZwGDH5cD
+         ktMaySmCSMZARk+CLbDbc89wq7J+qrgliiNlRH9zuvyP1L+ko8O40bt3oVdC0BALEEr9
+         /Ojg==
+X-Forwarded-Encrypted: i=1; AJvYcCVY/Ei+pI5c64A7egAPNRLNcG8iPD5ZIAyGh8AsS6xW1dtdjel1Y7h3EnWYC0OlWvkbRxmemrEUUWcMYWt4JrXdQWkCRKDCj7/O
+X-Gm-Message-State: AOJu0YxFKU8L5m6cVW9L3Y1d9adkEWo6PGecXPzG0snkWZGX/Q+PBSXh
+	7JwBrFy/k7Rj+uKt3YGJMATKnpaALL7RBiZAItamnX+dhhFiSdmQgjEXuvebmgM=
+X-Google-Smtp-Source: AGHT+IE7Gk5KUz2dhEVZPQ6lNyxESfnnqiVlBWPJ2z7t9MZy/2nNvv0lc4R4rPSUy+15xktWUbz8ew==
+X-Received: by 2002:a2e:b74b:0:b0:2e9:550b:f28f with SMTP id 38308e7fff4ca-2ea84c39e2amr6188601fa.6.1717088659955;
+        Thu, 30 May 2024 10:04:19 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ea91bee55fsm185011fa.58.2024.05.30.10.04.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 May 2024 10:04:19 -0700 (PDT)
+Date: Thu, 30 May 2024 20:04:18 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Sibi Sankar <quic_sibis@quicinc.com>, linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rajendra Nayak <quic_rjendra@quicinc.com>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Sibi Sankar <quic_sibis@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 Subject: Re: [PATCH] clk: qcom: gcc-x1e80100: Fix halt_check for all 3 USB
  PHY pipe clocks
-Message-ID: <20240530165335.GB11438@thinkpad>
+Message-ID: <mmsorfdaef7xwmgrnx2fuqoqjqvjwdamea5uslvbdptr4c33tb@rjgsqk3jj6ln>
 References: <20240530-x1e80100-clk-gcc-fix-halt-check-for-usb-phy-pipe-clks-v1-1-16c6f4dccbd5@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -47,70 +69,30 @@ List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
 In-Reply-To: <20240530-x1e80100-clk-gcc-fix-halt-check-for-usb-phy-pipe-clks-v1-1-16c6f4dccbd5@linaro.org>
 
 On Thu, May 30, 2024 at 07:48:44PM +0300, Abel Vesa wrote:
 > Since the pipe clocks are fed by the QMP PHYs, they are not under the
 > GCC control, therefore the halt bit might not get. This will lead to
+
+Nit: might not get... set? cleared?
+
 > the clock driver reporting the clock as stuck, but that is inaccurate.
 > So instead of waiting for the halt bit to get set, just use the
 > HALT_DELAY flag.
 > 
-
-Isn't this behavior applicable to PCIe pipe clocks also?
-
-- Mani
-
 > Fixes: 161b7c401f4b ("clk: qcom: Add Global Clock controller (GCC) driver for X1E80100")
 > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
 > ---
 >  drivers/clk/qcom/gcc-x1e80100.c | 6 +++---
 >  1 file changed, 3 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/clk/qcom/gcc-x1e80100.c b/drivers/clk/qcom/gcc-x1e80100.c
-> index 1404017be918..afff7cd14848 100644
-> --- a/drivers/clk/qcom/gcc-x1e80100.c
-> +++ b/drivers/clk/qcom/gcc-x1e80100.c
-> @@ -5186,7 +5186,7 @@ static struct clk_regmap_mux gcc_usb3_prim_phy_pipe_clk_src = {
->  
->  static struct clk_branch gcc_usb3_prim_phy_pipe_clk = {
->  	.halt_reg = 0x39068,
-> -	.halt_check = BRANCH_HALT_VOTED,
-> +	.halt_check = BRANCH_HALT_DELAY,
->  	.hwcg_reg = 0x39068,
->  	.hwcg_bit = 1,
->  	.clkr = {
-> @@ -5257,7 +5257,7 @@ static struct clk_regmap_mux gcc_usb3_sec_phy_pipe_clk_src = {
->  
->  static struct clk_branch gcc_usb3_sec_phy_pipe_clk = {
->  	.halt_reg = 0xa1068,
-> -	.halt_check = BRANCH_HALT_VOTED,
-> +	.halt_check = BRANCH_HALT_DELAY,
->  	.hwcg_reg = 0xa1068,
->  	.hwcg_bit = 1,
->  	.clkr = {
-> @@ -5327,7 +5327,7 @@ static struct clk_regmap_mux gcc_usb3_tert_phy_pipe_clk_src = {
->  
->  static struct clk_branch gcc_usb3_tert_phy_pipe_clk = {
->  	.halt_reg = 0xa2068,
-> -	.halt_check = BRANCH_HALT_VOTED,
-> +	.halt_check = BRANCH_HALT_DELAY,
->  	.hwcg_reg = 0xa2068,
->  	.hwcg_bit = 1,
->  	.clkr = {
-> 
-> ---
-> base-commit: 9d99040b1bc8dbf385a8aa535e9efcdf94466e19
-> change-id: 20240530-x1e80100-clk-gcc-fix-halt-check-for-usb-phy-pipe-clks-ef8cf5b5631b
-> 
-> Best regards,
-> -- 
-> Abel Vesa <abel.vesa@linaro.org>
-> 
-> 
+
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
 
 -- 
-மணிவண்ணன் சதாசிவம்
+With best wishes
+Dmitry
