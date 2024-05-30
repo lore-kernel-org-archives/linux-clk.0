@@ -1,87 +1,131 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ADE6176238
-	for <linux-clk@vger.kernel.org>; Thu, 30 May 2024 13:52:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D96E51DA53
+	for <linux-clk@vger.kernel.org>; Thu, 30 May 2024 14:05:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717077150; cv=none; b=lf5XlXjgPYlWFFkJt1ez5JH9b+72+mgzkViTA3LIwZqZoZ1EnenDBb3MaCiJDmN24gfKukw7QM+8BZVRyefFh8Ipe8KsX3XwMIbAlllNOtqvWUuUy7KkZqkhLHMjvMVYGderSh2/3v52ep0t9lSwO07yAcDtelEdg8EkBitNHrs=
+	t=1717077934; cv=none; b=ewpgkFrtrf6IrdwTQtje3Jelp+J8+51Ez7eCduWOujBXpEqXU2s7scADevi70syXfI+9Tf62k1tOcnry5Q70QXmopGxKw4BAWucLQNxm39QX84SCiZHoOmWW/BpURK3VlPr7y3lanxfXmafSd1Ov5rHYXOxxByd0Wwjpeiyb9kI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717077150; c=relaxed/simple;
-	bh=r7Nq+l30WnAPJMcoY9sAdA5J4veJVYeW/rCzNbYA8To=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mAZjCTYuZQGZAdcixHMFEkM4D3YiPaLzaKoZxBvnStkfveKuJlNiNF6HzmMtVAqFeXCUKkdtBxLpu4OA4/beYxmcNZUG7hJQwVnhqyjzg/XEBdXZyVD14kbHMik9QkRVxsSOSPQlh/aqxkBbCtG7HLPcI+6em2Hn9mzPVt/2EIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Ur4nqItg; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1717077934; c=relaxed/simple;
+	bh=ESd0gNsxszqbQaloGtME7oCQ3PNGImKH+e9qTcBH1qk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=JqXqQeAqqg3K/aoM0Ty7lhELz/b6XEomhajvzaRYjrIna7Y2fzoMbvj27sj6DbMklzFftwWRxzoGw5LgX7/Er8l1E3aV3ptZSI2oKgjHYm9KPUmmBYC7MfzJfhxrg1F0KctAEbxyAssAF2yu6eooxIpaVCtb86HIOR6W9qwVkLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L/B8RX2Y; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Ur4nqItg"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-354e22bc14bso877633f8f.1
-        for <linux-clk@vger.kernel.org>; Thu, 30 May 2024 06:52:26 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L/B8RX2Y"
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-57a2406f951so696701a12.1
+        for <linux-clk@vger.kernel.org>; Thu, 30 May 2024 07:05:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1717077145; x=1717681945; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=z5xCJKQ4ugEjWsoL7YroP9b14wp/Gl8VnioYQ/OGksw=;
-        b=Ur4nqItgT5FN41pNzH3cNluCsLUW42sh+9pI6jIt2sIgGw9jk4mPVXBNIb1JWr8ZAi
-         qXSP2VwlGiUDh5igso93zJbEG8kPccH23sjpCcU1cEk8vR1JIYqScax7FU9IxMgS2g5+
-         D35KHeNHA0m+oZyQ0IVWagzlGPbP/8N7oyPg0vlqC4Qn3VKUpE3PlGMFDZ4gqqDk/QY+
-         Gu6ydYQcGghV8AvRSrlEHfppfSioCxxF+M9Xw7lAb2DnGrBuiqjTbZIZeJzUQfSyESZ9
-         Hoaxt2hw6JVeIdiP8yvzrv+7krvdt6HEHSzElAfJQzo5lvXz9Lqd+vucwFGFgT23otuH
-         NHHg==
+        d=linaro.org; s=google; t=1717077931; x=1717682731; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ozNVAnxqE0lL+qF5HV2h+4/UhN7PSqlhKtJqHseh0HI=;
+        b=L/B8RX2YxSaggGp7tw6FdKibbb1unU3VPPON/2IXs3mh+d50C+Fs6Olj3BGQGD5L6q
+         /+38Nkwht8CgJhrrK4NZqszbRS0XqIy7lnEX8y28t6KB5wGKH7bFwYyyPLY0hJip9wlX
+         u2GWI2xeVoilzIsioojVNWS+ECDBzLr+CErKNjDMm/ms5IK+b5Vd4s+dfNWQ/He8Pykb
+         TAUvNL+U4Zu6JVBo6hwwywcE/s50PqlHsN9A5v6AdnQxvmZH/L7dw6HAWtl7wxwY1IxA
+         nsGT43SXv9v+CpJTwqXu5nKuym1H7+P81ND8iVhXqJbP0lZDsJyJ5XX2+BKyAeSr3jni
+         Xojg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717077145; x=1717681945;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=z5xCJKQ4ugEjWsoL7YroP9b14wp/Gl8VnioYQ/OGksw=;
-        b=t7kvZHYPnFRVUfDvL81f5Uh710S8+4Jc1xSQlHX06IaEZ1MdgMi4LFWRhJ/qiZGjJb
-         r1ZDZDUFb5Ket7H0m4VOHAT71LqapcCh12pWFkCBqvXYcJ6S75SdoEh4vFhXDhv9zWXy
-         X5ZpOnFEfjXxdE1B608R7BnwvrSLGG+6mwvm5lQCZ9nbJURJnEt1D0Tvqrd5oqBPxbq2
-         ob2Y/12VtxG5zsxGYN8zGGZUU9EP2kkRYoSaTS+hvDC6/wgMJEz0EtNzYFwnYFjFyGlY
-         W6dlEKSa4ZF3qoEF05zaEJ/0jk3PLcLV+ISL45kiHMFpFevuJo0LAInOnEtbpRZscfwo
-         R5Ng==
-X-Forwarded-Encrypted: i=1; AJvYcCXmyMjwMYP0rDdXZut5yqF2rf9itTD/dfMWrJveTmZsc0mjzkwXQP+Eo3rUUhyTtoqiKEZB5hC2J0sE26U5jfLch799L+N90qgG
-X-Gm-Message-State: AOJu0YypjBf+zn2UPd/hZGxZkGJqQOz1j+RkNKycF3JVHCLAucr5dD5t
-	eH5s90mrNQNDjz2WpPP5uYbvBxbwMoRdIIiT2QtMaEqMs9+xZtXl+aUCyJo3BB0=
-X-Google-Smtp-Source: AGHT+IFc1suDxNrUDOh2i/f0r05vdv6ugqX8mGy8cQBMw1VGOc/OpcHdjJLyHRt+fpRtRE8s9RTS+g==
-X-Received: by 2002:adf:fed1:0:b0:354:f815:8b85 with SMTP id ffacd0b85a97d-35dc02bd8c2mr1521286f8f.67.1717077144893;
-        Thu, 30 May 2024 06:52:24 -0700 (PDT)
-Received: from [192.168.1.172] ([93.5.22.158])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-35dbdb6f34fsm2471094f8f.73.2024.05.30.06.52.22
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 30 May 2024 06:52:23 -0700 (PDT)
-Message-ID: <27d42cbd-5985-4b05-80cc-59ab21b3435d@baylibre.com>
-Date: Thu, 30 May 2024 15:52:22 +0200
+        d=1e100.net; s=20230601; t=1717077931; x=1717682731;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ozNVAnxqE0lL+qF5HV2h+4/UhN7PSqlhKtJqHseh0HI=;
+        b=Sz2VnIHJ+opKxr+x5LyW6rG4nUgZpZtC7lKNze+lPqI+XZu/OXPzRQYRX/pZxVUn2R
+         Cv6g0eZPYg5KS49PMqBF7uUwKpqblzt6QnLXagctUirVur1G5NbhkaKhYP0ALvpr8U6G
+         DK71o76qWChU09xv9dSSNRojqDKvWPBzkNH8GcYcZff9Dw50qvudhlte9bVwSQB3c4ZI
+         bfWGO+8BU/EmNraXTMSRzmqQSgX2OfmmUikf6RIzCEnxAjNf9Uiaw+8d50rOeIR0VqOT
+         LnQ7aJpcf/+KiKhc/0PvpxecsMvHRiMjwlYyxfyTWcJVFPih4CakBWK8/Xa64/AM3rWA
+         yZbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXQISeav/lynSAWXLWzyETGl1nsMP/N5LDZz3c4sczwkzP1PK1einOhX8vg6RJlJp1MDAGVk0GeqIcfCVcYEv2lXcmBJH1evhlV
+X-Gm-Message-State: AOJu0YwPBojf3AwxlcXsuO+qyD6COf9u8/e3Z0xxFYAg7zTOOihPgCYh
+	CwqJoklWZ0Baw52yWHX8pJwRVWWKMpdyEmwTrpNMrUPlS9QFyO9RIVIc2hfJ8C547lemIqA/GbH
+	I
+X-Google-Smtp-Source: AGHT+IF/EgUdnO2R7u5brYgNfOJ73YaN+O9YN+pDX7gvTyYiHIa/WTphpHtPpGYtAukA9aMRxwrvhw==
+X-Received: by 2002:a17:906:2550:b0:a66:7666:fc64 with SMTP id a640c23a62f3a-a667666ffcemr88422766b.4.1717077930807;
+        Thu, 30 May 2024 07:05:30 -0700 (PDT)
+Received: from [127.0.1.1] ([188.27.161.69])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a663848c9aasm49630566b.207.2024.05.30.07.05.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 May 2024 07:05:30 -0700 (PDT)
+From: Abel Vesa <abel.vesa@linaro.org>
+Date: Thu, 30 May 2024 17:05:24 +0300
+Subject: [PATCH] clk: qcom: gcc-x1e80100: Set parent rate for USB3 sec and
+ tert PHY pipe clks
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: mediatek: Add a module description where missing
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- sboyd@kernel.org
-Cc: quic_jjohnson@quicinc.com, mturquette@baylibre.com,
- matthias.bgg@gmail.com, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, kernel@collabora.com
-References: <20240528121320.160685-1-angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-From: Alexandre Mergnat <amergnat@baylibre.com>
-In-Reply-To: <20240528121320.160685-1-angelogioacchino.delregno@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20240530-x1e80100-clk-gcc-usb3-sec-tert-set-parent-rate-v1-1-7b2b04cad545@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAKOHWGYC/x2NwQrCMBAFf6Xs2YXdpAX1V8RDTF9rUGLZpFIo/
+ XeDt5nLzE4FllDo2u1k+KaSPrmJnjqKz5BncBqbkxPXy+CFN8VZVITj+8VzjLyWh+eCyBVWG1R
+ egiFXtlDBvZNwgVP1o1KLLoYpbf/h7X4cPxJIJf+AAAAA
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1259; i=abel.vesa@linaro.org;
+ h=from:subject:message-id; bh=ESd0gNsxszqbQaloGtME7oCQ3PNGImKH+e9qTcBH1qk=;
+ b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBmWIel1xURmFNij+ie/FjjZdjHt5Q7HW7elDTa7
+ lANeTceYDSJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZliHpQAKCRAbX0TJAJUV
+ VnMiEACLXvkhX7K/Kz112drtLnDhAMbNb6HDLeh++fS2QCXs9qI+bIjcbdPR6/30p/LtLiLWIJb
+ cNK46wGJVKbF2oXJlCr4ESUl0lbRlFXM5RRafqQl8DUWiFpYkRDkqpDa3l3nSf+ola7xybzXgsY
+ F5V7jgqIRTeYb4HjYsJ/3TB+YLEgejcaVhksIHEbi2Nk8Cczc0X4M9TkJYWl2oRg7frJtffiC2K
+ VJAbg3WTVGwFP0a/cUK9AEqaAWLHfD4z8gk8qZDHylXYu0vbC5wtb58lpmfXTB8v3hws6qJR9H8
+ O6aqeWGh8Y/L+4+O+cwtKri95vnQEmRPsTUoQrqi2SA/qhEGfTH4uctL4HXkmgLHh9HJMp6Vs5Y
+ GOyiB8b8PhFXXV3W3S42oGLE194Pq/kBlNI3gWhM8a12+SUfwIwAtwrfgmEWm7E3gC12+rNLAhg
+ oHqyu7C0FyXM4Bm1fM7y5WWNGdbL8tpPUQBxc6OmWe5DzwGHKTwzZL2XtNAUemLc7uGrwCimIFa
+ +2dmQChazyn6oDAWyUQ8MeUOJE+jRWOwGfY+oFUOm1NpeTr0TKdXRpgosj1/eUdKjkkmtmsn4xt
+ w6YLx9za4BQJKWqHIcGMX++JtUCMcrJJe+CnkZG5vp54+8ENcD/LNr13FAE1Jx/b0BIxgrdZbyl
+ zWF9Hj8ix0ZoohQ==
+X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
+ fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
 
-Reviewed-by: Alexandre Mergnat <amergnat@baylibre.com>
+Allow the USB3 second and third GCC PHY pipe clocks to propagate the
+rate to the pipe clocks provided by the QMP combo PHYs. The first
+instance is already doing that.
 
+Fixes: ("161b7c401f4b clk: qcom: Add Global Clock controller (GCC) driver for X1E80100")
+Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+---
+ drivers/clk/qcom/gcc-x1e80100.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-On 28/05/2024 14:13, AngeloGioacchino Del Regno wrote:
-> Add a MODULE_DESCRIPTION() on all drivers that miss it to avoid
-> modpost warnings.
+diff --git a/drivers/clk/qcom/gcc-x1e80100.c b/drivers/clk/qcom/gcc-x1e80100.c
+index 1404017be918..8c72fdc99fd9 100644
+--- a/drivers/clk/qcom/gcc-x1e80100.c
++++ b/drivers/clk/qcom/gcc-x1e80100.c
+@@ -5269,6 +5269,7 @@ static struct clk_branch gcc_usb3_sec_phy_pipe_clk = {
+ 				&gcc_usb3_sec_phy_pipe_clk_src.clkr.hw,
+ 			},
+ 			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+@@ -5339,6 +5340,7 @@ static struct clk_branch gcc_usb3_tert_phy_pipe_clk = {
+ 				&gcc_usb3_tert_phy_pipe_clk_src.clkr.hw,
+ 			},
+ 			.num_parents = 1,
++			.flags = CLK_SET_RATE_PARENT,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
 
+---
+base-commit: 9d99040b1bc8dbf385a8aa535e9efcdf94466e19
+change-id: 20240530-x1e80100-clk-gcc-usb3-sec-tert-set-parent-rate-420a9e2113d1
+
+Best regards,
 -- 
-Regards,
-Alexandre
+Abel Vesa <abel.vesa@linaro.org>
+
