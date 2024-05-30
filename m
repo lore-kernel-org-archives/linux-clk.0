@@ -1,54 +1,54 @@
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6431B1C0DEA
-	for <linux-clk@vger.kernel.org>; Thu, 30 May 2024 08:35:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D002B3DAC08
+	for <linux-clk@vger.kernel.org>; Thu, 30 May 2024 08:35:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717058134; cv=none; b=WVqNZ03WQapPfOeXuk7oF+uqtR8WE+QMsEkyAZMWfgy8aR/hJitxx9mnJdnoCmnvZ6UyAV3epu7/KVYPSveZetLjGbwaWjXSYj2DXOkC0ZhuDraQQU8Y8OIipdOpjQWL3o11DYz6dxfAsdVgqgYXQ0htumLukzBNWt1xuFH6S2A=
+	t=1717058136; cv=none; b=uvoILNlx5JRAQHcj9MYsGBvZlZK/mLJnH7gQvPWVOnN0CPXxw2gUNToiqF0mFRn80iAoQodum84hL+Ny0+1sYGYJO3O9IVyrozHyHwu39McPc59vtbVYI9GrgEQb/ysyB5xNCNEGOYa0fvaGzc0tmN4TvH+ku69WrQ0IhFOrnXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717058134; c=relaxed/simple;
-	bh=fOA9PRzoSPSdOmLcXpSzgPJnmVrBIbISbwQee7WCels=;
+	s=arc-20240116; t=1717058136; c=relaxed/simple;
+	bh=2jqS2JCggZmT/Bgw5cZ1HuqlhOXJkBLK/dNVeJwD90I=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=JLjT6xgWQuXlTvonkAsRXp+E9QucmuFavaD12J+9PQS/zc5Mc1qYa04fMGCahvO2v+mX5AOEMyNME91JPtA8T7fuVYjNBxA8V8P9X2MEqSr+bGHetd42JpGw/1/0h0wdErX8moHyh/tns+7hLM+c2Bt3U5ZAps9XlkUKhvX2jI0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=bctwU5M3; arc=none smtp.client-ip=209.85.214.176
+	 MIME-Version; b=Rv/IXwt4G0lmBWaz4PKQh+ZV4nxcz3+gkRsrCQcewrkDiI46ct5ySvsxJUh5LzpV5goLeIGlb2Cx8cmk9LZHBwl30H7luozBmvJm29aoKx6tlfXqlW83xNsFW2VAyIo7iw4KcPsLVNuoYFsdy0tkz9qkzUCzyOLR+XIU2/pTU/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=mb7kFP4k; arc=none smtp.client-ip=209.85.214.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="bctwU5M3"
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-1f44b4404dfso5771645ad.0
-        for <linux-clk@vger.kernel.org>; Thu, 30 May 2024 01:35:31 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mb7kFP4k"
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1f48bd643a0so4457365ad.3
+        for <linux-clk@vger.kernel.org>; Thu, 30 May 2024 01:35:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1717058131; x=1717662931; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1717058134; x=1717662934; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=7xwThRWWm7RGJSY39HVyy4ljf9OK8/1xd1SRHdwBmpo=;
-        b=bctwU5M331EWFWasLTXDWtsRprL4uk6qi8hPZrnKFQLPV5zdQ+AcKI9xijUe1d1CSI
-         uenStIs4Qb9q9cSH6GlkmA7dPx38xuAnuDnZQaddXJOJNz3HdqNYU1rc9CQoopDKmjkd
-         QVfnq/oIUN4Z+HdD3MwFAJt/DoJYWW4UFOshE=
+        bh=IHkwqtBAKIh1FT18Wf08tYxtDsD9mBo3yYE6cpTa5lo=;
+        b=mb7kFP4k07RT+0hqjti94eOC+fepMqNXnLQDy6aPVIElQIzcv6GHqSAijgaBmZp1ak
+         pxepHxhfiA7gG3LQAZfh/Dc/VDsTSQzrsqYtP036OYsswtaO/JQbdLLsE8uqt4miEeXc
+         Gl0AEhXWLLMOdQwroO55iN2TI68cL5VELo8Hk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717058131; x=1717662931;
+        d=1e100.net; s=20230601; t=1717058134; x=1717662934;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=7xwThRWWm7RGJSY39HVyy4ljf9OK8/1xd1SRHdwBmpo=;
-        b=p5JLuUxIsc+HdPpg0Jdt8/olK52TIUVT51liYUM6AIdSn0x0ALlPa769m9NC0+JCeL
-         1+J5ATYlbHZIV340CKS2HKbGOkHA7n+o1BUGcudOAN8Xl3eGK77xSJhNEgi8Hgp6w0JM
-         O39B/GJV8XBmStROZgT3fpCBHrzkYkeUVh6vmZikZFHQeXZmFERGvS679q4UsNGlRbOH
-         FT7GXDUBs4UK7gn8ZP4lnlkW4r6H13nwnDeP35EKgjr8ofo1jBeKj9dgT4wqBXt1taVf
-         DY8/MEWeii9psrhNQNgAKs3r3DFsoRSIxPiaqFogm7WqSjAa/wlcIk5WFfa4o3uU15MT
-         BoxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUKUfoUPzkl8vrbWYMjPSg5O2qkCcgrX9Ckl5sIavwyXYRIkqO5iG/+fHB4/sdX9NAkdb+ojwFIcZz/v2MSNcqKbzxgHLZBHDLJ
-X-Gm-Message-State: AOJu0YyHZAek9lZNUswwntzOEzpNajiPxUG0SXCsf25xwOnvkhs/tvsO
-	uGz7zhMU3YNTYBQ5VsWOUB6zYc5sPhCfL7+NiHA7IOMtg/EvcPgCMVp2aCfESw==
-X-Google-Smtp-Source: AGHT+IEp028TMUUWRl/RXoMRYp1icLkfUsk+YnlWATTbz/4qqOD7Tx9V/9ogbJ57638g/PX+8PWjow==
-X-Received: by 2002:a17:902:c409:b0:1f5:e796:f26a with SMTP id d9443c01a7336-1f6193f2c1cmr16752955ad.5.1717058130799;
-        Thu, 30 May 2024 01:35:30 -0700 (PDT)
+        bh=IHkwqtBAKIh1FT18Wf08tYxtDsD9mBo3yYE6cpTa5lo=;
+        b=vFAYoF49k8k2HkWtcpei0wQuCRDNDnhfOOaRflxuGyT895us32KD5w4Z30RFVtUJKh
+         27Y4uf+BjactotKGUK8JUxeU3VQx3bDcu4Luijdc/HK1Oqa4GZS5jpoYNEaMRfeAkwyc
+         xUqg7wb6VVt+5GOYTYO7+2vNO0mkgYh3rzMrBoHN8VC9Lic4h3NqUwp6AiH4byl+yEF1
+         3dSTB/foDJuNWZbD8VBFfdzN63stMHN3JpkQJIGGrtsh8N+/p5wz9wd9Zdr0TH9nzq7B
+         W9sh3ygF2hyqwFTOEWFqJgmpTfgNKPCTHaXvGa13foqcKp8xAvEGfEMZthIA36DsgaoH
+         M+xg==
+X-Forwarded-Encrypted: i=1; AJvYcCXbw2K0DgZ30NpM9aAUhixiGFKSVZeNxdl6n3PPOzx9v8bCAizuKiq1GAMJfixs8JAIzTu7jF1YX279so4NprduV4CkQ72X5SJI
+X-Gm-Message-State: AOJu0Yxkt/vGOcNmgPbPVGJGAzgd4isx/P74x+k4jT01JgrRK9QwsmcI
+	7EDF7ZkVPsG3UK20JNBdBICw6wmNNKEZ/G0ZG6JngY+7RhZ+lid1OJGGOOzF/A==
+X-Google-Smtp-Source: AGHT+IGaMXKlAuHj3tKDXFrEymwDvO07A1BRFroXZlN02EvX5mN7HsOfQHvylgHcYJoSPTNjRI9s+A==
+X-Received: by 2002:a17:903:2095:b0:1f4:768b:445e with SMTP id d9443c01a7336-1f619605ee4mr11933665ad.24.1717058134222;
+        Thu, 30 May 2024 01:35:34 -0700 (PDT)
 Received: from wenstp920.tpe.corp.google.com ([2401:fa00:1:10:65f0:63a9:90bb:50b8])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f617390fe7sm10950635ad.146.2024.05.30.01.35.27
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1f617390fe7sm10950635ad.146.2024.05.30.01.35.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 01:35:30 -0700 (PDT)
+        Thu, 30 May 2024 01:35:33 -0700 (PDT)
 From: Chen-Yu Tsai <wenst@chromium.org>
 To: Frank Binns <frank.binns@imgtec.com>,
 	Matt Coster <matt.coster@imgtec.com>,
@@ -70,9 +70,9 @@ Cc: Chen-Yu Tsai <wenst@chromium.org>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-mediatek@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 3/6] dt-bindings: gpu: powervr-rogue: Add MediaTek MT8173 GPU
-Date: Thu, 30 May 2024 16:35:02 +0800
-Message-ID: <20240530083513.4135052-4-wenst@chromium.org>
+Subject: [PATCH 4/6] drm/imagination: Add compatible string entry for Series6XT
+Date: Thu, 30 May 2024 16:35:03 +0800
+Message-ID: <20240530083513.4135052-5-wenst@chromium.org>
 X-Mailer: git-send-email 2.45.1.288.g0e0cd299f1-goog
 In-Reply-To: <20240530083513.4135052-1-wenst@chromium.org>
 References: <20240530083513.4135052-1-wenst@chromium.org>
@@ -84,66 +84,26 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The MediaTek MT8173 comes with a PowerVR Rogue GX6250, which is one
-of the Series6XT GPUs, another sub-family of the Rogue family.
-
-This was part of the very first few versions of the PowerVR submission,
-but was later dropped. The compatible string has been updated to follow
-the new naming scheme adopted for the AXE series.
-
-In a previous iteration of the PowerVR binding submission [1], the
-number of clocks required for the 6XT family was mentioned to be
-always 3. This is also reflected here.
-
-[1] https://lore.kernel.org/dri-devel/6eeccb26e09aad67fb30ffcd523c793a43c79c2a.camel@imgtec.com/
+The MediaTek MT8173 comes with a PowerVR Rogue GX6250, which is part
+of the Series6XT, another variation of the Rogue family of GPUs.
 
 Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 ---
- .../bindings/gpu/img,powervr-rogue.yaml       | 24 +++++++++++++++----
- 1 file changed, 20 insertions(+), 4 deletions(-)
+ drivers/gpu/drm/imagination/pvr_drv.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
-index 256e252f8087..48aa205b66b4 100644
---- a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
-+++ b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
-@@ -12,10 +12,17 @@ maintainers:
+diff --git a/drivers/gpu/drm/imagination/pvr_drv.c b/drivers/gpu/drm/imagination/pvr_drv.c
+index 5c3b2d58d766..3d1a933c8303 100644
+--- a/drivers/gpu/drm/imagination/pvr_drv.c
++++ b/drivers/gpu/drm/imagination/pvr_drv.c
+@@ -1475,6 +1475,7 @@ pvr_remove(struct platform_device *plat_dev)
  
- properties:
-   compatible:
--    items:
--      - enum:
--          - ti,am62-gpu
--      - const: img,img-axe # IMG AXE GPU model/revision is fully discoverable
-+    oneOf:
-+      - items:
-+          - enum:
-+              - mediatek,mt8173-gpu
-+          # PowerVR 6XT GPU model/revision is fully discoverable
-+          - const: img,powervr-6xt
-+      - items:
-+          - enum:
-+              - ti,am62-gpu
-+          # IMG AXE GPU model/revision is fully discoverable
-+          - const: img,img-axe
- 
-   reg:
-     maxItems: 1
-@@ -56,6 +63,15 @@ allOf:
-       properties:
-         clocks:
-           maxItems: 1
-+  - if:
-+      properties:
-+        compatible:
-+          contains:
-+            const: img,powervr-6xt
-+    then:
-+      properties:
-+        clocks:
-+          minItems: 3
- 
- examples:
-   - |
+ static const struct of_device_id dt_match[] = {
+ 	{ .compatible = "img,img-axe", .data = NULL },
++	{ .compatible = "img,powervr-6xt", .data = NULL },
+ 	{}
+ };
+ MODULE_DEVICE_TABLE(of, dt_match);
 -- 
 2.45.1.288.g0e0cd299f1-goog
 
