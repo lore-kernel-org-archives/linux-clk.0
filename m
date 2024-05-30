@@ -1,350 +1,340 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D655183961
-	for <linux-clk@vger.kernel.org>; Thu, 30 May 2024 09:06:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D34315444F;
+	Thu, 30 May 2024 09:59:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717059976; cv=none; b=HvGwYRV7WQ/8dKZtDwlbJQ99MfceIaF/HWJ75jIWuVwRh10FvSpAtofzF1hXEL7IDehX2Obb7Qt7muxtn4+BRWRfVlGIs8hAAJLS2Td+Ca40gw+yqW9HaqvWtWiVlIs+RXx1zHkBRQQ4eJ2IlxRnJPnjUz+4MekZWoO92GHITFU=
+	t=1717063189; cv=none; b=t0fTtWtsehAxFvv1B/hKBz/7FpcXS3GcedBFKfwrLtl9ROz7oJrwCtWLNI2g8vy0yH1mIKlNx9gMWqjPwGJuL3R5gEZ++XtTsAKmXtRjVpJrpj/YISvWDShC8vdT2kBAV47YVx7IgyXs04jujIM5j4ia95CjBQhdWtP4E8rFB7w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717059976; c=relaxed/simple;
-	bh=j879v3knqvytxXz7DWl2Ufn9Fu7PF9YwKCUZ0eX9xBY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s6E3VxDnK3bxrvvj0PUiiYLQ+DOXPcAD0ebX48dVWcjOn6L1mDpq1/1c+xAPSJqSoswvIIF2hquNcawtJU+fAfMNSlskkRnQhyuxlMwaL+y0NsBHCGIlmr4pYB6MIe5tjHyP4BpC1+/OFL4CE0xCK/3ExClw/yLzTMz8fJ3iwp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1sCbjS-0000lO-Kl; Thu, 30 May 2024 11:05:58 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1sCbjS-003ZoP-5V; Thu, 30 May 2024 11:05:58 +0200
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1sCbjS-0003T0-0D;
-	Thu, 30 May 2024 11:05:58 +0200
-Date: Thu, 30 May 2024 11:05:58 +0200
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc: p.zabel@pengutronix.de, abelvesa@kernel.org, peng.fan@nxp.com,
-	mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org,
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-	marex@denx.de, linux-clk@vger.kernel.org, imx@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, shengjiu.wang@gmail.com
-Subject: Re: [PATCH v6 3/5] reset: imx-aux: Add i.MX auxiliary reset driver
-Message-ID: <20240530090558.53reobf2zea22oi2@pengutronix.de>
-References: <1717036278-3515-1-git-send-email-shengjiu.wang@nxp.com>
- <1717036278-3515-4-git-send-email-shengjiu.wang@nxp.com>
+	s=arc-20240116; t=1717063189; c=relaxed/simple;
+	bh=AKGRadsf1J118sookOiZjS+CmUusRlK9aPzsjgCfevk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sYmASTjZkXS0qGU0/4GVcr65uP6/GMNjLPpsip7UoEyjKaE/XMcbn3nOyV/3Ar6yKHX2r0ZQPKA61zbz8OijjZkBM5iRd/23ynJ/UWnJNMzJrf0jwPW1SJTWHvX9KdNm6q6Wa/lYj1GSQvLij2XtLcrhHYQcDMKP3DRAamBo37U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=0RnaC8ad; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="0RnaC8ad"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1717063185;
+	bh=AKGRadsf1J118sookOiZjS+CmUusRlK9aPzsjgCfevk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=0RnaC8adx3r6RnjUwZDZVM2zdWIDKgwUqypeZAS44ng+fEfbkf45OP1RK3QXx8j3w
+	 t/X9k9HvueIiGEEZ5s7iDfXJuXmgI6FB486yd3ogx0jxvP3C/V1ZJYxNbxfTftacat
+	 62RVZTErmbuiItNr8Hgeyvp7Mer4MTrui9f7BY5FlLVuQ06BJnhIDxRRkL7589Cy/x
+	 xxdOPuNSQkziKp/ReKWqlXinBAA+iy4xaZUCgsAWEHHtMc1lNS8fVqw0AlGuSdKa76
+	 alLZAiZolBAmBApBMaqEoTddiEvX9ygTPjIrnktbdWjn1S8EkDvyOIbzq1HiCMpTth
+	 nNlqZs6sH8iYQ==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 1A0A437821A7;
+	Thu, 30 May 2024 09:59:44 +0000 (UTC)
+Message-ID: <5a5842d7-adad-410b-bac2-9e5cb03ae18c@collabora.com>
+Date: Thu, 30 May 2024 11:59:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1717036278-3515-4-git-send-email-shengjiu.wang@nxp.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/6] clk: mediatek: Add mt8173-mfgtop driver
+To: Chen-Yu Tsai <wenst@chromium.org>, Frank Binns <frank.binns@imgtec.com>,
+ Matt Coster <matt.coster@imgtec.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
+Cc: David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20240530083513.4135052-1-wenst@chromium.org>
+ <20240530083513.4135052-3-wenst@chromium.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240530083513.4135052-3-wenst@chromium.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi,
-
-On 24-05-30, Shengjiu Wang wrote:
-> Add support for the resets on i.MX8MP Audio Block Control module,
-> which includes the EARC PHY software reset and EARC controller
-> software reset. The reset controller is created using the auxiliary
-> device framework and set up in the clock driver.
+Il 30/05/24 10:35, Chen-Yu Tsai ha scritto:
+> The MFG (GPU) block on the MT8173 has a small glue layer, named MFG_TOP
+> in the datasheet, that contains clock gates, some power sequence signal
+> delays, and other unknown registers that get toggled when the GPU is
+> powered on.
 > 
-> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> The clock gates are exposed as clocks provided by a clock controller,
+> while the power sequencing bits are exposed as one singular power domain.
+> 
+> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
 > ---
->  drivers/reset/Kconfig         |   8 ++
->  drivers/reset/Makefile        |   1 +
->  drivers/reset/reset-imx-aux.c | 217 ++++++++++++++++++++++++++++++++++
-			    ^
-You make use of the auxiliary bus but this isn't a aux driver, it's the
-i.MX8MP EARC reset driver. According the TRM only the EARC reset bits
-are covered by the AUDIOMIX blk-ctrl.
-
->  3 files changed, 226 insertions(+)
->  create mode 100644 drivers/reset/reset-imx-aux.c
+>   drivers/clk/mediatek/Kconfig             |   9 +
+>   drivers/clk/mediatek/Makefile            |   1 +
+>   drivers/clk/mediatek/clk-mt8173-mfgtop.c | 240 +++++++++++++++++++++++
+>   3 files changed, 250 insertions(+)
+>   create mode 100644 drivers/clk/mediatek/clk-mt8173-mfgtop.c
 > 
-> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-> index 7112f5932609..38fdf05b326b 100644
-> --- a/drivers/reset/Kconfig
-> +++ b/drivers/reset/Kconfig
-> @@ -91,6 +91,14 @@ config RESET_IMX7
->  	help
->  	  This enables the reset controller driver for i.MX7 SoCs.
->  
-> +config RESET_IMX_AUX
-> +	tristate "i.MX Auxiliary Reset Driver"
-			^
-              Same applies here
-
-> +	depends on CLK_IMX8MP
-> +	select AUXILIARY_BUS
-> +	default CLK_IMX8MP
+> diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
+> index 70a005e7e1b1..9e279c739f1c 100644
+> --- a/drivers/clk/mediatek/Kconfig
+> +++ b/drivers/clk/mediatek/Kconfig
+> @@ -500,6 +500,15 @@ config COMMON_CLK_MT8173_IMGSYS
+>   	help
+>   	  This driver supports MediaTek MT8173 imgsys clocks.
+>   
+> +config COMMON_CLK_MT8173_MFGTOP
+> +	tristate "Clock and power driver for MediaTek MT8173 mfgtop"
+> +	depends on COMMON_CLK_MT8173
+> +	default COMMON_CLK_MT8173
+> +	select PM_GENERIC_DOMAINS
+> +	select PM_GENERIC_DOMAINS_OF
 > +	help
-> +	  This enables the auxiliary reset controller driver for i.MX.
+> +	  This driver supports MediaTek MT8173 mfgtop clocks and power domain.
 > +
->  config RESET_INTEL_GW
->  	bool "Intel Reset Controller Driver"
->  	depends on X86 || COMPILE_TEST
-> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-> index fd8b49fa46fc..f078da14c327 100644
-> --- a/drivers/reset/Makefile
-> +++ b/drivers/reset/Makefile
-> @@ -14,6 +14,7 @@ obj-$(CONFIG_RESET_BRCMSTB_RESCAL) += reset-brcmstb-rescal.o
->  obj-$(CONFIG_RESET_GPIO) += reset-gpio.o
->  obj-$(CONFIG_RESET_HSDK) += reset-hsdk.o
->  obj-$(CONFIG_RESET_IMX7) += reset-imx7.o
-> +obj-$(CONFIG_RESET_IMX_AUX) += reset-imx-aux.o
->  obj-$(CONFIG_RESET_INTEL_GW) += reset-intel-gw.o
->  obj-$(CONFIG_RESET_K210) += reset-k210.o
->  obj-$(CONFIG_RESET_LANTIQ) += reset-lantiq.o
-> diff --git a/drivers/reset/reset-imx-aux.c b/drivers/reset/reset-imx-aux.c
+>   config COMMON_CLK_MT8173_MMSYS
+>          tristate "Clock driver for MediaTek MT8173 mmsys"
+>          depends on COMMON_CLK_MT8173
+> diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
+> index eeccfa039896..fdd3a76e12a1 100644
+> --- a/drivers/clk/mediatek/Makefile
+> +++ b/drivers/clk/mediatek/Makefile
+> @@ -77,6 +77,7 @@ obj-$(CONFIG_COMMON_CLK_MT8167_VDECSYS) += clk-mt8167-vdec.o
+>   obj-$(CONFIG_COMMON_CLK_MT8173) += clk-mt8173-apmixedsys.o clk-mt8173-infracfg.o \
+>   				   clk-mt8173-pericfg.o clk-mt8173-topckgen.o
+>   obj-$(CONFIG_COMMON_CLK_MT8173_IMGSYS) += clk-mt8173-img.o
+> +obj-$(CONFIG_COMMON_CLK_MT8173_MFGTOP) += clk-mt8173-mfgtop.o
+>   obj-$(CONFIG_COMMON_CLK_MT8173_MMSYS) += clk-mt8173-mm.o
+>   obj-$(CONFIG_COMMON_CLK_MT8173_VDECSYS) += clk-mt8173-vdecsys.o
+>   obj-$(CONFIG_COMMON_CLK_MT8173_VENCSYS) += clk-mt8173-vencsys.o
+> diff --git a/drivers/clk/mediatek/clk-mt8173-mfgtop.c b/drivers/clk/mediatek/clk-mt8173-mfgtop.c
 > new file mode 100644
-> index 000000000000..61c353abc84e
+> index 000000000000..85fa7a7453ed
 > --- /dev/null
-> +++ b/drivers/reset/reset-imx-aux.c
-> @@ -0,0 +1,217 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +++ b/drivers/clk/mediatek/clk-mt8173-mfgtop.c
+> @@ -0,0 +1,240 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
 > +/*
-> + * Copyright 2024 NXP
+> + * Copyright (c) 2024 Google LLC
+> + * Author: Chen-Yu Tsai <wenst@chromium.org>
+> + *
+> + * Based on driver in downstream ChromeOS v5.15 kernel.
+> + *
+> + * Copyright (c) 2014 MediaTek Inc.
+> + * Author: Chiawen Lee <chiawen.lee@mediatek.com>
 > + */
 > +
-> +#include <linux/auxiliary_bus.h>
-> +#include <linux/device.h>
-> +#include <linux/io.h>
+> +#include <dt-bindings/clock/mt8173-clk.h>
+> +
+> +#include <linux/bitfield.h>
+> +#include <linux/clk.h>
+> +#include <linux/mfd/syscon.h>
 > +#include <linux/module.h>
 > +#include <linux/of.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_platform.h>
 > +#include <linux/platform_device.h>
-> +#include <linux/reset-controller.h>
+> +#include <linux/pm_domain.h>
+> +#include <linux/pm_runtime.h>
+> +#include <linux/regmap.h>
 > +
-> +/*
-> + * The reset does not support the feature and corresponding
-> + * values are not valid
-> + */
-> +#define ASSERT_NONE     BIT(0)
-> +#define DEASSERT_NONE   BIT(1)
-> +#define STATUS_NONE     BIT(2)
+> +#include "clk-gate.h"
+> +#include "clk-mtk.h"
 > +
-> +/* When set this function is activated by setting(vs clearing) this bit */
-> +#define ASSERT_SET      BIT(3)
-> +#define DEASSERT_SET    BIT(4)
-> +#define STATUS_SET      BIT(5)
-> +
-> +/* The following are the inverse of the above and are added for consistency */
-> +#define ASSERT_CLEAR    (0 << 3)
-> +#define DEASSERT_CLEAR  (0 << 4)
-> +#define STATUS_CLEAR    (0 << 5)
-> +
-> +/**
-> + * struct imx_reset_ctrl - reset control structure
-> + * @assert_offset: reset assert control register offset
-> + * @assert_bit: reset assert bit in the reset assert control register
-> + * @deassert_offset: reset deassert control register offset
-> + * @deassert_bit: reset deassert bit in the reset deassert control register
-> + * @status_offset: reset status register offset
-> + * @status_bit: reset status bit in the reset status register
-> + * @flags: reset flag indicating how the (de)assert and status are handled
-> + */
-> +struct imx_reset_ctrl {
-> +	u32 assert_offset;
-> +	u32 assert_bit;
-> +	u32 deassert_offset;
-> +	u32 deassert_bit;
-> +	u32 status_offset;
-> +	u32 status_bit;
-> +	u32 flags;
-> +};
-
-Why do we make it this compicated for an simple EARC module reset? I
-understand that you want to provide a generic driver which can be
-re-used but there is actual no other user and may will get no other user
-in the future too. Therefore I would like to keep it simple at the
-begin and adapt the code on-demand.
-
-Regards,
-  Marco
-
-> +struct imx_reset_data {
-> +	const struct imx_reset_ctrl *rst_ctrl;
-> +	size_t rst_ctrl_num;
+> +static const struct mtk_gate_regs mfg_cg_regs = {
+> +	.sta_ofs = 0x0000,
+> +	.clr_ofs = 0x0008,
+> +	.set_ofs = 0x0004,
 > +};
 > +
-> +struct imx_aux_reset_priv {
-> +	struct reset_controller_dev rcdev;
-> +	void __iomem *base;
-> +	const struct imx_reset_data *data;
+> +#define GATE_MFG(_id, _name, _parent, _shift, _flags)	\
+> +		GATE_MTK_FLAGS(_id, _name, _parent, &mfg_cg_regs, _shift, &mtk_clk_gate_ops_setclr, _flags)
+
+Extra tabulation: please fix
+
+> +
+> +/* TODO: The block actually has dividers for the core and mem clocks. */
+> +static const struct mtk_gate mfg_clks[] = {
+> +	GATE_MFG(CLK_MFG_AXI, "mfg_axi", "axi_mfg_in_sel", 0, CLK_SET_RATE_PARENT),
+> +	GATE_MFG(CLK_MFG_MEM, "mfg_mem", "mem_mfg_in_sel", 1, CLK_SET_RATE_PARENT),
+> +	GATE_MFG(CLK_MFG_G3D, "mfg_g3d", "mfg_sel", 2, CLK_SET_RATE_PARENT),
+> +	GATE_MFG(CLK_MFG_26M, "mfg_26m", "clk26m", 3, 0),
 > +};
 > +
-> +static int imx_aux_reset_assert(struct reset_controller_dev *rcdev,
-> +				unsigned long id)
+> +static const struct mtk_clk_desc mfg_desc = {
+> +	.clks = mfg_clks,
+> +	.num_clks = ARRAY_SIZE(mfg_clks),
+> +};
+> +
+> +struct mt8173_mfgtop_data {
+> +	struct clk_hw_onecell_data *clk_data;
+> +	struct regmap *regmap;
+> +	struct generic_pm_domain genpd;
+> +	struct of_phandle_args parent_pd, child_pd;
+> +	struct clk *clk_26m;
+> +};
+> +
+> +static const struct of_device_id of_match_clk_mt8173_mfgtop[] = {
+> +	{ .compatible = "mediatek,mt8173-mfgtop", .data = &mfg_desc },
+> +	{ /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(of, of_match_clk_mt8173_mfgtop);
+
+Please move of_match_clk_mt8173_mfgtop before clk_mt8173_mfgtop_drv for consistency
+with all the other clock drivers.
+
+> +
+> +/* Delay count in clock cycles */
+> +#define MFG_ACTIVE_POWER_CON0	0x24
+> + #define RST_B_DELAY_CNT	GENMASK(7, 0)	/* pwr_rst_b de-assert delay during power-up */
+> + #define CLK_EN_DELAY_CNT	GENMASK(15, 8)	/* CLK_DIS deassert delay during power-up */
+> + #define CLK_DIS_DELAY_CNT	GENMASK(23, 16)	/* CLK_DIS assert delay during power-down */
+
+The reason why I had EVT_FORCE_ABORT and ACTIVE_PWRCTL_EN in my driver is to
+document that we're keeping the event force abort disabled and, more importantly,
+we are keeping the "active power control" feature disabled.
+
+Please, add those two - or at least the ACTIVE_PWRCTL_EN - to keep that documented,
+or this information will be lost for sure.
+If in the future the ACTIVE_PWRCTL feature will become usable, it's going to be
+just a 30 seconds change, as the info is already there.
+
+> +
+> +#define MFG_ACTIVE_POWER_CON1	0x28
+> + #define PWR_ON_S_DELAY_CNT	GENMASK(7, 0)	/* pwr_on_s assert delay during power-up */
+> + #define ISO_DELAY_CNT		GENMASK(15, 8)	/* ISO assert delay during power-down */
+> + #define ISOOFF_DELAY_CNT	GENMASK(23, 16)	/* ISO de-assert delay during power-up */
+> + #define RST__DELAY_CNT		GENMASK(31, 24) /* pwr_rsb_b assert delay during power-down */
+> +
+> +static int clk_mt8173_mfgtop_power_on(struct generic_pm_domain *domain)
 > +{
-> +	struct imx_aux_reset_priv *priv = container_of(rcdev,
-> +					struct imx_aux_reset_priv, rcdev);
-> +	const struct imx_reset_data *data = priv->data;
-> +	void __iomem *reg_addr = priv->base;
-> +	const struct imx_reset_ctrl *ctrl;
-> +	unsigned int mask, value, reg;
+> +	struct mt8173_mfgtop_data *data = container_of(domain, struct mt8173_mfgtop_data, genpd);
 > +
-> +	if (id >= data->rst_ctrl_num)
-> +		return -EINVAL;
+> +	/* drives internal power management */
+> +	clk_prepare_enable(data->clk_26m);
 > +
-> +	ctrl = &data->rst_ctrl[id];
+> +	/* Power on/off delays for various signals */
+> +	regmap_write(data->regmap, MFG_ACTIVE_POWER_CON0,
+> +		     FIELD_PREP(RST_B_DELAY_CNT, 77) |
+> +		     FIELD_PREP(CLK_EN_DELAY_CNT, 61) |
+> +		     FIELD_PREP(CLK_DIS_DELAY_CNT, 60));
+
+I get that this is kinda odd to read, but still...
+
+FIELD_PREP(CLK_DIS_DELAY_CNT, 60) |
+FIELD_PREP(ACTIVE_PWRCTL_EN, 0));
+
+...please :-)
+
+
+> +	regmap_write(data->regmap, MFG_ACTIVE_POWER_CON1,
+> +		     FIELD_PREP(PWR_ON_S_DELAY_CNT, 11) |
+> +		     FIELD_PREP(ISO_DELAY_CNT, 68) |
+> +		     FIELD_PREP(ISOOFF_DELAY_CNT, 69) |
+> +		     FIELD_PREP(RST__DELAY_CNT, 77));
 > +
-> +	/* assert not supported for this reset */
-> +	if (ctrl->flags & ASSERT_NONE)
-> +		return -EOPNOTSUPP;
-> +
-> +	mask = BIT(ctrl->assert_bit);
-> +	value = (ctrl->flags & ASSERT_SET) ? mask : 0x0;
-> +
-> +	reg = readl(reg_addr + ctrl->assert_offset);
-> +	writel(reg | value, reg_addr + ctrl->assert_offset);
+> +	/* Magic numbers related to core switch sequence and delays */
+> +	regmap_write(data->regmap, 0xe0, 0x7a710184);
+> +	regmap_write(data->regmap, 0xe4, 0x835f6856);
+> +	regmap_write(data->regmap, 0xe8, 0x002b0234);
+> +	regmap_write(data->regmap, 0xec, 0x80000000);
+> +	regmap_write(data->regmap, 0xa0, 0x08000000);
+
+Is there any way to retrieve information about what those registers are?
+
 > +
 > +	return 0;
 > +}
 > +
-> +static int imx_aux_reset_deassert(struct reset_controller_dev *rcdev,
-> +				  unsigned long id)
+> +static int clk_mt8173_mfgtop_power_off(struct generic_pm_domain *domain)
 > +{
-> +	struct imx_aux_reset_priv *priv = container_of(rcdev,
-> +					struct imx_aux_reset_priv, rcdev);
-> +	const struct imx_reset_data *data = priv->data;
-> +	void __iomem *reg_addr = priv->base;
-> +	const struct imx_reset_ctrl *ctrl;
-> +	unsigned int mask, value, reg;
+> +	struct mt8173_mfgtop_data *data = container_of(domain, struct mt8173_mfgtop_data, genpd);
 > +
-> +	if (id >= data->rst_ctrl_num)
-> +		return -EINVAL;
+> +	/* Magic numbers related to core switch sequence and delays */
+> +	regmap_write(data->regmap, 0xec, 0);
 > +
-> +	ctrl = &data->rst_ctrl[id];
-> +
-> +	/* deassert not supported for this reset */
-> +	if (ctrl->flags & DEASSERT_NONE)
-> +		return -EOPNOTSUPP;
-> +
-> +	mask = BIT(ctrl->deassert_bit);
-> +	value = (ctrl->flags & DEASSERT_SET) ? mask : 0x0;
-> +
-> +	reg = readl(reg_addr + ctrl->deassert_offset);
-> +	writel(reg | value, reg_addr + ctrl->deassert_offset);
+> +	/* drives internal power management */
+> +	clk_disable_unprepare(data->clk_26m);
 > +
 > +	return 0;
 > +}
 > +
-> +static int imx_aux_reset_status(struct reset_controller_dev *rcdev,
-> +				unsigned long id)
+> +static int clk_mt8173_mfgtop_probe(struct platform_device *pdev)
 > +{
-> +	struct imx_aux_reset_priv *priv = container_of(rcdev,
-> +					struct imx_aux_reset_priv, rcdev);
-> +	const struct imx_reset_data *data = priv->data;
-> +	void __iomem *reg_addr = priv->base;
-> +	const struct imx_reset_ctrl *ctrl;
-> +	unsigned int reset_state;
+> +	struct device *dev = &pdev->dev;
+> +	struct device_node *node = dev->of_node;
+> +	struct mt8173_mfgtop_data *data;
+> +	int ret;
 > +
-> +	if (id >= data->rst_ctrl_num)
-> +		return -EINVAL;
-> +
-> +	ctrl = &data->rst_ctrl[id];
-> +
-> +	/* status not supported for this reset */
-> +	if (ctrl->flags & STATUS_NONE)
-> +		return -EOPNOTSUPP;
-> +
-> +	reset_state = readl(reg_addr + ctrl->status_offset);
-> +
-> +	return !(reset_state & BIT(ctrl->status_bit)) ==
-> +		!(ctrl->flags & STATUS_SET);
-> +}
-> +
-> +static const struct reset_control_ops imx_aux_reset_ops = {
-> +	.assert   = imx_aux_reset_assert,
-> +	.deassert = imx_aux_reset_deassert,
-> +	.status	  = imx_aux_reset_status,
-> +};
-> +
-> +static int imx_aux_reset_probe(struct auxiliary_device *adev,
-> +			       const struct auxiliary_device_id *id)
-> +{
-> +	struct imx_reset_data *data = (struct imx_reset_data *)(id->driver_data);
-> +	struct imx_aux_reset_priv *priv;
-> +	struct device *dev = &adev->dev;
-> +
-> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
+> +	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+> +	if (!data)
 > +		return -ENOMEM;
 > +
-> +	priv->rcdev.owner     = THIS_MODULE;
-> +	priv->rcdev.nr_resets = data->rst_ctrl_num;
-> +	priv->rcdev.ops       = &imx_aux_reset_ops;
-> +	priv->rcdev.of_node   = dev->parent->of_node;
-> +	priv->rcdev.dev	      = dev;
-> +	priv->rcdev.of_reset_n_cells = 1;
-> +	priv->base            = of_iomap(dev->parent->of_node, 0);
-> +	priv->data            = data;
+> +	platform_set_drvdata(pdev, data);
 > +
-> +	return devm_reset_controller_register(dev, &priv->rcdev);
-> +}
+> +	data->clk_data = mtk_devm_alloc_clk_data(dev, ARRAY_SIZE(mfg_clks));
+> +	if (!data->clk_data)
+> +		return -ENOMEM;
 > +
-> +#define EARC  0x200
+> +	/* MTK clock gates also uses regmap */
+> +	data->regmap = device_node_to_regmap(node);
+> +	if (IS_ERR(data->regmap))
+> +		return dev_err_probe(dev, PTR_ERR(data->regmap), "Failed to get regmap\n");
 > +
-> +static const struct imx_reset_ctrl imx8mp_audiomix_rst_ctrl[] = {
-> +	{
-> +		.assert_offset = EARC,
-> +		.assert_bit = 0,
-> +		.deassert_offset = EARC,
-> +		.deassert_bit = 0,
-> +		.flags  = ASSERT_CLEAR | DEASSERT_SET | STATUS_NONE,
-> +	},
-> +	{
-> +		.assert_offset = EARC,
-> +		.assert_bit = 1,
-> +		.deassert_offset = EARC,
-> +		.deassert_bit = 1,
-> +		.flags  = ASSERT_CLEAR | DEASSERT_SET | STATUS_NONE,
-> +	},
-> +};
+> +	data->child_pd.np = node;
+> +	data->child_pd.args_count = 0;
+> +	ret = of_parse_phandle_with_args(node, "power-domains", "#power-domain-cells", 0,
+> +					 &data->parent_pd);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to parse power domain\n");
 > +
-> +static const struct imx_reset_data imx8mp_audiomix_rst_data = {
-> +	.rst_ctrl = imx8mp_audiomix_rst_ctrl,
-> +	.rst_ctrl_num = ARRAY_SIZE(imx8mp_audiomix_rst_ctrl),
-> +};
+> +	devm_pm_runtime_enable(dev);
+> +	/*
+> +	 * Do a pm_runtime_resume_and_get() to workaround a possible
+> +	 * deadlock between clk_register() and the genpd framework.
+> +	 */
+> +	ret = pm_runtime_resume_and_get(dev);
+> +	if (ret) {
+> +		dev_err_probe(dev, ret, "Failed to runtime resume device\n");
+> +		goto put_of_node;
+> +	}
 > +
-> +static const struct auxiliary_device_id imx_aux_reset_ids[] = {
-> +	{
-> +		.name = "clk_imx8mp_audiomix.reset",
-> +		.driver_data = (kernel_ulong_t)&imx8mp_audiomix_rst_data,
-> +	},
-> +	{ }
-> +};
-> +MODULE_DEVICE_TABLE(auxiliary, imx_aux_reset_ids);
+> +	ret = mtk_clk_register_gates(dev, node, mfg_clks, ARRAY_SIZE(mfg_clks),
+> +				     data->clk_data);
+> +	if (ret) {
+> +		dev_err_probe(dev, ret, "Failed to register clock gates\n");
+> +		goto put_pm_runtime;
+> +	}
 > +
-> +static struct auxiliary_driver imx_aux_reset_driver = {
-> +	.probe		= imx_aux_reset_probe,
-> +	.id_table	= imx_aux_reset_ids,
-> +};
+> +	data->clk_26m = clk_hw_get_clk(data->clk_data->hws[CLK_MFG_26M], "26m");
+> +	if (IS_ERR(data->clk_26m)) {
+> +		dev_err_probe(dev, PTR_ERR(data->clk_26m), "Failed to get 26 MHz clock\n");
+> +		goto unregister_clks;
+> +	}
 > +
-> +module_auxiliary_driver(imx_aux_reset_driver);
+> +	ret = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, data->clk_data);
+> +	if (ret) {
+> +		dev_err_probe(dev, ret, "Failed to add clk OF provider\n");
+> +		goto put_26m_clk;
+> +	}
 > +
-> +MODULE_AUTHOR("Shengjiu Wang <shengjiu.wang@nxp.com>");
-> +MODULE_DESCRIPTION("Freescale i.MX auxiliary reset driver");
-> +MODULE_LICENSE("GPL");
-> -- 
-> 2.34.1
-> 
-> 
-> 
+> +	data->genpd.name = "mfg_apm";
+
+"mfg-apm" or "mfg-pwr" please!
+
+Everything else looks good.
+
+Thanks for taking care of that, I started this work way too much time ago and
+realistically I wouldn't have been able to finish it due to time constraints.
+
+It's great to see that *finally* we can get some GPU upstream on this old SoC.
+As its CPUs are really slow, LLVMPipe is quite unusable from a UX perspective
+hence its only big issue was the lack of 3D HW acceleration.
+
+This makes machines embedding this SoC usable, and that's simply awesome.
+
+Cheers!
+Angelo
+
