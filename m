@@ -1,177 +1,120 @@
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C46846521
-	for <linux-clk@vger.kernel.org>; Thu, 30 May 2024 20:12:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC0CF17B418
+	for <linux-clk@vger.kernel.org>; Thu, 30 May 2024 23:56:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717099963; cv=none; b=fxSKDxHx4P8mivC1kwAs/v5qIDPoXFoJ9NEDBjFVNBmL2WXvWoFhMJDd69XAf144+jSRX+uO5xnZBFnGxP6ZcgiCRRbgIKZm5TTfOvEZHIGP4DiuKWsahGB672Q3ZvSmgniBgnfoejwkpomHlR5ZlfyRFk+Lm6DEZGB6dwrRa2I=
+	t=1717113377; cv=none; b=XOVX7Y9kYZcTLZ3/YjshwMeU1TpSNjWuojIDmC9rmsMT04hjoiV4iuY8pM4or/vgvc/SMy2UNqImELCnIGYRYiuFdVddpKw16n7M6AbL0YduL0nAnsjGRetZeMzsAuskOhdlzegBLnOQSLfuSYpn8dArYl7+MdWL9h+Wo3nbNOc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717099963; c=relaxed/simple;
-	bh=+8mnOtkeH9fcPI5/0e2c5cwqadw8gmoiGYpHngNzfbA=;
+	s=arc-20240116; t=1717113377; c=relaxed/simple;
+	bh=u1x9WGaWjdQsG0liwfIZehg9z7MUpjxN/JdxyprkMzo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OPG8Wkwk3HMJimIkfhFzZFSqJTKP6Qww118Ajqt394QeQfUf/uagu5M5pwRxVPQwRSY/M2bq9+bGbmfiU5dI3UvZ+lTXMbNcRb2W4Az6CE8P9hvE8BJwu3ioO2Qqy0eT314mchlurznd89Tx7LQmc2iVUayuVz4iklGSnSP3MOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PbOKIpWX; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=CqwsIM6WsH3sZxvwLQ/SW7UVEZ5llxMEcnxJAr959FAStOYNfkCryxw9b+aDd6E2js3Fppldua3FXLOVSooGaE4x6ze+5p30m32L8cGggp/XbNxNMyiOkGuZLJlwWHgHS4mJ/F2kU/l1CfMsj/y2nhqdkDkqalDnmoSuiAR9C/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oUTW42Jd; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PbOKIpWX"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1717099960;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=muyDpwslgzvSzhcZHj23jwcOsi3oF9m1bByqZFf5Dwg=;
-	b=PbOKIpWXRp1oRTzS9jKDq9Wg2jhHgh6znrt6yWI2eYYiVzocdGZSJQBND1r8NnXVEPQhCR
-	lyzifN8hn5DWeigGVyUb9xMx6aWZbUUqSOxCFACbmJmRnEIbUuLWuHHNRbfvjH+6daSO1K
-	vc51lbhm8fcx2Hoch5INbQjCL026kd0=
-Received: from mimecast-mx02.redhat.com (mimecast-mx02.redhat.com
- [66.187.233.88]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-504-DGHkysdBPxqOFQumhj4YgQ-1; Thu, 30 May 2024 16:12:34 -0400
-X-MC-Unique: DGHkysdBPxqOFQumhj4YgQ-1
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.rdu2.redhat.com [10.11.54.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mimecast-mx02.redhat.com (Postfix) with ESMTPS id AA075800CAC;
-	Thu, 30 May 2024 20:12:33 +0000 (UTC)
-Received: from fedora (unknown [10.22.9.63])
-	by smtp.corp.redhat.com (Postfix) with ESMTPS id 4D17B2027019;
-	Thu, 30 May 2024 20:12:33 +0000 (UTC)
-Date: Thu, 30 May 2024 16:12:32 -0400
-From: Audra Mitchell <audra@redhat.com>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Donald Zickus <dzickus@redhat.com>, msalter@redhat.com,
-	Nico Pache <npache@redhat.com>,
-	KUnit Development <kunit-dev@googlegroups.com>,
-	linux-clk@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>,
-	Audra Mitchell <aubaker@redhat.com>
-Subject: Re: [Bug Report] Multiple S390x KUNIT clk failures
-Message-ID: <ZljdsG6nWo3Acw3Z@fedora>
-References: <CAA1CXcBhABB60JG-sT1qRysD1AP+bN=wo=5vwbeTv13Gj72EzA@mail.gmail.com>
- <301cd41e6283c12ac67fb8c0f8d5c929.sboyd@kernel.org>
- <CAA1CXcALWqxfoWsv_wuiu-hAmX=AosvEedheGJUQHAhDCZf2Sg@mail.gmail.com>
- <9be47cd74b62ba8e4a36f3139fc8d275.sboyd@kernel.org>
- <CAK18DXZyEHZ=1TC52kQQ89gscFLph0e_4zB_bt=DTwR-A=0UPA@mail.gmail.com>
- <CAK18DXZ223RxeV7teXjBZ-0x5U8hdmgxxL9zew3aoR7SZvxEvQ@mail.gmail.com>
- <ZlZDR3xhZfK43njo@fedora>
- <7ee38bb411e20721c1d1ebdb0455a626885e1cb8.camel@redhat.com>
- <076c65b6247cc0ddbae792f8f414be89.sboyd@kernel.org>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oUTW42Jd"
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2e95abc7259so15716461fa.3
+        for <linux-clk@vger.kernel.org>; Thu, 30 May 2024 16:56:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717113374; x=1717718174; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ck/4mU0LZm3Pgy4D7+E7gErxKGmzB2tn/qzM/2E7y9I=;
+        b=oUTW42JdTHDdud5F7HJMmn7+mMm53Sa69cTFcJ+5zwkAInKzOf4BMWHrVHuMp9XOgZ
+         gj58JfBZUiwkEsjRlSq5Z+1Bm9bKum3mrbTJX2eYTNty2H0TD1ADs1TU/m6cSTAluaRt
+         IBoZTZGRCpNoX9wBYzQPtNRxVZY9R+ISAFEqWYHN/v74Q9kT2yq1R6jQZpRlXOmZNuq5
+         taihEDfy4uitbxrqN2xSNW5x2/3UfN+euyEcvpbYxtCIJDE/jXyA9nMM8Q4l56IlVvJz
+         PswBWBxbh5h1tjQ1iem/z06Kg1ZAYAbeDak7Q/f60Scm4feiSujZBv+GVsbuIXygVHaH
+         KiJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717113374; x=1717718174;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ck/4mU0LZm3Pgy4D7+E7gErxKGmzB2tn/qzM/2E7y9I=;
+        b=Lgw8G+tTAh1QjLLuYYCB6XIjtRJ3gaLYQtjwFD8fm5qMR25v2o8CsX4zWHqjXsoDnz
+         D31Hs5aLlNxEDt5LMwvd/K69BQnLj+PMtbAX1ccP8Fn1ClGTE8IsSN8l+gHzfCqHXcCq
+         +jJXIu+V3WnWYXMM1SQiiaoEEaMPvMQ5OivbPuRJRBMS5URFtuzdf5uuKL0rWYicOuvs
+         neyHzgdfksMTbqdOYLTiXdCjJSTGuUF+6gIhVruHS/So6/UEfoPdshgogjtVqJHbsftm
+         u2gluOJT3lE97rFB3tP98r4+0jdwquxPEQpABAmoDzZLE8+XD/LLhOEVKCLl0zO9EmKk
+         ZWqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUA14du2bJP+p79quFE7gyDNcIpa7oLNxav2tjHqocLZCULMl6yJk6o23SOFIF5tA/JzadW4C6N7lB6faVuWzFbRLzSYt1xjC3e
+X-Gm-Message-State: AOJu0YwJPvqSq9Se5N6zYslkbhPuhE4xsYCLd4wXxQjzZn/1JjBkpdY9
+	P6x7EzbyVx/J823GoEE5ylDk0Y4lWvhEx+udS6PaAWK4eBq5U2E/Pwm3rwW/EuA=
+X-Google-Smtp-Source: AGHT+IEUTVqHon41x+1SSS+K+W1Rvwpf147hdypOX52i25HOqsLrwvRahXwTRl7mrNyeUkY3JvtrbA==
+X-Received: by 2002:a2e:979a:0:b0:2e3:38e0:54c7 with SMTP id 38308e7fff4ca-2ea951b60f7mr1955031fa.38.1717113373865;
+        Thu, 30 May 2024 16:56:13 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ea91bed98csm1206671fa.70.2024.05.30.16.56.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 30 May 2024 16:56:13 -0700 (PDT)
+Date: Fri, 31 May 2024 02:56:12 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: gcc-x1e80100: Set parent rate for USB3 sec
+ and tert PHY pipe clks
+Message-ID: <3ukguewuqqm5gmbd3afl62ihysdzkk44j3f2nuqht4gjuf5ruo@zu7jmmnbrpdj>
+References: <20240530-x1e80100-clk-gcc-usb3-sec-tert-set-parent-rate-v1-1-7b2b04cad545@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <076c65b6247cc0ddbae792f8f414be89.sboyd@kernel.org>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.11.54.4
+In-Reply-To: <20240530-x1e80100-clk-gcc-usb3-sec-tert-set-parent-rate-v1-1-7b2b04cad545@linaro.org>
 
-On Wed, May 29, 2024 at 12:39:34PM -0700, Stephen Boyd wrote:
-> Quoting msalter@redhat.com (2024-05-28 15:53:48)
-> > On Tue, 2024-05-28 at 16:49 -0400, Audra Mitchell wrote:
-> > > 
-> > > I spent some time last week or so working on debugging these failures and I 
-> > > believe I have found the problem. I reached out to Malk Salter for advice on 
-> > > the best way to move forward with a fix on Friday the 17th, but he was on 
-> > > PTO for the last week. I was waiting for his reply before I replied to this 
-> > > thread. 
-> > > 
-> > > Also as a side note, I also ran into the same issue as Stephen with running
-> > > the kunit tests on s390 QEMU. I did not pursue resolving that issue and
-> > > instead just compiled the test as a module. 
-> > > 
-> > > For clarity, this is what I sent to Mark and were I believe the failure is
-> > > occurring:
-> > > 
-> > > The tests create a pretend clk-gate and use a "fake_reg" to emulate
-> > > the expected behavior of the clk_gate->reg. I added some debug
-> > > statements to the driver and noticed that the reg changes after
-> > > initialization to -1. I also noticed that we call this to read the
-> > > data in the clk-gate->reg:
-> > > 
-> > > static inline u32 clk_gate_readl(struct clk_gate *gate)
-> > > {
-> > >         if (gate->flags & CLK_GATE_BIG_ENDIAN)
-> > >                 return ioread32be(gate->reg);
-> > > 
-> > >         return readl(gate->reg);
-> > > }
-> > > 
-> > > However, it does not look like ioread32be is defined for s390, so
-> > 
-> > It is defined. arch/s390/include/asm/io.h defines:
-> > 
-> >    #define __raw_readl  zpci_read_u32
-> > 
-> > and then includes include/asm-generic/io.h which has:
-> > 
-> > static inline u32 readl(const volatile void __iomem *addr)
-> > {
-> >         u32 val;
-> > 
-> >         log_read_mmio(32, addr, _THIS_IP_, _RET_IP_);
-> >         __io_br();
-> >         val = __le32_to_cpu((__le32 __force)__raw_readl(addr));
-> >         __io_ar(val);
-> >         log_post_read_mmio(val, 32, addr, _THIS_IP_, _RET_IP_);
-> >         return val;
-> > }
-> > ...
-> > static inline u32 ioread32be(const volatile void __iomem *addr)
-> > {
-> >         return swab32(readl(addr));
-> > }
-> > 
-> > which should do the right thing (s390 being BE and readl() is for 32-bit LE reads).
-> > 
-> > But I don't know the s390 compiler or ISA, so I'm not sure where the zpci_load
-> > is coming from.
-> > 
+On Thu, May 30, 2024 at 05:05:24PM +0300, Abel Vesa wrote:
+> Allow the USB3 second and third GCC PHY pipe clocks to propagate the
+> rate to the pipe clocks provided by the QMP combo PHYs. The first
+> instance is already doing that.
+
+Which driver changes the rate of those clocks?
+
 > 
-> So the problem is that the zpci_read_u32() fails and returns -1?
+> Fixes: ("161b7c401f4b clk: qcom: Add Global Clock controller (GCC) driver for X1E80100")
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> ---
+>  drivers/clk/qcom/gcc-x1e80100.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> This test isn't the best because it uses fakes iomem and architectures
-> may not like that. We really need to implement something in KUnit core
-> to allocate a fake iomem region and then plumb that through all the
-> architectures so that the iomem functions like readl, writel, etc. go a
-> different direction when the pointer is for the fake region.
+> diff --git a/drivers/clk/qcom/gcc-x1e80100.c b/drivers/clk/qcom/gcc-x1e80100.c
+> index 1404017be918..8c72fdc99fd9 100644
+> --- a/drivers/clk/qcom/gcc-x1e80100.c
+> +++ b/drivers/clk/qcom/gcc-x1e80100.c
+> @@ -5269,6 +5269,7 @@ static struct clk_branch gcc_usb3_sec_phy_pipe_clk = {
+>  				&gcc_usb3_sec_phy_pipe_clk_src.clkr.hw,
+>  			},
+>  			.num_parents = 1,
+> +			.flags = CLK_SET_RATE_PARENT,
+>  			.ops = &clk_branch2_ops,
+>  		},
+>  	},
+> @@ -5339,6 +5340,7 @@ static struct clk_branch gcc_usb3_tert_phy_pipe_clk = {
+>  				&gcc_usb3_tert_phy_pipe_clk_src.clkr.hw,
+>  			},
+>  			.num_parents = 1,
+> +			.flags = CLK_SET_RATE_PARENT,
+>  			.ops = &clk_branch2_ops,
+>  		},
+>  	},
 > 
-> Probably the best thing to do in the short term here is to prevent this
-> test from running on S390 via Kconfig.
+> ---
+> base-commit: 9d99040b1bc8dbf385a8aa535e9efcdf94466e19
+> change-id: 20240530-x1e80100-clk-gcc-usb3-sec-tert-set-parent-rate-420a9e2113d1
+> 
+> Best regards,
+> -- 
+> Abel Vesa <abel.vesa@linaro.org>
+> 
 
-
-Hey Stephen, thanks a bunch for looking at this. I do not have a lot of
-experience with s390 to vote one way or another for how best to approach
-resolving this problem.
-
-By the way zpci_load is coming from here:
-
-readl calls __raw_readl
-s390 defines raw_readl as zpci_read_u32:
-
-  #define __raw_readl     zpci_read_u32
-
-And zpci_read is defined here, which then calls zpci_load:
-
-  #define zpci_read(LENGTH, RETTYPE)                                              \
-  static inline RETTYPE zpci_read_##RETTYPE(const volatile void __iomem *addr)    \
-  {                                                                               \
-          u64 data;                                                               \
-          int rc;                                                                 \
-                                                                                \
-          rc = zpci_load(&data, addr, LENGTH);                                    \
-          if (rc)                                                                 \
-                  data = -1ULL;                                                   \
-          return (RETTYPE) data;                                                  \
-  }
-
-Thanks again!
-
-
-
-
+-- 
+With best wishes
+Dmitry
