@@ -1,131 +1,177 @@
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D96E51DA53
-	for <linux-clk@vger.kernel.org>; Thu, 30 May 2024 14:05:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9128D17D8A6;
+	Thu, 30 May 2024 14:47:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717077934; cv=none; b=ewpgkFrtrf6IrdwTQtje3Jelp+J8+51Ez7eCduWOujBXpEqXU2s7scADevi70syXfI+9Tf62k1tOcnry5Q70QXmopGxKw4BAWucLQNxm39QX84SCiZHoOmWW/BpURK3VlPr7y3lanxfXmafSd1Ov5rHYXOxxByd0Wwjpeiyb9kI=
+	t=1717080478; cv=none; b=r6uUuA+uLU73KLnvewF3W7WxtBHJ67+teLR6nFuG9LuC3jaTjNQevTNoXgXWCmk/ad3TXjeDMxvsGeAPiLJt5FVSb+vgND0AQ18ySpPyib4jyqKXJg3zHXqhyb7en88Z3bKdulAozPUjs4OR+bIM9tqTF2IPnzowndz4VDptWcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717077934; c=relaxed/simple;
-	bh=ESd0gNsxszqbQaloGtME7oCQ3PNGImKH+e9qTcBH1qk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=JqXqQeAqqg3K/aoM0Ty7lhELz/b6XEomhajvzaRYjrIna7Y2fzoMbvj27sj6DbMklzFftwWRxzoGw5LgX7/Er8l1E3aV3ptZSI2oKgjHYm9KPUmmBYC7MfzJfhxrg1F0KctAEbxyAssAF2yu6eooxIpaVCtb86HIOR6W9qwVkLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=L/B8RX2Y; arc=none smtp.client-ip=209.85.208.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1717080478; c=relaxed/simple;
+	bh=0YtxMgJS9VghyYhRb60rtBUg4WCZN3CLjIawzdARKwU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dxn/0KFTCisKJ/U35RVmrjYZjMPXnJ1DS1yAsThUu47wTnUFKm5AHhYfozJW6X8wTXvGJ/qZrrjLdXb+w5gbxN+YsX+MzA9I/2uxD6P/541g2uEKij9DfMz0stuQAj9i/z/fka5Q+uZ7iKKN7Ud6ywHtuqYvJLtT1umTHXQI4TA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MF/HR1HP; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="L/B8RX2Y"
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-57a2406f951so696701a12.1
-        for <linux-clk@vger.kernel.org>; Thu, 30 May 2024 07:05:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717077931; x=1717682731; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ozNVAnxqE0lL+qF5HV2h+4/UhN7PSqlhKtJqHseh0HI=;
-        b=L/B8RX2YxSaggGp7tw6FdKibbb1unU3VPPON/2IXs3mh+d50C+Fs6Olj3BGQGD5L6q
-         /+38Nkwht8CgJhrrK4NZqszbRS0XqIy7lnEX8y28t6KB5wGKH7bFwYyyPLY0hJip9wlX
-         u2GWI2xeVoilzIsioojVNWS+ECDBzLr+CErKNjDMm/ms5IK+b5Vd4s+dfNWQ/He8Pykb
-         TAUvNL+U4Zu6JVBo6hwwywcE/s50PqlHsN9A5v6AdnQxvmZH/L7dw6HAWtl7wxwY1IxA
-         nsGT43SXv9v+CpJTwqXu5nKuym1H7+P81ND8iVhXqJbP0lZDsJyJ5XX2+BKyAeSr3jni
-         Xojg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717077931; x=1717682731;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ozNVAnxqE0lL+qF5HV2h+4/UhN7PSqlhKtJqHseh0HI=;
-        b=Sz2VnIHJ+opKxr+x5LyW6rG4nUgZpZtC7lKNze+lPqI+XZu/OXPzRQYRX/pZxVUn2R
-         Cv6g0eZPYg5KS49PMqBF7uUwKpqblzt6QnLXagctUirVur1G5NbhkaKhYP0ALvpr8U6G
-         DK71o76qWChU09xv9dSSNRojqDKvWPBzkNH8GcYcZff9Dw50qvudhlte9bVwSQB3c4ZI
-         bfWGO+8BU/EmNraXTMSRzmqQSgX2OfmmUikf6RIzCEnxAjNf9Uiaw+8d50rOeIR0VqOT
-         LnQ7aJpcf/+KiKhc/0PvpxecsMvHRiMjwlYyxfyTWcJVFPih4CakBWK8/Xa64/AM3rWA
-         yZbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXQISeav/lynSAWXLWzyETGl1nsMP/N5LDZz3c4sczwkzP1PK1einOhX8vg6RJlJp1MDAGVk0GeqIcfCVcYEv2lXcmBJH1evhlV
-X-Gm-Message-State: AOJu0YwPBojf3AwxlcXsuO+qyD6COf9u8/e3Z0xxFYAg7zTOOihPgCYh
-	CwqJoklWZ0Baw52yWHX8pJwRVWWKMpdyEmwTrpNMrUPlS9QFyO9RIVIc2hfJ8C547lemIqA/GbH
-	I
-X-Google-Smtp-Source: AGHT+IF/EgUdnO2R7u5brYgNfOJ73YaN+O9YN+pDX7gvTyYiHIa/WTphpHtPpGYtAukA9aMRxwrvhw==
-X-Received: by 2002:a17:906:2550:b0:a66:7666:fc64 with SMTP id a640c23a62f3a-a667666ffcemr88422766b.4.1717077930807;
-        Thu, 30 May 2024 07:05:30 -0700 (PDT)
-Received: from [127.0.1.1] ([188.27.161.69])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a663848c9aasm49630566b.207.2024.05.30.07.05.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 30 May 2024 07:05:30 -0700 (PDT)
-From: Abel Vesa <abel.vesa@linaro.org>
-Date: Thu, 30 May 2024 17:05:24 +0300
-Subject: [PATCH] clk: qcom: gcc-x1e80100: Set parent rate for USB3 sec and
- tert PHY pipe clks
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MF/HR1HP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 444A6C2BBFC;
+	Thu, 30 May 2024 14:47:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717080478;
+	bh=0YtxMgJS9VghyYhRb60rtBUg4WCZN3CLjIawzdARKwU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MF/HR1HP/m3XZlqOeBpT0r2512CquhGyBGTC3WMFzQQXDQ9ILKP5g1WYBCXOzJGLz
+	 +xlqWxQuMFeFA6t2EvaQgTEIv9d6AMccLM9f+zRUwYJXJb+nllidonx2B9hHsK101J
+	 4MRuFjEqFe0x+pqGtRb8UIVpK2iOxxfHEJHQxIxmMf3CiWm4P8T1uYZ2vMKrgt0Qor
+	 p1npNlYt1jsi5whPMW+O88Bp8xfzdq2LB6QVyVOEEl6VcIiJcK7Q0VAIcE74lRICc0
+	 syuxcjn4Bwe4JnvpmdpmBlQ6cwdbUeMHoltLGPJy7OAHjm7jEKm/VVaSWPv8sjSYEM
+	 eZSRJq3V9HyOQ==
+Date: Thu, 30 May 2024 20:17:49 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: devi priya <quic_devipriy@quicinc.com>
+Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	andersson@kernel.org, konrad.dybcio@linaro.org,
+	mturquette@baylibre.com, sboyd@kernel.org,
+	manivannan.sadhasivam@linaro.org, linux-arm-msm@vger.kernel.org,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH V5 6/6] PCI: qcom: Add support for IPQ9574
+Message-ID: <20240530144730.GG2770@thinkpad>
+References: <20240512082858.1806694-1-quic_devipriy@quicinc.com>
+ <20240512082858.1806694-7-quic_devipriy@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240530-x1e80100-clk-gcc-usb3-sec-tert-set-parent-rate-v1-1-7b2b04cad545@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAKOHWGYC/x2NwQrCMBAFf6Xs2YXdpAX1V8RDTF9rUGLZpFIo/
- XeDt5nLzE4FllDo2u1k+KaSPrmJnjqKz5BncBqbkxPXy+CFN8VZVITj+8VzjLyWh+eCyBVWG1R
- egiFXtlDBvZNwgVP1o1KLLoYpbf/h7X4cPxJIJf+AAAAA
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1259; i=abel.vesa@linaro.org;
- h=from:subject:message-id; bh=ESd0gNsxszqbQaloGtME7oCQ3PNGImKH+e9qTcBH1qk=;
- b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBmWIel1xURmFNij+ie/FjjZdjHt5Q7HW7elDTa7
- lANeTceYDSJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZliHpQAKCRAbX0TJAJUV
- VnMiEACLXvkhX7K/Kz112drtLnDhAMbNb6HDLeh++fS2QCXs9qI+bIjcbdPR6/30p/LtLiLWIJb
- cNK46wGJVKbF2oXJlCr4ESUl0lbRlFXM5RRafqQl8DUWiFpYkRDkqpDa3l3nSf+ola7xybzXgsY
- F5V7jgqIRTeYb4HjYsJ/3TB+YLEgejcaVhksIHEbi2Nk8Cczc0X4M9TkJYWl2oRg7frJtffiC2K
- VJAbg3WTVGwFP0a/cUK9AEqaAWLHfD4z8gk8qZDHylXYu0vbC5wtb58lpmfXTB8v3hws6qJR9H8
- O6aqeWGh8Y/L+4+O+cwtKri95vnQEmRPsTUoQrqi2SA/qhEGfTH4uctL4HXkmgLHh9HJMp6Vs5Y
- GOyiB8b8PhFXXV3W3S42oGLE194Pq/kBlNI3gWhM8a12+SUfwIwAtwrfgmEWm7E3gC12+rNLAhg
- oHqyu7C0FyXM4Bm1fM7y5WWNGdbL8tpPUQBxc6OmWe5DzwGHKTwzZL2XtNAUemLc7uGrwCimIFa
- +2dmQChazyn6oDAWyUQ8MeUOJE+jRWOwGfY+oFUOm1NpeTr0TKdXRpgosj1/eUdKjkkmtmsn4xt
- w6YLx9za4BQJKWqHIcGMX++JtUCMcrJJe+CnkZG5vp54+8ENcD/LNr13FAE1Jx/b0BIxgrdZbyl
- zWF9Hj8ix0ZoohQ==
-X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
- fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240512082858.1806694-7-quic_devipriy@quicinc.com>
 
-Allow the USB3 second and third GCC PHY pipe clocks to propagate the
-rate to the pipe clocks provided by the QMP combo PHYs. The first
-instance is already doing that.
+On Sun, May 12, 2024 at 01:58:58PM +0530, devi priya wrote:
+> The IPQ9574 platform has 4 Gen3 PCIe controllers:
+> two single-lane and two dual-lane based on SNPS core 5.70a
+> 
+> The Qcom IP rev is 1.27.0 and Synopsys IP rev is 5.80a
+> Added a new compatible 'qcom,pcie-ipq9574' and 'ops_1_27_0'
+> which reuses all the members of 'ops_2_9_0' except for the post_init
+> as the SLV_ADDR_SPACE_SIZE configuration differs between 2_9_0
+> and 1_27_0.
+> 
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Reviewed-by: Manivannan Sadhasivam <mani@kernel.org>
+> Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
+> Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
+> Signed-off-by: devi priya <quic_devipriy@quicinc.com>
+> ---
+>  Changes in V5:
+> 	- Rebased on top of the below series which adds support for fetching
+> 	  clocks from the device tree
+> 	  https://lore.kernel.org/linux-pci/20240417-pci-qcom-clk-bulk-v1-1-52ca19b3d6b2@linaro.org/
+> 
+>  drivers/pci/controller/dwc/pcie-qcom.c | 36 +++++++++++++++++++++++---
+>  1 file changed, 32 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> index 3d2eeff9a876..af36a29c092e 100644
+> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> @@ -106,6 +106,7 @@
+>  
+>  /* PARF_SLV_ADDR_SPACE_SIZE register value */
+>  #define SLV_ADDR_SPACE_SZ			0x10000000
+> +#define SLV_ADDR_SPACE_SZ_1_27_0		0x08000000
 
-Fixes: ("161b7c401f4b clk: qcom: Add Global Clock controller (GCC) driver for X1E80100")
-Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
----
- drivers/clk/qcom/gcc-x1e80100.c | 2 ++
- 1 file changed, 2 insertions(+)
+Can you please explain what this value corresponds to? Even though there is an
+old value, I didn't get much info earlier on what it is.
 
-diff --git a/drivers/clk/qcom/gcc-x1e80100.c b/drivers/clk/qcom/gcc-x1e80100.c
-index 1404017be918..8c72fdc99fd9 100644
---- a/drivers/clk/qcom/gcc-x1e80100.c
-+++ b/drivers/clk/qcom/gcc-x1e80100.c
-@@ -5269,6 +5269,7 @@ static struct clk_branch gcc_usb3_sec_phy_pipe_clk = {
- 				&gcc_usb3_sec_phy_pipe_clk_src.clkr.hw,
- 			},
- 			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_ops,
- 		},
- 	},
-@@ -5339,6 +5340,7 @@ static struct clk_branch gcc_usb3_tert_phy_pipe_clk = {
- 				&gcc_usb3_tert_phy_pipe_clk_src.clkr.hw,
- 			},
- 			.num_parents = 1,
-+			.flags = CLK_SET_RATE_PARENT,
- 			.ops = &clk_branch2_ops,
- 		},
- 	},
+- Mani
 
----
-base-commit: 9d99040b1bc8dbf385a8aa535e9efcdf94466e19
-change-id: 20240530-x1e80100-clk-gcc-usb3-sec-tert-set-parent-rate-420a9e2113d1
+>  
+>  /* PARF_MHI_CLOCK_RESET_CTRL register fields */
+>  #define AHB_CLK_EN				BIT(0)
+> @@ -1095,16 +1096,13 @@ static int qcom_pcie_init_2_9_0(struct qcom_pcie *pcie)
+>  	return clk_bulk_prepare_enable(res->num_clks, res->clks);
+>  }
+>  
+> -static int qcom_pcie_post_init_2_9_0(struct qcom_pcie *pcie)
+> +static int qcom_pcie_post_init(struct qcom_pcie *pcie)
+>  {
+>  	struct dw_pcie *pci = pcie->pci;
+>  	u16 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
+>  	u32 val;
+>  	int i;
+>  
+> -	writel(SLV_ADDR_SPACE_SZ,
+> -		pcie->parf + PARF_SLV_ADDR_SPACE_SIZE);
+> -
+>  	val = readl(pcie->parf + PARF_PHY_CTRL);
+>  	val &= ~PHY_TEST_PWR_DOWN;
+>  	writel(val, pcie->parf + PARF_PHY_CTRL);
+> @@ -1144,6 +1142,22 @@ static int qcom_pcie_post_init_2_9_0(struct qcom_pcie *pcie)
+>  	return 0;
+>  }
+>  
+> +static int qcom_pcie_post_init_1_27_0(struct qcom_pcie *pcie)
+> +{
+> +	writel(SLV_ADDR_SPACE_SZ_1_27_0,
+> +	       pcie->parf + PARF_SLV_ADDR_SPACE_SIZE);
+> +
+> +	return qcom_pcie_post_init(pcie);
+> +}
+> +
+> +static int qcom_pcie_post_init_2_9_0(struct qcom_pcie *pcie)
+> +{
+> +	writel(SLV_ADDR_SPACE_SZ,
+> +	       pcie->parf + PARF_SLV_ADDR_SPACE_SIZE);
+> +
+> +	return qcom_pcie_post_init(pcie);
+> +}
+> +
+>  static int qcom_pcie_link_up(struct dw_pcie *pci)
+>  {
+>  	u16 offset = dw_pcie_find_capability(pci, PCI_CAP_ID_EXP);
+> @@ -1297,6 +1311,15 @@ static const struct qcom_pcie_ops ops_2_9_0 = {
+>  	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
+>  };
+>  
+> +/* Qcom IP rev.: 1.27.0  Synopsys IP rev.: 5.80a */
+> +static const struct qcom_pcie_ops ops_1_27_0 = {
+> +	.get_resources = qcom_pcie_get_resources_2_9_0,
+> +	.init = qcom_pcie_init_2_9_0,
+> +	.post_init = qcom_pcie_post_init_1_27_0,
+> +	.deinit = qcom_pcie_deinit_2_9_0,
+> +	.ltssm_enable = qcom_pcie_2_3_2_ltssm_enable,
+> +};
+> +
+>  static const struct qcom_pcie_cfg cfg_1_0_0 = {
+>  	.ops = &ops_1_0_0,
+>  };
+> @@ -1334,6 +1357,10 @@ static const struct qcom_pcie_cfg cfg_sc8280xp = {
+>  	.no_l0s = true,
+>  };
+>  
+> +static const struct qcom_pcie_cfg cfg_1_27_0 = {
+> +	.ops = &ops_1_27_0,
+> +};
+> +
+>  static const struct dw_pcie_ops dw_pcie_ops = {
+>  	.link_up = qcom_pcie_link_up,
+>  	.start_link = qcom_pcie_start_link,
+> @@ -1603,6 +1630,7 @@ static const struct of_device_id qcom_pcie_match[] = {
+>  	{ .compatible = "qcom,pcie-ipq8064-v2", .data = &cfg_2_1_0 },
+>  	{ .compatible = "qcom,pcie-ipq8074", .data = &cfg_2_3_3 },
+>  	{ .compatible = "qcom,pcie-ipq8074-gen3", .data = &cfg_2_9_0 },
+> +	{ .compatible = "qcom,pcie-ipq9574", .data = &cfg_1_27_0 },
+>  	{ .compatible = "qcom,pcie-msm8996", .data = &cfg_2_3_2 },
+>  	{ .compatible = "qcom,pcie-qcs404", .data = &cfg_2_4_0 },
+>  	{ .compatible = "qcom,pcie-sa8540p", .data = &cfg_sc8280xp },
+> -- 
+> 2.34.1
+> 
 
-Best regards,
 -- 
-Abel Vesa <abel.vesa@linaro.org>
-
+மணிவண்ணன் சதாசிவம்
