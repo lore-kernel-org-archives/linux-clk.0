@@ -1,60 +1,60 @@
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C996176026
-	for <linux-clk@vger.kernel.org>; Fri, 31 May 2024 13:22:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA8476026
+	for <linux-clk@vger.kernel.org>; Fri, 31 May 2024 13:23:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717161728; cv=none; b=DcHQ2DKq7NKNh9vHaHkdpSPOsaM0Trs6XqgAquK0cdvVBFPaddP0TN0p13SdQtxEAHgw5U3OA9mNsAkZOSnGCjEUS/No7ffOtHeEIo58qoB3TnRfju4hu5Scmgp/pR2Gp9KI3uJ+ETO5GFJR7CsW60g5c9n/I2BOm1RCNIjcT6Q=
+	t=1717161797; cv=none; b=XbsPBRoSWzOoPzPNCLvnhgOt7XVNgdXoFN8o8wTTDQpceKeHU1nvdhN+f5oMFv8oxyCiuB2Dy1y0vgW1r26dye38HJhVCHfDvDhlePStWc0dGCNZ55WZ2ccGVsP7khqmSQV4PCAZh2RLQQKVj7aL8BSx6KrawRqEsRI5Gni62I8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717161728; c=relaxed/simple;
-	bh=4dHB2dowiT08SV6IgdUjc53AlAF/i7AVqlLqibLtUa8=;
+	s=arc-20240116; t=1717161797; c=relaxed/simple;
+	bh=8r9CDem7Kd8oF4q6YPYnMih7jmdP9hI2Js+nDr9y/g8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qYYi0pppauk4s7AJwdn6883t+pjNpHYdVj8/+swoFI7yv/YO68RLhHg5m4+VIJi1pyGLwgguEfE/Kb2m+phZiX+IAZm20QBTtuxVDwmhZaN5rqlcwab+jUQ9S2BT4whxdxgZlTpNQKV228egwekZnbuzqZiXETKCXuYKGDd94v0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aX2aQ8Jd; arc=none smtp.client-ip=209.85.218.45
+	 In-Reply-To:Content-Type; b=i9jPZoCu20qt3rOGNOihkVCKAlW7Q48UptFmGUNSVrBLTmGIdt3BCowdz3yiI3jHqBWOl+yI0am3qwvQmVIGY9TkqZpl5uBz8N1RO0pPh4Mu9F1P1kvGSPFJE9e+xXLUbfc1N+p1jLdQZvybeF7kGW59IRLifsGjLe6FPxhpNpc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RcKIUPxC; arc=none smtp.client-ip=209.85.218.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aX2aQ8Jd"
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a689b034b02so4401966b.2
-        for <linux-clk@vger.kernel.org>; Fri, 31 May 2024 06:22:06 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RcKIUPxC"
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a635a74e0deso236487566b.0
+        for <linux-clk@vger.kernel.org>; Fri, 31 May 2024 06:23:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717161725; x=1717766525; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1717161793; x=1717766593; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=5n6R8EWpr3FnxdLpXXtMb3F/ClJ+I9eAwAdha4U+a2k=;
-        b=aX2aQ8JdlqiJd2zo9jC2GaOJTYeZHOgmSF4gadOCKfnsHv/URSEji1ncnzJUtonrD3
-         J5q7yqdlhQevaN/SzDFcrGlP80JczFZ9tJ/UpBveVhmr6ao5OsWcFuG76WubM8ylwm0+
-         HMlpdk35xfu35/AvWXpAi7U7Z01iKQVuTn3AP3VHt90P9w6vaARfKFXvnImwamdmmZFu
-         Ja3OQJStP6im38/25xmMNhNj0c7+46Yn7S2EpldYTkpRgGzv6C9aqIaESvX1zrBNcUsw
-         C4U6SCiJE7ut8InaQxcY2ElCO5WHSG4xNUI7FGJPAHBQEtKjO2Wee8pvsoJWFiXjKeZX
-         i+6A==
+        bh=STix1dJXVxMghu73EX9zT2PylPHwrWELMf06LOWBhdA=;
+        b=RcKIUPxCkr1CxHnMuKwUpR2ktcnRcOz35x2EUGJekvxzO4m+fzlg+Haeu3Y0hVjVbk
+         oOgGIZDsWH4m6A3RlmPCJbQwmEvR22A/rfR4R91TvywhIhHfdKJSfIfoIBmwowLV19/P
+         4YR9iat0x8D8THInDm0GPklZHTjLN1eFw/3ByaBAbbnGCLZhaRaDGlKLQUPurqpFGN6f
+         nLcfKEXhlXO/d/OVUoplYEo5m2GRGFli2cdqW5Lvg87JxyzOTbBtJI0VS6S3wrGHnemA
+         xDSTkmgnEerOGQcPaK6d3Z7vy4TRiQGmyN4p0pE7mywvISdD+2zzQTvsZFhl4ozVKCef
+         l4ZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717161725; x=1717766525;
+        d=1e100.net; s=20230601; t=1717161793; x=1717766593;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=5n6R8EWpr3FnxdLpXXtMb3F/ClJ+I9eAwAdha4U+a2k=;
-        b=fW0unkvk0qK6lSOQrkoREgtG74uzEOC2XDlPhYb9O8DXx9aefBNLe0NbepsuOmLIf0
-         9MZGhygIMaMhs1by1cklFfLdMIsRVNCbrAG3htGc6XpCbtLDiEpPCBrguCdtgdZYkSfs
-         jD/oJo9qtfsaB65uPf3itP/smd5srDL95HfWASZy0H782n2nAb5gryToa8AizKxUrD5/
-         Lo3Tj+CALsInMGMSiPB7iy1Nr1F9gg0tHwUG5DGkTDWuOvNlIbxOiG+a9UlQeTCspSis
-         wQ8JFTKUNJiOv+caa0j033DnUsBnavAdq52soFMOzeX1cKV1c0TfdJTG5Hs+8P77fzg2
-         ejyA==
-X-Forwarded-Encrypted: i=1; AJvYcCWjIs+GFG3nZS7bG351uFx4+THkRYMBdPXTwHZiw/meg8onedTE9ibLympeVfD7PCvpA4arc8KrpEpIyrWyEXJGku1ZsMLywX0l
-X-Gm-Message-State: AOJu0Yziky5H98nLLQ3flR0to+9YrAPJZAbSqSC1O5pbDAWRK/k4yt6K
-	14D8q/dqjWbNx7wEa38+mT5OPOEl1AbYZlfjYH3CZ/NwpK86bP3hN/HopTGhxx4=
-X-Google-Smtp-Source: AGHT+IGuQBIu0beKUp0DIAfM6UMiMTeXT65eB+2f22NRmeuVdDnGjQURLzk7WMAAhyJKajlbiDnheQ==
-X-Received: by 2002:a17:907:1596:b0:a67:6d99:d6be with SMTP id a640c23a62f3a-a681fc5c781mr108251766b.15.1717161725098;
-        Fri, 31 May 2024 06:22:05 -0700 (PDT)
+        bh=STix1dJXVxMghu73EX9zT2PylPHwrWELMf06LOWBhdA=;
+        b=NcqW2ZpTsJ8/ukTVQqciMxE3EpIMeDmcd6L/6wSAc7aaM1JDNvqpnciLcwMeK92jv6
+         7jUD2tWZgGt/rjuqz+MxJTJ8ExF0GyP3L2WWUKczIiiTld+5Yr3yxLMYjqi1ulZ6KVUq
+         IBrqrTCFQBRFIA6ex1xv7xFcCiCyqVYH73qeCU1J1ff4E7gRPZKhUTevZ1RKFs/Kgr8y
+         DcZWnP8hV+X1O/+ZjmCFgcZTqzDeR8xip8lIVGIUOlGrnX84vv39p6VcO6endiPEZPiU
+         qONmSum4y9pbLiEZXUgzQ+enSfTjB7gSiHNyUuEObg847jjuXs+itsO1u1LJzo3gNsQm
+         rhgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV9QtuUHKTjYMPQ36FOfmwoZHLKmR9MOEuWi9i2C/Fl6rcuUgleARgLRu9XAcMHd9IdvOWd4zaDbfCLdgyjjoTXwlDWHrb95zWk
+X-Gm-Message-State: AOJu0YwQxr8y+PlavWaBfTBlpBCfezGKN+2KUgsai3cV62y3q/A8/YQi
+	xNrCB0dl7Ir8myQRTDKZBfmmYAWii4QPdMeWj43LYU0o/wHUefTAGR2ROMN7cS0=
+X-Google-Smtp-Source: AGHT+IG6w9uC4RvKnKHCYwm6+Kwf0FjnMWOFoz/JqPbc7RNwGHUYQ4UZVR8hrtC+oxY7ezKmnlw3JQ==
+X-Received: by 2002:a17:906:4e87:b0:a66:d1a1:f92f with SMTP id a640c23a62f3a-a681fe4e434mr147770666b.14.1717161793038;
+        Fri, 31 May 2024 06:23:13 -0700 (PDT)
 Received: from [192.168.128.139] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57a31c6d325sm1014416a12.65.2024.05.31.06.22.03
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a67ea67b506sm86629966b.98.2024.05.31.06.23.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 31 May 2024 06:22:04 -0700 (PDT)
-Message-ID: <9163bc46-983f-4d5a-b009-c12ddd5a5c8a@linaro.org>
-Date: Fri, 31 May 2024 15:22:02 +0200
+        Fri, 31 May 2024 06:23:12 -0700 (PDT)
+Message-ID: <2fd8bcea-8bea-48ea-8052-d7fe6c1e8f59@linaro.org>
+Date: Fri, 31 May 2024 15:23:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -62,8 +62,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/13] clk: qcom: gcc-sa8775p: Update the GDSC wait_val
- fields and flags
+Subject: Re: [PATCH 05/13] clk: qcom: gpucc-sa8775p: Park RCG's clk source at
+ XO during disable
 To: Taniya Das <quic_tdas@quicinc.com>, Bjorn Andersson
  <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
  Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
@@ -73,7 +73,7 @@ Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, quic_jkona@quicinc.com,
  Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 References: <20240531090249.10293-1-quic_tdas@quicinc.com>
- <20240531090249.10293-3-quic_tdas@quicinc.com>
+ <20240531090249.10293-6-quic_tdas@quicinc.com>
 Content-Language: en-US
 From: Konrad Dybcio <konrad.dybcio@linaro.org>
 Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
@@ -111,46 +111,20 @@ Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
  nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
  izWDgYvmBE8=
-In-Reply-To: <20240531090249.10293-3-quic_tdas@quicinc.com>
+In-Reply-To: <20240531090249.10293-6-quic_tdas@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 31.05.2024 11:02 AM, Taniya Das wrote:
-> Update the GDSC wait_val fields as per the default hardware values as
-> otherwise they would lead to GDSC FSM state to be stuck and causing
-> failures to power on/off. Also add the GDSC flags as applicable and
-> add support to control PCIE GDSC's using collapse vote registers.
+> The RCG's clk src has to be parked at XO while disabling as per the
+> HW recommendation, hence use clk_rcg2_shared_ops to achieve the same.
+> Also gpu_cc_cb_clk is recommended to be kept always ON, hence use
+> clk_branch2_aon_ops to keep the clock always ON.
 > 
-> Fixes: 08c51ceb12f7 ("clk: qcom: add the GCC driver for sa8775p")
+> Fixes: 0afa16afc36d ("clk: qcom: add the GPUCC driver for sa8775p")
 > Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
 > ---
->  drivers/clk/qcom/gcc-sa8775p.c | 40 ++++++++++++++++++++++++++++++++++
->  1 file changed, 40 insertions(+)
-> 
-> diff --git a/drivers/clk/qcom/gcc-sa8775p.c b/drivers/clk/qcom/gcc-sa8775p.c
-> index 7bb7aa3a7be5..71fa95f59a0a 100644
-> --- a/drivers/clk/qcom/gcc-sa8775p.c
-> +++ b/drivers/clk/qcom/gcc-sa8775p.c
-> @@ -4203,74 +4203,114 @@ static struct clk_branch gcc_video_axi1_clk = {
->  
->  static struct gdsc pcie_0_gdsc = {
->  	.gdscr = 0xa9004,
-> +	.collapse_ctrl = 0x4b104,
-> +	.collapse_mask = BIT(0),
-> +	.en_rest_wait_val = 0x2,
-> +	.en_few_wait_val = 0x2,
-> +	.clk_dis_wait_val = 0xf,
->  	.pd = {
->  		.name = "pcie_0_gdsc",
->  	},
->  	.pwrsts = PWRSTS_OFF_ON,
-> +	.flags = VOTABLE | RETAIN_FF_ENABLE | POLL_CFG_GDSCR,
 
-I have some old dt for this platform, and it doesn't mention the downstream
-counterpart flag for it (qcom,support-cfg-gdscr), so please double-check
-whether you really want to poll gdcsr + 0x4.
-
-The magic values I trust you have better sources for, the collapse off/masks
-look good.
+Should the same fixes apply to 8350?
 
 Konrad
