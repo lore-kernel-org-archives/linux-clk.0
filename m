@@ -1,174 +1,135 @@
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D61CD7710F
-	for <linux-clk@vger.kernel.org>; Fri, 31 May 2024 09:27:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93E537710F;
+	Fri, 31 May 2024 09:28:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717147639; cv=none; b=rRxdtBdhJxuwv2CYKrcaQCaLs+sPkSit3PUEaboe65cxyzEY3tRMPVvWg4B9dwv4cTU/JBCA2RM3cFLeytPuvFLfo98NFCfxuGELz3Ih8kxwATuA/DcFXtPlaVNlkAWYUT3cOvC/CaOHwMvqdeBs3HIliTa9SUbShDkPCCdllkc=
+	t=1717147734; cv=none; b=Wzl/gVZxsu0QhokeYJ/ZQPanj9nscVKZJRmNOfo3B376Y5TznbYzjKWb1jJhp71PPYrm7PKxio0vmGZ4mlEpNN7ecaeiCViQaJ39wXzw04LqKwvHJLfg3J/5pu1HPdm443SzP4PK4wV75Lj4uz+jmxnlkNY+KvzrJ57UDF8OK2M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717147639; c=relaxed/simple;
-	bh=glA0wCl4lQltSrWyYy62EoTfVe8JrGVFKzfyg6qHueg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZtP9VfeynxisZMrBlRpVobuQExLEkqnBlnwIOI2ww2dmMX2l45HfGTVTnY+cXA2U8jTNFNAV5/7MesI8ioIP7o4tEvrU2PR8ALyDBtRXp497PLJXEH1+DDOBRUn6sfgPJJL+onP6xON6MGlPneLLSEdSSL1l1zpTtFHevQDUx4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=otjK8zEJ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=6aqXqvwU; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xpGW9aGC; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=txGgbeyT; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+	s=arc-20240116; t=1717147734; c=relaxed/simple;
+	bh=kwImjdse1mZhW7DoFJ7ZUMIRINFQPVXqHwRakinZky0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=PhknVEbJtGI7ydmO44BGIvsjY9l0AK/ojGVr6Ur6AIW2ZgrA9XZu+YrDWHpMl6ebeaAguda8leeQI0QseMj1BWYZA3X6h+vo6u6HqOSQdHk/ne3IgLS0C2ZWPmaa2Ng5uve14evDJgKSL/c+FiWNQnNUnM8807NtnrCS3zJNllM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iNy2pgJ6; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="otjK8zEJ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="6aqXqvwU";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xpGW9aGC";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="txGgbeyT"
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id EDFBE1F816;
-	Fri, 31 May 2024 09:27:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1717147636; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=l+YfU9viPrCiXkQE3xw23iUZrKeBoEWHPl6GbE83aTY=;
-	b=otjK8zEJYOsXZs7iU13NOjq6dHWj7HVpe/odLjXAOb8mmUxQHyJQ/p40p+LvVOHc1Z1GZL
-	s9QwdN+3oseOi3anqw6xZsnvC/077wr79jP6GnrBdq1Fa8LvZgLtM6kWcPprxclu9pECo/
-	/ii5v809lQFJtW7sgnIdxk7JN4JdGqA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1717147636;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=l+YfU9viPrCiXkQE3xw23iUZrKeBoEWHPl6GbE83aTY=;
-	b=6aqXqvwUEO774rAB+i0PS2aiWhlC1C7L0FwCmtaLfWJdvnZxulHM4w+H8x5G2w0IxK3Mha
-	V2KoSnPDi7xOuPAA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=xpGW9aGC;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=txGgbeyT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1717147635; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=l+YfU9viPrCiXkQE3xw23iUZrKeBoEWHPl6GbE83aTY=;
-	b=xpGW9aGC9fyBCASYO6nGYQXnIux//DHqeAJAEePFcHazBK7guNAibYIiOzSdJUfvFnvhy9
-	uqDivi0R7dnwubTnfKpvIVAx5/TkCHlyUz1iMfL9HSWa1yGIrU/JUKD0yp3j2rTF9a1TZ/
-	xaWbDA/h7xUm1f2TckAtlK8sXzd3RfA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1717147635;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=l+YfU9viPrCiXkQE3xw23iUZrKeBoEWHPl6GbE83aTY=;
-	b=txGgbeyTH8gnWqRWmlAw/DBMo/heieqShagZreyL7/XBNYvnJmUEhP1HTkWNpx97eZFAxe
-	MhNI/jT9iPPtzrDg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D9092132C2;
-	Fri, 31 May 2024 09:27:14 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 7xGRNPKXWWYjGwAAD6G6ig
-	(envelope-from <iivanov@suse.de>); Fri, 31 May 2024 09:27:14 +0000
-From: "Ivan T. Ivanov" <iivanov@suse.de>
-To: sboyd@kernel.org
-Cc: florian.fainelli@broadcom.com,
-	wahrenst@gmx.net,
-	linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Maxime Ripard <maxime@cerno.tech>,
-	"Ivan T . Ivanov" <iivanov@suse.de>
-Subject: [PATCH] clk: bcm: rpi: Add disp clock
-Date: Fri, 31 May 2024 12:27:30 +0300
-Message-ID: <20240531092730.253484-1-iivanov@suse.de>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iNy2pgJ6"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44UMJ8ev015725;
+	Fri, 31 May 2024 09:28:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	DrkJ8VGp0AIj0xrO8UdAlwyPqrhHczKNhYKiCx3vpSg=; b=iNy2pgJ61W4dDfci
+	PRRdZ8CMBijFf4Qzb4TgpRKXigWPhwKWVY1+Se3jtCoI1D6npJofbVegUghz3nHB
+	HchQDxmUPSH0jKXftRQLov47rxaNR5bo1Fyg/Vw2WBZdhkPS+1GbzpqDM8uAggSY
+	h9phvwyunAYN8mOnwooRn5wUcIl3R//hLbyYvAy1r2Mdx7mNyR056emYwEuRQ4r1
+	viSrLzV8oHU3FPVuZf51Suyi65YKzuC2oxVBhJltFB7dgJDTq5FuysysGATLxRWz
+	rbT3djWOtpJtaqugU5VdqPZA19Ggj+LBGpUABmDh7FBAJHMg69kB/s+RVlHNQXJP
+	mru3+g==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba0qpfjb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 09:28:47 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44V9SkWp005057
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 09:28:46 GMT
+Received: from [10.217.216.152] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 31 May
+ 2024 02:28:41 -0700
+Message-ID: <d66ed568-8264-4430-a070-f353879f6b65@quicinc.com>
+Date: Fri, 31 May 2024 14:58:38 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.00 / 50.00];
-	BAYES_HAM(-2.99)[99.95%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FREEMAIL_CC(0.00)[broadcom.com,gmx.net,vger.kernel.org,lists.infradead.org,cerno.tech,suse.de];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:dkim,suse.de:email];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmx.net]
-X-Rspamd-Action: no action
-X-Rspamd-Queue-Id: EDFBE1F816
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Score: -3.00
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/8] dt-bindings: clock: qcom: Add compatible for
+ QCM6490 boards
+To: Luca Weiss <luca.weiss@fairphone.com>, Stephen Boyd <sboyd@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Rob Herring
+	<robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>
+References: <20240318053555.20405-1-quic_tdas@quicinc.com>
+ <20240318053555.20405-2-quic_tdas@quicinc.com>
+ <CZWOT0K3AE2F.1BUND7M9Q5RXO@fairphone.com>
+Content-Language: en-US
+From: Taniya Das <quic_tdas@quicinc.com>
+In-Reply-To: <CZWOT0K3AE2F.1BUND7M9Q5RXO@fairphone.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: ecrxHHs6mvSRBALYkbwQDCQB02OHrjV0
+X-Proofpoint-ORIG-GUID: ecrxHHs6mvSRBALYkbwQDCQB02OHrjV0
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-31_05,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ suspectscore=0 lowpriorityscore=0 impostorscore=0 clxscore=1011 mlxscore=0
+ mlxlogscore=999 malwarescore=0 spamscore=0 adultscore=0 bulkscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405310069
 
-From: Maxime Ripard <maxime@cerno.tech>
 
-BCM2712 has an extra clock exposed by the firmware called DISP, and used
-by (at least) the HVS. Let's add it to the list of clocks to register in
-Linux.
 
-Without this new definition driver fails at probe on BCM2712.
+On 3/18/2024 12:41 PM, Luca Weiss wrote:
+> On Mon Mar 18, 2024 at 6:35 AM CET, Taniya Das wrote:
+>> Add the new QCM6490 compatible to support the reset functionality for
+>> Low Power Audio subsystem.
+>>
+>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+>> ---
+>>   .../devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml       | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml b/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml
+>> index deee5423d66e..861b41933525 100644
+>> --- a/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,sc7280-lpasscorecc.yaml
+>> @@ -30,6 +30,7 @@ properties:
+>>         - qcom,sc7280-lpassaudiocc
+>>         - qcom,sc7280-lpasscorecc
+>>         - qcom,sc7280-lpasshm
+>> +      - qcom,qcm6490-lpassaudiocc
+> 
+> So QCM6490 and SM7325 and SC7280 with non-CrOS firmware (maybe some WoA
+> devices?) are supposed to use qcom,qcm6490-lpassaudiocc then? Is this
+> what is intended?
+> 
 
-Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-Signed-off-by: Ivan T. Ivanov <iivanov@suse.de>
----
- drivers/clk/bcm/clk-raspberrypi.c          | 5 +++++
- include/soc/bcm2835/raspberrypi-firmware.h | 1 +
- 2 files changed, 6 insertions(+)
+Sorry for the very late response on this thread, On QCM6490-IPD and 
+QCS690-RB3Gen2 boards, will require only reset functionality for Low 
+Power Audio subsystem and other clock controller functionality is not 
+supported from HLOS, as LPASS firmware takes care of it.
+Hence added new compatible to support only resets.
 
-diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-raspberrypi.c
-index 4d411408e4af..fabd5595e9cd 100644
---- a/drivers/clk/bcm/clk-raspberrypi.c
-+++ b/drivers/clk/bcm/clk-raspberrypi.c
-@@ -34,6 +34,7 @@ static char *rpi_firmware_clk_names[] = {
- 	[RPI_FIRMWARE_M2MC_CLK_ID]	= "m2mc",
- 	[RPI_FIRMWARE_PIXEL_BVB_CLK_ID]	= "pixel-bvb",
- 	[RPI_FIRMWARE_VEC_CLK_ID]	= "vec",
-+	[RPI_FIRMWARE_DISP_CLK_ID]	= "disp",
- };
- 
- #define RPI_FIRMWARE_STATE_ENABLE_BIT	BIT(0)
-@@ -124,6 +125,10 @@ raspberrypi_clk_variants[RPI_FIRMWARE_NUM_CLK_ID] = {
- 	[RPI_FIRMWARE_VEC_CLK_ID] = {
- 		.export = true,
- 	},
-+	[RPI_FIRMWARE_DISP_CLK_ID] = {
-+		.export = true,
-+		.minimize = true,
-+	},
- };
- 
- /*
-diff --git a/include/soc/bcm2835/raspberrypi-firmware.h b/include/soc/bcm2835/raspberrypi-firmware.h
-index 73cac8d0287e..e1f87fbfe554 100644
---- a/include/soc/bcm2835/raspberrypi-firmware.h
-+++ b/include/soc/bcm2835/raspberrypi-firmware.h
-@@ -152,6 +152,7 @@ enum rpi_firmware_clk_id {
- 	RPI_FIRMWARE_M2MC_CLK_ID,
- 	RPI_FIRMWARE_PIXEL_BVB_CLK_ID,
- 	RPI_FIRMWARE_VEC_CLK_ID,
-+	RPI_FIRMWARE_DISP_CLK_ID,
- 	RPI_FIRMWARE_NUM_CLK_ID,
- };
- 
+> Regards
+> Luca
+> 
+>>
+>>     power-domains:
+>>       maxItems: 1
+>> --
+>> 2.17.1
+> 
+
 -- 
-2.43.0
-
+Thanks & Regards,
+Taniya Das.
