@@ -1,146 +1,124 @@
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1555514B084
-	for <linux-clk@vger.kernel.org>; Fri, 31 May 2024 12:04:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A472157A68
+	for <linux-clk@vger.kernel.org>; Fri, 31 May 2024 12:14:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717157066; cv=none; b=qJtj6ebSfkR6InGcUns3v4v94XKgdPBHyz+ub6G21CnTulZfzM05hp/a6r2gZxwioaYkiRwvYS4gvUuL+cwSogfTTrh1HzcKYIvODjEPQRKH9n9ofAcsfVPxI2pJUxNvTNG3l7GnJAtvxhukW/lM48GDo6dTQqHm5OzJ3KWRfHk=
+	t=1717157684; cv=none; b=p6S4fFT51Ylf4hVJdiaamzK1lQ40Up6gy1qldp6AYxROHoywz5AM7qdZ70xcOksSmcWgG6O7hf+t43v2NmFNn0959S15FaHWO833H6F4vWbtJfhZaA+giom8RlTcbdTJeKAbFqENlvhwoD1sOILRmGj5MPDovScESdt6hlnBkQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717157066; c=relaxed/simple;
-	bh=6xdvJeDyYBD4qbZ8lT/zvJ7dO2l6Wggb6jIEtTTboGU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sWigiUH4blcMJcZ4Ei586XFpJb8pgkUlHv84YLFj/zFJugOJgpE3W3N6MRpvt4K8FJu8Q+XQuG7Z8P8By4bIQAPYjDAWOy8HMHLGX583cu7kjYR0LzBBBAKzXz1pnXhQRpXtPZMaSvCnZ1ybZiSEHw4cRrLtjxIlKISfu76QPjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ry+sBbA2; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1717157684; c=relaxed/simple;
+	bh=CQmx+o9N0DMEYwK5DNVlIisz18HsP6y0ABMSIz8z4S8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=inuV+oArktzFzQoWXtrWGLcjCKTcz9LCwsL76VCAlNUG+Hv6k4fLci8/HQTGNiGt2shbHMUCRdWKwp4Fr0n4ZbQCVA9XJWeY0bFlCUfSeCGmkg6DIYO6xM5OYoYE0jr65WwzQoCVE2/ptPuFc3dMJ2MOVnKIYhQH44yKsyhB3Ug=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=UNtSVBjT; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ry+sBbA2"
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52aea6067c8so2338886e87.0
-        for <linux-clk@vger.kernel.org>; Fri, 31 May 2024 05:04:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717157063; x=1717761863; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QppKMPnoJFrrG7X3aJOQRgCs56wwZx8U2VxR/4HfLRc=;
-        b=ry+sBbA2d/i3ImCnIsCZlweZQX4NnC/ijEewiklxMH4ZVFxIdYhPto/UKhaf8jHiEf
-         8ifUaUoAujYmA0jj3yZhFUubWwRJh9b30rr1dxuiIJSp6tGPfLjSn7Wkkx1ukWSOU+sp
-         wKyF+m4sbwmFlWquGfFptsZzOimUm48z7lmBjhacpw+8gphig76P+Q5xrzZichAHDF/t
-         78NuwucbRBgHvh1vnwb/gYqUjeklq3JZPgzFIum6RIypS2sWI6WBXGFOTn1cEhYzO+zR
-         QwPCHFIxJ5sZjJhbat313CliDVorGPbUPjuN5XfG4xCr7KtMn1a6duSaCJcmTCI53/Jk
-         K4hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717157063; x=1717761863;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QppKMPnoJFrrG7X3aJOQRgCs56wwZx8U2VxR/4HfLRc=;
-        b=FBavYxEUlkCWdzhXNH+D6KhtRw+fRdI7ILm1xa645/BFMULZWP2+KOmSa2+c8FPmGr
-         PLkH6TZ3qvgDEErN1R/rKiCcU58zW+74gTwcR6R5WL6rC84PZDIPlQNRzJIStkrAaA46
-         je4/InezYHKGnqVpIE0sljzW5ZWbTtYBRW4C4cOL7RHyigSZSxl2kq5l7cVW+QztbivM
-         7gXjEaqRQTuIcOXps/E9AU5mCLkU9SV8zBfDNSGrwKVum5M24lwVYz+k+7AKfwy1xxk7
-         FcRGbUJ9fX2yIbJIYCTJo4z0VhA2K+w2GejXRXkiwGdd12wYbUfCHZPJeuqmT443DFrh
-         HWyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV0I3gHBawfCV4FyhDEaLxfuHRpqr4Tv+WL12rMi04C3ohrQeNobT8IyqD5hjRMQT97nCDrlWnDI2Qasud67hJXTiNsip5OqS39
-X-Gm-Message-State: AOJu0YzuzLqJklUCywsiNjO7Ftu0NUcqwG4/Te8hCyKbgTs9/0oZP40x
-	REP1Lp63NRYHO7HKYjlAcGcPwu3f0LNPJfL2AISliWvNwf1A1iTKe3Vi/xhFysI=
-X-Google-Smtp-Source: AGHT+IHWCNuEqJi9LuYYD8GAiM8tuYHlXxxRcctEj/EVqNcTsAou3H4jkdkLfvlRb36nQ/5Wf94s+A==
-X-Received: by 2002:a05:6512:3b25:b0:522:1e16:1f17 with SMTP id 2adb3069b0e04-52b8980b4damr1500989e87.65.1717157063255;
-        Fri, 31 May 2024 05:04:23 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52b84d75dacsm309445e87.132.2024.05.31.05.04.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 May 2024 05:04:22 -0700 (PDT)
-Date: Fri, 31 May 2024 15:04:21 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Taniya Das <quic_tdas@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Rob Herring <robh+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, quic_jkona@quicinc.com, 
-	quic_imrashai@quicinc.com, devicetree@vger.kernel.org
-Subject: Re: [PATCH 3/4] arm64: dts: qcom: qcm6490-idp: Update protected
- clocks list
-Message-ID: <4dvqegoz45ct5rqknf6vgi6rvh4osaecfyp7fcrs26lcsq4npu@dwoyubuqlbss>
-References: <20240531102252.26061-1-quic_tdas@quicinc.com>
- <20240531102252.26061-4-quic_tdas@quicinc.com>
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="UNtSVBjT"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1717157666; x=1717762466; i=wahrenst@gmx.net;
+	bh=CQmx+o9N0DMEYwK5DNVlIisz18HsP6y0ABMSIz8z4S8=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=UNtSVBjT9wBbToHu9kRPK462Atqvz6SbOMbmesXm+L6miPO/KkKHGlU8sGBZPufI
+	 ZnquaJNpE9vXSuesgH4i/gm/RK2gyaL6bCrgxR5AcSQm7XzeUpChxZcMpV9jZBWKv
+	 ihJQv1q8LwdESvWDuqfN78Kj8kGW4lx72f+MzSTjYv+zB1mqA4p7KO4Tyo/a7CAgo
+	 K7zXqfJybQilu/rD9c7Qt/3KF0njN9/WhYtvoD/1229Sz2rrmvZsZmNrTjZHqR6G5
+	 /e3c7TVnXQQzP8M6o7evwPng0BHKt5jigmF+bXZ6GVPLRHXofpX4twV4N0Hq6ZUuP
+	 5LAwHg9wOzYHAzXLCQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.127] ([37.4.248.43]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MtOGa-1sTz2a1I2I-00rX6E; Fri, 31
+ May 2024 14:14:26 +0200
+Message-ID: <30874df5-6777-4c7e-91ae-33160abf14a4@gmx.net>
+Date: Fri, 31 May 2024 14:14:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240531102252.26061-4-quic_tdas@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: bcm: rpi: Add disp clock
+To: "Ivan T. Ivanov" <iivanov@suse.de>
+Cc: sboyd@kernel.org, florian.fainelli@broadcom.com,
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Maxime Ripard <maxime@cerno.tech>, Andrea della Porta <andrea.porta@suse.com>
+References: <20240531092730.253484-1-iivanov@suse.de>
+ <4c56e57c-7a4e-4976-a05e-0adf3df13b3f@gmx.net>
+ <20240531101813.fronn47dx3ksacq6@localhost.localdomain>
+ <2a9fdc2d-7fdd-439d-b8b6-406b559d27c9@gmx.net>
+ <20240531111857.mwekjpyetqmi7c5t@localhost.localdomain>
+Content-Language: en-US
+From: Stefan Wahren <wahrenst@gmx.net>
+In-Reply-To: <20240531111857.mwekjpyetqmi7c5t@localhost.localdomain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:SViQSd23+ZB7Ub7haqZRnSDU6SkU4K4MxogNbWJEYyMEAGDmwr4
+ K4775HbuMNWv0eltiBlywIS0v+rgDI4Pqeq8s6vtfGfbY4KSGrPWR3CuE5T3Q/J3d32QtS3
+ sZjpdVgNc8m23J64u9sZCEo3zXcqaP5O9QHaiQmH1bJbAA3rAzsFFYJIE3prO7Qtmqzb+N7
+ hQVuqXl0kFSyPOf3Uf7BA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:GW/myPWZ8No=;CqL7LtaabWFHgPfm0Wv0j3C9GHf
+ WheZajuIw5dJtphzbCEJWPrw6+FblwKuVQsmY/zB1HgX8wPk6pm/u5VYgNjRk0LdmhF+Fs5A7
+ 5vKOKq5pnMwUwFIJF7PAw8RAV2XOHoH57IbV0as/iM3vd1Gx4bwR8+sxufpJ0DiZ0vMGsB2gi
+ TreO9YR/3a+RT4LHGzv9RvkNQ1Geo6lT3l81rlc0vStvhzRhlQJhakGVRFBMy+Nuzt/l9tX2Z
+ dt44BdHql5tOgbXKUAh2yzjI+UHfAKaVq3O8LQIY9gf1yJeimKZUoZERETH484MVciTNwj0ms
+ JdVlzQTZB7MHXIrd/foDL9/dfjr2f5J0tU3FkL8Q69lAvAn9hdqAE0rrXBGr3j7tcUVqFosuO
+ IV5EYTIbkHjprLxB5Ft9flY6QrjsiTq6xkAFU4Xvdd9qh6R3BEVkZcxOqAm8xrfXZNUIytbcu
+ Z5dbrih91gpkvHW08Exi+Li5qwM5Q2UCc+xoQY2TEc4XZGTeGS4dUv7WDRnbvWZWM9oFQ9xv5
+ uOG5egu4Hm9aiyxNgIpXG0JS36kxbFU/Sa8NkcJ/YAR1NCWmleTZS1tFLC03FqhDaU80qCEyp
+ uRtPi3hira/k5pMe5XyVBpL4qxcYHgfBKIo+Y2JN26D5EnQArIBu83Y8HWtYJV9EFgGrnEcMB
+ nvTg5p/M3V3PS7xx4Bnow1K6fzJulsKcUB+T8Gt8iqIVlKWK+ALAKPzfYAWS2gcsT4IkUKN4Z
+ 6VwryYoITbUHjLoaCkPL3CVo7X0WoBVDjmOz5ht7Qcs0AXC4o5uybCLsLTiI7qLx0IvVPWmHj
+ M3bFWleYH3zPZNDS1gp6STP03nIhQa75LyMp2XotYUZUU=
 
-On Fri, May 31, 2024 at 03:52:51PM +0530, Taniya Das wrote:
-> Certain clocks are not accessible on QCM6490-IDP board,
-> thus mark them as protected. Update the lpassaudio node to
-> support the new compatible as the lpassaudio needs to support
-> the reset functionality on the QCM6490 board and the rest of
-> the Audio functionality would be provided from the LPASS
-> firmware.
-> 
-> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/qcm6490-idp.dts | 28 +++++++++++++++++++++++-
->  1 file changed, 27 insertions(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
-> index a0668f767e4b..4eece564331a 100644
-> --- a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
-> +++ b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
-> @@ -1,6 +1,6 @@
->  // SPDX-License-Identifier: BSD-3-Clause
->  /*
-> - * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
-> + * Copyright (c) 2023-2024 Qualcomm Innovation Center, Inc. All rights reserved.
->   */
->  
->  /dts-v1/;
-> @@ -688,3 +688,29 @@
->  &wifi {
->  	memory-region = <&wlan_fw_mem>;
->  };
-> +
-> +&gcc {
-> +	protected-clocks = <GCC_AGGRE_NOC_PCIE_1_AXI_CLK> ,<GCC_PCIE_1_AUX_CLK>,
-> +			<GCC_PCIE_1_AUX_CLK_SRC>, <GCC_PCIE_1_CFG_AHB_CLK>,
-> +			<GCC_PCIE_1_MSTR_AXI_CLK>, <GCC_PCIE_1_PHY_RCHNG_CLK_SRC>,
-> +			<GCC_PCIE_1_PIPE_CLK>, <GCC_PCIE_1_PIPE_CLK_SRC>,
-> +			<GCC_PCIE_1_SLV_AXI_CLK>, <GCC_PCIE_1_SLV_Q2A_AXI_CLK>,
-> +			<GCC_QSPI_CNOC_PERIPH_AHB_CLK>, <GCC_QSPI_CORE_CLK>,
-> +			<GCC_QSPI_CORE_CLK_SRC>,<GCC_USB30_SEC_MASTER_CLK>,
-> +			<GCC_USB30_SEC_MASTER_CLK_SRC>, <GCC_USB30_SEC_MOCK_UTMI_CLK>,
-> +			<GCC_USB30_SEC_MOCK_UTMI_CLK_SRC>,
-> +			<GCC_USB30_SEC_MOCK_UTMI_POSTDIV_CLK_SRC>, <GCC_USB30_SEC_SLEEP_CLK>,
-> +			<GCC_USB3_SEC_PHY_AUX_CLK>, <GCC_USB3_SEC_PHY_AUX_CLK_SRC>,
-> +			<GCC_USB3_SEC_PHY_COM_AUX_CLK>, <GCC_USB3_SEC_PHY_PIPE_CLK>,
-> +			<GCC_USB3_SEC_PHY_PIPE_CLK_SRC>, <GCC_CFG_NOC_LPASS_CLK>,
-> +			<GCC_MSS_GPLL0_MAIN_DIV_CLK_SRC>, <GCC_MSS_CFG_AHB_CLK>,
-> +			<GCC_MSS_OFFLINE_AXI_CLK>, <GCC_MSS_SNOC_AXI_CLK>,
-> +			<GCC_MSS_Q6_MEMNOC_AXI_CLK>, <GCC_MSS_Q6SS_BOOT_CLK_SRC>,
-> +			<GCC_SEC_CTRL_CLK_SRC>, <GCC_WPSS_AHB_CLK>,
-> +			<GCC_WPSS_AHB_BDG_MST_CLK>, <GCC_WPSS_RSCP_CLK>;
+Am 31.05.24 um 13:18 schrieb Ivan T. Ivanov:
+> On 05-31 13:06, Stefan Wahren wrote:
+>> Hi Ivan,
+>>
+>> Am 31.05.24 um 12:20 schrieb Ivan T. Ivanov:
+>>> Hi,
+>>>
+>>> On 05-31 11:55, Stefan Wahren wrote:
+>>>> Hi Ivan,
+>>>>
+>>>> Am 31.05.24 um 11:27 schrieb Ivan T. Ivanov:
+>>>>> From: Maxime Ripard <maxime@cerno.tech>
+>>>>>
+>>>>> BCM2712 has an extra clock exposed by the firmware called DISP, and =
+used
+>>>>> by (at least) the HVS. Let's add it to the list of clocks to registe=
+r in
+>>>>> Linux.
+>>>>>
+>>>>> Without this new definition driver fails at probe on BCM2712.
+>>>> could you please explain the relation to Andrea's series [1]?
+>>>>
+>>>> How can this occur, because there is no Raspberry Pi 5 support in Mai=
+nline?
+>>> I am using few out-of-tree drivers on top of the Andrea's patch-set
+>>> and noticed the failure, so decided to prepare the road for RPi5.
+>> okay and did you use the vendor DTB or Andreas' version?
+> Patches from Andrea don't have "raspberrypi,firmware-clocks" node.
+That's the reason i'm asking :-)
+>
+>>> I am not entirely sure what are you asking.
+>> Because Andreas DTS shouldn't require this patch and we usually don't
+>> include changes which are not testable with Mainline Kernel.
+>>
+> So I should wait Andreas' patch set to be merged in before I can post
+> anything about RPi5?
+No, but it would be extremely helpful for the maintainers to know, which
+patches (directly or indirectly) depend on which pending series. So a
+comment below the commit message (at the same place as the patch
+changelog) about this would be nice in this case.
+>
+> Regards,
+> Ivan
+>
 
-Is there any reason why this list is significantly larger than a list
-for RB3g2 or FP5?
-
-> +};
-> +
-> +&lpass_audiocc {
-> +	compatible = "qcom,qcm6490-lpassaudiocc";
-> +	/delete-property/ power-domains;
-> +};
-
-Separate commits, please.
-
-> -- 
-> 2.17.1
-> 
-
--- 
-With best wishes
-Dmitry
