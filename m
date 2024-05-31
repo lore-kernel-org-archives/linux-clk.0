@@ -1,140 +1,231 @@
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7FC1CD35
-	for <linux-clk@vger.kernel.org>; Fri, 31 May 2024 09:55:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D3CF1CD35;
+	Fri, 31 May 2024 09:57:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717149324; cv=none; b=iXFDoraLivoeHgrveuSlq3s6Ad/7iH2aXiJW5Ljduao5Fw4RFpzaXnYMLet+hkavdudqEOP6v1OR+svjA0dpUA1MHpNM2wQf1bCQhNMrBNTR91CzyHnYDJ0SGKqC+PrhhnMznDyg0kTG2q3AKDeBhXLIgI0xun5AHpFQZaeZP4g=
+	t=1717149425; cv=none; b=G3XdTga2krT/U3hOn7davQ/wxbcVaccYs1RIR6zOWy/ymL1O18Uxk2TnmpfKewfBaXHgCVy6YGkBnowmQg99yLuNZdQvRU0Fph2w6xYo/pYgjNns2IQUEB3btyerL+v/4VCirNJQiQ6aZcQu34S2YtjEacbmSYGTZXKlYIyLGww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717149324; c=relaxed/simple;
-	bh=HmBOAq8DyYpV8ruVb8dWgK4z+JEI5A6yGTu0NI31i6E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZnsNUf95E+KqaLGXr5T3Fp14xq+LmE00z7xwTi686SHFBbpqn1MkevDEBEgS7cGqBufDHo48jsi50YN8ETdlYPIqKkApZPDUFheae6MzR625cCvjvwsswTnaLIijNekl0MsBsi3Zvjwr7n15AuasQ1A4XGHhppiHc35iIVkQego=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=TYLRRNlG; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+	s=arc-20240116; t=1717149425; c=relaxed/simple;
+	bh=pG1FuJNpg4iD5VvuUxyaJG1TPUBzdsFzeembK8i33cE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QSooPByyUkRjkWzBjLh9BoUUR0xWLdDPQmL7VUmXupIGXM6npxUaaZ4ppyNso7km0sJopNLEs4TVdEg5IgahXYmSWpUKq5934p0e6xDaSUltaW92PinNGwqv020vsZa3iIBGASytf3rySiuJNqEWwmCnncAqwLZ6wB96oRCi8RE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hu5bMmVB; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="TYLRRNlG"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1717149303; x=1717754103; i=wahrenst@gmx.net;
-	bh=9d/HsGlaRLDBdBPakmfbaADULgWGTtFBoM3Fa6M59L0=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=TYLRRNlG0CvalwlDh72a7G5Ff9P9wWAbPaGAtRY3iKuYJtwMd+HPlTxV3ZN7Wnbd
-	 gAgsqdqJQsFbWsAJLsmmpwjMRH1BWVFd7WAypqI5xneYSnzJlqVGAZnvTrLgn0+GB
-	 6LMZ569uUtP0g8F5jpXJGxg38J/lYNxkjo/HHpeeHumBHQ763ZiN1uR/hajl1RH8Z
-	 0TAx25ZizIkNNlIFJE82WlMTWf/ADgT/zB8asFJ31pHzzp8uDQJKx2wGSBjMdl5Cv
-	 X7d3/1g9CtWPIntuFM6ppxMxFHkH4UYOoHYuceJy5qeQEFjnKVdH33KBY+4rik+RP
-	 injQZs6nyWEiwmMXkA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.127] ([37.4.248.43]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1Mnpns-1soncb3GEk-00oHwM; Fri, 31
- May 2024 11:55:03 +0200
-Message-ID: <4c56e57c-7a4e-4976-a05e-0adf3df13b3f@gmx.net>
-Date: Fri, 31 May 2024 11:55:03 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hu5bMmVB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65A56C116B1;
+	Fri, 31 May 2024 09:56:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717149424;
+	bh=pG1FuJNpg4iD5VvuUxyaJG1TPUBzdsFzeembK8i33cE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hu5bMmVBc986akPDt9Ge9tIAY28LTFO3zwiOt/Joe+hTEGWcqkK1uspvfXfUgXXxe
+	 37xIAg+mkLYdlb3Hs9WdiXpCF1VeQrUhl78CihP1szlXYNSBa15MdkJ/xVV25GxxSe
+	 GoFHLTigYu0YGr12LUzpQPJDP6vTnVpL49ILbXi3zxAMPLAoxFNkYdK1EVTmNJFn7f
+	 CA1vM3tFKh3BQ8+a2Mrj8F6+o+ltODCoNMa/d4HHrTNiLP+FE/f+tft+dne1biNKt8
+	 EM2SBRlBln82aT4Aeemi64mL4//CHv+Iem7UQVhtCKN9l9VGh3B5qbmCfUa1q0Ty4h
+	 r2ZCGXufem1Qw==
+Date: Fri, 31 May 2024 10:56:50 +0100
+From: Lee Jones <lee@kernel.org>
+To: Yoshinori Sato <ysato@users.sourceforge.jp>
+Cc: linux-sh@vger.kernel.org, Damien Le Moal <dlemoal@kernel.org>,
+	Niklas Cassel <cassel@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Rich Felker <dalias@libc.org>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Helge Deller <deller@gmx.de>,
+	Heiko Stuebner <heiko.stuebner@cherry.de>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Chris Morgan <macromorgan@hotmail.com>,
+	Sebastian Reichel <sre@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Masahiro Yamada <masahiroy@kernel.org>, Baoquan He <bhe@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Kefeng Wang <wangkefeng.wang@huawei.com>,
+	Stephen Rothwell <sfr@canb.auug.org.au>,
+	Azeem Shaikh <azeemshaikh38@gmail.com>, Guo Ren <guoren@kernel.org>,
+	Max Filippov <jcmvbkbc@gmail.com>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Anup Patel <apatel@ventanamicro.com>,
+	Jacky Huang <ychuang3@nuvoton.com>,
+	Hugo Villeneuve <hvilleneuve@dimonoff.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+	Sam Ravnborg <sam@ravnborg.org>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	Sergey Shtylyov <s.shtylyov@omp.ru>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	linux-ide@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-pci@vger.kernel.org, linux-serial@vger.kernel.org,
+	linux-fbdev@vger.kernel.org
+Subject: Re: [DO NOT MERGE v8 23/36] mfd: sm501: Convert platform_data to OF
+ property
+Message-ID: <20240531095650.GD8682@google.com>
+References: <cover.1716965617.git.ysato@users.sourceforge.jp>
+ <c139d3a42c61d978296aa2e513de073c643e4fbe.1716965617.git.ysato@users.sourceforge.jp>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: bcm: rpi: Add disp clock
-To: "Ivan T. Ivanov" <iivanov@suse.de>, sboyd@kernel.org
-Cc: florian.fainelli@broadcom.com, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, Maxime Ripard <maxime@cerno.tech>,
- Andrea della Porta <andrea.porta@suse.com>
-References: <20240531092730.253484-1-iivanov@suse.de>
-Content-Language: en-US
-From: Stefan Wahren <wahrenst@gmx.net>
-In-Reply-To: <20240531092730.253484-1-iivanov@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:eJXZyW8nquPN97oYqnXyhyNtCJ0Ozo6YLDgVL2Z4jO2tBdU5me4
- Km/qE41fYmbfPqWcSjv2ufWQHwPDVrB1fg4tUW1qD68AFGstfhYs6IVDGjYR8QVDy0tRAkC
- NRFrbpg4G9JprA/dKD4mbgpSLPh+MWTLbI2fUr99n5o5VsJ9JGUP9N0UoqM8QHg2URYwVqC
- lWvVSHVw9tG5L0aw2UyjA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:fr7cx4enoEc=;a/a+KuX+HDSL4PZsquzGgA0AYbl
- oeVWUR06ea6q40IpgqgDB4AFzYKIaf1egG/NQjpQnFMSYH+WcHXWO+j9/Fn9MkBH64FN/pLcV
- 5A2DI+LYxbpnImCmJbrcW2XDBn0WIeLoVZIwkLLWwaWuh1ggQlvqUVf8/9LwBf6Vp4NzUqw3K
- tofospkX7HnzsPkeDxamt/QlyKoJ/vrcRBG9lwvG/B5zx4aoTJmJDvhtQKwnDCeirja8FmxRL
- GpirU/PG5NGKiU8PJpS1X/IUKrdM3QDqtyzD9bAn4+XnpvEMUGtPEKy+BIcgvvG5OkrMH3Dek
- TpdxwYKRh4pyqwSHBXpQ0cRFQPvmwUAHItnCH92ed4m+2tLtN25WbdI9UE6GVNKS9Elp6iGxe
- zjwhnITEALotbKNuNCSumv8LOt/EQCwzkI0lADEmp7P7dtrQOCuogWbVDPvqIGjP45VFQVoKC
- Er1B84q4Suc6hQO5+uh5vzSLlSXRbJgq/XLL6yha4x75IxTnZwoBDEB1msZmqlQDSHrWBXUz1
- zZKL1D08hExebeKiw2xtVh+8VlutNZafJlKvQ/yiZQ7aP68CLM89+50lAo/5/arajfxujUDtF
- ea5D144ou90yZk3c02gvm4ScfDv0vQUY5LqLNEiEqdZ9gJ22CEez3PEAca94KbubTcbeRPGPk
- UBr1eX5Qezzt9o1lMZAeNlWBjqE9uijRQErlxqXqTBm2ke4bP11sSAtW1Fawx6wGsZI2/EMOx
- hbMruoUBKyfqG9BzYa6X+j7s8cfbOH6paLNeNob0n5Vvb0YwN8Dfi/6/IgKf8giz3YMIuM/UX
- aurVkX1eeAPGVPl2Te42ADtVPQ5iURkCFUX7dlR7PpLi8=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <c139d3a42c61d978296aa2e513de073c643e4fbe.1716965617.git.ysato@users.sourceforge.jp>
 
-Hi Ivan,
+On Wed, 29 May 2024, Yoshinori Sato wrote:
 
-Am 31.05.24 um 11:27 schrieb Ivan T. Ivanov:
-> From: Maxime Ripard <maxime@cerno.tech>
->
-> BCM2712 has an extra clock exposed by the firmware called DISP, and used
-> by (at least) the HVS. Let's add it to the list of clocks to register in
-> Linux.
->
-> Without this new definition driver fails at probe on BCM2712.
-could you please explain the relation to Andrea's series [1]?
-
-How can this occur, because there is no Raspberry Pi 5 support in Mainline=
-?
-
-[1] -
-https://lore.kernel.org/linux-arm-kernel/cover.1717061147.git.andrea.porta=
-@suse.com/
->
-> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
-> Signed-off-by: Ivan T. Ivanov <iivanov@suse.de>
+> Various parameters of SM501 can be set using platform_data,
+> so parameters cannot be passed in the DeviceTree target.
+> Expands the parameters set in platform_data so that they can be
+> specified using DeviceTree properties.
+> 
+> Signed-off-by: Yoshinori Sato <ysato@users.sourceforge.jp>
 > ---
->   drivers/clk/bcm/clk-raspberrypi.c          | 5 +++++
->   include/soc/bcm2835/raspberrypi-firmware.h | 1 +
->   2 files changed, 6 insertions(+)
->
-> diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-ras=
-pberrypi.c
-> index 4d411408e4af..fabd5595e9cd 100644
-> --- a/drivers/clk/bcm/clk-raspberrypi.c
-> +++ b/drivers/clk/bcm/clk-raspberrypi.c
-> @@ -34,6 +34,7 @@ static char *rpi_firmware_clk_names[] =3D {
->   	[RPI_FIRMWARE_M2MC_CLK_ID]	=3D "m2mc",
->   	[RPI_FIRMWARE_PIXEL_BVB_CLK_ID]	=3D "pixel-bvb",
->   	[RPI_FIRMWARE_VEC_CLK_ID]	=3D "vec",
-> +	[RPI_FIRMWARE_DISP_CLK_ID]	=3D "disp",
->   };
->
->   #define RPI_FIRMWARE_STATE_ENABLE_BIT	BIT(0)
-> @@ -124,6 +125,10 @@ raspberrypi_clk_variants[RPI_FIRMWARE_NUM_CLK_ID] =
-=3D {
->   	[RPI_FIRMWARE_VEC_CLK_ID] =3D {
->   		.export =3D true,
->   	},
-> +	[RPI_FIRMWARE_DISP_CLK_ID] =3D {
-> +		.export =3D true,
-> +		.minimize =3D true,
-> +	},
->   };
->
->   /*
-> diff --git a/include/soc/bcm2835/raspberrypi-firmware.h b/include/soc/bc=
-m2835/raspberrypi-firmware.h
-> index 73cac8d0287e..e1f87fbfe554 100644
-> --- a/include/soc/bcm2835/raspberrypi-firmware.h
-> +++ b/include/soc/bcm2835/raspberrypi-firmware.h
-> @@ -152,6 +152,7 @@ enum rpi_firmware_clk_id {
->   	RPI_FIRMWARE_M2MC_CLK_ID,
->   	RPI_FIRMWARE_PIXEL_BVB_CLK_ID,
->   	RPI_FIRMWARE_VEC_CLK_ID,
-> +	RPI_FIRMWARE_DISP_CLK_ID,
->   	RPI_FIRMWARE_NUM_CLK_ID,
->   };
->
+>  drivers/mfd/sm501.c           | 238 ++++++++++++++++++++++++++++++++++
+>  drivers/video/fbdev/sm501fb.c |  87 +++++++++++++
+>  2 files changed, 325 insertions(+)
+> 
+> diff --git a/drivers/mfd/sm501.c b/drivers/mfd/sm501.c
+> index b3592982a83b..d373aded0c3b 100644
+> --- a/drivers/mfd/sm501.c
+> +++ b/drivers/mfd/sm501.c
+> @@ -20,6 +20,7 @@
+>  #include <linux/gpio/driver.h>
+>  #include <linux/gpio/machine.h>
+>  #include <linux/slab.h>
+> +#include <linux/clk.h>
+>  
+>  #include <linux/sm501.h>
+>  #include <linux/sm501-regs.h>
+> @@ -82,6 +83,16 @@ struct sm501_devdata {
+>  	unsigned int			 rev;
+>  };
+>  
+> +struct sm501_config_props_uint {
+> +	char *name;
+> +	u32 shift;
+> +};
+> +
+> +struct sm501_config_props_flag {
+> +	char *clr_name;
+> +	char *set_name;
+> +	u32 bit;
+> +};
+>  
+>  #define MHZ (1000 * 1000)
+>  
+> @@ -1370,6 +1381,227 @@ static int sm501_init_dev(struct sm501_devdata *sm)
+>  	return 0;
+>  }
+>  
+> +#define FIELD_WIDTH 4
+> +struct dt_values {
+> +	char *name;
+> +	unsigned int offset;
+> +	unsigned int width;
+> +	char *val[(1 << FIELD_WIDTH) + 1];
+> +};
+> +
+> +#define fld(_name, _offset, _width, ...)	\
+> +	{ \
+> +		.name = _name, \
+> +		.offset = _offset, \
+> +		.width = _width,	\
+> +		.val = { __VA_ARGS__, NULL},	\
+> +	}
+> +
+> +static const struct dt_values misc_timing[] = {
+> +	fld("ex", 28, 4,
+> +	    "none", "16", "32", "48", "64", "80", "96", "112",
+> +	    "128", "144", "160", "176", "192", "208", "224", "240"),
+> +	fld("xc", 24, 2, "internal-pll", "hclk", "gpio30"),
+> +	fld("us", 23, 1, "disable", "enable"),
+> +	fld("ssm1", 20, 1, "288", "divider"),
+> +	fld("sm1", 16, 4,
+> +	    "1", "2", "4", "8", "16", "32", "64", "128",
+> +	    "3", "6", "12", "24", "48", "96", "192", "384"),
+> +	fld("ssm0", 12, 1, "288", "divider"),
+> +	fld("sm0", 8, 4,
+> +	    "1", "2", "4", "8", "16", "32", "64", "128",
+> +	    "3", "6", "12", "24", "48", "96", "192", "384"),
+> +	fld("deb", 7, 1, "input-reference", "output"),
+> +	fld("a", 6, 1, "no-acpi", "acpi"),
+> +	fld("divider", 4, 2, "336", "288", "240", "192"),
+> +	fld("u", 3, 1, "normal", "simulation"),
+> +	fld("delay", 0, 3, "none", "0.5", "1.0", "1.5", "2.0", "2.5"),
+> +	{ .name = NULL },
+> +};
+> +
+> +static const struct dt_values misc_control[] = {
+> +	fld("pad", 30, 2, "24", "12", "8"),
+> +	fld("usbclk", 28, 2, "xtal", "96", "48"),
+> +	fld("ssp", 27, 1, "uart1", "ssp1"),
+> +	fld("lat", 26, 1, "disable", "enable"),
+> +	fld("fp", 25, 1, "18", "24"),
+> +	fld("freq", 24, 1, "24", "12"),
+> +	fld("refresh", 21, 2, "8", "16", "32", "64"),
+> +	fld("hold", 18, 3, "fifo-empty", "8", "16", "24", "32"),
+> +	fld("sh", 17, 1, "active-low", "active-high"),
+> +	fld("ii", 16, 1, "normal", "inverted"),
+> +	fld("pll", 15, 1, "disable", "enable"),
+> +	fld("gap", 13, 2, "0"),
+> +	fld("dac", 12, 1, "enable", "disable"),
+> +	fld("mc", 11, 1, "cpu", "8051"),
+> +	fld("bl", 10, 8, "1"),
+> +	fld("usb", 9, 1, "master", "slave"),
+> +	fld("vr", 4, 1, "0x1e00000", "0x3e00000"),
+> +	{ .name = NULL },
+> +};
 
+I've been avoiding this set for a while now!
+
+I appreciate the amount of work that you've put into this, but this is a
+bit of a disaster.  It's a hell of lot of over-complex infrastructure
+just to pull out some values from DT.
+
+Forgive me if I have this wrong, but it looks like you're defining
+various structs then populating static versions with hard-coded offsets
+into DT arrays!  Then you have a bunch of hoop-jumpy functions to
+firstly parse the offset-structs, then conduct look-ups to pull the
+final value which in turn gets shifted into an encoded variable ready
+for to write out to the registers.  Bonkers.
+
+What does 'timing' even mean in this context?  Clocks?
+
+What other devices require this kind of handling?  Why is this device so
+different from all other supported devices to date?  Instead of
+attempting to shoehorn this into a 20 year old driver, why not reshape
+it to bring it into alignment with how we do things today?
+
+E.g. handle all clocking from the clock driver, all display settings
+(including timing?) from the display driver, etc.
+
+-- 
+Lee Jones [李琼斯]
