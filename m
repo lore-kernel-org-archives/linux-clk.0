@@ -1,111 +1,139 @@
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A836317C7DE
-	for <linux-clk@vger.kernel.org>; Fri, 31 May 2024 17:39:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50FF5446D1;
+	Fri, 31 May 2024 17:46:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717177175; cv=none; b=JFGatDxB8qZVzqA9qX5T7aO/IiSJRb28hfFne3rvC3RbalkNWbmOe0lRH2DetDxbMHh7faVp4czgWMvrPAgoP4b/hGJFWvc+n9SivX4907a45b8+7Mtg/L4LFfjX+kJaQWGD38Sd6rqdZY4pylf6m7BqY01kLShGTgueYbosWXs=
+	t=1717177607; cv=none; b=B5YONc9uw098/JNq2sPqiplVSgn07Htu3pdasmLaCqU6FKcetZ/H2vr2C0IZ5DnN49VgjtxUYldso8TBbkI67Nyjaz3+XZ8z6VVGvQghTlBwIPUy2lFjTeT2NF9aqUEUO03nJmjMD07UOHg2/v7JLpHAfMv4+fDRo/QUoToBOVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717177175; c=relaxed/simple;
-	bh=PzdmUDU3SWlU3IKidPUsdT6fM1IqaOEod+sGZdxJ3eI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EmQAaZWMDJIKROHS7QkZjsUH2i04f9zntcQBCnxKnkf7lbgy94N0aBdLog0L5woeHePAv2Yu/T1YUuE3KWIzDRZPOfem3/7/mlMXNsKREnNCFZUXkIlJ9j2C8a1tkKMnAv1AJrx7SWnAizKOej/wUkANenTKKC1Ttkxf2cPCpgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hQx/Ih5H; arc=none smtp.client-ip=209.85.219.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1717177607; c=relaxed/simple;
+	bh=Jactaw/uaQDCqVlYlCN8SCZA8mfXUF5s7kM6dX3ZtcE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=pzxmwkqUMT7yVUm4MXYmi7xrltXy5NWSmJ5n4YruAnoZhcrJLKsm85aTrILg7BbHEf0/JXkNcuE+IpiyJcXwm3EIeOx+tmAyGAojRSoo4uTk8p3vr0pNIJbPjL0wX0yIgegIS0j/nACJjSg69DXXiIFskWJKMftgViwqLcto8JI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jS9heyO+; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hQx/Ih5H"
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-dfa71ded97bso804078276.1
-        for <linux-clk@vger.kernel.org>; Fri, 31 May 2024 10:39:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717177173; x=1717781973; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=e5V80uMpIIHXc+5LdtOp/W0iR82wcJaJTavrV/rpZj4=;
-        b=hQx/Ih5HN3VJ7lkybai7djI0Tme8sE/JdRs/QEK5SS8dMLWF8Xnm0AKm/YPkPNR7Vh
-         aWC7w6KXPzNpHu8TnQSlQPdFq8XMMeTToQ+xK0BOkL2zhVZ+5gMxX1xVG8a7/qrHvoRa
-         w4oYxtaps2BWpUfBVe15ENRpHBzB1oHhKOC9Y3cTL/bHSIlawRd8aXCXbwf6nGee5ZkT
-         bQhOdxXuNTjwZg5CSABKXnn0i0R7ChaaUGHy1bOzkZZD8ElGK3XSznVQB/KSeOK98LLM
-         +QEYFmGrvpJyvTx3Eczxdd8P+akRl90ECE5yxADVMBHN+8K1IS4Vi14Dx173m/n9Eiml
-         +eRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717177173; x=1717781973;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=e5V80uMpIIHXc+5LdtOp/W0iR82wcJaJTavrV/rpZj4=;
-        b=utg+EPy3gEQsUw+NTAOzVcAHmaWYBdGMmPgxPBPcEJjIQAXF51DfENYWEFYx0JTdch
-         92q+OwRitd4AQUNFCHK2AnhLZvapJQC4AbmyKf3g5iJQdmsHcx770n+MDQDhqrreUzea
-         dxr6HwzphPmI0uE463PVoAiEvTYBdGqiYnKqIhU2haTVsBKAv7oEpTPAFUK2J0hsJbaV
-         bZ8oEHF/mFF1n3ajgxXqtmY3TuhaGnW554SO2RHU6AwXJ6A/GdNjmHPHgP1AKFpcBD+G
-         6g3m2cjUUpRucYHvPvQDO8lQxi+JakxLPJ8oX16YXgTnUmFRHgNjL8tml4cN9xas3jyK
-         NBxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWMBTjO25dNE09vJ6Qe2GuZ+1qnJ1Tj+i8b31tQ4YD7nzEKFLKDiOqaU3ydF3n/htUCcYSNw4DnztqHjc+W1Cla9HfmJUzg61i8
-X-Gm-Message-State: AOJu0YxXrQVq/M0HKA81ObSfCcbCrqyeoWiFBkIySgJBjAOCbygwTmvD
-	rYuQQtcIdPkJanNgQBhjUmOzntg1hCCSDLMBTBDOsi3HnUC6LcdFFJkmnbFbj4o/9c0yvUPPkyL
-	MgVYX5CmX27jTlkgkhhUo8FWxaGf9WvEXl8Px3A==
-X-Google-Smtp-Source: AGHT+IEXnK9LdU1Sd4QTI/Pted/ljjrPJBKy0MOouFqYqBZ6C8Fxg28XZ8RCoKQbK+aHOloAvYXkSgJ4JAVE3Vl4Y9k=
-X-Received: by 2002:a25:bdc1:0:b0:df4:7a85:d603 with SMTP id
- 3f1490d57ef6-dfa5d81886amr4603843276.10.1717177172674; Fri, 31 May 2024
- 10:39:32 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jS9heyO+"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44V9TDHA012449;
+	Fri, 31 May 2024 17:46:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	lojhr8KdZI9iOzBReVoHzeXEE7SevnRJFlYKRMmFYAY=; b=jS9heyO+7eyinRPT
+	/9B0oyYAlqplh9wMMZ4pp+c/t/wkyn1DFozbHO1KS+9cUvA5qod2uko3f1WLHzNe
+	yGVNR+3Tftvi7MNAdPJLiZd4mSleJyMZ5mL4GlrJ7lPnMZ7Lx5IevKseO8jdl03B
+	E7+x0Np1a6TWwhsc4gU+WeKR/FcgS5A40i/6DgTRaPG/Ebo+dF56DW2KUxTDUfPb
+	VWOVrxkFLK4YaZzjvgHkbKKhAWC25bqcLtkgqr/hiPXnIUmYBj/fK9gleSP3zFmm
+	prFny8NnlonzY8hnvnMlU+SkTxqxCs3r9hYNgK0B1eeL9skni71kabImO08/abMc
+	gsCeiw==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba0qqtv1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 17:46:41 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44VHke97026694
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 17:46:40 GMT
+Received: from [10.110.0.231] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 31 May
+ 2024 10:46:39 -0700
+Message-ID: <cb1066a9-d3b2-d921-9af6-01300987d37b@quicinc.com>
+Date: Fri, 31 May 2024 10:46:39 -0700
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240531-dt-bindings-qcom-gcc-v1-0-b37d49fe1421@linaro.org>
- <l73uszlhnhyamfuwm7f6bbmockttwihsylkkgbyedkdseznlka@mtr5c7r4nqt4> <8ac8cc27-6c39-45fe-bdc2-40a310c815cc@linaro.org>
-In-Reply-To: <8ac8cc27-6c39-45fe-bdc2-40a310c815cc@linaro.org>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Fri, 31 May 2024 20:39:31 +0300
-Message-ID: <CAA8EJpo56ymWsLJo9QU4VXTK=rnLQrp3dR+pXGK6ECAjU0PE5w@mail.gmail.com>
-Subject: Re: [PATCH 00/16] dt-bindings: clock: qcom: reference qcom-gcc.yaml
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Taniya Das <quic_tdas@quicinc.com>, Konrad Dybcio <konrad.dybcio@somainline.org>, 
-	Jonathan Marek <jonathan@marek.ca>, Del Regno <angelogioacchino.delregno@somainline.org>, 
-	Loic Poulain <loic.poulain@linaro.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH 04/13] clk: qcom: gpucc-sa8775p: Remove the
+ CLK_IS_CRITICAL and ALWAYS_ON flags
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Taniya Das
+	<quic_tdas@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        "Konrad
+ Dybcio" <konrad.dybcio@linaro.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <quic_jkona@quicinc.com>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>
+References: <20240531090249.10293-1-quic_tdas@quicinc.com>
+ <20240531090249.10293-5-quic_tdas@quicinc.com>
+ <0f56831e-8572-46f5-89cf-d1e990813a02@linaro.org>
+Content-Language: en-US
+From: Trilok Soni <quic_tsoni@quicinc.com>
+In-Reply-To: <0f56831e-8572-46f5-89cf-d1e990813a02@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: l5C3eVaSej4myDn4eoOJ_JgbrLyCvyng
+X-Proofpoint-ORIG-GUID: l5C3eVaSej4myDn4eoOJ_JgbrLyCvyng
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-31_12,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ suspectscore=0 lowpriorityscore=0 impostorscore=0 clxscore=1011 mlxscore=0
+ mlxlogscore=999 malwarescore=0 spamscore=0 adultscore=0 bulkscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405310135
 
-On Fri, 31 May 2024 at 18:19, Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> On 31/05/2024 17:14, Dmitry Baryshkov wrote:
-> > On Fri, May 31, 2024 at 03:52:18PM +0200, Krzysztof Kozlowski wrote:
-> >> Hi,
-> >>
-> >> Unify Qualcomm clock controllers by referencing qcom,gcc.yaml where
-> >> applicable.  Several existing bindings for these display/GPU/CAM clock
-> >> controllers already do it.
-> >
-> > The series looks good to me with a single point in mind. You are writing
-> > that dispcc/videocc/etc are a variant of GCC. However GCC is a Global
-> > Clock Controller.
->
-> Yeah, that's simplification from my side and assumption that at first
-> they designed GCC and then they copied the design to other blocks.
->
-> > What about renaming qcom,gcc.yaml to
-> > qcom,cc-common.yaml ? Then the rest makes total sense to me.
->
-> Several gpu/disp/cam clock controllers already include qcom,gcc.yaml, so
-> I would say this should not be a requirement for this patchset.
->
-> We can rename, although it always is a bit of churn - git log needs
-> special option, backporting is a bit trickier.
+On 5/31/2024 2:59 AM, Krzysztof Kozlowski wrote:
+> On 31/05/2024 11:02, Taniya Das wrote:
+>> The gpu clocks and GDSC have been marked critical from the clock driver
+>> which is not desired for functionality. Hence remove the CLK_IS_CRITICAL
+>> and ALWAYS_ON flags.
+>>
+>> Fixes: 0afa16afc36d ("clk: qcom: add the GPUCC driver for sa8775p")
+>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+>> ---
+>>  drivers/clk/qcom/gpucc-sa8775p.c | 27 +++++++++++----------------
+>>  1 file changed, 11 insertions(+), 16 deletions(-)
+>>
+>> diff --git a/drivers/clk/qcom/gpucc-sa8775p.c b/drivers/clk/qcom/gpucc-sa8775p.c
+>> index 1167c42da39d..f965babf4330 100644
+>> --- a/drivers/clk/qcom/gpucc-sa8775p.c
+>> +++ b/drivers/clk/qcom/gpucc-sa8775p.c
+>> @@ -1,6 +1,6 @@
+>>  // SPDX-License-Identifier: GPL-2.0-only
+>>  /*
+>> - * Copyright (c) 2021-2022, Qualcomm Innovation Center, Inc. All rights reserved.
+>> + * Copyright (c) 2021-2022, 2024, Qualcomm Innovation Center, Inc. All rights reserved.
+> 
+> That's not a fix.
+> 
+>>   * Copyright (c) 2023, Linaro Limited
+>>   */
+>>  
+>> @@ -280,7 +280,7 @@ static struct clk_branch gpu_cc_ahb_clk = {
+>>  				&gpu_cc_hub_ahb_div_clk_src.clkr.hw,
+>>  			},
+>>  			.num_parents = 1,
+>> -			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
+>> +			.flags = CLK_SET_RATE_PARENT,
+> 
+> I fail to see why this is a fix. They were marked as critical on
+> purpose. It was needed, wasn't it?
+> 
+> Provide jsutification for commits, not just sprinkle Fixes tag all around.
 
-Ok. For the series:
-
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
+Taniya - please separate fixes into another series? 
 
 -- 
-With best wishes
-Dmitry
+---Trilok Soni
+
