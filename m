@@ -1,114 +1,105 @@
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C46601514F5
-	for <linux-clk@vger.kernel.org>; Fri, 31 May 2024 10:20:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38D6015217E;
+	Fri, 31 May 2024 10:23:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717150820; cv=none; b=sTXmUdYyvBszWnFDa4R/deO3XRedk/OUotZEdw2s8yPKC1X7H/IOvAWFbowxjRVns67CZGHIgxj8OsYrq4ygFrjl7YtGjexKGXCUDgdQwfLxcmBZeExjZ97dz0DMbb4VRToc7FaCXOIsy3tXDwx3dgXFaf9gTcUi4V2KFqKR6As=
+	t=1717150998; cv=none; b=OiFnLVMS7CatAA2icvn3YDd+xhXZNj0HfJAttrPZIV3C465hLjK2A/52487OrRR2gkRoQOrRV5Q2ylaFnn6qEi4VgW2t8OmONvvsDmmT4mUivfAAbNZmEpVjcsy3MUHcOq/rSEQkzRNcJkBIroukkgt+KUKH4s83SMba2W5EpHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717150820; c=relaxed/simple;
-	bh=oDkCy8oJ2WMeKcy9+Uh0V14y9VWvcEu1F1wyVC5z6LU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gF1Z60EWAKMI6b6wFlZs2+vHsMbSWH/vDaUQANUIERtUNxq4VxCkxf5RbiEF2CTgEgLJxC1KlJfLvVR9Czd5MxZDV7tP2uiB3LifUSAi0DR7TfqCF1h8nYWvdEUyfY6juwsIYNCsalwXD4CYc1URCkdzdPmhJD5iL0Q0V08tM50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bnKYacDX; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1717150998; c=relaxed/simple;
+	bh=ivY1RK9CsSl4Vu834TA4KZSM7clN9/1U4l63N50ZI58=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oupUQq1mhMlXmZfblJNCnH7SiUQiubBUCrpKN5rMzx6MZyCcX5cR1+4fWlggOejzSnZg4eJIK946UwgMS3G050o3VLUa+UhM5wF8wLNrhQaRxzf5lxRtqUyorAtztZb6Nj9qAiPG2ZFhkkBmeP8ZVZsLqaCHJKzJd8wXoBCGptg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dePtKJsj; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bnKYacDX"
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2e724bc46c4so19051471fa.2
-        for <linux-clk@vger.kernel.org>; Fri, 31 May 2024 03:20:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717150817; x=1717755617; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZJg6C0WVWn0Vp3XGiynuZUYf7BAqZo56bxrIXpikvkk=;
-        b=bnKYacDXhez1MqTGVeWrOL+5JJaLnb9p3zFOqceh0WtJCB67KE92/KGi0vdy89MUVK
-         ZmzcEDKnRN14ckXyJyTzPYQgyX2XFe3+LHsohJq/buvNOHPy/nE2XNtX/Z1JUEGvYIGS
-         7oh6/5mOYKagnty2M4xgdc52j5kiBrOtH3Yq6JGMVrZ975IQNMZn+068G30/TaW6QxQB
-         nZ0YNQg8x+TqoGDO147NneP/+3mS6WvNVddL8ioH9Ieh0flKvavUXII+yNHub0q6CKUd
-         30jYWl8pJ/cVPBCqLflWK61ySmiwe1n/4/WyLUlwaFv5eTnfpIfWhrCZ9NSmd/xVbpIG
-         jzzA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717150817; x=1717755617;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZJg6C0WVWn0Vp3XGiynuZUYf7BAqZo56bxrIXpikvkk=;
-        b=L6TutJ+Yzw+QBnLVk1JU4ln9xQ9hoMONxADjAtPFLo2lPpwBxaP/AP4wMyaM+3+51h
-         6yanv83/HYZoIKvIlX0PRa7VzA3cB408PbLnz5jcOgO+XuLlZN/2D36tqcG22Xi/QiMM
-         Ujsy9SfwDaul5IuEcpbefyURjFkzf/LjKTsu/5xKVqjZh8j+EXi9/ozOM+ITA1ryw+Io
-         845zK91L7FKNIyPB8jeoyOOuRHDnZYMss+eqNGynKVn0PxCdZjWLQZAPppTv8SIaihq/
-         B1Lxyle/MLksr1vS/zgX9r9Vojc9tHoKrW6nU1Hmkxkq0LrR93N8NxerUnBIxgdDxeB1
-         cGqg==
-X-Forwarded-Encrypted: i=1; AJvYcCXLgu1I48/NBVBxrewc8jzhUIPegskQ7wBQUCmaUVH9XNl86DqXQxTCneugOVZMM0zQoLyu0IACNeLcOIpU1jF8yzPIkEIHnthM
-X-Gm-Message-State: AOJu0YwL8CKd/77CbMBxsIFVi49rxH5DZD1IBOEQC+md7NX7xd+z7imL
-	aECxs1OE7W9Fu9PZVhJZpLfy7Tadb71znFhzkLQxd0h8AYzCjIIRbJKa2dTFEr8=
-X-Google-Smtp-Source: AGHT+IH3eDhHYffts7P6CotucZIC/1NV5s1KOoULl1yKA9WH7Y4N37DO0QUnBGhOLPU2OlwFm5r/iw==
-X-Received: by 2002:a05:651c:2112:b0:2e9:8374:3820 with SMTP id 38308e7fff4ca-2ea951dfc12mr12587551fa.40.1717150817101;
-        Fri, 31 May 2024 03:20:17 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ea91b9d744sm2653711fa.28.2024.05.31.03.20.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 May 2024 03:20:16 -0700 (PDT)
-Date: Fri, 31 May 2024 13:20:15 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Taniya Das <quic_tdas@quicinc.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	Stephen Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 4/8] clk: qcom: sc7280: Update the transition delay
- for GDSC
-Message-ID: <3dasezpuum7jnafhciv6atfi6n2tqra3lo3q425s7f36wuoc7i@pguvou37vhpl>
-References: <20240318053555.20405-1-quic_tdas@quicinc.com>
- <20240318053555.20405-5-quic_tdas@quicinc.com>
- <3293d565-ceb6-44f1-8a47-d18e9d0083a5@linaro.org>
- <a671ba20-f000-425f-914f-54a9d65d79c7@quicinc.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dePtKJsj"
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44V4gf7L006624;
+	Fri, 31 May 2024 10:23:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	qcppdkim1; bh=xqHT/lx4BU0YX0wZd/m+cOJU4o4wF7wnQaBAwX7AAmA=; b=de
+	PtKJsjByGK5984q/cvSKmfm4lVfEMoLQlo9VCeYFcG7wJGmv3nLe8R3De83UaLor
+	TLxsNstI5B4zUt8IoaE7iEWd93ijq+YBMHfRfSp4sXZhBNDkHJikc4wps0f4eTYj
+	xOWHNpEctvvR4vDSNyK4HqMJsrBw8458Ijidvbm6/FK+rLiHA0zSAvpie3YLCjsA
+	E8ONSdqekqhj4YSRidY4UgulhdQDDCzmHwOQJwHa2Ri1VZNjzLO5vn5v8mP0cZIe
+	4NE9sVM2x5LMROkOcIbYcVyCxOLblbXf7uqujZKDG7b/ZILvJPnyP9x1Di7Zl+HV
+	JQ3fD/48N7kPVrrei8NA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ye96bmv7n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 10:23:13 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44VANChx019243
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 31 May 2024 10:23:12 GMT
+Received: from hu-tdas-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 31 May 2024 03:23:07 -0700
+From: Taniya Das <quic_tdas@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "Conor
+ Dooley" <conor+dt@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <quic_jkona@quicinc.com>, <quic_imrashai@quicinc.com>,
+        <devicetree@vger.kernel.org>, Taniya Das <quic_tdas@quicinc.com>
+Subject: [PATCH 0/4] Update LPASS Audio clock driver for QCM6490 board
+Date: Fri, 31 May 2024 15:52:48 +0530
+Message-ID: <20240531102252.26061-1-quic_tdas@quicinc.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a671ba20-f000-425f-914f-54a9d65d79c7@quicinc.com>
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: xM9yCGNzTfSHpOyjy9JPMWZdXf7d8UMe
+X-Proofpoint-ORIG-GUID: xM9yCGNzTfSHpOyjy9JPMWZdXf7d8UMe
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
+ definitions=2024-05-31_06,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
+ lowpriorityscore=0 mlxlogscore=752 spamscore=0 clxscore=1015
+ priorityscore=1501 impostorscore=0 malwarescore=0 suspectscore=0
+ bulkscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2405310077
 
-On Fri, May 31, 2024 at 03:00:40PM +0530, Taniya Das wrote:
-> 
-> 
-> On 3/18/2024 1:23 PM, Krzysztof Kozlowski wrote:
-> > On 18/03/2024 06:35, Taniya Das wrote:
-> > > Update the GDSC default values of GDSC transition delay to avoid the
-> > > issues in the GDSC FSM state.
-> > 
-> > What issues?
-> > 
-> > > 
-> 
-> The GDSC FSM will be stuck and the GDSC will not be able to power on/off.
-> 
-> I will update the patch commit text as well.
-> 
-> > 
-> > Why none of your so called "fixes" are marked as Cc-stable? If they are
-> > real fixes, they should be.
-> > 
-> > > Fixes: fae7617bb142 ("clk: qcom: Add video clock controller driver for SC7280")
-> > > Fixes: 1daec8cfebc2 ("clk: qcom: camcc: Add camera clock controller driver for SC7280")
-> > > Fixes: a3cc092196ef ("clk: qcom: Add Global Clock controller (GCC) driver for SC7280")
-> > > Fixes: 3e0f01d6c7e7 ("clk: qcom: Add graphics clock controller driver for SC7280")
-> > 
-> > No, don't combine separate fixes into one commit.
-> > 
-> 
-> I will remove the fixes tag in the next patch.
+This series updates the low pass audio clock controller driver for reset
+functionality. The patches are split from the below series.
+https://lore.kernel.org/all/20240318053555.20405-1-quic_tdas@quicinc.com/
 
-The intent was to _split_ the commit into 4 parts.
+The QCM6490 board requires only the reset functionality from the LPASS
+subsystem. Thus separate out the driver probe to provide the same on the
+QCM6490 boards.
 
--- 
-With best wishes
-Dmitry
+Taniya Das (4):
+  dt-bindings: clock: qcom: Add compatible for QCM6490 boards
+  clk: qcom: lpassaudiocc-sc7280: Add support for LPASS resets for
+    QCM6490
+  arm64: dts: qcom: qcm6490-idp: Update protected clocks list
+  arm64: dts: qcom: qcs6490-rb3gen2: Update the LPASS audio node
+
+ .../clock/qcom,sc7280-lpasscorecc.yaml        |  1 +
+ arch/arm64/boot/dts/qcom/qcm6490-idp.dts      | 28 ++++++++++++++++++-
+ arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts  |  7 ++++-
+ drivers/clk/qcom/lpassaudiocc-sc7280.c        | 28 +++++++++++++++++++
+ 4 files changed, 62 insertions(+), 2 deletions(-)
+
+--
+2.17.1
+
