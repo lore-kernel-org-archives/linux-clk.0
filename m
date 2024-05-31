@@ -1,143 +1,140 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB0037C6EB;
-	Fri, 31 May 2024 09:52:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7FC1CD35
+	for <linux-clk@vger.kernel.org>; Fri, 31 May 2024 09:55:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717149136; cv=none; b=p/gzMEwOka+mRSznX9Brk9py0rN6Zl5UrffEvkqX9iLgjnRKBIlrvpfpQyhF40cRg/bf+bdBN6LxCkOu7scNZVpGE40IPbZhK/o3uLWHnABturQe5SO6DDXQODMNGqwJsAecuE+eeEWAjQE5FQXBhzL8hHUPWrSDef1Dcvedb10=
+	t=1717149324; cv=none; b=iXFDoraLivoeHgrveuSlq3s6Ad/7iH2aXiJW5Ljduao5Fw4RFpzaXnYMLet+hkavdudqEOP6v1OR+svjA0dpUA1MHpNM2wQf1bCQhNMrBNTR91CzyHnYDJ0SGKqC+PrhhnMznDyg0kTG2q3AKDeBhXLIgI0xun5AHpFQZaeZP4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717149136; c=relaxed/simple;
-	bh=omh52pzJwZb7qTxI82HwtZyMLz/9rgCMazvGD8ctzj8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VF5JFeVqGtPr/nMwJMwWBmq75Up+/UcfADjxSr7ogQRQcF4jYVS3ZkACXkPkLuxM+USkTb/5XdzAkcUt/zyX50BvrKFxKn99axbGKLb4I/lg2txYYdnYjOHKA5SNbQ1cJsLxmSgtdwgcAqyogZDtw7zdHO9+sgBHDJ4rndsO3rU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TQSQYtcF; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1717149324; c=relaxed/simple;
+	bh=HmBOAq8DyYpV8ruVb8dWgK4z+JEI5A6yGTu0NI31i6E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZnsNUf95E+KqaLGXr5T3Fp14xq+LmE00z7xwTi686SHFBbpqn1MkevDEBEgS7cGqBufDHo48jsi50YN8ETdlYPIqKkApZPDUFheae6MzR625cCvjvwsswTnaLIijNekl0MsBsi3Zvjwr7n15AuasQ1A4XGHhppiHc35iIVkQego=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=TYLRRNlG; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TQSQYtcF"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44V9Ik5W015853;
-	Fri, 31 May 2024 09:52:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=/P6JYdvjNcY7mDXD4jQQZtQ9
-	AOSRkP1qxWaI4oU07tk=; b=TQSQYtcFT0k960j4ceEE8dLAUwGc7Ak1ihmSr8Ui
-	SeN8erV9OvOzIh3PRfOHOk0SsuyyRdD8XDHv+gDU9/4GDixBVPTvEJj4ZZynnqSq
-	t8/hXOI8aiR9yqGRTS8NsZGt2udx6EQB063OQAsYrRHiI8cFFJqM6lQF3s+bhekS
-	8jGPUbh6UUdTXaEMtrtVoI92kJyMisELfft2c7VOfMWwR6kHNi/wW68z3arb75Rc
-	Cb2PyS4ETBLavgj8s1vBPQdllldRDxlO2PXqTi3ckYrspY9iSTMdX9+8UgS2JovA
-	uSOMzn6IbnutHm5QG1v3ssGinMivCLOw0Q+IET59ugzeEQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yf23ssb0d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 31 May 2024 09:52:11 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44V9q9qu000511
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 31 May 2024 09:52:09 GMT
-Received: from hu-tdas-hyd.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 31 May 2024 02:52:06 -0700
-From: Taniya Das <quic_tdas@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <quic_jkona@quicinc.com>, <quic_imrashai@quicinc.com>,
-        Taniya Das
-	<quic_tdas@quicinc.com>
-Subject: [PATCH v3 3/3] clk: qcom: camcc-sc7280: Add parent dependency to all camera GDSCs
-Date: Fri, 31 May 2024 15:21:42 +0530
-Message-ID: <20240531095142.9688-4-quic_tdas@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20240531095142.9688-1-quic_tdas@quicinc.com>
-References: <20240531095142.9688-1-quic_tdas@quicinc.com>
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="TYLRRNlG"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1717149303; x=1717754103; i=wahrenst@gmx.net;
+	bh=9d/HsGlaRLDBdBPakmfbaADULgWGTtFBoM3Fa6M59L0=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=TYLRRNlG0CvalwlDh72a7G5Ff9P9wWAbPaGAtRY3iKuYJtwMd+HPlTxV3ZN7Wnbd
+	 gAgsqdqJQsFbWsAJLsmmpwjMRH1BWVFd7WAypqI5xneYSnzJlqVGAZnvTrLgn0+GB
+	 6LMZ569uUtP0g8F5jpXJGxg38J/lYNxkjo/HHpeeHumBHQ763ZiN1uR/hajl1RH8Z
+	 0TAx25ZizIkNNlIFJE82WlMTWf/ADgT/zB8asFJ31pHzzp8uDQJKx2wGSBjMdl5Cv
+	 X7d3/1g9CtWPIntuFM6ppxMxFHkH4UYOoHYuceJy5qeQEFjnKVdH33KBY+4rik+RP
+	 injQZs6nyWEiwmMXkA==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.127] ([37.4.248.43]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1Mnpns-1soncb3GEk-00oHwM; Fri, 31
+ May 2024 11:55:03 +0200
+Message-ID: <4c56e57c-7a4e-4976-a05e-0adf3df13b3f@gmx.net>
+Date: Fri, 31 May 2024 11:55:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: yM_jmYABCYz8RvPYr_GCjX0o7JZNtVMx
-X-Proofpoint-GUID: yM_jmYABCYz8RvPYr_GCjX0o7JZNtVMx
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-31_06,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- adultscore=0 spamscore=0 lowpriorityscore=0 priorityscore=1501
- impostorscore=0 phishscore=0 mlxlogscore=782 bulkscore=0 mlxscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405310073
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: bcm: rpi: Add disp clock
+To: "Ivan T. Ivanov" <iivanov@suse.de>, sboyd@kernel.org
+Cc: florian.fainelli@broadcom.com, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Maxime Ripard <maxime@cerno.tech>,
+ Andrea della Porta <andrea.porta@suse.com>
+References: <20240531092730.253484-1-iivanov@suse.de>
+Content-Language: en-US
+From: Stefan Wahren <wahrenst@gmx.net>
+In-Reply-To: <20240531092730.253484-1-iivanov@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:eJXZyW8nquPN97oYqnXyhyNtCJ0Ozo6YLDgVL2Z4jO2tBdU5me4
+ Km/qE41fYmbfPqWcSjv2ufWQHwPDVrB1fg4tUW1qD68AFGstfhYs6IVDGjYR8QVDy0tRAkC
+ NRFrbpg4G9JprA/dKD4mbgpSLPh+MWTLbI2fUr99n5o5VsJ9JGUP9N0UoqM8QHg2URYwVqC
+ lWvVSHVw9tG5L0aw2UyjA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:fr7cx4enoEc=;a/a+KuX+HDSL4PZsquzGgA0AYbl
+ oeVWUR06ea6q40IpgqgDB4AFzYKIaf1egG/NQjpQnFMSYH+WcHXWO+j9/Fn9MkBH64FN/pLcV
+ 5A2DI+LYxbpnImCmJbrcW2XDBn0WIeLoVZIwkLLWwaWuh1ggQlvqUVf8/9LwBf6Vp4NzUqw3K
+ tofospkX7HnzsPkeDxamt/QlyKoJ/vrcRBG9lwvG/B5zx4aoTJmJDvhtQKwnDCeirja8FmxRL
+ GpirU/PG5NGKiU8PJpS1X/IUKrdM3QDqtyzD9bAn4+XnpvEMUGtPEKy+BIcgvvG5OkrMH3Dek
+ TpdxwYKRh4pyqwSHBXpQ0cRFQPvmwUAHItnCH92ed4m+2tLtN25WbdI9UE6GVNKS9Elp6iGxe
+ zjwhnITEALotbKNuNCSumv8LOt/EQCwzkI0lADEmp7P7dtrQOCuogWbVDPvqIGjP45VFQVoKC
+ Er1B84q4Suc6hQO5+uh5vzSLlSXRbJgq/XLL6yha4x75IxTnZwoBDEB1msZmqlQDSHrWBXUz1
+ zZKL1D08hExebeKiw2xtVh+8VlutNZafJlKvQ/yiZQ7aP68CLM89+50lAo/5/arajfxujUDtF
+ ea5D144ou90yZk3c02gvm4ScfDv0vQUY5LqLNEiEqdZ9gJ22CEez3PEAca94KbubTcbeRPGPk
+ UBr1eX5Qezzt9o1lMZAeNlWBjqE9uijRQErlxqXqTBm2ke4bP11sSAtW1Fawx6wGsZI2/EMOx
+ hbMruoUBKyfqG9BzYa6X+j7s8cfbOH6paLNeNob0n5Vvb0YwN8Dfi/6/IgKf8giz3YMIuM/UX
+ aurVkX1eeAPGVPl2Te42ADtVPQ5iURkCFUX7dlR7PpLi8=
 
-Camera titan top GDSC is a parent supply to all other camera GDSCs. Titan
-top GDSC is required to be enabled before enabling any other camera GDSCs
-and it should be disabled only after all other camera GDSCs are disabled.
-Ensure this behavior by marking titan top GDSC as parent of all other
-camera GDSCs.
+Hi Ivan,
 
-Fixes: 1daec8cfebc2 ("clk: qcom: camcc: Add camera clock controller driver for SC7280")
-Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
----
- drivers/clk/qcom/camcc-sc7280.c | 5 +++++
- 1 file changed, 5 insertions(+)
+Am 31.05.24 um 11:27 schrieb Ivan T. Ivanov:
+> From: Maxime Ripard <maxime@cerno.tech>
+>
+> BCM2712 has an extra clock exposed by the firmware called DISP, and used
+> by (at least) the HVS. Let's add it to the list of clocks to register in
+> Linux.
+>
+> Without this new definition driver fails at probe on BCM2712.
+could you please explain the relation to Andrea's series [1]?
 
-diff --git a/drivers/clk/qcom/camcc-sc7280.c b/drivers/clk/qcom/camcc-sc7280.c
-index 27bfb0f959c4..da29d3b953ee 100644
---- a/drivers/clk/qcom/camcc-sc7280.c
-+++ b/drivers/clk/qcom/camcc-sc7280.c
-@@ -2267,6 +2267,7 @@ static struct gdsc cam_cc_bps_gdsc = {
- 		.name = "cam_cc_bps_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
-+	.parent = &cam_cc_titan_top_gdsc.pd,
- 	.flags = HW_CTRL | RETAIN_FF_ENABLE,
- };
- 
-@@ -2279,6 +2280,7 @@ static struct gdsc cam_cc_ife_0_gdsc = {
- 		.name = "cam_cc_ife_0_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
-+	.parent = &cam_cc_titan_top_gdsc.pd,
- 	.flags = RETAIN_FF_ENABLE,
- };
- 
-@@ -2291,6 +2293,7 @@ static struct gdsc cam_cc_ife_1_gdsc = {
- 		.name = "cam_cc_ife_1_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
-+	.parent = &cam_cc_titan_top_gdsc.pd,
- 	.flags = RETAIN_FF_ENABLE,
- };
- 
-@@ -2303,6 +2306,7 @@ static struct gdsc cam_cc_ife_2_gdsc = {
- 		.name = "cam_cc_ife_2_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
-+	.parent = &cam_cc_titan_top_gdsc.pd,
- 	.flags = RETAIN_FF_ENABLE,
- };
- 
-@@ -2315,6 +2319,7 @@ static struct gdsc cam_cc_ipe_0_gdsc = {
- 		.name = "cam_cc_ipe_0_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
-+	.parent = &cam_cc_titan_top_gdsc.pd,
- 	.flags = HW_CTRL | RETAIN_FF_ENABLE,
- };
- 
--- 
-2.17.1
+How can this occur, because there is no Raspberry Pi 5 support in Mainline=
+?
+
+[1] -
+https://lore.kernel.org/linux-arm-kernel/cover.1717061147.git.andrea.porta=
+@suse.com/
+>
+> Signed-off-by: Maxime Ripard <maxime@cerno.tech>
+> Signed-off-by: Ivan T. Ivanov <iivanov@suse.de>
+> ---
+>   drivers/clk/bcm/clk-raspberrypi.c          | 5 +++++
+>   include/soc/bcm2835/raspberrypi-firmware.h | 1 +
+>   2 files changed, 6 insertions(+)
+>
+> diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-ras=
+pberrypi.c
+> index 4d411408e4af..fabd5595e9cd 100644
+> --- a/drivers/clk/bcm/clk-raspberrypi.c
+> +++ b/drivers/clk/bcm/clk-raspberrypi.c
+> @@ -34,6 +34,7 @@ static char *rpi_firmware_clk_names[] =3D {
+>   	[RPI_FIRMWARE_M2MC_CLK_ID]	=3D "m2mc",
+>   	[RPI_FIRMWARE_PIXEL_BVB_CLK_ID]	=3D "pixel-bvb",
+>   	[RPI_FIRMWARE_VEC_CLK_ID]	=3D "vec",
+> +	[RPI_FIRMWARE_DISP_CLK_ID]	=3D "disp",
+>   };
+>
+>   #define RPI_FIRMWARE_STATE_ENABLE_BIT	BIT(0)
+> @@ -124,6 +125,10 @@ raspberrypi_clk_variants[RPI_FIRMWARE_NUM_CLK_ID] =
+=3D {
+>   	[RPI_FIRMWARE_VEC_CLK_ID] =3D {
+>   		.export =3D true,
+>   	},
+> +	[RPI_FIRMWARE_DISP_CLK_ID] =3D {
+> +		.export =3D true,
+> +		.minimize =3D true,
+> +	},
+>   };
+>
+>   /*
+> diff --git a/include/soc/bcm2835/raspberrypi-firmware.h b/include/soc/bc=
+m2835/raspberrypi-firmware.h
+> index 73cac8d0287e..e1f87fbfe554 100644
+> --- a/include/soc/bcm2835/raspberrypi-firmware.h
+> +++ b/include/soc/bcm2835/raspberrypi-firmware.h
+> @@ -152,6 +152,7 @@ enum rpi_firmware_clk_id {
+>   	RPI_FIRMWARE_M2MC_CLK_ID,
+>   	RPI_FIRMWARE_PIXEL_BVB_CLK_ID,
+>   	RPI_FIRMWARE_VEC_CLK_ID,
+> +	RPI_FIRMWARE_DISP_CLK_ID,
+>   	RPI_FIRMWARE_NUM_CLK_ID,
+>   };
+>
 
