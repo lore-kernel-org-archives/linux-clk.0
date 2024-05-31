@@ -1,199 +1,96 @@
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7385B56448;
-	Fri, 31 May 2024 14:25:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9FA857C8E;
+	Fri, 31 May 2024 14:58:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717165512; cv=none; b=E8uZ7v38buRxE/huVjOkkaA8a/rQBjGtqczCE/P3seak4Hyarc13o2Mw94aDIQ2r/Fa6tDClxxzZZKvB9qs2KVSCC7Z12Qr2F+duOpquLWjveDWVjwl/XzlpUiz7YWweFqS+nOIyVR6neu1IiEd8KAVAozs0MGThr2EvBIengBU=
+	t=1717167512; cv=none; b=gYUJF51MlU7l4E50eyBZuX8nwEHbFdJOFIYYWitU2vb24FKNt9BET8xjHVFbnnDs4Qrb28C7x6yJbktilmPJPvO/AHCEB5tFnLTdia8YpyRXAabdp7sKZcbMOngfHhHLeSPzWlKU8AH/KpYKyxrAJLGppAZAHU5/EYcM/Bf9VFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717165512; c=relaxed/simple;
-	bh=cOofNTY/oXTRZ81RXzPrmeOruTYdnOEFZTR+wvJ4FfE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YeC2huJ4Y5DsdppunQ+aqpqw8Fuvfg6N+xCKGLQGLVZ+Wogbl2j/7+KoaxaeRDsg7uUrYw7Uyk96sBE0xWc4P61KPE/m6/kQeX8LT7NhnhBu/hY/pzbr7kEaWttAvX2rpCzTREgODvuGldIZ/xVHgA6buzp+QAA6neIf12UCUaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FtGAo6f3; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1717167512; c=relaxed/simple;
+	bh=g1eGXHdN0kkF++pfgnz1WIShz96T3A5ZcHkmqtw/Loc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O8Eg2Of1gcta+eUb3DNvk14KOk/vXp0RyJe90oHAWoRsT69ea6QRk8Mywv3ALm3guugFk60bp+vkEqcB+0VQQqtI23F+f/EOxt3zeOJvb50G64IHqzCyHAjfIEkE1gt5/Gz8ks9D/+0ZaK/2VjlfI894apRiD/4B80T1sk4Iv+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OmMz+4zs; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FtGAo6f3"
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-656d8b346d2so1451965a12.2;
-        Fri, 31 May 2024 07:25:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717165511; x=1717770311; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FvrZTCq64hB5lHJheyU2TPKqgbbvFWSIbyIIWaCcr6w=;
-        b=FtGAo6f3qR5kU+3ZtHO+i2eBpRZvw5me1eLAXUmvjqJerBIKd6+JCHQznme32TVzk2
-         Z6FAzAiGZR3NxB/oepUQ3FyTaCaAP+cMFeEeiKU2+GnjqfBuefLQmfcG/2Olc3GoIgs5
-         3AAGRCyZjh/5C8zjuTvtBSVY/Eo/F8NQNXLk8zHft0eNuwdc/zDqvmyZYqEqn/4FbwQD
-         Xwi+uCgNvifToizW16HHY7Loi5CFdNwaUQq5b2ooTtBY9MFXNxjLCSPSnMP+/H6CVLGN
-         xyw57/ttSTYWU82uzaBwibXCgxU0s52KIjkqiKrDjEtBRHD+zgxQPi75uCAzxV951vtP
-         4THQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717165511; x=1717770311;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FvrZTCq64hB5lHJheyU2TPKqgbbvFWSIbyIIWaCcr6w=;
-        b=PtOwS/uAglEmH4U72kEEmKgTEBtnyNSQrD+Sb+W8x74WBYtzIogBxZVmrDNazJGu+f
-         sBRHdImEjkJcjTYKW5HKeWocqdZU9BKxFdZQPzTeucx8ALMxdu71PnVNf/+64kBBT0xD
-         sTPemradqpEJkB3bmEjVokfbnlB/oEg0wWL1BznZYtduX2JeKcw87gRdEWB5fWMAcFSY
-         8ztkiFZrRm2rbCCVpxBbR8u6AU8YJ91pc4uaGMWjNkSOFw1AiEMrcSZFLPbU4Kv8/Hnv
-         9jLQF1latFEQXgDvcB29lIyRrZ16suXhrzML82ipvWu/sHMk7NFr9mfeJ4SSkLmzv3QC
-         SwlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWxvf4JH2ZMROmeZBBtMbLJ2HWZUXQICyLdjLAASghMx4xwg7dBPtbfNon7YqKH39uCXly1TTGMpgimNR9r2lh4jawhviAHPlGJDTffZC+HHVJioC+D/A6xuVXy4wzjGKl0MhZYXc3vC2B/RtDfpzovC3Ez1oy/1Xh5xuvh37GNdnAGOw==
-X-Gm-Message-State: AOJu0YxJIPQv6rfKUMt57XRIYlJ6qB7FQh58Gx3mnXLVHn/0OhF/HxmP
-	b4q2KO/sOXyvi9id3/v+jt1X4zA2HsXHvfZzSag0N/njmtOFyyvbdrnCGbBb7qsuSLgyEdI8gxh
-	UchC8Xz8LDDaWbzPHMXyayWZgFyM=
-X-Google-Smtp-Source: AGHT+IGLbXNCTP7kEEDSMq48BUCNTcGq4/Bj168zhaicbZLEfBju50BxyoEC44nEYY/K5zSXtSoOZMn4twkyQ+dOxks=
-X-Received: by 2002:a17:90b:2282:b0:2bd:fa57:b361 with SMTP id
- 98e67ed59e1d1-2c1dc56fce1mr1799546a91.11.1717165510580; Fri, 31 May 2024
- 07:25:10 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OmMz+4zs"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50720C116B1;
+	Fri, 31 May 2024 14:58:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717167511;
+	bh=g1eGXHdN0kkF++pfgnz1WIShz96T3A5ZcHkmqtw/Loc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OmMz+4zslnz3CoeqQnw4R6MTFsDQPLnEs6swHFG8QQF9SYpF/35igdu+dIagmM9yN
+	 4A2Vkpnbrn+D8A9ONTwmM/yxSAtY+fB3+4wYewAn2xHme9a+bWLxYIb9ICJC7X+Q6s
+	 g/hBxxws2HElAZ5XTmy93gd0tFHDbycLSa4KrBHw7AUDGnLsGelmqYvdICYQyGkT0w
+	 UHtXY3hwlsppDvSryW6PhXu0rMyPGWmoOhnLjgboATs4lqNqACr2u9nMU+NTzMyzhS
+	 80r0loHtgrlHoxZbJ2b4co1qT7uj27CurSX70Lf/7mds00sRKp3Hv2BHX0n6CWe0nh
+	 i9ikqd5rw7bBA==
+Date: Fri, 31 May 2024 15:58:25 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Frank Binns <frank.binns@imgtec.com>,
+	Matt Coster <matt.coster@imgtec.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/6] dt-bindings: clock: mediatek: Add mt8173 mfgtop
+Message-ID: <20240531-rubbing-gala-4104e3051425@spud>
+References: <20240530083513.4135052-1-wenst@chromium.org>
+ <20240530083513.4135052-2-wenst@chromium.org>
+ <20240530-revisit-profanity-889f1bcae21a@spud>
+ <CAGXv+5F=AEE7t=YQ0hNGtV9rbVBm75D=ftJdZKwD_JmUW9gQWQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240530083513.4135052-1-wenst@chromium.org> <20240530083513.4135052-4-wenst@chromium.org>
- <cc5847a486a760921375f069a4f65cd29453a624.camel@imgtec.com>
-In-Reply-To: <cc5847a486a760921375f069a4f65cd29453a624.camel@imgtec.com>
-From: Adam Ford <aford173@gmail.com>
-Date: Fri, 31 May 2024 09:24:56 -0500
-Message-ID: <CAHCN7xJ7X9_yNJa7-HyU=FzN2G1cV8i9R+PoTHm-DKyiOPenUQ@mail.gmail.com>
-Subject: Re: [PATCH 3/6] dt-bindings: gpu: powervr-rogue: Add MediaTek MT8173 GPU
-To: Frank Binns <Frank.Binns@imgtec.com>
-Cc: "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>, "tzimmermann@suse.de" <tzimmermann@suse.de>, 
-	Matt Coster <Matt.Coster@imgtec.com>, "sboyd@kernel.org" <sboyd@kernel.org>, 
-	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>, 
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>, 
-	"wenst@chromium.org" <wenst@chromium.org>, "mripard@kernel.org" <mripard@kernel.org>, 
-	"conor+dt@kernel.org" <conor+dt@kernel.org>, 
-	"angelogioacchino.delregno@collabora.com" <angelogioacchino.delregno@collabora.com>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "airlied@gmail.com" <airlied@gmail.com>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, "daniel@ffwll.ch" <daniel@ffwll.ch>, 
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="Ys2BwcK/uLhX00G4"
+Content-Disposition: inline
+In-Reply-To: <CAGXv+5F=AEE7t=YQ0hNGtV9rbVBm75D=ftJdZKwD_JmUW9gQWQ@mail.gmail.com>
+
+
+--Ys2BwcK/uLhX00G4
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 31, 2024 at 8:37=E2=80=AFAM Frank Binns <Frank.Binns@imgtec.com=
-> wrote:
->
-> Hi ChenYu,
->
-> On Thu, 2024-05-30 at 16:35 +0800, Chen-Yu Tsai wrote:
-> > The MediaTek MT8173 comes with a PowerVR Rogue GX6250, which is one
-> > of the Series6XT GPUs, another sub-family of the Rogue family.
->
-> I've added Adam Ford who sent out some DT related patches [1] for the Ren=
-esas
-> variant of GX6250 and the GX6650 (another Series6XT GPU).
->
+On Fri, May 31, 2024 at 03:29:06PM +0800, Chen-Yu Tsai wrote:
+> On Thu, May 30, 2024 at 11:43=E2=80=AFPM Conor Dooley <conor@kernel.org> =
+wrote:
+> >
+> > On Thu, May 30, 2024 at 04:35:00PM +0800, Chen-Yu Tsai wrote:
+> > > +        #include <dt-bindings/clock/mt8173-clk.h>
+> > > +        #include <dt-bindings/power/mt8173-power.h>
+> > > +
+> > > +        mfgtop: clock-controller@13fff000 {
+> >
+> > The label here is used, so drop it.
+>=20
+> Assume you mean _not_ used. Dropping. :D
 
-Thanks for including me.
+Correct :D
 
-> >
-> > This was part of the very first few versions of the PowerVR submission,
-> > but was later dropped. The compatible string has been updated to follow
-> > the new naming scheme adopted for the AXE series.
-> >
-> > In a previous iteration of the PowerVR binding submission [1], the
-> > number of clocks required for the 6XT family was mentioned to be
-> > always 3. This is also reflected here.
-> >
-> > [1] https://lore.kernel.org/dri-devel/6eeccb26e09aad67fb30ffcd523c793a4=
-3c79c2a.camel@imgtec.com/
-> >
-> > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-> > ---
-> >  .../bindings/gpu/img,powervr-rogue.yaml       | 24 +++++++++++++++----
-> >  1 file changed, 20 insertions(+), 4 deletions(-)
-> >
-> > diff --git a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.ya=
-ml b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
-> > index 256e252f8087..48aa205b66b4 100644
-> > --- a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
-> > +++ b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
-> > @@ -12,10 +12,17 @@ maintainers:
-> >
-> >  properties:
-> >    compatible:
-> > -    items:
-> > -      - enum:
-> > -          - ti,am62-gpu
-> > -      - const: img,img-axe # IMG AXE GPU model/revision is fully disco=
-verable
-> > +    oneOf:
-> > +      - items:
-> > +          - enum:
-> > +              - mediatek,mt8173-gpu
-> > +          # PowerVR 6XT GPU model/revision is fully discoverable
-> > +          - const: img,powervr-6xt
-> > +      - items:
-> > +          - enum:
-> > +              - ti,am62-gpu
-> > +          # IMG AXE GPU model/revision is fully discoverable
-> > +          - const: img,img-axe
->
-> The Series6XT GPU models have differing numbers of power domains (either =
-2, 4 or
-> 5). Whereas, the AXE GPUs have a single power domain, so I assume there s=
-hould
-> be a related change here.
->
-> The GX6250 has two power domains (lets call them A and B). There's a cons=
-traint
-> that if domain B is powered then domain A must also be powered.
->
-> In patch 6 [2] it's setting the power domain to MT8173_POWER_DOMAIN_MFG, =
-which I
-> believe corresponds to power domain B. I assume this works because the MT=
-K power
-> controller driver is encoding the constraint above, meaning that when we =
-disable
-> or enable MT8173_POWER_DOMAIN_MFG it's also disabling/enabling MT8173_POW=
-ER_DOMA
-> IN_MFG_2D (domain A).
->
+--Ys2BwcK/uLhX00G4
+Content-Type: application/pgp-signature; name="signature.asc"
 
-In the cover letter of this series, it was noted that the GPU
-enumerates, but it doesn' fully function yet.  This is also the case
-for both of the Renesas variants I have been testing, and I was nicely
-asked to postpone my series until the driver was closer to being
-ready.
+-----BEGIN PGP SIGNATURE-----
 
-Even if the driver isn't ready yet, it would be nice to move the
-bindings forward.
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZlnlkQAKCRB4tDGHoIJi
+0giRAP94G90Cq94R7lpitEm0sZWkvKgob2eHruL8ul6FkP4EuwEAnm88tB8IKALh
+7teTfUoOYj4sOcrhC/d5sE1XgPb58g8=
+=BRoX
+-----END PGP SIGNATURE-----
 
-adam
-
-> Thanks
-> Frank
->
-> [1] https://lists.freedesktop.org/archives/dri-devel/2024-February/443548=
-.html
-> [2] https://lists.freedesktop.org/archives/dri-devel/2024-May/455833.html
->
-> >
-> >    reg:
-> >      maxItems: 1
-> > @@ -56,6 +63,15 @@ allOf:
-> >        properties:
-> >          clocks:
-> >            maxItems: 1
-> > +  - if:
-> > +      properties:
-> > +        compatible:
-> > +          contains:
-> > +            const: img,powervr-6xt
-> > +    then:
-> > +      properties:
-> > +        clocks:
-> > +          minItems: 3
-> >
-> >  examples:
-> >    - |
+--Ys2BwcK/uLhX00G4--
