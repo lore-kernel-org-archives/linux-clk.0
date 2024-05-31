@@ -1,164 +1,146 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F74215748F;
-	Fri, 31 May 2024 11:57:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1555514B084
+	for <linux-clk@vger.kernel.org>; Fri, 31 May 2024 12:04:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717156646; cv=none; b=fAg6LQj+TUVkBRS1gz8FyOKTWsii7bh3vwU1xFi9RuBP2zBhmFHfIOF1iTHF3CYjX+Zb2LQiXR8VZsXSCqlQaQ7arsRar6FDNJ6FFrjg+BEGxSEMP7WJD7ycOFPpuRP3rLwJ23/zALRL0hyzwKUt+5QW/FyWZEnw3uATSMuc0VM=
+	t=1717157066; cv=none; b=qJtj6ebSfkR6InGcUns3v4v94XKgdPBHyz+ub6G21CnTulZfzM05hp/a6r2gZxwioaYkiRwvYS4gvUuL+cwSogfTTrh1HzcKYIvODjEPQRKH9n9ofAcsfVPxI2pJUxNvTNG3l7GnJAtvxhukW/lM48GDo6dTQqHm5OzJ3KWRfHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717156646; c=relaxed/simple;
-	bh=jK6YYEy/7Igoejw2c2fzU6CRCWo7OrhStRnGrEA4778=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=YpEWbaZA5gAAHJ+JsLfNAAfd2TXb8BBhzVMwV4deM+ElvaIio4eUmFq/1y2JttP6S4BoCO7/neq/g4X22IWKI14fXBO2yVtrP9i4AQvEpC5ZHigX29pJM8aT/78R+BTqxEIJZDqLpYv6iTwk+//AWKiGW0C7GP8WlBQ674aRclE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=g93vQSf9; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1717157066; c=relaxed/simple;
+	bh=6xdvJeDyYBD4qbZ8lT/zvJ7dO2l6Wggb6jIEtTTboGU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sWigiUH4blcMJcZ4Ei586XFpJb8pgkUlHv84YLFj/zFJugOJgpE3W3N6MRpvt4K8FJu8Q+XQuG7Z8P8By4bIQAPYjDAWOy8HMHLGX583cu7kjYR0LzBBBAKzXz1pnXhQRpXtPZMaSvCnZ1ybZiSEHw4cRrLtjxIlKISfu76QPjo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ry+sBbA2; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="g93vQSf9"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44V8lHAr006252;
-	Fri, 31 May 2024 11:57:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	QLXCf+uuiqWX0T+eAEfBRmO10Kpgb3O9apvffaCdJmA=; b=g93vQSf9dgKTHatG
-	Am/8jpuemv3UW6BDgRKTST76WOniM8PKa3t1AgfRk0Xdc++DThS/2XEGkI0xIvZQ
-	U+mrbpRfA7MUasPTZwePgCKfsJ5q7DlWSU29P+75RVwkrJmRjKPi8hrWc49OIKsN
-	2UB1b05HbTpCraKFhDk2S88QxwaLBJ1vpDiHteIn2gPITKbEaI80qDo9A0vQrJmK
-	KmeJ5vEppgX3Gcrr+eL/9ReWG6cQ8ceNQzD15uZhcU+o0T3pVB9ZjV53k/kfaBlO
-	q6NYTFGsXFq5bvX4Dxs/ZiVthmDMK2Fw0Y2EaaT5jW44cu/4teoEbAQNNd7F4e93
-	XbyXQA==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba2hembv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 31 May 2024 11:57:11 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44VBvA7b010803
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 31 May 2024 11:57:10 GMT
-Received: from [10.218.5.19] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 31 May
- 2024 04:56:55 -0700
-Message-ID: <1df48a42-3b4e-4eb4-971b-cd4be001ba27@quicinc.com>
-Date: Fri, 31 May 2024 17:26:52 +0530
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ry+sBbA2"
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52aea6067c8so2338886e87.0
+        for <linux-clk@vger.kernel.org>; Fri, 31 May 2024 05:04:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1717157063; x=1717761863; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=QppKMPnoJFrrG7X3aJOQRgCs56wwZx8U2VxR/4HfLRc=;
+        b=ry+sBbA2d/i3ImCnIsCZlweZQX4NnC/ijEewiklxMH4ZVFxIdYhPto/UKhaf8jHiEf
+         8ifUaUoAujYmA0jj3yZhFUubWwRJh9b30rr1dxuiIJSp6tGPfLjSn7Wkkx1ukWSOU+sp
+         wKyF+m4sbwmFlWquGfFptsZzOimUm48z7lmBjhacpw+8gphig76P+Q5xrzZichAHDF/t
+         78NuwucbRBgHvh1vnwb/gYqUjeklq3JZPgzFIum6RIypS2sWI6WBXGFOTn1cEhYzO+zR
+         QwPCHFIxJ5sZjJhbat313CliDVorGPbUPjuN5XfG4xCr7KtMn1a6duSaCJcmTCI53/Jk
+         K4hw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717157063; x=1717761863;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QppKMPnoJFrrG7X3aJOQRgCs56wwZx8U2VxR/4HfLRc=;
+        b=FBavYxEUlkCWdzhXNH+D6KhtRw+fRdI7ILm1xa645/BFMULZWP2+KOmSa2+c8FPmGr
+         PLkH6TZ3qvgDEErN1R/rKiCcU58zW+74gTwcR6R5WL6rC84PZDIPlQNRzJIStkrAaA46
+         je4/InezYHKGnqVpIE0sljzW5ZWbTtYBRW4C4cOL7RHyigSZSxl2kq5l7cVW+QztbivM
+         7gXjEaqRQTuIcOXps/E9AU5mCLkU9SV8zBfDNSGrwKVum5M24lwVYz+k+7AKfwy1xxk7
+         FcRGbUJ9fX2yIbJIYCTJo4z0VhA2K+w2GejXRXkiwGdd12wYbUfCHZPJeuqmT443DFrh
+         HWyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV0I3gHBawfCV4FyhDEaLxfuHRpqr4Tv+WL12rMi04C3ohrQeNobT8IyqD5hjRMQT97nCDrlWnDI2Qasud67hJXTiNsip5OqS39
+X-Gm-Message-State: AOJu0YzuzLqJklUCywsiNjO7Ftu0NUcqwG4/Te8hCyKbgTs9/0oZP40x
+	REP1Lp63NRYHO7HKYjlAcGcPwu3f0LNPJfL2AISliWvNwf1A1iTKe3Vi/xhFysI=
+X-Google-Smtp-Source: AGHT+IHWCNuEqJi9LuYYD8GAiM8tuYHlXxxRcctEj/EVqNcTsAou3H4jkdkLfvlRb36nQ/5Wf94s+A==
+X-Received: by 2002:a05:6512:3b25:b0:522:1e16:1f17 with SMTP id 2adb3069b0e04-52b8980b4damr1500989e87.65.1717157063255;
+        Fri, 31 May 2024 05:04:23 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52b84d75dacsm309445e87.132.2024.05.31.05.04.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 31 May 2024 05:04:22 -0700 (PDT)
+Date: Fri, 31 May 2024 15:04:21 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Taniya Das <quic_tdas@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+	Rob Herring <robh+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, quic_jkona@quicinc.com, 
+	quic_imrashai@quicinc.com, devicetree@vger.kernel.org
+Subject: Re: [PATCH 3/4] arm64: dts: qcom: qcm6490-idp: Update protected
+ clocks list
+Message-ID: <4dvqegoz45ct5rqknf6vgi6rvh4osaecfyp7fcrs26lcsq4npu@dwoyubuqlbss>
+References: <20240531102252.26061-1-quic_tdas@quicinc.com>
+ <20240531102252.26061-4-quic_tdas@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V5 RESEND 5/5] venus: pm_helpers: Use
- dev_pm_genpd_set_hwmode to switch GDSC mode on V6
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        "Michael
- Turquette" <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
-        Vikash Garodia
-	<quic_vgarodia@quicinc.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        "Ulf
- Hansson" <ulf.hansson@linaro.org>,
-        "Rafael J . Wysocki" <rafael@kernel.org>,
-        Kevin Hilman <khilman@kernel.org>, Pavel Machek <pavel@ucw.cz>,
-        Len Brown
-	<len.brown@intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Andy
- Gross" <agross@kernel.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Abel Vesa <abel.vesa@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
-        "Satya Priya
- Kakitapalli" <quic_skakitap@quicinc.com>,
-        Imran Shaik
-	<quic_imrashai@quicinc.com>,
-        Ajit Pandey <quic_ajipan@quicinc.com>
-References: <20240413152013.22307-1-quic_jkona@quicinc.com>
- <20240413152013.22307-6-quic_jkona@quicinc.com>
- <5c78ad52-524b-4ad7-b149-0e7252abc2ee@linaro.org>
- <b96ef82c-4033-43e0-9c1e-347ffb500751@quicinc.com>
- <a522f25f-bb38-4ae1-8f13-8e56934e5ef5@linaro.org>
- <dbd1b86c-7b5f-4b92-ab1f-fecfe1486cfc@quicinc.com>
- <621dbaaa-6b86-45b5-988e-a6d9c39b13d7@linaro.org>
- <d36c1163-a3f0-4034-a430-91986e5bbce8@linaro.org>
- <ef194e5c-f136-4dba-bfe0-2c6439892e34@linaro.org>
- <d2e55523-f8fd-4cbe-909c-57de241107e8@linaro.org>
-Content-Language: en-US
-From: Jagadeesh Kona <quic_jkona@quicinc.com>
-In-Reply-To: <d2e55523-f8fd-4cbe-909c-57de241107e8@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: BLsjDIiK3CsLckqGqMKAgMBG7h5L6Pat
-X-Proofpoint-ORIG-GUID: BLsjDIiK3CsLckqGqMKAgMBG7h5L6Pat
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-31_08,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 adultscore=0
- malwarescore=0 priorityscore=1501 impostorscore=0 suspectscore=0
- phishscore=0 bulkscore=0 mlxscore=0 lowpriorityscore=0 spamscore=0
- mlxlogscore=921 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2405310088
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240531102252.26061-4-quic_tdas@quicinc.com>
 
-
-
-On 5/10/2024 6:31 PM, Bryan O'Donoghue wrote:
-> On 01/05/2024 10:14, Bryan O'Donoghue wrote:
->> On 30/04/2024 21:01, Konrad Dybcio wrote:
->>> On 24.04.2024 11:50 AM, Bryan O'Donoghue wrote:
->>>> On 24/04/2024 10:45, Jagadeesh Kona wrote:
->>>>>
->>>>> Thanks Bryan for testing this series. Can you please confirm if 
->>>>> this issue is observed in every run or only seen during the first 
->>>>> run? Also please let me know on which platform this issue is observed?
->>>>>
->>>>> Thanks,
->>>>> Jagadeesh
->>>>
->>>> rb5/sm8250
->>>>
->>>> My observation was on a previous _boot_ the stuttering was worse. 
->>>> There is in the video capture three times that I count where the 
->>>> video halts briefly, I guess we need to vote or set an OPP so the 
->>>> firmware knows not to power-collapse quite so aggressively.
->>>
->>> We seem to be having some qualcomm-wide variance on perf/pwr usage on 
->>> some
->>> odd boots.. Any chance you could try like 5 times and see if it was a 
->>> fluke?
->>>
->>> Konrad
->>
->> Sure.
->>
->> The first time I tried it, it was much worse.
->>
->> The second time, captured in the video is only noticeable because I 
->> was *looking* for this specific error i.e. I don't think I would have 
->> noticed the error on the second run, had I not seen the first run.
->>
->> I'll find some time to do 5x with and 5x without.
->>
->> ---
->> bod
+On Fri, May 31, 2024 at 03:52:51PM +0530, Taniya Das wrote:
+> Certain clocks are not accessible on QCM6490-IDP board,
+> thus mark them as protected. Update the lpassaudio node to
+> support the new compatible as the lpassaudio needs to support
+> the reset functionality on the QCM6490 board and the rest of
+> the Audio functionality would be provided from the LPASS
+> firmware.
 > 
-> ping bod please remember to do this thanks
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/qcm6490-idp.dts | 28 +++++++++++++++++++++++-
+>  1 file changed, 27 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
+> index a0668f767e4b..4eece564331a 100644
+> --- a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
+> +++ b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
+> @@ -1,6 +1,6 @@
+>  // SPDX-License-Identifier: BSD-3-Clause
+>  /*
+> - * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
+> + * Copyright (c) 2023-2024 Qualcomm Innovation Center, Inc. All rights reserved.
+>   */
+>  
+>  /dts-v1/;
+> @@ -688,3 +688,29 @@
+>  &wifi {
+>  	memory-region = <&wlan_fw_mem>;
+>  };
+> +
+> +&gcc {
+> +	protected-clocks = <GCC_AGGRE_NOC_PCIE_1_AXI_CLK> ,<GCC_PCIE_1_AUX_CLK>,
+> +			<GCC_PCIE_1_AUX_CLK_SRC>, <GCC_PCIE_1_CFG_AHB_CLK>,
+> +			<GCC_PCIE_1_MSTR_AXI_CLK>, <GCC_PCIE_1_PHY_RCHNG_CLK_SRC>,
+> +			<GCC_PCIE_1_PIPE_CLK>, <GCC_PCIE_1_PIPE_CLK_SRC>,
+> +			<GCC_PCIE_1_SLV_AXI_CLK>, <GCC_PCIE_1_SLV_Q2A_AXI_CLK>,
+> +			<GCC_QSPI_CNOC_PERIPH_AHB_CLK>, <GCC_QSPI_CORE_CLK>,
+> +			<GCC_QSPI_CORE_CLK_SRC>,<GCC_USB30_SEC_MASTER_CLK>,
+> +			<GCC_USB30_SEC_MASTER_CLK_SRC>, <GCC_USB30_SEC_MOCK_UTMI_CLK>,
+> +			<GCC_USB30_SEC_MOCK_UTMI_CLK_SRC>,
+> +			<GCC_USB30_SEC_MOCK_UTMI_POSTDIV_CLK_SRC>, <GCC_USB30_SEC_SLEEP_CLK>,
+> +			<GCC_USB3_SEC_PHY_AUX_CLK>, <GCC_USB3_SEC_PHY_AUX_CLK_SRC>,
+> +			<GCC_USB3_SEC_PHY_COM_AUX_CLK>, <GCC_USB3_SEC_PHY_PIPE_CLK>,
+> +			<GCC_USB3_SEC_PHY_PIPE_CLK_SRC>, <GCC_CFG_NOC_LPASS_CLK>,
+> +			<GCC_MSS_GPLL0_MAIN_DIV_CLK_SRC>, <GCC_MSS_CFG_AHB_CLK>,
+> +			<GCC_MSS_OFFLINE_AXI_CLK>, <GCC_MSS_SNOC_AXI_CLK>,
+> +			<GCC_MSS_Q6_MEMNOC_AXI_CLK>, <GCC_MSS_Q6SS_BOOT_CLK_SRC>,
+> +			<GCC_SEC_CTRL_CLK_SRC>, <GCC_WPSS_AHB_CLK>,
+> +			<GCC_WPSS_AHB_BDG_MST_CLK>, <GCC_WPSS_RSCP_CLK>;
+
+Is there any reason why this list is significantly larger than a list
+for RB3g2 or FP5?
+
+> +};
+> +
+> +&lpass_audiocc {
+> +	compatible = "qcom,qcm6490-lpassaudiocc";
+> +	/delete-property/ power-domains;
+> +};
+
+Separate commits, please.
+
+> -- 
+> 2.17.1
 > 
 
-Hi Bryan, Could you please let me know if you got a chance to check the 
-above? Thank you!
-
-Thanks,
-Jagadeesh
+-- 
+With best wishes
+Dmitry
