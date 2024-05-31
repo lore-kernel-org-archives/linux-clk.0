@@ -1,57 +1,57 @@
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAE7815098A
-	for <linux-clk@vger.kernel.org>; Fri, 31 May 2024 10:19:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C46601514F5
+	for <linux-clk@vger.kernel.org>; Fri, 31 May 2024 10:20:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717150767; cv=none; b=TdKhNVvc9bmNOTHvnUAGNrpbMTj1Vs9ORyqpfrDmXor2nfLjw2DMttKaCbIVbTVM56pTPaswxzcX388Y1mNATr+zkEX3X/2h3KHJlXNYYA1NBGIWSwaRVGvMm79Wggj91hdNsN5rdPt2sB6DSyOlAkGW3TR4NkFkctAtIjhJd1E=
+	t=1717150820; cv=none; b=sTXmUdYyvBszWnFDa4R/deO3XRedk/OUotZEdw2s8yPKC1X7H/IOvAWFbowxjRVns67CZGHIgxj8OsYrq4ygFrjl7YtGjexKGXCUDgdQwfLxcmBZeExjZ97dz0DMbb4VRToc7FaCXOIsy3tXDwx3dgXFaf9gTcUi4V2KFqKR6As=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717150767; c=relaxed/simple;
-	bh=tpARhdnqDejvUkHf6A6ZGltXn5u+j+vN0C/r8HohpZE=;
+	s=arc-20240116; t=1717150820; c=relaxed/simple;
+	bh=oDkCy8oJ2WMeKcy9+Uh0V14y9VWvcEu1F1wyVC5z6LU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=odXR4ixRFGGKDm6z+xqlMkGxfQkW0T1rTsx22Y0ylc8TzobPLM5c4QwJ7r9KdBdiJtQZQMHsxwg/d1OPBckZVUdaTL/8AaSpsirWDZiQDSjrPstIKVmL4Rbf3h171GFS7mrdzPpoCQxRqXbI0wVi/jIsGfym8jDvbbxpUNgjX5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ao8LKugR; arc=none smtp.client-ip=209.85.167.53
+	 Content-Type:Content-Disposition:In-Reply-To; b=gF1Z60EWAKMI6b6wFlZs2+vHsMbSWH/vDaUQANUIERtUNxq4VxCkxf5RbiEF2CTgEgLJxC1KlJfLvVR9Czd5MxZDV7tP2uiB3LifUSAi0DR7TfqCF1h8nYWvdEUyfY6juwsIYNCsalwXD4CYc1URCkdzdPmhJD5iL0Q0V08tM50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bnKYacDX; arc=none smtp.client-ip=209.85.208.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ao8LKugR"
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52962423ed8so2223295e87.2
-        for <linux-clk@vger.kernel.org>; Fri, 31 May 2024 03:19:25 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bnKYacDX"
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2e724bc46c4so19051471fa.2
+        for <linux-clk@vger.kernel.org>; Fri, 31 May 2024 03:20:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717150764; x=1717755564; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1717150817; x=1717755617; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mV76t4cc6pTDC5ZC7ticoYRVaUYUCrSvGFXMf4nLI88=;
-        b=Ao8LKugRCDEOCh9jlYFBgv7KigBwXjgb9xm6JaO7ExcdC9t+LHVEV8LYkLBDKf5oPU
-         kPqD9SPesp2zuQqeqakVnsPStxpP1lsBSc8Yzuy8ugc4Ktgp9digwpb5wLg4Xp7wDe0Y
-         PH4awiaMYyC3L1xTZ8L9nKHRF4EFVq7/aOgyEN+VB4/Z56ueOATQSEcV0cOOlE8GFET7
-         IdRv5ymrZurIFhNI8u4qO1Sg/lZevFJ+GJge/LH4Qgrl72FBP1lAPfGmodxfN89Ba/1S
-         c6e190kXcaVndAL5waOsuZN2VnZ3Z7wuM208rx6NPheOGfLLXNOC/r7rvpzOXIuFavoO
-         CAUQ==
+        bh=ZJg6C0WVWn0Vp3XGiynuZUYf7BAqZo56bxrIXpikvkk=;
+        b=bnKYacDXhez1MqTGVeWrOL+5JJaLnb9p3zFOqceh0WtJCB67KE92/KGi0vdy89MUVK
+         ZmzcEDKnRN14ckXyJyTzPYQgyX2XFe3+LHsohJq/buvNOHPy/nE2XNtX/Z1JUEGvYIGS
+         7oh6/5mOYKagnty2M4xgdc52j5kiBrOtH3Yq6JGMVrZ975IQNMZn+068G30/TaW6QxQB
+         nZ0YNQg8x+TqoGDO147NneP/+3mS6WvNVddL8ioH9Ieh0flKvavUXII+yNHub0q6CKUd
+         30jYWl8pJ/cVPBCqLflWK61ySmiwe1n/4/WyLUlwaFv5eTnfpIfWhrCZ9NSmd/xVbpIG
+         jzzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717150764; x=1717755564;
+        d=1e100.net; s=20230601; t=1717150817; x=1717755617;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=mV76t4cc6pTDC5ZC7ticoYRVaUYUCrSvGFXMf4nLI88=;
-        b=JYe9h43pqCIZZuI58LUK+yEOyq2m3D1e+83WYpzMA7C9R/zWnWKRyjwvbokHSafHOF
-         94MxQ3/53PhINaU3O9ZcRrkJTLQAekFSd+MMqJNk+f5sNmaDU7eQDsXcBoAQKIZ7YkGN
-         il10ZBrzCCIOY9XVLDbhAQUKwNJ4N/Iupp5BWbuZyUCaXd4N2wpe+sa17CTEDV28da6A
-         FY5E8Po4NDnozLcK0E3BT4u4fxFMA6nV2SY9hGED1pVrED3QK51KWYqReQo/2ZuuuVe4
-         Y0ciI2Cq7sh+3s4ISsmQ5sp54P7j7Gw5IWEyvUcki+Bx6lJffYxbevkMliMUSMZq3uWn
-         k2WQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX0HUyz7ay9fx+FRos99WuNp+rkB/Gx54hPOd0urw4EKmPBUPLjdpxUXb0EX/t3GEQKeCgHfhTgx/OJAjK1JtouDSZMZNfqCj4N
-X-Gm-Message-State: AOJu0Yy2oA7ZDgdC33nhsl4aTfwhq+zzWGXWauNbO4P5jg+4H34Xj3Le
-	9Uwrf5X+b72Hnr4vJR04ivPkUn6eYltkeAtwNkHAIGz7P01WNaD2RVzrhU97tE4=
-X-Google-Smtp-Source: AGHT+IEqea1VcUvpL4DaWYLaSQWOtObl3fO5LomQnajs74gEtay+IQUApjHW0XNUvR4dba5N2XbxPQ==
-X-Received: by 2002:a05:6512:74c:b0:52b:2f78:9c92 with SMTP id 2adb3069b0e04-52b895694a3mr836554e87.5.1717150763810;
-        Fri, 31 May 2024 03:19:23 -0700 (PDT)
+        bh=ZJg6C0WVWn0Vp3XGiynuZUYf7BAqZo56bxrIXpikvkk=;
+        b=L6TutJ+Yzw+QBnLVk1JU4ln9xQ9hoMONxADjAtPFLo2lPpwBxaP/AP4wMyaM+3+51h
+         6yanv83/HYZoIKvIlX0PRa7VzA3cB408PbLnz5jcOgO+XuLlZN/2D36tqcG22Xi/QiMM
+         Ujsy9SfwDaul5IuEcpbefyURjFkzf/LjKTsu/5xKVqjZh8j+EXi9/ozOM+ITA1ryw+Io
+         845zK91L7FKNIyPB8jeoyOOuRHDnZYMss+eqNGynKVn0PxCdZjWLQZAPppTv8SIaihq/
+         B1Lxyle/MLksr1vS/zgX9r9Vojc9tHoKrW6nU1Hmkxkq0LrR93N8NxerUnBIxgdDxeB1
+         cGqg==
+X-Forwarded-Encrypted: i=1; AJvYcCXLgu1I48/NBVBxrewc8jzhUIPegskQ7wBQUCmaUVH9XNl86DqXQxTCneugOVZMM0zQoLyu0IACNeLcOIpU1jF8yzPIkEIHnthM
+X-Gm-Message-State: AOJu0YwL8CKd/77CbMBxsIFVi49rxH5DZD1IBOEQC+md7NX7xd+z7imL
+	aECxs1OE7W9Fu9PZVhJZpLfy7Tadb71znFhzkLQxd0h8AYzCjIIRbJKa2dTFEr8=
+X-Google-Smtp-Source: AGHT+IH3eDhHYffts7P6CotucZIC/1NV5s1KOoULl1yKA9WH7Y4N37DO0QUnBGhOLPU2OlwFm5r/iw==
+X-Received: by 2002:a05:651c:2112:b0:2e9:8374:3820 with SMTP id 38308e7fff4ca-2ea951dfc12mr12587551fa.40.1717150817101;
+        Fri, 31 May 2024 03:20:17 -0700 (PDT)
 Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyyykxt-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::227])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52b84d3f428sm286144e87.92.2024.05.31.03.19.23
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ea91b9d744sm2653711fa.28.2024.05.31.03.20.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 31 May 2024 03:19:23 -0700 (PDT)
-Date: Fri, 31 May 2024 13:19:21 +0300
+        Fri, 31 May 2024 03:20:16 -0700 (PDT)
+Date: Fri, 31 May 2024 13:20:15 +0300
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To: Taniya Das <quic_tdas@quicinc.com>
 Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
@@ -60,13 +60,13 @@ Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
 	Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
 	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
 	devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 7/8] arm64: dts: qcom: qcm6490-idp: Update protected
- clocks list
-Message-ID: <3zpeoonngdzyubxs2t4r6izwilrqgdxk75bjhqfmov2vmrugzn@ebes3fuvskhn>
+Subject: Re: [PATCH v2 4/8] clk: qcom: sc7280: Update the transition delay
+ for GDSC
+Message-ID: <3dasezpuum7jnafhciv6atfi6n2tqra3lo3q425s7f36wuoc7i@pguvou37vhpl>
 References: <20240318053555.20405-1-quic_tdas@quicinc.com>
- <20240318053555.20405-8-quic_tdas@quicinc.com>
- <06c08855-3965-4d57-8bec-fba8544dee7d@linaro.org>
- <9a2a4e55-e123-4f41-bfaa-563cf2e04f5a@quicinc.com>
+ <20240318053555.20405-5-quic_tdas@quicinc.com>
+ <3293d565-ceb6-44f1-8a47-d18e9d0083a5@linaro.org>
+ <a671ba20-f000-425f-914f-54a9d65d79c7@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -75,59 +75,39 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9a2a4e55-e123-4f41-bfaa-563cf2e04f5a@quicinc.com>
+In-Reply-To: <a671ba20-f000-425f-914f-54a9d65d79c7@quicinc.com>
 
-On Fri, May 31, 2024 at 03:04:51PM +0530, Taniya Das wrote:
+On Fri, May 31, 2024 at 03:00:40PM +0530, Taniya Das wrote:
 > 
 > 
-> On 3/18/2024 1:24 PM, Krzysztof Kozlowski wrote:
+> On 3/18/2024 1:23 PM, Krzysztof Kozlowski wrote:
 > > On 18/03/2024 06:35, Taniya Das wrote:
-> > > Certain clocks are not accessible on QCM6490-IDP board,
-> > > thus mark them as protected. Update the lpassaudio node to
-> > > support the new compatible.
-> > > 
-> > > Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> > > ---
+> > > Update the GDSC default values of GDSC transition delay to avoid the
+> > > issues in the GDSC FSM state.
+> > 
+> > What issues?
 > > 
 > > > 
-> > > +&gcc {
-> > > +	protected-clocks = <GCC_AGGRE_NOC_PCIE_1_AXI_CLK> ,<GCC_PCIE_1_AUX_CLK>,
-> > > +			<GCC_PCIE_1_AUX_CLK_SRC>, <GCC_PCIE_1_CFG_AHB_CLK>,
-> > > +			<GCC_PCIE_1_MSTR_AXI_CLK>, <GCC_PCIE_1_PHY_RCHNG_CLK_SRC>,
-> > > +			<GCC_PCIE_1_PIPE_CLK>, <GCC_PCIE_1_PIPE_CLK_SRC>,
-> > > +			<GCC_PCIE_1_SLV_AXI_CLK>, <GCC_PCIE_1_SLV_Q2A_AXI_CLK>,
-> > > +			<GCC_QSPI_CNOC_PERIPH_AHB_CLK>, <GCC_QSPI_CORE_CLK>,
-> > > +			<GCC_QSPI_CORE_CLK_SRC>,<GCC_USB30_SEC_MASTER_CLK>,
-> > > +			<GCC_USB30_SEC_MASTER_CLK_SRC>, <GCC_USB30_SEC_MOCK_UTMI_CLK>,
-> > > +			<GCC_USB30_SEC_MOCK_UTMI_CLK_SRC>,
-> > > +			<GCC_USB30_SEC_MOCK_UTMI_POSTDIV_CLK_SRC>, <GCC_USB30_SEC_SLEEP_CLK>,
-> > > +			<GCC_USB3_SEC_PHY_AUX_CLK>, <GCC_USB3_SEC_PHY_AUX_CLK_SRC>,
-> > > +			<GCC_USB3_SEC_PHY_COM_AUX_CLK>, <GCC_USB3_SEC_PHY_PIPE_CLK>,
-> > > +			<GCC_USB3_SEC_PHY_PIPE_CLK_SRC>, <GCC_CFG_NOC_LPASS_CLK>,
-> > > +			<GCC_MSS_GPLL0_MAIN_DIV_CLK_SRC>, <GCC_MSS_CFG_AHB_CLK>,
-> > > +			<GCC_MSS_OFFLINE_AXI_CLK>, <GCC_MSS_SNOC_AXI_CLK>,
-> > > +			<GCC_MSS_Q6_MEMNOC_AXI_CLK>, <GCC_MSS_Q6SS_BOOT_CLK_SRC>,
-> > > +			<GCC_SEC_CTRL_CLK_SRC>, <GCC_WPSS_AHB_CLK>,
-> > > +			<GCC_WPSS_AHB_BDG_MST_CLK>, <GCC_WPSS_RSCP_CLK>;
-> > > +};
-> > > +
-> > > +&lpass_audiocc {
-> > > +	compatible = "qcom,qcm6490-lpassaudiocc";
+> 
+> The GDSC FSM will be stuck and the GDSC will not be able to power on/off.
+> 
+> I will update the patch commit text as well.
+> 
 > > 
-> > What? Why do you override compatible for given board? This is a SoC
-> > block, not board!
+> > Why none of your so called "fixes" are marked as Cc-stable? If they are
+> > real fixes, they should be.
+> > 
+> > > Fixes: fae7617bb142 ("clk: qcom: Add video clock controller driver for SC7280")
+> > > Fixes: 1daec8cfebc2 ("clk: qcom: camcc: Add camera clock controller driver for SC7280")
+> > > Fixes: a3cc092196ef ("clk: qcom: Add Global Clock controller (GCC) driver for SC7280")
+> > > Fixes: 3e0f01d6c7e7 ("clk: qcom: Add graphics clock controller driver for SC7280")
+> > 
+> > No, don't combine separate fixes into one commit.
+> > 
 > 
-> On QCM6490-IDP and QCS690-RB3Gen2 boards, the HLOS Audio driver requires the
-> support for the reset functionality only from the LPASS region.
-> Rest of the clocks functionality is controlled from LPASS firmware.
-> 
-> Hence, in the earlier series we marked all the clocks as protected and
-> introduced new "qcom,adsp-skip-pll" flag to skip PLL configurations.
-> But as the flag was also not approved and the ask was to use the compatible
-> string, we went ahead with this approach.
+> I will remove the fixes tag in the next patch.
 
-Is this also applicable for the QCM6490 FairPhone5? If so, maybe it's
-time to have qcm6490.dtsi.
+The intent was to _split_ the commit into 4 parts.
 
 -- 
 With best wishes
