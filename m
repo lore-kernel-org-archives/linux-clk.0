@@ -1,48 +1,48 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 565B0768EA;
-	Fri, 31 May 2024 09:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 687E7823C3;
+	Fri, 31 May 2024 09:35:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717147854; cv=none; b=DxG0mij8fqUIp/Cowh5lznAYWbJdMZI4BIwM9/j9MwSIh3Oo8LFUzM9SfvhpAfra1FFUMOyWWuqglFFdVgZXxcZWNQkpwjCm7Lrzp0HO5xAjjxA+MtZKdrBbHtR8m9O8NDky9v8OASoj00CFtMd+556gWTgBBHGLPcrECelnTT8=
+	t=1717148105; cv=none; b=XIR6N0CYfNd/LLLMVTtPZqvEuhaqQ877Kwb0WA6bJK49xAjI+lyL4ymu5tEq8rQQSLFP7iZyD/lY0iwgrDQWvMQniDDzaU+FM94FZqSnQ/IXMZIBsWFkMAl/9E166NHmvaM7F1khu9cP4CrVa1nBLdgv4cLovc9y+SR7+B8N+m4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717147854; c=relaxed/simple;
-	bh=KIOXzoDM4zhlJsEhof+5gWYeeom0SgBNEnTzGH448Xw=;
+	s=arc-20240116; t=1717148105; c=relaxed/simple;
+	bh=Cw6NjBZ2byZb0Evs0+ZgeDKCI22umh672J6NIRogw9c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=P6Mf6Un1puh98yymKkRg0dqx26njeY2YepoaAK1mhz8Vvu76fSlNCQ2i40G5KwVAoRy781iqTK/uTblQS/9UzzjtCFSYnlAMUFEo+Y9jD7Wn6BSugKjXkp+hQh4b1xt16Vt/UgRDYh/5A7kXXh9Edhdu3SWxO72W13ohpT0Atc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cd12ImHT; arc=none smtp.client-ip=205.220.168.131
+	 In-Reply-To:Content-Type; b=MHf7o31WSquUo1uHYMmZVH50SVQA1Wu9Nqx/HCjKStUCDezeRHTw7JZ5LFWGZNeWgMoNG3YGWjO+vUdPIxmsKJ1+XMyI98EAl6CQB4RNqPiQTTrxg54tzEhi2HlEZ6kAWrbvuv2b6dVl5kMrWskzXllZIahNB7w2HnIdmIFcNKM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OREKyfsA; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cd12ImHT"
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44V62a26031687;
-	Fri, 31 May 2024 09:30:49 GMT
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OREKyfsA"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44V8tmgx016230;
+	Fri, 31 May 2024 09:35:00 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	4z6835LnByoH0M/7ANVxcOc0mQVXkQ9QylW6OHCpY7k=; b=cd12ImHT7cn02c5F
-	NZqAPcHHYMaPuZmWNhqlqGDAtBtvR1H+6kD4/uHDDT3UcrLwqQ0dOUM2Fgf+R40z
-	cbWyGLrQ14s9NoGxhotGR4TWM71RAfpMfly+fXi3wm5JdU6FHoq09BBc6OYd1zFS
-	6N5NWM8DVuAI3MtnwPLvWTltFWLsp6nV7zCVJelRxyioGzgQZCFyX1PIUUeUUxFJ
-	qpS8V78Y4RcVKJeB12dKy7d7QpKnqHJ3IqWdkM07jQm5vhKtvP2JXX7Dz9wsHdZj
-	gYYM+ib6pC5DZHWoWCqZwEdzJJg6kUAqONonPZQctcfTrbzWGCiMueJXRla0BmLo
-	LIfubQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yf8xa0gsq-1
+	+JsPFS9PrUULdkHBchZWT/X6kJBuEOj4JVqpMgktZkU=; b=OREKyfsAHXmN+uut
+	hRKBME4gt0NjqociwYw14Rl2LToMqE36ndCne2lXvakH6fNLomXrpKm2wkthR26u
+	mj1UBYJzXxrNbHp14QPc7VDXzOHDiH8bakYIttjic8czKFIzGb8K3hLhOZITDY/6
+	WDZGy8xJqL2tIkOfxSzTzBV5FC7BBW/XKRU2p05z1s8av4h06l5WZJAiaB6F5C8K
+	yGE0ySAPiTd/6f4Ko9NmHHG3F9Qf2Fs8p0DrDIqyne0Duz/SLojCbGGVJX4eaavm
+	9DEig8TMuebtomXYlQ2lqmjxo2s3/ApkN8ObyB0RFJc1A15I1O2JMKVdEvOXJGMv
+	uCSLDA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yb9yjekxm-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 31 May 2024 09:30:49 +0000 (GMT)
+	Fri, 31 May 2024 09:35:00 +0000 (GMT)
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44V9UmrU004678
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44V9YwAO002284
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 31 May 2024 09:30:48 GMT
+	Fri, 31 May 2024 09:34:58 GMT
 Received: from [10.217.216.152] (10.80.80.8) by nalasex01a.na.qualcomm.com
  (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 31 May
- 2024 02:30:44 -0700
-Message-ID: <a671ba20-f000-425f-914f-54a9d65d79c7@quicinc.com>
-Date: Fri, 31 May 2024 15:00:40 +0530
+ 2024 02:34:54 -0700
+Message-ID: <9a2a4e55-e123-4f41-bfaa-563cf2e04f5a@quicinc.com>
+Date: Fri, 31 May 2024 15:04:51 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,8 +50,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/8] clk: qcom: sc7280: Update the transition delay for
- GDSC
+Subject: Re: [PATCH v2 7/8] arm64: dts: qcom: qcm6490-idp: Update protected
+ clocks list
 To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
         Stephen Boyd
 	<sboyd@kernel.org>,
@@ -66,58 +66,76 @@ To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
 CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
         <devicetree@vger.kernel.org>
 References: <20240318053555.20405-1-quic_tdas@quicinc.com>
- <20240318053555.20405-5-quic_tdas@quicinc.com>
- <3293d565-ceb6-44f1-8a47-d18e9d0083a5@linaro.org>
+ <20240318053555.20405-8-quic_tdas@quicinc.com>
+ <06c08855-3965-4d57-8bec-fba8544dee7d@linaro.org>
 Content-Language: en-US
 From: Taniya Das <quic_tdas@quicinc.com>
-In-Reply-To: <3293d565-ceb6-44f1-8a47-d18e9d0083a5@linaro.org>
+In-Reply-To: <06c08855-3965-4d57-8bec-fba8544dee7d@linaro.org>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Xso3tW-qjhbrnc9PP0KYlUvJQ4qk8f93
-X-Proofpoint-ORIG-GUID: Xso3tW-qjhbrnc9PP0KYlUvJQ4qk8f93
+X-Proofpoint-GUID: -VHo6E-qrod3w86Q0CzwEmxGe5eE_cK-
+X-Proofpoint-ORIG-GUID: -VHo6E-qrod3w86Q0CzwEmxGe5eE_cK-
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-05-31_06,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- mlxlogscore=766 mlxscore=0 priorityscore=1501 malwarescore=0 bulkscore=0
- impostorscore=0 clxscore=1015 lowpriorityscore=0 adultscore=0 phishscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ definitions=2024-05-31_05,2024-05-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ adultscore=0 mlxscore=0 phishscore=0 mlxlogscore=999 spamscore=0
+ clxscore=1015 impostorscore=0 bulkscore=0 suspectscore=0 malwarescore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.19.0-2405170001 definitions=main-2405310069
 
 
 
-On 3/18/2024 1:23 PM, Krzysztof Kozlowski wrote:
+On 3/18/2024 1:24 PM, Krzysztof Kozlowski wrote:
 > On 18/03/2024 06:35, Taniya Das wrote:
->> Update the GDSC default values of GDSC transition delay to avoid the
->> issues in the GDSC FSM state.
-> 
-> What issues?
+>> Certain clocks are not accessible on QCM6490-IDP board,
+>> thus mark them as protected. Update the lpassaudio node to
+>> support the new compatible.
+>>
+>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+>> ---
 > 
 >>
-
-The GDSC FSM will be stuck and the GDSC will not be able to power on/off.
-
-I will update the patch commit text as well.
-
+>> +&gcc {
+>> +	protected-clocks = <GCC_AGGRE_NOC_PCIE_1_AXI_CLK> ,<GCC_PCIE_1_AUX_CLK>,
+>> +			<GCC_PCIE_1_AUX_CLK_SRC>, <GCC_PCIE_1_CFG_AHB_CLK>,
+>> +			<GCC_PCIE_1_MSTR_AXI_CLK>, <GCC_PCIE_1_PHY_RCHNG_CLK_SRC>,
+>> +			<GCC_PCIE_1_PIPE_CLK>, <GCC_PCIE_1_PIPE_CLK_SRC>,
+>> +			<GCC_PCIE_1_SLV_AXI_CLK>, <GCC_PCIE_1_SLV_Q2A_AXI_CLK>,
+>> +			<GCC_QSPI_CNOC_PERIPH_AHB_CLK>, <GCC_QSPI_CORE_CLK>,
+>> +			<GCC_QSPI_CORE_CLK_SRC>,<GCC_USB30_SEC_MASTER_CLK>,
+>> +			<GCC_USB30_SEC_MASTER_CLK_SRC>, <GCC_USB30_SEC_MOCK_UTMI_CLK>,
+>> +			<GCC_USB30_SEC_MOCK_UTMI_CLK_SRC>,
+>> +			<GCC_USB30_SEC_MOCK_UTMI_POSTDIV_CLK_SRC>, <GCC_USB30_SEC_SLEEP_CLK>,
+>> +			<GCC_USB3_SEC_PHY_AUX_CLK>, <GCC_USB3_SEC_PHY_AUX_CLK_SRC>,
+>> +			<GCC_USB3_SEC_PHY_COM_AUX_CLK>, <GCC_USB3_SEC_PHY_PIPE_CLK>,
+>> +			<GCC_USB3_SEC_PHY_PIPE_CLK_SRC>, <GCC_CFG_NOC_LPASS_CLK>,
+>> +			<GCC_MSS_GPLL0_MAIN_DIV_CLK_SRC>, <GCC_MSS_CFG_AHB_CLK>,
+>> +			<GCC_MSS_OFFLINE_AXI_CLK>, <GCC_MSS_SNOC_AXI_CLK>,
+>> +			<GCC_MSS_Q6_MEMNOC_AXI_CLK>, <GCC_MSS_Q6SS_BOOT_CLK_SRC>,
+>> +			<GCC_SEC_CTRL_CLK_SRC>, <GCC_WPSS_AHB_CLK>,
+>> +			<GCC_WPSS_AHB_BDG_MST_CLK>, <GCC_WPSS_RSCP_CLK>;
+>> +};
+>> +
+>> +&lpass_audiocc {
+>> +	compatible = "qcom,qcm6490-lpassaudiocc";
 > 
-> Why none of your so called "fixes" are marked as Cc-stable? If they are
-> real fixes, they should be.
-> 
->> Fixes: fae7617bb142 ("clk: qcom: Add video clock controller driver for SC7280")
->> Fixes: 1daec8cfebc2 ("clk: qcom: camcc: Add camera clock controller driver for SC7280")
->> Fixes: a3cc092196ef ("clk: qcom: Add Global Clock controller (GCC) driver for SC7280")
->> Fixes: 3e0f01d6c7e7 ("clk: qcom: Add graphics clock controller driver for SC7280")
-> 
-> No, don't combine separate fixes into one commit.
-> 
+> What? Why do you override compatible for given board? This is a SoC
+> block, not board!
 
-I will remove the fixes tag in the next patch.
+On QCM6490-IDP and QCS690-RB3Gen2 boards, the HLOS Audio driver requires 
+the support for the reset functionality only from the LPASS region.
+Rest of the clocks functionality is controlled from LPASS firmware.
 
-> 
+Hence, in the earlier series we marked all the clocks as protected and 
+introduced new "qcom,adsp-skip-pll" flag to skip PLL configurations.
+But as the flag was also not approved and the ask was to use the 
+compatible string, we went ahead with this approach.
+
 > 
 > Best regards,
 > Krzysztof
