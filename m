@@ -1,44 +1,45 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47E171CD35;
-	Fri, 31 May 2024 09:52:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43FF71CD35;
+	Fri, 31 May 2024 09:52:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717149125; cv=none; b=JmKlylAD4vUHbPdYexIXJciZ+prDTmmJTNKOWeteAwbEYb7SRNi7K+YDF3el6eE8QkUjBDGujIlqLoWhVNFeVUr3zANw81M9y4di0S7xi4lxp3Tl1vr5oe772kmegwzIAbvSZ4Oblw7TCes9s7Mtf/zom7zA/wH+FkWp5Hj71+o=
+	t=1717149132; cv=none; b=akx1UR9vNmBOzywGqdGCk3YySAXhMIwuiE7zS5jSgMh61Echays5O9hwinlPo4gDwQkE3TJQRFiqHQt83RL9TAmSnv0fJQtEj5Jj71FV3ZOazUhNwCb7iiiycNGeIdsd1lOZj/wZSYYcbn0y8c/U6wpCCZcdsk4kVTm+dcvhJxg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717149125; c=relaxed/simple;
-	bh=Csaa3tt3xr9DechulIPvuOls8GvhzdSpwi1pkFEl4CE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EIshbtLmPhg2L4OqG/AqFSqEWcYe8C8CfneIzHYOlxWGk4chV3XlB5JTPxIe9hKDM2WFIjD4nVQ9PPRchWwVRkf7kVN4VVvEBZK7Uez905zQNikootrBDxVKw4iqZJPS35iPgMnuo+x7wYehpjnT9YtMpOR0gsX0StAyiwjVGr8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bsb4vr0r; arc=none smtp.client-ip=205.220.168.131
+	s=arc-20240116; t=1717149132; c=relaxed/simple;
+	bh=6Gv7f3+SNjC+yNXhqTABahm34jzBn0mCyTDLLSHKNZQ=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Mjfk26jRpyKcq3Yc/CvJX9byff2mV6p9XV7jQyAl9a3+q8Q+TCZYdBrDbKmLCz6+ifuAxJN8esvJc0TdMu/dIcr3uO38qGrvYpck0A2VOsnpO0+JHl+t5F1BBDebrWxOtMpsJJzVu0aEtbqc15JPvjMxPjQj2bHxOva9Abuj+ww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kVcBqVu4; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bsb4vr0r"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44V9AAGZ020826;
-	Fri, 31 May 2024 09:52:00 GMT
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kVcBqVu4"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 44V711XT001099;
+	Fri, 31 May 2024 09:52:07 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:message-id:mime-version:subject:to; s=
-	qcppdkim1; bh=4GDTEZEvr5D+uqFK1E8+9SzBVC37kZcctSCb3223QFI=; b=bs
-	b4vr0rDE/ML4bdeRfUU1WNFH69QqlOnNe84U0MP5hSGWxXbHzZ5EUfgHLdaBhnkM
-	AerVY97dJTH8ClWsWzG0KLo3AZL8XvQBVmsvIwbotLHKq2mK8aSi9kWqYnzB4XUs
-	0kRjwRX4wWP/z9H7ZNQjvau8wI2cGUPAtgleYAnfntfrmu8CJhYV7y9D/FqDvMIi
-	jCLV4upRojzRCRVjBbAKneABasVcWnY5aTQvr/jVmXeke3rDOoIuitbVR7JpTwAN
-	nqLphXgc6/V5kt8bTTdKcurg2imQFLp7pIiGyEmro0sg/147gCmvUjA6kv0RxJWH
-	34qT4fGc/T2FqJMhDhEA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yba2hed0v-1
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=kyXDGJj6o6bzvppirB19pxmO
+	CRyZJlkp8qSEQ/Gzbw4=; b=kVcBqVu49Zur+GkdhV8LuZCYXvuCDRVUBawS8LQc
+	VdoD+s91sdEm1f8NN+26w06JcfO0NmqKz1rp7pBHelrF9x6FE8Q+Li4zYd/bBaL0
+	XsNUkMJsVvon1IObXvLzwNJ24F0laFgu7MJrj4UDIBriZKGj6pViq0C01bNQgapO
+	kQTeHP/uwFqwfDgDnGz1FE5ncG/dK2Co9SQyCgXerNa57Wg4Dl6MuRPUTxiRWhVL
+	0GYVlq73PD23OmRr3oM/+xD/aUtSFpf4+vcB3yZIoANeEPEc2owdP7KQ5skvCuXL
+	rrCIGiAJDczYfdkTRAntWHWAddtGjelaznj2hs7eXA/xxQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yb9yjen4f-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 31 May 2024 09:52:00 +0000 (GMT)
+	Fri, 31 May 2024 09:52:07 +0000 (GMT)
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44V9pxww007409
+	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 44V9q6JI025002
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 31 May 2024 09:51:59 GMT
+	Fri, 31 May 2024 09:52:06 GMT
 Received: from hu-tdas-hyd.qualcomm.com (10.80.80.8) by
  nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 31 May 2024 02:51:55 -0700
+ 15.2.1544.9; Fri, 31 May 2024 02:52:02 -0700
 From: Taniya Das <quic_tdas@quicinc.com>
 To: Bjorn Andersson <andersson@kernel.org>,
         Konrad Dybcio
@@ -51,10 +52,12 @@ CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
         <quic_jkona@quicinc.com>, <quic_imrashai@quicinc.com>,
         Taniya Das
 	<quic_tdas@quicinc.com>
-Subject: [PATCH v3 0/3] Add updates for clock controllers to support QCM6490
-Date: Fri, 31 May 2024 15:21:39 +0530
-Message-ID: <20240531095142.9688-1-quic_tdas@quicinc.com>
+Subject: [PATCH v3 2/3] clk: qcom: gcc-sc7280: Update force mem core bit for UFS ICE clock
+Date: Fri, 31 May 2024 15:21:41 +0530
+Message-ID: <20240531095142.9688-3-quic_tdas@quicinc.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20240531095142.9688-1-quic_tdas@quicinc.com>
+References: <20240531095142.9688-1-quic_tdas@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -66,53 +69,42 @@ X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: P2LLaKOMm-e1gU9Nx01utIk5XARe7u36
-X-Proofpoint-ORIG-GUID: P2LLaKOMm-e1gU9Nx01utIk5XARe7u36
+X-Proofpoint-GUID: ltx8JukhXwhbDbzj-thoHzvCoCvArdCq
+X-Proofpoint-ORIG-GUID: ltx8JukhXwhbDbzj-thoHzvCoCvArdCq
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
  definitions=2024-05-31_06,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
- malwarescore=0 priorityscore=1501 impostorscore=0 suspectscore=0
- phishscore=0 bulkscore=0 mlxscore=0 lowpriorityscore=0 spamscore=0
- mlxlogscore=743 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ adultscore=0 mlxscore=0 phishscore=0 mlxlogscore=999 spamscore=0
+ clxscore=1015 impostorscore=0 bulkscore=0 suspectscore=0 malwarescore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.19.0-2405170001 definitions=main-2405310073
 
-[v3]
-   1. Patches for LPASS Audio has been split from this series.
-   2. Updated the commit text as per the comments.
+Update the force mem core bit for UFS ICE clock to force the core on signal
+to remain active during halt state of the clk. When retention bit of the
+clock is set the memories of the subsystem will retain the logic across
+power states.
 
-[v2]
-  1. Move the implementation to support the lpass resets for the SoC
-  using device tree property to new SoC-specific compatible.
-  2. Separate the regmap conflict warning to a new patchset.
-  3. Separate patch to handle the transition delay for GDSC and the mem
-  core bit update for UFS ICE clock.
-  4. Separate the device tree board specific changes to handle the
-  protected clocks and lpass audio clock node. Remove the unnecessary
-  disables of the lpass nodes.
-  Link to v2 - https://lore.kernel.org/all/20240318053555.20405-1-quic_tdas@quicinc.com/
+Fixes: a3cc092196ef ("clk: qcom: Add Global Clock controller (GCC) driver for SC7280")
+Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+---
+ drivers/clk/qcom/gcc-sc7280.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-[v1]
-   1. Adding the "qcom,adsp-skip-pll" property to dt bindings.
-   2. Fix to skip the lpass pll configuration on qcm6490 derivative boards.
-   3. Enable the force mem core for UFS ICE clock and update the gdsc
-      transition delays.
-   4. Fix to add the camera titan top gdsc as parent to all camera gdscs.
-   5. Update protected clocks list and disable few of the lpass clock
-      controller nodes for qcm6490-idp and qcs6490-rb3gen2 platforms.
-   Link to v1 - https://lore.kernel.org/all/20240208062836.19767-1-quic_tdas@quicinc.com/
-
-Taniya Das (3):
-  clk: qcom: sc7280: Update the transition delay for GDSC
-  clk: qcom: gcc-sc7280: Update force mem core bit for UFS ICE clock
-  clk: qcom: camcc-sc7280: Add parent dependency to all camera GDSCs
-
- drivers/clk/qcom/camcc-sc7280.c   | 24 ++++++++++++++++++++++++
- drivers/clk/qcom/gcc-sc7280.c     | 13 +++++++++++++
- drivers/clk/qcom/gpucc-sc7280.c   |  7 +++++++
- drivers/clk/qcom/videocc-sc7280.c |  7 +++++++
- 4 files changed, 51 insertions(+)
-
---
+diff --git a/drivers/clk/qcom/gcc-sc7280.c b/drivers/clk/qcom/gcc-sc7280.c
+index c622cd9a9d24..b937d513b814 100644
+--- a/drivers/clk/qcom/gcc-sc7280.c
++++ b/drivers/clk/qcom/gcc-sc7280.c
+@@ -3473,6 +3473,9 @@ static int gcc_sc7280_probe(struct platform_device *pdev)
+ 	qcom_branch_set_clk_en(regmap, 0x71004);/* GCC_GPU_CFG_AHB_CLK */
+ 	regmap_update_bits(regmap, 0x7100C, BIT(13), BIT(13));
+ 
++	/* FORCE_MEM_CORE_ON for ufs phy ice core clocks */
++	qcom_branch_set_force_mem_core(regmap, gcc_ufs_phy_ice_core_clk, true);
++
+ 	ret = qcom_cc_register_rcg_dfs(regmap, gcc_dfs_clocks,
+ 			ARRAY_SIZE(gcc_dfs_clocks));
+ 	if (ret)
+-- 
 2.17.1
 
