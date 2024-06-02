@@ -1,44 +1,47 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5B8CAD2D;
-	Sun,  2 Jun 2024 04:22:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BE6679C2;
+	Sun,  2 Jun 2024 04:29:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717302145; cv=none; b=A94gKkL+FEJ6qiSQx3H0Tq44Oafp6kWYiJm/fJntxyznOfORWhijxDSg9IDQOqAJIHTh6yvv4R7GvgHPsQAN1N3t89kh+iJA0gY3HM+05dPtW2m4SjSzcYgm7l7GgfJletYpsTTz+HV5xL0CArnU4kKNHJLkAzOr07+YuTKgJNY=
+	t=1717302558; cv=none; b=dw2b80nHxOwPiheMlNkSt0CTyykMw0AsBQPbTa98eEZlf+8LdnfcorHOH1MddezfcywTtKR5oahB4TWEnre0XMSQCbLW4qRAriPc+/062rJ/Gn9c73qx3n1QO9F5G0SnrnxQbCEA+bpiLll2KWazgAiZbwWlzFcgIsPy5nZWvkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717302145; c=relaxed/simple;
-	bh=VEzcGnfYuLgpyvwW9Sbdi6HU0+XOzlYljls9InAkb0k=;
+	s=arc-20240116; t=1717302558; c=relaxed/simple;
+	bh=oYpwUgb3R9s21VRsk1J9qoySXDBYWtk7Ai56w1NOPwM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=drS5jzwEgAbZp1Va84niOM0DJMiyJHFSMI/U8kMLXy2eDg2tLCf2VQH2VbHWLvRjX7E8yEsP3NjRwiDqNkVxkYLK0lFEAzMNjaz36mbtJo6q1iuGEm3zIaLD2aJ01m49cQnOGYtuX1AOvCnTkMG+w+oa4zpdL0FpM/mWrQnNzhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cLP2XK2z; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=j29MeOCoF68ADA6x+Lhi9sAy+YhoVMcDRHl2hnxXsDtMTx2EU6gkVT6Z3cycBwMAnHjOEpUWmvEpeKFgZlL5S7Si6bV537ZuW326Fkb1G85YcFXfjJ74KCDPyAEitYBgSqCEJ7waspkQFLIfCK/6prwNDJ2ORB75u15RXMHg228=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tzGP96jh; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cLP2XK2z"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89D7DC2BBFC;
-	Sun,  2 Jun 2024 04:22:21 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tzGP96jh"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87BB2C2BBFC;
+	Sun,  2 Jun 2024 04:29:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717302143;
-	bh=VEzcGnfYuLgpyvwW9Sbdi6HU0+XOzlYljls9InAkb0k=;
+	s=k20201202; t=1717302557;
+	bh=oYpwUgb3R9s21VRsk1J9qoySXDBYWtk7Ai56w1NOPwM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cLP2XK2z6zP7apu84C5Y08umAPl/cH2cM1ohr9g/Duw1mlp1PJLFj71XGj0blcz8+
-	 n/cyxrg2v9Xnu0tW+X/BddZxCJEGQ9Ivtj8F/PtJBzbUTCL9ucVwcVLs+LDc0mMyKj
-	 Wv6sBJyqdjECtlj26NXOa7lrT7KkteP+2r9TkLdlN1Zq5Hm8hQvGnJjomXM/azBXty
-	 ubEs1NUFVeOI5QqcIBdAGqJ8ntJIr8e2569s/w4RpyvIdoEwZSG+u/1/CpyHpP2GsN
-	 TKbyLLQqaXjc1Ebgejs9xhhYJftzX/ibapjJOV23RWfJ6GB1YihofW17D8KqxDMuPB
-	 zdKcxOpwqf2ww==
-Date: Sat, 1 Jun 2024 23:22:18 -0500
+	b=tzGP96jhia4fn4mO1OIp3fqdmG7bjAFymlOTMwLkOW9c8n/Kc9VlrZ41tTUx9oe8z
+	 Kz1WGF9z41vlJW5ZfjsAE6XDAXyaMbhJbZZt0g9j7hX6fJ+F5iXV4JwwNvNPaSV5TB
+	 slG6HBdr78658hTU2gzuKDKwGXEtI6KlLIDkPiBoy4EqDTe9BeerCyusDyjT71Zn6l
+	 LOM8QBR0U1EgpKDidX009FSidAQkXS2B4yEnc5Lmx7i9wfMC5ZI9djpD+xOQHgupVU
+	 eD+3akz/e+MV13A6LIfpWw1sjyhAoV2xAs+T21Z2P9/OhMKzSeEJUKUKL+A93UooJ6
+	 283MPinGsm4/w==
+Date: Sat, 1 Jun 2024 23:29:14 -0500
 From: Bjorn Andersson <andersson@kernel.org>
-To: Taniya Das <quic_tdas@quicinc.com>
-Cc: Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, quic_jkona@quicinc.com, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH 00/13] Add support for SA8775P Multimedia clock
- controllers
-Message-ID: <ivssjgpuex3ckva55tndsqsioo7ysopjrhlvtbv2ot7stjkx2p@opluyh34wy5r>
-References: <20240531090249.10293-1-quic_tdas@quicinc.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Taniya Das <quic_tdas@quicinc.com>, Konrad Dybcio <konrad.dybcio@somainline.org>, 
+	Jonathan Marek <jonathan@marek.ca>, Del Regno <angelogioacchino.delregno@somainline.org>, 
+	Loic Poulain <loic.poulain@linaro.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/16] dt-bindings: clock: qcom: reference qcom-gcc.yaml
+Message-ID: <dqk2jxt44lh3e4hlkfflqjyzmaujwtrzgxe7kem2soua3yryxt@hykweb47ku37>
+References: <20240531-dt-bindings-qcom-gcc-v1-0-b37d49fe1421@linaro.org>
+ <l73uszlhnhyamfuwm7f6bbmockttwihsylkkgbyedkdseznlka@mtr5c7r4nqt4>
+ <8ac8cc27-6c39-45fe-bdc2-40a310c815cc@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,73 +50,45 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240531090249.10293-1-quic_tdas@quicinc.com>
+In-Reply-To: <8ac8cc27-6c39-45fe-bdc2-40a310c815cc@linaro.org>
 
-On Fri, May 31, 2024 at 02:32:36PM GMT, Taniya Das wrote:
-> Update GCC, GPUCC clock controllers and add support for multimedia
-> clock controllers on Qualcomm SA8775P platform.
+On Fri, May 31, 2024 at 05:19:19PM GMT, Krzysztof Kozlowski wrote:
+> On 31/05/2024 17:14, Dmitry Baryshkov wrote:
+> > On Fri, May 31, 2024 at 03:52:18PM +0200, Krzysztof Kozlowski wrote:
+> >> Hi,
+> >>
+> >> Unify Qualcomm clock controllers by referencing qcom,gcc.yaml where
+> >> applicable.  Several existing bindings for these display/GPU/CAM clock
+> >> controllers already do it.
+> > 
+> > The series looks good to me with a single point in mind. You are writing
+> > that dispcc/videocc/etc are a variant of GCC. However GCC is a Global
+> > Clock Controller. 
+> 
+> Yeah, that's simplification from my side and assumption that at first
+> they designed GCC and then they copied the design to other blocks.
 > 
 
-Most of the patches in this series does not depend on each other and
-some of them could have been merged already, if they weren't stacked in
-the middle of the series.
+That may or may not be the case, who knows... I also don't have a strong
+opinion about tying it all to gcc.yaml if that work...
 
-Please lump patches together into series only when there is a dependency
-between them.
+But the claim in the commit messages should the be that we inherit
+gcc.yaml because it's convenient, not because all clock controllers are
+derived from gcc.
 
-The one exception here is the dts change at the end that has a
-dependency on the multiple binding updates. You can choose to either
-split this into multiple updates, or send it separately once the clock
-changes has been accepted.
-
-Thanks,
+Regards,
 Bjorn
 
-> Taniya Das (13):
->   clk: qcom: gcc-sa8775p: Remove support for UFS hw ctl clocks
->   clk: qcom: gcc-sa8775p: Update the GDSC wait_val fields and flags
->   clk: qcom: gcc-sa8775p: Set FORCE_MEM_CORE_ON for
->     gcc_ufs_phy_ice_core_clk
->   clk: qcom: gpucc-sa8775p: Remove the CLK_IS_CRITICAL and ALWAYS_ON
->     flags
->   clk: qcom: gpucc-sa8775p: Park RCG's clk source at XO during disable
->   clk: qcom: gpucc-sa8775p: Update wait_val fields for GPU GDSC's
->   dt-bindings: clock: qcom: Add SA8775P video clock controller
->   clk: qcom: Add support for Video clock controller on SA8775P
->   dt-bindings: clock: qcom: Add SA8775P camera controller
->   clk: qcom: Add support for Camera Clock Controller on SA8775P
->   dt-bindings: clock: qcom: Add SA8775P display controller
->   clk: qcom: Add support for Display Controllers on SA8775P
->   arm64: dts: qcom: Add support for multimedia clock controllers
+> > What about renaming qcom,gcc.yaml to
+> > qcom,cc-common.yaml ? Then the rest makes total sense to me.
 > 
->  .../bindings/clock/qcom,sa8775p-camcc.yaml    |   76 +
->  .../bindings/clock/qcom,sa8775p-dispcc.yaml   |   88 +
->  .../bindings/clock/qcom,sa8775p-videocc.yaml  |   75 +
->  arch/arm64/boot/dts/qcom/sa8775p-ride.dts     |    2 +-
->  arch/arm64/boot/dts/qcom/sa8775p.dtsi         |   59 +
->  drivers/clk/qcom/Kconfig                      |   31 +
->  drivers/clk/qcom/Makefile                     |    3 +
->  drivers/clk/qcom/camcc-sa8775p.c              | 1849 +++++++++++++++++
->  drivers/clk/qcom/dispcc0-sa8775p.c            | 1481 +++++++++++++
->  drivers/clk/qcom/dispcc1-sa8775p.c            | 1481 +++++++++++++
->  drivers/clk/qcom/gcc-sa8775p.c                |  154 +-
->  drivers/clk/qcom/gpucc-sa8775p.c              |   41 +-
->  drivers/clk/qcom/videocc-sa8775p.c            |  576 +++++
->  .../dt-bindings/clock/qcom,sa8775p-camcc.h    |  107 +
->  .../dt-bindings/clock/qcom,sa8775p-dispcc.h   |   87 +
->  .../dt-bindings/clock/qcom,sa8775p-videocc.h  |   47 +
->  16 files changed, 6027 insertions(+), 130 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sa8775p-camcc.yaml
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sa8775p-dispcc.yaml
->  create mode 100644 Documentation/devicetree/bindings/clock/qcom,sa8775p-videocc.yaml
->  create mode 100644 drivers/clk/qcom/camcc-sa8775p.c
->  create mode 100644 drivers/clk/qcom/dispcc0-sa8775p.c
->  create mode 100644 drivers/clk/qcom/dispcc1-sa8775p.c
->  create mode 100644 drivers/clk/qcom/videocc-sa8775p.c
->  create mode 100644 include/dt-bindings/clock/qcom,sa8775p-camcc.h
->  create mode 100644 include/dt-bindings/clock/qcom,sa8775p-dispcc.h
->  create mode 100644 include/dt-bindings/clock/qcom,sa8775p-videocc.h
+> Several gpu/disp/cam clock controllers already include qcom,gcc.yaml, so
+> I would say this should not be a requirement for this patchset.
 > 
-> --
-> 2.17.1
+> We can rename, although it always is a bit of churn - git log needs
+> special option, backporting is a bit trickier.
+> 
+> 
+> Best regards,
+> Krzysztof
 > 
