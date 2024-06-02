@@ -1,84 +1,105 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCF9E381D4;
-	Sun,  2 Jun 2024 03:53:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86992AD21;
+	Sun,  2 Jun 2024 04:08:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717300439; cv=none; b=a3G72nxd6P5tieiww/53b020VksUhf0SF2B1uTL/0rO+x5mStO1RB4iFOuV+2bub3KAixdb7BBj9kWj5PupZN/LqyJk57mYpj3N5YZ21eQwmnQLRC+jmTFTA2BJDUxFo6CX6sC2EX7QfDfZ6sTPxbdnLtn9eNSbbLE2jdWeNPdQ=
+	t=1717301326; cv=none; b=WNg4wHFca47wzI7URHcnwTlIrauQZc4HhW6knXP9DI15s5seXPSlmamDX3GISnV1O4lMK8iiYBst3esz0T6u7WgeidDWrBOM76Idz65hP4p0qF8wb093wejijDpVFEVZuyJYAzj9odPY5oP+lpPy+KtKNccvM+jk3NhVWtyT6cQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717300439; c=relaxed/simple;
-	bh=Uq/iB0/HACyOw00ABR9dimhGwSP9o93X+Evte1PJjgo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WdBf7LBnFgVcd7dKdMvGV++/SSETsd7jxtnKXeuaHnmjaP0tj76mUA32rsmrxcYYkOFRZ5GCWE2nqH0alt5TO/h19rkuZzfI/oYo3iPeRx4IKh6K5U+a/PYSz6+BG9BuadWKnuh1X6+B8zNDbzowU7eucVRlfNncVK+2ikk3DpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YLMMfYmJ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1717301326; c=relaxed/simple;
+	bh=ruhWwfADPbqcU9FRQvUk8FxZy/x+JYyQFwmMrdX2xDA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZFVd1UFmnfG+AbGxTTsWIuc0qFnxFWR9sxE7c65zCQeTxvKtcSWVpzkaPMISy2UGL99yC3CuY3/yz/OVylxyeadgqHh1empCJPIjM/512P/5wudWT5Opxvs0+73pyH2x4KH99uzVpGf85g9/DtojSfjyR/2p6OyDxt/Dbd3J2lU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NoaA7NAq; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YLMMfYmJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBAD4C4AF0C;
-	Sun,  2 Jun 2024 03:53:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NoaA7NAq"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA39CC2BBFC;
+	Sun,  2 Jun 2024 04:08:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717300439;
-	bh=Uq/iB0/HACyOw00ABR9dimhGwSP9o93X+Evte1PJjgo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=YLMMfYmJq1l3GIYIip08pJuQwB80inSGjCGI3GvdEHXzArY1Mr4tM0qWJe+USzREh
-	 8Rdcn3Hcg49isdiHHPrd9IEFJuUe4acaRhPUQvjRPLdwa1H40PrRxvCjv9bQSi6vDc
-	 SrkQoG5cNw/fUgOQ0ErXNKTrBwB+ONc6qG+J6KyIzxmNozDI775h3l6vr1ahkEYPhf
-	 9Fn5k2Y2xBFmqxLQMStTaiinykuJAegVmCNTXwffCH6T9tRty77BJy4tmkqudJva7A
-	 rDLznGGql/TlsRs4ysdUbVeXb5teSqhcoMnN7GKN1rRH38rRPHbKM9xZfBNa2kiMK6
-	 pd3iDiAZnw5pQ==
+	s=k20201202; t=1717301326;
+	bh=ruhWwfADPbqcU9FRQvUk8FxZy/x+JYyQFwmMrdX2xDA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NoaA7NAqPG65NHAq6aZq73EhLsA03rDvBniukXoq2UAS+Ag4MxxwuZuRtvX9DyC8y
+	 zP4OjHOlzyt44gxyghO1dmiuTFveoduCjzoTu8T5V9vpNc71OrjY/cm2pyX981H9jU
+	 PY1611Gi/Yny6rH52n7KjzbtHmamosa1KasDuzeHUl1EmUnqAyNIa4mXmJXjssDJkw
+	 PGGovzgm03KMlkW1CY9jCfEM1YBVwd5nl952nq/a2p/t0dORBKFjpfUsv8n9HH2AcZ
+	 l9Si6SSg/ewFew6q/ZTdS5ysWOHWLbQZeZWUx9FX5z41Ds5999x2aogWQytwzg8BeC
+	 rck0vAvXTX/7g==
+Date: Sat, 1 Jun 2024 23:08:42 -0500
 From: Bjorn Andersson <andersson@kernel.org>
-To: Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Taniya Das <quic_tdas@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	quic_jkona@quicinc.com,
-	quic_imrashai@quicinc.com
-Subject: Re: [PATCH v3 0/3] Add updates for clock controllers to support QCM6490
-Date: Sat,  1 Jun 2024 22:53:45 -0500
-Message-ID: <171730042581.665897.14151503149058581115.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20240531095142.9688-1-quic_tdas@quicinc.com>
-References: <20240531095142.9688-1-quic_tdas@quicinc.com>
+To: Trilok Soni <quic_tsoni@quicinc.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+	Taniya Das <quic_tdas@quicinc.com>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, quic_jkona@quicinc.com, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH 04/13] clk: qcom: gpucc-sa8775p: Remove the
+ CLK_IS_CRITICAL and ALWAYS_ON flags
+Message-ID: <drkjvvoxvzfbkvuylwtxbyroxuv7bf7w7cn6lmrovsqe72re57@xspcrygo3pl4>
+References: <20240531090249.10293-1-quic_tdas@quicinc.com>
+ <20240531090249.10293-5-quic_tdas@quicinc.com>
+ <0f56831e-8572-46f5-89cf-d1e990813a02@linaro.org>
+ <cb1066a9-d3b2-d921-9af6-01300987d37b@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cb1066a9-d3b2-d921-9af6-01300987d37b@quicinc.com>
 
-
-On Fri, 31 May 2024 15:21:39 +0530, Taniya Das wrote:
-> [v3]
->    1. Patches for LPASS Audio has been split from this series.
->    2. Updated the commit text as per the comments.
+On Fri, May 31, 2024 at 10:46:39AM GMT, Trilok Soni wrote:
+> On 5/31/2024 2:59 AM, Krzysztof Kozlowski wrote:
+> > On 31/05/2024 11:02, Taniya Das wrote:
+> >> The gpu clocks and GDSC have been marked critical from the clock driver
+> >> which is not desired for functionality. Hence remove the CLK_IS_CRITICAL
+> >> and ALWAYS_ON flags.
+> >>
+> >> Fixes: 0afa16afc36d ("clk: qcom: add the GPUCC driver for sa8775p")
+> >> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> >> ---
+> >>  drivers/clk/qcom/gpucc-sa8775p.c | 27 +++++++++++----------------
+> >>  1 file changed, 11 insertions(+), 16 deletions(-)
+> >>
+> >> diff --git a/drivers/clk/qcom/gpucc-sa8775p.c b/drivers/clk/qcom/gpucc-sa8775p.c
+> >> index 1167c42da39d..f965babf4330 100644
+> >> --- a/drivers/clk/qcom/gpucc-sa8775p.c
+> >> +++ b/drivers/clk/qcom/gpucc-sa8775p.c
+> >> @@ -1,6 +1,6 @@
+> >>  // SPDX-License-Identifier: GPL-2.0-only
+> >>  /*
+> >> - * Copyright (c) 2021-2022, Qualcomm Innovation Center, Inc. All rights reserved.
+> >> + * Copyright (c) 2021-2022, 2024, Qualcomm Innovation Center, Inc. All rights reserved.
+> > 
+> > That's not a fix.
+> > 
+> >>   * Copyright (c) 2023, Linaro Limited
+> >>   */
+> >>  
+> >> @@ -280,7 +280,7 @@ static struct clk_branch gpu_cc_ahb_clk = {
+> >>  				&gpu_cc_hub_ahb_div_clk_src.clkr.hw,
+> >>  			},
+> >>  			.num_parents = 1,
+> >> -			.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
+> >> +			.flags = CLK_SET_RATE_PARENT,
+> > 
+> > I fail to see why this is a fix. They were marked as critical on
+> > purpose. It was needed, wasn't it?
+> > 
+> > Provide jsutification for commits, not just sprinkle Fixes tag all around.
 > 
-> [v2]
->   1. Move the implementation to support the lpass resets for the SoC
->   using device tree property to new SoC-specific compatible.
->   2. Separate the regmap conflict warning to a new patchset.
->   3. Separate patch to handle the transition delay for GDSC and the mem
->   core bit update for UFS ICE clock.
->   4. Separate the device tree board specific changes to handle the
->   protected clocks and lpass audio clock node. Remove the unnecessary
->   disables of the lpass nodes.
->   Link to v2 - https://lore.kernel.org/all/20240318053555.20405-1-quic_tdas@quicinc.com/
+> Taniya - please separate fixes into another series? 
 > 
-> [...]
 
-Applied, thanks!
+There's no problem including fixes in a series with other changes, but
+keeping them at the beginning of the series is generally preferred - as
+this both enable them being picked for some -fixes branch and avoid
+potential issues when backporting.
 
-[1/3] clk: qcom: sc7280: Update the transition delay for GDSC
-      commit: 7f10197853006c45e51f17e5f6b2da8d98b60784
-[2/3] clk: qcom: gcc-sc7280: Update force mem core bit for UFS ICE clock
-      commit: f38467b5a920be1473710428a93c4e54b6f8a0c1
-[3/3] clk: qcom: camcc-sc7280: Add parent dependency to all camera GDSCs
-      commit: 63aec3e4d987fd43237f557460345bca3b51e530
-
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+Regards,
+Bjorn
