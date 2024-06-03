@@ -1,57 +1,79 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail2.andi.de1.cc (vmd64148.contaboserver.net [161.97.139.27])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D159213BAFA;
-	Mon,  3 Jun 2024 21:36:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B6694F1EE;
+	Mon,  3 Jun 2024 21:41:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=161.97.139.27
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717450614; cv=none; b=MJzRnc4+maisnFZNWLzLsWQX0HhzQJFkhfIBetzgjlTzf6ifN/3zum+Q4p0E6fIo/S0p8+f/tLq53bGDrA+f25QsO2ctXq+C4XQ5lUp4jn+vW1H9FyFiExVs9JycGp81KP1hV+4e10to2qE1InuqJn0HFBis1tmJdu5gKyRTIKI=
+	t=1717450905; cv=none; b=U5YCJ7xadIkPLt+o/4RW8OEQdNKf23amg1AQfVe4hiMh0zZvfGlR7uYu3tovG/qn61KlthnpTYxcTnIEj02jdW5uurY1vQMTG0TvB3udZmtLh9fBn5oSHluxSA4IEi/3tMzBCRd1R5SNUlEfp4lcfgp4Hq4kX46J1PK4vRM/Xz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717450614; c=relaxed/simple;
-	bh=0TacpChjWF6BZ+mwmy7iO27gmbgjpFbCq69+FboeDeU=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=h1Oxdd5ypppIrU2KhSmyvO1kGJ4lBvubF6/dDY4PV9P1Z9o3oe8geqPwVNGcRissjEtFhWqGLDKh0VpHROCZliStY5CXkFoI2QVtSJ5OPPGTOSCH3Va/1EWk6j21Lil617FL/SG2gQOnnd1/Jj7NkTRxPQXkJKFJX7ZHnH7XR7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MVozPV++; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1717450905; c=relaxed/simple;
+	bh=tpUrNqY4FkEDDxPsV0nGW3ExusFdQsKzaQoa1bbE3+E=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type; b=pZIxJ48jPlRsXtGoxHb7JQG7Qd5HUFBy4zB7I52ZKyUL6D8s/yNvz1Oyh4nzjH0eHxdSQZzUpyVeV4tMCl+Z4CR0H/VzVNDflCqQAkpEVY0tmhQfnOrA+G7hzkzQUm/Xlyo5Ap/iZ+5r6KYu3RcDK9TUD2Wm2N35dfz4/Yjfpm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=draCQutM; arc=none smtp.client-ip=161.97.139.27
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MVozPV++"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DC78C2BD10;
-	Mon,  3 Jun 2024 21:36:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717450614;
-	bh=0TacpChjWF6BZ+mwmy7iO27gmbgjpFbCq69+FboeDeU=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=MVozPV++vnGOvooQjEWhNJ+/rWZiL2MiN1OXLujIYp80JiyZwaGwEOLRgyL6Yzezf
-	 P5ly0bbePi2wWKvK/SVlhX1WsqG0awWZ99EMpwH30a6WLJArmpgjp//DZ1asJMEt3p
-	 RyeU08K2ie+UbyC0d1FFERIsz/0NG8XRaE5fTysK77iPOprVvVbyRbwTdL5QSi76A+
-	 H18ipg2ty6FqmEgQ3hTAgCFQcKfwcFQCgUU73bngsAzi9NaPUHwFQR8ICQBiN/92OW
-	 JM1TTCKD0X9YF1urWtKB23swqBN6lMyymHlIzbVvryPNXwo6c4qFjIu9L804SKgfUU
-	 d+m6TzWEKhF4g==
-Message-ID: <0193c984c16103e4fb517c5791642673.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="draCQutM"
+Received: from mail.andi.de1.cc ([2a02:c205:3004:2154::1])
+	by mail2.andi.de1.cc with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <andreas@kemnade.info>)
+	id 1sEFQy-008iye-2R;
+	Mon, 03 Jun 2024 23:41:41 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=Content-Transfer-Encoding:Content-Type:
+	MIME-Version:Message-ID:Subject:To:From:Date:Sender:Reply-To:Cc:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=mECr+0yYQ3o07FypcUd2rfqn9MmI8qAiS3TgF2g/mxg=; b=draCQutMlpkrh8zj+94YhMINki
+	EoTvD1ldlYzuwEqQwahirwW5YerDHtKCMo0eUwdBxRIc9oZ36mEuPRxLIgJRyFIWt6/L0Vja3T1W9
+	h21FLisU+mDa1sKEPPa3K/AOcxbVtyMBeyKxyh675AALdkcKh/hM5dRwI/ofPGxRVi9Ctc2bcEl7U
+	S1yaPY0mjsioatPmO4IUW92benlGNkx4agPCm1Hc7Y6eNMypfl6+CWFKuTiPxK/2zFe4UDg7r3Ftn
+	H/NKQh9mT6CdjFd9EDHWvzyAJUVRuiz6amB/sEBO/bdWoUx5/m5tjZ2qxqiMsMV3UsVLlokL2qGcZ
+	gALdZwXA==;
+Received: from p200300c20737c2001a3da2fffebfd33a.dip0.t-ipconnect.de ([2003:c2:737:c200:1a3d:a2ff:febf:d33a] helo=aktux)
+	by mail.andi.de1.cc with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <andreas@kemnade.info>)
+	id 1sEFQx-002WPx-15;
+	Mon, 03 Jun 2024 23:41:40 +0200
+Date: Mon, 3 Jun 2024 23:41:39 +0200
+From: Andreas Kemnade <andreas@kemnade.info>
+To: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: clk mess on omap4460 with mpu clock
+Message-ID: <20240603234139.280629b2@aktux>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240529131310.260954-3-gabriel.fernandez@foss.st.com>
-References: <20240529131310.260954-1-gabriel.fernandez@foss.st.com> <20240529131310.260954-3-gabriel.fernandez@foss.st.com>
-Subject: Re: [RESEND PATCH v2 2/3] clk: stm32mp25: add security clocks
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-To: Alexandre Torgue <alexandre.torgue@foss.st.com>, Conor Dooley <conor+dt@kernel.org>, Dan Carpenter <dan.carpenter@linaro.or6g>, Gabriel Fernandez <gabriel.fernandez@foss.st.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Maxime Ripard <mripard@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>
-Date: Mon, 03 Jun 2024 14:36:52 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Quoting gabriel.fernandez@foss.st.com (2024-05-29 06:13:09)
-> From: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
->=20
-> Add ck_icn_p_iwdg1, ck_icn_p_pka, ck_icn_p_rng, ck_icn_p_saes,
-> ck_icn_p_serc clocks.
-> They could be configured for non secured world.
->=20
-> Signed-off-by: Gabriel Fernandez <gabriel.fernandez@foss.st.com>
-> ---
+Hi,
 
-Applied to clk-next
+just stumbled across this on 6.10-rc1:
+
+[    1.475830] ocp:target-module@48210000:mpu:fck: device ID is greater than 24
+[    1.483154] ti-sysc ocp:target-module@48210000: could not add child clock fck: -12
+
+Maybe
+        /*
+         * Use clkdev_add() instead of clkdev_alloc() to avoid the MAX_DEV_ID
+         * limit for clk_get(). If cl ever needs to be freed, it should be done
+         * with clkdev_drop().
+         */
+in ti-sysc.c does not work anymore?
+
+The offending clock definition is in omap4.dtsi
+
+clocks = <&mpuss_clkctrl OMAP4_MPU_CLKCTRL 0>;
+
+Did not bisect that yet.
+
+Regards,
+Andreas
