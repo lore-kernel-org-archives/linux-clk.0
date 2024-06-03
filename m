@@ -1,59 +1,36 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ABAE3BB24;
-	Mon,  3 Jun 2024 07:51:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86FEC7E796;
+	Mon,  3 Jun 2024 10:04:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717401115; cv=none; b=B8O7EiiuJU7+x+Doe2/m155QgiDQp8+Ol3Yl9/1kmkWPAXsL+TZgZSJKR4EKa/CVePnjR/AKyMnrJSJajlCyCxwvNNbFhdoQWD12txIxos8adiTIrD5Y4bgXs0J5UzZqqWarAM4OwXwfws6zFrYG4tnOYAAyLQbm3fc5j5zyLaU=
+	t=1717409077; cv=none; b=IPvmU9ztC57nEmn4TEyPVl8qkbW7Qon5gU5C0kdBPE5RXB/vNVnBM6/erXORA9ArZdAKcQphv8ixyngSHyDRWlNSv/PsSgb8mvx4p6QEfk/RTrOCAZG6xUnDbuMwgs/dD8hEExTzRAoX8tADV5EGeXblhUdhjf/1Z4OnTnbSjCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717401115; c=relaxed/simple;
-	bh=UNGmFlIjG+IUgjY9/2P+gSGtwZOytRdfZTK8275Gdt0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=blRnEqD91BOe66/Yf49snpNvb4fGhI17hssMMZPEXfE/35dAzcaWdXTzmYBaeX95Z+ikea8EEohCB4pWla2x5jYs/6aAz/XD3SxvzMJyLLL/G7hBFbN4msuj8ygbO7wvXUfk284RRaaFMWhOUgizFwB0VnObH+qMV4nPsAP5uLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=5LVGfTIv; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1717409077; c=relaxed/simple;
+	bh=Wlp7cZUIlE4IOHsusBnYh5vU2mzpL9FERd+nACxXsNk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=UewtMI66+QzqNePQaPlWoT61VlaUQmvLG0+SGxGv/Tc6DWhGK4wGPAlxjyrbGhNrbYhAvmm+9I/1kTPNWFTWbuOa4SAvSFgQzi54jJFQbM3MghdtKssCcSRq32UQzOVizg614GEdDQUrM6bTKfjt3agSDwZA4q9nihL947vmrfc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jitBqWF1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="5LVGfTIv"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1717401112;
-	bh=UNGmFlIjG+IUgjY9/2P+gSGtwZOytRdfZTK8275Gdt0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=5LVGfTIv30xTmxae/jtC/qEtIh1xKmHlQBqe+vE/2u5F+lO+oiMSnk9o7iZwexD9n
-	 x7I5TgBu5DEdJsje+vsAW4KERyBP+ko81aLax8XC/1VXYf7wdNRcBu1mDm9GZDStV7
-	 IM3+VuHGhNC1i/bX7Ldz7FfDG65LBOQ/Y13cy9Du6Uu3vDdRwVLIejTL0LWhBFJtxa
-	 TSzDZ0zwkTm6R3X+mN1MqVxXiGB/U7J5iuBnuZ5gN5S3CvZM+8rmD1C80GP9ffuEkK
-	 +Uwk6c0PSCtuDmlNaVc6FNgwkfR2N5dPAaSX8Qk65vgSjBvxluJh5yp8lR0rPk62eZ
-	 HpDkTqC0yXMTQ==
-Received: from IcarusMOD.eternityproject.eu (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 0FE7537813CA;
-	Mon,  3 Jun 2024 07:51:51 +0000 (UTC)
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
- Lee Jones <lee@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
- Frank Wunderlich <linux@fw-web.de>
-Cc: Frank Wunderlich <frank-w@public-files.de>, 
- Eric Woudstra <ericwouds@gmail.com>, Tianling Shen <cnsztl@immortalwrt.org>, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-clk@vger.kernel.org, linux-leds@vger.kernel.org, 
- netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org
-In-Reply-To: <20240510095707.6895-1-linux@fw-web.de>
-References: <20240510095707.6895-1-linux@fw-web.de>
-Subject: Re: [PATCH v3 0/2] Add Bananapi R3 Mini
-Message-Id: <171740111097.46559.14241820863717418080.b4-ty@collabora.com>
-Date: Mon, 03 Jun 2024 09:51:50 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jitBqWF1"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id E3BE1C2BD10;
+	Mon,  3 Jun 2024 10:04:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717409077;
+	bh=Wlp7cZUIlE4IOHsusBnYh5vU2mzpL9FERd+nACxXsNk=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=jitBqWF1HmyfocksqKrVWvoUdLzYHte1P62IPlwRvfzXXcj+S+Ew3u5pSPaWdaPqC
+	 TnDYquRgSjqKGrddFCEt7XSQ2cu5R1FDLVNrI8HO+NJ4M7EQof9EPK/ATJ8PRsLXYI
+	 19qmKeJBi2NkOyLWdIMmyOSP2tCMrawtG9YrDEO4G9FzMfqjlDJHj0fPqvnfP3hANW
+	 BrPlGxBnGwWfVQhdCf/hCRbjjoXK2VyZThPXUOTq2ZISjEA1N7gooblakjh0z3oZPZ
+	 AbfyUkJVJvQMLuOJKYLmKsjRanem+wocNewNB2m5Yx6jyx1zCDLIMBMSvl74XkSBpQ
+	 9ZV3CNB1BrPlA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9170C27C44;
+	Mon,  3 Jun 2024 10:04:36 +0000 (UTC)
+From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
+Date: Mon, 03 Jun 2024 18:04:33 +0800
+Subject: [PATCH] clk: meson: s4: fix fixed_pll_dco clock
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -62,28 +39,66 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Message-Id: <20240603-s4_fixedpll-v1-1-2b2a98630841@amlogic.com>
+X-B4-Tracking: v=1; b=H4sIADCVXWYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDMwNj3WKT+LTMitSUgpwcXWNLo6QkM6PUZEtzCyWgjoKiVJAcyLTo2Np
+ aAPgIUCtdAAAA
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Jerome Brunet <jbrunet@baylibre.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Yu Tu <yu.tu@amlogic.com>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Xianwei Zhao <xianwei.zhao@amlogic.com>
+X-Mailer: b4 0.12.4
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1717409074; l=969;
+ i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
+ bh=SOD0rIzjB9of1yjvijBbI9sErwBPGjkFM4JLYIAkE/M=;
+ b=EWCSOcnNVVrdnL4wLFgNl2+yIEH8TlQrvcy01wiM/tm0IMyHU3b5njMf9swxD3EF8sp0fC7I7
+ SQIYVaOz7myArhV3xPZMCbNAf8qNc/P/MP4qsyCyZEF6SHCnNBeF3vx
+X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
+ pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
+X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
+ auth_id=107
+X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+Reply-To: xianwei.zhao@amlogic.com
 
-On Fri, 10 May 2024 11:57:05 +0200, Frank Wunderlich wrote:
-> From: Frank Wunderlich <frank-w@public-files.de>
-> 
-> Add mt7986 based BananaPi R3 Mini SBC.
-> 
-> changes in v3:
-> - fixed unicde parenthesis in commit description of dts patch
-> - dropped "dts:" from title of binding patch
-> - added AB to binding and RB to dts patch
-> 
-> [...]
+From: Xianwei Zhao <xianwei.zhao@amlogic.com>
 
-Applied to v6.10-next/dts64, thanks!
+The fixed_pll_dco output frequency is not accurate,
+add frac factor for fixed_pll_dco clk to fix it.
 
-[1/2] dt-bindings: arm64: mediatek: add BananaPi R3 Mini
-      commit: ca33f36216abe52eef8e660c638d8200e72251e9
-[2/2] arm64: dts: mediatek: Add mt7986 based Bananapi R3 Mini
-      commit: 07d7e57ea9d9491075820d447f140de9b6c3bd40
+Fixes: 57b55c76aaf1 ("clk: meson: S4: add support for Amlogic S4 SoC peripheral clock controller")
+Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+---
+ drivers/clk/meson/s4-pll.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-Cheers,
-Angelo
+diff --git a/drivers/clk/meson/s4-pll.c b/drivers/clk/meson/s4-pll.c
+index 8dfaeccaadc2..47c0c105e32d 100644
+--- a/drivers/clk/meson/s4-pll.c
++++ b/drivers/clk/meson/s4-pll.c
+@@ -38,6 +38,11 @@ static struct clk_regmap s4_fixed_pll_dco = {
+ 			.shift   = 0,
+ 			.width   = 8,
+ 		},
++		.frac = {
++			.reg_off = ANACTRL_FIXPLL_CTRL1,
++			.shift   = 0,
++			.width   = 17,
++		},
+ 		.n = {
+ 			.reg_off = ANACTRL_FIXPLL_CTRL0,
+ 			.shift   = 10,
+
+---
+base-commit: ba535bce57e71463a86f8b33a0ea88c26e3a6418
+change-id: 20240603-s4_fixedpll-392bb62ec978
+
+Best regards,
+-- 
+Xianwei Zhao <xianwei.zhao@amlogic.com>
 
 
