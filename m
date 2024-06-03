@@ -1,125 +1,89 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 923714C61C;
-	Mon,  3 Jun 2024 07:45:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ABAE3BB24;
+	Mon,  3 Jun 2024 07:51:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717400708; cv=none; b=MKULBggTAdf+hNWPP2qoJD7wcnq9efAuEAS3Z2yn5R34iouB13H5g406+6Ncc3nOHuSUrM7HSEhCpE7T9Knzy0Q9hKaXVfqyDciPQmt1mBxtg6eXa5DfdPdxpb0J32Ey7cQVzSSrJQmzFGpvq8+/SbFK4d5xWC8whqudXO6rGTs=
+	t=1717401115; cv=none; b=B8O7EiiuJU7+x+Doe2/m155QgiDQp8+Ol3Yl9/1kmkWPAXsL+TZgZSJKR4EKa/CVePnjR/AKyMnrJSJajlCyCxwvNNbFhdoQWD12txIxos8adiTIrD5Y4bgXs0J5UzZqqWarAM4OwXwfws6zFrYG4tnOYAAyLQbm3fc5j5zyLaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717400708; c=relaxed/simple;
-	bh=jG2Qkqno7nw2YxAPdMySz0EFNj7Gm9u4EtZnUecdAN8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NMBOLY3VoegoXfHQR0RLJT9pifQHD8S+EzPdcqSeprXtKwgOQApJJvRMShyzcVEMMSK/y0aBYJgIWDlbHbifWjnhfwb41jx8zlMrL1V36lmZ3M5pLaBrkE3SXqtzhdNTHL8wf5qx8xlcJeic8Efjd1obNU6OK2O/zWMJIcU6YV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C66D81042;
-	Mon,  3 Jun 2024 00:45:28 -0700 (PDT)
-Received: from [10.57.39.221] (unknown [10.57.39.221])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 522F83F762;
-	Mon,  3 Jun 2024 00:45:00 -0700 (PDT)
-Message-ID: <ebcbc9c6-d858-4774-be48-857b7d446e15@arm.com>
-Date: Mon, 3 Jun 2024 08:45:00 +0100
+	s=arc-20240116; t=1717401115; c=relaxed/simple;
+	bh=UNGmFlIjG+IUgjY9/2P+gSGtwZOytRdfZTK8275Gdt0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=blRnEqD91BOe66/Yf49snpNvb4fGhI17hssMMZPEXfE/35dAzcaWdXTzmYBaeX95Z+ikea8EEohCB4pWla2x5jYs/6aAz/XD3SxvzMJyLLL/G7hBFbN4msuj8ygbO7wvXUfk284RRaaFMWhOUgizFwB0VnObH+qMV4nPsAP5uLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=5LVGfTIv; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="5LVGfTIv"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1717401112;
+	bh=UNGmFlIjG+IUgjY9/2P+gSGtwZOytRdfZTK8275Gdt0=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=5LVGfTIv30xTmxae/jtC/qEtIh1xKmHlQBqe+vE/2u5F+lO+oiMSnk9o7iZwexD9n
+	 x7I5TgBu5DEdJsje+vsAW4KERyBP+ko81aLax8XC/1VXYf7wdNRcBu1mDm9GZDStV7
+	 IM3+VuHGhNC1i/bX7Ldz7FfDG65LBOQ/Y13cy9Du6Uu3vDdRwVLIejTL0LWhBFJtxa
+	 TSzDZ0zwkTm6R3X+mN1MqVxXiGB/U7J5iuBnuZ5gN5S3CvZM+8rmD1C80GP9ffuEkK
+	 +Uwk6c0PSCtuDmlNaVc6FNgwkfR2N5dPAaSX8Qk65vgSjBvxluJh5yp8lR0rPk62eZ
+	 HpDkTqC0yXMTQ==
+Received: from IcarusMOD.eternityproject.eu (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 0FE7537813CA;
+	Mon,  3 Jun 2024 07:51:51 +0000 (UTC)
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+To: Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
+ Lee Jones <lee@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
+ Frank Wunderlich <linux@fw-web.de>
+Cc: Frank Wunderlich <frank-w@public-files.de>, 
+ Eric Woudstra <ericwouds@gmail.com>, Tianling Shen <cnsztl@immortalwrt.org>, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-clk@vger.kernel.org, linux-leds@vger.kernel.org, 
+ netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org
+In-Reply-To: <20240510095707.6895-1-linux@fw-web.de>
+References: <20240510095707.6895-1-linux@fw-web.de>
+Subject: Re: [PATCH v3 0/2] Add Bananapi R3 Mini
+Message-Id: <171740111097.46559.14241820863717418080.b4-ty@collabora.com>
+Date: Mon, 03 Jun 2024 09:51:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/6] drm/imagination: Add compatible string entry for
- Series6XT
-To: Chen-Yu Tsai <wenst@chromium.org>, Frank Binns <Frank.Binns@imgtec.com>
-Cc: "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
- "tzimmermann@suse.de" <tzimmermann@suse.de>,
- Matt Coster <Matt.Coster@imgtec.com>, "sboyd@kernel.org" <sboyd@kernel.org>,
- "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>,
- "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
- "mripard@kernel.org" <mripard@kernel.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "angelogioacchino.delregno@collabora.com"
- <angelogioacchino.delregno@collabora.com>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "airlied@gmail.com" <airlied@gmail.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- "daniel@ffwll.ch" <daniel@ffwll.ch>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- Boris Brezillon <boris.brezillon@collabora.com>
-References: <20240530083513.4135052-1-wenst@chromium.org>
- <20240530083513.4135052-5-wenst@chromium.org>
- <efdacd820d13368816973f57c4a817e039ec4a2d.camel@imgtec.com>
- <CAGXv+5EMMNCbxaBqiBSQwGrQt-0KXWAtJU54K20sUU8PBh8faQ@mail.gmail.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <CAGXv+5EMMNCbxaBqiBSQwGrQt-0KXWAtJU54K20sUU8PBh8faQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-On 03/06/2024 04:29, Chen-Yu Tsai wrote:
-> On Fri, May 31, 2024 at 7:18 PM Frank Binns <Frank.Binns@imgtec.com> wrote:
->>
->> On Thu, 2024-05-30 at 16:35 +0800, Chen-Yu Tsai wrote:
->>> The MediaTek MT8173 comes with a PowerVR Rogue GX6250, which is part
->>> of the Series6XT, another variation of the Rogue family of GPUs.
->>>
->>> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
->>> ---
->>>  drivers/gpu/drm/imagination/pvr_drv.c | 1 +
->>>  1 file changed, 1 insertion(+)
->>>
->>> diff --git a/drivers/gpu/drm/imagination/pvr_drv.c b/drivers/gpu/drm/imagination/pvr_drv.c
->>> index 5c3b2d58d766..3d1a933c8303 100644
->>> --- a/drivers/gpu/drm/imagination/pvr_drv.c
->>> +++ b/drivers/gpu/drm/imagination/pvr_drv.c
->>> @@ -1475,6 +1475,7 @@ pvr_remove(struct platform_device *plat_dev)
->>>
->>>  static const struct of_device_id dt_match[] = {
->>>       { .compatible = "img,img-axe", .data = NULL },
->>> +     { .compatible = "img,powervr-6xt", .data = NULL },
->>
->> I assume that by adding this to the list of supported devices we're essentially
->> freezing the existing uapi. This concerns me, as we've not yet started running
->> Vulkan conformance on any Series6XT GPUs and there's a chance we may need to
->> make some tweaks.
->>
->> I'm not really sure what the accepted approach is to hardware enablement /
->> experimental support. I'm not sure if it's sufficient to hide support behind a
->> Kconfig option and/or module parameter or whether we just have to hold this
->> patch back for the time being.
+On Fri, 10 May 2024 11:57:05 +0200, Frank Wunderlich wrote:
+> From: Frank Wunderlich <frank-w@public-files.de>
 > 
-> I guess this is more of a question for the DRM maintainers.
-> Added a couple Panfrost/Panthor folks for ideas.
+> Add mt7986 based BananaPi R3 Mini SBC.
+> 
+> changes in v3:
+> - fixed unicde parenthesis in commit description of dts patch
+> - dropped "dts:" from title of binding patch
+> - added AB to binding and RB to dts patch
+> 
+> [...]
 
-I'm not sure quite what scale of "tweaks" you are expecting. Obviously
-adding new uAPI is possible at any time - the only requirement is "don't
-break user space" - i.e. don't remove old uAPI. Although obviously you
-want to be careful about adding it because that means supporting it
-forever more.
+Applied to v6.10-next/dts64, thanks!
 
-Panfrost has had an "unstable_ioctls" module parameter that we've hidden
-performance counters behind. (Performance counters are hard from a uAPI
-perspective - Panthor has similar issues).
+[1/2] dt-bindings: arm64: mediatek: add BananaPi R3 Mini
+      commit: ca33f36216abe52eef8e660c638d8200e72251e9
+[2/2] arm64: dts: mediatek: Add mt7986 based Bananapi R3 Mini
+      commit: 07d7e57ea9d9491075820d447f140de9b6c3bd40
 
-We've also added support for GPUs in a deliberately "crippled" manner
-(e.g. only one core group - see panfrost_get_core_mask()). I think we're
-mostly just hoping those 'awkward' GPUs are not interesting enough and
-we'll never implement full support for them - but if we did I expect
-we'd implement support by providing a new uAPI for enabling the second
-core group so old user space can continue working with just the single
-core group.
+Cheers,
+Angelo
 
-Of course if the support for this platform is actually 'broken' (the
-talk of GPU resets makes me think so - on Mali requiring a reset is a
-"should never happen" situation, but we do have errata...) then it's
-probably best holding off merging this until you've got something which
-is minimally functional and then add support as necessary. For Vulkan
-you can always have user space require a particular DRM kernel version
-if you discover extra uAPI is needed.
-
-Steve
 
