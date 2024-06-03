@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F0E7F9E9;
-	Mon,  3 Jun 2024 22:47:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B9C213CFA2;
+	Mon,  3 Jun 2024 23:24:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717454841; cv=none; b=aUA6sPqkrM8Qop85o+xMjbA0C4g7Y1g8T+ETZtGdUK0nA17GucDZisaHXkjRPYVhfXAOnapZaaRdtzhNvI8lpO8lRSHTK4mp3ig7l5OVQ96Z1vUbUDyQkvUcBXKk/MYRzutU+cluvxfpLGsHIhIW68EigA8oINy6kvLRV2FOYkw=
+	t=1717457088; cv=none; b=RepCnZYRqAYs/JdWG/0y/e2lv5WL8yV8KjKaQB620JT2qhufBTtZbxUMM6GusMGXEZ9YMzDLM48uoDH9r3hL6BYzqpx3khLs5fLtml4OWgLUC3Qj5U+sI9a6XXAZQbKRkYPl2JiPZli7FCdxASrXX9wiMfNIo8G4Eu0SvajUeGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717454841; c=relaxed/simple;
-	bh=DEunokyrNaEDT2d/O3KKJyk3+DcOVUw3ikRMaRgGBrg=;
+	s=arc-20240116; t=1717457088; c=relaxed/simple;
+	bh=38Xpy1RQYAEE/bLMyyOQflCsEozhARLqUIkUOJC0DDE=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=CkK//caStfbIk180Fyjs0EA71snYUG7D+vJ1Wu6qbWZJoae/M0EvMkIzyMkwbmI5iI6xDSTfY8jSB2IpeMHOfzfDyyUSxPYaB4VCGezwt0w3aQnxMIjLunzpuTh7O7VGvZj3tKAwa3KFxCNS4uSqJZC1P29dCtTlNYmBPDNjOBE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cv4ZXOWp; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=JxwjSbCI9G1Ha1wb60UtU6Tz2djzRyQXo3K1r4q3OwPrnVD5ZIslB217UHXN4REkyjcMQrjRs2b0GDQcU5H9+A6MYqp8W20PTtqfqbXUj6DIfqRduOGa7v/idhgKqAsD9urOdRyY54z+/QJ6o4N22a0MfRlq1NI2lrNO4BYPzXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XM7juh57; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cv4ZXOWp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91F84C32782;
-	Mon,  3 Jun 2024 22:47:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XM7juh57"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4195C4AF0A;
+	Mon,  3 Jun 2024 23:24:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717454840;
-	bh=DEunokyrNaEDT2d/O3KKJyk3+DcOVUw3ikRMaRgGBrg=;
+	s=k20201202; t=1717457087;
+	bh=38Xpy1RQYAEE/bLMyyOQflCsEozhARLqUIkUOJC0DDE=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=cv4ZXOWp1nK6xjrHJX1Q1uLMP5Sdi4LNFmK6Pf7I9NvQ6CFxOl4YOxndvCx2HpkpW
-	 I4rqv+/encoYeBXkiQctekTnJyTvAre02DAYYdFiS+JsVKL/fLVe8wRvxoIFacP5kF
-	 vf1WnlX04zXnciqtpzDFtrVPw9qQhmoIKI9rCSsqKnA3j43ATCMs+/FPoMdcvuyx8u
-	 LPi8Hv7IRVrJevG5kcjQUO34CGI89H+jjyFI02qaaeAh7iEys3bHN8i0tCT+hm0Q1q
-	 2tfEeh/zpiWxPUnfYeBM5r75s863ySFrDEpk/KYJyNfcQveQuKzrll8qnzBZThXgjf
-	 3jnLS9oaKFeLg==
-Message-ID: <228229d08b0293b31e52e604e10d9f54.sboyd@kernel.org>
+	b=XM7juh575+BwlBcZ8fp0bRiLLzJusRPi2ixOuV8ODfzek8cJ6RKz+wuTOZmOmjtsY
+	 ayk82edDK3SMswNr1QDSCDH8UgiADMfwfA/I9mS373pboLmUh750GXVyNWPHC262Sq
+	 J7oUmQ6s3jgUETrSbg3UE9MmsEDyiflWnj2RWfKtt4fuOsjriSoVUDJc1V6XRIhDV7
+	 iYfOQkiTvUykOoVlAAsNe0j50b4O1HQ/jPI+k2VRR+KXmrZWRTWoHRpE6MZ8era807
+	 WXyeNS9vtdFM0BMWG9x8rLTISFtfbgGaLDC0urP2hMcE6siaoevG5wyLUDWZO+2ZVP
+	 iGAElybhs37Ag==
+Message-ID: <d0c692c2b78e2e562dfe5df6388aaf8e.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,26 +35,21 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240602-md-clk-test-v1-1-a6afd4793337@quicinc.com>
-References: <20240602-md-clk-test-v1-1-a6afd4793337@quicinc.com>
-Subject: Re: [PATCH] clk: test: add missing MODULE_DESCRIPTION() macros
+In-Reply-To: <20240528121320.160685-1-angelogioacchino.delregno@collabora.com>
+References: <20240528121320.160685-1-angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH] clk: mediatek: Add a module description where missing
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, Jeff Johnson <quic_jjohnson@quicinc.com>
-To: Jeff Johnson <quic_jjohnson@quicinc.com>, Michael Turquette <mturquette@baylibre.com>
-Date: Mon, 03 Jun 2024 15:47:18 -0700
+Cc: quic_jjohnson@quicinc.com, mturquette@baylibre.com, matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, kernel@collabora.com
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Date: Mon, 03 Jun 2024 16:24:45 -0700
 User-Agent: alot/0.10
 
-Quoting Jeff Johnson (2024-06-02 08:38:33)
-> make allmodconfig && make W=3D1 C=3D1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/clk_test.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/clk-gate_te=
-st.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/clk-fractio=
-nal-divider_test.o
+Quoting AngeloGioacchino Del Regno (2024-05-28 05:13:13)
+> Add a MODULE_DESCRIPTION() on all drivers that miss it to avoid
+> modpost warnings.
 >=20
-> Add the missing invocations of the MODULE_DESCRIPTION() macro.
->=20
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
+abora.com>
 > ---
 
 Applied to clk-next
