@@ -1,317 +1,227 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDFFF384;
-	Tue,  4 Jun 2024 00:10:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA381384B6;
+	Tue,  4 Jun 2024 01:30:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717459828; cv=none; b=eReN3PhNOpfsAzn+32zhaRYZ1kcdd+s8/PKcX0qJ39LdFbgxBbiKbie/AfuNjRtlYUEmqZnRga4GPp65zobyZEH7rKTDcavPmiPYfy5+OKYVLTe6GbHuFdKMsUNAT5cfOOAKknb/IjKQTLp4N/rs9+zME3F2D9RHbA2z7p+sp9w=
+	t=1717464602; cv=none; b=ioU3orHxl54TlAI9kFxUNQljuC8pTEO3dQoHWesxgGp7xJk3HnQ2hIhxsozO8xSzFa8wFCqEbsYjzF4IrOUjNfeg3GM++lg7MX/CKiPenNRzqq+ISOCFlctYEnjzm+gFeHQIHnZnYYK/RRz2eHCWa3NtJ5UNzlojKCdBCNXRD18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717459828; c=relaxed/simple;
-	bh=UnZP8hTxJqNQKBXlQ6Yjy1MXD2T4EGPiF4S7k9wGFSg=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=Dg2ppSX+Pe9NPAvIJZ3EKxAOoghSBAuNs/V6JWCxoCU7CGGI/u+xgV2Mm7BqM2nQbo5psJpJY0YkV5blNz1L5bPH84VB/QOLwUfv2FiMzUlWUE/wiZFzWmBBb+y7RzGJQMmcixsfhQSCQM33u88OEUZrjQoMmtg3yFOOq8db+LI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HY6ST8IK; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1717464602; c=relaxed/simple;
+	bh=+0MwbPrNLjHstEP7nUmI9nU5cr+C1uEqCmU+IfVJhBs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TfPn+NeO5ot6+FpPm6BRPnuTYTwlY+6t9FKjWY3wFjhVGENpmihrIeu0tTdVUYsLq7/ncYt4tHsFXOuDlFieQvGd17hEJ4oqJ7Igy0tFPIU8VuQ+F2cAVJjMyyAaPcidHjy8k/j9nnn+cz2sm3kUkuJrTEZc07FsokBFwEta6Mw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bnlgXxEM; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HY6ST8IK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A99EC2BD10;
-	Tue,  4 Jun 2024 00:10:27 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bnlgXxEM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79DCCC2BD10;
+	Tue,  4 Jun 2024 01:29:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717459827;
-	bh=UnZP8hTxJqNQKBXlQ6Yjy1MXD2T4EGPiF4S7k9wGFSg=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=HY6ST8IK5UWhR0hRot1g38azQUr9oyF17qxp+LOxv8q+7KMnYN+vZXvW/Q79AAj5b
-	 lpYejqrtRCnSUFNrRFk9G1ZDCwvE9OYyK1abre8em4OHt07PbM+uV7cjqDe8Ty6qVN
-	 mwi+wyg9Nge//d+hy+O2GZHHJwJ+93Ftg9TVlARIbem0MFG+LCMW4IkjypNyHq8B+b
-	 wju0Er2rj8HtQVxlNX82BFnAc+Kvvj9CtWRJvJzZQcYCnzntXFGj5g6KRMVKH39H5U
-	 /3JGEvq0y0PhoXV57OstJSggR5wyr6mId88RvkzKg8qOqUrg8PFIGIFk6HRm34Q+4I
-	 TTQuNVL4j5VFQ==
-Message-ID: <8e6fcde41671b0a1e8365214e6df4ec2.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1717464601;
+	bh=+0MwbPrNLjHstEP7nUmI9nU5cr+C1uEqCmU+IfVJhBs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=bnlgXxEMpTvmKahSPWzVW2eioXzJ7InXnLcF2Rs1JSkMfQA93wXQBY9/XKuZVVXJi
+	 oeHmsD31IY3HyHMYtTD7PSrvj9S1H3KP04TKlWZzgFGXGWPDdoy6u+l15hTWpd+gzW
+	 rrkqErwJ5iAh1ROObeeg8gEUmGPLn4HkWiomXClAUEV1Ygn9FUP+Qbw+IPeT8+Ws56
+	 I8+zq8Wdj1Ege6tKvptsdljRUJrjovlC8dK+XkPQEaDh/6yi5A2iz8Lc911AkK3iVQ
+	 9J/Qo4EvtrUegklsv+qidHqtelitfCS46Jvgeoe5elf4+5tozjA1SGSUxdf7rn2IsA
+	 VjsM2fsbxxo3g==
+Message-ID: <3f98a7da-19c8-4e91-94d7-e8256cc0cb1e@kernel.org>
+Date: Tue, 4 Jun 2024 10:29:35 +0900
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240517-a2b-v1-8-b8647554c67b@bang-olufsen.dk>
-References: <20240517-a2b-v1-0-b8647554c67b@bang-olufsen.dk> <20240517-a2b-v1-8-b8647554c67b@bang-olufsen.dk>
-Subject: Re: [PATCH 08/13] clk: add AD24xx clock driver
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Emil Svendsen <emas@bang-olufsen.dk>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-gpio@vger.kernel.org, linux-sound@vger.kernel.org, linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org, Alvin =?utf-8?q?=C5=A0ipraga?= <alsi@bang-olufsen.dk>
-To: Alvin =?utf-8?q?=C5=A0ipraga?= <alvin@pqrs.dk>, Andi Shyti <andi.shyti@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Conor Dooley <conor+dt@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jaroslav Kysela <perex@perex.cz>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Brown <broonie@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rafael J. Wysocki <rafael@kernel.org>, Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, Takashi Iwai <tiwai@suse.com>
-Date: Mon, 03 Jun 2024 17:10:25 -0700
-User-Agent: alot/0.10
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/1] treewide: Align match_string() with
+ sysfs_match_string()
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Corey Minyard <minyard@acm.org>, Allen Pais <apais@linux.microsoft.com>,
+ Sebastian Reichel <sebastian.reichel@collabora.com>,
+ Perry Yuan <perry.yuan@amd.com>,
+ Giovanni Cabiddu <giovanni.cabiddu@intel.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>, Nuno Sa <nuno.sa@analog.com>,
+ Guenter Roeck <linux@roeck-us.net>, Randy Dunlap <rdunlap@infradead.org>,
+ Andi Shyti <andi.shyti@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>,
+ Lee Jones <lee@kernel.org>, Samuel Holland <samuel@sholland.org>,
+ Elad Nachman <enachman@marvell.com>,
+ Arseniy Krasnov <AVKrasnov@sberdevices.ru>,
+ Johannes Berg <johannes.berg@intel.com>,
+ Gregory Greenman <gregory.greenman@intel.com>,
+ Benjamin Berg <benjamin.berg@intel.com>, Bjorn Helgaas
+ <bhelgaas@google.com>, Robert Richter <rrichter@amd.com>,
+ Vinod Koul <vkoul@kernel.org>, Chunfeng Yun <chunfeng.yun@mediatek.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Hans de Goede
+ <hdegoede@redhat.com>, =?UTF-8?Q?Ilpo_J=C3=A4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>, Nikita Kravets <teackot@gmail.com>,
+ Jiri Slaby <jirislaby@kernel.org>,
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+ Stanley Chang <stanley_chang@realtek.com>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Abdel Alkuor <abdelalkuor@geotab.com>,
+ Kent Overstreet <kent.overstreet@linux.dev>,
+ Eric Biggers <ebiggers@google.com>, Kees Cook <keescook@chromium.org>,
+ Ingo Molnar <mingo@kernel.org>, "Steven Rostedt (Google)"
+ <rostedt@goodmis.org>, Daniel Bristot de Oliveira <bristot@kernel.org>,
+ Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
+ Abel Wu <wuyun.abel@bytedance.com>,
+ John Johansen <john.johansen@canonical.com>, Mimi Zohar
+ <zohar@linux.ibm.com>, Stefan Berger <stefanb@linux.ibm.com>,
+ Roberto Sassu <roberto.sassu@huawei.com>,
+ Eric Snowberg <eric.snowberg@oracle.com>, Takashi Iwai <tiwai@suse.de>,
+ Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+ Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
+ Mark Brown <broonie@kernel.org>,
+ Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+ linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+ keyrings@vger.kernel.org, linux-crypto@vger.kernel.org,
+ linux-acpi@vger.kernel.org, linux-ide@vger.kernel.org,
+ openipmi-developer@lists.sourceforge.net, linux-clk@vger.kernel.org,
+ linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-tegra@vger.kernel.org,
+ linux-pm@vger.kernel.org, qat-linux@intel.com,
+ dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org,
+ intel-xe@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+ linux-hwmon@vger.kernel.org, linux-i2c@vger.kernel.org,
+ linux-leds@vger.kernel.org, linux-sunxi@lists.linux.dev,
+ linux-omap@vger.kernel.org, linux-mmc@vger.kernel.org,
+ linux-mtd@lists.infradead.org, netdev@vger.kernel.org,
+ linux-wireless@vger.kernel.org, linux-pci@vger.kernel.org,
+ linux-mediatek@lists.infradead.org, linux-phy@lists.infradead.org,
+ linux-gpio@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+ linux-staging@lists.linux.dev, linux-usb@vger.kernel.org,
+ linux-fbdev@vger.kernel.org, linux-bcachefs@vger.kernel.org,
+ linux-hardening@vger.kernel.org, cgroups@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org,
+ apparmor@lists.ubuntu.com, linux-security-module@vger.kernel.org,
+ linux-integrity@vger.kernel.org, alsa-devel@alsa-project.org,
+ linux-sound@vger.kernel.org
+Cc: Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin
+ <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>,
+ "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+ David Howells <dhowells@redhat.com>, "David S. Miller"
+ <davem@davemloft.net>, "Rafael J. Wysocki" <rafael@kernel.org>,
+ Len Brown <lenb@kernel.org>, Sergey Shtylyov <s.shtylyov@omp.ru>,
+ Niklas Cassel <cassel@kernel.org>, Daniel Scally <djrscally@gmail.com>,
+ Sakari Ailus <sakari.ailus@linux.intel.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>,
+ Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>, Heiko Stuebner <heiko@sntech.de>,
+ Peter De Schrijver <pdeschrijver@nvidia.com>,
+ Prashant Gaikwad <pgaikwad@nvidia.com>,
+ Thierry Reding <thierry.reding@gmail.com>,
+ Jonathan Hunter <jonathanh@nvidia.com>, Huang Rui <ray.huang@amd.com>,
+ "Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+ Mario Limonciello <mario.limonciello@amd.com>,
+ Viresh Kumar <viresh.kumar@linaro.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Jani Nikula <jani.nikula@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Tvrtko Ursulin <tursulin@ursulin.net>, Karol Herbst <kherbst@redhat.com>,
+ Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@redhat.com>,
+ Jean Delvare <jdelvare@suse.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Pavel Machek <pavel@ucw.cz>, Chen-Yu Tsai <wens@csie.org>,
+ Jernej Skrabec <jernej.skrabec@gmail.com>, Tony Lindgren <tony@atomide.com>,
+ Adrian Hunter <adrian.hunter@intel.com>, Hu Ziji <huziji@marvell.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>,
+ Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Potnuri Bharat Teja <bharat@chelsio.com>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>,
+ Miri Korenblit <miriam.rachel.korenblit@intel.com>,
+ Kalle Valo <kvalo@kernel.org>, Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
+ Oliver O'Halloran <oohall@gmail.com>,
+ Kishon Vijay Abraham I <kishon@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ JC Kuo <jckuo@nvidia.com>, Andrew Lunn <andrew@lunn.ch>,
+ Gregory Clement <gregory.clement@bootlin.com>,
+ Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
+ Sebastian Reichel <sre@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+ Lukasz Luba <lukasz.luba@arm.com>, Thinh Nguyen <Thinh.Nguyen@synopsys.com>,
+ Helge Deller <deller@gmx.de>, Brian Foster <bfoster@redhat.com>,
+ Zhihao Cheng <chengzhihao1@huawei.com>, Tejun Heo <tj@kernel.org>,
+ Zefan Li <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>,
+ Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall
+ <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+ Daniel Bristot de Oliveira <bristot@redhat.com>,
+ Valentin Schneider <vschneid@redhat.com>,
+ Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Jason Baron <jbaron@akamai.com>, Jim Cromie <jim.cromie@gmail.com>,
+ Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>,
+ Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+ Clemens Ladisch <clemens@ladisch.de>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>
+References: <20240603211538.289765-1-andriy.shevchenko@linux.intel.com>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <20240603211538.289765-1-andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Quoting Alvin =C5=A0ipraga (2024-05-17 06:02:15)
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index 3e9099504fad..a3d54b077e68 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -257,6 +257,13 @@ config COMMON_CLK_LAN966X
->           LAN966X SoC. GCK generates and supplies clock to various periph=
-erals
->           within the SoC.
-> =20
-> +config COMMON_CLK_AD24XX
-> +       bool "Clock driver for Analog Devices Inc. AD24xx"
+On 6/3/24 00:57, Andy Shevchenko wrote:
+> Make two APIs look similar. Hence convert match_string() to be
+> a 2-argument macro. In order to avoid unneeded churn, convert
+> all users as well. There is no functional change intended.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
 
-tristate
+[...]
 
-> +       depends on A2B_AD24XX_NODE
+> diff --git a/drivers/ata/pata_hpt366.c b/drivers/ata/pata_hpt366.c
+> index bdccd1ba1524..8134f9290791 100644
+> --- a/drivers/ata/pata_hpt366.c
+> +++ b/drivers/ata/pata_hpt366.c
+> @@ -178,7 +178,7 @@ static int hpt_dma_blacklisted(const struct ata_device *dev, char *modestr,
+>  
+>  	ata_id_c_string(dev->id, model_num, ATA_ID_PROD, sizeof(model_num));
+>  
+> -	i = match_string(list, -1, model_num);
+> +	i = __match_string(list, -1, model_num);
+>  	if (i >= 0) {
+>  		ata_dev_warn(dev, "%s is not supported for %s\n", modestr, list[i]);
+>  		return 1;
+> diff --git a/drivers/ata/pata_hpt37x.c b/drivers/ata/pata_hpt37x.c
+> index c0329cf01135..2d0b659bbd65 100644
+> --- a/drivers/ata/pata_hpt37x.c
+> +++ b/drivers/ata/pata_hpt37x.c
+> @@ -226,7 +226,7 @@ static int hpt_dma_blacklisted(const struct ata_device *dev, char *modestr,
+>  
+>  	ata_id_c_string(dev->id, model_num, ATA_ID_PROD, sizeof(model_num));
+>  
+> -	i = match_string(list, -1, model_num);
+> +	i = __match_string(list, -1, model_num);
+>  	if (i >= 0) {
+>  		ata_dev_warn(dev, "%s is not supported for %s\n",
+>  			     modestr, list[i]);
 
-Please make it be COMPILE_TESTed as well?
+Looks good to me.
 
-> +       help
-> +         This driver supports the clock output functionality of AD24xx s=
-eries
-> +         A2B transceiver chips.
-> +
->  config COMMON_CLK_ASPEED
->         bool "Clock driver for Aspeed BMC SoCs"
->         depends on ARCH_ASPEED || COMPILE_TEST
-> diff --git a/drivers/clk/clk-ad24xx.c b/drivers/clk/clk-ad24xx.c
-> new file mode 100644
-> index 000000000000..ed227c317faa
-> --- /dev/null
-> +++ b/drivers/clk/clk-ad24xx.c
-> @@ -0,0 +1,341 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * AD24xx clock driver
-> + *
-> + * Copyright (c) 2023 Alvin =C5=A0ipraga <alsi@bang-olufsen.dk>
-> + */
-> +
-> +#include <linux/a2b/a2b.h>
-> +#include <linux/a2b/ad24xx.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/module.h>
-> +#include <linux/regmap.h>
+Acked-by: Damien Le Moal <dlemoal@kernel.org>	# drivers/ata/
 
-Include header for static_assert() at least. There's probably more that
-are needed, please check.
+-- 
+Damien Le Moal
+Western Digital Research
 
-> +
-> +#define AD24XX_NUM_CLKS 2
-> +
-> +/* Define some safe macros to make the code more readable */
-> +#define A2B_CLKCFG(_idx)        (!(_idx) ? A2B_CLK1CFG : A2B_CLK2CFG)
-> +
-> +#define A2B_CLKCFG_DIV_SHIFT    A2B_CLK1CFG_CLK1DIV_SHIFT
-> +#define A2B_CLKCFG_PDIV_SHIFT   A2B_CLK1CFG_CLK1PDIV_SHIFT
-> +
-> +#define A2B_CLKCFG_DIV_MASK     A2B_CLK1CFG_CLK1DIV_MASK
-> +#define A2B_CLKCFG_PDIV_MASK    A2B_CLK1CFG_CLK1PDIV_MASK
-> +#define A2B_CLKCFG_INV_MASK     A2B_CLK1CFG_CLK1INV_MASK
-> +#define A2B_CLKCFG_EN_MASK      A2B_CLK1CFG_CLK1EN_MASK
-> +
-> +static_assert(A2B_CLK1CFG_CLK1DIV_MASK  =3D=3D A2B_CLK2CFG_CLK2DIV_MASK);
-> +static_assert(A2B_CLK1CFG_CLK1PDIV_MASK =3D=3D A2B_CLK2CFG_CLK2PDIV_MASK=
-);
-> +static_assert(A2B_CLK1CFG_CLK1INV_MASK  =3D=3D A2B_CLK2CFG_CLK2INV_MASK);
-> +static_assert(A2B_CLK1CFG_CLK1EN_MASK   =3D=3D A2B_CLK2CFG_CLK2EN_MASK);
-> +
-> +struct ad24xx_clkout {
-> +       struct clk_hw hw;
-> +       unsigned int idx;
-> +       bool registered;
-> +};
-> +
-> +struct ad24xx_clk {
-> +       struct device *dev;
-
-Is this used?
-
-> +       struct a2b_func *func;
-
-Is this used?
-
-> +       struct a2b_node *node;
-
-Is this used?
-
-> +       struct regmap *regmap;
-> +       struct clk_hw *pll_hw;
-
-Is this used outside of probe?
-
-> +       struct ad24xx_clkout clkouts[AD24XX_NUM_CLKS];
-> +};
-> +
-[..]
-> +
-> +static const struct regmap_config ad24xx_clk_regmap_config =3D {
-> +       .reg_bits =3D 8,
-> +       .val_bits =3D 8,
-> +       .cache_type =3D REGCACHE_RBTREE,
-
-No max_register?
-
-> +};
-> +
-> +static struct clk_hw *ad24xx_clk_of_get(struct of_phandle_args *clkspec,=
- void *data)
-> +{
-> +       struct ad24xx_clk *adclk =3D data;
-> +       unsigned int idx =3D clkspec->args[0];
-> +
-> +       if (idx >=3D AD24XX_NUM_CLKS)
-> +               return ERR_PTR(-EINVAL);
-> +
-> +       if (!adclk->clkouts[idx].registered)
-> +               return ERR_PTR(-ENOENT);
-> +
-> +       return &adclk->clkouts[idx].hw;
-> +}
-> +
-> +static int ad24xx_clk_probe(struct device *dev)
-> +{
-> +       struct a2b_func *func =3D to_a2b_func(dev);
-> +       struct a2b_node *node =3D func->node;
-> +       struct device_node *np =3D dev->of_node;
-> +       char *pll_name;
-> +       const char *sync_clk_name;
-> +       struct ad24xx_clk *adclk;
-> +       int num_clks;
-> +       int ret;
-> +       int i;
-> +
-> +       /*
-> +        * Older series AD240x and AD241x chips have a single discrete
-> +        * A2B_CLKCFG register that behaves differently to the A2B_CLKnCFG
-> +        * registers of the later AD242x series. This driver only support=
-s the
-> +        * latter right now.
-> +        */
-> +       if (!(node->chip_info->caps & A2B_CHIP_CAP_CLKOUT))
-> +               return -ENODEV;
-
-Maybe print a warning message to make it more obvious.
-
-> +
-> +       adclk =3D devm_kzalloc(dev, sizeof(*adclk), GFP_KERNEL);
-> +       if (!adclk)
-> +               return -ENOMEM;
-> +
-> +       adclk->regmap =3D
-> +               devm_regmap_init_a2b_func(func, &ad24xx_clk_regmap_config=
-);
-
-Put it on one line please .
-
-> +       if (IS_ERR(adclk->regmap))
-> +               return PTR_ERR(adclk->regmap);
-> +
-> +       adclk->dev =3D dev;
-> +       adclk->func =3D func;
-> +       adclk->node =3D node;
-> +       dev_set_drvdata(dev, adclk);
-> +
-> +       num_clks =3D of_property_count_strings(np, "clock-output-names");
-> +       if (num_clks < 0 || num_clks > AD24XX_NUM_CLKS)
-> +               return -EINVAL;
-
-Please register all the clks provided by this chip.
-
-> +
-> +       /*
-> +        * Register the PLL internally to use it as the parent of the CLK=
-OUTs.
-> +        * The PLL runs at 2048 times the SYNC clock rate.
-> +        */
-> +       pll_name =3D
-> +               devm_kasprintf(dev, GFP_KERNEL, "%s_pll", dev_name(&node-=
->dev));
-> +       if (!pll_name)
-> +               return -ENOMEM;
-> +       sync_clk_name =3D __clk_get_name(a2b_node_get_sync_clk(func->node=
-));
-> +       adclk->pll_hw =3D devm_clk_hw_register_fixed_factor(
-> +               dev, pll_name, sync_clk_name, 0, 2048, 1);
-
-I think this should be devm_clk_hw_register_fixed_factor_fwname().
-
-> +       if (IS_ERR(adclk->pll_hw))
-> +               return PTR_ERR(adclk->pll_hw);
-> +
-> +       for (i =3D 0; i < num_clks; i++) {
-> +               struct clk_init_data init =3D { };
-> +               const char *parent_names =3D clk_hw_get_name(adclk->pll_h=
-w);
-
-Please use struct clk_parent_data instead of strings to describe
-topology.
-
-> +               unsigned int idx =3D i;
-> +
-> +               /* Clock outputs can be skipped with the clock-indices pr=
-operty */
-> +               of_property_read_u32_index(np, "clock-indices", i, &idx);
-> +               if (idx > AD24XX_NUM_CLKS)
-> +                       return -EINVAL;
-> +
-> +               ret =3D of_property_read_string_index(np, "clock-output-n=
-ames", i,
-> +                                                   &init.name);
-
-The name should only be for debug purposes. Please don't use
-clock-output-names DT property. If you need to make it unique perhaps
-you can add in the device name or something like that?
-
-> +               if (ret)
-> +                       return ret;
-> +
-> +               init.ops =3D &ad24xx_clk_ops;
-> +               init.parent_names =3D &parent_names;
-> +               init.num_parents =3D 1;
-> +
-> +               adclk->clkouts[idx].hw.init =3D &init;
-> +               adclk->clkouts[idx].idx =3D idx;
-> +               adclk->clkouts[idx].registered =3D true;
-> +
-> +               ret =3D devm_clk_hw_register(dev, &adclk->clkouts[idx].hw=
-);
-> +               if (ret)
-> +                       return ret;
-> +       }
-> +
-> +       ret =3D devm_of_clk_add_hw_provider(dev, ad24xx_clk_of_get, adclk=
-);
-> +       if (ret)
-> +               return ret;
-> +
-> +       return 0;
-
-Please just return devm_of_clk_add_hw_provider(...) to prevent the
-cleanup crews from sending a followup patch.
-
-> +}
-> +
-> +static const struct of_device_id ad24xx_clk_of_match_table[] =3D {
-> +       { .compatible =3D "adi,ad2420-clk" },
-> +       { .compatible =3D "adi,ad2421-clk" },
-> +       { .compatible =3D "adi,ad2422-clk" },
-> +       { .compatible =3D "adi,ad2425-clk" },
-> +       { .compatible =3D "adi,ad2426-clk" },
-> +       { .compatible =3D "adi,ad2427-clk" },
-> +       { .compatible =3D "adi,ad2428-clk" },
-> +       { .compatible =3D "adi,ad2429-clk" },
-> +       { /* sentinel */ }
-> +};
-> +MODULE_DEVICE_TABLE(of, ad24xx_clk_of_match_table);
-> +
-> +static struct a2b_driver ad24xx_clk_driver =3D {
-
-I guess because this isn't a platform driver I can't merge this through
-the clk tree? Is there any difference from the platform bus?
-
-> +       .driver =3D {
-> +               .name =3D "ad24xx-clk",
-> +               .of_match_table =3D ad24xx_clk_of_match_table,
-> +               .probe_type =3D PROBE_PREFER_ASYNCHRONOUS,
-> +       },
-> +       .probe =3D ad24xx_clk_probe,
-> +};
-> +module_a2b_driver(ad24xx_clk_driver);
