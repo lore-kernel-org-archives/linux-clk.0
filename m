@@ -1,213 +1,159 @@
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AF8813DDAB
-	for <linux-clk@vger.kernel.org>; Tue,  4 Jun 2024 04:21:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4815413777D
+	for <linux-clk@vger.kernel.org>; Tue,  4 Jun 2024 06:43:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717474921; cv=none; b=d6QvxgS9Kr1yYKRaDTbkYwFstuqe6Kra2n44n9cseegEU5HdmN9OQ5qNBKoxG9QmHs9N+tC1qzwbJRGoeXRwuOoZ2xQDYCyBUHu2tavhDHj7Y/z7AzLD8XNbSeKNiKh7EwaNXNty6Z10q/zn9iaaymtBdfDxW3jglL7XKMi875Q=
+	t=1717483432; cv=none; b=apmhrYc9wstbxhZ6xXuHWXazzubVDEHTTcnT/MRkt6tEfw4mDDhkLB9s8MJF6qz0Fxc5lU/CibvE+GIwo/dBOfRQes4TSmZswCtSckzn9Tnzxv30+ZlQaYCRkxA2oMhv5q9qSewpa0gnq/IFUzQcISHOpa14DqdO1bJhLW/EN5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717474921; c=relaxed/simple;
-	bh=vdT1WnfavoXbakHdoyabknlLpRd1rltXkfOabReQFKk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U8149BJkKfsg2LkucR72cXWfB4xohCV6HrsPYKPrLOVqukQEE6UGv7T0knNdLiP5yWlsdeSzbpCTN2879QsqDc3Cp2otKII5cV8nuPlcBDyfES7zLrBqg4A2p9f0JHGf1aaf7AsfG1b4kWS+T4VsLPhIK26wdbw5g4TWKM8GISk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=e+uXFulk; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1717483432; c=relaxed/simple;
+	bh=MRgoQDvDkJicFSrBsjwFZZ3IdehjdBtaPOKmVbj4cvM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=if8eFO3gNkO6hPh57QqYCnmUDEnMIkr2teip+tclI3buUOULtnblv3vEP7giNWgpqww5cgzLdZIxHxS4jFmUbcq5YpGpwBREcdP7ik7yYg+C/DQbTUUqQoYziLmlwLFTr01o3VEd3DMKFR6KslDBHzj2QqFl092W1LspHKdymZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zUb1jnId; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="e+uXFulk"
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2e72b8931caso55796151fa.0
-        for <linux-clk@vger.kernel.org>; Mon, 03 Jun 2024 21:21:59 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zUb1jnId"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42153115c65so1217345e9.0
+        for <linux-clk@vger.kernel.org>; Mon, 03 Jun 2024 23:43:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1717474918; x=1718079718; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sZTkPdaoUs8jQNyMlsxEd3PQVY77PvdNJflZvZlG4XM=;
-        b=e+uXFulkAUmDRkcSNAcbr5C0R6/BqxNB6IQnwYnfyjBOJSLnCGJOFaDpCXrCEql/et
-         bxpLzyXZD2zProRAF1WjVJ6JcTZyvlk06TgvcjUuAsbYBOMPAZGHXfkyXCFnlleyUZ4z
-         zbxLeXpfWvZtPttVGhytF1SGLrIAVs9wILV2A=
+        d=linaro.org; s=google; t=1717483429; x=1718088229; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=46NZCsaw/Yp5QHNYSFkfK0pkxc//c/PYouHi7YwJ++U=;
+        b=zUb1jnIdpIgxbnGipzSgQhQ0mj7RJ3UgnDYtyLefSWd01NJQWuK6PiXwr5eJbQNihB
+         7qHy2byCVj3ICgYrBQbGPZ5lVoi9sddz4bx/QIZ76Fs0/dT6vyiUqX9ACpZDWhkRrm2x
+         fmxL72NZ6jeAup9UL6jV7ImvVCF/iM6LIakiR+fgMxnw1vlg4X30qh+M/Vmu5EzjBM57
+         1p9Fzm0gnnWhumvhOgR+h2DSgoPue2YslRcu9ZUJAboOKDjIOy1RFKfFkjqR+E8HzL9K
+         qfw/vbKT5T6E29ws0EG0ovbr930jWiUQ33ZO3G95z3jDMJPZgQ1pbmUltMhzqde0tBs7
+         NbRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717474918; x=1718079718;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sZTkPdaoUs8jQNyMlsxEd3PQVY77PvdNJflZvZlG4XM=;
-        b=QrxYytdkuwlGGcFWdsDOelQkYq9QoJRPIVXmt621xAKJrwjwwDAMjrLXGP069Vwr/n
-         eoDr+1+8zv3B6vjfG9OzC1a8J1TGgNZLDafWOu/C53Q4IEPbhjiM78heHXIwXA+UyUSU
-         HcdVCreMhdfKIX2MH5DLpufdmkvFzwCuBMi0RBkcyH8QmpCkXHqWzvvnc5dwmrac0ZIV
-         qqqS5Vtu21VPwEt/YYb7qQRpqDRp0hM1p4pWOt0xCQ5dOLTWgNwpHxKaDSD32dyH4m6N
-         0y42qVnk2it3VqpQknjXjST9fsR2PFix9jmOnvlONsHUwNX83KceU8Q2TNbpqggwSwXX
-         zudg==
-X-Forwarded-Encrypted: i=1; AJvYcCUMFLR8mAEWM5NkIijWGEMTNoH+JRiQs8XygONRmFNFq7LOKepd62yzlg6L8rkqJx34gfVtLXM8GP6gLkv13JrkF1lEuoN+Nhdx
-X-Gm-Message-State: AOJu0YzBq1ey9BOVaSSZVSoAtuldvYApY/SJOhusHwBmEmqkP8O2fxAf
-	Qqnc0wV2blqv43VdaD7lSFLxqngsyvEyafLGk3y94RP8Y1EcAoEXIy3U7zCLNwxPgxzW1/B7Z+3
-	dBjPeGc2yZ/44TLuBUMiMBO3wXrBJwoJ1c95u
-X-Google-Smtp-Source: AGHT+IGDgg2+V5eJ8x467mxNrV7nhwIMgXm1gR49RnrnhPkROZN8HdeL71iXvR/Wj+N6cLD7tGCc7y6sYjgN44bSwNQ=
-X-Received: by 2002:a19:5f53:0:b0:51d:5f0b:816f with SMTP id
- 2adb3069b0e04-52b89590e7cmr5639078e87.15.1717474917527; Mon, 03 Jun 2024
- 21:21:57 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1717483429; x=1718088229;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=46NZCsaw/Yp5QHNYSFkfK0pkxc//c/PYouHi7YwJ++U=;
+        b=S6TKECfgd7nY6VD/acOvZ/ReL5N1ORFN1FRwmXtKxvww7UNwH/xmy/UDmWfVcjjSmP
+         GYtSxWzydozTQv/nxnH5osB2xpRR8QjQtK9wuPaxhgFDv+OBUNT6L/SYb00phanr0hJL
+         NJS0FtvWvv1fcqs/O+K8rY5zj1VCtwpqfD9cUEULX91mQAhhGb+pjL+w0elakS/IE6yv
+         D4y5Ob5sAHtteNBn4pdeE6NgB2khuDLtGQ2dTFog4+RuRBr3yQJjkq8v/ZOoKiu/nsEZ
+         M3ytQqerCB5TYNLctSXA4Z7ksHVeDy8RwGiDxehnuesBuPLjdlshK410jHVGgSowCPth
+         4SEA==
+X-Forwarded-Encrypted: i=1; AJvYcCUVGexDGxsaqJtAYFSakoPyzrZmRdhS34N/FiwAApHS94M1Vtrxu0eG9fs1Terd/qCONGYHgqWzJgHKFOwqFEY5pf6+uX3hls4E
+X-Gm-Message-State: AOJu0YzubYdm/5LmLaGkBklZ9IN+jkjCv8hAo977DY/xtdAWv+xXrlm7
+	CbF/R9h0Yxjq3joOqwHBfC0KB18ihI/sS7PPbFxUGM8ut8+y6l/kdJIqMM1mQzU=
+X-Google-Smtp-Source: AGHT+IFcyVFI819SCILStwHAIhXZ6qsX58xkNd9egtc8LY9lrssQyuBHWJXgkwyZc6YrYEMxro4D6A==
+X-Received: by 2002:a05:600c:198b:b0:41b:e0e5:a525 with SMTP id 5b1f17b1804b1-4212e0620c5mr100351905e9.17.1717483429491;
+        Mon, 03 Jun 2024 23:43:49 -0700 (PDT)
+Received: from [192.168.2.24] ([110.93.11.116])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4212b83d479sm142217975e9.3.2024.06.03.23.43.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Jun 2024 23:43:48 -0700 (PDT)
+Message-ID: <af9dc472-0d9d-4a31-8f44-5f21cf411668@linaro.org>
+Date: Tue, 4 Jun 2024 08:43:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240530083513.4135052-1-wenst@chromium.org> <20240530083513.4135052-4-wenst@chromium.org>
- <cc5847a486a760921375f069a4f65cd29453a624.camel@imgtec.com> <CAHCN7xJ7X9_yNJa7-HyU=FzN2G1cV8i9R+PoTHm-DKyiOPenUQ@mail.gmail.com>
-In-Reply-To: <CAHCN7xJ7X9_yNJa7-HyU=FzN2G1cV8i9R+PoTHm-DKyiOPenUQ@mail.gmail.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Tue, 4 Jun 2024 12:21:46 +0800
-Message-ID: <CAGXv+5GeWpBaFw89KsKyQi4t+Wjh=+58UQ7hyPaLM6pwGELiVA@mail.gmail.com>
-Subject: Re: [PATCH 3/6] dt-bindings: gpu: powervr-rogue: Add MediaTek MT8173 GPU
-To: Adam Ford <aford173@gmail.com>
-Cc: Frank Binns <Frank.Binns@imgtec.com>, 
-	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>, "tzimmermann@suse.de" <tzimmermann@suse.de>, 
-	Matt Coster <Matt.Coster@imgtec.com>, "sboyd@kernel.org" <sboyd@kernel.org>, 
-	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>, 
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>, 
-	"mripard@kernel.org" <mripard@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
-	"angelogioacchino.delregno@collabora.com" <angelogioacchino.delregno@collabora.com>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "airlied@gmail.com" <airlied@gmail.com>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, "daniel@ffwll.ch" <daniel@ffwll.ch>, 
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V4 1/8] dt-bindings: clock: qcom: Update SM8450 videocc
+ header file name
+To: Jagadeesh Kona <quic_jkona@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Taniya Das <quic_tdas@quicinc.com>,
+ Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+ Ajit Pandey <quic_ajipan@quicinc.com>,
+ Imran Shaik <quic_imrashai@quicinc.com>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+References: <20240602114439.1611-1-quic_jkona@quicinc.com>
+ <20240602114439.1611-2-quic_jkona@quicinc.com>
+ <921bb7cb-3630-4d08-827f-b5a9315316f9@linaro.org>
+ <4c0c2cfe-c287-489b-944d-c909de4fefd1@quicinc.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <4c0c2cfe-c287-489b-944d-c909de4fefd1@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, May 31, 2024 at 10:25=E2=80=AFPM Adam Ford <aford173@gmail.com> wro=
-te:
->
-> On Fri, May 31, 2024 at 8:37=E2=80=AFAM Frank Binns <Frank.Binns@imgtec.c=
-om> wrote:
-> >
-> > Hi ChenYu,
-> >
-> > On Thu, 2024-05-30 at 16:35 +0800, Chen-Yu Tsai wrote:
-> > > The MediaTek MT8173 comes with a PowerVR Rogue GX6250, which is one
-> > > of the Series6XT GPUs, another sub-family of the Rogue family.
-> >
-> > I've added Adam Ford who sent out some DT related patches [1] for the R=
-enesas
-> > variant of GX6250 and the GX6650 (another Series6XT GPU).
-> >
->
-> Thanks for including me.
->
-> > >
-> > > This was part of the very first few versions of the PowerVR submissio=
-n,
-> > > but was later dropped. The compatible string has been updated to foll=
-ow
-> > > the new naming scheme adopted for the AXE series.
-> > >
-> > > In a previous iteration of the PowerVR binding submission [1], the
-> > > number of clocks required for the 6XT family was mentioned to be
-> > > always 3. This is also reflected here.
-> > >
-> > > [1] https://lore.kernel.org/dri-devel/6eeccb26e09aad67fb30ffcd523c793=
-a43c79c2a.camel@imgtec.com/
-> > >
-> > > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-> > > ---
-> > >  .../bindings/gpu/img,powervr-rogue.yaml       | 24 +++++++++++++++--=
---
-> > >  1 file changed, 20 insertions(+), 4 deletions(-)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.=
-yaml b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
-> > > index 256e252f8087..48aa205b66b4 100644
-> > > --- a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
-> > > +++ b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
-> > > @@ -12,10 +12,17 @@ maintainers:
-> > >
-> > >  properties:
-> > >    compatible:
-> > > -    items:
-> > > -      - enum:
-> > > -          - ti,am62-gpu
-> > > -      - const: img,img-axe # IMG AXE GPU model/revision is fully dis=
-coverable
-> > > +    oneOf:
-> > > +      - items:
-> > > +          - enum:
-> > > +              - mediatek,mt8173-gpu
-> > > +          # PowerVR 6XT GPU model/revision is fully discoverable
-> > > +          - const: img,powervr-6xt
-> > > +      - items:
-> > > +          - enum:
-> > > +              - ti,am62-gpu
-> > > +          # IMG AXE GPU model/revision is fully discoverable
-> > > +          - const: img,img-axe
-> >
-> > The Series6XT GPU models have differing numbers of power domains (eithe=
-r 2, 4 or
-> > 5). Whereas, the AXE GPUs have a single power domain, so I assume there=
- should
-> > be a related change here.
-> >
-> > The GX6250 has two power domains (lets call them A and B). There's a co=
-nstraint
-> > that if domain B is powered then domain A must also be powered.
-> >
-> > In patch 6 [2] it's setting the power domain to MT8173_POWER_DOMAIN_MFG=
-, which I
-> > believe corresponds to power domain B. I assume this works because the =
-MTK power
-> > controller driver is encoding the constraint above, meaning that when w=
-e disable
-> > or enable MT8173_POWER_DOMAIN_MFG it's also disabling/enabling MT8173_P=
-OWER_DOMA
-> > IN_MFG_2D (domain A).
-> >
->
-> In the cover letter of this series, it was noted that the GPU
-> enumerates, but it doesn' fully function yet.  This is also the case
-> for both of the Renesas variants I have been testing, and I was nicely
-> asked to postpone my series until the driver was closer to being
-> ready.
+On 03/06/2024 15:27, Jagadeesh Kona wrote:
+> 
+> 
+> On 6/2/2024 8:54 PM, Krzysztof Kozlowski wrote:
+>> On 02/06/2024 13:44, Jagadeesh Kona wrote:
+>>> Correct the videocc header file name in SM8450 videocc bindings.
+>>>
+>>> Fixes: 1e910b2ba0ed ("dt-bindings: clock: qcom: Add SM8450 video clock controller")
+>>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+>>> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+>>
+>> Where did this review happen? Can you provide lore link?
+>>
+>> Best regards,
+>> Krzysztof
+>>
+> 
+> Please find the lore link for this review:-
+> https://lore.kernel.org/all/e9109e46-4e72-4b3b-a995-4b2af3c31e45@linaro.org/#t
 
-Yeah. Frank laid out the current state of GX6250 support and future plans
-in his reply to the clk driver patch.
+Indeed, thanks. I could not find it.
 
-> Even if the driver isn't ready yet, it would be nice to move the
-> bindings forward.
+Best regards,
+Krzysztof
 
-Agreed. It would be nice to have an agreed upon set of bindings. We
-can then move our downstream stuff comply with it.
-
-
-Thanks
-ChenYu
-
-> adam
->
-> > Thanks
-> > Frank
-> >
-> > [1] https://lists.freedesktop.org/archives/dri-devel/2024-February/4435=
-48.html
-> > [2] https://lists.freedesktop.org/archives/dri-devel/2024-May/455833.ht=
-ml
-> >
-> > >
-> > >    reg:
-> > >      maxItems: 1
-> > > @@ -56,6 +63,15 @@ allOf:
-> > >        properties:
-> > >          clocks:
-> > >            maxItems: 1
-> > > +  - if:
-> > > +      properties:
-> > > +        compatible:
-> > > +          contains:
-> > > +            const: img,powervr-6xt
-> > > +    then:
-> > > +      properties:
-> > > +        clocks:
-> > > +          minItems: 3
-> > >
-> > >  examples:
-> > >    - |
