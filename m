@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1624149DE2;
-	Tue,  4 Jun 2024 18:28:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D04EA5F;
+	Tue,  4 Jun 2024 18:37:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717525699; cv=none; b=JbREdxtos2LL24QoWBMXpUY0JkplzjpvB25/2RoZJ0fZ0apdMUllyrYYOTt/x3r23dozrBSapyxWrNbsWYiG7FvUHsl/133+IPnYpUZ0K2B0GzS+yCJubDT1qNdMemfZuJg6NwdrWi1luF8AE1WKJoY7HstMiH6f1K+B/UkdbBE=
+	t=1717526261; cv=none; b=oZ+Kfd5jTpVMg3RNDcAN70q8KSs7WqcwGx+Xc3Fj2dhpED5+HVeIF74QgGK8Gz5kYRRKj5+MNhXGzQ64Fx2anGkeW6RKC+550haXJ5sCXnw22H+CnupCI/4kkP5KkFb/X7o80pDvNYA4tEH52Xa4T4UmLw87TquxSsTnbINRV6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717525699; c=relaxed/simple;
-	bh=kIEYUuEX7E2+uY0Qphw9+ECQqMwNwRaCDQiB6eHl2Wk=;
+	s=arc-20240116; t=1717526261; c=relaxed/simple;
+	bh=DzYmhCVLTbbGz9nX9THqcZl6MvWkHcmd5Ebv1OCgf3Y=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=X2D3Da0J/9D2vl5YEf0q1vVgRH358oBQNHlotVlmAFkmdSdqAaQoNdOZ+3SkLHUEzalD1gDdZ5H9tTC+JQyyNIi5x9fbqwmpKBsR/hoTLQ15xyZrQJN1jKJesIt9X8hS8YNgQH2spy26TLMoOajE5qISfYEJDr+WLBlPWMF/XI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QeCjGfAV; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=huIcuKxbiotonOtrynu9uvdr5IzpKsWLBIlHnReYBzs99+QandFig0xld1MxAyDYQ1rL/X8gvOpOvYart7CX+q0IakMmgiPC1/s6KN38V71ZjtxAf2qfO2G8ZCRuuIK+AevVzEE6v3vG5b0PlVowSa6LrpNdfMhpX/fv2qiJLUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H6iyf4FY; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QeCjGfAV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50ACDC2BBFC;
-	Tue,  4 Jun 2024 18:28:18 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H6iyf4FY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F3661C2BBFC;
+	Tue,  4 Jun 2024 18:37:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717525698;
-	bh=kIEYUuEX7E2+uY0Qphw9+ECQqMwNwRaCDQiB6eHl2Wk=;
+	s=k20201202; t=1717526261;
+	bh=DzYmhCVLTbbGz9nX9THqcZl6MvWkHcmd5Ebv1OCgf3Y=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=QeCjGfAVAn1A/3hD8DsW+EqwbJolKBt/+3CWR7T2tZyxomLtQ0RlP5QzICJZaI4nE
-	 9biw15hXJ0DhWOKE4cUOE3s7iKMnXK9hMTCk/Q89XoMKgUM0jah7Dn8oawTFZ97G2X
-	 23iZdnyJmTTpD3SMblGEl7QnM+4Ex44dOsTxa1XsI9txaY/Dp7fCGnQeZL4yhngEf6
-	 3QeyThEWO2X/IPFfJ7rsMB6815hMGS6MD/pDaBs2AOhCNEZRiS4B5JTDAYGdaR8GE+
-	 BSnLyTq0xlO3E3rJFgrX78mk5Tfj7PBbx+oTJrqhvJF1BcexSofNjgMjwjpmqc3w5n
-	 lCdGovF9ENnNw==
-Message-ID: <cce5a85e48f35f5ad5464a2443ca972e.sboyd@kernel.org>
+	b=H6iyf4FYiijqhDj+kJTlMWo9y2L4Fy87O89QypH1ElA20bzuydlppo2lEH3MBmEhY
+	 lo/JMlGvViBnlMmoQ91MVVD88WeeyNPp5rPwdemgjfb+FY+RuT+9r4y63nooFHISj5
+	 wThfFw+oErp3KLu8dJUYyLMaBFQAEg54sLkOmeRv3X5lNf4+cKIcbQ3FpXAyKkY17Z
+	 d50TDA0PWKWYRETS4m9wKaIgjzOYEicdJGxgFVykXF+pu31R+9yskXHUmelDxHAmTs
+	 rzy0q/3O3C107rzBzAQK68vjr5rkkC9xKE2eQ2IeCSHcOglpN1sgRbSq7KXuaRf2zN
+	 kJ+kVhL/Lzlcw==
+Message-ID: <60ddc90da5b5dc6a4b0eec91b06bcbfc.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,69 +35,25 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240604130526.GA12945-robh@kernel.org>
-References: <20240603223811.3815762-1-sboyd@kernel.org> <20240603223811.3815762-8-sboyd@kernel.org> <20240604130526.GA12945-robh@kernel.org>
-Subject: Re: [PATCH v5 07/11] dt-bindings: test: Add single clk consumer
+In-Reply-To: <20240604130531.170371-1-krzysztof.kozlowski@linaro.org>
+References: <20240604130531.170371-1-krzysztof.kozlowski@linaro.org>
+Subject: Re: [RESEND PATCH] clk: sifive: prci: fix module autoloading
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, patches@lists.linux.dev, kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org, devicetree@vger.kernel.org, Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rafael J . Wysocki <rafael@kernel.org>, Saravana Kannan <saravanak@google.com>, Daniel Latypov <dlatypov@google.com>, Christian Marangi <ansuelsmth@gmail.com>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Maxime Ripard <maxime@cerno.tech>
-To: Rob Herring <robh@kernel.org>
-Date: Tue, 04 Jun 2024 11:28:16 -0700
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Paul Walmsley <paul.walmsley@sifive.com>, Samuel Holland <samuel.holland@sifive.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Date: Tue, 04 Jun 2024 11:37:38 -0700
 User-Agent: alot/0.10
 
-Quoting Rob Herring (2024-06-04 06:05:26)
-> On Mon, Jun 03, 2024 at 03:38:04PM -0700, Stephen Boyd wrote:
-> > Describe a binding for a device that consumes a single clk in DT. This
-> > will initially be used by a KUnit test to clk_get() the clk registered
-> > by of_fixed_clk_setup() and test that it is setup properly.
-> >=20
-> > Cc: Rob Herring <robh@kernel.org>
-> > Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
-> > Cc: Conor Dooley <conor+dt@kernel.org>
-> > Cc: Brendan Higgins <brendan.higgins@linux.dev>
-> > Cc: David Gow <davidgow@google.com>
-> > Cc: Rae Moar <rmoar@google.com>
-> > Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-> > ---
-> >  .../test/test,single-clk-consumer.yaml        | 34 +++++++++++++++++++
-> >  1 file changed, 34 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/test/test,single-=
-clk-consumer.yaml
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/test/test,single-clk-con=
-sumer.yaml b/Documentation/devicetree/bindings/test/test,single-clk-consume=
-r.yaml
-> > new file mode 100644
-> > index 000000000000..8c384c48707d
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/test/test,single-clk-consumer.y=
-aml
-> > @@ -0,0 +1,34 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/test/test,single-clk-consumer.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Test consumer of a single clock
-> > +
-> > +maintainers:
-> > +  - Stephen Boyd <sboyd@kernel.org>
-> > +
-> > +description:
-> > +  A consumer of a single clock used in tests.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: test,single-clk-consumer
+Quoting Krzysztof Kozlowski (2024-06-04 06:05:31)
+> From: Krzysztof Kozlowski <krzk@kernel.org>
 >=20
-> I don't know if there's much value in defining bindings for tests. We=20
-> could alternatively make 'test,' opt out of everything. There's already=20
-> some support in dtschema for this with 'foo,'.
+> Add MODULE_DEVICE_TABLE(), so modules could be properly autoloaded
+> based on the alias from of_device_id table.  Clocks are considered core
+> components, so usually they are built-in, however these can be built and
+> used as modules on some generic kernel.
 >=20
-> I need something for the DT unittest as well.=20
->=20
+> Signed-off-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
+> ---
 
-Ok. So I should drop this patch and the other one that adds a binding
-for the fake clock provider? And replace it with something that makes
-the test vendor prefix opt out of all checking? How is that done?  Some
-patch to dtschema directly?
+Applied to clk-next
