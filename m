@@ -1,113 +1,101 @@
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 949EE13B58A;
-	Tue,  4 Jun 2024 09:46:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30EFF1448C0
+	for <linux-clk@vger.kernel.org>; Tue,  4 Jun 2024 09:54:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717494387; cv=none; b=t3o0N120IPSAhZN3JN/Gb6nhIaAJlJ7vD2RXxoIpVaWbV3bxe5wj03ySt8nr+qFrlDzfH90Efm24vBfPAjQ/oNtNBPA+sQ4oQcLGPHI4dxuXLAsJRmRd1ZPIKYujunluW3ETo8Nbr94xB8CsKno2/IKMmOZnCW4nijYSFDMr1t8=
+	t=1717494898; cv=none; b=g44z1asR+z1i3WBhlw+jjggMKEI63MR3OpFSgvYatuM4BMYu2g29tJuvyobMRrU2KSKvzFQ8IMv947h1fyNOWJH+T0gFDioRJ/Bh69kUjNpo3W5dAewbOZweaBxqWg+cGH8EcqXmubl9x00rWHYBc4IVZwHT522J80Gl9Hlst9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717494387; c=relaxed/simple;
-	bh=VelLrgCyVufY769kxGVathE8QdW2VKCazGNXXN/11xQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MRC5143GTso/MPgKw86Qsds9VO4t8tC7snO6DAjBmN4CuASrelK2ZsVxh9df9rd5QJurXVrivXApXC7BV0laH19HC8Sp0gNrS5CnXWPgM0oDDWLlCsHae+2mktAz613n6eFCH0QXldcp6A1MHv8qd2/k3CcAwMO6NbhSBdcFJDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BGO90VT5; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1717494898; c=relaxed/simple;
+	bh=X2ogPccdDTs13IL08Tf8Bkwcu0VIj1IFTLfvvR7wyB8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bgQd8JZioohqagM401SiNT1FTVmbLCkvFFE1VQqHSx8QRem2h2E7iH/gcgJ4U3bm9VssEf9u3/Kdq5XtxC9v3dOa3M3ZMZp0AS01VsnRMY57s0DejGuXdiAIFJLkY4HgSWbvltvgjwLGydjJ/amOt8V/cCWQ7N0XX4RHNEhFx9s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=LCLjCLVn; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BGO90VT5"
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2c1a272c96cso901726a91.1;
-        Tue, 04 Jun 2024 02:46:26 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="LCLjCLVn"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42148c0cb1aso7970925e9.3
+        for <linux-clk@vger.kernel.org>; Tue, 04 Jun 2024 02:54:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717494386; x=1718099186; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1717494894; x=1718099694; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=l4Iy/95Cu2HrlzBSr5TKl0e7xBU0QDGnX2eGXYKgDdg=;
-        b=BGO90VT5XzsIbp8+8+tw4ewQFvh99pGB6iprMCFt5Xb6ilkxOUVhr6BHwS/v6FkW4m
-         EGftatoMMK2ST0LnPsCKgaNb8kFeMJeagw3QuafIUnjTdWhehYlx5T9DstK4wy0eaZzS
-         J80JBXqslTf4qlqqgCYKzJyhM11I8NnpCVsLfhYVtd5SkRaWIUeesycSq7/zkeDmH8I1
-         9pcmaNyL6Btqxn4dkMaHGHh/B3c32+W8NZEWB9WHThTLFJ5Bz7FJmXfmivFegSodbNwM
-         jMjx58kckb2xsEYuaXzF4g+bh3+ASmghyMGsVYiQMx3N3osQmxd/N5F9wkUi7CXR97qV
-         Y1uA==
+        bh=eqG33BTlDFY1JTtCCY4mtc8hNwHOOmvwm9Q2v4L26W0=;
+        b=LCLjCLVne/CbZ0ImH+68XeDcA22TsbaROdqtIDs4S7haA/YRQXhm89ARnX8tJE8obx
+         LGzfjQhDMj/HXqGt/vaZsLGdycm4hc7bs1cDj5S5Jc2W6mbm4zkelVrVkIfe6mQtx533
+         tnHJ2NHpQMoiVZ7uem8cKXJUmhYkFUEX/YTOz697NC6gG0zZHbx+9CzlFgOnthRZZLHX
+         Fj3vZkFohH4yjVGZVJ2vpTNLSnyMPUhe/nsoApVkqTXkcwjgCgMWtLhsizQyolgchsVH
+         UMz9ooqCiy4eFGbmgf5ld4J8HcMtHbWvgg7b1jmUPG/T87Zx/OyGHasL3ARRlqtssriy
+         88LA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717494386; x=1718099186;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1717494894; x=1718099694;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=l4Iy/95Cu2HrlzBSr5TKl0e7xBU0QDGnX2eGXYKgDdg=;
-        b=WaDxMCR+FvWrT9+J5F/17on/H3XLMStN1n/rb0/wvJpvVWVWNUf0f8/fHGTo/skCBP
-         1gSjU79jD5OfJndkHZz0wUpGnipCsOFCCsLPRJvBxuLzv5FaG6zaPvdSOnUNb2esXKtX
-         nLM3pKEPZTP8FtwuyTTnvJW9YxZDqu/nTTFyMjLhEiFiy2RmFT+R8eZhsYwuc+AQjtXq
-         Pc0KC/RDR/DHCh2sjoe1L+u3wfnbsr2v0t7JhRRGe3PHI+JCS4jr40qKLY01WoU0cI6Z
-         UpaFwyM4io3uO/k1lZWee4sJLfqXvWB/D3xhXclOJxnYm0cmxsOo6X7GrMGF3mk9pJdb
-         eB/A==
-X-Forwarded-Encrypted: i=1; AJvYcCW/Bl4+vBGeSqLuP0Bgbty6u9pz072X2YMse4tuIR0RXg+HsSIc4lJ/qEAt7riPTJXpHr66CItxjNz+19JBVUFp0LRb7vQsJqZbk6gTvhJU9TxlhVIunoBzur2PtgtTIZZxhPZfKmYaBMfs6zZqRJoOBdq+xwbCudA/TNPjoqGFjX5qmw==
-X-Gm-Message-State: AOJu0YwWBmprp6HteeQQz4nJaGT+IARjsUOToX+WeWU290I/hfP31EzO
-	MoNPdfT2jnUn/WfCFZQBiUlRcM3Ia3HwhTIFU/WRiEOyfSWZ8tFpzDUp68M6CT8RbnnVMC/qldM
-	pzrB1NgCN0ccKvu52YjtdCWr7eUc=
-X-Google-Smtp-Source: AGHT+IGQu/cJn1x0sA5BtqSnIZFVL97WUuQok1tV3pUcfO+SZxiGMkxxQbIzQbdbfMNIlTn164Rr8DvSHK2haHzzUy4=
-X-Received: by 2002:a17:90a:12c9:b0:2bf:9370:5a55 with SMTP id
- 98e67ed59e1d1-2c1dc5be130mr10619514a91.2.1717494385767; Tue, 04 Jun 2024
- 02:46:25 -0700 (PDT)
+        bh=eqG33BTlDFY1JTtCCY4mtc8hNwHOOmvwm9Q2v4L26W0=;
+        b=EkqkxUCBQvnrABrYn3DTEd2cI2Aadkw+WKMbyJK3GdNso0OM2BevIe9RgzUo7mLBZt
+         R18U9DaaxNacv+Jevr8ef7jhhDzyAcqg+2H9dH+kU3zwS4mRE9yG99uHceefucaaXhZF
+         8+WF4jp1xSSJbDLI3Bn+m+Rrgf+CL8w2J25ndP4ru/aN3bSGa5FO1k4Cd7JUmJlc6p++
+         mpDijaoI+YCJjuHBLeH5v4PxFaYYHASzNBN1VIHOm2CCw1baPE18E3hBJ2RaVrgOuGsK
+         ckiGpJe6ACQzQFqjwq+cNnYrC2VGB/p7jlcFrYCuRfBHeC+7p0jWgLvaRZz87OnAl0DW
+         sXTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVCD2qCn0OqapdaB1vqZFkncuttaJxd4M+WCFaKY0xqtJ4uaezLxqnokwO0K3NFRCWiqPja7CI5Y8NQ+K/pCXrVUYCcNYqkRbqL
+X-Gm-Message-State: AOJu0YzPX51/hZbwNqT7GHxGtskLsbVRGtIYvDNzFdM5bo10p39pAytP
+	mrSGnVKtOU6tqHrTnVpLjXS3XkAgIJtX+yDj2Uj5DWtufxV6DQ13v9r+H7p0K/7o5nicd24t1fy
+	i
+X-Google-Smtp-Source: AGHT+IFuWoB4BQKHWujuBNN/tLqUteBjiY6L1E/xsaU6QhnEcgVTXAv++hch3aOpdGEUYNU8pLbWlw==
+X-Received: by 2002:a05:600c:46cb:b0:41a:a521:9699 with SMTP id 5b1f17b1804b1-4212e045342mr108000555e9.4.1717494894440;
+        Tue, 04 Jun 2024 02:54:54 -0700 (PDT)
+Received: from toaster.lan ([2a01:e0a:3c5:5fb1:60ea:fe6c:6bbc:4888])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4212f9b9ef1sm136678955e9.9.2024.06.04.02.54.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Jun 2024 02:54:53 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Xianwei Zhao <xianwei.zhao@amlogic.com>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Kevin Hilman <khilman@baylibre.com>
+Subject: Re: [PATCH v9 0/5] Add C3 SoC PLLs and Peripheral clock
+Date: Tue,  4 Jun 2024 11:53:49 +0200
+Message-ID: <171749479841.590656.11363124184470308378.b4-ty@baylibre.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240522082727.3029656-1-xianwei.zhao@amlogic.com>
+References: <20240522082727.3029656-1-xianwei.zhao@amlogic.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240507065319.274976-1-xingyu.wu@starfivetech.com>
- <20240510-unfounded-syrup-d1263d57d05a@spud> <NTZPR01MB0956D48361098E8AA4B3930A9FE02@NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn>
- <20240511-unbiased-dainty-ccb5ece9b1b9@spud> <NTZPR01MB0956A7393097129D3CD048EB9FE32@NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn>
- <20240514-congenial-smother-1e4b0fc6a5df@spud> <NTZPR01MB0956CF1AA9EA5A20A174FD8A9FEC2@NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn>
- <20240515-reorder-even-8b9eebd91b45@spud>
-In-Reply-To: <20240515-reorder-even-8b9eebd91b45@spud>
-From: David Abdurachmanov <david.abdurachmanov@gmail.com>
-Date: Tue, 4 Jun 2024 12:45:48 +0300
-Message-ID: <CAEn-LTrKn079kbs2Wx5AuTs5+_sB4zaJsTf=MKn_nZZL04E5gA@mail.gmail.com>
-Subject: Re: [PATCH v5 0/2] Add notifier for PLL0 clock and set it 1.5GHz on
-To: Conor Dooley <conor@kernel.org>
-Cc: Xingyu Wu <xingyu.wu@starfivetech.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, 
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Hal Feng <hal.feng@starfivetech.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, May 15, 2024 at 7:31=E2=80=AFPM Conor Dooley <conor@kernel.org> wro=
-te:
->
-> On Wed, May 15, 2024 at 02:23:47AM +0000, Xingyu Wu wrote:
-> > On 15/05/2024 02:08, Conor Dooley wrote:
->
-> > > There's a push in U-Boot to move devicestrees to use "OF_UPSTREAM", w=
-hich
-> > > means importing devicetrees directly from Linux and using them in U-B=
-oot. I
-> > > don't really want to merge a patch that would present U-Boot with a p=
-roblem if
-> > > the VisionFive 2 moved to that model there.
->
-> > Would it be better  if I  change the rates of PLL0 and CPU core in the =
-driver not dts,
-> > and avoid the dts of Linux and U-Boot being different?
->
-> I'd definitely prefer if we don't include stuff in the kernel tree that
-> would cause problems for U-Boot if imported there, yeah.
->
+Applied to clk-meson (v6.11/drivers), thanks!
 
-What is the current state of this patchset?
+[1/5] dt-bindings: clock: add Amlogic C3 PLL clock controller
+      https://github.com/BayLibre/clk-meson/commit/0e6be855a96d
+[2/5] dt-bindings: clock: add Amlogic C3 SCMI clock controller support
+      https://github.com/BayLibre/clk-meson/commit/d309989a0a0a
+[3/5] dt-bindings: clock: add Amlogic C3 peripherals clock controller
+      https://github.com/BayLibre/clk-meson/commit/fc1c7f941c71
+[4/5] clk: meson: c3: add support for the C3 SoC PLL clock
+      https://github.com/BayLibre/clk-meson/commit/8a9a129dc565
+[5/5] clk: meson: c3: add c3 clock peripherals controller driver
+      https://github.com/BayLibre/clk-meson/commit/f06ac3ed04e8
 
-I noticed this patchset on the U-Boot side from Hal Feng:
-[PATCH v1 0/4] Sync StarFive JH7110 clock and reset dt-bindings with Linux
-
-It seems to indicate that there is WIP for OF_UPSTREAM support.
-
-Cheers,
-david
+Best regards,
+--
+Jerome
