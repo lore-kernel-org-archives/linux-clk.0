@@ -1,383 +1,394 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f175.google.com (mail-il1-f175.google.com [209.85.166.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA377ECC;
-	Tue,  4 Jun 2024 03:36:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80E0613DB9F;
+	Tue,  4 Jun 2024 03:57:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717472215; cv=none; b=GE15SWWm37trxgj+EuXU2Ugb+A8zWKkAJCXN9U3IWwEbLbbWxaOUrputxjHub11XKr+F2C6fgwTN+HY9Se4hls5i5vUMnTKUDW1bZZf8sw+y+oJgQGttSpiQ7WidOTjNmfCLfgaUC+MBL0L5A1pLpq50jSEXdQxL/yF6mwol9jE=
+	t=1717473441; cv=none; b=gezMKJVVTUlONR7uzgVa5Xdkr5hgdxl5W327wnJ52LiM1Qp2pyvQL8GClgZeZ3Xv4tWGxsNGL8n5jAn2jC6e1+AfJ16JaewqTiWXFh2U/bHP+6hsppp2TOGlR4jwmiKaGu0y1DYhYmtQRpyEiXSolf6H3KER1lJySLIyukFPduE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717472215; c=relaxed/simple;
-	bh=O0ooiMhE9ABdkegOf36SMh542CQAMxvZp66UK0IMt60=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=Ycs97H8ppSqVMTJGgpAz2/FdNGKJUgEyb7MoER0p79Hdc76z2OQW/41Mnz17weNn5CW5kvHkI0wWyadb4AUUZSr24HzLR1lAmO1HLa54f+6cwuV+/MnsAlwj+kPf9fl1TyVInSiLaNikjkD4Qa4PMoI+0w8fJVz1GaG7wSLaUKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=D2/C4O5q; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1717473441; c=relaxed/simple;
+	bh=UMFaQHIGOcCk2JsX+HFbn+3z235Z8FarTMQKUt5Qxwc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qOXwQO06XXsXgu7wn7UkUC7hQ21SBMGQfYubJycEbBhWHYMZkrXS/ZMGy14qKcb9nqBr/4tJIVipAAkFQ4t4hTxU5frfrWy2cq/n6todZL5Ay8MvG5gQYhlh9xFuDeExUd8TuKsHNdwFR6h/tT6UI8FvMjz9q84H6GXKWpocpOE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Za411B2j; arc=none smtp.client-ip=209.85.166.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="D2/C4O5q"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 453LjAaf011871;
-	Tue, 4 Jun 2024 03:36:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=LuB8fR0LHpEmWCDuLjFiVc
-	EamlqAVUpj9s7llmRcsBU=; b=D2/C4O5qxKaUakWrwgm3UL1zbVZw3GJ35G6fbF
-	wbLAkLt3eFbBq6KBg3ecmNVSbde5zZ3nNzze2+5d/YkmvC+U63g9IMkkOGPjiYiD
-	rrv4wTaS5jyKVgSdbIz9fpnTZCBCjzD7C8zQ/GUVdqMv58hkzAIs9zmzToLg796w
-	IVqg1hr0y5KW7jSx188XBL7TK+yoTONWtVAs0GQFA8Nh5Aklp4P4uJ7M7O0MjMem
-	sSyH1JYECRps4npHwN1f09nLCv72LUdcXQJ+eczPom9VuwRWNtdsXPBqogaerz1y
-	2yXujx4EvxJ8vtT/1DSAFEL0tX4XEPQZK2BKUV06HlT95jJg==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yfw6qnmdg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Jun 2024 03:36:30 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.5/8.17.1.5) with ESMTPS id 4543aUIT012497
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 4 Jun 2024 03:36:30 GMT
-Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 3 Jun 2024
- 20:36:29 -0700
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Date: Mon, 3 Jun 2024 20:36:28 -0700
-Subject: [PATCH] clk: sunxi-ng: add missing MODULE_DESCRIPTION() macros
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Za411B2j"
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-36ddf683ad7so21504845ab.2;
+        Mon, 03 Jun 2024 20:57:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717473439; x=1718078239; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sDw463836VXxjFEssZxkzySa5xdge6xhhv/M+Qec16I=;
+        b=Za411B2jTS5MzNl8HC2R/lLdQBEhvSD5ZuUwwOg3sWoS2Bs4+s38NTffxB6PR2CdFl
+         NY4ITaSaLzix+kehlbRrLfAN5O6a8sd4m4hfxigEVpNUAmVR/RImaiLPnLo0F6w2jD13
+         8FJoROINXcaPe3sJ7o40U62Vt7xA7EhIvj2m3UfP84lvzNVQ0HEmFYEYbqTCi0pN68pf
+         vh39hhrTmWlWJ7A6yny1f0Uz+PMl6b9HTkNoaqt+Ul8sZATXfzJWdGg3ta8GAPpki5z1
+         rmLiVnx3Y4iLtSQM1Kuxqkd2asYAFDgYUvy4U0M0Q+ld5IV2hCZu2VFCCEC6XXk5m46z
+         MaOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717473439; x=1718078239;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sDw463836VXxjFEssZxkzySa5xdge6xhhv/M+Qec16I=;
+        b=bRmkm7PtMHigdEiTA++Iz9mjJrhc/S+07Bhubv39NXc8421uAzQgfUuFwWQzLFatgS
+         fT/Fnl9MBI1A0VHRpT//QhnLQpKf0nO7R37ivaIqZzMJuu+2N4M+4m0LE7ermeMAZliB
+         i8h5oJb2C6C62Ftc4+ZMuJ2ENO9kidU/5E6sQvOxi+9GEjRFEUso9W7sRseViV4uqArs
+         QRd/cpCt/pTj/mn53VnCJrsTa2kKgg2YiTIYrQhqFEtAzlqfHCRo8Y2QzfEZKg07ZSiV
+         J9f8EuW6jg+XXiVVete3GNwSGVjqP8dEg2XYByYsWzmHCgh5IoWlzXh0tOBXJfc8BACF
+         DrUg==
+X-Forwarded-Encrypted: i=1; AJvYcCWcjReaZzVg4jvACr6TsmB66kQYVzlCISsO9l50KxeSl1tFwvYr8G5mRLHLkJOZGWS7opqKgLl9aAV9CxS3K3b9nFQVS7Z4ov1QT8DQVj1zzZP8ewEom6C1nnDtXQp5LMC1zBafLbIQ2SkmNm4TLhZ01TpsoVOF/y0G10KNaNCdoOG26w==
+X-Gm-Message-State: AOJu0YwdYqdjc1m7cUq/fpYDqgI/OPzHcAly96hiNioPU4zuauy9yIxU
+	KQQ5iKg7z+lH77VhZfvXJUdp/HOUcM463qqpvXrpKCkmWMrTHXu+jrjxtrTDpQc37irLmeNoSKX
+	86YOqZFnGzoZWlItlPdFtbZh2cPU=
+X-Google-Smtp-Source: AGHT+IHv96HDpvzi1scKNYLa1svsheD1fN+/LYbf36PbZHOxMXXSnA2KzvqwtRPzC25VCJqRhpk1QNNccpIzt5c3Ijc=
+X-Received: by 2002:a05:6e02:2165:b0:374:99df:1da2 with SMTP id
+ e9e14a558f8ab-37499df20b9mr66313035ab.18.1717473438578; Mon, 03 Jun 2024
+ 20:57:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240603-md-drivers-clk-sunxi-ng-v1-1-c44a4c22d544@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIALuLXmYC/x3MTQqDQAxA4atI1g2MdpDSq5Qu5idqqKYlURkQ7
- 95pl9/ivQOMlMng3hygtLPxWyraSwNpCjIScq6GznXe9e6KS8asvJMapvmFtklhlBG9G24uUus
- p9FDrj9LA5X9+PKtjMMKoQdL0+80sW8El2EoK5/kFn4sfJ4gAAAA=
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec
-	<jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>
-CC: <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-sunxi@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>,
-        Jeff Johnson <quic_jjohnson@quicinc.com>
-X-Mailer: b4 0.13.0
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: HRzBJTv6RcDYu6LHBHavhZlwpsRu2fAh
-X-Proofpoint-ORIG-GUID: HRzBJTv6RcDYu6LHBHavhZlwpsRu2fAh
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.650,FMLib:17.12.28.16
- definitions=2024-06-03_17,2024-05-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- bulkscore=0 mlxlogscore=999 clxscore=1015 impostorscore=0 malwarescore=0
- mlxscore=0 adultscore=0 lowpriorityscore=0 suspectscore=0 spamscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406040027
+References: <1717036278-3515-1-git-send-email-shengjiu.wang@nxp.com>
+ <1717036278-3515-4-git-send-email-shengjiu.wang@nxp.com> <20240530090558.53reobf2zea22oi2@pengutronix.de>
+In-Reply-To: <20240530090558.53reobf2zea22oi2@pengutronix.de>
+From: Shengjiu Wang <shengjiu.wang@gmail.com>
+Date: Tue, 4 Jun 2024 11:57:07 +0800
+Message-ID: <CAA+D8AMTC0cwsoebc804rvoJ1tZMqzQcMqDS17tPvwCsAmwFCw@mail.gmail.com>
+Subject: Re: [PATCH v6 3/5] reset: imx-aux: Add i.MX auxiliary reset driver
+To: Marco Felsch <m.felsch@pengutronix.de>
+Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, p.zabel@pengutronix.de, abelvesa@kernel.org, 
+	peng.fan@nxp.com, mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org, 
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
+	marex@denx.de, linux-clk@vger.kernel.org, imx@lists.linux.dev, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-make allmodconfig && make W=1 C=1 reports:
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sunxi-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/suniv-f1c100s-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun20i-d1-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun20i-d1-r-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun50i-a64-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun50i-a100-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun50i-a100-r-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun50i-h6-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun50i-h6-r-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun50i-h616-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun4i-a10-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun6i-a31-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun6i-rtc-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun8i-a23-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun8i-a33-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun8i-a83t-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun8i-h3-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun8i-r40-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun8i-v3s-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun8i-de2-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun8i-r-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun9i-a80-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun9i-a80-de-ccu.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/sunxi-ng/sun9i-a80-usb-ccu.o
+On Thu, May 30, 2024 at 5:06=E2=80=AFPM Marco Felsch <m.felsch@pengutronix.=
+de> wrote:
+>
+> Hi,
+>
+> On 24-05-30, Shengjiu Wang wrote:
+> > Add support for the resets on i.MX8MP Audio Block Control module,
+> > which includes the EARC PHY software reset and EARC controller
+> > software reset. The reset controller is created using the auxiliary
+> > device framework and set up in the clock driver.
+> >
+> > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> > ---
+> >  drivers/reset/Kconfig         |   8 ++
+> >  drivers/reset/Makefile        |   1 +
+> >  drivers/reset/reset-imx-aux.c | 217 ++++++++++++++++++++++++++++++++++
+>                             ^
+> You make use of the auxiliary bus but this isn't a aux driver, it's the
+> i.MX8MP EARC reset driver. According the TRM only the EARC reset bits
+> are covered by the AUDIOMIX blk-ctrl.
 
-Add the missing invocations of the MODULE_DESCRIPTION() macro.
+I am confused. According to below discussion:
 
-Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
----
- drivers/clk/sunxi-ng/ccu-sun20i-d1-r.c   | 1 +
- drivers/clk/sunxi-ng/ccu-sun20i-d1.c     | 1 +
- drivers/clk/sunxi-ng/ccu-sun4i-a10.c     | 1 +
- drivers/clk/sunxi-ng/ccu-sun50i-a100-r.c | 1 +
- drivers/clk/sunxi-ng/ccu-sun50i-a100.c   | 1 +
- drivers/clk/sunxi-ng/ccu-sun50i-a64.c    | 1 +
- drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c   | 1 +
- drivers/clk/sunxi-ng/ccu-sun50i-h6.c     | 1 +
- drivers/clk/sunxi-ng/ccu-sun50i-h616.c   | 1 +
- drivers/clk/sunxi-ng/ccu-sun6i-a31.c     | 1 +
- drivers/clk/sunxi-ng/ccu-sun6i-rtc.c     | 1 +
- drivers/clk/sunxi-ng/ccu-sun8i-a23.c     | 1 +
- drivers/clk/sunxi-ng/ccu-sun8i-a33.c     | 1 +
- drivers/clk/sunxi-ng/ccu-sun8i-a83t.c    | 1 +
- drivers/clk/sunxi-ng/ccu-sun8i-de2.c     | 1 +
- drivers/clk/sunxi-ng/ccu-sun8i-h3.c      | 1 +
- drivers/clk/sunxi-ng/ccu-sun8i-r.c       | 1 +
- drivers/clk/sunxi-ng/ccu-sun8i-r40.c     | 1 +
- drivers/clk/sunxi-ng/ccu-sun8i-v3s.c     | 1 +
- drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c  | 1 +
- drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c | 1 +
- drivers/clk/sunxi-ng/ccu-sun9i-a80.c     | 1 +
- drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c | 1 +
- drivers/clk/sunxi-ng/ccu_common.c        | 1 +
- 24 files changed, 24 insertions(+)
+https://lore.kernel.org/lkml/b86c83a520f0c45a60249468fa92b1de.sboyd@kernel.=
+org/
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun20i-d1-r.c b/drivers/clk/sunxi-ng/ccu-sun20i-d1-r.c
-index 0736f6c81269..de36e21d3eaf 100644
---- a/drivers/clk/sunxi-ng/ccu-sun20i-d1-r.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun20i-d1-r.c
-@@ -138,4 +138,5 @@ static struct platform_driver sun20i_d1_r_ccu_driver = {
- module_platform_driver(sun20i_d1_r_ccu_driver);
- 
- MODULE_IMPORT_NS(SUNXI_CCU);
-+MODULE_DESCRIPTION("Support for the Allwinner D1/R528/T113 PRCM CCU");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/sunxi-ng/ccu-sun20i-d1.c b/drivers/clk/sunxi-ng/ccu-sun20i-d1.c
-index 60756aadfad6..9b5cfac2ee70 100644
---- a/drivers/clk/sunxi-ng/ccu-sun20i-d1.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun20i-d1.c
-@@ -1407,4 +1407,5 @@ static struct platform_driver sun20i_d1_ccu_driver = {
- module_platform_driver(sun20i_d1_ccu_driver);
- 
- MODULE_IMPORT_NS(SUNXI_CCU);
-+MODULE_DESCRIPTION("Support for the Allwinner D1/R528/T113 CCU");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/sunxi-ng/ccu-sun4i-a10.c b/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
-index 14f5c3da652b..d1a1683baff4 100644
---- a/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun4i-a10.c
-@@ -1494,4 +1494,5 @@ static struct platform_driver sun4i_a10_ccu_driver = {
- module_platform_driver(sun4i_a10_ccu_driver);
- 
- MODULE_IMPORT_NS(SUNXI_CCU);
-+MODULE_DESCRIPTION("Support for the Allwinner A10/A20 CCU");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a100-r.c b/drivers/clk/sunxi-ng/ccu-sun50i-a100-r.c
-index 3b983bb59bd9..2c791761a646 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-a100-r.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-a100-r.c
-@@ -215,4 +215,5 @@ static struct platform_driver sun50i_a100_r_ccu_driver = {
- module_platform_driver(sun50i_a100_r_ccu_driver);
- 
- MODULE_IMPORT_NS(SUNXI_CCU);
-+MODULE_DESCRIPTION("Support for the Allwinner A100 PRCM CCU");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a100.c b/drivers/clk/sunxi-ng/ccu-sun50i-a100.c
-index 38aa6e5f298e..bbaa82978716 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-a100.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-a100.c
-@@ -1277,4 +1277,5 @@ static struct platform_driver sun50i_a100_ccu_driver = {
- module_platform_driver(sun50i_a100_ccu_driver);
- 
- MODULE_IMPORT_NS(SUNXI_CCU);
-+MODULE_DESCRIPTION("Support for the Allwinner A100 CCU");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-index 491b16cfe368..c255dba2c96d 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-a64.c
-@@ -995,4 +995,5 @@ static struct platform_driver sun50i_a64_ccu_driver = {
- module_platform_driver(sun50i_a64_ccu_driver);
- 
- MODULE_IMPORT_NS(SUNXI_CCU);
-+MODULE_DESCRIPTION("Support for the Allwinner A64 CCU");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
-index e2dc29fa99e7..c72815841111 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6-r.c
-@@ -257,4 +257,5 @@ static struct platform_driver sun50i_h6_r_ccu_driver = {
- module_platform_driver(sun50i_h6_r_ccu_driver);
- 
- MODULE_IMPORT_NS(SUNXI_CCU);
-+MODULE_DESCRIPTION("Support for the Allwinner H6 and H616 PRCM CCU");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-index e6421c2ba122..a20b621ad8f1 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-@@ -1287,4 +1287,5 @@ static struct platform_driver sun50i_h6_ccu_driver = {
- module_platform_driver(sun50i_h6_ccu_driver);
- 
- MODULE_IMPORT_NS(SUNXI_CCU);
-+MODULE_DESCRIPTION("Support for the Allwinner H6 CCU");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h616.c b/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
-index 45aae1ae5178..cd67751f2bdf 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-h616.c
-@@ -1167,4 +1167,5 @@ static struct platform_driver sun50i_h616_ccu_driver = {
- module_platform_driver(sun50i_h616_ccu_driver);
- 
- MODULE_IMPORT_NS(SUNXI_CCU);
-+MODULE_DESCRIPTION("Support for the Allwinner H616 CCU");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
-index 8cb8cbbdbafb..e8b8d2dd7f2c 100644
---- a/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun6i-a31.c
-@@ -1284,4 +1284,5 @@ static struct platform_driver sun6i_a31_ccu_driver = {
- module_platform_driver(sun6i_a31_ccu_driver);
- 
- MODULE_IMPORT_NS(SUNXI_CCU);
-+MODULE_DESCRIPTION("Support for the Allwinner A31/A31s CCU");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c b/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c
-index 5a98c4e9e667..87e23d16ed0f 100644
---- a/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun6i-rtc.c
-@@ -382,4 +382,5 @@ int sun6i_rtc_ccu_probe(struct device *dev, void __iomem *reg)
- }
- 
- MODULE_IMPORT_NS(SUNXI_CCU);
-+MODULE_DESCRIPTION("Support for the Allwinner H616/R329 RTC CCU");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a23.c b/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
-index e748ad612b8f..6c2a08f722a8 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-a23.c
-@@ -764,4 +764,5 @@ static struct platform_driver sun8i_a23_ccu_driver = {
- module_platform_driver(sun8i_a23_ccu_driver);
- 
- MODULE_IMPORT_NS(SUNXI_CCU);
-+MODULE_DESCRIPTION("Support for the Allwinner A23 CCU");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-index 8a27a1777600..5e0bc08a9ce3 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-a33.c
-@@ -836,4 +836,5 @@ static struct platform_driver sun8i_a33_ccu_driver = {
- module_platform_driver(sun8i_a33_ccu_driver);
- 
- MODULE_IMPORT_NS(SUNXI_CCU);
-+MODULE_DESCRIPTION("Support for the Allwinner A33 CCU");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c b/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
-index 93eca47935cf..cb4c6b16c467 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-a83t.c
-@@ -924,4 +924,5 @@ static struct platform_driver sun8i_a83t_ccu_driver = {
- module_platform_driver(sun8i_a83t_ccu_driver);
- 
- MODULE_IMPORT_NS(SUNXI_CCU);
-+MODULE_DESCRIPTION("Support for the Allwinner A83T CCU");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-index b0b8dba239ae..7683ea08d8e3 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-@@ -349,4 +349,5 @@ static struct platform_driver sunxi_de2_clk_driver = {
- module_platform_driver(sunxi_de2_clk_driver);
- 
- MODULE_IMPORT_NS(SUNXI_CCU);
-+MODULE_DESCRIPTION("Support for the Allwinner SoCs DE2 CCU");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-index ca5739fa04f7..13e57db2f8d5 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-h3.c
-@@ -1095,4 +1095,5 @@ static struct platform_driver sun8i_h3_ccu_driver = {
- module_platform_driver(sun8i_h3_ccu_driver);
- 
- MODULE_IMPORT_NS(SUNXI_CCU);
-+MODULE_DESCRIPTION("Support for the Allwinner H3 CCU");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r.c b/drivers/clk/sunxi-ng/ccu-sun8i-r.c
-index bac7e737db98..da6569334d68 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-r.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-r.c
-@@ -275,4 +275,5 @@ static struct platform_driver sun8i_r_ccu_driver = {
- module_platform_driver(sun8i_r_ccu_driver);
- 
- MODULE_IMPORT_NS(SUNXI_CCU);
-+MODULE_DESCRIPTION("Support for Allwinner SoCs' PRCM CCUs");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-index 3774b293e74c..984ad3f76b18 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-r40.c
-@@ -1376,4 +1376,5 @@ static struct platform_driver sun8i_r40_ccu_driver = {
- module_platform_driver(sun8i_r40_ccu_driver);
- 
- MODULE_IMPORT_NS(SUNXI_CCU);
-+MODULE_DESCRIPTION("Support for the Allwinner R40 CCU");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
-index 994258a3ad2e..d24c0d8dfee4 100644
---- a/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun8i-v3s.c
-@@ -781,4 +781,5 @@ static struct platform_driver sun8i_v3s_ccu_driver = {
- module_platform_driver(sun8i_v3s_ccu_driver);
- 
- MODULE_IMPORT_NS(SUNXI_CCU);
-+MODULE_DESCRIPTION("Support for the Allwinner V3s CCU");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c b/drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c
-index ae7939d3f502..0975ac58949f 100644
---- a/drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun9i-a80-de.c
-@@ -267,4 +267,5 @@ static struct platform_driver sun9i_a80_de_clk_driver = {
- module_platform_driver(sun9i_a80_de_clk_driver);
- 
- MODULE_IMPORT_NS(SUNXI_CCU);
-+MODULE_DESCRIPTION("Support for the Allwinner A80 Display Engine CCU");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c b/drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c
-index bfa2ff9d52a4..e5527c8cc64f 100644
---- a/drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun9i-a80-usb.c
-@@ -139,4 +139,5 @@ static struct platform_driver sun9i_a80_usb_clk_driver = {
- module_platform_driver(sun9i_a80_usb_clk_driver);
- 
- MODULE_IMPORT_NS(SUNXI_CCU);
-+MODULE_DESCRIPTION("Support for the Allwinner A80 USB CCU");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/sunxi-ng/ccu-sun9i-a80.c b/drivers/clk/sunxi-ng/ccu-sun9i-a80.c
-index c05805e4ad22..756dd8fca6b0 100644
---- a/drivers/clk/sunxi-ng/ccu-sun9i-a80.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun9i-a80.c
-@@ -1249,4 +1249,5 @@ static struct platform_driver sun9i_a80_ccu_driver = {
- module_platform_driver(sun9i_a80_ccu_driver);
- 
- MODULE_IMPORT_NS(SUNXI_CCU);
-+MODULE_DESCRIPTION("Support for the Allwinner A80 CCU");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c b/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c
-index 76d3d070b2a7..52f1a04269f8 100644
---- a/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c
-+++ b/drivers/clk/sunxi-ng/ccu-suniv-f1c100s.c
-@@ -578,4 +578,5 @@ static struct platform_driver suniv_f1c100s_ccu_driver = {
- module_platform_driver(suniv_f1c100s_ccu_driver);
- 
- MODULE_IMPORT_NS(SUNXI_CCU);
-+MODULE_DESCRIPTION("Support for the Allwinner newer F1C100s CCU");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/sunxi-ng/ccu_common.c b/drivers/clk/sunxi-ng/ccu_common.c
-index ac0091b4ce24..9dc56c36add5 100644
---- a/drivers/clk/sunxi-ng/ccu_common.c
-+++ b/drivers/clk/sunxi-ng/ccu_common.c
-@@ -247,4 +247,5 @@ void of_sunxi_ccu_probe(struct device_node *node, void __iomem *reg,
- 	}
- }
- 
-+MODULE_DESCRIPTION("Common clock support for Allwinner SoCs");
- MODULE_LICENSE("GPL");
+Stephen and Conor suggested using auxdev.
 
----
-base-commit: a693b9c95abd4947c2d06e05733de5d470ab6586
-change-id: 20240603-md-drivers-clk-sunxi-ng-40f80be14ea6
 
+Best regards
+Shengjiu Wang
+
+>
+> >  3 files changed, 226 insertions(+)
+> >  create mode 100644 drivers/reset/reset-imx-aux.c
+> >
+> > diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+> > index 7112f5932609..38fdf05b326b 100644
+> > --- a/drivers/reset/Kconfig
+> > +++ b/drivers/reset/Kconfig
+> > @@ -91,6 +91,14 @@ config RESET_IMX7
+> >       help
+> >         This enables the reset controller driver for i.MX7 SoCs.
+> >
+> > +config RESET_IMX_AUX
+> > +     tristate "i.MX Auxiliary Reset Driver"
+>                         ^
+>               Same applies here
+>
+> > +     depends on CLK_IMX8MP
+> > +     select AUXILIARY_BUS
+> > +     default CLK_IMX8MP
+> > +     help
+> > +       This enables the auxiliary reset controller driver for i.MX.
+> > +
+> >  config RESET_INTEL_GW
+> >       bool "Intel Reset Controller Driver"
+> >       depends on X86 || COMPILE_TEST
+> > diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
+> > index fd8b49fa46fc..f078da14c327 100644
+> > --- a/drivers/reset/Makefile
+> > +++ b/drivers/reset/Makefile
+> > @@ -14,6 +14,7 @@ obj-$(CONFIG_RESET_BRCMSTB_RESCAL) +=3D reset-brcmstb=
+-rescal.o
+> >  obj-$(CONFIG_RESET_GPIO) +=3D reset-gpio.o
+> >  obj-$(CONFIG_RESET_HSDK) +=3D reset-hsdk.o
+> >  obj-$(CONFIG_RESET_IMX7) +=3D reset-imx7.o
+> > +obj-$(CONFIG_RESET_IMX_AUX) +=3D reset-imx-aux.o
+> >  obj-$(CONFIG_RESET_INTEL_GW) +=3D reset-intel-gw.o
+> >  obj-$(CONFIG_RESET_K210) +=3D reset-k210.o
+> >  obj-$(CONFIG_RESET_LANTIQ) +=3D reset-lantiq.o
+> > diff --git a/drivers/reset/reset-imx-aux.c b/drivers/reset/reset-imx-au=
+x.c
+> > new file mode 100644
+> > index 000000000000..61c353abc84e
+> > --- /dev/null
+> > +++ b/drivers/reset/reset-imx-aux.c
+> > @@ -0,0 +1,217 @@
+> > +// SPDX-License-Identifier: GPL-2.0-or-later
+> > +/*
+> > + * Copyright 2024 NXP
+> > + */
+> > +
+> > +#include <linux/auxiliary_bus.h>
+> > +#include <linux/device.h>
+> > +#include <linux/io.h>
+> > +#include <linux/module.h>
+> > +#include <linux/of.h>
+> > +#include <linux/of_address.h>
+> > +#include <linux/of_platform.h>
+> > +#include <linux/platform_device.h>
+> > +#include <linux/reset-controller.h>
+> > +
+> > +/*
+> > + * The reset does not support the feature and corresponding
+> > + * values are not valid
+> > + */
+> > +#define ASSERT_NONE     BIT(0)
+> > +#define DEASSERT_NONE   BIT(1)
+> > +#define STATUS_NONE     BIT(2)
+> > +
+> > +/* When set this function is activated by setting(vs clearing) this bi=
+t */
+> > +#define ASSERT_SET      BIT(3)
+> > +#define DEASSERT_SET    BIT(4)
+> > +#define STATUS_SET      BIT(5)
+> > +
+> > +/* The following are the inverse of the above and are added for consis=
+tency */
+> > +#define ASSERT_CLEAR    (0 << 3)
+> > +#define DEASSERT_CLEAR  (0 << 4)
+> > +#define STATUS_CLEAR    (0 << 5)
+> > +
+> > +/**
+> > + * struct imx_reset_ctrl - reset control structure
+> > + * @assert_offset: reset assert control register offset
+> > + * @assert_bit: reset assert bit in the reset assert control register
+> > + * @deassert_offset: reset deassert control register offset
+> > + * @deassert_bit: reset deassert bit in the reset deassert control reg=
+ister
+> > + * @status_offset: reset status register offset
+> > + * @status_bit: reset status bit in the reset status register
+> > + * @flags: reset flag indicating how the (de)assert and status are han=
+dled
+> > + */
+> > +struct imx_reset_ctrl {
+> > +     u32 assert_offset;
+> > +     u32 assert_bit;
+> > +     u32 deassert_offset;
+> > +     u32 deassert_bit;
+> > +     u32 status_offset;
+> > +     u32 status_bit;
+> > +     u32 flags;
+> > +};
+>
+> Why do we make it this compicated for an simple EARC module reset? I
+> understand that you want to provide a generic driver which can be
+> re-used but there is actual no other user and may will get no other user
+> in the future too. Therefore I would like to keep it simple at the
+> begin and adapt the code on-demand.
+>
+> Regards,
+>   Marco
+>
+> > +struct imx_reset_data {
+> > +     const struct imx_reset_ctrl *rst_ctrl;
+> > +     size_t rst_ctrl_num;
+> > +};
+> > +
+> > +struct imx_aux_reset_priv {
+> > +     struct reset_controller_dev rcdev;
+> > +     void __iomem *base;
+> > +     const struct imx_reset_data *data;
+> > +};
+> > +
+> > +static int imx_aux_reset_assert(struct reset_controller_dev *rcdev,
+> > +                             unsigned long id)
+> > +{
+> > +     struct imx_aux_reset_priv *priv =3D container_of(rcdev,
+> > +                                     struct imx_aux_reset_priv, rcdev)=
+;
+> > +     const struct imx_reset_data *data =3D priv->data;
+> > +     void __iomem *reg_addr =3D priv->base;
+> > +     const struct imx_reset_ctrl *ctrl;
+> > +     unsigned int mask, value, reg;
+> > +
+> > +     if (id >=3D data->rst_ctrl_num)
+> > +             return -EINVAL;
+> > +
+> > +     ctrl =3D &data->rst_ctrl[id];
+> > +
+> > +     /* assert not supported for this reset */
+> > +     if (ctrl->flags & ASSERT_NONE)
+> > +             return -EOPNOTSUPP;
+> > +
+> > +     mask =3D BIT(ctrl->assert_bit);
+> > +     value =3D (ctrl->flags & ASSERT_SET) ? mask : 0x0;
+> > +
+> > +     reg =3D readl(reg_addr + ctrl->assert_offset);
+> > +     writel(reg | value, reg_addr + ctrl->assert_offset);
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static int imx_aux_reset_deassert(struct reset_controller_dev *rcdev,
+> > +                               unsigned long id)
+> > +{
+> > +     struct imx_aux_reset_priv *priv =3D container_of(rcdev,
+> > +                                     struct imx_aux_reset_priv, rcdev)=
+;
+> > +     const struct imx_reset_data *data =3D priv->data;
+> > +     void __iomem *reg_addr =3D priv->base;
+> > +     const struct imx_reset_ctrl *ctrl;
+> > +     unsigned int mask, value, reg;
+> > +
+> > +     if (id >=3D data->rst_ctrl_num)
+> > +             return -EINVAL;
+> > +
+> > +     ctrl =3D &data->rst_ctrl[id];
+> > +
+> > +     /* deassert not supported for this reset */
+> > +     if (ctrl->flags & DEASSERT_NONE)
+> > +             return -EOPNOTSUPP;
+> > +
+> > +     mask =3D BIT(ctrl->deassert_bit);
+> > +     value =3D (ctrl->flags & DEASSERT_SET) ? mask : 0x0;
+> > +
+> > +     reg =3D readl(reg_addr + ctrl->deassert_offset);
+> > +     writel(reg | value, reg_addr + ctrl->deassert_offset);
+> > +
+> > +     return 0;
+> > +}
+> > +
+> > +static int imx_aux_reset_status(struct reset_controller_dev *rcdev,
+> > +                             unsigned long id)
+> > +{
+> > +     struct imx_aux_reset_priv *priv =3D container_of(rcdev,
+> > +                                     struct imx_aux_reset_priv, rcdev)=
+;
+> > +     const struct imx_reset_data *data =3D priv->data;
+> > +     void __iomem *reg_addr =3D priv->base;
+> > +     const struct imx_reset_ctrl *ctrl;
+> > +     unsigned int reset_state;
+> > +
+> > +     if (id >=3D data->rst_ctrl_num)
+> > +             return -EINVAL;
+> > +
+> > +     ctrl =3D &data->rst_ctrl[id];
+> > +
+> > +     /* status not supported for this reset */
+> > +     if (ctrl->flags & STATUS_NONE)
+> > +             return -EOPNOTSUPP;
+> > +
+> > +     reset_state =3D readl(reg_addr + ctrl->status_offset);
+> > +
+> > +     return !(reset_state & BIT(ctrl->status_bit)) =3D=3D
+> > +             !(ctrl->flags & STATUS_SET);
+> > +}
+> > +
+> > +static const struct reset_control_ops imx_aux_reset_ops =3D {
+> > +     .assert   =3D imx_aux_reset_assert,
+> > +     .deassert =3D imx_aux_reset_deassert,
+> > +     .status   =3D imx_aux_reset_status,
+> > +};
+> > +
+> > +static int imx_aux_reset_probe(struct auxiliary_device *adev,
+> > +                            const struct auxiliary_device_id *id)
+> > +{
+> > +     struct imx_reset_data *data =3D (struct imx_reset_data *)(id->dri=
+ver_data);
+> > +     struct imx_aux_reset_priv *priv;
+> > +     struct device *dev =3D &adev->dev;
+> > +
+> > +     priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> > +     if (!priv)
+> > +             return -ENOMEM;
+> > +
+> > +     priv->rcdev.owner     =3D THIS_MODULE;
+> > +     priv->rcdev.nr_resets =3D data->rst_ctrl_num;
+> > +     priv->rcdev.ops       =3D &imx_aux_reset_ops;
+> > +     priv->rcdev.of_node   =3D dev->parent->of_node;
+> > +     priv->rcdev.dev       =3D dev;
+> > +     priv->rcdev.of_reset_n_cells =3D 1;
+> > +     priv->base            =3D of_iomap(dev->parent->of_node, 0);
+> > +     priv->data            =3D data;
+> > +
+> > +     return devm_reset_controller_register(dev, &priv->rcdev);
+> > +}
+> > +
+> > +#define EARC  0x200
+> > +
+> > +static const struct imx_reset_ctrl imx8mp_audiomix_rst_ctrl[] =3D {
+> > +     {
+> > +             .assert_offset =3D EARC,
+> > +             .assert_bit =3D 0,
+> > +             .deassert_offset =3D EARC,
+> > +             .deassert_bit =3D 0,
+> > +             .flags  =3D ASSERT_CLEAR | DEASSERT_SET | STATUS_NONE,
+> > +     },
+> > +     {
+> > +             .assert_offset =3D EARC,
+> > +             .assert_bit =3D 1,
+> > +             .deassert_offset =3D EARC,
+> > +             .deassert_bit =3D 1,
+> > +             .flags  =3D ASSERT_CLEAR | DEASSERT_SET | STATUS_NONE,
+> > +     },
+> > +};
+> > +
+> > +static const struct imx_reset_data imx8mp_audiomix_rst_data =3D {
+> > +     .rst_ctrl =3D imx8mp_audiomix_rst_ctrl,
+> > +     .rst_ctrl_num =3D ARRAY_SIZE(imx8mp_audiomix_rst_ctrl),
+> > +};
+> > +
+> > +static const struct auxiliary_device_id imx_aux_reset_ids[] =3D {
+> > +     {
+> > +             .name =3D "clk_imx8mp_audiomix.reset",
+> > +             .driver_data =3D (kernel_ulong_t)&imx8mp_audiomix_rst_dat=
+a,
+> > +     },
+> > +     { }
+> > +};
+> > +MODULE_DEVICE_TABLE(auxiliary, imx_aux_reset_ids);
+> > +
+> > +static struct auxiliary_driver imx_aux_reset_driver =3D {
+> > +     .probe          =3D imx_aux_reset_probe,
+> > +     .id_table       =3D imx_aux_reset_ids,
+> > +};
+> > +
+> > +module_auxiliary_driver(imx_aux_reset_driver);
+> > +
+> > +MODULE_AUTHOR("Shengjiu Wang <shengjiu.wang@nxp.com>");
+> > +MODULE_DESCRIPTION("Freescale i.MX auxiliary reset driver");
+> > +MODULE_LICENSE("GPL");
+> > --
+> > 2.34.1
+> >
+> >
+> >
