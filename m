@@ -1,101 +1,99 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30EFF1448C0
-	for <linux-clk@vger.kernel.org>; Tue,  4 Jun 2024 09:54:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57CA314882B;
+	Tue,  4 Jun 2024 12:50:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717494898; cv=none; b=g44z1asR+z1i3WBhlw+jjggMKEI63MR3OpFSgvYatuM4BMYu2g29tJuvyobMRrU2KSKvzFQ8IMv947h1fyNOWJH+T0gFDioRJ/Bh69kUjNpo3W5dAewbOZweaBxqWg+cGH8EcqXmubl9x00rWHYBc4IVZwHT522J80Gl9Hlst9E=
+	t=1717505433; cv=none; b=EQee+zDe1W0JZkNm6wm+sVXxgpIGFyHNM8EWcuF959uwtB/fYrLRjjzY0f8/DLeC95JhVhlOz/RJT4WT0gSvNnAsE64uKwUMGlmRy9mbUMPEjw3Q4TN+K7YQ45G2cT7v4WIicoA8Pyi7O+AYP+RgGni34aahSJ2bzGdEqx0jRd8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717494898; c=relaxed/simple;
-	bh=X2ogPccdDTs13IL08Tf8Bkwcu0VIj1IFTLfvvR7wyB8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=bgQd8JZioohqagM401SiNT1FTVmbLCkvFFE1VQqHSx8QRem2h2E7iH/gcgJ4U3bm9VssEf9u3/Kdq5XtxC9v3dOa3M3ZMZp0AS01VsnRMY57s0DejGuXdiAIFJLkY4HgSWbvltvgjwLGydjJ/amOt8V/cCWQ7N0XX4RHNEhFx9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=LCLjCLVn; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1717505433; c=relaxed/simple;
+	bh=CLuSD10Auw3b45Rs7wDNc1Y+bI+7e6t/jKqHAQlZhBo=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=RBO9NZ4Dk82NMFN+kPHmM0J0RVUE3ZslteipjLwJCHwQ3anqAGwpbDpvPdMUp7IkuKRyCnWNq5RghDh68+0AacLnNrlpe8Vj3DxND5g1MgM0Hx6BQls5TRFv00gANYCRV/AHtzsQnB+mbA9Wkk+VIAz2BJ9UJ/eHSVYVoTh8AL0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NxMknA+X; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="LCLjCLVn"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42148c0cb1aso7970925e9.3
-        for <linux-clk@vger.kernel.org>; Tue, 04 Jun 2024 02:54:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1717494894; x=1718099694; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=eqG33BTlDFY1JTtCCY4mtc8hNwHOOmvwm9Q2v4L26W0=;
-        b=LCLjCLVne/CbZ0ImH+68XeDcA22TsbaROdqtIDs4S7haA/YRQXhm89ARnX8tJE8obx
-         LGzfjQhDMj/HXqGt/vaZsLGdycm4hc7bs1cDj5S5Jc2W6mbm4zkelVrVkIfe6mQtx533
-         tnHJ2NHpQMoiVZ7uem8cKXJUmhYkFUEX/YTOz697NC6gG0zZHbx+9CzlFgOnthRZZLHX
-         Fj3vZkFohH4yjVGZVJ2vpTNLSnyMPUhe/nsoApVkqTXkcwjgCgMWtLhsizQyolgchsVH
-         UMz9ooqCiy4eFGbmgf5ld4J8HcMtHbWvgg7b1jmUPG/T87Zx/OyGHasL3ARRlqtssriy
-         88LA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717494894; x=1718099694;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eqG33BTlDFY1JTtCCY4mtc8hNwHOOmvwm9Q2v4L26W0=;
-        b=EkqkxUCBQvnrABrYn3DTEd2cI2Aadkw+WKMbyJK3GdNso0OM2BevIe9RgzUo7mLBZt
-         R18U9DaaxNacv+Jevr8ef7jhhDzyAcqg+2H9dH+kU3zwS4mRE9yG99uHceefucaaXhZF
-         8+WF4jp1xSSJbDLI3Bn+m+Rrgf+CL8w2J25ndP4ru/aN3bSGa5FO1k4Cd7JUmJlc6p++
-         mpDijaoI+YCJjuHBLeH5v4PxFaYYHASzNBN1VIHOm2CCw1baPE18E3hBJ2RaVrgOuGsK
-         ckiGpJe6ACQzQFqjwq+cNnYrC2VGB/p7jlcFrYCuRfBHeC+7p0jWgLvaRZz87OnAl0DW
-         sXTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVCD2qCn0OqapdaB1vqZFkncuttaJxd4M+WCFaKY0xqtJ4uaezLxqnokwO0K3NFRCWiqPja7CI5Y8NQ+K/pCXrVUYCcNYqkRbqL
-X-Gm-Message-State: AOJu0YzPX51/hZbwNqT7GHxGtskLsbVRGtIYvDNzFdM5bo10p39pAytP
-	mrSGnVKtOU6tqHrTnVpLjXS3XkAgIJtX+yDj2Uj5DWtufxV6DQ13v9r+H7p0K/7o5nicd24t1fy
-	i
-X-Google-Smtp-Source: AGHT+IFuWoB4BQKHWujuBNN/tLqUteBjiY6L1E/xsaU6QhnEcgVTXAv++hch3aOpdGEUYNU8pLbWlw==
-X-Received: by 2002:a05:600c:46cb:b0:41a:a521:9699 with SMTP id 5b1f17b1804b1-4212e045342mr108000555e9.4.1717494894440;
-        Tue, 04 Jun 2024 02:54:54 -0700 (PDT)
-Received: from toaster.lan ([2a01:e0a:3c5:5fb1:60ea:fe6c:6bbc:4888])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4212f9b9ef1sm136678955e9.9.2024.06.04.02.54.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Jun 2024 02:54:53 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Xianwei Zhao <xianwei.zhao@amlogic.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kevin Hilman <khilman@baylibre.com>
-Subject: Re: [PATCH v9 0/5] Add C3 SoC PLLs and Peripheral clock
-Date: Tue,  4 Jun 2024 11:53:49 +0200
-Message-ID: <171749479841.590656.11363124184470308378.b4-ty@baylibre.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240522082727.3029656-1-xianwei.zhao@amlogic.com>
-References: <20240522082727.3029656-1-xianwei.zhao@amlogic.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NxMknA+X"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CCD6C3277B;
+	Tue,  4 Jun 2024 12:50:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717505430;
+	bh=CLuSD10Auw3b45Rs7wDNc1Y+bI+7e6t/jKqHAQlZhBo=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=NxMknA+X6kjkzdJE34TjJfT5bJm+unUH6RIKDrzTQ3rWpldei90v2NMZNZ3eUJB4b
+	 7n1NWjjUpL7oovMphxfKQCZdx1bMG5wiGuo7S1VuHhabzglGHjhoiqh7Bft+V5XLgq
+	 CQ6lyyCbDcscAzRNeMgLPXwQcGXbW38GJst6eTP9GL1YBJRdlytiZmGDE1KRO84n06
+	 GtWLn/d6usN3winasKQcnAThxqfpZlC4Gm6EIcTbTt9OQldb1kHh9/Pgk2Z8VCc7Nz
+	 uL8OsWtSCCQdMYHu7mZ5J3QY9pPJrQ3yYUsyPnWxUAnXP77e/7+RR6voWRRKRbZhTC
+	 WenSkITJvWQbw==
+Date: Tue, 04 Jun 2024 07:50:28 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Brendan Higgins <brendan.higgins@linux.dev>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Daniel Latypov <dlatypov@google.com>, Maxime Ripard <maxime@cerno.tech>, 
+ linux-clk@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, 
+ patches@lists.linux.dev, "Rafael J . Wysocki" <rafael@kernel.org>, 
+ kunit-dev@googlegroups.com, Christian Marangi <ansuelsmth@gmail.com>, 
+ Saravana Kannan <saravanak@google.com>, linux-kselftest@vger.kernel.org, 
+ David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
+ Conor Dooley <conor+dt@kernel.org>
+In-Reply-To: <20240603223811.3815762-8-sboyd@kernel.org>
+References: <20240603223811.3815762-1-sboyd@kernel.org>
+ <20240603223811.3815762-8-sboyd@kernel.org>
+Message-Id: <171750542807.3346.5048720218082629186.robh@kernel.org>
+Subject: Re: [PATCH v5 07/11] dt-bindings: test: Add single clk consumer
 
-Applied to clk-meson (v6.11/drivers), thanks!
 
-[1/5] dt-bindings: clock: add Amlogic C3 PLL clock controller
-      https://github.com/BayLibre/clk-meson/commit/0e6be855a96d
-[2/5] dt-bindings: clock: add Amlogic C3 SCMI clock controller support
-      https://github.com/BayLibre/clk-meson/commit/d309989a0a0a
-[3/5] dt-bindings: clock: add Amlogic C3 peripherals clock controller
-      https://github.com/BayLibre/clk-meson/commit/fc1c7f941c71
-[4/5] clk: meson: c3: add support for the C3 SoC PLL clock
-      https://github.com/BayLibre/clk-meson/commit/8a9a129dc565
-[5/5] clk: meson: c3: add c3 clock peripherals controller driver
-      https://github.com/BayLibre/clk-meson/commit/f06ac3ed04e8
+On Mon, 03 Jun 2024 15:38:04 -0700, Stephen Boyd wrote:
+> Describe a binding for a device that consumes a single clk in DT. This
+> will initially be used by a KUnit test to clk_get() the clk registered
+> by of_fixed_clk_setup() and test that it is setup properly.
+> 
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+> Cc: Conor Dooley <conor+dt@kernel.org>
+> Cc: Brendan Higgins <brendan.higgins@linux.dev>
+> Cc: David Gow <davidgow@google.com>
+> Cc: Rae Moar <rmoar@google.com>
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+> ---
+>  .../test/test,single-clk-consumer.yaml        | 34 +++++++++++++++++++
+>  1 file changed, 34 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/test/test,single-clk-consumer.yaml
+> 
 
-Best regards,
---
-Jerome
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/test/test,single-clk-consumer.example.dtb: /example-0/clock-consumer: failed to match any schema with compatible: ['test,clk-fixed-rate']
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240603223811.3815762-8-sboyd@kernel.org
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
