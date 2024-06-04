@@ -1,94 +1,138 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EC9214B061;
-	Tue,  4 Jun 2024 20:03:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1232783CD6;
+	Tue,  4 Jun 2024 20:19:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717531412; cv=none; b=ZqZ1qFX4qDGlV2aHaZaIHzUP3LeF0i8y6HPaZ/TWGTApZ2sd1iXe6hbbb+vLL5poC66ZH7jNoTELaeXt+rJfDq8tFaDWBu6IbxGJXxha/GJuhyF6ui2AFJvUjmrWIWWMZZQ7qhd3QW9P/6D2Yuj4QmDVUOpSteuCKbjrnRj2XHY=
+	t=1717532373; cv=none; b=M4+8Ck5syhW5JjxZo0MD/dMmyokvLD5Ez+flHECTFJWm2OB2DHPAMP1KD/NNEbb+8jhaH5OBqfuby5f8yzCiYvQuE2HryP3DwnTBi1FmvQlLg/fC5Ryn+bKm97W24R85M7e52Et1HdCDnR7o40CetaQf6anbxagPtoepTxXZd0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717531412; c=relaxed/simple;
-	bh=VCLwUoI/i0JqcxtBWc9VZ9k+0Uwoi+MZSL/jW1yYI90=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lc3PWUlWOJJMsljP0ospvgPyy3du9vAu3XACNJXf/OcUx3kOC3FdHZxjK9gIHZ+bQfHRkxZ5hs4/JqoITPI+1LUSLPn3zY3pY9RpPpPta8fSo2a3XVQMQg/Q7T+lVqIMr+3krKQLkhKUN2oQoz+9c4xsec743RkAmaaQsnj8dog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PhxrVaaA; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1717532373; c=relaxed/simple;
+	bh=xfed6Cfrm4TYAkaOK6QS9lthrhaOfXoUEarZpKNCE3o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O86/Wz19ukwpeu55oPnYZjjMcfwAhONTxD/b1vIvHyga+9YvbLMdhIsMW1NwnEB47wLfsxkp1qw4pU6pHk158OYhgKAyulkD/rfDQernhPWhh2JdMq4ta9skSQxtggG3QtBqMZt4FTUy7b7PwLUbtrKVUFBecfeTEOt0N8MysLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rG/dc3M1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PhxrVaaA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E991BC2BBFC;
-	Tue,  4 Jun 2024 20:03:31 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rG/dc3M1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B64E7C4AF08;
+	Tue,  4 Jun 2024 20:19:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717531412;
-	bh=VCLwUoI/i0JqcxtBWc9VZ9k+0Uwoi+MZSL/jW1yYI90=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PhxrVaaAL/SQLCbWCV8L5NlB9hKWEbEPzK2/sW4rxlhIq+KMW24Bx9K9uvgt7huId
-	 6VSh4oqp3UPYMb6mPQaGu8Sm3M9Ztcw7zuy8Px9HOFUvqEyQnntFm572ywlf8Q8Awy
-	 iDOkZdtSbfD1y3ViXbAA+9w3bdVlNsvrwwHPpn22EgRMM/nkhdFap6U6pHBnsNeRSc
-	 +YuFTeFyYQfH1BKjObU1PuywCfHXzaQ344ey/pEl4+kX1YZy9iYTCWYj7Mxkuz6Ac6
-	 JospFPvxH+bFjKN4lmumpwOxsdbhi2hNc8QToF+UbnKD8XEBevjEKq0SKLKqWAJWSG
-	 b0+M7zQx/rMFg==
-Date: Tue, 4 Jun 2024 15:03:29 -0500
-From: Rob Herring <robh@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Taniya Das <quic_tdas@quicinc.com>,
-	Konrad Dybcio <konrad.dybcio@somainline.org>,
-	Jonathan Marek <jonathan@marek.ca>,
-	Del Regno <angelogioacchino.delregno@somainline.org>,
-	Loic Poulain <loic.poulain@linaro.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/16] dt-bindings: clock: qcom: reference qcom-gcc.yaml
-Message-ID: <20240604200329.GA1295824-robh@kernel.org>
-References: <20240531-dt-bindings-qcom-gcc-v1-0-b37d49fe1421@linaro.org>
+	s=k20201202; t=1717532372;
+	bh=xfed6Cfrm4TYAkaOK6QS9lthrhaOfXoUEarZpKNCE3o=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=rG/dc3M1CG5owOIa1XY6ze4o7kfMnD+PsTfmDwTVwgwG9ydgIW+oS5cJAsUNTIpD0
+	 RN+NGNQnSwiE5VCW+UQLk08bqTGnghi4AeIOF8Q0b8M+7mp8FvyyfqQOo8YIPKMhOY
+	 p6dd/ECrPIqdLrjz1WedwmuDPjsIrLrOlco6IOWGzpTl0IFeJqJmGTfIigRkL/tmTJ
+	 2InR+eOV2BGWjOEHMD/Fgb+9qI0RdNYz/1a6I8hTVdrAWsb3MfbLqrn13bBBg86w/U
+	 P7z70Xzz4dLq/xsowpHr6jQ/PgIp1XqPdmDZRVUGcQb02/1sH8KIk9jXYAWAdchRy5
+	 gBMhcNXprTCXQ==
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52b8b638437so1700767e87.3;
+        Tue, 04 Jun 2024 13:19:32 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUzZ1HtoTgr3HdcMVxEmfmyshqPZbVPpVOWLMD7btqsYAZKBbee3qAFSP2vDIi2EmnNN7IrZPMn5utccImE+A316zECtx0q4oGUD1/9viOs85iGN0DaeiXzxcXoEBKqAro2IziXwJMibnc3wZbUqC0Ulc0XlNDF8J9CvrDnpYnKXWFG+EImY0PUAKgOfsbMk1GEBbpPFn1xxQUpVXGiG7/e0nBLxQ==
+X-Gm-Message-State: AOJu0YxRmgDAQ1kLfzhcBfZ94XxrIuId8nZvXMLFyqOaitliYsSIuceg
+	nd+kXONeTqt1B8I+8wk7mse2YE8mhNbLb1I1Rz8anx5dRm+RAsKRV2XUB398tE3qXAf1/F3AW7W
+	5gtl8+fxaXxbAssgN7k/o5cdaCw==
+X-Google-Smtp-Source: AGHT+IGG/ugXWVgGpCxPMAP/Ccqb4aZBz8y38s1TLqki2W99KFPyOdEm7ffLjdVe1PWTT7lBgxduFT+JvaciNq7bwps=
+X-Received: by 2002:a05:6512:1597:b0:52b:2031:4b93 with SMTP id
+ 2adb3069b0e04-52bab4ca9d7mr467209e87.4.1717532371055; Tue, 04 Jun 2024
+ 13:19:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240531-dt-bindings-qcom-gcc-v1-0-b37d49fe1421@linaro.org>
+References: <20240603223811.3815762-1-sboyd@kernel.org> <20240603223811.3815762-8-sboyd@kernel.org>
+ <20240604130526.GA12945-robh@kernel.org> <cce5a85e48f35f5ad5464a2443ca972e.sboyd@kernel.org>
+In-Reply-To: <cce5a85e48f35f5ad5464a2443ca972e.sboyd@kernel.org>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 4 Jun 2024 15:19:18 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+mGbW=4RbF+E1knvQco+5b1s7Tk8=2wyo9rT48Q=zkFQ@mail.gmail.com>
+Message-ID: <CAL_Jsq+mGbW=4RbF+E1knvQco+5b1s7Tk8=2wyo9rT48Q=zkFQ@mail.gmail.com>
+Subject: Re: [PATCH v5 07/11] dt-bindings: test: Add single clk consumer
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, patches@lists.linux.dev, 
+	kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org, 
+	devicetree@vger.kernel.org, Brendan Higgins <brendan.higgins@linux.dev>, 
+	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J . Wysocki" <rafael@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, Daniel Latypov <dlatypov@google.com>, 
+	Christian Marangi <ansuelsmth@gmail.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Maxime Ripard <maxime@cerno.tech>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, May 31, 2024 at 03:52:18PM +0200, Krzysztof Kozlowski wrote:
-> Hi,
-> 
-> Unify Qualcomm clock controllers by referencing qcom,gcc.yaml where
-> applicable.  Several existing bindings for these display/GPU/CAM clock
-> controllers already do it.
-> 
-> No external dependencies, this CAN be applied independently, but require
-> power-domain-cells in each binding, just like Dmitry's new set is doing.
-> 
-> https://lore.kernel.org/all/20240529-qcom-gdscs-v2-0-69c63d0ae1e7@linaro.org/
-> 
-> Best regards,
-> Krzysztof
-> 
-> ---
-> Krzysztof Kozlowski (16):
->       dt-bindings: clock: qcom,sm8450-videocc: reference qcom,gcc.yaml
->       dt-bindings: clock: qcom,videocc: reference qcom,gcc.yaml
->       dt-bindings: clock: qcom,dispcc-sc8280xp: reference qcom,gcc.yaml
->       dt-bindings: clock: qcom,dispcc-sm6350: reference qcom,gcc.yaml
->       dt-bindings: clock: qcom,dispcc-sm8x50: reference qcom,gcc.yaml
->       dt-bindings: clock: qcom,gpucc-sdm660: reference qcom,gcc.yaml
->       dt-bindings: clock: qcom,gpucc: reference qcom,gcc.yaml
->       dt-bindings: clock: qcom,msm8998-gpucc: reference qcom,gcc.yaml
->       dt-bindings: clock: qcom,qcm2290-dispcc: reference qcom,gcc.yaml
->       dt-bindings: clock: qcom,sc7180-dispcc: reference qcom,gcc.yaml
->       dt-bindings: clock: qcom,sc7280-dispcc: reference qcom,gcc.yaml
->       dt-bindings: clock: qcom,sdm845-dispcc: reference qcom,gcc.yaml
->       dt-bindings: clock: qcom,sm6115-dispcc: reference qcom,gcc.yaml
->       dt-bindings: clock: qcom,sm8450-dispcc: reference qcom,gcc.yaml
->       dt-bindings: clock: qcom,sm8550-dispcc: reference qcom,gcc.yaml
->       dt-bindings: clock: qcom,sm8450-gpucc: reference qcom,gcc.yaml
+On Tue, Jun 4, 2024 at 1:28=E2=80=AFPM Stephen Boyd <sboyd@kernel.org> wrot=
+e:
+>
+> Quoting Rob Herring (2024-06-04 06:05:26)
+> > On Mon, Jun 03, 2024 at 03:38:04PM -0700, Stephen Boyd wrote:
+> > > Describe a binding for a device that consumes a single clk in DT. Thi=
+s
+> > > will initially be used by a KUnit test to clk_get() the clk registere=
+d
+> > > by of_fixed_clk_setup() and test that it is setup properly.
+> > >
+> > > Cc: Rob Herring <robh@kernel.org>
+> > > Cc: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+> > > Cc: Conor Dooley <conor+dt@kernel.org>
+> > > Cc: Brendan Higgins <brendan.higgins@linux.dev>
+> > > Cc: David Gow <davidgow@google.com>
+> > > Cc: Rae Moar <rmoar@google.com>
+> > > Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+> > > ---
+> > >  .../test/test,single-clk-consumer.yaml        | 34 +++++++++++++++++=
+++
+> > >  1 file changed, 34 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/test/test,singl=
+e-clk-consumer.yaml
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/test/test,single-clk-c=
+onsumer.yaml b/Documentation/devicetree/bindings/test/test,single-clk-consu=
+mer.yaml
+> > > new file mode 100644
+> > > index 000000000000..8c384c48707d
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/test/test,single-clk-consumer=
+.yaml
+> > > @@ -0,0 +1,34 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/test/test,single-clk-consumer.yam=
+l#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: Test consumer of a single clock
+> > > +
+> > > +maintainers:
+> > > +  - Stephen Boyd <sboyd@kernel.org>
+> > > +
+> > > +description:
+> > > +  A consumer of a single clock used in tests.
+> > > +
+> > > +properties:
+> > > +  compatible:
+> > > +    const: test,single-clk-consumer
+> >
+> > I don't know if there's much value in defining bindings for tests. We
+> > could alternatively make 'test,' opt out of everything. There's already
+> > some support in dtschema for this with 'foo,'.
+> >
+> > I need something for the DT unittest as well.
+> >
+>
+> Ok. So I should drop this patch and the other one that adds a binding
+> for the fake clock provider?
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Yes.
+
+> And replace it with something that makes
+> the test vendor prefix opt out of all checking? How is that done?  Some
+> patch to dtschema directly?
+
+Yes, but I just added it for you.
+
+Rob
