@@ -1,379 +1,161 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7611B8F6A;
-	Wed,  5 Jun 2024 11:27:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC7A01957FC;
+	Wed,  5 Jun 2024 12:40:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717586824; cv=none; b=Yhc4hfdSFCTOb8Nqs9z2+BI7FsltUzjeYT3+h1w08ko114B5cy2FODzJnX+nea5ZEGjwVFKitom2o54aAKfJPu24drei3Zzw7/SSLMM2bwT3y+/O32g8xwnJWMEUriHY6ItNLRH//LKsVZlO5778lazqstaVhFk0KsOyzmdQr00=
+	t=1717591247; cv=none; b=mkv/oPb9D6DngXhTCDxISGZ10kywUiBeaVjgmHzU5OC6knmK1C7qPohPVkKddLWXGF44kObADX3zQJEecYNEDoE9k4yr9oFDdQoS1j3RhjhYyyTsBuVXg27+fosbUZ8QnPXRlLjNRBxZ1jb/lgWkmFTPPeU1HUcxO1Gt/TAhQSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717586824; c=relaxed/simple;
-	bh=skiWVXg+Okzk4A++N93qbkjreN4bf9JsKHGqSNOzYYA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u+JErh78YWQcqbKC6qk/DM53QYfA4NJSASCLKq6zwtYOJQ6PbZIN8GspWrNf7t9vGYMB8uoOnkHjgCKRzlT3ZgO2qJLx0hbJFTRv96rNhlpgC421pQTHhE+p6znC91v1Oqko31J1+sfV4mMia/lA49T+egbOLT6NT0HyPorJ7Xs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=VP6LUCe5; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="VP6LUCe5"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1717586820;
-	bh=skiWVXg+Okzk4A++N93qbkjreN4bf9JsKHGqSNOzYYA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VP6LUCe5bRNTMWZTwBbHPGfmabEr81OCRyal/+/LVhjloEOiQULYH4uuaeyLCKQ7w
-	 INX/R4MPDqGFqn6WO1JT2fGrQ0fLY0nhRsHE8YdQ9Qy9ajQCp2x+DvYQkb6rvbKFyl
-	 OwlzXnx1EqMyb7SGduqbpVMPv+0idfhEfb1S2nwIgKpmrxdM0AmgBz8fxQTLaLs/sz
-	 v0Lkxvx8PjubMwqRf+Oa+4gxqOT2enromTv6b+rgR9OI6Ci4FctfJyGoGX0K1bx+RY
-	 GLVryRRg1ytYNefulUSXrB4lsociMsW1/ST4bbr6wn9ZQCRT9jnQCGAzVQkOd21lGE
-	 IKVy19/KVL7YA==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id B5B403781139;
-	Wed,  5 Jun 2024 11:26:59 +0000 (UTC)
-Message-ID: <042a11f9-0c96-4aa8-8f52-6edf4c949497@collabora.com>
-Date: Wed, 5 Jun 2024 13:26:59 +0200
+	s=arc-20240116; t=1717591247; c=relaxed/simple;
+	bh=L9f0nPu86ClISH3h8JDLKArTlRwI6HQQN1TeZVB8Ql4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aX2t168ba5rLNjPAVGq+05yudDUYD/ESVDHc/A21ivmNlw4Qbr+ko58rOtY9tjuptHC355dozt6YUd6z3ejT36MLuepM6/K1xJAYTJ4EySpkvE6ja9NcRngTYLTbBazLySrGpU3kRkOHsFGXs5JAlR7/jOUB8GYWk8y+IhzZDIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-62a2424ec50so71433237b3.3;
+        Wed, 05 Jun 2024 05:40:45 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717591243; x=1718196043;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QA2P5Xr8Q0KSzKZJIkj8jUkBjIWrqYG6SJ0zJfpivIQ=;
+        b=M8+ci1mQX+JyvI7/9DGyS2SKkRGVNO8n6MnqDCetO94TRsX6hiPd+os6PnG+MLssoG
+         NhHozFQ7XbOjO0X/zvOTpOmmAYMm7DlZOrj9AOWTzDyrgqb+dTZEwickWFC+5eZscFFD
+         lbkO5kRWJtcZQF0zw+BQI1ZC6xH583ygRlnZoV0eBLqSy5+5t8pgpWg+yEEpHR9U2cZy
+         Nq3zVfVePhvC9EM2t8lKTCpESffBJgGkBYQWFQK4o7nafd7zPsAHjuBIyOUB3n1s7P/0
+         gm6FQrGbMq+sYIcJ6mk71B0v5h/oDg89ls8Kvb6Osk1o6iSccF92feYfVpunN+wKw4UE
+         mq0g==
+X-Forwarded-Encrypted: i=1; AJvYcCUAb7a+UAYeR8JxK5Q8b6p5bgpvitOlySJ9+uFyyWr+6PsowZabRzHlzAQtlLTULnHiHjqBEPVwjrjXvCvVKwnpG13PeNP7XUX9R24IqGXQPN7/ZnYt1WpD8Hc7yHxm2u2knyMa1BZBiO4rLYX/C0bLCHMUys5LRNjetHpEJeTPjb+VlBKKycoZHBVIDzH3aLGHHimRUpN5h3fiUyyJfU8AHHEE+TNC
+X-Gm-Message-State: AOJu0YyWoW6448jYaLzHmMABcbLkkzjeIHLk3VIaEkGSLFTnIjo2jobu
+	/N/5YqBYLtY9j7/z12JsqIH3sFewwCJB7k/iNIwbX4Zff9FjFFE1rwfx3pJ6
+X-Google-Smtp-Source: AGHT+IEeyo/5wHU6sVa9oOhmt9I8O5qBu+xsNVmh3RLnsPOaTESN6RyU2uwVNomGzFmS4jhrfirk0g==
+X-Received: by 2002:a81:b717:0:b0:62a:530:1e53 with SMTP id 00721157ae682-62cbb504e14mr21958887b3.30.1717591241387;
+        Wed, 05 Jun 2024 05:40:41 -0700 (PDT)
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com. [209.85.219.172])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-62c766850aesm21918417b3.102.2024.06.05.05.40.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Jun 2024 05:40:41 -0700 (PDT)
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-dfa727d47c1so5171939276.0;
+        Wed, 05 Jun 2024 05:40:41 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU9LbJI1sms3UgoOn0dxdCnEpuOw/+h3VmdjpLIgd4hm8a3C4mo6uUsinzrigqiJdscFjMht8KrvSfrjBVjmYAc4DElNfWHCow/GajuMjm52N6o6x87LFfQ4Dk294NDbPw5MwC7ZCEroGjJ1L2SecxPAZxn30fqwNP+VTRlonHP0K2RsrJ2932b1nTxqs2Bz+0h66cPfJCzal8U6Wv/IDwjOsOzj7zm
+X-Received: by 2002:a25:b20f:0:b0:dfa:b28b:a0c with SMTP id
+ 3f1490d57ef6-dfacac53bf8mr2604814276.26.1717591239815; Wed, 05 Jun 2024
+ 05:40:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/6] clk: mediatek: Add mt8173-mfgtop driver
-To: Chen-Yu Tsai <wenst@chromium.org>
-Cc: Frank Binns <frank.binns@imgtec.com>, Matt Coster
- <matt.coster@imgtec.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- dri-devel@lists.freedesktop.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240530083513.4135052-1-wenst@chromium.org>
- <20240530083513.4135052-3-wenst@chromium.org>
- <5a5842d7-adad-410b-bac2-9e5cb03ae18c@collabora.com>
- <CAGXv+5E5zFWVi+QmZj+mMb5jRfv138kz1FQyXiuzpe5Zz2KbZQ@mail.gmail.com>
- <CAGXv+5GHJXh8xnpK6+crfYaUNXWV+W7s8sUopK+=9KhfcuCHeA@mail.gmail.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <CAGXv+5GHJXh8xnpK6+crfYaUNXWV+W7s8sUopK+=9KhfcuCHeA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20240524082800.333991-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240524082800.333991-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CAMuHMdWzZP2d6kRw1oTkMYgzS46J68gR_bg14==HCvVpkp0sJA@mail.gmail.com>
+ <CA+V-a8uxwiof-hLPRpYCnDkVs8tj+-+v8GQLSSkMFUP13cuoXQ@mail.gmail.com>
+ <CAMuHMdWEKCB3XdwQeK_MOUm3wyrhLtVXE+96vAVLv2iurmGbJQ@mail.gmail.com> <CA+V-a8s3J8PzmA9DqoazdAoC2WRdBASvWTr35FFzfKnJ7yWayA@mail.gmail.com>
+In-Reply-To: <CA+V-a8s3J8PzmA9DqoazdAoC2WRdBASvWTr35FFzfKnJ7yWayA@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 5 Jun 2024 14:40:28 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVNHSf6fN756GgNqNsYDDm2v6p+KCTZYDBx08M3213kkg@mail.gmail.com>
+Message-ID: <CAMuHMdVNHSf6fN756GgNqNsYDDm2v6p+KCTZYDBx08M3213kkg@mail.gmail.com>
+Subject: Re: [PATCH 2/4] dt-bindings: clock: Add R9A09G057 CPG Clock and Reset Definitions
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Magnus Damm <magnus.damm@gmail.com>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Il 05/06/24 10:39, Chen-Yu Tsai ha scritto:
-> On Thu, May 30, 2024 at 6:16 PM Chen-Yu Tsai <wenst@chromium.org> wrote:
->>
->> On Thu, May 30, 2024 at 5:59 PM AngeloGioacchino Del Regno
->> <angelogioacchino.delregno@collabora.com> wrote:
->>>
->>> Il 30/05/24 10:35, Chen-Yu Tsai ha scritto:
->>>> The MFG (GPU) block on the MT8173 has a small glue layer, named MFG_TOP
->>>> in the datasheet, that contains clock gates, some power sequence signal
->>>> delays, and other unknown registers that get toggled when the GPU is
->>>> powered on.
->>>>
->>>> The clock gates are exposed as clocks provided by a clock controller,
->>>> while the power sequencing bits are exposed as one singular power domain.
->>>>
->>>> Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
->>>> ---
->>>>    drivers/clk/mediatek/Kconfig             |   9 +
->>>>    drivers/clk/mediatek/Makefile            |   1 +
->>>>    drivers/clk/mediatek/clk-mt8173-mfgtop.c | 240 +++++++++++++++++++++++
->>>>    3 files changed, 250 insertions(+)
->>>>    create mode 100644 drivers/clk/mediatek/clk-mt8173-mfgtop.c
->>>>
->>>> diff --git a/drivers/clk/mediatek/Kconfig b/drivers/clk/mediatek/Kconfig
->>>> index 70a005e7e1b1..9e279c739f1c 100644
->>>> --- a/drivers/clk/mediatek/Kconfig
->>>> +++ b/drivers/clk/mediatek/Kconfig
->>>> @@ -500,6 +500,15 @@ config COMMON_CLK_MT8173_IMGSYS
->>>>        help
->>>>          This driver supports MediaTek MT8173 imgsys clocks.
->>>>
->>>> +config COMMON_CLK_MT8173_MFGTOP
->>>> +     tristate "Clock and power driver for MediaTek MT8173 mfgtop"
->>>> +     depends on COMMON_CLK_MT8173
->>>> +     default COMMON_CLK_MT8173
->>>> +     select PM_GENERIC_DOMAINS
->>>> +     select PM_GENERIC_DOMAINS_OF
->>>> +     help
->>>> +       This driver supports MediaTek MT8173 mfgtop clocks and power domain.
->>>> +
->>>>    config COMMON_CLK_MT8173_MMSYS
->>>>           tristate "Clock driver for MediaTek MT8173 mmsys"
->>>>           depends on COMMON_CLK_MT8173
->>>> diff --git a/drivers/clk/mediatek/Makefile b/drivers/clk/mediatek/Makefile
->>>> index eeccfa039896..fdd3a76e12a1 100644
->>>> --- a/drivers/clk/mediatek/Makefile
->>>> +++ b/drivers/clk/mediatek/Makefile
->>>> @@ -77,6 +77,7 @@ obj-$(CONFIG_COMMON_CLK_MT8167_VDECSYS) += clk-mt8167-vdec.o
->>>>    obj-$(CONFIG_COMMON_CLK_MT8173) += clk-mt8173-apmixedsys.o clk-mt8173-infracfg.o \
->>>>                                   clk-mt8173-pericfg.o clk-mt8173-topckgen.o
->>>>    obj-$(CONFIG_COMMON_CLK_MT8173_IMGSYS) += clk-mt8173-img.o
->>>> +obj-$(CONFIG_COMMON_CLK_MT8173_MFGTOP) += clk-mt8173-mfgtop.o
->>>>    obj-$(CONFIG_COMMON_CLK_MT8173_MMSYS) += clk-mt8173-mm.o
->>>>    obj-$(CONFIG_COMMON_CLK_MT8173_VDECSYS) += clk-mt8173-vdecsys.o
->>>>    obj-$(CONFIG_COMMON_CLK_MT8173_VENCSYS) += clk-mt8173-vencsys.o
->>>> diff --git a/drivers/clk/mediatek/clk-mt8173-mfgtop.c b/drivers/clk/mediatek/clk-mt8173-mfgtop.c
->>>> new file mode 100644
->>>> index 000000000000..85fa7a7453ed
->>>> --- /dev/null
->>>> +++ b/drivers/clk/mediatek/clk-mt8173-mfgtop.c
->>>> @@ -0,0 +1,240 @@
->>>> +// SPDX-License-Identifier: GPL-2.0-only
->>>> +/*
->>>> + * Copyright (c) 2024 Google LLC
->>>> + * Author: Chen-Yu Tsai <wenst@chromium.org>
->>>> + *
->>>> + * Based on driver in downstream ChromeOS v5.15 kernel.
->>>> + *
->>>> + * Copyright (c) 2014 MediaTek Inc.
->>>> + * Author: Chiawen Lee <chiawen.lee@mediatek.com>
->>>> + */
->>>> +
->>>> +#include <dt-bindings/clock/mt8173-clk.h>
->>>> +
->>>> +#include <linux/bitfield.h>
->>>> +#include <linux/clk.h>
->>>> +#include <linux/mfd/syscon.h>
->>>> +#include <linux/module.h>
->>>> +#include <linux/of.h>
->>>> +#include <linux/platform_device.h>
->>>> +#include <linux/pm_domain.h>
->>>> +#include <linux/pm_runtime.h>
->>>> +#include <linux/regmap.h>
->>>> +
->>>> +#include "clk-gate.h"
->>>> +#include "clk-mtk.h"
->>>> +
->>>> +static const struct mtk_gate_regs mfg_cg_regs = {
->>>> +     .sta_ofs = 0x0000,
->>>> +     .clr_ofs = 0x0008,
->>>> +     .set_ofs = 0x0004,
->>>> +};
->>>> +
->>>> +#define GATE_MFG(_id, _name, _parent, _shift, _flags)        \
->>>> +             GATE_MTK_FLAGS(_id, _name, _parent, &mfg_cg_regs, _shift, &mtk_clk_gate_ops_setclr, _flags)
->>>
->>> Extra tabulation: please fix
->>
->> One tab instead of two? OK.
->>
->>>> +
->>>> +/* TODO: The block actually has dividers for the core and mem clocks. */
->>>> +static const struct mtk_gate mfg_clks[] = {
->>>> +     GATE_MFG(CLK_MFG_AXI, "mfg_axi", "axi_mfg_in_sel", 0, CLK_SET_RATE_PARENT),
->>>> +     GATE_MFG(CLK_MFG_MEM, "mfg_mem", "mem_mfg_in_sel", 1, CLK_SET_RATE_PARENT),
->>>> +     GATE_MFG(CLK_MFG_G3D, "mfg_g3d", "mfg_sel", 2, CLK_SET_RATE_PARENT),
->>>> +     GATE_MFG(CLK_MFG_26M, "mfg_26m", "clk26m", 3, 0),
->>>> +};
->>>> +
->>>> +static const struct mtk_clk_desc mfg_desc = {
->>>> +     .clks = mfg_clks,
->>>> +     .num_clks = ARRAY_SIZE(mfg_clks),
->>>> +};
->>>> +
->>>> +struct mt8173_mfgtop_data {
->>>> +     struct clk_hw_onecell_data *clk_data;
->>>> +     struct regmap *regmap;
->>>> +     struct generic_pm_domain genpd;
->>>> +     struct of_phandle_args parent_pd, child_pd;
->>>> +     struct clk *clk_26m;
->>>> +};
->>>> +
->>>> +static const struct of_device_id of_match_clk_mt8173_mfgtop[] = {
->>>> +     { .compatible = "mediatek,mt8173-mfgtop", .data = &mfg_desc },
->>>> +     { /* sentinel */ }
->>>> +};
->>>> +MODULE_DEVICE_TABLE(of, of_match_clk_mt8173_mfgtop);
->>>
->>> Please move of_match_clk_mt8173_mfgtop before clk_mt8173_mfgtop_drv for consistency
->>> with all the other clock drivers.
->>
->> Ack.
->>
->>>> +
->>>> +/* Delay count in clock cycles */
->>>> +#define MFG_ACTIVE_POWER_CON0        0x24
->>>> + #define RST_B_DELAY_CNT     GENMASK(7, 0)   /* pwr_rst_b de-assert delay during power-up */
->>>> + #define CLK_EN_DELAY_CNT    GENMASK(15, 8)  /* CLK_DIS deassert delay during power-up */
->>>> + #define CLK_DIS_DELAY_CNT   GENMASK(23, 16) /* CLK_DIS assert delay during power-down */
->>>
->>> The reason why I had EVT_FORCE_ABORT and ACTIVE_PWRCTL_EN in my driver is to
->>> document that we're keeping the event force abort disabled and, more importantly,
->>> we are keeping the "active power control" feature disabled.
->>>
->>> Please, add those two - or at least the ACTIVE_PWRCTL_EN - to keep that documented,
->>> or this information will be lost for sure.
->>> If in the future the ACTIVE_PWRCTL feature will become usable, it's going to be
->>> just a 30 seconds change, as the info is already there.
->>
->> OK.
->>
->>>> +
->>>> +#define MFG_ACTIVE_POWER_CON1        0x28
->>>> + #define PWR_ON_S_DELAY_CNT  GENMASK(7, 0)   /* pwr_on_s assert delay during power-up */
->>>> + #define ISO_DELAY_CNT               GENMASK(15, 8)  /* ISO assert delay during power-down */
->>>> + #define ISOOFF_DELAY_CNT    GENMASK(23, 16) /* ISO de-assert delay during power-up */
->>>> + #define RST__DELAY_CNT              GENMASK(31, 24) /* pwr_rsb_b assert delay during power-down */
->>>> +
->>>> +static int clk_mt8173_mfgtop_power_on(struct generic_pm_domain *domain)
->>>> +{
->>>> +     struct mt8173_mfgtop_data *data = container_of(domain, struct mt8173_mfgtop_data, genpd);
->>>> +
->>>> +     /* drives internal power management */
->>>> +     clk_prepare_enable(data->clk_26m);
->>>> +
->>>> +     /* Power on/off delays for various signals */
->>>> +     regmap_write(data->regmap, MFG_ACTIVE_POWER_CON0,
->>>> +                  FIELD_PREP(RST_B_DELAY_CNT, 77) |
->>>> +                  FIELD_PREP(CLK_EN_DELAY_CNT, 61) |
->>>> +                  FIELD_PREP(CLK_DIS_DELAY_CNT, 60));
->>>
->>> I get that this is kinda odd to read, but still...
->>>
->>> FIELD_PREP(CLK_DIS_DELAY_CNT, 60) |
->>> FIELD_PREP(ACTIVE_PWRCTL_EN, 0));
->>>
->>> ...please :-)
->>
->> Sure.
->>
->>>> +     regmap_write(data->regmap, MFG_ACTIVE_POWER_CON1,
->>>> +                  FIELD_PREP(PWR_ON_S_DELAY_CNT, 11) |
->>>> +                  FIELD_PREP(ISO_DELAY_CNT, 68) |
->>>> +                  FIELD_PREP(ISOOFF_DELAY_CNT, 69) |
->>>> +                  FIELD_PREP(RST__DELAY_CNT, 77));
->>>> +
->>>> +     /* Magic numbers related to core switch sequence and delays */
->>>> +     regmap_write(data->regmap, 0xe0, 0x7a710184);
->>>> +     regmap_write(data->regmap, 0xe4, 0x835f6856);
->>>> +     regmap_write(data->regmap, 0xe8, 0x002b0234);
->>>> +     regmap_write(data->regmap, 0xec, 0x80000000);
->>>> +     regmap_write(data->regmap, 0xa0, 0x08000000);
->>>
->>> Is there any way to retrieve information about what those registers are?
->>
->> I asked. They said the project was too long ago, and they could only
->> figure out that it had something to do with core switch sequencing and
->> delays between each core, which is what I put in the comment there.
->>
->>>> +
->>>> +     return 0;
->>>> +}
->>>> +
->>>> +static int clk_mt8173_mfgtop_power_off(struct generic_pm_domain *domain)
->>>> +{
->>>> +     struct mt8173_mfgtop_data *data = container_of(domain, struct mt8173_mfgtop_data, genpd);
->>>> +
->>>> +     /* Magic numbers related to core switch sequence and delays */
->>>> +     regmap_write(data->regmap, 0xec, 0);
->>>> +
->>>> +     /* drives internal power management */
->>>> +     clk_disable_unprepare(data->clk_26m);
->>>> +
->>>> +     return 0;
->>>> +}
->>>> +
->>>> +static int clk_mt8173_mfgtop_probe(struct platform_device *pdev)
->>>> +{
->>>> +     struct device *dev = &pdev->dev;
->>>> +     struct device_node *node = dev->of_node;
->>>> +     struct mt8173_mfgtop_data *data;
->>>> +     int ret;
->>>> +
->>>> +     data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
->>>> +     if (!data)
->>>> +             return -ENOMEM;
->>>> +
->>>> +     platform_set_drvdata(pdev, data);
->>>> +
->>>> +     data->clk_data = mtk_devm_alloc_clk_data(dev, ARRAY_SIZE(mfg_clks));
->>>> +     if (!data->clk_data)
->>>> +             return -ENOMEM;
->>>> +
->>>> +     /* MTK clock gates also uses regmap */
->>>> +     data->regmap = device_node_to_regmap(node);
->>>> +     if (IS_ERR(data->regmap))
->>>> +             return dev_err_probe(dev, PTR_ERR(data->regmap), "Failed to get regmap\n");
->>>> +
->>>> +     data->child_pd.np = node;
->>>> +     data->child_pd.args_count = 0;
->>>> +     ret = of_parse_phandle_with_args(node, "power-domains", "#power-domain-cells", 0,
->>>> +                                      &data->parent_pd);
->>>> +     if (ret)
->>>> +             return dev_err_probe(dev, ret, "Failed to parse power domain\n");
->>>> +
->>>> +     devm_pm_runtime_enable(dev);
->>>> +     /*
->>>> +      * Do a pm_runtime_resume_and_get() to workaround a possible
->>>> +      * deadlock between clk_register() and the genpd framework.
->>>> +      */
->>>> +     ret = pm_runtime_resume_and_get(dev);
->>>> +     if (ret) {
->>>> +             dev_err_probe(dev, ret, "Failed to runtime resume device\n");
->>>> +             goto put_of_node;
->>>> +     }
->>>> +
->>>> +     ret = mtk_clk_register_gates(dev, node, mfg_clks, ARRAY_SIZE(mfg_clks),
->>>> +                                  data->clk_data);
->>>> +     if (ret) {
->>>> +             dev_err_probe(dev, ret, "Failed to register clock gates\n");
->>>> +             goto put_pm_runtime;
->>>> +     }
->>>> +
->>>> +     data->clk_26m = clk_hw_get_clk(data->clk_data->hws[CLK_MFG_26M], "26m");
->>>> +     if (IS_ERR(data->clk_26m)) {
->>>> +             dev_err_probe(dev, PTR_ERR(data->clk_26m), "Failed to get 26 MHz clock\n");
->>>> +             goto unregister_clks;
->>>> +     }
->>>> +
->>>> +     ret = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, data->clk_data);
->>>> +     if (ret) {
->>>> +             dev_err_probe(dev, ret, "Failed to add clk OF provider\n");
->>>> +             goto put_26m_clk;
->>>> +     }
->>>> +
->>>> +     data->genpd.name = "mfg_apm";
->>>
->>> "mfg-apm" or "mfg-pwr" please!
->>
->> Ack.
-> 
-> On second thought, mfg-top seems like a better name, since it matches
-> the datasheet.
-> 
+Hi Prabhakar,
 
-Yes, I definitely agree. Let's go for mfg-top.
+On Thu, May 30, 2024 at 12:00=E2=80=AFPM Lad, Prabhakar
+<prabhakar.csengg@gmail.com> wrote:
+> On Thu, May 30, 2024 at 8:12=E2=80=AFAM Geert Uytterhoeven <geert@linux-m=
+68k.org> wrote:
+> > On Wed, May 29, 2024 at 11:10=E2=80=AFPM Lad, Prabhakar
+> > <prabhakar.csengg@gmail.com> wrote:
+> > > On Mon, May 27, 2024 at 10:18=E2=80=AFAM Geert Uytterhoeven
+> > > <geert@linux-m68k.org> wrote:
+> > > > On Fri, May 24, 2024 at 10:29=E2=80=AFAM Prabhakar <prabhakar.cseng=
+g@gmail.com> wrote:
+> > > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > > >
+> > > > > Define RZ/V2H(P) (R9A09G057) Clock Pulse Generator module clock o=
+utputs
+> > > > > (CPG_CLK_ON* registers), and reset definitions (CPG_RST_* registe=
+rs)
+> > > > > in Section 4.4.2 and 4.4.3 ("List of Clock/Reset Signals") of the=
+ RZ/V2H(P)
+> > > > > Hardware User's Manual (Rev.1.01, Feb. 2024).
+> > > > >
+> > > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas=
+.com>
+> > > >
+> > > > > --- /dev/null
+> > > > > +++ b/include/dt-bindings/clock/r9a09g057-cpg.h
+> > > > > @@ -0,0 +1,644 @@
+> > > > > +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > > > + *
+> > > > > + * Copyright (C) 2024 Renesas Electronics Corp.
+> > > > > + */
+> > > > > +#ifndef __DT_BINDINGS_CLOCK_R9A09G057_CPG_H__
+> > > > > +#define __DT_BINDINGS_CLOCK_R9A09G057_CPG_H__
+> > > > > +
+> > > > > +#include <dt-bindings/clock/renesas-cpg-mssr.h>
+> > > > > +
+> > > > > +/* Clock list */
+> > > >
+> > > > No distinction between Core and Module clocks?
+> > > >
+> > > I was in two minds here. Would you prefer clocks with no CGC support
+> > > to be listed as core clocks?
+> >
+> > What's CGC support? (Obviously I need some more reading before
+> > I can tackle the rest of this series :-)
+> >
+> I meant the clocks which cannot be controlled by the CPG_CLKON_m
+> register. Shall I add them as CORE clocks?
 
-Cheers!
+If you don't need to refer to these clocks from DT, there is no need to add
+them to the bindings header file.
 
-> ChenYu
-> 
->>> Everything else looks good.
->>>
->>> Thanks for taking care of that, I started this work way too much time ago and
->>> realistically I wouldn't have been able to finish it due to time constraints.
->>>
->>> It's great to see that *finally* we can get some GPU upstream on this old SoC.
->>> As its CPUs are really slow, LLVMPipe is quite unusable from a UX perspective
->>> hence its only big issue was the lack of 3D HW acceleration.
->>
->> I think there's still more work on the GPU driver side. I was digging
->> through the mailing list to find ways to get it running, and evidently
->> it doesn't fully support zink yet.
->>
->>> This makes machines embedding this SoC usable, and that's simply awesome.
->>
->> I'll give the patches a week to simmer while I go work on some
->> other stuff.
->>
->> ChenYu
+> > My comments are due to the bindings saying:
+> >
+> >   '#clock-cells':
+> >     description: |
+> >       - For CPG core clocks, the two clock specifier cells must be "CPG=
+_CORE"
+> >         and a core clock reference, as defined in
+> >         <dt-bindings/clock/r9a09g057-cpg.h>,
+> >       - For module clocks, the two clock specifier cells must be "CPG_M=
+OD" and
+> >         a module number, as defined in <dt-bindings/clock/r9a09g057-cpg=
+.h>.
+> >     const: 2
+> >
+> > while the header file does not make it obvious whether a clock needs
+> > CPG_CORE or CPG_MOD.
+> >
+> I was intending to drop the CPG_CORE description in the next version.
 
+OK.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
