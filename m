@@ -1,192 +1,129 @@
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA6CB1946A0
-	for <linux-clk@vger.kernel.org>; Wed,  5 Jun 2024 08:25:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D301049629;
+	Wed,  5 Jun 2024 08:28:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717575959; cv=none; b=fzS9SH2pQU2r3VkKaQ2fO4E9VYIXtanmEZmWhVmKkEP75xRbfzHmm0cFpXv9FTDickP2+d8MqyDZmiOAVaNhd3vOKXVYUZCLrHXKnRWXVlTtBUKa45ueXo1URT2Ga4OB9vJYlU5Cugs9z/EAkADmR7I3BgU+23PEOTuq575MOaU=
+	t=1717576141; cv=none; b=JEqelsoNzh+MDwnNyrnJuCXUXb53qfpvrGLRDYvv6yfM6A7Ss0XUnhYxWTw8em4MxeZmL5PyxEk456uer7DG0GGmABmbZh6E614yds0r2HXasewMNEaTrmY6iOsWvlP5twa1Giso/b9S9GHrBPceyndIvgRdQoM6mWf8qCJFfQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717575959; c=relaxed/simple;
-	bh=ZGckZDXYZoBdYKxgR4JQZaNiWYJn8XxdnxbJ0v6qLEA=;
+	s=arc-20240116; t=1717576141; c=relaxed/simple;
+	bh=geEdGynOyucE3kHrS5qgwHTeebHnMtwLbCVySSNh2pg=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oUZmOO5UztCnwIPim0EIKqXZHSkEWCPiDNHmonudeJeFA81sfTMXKG0FihBS8pcFQn5bzbT4XenaIZMXm+eIoqxSTOXyC9XnTvdXTcW9Fcyg1btACaH/7GneZb1vVf+VdFRgWEyC6kv/PCxil/Ymu8AuXgWYvUWfA3swTvm136c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=kr+LCE5W; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="kr+LCE5W"
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52b8d483a08so5602765e87.1
-        for <linux-clk@vger.kernel.org>; Wed, 05 Jun 2024 01:25:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1717575956; x=1718180756; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KTYgiHqEKqI6DY4xUoSYEerbolGYT7sqcHeeQXdfKvE=;
-        b=kr+LCE5W69vzIYoovALFjPU8M1t/n5j3jHw9QFGk/3yW0p4L1MyF2/+K6I8H2m+FkC
-         8E4NLY9fx9gzwwIrfZ6/eBkGGbCLiPldR6BYqXeDpdMfID7VGjbWc8d23Gm6Sj3bio4U
-         7XeORRdpkId5UFFNIwZSle5Rt9gbX5q8qeqsA=
+	 To:Cc:Content-Type; b=pyHFDCJn4WHMYfPNVJhgsJx01N14X8FM/KFV+zhCBxgXMKu0N93hvmXySAzkHnUg5fwaeQqfIPt4zE6uakrg4ZgBO1PGuNtaggyNLvahjDSffRHTdwAn86SQLYpiWCpzpJQi5p+dSZ/hnKuqg1SjMQDbleuA8KLAUDfkF6uqeUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-62a2424ed00so70205577b3.1;
+        Wed, 05 Jun 2024 01:28:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717575956; x=1718180756;
+        d=1e100.net; s=20230601; t=1717576138; x=1718180938;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=KTYgiHqEKqI6DY4xUoSYEerbolGYT7sqcHeeQXdfKvE=;
-        b=PaK6p0JenrTmgioxD47uh4u3a4xLiZVbVYiHnjxMpOerzL07T0pf6oLsXBrqSaUGsa
-         AJgYGbLLAOBHD1Gtl2WEg3oZ4JtASsjLWZFIx+jEt9gCPSEo0N+eSH7PsvXh9v3xBkFO
-         yF3WQZZfBK+7TuZSh04FReS4osf3HGOKS03gg5x4RoFX20Mo8WDeXWThc39VZhYDDdWP
-         /dTbXMyqcDATpKi+EKzPf9WjPPgje5LqpoOih2DgicaXxyUQoK1UoC31ctCl5jXEcD23
-         9/8MfuA1KjW7ZV9QzGnhvDsjxtvsbh1RTsx69zDUh4ogHvfV7NcP4i6MVSbMORYaTUcD
-         f7FA==
-X-Forwarded-Encrypted: i=1; AJvYcCWhli7vIfg0Jlqyjr2hAH9NKfQunMIUgeggqXzrDlpjDK2+EUvaFDzhsyTJC/1ep2glXlck4PEph2lkV2BHDUtJeOSrb/whvkTa
-X-Gm-Message-State: AOJu0YxOCa2Jt3ggi7gqztLHx9z9tcKS7mSB3wnObV+mq/z0tHCFRUyf
-	+v1ZjIQW1/z/asSnV4YM9pyUPN/Anl846lPJQO8crIIwA1eaeJhVrvbL0Z8FQZemdHFgVM/a+DK
-	z6b4O9qDcJk2ZyxVj+TjuHNBr17NkTYlwSjyN
-X-Google-Smtp-Source: AGHT+IEz6cLO0SYpIuAYgl0GIp5y8JoS82uXIYv/gjnD7flwuduPkyTGJYNwDh582C9DE0cOUwen7uBXY5qAmo/W3wY=
-X-Received: by 2002:a05:6512:3082:b0:52b:423b:ade2 with SMTP id
- 2adb3069b0e04-52bab4b85b8mr1349765e87.3.1717575955882; Wed, 05 Jun 2024
- 01:25:55 -0700 (PDT)
+        bh=Hfd+FJyK15D+Es2iPmRAY8yc8/FtthQxewg+TITEWvc=;
+        b=cNXucTOVa3Uu/jrFsNxJHtk8tgE9LbePs/wUWaLy41Jeurda6Zh8mbunTIRx/SX1ej
+         NV++QPYR4Ak/YuGwtqzL77Y/RVS5Jo04f0UX1+NcbbSvRtSUrBrSMR6FLbcaPH8zqPzc
+         jfUNCNa6hP3wChcs2lCyHkxVWPkrAqymCmKfSwwDRmOJcWU9hHJF0tIcBApMa6/92za8
+         ZuFRFfPfuYZuxM92l9aYlPea30JW+MARLervdneJ/8IXxMskwmifaK/jgewghPGR7ytm
+         xalTUaqURCjhQsW8JF0iphrE8o7lWiHUSpqWMRs7aM9JIFv5PeP+fv7wTKkjOxrII0p/
+         yP2w==
+X-Forwarded-Encrypted: i=1; AJvYcCU8dgsmTwAZuuXg9wfBKEzS4/dyU8e9pYkqHyrrB/KkAvBw2uAHoqxGdZhJ4ZJBTvQypmrxY3OCSn03/xHwBgz/JnVdgpf5IdkvmdNzyzEXK+aYRqT1TLJYs3JsmXmcXrz9m5I9B1iK1bMEbqcy3IsQ/8ubktnma1aqAbSRNn4QGHEZDbaT1a+Amh2C3bHwFHD179V7PHMwoW5dCDfpKZCapvB9jrII
+X-Gm-Message-State: AOJu0Yy0Hdd8STxjj8l45GnnQGcmghUKLVUWNLQfEIK065IBhJUaTtdn
+	5RM2JPS4vqBuRz+uzoymWvWyznMB0vdcWwDwbejfH8/C3d5pnzb0sLNT+Tbp
+X-Google-Smtp-Source: AGHT+IFBf4tLiYdz6BArfyyARKZJ5SLf3QzbTVCrQNpEt950uAcKds0beYnueJOc5BdrnB/LljXMvw==
+X-Received: by 2002:a0d:dd88:0:b0:618:1034:f4ef with SMTP id 00721157ae682-62cbb4d6396mr18356797b3.16.1717576138512;
+        Wed, 05 Jun 2024 01:28:58 -0700 (PDT)
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com. [209.85.219.178])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-62c765e715esm21584027b3.56.2024.06.05.01.28.58
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Jun 2024 01:28:58 -0700 (PDT)
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-dfa4876a5bbso5981409276.2;
+        Wed, 05 Jun 2024 01:28:58 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWsnEgw+vTQWWRHdYIWA4523CerSrM8Z/n/tIgUggDz2qhjkV1/OgQWdKbtTrfq3DUjmn0swhyeSqbT2wDrEqrE0dNAkkDBG2E+4KSeAkDHjY1KZbNAmSoV9/gYT+b/VMm0+mM21frChtj3GHqwxyB/wKAeU/H46g//lmP0GWJj5D/8eOMEHxjMy3CObsxJ8C87WliTV42X/eJJ0YTCfLQXLWTkyq7e
+X-Received: by 2002:a05:6902:4cc:b0:df4:da84:195e with SMTP id
+ 3f1490d57ef6-dfacac47b76mr1560204276.22.1717576138150; Wed, 05 Jun 2024
+ 01:28:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240530083513.4135052-1-wenst@chromium.org> <20240530083513.4135052-6-wenst@chromium.org>
- <4f20f130-c9ab-43ea-a758-e29d7be10db0@collabora.com>
-In-Reply-To: <4f20f130-c9ab-43ea-a758-e29d7be10db0@collabora.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Wed, 5 Jun 2024 16:25:44 +0800
-Message-ID: <CAGXv+5GuGz-KahcbKtuyUA1-59sMWSL0QucOdp8FPoQWrc9YUQ@mail.gmail.com>
-Subject: Re: [PATCH 5/6] arm64: dts: mediatek: mt8173: Fix MFG_ASYNC power
- domain clock
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Frank Binns <frank.binns@imgtec.com>, Matt Coster <matt.coster@imgtec.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, dri-devel@lists.freedesktop.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
+References: <20240524082800.333991-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240524082800.333991-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdU7+O-+v=2V83AjQmTWyGy_a-AHgU_nPMDHnVUtYt89iQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdU7+O-+v=2V83AjQmTWyGy_a-AHgU_nPMDHnVUtYt89iQ@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 5 Jun 2024 10:28:45 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVs1SuVeWGWEbkO68pR-ZGjqAhwjLT7UoR85j7udVbb1A@mail.gmail.com>
+Message-ID: <CAMuHMdVs1SuVeWGWEbkO68pR-ZGjqAhwjLT7UoR85j7udVbb1A@mail.gmail.com>
+Subject: Re: [PATCH 2/4] dt-bindings: clock: Add R9A09G057 CPG Clock and Reset Definitions
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Magnus Damm <magnus.damm@gmail.com>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Greg KH <gregkh@linuxfoundation.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, May 30, 2024 at 6:03=E2=80=AFPM AngeloGioacchino Del Regno
-<angelogioacchino.delregno@collabora.com> wrote:
->
-> Il 30/05/24 10:35, Chen-Yu Tsai ha scritto:
-> > The MFG_ASYNC domain, which is likely associated to the whole MFG block=
-,
-> > currently specifies clk26m as its domain clock. This is bogus, since th=
-e
-> > clock is an external crystal with no controls. Also, the MFG block has
-> > a independent CLK_TOP_AXI_MFG_IN_SEL clock, which according to the bloc=
-k
-> > diagram, gates access to the hardware registers. Having this one as the
-> > domain clock makes much more sense. This also fixes access to the MFGTO=
-P
-> > registers.
+Hi Prabhakar,
+
+CC Greg
+
+On Tue, Jun 4, 2024 at 5:46=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68k=
+.org> wrote:
+> On Fri, May 24, 2024 at 10:29=E2=80=AFAM Prabhakar <prabhakar.csengg@gmai=
+l.com> wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > >
-> > Change the MFG_ASYNC domain clock to CLK_TOP_AXI_MFG_IN_SEL.
-> >
-> > Fixes: 8b6562644df9 ("arm64: dts: mediatek: Add mt8173 power domain con=
-troller")
-> > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
+> > Define RZ/V2H(P) (R9A09G057) Clock Pulse Generator module clock outputs
+> > (CPG_CLK_ON* registers), and reset definitions (CPG_RST_* registers)
+> > in Section 4.4.2 and 4.4.3 ("List of Clock/Reset Signals") of the RZ/V2=
+H(P)
+> > Hardware User's Manual (Rev.1.01, Feb. 2024).
 >
-> Just one question... what happens if there's no GPU support at all and th=
-is
-> power domain gets powered off?
+> Hmm, I must have a slightly different Rev. 1.01 ;-)
 >
-> I expect the answer to be "nothing", so I'm preventively giving you my
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> > --- /dev/null
+> > +++ b/include/dt-bindings/clock/r9a09g057-cpg.h
 
-Well it's powered off by default. Just double checked, and without the fina=
-l
-patch:
+> > +/* Clock list */
+>
+> [...]
+>
+> > +#define R9A09G057_USB30_CLK_RESERVED0                  197
+> > +#define R9A09G057_USB30_CLK_RESERVED1                  198
+> > +#define R9A09G057_USB30_CLK_RESERVED2                  199
+> > +#define R9A09G057_USB30_CLK_RESERVED3                  200
 
-# cat /sys/kernel/debug/pm_genpd/pm_genpd_summary
-domain                          status          children
-            performance
-    /device                                             runtime status
----------------------------------------------------------------------------=
--------------------
-mfg                             off-0
-            0
-mfg_2d                          off-0
-            0
-                                                mfg
-mfg_async                       off-0
-            0
-                                                mfg_2d
+[...]
 
-And with the last patch but with the powervr removed:
+It has been brought to my attention these had been named *RESERVED*
+deliberately, to avoid disclosing their meaning.
+As these definitions are part of the DT ABI, and the DTS writer has to
+relate the names to the actual clocks in the datasheet, and to the names
+used in the DT bindings for the consumer devices (if ever upstreamed),
+I find it hard to accept these for upstream inclusion as-is.
 
-# cat /sys/kernel/debug/pm_genpd/pm_genpd_summary
-domain                          status          children
-            performance
-    /device                                             runtime status
----------------------------------------------------------------------------=
--------------------
-mfg_apm                         off-0
-            0
-mfg                             off-0
-            0
-                                                mfg_apm
-    /devices/platform/soc/13fff000.clock-controller     suspended
-            0
-mfg_2d                          off-0
-            0
-                                                mfg
-mfg_async                       off-0
-            0
-                                                mfg_2d
-
-Things seem to work OK. I can SSH in, and the framebuffer console on the sc=
-reen
-works fine.
-
-
-Note that accessing the regmap through debugfs doesn't do much good. regmap
-doesn't handle runtime PM. And the syscon regmap isn't even tied to a
-struct device. Dumping the regmap through debugfs while the power domain
-is off gives all zeroes, likely due to bus isolation.
-
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
-ora.com>
-
+What do other people think?
 Thanks!
 
-ChenYu
+Gr{oetje,eeting}s,
 
-> ....but if I'm wrong and the answer isn't exactly "nothing", then I still=
- agree
-> with this commit, but only after removing the Fixes tag.
->
-> Cheers,
-> Angelo
->
-> > ---
-> >   arch/arm64/boot/dts/mediatek/mt8173.dtsi | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/arch/arm64/boot/dts/mediatek/mt8173.dtsi b/arch/arm64/boot=
-/dts/mediatek/mt8173.dtsi
-> > index 3458be7f7f61..136b28f80cc2 100644
-> > --- a/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-> > +++ b/arch/arm64/boot/dts/mediatek/mt8173.dtsi
-> > @@ -497,7 +497,7 @@ power-domain@MT8173_POWER_DOMAIN_USB {
-> >                               };
-> >                               mfg_async: power-domain@MT8173_POWER_DOMA=
-IN_MFG_ASYNC {
-> >                                       reg =3D <MT8173_POWER_DOMAIN_MFG_=
-ASYNC>;
-> > -                                     clocks =3D <&clk26m>;
-> > +                                     clocks =3D <&topckgen CLK_TOP_AXI=
-_MFG_IN_SEL>;
-> >                                       clock-names =3D "mfg";
-> >                                       #address-cells =3D <1>;
-> >                                       #size-cells =3D <0>;
->
->
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
