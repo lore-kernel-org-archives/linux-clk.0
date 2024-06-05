@@ -1,152 +1,275 @@
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1620B4965B;
-	Wed,  5 Jun 2024 21:03:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A205B2AE7F;
+	Wed,  5 Jun 2024 23:47:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717621419; cv=none; b=dkr1ZicjD56KcmxBt/nZ2/ueZjkOD3ixpiK3EXE1cDnzuGwW2CIEMzQRrMXsoEsQ3+st9Z44j/dzlS60E5ZExyBo7x+XfGUA+ftp8vTpmmvryAfLMoO4lc8bTkLnWrhPaznz8krlwu3tU4LTHCUBqDR8/gXhzHhqNXfucdDn1PY=
+	t=1717631243; cv=none; b=T/VZVQYr8KfR4EfyVMmirv0n9mN/AsVxyKnwrZFlWL9a3mBnxAe5BDVC9RkiKhzk+TrV7mKR5kI5NzavQI3QVjRpY17VSqxXnkTmgYamZGnQfZI/zDL4Lnq2disaRDmSwAC8oCWBgJXGpf1ATTAHBY6w/hMIl4hQ9fAO5vGWjTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717621419; c=relaxed/simple;
-	bh=eh9IzC/sXudftroa0oNPCl+CeaVwJW9OIwLv2VcI54Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tfxTygizntlryoDzjAWK8vX1d8cY8KmIoguirSBm/DKWw3V+d6qk8NjeS6bEB3ymJ6b6sN7PYPqRiQRF0u6UymImzWARqp0WTef3k/bNujlFlU8m+wiJS+eUo2rKk8+Ij5vJeV0gsuj6BwUWMfquCAax0Y1NcJoPO5R+ovTozBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T+w0OdEU; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1717631243; c=relaxed/simple;
+	bh=Yh7e+MZK1NlEEhfWUcUENcGAh0vhZ1kB0W2n+WAnn1g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iMW+G4Q0Haw/u2xiK8ezHQr86/gj6qE+N8z0bVN4NznoSvB7kB4gVHmChIyngGBOjF+XtrIXeqNdmH5fGdEMEvfuQ0sgWJF2GXHtvb49CixShNq/1vQI6hgtxt7RbKOHY3KK1TWZEHL+X7w8BjoGPNbEBrF7dHu8/yXvEkU74Po=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T9wOINd0; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T+w0OdEU"
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-42158db02c3so3589385e9.2;
-        Wed, 05 Jun 2024 14:03:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717621416; x=1718226216; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wxkQybmLe5sPp9htKJDI8bCr/w4I0AK0t4E3wZxsO9s=;
-        b=T+w0OdEUmtYDHIOI9sZ6DFb8xYQp6NA/zgQidfkWMsyYvDmyUQtK/9oHyMNWnS7Dcz
-         S7PYlZP73N3AgIg15FW1VheaoqiZlQDBLT8MxwfcbRNDl1yZFfK0z/fHM7bcNXLP5zwx
-         f33sReIWd20rdDAfwTCJJ/bZ674VtaKbPF+JVaGaGgIw6/BeQa8C2L2RhMLJVRRbuMgZ
-         ysNp5jrt7uXtPOg7Uxl2kMK5fHdbzKY65af7AiQZ9VxX9HoNfepXK12P/CI492GFudk7
-         v1U72/0vzyt2ubA2PKZWJBX9qdaeNAatDoxjA9kFepkY47GJd1Dy6Lg1UQfTvc6Nt2Go
-         DuKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717621416; x=1718226216;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wxkQybmLe5sPp9htKJDI8bCr/w4I0AK0t4E3wZxsO9s=;
-        b=sA61ZDYzCFSvXAXirY+0t0V+N6bW3e4ubfy8UVLzORnnAZxbsMa7Zr39xQcZaiH0Ju
-         aCmPHWHS5c2gy2NsAjg9P5cuhoCOTctDu5AxLunu7Hi5hd/vdMxTEcfVIJ7IkGOtz7G3
-         b7C0sLZ5Zo27wyvK3SqvstKAcSe+lpq+y2q5JX4Mn4xVznLkhvwyTBbdiavdA2fVBVNn
-         /8ZrPZUTz67zgvs0yACSn9KUbvPwR25yZ/L4BewtJeoTfpmDnYA/I6Z/sryAoEfjTeEV
-         9s6/GcuaS365IfSGMIvRQzIu7luJhwhTCFv4siQanwdCUrLkow2wU+UlUnPloG/exVIa
-         c6lA==
-X-Forwarded-Encrypted: i=1; AJvYcCX6sh5BsO30nsOO+6+h2Epys1/yfSh0HQpbtObfq/UCIRrRqkDQMbtaWxDr7qOumd1L7ZIcc+9TBPRBEVfwwWj0tN8IGfMp8at6njd+2Uxgg36BEtaPJm+3WM0dF+2kuFugwpYQjywBnda5UPhc3L0M3R08pvyG3dmWaXkfWfSOHbvh7Q==
-X-Gm-Message-State: AOJu0Ywh/fTQ4oPS/5gXDQgKgtqrtE0xKBkgtHGIU1XWXbvvS6KI0xSL
-	j1ea5pi7lmuZCMJIa6PPcO750DM3p1Oxaepwd8sN7lwVFV53zlD/6wHL
-X-Google-Smtp-Source: AGHT+IEQ5Bvq496WQdI6NCNSKRLJfGNuhXeduOQUjAa/vxuh86+qvv8BXGs75zaVxP88iejgFvqqSw==
-X-Received: by 2002:a05:600c:3550:b0:41b:fc3a:f1ef with SMTP id 5b1f17b1804b1-42156339013mr28592605e9.33.1717621416317;
-        Wed, 05 Jun 2024 14:03:36 -0700 (PDT)
-Received: from ?IPV6:2a02:810b:f40:4600:5211:58fe:dfef:c48c? ([2a02:810b:f40:4600:5211:58fe:dfef:c48c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215810242fsm33579345e9.12.2024.06.05.14.03.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Jun 2024 14:03:35 -0700 (PDT)
-Message-ID: <9da22443-b5c3-4fbc-8cb0-d6bebab55da4@gmail.com>
-Date: Wed, 5 Jun 2024 23:03:34 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T9wOINd0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBA99C2BD11;
+	Wed,  5 Jun 2024 23:47:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717631243;
+	bh=Yh7e+MZK1NlEEhfWUcUENcGAh0vhZ1kB0W2n+WAnn1g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=T9wOINd0EQxN3A7+sl/amyoBdEKWAPiNYbYDP/UM0nzDUIB9RZtk3/3omKpnMp/d2
+	 kEXQiDghGj1O29YJ50YIm6M3QmkgSOgPd/ytxOjMq/xFAe4Yv2JwMxh+ky1kv9VoNk
+	 3uM5b7zN4735K02XRMaw8OfnGeZmLYicw1RZBwlssdvl2HtTKaBilCTYYrS8jhO6XK
+	 cOEGTQGqQerA7DgTtMBtoC6U3VrVDreB4grGjV6KjPouTUjJxyUD0Xm975oIgU0TQ0
+	 D8fuia0s12Nr9GN8fSXFpIuv5jJzrJMGJdhKqL/aKfQKQdNicxEHo+ise2QwybExFf
+	 khHfCXTeE5nXQ==
+Date: Wed, 5 Jun 2024 17:47:20 -0600
+From: Rob Herring <robh@kernel.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+	patches@lists.linux.dev, kunit-dev@googlegroups.com,
+	linux-kselftest@vger.kernel.org, devicetree@vger.kernel.org,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Daniel Latypov <dlatypov@google.com>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Ripard <maxime@cerno.tech>
+Subject: Re: [PATCH v5 05/11] of: Add a KUnit test for overlays and test
+ managed APIs
+Message-ID: <20240605234720.GA3441001-robh@kernel.org>
+References: <20240603223811.3815762-1-sboyd@kernel.org>
+ <20240603223811.3815762-6-sboyd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] clk: rockchip: rk3128: Drop CLK_NR_CLKS usage
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20240605205209.232005-1-knaerzche@gmail.com>
-Content-Language: en-US
-From: Alex Bee <knaerzche@gmail.com>
-In-Reply-To: <20240605205209.232005-1-knaerzche@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240603223811.3815762-6-sboyd@kernel.org>
 
-Hi,
-sorry for the noise - not sure what went wrong here.
-Just resend v2:
-https://lore.kernel.org/all/20240605210049.232284-1-knaerzche@gmail.com/
-
-Alex
-Am 05.06.24 um 22:51 schrieb Alex Bee:
-> Similar to
-> commit 2dc66a5ab2c6 ("clk: rockchip: rk3588: fix CLK_NR_CLKS usage")
-> this drops CLK_NR_CLKS usage from the clock driver and instead uses the
-> rockchip_clk_find_max_clk_id helper which was introduced for that purpose.
+On Mon, Jun 03, 2024 at 03:38:02PM -0700, Stephen Boyd wrote:
+> Test the KUnit test managed overlay APIs. Confirm that platform devices
+> are created and destroyed properly. This provides us confidence that the
+> test managed APIs work correctly and can be relied upon to provide tests
+> with fake platform devices and device nodes via overlays compiled into
+> the kernel image.
 > 
-> Signed-off-by: Alex Bee <knaerzche@gmail.com>
+> Cc: Rob Herring <robh@kernel.org>
+> Cc: Saravana Kannan <saravanak@google.com>
+> Cc: Daniel Latypov <dlatypov@google.com>
+> Cc: Brendan Higgins <brendan.higgins@linux.dev>
+> Cc: David Gow <davidgow@google.com>
+> Cc: Rae Moar <rmoar@google.com>
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 > ---
->   drivers/clk/rockchip/clk-rk3128.c | 20 ++++++++++++++++----
->   1 file changed, 16 insertions(+), 4 deletions(-)
+>  drivers/of/.kunitconfig            |   1 +
+>  drivers/of/Kconfig                 |  10 +++
+>  drivers/of/Makefile                |   1 +
+>  drivers/of/kunit_overlay_test.dtso |   9 +++
+>  drivers/of/overlay_test.c          | 116 +++++++++++++++++++++++++++++
+>  5 files changed, 137 insertions(+)
+>  create mode 100644 drivers/of/kunit_overlay_test.dtso
+>  create mode 100644 drivers/of/overlay_test.c
 > 
-> diff --git a/drivers/clk/rockchip/clk-rk3128.c b/drivers/clk/rockchip/clk-rk3128.c
-> index d076b7971f33..40e0e4556d59 100644
-> --- a/drivers/clk/rockchip/clk-rk3128.c
-> +++ b/drivers/clk/rockchip/clk-rk3128.c
-> @@ -569,18 +569,22 @@ static const char *const rk3128_critical_clocks[] __initconst = {
->   	"sclk_timer5",
->   };
->   
-> -static struct rockchip_clk_provider *__init rk3128_common_clk_init(struct device_node *np)
-> +static struct rockchip_clk_provider *__init rk3128_common_clk_init(struct device_node *np,
-> +								   unsigned long soc_nr_clks)
->   {
->   	struct rockchip_clk_provider *ctx;
-> +	unsigned long common_nr_clks;
->   	void __iomem *reg_base;
->   
-> +	common_nr_clks = rockchip_clk_find_max_clk_id(common_clk_branches,
-> +						      ARRAY_SIZE(common_clk_branches)) + 1;
->   	reg_base = of_iomap(np, 0);
->   	if (!reg_base) {
->   		pr_err("%s: could not map cru region\n", __func__);
->   		return ERR_PTR(-ENOMEM);
->   	}
->   
-> -	ctx = rockchip_clk_init(np, reg_base, CLK_NR_CLKS);
-> +	ctx = rockchip_clk_init(np, reg_base, max(common_nr_clks, soc_nr_clks));
->   	if (IS_ERR(ctx)) {
->   		pr_err("%s: rockchip clk init failed\n", __func__);
->   		iounmap(reg_base);
-> @@ -609,8 +613,12 @@ static struct rockchip_clk_provider *__init rk3128_common_clk_init(struct device
->   static void __init rk3126_clk_init(struct device_node *np)
->   {
->   	struct rockchip_clk_provider *ctx;
-> +	unsigned long soc_nr_clks;
->   
-> -	ctx = rk3128_common_clk_init(np);
-> +	soc_nr_clks = rockchip_clk_find_max_clk_id(rk3126_clk_branches,
-> +						   ARRAY_SIZE(rk3126_clk_branches)) + 1;
+> diff --git a/drivers/of/.kunitconfig b/drivers/of/.kunitconfig
+> index 5a8fee11978c..4c53d2c7a275 100644
+> --- a/drivers/of/.kunitconfig
+> +++ b/drivers/of/.kunitconfig
+> @@ -1,3 +1,4 @@
+>  CONFIG_KUNIT=y
+>  CONFIG_OF=y
+>  CONFIG_OF_KUNIT_TEST=y
+> +CONFIG_OF_OVERLAY_KUNIT_TEST=y
+> diff --git a/drivers/of/Kconfig b/drivers/of/Kconfig
+> index dd726c7056bf..0e2d608c3e20 100644
+> --- a/drivers/of/Kconfig
+> +++ b/drivers/of/Kconfig
+> @@ -107,6 +107,16 @@ config OF_OVERLAY
+>  	  While this option is selected automatically when needed, you can
+>  	  enable it manually to improve device tree unit test coverage.
+>  
+> +config OF_OVERLAY_KUNIT_TEST
+> +	tristate "Device Tree overlay KUnit tests" if !KUNIT_ALL_TESTS
+> +	depends on KUNIT
+> +	default KUNIT_ALL_TESTS
+> +	select OF_OVERLAY
+> +	help
+> +	  This option builds KUnit unit tests for the device tree overlay code.
 > +
-> +	ctx = rk3128_common_clk_init(np, soc_nr_clks);
->   	if (IS_ERR(ctx))
->   		return;
->   
-> @@ -627,8 +635,12 @@ CLK_OF_DECLARE(rk3126_cru, "rockchip,rk3126-cru", rk3126_clk_init);
->   static void __init rk3128_clk_init(struct device_node *np)
->   {
->   	struct rockchip_clk_provider *ctx;
-> +	unsigned long soc_nr_clks;
+> +	  If unsure, say N here, but this option is safe to enable.
 > +
-> +	soc_nr_clks = rockchip_clk_find_max_clk_id(rk3128_clk_branches,
-> +						   ARRAY_SIZE(rk3128_clk_branches)) + 1;
->   
-> -	ctx = rk3128_common_clk_init(np);
-> +	ctx = rk3128_common_clk_init(np, soc_nr_clks);
->   	if (IS_ERR(ctx))
->   		return;
->   
+>  config OF_NUMA
+>  	bool
+>  
+> diff --git a/drivers/of/Makefile b/drivers/of/Makefile
+> index 2ae909adde49..abd9c578343b 100644
+> --- a/drivers/of/Makefile
+> +++ b/drivers/of/Makefile
+> @@ -21,5 +21,6 @@ endif
+>  
+>  obj-$(CONFIG_KUNIT) += of_kunit_helpers.o
+>  obj-$(CONFIG_OF_KUNIT_TEST) += of_test.o
+> +obj-$(CONFIG_OF_OVERLAY_KUNIT_TEST) += overlay_test.o kunit_overlay_test.dtbo.o
+>  
+>  obj-$(CONFIG_OF_UNITTEST) += unittest-data/
+> diff --git a/drivers/of/kunit_overlay_test.dtso b/drivers/of/kunit_overlay_test.dtso
+> new file mode 100644
+> index 000000000000..85f20b4b4c16
+> --- /dev/null
+> +++ b/drivers/of/kunit_overlay_test.dtso
+> @@ -0,0 +1,9 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/dts-v1/;
+> +/plugin/;
+> +
+> +&{/} {
+> +	kunit-test {
+> +		compatible = "test,empty";
+> +	};
+> +};
+> diff --git a/drivers/of/overlay_test.c b/drivers/of/overlay_test.c
+> new file mode 100644
+> index 000000000000..9a8083c3a659
+> --- /dev/null
+> +++ b/drivers/of/overlay_test.c
+> @@ -0,0 +1,116 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * KUnit tests for device tree overlays
+> + */
+> +#include <linux/device/bus.h>
+> +#include <linux/kconfig.h>
+> +#include <linux/of.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/platform_device.h>
+> +
+> +#include <kunit/of.h>
+> +#include <kunit/test.h>
+> +
+> +static const char * const kunit_node_name = "kunit-test";
+> +static const char * const kunit_compatible = "test,empty";
+> +
+> +/* Test that of_overlay_apply_kunit() adds a node to the live tree */
+> +static void of_overlay_apply_kunit_apply(struct kunit *test)
+> +{
+> +	struct device_node *np;
+> +
+> +	KUNIT_ASSERT_EQ(test, 0,
+> +			of_overlay_apply_kunit(test, kunit_overlay_test));
+> +
+> +	np = of_find_node_by_name(NULL, kunit_node_name);
+> +	KUNIT_EXPECT_NOT_ERR_OR_NULL(test, np);
+> +	of_node_put(np);
+> +}
+> +
+> +/*
+> + * Test that of_overlay_apply_kunit() creates platform devices with the
+> + * expected device_node
+> + */
+> +static void of_overlay_apply_kunit_platform_device(struct kunit *test)
+> +{
+> +	struct platform_device *pdev;
+> +	struct device_node *np;
+> +
+> +	KUNIT_ASSERT_EQ(test, 0,
+> +			of_overlay_apply_kunit(test, kunit_overlay_test));
+> +
+> +	np = of_find_node_by_name(NULL, kunit_node_name);
+> +	of_node_put_kunit(test, np);
 
+Moving target, but we now have of_node_put() cleanups. Would that work 
+here instead?
+
+> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, np);
+> +
+> +	pdev = of_find_device_by_node(np);
+> +	KUNIT_EXPECT_NOT_ERR_OR_NULL(test, pdev);
+> +	if (pdev)
+> +		put_device(&pdev->dev);
+> +}
+> +
+> +static int of_overlay_bus_match_compatible(struct device *dev, const void *data)
+> +{
+> +	return of_device_is_compatible(dev->of_node, data);
+> +}
+> +
+> +/* Test that of_overlay_apply_kunit() cleans up after the test is finished */
+> +static void of_overlay_apply_kunit_cleanup(struct kunit *test)
+> +{
+> +	struct kunit fake;
+> +	struct platform_device *pdev;
+> +	struct device *dev;
+> +	struct device_node *np;
+> +
+> +	if (!IS_ENABLED(CONFIG_OF_OVERLAY))
+> +		kunit_skip(test, "requires CONFIG_OF_OVERLAY");
+> +	if (!IS_ENABLED(CONFIG_OF_EARLY_FLATTREE))
+> +		kunit_skip(test, "requires CONFIG_OF_EARLY_FLATTREE for root node");
+> +
+> +	kunit_init_test(&fake, "fake test", NULL);
+> +	KUNIT_ASSERT_EQ(test, fake.status, KUNIT_SUCCESS);
+> +
+> +	KUNIT_ASSERT_EQ(test, 0,
+> +			of_overlay_apply_kunit(&fake, kunit_overlay_test));
+> +
+> +	np = of_find_node_by_name(NULL, kunit_node_name);
+> +	of_node_put(np); /* Not derefing 'np' after this */
+> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, np);
+> +
+> +	pdev = of_find_device_by_node(np);
+
+Don't you need to hold a ref on np until here?
+
+
+> +	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, pdev);
+> +	put_device(&pdev->dev); /* Not derefing 'pdev' after this */
+> +
+> +	/* Remove overlay */
+> +	kunit_cleanup(&fake);
+> +
+> +	/* The node and device should be removed */
+> +	np = of_find_node_by_name(NULL, kunit_node_name);
+> +	KUNIT_EXPECT_PTR_EQ(test, NULL, np);
+> +	of_node_put(np);
+> +
+> +	dev = bus_find_device(&platform_bus_type, NULL, kunit_compatible,
+> +			      of_overlay_bus_match_compatible);
+> +	KUNIT_EXPECT_PTR_EQ(test, NULL, dev);
+> +	put_device(dev);
+> +}
+> +
+> +static struct kunit_case of_overlay_apply_kunit_test_cases[] = {
+> +	KUNIT_CASE(of_overlay_apply_kunit_apply),
+> +	KUNIT_CASE(of_overlay_apply_kunit_platform_device),
+> +	KUNIT_CASE(of_overlay_apply_kunit_cleanup),
+> +	{}
+> +};
+> +
+> +/*
+> + * Test suite for test managed device tree overlays.
+> + */
+> +static struct kunit_suite of_overlay_apply_kunit_suite = {
+> +	.name = "of_overlay_apply_kunit",
+> +	.test_cases = of_overlay_apply_kunit_test_cases,
+> +};
+> +
+> +kunit_test_suites(
+> +	&of_overlay_apply_kunit_suite,
+> +);
+> +MODULE_LICENSE("GPL");
+> -- 
+> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
+> https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
+> 
