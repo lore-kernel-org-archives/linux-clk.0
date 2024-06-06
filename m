@@ -1,60 +1,60 @@
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2831A1993B5
-	for <linux-clk@vger.kernel.org>; Thu,  6 Jun 2024 14:10:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDFC319E7CA
+	for <linux-clk@vger.kernel.org>; Thu,  6 Jun 2024 14:18:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717683007; cv=none; b=W7TgEdRDJVtxoX3vhn2HgxVMeXyi5wpOEu0dQIsR4gLxv17HrNeYJ7ds5wdjGPzGZzEpG4LZRnwWCd8p1j07HH/zRrQgzhE4DKfJ7pNIk7bsHCG+yksNwr6mH5B/NKQ1Y7w/jCHXU04731V/dQg+JPSvizUd18TMKPpqr2BHYx8=
+	t=1717683516; cv=none; b=ujVMHFJe8tliFotVsEb/yKMXO51EI7QG08i5jAq5z+do4wW/kN9vKNOaVLrYW9o/7EKL62YtIVc/Pj0vpGXw0XXIlww/xqDLU1wbnQU345SM5sx7eHo6KvdKQy+Z6OO0FHcYlz/OvJhirkXu0DNWWcCZExl9zepqIkHzEQjCzZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717683007; c=relaxed/simple;
-	bh=24pglO9E/bRowOuSke4wLZiUYaZTC9VWRxyynjJ5zIU=;
+	s=arc-20240116; t=1717683516; c=relaxed/simple;
+	bh=BiBCH8sN/o6upysF4HxAnO3+CZdqSl/X/ipq8lpHoS8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dCpKdUVLnXm4wVJ3V3BOCy8lLZmscW5dqwHKNhXffpnRT5WPmPngs2PWB2AsY0e+x3aSNs+kKzsuMgqKwgebhUWTzlwNHTvAPv/cl+VQnE+dbxUq0a5VAIbIO5FTudyeG5uMl5HtjD1fkiMSZN8jY0Fq2tvb2K8fWf2twoCJ/es=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=X0DribLY; arc=none smtp.client-ip=209.85.208.49
+	 In-Reply-To:Content-Type; b=VqQkwtcFo6FLzdkx+hrjhnJUZNXsBypJ2kDUfu4lALahL5DVCOscEjmc9WK2Bx/sTAwAZwLdCI4cOi2gws6YmaZ+4DB1KTC5goC36wUpxVcvCYtnSWFf5Bt92BBmzWYy2YGaJTJI5SO1yRbIP+gYAYPolgRrDH86BiMvYNdksks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jMEKxtOS; arc=none smtp.client-ip=209.85.218.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="X0DribLY"
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-57aa64c6bbfso978214a12.3
-        for <linux-clk@vger.kernel.org>; Thu, 06 Jun 2024 07:10:05 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jMEKxtOS"
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a692130eb19so110555266b.2
+        for <linux-clk@vger.kernel.org>; Thu, 06 Jun 2024 07:18:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717683004; x=1718287804; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1717683513; x=1718288313; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=bo+hF5pSAYXFKM3WEz/kBQqU6EXGseq0xVutr/9kK1s=;
-        b=X0DribLYBxrPl93h/VGVt5eZZJVVf4FkTrhhdxEOGfijNaESjMR0+FFvq8wwCXcmhy
-         oJ/qcIs5rj9Vg0VqSaF1pGDJtLQClKxBloafcYLVheiTC2RmrU6kqzcBRqzbRCcSjdq3
-         wfq7TsY+0jDcqnBns6j5VNNB5uK625sgL+wIigz01qW8yONoCBo/PIejqXR8ComhX13O
-         zfH4Dj8zzjU0s74GF9IuJVgK6xPCPxa0d+27sCH7qmKbYbhVUV6pwnfRdoQ2hcjHQGHv
-         zzuQCQ6ATfxz5z5Y6LnLCru90jGqIb6jIS4JUSosHcl+muHlC7OJjrmUStRW3PsC51b5
-         ey3w==
+        bh=xsS19cMaV/4EPV/EgQa6AJFHMCscfNLaMnzT0+WkQ94=;
+        b=jMEKxtOS5nZYvuBZXPjBfeTH/eb+peRPJqjF5zhUhMEHTXRvKSO7gbBKR3nymcp1fY
+         ee7vy64bDLVsVXwNcz5Y32Qa4dkP/PDd7JgqyCFLyoyfkhGXthmT/hdcDgqZewdCBMIV
+         zv92YcwPqyVnF93upeLsD6BUpspuGNxpp1STiIW88LPWMHdJKFreu7wFuJQk43H2IGWu
+         kU1A9c8sUJXlmZR+5QmFczv5fGcJuMBg/2cQg4OLJ9PNlNRUVh57vpyad+qVqtACtJrX
+         MjkjMxhuSdWKko5dIPxu+02FvKjxtRI0qVbG0V+OQMX7jwpm11DCel6OmngCr12W6vWW
+         2pXA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717683004; x=1718287804;
+        d=1e100.net; s=20230601; t=1717683513; x=1718288313;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bo+hF5pSAYXFKM3WEz/kBQqU6EXGseq0xVutr/9kK1s=;
-        b=t0sU/SQQVNTnkXemF7L0iepoKtrkEj9ZzIbP3zzfzNZpX49pVCDFzyX2jkNZI5Czpl
-         GEroE9NRCbNkZLjrj5yPAADsJaZksTarS/4wSWr2CVHzSfcr3vD4vLBSiWfKdsvnebOZ
-         f4fuprx5NvoGH9AdUPg3QzcO696GwhnYUAIiJB4yYsPwoPtermxiqiuvfBz3dchWY+c5
-         dNEqJUm+4Z36ZyRfBbUDTxmhDv4yVK72WsDlNdY0tMxMJV136aYc/KfMqARRNZWEhnrC
-         uZsinlhN8trLAJi7u9mXnlKYUPedtRbeERLpoS4ngACd70T46uf+xFMhbVL20KJs+reX
-         xIlA==
-X-Forwarded-Encrypted: i=1; AJvYcCVHgBoz7E44M+0gHn+ZqHbnP9Igh2L0oju1Ks6aQ5p7EHIT+RpV0N/S28k+5RjyueXprYbmx6kIUecp743krBdBQZOJSMzHfaP2
-X-Gm-Message-State: AOJu0YzDOl8G17uSXO5GckhGR7W/sZdJx0OJ23PVVXVLAuS6x+2Mgh/a
-	+lynnMrAM5XD7XVMJ+CppJEzF62sbwydOH0Zq9bM68Sp06frcRMprKkCFJ8ar14=
-X-Google-Smtp-Source: AGHT+IHFQRWk4cqhYfNcA5PshAJp1zb63+Yb8p2vJT7vBfHQjtW7rLfoo86TbXCGGrO8+6cH1E51Bg==
-X-Received: by 2002:a50:cc88:0:b0:578:6865:3227 with SMTP id 4fb4d7f45d1cf-57a8bca20f6mr3504813a12.30.1717683002343;
-        Thu, 06 Jun 2024 07:10:02 -0700 (PDT)
+        bh=xsS19cMaV/4EPV/EgQa6AJFHMCscfNLaMnzT0+WkQ94=;
+        b=DmkpYcQCxz7sn2iXLhRYhTjW2gSeGUGCeE5WxOZit/3vWiKM2HWM/EFJcm3+IK8l9N
+         0ba5uD7go3rQckLCazk0jRsS+cUBWpYle6ZdOonv7wT8kJWmMVMe2ygkYHbz5Yc4eldj
+         rsUNotsqNP/9v9GV4sMH3nKfXff8ZjcV1uW2EI60actu8j5k0ptknlXlrwCfXEmiteLR
+         bSlMXy0REHiQm6OWAdBa1kT3dDAbhxBcEZWpQ7lrtfvvWZddqC22M3rSECFxgtr+OnD0
+         J4oZWJ7w5fUqdk4GM55ynqW2gwZOIvLuuVAbRGv4LUl3deegYmv9Fo4zurMvgX7R5mqZ
+         S/Jw==
+X-Forwarded-Encrypted: i=1; AJvYcCXXLXzI3wx5AsBEqwZKY5vsDdm3BIAK7wPfzoFkamZ8bE4wCUlBpvY4uFJ3AMSiGiv2o2GqolYGKbxAyTOZubliKS7+rJCzJtro
+X-Gm-Message-State: AOJu0YxJv7QUHoyYG32pXvT7AhXO6gZuH1hTz/iRZUxpmLHpfaAGQE8J
+	U7fgQ9vOf/O1CLb9Y49iBKp8lDp06f1JF2eifgZJcXBp/WyCyDUicO7TIAJC1Ww=
+X-Google-Smtp-Source: AGHT+IF2a/gAITjCB/oIM3XJ/g5T7l41X0nPUmERP0+wT+8b4T+Th0D+VXxz+GYynpEWW2HUhPExwg==
+X-Received: by 2002:a17:906:f913:b0:a69:a66:75fe with SMTP id a640c23a62f3a-a699faa9943mr370583566b.11.1717683513131;
+        Thu, 06 Jun 2024 07:18:33 -0700 (PDT)
 Received: from [192.168.128.139] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57aae13d1aesm1162969a12.55.2024.06.06.07.09.59
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c805cc3a4sm103842566b.69.2024.06.06.07.18.31
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Jun 2024 07:10:01 -0700 (PDT)
-Message-ID: <4e61ff55-bd2d-4f01-bd16-1ae6153504df@linaro.org>
-Date: Thu, 6 Jun 2024 16:09:59 +0200
+        Thu, 06 Jun 2024 07:18:32 -0700 (PDT)
+Message-ID: <9d8ae55f-9528-4685-8ad3-866f4b9eafb8@linaro.org>
+Date: Thu, 6 Jun 2024 16:18:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -62,8 +62,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 8/8] arm64: dts: qcom: sm4450: add camera, display and
- gpu clock controller
+Subject: Re: [PATCH V3 7/8] clk: qcom: Add GPUCC driver support for SM4450
 To: Ajit Pandey <quic_ajipan@quicinc.com>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
@@ -76,8 +75,8 @@ Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  Taniya Das <quic_tdas@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>,
  Imran Shaik <quic_imrashai@quicinc.com>,
  Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-References: <20240416182005.75422-1-quic_ajipan@quicinc.com>
- <20240416182005.75422-9-quic_ajipan@quicinc.com>
+References: <20240528114254.3147988-1-quic_ajipan@quicinc.com>
+ <20240528114254.3147988-8-quic_ajipan@quicinc.com>
 Content-Language: en-US
 From: Konrad Dybcio <konrad.dybcio@linaro.org>
 Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
@@ -115,44 +114,16 @@ Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
  nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
  izWDgYvmBE8=
-In-Reply-To: <20240416182005.75422-9-quic_ajipan@quicinc.com>
+In-Reply-To: <20240528114254.3147988-8-quic_ajipan@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 16.04.2024 8:20 PM, Ajit Pandey wrote:
-> Add device node for camera, display and graphics clock controller on
-> Qualcomm SM4450 platform.
+On 28.05.2024 1:42 PM, Ajit Pandey wrote:
+> Add Graphics Clock Controller (GPUCC) support for SM4450 platform.
 > 
 > Signed-off-by: Ajit Pandey <quic_ajipan@quicinc.com>
 > ---
->  arch/arm64/boot/dts/qcom/sm4450.dtsi | 35 ++++++++++++++++++++++++++++
->  1 file changed, 35 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sm4450.dtsi b/arch/arm64/boot/dts/qcom/sm4450.dtsi
-> index 603c962661cc..c78b793f5d6a 100644
-> --- a/arch/arm64/boot/dts/qcom/sm4450.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sm4450.dtsi
-> @@ -364,6 +364,41 @@ gcc: clock-controller@100000 {
->  				 <0>;
->  		};
->  
-> +		camcc: clock-controller@ade0000 {
-> +			compatible = "qcom,sm4450-camcc";
-> +			reg = <0x0 0xade0000 0x0 0x20000>;
 
-Please keep the non-zero address part padded to 8 hex digits
-
-> +			clocks = <&rpmhcc RPMH_CXO_CLK>,
-> +				 <&gcc GCC_CAMERA_AHB_CLK>;
-> +			#clock-cells = <1>;
-> +			#reset-cells = <1>;
-> +			#power-domain-cells = <1>;
-> +		};
-> +
-> +		dispcc: clock-controller@af00000 {
-> +			compatible = "qcom,sm4450-dispcc";
-> +			reg = <0 0x0af00000 0 0x20000>;
-
-You used 0x0 above and 0 here.. Consistency is key! :P
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
 Konrad
