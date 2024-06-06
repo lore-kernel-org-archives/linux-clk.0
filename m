@@ -1,215 +1,155 @@
-Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0553A13C900;
-	Thu,  6 Jun 2024 08:37:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 255AF13FD99
+	for <linux-clk@vger.kernel.org>; Thu,  6 Jun 2024 09:27:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717663068; cv=none; b=BwGleTDn6CfwIJUI9Wnds+UUOs8ZMzClXpnWPrKRPjWmac1QhkP+2615XqFRTR85xRJfK+QmZQk4VuAvBMs/FNLW6rqDJvHF3sDP+ECGOYXGyIjjqJutyPEaVRYIpzvm/JqKbf0iI2KqTGbZQMXMIg1n015P7zbF3HqlMo8X6Dw=
+	t=1717666062; cv=none; b=q2+HJEo6Te34CcDyFX2NBfhOXeZ5Y7vqtSyZ/LHxLzSB5dQHxtPjnc0pbBWiDpSCbkSnK0j2suqn2VNFAUysVVlc6yEQkNTeXnzbb1/uXDPN268xKzAYGanE5R66U8Qu4cjJM1Qy0Vq+UonG+jLYrCtXd6ATvp/G/9nJLuyAX3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717663068; c=relaxed/simple;
-	bh=HYy0uBIq7a4XYMVsAB46Cm0zvk1JrXNzFX9UbTeng8k=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=R1ngDzmjR0Xbe2fvj6kD27xr5tlXswBNbjsYGrpMh2hAWrSwvI8mVE/3/iZW7BvmooeHK74m3omrRM6XKr8vlGGUntFVSV+dpKC0zcxyhWFXUCee0egM5ECtUW3EH5tbzGCPDxZwjsQZQxMg6ZFxle/nIRVCou1WCrUNEAh0eo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WZnTT1W4; arc=none smtp.client-ip=209.85.210.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1717666062; c=relaxed/simple;
+	bh=rYnqU+2ou4u7Kaw4R/jgOa2YNlkFkEhv+b9vNxA6IfE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=N8qQxIR92SosAP0Vt7Q3g3q62s1x/tgH/TMzybWX34QQUikVpwaUktS31NVbWbS5R/Ft2+BYLU5x8qaxbkHh9DIsH2JY/kSIDBTMHbb6QN4T99Re93k28U5kWQbt5eCnBcVNhHzYZA8ecHuFWumpo+R1RMbWRYN+2oBjYQNShOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mHbpPO++; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WZnTT1W4"
-Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-6f938c18725so375006a34.1;
-        Thu, 06 Jun 2024 01:37:46 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mHbpPO++"
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57a44c2ce80so709609a12.0
+        for <linux-clk@vger.kernel.org>; Thu, 06 Jun 2024 02:27:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717663066; x=1718267866; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qXXhn+viEW5QNpw1s0JwBzkpEksiOVn61xZJPP4n0t4=;
-        b=WZnTT1W4wHzAVEaakNo6zXCPikupDjNgXzfzF7EGwy4sUU4SRDHCFZA+hQFWdMJ7tq
-         mXxlA6j0ansWSi80zDas8j1MozUnzNIvfFWzRA89kSe//r9mYFbXP873BUkR2QeNU2SB
-         xEkkHHRzHj03BBVboPbqxbj6u6aWxgHNaIfiq2A0BLG0tksgz3rLVE2BFtq3k2dTj6Uz
-         B8S3lHnl3UwG0r3Z+VjsAY56ivCoSkuY1DWaCrYhk6m0TD+VZUVrVNIF7rnM5ebRj2G9
-         R5k/twuVvcpl09ldwpp+KbBUKV8R8b9mFmNha7547SOQWZF+W8y+C1Kze4Aw4vlWg6r1
-         7cKg==
+        d=linaro.org; s=google; t=1717666058; x=1718270858; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=4coGUS5rqVO/XkMEjgpDlue2Pr3XzDgvTCMJ1kTn61Y=;
+        b=mHbpPO++Pj5BgKK7RI2OslzYmpyQe13GSZVmlCQvrgoAwdLYZVDRRI9UBvMJZVKyJH
+         8RR9v1HbA4yn4JLqTcPyeutgJ3tA37Wo60zZiJHCXGte8Mhve3ZJoX08HjFMI6IVrnau
+         f+HDCon7V188Do/dwnUWaqahv2ttTvwe/3gNXzztAdO5Nww4cph5DhkDAxzK7daZYza/
+         UdaDaQ7SHXQTqS46zpsd6LzDEAvRIOFOOV0q6i1aL9b0G+4g2k5lc1YyphMFZcKA4oKV
+         DJ80oUQHE8gxY99hzrahq9OFnjFJ0bym93hFQdGqrHooEAemF4O7fM7vV3rKmf6l2vWI
+         b6fA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717663066; x=1718267866;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qXXhn+viEW5QNpw1s0JwBzkpEksiOVn61xZJPP4n0t4=;
-        b=jTQpB6NvPnH+Sp41SR7XF5Iusmg6DYA3FkmOh4xA5otC+bt/fzh9fFwAY8ZMrqv8Sl
-         gg/9s1PT5YggYto+2g+eiYFp4vagIi1Glu2/sKKK55xGaYWUFE6hmooobuS0BcN95q/g
-         GlHXKAlYGG1UHf4pli6OzT4zIgkfpPGso/Yf2gzhKrflqgfVUMUBVOx03vMfzm0ooEcU
-         qR9EQ/32MDm/tJauAt8EOcaJSBFXqr2kaOBkBdfE1iWBqSZuXeTJtSd4k2ehTeyn4WVX
-         dN/pKOW9LfaHd4AHOZJUrpCtSIZ3fl+zW5frn64PWb57z7f9lARCqnKnbugqpBaMzMIW
-         BmwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW33hewHSPg3rd6WZ2Dh+xDWFa37qwVN6vp0wX6wJQvaXjSGtGquWZLI9/8j19vuEOyhttYGDqEh5ea3jDHXqLL2IRYhNzg+NSFM0yb75jCAsO/e7thupGc92qHHy9mGctyxUd/B+tTLb1kpgtrVVPsZdu2QL+paagU4Zbu/jOEFqVcyQ==
-X-Gm-Message-State: AOJu0YzE1DPz77TObRv6yL+UuRq+/MU13swj5JnsY0U4s8W+qNbWFprx
-	1HeAm/hfDrLNb3Bmy/ry+DaQ020GyJDMmGjNK2B70qEdzJXL6h+J
-X-Google-Smtp-Source: AGHT+IGZlEYKLCxi0RKiEtXK7Ckj+6l6wKfH5lX8OsZs2LFvUkmtRa+80HPxCK7UHmoLIlW9SGRzaw==
-X-Received: by 2002:a05:6830:148d:b0:6f0:444c:d534 with SMTP id 46e09a7af769-6f94341474cmr5168489a34.5.1717663065958;
-        Thu, 06 Jun 2024 01:37:45 -0700 (PDT)
-Received: from localhost.localdomain ([122.8.183.87])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-6f94dcf4ffcsm210863a34.63.2024.06.06.01.37.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jun 2024 01:37:45 -0700 (PDT)
-From: Chen Wang <unicornxw@gmail.com>
-To: aou@eecs.berkeley.edu,
-	chao.wei@sophgo.com,
-	conor@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org,
-	mturquette@baylibre.com,
-	palmer@dabbelt.com,
-	paul.walmsley@sifive.com,
-	richardcochran@gmail.com,
-	robh+dt@kernel.org,
-	sboyd@kernel.org,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	haijiao.liu@sophgo.com,
-	xiaoguang.xing@sophgo.com,
-	guoren@kernel.org,
-	jszhang@kernel.org,
-	inochiama@outlook.com,
-	samuel.holland@sifive.com
-Cc: Chen Wang <unicorn_wang@outlook.com>
-Subject: [PATCH v16 5/5] riscv: dts: add clock generator for Sophgo SG2042 SoC
-Date: Thu,  6 Jun 2024 16:37:39 +0800
-Message-Id: <9ff7c8917a2125319316d59973a54ac12c311a19.1717661798.git.unicorn_wang@outlook.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1717661798.git.unicorn_wang@outlook.com>
-References: <cover.1717661798.git.unicorn_wang@outlook.com>
+        d=1e100.net; s=20230601; t=1717666058; x=1718270858;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4coGUS5rqVO/XkMEjgpDlue2Pr3XzDgvTCMJ1kTn61Y=;
+        b=gdEcJghCSocm8N1URGVcLFfbxPjqZhMP01horU77pTmPhgkq2b5e64tAGbPSs4m1RW
+         5KdA9zBAPRXjdcfLGCHs0dhQjbcRb3eka8QgMYv+BPd4/VjHQNFiqEjM1ZbFJntNxqf1
+         lXD59aqGj1cQVryRRsIdh50kYl3sQkzDC9bqX8QWp64av+3Jk3RJakXR6mucQ07d16P6
+         lSwuf6igAkSHDvnwUFANKDGcQ3UNEz0nawQDj53Hm/fQiU7l9tHSE4Vrn6WUF4be5/NF
+         ghhmmGfYbZfAuW8uMxs+CJDai+tQ6aTl+cPL4GgnzPd4hBY3EEG/gLWDYGq9RQKaWPLk
+         7/Xg==
+X-Forwarded-Encrypted: i=1; AJvYcCUxddaaxA+rGFSSgFgJsiM2GqOPuUiGK7Tcjr9IvHgZDa3B7f/HnHflc8BawCr86J1oymmMznmql3BaKtLUUEw/zLkICtYFMysI
+X-Gm-Message-State: AOJu0YzpLorVc2tZs40/kImjUFdXm3J1sPL6q157HTDXp2Mtua7MrxJW
+	aRZHO2k7uqISYRlhH66OhI0F3Ydoq139tDw+RIBdWOdzwPfZ3rtBPXzF4JlYSDM=
+X-Google-Smtp-Source: AGHT+IGqN8B1VWaFB5hpOX3x2j23zjabMi+w1OoZszVo5ULIhjp7d0F8Xv74HZa+5EdL58oQ+GHQ2A==
+X-Received: by 2002:a50:d5c8:0:b0:574:ebf4:f78c with SMTP id 4fb4d7f45d1cf-57aaaf0eb41mr807201a12.7.1717666058529;
+        Thu, 06 Jun 2024 02:27:38 -0700 (PDT)
+Received: from [192.168.128.139] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57aae0ca5e3sm766761a12.25.2024.06.06.02.27.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Jun 2024 02:27:38 -0700 (PDT)
+Message-ID: <fca5168d-9ea2-4fe9-a247-0d97ab175eb3@linaro.org>
+Date: Thu, 6 Jun 2024 11:27:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/7] drm/msm/adreno: Add A702 support
+To: Connor Abbott <cwabbott0@gmail.com>
+Cc: Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Joerg Roedel <joro@8bytes.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Clark <robdclark@gmail.com>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ freedreno@lists.freedesktop.org
+References: <20240219-topic-rb1_gpu-v2-0-2d3d6a0db040@linaro.org>
+ <20240219-topic-rb1_gpu-v2-5-2d3d6a0db040@linaro.org>
+ <CACu1E7FTN=kwaDJMNiTmFspALzj2+Q-nvsN5ugi=vz4RdUGvGw@mail.gmail.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <CACu1E7FTN=kwaDJMNiTmFspALzj2+Q-nvsN5ugi=vz4RdUGvGw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Chen Wang <unicorn_wang@outlook.com>
+On 23.05.2024 2:14 PM, Connor Abbott wrote:
+> On Fri, Feb 23, 2024 at 9:28 PM Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
+>>
+>> The A702 is a weird mix of 600 and 700 series.. Perhaps even a
+>> testing ground for some A7xx features with good ol' A6xx silicon.
+>> It's basically A610 that's been beefed up with some new registers
+>> and hw features (like APRIV!), that was then cut back in size,
+>> memory bus and some other ways.
+>>
+>> Add support for it, tested with QCM2290 / RB1.
+>>
+>> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+>> ---
 
-Add clock generator node to device tree for SG2042, and enable clock for
-uart.
+[...]
 
-Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
-Reviewed-by: Guo Ren <guoren@kernel.org>
----
- .../boot/dts/sophgo/sg2042-milkv-pioneer.dts  | 12 ++++
- arch/riscv/boot/dts/sophgo/sg2042.dtsi        | 55 ++++++++++++++++++-
- 2 files changed, 66 insertions(+), 1 deletion(-)
+>> +
+>> +       if (adreno_is_a702(gpu)) {
+>> +               gpu->ubwc_config.highest_bank_bit = 14;
+>> +               gpu->ubwc_config.min_acc_len = 1;
+>> +               gpu->ubwc_config.ubwc_mode = 2;
+> 
+> I just noticed, but this is wrong. ubwc_mode is a 1 bit field and what
+> this is actually doing is overwriting hbb_lo, making the highest bank
+> bit 15 instead of 14.
 
-diff --git a/arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts b/arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts
-index 49b4b9c2c101..80cb017974d8 100644
---- a/arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts
-+++ b/arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts
-@@ -14,6 +14,18 @@ chosen {
- 	};
- };
- 
-+&cgi_main {
-+	clock-frequency = <25000000>;
-+};
-+
-+&cgi_dpll0 {
-+	clock-frequency = <25000000>;
-+};
-+
-+&cgi_dpll1 {
-+	clock-frequency = <25000000>;
-+};
-+
- &uart0 {
- 	status = "okay";
- };
-diff --git a/arch/riscv/boot/dts/sophgo/sg2042.dtsi b/arch/riscv/boot/dts/sophgo/sg2042.dtsi
-index 81fda312f988..34c802bd3f9b 100644
---- a/arch/riscv/boot/dts/sophgo/sg2042.dtsi
-+++ b/arch/riscv/boot/dts/sophgo/sg2042.dtsi
-@@ -4,8 +4,10 @@
-  */
- 
- /dts-v1/;
-+#include <dt-bindings/clock/sophgo,sg2042-clkgen.h>
-+#include <dt-bindings/clock/sophgo,sg2042-pll.h>
-+#include <dt-bindings/clock/sophgo,sg2042-rpgate.h>
- #include <dt-bindings/interrupt-controller/irq.h>
--
- #include <dt-bindings/reset/sophgo,sg2042-reset.h>
- 
- #include "sg2042-cpus.dtsi"
-@@ -20,12 +22,60 @@ aliases {
- 		serial0 = &uart0;
- 	};
- 
-+	cgi_main: oscillator0 {
-+		compatible = "fixed-clock";
-+		clock-output-names = "cgi_main";
-+		#clock-cells = <0>;
-+	};
-+
-+	cgi_dpll0: oscillator1 {
-+		compatible = "fixed-clock";
-+		clock-output-names = "cgi_dpll0";
-+		#clock-cells = <0>;
-+	};
-+
-+	cgi_dpll1: oscillator2 {
-+		compatible = "fixed-clock";
-+		clock-output-names = "cgi_dpll1";
-+		#clock-cells = <0>;
-+	};
-+
- 	soc: soc {
- 		compatible = "simple-bus";
- 		#address-cells = <2>;
- 		#size-cells = <2>;
- 		ranges;
- 
-+		pllclk: clock-controller@70300100c0 {
-+			compatible = "sophgo,sg2042-pll";
-+			reg = <0x70 0x300100c0 0x0 0x40>;
-+			clocks = <&cgi_main>, <&cgi_dpll0>, <&cgi_dpll1>;
-+			clock-names = "cgi_main", "cgi_dpll0", "cgi_dpll1";
-+			#clock-cells = <1>;
-+		};
-+
-+		rpgate: clock-controller@7030010368 {
-+			compatible = "sophgo,sg2042-rpgate";
-+			reg = <0x70 0x30010368 0x0 0x98>;
-+			clocks = <&clkgen GATE_CLK_RP_CPU_NORMAL>;
-+			clock-names = "rpgate";
-+			#clock-cells = <1>;
-+		};
-+
-+		clkgen: clock-controller@7030012000 {
-+			compatible = "sophgo,sg2042-clkgen";
-+			reg = <0x70 0x30012000 0x0 0x1000>;
-+			clocks = <&pllclk MPLL_CLK>,
-+				 <&pllclk FPLL_CLK>,
-+				 <&pllclk DPLL0_CLK>,
-+				 <&pllclk DPLL1_CLK>;
-+			clock-names = "mpll",
-+				      "fpll",
-+				      "dpll0",
-+				      "dpll1";
-+			#clock-cells = <1>;
-+		};
-+
- 		clint_mswi: interrupt-controller@7094000000 {
- 			compatible = "sophgo,sg2042-aclint-mswi", "thead,c900-aclint-mswi";
- 			reg = <0x00000070 0x94000000 0x00000000 0x00004000>;
-@@ -341,6 +391,9 @@ uart0: serial@7040000000 {
- 			interrupt-parent = <&intc>;
- 			interrupts = <112 IRQ_TYPE_LEVEL_HIGH>;
- 			clock-frequency = <500000000>;
-+			clocks = <&clkgen GATE_CLK_UART_500M>,
-+				 <&clkgen GATE_CLK_APB_UART>;
-+			clock-names = "baudclk", "apb_pclk";
- 			reg-shift = <2>;
- 			reg-io-width = <4>;
- 			resets = <&rstgen RST_UART0>;
--- 
-2.25.1
+You're right, this should be a 0. Thanks!
+
+Konrad
 
