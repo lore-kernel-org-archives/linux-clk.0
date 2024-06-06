@@ -1,108 +1,127 @@
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fout1-smtp.messagingengine.com (fout1-smtp.messagingengine.com [103.168.172.144])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F3C7197A9E;
-	Thu,  6 Jun 2024 16:11:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F7B1198A24;
+	Thu,  6 Jun 2024 17:09:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717690266; cv=none; b=K/2Jr2YPUJ3nqRhZQZ5GqOiyz0imFyfmVE8tmsBZXhdAbDHznhNbBPhuIKkf19VEgcUD8WDDMIdT3VABhBSKi7VOHKfL3JOYA7bKEKeecxK8mw7kFrkeEWC/fKZqkIG0bXgFWRoFTcX7oFI2N2i9XU91u7HOygPP2siegpIbxvM=
+	t=1717693784; cv=none; b=HrbOiHmADTOuk5TYvV0//T3l5yLfbxmPv8Dj7tWIrBrjM3xvyqGs3OSAvYWuLHoAhow7d4wa9HiYDdAlK0PksK3+Gv5UQlpj8mhVhzJqyZPt8uiU09hb+XbewA/y4WjsersCJ1YBQr+I26TKwBRJRY5SNjAGqJMdgQ/Ef5VNeu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717690266; c=relaxed/simple;
-	bh=jPkUwIUErPfWq/A4tMraeoYy+ph2aOlfxFKOGnXfBKQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=OpSXDzURvu/e4CpmfZ9PPLB9Oqjd0I7wdYiyVTeB+efswwfo/bJHdfPVDoaTn8s/r06tiIwhD/RjoDqCEJY1GhGCp1pMb1wDW5Txg6YkJ/tYHRge8QO6TLNxBdVdHte/jXHx8d3RY6PQimiX3PE5v3aL+5PE343L703fyplNd40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fZP/rKJP; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1717693784; c=relaxed/simple;
+	bh=NyDTMWjqq76gtV68Xg6Wx97ZWAT/9bfulqWfS0agPIU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=L7hxuxiARskm0VG5AH55gEj6pASfP+GWOS+alZ1rut9v0lW3TpjtPxxJz89Rf3UxQ+XI9foiyda/Y9c0WJYiOLwsx5G2I7+RG1ozOOysuVL6bwbNfzPuoM4vWabO9oOxAyCOD4OydJrW3Fj0eKBBx3adenrwVYDDnHoGT2yboTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=0+qexqTN; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=iK+uQbzY; arc=none smtp.client-ip=103.168.172.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fZP/rKJP"
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-421396e3918so14944595e9.0;
-        Thu, 06 Jun 2024 09:11:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717690263; x=1718295063; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6gYT/WuDQbbZMRTr/c1VVX3M41AHAGXJIfymJEdz54I=;
-        b=fZP/rKJPcclFUi0LuXG9zGf7+g0fGrpB5Y+zEZg30+5DUIeFeeWAp2QpMGQ1dQgApN
-         PubDStHmIuyMq/o871v9xwYBFkIZoN9J8Ynxhb0dVB+mNocbE3jHzU3IxytUgD5P1gWD
-         tc3IXVq6Ya0YuU4IVZ4MBpC2JBYPvcYoe8azKMR7BPfCmLxgwerfFrgPwbYMJ2rjmyBC
-         q/r/7t81VUqQp2Ba7KnpnouBR+b/csqRjh0dagqlcde9tapr2136LFpyQSKAiJnMXbv2
-         uGwtMGTLzFsZ+5wn0aPZZ6P/AGI5oq4kgcVo+bzQL6bW6ACWXeh5KYuWn5sZ1FwWJh0X
-         LLFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717690263; x=1718295063;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6gYT/WuDQbbZMRTr/c1VVX3M41AHAGXJIfymJEdz54I=;
-        b=JNt3BAPC6bUwnOkoiLzenGMGXWK//1uqoNd+14d01x7S4g7zAFyzrt+LEgvXdqTtex
-         rdBR0K1lziBBnGSG0tBAbdwzvYcy7QaEw+g6SBHMnXZM86YANJheyGHvyp60jx/ZEtZT
-         nT9zMntn//Xk4B9JYSivYRPYzNOVFrDq5fM+IBDT1Tym8tCJIBrwFsyFUmXuvepLT28V
-         a1fqNFOA8Tay3IUlcge2ogHDFlUKLj7EK7MVHjQ1yZhIrHNUYap+Lw5IaJW4WR1LlQd0
-         n8N9PE2RKXxWaLRSzbQz6F7/glyiUOweIZBU0GoktS2BoTkf7ATb3XI1Nfism1tcXomc
-         UXlw==
-X-Forwarded-Encrypted: i=1; AJvYcCXOXqJ6S03s+yaDyza+X6WMGdnzxhSpd7TgwrfouX5VZvzM31XoUN+YuXbOsLXWb5RYgV83zH2HZfS+n4IdD46hbIHDWDN49rHugfqfXH31cXYa/9II6HYcRp/5WyD2FmuyeRz530K+d3kcPK7Vb8/4mHTDiKx3Vax6yMbTTZcoYdSi1A==
-X-Gm-Message-State: AOJu0YxSMVIbC0w7EJUz84pqJqwqco/O1DcclwhsfRQvo1HzJFgdxN+0
-	Je6elyj5FlbeuX+SAKiZKXYs8iOKYhfZjgC2T5ajPwzGLelO/wFE
-X-Google-Smtp-Source: AGHT+IEjmbYzoXyGZuLYy9YXCYIoFgpNnq3YKEnWDVeZM9L/qvjO7hTxRccvi71+ha+k+Rs/FajN8w==
-X-Received: by 2002:a05:600c:4590:b0:41f:e7e6:7f27 with SMTP id 5b1f17b1804b1-42164a2b361mr1517815e9.26.1717690262362;
-        Thu, 06 Jun 2024 09:11:02 -0700 (PDT)
-Received: from prasmi.home ([2a00:23c8:2500:a01:2595:4364:d152:dff3])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4216055101dsm14229565e9.21.2024.06.06.09.11.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jun 2024 09:11:01 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="0+qexqTN";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="iK+uQbzY"
+Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
+	by mailfout.nyi.internal (Postfix) with ESMTP id 4B50F13800E3;
+	Thu,  6 Jun 2024 13:09:37 -0400 (EDT)
+Received: from mailfrontend2 ([10.202.2.163])
+  by compute4.internal (MEProxy); Thu, 06 Jun 2024 13:09:37 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:message-id:mime-version:reply-to
+	:subject:subject:to:to; s=fm3; t=1717693777; x=1717780177; bh=uh
+	+BX1wYIP+G0aosdwsgzf1m796E5yae5OCKa3pMPNE=; b=0+qexqTNhodlaWXVOh
+	ytZleR6ERq7J1FAC3IpKi+N3IGqkWkJoGjCZ5NRBtyU81dfxoV534aSYwVa6YO/0
+	S+d33d8L2he/76QEYpjACv10LvvbFp/ftJKVrRJCJGq07EQ0jKHKteN3OqD6ykag
+	94uSQ0ei7Wba4+G2rVc+GGrGLMQkBmc69iUG5zMpiKQjIRDoH1k+2WdnExZkn9VD
+	evD725ZxpOxXYQ2uEwwetOMrkNaLCDoyGkQmjg6LyeuIJlimr/1tOxBiMASiDQCi
+	z0oDANWNfg3BFFJMBthh86BGXyRThp0Pr2aglyBsKqxsiDvjl0nag5KNPU2dtUjE
+	rC5w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
+	:x-sasl-enc; s=fm1; t=1717693777; x=1717780177; bh=uh+BX1wYIP+G0
+	aosdwsgzf1m796E5yae5OCKa3pMPNE=; b=iK+uQbzYL0MmGCeBNkD7Oz8P164kW
+	6ck03LPYX8wb6nY4ExEIl6/sK9anyRF0EgnYtpIKJmxX6ad3ic9p3R0ENMkNEL6A
+	OIq0JZ8cTqWxf7M0jrw5cbOTBeNPIe6y7/CUm8rPgKfcufC32e+5N16IFhWQ9ksu
+	AEFZnc32XAhCGEvv6dBDAnFy/FFyXfjkNWN+oagXUT8ZurbxiFKOcn/zAxGQomdv
+	Pije3mtmC5S6XuFMHn2btbeI5din3frxG5g7b1FECdXb31tIz9ydAV0MBxQeyK5w
+	vAXDrnDEhjlHZuMs9wKClvg4CKxKoTrt3MIvOTJBrxbr4FZJ4FLUenFmA==
+X-ME-Sender: <xms:Ue1hZh5NLzs65hm4ZkrQsuWh5WK4_9V6uDeKZbpQcn8pyzNmlqQeoQ>
+    <xme:Ue1hZu7lCha8NneT8d4ZTQlRgFzY6OW0Kk7G5S_qRz3K_CTuwZfd3fMdL_aEbg-rT
+    PIIFDdFhY_hQ984j3c>
+X-ME-Received: <xmr:Ue1hZocSAICcUnOpMiy6jWcSBfBlfPNWbE_88qHnAWx5-4upwVeW4HCxFhq-2Nu6991WyGDG9qtyleAMMedqglEizMWpfv2JR2Ro>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdelkedguddtlecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
+    necuuegrihhlohhuthemuceftddtnecunecujfgurhephffvvefufffkofggtgfgsehtke
+    ertdertdejnecuhfhrohhmpefpihhklhgrshcuufpnuggvrhhluhhnugcuoehnihhklhgr
+    shdrshhouggvrhhluhhnugdorhgvnhgvshgrshesrhgrghhnrghtvggthhdrshgvqeenuc
+    ggtffrrghtthgvrhhnpeehudelteetkefgffefudefuedvjeeivdekhfevieefgeffheel
+    tddvvefhfeetgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
+    hrohhmpehnihhklhgrshdrshhouggvrhhluhhnugdorhgvnhgvshgrshesrhgrghhnrght
+    vggthhdrshgv
+X-ME-Proxy: <xmx:Ue1hZqKZBPyk683EdVogLOsmz76IpArya6bgcWgP-80NWUlIbLRftA>
+    <xmx:Ue1hZlK6mMkWrWsip7ZFEmdLwpTDRGBQ6FvmxSc5XI5-3pNuLFfS8g>
+    <xmx:Ue1hZjyd620M_rqZmSxfh58RlWlrgsjbNk486y9pHM6yYShkn8wpTw>
+    <xmx:Ue1hZhJsg-pobhmzrECEu6wZVEYW9zDBMXlicxV2jQiJ6saVHXzo5A>
+    <xmx:Ue1hZiGrm_xBvMRA9wdN7BHlAwwfL2X3v_WT-E3bqmJChcFaReLw5TJz>
+Feedback-ID: i80c9496c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 6 Jun 2024 13:09:36 -0400 (EDT)
+From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
 To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH] dt-bindings: clock: renesas,rzg2l-cpg: Update description for #reset-cells
-Date: Thu,  6 Jun 2024 17:10:47 +0100
-Message-Id: <20240606161047.663833-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.34.1
+	linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+Subject: [PATCH v2] clk: renesas: r8a779h0: Add VIN clocks
+Date: Thu,  6 Jun 2024 19:08:58 +0200
+Message-ID: <20240606170858.1694652-1-niklas.soderlund+renesas@ragnatech.se>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Add the VIN module clocks, which are used by the VIN modules on the
+Renesas R-Car V4M (R8A779H0) SoC.
 
-For the RZ/G2L and similar SoCs, the reset specifier is the reset number
-and not the module number. Reflect this in the description for the
-'#reset-cells' property.
-
-Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 ---
- Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+* Changes since v1
+- Fix names for first 8 VIN clocks, should be vin0[0-7] not vin[0-7].
+- Fix parent clock to S0D4_VIO.
+---
+ drivers/clk/renesas/r8a779h0-cpg-mssr.c | 16 ++++++++++++++++
+ 1 file changed, 16 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml b/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml
-index 4e3b0c45124a..0440f23da059 100644
---- a/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml
-+++ b/Documentation/devicetree/bindings/clock/renesas,rzg2l-cpg.yaml
-@@ -62,7 +62,7 @@ properties:
- 
-   '#reset-cells':
-     description:
--      The single reset specifier cell must be the module number, as defined in
-+      The single reset specifier cell must be the reset number, as defined in
-       <dt-bindings/clock/r9a0*-cpg.h>.
-     const: 1
- 
+diff --git a/drivers/clk/renesas/r8a779h0-cpg-mssr.c b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
+index 034e375f31fe..5ca1b14a6d60 100644
+--- a/drivers/clk/renesas/r8a779h0-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
+@@ -208,6 +208,22 @@ static const struct mssr_mod_clk r8a779h0_mod_clks[] = {
+ 	DEF_MOD("tmu2",		715,	R8A779H0_CLK_SASYNCPERD2),
+ 	DEF_MOD("tmu3",		716,	R8A779H0_CLK_SASYNCPERD2),
+ 	DEF_MOD("tmu4",		717,	R8A779H0_CLK_SASYNCPERD2),
++	DEF_MOD("vin00",	730,	R8A779H0_CLK_S0D4_VIO),
++	DEF_MOD("vin01",	731,	R8A779H0_CLK_S0D4_VIO),
++	DEF_MOD("vin02",	800,	R8A779H0_CLK_S0D4_VIO),
++	DEF_MOD("vin03",	801,	R8A779H0_CLK_S0D4_VIO),
++	DEF_MOD("vin04",	802,	R8A779H0_CLK_S0D4_VIO),
++	DEF_MOD("vin05",	803,	R8A779H0_CLK_S0D4_VIO),
++	DEF_MOD("vin06",	804,	R8A779H0_CLK_S0D4_VIO),
++	DEF_MOD("vin07",	805,	R8A779H0_CLK_S0D4_VIO),
++	DEF_MOD("vin10",	806,	R8A779H0_CLK_S0D4_VIO),
++	DEF_MOD("vin11",	807,	R8A779H0_CLK_S0D4_VIO),
++	DEF_MOD("vin12",	808,	R8A779H0_CLK_S0D4_VIO),
++	DEF_MOD("vin13",	809,	R8A779H0_CLK_S0D4_VIO),
++	DEF_MOD("vin14",	810,	R8A779H0_CLK_S0D4_VIO),
++	DEF_MOD("vin15",	811,	R8A779H0_CLK_S0D4_VIO),
++	DEF_MOD("vin16",	812,	R8A779H0_CLK_S0D4_VIO),
++	DEF_MOD("vin17",	813,	R8A779H0_CLK_S0D4_VIO),
+ 	DEF_MOD("wdt1:wdt0",	907,	R8A779H0_CLK_R),
+ 	DEF_MOD("cmt0",		910,	R8A779H0_CLK_R),
+ 	DEF_MOD("cmt1",		911,	R8A779H0_CLK_R),
 -- 
-2.34.1
+2.45.1
 
