@@ -1,155 +1,104 @@
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B138619D09B;
-	Thu,  6 Jun 2024 14:37:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAEE6196C65;
+	Thu,  6 Jun 2024 15:10:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717684653; cv=none; b=rCnVNOSQvx3cH1WYiZrNPMzM2sR4vUHVmlSfaEhIAMAamB+9gBD0X5JINpn6grZ5hoiD5j+zloz/UkRoJcLVIjg+sGOGBkp3a2tEE1qTy9A0aTswiXLe1L/NDbyNCiQ8xvxAfWOL62xSTqhbIVTY/wQAWhusOrPoLS7oHHPlMTE=
+	t=1717686612; cv=none; b=chEOlVN7sbjx1WYJH5Q6TkKH9rzQgohIGL+Q3Yof01udrXlrf1RMODrTDy1K/1xZTbArINydAucZhTHqsaP/VK48eaTO8VzMiK8ue9AOtUaHRVwVAKdZ92NAxbqp/c3616uge+ax3f81ujA0SoTUtks4n8LU5bl7ONT0aofOwFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717684653; c=relaxed/simple;
-	bh=ZdpFKueYPK+WEfUg3Gqz23LkOndZ3SLipHGnj6qgiUY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=U2YGwYvjTm1yvuZMKQu4iXsjqbU4vIFyfwkeQBFDy1qO9DuxcsgatSRowG6EPlntVjH+11sYN/lxEQZRz18ja95BiGkG1RqMkLonlp345x+S33CBD8wF2MDDE2WtTg2snLty58r+uUFNM0p7ClKBNCpVl1+aYuE5hjs8X/dpSeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AYz97BZB; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1717686612; c=relaxed/simple;
+	bh=ThYfWkVZq+xxHPZzWBX0JDqaDQnqCEqItdLxeyZzmFY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OCvOKWB2rAWBjpPn9PwoZVPnWB4TaHRaojhskulFSBWqjD7zEeZl8PRKm6HPGJw3VHJGpXklPBLHPuhx1pqpmrpznB+hrmuhpM8MoTBCopJtmo+OObJPZHMdLGQJNVvdvxpt7m8HS8jKe/HWAY4mdAV+8+lNoeE0DsNn81aksIc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AYz97BZB"
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-57864327f6eso518173a12.1;
-        Thu, 06 Jun 2024 07:37:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717684650; x=1718289450; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6e1IO8wa8L/zyDqKfvDJQSO9H57/3PySfWDoeUhjP78=;
-        b=AYz97BZBtunnETP89dklvH84DrWxZv/l4ix7tc1JetY+jYa2L+6PaiwpjSvKapyL/2
-         87wl33TWlNL7tEbDtnLPg2GT8Gkw1XdlJCzrBSB8ys63tNUYuSyR9B5IiDBLCKj5Huy5
-         jMS5/Us5rWYPQFfyCBSJpXWaU2EUGC82EF2f5WnKdmFjeazmdQuM5rD6TPTLXS1Ui4iO
-         juBe+i9dd+UfRZLPR3i2ZRfAZcQpJLuNR4wK/I9oWU93w+z0N5iGYcfoGIGxazzJbwWs
-         5E8tHz/kfx3UkRU1FsRNB/IeCKlTWyEJD+AiKSzl6pQfq6UkK6fo+WLqTKAfqcRZPkC4
-         tzcg==
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5295e488248so1320613e87.2;
+        Thu, 06 Jun 2024 08:10:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717684650; x=1718289450;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6e1IO8wa8L/zyDqKfvDJQSO9H57/3PySfWDoeUhjP78=;
-        b=R5uWMHy4xZgtg8k0zwbRIpmu+xF1ng9bgK/uFyjw7ErrinVRw3n7z1JgCal41SpU6K
-         v7UlQn95bPMhqj1/CfZwV7xXlIKnTvK7bEzuOudyL2mm/IB4JiEZJ0BD7m8+5CDbfEiB
-         3dShg//TJvhumvtx+ZqFvtPGNv29x3IMS/sUDoNzOt+Iwy4kS4u/lpXOm7F3N4sJKHE6
-         1k4IcEmD0hmT4du1S9JTLfzK0NVk4xNaaKTKtNBVK4cMgWPRjcxrDLUs62sCw6TpkqqI
-         WHBomYdOL470kD63GE9l950I5d7QONX4xeNgri1l7HEbUdX4r0VR0J7Kc6Q5tAq2L1bE
-         s9+g==
-X-Forwarded-Encrypted: i=1; AJvYcCVzCpSr0U5jCrn0SqlBLNCL4/KtpJQTv7KGstG9vp8dqpgSNoVoFLUwkAAOI78IZT2xBg9az7cic5UfXrTCcLmD+TiE17jXv01gq+MZLc/2zzJTwbS0ITp6ybu48h8uGESdvdnGOnQAP8XH2oCNOKUUvnDjsYLK2EpKz3wL3hZD0dhLwg==
-X-Gm-Message-State: AOJu0Yx1ODWutmx/TQ4BcVyw3/ASmwU9H/FAq/s4pUfY4AUIieF5Mz7m
-	RoU2TBolsTQxEul+PzJzHiyREDIrc1xpdbEemAHMiwBdtKu+JDU=
-X-Google-Smtp-Source: AGHT+IGTguIsiQuctF52YO2KaIAv/wxplXc7Xf93KtnhaWBBwggvhPDzJlNlzZ3hmNeOjD5ieyF3QQ==
-X-Received: by 2002:a50:d7db:0:b0:578:69be:6e7a with SMTP id 4fb4d7f45d1cf-57aa53e0569mr2595265a12.1.1717684649733;
-        Thu, 06 Jun 2024 07:37:29 -0700 (PDT)
-Received: from U4.lan ([2a02:810b:f40:4600:ed9f:91b7:21f2:3109])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57aae1008adsm1190925a12.38.2024.06.06.07.37.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jun 2024 07:37:29 -0700 (PDT)
-From: Alex Bee <knaerzche@gmail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Alex Bee <knaerzche@gmail.com>
-Subject: [PATCH v3 5/5] ARM: dts: rockchip: Add SFC for RK3128
-Date: Thu,  6 Jun 2024 16:34:02 +0200
-Message-ID: <20240606143401.32454-7-knaerzche@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240606143401.32454-2-knaerzche@gmail.com>
-References: <20240606143401.32454-2-knaerzche@gmail.com>
+        d=1e100.net; s=20230601; t=1717686607; x=1718291407;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3jOGBua+p9M0Sd6v07XuabYs/DUuTufTW2i+aDQNa+M=;
+        b=tSbt9wMi4VYU/D2aKeMVOE3gGMoa0GE4XPGsQPkjxROfY/6MY58zUz/hPC9K7+OEmq
+         bICy3nqyxLc6/y29d4685hvy9xYNJdAO7DrkYzqhyPsrLVCxD0912MJTHzA7+VxD/QI7
+         PuM+8SAIXVrUjnj9txNCbp4Ps1dFQKHrpZt1MIlI2ulAge6NbtaiAR3mDrhkPzJdqxA0
+         tr/UrXu23fqvDMpExAdhDBJlkSFMb3qGUHQxldlBYvhJ/IXraN23ywsTpDLMYKdTMSuS
+         jSoKDrGiBXDllXfG57jLO837oygGzyhE3GdRveDpQUAGjqHALEMlbEsZJfIOBWriWrKZ
+         MdqA==
+X-Forwarded-Encrypted: i=1; AJvYcCUsjCZoqlZSBZ7WW4pHTXqVRs51wvXR0LwWv/gFxdaA0HXrfT6OhS19kzn87qJhh3+VZlYKMSnnuz0ZTnnPY/pXTWSo+ytp7KRYHbeqkP5lw2asmE9bEgEqL1AYIBYjw+2D3xJE5TB1anreAfT0i6SXFaN4zS+ZG2ATZq7OtJDvHw==
+X-Gm-Message-State: AOJu0Yxk2r5ldfZIsMkSpYPvDmoNeQ/Si/DTrS0kbK0ADJ7EHJGepXrR
+	mO8HSC4oVD7HLtpZJTqewQiHu3GBWB2filmm7s3fyNuxjHxW8UPFDALaFeMn
+X-Google-Smtp-Source: AGHT+IHfVh70HmjGy3/+qXQs7aeOIu0ot1qZIVqdIMrutTJ6CiOVYkEj3FtiF9HXSA24ffGlGEvsaw==
+X-Received: by 2002:a05:6512:2f7:b0:52b:95c4:4641 with SMTP id 2adb3069b0e04-52bab4e3661mr3043795e87.32.1717686606411;
+        Thu, 06 Jun 2024 08:10:06 -0700 (PDT)
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52bb423d533sm219951e87.183.2024.06.06.08.10.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Jun 2024 08:10:06 -0700 (PDT)
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ead2c6b50bso9030591fa.0;
+        Thu, 06 Jun 2024 08:10:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUSTmLG0YfVPu9dc1/JFtzyWkoHiMWk11SOZIMqe3a4KDcutDqxWwbH/HTgEsJy3TiJ1d+xCI1CuOTutpMT8NCoOHtto0y+ICtw2yi8SvRm5LnZK9s+Wuk1aHBryGlvCTFbTivzFtjmSxJ1RxJUDVzReOJJiGU5spBj8Mr5OIhEbw==
+X-Received: by 2002:a2e:854f:0:b0:2ea:b956:db16 with SMTP id
+ 38308e7fff4ca-2eac79ba896mr33235911fa.8.1717686606111; Thu, 06 Jun 2024
+ 08:10:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240605172049.231108-1-macroalpha82@gmail.com>
+In-Reply-To: <20240605172049.231108-1-macroalpha82@gmail.com>
+Reply-To: wens@csie.org
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Thu, 6 Jun 2024 23:09:53 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65RpyESyzVp18EDCqkBQ-A4j9LYhXQe+bJOP+MGbUsC+Q@mail.gmail.com>
+Message-ID: <CAGb2v65RpyESyzVp18EDCqkBQ-A4j9LYhXQe+bJOP+MGbUsC+Q@mail.gmail.com>
+Subject: Re: [PATCH V2 0/4] Add GPADC for Allwinner H616
+To: Chris Morgan <macroalpha82@gmail.com>
+Cc: linux-sunxi@lists.linux.dev, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-iio@vger.kernel.org, p.zabel@pengutronix.de, 
+	sboyd@kernel.org, mturquette@baylibre.com, samuel@sholland.org, 
+	jernej.skrabec@gmail.com, conor+dt@kernel.org, krzk+dt@kernel.org, 
+	robh@kernel.org, Chris Morgan <macromorgan@hotmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add the Serial Flash Controller and it's pincontrols.
+On Thu, Jun 6, 2024 at 1:20=E2=80=AFAM Chris Morgan <macroalpha82@gmail.com=
+> wrote:
+>
+> From: Chris Morgan <macromorgan@hotmail.com>
+>
+> Add support for the general purpose analog-to-digital converter (GPADC)
+> for the Allwinner H616 SoC to support the ADC joysticks as found on the
+> Anbernic RG35XX-H.
+>
+> Changes since V1:
+>  - Split dt-binding include additions to a separate patch.
+>  - Removed patch adding compatible string as it was already upstreamed.
+>  - Added patch to add the adc-joystick function to the RG35XX-H.
 
-Signed-off-by: Alex Bee <knaerzche@gmail.com>
----
-changes since v2:
-Fixed pinux settings for the chipselect pincontrols which originated from
-contradictory documentation: Datasheet [0] (page 29/31) says it is func4
-(when start counting with func1), while TRM [1] (page 185) says func3
-(register value 0x2). It turned out TRM is correct as with setting cs
-pincontrols to func4 the spi chip is not detected, while func3 is fine.
+Please carry relevant Reviewed-by and other tags forward.
 
-[0] https://www.armdesigner.com/download/Rockchip_RK3128_datasheet_V1.2.pdf, 
-[1] https://www.t-firefly.com/download/fireprime/docs/rk3128_trm/chapter-5-general-register-file(grf).pdf
+ChenYu
 
-
- arch/arm/boot/dts/rockchip/rk3128.dtsi | 35 ++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
-
-diff --git a/arch/arm/boot/dts/rockchip/rk3128.dtsi b/arch/arm/boot/dts/rockchip/rk3128.dtsi
-index a7ab0904564f..c37aed28bd10 100644
---- a/arch/arm/boot/dts/rockchip/rk3128.dtsi
-+++ b/arch/arm/boot/dts/rockchip/rk3128.dtsi
-@@ -399,6 +399,15 @@ usb_host_ohci: usb@101e0000 {
- 		status = "disabled";
- 	};
- 
-+	sfc: spi@1020c000 {
-+		compatible = "rockchip,sfc";
-+		reg = <0x1020c000 0x8000>;
-+		interrupts = <GIC_SPI 50 IRQ_TYPE_LEVEL_HIGH>;
-+		clocks = <&cru SCLK_SFC>, <&cru HCLK_SFC>;
-+		clock-names = "clk_sfc", "hclk_sfc";
-+		status = "disabled";
-+	};
-+
- 	sdmmc: mmc@10214000 {
- 		compatible = "rockchip,rk3128-dw-mshc", "rockchip,rk3288-dw-mshc";
- 		reg = <0x10214000 0x4000>;
-@@ -1155,6 +1164,32 @@ sdmmc_bus4: sdmmc-bus4 {
- 			};
- 		};
- 
-+		sfc {
-+			sfc_bus2: sfc-bus2 {
-+				rockchip,pins = <1 RK_PD0 3 &pcfg_pull_default>,
-+						<1 RK_PD1 3 &pcfg_pull_default>;
-+			};
-+
-+			sfc_bus4: sfc-bus4 {
-+				rockchip,pins = <1 RK_PD0 3 &pcfg_pull_default>,
-+						<1 RK_PD1 3 &pcfg_pull_default>,
-+						<1 RK_PD2 3 &pcfg_pull_default>,
-+						<1 RK_PD3 3 &pcfg_pull_default>;
-+			};
-+
-+			sfc_clk: sfc-clk {
-+				rockchip,pins = <2 RK_PA4 3 &pcfg_pull_none>;
-+			};
-+
-+			sfc_cs0: sfc-cs0 {
-+				rockchip,pins = <2 RK_PA2 2 &pcfg_pull_default>;
-+			};
-+
-+			sfc_cs1: sfc-cs1 {
-+				rockchip,pins = <2 RK_PA3 2 &pcfg_pull_default>;
-+			};
-+		};
-+
- 		spdif {
- 			spdif_tx: spdif-tx {
- 				rockchip,pins = <3 RK_PD3 1 &pcfg_pull_none>;
--- 
-2.45.2
-
+> Chris Morgan (4):
+>   dt-bindings: clock: sun50i-h616-ccu: Add GPADC clocks
+>   clk: sunxi-ng: h616: Add clock/reset for GPADC
+>   arm64: dts: allwinner: h616: Add GPADC device node
+>   arm64: dts: allwinner: anbernic-rg35xx-h: Add ADC joysticks
+>
+>  .../arm64/boot/dts/allwinner/sun50i-h616.dtsi | 11 +++
+>  .../sun50i-h700-anbernic-rg35xx-h.dts         | 79 +++++++++++++++++++
+>  drivers/clk/sunxi-ng/ccu-sun50i-h616.c        |  5 ++
+>  drivers/clk/sunxi-ng/ccu-sun50i-h616.h        |  2 +-
+>  include/dt-bindings/clock/sun50i-h616-ccu.h   |  1 +
+>  include/dt-bindings/reset/sun50i-h616-ccu.h   |  1 +
+>  6 files changed, 98 insertions(+), 1 deletion(-)
+>
+> --
+> 2.34.1
+>
