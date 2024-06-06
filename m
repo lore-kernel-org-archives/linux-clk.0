@@ -1,104 +1,155 @@
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAEE6196C65;
-	Thu,  6 Jun 2024 15:10:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18E53195FC4;
+	Thu,  6 Jun 2024 15:23:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717686612; cv=none; b=chEOlVN7sbjx1WYJH5Q6TkKH9rzQgohIGL+Q3Yof01udrXlrf1RMODrTDy1K/1xZTbArINydAucZhTHqsaP/VK48eaTO8VzMiK8ue9AOtUaHRVwVAKdZ92NAxbqp/c3616uge+ax3f81ujA0SoTUtks4n8LU5bl7ONT0aofOwFU=
+	t=1717687413; cv=none; b=BLRLht+k/wqXEaC2/aGSoZepMrU441mL8XnJilNWyB+dqVXvsui/VhcB+p1P/PlUusuNyEjAInkbzSRxpPsfYnKprVbeu5THq6geIUMkgj6e1rONU+O7Js1yDz8lQ3s26pxv6UvSsStrqRHgfr8YApRSV/SclsD59svpwwT+CFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717686612; c=relaxed/simple;
-	bh=ThYfWkVZq+xxHPZzWBX0JDqaDQnqCEqItdLxeyZzmFY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OCvOKWB2rAWBjpPn9PwoZVPnWB4TaHRaojhskulFSBWqjD7zEeZl8PRKm6HPGJw3VHJGpXklPBLHPuhx1pqpmrpznB+hrmuhpM8MoTBCopJtmo+OObJPZHMdLGQJNVvdvxpt7m8HS8jKe/HWAY4mdAV+8+lNoeE0DsNn81aksIc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5295e488248so1320613e87.2;
-        Thu, 06 Jun 2024 08:10:09 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717686607; x=1718291407;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3jOGBua+p9M0Sd6v07XuabYs/DUuTufTW2i+aDQNa+M=;
-        b=tSbt9wMi4VYU/D2aKeMVOE3gGMoa0GE4XPGsQPkjxROfY/6MY58zUz/hPC9K7+OEmq
-         bICy3nqyxLc6/y29d4685hvy9xYNJdAO7DrkYzqhyPsrLVCxD0912MJTHzA7+VxD/QI7
-         PuM+8SAIXVrUjnj9txNCbp4Ps1dFQKHrpZt1MIlI2ulAge6NbtaiAR3mDrhkPzJdqxA0
-         tr/UrXu23fqvDMpExAdhDBJlkSFMb3qGUHQxldlBYvhJ/IXraN23ywsTpDLMYKdTMSuS
-         jSoKDrGiBXDllXfG57jLO837oygGzyhE3GdRveDpQUAGjqHALEMlbEsZJfIOBWriWrKZ
-         MdqA==
-X-Forwarded-Encrypted: i=1; AJvYcCUsjCZoqlZSBZ7WW4pHTXqVRs51wvXR0LwWv/gFxdaA0HXrfT6OhS19kzn87qJhh3+VZlYKMSnnuz0ZTnnPY/pXTWSo+ytp7KRYHbeqkP5lw2asmE9bEgEqL1AYIBYjw+2D3xJE5TB1anreAfT0i6SXFaN4zS+ZG2ATZq7OtJDvHw==
-X-Gm-Message-State: AOJu0Yxk2r5ldfZIsMkSpYPvDmoNeQ/Si/DTrS0kbK0ADJ7EHJGepXrR
-	mO8HSC4oVD7HLtpZJTqewQiHu3GBWB2filmm7s3fyNuxjHxW8UPFDALaFeMn
-X-Google-Smtp-Source: AGHT+IHfVh70HmjGy3/+qXQs7aeOIu0ot1qZIVqdIMrutTJ6CiOVYkEj3FtiF9HXSA24ffGlGEvsaw==
-X-Received: by 2002:a05:6512:2f7:b0:52b:95c4:4641 with SMTP id 2adb3069b0e04-52bab4e3661mr3043795e87.32.1717686606411;
-        Thu, 06 Jun 2024 08:10:06 -0700 (PDT)
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52bb423d533sm219951e87.183.2024.06.06.08.10.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Jun 2024 08:10:06 -0700 (PDT)
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ead2c6b50bso9030591fa.0;
-        Thu, 06 Jun 2024 08:10:06 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUSTmLG0YfVPu9dc1/JFtzyWkoHiMWk11SOZIMqe3a4KDcutDqxWwbH/HTgEsJy3TiJ1d+xCI1CuOTutpMT8NCoOHtto0y+ICtw2yi8SvRm5LnZK9s+Wuk1aHBryGlvCTFbTivzFtjmSxJ1RxJUDVzReOJJiGU5spBj8Mr5OIhEbw==
-X-Received: by 2002:a2e:854f:0:b0:2ea:b956:db16 with SMTP id
- 38308e7fff4ca-2eac79ba896mr33235911fa.8.1717686606111; Thu, 06 Jun 2024
- 08:10:06 -0700 (PDT)
+	s=arc-20240116; t=1717687413; c=relaxed/simple;
+	bh=n8Yr0UeoP6wPmeyQGK/cVLGthNtM0TGWP7koLQxIank=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=U7wc7JLUDcTd0Ul92MxvtHIi77i5bTyydXHUjRJbsJR0rrUzxekcUq5a6UyTkQbcAUheSYwzblhTwlgqsbdD7yGS/f4h59DiIGuV96oQKIOQMNQjBS5fFrGUWN4RTvrYWO+mAF1ZjlILqWGJo6HZ12Q0WIgOaDM/pre7VNp2a9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bGDQ3Nz9; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bGDQ3Nz9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FE53C2BD10;
+	Thu,  6 Jun 2024 15:23:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1717687412;
+	bh=n8Yr0UeoP6wPmeyQGK/cVLGthNtM0TGWP7koLQxIank=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=bGDQ3Nz9FJaTI03nkHRRI8Rkbmqyr8quCZRGkaHPS78qF5hhbIu4lQZVvtyfMCwaJ
+	 HNNQFCq99KG4QMX5sAPumvaa8eOxjVdP0f17ulhpsskQ7G4f0MWGcAe45aou2zPUIo
+	 puEO9reNGbm2iTeM2JO3MKqGYKuBjyDajfpZP6CH1fdj1EcSZRdM4UxCM95p1BzN+1
+	 d2W44/s7KjAFeuSgy6+WD9SocKtMJeh7WRL68waquEN4l2jQv20b7Dcv1Jfj+I/yQc
+	 kPZbyvhjJzExje/AobiV3kGiteGFOJxgnfi5obYxJpmbDqewG2Y1hzqQkn2G+xMaPb
+	 LBWRr86Qk3guQ==
+Message-ID: <025da51b45c5234dc05c4bfc6b0570e5.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240605172049.231108-1-macroalpha82@gmail.com>
-In-Reply-To: <20240605172049.231108-1-macroalpha82@gmail.com>
-Reply-To: wens@csie.org
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Thu, 6 Jun 2024 23:09:53 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65RpyESyzVp18EDCqkBQ-A4j9LYhXQe+bJOP+MGbUsC+Q@mail.gmail.com>
-Message-ID: <CAGb2v65RpyESyzVp18EDCqkBQ-A4j9LYhXQe+bJOP+MGbUsC+Q@mail.gmail.com>
-Subject: Re: [PATCH V2 0/4] Add GPADC for Allwinner H616
-To: Chris Morgan <macroalpha82@gmail.com>
-Cc: linux-sunxi@lists.linux.dev, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-iio@vger.kernel.org, p.zabel@pengutronix.de, 
-	sboyd@kernel.org, mturquette@baylibre.com, samuel@sholland.org, 
-	jernej.skrabec@gmail.com, conor+dt@kernel.org, krzk+dt@kernel.org, 
-	robh@kernel.org, Chris Morgan <macromorgan@hotmail.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240605234720.GA3441001-robh@kernel.org>
+References: <20240603223811.3815762-1-sboyd@kernel.org> <20240603223811.3815762-6-sboyd@kernel.org> <20240605234720.GA3441001-robh@kernel.org>
+Subject: Re: [PATCH v5 05/11] of: Add a KUnit test for overlays and test managed APIs
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, patches@lists.linux.dev, kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org, devicetree@vger.kernel.org, Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rafael J . Wysocki <rafael@kernel.org>, Saravana Kannan <saravanak@google.com>, Daniel Latypov <dlatypov@google.com>, Christian Marangi <ansuelsmth@gmail.com>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Maxime Ripard <maxime@cerno.tech>
+To: Rob Herring <robh@kernel.org>
+Date: Thu, 06 Jun 2024 08:23:30 -0700
+User-Agent: alot/0.10
 
-On Thu, Jun 6, 2024 at 1:20=E2=80=AFAM Chris Morgan <macroalpha82@gmail.com=
-> wrote:
->
-> From: Chris Morgan <macromorgan@hotmail.com>
->
-> Add support for the general purpose analog-to-digital converter (GPADC)
-> for the Allwinner H616 SoC to support the ADC joysticks as found on the
-> Anbernic RG35XX-H.
->
-> Changes since V1:
->  - Split dt-binding include additions to a separate patch.
->  - Removed patch adding compatible string as it was already upstreamed.
->  - Added patch to add the adc-joystick function to the RG35XX-H.
+Quoting Rob Herring (2024-06-05 16:47:20)
+> On Mon, Jun 03, 2024 at 03:38:02PM -0700, Stephen Boyd wrote:
+> > diff --git a/drivers/of/Makefile b/drivers/of/Makefile
+> > index 2ae909adde49..abd9c578343b 100644
+> > diff --git a/drivers/of/overlay_test.c b/drivers/of/overlay_test.c
+> > new file mode 100644
+> > index 000000000000..9a8083c3a659
+> > --- /dev/null
+> > +++ b/drivers/of/overlay_test.c
+> > @@ -0,0 +1,116 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * KUnit tests for device tree overlays
+> > + */
+> > +#include <linux/device/bus.h>
+> > +#include <linux/kconfig.h>
+> > +#include <linux/of.h>
+> > +#include <linux/of_platform.h>
+> > +#include <linux/platform_device.h>
+> > +
+> > +#include <kunit/of.h>
+> > +#include <kunit/test.h>
+> > +
+> > +static const char * const kunit_node_name =3D "kunit-test";
+> > +static const char * const kunit_compatible =3D "test,empty";
+> > +
+> > +/* Test that of_overlay_apply_kunit() adds a node to the live tree */
+> > +static void of_overlay_apply_kunit_apply(struct kunit *test)
+> > +{
+> > +     struct device_node *np;
+> > +
+> > +     KUNIT_ASSERT_EQ(test, 0,
+> > +                     of_overlay_apply_kunit(test, kunit_overlay_test));
+> > +
+> > +     np =3D of_find_node_by_name(NULL, kunit_node_name);
+> > +     KUNIT_EXPECT_NOT_ERR_OR_NULL(test, np);
+> > +     of_node_put(np);
+> > +}
+> > +
+> > +/*
+> > + * Test that of_overlay_apply_kunit() creates platform devices with the
+> > + * expected device_node
+> > + */
+> > +static void of_overlay_apply_kunit_platform_device(struct kunit *test)
+> > +{
+> > +     struct platform_device *pdev;
+> > +     struct device_node *np;
+> > +
+> > +     KUNIT_ASSERT_EQ(test, 0,
+> > +                     of_overlay_apply_kunit(test, kunit_overlay_test));
+> > +
+> > +     np =3D of_find_node_by_name(NULL, kunit_node_name);
+> > +     of_node_put_kunit(test, np);
+>=20
+> Moving target, but we now have of_node_put() cleanups. Would that work=20
+> here instead?
 
-Please carry relevant Reviewed-by and other tags forward.
+Do you mean cleanup.h? I don't think it will work. The assert logic is
+like an exception handler. If the assertion fails we basically jump out
+of the test and run any test exit code, including kunit resource exits.
+I could introduce another kunit wrapper for of_find_node_by_name() and
+use that here so that the reference is dropped when the test exits.
 
-ChenYu
+>=20
+> > +     KUNIT_ASSERT_NOT_ERR_OR_NULL(test, np);
+> > +
+> > +     pdev =3D of_find_device_by_node(np);
+> > +     KUNIT_EXPECT_NOT_ERR_OR_NULL(test, pdev);
+> > +     if (pdev)
+> > +             put_device(&pdev->dev);
+> > +}
+> > +
+> > +static int of_overlay_bus_match_compatible(struct device *dev, const v=
+oid *data)
+> > +{
+> > +     return of_device_is_compatible(dev->of_node, data);
+> > +}
+> > +
+> > +/* Test that of_overlay_apply_kunit() cleans up after the test is fini=
+shed */
+> > +static void of_overlay_apply_kunit_cleanup(struct kunit *test)
+> > +{
+> > +     struct kunit fake;
+> > +     struct platform_device *pdev;
+> > +     struct device *dev;
+> > +     struct device_node *np;
+> > +
+> > +     if (!IS_ENABLED(CONFIG_OF_OVERLAY))
+> > +             kunit_skip(test, "requires CONFIG_OF_OVERLAY");
+> > +     if (!IS_ENABLED(CONFIG_OF_EARLY_FLATTREE))
+> > +             kunit_skip(test, "requires CONFIG_OF_EARLY_FLATTREE for r=
+oot node");
+> > +
+> > +     kunit_init_test(&fake, "fake test", NULL);
+> > +     KUNIT_ASSERT_EQ(test, fake.status, KUNIT_SUCCESS);
+> > +
+> > +     KUNIT_ASSERT_EQ(test, 0,
+> > +                     of_overlay_apply_kunit(&fake, kunit_overlay_test)=
+);
+> > +
+> > +     np =3D of_find_node_by_name(NULL, kunit_node_name);
+> > +     of_node_put(np); /* Not derefing 'np' after this */
+> > +     KUNIT_ASSERT_NOT_ERR_OR_NULL(test, np);
+> > +
+> > +     pdev =3D of_find_device_by_node(np);
+>=20
+> Don't you need to hold a ref on np until here?
 
-> Chris Morgan (4):
->   dt-bindings: clock: sun50i-h616-ccu: Add GPADC clocks
->   clk: sunxi-ng: h616: Add clock/reset for GPADC
->   arm64: dts: allwinner: h616: Add GPADC device node
->   arm64: dts: allwinner: anbernic-rg35xx-h: Add ADC joysticks
->
->  .../arm64/boot/dts/allwinner/sun50i-h616.dtsi | 11 +++
->  .../sun50i-h700-anbernic-rg35xx-h.dts         | 79 +++++++++++++++++++
->  drivers/clk/sunxi-ng/ccu-sun50i-h616.c        |  5 ++
->  drivers/clk/sunxi-ng/ccu-sun50i-h616.h        |  2 +-
->  include/dt-bindings/clock/sun50i-h616-ccu.h   |  1 +
->  include/dt-bindings/reset/sun50i-h616-ccu.h   |  1 +
->  6 files changed, 98 insertions(+), 1 deletion(-)
->
-> --
-> 2.34.1
->
+Oh, good catch. We need an of_find_node_by_name_kunit() wrapper then.
