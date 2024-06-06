@@ -1,127 +1,95 @@
-Received: from fout1-smtp.messagingengine.com (fout1-smtp.messagingengine.com [103.168.172.144])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F7B1198A24;
-	Thu,  6 Jun 2024 17:09:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C69691990A2;
+	Thu,  6 Jun 2024 17:26:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717693784; cv=none; b=HrbOiHmADTOuk5TYvV0//T3l5yLfbxmPv8Dj7tWIrBrjM3xvyqGs3OSAvYWuLHoAhow7d4wa9HiYDdAlK0PksK3+Gv5UQlpj8mhVhzJqyZPt8uiU09hb+XbewA/y4WjsersCJ1YBQr+I26TKwBRJRY5SNjAGqJMdgQ/Ef5VNeu0=
+	t=1717694771; cv=none; b=goBtAXHrTaUfgCGI1p1d7KH+fYhFJYq68zBiSxIfms1+BCGlQ90jNz0A1MuS0X3lgewhOqYo7z14ucYGv8oYuVc2faUTLX+wBhM+OXTNYfMxQvKrDL/xGOI3cmvIpx7NEMIihYefhQ01T2oSIicOQm/z43twPUTrCYAS0OY4Vc4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717693784; c=relaxed/simple;
-	bh=NyDTMWjqq76gtV68Xg6Wx97ZWAT/9bfulqWfS0agPIU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=L7hxuxiARskm0VG5AH55gEj6pASfP+GWOS+alZ1rut9v0lW3TpjtPxxJz89Rf3UxQ+XI9foiyda/Y9c0WJYiOLwsx5G2I7+RG1ozOOysuVL6bwbNfzPuoM4vWabO9oOxAyCOD4OydJrW3Fj0eKBBx3adenrwVYDDnHoGT2yboTw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=0+qexqTN; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=iK+uQbzY; arc=none smtp.client-ip=103.168.172.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+	s=arc-20240116; t=1717694771; c=relaxed/simple;
+	bh=VqnNKmLSC1RD6dHJs9bd0MVxv0ddr88QmVM8jgunJ+I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EDdsTPXoER/oTgI3oWOXPC4Ur45+Y40fNBesXwDEj0TBlM4Yv3N7zHBtL/8AMI/A/hsTTyjbEOUshBIS3RL732vHFAH4uyEcezo7jC/qfuPpm8ej+JSxUJ46Ykd0Cq+jP5gdIk7xtYu3eSLSZVXzWaQynFZovLv0HRmSt+8iLBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d5ojnwxW; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="0+qexqTN";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="iK+uQbzY"
-Received: from compute4.internal (compute4.nyi.internal [10.202.2.44])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 4B50F13800E3;
-	Thu,  6 Jun 2024 13:09:37 -0400 (EDT)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute4.internal (MEProxy); Thu, 06 Jun 2024 13:09:37 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:message-id:mime-version:reply-to
-	:subject:subject:to:to; s=fm3; t=1717693777; x=1717780177; bh=uh
-	+BX1wYIP+G0aosdwsgzf1m796E5yae5OCKa3pMPNE=; b=0+qexqTNhodlaWXVOh
-	ytZleR6ERq7J1FAC3IpKi+N3IGqkWkJoGjCZ5NRBtyU81dfxoV534aSYwVa6YO/0
-	S+d33d8L2he/76QEYpjACv10LvvbFp/ftJKVrRJCJGq07EQ0jKHKteN3OqD6ykag
-	94uSQ0ei7Wba4+G2rVc+GGrGLMQkBmc69iUG5zMpiKQjIRDoH1k+2WdnExZkn9VD
-	evD725ZxpOxXYQ2uEwwetOMrkNaLCDoyGkQmjg6LyeuIJlimr/1tOxBiMASiDQCi
-	z0oDANWNfg3BFFJMBthh86BGXyRThp0Pr2aglyBsKqxsiDvjl0nag5KNPU2dtUjE
-	rC5w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-	:x-sasl-enc; s=fm1; t=1717693777; x=1717780177; bh=uh+BX1wYIP+G0
-	aosdwsgzf1m796E5yae5OCKa3pMPNE=; b=iK+uQbzYL0MmGCeBNkD7Oz8P164kW
-	6ck03LPYX8wb6nY4ExEIl6/sK9anyRF0EgnYtpIKJmxX6ad3ic9p3R0ENMkNEL6A
-	OIq0JZ8cTqWxf7M0jrw5cbOTBeNPIe6y7/CUm8rPgKfcufC32e+5N16IFhWQ9ksu
-	AEFZnc32XAhCGEvv6dBDAnFy/FFyXfjkNWN+oagXUT8ZurbxiFKOcn/zAxGQomdv
-	Pije3mtmC5S6XuFMHn2btbeI5din3frxG5g7b1FECdXb31tIz9ydAV0MBxQeyK5w
-	vAXDrnDEhjlHZuMs9wKClvg4CKxKoTrt3MIvOTJBrxbr4FZJ4FLUenFmA==
-X-ME-Sender: <xms:Ue1hZh5NLzs65hm4ZkrQsuWh5WK4_9V6uDeKZbpQcn8pyzNmlqQeoQ>
-    <xme:Ue1hZu7lCha8NneT8d4ZTQlRgFzY6OW0Kk7G5S_qRz3K_CTuwZfd3fMdL_aEbg-rT
-    PIIFDdFhY_hQ984j3c>
-X-ME-Received: <xmr:Ue1hZocSAICcUnOpMiy6jWcSBfBlfPNWbE_88qHnAWx5-4upwVeW4HCxFhq-2Nu6991WyGDG9qtyleAMMedqglEizMWpfv2JR2Ro>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrvdelkedguddtlecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfgh
-    necuuegrihhlohhuthemuceftddtnecunecujfgurhephffvvefufffkofggtgfgsehtke
-    ertdertdejnecuhfhrohhmpefpihhklhgrshcuufpnuggvrhhluhhnugcuoehnihhklhgr
-    shdrshhouggvrhhluhhnugdorhgvnhgvshgrshesrhgrghhnrghtvggthhdrshgvqeenuc
-    ggtffrrghtthgvrhhnpeehudelteetkefgffefudefuedvjeeivdekhfevieefgeffheel
-    tddvvefhfeetgeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfh
-    hrohhmpehnihhklhgrshdrshhouggvrhhluhhnugdorhgvnhgvshgrshesrhgrghhnrght
-    vggthhdrshgv
-X-ME-Proxy: <xmx:Ue1hZqKZBPyk683EdVogLOsmz76IpArya6bgcWgP-80NWUlIbLRftA>
-    <xmx:Ue1hZlK6mMkWrWsip7ZFEmdLwpTDRGBQ6FvmxSc5XI5-3pNuLFfS8g>
-    <xmx:Ue1hZjyd620M_rqZmSxfh58RlWlrgsjbNk486y9pHM6yYShkn8wpTw>
-    <xmx:Ue1hZhJsg-pobhmzrECEu6wZVEYW9zDBMXlicxV2jQiJ6saVHXzo5A>
-    <xmx:Ue1hZiGrm_xBvMRA9wdN7BHlAwwfL2X3v_WT-E3bqmJChcFaReLw5TJz>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 6 Jun 2024 13:09:36 -0400 (EDT)
-From: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Cc: =?UTF-8?q?Niklas=20S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-Subject: [PATCH v2] clk: renesas: r8a779h0: Add VIN clocks
-Date: Thu,  6 Jun 2024 19:08:58 +0200
-Message-ID: <20240606170858.1694652-1-niklas.soderlund+renesas@ragnatech.se>
-X-Mailer: git-send-email 2.45.1
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d5ojnwxW"
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a692130eb19so136746666b.2;
+        Thu, 06 Jun 2024 10:26:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1717694768; x=1718299568; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VqnNKmLSC1RD6dHJs9bd0MVxv0ddr88QmVM8jgunJ+I=;
+        b=d5ojnwxWdvkyXcBrwWEJzHu5MwkasidhPfm7+vMuuGPFAQGmeooTwWu9HmkjRaias1
+         ckNRxwjVWRz9bCga0m6ARIeAcaXCpRbCc0/4MLmU/2MEiET/+CSkpWuH0LoHTVpibGiN
+         FvQjTNhZf8Wm8ppsmc3wAyAOVNit/X/WIVnjOvAe7wz5IiOun4Ve1mgmihLHoJvlqscU
+         8Obqcf8x5f8WgC4M5MiFQ6t39MDlPcJSgJXXYh7d/s5zNfycBBZXmadEMxf8395MIO+E
+         tZs6jD2jl/4GtSQZj5nRDSSrdAjIAL+qKie6Nv4lmXaQMKp5K4fTMk6P7Z1/Cdq3OVoZ
+         ctfg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1717694768; x=1718299568;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VqnNKmLSC1RD6dHJs9bd0MVxv0ddr88QmVM8jgunJ+I=;
+        b=Fzw6s1YP3FPe8xwJ+2Im4JNWshMsyS2rgUPV6T9P9/rqQWYnzGjFrNjC6vTAwouPPN
+         CD06s4dIdeqhPZihIe7X5zZyMJ1G+ocLqWcBoPzhCfLddWvJa9FU8lw+p7KbdkE5Xmbk
+         ui0AdtoQgklzl1Q+g5g7sMq5a/yG3JcG6TLSkjK6NAZO2GJ+FEhUQFaH3R9L3pc/pa09
+         8M+Yr81U5LSPWuZSuWp5ehcLJ7TLSIFqMjbnugkXhs9gtNH46bhDv8Efc6fTHEeyYusG
+         PjNKjEs7XYdvGTWI4JP+Yx+NweHqzAqAWEbKZm3eV6ARRPPyQ/FamejRVffbjxLeZzAX
+         AdXg==
+X-Forwarded-Encrypted: i=1; AJvYcCUDxUWAmqe9rIY6ocM0ezrJBtOaxCYd5hgydE9KDfMCgvF21n6+gTPxhfG4mfgzg1Zi4k00QDaqwKsykiZJA4bHrPRIhVxjSmkMhht/ZM/t8TNsgP0ywSeuFi+4cXsbg1SPQ1eNdh47Bdth/Rfq1AMfMgozOg4vZJx+qTK/x9lRbH+tlg==
+X-Gm-Message-State: AOJu0YwX84CV3Bohig25ySoq2j+SPfW/IL8mVZgJckQ/8+YRluPq2FjF
+	kQYbtpq72a7SAZtc1rBegVIaqjUOvLzMj5NSjP4qt3aBYiIoFHo=
+X-Google-Smtp-Source: AGHT+IEWHpUP1OjNuBxbT3hNUewpxmHFYSGB8WmlQsIDkOOC1DBOurNrQViCNgd74rDrnr8oHEdemA==
+X-Received: by 2002:a17:906:446:b0:a68:cc34:87d8 with SMTP id a640c23a62f3a-a6cdbfec41cmr13492866b.67.1717694767849;
+        Thu, 06 Jun 2024 10:26:07 -0700 (PDT)
+Received: from ?IPV6:2a02:810b:f40:4600:ed9f:91b7:21f2:3109? ([2a02:810b:f40:4600:ed9f:91b7:21f2:3109])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c805ccb11sm120939166b.78.2024.06.06.10.26.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Jun 2024 10:26:07 -0700 (PDT)
+Message-ID: <1f549cba-a754-4256-aa4b-dbc630e5e451@gmail.com>
+Date: Thu, 6 Jun 2024 19:26:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/5 RESEND] dt-bindings: clock: rk3128: Drop
+ CLK_NR_CLKS
+To: Conor Dooley <conor@kernel.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20240605210049.232284-1-knaerzche@gmail.com>
+ <20240605210049.232284-3-knaerzche@gmail.com>
+ <20240606-dispersal-buffed-27a6e7540d4c@spud>
+Content-Language: en-US
+From: Alex Bee <knaerzche@gmail.com>
+In-Reply-To: <20240606-dispersal-buffed-27a6e7540d4c@spud>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Add the VIN module clocks, which are used by the VIN modules on the
-Renesas R-Car V4M (R8A779H0) SoC.
 
-Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
----
-* Changes since v1
-- Fix names for first 8 VIN clocks, should be vin0[0-7] not vin[0-7].
-- Fix parent clock to S0D4_VIO.
----
- drivers/clk/renesas/r8a779h0-cpg-mssr.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+Am 06.06.24 um 18:09 schrieb Conor Dooley:
+> On Wed, Jun 05, 2024 at 11:00:46PM +0200, Alex Bee wrote:
+>> CLK_NR_CLKS should not be part of the binding. Let's drop it, since
+>> the kernel code no longer uses it either.
+> What about other operating systems etc, e.g. U-Boot or barebox?
+For u-boot: RK3128 hasn't been switched to OF_UPSTREAM yet and it still
+uses it's own (dated) copy of the dt-bindings headers [0] and besides this
+macro isn't used there. Barebox doesn't support RK3128 at all and I'm
+generally not aware of any other bootloader/OS does which does and
+especially none which uses this macro.
 
-diff --git a/drivers/clk/renesas/r8a779h0-cpg-mssr.c b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
-index 034e375f31fe..5ca1b14a6d60 100644
---- a/drivers/clk/renesas/r8a779h0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
-@@ -208,6 +208,22 @@ static const struct mssr_mod_clk r8a779h0_mod_clks[] = {
- 	DEF_MOD("tmu2",		715,	R8A779H0_CLK_SASYNCPERD2),
- 	DEF_MOD("tmu3",		716,	R8A779H0_CLK_SASYNCPERD2),
- 	DEF_MOD("tmu4",		717,	R8A779H0_CLK_SASYNCPERD2),
-+	DEF_MOD("vin00",	730,	R8A779H0_CLK_S0D4_VIO),
-+	DEF_MOD("vin01",	731,	R8A779H0_CLK_S0D4_VIO),
-+	DEF_MOD("vin02",	800,	R8A779H0_CLK_S0D4_VIO),
-+	DEF_MOD("vin03",	801,	R8A779H0_CLK_S0D4_VIO),
-+	DEF_MOD("vin04",	802,	R8A779H0_CLK_S0D4_VIO),
-+	DEF_MOD("vin05",	803,	R8A779H0_CLK_S0D4_VIO),
-+	DEF_MOD("vin06",	804,	R8A779H0_CLK_S0D4_VIO),
-+	DEF_MOD("vin07",	805,	R8A779H0_CLK_S0D4_VIO),
-+	DEF_MOD("vin10",	806,	R8A779H0_CLK_S0D4_VIO),
-+	DEF_MOD("vin11",	807,	R8A779H0_CLK_S0D4_VIO),
-+	DEF_MOD("vin12",	808,	R8A779H0_CLK_S0D4_VIO),
-+	DEF_MOD("vin13",	809,	R8A779H0_CLK_S0D4_VIO),
-+	DEF_MOD("vin14",	810,	R8A779H0_CLK_S0D4_VIO),
-+	DEF_MOD("vin15",	811,	R8A779H0_CLK_S0D4_VIO),
-+	DEF_MOD("vin16",	812,	R8A779H0_CLK_S0D4_VIO),
-+	DEF_MOD("vin17",	813,	R8A779H0_CLK_S0D4_VIO),
- 	DEF_MOD("wdt1:wdt0",	907,	R8A779H0_CLK_R),
- 	DEF_MOD("cmt0",		910,	R8A779H0_CLK_R),
- 	DEF_MOD("cmt1",		911,	R8A779H0_CLK_R),
--- 
-2.45.1
-
+[0]
+https://github.com/u-boot/u-boot/blob/master/include/dt-bindings/clock/rk3128-cru.h
