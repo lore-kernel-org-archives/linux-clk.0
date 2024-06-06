@@ -1,95 +1,123 @@
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C69691990A2;
-	Thu,  6 Jun 2024 17:26:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02913198E74;
+	Thu,  6 Jun 2024 18:09:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717694771; cv=none; b=goBtAXHrTaUfgCGI1p1d7KH+fYhFJYq68zBiSxIfms1+BCGlQ90jNz0A1MuS0X3lgewhOqYo7z14ucYGv8oYuVc2faUTLX+wBhM+OXTNYfMxQvKrDL/xGOI3cmvIpx7NEMIihYefhQ01T2oSIicOQm/z43twPUTrCYAS0OY4Vc4=
+	t=1717697348; cv=none; b=X5IifolTOrIAB2FWCYInGy8HZ+MfxutnMusXpBFNQTBZGiJ5bRMpZKFPEFrw2Oe1aJwg8apPxgKOOGl8HzePDXJO7rro5fd1ZDJUXPr6k2sNc2wKG+zsALsvH6wgR76DyG4uot5L6x69qVsUyuL1y9HtX3LvJpdTyELNlczuPSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717694771; c=relaxed/simple;
-	bh=VqnNKmLSC1RD6dHJs9bd0MVxv0ddr88QmVM8jgunJ+I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EDdsTPXoER/oTgI3oWOXPC4Ur45+Y40fNBesXwDEj0TBlM4Yv3N7zHBtL/8AMI/A/hsTTyjbEOUshBIS3RL732vHFAH4uyEcezo7jC/qfuPpm8ej+JSxUJ46Ykd0Cq+jP5gdIk7xtYu3eSLSZVXzWaQynFZovLv0HRmSt+8iLBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d5ojnwxW; arc=none smtp.client-ip=209.85.218.41
+	s=arc-20240116; t=1717697348; c=relaxed/simple;
+	bh=8rmvDfyR18J9R4Nr5L9/81wBXu6SoSVYsBY65zb4Wdk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eSLuW7Q0JIPkD5nHGOS+fDW+XhNe2fWAXeMpoyt3qusMA6VjEK3sScfbnpp4cAuboXvMFQ5+j4PGZ0FAx6n1hLqPQ2RpugY1sYenhrGkLyqbHEmiX6Os61IwPEEv98uc+OPANo0RNaHV0GtDcVlBhsJlGIJ2uYMalWQTAta2Y84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DIoln4T4; arc=none smtp.client-ip=209.85.216.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d5ojnwxW"
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a692130eb19so136746666b.2;
-        Thu, 06 Jun 2024 10:26:09 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DIoln4T4"
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2bfff08fc29so1105993a91.1;
+        Thu, 06 Jun 2024 11:09:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717694768; x=1718299568; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VqnNKmLSC1RD6dHJs9bd0MVxv0ddr88QmVM8jgunJ+I=;
-        b=d5ojnwxWdvkyXcBrwWEJzHu5MwkasidhPfm7+vMuuGPFAQGmeooTwWu9HmkjRaias1
-         ckNRxwjVWRz9bCga0m6ARIeAcaXCpRbCc0/4MLmU/2MEiET/+CSkpWuH0LoHTVpibGiN
-         FvQjTNhZf8Wm8ppsmc3wAyAOVNit/X/WIVnjOvAe7wz5IiOun4Ve1mgmihLHoJvlqscU
-         8Obqcf8x5f8WgC4M5MiFQ6t39MDlPcJSgJXXYh7d/s5zNfycBBZXmadEMxf8395MIO+E
-         tZs6jD2jl/4GtSQZj5nRDSSrdAjIAL+qKie6Nv4lmXaQMKp5K4fTMk6P7Z1/Cdq3OVoZ
-         ctfg==
+        d=gmail.com; s=20230601; t=1717697346; x=1718302146; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1uSu71eHsqUtnpmvK2hW8dkSREGhr2OmLFu/qTAkXfY=;
+        b=DIoln4T4hE34c4oSQm/+ZKvlffd/LP8+BVJV9odIfxkXXhwgbMBeSbjxyS5OeZkiTI
+         J0i7AQobCP8dz3Q8vhLt61qMAkCUie0c7hlNZUyEk3f4HlrqK/wTJ8zSvTn1FgC4C61C
+         grhzMJF+UIe3LPi3LnwKTZrzkj8RSSdd1ol6FSkD4W5huiciupqqcft6HLgvpvdw3U5M
+         c5LDdHWuh+phKFMfFk+xm/f4uYfjwJUN3wUfHqbnp7CZm7rFBjCiFK+Goi5IctPpb631
+         jTpV3nFWBnzT2NKVtYwBUS0THYLERPnfu36kesmb80Q3hzC4+fb9J51+LhwXgibisqUs
+         mByg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717694768; x=1718299568;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VqnNKmLSC1RD6dHJs9bd0MVxv0ddr88QmVM8jgunJ+I=;
-        b=Fzw6s1YP3FPe8xwJ+2Im4JNWshMsyS2rgUPV6T9P9/rqQWYnzGjFrNjC6vTAwouPPN
-         CD06s4dIdeqhPZihIe7X5zZyMJ1G+ocLqWcBoPzhCfLddWvJa9FU8lw+p7KbdkE5Xmbk
-         ui0AdtoQgklzl1Q+g5g7sMq5a/yG3JcG6TLSkjK6NAZO2GJ+FEhUQFaH3R9L3pc/pa09
-         8M+Yr81U5LSPWuZSuWp5ehcLJ7TLSIFqMjbnugkXhs9gtNH46bhDv8Efc6fTHEeyYusG
-         PjNKjEs7XYdvGTWI4JP+Yx+NweHqzAqAWEbKZm3eV6ARRPPyQ/FamejRVffbjxLeZzAX
-         AdXg==
-X-Forwarded-Encrypted: i=1; AJvYcCUDxUWAmqe9rIY6ocM0ezrJBtOaxCYd5hgydE9KDfMCgvF21n6+gTPxhfG4mfgzg1Zi4k00QDaqwKsykiZJA4bHrPRIhVxjSmkMhht/ZM/t8TNsgP0ywSeuFi+4cXsbg1SPQ1eNdh47Bdth/Rfq1AMfMgozOg4vZJx+qTK/x9lRbH+tlg==
-X-Gm-Message-State: AOJu0YwX84CV3Bohig25ySoq2j+SPfW/IL8mVZgJckQ/8+YRluPq2FjF
-	kQYbtpq72a7SAZtc1rBegVIaqjUOvLzMj5NSjP4qt3aBYiIoFHo=
-X-Google-Smtp-Source: AGHT+IEWHpUP1OjNuBxbT3hNUewpxmHFYSGB8WmlQsIDkOOC1DBOurNrQViCNgd74rDrnr8oHEdemA==
-X-Received: by 2002:a17:906:446:b0:a68:cc34:87d8 with SMTP id a640c23a62f3a-a6cdbfec41cmr13492866b.67.1717694767849;
-        Thu, 06 Jun 2024 10:26:07 -0700 (PDT)
-Received: from ?IPV6:2a02:810b:f40:4600:ed9f:91b7:21f2:3109? ([2a02:810b:f40:4600:ed9f:91b7:21f2:3109])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6c805ccb11sm120939166b.78.2024.06.06.10.26.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Jun 2024 10:26:07 -0700 (PDT)
-Message-ID: <1f549cba-a754-4256-aa4b-dbc630e5e451@gmail.com>
-Date: Thu, 6 Jun 2024 19:26:06 +0200
+        d=1e100.net; s=20230601; t=1717697346; x=1718302146;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1uSu71eHsqUtnpmvK2hW8dkSREGhr2OmLFu/qTAkXfY=;
+        b=d9XlemMqfkW8DWwtO6hZiotgETn94uPpbXe8Hk8aTOBk6NIJSKYGih7dCCDpbT8R5r
+         tWk1ogLa+lVyqemLoHhD5hiy48gfNX/mWN7UEQHvhIuOrPx4DAmS1claPbtZVwtJ8hJF
+         yjMBWWvFGMOY5Sn1E3lLtRO1LcE30RCC9V3YsPMyFlXL+0CCMQ85wCgcuGbtyqnkoIqx
+         vJwx6RYfpqj6rkvrn3kg9XOHlizuUZJVj8V38ozBB0zHCjswso0T7gCjcRGUkLhVvGiL
+         JzfrbxUl8rAAMoJ5MZtm1BYjjtK8Vm20wi0eEEMSMagytTBfUBAWqgNJWGe3zMeifl3A
+         gUCg==
+X-Forwarded-Encrypted: i=1; AJvYcCULtOdR29Q4h6ep7ucw0uksA7ZhoBSEKuoFPrcNsCj8oNvjqs0vFFxQSxTXafi7x4RFqqU1MzS6heFYwDPf8SLSaakTNz7MO3iOuPIn4bEyMOyJsIjhjPFsAiVq808gPyUvGafY9Wo9
+X-Gm-Message-State: AOJu0YzoEAEGjZLj16gSed/9+SjvT1fVtmTJQRdNrLYmlKjMYY6ljoLp
+	JptVFD6bUfXmiI6gcgOld/jJYOIDBZnG2j9f+xk4r+7oAOEU4KQ4sxZGsTgKoQCR30ddTcIVYrE
+	f638PtagGQawBGhuCVCUkt/8QrZs=
+X-Google-Smtp-Source: AGHT+IGVqfib7a6zT10Bihuq1okEft/QKigMZXkxBv7gI9UOhsg+rEzGiZYDIYZIVJEp5FciaEux0sVwRtv6+I1acYM=
+X-Received: by 2002:a17:90a:4383:b0:2ac:9baf:25b5 with SMTP id
+ 98e67ed59e1d1-2c2bcc0b8c4mr271174a91.25.1717697345935; Thu, 06 Jun 2024
+ 11:09:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/5 RESEND] dt-bindings: clock: rk3128: Drop
- CLK_NR_CLKS
-To: Conor Dooley <conor@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20240605210049.232284-1-knaerzche@gmail.com>
- <20240605210049.232284-3-knaerzche@gmail.com>
- <20240606-dispersal-buffed-27a6e7540d4c@spud>
-Content-Language: en-US
-From: Alex Bee <knaerzche@gmail.com>
-In-Reply-To: <20240606-dispersal-buffed-27a6e7540d4c@spud>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <1711026842-7268-1-git-send-email-shengjiu.wang@nxp.com>
+ <20240424164725.GA18760@francesco-nb> <f0a38df8-9197-452d-a46f-2bc2697c1186@sirena.org.uk>
+ <CAA+D8APWGk6oJJsfLhcOfyzMo7uNFABFmeF51gerSC_16xj9uQ@mail.gmail.com>
+In-Reply-To: <CAA+D8APWGk6oJJsfLhcOfyzMo7uNFABFmeF51gerSC_16xj9uQ@mail.gmail.com>
+From: Adam Ford <aford173@gmail.com>
+Date: Thu, 6 Jun 2024 13:08:54 -0500
+Message-ID: <CAHCN7xJgqz3_6j5dzJQ5OW_=g_VEYj4zNUBn-SjEBSj1GF9BSw@mail.gmail.com>
+Subject: Re: [PATCH v4] clk: imx: imx8mp: Add pm_runtime support for power saving
+To: Shengjiu Wang <shengjiu.wang@gmail.com>
+Cc: Mark Brown <broonie@kernel.org>, Francesco Dolcini <francesco@dolcini.it>, 
+	Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org, peng.fan@nxp.com, 
+	mturquette@baylibre.com, sboyd@kernel.org, shawnguo@kernel.org, 
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
+	linux-imx@nxp.com, linux-clk@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, May 27, 2024 at 7:37=E2=80=AFAM Shengjiu Wang <shengjiu.wang@gmail.=
+com> wrote:
+>
+> On Mon, May 27, 2024 at 8:24=E2=80=AFPM Mark Brown <broonie@kernel.org> w=
+rote:
+> >
+> > On Wed, Apr 24, 2024 at 06:47:25PM +0200, Francesco Dolcini wrote:
+> > > On Thu, Mar 21, 2024 at 09:14:02PM +0800, Shengjiu Wang wrote:
+> > > > Add pm_runtime support for power saving. In pm runtime suspend
+> > > > state the registers will be reseted, so add registers save
+> > > > in pm runtime suspend and restore them in pm runtime resume.
+> > > >
+> > > > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> > > > Reviewed-by: Peng Fan <peng.fan@nxp.com>
+> > >
+> > > Is this introducing a regression?
+> > >
+> > >   800 13:50:19.713052  <6>[   16.531134] clk: Disabling unused clocks
+> > >   801 13:50:19.727524  <2>[   16.535413] SError Interrupt on CPU2, co=
+de 0x00000000bf000002 -- SError
+> > >   802 13:50:19.731400  <4>[   16.535421] CPU: 2 PID: 1 Comm: swapper/=
+0 Not tainted 6.9.0-rc5-next-20240424 #1
+> > >   803 13:50:19.742514  <4>[   16.535428] Hardware name: Toradex Verdi=
+n iMX8M Plus on Dahlia Board (DT)
+> >
+> > I am now seeing this failure in mainline on both the above board and
+> > i.MX8MP-EVK.  There was a fix mentioned in the thread but it's not
+> > landed for -rc1, both boards crash as above.  What's the plan for
+> > getting this fixed, should the patch be reverted for now?
+>
+> https://lore.kernel.org/all/CAPDyKFp4V8f0iyeRASSEu4YaCSz0m56=3D8ssBJ9ogSv=
+qG1dzMZA@mail.gmail.com/
+>
+> fixed is merged,  but may not in v6.10-rc1. Should anybody help to cherry=
+-pick?
 
-Am 06.06.24 um 18:09 schrieb Conor Dooley:
-> On Wed, Jun 05, 2024 at 11:00:46PM +0200, Alex Bee wrote:
->> CLK_NR_CLKS should not be part of the binding. Let's drop it, since
->> the kernel code no longer uses it either.
-> What about other operating systems etc, e.g. U-Boot or barebox?
-For u-boot: RK3128 hasn't been switched to OF_UPSTREAM yet and it still
-uses it's own (dated) copy of the dt-bindings headers [0] and besides this
-macro isn't used there. Barebox doesn't support RK3128 at all and I'm
-generally not aware of any other bootloader/OS does which does and
-especially none which uses this macro.
+It appears that RC2 has this fix [1].
 
-[0]
-https://github.com/u-boot/u-boot/blob/master/include/dt-bindings/clock/rk3128-cru.h
+adam
+
+[1] - https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/di=
+ff/drivers/pmdomain/imx/gpcv2.c?id=3Dv6.10-rc2&id2=3Dv6.10-rc1
+
+>
+> Best regards
+> Shengjiu Wang
+>
