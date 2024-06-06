@@ -1,60 +1,59 @@
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 255AF13FD99
-	for <linux-clk@vger.kernel.org>; Thu,  6 Jun 2024 09:27:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ED66193070;
+	Thu,  6 Jun 2024 10:12:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717666062; cv=none; b=q2+HJEo6Te34CcDyFX2NBfhOXeZ5Y7vqtSyZ/LHxLzSB5dQHxtPjnc0pbBWiDpSCbkSnK0j2suqn2VNFAUysVVlc6yEQkNTeXnzbb1/uXDPN268xKzAYGanE5R66U8Qu4cjJM1Qy0Vq+UonG+jLYrCtXd6ATvp/G/9nJLuyAX3w=
+	t=1717668779; cv=none; b=eeNtxivw4+Vp0mLK002qZuo8+pVzDsULrA6/iiD2uOw0+LfU6JBMuLcbnWKX0VEVHJ2U8iWeTlxjIlOgQnJuHuU/9kwlLBLi1zu+MkdY4yw0z3SoXHSnbP7GMpJ67LhbbiRlUhRauO4i92S0aOLkxUWkAM3wuMXKMUlBrdzl2X0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717666062; c=relaxed/simple;
-	bh=rYnqU+2ou4u7Kaw4R/jgOa2YNlkFkEhv+b9vNxA6IfE=;
+	s=arc-20240116; t=1717668779; c=relaxed/simple;
+	bh=6Uy5q4elvDKhtFVRvt/yFW+qIAdrjmGYOYzK4xro7+I=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=N8qQxIR92SosAP0Vt7Q3g3q62s1x/tgH/TMzybWX34QQUikVpwaUktS31NVbWbS5R/Ft2+BYLU5x8qaxbkHh9DIsH2JY/kSIDBTMHbb6QN4T99Re93k28U5kWQbt5eCnBcVNhHzYZA8ecHuFWumpo+R1RMbWRYN+2oBjYQNShOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mHbpPO++; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 In-Reply-To:Content-Type; b=T5Eyc9yqbINdR1h+gRvRaDmWDVpPCez8nBTg1BvoKlSxfIMAhrHW/A2f4RzwUEWo260u4qsaHspooRSCxP7LatGuVBqrFogyN9D5cb4VU8AYKAm706My0k/M63MrIdiZUUhnZlbJSmW5sr5ORLMRImdV7/Ll4tOUyzHNSsdah9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J0oAAg54; arc=none smtp.client-ip=209.85.208.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mHbpPO++"
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57a44c2ce80so709609a12.0
-        for <linux-clk@vger.kernel.org>; Thu, 06 Jun 2024 02:27:39 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J0oAAg54"
+Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2eaae2a6dc1so14058461fa.0;
+        Thu, 06 Jun 2024 03:12:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1717666058; x=1718270858; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=4coGUS5rqVO/XkMEjgpDlue2Pr3XzDgvTCMJ1kTn61Y=;
-        b=mHbpPO++Pj5BgKK7RI2OslzYmpyQe13GSZVmlCQvrgoAwdLYZVDRRI9UBvMJZVKyJH
-         8RR9v1HbA4yn4JLqTcPyeutgJ3tA37Wo60zZiJHCXGte8Mhve3ZJoX08HjFMI6IVrnau
-         f+HDCon7V188Do/dwnUWaqahv2ttTvwe/3gNXzztAdO5Nww4cph5DhkDAxzK7daZYza/
-         UdaDaQ7SHXQTqS46zpsd6LzDEAvRIOFOOV0q6i1aL9b0G+4g2k5lc1YyphMFZcKA4oKV
-         DJ80oUQHE8gxY99hzrahq9OFnjFJ0bym93hFQdGqrHooEAemF4O7fM7vV3rKmf6l2vWI
-         b6fA==
+        d=gmail.com; s=20230601; t=1717668776; x=1718273576; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=VwwGGDviOkEqNMI4ZeyME6vD2otTizBZGZrZCysEeXs=;
+        b=J0oAAg54a2s8REwQAcbWucX9zQmshjYXIt6wxi04BrfMkJn44AQ5sYHFWgkayTSSBL
+         Cq0caGk+JRTBy1uttPzUh4wK5pDLCyo8r4sckIzLbl8M5xP8NmDTP9WR66VUJjbHX48Y
+         mJXTKCq0rJxP8EM6IkN3VZ33pYN0uldfFohLPih+toKKbcnyANg3N32IzA6qvlBKLEC4
+         oT8yCbQw2wcruWCgfTMATqcz1tKqAn9PoDEOQ/GsQvYOKFhwTRg1/oubxtx7YVf9+G4J
+         6TwjiEU3ZliyRYgHx4/NatMsuXEeIwkiMZiaPoTKLW+hz6nuOrnfk8PruClrW2eq/g+E
+         up1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717666058; x=1718270858;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4coGUS5rqVO/XkMEjgpDlue2Pr3XzDgvTCMJ1kTn61Y=;
-        b=gdEcJghCSocm8N1URGVcLFfbxPjqZhMP01horU77pTmPhgkq2b5e64tAGbPSs4m1RW
-         5KdA9zBAPRXjdcfLGCHs0dhQjbcRb3eka8QgMYv+BPd4/VjHQNFiqEjM1ZbFJntNxqf1
-         lXD59aqGj1cQVryRRsIdh50kYl3sQkzDC9bqX8QWp64av+3Jk3RJakXR6mucQ07d16P6
-         lSwuf6igAkSHDvnwUFANKDGcQ3UNEz0nawQDj53Hm/fQiU7l9tHSE4Vrn6WUF4be5/NF
-         ghhmmGfYbZfAuW8uMxs+CJDai+tQ6aTl+cPL4GgnzPd4hBY3EEG/gLWDYGq9RQKaWPLk
-         7/Xg==
-X-Forwarded-Encrypted: i=1; AJvYcCUxddaaxA+rGFSSgFgJsiM2GqOPuUiGK7Tcjr9IvHgZDa3B7f/HnHflc8BawCr86J1oymmMznmql3BaKtLUUEw/zLkICtYFMysI
-X-Gm-Message-State: AOJu0YzpLorVc2tZs40/kImjUFdXm3J1sPL6q157HTDXp2Mtua7MrxJW
-	aRZHO2k7uqISYRlhH66OhI0F3Ydoq139tDw+RIBdWOdzwPfZ3rtBPXzF4JlYSDM=
-X-Google-Smtp-Source: AGHT+IGqN8B1VWaFB5hpOX3x2j23zjabMi+w1OoZszVo5ULIhjp7d0F8Xv74HZa+5EdL58oQ+GHQ2A==
-X-Received: by 2002:a50:d5c8:0:b0:574:ebf4:f78c with SMTP id 4fb4d7f45d1cf-57aaaf0eb41mr807201a12.7.1717666058529;
-        Thu, 06 Jun 2024 02:27:38 -0700 (PDT)
-Received: from [192.168.128.139] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57aae0ca5e3sm766761a12.25.2024.06.06.02.27.35
+        d=1e100.net; s=20230601; t=1717668776; x=1718273576;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=VwwGGDviOkEqNMI4ZeyME6vD2otTizBZGZrZCysEeXs=;
+        b=uySMzTO3qegcH/iQv+aeFeegz0A13sMRPavnJ76E3xYzEaU64Mk56Xj0BOcgh07xRb
+         gidYj4zT+5h+WytPk5PXon3iMeR700hGO1lHaATyuKP69vwbAOqKP1Pzp10/66fEYgLW
+         2oJsWJ06N+lWZp7cb/M9v3vs14J6qIg0+R6yb+PwpyoTeK66RwIFXSLvz/F8NcvsrvFt
+         MHUYHafL7LYl/zj6mUoaFsjcBTrFllfzNOSOZ7A2OoKnPb4XLKdRwMrdPA7XJtTsn6Je
+         k4Ejt5frkYfJG6VrXrFW8K6qzCcVdK39y68483B09Y6/FhpD8G4Dxmxg/EgQZoZlQUEe
+         2ogQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUNfzQ6+w561m2W+yq6ZAwGhDgbP8MiY5HSffQ0kmms1AGMDjRzVjT5v1d8Ch0nufthlWZpMvchzVCuUnRuE7Y5JPJK7AM5lvHtmpqSJFIDnatxbAO59TH61mjgAQJKTgc3tbGid8nTjCGwgn4Dvsj+DbXl1fucs/mhsehk8wtGU3eFfQ==
+X-Gm-Message-State: AOJu0YwYF5QDHsLT1fJKovfS7xy3/Tepo8NDSAbEEk5Pz/lg1o2HvURd
+	SY157XYxdybqhJ+PvQeyLKBOKKwrcrSH83QyKQCJpZRX0yg6NqE=
+X-Google-Smtp-Source: AGHT+IERDa7mrBB8yKBaPAZ+hETVUsn6IFbG49e1yW7WhBHVEIh7oLLq5qPqjNGKWMPo9qPJolTPeg==
+X-Received: by 2002:a2e:a543:0:b0:2d8:5af9:90c5 with SMTP id 38308e7fff4ca-2eac7a68650mr46400261fa.39.1717668775339;
+        Thu, 06 Jun 2024 03:12:55 -0700 (PDT)
+Received: from ?IPV6:2a02:810b:f40:4600:7ad9:7718:9ddf:523c? ([2a02:810b:f40:4600:7ad9:7718:9ddf:523c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4215811d13esm48762385e9.24.2024.06.06.03.12.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Jun 2024 02:27:38 -0700 (PDT)
-Message-ID: <fca5168d-9ea2-4fe9-a247-0d97ab175eb3@linaro.org>
-Date: Thu, 6 Jun 2024 11:27:34 +0200
+        Thu, 06 Jun 2024 03:12:55 -0700 (PDT)
+Message-ID: <e379af59-a997-4774-96c1-33739b715ad1@gmail.com>
+Date: Thu, 6 Jun 2024 12:12:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -62,94 +61,62 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/7] drm/msm/adreno: Add A702 support
-To: Connor Abbott <cwabbott0@gmail.com>
-Cc: Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Joerg Roedel <joro@8bytes.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Clark <robdclark@gmail.com>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sean Paul <sean@poorly.run>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
- freedreno@lists.freedesktop.org
-References: <20240219-topic-rb1_gpu-v2-0-2d3d6a0db040@linaro.org>
- <20240219-topic-rb1_gpu-v2-5-2d3d6a0db040@linaro.org>
- <CACu1E7FTN=kwaDJMNiTmFspALzj2+Q-nvsN5ugi=vz4RdUGvGw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/5] Add SFC support for RK3128
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <20240605205209.232005-1-knaerzche@gmail.com>
+ <20240605205209.232005-6-knaerzche@gmail.com>
+ <fcff0181-b6de-4e47-b7ff-47baac061b3e@kernel.org> <7129744.aoefvbuG5b@diego>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <CACu1E7FTN=kwaDJMNiTmFspALzj2+Q-nvsN5ugi=vz4RdUGvGw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+From: Alex Bee <knaerzche@gmail.com>
+In-Reply-To: <7129744.aoefvbuG5b@diego>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 23.05.2024 2:14 PM, Connor Abbott wrote:
-> On Fri, Feb 23, 2024 at 9:28 PM Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
+Hi Heiko, Hi Krzysztof,
+
+Am 06.06.24 um 09:37 schrieb Heiko Stübner:
+> Am Donnerstag, 6. Juni 2024, 08:41:19 CEST schrieb Krzysztof Kozlowski:
+>> On 05/06/2024 22:52, Alex Bee wrote:
+>>> This series adds support for the Serial Flash Controller (SFC) found in
+>>> RK3128 SoCs.
+>>>
+>>> As without using some "id holes" we would run out clock ids in the binding
+>>> and would have to touch the ABI, I added patches which removes the
+>>> CLK_NR_CLKS macro and uses the recently introduced
+>>> rockchip_clk_find_max_clk_id helper instead to find the highest clock id.
+>>>
+>>> changes since v1:
+>>>   - added patches to remove CLK_NR_CLKS (Connor)
+>>>
+>> Do not attach (thread) your patchsets to some other threads (unrelated
+>> or older versions). This buries them deep in the mailbox and might
+>> interfere with applying entire sets.
 >>
->> The A702 is a weird mix of 600 and 700 series.. Perhaps even a
->> testing ground for some A7xx features with good ol' A6xx silicon.
->> It's basically A610 that's been beefed up with some new registers
->> and hw features (like APRIV!), that was then cut back in size,
->> memory bus and some other ways.
->>
->> Add support for it, tested with QCM2290 / RB1.
->>
->> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
->> ---
+>> You sent now v2 immediately after. Confused.
+> it looks like Alex had some mail trouble yesterday.
+>
+> The thread you Acked patches in actually is v2, just missing the label.
+>
+> - original v1: https://lore.kernel.org/linux-rockchip/20240605172154.193047-1-knaerzche@gmail.com
+>
+> - "unlabeled" v2: https://lore.kernel.org/linux-rockchip/20240605205209.232005-1-knaerzche@gmail.com/
+> - this as v2, but as reply to the previous
+> - real v2: https://lore.kernel.org/linux-rockchip/20240605210049.232284-1-knaerzche@gmail.com/
+>
+> The last 3 are identical, just the sending process was somehow fumbled.
+Yes, that's why I replied to the first message in the messed-up thread
+explaining it a bit:
+https://lore.kernel.org/all/9da22443-b5c3-4fbc-8cb0-d6bebab55da4@gmail.com/
+Anyway: To make it a bit less confusing, I'll send v3 with Krzysztof's acks
+included.
 
-[...]
-
->> +
->> +       if (adreno_is_a702(gpu)) {
->> +               gpu->ubwc_config.highest_bank_bit = 14;
->> +               gpu->ubwc_config.min_acc_len = 1;
->> +               gpu->ubwc_config.ubwc_mode = 2;
-> 
-> I just noticed, but this is wrong. ubwc_mode is a 1 bit field and what
-> this is actually doing is overwriting hbb_lo, making the highest bank
-> bit 15 instead of 14.
-
-You're right, this should be a 0. Thanks!
-
-Konrad
-
+Alex
+>
+>
