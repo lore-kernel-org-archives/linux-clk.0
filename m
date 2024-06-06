@@ -1,57 +1,57 @@
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5246B198E99;
-	Thu,  6 Jun 2024 14:37:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F9BA198825;
+	Thu,  6 Jun 2024 14:37:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717684651; cv=none; b=BbSrsvlNqiKeivf2+8zXyCQ2itPudA60IWTDrpKw5E8GRoQBURT/K7IcEH0PgfDq/Xj2IISFMqd00s03su+enxyhWooGtAsaAMk/nov7XiaIJ206y7uTDQN1pc1nnwPZtZzVnjVUF+zH/VDCMEBxrzbiXs4RnGtTU3/SVk9k+10=
+	t=1717684653; cv=none; b=G+FJHJBdphqcV6u+xyGPqYauh/JoOoGz4WrT4kzN2T/qrbk8kQU9bGV0GquR06XvLr8ZH6CTZQfSIngTSmc6HS8HdnCyVcWWclw4afgOpohDLLm5kDE7w/KpCzZFjKuhCjulmv0zvsaj2CQNtnmK+BzO5XnELfYgZoEDtGjc9B0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717684651; c=relaxed/simple;
-	bh=3zAIAfG0l1zDNiZJuAm2SkE62RSxhja2hDZKa6smMl0=;
+	s=arc-20240116; t=1717684653; c=relaxed/simple;
+	bh=V9iuBXE3RCPxqipBIYq+2imZhquQ1wdIjv+HQgtM/dk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EopD6tVf7VIxGgY40FVFn7Wd8I32i+acadA29oa8ZLxzYBMvwUwKjXixF6OuZ76tLGiZxfc+JTq0iXr5gyxzebbEm9+GMTLxsSGaijhkpcI5W+CTgAamoigIe4w3P6VrpnailjeCznYGg3Sawd5CFUZZlEgYK0bjFsuULAbuG/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KbPQMTgS; arc=none smtp.client-ip=209.85.208.53
+	 MIME-Version; b=CoO0eOFR6EJgE2z77o7X5UPQbfc/O9ZVt6hZk/ufIbV1X9DF3wqOCe+8y8WRR8X562cI++f7tSYFh94LxNDMaHGXZ0hT1WsonIaQ1eJUaJtfSch/U0KZCbknaHxjZXzuP1UkHLEYCFrp9Fxtui8nWQu5Cly7m+SkXRTI8R4/xyM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TDI3lEbM; arc=none smtp.client-ip=209.85.208.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KbPQMTgS"
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-572c65cea55so458727a12.0;
-        Thu, 06 Jun 2024 07:37:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TDI3lEbM"
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2e73441edf7so11036981fa.1;
+        Thu, 06 Jun 2024 07:37:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1717684649; x=1718289449; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1717684647; x=1718289447; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=REl0Xx4fomFhEoX2hAlcG1iEdQqTsDARw0lBKW2BPss=;
-        b=KbPQMTgSKmbo80mENCs6SZv7xXJQ7pixwwFLkuPjFAXWPf35l5XMLFwNkrexaBMZps
-         ZvjVItM8MjLHxtSofppmxoKlNF/BI1bdQYE2HpFPfm/eyuZrHVeoJ/k5sIMgQ8WMUBmJ
-         JhAmcujM9bLmtF/a/XTFIENN4jEHmjeb4AHFFBAjX8BE7oyB60VFyw21nLM1gr9ygK8Z
-         a1GwJmc6T1zF6FE4FF7n0fiQCgTGzZnmTVpqXWkEQTqLtTK1qjTKRMGy7ieNXrPY1IdG
-         zrOUPnNlPFiNcOEkpuu418pCOyy5/BKHEqW8HcAPcWe+O38aSU5mYa4Oh/qqIqoBfpNz
-         PM3g==
+        bh=SwbtZSg+KieEl718DTPhm+GILj3m52AXbprU8PF/yug=;
+        b=TDI3lEbMbSVaFDeQqCNHF1yClv2HloTqb0zLXV8oPx5b9w6uThJBbqzNU7RR3q2qIT
+         0KPndiyEVvz4XTmGEfWNMs37fZ9XyJVM4rcdHfYIWg/jRRAHiAkjAgqvN8+Tr7Jws0vV
+         SFAisY2tFVv+OcFLrtFcF/6uTXCJ0Z0O1YKZbVfhzi10ZZd7Yrems+cm0GrGeapWfUP1
+         RL7D36B4AckLWi7UyrGThQPWyIqQgReStiSPIG4fcEECx4XCZlNcygKeonMxapCUPhvQ
+         1dLzNvXBttj1Am/6bgOdsKNpiia4RauOIO9pKzAnTuok/ZrwvWgNA2iLQtX+Ub9BALvI
+         KLdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717684649; x=1718289449;
+        d=1e100.net; s=20230601; t=1717684647; x=1718289447;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=REl0Xx4fomFhEoX2hAlcG1iEdQqTsDARw0lBKW2BPss=;
-        b=Z5athABVBcL4MXK1IwpD04AChapKzHpfS9r/1XaFdPhhzaBTC07x6qAiz+dEiMzl4K
-         vX1xtLNI7FADklNwpliXWNwqzfXZbzuR7IkU7627AnJ3zMYCQyo1Vs9zta8NVLdboSBE
-         lqGt9y8XjESenBazLhzD8lPSK8qI23RHgBsyQWig2+llfetEvAsJ3JykyKQk4xCOs4Bq
-         kZ5EfNGbMnjTHdrSADcMySvuAEESN1fEJsIfwzYxsrEHHKo9jl9Gxkz85uosyFonHGaN
-         jOPbaFEjHZJP67FVqRErUg84B30qnei8TkQvQ5yT19nbiMHyjDEKvLWI48eagth+Sq4m
-         jmmg==
-X-Forwarded-Encrypted: i=1; AJvYcCXjitvI7p0Xs4SQKHeIBLuCaUjxjFXoa1d231mdKEOBs8woTNVe2ULvWdwovo8pPA2TMuPz4BXpBsEa/uZMhYXqYawH1V/x/gq9WM2jZTUMx4yCUNUhkq53KQ1sKOp46xmzc0kV3Y/Z7qQmq9Zu7NagXkpnsGVKy/XaJJHg2X7z87eNxg==
-X-Gm-Message-State: AOJu0YxzZJnZkTm4JlA38MptVbC/pERCpHeMyLalbYOaUKwyfGCILzai
-	9/OiyDyHmT2NMQdjhG99TCY3sNidtSshx71AprcBtrvK3fvscnE=
-X-Google-Smtp-Source: AGHT+IGtqB4Yqpf33WXk7lsyzw0x62MTsqjUTwKDFtbYVmSJtlwiER+p6JD5MO3ffaIRJsgfC7IDMg==
-X-Received: by 2002:a05:6402:446:b0:57c:46f7:a49c with SMTP id 4fb4d7f45d1cf-57c46f7ac1cmr819478a12.7.1717684648412;
-        Thu, 06 Jun 2024 07:37:28 -0700 (PDT)
+        bh=SwbtZSg+KieEl718DTPhm+GILj3m52AXbprU8PF/yug=;
+        b=L6LbFltel94GYha+65o/zuX99NszI8otHxGQHH6/1yy0A2dh3NWbR5N4PTthcXfonI
+         p7feT83UC+YJflqLlfjIls7x1Z2hkcKWPH2VWuByB2dsriKOfwi/OvehdaEYCQvGz3YZ
+         CoLE2R21vJLjRVFztS3Nm3B8B+Kz0HWwLLP3ceR2LSyPT2yZhCnzJfTy4J/NLxYyQFie
+         eeyraaTY2zgsRKpH9eJatZkn4FexGiyhSxNRBmUCoJj8mpV7aWvS0duidYeVopTjeNfp
+         Fb+I4xiqj5zsaTepnyg13T9ub0xFmCXuCmnztirYICz+Gx8XLOfe7gQNYtU11DtooAFA
+         OyqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUJpeXrLtLOjm83jNlQ4bHl11qNxdJ7toRo581CQaGr8mRKpZVe2RxOlrt6x7fvrNZRtr37hnLCnL5jlj4KCnDM2gG+D2O19d7Ms7jMWXhaQeQbELDqTgm9vTZEI1seKDo1+T3nvo7aNB09/icfWcpSZcWuIlXFq3P+hDI3b4JtFG77Gg==
+X-Gm-Message-State: AOJu0Yw7pElfe7Iavmk5+6FOxr9oYrbMZtMKdLp0SyhMLhyTSCQ1hHCe
+	ykg78UB55U0lMLkZajIcrfjx1Heeo19dkSApDcdHBXHcV+QEn/8=
+X-Google-Smtp-Source: AGHT+IH1deup0gJuPwta9k775MNhv8GAL/BikALDm1EyiQnDESfz6dwxMRWHIj+6oNfeitvvhv7KfA==
+X-Received: by 2002:a2e:9ac6:0:b0:2de:74b1:6007 with SMTP id 38308e7fff4ca-2eac7a72de1mr38708601fa.36.1717684646965;
+        Thu, 06 Jun 2024 07:37:26 -0700 (PDT)
 Received: from U4.lan ([2a02:810b:f40:4600:ed9f:91b7:21f2:3109])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57aae1008adsm1190925a12.38.2024.06.06.07.37.27
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57aae1008adsm1190925a12.38.2024.06.06.07.37.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Jun 2024 07:37:28 -0700 (PDT)
+        Thu, 06 Jun 2024 07:37:26 -0700 (PDT)
 From: Alex Bee <knaerzche@gmail.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -64,11 +64,10 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
 	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	Alex Bee <knaerzche@gmail.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH v3 3/5] dt-bindings: clock: rk3128: Add HCLK_SFC
-Date: Thu,  6 Jun 2024 16:34:00 +0200
-Message-ID: <20240606143401.32454-5-knaerzche@gmail.com>
+	Alex Bee <knaerzche@gmail.com>
+Subject: [PATCH v3 1/5] clk: rockchip: rk3128: Drop CLK_NR_CLKS usage
+Date: Thu,  6 Jun 2024 16:33:58 +0200
+Message-ID: <20240606143401.32454-3-knaerzche@gmail.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240606143401.32454-2-knaerzche@gmail.com>
 References: <20240606143401.32454-2-knaerzche@gmail.com>
@@ -80,29 +79,75 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a clock id for SFC's AHB clock.
+In order to get rid of CLK_NR_CLKS and be able to drop it from the
+bindings, use rockchip_clk_find_max_clk_id helper to find the highest
+clock id.
 
 Signed-off-by: Alex Bee <knaerzche@gmail.com>
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
 changes since v1:
- - add new clock id at the end
+ - new patch
 
- include/dt-bindings/clock/rk3128-cru.h | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/rockchip/clk-rk3128.c | 20 ++++++++++++++++----
+ 1 file changed, 16 insertions(+), 4 deletions(-)
 
-diff --git a/include/dt-bindings/clock/rk3128-cru.h b/include/dt-bindings/clock/rk3128-cru.h
-index 2616a8791c14..b609fcf96508 100644
---- a/include/dt-bindings/clock/rk3128-cru.h
-+++ b/include/dt-bindings/clock/rk3128-cru.h
-@@ -144,6 +144,7 @@
- #define HCLK_TSP		475
- #define HCLK_CRYPTO		476
- #define HCLK_PERI		478
-+#define HCLK_SFC		479
+diff --git a/drivers/clk/rockchip/clk-rk3128.c b/drivers/clk/rockchip/clk-rk3128.c
+index d076b7971f33..40e0e4556d59 100644
+--- a/drivers/clk/rockchip/clk-rk3128.c
++++ b/drivers/clk/rockchip/clk-rk3128.c
+@@ -569,18 +569,22 @@ static const char *const rk3128_critical_clocks[] __initconst = {
+ 	"sclk_timer5",
+ };
  
- /* soft-reset indices */
- #define SRST_CORE0_PO		0
+-static struct rockchip_clk_provider *__init rk3128_common_clk_init(struct device_node *np)
++static struct rockchip_clk_provider *__init rk3128_common_clk_init(struct device_node *np,
++								   unsigned long soc_nr_clks)
+ {
+ 	struct rockchip_clk_provider *ctx;
++	unsigned long common_nr_clks;
+ 	void __iomem *reg_base;
+ 
++	common_nr_clks = rockchip_clk_find_max_clk_id(common_clk_branches,
++						      ARRAY_SIZE(common_clk_branches)) + 1;
+ 	reg_base = of_iomap(np, 0);
+ 	if (!reg_base) {
+ 		pr_err("%s: could not map cru region\n", __func__);
+ 		return ERR_PTR(-ENOMEM);
+ 	}
+ 
+-	ctx = rockchip_clk_init(np, reg_base, CLK_NR_CLKS);
++	ctx = rockchip_clk_init(np, reg_base, max(common_nr_clks, soc_nr_clks));
+ 	if (IS_ERR(ctx)) {
+ 		pr_err("%s: rockchip clk init failed\n", __func__);
+ 		iounmap(reg_base);
+@@ -609,8 +613,12 @@ static struct rockchip_clk_provider *__init rk3128_common_clk_init(struct device
+ static void __init rk3126_clk_init(struct device_node *np)
+ {
+ 	struct rockchip_clk_provider *ctx;
++	unsigned long soc_nr_clks;
+ 
+-	ctx = rk3128_common_clk_init(np);
++	soc_nr_clks = rockchip_clk_find_max_clk_id(rk3126_clk_branches,
++						   ARRAY_SIZE(rk3126_clk_branches)) + 1;
++
++	ctx = rk3128_common_clk_init(np, soc_nr_clks);
+ 	if (IS_ERR(ctx))
+ 		return;
+ 
+@@ -627,8 +635,12 @@ CLK_OF_DECLARE(rk3126_cru, "rockchip,rk3126-cru", rk3126_clk_init);
+ static void __init rk3128_clk_init(struct device_node *np)
+ {
+ 	struct rockchip_clk_provider *ctx;
++	unsigned long soc_nr_clks;
++
++	soc_nr_clks = rockchip_clk_find_max_clk_id(rk3128_clk_branches,
++						   ARRAY_SIZE(rk3128_clk_branches)) + 1;
+ 
+-	ctx = rk3128_common_clk_init(np);
++	ctx = rk3128_common_clk_init(np, soc_nr_clks);
+ 	if (IS_ERR(ctx))
+ 		return;
+ 
 -- 
 2.45.2
 
