@@ -1,98 +1,114 @@
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA6EA4204E;
-	Fri,  7 Jun 2024 06:46:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD28313E043;
+	Fri,  7 Jun 2024 08:13:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717742795; cv=none; b=NWzHVT2eMYFpyuqGHmkt5ThRvNOyd0e7wwF9pRPv8OkpueSmprduO9Qtv7SWxfULET/SF/rJCnlXgxPDDqmM8S/Zn14Cl6WkKIQp20iUehTc4eNJrkEgtmkuq/xtXVQ7q89/32Zdlz85MIa1P0NUfl4O98GaUUmpoyA8qXO6NHQ=
+	t=1717748007; cv=none; b=lZ8wFnmVwFvk0bpyQcLjLlebYdjKigvJc+ZzzCi+LN1WWIuFtuiKyQUXgxOVN1Y2K1Hduv5eKXrZGxXpVFDMH529DoVCgrOXiiP8E8aV6VIKsmZaU117l45H+6T2JqtRvJzJN3eDcYC5m854WPXT2onAnf5V3eBkQmRBqkjmQC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717742795; c=relaxed/simple;
-	bh=m+AxGavw6qf3DguFuG/0KLvq43YRxheits2J8pXupWE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lSKPtWF1JcPsutZBtXEg/N0HjmLlzVenPhxmbYDnRmrpYYcS9zDBF+Nsxd6tZuyB74DmefAQrad7ZzfzHyVS5scYyTUnXRK03iDfuxLp35CKjUZj3bla4gP1pCTEUxXa23RgZgRNLoSswR4x2/5T4h2ivdVVL0o2i7VLtw/uX5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-dfa79233c48so1788432276.1;
-        Thu, 06 Jun 2024 23:46:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1717742792; x=1718347592;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+CEEs7bAPn2yXK6wMOvbkOCpzTOjIzYTwlHnAovymsg=;
-        b=IZ9Iha8zabD9J0fAkR39371SpQPqrBY8GbDgINVIYDae0b4EW5jus8KFBzunf9W41x
-         nfNHDfda0XMko5/OhqoRiFR+LF+Y9YIq9Xu2v5Lx51ApBVMO5MmsUZ1n6pafYVkuddVY
-         RdZ5gR7wp1A3GTKuNvG0zBSTqMokg4gPxQh71q49HEzjKWKdpV1+/esShwkvMk8/ZswE
-         GtTULrk7bTawE/0gHP2Bd0ksaNS4bgxiSgEjyn9OwzPBNShuWpBOb10RKXxMiIilrxqr
-         0dSfoFPevRLJD/JCJZs3X5yyYWK+B46uij0yJubk3tJu3B75tmZEmPWyLJejkoRhWiSj
-         oMIg==
-X-Forwarded-Encrypted: i=1; AJvYcCWkAOaWo0PsWKZpm6mIXjfQAgdaZLndYwN5ztUitar9sxvcdhTK+MD12bYG/C+JBZmud1UVk8MKct7azX0ekB1WTwgK56vIeIZrJhz4WRu1dIG4/wUIYkt8c4qIPrq5BdnidYrO44XR7AzqIsVXfGEANJVf62/25LV+xQF+WcEqmRO3Mv07nYrmXudxeuT3hy9bn/+wqHuGnLwWsWvcCl58unwdUNmd
-X-Gm-Message-State: AOJu0YxR5+ByR/yyeg6P5a75GDCJhFHCU5qFyIowZbK7+YQKnqyk1ZRB
-	4NyhNS929ybOMUuq54hXb7Pj+JG/8qI+pUp2YP3j5SCCQEhYBfb6WoNByHtF
-X-Google-Smtp-Source: AGHT+IFRk5bGOhHUw/P/axkd+o0QA7Z1k5Y9iiuR6koLpSxSbl3Osc8QH6yYbfcEtNr2QD92ropFag==
-X-Received: by 2002:a25:aba3:0:b0:df4:dcb6:75bd with SMTP id 3f1490d57ef6-dfaf64e7195mr1591044276.9.1717742791765;
-        Thu, 06 Jun 2024 23:46:31 -0700 (PDT)
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com. [209.85.219.180])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-dfae53027b5sm566333276.38.2024.06.06.23.46.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 06 Jun 2024 23:46:31 -0700 (PDT)
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-dfa629b4e0eso1815616276.2;
-        Thu, 06 Jun 2024 23:46:31 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWLzNd8tRyJVPmpCojnT6swHRngbMa1Pve6rqaCNEGcH2ze07CkTBfQP0T4JKgUW3y2odH6C09mhU9fKesb0i71/hv4J+C21qaQZNImXFjXOMrQD0AdTKr7XJBDHUS2MRy+1NkrD7ORNdb+AtpS45sagomb7zyDt/TTAciXx7FdS4yS/50ccTDmZ8T2J8OkxEq/BUbOxH6MDCNIO3hYPGRK33Lbf58Y
-X-Received: by 2002:a25:ad50:0:b0:df7:89e3:c8d with SMTP id
- 3f1490d57ef6-dfaf662699amr1759515276.47.1717742790990; Thu, 06 Jun 2024
- 23:46:30 -0700 (PDT)
+	s=arc-20240116; t=1717748007; c=relaxed/simple;
+	bh=VIzFG9SjjjS21ocqaupIRcoydDcwg7MVYn9fi3MKjaI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZYazl8lZaDk0S7K27RsZlqfweL/IjyML/eYAITk5k7CK1OV7HUgM6hPtwoUdROPIse2oHpqQ9z4h1FVR0iM6Bkx2NnKUDfjkwXQOhsuNQW5RB9oBcqwc5xFhU0+TGTQeFwXAYszsIhGQNIY6mTw01I0C5jmABooC3wOXAUUq4BE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Received: from i53875b65.versanet.de ([83.135.91.101] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sFUif-0000XX-SI; Fri, 07 Jun 2024 10:13:05 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Sam Protsenko <semen.protsenko@linaro.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+Subject: Re: [PATCH v1 2/4] clk: rockchip: Switch to use kmemdup_array()
+Date: Fri, 07 Jun 2024 10:13:04 +0200
+Message-ID: <8182279.JRmrKFJ9eK@diego>
+In-Reply-To: <20240606161028.2986587-3-andriy.shevchenko@linux.intel.com>
+References:
+ <20240606161028.2986587-1-andriy.shevchenko@linux.intel.com>
+ <20240606161028.2986587-3-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240606161047.663833-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240606161047.663833-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 7 Jun 2024 08:46:19 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdV9NK2eAh9rYk1vRBSMc_iGkmVQdxh4-kapxR=Mn1S9pw@mail.gmail.com>
-Message-ID: <CAMuHMdV9NK2eAh9rYk1vRBSMc_iGkmVQdxh4-kapxR=Mn1S9pw@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: clock: renesas,rzg2l-cpg: Update description
- for #reset-cells
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On Thu, Jun 6, 2024 at 6:11=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.co=
-m> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> For the RZ/G2L and similar SoCs, the reset specifier is the reset number
-> and not the module number. Reflect this in the description for the
-> '#reset-cells' property.
->
-> Reported-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Hi Andy,
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v6.11.
+Am Donnerstag, 6. Juni 2024, 18:09:32 CEST schrieb Andy Shevchenko:
+> Let the kememdup_array() take care about multiplication and possible
+> overflows.
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> ---
+>  drivers/clk/rockchip/clk-cpu.c | 5 ++---
+>  drivers/clk/rockchip/clk-pll.c | 8 ++++----
+>  2 files changed, 6 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/clk/rockchip/clk-cpu.c b/drivers/clk/rockchip/clk-cpu.c
+> index 6ea7fba9f9e5..398a226ad34e 100644
+> --- a/drivers/clk/rockchip/clk-cpu.c
+> +++ b/drivers/clk/rockchip/clk-cpu.c
+> @@ -369,9 +369,8 @@ struct clk *rockchip_clk_register_cpuclk(const char *name,
+>  
+>  	if (nrates > 0) {
+>  		cpuclk->rate_count = nrates;
+> -		cpuclk->rate_table = kmemdup(rates,
+> -					     sizeof(*rates) * nrates,
+> -					     GFP_KERNEL);
+> +		cpuclk->rate_table = kmemdup_array(rates, nrates, sizeof(*rates),
+> +						   GFP_KERNEL);
 
-Gr{oetje,eeting}s,
+are you sure the param order is correct?
 
-                        Geert
+According to [0], it's (src, element_size, count, gfp), while above
+(and below) element_size and count seems switched in the
+kmemdup_array calls.
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Heiko
+
+[0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/mm/util.c#n149
+
+>  		if (!cpuclk->rate_table) {
+>  			ret = -ENOMEM;
+>  			goto unregister_notifier;
+> diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
+> index 2d42eb628926..606ce5458f54 100644
+> --- a/drivers/clk/rockchip/clk-pll.c
+> +++ b/drivers/clk/rockchip/clk-pll.c
+> @@ -1136,10 +1136,10 @@ struct clk *rockchip_clk_register_pll(struct rockchip_clk_provider *ctx,
+>  			len++;
+>  
+>  		pll->rate_count = len;
+> -		pll->rate_table = kmemdup(rate_table,
+> -					pll->rate_count *
+> -					sizeof(struct rockchip_pll_rate_table),
+> -					GFP_KERNEL);
+> +		pll->rate_table = kmemdup_array(rate_table,
+> +						pll->rate_count,
+> +						sizeof(*pll->rate_table),
+> +						GFP_KERNEL);
+>  		WARN(!pll->rate_table,
+>  			"%s: could not allocate rate table for %s\n",
+>  			__func__, name);
+> 
+
+
+
+
