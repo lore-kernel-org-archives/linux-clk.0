@@ -1,74 +1,63 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21C33360;
-	Sun,  9 Jun 2024 01:27:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB8244405;
+	Sun,  9 Jun 2024 02:18:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717896441; cv=none; b=QlCKukF90P9osDUDyxItyc3fHhbWLmVjt1JUMDcVQ91pa25JJEbd/1W0LvcdXU84LBkp9cfoc3+w1esh0Lb2yEpbjMmHKPaKPfqDAbHyl1W7EQG3Dp+cjLaYmalPLRfjzIJTk4nBSK8pVwR5SuCoX0mO2CHFPyQIYVnJj0S+V5Y=
+	t=1717899521; cv=none; b=LL7T5Z1mmGQFl6e4z19CsHZ9QNzHE/fjGbWclZEPQrJ0JFtO11Z45IvfXqAbibrjBF+XwOwAzs3+ULYiwFlgSTP5Z5Zp+46Ln1ocCGjkhqEB+90cj5/GtI2x2aYKDonYFG0JSc+fCJzcSl9regdtsHnRvp+qUGu+APLNLDXcP/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717896441; c=relaxed/simple;
-	bh=6sl0ZI6qGZzRme/1+79bRsWchE453bSArJoTsSrkLV8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GsSdsPN7rbhofsysfZDIB/RhABA2mcoo1zb1w0ANUZviYc4vRIhJLJuDHBmXlUAYLAixhtlMgopO/K91I2nn1oduFQ/fLe43yEC+ePlN0enO9E3NlmN4kCUuE4o80rCprAowBtAW4IEw1CXeRB3kY9LqN9PO/01gMzUvQC2GppA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qI1m1mCh; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1717899521; c=relaxed/simple;
+	bh=tDvJmWyi3nu13k8lWIoGKsJdb4j1Pw77A2/YmYj+qE4=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=HgjLh706aeNiTt1VuHb64mFxPsLA0tYLlWmyjUm2QO16998iMkS7sYpsVerKg2/pv1yS9XO4zHPlrpWFwzRs5rwGSCX7Kuv7EaIAcFWpDj9qDalPxreUYhxfUpwSyUSs1ooheyUWdfk92eQYznNeMZdMSX860pGDiasjMIivzQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jKYtOWCL; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qI1m1mCh"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A56DC2BD11;
-	Sun,  9 Jun 2024 01:27:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jKYtOWCL"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 795CAC2BD11;
+	Sun,  9 Jun 2024 02:18:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717896440;
-	bh=6sl0ZI6qGZzRme/1+79bRsWchE453bSArJoTsSrkLV8=;
-	h=From:To:Cc:Subject:Date:From;
-	b=qI1m1mChsBBXCMYPrz83KBIxYo8pdVn3C21dc3HrzmLX9OTjIJ74GhDPuOy01VI1e
-	 l320XL3fQ8os1aIIU3BO9R7w/tj5yYZaxJ5LFt8lIICmFEh4ILcKysji9LRyZE1wUQ
-	 RrEN4VhleT3OL/wqDFzaUhG9TEMDPkUzOTPWucPCd6HxQzw1GV6hdG/mqriUsSBSI7
-	 4yjo/QZPaBAiBizEZoV42qRGbXIdoCl2AiR7crymAcCB8cWCH2qJRNI9UcFhBPaGgT
-	 bR3clRSEvCtn+XIfIkSK0HkUuFByizeKc76zAE2+5qolfQqWU83qQCaFrfSSaaDZZV
-	 95EbwlrjNMhTA==
-From: Stephen Boyd <sboyd@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] clk fixes for v6.10-rc2
-Date: Sat,  8 Jun 2024 18:27:18 -0700
-Message-ID: <20240609012719.1748309-1-sboyd@kernel.org>
-X-Mailer: git-send-email 2.45.2.505.gda0bf45e8d-goog
+	s=k20201202; t=1717899521;
+	bh=tDvJmWyi3nu13k8lWIoGKsJdb4j1Pw77A2/YmYj+qE4=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=jKYtOWCL251KCVYkL/3G72lcZt2hK3yQOoftlkWka4/Qy+q2JAbZ9uvo0K7q2Z2Fo
+	 ySXIkNgmwGLdgzhscACYUuLSKSMeDU9YFBfa7MpDQCiK/qRpWLkoJu+P4FuUvXvtd5
+	 xRsXjZmwjfzsXG0I1rnvywMuSj9xkjVGAULJiULqI3jo8uq5qMZL5Idb5u6NZeUkdi
+	 CH7b6TGeeM1M7MRS50uD0T4VjMRSQ8C8hNKJpDjCbUGSa2a3At0IKdRb+OFOoIkZnm
+	 Bd01k9HVYJB8AagQhCnbLXc5orvnmiOJAbZoiC9MatrfpiDk/p+wvF2I4xrCBOYEhO
+	 X/x2ikqqbtyuQ==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 6D866C43168;
+	Sun,  9 Jun 2024 02:18:41 +0000 (UTC)
+Subject: Re: [GIT PULL] clk fixes for v6.10-rc2
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20240609012719.1748309-1-sboyd@kernel.org>
+References: <20240609012719.1748309-1-sboyd@kernel.org>
+X-PR-Tracked-List-Id: <linux-clk.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20240609012719.1748309-1-sboyd@kernel.org>
+X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+X-PR-Tracked-Commit-Id: 2607133196c35f31892ee199ce7ffa717bea4ad1
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 771ed66105de9106a6f3e4311e06451881cdac5e
+Message-Id: <171789952143.28801.11341460538483764420.pr-tracker-bot@kernel.org>
+Date: Sun, 09 Jun 2024 02:18:41 +0000
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
+The pull request you sent on Sat,  8 Jun 2024 18:27:18 -0700:
 
-  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
+> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
 
-are available in the Git repository at:
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/771ed66105de9106a6f3e4311e06451881cdac5e
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-
-for you to fetch changes up to 2607133196c35f31892ee199ce7ffa717bea4ad1:
-
-  clk: sifive: Do not register clkdevs for PRCI clocks (2024-05-29 12:31:02 -0700)
-
-----------------------------------------------------------------
-One fix for the SiFive PRCI clocks so that the device boots again. This
-driver was registering clkdev lookups that were always going to be
-useless. This wasn't a problem until clkdev started returning an error
-in these cases, causing this driver to fail probe, and thus boot to fail
-because clks are essential for most drivers. The fix is simple, don't
-use clkdev because this is a DT based system where clkdev isn't used.
-
-----------------------------------------------------------------
-Samuel Holland (1):
-      clk: sifive: Do not register clkdevs for PRCI clocks
-
- drivers/clk/sifive/sifive-prci.c | 8 --------
- 1 file changed, 8 deletions(-)
+Thank you!
 
 -- 
-https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
-https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
