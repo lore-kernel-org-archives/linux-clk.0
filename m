@@ -1,63 +1,143 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from fout5-smtp.messagingengine.com (fout5-smtp.messagingengine.com [103.168.172.148])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB8244405;
-	Sun,  9 Jun 2024 02:18:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B75386139;
+	Sun,  9 Jun 2024 03:20:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1717899521; cv=none; b=LL7T5Z1mmGQFl6e4z19CsHZ9QNzHE/fjGbWclZEPQrJ0JFtO11Z45IvfXqAbibrjBF+XwOwAzs3+ULYiwFlgSTP5Z5Zp+46Ln1ocCGjkhqEB+90cj5/GtI2x2aYKDonYFG0JSc+fCJzcSl9regdtsHnRvp+qUGu+APLNLDXcP/A=
+	t=1717903230; cv=none; b=gLfuyXr2vF1UjQk1wWszXgP1NdcIDmt6TFLy19yE//ZRy1tbdgwNXjetP0gMeWDkkpv55v5VtgKL6SWGYDiNwBV6SPErpa7VMSAh7kcfkEGqvlBItixBYO8A2dUq22PkGrOs0l1XrLfaYj8oXfSfPq5xKX0OdqJHos6t1loARZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1717899521; c=relaxed/simple;
-	bh=tDvJmWyi3nu13k8lWIoGKsJdb4j1Pw77A2/YmYj+qE4=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=HgjLh706aeNiTt1VuHb64mFxPsLA0tYLlWmyjUm2QO16998iMkS7sYpsVerKg2/pv1yS9XO4zHPlrpWFwzRs5rwGSCX7Kuv7EaIAcFWpDj9qDalPxreUYhxfUpwSyUSs1ooheyUWdfk92eQYznNeMZdMSX860pGDiasjMIivzQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jKYtOWCL; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1717903230; c=relaxed/simple;
+	bh=Le9WBgmA0YpV/A0GmNkYA2wHA97wE3nPFDySMUZ0UuA=;
+	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
+	 Subject:Content-Type; b=SDvxpnDbGFTNznHlIGyJ+9x3WjkA+wz7BTLah7oyCu4MvCfgaxASvnQf/E1pBewMJquKmzaU7EGD45O4SN56EW3gmZYiejtiwv3GSLo2PwDRG2Ya0b9X1xiUtawpgaM2HOERW7Xz5WYulf5utXIEN9YwnCGc0p3liE8Cm4DSG4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com; spf=pass smtp.mailfrom=testtoast.com; dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b=VD/49Dn4; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ADdG47QY; arc=none smtp.client-ip=103.168.172.148
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=testtoast.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jKYtOWCL"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 795CAC2BD11;
-	Sun,  9 Jun 2024 02:18:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1717899521;
-	bh=tDvJmWyi3nu13k8lWIoGKsJdb4j1Pw77A2/YmYj+qE4=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=jKYtOWCL251KCVYkL/3G72lcZt2hK3yQOoftlkWka4/Qy+q2JAbZ9uvo0K7q2Z2Fo
-	 ySXIkNgmwGLdgzhscACYUuLSKSMeDU9YFBfa7MpDQCiK/qRpWLkoJu+P4FuUvXvtd5
-	 xRsXjZmwjfzsXG0I1rnvywMuSj9xkjVGAULJiULqI3jo8uq5qMZL5Idb5u6NZeUkdi
-	 CH7b6TGeeM1M7MRS50uD0T4VjMRSQ8C8hNKJpDjCbUGSa2a3At0IKdRb+OFOoIkZnm
-	 Bd01k9HVYJB8AagQhCnbLXc5orvnmiOJAbZoiC9MatrfpiDk/p+wvF2I4xrCBOYEhO
-	 X/x2ikqqbtyuQ==
-Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 6D866C43168;
-	Sun,  9 Jun 2024 02:18:41 +0000 (UTC)
-Subject: Re: [GIT PULL] clk fixes for v6.10-rc2
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20240609012719.1748309-1-sboyd@kernel.org>
-References: <20240609012719.1748309-1-sboyd@kernel.org>
-X-PR-Tracked-List-Id: <linux-clk.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20240609012719.1748309-1-sboyd@kernel.org>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
-X-PR-Tracked-Commit-Id: 2607133196c35f31892ee199ce7ffa717bea4ad1
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 771ed66105de9106a6f3e4311e06451881cdac5e
-Message-Id: <171789952143.28801.11341460538483764420.pr-tracker-bot@kernel.org>
-Date: Sun, 09 Jun 2024 02:18:41 +0000
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Michael Turquette <mturquette@baylibre.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+	dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b="VD/49Dn4";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ADdG47QY"
+Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
+	by mailfout.nyi.internal (Postfix) with ESMTP id CD21013800E5;
+	Sat,  8 Jun 2024 23:20:26 -0400 (EDT)
+Received: from imap47 ([10.202.2.97])
+  by compute5.internal (MEProxy); Sat, 08 Jun 2024 23:20:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=testtoast.com;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1717903226; x=
+	1717989626; bh=gmUkjBG9eKIc8kATrXroPkry8GdBqTJDN2D9sjhCJqI=; b=V
+	D/49Dn4YVDQybyngGLmUlKXdGLIaTfzeCDqPQloKq9COJUFUR8+z4KvqD7wlG/Yr
+	R7u0f5NebFqKXMgBltvt7sjFmfq8z5q9fLiAr/61w7RJX5gFotBjnZ3cYAgAahK5
+	wyGPF3yu6Z0cUwxZPTUJWv2CTeHQvLJL0IjFLTwxNNPY12tGhxleIrPbaG7pFVA1
+	co83g3AdbrSbsqns+NqqeiaqkEpl1Q9R4UUpDKGZugNdeR2qVekTxCd3RQCFpRM5
+	FeeVi/2DlsKTbma8tx1+awD6h1YE+G56gf60TpfEro5yIB41wX1+07PujagGut4r
+	jnRucC2o6Dafdun9zrIjQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm1; t=1717903226; x=1717989626; bh=gmUkjBG9eKIc8kATrXroPkry8GdB
+	qTJDN2D9sjhCJqI=; b=ADdG47QYsC8/N7wDVHfbHOWsfIb68Ow9km7WaQpO+zgD
+	hyZLJUXMKiaEIEf3LD7nnqSVo4Nzwyg8KPhlqsNQ2ov9zpCtTZ0NiYnEXUpHivL+
+	Apjj4rfJVrnf4a5mZ29P0V4XBDndP/DK1RFSgV9mxaXqn1OjpQMDgEv5aDO6MDgA
+	xq3sVQRhIeEDq3OaTA+axIoldmuVdCxFqqPy1a+ltnaCFrXDSn6MyCKsQqjhQYsJ
+	ZiZtSoz8vnfzFtTsnv83B5EOE+Mp+QwzzMZLkNz0NCvSHT6Jjf37DyJ8oXyxQbAW
+	8qPjviDytAK5tyEN4AayyX6gaSjYYqn5SIzIzp6BBw==
+X-ME-Sender: <xms:eR9lZqsdHfxQ5RxzoH0mm-D2kaixrg3VGeslTWp-PXsXdlDz3BqlIA>
+    <xme:eR9lZvdfp2xXrNRpmNLcOBO9eX1FkSPaPeOcmgAgUsU5TqKSbu3q6Gluf9uhjc55u
+    CDM8a4eAcPgrRJKFg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedthedgieeiucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
+    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
+    cujfgurhepofgfggfkjghffffhvfevufgtsehttdertderredtnecuhfhrohhmpedftfih
+    rghnucghrghlkhhlihhnfdcuoehrhigrnhesthgvshhtthhorghsthdrtghomheqnecugg
+    ftrfgrthhtvghrnhephedvveeigedujeeufeegffehhfffveduhfeijefgtdffteelgfet
+    ueevieduieejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrh
+    homheprhihrghnsehtvghsthhtohgrshhtrdgtohhm
+X-ME-Proxy: <xmx:eR9lZlwekETTJ6ICLO-9RPdoB-lOcanPHbzsQJZL1CP4drSFEx_WOg>
+    <xmx:eR9lZlMBV7YIUUDnUHxkRDj7u8ekjaGfhY_tC_3ETeZ8C_7GX3InjQ>
+    <xmx:eR9lZq_mAz18BLGtc3y_4wUcfy6V8AcvFOmp4Pkw8NrkgKXyYFdWlA>
+    <xmx:eR9lZtUOJWg9WVYK8H5cUactdBN22XoOBU_CH2EY-Igmt-yHaa8H2w>
+    <xmx:eh9lZglttGZrqC_j6eB2uq5IXUoWgo3DsW-05hE1oeYqFayWKzM6D3xz>
+Feedback-ID: idc0145fc:Fastmail
+Received: by mailuser.nyi.internal (Postfix, from userid 501)
+	id 4A703A60078; Sat,  8 Jun 2024 23:20:25 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
+User-Agent: Cyrus-JMAP/3.11.0-alpha0-497-g97f96844c-fm-20240526.001-g97f96844
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Message-Id: <e9e7a362-c41e-41f8-b6cd-02fbbd16ce8c@app.fastmail.com>
+In-Reply-To: <20240607-gag-radiantly-37bc3ac76907@spud>
+References: <20240607110227.49848-1-ryan@testtoast.com>
+ <20240607110227.49848-2-ryan@testtoast.com>
+ <20240607-gag-radiantly-37bc3ac76907@spud>
+Date: Sun, 09 Jun 2024 15:19:55 +1200
+From: "Ryan Walklin" <ryan@testtoast.com>
+To: "Conor Dooley" <conor@kernel.org>
+Cc: "Maxime Ripard" <mripard@kernel.org>, "Chen-Yu Tsai" <wens@csie.org>,
+ "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
+ "Thomas Zimmermann" <tzimmermann@suse.de>,
+ "David Airlie" <airlied@gmail.com>, "Daniel Vetter" <daniel@ffwll.ch>,
+ "Jernej Skrabec" <jernej.skrabec@gmail.com>,
+ "Samuel Holland" <samuel@sholland.org>, "Rob Herring" <robh@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
+ "Conor Dooley" <conor+dt@kernel.org>,
+ "Michael Turquette" <mturquette@baylibre.com>,
+ "Stephen Boyd" <sboyd@kernel.org>, "Andre Przywara" <andre.przywara@arm.com>,
+ "Chris Morgan" <macroalpha82@gmail.com>, "John Watts" <contact@jookia.org>,
+ dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org
+Subject: Re: [PATCH RFC 1/8] dt-bindings: bus: allwinner: add H616 DE33 bindings
+Content-Type: text/plain
 
-The pull request you sent on Sat,  8 Jun 2024 18:27:18 -0700:
+On Sat, 8 Jun 2024, at 2:23 AM, Conor Dooley wrote:
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+Thanks for the review!
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/771ed66105de9106a6f3e4311e06451881cdac5e
+>> --- a/Documentation/devicetree/bindings/bus/allwinner,sun50i-a64-de2.yaml
+>> +++ b/Documentation/devicetree/bindings/bus/allwinner,sun50i-a64-de2.yaml
+>> @@ -25,6 +25,7 @@ properties:
+>>        - const: allwinner,sun50i-a64-de2
+>>        - items:
+>>            - const: allwinner,sun50i-h6-de3
+>> +          - const: allwinner,sun50i-h616-de33
+>>            - const: allwinner,sun50i-a64-de2
+>
+> This does not do what you think it does!
+> It needs to be
+> items:
+>   - enum:
+>       - h6
+>       - h616
+>   - const: a64
+>
+Thanks, will correct in v2.
 
-Thank you!
+>> +      - const: allwinner,sun50i-h616-de33-clk
+>
+> I think this is not right, as a corresponding driver change is missing.
+> Either you're missing a clock driver patch or you didn't test your dts.
 
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+The clock driver patch with this compatible string is in patch 8/8.
+
+>>        - allwinner,sun50i-h6-de3-mixer-0
+>> +      - allwinner,sun50i-h616-de33-mixer-0
+>
+> Your commit message should mention why a fallback is not suitable here.
+
+Will do, thanks.
+>
+> Thanks,
+> Conor.
+>
+
+Regards,
+
+Ryan
