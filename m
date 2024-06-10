@@ -1,493 +1,400 @@
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f174.google.com (mail-vk1-f174.google.com [209.85.221.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D69D41B812;
-	Mon, 10 Jun 2024 20:10:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E994537143;
+	Mon, 10 Jun 2024 22:03:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718050230; cv=none; b=Q3Z+Sd1LmEIgKTQc25aY1IZFxzV9xYLyyPh9vh3RmmN4CZ8oYAv0Rh6hK+Hqb/u9LRnGAzYJEeBiLCtgNDwLvJEUgtlCNIhFBxWUf5Hxr1ArcD7mogirL2O9dBHF7osYOQY/OGOPWj1HLFr3K5cuxfZvzTsjX/mDomQMUBFpYD4=
+	t=1718057017; cv=none; b=KGYHOaT7J4SJrRQ348Q/eNFz+kKleWHKBdXrqvvyL8xemIbewU7iuuVFJ25WWXdK/4mEJfsIWiJHHLD4Kw3JHk5sS3fvplRFzyaUX3evNzmNrFf+I3dR0EqIVJYK8hTApVzTA3ennmqWwCH64a1s9CqVGVs5ejRewUX+RRMPs1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718050230; c=relaxed/simple;
-	bh=6uixyUWYSj3kgndB5cgUrZNGgpCXWIIZ9W1XOnK8m5k=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BeRdO0HjMfQlPS+niruuxYiqH+352kbh8Fr3z0JubopgeH6ojpSNt6a7+yG4XXfygx1MIZ62EGcSa6V5cQfsPkcvaOgpd5+55ESdrEUVteLmB2R+oQoeNrr9/x+dr2GHFRu61Wv0SXUSCBtwK8qYNj9FX56NVTTWcxNj7mYSHvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=QuuLqwCx; arc=none smtp.client-ip=45.89.224.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
+	s=arc-20240116; t=1718057017; c=relaxed/simple;
+	bh=ay4cfm5Vh6fseP07CmbZghkNIVWCHbsD/5Z3/ck6HMs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DfIRR4QmPjJq650Ix97vO2W/mPptCrQbhwECIwwBXRRLIUuqmz41LfqGDh5/3+ekQzzMqP/qQv0Xnl2LT/K5yXXvqo4aAMDmnAwuLj3KqS6yIpkTs1CrBRhiO4PUF3e4iI88Q6hmdgh5VJ2mLGwJHiGFepaipt9+vQ9CBPewbWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P6uLceX0; arc=none smtp.client-ip=209.85.221.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="QuuLqwCx"
-Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id DDC78120002;
-	Mon, 10 Jun 2024 23:10:21 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru DDC78120002
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1718050221;
-	bh=CyjAD39Adp9YwtacIJu4i0hG6rQt5kSGw9YY6Ugq/9U=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:From;
-	b=QuuLqwCxereQliyq65cKfCVAjsgIdKyiQjvZOA4iEWZyIGzvCqXalBYideWIO4VAa
-	 wF2FNblb8PntwV+ncoMago15ud6S3gi1d33ktZ2NpOLt1okDA0T99VQlo/XNmg98ZO
-	 Gq2gWpToFdUkAJi3WkAFY2d1PDTUPPvQexK9Oo1BrksmA4Tk9Y35xcQMksjtJHAQkn
-	 4uCNJL4saexygvckBqYOZ0IVkasb+UtvPe5Z+9tQxaH73GFMTG5JV5h8sg21xJssu8
-	 O0WYwVkQqb+CPvMg9aO2YyZsJPbygBfyxd+khBgZ8Un8JK1jVz+qLJAhN9Kx6RGgv/
-	 gJ40wS8EmnHyA==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Mon, 10 Jun 2024 23:10:21 +0300 (MSK)
-Received: from localhost (100.64.160.123) by p-i-exch-sc-m02.sberdevices.ru
- (172.16.192.103) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Mon, 10 Jun
- 2024 23:10:21 +0300
-Date: Mon, 10 Jun 2024 23:10:16 +0300
-From: Dmitry Rokosov <ddrokosov@salutedevices.com>
-To: Jerome Brunet <jbrunet@baylibre.com>
-CC: <neil.armstrong@linaro.org>, <mturquette@baylibre.com>,
-	<sboyd@kernel.org>, <robh+dt@kernel.org>,
-	<krzysztof.kozlowski+dt@linaro.org>, <khilman@baylibre.com>,
-	<martin.blumenstingl@googlemail.com>, <jian.hu@amlogic.com>,
-	<kernel@sberdevices.ru>, <rockosov@gmail.com>,
-	<linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v3 7/7] clk: meson: a1: add Amlogic A1 CPU clock
- controller driver
-Message-ID: <20240610201016.3ufzf6oh43sccxqx@CAB-WSD-L081021>
-References: <20240515185103.20256-1-ddrokosov@salutedevices.com>
- <20240515185103.20256-8-ddrokosov@salutedevices.com>
- <1jmsntp0wo.fsf@starbuckisacylon.baylibre.com>
- <20240610130824.dt7matrj4tespizl@CAB-WSD-L081021>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P6uLceX0"
+Received: by mail-vk1-f174.google.com with SMTP id 71dfb90a1353d-4ecf4100d9dso108644e0c.1;
+        Mon, 10 Jun 2024 15:03:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718057015; x=1718661815; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=37WK3YA7IDWiuaFSnLcLKkEgQk7Zp3w+7x4cWeVOqsM=;
+        b=P6uLceX0USpiBAu474Ypza3vnCKX4hR7GxP0FMR7zaN81e6K0dRbEkKhXa9yKsVeMW
+         OiNlortP8ooMq1A3T7spSowAx6nlwak50wLrLDTfsI+FTKaOFgM16pS6Bo1ANd/meGQ6
+         NuiA9zzux734u+aHJvT/yHobNHwfPQla/dYaCzLbq2cAzmlOgjAyl9mcRIBU5NDQl32Z
+         gfgDgLVDnk6nMXx0yu3oBKI0PVPJ7p10PY/moKqvwugL0Qy92alrkSWZoFKRghnwJ2Fz
+         N9/0pa9GNXSikMWLj69fiI9P4jNyWXtL+1DXnabfmnembuWFU2xD5LaOcUz4AlIXTIrp
+         8X7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718057015; x=1718661815;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=37WK3YA7IDWiuaFSnLcLKkEgQk7Zp3w+7x4cWeVOqsM=;
+        b=RCTm0TamejyGUMaCTAILWUZr2rJ+HROy+abi1xV+n0/df9bvvVbl0A3NkdzYFIrfdQ
+         a7BmfRJgNOR6xOj/cKMB89/Ci9AHvYSgjdUT+TN3YIdZWOIy8emzhIxHnMmaatJsux6i
+         0cr3Te+R2HJ8oLv6qVpgVYHqBp/hScQNDVZ4EgTDTo5Ub86nxUXnxT7/AI66BIaWWdqz
+         voUnUXDU5kVPwBucb7ROP3YrJeujW9OlJNwEBj/O9lraB5vmFtGGBd8Jd5LlqK2U1Rb0
+         ILqt3ut2lGvXYgBHYV+PlobPFTHqkpq+CgLTyXpr9u8J4pBW191F3x9w8b4uDCbmgI0Z
+         nIeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWBuM2vty5+9MwcbbdTZnRMqtSWdjA8dtFvchOqKVtQXc4RSfeAGvu63LL9p+DgZjIpjJt9xGM8DVXLknDedKtvIMPxKGAJDWE3l9ZwjzGgkVvxcRSzKZuyogmsFTGPsevcO0vXIi+bgByEbXPaebu12NbPngUPCu1ZOslYnMV5F9Pa5M+Mjjzc723XHUvqLto5tufsYHKr5NUMtMzn13sVDWfeFoEJ
+X-Gm-Message-State: AOJu0YyD/SE/w6I8GQP29XfJF4G691dWxdYnL3fpHFBUsqVSl+GlC9de
+	jEktNy68IHXHL5pTZC2r93WY0ytOj+kiKZ8HS+m/auCkUAaBy1twu/X7/pp7KkQnmhXkrh2bUEb
+	i4cgC5Lb7T/qMkgE22SEA6MaGfe0=
+X-Google-Smtp-Source: AGHT+IEA8nq5wVpUdWIjizjQRrckrbSqgzcciwlVd1gcPp1d1GQna4Z/BwfT0NDNjIsJu01jpKIZs9QDNRwopwgclgE=
+X-Received: by 2002:a05:6122:4010:b0:4e4:e749:32a2 with SMTP id
+ 71dfb90a1353d-4ecf284777emr1384635e0c.7.1718057014704; Mon, 10 Jun 2024
+ 15:03:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240610130824.dt7matrj4tespizl@CAB-WSD-L081021>
-User-Agent: NeoMutt/20220415
-X-ClientProxiedBy: p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) To
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 185845 [Jun 10 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: ddrokosov@salutedevices.com
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 20 0.3.20 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f, {Track_E25351}, {Tracking_from_domain_doesnt_match_to}, salutedevices.com:7.1.1;127.0.0.199:7.1.2;smtp.sberdevices.ru:7.1.1,5.0.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;100.64.160.123:7.1.2, FromAlignment: s, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/06/10 15:05:00 #25537858
-X-KSMG-AntiVirus-Status: Clean, skipped
+References: <20240524082800.333991-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240524082800.333991-4-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdVPZgxsM1OsFt-+802mzajKR6CO8B9ofFzaThKsBAdGTQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdVPZgxsM1OsFt-+802mzajKR6CO8B9ofFzaThKsBAdGTQ@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Mon, 10 Jun 2024 23:03:07 +0100
+Message-ID: <CA+V-a8tQr8gXxAfRcffP9Bz2dL66+NOYUacKx0nmZd=TTVA9FA@mail.gmail.com>
+Subject: Re: [PATCH 3/4] clk: renesas: Add RZ/V2H CPG core wrapper driver
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Magnus Damm <magnus.damm@gmail.com>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 10, 2024 at 04:08:24PM +0300, Dmitry Rokosov wrote:
-> On Mon, Jun 10, 2024 at 12:06:31PM +0200, Jerome Brunet wrote:
-> > On Wed 15 May 2024 at 21:47, Dmitry Rokosov <ddrokosov@salutedevices.com> wrote:
-> > 
-> > > The CPU clock controller plays a general role in the Amlogic A1 SoC
-> > > family by generating CPU clocks. As an APB slave module, it offers the
-> > > capability to inherit the CPU clock from two sources: the internal fixed
-> > > clock known as 'cpu fixed clock' and the external input provided by the
-> > > A1 PLL clock controller, referred to as 'syspll'.
-> > >
-> > > It is important for the driver to handle cpu_clk rate switching
-> > > effectively by transitioning to the CPU fixed clock to avoid any
-> > > potential execution freezes.
-> > >
-> > > Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
-> > > ---
-> > >  drivers/clk/meson/Kconfig  |  10 ++
-> > >  drivers/clk/meson/Makefile |   1 +
-> > >  drivers/clk/meson/a1-cpu.c | 331 +++++++++++++++++++++++++++++++++++++
-> > >  3 files changed, 342 insertions(+)
-> > >  create mode 100644 drivers/clk/meson/a1-cpu.c
-> > >
-> > > diff --git a/drivers/clk/meson/Kconfig b/drivers/clk/meson/Kconfig
-> > > index 80c4a18c83d2..148d4495eee3 100644
-> > > --- a/drivers/clk/meson/Kconfig
-> > > +++ b/drivers/clk/meson/Kconfig
-> > > @@ -111,6 +111,16 @@ config COMMON_CLK_AXG_AUDIO
-> > >  	  Support for the audio clock controller on AmLogic A113D devices,
-> > >  	  aka axg, Say Y if you want audio subsystem to work.
-> > >  
-> > > +config COMMON_CLK_A1_CPU
-> > > +	tristate "Amlogic A1 SoC CPU controller support"
-> > > +	depends on ARM64
-> > > +	select COMMON_CLK_MESON_REGMAP
-> > > +	select COMMON_CLK_MESON_CLKC_UTILS
-> > > +	help
-> > > +	  Support for the CPU clock controller on Amlogic A113L based
-> > > +	  device, A1 SoC Family. Say Y if you want A1 CPU clock controller
-> > > +	  to work.
-> > > +
-> > >  config COMMON_CLK_A1_PLL
-> > >  	tristate "Amlogic A1 SoC PLL controller support"
-> > >  	depends on ARM64
-> > > diff --git a/drivers/clk/meson/Makefile b/drivers/clk/meson/Makefile
-> > > index 4968fc7ad555..2a06eb0303d6 100644
-> > > --- a/drivers/clk/meson/Makefile
-> > > +++ b/drivers/clk/meson/Makefile
-> > > @@ -18,6 +18,7 @@ obj-$(CONFIG_COMMON_CLK_MESON_AUDIO_RSTC) += meson-audio-rstc.o
-> > >  
-> > >  obj-$(CONFIG_COMMON_CLK_AXG) += axg.o axg-aoclk.o
-> > >  obj-$(CONFIG_COMMON_CLK_AXG_AUDIO) += axg-audio.o
-> > > +obj-$(CONFIG_COMMON_CLK_A1_CPU) += a1-cpu.o
-> > >  obj-$(CONFIG_COMMON_CLK_A1_PLL) += a1-pll.o
-> > >  obj-$(CONFIG_COMMON_CLK_A1_PERIPHERALS) += a1-peripherals.o
-> > >  obj-$(CONFIG_COMMON_CLK_A1_AUDIO) += a1-audio.o
-> > > diff --git a/drivers/clk/meson/a1-cpu.c b/drivers/clk/meson/a1-cpu.c
-> > > new file mode 100644
-> > > index 000000000000..a9edabeafea9
-> > > --- /dev/null
-> > > +++ b/drivers/clk/meson/a1-cpu.c
-> > > @@ -0,0 +1,331 @@
-> > > +// SPDX-License-Identifier: GPL-2.0+
-> > > +/*
-> > > + * Amlogic A1 SoC family CPU Clock Controller driver.
-> > > + *
-> > > + * Copyright (c) 2024, SaluteDevices. All Rights Reserved.
-> > > + * Author: Dmitry Rokosov <ddrokosov@salutedevices.com>
-> > > + */
-> > > +
-> > > +#include <linux/clk.h>
-> > > +#include <linux/clk-provider.h>
-> > > +#include <linux/mod_devicetable.h>
-> > > +#include <linux/platform_device.h>
-> > > +#include "clk-regmap.h"
-> > > +#include "meson-clkc-utils.h"
-> > > +
-> > > +#include <dt-bindings/clock/amlogic,a1-cpu-clkc.h>
-> > > +
-> > > +/* CPU Clock Controller register offset */
-> > > +#define CPUCTRL_CLK_CTRL0	0x0
-> > > +#define CPUCTRL_CLK_CTRL1	0x4
-> > > +
-> > > +static u32 cpu_fsource_sel_table[] = { 0, 1, 2 };
-> > > +static const struct clk_parent_data cpu_fsource_sel_parents[] = {
-> > > +	{ .fw_name = "xtal" },
-> > > +	{ .fw_name = "fclk_div2" },
-> > > +	{ .fw_name = "fclk_div3" },
-> > > +};
-> > > +
-> > > +static struct clk_regmap cpu_fsource_sel0 = {
-> > > +	.data = &(struct clk_regmap_mux_data) {
-> > > +		.offset = CPUCTRL_CLK_CTRL0,
-> > > +		.mask = 0x3,
-> > > +		.shift = 0,
-> > > +		.table = cpu_fsource_sel_table,
-> > > +	},
-> > > +	.hw.init = &(struct clk_init_data) {
-> > > +		.name = "cpu_fsource_sel0",
-> > > +		.ops = &clk_regmap_mux_ops,
-> > > +		.parent_data = cpu_fsource_sel_parents,
-> > > +		.num_parents = ARRAY_SIZE(cpu_fsource_sel_parents),
-> > > +		.flags = CLK_SET_RATE_PARENT,
-> > 
-> > I don't think setting the rates of controller parents is appropriate
-> > 
-> > > +	},
-> > > +};
-> > > +
-> > > +static struct clk_regmap cpu_fsource_div0 = {
-> > > +	.data = &(struct clk_regmap_div_data) {
-> > > +		.offset = CPUCTRL_CLK_CTRL0,
-> > > +		.shift = 4,
-> > > +		.width = 6,
-> > > +	},
-> > > +	.hw.init = &(struct clk_init_data) {
-> > > +		.name = "cpu_fsource_div0",
-> > > +		.ops = &clk_regmap_divider_ops,
-> > > +		.parent_hws = (const struct clk_hw *[]) {
-> > > +			&cpu_fsource_sel0.hw
-> > > +		},
-> > > +		.num_parents = 1,
-> > > +		.flags = CLK_SET_RATE_PARENT,
-> > > +	},
-> > > +};
-> > > +
-> > > +static struct clk_regmap cpu_fsel0 = {
-> > > +	.data = &(struct clk_regmap_mux_data) {
-> > > +		.offset = CPUCTRL_CLK_CTRL0,
-> > > +		.mask = 0x1,
-> > > +		.shift = 2,
-> > > +	},
-> > > +	.hw.init = &(struct clk_init_data) {
-> > > +		.name = "cpu_fsel0",
-> > > +		.ops = &clk_regmap_mux_ops,
-> > > +		.parent_hws = (const struct clk_hw *[]) {
-> > > +			&cpu_fsource_sel0.hw,
-> > > +			&cpu_fsource_div0.hw,
-> > > +		},
-> > > +		.num_parents = 2,
-> > > +		.flags = CLK_SET_RATE_GATE | CLK_SET_RATE_PARENT,
-> > > +	},
-> > > +};
-> > > +
-> > > +static struct clk_regmap cpu_fsource_sel1 = {
-> > > +	.data = &(struct clk_regmap_mux_data) {
-> > > +		.offset = CPUCTRL_CLK_CTRL0,
-> > > +		.mask = 0x3,
-> > > +		.shift = 16,
-> > > +		.table = cpu_fsource_sel_table,
-> > > +	},
-> > > +	.hw.init = &(struct clk_init_data) {
-> > > +		.name = "cpu_fsource_sel1",
-> > > +		.ops = &clk_regmap_mux_ops,
-> > > +		.parent_data = cpu_fsource_sel_parents,
-> > > +		.num_parents = ARRAY_SIZE(cpu_fsource_sel_parents),
-> > > +		.flags = CLK_SET_RATE_PARENT,
-> > > +	},
-> > > +};
-> > > +
-> > > +static struct clk_regmap cpu_fsource_div1 = {
-> > > +	.data = &(struct clk_regmap_div_data) {
-> > > +		.offset = CPUCTRL_CLK_CTRL0,
-> > > +		.shift = 20,
-> > > +		.width = 6,
-> > > +	},
-> > > +	.hw.init = &(struct clk_init_data) {
-> > > +		.name = "cpu_fsource_div1",
-> > > +		.ops = &clk_regmap_divider_ops,
-> > > +		.parent_hws = (const struct clk_hw *[]) {
-> > > +			&cpu_fsource_sel1.hw
-> > > +		},
-> > > +		.num_parents = 1,
-> > > +		.flags = CLK_SET_RATE_PARENT,
-> > > +	},
-> > > +};
-> > > +
-> > > +static struct clk_regmap cpu_fsel1 = {
-> > > +	.data = &(struct clk_regmap_mux_data) {
-> > > +		.offset = CPUCTRL_CLK_CTRL0,
-> > > +		.mask = 0x1,
-> > > +		.shift = 18,
-> > > +	},
-> > > +	.hw.init = &(struct clk_init_data) {
-> > > +		.name = "cpu_fsel1",
-> > > +		.ops = &clk_regmap_mux_ops,
-> > > +		.parent_hws = (const struct clk_hw *[]) {
-> > > +			&cpu_fsource_sel1.hw,
-> > > +			&cpu_fsource_div1.hw,
-> > > +		},
-> > > +		.num_parents = 2,
-> > > +		.flags = CLK_SET_RATE_GATE | CLK_SET_RATE_PARENT,
-> > > +	},
-> > > +};
-> > > +
-> > > +static struct clk_regmap cpu_fclk = {
-> > > +	.data = &(struct clk_regmap_mux_data) {
-> > > +		.offset = CPUCTRL_CLK_CTRL0,
-> > > +		.mask = 0x1,
-> > > +		.shift = 10,
-> > > +	},
-> > > +	.hw.init = &(struct clk_init_data) {
-> > > +		.name = "cpu_fclk",
-> > > +		.ops = &clk_regmap_mux_ops,
-> > > +		.parent_hws = (const struct clk_hw *[]) {
-> > > +			&cpu_fsel0.hw,
-> > > +			&cpu_fsel1.hw,
-> > > +		},
-> > > +		.num_parents = 2,
-> > > +		.flags = CLK_SET_RATE_PARENT,
-> > > +	},
-> > > +};
-> > > +
-> > > +static struct clk_regmap cpu_clk = {
-> > > +	.data = &(struct clk_regmap_mux_data) {
-> > > +		.offset = CPUCTRL_CLK_CTRL0,
-> > > +		.mask = 0x1,
-> > > +		.shift = 11,
-> > > +	},
-> > > +	.hw.init = &(struct clk_init_data) {
-> > > +		.name = "cpu_clk",
-> > > +		.ops = &clk_regmap_mux_ops,
-> > > +		.parent_data = (const struct clk_parent_data []) {
-> > > +			{ .hw = &cpu_fclk.hw },
-> > > +			{ .fw_name = "sys_pll", },
-> > > +		},
-> > 
-> > You've put CLK_SET_RATE_GATE on fixed clock path but not the SYS_PLL
-> > ... that is odd. IMO there should be a bypass input clock to the sys_pll
-> > with that flag.
-> > 
-> 
-> Apologies for any confusion caused. To clarify, are you proposing the
-> idea of creating an additional sys_pll_input clock object with the
-> CLK_SET_RATE_PARENT property, and then using it as the parent clock for
-> cpu_clk?
-> 
-> > > +		.num_parents = 2,
-> > > +		.flags = CLK_SET_RATE_PARENT | CLK_IS_CRITICAL,
-> > > +	},
-> > > +};
-> > > +
-> > > +/* Array of all clocks registered by this provider */
-> > > +static struct clk_hw *a1_cpu_hw_clks[] = {
-> > > +	[CLKID_CPU_FSOURCE_SEL0]	= &cpu_fsource_sel0.hw,
-> > > +	[CLKID_CPU_FSOURCE_DIV0]	= &cpu_fsource_div0.hw,
-> > > +	[CLKID_CPU_FSEL0]		= &cpu_fsel0.hw,
-> > > +	[CLKID_CPU_FSOURCE_SEL1]	= &cpu_fsource_sel1.hw,
-> > > +	[CLKID_CPU_FSOURCE_DIV1]	= &cpu_fsource_div1.hw,
-> > > +	[CLKID_CPU_FSEL1]		= &cpu_fsel1.hw,
-> > > +	[CLKID_CPU_FCLK]		= &cpu_fclk.hw,
-> > > +	[CLKID_CPU_CLK]			= &cpu_clk.hw,
-> > > +};
-> > > +
-> > > +static struct clk_regmap *const a1_cpu_regmaps[] = {
-> > > +	&cpu_fsource_sel0,
-> > > +	&cpu_fsource_div0,
-> > > +	&cpu_fsel0,
-> > > +	&cpu_fsource_sel1,
-> > > +	&cpu_fsource_div1,
-> > > +	&cpu_fsel1,
-> > > +	&cpu_fclk,
-> > > +	&cpu_clk,
-> > > +};
-> > > +
-> > > +static struct regmap_config a1_cpu_regmap_cfg = {
-> > > +	.reg_bits   = 32,
-> > > +	.val_bits   = 32,
-> > > +	.reg_stride = 4,
-> > > +	.max_register = CPUCTRL_CLK_CTRL1,
-> > > +};
-> > > +
-> > > +static struct meson_clk_hw_data a1_cpu_clks = {
-> > > +	.hws = a1_cpu_hw_clks,
-> > > +	.num = ARRAY_SIZE(a1_cpu_hw_clks),
-> > > +};
-> > > +
-> > > +struct a1_sys_pll_nb_data {
-> > > +	struct notifier_block nb;
-> > > +	struct clk_hw *cpu_clk;
-> > > +	struct clk_hw *cpu_fclk;
-> > > +	struct clk *sys_pll;
-> > > +};
-> > 
-> > There are number of things which are wrong with this notifier.
-> > 
-> > First, and foremost, this is a clock controller driver ... it should not
-> > handle cpufreq policy. There is subsystem for that
-> > 
-> > > +
-> > > +static int meson_a1_sys_pll_notifier_cb(struct notifier_block *nb,
-> > > +					unsigned long event, void *data)
-> > > +{
-> > > +	struct a1_sys_pll_nb_data *nbd;
-> > > +	int ret = 0;
-> > > +
-> > > +	nbd = container_of(nb, struct a1_sys_pll_nb_data, nb);
-> > > +
-> > > +	switch (event) {
-> > > +	case PRE_RATE_CHANGE:
-> > > +		/*
-> > > +		 * Clock sys_pll will be changed to feed cpu_clk,
-> > > +		 * configure cpu_clk to use cpu_fclk fixed clock.
-> > > +		 */
-> > > +		ret = clk_hw_set_parent(nbd->cpu_clk, nbd->cpu_fclk);
-> > 
-> > 
-> > This jumps to whatever was the last frequency below 768MHz ... that does
-> > not seems deterministic or safe.
-> 
-> Ah, that's an aspect I hadn't considered. You make a valid point. So,
-> this implies that the g12a clock driver could potentially encounter the
-> same issue, correct?
-> 
-> > > +
-> > > +		/* Wait for clock propagation */
-> > > +		if (!ret)
-> > > +			udelay(100);
-> > > +
-> > > +		break;
-> > > +
-> > > +	case POST_RATE_CHANGE:
-> > > +		 /*
-> > > +		  * Clock sys_pll rate has ben calculated,
-> > > +		  * switch back cpu_clk to sys_pll
-> > > +		  */
-> > > +		ret = clk_set_parent(nbd->cpu_clk->clk, nbd->sys_pll);
-> > 
-> > So whenever sys_pll changes, even if was not used by the CPU at that
-> > time, this will change back to the sys_pll. Again, that seems fragile
-> > 
-> 
-> From what I comprehend, only the GEN clock is capable of using sys_pll
-> as its parent clock. The GEN clock seems more comparable to a diagnostic
-> clock, implying that when utilized, it should be done with full
-> awareness and control over its operations.
-> 
-> > > +
-> > > +		/* Wait for clock propagation */
-> > > +		if (!ret)
-> > > +			udelay(100);
-> > > +		break;
-> > > +
-> > > +	default:
-> > > +		pr_warn("Unknown event %lu for sys_pll notifier\n", event);
-> > > +		break;
-> > > +	}
-> > > +
-> > > +	return notifier_from_errno(ret);
-> > > +}
-> > > +
-> > > +static struct a1_sys_pll_nb_data a1_sys_pll_nb_data = {
-> > > +	.nb.notifier_call = meson_a1_sys_pll_notifier_cb,
-> > > +	.cpu_clk = &cpu_clk.hw,
-> > > +	.cpu_fclk = &cpu_fclk.hw,
-> > > +};
-> > > +
-> > > +static int meson_a1_dvfs_setup(struct platform_device *pdev)
-> > > +{
-> > > +	struct device *dev = &pdev->dev;
-> > > +	struct clk *sys_pll;
-> > > +	int ret;
-> > > +
-> > > +	/* Setup clock notifier for sys_pll clk */
-> > > +	sys_pll = devm_clk_get(dev, "sys_pll");
-> > > +	if (IS_ERR(sys_pll))
-> > > +		return dev_err_probe(dev, PTR_ERR(sys_pll),
-> > > +				     "can't get sys_pll as notifier clock\n");
-> > > +
-> > > +	a1_sys_pll_nb_data.sys_pll = sys_pll;
-> > > +	ret = devm_clk_notifier_register(dev, sys_pll,
-> > > +					 &a1_sys_pll_nb_data.nb);
-> > > +	if (ret)
-> > > +		return dev_err_probe(dev, ret,
-> > > +				     "can't register sys_pll notifier\n");
-> > > +
-> > > +	return ret;
-> > > +}
-> > 
-> > I don't think these notifiers are appropriate to handle CPU frequency
-> > change. Cpufreq has a .target_intermediate() callback that seems more
-> > appropriate to switch the CPU to a safe clock while relocking a PLL.
-> > 
-> > You should have a look at it and probably at the imx-cpufreq-dt.c which
-> > improves on cpufreq-dt.c to handle platform quirks
-> > 
-> 
-> I believed that the same approach was employed with the g12a clock,
-> which uses a sys_pll <-> cpu fixed clock transition to ensure stable CPU
-> clocking. Am I overlooking something? Or does the g12a cpu clock
-> maintain a fixed frequency, thus indicating it is not fragile?
-> 
-> [...]
+Hi Geert,
 
-Based on your suggestion, I explored the imx-cpufreq-dt driver and it
-does seem like a more suitable place to implement CPU clock switching.
-Thank you for pointing that out!
+Thank you for the review.
 
-However, from my understanding, it appears that we also need to redesign
-the g12a clock driver's CPU clock notifier. I would love to hear your
-thoughts on this. It seems like a necessary step to ensure a
-comprehensive solution.
+On Tue, Jun 4, 2024 at 5:01=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68k=
+.org> wrote:
+>
+> Hi Prabhakar,
+>
+> Thanks for your patch!
+>
+> On Fri, May 24, 2024 at 10:29=E2=80=AFAM Prabhakar <prabhakar.csengg@gmai=
+l.com> wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Add CPG core helper wrapper driver for RZ/V2H SoC.
+>
+> What is a "core helper wrapper"? ;-)
+>
+As this file basically uses core API for clock and reset, I worded the
+commit as such.
 
--- 
-Thank you,
-Dmitry
+> Looking at the structure, this looks like a family-specific clock driver?
+Yes, as the CPG on RZ/V2H varies quite a bit compared to RZ/G2L I have
+introduced a family-specific clock driver
+
+> Will there be more RZ/V2H-alike SoCs?
+>
+I'm not sure about it tbh!
+
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> >  drivers/clk/renesas/Kconfig     |   5 +
+> >  drivers/clk/renesas/Makefile    |   1 +
+> >  drivers/clk/renesas/rzv2h-cpg.c | 673 ++++++++++++++++++++++++++++++++
+> >  drivers/clk/renesas/rzv2h-cpg.h | 149 +++++++
+> >  4 files changed, 828 insertions(+)
+> >  create mode 100644 drivers/clk/renesas/rzv2h-cpg.c
+> >  create mode 100644 drivers/clk/renesas/rzv2h-cpg.h
+> >
+> > diff --git a/drivers/clk/renesas/Kconfig b/drivers/clk/renesas/Kconfig
+> > index d252150402e8..254203c2cb2e 100644
+> > --- a/drivers/clk/renesas/Kconfig
+> > +++ b/drivers/clk/renesas/Kconfig
+> > @@ -40,6 +40,7 @@ config CLK_RENESAS
+> >         select CLK_R9A07G054 if ARCH_R9A07G054
+> >         select CLK_R9A08G045 if ARCH_R9A08G045
+> >         select CLK_R9A09G011 if ARCH_R9A09G011
+> > +       select CLK_R9A09G057 if ARCH_R9A09G057
+> >         select CLK_SH73A0 if ARCH_SH73A0
+> >
+> >  if CLK_RENESAS
+> > @@ -193,6 +194,10 @@ config CLK_R9A09G011
+> >         bool "RZ/V2M clock support" if COMPILE_TEST
+> >         select CLK_RZG2L
+> >
+> > +config CLK_R9A09G057
+> > +       bool "Renesas RZ/V2H(P) clock support" if COMPILE_TEST
+>
+> Please drop "Renesas "
+> (few other symbols have it, I'll fix the remaining).
+>
+OK.
+
+> > +       select RESET_CONTROLLER
+> > +
+> >  config CLK_SH73A0
+> >         bool "SH-Mobile AG5 clock support" if COMPILE_TEST
+> >         select CLK_RENESAS_CPG_MSTP
+> > diff --git a/drivers/clk/renesas/Makefile b/drivers/clk/renesas/Makefil=
+e
+> > index f7e18679c3b8..79cc7c4d77c6 100644
+> > --- a/drivers/clk/renesas/Makefile
+> > +++ b/drivers/clk/renesas/Makefile
+> > @@ -37,6 +37,7 @@ obj-$(CONFIG_CLK_R9A07G044)           +=3D r9a07g044-=
+cpg.o
+> >  obj-$(CONFIG_CLK_R9A07G054)            +=3D r9a07g044-cpg.o
+> >  obj-$(CONFIG_CLK_R9A08G045)            +=3D r9a08g045-cpg.o
+> >  obj-$(CONFIG_CLK_R9A09G011)            +=3D r9a09g011-cpg.o
+> > +obj-$(CONFIG_CLK_R9A09G057)            +=3D rzv2h-cpg.o
+>
+> If this is a family-specific clock driver, please use a separate Kconfig
+> symbol, like other families do, and move it ...
+>
+> >  obj-$(CONFIG_CLK_SH73A0)               +=3D clk-sh73a0.o
+> >
+> >  # Family
+>
+> ... here.
+>
+OK, I will move it to the family section.
+
+> > --- /dev/null
+> > +++ b/drivers/clk/renesas/rzv2h-cpg.c
+>
+> > +/**
+> > + * struct rzv2h_cpg_priv - Clock Pulse Generator Private Data
+> > + *
+> > + * @rcdev: Reset controller entity
+> > + * @dev: CPG device
+> > + * @base: CPG register block base address
+> > + * @rmw_lock: protects register accesses
+> > + * @clks: Array containing all Core and Module Clocks
+> > + * @num_core_clks: Number of Core Clocks in clks[]
+> > + * @num_mod_clks: Number of Module Clocks in clks[]
+> > + * @num_resets: Number of Module Resets in info->resets[]
+> > + * @info: Pointer to platform data
+> > + */
+> > +struct rzv2h_cpg_priv {
+> > +       struct reset_controller_dev rcdev;
+> > +       struct device *dev;
+> > +       void __iomem *base;
+> > +       spinlock_t rmw_lock;
+>
+> Unused
+>
+I will drop it.
+
+> > +
+> > +       struct clk **clks;
+> > +       unsigned int num_core_clks;
+> > +       unsigned int num_mod_clks;
+> > +       unsigned int num_resets;
+> > +
+> > +       const struct rzv2h_cpg_info *info;
+> > +};
+>
+> > +static struct clk
+> > +*rzv2h_cpg_clk_src_twocell_get(struct of_phandle_args *clkspec,
+> > +                              void *data)
+> > +{
+> > +       unsigned int clkidx =3D clkspec->args[1];
+> > +       struct rzv2h_cpg_priv *priv =3D data;
+> > +       struct device *dev =3D priv->dev;
+> > +       const char *type;
+> > +       struct clk *clk;
+> > +
+> > +       switch (clkspec->args[0]) {
+> > +       case CPG_CORE:
+> > +               type =3D "core";
+> > +               clk =3D priv->clks[clkidx];
+>
+> No range checking?
+>
+I will add a check for it.
+
+> > +               break;
+> > +
+> > +       case CPG_MOD:
+> > +               type =3D "module";
+> > +               if (clkidx >=3D priv->num_mod_clks) {
+> > +                       dev_err(dev, "Invalid %s clock index %u\n", typ=
+e,
+> > +                               clkidx);
+> > +                       return ERR_PTR(-EINVAL);
+> > +               }
+> > +               clk =3D priv->clks[priv->num_core_clks + clkidx];
+> > +               break;
+> > +
+> > +       default:
+> > +               dev_err(dev, "Invalid CPG clock type %u\n", clkspec->ar=
+gs[0]);
+> > +               return ERR_PTR(-EINVAL);
+> > +       }
+> > +
+> > +       if (IS_ERR(clk))
+> > +               dev_err(dev, "Cannot get %s clock %u: %ld", type, clkid=
+x,
+> > +                       PTR_ERR(clk));
+> > +       else
+> > +               dev_dbg(dev, "clock (%u, %u) is %pC at %lu Hz\n",
+> > +                       clkspec->args[0], clkspec->args[1], clk,
+> > +                       clk_get_rate(clk));
+> > +       return clk;
+> > +}
+>
+> > +static void __init
+> > +rzv2h_cpg_register_mod_clk(const struct rzv2h_mod_clk *mod,
+> > +                          const struct rzv2h_cpg_info *info,
+> > +                          struct rzv2h_cpg_priv *priv)
+> > +{
+> > +       struct mstp_clock *clock =3D NULL;
+> > +       struct device *dev =3D priv->dev;
+> > +       unsigned int id =3D mod->id;
+> > +       struct clk_init_data init;
+> > +       struct clk *parent, *clk;
+> > +       const char *parent_name;
+> > +       unsigned int i;
+> > +
+> > +       WARN_DEBUG(id < priv->num_core_clks);
+> > +       WARN_DEBUG(id >=3D priv->num_core_clks + priv->num_mod_clks);
+> > +       WARN_DEBUG(mod->parent >=3D priv->num_core_clks + priv->num_mod=
+_clks);
+> > +       WARN_DEBUG(PTR_ERR(priv->clks[id]) !=3D -ENOENT);
+> > +
+> > +       if (!mod->name) {
+> > +               /* Skip NULLified clock */
+> > +               return;
+> > +       }
+>
+> Do you have NULLified clocks?
+>
+Nope, I 'll drop this check.
+
+>
+> > new file mode 100644
+> > index 000000000000..689c123d01c5
+> > --- /dev/null
+> > +++ b/drivers/clk/renesas/rzv2h-cpg.h
+>
+> > +/**
+> > + * struct rzv2h_mod_clk - Module Clocks definitions
+> > + *
+> > + * @name: handle between common and hardware-specific interfaces
+> > + * @id: clock index in array containing all Core and Module Clocks
+> > + * @parent: id of parent clock
+> > + * @off: register offset
+>
+> control register offset
+>
+> > + * @bit: ON/MON bit
+>
+> > + * @monoff: monitor register offset
+> > + * @monbit: monitor bit
+> > + */
+> > +struct rzv2h_mod_clk {
+> > +       const char *name;
+> > +       unsigned int id;
+> > +       unsigned int parent;
+> > +       u16 off;
+> > +       u8 bit;
+>
+> Perhaps name them ctrl{off,bit}?
+>
+> However, as all CPG_CLKONn registers are contiguous, storing
+> the register index (u8) might be better than the register offset (u16)?
+>
+> > +       u16 monoff;
+> > +       u8 monbit;
+>
+> Likewise for the CPG_CLKMONx registers...
+>
+> > +};
+> > +
+> > +#define DEF_MOD_BASE(_name, _id, _parent, _off, _bit, _monoff, _monbit=
+)        \
+> > +       { \
+> > +               .name =3D _name, \
+> > +               .id =3D MOD_CLK_BASE + (_id), \
+> > +               .parent =3D (_parent), \
+> > +               .off =3D (_off), \
+> > +               .bit =3D (_bit), \
+> > +               .monoff =3D (_monoff), \
+> > +               .monbit =3D (_monbit), \
+> > +       }
+> > +
+> > +#define DEF_MOD(_name, _id, _parent, _off, _bit, _monoff, _monbit)    =
+ \
+> > +       DEF_MOD_BASE(_name, _id, _parent, _off, _bit, _monoff, _monbit)
+> > +
+> > +/**
+> > + * struct rzv2h_reset - Reset definitions
+> > + *
+> > + * @off: reset register offset
+> > + * @bit: reset bit
+> > + * @monoff: monitor register offset
+> > + * @monbit: monitor bit
+> > + */
+> > +struct rzv2h_reset {
+> > +       u16 resoff;
+> > +       u8 resbit;
+> > +       u16 monoff;
+> > +       u8 monbit;
+>
+> ... and the CPG_RSTx and CPG_RSTMONx registers.
+>
+>
+Ok, I will store the indexes for CLK/CLKMON/RST/RSTMON regs.
+
+> > +};
+> > +
+> > +#define DEF_RST(_id, _resoff, _resbit, _monoff, _monbit)       \
+> > +       [_id] =3D { \
+> > +               .resoff =3D (_resoff), \
+> > +               .resbit =3D (_resbit), \
+> > +               .monoff =3D (_monoff), \
+> > +               .monbit =3D (_monbit) \
+> > +       }
+> > +
+> > +/**
+> > + * struct rzv2h_cpg_info - SoC-specific CPG Description
+> > + *
+> > + * @core_clks: Array of Core Clock definitions
+> > + * @num_core_clks: Number of entries in core_clks[]
+> > + * @num_total_core_clks: Total number of Core Clocks (exported + inter=
+nal)
+> > + *
+> > + * @mod_clks: Array of Module Clock definitions
+> > + * @num_mod_clks: Number of entries in mod_clks[]
+> > + * @num_hw_mod_clks: Number of Module Clocks supported by the hardware
+> > + *
+> > + * @resets: Array of Module Reset definitions
+> > + * @num_resets: Number of entries in resets[]
+> > + *
+> > + * @crit_mod_clks: Array with Module Clock IDs of critical clocks that
+> > + *                 should not be disabled without a knowledgeable driv=
+er
+> > + * @num_crit_mod_clks: Number of entries in crit_mod_clks[]
+> > + * @pll_get_clk1_offset: Function pointer to get PLL CLK1 offset
+> > + * @pll_get_clk2_offset: Function pointer to get PLL CLK2 offset
+> > + */
+> > +struct rzv2h_cpg_info {
+>
+> > +       /* function pointers for PLL information */
+> > +       int (*pll_get_clk1_offset)(int clk);
+> > +       int (*pll_get_clk2_offset)(int clk);
+>
+> Why are these function pointers?
+>
+To get the offsets for PLL CLK1/2. But I plan to drop these and get
+the offset from conf instead.
+
+Cheers,
+Prabhakar
