@@ -1,92 +1,243 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06AB474C1B
-	for <linux-clk@vger.kernel.org>; Mon, 10 Jun 2024 10:32:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A70FC1B80F;
+	Mon, 10 Jun 2024 11:18:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718015559; cv=none; b=Px6vlpUiQJUnrJbJf1aE18ClvDtD97qptNxmI2QqEOAtpLGS6RezhbvIeXcGw4ZcvYIxJgD70uUPPrSX6yW4mc4w316nFwf3TPoalj9I0a9HGacW1SC2ClY6H8kRP25Oar6KOrsyfmuFfs2484/hdLHJ2L+KzlvrCWQtNPKxoy8=
+	t=1718018320; cv=none; b=ebtW2pE7n+LjW9UHI2xggOyicxFr2RCxtAhsXGRZpqokafWWLHyFicVacSpPon47JrtelGgotye9x/04r+tsMvRJWl0EEJ/A8iEY+pNvT9h141GkFsRB27eM6lWwYoMZA8gPQ0bJ9cmT6nbZaHtmooQPVx3TcRhTzhUlxRKAuC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718015559; c=relaxed/simple;
-	bh=OcNCNxQjyElxIcrEZhK8KOZ1sEwgrkb9YkFTm5vr/ks=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=auKGWwdowZ/Jk19OSTlbAH9SGsV3Q8q5p99VpG1Qe5511a9kkRuLqatb1va0/7Vcqdm5xkR7oA6EfyEiGAKiATnjqJweoQqz7I86UVmPjG8+Z+jAQpMj8Q9Mt99PbH0gzcyQWgDELRIRr+R4IcIaAT0rvcSWOM6RWgZ4wjxeOrk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=FpdsPS7Y; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1718018320; c=relaxed/simple;
+	bh=BVJRnE1p9c1EyXh04it2m5C3V1BucUBrRwnwjCNsqJw=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nTuB/fzimBPRG7zWC64sypfaW043d7AEM7paDsFdR6++1vFyIBfrOwjBmZ3OnI94viG20RQZjpWXlB3UhHfW1umM7yD91GI+aK5fVlYQHyu8Mu/vq5qMZlU7afL3ins9M1ys7Vb0Oa81FM6GWTnKEVVKSaBSQfZYQ2SPPBUQwAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=ABivI1rz; arc=none smtp.client-ip=45.89.224.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="FpdsPS7Y"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42136faf3aeso25260105e9.2
-        for <linux-clk@vger.kernel.org>; Mon, 10 Jun 2024 03:32:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718015555; x=1718620355; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MXXg9qprKu/qiLNvKW8mzWq7DARUrTSzjJdZFxDwHKA=;
-        b=FpdsPS7Y5OZz7a0VchLZejedd5yprC9uzWu8lo54DUrS5gMrgtPu4pKm//9joJcbHS
-         +ZDtu3sN98Kuti1EFdNbil7xNyFfsEiPBEEHBKaqiADW01rrCNB3TKPYgMRMt7d0mMIw
-         WQd9V+H4EViTcxiS8IHPab1CeE49QSQqFoRh/DtMdkKvA9Z46UHhnL64kRXYNqQ93Rvx
-         G5b0bJg1v14Rz90O5FD1MxaudpIchkyMtSNx9dykFgmiQgwyTteflPkUWeznXPL838BE
-         cS6KcDdyZw1uRpSYUntiIJ08dzTq7f5cth/UcYF3eM/gmYJIfZucrBCU3f+Aml6AniZq
-         KJeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718015555; x=1718620355;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MXXg9qprKu/qiLNvKW8mzWq7DARUrTSzjJdZFxDwHKA=;
-        b=EQWAoAFkzIRkXMTngJ2jLSlLQRjSR2V3JfiBkRPQ1Q9t+kaKHNjX6/hFmFI2SPLADL
-         uupi3PZgKJRHEPTzMP2tgKQ5TlL6ZuVLznw1YWbKjcCXDeb33XJVV4yQ4H/t4v/a/bss
-         CYHq1TwyWg8G+dSynT/IUZ5sWSSdzFUWaO707dPB+LhY6BYFnQEVKeyTqDID0pad6T6i
-         9c4rI5vpPGjZCe7Pkm7uyirrTeuC0EvPWvZwLMCPh0Pxr1+8VieKVFy4FFqSRZUP26c5
-         hiJrNUHoSVI0SyYCU43AXOTGqo4G29t6Q5w7bDnAydX5VvTXUWNed2l/vQpXw/KqGYU2
-         5cqw==
-X-Forwarded-Encrypted: i=1; AJvYcCVxOE+GbD6ml4jn/5E8oa9fUm8u9QC/a7LR+Xg1Z99HlaCdQ3yaxszY+Pot8K+R1VzVmgnjsrL5RCLf90y82nJAGwCWjWqiy0W8
-X-Gm-Message-State: AOJu0YyJKk3GofvRIhyaqOVRZdcEFFPL9CRN5fsXrV2d+rmn96CneXQM
-	59Y+/0F4gkwLLMohTZ5mg0QTHqlhP0490E4juxr/EKzpQ7gB42BoXUAjEOrL9NU=
-X-Google-Smtp-Source: AGHT+IE+UMWspFxOkW0VMFhc6ufITIhWfVtf8wdrgpK/+aRYj657WAU4bd9S2VLhpwjXlkDwo9fr4w==
-X-Received: by 2002:adf:fa4d:0:b0:35f:18be:227b with SMTP id ffacd0b85a97d-35f18be22e2mr4263828f8f.14.1718015555378;
-        Mon, 10 Jun 2024 03:32:35 -0700 (PDT)
-Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:afd3:66ee:5486:4249])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-35f2774bb64sm1136213f8f.103.2024.06.10.03.32.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 10 Jun 2024 03:32:35 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: neil.armstrong@linaro.org, mturquette@baylibre.com, sboyd@kernel.org, 
- robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, khilman@baylibre.com, 
- martin.blumenstingl@googlemail.com, 
- Dmitry Rokosov <ddrokosov@salutedevices.com>
-Cc: jian.hu@amlogic.com, kernel@sberdevices.ru, rockosov@gmail.com, 
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org
-In-Reply-To: <20240515185103.20256-1-ddrokosov@salutedevices.com>
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="ABivI1rz"
+Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 8D299120002;
+	Mon, 10 Jun 2024 14:18:27 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 8D299120002
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1718018307;
+	bh=ArNoe6t1RcA/TLth3lJ1kMJmZwBKoMGM2K5yPZHNVWU=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:From;
+	b=ABivI1rzJ9cdnIpC+YYQd3GZFR3Ioef5hZwPTqoEzOIki8LLCScYK3ygJfQKMJUAS
+	 IUR1yIiHZ5ZOfMJOO5hYGv0qjJeDVgtw30MMHlXHrDUzfQtqejSV4/YVQCBJ8rKHJL
+	 v/2h9HqFpe3poHBmMiNNC03aG1G4GMVKN4CPTDr6jiZlgoQEo9QrGg4tekjtdgE7Kg
+	 pmSbGVOKhTiplkB3RjsYpNvtp305Fpb3DINfU1ZSP5ugI/z2m3E6Z3sRBRhzO1tt7i
+	 vflVmoqiwaBt14APoWIohlbT76cJLf59anFFsGYJtIfKBcCiRNqMf84RHEl6nkl/3v
+	 7jDjI21HeMM+g==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Mon, 10 Jun 2024 14:18:27 +0300 (MSK)
+Received: from localhost (100.64.160.123) by p-i-exch-sc-m02.sberdevices.ru
+ (172.16.192.103) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Mon, 10 Jun
+ 2024 14:18:27 +0300
+Date: Mon, 10 Jun 2024 14:18:26 +0300
+From: Dmitry Rokosov <ddrokosov@salutedevices.com>
+To: Jerome Brunet <jbrunet@baylibre.com>
+CC: <neil.armstrong@linaro.org>, <mturquette@baylibre.com>,
+	<sboyd@kernel.org>, <robh+dt@kernel.org>,
+	<krzysztof.kozlowski+dt@linaro.org>, <khilman@baylibre.com>,
+	<martin.blumenstingl@googlemail.com>, <jian.hu@amlogic.com>,
+	<kernel@sberdevices.ru>, <rockosov@gmail.com>,
+	<linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v3 6/7] dt-bindings: clock: meson: add A1 CPU clock
+ controller bindings
+Message-ID: <20240610111826.im3mz64hjfkxrxhr@CAB-WSD-L081021>
 References: <20240515185103.20256-1-ddrokosov@salutedevices.com>
-Subject: Re: (subset) [PATCH v3 0/7] clk: meson: introduce Amlogic A1 SoC
- Family CPU clock controller driver
-Message-Id: <171801555454.91134.14151750531513287014.b4-ty@baylibre.com>
-Date: Mon, 10 Jun 2024 12:32:34 +0200
+ <20240515185103.20256-7-ddrokosov@salutedevices.com>
+ <1jtti1p10m.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <1jtti1p10m.fsf@starbuckisacylon.baylibre.com>
+User-Agent: NeoMutt/20220415
+X-ClientProxiedBy: p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) To
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 185831 [Jun 10 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: ddrokosov@salutedevices.com
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 20 0.3.20 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f, {Tracking_uf_ne_domains}, {Track_E25351}, {Tracking_from_domain_doesnt_match_to}, d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;devicetree.org:7.1.1;salutedevices.com:7.1.1;127.0.0.199:7.1.2;smtp.sberdevices.ru:5.0.1,7.1.1;100.64.160.123:7.1.2, FromAlignment: s, ApMailHostAddress: 100.64.160.123
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean, bases: 2024/06/10 11:00:00
+X-KSMG-LinksScanning: Clean, bases: 2024/06/10 11:00:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/06/10 07:14:00 #25537945
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-Applied to clk-meson (v6.11/drivers), thanks!
+Hello Jerome,
 
-[1/7] clk: meson: add 'NOINIT_ENABLED' flag to eliminate init for enabled PLL
-      https://github.com/BayLibre/clk-meson/commit/d4c83ac16c65
-[2/7] dt-bindings: clock: meson: a1: pll: introduce new syspll bindings
-      https://github.com/BayLibre/clk-meson/commit/96f3b9787363
-[4/7] dt-bindings: clock: meson: a1: peripherals: support sys_pll input
-      https://github.com/BayLibre/clk-meson/commit/41056416ed53
+Thank you for the review!
 
-Best regards,
---
-Jerome
+On Mon, Jun 10, 2024 at 12:04:09PM +0200, Jerome Brunet wrote:
+> On Wed 15 May 2024 at 21:47, Dmitry Rokosov <ddrokosov@salutedevices.com> wrote:
+> 
+> > Add the documentation and dt bindings for Amlogic A1 CPU clock
+> > controller.
+> >
+> > This controller consists of the general 'cpu_clk' and two main parents:
+> > 'cpu fixed clock' and 'syspll'. The 'cpu fixed clock' is an internal
+> > fixed clock, while the 'syspll' serves as an external input from the A1
+> > PLL clock controller.
+> >
+> > Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
+> > Reviewed-by: Rob Herring <robh@kernel.org>
+> > ---
+> >  .../bindings/clock/amlogic,a1-cpu-clkc.yaml   | 64 +++++++++++++++++++
+> >  .../dt-bindings/clock/amlogic,a1-cpu-clkc.h   | 19 ++++++
+> >  2 files changed, 83 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-cpu-clkc.yaml
+> >  create mode 100644 include/dt-bindings/clock/amlogic,a1-cpu-clkc.h
+> >
+> > diff --git a/Documentation/devicetree/bindings/clock/amlogic,a1-cpu-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,a1-cpu-clkc.yaml
+> > new file mode 100644
+> > index 000000000000..f4958b315ed4
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/amlogic,a1-cpu-clkc.yaml
+> > @@ -0,0 +1,64 @@
+> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/clock/amlogic,a1-cpu-clkc.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Amlogic A1 CPU Clock Control Unit
+> > +
+> > +maintainers:
+> > +  - Neil Armstrong <neil.armstrong@linaro.org>
+> > +  - Jerome Brunet <jbrunet@baylibre.com>
+> > +  - Dmitry Rokosov <ddrokosov@salutedevices.com>
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: amlogic,a1-cpu-clkc
+> > +
+> > +  '#clock-cells':
+> > +    const: 1
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  clocks:
+> > +    items:
+> > +      - description: input fixed pll div2
+> > +      - description: input fixed pll div3
+> > +      - description: input sys pll
+> > +      - description: input oscillator (usually at 24MHz)
+> 
+> According to the documentation, fdiv5 is also an input of the CPU clock
+> tree.
+> 
+> That is typically the kind of things we'd prefer to get right from the
+> beginning to avoid modifying the bindings later.
+> 
 
+Could you please share which documentation you are referencing? I have
+the A113L documentation, and there is no mention of the CPU clock IP.
+I retrieved below register map from the vendor's custom driver:
+
+===
+CPUCTRL_CLK_CTRL0
+
+bits 1:0 - cpu_fsource_sel0
+    0 - xtal
+    1 - fclk_div2
+    2 - fclk_div3
+
+bit 2 - cpu_fsel0
+    0 - cpu_fsource_sel0
+    1 - cpu_fsource_div0
+
+bit 3 - UNKNONWN
+
+bits 9:4 - cpu_fsource_div0
+    Divider value
+
+bit 10 - cpu_fclk
+    0 - cpu_fsel0
+    1 - cpu_fsel1
+
+bit 11 - cpu_clk
+    0 - cpu_fclk
+    1 - sys_pll
+
+bits 15:12 - UNKNONWN
+
+bits 17:16 - cpu_fsource_sel1
+    0 - xtal
+    1 - fclk_div2
+    2 - fclk_div3
+
+bit 18 - cpu_fsel1
+    0 - cpu_fsource_sel1
+    1 - cpu_fsource_div1
+
+bit 19 - UNKNONWN
+
+bits 25:20 - cpu_fsource_div1
+    Divider value
+
+bits 31:26 - UNKNONWN
+===
+
+As you can see it doesn't have any other inputs except fclk_div2,
+fclk_div3, sys_pll and xtal.
+
+> > +
+> > +  clock-names:
+> > +    items:
+> > +      - const: fclk_div2
+> > +      - const: fclk_div3
+> > +      - const: sys_pll
+> > +      - const: xtal
+> > +
+> > +required:
+> > +  - compatible
+> > +  - '#clock-cells'
+> > +  - reg
+> > +  - clocks
+> > +  - clock-names
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    #include <dt-bindings/clock/amlogic,a1-pll-clkc.h>
+> > +    apb {
+> > +        #address-cells = <2>;
+> > +        #size-cells = <2>;
+> > +
+> > +        clock-controller@fd000000 {
+> > +            compatible = "amlogic,a1-cpu-clkc";
+> > +            reg = <0 0xfd000080 0 0x8>;
+> 
+> If reg is <0 0xfd000080 0 0x8> then node name should be clock-controller@fd000080
+> 
+
+Okay, I will fix that example in the next version.
+
+[...]
+
+-- 
+Thank you,
+Dmitry
