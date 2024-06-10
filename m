@@ -1,95 +1,107 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF3D6143746;
-	Mon, 10 Jun 2024 16:32:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C4E147C74;
+	Mon, 10 Jun 2024 17:54:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718037153; cv=none; b=T949qwjkKuPDxG3i/jEn3RatSeAwoLl7PEgA6KnDQ8aMQiGftyjocjzQoEZZfGo/vl2RETlvBesCNqswa+OBtQcfBxm+DY3w2XA0mXhV1Ce3rFUg4an8PY9T82+jC1wjjGIMmOBx1aSPAY6ZY7XchtsCjlBClUFdcBXHKwogDPs=
+	t=1718042062; cv=none; b=PTo6GWOY1N4C3SILLeGAtlQZuaq/cCkLGmx8fBPRtNmTGUrQAgIJJccVBWHEj+gbUTlBaMxk3n+QcdZawscTjZTzfADm5B9KqDEA3dYgd96w7GC+Jp+Q/GX1tr56En3q4RvknJ4rhcaC7iSq7XJiJQgwAxOit6WynQEJ0UwyVXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718037153; c=relaxed/simple;
-	bh=t3huLbYF+iqIvyjBa2Lrl3w5SrJDDUFNPpkhxQFR8lE=;
+	s=arc-20240116; t=1718042062; c=relaxed/simple;
+	bh=leKKf29U173teK1FhuP+pu+V4jq3YaQC555HqoGy8Fo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DX37Z/jloGrTWwD234DYhMy4Visx9QE/3l1XAfcYd4pld/ot0z4QDymAsRGeYvc6xSsgpLIyyhZdNn7t6Aws4ofIlRDm+2iTmcg1qWaJ4ZWRcwvTpiwct+YJw0HnoFkPrqWvhebMtzKr3104W9c+ryPbClphSOLwfPOxUmR0G5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iwa32bmP; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iwa32bmP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E2D9C2BBFC;
-	Mon, 10 Jun 2024 16:32:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718037153;
-	bh=t3huLbYF+iqIvyjBa2Lrl3w5SrJDDUFNPpkhxQFR8lE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Iwa32bmP1FleUw+0UYiDwS1tt+D4BxK7bOYhNs/ktjU28WW/ryG8MQ3gjjilliHDC
-	 rrcwcHYjJwE5SqfJMbNveCT4SwsMBYEFhHsZtM+sweE290C2KlhwKByytFl9aqiwxx
-	 9NCgVlT+0vhqFFJhNYg6B4wVvrhGMPVBExNKmST18i82qUIQas7Ozc+QE6+U4Gd5FU
-	 RJK9RLAbVz/E4S/ks6fIi8fHABIUDKpUJDoAGVV0scmUSFKLIoVHw6rI9j/AlwRri0
-	 4+GR87IyfXBEN38PzAjtPUXvpsEqaPXI831o0177KxHP52BX/9V2pD2yu5KXXeoMUl
-	 fZ43wlAmvr7yw==
-Date: Mon, 10 Jun 2024 17:32:27 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Ryan Walklin <ryan@testtoast.com>
-Cc: Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Andre Przywara <andre.przywara@arm.com>,
-	Chris Morgan <macroalpha82@gmail.com>,
-	John Watts <contact@jookia.org>, dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH RFC 1/8] dt-bindings: bus: allwinner: add H616 DE33
- bindings
-Message-ID: <20240610-morbidity-slum-d733494f1939@spud>
-References: <20240607110227.49848-1-ryan@testtoast.com>
- <20240607110227.49848-2-ryan@testtoast.com>
- <20240607-gag-radiantly-37bc3ac76907@spud>
- <e9e7a362-c41e-41f8-b6cd-02fbbd16ce8c@app.fastmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=QhlSxc0ePThzxBi61CJgPCjdIKESBfO4KQtbbIAwi9fe57LXgwm23WKgy7eaol5basMHNbZufZNxx1SNboF8Fd3BpyX5XO10hsgfQ4lnaOwfP9jWgn324+6OELOw8xfUKBksrlFkMMhcn5A/JFnc1Iu7pMpILxkrROia2NjmklQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4248FC2BBFC;
+	Mon, 10 Jun 2024 17:54:17 +0000 (UTC)
+Date: Mon, 10 Jun 2024 23:24:12 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Devi Priya <quic_devipriy@quicinc.com>
+Cc: Manivannan Sadhasivam <mani@kernel.org>, bhelgaas@google.com,
+	lpieralisi@kernel.org, kw@linux.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
+	konrad.dybcio@linaro.org, mturquette@baylibre.com, sboyd@kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH V5 6/6] PCI: qcom: Add support for IPQ9574
+Message-ID: <20240610175412.GB7660@thinkpad>
+References: <20240512082858.1806694-1-quic_devipriy@quicinc.com>
+ <20240512082858.1806694-7-quic_devipriy@quicinc.com>
+ <20240530144730.GG2770@thinkpad>
+ <f42559f5-9d4c-4667-bf0e-7abfd9983c36@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="p5IxoNo8buJ/UBHS"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <e9e7a362-c41e-41f8-b6cd-02fbbd16ce8c@app.fastmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f42559f5-9d4c-4667-bf0e-7abfd9983c36@quicinc.com>
 
+On Mon, Jun 10, 2024 at 11:15:55AM +0530, Devi Priya wrote:
+> 
+> 
+> On 5/30/2024 8:17 PM, Manivannan Sadhasivam wrote:
+> > On Sun, May 12, 2024 at 01:58:58PM +0530, devi priya wrote:
+> > > The IPQ9574 platform has 4 Gen3 PCIe controllers:
+> > > two single-lane and two dual-lane based on SNPS core 5.70a
+> > > 
+> > > The Qcom IP rev is 1.27.0 and Synopsys IP rev is 5.80a
+> > > Added a new compatible 'qcom,pcie-ipq9574' and 'ops_1_27_0'
+> > > which reuses all the members of 'ops_2_9_0' except for the post_init
+> > > as the SLV_ADDR_SPACE_SIZE configuration differs between 2_9_0
+> > > and 1_27_0.
+> > > 
+> > > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > > Reviewed-by: Manivannan Sadhasivam <mani@kernel.org>
+> > > Co-developed-by: Anusha Rao <quic_anusha@quicinc.com>
+> > > Signed-off-by: Anusha Rao <quic_anusha@quicinc.com>
+> > > Signed-off-by: devi priya <quic_devipriy@quicinc.com>
+> > > ---
+> > >   Changes in V5:
+> > > 	- Rebased on top of the below series which adds support for fetching
+> > > 	  clocks from the device tree
+> > > 	  https://lore.kernel.org/linux-pci/20240417-pci-qcom-clk-bulk-v1-1-52ca19b3d6b2@linaro.org/
+> > > 
+> > >   drivers/pci/controller/dwc/pcie-qcom.c | 36 +++++++++++++++++++++++---
+> > >   1 file changed, 32 insertions(+), 4 deletions(-)
+> > > 
+> > > diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+> > > index 3d2eeff9a876..af36a29c092e 100644
+> > > --- a/drivers/pci/controller/dwc/pcie-qcom.c
+> > > +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+> > > @@ -106,6 +106,7 @@
+> > >   /* PARF_SLV_ADDR_SPACE_SIZE register value */
+> > >   #define SLV_ADDR_SPACE_SZ			0x10000000
+> > > +#define SLV_ADDR_SPACE_SZ_1_27_0		0x08000000
+> > 
+> > Can you please explain what this value corresponds to? Even though there is an
+> > old value, I didn't get much info earlier on what it is.
+> 
+> The PARF_SLV_ADDR_SPACE_SIZE register indicates the range of RC accesses
+> to the EP's memory space. Default PoR value is 16MB, which seems to be
+> sufficient for IPQ9574 SoC.
+> As per the memory map, the memory space corresponding to each PCIe region is
+> 128Mb. As the older value corresponds to 256Mb we see PCIe enumeration
+> failures.
 
---p5IxoNo8buJ/UBHS
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+What kind of failure? Is it because kernel is trying to allocate memory region >
+128MB range?
 
-On Sun, Jun 09, 2024 at 03:19:55PM +1200, Ryan Walklin wrote:
-> On Sat, 8 Jun 2024, at 2:23 AM, Conor Dooley wrote:
+> This register should either be updated to 128Mb(0x8000000) or left at the
+> PoR value 16Mb (0x1000000).
+> 
 
-> >> +      - const: allwinner,sun50i-h616-de33-clk
-> >
-> > I think this is not right, as a corresponding driver change is missing.
-> > Either you're missing a clock driver patch or you didn't test your dts.
->=20
-> The clock driver patch with this compatible string is in patch 8/8.
+Ok, so this is essentially the same as the PCI MEM region defined in DT? In that
+case, this value should be extracted from DT instead of being hardcoded.
 
-Ahh, I didn't notice that " drm: sun4i: add Display Engine 3.3 (DE33)
-support" had a clk driver. That needs to go into a patch of its own.
+But PCI MEM region range in DT is low on many platforms. Maybe that's due to all
+PCIe instances sharing the 256MB range?
 
---p5IxoNo8buJ/UBHS
-Content-Type: application/pgp-signature; name="signature.asc"
+- Mani
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZmcqmwAKCRB4tDGHoIJi
-0tu7AQCo8gZn4juYCM25OwzfJQq7/23ZcuOT80PyC9J9xBK+qQEA/EVLDLvMiLow
-eaJLi+JsbSGZdPTSG/nuSu8+I+D9eQc=
-=1+Ai
------END PGP SIGNATURE-----
-
---p5IxoNo8buJ/UBHS--
+-- 
+மணிவண்ணன் சதாசிவம்
