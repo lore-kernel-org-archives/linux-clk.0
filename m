@@ -1,155 +1,261 @@
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86A1AB657;
-	Tue, 11 Jun 2024 07:03:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF29317624A;
+	Tue, 11 Jun 2024 09:42:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718089432; cv=none; b=aVXKTcGDDtUzgaHp8V2Qnm/kyWee/bvHAre3XNa8/SKu7JTSvH4ccnM2XApTiGvcWJj1o67bOhp4lH523jADlPQ5usGgpw6ipWqluLU/7Sr2ufBGyf7uWv+Tn5nsE5Wx2JqUGedS9jP0OMQnbj9O1o1kVqlEU9o9P6XrPO7mjTk=
+	t=1718098952; cv=none; b=hwOFjkiH/49nRPmx6TE+fNO8RrEhm6jbA0q6EoNPFZk8mrCP8lDazG39HdbZ+SeijjuzVjDq8UA/ZV8o78KSuyVj+ztli0kzE9EX9bOJVvOLW88cE0bZfIQDMwXLCe5n2WJ83OgGSGxJZ7YVBAXSCTNsDjDEznfaA8nLKqxv2Dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718089432; c=relaxed/simple;
-	bh=534zje78Vmh7/8/3gk/F5m97kl9O7VC9jDh6In6iEIY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Yv38+bayDLeCR5ES0fMM71inQadSP4TbC7rrR4zGFavWhPKmu+IKmRBPbqXzWiO999wcXTLjNICe/zN6Rd39+3f/WdrZkYYfwxGvxtZFHufs4BZklWR1kTYlc+5vWd00bkXGe6hZg7LrliVkBN/li21/saE9CoRwLrpz0kUD+tg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-62a080a171dso54666627b3.0;
-        Tue, 11 Jun 2024 00:03:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718089429; x=1718694229;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nW56XVygKDEJ/sK4L22c/J11/mN3vlpwHRil5rep5WE=;
-        b=m7bi3vptQyyCjYS5nWBljLnUO7Bf+oy1tyb2+MH2pCIjmcSlGfMIaItENvOa+5aEQ6
-         QnMB/1Vo0riEnNZOwy8HiovaHxVmFaN1GQ+BJk0ySUqQGkHQuLrVq/EaTU5QzzK3X9V9
-         zexTC9SvVmLIEdDEWuq21tvPuLZiNzzsIWtzYf/8rCW3J1q0k4KICgcmsY+EJ/0hK1Il
-         4ZJwm0ZXaphS2CNeH3if2HCKKJabWH+yFUPbIFRxo5oyUo/eiPDGfCMj5ln2S3+d2FMk
-         iU6h0c47yKONBuhFfU5Wl8/2oll6H5M7k9HGQbcJkKJrI/BBi1fHgv6kHmLga4ksAV7h
-         LAOg==
-X-Forwarded-Encrypted: i=1; AJvYcCUZ3kSEMe/qcU1vOZmJLvkBP6HEVWghj1lXTrw4ab3plknXqCJP9bXJojusvjRFzpWPgkk7nYxrlYVPuFL82X4ZZgZNhh1xjTDeOFx7Akgpf1FICPjFezIceXKbmMSP8rIjLGrM10//CIEyQvuUY8vUUEvRa0JtM1i6lf6OoCFYYp3bOto98I/4tbMGhSjn55TraKllQirq7JMWnP21x/U3lvSOeOLo
-X-Gm-Message-State: AOJu0Yzv8+PHoaYe512tUYilU2Gz5YctJWMJNthnA7WAbjbS+Aiit0Bt
-	jJywne7xsAefDjNJJWYWtKni0LdeYCp/sP2MVrdK+ZSPsL9iqZBRfzjlFhRb
-X-Google-Smtp-Source: AGHT+IE1tkhRYa3O+NdsAkcFq5KicoFmer6laI9NH7+JvINjkGXBxcHmtNVp17KMR4nlF5uuIlCGBw==
-X-Received: by 2002:a81:83c5:0:b0:61b:eb65:4a87 with SMTP id 00721157ae682-62cd56a9ff1mr106826837b3.48.1718089429020;
-        Tue, 11 Jun 2024 00:03:49 -0700 (PDT)
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com. [209.85.219.170])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-62ccace6713sm19150267b3.38.2024.06.11.00.03.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 11 Jun 2024 00:03:48 -0700 (PDT)
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-dfa6e0add60so5195533276.3;
-        Tue, 11 Jun 2024 00:03:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXWqG66kV/qOW5xF2vDPCdixhDamdmqJpvEekDhA5xqjQwz0G97bOv8Vof/uhFaYnjrq9iclvXRv8qhjHRWoeP630Lj/RpsCGj7MQfWGh3vncoO4pY0k7chk2w32Y1tuy7vGVbU8SYJmmpI7t2eUmemgefm49sDZn3otJqEl4DXUNGhn6w1hmbU41WG7na2yiowe7To56xmSLFYB4xhiPxPK0hluV8X
-X-Received: by 2002:a25:aa6d:0:b0:dc6:aebb:168e with SMTP id
- 3f1490d57ef6-dfaf64bf568mr11147486276.26.1718089428640; Tue, 11 Jun 2024
- 00:03:48 -0700 (PDT)
+	s=arc-20240116; t=1718098952; c=relaxed/simple;
+	bh=vmcw0LoEb2KYPpqCFEmI5BlvDCI6GwFkzcgF2Y7u/DA=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=orMPhfum8fnY8u76az57XTsqjI0rm5rCs+aIM6vbx418v7Rus9nDTtdiCMZUJfaLWwOhItfu+rit2KMVI/PipeO/XgL1OOSycwEKXAvFnGABYrZsxJ7kzfZ+Q27KAplENGqgDLKOwMgZ6HGnCPvbA3cvcj53HiUYw/m5uw8GvvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FWtA8+nt; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FWtA8+nt"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45B2qdon024313;
+	Tue, 11 Jun 2024 09:42:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=4cDv83/EReSbO2bcNeU4T7lO
+	TBkKY0tXj81oN6i5QT0=; b=FWtA8+ntrlZ2+XgaDmj30WDTL1gGuL0A5i2g1l0V
+	Ahkh4VntEJujQ0veP8uxja+RzPDdwwzM/N+zOfJ+NxBcAZYrerqNsFw6jvnBF4On
+	swYr22huRTU/cOXDk5GuH0Gl4h66AHX6tt7BP3FUOJ+udaptzd1yPQcky+KR2gaF
+	eyOtwQp0Bcc+SOI++6Z+IVyD/DmifxyMu/yfUSKGHnD6m8OdIL3FX1eoSR9QsBjJ
+	0sDZCokn8knOxqabSp2ASMP+wg2TuNrH/Vb6qf0tq9V2ydZyukuABOioHdfkoyE6
+	ojQ4WEMQK0hM/+FGanQLJIcca30EI8KXId24xbJ7k4gKPw==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ymd0eehk2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Jun 2024 09:42:25 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45B9gPk6009672
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Jun 2024 09:42:25 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 11 Jun 2024 02:42:20 -0700
+Date: Tue, 11 Jun 2024 15:12:16 +0530
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+CC: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Georgi Djakov
+	<djakov@kernel.org>, <andersson@kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <quic_anusha@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH v9 6/6] arm64: dts: qcom: ipq9574: Add icc provider
+ ability to gcc
+Message-ID: <Zmgb+OjdBNw71sC1@hu-varada-blr.qualcomm.com>
+References: <20240418092305.2337429-1-quic_varada@quicinc.com>
+ <20240418092305.2337429-7-quic_varada@quicinc.com>
+ <a7194edd-a2c8-46fc-bea1-f26b0960e535@linaro.org>
+ <Ziov6bWBXYXJ4Zp8@hu-varada-blr.qualcomm.com>
+ <27f4f3dd-9375-40cf-8c8f-1c4edf66e31b@linaro.org>
+ <ZjNdTmmXucjtRxJt@hu-varada-blr.qualcomm.com>
+ <c015b3a5-2213-4ebd-b960-d97ed1fe7062@kernel.org>
+ <ZjshR0ekcn0gxwOa@hu-varada-blr.qualcomm.com>
+ <CAA8EJpqENsojPQmCbma_nQLEZq8nK1fz1K0JdtvLd=kPrH_DBw@mail.gmail.com>
+ <1a08ef42-b52f-4c97-90d7-e7fdee7725b4@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240524082800.333991-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240524082800.333991-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CAMuHMdVPZgxsM1OsFt-+802mzajKR6CO8B9ofFzaThKsBAdGTQ@mail.gmail.com> <CA+V-a8tQr8gXxAfRcffP9Bz2dL66+NOYUacKx0nmZd=TTVA9FA@mail.gmail.com>
-In-Reply-To: <CA+V-a8tQr8gXxAfRcffP9Bz2dL66+NOYUacKx0nmZd=TTVA9FA@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 11 Jun 2024 09:03:37 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWY7SaL40oiFJ-wSA+x7NNZgE_0Wyj850QhbFz+yWwWTg@mail.gmail.com>
-Message-ID: <CAMuHMdWY7SaL40oiFJ-wSA+x7NNZgE_0Wyj850QhbFz+yWwWTg@mail.gmail.com>
-Subject: Re: [PATCH 3/4] clk: renesas: Add RZ/V2H CPG core wrapper driver
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Magnus Damm <magnus.damm@gmail.com>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <1a08ef42-b52f-4c97-90d7-e7fdee7725b4@linaro.org>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: _-L6S3pVII9ef9_o7MLi0E3pCivFMPxi
+X-Proofpoint-ORIG-GUID: _-L6S3pVII9ef9_o7MLi0E3pCivFMPxi
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-11_05,2024-06-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
+ lowpriorityscore=0 priorityscore=1501 malwarescore=0 suspectscore=0
+ adultscore=0 spamscore=0 mlxscore=0 clxscore=1011 bulkscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406110073
 
-Hi Prabhakar,
-
-On Tue, Jun 11, 2024 at 12:03=E2=80=AFAM Lad, Prabhakar
-<prabhakar.csengg@gmail.com> wrote:
-> On Tue, Jun 4, 2024 at 5:01=E2=80=AFPM Geert Uytterhoeven <geert@linux-m6=
-8k.org> wrote:
-> > On Fri, May 24, 2024 at 10:29=E2=80=AFAM Prabhakar <prabhakar.csengg@gm=
-ail.com> wrote:
-> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > >
-> > > Add CPG core helper wrapper driver for RZ/V2H SoC.
+On Thu, Jun 06, 2024 at 04:06:01PM +0200, Konrad Dybcio wrote:
+> On 8.05.2024 10:10 AM, Dmitry Baryshkov wrote:
+> > On Wed, 8 May 2024 at 09:53, Varadarajan Narayanan
+> > <quic_varada@quicinc.com> wrote:
+> >>
+> >> On Fri, May 03, 2024 at 04:51:04PM +0300, Georgi Djakov wrote:
+> >>> Hi Varada,
+> >>>
+> >>> Thank you for your work on this!
+> >>>
+> >>> On 2.05.24 12:30, Varadarajan Narayanan wrote:
+> >>>> On Tue, Apr 30, 2024 at 12:05:29PM +0200, Konrad Dybcio wrote:
+> >>>>> On 25.04.2024 12:26 PM, Varadarajan Narayanan wrote:
+> >>>>>> On Tue, Apr 23, 2024 at 02:58:41PM +0200, Konrad Dybcio wrote:
+> >>>>>>>
+> >>>>>>>
+> >>>>>>> On 4/18/24 11:23, Varadarajan Narayanan wrote:
+> >>>>>>>> IPQ SoCs dont involve RPM in managing NoC related clocks and
+> >>>>>>>> there is no NoC scaling. Linux itself handles these clocks.
+> >>>>>>>> However, these should not be exposed as just clocks and align
+> >>>>>>>> with other Qualcomm SoCs that handle these clocks from a
+> >>>>>>>> interconnect provider.
+> >>>>>>>>
+> >>>>>>>> Hence include icc provider capability to the gcc node so that
+> >>>>>>>> peripherals can use the interconnect facility to enable these
+> >>>>>>>> clocks.
+> >>>>>>>>
+> >>>>>>>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> >>>>>>>> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> >>>>>>>> ---
+> >>>>>>>
+> >>>>>>> If this is all you do to enable interconnect (which is not the case,
+> >>>>>>> as this patch only satisfies the bindings checker, the meaningful
+> >>>>>>> change happens in the previous patch) and nothing explodes, this is
+> >>>>>>> an apparent sign of your driver doing nothing.
+> >>>>>>
+> >>>>>> It appears to do nothing because, we are just enabling the clock
+> >>>>>> provider to also act as interconnect provider. Only when the
+> >>>>>> consumers are enabled with interconnect usage, this will create
+> >>>>>> paths and turn on the relevant NOC clocks.
+> >>>>>
+> >>>>> No, with sync_state it actually does "something" (sets the interconnect
+> >>>>> path bandwidths to zero). And *this* patch does nothing functionally,
+> >>>>> it only makes the dt checker happy.
+> >>>>
+> >>>> I understand.
+> >>>>
+> >>>>>> This interconnect will be used by the PCIe and NSS blocks. When
+> >>>>>> those patches were posted earlier, they were put on hold until
+> >>>>>> interconnect driver is available.
+> >>>>>>
+> >>>>>> Once this patch gets in, PCIe for example will make use of icc.
+> >>>>>> Please refer to https://lore.kernel.org/linux-arm-msm/20230519090219.15925-5-quic_devipriy@quicinc.com/.
+> >>>>>>
+> >>>>>> The 'pcieX' nodes will include the following entries.
+> >>>>>>
+> >>>>>>         interconnects = <&gcc MASTER_ANOC_PCIE0 &gcc SLAVE_ANOC_PCIE0>,
+> >>>>>>                         <&gcc MASTER_SNOC_PCIE0 &gcc SLAVE_SNOC_PCIE0>;
+> >>>>>>         interconnect-names = "pcie-mem", "cpu-pcie";
+> >>>>>
+> >>>>> Okay. What about USB that's already enabled? And BIMC/MEMNOC?
+> >>>>
+> >>>> For USB, the GCC_ANOC_USB_AXI_CLK is enabled as part of the iface
+> >>>> clock. Hence, interconnect is not specified there.
+> >>>>
+> >>>> MEMNOC to System NOC interfaces seem to be enabled automatically.
+> >>>> Software doesn't have to turn on or program specific clocks.
+> >>>>
+> >>>>>>> The expected reaction to "enabling interconnect" without defining the
+> >>>>>>> required paths for your hardware would be a crash-on-sync_state, as all
+> >>>>>>> unused (from Linux's POV) resources ought to be shut down.
+> >>>>>>>
+> >>>>>>> Because you lack sync_state, the interconnects silently retain the state
+> >>>>>>> that they were left in (which is not deterministic), and that's precisely
+> >>>>>>> what we want to avoid.
+> >>>>>>
+> >>>>>> I tried to set 'sync_state' to icc_sync_state to be invoked and
+> >>>>>> didn't see any crash.
+> >>>>>
+> >>>>> Have you confirmed that the registers are actually written to, and with
+> >>>>> correct values?
+> >>>>
+> >>>> I tried the following combinations:-
+> >>>>
+> >>>> 1. Top of tree linux-next + This patch set
+> >>>>
+> >>>>     * icc_sync_state called
+> >>>>     * No crash or hang observed
+> >>>>     * From /sys/kernel/debug/clk/clk_summary can see the
+> >>>>       relevant clocks are set to the expected rates (compared
+> >>>>       with downstream kernel)
+> >>>>
+> >>>> 2. Top of tree linux-next + This patch set + PCIe enablement
+> >>>>
+> >>>>     * icc_sync_state NOT called
+> >>>
+> >>> If sync_state() is not being called, that usually means that there
+> >>> are interconnect consumers that haven't probed successfully (PCIe?)
+> >>> or their dependencies. That can be checked in /sys/class/devlink/.../status
+> >>> But i am not sure how this works for PCI devices however.
+> >>>
+> >>> You can also manually force a call to sync_state by writing "1" to
+> >>> the interconnect provider's /sys/devices/.../state_synced
+> >>>
+> >>> Anyway, the question is if PCIe and NSS work without this driver?
+> >>
+> >> No.
+> >>
+> >>> If they work, is this because the clocks are turned on by default
+> >>> or by the boot loader?
+> >>
+> >> Initially, the PCIe/NSS driver enabled these clocks directly
+> >> by having them in their DT nodes itself. Based on community
+> >> feedback this was removed and after that PCIe/NSS did not work.
+> >>
+> >>> Then if an interconnect path (clock) gets disabled either when we
+> >>> reach a sync_state (with no bandwidth requests) or we explicitly
+> >>> call icc_set_bw() with 0 bandwidth values, i would expect that
+> >>> these PCIe and NSS devices would not function anymore (it might
+> >>> save some power etc) and if this is unexpected we should see a
+> >>> a crash or hang...
+> >>>
+> >>> Can you confirm this?
+> >>
+> >> With ICC enabled, icc_set_bw (with non-zero values) is called by
+> >> PCIe and NSS drivers. Haven't checked with icc_set_bw with zero
+> >> values.
+> >>
+> >> PCIe:   qcom_pcie_probe -> qcom_pcie_icc_init -> icc_set_bw
+> >> NSS:    ppe_icc_init -> icc_set_bw
+> >>
+> >> I believe sync_state is not getting called since there is a
+> >> non-zero set bandwidth request. Which seems to be aligned with
+> >> your explanation.
 > >
-> > What is a "core helper wrapper"? ;-)
-> >
-> As this file basically uses core API for clock and reset, I worded the
-> commit as such.
+> > This doesn't look correct. sync_state is being called once all
+> > consumers are probed. It doesn't matter whether those consumers have
+> > non-zero bandwidth requests or no.
 >
-> > Looking at the structure, this looks like a family-specific clock drive=
-r?
-> Yes, as the CPG on RZ/V2H varies quite a bit compared to RZ/G2L I have
-> introduced a family-specific clock driver
->
-> > Will there be more RZ/V2H-alike SoCs?
-> >
-> I'm not sure about it tbh!
+> /sys/kernel/debug/devices_deferred may have some useful info, too
 
-OK, I see we did the same when introducing RZ/G2L support.
+/sys/kernel/debug/devices_deferred seems to be empty
 
-> > > --- /dev/null
-> > > +++ b/drivers/clk/renesas/rzv2h-cpg.h
+	# mount | grep -w debugfs
+	none on /sys/kernel/debug type debugfs (rw,relatime)
 
-> > > +/**
-> > > + * struct rzv2h_cpg_info - SoC-specific CPG Description
-> > > + *
-> > > + * @core_clks: Array of Core Clock definitions
-> > > + * @num_core_clks: Number of entries in core_clks[]
-> > > + * @num_total_core_clks: Total number of Core Clocks (exported + int=
-ernal)
-> > > + *
-> > > + * @mod_clks: Array of Module Clock definitions
-> > > + * @num_mod_clks: Number of entries in mod_clks[]
-> > > + * @num_hw_mod_clks: Number of Module Clocks supported by the hardwa=
-re
-> > > + *
-> > > + * @resets: Array of Module Reset definitions
-> > > + * @num_resets: Number of entries in resets[]
-> > > + *
-> > > + * @crit_mod_clks: Array with Module Clock IDs of critical clocks th=
-at
-> > > + *                 should not be disabled without a knowledgeable dr=
-iver
-> > > + * @num_crit_mod_clks: Number of entries in crit_mod_clks[]
-> > > + * @pll_get_clk1_offset: Function pointer to get PLL CLK1 offset
-> > > + * @pll_get_clk2_offset: Function pointer to get PLL CLK2 offset
-> > > + */
-> > > +struct rzv2h_cpg_info {
-> >
-> > > +       /* function pointers for PLL information */
-> > > +       int (*pll_get_clk1_offset)(int clk);
-> > > +       int (*pll_get_clk2_offset)(int clk);
-> >
-> > Why are these function pointers?
+	# cat /sys/kernel/debug/devices_deferred  | wc -l
+	0
 
-I meant "... and not pointer/len pairs?".
+Added the following print to icc_sync_state,
 
-> To get the offsets for PLL CLK1/2. But I plan to drop these and get
-> the offset from conf instead.
+	@@ -1096,6 +1096,7 @@ void icc_sync_state(struct device *dev)
+		struct icc_node *n;
+		static int count;
 
-OK
+	+	printk("--> %s: %d %d\n", __func__, providers_count, count);
+		count++;
 
-Gr{oetje,eeting}s,
+		if (count < providers_count)
+			return;
 
-                        Geert
+icc_sync_state seems to be called once,
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+	# dmesg | grep icc_sync_state
+	[   12.260544] --> icc_sync_state: 2 0
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Since 'providers_count' is greated than 'count' icc_sync_state
+seems to return before doing anything.
+
+Thanks
+Varada
