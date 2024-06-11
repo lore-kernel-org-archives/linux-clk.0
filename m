@@ -1,295 +1,153 @@
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1999C17CA1B
-	for <linux-clk@vger.kernel.org>; Tue, 11 Jun 2024 13:35:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 642F947F7A;
+	Tue, 11 Jun 2024 13:38:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718112927; cv=none; b=pZdJRfYaMt9yCDMkqOsoVlMSMnN0susP6mhLq5oTuuyx7Xp1PuHb3B1xPWCbqTrRXmF+wi/FyC/sGbWo5fge0ap4WZbcIJ7dLcvx+34rnKNh8I3mnKTkEg+Hi+g8bIB4Zcr3KXy2SvvL1vFMRYTpYKOCo96jX/T28cG9XG9iavA=
+	t=1718113114; cv=none; b=FKhcCnGTtfX1ZCQdF+zRToExuDLC2wDwSuTBdzvNybV801L+xITEEpkTdCC0N7n3QZBKu1rBa7B1r4anzbjGlWIwzUMvm6ar5F1YYdGGxbWV5fpnL8AT0CBlhfhXvBbfaSTGD0HSbpmM7vGyg9mr1D8eks9o7vRw6FgnCWc4aik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718112927; c=relaxed/simple;
-	bh=4a3scLvYXkuJsnLKn89qlgPibWnIiRsl52VCCdkhGOM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fuXKspKyPfibQu6EYhn7Br9UqcF9Tdmn630YKrmxu46lcSWZiyxPpgp1JgQ0rsmd4U7OlBbyGj4CKBARwIxdGFIjHqj0cAKGHq7jDxP3IJITnUE3c9j9Xup8KQFwszSvZ2id44moFjE+UbPg2ifPtHwMyrgFiNj6/NOTsaQtJPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=VmPMlWNT; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1718113114; c=relaxed/simple;
+	bh=gmpbs7daVQsy3/1FXy7yuLz6FDIlj6i6xTlS8xlezPU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZaLe3VHgVhNL28jXB1A1JsdUbUeTcNSJglhefaU8ciMPb21/7T56odA1AXvQn55tMHx6o2KFVl+X/Etx6+/tVyADYwLfGn/id2MB4J4oDX8SoraD9Wte/Hnec/sQ04u1/qfMtafinvilaPeHmt0OdHJOkLOFAGIqSN7cjKZFKyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gBHpdoUu; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="VmPMlWNT"
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2eadaac1d28so50289961fa.3
-        for <linux-clk@vger.kernel.org>; Tue, 11 Jun 2024 06:35:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718112922; x=1718717722; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=H8QDeS52Z8AMlWRKMLQ8N+MaKcddL0RJGmQ+tlm1Cp0=;
-        b=VmPMlWNTvkcDqEHjZvvlvmXueamzUl+JB3YGgZn1cT7xBrT6AHrcOrkClxTdlMLbf3
-         QlhcAl5IIhueqqdjK20O3lePfclzKfoIRSwS963WD7Bl0DA+XGriHy3Q+o9JwoPGcHuB
-         Kq52eEx1SFiapMD037JMDBe22rqkyuf3vHrSl2rpbl4W6RBcDqCaCoVOswRg8qZ3f8G8
-         CyzeVozM+m0/aq3KVYN8Vs9D2ZqukGduCZJqMlmsP5v9xsmz5Jf3irdI+dJN/9tm08Yb
-         NR5SL05qaBFf8MoA41EQWX0o239aDyA/lPlIR5YA75e+RHXZ3b5tpHnGAcYgNyODeI4X
-         3fFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718112922; x=1718717722;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=H8QDeS52Z8AMlWRKMLQ8N+MaKcddL0RJGmQ+tlm1Cp0=;
-        b=P6Z2jwdq7GceeNWQ6IhPn1xHw1i4Y+AIAPmeNDn+pimt79nlONHLEBIKfzne+p9BdY
-         e9kT9BQUUuMBZyUOczGyoQu1iRGzcETGtzq1YkjHbxvEmIHDxC1ec8YxrT2Ibo0Qk4Cn
-         /8mtNXS5aboZNCrj3tMsSXKIXfpzgozfLZoPEf6fWlywS8ZUdy3sXi0dntaar5uGIc7o
-         H6urniJI9KElY07oK17arK2aSasKatG1/BcZF4c4cLrgtlhKG7f8YCvJwAidn0PIRW4x
-         0IcgBUpumThSfYPXd08gtCHkqZFU0zXhvXJEa4TiIbI3yrPW02Pufh9Q2FHdMQCBdw5M
-         eFzA==
-X-Forwarded-Encrypted: i=1; AJvYcCUeX0Xa0oVBJieBFWaRR1RCHpg/RxIuTwnw8I5aZ4D84LfIxpRhWwV0goQTSeEiw6zc3YfYtD4qzzkPt88Vdx4b/rgEEbmwKOgR
-X-Gm-Message-State: AOJu0YyXrwuUq1WYtFLByVWYSlQO6CxfLOCnTUgSgLv5ZGxfx7C+xXz0
-	7Oo4kjsiwuY7NCjtwBSkd4dS7LpB5Giskw4KWk847rLNN0lkXhBbC7osLuqdBxs=
-X-Google-Smtp-Source: AGHT+IFYXJL8gSHUGZhhV7TvyGBajrxwHaxnUpJkWCNrjteJ0gG8Kk8wjsEIGqil2U66IxgDoS/SNA==
-X-Received: by 2002:a2e:7a06:0:b0:2eb:dba0:6772 with SMTP id 38308e7fff4ca-2ebdba071a5mr53285941fa.37.1718112922031;
-        Tue, 11 Jun 2024 06:35:22 -0700 (PDT)
-Received: from toaster.lan ([2a01:e0a:3c5:5fb1:6945:4110:d128:827])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4215c1aa1desm179497315e9.11.2024.06.11.06.35.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 11 Jun 2024 06:35:21 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>,
-	Kevin Hilman <khilman@baylibre.com>,
-	linux-kernel@vger.kernel.org,
-	linux-amlogic@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	Jeff Johnson <quic_jjohnson@quicinc.com>
-Subject: [PATCH] clk: meson: add missing MODULE_DESCRIPTION() macros
-Date: Tue, 11 Jun 2024 15:35:08 +0200
-Message-ID: <20240611133512.341817-1-jbrunet@baylibre.com>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gBHpdoUu"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45B9g8Wu018402;
+	Tue, 11 Jun 2024 13:38:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=lECHIcGMhrxBkzvs8TUnS3
+	MeZMm4+W9YCpT7HYbPSsA=; b=gBHpdoUuGgQgwzDpWGblrTmYcupXYY/3arkB/l
+	d9eR2tjn263hJFZKpnYBGxSGL9omVBZwDP5c3sXvd/S+ERaFmxAr3hkV2w3fTit0
+	XqA10Rzz2kCs4AoGwwJa2lwTHRgSg5hTaiZze/uLZVAoIODiNW52CkEXgkJc8L0w
+	l4/u6GqHfmjCR35nCdr3Qw0IyGwgXAPoQ0f51csqVymt6c+XtE2aQLmi22yeB+vV
+	3zKMZGWjPFq8/mRC7hM2qOxNC68T56TIpEkXY2W5ByJrjdTUpoxNgrDKiWyjKVEM
+	Fn/+t2Cw8Yyxl861g/I0lF95g7iemNQRnBHlCD9vcro+x+gA==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ypm6b8m6p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Jun 2024 13:38:27 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45BDcQwI018243
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 11 Jun 2024 13:38:26 GMT
+Received: from hu-ajipan-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 11 Jun 2024 06:38:21 -0700
+From: Ajit Pandey <quic_ajipan@quicinc.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Vinod Koul <vkoul@kernel.org>,
+        Vladimir Zapolskiy
+	<vladimir.zapolskiy@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Taniya Das
+	<quic_tdas@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>,
+        Satya Priya Kakitapalli
+	<quic_skakitap@quicinc.com>,
+        Ajit Pandey <quic_ajipan@quicinc.com>
+Subject: [PATCH V4 0/8] clk: qcom: Add support for DISPCC, CAMCC and GPUCC on SM4450
+Date: Tue, 11 Jun 2024 19:07:44 +0530
+Message-ID: <20240611133752.2192401-1-quic_ajipan@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Patchwork-Bot: notify
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Bfop7SZxK_d8j7bFtG6_OIrudapLbDV_
+X-Proofpoint-GUID: Bfop7SZxK_d8j7bFtG6_OIrudapLbDV_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-11_07,2024-06-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 suspectscore=0
+ mlxlogscore=999 impostorscore=0 spamscore=0 priorityscore=1501
+ lowpriorityscore=0 adultscore=0 bulkscore=0 phishscore=0 mlxscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406110099
 
-Add the missing MODULE_DESCRIPTION() in the Amlogic clock modules missing
-it.
+This patch series add dt-bindings, driver and device tree support for DISPCC, CAMCC
+and GPUCC on QCOM SM4450 platform and also includes a fix related to LUCID EVO PLL
+config issue in clk-alpha-pll driver which is required for correct scaling of few
+supported frequencies in graphics clock controllers on SM4450.
 
-Reported-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-Closes: https://lore.kernel.org/linux-clk/964210f1-671f-4ecc-bdb7-3cf53089c327@quicinc.com
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- drivers/clk/meson/a1-peripherals.c   | 3 ++-
- drivers/clk/meson/a1-pll.c           | 3 ++-
- drivers/clk/meson/axg-aoclk.c        | 3 ++-
- drivers/clk/meson/axg.c              | 3 ++-
- drivers/clk/meson/c3-peripherals.c   | 3 ++-
- drivers/clk/meson/c3-pll.c           | 3 ++-
- drivers/clk/meson/g12a-aoclk.c       | 3 ++-
- drivers/clk/meson/g12a.c             | 3 ++-
- drivers/clk/meson/gxbb-aoclk.c       | 2 ++
- drivers/clk/meson/gxbb.c             | 3 ++-
- drivers/clk/meson/meson-aoclk.c      | 2 ++
- drivers/clk/meson/meson-clkc-utils.c | 1 +
- drivers/clk/meson/meson-eeclk.c      | 2 ++
- drivers/clk/meson/s4-peripherals.c   | 3 ++-
- drivers/clk/meson/s4-pll.c           | 3 ++-
- 15 files changed, 29 insertions(+), 11 deletions(-)
+Changes in V4:
+- [PATCH 8/8]: Sorted nodes with address and minor updates for review comments on v2.
+- [PATCH 7/8]: Added Reviewed-by: Konrad Dybcio received in v2.
+- Link to V3: https://lore.kernel.org/all/20240528114254.3147988-1-quic_ajipan@quicinc.com/
 
-diff --git a/drivers/clk/meson/a1-peripherals.c b/drivers/clk/meson/a1-peripherals.c
-index 621af1e6e4b2..99b5bc450446 100644
---- a/drivers/clk/meson/a1-peripherals.c
-+++ b/drivers/clk/meson/a1-peripherals.c
-@@ -2240,8 +2240,9 @@ static struct platform_driver a1_periphs_clkc_driver = {
- 		.of_match_table = a1_periphs_clkc_match_table,
- 	},
- };
--
- module_platform_driver(a1_periphs_clkc_driver);
-+
-+MODULE_DESCRIPTION("Amlogic A1 Peripherals Clock Controller driver");
- MODULE_AUTHOR("Jian Hu <jian.hu@amlogic.com>");
- MODULE_AUTHOR("Dmitry Rokosov <ddrokosov@sberdevices.ru>");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/meson/a1-pll.c b/drivers/clk/meson/a1-pll.c
-index 90b0aeeb049c..a16e537d139a 100644
---- a/drivers/clk/meson/a1-pll.c
-+++ b/drivers/clk/meson/a1-pll.c
-@@ -354,8 +354,9 @@ static struct platform_driver a1_pll_clkc_driver = {
- 		.of_match_table = a1_pll_clkc_match_table,
- 	},
- };
--
- module_platform_driver(a1_pll_clkc_driver);
-+
-+MODULE_DESCRIPTION("Amlogic S4 PLL Clock Controller driver");
- MODULE_AUTHOR("Jian Hu <jian.hu@amlogic.com>");
- MODULE_AUTHOR("Dmitry Rokosov <ddrokosov@sberdevices.ru>");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/meson/axg-aoclk.c b/drivers/clk/meson/axg-aoclk.c
-index e4d0f46f47f5..fa1dcb7f91e4 100644
---- a/drivers/clk/meson/axg-aoclk.c
-+++ b/drivers/clk/meson/axg-aoclk.c
-@@ -338,6 +338,7 @@ static struct platform_driver axg_aoclkc_driver = {
- 		.of_match_table = axg_aoclkc_match_table,
- 	},
- };
--
- module_platform_driver(axg_aoclkc_driver);
-+
-+MODULE_DESCRIPTION("Amlogic AXG Always-ON Clock Controller driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/meson/axg.c b/drivers/clk/meson/axg.c
-index 52d610110e44..065b5f198297 100644
---- a/drivers/clk/meson/axg.c
-+++ b/drivers/clk/meson/axg.c
-@@ -2183,6 +2183,7 @@ static struct platform_driver axg_driver = {
- 		.of_match_table = clkc_match_table,
- 	},
- };
--
- module_platform_driver(axg_driver);
-+
-+MODULE_DESCRIPTION("Amlogic AXG Main Clock Controller driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/meson/c3-peripherals.c b/drivers/clk/meson/c3-peripherals.c
-index ff17abe6a999..56b33d23c317 100644
---- a/drivers/clk/meson/c3-peripherals.c
-+++ b/drivers/clk/meson/c3-peripherals.c
-@@ -2359,7 +2359,8 @@ static struct platform_driver c3_peripherals_driver = {
- 		.of_match_table = c3_peripherals_clkc_match_table,
- 	},
- };
--
- module_platform_driver(c3_peripherals_driver);
-+
-+MODULE_DESCRIPTION("Amlogic C3 Peripherals Clock Controller driver");
- MODULE_AUTHOR("Chuan Liu <chuan.liu@amlogic.com>");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/meson/c3-pll.c b/drivers/clk/meson/c3-pll.c
-index 44b20bf4deac..6d5271c61d14 100644
---- a/drivers/clk/meson/c3-pll.c
-+++ b/drivers/clk/meson/c3-pll.c
-@@ -740,7 +740,8 @@ static struct platform_driver c3_pll_driver = {
- 		.of_match_table = c3_pll_clkc_match_table,
- 	},
- };
--
- module_platform_driver(c3_pll_driver);
-+
-+MODULE_DESCRIPTION("Amlogic C3 PLL Clock Controller driver");
- MODULE_AUTHOR("Chuan Liu <chuan.liu@amlogic.com>");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/meson/g12a-aoclk.c b/drivers/clk/meson/g12a-aoclk.c
-index 58976ed8b92a..a5f4d15d8396 100644
---- a/drivers/clk/meson/g12a-aoclk.c
-+++ b/drivers/clk/meson/g12a-aoclk.c
-@@ -473,6 +473,7 @@ static struct platform_driver g12a_aoclkc_driver = {
- 		.of_match_table = g12a_aoclkc_match_table,
- 	},
- };
--
- module_platform_driver(g12a_aoclkc_driver);
-+
-+MODULE_DESCRIPTION("Amlogic G12A Always-ON Clock Controller driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/meson/g12a.c b/drivers/clk/meson/g12a.c
-index 56e66ecc306e..4647e84d2502 100644
---- a/drivers/clk/meson/g12a.c
-+++ b/drivers/clk/meson/g12a.c
-@@ -5612,6 +5612,7 @@ static struct platform_driver g12a_driver = {
- 		.of_match_table = clkc_match_table,
- 	},
- };
--
- module_platform_driver(g12a_driver);
-+
-+MODULE_DESCRIPTION("Amlogic G12/SM1 Main Clock Controller driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/meson/gxbb-aoclk.c b/drivers/clk/meson/gxbb-aoclk.c
-index dbda563729db..33fafbdf65c4 100644
---- a/drivers/clk/meson/gxbb-aoclk.c
-+++ b/drivers/clk/meson/gxbb-aoclk.c
-@@ -300,4 +300,6 @@ static struct platform_driver gxbb_aoclkc_driver = {
- 	},
- };
- module_platform_driver(gxbb_aoclkc_driver);
-+
-+MODULE_DESCRIPTION("Amlogic GXBB Always-ON Clock Controller driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/meson/gxbb.c b/drivers/clk/meson/gxbb.c
-index 29507b8c4304..d3175e4335bb 100644
---- a/drivers/clk/meson/gxbb.c
-+++ b/drivers/clk/meson/gxbb.c
-@@ -3567,6 +3567,7 @@ static struct platform_driver gxbb_driver = {
- 		.of_match_table = clkc_match_table,
- 	},
- };
--
- module_platform_driver(gxbb_driver);
-+
-+MODULE_DESCRIPTION("Amlogic GXBB Main Clock Controller driver");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/meson/meson-aoclk.c b/drivers/clk/meson/meson-aoclk.c
-index b8a9d59e6726..2dd064201fae 100644
---- a/drivers/clk/meson/meson-aoclk.c
-+++ b/drivers/clk/meson/meson-aoclk.c
-@@ -89,4 +89,6 @@ int meson_aoclkc_probe(struct platform_device *pdev)
- 	return devm_of_clk_add_hw_provider(dev, meson_clk_hw_get, (void *)&data->hw_clks);
- }
- EXPORT_SYMBOL_GPL(meson_aoclkc_probe);
-+
-+MODULE_DESCRIPTION("Amlogic Always-ON Clock Controller helpers");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/meson/meson-clkc-utils.c b/drivers/clk/meson/meson-clkc-utils.c
-index 7370644e8092..4dd5948b7ae4 100644
---- a/drivers/clk/meson/meson-clkc-utils.c
-+++ b/drivers/clk/meson/meson-clkc-utils.c
-@@ -22,4 +22,5 @@ struct clk_hw *meson_clk_hw_get(struct of_phandle_args *clkspec, void *clk_hw_da
- }
- EXPORT_SYMBOL_GPL(meson_clk_hw_get);
- 
-+MODULE_DESCRIPTION("Amlogic Clock Controller Utilities");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/meson/meson-eeclk.c b/drivers/clk/meson/meson-eeclk.c
-index 3cbc7f233bba..570992eece86 100644
---- a/drivers/clk/meson/meson-eeclk.c
-+++ b/drivers/clk/meson/meson-eeclk.c
-@@ -58,4 +58,6 @@ int meson_eeclkc_probe(struct platform_device *pdev)
- 	return devm_of_clk_add_hw_provider(dev, meson_clk_hw_get, (void *)&data->hw_clks);
- }
- EXPORT_SYMBOL_GPL(meson_eeclkc_probe);
-+
-+MODULE_DESCRIPTION("Amlogic Main Clock Controller Helpers");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/meson/s4-peripherals.c b/drivers/clk/meson/s4-peripherals.c
-index 73340c7e815e..130c50554290 100644
---- a/drivers/clk/meson/s4-peripherals.c
-+++ b/drivers/clk/meson/s4-peripherals.c
-@@ -3809,7 +3809,8 @@ static struct platform_driver s4_driver = {
- 		.of_match_table = clkc_match_table,
- 	},
- };
--
- module_platform_driver(s4_driver);
-+
-+MODULE_DESCRIPTION("Amlogic S4 Peripherals Clock Controller driver");
- MODULE_AUTHOR("Yu Tu <yu.tu@amlogic.com>");
- MODULE_LICENSE("GPL");
-diff --git a/drivers/clk/meson/s4-pll.c b/drivers/clk/meson/s4-pll.c
-index 707c107a5291..c2afade24f9f 100644
---- a/drivers/clk/meson/s4-pll.c
-+++ b/drivers/clk/meson/s4-pll.c
-@@ -868,7 +868,8 @@ static struct platform_driver s4_driver = {
- 		.of_match_table = clkc_match_table,
- 	},
- };
--
- module_platform_driver(s4_driver);
-+
-+MODULE_DESCRIPTION("Amlogic S4 PLL Clock Controller driver");
- MODULE_AUTHOR("Yu Tu <yu.tu@amlogic.com>");
- MODULE_LICENSE("GPL");
+Changes in V3:
+- [PATCH 1/8]: Updated commit tags order and added Reviewed-by: tags
+- [PATCH 3/8]: Fixed reusing of pll0_config and added Reviewed-by: tags 
+- [PATCH 6/8]: Updated commit text and added Reviewed-by tags
+- [PATCH 8/8]: Updated node order for gpucc.
+- Link to V2: https://lore.kernel.org/all/20240416182005.75422-1-quic_ajipan@quicinc.com/ 
+
+Changes in V2:
+- [PATCH 1/8]: Updated commit text adding stable kernel signoff for Fixes patch
+- [PATCH 2/8]: Updated commit msg and added Reviewed-by: Krzysztof Kozlowski tag
+- [PATCH 4/8]: Updated commit text as per review comments in v1
+- [PATCH 5/8]: Added Reviewed-by: Dmitry Baryshkov tags received in v1
+- [PATCH 7/8]: Fixed duplicate reset entries warnings
+- [PATCH 8/8]: New patch for adding dispcc, camcc and gpucc device-tree nodes
+- Link to V1: https://lore.kernel.org/all/20240330182817.3272224-1-quic_ajipan@quicinc.com/
+
+Ajit Pandey (8):
+  clk: qcom: clk-alpha-pll: Fix CAL_L_VAL override for LUCID EVO PLL
+  dt-bindings: clock: qcom: add DISPCC clocks on SM4450
+  clk: qcom: Add DISPCC driver support for SM4450
+  dt-bindings: clock: qcom: add CAMCC clocks on SM4450
+  clk: qcom: Add CAMCC driver support for SM4450
+  dt-bindings: clock: qcom: add GPUCC clocks on SM4450
+  clk: qcom: Add GPUCC driver support for SM4450
+  arm64: dts: qcom: sm4450: add camera, display and gpu clock controller
+
+ .../bindings/clock/qcom,sm4450-camcc.yaml     |   63 +
+ .../bindings/clock/qcom,sm4450-dispcc.yaml    |   71 +
+ .../bindings/clock/qcom,sm8450-gpucc.yaml     |    2 +
+ arch/arm64/boot/dts/qcom/sm4450.dtsi          |   38 +
+ drivers/clk/qcom/Kconfig                      |   27 +
+ drivers/clk/qcom/Makefile                     |    3 +
+ drivers/clk/qcom/camcc-sm4450.c               | 1688 +++++++++++++++++
+ drivers/clk/qcom/clk-alpha-pll.c              |    2 +-
+ drivers/clk/qcom/dispcc-sm4450.c              |  770 ++++++++
+ drivers/clk/qcom/gpucc-sm4450.c               |  805 ++++++++
+ include/dt-bindings/clock/qcom,sm4450-camcc.h |  106 ++
+ .../dt-bindings/clock/qcom,sm4450-dispcc.h    |   51 +
+ include/dt-bindings/clock/qcom,sm4450-gpucc.h |   62 +
+ 13 files changed, 3687 insertions(+), 1 deletion(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm4450-camcc.yaml
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,sm4450-dispcc.yaml
+ create mode 100644 drivers/clk/qcom/camcc-sm4450.c
+ create mode 100644 drivers/clk/qcom/dispcc-sm4450.c
+ create mode 100644 drivers/clk/qcom/gpucc-sm4450.c
+ create mode 100644 include/dt-bindings/clock/qcom,sm4450-camcc.h
+ create mode 100644 include/dt-bindings/clock/qcom,sm4450-dispcc.h
+ create mode 100644 include/dt-bindings/clock/qcom,sm4450-gpucc.h
+
 -- 
-2.43.0
+2.25.1
 
