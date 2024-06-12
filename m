@@ -1,120 +1,132 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C8F517DE39;
-	Wed, 12 Jun 2024 14:42:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09C6B1C14;
+	Wed, 12 Jun 2024 20:12:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718203343; cv=none; b=h9VO6yE/+1WBxxt93qyqrxivW4PWsSMhs4UuvTz9NO+Gj8tF96x6R0hJ5vpVQBRHmdC1E/XUv7FIbWnba1DCrBoqNgRymxlQ4jmC7+UQYOejMlTwp844AaIKLPS+vwf3MgkbuVmsVGGs7LhxcxpceiJWc6NyL9nBCsx6BKGOmzw=
+	t=1718223143; cv=none; b=AdaIgr0GwVEiEipOz/lB7Q82EFpeyxdt59gYFy82NUC/LOKwkCQqrANYh7/SPF6i4II+kOP79JGRhuOXwvMkbONLAvIWPEdqNDOqvSjErrfJwNSnUPUksqbvqr0G9M9hlNfmVC3hEgBYOGuX7NR5DrZ2onk+qJs9t/k5C+7iC1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718203343; c=relaxed/simple;
-	bh=fIyHMCmdFag/kreazotdgSfqaaLxX6azOoYs64Naiq8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MOCClNEcMmdRt/QfDpMLRzu9xCiEhXxdZL2OM4eeWxTH5/5Ua9zZY+EuStHr9RSq/mdRSf6y0R1PYx7Bq5wCBJRD67itJEwR23NCGluA+LLAPL9Sbm2gDhoqx4p/8vZZuG58A6vR1YuoxwXFaGbINMbOKYDfcs+Oiwnts/aL+uI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=2r7wGhyb; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1718223143; c=relaxed/simple;
+	bh=vTRvMcmQ67qBx2Si3u2LtonShyXfmrbl+BRv5Bd+fyk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=H9/5lwMXLcmrvUWfOAAoWW7EAUiVR8nfUUbNHKwercZmfguReuSe69E/ihAOMT0fBZYrSBLFrDazEMhrgBHhrR1qXRn4FQWJsmb/xL9DZa3OzyMMSMFK6EuThONWPef3Rsu0gMmG3FMonmXNsJerwUDQXf+vewuKA2gklYhVTcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YcyBl6ma; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="2r7wGhyb"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C34FC116B1;
-	Wed, 12 Jun 2024 14:42:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1718203342;
-	bh=fIyHMCmdFag/kreazotdgSfqaaLxX6azOoYs64Naiq8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=2r7wGhybYveJ0OLks02tsdo8uWtqpEFFUrtDCrsXCKYC1H7xvfiNjkI9VxsQ345hk
-	 TJKFXsJYUE9xA7aEoZdI9C2Va7O2R3Yd0hrKq8OC0ZkL3c5HWp82SMRze2saG2/DHQ
-	 icYL9JmNEzpNy+dkQ2CDZOVDP7TwVbPDBXqoCCAs=
-Date: Wed, 12 Jun 2024 16:42:20 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Linux regressions mailing list <regressions@lists.linux.dev>
-Cc: =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>,
-	Frank Oltmanns <frank@oltmanns.dev>, stable@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YcyBl6ma"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-35dc1d8867eso294761f8f.0;
+        Wed, 12 Jun 2024 13:12:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718223140; x=1718827940; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1eed+2CfpyC5UVd4nAFeDZB/9Ij+Vk+m/v76FicPbdk=;
+        b=YcyBl6maGy5+TEcKzFrBYqIusHBay3y2EIdhfvuxrRSXpARF9zy+CYZYDOLyh22JEc
+         EslbmIzinX26BxjDRK3IVpyocqt3dVO+a0WziOtCbMiZOUwLyjC505jUl5NtyYaxsPsM
+         pAkRK1B50+IcTM17zhPPksprYa/S93njUsPURjvwFZo9HXugNWFMID3ciTkM+FBxy/7u
+         pgNN81e6BpMi9llWU/OhyAFLh0RPlFKXockCmlFq0qDYwkTAIkJyObb4Kk5yjpxe+b+I
+         +f/XsSsQJYUofpnV43tSu6CMZJJ+VpLFMcjvoLM4sNISnSCScTRVkr4TBU9GXAXaW6Hx
+         FFCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718223140; x=1718827940;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1eed+2CfpyC5UVd4nAFeDZB/9Ij+Vk+m/v76FicPbdk=;
+        b=G0xr3OUb9yOPaMcN7leQPtPy1m2LcIs2EZpMmaUYW9D/ZVXUdFhIrsyjTjfSu+D7Cv
+         WgCc3KGzbpEjU6nOJPeTZ8ZRc6oqdE2DQFq0WBhEQrp1Jh7XiEOdXvvnNXxsn49IZmGe
+         htZ4Cken7Hg0BUNVHEUVyNBGeb6Ff+q1y/zuqz6PDWt019b4NmTjvUNvGdct72wR/b3M
+         Kv3q5aPo8WcogUpupLTj9MCdwN8sX1Iz7wK/V6bDrN5sQg4l26fXXOWUYP0OfQg8Bf+a
+         ufVKSCOI4hdfpfetx6aiTGsnyr9GG+cWYLMXhKaG+jT9EZeJGwPy3MVZkZ4faC5cOC87
+         68XQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU/u6ZnL2u7CVq5yknKala52wGaGdz/wVzh5EtgLN6FPYhF2QHrcU0rgDQfqTfTioX63zRp/Zd5qP27yNRH0L1t8Dudc57xgPNSM6kgkvTOfVxebY0DtL7CLMaER5sDyTCJI/INlA==
+X-Gm-Message-State: AOJu0YyPd/9dkNVJ6I8er1Skp9afEyQSamvsYQE/Ys89DEJU2KUbhL1u
+	gynhfyyOIFuKtrd/SmqjEwygX4rXubI+rICIl58uP4hHjGi4h4RH
+X-Google-Smtp-Source: AGHT+IFzhJSmsSeyPWsFkquVLF4ZsYUhdbk+Ko+VxAggBeLczkroAq1sV7RZSMvKVmWBaruhdXyaWg==
+X-Received: by 2002:a05:600c:4590:b0:421:a1b4:c1d4 with SMTP id 5b1f17b1804b1-422863a8ce8mr28675025e9.13.1718223140088;
+        Wed, 12 Jun 2024 13:12:20 -0700 (PDT)
+Received: from ALPER-PC.. ([178.233.24.52])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42286fe7670sm38110205e9.6.2024.06.12.13.12.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 12 Jun 2024 13:12:19 -0700 (PDT)
+From: Alper Nebi Yasak <alpernebiyasak@gmail.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-mediatek@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	devicetree@vger.kernel.org,
 	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>,
-	Purism Kernel Team <kernel@puri.sm>, Ondrej Jirman <megi@xff.cz>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v4 1/5] clk: sunxi-ng: common: Support minimum and
- maximum rate
-Message-ID: <2024061208-trapping-diminish-fda6@gregkh>
-References: <20240310-pinephone-pll-fixes-v4-0-46fc80c83637@oltmanns.dev>
- <20240310-pinephone-pll-fixes-v4-1-46fc80c83637@oltmanns.dev>
- <yw1xo78z8ez0.fsf@mansr.com>
- <c4c1229c-1ed3-4b6e-a53a-e1ace2502ded@oltmanns.dev>
- <yw1x4jap90va.fsf@mansr.com>
- <yw1xo78w73uv.fsf@mansr.com>
- <8be80682-067a-4685-9830-cfed0287e617@leemhuis.info>
+	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Chen-Yu Tsai <wenst@chromium.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	linux-clk@vger.kernel.org,
+	Alper Nebi Yasak <alpernebiyasak@gmail.com>
+Subject: [PATCH RESEND v2 1/2] clk: mediatek: mt8173-infracfg: Handle unallocated infracfg when module
+Date: Wed, 12 Jun 2024 23:11:00 +0300
+Message-ID: <20240612201211.91683-1-alpernebiyasak@gmail.com>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <8be80682-067a-4685-9830-cfed0287e617@leemhuis.info>
 
-On Wed, Jun 12, 2024 at 03:28:01PM +0200, Linux regression tracking (Thorsten Leemhuis) wrote:
-> On 23.05.24 20:58, Måns Rullgård wrote:
-> > Måns Rullgård <mans@mansr.com> writes:
-> >> Frank Oltmanns <frank@oltmanns.dev> writes:
-> >>> 21.05.2024 15:43:10 Måns Rullgård <mans@mansr.com>:
-> >>>> Frank Oltmanns <frank@oltmanns.dev> writes:
-> >>>>
-> >>>>> The Allwinner SoC's typically have an upper and lower limit for their
-> >>>>> clocks' rates. Up until now, support for that has been implemented
-> >>>>> separately for each clock type.
-> >>>>>
-> >>>>> Implement that functionality in the sunxi-ng's common part making use of
-> >>>>> the CCF rate liming capabilities, so that it is available for all clock
-> >>>>> types.
-> >>>>>
-> >>>>> Suggested-by: Maxime Ripard <mripard@kernel.org>
-> >>>>> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
-> >>>>> Cc: stable@vger.kernel.org
-> >>>>> ---
-> >>>>> drivers/clk/sunxi-ng/ccu_common.c | 19 +++++++++++++++++++
-> >>>>> drivers/clk/sunxi-ng/ccu_common.h |  3 +++
-> >>>>> 2 files changed, 22 insertions(+)
-> >>>>
-> >>>> This just landed in 6.6 stable, and it broke HDMI output on an A20 based
-> >>>> device, the clocks ending up all wrong as seen in this diff of
-> >>>> /sys/kernel/debug/clk/clk_summary:
-> > [...]
-> > 
-> >>>> Reverting this commit makes it work again.
-> >>> Thank you for your detailed report!
-> > [...]
-> > It turns out HDMI output is broken in v6.9 for a different reason.
-> > However, this commit (b914ec33b391 clk: sunxi-ng: common: Support
-> > minimum and maximum rate) requires two others as well in order not
-> > to break things on the A20:
-> > 
-> > cedb7dd193f6 drm/sun4i: hdmi: Convert encoder to atomic
-> > 9ca6bc246035 drm/sun4i: hdmi: Move mode_set into enable
-> > 
-> > With those two (the second depends on the first) cherry-picked on top of
-> > v6.6.31, the HDMI output is working again.  Likewise on v6.8.10.
-> 
-> They from what I can see are not yet in 6.6.y or on their way there (6.8
-> is EOL now). Did anyone ask Greg to pick this up? If not: Månsm could
-> you maybe do that? CCing him on a reply and asking is likely enough if
-> both changes apply cleanly.
+The MT8173 infracfg clock driver does initialization in two steps, via a
+CLK_OF_DECLARE_DRIVER declaration. However its early init function
+doesn't get to run when it's built as a module, presumably since it's
+not loaded by the time it would have been called by of_clk_init(). This
+causes its second-step probe() to return -ENOMEM when trying to register
+clocks, as the necessary clock_data struct isn't initialized by the
+first step.
 
-Both now queued up, thanks.
+MT2701 and MT6797 clock drivers also use this mechanism, but they try to
+allocate the necessary clock_data structure if missing in the second
+step. Mimic that for the MT8173 infracfg clock as well to make it work
+as a module.
 
-greg k-h
+Signed-off-by: Alper Nebi Yasak <alpernebiyasak@gmail.com>
+---
+
+Changes in v2:
+- Rewrite patch subject for consistency
+
+v1: https://lore.kernel.org/lkml/20231108213734.140707-1-alpernebiyasak@gmail.com/
+
+ drivers/clk/mediatek/clk-mt8173-infracfg.c | 12 +++++++++++-
+ 1 file changed, 11 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/mediatek/clk-mt8173-infracfg.c b/drivers/clk/mediatek/clk-mt8173-infracfg.c
+index 2f2f074e231a..ecc8b0063ea5 100644
+--- a/drivers/clk/mediatek/clk-mt8173-infracfg.c
++++ b/drivers/clk/mediatek/clk-mt8173-infracfg.c
+@@ -98,7 +98,17 @@ CLK_OF_DECLARE_DRIVER(mtk_infrasys, "mediatek,mt8173-infracfg",
+ static int clk_mt8173_infracfg_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *node = pdev->dev.of_node;
+-	int r;
++	int r, i;
++
++	if (!infra_clk_data) {
++		infra_clk_data = mtk_alloc_clk_data(CLK_INFRA_NR_CLK);
++		if (!infra_clk_data)
++			return -ENOMEM;
++	} else {
++		for (i = 0; i < CLK_INFRA_NR_CLK; i++)
++			if (infra_clk_data->hws[i] == ERR_PTR(-EPROBE_DEFER))
++				infra_clk_data->hws[i] = ERR_PTR(-ENOENT);
++	}
+ 
+ 	r = mtk_clk_register_gates(&pdev->dev, node, infra_gates,
+ 				   ARRAY_SIZE(infra_gates), infra_clk_data);
+
+base-commit: 03d44168cbd7fc57d5de56a3730427db758fc7f6
+-- 
+2.45.1
+
