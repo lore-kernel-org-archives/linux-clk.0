@@ -1,164 +1,148 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B8916EBF0;
-	Wed, 12 Jun 2024 12:07:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CFC517B50C;
+	Wed, 12 Jun 2024 12:52:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718194032; cv=none; b=P0CnkfMsaanfAMUzepyHrydH76Pt6PxBH1uPc3D45ANRu5C4WaBOYcXTCWZLNOg/264T7+S+tb5KEcoYNidS92SoHfdGFTgPkhuO27frPkBATJUgP1hYjZcwH0BjT7K0Tijb7x/Z6Zkw99ZczmZEQzD4ToPkbnrAQ7a2dUv0xOM=
+	t=1718196777; cv=none; b=crkdssjU7t43QVx2/iW66M5MD7zZB5pNOUia2HNHc2Hkc3HSviema7JE+q+fsSzxe+9sqvnQryBoRLpK1b6dE2soImrMYQGs66wN1ShD5w1EuJbtdLmwWPQDWhR/TuxbIbxZ/QxBnxEQuSKOYe1V1NzTpG+chNATZUQaOZxRKm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718194032; c=relaxed/simple;
-	bh=++fbo4SuBu2Z2PZvsQACpDLh5fMt0JZNidPjcHb7tvQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cpFUXvp47esDwTO43ItlUtxyoH0SZhNd1fJxISjCln2JE4lUAe8o38MxECbHQvjPiFi+flka6Qs9mEK1sYfNwoNPv1xghh74xlhbPagqfadzb0fIQPwzNoaXhM6Fw+o1pC3+y57ssx6y9i+geuxMqIbfSbmAGJGkNpP5n+zXV8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wp6JVeHx; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1718196777; c=relaxed/simple;
+	bh=UJ4JudAfMWR1kYmv/khSHntL+ff+3UTdSYyO7febHfQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MWs7Hjnfic5gMeOQUWNXpkP80ETs4cywj/O8MQuPF4ggLV/BwOinkcspUlE89ARIobHArhuPdmLMxYjRACu215qbg52pbagisKWT2FFD1QO9tbsAg9NVPwq3z6OuTzSX9fHwMxmx23D06LNCYIhdNsN0+8TIaQDRrv60NftoYhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HIpK+x9m; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wp6JVeHx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0929BC3277B;
-	Wed, 12 Jun 2024 12:07:09 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HIpK+x9m"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBD71C3277B;
+	Wed, 12 Jun 2024 12:52:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718194032;
-	bh=++fbo4SuBu2Z2PZvsQACpDLh5fMt0JZNidPjcHb7tvQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Wp6JVeHxvI/2hX8RgqVmKY6HCOkL6GBIUSpVtE4ZBPCNOIWjt7wMc4EzW+AovuGYo
-	 BYgWN246wX4siFRlP/82oipQ9cCHXkdbZHoaXEnBj4yeOV+7A4SO2yme6mddiR+KJV
-	 tGSTqqGqAFTd12J19UBfDWFVtYZSsffh577xq+ydXKZzTurH/DrgHOpZfd4mWLdiS3
-	 9TxKDvnB7m8o/aPsG++W3ou+C253+JQcPB6UXDkVDQLdIyTBFvRF+iWErOI01tH696
-	 LfYQ/M/ylpttQi1z6BrqupfC5+1q2iBW3iD+BtamfaYCsQ4Mf1Gg4LpgVJHgn3kyAU
-	 i4FKQqtYqaPdA==
-Date: Wed, 12 Jun 2024 13:07:07 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-Cc: Antoniu Miclaus <antoniu.miclaus@analog.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] iio: frequency: adf4350: add clk provider
-Message-ID: <20240612-traverse-scion-1c5fd444f9c2@spud>
-References: <20240612104554.66851-1-antoniu.miclaus@analog.com>
- <20240612104554.66851-2-antoniu.miclaus@analog.com>
- <b9c974265111887e7a944cb9e854e86cc8bcd47c.camel@gmail.com>
+	s=k20201202; t=1718196777;
+	bh=UJ4JudAfMWR1kYmv/khSHntL+ff+3UTdSYyO7febHfQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=HIpK+x9mXFva2OYweYMjCSux8vWn5J5v/aJqWoVm+ATzMjGtGEAYmI+7O5DFPfYfy
+	 WBZvR5Uqwl7lrkcGStsaHJWnTxySi5/ae9AJLMgzi7RwzsJ+UY9jmKHZZIh9z81NY0
+	 GQBwRbcepXzHDwqrYwfhr2YE8iC2tjfEI0GAC+4Pke+yIzytho7+riZOUe8dJtecNT
+	 lAVf9MN1liynoKwkVBM5jvs6QmMV0AXhCMeqpsa8SyiYPsH26lp6Sqh9xPDkp3bIc/
+	 zkdQduCZp1FVmH7468ScwcdlFBAH8rpTbk8L15UH5kbNmOd6r664VxC2Kexnsia/b4
+	 3r7JPkcyXGrYQ==
+Message-ID: <8e32a8be-dbbf-49ca-92a1-2fe3c8bfb571@kernel.org>
+Date: Wed, 12 Jun 2024 15:52:51 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="wmb5i0D1Mc1BcH67"
-Content-Disposition: inline
-In-Reply-To: <b9c974265111887e7a944cb9e854e86cc8bcd47c.camel@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 6/6] arm64: dts: qcom: ipq9574: Add icc provider
+ ability to gcc
+To: Varadarajan Narayanan <quic_varada@quicinc.com>
+Cc: Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, andersson@kernel.org,
+ mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, quic_anusha@quicinc.com,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org
+References: <27f4f3dd-9375-40cf-8c8f-1c4edf66e31b@linaro.org>
+ <ZjNdTmmXucjtRxJt@hu-varada-blr.qualcomm.com>
+ <c015b3a5-2213-4ebd-b960-d97ed1fe7062@kernel.org>
+ <ZjshR0ekcn0gxwOa@hu-varada-blr.qualcomm.com>
+ <CAA8EJpqENsojPQmCbma_nQLEZq8nK1fz1K0JdtvLd=kPrH_DBw@mail.gmail.com>
+ <1a08ef42-b52f-4c97-90d7-e7fdee7725b4@linaro.org>
+ <Zmgb+OjdBNw71sC1@hu-varada-blr.qualcomm.com>
+ <176137e5-6312-4d46-97b6-c4494bc1c61b@kernel.org>
+ <ZmlAdETV0+6Md8HC@hu-varada-blr.qualcomm.com>
+ <e24cfd23-6f77-46a0-b020-9cb3daef6930@kernel.org>
+ <Zml4RQ5R5s3mVMnI@hu-varada-blr.qualcomm.com>
+Content-Language: en-US
+From: Georgi Djakov <djakov@kernel.org>
+In-Reply-To: <Zml4RQ5R5s3mVMnI@hu-varada-blr.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 12.06.24 13:28, Varadarajan Narayanan wrote:
+> On Wed, Jun 12, 2024 at 11:48:17AM +0300, Georgi Djakov wrote:
+>> On 12.06.24 9:30, Varadarajan Narayanan wrote:
+>>> On Tue, Jun 11, 2024 at 02:29:48PM +0300, Georgi Djakov wrote:
+>>>> On 11.06.24 12:42, Varadarajan Narayanan wrote:
+>>>>> On Thu, Jun 06, 2024 at 04:06:01PM +0200, Konrad Dybcio wrote:
+>>>>>> On 8.05.2024 10:10 AM, Dmitry Baryshkov wrote:
+>>>>>>> On Wed, 8 May 2024 at 09:53, Varadarajan Narayanan
+>>>>>>> <quic_varada@quicinc.com> wrote:
+>>>>>>>>
+>>>>>>>> On Fri, May 03, 2024 at 04:51:04PM +0300, Georgi Djakov wrote:
+>>>>>>>>> Hi Varada,
+>>>>>>>>>
+>>>>>>>>> Thank you for your work on this!
+>>>>>>>>>
+>>>>>>>>> On 2.05.24 12:30, Varadarajan Narayanan wrote:
+>>>>>>>>>> On Tue, Apr 30, 2024 at 12:05:29PM +0200, Konrad Dybcio wrote:
+>>>>>>>>>>> On 25.04.2024 12:26 PM, Varadarajan Narayanan wrote:
+>>>>>>>>>>>> On Tue, Apr 23, 2024 at 02:58:41PM +0200, Konrad Dybcio wrote:
+>>>>>>>>>>>>>
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> On 4/18/24 11:23, Varadarajan Narayanan wrote:
+>>>>>>>>>>>>>> IPQ SoCs dont involve RPM in managing NoC related clocks and
+>>>>>>>>>>>>>> there is no NoC scaling. Linux itself handles these clocks.
+>>>>>>>>>>>>>> However, these should not be exposed as just clocks and align
+>>>>>>>>>>>>>> with other Qualcomm SoCs that handle these clocks from a
+>>>>>>>>>>>>>> interconnect provider.
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>> Hence include icc provider capability to the gcc node so that
+>>>>>>>>>>>>>> peripherals can use the interconnect facility to enable these
+>>>>>>>>>>>>>> clocks.
+>>>>>>>>>>>>>>
+>>>>>>>>>>>>>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>>>>>>>>>>>>> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+>>>>>>>>>>>>>> ---
+>>>>>>>>>>>>>
+>>>>>>>>>>>>> If this is all you do to enable interconnect (which is not the case,
+>>>>>>>>>>>>> as this patch only satisfies the bindings checker, the meaningful
+>>>>>>>>>>>>> change happens in the previous patch) and nothing explodes, this is
+>>>>>>>>>>>>> an apparent sign of your driver doing nothing.
+>>>>>>>>>>>>
+>>>>>>>>>>>> It appears to do nothing because, we are just enabling the clock
+>>>>>>>>>>>> provider to also act as interconnect provider. Only when the
+>>>>>>>>>>>> consumers are enabled with interconnect usage, this will create
+>>>>>>>>>>>> paths and turn on the relevant NOC clocks.
+>>>>>>>>>>>
+>>>>>>>>>>> No, with sync_state it actually does "something" (sets the interconnect
+>>>>>>>>>>> path bandwidths to zero). And *this* patch does nothing functionally,
+>>>>>>>>>>> it only makes the dt checker happy.
+>>>>>>>>>>
 
---wmb5i0D1Mc1BcH67
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+[..]
 
-On Wed, Jun 12, 2024 at 01:54:07PM +0200, Nuno S=E1 wrote:
-> Hi Antonium
->=20
-> On Wed, 2024-06-12 at 13:45 +0300, Antoniu Miclaus wrote:
-> > Add clk provider feature for the adf4350.
-> >=20
-> > Even though the driver was sent as an IIO driver in most cases the
-> > device is actually seen as a clock provider.
-> >=20
-> > This patch aims to cover actual usecases requested by users in order to
-> > completely control the output frequencies from userspace.
-> >=20
-> > Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-> > ---
-> > changes in v3:
-> > =A0- use container_of to directly access the adf4350_state structure.
-> > =A0drivers/iio/frequency/adf4350.c | 118 ++++++++++++++++++++++++++++++=
-++
-> > =A01 file changed, 118 insertions(+)
-> >=20
-> > diff --git a/drivers/iio/frequency/adf4350.c b/drivers/iio/frequency/ad=
-f4350.c
-> > index 4abf80f75ef5..f716f744baa9 100644
-> > --- a/drivers/iio/frequency/adf4350.c
-> > +++ b/drivers/iio/frequency/adf4350.c
-> > @@ -19,6 +19,7 @@
-> > =A0#include <linux/gpio/consumer.h>
-> > =A0#include <asm/div64.h>
-> > =A0#include <linux/clk.h>
-> > +#include <linux/clk-provider.h>
-> > =A0
-> > =A0#include <linux/iio/iio.h>
-> > =A0#include <linux/iio/sysfs.h>
-> > @@ -36,6 +37,9 @@ struct adf4350_state {
-> > =A0	struct gpio_desc		*lock_detect_gpiod;
-> > =A0	struct adf4350_platform_data	*pdata;
-> > =A0	struct clk			*clk;
-> > +	struct clk			*clkout;
-> > +	const char			*clk_out_name;
-> > +	struct clk_hw			hw;
-> > =A0	unsigned long			clkin;
-> > =A0	unsigned long			chspc; /* Channel Spacing */
-> > =A0	unsigned long			fpfd; /* Phase Frequency Detector */
-> > @@ -61,6 +65,8 @@ struct adf4350_state {
-> > =A0	__be32				val __aligned(IIO_DMA_MINALIGN);
-> > =A0};
-> > =A0
-> > +#define to_state(_hw) container_of(_hw, struct adf4350_state, hw)
-> > +
->=20
-> nit: to_adf4350_state() would be neater...
->=20
-> > =A0static struct adf4350_platform_data default_pdata =3D {
-> > =A0	.channel_spacing =3D 10000,
-> > =A0	.r2_user_settings =3D ADF4350_REG2_PD_POLARITY_POS |
-> > @@ -264,6 +270,10 @@ static ssize_t adf4350_write(struct iio_dev *indio=
-_dev,
-> > =A0	mutex_lock(&st->lock);
-> > =A0	switch ((u32)private) {
-> > =A0	case ADF4350_FREQ:
-> > +		if (st->clkout) {
-> > +			ret =3D clk_set_rate(st->clkout, readin);
-> > +			break;
-> > +		}
->=20
-> So, apparently you forgot or decided otherwise to not go with the suggest=
-ion of
-> not including the IIO interface (at least he channel one - debugfs could =
-be
-> maintained I guess) or with the more in the middle approach Michael sugge=
-sted.
-> Just not allowing ADF4350_FREQ and ADF4350_FREQ_REFIN.
->=20
-> Hence, I would expect at least some justification to keep the above in yo=
-ur v3
-> changelog. Also note that keeping ADF4350_FREQ_REFIN while being a clock
-> provider seems pointless and maybe even be wrong (as the clock framework =
-should
-> take care of the parent clock). This also brings another question... see =
-below
->=20
+> 
+> nsscc_ipq9574 was not using icc_sync_state. After adding that, I
+> can see the following messages printed from icc_sync_state. I
+> also added a print to confirm if 'p->set(n, n);' is called.
 
-I think also there was a request to include the clk list and
-maintainers. It's possible that Stephen might want something like the
-auxbus to be used here so that the clock code ends up in the clock
-subsystem.
+Ok, that's good! So now when all providers are using sync_state, we
+can go back to the initial comment from Konrad. I think you should
+re-check the tests that you did, as the current results just lead to
+more questions than answers. Maybe it was just the sync-state that
+was missing, or there is some other issue.
 
-Thanks,
-Conor.
+BR,
+Georgi
 
+[..]
+> 
+> The gcc based interconnect paths are referenced by PCIe controller
+> nodes. Please refer to this patch
+> 
+> 	[PATCH V5 4/6] arm64: dts: qcom: ipq9574: Add PCIe PHYs and controller nodes
+> 	https://lore.kernel.org/linux-arm-msm/20240512082858.1806694-5-quic_devipriy@quicinc.com/
+> 
+> Sorry, did not post the nsscc related patches since this base ICC
+> patch hasn't reached closure. The nsscc patches are very similar
+> to this gcc based series. Wanted to gather the issues raised in
+> this and address them in nsscc so that it is in a more acceptable
+> shape.
+> 
+> Thanks
+> Varada
 
---wmb5i0D1Mc1BcH67
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZmmPawAKCRB4tDGHoIJi
-0vynAQCD/d0QgoTvtycKI0YWWbxLWVEG16TQRnF50K9GGEdTaQEAzTwSf8Zls9Sz
-zzAZyEwz4zs8xzqmIROcrcyIpxAkdQ8=
-=HaFQ
------END PGP SIGNATURE-----
-
---wmb5i0D1Mc1BcH67--
