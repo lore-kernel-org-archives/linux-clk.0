@@ -1,139 +1,123 @@
-Received: from fhigh4-smtp.messagingengine.com (fhigh4-smtp.messagingengine.com [103.168.172.155])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7548416EBFC;
-	Wed, 12 Jun 2024 10:30:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9F2E1C6AE;
+	Wed, 12 Jun 2024 10:30:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718188234; cv=none; b=oe16lObCfhqAHPc5s8cMl1FmbY1nIT1Lah9KQoeU7e4ZrR4sN8rKeMjbbLX8Tv9raLKbbgiB+jeqD4OSJcVvcmZafzQskfzkur1ySQQP+8KnrOdtDqJJI/XBX7DXclQirjxd9J/cZ/1eLBXjN2CFed6ccTKFSW035qjJb7yqW/k=
+	t=1718188261; cv=none; b=JERGm1PGj123y5r8hFWsTTzXg/3FES6ONI/mHbEi8WXUaRna4WLrvUQ27sksDP/CcimeA/vf3FD9i6ZQWxiqDK0ROGNb9X7llr/wRJjnIrJ2jJZEt0wfNnsVBdj+336aCF/nLdQ8JXla0szzHVpigiSqrwQqQjr8stfAIl4XA/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718188234; c=relaxed/simple;
-	bh=iIabPgz7ADBGrxrIM1dfsdAmZA/3xu0aZ+W63LuFjpw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ftml2kxhjQyzyp/ssHmb6xF/Lunf9IdqewWllW1/HtuyQTxqI9ryGro/sX1H35UstMHLNz5Vyovxj5QB+i2l/9sljEv484t3xjI7P1h42XPYT8ZNSNdwOGXn7wmYHE+fm4iANIWfxxjayN8CGXjtqUp9m+jbJXnvyRo1vX8oHEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=Y8ZNkSv5; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=PLQSg78K; arc=none smtp.client-ip=103.168.172.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+	s=arc-20240116; t=1718188261; c=relaxed/simple;
+	bh=iIl3J4Y4su5oerBe+xzxiQKX7+mUafM34hKHCQLBLHM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=aJF+T7CdOlOIa+FhF3eqbGviDvJqzo976pztXC2B87/REhqB2Y9Jukr4CJ5cvxIaWbKGdV7LO9+ZpXIkSqGA8dIE2Cq4E5as+v8rXxIW/z2lqgsKrH4Z5vbNaExu8EbuNk2QizXG4VVHNzJ4UTsP28fLYK+/Fyq858PxPemLyD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Ic1SBS4l; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="Y8ZNkSv5";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="PLQSg78K"
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfhigh.nyi.internal (Postfix) with ESMTP id 38CFA11401CC;
-	Wed, 12 Jun 2024 06:30:29 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute5.internal (MEProxy); Wed, 12 Jun 2024 06:30:29 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1718188229;
-	 x=1718274629; bh=t6OE9qM11UVWjiJ5yzDrZ+Br3A7hHV4coGXvTdagDCs=; b=
-	Y8ZNkSv539/Ca3DgZLLUaC06HtPDY0XrRXzmxQ6tvcw14eN5LixNlOo4lxvPt1Xi
-	VHGrUccJddF/OWAKOtIBcvP+GrIs1FwIIcxuIPnO1HvAF0zqUk2RtJzXGD0CnKPA
-	l5QltMdEj4m4wKWJNDgLvzv+MiyzGpa7jLSxrCJUWTfmGPTVN5IlZuLvXWGEIQhJ
-	bhL6pAstJqe9GbJosUQEzVHAMR/j5KV6dcXRCYAsYk3TOHO5zFzPdsJswntu3PfX
-	6/doc9ek/5KNyfG4xH3o/pyKkIGwpHYJ8a02gty8luoyq0suc0k3Ldbu6xwDEpCB
-	FpX88aXf+qQ8mOV5Ku+QmA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1718188229; x=
-	1718274629; bh=t6OE9qM11UVWjiJ5yzDrZ+Br3A7hHV4coGXvTdagDCs=; b=P
-	LQSg78KGkDXRse6YXWcYO76LbIYeiT+Tp5RYL/ostEqnK5AYoXdr79ic01jG+B3M
-	7ED64FvVypCvqykpY9RW2mQXUwKuHrAev3kgXLvikIhA+KwxYMOPhUGYwAYHCaYG
-	8MhLAAV8Lbo0NS9wGFjRCFXc1E2Us1TjHtuUXm216mzA30/kRFkTyBJYf72+ecvq
-	Jk8H9+idrtiMm5pSJy3JoCAyzMr2OqSWx+OICKjfitVD5aQ6wrhsgA3rvpcqRArD
-	PhUdjpfrvcxbYt+d2SeqEyCrwtf8a7KF3fGl7zTrfU2Nqwl1sz/U7g9fJAH/nIBC
-	203VWwMK1RP7fIj5hIc5w==
-X-ME-Sender: <xms:xHhpZhHa0zBP312oYxTewjB1CpvORQgeaBuakw3_ew96ZAGEM40C_w>
-    <xme:xHhpZmU7wS1XnRKwFuRzfiPvDVVoN0tZ85N3I6W93bxjIOwQuq-b-jr59XERyaFBw
-    NdosRKdQL9InIfxoQQ>
-X-ME-Received: <xmr:xHhpZjJgH2XtRLheFFJFbeBIMxKTkjm-X63zaTxQzw-quSxg5qyF-9-NhshbkqTuFyGRoJvSpg7XcLWf2gCiNbfW2-yNWTU>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfedugedgvdekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
-    uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
-    cujfgurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdejnecuhfhrohhmpefpihhk
-    lhgrshcuufpnuggvrhhluhhnugcuoehnihhklhgrshdrshhouggvrhhluhhnugdorhgvnh
-    gvshgrshesrhgrghhnrghtvggthhdrshgvqeenucggtffrrghtthgvrhhnpeefhfellefh
-    ffejgfefudfggeejlefhveehieekhfeulefgtdefueehffdtvdelieenucevlhhushhtvg
-    hrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehnihhklhgrshdrshhouggv
-    rhhluhhnugdorhgvnhgvshgrshesrhgrghhnrghtvggthhdrshgv
-X-ME-Proxy: <xmx:xHhpZnFNxI3qdL481qFa1mhuRscq4E8qs7kg4dCeK6XTXFfTTqoBGA>
-    <xmx:xHhpZnVDmFh5-ghUFyw2EX6yWOUxyZFL1toNO8s3qZIw6Yuhoeuc6g>
-    <xmx:xHhpZiNzMqxh6kZgpZHuwCGe6uuefFTBwyajZ3EpUR8QVZYyh620lg>
-    <xmx:xHhpZm0JzpWQV31mxWFWRWqvhajiRz0whl4cl9Gq-Cf6VRqh1b4iMw>
-    <xmx:xXhpZuFotNwgMm1Xsf7657yjWNW7DCH26oiH2vAKvkleBogGQaFr2HbD>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 12 Jun 2024 06:30:28 -0400 (EDT)
-Date: Wed, 12 Jun 2024 12:30:25 +0200
-From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Cong Dang <cong.dang.xn@renesas.com>,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: Re: [PATCH] clk: renesas: r8a779h0: Fix PLL2/PLL4 multipliers in
- comments
-Message-ID: <20240612103025.GE382677@ragnatech.se>
-References: <07126b55807c1596422c9547e72f0a032487da1e.1718177076.git.geert+renesas@glider.be>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Ic1SBS4l"
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45C66kgd002994;
+	Wed, 12 Jun 2024 10:30:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	lKwpwKZHWzQt+e7holbzQrF20Me1OIuVQ5ao6YWhUsc=; b=Ic1SBS4lWOlP1FbK
+	KZGpQJVXSmiRHXxaWI5QXZymEAOhSvku3xGrAdDj+scTum3UQcvOU5Petnd0r+ZC
+	9JRlvLEYoYQNiSm+yqIjtrnRC/PcrjtEY/UmVZZ6KkvfM9q2JWrDz5cODbEu9mNA
+	Vwe9ESJWTsQ5Wf/2fzShJYBQk1zoD4vaYxkvMTeLysIDzQXbtbGFuIyE6z9WeuRr
+	nzpIvuF2LUJCthN13NPb0jOUODv5SxBe2lTknEzLT0TiOu3DEiPK0HNpTcBYx+Ep
+	M+xaM/Z0AOzBqw1suqMqrrUI+xNsbSZBNcKaAhn/eQeVJZgyqKzEOQVAR6BPEu35
+	6UKUMA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yphsaum0n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Jun 2024 10:30:56 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45CAUt4E003819
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 12 Jun 2024 10:30:55 GMT
+Received: from [10.217.216.152] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 12 Jun
+ 2024 03:30:50 -0700
+Message-ID: <9ea7bd3a-0d41-418b-8162-266862e1467f@quicinc.com>
+Date: Wed, 12 Jun 2024 16:00:47 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <07126b55807c1596422c9547e72f0a032487da1e.1718177076.git.geert+renesas@glider.be>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 05/13] clk: qcom: gpucc-sa8775p: Park RCG's clk source at
+ XO during disable
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Stephen
+ Boyd" <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <quic_jkona@quicinc.com>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>
+References: <20240531090249.10293-1-quic_tdas@quicinc.com>
+ <20240531090249.10293-6-quic_tdas@quicinc.com>
+ <2fd8bcea-8bea-48ea-8052-d7fe6c1e8f59@linaro.org>
+ <61eb731d-1928-4d72-97a0-397d8cf45e0d@quicinc.com>
+ <d7jtqigvcmjv6swbifprjmf7ofgselxmrssbkptmbr2cj7izt5@a33lyesbdr5u>
+Content-Language: en-US
+From: Taniya Das <quic_tdas@quicinc.com>
+In-Reply-To: <d7jtqigvcmjv6swbifprjmf7ofgselxmrssbkptmbr2cj7izt5@a33lyesbdr5u>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 2h7nCDdfupOpv0zO7Qrp_4Ovcfp1xG3v
+X-Proofpoint-GUID: 2h7nCDdfupOpv0zO7Qrp_4Ovcfp1xG3v
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-12_06,2024-06-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 malwarescore=0
+ adultscore=0 spamscore=0 mlxlogscore=619 impostorscore=0
+ lowpriorityscore=0 clxscore=1015 phishscore=0 mlxscore=0
+ priorityscore=1501 suspectscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2405170001 definitions=main-2406120076
 
-Hi Geert,
 
-Thanks for your work.
 
-On 2024-06-12 09:25:16 +0200, Geert Uytterhoeven wrote:
-> The multipliers for PLL2 and PLL4 as listed in the comments for
-> the cpg_pll_configs[] array are incorrect.  Fix them.
+On 6/10/2024 11:44 PM, Dmitry Baryshkov wrote:
+> On Mon, Jun 10, 2024 at 02:41:10PM +0530, Taniya Das wrote:
+>>
+>>
+>> On 5/31/2024 6:53 PM, Konrad Dybcio wrote:
+>>> On 31.05.2024 11:02 AM, Taniya Das wrote:
+>>>> The RCG's clk src has to be parked at XO while disabling as per the
+>>>> HW recommendation, hence use clk_rcg2_shared_ops to achieve the same.
+>>>> Also gpu_cc_cb_clk is recommended to be kept always ON, hence use
+>>>> clk_branch2_aon_ops to keep the clock always ON.
+>>>>
+>>>> Fixes: 0afa16afc36d ("clk: qcom: add the GPUCC driver for sa8775p")
+>>>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+>>>> ---
+>>>
+>>> Should the same fixes apply to 8350?
+>>>
+>>
+>> Yes Konrad, it is applicable for 8350 as well.
 > 
-> Note that the actual values in the tables were correct.
+> Can we please get the corresponding patches (as a separate patchset)?
 > 
-> Reported-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-> Fixes: f077cab34df3010d ("clk: renesas: cpg-mssr: Add support for R-Car V4M")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
-
-> ---
-> To be queued in renesas-clk for v6.11.
-> ---
->  drivers/clk/renesas/r8a779h0-cpg-mssr.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/renesas/r8a779h0-cpg-mssr.c b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
-> index 0a553d5170d5fdde..1057a2b6a72769dd 100644
-> --- a/drivers/clk/renesas/r8a779h0-cpg-mssr.c
-> +++ b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
-> @@ -243,10 +243,10 @@ static const struct mssr_mod_clk r8a779h0_mod_clks[] = {
->   *   MD	 EXTAL		PLL1	PLL2	PLL3	PLL4	PLL5	PLL6	OSC
->   * 14 13 (MHz)
->   * ------------------------------------------------------------------------
-> - * 0  0	 16.66 / 1	x192	x204	x192	x144	x192	x168	/16
-> - * 0  1	 20    / 1	x160	x170	x160	x120	x160	x140	/19
-> + * 0  0	 16.66 / 1	x192	x240	x192	x240	x192	x168	/16
-> + * 0  1	 20    / 1	x160	x200	x160	x200	x160	x140	/19
->   * 1  0	 Prohibited setting
-> - * 1  1	 33.33 / 2	x192	x204	x192	x144	x192	x168	/32
-> + * 1  1	 33.33 / 2	x192	x240	x192	x240	x192	x168	/32
->   */
->  #define CPG_PLL_CONFIG_INDEX(md)	((((md) & BIT(14)) >> 13) | \
->  					 (((md) & BIT(13)) >> 13))
-> -- 
-> 2.34.1
-> 
+I will send the patch for 8350.
 
 -- 
-Kind Regards,
-Niklas Söderlund
+Thanks & Regards,
+Taniya Das.
