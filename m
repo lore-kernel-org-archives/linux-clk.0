@@ -1,132 +1,120 @@
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F06F176ACD;
-	Wed, 12 Jun 2024 13:28:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C8F517DE39;
+	Wed, 12 Jun 2024 14:42:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718198891; cv=none; b=G24kteH+x8PDpV25AgyPW6k7cISilaLiIZZKPJ4Pq6YVxTiSyQrYEDfD2HSdlKRM7wqgzF5eXxTsz70NNcnZArB+E70EG34sEb++As4NgzvwVMmYo1NmD4py/KbYFbrJW6Pn/bKnhgt1fT4l3HL0dFO+AEB3SVafVitnWzmgER8=
+	t=1718203343; cv=none; b=h9VO6yE/+1WBxxt93qyqrxivW4PWsSMhs4UuvTz9NO+Gj8tF96x6R0hJ5vpVQBRHmdC1E/XUv7FIbWnba1DCrBoqNgRymxlQ4jmC7+UQYOejMlTwp844AaIKLPS+vwf3MgkbuVmsVGGs7LhxcxpceiJWc6NyL9nBCsx6BKGOmzw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718198891; c=relaxed/simple;
-	bh=gB2qcYBlp6AUro7UgWKhRGLkwMDMrcuWA2Fwl19jD0g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=foD9B34QctGK4HKP09URoEkVKYLlLosG6eNoThMxH2dFRZNasHG85V90oV6xJ+NyzaS4aeDyv95dDvh66PZym462hL8Eq1Mqzd2X6DcYMr3Lfjy+CnP5XhJ4oNnbDwatWuzfN/+GcFv0R+7uq2XmX3v6WUUPVTcNYKF7+z8Hwhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=YYyHDS22; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+	s=arc-20240116; t=1718203343; c=relaxed/simple;
+	bh=fIyHMCmdFag/kreazotdgSfqaaLxX6azOoYs64Naiq8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MOCClNEcMmdRt/QfDpMLRzu9xCiEhXxdZL2OM4eeWxTH5/5Ua9zZY+EuStHr9RSq/mdRSf6y0R1PYx7Bq5wCBJRD67itJEwR23NCGluA+LLAPL9Sbm2gDhoqx4p/8vZZuG58A6vR1YuoxwXFaGbINMbOKYDfcs+Oiwnts/aL+uI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=2r7wGhyb; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="YYyHDS22"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:Reply-To:MIME-Version:Date:
-	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
-	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
-	In-Reply-To:References; bh=mLhQQIGQlskOYaBcJkFs0QBTdU7FLcK/wqX92dmx0i0=;
-	t=1718198889; x=1718630889; b=YYyHDS22kNlzhzFoeSSrFmLqpiE95Hxy+6P95jU51fj5/5s
-	JUy3JAy04H54tQZc/WMQ69VkZS3dVFQRaL/pSMlInnZ1axPSX59ROFB9jNsmCYWp7D6JJffyMCjyD
-	hVoX4v6My++nMziS/VwpFFY0RVJ9t2+5wUsFnBaKxc2X7RsP8owhzSt/32XdNe3DGqrxgGj33LpHO
-	SsAmysDR1SxmMvw8Eps1zrK85FVeTysjsIQLuKhlcUTNmv42hn9D82vtLtxUxhIurDweEPVP2mZ9h
-	BmHBjuiW7muq3SWlKisx5nJkFSYuN6XxqEskuEhXRk61NISl/PI4WRxx/+MKQUKQ==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1sHO1C-0007Ep-V0; Wed, 12 Jun 2024 15:28:03 +0200
-Message-ID: <8be80682-067a-4685-9830-cfed0287e617@leemhuis.info>
-Date: Wed, 12 Jun 2024 15:28:01 +0200
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="2r7wGhyb"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C34FC116B1;
+	Wed, 12 Jun 2024 14:42:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1718203342;
+	bh=fIyHMCmdFag/kreazotdgSfqaaLxX6azOoYs64Naiq8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=2r7wGhybYveJ0OLks02tsdo8uWtqpEFFUrtDCrsXCKYC1H7xvfiNjkI9VxsQ345hk
+	 TJKFXsJYUE9xA7aEoZdI9C2Va7O2R3Yd0hrKq8OC0ZkL3c5HWp82SMRze2saG2/DHQ
+	 icYL9JmNEzpNy+dkQ2CDZOVDP7TwVbPDBXqoCCAs=
+Date: Wed, 12 Jun 2024 16:42:20 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Linux regressions mailing list <regressions@lists.linux.dev>
+Cc: =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>,
+	Frank Oltmanns <frank@oltmanns.dev>, stable@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Guido =?iso-8859-1?Q?G=FCnther?= <agx@sigxcpu.org>,
+	Purism Kernel Team <kernel@puri.sm>, Ondrej Jirman <megi@xff.cz>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Sam Ravnborg <sam@ravnborg.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v4 1/5] clk: sunxi-ng: common: Support minimum and
+ maximum rate
+Message-ID: <2024061208-trapping-diminish-fda6@gregkh>
+References: <20240310-pinephone-pll-fixes-v4-0-46fc80c83637@oltmanns.dev>
+ <20240310-pinephone-pll-fixes-v4-1-46fc80c83637@oltmanns.dev>
+ <yw1xo78z8ez0.fsf@mansr.com>
+ <c4c1229c-1ed3-4b6e-a53a-e1ace2502ded@oltmanns.dev>
+ <yw1x4jap90va.fsf@mansr.com>
+ <yw1xo78w73uv.fsf@mansr.com>
+ <8be80682-067a-4685-9830-cfed0287e617@leemhuis.info>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>
-Subject: Re: [PATCH v4 1/5] clk: sunxi-ng: common: Support minimum and maximum
- rate
-To: =?UTF-8?B?TcOlbnMgUnVsbGfDpXJk?= <mans@mansr.com>,
- Frank Oltmanns <frank@oltmanns.dev>, stable@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>,
- Samuel Holland <samuel@sholland.org>, =?UTF-8?Q?Guido_G=C3=BCnther?=
- <agx@sigxcpu.org>, Purism Kernel Team <kernel@puri.sm>,
- Ondrej Jirman <megi@xff.cz>, Neil Armstrong <neil.armstrong@linaro.org>,
- Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org,
- Linux kernel regressions list <regressions@lists.linux.dev>
-References: <20240310-pinephone-pll-fixes-v4-0-46fc80c83637@oltmanns.dev>
- <20240310-pinephone-pll-fixes-v4-1-46fc80c83637@oltmanns.dev>
- <yw1xo78z8ez0.fsf@mansr.com>
- <c4c1229c-1ed3-4b6e-a53a-e1ace2502ded@oltmanns.dev>
- <yw1x4jap90va.fsf@mansr.com> <yw1xo78w73uv.fsf@mansr.com>
-From: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>
-Content-Language: en-US, de-DE
-In-Reply-To: <yw1xo78w73uv.fsf@mansr.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1718198889;f7fcbcb9;
-X-HE-SMSGID: 1sHO1C-0007Ep-V0
+In-Reply-To: <8be80682-067a-4685-9830-cfed0287e617@leemhuis.info>
 
-On 23.05.24 20:58, MÃ¥ns RullgÃ¥rd wrote:
-> MÃ¥ns RullgÃ¥rd <mans@mansr.com> writes:
->> Frank Oltmanns <frank@oltmanns.dev> writes:
->>> 21.05.2024 15:43:10 MÃ¥ns RullgÃ¥rd <mans@mansr.com>:
->>>> Frank Oltmanns <frank@oltmanns.dev> writes:
->>>>
->>>>> The Allwinner SoC's typically have an upper and lower limit for their
->>>>> clocks' rates. Up until now, support for that has been implemented
->>>>> separately for each clock type.
->>>>>
->>>>> Implement that functionality in the sunxi-ng's common part making use of
->>>>> the CCF rate liming capabilities, so that it is available for all clock
->>>>> types.
->>>>>
->>>>> Suggested-by: Maxime Ripard <mripard@kernel.org>
->>>>> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
->>>>> Cc: stable@vger.kernel.org
->>>>> ---
->>>>> drivers/clk/sunxi-ng/ccu_common.c | 19 +++++++++++++++++++
->>>>> drivers/clk/sunxi-ng/ccu_common.h |Â  3 +++
->>>>> 2 files changed, 22 insertions(+)
->>>>
->>>> This just landed in 6.6 stable, and it broke HDMI output on an A20 based
->>>> device, the clocks ending up all wrong as seen in this diff of
->>>> /sys/kernel/debug/clk/clk_summary:
-> [...]
+On Wed, Jun 12, 2024 at 03:28:01PM +0200, Linux regression tracking (Thorsten Leemhuis) wrote:
+> On 23.05.24 20:58, Måns Rullgård wrote:
+> > Måns Rullgård <mans@mansr.com> writes:
+> >> Frank Oltmanns <frank@oltmanns.dev> writes:
+> >>> 21.05.2024 15:43:10 Måns Rullgård <mans@mansr.com>:
+> >>>> Frank Oltmanns <frank@oltmanns.dev> writes:
+> >>>>
+> >>>>> The Allwinner SoC's typically have an upper and lower limit for their
+> >>>>> clocks' rates. Up until now, support for that has been implemented
+> >>>>> separately for each clock type.
+> >>>>>
+> >>>>> Implement that functionality in the sunxi-ng's common part making use of
+> >>>>> the CCF rate liming capabilities, so that it is available for all clock
+> >>>>> types.
+> >>>>>
+> >>>>> Suggested-by: Maxime Ripard <mripard@kernel.org>
+> >>>>> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
+> >>>>> Cc: stable@vger.kernel.org
+> >>>>> ---
+> >>>>> drivers/clk/sunxi-ng/ccu_common.c | 19 +++++++++++++++++++
+> >>>>> drivers/clk/sunxi-ng/ccu_common.h |  3 +++
+> >>>>> 2 files changed, 22 insertions(+)
+> >>>>
+> >>>> This just landed in 6.6 stable, and it broke HDMI output on an A20 based
+> >>>> device, the clocks ending up all wrong as seen in this diff of
+> >>>> /sys/kernel/debug/clk/clk_summary:
+> > [...]
+> > 
+> >>>> Reverting this commit makes it work again.
+> >>> Thank you for your detailed report!
+> > [...]
+> > It turns out HDMI output is broken in v6.9 for a different reason.
+> > However, this commit (b914ec33b391 clk: sunxi-ng: common: Support
+> > minimum and maximum rate) requires two others as well in order not
+> > to break things on the A20:
+> > 
+> > cedb7dd193f6 drm/sun4i: hdmi: Convert encoder to atomic
+> > 9ca6bc246035 drm/sun4i: hdmi: Move mode_set into enable
+> > 
+> > With those two (the second depends on the first) cherry-picked on top of
+> > v6.6.31, the HDMI output is working again.  Likewise on v6.8.10.
 > 
->>>> Reverting this commit makes it work again.
->>> Thank you for your detailed report!
-> [...]
-> It turns out HDMI output is broken in v6.9 for a different reason.
-> However, this commit (b914ec33b391 clk: sunxi-ng: common: Support
-> minimum and maximum rate) requires two others as well in order not
-> to break things on the A20:
-> 
-> cedb7dd193f6 drm/sun4i: hdmi: Convert encoder to atomic
-> 9ca6bc246035 drm/sun4i: hdmi: Move mode_set into enable
-> 
-> With those two (the second depends on the first) cherry-picked on top of
-> v6.6.31, the HDMI output is working again.  Likewise on v6.8.10.
+> They from what I can see are not yet in 6.6.y or on their way there (6.8
+> is EOL now). Did anyone ask Greg to pick this up? If not: Månsm could
+> you maybe do that? CCing him on a reply and asking is likely enough if
+> both changes apply cleanly.
 
-They from what I can see are not yet in 6.6.y or on their way there (6.8
-is EOL now). Did anyone ask Greg to pick this up? If not: MÃ¥nsm could
-you maybe do that? CCing him on a reply and asking is likely enough if
-both changes apply cleanly.
+Both now queued up, thanks.
 
-Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
---
-Everything you wanna know about Linux kernel regression tracking:
-https://linux-regtracking.leemhuis.info/about/#tldr
-If I did something stupid, please tell me, as explained on that page.
-
-#regzbot introduced: 547263745e15a0
-#regzbot fix: drm/sun4i: hdmi: Move mode_set into enable
-#regzbot poke
+greg k-h
