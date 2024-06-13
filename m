@@ -1,194 +1,187 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1075E13D273
-	for <linux-clk@vger.kernel.org>; Thu, 13 Jun 2024 08:20:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C21C3209;
+	Thu, 13 Jun 2024 09:03:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718266806; cv=none; b=G342J73hmzwJDCss1SoVBoNa6vkyHZ3QnFY0/zqUPeTx5zHhd1PK7GQz3RNJen/0u8w57zYJ9ONjwkLs7JCtVgD/nyKtAMOJTxpBXoLk+FH5D81rSee8bJc7u9t6J1np932cO1f3nTtSqEovSWqBs8pHJH1ckiqYf8XCn1ohWVY=
+	t=1718269426; cv=none; b=j6Nbu5+/CXPIXLqI+A7KO3aF4aR3ASqBT9KrLQbnDX9dT5mOv8JJrktK4oK+lXSVZES59j45iRmtQ/XAzipPyRBlXfCzxJf0RwBfJ5sho9R+Dvrdzw7cHiS/O+dbE+8l4QwiBiD37Ak34sHYn+1LBUe+4WfPeQkueCvrWdglU10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718266806; c=relaxed/simple;
-	bh=WCAEiBIiyTOXjgovBnlCZXpFFVek96FWLmwb8swe714=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fPnSJwZQahy0FIYXfHnXUWR1Dnsw5iMY8Tdb5UdLWqoKn7SwLbhzZYEnqwniKrx55Oxh+qAWMpm4NcsoRziOipmqBA6dSTLXDqtC9fD+UQtchydAC2EMCSYGWnEjkPvR69BxaHvOr1YCAhjHPbnTT1HpJYmjbn06juZc9FFwDFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1sHfgU-0003PM-BO; Thu, 13 Jun 2024 10:19:50 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1sHfgT-001z3X-RK; Thu, 13 Jun 2024 10:19:49 +0200
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1sHfgT-008Pdb-2P;
-	Thu, 13 Jun 2024 10:19:49 +0200
-Date: Thu, 13 Jun 2024 10:19:49 +0200
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc: p.zabel@pengutronix.de, abelvesa@kernel.org, peng.fan@nxp.com,
-	mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org,
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-	marex@denx.de, linux-clk@vger.kernel.org, imx@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, shengjiu.wang@gmail.com
-Subject: Re: [PATCH v7 2/5] clk: imx: clk-audiomix: Add reset controller
-Message-ID: <20240613081949.yty3hznopp3u2qwq@pengutronix.de>
-References: <1718243482-18552-1-git-send-email-shengjiu.wang@nxp.com>
- <1718243482-18552-3-git-send-email-shengjiu.wang@nxp.com>
+	s=arc-20240116; t=1718269426; c=relaxed/simple;
+	bh=nJx/IylAvAXPsNdrYNHuTbnSL6QhGxG2eIRgTDJNKLE=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PIywvmuJ6+NkWxgUrMrrMJACmxAdPGArGoJyvpfsRvvxyLQXdksYAajHD2lHnPliu7yomFzITUmc6IB5F50ZOyk+GLSk3xva2FrG21m2fN+r88bIeJI9RW6VRjhOdHXWmwSfmfqjv5W/LyUxqs2Fp356yEn6oDXLWaWfgB51cwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=cpo8W4V9; arc=none smtp.client-ip=45.89.224.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="cpo8W4V9"
+Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id E9AB4120009;
+	Thu, 13 Jun 2024 12:03:30 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru E9AB4120009
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1718269410;
+	bh=0eA1sXoPzlJDy1NTJKWN6Wp5FWbVIxxhC+wH9/qzD2Q=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:From;
+	b=cpo8W4V9eXHR1J54kiJTCFakcjoI/TafsZULXAXcMd0VmwTu1Hne/wsLpD/7yVkif
+	 LvKsDHvXeMr8r7rQ8MbEqnUkCGw6uzg031t8bDLuJuqEBSjt0hN7QyhDSJ+d0zK1RL
+	 tExrNFiZ79tlNrC3+DBg5MlZdR9sUpma/oxNA/o+euZqWHsQzzZjONoOpkryxgD6og
+	 er6btO9JCk8gvtU8QlX5z+lrQWZjiZtH3QoklomuEUMaHdiVaGqpcnppplsaX3HsiH
+	 ftq+iobNrEP/KnfNG26umtlD/FjWu1f+pBm2fFT68KGId4LnieUI1rxvSWGyAES59S
+	 PuocWvpneQf2A==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Thu, 13 Jun 2024 12:03:30 +0300 (MSK)
+Received: from localhost (100.64.160.123) by p-i-exch-sc-m02.sberdevices.ru
+ (172.16.192.103) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Thu, 13 Jun
+ 2024 12:03:30 +0300
+Date: Thu, 13 Jun 2024 12:03:30 +0300
+From: Dmitry Rokosov <ddrokosov@salutedevices.com>
+To: Jerome Brunet <jbrunet@baylibre.com>
+CC: <neil.armstrong@linaro.org>, <mturquette@baylibre.com>,
+	<sboyd@kernel.org>, <robh+dt@kernel.org>,
+	<krzysztof.kozlowski+dt@linaro.org>, <khilman@baylibre.com>,
+	<martin.blumenstingl@googlemail.com>, <jian.hu@amlogic.com>,
+	<kernel@sberdevices.ru>, <rockosov@gmail.com>,
+	<linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v3 6/7] dt-bindings: clock: meson: add A1 CPU clock
+ controller bindings
+Message-ID: <20240611210007.bzm5vawqgdhh2g5s@CAB-WSD-L081021>
+References: <20240515185103.20256-1-ddrokosov@salutedevices.com>
+ <20240515185103.20256-7-ddrokosov@salutedevices.com>
+ <1jtti1p10m.fsf@starbuckisacylon.baylibre.com>
+ <20240610111826.im3mz64hjfkxrxhr@CAB-WSD-L081021>
+ <1j7cexow91.fsf@starbuckisacylon.baylibre.com>
+ <20240610124842.mpy4rtlwtwasqf7h@CAB-WSD-L081021>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <1718243482-18552-3-git-send-email-shengjiu.wang@nxp.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+In-Reply-To: <20240610124842.mpy4rtlwtwasqf7h@CAB-WSD-L081021>
+User-Agent: NeoMutt/20220415
+X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 185894 [Jun 13 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: ddrokosov@salutedevices.com
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 20 0.3.20 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f, {Tracking_uf_ne_domains}, {Track_E25351}, {Tracking_from_domain_doesnt_match_to}, salutedevices.com:7.1.1;devicetree.org:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;smtp.sberdevices.ru:5.0.1,7.1.1;127.0.0.199:7.1.2;100.64.160.123:7.1.2, FromAlignment: s, ApMailHostAddress: 100.64.160.123
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean, bases: 2024/06/13 08:11:00
+X-KSMG-LinksScanning: Clean, bases: 2024/06/13 08:10:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/06/13 06:22:00 #25590998
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-On 24-06-13, Shengjiu Wang wrote:
-> Audiomix block control can be a reset controller for
-> Enhanced Audio Return Channel (EARC), which is one of
-> modules in this audiomix subsystem.
+On Mon, Jun 10, 2024 at 03:48:42PM +0300, Dmitry Rokosov wrote:
+> On Mon, Jun 10, 2024 at 01:47:06PM +0200, Jerome Brunet wrote:
+> > On Mon 10 Jun 2024 at 14:18, Dmitry Rokosov <ddrokosov@salutedevices.com> wrote:
+> > 
+> > > Hello Jerome,
+> > >
+> > > Thank you for the review!
+> > >
+> > > On Mon, Jun 10, 2024 at 12:04:09PM +0200, Jerome Brunet wrote:
+> > >> On Wed 15 May 2024 at 21:47, Dmitry Rokosov <ddrokosov@salutedevices.com> wrote:
+> > >> 
+> > >> > Add the documentation and dt bindings for Amlogic A1 CPU clock
+> > >> > controller.
+> > >> >
+> > >> > This controller consists of the general 'cpu_clk' and two main parents:
+> > >> > 'cpu fixed clock' and 'syspll'. The 'cpu fixed clock' is an internal
+> > >> > fixed clock, while the 'syspll' serves as an external input from the A1
+> > >> > PLL clock controller.
+> > >> >
+> > >> > Signed-off-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
+> > >> > Reviewed-by: Rob Herring <robh@kernel.org>
+> > >> > ---
+> > >> >  .../bindings/clock/amlogic,a1-cpu-clkc.yaml   | 64 +++++++++++++++++++
+> > >> >  .../dt-bindings/clock/amlogic,a1-cpu-clkc.h   | 19 ++++++
+> > >> >  2 files changed, 83 insertions(+)
+> > >> >  create mode 100644 Documentation/devicetree/bindings/clock/amlogic,a1-cpu-clkc.yaml
+> > >> >  create mode 100644 include/dt-bindings/clock/amlogic,a1-cpu-clkc.h
+> > >> >
+> > >> > diff --git a/Documentation/devicetree/bindings/clock/amlogic,a1-cpu-clkc.yaml b/Documentation/devicetree/bindings/clock/amlogic,a1-cpu-clkc.yaml
+> > >> > new file mode 100644
+> > >> > index 000000000000..f4958b315ed4
+> > >> > --- /dev/null
+> > >> > +++ b/Documentation/devicetree/bindings/clock/amlogic,a1-cpu-clkc.yaml
+> > >> > @@ -0,0 +1,64 @@
+> > >> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> > >> > +%YAML 1.2
+> > >> > +---
+> > >> > +$id: http://devicetree.org/schemas/clock/amlogic,a1-cpu-clkc.yaml#
+> > >> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > >> > +
+> > >> > +title: Amlogic A1 CPU Clock Control Unit
+> > >> > +
+> > >> > +maintainers:
+> > >> > +  - Neil Armstrong <neil.armstrong@linaro.org>
+> > >> > +  - Jerome Brunet <jbrunet@baylibre.com>
+> > >> > +  - Dmitry Rokosov <ddrokosov@salutedevices.com>
+> > >> > +
+> > >> > +properties:
+> > >> > +  compatible:
+> > >> > +    const: amlogic,a1-cpu-clkc
+> > >> > +
+> > >> > +  '#clock-cells':
+> > >> > +    const: 1
+> > >> > +
+> > >> > +  reg:
+> > >> > +    maxItems: 1
+> > >> > +
+> > >> > +  clocks:
+> > >> > +    items:
+> > >> > +      - description: input fixed pll div2
+> > >> > +      - description: input fixed pll div3
+> > >> > +      - description: input sys pll
+> > >> > +      - description: input oscillator (usually at 24MHz)
+> > >> 
+> > >> According to the documentation, fdiv5 is also an input of the CPU clock
+> > >> tree.
+> > >> 
+> > >> That is typically the kind of things we'd prefer to get right from the
+> > >> beginning to avoid modifying the bindings later.
+> > >> 
+> > >
+> > > Could you please share which documentation you are referencing? I have
+> > > the A113L documentation, and there is no mention of the CPU clock IP.
+> > 
+> > You should get in touch with Amlogic.
+> > 
 > 
-> The reset controller is supported by the auxiliary device
-> framework.
+> Okay, I will double check with Amlogic and back with accurate
+> information.
 > 
-> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> ---
->  drivers/clk/imx/Kconfig               |  1 +
->  drivers/clk/imx/clk-imx8mp-audiomix.c | 63 +++++++++++++++++++++++++++
->  2 files changed, 64 insertions(+)
-> 
-> diff --git a/drivers/clk/imx/Kconfig b/drivers/clk/imx/Kconfig
-> index 6da0fba68225..9edfb030bea9 100644
-> --- a/drivers/clk/imx/Kconfig
-> +++ b/drivers/clk/imx/Kconfig
-> @@ -81,6 +81,7 @@ config CLK_IMX8MP
->  	tristate "IMX8MP CCM Clock Driver"
->  	depends on ARCH_MXC || COMPILE_TEST
->  	select MXC_CLK
-> +	select AUXILIARY_BUS
 
-	select AUXILIARY_BUS if RESET_CONTROLLER
+According to a statement from an Amlogic FAE, there is an error in the
+datasheet's CPU clock controller figure. The FAE clarified the
+following:
 
->  	help
->  	    Build the driver for i.MX8MP CCM Clock Driver
->  
-> diff --git a/drivers/clk/imx/clk-imx8mp-audiomix.c b/drivers/clk/imx/clk-imx8mp-audiomix.c
-> index b381d6f784c8..517b1f88661b 100644
-> --- a/drivers/clk/imx/clk-imx8mp-audiomix.c
-> +++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
-> @@ -5,6 +5,7 @@
->   * Copyright (C) 2022 Marek Vasut <marex@denx.de>
->   */
->  
-> +#include <linux/auxiliary_bus.h>
->  #include <linux/clk-provider.h>
->  #include <linux/device.h>
->  #include <linux/io.h>
-> @@ -13,6 +14,7 @@
->  #include <linux/of.h>
->  #include <linux/platform_device.h>
->  #include <linux/pm_runtime.h>
-> +#include <linux/slab.h>
-		^
-This is an unrelated change.
+"""
+The d5/d7 clock source inside the A1 chip is not supplied to CPU_CLK and
+is instead used by other peripherals. Therefore, you can connect a fixed
+frequency divider (div5/div7) to peripherals in A1. The CPU control only
+supports fclk_div2/div3.
+"""
 
-Regards,
-  Marco
-	
->  
->  #include <dt-bindings/clock/imx8mp-clock.h>
->  
-> @@ -217,6 +219,63 @@ struct clk_imx8mp_audiomix_priv {
->  	struct clk_hw_onecell_data clk_data;
->  };
->  
-> +#if IS_ENABLED(CONFIG_RESET_CONTROLLER)
-> +
-> +static void clk_imx8mp_audiomix_reset_unregister_adev(void *_adev)
-> +{
-> +	struct auxiliary_device *adev = _adev;
-> +
-> +	auxiliary_device_delete(adev);
-> +	auxiliary_device_uninit(adev);
-> +}
-> +
-> +static void clk_imx8mp_audiomix_reset_adev_release(struct device *dev)
-> +{
-> +	struct auxiliary_device *adev = to_auxiliary_dev(dev);
-> +
-> +	kfree(adev);
-> +}
-> +
-> +static int clk_imx8mp_audiomix_reset_controller_register(struct device *dev,
-> +							 struct clk_imx8mp_audiomix_priv *priv)
-> +{
-> +	struct auxiliary_device *adev __free(kfree) = NULL;
-> +	int ret;
-> +
-> +	if (!of_property_present(dev->of_node, "#reset-cells"))
-> +		return 0;
-> +
-> +	adev = kzalloc(sizeof(*adev), GFP_KERNEL);
-> +	if (!adev)
-> +		return -ENOMEM;
-> +
-> +	adev->name = "reset";
-> +	adev->dev.parent = dev;
-> +	adev->dev.release = clk_imx8mp_audiomix_reset_adev_release;
-> +
-> +	ret = auxiliary_device_init(adev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = auxiliary_device_add(adev);
-> +	if (ret) {
-> +		auxiliary_device_uninit(adev);
-> +		return ret;
-> +	}
-> +
-> +	return devm_add_action_or_reset(dev, clk_imx8mp_audiomix_reset_unregister_adev,
-> +					no_free_ptr(adev));
-> +}
-> +
-> +#else /* !CONFIG_RESET_CONTROLLER */
-> +
-> +static int clk_imx8mp_audiomix_reset_controller_register(struct clk_imx8mp_audiomix_priv *priv)
-> +{
-> +	return 0;
-> +}
-> +
-> +#endif /* !CONFIG_RESET_CONTROLLER */
-> +
->  static void clk_imx8mp_audiomix_save_restore(struct device *dev, bool save)
->  {
->  	struct clk_imx8mp_audiomix_priv *priv = dev_get_drvdata(dev);
-> @@ -337,6 +396,10 @@ static int clk_imx8mp_audiomix_probe(struct platform_device *pdev)
->  	if (ret)
->  		goto err_clk_register;
->  
-> +	ret = clk_imx8mp_audiomix_reset_controller_register(dev, priv);
-> +	if (ret)
-> +		goto err_clk_register;
-> +
->  	pm_runtime_put_sync(dev);
->  	return 0;
->  
-> -- 
-> 2.34.1
-> 
-> 
-> 
+[...]
+
+-- 
+Thank you,
+Dmitry
