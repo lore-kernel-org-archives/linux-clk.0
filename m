@@ -1,224 +1,223 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7273E13D608
-	for <linux-clk@vger.kernel.org>; Thu, 13 Jun 2024 09:39:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C291304AA;
+	Thu, 13 Jun 2024 09:54:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718271575; cv=none; b=Y+Xb1Kd2y9vb/UlCPLuHzRW++cXEx7jhtALqOML8mR3oRcJRfmQgs/Ur0VAMAIMGet32FFozOajwn7wrMOBPUKZ0zwC/veSU1AjWxHEuyxRxVMMgG4l854GiNAIUi2H59tL6y2kBfkrUvuvUDakUkMhX4d+C+QXpi6i1/ruAvEQ=
+	t=1718272464; cv=none; b=reqzbrOw7u8Qg6Z5Ubwd4Qh4E8B2qNJWMNtzQpnNIBuwcT6xCiGA/C7n7BtFdhK1CE4EHGvlun47Io98qWqGwmBh0vA4IGSe/d0gZCjCz4xvpwLfhrXL9E21Ad6TC4/w8vf2O1Pv5w5YiKkVgMLTgr6UhAT1BufbsothZ9Pjgt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718271575; c=relaxed/simple;
-	bh=iLQX6wuI1C08F/UQlPVe2qnRK6e+oxmbatREJ02+xTQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F4lysfBa+sqcMoCoDWQxAn9uuwz6IA8DX+kHvcNKsdjiye16qykivY54uOlC8/bMswxmE7sCVwXlQB9tCK0W/n24KxnOXiLybfblNrCeGR1JjpDyi0gY58nxzqE57BieG+OtEPfMOn/+wnMC0CMQaBaTokrWteQklXrrULkm9Ws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1sHgvD-0002DT-Gy; Thu, 13 Jun 2024 11:39:07 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1sHgvC-001zsF-Uc; Thu, 13 Jun 2024 11:39:06 +0200
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1sHgvC-008SNC-2h;
-	Thu, 13 Jun 2024 11:39:06 +0200
-Date: Thu, 13 Jun 2024 11:39:06 +0200
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Shengjiu Wang <shengjiu.wang@gmail.com>
-Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, p.zabel@pengutronix.de,
-	abelvesa@kernel.org, peng.fan@nxp.com, mturquette@baylibre.com,
-	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
-	kernel@pengutronix.de, festevam@gmail.com, marex@denx.de,
-	linux-clk@vger.kernel.org, imx@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v7 2/5] clk: imx: clk-audiomix: Add reset controller
-Message-ID: <20240613093906.trc2rahodmhqd4lt@pengutronix.de>
-References: <1718243482-18552-1-git-send-email-shengjiu.wang@nxp.com>
- <1718243482-18552-3-git-send-email-shengjiu.wang@nxp.com>
- <20240613081949.yty3hznopp3u2qwq@pengutronix.de>
- <CAA+D8AMc9=bzHKNXyMH5LLerr2kgmKTxacP=1LhocTHgP9Thfw@mail.gmail.com>
+	s=arc-20240116; t=1718272464; c=relaxed/simple;
+	bh=7aAGjMds4cC7C5pA9pH7zWzRxwd4zaZ7obLTR9e8hlY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DYe2LC5VBrK9QryfbyQrinAiRlGog1DnmGKijyseO4clIY/WIneH1yYpSJ0wHojZtqtzL3BvcYyUTe2bJQoGFdcTQALL1pudeKvrIdY9NQFNoNLUMpjBE1+YFJqjyM9JI1wutCTmDh/wdrCe2ODVE86QuUcqf8MahPnQymVcu34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Byd4tdTF; arc=none smtp.client-ip=209.85.221.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Byd4tdTF"
+Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-4ed0ab952b0so304371e0c.3;
+        Thu, 13 Jun 2024 02:54:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718272462; x=1718877262; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K/vq8+DzyU0cJDbrOi0VwZbaVD4MN4U9YYAh7ulwD8E=;
+        b=Byd4tdTFQ0OoZbiGJ7mqRTGHa0xy7ELws4eNuDOGOKxw94cS06VXxby80jIL5p2X6O
+         1C0O4RXTQVeJhGjOgqrg7TynXvdfcFrk14+HQ7lBFdH4xgKPK7I6CeNDzttu21ld+CZX
+         vAz1OSpRRDoqOjA0E9nToY5RCPRTEjAkV+ms/k5WyOs3dd1E/clES1Li+3MuLE+EYX0q
+         i0uakLUvi+G8L1cgM7oMAOD1gdIwBhRhr3tvunBhbb/PKEy0jQO/mRF9hSMFbc8Gu8Aq
+         ldX7ez2Hvsipf3qqVh0EyfM/bxnjHN6hGi/gQegl6sVOx7m4Xl+IxwlnBR06+s7wC30x
+         hJ7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718272462; x=1718877262;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=K/vq8+DzyU0cJDbrOi0VwZbaVD4MN4U9YYAh7ulwD8E=;
+        b=oUypJU6kyRa/7D09eTCzFUWMgl7PiLdNVkOVt/0JCayQ0Zn/9SumiDEfU5sKaYz0N3
+         3tX0g+55hwxPufa1OSVoaXp4GqmgielUQmdQgDvIrEd0V190vmuyZR8vwP6v8+MitiID
+         Je6WIhqP4JAdrHNVk79bxCNoKAiqeCAoPf62TB8mlxmy6l5AcEIrmacrxI0ax0QOJprn
+         raKu0c3JEM8vyrjKupigmEXzdNOPED7wDEg8WvsVdWtxr28ywrTvxtSapxragB2MgVJQ
+         rxWuOFK65bf4wdu7x5bsupP3J/k+RANwAsk92D41F3ZYQ5KwX8MxxS2zOnyhqnG5GtKJ
+         J53w==
+X-Forwarded-Encrypted: i=1; AJvYcCWMXr/OefzBkoF/VMrVqPT417MCajM17cNJE5YDs/f6ufrCiPjb3sRibIZawgZlkt1Jk+ZJzHxVziD/WVEbi4s03jLRi2pgzcmth8xZPfwyLNUEWkeegD/9XttnFdoutRqV9tJfHY0CjvpNkcpwMAiSnmGszBmICR+z7GSkxjYJzL/HtovLH4Bo+QaN7lzrhBUYkA13NM1Ull/LX1pdo7c8Ha0gzBXJ
+X-Gm-Message-State: AOJu0YzArrY3vS9nx6g6fvsyC5sRhdzZS6EzywtQ8NltTkT6hOwhIOdy
+	xmMd3jgg6J7xeA7tR84pw1B7pDNtpOkBUu69qaLKWrhjLBHUwlclJZXKMaMKO1gN79Qwcj5FCw0
+	Q3qGny044L85fJWE3LjyCLByAdKc=
+X-Google-Smtp-Source: AGHT+IHTNg/HUt+bXVJDMIhzaY+LzLgC26EDmTgJo6tyA21CR32TSuFcohgyHb7mAMUm2nHHkRCxewSlyEFLyU1L+aQ=
+X-Received: by 2002:a05:6122:361a:b0:4ec:f52b:e4db with SMTP id
+ 71dfb90a1353d-4ed07c038f9mr3690216e0c.16.1718272460688; Thu, 13 Jun 2024
+ 02:54:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAA+D8AMc9=bzHKNXyMH5LLerr2kgmKTxacP=1LhocTHgP9Thfw@mail.gmail.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+References: <20240610233221.242749-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240610233221.242749-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <34b21e6f-0896-4691-9b66-d06ef2f44905@kernel.org>
+In-Reply-To: <34b21e6f-0896-4691-9b66-d06ef2f44905@kernel.org>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Thu, 13 Jun 2024 10:53:50 +0100
+Message-ID: <CA+V-a8u6dDpbb5BrQ+ty_RbwcPOF-U6rnJnuASRXEDVdrhrvAA@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 1/4] dt-bindings: clock: renesas: Document
+ RZ/V2H(P) SoC CPG
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 24-06-13, Shengjiu Wang wrote:
-> On Thu, Jun 13, 2024 at 4:20 PM Marco Felsch <m.felsch@pengutronix.de> wrote:
+Hi Krzysztof,
+
+Thank you for the review.
+
+On Tue, Jun 11, 2024 at 8:02=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
+>
+> On 11/06/2024 01:32, Prabhakar wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > >
-> > On 24-06-13, Shengjiu Wang wrote:
-> > > Audiomix block control can be a reset controller for
-> > > Enhanced Audio Return Channel (EARC), which is one of
-> > > modules in this audiomix subsystem.
-> > >
-> > > The reset controller is supported by the auxiliary device
-> > > framework.
-> > >
-> > > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> > > Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> > > ---
-> > >  drivers/clk/imx/Kconfig               |  1 +
-> > >  drivers/clk/imx/clk-imx8mp-audiomix.c | 63 +++++++++++++++++++++++++++
-> > >  2 files changed, 64 insertions(+)
-> > >
-> > > diff --git a/drivers/clk/imx/Kconfig b/drivers/clk/imx/Kconfig
-> > > index 6da0fba68225..9edfb030bea9 100644
-> > > --- a/drivers/clk/imx/Kconfig
-> > > +++ b/drivers/clk/imx/Kconfig
-> > > @@ -81,6 +81,7 @@ config CLK_IMX8MP
-> > >       tristate "IMX8MP CCM Clock Driver"
-> > >       depends on ARCH_MXC || COMPILE_TEST
-> > >       select MXC_CLK
-> > > +     select AUXILIARY_BUS
+> > Document the device tree bindings for the Renesas RZ/V2H(P) SoC
+> > Clock Pulse Generator (CPG).
 > >
-> >         select AUXILIARY_BUS if RESET_CONTROLLER
-> 
-> Do we really need this change?
-> 
-> I checked other drivers like MCHP_CLK_MPFS, but they don't have
-> this condition also.
-
-Since you made the whole reset optional I would like to pull reset
-dependency optional as well e.g. pulling it only if you really use it.
-In the end the RESET_CONTROLLER is enabled most the time.
-
-> > >       help
-> > >           Build the driver for i.MX8MP CCM Clock Driver
-> > >
-> > > diff --git a/drivers/clk/imx/clk-imx8mp-audiomix.c b/drivers/clk/imx/clk-imx8mp-audiomix.c
-> > > index b381d6f784c8..517b1f88661b 100644
-> > > --- a/drivers/clk/imx/clk-imx8mp-audiomix.c
-> > > +++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
-> > > @@ -5,6 +5,7 @@
-> > >   * Copyright (C) 2022 Marek Vasut <marex@denx.de>
-> > >   */
-> > >
-> > > +#include <linux/auxiliary_bus.h>
-> > >  #include <linux/clk-provider.h>
-> > >  #include <linux/device.h>
-> > >  #include <linux/io.h>
-> > > @@ -13,6 +14,7 @@
-> > >  #include <linux/of.h>
-> > >  #include <linux/platform_device.h>
-> > >  #include <linux/pm_runtime.h>
-> > > +#include <linux/slab.h>
-> >                 ^
-> > This is an unrelated change.
-> 
-> This is for the fix of this issue
-> 
-> https://lore.kernel.org/oe-kbuild-all/202405201844.zf7UkDmq-lkp@intel.com/
-
-Thanks for the link.
-
-Regards,
-  Marco
-
-> Best regards
-> Shengjiu wang
-> 
+> > CPG block handles the below operations:
+> > - Generation and control of clock signals for the IP modules
+> > - Generation and control of resets
+> > - Control over booting
+> > - Low power consumption and power supply domains
 > >
-> > Regards,
-> >   Marco
-> >
-> > >
-> > >  #include <dt-bindings/clock/imx8mp-clock.h>
-> > >
-> > > @@ -217,6 +219,63 @@ struct clk_imx8mp_audiomix_priv {
-> > >       struct clk_hw_onecell_data clk_data;
-> > >  };
-> > >
-> > > +#if IS_ENABLED(CONFIG_RESET_CONTROLLER)
-> > > +
-> > > +static void clk_imx8mp_audiomix_reset_unregister_adev(void *_adev)
-> > > +{
-> > > +     struct auxiliary_device *adev = _adev;
-> > > +
-> > > +     auxiliary_device_delete(adev);
-> > > +     auxiliary_device_uninit(adev);
-> > > +}
-> > > +
-> > > +static void clk_imx8mp_audiomix_reset_adev_release(struct device *dev)
-> > > +{
-> > > +     struct auxiliary_device *adev = to_auxiliary_dev(dev);
-> > > +
-> > > +     kfree(adev);
-> > > +}
-> > > +
-> > > +static int clk_imx8mp_audiomix_reset_controller_register(struct device *dev,
-> > > +                                                      struct clk_imx8mp_audiomix_priv *priv)
-> > > +{
-> > > +     struct auxiliary_device *adev __free(kfree) = NULL;
-> > > +     int ret;
-> > > +
-> > > +     if (!of_property_present(dev->of_node, "#reset-cells"))
-> > > +             return 0;
-> > > +
-> > > +     adev = kzalloc(sizeof(*adev), GFP_KERNEL);
-> > > +     if (!adev)
-> > > +             return -ENOMEM;
-> > > +
-> > > +     adev->name = "reset";
-> > > +     adev->dev.parent = dev;
-> > > +     adev->dev.release = clk_imx8mp_audiomix_reset_adev_release;
-> > > +
-> > > +     ret = auxiliary_device_init(adev);
-> > > +     if (ret)
-> > > +             return ret;
-> > > +
-> > > +     ret = auxiliary_device_add(adev);
-> > > +     if (ret) {
-> > > +             auxiliary_device_uninit(adev);
-> > > +             return ret;
-> > > +     }
-> > > +
-> > > +     return devm_add_action_or_reset(dev, clk_imx8mp_audiomix_reset_unregister_adev,
-> > > +                                     no_free_ptr(adev));
-> > > +}
-> > > +
-> > > +#else /* !CONFIG_RESET_CONTROLLER */
-> > > +
-> > > +static int clk_imx8mp_audiomix_reset_controller_register(struct clk_imx8mp_audiomix_priv *priv)
-> > > +{
-> > > +     return 0;
-> > > +}
-> > > +
-> > > +#endif /* !CONFIG_RESET_CONTROLLER */
-> > > +
-> > >  static void clk_imx8mp_audiomix_save_restore(struct device *dev, bool save)
-> > >  {
-> > >       struct clk_imx8mp_audiomix_priv *priv = dev_get_drvdata(dev);
-> > > @@ -337,6 +396,10 @@ static int clk_imx8mp_audiomix_probe(struct platform_device *pdev)
-> > >       if (ret)
-> > >               goto err_clk_register;
-> > >
-> > > +     ret = clk_imx8mp_audiomix_reset_controller_register(dev, priv);
-> > > +     if (ret)
-> > > +             goto err_clk_register;
-> > > +
-> > >       pm_runtime_put_sync(dev);
-> > >       return 0;
-> > >
-> > > --
-> > > 2.34.1
-> > >
-> > >
-> > >
-> 
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Since this is not a finished work (RFC), only limited review follows.
+>
+>
+> > +$id: http://devicetree.org/schemas/clock/renesas,rzv2h-cpg.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Renesas RZ/V2H(P) Clock Pulse Generator (CPG)
+> > +
+> > +maintainers:
+> > +  - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > +
+> > +description: |
+>
+> Do not need '|' unless you need to preserve formatting.
+>
+OK.
+
+> > +  On Renesas RZ/V2H(P) SoCs, the CPG (Clock Pulse Generator) handles g=
+eneration
+> > +  and control of clock signals for the IP modules, generation and cont=
+rol of resets,
+> > +  and control over booting, low power consumption and power supply dom=
+ains.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: renesas,r9a09g057-cpg
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  clocks:
+> > +    maxItems: 1
+> > +
+> > +  clock-names:
+> > +    description:
+> > +      Clock source to CPG on QEXTAL pin.
+> > +    const: qextal
+> > +
+> > +  '#clock-cells':
+> > +    description: |
+> > +      - For CPG core clocks, the two clock specifier cells must be "CP=
+G_CORE"
+> > +        and a core clock reference, as defined in
+> > +        <dt-bindings/clock/r9a09g057-cpg.h>,
+>
+> So second cell is not used?
+>
+It will be used for blocks using core clocks.
+
+> > +      - For module clocks, the two clock specifier cells must be "CPG_=
+MOD" and
+> > +        a module number.  The module number is calculated as the CLKON=
+ register
+> > +        offset index multiplied by 16, plus the actual bit in the regi=
+ster
+> > +        used to turn the CLK ON. For example, for CGC_GIC_0_GICCLK, th=
+e
+> > +        calculation is (1 * 16 + 3) =3D 19.
+>
+> You should not have different values. Make it const: 1 and just use IDs.
+>
+Are you suggesting not to differentiate between core/mod clocks. They
+are differentiated because the MOD clocks can turned ON/OFF but where
+as with the core clocks we cannot turn them ON/OF so the driver needs
+to know this, hence two specifiers are used.
+
+> > +    const: 2
+> > +
+> > +  '#power-domain-cells':
+> > +    description:
+> > +      SoC devices that are part of the CPG/Module Standby Mode Clock D=
+omain and
+> > +      can be power-managed through Module Standby should refer to the =
+CPG device
+> > +      node in their "power-domains" property, as documented by the gen=
+eric PM
+> > +      Domain bindings in Documentation/devicetree/bindings/power/power=
+-domain.yaml.
+>
+> Drop description, it's redundant.
+>
+OK.
+
+> > +    const: 0
+> > +
+> > +  '#reset-cells':
+> > +    description:
+> > +      The single reset specifier cell must be the reset number. The re=
+set number
+> > +      is calculated as the reset register offset index multiplied by 1=
+6, plus the
+> > +      actual bit in the register used to reset the specific IP block. =
+For example,
+> > +      for SYS_0_PRESETN, the calculation is (3 * 16 + 0) =3D 48.
+> > +    const: 1
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - clocks
+> > +  - clock-names
+> > +  - '#clock-cells'
+> > +  - '#power-domain-cells'
+> > +  - '#reset-cells'
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    cpg: clock-controller@10420000 {
+>
+> Drop unused label.
+>
+OK.
+
+> > +            compatible =3D "renesas,r9a09g057-cpg";
+>
+> Use 4 spaces for example indentation.
+>
+Sure, I will update it.
+
+Cheers,
+Prabhakar
