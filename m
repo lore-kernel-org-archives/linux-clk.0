@@ -1,85 +1,116 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0C22145B3F;
-	Thu, 13 Jun 2024 14:39:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40B1F1474CE;
+	Thu, 13 Jun 2024 15:15:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718289596; cv=none; b=mCA2/8N97eYZIxiL1YJe4Peeu+Td4+OD/T54cZDlzyCIRp0iCwyllSBEu+6a4PUZYD7JUx7ZNKuVdU8NheOnU2cKp0Dg/UbOhWPrL6l9SCfruZoYeF/DgB9MzNWovmBYN2jjqDuNPx/vOM72JGy+uWjOBWNorzv84X7zRHB1cWo=
+	t=1718291730; cv=none; b=CFUcGkdcW7MDO1EKoX/YZM78YLEomKR5Q1PT9geiXaGbAst/oVq/1QtXBH3Dse+6u6RabnuaJ6/WLQpamkSa0jadAHx+tjCMXZE6WtGztbQlG/OmuQGr6BUAA8Go0PdeIvSF/d/ZeABTMU5cZlic7fo3pvoi+stucZTZH6UqLbY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718289596; c=relaxed/simple;
-	bh=E524rcct08hz6YUrxdb412RbfB6vmLjWaw3BPmGgUfY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=BVl3rb92G6EPGYEV2LyP5z5Gq9vCTZgM5y/7k/vL8JXY7aEkw/RQe7cJMIJ6jYdD0+++uol5FHxoX+8hhnTXP79B2j8SnoGGzpCdOxkW3Psc9LScX1NSxOTkR+DtIff3mV1Q/AM6g1J0KQFuBotikGeJ+WZ3lu4RxCKABlCL71I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gjtuT8Xc; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gjtuT8Xc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FEF3C4AF4D;
-	Thu, 13 Jun 2024 14:39:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718289596;
-	bh=E524rcct08hz6YUrxdb412RbfB6vmLjWaw3BPmGgUfY=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=gjtuT8Xcz/yiy2MnxocB2sxoQHKjoPmW/zo//t0zNiZ+atwsq4a2odwxj4K7QUeQb
-	 vdpYwo14D0+Ce4fUCqAcZvmhVEfH9PydKjeIUCEF7Q5GKw9OtQksS0ws/NFGcbHphy
-	 PVyJy+/GPCawa9QHsAbfigFDO3HHS+svFzcF3jun5/nF9e5kGjF4W1Fl+iNXrUeyng
-	 ceMx3dcAlRNqOfHpnC1/xPlXUVoLj1Lu0ID0iWuxhy2dhlYY3Upi7kfr8BJHLwKVkr
-	 D/fNVBbQBi20BKi5EstWse2QH0jQ6TXFLl+bM5Tp5OEQHXr0ip9mq98L3Y3QqId/Xz
-	 KoIFCWN5jlnJA==
-From: Lee Jones <lee@kernel.org>
-To: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Nicolas Ferre <nicolas.ferre@microchip.com>, 
- Alexandre Belloni <alexandre.belloni@bootlin.com>, 
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, Andrew Lunn <andrew@lunn.ch>, 
- Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>, 
- Gregory Clement <gregory.clement@bootlin.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, UNGLinuxDriver@microchip.com, 
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
- Miquel Raynal <miquel.raynal@bootlin.com>, 
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
- Yisen Zhuang <yisen.zhuang@huawei.com>, 
- Salil Mehta <salil.mehta@huawei.com>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Conor Dooley <conor.dooley@microchip.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
- linux-mips@vger.kernel.org, linux-mtd@lists.infradead.org, 
- netdev@vger.kernel.org, linux-mediatek@lists.infradead.org
-In-Reply-To: <20240603131230.136196-2-robh@kernel.org>
-References: <20240603131230.136196-2-robh@kernel.org>
-Subject: Re: (subset) [PATCH v2] dt-bindings: mfd: syscon: Add more simple
- compatibles
-Message-Id: <171828959006.2643902.8308227314531523435.b4-ty@kernel.org>
-Date: Thu, 13 Jun 2024 15:39:50 +0100
+	s=arc-20240116; t=1718291730; c=relaxed/simple;
+	bh=upw3YZFDSMosNFgE94Z/c8GKTYTwKdjYG5hj/Ti18sQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XWlEMVv+M90SJq8v9Npe7mQmRoqP1OTYYmMBObQq4fifYwVODCRYtvfcPFBfsHKfkOwPq4Sdb3eDf8P/yhGKkL/sC6PudTEZ2FTtGhg8iGxBGRzcXK8IWb2R/Z6gxZOKEapoT0TeW7QLngK2ZFx39LuOESGD125RJU2gTcn3nN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-63152a07830so6923307b3.3;
+        Thu, 13 Jun 2024 08:15:27 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718291726; x=1718896526;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3USazagu6cS/+37Hogg/qABAlJZ7SMpYxKFouZ1jhuA=;
+        b=hyaV1QG5xEG+hdcEXr7FWnuZyYbnxCCej4a8XYDqXeBZBbynST+IsD4Fq+ALy+hBO4
+         K/Oo1+BoLKu1YCYL4p84RvtjT2+mlBoQiwAScb2cQSS5qxFFRJnubihW4qJGaMRt5h6D
+         EdJbAjQQb1C0b40Ieo+wW6Vnr7NKA5AWzFEkWsPrPI/5NM9Njlz+Dg5ygyq2iSyrFyz1
+         H84fqxPXkxx2fnF3HvmUbaYciqdXy5QBmKiyp8XqJUPkwHSFqbf7NcyxVVeZnV9Oyb/E
+         6W7uBchuf+cQzEAzs2MaptbN3nJWiwcjGazDaNOAE7OsDNhVK/m5EFZ0mQ98dLb8xurs
+         OevQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUVb+I9sfE2o073qznscslnh0mfXT9U+4FoQBKcoYtyqUft1KRiOB4PPAEi1RRi08T02ThKLNRmOtDj+Pwj5a/SzIYZgxzEj86oF4qMJP9b3JiwnjTdie3ZEp8EHpNgTthCsFfdmw90KMxYqu50m3cwpIWDQa/CLOSYbH8aE6eLPIwdgMeIegXOjiwHhZpJMxRiqJJI87+N58YidWMINFoWQAjW6Ece
+X-Gm-Message-State: AOJu0YzHW5NikyqhS2HZ/6ACEjE9qABVyRwtdpFLe8U57GmuCPJNDtPn
+	IsvXgSIzpE8nM8SKWfuiXIApAbZWsEgEsUbjwHCZNHggXlDw8r64/A2F8y/5
+X-Google-Smtp-Source: AGHT+IGagWeXE+WryF70K5ZP2Dq4uP0EZSxpfr05it96YSS/9QVMlIYbu2RV8nmgBgub9iGPg8sICw==
+X-Received: by 2002:a0d:c645:0:b0:615:35e1:e512 with SMTP id 00721157ae682-62fb79c2c01mr48079267b3.0.1718291724927;
+        Thu, 13 Jun 2024 08:15:24 -0700 (PDT)
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com. [209.85.128.178])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-631183d7842sm1951217b3.24.2024.06.13.08.15.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Jun 2024 08:15:24 -0700 (PDT)
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6312dc531d3so8495417b3.0;
+        Thu, 13 Jun 2024 08:15:24 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWsu8KdoT17RdRLYMieCZAFg+Dz3q244Nc3S7j5QYuA1JpUjRcaHAl8FaR2G9PKkqqq2ubEL5rwkZkyOHpxOUmbOkXTXHMZ5uO/e+Ce5EZibb5sGLh1GqMVAaVy38tIjAaa4sDToTWv/mbuF2XulG9sd93oML0TuvVjH7KWwhRHOgcYOzUrtZjw00BfXy6zUVX270eTrlyQnmbMIZVgaP1eb+/j4Gim
+X-Received: by 2002:a0d:df17:0:b0:62c:f90d:3797 with SMTP id
+ 00721157ae682-62fbc5d7d86mr45329167b3.37.1718291724474; Thu, 13 Jun 2024
+ 08:15:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.13.0
+References: <20240610233221.242749-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240610233221.242749-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <6b3fe242-3733-4f16-b727-494dc1d82002@kernel.org> <CA+V-a8vp0qHKqUMvyfy9hQjKyk8Cs0bDTnYh-ChvPi150r5i2g@mail.gmail.com>
+ <3d0a7a82-6262-40e6-be25-4a1c4d8df2fe@kernel.org>
+In-Reply-To: <3d0a7a82-6262-40e6-be25-4a1c4d8df2fe@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 13 Jun 2024 17:15:12 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUvtUWdEfN_=gNJWY+qfE6Yw9KdenQ2OkLc=HvmRnB6pw@mail.gmail.com>
+Message-ID: <CAMuHMdUvtUWdEfN_=gNJWY+qfE6Yw9KdenQ2OkLc=HvmRnB6pw@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 2/4] dt-bindings: clock: Add R9A09G057 core clocks
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 03 Jun 2024 08:12:27 -0500, Rob Herring (Arm) wrote:
-> Add another batch of various "simple" syscon compatibles which were
-> undocumented or still documented with old text bindings. Remove the old
-> text binding docs for the ones which were documented.
-> 
-> 
+Hi Krzysztof,
 
-Applied, thanks!
+On Thu, Jun 13, 2024 at 2:56=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.or=
+g> wrote:
+> On 13/06/2024 11:57, Lad, Prabhakar wrote:
+> >>> of section 4.4.2 which cannot be controlled by CLKON register.
+> >>> ---
+> >>>  include/dt-bindings/clock/r9a09g057-cpg.h | 21 +++++++++++++++++++++
+> >>>  1 file changed, 21 insertions(+)
+> >>>  create mode 100644 include/dt-bindings/clock/r9a09g057-cpg.h
+> >>
+> >> Missing vendor prefix.
+> >>
+> > OK, Is this just for new includes being added, or do you want me to
+> > rename the existing Renesas specific includes in here which dont have
+> > vendor prefix?
+>
+> Didn't we discuss it?
+>
+> I commented only about this binding.
 
-[1/1] dt-bindings: mfd: syscon: Add more simple compatibles
-      commit: 234db2775b9eff77b8ec2216cc8a286d1dd2cd65
+Yes we did, in the context of the R-Car V4M DT binding definitions,
+which became include/dt-bindings/clock/renesas,r8a779h0-cpg-mssr.h
+But Prabhakar was not involved there.
 
---
-Lee Jones [李琼斯]
+Note that I also asked to include the vendor prefix, see
+https://lore.kernel.org/linux-renesas-soc/CAMuHMdU7+O-+v=3D2V83AjQmTWyGy_a-=
+AHgU_nPMDHnVUtYt89iQ@mail.gmail.com/
 
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
