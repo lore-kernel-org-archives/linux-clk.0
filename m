@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA3D6A032;
-	Thu, 13 Jun 2024 07:29:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2746313B5B0;
+	Thu, 13 Jun 2024 07:31:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718263749; cv=none; b=an8wexwG1IzzVqEDE7ibTtjgGoxngDsfJ9WXQpj0OVIgc1CXeBnHWcb5x79A7Ly4OXh/B0/fFtxY7pNAer11+u/XV24gyfLq8gSl4qCRhTf8+Nv7IsKbsORu4jvj/vrmwF17Kgf+/n6cu6q9sJspChkQJYk7oGt52V495+TZ5rA=
+	t=1718263861; cv=none; b=XuNYj/A1VLPa881aQLoE8nT75DXwUfxKGp5nBltdzVfn6m02DfF6e5V3mPWY4VD9XQIs1KCIszGC+ggcNJnf9w06XTsaejqDtb+upPFtn+NCPn11p9tvokNxMwny/3lZ847AJ+AS/XfH3JviIA988OZhaaLliUB5agYoeFHngrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718263749; c=relaxed/simple;
-	bh=05vXCjdAv9cGIF9SndwW6GD0ZZ9bY49zJPDzNKfThqc=;
+	s=arc-20240116; t=1718263861; c=relaxed/simple;
+	bh=SpN+x8Bl+SPU7xbSBOLsmQFiCKZx9NC0SwnyioABxnE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EbPEIMgArXR8p4lHaz3pThxfDKCjvrO8KP4kWNfAtcG1+yKhtC+F9mqU/6zV4zjI/aS9Y7a5iiybFyXolWOJJ1cdKdnGV7smWeGHssuVDUQLk1r71ecCIKArVgZ9jRBwa16gxBsoitktBpWrnEe/Rrz79UnGcVWwFCO7CrJuka8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jYuZbhfp; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=qWXxMnPnkqaO2oYhOE2SCGQmq/vEVckIqal9DkB4JfdmFLgxJZ0twC19lW1//kMuNdYghXlIKtupXqetociaPc4STetaFlz5BhH9SKQpLiPWx278SkXUmf5UJK4vDpUgGFtZKIorVxd1Ovlq5q3Oqcn/82VPU2rxwmTIYqj7MVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VVVtjk8M; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jYuZbhfp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6770C4AF1C;
-	Thu, 13 Jun 2024 07:29:03 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VVVtjk8M"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4E06C2BBFC;
+	Thu, 13 Jun 2024 07:30:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718263748;
-	bh=05vXCjdAv9cGIF9SndwW6GD0ZZ9bY49zJPDzNKfThqc=;
+	s=k20201202; t=1718263860;
+	bh=SpN+x8Bl+SPU7xbSBOLsmQFiCKZx9NC0SwnyioABxnE=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jYuZbhfp6e+IaJ1oLvH2g4hs+b7aewk7z7UAxWnlKai2glwdHxPabJ5dp48jCix2I
-	 jJrLKhEt4DjwRDyztpZjB+nSwcRUKQX/wCE6GJBxkFvc14DbwL//mA0lzG85oYHv+p
-	 VYHHMqa3KKqUlfu4K+OFBK0jYS3nNKxno2AeCsD+L5XTWXbbJqFTF6TpQvEmySAqPy
-	 YIcB2FpMUUh8wpthfKJS+zEM2h+yG5uma1Gjmtu/mASznZl2XK0fjUvGBn/ly+Tc6N
-	 pPCKZIhBJkpYlkLIRgQTJB+EF3jEi1jnshO66XqScizl99itpY3ysFAO/wQmN9Mfef
-	 yMHoW6pgLbviA==
-Message-ID: <58706890-0937-4c3f-b7b3-ed1d6b64a857@kernel.org>
-Date: Thu, 13 Jun 2024 09:29:00 +0200
+	b=VVVtjk8MKcHE4l94FyWAgj53FcVen5KEMeN0jYCk3IzuIP9UZhPogwg9rz4fUmNMs
+	 ml7J7+jvIPmz/ab23wYsO8EwXmzLycUfARGMWpMX9prXBisc6TKNqt1rhMFJtjWpij
+	 o3GrIetd+oDfm4Zg5nZNBUHGO512+wwb2KGVfDBtApf3qFU0vAURgiphekg6g0vVSx
+	 Cz/sHpEqBsAxZjCBUJEkNXGWqeMTozLTGD1/D0EMQr5IhyODU3I2twt1ZdOiDKSd1Q
+	 DWiOWgAtNrFJBakYYhHKjxRlBQWyrqrr4SiCB+WnIGVRxGCb6EUuXKC0PkPGCSKIBB
+	 TslmUsZf7ydbQ==
+Message-ID: <fccf81eb-49be-4666-88ea-8acef040af16@kernel.org>
+Date: Thu, 13 Jun 2024 09:30:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/8] dt-bindings: clock: qcom: Add SA8775P camera clock
- controller
+Subject: Re: [PATCH 5/8] dt-bindings: clock: qcom: Add SA8775P display clock
+ controllers
 To: Taniya Das <quic_tdas@quicinc.com>, Bjorn Andersson
  <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
  Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
@@ -47,7 +47,7 @@ Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  quic_jkona@quicinc.com, quic_imrashai@quicinc.com
 References: <20240612-sa8775p-mm-clock-controllers-v1-0-db295a846ee7@quicinc.com>
- <20240612-sa8775p-mm-clock-controllers-v1-3-db295a846ee7@quicinc.com>
+ <20240612-sa8775p-mm-clock-controllers-v1-5-db295a846ee7@quicinc.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -93,20 +93,18 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240612-sa8775p-mm-clock-controllers-v1-3-db295a846ee7@quicinc.com>
+In-Reply-To: <20240612-sa8775p-mm-clock-controllers-v1-5-db295a846ee7@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 12/06/2024 12:47, Taniya Das wrote:
-> Add device tree bindings for the camera clock controller
+> Add device tree bindings for the display clock controllers
 > on Qualcomm SA8775P platform.
 > 
 > Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> ---
 
-Also nothing improved here, I guess, unless you expect us to review the
-same over and over again. Sorry, has many other patches to review which
-implement feedback.
+Please implement feedback and provide changelog. See go/upstream in your
+company.
 
 Best regards,
 Krzysztof
