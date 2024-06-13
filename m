@@ -1,209 +1,236 @@
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+Received: from mail-io1-f43.google.com (mail-io1-f43.google.com [209.85.166.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FDAE3209
-	for <linux-clk@vger.kernel.org>; Thu, 13 Jun 2024 09:10:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4018E13D26B;
+	Thu, 13 Jun 2024 09:20:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718269856; cv=none; b=VeN6LXCxojP3qRYRqt/WvnSGFImgnW6P3kxA4jfwtwmCOVi8FVE+1AMHHP/3AfkyYoO9a7taO9T2Ou429JIkKrLCaA6Jz7zNiyqSY8XuKmUQnbBdfL6fkqppqDbWy/5NRT1u5Nw2kJdUIJHU1hrESINWPkgimAxC0NObjMo8s2Y=
+	t=1718270431; cv=none; b=E1FW7N/lZZV6GAtRqXbUWNayvGtF1D9N0vWxfkPandNFw0zGGOawtR2Qt2ApWTDQx0h+Qnu45znqPZyoZcMQ6RNpb2dwQd4Qvb5Xblkg6SuB6wHqGo42fsMJC8lfzuoFkmv2UG7qbOufpcGNifuN2IHXqHtCegTd9Om8oMZ826Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718269856; c=relaxed/simple;
-	bh=30NWkqAV4R92RmhF2xlzh6uxyE5XgPuxEMk8Ttj6tog=;
+	s=arc-20240116; t=1718270431; c=relaxed/simple;
+	bh=nwIWyEx/7teWV5FWMzmwa4MnROj8ZAkaiOIAWcLazkU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kmwGVQljz6x97F8qD0amSNhSpz3xCZQ0dR3jecIcFCNybpchlHgfJuHOJvqv5wpX9He5G9LdycWaj/jDRbzqz/eRQGPOgv5lBYUVxfdCsZgK9+y6WTHdP7Rv7rZAwnZrrpgyAqQjC1A2n+K4FoWiBg8Q4OH0hkj7FEiutojrhWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=b9tAYuE/; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	 To:Cc:Content-Type; b=MfRvNEQcvJoLtKwXg5lVyiCcfsU0FGkC/HhNJOp8oxES2NTPXMnnlVJ44JSHVVnolqn8cobO/N413CR9zbkg/67MjqAcQ6IFB+OSOq3xrwI7qRtWsUM5hymRqdtzwvu5iHCIC5waVnR9fDKXJvHRgh24kJpC52SCMlMOrtC4jeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DLiZJBkI; arc=none smtp.client-ip=209.85.166.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="b9tAYuE/"
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2ebeefb9b56so8421341fa.0
-        for <linux-clk@vger.kernel.org>; Thu, 13 Jun 2024 02:10:53 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DLiZJBkI"
+Received: by mail-io1-f43.google.com with SMTP id ca18e2360f4ac-7ebcc7676c3so29358339f.0;
+        Thu, 13 Jun 2024 02:20:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1718269852; x=1718874652; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1718270429; x=1718875229; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0qMad1s8HI1EFGHqapCwasRBkvGmdeiF4NnLv9ZSDU4=;
-        b=b9tAYuE/ONzZjRb2zbpj1Shgn0Pj4GEvpPgMwBXfoyEjk89ZxyRPhbhxmJu4Fe24Sm
-         KNm3GUk/eKuzXc6zE31kOSaLdxRXZo6bTaCADg/UGiRGtH5//qIbG7JUnz7Hch+ttXOy
-         nm4TXgAc5zpaOGjqEFF4rAprNt9/2Ju3OK0Bg=
+        bh=csLKQFD6Tcenf8eJdKO/adEt8f/6C41cqRO+iDbL3zg=;
+        b=DLiZJBkIUF/b7O2Jrl9dC6ElNDHBZw6QcZL6HCM4WAn/vhrjNToRGDdlrRIiuwryYs
+         VXF4IepebRLt4J7YiZDd6/2qaUedwRoJFKPmIgStdN+LFVUtjfTW90g82NWoQam2lP4p
+         oWIvF4QjmQhr5zd1QXUrLwj8mpz1eV60232KZ2r2kYp2PZwhc3rgEh1LfBVZC1/ugTFy
+         rAFGn+qFEsD9mLCOfyRbB4wB3SKK0lMA4h7c5n9vxFml0Tg86XlJqzs4B1JzWJiPwWuy
+         ua79jybPAL8jrVvfQp9aUemdvcti5SdRvOxLRwlOFCy07HtFSouF1A2w6oxc4GN/H3wd
+         /68Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718269852; x=1718874652;
+        d=1e100.net; s=20230601; t=1718270429; x=1718875229;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0qMad1s8HI1EFGHqapCwasRBkvGmdeiF4NnLv9ZSDU4=;
-        b=dypIoeHe17MnBoREWa+yGa8iywCcZGxoPVMICcTdvVWCWYwRkJDzQymjspBphLf78d
-         ZUpSlmLzlgEPVdYN8tdcmCzOmbCJF2EEqmN9+SeBCiV3pMGJhJ2nJksnAEEiPJS+Dn4z
-         PHJqUUclUEBPIiAtJ6hVQ3t/g8uXCQCRKOPt+NCdPquoayhijGenhBlnVnhx3r3b04yn
-         kEszbUU/NqVjyaldwPkBn19Mvs3mbxC1VN0H54XrjCxpjj2CDJkkLsYmPVaKHaAeHzK1
-         D9GF+Y8q19HtEMIufZDqUiZfp/PlHpTz3Guh525actk4WBTSEPA38y+jegD3Bej2sZzT
-         y09Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVkYVMNZ4VmB3ruloe8zOGr/40euDpbPqC7EjqYlLVhcLO07i/2COqzRQWz/wzdgqZdqTS0KTI8YRV5+Z7ioGvcOmvNRZBvBClK
-X-Gm-Message-State: AOJu0YxlOlNEEh/iku+C0NPP1NVtRB9Cs/DsBaF2svVoSEFRaYJvfJc/
-	3R3JaGJkl1EF7p7uep69AoJfORD//QY9n3aEitcR+D/2r5hjn5EaEAF03lJvGf53Cr/47lYxrhC
-	8viUiLTHP2mXeRgdDt5xDO+ZoSUHsjB1Sxdlv
-X-Google-Smtp-Source: AGHT+IFE16q+3aJZ+pDB8j2rm8rHPIGnaWtqcWZM+SpiuLNffT3VD8BSWouvI+m971OdxrGKrmk+TlmqOWpCQUtBEeQ=
-X-Received: by 2002:a05:651c:19a6:b0:2eb:d77a:850c with SMTP id
- 38308e7fff4ca-2ebfc8f0545mr43873481fa.4.1718269852401; Thu, 13 Jun 2024
- 02:10:52 -0700 (PDT)
+        bh=csLKQFD6Tcenf8eJdKO/adEt8f/6C41cqRO+iDbL3zg=;
+        b=nOUXetTsDUuzooZ94h/AGGcEX3o6O8Aop7l1N/iDXnL4ocC6ESzqeR+ZNnNMpL9LGI
+         LJBu9kGLdm2fVlwkdATNNnjzZGj0HaulU6O6aghHESKeJ9GOgwIxgqKV9WH788c1Cx+c
+         VjhzUqSgGQu+6BPF+/k5y72HsceTH+SsW4QQQrp3SYwycsdLpMd4kWtlWB5T1Z97LZku
+         qeOL1G+7Bxjrc91xBRSQpIHU4XVo2hgOAhwpuckKX50q1v0cyUNjHkP02VHwZafqL9/O
+         vKZoqVs4daZYKCf/MAyTfYOrVoTMwJcPjwlg8w8yChCopC/SYiZnXYCot5Cka/9s2Gut
+         I1LA==
+X-Forwarded-Encrypted: i=1; AJvYcCUaKM5tQqyQS3rGR04DgW75EVW24CbTpccbEHO2t5X3DKH8U5va7QL20k8MVJF7ZI8iniAicqoa3n3ysGgMBsHd0fN33bFLZKuFGInKNdmoI1BkOHK+Cf2gSjSdADCoxHWLBkMRBr2RLVfp7BNhib2lXGwtM4Nir0tloKw0/DofSW0NNw==
+X-Gm-Message-State: AOJu0YxS+JDoVNxu7MxiVui8GXdJ0sl1lrEyh8WanZnWGijaWcZzJScA
+	79mQ4Z7R4EhPaDfXoq1qo2QU+mPwfQ3Ls3hOPX8bmFOJj1nTbWhAzM5r2aeUxDRzLASX+wGoU84
+	MKfsFzuB54MWb3OW1H0GgPnBgK8g=
+X-Google-Smtp-Source: AGHT+IFed9H5JM1SrGJtb2+Kf28Ibrp0V6KX2iqKvtXKbBzLKEMT/llRVLx61dEjDWZmVwx1MrI8K71JhP7Jr+l1hlY=
+X-Received: by 2002:a92:ca06:0:b0:375:a994:6de0 with SMTP id
+ e9e14a558f8ab-375cd177970mr48444765ab.13.1718270429288; Thu, 13 Jun 2024
+ 02:20:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240530083513.4135052-1-wenst@chromium.org> <20240530083513.4135052-4-wenst@chromium.org>
- <cc5847a486a760921375f069a4f65cd29453a624.camel@imgtec.com> <CAGXv+5FBqcXjTc+DO8VQierzcxTYhyNxpw+AuuB4U1H_Xo6wPg@mail.gmail.com>
-In-Reply-To: <CAGXv+5FBqcXjTc+DO8VQierzcxTYhyNxpw+AuuB4U1H_Xo6wPg@mail.gmail.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Thu, 13 Jun 2024 17:10:41 +0800
-Message-ID: <CAGXv+5HC_spBAc-t4cS+aCOQKdfWRzMkXK94HmD1Qg02ML4Uug@mail.gmail.com>
-Subject: Re: [PATCH 3/6] dt-bindings: gpu: powervr-rogue: Add MediaTek MT8173 GPU
-To: Frank Binns <Frank.Binns@imgtec.com>, Adam Ford <aford173@gmail.com>
-Cc: "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>, "tzimmermann@suse.de" <tzimmermann@suse.de>, 
-	Matt Coster <Matt.Coster@imgtec.com>, "sboyd@kernel.org" <sboyd@kernel.org>, 
-	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>, 
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>, 
-	"mripard@kernel.org" <mripard@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
-	"angelogioacchino.delregno@collabora.com" <angelogioacchino.delregno@collabora.com>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "airlied@gmail.com" <airlied@gmail.com>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>, "daniel@ffwll.ch" <daniel@ffwll.ch>, 
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+References: <1718243482-18552-1-git-send-email-shengjiu.wang@nxp.com>
+ <1718243482-18552-3-git-send-email-shengjiu.wang@nxp.com> <20240613081949.yty3hznopp3u2qwq@pengutronix.de>
+In-Reply-To: <20240613081949.yty3hznopp3u2qwq@pengutronix.de>
+From: Shengjiu Wang <shengjiu.wang@gmail.com>
+Date: Thu, 13 Jun 2024 17:20:18 +0800
+Message-ID: <CAA+D8AMc9=bzHKNXyMH5LLerr2kgmKTxacP=1LhocTHgP9Thfw@mail.gmail.com>
+Subject: Re: [PATCH v7 2/5] clk: imx: clk-audiomix: Add reset controller
+To: Marco Felsch <m.felsch@pengutronix.de>
+Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, p.zabel@pengutronix.de, abelvesa@kernel.org, 
+	peng.fan@nxp.com, mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org, 
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
+	marex@denx.de, linux-clk@vger.kernel.org, imx@lists.linux.dev, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jun 4, 2024 at 12:18=E2=80=AFPM Chen-Yu Tsai <wenst@chromium.org> w=
-rote:
+On Thu, Jun 13, 2024 at 4:20=E2=80=AFPM Marco Felsch <m.felsch@pengutronix.=
+de> wrote:
 >
-> On Fri, May 31, 2024 at 9:37=E2=80=AFPM Frank Binns <Frank.Binns@imgtec.c=
-om> wrote:
+> On 24-06-13, Shengjiu Wang wrote:
+> > Audiomix block control can be a reset controller for
+> > Enhanced Audio Return Channel (EARC), which is one of
+> > modules in this audiomix subsystem.
 > >
-> > Hi ChenYu,
+> > The reset controller is supported by the auxiliary device
+> > framework.
 > >
-> > On Thu, 2024-05-30 at 16:35 +0800, Chen-Yu Tsai wrote:
-> > > The MediaTek MT8173 comes with a PowerVR Rogue GX6250, which is one
-> > > of the Series6XT GPUs, another sub-family of the Rogue family.
+> > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> > Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> > ---
+> >  drivers/clk/imx/Kconfig               |  1 +
+> >  drivers/clk/imx/clk-imx8mp-audiomix.c | 63 +++++++++++++++++++++++++++
+> >  2 files changed, 64 insertions(+)
 > >
-> > I've added Adam Ford who sent out some DT related patches [1] for the R=
-enesas
-> > variant of GX6250 and the GX6650 (another Series6XT GPU).
-> >
-> > >
-> > > This was part of the very first few versions of the PowerVR submissio=
-n,
-> > > but was later dropped. The compatible string has been updated to foll=
-ow
-> > > the new naming scheme adopted for the AXE series.
-> > >
-> > > In a previous iteration of the PowerVR binding submission [1], the
-> > > number of clocks required for the 6XT family was mentioned to be
-> > > always 3. This is also reflected here.
-> > >
-> > > [1] https://lore.kernel.org/dri-devel/6eeccb26e09aad67fb30ffcd523c793=
-a43c79c2a.camel@imgtec.com/
-> > >
-> > > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-> > > ---
-> > >  .../bindings/gpu/img,powervr-rogue.yaml       | 24 +++++++++++++++--=
---
-> > >  1 file changed, 20 insertions(+), 4 deletions(-)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.=
-yaml b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
-> > > index 256e252f8087..48aa205b66b4 100644
-> > > --- a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
-> > > +++ b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
-> > > @@ -12,10 +12,17 @@ maintainers:
-> > >
-> > >  properties:
-> > >    compatible:
-> > > -    items:
-> > > -      - enum:
-> > > -          - ti,am62-gpu
-> > > -      - const: img,img-axe # IMG AXE GPU model/revision is fully dis=
-coverable
-> > > +    oneOf:
-> > > +      - items:
-> > > +          - enum:
-> > > +              - mediatek,mt8173-gpu
-> > > +          # PowerVR 6XT GPU model/revision is fully discoverable
-> > > +          - const: img,powervr-6xt
-> > > +      - items:
-> > > +          - enum:
-> > > +              - ti,am62-gpu
-> > > +          # IMG AXE GPU model/revision is fully discoverable
-> > > +          - const: img,img-axe
-> >
-> > The Series6XT GPU models have differing numbers of power domains (eithe=
-r 2, 4 or
-> > 5). Whereas, the AXE GPUs have a single power domain, so I assume there=
- should
-> > be a related change here.
-> >
-> > The GX6250 has two power domains (lets call them A and B). There's a co=
-nstraint
-> > that if domain B is powered then domain A must also be powered.
-> >
-> > In patch 6 [2] it's setting the power domain to MT8173_POWER_DOMAIN_MFG=
-, which I
-> > believe corresponds to power domain B. I assume this works because the =
-MTK power
-> > controller driver is encoding the constraint above, meaning that when w=
-e disable
-> > or enable MT8173_POWER_DOMAIN_MFG it's also disabling/enabling MT8173_P=
-OWER_DOMA
-> > IN_MFG_2D (domain A).
+> > diff --git a/drivers/clk/imx/Kconfig b/drivers/clk/imx/Kconfig
+> > index 6da0fba68225..9edfb030bea9 100644
+> > --- a/drivers/clk/imx/Kconfig
+> > +++ b/drivers/clk/imx/Kconfig
+> > @@ -81,6 +81,7 @@ config CLK_IMX8MP
+> >       tristate "IMX8MP CCM Clock Driver"
+> >       depends on ARCH_MXC || COMPILE_TEST
+> >       select MXC_CLK
+> > +     select AUXILIARY_BUS
 >
-> It could also be that the power domains are split in the glue layer and t=
-here
-> is some sequencing handled there. I'll reach out to MediaTek to see if th=
-ey
-> can dig up some design specifics.
+>         select AUXILIARY_BUS if RESET_CONTROLLER
 
-Unfortunately they said they no longer have that information.
+Do we really need this change?
 
-> I assume you would like to see the separate power domains properly modele=
-d
-> in the device tree?
-
-So how should we go about this? Adam, do you have this information for
-your platform?
-
-Thanks
-ChenYu
+I checked other drivers like MCHP_CLK_MPFS, but they don't have
+this condition also.
 
 >
-> Thanks
-> ChenYu
+> >       help
+> >           Build the driver for i.MX8MP CCM Clock Driver
+> >
+> > diff --git a/drivers/clk/imx/clk-imx8mp-audiomix.c b/drivers/clk/imx/cl=
+k-imx8mp-audiomix.c
+> > index b381d6f784c8..517b1f88661b 100644
+> > --- a/drivers/clk/imx/clk-imx8mp-audiomix.c
+> > +++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
+> > @@ -5,6 +5,7 @@
+> >   * Copyright (C) 2022 Marek Vasut <marex@denx.de>
+> >   */
+> >
+> > +#include <linux/auxiliary_bus.h>
+> >  #include <linux/clk-provider.h>
+> >  #include <linux/device.h>
+> >  #include <linux/io.h>
+> > @@ -13,6 +14,7 @@
+> >  #include <linux/of.h>
+> >  #include <linux/platform_device.h>
+> >  #include <linux/pm_runtime.h>
+> > +#include <linux/slab.h>
+>                 ^
+> This is an unrelated change.
+
+This is for the fix of this issue
+
+https://lore.kernel.org/oe-kbuild-all/202405201844.zf7UkDmq-lkp@intel.com/
+
+Best regards
+Shengjiu wang
+
 >
-> > Thanks
-> > Frank
+> Regards,
+>   Marco
+>
 > >
-> > [1] https://lists.freedesktop.org/archives/dri-devel/2024-February/4435=
-48.html
-> > [2] https://lists.freedesktop.org/archives/dri-devel/2024-May/455833.ht=
-ml
+> >  #include <dt-bindings/clock/imx8mp-clock.h>
 > >
-> > >
-> > >    reg:
-> > >      maxItems: 1
-> > > @@ -56,6 +63,15 @@ allOf:
-> > >        properties:
-> > >          clocks:
-> > >            maxItems: 1
-> > > +  - if:
-> > > +      properties:
-> > > +        compatible:
-> > > +          contains:
-> > > +            const: img,powervr-6xt
-> > > +    then:
-> > > +      properties:
-> > > +        clocks:
-> > > +          minItems: 3
-> > >
-> > >  examples:
-> > >    - |
+> > @@ -217,6 +219,63 @@ struct clk_imx8mp_audiomix_priv {
+> >       struct clk_hw_onecell_data clk_data;
+> >  };
+> >
+> > +#if IS_ENABLED(CONFIG_RESET_CONTROLLER)
+> > +
+> > +static void clk_imx8mp_audiomix_reset_unregister_adev(void *_adev)
+> > +{
+> > +     struct auxiliary_device *adev =3D _adev;
+> > +
+> > +     auxiliary_device_delete(adev);
+> > +     auxiliary_device_uninit(adev);
+> > +}
+> > +
+> > +static void clk_imx8mp_audiomix_reset_adev_release(struct device *dev)
+> > +{
+> > +     struct auxiliary_device *adev =3D to_auxiliary_dev(dev);
+> > +
+> > +     kfree(adev);
+> > +}
+> > +
+> > +static int clk_imx8mp_audiomix_reset_controller_register(struct device=
+ *dev,
+> > +                                                      struct clk_imx8m=
+p_audiomix_priv *priv)
+> > +{
+> > +     struct auxiliary_device *adev __free(kfree) =3D NULL;
+> > +     int ret;
+> > +
+> > +     if (!of_property_present(dev->of_node, "#reset-cells"))
+> > +             return 0;
+> > +
+> > +     adev =3D kzalloc(sizeof(*adev), GFP_KERNEL);
+> > +     if (!adev)
+> > +             return -ENOMEM;
+> > +
+> > +     adev->name =3D "reset";
+> > +     adev->dev.parent =3D dev;
+> > +     adev->dev.release =3D clk_imx8mp_audiomix_reset_adev_release;
+> > +
+> > +     ret =3D auxiliary_device_init(adev);
+> > +     if (ret)
+> > +             return ret;
+> > +
+> > +     ret =3D auxiliary_device_add(adev);
+> > +     if (ret) {
+> > +             auxiliary_device_uninit(adev);
+> > +             return ret;
+> > +     }
+> > +
+> > +     return devm_add_action_or_reset(dev, clk_imx8mp_audiomix_reset_un=
+register_adev,
+> > +                                     no_free_ptr(adev));
+> > +}
+> > +
+> > +#else /* !CONFIG_RESET_CONTROLLER */
+> > +
+> > +static int clk_imx8mp_audiomix_reset_controller_register(struct clk_im=
+x8mp_audiomix_priv *priv)
+> > +{
+> > +     return 0;
+> > +}
+> > +
+> > +#endif /* !CONFIG_RESET_CONTROLLER */
+> > +
+> >  static void clk_imx8mp_audiomix_save_restore(struct device *dev, bool =
+save)
+> >  {
+> >       struct clk_imx8mp_audiomix_priv *priv =3D dev_get_drvdata(dev);
+> > @@ -337,6 +396,10 @@ static int clk_imx8mp_audiomix_probe(struct platfo=
+rm_device *pdev)
+> >       if (ret)
+> >               goto err_clk_register;
+> >
+> > +     ret =3D clk_imx8mp_audiomix_reset_controller_register(dev, priv);
+> > +     if (ret)
+> > +             goto err_clk_register;
+> > +
+> >       pm_runtime_put_sync(dev);
+> >       return 0;
+> >
+> > --
+> > 2.34.1
+> >
+> >
+> >
