@@ -1,110 +1,179 @@
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8F5D12B170;
-	Thu, 13 Jun 2024 02:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35DC1824A6;
+	Thu, 13 Jun 2024 03:49:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718244491; cv=none; b=EZwGHSXSiE5Vd8ExacR/v9kIaYo4qPZrOCjloRLh63rH2Nror06dw1Utm+y47UvSdw7KVsSiJ1Yau8NG7Fxyinajv/xT0pv87LEnLvo5DAmUnSRmUvQrQxnFa2vFnziaUqn80zFCfZElwo8m6LC8/ows2gzoG/JSRWsjpsG+GYM=
+	t=1718250569; cv=none; b=FvAX6lc8SeTeuRB32CE68yVEWM4nZvcThDg2/Piq0nyYgP5cMG8+fSWNua8q2FyaJjhmltZBFYk8Tx5hiQGuJeR/7LxajI0PbLJyF+3XV/TA6+LtF8Q6bhuiZ8hXHSGo5S0n12DZOfloavq8XZ4IAhteAGelTdIzJel2Qk1l8DM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718244491; c=relaxed/simple;
-	bh=S2lBCY9EvtAQte7nGdlIdh1f9xtxLIBbDYoaJVFJgmY=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References; b=m8PGLKXVBAag++0uTNidMJDahEKjSyUmDuininbexETSgI+HT5/wHTOBBD09iQhuFST2kzie5GGtazxou58/0ZT7OnxhxetBkBMsmg/v8xw+/u8OqNssKkSqEKW+zpPDJax3f0LpQgicd/jCdr8y5z0pWSJxNNeCFQCFO15aBEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 4ABCE1A0ABE;
-	Thu, 13 Jun 2024 04:08:08 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id F0D071A0AB5;
-	Thu, 13 Jun 2024 04:08:07 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 9C1E2181D0F9;
-	Thu, 13 Jun 2024 10:08:05 +0800 (+08)
-From: Shengjiu Wang <shengjiu.wang@nxp.com>
-To: p.zabel@pengutronix.de,
-	abelvesa@kernel.org,
-	peng.fan@nxp.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	marex@denx.de,
-	linux-clk@vger.kernel.org,
-	imx@lists.linux.dev,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	shengjiu.wang@gmail.com
-Subject: [PATCH v7 5/5] clk: imx: clk-audiomix: Correct parent clock for earc_phy and audpll
-Date: Thu, 13 Jun 2024 09:51:22 +0800
-Message-Id: <1718243482-18552-6-git-send-email-shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1718243482-18552-1-git-send-email-shengjiu.wang@nxp.com>
-References: <1718243482-18552-1-git-send-email-shengjiu.wang@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+	s=arc-20240116; t=1718250569; c=relaxed/simple;
+	bh=aTM+ZGKPc+0UXpkUyqCKqKBRBKgG0dNkkwyTtKDnnNs=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CL1lAF9PooTUWm4H/T5c2K841/I+Z+XYBzRK19+vu2f6+clASM4RCZRXAsnN3ENY3kaUNspHp2OqEw+QUHTJhiJjtUJrMKbM/0L42p0nRIHttiv+/DfVFA2h0tVfzRVlN9Ghv/QtXjqloDaMA0BGfZ9HRq6HVwLRPvTjswijomg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=novo6Gl5; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="novo6Gl5"
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45CKnA51022989;
+	Thu, 13 Jun 2024 03:49:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=aC8FrLlkS7YLtoM7H04GSiYi
+	coAQ1XP4KZU2VFc6b2c=; b=novo6Gl5SCzwFjvYxQxFY33jiKlTxTt4atIXxV7j
+	lfL9nbVegBRyv3yn4AjexaRqJU41mFt8HgE6zDekaKUNoq+8rxU6ahqKH+IjR8om
+	/3Pl8GFUmzV75QJ1D9BY+rtb8HXfe6AcQ1rGVYdvLEbZzhfQFFMn0Rc8vY4mjXgy
+	wXBtg7cPNBxvo0xnKBSGDwwbH0U0ow7TsacKC8Zbrg16sXp642t/fAWC1Ek8EpcP
+	h6Y6PMo7K5lZ8KIUoE11fgxp6cyrx7P6qz+//IyLpB0lEGNsTUHT+WiWuP1gPlDe
+	lokwsIrnU6v1/1M7ayA+YYyUJaGh2glRblYTrpOkwYtSfg==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ypmjawgwj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Jun 2024 03:49:22 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45D3nLW0009867
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Jun 2024 03:49:21 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 12 Jun 2024 20:49:17 -0700
+Date: Thu, 13 Jun 2024 09:19:13 +0530
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: Georgi Djakov <djakov@kernel.org>
+CC: Konrad Dybcio <konrad.dybcio@linaro.org>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <quic_anusha@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH v9 6/6] arm64: dts: qcom: ipq9574: Add icc provider
+ ability to gcc
+Message-ID: <ZmpsOdsl9AMTSH88@hu-varada-blr.qualcomm.com>
+References: <c015b3a5-2213-4ebd-b960-d97ed1fe7062@kernel.org>
+ <ZjshR0ekcn0gxwOa@hu-varada-blr.qualcomm.com>
+ <CAA8EJpqENsojPQmCbma_nQLEZq8nK1fz1K0JdtvLd=kPrH_DBw@mail.gmail.com>
+ <1a08ef42-b52f-4c97-90d7-e7fdee7725b4@linaro.org>
+ <Zmgb+OjdBNw71sC1@hu-varada-blr.qualcomm.com>
+ <176137e5-6312-4d46-97b6-c4494bc1c61b@kernel.org>
+ <ZmlAdETV0+6Md8HC@hu-varada-blr.qualcomm.com>
+ <e24cfd23-6f77-46a0-b020-9cb3daef6930@kernel.org>
+ <Zml4RQ5R5s3mVMnI@hu-varada-blr.qualcomm.com>
+ <8e32a8be-dbbf-49ca-92a1-2fe3c8bfb571@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <8e32a8be-dbbf-49ca-92a1-2fe3c8bfb571@kernel.org>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: nS2B1HDPmkmi_KaZUDeK3HPSMD89fvdJ
+X-Proofpoint-ORIG-GUID: nS2B1HDPmkmi_KaZUDeK3HPSMD89fvdJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-12_12,2024-06-13_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 malwarescore=0
+ clxscore=1015 mlxscore=0 impostorscore=0 mlxlogscore=999
+ lowpriorityscore=0 spamscore=0 phishscore=0 bulkscore=0 priorityscore=1501
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406130024
 
-According to Reference Manual of i.MX8MP
-The parent clock of "earc_phy" is "sai_pll_out_div2",
-The parent clock of "audpll" is "osc_24m".
+On Wed, Jun 12, 2024 at 03:52:51PM +0300, Georgi Djakov wrote:
+> On 12.06.24 13:28, Varadarajan Narayanan wrote:
+> > On Wed, Jun 12, 2024 at 11:48:17AM +0300, Georgi Djakov wrote:
+> > > On 12.06.24 9:30, Varadarajan Narayanan wrote:
+> > > > On Tue, Jun 11, 2024 at 02:29:48PM +0300, Georgi Djakov wrote:
+> > > > > On 11.06.24 12:42, Varadarajan Narayanan wrote:
+> > > > > > On Thu, Jun 06, 2024 at 04:06:01PM +0200, Konrad Dybcio wrote:
+> > > > > > > On 8.05.2024 10:10 AM, Dmitry Baryshkov wrote:
+> > > > > > > > On Wed, 8 May 2024 at 09:53, Varadarajan Narayanan
+> > > > > > > > <quic_varada@quicinc.com> wrote:
+> > > > > > > > >
+> > > > > > > > > On Fri, May 03, 2024 at 04:51:04PM +0300, Georgi Djakov wrote:
+> > > > > > > > > > Hi Varada,
+> > > > > > > > > >
+> > > > > > > > > > Thank you for your work on this!
+> > > > > > > > > >
+> > > > > > > > > > On 2.05.24 12:30, Varadarajan Narayanan wrote:
+> > > > > > > > > > > On Tue, Apr 30, 2024 at 12:05:29PM +0200, Konrad Dybcio wrote:
+> > > > > > > > > > > > On 25.04.2024 12:26 PM, Varadarajan Narayanan wrote:
+> > > > > > > > > > > > > On Tue, Apr 23, 2024 at 02:58:41PM +0200, Konrad Dybcio wrote:
+> > > > > > > > > > > > > >
+> > > > > > > > > > > > > >
+> > > > > > > > > > > > > > On 4/18/24 11:23, Varadarajan Narayanan wrote:
+> > > > > > > > > > > > > > > IPQ SoCs dont involve RPM in managing NoC related clocks and
+> > > > > > > > > > > > > > > there is no NoC scaling. Linux itself handles these clocks.
+> > > > > > > > > > > > > > > However, these should not be exposed as just clocks and align
+> > > > > > > > > > > > > > > with other Qualcomm SoCs that handle these clocks from a
+> > > > > > > > > > > > > > > interconnect provider.
+> > > > > > > > > > > > > > >
+> > > > > > > > > > > > > > > Hence include icc provider capability to the gcc node so that
+> > > > > > > > > > > > > > > peripherals can use the interconnect facility to enable these
+> > > > > > > > > > > > > > > clocks.
+> > > > > > > > > > > > > > >
+> > > > > > > > > > > > > > > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > > > > > > > > > > > > > > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> > > > > > > > > > > > > > > ---
+> > > > > > > > > > > > > >
+> > > > > > > > > > > > > > If this is all you do to enable interconnect (which is not the case,
+> > > > > > > > > > > > > > as this patch only satisfies the bindings checker, the meaningful
+> > > > > > > > > > > > > > change happens in the previous patch) and nothing explodes, this is
+> > > > > > > > > > > > > > an apparent sign of your driver doing nothing.
+> > > > > > > > > > > > >
+> > > > > > > > > > > > > It appears to do nothing because, we are just enabling the clock
+> > > > > > > > > > > > > provider to also act as interconnect provider. Only when the
+> > > > > > > > > > > > > consumers are enabled with interconnect usage, this will create
+> > > > > > > > > > > > > paths and turn on the relevant NOC clocks.
+> > > > > > > > > > > >
+> > > > > > > > > > > > No, with sync_state it actually does "something" (sets the interconnect
+> > > > > > > > > > > > path bandwidths to zero). And *this* patch does nothing functionally,
+> > > > > > > > > > > > it only makes the dt checker happy.
+> > > > > > > > > > >
+>
+> [..]
+>
+> >
+> > nsscc_ipq9574 was not using icc_sync_state. After adding that, I
+> > can see the following messages printed from icc_sync_state. I
+> > also added a print to confirm if 'p->set(n, n);' is called.
+>
+> Ok, that's good! So now when all providers are using sync_state, we
+> can go back to the initial comment from Konrad. I think you should
+> re-check the tests that you did, as the current results just lead to
+> more questions than answers. Maybe it was just the sync-state that
+> was missing, or there is some other issue.
 
-Add CLK_GATE_PARENT() macro for usage of specifying parent clock.
+Georgi,
 
-Fixes: 6cd95f7b151c ("clk: imx: imx8mp: Add audiomix block control")
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-Reviewed-by: Peng Fan <peng.fan@nxp.com>
----
- drivers/clk/imx/clk-imx8mp-audiomix.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+Thanks very much for the clarifications. Will re-test the patches
+and update the thread.
 
-diff --git a/drivers/clk/imx/clk-imx8mp-audiomix.c b/drivers/clk/imx/clk-imx8mp-audiomix.c
-index 7fd336a96cfe..50ad5873c990 100644
---- a/drivers/clk/imx/clk-imx8mp-audiomix.c
-+++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
-@@ -156,6 +156,15 @@ static const struct clk_parent_data clk_imx8mp_audiomix_pll_bypass_sels[] = {
- 		PDM_SEL, 2, 0						\
- 	}
- 
-+#define CLK_GATE_PARENT(gname, cname, pname)						\
-+	{								\
-+		gname"_cg",						\
-+		IMX8MP_CLK_AUDIOMIX_##cname,				\
-+		{ .fw_name = pname, .name = pname }, NULL, 1,		\
-+		CLKEN0 + 4 * !!(IMX8MP_CLK_AUDIOMIX_##cname / 32),	\
-+		1, IMX8MP_CLK_AUDIOMIX_##cname % 32			\
-+	}
-+
- struct clk_imx8mp_audiomix_sel {
- 	const char			*name;
- 	int				clkid;
-@@ -173,14 +182,14 @@ static struct clk_imx8mp_audiomix_sel sels[] = {
- 	CLK_GATE("earc", EARC_IPG),
- 	CLK_GATE("ocrama", OCRAMA_IPG),
- 	CLK_GATE("aud2htx", AUD2HTX_IPG),
--	CLK_GATE("earc_phy", EARC_PHY),
-+	CLK_GATE_PARENT("earc_phy", EARC_PHY, "sai_pll_out_div2"),
- 	CLK_GATE("sdma2", SDMA2_ROOT),
- 	CLK_GATE("sdma3", SDMA3_ROOT),
- 	CLK_GATE("spba2", SPBA2_ROOT),
- 	CLK_GATE("dsp", DSP_ROOT),
- 	CLK_GATE("dspdbg", DSPDBG_ROOT),
- 	CLK_GATE("edma", EDMA_ROOT),
--	CLK_GATE("audpll", AUDPLL_ROOT),
-+	CLK_GATE_PARENT("audpll", AUDPLL_ROOT, "osc_24m"),
- 	CLK_GATE("mu2", MU2_ROOT),
- 	CLK_GATE("mu3", MU3_ROOT),
- 	CLK_PDM,
--- 
-2.34.1
+-Varada
 
+> [..]
+> >
+> > The gcc based interconnect paths are referenced by PCIe controller
+> > nodes. Please refer to this patch
+> >
+> > 	[PATCH V5 4/6] arm64: dts: qcom: ipq9574: Add PCIe PHYs and controller nodes
+> > 	https://lore.kernel.org/linux-arm-msm/20240512082858.1806694-5-quic_devipriy@quicinc.com/
+> >
+> > Sorry, did not post the nsscc related patches since this base ICC
+> > patch hasn't reached closure. The nsscc patches are very similar
+> > to this gcc based series. Wanted to gather the issues raised in
+> > this and address them in nsscc so that it is in a more acceptable
+> > shape.
+> >
+> > Thanks
+> > Varada
+>
