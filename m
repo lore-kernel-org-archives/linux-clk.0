@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD61A143C48;
-	Thu, 13 Jun 2024 12:47:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D07D7143899;
+	Thu, 13 Jun 2024 12:47:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718282863; cv=none; b=c7Mg6H9Hc82DiIqAQh9tECERTkC6HfuYRLaLLFTh7mntxr9crnVNRHpsHuMzQWE+AeqnjBKLJ8X2oj9UyqDMm496Ig3WA3usnJOMLMds/I21VCzZvLAekjNm3pbZ/NS+3PnudHZVbalxE/PBOwnCi0JJnsp+1/XYId5dskboX94=
+	t=1718282866; cv=none; b=YR3F+O3yW/7Xvk9D6h70AlcPEU1ZINqs5JIaliNg917e7576D3REHEWuxx48QGZ7kxuUuGN48gZ1wKmzaPoh9fouGL9DXNOLA9zZIcMsT2QkpRMnOm3TbxMrh38S+NoZGG0Nivk5ZQvg7o57DsNuwzfSLM2TnFLXYPTQCLs3mPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718282863; c=relaxed/simple;
-	bh=ad9x5yMs8ga0zZnmsTn+ucutXDEmn4srbTD18t0nLS0=;
+	s=arc-20240116; t=1718282866; c=relaxed/simple;
+	bh=lboWJOELb7i1u/sdo5EvnbtrEmDgZV0z3zT35BMdUfs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=U4brYwBAS5zNwreJkpRhTnjWQHq6uAgqISQmW28f2zbUaSxfq+rPTcztBJ/Uj6QEAHaueU1P4XONZk4JMZCD44YIWWZgzfmujTt74zgDxsKliZQ1JyyhFluKYIToULG9Cf8NdE6u4seYInqd5zuvg6PymjMfYsvWwK7jbRh3xEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=itDSX2Rn; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=J4tJaUqVgA5WfG4EAwTcUhgS7bOPtbk6F9C3XqaaKTfVZtJMv0925oC4Q+QwrvTCCzA+CyVqZThzlaBDOEpIiyw9ff2VHS6IJh6hbdnhYILwIdiLwUyYZ/mpGaN0lvAZJE6/mGWrmxkACRdFNNVK2fEgbgTpk1+yVHiixyo3IRI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I+n346rL; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="itDSX2Rn"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23703C2BBFC;
-	Thu, 13 Jun 2024 12:47:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I+n346rL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30BBEC32786;
+	Thu, 13 Jun 2024 12:47:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718282862;
-	bh=ad9x5yMs8ga0zZnmsTn+ucutXDEmn4srbTD18t0nLS0=;
+	s=k20201202; t=1718282866;
+	bh=lboWJOELb7i1u/sdo5EvnbtrEmDgZV0z3zT35BMdUfs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=itDSX2RnedPjYnzaoyH91+9KKIqhjMs18rPHCEJJTBI4D6CgiOdjRnEF9vKnV1P2/
-	 +hfTxfx2lw7JGcHmnbW0vExyHeOb0XF3CpKSlUV7C89IcnDu1SIvIwBSEa83DJIKVw
-	 fQy2A2GzZfqNKVAKCfY8NTxEa6vjev9Be8BWVlgH5mLZ1MGFWzfjcmM4b3JSLwAavs
-	 JZURSqvxSUcskYl8UpMM59FJZoiFTzRB1PztCm4Tgzgbwb3YGj7k9GEmJ/HcY33iCb
-	 fEVVbuk/J8947XcXNCbmgfUNhYkPXPTj3CNJgUugDKtkzsq4ogezj0hzwS75QAOp/2
-	 Jne8EfSVi7iQA==
+	b=I+n346rLl9Gji9k9bBt49hGAzJb9ZMrR3aS8Q6EhoZ7Wx4JVQbrfhvwEax/ULq0ds
+	 aqk1u+iheRQDSn2gk4SF8wE9N7wOQUx+jCD90olhMfEeXgYIH1Mve5+f9MGyYulqiP
+	 /Y+1PiD6ad+YbsOj6J6yMxmmstWqXSrQAvJqq8XTsXp2BLUim6BgwlLF4iMGKcU83x
+	 35ewuW4Es1nButRGmDHZO1ATt5vI27PB/6xuqX36rCVfjtyGlMH/T2ZO7tw9PE9noG
+	 RZ/zX4VZvZTBEFa79JhK5mfVHBMPhcqzulRkyORoZgsyylcaLKZ7DpgHHiIplJxvfH
+	 16jG39IcolpfA==
 From: Lorenzo Bianconi <lorenzo@kernel.org>
 To: linux-clk@vger.kernel.org
 Cc: p.zabel@pengutronix.de,
@@ -45,9 +45,9 @@ Cc: p.zabel@pengutronix.de,
 	will@kernel.org,
 	upstream@airoha.com,
 	angelogioacchino.delregno@collabora.com
-Subject: [PATCH v3 1/4] dt-bindings: clock: airoha: Add reset support to EN7581 clock binding
-Date: Thu, 13 Jun 2024 14:47:03 +0200
-Message-ID: <ac557b6f4029cb3428d4c0ed1582d0c602481fb6.1718282056.git.lorenzo@kernel.org>
+Subject: [PATCH v3 2/4] clk: en7523: Add reset-controller support for EN7581 SoC
+Date: Thu, 13 Jun 2024 14:47:04 +0200
+Message-ID: <20ebe87f8928918ae244677cf85e4e249285759d.1718282056.git.lorenzo@kernel.org>
 X-Mailer: git-send-email 2.45.1
 In-Reply-To: <cover.1718282056.git.lorenzo@kernel.org>
 References: <cover.1718282056.git.lorenzo@kernel.org>
@@ -59,149 +59,281 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Introduce reset capability to EN7581 device-tree clock binding
-documentation.
+Introduce reset API support to EN7581 clock driver.
 
+Tested-by: Zhengping Zhang <zhengping.zhang@airoha.com>
 Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
 ---
- .../bindings/clock/airoha,en7523-scu.yaml     | 25 ++++++-
- .../dt-bindings/reset/airoha,en7581-reset.h   | 66 +++++++++++++++++++
- 2 files changed, 90 insertions(+), 1 deletion(-)
- create mode 100644 include/dt-bindings/reset/airoha,en7581-reset.h
+ drivers/clk/clk-en7523.c | 200 ++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 197 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
-index 3f4266637733..84353fd09428 100644
---- a/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
-+++ b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.yaml
-@@ -35,7 +35,7 @@ properties:
+diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
+index ccc394692671..00638714fe08 100644
+--- a/drivers/clk/clk-en7523.c
++++ b/drivers/clk/clk-en7523.c
+@@ -5,7 +5,11 @@
+ #include <linux/io.h>
+ #include <linux/platform_device.h>
+ #include <linux/property.h>
++#include <linux/reset-controller.h>
+ #include <dt-bindings/clock/en7523-clk.h>
++#include <dt-bindings/reset/airoha,en7581-reset.h>
++
++#define RST_NR_PER_BANK			32
  
-   reg:
-     minItems: 2
--    maxItems: 3
-+    maxItems: 4
+ #define REG_PCI_CONTROL			0x88
+ #define   REG_PCI_CONTROL_PERSTOUT	BIT(29)
+@@ -40,6 +44,9 @@
+ #define REG_PCIE_XSI0_SEL_MASK		GENMASK(14, 13)
+ #define REG_PCIE_XSI1_SEL_MASK		GENMASK(12, 11)
  
-   "#clock-cells":
-     description:
-@@ -43,6 +43,10 @@ properties:
-       clocks.
-     const: 1
++#define REG_RST_CTRL2			0x00
++#define REG_RST_CTRL1			0x04
++
+ struct en_clk_desc {
+ 	int id;
+ 	const char *name;
+@@ -64,8 +71,20 @@ struct en_clk_gate {
+ 	struct clk_hw hw;
+ };
  
-+  '#reset-cells':
-+    description: ID of the controller reset line
-+    const: 1
++struct en_rst_data {
++	const u16 *bank_ofs;
++	const u16 *idx_map;
++	void __iomem *base;
++	struct reset_controller_dev rcdev;
++};
 +
- required:
-   - compatible
-   - reg
-@@ -60,6 +64,8 @@ allOf:
-             - description: scu base address
-             - description: misc scu base address
+ struct en_clk_soc_data {
+ 	const struct clk_ops pcie_ops;
++	struct {
++		const u16 *bank_ofs;
++		const u16 *idx_map;
++		u16 idx_map_nr;
++	} reset;
+ 	int (*hw_init)(struct platform_device *pdev, void __iomem *base,
+ 		       void __iomem *np_base);
+ };
+@@ -168,6 +187,69 @@ static const struct en_clk_desc en7523_base_clks[] = {
+ 	}
+ };
  
-+        '#reset-cells': false
++static const u16 en7581_rst_ofs[] = {
++	REG_RST_CTRL2,
++	REG_RST_CTRL1,
++};
 +
-   - if:
-       properties:
-         compatible:
-@@ -70,6 +76,7 @@ allOf:
-           items:
-             - description: scu base address
-             - description: misc scu base address
-+            - description: reset base address
-             - description: pb scu base address
++static const u16 en7581_rst_map[] = {
++	/* RST_CTRL2 */
++	[EN7581_XPON_PHY_RST]		= 0,
++	[EN7581_CPU_TIMER2_RST]		= 2,
++	[EN7581_HSUART_RST]		= 3,
++	[EN7581_UART4_RST]		= 4,
++	[EN7581_UART5_RST]		= 5,
++	[EN7581_I2C2_RST]		= 6,
++	[EN7581_XSI_MAC_RST]		= 7,
++	[EN7581_XSI_PHY_RST]		= 8,
++	[EN7581_NPU_RST]		= 9,
++	[EN7581_I2S_RST]		= 10,
++	[EN7581_TRNG_RST]		= 11,
++	[EN7581_TRNG_MSTART_RST]	= 12,
++	[EN7581_DUAL_HSI0_RST]		= 13,
++	[EN7581_DUAL_HSI1_RST]		= 14,
++	[EN7581_HSI_RST]		= 15,
++	[EN7581_DUAL_HSI0_MAC_RST]	= 16,
++	[EN7581_DUAL_HSI1_MAC_RST]	= 17,
++	[EN7581_HSI_MAC_RST]		= 18,
++	[EN7581_WDMA_RST]		= 19,
++	[EN7581_WOE0_RST]		= 20,
++	[EN7581_WOE1_RST]		= 21,
++	[EN7581_HSDMA_RST]		= 22,
++	[EN7581_TDMA_RST]		= 24,
++	[EN7581_EMMC_RST]		= 25,
++	[EN7581_SOE_RST]		= 26,
++	[EN7581_PCIE2_RST]		= 27,
++	[EN7581_XFP_MAC_RST]		= 28,
++	[EN7581_USB_HOST_P1_RST]	= 29,
++	[EN7581_USB_HOST_P1_U3_PHY_RST]	= 30,
++	/* RST_CTRL1 */
++	[EN7581_PCM1_ZSI_ISI_RST]	= RST_NR_PER_BANK + 0,
++	[EN7581_FE_PDMA_RST]		= RST_NR_PER_BANK + 1,
++	[EN7581_FE_QDMA_RST]		= RST_NR_PER_BANK + 2,
++	[EN7581_PCM_SPIWP_RST]		= RST_NR_PER_BANK + 4,
++	[EN7581_CRYPTO_RST]		= RST_NR_PER_BANK + 6,
++	[EN7581_TIMER_RST]		= RST_NR_PER_BANK + 8,
++	[EN7581_PCM1_RST]		= RST_NR_PER_BANK + 11,
++	[EN7581_UART_RST]		= RST_NR_PER_BANK + 12,
++	[EN7581_GPIO_RST]		= RST_NR_PER_BANK + 13,
++	[EN7581_GDMA_RST]		= RST_NR_PER_BANK + 14,
++	[EN7581_I2C_MASTER_RST]		= RST_NR_PER_BANK + 16,
++	[EN7581_PCM2_ZSI_ISI_RST]	= RST_NR_PER_BANK + 17,
++	[EN7581_SFC_RST]		= RST_NR_PER_BANK + 18,
++	[EN7581_UART2_RST]		= RST_NR_PER_BANK + 19,
++	[EN7581_GDMP_RST]		= RST_NR_PER_BANK + 20,
++	[EN7581_FE_RST]			= RST_NR_PER_BANK + 21,
++	[EN7581_USB_HOST_P0_RST]	= RST_NR_PER_BANK + 22,
++	[EN7581_GSW_RST]		= RST_NR_PER_BANK + 23,
++	[EN7581_SFC2_PCM_RST]		= RST_NR_PER_BANK + 25,
++	[EN7581_PCIE0_RST]		= RST_NR_PER_BANK + 26,
++	[EN7581_PCIE1_RST]		= RST_NR_PER_BANK + 27,
++	[EN7581_CPU_TIMER_RST]		= RST_NR_PER_BANK + 28,
++	[EN7581_PCIE_HB_RST]		= RST_NR_PER_BANK + 29,
++	[EN7581_XPON_MAC_RST]		= RST_NR_PER_BANK + 31,
++};
++
+ static unsigned int en7523_get_base_rate(void __iomem *base, unsigned int i)
+ {
+ 	const struct en_clk_desc *desc = &en7523_base_clks[i];
+@@ -370,7 +452,7 @@ static int en7581_clk_hw_init(struct platform_device *pdev,
+ 	void __iomem *pb_base;
+ 	u32 val;
  
- additionalProperties: false
-@@ -83,3 +90,19 @@ examples:
-             <0x1fb00000 0x1000>;
-       #clock-cells = <1>;
-     };
+-	pb_base = devm_platform_ioremap_resource(pdev, 2);
++	pb_base = devm_platform_ioremap_resource(pdev, 3);
+ 	if (IS_ERR(pb_base))
+ 		return PTR_ERR(pb_base);
+ 
+@@ -423,6 +505,102 @@ static void en7523_register_clocks(struct device *dev, struct clk_hw_onecell_dat
+ 	clk_data->num = EN7523_NUM_CLOCKS;
+ }
+ 
++static int en7523_reset_update(struct reset_controller_dev *rcdev,
++			       unsigned long id, bool assert)
++{
++	struct en_rst_data *rst_data;
++	void __iomem *addr;
++	u32 val;
 +
-+  - |
-+    soc {
-+      #address-cells = <2>;
-+      #size-cells = <2>;
++	rst_data = container_of(rcdev, struct en_rst_data, rcdev);
++	addr = rst_data->base + rst_data->bank_ofs[id / RST_NR_PER_BANK];
 +
-+      scuclk: clock-controller@1fa20000 {
-+        compatible = "airoha,en7581-scu";
-+        reg = <0x0 0x1fa20000 0x0 0x400>,
-+              <0x0 0x1fb00000 0x0 0x90>,
-+              <0x0 0x1fb00830 0x0 0x8>,
-+              <0x0 0x1fbe3400 0x0 0xfc>;
-+              #clock-cells = <1>;
-+              #reset-cells = <1>;
-+      };
-+    };
-diff --git a/include/dt-bindings/reset/airoha,en7581-reset.h b/include/dt-bindings/reset/airoha,en7581-reset.h
-new file mode 100644
-index 000000000000..6544a1790b83
---- /dev/null
-+++ b/include/dt-bindings/reset/airoha,en7581-reset.h
-@@ -0,0 +1,66 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Copyright (c) 2024 AIROHA Inc
-+ * Author: Lorenzo Bianconi <lorenzo@kernel.org>
-+ */
++	val = readl(addr);
++	if (assert)
++		val |= BIT(id % RST_NR_PER_BANK);
++	else
++		val &= ~BIT(id % RST_NR_PER_BANK);
++	writel(val, addr);
 +
-+#ifndef __DT_BINDINGS_RESET_CONTROLLER_AIROHA_EN7581_H_
-+#define __DT_BINDINGS_RESET_CONTROLLER_AIROHA_EN7581_H_
++	return 0;
++}
 +
-+/* RST_CTRL2 */
-+#define EN7581_XPON_PHY_RST		 0
-+#define EN7581_CPU_TIMER2_RST		 1
-+#define EN7581_HSUART_RST		 2
-+#define EN7581_UART4_RST		 3
-+#define EN7581_UART5_RST		 4
-+#define EN7581_I2C2_RST			 5
-+#define EN7581_XSI_MAC_RST		 6
-+#define EN7581_XSI_PHY_RST		 7
-+#define EN7581_NPU_RST			 8
-+#define EN7581_I2S_RST			 9
-+#define EN7581_TRNG_RST			10
-+#define EN7581_TRNG_MSTART_RST		11
-+#define EN7581_DUAL_HSI0_RST		12
-+#define EN7581_DUAL_HSI1_RST		13
-+#define EN7581_HSI_RST			14
-+#define EN7581_DUAL_HSI0_MAC_RST	15
-+#define EN7581_DUAL_HSI1_MAC_RST	16
-+#define EN7581_HSI_MAC_RST		17
-+#define EN7581_WDMA_RST			18
-+#define EN7581_WOE0_RST			19
-+#define EN7581_WOE1_RST			20
-+#define EN7581_HSDMA_RST		21
-+#define EN7581_TDMA_RST			22
-+#define EN7581_EMMC_RST			23
-+#define EN7581_SOE_RST			24
-+#define EN7581_PCIE2_RST		25
-+#define EN7581_XFP_MAC_RST		26
-+#define EN7581_USB_HOST_P1_RST		27
-+#define EN7581_USB_HOST_P1_U3_PHY_RST	28
-+/* RST_CTRL1 */
-+#define EN7581_PCM1_ZSI_ISI_RST		29
-+#define EN7581_FE_PDMA_RST		30
-+#define EN7581_FE_QDMA_RST		31
-+#define EN7581_PCM_SPIWP_RST		32
-+#define EN7581_CRYPTO_RST		33
-+#define EN7581_TIMER_RST		34
-+#define EN7581_PCM1_RST			35
-+#define EN7581_UART_RST			36
-+#define EN7581_GPIO_RST			37
-+#define EN7581_GDMA_RST			38
-+#define EN7581_I2C_MASTER_RST		39
-+#define EN7581_PCM2_ZSI_ISI_RST		40
-+#define EN7581_SFC_RST			41
-+#define EN7581_UART2_RST		42
-+#define EN7581_GDMP_RST			43
-+#define EN7581_FE_RST			44
-+#define EN7581_USB_HOST_P0_RST		45
-+#define EN7581_GSW_RST			46
-+#define EN7581_SFC2_PCM_RST		47
-+#define EN7581_PCIE0_RST		48
-+#define EN7581_PCIE1_RST		49
-+#define EN7581_CPU_TIMER_RST		50
-+#define EN7581_PCIE_HB_RST		51
-+#define EN7581_XPON_MAC_RST		52
++static int en7523_reset_assert(struct reset_controller_dev *rcdev,
++			       unsigned long id)
++{
++	return en7523_reset_update(rcdev, id, true);
++}
 +
-+#endif /* __DT_BINDINGS_RESET_CONTROLLER_AIROHA_EN7581_H_ */
++static int en7523_reset_deassert(struct reset_controller_dev *rcdev,
++				 unsigned long id)
++{
++	return en7523_reset_update(rcdev, id, false);
++}
++
++static int en7523_reset_status(struct reset_controller_dev *rcdev,
++			       unsigned long id)
++{
++	struct en_rst_data *rst_data;
++	void __iomem *addr;
++
++	rst_data = container_of(rcdev, struct en_rst_data, rcdev);
++	addr = rst_data->base + rst_data->bank_ofs[id / RST_NR_PER_BANK];
++
++	return !!(readl(addr) & BIT(id % RST_NR_PER_BANK));
++}
++
++static int en7523_reset_xlate(struct reset_controller_dev *rcdev,
++			      const struct of_phandle_args *reset_spec)
++{
++	struct en_rst_data *rst_data;
++
++	rst_data = container_of(rcdev, struct en_rst_data, rcdev);
++	if (reset_spec->args[0] >= rcdev->nr_resets)
++		return -EINVAL;
++
++	return rst_data->idx_map[reset_spec->args[0]];
++}
++
++static const struct reset_control_ops en7523_reset_ops = {
++	.assert = en7523_reset_assert,
++	.deassert = en7523_reset_deassert,
++	.status = en7523_reset_status,
++};
++
++static int en7523_reset_register(struct platform_device *pdev,
++				 const struct en_clk_soc_data *soc_data)
++{
++	struct device *dev = &pdev->dev;
++	struct en_rst_data *rst_data;
++	void __iomem *base;
++
++	/* no reset lines available */
++	if (!soc_data->reset.idx_map_nr)
++		return 0;
++
++	base = devm_platform_ioremap_resource(pdev, 2);
++	if (IS_ERR(base))
++		return PTR_ERR(base);
++
++	rst_data = devm_kzalloc(dev, sizeof(*rst_data), GFP_KERNEL);
++	if (!rst_data)
++		return -ENOMEM;
++
++	rst_data->bank_ofs = soc_data->reset.bank_ofs;
++	rst_data->idx_map = soc_data->reset.idx_map;
++	rst_data->base = base;
++
++	rst_data->rcdev.nr_resets = soc_data->reset.idx_map_nr;
++	rst_data->rcdev.of_xlate = en7523_reset_xlate;
++	rst_data->rcdev.ops = &en7523_reset_ops;
++	rst_data->rcdev.of_node = dev->of_node;
++	rst_data->rcdev.of_reset_n_cells = 1;
++	rst_data->rcdev.owner = THIS_MODULE;
++	rst_data->rcdev.dev = dev;
++
++	return devm_reset_controller_register(dev, &rst_data->rcdev);
++}
++
+ static int en7523_clk_probe(struct platform_device *pdev)
+ {
+ 	struct device_node *node = pdev->dev.of_node;
+@@ -455,12 +633,23 @@ static int en7523_clk_probe(struct platform_device *pdev)
+ 	en7523_register_clocks(&pdev->dev, clk_data, base, np_base);
+ 
+ 	r = of_clk_add_hw_provider(node, of_clk_hw_onecell_get, clk_data);
+-	if (r)
++	if (r) {
+ 		dev_err(&pdev->dev,
+ 			"could not register clock provider: %s: %d\n",
+ 			pdev->name, r);
++		return r;
++	}
+ 
+-	return r;
++	r = en7523_reset_register(pdev, soc_data);
++	if (r) {
++		dev_err(&pdev->dev,
++			"could not register reset controller: %s: %d\n",
++			pdev->name, r);
++		of_clk_del_provider(node);
++		return r;
++	}
++
++	return 0;
+ }
+ 
+ static const struct en_clk_soc_data en7523_data = {
+@@ -479,6 +668,11 @@ static const struct en_clk_soc_data en7581_data = {
+ 		.unprepare = en7581_pci_unprepare,
+ 		.disable = en7581_pci_disable,
+ 	},
++	.reset = {
++		.bank_ofs = en7581_rst_ofs,
++		.idx_map = en7581_rst_map,
++		.idx_map_nr = ARRAY_SIZE(en7581_rst_map),
++	},
+ 	.hw_init = en7581_clk_hw_init,
+ };
+ 
 -- 
 2.45.1
 
