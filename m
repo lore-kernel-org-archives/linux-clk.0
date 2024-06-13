@@ -1,118 +1,109 @@
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBA1514B061;
-	Thu, 13 Jun 2024 18:55:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20DC15A4FD;
+	Thu, 13 Jun 2024 21:55:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718304953; cv=none; b=gtBlvSyj6UI1LC+aVRZsr9GarQJCIMPoIi7Un0DwYpjgMv3DblqppKuMMQJuvx4wnDc+lbE0eSvlySxY+BkrNyfjglCiu1edWSPNc5Uk6sf9vwY4VVA7FuXiDxuJ40OSmFTXc2/JB32C25DGbXgOEahXOVEi02iKhZCN5LHJSFU=
+	t=1718315741; cv=none; b=icgQl+6fR1YOMpBHxjKxUK0ZQVxcR1EZop/y8nEm/fLIWE+IZLBVXe1igv4YBZCgb5qR40y76uUA6qDSUFPT/dgMTrVEuzK2mrptqkoaGmfCbUqyteLkhpSC8+Me5Z+JpolFgnBQAeTc1Bk/nZ7sujtkaCe9zPjLMkYPo6MLhSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718304953; c=relaxed/simple;
-	bh=PB2nojLhZzae5rx9ilIWiCyCUZzKIumHsScsPI9lg9I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HzDEbaJfk3yq/twglG5sHNgwwWo7CsZ8QJlbSlzNZcf+VGMPGTXKYILtqVY+eT9s8HkFImuXTwZkeGDx6BG14fxwQ6vqIXosCToqp5VfnJagNwgo48T+GOKnQcVfU7D+CtDwVu3fCEwS0sF4jWMuVE1lBgKb9AzFz0OfD1j908Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e6TxCS+O; arc=none smtp.client-ip=209.85.221.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1718315741; c=relaxed/simple;
+	bh=dsOdR70lZRFyArvzgl/75h8G2gwthKt8M1Exy+eRc7I=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=Z0BrI1O3qo1YAWPiw6cz/RQTOt3eXKWbZLVOJR3TX+ZrrkFnGRnQO3DOEt/R/fxlKZKGL0/zwtF7SUbdKG3lkLUCz2mrHc4Z9RScOUZAIqHEGdFxHn7tQI7qcd8ZFLOZa6EGCYx3RnTLzG1MqveQ5qggP4B+Qfe9H1U8d6x9kNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WuUGQ1px; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e6TxCS+O"
-Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-4e7eadf3668so522239e0c.0;
-        Thu, 13 Jun 2024 11:55:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718304951; x=1718909751; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=A8rHVmgvSmGrxOP2jWFGDRV2w5cu6w7bmnQNCKQ1muA=;
-        b=e6TxCS+O9aQfngFVhOYQ1VtJzbOYuRTkNOIAOoyHsr6VsKxS2OUDTqItRzRf1Tsec5
-         n6i1gZTFU0hNGNSqzJM6xuZPgK4ITRWpPP8GhDnn6EXkpnN83dZyClJgP6LbZZh9E0KZ
-         K9AeHRhklbCFceEmczksHsFBdPCrvX9S9wmd6sloo7mKBOcYBHvlHzm5utE/zsfwacGu
-         A7OzF7PL9MK8xeof5hSzyaEMoqAsyU5wJ0DC4UUn8f78JF8+sNrhBOB+dtGdW6NPXh0n
-         JLkjHR5lBhbe4StEGXqYvqJqGDCajErnCPDx4lUB9cADjSTJDJh6woirz58i6q7jtQ79
-         b2fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718304951; x=1718909751;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=A8rHVmgvSmGrxOP2jWFGDRV2w5cu6w7bmnQNCKQ1muA=;
-        b=M9PWBVfdEnylx+2KuDfK6il10FMbrGSa8SGJ4ixmWyfnNjxN8fwkDRy01LJFpNeO+o
-         e7zy05zuDWhub62FRyRxRriF6uZi/htbvKPIAKm3E/wBqm5BTHgJftWxmQuCwxKPLHdH
-         pXvFGSESB28cZOX5Ux0HZkNfLZHztVFwlQ7GE9DUD/Pt6wMz2EFYxMOERP2b/m7blLoo
-         rEYr8hOUYUzA+sjDdn8SkO5C8aMMcssQG5fgBC4mYvzD81KrNN3YHT1mMVqDqW3Q7ajS
-         MlLfmG6Z55YBM3XzoNWkVvfsuTvi5aWqQ+FBr0KUmKwB8nqCuASP8pVB8PKd5+SwNpcg
-         pBCw==
-X-Forwarded-Encrypted: i=1; AJvYcCWldhYnrIXjXT5EG3GHlToDc6au+n5QrWu6CQOrgv2oeynwatrLa9TVdye4FtvfDEqBa+ed3UfKhFz6tx8gKviHg8QIXRaVrASxoidSkZOgoaG/Vf/JMWexB6aJIR7hl3/b+gfOny7FnnxDjQGHr6+iZUVvJJ2PK0SBWtSMlXWHkQS3vM3WL1YYifPBFeJIQ7meeht0osryujgdMwjsVBK8k/Q0+D8Z
-X-Gm-Message-State: AOJu0Yxzd6p/4CtMJrFw24Yo20OAmyjGLDLTCenzYilTm6wwg933LIna
-	8u5KT2KoOC5X3Bk9B4/wsbmDtFVUu7X53X7Tg2OTkkBrPwYcuoose0FFJG96ZssxyKP7s8evOzi
-	xYn9rEllVZLRUi+xHtEec5e42XEU=
-X-Google-Smtp-Source: AGHT+IHcW9OQetK9tkbITect2sTp6OO3zxB/F1M+lzzi8s7lswUbebD05U4oMiYA9j3TDmHYe5iR/6Ccln61ys/yBoI=
-X-Received: by 2002:a05:6122:c9f:b0:4ec:fc20:a51a with SMTP id
- 71dfb90a1353d-4ee3e980ac8mr802618e0c.9.1718304949331; Thu, 13 Jun 2024
- 11:55:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WuUGQ1px"
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45DJGIDQ032680;
+	Thu, 13 Jun 2024 21:55:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=w8iVtX2uGyYjJntoEL2QQf
+	DpVm30iw125rO/76T8PAI=; b=WuUGQ1pxK8Yk/qCMcDycOW9/xD8uAWARvofYEs
+	t4CvK8/9Jj06UWmUVdVa6nkC8awGwiiJKrsdJbhnAWOe7zMK48gccWnr2BudWg2Y
+	WUHvPn0dN/RfMBj0QyXnnRc78Ls2IpB3YOH5JV/wudZ7+q4UQc6K7afkBMkb2dZi
+	J9kwFoagCnhxSLj3HsvR8PNKf1AvrWvzjsD5hQHUcSKrw1/+EHg65qBm/b6lLnVW
+	paPKzudbnmUquroVMlU8pCwldZ7u+b0JW2HGLqG+GbsJ/BxXiy1zskz2EGjFMsPa
+	Pw59ReWPSNBhH/4ZTLT2cYYYWGkKE1EHVVQnsdZcvkL9kj/w==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yr6q2rcat-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Jun 2024 21:55:29 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45DLtJFY028812
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 13 Jun 2024 21:55:19 GMT
+Received: from [169.254.0.1] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 13 Jun
+ 2024 14:55:18 -0700
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Thu, 13 Jun 2024 14:55:17 -0700
+Subject: [PATCH] clk: vexpress-osc: add missing MODULE_DESCRIPTION() macro
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240610233221.242749-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240610233221.242749-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <6b3fe242-3733-4f16-b727-494dc1d82002@kernel.org> <CA+V-a8vp0qHKqUMvyfy9hQjKyk8Cs0bDTnYh-ChvPi150r5i2g@mail.gmail.com>
- <3d0a7a82-6262-40e6-be25-4a1c4d8df2fe@kernel.org> <CAMuHMdUvtUWdEfN_=gNJWY+qfE6Yw9KdenQ2OkLc=HvmRnB6pw@mail.gmail.com>
-In-Reply-To: <CAMuHMdUvtUWdEfN_=gNJWY+qfE6Yw9KdenQ2OkLc=HvmRnB6pw@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Thu, 13 Jun 2024 19:55:18 +0100
-Message-ID: <CA+V-a8svpo8FYanyV9gKqmp=tCm+Po5cAi8VPmgFBnyDJyJQWg@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 2/4] dt-bindings: clock: Add R9A09G057 core clocks
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240613-md-arm64-drivers-clk-versatile-v1-1-6b8a5e5e00ef@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAMRqa2YC/x3NSw7CMAxF0a1UHmOpPwXEVhADJ3WpRRKQ3VaVq
+ u6dlNk7k/t2MFZhg3u1g/IqJp9c0FwqCBPlF6MMxdDWbV+7psM0IGlyPQ4qK6thiG88B80SGan
+ 2jrquvY79DUrkqzzK9j94PIs9GaNXymE6s1HysmEim1nhOH5iK8+ijwAAAA==
+To: Linus Walleij <linus.walleij@linaro.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Liviu Dudau
+	<liviu.dudau@arm.com>,
+        Sudeep Holla <sudeep.holla@arm.com>,
+        Lorenzo Pieralisi
+	<lpieralisi@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <kernel-janitors@vger.kernel.org>,
+        "Jeff
+ Johnson" <quic_jjohnson@quicinc.com>
+X-Mailer: b4 0.13.0
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: IABhzWWIfaWeGOsC5HBWz9Ewu9RaSAsQ
+X-Proofpoint-ORIG-GUID: IABhzWWIfaWeGOsC5HBWz9Ewu9RaSAsQ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-13_13,2024-06-13_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=907
+ malwarescore=0 mlxscore=0 spamscore=0 suspectscore=0 adultscore=0
+ impostorscore=0 bulkscore=0 clxscore=1015 phishscore=0 priorityscore=1501
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406130158
 
-Hi Geert,
+With ARCH=arm64, make allmodconfig && make W=1 C=1 reports:
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/versatile/clk-vexpress-osc.o
 
-On Thu, Jun 13, 2024 at 4:15=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
->
-> Hi Krzysztof,
->
-> On Thu, Jun 13, 2024 at 2:56=E2=80=AFPM Krzysztof Kozlowski <krzk@kernel.=
-org> wrote:
-> > On 13/06/2024 11:57, Lad, Prabhakar wrote:
-> > >>> of section 4.4.2 which cannot be controlled by CLKON register.
-> > >>> ---
-> > >>>  include/dt-bindings/clock/r9a09g057-cpg.h | 21 +++++++++++++++++++=
-++
-> > >>>  1 file changed, 21 insertions(+)
-> > >>>  create mode 100644 include/dt-bindings/clock/r9a09g057-cpg.h
-> > >>
-> > >> Missing vendor prefix.
-> > >>
-> > > OK, Is this just for new includes being added, or do you want me to
-> > > rename the existing Renesas specific includes in here which dont have
-> > > vendor prefix?
-> >
-> > Didn't we discuss it?
-> >
-> > I commented only about this binding.
->
-> Yes we did, in the context of the R-Car V4M DT binding definitions,
-> which became include/dt-bindings/clock/renesas,r8a779h0-cpg-mssr.h
-> But Prabhakar was not involved there.
->
-> Note that I also asked to include the vendor prefix, see
-> https://lore.kernel.org/linux-renesas-soc/CAMuHMdU7+O-+v=3D2V83AjQmTWyGy_=
-a-AHgU_nPMDHnVUtYt89iQ@mail.gmail.com/
->
-Oops I missed that review comment.
+Add the missing invocation of the MODULE_DESCRIPTION() macro.
 
-Cheers,
-Prabhakar
+Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+---
+ drivers/clk/versatile/clk-vexpress-osc.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/versatile/clk-vexpress-osc.c b/drivers/clk/versatile/clk-vexpress-osc.c
+index b2b32fa2d7c3..c385ca2f4a74 100644
+--- a/drivers/clk/versatile/clk-vexpress-osc.c
++++ b/drivers/clk/versatile/clk-vexpress-osc.c
+@@ -119,4 +119,5 @@ static struct platform_driver vexpress_osc_driver = {
+ 	.probe = vexpress_osc_probe,
+ };
+ module_platform_driver(vexpress_osc_driver);
++MODULE_DESCRIPTION("Clock driver for Versatile Express OSC clock generators");
+ MODULE_LICENSE("GPL v2");
+
+---
+base-commit: 83a7eefedc9b56fe7bfeff13b6c7356688ffa670
+change-id: 20240613-md-arm64-drivers-clk-versatile-a0b6a3327f48
+
