@@ -1,33 +1,59 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2746313B5B0;
-	Thu, 13 Jun 2024 07:31:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45BA713C3CD
+	for <linux-clk@vger.kernel.org>; Thu, 13 Jun 2024 07:42:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718263861; cv=none; b=XuNYj/A1VLPa881aQLoE8nT75DXwUfxKGp5nBltdzVfn6m02DfF6e5V3mPWY4VD9XQIs1KCIszGC+ggcNJnf9w06XTsaejqDtb+upPFtn+NCPn11p9tvokNxMwny/3lZ847AJ+AS/XfH3JviIA988OZhaaLliUB5agYoeFHngrI=
+	t=1718264527; cv=none; b=AA8bFj49XaUQ6O0ElX+lrOlCyWl+O/ZN/sdu0uI+wAhY/LDRYVQsCT3cacyVMF1tX2tVhi/LwZ/EZeF73sV89WGR31iXKx0u3+k2TV6o9KO3a3/WaCVm7SLzA90brOEgAxTRV719TPjrqv2Wi0gL7TR4KpWzsvLk88cyaMYtlqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718263861; c=relaxed/simple;
-	bh=SpN+x8Bl+SPU7xbSBOLsmQFiCKZx9NC0SwnyioABxnE=;
+	s=arc-20240116; t=1718264527; c=relaxed/simple;
+	bh=UWY1jQHCY6b4p926RE7DUgpp9ygGl4OAgxySR+CLJUw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qWXxMnPnkqaO2oYhOE2SCGQmq/vEVckIqal9DkB4JfdmFLgxJZ0twC19lW1//kMuNdYghXlIKtupXqetociaPc4STetaFlz5BhH9SKQpLiPWx278SkXUmf5UJK4vDpUgGFtZKIorVxd1Ovlq5q3Oqcn/82VPU2rxwmTIYqj7MVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VVVtjk8M; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=UTJ2IKXLNYOFayQ+LDkUc/BwORK6ep0Img+9BhnNo2ZfQauySyxJPaYb7t92hLVfEFsIgQhI0+yoOUusbkiTBIC8mLNMFQR9WjqHrYYymWHQe0bXozis6/8ftr4FyHxEOgc6Bd5R8Xm68R8D6TW6tDgrpRGvGCLt3WHzryieraw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hMTN8CUY; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VVVtjk8M"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4E06C2BBFC;
-	Thu, 13 Jun 2024 07:30:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718263860;
-	bh=SpN+x8Bl+SPU7xbSBOLsmQFiCKZx9NC0SwnyioABxnE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=VVVtjk8MKcHE4l94FyWAgj53FcVen5KEMeN0jYCk3IzuIP9UZhPogwg9rz4fUmNMs
-	 ml7J7+jvIPmz/ab23wYsO8EwXmzLycUfARGMWpMX9prXBisc6TKNqt1rhMFJtjWpij
-	 o3GrIetd+oDfm4Zg5nZNBUHGO512+wwb2KGVfDBtApf3qFU0vAURgiphekg6g0vVSx
-	 Cz/sHpEqBsAxZjCBUJEkNXGWqeMTozLTGD1/D0EMQr5IhyODU3I2twt1ZdOiDKSd1Q
-	 DWiOWgAtNrFJBakYYhHKjxRlBQWyrqrr4SiCB+WnIGVRxGCb6EUuXKC0PkPGCSKIBB
-	 TslmUsZf7ydbQ==
-Message-ID: <fccf81eb-49be-4666-88ea-8acef040af16@kernel.org>
-Date: Thu, 13 Jun 2024 09:30:53 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hMTN8CUY"
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52c82101407so1351411e87.3
+        for <linux-clk@vger.kernel.org>; Thu, 13 Jun 2024 00:42:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718264522; x=1718869322; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KF85CFMeWWGV8dBA/jqj/6jX8gLuT5XMmUZA13zEGiE=;
+        b=hMTN8CUYyhPlJrhE6LWJSklxu85FR1OBgNLXU2rDM7c1e3Ml6lm2k3GS+uQPzVYP9L
+         hkmP/aByKZdbyFdmq5zAmnox7iOOeckwL6XVriE7kBT2pmrcn5+ZbMDWTOJ6Hlf7GESR
+         Cl38Jn0zuTnGIpE5e/pLq9LAtYmMoGHt3vB8SPjWuJnlvDeQP50Oz++IL8t+UCfg5kbT
+         zRgQqoi30x8Uoabjt/jjyd3mahSxSJtCf5a8CwH01W5NZRgEZcrOyxn4HCa/kqjVo1AZ
+         sovQbdsqAfGFlWCNNC76ToI921wJGVH8QM3Ua3G1rU6JVZfztmcFaBDHL/BfDrXUrYzr
+         7OZg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718264522; x=1718869322;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KF85CFMeWWGV8dBA/jqj/6jX8gLuT5XMmUZA13zEGiE=;
+        b=BEn5hPn5cpeKoc+T0NFXooPA5vW7xLl3Mo+FpTjI5KEMgNsPcTIWQBEvWXzNl0YFC4
+         umknk9X5fFdNHkfpmsD0K5Gp1cl9eqVgbHSmbLHcVhvttzKRfQpPDsojazyyU1ozwR9Z
+         wrpPXlHaC9mD9Qq2/MTYAOqBPlG4yu3FayLN3j0a08PJgkq9POsvUM2zhELFH1skHmZJ
+         RsgblOu0LNezTiiG61NBf/FyBY6wp8KV6waAKfKElFyXnHIQjKpv4NnYCRzQn0PbzaSC
+         tW+bvNZSOS4Dl+dOgIpLqnvHmD5OAlHKCwKYfuVoPnZXQxaYKEY6pf7kuNXQWQygehJF
+         cllA==
+X-Forwarded-Encrypted: i=1; AJvYcCXQ1s31OUDPffOB4kz/hLMijqbjZvJWlZwwU9NkVaz/C1f0dPNICZr9LbUr1JmZai1mDel693Vv0GgakK/7EbqVyY+yQce6L34h
+X-Gm-Message-State: AOJu0YyCJ9X5g0deQ3Gw0J1lulupH+M/skqWXolD0nkIuBq7FElLZPlN
+	hOp/wcIvEMHMW7dUhenldzWUkqRebP0bQHEsyjRLb1bOUlfYT/tKC+x/4tKCplg=
+X-Google-Smtp-Source: AGHT+IHyDYh9PzejbIrV9uyAGEpgb2Op+Yqzxy+7aXYUzERG4u6uKEJAqIAAqudgHbeAgx7zU7yn1g==
+X-Received: by 2002:a05:6512:3045:b0:52c:8909:bd35 with SMTP id 2adb3069b0e04-52c9a3bfb2amr4010881e87.10.1718264522420;
+        Thu, 13 Jun 2024 00:42:02 -0700 (PDT)
+Received: from ?IPV6:2a00:f41:900a:a4b1:c71b:4253:8a9f:c478? ([2a00:f41:900a:a4b1:c71b:4253:8a9f:c478])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca282ee85sm114279e87.111.2024.06.13.00.42.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 13 Jun 2024 00:42:02 -0700 (PDT)
+Message-ID: <76f5e3c7-a90b-42d2-8169-e5e2211a14a1@linaro.org>
+Date: Thu, 13 Jun 2024 09:41:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,77 +61,41 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/8] dt-bindings: clock: qcom: Add SA8775P display clock
- controllers
-To: Taniya Das <quic_tdas@quicinc.com>, Bjorn Andersson
- <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH V4 8/8] arm64: dts: qcom: sm4450: add camera, display and
+ gpu clock controller
+To: Ajit Pandey <quic_ajipan@quicinc.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Vinod Koul <vkoul@kernel.org>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
 Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- quic_jkona@quicinc.com, quic_imrashai@quicinc.com
-References: <20240612-sa8775p-mm-clock-controllers-v1-0-db295a846ee7@quicinc.com>
- <20240612-sa8775p-mm-clock-controllers-v1-5-db295a846ee7@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ Taniya Das <quic_tdas@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>,
+ Imran Shaik <quic_imrashai@quicinc.com>,
+ Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+References: <20240611133752.2192401-1-quic_ajipan@quicinc.com>
+ <20240611133752.2192401-9-quic_ajipan@quicinc.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240612-sa8775p-mm-clock-controllers-v1-5-db295a846ee7@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20240611133752.2192401-9-quic_ajipan@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 12/06/2024 12:47, Taniya Das wrote:
-> Add device tree bindings for the display clock controllers
-> on Qualcomm SA8775P platform.
+
+
+On 6/11/24 15:37, Ajit Pandey wrote:
+> Add device node for camera, display and graphics clock controller on
+> Qualcomm SM4450 platform.
 > 
-> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> Signed-off-by: Ajit Pandey <quic_ajipan@quicinc.com>
+> ---
 
-Please implement feedback and provide changelog. See go/upstream in your
-company.
+None of these nodes reference a power domain (which would usually be
+CX/MX/MMCX). This way, the RPMhPDs will never be scaled.
 
-Best regards,
-Krzysztof
+The current upstream implementation only allows one power domain to be
+scaled, but that's better than none (see other DTs for recent SoCs).
 
+Konrad
