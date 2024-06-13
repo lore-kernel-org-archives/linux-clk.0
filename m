@@ -1,106 +1,106 @@
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from inva021.nxp.com (inva021.nxp.com [92.121.34.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE32D8288C
-	for <linux-clk@vger.kernel.org>; Wed, 12 Jun 2024 22:06:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68D212A1D1;
+	Thu, 13 Jun 2024 02:08:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718230004; cv=none; b=KfR6qGi3Kn63wxAMPWZUD7AlFTcpiaBvEoDJdqjEhVeupfqC1oJWAPSthaTquLXYpS8u7EoRpA5CSj5tArq0rt209kF8xY3zfVjm2js/V5g34NctvMhBMwiRNXZg4yzUs3/n0DDJQf0QRR/jJ452JKGMeH83R2sXX6fsL7nH4+E=
+	t=1718244483; cv=none; b=DmbLiIp79cCBkcZBY0B2E54F3FeYzXCsjEkB/D5wupBWvYdy++Um5TjA6CW/pcpU5u89SqYTuQpaoWlHTzJwqBtSWxIbLrrLHz/fYDyVoMCWYNPJ6Jr8UbJrrGIR2s5uNoC8FkqmCIfnFSohptXuGW+JIrL4T+lLYzXcHjQ8q/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718230004; c=relaxed/simple;
-	bh=nWQB0cxwpb5Nyp9W2Aj2B6qiyQPIg/qKQY5yKA+03K8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pVd2NBVWw+wADE0B5Fq3w1SNSUAPLOnGrCZf89hBRNPeUd3Dw5jiCdb/8dceErp6vcIbFtVVz2Ry0y/5O6EmtJN13baEh7MvMztFmCeoXwObp7AXmn5pT5ryOouEAa7WlVpvQNDCOrMs6+okz5/DSrPpTPo0GS4/AiXWELNfPbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Rxn08QA6; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Rxn08QA6"
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52c83f21854so53679e87.2
-        for <linux-clk@vger.kernel.org>; Wed, 12 Jun 2024 15:06:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718230001; x=1718834801; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VHMkWh1GJqApt9wvbkQjpRZMa0KcRsUTuqWe6P4okXg=;
-        b=Rxn08QA6bw+Rp/CPNBTBe1zTm9vXDUWsV7Uby7e1oF4TyL17o/CeJV0ALs+/t7PeWv
-         pwugLXNreBY8DyBo7jOcqWzqDVBmgXhlIFgZeUW0t2bMjv+iZmjTUzjwkAsHgVJnaX9p
-         UL9DY7b7MxtWgrVIUntHyQq6dfSAFOsev3QSajDrozf111aWRJjatg70HNVZpTo/pyMZ
-         9MfwthRMHWmgIi5exv5WiXdArtV+beTr9NurrBqA6bFF59SJuWpPnWMmkdnSfOmkpG0r
-         tdhRnpR0+q7wroUVHQuy8uJBIS6Xk6MnuI3/WIO086mIYe2ByKuHaSdI1WN7TGWeJqnl
-         pYsA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718230001; x=1718834801;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VHMkWh1GJqApt9wvbkQjpRZMa0KcRsUTuqWe6P4okXg=;
-        b=UAxLUVr783QvQYwfuMrLpsgG1Xca1upT23GwdLWlOGJZdjPRN8oWv061kxOtl41FtA
-         DqjTCZESwCPwk3yy/PzFyJFbbgzEOQEnSeo21+TOLqjBoDC7leCXMfhnrkhb0J0YEazr
-         DwpdGaywBAAvJypSksxVjIRLYkKSyEqCTqsRSO2pRz/dhe4wUM39Sf1f7czYHdMYcgV8
-         LZa7pgY1TE9att+R+9YrUEl5GSinNrhAGfzVO91koCOR4fhIcOVC0dgVDalkGSYYaH6a
-         Zls0a9lcMcFz25JvCodRNGkdlPjGHZjBWxxl5lVOmLey3mEXFvR7yrEVaMAm53ESUjwQ
-         LKRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXDJH72qyzBNe12ffZnr7fVcfB1VKtVAKIOOaebBGtRnsZhsV6XBsNdNg8J+tqAvNOm5POWUREJDDt+ozip+g9BYtKTqUIiR+1h
-X-Gm-Message-State: AOJu0Yz/uw0GdpVMufNSL33VmkagdDvcCTiB0sHnlwcQUMFQybpRJHUD
-	2dixaKLLRa/0CzAJUnV7T9GUXDDdCkfHHvqwMpnw8LxlsMgWj/uoW3ZwNuK6ZKE=
-X-Google-Smtp-Source: AGHT+IFGBDcnsnGgnH57GdtLyI7Cp/okDgOWixyNLiELylSt9euObSqVLA0Bs7EZsFFRS0f0ffmkBA==
-X-Received: by 2002:a2e:22c5:0:b0:2ec:2f8:f4b0 with SMTP id 38308e7fff4ca-2ec02f8f645mr4542301fa.0.1718230001010;
-        Wed, 12 Jun 2024 15:06:41 -0700 (PDT)
-Received: from [192.168.1.3] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec05c78556sm76301fa.85.2024.06.12.15.06.40
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 12 Jun 2024 15:06:40 -0700 (PDT)
-Message-ID: <e974477c-f451-4c9c-83d6-31437c52f1bd@linaro.org>
-Date: Thu, 13 Jun 2024 01:06:39 +0300
+	s=arc-20240116; t=1718244483; c=relaxed/simple;
+	bh=ChQvBI+Er4xZh0kIrCud60Pm6ajfJzZQKAnf67VYDCg=;
+	h=From:To:Subject:Date:Message-Id; b=RaT2lqdxTIYrOhAbjHrWC+a23eOc+preU8/KZLS2DnZx8XtXLlh8O9q3tT6Oq+W0lSQVJlEB8PyRo5J2ACMBNBIvAALvd+OmSXun2MfE4RMe5eqfibbd8bjxan0CTnQvvhqoM8kCjTv69pIjQww2GSKp0+dFCWt/lQqqJov/b/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+Received: from inva021.nxp.com (localhost [127.0.0.1])
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id AAAA7200A5D;
+	Thu, 13 Jun 2024 04:07:59 +0200 (CEST)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+	by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 550DA20012D;
+	Thu, 13 Jun 2024 04:07:59 +0200 (CEST)
+Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
+	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 7F9D71820F76;
+	Thu, 13 Jun 2024 10:07:57 +0800 (+08)
+From: Shengjiu Wang <shengjiu.wang@nxp.com>
+To: p.zabel@pengutronix.de,
+	abelvesa@kernel.org,
+	peng.fan@nxp.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	marex@denx.de,
+	linux-clk@vger.kernel.org,
+	imx@lists.linux.dev,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	shengjiu.wang@gmail.com
+Subject: [PATCH v7 0/5] clk: imx: clk-audiomix: Improvement for audiomix
+Date: Thu, 13 Jun 2024 09:51:17 +0800
+Message-Id: <1718243482-18552-1-git-send-email-shengjiu.wang@nxp.com>
+X-Mailer: git-send-email 2.7.4
+X-Virus-Scanned: ClamAV using ClamSMTP
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V4 2/8] dt-bindings: clock: qcom: Add SM8650 video clock
- controller
-Content-Language: en-US
-To: Jagadeesh Kona <quic_jkona@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Taniya Das <quic_tdas@quicinc.com>,
- Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
- Ajit Pandey <quic_ajipan@quicinc.com>,
- Imran Shaik <quic_imrashai@quicinc.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20240602114439.1611-1-quic_jkona@quicinc.com>
- <20240602114439.1611-3-quic_jkona@quicinc.com>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <20240602114439.1611-3-quic_jkona@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
 
-Hi Jagadeesh,
+Some improvement for audiomix driver:
+Add CLK_SET_RATE_PARENT flags for clocks
+Correct parent clock for earc_phy and audpll clocks.
+Add reset controller for EARC function, use the auxiliary device
+framework:
+https://lore.kernel.org/lkml/b86c83a520f0c45a60249468fa92b1de.sboyd@kernel.org/
 
-On 6/2/24 14:44, Jagadeesh Kona wrote:
-> SM8650 video clock controller has most clocks same as SM8450,
-> but it also has few additional clocks and resets. Add device tree
-> bindings for the video clock controller on Qualcomm SM8650 platform
-> by defining these additional clocks and resets on top of SM8450.
-> 
-> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
-> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+changes in v7:
+- add property "#reset-cells" exist check
+- change the reset driver to be specific for 8MP-audiomix
+  remove the design for general usage.
 
-thank you for the change.
+changes in v6:
+- fix type for "correct"
+- fix coding style for " * adev"
 
-Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+changes in v5:
+- fix miss header issue reported by kernel test robot
+- use scoped free
 
---
-Best wishes,
-Vladimir
+changes in v4:
+- use auxiliary device framework for reset controller driver.
+- drop syscon and simple-mfd related changes in v3
+
+changes in v3:
+- separate reset driver to driver/reset/
+- add binding doc for reset driver.
+- modify imx8mp.dtsi accordingly
+
+changes in v2:
+- add more info in commit messages
+
+Shengjiu Wang (5):
+  dt-bindings: clock: imx8mp: Add #reset-cells property
+  clk: imx: clk-audiomix: Add reset controller
+  reset: imx8mp-audiomix: Add AudioMix Block Control reset driver
+  clk: imx: clk-audiomix: Add CLK_SET_RATE_PARENT flags for clocks
+  clk: imx: clk-audiomix: Correct parent clock for earc_phy and audpll
+
+ .../bindings/clock/imx8mp-audiomix.yaml       |   3 +
+ drivers/clk/imx/Kconfig                       |   1 +
+ drivers/clk/imx/clk-imx8mp-audiomix.c         |  86 ++++++++++++++-
+ drivers/reset/Kconfig                         |   8 ++
+ drivers/reset/Makefile                        |   1 +
+ drivers/reset/reset-imx8mp-audiomix.c         | 103 ++++++++++++++++++
+ 6 files changed, 196 insertions(+), 6 deletions(-)
+ create mode 100644 drivers/reset/reset-imx8mp-audiomix.c
+
+-- 
+2.34.1
+
