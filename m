@@ -1,121 +1,70 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22790192B7A;
-	Fri, 14 Jun 2024 10:09:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B19193072
+	for <linux-clk@vger.kernel.org>; Fri, 14 Jun 2024 10:17:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718359770; cv=none; b=SYqHyY4vAJZ/4K0zE1IJeHkzLKohu1ZDJF+fHFQZd+QH2muzuir6srX6BsGCINaJch/0HisLDw/mwq6wcLW8g9Eq89/wL1GsVxUYGweYxP/X2yYz0Ryk4UN7umoeg8HC9EzkYyayrockkP8rLvlIrHoL+0zAT+bCTtM/1vNXKqE=
+	t=1718360267; cv=none; b=J407i/+WrCCcmRYdAb0zgLSECaNLKv+THJk+Am2u2AnU4KntDJfRCJMJda3OS1qyHMlJJu/1ngBj5rl9BdspeeR21vDpgXZeoW4V8hcohc09m5hWi2BY2wstCb3rrY4MlHAfiY7N10QO9nzC00ecAERBQgqvLAljtb4a2zln94I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718359770; c=relaxed/simple;
-	bh=v4F28CZ7Q1szKsWq5+Gh8c3sdOlAPghSCP3m/R+zW1I=;
+	s=arc-20240116; t=1718360267; c=relaxed/simple;
+	bh=BtH/RKSYaAqxELT3qVRNNqUqpHc8LxARL4H5WzDeODs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DzPjg9a5TbtGUl8VRmjqmipCy+G8BqagfjmumOqvTpGO0gBM6ssLFFoyszS2+AZW1RyuzCN9mO3PQsFZx2UUkbNRACTjhdEEzFF0uKQI0V0RkXyERW0+NQ0XiPQYlgbCfrmMEwND9BjyuD+/dK3YFLQfgup41z5lQqaJcPn18X8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=djDQ6xvM; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="djDQ6xvM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E58CC2BD10;
-	Fri, 14 Jun 2024 10:09:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718359769;
-	bh=v4F28CZ7Q1szKsWq5+Gh8c3sdOlAPghSCP3m/R+zW1I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=djDQ6xvMsW2ObL+7HR1nKHGs3RtHIujfq60rfpHaxg+RaC7QZXYhENSABPQTnIjl1
-	 PiHy9qctakh65tG4Xy4yydkFCf4sGFTcazHaoaZH3+IZ5tTD7tUL5Z1WiuaOiaY6fR
-	 b4gwsTWi2PdowlPxv3IBaNwg5Rus7+z2bmkLRzux/cJwFU5iQX3JsQc/C8s3ZljvqC
-	 mZVeMNI+IhUEoVa1DKGWxJeNqPMjV1lKJK1y2X4X279ZMvaBZTMhdk9Rfza1QBmGcU
-	 kb0NQBaiCQayr3kfSqxkp9OBFpm//uh5QAkq2/+O+KxuYylttsJROCiD3rKPtD4FGk
-	 hmlrfy4XKcIxw==
-Date: Fri, 14 Jun 2024 12:09:27 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, Frank Li <Frank.Li@nxp.com>, 
-	devicetree@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	linux-spi@vger.kernel.org, linux-pm@vger.kernel.org, linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: drop stale Anson Huang from maintainers
-Message-ID: <mqxt2dygm5trfa2dtdl57o4yo5gxqppkvfuzah3no7uxesyqcs@klnejal4npp3>
-References: <20240614095927.88762-1-krzysztof.kozlowski@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iLTXDW9vx+Geq2jE+fi+n5v7z/6khnDMT/sYguwWnFQ1gn59+EFNqNdDDmeV+wVeou1okL0X8b7QC9jCbMx21Tv9WHr7yv12atfM1tGIDcgj0qG/QIbdU4EXOXDeaSv+kQJf/wDe7fxmPfMhWnIxWxBih7cxvmjpv6xBt6hVOxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1sI3zt-0005L3-2i; Fri, 14 Jun 2024 12:17:29 +0200
+Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1sI3zr-002FB3-GE; Fri, 14 Jun 2024 12:17:27 +0200
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1sI3zr-00AOq7-1I;
+	Fri, 14 Jun 2024 12:17:27 +0200
+Date: Fri, 14 Jun 2024 12:17:27 +0200
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Shengjiu Wang <shengjiu.wang@nxp.com>
+Cc: p.zabel@pengutronix.de, abelvesa@kernel.org, peng.fan@nxp.com,
+	mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org,
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+	marex@denx.de, linux-clk@vger.kernel.org, imx@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, shengjiu.wang@gmail.com
+Subject: Re: [PATCH v8 2/5] clk: imx: clk-audiomix: Add reset controller
+Message-ID: <20240614101727.zkh32bqe5nurnmbx@pengutronix.de>
+References: <1718350923-21392-1-git-send-email-shengjiu.wang@nxp.com>
+ <1718350923-21392-3-git-send-email-shengjiu.wang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="jvb5uafbtlbt24pu"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240614095927.88762-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <1718350923-21392-3-git-send-email-shengjiu.wang@nxp.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-clk@vger.kernel.org
 
+On 24-06-14, Shengjiu Wang wrote:
+> Audiomix block control can be a reset controller for
+> Enhanced Audio Return Channel (EARC), which is one of
+> modules in this audiomix subsystem.
+> 
+> The reset controller is supported by the auxiliary device
+> framework.
+> 
+> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
 
---jvb5uafbtlbt24pu
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-Hello,
-
-On Fri, Jun 14, 2024 at 11:59:27AM +0200, Krzysztof Kozlowski wrote:
->  Documentation/devicetree/bindings/pwm/imx-tpm-pwm.yaml        | 4 +++-
->  Documentation/devicetree/bindings/pwm/mxs-pwm.yaml            | 1 -
-> [...]
-> diff --git a/Documentation/devicetree/bindings/pwm/imx-tpm-pwm.yaml b/Doc=
-umentation/devicetree/bindings/pwm/imx-tpm-pwm.yaml
-> index 8bef9dfeba9a..ac0a35bf8648 100644
-> --- a/Documentation/devicetree/bindings/pwm/imx-tpm-pwm.yaml
-> +++ b/Documentation/devicetree/bindings/pwm/imx-tpm-pwm.yaml
-> @@ -7,7 +7,9 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
->  title: Freescale i.MX TPM PWM controller
-> =20
->  maintainers:
-> -  - Anson Huang <anson.huang@nxp.com>
-> +  - Shawn Guo <shawnguo@kernel.org>
-> +  - Sascha Hauer <s.hauer@pengutronix.de>
-> +  - Fabio Estevam <festevam@gmail.com>
-> =20
->  description: |
->    The TPM counter and period counter are shared between multiple
-> diff --git a/Documentation/devicetree/bindings/pwm/mxs-pwm.yaml b/Documen=
-tation/devicetree/bindings/pwm/mxs-pwm.yaml
-> index 8f50e23ca8c9..a9d3a41ac5b9 100644
-> --- a/Documentation/devicetree/bindings/pwm/mxs-pwm.yaml
-> +++ b/Documentation/devicetree/bindings/pwm/mxs-pwm.yaml
-> @@ -8,7 +8,6 @@ title: Freescale MXS PWM controller
-> =20
->  maintainers:
->    - Shawn Guo <shawnguo@kernel.org>
-> -  - Anson Huang <anson.huang@nxp.com>
-> =20
->  allOf:
->    - $ref: pwm.yaml#
-
-Fine for me. For the purpose of merging that via arm-soc:
-
-Acked-by: Uwe Kleine-K=F6nig <ukleinek@kernel.org>
-
-for Documentation/devicetree/bindings/pwm/*.
-
-Best regards
-Uwe
-
---jvb5uafbtlbt24pu
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmZsFtIACgkQj4D7WH0S
-/k4EHAf+NhFz4jBrYHkmJSlCa+y/zpFunECUX9/prffCWwkuDkMys9XVT+QCXyrR
-GUfWrfUmCrjohnZXgVOES5bNUtgG6kieF2TIqKsi5zqrK4PMmu2PO0M4R1vmN0p1
-zclZFy0XA6BKT0wUFKryJdf7SkZFIZqu1vuREDWzwwF2KuXquvqbhaGCkOEMqGMk
-Wt3rcNS3JvR0pUkfoTW92eOm7DguVmpC9VpBdX8lacwCffZVAgzyyu1HCOFFb6Ip
-b+uOVSbot7CQRaD0bzjfyozsVSAF94ytwUjuMIwsUFAJxltXdjeS9OxGU21YL2Jn
-HVjXuqBgwCBQYOTK0cP7OyF9VBYd4w==
-=EWbs
------END PGP SIGNATURE-----
-
---jvb5uafbtlbt24pu--
+Reviewed-by: Marco Felsch <m.felsch@pengutronix.de>
