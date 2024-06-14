@@ -1,93 +1,322 @@
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 653F61946BB;
-	Fri, 14 Jun 2024 10:50:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF9CF149C4A
+	for <linux-clk@vger.kernel.org>; Fri, 14 Jun 2024 11:06:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718362208; cv=none; b=Kw/Jz1FtjGpo6UP8ukzgy/rPZ13TMrO365osKVOIfRLaH1ZmHxwL4z/7sYR4lx9lsQoXn3iwUr7PPiLCjpTtW+KBxAsRqKQXUF7ntMtcz1EOCQpFoPTR95NXkgEcGk85++SUWHa4CRsKlD/Y1StRw7uYlwzF9BCQRtqAbZCFn+g=
+	t=1718363204; cv=none; b=Z7KbvQ97ccNP1k3T0gmiBV/Av99fVAwFGBlOp9amOb2rm5vc6d59RQn6tCK5fI67vD5ptgPFyPg3z9xNtfQqsooaDh3bjE4cr2wwEAuB/DN/81KYHGBi2byonYvKxpVP8HL1DaO6yeNAJPY6m25uTZ1HvxeBaUKc91YT8BApn74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718362208; c=relaxed/simple;
-	bh=QXp0E+fwmVtC+dLdV29MGtpRInQu8wHVNWt3UcAzTaw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RwNibRdrCMuKPj5PCaqK2HAFVHe04WZYxBG7wkVOukrWGIBYcnBSmkA5x81uCYBIPST6gtMF1dFmlU3fu7d1w9gQFmbVJpWn4NYrIQsf4XarK2HM0DT8IfftLNDqeBDXyvFOpwEYMPqLMiH0RuL44FE/0++k1ZM2xjkJBuSufp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bgmLQJO1; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1718363204; c=relaxed/simple;
+	bh=ITk4Pmw1wElvoJaLQpDB7x++r9MKwh7KfmJ6kjQS1SQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ClJYw2dJ504OLjqyRh+cXPjuUMzfg4qIN/vvP5I2PrNOPt/Bn0ia4OjYAvl0oD2xmeqYsVeniGNoCcrsF9GQBKPcq0Gr/FOKG1/cG06+chG5qqB2B2VPao3rUigra/zj/XKVliCGZqnV2xiFUolvr87gdExZwod64Dtm042hAT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=ZS0ss3El; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bgmLQJO1"
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1f70a87fd16so1226755ad.3;
-        Fri, 14 Jun 2024 03:50:07 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="ZS0ss3El"
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52c819f6146so2870986e87.1
+        for <linux-clk@vger.kernel.org>; Fri, 14 Jun 2024 04:06:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718362207; x=1718967007; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FN3vsCtnCbhfEWE7YOMqnwUF4qxuxOyYlc2ZbCQATK8=;
-        b=bgmLQJO1SJCFM4kcPshjwqO23xIlOZkZDye5AeMajHZLHySPsw6SvYl4ycDJY881u+
-         TgohWduWOskTa9PQIygyNI5uurI36idypVqNOHw1IFFLto1N1mE8CXBHInnlAI43kvc3
-         0xXgmyJ5cxNCHdUo3lq0jkMLxHEp5MkssuDAOSPXSQ2z+Trb6sDAact+4VoaDnGgHDsv
-         PllifQKdMVDRqiI4vP3x8lH9I6Qcn2IwS0SH2gGQXLRv4upCSIS/VwlkOO+3Xx1+oEIv
-         hWnRf1seHA27Syfr9IvwpNWwvn/ZVPKZuUGpQtcgsmvfSpex9NwRGAEn4YnFMS+luQZX
-         1AUg==
+        d=tuxon.dev; s=google; t=1718363201; x=1718968001; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=r5D80in0TCKF7CT1Ecrry2kBSeVogFVfKvkdHakj/G8=;
+        b=ZS0ss3ElqQML10fu8j8eKaPhMQw1iuTwzguoHoek/Oe8FTuHaFnT4KmHUxH8aAAFUx
+         3vRTiWK6dgDF+yhhras1S1z+/EitG+4GxE9hKx9vmfG2YF8RCDzYHOYqW3Msj19nkJ2+
+         bF7XlyQnH0pxNhP0jibLTkt8fAqpzaNBXTGA/e4hOgDd4UrnIavYp0PlLE+R9cFWWQyG
+         0NRB6aglvZ8hXKBpKxYOn8Uc3tRmHvqpl625gnU3PpaEB60D5ICm65sACbYcRTxKx3Rq
+         8LHzDO9qPDAZNILgX0d4Wd3TfI9a8zqLwUqs6fD5An30HF55Lr+oxSHol+vhmq94R4HH
+         Q3Mw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718362207; x=1718967007;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FN3vsCtnCbhfEWE7YOMqnwUF4qxuxOyYlc2ZbCQATK8=;
-        b=SYw4ld0awjB+nwz3Qw6rLG7EzUXMKtr5eD3STUa6lZQwIvyL3r+o9UegUuYf5BU00J
-         7VIgnI723Dr313sa5/Hfx74yoH2yUHpTqHOSgpo8Q/cyKGEuQjv0SHUAYL6+r5J2UZoG
-         XcExBBKPk0nTNLugnQkANXqZvcS0UzmJIi03eV6UHTLHLXLvRfD8zvoYY4yfT6OJACOR
-         d+fKRUpqFRvwtRk/gOlIym66S6FGfwmmcERJ6yQjXCZrPt8FVkeZ5AY7RFvtKfyjEOOv
-         IUgD2kojtF70bWJXPA0nC2Mp2Wm0pNlulm1cp0mwPl7Vy4ZKLYzwv0A04MoAVekq0puw
-         ZXtw==
-X-Forwarded-Encrypted: i=1; AJvYcCXEynbhh8RTPTmQRJE/Njtez11bHkBOrkIJarbUjoFqfVL3TnJJ8Z3Gu12qhQwaRXfLQlfeQ9LHrIjVNKlny1n//cc2QwfzswYG+eEMbwRLknpvt8uLXWTpZ9lX/qKIdyyx9wII3gQ4mvcc5nkv4atRiIQLRK0DC8aLNaLtwSsu7/CQarK1VYNUoWCRv+Y0pqkZ7fKRzvKi5ZDHKkRvNuVPrnZNB9U5Xu/ej0a8oMBua6rsVTQG97dBdQFJdQSaUTinUfAnWdwylQhqwn3X81FohK/Fd/P25R8udGTKKrNG56ubKRXng7o7I1MlMn2uwfpfNWlT34I3gRIUoTKX2HqEhiA1aubpfL+Gxwt3aWl1YcKKN39t5NM6M+f9pcWj+cTxsPC2aesgFPvkodw21XLmEhnHUNTjdY9nhNIa7czIEviq3qeA
-X-Gm-Message-State: AOJu0YwO+KYJk9DvygpILIdZ28Sq8UeQIDFkzlqZ77KL79AV7lGqtRLQ
-	b5r1aq3DjWuXL2QCHdlod0HIM/iioM2E5rb6hs2K3hsNMJLRfBXE+SlcD6SgQUUkhp3fnyVepfC
-	RCbuqeoRYKfaLPmAqgSgiPHWHbXI=
-X-Google-Smtp-Source: AGHT+IHgArd11Sr3/cVVDrQnQwI2RDLcgIn6oK4LnKR6wQe/sXzVwQkyN3JryAftKxLHPTfJ0mLrINTYXizbakdH1hU=
-X-Received: by 2002:a05:6a21:9988:b0:1b7:571d:3d02 with SMTP id
- adf61e73a8af0-1bae841ec0bmr2723114637.5.1718362206628; Fri, 14 Jun 2024
- 03:50:06 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1718363201; x=1718968001;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=r5D80in0TCKF7CT1Ecrry2kBSeVogFVfKvkdHakj/G8=;
+        b=CS4nKn/nHI+VmVeOqeolntNZA5S2tOs64QOV77GlbKwN+tqwC//6pDYtEqWy+6MzYD
+         n+mR5wAOJnXrxnnpBoA3Bt9q8exZDx/Q8Ft7WPPbJ06G4cFjn8xJ9X71GwFxKUBkJjq1
+         rp1iMn7x5M2825ziUM8RyY54c29MBmZnUAx+8L7r+IuRnjF5LbYkOpa4gp3d4imMGrFW
+         vxge5Cne2VOAFI0AiSZreoCFLm9U1kt+EpfU73aDY3KRX3LCKKZbpATyfSDDiUeKR58p
+         ejfG7QI3OECWjgrhd9sj3ZXHcv6iF7S3PId/lIxO/Tv0PLWPtCbLeC0EXAWJFs5BG32V
+         BZ4w==
+X-Forwarded-Encrypted: i=1; AJvYcCV1XSzB+3dyvs9F0FKp1Qsslc+exQwr4ZKahH01pSAme3+G9tkhgBjBXWPM1wnTcXApYK4NLLOVpruKD69x15DuwNC7HAlVJesw
+X-Gm-Message-State: AOJu0Yy+HCgd/2mkXdS+2VnxD0hOXOBiMTHiabPM1b17fUBTJUpfrly7
+	xevR7YHKZnPUABP4sCwEyyqNTxgerj8oOJxvB3O9exuwHCDr3WQ3XaVTXju+8kc=
+X-Google-Smtp-Source: AGHT+IH9JHjPbSmLTT+F7xHZJ81IvkKNjZ+2yhkxhvBPp4AqZfmx5Y0pBQzf79FJO58OFQjWNVtaWg==
+X-Received: by 2002:a05:6512:3ca4:b0:52c:8339:d09b with SMTP id 2adb3069b0e04-52ca6e55096mr1765316e87.1.1718363200927;
+        Fri, 14 Jun 2024 04:06:40 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.189])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36075104a1bsm4095242f8f.102.2024.06.14.04.06.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 14 Jun 2024 04:06:40 -0700 (PDT)
+Message-ID: <4a477079-b4a6-4861-ae24-b3b87adb8ecd@tuxon.dev>
+Date: Fri, 14 Jun 2024 14:06:38 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240614095927.88762-1-krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20240614095927.88762-1-krzysztof.kozlowski@linaro.org>
-From: Fabio Estevam <festevam@gmail.com>
-Date: Fri, 14 Jun 2024 07:49:54 -0300
-Message-ID: <CAOMZO5Br98929LM-r8YnbFnPOUSusamMZoaMDvEHYBSmSqhGhQ@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: drop stale Anson Huang from maintainers
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
-	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
-	Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, Frank Li <Frank.Li@nxp.com>, 
-	devicetree@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, linux-iio@vger.kernel.org, 
-	linux-pwm@vger.kernel.org, linux-spi@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-watchdog@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 06/12] rtc: renesas-rtca3: Add driver for RTCA-3 available
+ on Renesas RZ/G3S SoC
+Content-Language: en-US
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, lee@kernel.org,
+ magnus.damm@gmail.com, linux-renesas-soc@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240614071932.1014067-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240614071932.1014067-7-claudiu.beznea.uj@bp.renesas.com>
+ <2024061409215756e6a10c@mail.local>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <2024061409215756e6a10c@mail.local>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Krzysztof,
+Hi, Alexandre,
 
-On Fri, Jun 14, 2024 at 6:59=E2=80=AFAM Krzysztof Kozlowski
-<krzysztof.kozlowski@linaro.org> wrote:
->
-> Emails to Anson Huang bounce:
->
->   Diagnostic-Code: smtp; 550 5.4.1 Recipient address rejected: Access den=
-ied.
->
-> Add IMX platform maintainers for bindings which would become orphaned.
->
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+On 14.06.2024 12:21, Alexandre Belloni wrote:
+> Hello Claudiu,
+> 
+> On 14/06/2024 10:19:26+0300, Claudiu wrote:
+>> +static int rtca3_initial_setup(struct rtca3_priv *priv)
+>> +{
+>> +	unsigned long osc32k_rate;
+>> +	u8 pes, tmp, mask;
+>> +	u32 sleep_us;
+>> +	int ret;
+>> +
+>> +	osc32k_rate = clk_get_rate(priv->clk);
+>> +	if (!osc32k_rate)
+>> +		return -EINVAL;
+>> +
+>> +	sleep_us = DIV_ROUND_UP_ULL(1000000ULL, osc32k_rate) * 6;
+>> +
+>> +	priv->ppb.ten_sec = DIV_ROUND_CLOSEST_ULL(1000000000ULL, (osc32k_rate * 10));
+>> +	priv->ppb.sixty_sec = DIV_ROUND_CLOSEST_ULL(1000000000ULL, (osc32k_rate * 60));
+>> +
+>> +	/*
+>> +	 * According to HW manual (section 22.4.2. Clock and count mode setting procedure)
+>> +	 * we need to wait at least 6 cycles of the 32KHz clock after clock was enabled.
+>> +	 */
+>> +	usleep_range(sleep_us, sleep_us + 10);
+>> +
+>> +	/* Disable alarm and carry interrupts. */
+>> +	mask = RTCA3_RCR1_AIE | RTCA3_RCR1_CIE;
+>> +	rtca3_byte_update_bits(priv, RTCA3_RCR1, mask, 0);
+>> +	ret = readb_poll_timeout(priv->base + RTCA3_RCR1, tmp, !(tmp & mask),
+>> +				 10, RTCA3_DEFAULT_TIMEOUT_US);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	/*
+>> +	 * Stop the RTC and set to 12 hours mode and calendar count mode.
+>> +	 * RCR2.START initial value is undefined so we need to stop here
+>> +	 * all the time.
+>> +	 */
+> 
+> Certainly not, if you stop the RTC on probe, you lose the time
+> information, this must only be done when the RTC has never been
+> initialised. The whole goal of the RTC is the keep time across reboots,
+> its lifecycle is longer than the system.
 
-Reviewed-by: Fabio Estevam <festevam@gmail.com>
+This was also my first thought when I read the HW manual.
+
+It has been done like this to follow the HW manual. According to HW manual
+[1], chapter 22.3.19 RTC Control Register 2 (RCR2), initial value of START
+bit is undefined.
+
+If it's 1 while probing but it has never been initialized, we can falsely
+detect that RTC is started and skip the rest of the initialization steps.
+W/o initialization configuration, the RTC will not be able to work.
+
+Even with this implementation we don't loose the time b/w reboots. Here is
+the output on my board [2]. The steps I did were the following:
+1/ remove the power to the board (I don't have a battery for RTC installed
+   at the moment)
+2/ boot the board and issue hwclock -w
+3/ reboot
+4/ check the systime and rtc time
+5/ poweroff
+6/ poweron
+7/ boot and check systime and RTC time
+
+As you can see the time is not lost but continue to increment. I presume
+the hardware takes into account that time needs to increment when initial
+configuration is executed.
+
+[1]
+https://www.renesas.com/us/en/products/microcontrollers-microprocessors/rz-mpus/rzg3s-general-purpose-microprocessors-single-core-arm-cortex-a55-11-ghz-cpu-and-dual-core-cortex-m33-250
+[2] https://p.fr33tux.org/585cd6
+
+> 
+> Also, why do you insist on 12H-mode? The proper thing to do is to support
+> 12H-mode on read but always use 24H-mode when setting the time.
+
+OK, I wasn't aware of this. I think I followed this approach as it looked
+to me the number of operation to update the hardware registers was lower
+for 12h mode.
+
+I'll adjust as proposed.
+
+> 
+>> +	mask = RTCA3_RCR2_START | RTCA3_RCR2_HR24 | RTCA3_RCR2_CNTMD;
+>> +	writeb(0, priv->base + RTCA3_RCR2);
+>> +	ret = readb_poll_timeout(priv->base + RTCA3_RCR2, tmp, !(tmp & mask),
+>> +				 10, RTCA3_DEFAULT_TIMEOUT_US);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	/* Execute reset and wait for reset and calendar count mode to be applied. */
+>> +	mask = RTCA3_RCR2_RESET | RTCA3_RCR2_CNTMD;
+>> +	writeb(RTCA3_RCR2_RESET, priv->base + RTCA3_RCR2);
+>> +	ret = readb_poll_timeout(priv->base + RTCA3_RCR2, tmp, !(tmp & mask),
+>> +				 10, RTCA3_RESET_TIMEOUT_US);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	/*
+>> +	 * According to HW manual (section 22.6.3. Notes on writing to and reading
+>> +	 * from registers) after reset we need to wait 6 clock cycles before
+>> +	 * writing to RTC registers.
+>> +	 */
+>> +	usleep_range(sleep_us, sleep_us + 10);
+>> +
+>> +	/* Set no adjustment. */
+>> +	writeb(0, priv->base + RTCA3_RADJ);
+>> +	ret = readb_poll_timeout(priv->base + RTCA3_RADJ, tmp, !tmp, 10,
+>> +				 RTCA3_DEFAULT_TIMEOUT_US);
+>> +
+>> +	/* Start the RTC and enable automatic time error adjustment. */
+>> +	mask = RTCA3_RCR2_START | RTCA3_RCR2_AADJE;
+>> +	writeb(RTCA3_RCR2_START | RTCA3_RCR2_AADJE, priv->base + RTCA3_RCR2);
+>> +	ret = readb_poll_timeout(priv->base + RTCA3_RCR2, tmp, ((tmp & mask) == mask),
+>> +				 10, RTCA3_START_TIMEOUT_US);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	/*
+>> +	 * According to HW manual (section 22.6.4. Notes on writing to and reading
+>> +	 * from registers) we need to wait 1/128 seconds while the clock is operating
+>> +	 * (RCR2.START bit = 1) to be able to read the counters after a return from
+>> +	 * reset.
+>> +	 */
+>> +	usleep_range(8000, 9000);
+>> +
+>> +	/* Set period interrupt to 1/64 seconds. It is necessary for alarm setup. */
+>> +	pes = FIELD_PREP(RTCA3_RCR1_PES, RTCA3_RCR1_PES_1_64_SEC);
+>> +	rtca3_byte_update_bits(priv, RTCA3_RCR1, RTCA3_RCR1_PES, pes);
+>> +	return readb_poll_timeout(priv->base + RTCA3_RCR1, tmp, ((tmp & RTCA3_RCR1_PES) == pes),
+>> +				  10, RTCA3_DEFAULT_TIMEOUT_US);
+>> +}
+>> +
+>> +static int rtca3_request_irqs(struct platform_device *pdev, struct rtca3_priv *priv)
+>> +{
+>> +	struct device *dev = &pdev->dev;
+>> +	int ret, irq;
+>> +
+>> +	irq = platform_get_irq_byname(pdev, "alarm");
+>> +	if (irq < 0)
+>> +		return dev_err_probe(dev, irq, "Failed to get alarm IRQ!\n");
+>> +
+>> +	ret = devm_request_irq(dev, irq, rtca3_alarm_handler, 0, "rtca3-alarm", priv);
+>> +	if (ret)
+>> +		return dev_err_probe(dev, ret, "Failed to request alarm IRQ!\n");
+>> +	priv->wakeup_irq = irq;
+>> +
+>> +	irq = platform_get_irq_byname(pdev, "period");
+>> +	if (irq < 0)
+>> +		return dev_err_probe(dev, irq, "Failed to get period IRQ!\n");
+>> +
+>> +	ret = devm_request_irq(dev, irq, rtca3_periodic_handler, 0, "rtca3-period", priv);
+>> +	if (ret)
+>> +		return dev_err_probe(dev, ret, "Failed to request period IRQ!\n");
+>> +
+>> +	/*
+>> +	 * Driver doesn't implement carry handler. Just get the IRQ here
+>> +	 * for backward compatibility, in case carry support will be added later.
+>> +	 */
+>> +	irq = platform_get_irq_byname(pdev, "carry");
+>> +	if (irq < 0)
+>> +		return dev_err_probe(dev, irq, "Failed to get carry IRQ!\n");
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int rtca3_probe(struct platform_device *pdev)
+>> +{
+>> +	struct device *dev = &pdev->dev;
+>> +	struct rtca3_priv *priv;
+>> +	int ret;
+>> +
+>> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+>> +	if (!priv)
+>> +		return -ENOMEM;
+>> +
+>> +	priv->base = devm_platform_ioremap_resource(pdev, 0);
+>> +	if (IS_ERR(priv->base))
+>> +		return PTR_ERR(priv->base);
+>> +
+>> +	priv->clk = devm_clk_get_enabled(dev, "counter");
+>> +	if (IS_ERR(priv->clk))
+>> +		return PTR_ERR(priv->clk);
+>> +
+>> +	platform_set_drvdata(pdev, priv);
+>> +
+>> +	spin_lock_init(&priv->lock);
+>> +	atomic_set(&priv->alrm_sstep, RTCA3_ALRM_SSTEP_DONE);
+>> +	init_completion(&priv->set_alarm_completion);
+>> +
+>> +	ret = rtca3_initial_setup(priv);
+>> +	if (ret)
+>> +		return dev_err_probe(dev, ret, "Failed to setup the RTC!\n");
+>> +
+>> +	ret = rtca3_request_irqs(pdev, priv);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	device_init_wakeup(&pdev->dev, 1);
+>> +
+>> +	priv->rtc_dev = devm_rtc_allocate_device(&pdev->dev);
+>> +	if (IS_ERR(priv->rtc_dev))
+>> +		return PTR_ERR(priv->rtc_dev);
+>> +
+>> +	priv->rtc_dev->ops = &rtca3_ops;
+>> +	priv->rtc_dev->max_user_freq = 256;
+>> +	priv->rtc_dev->range_min = mktime64(1999, 1, 1, 0, 0, 0);
+>> +	priv->rtc_dev->range_max = mktime64(2098, 12, 31, 23, 59, 59);
+> 
+> This very much looks like the range should be 2000 to 2099, why do you
+> want to shift it?
+
+2000-2099 was my first option for this but then I saw one of your old
+commits on this topic and, since I'm not very familiar with RTC,
+I took it as example. I'll adjust as you proposed.
+
+commit beee05dfbead
+Author: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Date:   Wed Mar 20 12:30:10 2019 +0100
+
+    rtc: sh: set range
+
+    The SH RTC is a BCD RTC with some version having 4 digits for the year.
+
+    The range for the RTCs with only 2 digits for the year was unfortunately
+    shifted to handle 1999 to 2098.
+
+    Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+    Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+
+
+Thank you for your review,
+Claudiu Beznea
+
+> 
+> 
