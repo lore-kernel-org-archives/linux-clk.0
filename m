@@ -1,70 +1,93 @@
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B19193072
-	for <linux-clk@vger.kernel.org>; Fri, 14 Jun 2024 10:17:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 653F61946BB;
+	Fri, 14 Jun 2024 10:50:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718360267; cv=none; b=J407i/+WrCCcmRYdAb0zgLSECaNLKv+THJk+Am2u2AnU4KntDJfRCJMJda3OS1qyHMlJJu/1ngBj5rl9BdspeeR21vDpgXZeoW4V8hcohc09m5hWi2BY2wstCb3rrY4MlHAfiY7N10QO9nzC00ecAERBQgqvLAljtb4a2zln94I=
+	t=1718362208; cv=none; b=Kw/Jz1FtjGpo6UP8ukzgy/rPZ13TMrO365osKVOIfRLaH1ZmHxwL4z/7sYR4lx9lsQoXn3iwUr7PPiLCjpTtW+KBxAsRqKQXUF7ntMtcz1EOCQpFoPTR95NXkgEcGk85++SUWHa4CRsKlD/Y1StRw7uYlwzF9BCQRtqAbZCFn+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718360267; c=relaxed/simple;
-	bh=BtH/RKSYaAqxELT3qVRNNqUqpHc8LxARL4H5WzDeODs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iLTXDW9vx+Geq2jE+fi+n5v7z/6khnDMT/sYguwWnFQ1gn59+EFNqNdDDmeV+wVeou1okL0X8b7QC9jCbMx21Tv9WHr7yv12atfM1tGIDcgj0qG/QIbdU4EXOXDeaSv+kQJf/wDe7fxmPfMhWnIxWxBih7cxvmjpv6xBt6hVOxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1sI3zt-0005L3-2i; Fri, 14 Jun 2024 12:17:29 +0200
-Received: from [2a0a:edc0:2:b01:1d::c5] (helo=pty.whiteo.stw.pengutronix.de)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1sI3zr-002FB3-GE; Fri, 14 Jun 2024 12:17:27 +0200
-Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <mfe@pengutronix.de>)
-	id 1sI3zr-00AOq7-1I;
-	Fri, 14 Jun 2024 12:17:27 +0200
-Date: Fri, 14 Jun 2024 12:17:27 +0200
-From: Marco Felsch <m.felsch@pengutronix.de>
-To: Shengjiu Wang <shengjiu.wang@nxp.com>
-Cc: p.zabel@pengutronix.de, abelvesa@kernel.org, peng.fan@nxp.com,
-	mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org,
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-	marex@denx.de, linux-clk@vger.kernel.org, imx@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, shengjiu.wang@gmail.com
-Subject: Re: [PATCH v8 2/5] clk: imx: clk-audiomix: Add reset controller
-Message-ID: <20240614101727.zkh32bqe5nurnmbx@pengutronix.de>
-References: <1718350923-21392-1-git-send-email-shengjiu.wang@nxp.com>
- <1718350923-21392-3-git-send-email-shengjiu.wang@nxp.com>
+	s=arc-20240116; t=1718362208; c=relaxed/simple;
+	bh=QXp0E+fwmVtC+dLdV29MGtpRInQu8wHVNWt3UcAzTaw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RwNibRdrCMuKPj5PCaqK2HAFVHe04WZYxBG7wkVOukrWGIBYcnBSmkA5x81uCYBIPST6gtMF1dFmlU3fu7d1w9gQFmbVJpWn4NYrIQsf4XarK2HM0DT8IfftLNDqeBDXyvFOpwEYMPqLMiH0RuL44FE/0++k1ZM2xjkJBuSufp0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bgmLQJO1; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bgmLQJO1"
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1f70a87fd16so1226755ad.3;
+        Fri, 14 Jun 2024 03:50:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718362207; x=1718967007; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FN3vsCtnCbhfEWE7YOMqnwUF4qxuxOyYlc2ZbCQATK8=;
+        b=bgmLQJO1SJCFM4kcPshjwqO23xIlOZkZDye5AeMajHZLHySPsw6SvYl4ycDJY881u+
+         TgohWduWOskTa9PQIygyNI5uurI36idypVqNOHw1IFFLto1N1mE8CXBHInnlAI43kvc3
+         0xXgmyJ5cxNCHdUo3lq0jkMLxHEp5MkssuDAOSPXSQ2z+Trb6sDAact+4VoaDnGgHDsv
+         PllifQKdMVDRqiI4vP3x8lH9I6Qcn2IwS0SH2gGQXLRv4upCSIS/VwlkOO+3Xx1+oEIv
+         hWnRf1seHA27Syfr9IvwpNWwvn/ZVPKZuUGpQtcgsmvfSpex9NwRGAEn4YnFMS+luQZX
+         1AUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718362207; x=1718967007;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FN3vsCtnCbhfEWE7YOMqnwUF4qxuxOyYlc2ZbCQATK8=;
+        b=SYw4ld0awjB+nwz3Qw6rLG7EzUXMKtr5eD3STUa6lZQwIvyL3r+o9UegUuYf5BU00J
+         7VIgnI723Dr313sa5/Hfx74yoH2yUHpTqHOSgpo8Q/cyKGEuQjv0SHUAYL6+r5J2UZoG
+         XcExBBKPk0nTNLugnQkANXqZvcS0UzmJIi03eV6UHTLHLXLvRfD8zvoYY4yfT6OJACOR
+         d+fKRUpqFRvwtRk/gOlIym66S6FGfwmmcERJ6yQjXCZrPt8FVkeZ5AY7RFvtKfyjEOOv
+         IUgD2kojtF70bWJXPA0nC2Mp2Wm0pNlulm1cp0mwPl7Vy4ZKLYzwv0A04MoAVekq0puw
+         ZXtw==
+X-Forwarded-Encrypted: i=1; AJvYcCXEynbhh8RTPTmQRJE/Njtez11bHkBOrkIJarbUjoFqfVL3TnJJ8Z3Gu12qhQwaRXfLQlfeQ9LHrIjVNKlny1n//cc2QwfzswYG+eEMbwRLknpvt8uLXWTpZ9lX/qKIdyyx9wII3gQ4mvcc5nkv4atRiIQLRK0DC8aLNaLtwSsu7/CQarK1VYNUoWCRv+Y0pqkZ7fKRzvKi5ZDHKkRvNuVPrnZNB9U5Xu/ej0a8oMBua6rsVTQG97dBdQFJdQSaUTinUfAnWdwylQhqwn3X81FohK/Fd/P25R8udGTKKrNG56ubKRXng7o7I1MlMn2uwfpfNWlT34I3gRIUoTKX2HqEhiA1aubpfL+Gxwt3aWl1YcKKN39t5NM6M+f9pcWj+cTxsPC2aesgFPvkodw21XLmEhnHUNTjdY9nhNIa7czIEviq3qeA
+X-Gm-Message-State: AOJu0YwO+KYJk9DvygpILIdZ28Sq8UeQIDFkzlqZ77KL79AV7lGqtRLQ
+	b5r1aq3DjWuXL2QCHdlod0HIM/iioM2E5rb6hs2K3hsNMJLRfBXE+SlcD6SgQUUkhp3fnyVepfC
+	RCbuqeoRYKfaLPmAqgSgiPHWHbXI=
+X-Google-Smtp-Source: AGHT+IHgArd11Sr3/cVVDrQnQwI2RDLcgIn6oK4LnKR6wQe/sXzVwQkyN3JryAftKxLHPTfJ0mLrINTYXizbakdH1hU=
+X-Received: by 2002:a05:6a21:9988:b0:1b7:571d:3d02 with SMTP id
+ adf61e73a8af0-1bae841ec0bmr2723114637.5.1718362206628; Fri, 14 Jun 2024
+ 03:50:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1718350923-21392-3-git-send-email-shengjiu.wang@nxp.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mfe@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-clk@vger.kernel.org
+References: <20240614095927.88762-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20240614095927.88762-1-krzysztof.kozlowski@linaro.org>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Fri, 14 Jun 2024 07:49:54 -0300
+Message-ID: <CAOMZO5Br98929LM-r8YnbFnPOUSusamMZoaMDvEHYBSmSqhGhQ@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: drop stale Anson Huang from maintainers
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, Frank Li <Frank.Li@nxp.com>, 
+	devicetree@vger.kernel.org, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, linux-iio@vger.kernel.org, 
+	linux-pwm@vger.kernel.org, linux-spi@vger.kernel.org, 
+	linux-pm@vger.kernel.org, linux-watchdog@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 24-06-14, Shengjiu Wang wrote:
-> Audiomix block control can be a reset controller for
-> Enhanced Audio Return Channel (EARC), which is one of
-> modules in this audiomix subsystem.
-> 
-> The reset controller is supported by the auxiliary device
-> framework.
-> 
-> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+Hi Krzysztof,
 
-Reviewed-by: Marco Felsch <m.felsch@pengutronix.de>
+On Fri, Jun 14, 2024 at 6:59=E2=80=AFAM Krzysztof Kozlowski
+<krzysztof.kozlowski@linaro.org> wrote:
+>
+> Emails to Anson Huang bounce:
+>
+>   Diagnostic-Code: smtp; 550 5.4.1 Recipient address rejected: Access den=
+ied.
+>
+> Add IMX platform maintainers for bindings which would become orphaned.
+>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Reviewed-by: Fabio Estevam <festevam@gmail.com>
