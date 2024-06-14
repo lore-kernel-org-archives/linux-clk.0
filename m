@@ -1,322 +1,172 @@
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from EUR04-DB3-obe.outbound.protection.outlook.com (mail-db3eur04on2059.outbound.protection.outlook.com [40.107.6.59])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF9CF149C4A
-	for <linux-clk@vger.kernel.org>; Fri, 14 Jun 2024 11:06:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718363204; cv=none; b=Z7KbvQ97ccNP1k3T0gmiBV/Av99fVAwFGBlOp9amOb2rm5vc6d59RQn6tCK5fI67vD5ptgPFyPg3z9xNtfQqsooaDh3bjE4cr2wwEAuB/DN/81KYHGBi2byonYvKxpVP8HL1DaO6yeNAJPY6m25uTZ1HvxeBaUKc91YT8BApn74=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718363204; c=relaxed/simple;
-	bh=ITk4Pmw1wElvoJaLQpDB7x++r9MKwh7KfmJ6kjQS1SQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ClJYw2dJ504OLjqyRh+cXPjuUMzfg4qIN/vvP5I2PrNOPt/Bn0ia4OjYAvl0oD2xmeqYsVeniGNoCcrsF9GQBKPcq0Gr/FOKG1/cG06+chG5qqB2B2VPao3rUigra/zj/XKVliCGZqnV2xiFUolvr87gdExZwod64Dtm042hAT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=ZS0ss3El; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B6D81990C2;
+	Fri, 14 Jun 2024 12:16:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.6.59
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718367410; cv=fail; b=AKztY7ag2IP88RFklR+bztzGL/rO3mU+h2wO6rFHxChTtsi+zIKVQ7lyWcAAtfBNu86uVvpV1y5XjoZSn2akcW3WzrcCBxlO7kJJlgW2j6ivDZx/plaG/T5hexlu7u9QsmphtPA6WLk3EY3K80ZJVqdMJpHoYEdD/A7g3svVGfg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718367410; c=relaxed/simple;
+	bh=BIG0l6HSnxbcIUY5GNzpd4CzCkM+GwVOHy4YaujkUtQ=;
+	h=From:To:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=lQDvPpDH9rvNS27DZOU8y62ixQUaQbGJFmrHO+0vC0Md47vO27zMZUeIG9+wffFPNdk9i0OARARIWk/Ansv+CattkW42zPOKY3gyfDEn5C1rMdibTJ7k4u8WWCHsAiADYTWRSxD47S3Ul8pFcFbmAfDMdpA9UzH01vATzbzui7I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=AwAvx7Bc; arc=fail smtp.client-ip=40.107.6.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="ZS0ss3El"
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52c819f6146so2870986e87.1
-        for <linux-clk@vger.kernel.org>; Fri, 14 Jun 2024 04:06:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1718363201; x=1718968001; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=r5D80in0TCKF7CT1Ecrry2kBSeVogFVfKvkdHakj/G8=;
-        b=ZS0ss3ElqQML10fu8j8eKaPhMQw1iuTwzguoHoek/Oe8FTuHaFnT4KmHUxH8aAAFUx
-         3vRTiWK6dgDF+yhhras1S1z+/EitG+4GxE9hKx9vmfG2YF8RCDzYHOYqW3Msj19nkJ2+
-         bF7XlyQnH0pxNhP0jibLTkt8fAqpzaNBXTGA/e4hOgDd4UrnIavYp0PlLE+R9cFWWQyG
-         0NRB6aglvZ8hXKBpKxYOn8Uc3tRmHvqpl625gnU3PpaEB60D5ICm65sACbYcRTxKx3Rq
-         8LHzDO9qPDAZNILgX0d4Wd3TfI9a8zqLwUqs6fD5An30HF55Lr+oxSHol+vhmq94R4HH
-         Q3Mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718363201; x=1718968001;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=r5D80in0TCKF7CT1Ecrry2kBSeVogFVfKvkdHakj/G8=;
-        b=CS4nKn/nHI+VmVeOqeolntNZA5S2tOs64QOV77GlbKwN+tqwC//6pDYtEqWy+6MzYD
-         n+mR5wAOJnXrxnnpBoA3Bt9q8exZDx/Q8Ft7WPPbJ06G4cFjn8xJ9X71GwFxKUBkJjq1
-         rp1iMn7x5M2825ziUM8RyY54c29MBmZnUAx+8L7r+IuRnjF5LbYkOpa4gp3d4imMGrFW
-         vxge5Cne2VOAFI0AiSZreoCFLm9U1kt+EpfU73aDY3KRX3LCKKZbpATyfSDDiUeKR58p
-         ejfG7QI3OECWjgrhd9sj3ZXHcv6iF7S3PId/lIxO/Tv0PLWPtCbLeC0EXAWJFs5BG32V
-         BZ4w==
-X-Forwarded-Encrypted: i=1; AJvYcCV1XSzB+3dyvs9F0FKp1Qsslc+exQwr4ZKahH01pSAme3+G9tkhgBjBXWPM1wnTcXApYK4NLLOVpruKD69x15DuwNC7HAlVJesw
-X-Gm-Message-State: AOJu0Yy+HCgd/2mkXdS+2VnxD0hOXOBiMTHiabPM1b17fUBTJUpfrly7
-	xevR7YHKZnPUABP4sCwEyyqNTxgerj8oOJxvB3O9exuwHCDr3WQ3XaVTXju+8kc=
-X-Google-Smtp-Source: AGHT+IH9JHjPbSmLTT+F7xHZJ81IvkKNjZ+2yhkxhvBPp4AqZfmx5Y0pBQzf79FJO58OFQjWNVtaWg==
-X-Received: by 2002:a05:6512:3ca4:b0:52c:8339:d09b with SMTP id 2adb3069b0e04-52ca6e55096mr1765316e87.1.1718363200927;
-        Fri, 14 Jun 2024 04:06:40 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.189])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36075104a1bsm4095242f8f.102.2024.06.14.04.06.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 14 Jun 2024 04:06:40 -0700 (PDT)
-Message-ID: <4a477079-b4a6-4861-ae24-b3b87adb8ecd@tuxon.dev>
-Date: Fri, 14 Jun 2024 14:06:38 +0300
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="AwAvx7Bc"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=jAs1c6HKtANHBxafYNZOlA7QPujAPyLM/r6rBr7MMUpOT9FBvWR5ZL51c+dy3x9K+Auqsy1LbN8eA6OqjVkf8abJdi9Ox8SFDkVEZSypzyfrXRA8OU4bIoj2nNlbWVDzVUPcm2lrzZoy29yjQSdxEO/SXK67Qjh7CBNwMe3kxURDBskb5uEHokXVmzKh4IWcJevryDe99JKGZTvYgnYydbgBlEmmjnoIcE4z7zdmQXz5HoLJIS8md2vAJugzaVwNVMrNe1judY8fB8BhqORMxZjlFMIX57+8Il5MVOCm66WEfRYPyFkHXkBX4rc6abdcJ4H88yuMmX8oU5G2fJ51+A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=BCcH4YUV1BP11XIBqBpwP18AsBjoj33htNJUGCDXiRU=;
+ b=iPkkt2UJJh8NLLH0rfBjKPztfkOoRsVbXYShKD/KC2LJID4c5foDg7zGnCi2nDJIEz3wbLj845mWVsUQFPhS7vK/rYPRs68zwFRoBa1FQdz/yOCozSvxku5ToyPuyQDGSzcryGN/3Eb1l3Ohd9VnqY9QahEWMIFb6FUI+T74GlJp4OiHnOO1A1WcViSjV3kn8mLTMTZn8BXvSIwHXcCR53BVyUDE9tpQ1TJktcvg+SsulZL+ngegQKWeY5zCWxsG88yOUUyhNBpoQFVd+D518tqwHXL//bZXTTaSq6YDT2eEYt+SBBxUhzr6LBpXQWJzgIm/Prd9cpYH4FOVgDjDwg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BCcH4YUV1BP11XIBqBpwP18AsBjoj33htNJUGCDXiRU=;
+ b=AwAvx7BcmoNTDQo+JJ1nafacMCshcPgGRpfpLIUa4nNPpIr4tPvOCjCWMjvXofGVhOwtcC7SNOLTqs8AFCvpmfP6ZXRmC4UVrXLNmqx5tgr6k5lX3ltvLFvYVsNTOFdPpdV2PoHOCViDPzgSmf0R6+PIK1A0er8iAi2KxDbP6aw=
+Received: from AM6PR04MB5941.eurprd04.prod.outlook.com (2603:10a6:20b:9e::16)
+ by DU4PR04MB10693.eurprd04.prod.outlook.com (2603:10a6:10:588::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7677.21; Fri, 14 Jun
+ 2024 12:16:45 +0000
+Received: from AM6PR04MB5941.eurprd04.prod.outlook.com
+ ([fe80::9f4e:b695:f5f0:5256]) by AM6PR04MB5941.eurprd04.prod.outlook.com
+ ([fe80::9f4e:b695:f5f0:5256%5]) with mapi id 15.20.7633.037; Fri, 14 Jun 2024
+ 12:16:44 +0000
+From: Peng Fan <peng.fan@nxp.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Rob Herring
+	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer
+	<s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Abel Vesa <abelvesa@kernel.org>, Frank Li
+	<frank.li@nxp.com>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, "linux-gpio@vger.kernel.org"
+	<linux-gpio@vger.kernel.org>, "linux-i2c@vger.kernel.org"
+	<linux-i2c@vger.kernel.org>, "linux-iio@vger.kernel.org"
+	<linux-iio@vger.kernel.org>, "linux-pwm@vger.kernel.org"
+	<linux-pwm@vger.kernel.org>, "linux-spi@vger.kernel.org"
+	<linux-spi@vger.kernel.org>, "linux-pm@vger.kernel.org"
+	<linux-pm@vger.kernel.org>, "linux-watchdog@vger.kernel.org"
+	<linux-watchdog@vger.kernel.org>
+Subject: RE: [PATCH] dt-bindings: drop stale Anson Huang from maintainers
+Thread-Topic: [PATCH] dt-bindings: drop stale Anson Huang from maintainers
+Thread-Index: AQHavkGTDHH4DyW5tkyonqziSWJqWrHHLMlA
+Date: Fri, 14 Jun 2024 12:16:44 +0000
+Message-ID:
+ <AM6PR04MB5941410C48BDDC4FAE7D761188C22@AM6PR04MB5941.eurprd04.prod.outlook.com>
+References: <20240614095927.88762-1-krzysztof.kozlowski@linaro.org>
+In-Reply-To: <20240614095927.88762-1-krzysztof.kozlowski@linaro.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AM6PR04MB5941:EE_|DU4PR04MB10693:EE_
+x-ms-office365-filtering-correlation-id: a8c4b532-14b2-4c30-e99a-08dc8c6bdb3e
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230037|366013|376011|7416011|1800799021|38070700015|921017;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?IouN3IIF5plRPkSCXvVWMUnq9gXH+tyx09hAmOs04Fxljf9fiwUkidENs1tH?=
+ =?us-ascii?Q?Hx9HE1lpAzoynWD6+4AJkY56GgjgczuCETuduKoj1++qUihC8/U6m7/I6z3G?=
+ =?us-ascii?Q?AkIt/2Vg8CzZ939XbOfCZgzRECPymCLVPOek0SFlnTBYAn3FmWoda/vbfqXv?=
+ =?us-ascii?Q?9G9ha0Ht45Wfk0WPUkT413pmP2nEP9x71036EpQc1Sy6omMzuVgTqbvNtoGa?=
+ =?us-ascii?Q?dOXAdA7fBL3g6pyM680g5NJhDyJ+kbw9DLZL319IeErNpR2kOtcQbEP5CRsg?=
+ =?us-ascii?Q?OYEimV406npIVHsz5YjfFUNL7A3NVTDzGedcacDXxepYLblWVrOJWMzVKhNO?=
+ =?us-ascii?Q?LSLUms6l/dTTQrqJJGjNMR0N1pY26iYCYWsNLNXhlEWKSzRs/55yDJKigPNU?=
+ =?us-ascii?Q?pVjxuwExyalkL45H4BVl/2t6vx48pbxnmgcZqVu+CLuTWtywwmbAIRL4G46a?=
+ =?us-ascii?Q?Su9DN37WVE3KS1o8dyooHI9e+uej6vIb+pTddLd0R4zNYKKTBfsmErYfBgRz?=
+ =?us-ascii?Q?IOt8shR5eTDiaDt1SJy/hGNxeyoa3XHWZNxu9OgKgBJlZLZQg34vl/JyfLiE?=
+ =?us-ascii?Q?I45zEBpa/JIJ3GuDB9zB5vq5heYu/xUAew0Q/sDaO5cBnLPbNosU7sRvA2QI?=
+ =?us-ascii?Q?X17DJS/hriwoOiC/b1FQs8401D3oxqwIUDdN8m/Ci3/3J8Um2oSwN/Qi8JzC?=
+ =?us-ascii?Q?kVjNr8tKogxT37bHI1jQS2722JIDEVo0jp1qkaQ49SWlv/gjU8jH5DHi6fDp?=
+ =?us-ascii?Q?cRT39ik8XOCJaPxzPVocoiQNXbozrEVp6XkE7CoEgABT88p9SzVcgXx01gV3?=
+ =?us-ascii?Q?bMq7TyrMTLpmgjXIhxSXe/LcTgVXc8NTOk9vzc/ngVwmKKA8scjzexVkHX5O?=
+ =?us-ascii?Q?tSPH0z2fog815X22MU98JMOJiCegPIH3l83AE2GdkMC/E34Njk3x3YsKc+ON?=
+ =?us-ascii?Q?88gRulv1gz/D+IqEgRzBfKUCY23prMd/exnE1jaYD9YYw0G3yGB5/z0PQWt4?=
+ =?us-ascii?Q?79bOuTvfs3xBs5jFrij58ucQAyLldhmvc9ppOfL7SQboqAsnA9tB01JthZNi?=
+ =?us-ascii?Q?sEuJoxtFKy3+aDPmxWUsXFir6EF2qcSJA9X2jIuxkqh6J2vSMRkmUBcSZNSe?=
+ =?us-ascii?Q?M0vfXVSJjAiIEGy9PsqFK1pSBtleqA4s0wtUAyctEALRQQ76pSIWx6+WsZpk?=
+ =?us-ascii?Q?vbUl7htosaljfDBfc/Dj4zRea/cdnDrx1BK2KVPBWNNF0Fte8lEsvfHRGCtC?=
+ =?us-ascii?Q?mK70Okng2DtZrNszkxBAhcr0VUPZmRgiF7DUNt6pkDyrKv7pJLYrWA4uk9y8?=
+ =?us-ascii?Q?mXmRBLy5dIs0tLHnYzj1x4zal6PUurfabD6iEvLAJardh+uyrsqLGxRAgKBX?=
+ =?us-ascii?Q?+t1P5yWGE/zluPVvYWMJfPPLFtWO?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM6PR04MB5941.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(366013)(376011)(7416011)(1800799021)(38070700015)(921017);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?K+l4osRW+v31sMu4ZcfEtjnDeqIrJmrDmMKIa1cPkH+wmYoLFSFd9Wp992X4?=
+ =?us-ascii?Q?IDD/ubpmJja1lzmL4mCbq3vSBTq3qBACCqKTsmZv19xqH5sntGwS6qoTw6oF?=
+ =?us-ascii?Q?HEIIbVfU75yQaphNBodm3iKm3rgLoSs3tliYP/h2n+NfRziZnI+xlJmQn2J3?=
+ =?us-ascii?Q?5Jd8jYnlqroNsu3VzTD6CBE0vwVSouyeAuLYXlLW+UvCWeznXsiAfDwEyG9h?=
+ =?us-ascii?Q?E2Pm9mOQ0T4blM15BRzqSKTQLqflVyJV3mOzQZg6/zKys1T7sKuchp0HsPhO?=
+ =?us-ascii?Q?UpyM91zYZFfedkD+2AcEhvSzAJToH1B2jmuUn40RU19l/xbxvQYVslTFfj34?=
+ =?us-ascii?Q?zJErC5psyxaH2+DGZLrNIr+ImWLlX1a7ujN06OPhrZTooSzTf9pAA+VBSTtt?=
+ =?us-ascii?Q?wrZwj03pv5Im3/qjq+AbIq1RNPs5AG4BSh0CK/gVfvqfts/mYb6ZUYxmz9hc?=
+ =?us-ascii?Q?1wu3ZnveiHnNSlBLg8sVaXhla8aCmr8OPffGAfygPQSYDn0803PiOtKJKi5z?=
+ =?us-ascii?Q?o1T/dxUx6d5WBBYij7I9JBMffFE3iAdgmXyxHY9iOzqBIrQsOy/bxoTXFq9T?=
+ =?us-ascii?Q?as1jz3ADgWKGAl6g7gRLfi7vPtZCWf17jnKznF0SkziMj6XAs5NHZkc74mOK?=
+ =?us-ascii?Q?YMtS0aeUfg+y/EN87SmiBBc9iXYLeVvXAJQw2N7y4LJ29N5u47nuHrDB7Smq?=
+ =?us-ascii?Q?Cen1QVZRpOzKvkIsjF97sZH56n+vAmqoet7zFpQEIx6HMhbvvgfdt6lmrGQ8?=
+ =?us-ascii?Q?ohoB5KKXTNMOYXgQ/UflxVATlV3ZVCa5B8wjtlszdrGDBKdyy6y3K3RAkKXj?=
+ =?us-ascii?Q?sLjk6ctXWkFJFs9ddsQ0DjsbFpy15SR9tOXAxL64RZ2E7kQDXp5nuise+HiS?=
+ =?us-ascii?Q?La6JqWEjTIYGfzOvDWT5Ms3YW5mxYkdKFfdRnw74aSMXoe2GjDRElgOTIVnO?=
+ =?us-ascii?Q?PCmmUVUWryYO+gWaqqDCrnKD0rxf/5f3YR8ppetyfPJlRoIC56xSoSp0PWf+?=
+ =?us-ascii?Q?hLKQDITr/BAWt0HqtfLzLi/bSTPV7F6f+oPKArrJiHRic8VIyErUQWnmyue8?=
+ =?us-ascii?Q?uM0R9PhESvdOAMi/Or18rRNng3J3xAZE+cyOxzoFituhmPMwG11JUeBLbMcG?=
+ =?us-ascii?Q?532UrdubJtCeFm0w3pwmhzlYwBMdZ4e1edQY4Kcb6tzw72mQbOfJ39MfTahk?=
+ =?us-ascii?Q?YLSvfvc/+VLlBEX/Aq2uT+okKAT/lXEu8SluDaYrvksWfJK4+Jf5bn02zdmc?=
+ =?us-ascii?Q?XSVoRzzTRyhckJvgKnq47XFbuvh0t9LWtb7X5X6loJ5E+UKWo8TtC4/PSlgm?=
+ =?us-ascii?Q?MhYIvHkOX1EBGFVrHoceRwTAjuvXxnTlaCHW2BRG/zmBa7tarkaCp9G13lS/?=
+ =?us-ascii?Q?PN4m9KM4i9IQnCulc3OkIeE7yJdBPSwWNXuBaJF6Jvl/y4wyZV8LL4GI4GQU?=
+ =?us-ascii?Q?ApF/3dSwUdwUVCALd2CMmTfqwf+Pau5Hb9Q6fIHnmqdvdDCFGS1zfPVx5J8f?=
+ =?us-ascii?Q?4bA91SIqPOxRbuOnycP8LBQwTHPdoLoQRVKtuHOjtk3l7dZ8Fru4G5/d2nby?=
+ =?us-ascii?Q?WF2SzF8A/C9YGX802uE=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 06/12] rtc: renesas-rtca3: Add driver for RTCA-3 available
- on Renesas RZ/G3S SoC
-Content-Language: en-US
-To: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, lee@kernel.org,
- magnus.damm@gmail.com, linux-renesas-soc@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240614071932.1014067-1-claudiu.beznea.uj@bp.renesas.com>
- <20240614071932.1014067-7-claudiu.beznea.uj@bp.renesas.com>
- <2024061409215756e6a10c@mail.local>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <2024061409215756e6a10c@mail.local>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AM6PR04MB5941.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a8c4b532-14b2-4c30-e99a-08dc8c6bdb3e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Jun 2024 12:16:44.7217
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: cy6Uhl9p0cGIv7/BDZEmuEFDIxPHfCbEsJnHNo9pUg6jxo3eY+Z4UG59LSbmun3pUubU1YeymzPyxIG7TKH+oQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR04MB10693
 
-Hi, Alexandre,
+> Subject: [PATCH] dt-bindings: drop stale Anson Huang from maintainers
+>=20
+> Emails to Anson Huang bounce:
+>=20
+>   Diagnostic-Code: smtp; 550 5.4.1 Recipient address rejected: Access den=
+ied.
+>=20
+> Add IMX platform maintainers for bindings which would become orphaned.
+>=20
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-On 14.06.2024 12:21, Alexandre Belloni wrote:
-> Hello Claudiu,
-> 
-> On 14/06/2024 10:19:26+0300, Claudiu wrote:
->> +static int rtca3_initial_setup(struct rtca3_priv *priv)
->> +{
->> +	unsigned long osc32k_rate;
->> +	u8 pes, tmp, mask;
->> +	u32 sleep_us;
->> +	int ret;
->> +
->> +	osc32k_rate = clk_get_rate(priv->clk);
->> +	if (!osc32k_rate)
->> +		return -EINVAL;
->> +
->> +	sleep_us = DIV_ROUND_UP_ULL(1000000ULL, osc32k_rate) * 6;
->> +
->> +	priv->ppb.ten_sec = DIV_ROUND_CLOSEST_ULL(1000000000ULL, (osc32k_rate * 10));
->> +	priv->ppb.sixty_sec = DIV_ROUND_CLOSEST_ULL(1000000000ULL, (osc32k_rate * 60));
->> +
->> +	/*
->> +	 * According to HW manual (section 22.4.2. Clock and count mode setting procedure)
->> +	 * we need to wait at least 6 cycles of the 32KHz clock after clock was enabled.
->> +	 */
->> +	usleep_range(sleep_us, sleep_us + 10);
->> +
->> +	/* Disable alarm and carry interrupts. */
->> +	mask = RTCA3_RCR1_AIE | RTCA3_RCR1_CIE;
->> +	rtca3_byte_update_bits(priv, RTCA3_RCR1, mask, 0);
->> +	ret = readb_poll_timeout(priv->base + RTCA3_RCR1, tmp, !(tmp & mask),
->> +				 10, RTCA3_DEFAULT_TIMEOUT_US);
->> +	if (ret)
->> +		return ret;
->> +
->> +	/*
->> +	 * Stop the RTC and set to 12 hours mode and calendar count mode.
->> +	 * RCR2.START initial value is undefined so we need to stop here
->> +	 * all the time.
->> +	 */
-> 
-> Certainly not, if you stop the RTC on probe, you lose the time
-> information, this must only be done when the RTC has never been
-> initialised. The whole goal of the RTC is the keep time across reboots,
-> its lifecycle is longer than the system.
+Acked-by: Peng Fan <peng.fan@nxp.com>
 
-This was also my first thought when I read the HW manual.
-
-It has been done like this to follow the HW manual. According to HW manual
-[1], chapter 22.3.19 RTC Control Register 2 (RCR2), initial value of START
-bit is undefined.
-
-If it's 1 while probing but it has never been initialized, we can falsely
-detect that RTC is started and skip the rest of the initialization steps.
-W/o initialization configuration, the RTC will not be able to work.
-
-Even with this implementation we don't loose the time b/w reboots. Here is
-the output on my board [2]. The steps I did were the following:
-1/ remove the power to the board (I don't have a battery for RTC installed
-   at the moment)
-2/ boot the board and issue hwclock -w
-3/ reboot
-4/ check the systime and rtc time
-5/ poweroff
-6/ poweron
-7/ boot and check systime and RTC time
-
-As you can see the time is not lost but continue to increment. I presume
-the hardware takes into account that time needs to increment when initial
-configuration is executed.
-
-[1]
-https://www.renesas.com/us/en/products/microcontrollers-microprocessors/rz-mpus/rzg3s-general-purpose-microprocessors-single-core-arm-cortex-a55-11-ghz-cpu-and-dual-core-cortex-m33-250
-[2] https://p.fr33tux.org/585cd6
-
-> 
-> Also, why do you insist on 12H-mode? The proper thing to do is to support
-> 12H-mode on read but always use 24H-mode when setting the time.
-
-OK, I wasn't aware of this. I think I followed this approach as it looked
-to me the number of operation to update the hardware registers was lower
-for 12h mode.
-
-I'll adjust as proposed.
-
-> 
->> +	mask = RTCA3_RCR2_START | RTCA3_RCR2_HR24 | RTCA3_RCR2_CNTMD;
->> +	writeb(0, priv->base + RTCA3_RCR2);
->> +	ret = readb_poll_timeout(priv->base + RTCA3_RCR2, tmp, !(tmp & mask),
->> +				 10, RTCA3_DEFAULT_TIMEOUT_US);
->> +	if (ret)
->> +		return ret;
->> +
->> +	/* Execute reset and wait for reset and calendar count mode to be applied. */
->> +	mask = RTCA3_RCR2_RESET | RTCA3_RCR2_CNTMD;
->> +	writeb(RTCA3_RCR2_RESET, priv->base + RTCA3_RCR2);
->> +	ret = readb_poll_timeout(priv->base + RTCA3_RCR2, tmp, !(tmp & mask),
->> +				 10, RTCA3_RESET_TIMEOUT_US);
->> +	if (ret)
->> +		return ret;
->> +
->> +	/*
->> +	 * According to HW manual (section 22.6.3. Notes on writing to and reading
->> +	 * from registers) after reset we need to wait 6 clock cycles before
->> +	 * writing to RTC registers.
->> +	 */
->> +	usleep_range(sleep_us, sleep_us + 10);
->> +
->> +	/* Set no adjustment. */
->> +	writeb(0, priv->base + RTCA3_RADJ);
->> +	ret = readb_poll_timeout(priv->base + RTCA3_RADJ, tmp, !tmp, 10,
->> +				 RTCA3_DEFAULT_TIMEOUT_US);
->> +
->> +	/* Start the RTC and enable automatic time error adjustment. */
->> +	mask = RTCA3_RCR2_START | RTCA3_RCR2_AADJE;
->> +	writeb(RTCA3_RCR2_START | RTCA3_RCR2_AADJE, priv->base + RTCA3_RCR2);
->> +	ret = readb_poll_timeout(priv->base + RTCA3_RCR2, tmp, ((tmp & mask) == mask),
->> +				 10, RTCA3_START_TIMEOUT_US);
->> +	if (ret)
->> +		return ret;
->> +
->> +	/*
->> +	 * According to HW manual (section 22.6.4. Notes on writing to and reading
->> +	 * from registers) we need to wait 1/128 seconds while the clock is operating
->> +	 * (RCR2.START bit = 1) to be able to read the counters after a return from
->> +	 * reset.
->> +	 */
->> +	usleep_range(8000, 9000);
->> +
->> +	/* Set period interrupt to 1/64 seconds. It is necessary for alarm setup. */
->> +	pes = FIELD_PREP(RTCA3_RCR1_PES, RTCA3_RCR1_PES_1_64_SEC);
->> +	rtca3_byte_update_bits(priv, RTCA3_RCR1, RTCA3_RCR1_PES, pes);
->> +	return readb_poll_timeout(priv->base + RTCA3_RCR1, tmp, ((tmp & RTCA3_RCR1_PES) == pes),
->> +				  10, RTCA3_DEFAULT_TIMEOUT_US);
->> +}
->> +
->> +static int rtca3_request_irqs(struct platform_device *pdev, struct rtca3_priv *priv)
->> +{
->> +	struct device *dev = &pdev->dev;
->> +	int ret, irq;
->> +
->> +	irq = platform_get_irq_byname(pdev, "alarm");
->> +	if (irq < 0)
->> +		return dev_err_probe(dev, irq, "Failed to get alarm IRQ!\n");
->> +
->> +	ret = devm_request_irq(dev, irq, rtca3_alarm_handler, 0, "rtca3-alarm", priv);
->> +	if (ret)
->> +		return dev_err_probe(dev, ret, "Failed to request alarm IRQ!\n");
->> +	priv->wakeup_irq = irq;
->> +
->> +	irq = platform_get_irq_byname(pdev, "period");
->> +	if (irq < 0)
->> +		return dev_err_probe(dev, irq, "Failed to get period IRQ!\n");
->> +
->> +	ret = devm_request_irq(dev, irq, rtca3_periodic_handler, 0, "rtca3-period", priv);
->> +	if (ret)
->> +		return dev_err_probe(dev, ret, "Failed to request period IRQ!\n");
->> +
->> +	/*
->> +	 * Driver doesn't implement carry handler. Just get the IRQ here
->> +	 * for backward compatibility, in case carry support will be added later.
->> +	 */
->> +	irq = platform_get_irq_byname(pdev, "carry");
->> +	if (irq < 0)
->> +		return dev_err_probe(dev, irq, "Failed to get carry IRQ!\n");
->> +
->> +	return 0;
->> +}
->> +
->> +static int rtca3_probe(struct platform_device *pdev)
->> +{
->> +	struct device *dev = &pdev->dev;
->> +	struct rtca3_priv *priv;
->> +	int ret;
->> +
->> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
->> +	if (!priv)
->> +		return -ENOMEM;
->> +
->> +	priv->base = devm_platform_ioremap_resource(pdev, 0);
->> +	if (IS_ERR(priv->base))
->> +		return PTR_ERR(priv->base);
->> +
->> +	priv->clk = devm_clk_get_enabled(dev, "counter");
->> +	if (IS_ERR(priv->clk))
->> +		return PTR_ERR(priv->clk);
->> +
->> +	platform_set_drvdata(pdev, priv);
->> +
->> +	spin_lock_init(&priv->lock);
->> +	atomic_set(&priv->alrm_sstep, RTCA3_ALRM_SSTEP_DONE);
->> +	init_completion(&priv->set_alarm_completion);
->> +
->> +	ret = rtca3_initial_setup(priv);
->> +	if (ret)
->> +		return dev_err_probe(dev, ret, "Failed to setup the RTC!\n");
->> +
->> +	ret = rtca3_request_irqs(pdev, priv);
->> +	if (ret)
->> +		return ret;
->> +
->> +	device_init_wakeup(&pdev->dev, 1);
->> +
->> +	priv->rtc_dev = devm_rtc_allocate_device(&pdev->dev);
->> +	if (IS_ERR(priv->rtc_dev))
->> +		return PTR_ERR(priv->rtc_dev);
->> +
->> +	priv->rtc_dev->ops = &rtca3_ops;
->> +	priv->rtc_dev->max_user_freq = 256;
->> +	priv->rtc_dev->range_min = mktime64(1999, 1, 1, 0, 0, 0);
->> +	priv->rtc_dev->range_max = mktime64(2098, 12, 31, 23, 59, 59);
-> 
-> This very much looks like the range should be 2000 to 2099, why do you
-> want to shift it?
-
-2000-2099 was my first option for this but then I saw one of your old
-commits on this topic and, since I'm not very familiar with RTC,
-I took it as example. I'll adjust as you proposed.
-
-commit beee05dfbead
-Author: Alexandre Belloni <alexandre.belloni@bootlin.com>
-Date:   Wed Mar 20 12:30:10 2019 +0100
-
-    rtc: sh: set range
-
-    The SH RTC is a BCD RTC with some version having 4 digits for the year.
-
-    The range for the RTCs with only 2 digits for the year was unfortunately
-    shifted to handle 1999 to 2098.
-
-    Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-    Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
-
-
-Thank you for your review,
-Claudiu Beznea
-
-> 
-> 
+Regards,
+Peng.
