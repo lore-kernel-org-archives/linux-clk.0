@@ -1,100 +1,88 @@
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28E72946C;
-	Fri, 14 Jun 2024 16:01:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37B76187548;
+	Fri, 14 Jun 2024 22:49:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718380891; cv=none; b=Gb+A9sJzmNyDQ5K5dljjAo+3iSgY42jBwqRJ3CV39eppMuy9nRAhw0/qB5lwazOSpARmUnMRo+JPbUDEaMybOWIcFRFbd4isJDj312wcAzz1MXSWm3S3KcYujupqDYDtJIo7tQvJBRmVeHy4ZyNZd+SaSNf1rgupI7g5MSghx2k=
+	t=1718405341; cv=none; b=TxA2MbbdrXU/c0003CYsw9L6BchF5LlFDaz9VaiGv24Icp7Fx1c7dXuFhoJEUkev7O689xiAmfeope7tjqTHUcK6nzgrYCveBsI3rEg4wm4P3t6UJdEkSo35PkDj1Pt9lj7FR/gPVyE8RrxcgLxS7rfgKTkV0zVKVGH/vgBYoRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718380891; c=relaxed/simple;
-	bh=PF06UVAUwNRTBfsiJ21LK7Zw9YpeWoI6dp0UuAuGFXs=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iC9DD7Y5sI8QiQFqt1PxpR9o3/UEZcFw7hZ33EqpZjm0oXuvuYD6E+HY71yjJt4AOZK80fcSogk34PReVfAVGLVBTFAVKgeeoQ6T0d/9bbIWSCYAxubRTQrGsBbwejU3NfLhU/kZg9BW3/FVqYVAUTqgM6u3lVTgGxH36LwQegY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4W13rc72Q9z6H7Wv;
-	Sat, 15 Jun 2024 00:00:00 +0800 (CST)
-Received: from lhrpeml500005.china.huawei.com (unknown [7.191.163.240])
-	by mail.maildlp.com (Postfix) with ESMTPS id 690CF140D26;
-	Sat, 15 Jun 2024 00:01:25 +0800 (CST)
-Received: from localhost (10.202.227.76) by lhrpeml500005.china.huawei.com
- (7.191.163.240) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 14 Jun
- 2024 17:01:24 +0100
-Date: Fri, 14 Jun 2024 17:01:23 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-CC: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, "Sascha
- Hauer" <s.hauer@pengutronix.de>, Pengutronix Kernel Team
-	<kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Abel Vesa
-	<abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, Frank Li
-	<Frank.Li@nxp.com>, <devicetree@vger.kernel.org>, <imx@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<linux-clk@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-	<linux-i2c@vger.kernel.org>, <linux-iio@vger.kernel.org>,
-	<linux-pwm@vger.kernel.org>, <linux-spi@vger.kernel.org>,
-	<linux-pm@vger.kernel.org>, <linux-watchdog@vger.kernel.org>
-Subject: Re: [PATCH] dt-bindings: drop stale Anson Huang from maintainers
-Message-ID: <20240614170123.00002e0f@Huawei.com>
-In-Reply-To: <20240614095927.88762-1-krzysztof.kozlowski@linaro.org>
-References: <20240614095927.88762-1-krzysztof.kozlowski@linaro.org>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1718405341; c=relaxed/simple;
+	bh=w1njwB9/Qau5mUTazesoHTA6cx3pRt57wTrcbewgHKM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=l6doxE1euLAKbFr7EeOqBJ0+ZiJN8DmbpqElLQuxOeU0MHde7M1LHI826M2ev6xOj7/Co/TQ/w6caZj3ULU3ineJRpj+3Re4tdWogg1lXFD/rYiEFp4eD35t7FzTSltuL/Io7eOX04E2mUbsiPWwtvXRMqR9XpfJUiYq4SVRs3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TVyIpaC3; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TVyIpaC3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 867F2C4AF1D;
+	Fri, 14 Jun 2024 22:48:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718405340;
+	bh=w1njwB9/Qau5mUTazesoHTA6cx3pRt57wTrcbewgHKM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=TVyIpaC3C7LJXjKAgNwQQgefT5hu2sBdWPaKpYXqDjIi/IzXuQWPx3wXFxI8TFocE
+	 lM5GHzg/7LFOxzscFD5Nsul7j4mFPMdzg7KqgzgmB7aQx3/1LEkecrnpE+B5CBn9ys
+	 poIwNWGXsETs2f+i57KlKuxJ+3/srQ+JMjlsldyx6+DkOke5ZXqjOn0X0LP0c3uKdQ
+	 YfGxKUcq7XKy4dMfvlRsi9AYVmM7JIRj0YdbxefAj4jc1io8Dx+KvSZ9+AD4k+d5MP
+	 qHihqk0Alpgw3Hh4Igg8VM5e7r8EEWHv0yuMNxNdkMHgjk+Z1NcYB8zic/5QGF55iQ
+	 FAdn7FbID1EsQ==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: Re: (subset) [PATCH v4 0/5] A702 support
+Date: Fri, 14 Jun 2024 17:48:50 -0500
+Message-ID: <171840533352.102487.15387361923289327590.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240606-topic-rb1_gpu-v4-0-4bc0c19da4af@linaro.org>
+References: <20240606-topic-rb1_gpu-v4-0-4bc0c19da4af@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500005.china.huawei.com (7.191.163.240) To
- lhrpeml500005.china.huawei.com (7.191.163.240)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Fri, 14 Jun 2024 11:59:27 +0200
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
 
-> Emails to Anson Huang bounce:
+On Thu, 06 Jun 2024 13:35:59 +0200, Konrad Dybcio wrote:
+> To: Bjorn Andersson <andersson@kernel.org>
+> To: Michael Turquette <mturquette@baylibre.com>
+> To: Stephen Boyd <sboyd@kernel.org>
+> To: Rob Herring <robh@kernel.org>
+> To: Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>
+> To: Conor Dooley <conor+dt@kernel.org>
+> To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+> Cc: Marijn Suijten <marijn.suijten@somainline.org>
+> Cc: Konrad Dybcio <konradybcio@kernel.org>
+> Cc: linux-arm-msm@vger.kernel.org
+> Cc: linux-clk@vger.kernel.org
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-kernel@vger.kernel.org
+> Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 > 
->   Diagnostic-Code: smtp; 550 5.4.1 Recipient address rejected: Access denied.
-> 
-> Add IMX platform maintainers for bindings which would become orphaned.
-That doesn't make much sense for the magnetometer which has nothing to do with
-imx.
+> [...]
 
-Make that one my problem under my jic23@kernel.org address.
+Applied, thanks!
 
-Thanks,
+[4/5] arm64: dts: qcom: qcm2290: Add GPU nodes
+      commit: 4faeef52c8e69f4fa43bd572049b502175fc55c3
+[5/5] arm64: dts: qcom: qrb2210-rb1: Enable the GPU
+      commit: 1ae60a51d175f5d43e2020a1c3f11346796ae6de
 
-Jonathan
-
-
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-> diff --git a/Documentation/devicetree/bindings/iio/magnetometer/fsl,mag3110.yaml b/Documentation/devicetree/bindings/iio/magnetometer/fsl,mag3110.yaml
-> index 6b54d32323fc..467002a5da43 100644
-> --- a/Documentation/devicetree/bindings/iio/magnetometer/fsl,mag3110.yaml
-> +++ b/Documentation/devicetree/bindings/iio/magnetometer/fsl,mag3110.yaml
-> @@ -7,7 +7,9 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
-
-Not sure the new maintainers make sense here.
-
-Flip it to me if no one else volunteers.
-
->  title: Freescale MAG3110 magnetometer sensor
->  
->  maintainers:
-> -  - Anson Huang <Anson.Huang@nxp.com>
-> +  - Shawn Guo <shawnguo@kernel.org>
-> +  - Sascha Hauer <s.hauer@pengutronix.de>
-> +  - Fabio Estevam <festevam@gmail.com>
->  
->  properties:
->    compatible:
-
-
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
