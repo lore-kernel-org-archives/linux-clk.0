@@ -1,85 +1,90 @@
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0947191497
-	for <linux-clk@vger.kernel.org>; Fri, 14 Jun 2024 08:58:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED7E2183071
+	for <linux-clk@vger.kernel.org>; Fri, 14 Jun 2024 09:07:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718355526; cv=none; b=sGaPPTeiJJ91G83V2WzfjXIAiCcB3AEQ8Rtwi5KLcRz+tjAIbqDcbpB7GaFiSMDkhdaYeAQiQpYnM7OIX3tJV/EG74/RzOKKSkjqZI5gr7dMXUM0Yt73wEYfrKuEzjGORW7L0lhOvLsBjc7hGa2zDyTcLyCurHwHzAGUR9Eo9Og=
+	t=1718356035; cv=none; b=MA51eBgdLuLbDFVWSafx+t/amW5+b/8JAuF1CifV8Jqpp1HBXzUbRscfO2kbPLVhufXs8rY2a0NGhRTEabXKmO+N6j+puk0zyi5o8Bntlr2Th5FIR9opN38TzzjQwaXDXd+keaCudxxJxkdfzMaDQmul5NmcON49YPSZ7FSJPH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718355526; c=relaxed/simple;
-	bh=URmpVX+h4mlfzvCudxDs8P7msnxwTQi7z+C/vPARdO8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=OBwgCrX/4zQyeGoplIeDmoZJUARovD4yuAiGtO42FP4OhE82DUlU/fpMgN7jr4KKuCc9LispNt2daFJaKRCt0iJJpXvXVJ63HKlVlyCKY18K4P0RcY2g+ykedYprRZcanfgaqRXlDYgBWhCAcEXYfsdhm2qcMSKAJRkHrUA/V3Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=sIE1IM6w; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="sIE1IM6w"
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-35f06861ae6so1803642f8f.2
-        for <linux-clk@vger.kernel.org>; Fri, 14 Jun 2024 01:58:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1718355517; x=1718960317; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZdYyUMalkTDxkfe8DhCeZo415hoYlYCOiWfh55zkm74=;
-        b=sIE1IM6wTzZbA2n/M7MHfRak/+tL9UJaabvQeKyDTWBONyx+oj60Un9OKIiS2Twpt6
-         /8c+CdxpM/AN+yqiy1/3TUOgTDw1N1/Dj7L83N+P+8EuggPykpkdBQqAH5DgTzptAZKO
-         1dpE/nhmCOR6Bf1neJAq4vLWd7hcsPI+OZw6Pbb8Ia42nDWRJCVq5iaCV1MI+nlY5+mu
-         DJgs3mW5oahyS0CslTb9Pondj6kQ0IBysLgrjqrLpPZWYt1Xny0m26en7h62ZpvQtHG7
-         TrYMu/NGfHZR8yORh2gvWQkIGz53+PpWqvHKiT1ALn7IeLcfKA0LZOG6roS8p2sAaH2n
-         Edqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718355517; x=1718960317;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZdYyUMalkTDxkfe8DhCeZo415hoYlYCOiWfh55zkm74=;
-        b=MApUOhVTMKHHj7nUMZc8gc8894zEM7wGyp18CyhRb/Vv5dS9bujWE97G9+4fZAkSHa
-         2DcSOoveR0egimzqua1F2nsPgDyOhl1C4EXljNfeL6/UvFpPDgLAPtfoOGroXz5e1EcF
-         mKzAGq5IcoWl20O+busSemlIQ60s36tF8O/tGcRr8mJQ9riP04oiFljP77bZhezu//Uo
-         ndZnWnZqmUQJd8ME8hrkLqxvJHbsbY1c9mx6iVuNA8ujPYOQMAfinn/9ZH8mp7YFHwGH
-         i4lPJDlgSJPCac9LN+ajl0jHoULgnITcg2WSDNoonha9NmPei7xYdbs0fv46AeX8PRnj
-         rVVA==
-X-Forwarded-Encrypted: i=1; AJvYcCXf2GmkMObGscVFlRtOqfkAC2v9SwL/e6TnCHZKoe+6AxDQ3pQcUSe3NdtNWTzTHHHzsg3FBEZmppV4TbIvA1bI8Xw2n8qxOHj7
-X-Gm-Message-State: AOJu0YznIibXNTGKAAK3GWjcLd40rIQZFg/qocYaQL1E34AjuMUm9wam
-	DUyDoBTjYo9hp3DaKek9maEIaKwJTIfO88righhSs1LTgfI4x9f77AsQ257zErM=
-X-Google-Smtp-Source: AGHT+IGM9Wi7J+z+MS6fiYn0dNhK3jifJCaU6+orZ5nbibQS0YySF3uGnRU/B+esBgM56A84wA1law==
-X-Received: by 2002:adf:dd8d:0:b0:35f:28fc:98eb with SMTP id ffacd0b85a97d-3607a764b54mr1322002f8f.18.1718355516988;
-        Fri, 14 Jun 2024 01:58:36 -0700 (PDT)
-Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:d811:babc:4f8c:772b])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-36075c6fa4esm3632562f8f.67.2024.06.14.01.58.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 14 Jun 2024 01:58:36 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Jerome Brunet <jbrunet@baylibre.com>
-Cc: Kevin Hilman <khilman@baylibre.com>, linux-kernel@vger.kernel.org, 
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
- Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <20240611133512.341817-1-jbrunet@baylibre.com>
-References: <20240611133512.341817-1-jbrunet@baylibre.com>
-Subject: Re: [PATCH] clk: meson: add missing MODULE_DESCRIPTION() macros
-Message-Id: <171835551618.663007.10385411290888790860.b4-ty@baylibre.com>
-Date: Fri, 14 Jun 2024 10:58:36 +0200
+	s=arc-20240116; t=1718356035; c=relaxed/simple;
+	bh=c5p4y5JMVWLeetbHdFadZZKgUE3h05QJXf9r0AojEfA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=VjKfQssaLf2A6QctqY9uhLVv7EEB8NOXBATg6lYg0j9QrAwF7bAMRPvVy3LtQhkMhdLd0wjMaXlSPc/Is8w9ORMXMaUkHuYKOC7qMo/V544j+gNKDkOAXoQyd+0oxcm3yCRCN+B6Hc2l8VGcarK1foq6hywRAWbEZWapgNo2cR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:be2a:f066:50f0:dff7])
+	by baptiste.telenet-ops.be with bizsmtp
+	id bM7D2C00U3w30qz01M7Dyc; Fri, 14 Jun 2024 11:07:13 +0200
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1sI2so-00BqPl-PD;
+	Fri, 14 Jun 2024 11:07:13 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1sI2tt-00FbKH-9T;
+	Fri, 14 Jun 2024 11:07:13 +0200
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL] clk: renesas: Updates for v6.11
+Date: Fri, 14 Jun 2024 11:07:10 +0200
+Message-Id: <cover.1718355410.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Applied to clk-meson (v6.11/drivers), thanks!
+	Hi Mike, Stephen,
 
-[1/1] clk: meson: add missing MODULE_DESCRIPTION() macros
-      https://github.com/BayLibre/clk-meson/commit/befe87380e21
+The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
 
-Best regards,
---
-Jerome
+  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
 
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v6.11-tag1
+
+for you to fetch changes up to f92d44a00bd559f411b2c70b677afbc7c4723019:
+
+  clk: renesas: r8a779h0: Add VIN clocks (2024-06-11 09:36:27 +0200)
+
+----------------------------------------------------------------
+clk: renesas: Updates for v6.11
+
+  - Add video capture (ISPCS, CSI-2, VIN) clocks on R-Car V4M,
+  - Miscellaneous fixes and improvements.
+
+Thanks for pulling!
+
+----------------------------------------------------------------
+Geert Uytterhoeven (3):
+      clk: renesas: r8a77970: Use common cpg_lock
+      clk: renesas: cpg-lib: Use DEFINE_SPINLOCK() for global spinlock
+      clk: renesas: rcar-gen2: Use DEFINE_SPINLOCK() for static spinlock
+
+Lad Prabhakar (1):
+      dt-bindings: clock: renesas,rzg2l-cpg: Update description for #reset-cells
+
+Niklas Söderlund (3):
+      clk: renesas: r8a779h0: Add ISPCS clocks
+      clk: renesas: r8a779h0: Add CSI-2 clocks
+      clk: renesas: r8a779h0: Add VIN clocks
+
+ .../devicetree/bindings/clock/renesas,rzg2l-cpg.yaml |  2 +-
+ drivers/clk/renesas/r8a77970-cpg-mssr.c              |  5 +----
+ drivers/clk/renesas/r8a779h0-cpg-mssr.c              | 20 ++++++++++++++++++++
+ drivers/clk/renesas/rcar-cpg-lib.c                   |  2 +-
+ drivers/clk/renesas/rcar-gen2-cpg.c                  |  4 +---
+ drivers/clk/renesas/rcar-gen3-cpg.c                  |  2 --
+ drivers/clk/renesas/rcar-gen4-cpg.c                  |  2 --
+ 7 files changed, 24 insertions(+), 13 deletions(-)
