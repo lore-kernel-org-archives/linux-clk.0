@@ -1,238 +1,473 @@
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f51.google.com (mail-ot1-f51.google.com [209.85.210.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88883191497;
-	Fri, 14 Jun 2024 09:22:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 317CE19FA65
+	for <linux-clk@vger.kernel.org>; Fri, 14 Jun 2024 09:59:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718356929; cv=none; b=ZSnduyMlc94gik8H/eSpde6CiEWtdFntB0yeBGTjUlS1I4c3NV+VN76/FxjbJkjofaMFsoHFZnB77VHHXII3Q3NDrtzjVOtWAW3K7yIjV650aYLdmYudlO8vU3WJLScmOJsHTUCb9+cltnK11wI+cne0FIc7EgoGZdudUWYfkT0=
+	t=1718359181; cv=none; b=ukOkm5vrx5oMK9g6F6CVXerFj412391+3PcKQEm65vbLgSUjjGLAv1qCjKxeAGbJjIdHJ1BitmUv4pWyrrYDv2kFawga2FDWFmyV5OvwSc+4fH6c0rNStQ+FKmzdE1JkHso9Aua5/VQ67djGw54mUUHWVhochzWXbpNhrmslrPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718356929; c=relaxed/simple;
-	bh=Q7gy1qqjZ+smCjQs/lR/3S57dKZFxfXG77Ywzt1cdUM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SSsT7RvvKA8JnYaOaZ1EUA0kSwSvH3Bzt/8oTbCuTq8k/hWJu68B9eWQGR430VYB3U+sXNYlvBcxfzliV6ZjpwmkibEdZAKx8z5hPDKHAgReMs+GGlH5uNdgRU1SWq7ReFBYd/ogQQL60qmlRMEmOF2JaAdaN3fHH2viTABXuwQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=eddZwAv/; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1718359181; c=relaxed/simple;
+	bh=o+UxusDvXcRw/9+99wtmLFw1Ay/JOFInOe2ZTYft6/8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C/1J4WlaBJzbA5pWuIl1tHlnaGjyU5G/g1uKkrSDc1SjZHMLNKjppik5VpTEg1aaYcz9ww/ILTl5IixYp+8pqtJfVdulRmPvfqH6Mlzo/GLdlPa/5XOnYXOxusWUFJUCGB+bhTpdXNcfu+PYXchlJ2cTjggRBmlqKxKmgBRJ5+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s5P1v4bX; arc=none smtp.client-ip=209.85.210.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="eddZwAv/"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 18A8020007;
-	Fri, 14 Jun 2024 09:21:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1718356919;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ez2HfY1x87bBiR5tU1ndmRD1HXIhQKtusmjdRjvINyc=;
-	b=eddZwAv/wquEluA9pJKGZdXbksACURRWevQ1N6byNcOheTyrgeIOEKGM632e9au9gW12gQ
-	d2IxX2j69f6CaKGOi7zMsIE/c8VglP6S/U+jZH8xfuuktleI2iYtT0rLGs1Ag4CfImo49O
-	ykvT85mdUKaa7LHIXeElrU+UREGO8qXAi4fttIkO8dfY1mKB8PsN+mFWw9f4Hb90xtlkNw
-	2bd9AEFqSEIcYj7GmfcyU6uGyb7q17zQARUK2sl6jjvRKAhWKoscCXefYxXCXRGhu13Pss
-	JH6CDhtFF+dymhpdZuKYBfpN1i80pAuQF/47Qf0w2yxgJxqB1JqrcZpL6TwwUw==
-Date: Fri, 14 Jun 2024 11:21:57 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	lee@kernel.org, magnus.damm@gmail.com,
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH 06/12] rtc: renesas-rtca3: Add driver for RTCA-3
- available on Renesas RZ/G3S SoC
-Message-ID: <2024061409215756e6a10c@mail.local>
-References: <20240614071932.1014067-1-claudiu.beznea.uj@bp.renesas.com>
- <20240614071932.1014067-7-claudiu.beznea.uj@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s5P1v4bX"
+Received: by mail-ot1-f51.google.com with SMTP id 46e09a7af769-6f9fbec4fd9so1144890a34.2
+        for <linux-clk@vger.kernel.org>; Fri, 14 Jun 2024 02:59:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718359178; x=1718963978; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZwEL12Dk210SzDROzm2fK2nLGU+zRldORTG8TcrOARU=;
+        b=s5P1v4bXiSooSYEMashPeGCvfQ6Ka+EpkeLR+DiXhtIsuFdN0f3LdlI3mm3ad4jHjf
+         uFVrLWCgi12AZc0wJgpuKM8JW/ewqsTAL5b6CNDJku+OvmHmw+zeW0ZuB/Aquawlb1HY
+         lBcwhBWvhLJB1j4Z9DMC7hctc+0Isf+6lPo7NZDt602He5iggH7k+68D38sn4YbZLoFz
+         L2BCo6hL983Qtwyvd2FAfL6E0QjhFaFiC0zMBQTLiLuoqSpDBE/UnAaSu584h6AvOlOU
+         kWNdxwR8beVjku3PmqM/1uAwdkb39Vlp3FACPEVS2gG+qHsDA0dbXWBQ1nfsQUJK1/IX
+         9o5Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718359178; x=1718963978;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ZwEL12Dk210SzDROzm2fK2nLGU+zRldORTG8TcrOARU=;
+        b=a+LHq8dk32eyTLqGVrwRxrijD7X1bBe7bgQfJKL7M/Uv/QdZFWI9bYm+Wbm+IhDa9m
+         RyxH5pzd0p1IQYxmrzYJxjkuEKIYNzb43ISr1sfJKJQm18uD1RFgZj25JYtEPyPRz0Rz
+         YViIdaYU5yLqnajbvPqKSu4oZwh9Y7HxWW9wT69xNbVpi57qv9VX84thv02CcHRFalw8
+         ZusBoEGRenCXtBF2fyhOUMU0bLUVBaVExuzxPCPTyX+ZgoSOZdgWhoR4/AcOiNcNkPVK
+         +npFY3CC8tLlPpQwqYUcMHVFMC4guiw5VRsVwtcU6SR+MP244vHAYS7T54L+WimWmMu8
+         63SA==
+X-Forwarded-Encrypted: i=1; AJvYcCVr3CRyL/x3qdjw51EZBQVCoKPo8skinT8CmPeqERKelacW41FCXPXmgv3ysztJQgOb3qGZsI3jhcRt9NjURE2ivDorsNcoTjod
+X-Gm-Message-State: AOJu0YzQfP8Q8uIoPGgVLVri5SzCoH8XoDd/2+JK038V68oxAgorub7w
+	bJQBFpQ6B2IctKnkNNjM7FYX4xsu9z76OjtcS4o6Efv7Pi/h2kix7AqQPC6Myg8=
+X-Google-Smtp-Source: AGHT+IGaIW4Oj4QyiK1N8uLp44uKOum0SpgbvhX9tXBoqXkfPuCUc1l/mIKPBdvr5bH67v1ZL9Bhsw==
+X-Received: by 2002:a05:6830:10a:b0:6fa:e93:3e3e with SMTP id 46e09a7af769-6fb93766baamr2212329a34.9.1718359178133;
+        Fri, 14 Jun 2024 02:59:38 -0700 (PDT)
+Received: from krzk-bin.. ([78.10.206.163])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-6fb5b2fe510sm554180a34.48.2024.06.14.02.59.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 14 Jun 2024 02:59:37 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Abel Vesa <abelvesa@kernel.org>,
+	Peng Fan <peng.fan@nxp.com>,
+	Frank Li <Frank.Li@nxp.com>,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	linux-iio@vger.kernel.org,
+	linux-pwm@vger.kernel.org,
+	linux-spi@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-watchdog@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH] dt-bindings: drop stale Anson Huang from maintainers
+Date: Fri, 14 Jun 2024 11:59:27 +0200
+Message-ID: <20240614095927.88762-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240614071932.1014067-7-claudiu.beznea.uj@bp.renesas.com>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-Hello Claudiu,
+Emails to Anson Huang bounce:
 
-On 14/06/2024 10:19:26+0300, Claudiu wrote:
-> +static int rtca3_initial_setup(struct rtca3_priv *priv)
-> +{
-> +	unsigned long osc32k_rate;
-> +	u8 pes, tmp, mask;
-> +	u32 sleep_us;
-> +	int ret;
-> +
-> +	osc32k_rate = clk_get_rate(priv->clk);
-> +	if (!osc32k_rate)
-> +		return -EINVAL;
-> +
-> +	sleep_us = DIV_ROUND_UP_ULL(1000000ULL, osc32k_rate) * 6;
-> +
-> +	priv->ppb.ten_sec = DIV_ROUND_CLOSEST_ULL(1000000000ULL, (osc32k_rate * 10));
-> +	priv->ppb.sixty_sec = DIV_ROUND_CLOSEST_ULL(1000000000ULL, (osc32k_rate * 60));
-> +
-> +	/*
-> +	 * According to HW manual (section 22.4.2. Clock and count mode setting procedure)
-> +	 * we need to wait at least 6 cycles of the 32KHz clock after clock was enabled.
-> +	 */
-> +	usleep_range(sleep_us, sleep_us + 10);
-> +
-> +	/* Disable alarm and carry interrupts. */
-> +	mask = RTCA3_RCR1_AIE | RTCA3_RCR1_CIE;
-> +	rtca3_byte_update_bits(priv, RTCA3_RCR1, mask, 0);
-> +	ret = readb_poll_timeout(priv->base + RTCA3_RCR1, tmp, !(tmp & mask),
-> +				 10, RTCA3_DEFAULT_TIMEOUT_US);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/*
-> +	 * Stop the RTC and set to 12 hours mode and calendar count mode.
-> +	 * RCR2.START initial value is undefined so we need to stop here
-> +	 * all the time.
-> +	 */
+  Diagnostic-Code: smtp; 550 5.4.1 Recipient address rejected: Access denied.
 
-Certainly not, if you stop the RTC on probe, you lose the time
-information, this must only be done when the RTC has never been
-initialised. The whole goal of the RTC is the keep time across reboots,
-its lifecycle is longer than the system.
+Add IMX platform maintainers for bindings which would become orphaned.
 
-Also, why do you insist on 12H-mode? The proper thing to do is to support
-12H-mode on read but always use 24H-mode when setting the time.
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+---
+ .../devicetree/bindings/arm/freescale/fsl,imx7ulp-sim.yaml    | 4 +++-
+ Documentation/devicetree/bindings/clock/imx6q-clock.yaml      | 4 +++-
+ Documentation/devicetree/bindings/clock/imx6sl-clock.yaml     | 4 +++-
+ Documentation/devicetree/bindings/clock/imx6sll-clock.yaml    | 4 +++-
+ Documentation/devicetree/bindings/clock/imx6sx-clock.yaml     | 4 +++-
+ Documentation/devicetree/bindings/clock/imx6ul-clock.yaml     | 4 +++-
+ Documentation/devicetree/bindings/clock/imx7d-clock.yaml      | 1 -
+ Documentation/devicetree/bindings/clock/imx8m-clock.yaml      | 4 +++-
+ Documentation/devicetree/bindings/gpio/fsl-imx-gpio.yaml      | 4 +++-
+ Documentation/devicetree/bindings/gpio/gpio-mxs.yaml          | 1 -
+ Documentation/devicetree/bindings/i2c/i2c-imx-lpi2c.yaml      | 4 +++-
+ .../devicetree/bindings/iio/magnetometer/fsl,mag3110.yaml     | 4 +++-
+ .../devicetree/bindings/memory-controllers/fsl/mmdc.yaml      | 4 +++-
+ Documentation/devicetree/bindings/nvmem/imx-iim.yaml          | 4 +++-
+ Documentation/devicetree/bindings/nvmem/imx-ocotp.yaml        | 4 +++-
+ Documentation/devicetree/bindings/nvmem/mxs-ocotp.yaml        | 4 +++-
+ Documentation/devicetree/bindings/pwm/imx-tpm-pwm.yaml        | 4 +++-
+ Documentation/devicetree/bindings/pwm/mxs-pwm.yaml            | 1 -
+ Documentation/devicetree/bindings/spi/spi-fsl-lpspi.yaml      | 4 +++-
+ Documentation/devicetree/bindings/thermal/imx-thermal.yaml    | 1 -
+ Documentation/devicetree/bindings/thermal/imx8mm-thermal.yaml | 4 +++-
+ Documentation/devicetree/bindings/thermal/qoriq-thermal.yaml  | 4 +++-
+ Documentation/devicetree/bindings/watchdog/fsl-imx-wdt.yaml   | 4 +++-
+ .../devicetree/bindings/watchdog/fsl-imx7ulp-wdt.yaml         | 4 +++-
+ 24 files changed, 60 insertions(+), 24 deletions(-)
 
-> +	mask = RTCA3_RCR2_START | RTCA3_RCR2_HR24 | RTCA3_RCR2_CNTMD;
-> +	writeb(0, priv->base + RTCA3_RCR2);
-> +	ret = readb_poll_timeout(priv->base + RTCA3_RCR2, tmp, !(tmp & mask),
-> +				 10, RTCA3_DEFAULT_TIMEOUT_US);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* Execute reset and wait for reset and calendar count mode to be applied. */
-> +	mask = RTCA3_RCR2_RESET | RTCA3_RCR2_CNTMD;
-> +	writeb(RTCA3_RCR2_RESET, priv->base + RTCA3_RCR2);
-> +	ret = readb_poll_timeout(priv->base + RTCA3_RCR2, tmp, !(tmp & mask),
-> +				 10, RTCA3_RESET_TIMEOUT_US);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/*
-> +	 * According to HW manual (section 22.6.3. Notes on writing to and reading
-> +	 * from registers) after reset we need to wait 6 clock cycles before
-> +	 * writing to RTC registers.
-> +	 */
-> +	usleep_range(sleep_us, sleep_us + 10);
-> +
-> +	/* Set no adjustment. */
-> +	writeb(0, priv->base + RTCA3_RADJ);
-> +	ret = readb_poll_timeout(priv->base + RTCA3_RADJ, tmp, !tmp, 10,
-> +				 RTCA3_DEFAULT_TIMEOUT_US);
-> +
-> +	/* Start the RTC and enable automatic time error adjustment. */
-> +	mask = RTCA3_RCR2_START | RTCA3_RCR2_AADJE;
-> +	writeb(RTCA3_RCR2_START | RTCA3_RCR2_AADJE, priv->base + RTCA3_RCR2);
-> +	ret = readb_poll_timeout(priv->base + RTCA3_RCR2, tmp, ((tmp & mask) == mask),
-> +				 10, RTCA3_START_TIMEOUT_US);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/*
-> +	 * According to HW manual (section 22.6.4. Notes on writing to and reading
-> +	 * from registers) we need to wait 1/128 seconds while the clock is operating
-> +	 * (RCR2.START bit = 1) to be able to read the counters after a return from
-> +	 * reset.
-> +	 */
-> +	usleep_range(8000, 9000);
-> +
-> +	/* Set period interrupt to 1/64 seconds. It is necessary for alarm setup. */
-> +	pes = FIELD_PREP(RTCA3_RCR1_PES, RTCA3_RCR1_PES_1_64_SEC);
-> +	rtca3_byte_update_bits(priv, RTCA3_RCR1, RTCA3_RCR1_PES, pes);
-> +	return readb_poll_timeout(priv->base + RTCA3_RCR1, tmp, ((tmp & RTCA3_RCR1_PES) == pes),
-> +				  10, RTCA3_DEFAULT_TIMEOUT_US);
-> +}
-> +
-> +static int rtca3_request_irqs(struct platform_device *pdev, struct rtca3_priv *priv)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	int ret, irq;
-> +
-> +	irq = platform_get_irq_byname(pdev, "alarm");
-> +	if (irq < 0)
-> +		return dev_err_probe(dev, irq, "Failed to get alarm IRQ!\n");
-> +
-> +	ret = devm_request_irq(dev, irq, rtca3_alarm_handler, 0, "rtca3-alarm", priv);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to request alarm IRQ!\n");
-> +	priv->wakeup_irq = irq;
-> +
-> +	irq = platform_get_irq_byname(pdev, "period");
-> +	if (irq < 0)
-> +		return dev_err_probe(dev, irq, "Failed to get period IRQ!\n");
-> +
-> +	ret = devm_request_irq(dev, irq, rtca3_periodic_handler, 0, "rtca3-period", priv);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to request period IRQ!\n");
-> +
-> +	/*
-> +	 * Driver doesn't implement carry handler. Just get the IRQ here
-> +	 * for backward compatibility, in case carry support will be added later.
-> +	 */
-> +	irq = platform_get_irq_byname(pdev, "carry");
-> +	if (irq < 0)
-> +		return dev_err_probe(dev, irq, "Failed to get carry IRQ!\n");
-> +
-> +	return 0;
-> +}
-> +
-> +static int rtca3_probe(struct platform_device *pdev)
-> +{
-> +	struct device *dev = &pdev->dev;
-> +	struct rtca3_priv *priv;
-> +	int ret;
-> +
-> +	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> +	if (!priv)
-> +		return -ENOMEM;
-> +
-> +	priv->base = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(priv->base))
-> +		return PTR_ERR(priv->base);
-> +
-> +	priv->clk = devm_clk_get_enabled(dev, "counter");
-> +	if (IS_ERR(priv->clk))
-> +		return PTR_ERR(priv->clk);
-> +
-> +	platform_set_drvdata(pdev, priv);
-> +
-> +	spin_lock_init(&priv->lock);
-> +	atomic_set(&priv->alrm_sstep, RTCA3_ALRM_SSTEP_DONE);
-> +	init_completion(&priv->set_alarm_completion);
-> +
-> +	ret = rtca3_initial_setup(priv);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "Failed to setup the RTC!\n");
-> +
-> +	ret = rtca3_request_irqs(pdev, priv);
-> +	if (ret)
-> +		return ret;
-> +
-> +	device_init_wakeup(&pdev->dev, 1);
-> +
-> +	priv->rtc_dev = devm_rtc_allocate_device(&pdev->dev);
-> +	if (IS_ERR(priv->rtc_dev))
-> +		return PTR_ERR(priv->rtc_dev);
-> +
-> +	priv->rtc_dev->ops = &rtca3_ops;
-> +	priv->rtc_dev->max_user_freq = 256;
-> +	priv->rtc_dev->range_min = mktime64(1999, 1, 1, 0, 0, 0);
-> +	priv->rtc_dev->range_max = mktime64(2098, 12, 31, 23, 59, 59);
-
-This very much looks like the range should be 2000 to 2099, why do you
-want to shift it?
-
-
+diff --git a/Documentation/devicetree/bindings/arm/freescale/fsl,imx7ulp-sim.yaml b/Documentation/devicetree/bindings/arm/freescale/fsl,imx7ulp-sim.yaml
+index 526f508cb98d..bd39cf107f3e 100644
+--- a/Documentation/devicetree/bindings/arm/freescale/fsl,imx7ulp-sim.yaml
++++ b/Documentation/devicetree/bindings/arm/freescale/fsl,imx7ulp-sim.yaml
+@@ -7,7 +7,9 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Freescale i.MX7ULP System Integration Module
+ 
+ maintainers:
+-  - Anson Huang <anson.huang@nxp.com>
++  - Shawn Guo <shawnguo@kernel.org>
++  - Sascha Hauer <s.hauer@pengutronix.de>
++  - Fabio Estevam <festevam@gmail.com>
+ 
+ description: |
+   The system integration module (SIM) provides system control and chip configuration
+diff --git a/Documentation/devicetree/bindings/clock/imx6q-clock.yaml b/Documentation/devicetree/bindings/clock/imx6q-clock.yaml
+index bae4fcb3aacc..74cfdcf1c93b 100644
+--- a/Documentation/devicetree/bindings/clock/imx6q-clock.yaml
++++ b/Documentation/devicetree/bindings/clock/imx6q-clock.yaml
+@@ -7,7 +7,9 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Freescale i.MX6 Quad Clock Controller
+ 
+ maintainers:
+-  - Anson Huang <Anson.Huang@nxp.com>
++  - Shawn Guo <shawnguo@kernel.org>
++  - Sascha Hauer <s.hauer@pengutronix.de>
++  - Fabio Estevam <festevam@gmail.com>
+ 
+ properties:
+   compatible:
+diff --git a/Documentation/devicetree/bindings/clock/imx6sl-clock.yaml b/Documentation/devicetree/bindings/clock/imx6sl-clock.yaml
+index c85ff6ea3d24..b780bdaa4126 100644
+--- a/Documentation/devicetree/bindings/clock/imx6sl-clock.yaml
++++ b/Documentation/devicetree/bindings/clock/imx6sl-clock.yaml
+@@ -7,7 +7,9 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Freescale i.MX6 SoloLite Clock Controller
+ 
+ maintainers:
+-  - Anson Huang <Anson.Huang@nxp.com>
++  - Shawn Guo <shawnguo@kernel.org>
++  - Sascha Hauer <s.hauer@pengutronix.de>
++  - Fabio Estevam <festevam@gmail.com>
+ 
+ properties:
+   compatible:
+diff --git a/Documentation/devicetree/bindings/clock/imx6sll-clock.yaml b/Documentation/devicetree/bindings/clock/imx6sll-clock.yaml
+index 6b549ed1493c..992536b2bf6a 100644
+--- a/Documentation/devicetree/bindings/clock/imx6sll-clock.yaml
++++ b/Documentation/devicetree/bindings/clock/imx6sll-clock.yaml
+@@ -7,7 +7,9 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Freescale i.MX6 SLL Clock Controller
+ 
+ maintainers:
+-  - Anson Huang <Anson.Huang@nxp.com>
++  - Shawn Guo <shawnguo@kernel.org>
++  - Sascha Hauer <s.hauer@pengutronix.de>
++  - Fabio Estevam <festevam@gmail.com>
+ 
+ properties:
+   compatible:
+diff --git a/Documentation/devicetree/bindings/clock/imx6sx-clock.yaml b/Documentation/devicetree/bindings/clock/imx6sx-clock.yaml
+index 55dcad18b7c6..cd67fd6ba7ad 100644
+--- a/Documentation/devicetree/bindings/clock/imx6sx-clock.yaml
++++ b/Documentation/devicetree/bindings/clock/imx6sx-clock.yaml
+@@ -7,7 +7,9 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Freescale i.MX6 SoloX Clock Controller
+ 
+ maintainers:
+-  - Anson Huang <Anson.Huang@nxp.com>
++  - Shawn Guo <shawnguo@kernel.org>
++  - Sascha Hauer <s.hauer@pengutronix.de>
++  - Fabio Estevam <festevam@gmail.com>
+ 
+ properties:
+   compatible:
+diff --git a/Documentation/devicetree/bindings/clock/imx6ul-clock.yaml b/Documentation/devicetree/bindings/clock/imx6ul-clock.yaml
+index be54d4df5afa..3804369c9f8a 100644
+--- a/Documentation/devicetree/bindings/clock/imx6ul-clock.yaml
++++ b/Documentation/devicetree/bindings/clock/imx6ul-clock.yaml
+@@ -7,7 +7,9 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Freescale i.MX6 UltraLite Clock Controller
+ 
+ maintainers:
+-  - Anson Huang <Anson.Huang@nxp.com>
++  - Shawn Guo <shawnguo@kernel.org>
++  - Sascha Hauer <s.hauer@pengutronix.de>
++  - Fabio Estevam <festevam@gmail.com>
+ 
+ properties:
+   compatible:
+diff --git a/Documentation/devicetree/bindings/clock/imx7d-clock.yaml b/Documentation/devicetree/bindings/clock/imx7d-clock.yaml
+index e7d8427e4957..880d602d09f4 100644
+--- a/Documentation/devicetree/bindings/clock/imx7d-clock.yaml
++++ b/Documentation/devicetree/bindings/clock/imx7d-clock.yaml
+@@ -8,7 +8,6 @@ title: Freescale i.MX7 Dual Clock Controller
+ 
+ maintainers:
+   - Frank Li <Frank.Li@nxp.com>
+-  - Anson Huang <Anson.Huang@nxp.com>
+ 
+ description: |
+   The clock consumer should specify the desired clock by having the clock
+diff --git a/Documentation/devicetree/bindings/clock/imx8m-clock.yaml b/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
+index 80539f88bc27..b4afd5aa8769 100644
+--- a/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
++++ b/Documentation/devicetree/bindings/clock/imx8m-clock.yaml
+@@ -7,7 +7,9 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: NXP i.MX8M Family Clock Control Module
+ 
+ maintainers:
+-  - Anson Huang <Anson.Huang@nxp.com>
++  - Shawn Guo <shawnguo@kernel.org>
++  - Sascha Hauer <s.hauer@pengutronix.de>
++  - Fabio Estevam <festevam@gmail.com>
+ 
+ description: |
+   NXP i.MX8M Mini/Nano/Plus/Quad clock control module is an integrated clock
+diff --git a/Documentation/devicetree/bindings/gpio/fsl-imx-gpio.yaml b/Documentation/devicetree/bindings/gpio/fsl-imx-gpio.yaml
+index 918776d16ef3..e1fc8bb6d379 100644
+--- a/Documentation/devicetree/bindings/gpio/fsl-imx-gpio.yaml
++++ b/Documentation/devicetree/bindings/gpio/fsl-imx-gpio.yaml
+@@ -7,7 +7,9 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Freescale i.MX/MXC GPIO controller
+ 
+ maintainers:
+-  - Anson Huang <Anson.Huang@nxp.com>
++  - Shawn Guo <shawnguo@kernel.org>
++  - Sascha Hauer <s.hauer@pengutronix.de>
++  - Fabio Estevam <festevam@gmail.com>
+ 
+ properties:
+   compatible:
+diff --git a/Documentation/devicetree/bindings/gpio/gpio-mxs.yaml b/Documentation/devicetree/bindings/gpio/gpio-mxs.yaml
+index dfa1133f8c5e..8ff54369d16c 100644
+--- a/Documentation/devicetree/bindings/gpio/gpio-mxs.yaml
++++ b/Documentation/devicetree/bindings/gpio/gpio-mxs.yaml
+@@ -8,7 +8,6 @@ title: Freescale MXS GPIO controller
+ 
+ maintainers:
+   - Shawn Guo <shawnguo@kernel.org>
+-  - Anson Huang <Anson.Huang@nxp.com>
+ 
+ description: |
+   The Freescale MXS GPIO controller is part of MXS PIN controller.
+diff --git a/Documentation/devicetree/bindings/i2c/i2c-imx-lpi2c.yaml b/Documentation/devicetree/bindings/i2c/i2c-imx-lpi2c.yaml
+index 54d500be6aaa..1dcb9c78de3b 100644
+--- a/Documentation/devicetree/bindings/i2c/i2c-imx-lpi2c.yaml
++++ b/Documentation/devicetree/bindings/i2c/i2c-imx-lpi2c.yaml
+@@ -7,7 +7,9 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Freescale Low Power Inter IC (LPI2C) for i.MX
+ 
+ maintainers:
+-  - Anson Huang <Anson.Huang@nxp.com>
++  - Shawn Guo <shawnguo@kernel.org>
++  - Sascha Hauer <s.hauer@pengutronix.de>
++  - Fabio Estevam <festevam@gmail.com>
+ 
+ allOf:
+   - $ref: /schemas/i2c/i2c-controller.yaml#
+diff --git a/Documentation/devicetree/bindings/iio/magnetometer/fsl,mag3110.yaml b/Documentation/devicetree/bindings/iio/magnetometer/fsl,mag3110.yaml
+index 6b54d32323fc..467002a5da43 100644
+--- a/Documentation/devicetree/bindings/iio/magnetometer/fsl,mag3110.yaml
++++ b/Documentation/devicetree/bindings/iio/magnetometer/fsl,mag3110.yaml
+@@ -7,7 +7,9 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Freescale MAG3110 magnetometer sensor
+ 
+ maintainers:
+-  - Anson Huang <Anson.Huang@nxp.com>
++  - Shawn Guo <shawnguo@kernel.org>
++  - Sascha Hauer <s.hauer@pengutronix.de>
++  - Fabio Estevam <festevam@gmail.com>
+ 
+ properties:
+   compatible:
+diff --git a/Documentation/devicetree/bindings/memory-controllers/fsl/mmdc.yaml b/Documentation/devicetree/bindings/memory-controllers/fsl/mmdc.yaml
+index 71547eee9919..5447f1dddedf 100644
+--- a/Documentation/devicetree/bindings/memory-controllers/fsl/mmdc.yaml
++++ b/Documentation/devicetree/bindings/memory-controllers/fsl/mmdc.yaml
+@@ -7,7 +7,9 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Freescale Multi Mode DDR controller (MMDC)
+ 
+ maintainers:
+-  - Anson Huang <Anson.Huang@nxp.com>
++  - Shawn Guo <shawnguo@kernel.org>
++  - Sascha Hauer <s.hauer@pengutronix.de>
++  - Fabio Estevam <festevam@gmail.com>
+ 
+ properties:
+   compatible:
+diff --git a/Documentation/devicetree/bindings/nvmem/imx-iim.yaml b/Documentation/devicetree/bindings/nvmem/imx-iim.yaml
+index e9d9d8df4811..bb37d72c9eaa 100644
+--- a/Documentation/devicetree/bindings/nvmem/imx-iim.yaml
++++ b/Documentation/devicetree/bindings/nvmem/imx-iim.yaml
+@@ -7,7 +7,9 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Freescale i.MX IC Identification Module (IIM)
+ 
+ maintainers:
+-  - Anson Huang <Anson.Huang@nxp.com>
++  - Shawn Guo <shawnguo@kernel.org>
++  - Sascha Hauer <s.hauer@pengutronix.de>
++  - Fabio Estevam <festevam@gmail.com>
+ 
+ description: |
+   This binding represents the IC Identification Module (IIM) found on
+diff --git a/Documentation/devicetree/bindings/nvmem/imx-ocotp.yaml b/Documentation/devicetree/bindings/nvmem/imx-ocotp.yaml
+index be1314454bec..e21c06e9a741 100644
+--- a/Documentation/devicetree/bindings/nvmem/imx-ocotp.yaml
++++ b/Documentation/devicetree/bindings/nvmem/imx-ocotp.yaml
+@@ -7,7 +7,9 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Freescale i.MX On-Chip OTP Controller (OCOTP)
+ 
+ maintainers:
+-  - Anson Huang <Anson.Huang@nxp.com>
++  - Shawn Guo <shawnguo@kernel.org>
++  - Sascha Hauer <s.hauer@pengutronix.de>
++  - Fabio Estevam <festevam@gmail.com>
+ 
+ description: |
+   This binding represents the on-chip eFuse OTP controller found on
+diff --git a/Documentation/devicetree/bindings/nvmem/mxs-ocotp.yaml b/Documentation/devicetree/bindings/nvmem/mxs-ocotp.yaml
+index d9287be89877..95121dd6311c 100644
+--- a/Documentation/devicetree/bindings/nvmem/mxs-ocotp.yaml
++++ b/Documentation/devicetree/bindings/nvmem/mxs-ocotp.yaml
+@@ -7,7 +7,9 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: On-Chip OTP Memory for Freescale i.MX23/i.MX28
+ 
+ maintainers:
+-  - Anson Huang <Anson.Huang@nxp.com>
++  - Shawn Guo <shawnguo@kernel.org>
++  - Sascha Hauer <s.hauer@pengutronix.de>
++  - Fabio Estevam <festevam@gmail.com>
+ 
+ allOf:
+   - $ref: nvmem.yaml#
+diff --git a/Documentation/devicetree/bindings/pwm/imx-tpm-pwm.yaml b/Documentation/devicetree/bindings/pwm/imx-tpm-pwm.yaml
+index 8bef9dfeba9a..ac0a35bf8648 100644
+--- a/Documentation/devicetree/bindings/pwm/imx-tpm-pwm.yaml
++++ b/Documentation/devicetree/bindings/pwm/imx-tpm-pwm.yaml
+@@ -7,7 +7,9 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Freescale i.MX TPM PWM controller
+ 
+ maintainers:
+-  - Anson Huang <anson.huang@nxp.com>
++  - Shawn Guo <shawnguo@kernel.org>
++  - Sascha Hauer <s.hauer@pengutronix.de>
++  - Fabio Estevam <festevam@gmail.com>
+ 
+ description: |
+   The TPM counter and period counter are shared between multiple
+diff --git a/Documentation/devicetree/bindings/pwm/mxs-pwm.yaml b/Documentation/devicetree/bindings/pwm/mxs-pwm.yaml
+index 8f50e23ca8c9..a9d3a41ac5b9 100644
+--- a/Documentation/devicetree/bindings/pwm/mxs-pwm.yaml
++++ b/Documentation/devicetree/bindings/pwm/mxs-pwm.yaml
+@@ -8,7 +8,6 @@ title: Freescale MXS PWM controller
+ 
+ maintainers:
+   - Shawn Guo <shawnguo@kernel.org>
+-  - Anson Huang <anson.huang@nxp.com>
+ 
+ allOf:
+   - $ref: pwm.yaml#
+diff --git a/Documentation/devicetree/bindings/spi/spi-fsl-lpspi.yaml b/Documentation/devicetree/bindings/spi/spi-fsl-lpspi.yaml
+index 2ff174244795..ed1d4aa41b8c 100644
+--- a/Documentation/devicetree/bindings/spi/spi-fsl-lpspi.yaml
++++ b/Documentation/devicetree/bindings/spi/spi-fsl-lpspi.yaml
+@@ -7,7 +7,9 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Freescale Low Power SPI (LPSPI) for i.MX
+ 
+ maintainers:
+-  - Anson Huang <Anson.Huang@nxp.com>
++  - Shawn Guo <shawnguo@kernel.org>
++  - Sascha Hauer <s.hauer@pengutronix.de>
++  - Fabio Estevam <festevam@gmail.com>
+ 
+ allOf:
+   - $ref: /schemas/spi/spi-controller.yaml#
+diff --git a/Documentation/devicetree/bindings/thermal/imx-thermal.yaml b/Documentation/devicetree/bindings/thermal/imx-thermal.yaml
+index 808d987bd8d1..337560562337 100644
+--- a/Documentation/devicetree/bindings/thermal/imx-thermal.yaml
++++ b/Documentation/devicetree/bindings/thermal/imx-thermal.yaml
+@@ -8,7 +8,6 @@ title: NXP i.MX Thermal
+ 
+ maintainers:
+   - Shawn Guo <shawnguo@kernel.org>
+-  - Anson Huang <Anson.Huang@nxp.com>
+ 
+ properties:
+   compatible:
+diff --git a/Documentation/devicetree/bindings/thermal/imx8mm-thermal.yaml b/Documentation/devicetree/bindings/thermal/imx8mm-thermal.yaml
+index d2c1e4573c32..42e2317a00f5 100644
+--- a/Documentation/devicetree/bindings/thermal/imx8mm-thermal.yaml
++++ b/Documentation/devicetree/bindings/thermal/imx8mm-thermal.yaml
+@@ -7,7 +7,9 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: NXP i.MX8M Mini Thermal
+ 
+ maintainers:
+-  - Anson Huang <Anson.Huang@nxp.com>
++  - Shawn Guo <shawnguo@kernel.org>
++  - Sascha Hauer <s.hauer@pengutronix.de>
++  - Fabio Estevam <festevam@gmail.com>
+ 
+ description: |
+   i.MX8MM has TMU IP to allow temperature measurement, there are
+diff --git a/Documentation/devicetree/bindings/thermal/qoriq-thermal.yaml b/Documentation/devicetree/bindings/thermal/qoriq-thermal.yaml
+index d155d6799da6..66c4972d5072 100644
+--- a/Documentation/devicetree/bindings/thermal/qoriq-thermal.yaml
++++ b/Documentation/devicetree/bindings/thermal/qoriq-thermal.yaml
+@@ -7,7 +7,9 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Thermal Monitoring Unit (TMU) on Freescale QorIQ SoCs
+ 
+ maintainers:
+-  - Anson Huang <Anson.Huang@nxp.com>
++  - Shawn Guo <shawnguo@kernel.org>
++  - Sascha Hauer <s.hauer@pengutronix.de>
++  - Fabio Estevam <festevam@gmail.com>
+ 
+ properties:
+   compatible:
+diff --git a/Documentation/devicetree/bindings/watchdog/fsl-imx-wdt.yaml b/Documentation/devicetree/bindings/watchdog/fsl-imx-wdt.yaml
+index 181f0cc5b5bd..36b836d0620c 100644
+--- a/Documentation/devicetree/bindings/watchdog/fsl-imx-wdt.yaml
++++ b/Documentation/devicetree/bindings/watchdog/fsl-imx-wdt.yaml
+@@ -7,7 +7,9 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Freescale i.MX Watchdog Timer (WDT) Controller
+ 
+ maintainers:
+-  - Anson Huang <Anson.Huang@nxp.com>
++  - Shawn Guo <shawnguo@kernel.org>
++  - Sascha Hauer <s.hauer@pengutronix.de>
++  - Fabio Estevam <festevam@gmail.com>
+ 
+ properties:
+   compatible:
+diff --git a/Documentation/devicetree/bindings/watchdog/fsl-imx7ulp-wdt.yaml b/Documentation/devicetree/bindings/watchdog/fsl-imx7ulp-wdt.yaml
+index 9c50766bf690..a09686b3030d 100644
+--- a/Documentation/devicetree/bindings/watchdog/fsl-imx7ulp-wdt.yaml
++++ b/Documentation/devicetree/bindings/watchdog/fsl-imx7ulp-wdt.yaml
+@@ -7,7 +7,9 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+ title: Freescale i.MX7ULP Watchdog Timer (WDT) Controller
+ 
+ maintainers:
+-  - Anson Huang <Anson.Huang@nxp.com>
++  - Shawn Guo <shawnguo@kernel.org>
++  - Sascha Hauer <s.hauer@pengutronix.de>
++  - Fabio Estevam <festevam@gmail.com>
+ 
+ allOf:
+   - $ref: watchdog.yaml#
 -- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.43.0
+
