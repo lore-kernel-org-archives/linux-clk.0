@@ -1,167 +1,106 @@
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C19F818042
-	for <linux-clk@vger.kernel.org>; Sat, 15 Jun 2024 08:03:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B60BB45020;
+	Sat, 15 Jun 2024 12:16:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718438594; cv=none; b=c3czXK5FZcILNONfdJE1bMKCGaSdMkE22z1BbBQ74n7oRfQO/GHUTeaOQT9a7vmcl1iW3y0Fcue3pnFDeiFwW4rEhLE3MD1Gmt16tHIMNwKxrq8ra4NYbucuiXUiBMPKGUwyNuv9rzWGgw/RDnG+lIm5fL0v0ISksQMVBQkZBd0=
+	t=1718453792; cv=none; b=J5TdKdrRTchUHDLV34f1tOO2tyrv7GfVSQv4huRgVLgm6iey7yqn05EM/Aq6Snxt2HdaGa3gM4zbjmYHb74zdnSKF+vil11qdUKkUEg6nTwzhAmVHpWUUurHhG9NWoz8wNBblMMKJtNTPS2T+8IssllWozHh4sD030Uw1lVELZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718438594; c=relaxed/simple;
-	bh=zh8wFqlkhu1LOYUvNSAdvMQzn9efxj16Mc5cp9NZux4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nUAdJt/1kVSGzzoMEA9KOulv4J/D02l3Y+fpayxd8DDw0hatViEn6EQZC6mLiwF1abfOOS1Kp7Qg3rfIzpUH7bVWVi24SAKMeYOMrqO5fy6xgy6bPYXzbZJGOtP71L6unFrqAHbUj+PmsGJxsbxkBQHDDwtURJaE6LLoJ/N7bxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jX5LQ8Ae; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1718453792; c=relaxed/simple;
+	bh=fIa7Fu5rfI4MXQKrG+JnjbyVR+srNml2BpZ8EMMTVxQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SYA2245R8iybNI+XqM+zQzD0xplkCqd7lI1k4Hd++QIRzTBZ8gO4Zvsk7K/7y8z67uaNb2vBzgo1181RvXWrwPMxpxYHj8FPhBz6DJNLrLvcQ1kt0xeX22ywNfwu4hk+7cmf5eplM3B1BkvNoos31LnSNMUPRsEJjEtmWYkCj70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mrB4kDMm; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jX5LQ8Ae"
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-57cce3bc8c6so271874a12.3
-        for <linux-clk@vger.kernel.org>; Sat, 15 Jun 2024 01:03:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718438591; x=1719043391; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=zOGB4ty0lN3NCNyIJ260rYDoej6YMyuL1DkilGLprq4=;
-        b=jX5LQ8AeBhA4W+2km7luY6Sixj9wKzjIEvWeYfkepTIGjA9eeGDqxR+WCuwszdcB8o
-         l/DCIvsqFa6WDwW1BFUqMXbzQrahZscIJ3YsdtQNDH/OMRRWZ2H8NUOJlySbDeKjg446
-         AQsxcgloWLZK9qtp+wyUrzAhOTTZnRIZgOYvB6PhfYUDLKj0NkLLi7e9s6J6cUhq1O9G
-         wYs7lG5MR9GgonV41hd/b4i4yVmYuWN6+a53cDy/tEvWj2J3n9IFVjzwCgPPgcGW1S3G
-         ooEnl4w+V22zwywAoWXhtZUzI4HuWcGzTyghygRxfaYvK6vm/lhilvwTVuB2iVYxeCtL
-         nINg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718438591; x=1719043391;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zOGB4ty0lN3NCNyIJ260rYDoej6YMyuL1DkilGLprq4=;
-        b=ri/TPupQTnaug44i53Ra6LrdqQltqhkcNuRfbcsTb1mNqP05Praz+2MZZFoN6Q2uvc
-         wyaXEsKe+00Q8nO6WipeI0lNlnclyeDQaCEz/YZnpxKR1T8J3HGX0aHSK3Z6GbCU9uE4
-         QkH1PiTqv4WLKpidwOVrmafiXb6PtqPSKgR9Apjjexg0OozzYMSiVuK7Ej9jWJSuAmkY
-         StWfpHZQldTOmcvnSkSU8eUTbQ0NEgpGatVzn2m/zlKxtF2UHUIai6Nk0ni9qYnlmdqA
-         3q2iIQwLTcPZgo8ipA1r5Ju33hIHkCfsaympHeWDp02A5RyHGjR70gP8v+Qmj/aa/kne
-         5Dsw==
-X-Forwarded-Encrypted: i=1; AJvYcCX/dWG2GS/cJAeJnqB0cKF7mMHKyDtYAQHrUMvOwc+zYMra5v5+eRwTitUgi/CFNByNnxVv84pQ7xYI7EtDjuQfyrCAeEzRQvny
-X-Gm-Message-State: AOJu0Yw8SsG8YU9bGUZAWmIFTm05K5Aus5Yum79pGjmsye148N6xRNF7
-	6teMyGZqDgI972OVoBFuvVLwScPVbSOKQtDiaJrH8D3uLOXjDfwyygzV1e0ugYo=
-X-Google-Smtp-Source: AGHT+IGcUqmW23OJOLctm0PilyvalwSahHFmwbkA/ty941zZUuGnFSGlIjdG0pmdv62CKNXHzx2K1Q==
-X-Received: by 2002:a50:a456:0:b0:57c:73fc:a8d7 with SMTP id 4fb4d7f45d1cf-57cbd69dd0dmr2882939a12.14.1718438591096;
-        Sat, 15 Jun 2024 01:03:11 -0700 (PDT)
-Received: from [192.168.0.18] ([78.10.206.163])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cb72daa67sm3310438a12.38.2024.06.15.01.03.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 15 Jun 2024 01:03:10 -0700 (PDT)
-Message-ID: <54dcddce-bd31-4e04-8fa3-ecca9b0162f8@linaro.org>
-Date: Sat, 15 Jun 2024 10:03:08 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mrB4kDMm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D7662C116B1;
+	Sat, 15 Jun 2024 12:16:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718453792;
+	bh=fIa7Fu5rfI4MXQKrG+JnjbyVR+srNml2BpZ8EMMTVxQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mrB4kDMmJTeiuyQOOkCj4Q1LDTg4yuNd0/ZYAsOv8J0waSVa1ZXik2Bpm2P4CK4rf
+	 YbcrrqGPDTKuwAvoo0Hes0ybEH1p8RdUfg2WjrdtedCpK9UeFZtOsXjeCuOxK6IDeZ
+	 s7cvjwzbYhS/QTkz614TYaOT4ab00my2nxTtvQ55BZgrLZKOgynNA/3p+BQ5RQvi03
+	 WW4kobYsc/6i0tNLMEnDhQe6k9BUn2JOzdn/CKL3u3ihIzwO+qFJgpH8RLwG4HmpdF
+	 H3p5uK6C6WjN4UFeAC69RiaY9PUL5gYmHJZd6Heef94qATd7ocJGPNLaFQpmsa5fGM
+	 cHVCMxPnoflIA==
+Date: Sat, 15 Jun 2024 13:16:26 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: "Claudiu.Beznea" <claudiu.beznea@tuxon.dev>,
+	"geert+renesas@glider.be" <geert+renesas@glider.be>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"sboyd@kernel.org" <sboyd@kernel.org>,
+	"robh@kernel.org" <robh@kernel.org>,
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"lee@kernel.org" <lee@kernel.org>,
+	"alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+	"magnus.damm@gmail.com" <magnus.damm@gmail.com>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH 05/12] dt-bindings: rtc: renesas,rzg3s-rtc: Document the
+ Renesas RZ/G3S RTC
+Message-ID: <20240615-unwell-hardcover-e95af7c4a43b@spud>
+References: <20240614071932.1014067-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240614071932.1014067-6-claudiu.beznea.uj@bp.renesas.com>
+ <TY3PR01MB113464811F43F19115FCF62A786C22@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <d6b4e0cc-c16e-4ea7-bbc4-ddbaaadc9a25@tuxon.dev>
+ <TY3PR01MB113468BB7BC53E43F41C6D65386C22@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: drop stale Anson Huang from maintainers
-To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Abel Vesa <abelvesa@kernel.org>,
- Peng Fan <peng.fan@nxp.com>, Frank Li <Frank.Li@nxp.com>,
- devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
- linux-i2c@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-pwm@vger.kernel.org, linux-spi@vger.kernel.org,
- linux-pm@vger.kernel.org, linux-watchdog@vger.kernel.org
-References: <20240614095927.88762-1-krzysztof.kozlowski@linaro.org>
- <20240614170123.00002e0f@Huawei.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <20240614170123.00002e0f@Huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="clAPQ20Y+OV8szeS"
+Content-Disposition: inline
+In-Reply-To: <TY3PR01MB113468BB7BC53E43F41C6D65386C22@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 
-On 14/06/2024 18:01, Jonathan Cameron wrote:
-> On Fri, 14 Jun 2024 11:59:27 +0200
-> Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org> wrote:
-> 
->> Emails to Anson Huang bounce:
->>
->>   Diagnostic-Code: smtp; 550 5.4.1 Recipient address rejected: Access denied.
->>
->> Add IMX platform maintainers for bindings which would become orphaned.
-> That doesn't make much sense for the magnetometer which has nothing to do with
-> imx.
-> 
-> Make that one my problem under my jic23@kernel.org address.
-> 
-> Thanks,
-> 
-> Jonathan
-> 
-> 
->>
->> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
->> diff --git a/Documentation/devicetree/bindings/iio/magnetometer/fsl,mag3110.yaml b/Documentation/devicetree/bindings/iio/magnetometer/fsl,mag3110.yaml
->> index 6b54d32323fc..467002a5da43 100644
->> --- a/Documentation/devicetree/bindings/iio/magnetometer/fsl,mag3110.yaml
->> +++ b/Documentation/devicetree/bindings/iio/magnetometer/fsl,mag3110.yaml
->> @@ -7,7 +7,9 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
-> 
-> Not sure the new maintainers make sense here.
-> 
-> Flip it to me if no one else volunteers.
 
-Indeed, too much automation. I'll do that for v2.
+--clAPQ20Y+OV8szeS
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Best regards,
-Krzysztof
+On Fri, Jun 14, 2024 at 08:22:57AM +0000, Biju Das wrote:
 
+> > >> +$id: http://devicetree.org/schemas/rtc/renesas,rzg3s-rtc.yaml#
+> > >
+> > > Please make it generic renesas,rtca3-rtc.yaml. Future SoCs may use th=
+is IP.
+> > > So use IP name instead.
+> >=20
+> > From what I know the file name should correspond with the compatible th=
+at file was introduced with,
+> > and this one shouldn't be generic but SoC specific.
+>=20
+> I maybe wrong, I was under the impression, we should use "vendor,ipname" =
+for the filename
+> and compatible should use vendor,ipname as generic compatible.
+> If there are differences between SoCs, then use SoC specific compatible.
+>=20
+> Currently there is one device, so not sure??
+
+The usual policy for new files is "filename matching a compatible".
+
+--clAPQ20Y+OV8szeS
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZm2GGgAKCRB4tDGHoIJi
+0ihkAP42Coh08F/VL7TmA4JWvrf8daBenjco1rVFZ1mSY5Q7iAD8COSVRjBudGDs
+xPkSHl85M/MiNRb4aFC6H8d+g8qECAY=
+=P/zh
+-----END PGP SIGNATURE-----
+
+--clAPQ20Y+OV8szeS--
