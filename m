@@ -1,33 +1,60 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A6F91836FB;
-	Sun, 16 Jun 2024 07:40:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F184216D32D
+	for <linux-clk@vger.kernel.org>; Sun, 16 Jun 2024 07:49:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718523607; cv=none; b=L+Yk3inF/vRkA2hmwlIZf0a+QYIrjqKAmBH447c4lgp0/wS7X7/mrrkva6Gqh3p30vlk2SZ2ADhcsnmTlx9MTzhmoyE8odg857o59G55F/eb7sej/yWGL0QQx6mS6Y7FPhSHBjWGXYi2DhLML+8625o5PqguNf/SOK28rXqLE9U=
+	t=1718524181; cv=none; b=tFw3cBNxz5ga9doHGCKbyRCz5NeTvtH6kvwv7c81ozSbPlPPnskeIV/mno6jvoocc3Z3wG8oiCtj0zZRrjo93XuDQtOaoQ3xqxMwUuzj5XZCRtHR+ArefRXlSwmr70UZ+blTK99Y6AxpQmGeVJ0xcPhoWNttr1nT8NBI+9mDaq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718523607; c=relaxed/simple;
-	bh=9/cAdGYrdwaI/4y1JqtVx9mdosaD9ipTezgsP7O70KI=;
+	s=arc-20240116; t=1718524181; c=relaxed/simple;
+	bh=HejHULBzGymitulylESro3rXLowj2YYTSXNJaJtgz9M=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ewzEmVBr3Lrmi/li5gFh5hWysJhCf9ovdrV6KmSqNDcc3YkUMwIWvqBCwkhu2axc5TLB9BQf5kOMpgLiQIg/roCQzgFhsS4Lm0/mA3v7nQlHI06XFLKCvCYuLLoejHvOcGi2s6B65Jv8LA5L0svSTTb5+1zYqued+qioVFSqcJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vOvOe7r+; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=hEJWYtJvGXPffJ9hRfKA/4aeOTcPSXEMHzid5uN5ZfZUtlOsLDYZOwFXBofd9ToLep8cXDUkcYXQEln1rPYL9TmJl9378w7F+uVipT9BL8G0ms1x8LbFrhgZsKUxgj7QTE5CJSa3/39DeFs2jtQ5aT7stl7Znx9lDb/XIKC41h4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=teZHHJsX; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vOvOe7r+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 03369C2BBFC;
-	Sun, 16 Jun 2024 07:40:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718523607;
-	bh=9/cAdGYrdwaI/4y1JqtVx9mdosaD9ipTezgsP7O70KI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=vOvOe7r+p5KApeZ5sDQE+mNN2B8K8rE1/dYYLfFH6GusifJLh/MThj+IczxwRoi0X
-	 8q4v8mXXHdh2h6N2AaHI5SEvDVuTV0ywPgmgPygnCcYpQEnK9un9MH+6V6/VMBnYBK
-	 S6lpT27lDVF9D5f6nY6DmYOczWKzdW2kC+dpXRs3hEI837S4jJL+8KTMxoAoPmh712
-	 LUwQYF0uTnAH6TWE1DR1TbjH0TZgSRi4wfqtXLb4AYXg5HCp71kITOeWfDw7FFR+20
-	 JM4s3zMNFsmAkad9zGSkQdKPeahY50CA5KSwJkcIbGXwjsCeHuBpH90m0+L+I/vpet
-	 gd0jakcveqI5Q==
-Message-ID: <de1077de-baa4-42aa-84c1-6ab629088a07@kernel.org>
-Date: Sun, 16 Jun 2024 09:40:01 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="teZHHJsX"
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-57c714a1e24so3823522a12.2
+        for <linux-clk@vger.kernel.org>; Sun, 16 Jun 2024 00:49:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718524178; x=1719128978; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=QwgXZsM35RnKSk3KbXQFEg1LMCCqtXq5AS0doiK9cKg=;
+        b=teZHHJsXtSVcKGupegFtUap8/Uz0JZPNgwigg+unSjQpdHsLX0K0I6sHvOojhb3uR7
+         EMY3WWxKa4PIlDYcF90YbewloI9CtkW6VAWytEKRN55GgCMmJs/WdzRRmzxYp19NFdvw
+         kmVhVpW6ZAJMXYCFi1ysp7qoFfqOkq+v+fXay5wsyxEkDxAtZa0uJ5JIQ8Ym3Pa29WJk
+         Y3osfheOW56qhQ3xCeZJnF2cxfcYFIC/N0IeK/kT5XS9r2NKnDU5f5kbA3jodS83PEb5
+         OC2ocyfB768xm0JoOcTGI7Qsg6nCMaRyCZa3a3qZQHEmJGAzd2GopoG4XvkAJaYtodvQ
+         yxvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718524178; x=1719128978;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QwgXZsM35RnKSk3KbXQFEg1LMCCqtXq5AS0doiK9cKg=;
+        b=FaM2i/5I9n1IdhZF4up3XSEvtRo2YM1pevKXms1lj/8uUFyATobwCQttY2KLjOBWq6
+         Wqyknlukd5i1G/XSDDK9ubJQIY3vaPsCrANPePUchghsGy0GUXdLz2mgQH80n63MbU/6
+         J7eP6ry024X/BRq56AzIaxyd1QY6rIkq3iBesxY6BHnCz5aJmQMZTk0CghFLuiN1FQ2P
+         nXkzy61KYzDbPm1NArYgtQaRF1GbK+Sw4LoNipR/+ynrmwzVO1VI2KPNCYv5PAa9z+D9
+         CKYqCx4JVEBkmF925U4prMuUuoDFV5bV0ZA7A4LWRI1I28G36r767ybdFFyRaiclFJCI
+         xK/A==
+X-Forwarded-Encrypted: i=1; AJvYcCVcmeVADO1wocogUKCVXxcAeYYlqnyCv17QpcV1LtMKoAqE25L4+yw6PFU+j/ooMExv+nGX7dc3hc7mRQO6Ehfuo30wjArjdw1w
+X-Gm-Message-State: AOJu0YwnXgOHAl3syBH87k9x+NvyhrdUyEnI8SuKEnLR7j083Sw+HQwi
+	JYsKZViV3WLClvfwdhfyksicVxAYgglWIVa3pzIuhc2lITJtJcvNNVcAwbsqz3Y=
+X-Google-Smtp-Source: AGHT+IFXLyAxLYNUuQ0pk9G3q8JrkH0kIoDvGpD5TyjLj49AH6DlH5p1ronmgiZsyFu1Q2OaiLYBEQ==
+X-Received: by 2002:a50:8746:0:b0:573:5c4f:27a8 with SMTP id 4fb4d7f45d1cf-57cbd8e7144mr4654273a12.35.1718524178136;
+        Sun, 16 Jun 2024 00:49:38 -0700 (PDT)
+Received: from [192.168.0.18] ([78.10.207.147])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57cb72ce2b3sm4704451a12.14.2024.06.16.00.49.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 16 Jun 2024 00:49:37 -0700 (PDT)
+Message-ID: <7ed1a911-ee75-4fb4-9223-c79fa5d3a293@linaro.org>
+Date: Sun, 16 Jun 2024 09:49:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,21 +62,22 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 05/12] dt-bindings: rtc: renesas,rzg3s-rtc: Document the
- Renesas RZ/G3S RTC
-To: Claudiu <claudiu.beznea@tuxon.dev>, geert+renesas@glider.be,
- mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, lee@kernel.org,
- alexandre.belloni@bootlin.com, magnus.damm@gmail.com
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240614071932.1014067-1-claudiu.beznea.uj@bp.renesas.com>
- <20240614071932.1014067-6-claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH 2/4] clk: qcom: lpassaudiocc-sc7280: Add support for LPASS
+ resets for QCM6490
+To: Taniya Das <quic_tdas@quicinc.com>, Bjorn Andersson
+ <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Rob Herring <robh+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ quic_jkona@quicinc.com, quic_imrashai@quicinc.com, devicetree@vger.kernel.org
+References: <20240531102252.26061-1-quic_tdas@quicinc.com>
+ <20240531102252.26061-3-quic_tdas@quicinc.com>
+ <9eb80c39-562c-49de-b4fd-61d138247b7f@linaro.org>
+ <7a0c9bbe-d499-428a-bfb4-deea45a345ce@quicinc.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
  JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
@@ -59,92 +87,123 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  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
- 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 fv0=
-In-Reply-To: <20240614071932.1014067-6-claudiu.beznea.uj@bp.renesas.com>
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <7a0c9bbe-d499-428a-bfb4-deea45a345ce@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 14/06/2024 09:19, Claudiu wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On 10/06/2024 12:03, Taniya Das wrote:
 > 
-> Document the RTC IP (RTCA-3) available on the Renesas RZ/G3S SoC.
+> 
+> On 5/31/2024 9:56 PM, Krzysztof Kozlowski wrote:
+>> On 31/05/2024 12:22, Taniya Das wrote:
+>>> On the QCM6490 boards the LPASS firmware controls the complete clock
+>>> controller functionalities. But the LPASS resets are required to be
+>>> controlled from the high level OS. The Audio SW driver should be able to
+>>> assert/deassert the audio resets as required. Thus in clock driver add
+>>> support for the same.
+>>>
+>>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+>>> ---
+>>>   drivers/clk/qcom/lpassaudiocc-sc7280.c | 28 ++++++++++++++++++++++++++
+>>>   1 file changed, 28 insertions(+)
+>>>
+>>> diff --git a/drivers/clk/qcom/lpassaudiocc-sc7280.c b/drivers/clk/qcom/lpassaudiocc-sc7280.c
+>>> index c43d0b1af7f7..7fdfd07c111c 100644
+>>> --- a/drivers/clk/qcom/lpassaudiocc-sc7280.c
+>>> +++ b/drivers/clk/qcom/lpassaudiocc-sc7280.c
+>>> @@ -1,6 +1,7 @@
+>>>   // SPDX-License-Identifier: GPL-2.0-only
+>>>   /*
+>>>    * Copyright (c) 2021, The Linux Foundation. All rights reserved.
+>>> + * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
+>>>    */
+>>>   
+>>>   #include <linux/clk-provider.h>
+>>> @@ -869,10 +870,36 @@ static struct platform_driver lpass_aon_cc_sc7280_driver = {
+>>>   	},
+>>>   };
+>>>   
+>>> +static const struct of_device_id lpass_audio_cc_qcm6490_match_table[] = {
+>>> +	{ .compatible = "qcom,qcm6490-lpassaudiocc" },
+>>> +	{ }
+>>> +};
+>>> +MODULE_DEVICE_TABLE(of, lpass_audio_cc_qcm6490_match_table);
+>>> +
+>>> +static int lpass_audio_cc_qcm6490_probe(struct platform_device *pdev)
+>>> +{
+>>> +	lpass_audio_cc_sc7280_regmap_config.name = "lpassaudio_cc_reset";
+>>> +	lpass_audio_cc_sc7280_regmap_config.max_register = 0xc8;
+>>> +
+>>> +	return qcom_cc_probe_by_index(pdev, 1, &lpass_audio_cc_reset_sc7280_desc);
+>>> +}
+>>> +
+>>> +static struct platform_driver lpass_audio_cc_qcm6490_driver = {
+>>> +	.probe = lpass_audio_cc_qcm6490_probe,
+>>> +	.driver = {
+>>> +		.name = "lpass_audio_cc-qcm6490",
+>>> +		.of_match_table = lpass_audio_cc_qcm6490_match_table,
+>>> +	},
+>>> +};
+>>> +
+>>>   static int __init lpass_audio_cc_sc7280_init(void)
+>>>   {
+>>>   	int ret;
+>>>   
+>>> +	ret = platform_driver_register(&lpass_audio_cc_qcm6490_driver);
+>>> +	if (ret)
+>>> +		return ret;
+>>> +
+>>>   	ret = platform_driver_register(&lpass_aon_cc_sc7280_driver);
+>> Why this is a new platform driver?  There should be just one driver with
+>> different match data.
+>>
+> 
+> The main problem for me is that the current board(QCM6490) needs to be 
+> only support a subset of the entire(only resets) functionality the 
+> SC7280. If I redesign the probe function to pick the match data then I 
+> might accidentally break the existing functionalities on SC7280 boards.
 
-> +
-> +  clocks:
-> +    maxItems: 1
-> +    description: RTC counter clock
+That's not a reason to not implement changes. Test your changes first.
 
-Just items: with description instead.
+> 
+> Hence I thought to have a separate driver registration which looked a 
+> cleaner approach to go away from the "of_device_is_compatible".
 
-> +
-> +  clock-names:
-> +    maxItems: 1
-
-Nope, it must be specifc. Or just drop. This applies to all your patches.
-
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - interrupt-names
-> +  - clocks
-> +  - clock-names
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    rtc: rtc@1004ec00 {
-
-Drop label, not used.
-
-> +        compatible = "renesas,rzg3s-rtc";
-> +        reg = <0x1004ec00 0x400>;
-> +        interrupts = <GIC_SPI 315 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 316 IRQ_TYPE_LEVEL_HIGH>,
-> +                     <GIC_SPI 317 IRQ_TYPE_LEVEL_HIGH>;
-> +        interrupt-names = "alarm", "period", "carry";
-> +        clocks = <&vbattclk>;
-> +        clock-names = "counter";
-> +        status = "disabled";
-
-Why do you paste it eevrywhere? It does no really make sense.
+No. You over complicate simple case introducing unusual pattern.
 
 Best regards,
 Krzysztof
