@@ -1,99 +1,99 @@
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4B9911185;
-	Sun, 16 Jun 2024 16:01:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAE2C210EE;
+	Sun, 16 Jun 2024 18:38:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718553678; cv=none; b=JNgr4xdzPVKB7uFaujTCu7ySk2WeYjKVYRZJAYMpKwU+HfdyAc1fVd8jrF0whJcu5FahW9XgLyUV3eh0XnfFKLFAGv/AdcewVB4QQ79Chmc0nIMGoo04ygGQxPL+RwUjLwhUDSVDISa/agaCtrEs2wK0Qx6febdEeh8DapAwzsY=
+	t=1718563107; cv=none; b=I8XqA8+1mhRLbo67qeDfr74JRfxgt/ejE1BPWX8oUWkENK0qzKzSOqKN4GQpZbv08xNgAzX5jOxWddb7XaGi1ad+FPO/3G5jtgSxnL2+z+ai3jKiwy7vXokArV1a5khOWVplyI3NnPxpraZD05ZebX7woxKFdG7SugIqVh/hcJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718553678; c=relaxed/simple;
-	bh=ky76xrPx3KXd2PYAqt9g4d0sF6oxLndKUB08CCA+F0Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=j3hJbzGgj3B5rGNU6IBS6Izbrd4fxLhTUROCqWxm+EQP/ZGxT2Lo498oLZfHfI5dC+zok4h18ggHZJrfRhOMi4q2ZGXtgs6KZkhfqO6f3fpCgFl2BBfUiQpkMeU0p6cSeta9SneL5FkRc5TOPF8ug48RRVTLMJ6kpShLtWL1Jlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=IrZDr+P9; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=T9UYY3Qr; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1718563107; c=relaxed/simple;
+	bh=mKljWFCEhr4ejc3sfHEzZLzWr53KPVcA5FfLGTbsJHY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mSrTI2v1TVCfW0ektKoFyG+V2bGXm+ju2G05ur1dEhEzj/IksccXZ/XpbsZcnvL8e9I5ANkUMKzGq3+r7q3neVvhXvwYQbWrZS8KDiv0yTOAGHSCoVIXcfE19+ehV/pCfkd/92pgWtV7eWQ0wsBFPBw9jXiA/1iNEPOaaOxWPY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S78wpN6S; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="IrZDr+P9";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="T9UYY3Qr"
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4W2Hmz4svLz9sZ1;
-	Sun, 16 Jun 2024 18:01:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1718553667;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=r3CnB77GSg22IGMkBWAHaCoVPnRGOj7kbhcXuyKInSE=;
-	b=IrZDr+P99wuJwGqgEtwuHRuZKy5HwMDMIjW4wjgtPBLm5AsoFbU9jH6J0UyhLvCLWpog0S
-	c3CR94fVR6CeJ98mBjLLULXcjMLSj5pkqQivB4qMch5ucmLmy6Atn237qspzDDPAT8mBwi
-	CpgeDUI36e6WNhjoXz3fB51t7BNhEa8iWSeOQKOCVJbdeZoFPYKRSn1vHPzKsU9exwgChJ
-	fxSHWHaBeeyrPlJTA1fZDyQjm0ymvgf/aSIRBDgSbBqqGxWxnTdWcVOUnnvWmD3jkF0sXn
-	Qmneeerwqx36PFII/N499GgQBAuxr1tkASH/8SuACul0zfAuq2OnugGQkk/iCg==
-From: Marek Vasut <marek.vasut+renesas@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1718553665;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=r3CnB77GSg22IGMkBWAHaCoVPnRGOj7kbhcXuyKInSE=;
-	b=T9UYY3QrgSqjVPdaFKxneQ1KaMEv2yWISwv92e7cl1sjr6fzj3gp2zSmrmE4Duid5AXdpN
-	3Ch3FY8Vl02WU1kh9YsfVequDNl/mzQsY7syViG0DOaSLIyj+UPyJjQDhlISG/U7nww93G
-	bTkEQ0xpfISuhoFn6bLAyx0iIGeqLKYZLBjgmIkhw6ZyU2IkO4hht7kQJ6UjmoFWGC1q6/
-	UWedibmBTiM+5ooNbvsdTDakNoUgNa1oIyL1tHekJus2dwnPVLeOeao4gO+X8Cs5zMQUQu
-	zHrpp8m66AOeDd8OeiBPwUyV3WNAhXHbiMc8tSoxvQ5Np8VkkWkd3AVd0pVyeQ==
-To: linux-clk@vger.kernel.org
-Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S78wpN6S"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7311C4AF1D;
+	Sun, 16 Jun 2024 18:38:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718563107;
+	bh=mKljWFCEhr4ejc3sfHEzZLzWr53KPVcA5FfLGTbsJHY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=S78wpN6SwSUeYKlNi+qGGtGDZ/DGfl5WZYihFc4RNV+iekIa+BqjXaPCP3s/r99cc
+	 SRcbh6rQgjTlxof1oFJa5cE1AQhwW2aJJG4SlA3cSICp1q7JbpKQK2DXmVx8LAPPG8
+	 KinUnF3HWCIRITCC9VYrofnnlC/3s7XaDUqqHUv5Apy1V3e65poWfeyg7qOePqxti3
+	 Vx4PFD9ampodJz7jEOgQzY9lFXuTo8ri4jkBr3f2cL5T1STHFa6Z7ovbkQaIl4c0KD
+	 +ikBGtl2nU1i0lCziGuYLFPjnRrx2+PuaYKOAc3NClRsOP980nJq47Ipr74dOdUsPl
+	 sS+TsW6pEK0iA==
+Date: Sun, 16 Jun 2024 19:38:21 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Drew Fustini <dfustini@tenstorrent.com>
+Cc: Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>, Yangtao Li <frank.li@vivo.com>,
+	Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	Rob Herring <robh@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] dt-bindings: clock: r8a7779: Remove duplicate newline
-Date: Sun, 16 Jun 2024 18:00:20 +0200
-Message-ID: <20240616160038.45937-1-marek.vasut+renesas@mailbox.org>
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/6] dt-bindings: clock: Document T-Head TH1520 AP_SUBSYS
+ controller
+Message-ID: <20240616-reaffirm-thud-e3fb4de33d7f@spud>
+References: <20240615-th1520-clk-v1-0-3ba4978c4d6b@tenstorrent.com>
+ <20240615-th1520-clk-v1-1-3ba4978c4d6b@tenstorrent.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-MBO-RS-META: 8xqqk8hrsxghkbn9conx3m9oqteiz6ns
-X-MBO-RS-ID: 0e427122175b53372da
-X-Rspamd-Queue-Id: 4W2Hmz4svLz9sZ1
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="GV1+ODsExlaKnTkx"
+Content-Disposition: inline
+In-Reply-To: <20240615-th1520-clk-v1-1-3ba4978c4d6b@tenstorrent.com>
 
-Drop duplicate newline. No functional change.
 
-Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
----
-Cc: Conor Dooley <conor+dt@kernel.org>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>
-Cc: Rob Herring <robh@kernel.org>
-Cc: Stephen Boyd <sboyd@kernel.org>
-Cc: devicetree@vger.kernel.org
-Cc: linux-clk@vger.kernel.org
-Cc: linux-renesas-soc@vger.kernel.org
----
- include/dt-bindings/clock/r8a7779-clock.h | 1 -
- 1 file changed, 1 deletion(-)
+--GV1+ODsExlaKnTkx
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/include/dt-bindings/clock/r8a7779-clock.h b/include/dt-bindings/clock/r8a7779-clock.h
-index 342a60b11934b..e39acdc6499c0 100644
---- a/include/dt-bindings/clock/r8a7779-clock.h
-+++ b/include/dt-bindings/clock/r8a7779-clock.h
-@@ -57,5 +57,4 @@
- #define R8A7779_CLK_MMC1	30
- #define R8A7779_CLK_MMC0	31
- 
--
- #endif /* __DT_BINDINGS_CLOCK_R8A7779_H__ */
--- 
-2.43.0
+On Sat, Jun 15, 2024 at 06:54:30PM -0700, Drew Fustini wrote:
+> +examples:
+> +  - |
+> +    #include <dt-bindings/clock/thead,th1520-clk-ap.h>
+> +    soc {
+> +      #address-cells = <2>;
+> +      #size-cells = <2>;
+> +
+> +      clock-controller@ffef010000 {
+> +        compatible = "thead,th1520-clk-ap";
+> +        reg = <0xff 0xef010000 0x0 0x1000>;
 
+Drop the 2 cell stuff here, it's not needed in the example.
+
+Otherwise, looks okay to me.
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+
+> +        clocks = <&osc>;
+> +        #clock-cells = <1>;
+> +      };
+> +    };
+
+--GV1+ODsExlaKnTkx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZm8xHQAKCRB4tDGHoIJi
+0nakAQDI/dX7wq4wr9fhDskwIEdo5GYlExy1/hq7ZvnCAqI/sQD8DXYLfuYeZ3h5
+b137VHF34ez/lW6qbnhU7C8kg1Cl3wY=
+=2EDw
+-----END PGP SIGNATURE-----
+
+--GV1+ODsExlaKnTkx--
