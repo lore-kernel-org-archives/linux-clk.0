@@ -1,99 +1,112 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAE2C210EE;
-	Sun, 16 Jun 2024 18:38:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7C3F6BFA6
+	for <linux-clk@vger.kernel.org>; Sun, 16 Jun 2024 21:29:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718563107; cv=none; b=I8XqA8+1mhRLbo67qeDfr74JRfxgt/ejE1BPWX8oUWkENK0qzKzSOqKN4GQpZbv08xNgAzX5jOxWddb7XaGi1ad+FPO/3G5jtgSxnL2+z+ai3jKiwy7vXokArV1a5khOWVplyI3NnPxpraZD05ZebX7woxKFdG7SugIqVh/hcJs=
+	t=1718573401; cv=none; b=Lcx8z7X94idKezDov8bpGTu6XB9gjk0o6XBELqIV4XFAbQ45G28C+/Qgr8viTYzr5soRRZmZzuEQ1bTiPgWPfDjqdJZFwdrEKpx20sb8f79CZMbu5NHXY8gYWvAgzFASiZLD+EcoWLXKbwn8WSDgq6W3NjlZ/4AjRbDQWvL6oB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718563107; c=relaxed/simple;
-	bh=mKljWFCEhr4ejc3sfHEzZLzWr53KPVcA5FfLGTbsJHY=;
+	s=arc-20240116; t=1718573401; c=relaxed/simple;
+	bh=77qTZ2/jNB1s3kvHZeR23oY3xoIE8oX+Pbgo1oPSZVU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mSrTI2v1TVCfW0ektKoFyG+V2bGXm+ju2G05ur1dEhEzj/IksccXZ/XpbsZcnvL8e9I5ANkUMKzGq3+r7q3neVvhXvwYQbWrZS8KDiv0yTOAGHSCoVIXcfE19+ehV/pCfkd/92pgWtV7eWQ0wsBFPBw9jXiA/1iNEPOaaOxWPY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S78wpN6S; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=Rxq6rjjdtilMK0D/Khcpri/pKIf/QAo4+GecYzTvJYmadcBHgZlit5OVvsCWMsSdkoP37B14/nmLE8hC/QiNPowcW2Cj5OgB1fVS86+jhSYiMBH79ZuoYeZtSmivuaQB7MTP8l/WuMVd2UXMwQ3hzQ9IrGCSGvggLaC/kMStFM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aafkBiRj; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S78wpN6S"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7311C4AF1D;
-	Sun, 16 Jun 2024 18:38:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718563107;
-	bh=mKljWFCEhr4ejc3sfHEzZLzWr53KPVcA5FfLGTbsJHY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=S78wpN6SwSUeYKlNi+qGGtGDZ/DGfl5WZYihFc4RNV+iekIa+BqjXaPCP3s/r99cc
-	 SRcbh6rQgjTlxof1oFJa5cE1AQhwW2aJJG4SlA3cSICp1q7JbpKQK2DXmVx8LAPPG8
-	 KinUnF3HWCIRITCC9VYrofnnlC/3s7XaDUqqHUv5Apy1V3e65poWfeyg7qOePqxti3
-	 Vx4PFD9ampodJz7jEOgQzY9lFXuTo8ri4jkBr3f2cL5T1STHFa6Z7ovbkQaIl4c0KD
-	 +ikBGtl2nU1i0lCziGuYLFPjnRrx2+PuaYKOAc3NClRsOP980nJq47Ipr74dOdUsPl
-	 sS+TsW6pEK0iA==
-Date: Sun, 16 Jun 2024 19:38:21 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Drew Fustini <dfustini@tenstorrent.com>
-Cc: Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>, Yangtao Li <frank.li@vivo.com>,
-	Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/6] dt-bindings: clock: Document T-Head TH1520 AP_SUBSYS
- controller
-Message-ID: <20240616-reaffirm-thud-e3fb4de33d7f@spud>
-References: <20240615-th1520-clk-v1-0-3ba4978c4d6b@tenstorrent.com>
- <20240615-th1520-clk-v1-1-3ba4978c4d6b@tenstorrent.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aafkBiRj"
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a6f8b0b10f4so10755466b.0
+        for <linux-clk@vger.kernel.org>; Sun, 16 Jun 2024 14:29:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718573396; x=1719178196; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=kmVQxJoiRRnVxUmJPLxuy9ofoBMY/z2Ox1ZWQdCQeiQ=;
+        b=aafkBiRj0Yn6c/bZ1p14eumNaiQ/bsJFCm37mOdKdnaPCC4XvrnCYuioEZO8WssSwO
+         6U637L21bQHhTg9w8tJYYy2hKeR+SxJFPzkLdWhOqoJXYHBSsa+J8nCyN8zpMloL6K8a
+         yZUuxrMnQUV//AliVgRgGoPDPt6bySgxZDyxVSHd2vxjKufne1dBh97wtR9uIOQj3Mdm
+         B+I9ATkEwxemVMAnxE2mSgRDXyEvY6plAI8GZrMxr9uc7ZPCeDgVP5XVP9xpsFqqvvTS
+         aV7UTIsvHOTjdhVbLbtgTs3qS3/NHg4Yp1UEHVf1ajOhEsb/6atr3qlZNA123inXNWDi
+         77oQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718573396; x=1719178196;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kmVQxJoiRRnVxUmJPLxuy9ofoBMY/z2Ox1ZWQdCQeiQ=;
+        b=PBG87uffBnXEUrQcVql4MpVQ2aZW0dHrBpG+99e/Rkre/XIhDGh5ZlDt1YcRWdvMfz
+         UXq3HEt0gJTl3m6EeTRJe+Oc0mfE3KjsceD9vs3jceExqn2JT4Yj/YfqJxZMUXJSPFEd
+         ho+DXx6KpexH4VK8K4MCCjUoSp82If8m+2J/HL/igiH0Cmh2FRzbjEjCwBhGRYWuQALe
+         GQqAV+ZE2SgdVIAJ+8dnr7rEQnojITki7JCn3Xxy8oHt3M3yYq5Qqunk1HKYkE4Ynzvr
+         VtOgwFnUkpv8R1InraObxX4nNJp14yGrABiTmP6ktzTd3SYvrGBVIv5EaKHsFnV4ZQAd
+         cUKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVLQ5+RMGk0CarfW6WIvT/HGurs93+T14j0NY6Gplg2CyLsdYp2I8TbXxR4hBXVRzBjiTARAJLd7IP4o5iIN7rB4/0RFXSYhwk8
+X-Gm-Message-State: AOJu0YzvN4ON3BZYV48nZCIHiOWBJxYrh+4MSlxP4vvVyo6ZKBD76eHk
+	EAE0wefuVsPhW6HpGltjEtBdrdIFfdD+ApND2yHzB24dTMgSmAHJ1Wu8vvU7NbztKBsg0aVGPe8
+	6
+X-Google-Smtp-Source: AGHT+IEvUS/odyJPhKK7Glqf82cIjEvLFIs9anp+ZsBOp8SFgZaTIpP8nTwgP28wMtCwtrwni3h6Dg==
+X-Received: by 2002:a17:907:c302:b0:a6f:6337:1ad5 with SMTP id a640c23a62f3a-a6f63371be1mr650604966b.27.1718573396000;
+        Sun, 16 Jun 2024 14:29:56 -0700 (PDT)
+Received: from linaro.org ([188.24.162.56])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f5f1c8d6fsm384984166b.0.2024.06.16.14.29.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 Jun 2024 14:29:55 -0700 (PDT)
+Date: Mon, 17 Jun 2024 00:29:53 +0300
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>, Abel Vesa <abelvesa@kernel.org>,
+	Peng Fan <peng.fan@nxp.com>, Frank Li <Frank.Li@nxp.com>,
+	devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
+	linux-i2c@vger.kernel.org, linux-iio@vger.kernel.org,
+	linux-pwm@vger.kernel.org, linux-spi@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-watchdog@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: drop stale Anson Huang from maintainers
+Message-ID: <Zm9ZUWpievH+P8Yc@linaro.org>
+References: <20240614095927.88762-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="GV1+ODsExlaKnTkx"
-Content-Disposition: inline
-In-Reply-To: <20240615-th1520-clk-v1-1-3ba4978c4d6b@tenstorrent.com>
-
-
---GV1+ODsExlaKnTkx
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20240614095927.88762-1-krzysztof.kozlowski@linaro.org>
 
-On Sat, Jun 15, 2024 at 06:54:30PM -0700, Drew Fustini wrote:
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/thead,th1520-clk-ap.h>
-> +    soc {
-> +      #address-cells = <2>;
-> +      #size-cells = <2>;
-> +
-> +      clock-controller@ffef010000 {
-> +        compatible = "thead,th1520-clk-ap";
-> +        reg = <0xff 0xef010000 0x0 0x1000>;
+On 24-06-14 11:59:27, Krzysztof Kozlowski wrote:
+> Emails to Anson Huang bounce:
+> 
+>   Diagnostic-Code: smtp; 550 5.4.1 Recipient address rejected: Access denied.
+> 
+> Add IMX platform maintainers for bindings which would become orphaned.
+> 
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
 
-Drop the 2 cell stuff here, it's not needed in the example.
+[...]
 
-Otherwise, looks okay to me.
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> diff --git a/Documentation/devicetree/bindings/clock/imx6q-clock.yaml b/Documentation/devicetree/bindings/clock/imx6q-clock.yaml
+> index bae4fcb3aacc..74cfdcf1c93b 100644
+> --- a/Documentation/devicetree/bindings/clock/imx6q-clock.yaml
+> +++ b/Documentation/devicetree/bindings/clock/imx6q-clock.yaml
+> @@ -7,7 +7,9 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
+>  title: Freescale i.MX6 Quad Clock Controller
+>  
+>  maintainers:
+> -  - Anson Huang <Anson.Huang@nxp.com>
+> +  - Shawn Guo <shawnguo@kernel.org>
+> +  - Sascha Hauer <s.hauer@pengutronix.de>
+> +  - Fabio Estevam <festevam@gmail.com>
+>  
 
-> +        clocks = <&osc>;
-> +        #clock-cells = <1>;
-> +      };
-> +    };
+For the clocks, please add me as well. Don't mind having more help from
+the others :-) . But i.MX clock bindings usually go through my tree.
 
---GV1+ODsExlaKnTkx
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZm8xHQAKCRB4tDGHoIJi
-0nakAQDI/dX7wq4wr9fhDskwIEdo5GYlExy1/hq7ZvnCAqI/sQD8DXYLfuYeZ3h5
-b137VHF34ez/lW6qbnhU7C8kg1Cl3wY=
-=2EDw
------END PGP SIGNATURE-----
-
---GV1+ODsExlaKnTkx--
+Thanks.
