@@ -1,81 +1,110 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7A8016D33E;
-	Sun, 16 Jun 2024 08:00:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 926321E867;
+	Sun, 16 Jun 2024 11:13:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718524817; cv=none; b=jyooDlwRF8eR0j81/UZYngWkON1t5hR63is3igmqdJnTPPB1AFTMd7mtGPgYiQY0tcKo3iL0VBMdPIHCqvLt9F5sIQoerlqAsOMcsw0elN40glVMe1gkJGdF3Npm0up01ZUcXtB4ZtR+AK6GIJXoqFmW3drNbpRI+d0KOX5I5+g=
+	t=1718536416; cv=none; b=KFlwEZUO78GYpYGfvge1VqYBbcYSMAkOjhTf621nfcH9PZBSkkHjs1kL+WcNyUK/ahGR2jE/OrVkzyIJJDnb0o/z18KeAwlOo4CK2+QfW5OFLWGb1+eBIai5FTddUjc/F0fkz1gX77XWLoOmeJgfdQR/y51GZ39saHqxEYWM3WE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718524817; c=relaxed/simple;
-	bh=Kx9wz1mFls9/uJS/vpae1QpuUfW4zPS3SusOm+sxWXQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AlVi7tXSErSntSTOXazmeMH1UgkQKrjmYN9TeFh4bNosKH7tGpS8lU0+1NsW0qNMaXkgFGMrYaxsWEBJItqbS0T6OP2w+KkAracSDC1+UqGgLm4ifB49dl98/LXTaI1MtAc/fpVjIVbCbUHvgNRwWSoQ4pKHP29bZiseibxHao0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from 79-98-74-242.sys-data.com ([79.98.74.242] helo=phil.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sIko5-0000Vp-S0; Sun, 16 Jun 2024 10:00:09 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Sam Protsenko <semen.protsenko@linaro.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Subject: Re: [PATCH v1 2/4] clk: rockchip: Switch to use kmemdup_array()
-Date: Sun, 16 Jun 2024 10:00:07 +0200
-Message-ID: <6087515.R56niFO833@phil>
-In-Reply-To: <ZmhPBccSC0Uc2fjQ@smile.fi.intel.com>
-References:
- <20240606161028.2986587-1-andriy.shevchenko@linux.intel.com>
- <8182279.JRmrKFJ9eK@diego> <ZmhPBccSC0Uc2fjQ@smile.fi.intel.com>
+	s=arc-20240116; t=1718536416; c=relaxed/simple;
+	bh=5Qe22a/rXnwgANrtomn4MOl7ZqJKAGbvletrgh/L8K4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=a0AXfZxb5Vv3GXQLa2DwOIa5b3r9F+y8qY4SHqe3gxLO2q2Mi/4rfOxqMhxP4gwMKYTGXI5YC2R1/flxAPf6vRvc1LFAHZ0eIq3AwM3bN81FFFm+quUt2ppDtgjhXvME65s6Y+h1B8n7nJBEJBb5xNsy86QxSHBvf+bjAYO3vTE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ki8XOTY4; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ki8XOTY4"
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-57c75464e77so4163587a12.0;
+        Sun, 16 Jun 2024 04:13:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718536413; x=1719141213; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KlVnCg4+HXPsRalS2DKf0R5L2DbSMtI+mYeqbnqSO/E=;
+        b=ki8XOTY47ztjcuZO9C2Abrm6xneWEeoJO3VVZekOw51cY82ewk8aDXnoZhaQccaAzo
+         vXceeuQ4iY4ENqeJJKbTNybcoEAGwDCzO4yecx9C5gG/CFeedCRyFlCW+/sYnuxoo1WZ
+         zyumBi/kWQAUaqBfeW5ZiS9oKW6PGQ+pyos7kK71YiZuX4ZPU8ueFWe3P2VRL6P0Xjp7
+         FeVA5LUGWN+yj22xh4O9bYA3JHOBtA/V9WjVzBVAEjryWdCa8OjqmE4Sy4PvSvJAsfHq
+         1Vm0aQvSjKr3slbvPhgeWYnjPRO8vp10bsk4CKE5tPfrAtWKF26AjjkrKcM1JR3iw3IE
+         koGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718536413; x=1719141213;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=KlVnCg4+HXPsRalS2DKf0R5L2DbSMtI+mYeqbnqSO/E=;
+        b=dcMpdp1p3ES5vxluIrLX7JsmXYaOUlYdPOHeugudbAWQk8vTdoS4r2G5Hyn00bCrTA
+         OVPyK/gZo9Cq8olaAtyKUuN5DGYdCA+5ZwoPGh708FJtu/NDGyCv6qbNiw6XYqTKHeGa
+         /9wT/+qAcjkaWbLf7LCE0Kmh8IEgAGxapA8Rp1Vy5sA5h80kf3wB8h/VMrEhNdGv/+jf
+         aCx3qKDwnLWTJ5iVIOv2Ks30/k4J92hK6ew/AFD5giyqSQTvur2LUka098A+7GrDq+3h
+         TJL67Vh7rFGVifm67M3tWS6JL8feNRTuzUsjoZNKeOxROKpOTehTFEcusV2DyXK89Aqw
+         FhHg==
+X-Forwarded-Encrypted: i=1; AJvYcCVno98CxqJgrd9Uz573enkt0uVF0TTVR3IdmO4t7Ul5+zdwumiAK7iKuRQV89SXlDtEPpxqA8NZHahBjanucKTviiU0JqVO4ipSqCcPgSejaod446Hh8zAj5jBOXIU3/nTJpy5sTvy5ADTisq/BsXMO6f8tGz+vZdv4+WQkgcXhQcEvhQ==
+X-Gm-Message-State: AOJu0YyQsQLCYCcuAxi08QVErr6j1Ac8+plqku09srPADGMM387G4epF
+	5PSl5Lfg/qvEtU52sanXZ6JqrutIjJD2OCrzMzyxzbupkdq+/3WB
+X-Google-Smtp-Source: AGHT+IGecZLkBaThfkqSL3QBnjraLowY/PCR45MvfrrAabtuQGmkj/cKCxg7OWyIiRbWH3JHOVE+Fw==
+X-Received: by 2002:a17:906:c005:b0:a6f:1fc0:3fc0 with SMTP id a640c23a62f3a-a6f60cefeaamr513546266b.6.1718536412509;
+        Sun, 16 Jun 2024 04:13:32 -0700 (PDT)
+Received: from standask-GA-A55M-S2HP (lu-nat-113-247.ehs.sk. [188.123.113.247])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56da3385sm394930266b.24.2024.06.16.04.13.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 16 Jun 2024 04:13:32 -0700 (PDT)
+Date: Sun, 16 Jun 2024 13:13:29 +0200
+From: Stanislav Jakubek <stano.jakubek@gmail.com>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: clock: drop obsolete stericsson,abx500.txt
+Message-ID: <Zm7I2Zbq1JNPoEJp@standask-GA-A55M-S2HP>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Am Dienstag, 11. Juni 2024, 15:20:05 CEST schrieb Andy Shevchenko:
-> On Fri, Jun 07, 2024 at 10:13:04AM +0200, Heiko St=FCbner wrote:
-> > Am Donnerstag, 6. Juni 2024, 18:09:32 CEST schrieb Andy Shevchenko:
->=20
-> ...
->=20
-> > > -		cpuclk->rate_table =3D kmemdup(rates,
-> > > -					     sizeof(*rates) * nrates,
-> > > -					     GFP_KERNEL);
-> > > +		cpuclk->rate_table =3D kmemdup_array(rates, nrates, sizeof(*rates),
-> > > +						   GFP_KERNEL);
-> >=20
-> > are you sure the param order is correct?
-> >=20
-> > According to [0], it's (src, element_size, count, gfp), while above
-> > (and below) element_size and count seems switched in the
-> > kmemdup_array calls.
->=20
-> I'm glad you asked. The parameter order is going to be fixed [1].
->=20
-> > [0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/=
-tree/mm/util.c#n149
->=20
-> [1]: 0ee14725471c ("mm/util: Swap kmemdup_array() arguments")
+These bindings are already (better) described in mfd/stericsson,ab8500.yaml,
+drop these now obsolete bindings.
 
-ah that clears it up :-)
+Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
+---
+ .../bindings/clock/stericsson,abx500.txt      | 20 -------------------
+ 1 file changed, 20 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/stericsson,abx500.txt
 
-
-Thanks for the pointer
-Heiko
-
+diff --git a/Documentation/devicetree/bindings/clock/stericsson,abx500.txt b/Documentation/devicetree/bindings/clock/stericsson,abx500.txt
+deleted file mode 100644
+index dbaa886b223e..000000000000
+--- a/Documentation/devicetree/bindings/clock/stericsson,abx500.txt
++++ /dev/null
+@@ -1,20 +0,0 @@
+-Clock bindings for ST-Ericsson ABx500 clocks
+-
+-Required properties :
+-- compatible : shall contain the following:
+-  "stericsson,ab8500-clk"
+-- #clock-cells should be <1>
+-
+-The ABx500 clocks need to be placed as a subnode of an AB8500
+-device node, see mfd/ab8500.txt
+-
+-All available clocks are defined as preprocessor macros in
+-dt-bindings/clock/ste-ab8500.h header and can be used in device
+-tree sources.
+-
+-Example:
+-
+-clock-controller {
+-	compatible = "stericsson,ab8500-clk";
+-	#clock-cells = <1>;
+-};
+-- 
+2.34.1
 
