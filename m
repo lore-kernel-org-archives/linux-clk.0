@@ -1,181 +1,280 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77D441847;
-	Sun, 16 Jun 2024 00:20:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13F99154C19
+	for <linux-clk@vger.kernel.org>; Sun, 16 Jun 2024 01:55:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718497210; cv=none; b=frphdvIpauAO0x3G47fK94W6mCnqd1IfM8Bo3scWJQdQuk5fbi2O+0Ym+Ha/vGSSP3/g+ZI7XYXfs/PlYc8ATI64uSHpbSjGqqPnEfhysPMcDT5g2oaB7QDfEY7IXLCieYYF78WYx3az4RKHxDMQRaT8nwZkE+oisSo9zJijXL8=
+	t=1718502924; cv=none; b=pBOgGifqwjomCoCBwQ2UTBse8S0t8C23Cp/lSmhYRlO/rAm09JzvdPCi57M6KEVGBgkpyOAqUw4CWbN5irXYZeVzX6+GZNP2WIFoJcS0HOsTY1pgS7QQKvVv0xNuvtTGptL0B9Ip6yKiRT/xk9o7DW0OyM3UbLze1+0ljFISBPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718497210; c=relaxed/simple;
-	bh=wwA+OqE2v6eOVsJjxE41uJDGwJ6LUdWs0oez7vI8tJ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dHCsYaE80ph1JZiJMGvN61BHrGWFYjEtjjlaxKJSMpHWNlwHt6eJWrjWJUFVPPSULSpCGxWx0AqyCYFd0WgTi8I8F7/2fR4AXcPV3vZQv/m7pfwzhgxVSUKbUbqrWJuTzCMy4R78Jgm70nu8xvvsQhB3p4VRg786Wf15iP7Re+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QgBw352i; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1718502924; c=relaxed/simple;
+	bh=gToYcgEXPl8RMOBRGH1O5IX4HgOMTtUquue4ZNNOFI4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=gRiYOWFqsSHABDqstx3Euvs/8INOvPbIEWTrBLFnLbDl6vI9kl51ZX3PwObMxcZmsTQy3mPbnWgwoxGX+1pjPGTDSrblp96f2W/e83cvHpPn7MrwS+zMrOTwJ786y5Tnr8YgO4gWaywAy7wNHDhmHgJndDM1pl61nL4oFt06/+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=Zx8YZv8e; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QgBw352i"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718497208; x=1750033208;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=wwA+OqE2v6eOVsJjxE41uJDGwJ6LUdWs0oez7vI8tJ0=;
-  b=QgBw352iVT0HwrQRoEottbxGdouw5JMoUF8Pk/fp+exg6Q93X3KYR0GX
-   rVA4Ad2TUcStQTj0MaNxYa95wEPEY5NcVhpM410t/ywwiYHlJI6/htsnW
-   Rq+HQmhEoaseVMKH5MJAXBBISAslLLC3/LtSBiDjksKaN3l4T5gUIhlCR
-   w1wQa2NQLdWS3ANFyK9rQD7ugDWpWtpORVz4MbSH2VF8+C/8yvlyT4x/2
-   E5UeBadZXLxcwrIlele6XZ0Pj8cNvtJcUxBOlos9E8pni6TIo9lDsuFdI
-   Fd5GNVFtLvs8Lv8F8J4WGrIveeZjab+zZaM24uGMQBX9w8V0vykqcD7GU
-   w==;
-X-CSE-ConnectionGUID: tb3RojjaTM6OZ80nMLDBMg==
-X-CSE-MsgGUID: RL2KcAgMQXu0GDuBmibhhQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11104"; a="19145764"
-X-IronPort-AV: E=Sophos;i="6.08,241,1712646000"; 
-   d="scan'208";a="19145764"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jun 2024 17:20:08 -0700
-X-CSE-ConnectionGUID: Dsk+HKVsTIOhZ4M66bYGxg==
-X-CSE-MsgGUID: fZPz2K0uQQih11sk8bAk1w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,241,1712646000"; 
-   d="scan'208";a="41529016"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa008.jf.intel.com with ESMTP; 15 Jun 2024 17:20:05 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sIdcn-0000dm-2e;
-	Sun, 16 Jun 2024 00:20:01 +0000
-Date: Sun, 16 Jun 2024 08:19:46 +0800
-From: kernel test robot <lkp@intel.com>
-To: Claudiu <claudiu.beznea@tuxon.dev>, geert+renesas@glider.be,
-	mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, lee@kernel.org,
-	alexandre.belloni@bootlin.com, magnus.damm@gmail.com
-Cc: oe-kbuild-all@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, claudiu.beznea@tuxon.dev,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH 04/12] clk: renesas: clk-vbattb: Add VBATTB clock driver
-Message-ID: <202406160847.Ns62KOVc-lkp@intel.com>
-References: <20240614071932.1014067-5-claudiu.beznea.uj@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="Zx8YZv8e"
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-6e3741519d7so2358169a12.2
+        for <linux-clk@vger.kernel.org>; Sat, 15 Jun 2024 18:55:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tenstorrent.com; s=google; t=1718502921; x=1719107721; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=I6/TFQb8ZgC49V/e8JMLt5R3HuWqpyZHKZc6KnVuH0c=;
+        b=Zx8YZv8egurwOu/Gu3b7IFhtv1HIEhGiJwg7DIOVuGBQbrqREO/DyoOXzIytaz2v2m
+         FsFGRkfWbQn6M/jYg937bNoheu6xOjxPcpMczIqS0T6cHBOeD3tkZdCOZY+1UT82De8C
+         hdD7Na9pUzZtaHTSb2jeZyNY3Tz2aK7FPyPqJMni/5RZKkWwSW15Mm9QmI/1HzCj44qB
+         wSOE3P+8BSnj7adbYsiaqvEeI8GGULsGOoclrTiVkizscuxczQ7U86raK6i9UIuFbrrE
+         2T09dRYRpaGImlBpkuB8YaLvAI9DIliluLvnP7f4i+/awq7XyI/M8WH4HrWlnmMshMSM
+         YsZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718502921; x=1719107721;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=I6/TFQb8ZgC49V/e8JMLt5R3HuWqpyZHKZc6KnVuH0c=;
+        b=VIiTlas5AuhUi6cDZ9htaZY6pFJ9/sRpREIYY6OqMMaV03wdYJGAhjF1z0uNCkRGED
+         9DlqxPl+LRph/YXpuusiSI2GsjiV2BFeMmGjw0a7kS1XTrwAaIjvXLhbWQ2kEkADY8YG
+         xTS5Y7aBkZ9Z70+UYJQNUnY2I5sHvrpP/Gz6dvqMiGZRG039fCpShGHs+fQKyFphr4Jz
+         KwX7RYNjqdtrWd1mZx8JJb+PblBAwZ/g9OVi6B/Sy5B7TCdEY58h0PwqZRDGcHlMJDpV
+         kzpjYp63t8EkI2zIQjcomYLuber5w4O6pReViWxoVZCxnGbKd9WhP1SspegOhzkI2ahu
+         AQYA==
+X-Forwarded-Encrypted: i=1; AJvYcCXO1B3h+wNLsGp5waHkJkcyX4CHkcMFA4MotGHYTEPv5vy8/qwv8IajkuQ1DSer59DuJfmlZWYH+KTWWhtpcEa1z/IV4vujse8d
+X-Gm-Message-State: AOJu0YzA2l7Q+b9so+4amuMoTHQFcvz8ljgqc9Y7YJBuTzZ52H6ztJ6h
+	6Vso863PTks/STTcPnbBGCq97WaBCdLfdZvn4bcWEivxVCShF54aqqIuF8BQqFo=
+X-Google-Smtp-Source: AGHT+IH82iPNF8qXNXUTrf3U/q2udG9cxwLwHm7cOupfogf2spUfAnxOiJnMle1wfsEKeQ7cXXamzg==
+X-Received: by 2002:a05:6a20:cf8b:b0:1b8:b2cf:bd8b with SMTP id adf61e73a8af0-1bae823dcc7mr6192244637.47.1718502921136;
+        Sat, 15 Jun 2024 18:55:21 -0700 (PDT)
+Received: from [127.0.1.1] ([2601:1c2:1802:170:1cea:28dd:2ee0:e8e5])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2c4a769aedbsm8751201a91.43.2024.06.15.18.55.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 15 Jun 2024 18:55:20 -0700 (PDT)
+From: Drew Fustini <dfustini@tenstorrent.com>
+Date: Sat, 15 Jun 2024 18:54:30 -0700
+Subject: [PATCH 1/6] dt-bindings: clock: Document T-Head TH1520 AP_SUBSYS
+ controller
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240614071932.1014067-5-claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240615-th1520-clk-v1-1-3ba4978c4d6b@tenstorrent.com>
+References: <20240615-th1520-clk-v1-0-3ba4978c4d6b@tenstorrent.com>
+In-Reply-To: <20240615-th1520-clk-v1-0-3ba4978c4d6b@tenstorrent.com>
+To: Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>, 
+ Fu Wei <wefu@redhat.com>, Yangtao Li <frank.li@vivo.com>, 
+ Thomas Bonnefille <thomas.bonnefille@bootlin.com>, 
+ Emil Renner Berthing <emil.renner.berthing@canonical.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
+Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Drew Fustini <dfustini@tenstorrent.com>
+X-Mailer: b4 0.12.3
 
-Hi Claudiu,
+Document bindings for the T-Head TH1520 AP sub-system clock controller.
 
-kernel test robot noticed the following build warnings:
+Link: https://openbeagle.org/beaglev-ahead/beaglev-ahead/-/blob/main/docs/TH1520%20System%20User%20Manual.pdf
+Co-developed-by: Yangtao Li <frank.li@vivo.com>
+Signed-off-by: Yangtao Li <frank.li@vivo.com>
+Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
+---
+ .../bindings/clock/thead,th1520-clk-ap.yaml        | 58 +++++++++++++
+ MAINTAINERS                                        |  2 +
+ include/dt-bindings/clock/thead,th1520-clk-ap.h    | 96 ++++++++++++++++++++++
+ 3 files changed, 156 insertions(+)
 
-[auto build test WARNING on geert-renesas-drivers/renesas-clk]
-[also build test WARNING on geert-renesas-devel/next linus/master v6.10-rc3 next-20240613]
-[cannot apply to abelloni/rtc-next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Claudiu/clk-renesas-r9a08g045-Add-clock-reset-and-power-domain-support-for-the-VBATTB-IP/20240614-152418
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git renesas-clk
-patch link:    https://lore.kernel.org/r/20240614071932.1014067-5-claudiu.beznea.uj%40bp.renesas.com
-patch subject: [PATCH 04/12] clk: renesas: clk-vbattb: Add VBATTB clock driver
-config: mips-randconfig-r122-20240616 (https://download.01.org/0day-ci/archive/20240616/202406160847.Ns62KOVc-lkp@intel.com/config)
-compiler: mips-linux-gcc (GCC) 13.2.0
-reproduce: (https://download.01.org/0day-ci/archive/20240616/202406160847.Ns62KOVc-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406160847.Ns62KOVc-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
->> drivers/clk/renesas/clk-vbattb.c:132:35: sparse: sparse: incorrect type in argument 2 (different base types) @@     expected unsigned int [usertype] size @@     got restricted gfp_t @@
-   drivers/clk/renesas/clk-vbattb.c:132:35: sparse:     expected unsigned int [usertype] size
-   drivers/clk/renesas/clk-vbattb.c:132:35: sparse:     got restricted gfp_t
->> drivers/clk/renesas/clk-vbattb.c:132:47: sparse: sparse: incorrect type in argument 3 (different base types) @@     expected restricted gfp_t [usertype] gfp @@     got unsigned int @@
-   drivers/clk/renesas/clk-vbattb.c:132:47: sparse:     expected restricted gfp_t [usertype] gfp
-   drivers/clk/renesas/clk-vbattb.c:132:47: sparse:     got unsigned int
-   drivers/clk/renesas/clk-vbattb.c: note: in included file (through include/linux/mmzone.h, include/linux/gfp.h, include/linux/xarray.h, ...):
-   include/linux/page-flags.h:240:46: sparse: sparse: self-comparison always evaluates to false
-   include/linux/page-flags.h:240:46: sparse: sparse: self-comparison always evaluates to false
-
-vim +132 drivers/clk/renesas/clk-vbattb.c
-
-   119	
-   120	static int vbattb_clk_probe(struct platform_device *pdev)
-   121	{
-   122		struct clk_parent_data parent_data = { .fw_name = "vbattb_xtal" };
-   123		struct device_node *np = pdev->dev.of_node;
-   124		struct device *dev = &pdev->dev;
-   125		struct clk_init_data init = {};
-   126		struct vbattb_clk *vbclk;
-   127		u32 load_capacitance;
-   128		struct clk_hw *hw;
-   129		bool bypass;
-   130		int ret;
-   131	
- > 132		vbclk = devm_kzalloc(dev, GFP_KERNEL, sizeof(*vbclk));
-   133		if (!vbclk)
-   134			return -ENOMEM;
-   135	
-   136		vbclk->regmap = syscon_node_to_regmap(np->parent);
-   137		if (IS_ERR(vbclk->regmap))
-   138			return PTR_ERR(vbclk->regmap);
-   139	
-   140		bypass = of_property_read_bool(np, "renesas,vbattb-osc-bypass");
-   141		ret = of_property_read_u32(np, "renesas,vbattb-load-nanofarads", &load_capacitance);
-   142		if (ret)
-   143			return ret;
-   144	
-   145		ret = vbattb_clk_validate_load_capacitance(vbclk, load_capacitance);
-   146		if (ret)
-   147			return ret;
-   148	
-   149		ret = devm_pm_runtime_enable(dev);
-   150		if (ret)
-   151			return ret;
-   152	
-   153		ret = pm_runtime_resume_and_get(dev);
-   154		if (ret)
-   155			return ret;
-   156	
-   157		regmap_update_bits(vbclk->regmap, VBATTB_BKSCCR, VBATTB_BKSCCR_SOSEL,
-   158				   bypass ? VBATTB_BKSCCR_SOSEL : 0);
-   159	
-   160		init.name = "vbattclk";
-   161		init.ops = &vbattb_clk_ops;
-   162		init.parent_data = &parent_data;
-   163		init.num_parents = 1;
-   164		init.flags = 0;
-   165	
-   166		vbclk->hw.init = &init;
-   167		hw = &vbclk->hw;
-   168	
-   169		spin_lock_init(&vbclk->lock);
-   170	
-   171		ret = devm_clk_hw_register(dev, hw);
-   172		if (ret)
-   173			goto rpm_put;
-   174	
-   175		ret = of_clk_add_hw_provider(np, of_clk_hw_simple_get, hw);
-   176		if (ret)
-   177			goto rpm_put;
-   178	
-   179		return 0;
-   180	
-   181	rpm_put:
-   182		pm_runtime_put(dev);
-   183		return ret;
-   184	}
-   185	
+diff --git a/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml b/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
+new file mode 100644
+index 000000000000..461abe62626d
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
+@@ -0,0 +1,58 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/thead,th1520-clk-ap.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: T-HEAD TH1520 AP sub-system clock controller
++
++description: |
++  The T-HEAD TH1520 AP sub-system clock controller configures the
++  CPU, DPU, GMAC and TEE PLLs.
++
++  SoC reference manual
++  https://openbeagle.org/beaglev-ahead/beaglev-ahead/-/blob/main/docs/TH1520%20System%20User%20Manual.pdf
++
++maintainers:
++  - Jisheng Zhang <jszhang@kernel.org>
++  - Wei Fu <wefu@redhat.com>
++  - Drew Fustini <dfustini@tenstorrent.com>
++
++properties:
++  compatible:
++    const: thead,th1520-clk-ap
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: main oscillator (24MHz)
++
++  "#clock-cells":
++    const: 1
++    description:
++      See <dt-bindings/clock/thead,th1520-clk-ap.h> for valid indices.
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - "#clock-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/thead,th1520-clk-ap.h>
++    soc {
++      #address-cells = <2>;
++      #size-cells = <2>;
++
++      clock-controller@ffef010000 {
++        compatible = "thead,th1520-clk-ap";
++        reg = <0xff 0xef010000 0x0 0x1000>;
++        clocks = <&osc>;
++        #clock-cells = <1>;
++      };
++    };
+diff --git a/MAINTAINERS b/MAINTAINERS
+index aacccb376c28..761fcbddc8d6 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -19320,7 +19320,9 @@ M:	Guo Ren <guoren@kernel.org>
+ M:	Fu Wei <wefu@redhat.com>
+ L:	linux-riscv@lists.infradead.org
+ S:	Maintained
++F:	Documentation/devicetree/bindings/clock/thead,th1520-clk-ap.yaml
+ F:	arch/riscv/boot/dts/thead/
++F:	include/dt-bindings/clock/thead,th1520-clk-ap.h
+ 
+ RNBD BLOCK DRIVERS
+ M:	Md. Haris Iqbal <haris.iqbal@ionos.com>
+diff --git a/include/dt-bindings/clock/thead,th1520-clk-ap.h b/include/dt-bindings/clock/thead,th1520-clk-ap.h
+new file mode 100644
+index 000000000000..a199784b3512
+--- /dev/null
++++ b/include/dt-bindings/clock/thead,th1520-clk-ap.h
+@@ -0,0 +1,96 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (C) 2023 Vivo Communication Technology Co. Ltd.
++ * Authors: Yangtao Li <frank.li@vivo.com>
++ */
++
++#ifndef _DT_BINDINGS_CLK_TH1520_H_
++#define _DT_BINDINGS_CLK_TH1520_H_
++
++#define CLK_CPU_PLL0		0
++#define CLK_CPU_PLL1		1
++#define CLK_GMAC_PLL		2
++#define CLK_VIDEO_PLL		3
++#define CLK_DPU0_PLL		4
++#define CLK_DPU1_PLL		5
++#define CLK_TEE_PLL		6
++#define CLK_C910_I0		7
++#define CLK_C910		8
++#define CLK_BROM		9
++#define CLK_BMU			10
++#define CLK_AHB2_CPUSYS_HCLK	11
++#define CLK_APB3_CPUSYS_PCLK	12
++#define CLK_AXI4_CPUSYS2_ACLK	13
++#define CLK_AON2CPU_A2X		14
++#define CLK_X2X_CPUSYS		15
++#define CLK_AXI_ACLK		16
++#define CLK_CPU2AON_X2H		17
++#define CLK_PERI_AHB_HCLK	18
++#define CLK_CPU2PERI_X2H	19
++#define CLK_PERI_APB_PCLK	20
++#define CLK_PERI2APB_PCLK	21
++#define CLK_PERISYS_APB1_HCLK	22
++#define CLK_PERISYS_APB2_HCLK	23
++#define CLK_PERISYS_APB3_HCLK	24
++#define CLK_PERISYS_APB4_HCLK	25
++#define CLK_OSC12M		26
++#define CLK_OUT1		27
++#define CLK_OUT2		28
++#define CLK_OUT3		29
++#define CLK_OUT4		30
++#define CLK_APB_PCLK		31
++#define CLK_NPU			32
++#define CLK_NPU_AXI		33
++#define CLK_VI			34
++#define CLK_VI_AHB		35
++#define CLK_VO_AXI		36
++#define CLK_VP_APB		37
++#define CLK_VP_AXI		38
++#define CLK_CPU2VP		39
++#define CLK_VENC		40
++#define CLK_DPU0		41
++#define CLK_DPU1		42
++#define CLK_EMMC_SDIO		43
++#define CLK_GMAC1		44
++#define CLK_PADCTRL1		45
++#define CLK_DSMART		46
++#define CLK_PADCTRL0		47
++#define CLK_GMAC_AXI		48
++#define CLK_GPIO3		49
++#define CLK_GMAC0		50
++#define CLK_PWM			51
++#define CLK_QSPI0		52
++#define CLK_QSPI1		53
++#define CLK_SPI			54
++#define CLK_UART0_PCLK		55
++#define CLK_UART1_PCLK		56
++#define CLK_UART2_PCLK		57
++#define CLK_UART3_PCLK		58
++#define CLK_UART4_PCLK		59
++#define CLK_UART5_PCLK		60
++#define CLK_GPIO0		61
++#define CLK_GPIO1		62
++#define CLK_GPIO2		63
++#define CLK_I2C0		64
++#define CLK_I2C1		65
++#define CLK_I2C2		66
++#define CLK_I2C3		67
++#define CLK_I2C4		68
++#define CLK_I2C5		69
++#define CLK_SPINLOCK		70
++#define CLK_DMA			71
++#define CLK_MBOX0		72
++#define CLK_MBOX1		73
++#define CLK_MBOX2		74
++#define CLK_MBOX3		75
++#define CLK_WDT0		76
++#define CLK_WDT1		77
++#define CLK_TIMER0		78
++#define CLK_TIMER1		79
++#define CLK_SRAM0		80
++#define CLK_SRAM1		81
++#define CLK_SRAM2		82
++#define CLK_SRAM3		83
++#define CLK_PLL_GMAC_100M	84
++#define CLK_UART_SCLK		85
++#endif
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.40.1
+
