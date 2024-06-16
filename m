@@ -1,107 +1,99 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 530AD4431;
-	Sun, 16 Jun 2024 13:40:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4B9911185;
+	Sun, 16 Jun 2024 16:01:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718545218; cv=none; b=laFm37HZTs5VzYRHrs8TMZqkAv1hQ8blSlgW9S2qn1ZXN/QgiysOhdcskGM5mryc2j0hnPaAbPSzeB6dRQUmOius5PA3mZZKoAfvqDY6QEWjdbAUQ2EtjbUl/GcJnWJfPIM6VR95Hp/Y4yy3lupsgl7s4uNk8JRrK+BZiBM/YYk=
+	t=1718553678; cv=none; b=JNgr4xdzPVKB7uFaujTCu7ySk2WeYjKVYRZJAYMpKwU+HfdyAc1fVd8jrF0whJcu5FahW9XgLyUV3eh0XnfFKLFAGv/AdcewVB4QQ79Chmc0nIMGoo04ygGQxPL+RwUjLwhUDSVDISa/agaCtrEs2wK0Qx6febdEeh8DapAwzsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718545218; c=relaxed/simple;
-	bh=VxzoehtXCQnqw9jYaFfGEiHCx+loREgL3ACwUTg6T7s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HPlDzL0dmJRroMGMXhFwMs/wNXqAHt60OaDLIJHTDwfPjg8WOlpFirTJ51hnSXhve50YXMmAzF05lsOgxABSVY/yDwHR/i62uAG87KhkjsqgTtQuy4syy1xj5uqrJuihuuJK3tTGaEfSZdSGI6SM72MyfKySDRoSBB+vbqpDOts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S/dPFqTx; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1718553678; c=relaxed/simple;
+	bh=ky76xrPx3KXd2PYAqt9g4d0sF6oxLndKUB08CCA+F0Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=j3hJbzGgj3B5rGNU6IBS6Izbrd4fxLhTUROCqWxm+EQP/ZGxT2Lo498oLZfHfI5dC+zok4h18ggHZJrfRhOMi4q2ZGXtgs6KZkhfqO6f3fpCgFl2BBfUiQpkMeU0p6cSeta9SneL5FkRc5TOPF8ug48RRVTLMJ6kpShLtWL1Jlg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=IrZDr+P9; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=T9UYY3Qr; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S/dPFqTx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4B24C2BBFC;
-	Sun, 16 Jun 2024 13:40:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718545217;
-	bh=VxzoehtXCQnqw9jYaFfGEiHCx+loREgL3ACwUTg6T7s=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=S/dPFqTx5QSLCNCcdQbrtM0BX23sDRvLxgtss9ggXLpKEK4tb7Fy5hVE+lqYkz8FK
-	 H2W7WAclK8C/UGJSU149zANLyFSZ4mElddhaQSeddglmZZbfC2p4eh+yz1DJ2yzh/w
-	 T1nJ+ZVB0lQpqqwbON1fZVTbVcYoynRmzXTaSDBibY9vSos4xKaX1Wq093HCzfYPWt
-	 6Mi7fQ5ATETy+wQu4nHTgnFTLepcTcNAYJ+hYroHo8n9EqeFjju7x+meFX7GDkEDeQ
-	 Yh1dxZVEkp+AK7kOYBqCHtJXoCzkcwlnUWCnkk4gb6VjIA/l8ZhJUvmLPvnxYusm5z
-	 PHpLxwrck4iUQ==
-Message-ID: <d9caa3bc-4158-4e60-89c3-b93b847d7202@kernel.org>
-Date: Sun, 16 Jun 2024 15:40:12 +0200
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="IrZDr+P9";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="T9UYY3Qr"
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4W2Hmz4svLz9sZ1;
+	Sun, 16 Jun 2024 18:01:07 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1718553667;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=r3CnB77GSg22IGMkBWAHaCoVPnRGOj7kbhcXuyKInSE=;
+	b=IrZDr+P99wuJwGqgEtwuHRuZKy5HwMDMIjW4wjgtPBLm5AsoFbU9jH6J0UyhLvCLWpog0S
+	c3CR94fVR6CeJ98mBjLLULXcjMLSj5pkqQivB4qMch5ucmLmy6Atn237qspzDDPAT8mBwi
+	CpgeDUI36e6WNhjoXz3fB51t7BNhEa8iWSeOQKOCVJbdeZoFPYKRSn1vHPzKsU9exwgChJ
+	fxSHWHaBeeyrPlJTA1fZDyQjm0ymvgf/aSIRBDgSbBqqGxWxnTdWcVOUnnvWmD3jkF0sXn
+	Qmneeerwqx36PFII/N499GgQBAuxr1tkASH/8SuACul0zfAuq2OnugGQkk/iCg==
+From: Marek Vasut <marek.vasut+renesas@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1718553665;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=r3CnB77GSg22IGMkBWAHaCoVPnRGOj7kbhcXuyKInSE=;
+	b=T9UYY3QrgSqjVPdaFKxneQ1KaMEv2yWISwv92e7cl1sjr6fzj3gp2zSmrmE4Duid5AXdpN
+	3Ch3FY8Vl02WU1kh9YsfVequDNl/mzQsY7syViG0DOaSLIyj+UPyJjQDhlISG/U7nww93G
+	bTkEQ0xpfISuhoFn6bLAyx0iIGeqLKYZLBjgmIkhw6ZyU2IkO4hht7kQJ6UjmoFWGC1q6/
+	UWedibmBTiM+5ooNbvsdTDakNoUgNa1oIyL1tHekJus2dwnPVLeOeao4gO+X8Cs5zMQUQu
+	zHrpp8m66AOeDd8OeiBPwUyV3WNAhXHbiMc8tSoxvQ5Np8VkkWkd3AVd0pVyeQ==
+To: linux-clk@vger.kernel.org
+Cc: Marek Vasut <marek.vasut+renesas@mailbox.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Rob Herring <robh@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	devicetree@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org
+Subject: [PATCH] dt-bindings: clock: r8a7779: Remove duplicate newline
+Date: Sun, 16 Jun 2024 18:00:20 +0200
+Message-ID: <20240616160038.45937-1-marek.vasut+renesas@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: clock: drop obsolete stericsson,abx500.txt
-To: Stanislav Jakubek <stano.jakubek@gmail.com>,
- Linus Walleij <linus.walleij@linaro.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <Zm7I2Zbq1JNPoEJp@standask-GA-A55M-S2HP>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <Zm7I2Zbq1JNPoEJp@standask-GA-A55M-S2HP>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-MBO-RS-META: 8xqqk8hrsxghkbn9conx3m9oqteiz6ns
+X-MBO-RS-ID: 0e427122175b53372da
+X-Rspamd-Queue-Id: 4W2Hmz4svLz9sZ1
 
-On 16/06/2024 13:13, Stanislav Jakubek wrote:
-> These bindings are already (better) described in mfd/stericsson,ab8500.yaml,
-> drop these now obsolete bindings.
-> 
-> Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
+Drop duplicate newline. No functional change.
 
+Signed-off-by: Marek Vasut <marek.vasut+renesas@mailbox.org>
+---
+Cc: Conor Dooley <conor+dt@kernel.org>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Rob Herring <robh@kernel.org>
+Cc: Stephen Boyd <sboyd@kernel.org>
+Cc: devicetree@vger.kernel.org
+Cc: linux-clk@vger.kernel.org
+Cc: linux-renesas-soc@vger.kernel.org
+---
+ include/dt-bindings/clock/r8a7779-clock.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
+diff --git a/include/dt-bindings/clock/r8a7779-clock.h b/include/dt-bindings/clock/r8a7779-clock.h
+index 342a60b11934b..e39acdc6499c0 100644
+--- a/include/dt-bindings/clock/r8a7779-clock.h
++++ b/include/dt-bindings/clock/r8a7779-clock.h
+@@ -57,5 +57,4 @@
+ #define R8A7779_CLK_MMC1	30
+ #define R8A7779_CLK_MMC0	31
+ 
+-
+ #endif /* __DT_BINDINGS_CLOCK_R8A7779_H__ */
+-- 
+2.43.0
 
