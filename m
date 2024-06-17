@@ -1,111 +1,172 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A80269D31;
-	Mon, 17 Jun 2024 07:09:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A19E6187336
+	for <linux-clk@vger.kernel.org>; Mon, 17 Jun 2024 07:16:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718608164; cv=none; b=L7i5erBlW0a7XxfiWoS3/KdjtvEWK0otMpiMPr+C0tnwKtpWzPGpNijPBARZXJzxNFxw3jidAKuly4BU7wmElSLWDSHq2zovzAmOxClnzsCupE9p+kUQwE2wjLVuaJ+jw8a2K5li/0ykFYDW8DLp2axXS2xS9VHeL6lkuaTu+nI=
+	t=1718608594; cv=none; b=bfNwjw9R2BUzGH8rhhCnXpaPxiY30fySJYrIlHv41AoE8x92S5VpQl7oxpM0Z/YwfbBXcnbBA/EsW67Jrc56yA/58yPrJyL9en7LgBx3nQovhTIfCR8R/dMeGNrun9S0L0lMcYWQefSEWZCrJIMfahGsooQIm9p5tX9xc2BOVSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718608164; c=relaxed/simple;
-	bh=omAFcBkiIeF3oDwNg1SA45RPTx9IUXA8dn8K551h5iI=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UcAav5wHczs5ARYJ/xWv8hh2cF7eJ6i0xzks366umonkZ+wrLMmvzg+FIhOMXEubhpOnb28S6SQGvMoAeuVFGy2afIsaMs+n6Q5hHFgaWPdp32Gj8o8XXwyIl8tpCWJ+mbLt2pgScq5IAzBi836HxKXdYY5HpCZVWJBoWqwDei4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=j10ALPtn; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1718608594; c=relaxed/simple;
+	bh=bPW+cY98TVGEQ8oYbU5+kTB5r2TuPe/4Gj4MB1VB0zg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EPuHbc98XJuEA4Ca2roJ5sIyiaL7U7ALQV1TPKjgdX0FF3ygDT36dyI7UgE/Hgx7kiCcsRGTpzjU5gLf/A58FZYp+75QiRac8KHVH9vyUsF7VgMLvo7Eb+CZhOlSrZw6y2TUYroM2VZepiye9wfUo5lRV90Xlz7xexo22U3Qw60=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=qInNYKXm; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="j10ALPtn"
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45H1Ei04010650;
-	Mon, 17 Jun 2024 07:09:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=KMGSuuYq3JLu9Nw9GFxe9Z
-	tVre62ltGolbLBWFUGriA=; b=j10ALPtnfbed2ysotfEWDpt3W9fFyKYZggkYSu
-	Ry7G+4E7VsxzLysapQMvGT3Ft40qm6C0TF0HGNSE3k8hZV56HnSN9VebCUmQxsJ9
-	wRxE0vSGizus9apmdsdoznt5ThSCRY7aaQx3XZB2fyPzQjKPeiIvJijv2eJpoEMr
-	pDw2hHOniz6RT0H2AcYrmlvmjnTd/J3OoWu7X0XpPV6nr6axAW1tcfgkP9vFzu4O
-	O10H2TjidtzQKIImXkaRaMOwaTN/lJ8BBbQwxl+RD2THjHAVVDvedT0SP3CpdjUr
-	wEd1lrfM8yEcjblEX6UvOGREnzQasMFfG+QTewg+BJJo9GjQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ys29gu03k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Jun 2024 07:09:15 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45H79E75018538
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 17 Jun 2024 07:09:14 GMT
-Received: from luoj-gv.qualcomm.com (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 17 Jun
- 2024 00:09:12 -0700
-From: Luo Jie <quic_luoj@quicinc.com>
-To: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <bryan.odonoghue@linaro.org>,
-        kernel test
- robot <lkp@intel.com>
-Subject: [PATCH] clk: qcom: nsscc-qca8k: Fix the MDIO functions undefined issue
-Date: Mon, 17 Jun 2024 15:09:01 +0800
-Message-ID: <20240617070901.3218636-1-quic_luoj@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="qInNYKXm"
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ec002caeb3so53964781fa.2
+        for <linux-clk@vger.kernel.org>; Mon, 17 Jun 2024 00:16:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1718608590; x=1719213390; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gOtB6hLjDe2q1k9n9j8GrerUfufcZavMvVvl5T64NeQ=;
+        b=qInNYKXmUySA4K0m8LtV38DyPSDUkYGLMqol4vqFb88MpFuep57Wy6s59OmVGIrTJK
+         K6ljKXYq2ZtceNnnHBcN1lgR6BIjpZMuCpRI3W+oFZaLgZOj/DYjeVi+eOdafjp8lm+H
+         mJMT2fQYtf9mJu+eReVr2PB4a90f/7cmvkQG4i1VnVv82OJLTpUHtEKG7bkyMfhfe0Dv
+         aAacgr4Z40cyPpMrZHtXAFVIHBdURY+hGJCyqd89W4ql4MssiQfh6pJLSzq4rq2Dr0YL
+         lOJ03rVV111VVij1AP3I4MKBpTV3IG0cg8EiXimG8nzQ9RypILkNWUyRT/bPmdrUbn8W
+         1ldA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718608590; x=1719213390;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gOtB6hLjDe2q1k9n9j8GrerUfufcZavMvVvl5T64NeQ=;
+        b=DMJflULxmOx7AF306r1HBaVnixGvyRWmTwF3QH0TakNaCYqy1K33CMhAVLECAyazTv
+         gmi9XmdJ2Imd7BUiorlBXTxBlidZ35DeGPV61yaLN4QdvUt+2t350Nps/Zw9ss7/Ou+v
+         96P6StRmuRaPoCo+ank/cJg8XJsAjChXVhr2qQ8QwQjc7zoAFNwfvgvzaM0MF7m6eSKq
+         PXtKwpDdsBrpEIlG8wK0VoTW9MWtpS2s2HtbE+WT0RMAX1f0gIiKXK4Bnoj2NcHdIA/G
+         Ph4rlDeMOl+qY/v0CTH9R9jE8knB92CttyJFo4p9g/7pjejyJiT/ilxcifjO6Mj70vpN
+         JEtg==
+X-Forwarded-Encrypted: i=1; AJvYcCVfNcFn3oIBZfgtaHa0R+kBkjQA8X0Xh+/VUEaWfb6BcKTc5d4NyO/lDG/zkUAwgxWUgtJRNUdlPjGNvboP+BcgvleZIQVUcyFF
+X-Gm-Message-State: AOJu0YzFQxhjn6eDGFHN4r9A414LVw1LY41sn0JVgycsIxT4PmlbKkl1
+	S6LCLN6hmC7zanWVvwwM2GqVatkGaqMu/rBU5LaCp1tOr7JgMUbMXYbKDA4a/w0=
+X-Google-Smtp-Source: AGHT+IHlanuvFDHlcHk0QHuwXweE3e5izwPD+BY+hJiW1cVcoATK8SU76Wd3c4dYNArqQvVGdfRmkA==
+X-Received: by 2002:a2e:a0d0:0:b0:2ec:30cd:fd7a with SMTP id 38308e7fff4ca-2ec30cdfe89mr4497991fa.49.1718608589940;
+        Mon, 17 Jun 2024 00:16:29 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.189])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-360750acf32sm11244173f8f.49.2024.06.17.00.16.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 17 Jun 2024 00:16:29 -0700 (PDT)
+Message-ID: <c882bac6-9cb9-4ba2-9bc4-967c03fcb031@tuxon.dev>
+Date: Mon, 17 Jun 2024 10:16:22 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: a6fNrG5IXCTskvWO3EK35fSwjuj91EbZ
-X-Proofpoint-ORIG-GUID: a6fNrG5IXCTskvWO3EK35fSwjuj91EbZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-17_06,2024-06-14_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 suspectscore=0
- adultscore=0 spamscore=0 clxscore=1011 lowpriorityscore=0 impostorscore=0
- priorityscore=1501 malwarescore=0 bulkscore=0 phishscore=0 mlxlogscore=894
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
- definitions=main-2406170053
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 03/12] dt-bindings: mfd: renesas,rzg3s-vbattb: Document
+ VBATTB
+Content-Language: en-US
+To: Krzysztof Kozlowski <krzk@kernel.org>, geert+renesas@glider.be,
+ mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, lee@kernel.org,
+ alexandre.belloni@bootlin.com, magnus.damm@gmail.com
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240614071932.1014067-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240614071932.1014067-4-claudiu.beznea.uj@bp.renesas.com>
+ <936beb9a-2701-476c-8f5a-4b6b06d4f87d@kernel.org>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <936beb9a-2701-476c-8f5a-4b6b06d4f87d@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-When the COMPILE_TEST is enabled, the MDIO_BUS is necessary because
-of the mdio_module_driver used for qca8k clock controller driver.
 
-This patch fixes the following undefined symbols.
-ERROR: modpost: "mdio_driver_register"
-[drivers/clk/qcom/nsscc-qca8k.ko] undefined!
-ERROR: modpost: "mdio_driver_unregister"
-[drivers/clk/qcom/nsscc-qca8k.ko] undefined!
-ERROR: modpost: "__mdiobus_write"
-[drivers/clk/qcom/nsscc-qca8k.ko] undefined!
-ERROR: modpost: "__mdiobus_read"
-[drivers/clk/qcom/nsscc-qca8k.ko] undefined!
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202406161634.B27sOs8B-lkp@intel.com/
-Closes: https://lore.kernel.org/oe-kbuild-all/202406162047.QkUMa2fG-lkp@intel.com/
-Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
----
- drivers/clk/qcom/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 16.06.2024 10:38, Krzysztof Kozlowski wrote:
+> On 14/06/2024 09:19, Claudiu wrote:
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+>> +
+>> +maintainers:
+>> +  - Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>> +
+>> +properties:
+>> +  compatible:
+>> +    items:
+>> +      - const: renesas,rzg3s-vbattb
+>> +      - const: syscon
+>> +      - const: simple-mfd
+> 
+> No, mfd does no look good. That's not a simple device anymore and you
+> claim here child does not need vbat bclk, power domains and resets? That
+> would be a big surprise, although technically possible.
 
-diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-index 4432b1cce478..4e8ca0ecf1f3 100644
---- a/drivers/clk/qcom/Kconfig
-+++ b/drivers/clk/qcom/Kconfig
-@@ -251,7 +251,7 @@ config IPQ_GCC_9574
- 
- config IPQ_NSSCC_QCA8K
- 	tristate "QCA8K(QCA8386 or QCA8084) NSS Clock Controller"
--	depends on MDIO_BUS || COMPILE_TEST
-+	depends on COMPILE_TEST && MDIO_BUS
- 	help
- 	  Support for NSS(Network SubSystem) clock controller on
- 	  qca8386/qca8084 chip.
--- 
-2.34.1
+I wasn't sure how this MFD will be received by the Renesas maintainers so I
+kept it simple for this version.
 
+In theory the VBAT clk, power domain and resets are specific to VBAT module
+itself but, indeed, the child cannot work w/o these.
+
+> 
+> Please clarify: which of parent resources are needed for children?
+
+VBAT clock, power domain are needed. Reset, too. In the current
+implementation the reset is deasserted though parent by calling the
+syscon_node_to_regmap(np->parent) in the clock driver.
+
+> 
+> ...
+> 
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/clock/r9a08g045-cpg.h>
+>> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+>> +
+>> +    vbattb: vbattb@1005c000 {
+>> +        compatible = "renesas,rzg3s-vbattb", "syscon", "simple-mfd";
+>> +        reg = <0x1005c000 0x1000>;
+>> +        ranges = <0 0 0x1005c000 0 0x1000>;
+>> +        interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
+>> +        interrupt-names = "tampdi";
+>> +        clocks = <&cpg CPG_MOD R9A08G045_VBAT_BCLK>;
+>> +        clock-names = "bclk";
+>> +        power-domains = <&cpg>;
+>> +        resets = <&cpg R9A08G045_VBAT_BRESETN>;
+>> +        #address-cells = <2>;
+>> +        #size-cells = <2>;
+>> +        status = "disabled";
+> 
+> Drop
+
+Could you please clarify this? Would you want me to drop the full node
+(same for clock-controller node)?
+
+Can you point me an example that you are thinking about?
+
+Thank you,
+Claudiu Beznea
+
+> 
+>> +
+>> +        vbattclk: clock-controller@1c {
+>> +            compatible = "renesas,rzg3s-vbattb-clk";
+>> +            reg = <0 0x1c 0 0x10>;
+>> +            clocks = <&cpg CPG_MOD R9A08G045_VBAT_BCLK>, <&vbattb_xtal>;
+>> +            clock-names = "bclk", "vbattb_xtal";
+>> +            #clock-cells = <0>;
+>> +            power-domains = <&cpg>;
+>> +            status = "disabled";
+> 
+> Drop
+> 
+>> +        };
+>> +    };
+>> +
+>> +...
+> 
+> Best regards,
+> Krzysztof
+> 
