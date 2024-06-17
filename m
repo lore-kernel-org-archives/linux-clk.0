@@ -1,112 +1,173 @@
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7C3F6BFA6
-	for <linux-clk@vger.kernel.org>; Sun, 16 Jun 2024 21:29:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B66441D688;
+	Mon, 17 Jun 2024 02:33:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718573401; cv=none; b=Lcx8z7X94idKezDov8bpGTu6XB9gjk0o6XBELqIV4XFAbQ45G28C+/Qgr8viTYzr5soRRZmZzuEQ1bTiPgWPfDjqdJZFwdrEKpx20sb8f79CZMbu5NHXY8gYWvAgzFASiZLD+EcoWLXKbwn8WSDgq6W3NjlZ/4AjRbDQWvL6oB4=
+	t=1718591610; cv=none; b=BxFAlNb6EkFjgewt3BtqTnJs8tBSOYRAD75NLhYsE92glpltLHoQUAShpEvGUtbsA2Vg24aphRp0bcTR8zrZ8EbkBJovn8fERoicxei35n4oT9+dD4CkBr5GxNLL4x5Ul9IhiBIQ8YjwCd5dLPC8wYWuSPBI0QsxveVKpnL9L2w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718573401; c=relaxed/simple;
-	bh=77qTZ2/jNB1s3kvHZeR23oY3xoIE8oX+Pbgo1oPSZVU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Rxq6rjjdtilMK0D/Khcpri/pKIf/QAo4+GecYzTvJYmadcBHgZlit5OVvsCWMsSdkoP37B14/nmLE8hC/QiNPowcW2Cj5OgB1fVS86+jhSYiMBH79ZuoYeZtSmivuaQB7MTP8l/WuMVd2UXMwQ3hzQ9IrGCSGvggLaC/kMStFM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aafkBiRj; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1718591610; c=relaxed/simple;
+	bh=qaFSTf4i2+sKzqy8gjlfepEibO50gXL5g34SjDmJK4Y=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=F3W2vZr6JV0WWEwGa6mgr9nM+h5O/0b7Va0zhnlUVgBcQ0arnuWbP9JuktNW7ZEzt2Zh1YeObBQxMevqfVJtmRn+K+8A6dR7/eUqk7tzb8C9fPsM6QgRm4MZQz+iKqpa3Wg0f1UHr9TAk+uWCzHmUaCsFqfxRd4Do9J1SI2Yj64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=O4L23uCJ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aafkBiRj"
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a6f8b0b10f4so10755466b.0
-        for <linux-clk@vger.kernel.org>; Sun, 16 Jun 2024 14:29:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718573396; x=1719178196; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kmVQxJoiRRnVxUmJPLxuy9ofoBMY/z2Ox1ZWQdCQeiQ=;
-        b=aafkBiRj0Yn6c/bZ1p14eumNaiQ/bsJFCm37mOdKdnaPCC4XvrnCYuioEZO8WssSwO
-         6U637L21bQHhTg9w8tJYYy2hKeR+SxJFPzkLdWhOqoJXYHBSsa+J8nCyN8zpMloL6K8a
-         yZUuxrMnQUV//AliVgRgGoPDPt6bySgxZDyxVSHd2vxjKufne1dBh97wtR9uIOQj3Mdm
-         B+I9ATkEwxemVMAnxE2mSgRDXyEvY6plAI8GZrMxr9uc7ZPCeDgVP5XVP9xpsFqqvvTS
-         aV7UTIsvHOTjdhVbLbtgTs3qS3/NHg4Yp1UEHVf1ajOhEsb/6atr3qlZNA123inXNWDi
-         77oQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718573396; x=1719178196;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kmVQxJoiRRnVxUmJPLxuy9ofoBMY/z2Ox1ZWQdCQeiQ=;
-        b=PBG87uffBnXEUrQcVql4MpVQ2aZW0dHrBpG+99e/Rkre/XIhDGh5ZlDt1YcRWdvMfz
-         UXq3HEt0gJTl3m6EeTRJe+Oc0mfE3KjsceD9vs3jceExqn2JT4Yj/YfqJxZMUXJSPFEd
-         ho+DXx6KpexH4VK8K4MCCjUoSp82If8m+2J/HL/igiH0Cmh2FRzbjEjCwBhGRYWuQALe
-         GQqAV+ZE2SgdVIAJ+8dnr7rEQnojITki7JCn3Xxy8oHt3M3yYq5Qqunk1HKYkE4Ynzvr
-         VtOgwFnUkpv8R1InraObxX4nNJp14yGrABiTmP6ktzTd3SYvrGBVIv5EaKHsFnV4ZQAd
-         cUKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVLQ5+RMGk0CarfW6WIvT/HGurs93+T14j0NY6Gplg2CyLsdYp2I8TbXxR4hBXVRzBjiTARAJLd7IP4o5iIN7rB4/0RFXSYhwk8
-X-Gm-Message-State: AOJu0YzvN4ON3BZYV48nZCIHiOWBJxYrh+4MSlxP4vvVyo6ZKBD76eHk
-	EAE0wefuVsPhW6HpGltjEtBdrdIFfdD+ApND2yHzB24dTMgSmAHJ1Wu8vvU7NbztKBsg0aVGPe8
-	6
-X-Google-Smtp-Source: AGHT+IEvUS/odyJPhKK7Glqf82cIjEvLFIs9anp+ZsBOp8SFgZaTIpP8nTwgP28wMtCwtrwni3h6Dg==
-X-Received: by 2002:a17:907:c302:b0:a6f:6337:1ad5 with SMTP id a640c23a62f3a-a6f63371be1mr650604966b.27.1718573396000;
-        Sun, 16 Jun 2024 14:29:56 -0700 (PDT)
-Received: from linaro.org ([188.24.162.56])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f5f1c8d6fsm384984166b.0.2024.06.16.14.29.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 16 Jun 2024 14:29:55 -0700 (PDT)
-Date: Mon, 17 Jun 2024 00:29:53 +0300
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Abel Vesa <abelvesa@kernel.org>,
-	Peng Fan <peng.fan@nxp.com>, Frank Li <Frank.Li@nxp.com>,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-i2c@vger.kernel.org, linux-iio@vger.kernel.org,
-	linux-pwm@vger.kernel.org, linux-spi@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-watchdog@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: drop stale Anson Huang from maintainers
-Message-ID: <Zm9ZUWpievH+P8Yc@linaro.org>
-References: <20240614095927.88762-1-krzysztof.kozlowski@linaro.org>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="O4L23uCJ"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45H0gIgn006046;
+	Mon, 17 Jun 2024 02:33:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	BUxdAQ+4gkK2RsZVXrsfQ3prcjR0pCCbZg7YdNgHnZc=; b=O4L23uCJpN00qNnb
+	e8DBCv9tbawBzpwTroUfjXtZuHHngNPrZo3Jur9s/kUqPvgp+3ZwXto1c1tcTWvG
+	tT5MZVadMIJ1XTfPbyi40j8iVI1g8lPdF9APHGorKmGFYIAqa25xxt/SPPs+cVSi
+	STP01NHEdil1pQW8v0tChiKKbnB9IAV+neaSZQrabDDodilkywgnKfVpeKZOq0WT
+	O50u1an79w6d0br5NhzyKV5W4WQpGx1kmuzHe/J0m53WSE4yR7VNP5L1enfxAO1h
+	ntg3XbwXIeyszSw1fyIeoeu5BoRCg6aKZlaD/bDCgRK/SdbtDxQewhGnUEdP8G+R
+	08qd+g==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ys31u2hfa-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Jun 2024 02:33:18 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45H2XGIW014275
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 17 Jun 2024 02:33:16 GMT
+Received: from [10.216.59.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 16 Jun
+ 2024 19:33:08 -0700
+Message-ID: <93a67151-02fa-4c53-8d6e-0ed1600128bf@quicinc.com>
+Date: Mon, 17 Jun 2024 08:01:51 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240614095927.88762-1-krzysztof.kozlowski@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V5 RESEND 5/5] venus: pm_helpers: Use
+ dev_pm_genpd_set_hwmode to switch GDSC mode on V6
+From: Jagadeesh Kona <quic_jkona@quicinc.com>
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        "Michael
+ Turquette" <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+        Vikash Garodia
+	<quic_vgarodia@quicinc.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        "Ulf
+ Hansson" <ulf.hansson@linaro.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Kevin Hilman <khilman@kernel.org>, Pavel Machek <pavel@ucw.cz>,
+        Len Brown
+	<len.brown@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Andy
+ Gross" <agross@kernel.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Abel Vesa <abel.vesa@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
+        "Satya Priya
+ Kakitapalli" <quic_skakitap@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>,
+        Ajit Pandey <quic_ajipan@quicinc.com>
+References: <20240413152013.22307-1-quic_jkona@quicinc.com>
+ <20240413152013.22307-6-quic_jkona@quicinc.com>
+ <5c78ad52-524b-4ad7-b149-0e7252abc2ee@linaro.org>
+ <b96ef82c-4033-43e0-9c1e-347ffb500751@quicinc.com>
+ <a522f25f-bb38-4ae1-8f13-8e56934e5ef5@linaro.org>
+ <dbd1b86c-7b5f-4b92-ab1f-fecfe1486cfc@quicinc.com>
+ <621dbaaa-6b86-45b5-988e-a6d9c39b13d7@linaro.org>
+ <d36c1163-a3f0-4034-a430-91986e5bbce8@linaro.org>
+ <ef194e5c-f136-4dba-bfe0-2c6439892e34@linaro.org>
+ <d2e55523-f8fd-4cbe-909c-57de241107e8@linaro.org>
+ <1df48a42-3b4e-4eb4-971b-cd4be001ba27@quicinc.com>
+Content-Language: en-US
+In-Reply-To: <1df48a42-3b4e-4eb4-971b-cd4be001ba27@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: FMcKqOktAbRS_ElgO3EOAwi75ddJwXeZ
+X-Proofpoint-ORIG-GUID: FMcKqOktAbRS_ElgO3EOAwi75ddJwXeZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-17_02,2024-06-14_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
+ lowpriorityscore=0 phishscore=0 adultscore=0 priorityscore=1501
+ spamscore=0 mlxscore=0 malwarescore=0 mlxlogscore=935 bulkscore=0
+ suspectscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2405170001 definitions=main-2406170018
 
-On 24-06-14 11:59:27, Krzysztof Kozlowski wrote:
-> Emails to Anson Huang bounce:
+
+
+On 5/31/2024 5:26 PM, Jagadeesh Kona wrote:
 > 
->   Diagnostic-Code: smtp; 550 5.4.1 Recipient address rejected: Access denied.
 > 
-> Add IMX platform maintainers for bindings which would become orphaned.
+> On 5/10/2024 6:31 PM, Bryan O'Donoghue wrote:
+>> On 01/05/2024 10:14, Bryan O'Donoghue wrote:
+>>> On 30/04/2024 21:01, Konrad Dybcio wrote:
+>>>> On 24.04.2024 11:50 AM, Bryan O'Donoghue wrote:
+>>>>> On 24/04/2024 10:45, Jagadeesh Kona wrote:
+>>>>>>
+>>>>>> Thanks Bryan for testing this series. Can you please confirm if 
+>>>>>> this issue is observed in every run or only seen during the first 
+>>>>>> run? Also please let me know on which platform this issue is 
+>>>>>> observed?
+>>>>>>
+>>>>>> Thanks,
+>>>>>> Jagadeesh
+>>>>>
+>>>>> rb5/sm8250
+>>>>>
+>>>>> My observation was on a previous _boot_ the stuttering was worse. 
+>>>>> There is in the video capture three times that I count where the 
+>>>>> video halts briefly, I guess we need to vote or set an OPP so the 
+>>>>> firmware knows not to power-collapse quite so aggressively.
+>>>>
+>>>> We seem to be having some qualcomm-wide variance on perf/pwr usage 
+>>>> on some
+>>>> odd boots.. Any chance you could try like 5 times and see if it was 
+>>>> a fluke?
+>>>>
+>>>> Konrad
+>>>
+>>> Sure.
+>>>
+>>> The first time I tried it, it was much worse.
+>>>
+>>> The second time, captured in the video is only noticeable because I 
+>>> was *looking* for this specific error i.e. I don't think I would have 
+>>> noticed the error on the second run, had I not seen the first run.
+>>>
+>>> I'll find some time to do 5x with and 5x without.
+>>>
+>>> ---
+>>> bod
+>>
+>> ping bod please remember to do this thanks
+>>
 > 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
+> Hi Bryan, Could you please let me know if you got a chance to check the 
+> above? Thank you!
+> 
 
-[...]
+Hi Bryan, Kindly can you please help confirm if this is a real issue or 
+observed as a fluke? so we can go ahead and mainline these changes.
 
-> diff --git a/Documentation/devicetree/bindings/clock/imx6q-clock.yaml b/Documentation/devicetree/bindings/clock/imx6q-clock.yaml
-> index bae4fcb3aacc..74cfdcf1c93b 100644
-> --- a/Documentation/devicetree/bindings/clock/imx6q-clock.yaml
-> +++ b/Documentation/devicetree/bindings/clock/imx6q-clock.yaml
-> @@ -7,7 +7,9 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
->  title: Freescale i.MX6 Quad Clock Controller
->  
->  maintainers:
-> -  - Anson Huang <Anson.Huang@nxp.com>
-> +  - Shawn Guo <shawnguo@kernel.org>
-> +  - Sascha Hauer <s.hauer@pengutronix.de>
-> +  - Fabio Estevam <festevam@gmail.com>
->  
-
-For the clocks, please add me as well. Don't mind having more help from
-the others :-) . But i.MX clock bindings usually go through my tree.
-
-Thanks.
+Thanks,
+Jagadeesh
