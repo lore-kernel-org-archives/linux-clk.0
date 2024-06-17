@@ -1,106 +1,118 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 846B4186E56;
-	Mon, 17 Jun 2024 11:50:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E42715820C;
+	Mon, 17 Jun 2024 15:17:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718625004; cv=none; b=Ig7/of5LBSQErcoSBAbSfFxKZYH1Ly1EmLI5JkgodDZx28VezLKmOhfnE49ak5H9Xt8ZqYtWfpGUX4/GpzOKBGbUJTkjCP559JNOrFycFyMJGYDQ7i3zy3tKib+tHdH80NDLLGUP1G1Ijqejfjzvc3+aOlX/kntmbIqg15h1HL8=
+	t=1718637444; cv=none; b=in+riuP82EBDrDH6DfDo2hJ2GoMBGMHxtepme/fGfYCPkj+3ULcky1O8bHb/jSznAhdoBUkcRMyiumD56S+yZQ1zAgOitUocc9urkX5zGAD9QzXpe2y5jT3vlzPtHyR9RObKHK6IQ9CzKgtqPFOStWDYWEPB2HjsWZ483A0yK1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718625004; c=relaxed/simple;
-	bh=OqoQ6ZxH5cHIMs3+jLFrcIOTsDPqWQXiXFgsGcvQtmc=;
+	s=arc-20240116; t=1718637444; c=relaxed/simple;
+	bh=nWUdZZx/qGzG/FxPtp0ZG7/Kb7lkI4Z5KRLX389IjV8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q+vmeHhTWobZGRqrmhNT6BADkBav8/Ug/KLosFKyINYMveYCmZ++9H5R5Qbw9ZyYD5CPf6Me3GLv0+NeXuMeHApPm4ZEI6V/Fs/34aXVpzY3rmePJVQkqHjWkwcU+gEQsnjw3Po/LCeTeeCuSX8blPvwxSbPhlHgkxBmuWtSDsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HpA8sHn4; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=n/Ddr+q8O6KTduvyFJerGdAHLfXmIb6RJPGz7zcmuuc/+41q2EmB75CDO1gu1wRMJx/yohWtUroz6HwHbGx200oMBzRUlltKeYjyUPhlw7vMUfyttbZrjYWYYJohzbW+n6pR0XqbOso5NuUUxaz1xh+bdoSXpOB4ma7uHkfssmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d6VDtBz2; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HpA8sHn4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 710F0C2BD10;
-	Mon, 17 Jun 2024 11:49:50 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d6VDtBz2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1498AC4DDE9;
+	Mon, 17 Jun 2024 15:17:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718625004;
-	bh=OqoQ6ZxH5cHIMs3+jLFrcIOTsDPqWQXiXFgsGcvQtmc=;
+	s=k20201202; t=1718637444;
+	bh=nWUdZZx/qGzG/FxPtp0ZG7/Kb7lkI4Z5KRLX389IjV8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HpA8sHn4I/uwMAoESG+goOFTmifzrpBQCu9dGkOqZXt8LYQqIz5QC28pY7Sf0V0im
-	 Rg3jeH3eikunEuigeTgUzbTZ+0Imva19O0s2muNxA4UevqUFDN3pgh2gkZqiPaumdk
-	 vcSLpVPa9akY/UIDqIsvq5tskgFgDB2P4D3sgld14Q56O303qkj5x6nQhfEvRRQi4M
-	 Gk0JUzOUemjLwycr4PfdBBZYJkpP7j747BOm1btJ2rnG35Qrq2fQkzKmtodhX7c5Fi
-	 Hx77E015tcScm9SmYjLY9TNQ7XuuFlhEtg/818x62PvlE5UBoaSBkrYLy4pAeurPpG
-	 nK8oyrEht/AUQ==
-Date: Mon, 17 Jun 2024 12:49:46 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Abel Vesa <abelvesa@kernel.org>,
-	Peng Fan <peng.fan@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>, Frank Li <Frank.Li@nxp.com>,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-i2c@vger.kernel.org, linux-iio@vger.kernel.org,
-	linux-pwm@vger.kernel.org, linux-spi@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-watchdog@vger.kernel.org,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: Re: [PATCH v2] dt-bindings: drop stale Anson Huang from maintainers
-Message-ID: <440bb6fa-2e26-4a64-8c53-bebf706a1079@sirena.org.uk>
-References: <20240617065828.9531-1-krzysztof.kozlowski@linaro.org>
+	b=d6VDtBz2GFuh/TxFnY4X49pZjeVVBu5nIMDYlwWMkLWRpdz4ZxJU/hUnUo7J4XI8R
+	 KJBs1Iavrtn+eExGCO30Pnp/fBIdU3X+dkBHUCiPX0xB8YwBMtrxavb0D0s+b61p1q
+	 mCFR/Wt13TjCCgvI+EYLy0wo/qm3sDpb/8bPK6Au+pXVMuuX5I1jcXnBGRym/BnC/W
+	 /+PuB6Ft2bwzn0sVdNPa/nZIgnGlMGtNKO97we7BrNTXelVyEl+cirCL6p30BZyq2H
+	 mApEsOI6zs0WQCulEjFhLq6Xbr6UxNWqTv1TIefir2MhBayaKozCvHXkrlRVq75efW
+	 vX24BdSAEcvXA==
+Date: Mon, 17 Jun 2024 16:17:19 +0100
+From: Conor Dooley <conor@kernel.org>
+To: claudiu beznea <claudiu.beznea@tuxon.dev>
+Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	lee@kernel.org, alexandre.belloni@bootlin.com,
+	magnus.damm@gmail.com, linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH 05/12] dt-bindings: rtc: renesas,rzg3s-rtc: Document the
+ Renesas RZ/G3S RTC
+Message-ID: <20240617-pretense-angles-89a9396ba795@spud>
+References: <20240614071932.1014067-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240614071932.1014067-6-claudiu.beznea.uj@bp.renesas.com>
+ <20240615-clench-turbofan-024a14939897@spud>
+ <7768f3e5-0574-4d9b-baff-8a35792cc854@tuxon.dev>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="jfSjzlj0zX5Rl/R2"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="1CZXiZLzRX7MOLGq"
 Content-Disposition: inline
-In-Reply-To: <20240617065828.9531-1-krzysztof.kozlowski@linaro.org>
-X-Cookie: Life is the urge to ecstasy.
+In-Reply-To: <7768f3e5-0574-4d9b-baff-8a35792cc854@tuxon.dev>
 
 
---jfSjzlj0zX5Rl/R2
+--1CZXiZLzRX7MOLGq
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jun 17, 2024 at 08:58:28AM +0200, Krzysztof Kozlowski wrote:
-> Emails to Anson Huang bounce:
+On Mon, Jun 17, 2024 at 10:19:55AM +0300, claudiu beznea wrote:
 >=20
->   Diagnostic-Code: smtp; 550 5.4.1 Recipient address rejected: Access den=
-ied.
 >=20
-> Add IMX platform maintainers for bindings which would become orphaned.
+> On 15.06.2024 15:20, Conor Dooley wrote:
+> > On Fri, Jun 14, 2024 at 10:19:25AM +0300, Claudiu wrote:
+> >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> >>
+> >> Document the RTC IP (RTCA-3) available on the Renesas RZ/G3S SoC.
+> >>
+> >> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> >> ---
+> >>  .../bindings/rtc/renesas,rzg3s-rtc.yaml       | 60 +++++++++++++++++++
+> >>  1 file changed, 60 insertions(+)
+> >>  create mode 100644 Documentation/devicetree/bindings/rtc/renesas,rzg3=
+s-rtc.yaml
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/rtc/renesas,rzg3s-rtc.y=
+aml b/Documentation/devicetree/bindings/rtc/renesas,rzg3s-rtc.yaml
+> >> new file mode 100644
+> >> index 000000000000..0e17f8a36155
+> >> --- /dev/null
+> >> +++ b/Documentation/devicetree/bindings/rtc/renesas,rzg3s-rtc.yaml
+> >> @@ -0,0 +1,60 @@
+> >> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> >> +%YAML 1.2
+> >> +---
+> >> +$id: http://devicetree.org/schemas/rtc/renesas,rzg3s-rtc.yaml#
+> >> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> >> +
+> >> +title: Real Time Clock for Renesas RZ/G3S SoC
+> >> +
+> >> +maintainers:
+> >> +  - Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> >> +
+> >=20
+> > Missing a ref to adc.yaml,
+>=20
+> I guess you mean rtc.yaml?
+>=20
+> I missed that rtc.yaml. I'll update it.
 
-Acked-by: Mark Brown <broonie@kernel.org>
+iio on my brain, I did indeed mean rtc.yaml.
 
---jfSjzlj0zX5Rl/R2
+--1CZXiZLzRX7MOLGq
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZwItoACgkQJNaLcl1U
-h9D5Wwf/Q7ZtAKp5HRIsqeh8PBxnOEEF8ljY8bCew6Q7rvMXTsxiI2WXFX0ykufr
-bDY0Ho5rMIUGwQf/F1v+q6ZS6TEUbnawVgxkKBRJTDeK8Uxs9bXPSfCu8oZY888f
-YzPOYmhnDVtIWvoHZFUO6klplmBwPYQn3WqXYi4M2eap2IHsTxAUrrcyiL4uLVAG
-yqNRTuUyg4+YAkj/te942l7M/obYkf3Nxb/1HM3vZypXDeUhg+ubgr3TKF8LRpg3
-LBmfcA+m586XLOoQUPbLcilqogjAJuokkNwNMia0ny9IINWjZ6izZ/1Oe/fCnHSn
-vX0livBtYHzSS6lauBj/V6L4gSTz+w==
-=b38n
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnBTfgAKCRB4tDGHoIJi
+0iVeAQDQW3L6bUxaaK9BZivyTpl6d1RE/8LDP4xCSlcihI4dmQEAryxnJuBTPBzG
+/Z2Z9zQYf/Rz//QmZQsfOeAeO5lUwA4=
+=CKsT
 -----END PGP SIGNATURE-----
 
---jfSjzlj0zX5Rl/R2--
+--1CZXiZLzRX7MOLGq--
