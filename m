@@ -1,114 +1,102 @@
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14DAD15EFDE
-	for <linux-clk@vger.kernel.org>; Tue, 18 Jun 2024 10:25:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 534AC1482FA;
+	Tue, 18 Jun 2024 11:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718706308; cv=none; b=CCHIS33uRsL6jfbHHN06O+XtGlBalBiPwMorkb0MjrYZzrmMQzKL9GorNTpK3Rb2a2Xlup7HisreWjRIiOVqvHIcFD16e5Il2km+eKyOCfc2WZSAk6syuIeQLyWCaKxKECwOcj4GzUzAMrOjVY5p3qcg6zjPiCYGIYTyDwmFx4s=
+	t=1718710363; cv=none; b=gWZBvZatQ0W6DOf6H/e28GYoOKoltsDpWBNgbs+kJvSID8S/v/gJ2pg/xkKYoEM2t92nh5KzrK+dFtAMyPbq64Kfbi0cEHEMOEAegQG/4erYmfvw3u7Y6KQ0PiCKQUwW9Tr8F9DDWcby/N7h4xgyiuxqYxvHvzLHjUhO0KM22LY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718706308; c=relaxed/simple;
-	bh=LqK8v8L6085Sefypgf1V3diltFl9sECNHVEvbocsyUg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TLr7DzPlcH1nfknnhaTdajL//Bs7zb6H4+f6Tri7wNuyajx7hT+LVOgnGDy/41b8kFu6UshqfNAvhrnbX5HctxuNNswxRZfyG3oQH4df0ojH4E8NM/JXRXYfWHDPwvg++bb142KDRIhWYohj5Gl2TxHXaWNlLJ/G+1wLa7eGs6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RdKxIzOJ; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1718710363; c=relaxed/simple;
+	bh=wpiKeO63IemTjXmi+1WwztXiYOdPdtVXvk0tyn5Fhoc=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=pGIuyCzMwU6LN2gJI7Bn57jHm9rMHIumZYgZpFIbV8cyTfydDr20wCaMmXiz3673d2+ZQ7bhyPy4npp2GMMjBj0ucWvGpU455RNkFNPb+doOURPYBdQpQHJweFYAeDpa3or8ZLElz0QiUHj+wcRMTIKmwtqcvlUEoLS2KvJHxuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=btHUdzlO; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RdKxIzOJ"
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2e724bc466fso62996701fa.3
-        for <linux-clk@vger.kernel.org>; Tue, 18 Jun 2024 03:25:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718706304; x=1719311104; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=6eO5TUpK8rT/f3c3WcP+sjjePLm+0H56buqyYkDvJss=;
-        b=RdKxIzOJWgCSbeH/GM4xnJemyiZdv9ubIqKBMU41TMZoRKwu/ra1xtIqhCfa+jtZOx
-         fTWx4eu5gjUNghGQRnWDmty3AWprLnZSACrPzp3kuoDO7V9khZv5o/DUuvs3cAqwJ+mm
-         vhMpPp8MqMNUjTczLdr3VOzlOM7xWMM7lgoHWIcSCIGRdX0CnTrOukOiyjDNelLH66Vw
-         UgcXHvc6m8gIARRu6lzEbObMDIvCP8+xMbE+QIEaEk3bO7YHVjahB5dbGIeDTaRU4DDN
-         cGYLzPQsEpQmOVWxXNONlEZo+irXVATgLKrS29obzsuPJhMgwOje5LF6WFZ30tr6rEOg
-         u4WA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718706304; x=1719311104;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6eO5TUpK8rT/f3c3WcP+sjjePLm+0H56buqyYkDvJss=;
-        b=tHdWBaM0tggvJSrR2FjA2PdFVPFf6RGP82JJj1XGttQhqozXF5i6PTkviR/4nFfOSb
-         be1+/JdpnikiSXZZ6QtHrhDbUhgq3jbbXa/n1dURxqQg3UNQZc8WCskXUroEYPNyMODh
-         rnMfXg9VTRAEwRcGRnGG/tugPZw6y0cFhMwwiUbwtyS5+K8u2hvVXrQ4np31MdN8EhIu
-         //FKPI++QFYa2rhw5vkXkCoXt4P1NYXK35ETaZd2fn1fVTdWXGoBMrTja3NnWCL3CIOi
-         IaCrzLBcfQ777zDZdaJS250tw2pJ0mg8vgJPJsqsg2bszzctQK8aYBmdXYfImMEpBTQT
-         YMqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWBLF5FVQQEg1Mlpnbauw/wrpgvTHu4cBJ8aEQDIu2V/QGU03DuU+H/pfd2sySDnl+b8MBNM3vwby54nQnjt24nO0gTUgZfvj6l
-X-Gm-Message-State: AOJu0YyPZdQMtBoGEXRvbw3WJQ6Ki++UlbV27N0vZ13k87cY5QX+XYMP
-	+ruLp8okQohxFEcS3aDcg6GT0d8AKfT1w1Dwzzy6/9TejMLyEsK/St5BmSHG/zE=
-X-Google-Smtp-Source: AGHT+IEiuZRNVMN76y6yOjWtf+3j+4HWW8RylKCvG8GARgK6ahHJIkTtS4MoJIzqIS0COIpvqo83xQ==
-X-Received: by 2002:a2e:9807:0:b0:2eb:d7f0:5edd with SMTP id 38308e7fff4ca-2ec0e5d15femr93327051fa.27.1718706304083;
-        Tue, 18 Jun 2024 03:25:04 -0700 (PDT)
-Received: from linaro.org ([82.79.124.209])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-422f641a64bsm185126885e9.46.2024.06.18.03.25.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 18 Jun 2024 03:25:03 -0700 (PDT)
-Date: Tue, 18 Jun 2024 13:25:01 +0300
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, Abel Vesa <abelvesa@kernel.org>,
-	Peng Fan <peng.fan@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Dong Aisheng <aisheng.dong@nxp.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Mark Brown <broonie@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>, Frank Li <Frank.Li@nxp.com>,
-	devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-i2c@vger.kernel.org, linux-iio@vger.kernel.org,
-	linux-pwm@vger.kernel.org, linux-spi@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-watchdog@vger.kernel.org,
-	Wolfram Sang <wsa+renesas@sang-engineering.com>
-Subject: Re: [PATCH v2] dt-bindings: drop stale Anson Huang from maintainers
-Message-ID: <ZnFgfbFmHhP7wLPM@linaro.org>
-References: <20240617065828.9531-1-krzysztof.kozlowski@linaro.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="btHUdzlO"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 081D7C4AF48;
+	Tue, 18 Jun 2024 11:32:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718710363;
+	bh=wpiKeO63IemTjXmi+1WwztXiYOdPdtVXvk0tyn5Fhoc=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=btHUdzlOT+VIyKTe3je22pK3+5vLZQ9K23c0u0il69gOCNjGuR7SvF/1Eje2MfJCp
+	 TWZyP45WcdqzYLuIz1RsT+JtydlkyZOia/SCXgY2bX2FMmNFDE8ijJx/Pm70v57ghV
+	 kRgSslxat16tz4K5jrY04W+U9ixvCDHydDequFp7qfpc7C/3SDZymFckE5oS28M4vY
+	 zfrKO01134c/qC7LCNfFMpD708yMBZLo8MBT5zkmvuDn8fCLbZfHVVjOzzM4rfZbQp
+	 NmPh/trp4K+QiUbc9/2ira4SQYWfZFIaD4pivLgTX3pu2Ip65un+covBoOCsh5Szb5
+	 tswRK/LL0CfbA==
+Date: Tue, 18 Jun 2024 05:32:42 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240617065828.9531-1-krzysztof.kozlowski@linaro.org>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Lorenzo Bianconi <lorenzo@kernel.org>
+Cc: lorenzo.bianconi83@gmail.com, robh+dt@kernel.org, upstream@airoha.com, 
+ conor+dt@kernel.org, edumazet@google.com, conor@kernel.org, 
+ davem@davemloft.net, pabeni@redhat.com, devicetree@vger.kernel.org, 
+ catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org, 
+ linux-clk@vger.kernel.org, rkannoth@marvell.com, 
+ benjamin.larsson@genexis.eu, kuba@kernel.org, 
+ krzysztof.kozlowski+dt@linaro.org, angelogioacchino.delregno@collabora.com, 
+ sgoutham@marvell.com, will@kernel.org, netdev@vger.kernel.org, 
+ andrew@lunn.ch, nbd@nbd.name
+In-Reply-To: <ae8ac05a56f479286bc748fb930c5643a2fbde10.1718696209.git.lorenzo@kernel.org>
+References: <cover.1718696209.git.lorenzo@kernel.org>
+ <ae8ac05a56f479286bc748fb930c5643a2fbde10.1718696209.git.lorenzo@kernel.org>
+Message-Id: <171871036213.1272776.17317814792121610122.robh@kernel.org>
+Subject: Re: [PATCH v2 net-next 1/2] dt-bindings: net: airoha: Add EN7581
+ ethernet controller
 
-On 24-06-17 08:58:28, Krzysztof Kozlowski wrote:
-> Emails to Anson Huang bounce:
+
+On Tue, 18 Jun 2024 09:49:02 +0200, Lorenzo Bianconi wrote:
+> Introduce device-tree binding documentation for Airoha EN7581 ethernet
+> mac controller.
 > 
->   Diagnostic-Code: smtp; 550 5.4.1 Recipient address rejected: Access denied.
+> Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
+> ---
+> This patch is based on the following one not applied yet on clk tree:
+> dt-bindings: clock: airoha: Add reset support to EN7581 clock binding
+> https://patchwork.kernel.org/project/linux-clk/patch/ac557b6f4029cb3428d4c0ed1582d0c602481fb6.1718282056.git.lorenzo@kernel.org/
+> ---
+>  .../bindings/net/airoha,en7581.yaml           | 106 ++++++++++++++++++
+>  1 file changed, 106 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/net/airoha,en7581.yaml
 > 
-> Add IMX platform maintainers for bindings which would become orphaned.
-> 
-> Acked-by: Uwe Kleine-König <ukleinek@kernel.org>
-> Reviewed-by: Fabio Estevam <festevam@gmail.com>
-> Acked-by: Peng Fan <peng.fan@nxp.com>
-> Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com> # for I2C
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
- 
-Acked-by: Abel Vesa <abel.vesa@linaro.org>
+
+My bot found errors running 'make dt_binding_check' on your patch:
+
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+Documentation/devicetree/bindings/net/airoha,en7581.example.dts:27:18: fatal error: dt-bindings/reset/airoha,en7581-reset.h: No such file or directory
+   27 |         #include <dt-bindings/reset/airoha,en7581-reset.h>
+      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+compilation terminated.
+make[2]: *** [scripts/Makefile.lib:427: Documentation/devicetree/bindings/net/airoha,en7581.example.dtb] Error 1
+make[2]: *** Waiting for unfinished jobs....
+make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1430: dt_binding_check] Error 2
+make: *** [Makefile:240: __sub-make] Error 2
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/ae8ac05a56f479286bc748fb930c5643a2fbde10.1718696209.git.lorenzo@kernel.org
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
