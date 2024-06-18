@@ -1,87 +1,87 @@
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 791AE13DDD6
-	for <linux-clk@vger.kernel.org>; Tue, 18 Jun 2024 10:22:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7AD015EFB4
+	for <linux-clk@vger.kernel.org>; Tue, 18 Jun 2024 10:25:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718706181; cv=none; b=G/hdpiqCwd3SYY9q+i44eor1RkZ5ZjBa/0RWHGrs0LiD8WxUu8CB6UekSvoijYhPQ/VyFVdgKHB9Pm1N1O2dRDolkOslmf6Ru5lB2B2xE5tMvS8oGZgzkXf+BlkG681AXnnwOf72dpDFbjXbJbv90QeQMevHXJWP32wk6iJ/tRw=
+	t=1718706304; cv=none; b=TKzcEBxwxC/xE/LbBgqWgVVrYWjn+L6baXhi6WDyPuxLbd89N9YX/6iNFLS04ElBlM6zYmFe8G72xha3wvOhL32sn40OHDzmixMKxbhnsq60oElhLsU/7WCikKZC3UzKBSEiLi3LZc3OfdR/2hhUqYMGLv7+UvstqUh9CcRhrPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718706181; c=relaxed/simple;
-	bh=ihV4mhCIBMNw0GbrSjpo4F1rbbfmrGIFerZHE45EcbQ=;
+	s=arc-20240116; t=1718706304; c=relaxed/simple;
+	bh=vORZc79X1rnxAyyCpSE7q09cQDfcT1xma8XWqw5O8M0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EmORami9q/kPw/VHcdqF3evTOO9BobQz1PJPWsU4PmI+1JyptrdSti1zxKB+pSxb004iwtp9rCE9pl0zB/1wn9YbceU9IvL1Yeqd2FqLWfNPOk/ke2DGdk1WTP6nNzVrUrBdvTaaYB2tSCipAEyMThFxEQocFQCzwBiy70SknFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qrR4+QWG; arc=none smtp.client-ip=209.85.167.45
+	 To:Cc:Content-Type; b=e4N+TGLStj8+TG/6/V8kFYQTk2/KhMHZTdihJLnKMgTuf8yREjJ1S7yWi0rCRFnN9Zr1XKGG93wrIPlnRS+bqi0CJJe3RFNIthbai3mPnC/dkSKtSoogyl9drMGWNBBKVvQyDeQg0emeixSe1Jc1eZvxtIq9DbzIzfQtteAjjAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bDTs/Rhn; arc=none smtp.client-ip=209.85.167.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qrR4+QWG"
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52c8ddc2b29so5716367e87.3
-        for <linux-clk@vger.kernel.org>; Tue, 18 Jun 2024 03:22:58 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bDTs/Rhn"
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52cc1528c83so1024989e87.2
+        for <linux-clk@vger.kernel.org>; Tue, 18 Jun 2024 03:25:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718706177; x=1719310977; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1718706300; x=1719311100; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ihV4mhCIBMNw0GbrSjpo4F1rbbfmrGIFerZHE45EcbQ=;
-        b=qrR4+QWGX/V4Z0fooMKHUzG0SCAqQ377tFKzKAR9H65J1Atf8JlaTTSFZCG5thE3sn
-         HbOSgCwep3q5RtM4FpXdQDsDvjDe5is8vnMOrjdeG70uSWmYFKqYyFDAEvSILpj6xybQ
-         p1tX8LisknFalZE5MRQjQqzJeHvxBz2gI/jbSBW7fygf/jt1nLY51QO/y2l3pychT7g1
-         zJGgfIXhwL7FNHYd8RZOnFWVZ01i3Ak3AIdV5brRLVznaT0xEoCQA++ZTkHsHqe6q43t
-         LtrASAyP0OpxqM9ucFidIEshKABF2dOL+9X0hKnoaTDu9TDyI8bji27IsQBVfvjm/sOP
-         PweA==
+        bh=vORZc79X1rnxAyyCpSE7q09cQDfcT1xma8XWqw5O8M0=;
+        b=bDTs/Rhn9uKuoFnAavsBfVwyr8eFN3dzixLtdqJEB9oNsOSDsJy4WKdgjuPtRwAUzj
+         AHUEVSStMVkPdRBONr2O54308oMi9UJH5lG5KAlF2bVCipkgN1SlDe8T/Kb9by5lb6HI
+         V8FV4Xxl4EDX3PeVez2yj8KswewrydhK2O64SZxX3WNs+pvEDBqDvE8l/QRdjKTb9xSN
+         cqHJYWIr9c9Lo5/xbMPI9BTLjzp3/RlsnD8xKkNeLzALWI3OtXVSwt7X5rCLrBnCvall
+         GCDZTA5a2ydaH1arxbAp9niOlhHT2xrlYCbMgKntghwyD5URwYfAqldHiU42tbCgPjX2
+         2JUA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718706177; x=1719310977;
+        d=1e100.net; s=20230601; t=1718706300; x=1719311100;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ihV4mhCIBMNw0GbrSjpo4F1rbbfmrGIFerZHE45EcbQ=;
-        b=GcdtjWTPjClycKZun1DnHFNRkd6S1ywPBOWYT6W13Vx2RUvx24lBCQcPsR0j2OUFnt
-         zCHKRilYawcXOZ3vCmOdCrWc7YfxBHIpNplSiM2Oj7/8MBYzilow6u7MAdFOC/UcIZPb
-         LA0DHmJGcYOOiEHNqrRT62o4EHwcHFfomH0Eppp9XQDW/dTBDiaZTk7reGPPTG+/OVDk
-         9OPC8SHdnSbYZp7Dy/dbFCT4Ez1s8Z1xpPZ1qFjENOKwOKvRx7XLAL3rLOlz4H0pVN3f
-         HJ/ya0n1LimiH8kVtvlzgFwQUkPcw4elTzZbCznUUE2XZpPWoeycb7o08FZwxit6jn5c
-         ZBdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVwWxfYpIflChmzmj+YuYrl0O0yHqftGgb07Z1ct125dkL+6zQMCdXVrFTGq29zLGkKEghWGdNSTFtJjZ6bs3BjbbvSVxZzVLyE
-X-Gm-Message-State: AOJu0YyJP4+dNX3vJhJ5rNDCUNQMwkgjgZJ1t4BrSo/u3uWECojp+n6f
-	dPLdiM9y1uA7SOHLJfofD2yBINOV8r3CKpDdzEBoc0jrmi7UP/XhXz4dJZSi62xkDLAhLTjpbaP
-	sQX6jMAlMWNmrzIK7Cj5dXw7XvtLah3hK1ctzrw==
-X-Google-Smtp-Source: AGHT+IH022WCOLlxYlftggBORDsbGqRdC1MMvSHHgSlDUwRF2SFmVC/CN9nibvTBvxf4WniRU2b80Vh9i/HWSfVw6SQ=
-X-Received: by 2002:a05:6512:4010:b0:52c:90a6:35f7 with SMTP id
- 2adb3069b0e04-52ca6e9af3amr12476647e87.58.1718706176667; Tue, 18 Jun 2024
- 03:22:56 -0700 (PDT)
+        bh=vORZc79X1rnxAyyCpSE7q09cQDfcT1xma8XWqw5O8M0=;
+        b=czBQgf+lBbfsSVOvYnE4wdsiG7eu2CKMpaTaEm029kYe/W+pX1Z6oxWxUAwjzCAiqd
+         3XAQlrC2rUFjGSKj65gGjsMhOORSd7YHr7aXsabXNJazgEyKEZA3YsEx7T6nH/V8vqcK
+         Eqg1svzxpaxmvqCefA8vHq1AbDzrwIwJaorvM4tjyUYUC9guH+dgFj4Qg55QM4n8+hwa
+         Q4iI/7wyUneQrQMdVhRzYBh8DKkGoUzEEnZmQlMpmDodI90XtUvOkN8DZshUMVR1gjba
+         +/9C0qX39Q2bn5jYaK5kKSpHbCSM0JrCdYwQedYE9zknk/7VZWzdjwEVytJCUWFgpkcK
+         fcIw==
+X-Forwarded-Encrypted: i=1; AJvYcCXM5r4KOpO8ipAU2dLP3DtJLb3JVvqQOni6Py3aiGSC8wvpggCjaVER0lRtNA6U7384TWBYAq0RMurYUIBq3ZiRwxODML4kei0R
+X-Gm-Message-State: AOJu0YzXZ2NXE7XtjuK46O3UKBuh4KlXj4vXeiMU9jiSMHqVpuxcLwnJ
+	rWydTM+4n58V76qGBoSV+dDDzYfdLzgJ1bLE1ETj4GFQCrd3yoD8JDBx9k52RXUI8OqjgaKPCIg
+	xQV2xBQqc9mIajhOnRnujPQ8VNJuaNodRm2MYpQ==
+X-Google-Smtp-Source: AGHT+IGmdTolgQpGEP2QQMQ3xSyIW78z1iVbi6bOrtMBYdBJmz1sd/on240XJN70b3haSE6d2gxQr6Bx2fcQnQKq3f0=
+X-Received: by 2002:a05:6512:ea4:b0:52c:86eb:a2e6 with SMTP id
+ 2adb3069b0e04-52ca6e567fcmr9051810e87.4.1718706300138; Tue, 18 Jun 2024
+ 03:25:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240613-md-arm64-drivers-clk-versatile-v1-1-6b8a5e5e00ef@quicinc.com>
-In-Reply-To: <20240613-md-arm64-drivers-clk-versatile-v1-1-6b8a5e5e00ef@quicinc.com>
+References: <Zm7I2Zbq1JNPoEJp@standask-GA-A55M-S2HP>
+In-Reply-To: <Zm7I2Zbq1JNPoEJp@standask-GA-A55M-S2HP>
 From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 18 Jun 2024 12:22:45 +0200
-Message-ID: <CACRpkdYmG=M717a0gmOmz2EtZY-AcxO+_a9Pcaicwq_iVNr2Hg@mail.gmail.com>
-Subject: Re: [PATCH] clk: vexpress-osc: add missing MODULE_DESCRIPTION() macro
-To: Jeff Johnson <quic_jjohnson@quicinc.com>
+Date: Tue, 18 Jun 2024 12:24:49 +0200
+Message-ID: <CACRpkdYEjg==qRSVG_tZ3Zn0kY04pwXX9jMAZL1fQjPybNm1yw@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: clock: drop obsolete stericsson,abx500.txt
+To: Stanislav Jakubek <stano.jakubek@gmail.com>
 Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Liviu Dudau <liviu.dudau@arm.com>, Sudeep Holla <sudeep.holla@arm.com>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 13, 2024 at 11:55=E2=80=AFPM Jeff Johnson <quic_jjohnson@quicin=
-c.com> wrote:
+On Sun, Jun 16, 2024 at 1:13=E2=80=AFPM Stanislav Jakubek
+<stano.jakubek@gmail.com> wrote:
 
-> With ARCH=3Darm64, make allmodconfig && make W=3D1 C=3D1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/versatile/c=
-lk-vexpress-osc.o
+> These bindings are already (better) described in mfd/stericsson,ab8500.ya=
+ml,
+> drop these now obsolete bindings.
 >
-> Add the missing invocation of the MODULE_DESCRIPTION() macro.
->
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
 
+I must have missed this file when I converted the bindings, thanks for clea=
+ning
+up my mess!
 Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
 Yours,
