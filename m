@@ -1,167 +1,260 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 466792139AF;
-	Tue, 18 Jun 2024 12:06:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 466592139BF;
+	Tue, 18 Jun 2024 12:09:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718712400; cv=none; b=NBeGyRSbnjX0LqI+fe1wIv4mMBqbknMuQcYkzy/+uUyaqzJvikdt3oW40RolQvO6Gem6O0tM6GnfSqE332L9FBO5uvw8DYmVrOFaiCIDnkDAPDeb7Vo0wt6qYwiGfL/xatOON/LZuu11I4yEJ8jmaKhqN+OqdJOY3ktFr1Qjt+Q=
+	t=1718712556; cv=none; b=sqYSx8+rshoQmVWhowOQ0zX0te/UG8ssPoUIpTvypXue2aUa2vOEMLY7OuEqYR4ArlXkdn9S2fbmeHJk4EdRqP1qATdtjjYZjzJfilUUIR4NU3jYqA2OUmgec0sBuo3yRQP0RviL06RoDsrM1hm5Nd3aFt2SIBlpIqNloKiIlIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718712400; c=relaxed/simple;
-	bh=PUxRGSzgzp4vRmnK1LHLDw8NXD+ShCbOt5l2m4UpRRY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=PUHFv8BwC8rBRb3U9/5Rl8MIjAfpzlk0Y1nw0pwRTd85BKgGRaPzU1oRYrvwqXezTRN4At9jTIm6SkVRmN0/Gc3hW/fgPwZADPpcNeUir0p3io/YOu45LXkXaPgkv80W5b+2/DBQcRLW80UHj+o99Sx2//kNdOY7IEQp3U1gv6g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bfIsS6he; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1718712556; c=relaxed/simple;
+	bh=sPDkpL2eRwrE9eObIY9L50bH2UWI7ApS/vbfGx6ztEQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=CWKdhcav5yMUHM3dUHM4oGj4vSSU0ZKW22LeEoihqWvebCLml9Eb2WVriPu0YEC/V89hoSFtnYlzZvKXFxDxN1gskTWU8u67utt35c6QuJdHxqSRmgO2FWKYj0XNsnXtLSRcUESO9/fKSlmphjQrnDp9qxud34ZuVS/dH6sbC5U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TcMQYi6k; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bfIsS6he"
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45I6bHvV004481;
-	Tue, 18 Jun 2024 12:06:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	BPoFZkZVeA1ImwyMY0d+//L134+Nq0+28Z4RqcXKJQc=; b=bfIsS6he2ziqqmBZ
-	w8t6xxKDfpMbiIiUPFb+AK7yYwoFE8rrlL1vflpmz9fcyRP/ruTmEuF1qJUzNZe0
-	q2M42CmmFhsCPRmmGIFTC5UFsXNlMLCipIvgJ2rvMTQTbJsNyTCIBqLOCMpFxhP1
-	fP9Mlw5JyWZX1Lz8EDp2Z+qTjNXalhs3L+zWa1RA4IRSd6/4fEIqs1DVY14XIDzQ
-	xzJsbeXSxMmxNYRbNuKlElywZK2hakyWgrukLNI+5+N3b4lpFtyhHPxHGPVEB0b2
-	hsXu3ZoBspxNGmQ5XQUUolqHaSWGhfdomef6vgYZ3+RN4Ifk5U4F4YCedP0iQFVg
-	bfGiRw==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ytt37a37f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Jun 2024 12:06:34 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45IC6GeE006473
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 18 Jun 2024 12:06:16 GMT
-Received: from [10.217.216.47] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 18 Jun
- 2024 05:06:11 -0700
-Message-ID: <003bfe18-fa51-42b0-bdd3-1cbb245cfff7@quicinc.com>
-Date: Tue, 18 Jun 2024 17:36:08 +0530
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TcMQYi6k"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C0F63C32786;
+	Tue, 18 Jun 2024 12:09:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718712555;
+	bh=sPDkpL2eRwrE9eObIY9L50bH2UWI7ApS/vbfGx6ztEQ=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=TcMQYi6kOP50QTemuQBUsEm6UzmxheZ5ajRoRg0RUn+9E2Oj+h9BdOdLUvBbXaiFO
+	 WtQsytI54GqfZhf/ykBH5bGU5faRkophKJVuxqaqhV1lco7g0h5035hdd0AocVVcAh
+	 NnTbFE+lDN8D0Bw/faI16XiOXSncvBZ8s4kzq/ek7mGuTBD9NLQCO3GUvX2KLzScS6
+	 2Q+bs2M8H7pTaKjoVWrpSwSsMel4g8YiUWCa15pSrkJZWsryI3NuH6wCa7jxsjBPPk
+	 ocfv1r57la53eqJ9hrR4z7+B4TS76OhMV+d5+OlZ0+iMTPitSMMaFhskJ+4KDL//wz
+	 x+LaGWXmbaBPA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACC22C27C4F;
+	Tue, 18 Jun 2024 12:09:15 +0000 (UTC)
+From: =?utf-8?q?Duje_Mihanovi=C4=87_via_B4_Relay?= <devnull+duje.mihanovic.skole.hr@kernel.org>
+Subject: [PATCH RESEND v10 00/12] Initial Marvell PXA1908 support
+Date: Tue, 18 Jun 2024 14:08:11 +0200
+Message-Id: <20240618-pxa1908-lkml-v10-0-754e5ece9078@skole.hr>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V4 8/8] arm64: dts: qcom: sm8650: Add video and camera
- clock controllers
-To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Stephen
- Boyd" <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Taniya Das
-	<quic_tdas@quicinc.com>,
-        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
-        Ajit Pandey <quic_ajipan@quicinc.com>,
-        Imran Shaik
-	<quic_imrashai@quicinc.com>
-References: <20240602114439.1611-1-quic_jkona@quicinc.com>
- <20240602114439.1611-9-quic_jkona@quicinc.com>
- <0f13ab6b-dff1-4b26-9707-704ae2e2b535@linaro.org>
-Content-Language: en-US
-From: Jagadeesh Kona <quic_jkona@quicinc.com>
-In-Reply-To: <0f13ab6b-dff1-4b26-9707-704ae2e2b535@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: AJBLjWTGSKkcAk_lHOi8NonjZiUqewe2
-X-Proofpoint-GUID: AJBLjWTGSKkcAk_lHOi8NonjZiUqewe2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-18_02,2024-06-17_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1011
- priorityscore=1501 lowpriorityscore=0 mlxscore=0 bulkscore=0 phishscore=0
- spamscore=0 mlxlogscore=999 adultscore=0 impostorscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
- definitions=main-2406180090
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+ Rob Herring <robh+dt@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Tony Lindgren <tony@atomide.com>, 
+ Haojian Zhuang <haojian.zhuang@linaro.org>, 
+ =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>, 
+ Lubomir Rintel <lkundrak@v3.sk>, Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, Tony Luck <tony.luck@intel.com>, 
+ "Guilherme G. Piccoli" <gpiccoli@igalia.com>, Rob Herring <robh@kernel.org>, 
+ Kees Cook <kees@kernel.org>
+Cc: phone-devel@vger.kernel.org, ~postmarketos/upstreaming@lists.sr.ht, 
+ Karel Balej <balejk@matfyz.cz>, David Wronek <david@mainlining.org>, 
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+ Conor Dooley <conor.dooley@microchip.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=7607;
+ i=duje.mihanovic@skole.hr; h=from:subject:message-id;
+ bh=sPDkpL2eRwrE9eObIY9L50bH2UWI7ApS/vbfGx6ztEQ=;
+ b=owEBbQKS/ZANAwAIAZoRnrBCLZbhAcsmYgBmcXjRqSGS/2RDeGt3uS0KsuTq5MtsTS6gevAfu
+ mpWjN8VNDaJAjMEAAEIAB0WIQRT351NnD/hEPs2LXiaEZ6wQi2W4QUCZnF40QAKCRCaEZ6wQi2W
+ 4VS3D/9gMYQQIF2aIgdFV/SveXjqHEjXnjtkD1YY0oJE81Pq0BW/Y/mllghWluKHQJ2es8ezife
+ Ekv4mNkItgu/WfSDOxuFXzlfqXIkVb2+rfUHw3CDJDxF49SOQX9LHjOroGq9aeyh99Ezl+ENxtG
+ 7ytIcywDokyOP2tXAtTxZ9x232gvS7gyVPMuKNpIl1SgslHgq33wcQKFBgqk4vHGOFA5YGgQ+Gv
+ cL2gBpMTBQNWgTSJJsrNTvIBsLWqEP7bA+ghQ9TLuoZJNKFr5AMKyRZKB0fw7H02uKo5OM2KRkW
+ yM2d4XVDT58iRDI0STMpRi59JD7G8gjYw3jlMYgAr54UeY2B0ZVJ6lZ4MvpXCkPd8Q9SqSS4WYD
+ oS8RSdIsG9ipzE/iF83HVu9IL41wYUmUndbjNK8nZV306IxykpFI6OMYoKrz+ERC8eDa45waUnw
+ SgCUTJ/eR7gzIGfa4RnFWtjiFoUYS+cKBKcxhKaLxrnzpiLDLPP18QSKge+oqaWL9YoWysWKbIq
+ YeOakqJPflLumborjfJnDIa/M0W2Q3+59227lgn0zqdPwAnISR4auC5NudjBP4SzpLR+qW/ILU2
+ B1dyoBWQR31meiqiUI/nj9bwX3yKaohUtLurilTxugQGSGquMX5mWxTLrlheve1WzErmDIdDP4P
+ 0UMB3Ya8ydgQzFA==
+X-Developer-Key: i=duje.mihanovic@skole.hr; a=openpgp;
+ fpr=53DF9D4D9C3FE110FB362D789A119EB0422D96E1
+X-Endpoint-Received: by B4 Relay for duje.mihanovic@skole.hr/default with
+ auth_id=112
+X-Original-From: =?utf-8?q?Duje_Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
+Reply-To: duje.mihanovic@skole.hr
+
+Hello,
+
+This series adds initial support for the Marvell PXA1908 SoC and
+"samsung,coreprimevelte", a smartphone using the SoC.
+
+USB works and the phone can boot a rootfs from an SD card, but there are
+some warnings in the dmesg:
+
+During SMP initialization:
+[    0.006519] CPU features: SANITY CHECK: Unexpected variation in SYS_CNTFRQ_EL0. Boot CPU: 0x000000018cba80, CPU1: 0x00000000000000
+[    0.006542] CPU features: Unsupported CPU feature variation detected.
+[    0.006589] CPU1: Booted secondary processor 0x0000000001 [0x410fd032]
+[    0.010710] Detected VIPT I-cache on CPU2
+[    0.010716] CPU features: SANITY CHECK: Unexpected variation in SYS_CNTFRQ_EL0. Boot CPU: 0x000000018cba80, CPU2: 0x00000000000000
+[    0.010758] CPU2: Booted secondary processor 0x0000000002 [0x410fd032]
+[    0.014849] Detected VIPT I-cache on CPU3
+[    0.014855] CPU features: SANITY CHECK: Unexpected variation in SYS_CNTFRQ_EL0. Boot CPU: 0x000000018cba80, CPU3: 0x00000000000000
+[    0.014895] CPU3: Booted secondary processor 0x0000000003 [0x410fd032]
+
+SMMU probing fails:
+[    0.101798] arm-smmu c0010000.iommu: probing hardware configuration...
+[    0.101809] arm-smmu c0010000.iommu: SMMUv1 with:
+[    0.101816] arm-smmu c0010000.iommu:         no translation support!
+
+A 3.14 based Marvell tree is available on GitHub
+acorn-marvell/brillo_pxa_kernel, and a Samsung one on GitHub
+CoderCharmander/g361f-kernel.
+
+Andreas Färber attempted to upstream support for this SoC in 2017:
+https://lore.kernel.org/lkml/20170222022929.10540-1-afaerber@suse.de/
+
+Signed-off-by: Duje Mihanović <duje.mihanovic@skole.hr>
+
+Changes in v10:
+- Update trailers
+- Rebase on v6.9-rc5
+- Clock driver changes:
+  - Add a couple of forgotten clocks in APBC
+    - The clocks are thermal_clk, ipc_clk, ssp0_clk, ssp2_clk and swjtag
+    - The IDs and register offsets were already present, but I forgot to
+      actually register them
+  - Split each controller block into own file
+  - Drop unneeded -of in clock driver filenames
+  - Simplify struct pxa1908_clk_unit
+  - Convert to platform driver
+  - Add module metadata
+- DTS changes:
+  - Properly name pinctrl nodes
+  - Drop pinctrl #size-cells, #address-cells, ranges and #gpio-size-cells
+  - Fix pinctrl input-schmitt configuration
+- Link to v9: https://lore.kernel.org/20240402-pxa1908-lkml-v9-0-25a003e83c6f@skole.hr
+
+Changes in v9:
+- Update trailers and rebase on v6.9-rc2, no changes
+- Link to v8: https://lore.kernel.org/20240110-pxa1908-lkml-v8-0-fea768a59474@skole.hr
+
+Changes in v8:
+- Drop SSPA patch
+- Drop broken-cd from eMMC node
+- Specify S-Boot hardcoded initramfs location in device tree
+- Add ARM PMU node
+- Correct inverted modem memory base and size
+- Update trailers
+- Rebase on next-20240110
+- Link to v7: https://lore.kernel.org/20231102-pxa1908-lkml-v7-0-cabb1a0cb52b@skole.hr
+  and https://lore.kernel.org/20231102152033.5511-1-duje.mihanovic@skole.hr
+
+Changes in v7:
+- Suppress SND_MMP_SOC_SSPA on ARM64
+- Update trailers
+- Rebase on v6.6-rc7
+- Link to v6: https://lore.kernel.org/r/20231010-pxa1908-lkml-v6-0-b2fe09240cf8@skole.hr
+
+Changes in v6:
+- Address maintainer comments:
+  - Add "marvell,pxa1908-padconf" binding to pinctrl-single driver
+- Drop GPIO patch as it's been pulled
+- Update trailers
+- Rebase on v6.6-rc5
+- Link to v5: https://lore.kernel.org/r/20230812-pxa1908-lkml-v5-0-a5d51937ee34@skole.hr
+
+Changes in v5:
+- Address maintainer comments:
+  - Move *_NR_CLKS to clock driver from dt binding file
+- Allocate correct number of clocks for each block instead of blindly
+  allocating 50 for each
+- Link to v4: https://lore.kernel.org/r/20230807-pxa1908-lkml-v4-0-cb387d73b452@skole.hr
+
+Changes in v4:
+- Address maintainer comments:
+  - Relicense clock binding file to BSD-2
+- Add pinctrl-names to SD card node
+- Add vgic registers to GIC node
+- Rebase on v6.5-rc5
+- Link to v3: https://lore.kernel.org/r/20230804-pxa1908-lkml-v3-0-8e48fca37099@skole.hr
+
+Changes in v3:
+- Address maintainer comments:
+  - Drop GPIO dynamic allocation patch
+  - Move clock register offsets into driver (instead of bindings file)
+  - Add missing Tested-by trailer to u32_fract patch
+  - Move SoC binding to arm/mrvl/mrvl.yaml
+- Add serial0 alias and stdout-path to board dts to enable UART
+  debugging
+- Rebase on v6.5-rc4
+- Link to v2: https://lore.kernel.org/r/20230727162909.6031-1-duje.mihanovic@skole.hr
+
+Changes in v2:
+- Remove earlycon patch as it's been merged into tty-next
+- Address maintainer comments:
+  - Clarify GPIO regressions on older PXA platforms
+  - Add Fixes tag to commit disabling GPIO pinctrl calls for this SoC
+  - Add missing includes to clock driver
+  - Clock driver uses HZ_PER_MHZ, u32_fract and GENMASK
+  - Dual license clock bindings
+  - Change clock IDs to decimal
+  - Fix underscores in dt node names
+  - Move chosen node to top of board dts
+  - Clean up documentation
+  - Reorder commits
+  - Drop pxa,rev-id
+- Rename muic-i2c to i2c-muic
+- Reword some commits
+- Move framebuffer node to chosen
+- Add aliases for mmc nodes
+- Rebase on v6.5-rc3
+- Link to v1: https://lore.kernel.org/r/20230721210042.21535-1-duje.mihanovic@skole.hr
+
+---
+Andy Shevchenko (1):
+      clk: mmp: Switch to use struct u32_fract instead of custom one
+
+Duje Mihanović (11):
+      dt-bindings: pinctrl: pinctrl-single: add marvell,pxa1908-padconf compatible
+      pinctrl: single: add marvell,pxa1908-padconf compatible
+      dt-bindings: clock: Add Marvell PXA1908 clock bindings
+      clk: mmp: Add Marvell PXA1908 APBC driver
+      clk: mmp: Add Marvell PXA1908 APBCP driver
+      clk: mmp: Add Marvell PXA1908 APMU driver
+      clk: mmp: Add Marvell PXA1908 MPMU driver
+      dt-bindings: marvell: Document PXA1908 SoC
+      arm64: Kconfig.platforms: Add config for Marvell PXA1908 platform
+      arm64: dts: Add DTS for Marvell PXA1908 and samsung,coreprimevelte
+      MAINTAINERS: add myself as Marvell PXA1908 maintainer
+
+ .../devicetree/bindings/arm/mrvl/mrvl.yaml         |   5 +
+ .../devicetree/bindings/clock/marvell,pxa1908.yaml |  48 +++
+ .../bindings/pinctrl/pinctrl-single.yaml           |   4 +
+ MAINTAINERS                                        |   9 +
+ arch/arm64/Kconfig.platforms                       |   8 +
+ arch/arm64/boot/dts/marvell/Makefile               |   3 +
+ .../dts/marvell/pxa1908-samsung-coreprimevelte.dts | 328 +++++++++++++++++++++
+ arch/arm64/boot/dts/marvell/pxa1908.dtsi           | 300 +++++++++++++++++++
+ drivers/clk/mmp/Makefile                           |   2 +-
+ drivers/clk/mmp/clk-frac.c                         |  57 ++--
+ drivers/clk/mmp/clk-of-mmp2.c                      |  26 +-
+ drivers/clk/mmp/clk-of-pxa168.c                    |   4 +-
+ drivers/clk/mmp/clk-of-pxa1928.c                   |   6 +-
+ drivers/clk/mmp/clk-of-pxa910.c                    |   4 +-
+ drivers/clk/mmp/clk-pxa1908-apbc.c                 | 131 ++++++++
+ drivers/clk/mmp/clk-pxa1908-apbcp.c                |  84 ++++++
+ drivers/clk/mmp/clk-pxa1908-apmu.c                 | 123 ++++++++
+ drivers/clk/mmp/clk-pxa1908-mpmu.c                 | 112 +++++++
+ drivers/clk/mmp/clk.h                              |  10 +-
+ drivers/pinctrl/pinctrl-single.c                   |   1 +
+ include/dt-bindings/clock/marvell,pxa1908.h        |  88 ++++++
+ 21 files changed, 1296 insertions(+), 57 deletions(-)
+---
+base-commit: ed30a4a51bb196781c8058073ea720133a65596f
+change-id: 20230803-pxa1908-lkml-6830e8da45c7
+
+Best regards,
+-- 
+Duje Mihanović <duje.mihanovic@skole.hr>
 
 
-
-On 6/13/2024 2:52 AM, Vladimir Zapolskiy wrote:
-> Hi Jagadeesh.
-> 
-> On 6/2/24 14:44, Jagadeesh Kona wrote:
->> Add device nodes for video and camera clock controllers on Qualcomm
->> SM8650 platform.
->>
->> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
->> Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
->> ---
->>   arch/arm64/boot/dts/qcom/sm8650.dtsi | 26 ++++++++++++++++++++++++++
->>   1 file changed, 26 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi 
->> b/arch/arm64/boot/dts/qcom/sm8650.dtsi
->> index 336c54242778..d964762b0532 100644
->> --- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
->> @@ -4,10 +4,12 @@
->>    */
->>   #include <dt-bindings/clock/qcom,rpmh.h>
->> +#include <dt-bindings/clock/qcom,sm8650-camcc.h>
->>   #include <dt-bindings/clock/qcom,sm8650-dispcc.h>
->>   #include <dt-bindings/clock/qcom,sm8650-gcc.h>
->>   #include <dt-bindings/clock/qcom,sm8650-gpucc.h>
->>   #include <dt-bindings/clock/qcom,sm8650-tcsr.h>
->> +#include <dt-bindings/clock/qcom,sm8650-videocc.h>
->>   #include <dt-bindings/dma/qcom-gpi.h>
->>   #include <dt-bindings/firmware/qcom,scm.h>
->>   #include <dt-bindings/gpio/gpio.h>
->> @@ -3315,6 +3317,30 @@ opp-202000000 {
->>               };
->>           };
->> +        videocc: clock-controller@aaf0000 {
->> +            compatible = "qcom,sm8650-videocc";
->> +            reg = <0 0x0aaf0000 0 0x10000>;
->> +            clocks = <&bi_tcxo_div2>,
->> +                 <&gcc GCC_VIDEO_AHB_CLK>;
->> +            power-domains = <&rpmhpd RPMHPD_MMCX>;
->> +            #clock-cells = <1>;
->> +            #reset-cells = <1>;
->> +            #power-domain-cells = <1>;
->> +        };
->> +
->> +        camcc: clock-controller@ade0000 {
->> +            compatible = "qcom,sm8650-camcc";
->> +            reg = <0 0x0ade0000 0 0x20000>;
->> +            clocks = <&gcc GCC_CAMERA_AHB_CLK>,
->> +                 <&bi_tcxo_div2>,
->> +                 <&bi_tcxo_ao_div2>,
->> +                 <&sleep_clk>;
->> +            power-domains = <&rpmhpd RPMHPD_MMCX>;
-> 
-> When you test the change on a particular board, do you get here any build
-> time warning messages like this one?
-> 
->    clock-controller@ade0000: 'required-opps' is a required property
->        from schema $id: 
-> http://devicetree.org/schemas/clock/qcom,sm8450-camcc.yaml#
-> 
-> I believe it's a valid warning, which has to be fixes, and as it says it
-> corresponds to the required property exactly.
-> 
-
-Thanks Vladimir for pointing this issue. I will check about this warning 
-and will fix this.
-
-Thanks,
-Jagadeesh
