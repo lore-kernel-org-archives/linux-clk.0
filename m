@@ -1,105 +1,142 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3612D1CAB3;
-	Tue, 18 Jun 2024 17:47:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E81EA146D6D
+	for <linux-clk@vger.kernel.org>; Tue, 18 Jun 2024 17:51:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718732856; cv=none; b=oAlllr4px283nZi4WfTeAVqchX8t7QhIH3BPOfCA7aYsUkCKJiJQJHd3mxt3vjQAHho8V8H7EySkMZ1faXckdR/s+TluYUuFofdhOlFo5pVZommmofc9s/6P06VmKP6IuiZCWbVYff5buR+NVrtQIUsGwJ8SLtKNdEo338HrxXQ=
+	t=1718733064; cv=none; b=gHvAFwxXuc/QqrezlAcIN+U28WD6ybK7xznLDKG1MTeG3uRaE/0j+bLRC8oPNkG2U0lpGJpX/qvE+KtYZumlBxy+xZ0M0WefyhBYgyr1CMEubnlNUWwYl4IErwMah4sRzRfIq8uCbgm5fFec3n2NoVhkVQo5MCbf80Co2RV+qvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718732856; c=relaxed/simple;
-	bh=G+uoL6mBMnnxqKc7tmPC/DmWA5qbYFGwxL9z4TpIRUs=;
+	s=arc-20240116; t=1718733064; c=relaxed/simple;
+	bh=d3mOZkwzhQUitJ9p5NHqTux2I2OqtKSPIYhdsh5PmW0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lBNUTiAjbo0Y9s/hGKVa5IopVgocFLJwS2FmPpjuJcROHVZ39w8cQyRpFPCs/sfacprL3g2KG/TJznHhLVlP7PR4FuO24T3YpqCyJvZZIZlqtcNnvAy8Trnpoz61xmNMESQAyPaAFvmtNOrH5+5N1E8AkUF8hduixz6+Cg6V5Hs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sKChmAEi; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=EnNDSylfvQiFS7qgm4Inxcwv2EHSJqMqAu8w8EQ28gyCcCbZykXzSSRnqMFO2EAKJ+ki6PFzbgBTjzu88sD4JGBY1+GzSOSqShS23p9tJl9UUSr6g7f7CFr0nAcVyZGwrEfiTgP26+MBnZfoU1tDMJxl65OGfaBj1K2fPhf3GSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UZbjvGBi; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sKChmAEi"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 811BFC4AF48;
-	Tue, 18 Jun 2024 17:47:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718732855;
-	bh=G+uoL6mBMnnxqKc7tmPC/DmWA5qbYFGwxL9z4TpIRUs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sKChmAEiuyOV50r44YzFyLj+BTIDFCeePXXplCpjFUQFn+35D8ADDQK8nAyxLu4Wu
-	 Tt89UPq7T/Zeh9LwzofF53KmsNRAW7MxsfWdIVDspUX2XrSC7xOq2B2Z5aIiPeAShg
-	 gFtGEslZrgOb6OPy/GK8nfR2k750a8qovdjzpMr4zUp7ti6+H6jpnz8rrZrQcSuXeO
-	 1VnsNPSPyDxyuLZOXOtnDnP559jLrDeNFIZLb0YuRR1Z5b9/Bqh2FRZe55m7+fFbN2
-	 j4jw5W4O/7LtqBlC7g59Vnw4s+nEFfQjsH5qC7CNPUVk6tQXVbbFjyeniLmM1Dfyw9
-	 zvPaC4l9b5H4w==
-Date: Tue, 18 Jun 2024 18:47:29 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Lorenzo Bianconi <lorenzo@kernel.org>
-Cc: netdev@vger.kernel.org, nbd@nbd.name, lorenzo.bianconi83@gmail.com,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, linux-arm-kernel@lists.infradead.org,
-	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org, devicetree@vger.kernel.org,
-	catalin.marinas@arm.com, will@kernel.org, upstream@airoha.com,
-	angelogioacchino.delregno@collabora.com,
-	benjamin.larsson@genexis.eu, linux-clk@vger.kernel.org,
-	rkannoth@marvell.com, sgoutham@marvell.com, andrew@lunn.ch
-Subject: Re: [PATCH v2 net-next 1/2] dt-bindings: net: airoha: Add EN7581
- ethernet controller
-Message-ID: <20240618-subpar-absentee-c3a43a1a9f5e@spud>
-References: <cover.1718696209.git.lorenzo@kernel.org>
- <ae8ac05a56f479286bc748fb930c5643a2fbde10.1718696209.git.lorenzo@kernel.org>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UZbjvGBi"
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ebd95f136bso64729371fa.0
+        for <linux-clk@vger.kernel.org>; Tue, 18 Jun 2024 10:51:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718733060; x=1719337860; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jdrPsOFRH9tibJcIwTVDIHrvX0et09f9Ar+HQWRvLZQ=;
+        b=UZbjvGBibP5eUYTkPaNxof/tkbNC8npO5YOvD3hQ4EtX1wH25FASo/SB13vTt+Rffx
+         FvZTPnWMvGFaWZSF3ry5vXYjC8RLeF5SU0gqaNoM2MMlDHlXcVOpT22HMh4mUZgpjset
+         gny+T5ZxSPjtbqBcELArMFbmZ4XICJl23MclKGrnMxm5xZptuKdYa+ovy+qi+yIQ4XiQ
+         FP4TNqGI5IgNzGlPsYveXlh0A4fqIthbYniUNqLC7sDn5XBj0DBFX0rTNpQnz0IvwFAd
+         3zPAwC/0kmTBHvsqH5zMEXCE49MrcAngFo4cqar0NuEPJU+a84CxoRcMIFrTXgksySPO
+         44YQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718733060; x=1719337860;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jdrPsOFRH9tibJcIwTVDIHrvX0et09f9Ar+HQWRvLZQ=;
+        b=jxugK/4s5QT1nDWX4wQLxYYUTBDSSHUncT8ZgG9n+Q71NZOQ9zhvg05lrLfVZ7d9A2
+         I2wqcRp+wLu6Nw3uKKwluzXYzJUEpmkDt4NkYdTZ6EgA2s9dp7HUaZ1y2KmqZXEVBVic
+         LBI4Fn1JQPAPtcC+6wJL0SRmHcSMKZrLU7zN7keSqFN6ApoXwn7yU5ue+tlOcqkQS+20
+         0dV7vmrR/yu6DdZGd8dKCF4r3vW2Moqw0fMscbJXqSWeXF44zO36Uy7LrcCYbpynBfmo
+         4ykDEVO0YiXbiVNkbkM+pDS14VcqkgOPrhqdVaw1jxztRIDkWmr5uLzIdMOFItSJcZh/
+         T/LQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW5crcYqt9k0BM2rOAlMGhUQS4TNcoJTpfK3upjyWK8auRWK92UqkI3z9hDE+owuRtGv+EkiVEoJaG8dusL3IRCletcn1vItWLW
+X-Gm-Message-State: AOJu0Yy6DVyha1r3tuG3PhKL3Y3jbqS3/uURl4Hcgvui+lrczsuL33te
+	cvl7RevhvvD8dkcopFrKp+OJBb6afeoIlyOjmtJmMaUh42KJE1Om0Fkchkx1by0=
+X-Google-Smtp-Source: AGHT+IGM/U45FeUpxxsmNAsTgVBSD3mO9NOKixFEiUXqhhF6IJuZRODRDq1PxwN+t2vV3hmMxogugA==
+X-Received: by 2002:a2e:2416:0:b0:2ec:eee:f19e with SMTP id 38308e7fff4ca-2ec3cfe5a12mr3314651fa.37.1718733059948;
+        Tue, 18 Jun 2024 10:50:59 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec3d00ae2bsm499111fa.51.2024.06.18.10.50.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Jun 2024 10:50:59 -0700 (PDT)
+Date: Tue, 18 Jun 2024 20:50:58 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Dzmitry Sankouski <dsankouski@gmail.com>
+Cc: Sebastian Reichel <sre@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Daniel Vetter <daniel@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Chanwoo Choi <cw00.choi@samsung.com>, phone-devel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-input@vger.kernel.org, 
+	linux-leds@vger.kernel.org, linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v3 02/23] gcc-sdm845: Add rates to the GP clocks
+Message-ID: <wnf3mfgdm4p4f5wrxdtlx4wccnizdvohc7iiyu5t22eeb67r57@xun3r73hksrg>
+References: <20240618-starqltechn_integration_upstream-v3-0-e3f6662017ac@gmail.com>
+ <20240618-starqltechn_integration_upstream-v3-2-e3f6662017ac@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="IVXoJjWBysv/457P"
-Content-Disposition: inline
-In-Reply-To: <ae8ac05a56f479286bc748fb930c5643a2fbde10.1718696209.git.lorenzo@kernel.org>
-
-
---IVXoJjWBysv/457P
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240618-starqltechn_integration_upstream-v3-2-e3f6662017ac@gmail.com>
 
-On Tue, Jun 18, 2024 at 09:49:02AM +0200, Lorenzo Bianconi wrote:
-> Introduce device-tree binding documentation for Airoha EN7581 ethernet
-> mac controller.
->=20
-> Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
+On Tue, Jun 18, 2024 at 04:59:36PM GMT, Dzmitry Sankouski wrote:
+> sdm845 has "General Purpose" clocks that can be muxed to
+> SoC pins.
+> 
+> Those clocks may be used as e.g. PWM sources for external peripherals.
+> Add more frequencies to the table for those clocks so it's possible
+> for arbitrary peripherals to make use of them.
+> 
+> See also: bf8bb8eaccf(clk: qcom: gcc-msm8916: Add rates to the GP clocks)
+
+Each time I look at the table attached to the GP CLK, I feel that it's
+plain wrong. In the end the GPCLK can in theory have arbitrary value
+depending on the usecase.
+
+Bjorn, Konrad, maybe we should add special clk_ops for GP CLK which
+allow more flexibility than a default clk_rcg2_ops?
+
+> 
+> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
 > ---
-> This patch is based on the following one not applied yet on clk tree:
-> dt-bindings: clock: airoha: Add reset support to EN7581 clock binding
-> https://patchwork.kernel.org/project/linux-clk/patch/ac557b6f4029cb3428d4=
-c0ed1582d0c602481fb6.1718282056.git.lorenzo@kernel.org/
-> ---
->  .../bindings/net/airoha,en7581.yaml           | 106 ++++++++++++++++++
->  1 file changed, 106 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/net/airoha,en7581.y=
-aml
->=20
-> diff --git a/Documentation/devicetree/bindings/net/airoha,en7581.yaml b/D=
-ocumentation/devicetree/bindings/net/airoha,en7581.yaml
-> new file mode 100644
-> index 000000000000..09e7b5eed3ae
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/net/airoha,en7581.yaml
+>  drivers/clk/qcom/gcc-sdm845.c | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
+> index ea4c3bf4fb9b..0efd3364e8f5 100644
+> --- a/drivers/clk/qcom/gcc-sdm845.c
+> +++ b/drivers/clk/qcom/gcc-sdm845.c
+> @@ -283,7 +283,21 @@ static struct clk_rcg2 gcc_sdm670_cpuss_rbcpr_clk_src = {
+>  	},
+>  };
+>  
+> +/*
+> + * This is a frequency table for "General Purpose" clocks.
+> + * These clocks can be muxed to the SoC pins and may be used by
+> + * external devices. They're often used as PWM source.
+> + *
+> + * See comment in gcc-mam8916.c at ftbl_gcc_gp1_3_clk.
+> + */
+>  static const struct freq_tbl ftbl_gcc_gp1_clk_src[] = {
+> +	F(10000,   P_BI_TCXO,    16,  1, 120),
+> +	F(20000,   P_BI_TCXO,    16,  1, 60),
+> +	F(100000,  P_BI_TCXO,    16,  1,  12),
+> +	F(500000,  P_GPLL0_OUT_EVEN, 12, 1, 100),
+> +	F(1000000, P_GPLL0_OUT_EVEN, 12, 1, 50),
+> +	F(2500000, P_GPLL0_OUT_EVEN, 12, 1, 10),
+> +	F(5000000, P_GPLL0_OUT_EVEN, 12, 1, 5),
+>  	F(19200000, P_BI_TCXO, 1, 0, 0),
+>  	F(25000000, P_GPLL0_OUT_EVEN, 12, 0, 0),
+>  	F(50000000, P_GPLL0_OUT_EVEN, 6, 0, 0),
+> 
+> -- 
+> 2.39.2
+> 
 
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - airoha,en7581-eth
-
-Actually, one other thing - filename matching compatible please.
-
-
---IVXoJjWBysv/457P
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnHIMQAKCRB4tDGHoIJi
-0n2HAQDeMQN4/+RLDEpD+PHgpRtQS2SO15QUUpcKLP10MltACQEAw5k3GqAbdps6
-JsoZfBwB4+yMUAvEfc1qZdDfb5KpdwM=
-=CIoQ
------END PGP SIGNATURE-----
-
---IVXoJjWBysv/457P--
+-- 
+With best wishes
+Dmitry
