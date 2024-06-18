@@ -1,96 +1,98 @@
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B092613EFEF
-	for <linux-clk@vger.kernel.org>; Tue, 18 Jun 2024 13:28:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D91F712B95;
+	Tue, 18 Jun 2024 13:47:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718717285; cv=none; b=I/ynGxtakhLKVKQR8UB0TeQljCVqMUEM2wuoSaJsySclm40LtqxfQqr3zVEYwhpRHaH4QFFzEvHB3pqY1I8ecgXYwTe4qIZC+sdK2V5VjJsC/5GU768/NKhwFWILxqZglnIBCOycJekOvMz5jAerDJKTJWVePgzF0bQZqz8dwJE=
+	t=1718718422; cv=none; b=kv9nj99FtZkiouc9EqbKyqSRnknP9drqW+KIHxpUI5DK+9nybBvbTqJK9wlFkxGEU8/58d0/QpY5G19VV3xZg9I4NghAsKbObIfRzCNXatqZ+8aPF1HoELP1Nh3NAMZ4oSxrjhgtYF1sm7nvYsdd5e0rpSIapFVvuKbrqTp0XRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718717285; c=relaxed/simple;
-	bh=P2iR+XJO20kjFPFruIuBNlrh7wkDA2ddjm99o7r11VA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s/aNV47ixWHTbWKfl2dU7Zd6kAEItjrJ2excJgoquerEqmHMelQtX5YEEbtaGmGC1Y8An6m4QESVnewll+lAV6XitpbU+9wduNhuR4o0uNdCx4lyurtPgQ8yDKjm9lRJFtpzONmdjZh7rMkycdOe7ROjApnvHg/L+XUGC5MB3j8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PzGSzlo0; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1718718422; c=relaxed/simple;
+	bh=Viw9Eun78C1RUCSEjiFT0KsiFOKKEeh6vR7q0MAvXxA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CDkimWI9omJRHfoDPxtrkZKNK7L+NvDYut7gmLCXccFhhYiKQziu8zgjLJaFN25UKYRxkqK/GRjySaRzWJWCQxK3G/53wQeI0BHJ9rvI795jH6LCQVw6KXhI/BJrHo5R823fgTEgoAvz7Z17MZrgBZQ+X953JQoIgcSDRTb4/hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=JlBlshUH; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PzGSzlo0"
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2ebed33cb65so61547921fa.2
-        for <linux-clk@vger.kernel.org>; Tue, 18 Jun 2024 06:28:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718717282; x=1719322082; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=cgj0IrDomaUjzBC0KLU+PFvHZCf8aMEd+R22qNfiYxc=;
-        b=PzGSzlo0Z7lcLsYIFQIg1tI22pHyBodDYcKzL62oZy4QhRUf6VKi7jAkbOGs12SHVc
-         zqZALJROERTqlP99kIRMpOZE2uRAFj3/y9Kqbz1eOQYyBHZLoWtRgyPt6GhAoVUXp6Sy
-         7gDwIgsO0jPuM4ryC+9GbzUHL5kPYUyszMRp9I+9GBrSkyRPuUJj3oC5j0XoyNGnWKwM
-         TKQYvFetVHzpS5r0UGqVbluXf+YjRa8ZEQOI7d8h1jrbbS3318r4fhPUqByaZwslkV6T
-         JhHlKglb0XEh7dB+9zhdmw8GtvBsj5ReBCnZUToGVsQPrku4FrIdNO85E92cp/Wj+vtY
-         u1Tg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718717282; x=1719322082;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cgj0IrDomaUjzBC0KLU+PFvHZCf8aMEd+R22qNfiYxc=;
-        b=L79jO9f1Q0i1LK9CWVPNUwEuP4vozrxP6Q00PzEzm2e0gN95aebSeGPqHkqY4vNZ0E
-         sBE0A7eS6JAVAKZBqGH6x2SsIPk+QTpQv/Tm6mtdd0qEhcbKNMp4BNIEXgNa8bS0byuc
-         iwX3uQx46XuXhoDCrjJCBhCRIucW2w2aFb+tONxcIPwnMpcIrQa1IxsEYTJA9BHALLoU
-         DtnzOM84BRCdx+ArCazWIubbMy6FenxWY9O+T8/A23k2eJFEjNtqt6l6F3hKZD3035Fz
-         PjGpL/R3s9Pxh175gH351v+D87OedRqMsDUxx7Rp5o4JEQW9VAcgyNeplYD9+lgQdX3O
-         D8Eg==
-X-Forwarded-Encrypted: i=1; AJvYcCV2rs2DpKa+qlwZxjGgybrMOdjnBfLvBciKoRduWk7OrS7bj6UarjsVj85jQ8rq7Z55BlMlvUR8CxE4kZrHgrzWsGqeDmH3Xv3x
-X-Gm-Message-State: AOJu0YxqCSy7RBIpenU5doVZF57zQOG+6ZEMp3DwZdfOGiSGhNVzAAjo
-	C7bWd5EcpBfyGS9Q6lUVEDoyEl3LJuuGFdafAC85jbi8HgKbd+sm6V/smKrcf6w=
-X-Google-Smtp-Source: AGHT+IGK2g/5pEGb2O7+YJ6KcJ8OGiwXCrOkIFFOMVK9jdv1m3RTPGFryY0YEY6iI7i+KanST2Vzzw==
-X-Received: by 2002:a2e:a306:0:b0:2ec:343d:9677 with SMTP id 38308e7fff4ca-2ec343d975amr15666551fa.39.1718717281835;
-        Tue, 18 Jun 2024 06:28:01 -0700 (PDT)
-Received: from ?IPV6:2a00:f41:9028:9df3:4fb7:492b:2c94:7283? ([2a00:f41:9028:9df3:4fb7:492b:2c94:7283])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec05bf44e8sm17040531fa.14.2024.06.18.06.28.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 18 Jun 2024 06:28:01 -0700 (PDT)
-Message-ID: <9104638a-fe7b-4503-91de-7bff3c518eb2@linaro.org>
-Date: Tue, 18 Jun 2024 15:27:59 +0200
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="JlBlshUH"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=hUyYkufXGXeMDxKKMutt0ej+hmCI0R2+ko1WofHWG5A=; b=JlBlshUHk+MaUPX9GuWHD7bxeU
+	fDs/yWhuOyNUyEYWbehY+4aua38cp4s909xfLJ6g4XpgISA+wrDd7fUaEcLwkrJNMZzkGqNFxuXlP
+	w8Qx3dnyeXqVsoERqmX8oLQdL6qHIC6zDVDKeHYkk815sJ/V9CdJeFHr4kj0o1RVr8/I=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sJZAW-000NhC-1k; Tue, 18 Jun 2024 15:46:40 +0200
+Date: Tue, 18 Jun 2024 15:46:40 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Lorenzo Bianconi <lorenzo@kernel.org>
+Cc: netdev@vger.kernel.org, nbd@nbd.name, lorenzo.bianconi83@gmail.com,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, conor@kernel.org,
+	linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+	devicetree@vger.kernel.org, catalin.marinas@arm.com,
+	will@kernel.org, upstream@airoha.com,
+	angelogioacchino.delregno@collabora.com,
+	benjamin.larsson@genexis.eu, linux-clk@vger.kernel.org,
+	rkannoth@marvell.com, sgoutham@marvell.com
+Subject: Re: [PATCH v2 net-next 2/2] net: airoha: Introduce ethernet support
+ for EN7581 SoC
+Message-ID: <64b3c847-8674-4fdd-bbe6-8ea22410aa19@lunn.ch>
+References: <cover.1718696209.git.lorenzo@kernel.org>
+ <f146a6f58492394a77f7d159f3c650a268fbe489.1718696209.git.lorenzo@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/6] clk: qcom: gpucc-sa8775p: Park RCG's clk source at
- XO during disable
-To: Taniya Das <quic_tdas@quicinc.com>, Bjorn Andersson
- <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- Shazad Hussain <quic_shazhuss@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, quic_jkona@quicinc.com,
- quic_imrashai@quicinc.com
-References: <20240612-sa8775p-v2-gcc-gpucc-fixes-v2-0-adcc756a23df@quicinc.com>
- <20240612-sa8775p-v2-gcc-gpucc-fixes-v2-5-adcc756a23df@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-In-Reply-To: <20240612-sa8775p-v2-gcc-gpucc-fixes-v2-5-adcc756a23df@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f146a6f58492394a77f7d159f3c650a268fbe489.1718696209.git.lorenzo@kernel.org>
+
+> +static void airoha_fe_maccr_init(struct airoha_eth *eth)
+> +{
+
+...
+
+> +	airoha_fe_wr(eth, REG_FE_VIP_PATN(11), 0xc057); /* PPP->IPv6CP (0xc057) */
+
+include/uapi/linux/ppp_defs.h
+#define PPP_IPV6CP      0x8057  /* IPv6 Control Protocol */
+
+Are these the same thing? Why is there one bit difference?
 
 
+> +	airoha_fe_wr(eth, REG_FE_VIP_PATN(17), 0x1ae0);
+> +	airoha_fe_wr(eth, REG_FE_VIP_EN(17),
+> +		     PATN_FCPU_EN_MASK | PATN_SP_EN_MASK |
+> +		     FIELD_PREP(PATN_TYPE_MASK, 3) | PATN_EN_MASK);
+> +
+> +	airoha_fe_wr(eth, REG_FE_VIP_PATN(18), 0x1ae00000);
+> +	airoha_fe_wr(eth, REG_FE_VIP_EN(18),
+> +		     PATN_FCPU_EN_MASK | PATN_DP_EN_MASK |
+> +		     FIELD_PREP(PATN_TYPE_MASK, 3) | PATN_EN_MASK);
 
-On 6/12/24 13:08, Taniya Das wrote:
-> The RCG's clk src has to be parked at XO while disabling as per the
-> HW recommendation, hence use clk_rcg2_shared_ops to achieve the same.
-> Also gpu_cc_cb_clk is recommended to be kept always ON, hence use
-> clk_branch2_aon_ops to keep the clock always ON.
-> 
-> Fixes: 0afa16afc36d ("clk: qcom: add the GPUCC driver for sa8775p")
-> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
-> ---
+> +	airoha_fe_wr(eth, REG_FE_VIP_PATN(22), 0xaaaa);
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+Please add a comment what these match.
 
-Konrad
+> +static int airoha_dev_change_mtu(struct net_device *dev, int new_mtu)
+> +{
+> +	dev->mtu = new_mtu;
+> +
+> +	return 0;
+> +}
+> +
+
+I don't think this is needed. Look at __dev_set_mtu().
+
+    Andrew
+
+---
+pw-bot: cr
