@@ -1,102 +1,167 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 534AC1482FA;
-	Tue, 18 Jun 2024 11:32:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 466792139AF;
+	Tue, 18 Jun 2024 12:06:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718710363; cv=none; b=gWZBvZatQ0W6DOf6H/e28GYoOKoltsDpWBNgbs+kJvSID8S/v/gJ2pg/xkKYoEM2t92nh5KzrK+dFtAMyPbq64Kfbi0cEHEMOEAegQG/4erYmfvw3u7Y6KQ0PiCKQUwW9Tr8F9DDWcby/N7h4xgyiuxqYxvHvzLHjUhO0KM22LY=
+	t=1718712400; cv=none; b=NBeGyRSbnjX0LqI+fe1wIv4mMBqbknMuQcYkzy/+uUyaqzJvikdt3oW40RolQvO6Gem6O0tM6GnfSqE332L9FBO5uvw8DYmVrOFaiCIDnkDAPDeb7Vo0wt6qYwiGfL/xatOON/LZuu11I4yEJ8jmaKhqN+OqdJOY3ktFr1Qjt+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718710363; c=relaxed/simple;
-	bh=wpiKeO63IemTjXmi+1WwztXiYOdPdtVXvk0tyn5Fhoc=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=pGIuyCzMwU6LN2gJI7Bn57jHm9rMHIumZYgZpFIbV8cyTfydDr20wCaMmXiz3673d2+ZQ7bhyPy4npp2GMMjBj0ucWvGpU455RNkFNPb+doOURPYBdQpQHJweFYAeDpa3or8ZLElz0QiUHj+wcRMTIKmwtqcvlUEoLS2KvJHxuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=btHUdzlO; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1718712400; c=relaxed/simple;
+	bh=PUxRGSzgzp4vRmnK1LHLDw8NXD+ShCbOt5l2m4UpRRY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=PUHFv8BwC8rBRb3U9/5Rl8MIjAfpzlk0Y1nw0pwRTd85BKgGRaPzU1oRYrvwqXezTRN4At9jTIm6SkVRmN0/Gc3hW/fgPwZADPpcNeUir0p3io/YOu45LXkXaPgkv80W5b+2/DBQcRLW80UHj+o99Sx2//kNdOY7IEQp3U1gv6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bfIsS6he; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="btHUdzlO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 081D7C4AF48;
-	Tue, 18 Jun 2024 11:32:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718710363;
-	bh=wpiKeO63IemTjXmi+1WwztXiYOdPdtVXvk0tyn5Fhoc=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=btHUdzlOT+VIyKTe3je22pK3+5vLZQ9K23c0u0il69gOCNjGuR7SvF/1Eje2MfJCp
-	 TWZyP45WcdqzYLuIz1RsT+JtydlkyZOia/SCXgY2bX2FMmNFDE8ijJx/Pm70v57ghV
-	 kRgSslxat16tz4K5jrY04W+U9ixvCDHydDequFp7qfpc7C/3SDZymFckE5oS28M4vY
-	 zfrKO01134c/qC7LCNfFMpD708yMBZLo8MBT5zkmvuDn8fCLbZfHVVjOzzM4rfZbQp
-	 NmPh/trp4K+QiUbc9/2ira4SQYWfZFIaD4pivLgTX3pu2Ip65un+covBoOCsh5Szb5
-	 tswRK/LL0CfbA==
-Date: Tue, 18 Jun 2024 05:32:42 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bfIsS6he"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45I6bHvV004481;
+	Tue, 18 Jun 2024 12:06:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	BPoFZkZVeA1ImwyMY0d+//L134+Nq0+28Z4RqcXKJQc=; b=bfIsS6he2ziqqmBZ
+	w8t6xxKDfpMbiIiUPFb+AK7yYwoFE8rrlL1vflpmz9fcyRP/ruTmEuF1qJUzNZe0
+	q2M42CmmFhsCPRmmGIFTC5UFsXNlMLCipIvgJ2rvMTQTbJsNyTCIBqLOCMpFxhP1
+	fP9Mlw5JyWZX1Lz8EDp2Z+qTjNXalhs3L+zWa1RA4IRSd6/4fEIqs1DVY14XIDzQ
+	xzJsbeXSxMmxNYRbNuKlElywZK2hakyWgrukLNI+5+N3b4lpFtyhHPxHGPVEB0b2
+	hsXu3ZoBspxNGmQ5XQUUolqHaSWGhfdomef6vgYZ3+RN4Ifk5U4F4YCedP0iQFVg
+	bfGiRw==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ytt37a37f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 12:06:34 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45IC6GeE006473
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 18 Jun 2024 12:06:16 GMT
+Received: from [10.217.216.47] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 18 Jun
+ 2024 05:06:11 -0700
+Message-ID: <003bfe18-fa51-42b0-bdd3-1cbb245cfff7@quicinc.com>
+Date: Tue, 18 Jun 2024 17:36:08 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Lorenzo Bianconi <lorenzo@kernel.org>
-Cc: lorenzo.bianconi83@gmail.com, robh+dt@kernel.org, upstream@airoha.com, 
- conor+dt@kernel.org, edumazet@google.com, conor@kernel.org, 
- davem@davemloft.net, pabeni@redhat.com, devicetree@vger.kernel.org, 
- catalin.marinas@arm.com, linux-arm-kernel@lists.infradead.org, 
- linux-clk@vger.kernel.org, rkannoth@marvell.com, 
- benjamin.larsson@genexis.eu, kuba@kernel.org, 
- krzysztof.kozlowski+dt@linaro.org, angelogioacchino.delregno@collabora.com, 
- sgoutham@marvell.com, will@kernel.org, netdev@vger.kernel.org, 
- andrew@lunn.ch, nbd@nbd.name
-In-Reply-To: <ae8ac05a56f479286bc748fb930c5643a2fbde10.1718696209.git.lorenzo@kernel.org>
-References: <cover.1718696209.git.lorenzo@kernel.org>
- <ae8ac05a56f479286bc748fb930c5643a2fbde10.1718696209.git.lorenzo@kernel.org>
-Message-Id: <171871036213.1272776.17317814792121610122.robh@kernel.org>
-Subject: Re: [PATCH v2 net-next 1/2] dt-bindings: net: airoha: Add EN7581
- ethernet controller
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V4 8/8] arm64: dts: qcom: sm8650: Add video and camera
+ clock controllers
+To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        "Stephen
+ Boyd" <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Taniya Das
+	<quic_tdas@quicinc.com>,
+        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+        Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>
+References: <20240602114439.1611-1-quic_jkona@quicinc.com>
+ <20240602114439.1611-9-quic_jkona@quicinc.com>
+ <0f13ab6b-dff1-4b26-9707-704ae2e2b535@linaro.org>
+Content-Language: en-US
+From: Jagadeesh Kona <quic_jkona@quicinc.com>
+In-Reply-To: <0f13ab6b-dff1-4b26-9707-704ae2e2b535@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: AJBLjWTGSKkcAk_lHOi8NonjZiUqewe2
+X-Proofpoint-GUID: AJBLjWTGSKkcAk_lHOi8NonjZiUqewe2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-18_02,2024-06-17_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1011
+ priorityscore=1501 lowpriorityscore=0 mlxscore=0 bulkscore=0 phishscore=0
+ spamscore=0 mlxlogscore=999 adultscore=0 impostorscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2405170001
+ definitions=main-2406180090
 
 
-On Tue, 18 Jun 2024 09:49:02 +0200, Lorenzo Bianconi wrote:
-> Introduce device-tree binding documentation for Airoha EN7581 ethernet
-> mac controller.
+
+On 6/13/2024 2:52 AM, Vladimir Zapolskiy wrote:
+> Hi Jagadeesh.
 > 
-> Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
-> ---
-> This patch is based on the following one not applied yet on clk tree:
-> dt-bindings: clock: airoha: Add reset support to EN7581 clock binding
-> https://patchwork.kernel.org/project/linux-clk/patch/ac557b6f4029cb3428d4c0ed1582d0c602481fb6.1718282056.git.lorenzo@kernel.org/
-> ---
->  .../bindings/net/airoha,en7581.yaml           | 106 ++++++++++++++++++
->  1 file changed, 106 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/net/airoha,en7581.yaml
+> On 6/2/24 14:44, Jagadeesh Kona wrote:
+>> Add device nodes for video and camera clock controllers on Qualcomm
+>> SM8650 platform.
+>>
+>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+>> Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+>> ---
+>>   arch/arm64/boot/dts/qcom/sm8650.dtsi | 26 ++++++++++++++++++++++++++
+>>   1 file changed, 26 insertions(+)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi 
+>> b/arch/arm64/boot/dts/qcom/sm8650.dtsi
+>> index 336c54242778..d964762b0532 100644
+>> --- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
+>> +++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
+>> @@ -4,10 +4,12 @@
+>>    */
+>>   #include <dt-bindings/clock/qcom,rpmh.h>
+>> +#include <dt-bindings/clock/qcom,sm8650-camcc.h>
+>>   #include <dt-bindings/clock/qcom,sm8650-dispcc.h>
+>>   #include <dt-bindings/clock/qcom,sm8650-gcc.h>
+>>   #include <dt-bindings/clock/qcom,sm8650-gpucc.h>
+>>   #include <dt-bindings/clock/qcom,sm8650-tcsr.h>
+>> +#include <dt-bindings/clock/qcom,sm8650-videocc.h>
+>>   #include <dt-bindings/dma/qcom-gpi.h>
+>>   #include <dt-bindings/firmware/qcom,scm.h>
+>>   #include <dt-bindings/gpio/gpio.h>
+>> @@ -3315,6 +3317,30 @@ opp-202000000 {
+>>               };
+>>           };
+>> +        videocc: clock-controller@aaf0000 {
+>> +            compatible = "qcom,sm8650-videocc";
+>> +            reg = <0 0x0aaf0000 0 0x10000>;
+>> +            clocks = <&bi_tcxo_div2>,
+>> +                 <&gcc GCC_VIDEO_AHB_CLK>;
+>> +            power-domains = <&rpmhpd RPMHPD_MMCX>;
+>> +            #clock-cells = <1>;
+>> +            #reset-cells = <1>;
+>> +            #power-domain-cells = <1>;
+>> +        };
+>> +
+>> +        camcc: clock-controller@ade0000 {
+>> +            compatible = "qcom,sm8650-camcc";
+>> +            reg = <0 0x0ade0000 0 0x20000>;
+>> +            clocks = <&gcc GCC_CAMERA_AHB_CLK>,
+>> +                 <&bi_tcxo_div2>,
+>> +                 <&bi_tcxo_ao_div2>,
+>> +                 <&sleep_clk>;
+>> +            power-domains = <&rpmhpd RPMHPD_MMCX>;
+> 
+> When you test the change on a particular board, do you get here any build
+> time warning messages like this one?
+> 
+>    clock-controller@ade0000: 'required-opps' is a required property
+>        from schema $id: 
+> http://devicetree.org/schemas/clock/qcom,sm8450-camcc.yaml#
+> 
+> I believe it's a valid warning, which has to be fixes, and as it says it
+> corresponds to the required property exactly.
 > 
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Thanks Vladimir for pointing this issue. I will check about this warning 
+and will fix this.
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/net/airoha,en7581.example.dts:27:18: fatal error: dt-bindings/reset/airoha,en7581-reset.h: No such file or directory
-   27 |         #include <dt-bindings/reset/airoha,en7581-reset.h>
-      |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-compilation terminated.
-make[2]: *** [scripts/Makefile.lib:427: Documentation/devicetree/bindings/net/airoha,en7581.example.dtb] Error 1
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1430: dt_binding_check] Error 2
-make: *** [Makefile:240: __sub-make] Error 2
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/ae8ac05a56f479286bc748fb930c5643a2fbde10.1718696209.git.lorenzo@kernel.org
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+Thanks,
+Jagadeesh
