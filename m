@@ -1,42 +1,47 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1092558B7;
-	Wed, 19 Jun 2024 17:48:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7DD820DCB;
+	Wed, 19 Jun 2024 17:49:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718819313; cv=none; b=i+Fn1kKMtIkkUNSexXoTB8UFh0Ts9c/kZTe0lwVBP+v1KfciuXh4criIX4sOF6W0232WmQ+FCoD9YM8gaKKmGcceXhRk9ZqT/VCVOPWjozGJJWdTkRi5Cu1IArVaHeAjM6W6tG2ejIrmLmqOim2Kik2vHWO/95soRT2QmruutuY=
+	t=1718819399; cv=none; b=q677Et0JMhC5YaYiE8HSeG/vfRqbSHzk94gh5MuZR1/vVw46Z9Nv+LCswgyLheeH6VZXwuWJwjiQgWA9xSd0O5eochDVCsIZIvl/gSiyiejFuZ7ehmzyBYVh4Ayo95RlF86MFElJbzxLLGL7orwyPt6xBM3/hJHgFu887oFYH00=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718819313; c=relaxed/simple;
-	bh=+H1y+nRL9sbiYxKUX3amRQOLD3k10dsKb7bEBzTZpwI=;
+	s=arc-20240116; t=1718819399; c=relaxed/simple;
+	bh=kfvIYYYXhENfQB2lgd26zgh9v3EDCNJsSZYFyuR+SBs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=phMPRBD/36X+uB8oa2/mbkjlZYqdabFkbS5IPzQf3qqWIQfWPMUAqHwsbIEH7MbTchf1KeGiuGGYI6y45WxqejLkIbsAGaXQdLFTmzcUgZXlrmkFRh+CGIo5AOWbXKSbNfpa2HAmXJXHkt6ZDuTbjymCjQRRB8ZNz9q4W0kPak0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l1yo5egO; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=E9xfi9Hn5X/UerrpkNpJoO5lZLUU3dplLQGkjvOX6lPa3zs2ELAZd48zok+LiJTPNmuUwTwx8fnjyoh4PJV7YUy1zlsyFNoGI7jBdfW1RIi06XWiYkq/hriPfYadGK6BLbf3omY5u/JxMTFuU9G/Tl3nghnWctreH91ZeEfltY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Lq75alNZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l1yo5egO"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA647C2BBFC;
-	Wed, 19 Jun 2024 17:48:31 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lq75alNZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2542C2BBFC;
+	Wed, 19 Jun 2024 17:49:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718819313;
-	bh=+H1y+nRL9sbiYxKUX3amRQOLD3k10dsKb7bEBzTZpwI=;
+	s=k20201202; t=1718819399;
+	bh=kfvIYYYXhENfQB2lgd26zgh9v3EDCNJsSZYFyuR+SBs=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=l1yo5egOUjPWySNaTqqx3kdECHlskTJiKvQomO2XPNhib4rCX2Ylr2sL+qowAgnMn
-	 TxlQ4sy0Ywyk54FmL/bw5vMvvobuy26b8CGlMZJcRa6DHYPik0hGl3LBbbNmWSnVwW
-	 djWFaVufj6TAwHRxAG/qfp6lewCaqpCUaDoUQX1+Cn+sMmf9ORUONtkCOkBMJSp4LE
-	 XaH4KpqyQklyNftv6ttlE2M2H+COTGR4UCumi4/iFosGa1ZdQXGp1eq8bo15OZk+Zn
-	 OwPG+wxioUxej4LcNOADzNhwwjLYDCeS7aLtDUnk7jP17W7A5TW57FNwQqvckDeWZr
-	 ctsdVEeRl2fzQ==
-Date: Wed, 19 Jun 2024 18:48:29 +0100
+	b=Lq75alNZQe0ZVzjGWgF9iCE3BtO2VXcDoyEYBDRjg74Hv+mLSeaHQDUDCE9Y/8Pnt
+	 ukJfIhxMLSEVfsIKELp6ElCVKI44Fdv7p2jhEqAFiHy2QTYsvSRcNo49LCizREWu0B
+	 DCXZG3/ICRNoynOhWCl+OfCvBwcIHEtiku1elw7dtdX4TKTwqNapHzPuWAfsf882Rr
+	 pdP/03Hj6f+mlTudw1BgBtxCaPACZOA7WCGsXwUFc++eHnp4T1MSMFMXgrDGBYQU1l
+	 A++L7ZmMVLgsNd9hpztW68SWwh3vyCRCsVsTEcBvg5E2zRvnfVGOcy6kxSLfebk3P/
+	 VLRy2kM2lO2dw==
+Date: Wed, 19 Jun 2024 18:49:53 +0100
 From: Conor Dooley <conor@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
-	marek.vasut+renesas@mailbox.org
-Subject: Re: [PATCH] dt-bindings: clock: rcar-gen2: Remove obsolete header
- files
-Message-ID: <20240619-explain-sip-97568f8ac726@spud>
-References: <d4abb688d666be35e99577a25b16958cbb4c3c98.1718796005.git.geert+renesas@glider.be>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: krzk+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+	robh@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com,
+	jassisinghbrar@gmail.com, garmin.chang@mediatek.com,
+	houlong.wei@mediatek.com, Jason-ch.Chen@mediatek.com,
+	amergnat@baylibre.com, Elvis.Wang@mediatek.com,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, kernel@collabora.com
+Subject: Re: [PATCH 3/3] dt-bindings: mailbox: mediatek: Avoid clock-names on
+ MT8188 GCE
+Message-ID: <20240619-sleeve-citable-a3dc10e5cd4f@spud>
+References: <20240619085322.66716-1-angelogioacchino.delregno@collabora.com>
+ <20240619085322.66716-3-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -44,45 +49,62 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="DHmCkqrhx6sMv4JG"
+	protocol="application/pgp-signature"; boundary="cyPzD5ebqalhMMLd"
 Content-Disposition: inline
-In-Reply-To: <d4abb688d666be35e99577a25b16958cbb4c3c98.1718796005.git.geert+renesas@glider.be>
+In-Reply-To: <20240619085322.66716-3-angelogioacchino.delregno@collabora.com>
 
 
---DHmCkqrhx6sMv4JG
+--cyPzD5ebqalhMMLd
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 19, 2024 at 01:22:46PM +0200, Geert Uytterhoeven wrote:
-> The clock definitions in <dt-bindings/clock/r8a779?-clock.h> were
-> superseded by those in <dt-bindings/clock/r8a779?-cpg-mssr.h> a long
-> time ago.
+On Wed, Jun 19, 2024 at 10:53:22AM +0200, AngeloGioacchino Del Regno wrote:
+> Add mediatek,mt8188-gce to the list of compatibles for which the
+> clock-names property is not required.
+
+Because, I assume, it has some internal clock? Why do either of these
+things have no clock? Doesn't the internal logic require one?
+
 >=20
-> The last DTS user of these files was removed in commit 362b334b17943d84
-> ("ARM: dts: r8a7791: Convert to new CPG/MSSR bindings") in v4.15.
-> Driver support for the old bindings was removed in commit
-> 58256143cff7c2e0 ("clk: renesas: Remove R-Car Gen2 legacy DT clock
-> support") in v5.5, so there is no point to keep on carrying these.
+> Fixes: f2b53c295620 ("dt-bindings: mailbox: mediatek,gce-mailbox: add mt8=
+188 compatible name")
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
+abora.com>
+> ---
+>  .../devicetree/bindings/mailbox/mediatek,gce-mailbox.yaml     | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
 >=20
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> diff --git a/Documentation/devicetree/bindings/mailbox/mediatek,gce-mailb=
+ox.yaml b/Documentation/devicetree/bindings/mailbox/mediatek,gce-mailbox.ya=
+ml
+> index cef9d7601398..55d4c34aa4b4 100644
+> --- a/Documentation/devicetree/bindings/mailbox/mediatek,gce-mailbox.yaml
+> +++ b/Documentation/devicetree/bindings/mailbox/mediatek,gce-mailbox.yaml
+> @@ -62,7 +62,9 @@ allOf:
+>          properties:
+>            compatible:
+>              contains:
+> -              const: mediatek,mt8195-gce
+> +              enum:
+> +                - mediatek,mt8188-gce
+> +                - mediatek,mt8195-gce
+>      then:
+>        required:
+>          - clock-names
+> --=20
+> 2.45.2
+>=20
 
-If U-Boot is not using them,
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-(and if it is, another task for Marek I guess!)
-
-Thanks,
-Conor.
-
---DHmCkqrhx6sMv4JG
+--cyPzD5ebqalhMMLd
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnMZ7QAKCRB4tDGHoIJi
-0sVNAP9XUqM3g9KnW52zPaLKAWsof5aGQZou1n3opr4EX3WvBwEA4gTj6X9xFd1X
-9IHy60JhSDC8V5IjTADrfy/yET7NxAs=
-=t8to
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnMaQQAKCRB4tDGHoIJi
+0qzoAQCbPlRk5egc83ziM5jXYPCmJMaADhzH2l5S9aOOvAPhAQEA/qWFFnhAnsFU
+k4cpnxAR7PDqgTBWGHNsR9LvHRcEywg=
+=/di+
 -----END PGP SIGNATURE-----
 
---DHmCkqrhx6sMv4JG--
+--cyPzD5ebqalhMMLd--
