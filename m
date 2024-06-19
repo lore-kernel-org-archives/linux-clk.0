@@ -1,195 +1,485 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E4AD208B0;
-	Wed, 19 Jun 2024 07:37:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA61D770EF;
+	Wed, 19 Jun 2024 08:41:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718782623; cv=none; b=UQV1tptvxI/hxQwzZ2YI2QMYn1nx5IVXYcM5foqdk+lnVlcUCkt27+MmJihwH9Kws9MA50y5f/dXapwfdrGvOOdUfGcnL6Q3K4vp+g8fvpZsbh3GEJorOBmAMfxUVkx9wg4cSXMtAUgyCzIdW1WwwvFEVV3BLcy+wdkGMivIdjI=
+	t=1718786471; cv=none; b=fGnBZbZgiFMZ4uoKTTCB9ulVRnDQoQspybY4xzl9S8z5iPOZllC8uRiiWTtNNLlbcPc2/AOS11Ult1sf/3hXrzbBz/bKCa+HOk597LeB5XA7fgyq29/5BFcBQ3/8ntgq68AqUrzd2OHuxg3ty2TGcF4NBd220Yn0ksTk6nuC580=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718782623; c=relaxed/simple;
-	bh=f7oSllmrd35P9uGR4eisbtJTPzm/dPPuS0q8bcjDQv8=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MhPll4HPpusZ4DL38SHjesR4B/y7JHskUNRjVmuTLGbcs0+0XeHCAl16JnZj06Js1chPdtpRF98BvJ1XdL2WolOVOKDClwfzfFSRT5mRcBG+zPF7vqEvFezy6nouQ6mT2rn6PLJTW/4kGdKZeFmV4E3UkCprnvt6/LE7dXO1c2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hH0J0IcK; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1718786471; c=relaxed/simple;
+	bh=Tlc4o20O3Cf3fNPjxmSzEo7xyl3wYZlfqx6ME1Sq/u8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=PNIQSeWhqMyIpFMIUlB6NEi8wqKmGiOA3DeIaPq2UE6DLQ/omh2azdKItE5BFIM+BiM64fpV/EJmfLfaThuleKLhnUDwjcowuM+LO0UD8QLSNRlVJhmfteiXKCE0vIgtmkZyrJ5dRJOzcYfqTDByazJ8Z3iTJLNijEcP6q4Sjs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=C7P5+XFx; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hH0J0IcK"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45ILbEpH007379;
-	Wed, 19 Jun 2024 07:36:56 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=tedI/wDgAe2P2gAwrsKDr6tK
-	yUDAAtGPLir7ppJx4as=; b=hH0J0IcKos3rnNxyMLyPbiT1gWcaGvAnOEL/aWsx
-	FqceVDJrxBXW4nuGNJswI9ADyEfBgtFZwQPvg6gRk0ESLQWCPNXXutS5TxM1osqT
-	fWxYEf72QmvA5+/rs1L4UNSJy55RCOjbBM5ELXxxoyt90IR5mb8nD4DmvoZ8Knej
-	GwaYyzowvG00oC9Q2pEgWwOslSxM7uOn79Huc83nlWfJW8lv+jx6zASy0/ncTDKV
-	2LQF6/dTb2zvv4Fxelyg7iAEEuUEI3HAPbg6Wy03ePKm+3d+wJWvRuoZjIS4+nC6
-	pcvXKNpGRSO+uCbnM6MwzARdEatEpQR/6uFpzg9szQ8P2g==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yujag0yh0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Jun 2024 07:36:56 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45J7asqg007860
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Jun 2024 07:36:54 GMT
-Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 19 Jun 2024 00:36:50 -0700
-Date: Wed, 19 Jun 2024 13:06:46 +0530
-From: Varadarajan Narayanan <quic_varada@quicinc.com>
-To: Georgi Djakov <djakov@kernel.org>
-CC: Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <quic_anusha@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH v9 6/6] arm64: dts: qcom: ipq9574: Add icc provider
- ability to gcc
-Message-ID: <ZnKKjomRQtJS2ZgL@hu-varada-blr.qualcomm.com>
-References: <ZjshR0ekcn0gxwOa@hu-varada-blr.qualcomm.com>
- <CAA8EJpqENsojPQmCbma_nQLEZq8nK1fz1K0JdtvLd=kPrH_DBw@mail.gmail.com>
- <1a08ef42-b52f-4c97-90d7-e7fdee7725b4@linaro.org>
- <Zmgb+OjdBNw71sC1@hu-varada-blr.qualcomm.com>
- <176137e5-6312-4d46-97b6-c4494bc1c61b@kernel.org>
- <ZmlAdETV0+6Md8HC@hu-varada-blr.qualcomm.com>
- <e24cfd23-6f77-46a0-b020-9cb3daef6930@kernel.org>
- <Zml4RQ5R5s3mVMnI@hu-varada-blr.qualcomm.com>
- <8e32a8be-dbbf-49ca-92a1-2fe3c8bfb571@kernel.org>
- <ZmpsOdsl9AMTSH88@hu-varada-blr.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="C7P5+XFx"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 63F8DFF808;
+	Wed, 19 Jun 2024 08:41:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1718786465;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6smco4//SLkqw6hV9ZxCBplt++bEV0FpjNrJ/tJ1nf8=;
+	b=C7P5+XFxDVwPxkDNEsUfr1h871Yj7fHVgWK1CNifSWsx9tF0D4yitNIa9o6VCW7PDIPzmZ
+	3tCc/T+weiLe8BbSBWrQBHFmH1bbBYUaH5jr8dcC5rawQbBYXPpO1UkJJ/NRceOnwBx3FV
+	38DyWclVdfrP5JXjmYuN1EE7sZFJw0VuP/bea/imnL1gMoOGWpOd0KhxmqqtDqL6ywSARl
+	8V12fQdEFO3d4i6RgIcmryAmppJqrUO3OYLjd6nTuswj/vQCVk+w/iqit3kRyRGLTINyJK
+	q2PbAjb7vGmptUeUwY2tnm5FDXxoGRRMDC8D8Z+ui6WBzH6wVLktrEQi113oqQ==
+Date: Wed, 19 Jun 2024 10:41:01 +0200
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: Lucas Stach <l.stach@pengutronix.de>, Laurent Pinchart
+ <laurent.pinchart@ideasonboard.com>, Marek Vasut <marex@denx.de>, Stephen
+ Boyd <sboyd@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+ Chen-Yu Tsai <wens@csie.org>, linux-clk@vger.kernel.org, Ulf Hansson
+ <ulf.hansson@linaro.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Kevin
+ Hilman <khilman@kernel.org>, linux-pm@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, Fabio Estevam <festevam@denx.de>,
+ Jacky Bai <ping.bai@nxp.com>, Peng Fan <peng.fan@nxp.com>, Shawn Guo
+ <shawnguo@kernel.org>, Shengjiu Wang <shengjiu.wang@nxp.com>,
+ linux-imx@nxp.com, Ian Ray <ian.ray@gehealthcare.com>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, =?UTF-8?B?SGVydsOp?= Codina
+ <herve.codina@bootlin.com>, Luca Ceresoli <luca.ceresoli@bootlin.com>
+Subject: Re: Clocks vs. Power Domains circular dependency
+Message-ID: <20240619104101.3060b153@xps-13>
+In-Reply-To: <20240527181928.4fc6b5f0@xps-13>
+References: <20240527181928.4fc6b5f0@xps-13>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <ZmpsOdsl9AMTSH88@hu-varada-blr.qualcomm.com>
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: q23CxMHp9g3T2Lbye7KLJTHea_kt33mb
-X-Proofpoint-ORIG-GUID: q23CxMHp9g3T2Lbye7KLJTHea_kt33mb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-19_02,2024-06-17_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- phishscore=0 mlxscore=0 adultscore=0 mlxlogscore=999 impostorscore=0
- spamscore=0 bulkscore=0 malwarescore=0 clxscore=1015 suspectscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406190055
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Thu, Jun 13, 2024 at 09:19:13AM +0530, Varadarajan Narayanan wrote:
-> On Wed, Jun 12, 2024 at 03:52:51PM +0300, Georgi Djakov wrote:
-> > On 12.06.24 13:28, Varadarajan Narayanan wrote:
-> > > On Wed, Jun 12, 2024 at 11:48:17AM +0300, Georgi Djakov wrote:
-> > > > On 12.06.24 9:30, Varadarajan Narayanan wrote:
-> > > > > On Tue, Jun 11, 2024 at 02:29:48PM +0300, Georgi Djakov wrote:
-> > > > > > On 11.06.24 12:42, Varadarajan Narayanan wrote:
-> > > > > > > On Thu, Jun 06, 2024 at 04:06:01PM +0200, Konrad Dybcio wrote:
-> > > > > > > > On 8.05.2024 10:10 AM, Dmitry Baryshkov wrote:
-> > > > > > > > > On Wed, 8 May 2024 at 09:53, Varadarajan Narayanan
-> > > > > > > > > <quic_varada@quicinc.com> wrote:
-> > > > > > > > > >
-> > > > > > > > > > On Fri, May 03, 2024 at 04:51:04PM +0300, Georgi Djakov wrote:
-> > > > > > > > > > > Hi Varada,
-> > > > > > > > > > >
-> > > > > > > > > > > Thank you for your work on this!
-> > > > > > > > > > >
-> > > > > > > > > > > On 2.05.24 12:30, Varadarajan Narayanan wrote:
-> > > > > > > > > > > > On Tue, Apr 30, 2024 at 12:05:29PM +0200, Konrad Dybcio wrote:
-> > > > > > > > > > > > > On 25.04.2024 12:26 PM, Varadarajan Narayanan wrote:
-> > > > > > > > > > > > > > On Tue, Apr 23, 2024 at 02:58:41PM +0200, Konrad Dybcio wrote:
-> > > > > > > > > > > > > > >
-> > > > > > > > > > > > > > >
-> > > > > > > > > > > > > > > On 4/18/24 11:23, Varadarajan Narayanan wrote:
-> > > > > > > > > > > > > > > > IPQ SoCs dont involve RPM in managing NoC related clocks and
-> > > > > > > > > > > > > > > > there is no NoC scaling. Linux itself handles these clocks.
-> > > > > > > > > > > > > > > > However, these should not be exposed as just clocks and align
-> > > > > > > > > > > > > > > > with other Qualcomm SoCs that handle these clocks from a
-> > > > > > > > > > > > > > > > interconnect provider.
-> > > > > > > > > > > > > > > >
-> > > > > > > > > > > > > > > > Hence include icc provider capability to the gcc node so that
-> > > > > > > > > > > > > > > > peripherals can use the interconnect facility to enable these
-> > > > > > > > > > > > > > > > clocks.
-> > > > > > > > > > > > > > > >
-> > > > > > > > > > > > > > > > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > > > > > > > > > > > > > > > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> > > > > > > > > > > > > > > > ---
-> > > > > > > > > > > > > > >
-> > > > > > > > > > > > > > > If this is all you do to enable interconnect (which is not the case,
-> > > > > > > > > > > > > > > as this patch only satisfies the bindings checker, the meaningful
-> > > > > > > > > > > > > > > change happens in the previous patch) and nothing explodes, this is
-> > > > > > > > > > > > > > > an apparent sign of your driver doing nothing.
-> > > > > > > > > > > > > >
-> > > > > > > > > > > > > > It appears to do nothing because, we are just enabling the clock
-> > > > > > > > > > > > > > provider to also act as interconnect provider. Only when the
-> > > > > > > > > > > > > > consumers are enabled with interconnect usage, this will create
-> > > > > > > > > > > > > > paths and turn on the relevant NOC clocks.
-> > > > > > > > > > > > >
-> > > > > > > > > > > > > No, with sync_state it actually does "something" (sets the interconnect
-> > > > > > > > > > > > > path bandwidths to zero). And *this* patch does nothing functionally,
-> > > > > > > > > > > > > it only makes the dt checker happy.
-> > > > > > > > > > > >
-> >
-> > [..]
-> >
-> > >
-> > > nsscc_ipq9574 was not using icc_sync_state. After adding that, I
-> > > can see the following messages printed from icc_sync_state. I
-> > > also added a print to confirm if 'p->set(n, n);' is called.
-> >
-> > Ok, that's good! So now when all providers are using sync_state, we
-> > can go back to the initial comment from Konrad. I think you should
-> > re-check the tests that you did, as the current results just lead to
-> > more questions than answers. Maybe it was just the sync-state that
-> > was missing, or there is some other issue.
->
-> Georgi,
->
-> Thanks very much for the clarifications. Will re-test the patches
-> and update the thread.
->
-> -Varada
+Hello,
 
-Georgi,
+miquel.raynal@bootlin.com wrote on Mon, 27 May 2024 18:19:28 +0200:
 
-Tested the patches with both gcc and nsscc providers having
-'sync_state' set to icc_sync_state.
+> Hello all,
+>=20
+> I would like to re-open the clocks vs. runtime PM/power domains topic
+> that is currently still problematic on i.MX8. I am mentioning a
+> specific SoC here but the problem is hardware agnostic and any SoC with
+> a sufficiently advanced power scheme may suffer from the same issues.
+> When (mainline) Linux is running, we get lockdep warnings because of
+> circular dependencies between the clock and power domain subsystems, as
+> well as real deadlocks.
+>=20
+> I don't have the full history but here is an interesting attempt at
+> fixing this by Marek end of 2022:
+> https://lore.kernel.org/all/Y1cs++TV2GCuh4tS@pendragon.ideasonboard.com/
+> And here is an interesting discussion that happened on the mailing list
+> following a second attempt from Marek as well:
+> https://patchwork.kernel.org/project/linux-pm/patch/20221108013517.749665=
+-1-marex@denx.de
+>=20
+> Looking more closely at this problem, there is indeed a software design
+> issue. Both the clock and power domain subsystems are recursive and
+> interdependent, the power domain subsystem being sometimes accessed
+> through runtime PM calls.
+>=20
+> [TLDR: I'm drafting something, but issue #4 at the bottom is blocking]
 
-	# dmesg | grep synced
-	[    3.029820] qcom,gcc-ipq9574 1800000.clock-controller: interconnect provider is in synced state
-	[    3.470106] qcom,nsscc-ipq9574 39b00000.clock-controller: interconnect provider is in synced state
+I understand getting involved in this thread is a bit tiresome :-), I'd
+really like to get some feedback from the interested parties, even if
+the feedback is not on the technical part, if this issue could get a
+bit of support it would already be a plus.
 
-I can see that icc_sync_state is getting called and clocks
-related to paths with zero bandwidth are getting disabled.
+Also, I am really annoyed by the issue mentioned below, in case someone
+wants^W has the willingness to look into it. In any case I might try
+to go further myself.
 
-Will post the NSSCC patches to get the full picture.
+Thanks!
+Miqu=C3=A8l
 
--Varada
+(keeping the context below, just in case)
 
->
-> > > nodes. Please refer to this patch
-> > >
-> > > 	[PATCH V5 4/6] arm64: dts: qcom: ipq9574: Add PCIe PHYs and controller nodes
-> > > 	https://lore.kernel.org/linux-arm-msm/20240512082858.1806694-5-quic_devipriy@quicinc.com/
-> > >
-> > > Sorry, did not post the nsscc related patches since this base ICC
-> > > patch hasn't reached closure. The nsscc patches are very similar
-> > > to this gcc based series. Wanted to gather the issues raised in
-> > > this and address them in nsscc so that it is in a more acceptable
-> > > shape.
-> > >
-> > > Thanks
-> > > Varada
-> >
->
+> ** THE ISSUE: FROM A CLOCK PERSPECTIVE **
+>=20
+> Clock changes (not only clk_prepare(), but getting/setting the rates as
+> well, re-parenting and so on) involve runtime resuming part of the clock
+> tree. Eg. registers for accessing/configuring a clock might be in a
+> power domain that must be resumed.
+>=20
+> Also, the clk subsystem is mostly written using recursivity, so for
+> instance preparing a clock works like this:
+>=20
+> /*
+>  * Same applies to the other clk consumer calls, but instead of going
+>  * through the parents, other parts of the clk tree are accessed (the
+>  * children subtree, the new parent tree, or both). So the prepare
+>  * situation is one of the simplest in this regard, but the following
+>  * basically applies to most consumer operations.
+>  */
+> clk_prepare(clk) {
+> 	clk_prepare(clk->parent);
+> 	runtime_resume(clk->domain);
+> 	clk->ops->prepare();
+> }
+>=20
+> Now if we add another level of complexity, accesses to the clock tree
+> are serialized by the clk_prepare mutex, and runtime PM calls are also
+> protected by a global genpd lock:
+>=20
+> clk_prepare(clk) {
+> 	mutex_lock(clk_prepare);
+> 	clk_prepare(clk->parent); /* clk_prepare is reentrant, so this is "fine"=
+ */
+> 	runtime_resume(clk->domain);
+> 	clk->ops->prepare();
+> 	mutex_unlock(clk_prepare);
+> }
+>=20
+> runtime_resume(domain) {
+> 	mutex_lock(genpd);
+> 	domain->ops->resume();
+> 	mutex_unlock(genpd);
+> }
+>=20
+> If we list the locking events in order, we will:
+> - acquire the clk lock
+> - acquire the genPD lock
+> - release the genPD lock
+> - release the clk lock
+>=20
+> ** THE ISSUE: FROM A POWER DOMAIN PERSPECTIVE **
+>=20
+> Now let's see the other side, from the power domain perspective. We can
+> imagine several situations where these locks are acquired in the reverse
+> order. From a hardware standpoint there is a prerequisite (met in the
+> i.MX8 in several places): a power domain is fed by a clock, hence
+> enabling the power domain also implies enabling the feeding clock.
+>=20
+>     #1: Probing/enabling peripherals involve attaching and powering up
+>     their power domain. If the power domain is fed by a clock the power
+>     domain implementation will request clock changes.
+>=20
+>     #2: Suspending devices happens asynchronously in a
+>     worker. Suspending a device implies turning off its power domain,
+>     and hence possibly reaching some clock internals as well.
+>=20
+> In these cases we will play with locks in this order:
+> - acquire the genPD lock
+> - acquire the clk lock
+> - release the clk lock
+> - release the genPD lock
+>=20
+> Here are two typical examples: power domains playing with upstream
+> clocks:
+> https://elixir.bootlin.com/linux/latest/source/drivers/pmdomain/imx/imx8m=
+p-blk-ctrl.c#L538
+> https://elixir.bootlin.com/linux/latest/source/drivers/pmdomain/imx/gpcv2=
+.c#L340
+>=20
+> ** CURRENT UNDERSTANDING **
+>=20
+> Clock changes and runtime PM calls can happen at any moment and if your
+> hardware is in a bad mood a dead lock *will* occur. I myself only
+> experienced deadlocks involving the clock worker disabling unused clocks
+> at the end of the boot, but chances are way too high that systems will
+> lock up at some point in production environment because of this circular
+> dependency between the clock and power domain locks. It is possible to
+> avoid the deadlock I experienced by disabling the clk_disable_unused
+> worker and keeping all clocks enabled, but we will all agree that this
+> is a very sub-optimal and extremely unsatisfying solution for a SoC
+> explicitly designed for optimized power consumptions.
+>=20
+> There is no magic, we must dismangle the situation and prevent either
+> one lock ordering or the other from happening. So we should ask
+> ourselves: what lock order seems the most legitimate?
+>=20
+>     #1: Do clocks really depend on power domains?
+>=20
+>     -> Clock controllers may be part of a power domain, hence the power =
+=20
+>     domain must be enabled in order to access the clock controller
+>     registers.
+>=20
+>     -> Same applies if a clock is generated by an external device =20
+>     (eg. an audio codec) and this codec is accessible through a serial
+>     bus: the bus controller must be resumed in order to configure the
+>     code, and the bus controller may be in its own power domain.
+>=20
+>     #2: Do power domains really depend on clocks?
+>=20
+>     -> Somehow yes. Most power domains are not explicitly "driven" by =20
+>     the upstream clocks described in device trees, ie: keeping these
+>     clocks gated does not prevent the use nor the access to the power
+>     domains per-se. However, the power domains may redistribute the
+>     clocks to the peripherals inside and somehow becoe themselves clock
+>     controllers (even though so far they are not flagged like that in
+>     any DTS). Hence it appears legitimate that they might want to play
+>     with the clock API.
+>=20
+>     DTSI example:
+>     https://elixir.bootlin.com/linux/latest/source/arch/arm64/boot/dts/fr=
+eescale/imx8mp.dtsi#L1799
+>=20
+>     TRM extract:
+>=20
+>       13.2.1 Overview
+>       The MEDIAMIX domain contains control and status registers known as
+>       Media Block Control (MEDIA BLK_CTRL). These registers have
+>       miscellaneous top-level controls for peripherals within the MEDIAMIX
+>       domain. Some of these controls includes clocking, [...]
+>=20
+>       13.2.2: Clocks and Resets
+>       The Media BLK_CTRL contains clock distribution and gating controls,
+>       as well as reset handling to several of the MEDIAMIX peripherals.
+>=20
+>     -> One specificity of the i.MX8 is that many power domains are =20
+>     also described with a "clocks" property which list clocks that are
+>     directly connected to the peripherals inside the power domain
+>     instead. The reason for this inaccurate description is: toggling a
+>     power domain on or off seems to involve propagating reset signals,
+>     which only happens correctly if a few specific clocks feeding the
+>     targeted peripherals are actually running. Then, as part of the
+>     on/off sequence, it is required that these clocks get enabled (and
+>     then disabled) earlier than in their respective probe functions,
+>     see:
+>     - ae1d2add26a4 ("soc: imx: gpcv2: handle reset clocks")
+>     - https://elixir.bootlin.com/linux/latest/source/arch/arm64/boot/dts/=
+freescale/imx8mp.dtsi#L795
+>     - https://elixir.bootlin.com/linux/latest/source/arch/arm64/boot/dts/=
+freescale/imx8mp.dtsi#L857
+>=20
+> It is hard to tell, without more details from NXP, how difficult it
+> would be to switch from the #2 "wrong" power domain DTS description to
+> something more accurate and still get the proper init sequence. Although
+> maybe doing that would not be very relevant as there are anyway real
+> clock dependencies from some power domains, as expressed in the SoC
+> manual quoted above.
+>=20
+> #1 however, despite being a physical constraint, seems also tightly
+> related to the software design: runtime PM calls were introduced in the
+> clock subsystem initially for two reasons:
+> - The clock is itself in an area of the SoC that needs to be powered on
+>   before accessing its registers.
+> - The above situation also applies to all the possible parents of the
+>   clock.
+> See: 9a34b45397e5 ("clk: Add support for runtime PM")
+> https://lore.kernel.org/all/1503302703-13801-2-git-send-email-m.szyprowsk=
+i@samsung.com
+> The clock core being highly recursive, it was way easier (and also
+> probably cleaner) to include nested runtime PM calls like this. But in
+> practice, we could imagine moving the resume path outside of the clock
+> lock and avoid "by software" the conditions under which the two locks
+> are taken.
+>=20
+> Note: These suggestions have already been made by Ulf:
+> https://patchwork.kernel.org/project/linux-pm/patch/20221108013517.749665=
+-1-marex@denx.de/#25092554
+>=20
+> ** APPROACH UNDER EVALUATION **
+>=20
+> As hinted above, maybe we should clarify the conditions under which RPM
+> calls can be made in the clock subsystem, and instead of including the
+> RPM calls within the clock sub-calls, we could consider, on a
+> case-by-case basis:
+> - listing what needs to be resumed for the whole clock operation to
+>   succeed first,
+> - then runtime resume the needed domains outside of the main subsystem
+>   lock
+> - before continuing with the clock operations and eventually acquiring
+>   the main clk_prepare lock.
+> IOW, avoiding the runtime PM calls with the subsystem lock acquired.
+>=20
+> Let's imagine the following situation: clkA (in power domain A) is
+> parent of clkB (in power domain B). Like above, let's try to picture the
+> call stack:
+>=20
+>  clk_prepare(clkB) {
+>  	mutex_lock(clk_prepare);
+>  	clkA =3D clkB->parent;
+>  	clk_prepare(clkA) {
+>  		mutex_lock(clk_prepare); /* fine, it's recursive */
+>  		runtime_resume(clkA->domain); // BANG
+>  		clkA->ops->prepare();
+>  		mutex_unlock(clk_prepare); /* does nothing */
+>  	}
+>  	runtime_resume(clkB->domain); // BANG again
+>  	clkB->ops->prepare();
+>  	mutex_unlock(clk_prepare);
+>  }
+>=20
+> Now, let's imagine we know what clocks are going to be accessed and thus
+> need to be runtime resumed. Maybe we could do that in advance. The logic
+> could become:
+>=20
+>  clk_prepare(clkB) {
+> +	list =3D list_useful_clocks_for_prepare(clkB);
+> +	runtime_resume(list);
+>  	mutex_lock(clk_prepare);
+>  	clkA =3D clkB->parent;
+>  	clk_prepare(clkA) {
+>  		mutex_lock(clk_prepare); /* fine, it's recursive */
+> -		runtime_resume(clkA->domain);
+>  		clkA->ops->prepare();
+>  		mutex_unlock(clk_prepare); /* does nothing */
+>  	}
+> -	runtime_resume(clkB->domain);
+>  	clkB->ops->prepare();
+>  	mutex_unlock(clk_prepare);
+>  }
+>=20
+> In the above example, the "list_useful_clocks_for_prepare()" is a bit
+> mysterious and has two aspects: first it needs to guess what clocks are
+> needed: this is addressed in the next paragraph. And second, we need to
+> make sure the tree does not change until the lock is acquired, this is
+> addressed in the "#1: Clock tree changes" chapter below.
+>=20
+> So, regarding the list itself, any operation on any clock in the tree
+> involves the said clock plus one or several clock "lists" among the
+> following choices:
+>=20
+> A- All its parents, through the clk_core->parent link.
+>    =3D> Typically during prepare/unprepare operations. =20
+>=20
+> B- All its children and sub children, through all the sub
+>    clk_core->children hlist.
+>    =3D> Typically during rate operations (get and set, see note below). =
+=20
+>=20
+> C- Parents and children of the new parent.
+>    =3D> In case of re-parenting, explicitly asked or as a result of a rat=
+e =20
+>    change.
+>=20
+> Side note: the clock core does not always remember the rate of the
+> clocks that were already configured. TBH I did not understand why,
+> because it seems trivial to do. Instead the core physically accesses the
+> clock controller which involves a lot of runtime PM handling. In
+> practice, this is not always the case but some clock controller drivers
+> request to be "asked" to read the actual rate each time. Problem is,
+> they re-calculate the rate and then also propagate the result across all
+> the children, which involves massive amounts of (IMHO) useless
+> wake-ups. This honestly feels a bit sub-optimal, without understanding
+> better why this is for.
+>=20
+> ** DRAWBACKS OF THIS APPROACH **
+>=20
+> #1: Clock tree changes
+>=20
+> Of course there was a point in making the runtime resume calls inside
+> the clk_prepare lock: the lock protects against clk tree changes. But
+> somehow this is still manageable, we could:
+> - acquire the lock
+> - parse the list of relevant clocks/reference counting them and save
+>   them in a list
+> - release the lock
+> - runtime resume the clocks in the list
+> - acquire the lock again
+> - compare the actual tree with the list and try again the whole
+>   operation if something changed.
+>=20
+> Estimated status: manageable.
+>=20
+> #2: Re-Parenting
+>=20
+> When performing almost any clock operation, we already know in advance
+> what clocks in the tree will be impacted and thus can precisely guess
+> what needs to be runtime resumed in advance. But this is not working
+> when re-parenting is involved, as the re-parenting opportunity is only
+> tried very deeply in the call stack far beyond acquiring the main lock.
+>=20
+> One idea to workaround the situation was to somehow save the new parent
+> handle, propagate a specific error up through the call stack (typically,
+> -EAGAIN), up to the point where we can process this error, perform a new
+> round of runtime resume calls over the new parent tree and retry the
+> operation.
+>=20
+> Estimated status: manageable.
+>=20
+> #3: Debug dumps might slightly get out of sync
+>=20
+> There are a couple of situations where all the clocks (or all the orphan
+> clocks, or the root clocks) will be "shown/dumped" by the user. Problem
+> is: it is fine to show all the parents/children of a single clock
+> (typically all the children of one root clock), but involve a lot of
+> code duplication to cover eg. all the root clocks at the same time. If
+> we decide that this is okay, we can iterate over these root clocks,
+> releasing the lock between them, which is obviously racy.
+>=20
+> Estimated status: probably manageable, maybe not so important.
+>=20
+> #4: Clock core recursivity and unrelated clocks
+>=20
+> This is the main drawback with this approach, and that is what
+> motivated this letter in the first place.
+>=20
+> The clock core is recursive. At first I thought it was useful to
+> simplify the locking mechanism inside the core itself, in particular
+> because the core is mainly built off recursive functions, but there are
+> two actual use cases that are much harder to solve. They are mentioned
+> in the commit introducing the reentrance mechanism:
+> 533ddeb1e86f ("clk: allow reentrant calls into the clk framework")
+>=20
+> Basically, besides simplifying the locking mechanism in the core itself:
+>=20
+> A: Enabling a clock may require enabling a "totally unrelated" peripheral
+>    first. Typically, an I2C audio codec that would need to be configured
+>    in order to produce a clock. In the ->prepare() hook implementation,
+>    one can expect some kind of i2c_xfer() call, which in turns will
+>    runtime resume the I2C controller used to access the codec. So we end
+>    up acquiring again the power domain lock with the clk_prepare lock
+>    taken.
+>=20
+> B: There is one clock driver (tegra/clk-dfll.c) which performs pinctrl
+>    changes inside clock operations. If the platform is runtime PM
+>    enabled, the pin controller may require being runtime resumed and
+>    once again we might fall into the same recursivity issue.
+>=20
+> I don't see any positive outcome in trying to guess nor discover these
+> cases dynamically and if we want to address that I believe some kind of
+> static declarations must be done by the clock controller drivers (and
+> trying to do that now will inevitably lead to regressions if we miss
+> a single case).
+>=20
+> Estimated status: problematic.
+>=20
+> ** CONCLUSION AND QUESTIONS **
+>=20
+> I've actually drafted the idea explained above. I need more work to get
+> it up to a working state, as the whole clock core must be converted
+> to this logic in order for it to work. I believe this approach is
+> relevant, but it still has blind spots we need to figure out (#4 above)
+> for which I would like to get some feedback.
+>=20
+> Maybe however the approach will not be acknowledged and another
+> direction will be pointed. In this case I would be pleased to discuss it
+> and see what we can do. In all cases, the i.MX8 issue is real and must
+> be fixed. If we don't do it properly, soon another power-oriented SoC
+> will also show similar defects. Basically any Linux based operating
+> system running on hardware featuring similarities is subject to deadlock
+> at any moment.
+>=20
+> I hope this report will be precise enough and raise ideas to help going
+> forward and finally address this issue that has been opened since
+> 2022 (at least) in a rather satisfying way.
+>=20
+> Thanks,
+> Miqu=C3=A8l
+>=20
+> PS: There are maybe other ways. Of course I had to pick the one that
+> felt the more promising, even though I initially considered a couple
+> other alternatives:
+> * Addressing the issue in the power domain subsystem ? Seemed less
+>   relevant than in the clock core, because of the physical
+>   dependencies. But please convince me :-)
+> * I saw comments about changing the clk_prepare lock semantics, but we
+>   will always need to serialize accessed to the clock tree and after
+>   digging a bit in the clock core I don't see any way out with this
+>   solution.
+> * Preventing power domains from gathering clocks? Also a possible
+>   approach maybe, even though the situation listed above are far from
+>   straightforward to address in this case.
+
