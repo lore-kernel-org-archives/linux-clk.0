@@ -1,120 +1,131 @@
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06A80155C80
-	for <linux-clk@vger.kernel.org>; Wed, 19 Jun 2024 18:15:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06052157E9F;
+	Wed, 19 Jun 2024 19:08:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718820911; cv=none; b=hm0lmou4LM4slC+y+uKp8Yr1AjVnS/fc5+b7EkgMdfrFV+6yuvzEJQz2yyHHMCeTlyFmg1aoElSYhaSmeVYU+uVNQTWN+RrlejjVj16rYOnPxD2lfthMKK5gS3BGxAFUIO8rgd6OMUwm7bWoAGvVtCZvRVrdbA2QQmU8F3NZpTg=
+	t=1718824137; cv=none; b=YIfzT+BVWtKKamrOGy9GDGPSNesJ+fRiORJ8Qplw5PyNzYMBFVEjfVpmUOKsewwr/1CQw/KDAcz1sQPwD38lWMH02Oky1rgw/crtx4zuLK79czPLUlnScVYK2lEuX50/Rp5uoMxir2LxuaKlcWtcZERVFg/gfdqfop/QE/LFjXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718820911; c=relaxed/simple;
-	bh=fVNJ46LFa+YhWYpSphStOCOSpTawRC5Ibrt5BRhp/I0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CQaeD2qBnGao0QjuP9yrnbAsZkUkDQEKOimpM0mv3LVaEScSk3AVAjk9dGbF7ZkwSlaiwSSPpAThAdD42X73d4STv7nCeOyFg85QiHnwYbwCbNdqJE1oY1qUt0XKFI7gHVoSMdsiHil61JDPcycRRkQ/ciUH+y33KTmtUD8cSNQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=VJCjcqGa; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
+	s=arc-20240116; t=1718824137; c=relaxed/simple;
+	bh=zRnzS9SZ+dxXGc3ihVIyUkY1xWZtFIkc0xyC6fJGY1w=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dlt5UtKYRV6rBix5P3DZjg+Wk/aQIEBu/ndBLx89U+cRx75XuBBSxfCwWIBkfr6Cv3CqJ2Kz5rwH4bQPVaEkFbi1FfboLr3HhMgqzj1hlz3OwFtOp2eEiOn0dYMUfx9lA3DDF4v73Jj54tHEBdgCQ+Cdb/B9xH7aRJWXEMuv90g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iVtbzgag; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="VJCjcqGa"
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-706264e1692so108436b3a.1
-        for <linux-clk@vger.kernel.org>; Wed, 19 Jun 2024 11:15:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tenstorrent.com; s=google; t=1718820908; x=1719425708; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ObNK4nw+goLT3sduvlOOitPrsfAxlE+HFMLfQaVSTdo=;
-        b=VJCjcqGaTcR6AOxzCG/JkLBXnFVZ/voA0rOBgBYAJOsr5yqXKTSBeV2SHrA4CVbTvD
-         guW4fPs6ZDfD4JT7afhhC8nMZGqI0fZtWnDaZmSZ6B/9jamvb7SEg/2ceREW3r7pBOlh
-         9U2939CqmKxIEM6XlwPbF4qd5bOTxGJCGmn9TmPkDr9V8snlNbIjk2lcQiAHikPQAHWt
-         LZG16jK0W9fdKYXFr5zp6+QF8hO/Lb5F3+RHlLyvXeBm3sU7H+UjLC4s2EGCXm0qb7EC
-         WcgUzLhrYYK7f8/swgI6FYXVDxlvKK6pYTCoaVmuseHN/21NgqCVW4+kt9qnPFi2P7/K
-         bqOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718820908; x=1719425708;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ObNK4nw+goLT3sduvlOOitPrsfAxlE+HFMLfQaVSTdo=;
-        b=bGKmBJ4u8wKYG+fsv8ICPwBa93+JhSYitLQDYsfaO1Awy8kdJgJ8MjEBINCPg0lI0C
-         u5dXunXIkx6K4eCmoqSuW8eH4sD7GZJLuRpbEZmn58SGTeoID3ToPvDtJmdugjmTHbPZ
-         uF8fLhvr7kibCAZdd4o2seIvRuqaTwzljo0/ilFfviqEkMTQnJWimBKADsFRt6F0enXS
-         xZDuXsqqySAPMHjG0sNg1ElSBFv1+EF88TQ8WRR7WoggEaBroyt8h41ulnxPOtfcdUFu
-         nWtRByx8mkn3Xe5q6LaUhR2XEAduFkNB0cFFyLo/b+iveqgpkhpmuSdnLJse0GZxjK0U
-         5yTA==
-X-Forwarded-Encrypted: i=1; AJvYcCV7+ZHfynueozUMzFCn03JEfX3I4EHvisatmUamql6a6yepRglLeqqdvbVEhXTpiAKhW00V5Sy4glVJ+ipMoq1sB5WIek4llu77
-X-Gm-Message-State: AOJu0Yy/Qpt5AeMemospvKM5f530JEpW11BO+CVShDliQSTAPmN06Zrf
-	+OmEQytgchBcObdUwbi+ShXLsFCqd0W3s8Y11QrfC+LcdIG/FIDpHbzMovDnSzM=
-X-Google-Smtp-Source: AGHT+IGj5wpO/mjLKZrOGKZvpPOXW2hKDnc/Jp/UqhQuyCI6Q1OQJ7aj2Y4azc+GePSR7cngyftNOw==
-X-Received: by 2002:aa7:9e90:0:b0:706:29f0:33fa with SMTP id d2e1a72fcca58-70629f038d4mr3002643b3a.6.1718820908271;
-        Wed, 19 Jun 2024 11:15:08 -0700 (PDT)
-Received: from x1 ([2601:1c2:1802:170:7627:e2a7:42c9:f02c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-705cc967334sm10993307b3a.57.2024.06.19.11.15.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 19 Jun 2024 11:15:08 -0700 (PDT)
-Date: Wed, 19 Jun 2024 11:15:06 -0700
-From: Drew Fustini <dfustini@tenstorrent.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>, Yangtao Li <frank.li@vivo.com>,
-	Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/6] clk: thead: Add support for TH1520 AP_SUBSYS clock
- controller
-Message-ID: <ZnMgKs/dUcYXiisk@x1>
-References: <20240615-th1520-clk-v1-0-3ba4978c4d6b@tenstorrent.com>
- <20240619-tapping-jaundice-471811929d96@spud>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iVtbzgag"
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45J9rQsA027119;
+	Wed, 19 Jun 2024 19:08:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=ZyMEkR9BE8crvd7eINIckNo/
+	AY9lbygpGEBGCIg3TI4=; b=iVtbzgagFp1MyBjvKJsTleyh99UbIsIJAGpL0QBk
+	WjmjN2tcOwKZ4g4epCH2DWZJ+u4x18oikF6cD88ONBwFtCicRrYko++AD0SOdHQN
+	G3Ini4ujZhPmPOICTvxDyCyc5qskcTkMRVP2c++MkYI+eERM4wd8QSVswRgLwN0f
+	2FvHbThhHVetORBnmRrfGf7oskkh2M9EI07OKVAiPsRB1tm88LngJcbNY6r+Go5O
+	xYYN3Npbn2Zmh3Ajy7+Lw7zgdcH0FODxTKvZvB8Y1SH/sYg47LlUdPzd5Fe5abnZ
+	mbMbfGCOmqgthcZOqgcIQALOh1HHnGbl+gcfks6SZnddbA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yuj9ytkst-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Jun 2024 19:08:52 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45JJ8qIl015527
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 19 Jun 2024 19:08:52 GMT
+Received: from hu-mdtipton-lv.qualcomm.com (10.49.16.6) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 19 Jun 2024 12:08:51 -0700
+Date: Wed, 19 Jun 2024 12:08:50 -0700
+From: Mike Tipton <quic_mdtipton@quicinc.com>
+To: Elliot Berman <quic_eberman@quicinc.com>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: qcom: Remove QCOM_RPMCC symbol
+Message-ID: <20240619190850.GA12720@hu-mdtipton-lv.qualcomm.com>
+References: <20240619-drop-qcom-rpmcc-v1-1-b487c95162ef@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20240619-tapping-jaundice-471811929d96@spud>
+In-Reply-To: <20240619-drop-qcom-rpmcc-v1-1-b487c95162ef@quicinc.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: P62NNEpelElMNrCzTGLgfQtpLH-P68pa
+X-Proofpoint-GUID: P62NNEpelElMNrCzTGLgfQtpLH-P68pa
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-19_02,2024-06-19_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ mlxlogscore=814 spamscore=0 lowpriorityscore=0 mlxscore=0 adultscore=0
+ clxscore=1011 bulkscore=0 suspectscore=0 malwarescore=0 priorityscore=1501
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406190145
 
-On Wed, Jun 19, 2024 at 12:12:30PM +0100, Conor Dooley wrote:
-> On Sat, Jun 15, 2024 at 06:54:29PM -0700, Drew Fustini wrote:
-> > This series adds support for the AP sub-system clock controller in the
-> > T-Head TH1520 [1]. Yangtao Li originally submitted this series in May
-> > 2023 [2]. Jisheng made additional improvements and then passed on the
-> > work in progress to me.
+On Wed, Jun 19, 2024 at 08:41:52AM -0700, Elliot Berman wrote:
+> This symbol is selected by a couple drivers, but isn't used by anyone
+> and hasn't been for years now. Drop it.
 > 
-> One thing I noticed on the dts side is that the GPIO controllers have no
-> clocks provided. Does the AP sub-system clock controller provide their
-> clocks too?
+> No functional change intended.
+> 
+> Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
+> ---
+>  drivers/clk/qcom/Kconfig | 5 -----
+>  1 file changed, 5 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+> index f72838aa573b..67c9188d53cb 100644
+> --- a/drivers/clk/qcom/Kconfig
+> +++ b/drivers/clk/qcom/Kconfig
+> @@ -7,9 +7,6 @@ config QCOM_GDSC
+>  	bool
+>  	select PM_GENERIC_DOMAINS if PM
+>  
+> -config QCOM_RPMCC
+> -	bool
+> -
+>  menuconfig COMMON_CLK_QCOM
+>  	tristate "Support for Qualcomm's clock controllers"
+>  	depends on OF
+> @@ -122,7 +119,6 @@ config QCOM_CLK_APCS_SDX55
+>  config QCOM_CLK_RPM
+>  	tristate "RPM based Clock Controller"
+>  	depends on MFD_QCOM_RPM
+> -	select QCOM_RPMCC
+>  	help
+>  	  The RPM (Resource Power Manager) is a dedicated hardware engine for
+>  	  managing the shared SoC resources in order to keep the lowest power
+> @@ -135,7 +131,6 @@ config QCOM_CLK_RPM
+>  config QCOM_CLK_SMD_RPM
+>  	tristate "RPM over SMD based Clock Controller"
+>  	depends on QCOM_SMD_RPM
+> -	select QCOM_RPMCC
+>  	help
+>  	  The RPM (Resource Power Manager) is a dedicated hardware engine for
+>  	  managing the shared SoC resources in order to keep the lowest power
+> 
+> ---
+> base-commit: eefb5ee4b41cdb68bf6feffe0d68b5bbe038e29d
+> change-id: 20240618-drop-qcom-rpmcc-2f3d85aca0a1
+> 
+> Best regards,
+> -- 
+> Elliot Berman <quic_eberman@quicinc.com>
+> 
+> 
 
-Good question. I see that dwapb_get_clks() in drivers/gpio/gpio-dwapb.c
-does call devm_clk_bulk_get_optional() for "bus" and "db". There doesn't
-seem to be to many in-tree examples of clocks being defined for gpio
-controllers with compatible "snps,dw-apb-gpio", but I do see that
-k210.dtsi defines K210_CLK_APB0 for "bus" and K210_CLK_GPIO for "db".
-
-From the TH1520 System User Manual, I do see the gpio related clocks in
-Section 4.4.2.2 AP_SUBSYS. The peripheral clock gate control register
-(PERI_CLK_CFG) has:
-
-Bit 20: GPIO3_CLK_EN
-Bit  8: GPIO0_CLK_EN
-Bit  7: GPIO1_CLK_EN
-Bit  6: GPIO2_CLK_EN
-
-I will add these gates to the clk-th1520-ap.c and reference them from
-the gpio controller nodes.
-
-Since each gpio controller will only have one clock, do you think I can
-omit the clock-names property?
-
-Thanks,
-Drew
-
-Link: https://git.beagleboard.org/beaglev-ahead/beaglev-ahead/-/tree/main/docs
+Reviewed-by: Mike Tipton <quic_mdtipton@quicinc.com>
