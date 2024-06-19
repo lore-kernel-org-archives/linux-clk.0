@@ -1,98 +1,89 @@
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40F168475;
-	Wed, 19 Jun 2024 19:17:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5891115A845;
+	Wed, 19 Jun 2024 21:03:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718824663; cv=none; b=MuKNQjGzhfXlWcZsZROg9E9CyOElKvP7ZNR5aWdHmXJeUJ7HKmUSzk+aLOoaJ+dS2NEenmJsZLON7Q71FQeElh9upAOOk1GBOEAXHSfsjXW9OeLHhfZ1WDgjMFOCAhri4+neV70wBjliiizC9F8gYn4VS8L1R30eS8vhz4z59EQ=
+	t=1718830989; cv=none; b=FINZdNVJI4Hr++x7BaiO0wshThBpJv7GK51g+TJkTTklnC7L+YnP9F69pIUYKtKTB+fGgjrkLKKFlhmCuJFUOl9gX1j8LYs0ADIBnjQLetR/RHemsc13UCq62YBPOvXWF+frdUcSt0HigHWIQ6xTTjSqVIouFHs+bcbkAoQW3fs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718824663; c=relaxed/simple;
-	bh=uvdix2AUJuTqObCGidaxun+B0yX5VPB9Y32EgkgNK1o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gFpaA6uJxNf5paPIGeAGNvtdWFgvDav2lsLfr0tVO6vI4ZBHFQqJ752gwEmxgPONdV1GtYahcLSfFL/41MByvADCN2ujOzm6wpRFDg1zFIGankTdM+KnG7yRbupydDCvboU+mL4s73P17Eo5my9hYmaGFylPqWJledd2zrD+j0U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=YoJZoIHo; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=ebe4Yjbs; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+	s=arc-20240116; t=1718830989; c=relaxed/simple;
+	bh=yQBW8z4axysHiGN+e7i8nXPi1UBkcEmQK0mdRQbQ40Q=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=gIPDSelBvVKF+zozRu60vA7zd0JTCuK4/mq2SH+s7ua+oNs3/1ZYw82k7q8I2VofYKtP/ZUZrihaIXnh4RiGTDu+tPTvFxQuY/AXVoyTX4KX2QvqOqWhSXbNerI//QPmzdxMeB1b37HPzO8ayMXxPlQdvYSamkftz5xauRCk2os=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=lucaweiss.eu; spf=pass smtp.mailfrom=lucaweiss.eu; dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b=VO0W1bOY; arc=none smtp.client-ip=128.199.32.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=lucaweiss.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lucaweiss.eu
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="YoJZoIHo";
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="ebe4Yjbs"
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4W4D0D0XHBz9sbf;
-	Wed, 19 Jun 2024 21:17:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1718824652;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xSr1Od9WFO6Zpf3tRHQVtZyK7tS6Amel2M2Nf15k1vs=;
-	b=YoJZoIHoEpuOSUdLDSj6buFEgkxpb4GUaQW8g+brwF4RRxuXvKddAttN7SW7O717FpT90L
-	hBoAVMShch+bQaDq4QIEljsk53gJ4ZFD7jsqzO1ngMkZdUEMt/+Z2Z6OmmMWul7MVBkDp0
-	LFoJHQteZevBPksZT8aBz0JvQirFN4jsNQzSwGjYUMEgqf5BIl0221jNJVfQDtQank9Yxw
-	NsgH6E8QWy29dckvin+R5OGKnj54zY+/5UtdBLoN6UhB7GHCo+wZp3Id1hk8J9hnSbPw/6
-	sdRLKkb/6VnNu95Uu/AIJegQ9liNMjytRQNq6ysMeWkO+7uP9uMKs4w197iEMw==
-Message-ID: <43a57696-eb4f-4ae3-970a-cee0640baa17@mailbox.org>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1718824650;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xSr1Od9WFO6Zpf3tRHQVtZyK7tS6Amel2M2Nf15k1vs=;
-	b=ebe4YjbsfmY6AZpNIGrFphYDMzqCyh0KhYYlofpgDnXdxFCTe7WvHCogurCVuZw9zvPOnf
-	P9OEokfvQ2ex7W0G29K/TPyP47Q4vtVlDDzrWkEaRgAcmEjpcmiAlkKwoQtCxIeUKXVUuJ
-	1bwyBSkXGqvzu2L6ZSOyerYQuAnPxSSXUuR8ZB041d7Tp9QsqZr3pz49YpGs8mkpIDwwDQ
-	ObC8OPGz0mXJeHCX9pg71RsFJk8Mfbh/otv+eAQoMP0RZylldHGeQkUjqTuuM0KxGbvQsE
-	4ASx3x53PB3HP71lwhArZDRJdImXBGpXPxfbQLY0WeRYajwjfgviEdpfZQNKig==
-Date: Wed, 19 Jun 2024 21:17:28 +0200
+	dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b="VO0W1bOY"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lucaweiss.eu; s=s1;
+	t=1718830985; bh=yQBW8z4axysHiGN+e7i8nXPi1UBkcEmQK0mdRQbQ40Q=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc;
+	b=VO0W1bOYD4LKSXAnWaxjnNtauATSOP6y4Nhuk45OsHAXKWxoTWGIGsh4iM7ri4x6A
+	 Z8K46knseGue4T498sGUiRW2jdt13F+IGi/7tRTAa3W6gNsKl4oZsuSvbE33cX5rRN
+	 aRO6IkhXunAHob6gTm8iblN9DWzkICM/MHQHDVcU=
+From: Luca Weiss <luca@lucaweiss.eu>
+Date: Wed, 19 Jun 2024 23:02:45 +0200
+Subject: [PATCH 1/7] dt-bindings: mailbox: qcom: add compatible for MSM8226
+ SoC
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] dt-bindings: clock: rcar-gen2: Remove obsolete header
- files
-To: Conor Dooley <conor@kernel.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
- marek.vasut+renesas@mailbox.org
-References: <d4abb688d666be35e99577a25b16958cbb4c3c98.1718796005.git.geert+renesas@glider.be>
- <20240619-explain-sip-97568f8ac726@spud>
-Content-Language: en-US
-From: Marek Vasut <marek.vasut@mailbox.org>
-In-Reply-To: <20240619-explain-sip-97568f8ac726@spud>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-MBO-RS-ID: 17c7cdeb49a11f25631
-X-MBO-RS-META: ufzdkouswyfk5rtwey7cc4f3gw9hgh5n
+Message-Id: <20240619-msm8226-cpufreq-v1-1-85143f5291d1@lucaweiss.eu>
+References: <20240619-msm8226-cpufreq-v1-0-85143f5291d1@lucaweiss.eu>
+In-Reply-To: <20240619-msm8226-cpufreq-v1-0-85143f5291d1@lucaweiss.eu>
+To: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+ Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+ Luca Weiss <luca@lucaweiss.eu>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=866; i=luca@lucaweiss.eu;
+ h=from:subject:message-id; bh=yQBW8z4axysHiGN+e7i8nXPi1UBkcEmQK0mdRQbQ40Q=;
+ b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBmc0eCyg0B9hONg1K6PiEtWtpKJoZsDpD7XEbtb
+ d1l08wZ8K+JAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZnNHggAKCRBy2EO4nU3X
+ Vq40D/9fnWO1r3tYievE0u6euDNtlgexLtRgFSxWJ2hDxy/uurgYUjeQaXml5MvTuulLBhGh4vN
+ Jt+wh4Py3cexJO5YZbBeVLiGU341CR8Nb8Ik2Gn8VONx9mfX1sRLFR5PKw+e0eIqQsRsrkB0REm
+ YuesaHcN4CDXgdkK1tCMyiHfG58tsWTxJDatJ2tRCtlxy78oLD/WwOtmkGkHYztJ3YVU/Hly8C9
+ 6vqQpyqlXq/Kjs0zCdHw87ohx/Q0IANDgNLFSU4ZgdMqC5GMNQa9oajM1WZR9SzGSP+4OxPpPAq
+ Wa49RVYaM0PTC1ZfFM5PIYx9q0m/6DdAkW/OB7xcHONqrpBMxIwFpNksICslafDCkWf1vO4pIbv
+ MqiiJrUMs9+8xRnuiLvAif2E6xzlu5jtlFRuhXhA8sLOxhaPr21a/EcDvCTOtXunnzrY/Z8ygLR
+ 8BwpCUNzkh/yhMcpm3ks0bTtIrOYJGdNtv6NtP7dB7PjPc/K4M56kGELQTu7dSZ2vS8++AVxtYC
+ 2CD9pC3RVpm/KOmxkR1f4LefltepFPY6klgo4G6+9dvk0aWy5NJH9u3B3Fu3JRUACcdbI57YM9W
+ GbJ94bE2RDu8M4xgvub5eCYb+bdTCcm5f+bUAM1jdXb06tXJMa4vu721eRCSSYsoeJB5kzjEr4u
+ sVYHxCDw12nGNFQ==
+X-Developer-Key: i=luca@lucaweiss.eu; a=openpgp;
+ fpr=BD04DA24C971B8D587B2B8D7FAF69CF6CD2D02CD
 
-On 6/19/24 7:48 PM, Conor Dooley wrote:
-> On Wed, Jun 19, 2024 at 01:22:46PM +0200, Geert Uytterhoeven wrote:
->> The clock definitions in <dt-bindings/clock/r8a779?-clock.h> were
->> superseded by those in <dt-bindings/clock/r8a779?-cpg-mssr.h> a long
->> time ago.
->>
->> The last DTS user of these files was removed in commit 362b334b17943d84
->> ("ARM: dts: r8a7791: Convert to new CPG/MSSR bindings") in v4.15.
->> Driver support for the old bindings was removed in commit
->> 58256143cff7c2e0 ("clk: renesas: Remove R-Car Gen2 legacy DT clock
->> support") in v5.5, so there is no point to keep on carrying these.
->>
->> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> 
-> If U-Boot is not using them,
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> (and if it is, another task for Marek I guess!)
+Add the mailbox compatible for MSM8226 SoC.
 
-U-Boot is using upstream DTs on R-Car via OF_UPSTREAM, so whatever 
-happens in Linux also happens in U-Boot since 2024.07 ... with slight 
-sync delay . I don't expect much breakage.
+Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
+---
+ Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-Thanks for the heads up !
+diff --git a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
+index 982c741e6225..dc75ea2383f1 100644
+--- a/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
++++ b/Documentation/devicetree/bindings/mailbox/qcom,apcs-kpss-global.yaml
+@@ -25,6 +25,7 @@ properties:
+           - const: qcom,ipq6018-apcs-apps-global
+       - items:
+           - enum:
++              - qcom,msm8226-apcs-kpss-global
+               - qcom,qcs404-apcs-apps-global
+           - const: qcom,msm8916-apcs-kpss-global
+           - const: syscon
+
+-- 
+2.45.2
+
