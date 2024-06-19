@@ -1,96 +1,86 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBDBE80025;
-	Wed, 19 Jun 2024 08:53:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B55044C6C;
+	Wed, 19 Jun 2024 11:12:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718787215; cv=none; b=iejm8uk1rq8sm4NtUfvWYtCbOHGAv8zGPN/L5qje92CQeLDTtmOaZkVsoj9C86q09pXasmyBofVFFPv73dwWDlgD2ydKsuvh5bgPG9AJ2kk2DZI0SfPWXnsv6tlG/DW47P0hLy6XgUirFk1rKka8WTlZKCBOZwEYuHQN9sUFo1s=
+	t=1718795557; cv=none; b=qrpdGpF+lf8S5ysyvilIE3ywBkYj84Ksg8YZiqhOY8GHZipMRfDqxsb881f6mF501+1aq+/7Pg3HxXF7LZ6p+9q2UkZaEyuZJd9M7WQ5pG2OVhXM8NPfBsQU7mpaZhty7m+bP3uprmpX0BrSENXVtKFX9MR23/WlVTm3grYwMW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718787215; c=relaxed/simple;
-	bh=IuOjjnE7/JrOSwZhq2h99WsYClEcZOw4C24NtZSA/0o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Xjp7zcsKE7PAO3cfCrV6+zOuP0qRozOplXWTI83SzpIrGSNnGC6+v2UEepTGgbrMQzX1jziR3q8Xa6xc0/PP2Ug9wYc9y1w83wsdFx+fcBceWfw7KmvoI5iT7Km72CoBv6xX1gUL2h8hLv0zp2yNR2XEpSIc/EzLr8Vyb1QzMZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=nMDm5Lng; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1718795557; c=relaxed/simple;
+	bh=O9nhu/+Qvcd4o30VuBzlUYrvaX7bpq5z3EfEXG99SKA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OGK9NtywQYEpwuEUbwrNGN6ko/hBUwTwYRZoub0gKYFc7nN1gSVSI4G/R/1t+3vIbuaFTNrm36X0ZP/H1rjA26mIZN0zrYwkiWhnrv5WpLIAUMdD840cVpRMw7kirVKU2am4aaYu+G/vnjjEfGy5Ehbj0WetIa6nQngcE8DSbVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m4N+24W4; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="nMDm5Lng"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1718787212;
-	bh=IuOjjnE7/JrOSwZhq2h99WsYClEcZOw4C24NtZSA/0o=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=nMDm5Lng3xQg3UXdS7i794m5nt2CTE76H5thEstpbtBboh3nQsktGx3HUKU/7eD6u
-	 cDmBHP/bAD32qrGFhH0yrfQBKb6GoXaa9bcfzmYM80fJ0Z60RiDdwkzSv/5cRTKCcz
-	 AwWd8ExsaTWcxLPJ13oDD7Br/2Xuc1MtdXTPW9pV1i3D+wTeMluBhUmg4DM5XXwEjB
-	 e3/+L1F5ds/NI6jAfIB18hsaIfj2tttiza6OhyY3Izoml6sEPvIhwEPUsKTvtR+22g
-	 dcJiOPArMDG4OPgIgn1Ls51YpiirbOZcwdYWJV9atkGuZjJC83AJLcG7vED39iKzOm
-	 JasMKkPNGRJbw==
-Received: from IcarusMOD.eternityproject.eu (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id E6B7237821C0;
-	Wed, 19 Jun 2024 08:53:30 +0000 (UTC)
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: krzk+dt@kernel.org
-Cc: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	conor+dt@kernel.org,
-	matthias.bgg@gmail.com,
-	angelogioacchino.delregno@collabora.com,
-	jassisinghbrar@gmail.com,
-	garmin.chang@mediatek.com,
-	houlong.wei@mediatek.com,
-	Jason-ch.Chen@mediatek.com,
-	amergnat@baylibre.com,
-	Elvis.Wang@mediatek.com,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	kernel@collabora.com
-Subject: [PATCH 3/3] dt-bindings: mailbox: mediatek: Avoid clock-names on MT8188 GCE
-Date: Wed, 19 Jun 2024 10:53:22 +0200
-Message-ID: <20240619085322.66716-3-angelogioacchino.delregno@collabora.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240619085322.66716-1-angelogioacchino.delregno@collabora.com>
-References: <20240619085322.66716-1-angelogioacchino.delregno@collabora.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m4N+24W4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19465C2BBFC;
+	Wed, 19 Jun 2024 11:12:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718795556;
+	bh=O9nhu/+Qvcd4o30VuBzlUYrvaX7bpq5z3EfEXG99SKA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=m4N+24W4GUYywKfd1i2dwkIWWjD5HVHCyj20kf4BUsnWhLyOC0niZaYsukQyT40AC
+	 2cgc9CdRNQ9UYlL567COAG+eEsCsaaYz7Bjjf/BuRbPMghM6N+gH3kSUnHCod578ka
+	 owgCGNYXKzNSe9xhYHuxjicp+EojR0lPu1ySPu9DtJIk5UGQ+R+PpgcJ7lgw6wJn7H
+	 wbXW8fAyzBbE+shz836a92bqhZWS5U8nEjJqT+kj+3UxNke3DIvp1kv2vIYyP19ZJO
+	 WmxtGLpsHi6YFkw/K9yq1nNcYGbcH7JzWIjko1e67vTvTBVbbAPjOG0FLsqthikwpC
+	 1XuRgZXPux22Q==
+Date: Wed, 19 Jun 2024 12:12:30 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Drew Fustini <dfustini@tenstorrent.com>
+Cc: Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>, Yangtao Li <frank.li@vivo.com>,
+	Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/6] clk: thead: Add support for TH1520 AP_SUBSYS clock
+ controller
+Message-ID: <20240619-tapping-jaundice-471811929d96@spud>
+References: <20240615-th1520-clk-v1-0-3ba4978c4d6b@tenstorrent.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="FObDbNoTBAgucHoG"
+Content-Disposition: inline
+In-Reply-To: <20240615-th1520-clk-v1-0-3ba4978c4d6b@tenstorrent.com>
 
-Add mediatek,mt8188-gce to the list of compatibles for which the
-clock-names property is not required.
 
-Fixes: f2b53c295620 ("dt-bindings: mailbox: mediatek,gce-mailbox: add mt8188 compatible name")
-Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
----
- .../devicetree/bindings/mailbox/mediatek,gce-mailbox.yaml     | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+--FObDbNoTBAgucHoG
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/Documentation/devicetree/bindings/mailbox/mediatek,gce-mailbox.yaml b/Documentation/devicetree/bindings/mailbox/mediatek,gce-mailbox.yaml
-index cef9d7601398..55d4c34aa4b4 100644
---- a/Documentation/devicetree/bindings/mailbox/mediatek,gce-mailbox.yaml
-+++ b/Documentation/devicetree/bindings/mailbox/mediatek,gce-mailbox.yaml
-@@ -62,7 +62,9 @@ allOf:
-         properties:
-           compatible:
-             contains:
--              const: mediatek,mt8195-gce
-+              enum:
-+                - mediatek,mt8188-gce
-+                - mediatek,mt8195-gce
-     then:
-       required:
-         - clock-names
--- 
-2.45.2
+On Sat, Jun 15, 2024 at 06:54:29PM -0700, Drew Fustini wrote:
+> This series adds support for the AP sub-system clock controller in the
+> T-Head TH1520 [1]. Yangtao Li originally submitted this series in May
+> 2023 [2]. Jisheng made additional improvements and then passed on the
+> work in progress to me.
 
+One thing I noticed on the dts side is that the GPIO controllers have no
+clocks provided. Does the AP sub-system clock controller provide their
+clocks too?
+
+--FObDbNoTBAgucHoG
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnK9HgAKCRB4tDGHoIJi
+0nOtAQCGanWyMDVqpiwnBPcON68b0Uar/qqWSiQrmJT0LkotFAD/QrasnNc1TUTV
+RH7Wx87PHTMMHt9BO/UguDi5bJ5uJQU=
+=LFxV
+-----END PGP SIGNATURE-----
+
+--FObDbNoTBAgucHoG--
