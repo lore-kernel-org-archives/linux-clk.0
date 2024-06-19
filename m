@@ -1,115 +1,88 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 229C015253B;
-	Wed, 19 Jun 2024 15:52:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1092558B7;
+	Wed, 19 Jun 2024 17:48:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718812335; cv=none; b=J102YcQn6JLE0HnjApZw/hEz+zwSknyZGv5WTZ0daY7fMinuRoO3HVqgsmrdye5zXoI36h/nM/zNjYtxaLxzah2tAY2RYznqnO26enZ09X6tReD9ox8gXxDPUi5I7pUNtHNrKXmSDFzYvTPhD0GTjCPSfP7vRCR5yhOj2dbzi0o=
+	t=1718819313; cv=none; b=i+Fn1kKMtIkkUNSexXoTB8UFh0Ts9c/kZTe0lwVBP+v1KfciuXh4criIX4sOF6W0232WmQ+FCoD9YM8gaKKmGcceXhRk9ZqT/VCVOPWjozGJJWdTkRi5Cu1IArVaHeAjM6W6tG2ejIrmLmqOim2Kik2vHWO/95soRT2QmruutuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718812335; c=relaxed/simple;
-	bh=B/QDewZ8f8pxC39ZfdvW4tjMlJycPZjA3D7QbLHaMqM=;
+	s=arc-20240116; t=1718819313; c=relaxed/simple;
+	bh=+H1y+nRL9sbiYxKUX3amRQOLD3k10dsKb7bEBzTZpwI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CUT4UBkhU6hZ8TdiWoKJ+bQ3/x5Ejb2KffS0x1ZM76gV9YFhpI2jHCPr8dDPaxTDXKfH0pTPGjZupCqCF0Vdtml4WqiF6SLZHKm4uGxFFfbt4W1pkiMi6XRQAaOJ7NWFsrbL+68TUgsMyx6/2CzpwdAKz9LWfFKjGPqKZOkddwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IylMLhlN; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=phMPRBD/36X+uB8oa2/mbkjlZYqdabFkbS5IPzQf3qqWIQfWPMUAqHwsbIEH7MbTchf1KeGiuGGYI6y45WxqejLkIbsAGaXQdLFTmzcUgZXlrmkFRh+CGIo5AOWbXKSbNfpa2HAmXJXHkt6ZDuTbjymCjQRRB8ZNz9q4W0kPak0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l1yo5egO; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IylMLhlN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87025C2BBFC;
-	Wed, 19 Jun 2024 15:52:07 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l1yo5egO"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA647C2BBFC;
+	Wed, 19 Jun 2024 17:48:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718812334;
-	bh=B/QDewZ8f8pxC39ZfdvW4tjMlJycPZjA3D7QbLHaMqM=;
+	s=k20201202; t=1718819313;
+	bh=+H1y+nRL9sbiYxKUX3amRQOLD3k10dsKb7bEBzTZpwI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IylMLhlNZi/cBkkmZVPI7bXXgrSd1kDiDEp6eLLOo2nGFroQz5C5LHISQRpu8OsT1
-	 ZebKIkh/37BE+tCC0dPbTunx+Jf7mW8Lc/X9ck1GnvrdFV8SeypZlwHN5y4jU0KjX4
-	 /Om4T7tnb4jG4zTwBY1QpJBsKP21M1OBf8KPqReV2NUXM/7Ia9OgMKi5a9I82MS75F
-	 fwMjiOFF79nRb6ImdtvUJ9f9VwuKSH9ux6kPUoE0ufCRYD2awuICQff7QG5YsKlyVv
-	 axYsRc5alGXsGKOx+fl5Ye2CssDPfd7Be2SuLIfb099sEGElhi8KhOh1MpHQddk4Be
-	 A4y3g2uw6MFjg==
-Date: Wed, 19 Jun 2024 16:52:04 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Dzmitry Sankouski <dsankouski@gmail.com>
-Cc: Sebastian Reichel <sre@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Sam Ravnborg <sam@ravnborg.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Pavel Machek <pavel@ucw.cz>, Liam Girdwood <lgirdwood@gmail.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Chanwoo Choi <cw00.choi@samsung.com>, phone-devel@vger.kernel.org,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
-	linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Subject: Re: [PATCH v3 18/23] regulator: add s2dos05 regulator support
-Message-ID: <c17669b2-5fa0-40d4-b88d-8dee6a264321@sirena.org.uk>
-References: <20240618-starqltechn_integration_upstream-v3-0-e3f6662017ac@gmail.com>
- <20240618-starqltechn_integration_upstream-v3-18-e3f6662017ac@gmail.com>
- <4eab619f-6da9-4aff-b956-69d8e2ecd47f@sirena.org.uk>
- <CABTCjFDUKgeYWuwo8eLt+5WD=4O+kLbFwMRxsTufGnqK0Ecpvg@mail.gmail.com>
+	b=l1yo5egOUjPWySNaTqqx3kdECHlskTJiKvQomO2XPNhib4rCX2Ylr2sL+qowAgnMn
+	 TxlQ4sy0Ywyk54FmL/bw5vMvvobuy26b8CGlMZJcRa6DHYPik0hGl3LBbbNmWSnVwW
+	 djWFaVufj6TAwHRxAG/qfp6lewCaqpCUaDoUQX1+Cn+sMmf9ORUONtkCOkBMJSp4LE
+	 XaH4KpqyQklyNftv6ttlE2M2H+COTGR4UCumi4/iFosGa1ZdQXGp1eq8bo15OZk+Zn
+	 OwPG+wxioUxej4LcNOADzNhwwjLYDCeS7aLtDUnk7jP17W7A5TW57FNwQqvckDeWZr
+	 ctsdVEeRl2fzQ==
+Date: Wed, 19 Jun 2024 18:48:29 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	marek.vasut+renesas@mailbox.org
+Subject: Re: [PATCH] dt-bindings: clock: rcar-gen2: Remove obsolete header
+ files
+Message-ID: <20240619-explain-sip-97568f8ac726@spud>
+References: <d4abb688d666be35e99577a25b16958cbb4c3c98.1718796005.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="sNyOiMkks8z+Tn4L"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="DHmCkqrhx6sMv4JG"
 Content-Disposition: inline
-In-Reply-To: <CABTCjFDUKgeYWuwo8eLt+5WD=4O+kLbFwMRxsTufGnqK0Ecpvg@mail.gmail.com>
-X-Cookie: Don't I know you?
+In-Reply-To: <d4abb688d666be35e99577a25b16958cbb4c3c98.1718796005.git.geert+renesas@glider.be>
 
 
---sNyOiMkks8z+Tn4L
-Content-Type: text/plain; charset=utf-8
+--DHmCkqrhx6sMv4JG
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jun 19, 2024 at 06:49:06PM +0300, Dzmitry Sankouski wrote:
-> =D0=B2=D1=82, 18 =D0=B8=D1=8E=D0=BD. 2024=E2=80=AF=D0=B3. =D0=B2 17:08, M=
-ark Brown <broonie@kernel.org>:
-> > On Tue, Jun 18, 2024 at 04:59:52PM +0300, Dzmitry Sankouski wrote:
+On Wed, Jun 19, 2024 at 01:22:46PM +0200, Geert Uytterhoeven wrote:
+> The clock definitions in <dt-bindings/clock/r8a779?-clock.h> were
+> superseded by those in <dt-bindings/clock/r8a779?-cpg-mssr.h> a long
+> time ago.
+>=20
+> The last DTS user of these files was removed in commit 362b334b17943d84
+> ("ARM: dts: r8a7791: Convert to new CPG/MSSR bindings") in v4.15.
+> Driver support for the old bindings was removed in commit
+> 58256143cff7c2e0 ("clk: renesas: Remove R-Car Gen2 legacy DT clock
+> support") in v5.5, so there is no point to keep on carrying these.
+>=20
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> > > +// SPDX-License-Identifier: GPL-2.0+
-> > > +/*
-> > > + * s2dos05.c - Regulator driver for the Samsung s2dos05
-> > > + *
+If U-Boot is not using them,
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+(and if it is, another task for Marek I guess!)
 
-> > Please make the entire comment a C++ one so things look more
-> > intentional.
+Thanks,
+Conor.
 
-> Do you mean enclosing the first line (license identifier) in /* */
-> style comment?
-
-No, that would be a C comment.  Please use C++ style for the rest of the
-header as well as the first line.
-
---sNyOiMkks8z+Tn4L
+--DHmCkqrhx6sMv4JG
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmZy/qMACgkQJNaLcl1U
-h9DGWQgAgOa8X/ixdsOMeRWsYHbb7eeKRUufmB/VZK2WyLNILPGYtncD6cuJ+cLr
-AvUANsF0WqGXnetxElS8Y2jV21tcbGNT1eGe64GUPss6hdDebteb63GcRbB8N0Fd
-3L+HI4CWnr1oqwLzGGmVRLifr3h/4alGz6R+jy9O5drxEHxalZPdRFVdjbZ8jyr/
-3jg43CkWP2vdnZz08OObTm8jI197PhpxgFleekSlSmPqIqtMV/a3krF5CCSh4M8V
-n1CJGe6mr4M9lSZ3UpDJQCzWW7EfTmM1iu8RW6IpF5T6JZFtj+cwfS9Ba6kIK4+E
-zrmidAhG51b6MN5sNypIpxv0bh1Jxw==
-=zdP0
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnMZ7QAKCRB4tDGHoIJi
+0sVNAP9XUqM3g9KnW52zPaLKAWsof5aGQZou1n3opr4EX3WvBwEA4gTj6X9xFd1X
+9IHy60JhSDC8V5IjTADrfy/yET7NxAs=
+=t8to
 -----END PGP SIGNATURE-----
 
---sNyOiMkks8z+Tn4L--
+--DHmCkqrhx6sMv4JG--
