@@ -1,131 +1,98 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06052157E9F;
-	Wed, 19 Jun 2024 19:08:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40F168475;
+	Wed, 19 Jun 2024 19:17:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718824137; cv=none; b=YIfzT+BVWtKKamrOGy9GDGPSNesJ+fRiORJ8Qplw5PyNzYMBFVEjfVpmUOKsewwr/1CQw/KDAcz1sQPwD38lWMH02Oky1rgw/crtx4zuLK79czPLUlnScVYK2lEuX50/Rp5uoMxir2LxuaKlcWtcZERVFg/gfdqfop/QE/LFjXU=
+	t=1718824663; cv=none; b=MuKNQjGzhfXlWcZsZROg9E9CyOElKvP7ZNR5aWdHmXJeUJ7HKmUSzk+aLOoaJ+dS2NEenmJsZLON7Q71FQeElh9upAOOk1GBOEAXHSfsjXW9OeLHhfZ1WDgjMFOCAhri4+neV70wBjliiizC9F8gYn4VS8L1R30eS8vhz4z59EQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718824137; c=relaxed/simple;
-	bh=zRnzS9SZ+dxXGc3ihVIyUkY1xWZtFIkc0xyC6fJGY1w=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dlt5UtKYRV6rBix5P3DZjg+Wk/aQIEBu/ndBLx89U+cRx75XuBBSxfCwWIBkfr6Cv3CqJ2Kz5rwH4bQPVaEkFbi1FfboLr3HhMgqzj1hlz3OwFtOp2eEiOn0dYMUfx9lA3DDF4v73Jj54tHEBdgCQ+Cdb/B9xH7aRJWXEMuv90g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iVtbzgag; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1718824663; c=relaxed/simple;
+	bh=uvdix2AUJuTqObCGidaxun+B0yX5VPB9Y32EgkgNK1o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gFpaA6uJxNf5paPIGeAGNvtdWFgvDav2lsLfr0tVO6vI4ZBHFQqJ752gwEmxgPONdV1GtYahcLSfFL/41MByvADCN2ujOzm6wpRFDg1zFIGankTdM+KnG7yRbupydDCvboU+mL4s73P17Eo5my9hYmaGFylPqWJledd2zrD+j0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=YoJZoIHo; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=ebe4Yjbs; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iVtbzgag"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45J9rQsA027119;
-	Wed, 19 Jun 2024 19:08:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=ZyMEkR9BE8crvd7eINIckNo/
-	AY9lbygpGEBGCIg3TI4=; b=iVtbzgagFp1MyBjvKJsTleyh99UbIsIJAGpL0QBk
-	WjmjN2tcOwKZ4g4epCH2DWZJ+u4x18oikF6cD88ONBwFtCicRrYko++AD0SOdHQN
-	G3Ini4ujZhPmPOICTvxDyCyc5qskcTkMRVP2c++MkYI+eERM4wd8QSVswRgLwN0f
-	2FvHbThhHVetORBnmRrfGf7oskkh2M9EI07OKVAiPsRB1tm88LngJcbNY6r+Go5O
-	xYYN3Npbn2Zmh3Ajy7+Lw7zgdcH0FODxTKvZvB8Y1SH/sYg47LlUdPzd5Fe5abnZ
-	mbMbfGCOmqgthcZOqgcIQALOh1HHnGbl+gcfks6SZnddbA==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yuj9ytkst-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Jun 2024 19:08:52 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45JJ8qIl015527
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 19 Jun 2024 19:08:52 GMT
-Received: from hu-mdtipton-lv.qualcomm.com (10.49.16.6) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 19 Jun 2024 12:08:51 -0700
-Date: Wed, 19 Jun 2024 12:08:50 -0700
-From: Mike Tipton <quic_mdtipton@quicinc.com>
-To: Elliot Berman <quic_eberman@quicinc.com>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] clk: qcom: Remove QCOM_RPMCC symbol
-Message-ID: <20240619190850.GA12720@hu-mdtipton-lv.qualcomm.com>
-References: <20240619-drop-qcom-rpmcc-v1-1-b487c95162ef@quicinc.com>
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="YoJZoIHo";
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="ebe4Yjbs"
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4W4D0D0XHBz9sbf;
+	Wed, 19 Jun 2024 21:17:32 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1718824652;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xSr1Od9WFO6Zpf3tRHQVtZyK7tS6Amel2M2Nf15k1vs=;
+	b=YoJZoIHoEpuOSUdLDSj6buFEgkxpb4GUaQW8g+brwF4RRxuXvKddAttN7SW7O717FpT90L
+	hBoAVMShch+bQaDq4QIEljsk53gJ4ZFD7jsqzO1ngMkZdUEMt/+Z2Z6OmmMWul7MVBkDp0
+	LFoJHQteZevBPksZT8aBz0JvQirFN4jsNQzSwGjYUMEgqf5BIl0221jNJVfQDtQank9Yxw
+	NsgH6E8QWy29dckvin+R5OGKnj54zY+/5UtdBLoN6UhB7GHCo+wZp3Id1hk8J9hnSbPw/6
+	sdRLKkb/6VnNu95Uu/AIJegQ9liNMjytRQNq6ysMeWkO+7uP9uMKs4w197iEMw==
+Message-ID: <43a57696-eb4f-4ae3-970a-cee0640baa17@mailbox.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1718824650;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xSr1Od9WFO6Zpf3tRHQVtZyK7tS6Amel2M2Nf15k1vs=;
+	b=ebe4YjbsfmY6AZpNIGrFphYDMzqCyh0KhYYlofpgDnXdxFCTe7WvHCogurCVuZw9zvPOnf
+	P9OEokfvQ2ex7W0G29K/TPyP47Q4vtVlDDzrWkEaRgAcmEjpcmiAlkKwoQtCxIeUKXVUuJ
+	1bwyBSkXGqvzu2L6ZSOyerYQuAnPxSSXUuR8ZB041d7Tp9QsqZr3pz49YpGs8mkpIDwwDQ
+	ObC8OPGz0mXJeHCX9pg71RsFJk8Mfbh/otv+eAQoMP0RZylldHGeQkUjqTuuM0KxGbvQsE
+	4ASx3x53PB3HP71lwhArZDRJdImXBGpXPxfbQLY0WeRYajwjfgviEdpfZQNKig==
+Date: Wed, 19 Jun 2024 21:17:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20240619-drop-qcom-rpmcc-v1-1-b487c95162ef@quicinc.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: P62NNEpelElMNrCzTGLgfQtpLH-P68pa
-X-Proofpoint-GUID: P62NNEpelElMNrCzTGLgfQtpLH-P68pa
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-19_02,2024-06-19_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- mlxlogscore=814 spamscore=0 lowpriorityscore=0 mlxscore=0 adultscore=0
- clxscore=1011 bulkscore=0 suspectscore=0 malwarescore=0 priorityscore=1501
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2405170001 definitions=main-2406190145
+Subject: Re: [PATCH] dt-bindings: clock: rcar-gen2: Remove obsolete header
+ files
+To: Conor Dooley <conor@kernel.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+ marek.vasut+renesas@mailbox.org
+References: <d4abb688d666be35e99577a25b16958cbb4c3c98.1718796005.git.geert+renesas@glider.be>
+ <20240619-explain-sip-97568f8ac726@spud>
+Content-Language: en-US
+From: Marek Vasut <marek.vasut@mailbox.org>
+In-Reply-To: <20240619-explain-sip-97568f8ac726@spud>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-MBO-RS-ID: 17c7cdeb49a11f25631
+X-MBO-RS-META: ufzdkouswyfk5rtwey7cc4f3gw9hgh5n
 
-On Wed, Jun 19, 2024 at 08:41:52AM -0700, Elliot Berman wrote:
-> This symbol is selected by a couple drivers, but isn't used by anyone
-> and hasn't been for years now. Drop it.
+On 6/19/24 7:48 PM, Conor Dooley wrote:
+> On Wed, Jun 19, 2024 at 01:22:46PM +0200, Geert Uytterhoeven wrote:
+>> The clock definitions in <dt-bindings/clock/r8a779?-clock.h> were
+>> superseded by those in <dt-bindings/clock/r8a779?-cpg-mssr.h> a long
+>> time ago.
+>>
+>> The last DTS user of these files was removed in commit 362b334b17943d84
+>> ("ARM: dts: r8a7791: Convert to new CPG/MSSR bindings") in v4.15.
+>> Driver support for the old bindings was removed in commit
+>> 58256143cff7c2e0 ("clk: renesas: Remove R-Car Gen2 legacy DT clock
+>> support") in v5.5, so there is no point to keep on carrying these.
+>>
+>> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 > 
-> No functional change intended.
-> 
-> Signed-off-by: Elliot Berman <quic_eberman@quicinc.com>
-> ---
->  drivers/clk/qcom/Kconfig | 5 -----
->  1 file changed, 5 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
-> index f72838aa573b..67c9188d53cb 100644
-> --- a/drivers/clk/qcom/Kconfig
-> +++ b/drivers/clk/qcom/Kconfig
-> @@ -7,9 +7,6 @@ config QCOM_GDSC
->  	bool
->  	select PM_GENERIC_DOMAINS if PM
->  
-> -config QCOM_RPMCC
-> -	bool
-> -
->  menuconfig COMMON_CLK_QCOM
->  	tristate "Support for Qualcomm's clock controllers"
->  	depends on OF
-> @@ -122,7 +119,6 @@ config QCOM_CLK_APCS_SDX55
->  config QCOM_CLK_RPM
->  	tristate "RPM based Clock Controller"
->  	depends on MFD_QCOM_RPM
-> -	select QCOM_RPMCC
->  	help
->  	  The RPM (Resource Power Manager) is a dedicated hardware engine for
->  	  managing the shared SoC resources in order to keep the lowest power
-> @@ -135,7 +131,6 @@ config QCOM_CLK_RPM
->  config QCOM_CLK_SMD_RPM
->  	tristate "RPM over SMD based Clock Controller"
->  	depends on QCOM_SMD_RPM
-> -	select QCOM_RPMCC
->  	help
->  	  The RPM (Resource Power Manager) is a dedicated hardware engine for
->  	  managing the shared SoC resources in order to keep the lowest power
-> 
-> ---
-> base-commit: eefb5ee4b41cdb68bf6feffe0d68b5bbe038e29d
-> change-id: 20240618-drop-qcom-rpmcc-2f3d85aca0a1
-> 
-> Best regards,
-> -- 
-> Elliot Berman <quic_eberman@quicinc.com>
-> 
-> 
+> If U-Boot is not using them,
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> (and if it is, another task for Marek I guess!)
 
-Reviewed-by: Mike Tipton <quic_mdtipton@quicinc.com>
+U-Boot is using upstream DTs on R-Car via OF_UPSTREAM, so whatever 
+happens in Linux also happens in U-Boot since 2024.07 ... with slight 
+sync delay . I don't expect much breakage.
+
+Thanks for the heads up !
