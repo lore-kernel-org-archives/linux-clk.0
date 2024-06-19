@@ -1,49 +1,50 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C2FB6F2EF;
-	Wed, 19 Jun 2024 06:58:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8DCA7406B;
+	Wed, 19 Jun 2024 07:19:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718780287; cv=none; b=BcveU60WEU+orR84zjmLC9IxM3lPWKm0NTNYAOyHWSMigID9+dcM1n3JyJ3mPrnaGmHgPAfxKK4JzN9T+IanjwqKmxgadvGV5sv0PkD9JgK0giqWABVlX7gsJkdczN7B81bU2DdOD0u97rxl2pgP/MCg177tKmUstJ2Ns2Zm12o=
+	t=1718781599; cv=none; b=PQ1SoTk0kTVqJewV43uRBkj6V+5buqd99MxozlmVN0jvBZjYdtlakD22ybsPt+E6zZH7ouuisACF1gv5Vudkin0rSehaDaVcFcUUN5r2wPdubUjm+Xag5wyGK2qDeq3kBtzgq3RSXo96pFwBBEyn06BlwAZxZvLr8wOSaRA/kuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718780287; c=relaxed/simple;
-	bh=cW5Ge63fweS/szTsICcadN5NAWgmIOD+EQ6sg9xkUmI=;
+	s=arc-20240116; t=1718781599; c=relaxed/simple;
+	bh=uvAP8y0qFZ/aHw0g4eIrWcQaH8P8vN+nnewkUnmZmDQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i+gqQ4qn3IM0D5/abzwLYq88SuxCzp8e3exf8p/2sHeK41H/3gcWDTkJeQYJdeQc2MSgN+h85IYRLbAr2vvYMuDNQpLFXt9ZDoHmOdZzpWgRUKOfwqB2yeRmkgEEVIuTcTl+O/36Zrcf3xrBGmVntmu1UCPgmpAWwu4AAasYBg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S4g0GHT3; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=D8GculfUFM7b6toepXydj7TUSf2bBhCmah1xoJGKHAGexR6UXdF9AP2qv4a9lqJHAj0HyLXHvM9taKGOMkqilBPqSor28199M9EZ+pV29UoZ3gaY3Feh0arvaWwNA00iLWUGmESPTcklcR5iOquzmu3xiAYGw6gNJYXnShh7y1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cgmz0kaE; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S4g0GHT3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D406C32786;
-	Wed, 19 Jun 2024 06:58:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cgmz0kaE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CFE8DC2BBFC;
+	Wed, 19 Jun 2024 07:19:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718780286;
-	bh=cW5Ge63fweS/szTsICcadN5NAWgmIOD+EQ6sg9xkUmI=;
+	s=k20201202; t=1718781598;
+	bh=uvAP8y0qFZ/aHw0g4eIrWcQaH8P8vN+nnewkUnmZmDQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=S4g0GHT3ZsPHYWl6TJwuiw7nJbxsDZqNYo8UgKbQgnQ/Jo87Jrir/RrXx17vvyey/
-	 fTEF3D0jvoZP6gjBGVpzVmLXJdN35fzEZzMp/GvTjfAEL36PV0Wa+AKZw80mhN1a35
-	 9CA1CYe1rpLcVejOA/s9nEaLzG9rbcK0MhUa/py9m6yrOgzF/9j+ODhDRMN8IdTvJL
-	 NoWqY9BSrFnJt8WVB1UM3iUHAuTRYveZOVR0GdlLsyBtS8GA0NvnqYa3yz+Ol3o++O
-	 VN6tv9U1hiFqIdQiVgfv0Uly+nrk527mr14OtPx4d8p6Sb+kuX2BS5bIh9uZ6LHn4q
-	 V+xUOc6cfWoPw==
-Date: Wed, 19 Jun 2024 08:58:02 +0200
+	b=cgmz0kaEeOZuEssLsDyMfcaN0ptcozzDrcsnfWcgf3wYAKNsVFBx5ZDNpThkTv2KA
+	 b7jiEVbZhMUj6mDw2w9PLcAWj7Ca7XNSkk3X1sbkO0On6eIs5lGepUf94wkGRHFPUc
+	 UA+LykfhiCEMmzOEouz8JalKkzCKjULNZfQ2P/kXz2TbWIH6pLqrCldKRBR3B9HZt8
+	 7u2pj0kE18Ug1gtRon8tLCUsFbleALWH97X/2HsbCk94JMrABH9MwzMyYvCc1A+hXf
+	 XgBbIWyqELBZExF2gi28wKvclW67DpOiRvb4x8Zch/EZgknVFYVYSDJI/z9ayJXLxR
+	 gLH8F11aOmVpQ==
+Date: Wed, 19 Jun 2024 09:19:54 +0200
 From: Lorenzo Bianconi <lorenzo@kernel.org>
-To: Conor Dooley <conor@kernel.org>
+To: Andrew Lunn <andrew@lunn.ch>
 Cc: netdev@vger.kernel.org, nbd@nbd.name, lorenzo.bianconi83@gmail.com,
 	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, linux-arm-kernel@lists.infradead.org,
-	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org,
-	conor+dt@kernel.org, devicetree@vger.kernel.org,
-	catalin.marinas@arm.com, will@kernel.org, upstream@airoha.com,
+	pabeni@redhat.com, conor@kernel.org,
+	linux-arm-kernel@lists.infradead.org, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org,
+	devicetree@vger.kernel.org, catalin.marinas@arm.com,
+	will@kernel.org, upstream@airoha.com,
 	angelogioacchino.delregno@collabora.com,
 	benjamin.larsson@genexis.eu, linux-clk@vger.kernel.org,
-	rkannoth@marvell.com, sgoutham@marvell.com, andrew@lunn.ch
-Subject: Re: [PATCH v2 net-next 1/2] dt-bindings: net: airoha: Add EN7581
- ethernet controller
-Message-ID: <ZnKBegrGA6OhIiJF@lore-desk>
+	rkannoth@marvell.com, sgoutham@marvell.com
+Subject: Re: [PATCH v2 net-next 2/2] net: airoha: Introduce ethernet support
+ for EN7581 SoC
+Message-ID: <ZnKGmhVOPV-W2LWA@lore-desk>
 References: <cover.1718696209.git.lorenzo@kernel.org>
- <ae8ac05a56f479286bc748fb930c5643a2fbde10.1718696209.git.lorenzo@kernel.org>
- <20240618-subpar-absentee-c3a43a1a9f5e@spud>
+ <f146a6f58492394a77f7d159f3c650a268fbe489.1718696209.git.lorenzo@kernel.org>
+ <64b3c847-8674-4fdd-bbe6-8ea22410aa19@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -51,61 +52,80 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="2kmjxWM4m0yk+HFF"
+	protocol="application/pgp-signature"; boundary="t1JdaXAETMxshABh"
 Content-Disposition: inline
-In-Reply-To: <20240618-subpar-absentee-c3a43a1a9f5e@spud>
+In-Reply-To: <64b3c847-8674-4fdd-bbe6-8ea22410aa19@lunn.ch>
 
 
---2kmjxWM4m0yk+HFF
+--t1JdaXAETMxshABh
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-> On Tue, Jun 18, 2024 at 09:49:02AM +0200, Lorenzo Bianconi wrote:
-> > Introduce device-tree binding documentation for Airoha EN7581 ethernet
-> > mac controller.
-> >=20
-> > Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
-> > ---
-> > This patch is based on the following one not applied yet on clk tree:
-> > dt-bindings: clock: airoha: Add reset support to EN7581 clock binding
-> > https://patchwork.kernel.org/project/linux-clk/patch/ac557b6f4029cb3428=
-d4c0ed1582d0c602481fb6.1718282056.git.lorenzo@kernel.org/
-> > ---
-> >  .../bindings/net/airoha,en7581.yaml           | 106 ++++++++++++++++++
-> >  1 file changed, 106 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/net/airoha,en7581=
-=2Eyaml
-> >=20
-> > diff --git a/Documentation/devicetree/bindings/net/airoha,en7581.yaml b=
-/Documentation/devicetree/bindings/net/airoha,en7581.yaml
-> > new file mode 100644
-> > index 000000000000..09e7b5eed3ae
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/net/airoha,en7581.yaml
+> > +static void airoha_fe_maccr_init(struct airoha_eth *eth)
+> > +{
 >=20
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - airoha,en7581-eth
+> ...
 >=20
-> Actually, one other thing - filename matching compatible please.
+> > +	airoha_fe_wr(eth, REG_FE_VIP_PATN(11), 0xc057); /* PPP->IPv6CP (0xc05=
+7) */
 >=20
+> include/uapi/linux/ppp_defs.h
+> #define PPP_IPV6CP      0x8057  /* IPv6 Control Protocol */
+>=20
+> Are these the same thing? Why is there one bit difference?
 
-ack, I will fix in v3.
+ack, I guess there is a typo here.
 
-Rregards,
+>=20
+>=20
+> > +	airoha_fe_wr(eth, REG_FE_VIP_PATN(17), 0x1ae0);
+> > +	airoha_fe_wr(eth, REG_FE_VIP_EN(17),
+> > +		     PATN_FCPU_EN_MASK | PATN_SP_EN_MASK |
+> > +		     FIELD_PREP(PATN_TYPE_MASK, 3) | PATN_EN_MASK);
+> > +
+> > +	airoha_fe_wr(eth, REG_FE_VIP_PATN(18), 0x1ae00000);
+> > +	airoha_fe_wr(eth, REG_FE_VIP_EN(18),
+> > +		     PATN_FCPU_EN_MASK | PATN_DP_EN_MASK |
+> > +		     FIELD_PREP(PATN_TYPE_MASK, 3) | PATN_EN_MASK);
+>=20
+> > +	airoha_fe_wr(eth, REG_FE_VIP_PATN(22), 0xaaaa);
+>=20
+> Please add a comment what these match.
+
+ack, I will look into them.
+
+>=20
+> > +static int airoha_dev_change_mtu(struct net_device *dev, int new_mtu)
+> > +{
+> > +	dev->mtu =3D new_mtu;
+> > +
+> > +	return 0;
+> > +}
+> > +
+>=20
+> I don't think this is needed. Look at __dev_set_mtu().
+
+ack, I will get rid of it in v3.
+
+Regards,
 Lorenzo
 
---2kmjxWM4m0yk+HFF
+>=20
+>     Andrew
+>=20
+> ---
+> pw-bot: cr
+
+--t1JdaXAETMxshABh
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCZnKBegAKCRA6cBh0uS2t
-rDkzAQCSUyqP7whqaj7oEagB3ButpOBwscMnJyiOHEWp+cB8ggD/XunfV68Xzv2N
-V66QJyDhZ4NOVLG1liVApntm0FihUAo=
-=5J4A
+iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCZnKGmgAKCRA6cBh0uS2t
+rIRCAP9rbZZTIY9xE3nb018VxcdNZuvz5KU6xukpk2vKwOwztQD/fI0rjlWwYxHQ
+kdo/7s1J7RCqUM5RlC+1sqpISnZ9KQU=
+=0xov
 -----END PGP SIGNATURE-----
 
---2kmjxWM4m0yk+HFF--
+--t1JdaXAETMxshABh--
