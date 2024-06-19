@@ -1,65 +1,82 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F6371E495;
-	Wed, 19 Jun 2024 06:20:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED2F0558BA
+	for <linux-clk@vger.kernel.org>; Wed, 19 Jun 2024 06:32:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718778057; cv=none; b=ADxSaBwy+fjTrp1ormZbcgfQj468xJjHbszUwXd9xuavk0r2VR0/nhHyA/jU8LClNdUHQeUC+Ic3KX/gq5jBsThbN9WVXJcaftC07G0Zs1YeXrAUPjIPy7JfYWE07wC/NczytK7GIC2435FLI6ahnQF4gVkQt7dyTs1NiuN6PGU=
+	t=1718778724; cv=none; b=tQ1rZp1uxT9sQ1eM/CKTVJqV5IMP6eXQPBIoCxy14/6gXjep6iBL5bXkhu6MKH0juTrB+VXpg7hQ7GKndGuNQD6UlC++P+DYEE5B5vMGWN14pJ717bdE8hsQyS7Vm8WYdgNGPyRjKbqvoVElqOVB8mE5rMJLT6BMN1CooBoX7AE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718778057; c=relaxed/simple;
-	bh=XFD15cCIqpCDpe/sTFNoNkjJnF9APKmPNvjg+90uazc=;
+	s=arc-20240116; t=1718778724; c=relaxed/simple;
+	bh=wFDerXuVfghJpTiIPsRtXmgYzrOV0DCn7nuFZy90qrw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kJ4lmei+4DVwWRzAossaC/M3ByZvs5QB2CI/MetLsxrzENCV4O7aVOZ8/1mCXmp1Rp8mNVVpCK0xjrO8i8JKEcr65J89wDcibvuUAPv26Tj1C6sRqKu2mWOpmHQyAwt2donHrFJx7PBFzXzNHnsWa3c5vdH2WYJjUoFksIN+nVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WGijIjTL; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZpKjsoAAaeqOElKViOBB0CT2ErWOSJ2t+4C/ev1P6qcxCKO/oh4DzJ5Xt9zwRgyxJti03XYDBsKUM5YXyjBLo2lm5P7zTC+m8/NJ6hJ+XZkP0VZQWeQmAzYjMDBkKM0CKl01EBWA5UbE5P/JnuLToZqCdkQqHxpeNMGcQP6t2dY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BKz5xUPQ; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WGijIjTL"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1718778054; x=1750314054;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=XFD15cCIqpCDpe/sTFNoNkjJnF9APKmPNvjg+90uazc=;
-  b=WGijIjTLJ64qAcv4r2c1pza9yQ2kQjzbw5N9rq4dwqy7Fexa+91HgiJJ
-   /eDJHsFMLZmHsJywZp6ad8HCsV76r+ETjtv/d4Gu1/sz9w15pbfCAeIzp
-   D39DaRwGM2Aqm5G5Nnprjvh8It6TzaCosfV5Z9/P3OoTWXDRtafVrvGRZ
-   WvFzn5J2apseTxowC+s93ElzK1bwg+NeRihk7EAXrFwejiGDbYCAHwtte
-   z5PkSzDskg77eSHef3uFAFOA0QsXnOL8b+niiWe//mxsiOGAODdkJW21K
-   vX+OxcQ7C6aQD88MJTAizRrSu5q4cSWHVVI66/7HOo4JsW/1NekTBuNWU
-   A==;
-X-CSE-ConnectionGUID: G2kPxB99STSUcuTVmjC4iA==
-X-CSE-MsgGUID: WCFCvJK2RD2EeA8hcCDsfA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11107"; a="15841495"
-X-IronPort-AV: E=Sophos;i="6.08,249,1712646000"; 
-   d="scan'208";a="15841495"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 18 Jun 2024 23:20:54 -0700
-X-CSE-ConnectionGUID: vhrBS1pSRFaDc2hrE5DTxA==
-X-CSE-MsgGUID: 4xWa3a2QTESJ40qFT14cAA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.08,249,1712646000"; 
-   d="scan'208";a="46751499"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 18 Jun 2024 23:20:50 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sJogZ-0006ML-28;
-	Wed, 19 Jun 2024 06:20:47 +0000
-Date: Wed, 19 Jun 2024 14:20:33 +0800
-From: kernel test robot <lkp@intel.com>
-To: Tomer Maimon <tmaimon77@gmail.com>, mturquette@baylibre.com,
-	sboyd@kernel.org, p.zabel@pengutronix.de, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, tali.perry1@gmail.com,
-	joel@jms.id.au, venture@google.com, yuenn@google.com,
-	benjaminfair@google.com
-Cc: oe-kbuild-all@lists.linux.dev, openbmc@lists.ozlabs.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, Tomer Maimon <tmaimon77@gmail.com>
-Subject: Re: [PATCH v25 1/3] dt-bindings: reset: npcm: add clock properties
-Message-ID: <202406191439.3NcnExKM-lkp@intel.com>
-References: <20240618185819.2155595-2-tmaimon77@gmail.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BKz5xUPQ"
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52c89d6b4adso5609089e87.3
+        for <linux-clk@vger.kernel.org>; Tue, 18 Jun 2024 23:32:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718778721; x=1719383521; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=kWA6TxZL/MZl6HZnFwnJJBsYFPvFUHxiD6fzJli2OEU=;
+        b=BKz5xUPQH5oe2m+oz6FIakh8YZgserhH9FwPYhDJIV7S3mTJ2hL6AXVPD2P3ceKBP3
+         d9JdM4lEru3xVZL5maYySHMxhFQ1gccubinwgylgdTZE4qKRwq/vIA+eltXrqzsbLitM
+         FGYcfMhG3ZcMv9+33hWSoBJaA3Suza9xdPjx/qxerRghj8r4Hf/tfm6C37uiiOFXBht3
+         /Zu/yp1Duwm/o1OdtskCt7sJ0f6PXXaqI0NUq+DSy4EakEeKk1XWubK3H2BMmRvv8b9T
+         FftwEDmm7DCTPHg5h6WBzj3hZ16MDviwmStE3cpL/sagMj+p0dpsCFRoV7zdKVUUA+El
+         44LQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718778721; x=1719383521;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kWA6TxZL/MZl6HZnFwnJJBsYFPvFUHxiD6fzJli2OEU=;
+        b=eaKueMnacQTWpgx+wy2ulhEjpV70zt4aPiGBvFEw+iq4M6dj+aswrN0RuVfO2MqfQY
+         BTk1J5F9Pd07Id86GgzFErbn32rFdP4g9OJedW7Qde5PMGWh3DkiixmGxeSXhgiVlk1l
+         TlCDHvTZzPk9/WXZ8ELR7Q3poqz4/iAPWffL7A9AuwbUfM/r61NVVNaOkPgKzu1rI1O+
+         ofiCAldU0hpro0o2CR+ZAij0R/C3l/lXbDMBDhAPfYbJe359jXfSl0p4YAIb50jDeZ6s
+         Xtl7e5YYVshTkU645JzVkMf+2SX2ZokUdXp6LqVDXsoiAyzTabjPgBUNNTux+kRS9Zqt
+         wDvg==
+X-Forwarded-Encrypted: i=1; AJvYcCWjWaudmUM+JCRB5R6TgvGvIYtADr6OQD3rXPCnHDrVe+OHW6nCUQe82C2t8hmk8lRsd/6z6w3zoT9rZcSAr+E8T1FeuIv5/j3S
+X-Gm-Message-State: AOJu0YxYeRxTcHb/4QDzgutGIXg0J3VivUI7K32AQB1O2QOL2osVr4D4
+	DCvliMCU2DPLOzHvpSlm0nmKDN2Qw6Cu3+UvOwzk9GXD47O9OxV5mTht8d3V/XM=
+X-Google-Smtp-Source: AGHT+IEESoHV+TTf90PdN7pLxmBm3gZ0xMUk7VRL1azohO9LT1Z72CZ3oFQjtGbrIy3x/5u5Qu0uhQ==
+X-Received: by 2002:a05:6512:3d04:b0:52b:c262:99b3 with SMTP id 2adb3069b0e04-52ccaa5693emr1070573e87.11.1718778719107;
+        Tue, 18 Jun 2024 23:31:59 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cba181738sm920583e87.255.2024.06.18.23.31.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 18 Jun 2024 23:31:58 -0700 (PDT)
+Date: Wed, 19 Jun 2024 09:31:57 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Dzmitry Sankouski <dsankouski@gmail.com>, 
+	Sebastian Reichel <sre@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
+	Sam Ravnborg <sam@ravnborg.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, 
+	phone-devel@vger.kernel.org, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-input@vger.kernel.org, linux-leds@vger.kernel.org, 
+	linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Subject: Re: [PATCH v3 02/23] gcc-sdm845: Add rates to the GP clocks
+Message-ID: <n7gvt4e6kt33lpnfivv4t2waro2t4qi4evkrfot3j2en7ubffb@gpzwolihwemr>
+References: <20240618-starqltechn_integration_upstream-v3-0-e3f6662017ac@gmail.com>
+ <20240618-starqltechn_integration_upstream-v3-2-e3f6662017ac@gmail.com>
+ <wnf3mfgdm4p4f5wrxdtlx4wccnizdvohc7iiyu5t22eeb67r57@xun3r73hksrg>
+ <ad04e203-4244-4cd3-9c9a-fae002962990@linaro.org>
+ <lwrz4rvn6ogseea5v6j7plc3yi3xnzo76dvrsl3muat3iswlkb@zmwa3xo3xgw4>
+ <85e03d10-59a2-4f15-bb85-7b2c0354a5d1@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -68,57 +85,45 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240618185819.2155595-2-tmaimon77@gmail.com>
+In-Reply-To: <85e03d10-59a2-4f15-bb85-7b2c0354a5d1@linaro.org>
 
-Hi Tomer,
+On Tue, Jun 18, 2024 at 09:11:58PM GMT, Konrad Dybcio wrote:
+> 
+> 
+> On 6/18/24 20:55, Dmitry Baryshkov wrote:
+> > On Tue, Jun 18, 2024 at 08:50:52PM GMT, Konrad Dybcio wrote:
+> > > 
+> > > 
+> > > On 6/18/24 19:50, Dmitry Baryshkov wrote:
+> > > > On Tue, Jun 18, 2024 at 04:59:36PM GMT, Dzmitry Sankouski wrote:
+> > > > > sdm845 has "General Purpose" clocks that can be muxed to
+> > > > > SoC pins.
+> > > > > 
+> > > > > Those clocks may be used as e.g. PWM sources for external peripherals.
+> > > > > Add more frequencies to the table for those clocks so it's possible
+> > > > > for arbitrary peripherals to make use of them.
+> > > > > 
+> > > > > See also: bf8bb8eaccf(clk: qcom: gcc-msm8916: Add rates to the GP clocks)
+> > > > 
+> > > > Each time I look at the table attached to the GP CLK, I feel that it's
+> > > > plain wrong. In the end the GPCLK can in theory have arbitrary value
+> > > > depending on the usecase.
+> > > > 
+> > > > Bjorn, Konrad, maybe we should add special clk_ops for GP CLK which
+> > > > allow more flexibility than a default clk_rcg2_ops?
+> > > 
+> > > If we can somehow get max m/n/d values for all possible parents, sure
+> > 
+> > Calculate them at runtime?
+> 
+> We'd be calculating the mnd values for a frequency that's either equal or
+> reasonably close to the one requested. My worry is that we somehow need
+> to get the maximum values they can take (unless they're well-known)
 
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on clk/clk-next]
-[also build test WARNING on linus/master pza/reset/next v6.10-rc4 next-20240618]
-[cannot apply to pza/imx-drm/next]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Tomer-Maimon/dt-bindings-reset-npcm-add-clock-properties/20240619-093532
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-patch link:    https://lore.kernel.org/r/20240618185819.2155595-2-tmaimon77%40gmail.com
-patch subject: [PATCH v25 1/3] dt-bindings: reset: npcm: add clock properties
-config: arm64-randconfig-051-20240619 (https://download.01.org/0day-ci/archive/20240619/202406191439.3NcnExKM-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 13.2.0
-dtschema version: 2024.6.dev1+g833054f
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240619/202406191439.3NcnExKM-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406191439.3NcnExKM-lkp@intel.com/
-
-dtcheck warnings: (new ones prefixed by >>)
-   arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi:63.7-177.5: Warning (simple_bus_reg): /ahb/apb: simple-bus unit address format error, expected "f0000000"
-   arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi:50.35-55.5: Warning (unique_unit_address_if_enabled): /ahb/reset-controller@f0801000: duplicate unit-address (also used in node /ahb/clock-controller@f0801000)
-   arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: /: memory@0: 'device_type' is a required property
-   	from schema $id: http://devicetree.org/schemas/memory.yaml#
-   arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: system-controller@f0800000: compatible: ['nuvoton,npcm845-gcr', 'syscon'] is too short
-   	from schema $id: http://devicetree.org/schemas/soc/nuvoton/nuvoton,npcm-gcr.yaml#
-   arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: interrupt-controller@dfff9000: 'ppi-partitions' does not match any of the regexes: '^v2m@[0-9a-f]+$', 'pinctrl-[0-9]+'
-   	from schema $id: http://devicetree.org/schemas/interrupt-controller/arm,gic.yaml#
-   arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: ahb: apb:ranges: [[0, 0, 4026531840, 3145728], [4293918720, 0, 4293918720, 90112]] is not of type 'boolean'
-   	from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
->> arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: reset-controller@f0801000: '#clock-cells' is a required property
-   	from schema $id: http://devicetree.org/schemas/reset/nuvoton,npcm750-reset.yaml#
->> arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: reset-controller@f0801000: 'clocks' is a required property
-   	from schema $id: http://devicetree.org/schemas/reset/nuvoton,npcm750-reset.yaml#
-   arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: timer@8000: 'clock-names' does not match any of the regexes: 'pinctrl-[0-9]+'
-   	from schema $id: http://devicetree.org/schemas/timer/nuvoton,npcm7xx-timer.yaml#
-   arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: /ahb/apb/watchdog@801c: failed to match any schema with compatible: ['nuvoton,npcm845-wdt', 'nuvoton,npcm750-wdt']
-   arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: /ahb/apb/watchdog@801c: failed to match any schema with compatible: ['nuvoton,npcm845-wdt', 'nuvoton,npcm750-wdt']
-   arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: /ahb/apb/watchdog@901c: failed to match any schema with compatible: ['nuvoton,npcm845-wdt', 'nuvoton,npcm750-wdt']
-   arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: /ahb/apb/watchdog@901c: failed to match any schema with compatible: ['nuvoton,npcm845-wdt', 'nuvoton,npcm750-wdt']
-   arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: /ahb/apb/watchdog@a01c: failed to match any schema with compatible: ['nuvoton,npcm845-wdt', 'nuvoton,npcm750-wdt']
-   arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: /ahb/apb/watchdog@a01c: failed to match any schema with compatible: ['nuvoton,npcm845-wdt', 'nuvoton,npcm750-wdt']
+One of the options might be to force devices to use
+assigned-clock-parent to set GP CLK sorource and pwm-clk as an actual
+device using the clock.
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+With best wishes
+Dmitry
