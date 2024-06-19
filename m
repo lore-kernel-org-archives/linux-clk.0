@@ -1,109 +1,201 @@
-Received: from ahti.lucaweiss.eu (ahti.lucaweiss.eu [128.199.32.197])
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE0D315CD77;
-	Wed, 19 Jun 2024 21:03:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.199.32.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 774B97F7D3
+	for <linux-clk@vger.kernel.org>; Wed, 19 Jun 2024 22:10:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718830992; cv=none; b=CQtBceq2NYUw4Th4nWEOnx7zIf/fgjgyMLb/5krKZjfdPGzS5r57sp0eKS60i8rY57SQb3f83BGrL8uC5GIx7LmkdYRMSXECkneyuHEx3UBIz3fhEnSBacqIhgbfRygcyA7/mTHho7FHHRIKmVlv3XoHp6fFvhvwEmInWEBHOY8=
+	t=1718835038; cv=none; b=hVCGjTxdSi0FwKdTu8zhwiCiaPfcRwaOWZQR2aeyeFc5Q8P+QWTz76UfxUvGi9BUZZSnWTUHoSRQ5rmX8/vPqQBgZ5Hl7yRqUD3deeQAoXfmwFE0HOUtb16LHfIisjYLf1WgUxfScNOt+VMKwr/kXxHrfTOpmG2RnifuEXWpnzU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718830992; c=relaxed/simple;
-	bh=QWyXpCDytX4xqVrRXmt0Xo2P70w0iAdxTSeodVhUvG4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=H9Fb3YWccA2i+WJkNSkOMUGHFXVcLtDDgRe+loZBV537s7JK8Mvl29vl8Xrf15Vdv7emokqUJxI0COGU8VTHXNy0KCioUXHbB/Ya0wPM+o1OSrap3a5uh7C/iq/Zd8Zir8uv9OTJ2vGTiX3ELnRx6w5Esy6seeoCa+ismfbotl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=lucaweiss.eu; spf=pass smtp.mailfrom=lucaweiss.eu; dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b=ZqGAiD7+; arc=none smtp.client-ip=128.199.32.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=lucaweiss.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lucaweiss.eu
+	s=arc-20240116; t=1718835038; c=relaxed/simple;
+	bh=MzmtV6RJLPp/mRcRZ0X769Ji07wp0WHO6hIUMyrrkbY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=b1OEEH3+LXAjHKHoa23xI+0rOfUde0yAR95ndMiFYNMpQG/7V7QscZ3XFabEzZQ7xakDh9inpYw5Vk8F5jSP9f99kPxM6IKdN/tJNDD8JvessFf/KDyY6nz2ihK95GQMIWK4XD1UbA87o/uiXcq8W1q3q7KYg0c4QpcuWCqwGHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZD0jODsj; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lucaweiss.eu header.i=@lucaweiss.eu header.b="ZqGAiD7+"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=lucaweiss.eu; s=s1;
-	t=1718830987; bh=QWyXpCDytX4xqVrRXmt0Xo2P70w0iAdxTSeodVhUvG4=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc;
-	b=ZqGAiD7+wLxqoKOocyonnzsQBQjVYYpbVWEh7eTV15N2MS6mfVlezhxMJyxuFwPyP
-	 9LR8pZZL1RbJuAJPg9DtkssoYpIE+9aaNEIqriRNdeO0dfmXabJjEbtr15iWonIJzE
-	 TwPLEoSklldP0wJ22Zgr21g7JTIvFNAif/gb+8lI=
-From: Luca Weiss <luca@lucaweiss.eu>
-Date: Wed, 19 Jun 2024 23:02:51 +0200
-Subject: [PATCH 7/7] ARM: dts: qcom: msm8226: Convert APCS usages to mbox
- interface
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZD0jODsj"
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52cc5d5179aso397074e87.0
+        for <linux-clk@vger.kernel.org>; Wed, 19 Jun 2024 15:10:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718835035; x=1719439835; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XLgiYNE4EcD1eCJhNuCVVYDqXAq6ojEUG+xkLeofvQc=;
+        b=ZD0jODsj2dqR6niAcu4iYnoLREx/xanEKDhi/tDviC4bUQJh5vtZjXfbC34tzZgW3G
+         6BKm4ageaUM4Hf0mRN7IdDnB/FDQYOPMieSxPdg1yXE6VW4aKv0cx6TWPLVQZunGYRwO
+         T54zssokxcBMS5TC2ImxzP+b6s15TQ6Za9AjiBnGGwzXZcAfnUO08vKEaJSs0bB0AGTx
+         +rDAGx3e3Ur2rilDtn6A70iSoBT+MlbQG8CdN8wZodf3whkXF5bOyp+x3hCuTbTBVwCF
+         0cMwh4WYT4dNykT6KqJEbMVdF20b2GKmxziiPIP5L02vNCPfaVLcq5xxKkdRVuFmXywi
+         0lhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718835035; x=1719439835;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XLgiYNE4EcD1eCJhNuCVVYDqXAq6ojEUG+xkLeofvQc=;
+        b=woLcfXCFu16NdGGYe7bTvbUBNaNSz0e0TeSsG5tTxOvOB2ouee3Mwk9OrdU+Mg8FVD
+         UMPJuCX5kB5mASfSwlODNupLocs3/OhL3Ly9HNVobkSOfXNN3OvrXxmjD38sU4711jV7
+         fc84ecom+gSrCBVoSa3lChBivk0vu5XPQgJoQ45WvxL3Qh+Ra1E0NYkLKenpuHGr3Sz9
+         oCIy/sAUGDwi8qPk/3S7PiG/xZ5k1lMvSJX9y0tNgH8+HLzFGIcFwmR02xULdiP8XxVq
+         I3/3+TeqjpBvMaAoqtf+2Q0FdOVyF7VxYrfM+n7VX/Kx+tQgXU9xnUyQtU5p0FVbAwP9
+         TLyw==
+X-Forwarded-Encrypted: i=1; AJvYcCUvDh9IUVVsbI+/Yw1y661VqXiWNz45g4IAUZYRGPhoqkNHRP+roijjnfMAfev+z4zuABL68A6JXW3p6gBNk5daKBPIXCT2xBOo
+X-Gm-Message-State: AOJu0YzSKvjNu/2OK/VrSV/BxKIdX0tfB22oDv4YjT98bg6u2vjvJkWn
+	pbB6oZkHlNg84rqW4mFsYMic+rIFH58fEvbPdfx7nOv+SKkD2aag9fQ5iNtsHZU=
+X-Google-Smtp-Source: AGHT+IH3CBrMepbPopZ1LMG2Hk8saC3rtJcvZcFGZJwOAFrtpz5t43UjJvvpMhq86KbRuj7gOqRYyA==
+X-Received: by 2002:a05:6512:742:b0:52b:bd50:baed with SMTP id 2adb3069b0e04-52ccaa5a074mr2226003e87.61.1718835034394;
+        Wed, 19 Jun 2024 15:10:34 -0700 (PDT)
+Received: from ?IPV6:2a02:8109:aa0d:be00::ebdd? ([2a02:8109:aa0d:be00::ebdd])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56ed3658sm704663566b.133.2024.06.19.15.10.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 19 Jun 2024 15:10:34 -0700 (PDT)
+Message-ID: <18c0b683-97c8-4d53-9852-840a21c11d9a@linaro.org>
+Date: Thu, 20 Jun 2024 00:10:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V6 3/5] clk: qcom: gdsc: Add set and get hwmode callbacks
+ to switch GDSC mode
+To: Jagadeesh Kona <quic_jkona@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J . Wysocki"
+ <rafael@kernel.org>, Kevin Hilman <khilman@kernel.org>,
+ Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>, Andy Gross <agross@kernel.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Abel Vesa <abel.vesa@linaro.org>
+Cc: linux-pm@vger.kernel.org, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Taniya Das <quic_tdas@quicinc.com>,
+ Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+ Imran Shaik <quic_imrashai@quicinc.com>,
+ Ajit Pandey <quic_ajipan@quicinc.com>
+References: <20240619141413.7983-1-quic_jkona@quicinc.com>
+ <20240619141413.7983-4-quic_jkona@quicinc.com>
+Content-Language: en-US
+From: Caleb Connolly <caleb.connolly@linaro.org>
+In-Reply-To: <20240619141413.7983-4-quic_jkona@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240619-msm8226-cpufreq-v1-7-85143f5291d1@lucaweiss.eu>
-References: <20240619-msm8226-cpufreq-v1-0-85143f5291d1@lucaweiss.eu>
-In-Reply-To: <20240619-msm8226-cpufreq-v1-0-85143f5291d1@lucaweiss.eu>
-To: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
- Luca Weiss <luca@lucaweiss.eu>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1217; i=luca@lucaweiss.eu;
- h=from:subject:message-id; bh=QWyXpCDytX4xqVrRXmt0Xo2P70w0iAdxTSeodVhUvG4=;
- b=owEBbQKS/ZANAwAIAXLYQ7idTddWAcsmYgBmc0eH/A+cTeCKbuN2F/m0lto1DGSCF9uaeDnV3
- Un/rUvRLbOJAjMEAAEIAB0WIQQ5utIvCCzakboVj/py2EO4nU3XVgUCZnNHhwAKCRBy2EO4nU3X
- VoLXD/9AP7duQM9JB397TIT24WwGlwFSyqkmoLTejECN0M6AnlBw4XpWpQeozxo1dTDaa7pkB6S
- bCY1rvt7t8mokSZU5st6OhXbuipuZ+J5ejFCYooLCCWkrhs1U/w0+iE93lftQgdGRNfA9LhIWSV
- XKGyPc54c0EIT4HNA5bsz4CSa+L974CDSyifoenBndahUrBu2ZgQEzdlkJwjqD1fkyJRHd9CSw7
- jU/PD035nI3jnL/QO4AF7IHBeK7kiNiChdjaLnVa7KBHge4Xg5oPlxAKh85AAUsXx1lW7kK1O2f
- P/YZfNKrQVkzzrOa3IqQ9eJk1ORjgxrHRAwyrGLvJyJ1OVeGXyHJo599fMTvH/lfUwfp+OeI9v1
- wXcyLmHrPpeQi2m9uQvCuqchC1Bmur5tUnAEFfVVkUCfosspWVJrhfjrXKESkJBx+zw7gAdf/KQ
- WY1vhyNy/Pube3NYkkRjSKI+8azOwSdGvLQ+Pj8aD8kOqSqwVq9U2g+30+SlsLniOlTW+hoUwGm
- QZEVbWTEAOpXPVHbVCMcsxuhno7zqocu8R8dOYU6TluZjm8xlz25Kw6k3gSqDHAdfyuZZkFpz1n
- r6uw5Wd5kdTvvGO0VUsY9xRVKis8f6rqKvSKJFGTjUm13ieuSDVPSsQ9QiM3korawPjcob+kKKB
- g10h5Lx5eJJ9oWg==
-X-Developer-Key: i=luca@lucaweiss.eu; a=openpgp;
- fpr=BD04DA24C971B8D587B2B8D7FAF69CF6CD2D02CD
 
-Since we now have the apcs set up as a mailbox provider, let's use the
-interface for all drivers where possible.
+Hi Jagadeesh,
 
-Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
----
- arch/arm/boot/dts/qcom/qcom-msm8226.dtsi | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Sorry, some grammar nitpicks.
 
-diff --git a/arch/arm/boot/dts/qcom/qcom-msm8226.dtsi b/arch/arm/boot/dts/qcom/qcom-msm8226.dtsi
-index 9deee34fc5ca..5c1122f93054 100644
---- a/arch/arm/boot/dts/qcom/qcom-msm8226.dtsi
-+++ b/arch/arm/boot/dts/qcom/qcom-msm8226.dtsi
-@@ -157,7 +157,7 @@ master-stats {
- 
- 		smd-edge {
- 			interrupts = <GIC_SPI 168 IRQ_TYPE_EDGE_RISING>;
--			qcom,ipc = <&apcs 8 0>;
-+			mboxes = <&apcs 0>;
- 			qcom,smd-edge = <15>;
- 
- 			rpm_requests: rpm-requests {
-@@ -235,7 +235,7 @@ smp2p-adsp {
- 		interrupt-parent = <&intc>;
- 		interrupts = <GIC_SPI 158 IRQ_TYPE_EDGE_RISING>;
- 
--		qcom,ipc = <&apcs 8 10>;
-+		mboxes = <&apcs 10>;
- 
- 		qcom,local-pid = <0>;
- 		qcom,remote-pid = <2>;
-@@ -1232,7 +1232,7 @@ adsp: remoteproc@fe200000 {
- 			smd-edge {
- 				interrupts = <GIC_SPI 156 IRQ_TYPE_EDGE_RISING>;
- 
--				qcom,ipc = <&apcs 8 8>;
-+				mboxes = <&apcs 8>;
- 				qcom,smd-edge = <1>;
- 
- 				label = "lpass";
+On 19/06/2024 16:14, Jagadeesh Kona wrote:
+> Some GDSC client drivers require the GDSC mode to be switched dynamically
+> to HW mode at runtime to gain the power benefits. Typically such client
+> drivers require the GDSC to be brought up in SW mode initially to enable
+> the required dependent clocks and configure the hardware to proper state.
+> Once initial hardware set up is done, they switch the GDSC to HW mode to
+> save power. At the end of usecase, they switch the GDSC back to SW mode
+> and disable the GDSC.
+> 
+> Introduce HW_CTRL_TRIGGER flag to register the set_hwmode_dev and
+> get_hwmode_dev callbacks for GDSC's whose respective client drivers
+> require the GDSC mode to be switched dynamically at runtime using
+> dev_pm_genpd_set_hwmode() API.
+> 
+> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> ---
+>   drivers/clk/qcom/gdsc.c | 42 +++++++++++++++++++++++++++++++++++++++++
+>   drivers/clk/qcom/gdsc.h |  1 +
+>   2 files changed, 43 insertions(+)
+> 
+> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
+> index df9618ab7eea..6acc7af82255 100644
+> --- a/drivers/clk/qcom/gdsc.c
+> +++ b/drivers/clk/qcom/gdsc.c
+> @@ -363,6 +363,44 @@ static int gdsc_disable(struct generic_pm_domain *domain)
+>   	return 0;
+>   }
+>   
+> +static int gdsc_set_hwmode(struct generic_pm_domain *domain, struct device *dev, bool mode)
+> +{
+> +	struct gdsc *sc = domain_to_gdsc(domain);
+> +	int ret;
+> +
+> +	ret = gdsc_hwctrl(sc, mode);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/*
+> +	 * Wait for the GDSC to go through a power down and
+> +	 * up cycle. In case SW/FW end up polling status
+> +	 * bits for the gdsc before the power cycle is completed
+> +	 * it might read the status wrongly.
+
+If we poll the status register before the power cycle is finished we 
+might read incorrect values.
+> +	 */
+> +	udelay(1);
+> +
+> +	/*
+> +	 * When GDSC is switched to HW mode, HW can disable the GDSC.
+The GDSC
+> +	 * When GDSC is switched back to SW mode, the GDSC will be enabled
+The GDSC
+> +	 * again, hence need to poll for GDSC to complete the power uphence we need to poll
+
+Kind regards,
+> +	 */
+> +	if (!mode)
+> +		return gdsc_poll_status(sc, GDSC_ON);
+> +
+> +	return 0;
+> +}
+> +
+> +static bool gdsc_get_hwmode(struct generic_pm_domain *domain, struct device *dev)
+> +{
+> +	struct gdsc *sc = domain_to_gdsc(domain);
+> +	u32 val;
+> +
+> +	regmap_read(sc->regmap, sc->gdscr, &val);
+> +
+> +	return !!(val & HW_CONTROL_MASK);
+> +}
+> +
+>   static int gdsc_init(struct gdsc *sc)
+>   {
+>   	u32 mask, val;
+> @@ -451,6 +489,10 @@ static int gdsc_init(struct gdsc *sc)
+>   		sc->pd.power_off = gdsc_disable;
+>   	if (!sc->pd.power_on)
+>   		sc->pd.power_on = gdsc_enable;
+> +	if (sc->flags & HW_CTRL_TRIGGER) {
+> +		sc->pd.set_hwmode_dev = gdsc_set_hwmode;
+> +		sc->pd.get_hwmode_dev = gdsc_get_hwmode;
+> +	}
+>   
+>   	ret = pm_genpd_init(&sc->pd, NULL, !on);
+>   	if (ret)
+> diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
+> index 803512688336..1e2779b823d1 100644
+> --- a/drivers/clk/qcom/gdsc.h
+> +++ b/drivers/clk/qcom/gdsc.h
+> @@ -67,6 +67,7 @@ struct gdsc {
+>   #define ALWAYS_ON	BIT(6)
+>   #define RETAIN_FF_ENABLE	BIT(7)
+>   #define NO_RET_PERIPH	BIT(8)
+> +#define HW_CTRL_TRIGGER	BIT(9)
+>   	struct reset_controller_dev	*rcdev;
+>   	unsigned int			*resets;
+>   	unsigned int			reset_count;
 
 -- 
-2.45.2
-
+// Caleb (they/them)
