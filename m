@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D26CB1C0052;
-	Thu, 20 Jun 2024 18:27:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B183944393;
+	Thu, 20 Jun 2024 19:47:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718908021; cv=none; b=MeQOyW1aqbJGqK7tUTqJdyEUwf9zgo6WD7AqkWeeq6btnxAoRIjXtMxtR9y0AOEJieeO8I145MGLjOLSh3LSoIE8lK9rdP/AvdmCPrN+wikQrSHmmqjScM0zFVy2AqV4oBSwVdVfP4cgm1iCGBv/v7422EHlCLogjT7ZjdgIUpk=
+	t=1718912838; cv=none; b=iVvTVUBZE8XzjtsfL36ULLFd6QQ08v2TZwDVMeWxyeTceI/RfrUh51wGCyqk30v8mxjjHA5IaLbTKZ4NeH3ln3OOzag/NbjQElDAdQyRKJIvtOuBCAReY233Ifvw9nmAe7cYFQ+jWTTx0FI7JV2wupVpK5VdQgEkLP9f+4udjBA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718908021; c=relaxed/simple;
-	bh=Npw3k9d4pOutQAzbANjN50tc75Fu4ciumJhM6mJHTaI=;
+	s=arc-20240116; t=1718912838; c=relaxed/simple;
+	bh=D+e2m26VHYUG/Lo1gKaeNxI1GFfU9WexaAsiXpn5YYI=;
 	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=RcwVvziCk5NelpivnplSV4kU9AMUejA1W+xKdU5ErNO//p1crVEBsGstGBGJ0+vPlsNRgSnW7N/0Txw5hZeAId7/LFVZR+p3XQt5UyIyyvWD4A+m/XHrg/4vz1vufHH+UgFLy3pX37lvAcd55zXjHl+/dgnRqhwFSJV2Lh1/j5Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bOmTno0Z; arc=none smtp.client-ip=10.30.226.201
+	 Message-Id:Subject; b=SMVtjwTdeDVBwAgGEzn1/anIMAd43GUoHKd8YnkdrydWw4yl+FgeaCkeuNmHUApbuKZWJLmX/K/r/9V7Jcze5mHEsvw7RQmbYWRNckcuNA0OLo8eR6Ytimg6LvjJpn58oVHKuki9xPWZk6bqklx55hqzHm4CTpBkweGRTV6WJ24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=snFugIF/; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bOmTno0Z"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18134C4AF0D;
-	Thu, 20 Jun 2024 18:27:00 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="snFugIF/"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BD0CC2BD10;
+	Thu, 20 Jun 2024 19:47:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718908020;
-	bh=Npw3k9d4pOutQAzbANjN50tc75Fu4ciumJhM6mJHTaI=;
+	s=k20201202; t=1718912838;
+	bh=D+e2m26VHYUG/Lo1gKaeNxI1GFfU9WexaAsiXpn5YYI=;
 	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=bOmTno0ZAI/lrVwWk8qZeZQp/7E/IKb2Zd/nPKbHfQIXzdr4xKlznfmGOBnZ19kmz
-	 5t0O0cirHqQ82XIkzwF1JS0GWfDBqVYHz+sLqD1uO16yYfORLy1Hrl5W6Gry3GkAbI
-	 TCNjzb4VuuaFyzxCG5d+teNDRnRF5uhhOFUdyZprHz1qQ0qS6uRUPSE2CgQtV4ISQT
-	 jRqL15VjUnjBfyZrsfvdIoZvYcgP9hKjZn2/VTDJRx0ahRaXV4k0nQJEhY0G/EhPpa
-	 MHJmow22NZFWdVY26rcRCvMVmRW40oJzvm6b95dV45V9Uws1/U2mpez6vVY2wGhUgX
-	 K2uIZa0Egkg4w==
-Date: Thu, 20 Jun 2024 12:26:58 -0600
+	b=snFugIF/AqgJy+pEn7auwBHqcgy7Pe3AUcf+drxFEmAqZGIg4UnWBdqoK6m6CwAsz
+	 EkiwhgZjP3d7GOm7e8ou0XhSc1T7L3lMeaa/T1AEIXbfpSX2iywkxq4avE0e0+m91t
+	 dLOvf7FI8ULn1u+pmBL4hCtE4SXPle6UjAxOchsCgdgfWHkHmUV9bzREB8NNPkOJPP
+	 5LWC2Wixht1KdskG7sSDxZfktWP8GWsK507Mj2+LEuf+K4sBHxeRyzFxXz2SDbZ0t9
+	 K6+mi92KIySVFO89b+DEvfdkNsCh+2E7uNs9B8beQA9nGHp8USIGgcbWKanPLsl5s8
+	 j+fvNo+PZMXHQ==
+Date: Thu, 20 Jun 2024 13:47:17 -0600
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -36,74 +36,46 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, 
- Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
- Philipp Zabel <p.zabel@pengutronix.de>, 
- Gregory CLEMENT <gregory.clement@bootlin.com>, linux-clk@vger.kernel.org, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, Lee Jones <lee@kernel.org>, 
- Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
- devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>, 
- Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
- linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org
-In-Reply-To: <20240620-mbly-olb-v3-4-5f29f8ca289c@bootlin.com>
-References: <20240620-mbly-olb-v3-0-5f29f8ca289c@bootlin.com>
- <20240620-mbly-olb-v3-4-5f29f8ca289c@bootlin.com>
-Message-Id: <171890801727.3178289.9824854320457865934.robh@kernel.org>
-Subject: Re: [PATCH v3 4/9] dt-bindings: soc: mobileye: add EyeQ OLB system
- controller
+To: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
+Cc: Andi Shyti <andi.shyti@kernel.org>, Vladimir Zapolskiy <vz@mleia.com>, 
+ Miquel Raynal <miquel.raynal@bootlin.com>, linux-sound@vger.kernel.org, 
+ Stephen Boyd <sboyd@kernel.org>, linuxppc-dev@lists.ozlabs.org, 
+ Arnd Bergmann <arnd@arndb.de>, Jaroslav Kysela <perex@perex.cz>, 
+ dmaengine@vger.kernel.org, Chancel Liu <chancel.liu@nxp.com>, 
+ Michael Ellerman <mpe@ellerman.id.au>, Richard Weinberger <richard@nod.at>, 
+ Michael Turquette <mturquette@baylibre.com>, Takashi Iwai <tiwai@suse.com>, 
+ Mark Brown <broonie@kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>, 
+ linux-kernel@vger.kernel.org, Markus Elfring <Markus.Elfring@web.de>, 
+ linux-arm-kernel@lists.infradead.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-clk@vger.kernel.org, 
+ Yangtao Li <frank.li@vivo.com>, 
+ "J.M.B. Downing" <jonathan.downing@nautel.com>, 
+ linux-mtd@lists.infradead.org, Liam Girdwood <lgirdwood@gmail.com>, 
+ devicetree@vger.kernel.org, Li Zetao <lizetao1@huawei.com>, 
+ linux-i2c@vger.kernel.org, Russell King <linux@armlinux.org.uk>, 
+ alsa-devel@alsa-project.org, Vinod Koul <vkoul@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+In-Reply-To: <20240620175657.358273-3-piotr.wojtaszczyk@timesys.com>
+References: <20240620175657.358273-1-piotr.wojtaszczyk@timesys.com>
+ <20240620175657.358273-3-piotr.wojtaszczyk@timesys.com>
+Message-Id: <171891283706.3289677.3213379285370562671.robh@kernel.org>
+Subject: Re: [Patch v4 02/10] dt-bindings: dma: Add lpc32xx DMA mux binding
 
 
-On Thu, 20 Jun 2024 19:30:56 +0200, Théo Lebrun wrote:
-> Add documentation to describe the "Other Logic Block" system-controller.
-> It deals with three platforms: EyeQ5, EyeQ6L and EyeQ6H. First two have
-> a single instance, whereas EyeQ6H has seven named instances.
+On Thu, 20 Jun 2024 19:56:33 +0200, Piotr Wojtaszczyk wrote:
+> LPC32XX SoCs use pl080 dma controller which have few request signals
+> multiplexed between peripherals. This binding describes how devices can
+> use the multiplexed request signals.
 > 
-> Features provided are:
->  - Clocks, children to main crystal. Some PLLs and divider clocks.
->  - Resets. Some instances DO NOT have reset.
->  - Pinctrl. Only EyeQ5 has such feature.
-> 
-> Those are NOT the only features exposed in OLB system-controllers! Many
-> individual registers, related to IP block integration, can be found.
-> Additional features will be exposed over time.
-> 
-> We simplify devicetree phandles to OLB in two ways:
-> 
->  - Compatibles exposing a single clock do not ask for a index argument.
->    This means we use EyeQ6H OLB south (it has four clocks):
-> 
->       clocks = <&olb_south EQ6HC_SOUTH_PLL_PER>;
-> 
->    But use EyeQ6H OLB east (it has one clock):
-> 
->       clocks = <&olb_east>;
-> 
->  - Compatibles exposing a single reset domain do not ask for a domain
->    index, only a reset index.
->    This means we use EyeQ5 OLB (it has three domains):
-> 
->      resets = <&olb 0 10>;
-> 
->    But use EyeQ6H west reset (it has one domain):
-> 
->       resets = <&olb_west 3>;
-> 
-> About pinctrl subnodes: all pins have two functionality, either GPIO or
-> something-else. The latter is pin dependent, we express constraints
-> using many if-then.
-> 
-> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+> Signed-off-by: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
 > ---
->  .../bindings/soc/mobileye/mobileye,eyeq5-olb.yaml  | 374 +++++++++++++++++++++
->  MAINTAINERS                                        |   2 +
->  include/dt-bindings/clock/mobileye,eyeq5-clk.h     |  21 ++
->  3 files changed, 397 insertions(+)
+> Changes for v4:
+> - This patch is new in v4
+> 
+>  .../bindings/dma/nxp,lpc3220-dmamux.yaml      | 56 +++++++++++++++++++
+>  MAINTAINERS                                   |  9 +++
+>  2 files changed, 65 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/dma/nxp,lpc3220-dmamux.yaml
 > 
 
 My bot found errors running 'make dt_binding_check' on your patch:
@@ -111,26 +83,11 @@ My bot found errors running 'make dt_binding_check' on your patch:
 yamllint warnings/errors:
 
 dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/usb/realtek,rts5411.yaml: ^.*@[1-4]$: Missing additionalProperties/unevaluatedProperties constraint
-
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/qcom,pcie-sm8350.yaml: oneOf: Missing additionalProperties/unevaluatedProperties constraint
-
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/pci/qcom,pcie-sm8350.yaml: oneOf: Missing additionalProperties/unevaluatedProperties constraint
-
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/nvmem/st,stm32-romem.yaml: ^.*@[0-9a-f]+$: Missing additionalProperties/unevaluatedProperties constraint
-
-Documentation/devicetree/bindings/sound/st,stm32-sai.example.dtb: /example-0/sai@4400b000/audio-controller@4400b004: failed to match any schema with compatible: ['st,stm32-sai-sub-a']
-Documentation/devicetree/bindings/net/wireless/qcom,ath11k.example.dtb: /example-0/remoteproc@cd00000: failed to match any schema with compatible: ['qcom,ipq8074-wcss-pil']
-Documentation/devicetree/bindings/thermal/brcm,avs-ro-thermal.example.dtb: /example-0/avs-monitor@7d5d2000: failed to match any schema with compatible: ['brcm,bcm2711-avs-monitor', 'syscon', 'simple-mfd']
-Documentation/devicetree/bindings/clock/sprd,sc9863a-clk.example.dtb: /example-1/syscon@20e00000: failed to match any schema with compatible: ['sprd,sc9863a-glbregs', 'syscon', 'simple-mfd']
-Documentation/devicetree/bindings/clock/milbeaut-clock.example.dtb: /example-2/serial@1e700010: failed to match any schema with compatible: ['socionext,milbeaut-usio-uart']
-Documentation/devicetree/bindings/arm/hisilicon/controller/hi3798cv200-perictrl.example.dtb: /example-0/peripheral-controller@8a20000/phy@850: failed to match any schema with compatible: ['hisilicon,hi3798cv200-combphy']
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/arm/stm32/st,mlahb.example.dtb: ahb@38000000: Unevaluated properties are not allowed ('reg' was unexpected)
-	from schema $id: http://devicetree.org/schemas/arm/stm32/st,mlahb.yaml#
+Documentation/devicetree/bindings/dma/nxp,lpc3220-dmamux.example.dtb: /example-0/syscon@40004000: failed to match any schema with compatible: ['nxp,lpc3220-creg', 'syscon', 'simple-mfd']
 
 doc reference errors (make refcheckdocs):
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240620-mbly-olb-v3-4-5f29f8ca289c@bootlin.com
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240620175657.358273-3-piotr.wojtaszczyk@timesys.com
 
 The base for the series is generally the latest rc1. A different dependency
 should be noted in *this* patch.
