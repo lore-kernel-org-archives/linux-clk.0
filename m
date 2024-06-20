@@ -1,71 +1,71 @@
 Received: from fout6-smtp.messagingengine.com (fout6-smtp.messagingengine.com [103.168.172.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3F9F1A4F09;
-	Thu, 20 Jun 2024 11:32:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37327763F7;
+	Thu, 20 Jun 2024 11:32:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718883154; cv=none; b=kyWdoplSJ1plG7V1xe/Vmvkks1HqVZtKcw003mBRV/Q6RLQ5PIZsRempg/xZzk7NKVkNpWIhqYPQSmg+K79WasNnQw7F9obfxnVH7g6pyYmaMvPI+vnmIw18K16P+ExjA6aCxjRHfHUck/AVWCCkLoIEUw1Vuwc+QVtmBC2x5x4=
+	t=1718883159; cv=none; b=hNDVpRpsfvHFr84P0vulMBQX/wiFopkiibZZbT6VHNl/73bhfrgncc9qlr7WibyObYZumicQc5dwWFfSxiOMuXneepwCqjren/UhBW+kQrT6y9S9ffCVZ7SiIbWR157S8hCEbCwSEHCOnIoSPjAzIrDZugJu6FPK4FRDi5wA12A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718883154; c=relaxed/simple;
-	bh=8YVfwSNlzB/6d5RaR+RT5eC2BqDILP0+FvJzvg4U7/k=;
+	s=arc-20240116; t=1718883159; c=relaxed/simple;
+	bh=jmjGtK29cRc4yaV7+nkqN0EfeRSKfNMHZIKyWrX6klM=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XRDHX3UX8Sb7Y9qVA7QxWp+usRvWVMNoX7clbAcD4sKsHy0gzmlTecbxYHoen5IbSv6nSWzLX0fJ+72ODE5rGJS6CQNTx/pjYGcHwwUFJuijjxeyIOxRBGe2fzotXLVREFj1wAMHYVNoNMxwxseoI9B/TflRBNd7u5Wdam7EbKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com; spf=pass smtp.mailfrom=testtoast.com; dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b=NunYtibv; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=N2ddD1k9; arc=none smtp.client-ip=103.168.172.149
+	 MIME-Version; b=NSeMVIf6aasEa/374jN8bL87gCkKeBjJv6rsWjwGxVKBcNJysBdi8htq8lpbuIbF27tZbA/UOd6ezOmZD/2LMCoArpXQ7ORGBEeLsPUSn8kEmSeV1Shtou+C1qwhTQ1PWx8QZJ4w1qCRMyeAHeXXUVNP99vhQKKMXHD+9tEWzDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com; spf=pass smtp.mailfrom=testtoast.com; dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b=McSDgzge; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MqEC56k7; arc=none smtp.client-ip=103.168.172.149
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=testtoast.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b="NunYtibv";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="N2ddD1k9"
+	dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b="McSDgzge";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MqEC56k7"
 Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.nyi.internal (Postfix) with ESMTP id C208613804D3;
-	Thu, 20 Jun 2024 07:32:31 -0400 (EDT)
+	by mailfout.nyi.internal (Postfix) with ESMTP id 5B7021380490;
+	Thu, 20 Jun 2024 07:32:37 -0400 (EDT)
 Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Thu, 20 Jun 2024 07:32:31 -0400
+  by compute5.internal (MEProxy); Thu, 20 Jun 2024 07:32:37 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=testtoast.com;
 	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
 	:from:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1718883151; x=
-	1718969551; bh=nWXLocCMt7EGKg67iVS/7BHF4d4/LJP7o3vbPwq3pQs=; b=N
-	unYtibvf57bb/Ij8GEEGuOIe/ih5a8T4F5ro8IPDktqeg7jN4qW2KDEiBxXkueNK
-	pSUUxGDe9loj+aVOQaeWx+5wxX5PY4mFMYsvxg8TNtT4CD58+H3mq/wWVo24EHX4
-	TwcZvyV6GaAWBVbSuDrsEiZyihNKfLyUrvGoqEaJv3PN+PY1EltcQx7z9h9PxZsy
-	jocwA0k1KAIZigd3z0eUtgcOZHzVLkIwf7I6w8jmKgMgnrKOY7Hu3UhYPybWRufm
-	VkdBJBoJ9jtBb8XhDh4stqwOzQjjlDUev0X8NqnDIdDtYvaDeKIw+EAzlh8eAo+8
-	e3yv3buIJ7TPva6yooW+Q==
+	:reply-to:subject:subject:to:to; s=fm2; t=1718883157; x=
+	1718969557; bh=tfCHMfxWFNiChBgwEq49Ue2QzQSIOUIUNic78/4HQvQ=; b=M
+	cSDgzgerjSAlSxxON1obvW9BO0YLQcmNAqjXoxszoUXEIYNBNf/Ogewcjx/H6E/3
+	hSy1+EPyqOWh3+X2Zf3RZ7LgUUFjNo73vPqD5pjYwz8t76mq0nL87SUIKHzLzwq6
+	+T6vEsgM8ZfQwcNR0kFEP1twV4uvd76o/1NeT6zvNAdAAhlIV1oeJ92uw3q8JgDy
+	f07txMZ45wOfrb5PGMaauMS7dGCFmX5E24GoknPU/hK7OMK3Xrjnbl1QhV/UCHqT
+	B1yD2kDx1hJsrp+XszjSfTtRlbWVVzfp+WVJiDIAo9ZrfXGabQtwfup9xoWrD5I6
+	bjtnCl51EU20jfswPCj5w==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1718883151; x=
-	1718969551; bh=nWXLocCMt7EGKg67iVS/7BHF4d4/LJP7o3vbPwq3pQs=; b=N
-	2ddD1k9yer0LRPeb2zf+NlqWvWlvgBU7ZkkDgWrcx5RO3tQfv9j/8OoD3EH5LApe
-	5GOP9tcNdeWBaeeqnm/Oha6R+FF8MbexF7lR1+btN2orOlNAm76p7bHlULyg5T3I
-	vTeptEbBK38dsbi7C/LZojGJLRxKB972HYH10kEw2T5beiDdA6S+ZU+yWV0/MzQ3
-	UrP0y+v3qGLRxbWt2y5TpozTill3zmcgv/S0gI5yCcfQFHct5mPgr+Gf1sA5ZXy3
-	qs9NbA3qUwu/EouFUxoAQ4DpTMB/eTbbVwqKDRZTZ+PGaQZ/CoMg1amh87UtycGr
-	xPai+P+ECgGCIhZIaPEGw==
-X-ME-Sender: <xms:TxN0ZknBGPBdJlqSK3tBef9l3buZ6FCGRj70Y3E6qqNjU5yv5Zmq5g>
-    <xme:TxN0Zj3-cz2OcUuUOzP8mHnwxIfmV9RLp9NRrZjXnWIEfxGidBQEON3_zIKoTp_W6
-    NRdXEn-rBnwaMUGbw>
-X-ME-Received: <xmr:TxN0Zipmap79B4gvCBrHp0CE0pLaLcoSVcYo4uv1n-_KTKaCqhoSgt8QqX_TLwH4dKlE250m-Z4tRqCvsOEVjVy9YfExdte9Bmc4ByLymUIDI5eB>
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1718883157; x=
+	1718969557; bh=tfCHMfxWFNiChBgwEq49Ue2QzQSIOUIUNic78/4HQvQ=; b=M
+	qEC56k7LWPyXBEjiWOJU0NWVPOTW+8phaRQpi2eqtjScJ2i4Onkry8ib3bCta0Lj
+	rhOp/iaRcRCR3l+NgbaU5P9TbkZtslcCIOsfd6MDvznJjdhVz0uc6LLS2L/Vkm2s
+	fi8P5LGLh1TlPKxy9Zjf4IQ7YHVqOROAfLhjO93Vk/YeUrGsmr2fQcWWXhKDaciQ
+	OBIArJ3YDYKdmluE753FCS0DWIa2RTyO6lQ4/V4u2VSsoWCVr9w1rsqDiA98/SsB
+	Md1H/jc1EjmV+mnSGrhIzyurUZZFMIfSScrr0eOugCznsC+ppxjZ7+aXFunqbw5I
+	R9b3e2ozF1I/zFDgrqNuQ==
+X-ME-Sender: <xms:VRN0Zk3lO-4w5vcrzgciRn1vBRM0mIUy4PO7L5ukRAzWjVuLKE-5Nw>
+    <xme:VRN0ZvHrdbDXNllwPcC4EvsE99qMkLU4o9EIH4Pp3nFqDhqu9W7F1Y6EbIoa9L6c0
+    KTclqOXDOquDBYLmw>
+X-ME-Received: <xmr:VRN0Zs5TvIuWyrMtogHd9hYIxe9JiWGxV8yXVGUp2s-FooOSmTieyYbABRJF-vvxvwYwsHH2-PbmepEeHcyQm9fZheMkjDO6Qsn_apr629nmeZiK>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgedvledrfeefvddggedvucetufdoteggodetrfdotf
     fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfqfgfvpdfurfetoffkrfgpnffqhgen
     uceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmne
     cujfgurhephffvvefufffkofgjfhgggfestdekredtredttdenucfhrhhomheptfihrghn
     ucghrghlkhhlihhnuceorhihrghnsehtvghsthhtohgrshhtrdgtohhmqeenucggtffrrg
     htthgvrhhnpeffheeiffegtdfgffejteevgeefkeelieelkeevueetffetteduffevgeei
-    ieehteenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepmhgrihhlfhhrohhmpe
+    ieehteenucevlhhushhtvghrufhiiigvpedvnecurfgrrhgrmhepmhgrihhlfhhrohhmpe
     hrhigrnhesthgvshhtthhorghsthdrtghomh
-X-ME-Proxy: <xmx:TxN0Zgmosurj4_IGSkRuB23v9LZ2X90y1xlL_QX6oNuFrTG-2o8TKA>
-    <xmx:TxN0Zi1mmWMRDkH4S_QnzHb2T37s0zHsHJidp08lyPHyXIU534_OSw>
-    <xmx:TxN0ZnuLf_JIeZwxxH1s2pw8qvx4ZZi4afLYApI_X3-o6oaA8sg1GA>
-    <xmx:TxN0ZuV2oIlQ0S3G8Mkt8xFKtTEYCc4OxgNIhRbvrIVnRvZNy3ujXA>
-    <xmx:TxN0Zgk0HQIQNApszSRcpOS9O7SjmZ0yt9a8hvKIS_s__55Ac3zTut8N>
+X-ME-Proxy: <xmx:VRN0Zt0uRt35WifdtWxyAz87P_Z98dilJojDXeYZl7axgF6NtlSz1g>
+    <xmx:VRN0ZnFG_FrqbwTStaxgnngNhz6nmLd50WyI542wCzrm2YGfussRag>
+    <xmx:VRN0Zm8gxtOl7O7z1lOliHvfE_IkkUk2phe3tfV0il0vLbkuAs2Ufw>
+    <xmx:VRN0ZskaccdKVFHiAGrtmTyWJ9R-w4WCoXQ2vCQFPFThFrYuTedyjw>
+    <xmx:VRN0Zg2qVlAIk19qqiHyLIZA6_ei5vC04pYQkKcS4UZ0Zu25JuFJ8-7s>
 Feedback-ID: idc0145fc:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 20 Jun 2024 07:32:26 -0400 (EDT)
+ 20 Jun 2024 07:32:32 -0400 (EDT)
 From: Ryan Walklin <ryan@testtoast.com>
 To: Maxime Ripard <mripard@kernel.org>,
 	Chen-Yu Tsai <wens@csie.org>,
@@ -89,9 +89,9 @@ Cc: Andre Przywara <andre.przywara@arm.com>,
 	devicetree@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	Ryan Walklin <ryan@testtoast.com>
-Subject: [PATCH 04/23] drm: sun4i: de2: Initialize layer fields earlier
-Date: Thu, 20 Jun 2024 23:29:42 +1200
-Message-ID: <20240620113150.83466-5-ryan@testtoast.com>
+Subject: [PATCH 05/23] drm: sun4i: de3: Add YUV formatter module
+Date: Thu, 20 Jun 2024 23:29:43 +1200
+Message-ID: <20240620113150.83466-6-ryan@testtoast.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20240620113150.83466-1-ryan@testtoast.com>
 References: <20240620113150.83466-1-ryan@testtoast.com>
@@ -105,68 +105,162 @@ Content-Transfer-Encoding: 8bit
 
 From: Jernej Skrabec <jernej.skrabec@gmail.com>
 
-drm_universal_plane_init() can already call some callbacks, like
-format_mod_supported, during initialization. Because of that, fields
-should be initialized beforehand.
+The display engine formatter (FMT) module is present in the DE3 engine
+and provides YUV444 to YUV422/YUV420 conversion, format re-mapping and
+color depth conversion.
+
+Add support for this module.
 
 Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
-Co-developed-by: Ryan Walklin <ryan@testtoast.com>
 Signed-off-by: Ryan Walklin <ryan@testtoast.com>
 ---
- drivers/gpu/drm/sun4i/sun8i_ui_layer.c | 7 ++++---
- drivers/gpu/drm/sun4i/sun8i_vi_layer.c | 7 ++++---
- 2 files changed, 8 insertions(+), 6 deletions(-)
+ drivers/gpu/drm/sun4i/Makefile     |  3 +-
+ drivers/gpu/drm/sun4i/sun50i_fmt.c | 82 ++++++++++++++++++++++++++++++
+ drivers/gpu/drm/sun4i/sun50i_fmt.h | 32 ++++++++++++
+ 3 files changed, 116 insertions(+), 1 deletion(-)
+ create mode 100644 drivers/gpu/drm/sun4i/sun50i_fmt.c
+ create mode 100644 drivers/gpu/drm/sun4i/sun50i_fmt.h
 
-diff --git a/drivers/gpu/drm/sun4i/sun8i_ui_layer.c b/drivers/gpu/drm/sun4i/sun8i_ui_layer.c
-index 884abe3cf773a..91781b5bbbbce 100644
---- a/drivers/gpu/drm/sun4i/sun8i_ui_layer.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_ui_layer.c
-@@ -365,6 +365,10 @@ struct sun8i_ui_layer *sun8i_ui_layer_init_one(struct drm_device *drm,
- 	if (!layer)
- 		return ERR_PTR(-ENOMEM);
+diff --git a/drivers/gpu/drm/sun4i/Makefile b/drivers/gpu/drm/sun4i/Makefile
+index bad7497a0d11e..3f516329f51ee 100644
+--- a/drivers/gpu/drm/sun4i/Makefile
++++ b/drivers/gpu/drm/sun4i/Makefile
+@@ -16,7 +16,8 @@ sun8i-drm-hdmi-y		+= sun8i_hdmi_phy_clk.o
  
-+	layer->mixer = mixer;
-+	layer->channel = channel;
-+	layer->overlay = 0;
+ sun8i-mixer-y			+= sun8i_mixer.o sun8i_ui_layer.o \
+ 				   sun8i_vi_layer.o sun8i_ui_scaler.o \
+-				   sun8i_vi_scaler.o sun8i_csc.o
++				   sun8i_vi_scaler.o sun8i_csc.o \
++				   sun50i_fmt.o
+ 
+ sun4i-tcon-y			+= sun4i_crtc.o
+ sun4i-tcon-y			+= sun4i_tcon_dclk.o
+diff --git a/drivers/gpu/drm/sun4i/sun50i_fmt.c b/drivers/gpu/drm/sun4i/sun50i_fmt.c
+new file mode 100644
+index 0000000000000..050a8716ae862
+--- /dev/null
++++ b/drivers/gpu/drm/sun4i/sun50i_fmt.c
+@@ -0,0 +1,82 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Copyright (C) Jernej Skrabec <jernej.skrabec@gmail.com>
++ */
 +
- 	if (index == 0)
- 		type = DRM_PLANE_TYPE_PRIMARY;
- 
-@@ -395,9 +399,6 @@ struct sun8i_ui_layer *sun8i_ui_layer_init_one(struct drm_device *drm,
- 	}
- 
- 	drm_plane_helper_add(&layer->plane, &sun8i_ui_layer_helper_funcs);
--	layer->mixer = mixer;
--	layer->channel = channel;
--	layer->overlay = 0;
- 
- 	return layer;
- }
-diff --git a/drivers/gpu/drm/sun4i/sun8i_vi_layer.c b/drivers/gpu/drm/sun4i/sun8i_vi_layer.c
-index 6ee3790a2a812..329e8bf8cd20d 100644
---- a/drivers/gpu/drm/sun4i/sun8i_vi_layer.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_vi_layer.c
-@@ -549,6 +549,10 @@ struct sun8i_vi_layer *sun8i_vi_layer_init_one(struct drm_device *drm,
- 	if (!layer)
- 		return ERR_PTR(-ENOMEM);
- 
-+	layer->mixer = mixer;
-+	layer->channel = index;
-+	layer->overlay = 0;
++#include <uapi/linux/media-bus-format.h>
 +
- 	if (mixer->cfg->is_de3) {
- 		formats = sun8i_vi_layer_de3_formats;
- 		format_count = ARRAY_SIZE(sun8i_vi_layer_de3_formats);
-@@ -607,9 +611,6 @@ struct sun8i_vi_layer *sun8i_vi_layer_init_one(struct drm_device *drm,
- 	}
- 
- 	drm_plane_helper_add(&layer->plane, &sun8i_vi_layer_helper_funcs);
--	layer->mixer = mixer;
--	layer->channel = index;
--	layer->overlay = 0;
- 
- 	return layer;
- }
++#include "sun50i_fmt.h"
++
++static bool sun50i_fmt_is_10bit(u32 format)
++{
++	switch (format) {
++	case MEDIA_BUS_FMT_RGB101010_1X30:
++	case MEDIA_BUS_FMT_YUV10_1X30:
++	case MEDIA_BUS_FMT_UYYVYY10_0_5X30:
++	case MEDIA_BUS_FMT_UYVY10_1X20:
++		return true;
++	default:
++		return false;
++	}
++}
++
++static u32 sun50i_fmt_get_colorspace(u32 format)
++{
++	switch (format) {
++	case MEDIA_BUS_FMT_UYYVYY8_0_5X24:
++	case MEDIA_BUS_FMT_UYYVYY10_0_5X30:
++		return SUN50I_FMT_CS_YUV420;
++	case MEDIA_BUS_FMT_UYVY8_1X16:
++	case MEDIA_BUS_FMT_UYVY10_1X20:
++		return SUN50I_FMT_CS_YUV422;
++	default:
++		return SUN50I_FMT_CS_YUV444RGB;
++	}
++}
++
++static void sun50i_fmt_de3_limits(u32 *limits, u32 colorspace, bool bit10)
++{
++	if (colorspace != SUN50I_FMT_CS_YUV444RGB) {
++		limits[0] = SUN50I_FMT_LIMIT(64, 940);
++		limits[1] = SUN50I_FMT_LIMIT(64, 960);
++		limits[2] = SUN50I_FMT_LIMIT(64, 960);
++	} else if (bit10) {
++		limits[0] = SUN50I_FMT_LIMIT(0, 1023);
++		limits[1] = SUN50I_FMT_LIMIT(0, 1023);
++		limits[2] = SUN50I_FMT_LIMIT(0, 1023);
++	} else {
++		limits[0] = SUN50I_FMT_LIMIT(0, 1021);
++		limits[1] = SUN50I_FMT_LIMIT(0, 1021);
++		limits[2] = SUN50I_FMT_LIMIT(0, 1021);
++	}
++}
++
++void sun50i_fmt_setup(struct sun8i_mixer *mixer, u16 width,
++		      u16 height, u32 format)
++{
++	u32 colorspace, limit[3], base;
++	struct regmap *regs;
++	bool bit10;
++
++	colorspace = sun50i_fmt_get_colorspace(format);
++	bit10 = sun50i_fmt_is_10bit(format);
++	base = SUN50I_FMT_DE3;
++	regs = sun8i_blender_regmap(mixer);
++
++	sun50i_fmt_de3_limits(limit, colorspace, bit10);
++
++	regmap_write(regs, SUN50I_FMT_CTRL(base), 0);
++
++	regmap_write(regs, SUN50I_FMT_SIZE(base),
++		     SUN8I_MIXER_SIZE(width, height));
++	regmap_write(regs, SUN50I_FMT_SWAP(base), 0);
++	regmap_write(regs, SUN50I_FMT_DEPTH(base), bit10);
++	regmap_write(regs, SUN50I_FMT_FORMAT(base), colorspace);
++	regmap_write(regs, SUN50I_FMT_COEF(base), 0);
++
++	regmap_write(regs, SUN50I_FMT_LMT_Y(base), limit[0]);
++	regmap_write(regs, SUN50I_FMT_LMT_C0(base), limit[1]);
++	regmap_write(regs, SUN50I_FMT_LMT_C1(base), limit[2]);
++
++	regmap_write(regs, SUN50I_FMT_CTRL(base), 1);
++}
+diff --git a/drivers/gpu/drm/sun4i/sun50i_fmt.h b/drivers/gpu/drm/sun4i/sun50i_fmt.h
+new file mode 100644
+index 0000000000000..4127f7206aade
+--- /dev/null
++++ b/drivers/gpu/drm/sun4i/sun50i_fmt.h
+@@ -0,0 +1,32 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
++/*
++ * Copyright (C) Jernej Skrabec <jernej.skrabec@gmail.com>
++ */
++
++#ifndef _SUN50I_FMT_H_
++#define _SUN50I_FMT_H_
++
++#include "sun8i_mixer.h"
++
++#define SUN50I_FMT_DE3 0xa8000
++
++#define SUN50I_FMT_CTRL(base)   ((base) + 0x00)
++#define SUN50I_FMT_SIZE(base)   ((base) + 0x04)
++#define SUN50I_FMT_SWAP(base)   ((base) + 0x08)
++#define SUN50I_FMT_DEPTH(base)  ((base) + 0x0c)
++#define SUN50I_FMT_FORMAT(base) ((base) + 0x10)
++#define SUN50I_FMT_COEF(base)   ((base) + 0x14)
++#define SUN50I_FMT_LMT_Y(base)  ((base) + 0x20)
++#define SUN50I_FMT_LMT_C0(base) ((base) + 0x24)
++#define SUN50I_FMT_LMT_C1(base) ((base) + 0x28)
++
++#define SUN50I_FMT_LIMIT(low, high) (((high) << 16) | (low))
++
++#define SUN50I_FMT_CS_YUV444RGB 0
++#define SUN50I_FMT_CS_YUV422    1
++#define SUN50I_FMT_CS_YUV420    2
++
++void sun50i_fmt_setup(struct sun8i_mixer *mixer, u16 width,
++		      u16 height, u32 format);
++
++#endif
 -- 
 2.45.2
 
