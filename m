@@ -1,124 +1,111 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA3E72139D7;
-	Thu, 20 Jun 2024 08:01:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2868317B402;
+	Thu, 20 Jun 2024 08:15:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718870486; cv=none; b=GU86acoEW7SnZoPwaWxxOSaXwxPvOUaBrJs22iuJilsSZyUBZCqe9Ms7xLvu0J7cNyXJ5h5jtupAJll/cmu7BqCX9p3fEX0rtLWMgp8/iDhCG+sswN3i4n+4EgNkU26fp4SDVHsiNQVUObdT+GiaR8A6QcQVXIa/pt5dPJUx2oc=
+	t=1718871324; cv=none; b=Y3VlDzAyTWYicK1TFEBhpwFfLZePQU6R6i1G6WyUX8+Fl4ybTF8DuZgfBQ8blm4d5oNaNB8k7fYyLh0BcRaIwTnDkgYVLaapWPZQsMYXdk0zyX1BeaDFOSJePZ48WrcqVB4nwdbZhGv8Xqq85AarKe9L9fHQ3xCj+Rd0eEHbcig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718870486; c=relaxed/simple;
-	bh=rhuKihUusm13Yt7WZRiQrggV9auR48Id+tI+3iKMR6k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JnzXHNnmn0hKWv8+IVle+pT3GgpVim/lACjHA63tcCYwk8LNPWJPxcCMJdEtdUNAGracx/3Z7fcKI4w4spSdv3XWhQsas6yoLMI7mRXV8Tl0lT0/P3OYuPkuG3jShdzrRu5MuoCdpao60rfQgTJFijEaERm0DwDTOSqDtAg8/v4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=qpwJiuz/; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1718871324; c=relaxed/simple;
+	bh=ecZzONJSzbydBjHKZzEKnU+9C7vywwQ1yMDmvKYVtrQ=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SHEgOkCnB3n1h+O7LBR7ZwPjS2iS1RTFshs+l76ONj/6Bj2zALQ+pqevYI1m35u+RD5R7QuD1dZ/UZ+QN0e21ZBzmZA3qoGtVW32sVP2wCZ+3TBg/t+msOylyi+odtD+0aNYS0LmHW8ERlqPmM+WGaqePyrXkaa1VSmo5tCdIVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=oBu9euuO; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="qpwJiuz/"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1718870479;
-	bh=rhuKihUusm13Yt7WZRiQrggV9auR48Id+tI+3iKMR6k=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=qpwJiuz/3GUiDh+pyl66iIMgpVTGYlwqM9wSwUBdC62zYV+8VAl8jBpqo0E2mtKzF
-	 7LPTXRg4+sYEfo9htAyqEBkO5gGcNXkMhbzs3eomwlMgcmHVd/f1cbnErEhtcDGn0G
-	 2/WEAw6ORtAQOA0LweJJTuXL+MN0B573w9mffSpZBEuRs1CcMqf0tGbpzw57rvfIbS
-	 9hqIdTEsowLJcDmv4aIUGCxSIKA20NxlBXDEbO9zrmbPwHRfjOtkYrWgufbMGIxF2t
-	 H1vRGdfpFu12Uu7wdUHCNHBQOSJMcIxyZfY0VS2ZcsTEv6XJgkffk44pX1cjzzkduy
-	 SYD7/xmI1/d5w==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id B8B6D378205D;
-	Thu, 20 Jun 2024 08:01:18 +0000 (UTC)
-Message-ID: <a7317981-8690-4d45-81b6-cc6a63c459e0@collabora.com>
-Date: Thu, 20 Jun 2024 10:01:18 +0200
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oBu9euuO"
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45K7A9CX019372;
+	Thu, 20 Jun 2024 08:15:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=5vRrdL+XbDqQ23ECVw34g6
+	vbTmR+1A6/Y8bIUfhDJVY=; b=oBu9euuObx6Uvd/FOKtqMI41CGNyv8YeL6cXi2
+	FlhBJP64iif7yoRYHlmp0PAseF8pI2YXwoTsCFMljRr5ILKSqFVDHL+hVNpDbLuC
+	xEfRFkjUK1Prs92gLdf4ZeXFgER/88REVBQ37Y0keA+uIIpDeM7u0ZMagoTeLkJJ
+	GGzfU3a0HrpwmW2j3Uv2kmnR9bI3b3PFu64SgxRpdbH+d2umzvaDTnMB+hsitEfj
+	zOc5MpKV26yrOWJp18uh34m+7Fkr9T3lI2NbwPibvYuvPDQc6z7K+7PSAwA3KQOK
+	MdmjCBTR4WaSc8PXyF4pvK9phZUfCu10U1id3QcGWgnaqCiQ==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yv2xu9nhp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Jun 2024 08:15:09 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45K8F8t4018260
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 20 Jun 2024 08:15:08 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 20 Jun 2024 01:15:01 -0700
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <angelogioacchino.delregno@collabora.com>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <ulf.hansson@linaro.org>, <quic_sibis@quicinc.com>,
+        <quic_rjendra@quicinc.com>, <luca@z3ntu.xyz>, <abel.vesa@linaro.org>,
+        <quic_varada@quicinc.com>, <quic_rohiagar@quicinc.com>,
+        <danila@jiaxyga.com>, <otto.pflueger@abscue.de>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>
+Subject: [PATCH v1 0/7] Enable CPR for IPQ9574
+Date: Thu, 20 Jun 2024 13:44:20 +0530
+Message-ID: <20240620081427.2860066-1-quic_varada@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] dt-bindings: mailbox: mediatek: Avoid clock-names on
- MT8188 GCE
-To: Conor Dooley <conor@kernel.org>
-Cc: krzk+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
- robh@kernel.org, conor+dt@kernel.org, matthias.bgg@gmail.com,
- jassisinghbrar@gmail.com, garmin.chang@mediatek.com,
- houlong.wei@mediatek.com, Jason-ch.Chen@mediatek.com, amergnat@baylibre.com,
- Elvis.Wang@mediatek.com, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- kernel@collabora.com
-References: <20240619085322.66716-1-angelogioacchino.delregno@collabora.com>
- <20240619085322.66716-3-angelogioacchino.delregno@collabora.com>
- <20240619-sleeve-citable-a3dc10e5cd4f@spud>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240619-sleeve-citable-a3dc10e5cd4f@spud>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: iIuSiD1YrF8RgAOsFInS5hdmfWZqILUs
+X-Proofpoint-ORIG-GUID: iIuSiD1YrF8RgAOsFInS5hdmfWZqILUs
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-20_04,2024-06-19_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 malwarescore=0
+ impostorscore=0 suspectscore=0 mlxlogscore=945 spamscore=0
+ lowpriorityscore=0 priorityscore=1501 clxscore=1011 adultscore=0
+ mlxscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2405170001 definitions=main-2406200058
 
-Il 19/06/24 19:49, Conor Dooley ha scritto:
-> On Wed, Jun 19, 2024 at 10:53:22AM +0200, AngeloGioacchino Del Regno wrote:
->> Add mediatek,mt8188-gce to the list of compatibles for which the
->> clock-names property is not required.
-> 
-> Because, I assume, it has some internal clock? Why do either of these
-> things have no clock? Doesn't the internal logic require one?
-> 
+This series tries to enable CPR on IPQ9574, that implements
+CPRv4. Since [1] is older, faced few minor issues. Those are
+addressed in [2].
 
-Because there's no gce0/gce1 clock, there's only an infracfg_AO clock that is
-for one GCE instance, hence there's no need to require clock-names.
+dt_binding_check and dtbs_check passed.
 
-I can't remove the clock-names requirement from the older compatibles though,
-because the (sorry about this word) driver (eh..) gets the clock by name for
-the single GCE SoCs...
+Depends:
+	[1] https://lore.kernel.org/lkml/20230217-topic-cpr3h-v14-0-9fd23241493d@linaro.org/T/
+	[2] https://github.com/quic-varada/cpr/commits/konrad/
 
-...and here comes a self-NACK for this commit, I have to fix the driver and
-then stop requiring clock-names on all compatibles, instead of having this
-ugly nonsense.
+Varadarajan Narayanan (7):
+  dt-bindings: power: rpmpd: Add IPQ9574 power domains
+  dt-bindings: soc: qcom: cpr3: Add bindings for IPQ9574
+  pmdomain: qcom: rpmpd: Add IPQ9574 power domains
+  dt-bindings: clock: Add CPR clock defines for IPQ9574
+  clk: qcom: gcc-ipq9574: Add CPR clock definition
+  soc: qcom: cpr3: Add IPQ9574 definitions
+  dts: arm64: qcom: ipq9574: Enable CPR
 
-Self-note: gce0/gce1 clocks lookup was implemented in the driver but never
-used and never added to the binding - luckily.
+ .../devicetree/bindings/power/qcom,rpmpd.yaml |   1 +
+ .../bindings/soc/qcom/qcom,cpr3.yaml          |  32 +++
+ arch/arm64/boot/dts/qcom/ipq9574.dtsi         | 269 ++++++++++++++++--
+ drivers/clk/qcom/gcc-ipq9574.c                |  38 +++
+ drivers/pmdomain/qcom/cpr3.c                  | 137 +++++++++
+ drivers/pmdomain/qcom/rpmpd.c                 |  19 ++
+ include/dt-bindings/clock/qcom,ipq9574-gcc.h  |   1 +
+ include/dt-bindings/power/qcom-rpmpd.h        |   3 +
+ 8 files changed, 483 insertions(+), 17 deletions(-)
 
-Sorry Conor, I just acknowledged that there's a better way of doing that.
-
-Thank you for making me re-read this stuff, I'll send the proper changes
-later today, driver change + binding change in a separate series.
-
-As for the other two commits in this series, completely unrelated to GCE,
-those are still fine, and are fixing dtbs_check warnings.
-
-Cheers,
-Angelo
-
->>
->> Fixes: f2b53c295620 ("dt-bindings: mailbox: mediatek,gce-mailbox: add mt8188 compatible name")
->> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->> ---
->>   .../devicetree/bindings/mailbox/mediatek,gce-mailbox.yaml     | 4 +++-
->>   1 file changed, 3 insertions(+), 1 deletion(-)
->>
->> diff --git a/Documentation/devicetree/bindings/mailbox/mediatek,gce-mailbox.yaml b/Documentation/devicetree/bindings/mailbox/mediatek,gce-mailbox.yaml
->> index cef9d7601398..55d4c34aa4b4 100644
->> --- a/Documentation/devicetree/bindings/mailbox/mediatek,gce-mailbox.yaml
->> +++ b/Documentation/devicetree/bindings/mailbox/mediatek,gce-mailbox.yaml
->> @@ -62,7 +62,9 @@ allOf:
->>           properties:
->>             compatible:
->>               contains:
->> -              const: mediatek,mt8195-gce
->> +              enum:
->> +                - mediatek,mt8188-gce
->> +                - mediatek,mt8195-gce
->>       then:
->>         required:
->>           - clock-names
->> -- 
->> 2.45.2
->>
+-- 
+2.34.1
 
