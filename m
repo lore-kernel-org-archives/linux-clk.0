@@ -1,76 +1,95 @@
-Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EF111AD486;
-	Thu, 20 Jun 2024 15:08:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5567F1AED4E
+	for <linux-clk@vger.kernel.org>; Thu, 20 Jun 2024 15:09:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718896094; cv=none; b=NVHChWafi8lseB08D8wX5wMq+os0sEr3BxZ7MU81BpF2T1aKnIlJ9T8ldHyJBM7nzyLFHPBDFXr3QgZPvf/NwwqoHFFW8YwNUfXK0Gi90dn6ACu31u0JOEeTzo+6aWXuosLynhEE/0+bL78PFbEdcvxTMw83uaM2PNn3JrYgsi4=
+	t=1718896196; cv=none; b=PB79j3CE/e05VKGqjwCDDCJMpVxi/hPHh3b6+9RuyCVrjp0TzR0FdardU1thfIisU4DU5RRq1B5QhXGBE8cVwG6MOWwOSBJeeFo115AzaHAgPabdJ7Bz6lQ7g24bT2DH4jklC3bRwZ6Ctmt9altcApB+qQVTWjA/3OVnpdn3CGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718896094; c=relaxed/simple;
-	bh=1LTnd0+K0uwlyQFAdEjs3Uz+oYwPuiQS3UghjjYSi3A=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=nr6+Ud1EGESF3oVyNCkR6YLRnBw1HhvDvXiIyJx71tKpsz3QoiwTddEHYDo+i48IvpxrstAHcmMDwN8RhL2039yGPNNCXMvIhc+ClVJ1zrbEBxEOQDL9alQkLQAuw+s7yQwqVS/F1JcaClOJZIFDxWDN+Zm3wJNab8Y67P7NqbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=45.254.49.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
-Received: from amadeus-Vostro-3710.lan (unknown [IPV6:240e:3b3:2c01:9890:db34:2f44:25db:ea3c])
-	by smtp.qiye.163.com (Hmail) with ESMTPA id 14CF67E0195;
-	Thu, 20 Jun 2024 23:01:32 +0800 (CST)
-From: Chukun Pan <amadeus@jmu.edu.cn>
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Chukun Pan <amadeus@jmu.edu.cn>
-Subject: [PATCH v6 1/2] clk: qcom: gcc-ipq6018: update sdcc max clock frequency
-Date: Thu, 20 Jun 2024 23:01:21 +0800
-Message-Id: <20240620150122.1406631-2-amadeus@jmu.edu.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240620150122.1406631-1-amadeus@jmu.edu.cn>
-References: <20240620150122.1406631-1-amadeus@jmu.edu.cn>
+	s=arc-20240116; t=1718896196; c=relaxed/simple;
+	bh=mfiwSIjC731sExU1owoEvvO8FCSEVIoCYkKggzTldDE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KrNLGu7WDT5BHCyq7vwz74t78viXl/WZ1pgvWL61IxymV6VdMXq/VycIeWIO7lPIot6Ck6j7Vh5q9QzQ54Fov7AgtFlQrWpdy06sHwYunS5/oEqLRTe7g1gDCuKuXMFaWeswcdAgT5fedIKaILEbtdO4kGj1ce8pzRrbOO045Qc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=V0P6wIfa; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="V0P6wIfa"
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52bc0a9cea4so916917e87.0
+        for <linux-clk@vger.kernel.org>; Thu, 20 Jun 2024 08:09:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1718896193; x=1719500993; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0gK+thIDawbMI8D6X0tNOPUzlxQcTHptuQx1Z2ceRXM=;
+        b=V0P6wIfamtHqFfdSKj+7giMe3rhe9Saloyfx06RP4zZ0dxam+nYkdJLhiYR7zFY5Ie
+         qkHDnkBjV3Qu+1IxADNrakETXBVYpu+Ynzjiu7SwMfGjctAmni9ecnygedl+kMEgFywP
+         p8q42rahO6+xzGYFuQISPWf2Xu4eEEvG2P4HDc7wldGhBPcq13FOI6N/Bg4Xo/zLSu/c
+         6o8bBdsxJDeMwGQFzVEnDN9DjIl2ohosU7qsGOnJgIab1pHMWpCL9JKuVcb/TYMSPBvz
+         LL6B72fExJ34Jn2uT+YyrqVrdUAXJcS7uLZWnF8jmyOe6+cp2mUO5jWmphIaWC6NX8f+
+         VOpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718896193; x=1719500993;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0gK+thIDawbMI8D6X0tNOPUzlxQcTHptuQx1Z2ceRXM=;
+        b=xFxYcxHoLSUmtZyn7madma8DXFwdtzKXxdu60UkxusX09ABTuz6D3xJhSGfqcHJulu
+         W6rmcmgB89hjEe2oOPoUv9+2p/p+KgcRVUdZa4U3/jt3aamHmvMTCvjAAMlc5IVo/qB4
+         ixJPXMsdEbZNakXcBpsVkqSvMYSCT+QRQosieEOAq2wTlCQn4k9Xf0OuaNGoabKNxpJ2
+         EpvJSJwnylp2B82d6h36GLg14CIMn3Dc/Q7s9l3zOqwZk4sBXqFG8YWoaKOeXwih5mMa
+         L5A2M/WAUkyW1APy7Lp+PRKjIXg6Y78nWlJf8d+rLS/qyi5qWBSeC8FABf9LmfsgLSQ2
+         VppA==
+X-Forwarded-Encrypted: i=1; AJvYcCVJFMx5hTQsth5ecCeN9NdvEKTzFiAVp/P7u+QRAmT7QgGjP4K9fH6VkvH0naBrHdy5+I6TNb6P6wvLogPZJgy6RsRenf3aft7a
+X-Gm-Message-State: AOJu0Yw2XkuMcpFlxvbXnGY1z1vkf0xrIZHZw19W/rP0YSAI3/GHy9/M
+	vOVpi1i5FdU4p8/84qhrA0cECcRPXw7sVQ7jll50TYYa3na/fEqE8c3AodSaJQc=
+X-Google-Smtp-Source: AGHT+IHZ7VSN2wu7ZM55UCXbxtOpvLmg+Rz6tqxnMXIu8tRVtuNvG3de09teEXUPAPTQMcqu6Cz87A==
+X-Received: by 2002:a05:6512:31d4:b0:52c:c64e:b902 with SMTP id 2adb3069b0e04-52cca1ea264mr1869080e87.27.1718896193490;
+        Thu, 20 Jun 2024 08:09:53 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca2826269sm2091191e87.61.2024.06.20.08.09.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jun 2024 08:09:53 -0700 (PDT)
+Date: Thu, 20 Jun 2024 18:09:51 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Varadarajan Narayanan <quic_varada@quicinc.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	angelogioacchino.delregno@collabora.com, andersson@kernel.org, konrad.dybcio@linaro.org, 
+	mturquette@baylibre.com, sboyd@kernel.org, ulf.hansson@linaro.org, quic_sibis@quicinc.com, 
+	quic_rjendra@quicinc.com, luca@z3ntu.xyz, abel.vesa@linaro.org, quic_rohiagar@quicinc.com, 
+	danila@jiaxyga.com, otto.pflueger@abscue.de, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-pm@vger.kernel.org, Praveenkumar I <quic_ipkumar@quicinc.com>
+Subject: Re: [PATCH v1 3/7] pmdomain: qcom: rpmpd: Add IPQ9574 power domains
+Message-ID: <jfh2xygjdoapkno2jrt6w7thlylgyp2tk7oaczundhxvi26qel@ahtskgn4v6sp>
+References: <20240620081427.2860066-1-quic_varada@quicinc.com>
+ <20240620081427.2860066-4-quic_varada@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVlCSk4ZVh4ZTkhMTR5KQ0lDQ1YeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlJT0seQUgZSEFJGEtKQUJDQktBHxlIT0FJHU9PQUlOHxlBHhpIGFlXWRYaDx
-	IVHRRZQVlPS0hVSktJT09PS1VKS0tVS1kG
-X-HM-Tid: 0a90362aca0003a2kunm14cf67e0195
-X-HM-MType: 10
-X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6Nww6NSo5MDNWEkxREz8hPS4S
-	LFYaCypVSlVKTEpDQ0JOTUJJTE1MVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWUlP
-	Sx5BSBlIQUkYS0pBQkNCS0EfGUhPQUkdT09BSU4fGUEeGkgYWVdZCAFZQUlKSk83Bg++
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240620081427.2860066-4-quic_varada@quicinc.com>
 
-The mmc controller of the IPQ6018 does not support HS400 mode.
-So adjust the maximum clock frequency of sdcc to 200 MHz (HS200).
+On Thu, Jun 20, 2024 at 01:44:23PM GMT, Varadarajan Narayanan wrote:
+> Add the APC power domain definitions used in IPQ9574.
+> 
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> Signed-off-by: Praveenkumar I <quic_ipkumar@quicinc.com>
 
-Signed-off-by: Chukun Pan <amadeus@jmu.edu.cn>
----
- drivers/clk/qcom/gcc-ipq6018.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+The order of the S-o-B's is wrong. Who is the actual author of the
+patch?
 
-diff --git a/drivers/clk/qcom/gcc-ipq6018.c b/drivers/clk/qcom/gcc-ipq6018.c
-index 7e69de34c310..6c764e3e2665 100644
---- a/drivers/clk/qcom/gcc-ipq6018.c
-+++ b/drivers/clk/qcom/gcc-ipq6018.c
-@@ -1617,7 +1617,7 @@ static const struct freq_tbl ftbl_sdcc_apps_clk_src[] = {
- 	F(96000000, P_GPLL2, 12, 0, 0),
- 	F(177777778, P_GPLL0, 4.5, 0, 0),
- 	F(192000000, P_GPLL2, 6, 0, 0),
--	F(384000000, P_GPLL2, 3, 0, 0),
-+	F(200000000, P_GPLL0, 4, 0, 0),
- 	{ }
- };
- 
+> ---
+>  drivers/pmdomain/qcom/rpmpd.c | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+> 
+
+
 -- 
-2.25.1
-
+With best wishes
+Dmitry
