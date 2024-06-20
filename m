@@ -1,363 +1,145 @@
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41D231B0115;
-	Thu, 20 Jun 2024 17:49:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ADA91BA87F
+	for <linux-clk@vger.kernel.org>; Thu, 20 Jun 2024 17:57:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718905745; cv=none; b=Sd5/Fe7b9UFTyQGKo2acqINElyBYGo+hxewGbhC1jYtZXRQqSQIu1zH+iobo5fHy4E/QWG3QUpXS/9kitnBwflleOnVXuflRkVkxZY8E09ZzSG78j0hOmQGKHrbE1KD1FCClnZLppDAX7SWcn7xGNSlQ0YOFpI+SaJe+OIasJrY=
+	t=1718906239; cv=none; b=ZLn/3y0wlTO7Tvim9O0bsXs0mZ/nVm3zAib/PzXqANeVY6vbWE3b/bQ/tWcmuIJ68rfpS5Vkayl5kurV01CVAIXROTcNa7uqFwTegq0gwQ5M/bfHir+kYL1m7ZzftlqExOBUiQ6tw1uRB5BoF52CsCRGYBMGreM6LSGni8a5p70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718905745; c=relaxed/simple;
-	bh=LqukskVfosQj/PiYyIrjBOVGTtXK2/AbOHRsUZqhpDA=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
-	 References:In-Reply-To; b=AoVj7cyhf1AU3CNbz/qJPjkVGA8iJETq3ZYH1kPauUYHgpOjJcU0rHBPWkCUJ4v96nmqztEOvT8F5Fm+/IVuSDn/UiXkxCCPA7mpz3ZKW694xiT/E2Dak5M/vxuzixA6bGsLfkFG1gngDY08GkEFtNfB9cchruR8fwPwd/Oq7J4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=n7wq2mXc; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1718906239; c=relaxed/simple;
+	bh=lL5HxCJiZymjowcOr7xVA2M7Te/xs6i3j2oxZgMh+rs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ANyvid0NGBAmWb2DudSZkfRdjUeC0uHtJ1a2qoe8AhihvPo52Obh9ZRO84xy2xzrfMIGEqR3xpEt+UAB9UOkSqk1fNOGEyYSsVDsUx4nh1x/7sxhcogixigjRVa4aiOiv5/99A97ss8g1/77Qmxz77yf0JyBPusgV6LhX03FUxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timesys.com; spf=pass smtp.mailfrom=timesys.com; dkim=pass (2048-bit key) header.d=timesys-com.20230601.gappssmtp.com header.i=@timesys-com.20230601.gappssmtp.com header.b=Ef2yOdoP; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timesys.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=timesys.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="n7wq2mXc"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 593E0240002;
-	Thu, 20 Jun 2024 17:48:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1718905738;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Ex/Fts0vtRxrrqpdJ6d+tTUoSpyLJVH1DzwkPw6yqtM=;
-	b=n7wq2mXc45hhfREFMBumX2r5QgvvgJHvyALaQdta5TcFJ+GbMKX6x/EQl+tRHggTSWyQN6
-	17WGjXqPBs71oqBUey79HqwgBPd3nRGLoZkFYJvXXyBuWKjIvySLyWKNiISdoEyssFvU/u
-	yiBHuf7c4nmY3LCczyt/SqU7t2gckcDtfzJfhgvWWLGkVfcciSQh6Um4kAO3qSf8eoYvrS
-	gTxWSrQH5wSgOa3290d8CIJV0+Qj/suQILEqL3OYA4FsUQ9sx/jYbmCghA/jXaDj3NCIlK
-	TrudObnOj/TMJpSuYkrLC18YyRMIxILk2YBRcgrdlVkP7JyILt4AxtjHSXmvpw==
+	dkim=pass (2048-bit key) header.d=timesys-com.20230601.gappssmtp.com header.i=@timesys-com.20230601.gappssmtp.com header.b="Ef2yOdoP"
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a6f13dddf7eso146022366b.0
+        for <linux-clk@vger.kernel.org>; Thu, 20 Jun 2024 10:57:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=timesys-com.20230601.gappssmtp.com; s=20230601; t=1718906235; x=1719511035; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UP/GNN9hhxz4nMUGrLaNfWrPk3mVaVMWtBi9huNJxPk=;
+        b=Ef2yOdoPvdrdIdPhr5LQiCJ0I9SLxjRSKaL/OqYMX5sqAZCEuTYZ7p/dgSstRd9dBo
+         453/Yyxx0wzRqZnwLXEhOVZlIMMOGUCt9mtMNngn1z/AFwrxtSyZeZigZvfq7nDB88xV
+         bfv/JdkfvxqG+JcOdNlu83TuBlMu8F15agYsQp6cQBRiayP82/3wP2Zfym+grexo+RbH
+         33uSmqeotVnrH7QfBwkcsJPqVTYCS6ltvJkZVCpj529Q28XwqxMs+LKs1pdi2dvKdODM
+         dBTtra4ZW7mcWHzmYzVTyIVE19mJcpcSI3bWWiS5kWd408yqD4I5puVMvo6ZbWc9XIqN
+         69lw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718906235; x=1719511035;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UP/GNN9hhxz4nMUGrLaNfWrPk3mVaVMWtBi9huNJxPk=;
+        b=Lc3Fk6vDIhOB7BMtDGUod+yRPR2AWL8AcnwANodx1+Oo4ojz63dzDt2iu+IPZZD0KN
+         CmM1VXXJgIh9lcIxL+hvjsOSo2+B4aZzGrLh82MJdHtCVp9Y1Ha6CzyuPzxJrmxo7WAw
+         ZDtlQMpDbkf9drGZQwhA035w4FlNcwe0+vwgU4WqwgHldI5DFVcgCUjV2ZcO7Il3P3/9
+         fGbxURvulpedWqLmzlFCWGrRWslcqa1TnsG/RjZUBjeRFF2ESSeupc0b0gO0wyMv0Bs6
+         MRGWzdx8147BvOafd23J/3TG6kGFkeRAjmaJ8oj3pPFFo+5iTjLOstVG5bPUvkTFoO+1
+         XBpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVuUowBDgZuPtpP9oFdOrllRmhlVOZmTdJXDLSstyRJ7Ozoe5FULQNImnWFmPTIlTYsX3wJP7aATkmUteP8zX9aDnvOVOaHjnki
+X-Gm-Message-State: AOJu0Ywm9n1DeWnZIR4E5eXbnXb0Dvi14BYUfmYPvQ3hV/NC8pGEOl6V
+	X+dLPqM1+g5Ju+JyBDLP4DW9LitQcDnuaD70gbYLm9Is3F+0W75SxHF9+tF+MGY=
+X-Google-Smtp-Source: AGHT+IHwzCxasTWecNI2BQg/1Mqv76qvz0pqMMUj9hgHTBodTuDhBkY00q2aX9YgUG43J9U17WwHFQ==
+X-Received: by 2002:a17:906:a09:b0:a6e:f7bf:712e with SMTP id a640c23a62f3a-a6fab618973mr379689666b.27.1718906235388;
+        Thu, 20 Jun 2024 10:57:15 -0700 (PDT)
+Received: from localhost.localdomain ([91.216.213.152])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56f42e80sm781370766b.186.2024.06.20.10.57.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 20 Jun 2024 10:57:14 -0700 (PDT)
+From: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
+To: Vinod Koul <vkoul@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"J.M.B. Downing" <jonathan.downing@nautel.com>,
+	Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Yangtao Li <frank.li@vivo.com>,
+	Li Zetao <lizetao1@huawei.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Chancel Liu <chancel.liu@nxp.com>,
+	dmaengine@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	alsa-devel@alsa-project.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-sound@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	linux-mtd@lists.infradead.org
+Cc: Markus Elfring <Markus.Elfring@web.de>
+Subject: [Patch v4 00/10] Add audio support for LPC32XX CPUs
+Date: Thu, 20 Jun 2024 19:56:31 +0200
+Message-Id: <20240620175657.358273-1-piotr.wojtaszczyk@timesys.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 20 Jun 2024 19:48:56 +0200
-Message-Id: <D2518A4HNS5R.2GQYLDGDQ82XV@bootlin.com>
-Subject: Re: [PATCH v2 06/11] mfd: olb: Add support for Mobileye OLB
- system-controller
-Cc: "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
- <krzysztof.kozlowski+dt@linaro.org>, "Conor Dooley" <conor+dt@kernel.org>,
- "Michael Turquette" <mturquette@baylibre.com>, "Stephen Boyd"
- <sboyd@kernel.org>, "Philipp Zabel" <p.zabel@pengutronix.de>, "Linus
- Walleij" <linus.walleij@linaro.org>, "Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- <linux-mips@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
- <linux-gpio@vger.kernel.org>, "Vladimir Kondratiev"
- <vladimir.kondratiev@mobileye.com>, "Gregory CLEMENT"
- <gregory.clement@bootlin.com>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
- <tawfik.bayouk@mobileye.com>
-To: "Lee Jones" <lee@kernel.org>
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-X-Mailer: aerc 0.17.0
-References: <20240503-mbly-olb-v2-0-95ce5a1e18fe@bootlin.com>
- <20240503-mbly-olb-v2-6-95ce5a1e18fe@bootlin.com>
- <20240531110550.GE1005600@google.com>
-In-Reply-To: <20240531110550.GE1005600@google.com>
-X-GND-Sasl: theo.lebrun@bootlin.com
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Hello Lee,
+This pach set is to bring back audio to machines with a LPC32XX CPU.
+The legacy LPC32XX SoC used to have audio spport in linux 2.6.27.
+The support was dropped due to lack of interest from mainaeners.
 
-The latest revision [0] has changed approach following advice from
-Stephen Boyd to rather move forward with auxiliary devices.
+Piotr Wojtaszczyk (10):
+  dt-bindings: dma: pl08x: Add dma-cells description
+  dt-bindings: dma: Add lpc32xx DMA mux binding
+  ASoC: dt-bindings: lpc32xx: Add lpc32xx i2s DT binding
+  ARM: dts: lpc32xx: Add missing dma and i2s properties
+  clk: lpc32xx: initialize regmap using parent syscon
+  dmaengine: Add dma router for pl08x in LPC32XX SoC
+  ARM: lpc32xx: Remove pl08x platform data in favor for device tree
+  mtd: rawnand: lpx32xx: Request DMA channels using DT entries
+  ASoC: fsl: Add i2s and pcm drivers for LPC32xx CPUs
+  i2x: pnx: Use threaded irq to fix warning from del_timer_sync()
 
-[0]: https://lore.kernel.org/lkml/20240620-mbly-olb-v3-0-5f29f8ca289c@bootl=
-in.com/
+ .../devicetree/bindings/dma/arm-pl08x.yaml    |   7 +
+ .../bindings/dma/nxp,lpc3220-dmamux.yaml      |  56 +++
+ .../bindings/sound/nxp,lpc3220-i2s.yaml       |  73 ++++
+ MAINTAINERS                                   |  21 +
+ arch/arm/boot/dts/nxp/lpc/lpc32xx.dtsi        |  53 ++-
+ arch/arm/mach-lpc32xx/phy3250.c               |  54 ---
+ drivers/clk/Kconfig                           |   1 +
+ drivers/clk/nxp/clk-lpc32xx.c                 |  10 +-
+ drivers/dma/Kconfig                           |   9 +
+ drivers/dma/Makefile                          |   1 +
+ drivers/dma/lpc32xx-dmamux.c                  | 195 +++++++++
+ drivers/i2c/busses/i2c-pnx.c                  |   4 +-
+ drivers/mtd/nand/raw/lpc32xx_mlc.c            |  10 +-
+ drivers/mtd/nand/raw/lpc32xx_slc.c            |  10 +-
+ sound/soc/fsl/Kconfig                         |   7 +
+ sound/soc/fsl/Makefile                        |   2 +
+ sound/soc/fsl/lpc3xxx-i2s.c                   | 376 ++++++++++++++++++
+ sound/soc/fsl/lpc3xxx-i2s.h                   |  79 ++++
+ sound/soc/fsl/lpc3xxx-pcm.c                   |  73 ++++
+ 19 files changed, 954 insertions(+), 87 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/dma/nxp,lpc3220-dmamux.yaml
+ create mode 100644 Documentation/devicetree/bindings/sound/nxp,lpc3220-i2s.yaml
+ create mode 100644 drivers/dma/lpc32xx-dmamux.c
+ create mode 100644 sound/soc/fsl/lpc3xxx-i2s.c
+ create mode 100644 sound/soc/fsl/lpc3xxx-i2s.h
+ create mode 100644 sound/soc/fsl/lpc3xxx-pcm.c
 
-On Fri May 31, 2024 at 1:05 PM CEST, Lee Jones wrote:
-> On Fri, 03 May 2024, Th=C3=A9o Lebrun wrote:
->
-> > Mobileye OLB system-controller gets used in EyeQ5, EyeQ6L and EyeQ6H
-> > platforms. It hosts clock, reset and pinctrl functionality.
-> >=20
-> > Tiny iomem resources are declared for all cells. Some features are
-> > spread apart. Pinctrl is only used on EyeQ5.
-> >=20
-> > EyeQ6H is special: it hosts seven OLB controllers, each with a
-> > compatible. That means many clock and reset cells. Use cell->devname
-> > for explicit device names rather than clk-eyeq.ID or clk-eyeq.ID.auto.
-> >=20
-> > Signed-off-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
-> > ---
-> >  drivers/mfd/Kconfig        |  10 +++
-> >  drivers/mfd/Makefile       |   2 +
-> >  drivers/mfd/mobileye-olb.c | 180 +++++++++++++++++++++++++++++++++++++=
-++++++++
-> >  3 files changed, 192 insertions(+)
-> >=20
-> > diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> > index 4b023ee229cf..d004a3f4d493 100644
-> > --- a/drivers/mfd/Kconfig
-> > +++ b/drivers/mfd/Kconfig
-> > @@ -1030,6 +1030,16 @@ config MFD_OCELOT
-> > =20
-> >  	  If unsure, say N.
-> > =20
-> > +config MFD_OLB
-> > +	bool "Mobileye EyeQ OLB System Controller Support"
-> > +	select MFD_CORE
-> > +	depends on MACH_EYEQ5 || MACH_EYEQ6H || COMPILE_TEST
-> > +	default MACH_EYEQ5 || MACH_EYEQ6H
-> > +	help
-> > +	  Say yes here to add support for EyeQ platforms (EyeQ5, EyeQ6L and
-> > +	  EyeQ6H). This core MFD platform driver provides clock, reset and
-> > +	  pinctrl (only EyeQ5) support.
-> > +
-> >  config EZX_PCAP
-> >  	bool "Motorola EZXPCAP Support"
-> >  	depends on SPI_MASTER
-> > diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-> > index c66f07edcd0e..d872833966a8 100644
-> > --- a/drivers/mfd/Makefile
-> > +++ b/drivers/mfd/Makefile
-> > @@ -120,6 +120,8 @@ obj-$(CONFIG_MFD_CORE)		+=3D mfd-core.o
-> >  ocelot-soc-objs			:=3D ocelot-core.o ocelot-spi.o
-> >  obj-$(CONFIG_MFD_OCELOT)	+=3D ocelot-soc.o
-> > =20
-> > +obj-$(CONFIG_MFD_OLB)		+=3D mobileye-olb.o
-> > +
-> >  obj-$(CONFIG_EZX_PCAP)		+=3D ezx-pcap.o
-> >  obj-$(CONFIG_MFD_CPCAP)		+=3D motorola-cpcap.o
-> > =20
-> > diff --git a/drivers/mfd/mobileye-olb.c b/drivers/mfd/mobileye-olb.c
-> > new file mode 100644
-> > index 000000000000..1640d63a3ddd
-> > --- /dev/null
-> > +++ b/drivers/mfd/mobileye-olb.c
-> > @@ -0,0 +1,180 @@
-> > +// SPDX-License-Identifier: GPL-2.0-only
-> > +/*
-> > + * System controller multi-function device for EyeQ platforms.
-> > + *
-> > + * Mobileye EyeQ5, EyeQ6L and EyeQ6H platforms have MMIO mapped regist=
-ers
-> > + * controlling core platform clocks, resets and pin control. Many othe=
-r
-> > + * features are present and not yet exposed.
-> > + *
-> > + * Declare cells for each compatible. Only EyeQ5 has pinctrl.
-> > + * EyeQ6H has seven OLB instances; each has a name which we propagate =
-to
-> > + * sub-devices using cell->devname.
-> > + *
-> > + * Copyright (C) 2024 Mobileye Vision Technologies Ltd.
-> > + */
-> > +
-> > +#include <linux/array_size.h>
-> > +#include <linux/device.h>
-> > +#include <linux/errno.h>
-> > +#include <linux/ioport.h>
-> > +#include <linux/mfd/core.h>
-> > +#include <linux/mod_devicetable.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/property.h>
-> > +
-> > +#define OLB_MFD_CELL(_name, _res, _devname) \
-> > +	MFD_CELL_ALL(_name, _res, NULL, 0, 0, NULL, 0, false, NULL, _devname)
->
-> The reason we provide generic MACROs is so that you don't have to define
-> your own.
-
-In this case, there was no macro that allowed setting the MFD cell
-devname field, which is something that was added in the series.
-
-I didn't know what generic macro to create so instead of creating loads
-of useless ones I created a single one, targeted at my usecase.
-
->
-> > +struct olb_match_data {
-> > +	const struct mfd_cell	*cells;
-> > +	int			nb_cells; /* int to match devm_mfd_add_devices() argument */
-> > +};
-> > +
-> > +#define OLB_DATA(_cells) { .cells =3D (_cells), .nb_cells =3D ARRAY_SI=
-ZE(_cells) }
-> > +
-> > +static int olb_probe(struct platform_device *pdev)
-> > +{
-> > +	const struct olb_match_data *match_data;
-> > +	struct device *dev =3D &pdev->dev;
-> > +	struct resource *res;
-> > +
-> > +	match_data =3D device_get_match_data(dev);
-> > +	if (!match_data)
-> > +		return -ENODEV;
-> > +
-> > +	res =3D platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> > +	if (!res)
-> > +		return -ENODEV;
-> > +
-> > +	return devm_mfd_add_devices(dev, PLATFORM_DEVID_NONE,
-> > +				    match_data->cells, match_data->nb_cells,
-> > +				    res, 0, NULL);
-> > +}
-> > +
-> > +static const struct resource olb_eyeq5_clk_resources[] =3D {
-> > +	DEFINE_RES_MEM_NAMED(0x02C, 10 * 8, "pll"),
-> > +	DEFINE_RES_MEM_NAMED(0x11C, 1 * 4, "ospi"),
-> > +};
-> > +
-> > +static const struct resource olb_eyeq5_reset_resources[] =3D {
-> > +	DEFINE_RES_MEM_NAMED(0x004, 2 * 4, "d0"),
-> > +	DEFINE_RES_MEM_NAMED(0x200, 13 * 4, "d1"),
-> > +	DEFINE_RES_MEM_NAMED(0x120, 1 * 4, "d2"),
-> > +};
-> > +
-> > +static const struct resource olb_eyeq5_pinctrl_resources[] =3D {
-> > +	DEFINE_RES_MEM_NAMED(0x0B0, 12 * 4, "pinctrl"),
-> > +};
-> > +
-> > +static const struct mfd_cell olb_eyeq5_cells[] =3D {
-> > +	OLB_MFD_CELL("clk-eyeq", olb_eyeq5_clk_resources, NULL),
-> > +	OLB_MFD_CELL("reset-eyeq", olb_eyeq5_reset_resources, NULL),
-> > +	OLB_MFD_CELL("eyeq5-pinctrl", olb_eyeq5_pinctrl_resources, NULL),
-> > +};
-> > +
-> > +static const struct olb_match_data olb_eyeq5_match_data =3D OLB_DATA(o=
-lb_eyeq5_cells);
-> > +
-> > +static const struct resource olb_eyeq6l_clk_resources[] =3D {
-> > +	DEFINE_RES_MEM_NAMED(0x02C, 4 * 8, "pll"),
-> > +};
-> > +
-> > +static const struct resource olb_eyeq6l_reset_resources[] =3D {
-> > +	DEFINE_RES_MEM_NAMED(0x004, 2 * 4, "d0"),
-> > +	DEFINE_RES_MEM_NAMED(0x200, 13 * 4, "d1"),
-> > +};
-> > +
-> > +static const struct mfd_cell olb_eyeq6l_cells[] =3D {
-> > +	OLB_MFD_CELL("clk-eyeq", olb_eyeq6l_clk_resources, NULL),
-> > +	OLB_MFD_CELL("reset-eyeq", olb_eyeq6l_reset_resources, NULL),
-> > +};
-> > +
-> > +static const struct olb_match_data olb_eyeq6l_match_data =3D OLB_DATA(=
-olb_eyeq6l_cells);
-> > +
-> > +static const struct resource olb_eyeq6h_acc_clk_resources[] =3D {
-> > +	DEFINE_RES_MEM_NAMED(0x040, 7 * 8, "pll"),
-> > +};
-> > +
-> > +static const struct resource olb_eyeq6h_acc_reset_resources[] =3D {
-> > +	DEFINE_RES_MEM_NAMED(0x000, 15 * 4, "d0"),
-> > +};
-> > +
-> > +static const struct mfd_cell olb_eyeq6h_acc_cells[] =3D {
-> > +	OLB_MFD_CELL("clk-eyeq", olb_eyeq6h_acc_clk_resources, "clk-eyeq-acc"=
-),
->
-> The point of enumerating platform device names is to identify devices
-> that are identical.  We lose this with bespoke naming.
->
-> If you want to identify devices either define a value to pass to .id or
-> adapt the first parameter and make the clk-eyeq driver accept different
-> device names.
-
-About int IDs: those make it unclear what device we are talking about,
-when we have seven of them as it was the case in this series. Yes,
-there were 7 system-controllers, each exposing clocks (and most
-exposing resets). IDs from 0 thru 6 was really not clear enough when
-going through dmesg, which I why I added the feature.
-
-I wasn't able to change the first parameter as that gets used for
-matching a driver. As it is driver name, there can only be a single
-string per driver. Here we have multiple MFD cells that each want to
-probe the same driver, so they must have the same name.
-
->
-> > +	OLB_MFD_CELL("reset-eyeq", olb_eyeq6h_acc_reset_resources, "reset-eye=
-q-acc"),
-> > +};
-> > +
-> > +static const struct olb_match_data olb_eyeq6h_acc_match_data =3D OLB_D=
-ATA(olb_eyeq6h_acc_cells);
-> > +
-> > +static const struct resource olb_eyeq6h_we_clk_resources[] =3D {
-> > +	DEFINE_RES_MEM_NAMED(0x074, 1 * 8, "pll"),
-> > +};
-> > +
-> > +static const struct resource olb_eyeq6h_we_reset_resources[] =3D {
-> > +	DEFINE_RES_MEM_NAMED(0x004, 4 * 4, "d0"),
-> > +};
-> > +
-> > +static const struct mfd_cell olb_eyeq6h_west_cells[] =3D {
-> > +	OLB_MFD_CELL("clk-eyeq", olb_eyeq6h_we_clk_resources, "clk-eyeq-west"=
-),
-> > +	OLB_MFD_CELL("reset-eyeq", olb_eyeq6h_we_reset_resources, "reset-eyeq=
--west"),
-> > +};
-> > +
-> > +static const struct olb_match_data olb_eyeq6h_west_match_data =3D OLB_=
-DATA(olb_eyeq6h_west_cells);
-> > +
-> > +static const struct mfd_cell olb_eyeq6h_east_cells[] =3D {
-> > +	OLB_MFD_CELL("clk-eyeq", olb_eyeq6h_we_clk_resources, "clk-eyeq-east"=
-),
-> > +	OLB_MFD_CELL("reset-eyeq", olb_eyeq6h_we_reset_resources, "reset-eyeq=
--east"),
-> > +};
-> > +
-> > +static const struct olb_match_data olb_eyeq6h_east_match_data =3D OLB_=
-DATA(olb_eyeq6h_east_cells);
-> > +
-> > +static const struct resource olb_eyeq6h_south_clk_resources[] =3D {
-> > +	DEFINE_RES_MEM_NAMED(0x000, 4 * 8, "pll"),
-> > +	DEFINE_RES_MEM_NAMED(0x070, 1 * 4, "emmc"),
-> > +	DEFINE_RES_MEM_NAMED(0x090, 1 * 4, "ospi"),
-> > +	DEFINE_RES_MEM_NAMED(0x098, 1 * 4, "tsu"),
-> > +};
-> > +
-> > +static const struct mfd_cell olb_eyeq6h_south_cells[] =3D {
-> > +	OLB_MFD_CELL("clk-eyeq", olb_eyeq6h_south_clk_resources, "clk-eyeq-so=
-uth"),
-> > +};
-> > +
-> > +static const struct olb_match_data olb_eyeq6h_south_match_data =3D OLB=
-_DATA(olb_eyeq6h_south_cells);
-> > +
-> > +static const struct resource olb_eyeq6h_ddr_clk_resources[] =3D {
-> > +	DEFINE_RES_MEM_NAMED(0x074, 1 * 8, "pll"),
-> > +};
-> > +
-> > +static const struct mfd_cell olb_eyeq6h_ddr0_cells[] =3D {
-> > +	OLB_MFD_CELL("clk-eyeq", olb_eyeq6h_ddr_clk_resources, "clk-eyeq-ddr0=
-"),
-> > +};
-> > +
-> > +static const struct olb_match_data olb_eyeq6h_ddr0_match_data =3D OLB_=
-DATA(olb_eyeq6h_ddr0_cells);
-> > +
-> > +static const struct mfd_cell olb_eyeq6h_ddr1_cells[] =3D {
-> > +	OLB_MFD_CELL("clk-eyeq", olb_eyeq6h_ddr_clk_resources, "clk-eyeq-ddr1=
-"),
-> > +};
-> > +
-> > +static const struct olb_match_data olb_eyeq6h_ddr1_match_data =3D OLB_=
-DATA(olb_eyeq6h_ddr1_cells);
-> > +
-> > +static const struct of_device_id olb_of_match[] =3D {
-> > +	{ .compatible =3D "mobileye,eyeq5-olb", .data =3D &olb_eyeq5_match_da=
-ta },
->
-> We're not passing MFD init data through the OF API, sorry.
->
-> Pass defined identifiers through instead and match on those please.
-
-Ah, that makes sense. Thanks for the mention. I can't find any
-reasoning, I might be missing context?
-
-Thanks Lee,
-
---
-Th=C3=A9o Lebrun, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+-- 
+2.25.1
 
