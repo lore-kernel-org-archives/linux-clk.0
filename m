@@ -1,67 +1,71 @@
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B494D8AD
-	for <linux-clk@vger.kernel.org>; Thu, 20 Jun 2024 20:24:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA4B37581B
+	for <linux-clk@vger.kernel.org>; Thu, 20 Jun 2024 20:54:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718915056; cv=none; b=GoPaegxTpVa4nVuRpG8A2ivtrP1KEhyvJIPIzWdj819f8CRKXVLDT031RmdQyTOTivMCWy0AzI/1gmZy3F+184gsZvOaa+wWMH1iHLFDRHv1njbUoa01s7XPwMs5ghFdcZxK6A20IZSUQtvXP2SQ2iiVKQgWH5Rk6lJzYjp4pJY=
+	t=1718916883; cv=none; b=jUA4kd1OpfVOI4vJlsFaKjcFQ0Z5IPZIRbYIA+m+aNLa/l2p1DemAcYKzrwZ9twDl51AmQBBH7hlWpZ1GP7+NAvfx171zy1aElz6lBQS9NkrcGbeDX8vd4VuWY79mR3a0C28/O+HQ+2BVwMenud5q6Zd3vMUdW7BjkQ/Z5zLMKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718915056; c=relaxed/simple;
-	bh=DXU+kaQ13mDGzc/ERef772ITWHwfMHgJ1whdUUQWN5M=;
+	s=arc-20240116; t=1718916883; c=relaxed/simple;
+	bh=ZgXjC97h5MuKsrDnXsPtqasAzjkA1L4/qZxU8zgq8dA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fSY3wII9fsL0HnWUhKlIEp0MEMvo/NRVK18QRcPh3m9JySHDRVz1Go9npeDg5CMzIvAVQ4kcjPCLsFvZCPJV9QL9ExzL8Thsgu1//gXbLtbiV71Sd0dGPBZqDheYOObuZIyFG6TM99Cda7EwPwEmVB6B1oK+eMXdonLjPRqVgg0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qE4YyeQ1; arc=none smtp.client-ip=209.85.167.49
+	 Content-Type:Content-Disposition:In-Reply-To; b=JBkbKscT9R2fr/AIWERswrYOhJWj2edBt57rgvNg8kruHI2JoWTdqYBvIAWrSAiXIXOvO4BGgLj9DVZDfKhG9rs2mCZcMfuLSGQmnRzkodFQO5qTsc+IY1BNadpQ61P9iuIxUP1Cq9GqTpKVHdKjM/RJY7PUpl6/L+iB6MIXiGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FjHRTABg; arc=none smtp.client-ip=209.85.167.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qE4YyeQ1"
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52c815e8e9eso1377032e87.0
-        for <linux-clk@vger.kernel.org>; Thu, 20 Jun 2024 13:24:14 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FjHRTABg"
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52cc9b887f1so1621796e87.3
+        for <linux-clk@vger.kernel.org>; Thu, 20 Jun 2024 13:54:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718915053; x=1719519853; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1718916879; x=1719521679; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bjwgpUTvj0kF3WJiIA1rR+AvckGLAoKpZg/E+Ljg++0=;
-        b=qE4YyeQ1jlqKNCbJwysMQtB2F/3JuJboDCc51OUgaRRNdeR8yzQy17/WTz3seimzB1
-         IDECObgnpRBftgq7JvM8jtr7BPWcleXZqx2yKY0+NxwCVfm2tWzbsTAIsIiLJH8ibQjb
-         Y7qGyvf6OvVX6fgB0DYISjxN4DbV55/fzTDixBK5MyBVYS9JniNV0T4wEvlfVvLcBnwM
-         63RiqE49rBH3d6RqNStPqZSOG8GN3AkYbROaeSLYZEQNpzrd+U3CxEc5ThRg4dBIaRyy
-         iSMgL4M6F0GNg1xschNsCjxRSvyTSY+biDtDllWo7s/ASaQjeUxAfylgvcswhWTCtkrz
-         iKCg==
+        bh=ugwCB2vYGLO9qBAziYraLolUxiamWxJkohpnuEn7xv4=;
+        b=FjHRTABgefpuzDhOKSeot1a81Hd6SjBNRf1VsHz+J3WAAVs41xZvo1sDaQWO5eSg3j
+         OXcRPpm5L4YuRLQ0LVg1ghKpUZaHsbFFstvXdAa04HLJjyD2l60ouDsvQoqgdD4LBlUb
+         tYktMP+dg7VG0+xmQwoEWHzi0hUw/Ro3FoOBvPV11dUC271qqYWTQQgQZ1i2YBXiYwVi
+         iSPysD3p27DAzJXOSiDAxQB+IRM565c7ry0n9ZYK4rq4w2I7qhmsoX5fDKydaICsjRkH
+         I4iHWl/ztXSeGKIQSb+XAV1IbettFbXAr32IBHat5ABLkk0N0dXIoibALZ11tdOjs4bC
+         x3lA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718915053; x=1719519853;
+        d=1e100.net; s=20230601; t=1718916879; x=1719521679;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=bjwgpUTvj0kF3WJiIA1rR+AvckGLAoKpZg/E+Ljg++0=;
-        b=SZan/ToIJfZCAqLkQKPjinR4ZMtRkLcm1aeBRrmre8285PBaCpJMexeZwvdUTvS/cO
-         YdXTTXagR6og3feNCzS9gxi22VAI0+GmK8ask5XymRVT8Z8rtjMVNEKY4Pj9kWT4ATVm
-         x4PGUPzYvPpgYjclZvj+31KetxUJfHCBVg7xG7i4vB3Li2lhTwbPM0+c5CVxuA2LowY3
-         cN7wLJXMtVjq6HPrJAM3HDo0W0yN4bf5FUjq0xbOLcYSexojHRAaXcERl0616NliJ5us
-         t2pFknAmw12NERxviqbsbrONR09ACBFYMpBQXNpXIP11Wk1vgB3DwU7mvLLfK0LsNIt4
-         q/fg==
-X-Forwarded-Encrypted: i=1; AJvYcCV78xypd/DQtL3CvW7QW1u49iAJypJpXJ19jbK7XYq7uEXj4tq1WmOOFZU8KjnZ5jEjWv81mYkrcJVnZcTE6Q5NtTrMw0zBOdAC
-X-Gm-Message-State: AOJu0YzEY0dpvYIXOjEvVjsHQUWeWZgncG3WJoUYge7tIflaS9NmkH8u
-	sV8z/FMOLLxDoJeX6rTZSPR6rRggw41k7hOnR7a6ZXODK6HsVTMDYmVY2O+Jiso=
-X-Google-Smtp-Source: AGHT+IH9EWkurMSwiLpS9SksacWAo23NNuhZoV9rS+DFQjCv4svEZZXVS1qoWFAt8tLMdslowIQ2nQ==
-X-Received: by 2002:ac2:4e06:0:b0:52c:80fa:2967 with SMTP id 2adb3069b0e04-52ccaa2d61amr4627356e87.12.1718915053081;
-        Thu, 20 Jun 2024 13:24:13 -0700 (PDT)
+        bh=ugwCB2vYGLO9qBAziYraLolUxiamWxJkohpnuEn7xv4=;
+        b=Oz0dtMxn7TTyn/MOEaNuNn07h3YxBiPqoMz8181XxUZOdEklpzOh8Sq1PDrIc6Z+k2
+         z5/5len+nZbwx63XKXaviMtRdFB9Kunc3VAcSzAAM/goN8brMOu0uJeC2EMoqx9UDEWC
+         YgtAGEn7xJkJ5ujt3t9lbFWqN6MNUyhYt82LMVV93OFUggWFBktyF6FayQxmald9REu7
+         gLkTN31ECjxcCb4EKAI/Jlruwf1h4XueYfyrlHNAze1+pBnJDjvY91K5J8roJHApye0D
+         u3VRo3PImuxwo1TPsz8TpdVsGGKuSv8dzHP6sepbxnglXOSsHYFe1sSJP6KpJbXtiYaY
+         WgyA==
+X-Forwarded-Encrypted: i=1; AJvYcCXNq+ffl97mfHxowa39o6sjS8OJ5gksZsXefkESZr5LE6C262b0eQ7UNW3f1gPlxwmWqLQwKZXPedXbPLmsUqMmtgaj+NnTmc+a
+X-Gm-Message-State: AOJu0YxdyEZ49q/U85Ekyx0jmVBI45B0ffiSdIocLShDkuW0I/IY0bRK
+	G1P/r1IRFMIh6yc6dtkXe6E7K2saWAiRcM7e8ZwItF8XZx+sBzkXP0me5MY4Pj8=
+X-Google-Smtp-Source: AGHT+IHnFgbLo9Xcp+69vJ7BWOOt187psCaIWf449B7p6z2+NscRcPlpcLAiFhI9a8nNstz7XcQabw==
+X-Received: by 2002:ac2:505a:0:b0:52c:c156:15c5 with SMTP id 2adb3069b0e04-52ccaa65800mr4307687e87.41.1718916878938;
+        Thu, 20 Jun 2024 13:54:38 -0700 (PDT)
 Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca282ed95sm2154233e87.75.2024.06.20.13.24.12
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca287a7b2sm2169544e87.190.2024.06.20.13.54.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 13:24:12 -0700 (PDT)
-Date: Thu, 20 Jun 2024 23:24:11 +0300
+        Thu, 20 Jun 2024 13:54:38 -0700 (PDT)
+Date: Thu, 20 Jun 2024 23:54:37 +0300
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Lukas Bulwahn <lbulwahn@redhat.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: Re: [PATCH] clk: qcom: select right config in CLK_QCM2290_GPUCC
- definition
-Message-ID: <lrvvogzmhtxsjyebebjngnhu2s7rwwrxl6urvl35kte6n4panl@hvejq4mbwvb3>
-References: <20240620201431.93254-1-lukas.bulwahn@redhat.com>
+To: Luca Weiss <luca@lucaweiss.eu>
+Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
+	Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-clk@vger.kernel.org
+Subject: Re: [PATCH 5/7] ARM: dts: qcom: msm8226: Add CPU frequency scaling
+ support
+Message-ID: <2dr3dyqu3epnrdpot3iwatkwq4uxgcmkoh7mzru2pet6xllarr@izq6mmyquffk>
+References: <20240619-msm8226-cpufreq-v1-0-85143f5291d1@lucaweiss.eu>
+ <20240619-msm8226-cpufreq-v1-5-85143f5291d1@lucaweiss.eu>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -70,28 +74,25 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240620201431.93254-1-lukas.bulwahn@redhat.com>
+In-Reply-To: <20240619-msm8226-cpufreq-v1-5-85143f5291d1@lucaweiss.eu>
 
-On Thu, Jun 20, 2024 at 10:14:31PM GMT, Lukas Bulwahn wrote:
-> From: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+On Wed, Jun 19, 2024 at 11:02:49PM GMT, Luca Weiss wrote:
+> Add a node for the a7pll with its frequencies. With this we can use the
+> apcs-kpss-global driver for the apcs node and use the apcs to scale the
+> CPU frequency according to the opp-table.
 > 
-> Commit 8cab033628b1 ("clk: qcom: Add QCM2290 GPU clock controller driver")
-> adds the config CLK_QCM2290_GPUCC, which intends to select the support for
-> the QCM2290 Global Clock Controller. It however selects the non-existing
-> config CLK_QCM2290_GCC, whereas the config for the QCM2290 Global Clock
-> Controller is named QCM_GCC_2290.
+> At the same time unfortunately we need to provide the gcc node xo_board
+> instead of the XO via rpmcc since otherwise we'll have a circular
+> dependency between apcs, gcc and the rpm.
+
+But it should be fine, isn't it? Clock controllers can handle orphaned
+clocks.
+
+The xo_board is really a hack and should eventually be removed.
+
 > 
-> Adjust the config to the intended one.
-> 
-> Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
+> Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
 > ---
->  drivers/clk/qcom/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-
-Fixes: 8cab033628b1 ("clk: qcom: Add QCM2290 GPU clock controller driver")
-
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
 
 -- 
 With best wishes
