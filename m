@@ -1,98 +1,111 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B79EF1991DC;
-	Thu, 20 Jun 2024 12:25:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 207751AD9CD;
+	Thu, 20 Jun 2024 13:26:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718886301; cv=none; b=LNAtbtVqYeokZp3IavqkEr3zHCw7dBTff/x1GETfnRaJCUZx1/Cvp6s+SpVL70L8f2E84h9O7dqqcaE8ObIXuMWoEQIxQP9+gglDv2TLVKGzJ17qlXAydm+gUaj9P0FIeH9XEJXWKrks0ytGn2QaTQ3zx4tcgI6bkFZd52LNQ8c=
+	t=1718889992; cv=none; b=FI/uzuztAR2A33yfhpgC2dlGVsv0262A1Uj7UOpVYrCAQ2MDNuwdUxwSejTT5xDihiLXy27Fz+Q+vcKwDpIwyVYBqUSwpJb+/okjJphUbM7Ye2L8ZCkCvCWt1qIPzswlzTSTtbbg+2iQ5KF1Z83xMduJZE/K9AKg4wSzK7+nav0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718886301; c=relaxed/simple;
-	bh=u0IxrPEYcajYQ4EI1J1Jc2UprPH+WcAt3a1Y9ua5dp8=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=HiLJK7KFhLlYlnkSZkr0A7yz/UQ92BUHPh/TSJE+g32VIboQQCcC4+OEikELlxzvPOkR89Bs+t3oAFYTKyIRTwj0b5Zy/EOFmU9+2Oa7E7iubSv1Cr1g7uPRg0OTrMdkxImUTBmZs2r6NVDbwLuEvAaO3pUZEOR6LphDLg2TyVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I2bLUI9g; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1718889992; c=relaxed/simple;
+	bh=XT9J44TmPVDG/sz/dvCXD8DRQvFUNAjntFTCPTFSvw4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=KS1GHLpsAlltrORq3dmD4bQle0yBFrpBlopao/hneEC/SxBipFgPhttovM2OItzfy3YMpbiEw4jzcPYANNDNrv3sAlWpAs6tfgVgrSPhsyuPfjE7p1fHk0gAS37NkKoHJ1xpI/NsVtSROiqtvwPEDV1gBN5Wkz5NsuX2rMFL1LM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uLGMYYf7; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I2bLUI9g"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 154DFC2BD10;
-	Thu, 20 Jun 2024 12:25:01 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uLGMYYf7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11828C4AF17;
+	Thu, 20 Jun 2024 13:26:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718886301;
-	bh=u0IxrPEYcajYQ4EI1J1Jc2UprPH+WcAt3a1Y9ua5dp8=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=I2bLUI9gvnbc/rB0DbBcfYycaG+F958VXJMvlqwwjksQEuBykPXfnVk6mnVUZpnah
-	 H4atNR+9PYQRuSTGpqdM3yMY68s+Mf5sHmJP9RMeJvyN7KJWQdu5/Bd0IlpjEjnuqf
-	 JGROnRYNJOxbL4cquiWwHk9rq69loiBjZnD0irec0hL91pecG5ho2+IlsbXUQzNZPr
-	 OtUzrbm60xxgDo3UHECDgYvXyZILyllYgE2dh7Z6UEnFTtwWvBBrv7wDwgBB/WMePY
-	 G48sEmt5gs04zvX6sOxYCpPVhF/R6q4k/tdUZbn4aqAJZxG53wHLVaDdPx4iNcSekN
-	 lo3qZ08S5qv+A==
-Date: Thu, 20 Jun 2024 06:25:00 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1718889991;
+	bh=XT9J44TmPVDG/sz/dvCXD8DRQvFUNAjntFTCPTFSvw4=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=uLGMYYf7jomd2LSJIaEujv+j6T3pvGyyn72meoZBjHb0xu8bHgOSm0HdS79e+SMON
+	 0UUjiGD+lNNoumz4tOhqqYUwZAtpGTP1b+LBA+nAf/4XHl+AnH+qNWvPkN7wjBGBx5
+	 6+3FQNlAZR+yE8YwdJQasppBlgdlNpin3wgTYi3XCBqnGTpt5J8eP3sEfkSn8bIHIm
+	 4GoAxXirhwgQszxscjZmn2dP6lZlOmsiAtgaiAFf9iqz4WIdypl9taZx5v1ifuwjLE
+	 /IXP7js7984WqakKsHwY4/uL9GML/AFcdhnSGrzJt92kqtjI6ZFNwIUwmD+ucTqnu/
+	 IAFP43J/SewAA==
+Message-ID: <f85fc367-c1da-40ce-8e90-b5d10fd5d190@kernel.org>
+Date: Thu, 20 Jun 2024 15:26:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Ryan Walklin <ryan@testtoast.com>
-Cc: Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- David Airlie <airlied@gmail.com>, Andre Przywara <andre.przywara@arm.com>, 
- Daniel Vetter <daniel@ffwll.ch>, Chris Morgan <macroalpha82@gmail.com>, 
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
- Thomas Zimmermann <tzimmermann@suse.de>, John Watts <contact@jookia.org>, 
- Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
- linux-sunxi@lists.linux.dev, devicetree@vger.kernel.org, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Samuel Holland <samuel@sholland.org>, Maxime Ripard <mripard@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, dri-devel@lists.freedesktop.org, 
- Michael Turquette <mturquette@baylibre.com>
-In-Reply-To: <20240620113150.83466-19-ryan@testtoast.com>
-References: <20240620113150.83466-1-ryan@testtoast.com>
- <20240620113150.83466-19-ryan@testtoast.com>
-Message-Id: <171888630004.1426859.15945368564600967257.robh@kernel.org>
-Subject: Re: [PATCH 18/23] dt-bindings: allwinner: add H616 DE33 bus, clock
- and display bindings
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/7] dt-bindings: power: rpmpd: Add IPQ9574 power
+ domains
+To: Varadarajan Narayanan <quic_varada@quicinc.com>, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org,
+ angelogioacchino.delregno@collabora.com, andersson@kernel.org,
+ konrad.dybcio@linaro.org, mturquette@baylibre.com, sboyd@kernel.org,
+ ulf.hansson@linaro.org, quic_sibis@quicinc.com, quic_rjendra@quicinc.com,
+ luca@z3ntu.xyz, abel.vesa@linaro.org, quic_rohiagar@quicinc.com,
+ danila@jiaxyga.com, otto.pflueger@abscue.de, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
+References: <20240620081427.2860066-1-quic_varada@quicinc.com>
+ <20240620081427.2860066-2-quic_varada@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240620081427.2860066-2-quic_varada@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-On Thu, 20 Jun 2024 23:29:56 +1200, Ryan Walklin wrote:
-> The Allwinner H616 and variants have a new display engine revision
-> (DE33).
+On 20/06/2024 10:14, Varadarajan Narayanan wrote:
+> Add the compatibles and indexes for the rpmpd in IPQ9574.
 > 
-> Add display engine bus, clock and mixer bindings for the DE33.
-> 
-> Signed-off-by: Ryan Walklin <ryan@testtoast.com>
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
 > ---
->  .../devicetree/bindings/bus/allwinner,sun50i-a64-de2.yaml  | 7 ++++---
->  .../bindings/clock/allwinner,sun8i-a83t-de2-clk.yaml       | 1 +
->  .../bindings/display/allwinner,sun8i-a83t-de2-mixer.yaml   | 1 +
->  3 files changed, 6 insertions(+), 3 deletions(-)
-> 
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-yamllint warnings/errors:
-./Documentation/devicetree/bindings/bus/allwinner,sun50i-a64-de2.yaml:27:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/bus/allwinner,sun50i-a64-de2.example.dtb: bus@1000000: compatible: ['allwinner,sun50i-a64-de2'] is valid under each of {'items': [{'const': 'allwinner,sun50i-a64-de2'}], 'type': 'array', 'minItems': 1, 'maxItems': 1}, {'items': [{'const': 'allwinner,sun50i-a64-de2'}], 'type': 'array', 'minItems': 1, 'maxItems': 1}
-	from schema $id: http://devicetree.org/schemas/bus/allwinner,sun50i-a64-de2.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240620113150.83466-19-ryan@testtoast.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+Best regards,
+Krzysztof
 
