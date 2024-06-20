@@ -1,57 +1,58 @@
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5567F1AED4E
-	for <linux-clk@vger.kernel.org>; Thu, 20 Jun 2024 15:09:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A29F1AF68B
+	for <linux-clk@vger.kernel.org>; Thu, 20 Jun 2024 15:11:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718896196; cv=none; b=PB79j3CE/e05VKGqjwCDDCJMpVxi/hPHh3b6+9RuyCVrjp0TzR0FdardU1thfIisU4DU5RRq1B5QhXGBE8cVwG6MOWwOSBJeeFo115AzaHAgPabdJ7Bz6lQ7g24bT2DH4jklC3bRwZ6Ctmt9altcApB+qQVTWjA/3OVnpdn3CGw=
+	t=1718896298; cv=none; b=ckb00fqvsxgLXoIl0eTFRL+4ahe25eAdu57bxiGopzzNH+bNw9LYFgr0emHwOHLCY6p4sRrc5ofG4Cj5owy67WNjEAxpaHBUq1H5jyAopMJkdbIM+QWs5uIdK/CYqL3Rl+pBlRsDUGmBC4mdEtuQMiLFraeK6mFU6GuUrdI9ns4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718896196; c=relaxed/simple;
-	bh=mfiwSIjC731sExU1owoEvvO8FCSEVIoCYkKggzTldDE=;
+	s=arc-20240116; t=1718896298; c=relaxed/simple;
+	bh=bXi5AxhJ6BOlPGDlzlnhp/B19Cg5Fbvd0iajo/vvX3U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KrNLGu7WDT5BHCyq7vwz74t78viXl/WZ1pgvWL61IxymV6VdMXq/VycIeWIO7lPIot6Ck6j7Vh5q9QzQ54Fov7AgtFlQrWpdy06sHwYunS5/oEqLRTe7g1gDCuKuXMFaWeswcdAgT5fedIKaILEbtdO4kGj1ce8pzRrbOO045Qc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=V0P6wIfa; arc=none smtp.client-ip=209.85.167.42
+	 Content-Type:Content-Disposition:In-Reply-To; b=HiSI5Ob7mCWf3/plLxUAzG40xMbnZxIdAsJNUdH6luPur8gJ8P6MdbWQvm5diKqM0aXXcuS5Yo/QWgVU1dNC+qoVyCVK5fKwq4jEyD3FApFcZKQ9CRZNesTKrGbX4YetW7FticyPJx08nHom9cDMabRfAYXtrHIimfXMzjvKmGQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fhvNPEUt; arc=none smtp.client-ip=209.85.208.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="V0P6wIfa"
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52bc0a9cea4so916917e87.0
-        for <linux-clk@vger.kernel.org>; Thu, 20 Jun 2024 08:09:55 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fhvNPEUt"
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2ec461d1005so7597491fa.0
+        for <linux-clk@vger.kernel.org>; Thu, 20 Jun 2024 08:11:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718896193; x=1719500993; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1718896294; x=1719501094; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0gK+thIDawbMI8D6X0tNOPUzlxQcTHptuQx1Z2ceRXM=;
-        b=V0P6wIfamtHqFfdSKj+7giMe3rhe9Saloyfx06RP4zZ0dxam+nYkdJLhiYR7zFY5Ie
-         qkHDnkBjV3Qu+1IxADNrakETXBVYpu+Ynzjiu7SwMfGjctAmni9ecnygedl+kMEgFywP
-         p8q42rahO6+xzGYFuQISPWf2Xu4eEEvG2P4HDc7wldGhBPcq13FOI6N/Bg4Xo/zLSu/c
-         6o8bBdsxJDeMwGQFzVEnDN9DjIl2ohosU7qsGOnJgIab1pHMWpCL9JKuVcb/TYMSPBvz
-         LL6B72fExJ34Jn2uT+YyrqVrdUAXJcS7uLZWnF8jmyOe6+cp2mUO5jWmphIaWC6NX8f+
-         VOpg==
+        bh=3h6oqRW/qdffe42UR3aCeVEd5BB42fceS5IJnJKBOSg=;
+        b=fhvNPEUtUIs+2riN8Unpt5qz8zQWQqfmrmVuTSdWgCnOrFgicx+cb8QB/HazvRD1dZ
+         9iCZIriFQtZWKRKpFEtNeQkUET4UuQmszb/1KSdWqSNGAi1aPu/ahGmJXYuIN38rDdtf
+         MkDyg8WcdwFrtJ7rGwm42oA/bTosKLv9kmcwQsKtgofekmlK2drj8mCzrSIWEuaLBjAl
+         bRgRp3v1ekG754XWWzg1o64MR2W+KqrKiFMKzV1bmtsDsHUXb68wHAy5olSSbWkmag7r
+         twYPZYIwaxINL/xY7emBcB5S6eIF90fG340YnR8nCyIYFe5j7btngQEIt+QDcPOqCeN5
+         AiDA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718896193; x=1719500993;
+        d=1e100.net; s=20230601; t=1718896294; x=1719501094;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0gK+thIDawbMI8D6X0tNOPUzlxQcTHptuQx1Z2ceRXM=;
-        b=xFxYcxHoLSUmtZyn7madma8DXFwdtzKXxdu60UkxusX09ABTuz6D3xJhSGfqcHJulu
-         W6rmcmgB89hjEe2oOPoUv9+2p/p+KgcRVUdZa4U3/jt3aamHmvMTCvjAAMlc5IVo/qB4
-         ixJPXMsdEbZNakXcBpsVkqSvMYSCT+QRQosieEOAq2wTlCQn4k9Xf0OuaNGoabKNxpJ2
-         EpvJSJwnylp2B82d6h36GLg14CIMn3Dc/Q7s9l3zOqwZk4sBXqFG8YWoaKOeXwih5mMa
-         L5A2M/WAUkyW1APy7Lp+PRKjIXg6Y78nWlJf8d+rLS/qyi5qWBSeC8FABf9LmfsgLSQ2
-         VppA==
-X-Forwarded-Encrypted: i=1; AJvYcCVJFMx5hTQsth5ecCeN9NdvEKTzFiAVp/P7u+QRAmT7QgGjP4K9fH6VkvH0naBrHdy5+I6TNb6P6wvLogPZJgy6RsRenf3aft7a
-X-Gm-Message-State: AOJu0Yw2XkuMcpFlxvbXnGY1z1vkf0xrIZHZw19W/rP0YSAI3/GHy9/M
-	vOVpi1i5FdU4p8/84qhrA0cECcRPXw7sVQ7jll50TYYa3na/fEqE8c3AodSaJQc=
-X-Google-Smtp-Source: AGHT+IHZ7VSN2wu7ZM55UCXbxtOpvLmg+Rz6tqxnMXIu8tRVtuNvG3de09teEXUPAPTQMcqu6Cz87A==
-X-Received: by 2002:a05:6512:31d4:b0:52c:c64e:b902 with SMTP id 2adb3069b0e04-52cca1ea264mr1869080e87.27.1718896193490;
-        Thu, 20 Jun 2024 08:09:53 -0700 (PDT)
+        bh=3h6oqRW/qdffe42UR3aCeVEd5BB42fceS5IJnJKBOSg=;
+        b=b38gxFpc59GB/s+oYLzg715udmep4pHgwNsrkWd2ZgcTi3dFhCWCsV6bsVNGBTlmvY
+         Tej1aIE2Kck/Qc2P/VWNWheTSXGwDkKrA6bym0O1RofNK382c4rAGrj/mHc9mytF3+T7
+         CBPJebwn7OqD8fE2a1rs8XXs5bJ1ToBxuUzYXYk/WL+nqBxli5IVXNtMFRKdnyHR/a8M
+         TiTCwR/pBr7Fg4YQ96oNpZCvJouAwxZxO2hGJP3lnpAqamNSv84aP4rqYXWFL/Ynmm9f
+         XNZ4SJHj9xofos1s3PS3mQpjfE3LY8CouIjMr9Hb7HbzTMYLmh8AejDxna58cdC9bs4N
+         vUBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUz7/73DOE9LleJh343/q85mhRCl3V7KBVRm6/S/rBjQyFkDogHartvYl75+lqkqCmw+Al7XfBD66pY5EySchD+LxtbCUAW+Hg8
+X-Gm-Message-State: AOJu0YxaRO74nC2vYL4nKUaxXv7aFfp6NmeZ5hIH6riGFy3QgNTMSEOK
+	JCXeNv7i96VBvhRV27OvO75Ufgwy8B4JL0DXopPJqHhND/lfCINiobZ2PPHmY9gXXFxd9ZgI4tg
+	BFyI=
+X-Google-Smtp-Source: AGHT+IG2bhnBYuuNCUcW1g1XePnvj4eVOUhHtCKEC+de0GhrbLOlWQDOt226Xo64hud8Q/lYWQdHrw==
+X-Received: by 2002:a05:6512:3049:b0:52c:a88e:945e with SMTP id 2adb3069b0e04-52cca1f35bcmr1702015e87.31.1718896294581;
+        Thu, 20 Jun 2024 08:11:34 -0700 (PDT)
 Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca2826269sm2091191e87.61.2024.06.20.08.09.52
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ca282ee54sm2120259e87.73.2024.06.20.08.11.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 08:09:53 -0700 (PDT)
-Date: Thu, 20 Jun 2024 18:09:51 +0300
+        Thu, 20 Jun 2024 08:11:34 -0700 (PDT)
+Date: Thu, 20 Jun 2024 18:11:32 +0300
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To: Varadarajan Narayanan <quic_varada@quicinc.com>
 Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
@@ -60,11 +61,11 @@ Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
 	quic_rjendra@quicinc.com, luca@z3ntu.xyz, abel.vesa@linaro.org, quic_rohiagar@quicinc.com, 
 	danila@jiaxyga.com, otto.pflueger@abscue.de, linux-arm-msm@vger.kernel.org, 
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-pm@vger.kernel.org, Praveenkumar I <quic_ipkumar@quicinc.com>
-Subject: Re: [PATCH v1 3/7] pmdomain: qcom: rpmpd: Add IPQ9574 power domains
-Message-ID: <jfh2xygjdoapkno2jrt6w7thlylgyp2tk7oaczundhxvi26qel@ahtskgn4v6sp>
+	linux-pm@vger.kernel.org
+Subject: Re: [PATCH v1 5/7] clk: qcom: gcc-ipq9574: Add CPR clock definition
+Message-ID: <wadru6axfhvws74vcd6umdhnm6gl5poegoljvb7fgbtuz2mccp@hrclt6qesp6e>
 References: <20240620081427.2860066-1-quic_varada@quicinc.com>
- <20240620081427.2860066-4-quic_varada@quicinc.com>
+ <20240620081427.2860066-6-quic_varada@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -73,22 +74,79 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240620081427.2860066-4-quic_varada@quicinc.com>
+In-Reply-To: <20240620081427.2860066-6-quic_varada@quicinc.com>
 
-On Thu, Jun 20, 2024 at 01:44:23PM GMT, Varadarajan Narayanan wrote:
-> Add the APC power domain definitions used in IPQ9574.
+On Thu, Jun 20, 2024 at 01:44:25PM GMT, Varadarajan Narayanan wrote:
+> Add the CPR clock definition needed for enabling access to
+> CPR register space.
 > 
 > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> Signed-off-by: Praveenkumar I <quic_ipkumar@quicinc.com>
-
-The order of the S-o-B's is wrong. Who is the actual author of the
-patch?
-
 > ---
->  drivers/pmdomain/qcom/rpmpd.c | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
+>  drivers/clk/qcom/gcc-ipq9574.c | 38 ++++++++++++++++++++++++++++++++++
+>  1 file changed, 38 insertions(+)
 > 
+> diff --git a/drivers/clk/qcom/gcc-ipq9574.c b/drivers/clk/qcom/gcc-ipq9574.c
+> index e1dc74d04ed1..7c8eb94f654b 100644
+> --- a/drivers/clk/qcom/gcc-ipq9574.c
+> +++ b/drivers/clk/qcom/gcc-ipq9574.c
+> @@ -3994,6 +3994,43 @@ static struct clk_branch gcc_xo_div4_clk = {
+>  	},
+>  };
+>  
+> +static const struct freq_tbl ftbl_hmss_rbcpr_clk_src[] = {
+> +	F(24000000, P_XO, 1, 0, 0),
+> +	{ }
+> +};
+> +
+> +static struct clk_rcg2 rbcpr_clk_src = {
+> +	.cmd_rcgr = 0x48044,
+> +	.mnd_width = 0,
+> +	.hid_width = 5,
+> +	.parent_map = gcc_xo_map,
+> +	.freq_tbl = ftbl_gp1_clk_src,
+> +	.clkr.hw.init = &(struct clk_init_data){
+> +		.name = "rbcpr_clk_src",
+> +		.parent_data = gcc_xo_gpll0_gpll4,
+> +		.num_parents = ARRAY_SIZE(gcc_xo_map),
+> +		.ops = &clk_rcg2_ops,
+> +	},
+> +};
+> +
+> +static struct clk_branch gcc_rbcpr_clk = {
+> +	.halt_reg = 0x48008,
+> +	.halt_check = BRANCH_HALT,
+> +	.clkr = {
+> +		.enable_reg = 0x48008,
+> +		.enable_mask = BIT(0),
+> +		.hw.init = &(struct clk_init_data){
+> +			.name = "gcc_rbcpr_clk",
+> +			.parent_hws = (const struct clk_hw *[]) {
+> +				&rbcpr_clk_src.clkr.hw,
 
+Where is the &rbcpr_clk_src registered?
+
+> +			},
+> +			.num_parents = 1,
+> +			.flags = CLK_SET_RATE_PARENT,
+> +			.ops = &clk_branch2_ops,
+> +		},
+> +	},
+> +};
+> +
+>  static struct clk_hw *gcc_ipq9574_hws[] = {
+>  	&gpll0_out_main_div2.hw,
+>  	&gcc_xo_div4_clk_src.hw,
+> @@ -4219,6 +4256,7 @@ static struct clk_regmap *gcc_ipq9574_clks[] = {
+>  	[GCC_PCIE1_PIPE_CLK] = &gcc_pcie1_pipe_clk.clkr,
+>  	[GCC_PCIE2_PIPE_CLK] = &gcc_pcie2_pipe_clk.clkr,
+>  	[GCC_PCIE3_PIPE_CLK] = &gcc_pcie3_pipe_clk.clkr,
+> +	[GCC_RBCPR_CLK] = &gcc_rbcpr_clk.clkr,
+>  };
+>  
+>  static const struct qcom_reset_map gcc_ipq9574_resets[] = {
+> -- 
+> 2.34.1
+> 
 
 -- 
 With best wishes
