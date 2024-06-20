@@ -1,112 +1,134 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02CC34207F;
-	Thu, 20 Jun 2024 06:50:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5265B2582;
+	Thu, 20 Jun 2024 07:32:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718866249; cv=none; b=YDnzqhFSuM3nBifYMKqKq3EGmUbZwju424r45VEtZcTt0VZqGsHv/RHnuLuEDVZyUDVW2U4Vys12NoqqthvI5bW8MGHtY319Jgwxed/zbwxuYG5rZCa+yGHBXLVXF0IaRBCHB58aMtz8A59XkPTJzze1exRcRRIN2vl9CrvjyLU=
+	t=1718868759; cv=none; b=siPhPTTjLsFZ9gVI+Uoe4hRx6xkdpjd0gmAHKJ6wao0dloS4pVq9PnJuHfrHW65iHsISSCT5LDcmjiAxmRXKeTFc/V6Qqy0z3rFV1JG+zpZKipykMhP+/gvMFIuCrx3NxhBZQ5u0CusXbMLmUJpFlUQ0/602R9Yoo3fgNrpGduc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718866249; c=relaxed/simple;
-	bh=baXgiEe0ODp10Whq0wyruPc8ViNJffY0RBJUGVLSt/Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=edYjLMUUYJnoYwWgxB4i3KYn1/fX7ueOcIuLBcL3wl+KyV8EI+T7az3GBt8iiH0PJ+dlbIUeCARUxNx2a4GIDOLvujeGvJPhA20+YhngeHKcKkuLt56fj3smISCtp5lP2izCKBaXFjBQt0CNaLh3H6kBQU9yXTV1Uczp9g7mDHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TC5R4jE3; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1718868759; c=relaxed/simple;
+	bh=wHBVd9fc2iWfUZuweb4LS9YbAAd/18fD/OhLw/DQ1QU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sgBQKDElaiBa5THypnJhe2lEd3Vm7YsfMtruG0sRKzSlC6ykCPiOtTa2hUSWUxdrVdRjpYAEEiAqQkcJ/rYF9ky4e7QSjT5nl3oxj75FvP4nBj/ZA+Uud2QpK+tNuIjqFABwyY6e2vY6vrWVCghTJNxuvKBcv87sd/kKgXaG4XA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XwUWPywQ; arc=none smtp.client-ip=209.85.128.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TC5R4jE3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5794DC4AF0A;
-	Thu, 20 Jun 2024 06:50:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718866248;
-	bh=baXgiEe0ODp10Whq0wyruPc8ViNJffY0RBJUGVLSt/Y=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=TC5R4jE39JukwGnmugmO4mpHm/fn9rIrVv72719dcM8bhzpNeobEQLZpShwL5RfB7
-	 GSmfgBewyfCN2uPhyB5cLhqcuKatAjbhhZo7GU1u6QjP4trkTisiSpxZRNmRTqX5hQ
-	 LGEDfbhGUb6e727lIj+iW3jAd5U/KZ8vTQwrdxxkdoRvfMyYWcajuKE/bSUraXWLxG
-	 TE2yYc/w5Qip0Vth1c1oo+ig1q/roba+igYaIFOU4ZsKGbXIuS/ay7TQckslE/AORN
-	 nQNn+K+TSoMJklSNkJu/JpbSdg3MXPpV2k2reyShOJW8botF1BMYNcZvG1XWD+zT11
-	 2n5ulGfGiLCcw==
-Message-ID: <20bd14a0-bdfb-4fd3-912a-d28ab43b4db2@kernel.org>
-Date: Thu, 20 Jun 2024 08:50:40 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XwUWPywQ"
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-62cddff7f20so5002917b3.3;
+        Thu, 20 Jun 2024 00:32:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718868757; x=1719473557; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=qnAIkWGQryIAQtTLmUZTYaNhdbVrLJLMPyGuu/muHE4=;
+        b=XwUWPywQ0J+uow7/3WM3VxDHf2yfN/gmz8ONSejpWXnXXkWkkcE6WD3hNXztgjiZVo
+         XZ/zSclx0OJXpYAt0hGVqpAKB5difb1mpYRCH5OztsfEtLSQVWJJxQf5pL+Ax06f5/iA
+         YT+2o8YyMkinjPqJBepe7jKwDwX/teTqWzztgBF0AgwHBEQj18K6jalWPXDQ7mVG+3rM
+         lRpqajQUKesOT1MtPKiLGeYMhl84qtQd7AsoAWQ3veguEion4+RPkDrzazug3283o4DQ
+         XhnQ+rsbr6UhJgkolyueURKUq9pOthe+pN6W38xpX4RdhrJ6ewiKSuYwQbH6BsDEDA//
+         Es4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718868757; x=1719473557;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qnAIkWGQryIAQtTLmUZTYaNhdbVrLJLMPyGuu/muHE4=;
+        b=KA5CCCihMW//oD6Yi55M2BfcadVmm7lW8d9ZIwq+o6o94Mtmo0tuYNWjxxKMDYgXlv
+         PMHBm8SJTGgI2vruVFh2TV21J/yR7qDzZVuCPIDAwErzppl+BnHy0IsSOU3PqvPyKhE4
+         u5VvznZIa/LgKx0kSLtoNivesaN4cJsQWXCDzkHt7diIWJWgDqdFHkgDT7sYTry4VEpw
+         /1PHEIrSrT0xcXin7n9Pytw+LyJIfVTaknU9htgVEmZ5Sv3FhhXANnUDeXznhOP8Ud2a
+         bMFlQohwI6iQVia8c3WvwVka0sG0s9POS69Hsmn3FHjEotKyEAJB1xnd9tlIBZA5y8i3
+         h65A==
+X-Forwarded-Encrypted: i=1; AJvYcCWv8ZDAIh0SxfIUHIt2W0GfAtq7Cg3Mo7e3M4EEeyw55Xt2PuEH9PKozocC3jjglvmltyFRMmr56JvIG7uZh8+mCLA2ZRViK9pwJFEg1tMEDUFFbvFByivFIZuMYdW1XuIa1dTUXE1lECx5eNBkHw5/+FiLlD/yF3ctIQUPLvTbw1Duxw==
+X-Gm-Message-State: AOJu0YxZrMoQyKbBGmykjiLU9NaI1hd8zo3cXXdEgLdZSvqOompsMIT6
+	kQ6eg6wqWRslT5Sw2fQPwl1Pd3WDwnJVlX5W7UJ0kbrp6s/ZT+lZBLH6qoew6LPwzWlsv733B42
+	QPlrHXKyH9BzouBOVGiLH2jdwmmM=
+X-Google-Smtp-Source: AGHT+IFMs27chWrPqAVjs1vjzs16P9LfbkLcD+9tzrx+qaAHwjt2BmEAahSMklBZ+1btLgaZ6nW+L/dXD2/WIeBy5t8=
+X-Received: by 2002:a0d:e605:0:b0:618:8d31:a557 with SMTP id
+ 00721157ae682-63a8e1d915cmr46504547b3.14.1718868757233; Thu, 20 Jun 2024
+ 00:32:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/7] dt-bindings: clock: qcom,a53pll: Allow opp-table
- subnode
-To: Luca Weiss <luca@lucaweiss.eu>, ~postmarketos/upstreaming@lists.sr.ht,
- phone-devel@vger.kernel.org, Jassi Brar <jassisinghbrar@gmail.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20240619-msm8226-cpufreq-v1-0-85143f5291d1@lucaweiss.eu>
- <20240619-msm8226-cpufreq-v1-2-85143f5291d1@lucaweiss.eu>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240619-msm8226-cpufreq-v1-2-85143f5291d1@lucaweiss.eu>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20240618185819.2155595-2-tmaimon77@gmail.com> <202406191439.3NcnExKM-lkp@intel.com>
+In-Reply-To: <202406191439.3NcnExKM-lkp@intel.com>
+From: Tomer Maimon <tmaimon77@gmail.com>
+Date: Thu, 20 Jun 2024 10:32:26 +0300
+Message-ID: <CAP6Zq1h2Sk6H2V-i+PAk_fCy9xdywcYw=w9wT_xcJ2WrqyWbAg@mail.gmail.com>
+Subject: Re: [PATCH v25 1/3] dt-bindings: reset: npcm: add clock properties
+To: kernel test robot <lkp@intel.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, 
+	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, tali.perry1@gmail.com, 
+	joel@jms.id.au, venture@google.com, yuenn@google.com, benjaminfair@google.com, 
+	oe-kbuild-all@lists.linux.dev, openbmc@lists.ozlabs.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 19/06/2024 23:02, Luca Weiss wrote:
-> Allow placing an opp-table as a subnode that can be assigned using
-> operating-points-v2 to specify the frequency table for the PLL.
-> 
-> Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
-> ---
->  Documentation/devicetree/bindings/clock/qcom,a53pll.yaml | 3 +++
->  1 file changed, 3 insertions(+)
+Hi Rob and Krzysztof,
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Could you please review this patch?
 
-Best regards,
-Krzysztof
+Thanks,
 
+Tomer
+
+On Wed, 19 Jun 2024 at 09:20, kernel test robot <lkp@intel.com> wrote:
+>
+> Hi Tomer,
+>
+> kernel test robot noticed the following build warnings:
+>
+> [auto build test WARNING on clk/clk-next]
+> [also build test WARNING on linus/master pza/reset/next v6.10-rc4 next-20240618]
+> [cannot apply to pza/imx-drm/next]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>
+> url:    https://github.com/intel-lab-lkp/linux/commits/Tomer-Maimon/dt-bindings-reset-npcm-add-clock-properties/20240619-093532
+> base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+> patch link:    https://lore.kernel.org/r/20240618185819.2155595-2-tmaimon77%40gmail.com
+> patch subject: [PATCH v25 1/3] dt-bindings: reset: npcm: add clock properties
+> config: arm64-randconfig-051-20240619 (https://download.01.org/0day-ci/archive/20240619/202406191439.3NcnExKM-lkp@intel.com/config)
+> compiler: aarch64-linux-gcc (GCC) 13.2.0
+> dtschema version: 2024.6.dev1+g833054f
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240619/202406191439.3NcnExKM-lkp@intel.com/reproduce)
+>
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202406191439.3NcnExKM-lkp@intel.com/
+>
+> dtcheck warnings: (new ones prefixed by >>)
+>    arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi:63.7-177.5: Warning (simple_bus_reg): /ahb/apb: simple-bus unit address format error, expected "f0000000"
+>    arch/arm64/boot/dts/nuvoton/nuvoton-common-npcm8xx.dtsi:50.35-55.5: Warning (unique_unit_address_if_enabled): /ahb/reset-controller@f0801000: duplicate unit-address (also used in node /ahb/clock-controller@f0801000)
+>    arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: /: memory@0: 'device_type' is a required property
+>         from schema $id: http://devicetree.org/schemas/memory.yaml#
+>    arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: system-controller@f0800000: compatible: ['nuvoton,npcm845-gcr', 'syscon'] is too short
+>         from schema $id: http://devicetree.org/schemas/soc/nuvoton/nuvoton,npcm-gcr.yaml#
+>    arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: interrupt-controller@dfff9000: 'ppi-partitions' does not match any of the regexes: '^v2m@[0-9a-f]+$', 'pinctrl-[0-9]+'
+>         from schema $id: http://devicetree.org/schemas/interrupt-controller/arm,gic.yaml#
+>    arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: ahb: apb:ranges: [[0, 0, 4026531840, 3145728], [4293918720, 0, 4293918720, 90112]] is not of type 'boolean'
+>         from schema $id: http://devicetree.org/schemas/simple-bus.yaml#
+> >> arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: reset-controller@f0801000: '#clock-cells' is a required property
+>         from schema $id: http://devicetree.org/schemas/reset/nuvoton,npcm750-reset.yaml#
+> >> arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: reset-controller@f0801000: 'clocks' is a required property
+>         from schema $id: http://devicetree.org/schemas/reset/nuvoton,npcm750-reset.yaml#
+>    arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: timer@8000: 'clock-names' does not match any of the regexes: 'pinctrl-[0-9]+'
+>         from schema $id: http://devicetree.org/schemas/timer/nuvoton,npcm7xx-timer.yaml#
+>    arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: /ahb/apb/watchdog@801c: failed to match any schema with compatible: ['nuvoton,npcm845-wdt', 'nuvoton,npcm750-wdt']
+>    arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: /ahb/apb/watchdog@801c: failed to match any schema with compatible: ['nuvoton,npcm845-wdt', 'nuvoton,npcm750-wdt']
+>    arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: /ahb/apb/watchdog@901c: failed to match any schema with compatible: ['nuvoton,npcm845-wdt', 'nuvoton,npcm750-wdt']
+>    arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: /ahb/apb/watchdog@901c: failed to match any schema with compatible: ['nuvoton,npcm845-wdt', 'nuvoton,npcm750-wdt']
+>    arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: /ahb/apb/watchdog@a01c: failed to match any schema with compatible: ['nuvoton,npcm845-wdt', 'nuvoton,npcm750-wdt']
+>    arch/arm64/boot/dts/nuvoton/nuvoton-npcm845-evb.dtb: /ahb/apb/watchdog@a01c: failed to match any schema with compatible: ['nuvoton,npcm845-wdt', 'nuvoton,npcm750-wdt']
+>
+> --
+> 0-DAY CI Kernel Test Service
+> https://github.com/intel/lkp-tests/wiki
