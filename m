@@ -1,201 +1,108 @@
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 774B97F7D3
-	for <linux-clk@vger.kernel.org>; Wed, 19 Jun 2024 22:10:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B472B38385;
+	Thu, 20 Jun 2024 05:57:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718835038; cv=none; b=hVCGjTxdSi0FwKdTu8zhwiCiaPfcRwaOWZQR2aeyeFc5Q8P+QWTz76UfxUvGi9BUZZSnWTUHoSRQ5rmX8/vPqQBgZ5Hl7yRqUD3deeQAoXfmwFE0HOUtb16LHfIisjYLf1WgUxfScNOt+VMKwr/kXxHrfTOpmG2RnifuEXWpnzU=
+	t=1718863062; cv=none; b=suBiWf2wxmuaAHUnQwf+XOEV5NEoK+umSxfsxO1FGDg5pqJr6bmVzcj7oOwdN1E7TCUdBNu7kM7l6gjivPQUHptg2gTM/FIkefvNUeZU4Zmr1270rM/EqQVpfkRDh2b0uRSzuF7+9eDEAdtR+qCPnQUGrjY4mpTTN145ks9DJq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718835038; c=relaxed/simple;
-	bh=MzmtV6RJLPp/mRcRZ0X769Ji07wp0WHO6hIUMyrrkbY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b1OEEH3+LXAjHKHoa23xI+0rOfUde0yAR95ndMiFYNMpQG/7V7QscZ3XFabEzZQ7xakDh9inpYw5Vk8F5jSP9f99kPxM6IKdN/tJNDD8JvessFf/KDyY6nz2ihK95GQMIWK4XD1UbA87o/uiXcq8W1q3q7KYg0c4QpcuWCqwGHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZD0jODsj; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1718863062; c=relaxed/simple;
+	bh=zMCFp8zCllWXZJOLn+ox9s+gLl+0FUepfCkgfmEOmGU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B7wkrGC8De4siOWoE+/SsL/VBg69vhncDvzZm2n/u5N9Fveg3I1KNfd7xDO+/GEG94HUr16A9cfXmRx4ZB25LwjwlazQ2mlgNjWKHD2DBEnRPEMr8pTKf0OxE6LUU7DhdsaJH6sc4mMuzs0SYBBgqQ3xOoc8P3sjqkvxYmzkk04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RxgTjgPY; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZD0jODsj"
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52cc5d5179aso397074e87.0
-        for <linux-clk@vger.kernel.org>; Wed, 19 Jun 2024 15:10:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718835035; x=1719439835; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XLgiYNE4EcD1eCJhNuCVVYDqXAq6ojEUG+xkLeofvQc=;
-        b=ZD0jODsj2dqR6niAcu4iYnoLREx/xanEKDhi/tDviC4bUQJh5vtZjXfbC34tzZgW3G
-         6BKm4ageaUM4Hf0mRN7IdDnB/FDQYOPMieSxPdg1yXE6VW4aKv0cx6TWPLVQZunGYRwO
-         T54zssokxcBMS5TC2ImxzP+b6s15TQ6Za9AjiBnGGwzXZcAfnUO08vKEaJSs0bB0AGTx
-         +rDAGx3e3Ur2rilDtn6A70iSoBT+MlbQG8CdN8wZodf3whkXF5bOyp+x3hCuTbTBVwCF
-         0cMwh4WYT4dNykT6KqJEbMVdF20b2GKmxziiPIP5L02vNCPfaVLcq5xxKkdRVuFmXywi
-         0lhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718835035; x=1719439835;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XLgiYNE4EcD1eCJhNuCVVYDqXAq6ojEUG+xkLeofvQc=;
-        b=woLcfXCFu16NdGGYe7bTvbUBNaNSz0e0TeSsG5tTxOvOB2ouee3Mwk9OrdU+Mg8FVD
-         UMPJuCX5kB5mASfSwlODNupLocs3/OhL3Ly9HNVobkSOfXNN3OvrXxmjD38sU4711jV7
-         fc84ecom+gSrCBVoSa3lChBivk0vu5XPQgJoQ45WvxL3Qh+Ra1E0NYkLKenpuHGr3Sz9
-         oCIy/sAUGDwi8qPk/3S7PiG/xZ5k1lMvSJX9y0tNgH8+HLzFGIcFwmR02xULdiP8XxVq
-         I3/3+TeqjpBvMaAoqtf+2Q0FdOVyF7VxYrfM+n7VX/Kx+tQgXU9xnUyQtU5p0FVbAwP9
-         TLyw==
-X-Forwarded-Encrypted: i=1; AJvYcCUvDh9IUVVsbI+/Yw1y661VqXiWNz45g4IAUZYRGPhoqkNHRP+roijjnfMAfev+z4zuABL68A6JXW3p6gBNk5daKBPIXCT2xBOo
-X-Gm-Message-State: AOJu0YzSKvjNu/2OK/VrSV/BxKIdX0tfB22oDv4YjT98bg6u2vjvJkWn
-	pbB6oZkHlNg84rqW4mFsYMic+rIFH58fEvbPdfx7nOv+SKkD2aag9fQ5iNtsHZU=
-X-Google-Smtp-Source: AGHT+IH3CBrMepbPopZ1LMG2Hk8saC3rtJcvZcFGZJwOAFrtpz5t43UjJvvpMhq86KbRuj7gOqRYyA==
-X-Received: by 2002:a05:6512:742:b0:52b:bd50:baed with SMTP id 2adb3069b0e04-52ccaa5a074mr2226003e87.61.1718835034394;
-        Wed, 19 Jun 2024 15:10:34 -0700 (PDT)
-Received: from ?IPV6:2a02:8109:aa0d:be00::ebdd? ([2a02:8109:aa0d:be00::ebdd])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6f56ed3658sm704663566b.133.2024.06.19.15.10.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 19 Jun 2024 15:10:34 -0700 (PDT)
-Message-ID: <18c0b683-97c8-4d53-9852-840a21c11d9a@linaro.org>
-Date: Thu, 20 Jun 2024 00:10:31 +0200
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RxgTjgPY"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1718863059; x=1750399059;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=zMCFp8zCllWXZJOLn+ox9s+gLl+0FUepfCkgfmEOmGU=;
+  b=RxgTjgPYoVV8iCGOnQ/T7++dSQmB0B6ePTQU6x49nnL8hx0WHAri0mSb
+   cXVXrxkYjgO3auOaycLjRO/ZUx+7y3EMoT4pAdziFirqss/N3y3TBWUig
+   WOLuwQtycbStOUHjnzNsiM2KZocBBjv1CwVdIyxTjPoWEbqDkUKTbbfUn
+   DP7F/zyD/MSL7LphhQ94AN9R7mmZUfChcht9pJvWp3nTQXDlDSP7JNrEt
+   1g80rOTLN4dw19xSHR/fXXbx/GfREKPSUMXn0YRs2jRy7oHSEbPKmaLdr
+   Bz/NN8uEVCdXwB0c5mmmywBQLURfQ0Jpbp7BzulB+dfY8FH9OdbBT7aKY
+   w==;
+X-CSE-ConnectionGUID: uQKHA3TpQtaEfeztt55WZw==
+X-CSE-MsgGUID: BCuam25yTJmkZlK4g6/moQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11108"; a="15585019"
+X-IronPort-AV: E=Sophos;i="6.08,251,1712646000"; 
+   d="scan'208";a="15585019"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 19 Jun 2024 22:57:38 -0700
+X-CSE-ConnectionGUID: xNu0A6xbT2qdW0R8iq+V0Q==
+X-CSE-MsgGUID: Cca+h7QjQquGw6LR94NR2g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.08,251,1712646000"; 
+   d="scan'208";a="42792780"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 19 Jun 2024 22:57:35 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sKAnb-0007Mk-34;
+	Thu, 20 Jun 2024 05:57:31 +0000
+Date: Thu, 20 Jun 2024 13:57:02 +0800
+From: kernel test robot <lkp@intel.com>
+To: Tomer Maimon <tmaimon77@gmail.com>, mturquette@baylibre.com,
+	sboyd@kernel.org, p.zabel@pengutronix.de, robh+dt@kernel.org,
+	krzysztof.kozlowski+dt@linaro.org, tali.perry1@gmail.com,
+	joel@jms.id.au, venture@google.com, yuenn@google.com,
+	benjaminfair@google.com
+Cc: oe-kbuild-all@lists.linux.dev, devicetree@vger.kernel.org,
+	openbmc@lists.ozlabs.org, Tomer Maimon <tmaimon77@gmail.com>,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v25 2/3] reset: npcm: register npcm8xx clock auxiliary
+ bus device
+Message-ID: <202406201328.SGrN27to-lkp@intel.com>
+References: <20240618185819.2155595-3-tmaimon77@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V6 3/5] clk: qcom: gdsc: Add set and get hwmode callbacks
- to switch GDSC mode
-To: Jagadeesh Kona <quic_jkona@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>,
- Ulf Hansson <ulf.hansson@linaro.org>, "Rafael J . Wysocki"
- <rafael@kernel.org>, Kevin Hilman <khilman@kernel.org>,
- Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>, Andy Gross <agross@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Abel Vesa <abel.vesa@linaro.org>
-Cc: linux-pm@vger.kernel.org, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Taniya Das <quic_tdas@quicinc.com>,
- Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
- Imran Shaik <quic_imrashai@quicinc.com>,
- Ajit Pandey <quic_ajipan@quicinc.com>
-References: <20240619141413.7983-1-quic_jkona@quicinc.com>
- <20240619141413.7983-4-quic_jkona@quicinc.com>
-Content-Language: en-US
-From: Caleb Connolly <caleb.connolly@linaro.org>
-In-Reply-To: <20240619141413.7983-4-quic_jkona@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240618185819.2155595-3-tmaimon77@gmail.com>
 
-Hi Jagadeesh,
+Hi Tomer,
 
-Sorry, some grammar nitpicks.
+kernel test robot noticed the following build errors:
 
-On 19/06/2024 16:14, Jagadeesh Kona wrote:
-> Some GDSC client drivers require the GDSC mode to be switched dynamically
-> to HW mode at runtime to gain the power benefits. Typically such client
-> drivers require the GDSC to be brought up in SW mode initially to enable
-> the required dependent clocks and configure the hardware to proper state.
-> Once initial hardware set up is done, they switch the GDSC to HW mode to
-> save power. At the end of usecase, they switch the GDSC back to SW mode
-> and disable the GDSC.
-> 
-> Introduce HW_CTRL_TRIGGER flag to register the set_hwmode_dev and
-> get_hwmode_dev callbacks for GDSC's whose respective client drivers
-> require the GDSC mode to be switched dynamically at runtime using
-> dev_pm_genpd_set_hwmode() API.
-> 
-> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
-> Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
-> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> ---
->   drivers/clk/qcom/gdsc.c | 42 +++++++++++++++++++++++++++++++++++++++++
->   drivers/clk/qcom/gdsc.h |  1 +
->   2 files changed, 43 insertions(+)
-> 
-> diff --git a/drivers/clk/qcom/gdsc.c b/drivers/clk/qcom/gdsc.c
-> index df9618ab7eea..6acc7af82255 100644
-> --- a/drivers/clk/qcom/gdsc.c
-> +++ b/drivers/clk/qcom/gdsc.c
-> @@ -363,6 +363,44 @@ static int gdsc_disable(struct generic_pm_domain *domain)
->   	return 0;
->   }
->   
-> +static int gdsc_set_hwmode(struct generic_pm_domain *domain, struct device *dev, bool mode)
-> +{
-> +	struct gdsc *sc = domain_to_gdsc(domain);
-> +	int ret;
-> +
-> +	ret = gdsc_hwctrl(sc, mode);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/*
-> +	 * Wait for the GDSC to go through a power down and
-> +	 * up cycle. In case SW/FW end up polling status
-> +	 * bits for the gdsc before the power cycle is completed
-> +	 * it might read the status wrongly.
+[auto build test ERROR on clk/clk-next]
+[also build test ERROR on linus/master pza/reset/next v6.10-rc4 next-20240619]
+[cannot apply to pza/imx-drm/next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-If we poll the status register before the power cycle is finished we 
-might read incorrect values.
-> +	 */
-> +	udelay(1);
-> +
-> +	/*
-> +	 * When GDSC is switched to HW mode, HW can disable the GDSC.
-The GDSC
-> +	 * When GDSC is switched back to SW mode, the GDSC will be enabled
-The GDSC
-> +	 * again, hence need to poll for GDSC to complete the power uphence we need to poll
+url:    https://github.com/intel-lab-lkp/linux/commits/Tomer-Maimon/dt-bindings-reset-npcm-add-clock-properties/20240619-093532
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+patch link:    https://lore.kernel.org/r/20240618185819.2155595-3-tmaimon77%40gmail.com
+patch subject: [PATCH v25 2/3] reset: npcm: register npcm8xx clock auxiliary bus device
+config: arm64-randconfig-003-20240620 (https://download.01.org/0day-ci/archive/20240620/202406201328.SGrN27to-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240620/202406201328.SGrN27to-lkp@intel.com/reproduce)
 
-Kind regards,
-> +	 */
-> +	if (!mode)
-> +		return gdsc_poll_status(sc, GDSC_ON);
-> +
-> +	return 0;
-> +}
-> +
-> +static bool gdsc_get_hwmode(struct generic_pm_domain *domain, struct device *dev)
-> +{
-> +	struct gdsc *sc = domain_to_gdsc(domain);
-> +	u32 val;
-> +
-> +	regmap_read(sc->regmap, sc->gdscr, &val);
-> +
-> +	return !!(val & HW_CONTROL_MASK);
-> +}
-> +
->   static int gdsc_init(struct gdsc *sc)
->   {
->   	u32 mask, val;
-> @@ -451,6 +489,10 @@ static int gdsc_init(struct gdsc *sc)
->   		sc->pd.power_off = gdsc_disable;
->   	if (!sc->pd.power_on)
->   		sc->pd.power_on = gdsc_enable;
-> +	if (sc->flags & HW_CTRL_TRIGGER) {
-> +		sc->pd.set_hwmode_dev = gdsc_set_hwmode;
-> +		sc->pd.get_hwmode_dev = gdsc_get_hwmode;
-> +	}
->   
->   	ret = pm_genpd_init(&sc->pd, NULL, !on);
->   	if (ret)
-> diff --git a/drivers/clk/qcom/gdsc.h b/drivers/clk/qcom/gdsc.h
-> index 803512688336..1e2779b823d1 100644
-> --- a/drivers/clk/qcom/gdsc.h
-> +++ b/drivers/clk/qcom/gdsc.h
-> @@ -67,6 +67,7 @@ struct gdsc {
->   #define ALWAYS_ON	BIT(6)
->   #define RETAIN_FF_ENABLE	BIT(7)
->   #define NO_RET_PERIPH	BIT(8)
-> +#define HW_CTRL_TRIGGER	BIT(9)
->   	struct reset_controller_dev	*rcdev;
->   	unsigned int			*resets;
->   	unsigned int			reset_count;
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406201328.SGrN27to-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   aarch64-linux-ld: drivers/reset/reset-npcm.o: in function `npcm_rc_probe':
+   reset-npcm.c:(.text+0xce8): undefined reference to `auxiliary_device_init'
+>> reset-npcm.c:(.text+0xce8): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `auxiliary_device_init'
+>> aarch64-linux-ld: reset-npcm.c:(.text+0xd30): undefined reference to `__auxiliary_device_add'
+>> reset-npcm.c:(.text+0xd30): relocation truncated to fit: R_AARCH64_CALL26 against undefined symbol `__auxiliary_device_add'
 
 -- 
-// Caleb (they/them)
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
