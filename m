@@ -1,121 +1,209 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64CB91AED3B;
-	Thu, 20 Jun 2024 16:30:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34EBE1DDEE;
+	Thu, 20 Jun 2024 17:31:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718901018; cv=none; b=NnPZk2WrONebqa3ZRSbzZtO0jsqNVdmlagiJkXNJO3t9Oe5jbzWTanbaQG7yOqAcuKeodzAGkfnJoSkFLdl60MYWPudbQWp/cJiRzvmpT0JrvdHv48BdeLFAS0jdQwJ0532wC5wPZ+Z4b5I1i0eLPwPTckCiyNK5MNlgAFlJ2ic=
+	t=1718904705; cv=none; b=T3iLENnB+mRz/XrmwTq5kKqbp713TdRZBVj7Y5HrSELHLLNC/CK02jMvN2LhKCzSIJadhNC3C2hQlD69r+YXamKYQDL4t5VXmQmop7N9ECMYfpSXzv2sqajPLEVyJW8u5MzCC0osKfSmoKpI+1l2KXjnPOlRfR3s2mLEPNuA5HY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718901018; c=relaxed/simple;
-	bh=2nApdRW4uFWIFKAeWO48GxrtOn9CEoIKmUrYIKGLbhc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y7wIDJQdPkwVV8U+RiA+zyf348HpNaPUuUA8fdMU1AWFoW6g2z0TuoXG/wY4mV1K1jqwR86IeTEVtnYaJ3//bUX52xWW1s2onkrWDo2WL+EfIJpvT9tlQBEZcqwwkNIZ679yyCrqDNIqhf+1GhHGY1Ojasid96UvpVKvif2YPd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J2ERoqHj; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1718904705; c=relaxed/simple;
+	bh=2msHhaArGXUII7vZvDX3RYqIVT0kPBHzS6JmMaEg6GE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=BBTB4Jef+egVrkJRGzCZ72aIKLW/y2buj/uhLiafPTgytbrv89tHcMDubGf/WpcbGCWd9NK+ynsuqGuD6fteQjv7wm9KcfIptM0Z0efWkIXZ5i6Gwu9BYrYNhIlSuC/HtJpEClSyWHjPnHZOGGpR6A5lARNuH/VGdorQhsyJJEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JQcKX1kz; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J2ERoqHj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A75CCC2BD10;
-	Thu, 20 Jun 2024 16:30:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718901018;
-	bh=2nApdRW4uFWIFKAeWO48GxrtOn9CEoIKmUrYIKGLbhc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=J2ERoqHjMVj7J7iiKKY7CLQUQBWT2OD0KPDkExlb1q0FDGvMI83NKfoiUqNPrmfX0
-	 mEH4QJ1t9ti1FWWszJppGi3GHjWQq+47H+ZIBffNIHvtZJYWEUV+KLcSbWjUTMKR6f
-	 16lRiHf9HH3RbI+dskTpxeHYV+JWqU4VXvy/r5ReRto5xqMW7VRF3V0XYU5QzgoMHA
-	 kv0eeU1THmYjLlrIPAd95+WwPAkKfdYl9bypTX+2j7Qiwkk2xQqarsV+Jl8qHF45xy
-	 6u/Hpbes8H4kqOXj6LuNSUpsV56jF/modm9ZJ+zB0w0cTAF/QLIseVigYVpT2zVkJ/
-	 0V1a6nNYDRC0Q==
-Date: Thu, 20 Jun 2024 17:30:12 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Drew Fustini <dfustini@tenstorrent.com>
-Cc: Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>, Yangtao Li <frank.li@vivo.com>,
-	Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, linux-riscv@lists.infradead.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/6] clk: thead: Add support for TH1520 AP_SUBSYS clock
- controller
-Message-ID: <20240620-pregame-statute-2b43c0547064@spud>
-References: <20240615-th1520-clk-v1-0-3ba4978c4d6b@tenstorrent.com>
- <20240619-tapping-jaundice-471811929d96@spud>
- <ZnMgKs/dUcYXiisk@x1>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JQcKX1kz"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 5C1B11C0002;
+	Thu, 20 Jun 2024 17:31:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1718904700;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=5jSCf/ll+OHO3qhGzh3F7nih4V1BJIM+0UihWsXUkgU=;
+	b=JQcKX1kzSltdO6ex4hv/5gRrFQNcH1sKg05NfkmPYeH6lXHOf1hOxvhY3gpTY1DXVmnU8S
+	PtRx55Iv3Bdf/h0HM49kb31L3/CUuaLsz3C9JC5qXCZL6QHuhyQaqk9ArmOFdsl7/xGU2z
+	7sRLTr1scLtERtmvGeCYdgZMcNjXVcpntSHHAeDQiG69/+1kf0EwG/5p8A8KjXVZ5OAdps
+	v2yVJJH5OFd2pdDSrLx3/8HjkgEiRDW3eBeeDSt9p9UEtY/RAHIXS/82ju/vHgtYRIKYw8
+	8K/WiXByCjpXAkZ6bJyWSIj137L0gnI4k5ON9dLaqgQ6E1JFfkkxsCHCK9hp8A==
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: [PATCH v3 0/9] Add Mobileye EyeQ system controller support (clk,
+ reset, pinctrl)
+Date: Thu, 20 Jun 2024 19:30:52 +0200
+Message-Id: <20240620-mbly-olb-v3-0-5f29f8ca289c@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="HSewvxSgds9cd/HB"
-Content-Disposition: inline
-In-Reply-To: <ZnMgKs/dUcYXiisk@x1>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAExndGYC/1WMywqDMBQFf0Xuuil5mKpd9T9KFybe1ICakkioS
+ P69UQq2yzmcmRUCeosBrsUKHqMN1k0ZxKkA3bfTE4ntMgOnvKQlrcmohoW4QZFKtrU0UpsOBeT
+ 7y6Ox7z11f2TubZidX/ZyZNv6jTB6RCIjlAghsWwuXaVQ3JRz82Cns3YjbJnID1VS8aPyrDZSo
+ 2wZstrgv5pS+gCcsC7Q3QAAAA==
+To: Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+ Linus Walleij <linus.walleij@linaro.org>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Lee Jones <lee@kernel.org>, 
+ Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+Cc: linux-mips@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, 
+ Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+ Gregory CLEMENT <gregory.clement@bootlin.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+X-Mailer: b4 0.14.0
+X-GND-Sasl: theo.lebrun@bootlin.com
 
+Hello,
 
---HSewvxSgds9cd/HB
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This builds on previous Mobileye EyeQ system-controller revisions,
+supporting EyeQ5, EyeQ6L and EyeQ6H. We expose a few OLB
+system-controller features here:
+ - Clocks: some read-only PLLs derived from main crystal and some
+   divider clocks based on PLLs.
+ - Resets.
+ - Pin controller, only on EyeQ5 (others will use pinctrl-single).
 
-On Wed, Jun 19, 2024 at 11:15:06AM -0700, Drew Fustini wrote:
-> On Wed, Jun 19, 2024 at 12:12:30PM +0100, Conor Dooley wrote:
-> > On Sat, Jun 15, 2024 at 06:54:29PM -0700, Drew Fustini wrote:
-> > > This series adds support for the AP sub-system clock controller in the
-> > > T-Head TH1520 [1]. Yangtao Li originally submitted this series in May
-> > > 2023 [2]. Jisheng made additional improvements and then passed on the
-> > > work in progress to me.
-> >=20
-> > One thing I noticed on the dts side is that the GPIO controllers have no
-> > clocks provided. Does the AP sub-system clock controller provide their
-> > clocks too?
->=20
-> Good question. I see that dwapb_get_clks() in drivers/gpio/gpio-dwapb.c
-> does call devm_clk_bulk_get_optional() for "bus" and "db". There doesn't
-> seem to be to many in-tree examples of clocks being defined for gpio
-> controllers with compatible "snps,dw-apb-gpio", but I do see that
-> k210.dtsi defines K210_CLK_APB0 for "bus" and K210_CLK_GPIO for "db".
->=20
-> From the TH1520 System User Manual, I do see the gpio related clocks in
-> Section 4.4.2.2 AP_SUBSYS. The peripheral clock gate control register
-> (PERI_CLK_CFG) has:
->=20
-> Bit 20: GPIO3_CLK_EN
-> Bit  8: GPIO0_CLK_EN
-> Bit  7: GPIO1_CLK_EN
-> Bit  6: GPIO2_CLK_EN
->=20
-> I will add these gates to the clk-th1520-ap.c and reference them from
-> the gpio controller nodes.
->=20
-> Since each gpio controller will only have one clock, do you think I can
-> omit the clock-names property?
+EyeQ6H is special in that it has seven instances of this
+system-controller. Those are spread around and cannot be seen as a
+single device, hence are exposed as seven DT nodes and seven
+unique compatibles.
 
-Sure, thanks for looking into this.
+Following feedback (that took time to reach my brain, sorry about that):
+ - We expose each system-controller as a single devicetree node. This
+   means reverting previously accepted dt-bindings that described a
+   one-node-per-feature approach.
+ - We use auxiliary devices infrastructure to split functionality into
+   separate drivers. Clock is the platform driver that spawns child
+   auxdevs. They get an iomem pointer to the OLB region as
+   platform_data. They know which behavior to implement by matching
+   compatible on their parent device's OF node.
 
->=20
-> Thanks,
-> Drew
->=20
-> Link: https://git.beagleboard.org/beaglev-ahead/beaglev-ahead/-/tree/main=
-/docs
+Patches are targeting MIPS, clk, reset and pinctrl:
 
---HSewvxSgds9cd/HB
-Content-Type: application/pgp-signature; name="signature.asc"
+MIPS:
+ - dt-bindings: soc: mobileye: add EyeQ OLB system controller
+ - MIPS: mobileye: eyeq5: add OLB system-controller node
 
------BEGIN PGP SIGNATURE-----
+clk:
+ - Revert "dt-bindings: clock: mobileye,eyeq5-clk: add bindings"
+ - clk: divider: Introduce CLK_DIVIDER_EVEN_INTEGERS flag
+ - clk: eyeq: add driver
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZnRZFAAKCRB4tDGHoIJi
-0jhfAPsFxSm+IHVQdarF1A8PQAiZE2P45kwvHpTzuUOpbO41gwEA3g6fNgbFnrZT
-cPWAqmEQpUXzmehcdcTKzTlP4ETGrwQ=
-=Y3Yf
------END PGP SIGNATURE-----
+reset:
+ - Revert "dt-bindings: reset: mobileye,eyeq5-reset: add bindings"
+ - reset: eyeq: add platform driver
 
---HSewvxSgds9cd/HB--
+pinctrl:
+ - Revert "dt-bindings: pinctrl: mobileye,eyeq5-pinctrl: add bindings"
+ - pinctrl: eyeq5: add platform driver
+
+Have a nice day,
+Théo
+
+Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+---
+Changes in v3:
+- Drivers: Switch to using auxiliary devices. Drop the MFD patches.
+  Consequent changes to the clk driver that now spawns its auxdevs.
+  Reset and pinctrl switch from being platform driver to auxdevs.
+- dt-bindings and EyeQ5 DTS: remove "simple-mfd" compatible from all OLB
+  nodes.
+- dt-bindings: rewrite commit title and messages. Title now takes the
+  standard revert format.
+- dt-bindings: revert pinctrl dt-bindings as well; this was forgotten in
+  the previous revision.
+- clk driver: fix overflow of factors; they get stored in 32-bit ints in
+  fixed-factor which we overflowed when spread-spectrum is enabled.
+- Link to v2: https://lore.kernel.org/r/20240503-mbly-olb-v2-0-95ce5a1e18fe@bootlin.com
+
+Changes in v2:
+- dt-bindings:
+  - Drop mobileye,eyeq5-clk and mobileye,eyeq5-reset bindings.
+  - Update OLB bindings to handle clk/reset/pinctrl from OLB node.
+- MFD:
+  - Add core driver and MFD patches to allow setting sub-devices names
+    from MFD cell.
+  - Add MFD OLB driver.
+- clk:
+  - Change type of eqc_pll->reg64 from u32 to unsigned int.
+  - Use resource indexes rather than names for iomem resources.
+  - Put early PLLs into a separate match data table. Also, have store
+    number of late clocks in early match data to properly alloc cells.
+  - Pre-acquire all divclk resources first, then register them.
+    This simplifies code.
+  - Extract PLLs and divclks init to two separate functions.
+  - Avoid variable declarations in loop bodies.
+  - Do not register match data table to platform driver. It gets probed
+    as MFD sub-device matching on driver name. Match data table is
+    matched against parent OF node compatible.
+  - Fix ugly memory corruption bug when clk count == 1.
+- reset:
+  - EQR_EYEQ5_SARCR and EQR_EYEQ6H_SARCR did not use offset 0x0: do
+    minus four to all their offsets and reduce resource sizes.
+  - Remove resource names. Reset i uses iomem resource index i.
+  - Simplify xlate: have two implementations for of_reset_n_cells==1 and
+    of_reset_n_cells==2. Both call the same helper internal function.
+  - Do not register match data table to platform driver. It gets probed
+    as MFD sub-device matching on driver name. Match data table is
+    matched against parent OF node compatible.
+- pinctrl:
+  - Remove match data table to platform driver. It gets probed as MFD
+    sub-device matching on driver name. Driver has single compatible.
+  - Drop "Reviewed-by: Linus Walleij" as driver changed approach.
+- MIPS DTS:
+  - Squash all commits together into a single one.
+  - Adapt to new approach: OLB is now a single OF node.
+- Link to v1: https://lore.kernel.org/r/20240410-mbly-olb-v1-0-335e496d7be3@bootlin.com
+
+---
+Théo Lebrun (9):
+      Revert "dt-bindings: clock: mobileye,eyeq5-clk: add bindings"
+      Revert "dt-bindings: reset: mobileye,eyeq5-reset: add bindings"
+      Revert "dt-bindings: pinctrl: mobileye,eyeq5-pinctrl: add bindings"
+      dt-bindings: soc: mobileye: add EyeQ OLB system controller
+      clk: divider: Introduce CLK_DIVIDER_EVEN_INTEGERS flag
+      clk: eyeq: add driver
+      reset: eyeq: add platform driver
+      pinctrl: eyeq5: add platform driver
+      MIPS: mobileye: eyeq5: add OLB system-controller node
+
+ .../bindings/clock/mobileye,eyeq5-clk.yaml         |  51 --
+ .../bindings/reset/mobileye,eyeq5-reset.yaml       |  43 --
+ .../mobileye/mobileye,eyeq5-olb.yaml}              | 168 ++++-
+ MAINTAINERS                                        |   5 +
+ .../{eyeq5-fixed-clocks.dtsi => eyeq5-clocks.dtsi} |  54 +-
+ arch/mips/boot/dts/mobileye/eyeq5-pins.dtsi        | 125 ++++
+ arch/mips/boot/dts/mobileye/eyeq5.dtsi             |  22 +-
+ drivers/clk/Kconfig                                |  12 +
+ drivers/clk/Makefile                               |   1 +
+ drivers/clk/clk-divider.c                          |  12 +-
+ drivers/clk/clk-eyeq.c                             | 789 +++++++++++++++++++++
+ drivers/pinctrl/Kconfig                            |  15 +
+ drivers/pinctrl/Makefile                           |   1 +
+ drivers/pinctrl/pinctrl-eyeq5.c                    | 576 +++++++++++++++
+ drivers/reset/Kconfig                              |  14 +
+ drivers/reset/Makefile                             |   1 +
+ drivers/reset/reset-eyeq.c                         | 563 +++++++++++++++
+ include/dt-bindings/clock/mobileye,eyeq5-clk.h     |  21 +
+ include/linux/clk-provider.h                       |  11 +-
+ 19 files changed, 2326 insertions(+), 158 deletions(-)
+---
+base-commit: 061f2865f17c038f04a71ccdd6c90746381d63a8
+change-id: 20240408-mbly-olb-75a85f5cfde3
+
+Best regards,
+-- 
+Théo Lebrun <theo.lebrun@bootlin.com>
+
