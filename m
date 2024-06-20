@@ -1,119 +1,113 @@
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 937C0EDB;
-	Thu, 20 Jun 2024 08:30:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 936D419DF78;
+	Thu, 20 Jun 2024 08:32:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718872242; cv=none; b=ZwdL7PgBgT2J9FE1IFzO7UeRcGySvdHRG5Jv6sNyeFTBZm/sgx0qChljZDnOgg2s232Ax5CdIrgkbKUmQNiDGTgBEpeLxGeDEicxMTx2afYzkTDd8R6KR7RXH+UauaTZQ3EZfvFbXGRIdIAEwSP/p1QzvOoVg+r8NIm3gZEgoHY=
+	t=1718872362; cv=none; b=m38p0AFvm5SdezObf/jvUwNhvHd5wKIKcgZKBlZoNAVOdYvK84eY1/0G8lNFT9OboVADGHmiKFpar0x0BD5oVOUDFPxaafTA0l3jwiKU2CF1HFRohdjZKyubSR2nIuCAc68tIRfOUQVxyqjw7Ruc+xK/00Hd7pmLtjx5x06l6t8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718872242; c=relaxed/simple;
-	bh=eB1CIq0gxlY+acvnR1ypmvNl19YmBIL4UPKL1g+r3a0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E9yZYHR265OY6mI10d8DfCykr3wpLP5aDhs5qfUtNc6fy/yzp+Wjk8c/Va3eP5JFz3WwMM0n3dBrZRg3jNw2E6C8euPq3uR2Y6nMigD8VYElsEqgmHC/u3u+uWcJQTDw3wrI+7eXFPkvb1FzfyLEv48jYNvY7u5XcEzMNsJotIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-dfdb6122992so572481276.3;
-        Thu, 20 Jun 2024 01:30:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718872239; x=1719477039;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2RFve7hyiskn4h2RnWHk8TUVX1VIb0WnIJgOemezHVg=;
-        b=Xl1HtMFOTQWrQFnOLy3dFYfCfiITqY/JXpM+V/1L/bWNLXKaGICt5p8hY8srTaU/e2
-         Wo0wshN0Sh4N7yz+I+Upr5NuTSlrGQbP8SJifyJM4LA07qxV3sYgOe0IXH/p2vPYFbRt
-         aK2m1HBQ4THIR0qxe+i4Mv7UJ5hP7IPPwk/lSIawd/CaAHBe5qtrJDM0VfDOnCxcnD5i
-         REBr+G1yy1KpQ/lT+Z0CYjbRiEgZIC+24UvDEqXsWpsbefIab7PDrtPjJQVN1JHpTbqC
-         Ahtd65kj4ggnzIlgrlzroTR82zK/v50ZDvov+BWGp/6zND8DBHlPWKQIDTISp4E6+/Tx
-         gXqg==
-X-Forwarded-Encrypted: i=1; AJvYcCWG6q5kw+KwuwFn7Wmr7TIvwhHCrDWwZ/jV5TGsghguTuTRDwM6BO5JEk9yWANR34GclNR2Kb0mjefjGBMx4qawXBdGzN66zJSKiVtaFpP6znQAT0V98t7IlwTnRbF/eeCTXFDTdtJF8FyKmoc1IueGXF7l4GeNxSyZnJaBaZoM6Nhlfer+Ie/W
-X-Gm-Message-State: AOJu0YwKs5U0KIy/J6Or7zjnWJQrlOTDRiu6dLkmVuSlagtce+ZASlYr
-	5fbMRcgNU/qNH/p13COxzz9kzoJtfILOezK9QaI7Km2xEpJKXEYhe7XTRlKr
-X-Google-Smtp-Source: AGHT+IHSRmpTuWzxNcthhbG0rRvqjw6Qn2MbO7Wbl8weu1WpTHEfEZ/EBLfKisCQOOsp0TDi6dpYsw==
-X-Received: by 2002:a25:d30b:0:b0:e02:6e1e:209b with SMTP id 3f1490d57ef6-e02be17c36cmr5099594276.38.1718872238819;
-        Thu, 20 Jun 2024 01:30:38 -0700 (PDT)
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com. [209.85.128.177])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-dff04a4dc23sm3508055276.48.2024.06.20.01.30.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 20 Jun 2024 01:30:38 -0700 (PDT)
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-63bdb089ffdso5215287b3.3;
-        Thu, 20 Jun 2024 01:30:38 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWN/Rvf6z9hBQqvx6L+/np7/EWBsVXJygdZPlEhoA4VSzH6Pj4hUBbD1PEt42wkhVUPz3sQ1GOo5evyBvEKXAhi3ltodcVoLUg4CbqdBFD8hjjIYCe9HfqlwgqVRoiiPPoRIytLMgY04oJtNRPOvGG5CxlmqjKOgPnF80Tg/b3H4Jw1x5+B1afq
-X-Received: by 2002:a81:a605:0:b0:62d:1eb6:87bf with SMTP id
- 00721157ae682-63a8d3518b0mr47889817b3.5.1718872238440; Thu, 20 Jun 2024
- 01:30:38 -0700 (PDT)
+	s=arc-20240116; t=1718872362; c=relaxed/simple;
+	bh=kZP756ApMCbsWPF0yi0qrMXeSdEChDIUSSlFRUyfPx8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ozet9mPRBVfWx9WE1M/nDNYhj6rU1PcIVxndZZte/+KGHuH/Eoc7GHYMCwk5ty7pbMrR+gO9JlyhvvNsObs7UTu7ub9LfnbSkM+C8Xe3wDoeoSGfWvU9XcLywuybcbXUEi0MUHif2coMyDmecwjS9yZdMFFcb/8Vy8/dZH8hB64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=m94fVAGC; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="m94fVAGC"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1718872358;
+	bh=kZP756ApMCbsWPF0yi0qrMXeSdEChDIUSSlFRUyfPx8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=m94fVAGCsmSi/o6TVENMyOEqnM63upOGVNIRWSaLxdveLfeD38e/3dwH3JxVowuNC
+	 LihXaxoOcghFwfcLX+rWX9f7tm8RLtoS5hFz6RWtZRot/Bb8tNS/BkSXklJAkkEEvX
+	 Pjfbt7NM49sO2VNTjUVi7qdP2fXSlVVJjkpQQ4IMt/rgAQCxXTjymx3Ya+dbSQZ4ia
+	 +3ekd1Z5eytypiLJr13POcrBx4CubdXR/0DwxLnA5bVKLDJSD1XACQIgwCV/3tBhlc
+	 rsTZGR+GuH5bNclWuqEg/2sbGuODI/LtoH2QYVgaQ62gnY+TmALeuK9k4Tw5NZj8hl
+	 WfIy8RPIDBTXg==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 93B9F37810CD;
+	Thu, 20 Jun 2024 08:32:37 +0000 (UTC)
+Message-ID: <c154527b-90c3-4834-a4a0-cff4524de5f1@collabora.com>
+Date: Thu, 20 Jun 2024 10:32:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <d4abb688d666be35e99577a25b16958cbb4c3c98.1718796005.git.geert+renesas@glider.be>
- <20240619-explain-sip-97568f8ac726@spud> <43a57696-eb4f-4ae3-970a-cee0640baa17@mailbox.org>
-In-Reply-To: <43a57696-eb4f-4ae3-970a-cee0640baa17@mailbox.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 20 Jun 2024 10:30:25 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdV2M6zKwy=Qqv4XR1Zjz4yRGWcp_EYO2d68DUyLp2O1Cw@mail.gmail.com>
-Message-ID: <CAMuHMdV2M6zKwy=Qqv4XR1Zjz4yRGWcp_EYO2d68DUyLp2O1Cw@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: clock: rcar-gen2: Remove obsolete header files
-To: Marek Vasut <marek.vasut@mailbox.org>, Conor Dooley <conor@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	marek.vasut+renesas@mailbox.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] dt-bindings: mailbox: mediatek: Avoid clock-names on
+ MT8188 GCE
+To: Conor Dooley <conor.dooley@microchip.com>
+Cc: Conor Dooley <conor@kernel.org>, krzk+dt@kernel.org,
+ mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+ conor+dt@kernel.org, matthias.bgg@gmail.com, jassisinghbrar@gmail.com,
+ garmin.chang@mediatek.com, houlong.wei@mediatek.com,
+ Jason-ch.Chen@mediatek.com, amergnat@baylibre.com, Elvis.Wang@mediatek.com,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, kernel@collabora.com
+References: <20240619085322.66716-1-angelogioacchino.delregno@collabora.com>
+ <20240619085322.66716-3-angelogioacchino.delregno@collabora.com>
+ <20240619-sleeve-citable-a3dc10e5cd4f@spud>
+ <a7317981-8690-4d45-81b6-cc6a63c459e0@collabora.com>
+ <20240620-district-bullring-c028e0183925@wendy>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240620-district-bullring-c028e0183925@wendy>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Marek, Conor,
+Il 20/06/24 10:22, Conor Dooley ha scritto:
+> On Thu, Jun 20, 2024 at 10:01:18AM +0200, AngeloGioacchino Del Regno wrote:
+>> Il 19/06/24 19:49, Conor Dooley ha scritto:
+>>> On Wed, Jun 19, 2024 at 10:53:22AM +0200, AngeloGioacchino Del Regno wrote:
+>>>> Add mediatek,mt8188-gce to the list of compatibles for which the
+>>>> clock-names property is not required.
+>>>
+>>> Because, I assume, it has some internal clock? Why do either of these
+>>> things have no clock? Doesn't the internal logic require one?
+>>>
+>>
+>> Because there's no gce0/gce1 clock, there's only an infracfg_AO clock that is
+>> for one GCE instance, hence there's no need to require clock-names.
+> 
+> clock-names, d'oh. I misread that completely yesterday.
+> 
+>> I can't remove the clock-names requirement from the older compatibles though,
+>> because the (sorry about this word) driver (eh..) gets the clock by name for
+>> the single GCE SoCs...
+>>
+>> ...and here comes a self-NACK for this commit, I have to fix the driver and
+>> then stop requiring clock-names on all compatibles, instead of having this
+>> ugly nonsense.
+> 
+> Is it not worth keeping the clock names, even if ugly or w/e, because
+> things have been done that way for a while?
 
-On Wed, Jun 19, 2024 at 9:17=E2=80=AFPM Marek Vasut <marek.vasut@mailbox.or=
-g> wrote:
-> On 6/19/24 7:48 PM, Conor Dooley wrote:
-> > On Wed, Jun 19, 2024 at 01:22:46PM +0200, Geert Uytterhoeven wrote:
-> >> The clock definitions in <dt-bindings/clock/r8a779?-clock.h> were
-> >> superseded by those in <dt-bindings/clock/r8a779?-cpg-mssr.h> a long
-> >> time ago.
-> >>
-> >> The last DTS user of these files was removed in commit 362b334b17943d8=
-4
-> >> ("ARM: dts: r8a7791: Convert to new CPG/MSSR bindings") in v4.15.
-> >> Driver support for the old bindings was removed in commit
-> >> 58256143cff7c2e0 ("clk: renesas: Remove R-Car Gen2 legacy DT clock
-> >> support") in v5.5, so there is no point to keep on carrying these.
-> >>
-> >> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> >
-> > If U-Boot is not using them,
-> > Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> > (and if it is, another task for Marek I guess!)
+It's worth allowing clock-names, but *requiring* that is unnecessary because
+there is, and there will always be, only one clock...!
 
-Good point!
+> Also, what does U-Boot do on these systems to get the clocks?
+> 
 
-U-Boot does have include/dt-bindings/clock/r8a779?-clock.h, despite
-never having used them.  The unused headers and the corresponding
-r8a779?.dtsi files were introduced together, in the various "ARM: dts:
-rmobile: Import R8A779[0-4] DTS from Linux 4.15-rc8") commits in U-Boot
-v2018.03, i.e. after the conversion to the CPG/MSSR DT bindings.
+U-Boot doesn't support GCE at all (no driver - at least upstream)...!
 
-> U-Boot is using upstream DTs on R-Car via OF_UPSTREAM, so whatever
-> happens in Linux also happens in U-Boot since 2024.07 ... with slight
-> sync delay . I don't expect much breakage.
+>> Self-note: gce0/gce1 clocks lookup was implemented in the driver but never
+>> used and never added to the binding - luckily.
+>>
+>> Sorry Conor, I just acknowledged that there's a better way of doing that.
+>>
+>> Thank you for making me re-read this stuff, I'll send the proper changes
+>> later today, driver change + binding change in a separate series.
+>>
+>> As for the other two commits in this series, completely unrelated to GCE,
+>> those are still fine, and are fixing dtbs_check warnings.
 
-So the obsolete headers will be removed automatically from U-Boot
-soon, too?
-Thanks!
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
