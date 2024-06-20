@@ -1,109 +1,80 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CD7B1AD4B8;
-	Thu, 20 Jun 2024 13:30:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C95491AED4E;
+	Thu, 20 Jun 2024 15:08:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718890207; cv=none; b=IM3iwHbsF0sIMz0oSjlUWZZWggQmNbRylmFcyF5twQif+ldV5IyW+ElltRPDGA55c1Nlj0NW9HSgFs3epEaRHkc1ZuH74lP0vLVROtJIJX6O102Ynw+LE55kNBEc/SqcbAc3Rsf5ISFi5roL9UMpFWE2w3Jbo0vhViFJz6ZzPQw=
+	t=1718896092; cv=none; b=kW2uvbY/L625PYtDEcc7YOE5UkpVywRdBvaRwuc+RsGkRgesiBE596z/ZRmrQaX8xq8qntyzsLYLZ/U1xWZRe6G6zpJce0CIpQQbrl6+Z8INW//QW4o9dJfrUg0YVTxTFFGI4xsyDfC27Qqnk4Qh1QYS6VxZpDjSIJawjJrnRvs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718890207; c=relaxed/simple;
-	bh=IxmUyzEcJMOiOVQPDyxrSqnmY7FhcCTjFRxTX7XpCYs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=erKmlS6jbGX+fCfyAMfpbR8T4gjyb0sDSsC3LfmB5Z8IPe1JTqGL+aae9Q4jIcYi54stKkBpiPjZM7+Rh1C9FQKqDvSAG+TX744oHqp82gDSP8RbgE4VIueUHhPgFwKRKwrwZ0gfJc6Kgu+ZZBQlyMBOAEYLhxskyRsYPJowB+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TUFnNODS; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TUFnNODS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 19455C2BD10;
-	Thu, 20 Jun 2024 13:30:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718890206;
-	bh=IxmUyzEcJMOiOVQPDyxrSqnmY7FhcCTjFRxTX7XpCYs=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=TUFnNODS7TBwqRxVVcUJxA36KOMRliWq2noSGIMMbvbXmg4zG3k66tJ2PFPlRoc2H
-	 FaIjUJGTUmwByQcb78KmfmIXOHpi0KKorMVOOGyJLthEU18I2YIs939/IVlUAPLS5b
-	 Yf7w3gqHQsEnMwCtFgTUQNdNUcRI8D812isM50aLIMfibLopKk6ZFeUe+EjEUZYx+4
-	 rJXQjcWBCxuxrMta6bp1kI0jcPLItc4oNhRktsKkXxDchtb0lxJgac01fX713E0sMY
-	 x8YnjDI+NFxfrObyJ9+PQAQIsUWcd8M0RBoMAXW6H96hZpxHKaY9Lf9hacLCOtjxOB
-	 U9A/cnare5T9A==
-Message-ID: <0fead9a9-1742-4468-a85b-fc3ff4b33f54@kernel.org>
-Date: Thu, 20 Jun 2024 15:30:00 +0200
+	s=arc-20240116; t=1718896092; c=relaxed/simple;
+	bh=A38uNFuqbWu1uL/s4VdoYZ4T7u+gnu1BcrPcKjtGLL0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GE1plF814Dq7ZXDRJiHCdmAw2XGdCP1CtdV3w/6AufQjozo0wVt7MAn7XwpVTSqkbQGYLKDqIb2LX711fRGqxPSfbObRMPYzl9vJX0dVkzvITQYLnBEG6zi01K39B+JLPeQRMEw4GwbZ4Q3M49pjHlU+UeoUv83wSugi+uYitj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn; spf=pass smtp.mailfrom=jmu.edu.cn; arc=none smtp.client-ip=45.254.49.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=jmu.edu.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jmu.edu.cn
+Received: from amadeus-Vostro-3710.lan (unknown [IPV6:240e:3b3:2c01:9890:db34:2f44:25db:ea3c])
+	by smtp.qiye.163.com (Hmail) with ESMTPA id 249CB7E0107;
+	Thu, 20 Jun 2024 23:01:30 +0800 (CST)
+From: Chukun Pan <amadeus@jmu.edu.cn>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Chukun Pan <amadeus@jmu.edu.cn>
+Subject: [PATCH v6 0/2] arm64: dts: qcom: ipq6018: add sdhci node
+Date: Thu, 20 Jun 2024 23:01:20 +0800
+Message-Id: <20240620150122.1406631-1-amadeus@jmu.edu.cn>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 4/7] dt-bindings: clock: Add CPR clock defines for
- IPQ9574
-To: Varadarajan Narayanan <quic_varada@quicinc.com>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org,
- angelogioacchino.delregno@collabora.com, andersson@kernel.org,
- konrad.dybcio@linaro.org, mturquette@baylibre.com, sboyd@kernel.org,
- ulf.hansson@linaro.org, quic_sibis@quicinc.com, quic_rjendra@quicinc.com,
- luca@z3ntu.xyz, abel.vesa@linaro.org, quic_rohiagar@quicinc.com,
- danila@jiaxyga.com, otto.pflueger@abscue.de, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
-References: <20240620081427.2860066-1-quic_varada@quicinc.com>
- <20240620081427.2860066-5-quic_varada@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240620081427.2860066-5-quic_varada@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZHUkaVh9JHh8eTk1PShoYSVYeHw5VEwETFhoSFy
+	QUDg9ZV1kYEgtZQVlJT0seQUgZSEFJGEtKQUJDQktBHxlIT0FJHU9PQUlOHxlBHhpIGFlXWRYaDx
+	IVHRRZQVlPS0hVSktJQkNDTVVKS0tVS1kG
+X-HM-Tid: 0a90362ac27403a2kunm249cb7e0107
+X-HM-MType: 10
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6OjI6Pgw*LzNWDkw*OTg9PRko
+	Lg0aCwtVSlVKTEpDQ0JOTUJLTUxDVTMWGhIXVRoWGh8eDgg7ERYOVR4fDlUYFUVZV1kSC1lBWUlP
+	Sx5BSBlIQUkYS0pBQkNCS0EfGUhPQUkdT09BSU4fGUEeGkgYWVdZCAFZQUpCQ0I3Bg++
 
-On 20/06/2024 10:14, Varadarajan Narayanan wrote:
-> Add defines for the CPR block present in IPQ9574.
-> 
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+It is difficult to add OPP table for sdhci node due to lack of
+datasheet and other data. Limit the maximum clock frequency of
+sdcc to avoid overclocking SD/eMMC cards.
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Changes in v6:
+  Adjust the maximum clock frequency of sdcc to 200 MHz.
 
-Best regards,
-Krzysztof
+Changes in v5:
+  Move LDOA2 regulator patch to other series.
+
+Changes in v4:
+  Change 'enable' to 'add' of the commit title.
+
+Changes in v3:
+  Remove always-on for LDOA2 regulator.
+  Remove 1.8v properties of the node added in dtsi.
+
+Changes in v2:
+  Add LDOA2 regulator to support SDCC voltage scaling.
+
+Chukun Pan (2):
+  clk: qcom: gcc-ipq6018: update sdcc max clock frequency
+  arm64: dts: qcom: ipq6018: add sdhci node
+
+ arch/arm64/boot/dts/qcom/ipq6018.dtsi | 19 +++++++++++++++++++
+ drivers/clk/qcom/gcc-ipq6018.c        |  2 +-
+ 2 files changed, 20 insertions(+), 1 deletion(-)
+
+-- 
+2.25.1
 
