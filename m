@@ -1,277 +1,225 @@
-Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from JPN01-TYC-obe.outbound.protection.outlook.com (mail-tycjpn01on2049.outbound.protection.outlook.com [40.107.114.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E8AC1534FC;
-	Fri, 21 Jun 2024 12:34:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718973278; cv=none; b=G5jNXRi1KAxw6p9yt4yWYkeScN3MzsfMayBgHnQQru9NCXkFzLvLvlLBBXzC5+wQLV/8bTsgSjyjGmlhK98R9tkld1LmYWf5+OcESWXiMu8zFlfdW/df0ndN4nl8d5DM5SQLLBdmHKk+OsdHCSlI4pey5ivDVP9dG35FkIyqZn0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718973278; c=relaxed/simple;
-	bh=Yahd2TW4qFaEJgmMQrnqN51wGuKcQM4+rIrvMT2uzvU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jnu2IGwe6Izq9NyeZOvJ9YywofkX62p1H+GwXAZPKplqo4ZBfU8M6IqsWUJ3+JgHtUnqylWQiy4YotKVG0iORnye5KYP70R1cWU4q/yPwjIHIqjnJqI0yhqyCqjoeepzmoN8GeEwJsvqsGO9og7Vj9pVB+ehbwIuza7Tfq0YvuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jq2Ahmrc; arc=none smtp.client-ip=209.85.166.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE6F515357A;
+	Fri, 21 Jun 2024 12:34:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.114.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1718973284; cv=fail; b=L9UdD2xoCW7i5aDQuOlQIlLvRzbvzNjUyNDsmytQa0Ta8YRD2G4swke68ZfVMMbkUDUn7KObccjoSCXCqqiuccvm8i8jZG6ZvTn1O5KaPiJandFCj8KZqffcKwvkHlqDINGdJlWbc30aGxHSlL7GZpr7uW2+giS+yZQ7Rtscph8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1718973284; c=relaxed/simple;
+	bh=IIDnD/7AGCO6I57YZRnycjkcWL1l3s/PSieeSME1hgQ=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=p+5vwL5gIainYiKGvFuzxvop8vPz33Fu7AIqSnivQx7UEWe05B6BM/h8qO40R8QAWSfeaWkGZndDYd5ifJcIJ7WRXDZtytIB5O4XdGsy1bum9dQQXEIeGBwt3pz6sVW1I9gXiWpPXCsdMKsJEPI7FEkZZTFS7ghEcBRpyYP6leQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=D66U7ZyQ; arc=fail smtp.client-ip=40.107.114.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jq2Ahmrc"
-Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-7eee7728b00so75586839f.3;
-        Fri, 21 Jun 2024 05:34:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1718973275; x=1719578075; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dhi9mJ2T+XilHMtHiURF97rDjoedF5ZeDitu39Zi0QU=;
-        b=Jq2Ahmrcd9SOE/0MI59Zn1eJePX4WKxrWMsd41nB4rANt5i61/dhr3htWSAgqMRvxL
-         pzVnHZ0YcnJWphNYrgWXXky5r0RTbwnBM0rIsW5brEpSqgahWsR0Wkk6zgpzfSYaREqR
-         KSQs03zGXCr2yYO/+Y1hYd7y6Q0CdnnteKihUHTlxwdvi4wvmvYQrjGBBW25hrRHObaR
-         jRsA+2+++jRMSZkAKyppd0lw6osgUmDqXxvYeVEqqJTj5u/UNx0pxPaGCPUpoPIj4HsS
-         C5KOnSn7QZDZuivOz97bOyqD9WimIzPIfytGHkmDZt1S5Jy41NoDkDTHaKNtMYvKul0a
-         zDag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718973275; x=1719578075;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dhi9mJ2T+XilHMtHiURF97rDjoedF5ZeDitu39Zi0QU=;
-        b=jad9Oc1n0StFNfQ9lt1kXdqQJ6RJ9JNOu9fC8prLgsfFzlgcP3gpqvqV+naK/G1ORQ
-         hF/ZHwzCOp8MQguqcylRlbv83V+ksJLgPCiF3hVOIbyKiACrGJPCkgK643kApq731uYT
-         zdJGsa0FavK82RRt2aw32XkUAue83C7w3gGRqX+WZfdyYRIn4jNIqdWzY3EqdYzBBhGm
-         UmF+1U9iP0cCUG4uUQ2YDgGwIXHd9QpLO6EVqxvNm/FQpiGMTx6w+fu59b2BilDcmJbo
-         WCet1k+obd+o0aHE8x4Zu9tX8oqWpuMVg2SPh0xp7lkzaig4nykuiUgYOUvUWDbsuMWU
-         WjXg==
-X-Forwarded-Encrypted: i=1; AJvYcCVulBvyFuib7LbC/abL44AHMHczQTXLp+UUVdk6bQEe+677drP39LYFVmGdiYFV0QJrAwYcjeOM574ZGj3oehCicKF798ViehaFSzeOkUMWVpV2LF/nRoeF4Ij4sArSB6+HNVcD/sN8aWsgR/jHgppd6M5F3RyBMNvALBK7LlcipVWoHg==
-X-Gm-Message-State: AOJu0YzeNaxh76/ypbCg+yd31Bc+uzlzd2hfljzrVDDgqi3n4mbLUDpE
-	FAMQQIMzxFPa3mlbIn0RPyKuBUczhd2baxTaeWIdwPJvj11WU+Iwqh9oYdPU/QNjR4EpGUX0DIB
-	XG/OVZ+ADUOHLSwUIZMiqcY50/RA=
-X-Google-Smtp-Source: AGHT+IGQkbrfRhBIP+rcF1h8shhS/agBglVSTfqe/anG+BrwroxCr0J9kcHCTV0Y5V8uiwFSyhB1bW216O5/yaDcYNo=
-X-Received: by 2002:a05:6e02:164e:b0:375:9e3f:5f6 with SMTP id
- e9e14a558f8ab-3761d656391mr93527345ab.6.1718973275065; Fri, 21 Jun 2024
- 05:34:35 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="D66U7ZyQ"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=Wze3Z9s9Z74QigwL/uR6OSyYhtf6balYuubXyXu4RORIFQOr7wGFYz80GXvl7Y+BjlCevEKsdTap5RGpwy17MoLojPTIKgRiae+fTH91lVDC5YEgCPpKqOtl1rpTqfVihjdlklCTl8PjEQ9bWVzBJpsRvD/gUPxNTZOjxThvKhijrf9b4p7y1Mw4cqeE0pdyhBnx93ZzmvNSWJle8mBnsukxAnR9Cp9pANvhR0VziYIlIVhQIY3LRwUuq8paCE6xS56yfG+V6m/cY9X52mwTpyoOxcabAYNmTvypDiUuK4ENUFPKt9o54S1DRwSqWH3UhenreyLVeIaiF9wzleRVcA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=np5dfh9TflE+xe7FkqRMqZHWFEG+cgscqEEt1akDb6Q=;
+ b=IDRvgGqZKxfn2etGU1gP/2sBUsgJozQWrzagLYWGnJFtq3zQj8r2VQMNeZpr4HGU2lfGHaKjdt5fk1leYOaxjTR1SmVP6qGhcDdI5VnpBG7SX4idGqqnxoN0BqrdcuczXdNoyIJk0aIk35jMalyz93mBPiKzOJyPfH5mD9V1vlyEJYyZfU41u9qmaexIEQWNY4rv51fBJ7XaOkDU1VYAuF7ylnM0qchPzyxcqj5JOMbEfVg7AZobjE+BGAoPblnyMN5bZw/pzY5IQLUNv0CS3TmC5M7Wom15k46PzcqRnNlMbTef0S2gd8BVqMDx876nhSzaPA2VvXTi4Q8g/oOjrg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=np5dfh9TflE+xe7FkqRMqZHWFEG+cgscqEEt1akDb6Q=;
+ b=D66U7ZyQtDJyhyG96Iuc7qQ8OFA2LobOpNv5dj2U6NiIeY6H3uoexuz3/czJZrAwNqbVHNAsgaSaLOs3qqmCQpFOLK/JEvuXlUMdNS1d23hkq0fzSs94/fY+M0a1W13GscKFNHX4u8TQp71trh5nKlOtO/w8co20s2jUV0eJOc8=
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
+ by TYWPR01MB11266.jpnprd01.prod.outlook.com (2603:1096:400:3f9::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.21; Fri, 21 Jun
+ 2024 12:34:38 +0000
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::86ef:ca98:234d:60e1%4]) with mapi id 15.20.7698.020; Fri, 21 Jun 2024
+ 12:34:38 +0000
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Claudiu.Beznea <claudiu.beznea@tuxon.dev>, Chris Brandt
+	<Chris.Brandt@renesas.com>, "andi.shyti@kernel.org" <andi.shyti@kernel.org>,
+	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"geert+renesas@glider.be" <geert+renesas@glider.be>, "magnus.damm@gmail.com"
+	<magnus.damm@gmail.com>, "mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"sboyd@kernel.org" <sboyd@kernel.org>, "p.zabel@pengutronix.de"
+	<p.zabel@pengutronix.de>, "wsa+renesas@sang-engineering.com"
+	<wsa+renesas@sang-engineering.com>
+CC: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Claudiu.Beznea
+	<claudiu.beznea@tuxon.dev>, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: RE: [PATCH 08/12] dt-bindings: i2c: renesas,riic: Document the
+ R9A08G045 support
+Thread-Topic: [PATCH 08/12] dt-bindings: i2c: renesas,riic: Document the
+ R9A08G045 support
+Thread-Index: AQHaw83CoDfPceNxD0KOSNXxIs1DTLHSJmsg
+Date: Fri, 21 Jun 2024 12:34:38 +0000
+Message-ID:
+ <TY3PR01MB11346105D3D3DD46AEF8CD44986C92@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+References: <20240621112303.1607621-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240621112303.1607621-9-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20240621112303.1607621-9-claudiu.beznea.uj@bp.renesas.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|TYWPR01MB11266:EE_
+x-ms-office365-filtering-correlation-id: 0119cbb0-446b-49d0-f206-08dc91ee8444
+x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230037|1800799021|7416011|366013|376011|38070700015|921017;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?ZX/XWn4fPsPrj03jWLqqKaJK9Zi32aVqFt4wWGI/GV+aZubfiHAV3IEQYYIi?=
+ =?us-ascii?Q?gKSESHwP93Cw8nUX0Tux3P7iUnEDeKm4o6OBiaplXtdzf1g3pqgo2EbigkVk?=
+ =?us-ascii?Q?wAWwsUHXpJ9EfXiVUSIZRBn9/df4sVcBm+yUP/fw1muqTgbudbafRaYgfVHp?=
+ =?us-ascii?Q?6L9eZkgmpEb9B3xnPWzIaX1qZ7GsC8Zor+wyDzufB7Pu9VPbSkp8XZBMB/9l?=
+ =?us-ascii?Q?omJS9PCypFWQ3Mqt/i6rX4ZV4JUkCd8qdTPAU9QhAie74J4+QAPiqMpR4Gnu?=
+ =?us-ascii?Q?EUWmK0uWCSjUcD2DPAYHNOPrz9khPJh+4AKlq041cGDEqecI+Q913IjiHY2b?=
+ =?us-ascii?Q?JIdKg2y/pl597Xb2YxoGQFtRvZ56xVTGpI7lZNeDxG/X20PnfjROq2GQJPGx?=
+ =?us-ascii?Q?zabltZVE7GkJYAss32pxelBYlkQ6Uwev66LCpRvD0OgUIQIbD+hYx97T7z2X?=
+ =?us-ascii?Q?W6FgHosxhn9vFHtGkDGbWmq6CcN6fJylifBrml0ZsXITy08DJqN9KUo1Lqlq?=
+ =?us-ascii?Q?AJyUgXruC4hG0JsHzNlybSA0mLzdm9HWaDLbkBDSa251Qv/qD3RwjJJ5RNAz?=
+ =?us-ascii?Q?hwnvshb2r0q5NDHVQCZiRh23MSjI2eBUbkHx0CF3VNUI0uWhOdNEdBcFFUXT?=
+ =?us-ascii?Q?eaNHweRtBC8sfr2CrZKDcpgFahBiLiXhrixNxWGZOHlhRZF9K+cgg8hFnArf?=
+ =?us-ascii?Q?+2pqtYbWTZqJBx/lkYbsmAxJPb1ZnDYomGVGGUV+R+adZgtAR3HLnKkkhhaE?=
+ =?us-ascii?Q?VrsdrUFXtvpdCs8gZL5SGp0OXkvzQJLbpq2Refw9EnJ/FerqDlXwvrHJH3mT?=
+ =?us-ascii?Q?jBsrDGzqbx8RavZnhmTe/W92u5W58k+whF837rvrLB5vu6KzeHVW3R5N3TNc?=
+ =?us-ascii?Q?ZD3qC6tflOvOPwY2tghzU+FAmFrCBws5/h3p0MwGc7lSB1w92zVy3i7U84v1?=
+ =?us-ascii?Q?wSZXigUrOkOaOXj0lReuzZnLWW2el9PqhPc26yo7ZW1Yd7MYiqKPf+T1KYzS?=
+ =?us-ascii?Q?Frq/+Cj3KfdM2bGbk5ll/QcUHHaSt6CLUBuv4pSjOFeggI3IrOyCXrgo/kyA?=
+ =?us-ascii?Q?fCiW78KtveGEYX9udeRaI5ef/dvN2g5Wrb6NRMOaL0tznbrb+4gmRXRZPs/D?=
+ =?us-ascii?Q?SiCbh8aFXH6CAY1f16xQGIjbgbhE1eEjmas0MXecqBd7g4M0HN4o5TqgkBkb?=
+ =?us-ascii?Q?K3OaQ196/kSYU2wNBO897whq8bdY3Kg0xVu/FcBi6w5f+ekZUTGb8JI+FrzQ?=
+ =?us-ascii?Q?rvft4Rgq1zCjSzojJKZc44TuvkhC0Jp7I4qKdH0DuoP/6TbRIHDoJq7Tdbab?=
+ =?us-ascii?Q?kgXbNP8bTe374K4Fa7xREfcgbgIUAeXMrxGN1ovBhaFGVqvoUten6giq2+g1?=
+ =?us-ascii?Q?6vAhMrWH7eOHJ3iwZf3+LVWwwzMA?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230037)(1800799021)(7416011)(366013)(376011)(38070700015)(921017);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?GqS45KbocqvKeOvdnLSHb+mWHLFeW5h7T5y355yd1QzK173O/cxIt6J4D4i4?=
+ =?us-ascii?Q?Ve8j6MUdEGQAkKCT4vKZZhcs1dQ78iAznph5CJEZNjNBODlLiJvQXDdCytLp?=
+ =?us-ascii?Q?ftTQmyHIAmIFgMFKup7VXUety0zBj4EBfAC7QPUHxCwyopiKInm375zfjRQi?=
+ =?us-ascii?Q?tR/Eo31mXkpSIBuelmv9Nk706gnWnd5PR3nD/NlkcZgUss0J8oG5GZEvv4mB?=
+ =?us-ascii?Q?su84c8KwFFIeSak41FckEgtX89WcAXgZSFTf47vKqhVpj+LBMPg+VNRN4UVX?=
+ =?us-ascii?Q?gCLEcli5lA8nTdlbgSHrgeAtHVfbiErum5Mv/OY9zcHWhOE5GSeENJ7TEPuD?=
+ =?us-ascii?Q?wWaFf+EslFu9wrPdEyRRxRJBmgZL9FB31yLrqheNNW5VpvBGKFZFtkN8owDi?=
+ =?us-ascii?Q?/IW77FjZ+HuJPyGto5rTodG+aEK6xGCLHyX4ns2JbdSx1gdckV0zteDPGbsA?=
+ =?us-ascii?Q?1SS076MDuFITIwZ/TDrG+KBXsx0MbxGJqdNMERaPmPmr2zrQlF8TekKgOkow?=
+ =?us-ascii?Q?WXYHzdHKCwvQmpNAx2R2M5Bu9T3GAb+EVWuUaeJtL02njTaA/zHc2PuFnxtF?=
+ =?us-ascii?Q?y0i65qDlfyAih+4cHb4OW2Y77qvub1jmhnYJZsSvWSZTlg7RtguIChOl9SrO?=
+ =?us-ascii?Q?HSE9Ld9hkwWCAOPvw6htsjItuagINOXmNnokPLUJOOUSZXMaVSGF7KJ99dzJ?=
+ =?us-ascii?Q?UMtzhvHmODRP9SZ0erH2ddYnJIfgBI2UoKx8wzogJzxgqV/LtBqRAqQiQABi?=
+ =?us-ascii?Q?rgAHPUkAxtxP9NovvVG3LpMEz4GUJbvPr1k++8Wu/DQ1MWQeF0wf6XQVCpfQ?=
+ =?us-ascii?Q?OI1zV3CpmYR53Z3cjXvzEuua25undknrxo3FpBxM/RQLrIkn5G89qs4Y1eRL?=
+ =?us-ascii?Q?ZgZfbreyacDavdmQmn5G2P/O4F9RMBaKbMv5vYWkSb82vVkBxB4GdyJQZsVT?=
+ =?us-ascii?Q?MM/k7Ow9n+4soYptQtWz/nvLJ9dfdu4MvKF2KuIrqVI6gk8zoOqj2uT/VXG1?=
+ =?us-ascii?Q?fIMrcFIMaPnCveTqx1moLd3w+ZfMolhbMe0zI+FfFD/RfG7IUhOgy0JvpFmU?=
+ =?us-ascii?Q?OIdHmJPNn13gy2BZmoUiH6teSOqTbxNosUUnNjx4oaiytPjfMz7VS2L4asby?=
+ =?us-ascii?Q?v0rpFAkkq8om4ieEgrDr/HPuCK+h+OprW99aPENqNxt9TAY0PMCKooyLpdux?=
+ =?us-ascii?Q?miNe+7dIC9zAkuqsuHX9/JqaOfB3BDpHDQp6Rob8slddQa2IvgkBGaLnNTlD?=
+ =?us-ascii?Q?b3/0jlYDadDtMPuob45/3rZZ1Bas/B8LzdHHLApyUDldINVm5BBmzzgc6Uum?=
+ =?us-ascii?Q?/8uNExd0Hxkz1Wrh6ZgMxWawvVEXjSWpfHgxAHypiA4hZhrcLOS/U6/t5WgE?=
+ =?us-ascii?Q?QEc8zdbF0UuY1uZDYYggOYzrGZXqdITGh3TzrbT4NKKiUTqbWA2YqVTkpgCZ?=
+ =?us-ascii?Q?c9mb9PnjuGOBBX68KUvO9CH1wlmuIQtoZCIX6V6MVWG9FkMPnm7t7IX9Kd0I?=
+ =?us-ascii?Q?QRkTiAnUylPUQD9zNdPcwyNjNQaHsMewQrfMkhDbB4KPK+n2LkNk0SimaY7Q?=
+ =?us-ascii?Q?SRmQEYvVmsdXbt1nsArbII3mC0J0BXxyBnzZl7aquLqKBZ0Sfv/a210wpAkj?=
+ =?us-ascii?Q?Kw=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1718350923-21392-1-git-send-email-shengjiu.wang@nxp.com>
- <1718350923-21392-4-git-send-email-shengjiu.wang@nxp.com> <27ea1bf7de6f349426fcd7ddb056a1adfae47c73.camel@pengutronix.de>
-In-Reply-To: <27ea1bf7de6f349426fcd7ddb056a1adfae47c73.camel@pengutronix.de>
-From: Shengjiu Wang <shengjiu.wang@gmail.com>
-Date: Fri, 21 Jun 2024 20:34:23 +0800
-Message-ID: <CAA+D8AOzY3EcUayGP+pYeAqQu1y0=8WWngnBriwDwOCwnbcN2A@mail.gmail.com>
-Subject: Re: [PATCH v8 3/5] reset: imx8mp-audiomix: Add AudioMix Block Control
- reset driver
-To: Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org, peng.fan@nxp.com, 
-	mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org, 
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com, 
-	marex@denx.de, linux-clk@vger.kernel.org, imx@lists.linux.dev, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0119cbb0-446b-49d0-f206-08dc91ee8444
+X-MS-Exchange-CrossTenant-originalarrivaltime: 21 Jun 2024 12:34:38.6733
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: V+zfVB0OM9Dzg9c/myhVm14pVov4eM1Xncx1PJCHtp9YA2tlyKabwImDcFVub9joG91d15A/ab6j+5jIHC9NlceWZgPj2LYmOmUhrgOikHo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYWPR01MB11266
 
-On Fri, Jun 21, 2024 at 6:59=E2=80=AFPM Philipp Zabel <p.zabel@pengutronix.=
-de> wrote:
->
-> Hi,
->
-> On Fr, 2024-06-14 at 15:42 +0800, Shengjiu Wang wrote:
-> > Add support for the resets on i.MX8MP Audio Block Control module,
-> > which includes the EARC PHY software reset and EARC controller
-> > software reset. The reset controller is created using the auxiliary
-> > device framework and set up in the clock driver.
-> >
-> > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> > Reviewed-by: Marco Felsch <m.felsch@pengutronix.de>
-> > ---
-> >  drivers/reset/Kconfig                 |   8 ++
-> >  drivers/reset/Makefile                |   1 +
-> >  drivers/reset/reset-imx8mp-audiomix.c | 106 ++++++++++++++++++++++++++
-> >  3 files changed, 115 insertions(+)
-> >  create mode 100644 drivers/reset/reset-imx8mp-audiomix.c
-> >
-> > diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-> > index 7112f5932609..b3c0e528d08c 100644
-> > --- a/drivers/reset/Kconfig
-> > +++ b/drivers/reset/Kconfig
-> > @@ -91,6 +91,14 @@ config RESET_IMX7
-> >       help
-> >         This enables the reset controller driver for i.MX7 SoCs.
-> >
-> > +config RESET_IMX8MP_AUDIOMIX
-> > +     tristate "i.MX8MP AudioMix Reset Driver"
-> > +     depends on CLK_IMX8MP
->
-> I'd like this to be made compile-testable without CLK_IMX8MP being
-> enabled.
+Hi Claudiu,
 
-Ok, will remove the depends.
+> -----Original Message-----
+> From: Claudiu <claudiu.beznea@tuxon.dev>
+> Sent: Friday, June 21, 2024 12:23 PM
+> Subject: [PATCH 08/12] dt-bindings: i2c: renesas,riic: Document the R9A08=
+G045 support
+>=20
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>=20
+> Document the Renesas RZ/G3S (R9A08G045) RIIC IP. This is compatible with =
+the version available on
+> Renesas RZ/V2H (R9A09G075). Most of the IP variants that the RIIC driver =
+is working with supports
+> fast mode plus.
+> However, it happens that on the same SoC to have IP instatiations that su=
+pport fast mode plus as
+> well as IP instantiation that doesn't support it. For this, introduced th=
+e renesas,riic-no-fast-
+> mode-plus property.
+>=20
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
+>  Documentation/devicetree/bindings/i2c/renesas,riic.yaml | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/i2c/renesas,riic.yaml
+> b/Documentation/devicetree/bindings/i2c/renesas,riic.yaml
+> index 91ecf17b7a81..c0964edbca69 100644
+> --- a/Documentation/devicetree/bindings/i2c/renesas,riic.yaml
+> +++ b/Documentation/devicetree/bindings/i2c/renesas,riic.yaml
+> @@ -25,6 +25,10 @@ properties:
+>                - renesas,riic-r9a07g054  # RZ/V2L
+>            - const: renesas,riic-rz      # RZ/A or RZ/G2L
+>=20
+> +      - items:
+> +          - const: renesas,riic-r9a08g045   # RZ/G3S
+> +          - const: renesas,riic-r9a09g057
+> +
+>        - const: renesas,riic-r9a09g057   # RZ/V2H(P)
+>=20
+>    reg:
+> @@ -66,6 +70,10 @@ properties:
+>    resets:
+>      maxItems: 1
+>=20
+> +  renesas,riic-no-fast-mode-plus:
+> +    description: specifies if fast mode plus is not supported
+> +    type: Boolean
 
->
-> > +     select AUXILIARY_BUS
-> > +     default CLK_IMX8MP
-> > +     help
-> > +       This enables the reset controller driver for i.MX8MP AudioMix
-> > +
-> >  config RESET_INTEL_GW
-> >       bool "Intel Reset Controller Driver"
-> >       depends on X86 || COMPILE_TEST
-> > diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-> > index fd8b49fa46fc..a6796e83900b 100644
-> > --- a/drivers/reset/Makefile
-> > +++ b/drivers/reset/Makefile
-> > @@ -14,6 +14,7 @@ obj-$(CONFIG_RESET_BRCMSTB_RESCAL) +=3D reset-brcmstb=
--rescal.o
-> >  obj-$(CONFIG_RESET_GPIO) +=3D reset-gpio.o
-> >  obj-$(CONFIG_RESET_HSDK) +=3D reset-hsdk.o
-> >  obj-$(CONFIG_RESET_IMX7) +=3D reset-imx7.o
-> > +obj-$(CONFIG_RESET_IMX8MP_AUDIOMIX) +=3D reset-imx8mp-audiomix.o
-> >  obj-$(CONFIG_RESET_INTEL_GW) +=3D reset-intel-gw.o
-> >  obj-$(CONFIG_RESET_K210) +=3D reset-k210.o
-> >  obj-$(CONFIG_RESET_LANTIQ) +=3D reset-lantiq.o
-> > diff --git a/drivers/reset/reset-imx8mp-audiomix.c b/drivers/reset/rese=
-t-imx8mp-audiomix.c
-> > new file mode 100644
-> > index 000000000000..1fc984bc08c0
-> > --- /dev/null
-> > +++ b/drivers/reset/reset-imx8mp-audiomix.c
-> > @@ -0,0 +1,106 @@
-> > +// SPDX-License-Identifier: GPL-2.0-or-later
-> > +/*
-> > + * Copyright 2024 NXP
-> > + */
-> > +
-> > +#include <linux/auxiliary_bus.h>
-> > +#include <linux/device.h>
-> > +#include <linux/io.h>
-> > +#include <linux/module.h>
-> > +#include <linux/of.h>
-> > +#include <linux/of_address.h>
-> > +#include <linux/of_platform.h>
-> > +#include <linux/platform_device.h>
->
-> Still needed?
+Can't this info, as part of device data?? Based on frequency and device dat=
+a
+is enough to derive this info??
 
-Ok, can be removed.
+Cheers,
+Biju
 
->
-> > +#include <linux/reset-controller.h>
-> > +
-> > +#define EARC                 0x200
-> > +#define EARC_RESET_MASK              0x3
-> > +
-> > +struct imx8mp_audiomix_reset {
-> > +     struct reset_controller_dev rcdev;
-> > +     void __iomem *base;
-> > +};
-> > +
-> > +static struct imx8mp_audiomix_reset *to_imx8mp_audiomix_reset(struct r=
-eset_controller_dev *rcdev)
-> > +{
-> > +     return container_of(rcdev, struct imx8mp_audiomix_reset, rcdev);
-> > +}
-> > +
-> > +static int imx8mp_audiomix_reset_assert(struct reset_controller_dev *r=
-cdev,
-> > +                                     unsigned long id)
-> > +{
-> > +     struct imx8mp_audiomix_reset *priv =3D to_imx8mp_audiomix_reset(r=
-cdev);
-> > +     void __iomem *reg_addr =3D priv->base;
-> > +     unsigned int mask, reg;
-> > +
-> > +     if (id >=3D fls(EARC_RESET_MASK))
-> > +             return -EINVAL;
->
-> This check is not required.
->
-> Since you have nr_resets set to fls(EARC_RESET_MASK), the same is
-> already checked in of_reset_simple_xlate, before a reset control is
-> even returned.
+> +
+>  required:
+>    - compatible
+>    - reg
+> --
+> 2.39.2
+>=20
 
-Ok, will remove it.
-
->
-> > +     mask =3D BIT(id);
-> > +     reg =3D readl(reg_addr + EARC);
-> > +     writel(reg & ~mask, reg_addr + EARC);
->
-> There are multiple (well, two) resets in this register, so it would be
-> good style to protect the read-modify-write cycle with a spinlock.
-
-Ok, will add spinlock
-
->
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static int imx8mp_audiomix_reset_deassert(struct reset_controller_dev =
-*rcdev,
-> > +                                       unsigned long id)
-> > +{
-> > +     struct imx8mp_audiomix_reset *priv =3D to_imx8mp_audiomix_reset(r=
-cdev);
-> > +     void __iomem *reg_addr =3D priv->base;
-> > +     unsigned int mask, reg;
-> > +
-> > +     if (id >=3D fls(EARC_RESET_MASK))
-> > +             return -EINVAL;
-> > +
-> > +     mask =3D BIT(id);
-> > +     reg =3D readl(reg_addr + EARC);
-> > +     writel(reg | mask, reg_addr + EARC);
-> > +
-> > +     return 0;
-> > +}
-> > +
-> > +static const struct reset_control_ops imx8mp_audiomix_reset_ops =3D {
-> > +     .assert   =3D imx8mp_audiomix_reset_assert,
-> > +     .deassert =3D imx8mp_audiomix_reset_deassert,
-> > +};
-> > +
-> > +static int imx8mp_audiomix_reset_probe(struct auxiliary_device *adev,
-> > +                                    const struct auxiliary_device_id *=
-id)
-> > +{
-> > +     struct imx8mp_audiomix_reset *priv;
-> > +     struct device *dev =3D &adev->dev;
-> > +
-> > +     priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-> > +     if (!priv)
-> > +             return -ENOMEM;
-> > +
-> > +     priv->rcdev.owner     =3D THIS_MODULE;
-> > +     priv->rcdev.nr_resets =3D fls(EARC_RESET_MASK);
-> > +     priv->rcdev.ops       =3D &imx8mp_audiomix_reset_ops;
-> > +     priv->rcdev.of_node   =3D dev->parent->of_node;
-> > +     priv->rcdev.dev       =3D dev;
-> > +     priv->rcdev.of_reset_n_cells =3D 1;
-> > +     priv->base            =3D of_iomap(dev->parent->of_node, 0);
->
-> This is missing the corresponding iounmap().
-
-Ok, will add iounmap.
-
->
-> I wonder why we map at all. If the parent driver already has iomem
-> mapped, can't it just pass that in, like JH7110 does?
-
-Because this is a simple reset driver, just two reset bits,
-I want to avoid adding a header file for the parent driver and this driver.
-
-Thanks for reviewing.
-
-By the way: shall I just send a new version for this patch only next time?
-
-Best regards
-Shengjiu Wang
->
->
-> regards
-> Philipp
