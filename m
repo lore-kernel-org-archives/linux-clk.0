@@ -1,136 +1,98 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B8A12D771;
-	Fri, 21 Jun 2024 06:41:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFB7C16B74F;
+	Fri, 21 Jun 2024 07:30:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718952119; cv=none; b=V/BeIl+gvxDGFIsx1b9a3SbS+0lmLAd3pX1ylV7wy9nLu+QHcJnVMqseWygPlfiEZSM/bVqr/tBGblv45tLsthXZz1EKDHVv0UCT8nhLnn96vyr5NuWQ9IRdcnY52/iFWJQIDNGLoJlGxiFdYuBKQputE64FKgKq3OPkRXlqMoI=
+	t=1718955057; cv=none; b=P9gzuFOs6V9JDq5YPtP7Jlm54W2hig24ZsSXxsMNLhCfLC1zZ4fB/g9GVWEzaFmYHGpiY2GIwovVP7dUljPlu7+Q9XAowf0RrUY4C2BGsDR92+WGOJwBOkDoyVo8Yj7EOzJ/ge8EZaDkJSNSmjVUAMbX6pPPKO/As47DIrEO5rI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718952119; c=relaxed/simple;
-	bh=WruSoZIyzBxO2AjClNC3OXrTNOVdz8wBtrZPpY4CzrU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EJqWNOWldIb5Z433zavPquYTqY55PWAB+Ymb3vp+9FlHdpZPEcB0+EOWzVGV1GypdIm9DXJpA9p+Ui3/wAOedUAloReU5AEsIySH9JfZN8K5Hfepn7omgkLUFVq9iAFHEp+d9hqKlgoRFQ+oFpp2uECis1ASorQAk7CYrwTFzlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B6rNiBrl; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1718955057; c=relaxed/simple;
+	bh=ko8J2UaKlSl/BDPlAtHFYwIIw4yfwjeKtWhC1B1E6dI=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lfhVGj8VTXUysLGlCDz/3Lf81KQQ+LFWAGnIpVI4CaJBd7h8qE4/hXX4OfhsY2rRhS74ZAS0U8mP/yOWGBng58V/r1v1F644hPuzvFrBuP8+1XOZSQMEGZ62gApCNIrzy7cXkyt0O4SDhaQHJpUwuzFLL0eaEm4JWvGgHQyvSxs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PdfMISyd; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B6rNiBrl"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5054AC2BBFC;
-	Fri, 21 Jun 2024 06:41:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718952119;
-	bh=WruSoZIyzBxO2AjClNC3OXrTNOVdz8wBtrZPpY4CzrU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=B6rNiBrlBYwkyA0e3RSYOVVn9W1hyp5+2on+44gsrjjFhPH9shLFOj/UhUxvhyGUX
-	 ndS2Uw9gLQUTvPgbp6+oa7ckki11+h6YS35Rm3ssuekkMQqqEDGU8t5oIP8sw2SMCg
-	 xgY+2Hrz9VOSQTQ5gkl8QkdwI7lql2KpHeVays6R78PaHkIXqd1Eeqw3sF+DeEpeop
-	 cH5SB53sv5vLkRT22zQNb3XXhn1PQ5DnSEw9aNPF8fXe1cJdAVDYU1yScT0bKYZShV
-	 tqwJvKFIX894a77BWrQjqwvK/zoh8gH+KCRRiW/Dqck0HWSaXrePPLfC5qABtGaTgb
-	 px/O/wkUpRPwA==
-Message-ID: <0c5d89e7-b5cf-4a51-9bd7-24fbae1b7c62@kernel.org>
-Date: Fri, 21 Jun 2024 08:41:51 +0200
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PdfMISyd"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45L5tdhw023962;
+	Fri, 21 Jun 2024 07:30:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=ko8J2UaKlSl/BDPlAtHFYwII
+	w4yfwjeKtWhC1B1E6dI=; b=PdfMISyd+3hSBZ1Ke013xq1J2zysYifRDPjAQ8mf
+	63t0Oq8F+STq05ZXQDoltyCI+30YcLArzi+iIctkeBOJZEhAkNojqvG1/6sabk3N
+	gjdxWdf1ouecy/Es5gE5yQILuoXPrxCBIh88yD8mSeRTQ57aftuX/REz4aS6lnbe
+	lYz/VkRlnSKTNFJt2ybQ4Wr0Y/8VL/3WlkoUvRwJFFSySJLP91unkez7r5U+z0Xw
+	48QB6N5Tn1EZrr4Z+xVsjyGIm8h62N7wKW2nsJopX+2GDCqChRHV+M/tffvdW5+D
+	92c9QlT1FI6zTDWRuDvKnzet+mRAfbPYGR92vz7nuCbVJA==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yvrksswd3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Jun 2024 07:30:43 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45L7Ugpb026188
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Jun 2024 07:30:42 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 21 Jun 2024 00:30:36 -0700
+Date: Fri, 21 Jun 2024 13:00:31 +0530
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <angelogioacchino.delregno@collabora.com>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <ulf.hansson@linaro.org>, <quic_sibis@quicinc.com>,
+        <quic_rjendra@quicinc.com>, <luca@z3ntu.xyz>, <abel.vesa@linaro.org>,
+        <quic_rohiagar@quicinc.com>, <danila@jiaxyga.com>,
+        <otto.pflueger@abscue.de>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        Praveenkumar I <quic_ipkumar@quicinc.com>
+Subject: Re: [PATCH v1 3/7] pmdomain: qcom: rpmpd: Add IPQ9574 power domains
+Message-ID: <ZnUsFwQyc7JRTXl/@hu-varada-blr.qualcomm.com>
+References: <20240620081427.2860066-1-quic_varada@quicinc.com>
+ <20240620081427.2860066-4-quic_varada@quicinc.com>
+ <jfh2xygjdoapkno2jrt6w7thlylgyp2tk7oaczundhxvi26qel@ahtskgn4v6sp>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/8] dt-bindings: clock: qcom: Add SA8775P video clock
- controller
-To: Taniya Das <quic_tdas@quicinc.com>, Bjorn Andersson
- <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- quic_jkona@quicinc.com, quic_imrashai@quicinc.com
-References: <20240612-sa8775p-mm-clock-controllers-v1-0-db295a846ee7@quicinc.com>
- <20240612-sa8775p-mm-clock-controllers-v1-1-db295a846ee7@quicinc.com>
- <e1424d12-4dd8-4a8a-a8b5-ac94476fa3d3@kernel.org>
- <ac8781fe-e8f1-4ba7-8f7d-ebfcbaadbcee@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <ac8781fe-e8f1-4ba7-8f7d-ebfcbaadbcee@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <jfh2xygjdoapkno2jrt6w7thlylgyp2tk7oaczundhxvi26qel@ahtskgn4v6sp>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 3EDCezE50oxWbJ3qrC5dswBy0blzoSZi
+X-Proofpoint-GUID: 3EDCezE50oxWbJ3qrC5dswBy0blzoSZi
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-21_02,2024-06-20_04,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxscore=0
+ adultscore=0 phishscore=0 suspectscore=0 spamscore=0 malwarescore=0
+ impostorscore=0 lowpriorityscore=0 priorityscore=1501 clxscore=1015
+ mlxlogscore=628 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406210055
 
-On 21/06/2024 06:24, Taniya Das wrote:
-> 
-> 
-> On 6/13/2024 12:58 PM, Krzysztof Kozlowski wrote:
->> On 12/06/2024 12:47, Taniya Das wrote:
->>> Add device tree bindings for the video clock controller on Qualcomm
->>> SA8775P platform.
->>
->> You claim it is a v1, but I saw it and already commented on this. No
->> changelog, no versioning, so my comments were ignored?
->>
->> Please go back to previous comments, implement then, respond and then
->> send v3 with all comments addressed.
->>
-> 
-> Krzysztof, I mentioned the below in the cover letter of this series. Did 
-> I still miss something?
-> 
-> Add support for videocc, camcc, dispcc0 and dispcc1 on Qualcomm SA8775P
-> platform.
-> 
-> These multimedia clock controller and device tree patches are split
-> from the below series.
-> https://lore.kernel.org/all/20240531090249.10293-1-quic_tdas@quicinc.com/
+On Thu, Jun 20, 2024 at 06:09:51PM +0300, Dmitry Baryshkov wrote:
+> On Thu, Jun 20, 2024 at 01:44:23PM GMT, Varadarajan Narayanan wrote:
+> > Add the APC power domain definitions used in IPQ9574.
+> >
+> > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> > Signed-off-by: Praveenkumar I <quic_ipkumar@quicinc.com>
+>
+> The order of the S-o-B's is wrong. Who is the actual author of the
+> patch?
 
-But this does not invalidate patch history. If you sent patch in foo
-patchset, then sending v2 of this patch in bar patchset is still v2, not
-v1. You still need changelog and proper versioning.
+Praveenkumar I <quic_ipkumar@quicinc.com> is the actual author.
 
-So again - respond to previous comments and/or implement them, then
-provide changelog what happened.
-
-Best regards,
-Krzysztof
-
+Thanks
+Varada
