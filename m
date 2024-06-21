@@ -1,98 +1,136 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 094C315624C
-	for <linux-clk@vger.kernel.org>; Fri, 21 Jun 2024 06:38:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B8A12D771;
+	Fri, 21 Jun 2024 06:41:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718951903; cv=none; b=Ih7mqHyOBu9ieWcpIcHB0+MiOec5aMKoPV5jpAB25S9RlKC5S3pqcvyqEzQz4yu8ZmdcIjxkkDd3VJfHkmDbIIaDMpTPvFlCF6DSEkQ4uSHTG43d7db1mZCeHki1VDXKLxqdDBXDEvVGrleYROuK/lpwharOywGQb7sUu6OUnR4=
+	t=1718952119; cv=none; b=V/BeIl+gvxDGFIsx1b9a3SbS+0lmLAd3pX1ylV7wy9nLu+QHcJnVMqseWygPlfiEZSM/bVqr/tBGblv45tLsthXZz1EKDHVv0UCT8nhLnn96vyr5NuWQ9IRdcnY52/iFWJQIDNGLoJlGxiFdYuBKQputE64FKgKq3OPkRXlqMoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718951903; c=relaxed/simple;
-	bh=IXZaJwoonaXAaG8nRSLWn+rv7pzccaEi+tHComAcTnA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=SHwqYdNTXwmrHbsas22PbaE3TST3MuCL/t07p3mGiM5jsZqHmhZayVofYWXCwqfzCM9+52cWZOgfD9KSZhyGfAXWl6FwlWG4SNYpkVrdtzPri6dtn3ROKZ4B3xFIkMe0QlQlac/Hx1Z/Kpiyje9XxaHj7V9Ik9InfbotnJs3kDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=M31VWUOe; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1718952119; c=relaxed/simple;
+	bh=WruSoZIyzBxO2AjClNC3OXrTNOVdz8wBtrZPpY4CzrU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EJqWNOWldIb5Z433zavPquYTqY55PWAB+Ymb3vp+9FlHdpZPEcB0+EOWzVGV1GypdIm9DXJpA9p+Ui3/wAOedUAloReU5AEsIySH9JfZN8K5Hfepn7omgkLUFVq9iAFHEp+d9hqKlgoRFQ+oFpp2uECis1ASorQAk7CYrwTFzlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B6rNiBrl; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="M31VWUOe"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-421f4d1c057so16001545e9.3
-        for <linux-clk@vger.kernel.org>; Thu, 20 Jun 2024 23:38:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718951900; x=1719556700; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bjXqcRlv34M001faSimJYUquwzCRuq58MB8h3usWsF4=;
-        b=M31VWUOeSXLT1h/DBcG0O6RhprZcTRoZLKE69iPsMlpeyw/Gl09otZfuwdVKcuKBbm
-         UVptyREkmjlnX4TJhAr3Z8HwLZSGY6ZAVUI1UsqWZ9U0hrT72kYTxXKyRqZX0ZXCwPhR
-         2vX+y+6RsQs1y0q59c1QJavv53wdcgeXOAL9xLvpXjcTpjmCO41sSgCk0yRBr7snmsqU
-         41H5bdHuZCwnLYJ3pbR9JHLrZ8zjKDd2+Ydr2C5hpAgkju1j+kskTjrZllNlBbtSElob
-         +toDSxL8353cqc/HkAG/l5IgsgsLhWqMsztISyWp/YumZa8u5PN11BWTUrmf4RWi7Iir
-         8uXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718951900; x=1719556700;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bjXqcRlv34M001faSimJYUquwzCRuq58MB8h3usWsF4=;
-        b=LFoGJR89mil0IzSnEPOgyr0ZHuRBQ1hggV3moMg8gGVaWyPk4D2Rc1pEjxUioyZZq9
-         i9yez6o/h4W1P0nVrYQiDhxoVCM+ufxU2YtBFaOdKZgG+Ai/xBKgpHqgwV75AplqSzpG
-         cFLv3mZvzOrNoasBG4CRjuaYQpeGgQNc4sPB1IQWrbH0wbqslEVgxAC38O2/iQWXu9Hm
-         DDC63Z+o0+inLgTzb9YWYLC/7YuljqUutsBR71vTYDazJhBes2ndSdQB7IXR08F4kAds
-         oj/G5e4PWuS4pPamHh7TmDV5jD3lmnktlEjp06QsqRhBV65tEKZS65faX+O0YQolzMcl
-         rR6w==
-X-Gm-Message-State: AOJu0YyybUvlxVlTwMF7x8N0cTVPndz+oe8PeFu/0+q35xskpG2da09l
-	lgDO0URVslb93VhDmrcBMv3fZv76f6LgxNHp1GWeDjTLgqatD/HezpsymXOO5kg=
-X-Google-Smtp-Source: AGHT+IEiWE3LOwtpN12PBZwo+HPa101V8ycfDZ32up/OGnZ40ETADhDqdiNS1elyZsP4oUBOaW75YQ==
-X-Received: by 2002:a05:600c:3b8d:b0:421:7ac9:460c with SMTP id 5b1f17b1804b1-4247529a970mr54295265e9.39.1718951900172;
-        Thu, 20 Jun 2024 23:38:20 -0700 (PDT)
-Received: from [127.0.1.1] ([82.79.124.209])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4247d2122e7sm51100865e9.40.2024.06.20.23.38.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 23:38:19 -0700 (PDT)
-From: Abel Vesa <abel.vesa@linaro.org>
-To: linux-clk@vger.kernel.org, Marek Vasut <marex@denx.de>
-Cc: Abel Vesa <abelvesa@kernel.org>, Fabio Estevam <festevam@gmail.com>, 
- "Lukas F . Hartmann" <lukas@mntmn.com>, 
- Michael Turquette <mturquette@baylibre.com>, Peng Fan <peng.fan@nxp.com>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Sascha Hauer <s.hauer@pengutronix.de>, Shawn Guo <shawnguo@kernel.org>, 
- Stephen Boyd <sboyd@kernel.org>, imx@lists.linux.dev, 
- kernel@dh-electronics.com, linux-arm-kernel@lists.infradead.org
-In-Reply-To: <20240531202648.277078-1-marex@denx.de>
-References: <20240531202648.277078-1-marex@denx.de>
-Subject: Re: [PATCH] clk: imx: clk-imx8mp: Allow media_disp pixel clock
- reconfigure parent rate
-Message-Id: <171895189899.3641239.4256976969663530341.b4-ty@linaro.org>
-Date: Fri, 21 Jun 2024 09:38:18 +0300
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B6rNiBrl"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5054AC2BBFC;
+	Fri, 21 Jun 2024 06:41:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718952119;
+	bh=WruSoZIyzBxO2AjClNC3OXrTNOVdz8wBtrZPpY4CzrU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=B6rNiBrlBYwkyA0e3RSYOVVn9W1hyp5+2on+44gsrjjFhPH9shLFOj/UhUxvhyGUX
+	 ndS2Uw9gLQUTvPgbp6+oa7ckki11+h6YS35Rm3ssuekkMQqqEDGU8t5oIP8sw2SMCg
+	 xgY+2Hrz9VOSQTQ5gkl8QkdwI7lql2KpHeVays6R78PaHkIXqd1Eeqw3sF+DeEpeop
+	 cH5SB53sv5vLkRT22zQNb3XXhn1PQ5DnSEw9aNPF8fXe1cJdAVDYU1yScT0bKYZShV
+	 tqwJvKFIX894a77BWrQjqwvK/zoh8gH+KCRRiW/Dqck0HWSaXrePPLfC5qABtGaTgb
+	 px/O/wkUpRPwA==
+Message-ID: <0c5d89e7-b5cf-4a51-9bd7-24fbae1b7c62@kernel.org>
+Date: Fri, 21 Jun 2024 08:41:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/8] dt-bindings: clock: qcom: Add SA8775P video clock
+ controller
+To: Taniya Das <quic_tdas@quicinc.com>, Bjorn Andersson
+ <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ quic_jkona@quicinc.com, quic_imrashai@quicinc.com
+References: <20240612-sa8775p-mm-clock-controllers-v1-0-db295a846ee7@quicinc.com>
+ <20240612-sa8775p-mm-clock-controllers-v1-1-db295a846ee7@quicinc.com>
+ <e1424d12-4dd8-4a8a-a8b5-ac94476fa3d3@kernel.org>
+ <ac8781fe-e8f1-4ba7-8f7d-ebfcbaadbcee@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <ac8781fe-e8f1-4ba7-8f7d-ebfcbaadbcee@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
 
-
-On Fri, 31 May 2024 22:26:26 +0200, Marek Vasut wrote:
-> The media_disp[12]_pix clock supply LCDIFv3 pixel clock output. These
-> clocks are usually the only downstream clock from Video PLL on i.MX8MP.
-> Allow these clocks to reconfigure the Video PLL, as that results in
-> accurate pixel clock. If the Video PLL is not reconfigured, the pixel
-> clock accuracy is low.
+On 21/06/2024 06:24, Taniya Das wrote:
 > 
 > 
-> [...]
+> On 6/13/2024 12:58 PM, Krzysztof Kozlowski wrote:
+>> On 12/06/2024 12:47, Taniya Das wrote:
+>>> Add device tree bindings for the video clock controller on Qualcomm
+>>> SA8775P platform.
+>>
+>> You claim it is a v1, but I saw it and already commented on this. No
+>> changelog, no versioning, so my comments were ignored?
+>>
+>> Please go back to previous comments, implement then, respond and then
+>> send v3 with all comments addressed.
+>>
+> 
+> Krzysztof, I mentioned the below in the cover letter of this series. Did 
+> I still miss something?
+> 
+> Add support for videocc, camcc, dispcc0 and dispcc1 on Qualcomm SA8775P
+> platform.
+> 
+> These multimedia clock controller and device tree patches are split
+> from the below series.
+> https://lore.kernel.org/all/20240531090249.10293-1-quic_tdas@quicinc.com/
 
-Applied, thanks!
+But this does not invalidate patch history. If you sent patch in foo
+patchset, then sending v2 of this patch in bar patchset is still v2, not
+v1. You still need changelog and proper versioning.
 
-[1/1] clk: imx: clk-imx8mp: Allow media_disp pixel clock reconfigure parent rate
-      commit: ff06ea04e4cf3ba2f025024776e83bfbdfa05155
+So again - respond to previous comments and/or implement them, then
+provide changelog what happened.
 
 Best regards,
--- 
-Abel Vesa <abel.vesa@linaro.org>
+Krzysztof
 
