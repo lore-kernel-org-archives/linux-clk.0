@@ -1,46 +1,44 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA8516B3AA;
-	Fri, 21 Jun 2024 06:11:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 225C0145B0C;
+	Fri, 21 Jun 2024 06:11:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718950299; cv=none; b=Re0M1etK88Ric3lcMSlYrGYOxWBB/m7Hi3zqNOO9nh66EqdUPgJJbiPH60Thk76/5sBTBjvUG8vX9gwC2b2haHFXQ6U059Ixfl1Vs84LvYdsROb0lvpiFqgLQtQLyyeIio1HrvFurIVpK0/OLR7DR0KEqIXlazqke8TMJBykjvE=
+	t=1718950303; cv=none; b=CFIFKrEe5R9OP579O2lY27XhdxfgKg8KpR/FhRnHiLqWEy5JZ+iTWms9hLAjUi1fH6aYpVu29V/16MYM9F5E1c7oZMTuSgBQL3qm82EYaVnYi/EbrRxPI34I9Cjh3PfmHzhrTGPqqQdEYVqggFjxv33a8zEaMYiX999RhJiP5PY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718950299; c=relaxed/simple;
-	bh=/PXa4wKm47IBCNzQncXGB4SQlNPgnCeArtsLDhDBDok=;
+	s=arc-20240116; t=1718950303; c=relaxed/simple;
+	bh=Rt3SceI+3WtSlghMCrF4xk0O9VqqF+9ICLfLpATWNzo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rdRV/Kw8nQ4HikXEIMeUNYM1SFDxiQVSqEMO1PpdpJUGSWqwocUv5IpXOLpEfic5MZxmERAEj513JeWug2tlOVAvOAny4OFHuH6osZcHmUGLPgDVKn6gsdAxm4enj/L+4oJ5IcrmhjnfIdMzPhL5OBhqr00BlFvpExreyGQ9fb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OmFy5hZs; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=Im+AAMZoipJpiXyJHHGzaIyF3DrX8BJA6PZKdo7w6PafB5mdwX3Dm8CX1QVREbFDTyP9aRfq5k1aIWiAeX6UyydkX7Th1eMM+Q1zap4MtgTPuRNbzw0mc8YN9FXo/zcd3HPkCPsZLYcCruEAVQG0K2uM9zFYBgy488FKAD324dY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p1MGzifU; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OmFy5hZs"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28990C4AF11;
-	Fri, 21 Jun 2024 06:11:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p1MGzifU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A003C4AF11;
+	Fri, 21 Jun 2024 06:11:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718950298;
-	bh=/PXa4wKm47IBCNzQncXGB4SQlNPgnCeArtsLDhDBDok=;
+	s=k20201202; t=1718950302;
+	bh=Rt3SceI+3WtSlghMCrF4xk0O9VqqF+9ICLfLpATWNzo=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=OmFy5hZsxf/Zci8chfb+1uStjcAhHjDIQy2noog5nuhI90nxu0BkSPdVS23lrUAVK
-	 VjZU+gijxFtAUyMz/BnijNKglFNWBqD3PH0uWwGtVFZH6qiKJYasrYUDrNJ46TzCec
-	 2i/Xw04Bsjxadfd9iiY9ORl54kbpIDJz9zHAnQ9VCmIA+mtXFuP64JokS6OGF06mpw
-	 qm8n22UkWUFWNGGRrIGJhK7jdiQrbJcBxt0F2M+PO5P3Y46TceH1NizFLa62iWmtE0
-	 rzLLeDHjne2OP7f8oxrAvY3ZJF0I9AXrVrnaGVEM5p/7pLwXl5MQH8MMYsZW6JZH8m
-	 ciVtl0OVtHUAQ==
+	b=p1MGzifUh0Eybr7LicxuunGIVvsXGMVJFctpG0AgcExsUQ1zc5jsMgiZ93ea92RiF
+	 OcQaFDCA9ZR3M54BUjDpfQYu7TmnBtGdjLG7QjEI+3H+ZFzL4e4Q++7S1aic0G7jQ8
+	 poCeuwyoHiT7vEAyZ9WQbI4i2/NSkjTK1enWHMkP95Fm8W0TOAA65uyzG8KOeOUAMN
+	 i1JqHbOkiJOPD+1222Z2o+3Wi29rlRGel8JCb09Pz64dRgp5YZkT4IWH9iyjbOnrA9
+	 8yb/4x64ZcthxRWAYkwxsiqJvX2jwFjm45RiMSe64GDYuUFl/gGP7JRi5j+vOySoX6
+	 szWrlOufxYIkA==
 From: Bjorn Andersson <andersson@kernel.org>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
+	Elliot Berman <quic_eberman@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	Lukas Bulwahn <lbulwahn@redhat.com>
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Lukas Bulwahn <lukas.bulwahn@redhat.com>
-Subject: Re: [PATCH] clk: qcom: select right config in CLK_QCM2290_GPUCC definition
-Date: Fri, 21 Jun 2024 01:11:20 -0500
-Message-ID: <171895028807.12506.17240836109447013831.b4-ty@kernel.org>
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: Remove QCOM_RPMCC symbol
+Date: Fri, 21 Jun 2024 01:11:24 -0500
+Message-ID: <171895028805.12506.8367685063587068019.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240620201431.93254-1-lukas.bulwahn@redhat.com>
-References: <20240620201431.93254-1-lukas.bulwahn@redhat.com>
+In-Reply-To: <20240619-drop-qcom-rpmcc-v1-1-b487c95162ef@quicinc.com>
+References: <20240619-drop-qcom-rpmcc-v1-1-b487c95162ef@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -51,21 +49,18 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Thu, 20 Jun 2024 22:14:31 +0200, Lukas Bulwahn wrote:
-> Commit 8cab033628b1 ("clk: qcom: Add QCM2290 GPU clock controller driver")
-> adds the config CLK_QCM2290_GPUCC, which intends to select the support for
-> the QCM2290 Global Clock Controller. It however selects the non-existing
-> config CLK_QCM2290_GCC, whereas the config for the QCM2290 Global Clock
-> Controller is named QCM_GCC_2290.
+On Wed, 19 Jun 2024 08:41:52 -0700, Elliot Berman wrote:
+> This symbol is selected by a couple drivers, but isn't used by anyone
+> and hasn't been for years now. Drop it.
 > 
-> Adjust the config to the intended one.
+> No functional change intended.
 > 
-> [...]
+> 
 
 Applied, thanks!
 
-[1/1] clk: qcom: select right config in CLK_QCM2290_GPUCC definition
-      commit: f8d1dca6c44dff362102b1f535b6dab552edb760
+[1/1] clk: qcom: Remove QCOM_RPMCC symbol
+      commit: e429be706f2a1bd0c9a780793fff6b3784fb4204
 
 Best regards,
 -- 
