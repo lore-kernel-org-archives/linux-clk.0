@@ -1,149 +1,100 @@
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4F3AEA4
-	for <linux-clk@vger.kernel.org>; Fri, 21 Jun 2024 04:48:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D11B7FBF3;
+	Fri, 21 Jun 2024 05:37:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718945331; cv=none; b=SqYdSsAdB0tgeUrJHV8AuFz1qubTtoYaXmSrG2P4gAknWR2b4DCCq9zSl+vR1SfRe5840O2MYkFRUNH+l9YN7wfodxcxENkPSB0TQODC49MIZXg/EhWTudZKkVFvQif+hO9tNbIMmPADWzBzRFpeWjMcXrG90T5tu1yROsOe9bU=
+	t=1718948277; cv=none; b=hqkZRm28JqzMj5YurTcJ0wnmKpOxZyyUK8eA1mvnJVB3Y+Sk/abw6BDevapIEmckszq548IoHMg+DHLJcaGusRG7vQVrd8Iv6jxFWJIeRCcMPhExr+7hGOaP27VvpWFxjhV5Lk2SLuVhwhjKThvauA0XE4RB3Aj8b8cwnZ6eZ+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718945331; c=relaxed/simple;
-	bh=okAC9j6W98urT9FWKNpZ80XLrOwm3rAjrBQGcyQaHLg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JYm933LMEOmCg1Leew8ky6kBVHv/g9sKsyd31MF+BIGYqaPhDAffh0d7iwZ0NlESJTjrEvLT7Rrj4SvZ2W5/EYmgpEJaNGqKvESi1pNjT/AtSvEs8sG30yXraVhrE6OBrM5M99q5LR5+74m3kbQkKh1KNOUCrwlqkAQ9QYb4W04=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yxOyQaBB; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1718948277; c=relaxed/simple;
+	bh=LLFy4E3fQZogzsjSkuuitSHmxQQmS4uiYTMS6JzbgpU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=cDPFlUOMxWT/0QB+gKAx2/kPMB8paYPfZ4jofzwtBmjyuqp+ZmGdsREERe6SwsK6/Ltxg0nTauF3R6J+UPggg5QZwC7gjHGIC9NLRLwXmdAZvhO/HYf+0pFCbxx9U96CgzPWAAacMBk6lhJYGT7OMAsXRrFSQqXY8GVUqxlP4R0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=OxGxApPm; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yxOyQaBB"
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52cd87277d8so88541e87.2
-        for <linux-clk@vger.kernel.org>; Thu, 20 Jun 2024 21:48:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1718945327; x=1719550127; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2WGzLpSHiAFMQ6rhulZPDgtq0nr+/nkWynRADUnWeOc=;
-        b=yxOyQaBBsWpkvo1sBa4JLFumRAZjoOHrs96oH+pG23ZylqDXf9uoRf2ypBj7JHaXlR
-         AV9nH57lIqLzL+0ljx8RqTpSficlywbQBZOJCPjsK+b9QhHJTFYp7/UOzmfldOl4dmQd
-         hz89qCOmVSAbsh+NWaezxflRsUNKNU+tW/ZCgliz0edyXrzRvVxXAdTm1XTH6U5G3e1x
-         yK+d2Y+upbrb3w0DFmR78dHs76eoxtO+8kR2V1vJq2tqN3L0H5BB93gLbMS+uDf65MPS
-         rEBnUr1J/mqc0OqTRyLHYxkEKx2/Wynj4A0qLhyel2GaRE96FxkdeBeeRTKhSa190FxE
-         oiWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718945327; x=1719550127;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2WGzLpSHiAFMQ6rhulZPDgtq0nr+/nkWynRADUnWeOc=;
-        b=vlvb8mXYPGwAXzwYSiSVXT1+ebC3VC/sCRggjQl+6yyPpMo19tJe05eTGIMuArFbyW
-         szL4H5JL9kv8GXlDhNFg88OMMIwMISV3yDaDLGv5p/B3P8eKaBBadyR+BY+JRZR2uTOd
-         U7BVFgD6KAR3uFXwtO8CzwWbM2sYQSvMn+QQIIHRXKjLJbmhYp6Eopep9aFFuAMaBoKj
-         m+SP0j0WZI1nNGIpP0iWJQWp+cr17LcdEEb/7K0Th670AR3+4wtgTCR9Sgsdb8/R7VB7
-         PyUOw3AJlNUFbwMphgSXnKIFJb1oK7fjHXyTCR+l2+UEKHu/MyGdZFHra8U13s6U3RFN
-         xEtQ==
-X-Gm-Message-State: AOJu0Yy36e/2tDOQEMfkCN/BYTDYn0DszLjlm5pk2b+8vCIM67ZEjhqW
-	1w2Gu/k/0gEg0+df0PNVFP18A6iihRQ+MbmVGGK2sYS8NLcuLkvA7QbHMApKZdo=
-X-Google-Smtp-Source: AGHT+IHQ/LUmDuyLZQ0IaCKcHTZmjchVpKw8WeCnkMirzzuExs8oyd0Nlj5f9/vavkQGjh28g4RcMw==
-X-Received: by 2002:a05:6512:10c3:b0:52c:859c:91dd with SMTP id 2adb3069b0e04-52ccaa594cfmr4875472e87.5.1718945326588;
-        Thu, 20 Jun 2024 21:48:46 -0700 (PDT)
-Received: from linaro.org ([82.79.124.209])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3663cd5fa47sm632123f8f.0.2024.06.20.21.48.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 20 Jun 2024 21:48:46 -0700 (PDT)
-Date: Fri, 21 Jun 2024 07:48:44 +0300
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Marek Vasut <marex@denx.de>
-Cc: linux-clk@vger.kernel.org, Abel Vesa <abelvesa@kernel.org>,
-	Fabio Estevam <festevam@gmail.com>,
-	"Lukas F . Hartmann" <lukas@mntmn.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Peng Fan <peng.fan@nxp.com>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	imx@lists.linux.dev, kernel@dh-electronics.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH] clk: imx: clk-imx8mp: Allow media_disp pixel clock
- reconfigure parent rate
-Message-ID: <ZnUGLCZYrSdW4f3S@linaro.org>
-References: <20240531202648.277078-1-marex@denx.de>
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="OxGxApPm"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1718948207; x=1719553007; i=markus.elfring@web.de;
+	bh=1SQIJLyP8KM0t0hXj5dAJLCq9lDBaf/TIWUVsJ97Ung=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
+	 References:Cc:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=OxGxApPm3qrh/Uq5UHSKdmuHA/EdQNdVJma2RSdg+S1AafTTsW8sFpAYf2MgTKfv
+	 fZqivsvv+R5zbqNTRfhhkPPlGppoe5bmTcmMuGHMKC0k/OAykV552sZwl8awTQDsB
+	 AGzeQ4RW7xxaGjveQJX3GD9ERf6C+RV4Ym6AX+TKIf52lZS7atgVBQbv1mV4RtSRH
+	 KkLEhiS7KHYlRbJUQEAALxh1GO9FOVOYR0xJfPw94pP+vbFbjZ76u0PXn2nVtSrHY
+	 6zTbgoX3wK0YvcjZsvq6EeqaZsHZhLuAlAjT+yQReM8MI5A86H1yxI1+ANljXev5R
+	 k8YcZrvMI2bYGwTXBg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1N0Zs0-1sWp6x1rro-018Giw; Fri, 21
+ Jun 2024 07:36:47 +0200
+Message-ID: <a39f024c-7ab0-41f2-839d-ee2f62ddd6e9@web.de>
+Date: Fri, 21 Jun 2024 07:36:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240531202648.277078-1-marex@denx.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Patch v4 04/10] ARM: dts: lpc32xx: Add missing dma and i2s
+ properties
+To: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
+ Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, "J.M.B. Downing" <jonathan.downing@nautel.com>,
+ Vladimir Zapolskiy <vz@mleia.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Russell King <linux@armlinux.org.uk>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+ Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Arnd Bergmann <arnd@arndb.de>, Yangtao Li <frank.li@vivo.com>,
+ Li Zetao <lizetao1@huawei.com>, Michael Ellerman <mpe@ellerman.id.au>,
+ Chancel Liu <chancel.liu@nxp.com>, dmaengine@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org,
+ linux-sound@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-i2c@vger.kernel.org, linux-mtd@lists.infradead.org
+References: <20240620175657.358273-1-piotr.wojtaszczyk@timesys.com>
+ <20240620175657.358273-5-piotr.wojtaszczyk@timesys.com>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240620175657.358273-5-piotr.wojtaszczyk@timesys.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:Q7NNgNryQC4SvaqLSK46kUdFDA/ZWIIeO+B+DYHgCi0VqphfXz0
+ LxOkeihG+Vrnw4q7094DPBzn7YDv2hUbpmVAdrJiShrqQhvj/8VJB5CO1x9U8dSN1exLjhS
+ laSizbk3rhAQA4KMMEgqhwVU706cLgRCb467YcJy47Twkvz6B9MtZOubwGfQ9bMn5k+qiZq
+ UXTnwNamwsXRAU6cK3a+Q==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:sxFXbRmwiow=;ItU3h73LSNWoHkiePPzF614YhOu
+ vuWij/Wyd7G8C5bGFuxA34oRBoufqeSTJ1sO9oRDCQE17yA7yy+qUu1NsP3rGmwp607imLjET
+ tlxMODkKmLWwjZN6WYB6OA00j+fL4/qe6kTDDGUFCsG3taFS+ziaS/XOF31nR0iYxmcGadXTF
+ 6WbDUOyp+fcYOvOUMdt9RtSb2KDjSlAT7V/u2dyxjIY7X2vNdA2A3LesS4hrWtUQ/j9jjsvCn
+ 9beVtwcM8ulERcSMjuM741ha+Tw/qMRQ7gvbaw8+RqndqAdbkDOMNKreIXpENNCPmnCrs2u7d
+ uu7d4ceOXvKIb0nfzXvE8ZxudF5gVftjMcbGm9p5v/g2bWH7hYwtq5BZvz2s5DSK5Ta2ADRIX
+ Zj2gqGUTQD6PH2NOVY/JvDoxrqN45EWShbKqn6+ZNV5ks/kb+tYB/7ZiQ0Pa0HXSr9tf+A+so
+ 2m0HXc6DpDDbA5nZafQpxxhgKpzPfPkjIo0773z24llMY/3IgrJYUbesX+Q5vBXyKqmi9y2M0
+ LK96kUrboZ04zfJ43TiSAduhHGvUqMa0Jd2kkqNGi3fbr9ha1sNkt9rYqZm5yiKLdvXbfM2No
+ 5QPLKvW7DEDeT5xgYTZuSUEhGr0NvKoFBDWXfNP1E1JvGayANL1ZwqCpCoC1SFc5KVhOkyEO2
+ 22iZ/kQ+CA2ClHf081/2WBHIHecK0qpypwt0wXVmjFbC/kbygWKAOart5LMzLQ+2A7RERaKAl
+ 2v4BF7zzWd40QCWglLMTkaLvdwDoghAUBkoMXKoI+FWfJV1ZYWSEIJdBn8GPUvZFcmMAMgaTm
+ TmADuSAnsOy9ft+lNhrWayN5+XfvhQrVkx6wjoHCE4kfM=
 
-On 24-05-31 22:26:26, Marek Vasut wrote:
-> The media_disp[12]_pix clock supply LCDIFv3 pixel clock output. These
-> clocks are usually the only downstream clock from Video PLL on i.MX8MP.
-> Allow these clocks to reconfigure the Video PLL, as that results in
-> accurate pixel clock. If the Video PLL is not reconfigured, the pixel
-> clock accuracy is low.
-> 
-> Signed-off-by: Marek Vasut <marex@denx.de>
+> Adds properties declared in the new DT bindings:
 
-Reviewed-by: Abel Vesa <abel.vesa@linaro.org>
+  Add?                                How do you think about to replace such an abbreviation?
 
-> ---
-> Cc: Abel Vesa <abelvesa@kernel.org>
-> Cc: Fabio Estevam <festevam@gmail.com>
-> Cc: Lukas F. Hartmann <lukas@mntmn.com>
-> Cc: Michael Turquette <mturquette@baylibre.com>
-> Cc: Peng Fan <peng.fan@nxp.com>
-> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
-> Cc: Sascha Hauer <s.hauer@pengutronix.de>
-> Cc: Shawn Guo <shawnguo@kernel.org>
-> Cc: Stephen Boyd <sboyd@kernel.org>
-> Cc: imx@lists.linux.dev
-> Cc: kernel@dh-electronics.com
-> Cc: linux-arm-kernel@lists.infradead.org
-> Cc: linux-clk@vger.kernel.org
-> ---
->  drivers/clk/imx/clk-imx8mp.c | 4 ++--
->  drivers/clk/imx/clk.h        | 4 ++++
->  2 files changed, 6 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
-> index 670aa2bab3017..f11dfe2028319 100644
-> --- a/drivers/clk/imx/clk-imx8mp.c
-> +++ b/drivers/clk/imx/clk-imx8mp.c
-> @@ -547,7 +547,7 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
->  	hws[IMX8MP_CLK_AHB] = imx8m_clk_hw_composite_bus_critical("ahb_root", imx8mp_ahb_sels, ccm_base + 0x9000);
->  	hws[IMX8MP_CLK_AUDIO_AHB] = imx8m_clk_hw_composite_bus("audio_ahb", imx8mp_audio_ahb_sels, ccm_base + 0x9100);
->  	hws[IMX8MP_CLK_MIPI_DSI_ESC_RX] = imx8m_clk_hw_composite_bus("mipi_dsi_esc_rx", imx8mp_mipi_dsi_esc_rx_sels, ccm_base + 0x9200);
-> -	hws[IMX8MP_CLK_MEDIA_DISP2_PIX] = imx8m_clk_hw_composite_bus("media_disp2_pix", imx8mp_media_disp_pix_sels, ccm_base + 0x9300);
-> +	hws[IMX8MP_CLK_MEDIA_DISP2_PIX] = imx8m_clk_hw_composite_bus_flags("media_disp2_pix", imx8mp_media_disp_pix_sels, ccm_base + 0x9300, CLK_SET_RATE_PARENT);
->  
->  	hws[IMX8MP_CLK_IPG_ROOT] = imx_clk_hw_divider2("ipg_root", "ahb_root", ccm_base + 0x9080, 0, 1);
->  
-> @@ -609,7 +609,7 @@ static int imx8mp_clocks_probe(struct platform_device *pdev)
->  	hws[IMX8MP_CLK_USDHC3] = imx8m_clk_hw_composite("usdhc3", imx8mp_usdhc3_sels, ccm_base + 0xbc80);
->  	hws[IMX8MP_CLK_MEDIA_CAM1_PIX] = imx8m_clk_hw_composite("media_cam1_pix", imx8mp_media_cam1_pix_sels, ccm_base + 0xbd00);
->  	hws[IMX8MP_CLK_MEDIA_MIPI_PHY1_REF] = imx8m_clk_hw_composite("media_mipi_phy1_ref", imx8mp_media_mipi_phy1_ref_sels, ccm_base + 0xbd80);
-> -	hws[IMX8MP_CLK_MEDIA_DISP1_PIX] = imx8m_clk_hw_composite("media_disp1_pix", imx8mp_media_disp_pix_sels, ccm_base + 0xbe00);
-> +	hws[IMX8MP_CLK_MEDIA_DISP1_PIX] = imx8m_clk_hw_composite_bus_flags("media_disp1_pix", imx8mp_media_disp_pix_sels, ccm_base + 0xbe00, CLK_SET_RATE_PARENT);
->  	hws[IMX8MP_CLK_MEDIA_CAM2_PIX] = imx8m_clk_hw_composite("media_cam2_pix", imx8mp_media_cam2_pix_sels, ccm_base + 0xbe80);
->  	hws[IMX8MP_CLK_MEDIA_LDB] = imx8m_clk_hw_composite("media_ldb", imx8mp_media_ldb_sels, ccm_base + 0xbf00);
->  	hws[IMX8MP_CLK_MEMREPAIR] = imx8m_clk_hw_composite_critical("mem_repair", imx8mp_memrepair_sels, ccm_base + 0xbf80);
-> diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
-> index adb7ad649a0d2..aa5202f284f3d 100644
-> --- a/drivers/clk/imx/clk.h
-> +++ b/drivers/clk/imx/clk.h
-> @@ -442,6 +442,10 @@ struct clk_hw *__imx8m_clk_hw_composite(const char *name,
->  	_imx8m_clk_hw_composite(name, parent_names, reg, \
->  			IMX_COMPOSITE_BUS, IMX_COMPOSITE_CLK_FLAGS_DEFAULT)
->  
-> +#define imx8m_clk_hw_composite_bus_flags(name, parent_names, reg, flags) \
-> +	_imx8m_clk_hw_composite(name, parent_names, reg, \
-> +			IMX_COMPOSITE_BUS, IMX_COMPOSITE_CLK_FLAGS_DEFAULT | flags)
-> +
->  #define imx8m_clk_hw_composite_bus_critical(name, parent_names, reg)	\
->  	_imx8m_clk_hw_composite(name, parent_names, reg, \
->  			IMX_COMPOSITE_BUS, IMX_COMPOSITE_CLK_FLAGS_CRITICAL)
-> -- 
-> 2.43.0
-> 
+  https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.10-rc4#n94
+
+Regards,
+Markus
