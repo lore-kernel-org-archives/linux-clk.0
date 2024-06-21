@@ -1,57 +1,57 @@
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E40CD17A90F
-	for <linux-clk@vger.kernel.org>; Fri, 21 Jun 2024 11:23:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3BF717B409
+	for <linux-clk@vger.kernel.org>; Fri, 21 Jun 2024 11:23:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718969020; cv=none; b=G+cNxJYpF9dr3xSAo3a/BtT4ldDs2dMO6SvHT7q/h93/VaF1C55bxdTweJ5wCaUh90rF2t1Gm4G8lOYpr5l1Zbj90HUw58Gf7PtMY73nVTyGXDa2sDKvoh0GWzuY9aOGNvbGV+jT7sVLAf4m1fXr1WiUNSnNXTFnlaVziEoejq8=
+	t=1718969022; cv=none; b=baplt2HyZ7AMt3QBkKsKg7uVTkK1WLkb25hmoHFnkKHT8PZ63MYA7yQwL1C1TOXmzjm27tP1HZ+Wfivhb1djCxBytyXa4zb2HPyyO7simgp1OB8vOB1tJnuhjwmnhA+ZJbHh0yjrKWHvo7k2nm+SYvH2JpRMRa7tRZQ5KlW6n88=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718969020; c=relaxed/simple;
-	bh=lNldhumSE6RINO7oqa+VZtuUTBaUdRaXgz5D33kBNAs=;
+	s=arc-20240116; t=1718969022; c=relaxed/simple;
+	bh=JYgANfGK0OX8coSzjyoca5b835OY0thvAp8k5tv/WVM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=hBiu7pX5Wo5zSmk0HBiNVMa01T8nAq473qbHhwlgxkqhqCw/n4+wNzCwlPAbjkfqTPDmsCmlfzI8Wqyc2ysJ6PBveaMSFmqdOS/P/nGDvY/vr+unWRaUvHX8smyn5e4qkncG0TL+JYE2rgeXL7wD98fyAJ1R/baNN6bYjJuc1A0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=bcFzA+EA; arc=none smtp.client-ip=209.85.208.45
+	 MIME-Version; b=jwDd6PKOQ0A4PoCGGsExw+woEeYTEuigc12b0VKYHH0+JvgwX17PuClX5gv/zT4l5cMgfZRRaYSfmS/+1oOruO0neA/Vq5e4fZgovjvsg6Heg04eoxIoAahMFvcn85EqLxA9Cj51SK235E0HYsU/2UqcM4jzaJTdqwUC+UvkzZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=JAa7eP8N; arc=none smtp.client-ip=209.85.218.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="bcFzA+EA"
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-57d1d45ba34so2107963a12.3
-        for <linux-clk@vger.kernel.org>; Fri, 21 Jun 2024 04:23:38 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="JAa7eP8N"
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a6f13dddf7eso233567966b.0
+        for <linux-clk@vger.kernel.org>; Fri, 21 Jun 2024 04:23:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1718969017; x=1719573817; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1718969019; x=1719573819; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rP4+zuetuuIfhuOzhXeFAzrE549ps3331iDalIZrx6w=;
-        b=bcFzA+EAsUy4SO6/cfglGOW42Yy0TzcyVBEJl1JTnRvaXaNchrVVgdQsvSpknXkhqC
-         07rePusNlPT3B6Ae/vHfZOOZV7Hm0L/xKL6ResvzmkscXqNhLZ+zK1BM+T0GlmKBsYwP
-         S/RpYudq4SRtfFlUffqHAqScjF6gfHZ3X4aZsV62vDukJW2YYFk9be3Wjrb0JxL71vs2
-         zGHFY2QpHqQMXDfU40tg8e4tnlv3Xu+z9bgRyq7WQXEOwR+z3L32AmdonltmeQu1TpaZ
-         M5NuTozDAb3d0rS4wBObPq1s/S0VMUnUbczSmfMnVtTK3W2cKacFkIGOkXT4NBcdrJKY
-         hqvA==
+        bh=ebUuaMvHVQnkndloXfGsR/owtWP+gpjE1NoWoH3dplE=;
+        b=JAa7eP8NR3gPlIWuXDitYo/A9n1uSnBAtziN6wps1x1rrVVjUtYJ0ujtn55MkhJ/Tb
+         ORWKkmkyukeN5BgoHQ5halpq6Fa+aWnKNioEF/R6sXt83DKoofB5jCtNeOZ9quJWNM9G
+         As9zlAO51VCsfZc9q19X3oTw/5XCX9jUBEqNAmbj72DNuQAydzc4n2etJMySMJ1VRytY
+         X4OXV6p2A2P7vnMUvuYj1htW5lrsgCPsqE22vEb9P/PtsBoHy9VkSoRGfG6cao17wtXo
+         r0BEnujtQC2IP6shoU2xugkAXIHtlWEDUcvmOvaa/IaH8hLQngx1AEMhoFyDxNRKT+N6
+         QRJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718969017; x=1719573817;
+        d=1e100.net; s=20230601; t=1718969019; x=1719573819;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rP4+zuetuuIfhuOzhXeFAzrE549ps3331iDalIZrx6w=;
-        b=m8s4PIr27jYkhhI2dk7sxDg1tZdqpF8MWMBQAefebwC9l3Vve1pTjiDsFO5lnH04FK
-         iQAHQHmPAW/fvHynn/gWqfgRs3lnO33mslaw0x3Mgd3yUOA1vK4ZOzZ8uKzjYZmkg2n5
-         EMgS5qx6+Ma6AC+zUmaVc1EZliJ/ydBR4/k1ez1tg8sj/5HXibO77M7melVVYaw6I+Qc
-         onYkqJOmrpsQB6EtSJtLHC2os967pFXkOAGh+fJN3+xdRx2+BvZ44oCnihdPPRwLY/xu
-         v0aB8OmoVcBjmO+sibDYxbzPhIeyz1DgOMdaWyAcIp5ts1KauOFNgQCl+OmVe93zq1Q0
-         G7hg==
-X-Forwarded-Encrypted: i=1; AJvYcCWDLANQ0W/rWvGSxPDo+Js5dFaB7AkKL0TkyC9v3l6PgyIROuc258n9xAtrxobRstXdzNwUr3m5kYDssK7JY6D1O5y6ZxE7h/Wk
-X-Gm-Message-State: AOJu0Yx4z5eznWuLpzq99K9lDdtugHzQ+JyHF5/WEQ3XEAsDk9I75fvn
-	/yjaG6iSHURROTCf9lSbpb74X9p3knhLvWJ7VU2glyvaRE9FfVq1MdROL3Ih8ww=
-X-Google-Smtp-Source: AGHT+IFIq66bSlA38LAdExrJtWaTZlg6NozLGS4VPpVsqky9aYie4i5NKq+JpOklKvZ45RaWZgib2g==
-X-Received: by 2002:a17:907:bc4:b0:a6f:4ef7:85bd with SMTP id a640c23a62f3a-a6fab77a648mr353123466b.47.1718969017264;
-        Fri, 21 Jun 2024 04:23:37 -0700 (PDT)
+        bh=ebUuaMvHVQnkndloXfGsR/owtWP+gpjE1NoWoH3dplE=;
+        b=rI+YufDT1r93Bt4bcEldl3Qv6/MwVzUWK57gkCF1WK1O455LpHPSGI3LanJNX2Vs56
+         3qKGQyU9rsikw9mwbwPYoiWQX8g8gccIKn2H95NXf/lz86KMir9SacKDR4U5vTj5LvuO
+         Sx6jnHMPgmOO/j3nsrx5GZUCMWScbJ96FYO7HW0ANcWIoQh1Re5aZiehmLFap0OYYQYe
+         aX4lAizFOjAcH6TJG3OGCxR2nY1cW3cdJBQqYNOQCq7odOaxs5uu6FSlIthXcSeYFs5Y
+         6gdfd+9iZABhAw1NQss+hbha5MlKRgI02/HDL/f9bv10YJDUsOPYbpXXs996/8BsHqMD
+         2t2A==
+X-Forwarded-Encrypted: i=1; AJvYcCVwbK9Y/OG0K/rDP8cpPmaf6VTwFOTn6Mit7+5shoOZAsg//rh5aUGT1BcxdIAo7C40ROw4SHHy3grgWuWjLlpQGaNAuqQ1eLfi
+X-Gm-Message-State: AOJu0YzucDR+wFJeFcJaiy9QYt82TR3xaxwmSuzgDetl/2gtc1mfupJ1
+	wd6uOst60+5SHHT/KESEmn3SFIM+sI44f9PbR5YSoEzzJRq1zh7zt29vk0rTJzM=
+X-Google-Smtp-Source: AGHT+IGZv8gS1+I6ldBjfQ4fdMF7NlgFickAepkyUrui9xQnT8bZE+QnGQ4UWGjz1h6JNkW6Y5A7vw==
+X-Received: by 2002:a17:907:a587:b0:a6f:bf0f:4209 with SMTP id a640c23a62f3a-a6fbf0f42f2mr378145566b.42.1718969019378;
+        Fri, 21 Jun 2024 04:23:39 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.70])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fd0838345sm64498466b.99.2024.06.21.04.23.35
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fd0838345sm64498466b.99.2024.06.21.04.23.37
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 04:23:36 -0700 (PDT)
+        Fri, 21 Jun 2024 04:23:39 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: chris.brandt@renesas.com,
@@ -72,9 +72,9 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	claudiu.beznea@tuxon.dev,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 10/12] arm64: dts: renesas: r9a08g045: Add I2C nodes
-Date: Fri, 21 Jun 2024 14:23:01 +0300
-Message-Id: <20240621112303.1607621-11-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 11/12] arm64: dts: renesas: rzg3s-smarc: Enable i2c0 node
+Date: Fri, 21 Jun 2024 14:23:02 +0300
+Message-Id: <20240621112303.1607621-12-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240621112303.1607621-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20240621112303.1607621-1-claudiu.beznea.uj@bp.renesas.com>
@@ -88,114 +88,38 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-The Renesas RZ/G3S has 4 I2C channels. Add DT nodes for it.
+Enable i2c0 node.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- arch/arm64/boot/dts/renesas/r9a08g045.dtsi | 90 ++++++++++++++++++++++
- 1 file changed, 90 insertions(+)
+ arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-index 2162c247d6de..cc5beed37ae8 100644
---- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-@@ -72,6 +72,96 @@ scif0: serial@1004b800 {
- 			status = "disabled";
- 		};
+diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
+index deb2ad37bb2e..7945d44e6ee1 100644
+--- a/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi
+@@ -11,6 +11,7 @@
  
-+		i2c0: i2c@10090000 {
-+			compatible = "renesas,riic-r9a08g045", "renesas,riic-r9a09g057";
-+			reg = <0 0x10090000 0 0x400>;
-+			interrupts = <GIC_SPI 257 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 263 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 264 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 259 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 260 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 258 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 261 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 262 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "tei", "ri", "ti", "spi", "sti",
-+					  "naki", "ali", "tmoi";
-+			clocks = <&cpg CPG_MOD R9A08G045_I2C0_PCLK>;
-+			clock-frequency = <100000>;
-+			resets = <&cpg R9A08G045_I2C0_MRST>;
-+			power-domains = <&cpg>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
+ / {
+ 	aliases {
++		i2c0 = &i2c0;
+ 		serial0 = &scif0;
+ 		mmc1 = &sdhi1;
+ 	};
+@@ -66,6 +67,12 @@ vccq_sdhi1: regulator-vccq-sdhi1 {
+ 	};
+ };
+ 
++&i2c0 {
++	status = "okay";
 +
-+		i2c1: i2c@10090400 {
-+			compatible = "renesas,riic-r9a08g045", "renesas,riic-r9a09g057";
-+			reg = <0 0x10090400 0 0x400>;
-+			interrupts = <GIC_SPI 265 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 271 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 272 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 267 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 268 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 269 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 270 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "tei", "ri", "ti", "spi", "sti",
-+					  "naki", "ali", "tmoi";
-+			clocks = <&cpg CPG_MOD R9A08G045_I2C1_PCLK>;
-+			clock-frequency = <100000>;
-+			resets = <&cpg R9A08G045_I2C1_MRST>;
-+			power-domains = <&cpg>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			status = "disabled";
-+		};
++	clock-frequency = <1000000>;
++};
 +
-+		i2c2: i2c@10090800 {
-+			compatible = "renesas,riic-r9a08g045", "renesas,riic-r9a09g057";
-+			reg = <0 0x10090800 0 0x400>;
-+			interrupts = <GIC_SPI 273 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 279 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 280 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 275 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 276 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 274 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 277 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 278 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "tei", "ri", "ti", "spi", "sti",
-+					  "naki", "ali", "tmoi";
-+			clocks = <&cpg CPG_MOD R9A08G045_I2C2_PCLK>;
-+			clock-frequency = <100000>;
-+			resets = <&cpg R9A08G045_I2C2_MRST>;
-+			power-domains = <&cpg>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			renesas,riic-no-fast-mode-plus;
-+			status = "disabled";
-+		};
-+
-+		i2c3: i2c@10090c00 {
-+			compatible = "renesas,riic-r9a08g045", "renesas,riic-r9a09g057";
-+			reg = <0 0x10090c00 0 0x400>;
-+			interrupts = <GIC_SPI 281 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 287 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 288 IRQ_TYPE_EDGE_RISING>,
-+				     <GIC_SPI 283 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 284 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 282 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 285 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 286 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "tei", "ri", "ti", "spi", "sti",
-+					  "naki", "ali", "tmoi";
-+			clocks = <&cpg CPG_MOD R9A08G045_I2C3_PCLK>;
-+			clock-frequency = <100000>;
-+			resets = <&cpg R9A08G045_I2C3_MRST>;
-+			power-domains = <&cpg>;
-+			#address-cells = <1>;
-+			#size-cells = <0>;
-+			renesas,riic-no-fast-mode-plus;
-+			status = "disabled";
-+		};
-+
- 		cpg: clock-controller@11010000 {
- 			compatible = "renesas,r9a08g045-cpg";
- 			reg = <0 0x11010000 0 0x10000>;
+ &pinctrl {
+ 	key-1-gpio-hog {
+ 		gpio-hog;
 -- 
 2.39.2
 
