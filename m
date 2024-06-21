@@ -1,202 +1,117 @@
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 311AF155A43
-	for <linux-clk@vger.kernel.org>; Fri, 21 Jun 2024 13:29:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10A9120335;
+	Fri, 21 Jun 2024 13:45:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718976589; cv=none; b=mLzeg7/3S8PpfoFFHMqbtG/ResNpm179s0IqC2DyFPU9S8uo9t6wy7IlEkK5x/7rb7Jhm31SPRx5zW3dq4ifaCFaiKDeVtwSLitNdI1QAmC1nQee5TXT5nngkLQN4veXnFBlQiwlmZiwN1Yf/xMPJwhibim3G95HB2KTPaTfpIs=
+	t=1718977504; cv=none; b=qdLL7FRTIQX8CXZYp0QeT1mrvpvjb346fBGWAO7rR/EoWqEZB2CyWvuQ6la3DN2BSCfgm4mBdDohjx5WWAwGS8tHqFMI042opd3Yax2iyZrAZNjaKSHR62sRI1iukNQthNeFQKYYNJKSBg96WRji2PMXJwW2pHIv1o7WDsyqQLs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718976589; c=relaxed/simple;
-	bh=PrpYvrr+lZj/0Jd3AkYhgkAtqFwGNxKdteDQAdEtqEI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XTEYfKBu+4Ze35JhZJbsOG9NfhXxwZSjnUE4TBa9YExSSeI3q+PRidZJbeaOlY4N8soX/0wuRAdFE1NroB2IofY2v6xqlA5T8PeLDvUkYE9qiixrGTE+xvSMzxEf4Ys8surr/k1amVOXRyM1Ox02P42dIu8IaNpSlkBZQgNgHzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=N1g6+9HU; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1718977504; c=relaxed/simple;
+	bh=WoquWunYmCSL+/95Rrnl6iED+A+KdzoiIUpUW0JykN4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jWogVBkYvtsUW2F7gYb4UMRPZACjHguz53bIlkBIIx2MRBnO+UaZ6jDyD2C5J8KtJn21+kFmaXkA6xxjuMWxDtyzwqeaVgU0to6PhtGN4ZnpYHbf5/VWunO1Mi4ykTyYyCkZ9XCBrlFa91VMmcE6G8MR4dlW5Mw72TojIH1Jw4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=L8B9Gp1r; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="N1g6+9HU"
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a6f85f82ffeso254873866b.0
-        for <linux-clk@vger.kernel.org>; Fri, 21 Jun 2024 06:29:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1718976585; x=1719581385; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=INoRISBtXksAaYyy0JvylhuhhaTC+YBBST6VNRHIR4w=;
-        b=N1g6+9HUkZuIEMIk8r7k57BGHCPOsP5YljHBrK545ZZ3mKktX4GvovEJ/SlifC4k9A
-         P09vg2gjtzqXpCRoDcR12a2v4x+s0DCoYAswrgeXKxLSTje14IHb2+W12wym0mXqxiyd
-         VK4/yzSpSBlrJFTO9LFXGHHH9cECYHw5oOnmoqURPSLqGXrzncyiq7dD4Y+PDZx+3KhM
-         ZtrBJA0y80eDFJTGH12dUg2LBfJITaGauRwQfs7sg4KJwIp1UKA4PBvU7oWAUh8GQLsP
-         WN7ZWyMvfJ4OJSiVXONtFUrcgxP3SB6q/A4I6bGEGrrbrHLOpkqFY29ThVfJoh8LW3ty
-         q3sQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718976585; x=1719581385;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=INoRISBtXksAaYyy0JvylhuhhaTC+YBBST6VNRHIR4w=;
-        b=vUVBPHFEbFbkTBq73qF/44Vg6FiFBpDFP6BYgFnSkTCF4UFaSEQX7JVDeHQxouUy+G
-         rewkPTxrnSt/QayBRV4+lUOf+R4xctQamNQ1J+tWdCbYK0/XhAUK5V9Rrb5MU/AOCa3m
-         5Vd5wqanjqOpBgL9O2b16r0tr36uPLApvxChm/8TbTdM7Aeg2KKWSerJ1/XBlf8AgT5W
-         TzEoPN9vOAZfHWGw0iqEftTgind7+o3CWva3prHuZL+zjLzFzvQLSkgXNiMx46O6wj3M
-         nQM3pXsFoo0yOdYRaHtXKOS1dAQEMpFn5+6BhuYozwTfeSR/jMub9j5oKq89xAgZO77o
-         lCpA==
-X-Forwarded-Encrypted: i=1; AJvYcCVXUN92uQst/43zeOZssagm9nSJBd5pYuE7Xd9eoqh9V/GF6eXdZL64OiTZ+i5D7ShKHeSfL3QduPMPcDwiErrj0oDp7Xau6o4y
-X-Gm-Message-State: AOJu0YwbeGeDfob7sWNulJ8aNBgAhfHpyICa/JIT4Sma/YjBAmngyqf/
-	mpN1MGpLF2y4DXuiCf+475EPaCSSpwgpXpg8dDPzZFPU/RsDgn5oFWiiW0jm3HE=
-X-Google-Smtp-Source: AGHT+IFnJLB1bdpPyMNJb5hUtZ8cwpI1DBnsNCd6rt2DmnH3ISK33RmtfNC2TKx7U0ybwxMCRAAz9w==
-X-Received: by 2002:a17:906:f2c3:b0:a6f:15c9:9aa3 with SMTP id a640c23a62f3a-a6fab7d6a99mr477701666b.67.1718976585397;
-        Fri, 21 Jun 2024 06:29:45 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.70])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fcf42a650sm84492566b.43.2024.06.21.06.29.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 21 Jun 2024 06:29:44 -0700 (PDT)
-Message-ID: <e381e1c0-2e23-4734-a55f-cab6c21f8c5b@tuxon.dev>
-Date: Fri, 21 Jun 2024 16:29:41 +0300
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="L8B9Gp1r"
+Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
+	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45LBel53014651;
+	Fri, 21 Jun 2024 08:14:24 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=FRa3aI0ad3u7nydsNc44sEFGNZQ
+	hulyTRHX1Q7HOfYY=; b=L8B9Gp1rQuEvKJ70pgMgEIohqQzyUnXFuEishOXEnsx
+	G5dKGv97qbZc/OuF7Ty636rO6Ma19DNRsldTlSI4lG4CfgyQYXihTPG5kqzxnHao
+	U04a+dlR1YD2aXLO9cZg6rR0QFvW9BsGRHu0OwgPxmQganQds8Bi3g8k5PnYKcGs
+	K1DNzFMDD3DEGVqpT7uMtW8tITpdHLVxOFaEV2QDQKtUlMvgXiGYZSGdGCi23jF6
+	I2Ge70brJvm47F0OZY/r9Zz5uSpjnR46Am0Ay6LeHmfv7MvkMd2YZONso5L9qk6p
+	0xdhB+pBHnkRPbAKLZ103YAwCQVHPXXzJJD/YH146Iw==
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 3yw4yxs5v7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Jun 2024 08:14:23 -0400 (EDT)
+Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
+	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 45LCEMf0021835
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 21 Jun 2024 08:14:22 -0400
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Fri, 21 Jun
+ 2024 08:14:21 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Fri, 21 Jun 2024 08:14:21 -0400
+Received: from amiclaus-VirtualBox.ad.analog.com (AMICLAUS-L02.ad.analog.com [10.48.65.120])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 45LCE6Su032255;
+	Fri, 21 Jun 2024 08:14:08 -0400
+From: Antoniu Miclaus <antoniu.miclaus@analog.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Lars-Peter Clausen
+	<lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Jonathan
+ Cameron <jic23@kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-iio@vger.kernel.org>
+CC: Antoniu Miclaus <antoniu.miclaus@analog.com>,
+        Conor Dooley
+	<conor.dooley@microchip.com>
+Subject: [PATCH v6 1/2] dt-bindings: iio: adf4350: add clk provider prop
+Date: Fri, 21 Jun 2024 15:13:58 +0300
+Message-ID: <20240621121403.47912-1-antoniu.miclaus@analog.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/12] dt-bindings: i2c: renesas,riic: Document the
- R9A08G045 support
-Content-Language: en-US
-To: Biju Das <biju.das.jz@bp.renesas.com>,
- Chris Brandt <Chris.Brandt@renesas.com>,
- "andi.shyti@kernel.org" <andi.shyti@kernel.org>,
- "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "geert+renesas@glider.be" <geert+renesas@glider.be>,
- "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "sboyd@kernel.org" <sboyd@kernel.org>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>
-Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
- "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240621112303.1607621-1-claudiu.beznea.uj@bp.renesas.com>
- <20240621112303.1607621-9-claudiu.beznea.uj@bp.renesas.com>
- <TY3PR01MB11346105D3D3DD46AEF8CD44986C92@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <0bc78e5e-de37-4ff6-ac74-571f615b97f9@tuxon.dev>
- <TY3PR01MB1134602C189C6C63C6187840886C92@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <b5a3ef7c-8509-4065-ab0f-efb5a7e5fcbb@tuxon.dev>
- <TY3PR01MB11346D9CF89F7ED9B6A49C61586C92@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <TY3PR01MB11346D9CF89F7ED9B6A49C61586C92@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-GUID: q5lCPQa3DyGBp6-UeJoXADohoYHrnZur
+X-Proofpoint-ORIG-GUID: q5lCPQa3DyGBp6-UeJoXADohoYHrnZur
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-21_04,2024-06-21_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
+ bulkscore=0 malwarescore=0 spamscore=0 mlxscore=0 phishscore=0
+ impostorscore=0 clxscore=1015 mlxlogscore=999 priorityscore=1501
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406210091
 
+Add properties required for providing clock to other consumers.
 
+Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+---
+no changes in v6.
+ .../devicetree/bindings/iio/frequency/adi,adf4350.yaml      | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-On 21.06.2024 16:10, Biju Das wrote:
-> 
-> 
->> -----Original Message-----
->> From: claudiu beznea <claudiu.beznea@tuxon.dev>
->> Sent: Friday, June 21, 2024 2:06 PM
->  Subject: Re: [PATCH 08/12] dt-bindings: i2c: renesas,riic: Document the R9A08G045 support
->>
->>
->>
->> On 21.06.2024 15:56, Biju Das wrote:
->>>
->>> Hi claudiu,
->>>
->>>> -----Original Message-----
->>>> From: claudiu beznea <claudiu.beznea@tuxon.dev>
->>>> Sent: Friday, June 21, 2024 1:55 PM
->>>> Subject: Re: [PATCH 08/12] dt-bindings: i2c: renesas,riic: Document
->>>> the R9A08G045 support
->>>>
->>>>
->>>>
->>>> On 21.06.2024 15:34, Biju Das wrote:
->>>>> Hi Claudiu,
->>>>>
->>>>>> -----Original Message-----
->>>>>> From: Claudiu <claudiu.beznea@tuxon.dev>
->>>>>> Sent: Friday, June 21, 2024 12:23 PM
->>>>>> Subject: [PATCH 08/12] dt-bindings: i2c: renesas,riic: Document the
->>>>>> R9A08G045 support
->>>>>>
->>>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>>>>
->>>>>> Document the Renesas RZ/G3S (R9A08G045) RIIC IP. This is compatible
->>>>>> with the version available on Renesas RZ/V2H (R9A09G075). Most of
->>>>>> the IP variants that the RIIC driver is working with supports fast mode plus.
->>>>>> However, it happens that on the same SoC to have IP instatiations
->>>>>> that support fast mode plus as well as IP instantiation that
->>>>>> doesn't support it. For this, introduced the renesas,riic-no-fast- mode-plus property.
->>>>>>
->>>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>>>> ---
->>>>>>  Documentation/devicetree/bindings/i2c/renesas,riic.yaml | 8
->>>>>> ++++++++
->>>>>>  1 file changed, 8 insertions(+)
->>>>>>
->>>>>> diff --git
->>>>>> a/Documentation/devicetree/bindings/i2c/renesas,riic.yaml
->>>>>> b/Documentation/devicetree/bindings/i2c/renesas,riic.yaml
->>>>>> index 91ecf17b7a81..c0964edbca69 100644
->>>>>> --- a/Documentation/devicetree/bindings/i2c/renesas,riic.yaml
->>>>>> +++ b/Documentation/devicetree/bindings/i2c/renesas,riic.yaml
->>>>>> @@ -25,6 +25,10 @@ properties:
->>>>>>                - renesas,riic-r9a07g054  # RZ/V2L
->>>>>>            - const: renesas,riic-rz      # RZ/A or RZ/G2L
->>>>>>
->>>>>> +      - items:
->>>>>> +          - const: renesas,riic-r9a08g045   # RZ/G3S
->>>>>> +          - const: renesas,riic-r9a09g057
->>>>>> +
->>>>>>        - const: renesas,riic-r9a09g057   # RZ/V2H(P)
->>>>>>
->>>>>>    reg:
->>>>>> @@ -66,6 +70,10 @@ properties:
->>>>>>    resets:
->>>>>>      maxItems: 1
->>>>>>
->>>>>> +  renesas,riic-no-fast-mode-plus:
->>>>>> +    description: specifies if fast mode plus is not supported
->>>>>> +    type: Boolean
->>>>>
->>>>> Can't this info, as part of device data?? Based on frequency and
->>>>> device data is enough to derive this info??
->>>>
->>>> We can't rely completely on device data because on RZ/G3S we have 2
->>>> RIIC channels that support fast mode plus and 2 that doesn't support it.
->>>
->>> Can't array of bits for this channels won't help??
->>
->> Can you give an example? I'm not sure I understand how you would prefer me to use the array of
->> bits.
-> 
-> struct riic_of_data {
-> 	u8 regs[RIIC_REG_END];
-> 	u16 fast_mode_info info; /* 1 means fast mode plus supported, starting with channel 0*/
-> };
-> 
-> .info = 0x3, means channel 0 and 1 has fast mode plus supported
-> .info = 0x0, none of the channel supported fast mode plus.
+diff --git a/Documentation/devicetree/bindings/iio/frequency/adi,adf4350.yaml b/Documentation/devicetree/bindings/iio/frequency/adi,adf4350.yaml
+index 43cbf27114c7..d1d1311332f8 100644
+--- a/Documentation/devicetree/bindings/iio/frequency/adi,adf4350.yaml
++++ b/Documentation/devicetree/bindings/iio/frequency/adi,adf4350.yaml
+@@ -28,6 +28,12 @@ properties:
+   clock-names:
+     const: clkin
+ 
++  '#clock-cells':
++    const: 0
++
++  clock-output-names:
++    maxItems: 1
++
+   gpios:
+     maxItems: 1
+     description: Lock detect GPIO.
+-- 
+2.45.2
 
-If I understand the proposal correctly, a match b/w struct
-riic_of_data::info bit + frequency and the nodes in device tree is still
-needed, right? As the RZ/G3S RIIC channels are using the same compatible.
-W/o a match how I cannot detect in the driver who is, e.g., channel 1 that
-supports FMP w/o hardcoding some RIIC channel data in the driver (e.g. RIIC
-channel address)?
-
-Also, for future SoCs that will suffer the same symptom but for different
-channels (and channels with different addresses) the driver will have to be
-adapted to match b/w the channel bit in struct riic_of_data::info and
-channel node from DT.
-
-> 
-> Cheers,
-> Biju
