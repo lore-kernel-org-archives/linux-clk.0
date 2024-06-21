@@ -1,83 +1,57 @@
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4183B17B43C
-	for <linux-clk@vger.kernel.org>; Fri, 21 Jun 2024 11:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F0DA17335C;
+	Fri, 21 Jun 2024 11:48:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718969024; cv=none; b=X5nesKVAN/LBETYA0RUBoR4eRau7S7u4RE9eLW8RwnDHKh7yiXPkC43q8ykcZC0265pUKk21mb2AJtKjOH6cM2ixzvHbxUZPTiVg55dvXcYnBQUiCGoCT3naQcqkkZ7+ByetADG3ZMbGBy3MukVbvsHVSN1anqCjk5rBObz8tRw=
+	t=1718970483; cv=none; b=lsgxB9AL+d777rB2OkzgO9uaC0Qj+U3+xzdrWt+pvzdZOJ2+aKejhA9IHA0PYRlAEmZzoiP1dCLa8xIoXNSAotPwGuTJgnLW2xVLb3sr+N+vDKvu5nZpP1qUvCU5XpNd8Yf7XlqKJspAEXhrqn8bfFVcLrNGMtL04MJVNnpJDMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718969024; c=relaxed/simple;
-	bh=n02VnI1z3Lo/vCVvdYX3gNJ/na1w3LKQu6cqOd+GMII=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=cxMqy4NeIH81GQZUu5Vz6YgiaibWDztA5S4tUgkuoZD4BDdaGvL9cOg4P9nwKYspe+3UtEqkE4ikpwdqUUurke31V4cNbHXJ+Cyp745VV8mRrmOO4JLKWgRQh0M+PWbg/cuOORjB87f658YA0uUJ4q6orzzBbP0My02nRHWGUE0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=e8GGMkk+; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1718970483; c=relaxed/simple;
+	bh=7Z+8FcX1N2P4XzCec6u30kS5YpcYPjQl4yJIYffpZ3g=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=aIqIhnPeBF4OyFoaNNJj8tBk+V9Yo1P92W2Qu7I8pkVUgB3rUHLaJryZeqs3esBsn7/HOfLdbqE7EL3wbDhqPV6U//L7pf3JB+ekMPRTV6JX2alHIphzTW+UytlDvhCydgUmEe0LJbDrD2ryc4s13Oo6kndmZofPQa8EG0Bx9TY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BXzEOAQ9; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="e8GGMkk+"
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a6f1da33826so239061866b.0
-        for <linux-clk@vger.kernel.org>; Fri, 21 Jun 2024 04:23:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1718969021; x=1719573821; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=veIrjSKIW0msyP1BPKwCOv7rRYyO3ebgm2ScapHwacw=;
-        b=e8GGMkk+MEXMMx8ecWdrmUcnfitLVwhwuDlqjvGYpUyGhaWvRXyN5hdsYkLxR7tuV1
-         IuxOuTN7n8C/W6q8+nERUdyT7V/jcGADm4gRzAneS+IkzEAxyJSSciw2rwOxAi3LmpzY
-         ajVubbLI+apSF3iG7ocIzwYsbcVXO9EB1er0xxTY/3JmfhNZQYeGC5yEUZGQJffmVGI4
-         3Ymvez3WGcJ1juZQ0TVoJI/ywBLAmc508wv2kQE0naQuF1ni/bTnnCRYx+NcpnGHaHj6
-         AlqSrHwEmsKSxrXxk+caxlBNtZAO8qJPJgJL5mKPq9kypOiiK7xqbY2H5MVCSy43L9NN
-         cOaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1718969021; x=1719573821;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=veIrjSKIW0msyP1BPKwCOv7rRYyO3ebgm2ScapHwacw=;
-        b=jH3pMUSG2EGmC3GacWKQRmrAWaNyCgJzl8wx0OjlGtrpnPSh5yFvroroTr0vVucNYb
-         1dDgXDf2SColggp8zZvBXulh0OThyird3KEQsgYiMO253hW+Pdc93xFlyYFKUXhETqd6
-         nV4b3DKCOGrvEpnZ/dFpAyF9myiBDX6oIIjq0UCY57jD0MHxR5UzPNpWk1izhevTla1j
-         i8hTV3uhFeyXJpIG6dyAYYN+dX1XD+JWHnOgilU/5GwM21sVFZzj+9OCdYzPjfdzbOA9
-         Wro80WtZZjPSatu2J4j15qa54+RCb3adzqFFPu30Bx3TsA57Qut8higwnMo8nTdJx+jA
-         gJmA==
-X-Forwarded-Encrypted: i=1; AJvYcCXs7eZt5ke9UkoaxI84q25+/zNV0S3bt9c1YtZi1Sft/cqgYRttfVFLP3YYycz4F59NvSJ6xnltLMcuZ8rOFs22Df49iFABIQwG
-X-Gm-Message-State: AOJu0Yxzuz+m7lc6Bg4n/b6tUxfpJ4XUltcnOvh4uprTv231+Dw1e//z
-	7YHhuEjqqAipvE6OsrPo8fFG0BYO5TIM0XbaGJK7DVkzBDwJSzVkZlsykBP/O0U=
-X-Google-Smtp-Source: AGHT+IEEH1uXQ9SWBQpZ3LT5PHwfn4wvDC947Dj2o3fom2F9AP5MXqF9KQPaa6c5ngH5rqOd6vpGow==
-X-Received: by 2002:a17:907:ca1b:b0:a63:49d3:e1c5 with SMTP id a640c23a62f3a-a6fab7d6a8emr476914666b.64.1718969021696;
-        Fri, 21 Jun 2024 04:23:41 -0700 (PDT)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.70])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fd0838345sm64498466b.99.2024.06.21.04.23.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 04:23:41 -0700 (PDT)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: chris.brandt@renesas.com,
-	andi.shyti@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	geert+renesas@glider.be,
-	magnus.damm@gmail.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	p.zabel@pengutronix.de,
-	wsa+renesas@sang-engineering.com
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	claudiu.beznea@tuxon.dev,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 12/12] arm64: dts: renesas: rzg3s-smarc-som: Enable i2c1 node
-Date: Fri, 21 Jun 2024 14:23:03 +0300
-Message-Id: <20240621112303.1607621-13-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240621112303.1607621-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20240621112303.1607621-1-claudiu.beznea.uj@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BXzEOAQ9"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45L8i1wd021385;
+	Fri, 21 Jun 2024 11:47:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=+ouvelZxylIYzDsDNrPHND
+	Hg91pcIf3hHhEAdWgue/M=; b=BXzEOAQ9lWcUvXPJ9SodSPcjT1R/OiGUJFL3Ho
+	PHP8RMiMRyc7hLKC19ZbgpkGTO7ZWSrcXJqPDkXmnCOH/VBwK4OOcFXlwzyOm44z
+	+IIORfVjK+kZwMaNATwsMnbefw0gpFhXriwTE7ctRSlxfWFQ1Saa46NMVzc2kmm2
+	mfcVCpYLyVxrLAxe63XWj/bSzuW1LevMc7tLMwwGUOiGxV3OhGLaZR4O5wq6ZLtH
+	JOTSX7uhWQDC2OeEN/Ig+/DGaoGRhff4kRT20ZQVWEGAQ1/E99NEYQZYQPtu3NrJ
+	j2mr1+6fYvecw+Fzh8rI0MA0Ojndf87BpNFeCnIPVFM1vHSQ==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yw6920dw8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Jun 2024 11:47:23 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45LBlL8l023071
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 21 Jun 2024 11:47:21 GMT
+Received: from hu-gokulsri-blr.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 21 Jun 2024 04:47:16 -0700
+From: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
+To: <sboyd@kernel.org>, <andersson@kernel.org>, <bjorn.andersson@linaro.org>,
+        <david.brown@linaro.org>, <devicetree@vger.kernel.org>,
+        <jassisinghbrar@gmail.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <mark.rutland@arm.com>,
+        <mturquette@baylibre.com>, <ohad@wizery.com>, <robh@kernel.org>,
+        <sricharan@codeaurora.org>
+CC: <gokulsri@codeaurora.org>
+Subject: [PATCH v9 0/8] remoteproc: qcom: q6v5-wcss: Add support for secure pil
+Date: Fri, 21 Jun 2024 17:16:51 +0530
+Message-ID: <20240621114659.2958170-1-quic_gokulsri@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -85,39 +59,46 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: ltZ0Ud7emP-AmLq_72k7T8yRPOTSW_rQ
+X-Proofpoint-GUID: ltZ0Ud7emP-AmLq_72k7T8yRPOTSW_rQ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-21_04,2024-06-21_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1011
+ bulkscore=0 lowpriorityscore=0 malwarescore=0 adultscore=0 mlxscore=0
+ priorityscore=1501 spamscore=0 impostorscore=0 phishscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406210087
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+IPQ8074 needs support for secure pil as well.
+Also, currently only unified firmware is supported.
+IPQ8074 supports split firmware for q6 and m3, so
+adding support for that.
 
-Enable i2c1 node.
+changes since v8:
+ - Rebased on top of Linux 6.10-rc4
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
- arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+Gokul Sriram Palanisamy (8):
+  remoteproc: qcom: Add PRNG proxy clock
+  remoteproc: qcom: Add secure PIL support
+  remoteproc: qcom: Add support for split q6 + m3 wlan firmware
+  remoteproc: qcom: Add ssr subdevice identifier
+  remoteproc: qcom: Update regmap offsets for halt register
+  dt-bindings: clock: qcom: Add reset for WCSSAON
+  clk: qcom: Add WCSSAON reset
+  arm64: dts: qcom: Enable Q6v5 WCSS for ipq8074 SoC
 
-diff --git a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-index 8a3d302f1535..21bfa4e03972 100644
---- a/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-+++ b/arch/arm64/boot/dts/renesas/rzg3s-smarc-som.dtsi
-@@ -32,6 +32,7 @@ / {
- 	compatible = "renesas,rzg3s-smarcm", "renesas,r9a08g045s33", "renesas,r9a08g045";
- 
- 	aliases {
-+		i2c1 = &i2c1;
- 		mmc0 = &sdhi0;
- #if SW_CONFIG3 == SW_OFF
- 		mmc2 = &sdhi2;
-@@ -150,6 +151,10 @@ &extal_clk {
- 	clock-frequency = <24000000>;
- };
- 
-+&i2c1 {
-+	status = "okay";
-+};
-+
- #if SW_CONFIG2 == SW_ON
- /* SD0 slot */
- &sdhi0 {
+ arch/arm64/boot/dts/qcom/ipq8074.dtsi        |  80 +++++++++
+ drivers/clk/qcom/gcc-ipq8074.c               |   1 +
+ drivers/remoteproc/qcom_q6v5_wcss.c          | 162 +++++++++++++++----
+ include/dt-bindings/clock/qcom,gcc-ipq8074.h |   1 +
+ 4 files changed, 212 insertions(+), 32 deletions(-)
+
 -- 
-2.39.2
+2.34.1
 
