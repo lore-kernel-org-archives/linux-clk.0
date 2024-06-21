@@ -1,44 +1,46 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 225C0145B0C;
-	Fri, 21 Jun 2024 06:11:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5571B16E873;
+	Fri, 21 Jun 2024 06:11:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718950303; cv=none; b=CFIFKrEe5R9OP579O2lY27XhdxfgKg8KpR/FhRnHiLqWEy5JZ+iTWms9hLAjUi1fH6aYpVu29V/16MYM9F5E1c7oZMTuSgBQL3qm82EYaVnYi/EbrRxPI34I9Cjh3PfmHzhrTGPqqQdEYVqggFjxv33a8zEaMYiX999RhJiP5PY=
+	t=1718950307; cv=none; b=jplcTEbArZsTXXg390cnVaRoSAPxVQjSzOBdSxuqsvFC14L3jfz4xvb4dOyt7ZHfN13PT7qnOI2Y0jZpwXtsQks39hJRrF4/AMOyFMuWrCVnK97nFbKZE7VzDr8Q6DQ7rfq3ItwYeGl4yZIZlp25Zoharw/QyjyhUFTNuAW4Pkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718950303; c=relaxed/simple;
-	bh=Rt3SceI+3WtSlghMCrF4xk0O9VqqF+9ICLfLpATWNzo=;
+	s=arc-20240116; t=1718950307; c=relaxed/simple;
+	bh=Pi58QsHkfSwBWg43hVZ5RjfXwbqb9W8glY+hY0DxfbE=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Im+AAMZoipJpiXyJHHGzaIyF3DrX8BJA6PZKdo7w6PafB5mdwX3Dm8CX1QVREbFDTyP9aRfq5k1aIWiAeX6UyydkX7Th1eMM+Q1zap4MtgTPuRNbzw0mc8YN9FXo/zcd3HPkCPsZLYcCruEAVQG0K2uM9zFYBgy488FKAD324dY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p1MGzifU; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=KVU8zcMrteGMsA+gOfQ630o1lgRY/dvFOHD5lxDzzOZrQIbEb3ncw/Tq6BRZLcCby1QwwABjfhbcb8qoYqWKi3Usmhecedz5jVrF1xr9nT/ulXv/nS1t6Sf+i2iHvG5yECoe+W02oeWQ1KC5hg2C0pFIFGKiuJXoQFUwuS2By2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YjVoM8Ve; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p1MGzifU"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A003C4AF11;
-	Fri, 21 Jun 2024 06:11:42 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YjVoM8Ve"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E50AC4AF07;
+	Fri, 21 Jun 2024 06:11:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1718950302;
-	bh=Rt3SceI+3WtSlghMCrF4xk0O9VqqF+9ICLfLpATWNzo=;
+	s=k20201202; t=1718950306;
+	bh=Pi58QsHkfSwBWg43hVZ5RjfXwbqb9W8glY+hY0DxfbE=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=p1MGzifUh0Eybr7LicxuunGIVvsXGMVJFctpG0AgcExsUQ1zc5jsMgiZ93ea92RiF
-	 OcQaFDCA9ZR3M54BUjDpfQYu7TmnBtGdjLG7QjEI+3H+ZFzL4e4Q++7S1aic0G7jQ8
-	 poCeuwyoHiT7vEAyZ9WQbI4i2/NSkjTK1enWHMkP95Fm8W0TOAA65uyzG8KOeOUAMN
-	 i1JqHbOkiJOPD+1222Z2o+3Wi29rlRGel8JCb09Pz64dRgp5YZkT4IWH9iyjbOnrA9
-	 8yb/4x64ZcthxRWAYkwxsiqJvX2jwFjm45RiMSe64GDYuUFl/gGP7JRi5j+vOySoX6
-	 szWrlOufxYIkA==
+	b=YjVoM8Vehs6KYvOTJ0Wd/Dsw5rKkENrlU4+iYqh9ytSarPdNLvz5H5T8l0RdQY2xY
+	 Udu87Dy5pfe7Te+73IbxECVsgBvvDNkWTgtfjPWlAFztNrMgyMTq2gMgeQDuljXYw1
+	 mFjaTpnQicbP1XkohRTnp6mBxzF5T+K6FB8auaTQWfmgTNhUXD+YlwWoZUhmQTk34t
+	 SQrA1QZxjqB+h2a3X2qlKGbN+8zRojobvlGowmHmiSWEy/A7Zpm7S1bic7T1Ee+X4s
+	 YUMkQlT5yVivKlwbAGsuq8aJ/ncmkixM3NdYVXy2RTvAIQcsyuhklrO3I/P6u4EVR1
+	 YH9Ysjm7Q9oKA==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Elliot Berman <quic_eberman@quicinc.com>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	Luo Jie <quic_luoj@quicinc.com>
 Cc: linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: Remove QCOM_RPMCC symbol
-Date: Fri, 21 Jun 2024 01:11:24 -0500
-Message-ID: <171895028805.12506.8367685063587068019.b4-ty@kernel.org>
+	linux-kernel@vger.kernel.org,
+	bryan.odonoghue@linaro.org,
+	kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH v2] clk: qcom: nsscc-qca8k: Fix the MDIO functions undefined issue
+Date: Fri, 21 Jun 2024 01:11:29 -0500
+Message-ID: <171895028810.12506.13906619413598712077.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240619-drop-qcom-rpmcc-v1-1-b487c95162ef@quicinc.com>
-References: <20240619-drop-qcom-rpmcc-v1-1-b487c95162ef@quicinc.com>
+In-Reply-To: <20240617093806.3461165-1-quic_luoj@quicinc.com>
+References: <20240617093806.3461165-1-quic_luoj@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -49,18 +51,26 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Wed, 19 Jun 2024 08:41:52 -0700, Elliot Berman wrote:
-> This symbol is selected by a couple drivers, but isn't used by anyone
-> and hasn't been for years now. Drop it.
+On Mon, 17 Jun 2024 17:38:06 +0800, Luo Jie wrote:
+> The clock controller driver of QCA8K depends on MDIO_BUS because
+> of mdio_module_driver used to register the driver.
 > 
-> No functional change intended.
+> This patch fixes the following undefined symbols.
+> ERROR: modpost: "mdio_driver_register"
+> [drivers/clk/qcom/nsscc-qca8k.ko] undefined!
+> ERROR: modpost: "mdio_driver_unregister"
+> [drivers/clk/qcom/nsscc-qca8k.ko] undefined!
+> ERROR: modpost: "__mdiobus_write"
+> [drivers/clk/qcom/nsscc-qca8k.ko] undefined!
+> ERROR: modpost: "__mdiobus_read"
+> [drivers/clk/qcom/nsscc-qca8k.ko] undefined!
 > 
-> 
+> [...]
 
 Applied, thanks!
 
-[1/1] clk: qcom: Remove QCOM_RPMCC symbol
-      commit: e429be706f2a1bd0c9a780793fff6b3784fb4204
+[1/1] clk: qcom: nsscc-qca8k: Fix the MDIO functions undefined issue
+      commit: b45120fbd39825ca0d32e39309c30a9e9d567cd8
 
 Best regards,
 -- 
