@@ -1,126 +1,112 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF46F1527B6;
-	Fri, 21 Jun 2024 12:06:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 269C6174EC7
+	for <linux-clk@vger.kernel.org>; Fri, 21 Jun 2024 12:08:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718971596; cv=none; b=dKijNnFk5CLIgKOsmGPHaMOkmG4s8zmAcSUvGhYDz7R9lkzUSRh31Rwb7Ca57c12o1AHw9NiMaQRW491tViazuzwRtWsLvhhJdzsWr0MnGeF3mzpC6Ka8KK/0BHFnVXj8RV/QWCmMPqv1GDq6yRpP/dz+nQsKqvt2Xs4xZKEgf0=
+	t=1718971697; cv=none; b=KdxSPEVzipNVGZWim0pEkiuRCMg9nGRqqW5YEHtesMVABdU/x+EqMI6R/zFsiL97aDtBDxniUvisvfZTiLEQXOP3WrJ7GnN80wrZjAyQFiLddN8sWtjKPL/1xbEUAPkj5aJn8E9ivuQwe2w3Me6ZxR5NPo6vqlmZ6UrGMLFBC6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718971596; c=relaxed/simple;
-	bh=l2igSO8O7G5RzRxQ3yZ8xZyAbetAJaOFvPFrxwmzk0E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=JJuLb5LJ77KwskU6rsgj8eq0OfZXwWdnR+3lfHj661J+vnvLx1PZ/1MX8HIppqCcVfe/6Lz7bEK1jwZZGIY+V+uc/yaKR56677Zb08ib9W0u5GNX32OiEDNtk2dbvGUfqkdSFKEsUg1LWVYOH4IvPajbTolruwAWW1KpNyqFhHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QhH6jBuZ; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1718971697; c=relaxed/simple;
+	bh=5CsIqk65T8h28pv7LSZHK/r+thMfNFgpmh7VKRl0UWQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QSm61UehE6/0phloIX5YeyhJc4pflZzwnx9OzGex5BM4/JMI4YDvXtysyHPtX2yTBgmUYSC3721B+IVmKvv0xUz38zPe34bCSrwolVy1FinugG34hPcv1+tMTliQAjta2/ksJJkOXDvige6G1tYx8ZIVNWaq2+hB/2YkMN+sigY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timesys.com; spf=pass smtp.mailfrom=timesys.com; dkim=pass (2048-bit key) header.d=timesys-com.20230601.gappssmtp.com header.i=@timesys-com.20230601.gappssmtp.com header.b=bwNl9B2b; arc=none smtp.client-ip=209.85.222.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timesys.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=timesys.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QhH6jBuZ"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45LAr7fL028340;
-	Fri, 21 Jun 2024 12:06:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	f/3Z1xfOkFSLFLCdSeQvAYqkVHrsu2wKwKESRWjc5+k=; b=QhH6jBuZoZTJjgXV
-	f6yPhW4u4+45hYJ/VweBpBp5h6lGzj+gVIpZSPBox+VIgHVBSJq6aseHUvzTgxsR
-	3xAXTPG2d/T0jjMEEu6biBbsq9nzTe4uTUV8g0pvaJkY8E0CUx9mayrC/tpwootx
-	KTu5SkrmDQZbHEW6uaVnhVRKQO9rh9WJQUXWw14VH+cZVCxut9mvGPmoY3UPCkv1
-	nAyFzHI0+bbR0fDMoQVAOQH9QY1nzmDViUsFrjcfKhb0R02EBUMwSJ3ya+v9DRzx
-	W4udRTpn50WW5rzEk1vJ1HFFcNeEAXrS5RqrwhiuupCDhRarByqqskh8Ju91jFPc
-	9ig1/A==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yw85e052b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Jun 2024 12:06:29 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45LC6TT0001969
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Jun 2024 12:06:29 GMT
-Received: from [10.216.44.165] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 21 Jun
- 2024 05:06:22 -0700
-Message-ID: <a0847448-56b4-4793-bb17-9e40a0a9feac@quicinc.com>
-Date: Fri, 21 Jun 2024 17:36:18 +0530
+	dkim=pass (2048-bit key) header.d=timesys-com.20230601.gappssmtp.com header.i=@timesys-com.20230601.gappssmtp.com header.b="bwNl9B2b"
+Received: by mail-qk1-f177.google.com with SMTP id af79cd13be357-795502843ccso104041685a.1
+        for <linux-clk@vger.kernel.org>; Fri, 21 Jun 2024 05:08:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=timesys-com.20230601.gappssmtp.com; s=20230601; t=1718971694; x=1719576494; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5CsIqk65T8h28pv7LSZHK/r+thMfNFgpmh7VKRl0UWQ=;
+        b=bwNl9B2b5uBkts+d4e1DdRjRmxBlNK3fTwlrYckofd8DFZRyHpP+wuYJNoiJFzIY0N
+         6J2XMZlIWqrBJdPaUYzL7AaytwBd2cv+HOibYo5pDM/cXmrBDsHNLJJg2+DNxDbfTG01
+         PGNcSY0E5srlf0xby1j0hw0vKWRgAxMKkG1uK9hQshCVklS2nrHA+8JMmi+OcLH9ExEM
+         76uZVM00QNMp5apgZUS8HFiWsw1t/COUYq6QZDqgb2TK+SDiYiCU5xgaajdsU4GHyF4a
+         TgfV1+fSkkp2MooWuTU1LdWf577gqcZAi+/zsQBwMkDc00qjp1XBC1jfhw4NHZJs/Mg0
+         fn5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718971694; x=1719576494;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5CsIqk65T8h28pv7LSZHK/r+thMfNFgpmh7VKRl0UWQ=;
+        b=gMz4Kt6IupYsZxwduQOJoyUNaycdE7bZNqouvq3YhVFUHRqBmxus69KVRfbfVC/qP1
+         zxVeARrrZoTKfNwFClJRVfjdGKeACibSg+YBjglVpqSR4FqXSVB8dijZaLBUG2KHGApa
+         pMzM8n086rxRLV4/gjc+LY84XRgky2PA5FfA9jGR1ot1RRHGSaGZnlyu5M3j7nZnZitI
+         VY7gNdAL9RR6Sj5JRxEroL8aB8BHtIHa87LxhpnMyRsK2azolcZhBY0HuPAxjupityxy
+         QyBTQJhGvzrWdx8U3NBGbXNe+9aLYVf2KU65W7TTtSaJWvOcgVLDZfbNIf4ENnrIxI8O
+         Mj8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXnIvp1VYe8T2SL7+aWHGJBol4tyIj0h4/UDUelpV5cVqkS1iA6Tb4t+p0rZj7azUtQKa+Bxy1WLDdEg/ifr44RKfNQls+K5gRG
+X-Gm-Message-State: AOJu0YwFGwoHI4cKg7lns1Sh/Vyjo39icwZRaOBdeYmAJ5uncfXp8S6C
+	zBL3vPPGpBn0VR0WwliGdjU0LfsuINmCfz578kV+Ir1K7J27UGOSx6vLUE9WPNxUsC05XGJHVj+
+	9/NoqzaP1vHxkULsbpypQpXBPlmQRCrSDnCo2Gw==
+X-Google-Smtp-Source: AGHT+IH9SeiO8vfdoOxDABbDkc1VlJaHvluIQfS8YUVwP2eXorBPvqf3BAKJdJfTNAn0CNJ3/z1faNaXrP6fson02ac=
+X-Received: by 2002:ad4:4245:0:b0:6b0:6629:bdf9 with SMTP id
+ 6a1803df08f44-6b501e2c710mr72849356d6.21.1718971694039; Fri, 21 Jun 2024
+ 05:08:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 05/13] clk: qcom: gpucc-sa8775p: Park RCG's clk source at
- XO during disable
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Stephen
- Boyd" <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <quic_jkona@quicinc.com>,
-        Bartosz Golaszewski
-	<bartosz.golaszewski@linaro.org>
-References: <20240531090249.10293-1-quic_tdas@quicinc.com>
- <20240531090249.10293-6-quic_tdas@quicinc.com>
- <2fd8bcea-8bea-48ea-8052-d7fe6c1e8f59@linaro.org>
- <61eb731d-1928-4d72-97a0-397d8cf45e0d@quicinc.com>
- <d7jtqigvcmjv6swbifprjmf7ofgselxmrssbkptmbr2cj7izt5@a33lyesbdr5u>
-Content-Language: en-US
-From: Taniya Das <quic_tdas@quicinc.com>
-In-Reply-To: <d7jtqigvcmjv6swbifprjmf7ofgselxmrssbkptmbr2cj7izt5@a33lyesbdr5u>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: VN2Om5P9v0-yHPkc8dt3uYXaDzjCLmLF
-X-Proofpoint-ORIG-GUID: VN2Om5P9v0-yHPkc8dt3uYXaDzjCLmLF
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-21_04,2024-06-21_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
- phishscore=0 spamscore=0 bulkscore=0 mlxscore=0 priorityscore=1501
- malwarescore=0 mlxlogscore=658 lowpriorityscore=0 suspectscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406210089
+References: <20240620175657.358273-1-piotr.wojtaszczyk@timesys.com>
+ <20240620175657.358273-11-piotr.wojtaszczyk@timesys.com> <jgqhlnysuwajlfxjwetas53jzdk6nnmewead2xzyt3xngwpcvl@xbooed6cwlq4>
+In-Reply-To: <jgqhlnysuwajlfxjwetas53jzdk6nnmewead2xzyt3xngwpcvl@xbooed6cwlq4>
+From: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
+Date: Fri, 21 Jun 2024 14:08:03 +0200
+Message-ID: <CAG+cZ04suU53wR5f0PhudgNmkxTRtwEXTS1cWH1o9_rTNM94Cg@mail.gmail.com>
+Subject: Re: [Patch v4 10/10] i2x: pnx: Use threaded irq to fix warning from del_timer_sync()
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	"J.M.B. Downing" <jonathan.downing@nautel.com>, Vladimir Zapolskiy <vz@mleia.com>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Russell King <linux@armlinux.org.uk>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Miquel Raynal <miquel.raynal@bootlin.com>, 
+	Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, Jaroslav Kysela <perex@perex.cz>, 
+	Takashi Iwai <tiwai@suse.com>, Arnd Bergmann <arnd@arndb.de>, Yangtao Li <frank.li@vivo.com>, 
+	Li Zetao <lizetao1@huawei.com>, Chancel Liu <chancel.liu@nxp.com>, 
+	Michael Ellerman <mpe@ellerman.id.au>, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org, 
+	linux-sound@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, linux-mtd@lists.infradead.org, 
+	Markus Elfring <Markus.Elfring@web.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Andi,
 
+On Fri, Jun 21, 2024 at 12:57=E2=80=AFAM Andi Shyti <andi.shyti@kernel.org>=
+ wrote:
+> On Thu, Jun 20, 2024 at 07:56:41PM GMT, Piotr Wojtaszczyk wrote:
+> > When del_timer_sync() is called in an interrupt context it throws a war=
+ning
+> > because of potential deadlock. Threaded irq handler fixes the potential
+> > problem.
+> >
+> > Signed-off-by: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
+>
+> did you run into a lockdep splat?
+>
+> Anything against using del_timer(), instead? Have you tried?
 
-On 6/10/2024 11:44 PM, Dmitry Baryshkov wrote:
-> On Mon, Jun 10, 2024 at 02:41:10PM +0530, Taniya Das wrote:
->>
->>
->> On 5/31/2024 6:53 PM, Konrad Dybcio wrote:
->>> On 31.05.2024 11:02 AM, Taniya Das wrote:
->>>> The RCG's clk src has to be parked at XO while disabling as per the
->>>> HW recommendation, hence use clk_rcg2_shared_ops to achieve the same.
->>>> Also gpu_cc_cb_clk is recommended to be kept always ON, hence use
->>>> clk_branch2_aon_ops to keep the clock always ON.
->>>>
->>>> Fixes: 0afa16afc36d ("clk: qcom: add the GPUCC driver for sa8775p")
->>>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
->>>> ---
->>>
->>> Should the same fixes apply to 8350?
->>>
->>
->> Yes Konrad, it is applicable for 8350 as well.
-> 
-> Can we please get the corresponding patches (as a separate patchset)?
-> 
+I didn't get a lockdep splat but console was flooded with warnings from
+https://github.com/torvalds/linux/blob/v6.10-rc4/kernel/time/timer.c#L1655
+In the linux kernel v5.15 I didn't see these warnings.
 
-Please find the patch.
+I'm not a maintainer of the driver and I didn't do any research on
+what kind of impact
+would have using del_timer() instad. Maybe Vladimir Zapolskiy will know tha=
+t.
 
-https://lore.kernel.org/lkml/20240621-sm8350-gpucc-fixes-v1-1-22db60c7c5d3@quicinc.com/T/#u
-
--- 
-Thanks & Regards,
-Taniya Das.
+--=20
+Piotr Wojtaszczyk
+Timesys
