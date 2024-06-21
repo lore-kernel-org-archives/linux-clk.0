@@ -1,279 +1,272 @@
-Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28F02940F;
-	Fri, 21 Jun 2024 14:51:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DFB03BBF5
+	for <linux-clk@vger.kernel.org>; Fri, 21 Jun 2024 14:59:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718981470; cv=none; b=rz5yMu6eLK4gri1ncoJ9Usj47Gy3+ALHlWd7smnNfrpmQLw+QtWabTPhw99P13pxqGHdArQ2LDWOsuEH75RtavBlXL/5N5guXmGyF8dTiXPr0PHvE35hKEwQ0qjua0Vt+8hpO0NPl7iI0vYvATObS7W7LRSuWmpkSWOneqaIrQw=
+	t=1718981969; cv=none; b=sV41OJsVASrZ1o0ubVNZANJ2LMZOflOvKyYNyRJsX1WuSB9IokLBmsfD2/a817E0CFNbAEVooViXFlvZ/Fvjbw5Y7MwBT07rgPxQ3Egggt1nit9dM16Gk0CC7UTKM0l3AZdvR+DXPaumLlmC8NwbpPx/QYB5aUjy6gZanTeslwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718981470; c=relaxed/simple;
-	bh=5hLo/NJHRsfeggQDXZtDEA7gdlTNrQ5GceHmTEYUk8k=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TqkdYGsOhMfADhX7WD/ULXYTNASpJ4eyu14sAB1Yj7+bedvmueh6sjP2B8vaDpXjwZ/+6MeXMqBGVZ05rqr7bxrJ5fyIHCEF4mjg1NNsI5uSJAvHQpj3+QNZdxc1azsoJMDhr3y6pHE0bY1uMO2m5geVA4Ap4QMYU3dpQBaQhuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=UaXZMKs5; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+	s=arc-20240116; t=1718981969; c=relaxed/simple;
+	bh=WigRbV7KlBkMBfbFYkSADamOt1ilXsNtB7dVBf83LNY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=piCF0zO/+izCfarHoyJMjKFst2jygZhWj21SxEccfMnlO3YPNA4qwYNGblC3RF3QSmNEK/lphQZ00u2tDQIIkQpbvtjTe72H7ol2gHrNDKuv8DwACLuF1rVvOCtZizZYDfpWcePUV4nFfJ0yKhLk+rTRxFo7VnbqPsJVk+b9j68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Oqz3vE+q; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="UaXZMKs5"
-Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
-	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45LBfeWg014796;
-	Fri, 21 Jun 2024 08:14:25 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=MxN1j
-	fBJIKGuR9o5HaLQx0jskf9yOcmAgKNAbFMGh/g=; b=UaXZMKs573U7Hq/tuwhso
-	duyHbSt5xkgv7pFv059imY1WDyMNMAI7527g4TRv8mvO/iUV8k/J+81NneZfTNpV
-	XeH1jg7WeqEDM0HW6kMmb7JX3E/cqbQDkmlIW0TFGfZuZpSmN9t/V9qhGuJjEcRG
-	WXChOHO0prYhAre7hYc+pOHA9Ywx/cj+Sieq1U9NBFzQi2FdLfTfc1Y3gR+IEUYj
-	3wSKvPy+uvJARPnupQBD9FWNVY2lyQQeEEJcHjiqcxSAxWOwXlu5vwaTmhQvbdk1
-	GidOGP1Q1Nx//5UUOGyOY3KQdA7+o1GJpfqovXTRQvQx7hl6FUe+5Kp8mAjTh3uu
-	w==
-Received: from nwd2mta4.analog.com ([137.71.173.58])
-	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 3yw4yxs5vc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Jun 2024 08:14:25 -0400 (EDT)
-Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
-	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 45LCEO2X021838
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 21 Jun 2024 08:14:24 -0400
-Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Fri, 21 Jun
- 2024 08:14:23 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
- (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Fri, 21 Jun 2024 08:14:23 -0400
-Received: from amiclaus-VirtualBox.ad.analog.com (AMICLAUS-L02.ad.analog.com [10.48.65.120])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 45LCE6Sv032255;
-	Fri, 21 Jun 2024 08:14:16 -0400
-From: Antoniu Miclaus <antoniu.miclaus@analog.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Lars-Peter Clausen
-	<lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Jonathan
- Cameron <jic23@kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-iio@vger.kernel.org>
-CC: Antoniu Miclaus <antoniu.miclaus@analog.com>
-Subject: [PATCH v6 2/2] iio: frequency: adf4350: add clk provider
-Date: Fri, 21 Jun 2024 15:13:59 +0300
-Message-ID: <20240621121403.47912-2-antoniu.miclaus@analog.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240621121403.47912-1-antoniu.miclaus@analog.com>
-References: <20240621121403.47912-1-antoniu.miclaus@analog.com>
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Oqz3vE+q"
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52cc10b5978so2405068e87.2
+        for <linux-clk@vger.kernel.org>; Fri, 21 Jun 2024 07:59:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1718981965; x=1719586765; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7k2nQvFOjuZ7C6fH4GnT+p4Sp8E7d5ws7fWv5o6k/Os=;
+        b=Oqz3vE+qdSCBS5G2ktOtuVfw0ca7Wwz4W9iT9RWEXnDtJzTcewhHrqfQLYmGO52FJt
+         3uFL5BL38lcZmzy3HQ3SjX5jJV1uh8i+ZGx8Fsqge8UMPa5ELzJlgenSkqW28n/wRCuH
+         UHbwgjYCStcegsoCPDIcbqSvFLBdYNwcbeDm1MWfNeWFpgz4hTr0UJgSnHJcY+xary2t
+         xMKk013jxL9wAABlmnRD1OfSnaGThIv85m/1CUU2UkdPA1eDJ2kSAjNo2O8++b9ubCfx
+         bIEJ0laLx7UzQdFCLQh5Z1Ri/bCeqJ1KIhEVNAD3fRpf9lHgVXTdCFNA+fj1g28n4J79
+         W0zg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718981965; x=1719586765;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7k2nQvFOjuZ7C6fH4GnT+p4Sp8E7d5ws7fWv5o6k/Os=;
+        b=qa+A4tEVMzqHeosfCxTYVau746kpo6xcUYdRbBw/EgKIR5weEc0pXJ18WToZ6fJapX
+         X6SyIIQ1e3phi/LH35oAsyIUxQ29eyKlknUsZ/ZTjOAwoKpsUI2CnHhPbMFXKuz3UGIU
+         RetNCpGIfoljOdLSkLTUyPGOwoX96Fsf3A2JIetYxjuzhquCEzNtBz8uDsc9rPp1lyvM
+         E5iEFJ7MOXwxruxPGcAzz/4PFbApc3i1eoHWnHrpueAohvFe55iZ0RUB/sjIf7VjCPBz
+         jW+JMhh/6zj6ej389KjO/3BFajeL8+IWiqqmUnZOU9RcE5pRVuK06MQqmbxUzKQJGhHW
+         RU9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWzeavvfr1MTKB4/VIAJHRFQQL8cE6VQQPdZfKPTh7+JgEkvEpl7x+43vvGVHkTNrnBmCS28L2opnVI/ZoO5fIgPMdxYyI8Jo2t
+X-Gm-Message-State: AOJu0YyWgLyp4klaGRNYP0coo7gQYDu4V1T15NgdWVkMTsrO3jGyNP3b
+	ix8Ej/FkQN6KBDut6L8Va97ZA1HI0ZFJMLaVvUZR++CtfHJ0K0aGhJhhMaVV/YM=
+X-Google-Smtp-Source: AGHT+IFFbnXa5y83ipiFrBG70v4cTSICilZFHJK0nDg/PBcswmk/132r8UcGNAsTvy2hfDPzaalr3w==
+X-Received: by 2002:a05:6512:214e:b0:52c:bc50:ff35 with SMTP id 2adb3069b0e04-52ccaa9739cmr4598189e87.57.1718981964604;
+        Fri, 21 Jun 2024 07:59:24 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.70])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424817b6381sm30688365e9.28.2024.06.21.07.59.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 21 Jun 2024 07:59:24 -0700 (PDT)
+Message-ID: <86843e15-6791-4214-8eca-720142820973@tuxon.dev>
+Date: Fri, 21 Jun 2024 17:59:21 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-GUID: C5-Nl98mnm-CxPdry3kMW7wGU8kUzwEg
-X-Proofpoint-ORIG-GUID: C5-Nl98mnm-CxPdry3kMW7wGU8kUzwEg
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-21_04,2024-06-21_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
- bulkscore=0 malwarescore=0 spamscore=0 mlxscore=0 phishscore=0
- impostorscore=0 clxscore=1015 mlxlogscore=999 priorityscore=1501
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406210091
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 08/12] dt-bindings: i2c: renesas,riic: Document the
+ R9A08G045 support
+Content-Language: en-US
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+ Chris Brandt <Chris.Brandt@renesas.com>,
+ "andi.shyti@kernel.org" <andi.shyti@kernel.org>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "geert+renesas@glider.be" <geert+renesas@glider.be>,
+ "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "sboyd@kernel.org" <sboyd@kernel.org>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>
+Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240621112303.1607621-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240621112303.1607621-9-claudiu.beznea.uj@bp.renesas.com>
+ <TY3PR01MB11346105D3D3DD46AEF8CD44986C92@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <0bc78e5e-de37-4ff6-ac74-571f615b97f9@tuxon.dev>
+ <TY3PR01MB1134602C189C6C63C6187840886C92@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <b5a3ef7c-8509-4065-ab0f-efb5a7e5fcbb@tuxon.dev>
+ <TY3PR01MB11346D9CF89F7ED9B6A49C61586C92@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <e381e1c0-2e23-4734-a55f-cab6c21f8c5b@tuxon.dev>
+ <TY3PR01MB113468EF895A0EBED5DBD975D86C92@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <871c563d-daa5-4be4-b114-9a8072e4edd0@tuxon.dev>
+ <TY3PR01MB113462C6C427DD4581086430D86C92@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <TY3PR01MB113462C6C427DD4581086430D86C92@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add clk provider feature for the adf4350.
 
-Even though the driver was sent as an IIO driver in most cases the
-device is actually seen as a clock provider.
 
-This patch aims to cover actual usecases requested by users in order to
-completely control the output frequencies from userspace.
+On 21.06.2024 17:37, Biju Das wrote:
+> 
+> 
+>> -----Original Message-----
+>> From: claudiu beznea <claudiu.beznea@tuxon.dev>
+>> Sent: Friday, June 21, 2024 3:31 PM
+>> To: Biju Das <biju.das.jz@bp.renesas.com>; Chris Brandt <Chris.Brandt@renesas.com>;
+>> andi.shyti@kernel.org; robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org;
+>> geert+renesas@glider.be; magnus.damm@gmail.com; mturquette@baylibre.com; sboyd@kernel.org;
+>> p.zabel@pengutronix.de; wsa+renesas@sang-engineering.com
+>> Cc: linux-renesas-soc@vger.kernel.org; linux-i2c@vger.kernel.org; devicetree@vger.kernel.org;
+>> linux-kernel@vger.kernel.org; linux-clk@vger.kernel.org; Claudiu Beznea
+>> <claudiu.beznea.uj@bp.renesas.com>
+>> Subject: Re: [PATCH 08/12] dt-bindings: i2c: renesas,riic: Document the R9A08G045 support
+>>
+>>
+>>
+>> On 21.06.2024 17:06, Biju Das wrote:
+>>> Hi Claudiu,
+>>>
+>>>> -----Original Message-----
+>>>> From: claudiu beznea <claudiu.beznea@tuxon.dev>
+>>>> Sent: Friday, June 21, 2024 2:30 PM
+>>>> Subject: Re: [PATCH 08/12] dt-bindings: i2c: renesas,riic: Document
+>>>> the R9A08G045 support
+>>>>
+>>>>
+>>>>
+>>>> On 21.06.2024 16:10, Biju Das wrote:
+>>>>>
+>>>>>
+>>>>>> -----Original Message-----
+>>>>>> From: claudiu beznea <claudiu.beznea@tuxon.dev>
+>>>>>> Sent: Friday, June 21, 2024 2:06 PM
+>>>>>  Subject: Re: [PATCH 08/12] dt-bindings: i2c: renesas,riic: Document
+>>>>> the R9A08G045 support
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>> On 21.06.2024 15:56, Biju Das wrote:
+>>>>>>>
+>>>>>>> Hi claudiu,
+>>>>>>>
+>>>>>>>> -----Original Message-----
+>>>>>>>> From: claudiu beznea <claudiu.beznea@tuxon.dev>
+>>>>>>>> Sent: Friday, June 21, 2024 1:55 PM
+>>>>>>>> Subject: Re: [PATCH 08/12] dt-bindings: i2c: renesas,riic:
+>>>>>>>> Document the R9A08G045 support
+>>>>>>>>
+>>>>>>>>
+>>>>>>>>
+>>>>>>>> On 21.06.2024 15:34, Biju Das wrote:
+>>>>>>>>> Hi Claudiu,
+>>>>>>>>>
+>>>>>>>>>> -----Original Message-----
+>>>>>>>>>> From: Claudiu <claudiu.beznea@tuxon.dev>
+>>>>>>>>>> Sent: Friday, June 21, 2024 12:23 PM
+>>>>>>>>>> Subject: [PATCH 08/12] dt-bindings: i2c: renesas,riic: Document
+>>>>>>>>>> the
+>>>>>>>>>> R9A08G045 support
+>>>>>>>>>>
+>>>>>>>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>>>>>>>>
+>>>>>>>>>> Document the Renesas RZ/G3S (R9A08G045) RIIC IP. This is
+>>>>>>>>>> compatible with the version available on Renesas RZ/V2H
+>>>>>>>>>> (R9A09G075). Most of the IP variants that the RIIC driver is
+>>>>>>>>>> working with supports fast mode
+>>>> plus.
+>>>>>>>>>> However, it happens that on the same SoC to have IP
+>>>>>>>>>> instatiations that support fast mode plus as well as IP
+>>>>>>>>>> instantiation that doesn't support it. For this, introduced the renesas,riic-no-fast-
+>> mode-plus property.
+>>>>>>>>>>
+>>>>>>>>>> Signed-off-by: Claudiu Beznea
+>>>>>>>>>> <claudiu.beznea.uj@bp.renesas.com>
+>>>>>>>>>> ---
+>>>>>>>>>>  Documentation/devicetree/bindings/i2c/renesas,riic.yaml | 8
+>>>>>>>>>> ++++++++
+>>>>>>>>>>  1 file changed, 8 insertions(+)
+>>>>>>>>>>
+>>>>>>>>>> diff --git
+>>>>>>>>>> a/Documentation/devicetree/bindings/i2c/renesas,riic.yaml
+>>>>>>>>>> b/Documentation/devicetree/bindings/i2c/renesas,riic.yaml
+>>>>>>>>>> index 91ecf17b7a81..c0964edbca69 100644
+>>>>>>>>>> --- a/Documentation/devicetree/bindings/i2c/renesas,riic.yaml
+>>>>>>>>>> +++ b/Documentation/devicetree/bindings/i2c/renesas,riic.yaml
+>>>>>>>>>> @@ -25,6 +25,10 @@ properties:
+>>>>>>>>>>                - renesas,riic-r9a07g054  # RZ/V2L
+>>>>>>>>>>            - const: renesas,riic-rz      # RZ/A or RZ/G2L
+>>>>>>>>>>
+>>>>>>>>>> +      - items:
+>>>>>>>>>> +          - const: renesas,riic-r9a08g045   # RZ/G3S
+>>>>>>>>>> +          - const: renesas,riic-r9a09g057
+>>>>>>>>>> +
+>>>>>>>>>>        - const: renesas,riic-r9a09g057   # RZ/V2H(P)
+>>>>>>>>>>
+>>>>>>>>>>    reg:
+>>>>>>>>>> @@ -66,6 +70,10 @@ properties:
+>>>>>>>>>>    resets:
+>>>>>>>>>>      maxItems: 1
+>>>>>>>>>>
+>>>>>>>>>> +  renesas,riic-no-fast-mode-plus:
+>>>>>>>>>> +    description: specifies if fast mode plus is not supported
+>>>>>>>>>> +    type: Boolean
+>>>>>>>>>
+>>>>>>>>> Can't this info, as part of device data?? Based on frequency and
+>>>>>>>>> device data is enough to derive this info??
+>>>>>>>>
+>>>>>>>> We can't rely completely on device data because on RZ/G3S we have
+>>>>>>>> 2 RIIC channels that support fast mode plus and 2 that doesn't support it.
+>>>>>>>
+>>>>>>> Can't array of bits for this channels won't help??
+>>>>>>
+>>>>>> Can you give an example? I'm not sure I understand how you would
+>>>>>> prefer me to use the array of bits.
+>>>>>
+>>>>> struct riic_of_data {
+>>>>> 	u8 regs[RIIC_REG_END];
+>>>>> 	u16 fast_mode_info info; /* 1 means fast mode plus supported,
+>>>>> starting with channel 0*/ };
+>>>>>
+>>>>> .info = 0x3, means channel 0 and 1 has fast mode plus supported
+>>>>> .info = 0x0, none of the channel supported fast mode plus.
+>>>>
+>>>> If I understand the proposal correctly, a match b/w struct
+>>>> riic_of_data::info bit + frequency and the nodes in device tree is
+>>>> still needed, right? As the RZ/G3S RIIC channels are using the same compatible.
+>>>> W/o a match how I cannot detect in the driver who is, e.g., channel 1
+>>>> that supports FMP w/o hardcoding some RIIC channel data in the driver (e.g. RIIC channel
+>> address)?
+>>>
+>>> bit array gives the capability info on various channels.
+>>>
+>>> If someone define fast_mode_plus frequency in DT node and channel is
+>>> not fast_mode_plus(from the capability info) then you should return error.
+>>>
+>>> Here you need to use SoC specific compatible as each SoC has different capabilities.
+>>
+>> And I would add, as it is in this case: there are multiple instantiation of the RIIC in RZ/G3S SoC.
+>> RIIC 0 and 1 supports FMP, RIIC 2 and 3 does not.
+>>
+>> For all RIICs (0, 1, 2, 3) we use the same compatible (as all are part of the same SoC). How to do
+>> the match b/w DT RIIC channel and driver with the solution you propose w/o hardcoding some RIIC
+>> channel data in the driver?
+> 
+> .info =0x3, so you know from the capability, for this soc, bus 0 and 1 supports FMP.
 
-Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
----
-changes in v6:
- - rework `init.name` handling.
- - simplify iio channels initialization.
- drivers/iio/frequency/adf4350.c | 124 +++++++++++++++++++++++++++++++-
- 1 file changed, 122 insertions(+), 2 deletions(-)
+I understand this part. What I don't understand is: when probing the driver
+for, e.g., bus 0, how do I know I probe the driver for bus 0? compatible is
+the same for all buses.
 
-diff --git a/drivers/iio/frequency/adf4350.c b/drivers/iio/frequency/adf4350.c
-index 4abf80f75ef5..e13e64a5164c 100644
---- a/drivers/iio/frequency/adf4350.c
-+++ b/drivers/iio/frequency/adf4350.c
-@@ -19,6 +19,7 @@
- #include <linux/gpio/consumer.h>
- #include <asm/div64.h>
- #include <linux/clk.h>
-+#include <linux/clk-provider.h>
- 
- #include <linux/iio/iio.h>
- #include <linux/iio/sysfs.h>
-@@ -36,6 +37,9 @@ struct adf4350_state {
- 	struct gpio_desc		*lock_detect_gpiod;
- 	struct adf4350_platform_data	*pdata;
- 	struct clk			*clk;
-+	struct clk			*clkout;
-+	const char			*clk_out_name;
-+	struct clk_hw			hw;
- 	unsigned long			clkin;
- 	unsigned long			chspc; /* Channel Spacing */
- 	unsigned long			fpfd; /* Phase Frequency Detector */
-@@ -61,6 +65,8 @@ struct adf4350_state {
- 	__be32				val __aligned(IIO_DMA_MINALIGN);
- };
- 
-+#define to_adf4350_state(_hw) container_of(_hw, struct adf4350_state, hw)
-+
- static struct adf4350_platform_data default_pdata = {
- 	.channel_spacing = 10000,
- 	.r2_user_settings = ADF4350_REG2_PD_POLARITY_POS |
-@@ -381,6 +387,113 @@ static const struct iio_info adf4350_info = {
- 	.debugfs_reg_access = &adf4350_reg_access,
- };
- 
-+static void adf4350_clk_del_provider(void *data)
-+{
-+	struct adf4350_state *st = data;
-+
-+	of_clk_del_provider(st->spi->dev.of_node);
-+}
-+
-+static unsigned long adf4350_clk_recalc_rate(struct clk_hw *hw,
-+					     unsigned long parent_rate)
-+{
-+	struct adf4350_state *st = to_adf4350_state(hw);
-+	unsigned long long tmp;
-+
-+	tmp = (u64)(st->r0_int * st->r1_mod + st->r0_fract) * st->fpfd;
-+	do_div(tmp, st->r1_mod * (1 << st->r4_rf_div_sel));
-+
-+	return tmp;
-+}
-+
-+static int adf4350_clk_set_rate(struct clk_hw *hw,
-+				unsigned long rate,
-+				unsigned long parent_rate)
-+{
-+	struct adf4350_state *st = to_adf4350_state(hw);
-+
-+	if (parent_rate == 0 || parent_rate > ADF4350_MAX_FREQ_REFIN)
-+		return -EINVAL;
-+
-+	st->clkin = parent_rate;
-+
-+	return adf4350_set_freq(st, rate);
-+}
-+
-+static int adf4350_clk_prepare(struct clk_hw *hw)
-+{
-+	struct adf4350_state *st = to_adf4350_state(hw);
-+
-+	st->regs[ADF4350_REG2] &= ~ADF4350_REG2_POWER_DOWN_EN;
-+
-+	return adf4350_sync_config(st);
-+}
-+
-+static void adf4350_clk_unprepare(struct clk_hw *hw)
-+{
-+	struct adf4350_state *st = to_adf4350_state(hw);
-+
-+	st->regs[ADF4350_REG2] |= ADF4350_REG2_POWER_DOWN_EN;
-+
-+	adf4350_sync_config(st);
-+}
-+
-+static int adf4350_clk_is_enabled(struct clk_hw *hw)
-+{
-+	struct adf4350_state *st = to_adf4350_state(hw);
-+
-+	return (st->regs[ADF4350_REG2] & ADF4350_REG2_POWER_DOWN_EN);
-+}
-+
-+static const struct clk_ops adf4350_clk_ops = {
-+	.recalc_rate = adf4350_clk_recalc_rate,
-+	.set_rate = adf4350_clk_set_rate,
-+	.prepare = adf4350_clk_prepare,
-+	.unprepare = adf4350_clk_unprepare,
-+	.is_enabled = adf4350_clk_is_enabled,
-+};
-+
-+static int adf4350_clk_register(struct adf4350_state *st)
-+{
-+	struct spi_device *spi = st->spi;
-+	struct clk_init_data init;
-+	struct clk *clk;
-+	const char *parent_name;
-+	int ret;
-+
-+	if (!device_property_present(&spi->dev, "#clock-cells"))
-+		return 0;
-+
-+	if (device_property_read_string(&spi->dev, "clock-output-names", &init.name)) {
-+		init.name = devm_kasprintf(&spi->dev, GFP_KERNEL, "%s-clk",
-+					   fwnode_get_name(dev_fwnode(&spi->dev)));
-+		if (!init.name)
-+			return -ENOMEM;
-+	}
-+
-+	parent_name = of_clk_get_parent_name(spi->dev.of_node, 0);
-+	if (!parent_name)
-+		return -EINVAL;
-+
-+	init.ops = &adf4350_clk_ops;
-+	init.parent_names = &parent_name;
-+	init.num_parents = 1;
-+	init.flags = CLK_SET_RATE_PARENT;
-+
-+	st->hw.init = &init;
-+	clk = devm_clk_register(&spi->dev, &st->hw);
-+	if (IS_ERR(clk))
-+		return PTR_ERR(clk);
-+
-+	ret = of_clk_add_provider(spi->dev.of_node, of_clk_src_simple_get, clk);
-+	if (ret)
-+		return ret;
-+
-+	st->clkout = clk;
-+
-+	return devm_add_action_or_reset(&spi->dev, adf4350_clk_del_provider, st);
-+}
-+
- static struct adf4350_platform_data *adf4350_parse_dt(struct device *dev)
- {
- 	struct adf4350_platform_data *pdata;
-@@ -522,8 +635,6 @@ static int adf4350_probe(struct spi_device *spi)
- 
- 	indio_dev->info = &adf4350_info;
- 	indio_dev->modes = INDIO_DIRECT_MODE;
--	indio_dev->channels = &adf4350_chan;
--	indio_dev->num_channels = 1;
- 
- 	mutex_init(&st->lock);
- 
-@@ -551,6 +662,15 @@ static int adf4350_probe(struct spi_device *spi)
- 			return ret;
- 	}
- 
-+	ret = adf4350_clk_register(st);
-+	if (ret)
-+		return ret;
-+
-+	if (!st->clkout) {
-+		indio_dev->channels = &adf4350_chan;
-+		indio_dev->num_channels = 1;
-+	}
-+
- 	ret = devm_add_action_or_reset(&spi->dev, adf4350_power_down, indio_dev);
- 	if (ret)
- 		return dev_err_probe(&spi->dev, ret,
--- 
-2.45.2
-
+> 
+> Cheers,
+> Biju
+> 
+> 
+>>
+>>>
+>>> Cheers,
+>>> Biju
+>>>
+>>>
+>>>>
+>>>> Also, for future SoCs that will suffer the same symptom but for
+>>>> different channels (and channels with different addresses) the driver
+>>>> will have to be adapted to match b/w the channel bit in struct riic_of_data::info and channel
+>> node from DT.
+>>>>
+>>>>>
+>>>>> Cheers,
+>>>>> Biju
