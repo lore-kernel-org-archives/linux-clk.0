@@ -1,68 +1,68 @@
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEC0B17BB31
-	for <linux-clk@vger.kernel.org>; Fri, 21 Jun 2024 21:28:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D09B2208C4
+	for <linux-clk@vger.kernel.org>; Fri, 21 Jun 2024 21:34:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719005302; cv=none; b=VmSUwgLu1oAM2I+u+QxTni7VML2+A3uZKuhHnCxYlTBpCgOvsOMDNIX3kHPjFnuNC6Dy2FmL2PUfKmv5KAxOledPGnpWBX4/vWD1T4HPhuBrYIyXmYLgTbowr6Ga6StepLtnpBFooIoOtkepvdNYOpqJpMygln6KlIRXKy/nkkE=
+	t=1719005672; cv=none; b=qaUdco7F2N1eRZYG0CPMVxDKcgbotDFf/UV2iQOiNT81UIyg6fJuQAeqnJ8/lHfV9qYCGYIVRT4d38HYmQJlOgmo58lbyleqbNRpHYthmm3HpQGH3Lakn7RYmHH47OUr1B+zyqEnlx0/S0jcWi2hUIyBekh8YspuRGMYyKs/bYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719005302; c=relaxed/simple;
-	bh=QKICx+L4+0gl4cYunnl2pqCV3ZKva8R72tLPn97iC7w=;
+	s=arc-20240116; t=1719005672; c=relaxed/simple;
+	bh=j6vDoLUrRaDY20UmI+c+o97/8kIf765BHIvIVJs1t5E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qg+p3yWN4JvbmTSjPDAnrwF6J/pajfh+h1xCm3a5OggZqPd+Yp/SwlPxSrcdaC3QZZgCtXUFocU1cOtG+6X1CfA3vAiM5rvEnJ4xsz/ahJSO9rHMogDdMW08QO+qjTQSHHhCfSSQwfmpJ5tJLVr+70h9/wIBaFs18OrcCj14ebc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wgizOFp7; arc=none smtp.client-ip=209.85.208.174
+	 Content-Type:Content-Disposition:In-Reply-To; b=qtlogYMXtOm8CjWTnZO3t0AaBKBDAHkZDMcT+HLZivUU7m+Vdg0sIorsDZg8teMcAgKpxWAXfMSIaGecWdNBRYWWrLl8r7kJHUvWEoppBR+tQuD+A++ODnWXnXXWyTMixZzN04X0bqwktentzWq+7+iNWrPphnLWY1J6xd+vwKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=I+gLL+W5; arc=none smtp.client-ip=209.85.208.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wgizOFp7"
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2ec002caf3eso35180131fa.1
-        for <linux-clk@vger.kernel.org>; Fri, 21 Jun 2024 14:28:20 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="I+gLL+W5"
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2ebe3bac6c6so29857141fa.1
+        for <linux-clk@vger.kernel.org>; Fri, 21 Jun 2024 14:34:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719005298; x=1719610098; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1719005669; x=1719610469; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FNfh9eqLivelE30NW3XWDky/5KmKUbqvae0js3n99HI=;
-        b=wgizOFp7ba8vJizjJiEFXtecYrdXgpgCtATk7WKHX4hoEZkkFCvq3TIF7vlT5L874J
-         K9R4qu4x3XGl8Z9kkUb9IlqdTWcNS3XS4wD2VtxdYvGDxHYPh9iOk4aCtusBzYfoekyu
-         SJeFJ+Mc+bS2uHb23D3/l1yrwLlpTdau+n3IBOYbmyIDGDwZbTrD9WGX/gCQYJGUDcvW
-         JVE5gdOHjNY2IlifyvOR3eilluzFM7sT7UH99VR7wq5QwvaYBJZ34nHvlNXT7n4C4ruj
-         rArswxD2vc8hJRx9wLmMNLd6/DJz2gUZK69c5k7BdWUSjMkrQjNXOglIOw4uk5/S1E1r
-         ZpIw==
+        bh=Pn63cjY4CH601Ssfo3ANW4x42gLFLLgNY0T4TfIh1vc=;
+        b=I+gLL+W53b6jVqxa+Cgjm0gJ+Cw1mIrU69feQycaWvJvPSMJqSUbkQv+bZ/V/8Y/et
+         mHf9UyCBV58d5SbrzIY6H7WZwHBQ1cbvJFZSbfNC3L1uf4Ra08PcGkRpUxOvsGCt1zue
+         VJIf/IISNH2s1sHtF/tTX2hzDUj0culLvCFAT/hME/5rQPHYsSTJN4sdeRa7PF3NxlmB
+         7DQFEsFuqooJeNU3wRfu6jY/rWHtgM8D1wgN89T3S+80BLm7BuAwNLyvqKb5BLeloicw
+         1Ti/0B7jqzJR5A8dbRAtkVdHwBnIbrJEJ/wtlp2UKqiMZLe2bF/69k+qc/VDr4PBeAZ+
+         NAlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719005298; x=1719610098;
+        d=1e100.net; s=20230601; t=1719005669; x=1719610469;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=FNfh9eqLivelE30NW3XWDky/5KmKUbqvae0js3n99HI=;
-        b=Hwaq46Ya9X9YpGqbwcjOWMSlOoi1BnnCGS3384JcQwOIazkxirx2tl7oBjgECk4xYA
-         TmGZj6KD8gkwPop35ROhvG29j/prQhlyi7yZ4KpvT8hTssraGbzpCW6G0Qx9iHeBhLWW
-         NAd8N2+9p+bwYCKeYDnpvDGfwtUgKj/oq5a9UzcBBOwQlBTZVQxUA6S+tWVudEf6VcFW
-         JXabzyF2NgqzmZTpQeg+sD1mdqymTmSfZxIF4DA6oate014qAptxvh7x4EApf3huOPHP
-         dsdoRdDv2ypeIRWzX7vzQyWljmaJlimbUWSLsxcrCQi5OsBoviHEI1cndajpcclqxvTP
-         25lg==
-X-Forwarded-Encrypted: i=1; AJvYcCUrhHt9zPCu3pu2qbHll4HJ+HfCTJrbvTU4UiE4+asQY8LiHHSMGdg5OCjTgKr19Iof+XphWF5jP9JKvxkt+Gjs0DCVMb5uaBmT
-X-Gm-Message-State: AOJu0YzJ12GGDTYR7NQczfnlwlFIn47AHQjnkFWTXtjZh6aziBhIBosb
-	En90pIobmxgtuck/FbT8DkhA3ThWU7/ptISHgXh+ftAV5CnOwuymnywnaFsy2n8=
-X-Google-Smtp-Source: AGHT+IFbHcB/N0L7fWGBY3IjR8AOgKNY0bCWBdJGE1qunkXqouLcTvLBQ/FsVAGlZYSLG5mzp0CQcg==
-X-Received: by 2002:ac2:5466:0:b0:52c:8075:4f3 with SMTP id 2adb3069b0e04-52ccaa36996mr6828296e87.36.1719005298513;
-        Fri, 21 Jun 2024 14:28:18 -0700 (PDT)
+        bh=Pn63cjY4CH601Ssfo3ANW4x42gLFLLgNY0T4TfIh1vc=;
+        b=bSELcRme17Zv3MeTbeBHiVCxb3PmcaJ6bkKJ8h2D4Jrnc3/6WMDX/XXa/Ar7rafSsm
+         cy7hA1tTev3R/g/D7cutiv2WCEgCtgpH25DEmcv7/pwHC7Bv0VKvmaB1vQwithAfRbaE
+         vk+lcHT0zW30/qjBffs26xlwS8EtX8lnS7GeJMdZiGsoFXuJ8w6qMyAa41pRZcwmAgKM
+         Lc/Gp9MZScdVsi9WQID061Vn0L8SAaboYmd4W0j9zNEeV8rswcM0SwAumuUWlorbiCBv
+         oRKHsOVdkR55t3Xy+rb6GW4qlOYPpmMiunLRn0tkifyOCkSrJPQLQ4bC62x40gR6UTQu
+         NVKA==
+X-Forwarded-Encrypted: i=1; AJvYcCUMYbn4HAplnaabQ48jIAfROpjij6DZNiqXXtwQ0ACqfC1PV41NjQbX3l8tZD7TttifpgNHyGYnYu+rYCBvegNbBdxwkUguEZCQ
+X-Gm-Message-State: AOJu0YzAqZYs3AN8FK9zZNScQsPOG0JnZD24RtqtsIkH9pqKN6ksWRGU
+	gxz3yazXkOT4ifg/o9of95wcYERmr/1LKse7tDVgYvj1BCkR33b26swDiSyxqk8=
+X-Google-Smtp-Source: AGHT+IG91S4SWJ8oGiOp31tb7eR2w967Cc7jB2Ddr7QtTNYyfA0/+9KgwyPHqLE/QPaUhHKa8qOeAg==
+X-Received: by 2002:a2e:96d4:0:b0:2eb:e471:dc42 with SMTP id 38308e7fff4ca-2ec3cea2bedmr69747651fa.31.1719005668950;
+        Fri, 21 Jun 2024 14:34:28 -0700 (PDT)
 Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cdd8d8c50sm36121e87.145.2024.06.21.14.28.17
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec4d708883sm2954361fa.47.2024.06.21.14.34.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 21 Jun 2024 14:28:18 -0700 (PDT)
-Date: Sat, 22 Jun 2024 00:28:16 +0300
+        Fri, 21 Jun 2024 14:34:28 -0700 (PDT)
+Date: Sat, 22 Jun 2024 00:34:27 +0300
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
-Cc: sboyd@kernel.org, andersson@kernel.org, bjorn.andersson@linaro.org, 
-	david.brown@linaro.org, devicetree@vger.kernel.org, jassisinghbrar@gmail.com, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-remoteproc@vger.kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, ohad@wizery.com, 
-	robh@kernel.org, sricharan@codeaurora.org, gokulsri@codeaurora.org
-Subject: Re: [PATCH v9 7/8] clk: qcom: Add WCSSAON reset
-Message-ID: <jtsysqyby566kw7m4y3fv5xu3lmfasvpynh3nfqb2vtrgobq44@3zgftd7vljd6>
-References: <20240621114659.2958170-1-quic_gokulsri@quicinc.com>
- <20240621114659.2958170-8-quic_gokulsri@quicinc.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Taniya Das <quic_tdas@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/5] clk: qcom: dispcc-sm8650: use correct clk ops for
+ dptx1_aux_clk_src
+Message-ID: <txiu2qlknkpwbzq4l7ouvv67q3titgzk7rojffbhy6pxom55ff@lbmtphg5qrvu>
+References: <20240621-topic-sm8650-upstream-fix-dispcc-v1-0-7b297dd9fcc1@linaro.org>
+ <20240621-topic-sm8650-upstream-fix-dispcc-v1-2-7b297dd9fcc1@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -71,39 +71,35 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240621114659.2958170-8-quic_gokulsri@quicinc.com>
+In-Reply-To: <20240621-topic-sm8650-upstream-fix-dispcc-v1-2-7b297dd9fcc1@linaro.org>
 
-On Fri, Jun 21, 2024 at 05:16:58PM GMT, Gokul Sriram Palanisamy wrote:
-> Add WCSSAON reset required for Q6v5 on IPQ8074 SoC.
+On Fri, Jun 21, 2024 at 04:01:15PM GMT, Neil Armstrong wrote:
+> Use the same clk clocks ops as the dptx0_aux_clk_src, dptx2_aux_clk_src
+> and dptx3_aux_clk_src.
+
+Squash into the previous patch, please.
+
 > 
-> Signed-off-by: Nikhil Prakash V <quic_nprakash@quicinc.com>
-> Signed-off-by: Sricharan R <quic_srichara@quicinc.com>
-> Signed-off-by: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
-
-Three authors for a single line?
-
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
+> Fixes: 9e939f008338 ("clk: qcom: add the SM8650 Display Clock Controller driver")
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 > ---
->  drivers/clk/qcom/gcc-ipq8074.c | 1 +
->  1 file changed, 1 insertion(+)
+>  drivers/clk/qcom/dispcc-sm8650.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/clk/qcom/gcc-ipq8074.c b/drivers/clk/qcom/gcc-ipq8074.c
-> index 32fd01ef469a..d382d16b9c10 100644
-> --- a/drivers/clk/qcom/gcc-ipq8074.c
-> +++ b/drivers/clk/qcom/gcc-ipq8074.c
-> @@ -4712,6 +4712,7 @@ static const struct qcom_reset_map gcc_ipq8074_resets[] = {
->  	[GCC_NSSPORT4_RESET] = { .reg = 0x68014, .bitmask = BIT(27) | GENMASK(9, 8) },
->  	[GCC_NSSPORT5_RESET] = { .reg = 0x68014, .bitmask = BIT(28) | GENMASK(11, 10) },
->  	[GCC_NSSPORT6_RESET] = { .reg = 0x68014, .bitmask = BIT(29) | GENMASK(13, 12) },
-> +	[GCC_WCSSAON_RESET] = { 0x59010, 0 },
-
-Do you notice that you line is pretty significantly different from the
-previous lines? The time has passed since Stephen has acked this line in
-2019.
-
+> diff --git a/drivers/clk/qcom/dispcc-sm8650.c b/drivers/clk/qcom/dispcc-sm8650.c
+> index 31c82f791b44..70944b7128e2 100644
+> --- a/drivers/clk/qcom/dispcc-sm8650.c
+> +++ b/drivers/clk/qcom/dispcc-sm8650.c
+> @@ -398,7 +398,7 @@ static struct clk_rcg2 disp_cc_mdss_dptx1_aux_clk_src = {
+>  		.parent_data = disp_cc_parent_data_0,
+>  		.num_parents = ARRAY_SIZE(disp_cc_parent_data_0),
+>  		.flags = CLK_SET_RATE_PARENT,
+> -		.ops = &clk_dp_ops,
+> +		.ops = &clk_rcg2_shared_ops,
+>  	},
 >  };
 >  
->  static struct gdsc *gcc_ipq8074_gdscs[] = {
+> 
 > -- 
 > 2.34.1
 > 
