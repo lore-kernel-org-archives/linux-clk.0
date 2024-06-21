@@ -1,101 +1,72 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2EE33207;
-	Fri, 21 Jun 2024 05:57:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDA8516B3AA;
+	Fri, 21 Jun 2024 06:11:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718949436; cv=none; b=X31PrfQ0S0oJdDubaiOnMUdsMn6Vye6p4iMoGKGGRvGwpXl1B00iAvOLuikH8k6bxytjUxRl35vFdDdVpEq/vpU85TbKxYITSlh3sMG3cOqvAeUumgjdyHHpWSGZAze0VpzOVJama3m7XYQgBypqUtSUzDzLQFQ9fXnHJLVIkCU=
+	t=1718950299; cv=none; b=Re0M1etK88Ric3lcMSlYrGYOxWBB/m7Hi3zqNOO9nh66EqdUPgJJbiPH60Thk76/5sBTBjvUG8vX9gwC2b2haHFXQ6U059Ixfl1Vs84LvYdsROb0lvpiFqgLQtQLyyeIio1HrvFurIVpK0/OLR7DR0KEqIXlazqke8TMJBykjvE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718949436; c=relaxed/simple;
-	bh=70TtcVLm9kmqiepSERoWu/9Hwwx1Rf4phfsof9PPYa4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=mw0bf2XjBoDSiasnpxknm+5c2p3uyG6izhFSSH/ixkfaNgPGKqMQGRk97CkdmVv8k2kuzjytAFfHeuWrAsqXloFG1/4YVnXjbCbBwnPrYZ+hQA2evdSWblXbi0MoGmTS3YDOQIno8Pa+fx70EV29qorHi3sV88pdvOGCoSJORSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=wO5bF2dn; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1718950299; c=relaxed/simple;
+	bh=/PXa4wKm47IBCNzQncXGB4SQlNPgnCeArtsLDhDBDok=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rdRV/Kw8nQ4HikXEIMeUNYM1SFDxiQVSqEMO1PpdpJUGSWqwocUv5IpXOLpEfic5MZxmERAEj513JeWug2tlOVAvOAny4OFHuH6osZcHmUGLPgDVKn6gsdAxm4enj/L+4oJ5IcrmhjnfIdMzPhL5OBhqr00BlFvpExreyGQ9fb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OmFy5hZs; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="wO5bF2dn"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1718949371; x=1719554171; i=markus.elfring@web.de;
-	bh=70TtcVLm9kmqiepSERoWu/9Hwwx1Rf4phfsof9PPYa4=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
-	 References:Cc:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=wO5bF2dnR36pYugAZFszjcO3gw0sL18WgGHyX6gNBuq9IaZKpqCaNVBg+xCZQrMx
-	 Y2/x2INaouP5hzu5A401lKHRk7OGa3pJy5idb/1yHkzlUWvXWThvtMFbrnTqNOOaQ
-	 DijgoTMjTEyJ+dI2rxFtO1nrQdEFiMI+S/8ZepiBj2pGkSWclmr6QLpGDbcMh40Q+
-	 XRUlVAvh/BsNifyu6T8mjVYsbFLPDy2WrtwyIoO94VC1T7Y7w5W5sAhzntGtkBQkM
-	 Sg3JFn+9S/TJCMLmkTHUru/f9YHCz3ElL6T4dGGVpuOJy1ueVodJvxjo5Odt1Pd/j
-	 EoKpzuAwElV5I+mU2Q==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MN6FV-1s1cnG2hm9-00UG7M; Fri, 21
- Jun 2024 07:56:11 +0200
-Message-ID: <bc3d018e-5a60-46b0-8e84-7158d231d2cc@web.de>
-Date: Fri, 21 Jun 2024 07:56:10 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OmFy5hZs"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28990C4AF11;
+	Fri, 21 Jun 2024 06:11:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1718950298;
+	bh=/PXa4wKm47IBCNzQncXGB4SQlNPgnCeArtsLDhDBDok=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=OmFy5hZsxf/Zci8chfb+1uStjcAhHjDIQy2noog5nuhI90nxu0BkSPdVS23lrUAVK
+	 VjZU+gijxFtAUyMz/BnijNKglFNWBqD3PH0uWwGtVFZH6qiKJYasrYUDrNJ46TzCec
+	 2i/Xw04Bsjxadfd9iiY9ORl54kbpIDJz9zHAnQ9VCmIA+mtXFuP64JokS6OGF06mpw
+	 qm8n22UkWUFWNGGRrIGJhK7jdiQrbJcBxt0F2M+PO5P3Y46TceH1NizFLa62iWmtE0
+	 rzLLeDHjne2OP7f8oxrAvY3ZJF0I9AXrVrnaGVEM5p/7pLwXl5MQH8MMYsZW6JZH8m
+	 ciVtl0OVtHUAQ==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Lukas Bulwahn <lbulwahn@redhat.com>
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lukas Bulwahn <lukas.bulwahn@redhat.com>
+Subject: Re: [PATCH] clk: qcom: select right config in CLK_QCM2290_GPUCC definition
+Date: Fri, 21 Jun 2024 01:11:20 -0500
+Message-ID: <171895028807.12506.17240836109447013831.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240620201431.93254-1-lukas.bulwahn@redhat.com>
+References: <20240620201431.93254-1-lukas.bulwahn@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [Patch v4 07/10] ARM: lpc32xx: Remove pl08x platform data in
- favor for device tree
-To: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
- Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, "J.M.B. Downing" <jonathan.downing@nautel.com>,
- Vladimir Zapolskiy <vz@mleia.com>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, Russell King <linux@armlinux.org.uk>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
- Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
- Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
- Yangtao Li <frank.li@vivo.com>, Arnd Bergmann <arnd@arndb.de>,
- Li Zetao <lizetao1@huawei.com>, Michael Ellerman <mpe@ellerman.id.au>,
- Chancel Liu <chancel.liu@nxp.com>, dmaengine@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org,
- linux-sound@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-i2c@vger.kernel.org, linux-mtd@lists.infradead.org
-References: <20240620175657.358273-1-piotr.wojtaszczyk@timesys.com>
- <20240620175657.358273-8-piotr.wojtaszczyk@timesys.com>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240620175657.358273-8-piotr.wojtaszczyk@timesys.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:iTUduqMb9cBGoyLdNuW6NQOj676Ul3b9o6PsNTkjdCixiNwYyKR
- oRvmzegMp0qsnzSo70irPsk4uNh054uLIALzh4CztbqWraJbmZHWwsKMRTm8H8QF3uXl6aw
- kX1K/LyUquko0H/IMh72DAyOoKYpTBJD4E6yCi3y21vP7Qgmc0rbTfrxSric9CHiwM0yEkI
- srUTTBp1uUclGZLL0j4BA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:4zwWuLMBIcI=;p3T9mcjmv9EhVlHD/sbm6ZtwCba
- UW1bkeS7/UTJNK3NQOP8ZTd48Yusiy5ZCAL1lyRMxOHwlVEQftGxe98qQylZmEpcdepsI+I/O
- /Gd7WAKyUHB2sWSHJFyt0//5tzvkYVAoJqXpUa173WTSwzFjjp8Mmm16e3xjTwMiEFa8s1wFo
- RMVLj3dQ43GBmpWNbS+3WoOplbIYIXLIkTgqR0dhJ4mOuVn7lHvfrCplqqsferQTJvMYZH7Ns
- INtfxjHQy8bLawfnhVbbBE/yeGK0Fy4EbE/1qo+BZpOZK8+cjnghxQiiNggT9SJC+GIa2e0zP
- rnZGJ5ZtpynHbThpuiManMYgp/NWQfdMvTFFm5GdzCAvNlfWeSzAbYaxc/DPQ8sT/Y6Xw89rd
- q8uoiSTyU6wQpib1I/h7mL0JaUI5nU9o3ByLA4f87UBVBXaz5YcBmAvvNVoEVCVylJ2gm24eb
- TWhgJG8fsq5TFXpP3zrBtVGr6/cqv3HwJv9XoRqhahaTAuc9AnSt9P/xeisDATr5AxmRFGNZn
- Bf/aIaIQEJArOgYQwP+hVLatduOlUoeajtsaXAzmhQhWtQhSvVjGxsNbdKOpwkku0X5GctvOg
- gJWAZy6HqbpBqQ8qQNH8sZen5E60fHE9ZMADZS9NrbJYBwfUApaMyYfHpyOEsdlZ9xrGY2Bvg
- s5zglaFXZisv5uabkgkayKCx/HDe0gnGtkZ6QIu4bm/w9BbmW0vXhd6jTqtK9ZCyhGf0aHRV6
- 4HgugA1UVbpqfWetnoa0VNmw+tRV61JKjOqSbx+O2VEMFROG/2I206GuAeiCCobeg14qAVH39
- d60BOgwvPQJESFlorxlJel7invZ+WB2Ew+jDa9ggMRf9o=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-> With the driver for nxp,lpc3220-dmamux we can remove the pl08x platform
-> data and let pl08x driver to create peripheral channels from the DT
-> properties.
 
-Do you see opportunities to improve such a change description?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.10-rc4#n94
+On Thu, 20 Jun 2024 22:14:31 +0200, Lukas Bulwahn wrote:
+> Commit 8cab033628b1 ("clk: qcom: Add QCM2290 GPU clock controller driver")
+> adds the config CLK_QCM2290_GPUCC, which intends to select the support for
+> the QCM2290 Global Clock Controller. It however selects the non-existing
+> config CLK_QCM2290_GCC, whereas the config for the QCM2290 Global Clock
+> Controller is named QCM_GCC_2290.
+> 
+> Adjust the config to the intended one.
+> 
+> [...]
 
-Regards,
-Markus
+Applied, thanks!
+
+[1/1] clk: qcom: select right config in CLK_QCM2290_GPUCC definition
+      commit: f8d1dca6c44dff362102b1f535b6dab552edb760
+
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
