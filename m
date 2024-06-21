@@ -1,180 +1,179 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48EB715AACD;
-	Fri, 21 Jun 2024 16:56:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3583340856
+	for <linux-clk@vger.kernel.org>; Fri, 21 Jun 2024 17:52:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1718989006; cv=none; b=jXdzelD8hhpLgJxHRD10DRhEJHrg4Xc4v+dKI6Pm5TXHBocGeQVG9hm1Zcvrkc/x/J94QMtNR7TFUZZD2L9ywP5YqcsoLj6/ezyaEcBt+QBW2enubRifmWDbmDxcw/dUaGhuajLCbOaKr/I40HzKj8DcilvOM52wzRUNQXzy6NA=
+	t=1718992378; cv=none; b=O6sQHMStfOOgvkZ6mPa1A1ZoHVb2+sMlnXpB8f/eTD7Zg5rUDoxWpoaho5VxxJtXR2hHqokQZB0ghUQsoYi1XUFX+ujV6FmfkAdXYhM35tjwvkj7RM16XHaDZzpUe/1Z8JVvGt6OU1fK/5PrsBZI9vSkhQ+pXbypeu9D/Al49OE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1718989006; c=relaxed/simple;
-	bh=n132DwKyYUHj3NiZKzJ2KoW1RQf5gMQTgFtd9SK4ok8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=twExwB9kQlj+frJ65TX0hKbHCV01Ia0EqXtUAC3u41n9IMRXnO3yB/EQ25LAWvj0CsLPv/UQZR2g3Ywl6cPBTYXQ2K9VXw/oG8tVDMowhEUDWpwwzTQQcMBZA3+08YYNU0P0H2SgAu4fWWj0qcpRqvTS/WT+GMciapWdQa+iHgU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=V9X8uvnT; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1718992378; c=relaxed/simple;
+	bh=l+e3TBsJGHgEO+B6v7c2lE1gihkDrqoV70vknaAijVY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=b7MIJH+QUeJPF0a5kDGzcoJWNlzdu+g60d64rFQ1Vu4b9d4qlFgRXuPB8RdYEoewzs4NQiBRFEdj/Ig2TnKlOqw6Yks4j2yNI1CbpC8ppxNF6kpiGExZUYBiVyR/cu4VWoB5OJF7LTYcWJRrW3L+eeB3t+eekg69hA1UnafGoD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mAnya+KK; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="V9X8uvnT"
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45LEILeA011370;
-	Fri, 21 Jun 2024 16:56:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	kUv80vZ6khixWxQQEnBqKp5KLpX7ptf9eFXJ0sTRTyU=; b=V9X8uvnTt3Tdrm9P
-	fbc8rv0msVJe6YB6DB2Gn8xPXRoqUUUuOTBAT+shFqiYPME89dMYVv7jUjv7o2w6
-	9ioTkbEOMNP8aFwpMubyf2bY0NcDaMjZyfYmPL0C2A5H0H9UriSBcuSTaRwPpklb
-	rDOS+JF47GLgOvW/fpDHj3QeeUllI2MBL7zVLfdLQXogi8Y7R/OMG9PWh4REw2Jk
-	71fREVSIwTgxkYg6zKt3zjqXdxp0jfCoV0AJmC6/r1knScZEfWoAdnvIsIAHPZKn
-	KtyNyn2alhmpg+Re9VTcbmde4J5eGRwd1UnuzU6PVXPSVMtrI824RcrLijpE7SYL
-	133TbQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3yvrrcb5g2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Jun 2024 16:56:40 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45LGudC5031649
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 21 Jun 2024 16:56:39 GMT
-Received: from [10.216.44.165] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 21 Jun
- 2024 09:56:35 -0700
-Message-ID: <7a5dd5a7-b9ad-4ae7-8267-8dc4c221fef2@quicinc.com>
-Date: Fri, 21 Jun 2024 22:26:30 +0530
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mAnya+KK"
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2c5362c7c0bso1758655a91.1
+        for <linux-clk@vger.kernel.org>; Fri, 21 Jun 2024 10:52:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1718992374; x=1719597174; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eceM7eGroF/1YftF1UIl+bHo7iAVJgd1bq1phB6robE=;
+        b=mAnya+KKAX0ifmnLMBKTtPbbcUguyOSmMna7nLO/mYGRdmXFwVnzZ2weQqjziZm1q0
+         1PZKJCuUhL5mdEOp/rGJOaQZ7hQTo5heTwXFvZhDNyPe3/OYtMyaUr1S7hBEwFQhLSri
+         7wMQpxHbaMvYGc0MnsOkczfYhHQSerGqPD7s+V5httGyaL46JRnSJ05ywsgwjXFHp49L
+         ZgYzfDJ1qhDZI33s+ZARyIM97+bJPxMkEAlGzcyBnKGcmHhHcDAV9OuMGkZTubEgMggZ
+         TMCrwKDlrhEJ7Vh16q7nnGT+ufMVfKGZMzChI7qbdaCFXxgx0L74g2tJGAL9gm2UtIaj
+         Lp2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1718992374; x=1719597174;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=eceM7eGroF/1YftF1UIl+bHo7iAVJgd1bq1phB6robE=;
+        b=X+mKlO8W28I66URACCYd6EcXhRyZjsIIznun01//r/J+PMdoKsyDkA+rC4I2gTt9Mx
+         fEZsJr1Yd8hPLFyPLEsw+sFNBp/QTQlKOcC1aj9lXuyxU3ZSkoliYbWXcU1+TDlTp0wB
+         xbX6xION/8WG9pe1gdEhMDjsCpq7atpKuhBZJP+lv0572AM7uyD6N74OPeVSZimSomPS
+         q2oDxzwrAZyLalK9s+K5ZeW9Ci+j0eAY4r0I5MgJdoVcwYP4rHEb2H9JHG6kQfNX9yxt
+         bujBVPDRR9hT/hLu+h9TnlgTN2bXtWfbMiSaN8393RdBqROXjZl8Z/0oT+Mme74n8iz2
+         qCNA==
+X-Gm-Message-State: AOJu0Yw88mXyiuemAyoYJ2AwJEf0YQNr8kuYCK9co+GedVIXc0ulbLBg
+	QIkNFW+zLRQVdWhOAWEgZlHFh+Bq8zg0BFbuuCa1nS0L77FDytv4SHykk7Z3mDTo7lbDRx9rOF9
+	/yQoBsQFoD46MWQ0lW/xnHXC2l34=
+X-Google-Smtp-Source: AGHT+IGayfrnXuX32A8k7x+SGn5TpPg73uu0SeCkfjVvVUrHSzOi3yXl1TtWyEkUmcLr+2LUM8tReB5PmJphEOGdAos=
+X-Received: by 2002:a17:90a:e615:b0:2c2:f2f9:a121 with SMTP id
+ 98e67ed59e1d1-2c7b5d6a450mr8877807a91.39.1718992374293; Fri, 21 Jun 2024
+ 10:52:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] clk: qcom: dispcc-sm8650: Park RCG's clk source at XO
- during disable
-To: Neil Armstrong <neil.armstrong@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen
- Boyd <sboyd@kernel.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20240621-topic-sm8650-upstream-fix-dispcc-v1-0-7b297dd9fcc1@linaro.org>
- <20240621-topic-sm8650-upstream-fix-dispcc-v1-1-7b297dd9fcc1@linaro.org>
-Content-Language: en-US
-From: Taniya Das <quic_tdas@quicinc.com>
-In-Reply-To: <20240621-topic-sm8650-upstream-fix-dispcc-v1-1-7b297dd9fcc1@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: m2yYyrm2fqpTLbCrtzEBmeOndlNTu8WU
-X-Proofpoint-ORIG-GUID: m2yYyrm2fqpTLbCrtzEBmeOndlNTu8WU
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-21_08,2024-06-21_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 mlxlogscore=999 spamscore=0 lowpriorityscore=0
- phishscore=0 bulkscore=0 adultscore=0 mlxscore=0 suspectscore=0
- malwarescore=0 clxscore=1011 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2406140001 definitions=main-2406210122
+References: <20240531202648.277078-1-marex@denx.de>
+In-Reply-To: <20240531202648.277078-1-marex@denx.de>
+From: Adam Ford <aford173@gmail.com>
+Date: Fri, 21 Jun 2024 12:52:42 -0500
+Message-ID: <CAHCN7xJA2i+k-n+02Km+83YXVEse=NDR_KmwQzhdTmCAJkP+BA@mail.gmail.com>
+Subject: Re: [PATCH] clk: imx: clk-imx8mp: Allow media_disp pixel clock
+ reconfigure parent rate
+To: Marek Vasut <marex@denx.de>
+Cc: linux-clk@vger.kernel.org, Abel Vesa <abelvesa@kernel.org>, 
+	Fabio Estevam <festevam@gmail.com>, "Lukas F . Hartmann" <lukas@mntmn.com>, 
+	Michael Turquette <mturquette@baylibre.com>, Peng Fan <peng.fan@nxp.com>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, Sascha Hauer <s.hauer@pengutronix.de>, 
+	Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>, imx@lists.linux.dev, 
+	kernel@dh-electronics.com, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Fri, May 31, 2024 at 3:36=E2=80=AFPM Marek Vasut <marex@denx.de> wrote:
+>
+> The media_disp[12]_pix clock supply LCDIFv3 pixel clock output. These
+> clocks are usually the only downstream clock from Video PLL on i.MX8MP.
+> Allow these clocks to reconfigure the Video PLL, as that results in
+> accurate pixel clock. If the Video PLL is not reconfigured, the pixel
+> clock accuracy is low.
 
+What happens if you have both a DSI (IMX8MP_CLK_MEDIA_DISP1_PIX) and
+an LVDS (IMX8MP_CLK_MEDIA_DISP2_PIX) display and both try to
+reconfigure their shared parent clock when their resolutions/clocks
+may not be the same?  I looked at doing that for the 8MP, but I was
+running into display issues.
 
-On 6/21/2024 7:31 PM, Neil Armstrong wrote:
-> The RCG's clk src has to be parked at XO while disabling as per the
-> HW recommendation, hence use clk_rcg2_shared_ops to achieve the same.
-> 
-> Fixes: 9e939f008338 ("clk: qcom: add the SM8650 Display Clock Controller driver")
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+For example, I was trying to test an 800x480 LVDS display which needed
+a pixel clock of 30MHz, and a DSI trying to run at 1920x1080 @
+148.5MHz.
+
+adam
+
+>
+> Signed-off-by: Marek Vasut <marex@denx.de>
 > ---
->   drivers/clk/qcom/dispcc-sm8650.c | 16 ++++++++--------
->   1 file changed, 8 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/dispcc-sm8650.c b/drivers/clk/qcom/dispcc-sm8650.c
-> index c9d2751f5cb8..31c82f791b44 100644
-> --- a/drivers/clk/qcom/dispcc-sm8650.c
-> +++ b/drivers/clk/qcom/dispcc-sm8650.c
-> @@ -339,7 +339,7 @@ static struct clk_rcg2 disp_cc_mdss_dptx0_aux_clk_src = {
->   		.parent_data = disp_cc_parent_data_0,
->   		.num_parents = ARRAY_SIZE(disp_cc_parent_data_0),
->   		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_shared_ops,
->   	},
->   };
->   
-> @@ -457,7 +457,7 @@ static struct clk_rcg2 disp_cc_mdss_dptx2_aux_clk_src = {
->   		.parent_data = disp_cc_parent_data_0,
->   		.num_parents = ARRAY_SIZE(disp_cc_parent_data_0),
->   		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_shared_ops,
->   	},
->   };
->   
-> @@ -516,7 +516,7 @@ static struct clk_rcg2 disp_cc_mdss_dptx3_aux_clk_src = {
->   		.parent_data = disp_cc_parent_data_0,
->   		.num_parents = ARRAY_SIZE(disp_cc_parent_data_0),
->   		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_shared_ops,
->   	},
->   };
->   
-> @@ -560,7 +560,7 @@ static struct clk_rcg2 disp_cc_mdss_esc0_clk_src = {
->   		.parent_data = disp_cc_parent_data_5,
->   		.num_parents = ARRAY_SIZE(disp_cc_parent_data_5),
->   		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_shared_ops,
->   	},
->   };
->   
-> @@ -575,7 +575,7 @@ static struct clk_rcg2 disp_cc_mdss_esc1_clk_src = {
->   		.parent_data = disp_cc_parent_data_5,
->   		.num_parents = ARRAY_SIZE(disp_cc_parent_data_5),
->   		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_shared_ops,
->   	},
->   };
->   
-> @@ -647,7 +647,7 @@ static struct clk_rcg2 disp_cc_mdss_vsync_clk_src = {
->   		.parent_data = disp_cc_parent_data_0,
->   		.num_parents = ARRAY_SIZE(disp_cc_parent_data_0),
->   		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_shared_ops,
->   	},
->   };
->   
-> @@ -667,7 +667,7 @@ static struct clk_rcg2 disp_cc_sleep_clk_src = {
->   		.parent_data = disp_cc_parent_data_9,
->   		.num_parents = ARRAY_SIZE(disp_cc_parent_data_9),
->   		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_shared_ops,
->   	},
-Technically not required for this RCG as the source is sleep clock.
->   };
->   
-> @@ -682,7 +682,7 @@ static struct clk_rcg2 disp_cc_xo_clk_src = {
->   		.parent_data = disp_cc_parent_data_0_ao,
->   		.num_parents = ARRAY_SIZE(disp_cc_parent_data_0_ao),
->   		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_shared_ops,
->   	},
->   };
-This RCG supports only XO frequency and can be ignored.
->   
-> 
-
--- 
-Thanks & Regards,
-Taniya Das.
+> Cc: Abel Vesa <abelvesa@kernel.org>
+> Cc: Fabio Estevam <festevam@gmail.com>
+> Cc: Lukas F. Hartmann <lukas@mntmn.com>
+> Cc: Michael Turquette <mturquette@baylibre.com>
+> Cc: Peng Fan <peng.fan@nxp.com>
+> Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+> Cc: Sascha Hauer <s.hauer@pengutronix.de>
+> Cc: Shawn Guo <shawnguo@kernel.org>
+> Cc: Stephen Boyd <sboyd@kernel.org>
+> Cc: imx@lists.linux.dev
+> Cc: kernel@dh-electronics.com
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-clk@vger.kernel.org
+> ---
+>  drivers/clk/imx/clk-imx8mp.c | 4 ++--
+>  drivers/clk/imx/clk.h        | 4 ++++
+>  2 files changed, 6 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/clk/imx/clk-imx8mp.c b/drivers/clk/imx/clk-imx8mp.c
+> index 670aa2bab3017..f11dfe2028319 100644
+> --- a/drivers/clk/imx/clk-imx8mp.c
+> +++ b/drivers/clk/imx/clk-imx8mp.c
+> @@ -547,7 +547,7 @@ static int imx8mp_clocks_probe(struct platform_device=
+ *pdev)
+>         hws[IMX8MP_CLK_AHB] =3D imx8m_clk_hw_composite_bus_critical("ahb_=
+root", imx8mp_ahb_sels, ccm_base + 0x9000);
+>         hws[IMX8MP_CLK_AUDIO_AHB] =3D imx8m_clk_hw_composite_bus("audio_a=
+hb", imx8mp_audio_ahb_sels, ccm_base + 0x9100);
+>         hws[IMX8MP_CLK_MIPI_DSI_ESC_RX] =3D imx8m_clk_hw_composite_bus("m=
+ipi_dsi_esc_rx", imx8mp_mipi_dsi_esc_rx_sels, ccm_base + 0x9200);
+> -       hws[IMX8MP_CLK_MEDIA_DISP2_PIX] =3D imx8m_clk_hw_composite_bus("m=
+edia_disp2_pix", imx8mp_media_disp_pix_sels, ccm_base + 0x9300);
+> +       hws[IMX8MP_CLK_MEDIA_DISP2_PIX] =3D imx8m_clk_hw_composite_bus_fl=
+ags("media_disp2_pix", imx8mp_media_disp_pix_sels, ccm_base + 0x9300, CLK_S=
+ET_RATE_PARENT);
+>
+>         hws[IMX8MP_CLK_IPG_ROOT] =3D imx_clk_hw_divider2("ipg_root", "ahb=
+_root", ccm_base + 0x9080, 0, 1);
+>
+> @@ -609,7 +609,7 @@ static int imx8mp_clocks_probe(struct platform_device=
+ *pdev)
+>         hws[IMX8MP_CLK_USDHC3] =3D imx8m_clk_hw_composite("usdhc3", imx8m=
+p_usdhc3_sels, ccm_base + 0xbc80);
+>         hws[IMX8MP_CLK_MEDIA_CAM1_PIX] =3D imx8m_clk_hw_composite("media_=
+cam1_pix", imx8mp_media_cam1_pix_sels, ccm_base + 0xbd00);
+>         hws[IMX8MP_CLK_MEDIA_MIPI_PHY1_REF] =3D imx8m_clk_hw_composite("m=
+edia_mipi_phy1_ref", imx8mp_media_mipi_phy1_ref_sels, ccm_base + 0xbd80);
+> -       hws[IMX8MP_CLK_MEDIA_DISP1_PIX] =3D imx8m_clk_hw_composite("media=
+_disp1_pix", imx8mp_media_disp_pix_sels, ccm_base + 0xbe00);
+> +       hws[IMX8MP_CLK_MEDIA_DISP1_PIX] =3D imx8m_clk_hw_composite_bus_fl=
+ags("media_disp1_pix", imx8mp_media_disp_pix_sels, ccm_base + 0xbe00, CLK_S=
+ET_RATE_PARENT);
+>         hws[IMX8MP_CLK_MEDIA_CAM2_PIX] =3D imx8m_clk_hw_composite("media_=
+cam2_pix", imx8mp_media_cam2_pix_sels, ccm_base + 0xbe80);
+>         hws[IMX8MP_CLK_MEDIA_LDB] =3D imx8m_clk_hw_composite("media_ldb",=
+ imx8mp_media_ldb_sels, ccm_base + 0xbf00);
+>         hws[IMX8MP_CLK_MEMREPAIR] =3D imx8m_clk_hw_composite_critical("me=
+m_repair", imx8mp_memrepair_sels, ccm_base + 0xbf80);
+> diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+> index adb7ad649a0d2..aa5202f284f3d 100644
+> --- a/drivers/clk/imx/clk.h
+> +++ b/drivers/clk/imx/clk.h
+> @@ -442,6 +442,10 @@ struct clk_hw *__imx8m_clk_hw_composite(const char *=
+name,
+>         _imx8m_clk_hw_composite(name, parent_names, reg, \
+>                         IMX_COMPOSITE_BUS, IMX_COMPOSITE_CLK_FLAGS_DEFAUL=
+T)
+>
+> +#define imx8m_clk_hw_composite_bus_flags(name, parent_names, reg, flags)=
+ \
+> +       _imx8m_clk_hw_composite(name, parent_names, reg, \
+> +                       IMX_COMPOSITE_BUS, IMX_COMPOSITE_CLK_FLAGS_DEFAUL=
+T | flags)
+> +
+>  #define imx8m_clk_hw_composite_bus_critical(name, parent_names, reg)   \
+>         _imx8m_clk_hw_composite(name, parent_names, reg, \
+>                         IMX_COMPOSITE_BUS, IMX_COMPOSITE_CLK_FLAGS_CRITIC=
+AL)
+> --
+> 2.43.0
+>
+>
