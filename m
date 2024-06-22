@@ -1,60 +1,60 @@
 Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED37514C587
-	for <linux-clk@vger.kernel.org>; Sat, 22 Jun 2024 11:47:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB69F14B947
+	for <linux-clk@vger.kernel.org>; Sat, 22 Jun 2024 11:48:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719056850; cv=none; b=D6b57KqAgRI5sW23dBEEr4w1H50Z+G9se8hMyO0XOHi0yX3WdUAolc5mcb3Aw6PCPfi/+ePN+EMSMyY6NyH7WjiNnOm0+vVTWnPm7rGXoEZDHNxZ+T7VJ0+6uorOkV7TX/vnQwfnoOoZznZRrbtE5HLV4/2YWZF/7QwU/7H8nMw=
+	t=1719056932; cv=none; b=DAMq2Wqr5z7nWBSFS53wi5CmMwQ8nldFwA+S28ci6NjCPptcPdNEeJNkI1ITrr2lguf1sZOkyrcYz8ZLCt3tn/Aq1/GAAX5+L9JNOSaGAoD8oUVRd+yRqkBV5dj5O+7dQwGY+lcs/dUBsdH9dzPqSooU1c8rPs/xvydjSGGveeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719056850; c=relaxed/simple;
-	bh=9HW0EKBjliMtQgcjh+Q6rnR7bvgYSXhkoyU8qURuBOE=;
+	s=arc-20240116; t=1719056932; c=relaxed/simple;
+	bh=64yO8JfGv2L2EdkUtYfsGwvZ48+tCTCotY2TqOzKbQk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Zq3WLR3JOfZHmrpKKGvUJbXIXV8omKNq0hWhqXRB4PVZjbgm7m2u9mKOdSmUkrW3iIHrqQzEZngIhHhXe6dyQXkAJOk/sG87E81ElB/Io4aZCxGHhDzSOZOtsChfMmmtitDbm7UsevZ5FDY0uUrnRBlB38Io1jRt0w5zzgK8BdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sSBfdw8A; arc=none smtp.client-ip=209.85.208.46
+	 In-Reply-To:Content-Type; b=DIcp83S69Dty2vNpmZJTzCU0L8sn3Xb9R+yiPJb58amhzhpVGTUikG5FZFzf+aAbLipYkVgrxXvVXNWD3NjVaDlWcJyDKza3K4R5mDajnGsw2ZDIUD7KZQ3v3XVAQG58WK/6i/s0Ov3GkGRcqiEVTrgfX+4NoMV6JsASBdsAews=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JsvyzqC0; arc=none smtp.client-ip=209.85.208.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sSBfdw8A"
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-57d457357easo257145a12.3
-        for <linux-clk@vger.kernel.org>; Sat, 22 Jun 2024 04:47:27 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JsvyzqC0"
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-57d280e2d5dso2481577a12.1
+        for <linux-clk@vger.kernel.org>; Sat, 22 Jun 2024 04:48:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719056846; x=1719661646; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1719056929; x=1719661729; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=GMNfILuks1dO8qewlx3Rln5wKJZKgfLBKJ/x00vmQuc=;
-        b=sSBfdw8AfGuahRGAMbm8SXWucHf6auJA8XtkxFrh8Ms8oXdaeolW09cmmzS3KJqIcK
-         xgeKiivaDJybl4x7nVb2qGOR6icCd5DiMpBNkD9aWqmFnvOeQi46OnjoB4sBTb3+yjHG
-         CBNukBWrCtfNha1aKfQOUw/ajUQVSi13YC8LBYFruU6KAGTdErT1r78E4GDatbMoQzfJ
-         HI1Jfo0A+EG0Rv7KIX13K6pdrlqOagOoCYKzo9AuzZf4Cl+UsvYy0ketu3SBA1Mfj14O
-         ePSZHr8UAynQGnylLWg4/CZSWFLRDrRBEy1NMxwTrMUoD9D/8P2W/E9Seg0ZnKlliN8a
-         jQEQ==
+        bh=Si+0+Udt3TumPYpj87u59+KPSMEelqrx15xLL3IUjzg=;
+        b=JsvyzqC0/Zr6zOkTWHxPCxqgTt0b4572BhpuVl3gLusJv2iOqmxwf6xAyt8OARjS0R
+         vTxBhd0xcu81TV1gZz/yMbvM3UAxEgyyKq2rYUWCLtDWT/vLilcil3ABsQ5rzRVSbdsF
+         CFYzpZuuC8/hdJeEYng2OwkgvVQ/HD+f9+HJE/SwwPf7tvkSTsaF3+l6a9CCtcGIzqBc
+         VDwNnmB007BMbbfb6VzEUzmhLxyhKbXz7GaToCA4YQk5M7kThTHAwl8q8g4/2Q68PPaI
+         uYqZX3G/F4/F5hlK3LZMKXmwz5gTGQn64BTdoT79Xa/gExuIz8Bxdl5kxUKSE5m2usqo
+         5NEg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719056846; x=1719661646;
+        d=1e100.net; s=20230601; t=1719056929; x=1719661729;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=GMNfILuks1dO8qewlx3Rln5wKJZKgfLBKJ/x00vmQuc=;
-        b=VcCjGke1PUNNlAkabkXTzCIrPGd8dpUUXLqp75J7YBf7iLMTQ6r/+g5NcVbyHvZ4Hf
-         W1s3agWpjpZl05ov/Zgf1qlZGIL/wGb22nbhdDXzMKZd4vZJH65r6yPHV9+ywsEORoqL
-         KXz2sqRkd8soI/rbAUwUZGZf3a8C73ZEdSOQfGZZ8m0hWzLuTr9x8p+8VaOK7zt3kfpL
-         VZgn1wPZxaehS/pQdcjYv37f3d+P9nuSKJUTDsstIRC4Ur/iVah7sPh+5Y+LS84vpGTG
-         ddHoWp6Gp7atSqQpPddNizn/6HG2BTdhVp9Ice0hK7Y9sblCV/hqA0qqxjN2+mhfEBwm
-         Zuuw==
-X-Forwarded-Encrypted: i=1; AJvYcCWneUIQiz2eElV9VIrBV6hVe5BlwfK7xXf52ml4CueJY5UWx9Yt47ae+XScr139jp6j9Ci7V7DbWbsPte9wzEyu3cmYHlJ4DX27
-X-Gm-Message-State: AOJu0YwmRniiberimNPovN2b8NdAZdlSXA9fxkjsTeCp62+bDpT1/Qvz
-	CxBn2/ojepdep7QLh36QOJn+G6WhdNcz/V/wu95uXYFpm41byb4/DAv62U/3KMs=
-X-Google-Smtp-Source: AGHT+IGPd0yRMno5iuHp123ccFoht9qSNa3r7/hf1JIr+3S3nQAB1NpSm/qpu9dnCIwbrVTmzCgpBg==
-X-Received: by 2002:a50:c014:0:b0:57c:7ce3:6cd9 with SMTP id 4fb4d7f45d1cf-57d07e6b7d8mr6880465a12.23.1719056846039;
-        Sat, 22 Jun 2024 04:47:26 -0700 (PDT)
+        bh=Si+0+Udt3TumPYpj87u59+KPSMEelqrx15xLL3IUjzg=;
+        b=UP+Nq1GyNdJ1luNuQlOPqQRtV0IW+By3eXVWzGUQS8AwCiU/N9Yi5skFW9MX0TIHfH
+         /HFoL7WT/877qkBDu0ZqBs+oDOupFWu7wgFf5l0pYZQT64+LxLSZszx/8FUgew2Ksoog
+         lTXQPvApFOZ0ZGRwqlXeG+cjBZXZOKJqAK4i/o3VWpzByz+Ms/+N3VofDxFZzW0oMG5W
+         8/RARlowDmsKrEAXXpVV12r+c6/cBXurensb20vGjuHrsk0o+KZWAym8jUUxJxGklHwz
+         /xA13irSYNl+MRHCxOAFmHT/hs1kS0TTUHwsT7T+xGTjg1I69tzDKb7Chxf1AUqSbDKv
+         qtIg==
+X-Forwarded-Encrypted: i=1; AJvYcCXrXfWRjz5/ohm2Vak++JsQSeMq4eeuIw+xHrvuOIjbZgL536rPSItc8GGKGPuISwLVzGSawKOoCYduzMS1AoLFBhWTIlnrFRFm
+X-Gm-Message-State: AOJu0YztpT8jOhUJMeghQDpCiyT7nqBPmgNiGq85OT2KfB4fZnslhaH/
+	lIzhLZ9UnsfqC7EbSvv8O5gEK+loFmA1RGYXPCD6w//ii+1VqKXH+UFQBBh496w=
+X-Google-Smtp-Source: AGHT+IETsmUp0wg345dn1k6YoCEgM27JTx2/WGxNpwXA2lrAy+TNHTbiIiNfA5B4wb3j7PDAkVxgug==
+X-Received: by 2002:a50:c30d:0:b0:57d:261d:f825 with SMTP id 4fb4d7f45d1cf-57d261df8b3mr3767209a12.21.1719056929128;
+        Sat, 22 Jun 2024 04:48:49 -0700 (PDT)
 Received: from [192.168.128.35] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d305616dfsm2243941a12.79.2024.06.22.04.47.24
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d3041208esm2237898a12.30.2024.06.22.04.48.46
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 22 Jun 2024 04:47:25 -0700 (PDT)
-Message-ID: <a7cd32a6-4689-4bb4-b211-b8dab5caa0a5@linaro.org>
-Date: Sat, 22 Jun 2024 13:47:23 +0200
+        Sat, 22 Jun 2024 04:48:48 -0700 (PDT)
+Message-ID: <2fcf909c-10c5-41b4-9962-d085e7e2bf5c@linaro.org>
+Date: Sat, 22 Jun 2024 13:48:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -62,7 +62,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/7] ARM: dts: qcom: msm8226: Hook up CPU cooling
+Subject: Re: [PATCH 7/7] ARM: dts: qcom: msm8226: Convert APCS usages to mbox
+ interface
 To: Luca Weiss <luca@lucaweiss.eu>, ~postmarketos/upstreaming@lists.sr.ht,
  phone-devel@vger.kernel.org, Jassi Brar <jassisinghbrar@gmail.com>,
  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -71,7 +72,7 @@ To: Luca Weiss <luca@lucaweiss.eu>, ~postmarketos/upstreaming@lists.sr.ht,
 Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
  devicetree@vger.kernel.org, linux-clk@vger.kernel.org
 References: <20240619-msm8226-cpufreq-v1-0-85143f5291d1@lucaweiss.eu>
- <20240619-msm8226-cpufreq-v1-6-85143f5291d1@lucaweiss.eu>
+ <20240619-msm8226-cpufreq-v1-7-85143f5291d1@lucaweiss.eu>
 Content-Language: en-US
 From: Konrad Dybcio <konrad.dybcio@linaro.org>
 Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
@@ -109,18 +110,16 @@ Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
  nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
  izWDgYvmBE8=
-In-Reply-To: <20240619-msm8226-cpufreq-v1-6-85143f5291d1@lucaweiss.eu>
+In-Reply-To: <20240619-msm8226-cpufreq-v1-7-85143f5291d1@lucaweiss.eu>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 19.06.2024 11:02 PM, Luca Weiss wrote:
-> Add cooling-maps for the CPU thermal zones so the driver can actually do
-> something when the CPU temperature rises too much.
+> Since we now have the apcs set up as a mailbox provider, let's use the
+> interface for all drivers where possible.
 > 
 > Signed-off-by: Luca Weiss <luca@lucaweiss.eu>
 > ---
-
-Very cool, thanks
 
 Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
