@@ -1,60 +1,60 @@
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4573714BF98
-	for <linux-clk@vger.kernel.org>; Sat, 22 Jun 2024 11:01:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9265D4C8A
+	for <linux-clk@vger.kernel.org>; Sat, 22 Jun 2024 11:23:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719054112; cv=none; b=RvDwauxoDrvqgEsDmlRM+UK7LpJVkUf/lt56B/DZlIdfFEzNmsfH/XAHRKlDMuMeeRGZe+7QnjFIpOoU5AflMExzhBAHizdUx5NdrJUgjVSoFK1Yd4APgMyzoROj0UvD1bdsv7Ma/fUbsIClCdtQEo2T3+8RsFDnjAzmYQSgeEg=
+	t=1719055414; cv=none; b=ggfRG8r5J0e8SM4kHWc79fK/rWm4N78TVttY/yOeJT3v7+tnh+uXSUymYRjNUidtu+vy95Clto+On+4UeLwUqM8sdEXhSjBlR88VbenYIhgsT2Te9wmWdsBkWX82oTCwvtK8VL5sMzi62QXfkvSxIkdxQwTkhcwPg+bjwT6pltU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719054112; c=relaxed/simple;
-	bh=F3gqfRmiUj+bYI01JOgOi0+RTUtI8rxBBXSadyCmGJQ=;
+	s=arc-20240116; t=1719055414; c=relaxed/simple;
+	bh=s8IcRfDXQj8f4kTCAOTtkNej/CuRn/sZJe1kkX5GCWI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Cmd5GwAQ6WDif+IyGmelZ8gOwNEREJFwrGOP9rmExR5G9XYatVGJpymGwY4oYGIGCaG5sJOMfG7ud9GtpiOruJ5UftspeHTZe/ROcbEIFeKV10gw6H0514Z9nbwGMDaDnVt7qvNp1i9P0IhS8bBZhhpDaO+tAAR7JNx/AQb9qJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lYTzriPx; arc=none smtp.client-ip=209.85.208.175
+	 In-Reply-To:Content-Type; b=gvNWhjSIBO5rUE309lPAJi5Whqkn8S4ighfpvd6e0FGVRwcPwztyeCcRGKJ/dY8PWVKGtF6cL7pZdyUEYVaAUtfhS8a4UECm8Dpnkc13jRJ8acg5rZGXOoNr9Zrk9WLU11q5wNBVeP1BaWJC9BdW4/dyiWao38NgEutJhPOzZBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j2p/2zlI; arc=none smtp.client-ip=209.85.218.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lYTzriPx"
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ec50d4e47bso11908851fa.2
-        for <linux-clk@vger.kernel.org>; Sat, 22 Jun 2024 04:01:48 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j2p/2zlI"
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a6ef46d25efso325411766b.0
+        for <linux-clk@vger.kernel.org>; Sat, 22 Jun 2024 04:23:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719054107; x=1719658907; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1719055410; x=1719660210; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=jXRUkjHTIgJfjCnNrNY9R3/Ef3KcLvNtWkpIANt8d5Y=;
-        b=lYTzriPxM1sfMe/Rop+6du5w9ArSWsz3nMiIqmo/aAqRlX/ziRpi3C9NtvL+P52wxL
-         cEQ6rJL9oikIrnHapvX6swYeI05PpJ6HpPOkpIX3JXu+uxef21iYHoKeEix9UqYcSpRu
-         ZjnNpqSfAfAQWFa00QwKhOTQcfyKSpA2RPeSjJPjQub5q77knEx5yz3DvvOaqi2dVV8A
-         m/vvGYpxJ2ad2MU3wuTZAY9+/Ol3WFp/eR2fp14+XOhq3IFMLzcyS4M0W1cRdDureqPJ
-         oXDG+xseE0OCExUXZOcxPWJ97LXtTOjZmEz0oVpDN8iHvBYnay6xrhPuznW8Q+Fmelab
-         iMlQ==
+        bh=v7v8etS9lc99/NCTpKj/r0Kcu15d2+tzcAbXByqh6yU=;
+        b=j2p/2zlI7fw/6R3RYdDQGWezho0/ahqytxSqmxl1cEIwZTsrv7HpQrIRFAdM4xWcTa
+         DzDOlU6MfC12qQUJtKeM1JBOvemn3g2P/r85wtInh6tw8N3DJsJDzODjyrwd+7QCuCPT
+         tazw9LarU47LqgChYt/iUnmD0nJXEMFqS0TqZ34AXdCq1UVVuHFOv2ehxD33VqvtHJJU
+         NlHCKQm0Bjcah85xB51xz+s0K7M9/o3dGiFtBwXpsou0zQhyLCFAMsSLNZ4UAteXlOUf
+         0XCSJ3Nba4kWiPYI/twm9D8aUs53LW+/1KHLg2qiPfYF0HaFadm7E/5OoXEwcsMTWfN1
+         Q1Aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719054107; x=1719658907;
+        d=1e100.net; s=20230601; t=1719055410; x=1719660210;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jXRUkjHTIgJfjCnNrNY9R3/Ef3KcLvNtWkpIANt8d5Y=;
-        b=bGceckDITGhoHRsLnBgWMbTqLapRP1DlioPxBHwZ8S6ANlALHVm4q32gLxgSlnTRc6
-         GuxO27sU/Ym43q9vylElRvJJC1Fz/g8XwhYyS2k5eSxPEyEHH2nQ+mR9TDvqc3uI7Sqg
-         p1F1Wean4sr3HRmsge84yiqbQ+eKQUS23mKFs8F2Ns47fYd+CG7JS4aW/RK85/3xOP4u
-         yKTV5VObr8YDEwrgxDHseUDwig+OWoTEhUqV1ANwXif9z9EH5mUkEuenzmPHoJjIrMGp
-         4IZtNjAREvs43voHSWaYhF46XBR43fvrMjEDmTsF5fyNWW6Nk+a4Ou6OgSZkVNsrhJ2p
-         BjCg==
-X-Forwarded-Encrypted: i=1; AJvYcCXAQjrAy9keeXM1RJAvBEpkTd+DyAxvOLkt7YbveBr5GEns/ZgDMafBV15y3Gom+Epw/1Js1zNc3nIDMEuTFkqO5BPdGTxxjaUH
-X-Gm-Message-State: AOJu0YzPy8Qe9CPWfdMZ78Zgi1FWkMoR+IYwyWEwxKniriFNCqUJKXbc
-	6Zjf3yvC/4W5oCjatsU2/ZvNP6uaubQEUW7e2C2aItEOjuwFM4lxDIe5fxL5PCk=
-X-Google-Smtp-Source: AGHT+IELT1vMCmwY6Vjcb3xgEIns4r8I00un0bZsJ8ozJP+j+xXOEMQnAgsIe1WzzaO/HXffS/b/Ug==
-X-Received: by 2002:a2e:9785:0:b0:2ec:59d8:a7e6 with SMTP id 38308e7fff4ca-2ec59d8aa0dmr280051fa.30.1719054106934;
-        Sat, 22 Jun 2024 04:01:46 -0700 (PDT)
+        bh=v7v8etS9lc99/NCTpKj/r0Kcu15d2+tzcAbXByqh6yU=;
+        b=XrdukFk/CbXihQBLcpHPyHinhkp6LygXc0Dbqpu2kdzu0vivAKxoPUA6ee141z+Qke
+         6e4z09bLqK6BGPul9+Pt0rkN37PS9y6t2HMbtBIu5sBgilh3NFVIiSowa3OBmg2XHrEN
+         yoyFOsaVoAf0S897cOjrt37ppXcGXe4XWWH9ZpQtsApKKcPFII6J7BU7uJJY4+HdXUyE
+         PHPokYtSp0Ax/aUT6SLP8w88tyhgvf3FR/W3U1ByPSJTtKPvLWuxZcgGxMYkfMI6IOId
+         kPIQ8k25XkaBLXZNp/7MzM4VeaSfD96fC7PHzNdc9JT3NW8Ptpn2G0JG77C62qT3w+tn
+         QjZA==
+X-Forwarded-Encrypted: i=1; AJvYcCW6hC/58kSHO0R8eh15r2db4wSV2cNrcbvUrOm1cP0vGIuxJN14VnDXg3T5PxojtXGKQS2kvEX+V/dAtlSAQF0SfCuSY9Fm63X5
+X-Gm-Message-State: AOJu0YwwLWjk4dcctoc0wkcW6N3ofzKOgL7GNU5203MWDExbZohdY5kw
+	ajq+l67Ky3zDLwRiGiXSBFJKDdb/CbBAt/51Cb0tNTZmWnHL8hjyR4dFH6NjLBY=
+X-Google-Smtp-Source: AGHT+IEaoEAn8s4dir0EPAEpXEjAqmTi0SuzROmlVCniI2u8CE3A38eP7o8hGM5gEEfcIY0BHPKDcg==
+X-Received: by 2002:a17:907:1606:b0:a6f:b19d:90ac with SMTP id a640c23a62f3a-a6fb19d9667mr734379866b.69.1719055409489;
+        Sat, 22 Jun 2024 04:23:29 -0700 (PDT)
 Received: from [192.168.128.35] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d303da249sm2172422a12.14.2024.06.22.04.01.45
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7242aa3c00sm11177366b.225.2024.06.22.04.23.28
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 22 Jun 2024 04:01:46 -0700 (PDT)
-Message-ID: <d508f8e5-8303-4f84-83d4-d63f6c612a02@linaro.org>
-Date: Sat, 22 Jun 2024 13:01:43 +0200
+        Sat, 22 Jun 2024 04:23:29 -0700 (PDT)
+Message-ID: <a9144943-317e-4727-b96b-532b5d56ceb1@linaro.org>
+Date: Sat, 22 Jun 2024 13:23:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -62,8 +62,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/5] clk: qcom: dispcc-sm8650: drop TCXO from table when
- using rcg2_shared_ops
+Subject: Re: [PATCH 5/5] clk: qcom: dispcc-sm8650: Update the GDSC wait_val
+ fields and flags
 To: Neil Armstrong <neil.armstrong@linaro.org>,
  Bjorn Andersson <andersson@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
@@ -71,7 +71,7 @@ To: Neil Armstrong <neil.armstrong@linaro.org>,
 Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  linux-kernel@vger.kernel.org
 References: <20240621-topic-sm8650-upstream-fix-dispcc-v1-0-7b297dd9fcc1@linaro.org>
- <20240621-topic-sm8650-upstream-fix-dispcc-v1-3-7b297dd9fcc1@linaro.org>
+ <20240621-topic-sm8650-upstream-fix-dispcc-v1-5-7b297dd9fcc1@linaro.org>
 Content-Language: en-US
 From: Konrad Dybcio <konrad.dybcio@linaro.org>
 Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
@@ -109,19 +109,23 @@ Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
  nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
  izWDgYvmBE8=
-In-Reply-To: <20240621-topic-sm8650-upstream-fix-dispcc-v1-3-7b297dd9fcc1@linaro.org>
+In-Reply-To: <20240621-topic-sm8650-upstream-fix-dispcc-v1-5-7b297dd9fcc1@linaro.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 21.06.2024 4:01 PM, Neil Armstrong wrote:
-> Since those clocks are using rcg2_shared_ops to park on TCXO
-> instead of disable, no need to have TCXO in the frequency table.
+> Update the GDSC wait_val fields and flags as per the default hardware values.
+> Add the missing POLL_CFG_GDSCR flag.
 > 
 > Fixes: 9e939f008338 ("clk: qcom: add the SM8650 Display Clock Controller driver")
 > Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 > ---
 
-I don't think that's correct.. some hardware can still run with the
-core clock @ 19.2 / 38.4 MHz
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+
+Bump: part of this patch is a broader problem that should have a
+more generic solution: [1]
 
 Konrad
+
+[1] https://lore.kernel.org/linux-arm-msm/514cd1cb-4fb2-489d-bc4b-d332fd4d381e@linaro.org/
