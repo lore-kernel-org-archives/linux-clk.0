@@ -1,60 +1,60 @@
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9265D4C8A
-	for <linux-clk@vger.kernel.org>; Sat, 22 Jun 2024 11:23:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F405514B09F
+	for <linux-clk@vger.kernel.org>; Sat, 22 Jun 2024 11:46:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719055414; cv=none; b=ggfRG8r5J0e8SM4kHWc79fK/rWm4N78TVttY/yOeJT3v7+tnh+uXSUymYRjNUidtu+vy95Clto+On+4UeLwUqM8sdEXhSjBlR88VbenYIhgsT2Te9wmWdsBkWX82oTCwvtK8VL5sMzi62QXfkvSxIkdxQwTkhcwPg+bjwT6pltU=
+	t=1719056778; cv=none; b=oW3vSzA9ZzvyFHMynXZLIpJWXCgrcxm/x33oOjeC5hLWo7pUHuH5CNHoZoGHBWR6Hr9vqrdOaPM0UZSyi7/IDYjCBOIDd1eewBxUdrWkXJrFZjKMKy+U3Y+5QtA/YyKhV/u7OMEOATrJOVA8MzqQA7cuhBSOpNl9fa33DNh8nis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719055414; c=relaxed/simple;
-	bh=s8IcRfDXQj8f4kTCAOTtkNej/CuRn/sZJe1kkX5GCWI=;
+	s=arc-20240116; t=1719056778; c=relaxed/simple;
+	bh=+66agaYiiFnc9wda50Lfas0i4FmApAa6AwkKsCf/3+Y=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gvNWhjSIBO5rUE309lPAJi5Whqkn8S4ighfpvd6e0FGVRwcPwztyeCcRGKJ/dY8PWVKGtF6cL7pZdyUEYVaAUtfhS8a4UECm8Dpnkc13jRJ8acg5rZGXOoNr9Zrk9WLU11q5wNBVeP1BaWJC9BdW4/dyiWao38NgEutJhPOzZBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j2p/2zlI; arc=none smtp.client-ip=209.85.218.42
+	 In-Reply-To:Content-Type; b=UwoQd7iEIp5d4U2mcQ9gW8UwrI3VLyj2PhBH7303xM30//wkjnQcc56rgl+BCZh8GChYO0+l2cnI5QN71DngrIY4YFejk9AzwnR25WseqFezAjGCIq0NAgCNZkEf9bCGmuZAwUDrjLhdyC/Elnb+GWzeMmbiLonh7yv/NPIPhro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ezOxR5VG; arc=none smtp.client-ip=209.85.208.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j2p/2zlI"
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a6ef46d25efso325411766b.0
-        for <linux-clk@vger.kernel.org>; Sat, 22 Jun 2024 04:23:31 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ezOxR5VG"
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57d0eca877cso3385009a12.2
+        for <linux-clk@vger.kernel.org>; Sat, 22 Jun 2024 04:46:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719055410; x=1719660210; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1719056774; x=1719661574; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=v7v8etS9lc99/NCTpKj/r0Kcu15d2+tzcAbXByqh6yU=;
-        b=j2p/2zlI7fw/6R3RYdDQGWezho0/ahqytxSqmxl1cEIwZTsrv7HpQrIRFAdM4xWcTa
-         DzDOlU6MfC12qQUJtKeM1JBOvemn3g2P/r85wtInh6tw8N3DJsJDzODjyrwd+7QCuCPT
-         tazw9LarU47LqgChYt/iUnmD0nJXEMFqS0TqZ34AXdCq1UVVuHFOv2ehxD33VqvtHJJU
-         NlHCKQm0Bjcah85xB51xz+s0K7M9/o3dGiFtBwXpsou0zQhyLCFAMsSLNZ4UAteXlOUf
-         0XCSJ3Nba4kWiPYI/twm9D8aUs53LW+/1KHLg2qiPfYF0HaFadm7E/5OoXEwcsMTWfN1
-         Q1Aw==
+        bh=ex0tM6LxW25V2+wIZSeOGMpb5a0XLFOxkY4gbLUAZJ4=;
+        b=ezOxR5VGsKHZZ9635CGMveXRb0NTtDFNfNq5/BEdMUIGhJouI8h5jKpXrH7Oj/KO1I
+         pYYUEUTUAiLUq0qzFf8gzZNz9Vu9yJbOEEmVMIWMzAO899xhLyV/hXnaLYZislMW2EDo
+         15pF69GoWn7hq8rQ2ETDFw0w0/sDtX+yOVU5GVXE0F3ff2DxXJPiUp5tzsiXCZGezrZA
+         IMdKWEDBAzbF+W9QThgXNALvgiRO5WKYxCEec9JHPXtM8Xn4hTvH51AhRsJyuXE2ObLL
+         860GizdMVJ6uiBUEHyWqE8ciN6DqUvKLE8sbFLGu8pCWEnQC4kE2GOJV4Iv9AaJhJrno
+         03ag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719055410; x=1719660210;
+        d=1e100.net; s=20230601; t=1719056774; x=1719661574;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=v7v8etS9lc99/NCTpKj/r0Kcu15d2+tzcAbXByqh6yU=;
-        b=XrdukFk/CbXihQBLcpHPyHinhkp6LygXc0Dbqpu2kdzu0vivAKxoPUA6ee141z+Qke
-         6e4z09bLqK6BGPul9+Pt0rkN37PS9y6t2HMbtBIu5sBgilh3NFVIiSowa3OBmg2XHrEN
-         yoyFOsaVoAf0S897cOjrt37ppXcGXe4XWWH9ZpQtsApKKcPFII6J7BU7uJJY4+HdXUyE
-         PHPokYtSp0Ax/aUT6SLP8w88tyhgvf3FR/W3U1ByPSJTtKPvLWuxZcgGxMYkfMI6IOId
-         kPIQ8k25XkaBLXZNp/7MzM4VeaSfD96fC7PHzNdc9JT3NW8Ptpn2G0JG77C62qT3w+tn
-         QjZA==
-X-Forwarded-Encrypted: i=1; AJvYcCW6hC/58kSHO0R8eh15r2db4wSV2cNrcbvUrOm1cP0vGIuxJN14VnDXg3T5PxojtXGKQS2kvEX+V/dAtlSAQF0SfCuSY9Fm63X5
-X-Gm-Message-State: AOJu0YwwLWjk4dcctoc0wkcW6N3ofzKOgL7GNU5203MWDExbZohdY5kw
-	ajq+l67Ky3zDLwRiGiXSBFJKDdb/CbBAt/51Cb0tNTZmWnHL8hjyR4dFH6NjLBY=
-X-Google-Smtp-Source: AGHT+IEaoEAn8s4dir0EPAEpXEjAqmTi0SuzROmlVCniI2u8CE3A38eP7o8hGM5gEEfcIY0BHPKDcg==
-X-Received: by 2002:a17:907:1606:b0:a6f:b19d:90ac with SMTP id a640c23a62f3a-a6fb19d9667mr734379866b.69.1719055409489;
-        Sat, 22 Jun 2024 04:23:29 -0700 (PDT)
+        bh=ex0tM6LxW25V2+wIZSeOGMpb5a0XLFOxkY4gbLUAZJ4=;
+        b=IBW7Vp4QKSEaXSwurCeZZEf0Oq8Rq8lN4pEV45A2H1fGnz0IaufxDOnVqskVI3FoiF
+         oCpRjJcY1aUdfemNGPvno+QcARmogTCbmZJjTOgpiCAdBJ5E48JbPBnYnA7ZudlJ5Y3t
+         Zt4am0D/lKYLQMWI6AiErToYouSYHlrsS6h2Fc5mCh74i9UxsloUXEgl7jhQPokaQwfW
+         A0gEnuYtLYUuVMXex7PpY3vbnKx9C36Rw6El89dEskQfTz6ORaCMaK4WkK7vbQg2Z//M
+         L1Kyvt5THtoqldLjJgoo/rf+z3nb7dKGk9NlN6MviZN5aC8tpKbrr+PK5tBeC/UQfSGZ
+         wwBg==
+X-Forwarded-Encrypted: i=1; AJvYcCWygyZOJLkNL+LoreIbhN5P7Opxfe47/91Nu9qMBAa2D9k1EoldOlb7yb/+IEfMKcKJrJwpWczftWC3RSqn9g8rJ1VrsDwlwwnt
+X-Gm-Message-State: AOJu0Ywlldv4GUuqmfGHe/HHDD2u/juI9dHPoQLomUtWJA2cRAshrYo8
+	bS1irQbT+HzebY9gDQAMis2JxmhXG7IXr8xjjCMcmyPQXkzv01efdeWtq0QCCQc=
+X-Google-Smtp-Source: AGHT+IG13RlR/h9teGk653CmpQ7usaf+YKjqH/yhLCC1Ebtglmw6+ywyyHzoCVz9ij/kluyQEMFntQ==
+X-Received: by 2002:a17:907:969e:b0:a72:42df:cd27 with SMTP id a640c23a62f3a-a7242dfcd78mr21027566b.71.1719056774060;
+        Sat, 22 Jun 2024 04:46:14 -0700 (PDT)
 Received: from [192.168.128.35] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7242aa3c00sm11177366b.225.2024.06.22.04.23.28
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a6fcf56073bsm185617566b.169.2024.06.22.04.46.11
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 22 Jun 2024 04:23:29 -0700 (PDT)
-Message-ID: <a9144943-317e-4727-b96b-532b5d56ceb1@linaro.org>
-Date: Sat, 22 Jun 2024 13:23:27 +0200
+        Sat, 22 Jun 2024 04:46:13 -0700 (PDT)
+Message-ID: <6e7e7b44-3c06-42ce-9d9b-9dcc83387657@linaro.org>
+Date: Sat, 22 Jun 2024 13:46:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -62,16 +62,17 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 5/5] clk: qcom: dispcc-sm8650: Update the GDSC wait_val
- fields and flags
-To: Neil Armstrong <neil.armstrong@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Taniya Das <quic_tdas@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240621-topic-sm8650-upstream-fix-dispcc-v1-0-7b297dd9fcc1@linaro.org>
- <20240621-topic-sm8650-upstream-fix-dispcc-v1-5-7b297dd9fcc1@linaro.org>
+Subject: Re: [PATCH 5/7] ARM: dts: qcom: msm8226: Add CPU frequency scaling
+ support
+To: Luca Weiss <luca@lucaweiss.eu>, ~postmarketos/upstreaming@lists.sr.ht,
+ phone-devel@vger.kernel.org, Jassi Brar <jassisinghbrar@gmail.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20240619-msm8226-cpufreq-v1-0-85143f5291d1@lucaweiss.eu>
+ <20240619-msm8226-cpufreq-v1-5-85143f5291d1@lucaweiss.eu>
 Content-Language: en-US
 From: Konrad Dybcio <konrad.dybcio@linaro.org>
 Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
@@ -109,23 +110,83 @@ Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
  nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
  izWDgYvmBE8=
-In-Reply-To: <20240621-topic-sm8650-upstream-fix-dispcc-v1-5-7b297dd9fcc1@linaro.org>
+In-Reply-To: <20240619-msm8226-cpufreq-v1-5-85143f5291d1@lucaweiss.eu>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 21.06.2024 4:01 PM, Neil Armstrong wrote:
-> Update the GDSC wait_val fields and flags as per the default hardware values.
-> Add the missing POLL_CFG_GDSCR flag.
+On 19.06.2024 11:02 PM, Luca Weiss wrote:
+> Add a node for the a7pll with its frequencies. With this we can use the
+> apcs-kpss-global driver for the apcs node and use the apcs to scale the
+> CPU frequency according to the opp-table.
 > 
-> Fixes: 9e939f008338 ("clk: qcom: add the SM8650 Display Clock Controller driver")
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
+> At the same time unfortunately we need to provide the gcc node xo_board
+> instead of the XO via rpmcc since otherwise we'll have a circular
+> dependency between apcs, gcc and the rpm.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+Hm.. thinking of a solution to that, should we maybe split the mux/clk
+part of APCS into a subnode and bind the clk device to that?
 
-Bump: part of this patch is a broader problem that should have a
-more generic solution: [1]
+Dmitry, Bjorn, thoughts?
+
+[...]
+> +
+> +		opp-600000000 {
+
+Can't find this one in the random msm-3.10 I have
+
+> +			opp-hz = /bits/ 64 <600000000>;
+> +		};
+> +
+> +		opp-787200000 {
+> +			opp-hz = /bits/ 64 <787200000>;
+> +		};
+> +
+> +		/* Higher CPU frequencies need speedbin support */
+
+1190400 kHz seems to also be a supported-across-the-board one.. unless the
+watch edition shuffled things around with a newer tree
+
+
+> +	};
+> +
+>  	pmu {
+>  		compatible = "arm,cortex-a7-pmu";
+>  		interrupts = <GIC_PPI 7 (GIC_CPU_MASK_SIMPLE(4) |
+> @@ -231,9 +262,75 @@ intc: interrupt-controller@f9000000 {
+>  			#interrupt-cells = <3>;
+>  		};
+>  
+> -		apcs: syscon@f9011000 {
+> -			compatible = "syscon";
+> +		apcs: mailbox@f9011000 {
+> +			compatible = "qcom,msm8226-apcs-kpss-global",
+> +				     "qcom,msm8916-apcs-kpss-global", "syscon";
+>  			reg = <0xf9011000 0x1000>;
+> +			#mbox-cells = <1>;
+> +			clocks = <&a7pll>, <&gcc GPLL0_VOTE>;
+> +			clock-names = "pll", "aux";
+> +			#clock-cells = <0>;
+> +		};
+> +
+> +		a7pll: clock@f9016000 {
+> +			compatible = "qcom,msm8226-a7pll";
+> +			reg = <0xf9016000 0x40>;
+> +			#clock-cells = <0>;
+> +			clocks = <&xo_board>;
+> +			clock-names = "xo";
+> +			operating-points-v2 = <&a7pll_opp_table>;
+> +
+> +			a7pll_opp_table: opp-table {
+> +				compatible = "operating-points-v2";
+> +
+> +				opp-768000000 {
+> +					opp-hz = /bits/ 64 <768000000>;
+> +				};
+
+Looks like scaling this PLL should also scale some voltage domains:
+CPR (fed by pm8226_s2) and MX
+
+Perhaps hook up MX to this one for now and add CPR to the CPU nodes( & OPP table)
+after that is brought up
 
 Konrad
-
-[1] https://lore.kernel.org/linux-arm-msm/514cd1cb-4fb2-489d-bc4b-d332fd4d381e@linaro.org/
