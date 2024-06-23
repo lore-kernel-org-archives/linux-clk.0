@@ -1,253 +1,152 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A1B81C294;
-	Sat, 22 Jun 2024 18:50:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC0DB3AC1F;
+	Sun, 23 Jun 2024 08:51:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719082227; cv=none; b=OLQOb7CIAQkePi65L0MEEKNRvt0p3/SjJxZtOkGL0gkN/3mANB03zeOrO3UU/GDL6AvM0fxbgoN5AWcWgedCYMauCOfD+4rdEHughr0Ldh2SSVWUZ5RKKPYENVynP5Gz1rWhNu6Dxg51q45X6zUseatgMT33PXEfADbwl3Fr4Oo=
+	t=1719132703; cv=none; b=q2TDRy1Cs9Nvj0iHkcoblztPRhOYXGbsnDu6mVKI8hX1O5JRWwmM6dBFZKV3GLemZAvyvII0DySVH+sN9a0d+nzsEVBCor3GVZqyQdul1Or2G5qnCYYgVuN4P2NV1J+2eiENImVrH7eqwPtUx7uMw5WH5rWG0aga/NxHT6ne2DA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719082227; c=relaxed/simple;
-	bh=hjpL8sBLRmDXwQAkwY/Az+tIeeHDtbnbJXHCvXbMkMY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OY8mIp1WDRhAOfAMCJBktf3fPVT1sO4FO5f5kEOd9AIQBZeWz81rQanb5RGHRQf3nVW/gp8LOiU2dnwtmwZ33HwH7/bJWsCasle2zffMKg3FuzuoTtSuqsceSatS06nXYYyIvEiaPvz/4K+kRyLXkmiSnqDJVHW441rDUn8Ta5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gxb+vuVf; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1719132703; c=relaxed/simple;
+	bh=/MbTc5IrzQ+vqZwxbntKS8rLbbH4xOE6FLZfVgj6O04=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=uAR9QldAN9hhTg8nPcIn1QF2nLyXjV51DZFxdPVxwqOvitx+hr+R2jxCDMqGAgzzQaihokmHH+DpLNlsRyCqJKxlwLsYq620YOKn3eodb4F63w3WW90wDiZREVAb6rhVYCSlOQJAvaU/vb4ZFB5xr7JCF+rhdcsyC6iVWc2FlSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oltmanns.dev; spf=pass smtp.mailfrom=oltmanns.dev; dkim=pass (2048-bit key) header.d=oltmanns.dev header.i=@oltmanns.dev header.b=1/6wsBso; arc=none smtp.client-ip=80.241.56.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oltmanns.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oltmanns.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gxb+vuVf"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDE5DC3277B;
-	Sat, 22 Jun 2024 18:50:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719082226;
-	bh=hjpL8sBLRmDXwQAkwY/Az+tIeeHDtbnbJXHCvXbMkMY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=gxb+vuVfi1dbrSqTeE1jSoDW2CVkMqhNgCvMoayI/UmTdAgMQyl/6bf7fVWfWqjsc
-	 +v1tSEwhPdBCQRLdVOcQVOuwS8q9UGZAhEyj/xR20eUrybNqvcQ/eIY1GFkFVkVmto
-	 6T0rSKhqwudppSgVS13Bap9DA+uiP37tBmwd1muQ5qxyPf5+avobrJvhxtnuhKviC+
-	 HtuVdzsz1tUwHbRcOT9xNoMugSy5u411k1chgvcSlUJj0TW84dHFLt1dYfNIfQtAid
-	 dYmwDBDRWp2R8zEW6t4761Y1hSyfALQZm9rXbjzVV2oALUVClrUxzABxQFXzdAmVGr
-	 2K7gZ+MYcbl+w==
-Date: Sat, 22 Jun 2024 19:50:18 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lars-Peter
- Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, <linux-clk@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-iio@vger.kernel.org>
-Subject: Re: [PATCH v6 2/2] iio: frequency: adf4350: add clk provider
-Message-ID: <20240622195018.587997ae@jic23-huawei>
-In-Reply-To: <20240621121403.47912-2-antoniu.miclaus@analog.com>
-References: <20240621121403.47912-1-antoniu.miclaus@analog.com>
-	<20240621121403.47912-2-antoniu.miclaus@analog.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=oltmanns.dev header.i=@oltmanns.dev header.b="1/6wsBso"
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4W6Pp3012bz9sdT;
+	Sun, 23 Jun 2024 10:46:19 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
+	s=MBO0001; t=1719132379;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=wt2mGoI760pT5VMOq6V2aEAJ75svBaYqL2cmxLmHat0=;
+	b=1/6wsBsoXw9MhiP3LTPhgn32X0RW4xqZ9NqZokA5hIumFYs2RdRWYfn4JrHiYJtWbynzba
+	BPjY4Doiovu9UYj5FP3y9PmNRsY5fhj47WWxxd16cV3zUpTF5fIMgUSGKonigbTUVNp6m6
+	flrYpSdFVk5lIwiDBwrdp4KWREIxqvfzbaTlyF7orI0CAZqIwM4LLlF8vYuZ77O3xZKGc6
+	aCbkekiPPpJNOfOHjhUAUOoImcWyit5LJ/RABgAahjppnSsd8bJVP2EqVA3QWX8zGVIrhK
+	7pA7RpuD7XCfoAoE58FpswNWhr2iHH7cgpzHd9vFl0THchWOwQIMQ89AP0Rqcw==
+From: Frank Oltmanns <frank@oltmanns.dev>
+Date: Sun, 23 Jun 2024 10:45:58 +0200
+Subject: [PATCH] clk: sunxi-ng: common: Don't call hw_to_ccu_common on hw
+ without common
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20240623-sunxi-ng_fix_common_probe-v1-1-7c97e32824a1@oltmanns.dev>
+X-B4-Tracking: v=1; b=H4sIAMXgd2YC/x2MWwqAIBAArxL7nWD2MLpKhJSttR+toRRCdPekz
+ 4GZeSBiIIwwFA8EvCmS5wxVWYDdZ95Q0JoZlFSN7JQS8eJEgjfjKBnrj8OzOYNfULSd1rbGptf
+ OQu7PgNn53+P0vh9hoB8SawAAAA==
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+ Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, Maxime Ripard <mripard@kernel.org>
+Cc: =?utf-8?q?M=C3=A5ns_Rullg=C3=A5rd?= <mans@mansr.com>, 
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
+ "Robert J. Pafford" <pafford.9@buckeyemail.osu.edu>, stable@vger.kernel.org, 
+ Frank Oltmanns <frank@oltmanns.dev>
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2817; i=frank@oltmanns.dev;
+ h=from:subject:message-id; bh=/MbTc5IrzQ+vqZwxbntKS8rLbbH4xOE6FLZfVgj6O04=;
+ b=owEB7QES/pANAwAIAZppogiUStPHAcsmYgBmd+DXrOE3LcA6aYi57bl6p32pUr0kuFo+nsrWf
+ /LS/2jw7RmJAbMEAAEIAB0WIQQC/SV7f5DmuaVET5aaaaIIlErTxwUCZnfg1wAKCRCaaaIIlErT
+ x0GVC/4vLLhNxs05792lSZo5ox+4SDMVmuSHieQ5Me/oS7yC6CJMsBXkm8fFJSJk1YtNkC7QQve
+ 2ykhrFUbI7IrbBwDrNQFaLFjDJt2YlsSDvpY2AQQyiJa4jx2g59N6gpjV3hgSveyijb3vb+DcA7
+ kOgB/Zddcp56czKp4TXsHa0nSQ+2DwQn4Cpe8Ss6cwJxWrKgzWN8duGS38t7NV5i8MiInW/ELmB
+ lo4kvF5oAAPW75eCP2DY9P3mcdnPZWDBTmFvhkL0S44HuhL/mUAwtlUdDfF9hleI/m3TIyn7y8b
+ 9USZYyJmsKGLuYf88CoCnIM+R4npW1DwWESH5lN3JS9d03lz0Md/r0YCTJOZx/6651cYaqGwVJY
+ lM4i4GtcKV7o6La5+Sb9EGzffxE+HRnXLeeoi3eSrIbAIFdPHCFlAnv0XWHF0CIMGW7BY9h4nlo
+ rdgetJ1y4ZZlBhdcQnzMOXjTuyBr4KGWPDj+7yNqwtmdDux43bQl90/vQ113xxsIhFkcw=
+X-Developer-Key: i=frank@oltmanns.dev; a=openpgp;
+ fpr=02FD257B7F90E6B9A5444F969A69A208944AD3C7
 
-On Fri, 21 Jun 2024 15:13:59 +0300
-Antoniu Miclaus <antoniu.miclaus@analog.com> wrote:
+In order to set the rate range of a hw sunxi_ccu_probe calls
+hw_to_ccu_common() assuming all entries in desc->ccu_clks are contained
+in a ccu_common struct. This assumption is incorrect and, in
+consequence, causes invalid pointer de-references.
 
-> Add clk provider feature for the adf4350.
-> 
-> Even though the driver was sent as an IIO driver in most cases the
-> device is actually seen as a clock provider.
-> 
-> This patch aims to cover actual usecases requested by users in order to
-> completely control the output frequencies from userspace.
-> 
-> Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
-You addressed both of Nuno's comments and I didn't have anything to add,
- so I'll pick this up (can still add a tag though if Nuno wants to give one).
+Remove the faulty call. Instead, add one more loop that iterates over
+the ccu_clks and sets the rate range, if required.
 
-Series applied to the togreg branch of iio.git and pushed out as testing
-for 0-day to have fun.
+Fixes: b914ec33b391 ("clk: sunxi-ng: common: Support minimum and maximum rate")
+Reported-by: Robert J. Pafford <pafford.9@buckeyemail.osu.edu>
+Closes: https://lore.kernel.org/lkml/DM6PR01MB58047C810DDD5D0AE397CADFF7C22@DM6PR01MB5804.prod.exchangelabs.com/
+Cc: stable@vger.kernel.org
+Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
+---
+Robert, could you please test if this fixes the issue you reported.
+
+I'm CC'ing Måns here, because he observed some strange behavior [1] with
+the original patch. Is it possible for you to look into if this patch
+fixes your issue without the need for the following (seemingly
+unrelated) patches:
+      cedb7dd193f6 "drm/sun4i: hdmi: Convert encoder to atomic"
+      9ca6bc246035 "drm/sun4i: hdmi: Move mode_set into enable"
 
 Thanks,
+  Frank
 
-Jonathan
+[1]: https://lore.kernel.org/lkml/yw1xo78z8ez0.fsf@mansr.com/
+---
+ drivers/clk/sunxi-ng/ccu_common.c | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
 
-> ---
-> changes in v6:
->  - rework `init.name` handling.
->  - simplify iio channels initialization.
->  drivers/iio/frequency/adf4350.c | 124 +++++++++++++++++++++++++++++++-
->  1 file changed, 122 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/iio/frequency/adf4350.c b/drivers/iio/frequency/adf4350.c
-> index 4abf80f75ef5..e13e64a5164c 100644
-> --- a/drivers/iio/frequency/adf4350.c
-> +++ b/drivers/iio/frequency/adf4350.c
-> @@ -19,6 +19,7 @@
->  #include <linux/gpio/consumer.h>
->  #include <asm/div64.h>
->  #include <linux/clk.h>
-> +#include <linux/clk-provider.h>
->  
->  #include <linux/iio/iio.h>
->  #include <linux/iio/sysfs.h>
-> @@ -36,6 +37,9 @@ struct adf4350_state {
->  	struct gpio_desc		*lock_detect_gpiod;
->  	struct adf4350_platform_data	*pdata;
->  	struct clk			*clk;
-> +	struct clk			*clkout;
-> +	const char			*clk_out_name;
-> +	struct clk_hw			hw;
->  	unsigned long			clkin;
->  	unsigned long			chspc; /* Channel Spacing */
->  	unsigned long			fpfd; /* Phase Frequency Detector */
-> @@ -61,6 +65,8 @@ struct adf4350_state {
->  	__be32				val __aligned(IIO_DMA_MINALIGN);
->  };
->  
-> +#define to_adf4350_state(_hw) container_of(_hw, struct adf4350_state, hw)
-> +
->  static struct adf4350_platform_data default_pdata = {
->  	.channel_spacing = 10000,
->  	.r2_user_settings = ADF4350_REG2_PD_POLARITY_POS |
-> @@ -381,6 +387,113 @@ static const struct iio_info adf4350_info = {
->  	.debugfs_reg_access = &adf4350_reg_access,
->  };
->  
-> +static void adf4350_clk_del_provider(void *data)
-> +{
-> +	struct adf4350_state *st = data;
-> +
-> +	of_clk_del_provider(st->spi->dev.of_node);
-> +}
-> +
-> +static unsigned long adf4350_clk_recalc_rate(struct clk_hw *hw,
-> +					     unsigned long parent_rate)
-> +{
-> +	struct adf4350_state *st = to_adf4350_state(hw);
-> +	unsigned long long tmp;
-> +
-> +	tmp = (u64)(st->r0_int * st->r1_mod + st->r0_fract) * st->fpfd;
-> +	do_div(tmp, st->r1_mod * (1 << st->r4_rf_div_sel));
-> +
-> +	return tmp;
-> +}
-> +
-> +static int adf4350_clk_set_rate(struct clk_hw *hw,
-> +				unsigned long rate,
-> +				unsigned long parent_rate)
-> +{
-> +	struct adf4350_state *st = to_adf4350_state(hw);
-> +
-> +	if (parent_rate == 0 || parent_rate > ADF4350_MAX_FREQ_REFIN)
-> +		return -EINVAL;
-> +
-> +	st->clkin = parent_rate;
-> +
-> +	return adf4350_set_freq(st, rate);
-> +}
-> +
-> +static int adf4350_clk_prepare(struct clk_hw *hw)
-> +{
-> +	struct adf4350_state *st = to_adf4350_state(hw);
-> +
-> +	st->regs[ADF4350_REG2] &= ~ADF4350_REG2_POWER_DOWN_EN;
-> +
-> +	return adf4350_sync_config(st);
-> +}
-> +
-> +static void adf4350_clk_unprepare(struct clk_hw *hw)
-> +{
-> +	struct adf4350_state *st = to_adf4350_state(hw);
-> +
-> +	st->regs[ADF4350_REG2] |= ADF4350_REG2_POWER_DOWN_EN;
-> +
-> +	adf4350_sync_config(st);
-> +}
-> +
-> +static int adf4350_clk_is_enabled(struct clk_hw *hw)
-> +{
-> +	struct adf4350_state *st = to_adf4350_state(hw);
-> +
-> +	return (st->regs[ADF4350_REG2] & ADF4350_REG2_POWER_DOWN_EN);
-> +}
-> +
-> +static const struct clk_ops adf4350_clk_ops = {
-> +	.recalc_rate = adf4350_clk_recalc_rate,
-> +	.set_rate = adf4350_clk_set_rate,
-> +	.prepare = adf4350_clk_prepare,
-> +	.unprepare = adf4350_clk_unprepare,
-> +	.is_enabled = adf4350_clk_is_enabled,
-> +};
-> +
-> +static int adf4350_clk_register(struct adf4350_state *st)
-> +{
-> +	struct spi_device *spi = st->spi;
-> +	struct clk_init_data init;
-> +	struct clk *clk;
-> +	const char *parent_name;
-> +	int ret;
-> +
-> +	if (!device_property_present(&spi->dev, "#clock-cells"))
-> +		return 0;
-> +
-> +	if (device_property_read_string(&spi->dev, "clock-output-names", &init.name)) {
-> +		init.name = devm_kasprintf(&spi->dev, GFP_KERNEL, "%s-clk",
-> +					   fwnode_get_name(dev_fwnode(&spi->dev)));
-> +		if (!init.name)
-> +			return -ENOMEM;
-> +	}
-> +
-> +	parent_name = of_clk_get_parent_name(spi->dev.of_node, 0);
-> +	if (!parent_name)
-> +		return -EINVAL;
-> +
-> +	init.ops = &adf4350_clk_ops;
-> +	init.parent_names = &parent_name;
-> +	init.num_parents = 1;
-> +	init.flags = CLK_SET_RATE_PARENT;
-> +
-> +	st->hw.init = &init;
-> +	clk = devm_clk_register(&spi->dev, &st->hw);
-> +	if (IS_ERR(clk))
-> +		return PTR_ERR(clk);
-> +
-> +	ret = of_clk_add_provider(spi->dev.of_node, of_clk_src_simple_get, clk);
-> +	if (ret)
-> +		return ret;
-> +
-> +	st->clkout = clk;
-> +
-> +	return devm_add_action_or_reset(&spi->dev, adf4350_clk_del_provider, st);
-> +}
-> +
->  static struct adf4350_platform_data *adf4350_parse_dt(struct device *dev)
->  {
->  	struct adf4350_platform_data *pdata;
-> @@ -522,8 +635,6 @@ static int adf4350_probe(struct spi_device *spi)
->  
->  	indio_dev->info = &adf4350_info;
->  	indio_dev->modes = INDIO_DIRECT_MODE;
-> -	indio_dev->channels = &adf4350_chan;
-> -	indio_dev->num_channels = 1;
->  
->  	mutex_init(&st->lock);
->  
-> @@ -551,6 +662,15 @@ static int adf4350_probe(struct spi_device *spi)
->  			return ret;
->  	}
->  
-> +	ret = adf4350_clk_register(st);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (!st->clkout) {
-> +		indio_dev->channels = &adf4350_chan;
-> +		indio_dev->num_channels = 1;
-> +	}
-> +
->  	ret = devm_add_action_or_reset(&spi->dev, adf4350_power_down, indio_dev);
->  	if (ret)
->  		return dev_err_probe(&spi->dev, ret,
+diff --git a/drivers/clk/sunxi-ng/ccu_common.c b/drivers/clk/sunxi-ng/ccu_common.c
+index ac0091b4ce24..be375ce0149c 100644
+--- a/drivers/clk/sunxi-ng/ccu_common.c
++++ b/drivers/clk/sunxi-ng/ccu_common.c
+@@ -132,7 +132,6 @@ static int sunxi_ccu_probe(struct sunxi_ccu *ccu, struct device *dev,
+ 
+ 	for (i = 0; i < desc->hw_clks->num ; i++) {
+ 		struct clk_hw *hw = desc->hw_clks->hws[i];
+-		struct ccu_common *common = hw_to_ccu_common(hw);
+ 		const char *name;
+ 
+ 		if (!hw)
+@@ -147,14 +146,21 @@ static int sunxi_ccu_probe(struct sunxi_ccu *ccu, struct device *dev,
+ 			pr_err("Couldn't register clock %d - %s\n", i, name);
+ 			goto err_clk_unreg;
+ 		}
++	}
++
++	for (i = 0; i < desc->num_ccu_clks; i++) {
++		struct ccu_common *cclk = desc->ccu_clks[i];
++
++		if (!cclk)
++			continue;
+ 
+-		if (common->max_rate)
+-			clk_hw_set_rate_range(hw, common->min_rate,
+-					      common->max_rate);
++		if (cclk->max_rate)
++			clk_hw_set_rate_range(&cclk->hw, cclk->min_rate,
++					      cclk->max_rate);
+ 		else
+-			WARN(common->min_rate,
++			WARN(cclk->min_rate,
+ 			     "No max_rate, ignoring min_rate of clock %d - %s\n",
+-			     i, name);
++			     i, clk_hw_get_name(&cclk->hw));
+ 	}
+ 
+ 	ret = of_clk_add_hw_provider(node, of_clk_hw_onecell_get,
+
+---
+base-commit: 2607133196c35f31892ee199ce7ffa717bea4ad1
+change-id: 20240622-sunxi-ng_fix_common_probe-5677c3e487fc
+
+Best regards,
+-- 
+Frank Oltmanns <frank@oltmanns.dev>
 
