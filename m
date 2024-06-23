@@ -1,129 +1,71 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08A1F2F4A;
-	Sun, 23 Jun 2024 17:34:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A94F8186E30;
+	Sun, 23 Jun 2024 21:02:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719164093; cv=none; b=VHMxKsWYN1CyfjOjWh5tu1aD1XZECfr4P7y+ErXpONhVZD7lkQObxvTylczxYOJ6q5HZFHYubp4FBLWNmV1RoZgXJ9kButZgGvksvzKbEQDG8SmrE5VzL7J4ArqKKSqpJFU1f6URqr++IREFRGJ4Xsvws/VuNlH7Ns8OJp3lsBI=
+	t=1719176548; cv=none; b=gXXVK0okuG1qh9OF5U8kG3sK5AliqNEOK2sYphBlHRhGikIhOV82xvVS1i+X2E9T2oPO0k3Y7sOdrYlCl132R/boD/CGTTRl9jbVyn1oaYFpfcKSz2Ek/wW8PiXNLDWyN60iAosrwMHe3PFqet2iCblf8r16Sz7qr59BC2Oxmx4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719164093; c=relaxed/simple;
-	bh=daiWmQHmva4abPaxrUPfp4JwvhbCwiI3qiWRpeHba/o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=JjzUaqu/TbhxzHKYGVS6yrvXYP9P4gByNZdpuSJuJiYTfnzD3SZ+w6jVQudf097PPQBu+FalDMG1QvtzyY+tmNfrOHmPi8/JJyvVkn4RuocaPynIKg1kNS6kj1zjGlWVZPcbmOHSQCROiqqlJUfgiOSXacMSsFSkmOfy5Vj4CBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=g76QPeSx; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1719176548; c=relaxed/simple;
+	bh=NXdkyD46wR535PZ6Mm4IhRprYdPLmjGLLdwdQZs+Cb0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DDoxa4FTwOzIXJwX8Fj7PvNzDcrVu0u0EKdVyA5XQlYkapP4UbJwULWraCLAop35/woHEy634+6PcceWEKgoXOrbc4JJwje8ZUq2sqKvgr25b3BdanRhn7RNB/AcRZaB8OX95ntdMPnBSpl9NoDNq0uQYvpdOamSB3VIDaAioLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bGvTSP7+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="g76QPeSx"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45NGkBHg015427;
-	Sun, 23 Jun 2024 17:34:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	zKU9ywoNcxpBMhaAX+xKekSuYP1hqoq3T9d9ts7RhQI=; b=g76QPeSxhTDmsfyE
-	HCvLDMhX4L1Ll4mnGlUoTL2SplxPd8kp0UQj5sP51hfkUBOKci2KNnaOAcRqNmKe
-	N5qwQy7Xhwa5LuV2O33SRGRGQ5CCUEQemhk5wQLJF6XooIJJrXtEossRaApdSaj1
-	JR86OwEf27bJMuCeX922uLjZm7e1M2PYOUUwEqv24TLeIsUl5h7ckA+NdK5tkyZz
-	HWXI6nm5ygrRcTJoY5GaaJ+nmH9hIpN+OXv1iuW5iCNbdW3oTgd2H5aWk/E+8kN5
-	EniwQk+VKeHUsPk3gb0SIEHebZnMrDSfn27u+/XX0Hd03xHjzIwUekO803XGwbDl
-	qVVu3Q==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywmaet5ea-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 23 Jun 2024 17:34:29 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45NHYSSE015212
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 23 Jun 2024 17:34:28 GMT
-Received: from [10.48.244.142] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 23 Jun
- 2024 10:34:27 -0700
-Message-ID: <f9badb23-dd3e-4cce-be42-5816616ccff7@quicinc.com>
-Date: Sun, 23 Jun 2024 10:34:26 -0700
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bGvTSP7+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FA67C4AF0A;
+	Sun, 23 Jun 2024 21:02:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719176548;
+	bh=NXdkyD46wR535PZ6Mm4IhRprYdPLmjGLLdwdQZs+Cb0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=bGvTSP7+kLc3eD/7XT5iT6MufefwE9QrY32IK7/d1DNC1QDacbNSVuaLWB6qCdo13
+	 yNL376ydzj1/ujPMF4kgs5VpEJW2RU8qRAmbe+qzfVMY+mPTAwuXiqg4HzA+/rnGqu
+	 Urtk/xfLkHWKjo/rb/zDfS4+ahcAoxJv7CoWQpDW5MPGNg1nRWGukvPrFN3FZMX0XJ
+	 yP7hq5ot+Th33WDlEUy0YiA3EzdtZhBfkgTk8fM9AycCVtHavlt9qYj4+DnelFGkYJ
+	 VVv2QN6/l+2iW/KUVEc10wBH/z7l9OTu78FnAwhMxTnuyT/HeQqiffLtEy3VbWa3DP
+	 HxMUjSSOTsTrQ==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Jonathan Marek <jonathan@marek.ca>,
+	Robert Foss <rfoss@kernel.org>,
+	Vinod Koul <vkoul@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Taniya Das <quic_tdas@quicinc.com>
+Cc: quic_jkona@quicinc.com,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] clk: qcom: gpucc-sm8350: Park RCG's clk source at XO during disable
+Date: Sun, 23 Jun 2024 16:02:19 -0500
+Message-ID: <171917653476.4580.18331742881214650946.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240621-sm8350-gpucc-fixes-v1-1-22db60c7c5d3@quicinc.com>
+References: <20240621-sm8350-gpucc-fixes-v1-1-22db60c7c5d3@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: imx: add missing MODULE_DESCRIPTION() macros
-Content-Language: en-US
-To: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
-        Michael
- Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Shawn
- Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix
- Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>
-CC: <linux-clk@vger.kernel.org>, <imx@lists.linux.dev>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-References: <20240602-md-clk-imx-v1-1-5c6d240f6fab@quicinc.com>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <20240602-md-clk-imx-v1-1-5c6d240f6fab@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: MQcsZrYUHb6JXdrVVHA38wPPsAH-kbYS
-X-Proofpoint-GUID: MQcsZrYUHb6JXdrVVHA38wPPsAH-kbYS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-23_09,2024-06-21_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- suspectscore=0 spamscore=0 bulkscore=0 phishscore=0 malwarescore=0
- clxscore=1011 mlxscore=0 lowpriorityscore=0 priorityscore=1501
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2406140001 definitions=main-2406230140
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 6/2/2024 8:59 AM, Jeff Johnson wrote:
-> make allmodconfig && make W=1 C=1 reports:
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/imx/mxc-clk.o
-> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/imx/clk-imxrt1050.o
+
+On Fri, 21 Jun 2024 17:34:23 +0530, Taniya Das wrote:
+> The RCG's clk src has to be parked at XO while disabling as per the
+> HW recommendation, hence use clk_rcg2_shared_ops to achieve the same.
 > 
-> Add the missing invocations of the MODULE_DESCRIPTION() macro.
-> 
-> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
-> ---
->  drivers/clk/imx/clk-imxrt1050.c | 1 +
->  drivers/clk/imx/clk.c           | 1 +
->  2 files changed, 2 insertions(+)
-> 
-> diff --git a/drivers/clk/imx/clk-imxrt1050.c b/drivers/clk/imx/clk-imxrt1050.c
-> index 08d155feb035..efd1ac9d8eeb 100644
-> --- a/drivers/clk/imx/clk-imxrt1050.c
-> +++ b/drivers/clk/imx/clk-imxrt1050.c
-> @@ -176,6 +176,7 @@ static struct platform_driver imxrt1050_clk_driver = {
->  };
->  module_platform_driver(imxrt1050_clk_driver);
->  
-> +MODULE_DESCRIPTION("NXP i.MX RT1050 clock driver");
->  MODULE_LICENSE("Dual BSD/GPL");
->  MODULE_AUTHOR("Jesse Taube <Mr.Bossman075@gmail.com>");
->  MODULE_AUTHOR("Giulio Benetti <giulio.benetti@benettiengineering.com>");
-> diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
-> index e35496af5ceb..df83bd939492 100644
-> --- a/drivers/clk/imx/clk.c
-> +++ b/drivers/clk/imx/clk.c
-> @@ -226,4 +226,5 @@ static int __init imx_clk_disable_uart(void)
->  late_initcall_sync(imx_clk_disable_uart);
->  #endif
->  
-> +MODULE_DESCRIPTION("Common clock support for NXP i.MX SoC family");
->  MODULE_LICENSE("GPL v2");
-> 
-> ---
-> base-commit: 83814698cf48ce3aadc5d88a3f577f04482ff92a
-> change-id: 20240602-md-clk-imx-370fc1d85ab5
 > 
 
-Following up to see if anything else is needed from me.
-Hoping to see this in linux-next :)
+Applied, thanks!
+
+[1/1] clk: qcom: gpucc-sm8350: Park RCG's clk source at XO during disable
+      commit: 313e2909023bef36ef7b6d1d9ff2d98febcaa28d
+
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
