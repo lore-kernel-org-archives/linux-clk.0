@@ -1,152 +1,129 @@
-Received: from mout-p-201.mailbox.org (mout-p-201.mailbox.org [80.241.56.171])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC0DB3AC1F;
-	Sun, 23 Jun 2024 08:51:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08A1F2F4A;
+	Sun, 23 Jun 2024 17:34:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719132703; cv=none; b=q2TDRy1Cs9Nvj0iHkcoblztPRhOYXGbsnDu6mVKI8hX1O5JRWwmM6dBFZKV3GLemZAvyvII0DySVH+sN9a0d+nzsEVBCor3GVZqyQdul1Or2G5qnCYYgVuN4P2NV1J+2eiENImVrH7eqwPtUx7uMw5WH5rWG0aga/NxHT6ne2DA=
+	t=1719164093; cv=none; b=VHMxKsWYN1CyfjOjWh5tu1aD1XZECfr4P7y+ErXpONhVZD7lkQObxvTylczxYOJ6q5HZFHYubp4FBLWNmV1RoZgXJ9kButZgGvksvzKbEQDG8SmrE5VzL7J4ArqKKSqpJFU1f6URqr++IREFRGJ4Xsvws/VuNlH7Ns8OJp3lsBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719132703; c=relaxed/simple;
-	bh=/MbTc5IrzQ+vqZwxbntKS8rLbbH4xOE6FLZfVgj6O04=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=uAR9QldAN9hhTg8nPcIn1QF2nLyXjV51DZFxdPVxwqOvitx+hr+R2jxCDMqGAgzzQaihokmHH+DpLNlsRyCqJKxlwLsYq620YOKn3eodb4F63w3WW90wDiZREVAb6rhVYCSlOQJAvaU/vb4ZFB5xr7JCF+rhdcsyC6iVWc2FlSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oltmanns.dev; spf=pass smtp.mailfrom=oltmanns.dev; dkim=pass (2048-bit key) header.d=oltmanns.dev header.i=@oltmanns.dev header.b=1/6wsBso; arc=none smtp.client-ip=80.241.56.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oltmanns.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oltmanns.dev
+	s=arc-20240116; t=1719164093; c=relaxed/simple;
+	bh=daiWmQHmva4abPaxrUPfp4JwvhbCwiI3qiWRpeHba/o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=JjzUaqu/TbhxzHKYGVS6yrvXYP9P4gByNZdpuSJuJiYTfnzD3SZ+w6jVQudf097PPQBu+FalDMG1QvtzyY+tmNfrOHmPi8/JJyvVkn4RuocaPynIKg1kNS6kj1zjGlWVZPcbmOHSQCROiqqlJUfgiOSXacMSsFSkmOfy5Vj4CBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=g76QPeSx; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oltmanns.dev header.i=@oltmanns.dev header.b="1/6wsBso"
-Received: from smtp102.mailbox.org (smtp102.mailbox.org [10.196.197.102])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-201.mailbox.org (Postfix) with ESMTPS id 4W6Pp3012bz9sdT;
-	Sun, 23 Jun 2024 10:46:19 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oltmanns.dev;
-	s=MBO0001; t=1719132379;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=wt2mGoI760pT5VMOq6V2aEAJ75svBaYqL2cmxLmHat0=;
-	b=1/6wsBsoXw9MhiP3LTPhgn32X0RW4xqZ9NqZokA5hIumFYs2RdRWYfn4JrHiYJtWbynzba
-	BPjY4Doiovu9UYj5FP3y9PmNRsY5fhj47WWxxd16cV3zUpTF5fIMgUSGKonigbTUVNp6m6
-	flrYpSdFVk5lIwiDBwrdp4KWREIxqvfzbaTlyF7orI0CAZqIwM4LLlF8vYuZ77O3xZKGc6
-	aCbkekiPPpJNOfOHjhUAUOoImcWyit5LJ/RABgAahjppnSsd8bJVP2EqVA3QWX8zGVIrhK
-	7pA7RpuD7XCfoAoE58FpswNWhr2iHH7cgpzHd9vFl0THchWOwQIMQ89AP0Rqcw==
-From: Frank Oltmanns <frank@oltmanns.dev>
-Date: Sun, 23 Jun 2024 10:45:58 +0200
-Subject: [PATCH] clk: sunxi-ng: common: Don't call hw_to_ccu_common on hw
- without common
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="g76QPeSx"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45NGkBHg015427;
+	Sun, 23 Jun 2024 17:34:29 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	zKU9ywoNcxpBMhaAX+xKekSuYP1hqoq3T9d9ts7RhQI=; b=g76QPeSxhTDmsfyE
+	HCvLDMhX4L1Ll4mnGlUoTL2SplxPd8kp0UQj5sP51hfkUBOKci2KNnaOAcRqNmKe
+	N5qwQy7Xhwa5LuV2O33SRGRGQ5CCUEQemhk5wQLJF6XooIJJrXtEossRaApdSaj1
+	JR86OwEf27bJMuCeX922uLjZm7e1M2PYOUUwEqv24TLeIsUl5h7ckA+NdK5tkyZz
+	HWXI6nm5ygrRcTJoY5GaaJ+nmH9hIpN+OXv1iuW5iCNbdW3oTgd2H5aWk/E+8kN5
+	EniwQk+VKeHUsPk3gb0SIEHebZnMrDSfn27u+/XX0Hd03xHjzIwUekO803XGwbDl
+	qVVu3Q==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywmaet5ea-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 23 Jun 2024 17:34:29 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45NHYSSE015212
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 23 Jun 2024 17:34:28 GMT
+Received: from [10.48.244.142] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 23 Jun
+ 2024 10:34:27 -0700
+Message-ID: <f9badb23-dd3e-4cce-be42-5816616ccff7@quicinc.com>
+Date: Sun, 23 Jun 2024 10:34:26 -0700
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240623-sunxi-ng_fix_common_probe-v1-1-7c97e32824a1@oltmanns.dev>
-X-B4-Tracking: v=1; b=H4sIAMXgd2YC/x2MWwqAIBAArxL7nWD2MLpKhJSttR+toRRCdPekz
- 4GZeSBiIIwwFA8EvCmS5wxVWYDdZ95Q0JoZlFSN7JQS8eJEgjfjKBnrj8OzOYNfULSd1rbGptf
- OQu7PgNn53+P0vh9hoB8SawAAAA==
-To: Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
- Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Samuel Holland <samuel@sholland.org>, Maxime Ripard <mripard@kernel.org>
-Cc: =?utf-8?q?M=C3=A5ns_Rullg=C3=A5rd?= <mans@mansr.com>, 
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org, 
- "Robert J. Pafford" <pafford.9@buckeyemail.osu.edu>, stable@vger.kernel.org, 
- Frank Oltmanns <frank@oltmanns.dev>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2817; i=frank@oltmanns.dev;
- h=from:subject:message-id; bh=/MbTc5IrzQ+vqZwxbntKS8rLbbH4xOE6FLZfVgj6O04=;
- b=owEB7QES/pANAwAIAZppogiUStPHAcsmYgBmd+DXrOE3LcA6aYi57bl6p32pUr0kuFo+nsrWf
- /LS/2jw7RmJAbMEAAEIAB0WIQQC/SV7f5DmuaVET5aaaaIIlErTxwUCZnfg1wAKCRCaaaIIlErT
- x0GVC/4vLLhNxs05792lSZo5ox+4SDMVmuSHieQ5Me/oS7yC6CJMsBXkm8fFJSJk1YtNkC7QQve
- 2ykhrFUbI7IrbBwDrNQFaLFjDJt2YlsSDvpY2AQQyiJa4jx2g59N6gpjV3hgSveyijb3vb+DcA7
- kOgB/Zddcp56czKp4TXsHa0nSQ+2DwQn4Cpe8Ss6cwJxWrKgzWN8duGS38t7NV5i8MiInW/ELmB
- lo4kvF5oAAPW75eCP2DY9P3mcdnPZWDBTmFvhkL0S44HuhL/mUAwtlUdDfF9hleI/m3TIyn7y8b
- 9USZYyJmsKGLuYf88CoCnIM+R4npW1DwWESH5lN3JS9d03lz0Md/r0YCTJOZx/6651cYaqGwVJY
- lM4i4GtcKV7o6La5+Sb9EGzffxE+HRnXLeeoi3eSrIbAIFdPHCFlAnv0XWHF0CIMGW7BY9h4nlo
- rdgetJ1y4ZZlBhdcQnzMOXjTuyBr4KGWPDj+7yNqwtmdDux43bQl90/vQ113xxsIhFkcw=
-X-Developer-Key: i=frank@oltmanns.dev; a=openpgp;
- fpr=02FD257B7F90E6B9A5444F969A69A208944AD3C7
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: imx: add missing MODULE_DESCRIPTION() macros
+Content-Language: en-US
+To: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>,
+        Michael
+ Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Shawn
+ Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix
+ Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <festevam@gmail.com>
+CC: <linux-clk@vger.kernel.org>, <imx@lists.linux.dev>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+References: <20240602-md-clk-imx-v1-1-5c6d240f6fab@quicinc.com>
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <20240602-md-clk-imx-v1-1-5c6d240f6fab@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: MQcsZrYUHb6JXdrVVHA38wPPsAH-kbYS
+X-Proofpoint-GUID: MQcsZrYUHb6JXdrVVHA38wPPsAH-kbYS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-23_09,2024-06-21_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ suspectscore=0 spamscore=0 bulkscore=0 phishscore=0 malwarescore=0
+ clxscore=1011 mlxscore=0 lowpriorityscore=0 priorityscore=1501
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2406140001 definitions=main-2406230140
 
-In order to set the rate range of a hw sunxi_ccu_probe calls
-hw_to_ccu_common() assuming all entries in desc->ccu_clks are contained
-in a ccu_common struct. This assumption is incorrect and, in
-consequence, causes invalid pointer de-references.
+On 6/2/2024 8:59 AM, Jeff Johnson wrote:
+> make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/imx/mxc-clk.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/imx/clk-imxrt1050.o
+> 
+> Add the missing invocations of the MODULE_DESCRIPTION() macro.
+> 
+> Signed-off-by: Jeff Johnson <quic_jjohnson@quicinc.com>
+> ---
+>  drivers/clk/imx/clk-imxrt1050.c | 1 +
+>  drivers/clk/imx/clk.c           | 1 +
+>  2 files changed, 2 insertions(+)
+> 
+> diff --git a/drivers/clk/imx/clk-imxrt1050.c b/drivers/clk/imx/clk-imxrt1050.c
+> index 08d155feb035..efd1ac9d8eeb 100644
+> --- a/drivers/clk/imx/clk-imxrt1050.c
+> +++ b/drivers/clk/imx/clk-imxrt1050.c
+> @@ -176,6 +176,7 @@ static struct platform_driver imxrt1050_clk_driver = {
+>  };
+>  module_platform_driver(imxrt1050_clk_driver);
+>  
+> +MODULE_DESCRIPTION("NXP i.MX RT1050 clock driver");
+>  MODULE_LICENSE("Dual BSD/GPL");
+>  MODULE_AUTHOR("Jesse Taube <Mr.Bossman075@gmail.com>");
+>  MODULE_AUTHOR("Giulio Benetti <giulio.benetti@benettiengineering.com>");
+> diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
+> index e35496af5ceb..df83bd939492 100644
+> --- a/drivers/clk/imx/clk.c
+> +++ b/drivers/clk/imx/clk.c
+> @@ -226,4 +226,5 @@ static int __init imx_clk_disable_uart(void)
+>  late_initcall_sync(imx_clk_disable_uart);
+>  #endif
+>  
+> +MODULE_DESCRIPTION("Common clock support for NXP i.MX SoC family");
+>  MODULE_LICENSE("GPL v2");
+> 
+> ---
+> base-commit: 83814698cf48ce3aadc5d88a3f577f04482ff92a
+> change-id: 20240602-md-clk-imx-370fc1d85ab5
+> 
 
-Remove the faulty call. Instead, add one more loop that iterates over
-the ccu_clks and sets the rate range, if required.
-
-Fixes: b914ec33b391 ("clk: sunxi-ng: common: Support minimum and maximum rate")
-Reported-by: Robert J. Pafford <pafford.9@buckeyemail.osu.edu>
-Closes: https://lore.kernel.org/lkml/DM6PR01MB58047C810DDD5D0AE397CADFF7C22@DM6PR01MB5804.prod.exchangelabs.com/
-Cc: stable@vger.kernel.org
-Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
----
-Robert, could you please test if this fixes the issue you reported.
-
-I'm CC'ing Måns here, because he observed some strange behavior [1] with
-the original patch. Is it possible for you to look into if this patch
-fixes your issue without the need for the following (seemingly
-unrelated) patches:
-      cedb7dd193f6 "drm/sun4i: hdmi: Convert encoder to atomic"
-      9ca6bc246035 "drm/sun4i: hdmi: Move mode_set into enable"
-
-Thanks,
-  Frank
-
-[1]: https://lore.kernel.org/lkml/yw1xo78z8ez0.fsf@mansr.com/
----
- drivers/clk/sunxi-ng/ccu_common.c | 18 ++++++++++++------
- 1 file changed, 12 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/clk/sunxi-ng/ccu_common.c b/drivers/clk/sunxi-ng/ccu_common.c
-index ac0091b4ce24..be375ce0149c 100644
---- a/drivers/clk/sunxi-ng/ccu_common.c
-+++ b/drivers/clk/sunxi-ng/ccu_common.c
-@@ -132,7 +132,6 @@ static int sunxi_ccu_probe(struct sunxi_ccu *ccu, struct device *dev,
- 
- 	for (i = 0; i < desc->hw_clks->num ; i++) {
- 		struct clk_hw *hw = desc->hw_clks->hws[i];
--		struct ccu_common *common = hw_to_ccu_common(hw);
- 		const char *name;
- 
- 		if (!hw)
-@@ -147,14 +146,21 @@ static int sunxi_ccu_probe(struct sunxi_ccu *ccu, struct device *dev,
- 			pr_err("Couldn't register clock %d - %s\n", i, name);
- 			goto err_clk_unreg;
- 		}
-+	}
-+
-+	for (i = 0; i < desc->num_ccu_clks; i++) {
-+		struct ccu_common *cclk = desc->ccu_clks[i];
-+
-+		if (!cclk)
-+			continue;
- 
--		if (common->max_rate)
--			clk_hw_set_rate_range(hw, common->min_rate,
--					      common->max_rate);
-+		if (cclk->max_rate)
-+			clk_hw_set_rate_range(&cclk->hw, cclk->min_rate,
-+					      cclk->max_rate);
- 		else
--			WARN(common->min_rate,
-+			WARN(cclk->min_rate,
- 			     "No max_rate, ignoring min_rate of clock %d - %s\n",
--			     i, name);
-+			     i, clk_hw_get_name(&cclk->hw));
- 	}
- 
- 	ret = of_clk_add_hw_provider(node, of_clk_hw_onecell_get,
-
----
-base-commit: 2607133196c35f31892ee199ce7ffa717bea4ad1
-change-id: 20240622-sunxi-ng_fix_common_probe-5677c3e487fc
-
-Best regards,
--- 
-Frank Oltmanns <frank@oltmanns.dev>
-
+Following up to see if anything else is needed from me.
+Hoping to see this in linux-next :)
