@@ -1,61 +1,60 @@
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E84649634
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2008A49653
 	for <linux-clk@vger.kernel.org>; Mon, 24 Jun 2024 08:06:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719216364; cv=none; b=g4wBhReGLdUIr9vK3ghLfVnF6t/JnJRDhUarwch63CbizFaoDAHdG9E/DetVyN44Nxjc4JRc/D2O3fCvwf0i7DbkLWbvglSqFUX2won3ViMIKn8GsC2GMJhcHYTZY2AmhOEhPXx/SZGmY4TGlFJvoSdX4DTqkHbywm1uClYMsEQ=
+	t=1719216364; cv=none; b=N6QKLQnur4Giwq8gzxLfvQ8E8KJ42C5tkk83DArgPO4Ts4r8Q4d3o2PFYXqJxd/F2NoSTNaWQp6ZDDA+ej57VQR4PP31RWgzYNv2AbuBHNXqK8FHodiB3nhLXuKcWYsgVLDcIBfFeryz++mgz/j9b4CgNm57a5T+dNnXb3IV9jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1719216364; c=relaxed/simple;
-	bh=U/4kw5IG79Gsn2kPtSO6sfS0IfZ5NSqFkcAhXyCMABw=;
+	bh=CVZ99XGO1/Q0YNiabuHR8pXC7UWmuLN1weDi3HiCVx0=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=PgqT5P9d99lhC8VXzpcZVcKZmibiLBT4TIVMY9GyBl1lMIXStNXsAFs62UcK/+MtrsJL5IRqjmQklAcQhjIffnUw3Yt8Vp6VClxqB4ljNNl0acJCneJYCrWqcn9y99iNokrLrpwhgxCkWvffhdMwgwHh4mpSUq7wGlRxyMnoTjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=q5u6w6mD; arc=none smtp.client-ip=209.85.208.177
+	 In-Reply-To:To:Cc; b=ehTf3fow77WOgHaG9sivjFmWqj/0/yXtrCQrc2hIlyNos3DPJQbyHKxZuMPbKe0XkHGqalLl7DvvMpotJBIFzlZENvOVc02gdy2BdgE9wfTafLfDCDHZkyMP8/WiBjw05vaAXhae+k5M/66gvKm3RRwBzJr4Kmlb+VTJpFGQGdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NKL4DMcg; arc=none smtp.client-ip=209.85.167.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q5u6w6mD"
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2ebe40673d8so45658381fa.3
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NKL4DMcg"
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52ce6c8db7bso772729e87.1
         for <linux-clk@vger.kernel.org>; Mon, 24 Jun 2024 01:06:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719216360; x=1719821160; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1719216361; x=1719821161; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ktOl1TdyOiIKzT9WKgPBAfSIkppzwpfD2FA95WZskPg=;
-        b=q5u6w6mDlaVVbYDBeFsAm33k4N8L+aIRrCL2bpNG4vDJFxSP0HAoFDsFIGmJiO3RCQ
-         1Ke56N0o/OeJIM1wqm911KYthEdKKC0yduO+fDCvEObQcVZM1MN0+X9Lo4BEs47qzmBo
-         rPpkH0+GwsqXK9oBvuOtJZOZRNyvLFN6BDMcegK6jCHHFWD7sWZt8DDmFeHl4s89AT5M
-         X2SjiAKb0pgJNOHRCG+ToQGytcOcRn5R42selWtYNcBvF1ckyD15lU87UNikL0lUy7GS
-         rqeIuEdKdDReQNQevqcCHNHz1Y34HZwBUgPvmHy6Z8hGXfGiuhn/DIi1kYgdszsQf4fF
-         M0/A==
+        bh=vq027QwJPOPWERgfAacSQ3tvZEtk9hRZ+RB+oxWkMp0=;
+        b=NKL4DMcgbnffaiAxBIiQ/hfa597L+CN9JPSQ5wzOeRxJb3aCKkUGd+ZmvCukpsDLve
+         bG5yltpPfgnVg8BmXo+vjJhGaKa+rL2p3pPSxXYcYaJyAw3XpO42sO7yXVeNbUaEgHJo
+         cpAIsw8IIJx6zHZ3oTY7t705s1R9YNTrGq65XaAzrWlgoCQhdIjVtHZd/WCE9lZSYTwU
+         jnonGyjVPpXRYGgNwWs69Yq6r0bKICN0ZYq0by/vOiwNyV30Y0tSZ2kl6tRilEhVLYjP
+         p/Tja+Za73ugkXLilAycGCqW1jlLKqbWwlknOsyUv1tXMwR8/zTjZfLwCsCKLdcM8pQh
+         LEag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719216360; x=1719821160;
+        d=1e100.net; s=20230601; t=1719216361; x=1719821161;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ktOl1TdyOiIKzT9WKgPBAfSIkppzwpfD2FA95WZskPg=;
-        b=Niqg2qzJTOWP6IY89DF2oB6kWkPCOx9eikH3YzWw2y2SB+Z6WGOGGLj6pJudBbA6aW
-         QXQFmRit8y2GOEPKeU9LUwLcFLaWzm521iQWzdVvZc4rQCN8F88uIATFjV+Ki0WAAVbB
-         0BxPCq6ICM1+zB1vsPBmjgIJvMaZG6ncrlAnqlplRfVY9ITYY4DN+KDgYMBqgCh60vca
-         Wsjz959HDuYflU9kAYCTI8sixL4tWp5oZqm/CiYT0tZM3+HWmUNSgADApOAtiL/17UXk
-         gFoLePyLlYh0RZdLtY6HIRzu+es7VNnmUfSaWwc10KOnRWEGrTIX88vBoOjGeH34v9CH
-         0B8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU9mhQbx2La1XdwTUZ5jZTF2kfkQ1SawkmGde0gY6dt7dQgotBI7GQpLF2GeeZ/vVu2vTYwIp9BcbjQMKPajD0di5BXEAF+c7zf
-X-Gm-Message-State: AOJu0Yxb2H4WUSVTZwe7pXXAqzFm9BqSMuXhB6b83QBwFf13aByjlp97
-	TtkD8YfcBzkDJfIolIaOOzQp+OFl6Mwh219L4er88tYmNIUhv1+HxjWkfwn+UsQ=
-X-Google-Smtp-Source: AGHT+IFikCUGMq0UTL86rjBwiRetioGQQvG4GE/IGZtmz7TODV3GyLgbG4wupKORlCuu5umrIJPHzw==
-X-Received: by 2002:a05:6512:401a:b0:52c:8979:9627 with SMTP id 2adb3069b0e04-52ce1832541mr2791403e87.3.1719216359895;
-        Mon, 24 Jun 2024 01:05:59 -0700 (PDT)
+        bh=vq027QwJPOPWERgfAacSQ3tvZEtk9hRZ+RB+oxWkMp0=;
+        b=fhrfb30etXAjYsrym7WZUW/2iOzWIl+rXRFJ1iJADa8dsQqsy9iI/WRt4Og8oSC6kM
+         4sp77M2pzE/Qms2cwyiCcm+NllZJ8SkJKWgfZ1cJH8tNK4Igs2qXobjg3tx8mbf5K7Aq
+         W22cN3dXbCNAP5pvz1bYsG/M20QKuSzdW9upmc6+MCZWb815NhB49zJfJYpkoI9slXHH
+         QRwfacrDaisxHG34XrtGCxPLL60k7/LL2aK2uPg0m7FSHHuyKMbO5biHNNwLTTa8jBKr
+         3Qv97wKwmRBuqaJLqXihPv/ensIEciHYiqimxH997CB1t/vKEyQRHd1xs61VpXC62izP
+         gu0g==
+X-Forwarded-Encrypted: i=1; AJvYcCUATH+tIZ52deQlu9a+s+/ZlKwB+1lBsCmk4baZuo5pBweu+j9XvwU4wzjiD4gbczjUqXgJ8H64wMzpSGx9Yv/9uvBZLSTM6eXR
+X-Gm-Message-State: AOJu0Yzg8nM/4g/HOQBA/E8ef4B5aDEFh2ozheiSkYGh61B6dbhlc9sK
+	KZp4DUACXLzEvfy74AP880gQ2eV0XfDWBu1OcqjG4ZS9lx+4dhUJKbUFglwk+v8=
+X-Google-Smtp-Source: AGHT+IG/DPxnHbM7vQbL/qKAQhWp6hBWMKXWzAs6fPLsVWWBybzmDb2augTjpN3BOnV6Yt5fPZiukQ==
+X-Received: by 2002:a19:4312:0:b0:52b:e800:25d8 with SMTP id 2adb3069b0e04-52ce183559fmr1934089e87.25.1719216360895;
+        Mon, 24 Jun 2024 01:06:00 -0700 (PDT)
 Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:8261:5fff:fe11:bdda])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3663a8c8b27sm9280284f8f.104.2024.06.24.01.05.58
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3663a8c8b27sm9280284f8f.104.2024.06.24.01.06.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 01:05:59 -0700 (PDT)
+        Mon, 24 Jun 2024 01:06:00 -0700 (PDT)
 From: Neil Armstrong <neil.armstrong@linaro.org>
-Date: Mon, 24 Jun 2024 10:05:51 +0200
-Subject: [PATCH v2 2/3] clk: qcom: dispcc-sm8650: add missing
- CLK_SET_RATE_PARENT flag
+Date: Mon, 24 Jun 2024 10:05:52 +0200
+Subject: [PATCH v2 3/3] clk: qcom: dispcc-sm8650: Update the GDSC flags
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -64,7 +63,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240624-topic-sm8650-upstream-fix-dispcc-v2-2-ddaa13f3b207@linaro.org>
+Message-Id: <20240624-topic-sm8650-upstream-fix-dispcc-v2-3-ddaa13f3b207@linaro.org>
 References: <20240624-topic-sm8650-upstream-fix-dispcc-v2-0-ddaa13f3b207@linaro.org>
 In-Reply-To: <20240624-topic-sm8650-upstream-fix-dispcc-v2-0-ddaa13f3b207@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -72,57 +71,56 @@ To: Bjorn Andersson <andersson@kernel.org>,
  Stephen Boyd <sboyd@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
  Taniya Das <quic_tdas@quicinc.com>
 Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+ linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1123;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1126;
  i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=U/4kw5IG79Gsn2kPtSO6sfS0IfZ5NSqFkcAhXyCMABw=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBmeSjjPByt2B3EFJuzbEuiV+a0ElumZUUDhDdwd3M6
- 2AiXUBSJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZnko4wAKCRB33NvayMhJ0UnwD/
- 0QQCRTICcNcXK35BooQCJ/xDstdEc5xcmDffrhOcLnyTUZXpW5qf2vfdV8ihWBu0h2JWHu/FEzbPIW
- jL3J1bk0NopRro0jXZA8RPszGtitpG8hZSAOu9RAlcfXItLBDFwjufjtLelv6HBZqPtbzugN1nckf9
- okf+DWzrOovEGwPI/A7NAXBJPjPEv8xufp4l8LJWZtqclhfB+FrkZjlAobrVJ99jVL57GjWQg0Evny
- T31GxGvR7eSQL0lkxFscb1fCLC2fk5KB1ktZP6fhC4TRUnWNcH4eelsxUJoznjnugOHBtNrzKXXA8f
- g+Z56GESEDhpXKL1uAS01CSv60tpsC1aj/dh3VEoUVMuVzh/CYO2Ogyji6FeiZYtHzTYkUouR6Qc5N
- 6Zk+XxDxrBQ6LqiSdHTtLkAumlTDZ2YC6XWL45YEEhGPHlyH2bL2LKDCtUElasPHqs2ISPZYpGkUuh
- jIRYPveBGzAz6g7vL/qKUwBrmB3bEUI+fLkz/OlAgzDrsb1wtIkSRRJtYBxp0OY+iBtQLJGWx9LVlm
- hJRCR2zy4eiuu0J8lzc7q0pvIYzkrceFpZIfq1lmtaB1gapQbwvdxb9aG6BgxF3P91K2ldVlJg6eDV
- qd28gyOUWfZkBUz3XH8tn5br1EXd5nsqBEVNxo9pML7I+8Aj8TIESxZxvwZQ==
+ bh=CVZ99XGO1/Q0YNiabuHR8pXC7UWmuLN1weDi3HiCVx0=;
+ b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBmeSjkAeoEtuUidH3qVRWlVXt8JDsc/aFpbUPsBrJe
+ q5pehxCJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZnko5AAKCRB33NvayMhJ0eFuEA
+ C8JXkUajsSIicgsyO769Yk5BjDrbB9kB3guwEeXo3oprRY/WUl/HT6yibZ1Oi1X5cIlHITEq8XNWqN
+ oVxE8WUl9SqnCwWqgqK3ov01vVl4BbPYmb7O9rU+EInhhLrgOITUtaaEVvHntcGNRvDPyHBzmPISwa
+ ViJUZOn6sKJzzOvoMIst5zLfl910mgHHq3UtS3VN1KwiRg9HWGlfZBrwEkL4UxDwjg9l1gKwOgVl2i
+ EtmNHy8TpuQuxy9nLGsxwueMRrKb8mLsROR1kivNbIp4rj6Mgc++9Qwu6MBAhuG5xKjQCvaZYRKUQg
+ ETHgKC5R05N7kz9aNTAhi6PvOmUfebRRBhK21TjVJoVppTc6xXx2xTZyP9tWsXTG4Mgc7OtvHC3m2F
+ sHc3AOgifIekEtqAC/S3PInL2/vDPWsUx1sfH6gbKCl8fgCGkgA4fmtbP94PL9V4RtRYoyWXjie4bd
+ 5kWWpQJe87aW2zwGogFIYepGHHH+7s80JQAiKS2rrQCnwZRTIWpTWG8rLXRafh4+vZJ5kMjASqh1vc
+ 0t+GKcfG3g8jhqDlEN3CbTzrCMCGM/IU9w4342QpFTTOINs0DjeWGivTwimjg1tBP69jtd/jhq4NU+
+ 6Tf/khTOmvmy6maWpHsphyzm5JUkcLb6jxiyuIdL3wKtItlEHBRZVrewfTLA==
 X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
  fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 
-Add the missing CLK_SET_RATE_PARENT for the byte0_div_clk_src
-and byte1_div_clk_src, the clock rate should propagate to
-the corresponding _clk_src.
+Update the GDSC flags by adding missing POLL_CFG_GDSCR flag.
 
 Fixes: 9e939f008338 ("clk: qcom: add the SM8650 Display Clock Controller driver")
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 ---
- drivers/clk/qcom/dispcc-sm8650.c | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/clk/qcom/dispcc-sm8650.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/clk/qcom/dispcc-sm8650.c b/drivers/clk/qcom/dispcc-sm8650.c
-index 360b80377ed6..1222a26c45c8 100644
+index 1222a26c45c8..85d8809e31e7 100644
 --- a/drivers/clk/qcom/dispcc-sm8650.c
 +++ b/drivers/clk/qcom/dispcc-sm8650.c
-@@ -696,6 +696,7 @@ static struct clk_regmap_div disp_cc_mdss_byte0_div_clk_src = {
- 			&disp_cc_mdss_byte0_clk_src.clkr.hw,
- 		},
- 		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
- 		.ops = &clk_regmap_div_ops,
+@@ -1610,7 +1610,7 @@ static struct gdsc mdss_gdsc = {
+ 		.name = "mdss_gdsc",
  	},
+ 	.pwrsts = PWRSTS_OFF_ON,
+-	.flags = HW_CTRL | RETAIN_FF_ENABLE,
++	.flags = POLL_CFG_GDSCR | HW_CTRL | RETAIN_FF_ENABLE,
  };
-@@ -710,6 +711,7 @@ static struct clk_regmap_div disp_cc_mdss_byte1_div_clk_src = {
- 			&disp_cc_mdss_byte1_clk_src.clkr.hw,
- 		},
- 		.num_parents = 1,
-+		.flags = CLK_SET_RATE_PARENT,
- 		.ops = &clk_regmap_div_ops,
+ 
+ static struct gdsc mdss_int2_gdsc = {
+@@ -1619,7 +1619,7 @@ static struct gdsc mdss_int2_gdsc = {
+ 		.name = "mdss_int2_gdsc",
  	},
+ 	.pwrsts = PWRSTS_OFF_ON,
+-	.flags = HW_CTRL | RETAIN_FF_ENABLE,
++	.flags = POLL_CFG_GDSCR | HW_CTRL | RETAIN_FF_ENABLE,
  };
+ 
+ static struct clk_regmap *disp_cc_sm8650_clocks[] = {
 
 -- 
 2.34.1
