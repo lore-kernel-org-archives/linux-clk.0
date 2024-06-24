@@ -1,50 +1,49 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A94F8186E30;
-	Sun, 23 Jun 2024 21:02:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CADC53A7;
+	Mon, 24 Jun 2024 00:13:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719176548; cv=none; b=gXXVK0okuG1qh9OF5U8kG3sK5AliqNEOK2sYphBlHRhGikIhOV82xvVS1i+X2E9T2oPO0k3Y7sOdrYlCl132R/boD/CGTTRl9jbVyn1oaYFpfcKSz2Ek/wW8PiXNLDWyN60iAosrwMHe3PFqet2iCblf8r16Sz7qr59BC2Oxmx4=
+	t=1719187984; cv=none; b=jlKZWd1phsrYR+mzIF8zgDS8lw4kYceVyStxJFu43v2AE/ioK2R/+VYfBlFUwHjCbLoj2IF/XwYi3UvF8hedGJYYgea2z+Rmr3riwqYABQqYmIWfu6R5wl/8VYPENc9/sP6DoSCoQakaW3+D6cIASCz3pPXHf2bVl7fWu7/gMcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719176548; c=relaxed/simple;
-	bh=NXdkyD46wR535PZ6Mm4IhRprYdPLmjGLLdwdQZs+Cb0=;
+	s=arc-20240116; t=1719187984; c=relaxed/simple;
+	bh=r13Hhd3r9OVP8v75iWfubcVtTc97zZqfxivXseH/ZEY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DDoxa4FTwOzIXJwX8Fj7PvNzDcrVu0u0EKdVyA5XQlYkapP4UbJwULWraCLAop35/woHEy634+6PcceWEKgoXOrbc4JJwje8ZUq2sqKvgr25b3BdanRhn7RNB/AcRZaB8OX95ntdMPnBSpl9NoDNq0uQYvpdOamSB3VIDaAioLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bGvTSP7+; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=EO09xZWs9lilmI2K1NzAVpqsTF/1JL6Ftz1xxlpEUKRNTeJBV82QVzvjsLWFMRa76sdbyBkYOM1gc042h05yks5YueX6PUC4dN/qy7W2EIb0l6SoXPdj6XsX/Sql6rk29hTshiVOogYXgJCZO8zeJxBqYFUbKOFJNOTw0+EYc5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PFWZ0mpU; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bGvTSP7+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FA67C4AF0A;
-	Sun, 23 Jun 2024 21:02:27 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PFWZ0mpU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44B75C2BD10;
+	Mon, 24 Jun 2024 00:13:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719176548;
-	bh=NXdkyD46wR535PZ6Mm4IhRprYdPLmjGLLdwdQZs+Cb0=;
+	s=k20201202; t=1719187984;
+	bh=r13Hhd3r9OVP8v75iWfubcVtTc97zZqfxivXseH/ZEY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=bGvTSP7+kLc3eD/7XT5iT6MufefwE9QrY32IK7/d1DNC1QDacbNSVuaLWB6qCdo13
-	 yNL376ydzj1/ujPMF4kgs5VpEJW2RU8qRAmbe+qzfVMY+mPTAwuXiqg4HzA+/rnGqu
-	 Urtk/xfLkHWKjo/rb/zDfS4+ahcAoxJv7CoWQpDW5MPGNg1nRWGukvPrFN3FZMX0XJ
-	 yP7hq5ot+Th33WDlEUy0YiA3EzdtZhBfkgTk8fM9AycCVtHavlt9qYj4+DnelFGkYJ
-	 VVv2QN6/l+2iW/KUVEc10wBH/z7l9OTu78FnAwhMxTnuyT/HeQqiffLtEy3VbWa3DP
-	 HxMUjSSOTsTrQ==
+	b=PFWZ0mpUi8ZBzS3snTaBjJMFBJoyeBNALmyPtHcMR0rPWS185GVaHUla6rdqjTeh8
+	 5ddmptTzpED5k95VcNtziZ3ToV/1MzI9SNWzFQH4/PGtwC5U/6C0GclEn76l57uKKf
+	 insgahMw1sz8J1OBYWu7CNTH8wyYxJiGSb1RVgquwqkkEnbPap3c5vs8wEhZpSVzu5
+	 URCFJLDmB7CGSV1tsLJt5WWabPcfXqcz6ARAhDnS2StJHbF2m9JgLfvY8sPmiLHirX
+	 vM9n0wW7nIUnizjFJMNrbPcHwnJcJpJZh+KHI5vpshXRWYpWmjhkGgNAUxZ4WJf7fG
+	 pNhc0cmbKsXnQ==
 From: Bjorn Andersson <andersson@kernel.org>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Jonathan Marek <jonathan@marek.ca>,
-	Robert Foss <rfoss@kernel.org>,
-	Vinod Koul <vkoul@kernel.org>,
 	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Shazad Hussain <quic_shazhuss@quicinc.com>,
 	Taniya Das <quic_tdas@quicinc.com>
-Cc: quic_jkona@quicinc.com,
-	linux-arm-msm@vger.kernel.org,
+Cc: linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: gpucc-sm8350: Park RCG's clk source at XO during disable
-Date: Sun, 23 Jun 2024 16:02:19 -0500
-Message-ID: <171917653476.4580.18331742881214650946.b4-ty@kernel.org>
+	linux-kernel@vger.kernel.org,
+	quic_jkona@quicinc.com,
+	quic_imrashai@quicinc.com
+Subject: Re: [PATCH v2 0/6] Update GCC, GPUCC clock drivers on SA8775P
+Date: Sun, 23 Jun 2024 19:13:01 -0500
+Message-ID: <171918797812.9262.9958160262802500413.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240621-sm8350-gpucc-fixes-v1-1-22db60c7c5d3@quicinc.com>
-References: <20240621-sm8350-gpucc-fixes-v1-1-22db60c7c5d3@quicinc.com>
+In-Reply-To: <20240612-sa8775p-v2-gcc-gpucc-fixes-v2-0-adcc756a23df@quicinc.com>
+References: <20240612-sa8775p-v2-gcc-gpucc-fixes-v2-0-adcc756a23df@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -55,16 +54,32 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Fri, 21 Jun 2024 17:34:23 +0530, Taniya Das wrote:
-> The RCG's clk src has to be parked at XO while disabling as per the
-> HW recommendation, hence use clk_rcg2_shared_ops to achieve the same.
+On Wed, 12 Jun 2024 16:38:20 +0530, Taniya Das wrote:
+> Update GCC, GPUCC clock controller drivers on SA8775P platform.
 > 
+> Changes in V2:
+>  [PATCH 1/6]: Dropped fixes tag for removing ufs hw ctl clocks
+>  [PATCH 3/6]: Updated commit text on setting FORCE_MEM_CORE_ON
+>               bit for ufs phy ice core clk
+>  [PATCH 4/6]: Updated commit text on removing CLK_IS_CRITICAL
+>               for GPU clocks
 > 
+> [...]
 
 Applied, thanks!
 
-[1/1] clk: qcom: gpucc-sm8350: Park RCG's clk source at XO during disable
-      commit: 313e2909023bef36ef7b6d1d9ff2d98febcaa28d
+[1/6] clk: qcom: gcc-sa8775p: Remove support for UFS hw ctl clocks
+      commit: d3b33848627d2b0e02bfcd74ea1671d0d6df3aec
+[2/6] clk: qcom: gcc-sa8775p: Update the GDSC wait_val fields and flags
+      commit: be208c0ccf7d861fc6109ca06c1a773512739af9
+[3/6] clk: qcom: gcc-sa8775p: Set FORCE_MEM_CORE_ON for gcc_ufs_phy_ice_core_clk
+      commit: 955606a7b073d724a50a6ab1119987e189fc3e36
+[4/6] clk: qcom: gpucc-sa8775p: Remove the CLK_IS_CRITICAL and ALWAYS_ON flags
+      commit: e69386d4a42afa5da6bfdcd4ac5ec61e1db04c61
+[5/6] clk: qcom: gpucc-sa8775p: Park RCG's clk source at XO during disable
+      commit: dff68b2f74547617dbb75d0d12f404877ec8f8ce
+[6/6] clk: qcom: gpucc-sa8775p: Update wait_val fields for GPU GDSC's
+      commit: 211681998d706d1e0fff6b62f89efcdf29c24978
 
 Best regards,
 -- 
