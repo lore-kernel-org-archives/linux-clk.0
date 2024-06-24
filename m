@@ -1,69 +1,60 @@
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 038D213D521
-	for <linux-clk@vger.kernel.org>; Mon, 24 Jun 2024 13:05:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6F8D13DB83
+	for <linux-clk@vger.kernel.org>; Mon, 24 Jun 2024 13:32:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719234347; cv=none; b=e9atFa2WAFi6u2ivvamr6lLkTFWoE27Gb8Zd/IF2fWw5NVuk9hvxoodHyWXJINM+CW5ro0RN013SMC94II8K2ONMC5UI6sI1xxSEkL/U3Np7IR9sZp+Y3attpsTVEF25Bro4NE7ttnNhw76r+PALEYZA9SfkcVZTmNGCu1XfDvY=
+	t=1719235964; cv=none; b=f8/cfbLMK1P8R3wqp6hI5b6TMc4Diin/F1T183BOSW0cW1U/K3dhnnKGU/w4ppVOYMNzBfReXeZ86sT6jKP1HAhshthTFHrnkeLZa5zL0KY3KvnzXsWe68c4UJobb/Sk1SQdVDPLPaLtqxDL+R1/De5D4mMSQC1IpjDNuDMt904=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719234347; c=relaxed/simple;
-	bh=J6s9FmYbwu6rCJX6bvwxo/5qkXV+mK8snTTnxvMNwXE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=AuCujipgQN8/rM4N6e+wcrW5Uk+KC98yBweGw9gOw1vLcsG8uTKND2fJ62izbJ1c+Ln6mz8gbMPCVWCqsJPYtlrwRRlAqtUAIu/odJvV3GEv5knfbkNquvpvV+4aeu2i1rZFJeOe7lysOc5hMJIDduCI/o4DXDDLiRFVaEoZuqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AIaMXfyb; arc=none smtp.client-ip=209.85.221.51
+	s=arc-20240116; t=1719235964; c=relaxed/simple;
+	bh=7KHXkSiw3G2cL0hHR90JF2g8MSUEbE7fJYE8XhmJ2hA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=QfKfDC4R89qAoNZUZuXe4MYRvjXiHQ1a1cg1U3q+Uaq5QEEdc27KQgZ3dKpyHO3vAeSDCmOPgmYggemM8duP6foCf8M0FNwkg0HNY0v4BCokl9+x3tBnt7XlZRIGqMmrmhmmK37+eQcyCdxFDFda9q/jSFjj4ORO8PEcp7UrA8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=u7rTFSjB; arc=none smtp.client-ip=209.85.221.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AIaMXfyb"
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-366de090da9so1686004f8f.1
-        for <linux-clk@vger.kernel.org>; Mon, 24 Jun 2024 06:05:45 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="u7rTFSjB"
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3632a6437d7so2523833f8f.0
+        for <linux-clk@vger.kernel.org>; Mon, 24 Jun 2024 06:32:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719234344; x=1719839144; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dgg5zTIauTsPF3TmgnW+tc9VxrEyT7qeMnvZKfv7t60=;
-        b=AIaMXfyb5FfZ0144JOGJ0UYRlciJmbJ5m3GKG0gKRfZZjJAUoU7h4iALxZwkNplUDd
-         dsm0Ha2URwWuAIEkUfZBieTnK4Q2TGnkVjdLxUBIJ2KKn+TxrjVXjClMuVelg69ENt7H
-         XbbAA0APE+J6xzMTqeZ4GJloJ7Vxd2IsEu+VddOJuGSk4wiqLnxmC8MpJadf48H3Qk1m
-         u0zDdBXTyN+QPlgL1tlc4eBkAYMQqN/39xJ1942Jrn3c4gZTUhhDII953PtsGrD4Yw3S
-         008HmH/N6rxVnSGkDxBSiNj5BTcuO/oT0nS/xQssts1IgLYkErKeCF6ApmzUsN1ZiJLS
-         F9Dg==
+        d=linaro.org; s=google; t=1719235960; x=1719840760; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=i63v09sV0tTGN/3CN/lUxe+ocEmeawwsZ2O+wqtiMdY=;
+        b=u7rTFSjBRQOdJb/2ttfvtvUdTHxLJGwkxGdBRv2zt2ddEvaV9yV8CuZU5k8W2n+1Xw
+         L21P8bETdjwNZwuZc9Q/1E7rVLHzIYBNIgdhAsj4A1ftaq0ScLWqiiCpvGRykBc25u9o
+         FNx+OJTY4HQVjfgTob18S07F/WaKvseY3ap+tdZSSLpak2yKRpWTDRmJU3NIDw+ZLaqx
+         txTQS9Kar8whOVUTq1hOKt3mJmLgQwU0A9S4BIRMpIKQVoeFUj/T2LzlxA+EkzJ20Dmf
+         YiwVKovoXwx5nwcTg/MSmIbDWGK4WxeFQc9dzXHq8afb5NmOkKU1+kaf+QbRARbYetNQ
+         cdLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719234344; x=1719839144;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dgg5zTIauTsPF3TmgnW+tc9VxrEyT7qeMnvZKfv7t60=;
-        b=p3oxxQDG2PZ0090lLS1DLE2qsemSabc2FprKoQqItEOQnr//nvMtRlKRmbPApFit8c
-         A5jaybarwyDC2ILcmzBubPHGoq5/y/hz8WRR/CGPcq3Yg+kLmELiGR0uHlpbS50yyUpc
-         RqLeYnXVuH7eU3ZEKjIdq7LLi0j5jVZSXz033pywwds7QBhYbnAl3fX0Pf1ycxgisv/B
-         4fllUYsewA7VOYOReh+h1oHt3aNOYwu4qxNIK0L/BkBPbbjlsO2WoY8X4yucalS9FuOx
-         8wFiT7OUic/L+l4Z0XJDuPQXaz1pntZrc5sK04/YpfKL25Tb/eXTaqkBYoiEFJTdqPP8
-         uqRg==
-X-Forwarded-Encrypted: i=1; AJvYcCUGhKQKQmOyXoGM98BnEf5hJl1lkoBc9oY3z0amuYIjMX0+SlSCZwYEHBynnryTsVE+4e+4a+oLocUxzV/9lNRd4GNbsV9Ii/TX
-X-Gm-Message-State: AOJu0YzDvnag3PfXBnsYY39eU0ZifjHRbwr7/LOanfZXxgRz0Jg6CNEO
-	ILPD9Vsx2e9vAaQ4zv8L0YemkU7kFDaqTTJfgsjU7WSRAwpwP+oWlkpEmCW0U2Q=
-X-Google-Smtp-Source: AGHT+IHzHCAkqhDnextCQWEo9v/WpPPKLVyplH9dWufwCaoEQzUNTJUM0of/AP9vtdGv3PM0Y5Zfog==
-X-Received: by 2002:adf:eec9:0:b0:362:c971:d97c with SMTP id ffacd0b85a97d-366e962cb55mr2719410f8f.63.1719234344223;
-        Mon, 24 Jun 2024 06:05:44 -0700 (PDT)
-Received: from [127.0.1.1] ([82.79.124.209])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3663a8c8f07sm10047839f8f.110.2024.06.24.06.05.43
+        d=1e100.net; s=20230601; t=1719235960; x=1719840760;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=i63v09sV0tTGN/3CN/lUxe+ocEmeawwsZ2O+wqtiMdY=;
+        b=jb76QLOR3WwDyAoajXaXkru9VfNWejMUxwabZC0ov2A1ZRcM8Hei3lAWr0nWVrWAGH
+         FJd4+oHP1lC9jnNHShSOpU+bEoaVl+DAS3ccwC42nbMlJyA3Kmh8K/N73pRuHhIT8QR8
+         RMNxpey0z8cVTgFzsCmSlqtLJeqgY7KwWjtt3TRNjdWaEux/SRWPxNSIdWCS/961UZOz
+         MMZoGWK02i+zz6wFvxN09CNvkE9ecfVdOgFEix1JdKRNccKEFlaZC28NNgudlQz72ggN
+         hx6mGEVkUr2XohV/0RwZcp7tK2CdGdpDry6xwJaRMVGCsm5BlAtbsvSPGIWAn+aNcoYQ
+         I3Pw==
+X-Forwarded-Encrypted: i=1; AJvYcCUlXEfIcziJ8R/mdKXmmzD7YBj/u7acqky69p99gGnAc4HXeR4ecfS+Uondf+UENxaXg4IJFYEBwIWZTy4GMgvhg2PdZ1U5ZEOc
+X-Gm-Message-State: AOJu0YxEIAZMAmufAvHqViRoY8hM/TfHk0DVcJJSrqtQ/oCKvRvoGVSb
+	Ar1nqXY/O4fDp14ThbbvbCHtL981G+TUcclCt1irYpHkQYLBcjw3+esgYwieJM8=
+X-Google-Smtp-Source: AGHT+IE4SN9gQRJbIu0u6FodUMhsPJCIqcZC7gf1k65l9XMDPiGEOXnzYwwzkZQjwtfhzTam4uGILA==
+X-Received: by 2002:adf:f990:0:b0:361:e909:60c3 with SMTP id ffacd0b85a97d-366e3267fb9mr4464756f8f.9.1719235960019;
+        Mon, 24 Jun 2024 06:32:40 -0700 (PDT)
+Received: from [192.168.1.195] ([5.133.47.210])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-366f7406f4dsm1888274f8f.114.2024.06.24.06.32.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 06:05:43 -0700 (PDT)
-From: Abel Vesa <abel.vesa@linaro.org>
-To: abelvesa@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
- shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
- festevam@gmail.com, "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-Cc: imx@lists.linux.dev, linux-clk@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Peng Fan <peng.fan@nxp.com>, kernel test robot <lkp@intel.com>
-In-Reply-To: <20240624024351.488492-1-peng.fan@oss.nxp.com>
-References: <20240624024351.488492-1-peng.fan@oss.nxp.com>
-Subject: Re: [PATCH] clk: imx: composite-7ulp: Use NULL instead of 0
-Message-Id: <171923434299.3353313.590319710383846542.b4-ty@linaro.org>
-Date: Mon, 24 Jun 2024 16:05:42 +0300
+        Mon, 24 Jun 2024 06:32:39 -0700 (PDT)
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH v2 0/3] arm64: dts: qcom: x1e80100: Add soundwire
+ controller resets
+Date: Mon, 24 Jun 2024 14:32:35 +0100
+Message-Id: <20240624-x1e-swr-reset-v2-0-8bc677fcfa64@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -72,25 +63,56 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+X-B4-Tracking: v=1; b=H4sIAHN1eWYC/3WNQQ6CMBBFr0K6dkxbCIgr72FYtHQKk2irU4IYw
+ t0t7F2+//PyVpGQCZO4FqtgnClRDBn0qRD9aMKAQC6z0FJXstYVLAohfRgYE04gVVt76xt78a3
+ IjjUJwbIJ/bhb7z4+wUeGgMu0/y9GT8vRu3eZR0pT5O+Rn9W+/ivNCiQ4U+rayaYsXXV7UDAcz
+ 5EH0W3b9gPScq9jywAAAA==
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=966;
+ i=srinivas.kandagatla@linaro.org; h=from:subject:message-id;
+ bh=7KHXkSiw3G2cL0hHR90JF2g8MSUEbE7fJYE8XhmJ2hA=;
+ b=owEBbQGS/pANAwAKAXqh/VnHNFU3AcsmYgBmeXV2FihPkTNyQFaxVnVV8Ez3xGG+fon5oAYL+
+ 0Nf+l5Y0ZWJATMEAAEKAB0WIQQi509axvzi9vce3Y16of1ZxzRVNwUCZnl1dgAKCRB6of1ZxzRV
+ N80VCACmXKLC+CFKab5XrBN3rQA9JR1VEZIkPu2OWm9+AXi30FzKhuuSjsxgkXj3tbWhJzvAIgt
+ y6ldwqxwuy5YPlnNKdALkICl9wshQz23JtQqaGSTikgrxRjSAwrzYXSWWGA1v+4+MmtibDgOPfj
+ CDUSDoL6+3n3JiS7X37tch7wN26SdZSbhhgXH1A2jgQKBwZihRN9PHsaYJ17XbI/64KWKpDMSTU
+ wtCLmGSGbItEe4ZVUwg/yqlnkLcq9XZ8i89we3DhRnjP7f/l8Sfc0dLZMxS1/jNpCRxPodsHAHJ
+ gRADD17sgjKyFDVCDC8MyJaaNLMDevQ/Hya95I7evNf2CLi1
+X-Developer-Key: i=srinivas.kandagatla@linaro.org; a=openpgp;
+ fpr=ED6472765AB36EC43B3EF97AD77E3FC0562560D6
 
+Soundwire resets are missing in the existing dts, add resets for all the 4
+instances of Soundwire controllers (WSA, WSA2, RX, TX).
 
-On Mon, 24 Jun 2024 10:43:51 +0800, Peng Fan (OSS) wrote:
-> Address the sparse warnings "
-> sparse warnings: (new ones prefixed by >>)
-> >> drivers/clk/imx/clk-composite-7ulp.c:85:24: sparse: sparse:
-> Using plain integer as NULL pointer
-> "
-> 
-> 
-> [...]
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+---
+Changes in v2:
+- fixed dt bindings.
+- Link to v1: https://lore.kernel.org/r/20240624-x1e-swr-reset-v1-0-da326d0733d4@linaro.org
 
-Applied, thanks!
+---
+Srinivas Kandagatla (3):
+      dt-bindings: clock: Add x1e80100 LPASS AUDIOCC reset controller
+      dt-bindings: clock: Add x1e80100 LPASSCC reset controller
+      arm64: dts: qcom: x1e80100: add soundwire controller resets
 
-[1/1] clk: imx: composite-7ulp: Use NULL instead of 0
-      commit: 466da3d2d967ee87d82060df2bc9c6ad4fc4af49
+ .../bindings/clock/qcom,sc8280xp-lpasscc.yaml      | 13 +++++++++---
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi             | 23 ++++++++++++++++++++++
+ 2 files changed, 33 insertions(+), 3 deletions(-)
+---
+base-commit: 781025f172e19ca5682d7bfc5243e7aa74c4977f
+change-id: 20240624-x1e-swr-reset-0196fbf7b8f9
 
 Best regards,
 -- 
-Abel Vesa <abel.vesa@linaro.org>
+Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
