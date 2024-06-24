@@ -1,127 +1,104 @@
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2008A49653
-	for <linux-clk@vger.kernel.org>; Mon, 24 Jun 2024 08:06:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F2EA1F93E;
+	Mon, 24 Jun 2024 08:09:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719216364; cv=none; b=N6QKLQnur4Giwq8gzxLfvQ8E8KJ42C5tkk83DArgPO4Ts4r8Q4d3o2PFYXqJxd/F2NoSTNaWQp6ZDDA+ej57VQR4PP31RWgzYNv2AbuBHNXqK8FHodiB3nhLXuKcWYsgVLDcIBfFeryz++mgz/j9b4CgNm57a5T+dNnXb3IV9jc=
+	t=1719216572; cv=none; b=driZRgMSuJJSx+3Be1pdzOR+v01AztYUxl2dXSrMY1bKctWhlqjB/SZ7TGIldv7BiqUc+n1JlEH/h+UrOiDT56yNVyXg4kl4MP/vCdwGozyjGKU4xIMl063/g9RTqFcabekbMByHesBkfx9A+x+lD+saKyeaZrAD2W6YwVb0ViE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719216364; c=relaxed/simple;
-	bh=CVZ99XGO1/Q0YNiabuHR8pXC7UWmuLN1weDi3HiCVx0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ehTf3fow77WOgHaG9sivjFmWqj/0/yXtrCQrc2hIlyNos3DPJQbyHKxZuMPbKe0XkHGqalLl7DvvMpotJBIFzlZENvOVc02gdy2BdgE9wfTafLfDCDHZkyMP8/WiBjw05vaAXhae+k5M/66gvKm3RRwBzJr4Kmlb+VTJpFGQGdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NKL4DMcg; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1719216572; c=relaxed/simple;
+	bh=NOhGw9rMrJpNkjxZpnWcF4vb9fMkV6OjsmbMKaXvgvk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Vx3kBgsqYd/sCOmKdguCGqOCkiJdwRxr7RoLK5yt3q6r3i1laln/M/deu1HdajDJH4iVIopStaec3jBxHXQoDyYPvRSs3WrZKUY3HnuyxzUajN5bhdKjiJccGy9ifDjRkPqLZwiApDAPWtF26QqXC8vQCHFi40wiYPY4cghQ5N0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OSwdhsVN; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NKL4DMcg"
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52ce6c8db7bso772729e87.1
-        for <linux-clk@vger.kernel.org>; Mon, 24 Jun 2024 01:06:02 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OSwdhsVN"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-363bbd51050so3040628f8f.0;
+        Mon, 24 Jun 2024 01:09:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719216361; x=1719821161; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vq027QwJPOPWERgfAacSQ3tvZEtk9hRZ+RB+oxWkMp0=;
-        b=NKL4DMcgbnffaiAxBIiQ/hfa597L+CN9JPSQ5wzOeRxJb3aCKkUGd+ZmvCukpsDLve
-         bG5yltpPfgnVg8BmXo+vjJhGaKa+rL2p3pPSxXYcYaJyAw3XpO42sO7yXVeNbUaEgHJo
-         cpAIsw8IIJx6zHZ3oTY7t705s1R9YNTrGq65XaAzrWlgoCQhdIjVtHZd/WCE9lZSYTwU
-         jnonGyjVPpXRYGgNwWs69Yq6r0bKICN0ZYq0by/vOiwNyV30Y0tSZ2kl6tRilEhVLYjP
-         p/Tja+Za73ugkXLilAycGCqW1jlLKqbWwlknOsyUv1tXMwR8/zTjZfLwCsCKLdcM8pQh
-         LEag==
+        d=gmail.com; s=20230601; t=1719216569; x=1719821369; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=NOhGw9rMrJpNkjxZpnWcF4vb9fMkV6OjsmbMKaXvgvk=;
+        b=OSwdhsVNd1DQKwGWNJMG/TsGEBIm/jsPujjB57AjjFx5K0yp93zF0mozMcCdMyT4Cj
+         5THLIVmjHkm6zXVYSJ+RCRFevVC85wmCNcwSf870Rza5ib6EFMu6jPtkoxOTs62p4yLM
+         rWxDfEI7ckkc02m5t2d/CN/wZnDW6zH7wAWG7waBGw8okMcKxJJ5BJ3dsYdj55HQ+r8y
+         mN9zr8HufKCaCWas1SfPNgts+qceYuXv9uu3BGP/8VbMx/QPPQ0RwhwrfpchVqD2Yo46
+         Q0yQ8BL5kgAaBveI1xQXMYEoAnRmcZG6BJ0sLfbmvzKXywKOK1YGQwAqf3IDV4r1gh+U
+         yhMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719216361; x=1719821161;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vq027QwJPOPWERgfAacSQ3tvZEtk9hRZ+RB+oxWkMp0=;
-        b=fhrfb30etXAjYsrym7WZUW/2iOzWIl+rXRFJ1iJADa8dsQqsy9iI/WRt4Og8oSC6kM
-         4sp77M2pzE/Qms2cwyiCcm+NllZJ8SkJKWgfZ1cJH8tNK4Igs2qXobjg3tx8mbf5K7Aq
-         W22cN3dXbCNAP5pvz1bYsG/M20QKuSzdW9upmc6+MCZWb815NhB49zJfJYpkoI9slXHH
-         QRwfacrDaisxHG34XrtGCxPLL60k7/LL2aK2uPg0m7FSHHuyKMbO5biHNNwLTTa8jBKr
-         3Qv97wKwmRBuqaJLqXihPv/ensIEciHYiqimxH997CB1t/vKEyQRHd1xs61VpXC62izP
-         gu0g==
-X-Forwarded-Encrypted: i=1; AJvYcCUATH+tIZ52deQlu9a+s+/ZlKwB+1lBsCmk4baZuo5pBweu+j9XvwU4wzjiD4gbczjUqXgJ8H64wMzpSGx9Yv/9uvBZLSTM6eXR
-X-Gm-Message-State: AOJu0Yzg8nM/4g/HOQBA/E8ef4B5aDEFh2ozheiSkYGh61B6dbhlc9sK
-	KZp4DUACXLzEvfy74AP880gQ2eV0XfDWBu1OcqjG4ZS9lx+4dhUJKbUFglwk+v8=
-X-Google-Smtp-Source: AGHT+IG/DPxnHbM7vQbL/qKAQhWp6hBWMKXWzAs6fPLsVWWBybzmDb2augTjpN3BOnV6Yt5fPZiukQ==
-X-Received: by 2002:a19:4312:0:b0:52b:e800:25d8 with SMTP id 2adb3069b0e04-52ce183559fmr1934089e87.25.1719216360895;
-        Mon, 24 Jun 2024 01:06:00 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:8261:5fff:fe11:bdda])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3663a8c8b27sm9280284f8f.104.2024.06.24.01.06.00
+        d=1e100.net; s=20230601; t=1719216569; x=1719821369;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=NOhGw9rMrJpNkjxZpnWcF4vb9fMkV6OjsmbMKaXvgvk=;
+        b=gyuwNy/GSq75k19kMv51WYHrr4w1FQiWXOdn1cpIZIgnBjRCzocpyPh/rRRQ5XQwQG
+         bFhfmQUtRh4zxIoQ5IgO9NSsfslGgBWLcCnNAKTnJGJuLE0p2CQD38Jmr5IczIHnau6/
+         qbHF3o6uX3wnyM50UbL1r0oYDnwO3Au07Ktb1OcDyhLGZyPs3kPFw9gs/90HkRQVAl7x
+         Ump3hkkGaVd+g3iaCafcGJIBdEm5gbpbHRzFNnS/3mOh4dVso4cvj+660BnaLtVI5fBL
+         wVFqe26bpElKwy+mJob85SOs2DI0rzjpY2QVBYsPryqS6u2vrEoQOwn5BLTYMwS0pClg
+         pj0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXWPlQGxmFAOSxA/gqrPFgj+KXHrTFtUNXNEwUJ3EmLwhm1PL5BqgN7Aiw8gPVearSQn2yQHppBh5Dl2rhdcV1x4FEjKQrAAbTikym+ZfYb6Jjm91yIrAFYLUQ6s+R4wNuBHZ6qYuJkiSRShES+nmJiA3S4b91iOHCFUeJ6tav9WrpLo8WjlM63d54aTQxXTbGtwPSkWqtmKjiFCCTG7A==
+X-Gm-Message-State: AOJu0Yy6lh6eEWsrqYmgXSu8GBr9YWnWP5qhu/VOlwaLzmxsrLoTo+bj
+	rE6R29RZ8QWMsA+8nGxO/81u8hGnKtQd8RM3Tnxd/97hypCxKpgP
+X-Google-Smtp-Source: AGHT+IFsu4SA440qLS+OTNB2Kp/IDfKOew+1SLAqJbJX3Dq9uflpOsscaCxVGx6MDcd8J/58+fIhuA==
+X-Received: by 2002:adf:f887:0:b0:361:dde2:87a0 with SMTP id ffacd0b85a97d-366e4f0cd03mr3249911f8f.65.1719216569219;
+        Mon, 24 Jun 2024 01:09:29 -0700 (PDT)
+Received: from ?IPv6:2001:a61:35f9:9001:40df:88bb:5090:7ab6? ([2001:a61:35f9:9001:40df:88bb:5090:7ab6])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-366389b8597sm9252800f8f.36.2024.06.24.01.09.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 01:06:00 -0700 (PDT)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Date: Mon, 24 Jun 2024 10:05:52 +0200
-Subject: [PATCH v2 3/3] clk: qcom: dispcc-sm8650: Update the GDSC flags
+        Mon, 24 Jun 2024 01:09:28 -0700 (PDT)
+Message-ID: <85c7b836721ad49125eebf7498d2d8a9cd15dd64.camel@gmail.com>
+Subject: Re: [PATCH v6 2/2] iio: frequency: adf4350: add clk provider
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>, Antoniu Miclaus
+	 <antoniu.miclaus@analog.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>,  Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,  Lars-Peter
+ Clausen <lars@metafoo.de>, Michael Hennerich
+ <Michael.Hennerich@analog.com>,  linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org
+Date: Mon, 24 Jun 2024 10:09:28 +0200
+In-Reply-To: <20240622195018.587997ae@jic23-huawei>
+References: <20240621121403.47912-1-antoniu.miclaus@analog.com>
+	 <20240621121403.47912-2-antoniu.miclaus@analog.com>
+	 <20240622195018.587997ae@jic23-huawei>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.2 (3.52.2-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240624-topic-sm8650-upstream-fix-dispcc-v2-3-ddaa13f3b207@linaro.org>
-References: <20240624-topic-sm8650-upstream-fix-dispcc-v2-0-ddaa13f3b207@linaro.org>
-In-Reply-To: <20240624-topic-sm8650-upstream-fix-dispcc-v2-0-ddaa13f3b207@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
- Taniya Das <quic_tdas@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1126;
- i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=CVZ99XGO1/Q0YNiabuHR8pXC7UWmuLN1weDi3HiCVx0=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBmeSjkAeoEtuUidH3qVRWlVXt8JDsc/aFpbUPsBrJe
- q5pehxCJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZnko5AAKCRB33NvayMhJ0eFuEA
- C8JXkUajsSIicgsyO769Yk5BjDrbB9kB3guwEeXo3oprRY/WUl/HT6yibZ1Oi1X5cIlHITEq8XNWqN
- oVxE8WUl9SqnCwWqgqK3ov01vVl4BbPYmb7O9rU+EInhhLrgOITUtaaEVvHntcGNRvDPyHBzmPISwa
- ViJUZOn6sKJzzOvoMIst5zLfl910mgHHq3UtS3VN1KwiRg9HWGlfZBrwEkL4UxDwjg9l1gKwOgVl2i
- EtmNHy8TpuQuxy9nLGsxwueMRrKb8mLsROR1kivNbIp4rj6Mgc++9Qwu6MBAhuG5xKjQCvaZYRKUQg
- ETHgKC5R05N7kz9aNTAhi6PvOmUfebRRBhK21TjVJoVppTc6xXx2xTZyP9tWsXTG4Mgc7OtvHC3m2F
- sHc3AOgifIekEtqAC/S3PInL2/vDPWsUx1sfH6gbKCl8fgCGkgA4fmtbP94PL9V4RtRYoyWXjie4bd
- 5kWWpQJe87aW2zwGogFIYepGHHH+7s80JQAiKS2rrQCnwZRTIWpTWG8rLXRafh4+vZJ5kMjASqh1vc
- 0t+GKcfG3g8jhqDlEN3CbTzrCMCGM/IU9w4342QpFTTOINs0DjeWGivTwimjg1tBP69jtd/jhq4NU+
- 6Tf/khTOmvmy6maWpHsphyzm5JUkcLb6jxiyuIdL3wKtItlEHBRZVrewfTLA==
-X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
- fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
 
-Update the GDSC flags by adding missing POLL_CFG_GDSCR flag.
+On Sat, 2024-06-22 at 19:50 +0100, Jonathan Cameron wrote:
+> On Fri, 21 Jun 2024 15:13:59 +0300
+> Antoniu Miclaus <antoniu.miclaus@analog.com> wrote:
+>=20
+> > Add clk provider feature for the adf4350.
+> >=20
+> > Even though the driver was sent as an IIO driver in most cases the
+> > device is actually seen as a clock provider.
+> >=20
+> > This patch aims to cover actual usecases requested by users in order to
+> > completely control the output frequencies from userspace.
+> >=20
+> > Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
+> You addressed both of Nuno's comments and I didn't have anything to add,
+> =C2=A0so I'll pick this up (can still add a tag though if Nuno wants to g=
+ive one).
+>=20
 
-Fixes: 9e939f008338 ("clk: qcom: add the SM8650 Display Clock Controller driver")
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
----
- drivers/clk/qcom/dispcc-sm8650.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Please do.
 
-diff --git a/drivers/clk/qcom/dispcc-sm8650.c b/drivers/clk/qcom/dispcc-sm8650.c
-index 1222a26c45c8..85d8809e31e7 100644
---- a/drivers/clk/qcom/dispcc-sm8650.c
-+++ b/drivers/clk/qcom/dispcc-sm8650.c
-@@ -1610,7 +1610,7 @@ static struct gdsc mdss_gdsc = {
- 		.name = "mdss_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
--	.flags = HW_CTRL | RETAIN_FF_ENABLE,
-+	.flags = POLL_CFG_GDSCR | HW_CTRL | RETAIN_FF_ENABLE,
- };
- 
- static struct gdsc mdss_int2_gdsc = {
-@@ -1619,7 +1619,7 @@ static struct gdsc mdss_int2_gdsc = {
- 		.name = "mdss_int2_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
--	.flags = HW_CTRL | RETAIN_FF_ENABLE,
-+	.flags = POLL_CFG_GDSCR | HW_CTRL | RETAIN_FF_ENABLE,
- };
- 
- static struct clk_regmap *disp_cc_sm8650_clocks[] = {
+Reviewed-by: Nuno Sa <nuno.sa@analog.com>
 
--- 
-2.34.1
 
