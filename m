@@ -1,106 +1,99 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C0C413A252
-	for <linux-clk@vger.kernel.org>; Mon, 24 Jun 2024 11:41:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AEC513D50C
+	for <linux-clk@vger.kernel.org>; Mon, 24 Jun 2024 13:05:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719229318; cv=none; b=kdrU5Z253nTseqXIa9u+cnJkREK0V2WoSC6GKx2JeAPOVfepPC1TK+MhzY84Fi5LqW3EOQDYflRt5YJ0VmTiQXVgyCz3EMSunOKc4dDL4GkgH24qKN+UQ1BTLcQQ7BJcj2+OKOojrB3VRRrgfFgwO9F2JQTSDo3UCqyxs4GT5Ew=
+	t=1719234310; cv=none; b=M0C4DOTE6apKR8VfCVX26iU3+RPUE3m43tCIxXzxD8WR1Q1HgmJ5VVIRgjIUs1xgNiirnaA9gwszC6x7r9ZP/wJ2L9hLladapBdMTz5GZVOknF/QjRlbRxOYQQzIQVZlZnyJ7f6rlHIMoEKJOnokgsUZ0LxIOp7HpO1QO1mEEz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719229318; c=relaxed/simple;
-	bh=C028/nFsGE40ydlmB9BxdAJi/8hIWgLolYvN+o5rEZ8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qBRFwFmKUM4/40VFmuRUZNDCiP3aoeXxryKpu4dCaLKcAZCxAXTadTxYiPxvZ+aKEbHDljKGOuB6eUX8QoF6vn4foheW8mTclH1ev+Es8ORjLiZoiSQbjq2q0cIOqu5DrNW1X/wCsT00I5ikDDvd4gd6R73s+hdwlcK9UusY11U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j1M/szUJ; arc=none smtp.client-ip=209.85.221.45
+	s=arc-20240116; t=1719234310; c=relaxed/simple;
+	bh=+drNbvux++uug0hPu6tz7VO4BFIyNDtMKC1mDMXPKq4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=Iz19hTqUX/SNHDKA09/NTwo0ZBsuggQZbXTT10vWv1mvRN7KDXEQWuE4/HYLV819o35vooHjkcuRp0oUvHyx8LHybvB3MKWyccXZv4jH7fBRA9YAM6550C9oY0iwPRbz/rpbE+xfhmm6NJbLGtocjecXGUPAZp16MAmhQ6W98m0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SPIbegnf; arc=none smtp.client-ip=209.85.208.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j1M/szUJ"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-362b32fbb3bso2856475f8f.2
-        for <linux-clk@vger.kernel.org>; Mon, 24 Jun 2024 04:41:56 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SPIbegnf"
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2ec1ac1aed2so52328831fa.3
+        for <linux-clk@vger.kernel.org>; Mon, 24 Jun 2024 06:05:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719229315; x=1719834115; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=T+jjro0681AEOFwhkhNhmaTtx8v0fmEZR11zlZ878gA=;
-        b=j1M/szUJ04JfmiXtzdUpbWOEGaymaHvffYUh0YgExeQe/9M5BcubEpewCPEuRVnJHy
-         d4NKbBIZFZgxkllY1Ie/chYOeZ5I/9G1YhKZ65eInOnAlx+EI77AuDYC5EqV8Ux+TnlB
-         /xyT5hHkn9nYwirYWVGZJQwikhxHQWkSBp0xaumLPdJjyxmfhHUnsecK6bEk+705gCcv
-         d0gvnxECWQ8fwtRCjWnjwzFLL17ItksMD3VG8pLpDtJBv5+Pitd/M4/jqwgaAW8nClJb
-         HAP9cNzgz8EROKUXAdwVpR6aKWusBVrH2qG/nK8ywxuDV2ZNTil55BWgf8Mah2lWHxVv
-         +nyQ==
+        d=linaro.org; s=google; t=1719234307; x=1719839107; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nCSs6EoE3tz3KgGGlszJ+JFtOP9WWRkRZnOsk0NEKe0=;
+        b=SPIbegnf7qJAJgLG49IOvMsTGCw2LHuKnnb06cOVtQDv6HwixAlrqAGutvjzsUzvEo
+         ga7mH18+JUNuQ/15mlP96/NDRt2/x9tuvCzTbKzd4Eq7E5dL8IKJ4FllU2kNXX+UIhaM
+         eGJenYuskcvD1SZqnQOWJzlSehyilpxwrPSiIYBN4nqLTNnLA+tMEY3Ex4UHKB77HJYw
+         QRUWOiDrA+4KEfqlHDx+gb9qDN/xywS85CL8q9xrMo6ZkosB0dGbOb1Pwlh1ZEcYLPVK
+         nsMrbUhKQwwLp3o/XmTZXJICeUmAtxs/Xes0t++aAS75FLilTvY2SFWpUN8Dkn4GIubr
+         WqmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719229315; x=1719834115;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=T+jjro0681AEOFwhkhNhmaTtx8v0fmEZR11zlZ878gA=;
-        b=MxVl6cORtBJJK/eM0AIQLpLg9iJCjJEXyyEu0cwuA7PGxf3szHTUosZ0STbi87VzJ5
-         nvD5Qc/+o4bEJWPX9euY00aF8ui2eOhC9tJcsKC2psAH2GHxtUJBjZm6/0m3knB/XE4U
-         RYweMqZaMDKyWs0ZfpDW2gODNfzJgYbcgv88MrCEML04AA/xuvzpHUOtnT64bysHc2wF
-         /KtyM2N3h85Vw51NAKnv9i/yXIFHq1GeEOLlCCtU5gSEmeYqLSCloTyvFnbUXBPlYnfb
-         RyOQA36z05XX8ILSs8M7zQeuoU8zaZKEUtDqyKolEsRZAsw/1vCzwbGugCY4dMk1NDEO
-         pu4A==
-X-Forwarded-Encrypted: i=1; AJvYcCXT41clZaVjk2wjxTZNfwBYSUoy8krq9GJHTIdkAwQAFIEfffh2wN7itC5YHYhug1O2n5szM2kidN2a56OhxTnQhQHEO9Qghn3M
-X-Gm-Message-State: AOJu0YwYcNyRg6tvtqqnhV9hVeIP765MQJ5QdsD2SX9oLeB4lj6oaZCQ
-	gUwyi+1rTnssOGLYjqh6bg4nonSrznu+pkmM82tOhudxSu6eolBKW3L2p1x2WzI=
-X-Google-Smtp-Source: AGHT+IHoGgWxVHYl9o9oDPZVH7R7MNNhC1mYVS4z9J3EY4whsBbRpKDAVx2h9mKJ84IvNeAFF6eWqA==
-X-Received: by 2002:a05:6000:1545:b0:366:e8cf:ef6d with SMTP id ffacd0b85a97d-366e8cff117mr4375611f8f.55.1719229315261;
-        Mon, 24 Jun 2024 04:41:55 -0700 (PDT)
-Received: from [192.168.1.195] ([5.133.47.210])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3663a8c7c6esm9839416f8f.103.2024.06.24.04.41.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Jun 2024 04:41:54 -0700 (PDT)
-Message-ID: <55bee27a-e4c8-4e4f-ac62-a581f46662ef@linaro.org>
-Date: Mon, 24 Jun 2024 12:41:53 +0100
+        d=1e100.net; s=20230601; t=1719234307; x=1719839107;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nCSs6EoE3tz3KgGGlszJ+JFtOP9WWRkRZnOsk0NEKe0=;
+        b=LDcw2E3f0Q8zA7nUeqSc1Fnt5aYXO9sJQnpJp34+elMIAPBAAd5XrAkB+vk+R666SC
+         iE+9NrZWUE1I5M+QNYjruYkBsnGJgzw2W87LsQNwn0aKrIN47hYFjDTTO3+yu1QdNoAb
+         gpsCBaLUv0NutYJTB1f2O1ckOtk3+Z+Ff1tiz76wd2bLMM6bymNNxPEzjcVHIXtiBol/
+         ha+PSlnUl1blZzRSjBsudTYlTyobfJN0qSbMvwugtHLd+93kq9ohFCJx8HcQLN/GVSIL
+         921UAanKWUagpXQzT3XivlaGy6pk1GqpgehiqGYQ6nIUR/e687sAcoE7b8ejfoSnqexD
+         JpOw==
+X-Gm-Message-State: AOJu0YxAA0STf6ZpuLMSS9Ch6YGmfPKZndfN5vIfQB4+OpvTz6w+JtE+
+	jCpT/alx3lxonZJiLpoH8OLsc+oDGfAuD9bteUk/ZGgTC/LvPIrwIICbpqNHIeU=
+X-Google-Smtp-Source: AGHT+IEZaZMrjJjqM0Ess2luZwycJQQVw6sc4PZ0oTPthYEnIA9g9rv/bnCXKiQWNCLkhV7ZgfxGTA==
+X-Received: by 2002:a05:6512:39c8:b0:52c:e4cf:4f31 with SMTP id 2adb3069b0e04-52ce4cf502dmr2779953e87.49.1719234307304;
+        Mon, 24 Jun 2024 06:05:07 -0700 (PDT)
+Received: from [127.0.1.1] ([82.79.124.209])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4248192243esm137985425e9.44.2024.06.24.06.05.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jun 2024 06:05:06 -0700 (PDT)
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>, 
+ Jeff Johnson <quic_jjohnson@quicinc.com>
+Cc: linux-clk@vger.kernel.org, imx@lists.linux.dev, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ kernel-janitors@vger.kernel.org
+In-Reply-To: <20240602-md-clk-imx-v1-1-5c6d240f6fab@quicinc.com>
+References: <20240602-md-clk-imx-v1-1-5c6d240f6fab@quicinc.com>
+Subject: Re: [PATCH] clk: imx: add missing MODULE_DESCRIPTION() macros
+Message-Id: <171923430571.3352368.17603224359381270285.b4-ty@linaro.org>
+Date: Mon, 24 Jun 2024 16:05:05 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] arm64: dts: qcom: x1e80100: Add soundwire controller
- resets
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240624-x1e-swr-reset-v1-0-da326d0733d4@linaro.org>
- <p6ooqgfwld7stzevozs7huztputc7vpc7652wx6rvg4cly5mj5@fwrzeu6alhgq>
- <ea57a3a1-1037-4d59-a384-50c98e1f9387@linaro.org>
- <mzcofsmnqkxgxarcbxh2gqtdusyzpxr4edjcpurerurzape7da@4dky45iy5iph>
-Content-Language: en-US
-From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-In-Reply-To: <mzcofsmnqkxgxarcbxh2gqtdusyzpxr4edjcpurerurzape7da@4dky45iy5iph>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
 
-
-On 24/06/2024 12:22, Dmitry Baryshkov wrote:
-> On Mon, Jun 24, 2024 at 12:11:08PM GMT, Srinivas Kandagatla wrote:
->>
->>
->> On 24/06/2024 12:08, Dmitry Baryshkov wrote:
->>> On Mon, Jun 24, 2024 at 11:55:29AM GMT, Srinivas Kandagatla wrote:
->>>> Soundwire resets are missing in the existing dts, add resets for all the 4
->>>> instances of Soundwire controllers (WSA, WSA2, RX, TX).
->>>>
->>>> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
->>>
->>> Could you please point out the driver changes?
->> If you mean, soundwire controller driver, it already has the reset support.
+On Sun, 02 Jun 2024 08:59:17 -0700, Jeff Johnson wrote:
+> make allmodconfig && make W=1 C=1 reports:
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/imx/mxc-clk.o
+> WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/imx/clk-imxrt1050.o
 > 
-> No, I was looking for audiocc drivers.
-
-drivers/clk/qcom/lpasscc-sc8280xp.c needs no changes, other then the 
-dt-bindings changes that i will fix in v2.
-
---srini
+> Add the missing invocations of the MODULE_DESCRIPTION() macro.
 > 
+> 
+> [...]
+
+Applied, thanks!
+
+[1/1] clk: imx: add missing MODULE_DESCRIPTION() macros
+      commit: 1919d77a9591aa692c8de11540ffc0e7d18eabb4
+
+Best regards,
+-- 
+Abel Vesa <abel.vesa@linaro.org>
+
