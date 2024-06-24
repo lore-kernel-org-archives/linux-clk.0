@@ -1,46 +1,59 @@
-Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C24D13DB83;
-	Mon, 24 Jun 2024 13:49:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 158DE1E511
+	for <linux-clk@vger.kernel.org>; Mon, 24 Jun 2024 14:02:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719236957; cv=none; b=svebFm1gnntPsqbO1xkIa1EgKlqTSF8ua2S4c6DYzVI2BuOM6thArWDmJ6LBJVIzvQfdXya53XKjxRWQugGqv61M/LD8ZDndm0OdktOR//7e5bqaMtE6wS2L0OaIJD40wzxDrwXC3roxrmgjHF6STFjynu4Lqs4oCCQLboAivGI=
+	t=1719237743; cv=none; b=j71tYLLABsnvJBwIEoq6K3NB4Q8nnEh3bbziGqJ1x+9gNxFytDJz84Y/2YmvgZVdQ5W40ArpdY3OMRk1hcBn5fu3p1DhQQQta7H0hCOar8MfbDvC6CChi2c1WZWGV8BdY+/MT77s44FMfGjesknnREAxQSYMzfJfuX+2Hw90o/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719236957; c=relaxed/simple;
-	bh=0W+C73xFi10D1zyj9OdcL1ESKNG08JcwE4ZimHsEhBk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=V86QWgXMtowPCPH2vilwgIGsWgmaoJDc9laWq+zpuimW35fVzB1J10+H6I6onQav3yGJ6FkT1HWvNwoQDM2fLNkoRaW6Om9E50L2IqGPuAKwQv2cEhqxBuccJ+Wd7nddc39fa1DJVpS4nYH4fLrNWzlblwslm7DSAJeIORTQrnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=eV82MdeP; arc=none smtp.client-ip=37.18.73.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sberdevices.ru
+	s=arc-20240116; t=1719237743; c=relaxed/simple;
+	bh=AM1CVy2u7oBZg3LZSOUlvoSnipYQvGJHEJnrE5Vt0Y8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VLnx+sOgE9WXKABMp33gzL5l6oaxhyXBuWXwPwarNVJaT+zH3vkxtiCFS0aFHtNpfjL42UbfLOuO9fpQeuFsEfiGu2WBrXukUVakOa5D+VfMLaO/yrI0HvO4reSL/TKRlzVAYrvsGCl6eNfiHxVz2WwKIT3ZG8LUQ169fdOEJgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zm6B3DvT; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="eV82MdeP"
-Received: from p-infra-ksmg-sc-msk01.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 8307E10000D;
-	Mon, 24 Jun 2024 16:49:01 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 8307E10000D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1719236941;
-	bh=1nrLHKRDeZOlG7iRG58yx2wRWxXJ1fEP3otaW6bOYCg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
-	b=eV82MdePHKY4+5PfujA6iLId+JmoR8/qyNxs8zwwNYP5QLUcHCT/f1NqH4dfgdPKR
-	 kdQB7pf8ZABRgSncq+bkldjgQiSljNaMHIcYX76DMJp3XD17LCdjA7BFKlWxjROXsG
-	 19FQMMLBoxi4OsbDvTLSIjEh7hvefQo6e6E2zRA4VPeDED6lftndzH324OcfvpS2Pc
-	 m64NreJwsgRiBhrRmeP26MWSpHLmGWZvPY0tuXXcumOuSbTSXFzuYRp1jV1Mim+2/m
-	 xgVBdQeSDj43zZePtvj27iudeBm9gANJJKHvl04+xCZYc6w9Lz8FeckF/ks4K1KN7p
-	 f2KjpgdcN0rfQ==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Mon, 24 Jun 2024 16:49:01 +0300 (MSK)
-Received: from [172.28.192.142] (100.64.160.123) by
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Mon, 24 Jun 2024 16:49:00 +0300
-Message-ID: <f7b13cc0-6155-4b0f-9f63-c35d73c3032f@salutedevices.com>
-Date: Mon, 24 Jun 2024 16:48:08 +0300
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zm6B3DvT"
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-57d1d614049so4841297a12.1
+        for <linux-clk@vger.kernel.org>; Mon, 24 Jun 2024 07:02:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719237740; x=1719842540; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZGiCYhVDIuHQY8nLb7I5dZxX04zWqpJLvrAyBZeObqs=;
+        b=zm6B3DvTLuu1LN2NZLHXMExdRUJjhTq4zEyBl+3ddWod92E6uUBE2pEpyfn3nagS4t
+         1YE9lD51xh1MVD/ZX5cK61SQ++VAwj2/S93vUF3DGBczip6ebGOLiWjKc7Mc3TKWfFv6
+         FCQ2UF1R3IwDS4N5OETD6i89Tn748lWbGADTCCdPTiKj63D7x91Sng7HFqtsWI7OP3Ki
+         nMim2zLzt6eSkM7aY7WJr9D6OJPrLVjpx3NnQM5t5OP5Cw9yiBpipSypAVMA5LhFXThz
+         jG15LlSWrzPhdJePzE3rHSbGMirRLTL0yaCDzfL55h0j8OQq5tk25aDK9c3+pRpVTT7v
+         9htQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719237740; x=1719842540;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZGiCYhVDIuHQY8nLb7I5dZxX04zWqpJLvrAyBZeObqs=;
+        b=IxvRI2f4UNSzD+Dps+azKCUGu3BXzYouRZfo/8Irgzvb2bdVbB+sw7UfQg8YxmEpCN
+         zwNh4EhimcbiNr2p8kSZ1jg86eZBySZYtTdwW56MkyoKnZmBGuL8n6Zk10/98FOlEHt1
+         0kVtM4X3JITt5Gpl39ZDK7V9XoQNNV/+ZRiZvzRxxImub8xXZOIEpKoXv0gevumQ6KzP
+         3Pxkmxpv4SKPkV7H1ZQUDA048J8AGPZDCAbgaMLkmmyMu35+84de5qdIO/rIk35X8Kb+
+         FyzeP0YYP043uGTxJxvWnHMtCW3p3igNCQ7rY/XI8lDA5vTThXRpEp/gRBrfpAoqbbCo
+         cqVw==
+X-Forwarded-Encrypted: i=1; AJvYcCWAzDUsQzx5MUjFUij9VWgLnusSGmRYvYsjgBKX+hgTq4Cop306bFUJm+t+/mj3nGYpAPqHgD2rd+K2omViQNI4+TaluQdWgX5G
+X-Gm-Message-State: AOJu0Yxye0WTArqDzMeNyGknab2t+LV/PTePaGVwBscDLLmdjBFGxZNK
+	wSkAqyUlHHW4RqOpewNop4kUyIb72Wj2y1Jeyjt9XijJQX/AAUESXEmQk+pLH4s=
+X-Google-Smtp-Source: AGHT+IF1FcxvB/vQ3U+UXkATvxTmtFEqMS6hASlVmeKEFS9T2PngpjRUDM21FdvvI/EDu+PSVB/YYA==
+X-Received: by 2002:a17:907:a08d:b0:a72:6346:65ec with SMTP id a640c23a62f3a-a726347852fmr57111366b.67.1719237740109;
+        Mon, 24 Jun 2024 07:02:20 -0700 (PDT)
+Received: from ?IPV6:2a00:f41:c03:9198:7df:6a16:3e8e:ed7b? ([2a00:f41:c03:9198:7df:6a16:3e8e:ed7b])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7169b12999sm266286466b.95.2024.06.24.07.02.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Jun 2024 07:02:19 -0700 (PDT)
+Message-ID: <cb32274e-31a9-4777-859c-54e90889cc98@linaro.org>
+Date: Mon, 24 Jun 2024 16:02:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -48,83 +61,37 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/9] reset: amlogic: move reset drivers out of CCF
-To: Jerome Brunet <jbrunet@baylibre.com>, Philipp Zabel
-	<p.zabel@pengutronix.de>, Stephen Boyd <sboyd@kernel.org>, Neil Armstrong
-	<neil.armstrong@linaro.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>
-References: <20240516150842.705844-1-jbrunet@baylibre.com>
+Subject: Re: [PATCH v2 3/3] arm64: dts: qcom: x1e80100: add soundwire
+ controller resets
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240624-x1e-swr-reset-v2-0-8bc677fcfa64@linaro.org>
+ <20240624-x1e-swr-reset-v2-3-8bc677fcfa64@linaro.org>
 Content-Language: en-US
-From: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-In-Reply-To: <20240516150842.705844-1-jbrunet@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+In-Reply-To: <20240624-x1e-swr-reset-v2-3-8bc677fcfa64@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) To
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 186090 [Jun 24 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: YVDakinevich@sberdevices.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 20 0.3.20 743589a8af6ec90b529f2124c2bbfc3ce1d2f20f, {Tracking_smtp_not_equal_from}, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, lore.kernel.org:7.1.1;sberdevices.ru:5.0.1,7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;salutedevices.com:7.1.1;smtp.sberdevices.ru:5.0.1,7.1.1;100.64.160.123:7.1.2;127.0.0.199:7.1.2, FromAlignment: n, {Tracking_smtp_domain_mismatch}, {Tracking_smtp_domain_2level_mismatch}, {Tracking_white_helo}, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/06/24 10:37:00
-X-KSMG-LinksScanning: Clean, bases: 2024/06/24 13:26:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/06/24 08:41:00 #25695455
-X-KSMG-AntiVirus-Status: Clean, skipped
 
-Jerome,
 
-Do you have any updates? I'm looking forward to these changes so I can
-continue my work on a1 audio clock controller driver.
 
-On 5/16/24 18:08, Jerome Brunet wrote:
-> This RFC follows the discussion about having reset driver in the clock tree
-> [1]. Ideally those should reside in the reset part of tree.
+On 6/24/24 15:32, Srinivas Kandagatla wrote:
+> Soundwire controllers (WSA, WSA2, RX, TX) require reset lines to enable
+> switching clock control from hardware to software.
 > 
-> Also the code of the amlogic reset driver is very similar between the 2 trees
-> and could use the same driver code.
+> Add them along with the reset control providers.
 > 
-> This RFC moves the reset driver of audio clock controller of the g12 and
-> sm1 SoC family to the reset tree, using the auxiliary bus.
+> Without this reset we might hit fifo under/over run when we try to write to
+> soundwire device registers.
 > 
-> The infrastructure put in place is meant to be generic enough so we may
-> eventually also move the reset drivers in the meson8b and aoclk clock
-> controllers.
-> 
-> [1] https://lore.kernel.org/linux-clk/e3a85852b911fdf16dd9ae158f42b3ef.sboyd@kernel.org
-> 
-> Jerome Brunet (9):
->   reset: amlogic: convert driver to regmap
->   reset: amlogic: add driver parameters
->   reset: amlogic: split the device and platform probe
->   reset: amlogic: use reset number instead of register count
->   reset: amlogic: add reset status support
->   reset: amlogic: add toggle reset support
->   reset: amlogic: add auxiliary reset driver support
->   clk: meson: add auxiliary reset helper driver
->   clk: amlogic: axg-audio: use the auxiliary reset driver
-> 
->  drivers/clk/meson/Kconfig                     |   6 +
->  drivers/clk/meson/Makefile                    |   1 +
->  drivers/clk/meson/axg-audio.c                 | 108 +--------
->  drivers/clk/meson/meson-clk-rst-aux.c         |  84 +++++++
->  drivers/clk/meson/meson-clk-rst-aux.h         |  14 ++
->  drivers/reset/Kconfig                         |   1 +
->  drivers/reset/reset-meson.c                   | 210 ++++++++++++++----
->  include/soc/amlogic/meson8b-auxiliary-reset.h |  17 ++
->  8 files changed, 293 insertions(+), 148 deletions(-)
->  create mode 100644 drivers/clk/meson/meson-clk-rst-aux.c
->  create mode 100644 drivers/clk/meson/meson-clk-rst-aux.h
->  create mode 100644 include/soc/amlogic/meson8b-auxiliary-reset.h
-> 
+> Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> ---
 
--- 
-Best regards
-Jan Dakinevich
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+
+Konrad
