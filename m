@@ -1,90 +1,78 @@
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BB29130A73
-	for <linux-clk@vger.kernel.org>; Mon, 24 Jun 2024 09:25:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1F6F1805E;
+	Mon, 24 Jun 2024 10:46:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719221150; cv=none; b=CodJJ39JwYEYNns7e58SxS0wqwi07o5EnSGV43D5jFg/jKhQD5Y12eRKa2Gb/Ei4e3rb2hhJJAjfSxeGCwFsYtCDEolRF1qV6KbeBN5f+ktpJpV42bz5L9w1NYuxOC20uPSWX8mICL5Rz96nIR6gPzt3O/VdDMStXuxqRxge86c=
+	t=1719226021; cv=none; b=ntKPwa3ezIHQn8zClPMUCsM9yNzmFskysAN2Id7M8+WDass9+yAlXouOWg4R4sPv9AJIFDsGA4jqf/E/1crQkv7wA4NvCFXKjsDC0MEfqYa3H9E3/Y9jFW8c3PweJV0nOnOpue/zWgEuno1G+oIZ5KIUny3wDORJggWQJqZqkOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719221150; c=relaxed/simple;
-	bh=dSpj6RVdGlwSynNTqiNA10vYR+M1oEJQAoRfZLhS/8I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bv9/IvNdN9sUz8mDOCa0GpvzVV+wbKnFrDSDqzLt/EYCFnB/rICn9l4T8gJk7DjF93uhKJMwTUUo/q2ioQolfsFpq+RjBUWKeOzD+eiU4l3D+1x3xYAi3xLbTwzq9BgrtUH9clOIqZJCFiLZIo1n5t0DM3JmnwVuW4cLReB0vh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=je+TYd6X; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1719226021; c=relaxed/simple;
+	bh=N7etgN4r7YuHpbryZAGdUzymvIiOw4YteMinJ/UaOK4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=PvisfCE13yo2y+6R08rYD1lYj/HUmQfTCqg+H3MieY49RP57BXw0yHH7njWBWLV9zeh0zkLty/9bbwA31LYj6RMBbxa+HFFj36grptqWwZpZFrI5PyjYQ645hr32W40njYD/S2amnQCRIORzDkKAxHpLbicQTS7mUBvgY7rAdqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=3VUGTKEL; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="je+TYd6X"
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2ec5fad1984so11907821fa.0
-        for <linux-clk@vger.kernel.org>; Mon, 24 Jun 2024 02:25:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719221147; x=1719825947; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hQ8rDTFoLXAhMjy0OhmeajbUY5vNojlhHctYKafkZN4=;
-        b=je+TYd6X6Epx5TXmUdV32lnX0jOt5fSRMF9O/FPmLnbvave1b3wMtu53E31nD+hVlg
-         7+J2CqD8zHqK+8+1P0cC9v2HKHqULRY/c/CB3GciWzLdnNTNPqm2zbkJVIWccD4VPngW
-         1Ol+pKtCuezWsDHo8yrjaV6eRJB1OnBivHQuocM1lfn4dDN6cfqK3HNfO6n3COeqq1PW
-         hoVgabNaGzu3FFKAShsArYKXsGk0xirP7sFmqlS82hbh4QrPk1/XeMtfJyRUaOvzqHdt
-         UN802zOYh+P12gHpRY5NdSTjmxs0h5v8pk7VnwI93ZUYZXNlS44QoeqZu0kG1PNaqIS+
-         h7pQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719221147; x=1719825947;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hQ8rDTFoLXAhMjy0OhmeajbUY5vNojlhHctYKafkZN4=;
-        b=Ht9+73eRWPpy56zftHe0+xLDpInNam0yZ8tYMtQfVhUEZnXeYAeVinrIkYzYP484zJ
-         iCbGmB3nWHzoVeO4dV6IbK3sKe9VgN81cKw6wh1V0+VqLhxfYXk9pIca3EqsZu0vDBC7
-         xrQBgnB2tNx5Iy/KZDwabVoN/QrASkzm7uL3BXhV4TVp480UkD4t0fc3TBpu32JXpI4q
-         K380h71YWn6CYsP5Z1ZyYDCyBaf/0DYgeG8eIUupGYyilkiGUqXCG9YJWRTECx4bgjaJ
-         fypb/8JhO5m88/7TD1ar/pnS2jaLYJjyNNzvajXpt+HAWxeByB3BelgXWXGenVt0cOSu
-         aOiw==
-X-Forwarded-Encrypted: i=1; AJvYcCUkBiIcwVPmS98m9TI7KX9NsVM0oGKEgP1Jgin+//7pixuEB9eimddHNQuhEv1akM6/XB17V3OgRhCUvqyP65tTHfnprJC45/Uw
-X-Gm-Message-State: AOJu0YznmJz/W6jl4et4dMiurmFQkjw8pwb7KpgacXI3D7LKAHEbjBFQ
-	5Xzv5X8gPyChWxFTlM9ZZ0Lkx93GQeDlXT3aYWm+8z1yqHm7wCEEOQSGY8O7YUE=
-X-Google-Smtp-Source: AGHT+IFyYQcI0M2p6Aug3g8DCGmk6of8qUf+Yl9RI+onwe/r8cDJBAKjW1liB62k+oh2Qcw1PYwa5g==
-X-Received: by 2002:a2e:7805:0:b0:2ec:5073:5814 with SMTP id 38308e7fff4ca-2ec5b2fd2f3mr32530691fa.8.1719221147588;
-        Mon, 24 Jun 2024 02:25:47 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ec5843318fsm5388401fa.91.2024.06.24.02.25.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 24 Jun 2024 02:25:47 -0700 (PDT)
-Date: Mon, 24 Jun 2024 12:25:45 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Taniya Das <quic_tdas@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 3/3] clk: qcom: dispcc-sm8650: Update the GDSC flags
-Message-ID: <kjb6m7sr2secyalg2szb36vcxtgwiqcbuqxilxc7uxmfhkx7n2@yrmkw4tw6nng>
-References: <20240624-topic-sm8650-upstream-fix-dispcc-v2-0-ddaa13f3b207@linaro.org>
- <20240624-topic-sm8650-upstream-fix-dispcc-v2-3-ddaa13f3b207@linaro.org>
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="3VUGTKEL"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1719226018;
+	bh=N7etgN4r7YuHpbryZAGdUzymvIiOw4YteMinJ/UaOK4=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=3VUGTKELcesK7vW3Vfh9zckFAGkd1lPhlvMXAzyUaUP2SpDveHFMeXilidTM6mXux
+	 YlCDs1eIqQCfD3+Q9a8T0FB/n7ayVJ4Vf/j7JNmAXJ1M/1u27jWiFCrWGgy0iCfcPK
+	 TJotqDfSaL8F1zuzbf6T7iVgBj6EbC4CSQ7Q1w4mzLHjkRqcdSPW3ytbdPdaYNYQ8T
+	 gPvTlrbbqmsa/wpSbIt0VkgydO49vXCw9BQmEkl5zJCCRWNFOO1HLm6J9Nvwfqe187
+	 TaAyMu+na7LRWI3kXWMoMnrazYAaGLjugbgi6cAe5xBc4gJIHewb7jieqmhkiaP80o
+	 d+vsdCy46/nQQ==
+Received: from IcarusMOD.eternityproject.eu (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 2D54C37804C6;
+	Mon, 24 Jun 2024 10:46:57 +0000 (UTC)
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+To: krzk+dt@kernel.org, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+ conor+dt@kernel.org, matthias.bgg@gmail.com, jassisinghbrar@gmail.com, 
+ garmin.chang@mediatek.com, houlong.wei@mediatek.com, 
+ Jason-ch.Chen@mediatek.com, amergnat@baylibre.com, Elvis.Wang@mediatek.com, 
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, kernel@collabora.com
+In-Reply-To: <20240619085322.66716-1-angelogioacchino.delregno@collabora.com>
+References: <20240619085322.66716-1-angelogioacchino.delregno@collabora.com>
+Subject: Re: (subset) [PATCH 1/3] arm64: dts: mediatek: mt8188: Fix
+ VPPSYS0/1 node name/compatibles
+Message-Id: <171922601711.121709.12074465182183603791.b4-ty@collabora.com>
+Date: Mon, 24 Jun 2024 12:46:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240624-topic-sm8650-upstream-fix-dispcc-v2-3-ddaa13f3b207@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.13.0
 
-On Mon, Jun 24, 2024 at 10:05:52AM GMT, Neil Armstrong wrote:
-> Update the GDSC flags by adding missing POLL_CFG_GDSCR flag.
+On Wed, 19 Jun 2024 10:53:20 +0200, AngeloGioacchino Del Regno wrote:
+> Like VDOSYS0/1, the VPPSYS0 and VPPSYS1 are syscon nodes, as
+> described by the mediatek,mmsys binding: fix the node name to
+> be syscon@address and add "syscon" to the list of compatible
+> strings for both VPPSYS0 and VPPSYS1.
 > 
-> Fixes: 9e939f008338 ("clk: qcom: add the SM8650 Display Clock Controller driver")
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
->  drivers/clk/qcom/dispcc-sm8650.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Applied to for-next, thanks!
 
--- 
-With best wishes
-Dmitry
+[1/3] arm64: dts: mediatek: mt8188: Fix VPPSYS0/1 node name/compatibles
+      commit: 013b7ab4080af0dccae16c6ea8a1e88ad530114c
+
+Cheers,
+Angelo
+
+
