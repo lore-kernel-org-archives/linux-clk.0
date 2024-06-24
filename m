@@ -1,54 +1,60 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1F6F1805E;
-	Mon, 24 Jun 2024 10:46:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6554B136E3F
+	for <linux-clk@vger.kernel.org>; Mon, 24 Jun 2024 10:55:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719226021; cv=none; b=ntKPwa3ezIHQn8zClPMUCsM9yNzmFskysAN2Id7M8+WDass9+yAlXouOWg4R4sPv9AJIFDsGA4jqf/E/1crQkv7wA4NvCFXKjsDC0MEfqYa3H9E3/Y9jFW8c3PweJV0nOnOpue/zWgEuno1G+oIZ5KIUny3wDORJggWQJqZqkOM=
+	t=1719226553; cv=none; b=Ki5/AOpQlx7ai3fcO+Vs5A4r8WCe5kShtfZb4X5S/W4lxlC02nOEmxTqZXvYu8LBo5VzNiwDYSa8Qq4N4Z5MBsFZAIj5c17rri0mXf4D+UfmOxOAPpmNhwVIASMCIW35kwu4bYymhyzncJgwpKTktN8/pHUVCKEx/gCnwUwQ2B8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719226021; c=relaxed/simple;
-	bh=N7etgN4r7YuHpbryZAGdUzymvIiOw4YteMinJ/UaOK4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=PvisfCE13yo2y+6R08rYD1lYj/HUmQfTCqg+H3MieY49RP57BXw0yHH7njWBWLV9zeh0zkLty/9bbwA31LYj6RMBbxa+HFFj36grptqWwZpZFrI5PyjYQ645hr32W40njYD/S2amnQCRIORzDkKAxHpLbicQTS7mUBvgY7rAdqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=3VUGTKEL; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1719226553; c=relaxed/simple;
+	bh=m93PqmPPYlVm3qNVKHO1OoiEMehyaRVknTRxmok2Igk=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=pDkRZKJ0hEJh5uhiyPsXjB5nEELOjA+yKWYncncLxd9AiGj9fFzoBi8Ryv51wKbjaxM3MzVJ0XA7/11N48WZojU+l35p+BW/XF9bZPd910Khmth/dyALo20dpTKE0aaB6fOpfTibT79CyHyTxp+ACNSq24PGTvUl6D1DipSZBN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BYle4mXz; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="3VUGTKEL"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1719226018;
-	bh=N7etgN4r7YuHpbryZAGdUzymvIiOw4YteMinJ/UaOK4=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=3VUGTKELcesK7vW3Vfh9zckFAGkd1lPhlvMXAzyUaUP2SpDveHFMeXilidTM6mXux
-	 YlCDs1eIqQCfD3+Q9a8T0FB/n7ayVJ4Vf/j7JNmAXJ1M/1u27jWiFCrWGgy0iCfcPK
-	 TJotqDfSaL8F1zuzbf6T7iVgBj6EbC4CSQ7Q1w4mzLHjkRqcdSPW3ytbdPdaYNYQ8T
-	 gPvTlrbbqmsa/wpSbIt0VkgydO49vXCw9BQmEkl5zJCCRWNFOO1HLm6J9Nvwfqe187
-	 TaAyMu+na7LRWI3kXWMoMnrazYAaGLjugbgi6cAe5xBc4gJIHewb7jieqmhkiaP80o
-	 d+vsdCy46/nQQ==
-Received: from IcarusMOD.eternityproject.eu (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 2D54C37804C6;
-	Mon, 24 Jun 2024 10:46:57 +0000 (UTC)
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: krzk+dt@kernel.org, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
- conor+dt@kernel.org, matthias.bgg@gmail.com, jassisinghbrar@gmail.com, 
- garmin.chang@mediatek.com, houlong.wei@mediatek.com, 
- Jason-ch.Chen@mediatek.com, amergnat@baylibre.com, Elvis.Wang@mediatek.com, 
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-mediatek@lists.infradead.org, kernel@collabora.com
-In-Reply-To: <20240619085322.66716-1-angelogioacchino.delregno@collabora.com>
-References: <20240619085322.66716-1-angelogioacchino.delregno@collabora.com>
-Subject: Re: (subset) [PATCH 1/3] arm64: dts: mediatek: mt8188: Fix
- VPPSYS0/1 node name/compatibles
-Message-Id: <171922601711.121709.12074465182183603791.b4-ty@collabora.com>
-Date: Mon, 24 Jun 2024 12:46:57 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BYle4mXz"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-421bb51d81aso34676315e9.3
+        for <linux-clk@vger.kernel.org>; Mon, 24 Jun 2024 03:55:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719226550; x=1719831350; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mrY4lNWDw0JNKgEW92bRaQnV7A+B9G4Rjjc9S7WHhug=;
+        b=BYle4mXzA7Au1Q2lVSw/2qNZ5jKLb+WtinSNg9pc7uw0j6qgwLnxR9vm2gLWk9u3IZ
+         KYui7B5BAs/pIk0qVIagYJdijqtDy4tW4YvZ+pU0avSCnPOIFfSbxFQBXX5ClgWvYvoy
+         HPT5E2sXj528jsJI/lN/4f8/tc1w3feU80WXEbY5KCC74VfpKfILuYjOXwnD08T75xLE
+         PcXHxwVK4x5rn9xudkiE2b4usnz3zHbrZClMlLjF3bLDvYZG0AmlEN0zokjHTqmvkEF6
+         OxXr4dax9LFBGWfCFtkb2FrybmI/Xw9mdH14iA9zhaFY87i0fR/+ZVMPLGsEyuxIs7XM
+         pGqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719226550; x=1719831350;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mrY4lNWDw0JNKgEW92bRaQnV7A+B9G4Rjjc9S7WHhug=;
+        b=VrMEo7qfU29iH4pGMWcvpA21i0sxcQnsl07pdOT5xysQd2J9DmRKS/Vt08MDHZ440Y
+         Zw2qQrDVCGhtXomyJliHu9vqYOJLhG+njw9ELT33Pf7PyDiaUvBAHDE4VkTQxXi0FEVs
+         uMt2IC7BYCKrzi1Tt4u90DdMjVfTSbmUy3dEfAAxaNzBTKYgt87bM+ml55xydF1/cYRC
+         A+20NCpVGySUGhJwnX/sbQAqgqnryZLT/M39w9grdedvDJJUffZbAzdnZlCs4ZUdIKja
+         iWhJ+UGuY+Zc+wL3bqLXNq9u0LtHDyE8vJw4jmJsTpOqH00cXttesJ7ItUJu1JB9U9vB
+         ILtA==
+X-Forwarded-Encrypted: i=1; AJvYcCUsnEeqWWLqWqeeXXAqjYqpm2fhK5RS1x830AkW/lcQbSS8hQiVONghRaRGlhhmDtRgVGj1r67DxsubHmikixCXPx+uofU5mFH5
+X-Gm-Message-State: AOJu0YySjFJFtRQktDvRdEoQ6JGT+CWNGzfXJDllVhixTVR6UaL7cNSR
+	i3kDjTPqtUNamzm3aYealiSXLccvSQLpPkRJ5MLFl8AsG0747Y7Xerxgvk4fkdA=
+X-Google-Smtp-Source: AGHT+IHw1NULDpfy7XMXRJ6DWODLoOwVod/uHKQ8uJcE3wFATvr4D6AfzpR6xKNl5BBnD6N+fh2jqw==
+X-Received: by 2002:a7b:cc89:0:b0:421:7f4d:525f with SMTP id 5b1f17b1804b1-4248cc35da7mr28663365e9.24.1719226549521;
+        Mon, 24 Jun 2024 03:55:49 -0700 (PDT)
+Received: from [192.168.1.195] ([5.133.47.210])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4247d208b6bsm172479595e9.32.2024.06.24.03.55.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 24 Jun 2024 03:55:49 -0700 (PDT)
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH 0/3] arm64: dts: qcom: x1e80100: Add soundwire controller
+ resets
+Date: Mon, 24 Jun 2024 11:55:29 +0100
+Message-Id: <20240624-x1e-swr-reset-v1-0-da326d0733d4@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -57,22 +63,50 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.13.0
+X-B4-Tracking: v=1; b=H4sIAKFQeWYC/x2NQQqDMBAAvyJ77kISxNZ+pfSQxN2aQ5N2V2xA/
+ Hujx2EYZgMlSaRw7zYQWpOmkhvYSwdx9vlFmKbG4IzrzeB6rJZQf4JCSgsaOw4c+BpuPEJrglf
+ CID7H+ai+sbyRi2Cmuhz+I8Spnr/Hc9//Pdx1+38AAAA=
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+X-Mailer: b4 0.12.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=802;
+ i=srinivas.kandagatla@linaro.org; h=from:subject:message-id;
+ bh=m93PqmPPYlVm3qNVKHO1OoiEMehyaRVknTRxmok2Igk=;
+ b=owEBbQGS/pANAwAKAXqh/VnHNFU3AcsmYgBmeVC0Cnfdjgd6Z45SxGBAWvVOkP4/ByB+oynqM
+ N+tmwF66b2JATMEAAEKAB0WIQQi509axvzi9vce3Y16of1ZxzRVNwUCZnlQtAAKCRB6of1ZxzRV
+ Nz+TCACEtla+qJDMQNeMS6wau+2oS8UC9r8+No4JYzgGKWx7zyR1Cp4PZhZKlaMNw0fHkiqP4vY
+ w5BzUOiW7J3cQB9hfWz2uZDiyvN3R2eOhFozBVmNNUjfPtr7YT4S8YAnuV4iMTqAfoXA63t5zAo
+ CRGcp3fptScKxrLW4hltFmXwosJYjy3Pv2kxRuSifQ6/ukSb5UKpexcCYEJZ9pOu+8KX0NxDgnv
+ 7tsA1KmtSPTB9in6qkAuahh/rTXHdCwmZJSsQ2GSYTfzHXOfAWQSBMlnHQBKjgbxHWbZuLTcwOV
+ ZQHgw5nQFtuu9Gr6GKW2XYTQPlHgXrzhZmPaxcaYENLQ7UgN
+X-Developer-Key: i=srinivas.kandagatla@linaro.org; a=openpgp;
+ fpr=ED6472765AB36EC43B3EF97AD77E3FC0562560D6
 
-On Wed, 19 Jun 2024 10:53:20 +0200, AngeloGioacchino Del Regno wrote:
-> Like VDOSYS0/1, the VPPSYS0 and VPPSYS1 are syscon nodes, as
-> described by the mediatek,mmsys binding: fix the node name to
-> be syscon@address and add "syscon" to the list of compatible
-> strings for both VPPSYS0 and VPPSYS1.
-> 
-> 
+Soundwire resets are missing in the existing dts, add resets for all the 4
+instances of Soundwire controllers (WSA, WSA2, RX, TX).
 
-Applied to for-next, thanks!
+Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+---
+Srinivas Kandagatla (3):
+      dt-bindings: clock: Add x1e80100 LPASS AUDIOCC reset controller
+      dt-bindings: clock: Add x1e80100 LPASSCC reset controller
+      arm64: dts: qcom: x1e80100: add soundwire controller resets
 
-[1/3] arm64: dts: mediatek: mt8188: Fix VPPSYS0/1 node name/compatibles
-      commit: 013b7ab4080af0dccae16c6ea8a1e88ad530114c
+ .../bindings/clock/qcom,sc8280xp-lpasscc.yaml      |  2 ++
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi             | 23 ++++++++++++++++++++++
+ 2 files changed, 25 insertions(+)
+---
+base-commit: 781025f172e19ca5682d7bfc5243e7aa74c4977f
+change-id: 20240624-x1e-swr-reset-0196fbf7b8f9
 
-Cheers,
-Angelo
-
+Best regards,
+-- 
+Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
 
