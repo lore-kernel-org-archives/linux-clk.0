@@ -1,65 +1,83 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD7371A01AD;
-	Mon, 24 Jun 2024 20:25:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 545A945010;
+	Mon, 24 Jun 2024 20:55:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719260719; cv=none; b=LpeCkamrmEKbEDg+laG2sYlGjO1Yx8l5EZs7dur0XBTYB+vchcZEJ5iGXOUE9XSJNr0StEwXCMYTjhWouRbhchNZFemMqlFwcQwI16Zyb8r1uoPY+RvXhusp4ik1VUR30uXn9KaEWYq8l9/yEahK8j0H34u9lB4hk7YcR9qbxHY=
+	t=1719262553; cv=none; b=nmsYuNfXyJCR9mW1mRVDuuySQV1p098y7elJVWzrrp44arCY5gruAM9pUB5VVQOW6tV2rK6nFOqLxxxswyhlK/mn61CFsfHKHDOP0kfg/r4l95rSmuHj9JjgQOu235a4PaO+XDd4Be5ecOHTJKgplGQJ8hEoQtP14JCsf9Gukzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719260719; c=relaxed/simple;
-	bh=Fdq+OcitQnYEPP9+kNdjQc7D1WlpTYAAifc1gtkVyRM=;
+	s=arc-20240116; t=1719262553; c=relaxed/simple;
+	bh=VWZUaMzX5Qio8eVf2ACkTHR2Gg2exUglIbOvPvij3wI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XQ0iPsAgoi1hWD2r2g/EaXM0/aRb652xMYDiAeG7WM0BN6dj3QWckoWD/8MCgJzIuXmzZhahPtfVYnNmPRseyRjOEhDlj9x9mCq+LPYq3y4ka5nAVDtuLyyzcC7QTAOyDHSDwGn72sB54D3bWBPUluY0VZV+E6Rz2uA4yqsy/rg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HiKMBa/k; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=A/2jRc4eJlpaDMIsKQWckcun72gxs4qPykViqmteDfdSIhAqS/Nf4ELOXrRLo9F9heUEMsAE2agyO66QFCTpnhJcjE5wZXliAURNzGt5UCjv6UO1ekowe7aMYuGRNuWtDHalUbKtEV3l7Sqqq1V+t70sctdPh3JmuymS7G8BsoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SBxgbgAE; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HiKMBa/k"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 177D1C2BBFC;
-	Mon, 24 Jun 2024 20:25:18 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SBxgbgAE"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E8AFC2BBFC;
+	Mon, 24 Jun 2024 20:55:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719260719;
-	bh=Fdq+OcitQnYEPP9+kNdjQc7D1WlpTYAAifc1gtkVyRM=;
+	s=k20201202; t=1719262552;
+	bh=VWZUaMzX5Qio8eVf2ACkTHR2Gg2exUglIbOvPvij3wI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HiKMBa/kqOJlHMLOaTWQW6+Yy0lW5X+cwIa+W8iHSg3iUjI2GTBITPqchAm/UK6/u
-	 wZU4JozlsKF6V4AXrurrj6OSaspAhNgPs6jLmk4rpHbY7UrPB+xB+QHhMevCYrDdwK
-	 1T+3T0MCRvPmCYOT5jc4PsNT4kgRwHdOJgZFbPzBaFTeSktAUuE2e0EooNJ+oAvZvt
-	 l04jDONpSkTgVqmZXLdVBXgM+0qbmEMqh52AbOFd4zNi3q+GTAqfSKnbY8AjvzuR8/
-	 F2ojkL03CaeLE9h3PurS6faaRZRj+50WYIqE6A2ZbCMi9xnO07D3BAkXf16qyZmXnl
-	 I8hkK+/kJ3P9w==
-Date: Mon, 24 Jun 2024 14:25:17 -0600
+	b=SBxgbgAEfJWQKngInYfmNSWbfEo4ph7HMHEYbnXY1yYEqG6GZvsJv+rYw0LL97UhE
+	 H2oIITR2X77VfdJDJQa7z1DyDY8FHL93FpjOGnkQgdN8MAW52oVAEMYmgU47qgp0x+
+	 wDW4SORstsHjEfVQFeW1xmCSP8Znphnt6Q41IplGvYRMqBlcqqBW61tRntSfKQ2V3o
+	 2tQGHum+CrwNWqaLHj8bvhcMmUn3swLRKUIvcNmomiHc/T1E9djPOVTBrBXIhM5Emm
+	 Y9miKw+XSrObnHVL5jdrFcM9dU3kZ9HNxRZwGsb3ZivrbL5lguj9JCDEHW+x2ve4NN
+	 Zc+nXpESeu2+g==
+Date: Mon, 24 Jun 2024 14:55:51 -0600
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Stanislav Jakubek <stano.jakubek@gmail.com>
-Cc: Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+To: =?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>
+Cc: Stephen Boyd <sboyd@kernel.org>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [PATCH] dt-bindings: clock: drop obsolete stericsson,abx500.txt
-Message-ID: <171926071549.350046.4840202614412404395.robh@kernel.org>
-References: <Zm7I2Zbq1JNPoEJp@standask-GA-A55M-S2HP>
+	linux-clk@vger.kernel.org, linux-mips@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
+	Lee Jones <lee@kernel.org>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+	linux-gpio@vger.kernel.org,
+	Gregory CLEMENT <gregory.clement@bootlin.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-kernel@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>
+Subject: Re: [PATCH v3 1/9] Revert "dt-bindings: clock: mobileye,eyeq5-clk:
+ add bindings"
+Message-ID: <171926254915.403186.10352088009707402076.robh@kernel.org>
+References: <20240620-mbly-olb-v3-0-5f29f8ca289c@bootlin.com>
+ <20240620-mbly-olb-v3-1-5f29f8ca289c@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <Zm7I2Zbq1JNPoEJp@standask-GA-A55M-S2HP>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240620-mbly-olb-v3-1-5f29f8ca289c@bootlin.com>
 
 
-On Sun, 16 Jun 2024 13:13:29 +0200, Stanislav Jakubek wrote:
-> These bindings are already (better) described in mfd/stericsson,ab8500.yaml,
-> drop these now obsolete bindings.
+On Thu, 20 Jun 2024 19:30:53 +0200, Théo Lebrun wrote:
+> Switch from one sub-node per functionality in the system-controller to a
+> single node representing the entire OLB instance. This is the
+> recommended approach for controllers handling many different
+> functionalities; it is a single controller and should be represented by
+> a single devicetree node.
 > 
-> Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
+> The clock bindings is removed and all properties will be described by:
+> soc/mobileye/mobileye,eyeq5-olb.yaml
+> 
+> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
 > ---
->  .../bindings/clock/stericsson,abx500.txt      | 20 -------------------
->  1 file changed, 20 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/clock/stericsson,abx500.txt
+>  .../bindings/clock/mobileye,eyeq5-clk.yaml         | 51 ----------------------
+>  1 file changed, 51 deletions(-)
 > 
 
-Applied, thanks!
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
