@@ -1,48 +1,59 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 034F813A253;
-	Tue, 25 Jun 2024 04:26:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 193A914388D
+	for <linux-clk@vger.kernel.org>; Tue, 25 Jun 2024 05:07:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719289615; cv=none; b=KwLdDPR+qn4g/ActmO2JZEESiQX8qyQF5m2b2X+ApgmeiRAiAvj1AzjRR8ZA1OJo7FSsuOJDrFZX3+lm8akTPSjcYKeI4XijckVfcWWlMvsvq/jPmHfwtQt3cQqumeeKMB68QnUt9oIVPvKewUeZn1VrcJ7puTJ563QEcTGi99k=
+	t=1719292028; cv=none; b=Bqio1WZ32a5uk75t52Ek6DpTpPPGaZ+CMoGULCLA5TvyslMJ8VHcgcSem2UZR6pesMYkTGyA8e0wHf3kcBchU2pbNsB98LqStk4My4oMzW6Mh/DLj+tGkevOLQN2QPnRo5TXIdf+r7k3xlJLpg+SnXDDIKYZcs2z71QbJXSY0xU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719289615; c=relaxed/simple;
-	bh=ngh9di9YBwGCpDip0VXhG5NC6zupRVpU4kXqowfdV6U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=hBuIgFZVo28pHbnm9CnlznFWtyisI2RQ7GcpQFPDdW8u7l2VYzmmRFwW2UgP8k+3/xn0Qh/BwZmqUjTK3cntr+1x3mVNnNz+7CEfDMeTTDbfKgitPC/F/LR4HwtZJZNu8IXZR8ZdyEqDi/luuDHRVuKRrIIHMPHDWy3Jz7IQiaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=IKP2aFKg; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1719292028; c=relaxed/simple;
+	bh=XFnA16kYW5gGBpSDrWeOV5VEpEAexRRRucWlNmOgnjI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QAZXv5jgoNrN1nnIhwvNWr+PtCmpFGSOFKMza06HukgiVHkiNaHcx7BjDRDan5trO7Zj2XDn2YZiIvd199QdYfH6REVTmenhHLU/oinpfZHTqnUhJYQbZEMCkVAm9924ztL6FzNb3FBROXQnswBVkUbcooeQGD4M8/jTEbl4QMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=qrP3uHEz; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="IKP2aFKg"
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45OIUsb2024767;
-	Tue, 25 Jun 2024 04:26:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	rYFqU0H/VyUp2ne+cOQ2385R1oRcm4cDigTTCRrLIDw=; b=IKP2aFKgahJxegvl
-	a9kBuhjVlRb/JESUo9cBmpOQWHOVLUQX6J1VJpvk44DYBXjQ7kCFGZdSY/9MIzhA
-	Rqdqx8wMNJfIQX20n3O3WlpFpp7bTUATn+1Ss3cu3Uz3RSi0tihM2DmPkMkut4Rg
-	ZeCG+3i9oni+8xkJrUv8x/45CT3zf7dMJpx7qCCYOv5L1KhwBFLGEIXphnDokdcW
-	5ssine/NLhIFzGnEKcTZsAxOD9OYeFlo50r6nhvysOBtTaozjyeDqkKOV4a/BasR
-	46z9W7D4wbVNyxTuu7RRzNCdFpHu4MYqd7GXhrx9qURVgbTQ2P/NzpdNdFhlSkJJ
-	9UvOrQ==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywqshne55-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Jun 2024 04:26:11 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45P4QB7K004892
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 25 Jun 2024 04:26:11 GMT
-Received: from [10.151.37.150] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 24 Jun
- 2024 21:26:05 -0700
-Message-ID: <070cee1c-e19c-45de-a3c3-a1b8feda0e9a@quicinc.com>
-Date: Tue, 25 Jun 2024 09:55:32 +0530
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="qrP3uHEz"
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5295e488248so5736411e87.2
+        for <linux-clk@vger.kernel.org>; Mon, 24 Jun 2024 22:07:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1719292024; x=1719896824; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iMTfoPJSp/wlWQYq7ramEp8kDhcvFWSvsJvWkHGYsCg=;
+        b=qrP3uHEzfNLNzM2yRBsn4IrZUYI+bNIFcB1A+Wn0rAhuZDg0ulZv2VOB58bK0QGkjW
+         19LtbjxRhflLujofe+2Bu4+kflhzVXoOidNHWTcQWu1FF6o2A0xmSR20YGk/84lPEkb3
+         X/IdGBbEuvbQULId5SojIBaw4ifrx6p2A5SXw3KJQMLcONfKB8aotKL1TK1/DjhIQl+i
+         b7OeJrceaUb2fn825ntM+I6bZ9Lm22zfETIZrS5DN1ukIBHXYA4YQv84e4nKaveJPJAM
+         cWxSMYwlb0CmG5YBLpi5KLgJ4KkSttGgClXktgbfq822xCHOoqDyiOg6hLNSuOHi1tre
+         2/+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719292024; x=1719896824;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iMTfoPJSp/wlWQYq7ramEp8kDhcvFWSvsJvWkHGYsCg=;
+        b=DnWXGFym1SUAqTL3TQ++Agf22KNMkw7KnJUcGASkERBh6e2cztbPod3qguPlWMEMiJ
+         zdR/g4izdtdKNJhluVg856nKji+u9J+S65n+oPUj1PyF28rf0+mqC2ps3DZUOsLvPpLJ
+         08rRrae2PSkJNhg/bp7lwgFDCacBzyjojeaPYKxvzGectkSIMiM6uncGxZOfa31Ju/NC
+         RJBYNfDnVtr5iZHQn/O6kg2YMQUsNfs0oiiHpl2GmPHsCLxs416fHqBv6KUHl1jP7Ode
+         vE3mJAIYs3PrKjA9bkmLntnZtn4RI6ly2yn0V2zukT2pArYeYjQdglsBkHlC4wDrbD0C
+         iBXA==
+X-Forwarded-Encrypted: i=1; AJvYcCWH8n4bZdNESlhBGjyNltUtt4BpaePa26S5lIs+3fyerHwxMBBUVgXGILPZO1mlz7d/a9f5TTwkHtA5T/+/1c1k5C5FtIiRSAKB
+X-Gm-Message-State: AOJu0Yw0b58sGJvqpkUHcwstYxbcNL1/BTIeib0x65QBcenchevjbZwZ
+	mPx6oZuR4kQgLrRcPsWNX93yLDeEye3PUWAiFVSI7fVdk1dIlpdSETmE5C+haJs=
+X-Google-Smtp-Source: AGHT+IG7HDx2+AdxqahzNH7iyEFC9rGrJpKDudbwOlrJIC/1s7QOXQZz7eUKgfpp4ZPXuAssY8mYtA==
+X-Received: by 2002:a05:6512:2355:b0:52c:9468:c991 with SMTP id 2adb3069b0e04-52ce1832bffmr3986238e87.14.1719292024114;
+        Mon, 24 Jun 2024 22:07:04 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.70])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4249b4232f9sm6119065e9.0.2024.06.24.22.07.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 24 Jun 2024 22:07:03 -0700 (PDT)
+Message-ID: <908ff65d-e9f0-47c2-94ab-47cac3aa58ce@tuxon.dev>
+Date: Tue, 25 Jun 2024 08:07:00 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,51 +61,89 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 1/8] remoteproc: qcom: Add PRNG proxy clock
-To: Krzysztof Kozlowski <krzk@kernel.org>, <sboyd@kernel.org>,
-        <andersson@kernel.org>, <bjorn.andersson@linaro.org>,
-        <david.brown@linaro.org>, <devicetree@vger.kernel.org>,
-        <jassisinghbrar@gmail.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-remoteproc@vger.kernel.org>, <mark.rutland@arm.com>,
-        <mturquette@baylibre.com>, <ohad@wizery.com>, <robh@kernel.org>,
-        <sricharan@codeaurora.org>
-CC: <gokulsri@codeaurora.org>
-References: <20240621114659.2958170-1-quic_gokulsri@quicinc.com>
- <20240621114659.2958170-2-quic_gokulsri@quicinc.com>
- <cd0533b8-bb47-4c68-b970-6bad4204c636@kernel.org>
+Subject: Re: [PATCH 08/12] dt-bindings: i2c: renesas,riic: Document the
+ R9A08G045 support
 Content-Language: en-US
-From: Gokul Sriram P <quic_gokulsri@quicinc.com>
-In-Reply-To: <cd0533b8-bb47-4c68-b970-6bad4204c636@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: chris.brandt@renesas.com, andi.shyti@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com,
+ mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
+ wsa+renesas@sang-engineering.com, linux-renesas-soc@vger.kernel.org,
+ linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240621112303.1607621-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240621112303.1607621-9-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdULaO2dH_wrcM5P6=rDYzRXcMSGfVsBz3okWPGjOsMN4A@mail.gmail.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <CAMuHMdULaO2dH_wrcM5P6=rDYzRXcMSGfVsBz3okWPGjOsMN4A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: BYyeMRgIUy4mtMKn2ju_fg_qowXYRlCk
-X-Proofpoint-GUID: BYyeMRgIUy4mtMKn2ju_fg_qowXYRlCk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-25_01,2024-06-24_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1011
- bulkscore=0 phishscore=0 suspectscore=0 lowpriorityscore=0 malwarescore=0
- mlxscore=0 impostorscore=0 mlxlogscore=948 priorityscore=1501 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2406250032
 
+Hi, Geert,
 
-On 6/21/2024 8:39 PM, Krzysztof Kozlowski wrote:
-> On 21/06/2024 13:46, Gokul Sriram Palanisamy wrote:
->>   
->> -static int q6v5_wcss_init_clock(struct q6v5_wcss *wcss)
->> +static int ipq8074_init_clock(struct q6v5_wcss *wcss)
->> +{
->> +	int ret;
+On 24.06.2024 18:40, Geert Uytterhoeven wrote:
+> Hi Claudiu,
+> 
+> On Fri, Jun 21, 2024 at 1:23 PM Claudiu <claudiu.beznea@tuxon.dev> wrote:
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> Document the Renesas RZ/G3S (R9A08G045) RIIC IP. This is compatible with
+>> the version available on Renesas RZ/V2H (R9A09G075). Most of the IP
+>> variants that the RIIC driver is working with supports fast mode plus.
+>> However, it happens that on the same SoC to have IP instatiations that
+>> support fast mode plus as well as IP instantiation that doesn't support
+>> it. For this, introduced the renesas,riic-no-fast-mode-plus property.
+>>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+> Thanks for your patch!
+> 
+>> --- a/Documentation/devicetree/bindings/i2c/renesas,riic.yaml
+>> +++ b/Documentation/devicetree/bindings/i2c/renesas,riic.yaml
+>> @@ -25,6 +25,10 @@ properties:
+>>                - renesas,riic-r9a07g054  # RZ/V2L
+>>            - const: renesas,riic-rz      # RZ/A or RZ/G2L
+>>
+>> +      - items:
+>> +          - const: renesas,riic-r9a08g045   # RZ/G3S
+>> +          - const: renesas,riic-r9a09g057
 >> +
->> +	wcss->prng_clk = devm_clk_get(wcss->dev, "prng");
-> Missing binding.
-   Thanks. Will address and post this in new series.
-> Best regards,
-> Krzysztof
->
+> 
+> LGTM.
+> 
+>>        - const: renesas,riic-r9a09g057   # RZ/V2H(P)
+>>
+>>    reg:
+>> @@ -66,6 +70,10 @@ properties:
+>>    resets:
+>>      maxItems: 1
+>>
+>> +  renesas,riic-no-fast-mode-plus:
+>> +    description: specifies if fast mode plus is not supported
+>> +    type: boolean
+>> +
+> 
+> Do you really need this?
+> The bus' clock-frequency property should take into account the combined
+> capabilities of all of controller, target, and wiring.  It is up to the
+> DTS writer to validate that all timing conditions are met.
+
+On a second thought, I tend to agree with you on this.
+
+I added it to comply with "chapter 47.5.15 I2C Bus Interface Access
+Timing, note 7, Tfmin cannot meet the specification in fast-mode plus for
+the RIIC ch2 and ch3" statement from hw manual.
+
+Thank you,
+Claudiu Beznea
+
+> 
+>>  required:
+>>    - compatible
+>>    - reg
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
