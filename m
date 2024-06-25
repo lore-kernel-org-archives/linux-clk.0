@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B07FE1369AE;
-	Tue, 25 Jun 2024 07:44:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B8B1487D8;
+	Tue, 25 Jun 2024 07:45:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719301491; cv=none; b=AVtc4JRkoq3A5tfKdxedGaJysHFjKo01db8+usTd7GGQoBYKH4tGLucE5DwtJz33wtV5cb8UbtqammXgW5H8glf+RutRF0aqxsqBIB+dNF20G+BX/qzUWQfDumz8guBRzJ0La0NSkDbVafs8aduL74oWgf30gIK5G3xjm1Tj3rI=
+	t=1719301502; cv=none; b=Pq9Aaro828/sZQLRs08H7nPtPgUWTcxWDDFCQJOpDduHIVsZTw8vk5pk/1VgUXgXHuO8ltWfdHxQaVyK0p5IxemPxFbHnJqFPhOJQ6rUMsmmVIcJ8ekHJ8ThVim9uHFxLSsVuRooYVW9qkmtNpBzwRGLbe/JGX4bmuo5f/HqhI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719301491; c=relaxed/simple;
-	bh=ybVLUsEP8ZJbdg5QOlbsb+sUaB7/Iz2oA4C1GVB7x6Q=;
+	s=arc-20240116; t=1719301502; c=relaxed/simple;
+	bh=KU6fSNsJjAtSPmi+6Ho8IJyU5WKJaSyGyZI6IlGsOr4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lz75lBgFGO23GV6jWycl2ILw9jMQbxLgqMUrMwk9fxXSDzh1F5Kwj8WYftvwktcpwfEiV9tCt9utPQoF9j0Ms7Zvs6yvKe1e+JFpDBO3Z144xY9J6420V9Nx6T7XpFeHN26DRmbCwqzdaWFFVCYrdAPF5Ml09DHJ3/NEZ5zrl7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EdVuZ7ek; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=j6hKLoTgta7CuVUm7ALPZeNhv/g9EGMfddZFLGw1as57YOicN3hSjILyZ9G6tx6ZxBYJrh5KGk35ZqQQBlCD0bwHAj5VFkD+P6GO/8jX8ORwJW4+xhRnZTkRXjJtZx+spr0ANWTWOjpCqvmHMkHWMCWXWTSeS9QD5tRrAwm5TbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jBMwiR5F; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EdVuZ7ek"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17D05C32781;
-	Tue, 25 Jun 2024 07:44:44 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jBMwiR5F"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C9A0C32782;
+	Tue, 25 Jun 2024 07:44:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719301491;
-	bh=ybVLUsEP8ZJbdg5QOlbsb+sUaB7/Iz2oA4C1GVB7x6Q=;
+	s=k20201202; t=1719301502;
+	bh=KU6fSNsJjAtSPmi+6Ho8IJyU5WKJaSyGyZI6IlGsOr4=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=EdVuZ7ekeDBJC9hl/02sgo5Nb7x6Neawutm8dpQYpP+65HeRzdnu4FLugkSDbpysk
-	 /ctJEQPoE2xJoNzCgMGbghEUpktUXWgYnop9JwItH4ZWlRtzsgkMmys+Sld+MXjt0F
-	 z4g5l7wg+Lfpvh0kdYFsDV24Ah9LRepmJmqc4XULPfBaSEBiQBjLUtYHnb+6wUsLZc
-	 whFq1G8qWWiJYzgHNfAAMcj3akjt0KyirJNd2qxpC4U1uY6K5FpMp7uy1QoFx8qWh8
-	 nwUb71k332/T3aQNX0rdrEDHXURNA2IzEtoCFNKIWEaJif8wrAjsEjIA/faJcIuKw8
-	 A9JzG8sCKtw4A==
-Message-ID: <39bcab8b-ed9c-4da9-b1ee-32dbfb2a23a4@kernel.org>
-Date: Tue, 25 Jun 2024 09:44:42 +0200
+	b=jBMwiR5FkypsC/i5Rbv65VuI/aEbbQ9qFi/yf9dxDETVyfLi24fld0WHew/xEb9+W
+	 qhyf05C2Hn5y3Jl/cpr2N1IHC+Av30bR5+S6diZj2o9u/mKXhlhh+aPUKjpvE/ffhO
+	 sf1QoLCjChIXuXJKfFZpH2DTvprBweFi61r9ljn0yFij80jQa+WNfFj2yE6pJfzjrT
+	 PQU9GYbLGIZPk0Xy1AsFGBhunvRbanuGMhFSajNf1+GOfo1xRDqOvVZU2lWsJttygw
+	 iSmA5czEYV1s1qgTFeINIAwAbZpTX8YDJHqPDa3Zu0jgS/TDzqtXGL1hre9ZF22q3g
+	 p74iCFysXRogQ==
+Message-ID: <09ccab44-fbbd-4195-99b3-6d74e9dabebb@kernel.org>
+Date: Tue, 25 Jun 2024 09:44:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,7 +35,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] clk: imx93: Drop macro IMX93_CLK_END
+Subject: Re: [PATCH 2/2] dt-bindings: clock: imx93: Drop IMX93_CLK_END macro
+ definition
 To: Pengfei Li <pengfei.li_1@nxp.com>, krzk+dt@kernel.org, robh@kernel.org,
  abelvesa@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
  conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
@@ -45,7 +46,7 @@ Cc: kernel@pengutronix.de, festevam@gmail.com, linux-clk@vger.kernel.org,
  imx@lists.linux.dev, devicetree@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 References: <20240625175147.94985-1-pengfei.li_1@nxp.com>
- <20240625175147.94985-2-pengfei.li_1@nxp.com>
+ <20240625175147.94985-3-pengfei.li_1@nxp.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -91,70 +92,17 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240625175147.94985-2-pengfei.li_1@nxp.com>
+In-Reply-To: <20240625175147.94985-3-pengfei.li_1@nxp.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 25/06/2024 19:51, Pengfei Li wrote:
-> IMX93_CLK_END was previously defined in imx93-clock.h to
-> indicate the number of clocks, but it is not part of the
-> ABI, so it should be dropped.
-> 
-> Now, the driver gets the number of clks by querying the
-> maximum index in the clk array. Due to the discontinuity
-> in the definition of clk index, with some gaps present,
-> the total count cannot be obtained by summing the array
-> size.
+> IMX93_CLK_END should be dropped as it is not part of the ABI.
 > 
 > Signed-off-by: Pengfei Li <pengfei.li_1@nxp.com>
 > ---
->  drivers/clk/imx/clk-imx93.c | 25 +++++++++++++++++++++----
->  1 file changed, 21 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/clk/imx/clk-imx93.c b/drivers/clk/imx/clk-imx93.c
-> index c6a9bc8ecc1f..68c929512e16 100644
-> --- a/drivers/clk/imx/clk-imx93.c
-> +++ b/drivers/clk/imx/clk-imx93.c
-> @@ -257,6 +257,20 @@ static const struct imx93_clk_ccgr {
->  static struct clk_hw_onecell_data *clk_hw_data;
->  static struct clk_hw **clks;
->  
-> +static int imx_clks_get_num(void)
-> +{
-> +	u32 val = 0;
-> +	int i;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(root_array); i++)
-> +		val = max_t(u32, val, root_array[i].clk);
-> +
-> +	for (i = 0; i < ARRAY_SIZE(ccgr_array); i++)
-> +		val = max_t(u32, val, ccgr_array[i].clk);
-> +
-> +	return val + 1;
-> +}
-> +
->  static int imx93_clocks_probe(struct platform_device *pdev)
->  {
->  	struct device *dev = &pdev->dev;
-> @@ -264,14 +278,17 @@ static int imx93_clocks_probe(struct platform_device *pdev)
->  	const struct imx93_clk_root *root;
->  	const struct imx93_clk_ccgr *ccgr;
->  	void __iomem *base, *anatop_base;
-> +	int clks_num;
->  	int i, ret;
->  
-> +	clks_num = imx_clks_get_num();
-> +
->  	clk_hw_data = devm_kzalloc(dev, struct_size(clk_hw_data, hws,
-> -					  IMX93_CLK_END), GFP_KERNEL);
-> +					  clks_num), GFP_KERNEL);
->  	if (!clk_hw_data)
->  		return -ENOMEM;
->  
-> -	clk_hw_data->num = IMX93_CLK_END;
-> +	clk_hw_data->num = clks_num;
 
-Why so complicated code instead of pre-processor define or array size?
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
