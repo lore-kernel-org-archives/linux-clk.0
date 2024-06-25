@@ -1,59 +1,48 @@
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 193A914388D
-	for <linux-clk@vger.kernel.org>; Tue, 25 Jun 2024 05:07:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD4872D600;
+	Tue, 25 Jun 2024 05:34:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719292028; cv=none; b=Bqio1WZ32a5uk75t52Ek6DpTpPPGaZ+CMoGULCLA5TvyslMJ8VHcgcSem2UZR6pesMYkTGyA8e0wHf3kcBchU2pbNsB98LqStk4My4oMzW6Mh/DLj+tGkevOLQN2QPnRo5TXIdf+r7k3xlJLpg+SnXDDIKYZcs2z71QbJXSY0xU=
+	t=1719293665; cv=none; b=D0LnZzLNYADATDrV+17vHuMaotgsbfd68Vbnwb/zYtWC6wYhJPXqxkz9y9trzC3jjiI3fPKOQv3zbeVeYQyhjijJIr7HSnhTasTFOhUGUGg415LF0ae/jDKmqF2OcqFVNGlllWbYygtAbHHu8/gbzDPhym9X4o9XIleG8+jSf/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719292028; c=relaxed/simple;
-	bh=XFnA16kYW5gGBpSDrWeOV5VEpEAexRRRucWlNmOgnjI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QAZXv5jgoNrN1nnIhwvNWr+PtCmpFGSOFKMza06HukgiVHkiNaHcx7BjDRDan5trO7Zj2XDn2YZiIvd199QdYfH6REVTmenhHLU/oinpfZHTqnUhJYQbZEMCkVAm9924ztL6FzNb3FBROXQnswBVkUbcooeQGD4M8/jTEbl4QMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=qrP3uHEz; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1719293665; c=relaxed/simple;
+	bh=WG61A8AegrCQ2sc9776tr4hXXzDrdIphGqwVreN11vE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Fi4DHCb8wR0J9dDhHRepkoHNH0lkDNX+IBofxudPC5US9mnGExj+2814oto7o4pKgAmxg3CPJKZfuY/iE4HvH4yj5VfvbAFiCztjgGB60GSSgyYy8IiHp/R/geNSlMOIRucvQkC8VyuU4UiBIdtx4zCCJmx48q8HY+zFN5Pu4Tg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Bcz5M/EZ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="qrP3uHEz"
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5295e488248so5736411e87.2
-        for <linux-clk@vger.kernel.org>; Mon, 24 Jun 2024 22:07:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1719292024; x=1719896824; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=iMTfoPJSp/wlWQYq7ramEp8kDhcvFWSvsJvWkHGYsCg=;
-        b=qrP3uHEzfNLNzM2yRBsn4IrZUYI+bNIFcB1A+Wn0rAhuZDg0ulZv2VOB58bK0QGkjW
-         19LtbjxRhflLujofe+2Bu4+kflhzVXoOidNHWTcQWu1FF6o2A0xmSR20YGk/84lPEkb3
-         X/IdGBbEuvbQULId5SojIBaw4ifrx6p2A5SXw3KJQMLcONfKB8aotKL1TK1/DjhIQl+i
-         b7OeJrceaUb2fn825ntM+I6bZ9Lm22zfETIZrS5DN1ukIBHXYA4YQv84e4nKaveJPJAM
-         cWxSMYwlb0CmG5YBLpi5KLgJ4KkSttGgClXktgbfq822xCHOoqDyiOg6hLNSuOHi1tre
-         2/+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719292024; x=1719896824;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iMTfoPJSp/wlWQYq7ramEp8kDhcvFWSvsJvWkHGYsCg=;
-        b=DnWXGFym1SUAqTL3TQ++Agf22KNMkw7KnJUcGASkERBh6e2cztbPod3qguPlWMEMiJ
-         zdR/g4izdtdKNJhluVg856nKji+u9J+S65n+oPUj1PyF28rf0+mqC2ps3DZUOsLvPpLJ
-         08rRrae2PSkJNhg/bp7lwgFDCacBzyjojeaPYKxvzGectkSIMiM6uncGxZOfa31Ju/NC
-         RJBYNfDnVtr5iZHQn/O6kg2YMQUsNfs0oiiHpl2GmPHsCLxs416fHqBv6KUHl1jP7Ode
-         vE3mJAIYs3PrKjA9bkmLntnZtn4RI6ly2yn0V2zukT2pArYeYjQdglsBkHlC4wDrbD0C
-         iBXA==
-X-Forwarded-Encrypted: i=1; AJvYcCWH8n4bZdNESlhBGjyNltUtt4BpaePa26S5lIs+3fyerHwxMBBUVgXGILPZO1mlz7d/a9f5TTwkHtA5T/+/1c1k5C5FtIiRSAKB
-X-Gm-Message-State: AOJu0Yw0b58sGJvqpkUHcwstYxbcNL1/BTIeib0x65QBcenchevjbZwZ
-	mPx6oZuR4kQgLrRcPsWNX93yLDeEye3PUWAiFVSI7fVdk1dIlpdSETmE5C+haJs=
-X-Google-Smtp-Source: AGHT+IG7HDx2+AdxqahzNH7iyEFC9rGrJpKDudbwOlrJIC/1s7QOXQZz7eUKgfpp4ZPXuAssY8mYtA==
-X-Received: by 2002:a05:6512:2355:b0:52c:9468:c991 with SMTP id 2adb3069b0e04-52ce1832bffmr3986238e87.14.1719292024114;
-        Mon, 24 Jun 2024 22:07:04 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.70])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4249b4232f9sm6119065e9.0.2024.06.24.22.07.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 24 Jun 2024 22:07:03 -0700 (PDT)
-Message-ID: <908ff65d-e9f0-47c2-94ab-47cac3aa58ce@tuxon.dev>
-Date: Tue, 25 Jun 2024 08:07:00 +0300
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Bcz5M/EZ"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45OHV4VN001863;
+	Tue, 25 Jun 2024 05:33:40 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	LoKPufBWxhxMKygsmQzlMm1MysiDrvGUFIj3Sx6alRk=; b=Bcz5M/EZoERI0SHa
+	Oa2t3IRNPR9crE6GxO4NTIO/+PyK2rMfZL7D279z2R/nUHLEI0VCvX5mBQE3mjGN
+	TU5VzEaG1AXRILyYBLZfFhom4uBDZc6fcNtg091qQz33NJ6s6RAnUBs/KjDF/t8u
+	ZGNud6P6OmOatMFLuAWgOhYyVvQ74N2OmTprCbKVy3EKrZsexiln5kbU7/YRrkUw
+	uEP5WK3dWpbNX196uDLMN34rEITAdNOMWdBcjS6nIZ2+wKkb6RdVwyH58trY/jtU
+	WCgUeUm460oZXScKfFwO8ATZJZMVbsXES3U0WjzY9Vdvu1a0/D+q9SAB7Y7J1pSk
+	9BuAgQ==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywmaewt41-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Jun 2024 05:33:39 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45P5XcS6015993
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 25 Jun 2024 05:33:38 GMT
+Received: from [10.152.201.37] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 24 Jun
+ 2024 22:33:33 -0700
+Message-ID: <73cb638e-4982-49a2-ba79-0e78402b59ad@quicinc.com>
+Date: Tue, 25 Jun 2024 11:03:30 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -61,89 +50,108 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/12] dt-bindings: i2c: renesas,riic: Document the
- R9A08G045 support
+Subject: Re: [PATCH v9 1/8] remoteproc: qcom: Add PRNG proxy clock
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <sboyd@kernel.org>, <andersson@kernel.org>, <bjorn.andersson@linaro.org>,
+        <david.brown@linaro.org>, <devicetree@vger.kernel.org>,
+        <jassisinghbrar@gmail.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-remoteproc@vger.kernel.org>, <mark.rutland@arm.com>,
+        <mturquette@baylibre.com>, <ohad@wizery.com>, <robh@kernel.org>,
+        <sricharan@codeaurora.org>, <gokulsri@codeaurora.org>
+References: <20240621114659.2958170-1-quic_gokulsri@quicinc.com>
+ <20240621114659.2958170-2-quic_gokulsri@quicinc.com>
+ <chi3pzh5ss3mivnhs3qeoen5hsecfcgzaj6qnrgxantvinrri2@bxsbmpufuqpe>
 Content-Language: en-US
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: chris.brandt@renesas.com, andi.shyti@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com,
- mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
- wsa+renesas@sang-engineering.com, linux-renesas-soc@vger.kernel.org,
- linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240621112303.1607621-1-claudiu.beznea.uj@bp.renesas.com>
- <20240621112303.1607621-9-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdULaO2dH_wrcM5P6=rDYzRXcMSGfVsBz3okWPGjOsMN4A@mail.gmail.com>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <CAMuHMdULaO2dH_wrcM5P6=rDYzRXcMSGfVsBz3okWPGjOsMN4A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+From: Gokul Sriram P <quic_gokulsri@quicinc.com>
+In-Reply-To: <chi3pzh5ss3mivnhs3qeoen5hsecfcgzaj6qnrgxantvinrri2@bxsbmpufuqpe>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: YINY9aTmPeiUpakPTSs3nRPKSnHLlcMl
+X-Proofpoint-GUID: YINY9aTmPeiUpakPTSs3nRPKSnHLlcMl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-25_02,2024-06-24_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ suspectscore=0 spamscore=0 bulkscore=0 phishscore=0 malwarescore=0
+ clxscore=1015 mlxscore=0 lowpriorityscore=0 priorityscore=1501
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2406140001 definitions=main-2406250040
 
-Hi, Geert,
 
-On 24.06.2024 18:40, Geert Uytterhoeven wrote:
-> Hi Claudiu,
-> 
-> On Fri, Jun 21, 2024 at 1:23 PM Claudiu <claudiu.beznea@tuxon.dev> wrote:
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On 6/22/2024 2:38 AM, Dmitry Baryshkov wrote:
+> On Fri, Jun 21, 2024 at 05:16:52PM GMT, Gokul Sriram Palanisamy wrote:
+>> PRNG clock is needed by the secure PIL, support for the same
+>> is added in subsequent patches.
+> Which 'same'?
+> What is 'secure PIL'?
+   will elaborate in the updated version.
+   To answer your question, secure PIL is signed PIL image which only 
+TrustZone can authenticate and load.
+>> Signed-off-by: Nikhil Prakash V <quic_nprakash@quicinc.com>
+>> Signed-off-by: Sricharan R <quic_srichara@quicinc.com>
+>> Signed-off-by: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
+>> ---
+>>   drivers/remoteproc/qcom_q6v5_wcss.c | 65 +++++++++++++++++++++--------
+>>   1 file changed, 47 insertions(+), 18 deletions(-)
 >>
->> Document the Renesas RZ/G3S (R9A08G045) RIIC IP. This is compatible with
->> the version available on Renesas RZ/V2H (R9A09G075). Most of the IP
->> variants that the RIIC driver is working with supports fast mode plus.
->> However, it happens that on the same SoC to have IP instatiations that
->> support fast mode plus as well as IP instantiation that doesn't support
->> it. For this, introduced the renesas,riic-no-fast-mode-plus property.
->>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> 
-> Thanks for your patch!
-> 
->> --- a/Documentation/devicetree/bindings/i2c/renesas,riic.yaml
->> +++ b/Documentation/devicetree/bindings/i2c/renesas,riic.yaml
->> @@ -25,6 +25,10 @@ properties:
->>                - renesas,riic-r9a07g054  # RZ/V2L
->>            - const: renesas,riic-rz      # RZ/A or RZ/G2L
->>
->> +      - items:
->> +          - const: renesas,riic-r9a08g045   # RZ/G3S
->> +          - const: renesas,riic-r9a09g057
+>> diff --git a/drivers/remoteproc/qcom_q6v5_wcss.c b/drivers/remoteproc/qcom_q6v5_wcss.c
+>> index 94f68c919ee6..366b19cbd994 100644
+>> --- a/drivers/remoteproc/qcom_q6v5_wcss.c
+>> +++ b/drivers/remoteproc/qcom_q6v5_wcss.c
+>> @@ -91,19 +91,6 @@ enum {
+>>   	WCSS_QCS404,
+>>   };
+>>   
+>> -struct wcss_data {
+>> -	const char *firmware_name;
+>> -	unsigned int crash_reason_smem;
+>> -	u32 version;
+>> -	bool aon_reset_required;
+>> -	bool wcss_q6_reset_required;
+>> -	const char *ssr_name;
+>> -	const char *sysmon_name;
+>> -	int ssctl_id;
+>> -	const struct rproc_ops *ops;
+>> -	bool requires_force_stop;
+>> -};
+>> -
+>>   struct q6v5_wcss {
+>>   	struct device *dev;
+>>   
+>> @@ -128,6 +115,7 @@ struct q6v5_wcss {
+>>   	struct clk *qdsp6ss_xo_cbcr;
+>>   	struct clk *qdsp6ss_core_gfmux;
+>>   	struct clk *lcc_bcr_sleep;
+>> +	struct clk *prng_clk;
+>>   	struct regulator *cx_supply;
+>>   	struct qcom_sysmon *sysmon;
+>>   
+>> @@ -151,6 +139,21 @@ struct q6v5_wcss {
+>>   	struct qcom_rproc_ssr ssr_subdev;
+>>   };
+>>   
+>> +struct wcss_data {
+>> +	int (*init_clock)(struct q6v5_wcss *wcss);
+>> +	int (*init_regulator)(struct q6v5_wcss *wcss);
+>> +	const char *firmware_name;
+>> +	unsigned int crash_reason_smem;
+>> +	u32 version;
+>> +	bool aon_reset_required;
+>> +	bool wcss_q6_reset_required;
+>> +	const char *ssr_name;
+>> +	const char *sysmon_name;
+>> +	int ssctl_id;
+>> +	const struct rproc_ops *ops;
+>> +	bool requires_force_stop;
+>> +};
+> Move this back and use forward-declaration of struct q6v5_wcss.
+   sure. Will update.
 >> +
-> 
-> LGTM.
-> 
->>        - const: renesas,riic-r9a09g057   # RZ/V2H(P)
->>
->>    reg:
->> @@ -66,6 +70,10 @@ properties:
->>    resets:
->>      maxItems: 1
->>
->> +  renesas,riic-no-fast-mode-plus:
->> +    description: specifies if fast mode plus is not supported
->> +    type: boolean
->> +
-> 
-> Do you really need this?
-> The bus' clock-frequency property should take into account the combined
-> capabilities of all of controller, target, and wiring.  It is up to the
-> DTS writer to validate that all timing conditions are met.
-
-On a second thought, I tend to agree with you on this.
-
-I added it to comply with "chapter 47.5.15 I2C Bus Interface Access
-Timing, note 7, Tfmin cannot meet the specification in fast-mode plus for
-the RIIC ch2 and ch3" statement from hw manual.
-
-Thank you,
-Claudiu Beznea
-
-> 
->>  required:
->>    - compatible
->>    - reg
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
+>>   static int q6v5_wcss_reset(struct q6v5_wcss *wcss)
+>>   {
+>>   	int ret;
