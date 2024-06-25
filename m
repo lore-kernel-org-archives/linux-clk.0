@@ -1,24 +1,24 @@
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DEED8F48;
-	Tue, 25 Jun 2024 00:29:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FED18F48;
+	Tue, 25 Jun 2024 00:29:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719275380; cv=none; b=YvxZH+JpTJiNj8aoSkcQj/8SbvROL6JxAjS/yUy25fjZp/Aeus+/34DdWQfenr6/XcBsaNsTZ5xIJAnb1tXBnf+TYrBmGH4o8nNsyvk+HyGFihBzAlRFpTo7tVYJRLlc23XcMTVITqO6CzaME3NxEvo7mVnlyv+2jBYsY1B6Rxk=
+	t=1719275390; cv=none; b=GreBFfi1jf0ldoqb13xgivLcP7LThX8vantEEqXKATPQYjuiLMsBONDzbwAfYlCN1RS7y3uvB+2FV4GV3hkKb6oZrOY6y2rxTh0YBU+KwfyxfCN1rWGSneJRcgEDT7FYieUGWf1Eivm8bBMvynN4SOSuahj9pyn2O7Sj2QioQEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719275380; c=relaxed/simple;
-	bh=i0pWdK5nSP/fIrx/nTWRVTjJ5F1x39v92nsWYedhHuM=;
+	s=arc-20240116; t=1719275390; c=relaxed/simple;
+	bh=iYn5VfO5+IG4ZfSgFzubFN6QkA26VSPvolhxPxclxYY=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qtffJ5maSTxH5NrTH9Y1aD8Fz3ysbGX3WB4p8zvGhzELMvFSUUjbuHE6rhY7uG78SSCkl8n+GADHT0UPV/hyHklPGcDqH+WLbDL7EZSvNbNy48c57FHg5fFD+dSwTiW7pmdtjZFeCxSlHH/AhglNGQeqiUAvzq2BEO/R7tvF6j0=
+	 MIME-Version:Content-Type; b=Mt/8cjrwbixTavmLE9KZnwzG7cISCtmHsOKF9wyKqTiU3wb1L+9Hp986C+DiEEc2c6nshRHKypCStnzsiY6oLX4261cFZrYw/IgkNZ2js6wgINYN0WLvzR0q4HGypnPuDEhyIPeaz8PfiKfsFfOP5rMmdmZJlLMPmP72MHtZp6Q=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7593A339;
-	Mon, 24 Jun 2024 17:30:02 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C57DF339;
+	Mon, 24 Jun 2024 17:30:12 -0700 (PDT)
 Received: from minigeek.lan (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0B3C93F6A8;
-	Mon, 24 Jun 2024 17:29:34 -0700 (PDT)
-Date: Tue, 25 Jun 2024 01:27:54 +0100
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 53A0D3F6A8;
+	Mon, 24 Jun 2024 17:29:45 -0700 (PDT)
+Date: Tue, 25 Jun 2024 01:28:04 +0100
 From: Andre Przywara <andre.przywara@arm.com>
 To: Ryan Walklin <ryan@testtoast.com>
 Cc: Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
@@ -32,11 +32,12 @@ Cc: Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
  dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
  linux-sunxi@lists.linux.dev, devicetree@vger.kernel.org,
  linux-clk@vger.kernel.org
-Subject: Re: [PATCH 13/23] drm: sun4i: de2/de3: add mixer version enum
-Message-ID: <20240625012754.0b9c4b21@minigeek.lan>
-In-Reply-To: <20240620113150.83466-14-ryan@testtoast.com>
+Subject: Re: [PATCH 14/23] drm: sun4i: de2/de3: refactor mixer
+ initialisation
+Message-ID: <20240625012804.27e55708@minigeek.lan>
+In-Reply-To: <20240620113150.83466-15-ryan@testtoast.com>
 References: <20240620113150.83466-1-ryan@testtoast.com>
-	<20240620113150.83466-14-ryan@testtoast.com>
+	<20240620113150.83466-15-ryan@testtoast.com>
 Organization: Arm Ltd.
 X-Mailer: Claws Mail 4.2.0 (GTK 3.24.31; x86_64-slackware-linux-gnu)
 Precedence: bulk
@@ -48,269 +49,142 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Thu, 20 Jun 2024 23:29:51 +1200
+On Thu, 20 Jun 2024 23:29:52 +1200
 Ryan Walklin <ryan@testtoast.com> wrote:
 
 Hi,
 
 > From: Jernej Skrabec <jernej.skrabec@gmail.com>
 > 
-> The Allwinner DE2 and DE3 display engine mixers are currently identified
-> by a simple boolean flag. This will not scale to support additional DE
-> variants.
+> Now that the DE variant can be selected by enum, take the oppportunity
+> to factor out some common initialisation code to a separate function.
 > 
-> Convert the boolean flag to an enum, and refactor the initialiser by
-> moving common code to a separate function.
-
-Thanks for splitting this up, makes review much easier.
-Can confirm that is just refactoring, from bool to enum:
-
 > Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 > Signed-off-by: Ryan Walklin <ryan@testtoast.com>
+> ---
+>  drivers/gpu/drm/sun4i/sun8i_mixer.c | 69 ++++++++++++++++-------------
+>  1 file changed, 38 insertions(+), 31 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+> index 7874b68786eee..533aa93d2a30e 100644
+> --- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
+> +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
+> @@ -404,6 +404,40 @@ static int sun8i_mixer_of_get_id(struct device_node *node)
+>  	return of_ep.id;
+>  }
+>  
+> +static void sun8i_mixer_init(struct sun8i_mixer *mixer)
+> +{
+> +	unsigned int base;
+> +	int plane_cnt, i;
+> +
+> +	base = sun8i_blender_base(mixer);
+
+Please move the initialisation up into the line with the declaration.
+
+> +
+> +	/* Enable the mixer */
+> +	regmap_write(mixer->engine.regs, SUN8I_MIXER_GLOBAL_CTL,
+> +		     SUN8I_MIXER_GLOBAL_CTL_RT_EN);
+> +
+> +	/* Set background color to black */
+> +	regmap_write(mixer->engine.regs, SUN8I_MIXER_BLEND_BKCOLOR(base),
+> +		     SUN8I_MIXER_BLEND_COLOR_BLACK);
+> +
+> +	/*
+> +	 * Set fill color of bottom plane to black. Generally not needed
+> +	 * except when VI plane is at bottom (zpos = 0) and enabled.
+> +	 */
+> +	regmap_write(mixer->engine.regs, SUN8I_MIXER_BLEND_PIPE_CTL(base),
+> +		     SUN8I_MIXER_BLEND_PIPE_CTL_FC_EN(0));
+> +	regmap_write(mixer->engine.regs, SUN8I_MIXER_BLEND_ATTR_FCOLOR(base, 0),
+> +		     SUN8I_MIXER_BLEND_COLOR_BLACK);
+> +
+> +	plane_cnt = mixer->cfg->vi_num + mixer->cfg->ui_num;
+> +	for (i = 0; i < plane_cnt; i++)
+> +		regmap_write(mixer->engine.regs,
+> +			     SUN8I_MIXER_BLEND_MODE(base, i),
+> +			     SUN8I_MIXER_BLEND_MODE_DEF);
+> +
+> +	regmap_update_bits(mixer->engine.regs, SUN8I_MIXER_BLEND_PIPE_CTL(base),
+> +			   SUN8I_MIXER_BLEND_PIPE_CTL_EN_MSK, 0);
+> +}
+> +
+>  static int sun8i_mixer_bind(struct device *dev, struct device *master,
+>  			      void *data)
+>  {
+> @@ -412,8 +446,6 @@ static int sun8i_mixer_bind(struct device *dev, struct device *master,
+>  	struct sun4i_drv *drv = drm->dev_private;
+>  	struct sun8i_mixer *mixer;
+>  	void __iomem *regs;
+> -	unsigned int base;
+> -	int plane_cnt;
+>  	int i, ret;
+>  
+>  	/*
+> @@ -517,8 +549,6 @@ static int sun8i_mixer_bind(struct device *dev, struct device *master,
+>  
+>  	list_add_tail(&mixer->engine.list, &drv->engine_list);
+>  
+> -	base = sun8i_blender_base(mixer);
+> -
+>  	/* Reset registers and disable unused sub-engines */
+>  	if (mixer->cfg->de_type == sun8i_mixer_de3) {
+>  		for (i = 0; i < DE3_MIXER_UNIT_SIZE; i += 4)
+> @@ -534,7 +564,8 @@ static int sun8i_mixer_bind(struct device *dev, struct device *master,
+>  		regmap_write(mixer->engine.regs, SUN50I_MIXER_FMT_EN, 0);
+>  		regmap_write(mixer->engine.regs, SUN50I_MIXER_CDC0_EN, 0);
+>  		regmap_write(mixer->engine.regs, SUN50I_MIXER_CDC1_EN, 0);
+> -	} else {
+> +
+
+That seems to add an extra line, which shouldn't be here.
+
+Verified that the rest is indeed just a code move, from below into a
+separate function. So with the two minor bits above fixed:
 
 Reviewed-by: Andre Przywara <andre.przywara@arm.com>
 
 Cheers,
 Andre
 
-> ---
->  drivers/gpu/drm/sun4i/sun8i_csc.c       |  2 +-
->  drivers/gpu/drm/sun4i/sun8i_mixer.c     | 14 ++++++++++++--
->  drivers/gpu/drm/sun4i/sun8i_mixer.h     | 11 ++++++++---
->  drivers/gpu/drm/sun4i/sun8i_ui_scaler.c |  2 +-
->  drivers/gpu/drm/sun4i/sun8i_vi_layer.c  |  8 ++++----
->  drivers/gpu/drm/sun4i/sun8i_vi_scaler.c |  4 ++--
->  6 files changed, 28 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/sun4i/sun8i_csc.c b/drivers/gpu/drm/sun4i/sun8i_csc.c
-> index e12a81fa91083..2d5a2cf7cba24 100644
-> --- a/drivers/gpu/drm/sun4i/sun8i_csc.c
-> +++ b/drivers/gpu/drm/sun4i/sun8i_csc.c
-> @@ -365,7 +365,7 @@ void sun8i_csc_set_ccsc(struct sun8i_mixer *mixer, int layer,
->  {
->  	u32 base;
->  
-> -	if (mixer->cfg->is_de3) {
-> +	if (mixer->cfg->de_type == sun8i_mixer_de3) {
->  		sun8i_de3_ccsc_setup(&mixer->engine, layer,
->  				     fmt_type, encoding, range);
->  		return;
-> diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> index ef8067b2cbc8c..7874b68786eee 100644
-> --- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> @@ -520,7 +520,7 @@ static int sun8i_mixer_bind(struct device *dev, struct device *master,
->  	base = sun8i_blender_base(mixer);
->  
->  	/* Reset registers and disable unused sub-engines */
-> -	if (mixer->cfg->is_de3) {
-> +	if (mixer->cfg->de_type == sun8i_mixer_de3) {
->  		for (i = 0; i < DE3_MIXER_UNIT_SIZE; i += 4)
+> +	} else if (mixer->cfg->de_type == sun8i_mixer_de2) {
+>  		for (i = 0; i < DE2_MIXER_UNIT_SIZE; i += 4)
 >  			regmap_write(mixer->engine.regs, i, 0);
 >  
-> @@ -611,6 +611,7 @@ static void sun8i_mixer_remove(struct platform_device *pdev)
->  
->  static const struct sun8i_mixer_cfg sun8i_a83t_mixer0_cfg = {
->  	.ccsc		= CCSC_MIXER0_LAYOUT,
-> +	.de_type	= sun8i_mixer_de2,
->  	.scaler_mask	= 0xf,
->  	.scanline_yuv	= 2048,
->  	.ui_num		= 3,
-> @@ -619,6 +620,7 @@ static const struct sun8i_mixer_cfg sun8i_a83t_mixer0_cfg = {
->  
->  static const struct sun8i_mixer_cfg sun8i_a83t_mixer1_cfg = {
->  	.ccsc		= CCSC_MIXER1_LAYOUT,
-> +	.de_type	= sun8i_mixer_de2,
->  	.scaler_mask	= 0x3,
->  	.scanline_yuv	= 2048,
->  	.ui_num		= 1,
-> @@ -627,6 +629,7 @@ static const struct sun8i_mixer_cfg sun8i_a83t_mixer1_cfg = {
->  
->  static const struct sun8i_mixer_cfg sun8i_h3_mixer0_cfg = {
->  	.ccsc		= CCSC_MIXER0_LAYOUT,
-> +	.de_type	= sun8i_mixer_de2,
->  	.mod_rate	= 432000000,
->  	.scaler_mask	= 0xf,
->  	.scanline_yuv	= 2048,
-> @@ -636,6 +639,7 @@ static const struct sun8i_mixer_cfg sun8i_h3_mixer0_cfg = {
->  
->  static const struct sun8i_mixer_cfg sun8i_r40_mixer0_cfg = {
->  	.ccsc		= CCSC_MIXER0_LAYOUT,
-> +	.de_type	= sun8i_mixer_de2,
->  	.mod_rate	= 297000000,
->  	.scaler_mask	= 0xf,
->  	.scanline_yuv	= 2048,
-> @@ -645,6 +649,7 @@ static const struct sun8i_mixer_cfg sun8i_r40_mixer0_cfg = {
->  
->  static const struct sun8i_mixer_cfg sun8i_r40_mixer1_cfg = {
->  	.ccsc		= CCSC_MIXER1_LAYOUT,
-> +	.de_type	= sun8i_mixer_de2,
->  	.mod_rate	= 297000000,
->  	.scaler_mask	= 0x3,
->  	.scanline_yuv	= 2048,
-> @@ -653,6 +658,7 @@ static const struct sun8i_mixer_cfg sun8i_r40_mixer1_cfg = {
->  };
->  
->  static const struct sun8i_mixer_cfg sun8i_v3s_mixer_cfg = {
-> +	.de_type = sun8i_mixer_de2,
->  	.vi_num = 2,
->  	.ui_num = 1,
->  	.scaler_mask = 0x3,
-> @@ -663,6 +669,7 @@ static const struct sun8i_mixer_cfg sun8i_v3s_mixer_cfg = {
->  
->  static const struct sun8i_mixer_cfg sun20i_d1_mixer0_cfg = {
->  	.ccsc		= CCSC_D1_MIXER0_LAYOUT,
-> +	.de_type	= sun8i_mixer_de2,
->  	.mod_rate	= 297000000,
->  	.scaler_mask	= 0x3,
->  	.scanline_yuv	= 2048,
-> @@ -672,6 +679,7 @@ static const struct sun8i_mixer_cfg sun20i_d1_mixer0_cfg = {
->  
->  static const struct sun8i_mixer_cfg sun20i_d1_mixer1_cfg = {
->  	.ccsc		= CCSC_MIXER1_LAYOUT,
-> +	.de_type	= sun8i_mixer_de2,
->  	.mod_rate	= 297000000,
->  	.scaler_mask	= 0x1,
->  	.scanline_yuv	= 1024,
-> @@ -681,6 +689,7 @@ static const struct sun8i_mixer_cfg sun20i_d1_mixer1_cfg = {
->  
->  static const struct sun8i_mixer_cfg sun50i_a64_mixer0_cfg = {
->  	.ccsc		= CCSC_MIXER0_LAYOUT,
-> +	.de_type	= sun8i_mixer_de2,
->  	.mod_rate	= 297000000,
->  	.scaler_mask	= 0xf,
->  	.scanline_yuv	= 4096,
-> @@ -690,6 +699,7 @@ static const struct sun8i_mixer_cfg sun50i_a64_mixer0_cfg = {
->  
->  static const struct sun8i_mixer_cfg sun50i_a64_mixer1_cfg = {
->  	.ccsc		= CCSC_MIXER1_LAYOUT,
-> +	.de_type	= sun8i_mixer_de2,
->  	.mod_rate	= 297000000,
->  	.scaler_mask	= 0x3,
->  	.scanline_yuv	= 2048,
-> @@ -699,7 +709,7 @@ static const struct sun8i_mixer_cfg sun50i_a64_mixer1_cfg = {
->  
->  static const struct sun8i_mixer_cfg sun50i_h6_mixer0_cfg = {
->  	.ccsc		= CCSC_MIXER0_LAYOUT,
-> -	.is_de3		= true,
-> +	.de_type	= sun8i_mixer_de3,
->  	.has_formatter	= 1,
->  	.mod_rate	= 600000000,
->  	.scaler_mask	= 0xf,
-> diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.h b/drivers/gpu/drm/sun4i/sun8i_mixer.h
-> index 13401643c7bfc..19052c594f8c2 100644
-> --- a/drivers/gpu/drm/sun4i/sun8i_mixer.h
-> +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.h
-> @@ -150,6 +150,11 @@ enum {
->  	CCSC_D1_MIXER0_LAYOUT,
->  };
->  
-> +enum sun8i_mixer_type {
-> +	sun8i_mixer_de2,
-> +	sun8i_mixer_de3,
-> +};
-> +
->  /**
->   * struct sun8i_mixer_cfg - mixer HW configuration
->   * @vi_num: number of VI channels
-> @@ -171,7 +176,7 @@ struct sun8i_mixer_cfg {
->  	int		scaler_mask;
->  	int		ccsc;
->  	unsigned long	mod_rate;
-> -	unsigned int	is_de3 : 1;
-> +	unsigned int	de_type;
->  	unsigned int    has_formatter : 1;
->  	unsigned int	scanline_yuv;
->  };
-> @@ -196,13 +201,13 @@ engine_to_sun8i_mixer(struct sunxi_engine *engine)
->  static inline u32
->  sun8i_blender_base(struct sun8i_mixer *mixer)
->  {
-> -	return mixer->cfg->is_de3 ? DE3_BLD_BASE : DE2_BLD_BASE;
-> +	return mixer->cfg->de_type == sun8i_mixer_de3 ? DE3_BLD_BASE : DE2_BLD_BASE;
->  }
->  
->  static inline u32
->  sun8i_channel_base(struct sun8i_mixer *mixer, int channel)
->  {
-> -	if (mixer->cfg->is_de3)
-> +	if (mixer->cfg->de_type == sun8i_mixer_de3)
->  		return DE3_CH_BASE + channel * DE3_CH_SIZE;
->  	else
->  		return DE2_CH_BASE + channel * DE2_CH_SIZE;
-> diff --git a/drivers/gpu/drm/sun4i/sun8i_ui_scaler.c b/drivers/gpu/drm/sun4i/sun8i_ui_scaler.c
-> index ae0806bccac7f..504ffa0971a4f 100644
-> --- a/drivers/gpu/drm/sun4i/sun8i_ui_scaler.c
-> +++ b/drivers/gpu/drm/sun4i/sun8i_ui_scaler.c
-> @@ -93,7 +93,7 @@ static u32 sun8i_ui_scaler_base(struct sun8i_mixer *mixer, int channel)
->  {
->  	int vi_num = mixer->cfg->vi_num;
->  
-> -	if (mixer->cfg->is_de3)
-> +	if (mixer->cfg->de_type == sun8i_mixer_de3)
->  		return DE3_VI_SCALER_UNIT_BASE +
->  		       DE3_VI_SCALER_UNIT_SIZE * vi_num +
->  		       DE3_UI_SCALER_UNIT_SIZE * (channel - vi_num);
-> diff --git a/drivers/gpu/drm/sun4i/sun8i_vi_layer.c b/drivers/gpu/drm/sun4i/sun8i_vi_layer.c
-> index 329e8bf8cd20d..866ed04fa0a14 100644
-> --- a/drivers/gpu/drm/sun4i/sun8i_vi_layer.c
-> +++ b/drivers/gpu/drm/sun4i/sun8i_vi_layer.c
-> @@ -74,7 +74,7 @@ static void sun8i_vi_layer_update_alpha(struct sun8i_mixer *mixer, int channel,
->  
->  	ch_base = sun8i_channel_base(mixer, channel);
->  
-> -	if (mixer->cfg->is_de3) {
-> +	if (mixer->cfg->de_type >= sun8i_mixer_de3) {
->  		mask = SUN50I_MIXER_CHAN_VI_LAYER_ATTR_ALPHA_MASK |
->  		       SUN50I_MIXER_CHAN_VI_LAYER_ATTR_ALPHA_MODE_MASK;
->  		val = SUN50I_MIXER_CHAN_VI_LAYER_ATTR_ALPHA
-> @@ -553,7 +553,7 @@ struct sun8i_vi_layer *sun8i_vi_layer_init_one(struct drm_device *drm,
->  	layer->channel = index;
->  	layer->overlay = 0;
->  
-> -	if (mixer->cfg->is_de3) {
-> +	if (mixer->cfg->de_type >= sun8i_mixer_de3) {
->  		formats = sun8i_vi_layer_de3_formats;
->  		format_count = ARRAY_SIZE(sun8i_vi_layer_de3_formats);
->  	} else {
-> @@ -577,7 +577,7 @@ struct sun8i_vi_layer *sun8i_vi_layer_init_one(struct drm_device *drm,
->  
->  	plane_cnt = mixer->cfg->ui_num + mixer->cfg->vi_num;
->  
-> -	if (mixer->cfg->vi_num == 1 || mixer->cfg->is_de3) {
-> +	if (mixer->cfg->vi_num == 1 || mixer->cfg->de_type >= sun8i_mixer_de3) {
->  		ret = drm_plane_create_alpha_property(&layer->plane);
->  		if (ret) {
->  			dev_err(drm->dev, "Couldn't add alpha property\n");
-> @@ -594,7 +594,7 @@ struct sun8i_vi_layer *sun8i_vi_layer_init_one(struct drm_device *drm,
->  
->  	supported_encodings = BIT(DRM_COLOR_YCBCR_BT601) |
->  			      BIT(DRM_COLOR_YCBCR_BT709);
-> -	if (mixer->cfg->is_de3)
-> +	if (mixer->cfg->de_type >= sun8i_mixer_de3)
->  		supported_encodings |= BIT(DRM_COLOR_YCBCR_BT2020);
->  
->  	supported_ranges = BIT(DRM_COLOR_YCBCR_LIMITED_RANGE) |
-> diff --git a/drivers/gpu/drm/sun4i/sun8i_vi_scaler.c b/drivers/gpu/drm/sun4i/sun8i_vi_scaler.c
-> index 2e49a6e5f1f1c..aa346c3beb303 100644
-> --- a/drivers/gpu/drm/sun4i/sun8i_vi_scaler.c
-> +++ b/drivers/gpu/drm/sun4i/sun8i_vi_scaler.c
-> @@ -835,7 +835,7 @@ static const u32 bicubic4coefftab32[480] = {
->  
->  static u32 sun8i_vi_scaler_base(struct sun8i_mixer *mixer, int channel)
->  {
-> -	if (mixer->cfg->is_de3)
-> +	if (mixer->cfg->de_type == sun8i_mixer_de3)
->  		return DE3_VI_SCALER_UNIT_BASE +
->  		       DE3_VI_SCALER_UNIT_SIZE * channel;
->  	else
-> @@ -982,7 +982,7 @@ void sun8i_vi_scaler_setup(struct sun8i_mixer *mixer, int layer,
->  		cvphase = vphase;
+> @@ -547,32 +578,8 @@ static int sun8i_mixer_bind(struct device *dev, struct device *master,
+>  		regmap_write(mixer->engine.regs, SUN8I_MIXER_DCSC_EN, 0);
 >  	}
 >  
-> -	if (mixer->cfg->is_de3) {
-> +	if (mixer->cfg->de_type >= sun8i_mixer_de3) {
->  		u32 val;
+> -	/* Enable the mixer */
+> -	regmap_write(mixer->engine.regs, SUN8I_MIXER_GLOBAL_CTL,
+> -		     SUN8I_MIXER_GLOBAL_CTL_RT_EN);
+> -
+> -	/* Set background color to black */
+> -	regmap_write(mixer->engine.regs, SUN8I_MIXER_BLEND_BKCOLOR(base),
+> -		     SUN8I_MIXER_BLEND_COLOR_BLACK);
+> -
+> -	/*
+> -	 * Set fill color of bottom plane to black. Generally not needed
+> -	 * except when VI plane is at bottom (zpos = 0) and enabled.
+> -	 */
+> -	regmap_write(mixer->engine.regs, SUN8I_MIXER_BLEND_PIPE_CTL(base),
+> -		     SUN8I_MIXER_BLEND_PIPE_CTL_FC_EN(0));
+> -	regmap_write(mixer->engine.regs, SUN8I_MIXER_BLEND_ATTR_FCOLOR(base, 0),
+> -		     SUN8I_MIXER_BLEND_COLOR_BLACK);
+> -
+> -	plane_cnt = mixer->cfg->vi_num + mixer->cfg->ui_num;
+> -	for (i = 0; i < plane_cnt; i++)
+> -		regmap_write(mixer->engine.regs,
+> -			     SUN8I_MIXER_BLEND_MODE(base, i),
+> -			     SUN8I_MIXER_BLEND_MODE_DEF);
+> -
+> -	regmap_update_bits(mixer->engine.regs, SUN8I_MIXER_BLEND_PIPE_CTL(base),
+> -			   SUN8I_MIXER_BLEND_PIPE_CTL_EN_MSK, 0);
+> -
+> +	sun8i_mixer_init(mixer);
+> +	
+>  	return 0;
 >  
->  		if (format->hsub == 1 && format->vsub == 1)
+>  err_disable_bus_clk:
 
