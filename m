@@ -1,112 +1,236 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 351C345010;
-	Mon, 24 Jun 2024 20:57:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61BEC8F6B;
+	Tue, 25 Jun 2024 00:29:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719262621; cv=none; b=uawyvukfrPc45KMrJGWK6oPVDAM/Mh5Hz9644oiYijUzUxJefjzYyrNZ1RTsSFtVPbDBGvF37uoELULIv+dHtJx+U7BuLkCtVu0WmxQNaby1N744FpMF8PNfaJjkgBaJiNvYlL6GLW6JOZ024B3Fm2rnut33oK1d4bmqcF9LlZ4=
+	t=1719275371; cv=none; b=SfvuxpltgH5jTD7hKobB8uyd2JJaU5UgGd0RI1jcsuAVwP6phKBhsJDu++fQK6BWx2TIppZbvem+TFl2AY/rXrbVUqiaZL3vtPHfH4HaHKCcqR254/G+Abs4j0i9whI3V/xrKtikGUonNz4ecgSMSccuiYxQZWwqGj9Hb1oCEKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719262621; c=relaxed/simple;
-	bh=95fdFeKlIJQaOSK88eu3YruFZOuuR7eAP6N0waxJM10=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F7pAYQzj6QkyQ01bTDUHNIDqFqIhI6weGZBGjTe/IiXgjEj+v3dkiv/JukHn4S4ZJxqXoX3t8kfbIYnlOJqcokp0qgvo8qPo7I541qGx2jOnBOcwehq1nHJZZPFOGdpPjEXSCdHbsog6Rh3poOSkAJs3tJkAHCStHYslqYweYR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CGcjseBw; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CGcjseBw"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46958C2BBFC;
-	Mon, 24 Jun 2024 20:57:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719262620;
-	bh=95fdFeKlIJQaOSK88eu3YruFZOuuR7eAP6N0waxJM10=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CGcjseBwVHp8LKIEzzmvaaffa/dpkvTlqW9L8+cilYLVXRHc5NdTfTuRERtlcLH1E
-	 2i6jIDQEi5dMidUHgp6blHVrs6e4CrX9eOWuPkuISpDZIdjVPeeSqr3141DgI8M+yN
-	 rca9KUK9BoFJ2404YxuLeKlWAlGOvHYEW2kerH/9LRlrU97pg98yTaZLDcttzltUh8
-	 5JXfAtlGywLgUjo/4npYUD41+eL0gRAOgUwE1MlQUnkP8WREmRT46w1xE2H5pUntRB
-	 g1xXUHFCg12ohpL68kR6VDVAPwUAV7PmgQ2rWe+t2hfuaOuJ3E8EerQ0wSZpHlOJjU
-	 7ByJq9qm+6kLg==
-Date: Mon, 24 Jun 2024 14:56:59 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: =?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
-	linux-gpio@vger.kernel.org,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	linux-clk@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>,
-	Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
-	Lee Jones <lee@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	devicetree@vger.kernel.org, Philipp Zabel <p.zabel@pengutronix.de>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Gregory CLEMENT <gregory.clement@bootlin.com>
-Subject: Re: [PATCH v3 4/9] dt-bindings: soc: mobileye: add EyeQ OLB system
- controller
-Message-ID: <171926261715.405330.8493876031546375299.robh@kernel.org>
-References: <20240620-mbly-olb-v3-0-5f29f8ca289c@bootlin.com>
- <20240620-mbly-olb-v3-4-5f29f8ca289c@bootlin.com>
+	s=arc-20240116; t=1719275371; c=relaxed/simple;
+	bh=1lkK1eSJH8YEwiH1rXj6tpqkEIhAMYbyX+ng9kqMoy0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Wz1BOGMdZCZZDz7syRSrHXqh9su3k/C+0gOGmqK5zfbq1KGzBy34FSBVx587lGrDvORumWz+ulKfXlsVJB8L080nl1/DAL3kh3PtPoQkhoPod1tgYXI0xLHtg+kRssyGARcwzL25GvldAJ5pf6jrn04K353mLZ/OyW2W7/0elWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 526AF339;
+	Mon, 24 Jun 2024 17:29:53 -0700 (PDT)
+Received: from minigeek.lan (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D6DA03F6A8;
+	Mon, 24 Jun 2024 17:29:25 -0700 (PDT)
+Date: Tue, 25 Jun 2024 01:27:43 +0100
+From: Andre Przywara <andre.przywara@arm.com>
+To: Ryan Walklin <ryan@testtoast.com>
+Cc: Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
+ <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter
+ <daniel@ffwll.ch>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel
+ Holland <samuel@sholland.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Chris
+ Morgan <macroalpha82@gmail.com>, John Watts <contact@jookia.org>,
+ dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org
+Subject: Re: [PATCH 01/23] drm: sun4i: de2/de3: Change CSC argument
+Message-ID: <20240625012743.058e9ece@minigeek.lan>
+In-Reply-To: <20240620113150.83466-2-ryan@testtoast.com>
+References: <20240620113150.83466-1-ryan@testtoast.com>
+	<20240620113150.83466-2-ryan@testtoast.com>
+Organization: Arm Ltd.
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.31; x86_64-slackware-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240620-mbly-olb-v3-4-5f29f8ca289c@bootlin.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Thu, 20 Jun 2024 23:29:39 +1200
+Ryan Walklin <ryan@testtoast.com> wrote:
 
-On Thu, 20 Jun 2024 19:30:56 +0200, Théo Lebrun wrote:
-> Add documentation to describe the "Other Logic Block" system-controller.
-> It deals with three platforms: EyeQ5, EyeQ6L and EyeQ6H. First two have
-> a single instance, whereas EyeQ6H has seven named instances.
+Hi,
+
+> From: Jernej Skrabec <jernej.skrabec@gmail.com>
 > 
-> Features provided are:
->  - Clocks, children to main crystal. Some PLLs and divider clocks.
->  - Resets. Some instances DO NOT have reset.
->  - Pinctrl. Only EyeQ5 has such feature.
+> Currently, CSC module takes care only for converting YUV to RGB.
+> However, DE3 is more suited to work in YUV color space. Change CSC mode
+> argument to format type to be more neutral. New argument only tells
+> layer format type and doesn't imply output type.
 > 
-> Those are NOT the only features exposed in OLB system-controllers! Many
-> individual registers, related to IP block integration, can be found.
-> Additional features will be exposed over time.
-> 
-> We simplify devicetree phandles to OLB in two ways:
-> 
->  - Compatibles exposing a single clock do not ask for a index argument.
->    This means we use EyeQ6H OLB south (it has four clocks):
-> 
->       clocks = <&olb_south EQ6HC_SOUTH_PLL_PER>;
-> 
->    But use EyeQ6H OLB east (it has one clock):
-> 
->       clocks = <&olb_east>;
-> 
->  - Compatibles exposing a single reset domain do not ask for a domain
->    index, only a reset index.
->    This means we use EyeQ5 OLB (it has three domains):
-> 
->      resets = <&olb 0 10>;
-> 
->    But use EyeQ6H west reset (it has one domain):
-> 
->       resets = <&olb_west 3>;
-> 
-> About pinctrl subnodes: all pins have two functionality, either GPIO or
-> something-else. The latter is pin dependent, we express constraints
-> using many if-then.
-> 
-> Signed-off-by: Théo Lebrun <theo.lebrun@bootlin.com>
+> This commit doesn't make any functional change.
+
+I can confirm that this is indeed just renaming, preparing for the
+intention change (from conversion mode to input type). 
+
+> Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+> Signed-off-by: Ryan Walklin <ryan@testtoast.com>
+
+Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+
+cheers,
+Andre
+
 > ---
->  .../bindings/soc/mobileye/mobileye,eyeq5-olb.yaml  | 374 +++++++++++++++++++++
->  MAINTAINERS                                        |   2 +
->  include/dt-bindings/clock/mobileye,eyeq5-clk.h     |  21 ++
->  3 files changed, 397 insertions(+)
+>  drivers/gpu/drm/sun4i/sun8i_csc.c      | 22 +++++++++++-----------
+>  drivers/gpu/drm/sun4i/sun8i_csc.h      | 10 +++++-----
+>  drivers/gpu/drm/sun4i/sun8i_vi_layer.c | 16 ++++++++--------
+>  3 files changed, 24 insertions(+), 24 deletions(-)
 > 
-
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> diff --git a/drivers/gpu/drm/sun4i/sun8i_csc.c b/drivers/gpu/drm/sun4i/sun8i_csc.c
+> index 58480d8e4f704..6ebd1c3aa3ab5 100644
+> --- a/drivers/gpu/drm/sun4i/sun8i_csc.c
+> +++ b/drivers/gpu/drm/sun4i/sun8i_csc.c
+> @@ -108,7 +108,7 @@ static const u32 yuv2rgb_de3[2][3][12] = {
+>  };
+>  
+>  static void sun8i_csc_set_coefficients(struct regmap *map, u32 base,
+> -				       enum sun8i_csc_mode mode,
+> +				       enum format_type fmt_type,
+>  				       enum drm_color_encoding encoding,
+>  				       enum drm_color_range range)
+>  {
+> @@ -118,12 +118,12 @@ static void sun8i_csc_set_coefficients(struct regmap *map, u32 base,
+>  
+>  	table = yuv2rgb[range][encoding];
+>  
+> -	switch (mode) {
+> -	case SUN8I_CSC_MODE_YUV2RGB:
+> +	switch (fmt_type) {
+> +	case FORMAT_TYPE_YUV:
+>  		base_reg = SUN8I_CSC_COEFF(base, 0);
+>  		regmap_bulk_write(map, base_reg, table, 12);
+>  		break;
+> -	case SUN8I_CSC_MODE_YVU2RGB:
+> +	case FORMAT_TYPE_YVU:
+>  		for (i = 0; i < 12; i++) {
+>  			if ((i & 3) == 1)
+>  				base_reg = SUN8I_CSC_COEFF(base, i + 1);
+> @@ -141,7 +141,7 @@ static void sun8i_csc_set_coefficients(struct regmap *map, u32 base,
+>  }
+>  
+>  static void sun8i_de3_ccsc_set_coefficients(struct regmap *map, int layer,
+> -					    enum sun8i_csc_mode mode,
+> +					    enum format_type fmt_type,
+>  					    enum drm_color_encoding encoding,
+>  					    enum drm_color_range range)
+>  {
+> @@ -151,12 +151,12 @@ static void sun8i_de3_ccsc_set_coefficients(struct regmap *map, int layer,
+>  
+>  	table = yuv2rgb_de3[range][encoding];
+>  
+> -	switch (mode) {
+> -	case SUN8I_CSC_MODE_YUV2RGB:
+> +	switch (fmt_type) {
+> +	case FORMAT_TYPE_YUV:
+>  		addr = SUN50I_MIXER_BLEND_CSC_COEFF(DE3_BLD_BASE, layer, 0);
+>  		regmap_bulk_write(map, addr, table, 12);
+>  		break;
+> -	case SUN8I_CSC_MODE_YVU2RGB:
+> +	case FORMAT_TYPE_YVU:
+>  		for (i = 0; i < 12; i++) {
+>  			if ((i & 3) == 1)
+>  				addr = SUN50I_MIXER_BLEND_CSC_COEFF(DE3_BLD_BASE,
+> @@ -206,7 +206,7 @@ static void sun8i_de3_ccsc_enable(struct regmap *map, int layer, bool enable)
+>  }
+>  
+>  void sun8i_csc_set_ccsc_coefficients(struct sun8i_mixer *mixer, int layer,
+> -				     enum sun8i_csc_mode mode,
+> +				     enum format_type fmt_type,
+>  				     enum drm_color_encoding encoding,
+>  				     enum drm_color_range range)
+>  {
+> @@ -214,14 +214,14 @@ void sun8i_csc_set_ccsc_coefficients(struct sun8i_mixer *mixer, int layer,
+>  
+>  	if (mixer->cfg->is_de3) {
+>  		sun8i_de3_ccsc_set_coefficients(mixer->engine.regs, layer,
+> -						mode, encoding, range);
+> +						fmt_type, encoding, range);
+>  		return;
+>  	}
+>  
+>  	base = ccsc_base[mixer->cfg->ccsc][layer];
+>  
+>  	sun8i_csc_set_coefficients(mixer->engine.regs, base,
+> -				   mode, encoding, range);
+> +				   fmt_type, encoding, range);
+>  }
+>  
+>  void sun8i_csc_enable_ccsc(struct sun8i_mixer *mixer, int layer, bool enable)
+> diff --git a/drivers/gpu/drm/sun4i/sun8i_csc.h b/drivers/gpu/drm/sun4i/sun8i_csc.h
+> index 828b86fd0cabb..7322770f39f03 100644
+> --- a/drivers/gpu/drm/sun4i/sun8i_csc.h
+> +++ b/drivers/gpu/drm/sun4i/sun8i_csc.h
+> @@ -22,14 +22,14 @@ struct sun8i_mixer;
+>  
+>  #define SUN8I_CSC_CTRL_EN		BIT(0)
+>  
+> -enum sun8i_csc_mode {
+> -	SUN8I_CSC_MODE_OFF,
+> -	SUN8I_CSC_MODE_YUV2RGB,
+> -	SUN8I_CSC_MODE_YVU2RGB,
+> +enum format_type {
+> +	FORMAT_TYPE_RGB,
+> +	FORMAT_TYPE_YUV,
+> +	FORMAT_TYPE_YVU,
+>  };
+>  
+>  void sun8i_csc_set_ccsc_coefficients(struct sun8i_mixer *mixer, int layer,
+> -				     enum sun8i_csc_mode mode,
+> +				     enum format_type fmt_type,
+>  				     enum drm_color_encoding encoding,
+>  				     enum drm_color_range range);
+>  void sun8i_csc_enable_ccsc(struct sun8i_mixer *mixer, int layer, bool enable);
+> diff --git a/drivers/gpu/drm/sun4i/sun8i_vi_layer.c b/drivers/gpu/drm/sun4i/sun8i_vi_layer.c
+> index f9c0a56d3a148..76e2d3ec0a78c 100644
+> --- a/drivers/gpu/drm/sun4i/sun8i_vi_layer.c
+> +++ b/drivers/gpu/drm/sun4i/sun8i_vi_layer.c
+> @@ -242,19 +242,19 @@ static int sun8i_vi_layer_update_coord(struct sun8i_mixer *mixer, int channel,
+>  	return 0;
+>  }
+>  
+> -static u32 sun8i_vi_layer_get_csc_mode(const struct drm_format_info *format)
+> +static u32 sun8i_vi_layer_get_format_type(const struct drm_format_info *format)
+>  {
+>  	if (!format->is_yuv)
+> -		return SUN8I_CSC_MODE_OFF;
+> +		return FORMAT_TYPE_RGB;
+>  
+>  	switch (format->format) {
+>  	case DRM_FORMAT_YVU411:
+>  	case DRM_FORMAT_YVU420:
+>  	case DRM_FORMAT_YVU422:
+>  	case DRM_FORMAT_YVU444:
+> -		return SUN8I_CSC_MODE_YVU2RGB;
+> +		return FORMAT_TYPE_YVU;
+>  	default:
+> -		return SUN8I_CSC_MODE_YUV2RGB;
+> +		return FORMAT_TYPE_YUV;
+>  	}
+>  }
+>  
+> @@ -262,7 +262,7 @@ static int sun8i_vi_layer_update_formats(struct sun8i_mixer *mixer, int channel,
+>  					 int overlay, struct drm_plane *plane)
+>  {
+>  	struct drm_plane_state *state = plane->state;
+> -	u32 val, ch_base, csc_mode, hw_fmt;
+> +	u32 val, ch_base, fmt_type, hw_fmt;
+>  	const struct drm_format_info *fmt;
+>  	int ret;
+>  
+> @@ -280,9 +280,9 @@ static int sun8i_vi_layer_update_formats(struct sun8i_mixer *mixer, int channel,
+>  			   SUN8I_MIXER_CHAN_VI_LAYER_ATTR(ch_base, overlay),
+>  			   SUN8I_MIXER_CHAN_VI_LAYER_ATTR_FBFMT_MASK, val);
+>  
+> -	csc_mode = sun8i_vi_layer_get_csc_mode(fmt);
+> -	if (csc_mode != SUN8I_CSC_MODE_OFF) {
+> -		sun8i_csc_set_ccsc_coefficients(mixer, channel, csc_mode,
+> +	fmt_type = sun8i_vi_layer_get_format_type(fmt);
+> +	if (fmt_type != FORMAT_TYPE_RGB) {
+> +		sun8i_csc_set_ccsc_coefficients(mixer, channel, fmt_type,
+>  						state->color_encoding,
+>  						state->color_range);
+>  		sun8i_csc_enable_ccsc(mixer, channel, true);
 
