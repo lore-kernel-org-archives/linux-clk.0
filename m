@@ -1,105 +1,124 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 124C417DE2E;
-	Tue, 25 Jun 2024 21:12:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E27617E905;
+	Tue, 25 Jun 2024 22:29:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719349938; cv=none; b=Db5z4zAG5THtvBE8Sbjgpk7Buk8k5WivILb93bEMkP++nXYYkUQBjStuQLOqthCx9ZUCfXgapOgnLqK8GJfrbbUVyPJLlaHpDAyBdxJ+JxqwnoNWUqYRWl+MTV+bMSd9v9qaplIh3Ffm9yRv/akWd56wKgrFWFMkWcI+hegn0R8=
+	t=1719354544; cv=none; b=lRLgrbZ/+i8ofiZ9DUYt0OSJt4GMsLPzhoHJ/X5TtTmLph2ype4Tm9MQ2aJwT6EaFRXz+vtjCfii9YLrpj6lwJeSP7FrpgCsj87ptZTjpeek2M913vcHz4Iwj7sLGFmh6ePznLIG7KFKfXLfM5bqBD4A/Wc/jqG/nny8T5fO23I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719349938; c=relaxed/simple;
-	bh=hyygwZzV0TA9MeTrczY+xfhnsSFmoluW/aMTxSPPF7g=;
+	s=arc-20240116; t=1719354544; c=relaxed/simple;
+	bh=+L/emvVgtDd3ULOJoo20PaysUqptsWugNLJKhSGnCkg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rrsx3retKRTBVJTyM3S6vHK838RUV5hvPFphP1Gqr17eYJujvjIR5J7JcFM4n8gLXFMoRx0C1486VoYYLUauWvvCdzhTwn0Vzjol8SD1c3voUq0ajDCYRNGEVswIgHSVXgjLtoduOxeHFKbD2qDAMDUgDiGsju6urXTRgJFEazY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ArcIuk0u; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=N9xY9Hpih9mjZ7Ip6VPGC7OL0QIgFTRkTY0NzRH7cbZi4NG0U46xFjs897PTGMpgaYRXl7TndyaaWMqKR+lj3t1vyAUAnQI52Cw8/a6cqnZ4ni62Gs0BzfpDM8EmAxfcYlfB0DWLUrtJEkz6PR/rlDns0h3XaS4Fy9Bbs+F4oJg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aHIBw3DB; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ArcIuk0u"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54F61C32781;
-	Tue, 25 Jun 2024 21:12:16 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aHIBw3DB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0F0AC32781;
+	Tue, 25 Jun 2024 22:29:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719349937;
-	bh=hyygwZzV0TA9MeTrczY+xfhnsSFmoluW/aMTxSPPF7g=;
+	s=k20201202; t=1719354544;
+	bh=+L/emvVgtDd3ULOJoo20PaysUqptsWugNLJKhSGnCkg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ArcIuk0uRfsESHfkGfkKUOWRPGGQRoYshDAKXgfL7RAidYC2yoPUOF4EOIWRth/zx
-	 ykHnbRshuPVKR4UsTmEqJpfbjR7Lxb1MgohaxTO7sN4G186OXUULYfjTSoMk/JACVy
-	 rDH4YFTTQFVhxEeWdIOOD5ronHyHYn5GlVnw+3JtZFiKhbLmGLU7w1aHq4GtR8VqXx
-	 zOrwlDLRr/Fxt5QON7ooh6qk8zgpeQFn4BGJ4f8p9B/da2ub1m3VU/0NxxHk78cBsC
-	 Ylf78UIPjF87TiTkhrpWjEAnrqweWrfQoiMdjHdFmTSchTgaZPSVi6dGjUTTadSf7V
-	 tnFI4Gu0p7ohg==
-Date: Tue, 25 Jun 2024 23:12:12 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	"J.M.B. Downing" <jonathan.downing@nautel.com>, Vladimir Zapolskiy <vz@mleia.com>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Russell King <linux@armlinux.org.uk>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Miquel Raynal <miquel.raynal@bootlin.com>, 
-	Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Yangtao Li <frank.li@vivo.com>, Li Zetao <lizetao1@huawei.com>, 
-	Chancel Liu <chancel.liu@nxp.com>, Michael Ellerman <mpe@ellerman.id.au>, dmaengine@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org, 
-	linux-sound@vger.kernel.org, linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	linux-mtd@lists.infradead.org, Markus Elfring <Markus.Elfring@web.de>
-Subject: Re: [Patch v4 10/10] i2x: pnx: Use threaded irq to fix warning from
- del_timer_sync()
-Message-ID: <73yvglxha45d5ft74m3y5fdmkgatm2yftvhza2msg4ombjz42f@wz43pubhbpdz>
-References: <20240620175657.358273-1-piotr.wojtaszczyk@timesys.com>
- <20240620175657.358273-11-piotr.wojtaszczyk@timesys.com>
- <jgqhlnysuwajlfxjwetas53jzdk6nnmewead2xzyt3xngwpcvl@xbooed6cwlq4>
- <CAG+cZ04suU53wR5f0PhudgNmkxTRtwEXTS1cWH1o9_rTNM94Cg@mail.gmail.com>
+	b=aHIBw3DBgsgjmcpsG44SasdTK/47SLheszc2AagGPy/V7LIt+KIuH7AKrKN0mdQ4m
+	 v/86HnwE7/KWPAzxgOoR5hd/JrDeNRp9OvGbCb53WyGFL4HooYtZJcZIp7AkX2QJaT
+	 +vHjK7JhSOiOAkpK9K/Uyzwtlo1NR5gjQek9RAJpOZqYT6fUx1Eow01E9Q9ijR15CZ
+	 38Zdrwgb2Jm2MNu4wtYm/QCdZo2set9VEJc9HQaVddLzXwUicN4X+XaslvpbMn/EO5
+	 WLDZHpj95vw9bZc+CTbvXsK9O1YX/XaWex8fqU8mdI6PeHJvGwff4q5XmL1qsCihxt
+	 HbV5Mb4qb0ZXA==
+Date: Tue, 25 Jun 2024 16:29:02 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: imx@lists.linux.dev, Frank Li <Frank.Li@nxp.com>,
+	linux-gpio@vger.kernel.org,
+	Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Guenter Roeck <linux@roeck-us.net>, linux-pwm@vger.kernel.org,
+	Lars-Peter Clausen <lars@metafoo.de>, linux-pm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Jonathan Cameron <jic23@kernel.org>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	linux-watchdog@vger.kernel.org, linux-iio@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-spi@vger.kernel.org, linux-i2c@vger.kernel.org,
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+	linux-clk@vger.kernel.org, Dong Aisheng <aisheng.dong@nxp.com>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Abel Vesa <abelvesa@kernel.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	devicetree@vger.kernel.org, Peng Fan <peng.fan@nxp.com>,
+	Zhang Rui <rui.zhang@intel.com>, Andi Shyti <andi.shyti@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: [PATCH v2] dt-bindings: drop stale Anson Huang from maintainers
+Message-ID: <171935453992.325655.11101198917545671907.robh@kernel.org>
+References: <20240617065828.9531-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAG+cZ04suU53wR5f0PhudgNmkxTRtwEXTS1cWH1o9_rTNM94Cg@mail.gmail.com>
+In-Reply-To: <20240617065828.9531-1-krzysztof.kozlowski@linaro.org>
 
-Hi Piotr,
 
-On Fri, Jun 21, 2024 at 02:08:03PM GMT, Piotr Wojtaszczyk wrote:
-> On Fri, Jun 21, 2024 at 12:57â€¯AM Andi Shyti <andi.shyti@kernel.org> wrote:
-> > On Thu, Jun 20, 2024 at 07:56:41PM GMT, Piotr Wojtaszczyk wrote:
-> > > When del_timer_sync() is called in an interrupt context it throws a warning
-> > > because of potential deadlock. Threaded irq handler fixes the potential
-> > > problem.
-> > >
-> > > Signed-off-by: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
-> >
-> > did you run into a lockdep splat?
-> >
-> > Anything against using del_timer(), instead? Have you tried?
+On Mon, 17 Jun 2024 08:58:28 +0200, Krzysztof Kozlowski wrote:
+> Emails to Anson Huang bounce:
 > 
-> I didn't get a lockdep splat but console was flooded with warnings from
-> https://github.com/torvalds/linux/blob/v6.10-rc4/kernel/time/timer.c#L1655
-> In the linux kernel v5.15 I didn't see these warnings.
+>   Diagnostic-Code: smtp; 550 5.4.1 Recipient address rejected: Access denied.
 > 
-> I'm not a maintainer of the driver and I didn't do any research on
-> what kind of impact
-> would have using del_timer() instad. Maybe Vladimir Zapolskiy will know that.
+> Add IMX platform maintainers for bindings which would become orphaned.
+> 
+> Acked-by: Uwe Kleine-König <ukleinek@kernel.org>
+> Reviewed-by: Fabio Estevam <festevam@gmail.com>
+> Acked-by: Peng Fan <peng.fan@nxp.com>
+> Acked-by: Wolfram Sang <wsa+renesas@sang-engineering.com> # for I2C
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> ---
+> 
+> Changes in v2:
+> 1. Add acks/Rbs.
+> 2. Change clock maintainers to Abel Vesa and Peng Fan.
+> 3. Change iio/magnetometer maintainer to Jonathan.
+> ---
+>  .../devicetree/bindings/arm/freescale/fsl,imx7ulp-sim.yaml    | 4 +++-
+>  Documentation/devicetree/bindings/clock/imx6q-clock.yaml      | 3 ++-
+>  Documentation/devicetree/bindings/clock/imx6sl-clock.yaml     | 3 ++-
+>  Documentation/devicetree/bindings/clock/imx6sll-clock.yaml    | 3 ++-
+>  Documentation/devicetree/bindings/clock/imx6sx-clock.yaml     | 3 ++-
+>  Documentation/devicetree/bindings/clock/imx6ul-clock.yaml     | 3 ++-
+>  Documentation/devicetree/bindings/clock/imx7d-clock.yaml      | 1 -
+>  Documentation/devicetree/bindings/clock/imx8m-clock.yaml      | 3 ++-
+>  Documentation/devicetree/bindings/gpio/fsl-imx-gpio.yaml      | 4 +++-
+>  Documentation/devicetree/bindings/gpio/gpio-mxs.yaml          | 1 -
+>  Documentation/devicetree/bindings/i2c/i2c-imx-lpi2c.yaml      | 4 +++-
+>  .../devicetree/bindings/iio/magnetometer/fsl,mag3110.yaml     | 2 +-
+>  .../devicetree/bindings/memory-controllers/fsl/mmdc.yaml      | 4 +++-
+>  Documentation/devicetree/bindings/nvmem/imx-iim.yaml          | 4 +++-
+>  Documentation/devicetree/bindings/nvmem/imx-ocotp.yaml        | 4 +++-
+>  Documentation/devicetree/bindings/nvmem/mxs-ocotp.yaml        | 4 +++-
+>  Documentation/devicetree/bindings/pwm/imx-tpm-pwm.yaml        | 4 +++-
+>  Documentation/devicetree/bindings/pwm/mxs-pwm.yaml            | 1 -
+>  Documentation/devicetree/bindings/spi/spi-fsl-lpspi.yaml      | 4 +++-
+>  Documentation/devicetree/bindings/thermal/imx-thermal.yaml    | 1 -
+>  Documentation/devicetree/bindings/thermal/imx8mm-thermal.yaml | 4 +++-
+>  Documentation/devicetree/bindings/thermal/qoriq-thermal.yaml  | 4 +++-
+>  Documentation/devicetree/bindings/watchdog/fsl-imx-wdt.yaml   | 4 +++-
+>  .../devicetree/bindings/watchdog/fsl-imx7ulp-wdt.yaml         | 4 +++-
+>  24 files changed, 52 insertions(+), 24 deletions(-)
+> 
 
-Your patch is definitely correct, no doubt about that.
+Applied, thanks!
 
-And I don't have anything aginast changing irq handlers to
-threaded handlers. But I would be careful at doing that depending
-on the use of the controller and for accepting such change I
-would need an ack from someone who knows the device. Vladimir,
-perhaps?
-
-There are cases where using threaded handlers are not totally
-right, for example when the controller is used at early boot for
-power management handling. I don't think it's the case for this
-driver, but I can't be 100% sure.
-
-If you were able to see the flood of WARN_ON's, would be
-interesting to know how it behaves with del_timer(). Mind
-giving it a test?
-
-Thanks,
-Andi
