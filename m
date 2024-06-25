@@ -1,24 +1,24 @@
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FED18F48;
-	Tue, 25 Jun 2024 00:29:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C32A0746E;
+	Tue, 25 Jun 2024 00:39:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719275390; cv=none; b=GreBFfi1jf0ldoqb13xgivLcP7LThX8vantEEqXKATPQYjuiLMsBONDzbwAfYlCN1RS7y3uvB+2FV4GV3hkKb6oZrOY6y2rxTh0YBU+KwfyxfCN1rWGSneJRcgEDT7FYieUGWf1Eivm8bBMvynN4SOSuahj9pyn2O7Sj2QioQEo=
+	t=1719275951; cv=none; b=Q5dbrjtw3dtTYk0n+Th7lr4Z8u23qNE22yO+lJZrER33/tCcXbxi+Vwx7HBqa72XiyJE+9SQEYp7l0KbwaKJejfn5sB3VbqsUzBBZMPhn7nCAL6oLpXd1YbS9mqk+wzFyYH42NDmWV9o/c4wqxodBZC5jWmQYDUztWCngAEHK1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719275390; c=relaxed/simple;
-	bh=iYn5VfO5+IG4ZfSgFzubFN6QkA26VSPvolhxPxclxYY=;
+	s=arc-20240116; t=1719275951; c=relaxed/simple;
+	bh=p2n334UNdruZ6KKG3jJXEblFwhf8ypH8DxOBtDAQ2PY=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Mt/8cjrwbixTavmLE9KZnwzG7cISCtmHsOKF9wyKqTiU3wb1L+9Hp986C+DiEEc2c6nshRHKypCStnzsiY6oLX4261cFZrYw/IgkNZ2js6wgINYN0WLvzR0q4HGypnPuDEhyIPeaz8PfiKfsFfOP5rMmdmZJlLMPmP72MHtZp6Q=
+	 MIME-Version:Content-Type; b=kO0zjQa6GnowqATO2m+oA4boQDXZ35cQn7GaMRXfr2HfHW7a0CSKDDOzpaQjSuHiiikcRQOq4ia2SF9QYihiBC+cpyJ84tkBlD3GxTthoRPQMmIW1ogwBL5U77vqx53z5VVAik1yfgc+xkyPdeYOkbi+d62h0CI9s8R7ws4Pyhg=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C57DF339;
-	Mon, 24 Jun 2024 17:30:12 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 91F6D339;
+	Mon, 24 Jun 2024 17:39:33 -0700 (PDT)
 Received: from minigeek.lan (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 53A0D3F6A8;
-	Mon, 24 Jun 2024 17:29:45 -0700 (PDT)
-Date: Tue, 25 Jun 2024 01:28:04 +0100
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 272C03F6A8;
+	Mon, 24 Jun 2024 17:39:06 -0700 (PDT)
+Date: Tue, 25 Jun 2024 01:37:25 +0100
 From: Andre Przywara <andre.przywara@arm.com>
 To: Ryan Walklin <ryan@testtoast.com>
 Cc: Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
@@ -32,12 +32,12 @@ Cc: Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
  dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
  linux-sunxi@lists.linux.dev, devicetree@vger.kernel.org,
  linux-clk@vger.kernel.org
-Subject: Re: [PATCH 14/23] drm: sun4i: de2/de3: refactor mixer
- initialisation
-Message-ID: <20240625012804.27e55708@minigeek.lan>
-In-Reply-To: <20240620113150.83466-15-ryan@testtoast.com>
+Subject: Re: [PATCH 18/23] dt-bindings: allwinner: add H616 DE33 bus, clock
+ and display bindings
+Message-ID: <20240625013725.4c5a3e7c@minigeek.lan>
+In-Reply-To: <20240620113150.83466-19-ryan@testtoast.com>
 References: <20240620113150.83466-1-ryan@testtoast.com>
-	<20240620113150.83466-15-ryan@testtoast.com>
+	<20240620113150.83466-19-ryan@testtoast.com>
 Organization: Arm Ltd.
 X-Mailer: Claws Mail 4.2.0 (GTK 3.24.31; x86_64-slackware-linux-gnu)
 Precedence: bulk
@@ -49,142 +49,79 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Thu, 20 Jun 2024 23:29:52 +1200
+On Thu, 20 Jun 2024 23:29:56 +1200
 Ryan Walklin <ryan@testtoast.com> wrote:
 
-Hi,
-
-> From: Jernej Skrabec <jernej.skrabec@gmail.com>
+> The Allwinner H616 and variants have a new display engine revision
+> (DE33).
 > 
-> Now that the DE variant can be selected by enum, take the oppportunity
-> to factor out some common initialisation code to a separate function.
+> Add display engine bus, clock and mixer bindings for the DE33.
 > 
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 > Signed-off-by: Ryan Walklin <ryan@testtoast.com>
 > ---
->  drivers/gpu/drm/sun4i/sun8i_mixer.c | 69 ++++++++++++++++-------------
->  1 file changed, 38 insertions(+), 31 deletions(-)
+>  .../devicetree/bindings/bus/allwinner,sun50i-a64-de2.yaml  | 7 ++++---
+>  .../bindings/clock/allwinner,sun8i-a83t-de2-clk.yaml       | 1 +
+>  .../bindings/display/allwinner,sun8i-a83t-de2-mixer.yaml   | 1 +
+>  3 files changed, 6 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/gpu/drm/sun4i/sun8i_mixer.c b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> index 7874b68786eee..533aa93d2a30e 100644
-> --- a/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> +++ b/drivers/gpu/drm/sun4i/sun8i_mixer.c
-> @@ -404,6 +404,40 @@ static int sun8i_mixer_of_get_id(struct device_node *node)
->  	return of_ep.id;
->  }
->  
-> +static void sun8i_mixer_init(struct sun8i_mixer *mixer)
-> +{
-> +	unsigned int base;
-> +	int plane_cnt, i;
-> +
-> +	base = sun8i_blender_base(mixer);
+> diff --git a/Documentation/devicetree/bindings/bus/allwinner,sun50i-a64-de2.yaml b/Documentation/devicetree/bindings/bus/allwinner,sun50i-a64-de2.yaml
+> index 9845a187bdf65..631027375e33b 100644
+> --- a/Documentation/devicetree/bindings/bus/allwinner,sun50i-a64-de2.yaml
+> +++ b/Documentation/devicetree/bindings/bus/allwinner,sun50i-a64-de2.yaml
+> @@ -23,9 +23,10 @@ properties:
+>    compatible:
+>      oneOf:
+>        - const: allwinner,sun50i-a64-de2
+> -      - items:
+> -          - const: allwinner,sun50i-h6-de3
+> -          - const: allwinner,sun50i-a64-de2
+> +      - enum:
+> +        - allwinner,sun50i-h6-de3
+> +        - allwinner,sun50i-h616-de33
+> +      - const: allwinner,sun50i-a64-de2
 
-Please move the initialisation up into the line with the declaration.
+That doesn't look right, that would allow:
+- h6-de
+- h616-de33
+- a64-de2
 
-> +
-> +	/* Enable the mixer */
-> +	regmap_write(mixer->engine.regs, SUN8I_MIXER_GLOBAL_CTL,
-> +		     SUN8I_MIXER_GLOBAL_CTL_RT_EN);
-> +
-> +	/* Set background color to black */
-> +	regmap_write(mixer->engine.regs, SUN8I_MIXER_BLEND_BKCOLOR(base),
-> +		     SUN8I_MIXER_BLEND_COLOR_BLACK);
-> +
-> +	/*
-> +	 * Set fill color of bottom plane to black. Generally not needed
-> +	 * except when VI plane is at bottom (zpos = 0) and enabled.
-> +	 */
-> +	regmap_write(mixer->engine.regs, SUN8I_MIXER_BLEND_PIPE_CTL(base),
-> +		     SUN8I_MIXER_BLEND_PIPE_CTL_FC_EN(0));
-> +	regmap_write(mixer->engine.regs, SUN8I_MIXER_BLEND_ATTR_FCOLOR(base, 0),
-> +		     SUN8I_MIXER_BLEND_COLOR_BLACK);
-> +
-> +	plane_cnt = mixer->cfg->vi_num + mixer->cfg->ui_num;
-> +	for (i = 0; i < plane_cnt; i++)
-> +		regmap_write(mixer->engine.regs,
-> +			     SUN8I_MIXER_BLEND_MODE(base, i),
-> +			     SUN8I_MIXER_BLEND_MODE_DEF);
-> +
-> +	regmap_update_bits(mixer->engine.regs, SUN8I_MIXER_BLEND_PIPE_CTL(base),
-> +			   SUN8I_MIXER_BLEND_PIPE_CTL_EN_MSK, 0);
-> +}
-> +
->  static int sun8i_mixer_bind(struct device *dev, struct device *master,
->  			      void *data)
->  {
-> @@ -412,8 +446,6 @@ static int sun8i_mixer_bind(struct device *dev, struct device *master,
->  	struct sun4i_drv *drv = drm->dev_private;
->  	struct sun8i_mixer *mixer;
->  	void __iomem *regs;
-> -	unsigned int base;
-> -	int plane_cnt;
->  	int i, ret;
->  
->  	/*
-> @@ -517,8 +549,6 @@ static int sun8i_mixer_bind(struct device *dev, struct device *master,
->  
->  	list_add_tail(&mixer->engine.list, &drv->engine_list);
->  
-> -	base = sun8i_blender_base(mixer);
-> -
->  	/* Reset registers and disable unused sub-engines */
->  	if (mixer->cfg->de_type == sun8i_mixer_de3) {
->  		for (i = 0; i < DE3_MIXER_UNIT_SIZE; i += 4)
-> @@ -534,7 +564,8 @@ static int sun8i_mixer_bind(struct device *dev, struct device *master,
->  		regmap_write(mixer->engine.regs, SUN50I_MIXER_FMT_EN, 0);
->  		regmap_write(mixer->engine.regs, SUN50I_MIXER_CDC0_EN, 0);
->  		regmap_write(mixer->engine.regs, SUN50I_MIXER_CDC1_EN, 0);
-> -	} else {
-> +
+which is not what we want, right? It's more:
+- h6-de, a64-de2
+- h616-de, a64-de2
+- a64-de2
 
-That seems to add an extra line, which shouldn't be here.
-
-Verified that the rest is indeed just a code move, from below into a
-separate function. So with the two minor bits above fixed:
-
-Reviewed-by: Andre Przywara <andre.przywara@arm.com>
+I think allwinner,sun8i-a23-rsb.yaml uses the pattern you are after.
 
 Cheers,
 Andre
 
-> +	} else if (mixer->cfg->de_type == sun8i_mixer_de2) {
->  		for (i = 0; i < DE2_MIXER_UNIT_SIZE; i += 4)
->  			regmap_write(mixer->engine.regs, i, 0);
+
+
 >  
-> @@ -547,32 +578,8 @@ static int sun8i_mixer_bind(struct device *dev, struct device *master,
->  		regmap_write(mixer->engine.regs, SUN8I_MIXER_DCSC_EN, 0);
->  	}
+>    reg:
+>      maxItems: 1
+> diff --git a/Documentation/devicetree/bindings/clock/allwinner,sun8i-a83t-de2-clk.yaml b/Documentation/devicetree/bindings/clock/allwinner,sun8i-a83t-de2-clk.yaml
+> index 70369bd633e40..7fcd55d468d49 100644
+> --- a/Documentation/devicetree/bindings/clock/allwinner,sun8i-a83t-de2-clk.yaml
+> +++ b/Documentation/devicetree/bindings/clock/allwinner,sun8i-a83t-de2-clk.yaml
+> @@ -25,6 +25,7 @@ properties:
+>        - const: allwinner,sun50i-a64-de2-clk
+>        - const: allwinner,sun50i-h5-de2-clk
+>        - const: allwinner,sun50i-h6-de3-clk
+> +      - const: allwinner,sun50i-h616-de33-clk
+>        - items:
+>            - const: allwinner,sun8i-r40-de2-clk
+>            - const: allwinner,sun8i-h3-de2-clk
+> diff --git a/Documentation/devicetree/bindings/display/allwinner,sun8i-a83t-de2-mixer.yaml b/Documentation/devicetree/bindings/display/allwinner,sun8i-a83t-de2-mixer.yaml
+> index b75c1ec686ad2..c37eb8ae1b8ee 100644
+> --- a/Documentation/devicetree/bindings/display/allwinner,sun8i-a83t-de2-mixer.yaml
+> +++ b/Documentation/devicetree/bindings/display/allwinner,sun8i-a83t-de2-mixer.yaml
+> @@ -24,6 +24,7 @@ properties:
+>        - allwinner,sun50i-a64-de2-mixer-0
+>        - allwinner,sun50i-a64-de2-mixer-1
+>        - allwinner,sun50i-h6-de3-mixer-0
+> +      - allwinner,sun50i-h616-de33-mixer-0
 >  
-> -	/* Enable the mixer */
-> -	regmap_write(mixer->engine.regs, SUN8I_MIXER_GLOBAL_CTL,
-> -		     SUN8I_MIXER_GLOBAL_CTL_RT_EN);
-> -
-> -	/* Set background color to black */
-> -	regmap_write(mixer->engine.regs, SUN8I_MIXER_BLEND_BKCOLOR(base),
-> -		     SUN8I_MIXER_BLEND_COLOR_BLACK);
-> -
-> -	/*
-> -	 * Set fill color of bottom plane to black. Generally not needed
-> -	 * except when VI plane is at bottom (zpos = 0) and enabled.
-> -	 */
-> -	regmap_write(mixer->engine.regs, SUN8I_MIXER_BLEND_PIPE_CTL(base),
-> -		     SUN8I_MIXER_BLEND_PIPE_CTL_FC_EN(0));
-> -	regmap_write(mixer->engine.regs, SUN8I_MIXER_BLEND_ATTR_FCOLOR(base, 0),
-> -		     SUN8I_MIXER_BLEND_COLOR_BLACK);
-> -
-> -	plane_cnt = mixer->cfg->vi_num + mixer->cfg->ui_num;
-> -	for (i = 0; i < plane_cnt; i++)
-> -		regmap_write(mixer->engine.regs,
-> -			     SUN8I_MIXER_BLEND_MODE(base, i),
-> -			     SUN8I_MIXER_BLEND_MODE_DEF);
-> -
-> -	regmap_update_bits(mixer->engine.regs, SUN8I_MIXER_BLEND_PIPE_CTL(base),
-> -			   SUN8I_MIXER_BLEND_PIPE_CTL_EN_MSK, 0);
-> -
-> +	sun8i_mixer_init(mixer);
-> +	
->  	return 0;
->  
->  err_disable_bus_clk:
+>    reg:
+>      maxItems: 1
 
