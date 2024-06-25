@@ -1,57 +1,57 @@
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A7731667C2
-	for <linux-clk@vger.kernel.org>; Tue, 25 Jun 2024 12:14:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F77316A945
+	for <linux-clk@vger.kernel.org>; Tue, 25 Jun 2024 12:14:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719317676; cv=none; b=ZxliLIL9o4VMMUNhU0/mOb7sydazNYvKIML3q2wwgGK9Nk+CRB8eAfrbvVMMXK0kM2VxzYuO/uVm05WfYRPGe4ZQoaHOOm0RglcfFvsUuFrQoS5wIEa8D6v+o9pdkTl2UxLWh8rcDKUCOxiN2duAgf587nX3xRwhUew9olh2BcI=
+	t=1719317677; cv=none; b=OW5CmsJ1ompgFnTa/cT21R9sAA+ZxOEJTaccINxHEDIoM5iUMeIGp2xEUjZlVMoeELqv04DSzULBpdmEDfhGlE/dVUYu35Pu0azAnp9PSsrjRC/mZFK5Kr+KUX5NXkX1h6BuaKKKqkhKIcu9GNyPJCGxDmk88GmHi42VYpw0Zjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719317676; c=relaxed/simple;
-	bh=rr0lgEBLkmAXsCiSlTXgBt/no/AR92gtWozf/BUgBJw=;
+	s=arc-20240116; t=1719317677; c=relaxed/simple;
+	bh=G+BtkmivEpWKO42JZ/b2nYWC06K1BWJ8enlG6hWRiGk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qfRQ3xBEBvt3m1yv8+MAuIP9Cq2ptIhYlE7Rfl7Ks8gLScrqmtK0DoDpLyst+MIUjTENc4YEpBi7oWFnoxomh5YtrPU5vpVNPhLPNrDx16j/31ZfPQalPQJJThG1UVDagw8tFP5UbAeNa2u1PiMiNiUas0FEvz8Rz2StOv886FE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=NXKZWhsM; arc=none smtp.client-ip=209.85.208.172
+	 MIME-Version; b=WkrtpBO8iVqdR49SwPYhYsjEqSKWQ6P75S2CBwflxsw7rM7Ds1e0xqf86qC+y4iEVRha4rPSxMNnGGb2+uMFZCnt9YJmnsz8ku+EYWqC3xBsNSTYgWS41ek5eavH6gPT4EAkZkrKt5ASi06+NSXFBcBDeYxIR/WXcpWlNI7ZQvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=h/gHlTGI; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="NXKZWhsM"
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2ec002caf3eso80572411fa.1
-        for <linux-clk@vger.kernel.org>; Tue, 25 Jun 2024 05:14:34 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="h/gHlTGI"
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-363bbd51050so4309144f8f.0
+        for <linux-clk@vger.kernel.org>; Tue, 25 Jun 2024 05:14:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1719317673; x=1719922473; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1719317675; x=1719922475; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jRze9YXE4oJAbB9LOUs5rXXSGUTHGLWP5SsCaSBey6I=;
-        b=NXKZWhsMkBX+r41JCgIibsEt0XCPB0VF1BUBzoNT+cMOg9P34C8EzT4Ty1BoZXsPd0
-         wZfUimoGclnxxklgNI5O64ifYjSv/wWX+B0RFFQxQy16BHIIAp21XtlCYco90vKu0dyB
-         j/VrmJBgRgIqK8vAkZgeRHgNZp5TzQHUrIaKtik+jiC18i6/cImARZ5Or5MYXELD+nVF
-         fMpgVmebrnQP3xki+nrLmQVS05biBZgUgQs7QkQaT6rs9h22F831rtrNdeCHIvRIZEJ5
-         B8z/rLyVDdN4FaNPvqD9yIg54ZFOgPZ4W15McU9XFTFe469mqLiQdchpr5RiDzXDEZUC
-         CZ4g==
+        bh=tmpNHRRU2OSWCKd+hVEeWAEb1vupeZqAg8vsnXJHwhU=;
+        b=h/gHlTGIDkFVEDFq1QHC6bePIxIIx2MqnlMCnhGfqXVYAJxJHaZY1ipDS4Xt/b5tAB
+         tdA87XfdbEaUwquSKwsn6B9kKR/wuiNOLDJlcVue+jsJFYd01tKBev5ly+R6u9/5wLll
+         aHH06pO5E6NIKeGN6V4YVStV8PObjoY+Hqgcc4EHGcg+Wmz91ec0069F/bxzcm4vzueN
+         sc7v8FIgg7OZ0BTJw1Kxh11adZVuhM4nUUWXV7E6ZYi8E2DS7xcKFak8tH6K3ETDTAcv
+         hbsPa8664U3Qz3kMy4WgfTv0MQsBFJJh7N0euKqrj+buN3N7aziFf4PjhlKkweYUYnfy
+         u7mw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719317673; x=1719922473;
+        d=1e100.net; s=20230601; t=1719317675; x=1719922475;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=jRze9YXE4oJAbB9LOUs5rXXSGUTHGLWP5SsCaSBey6I=;
-        b=ieeUI7Cdf3/FeP9MOUARgXvLZ+fe2RE+yFvkttNoF4C36MenBdYxVQh2mrqDq9tyqI
-         I7ULyO36kQBP7u7rFdrX8ZHSEzY9ydWGDy/7KzsyQYKcTQJBrQelpw0Ive2XzyKlKjMX
-         uslu/MWYaUx7PStwdq5k+PkeduLlXgxIhs7stuIlZE5oP4vzD9qhl7sEWIpYI91GmU7W
-         ffkf0bQIw5dFv7Agv0hjDGCJFHtXlBxbkoUKq7wnTfmOxky/bMcsEkDF3aNT5wJ2hlBe
-         oaZ3f5SCMtLlyvnYhxkXk89KrrrOkq9Tk4iw3ctmJkDdLCXbXT+cbi9jeG7KEs7M/2Jb
-         z8CA==
-X-Forwarded-Encrypted: i=1; AJvYcCUivVLZMLBIig/BbgB8B07xbTjzCLyIOy4X/nR7galTURKwhyTDkd3/dRslV9FTAwMa7b7aqzAiaE0jA2P8DVwdKKiOEYvcDmMz
-X-Gm-Message-State: AOJu0YzsT6iWBLctWABohRG0hKejhtWmJSlwlJ7ioYjYKPjqtGUvxBxq
-	mzMLrKOKNLBSsxi6Pgaw5Akvn12BDFRFiO7DeBxxPfbVk8gKHGGwMFUGX7UyB04=
-X-Google-Smtp-Source: AGHT+IGYT+z595GKvgUGt9vUUVbcDQtV2IC7YkMuRBlJD2y/+YjkQ2HgvlUA0wAqAKIBNsXZdL+8HA==
-X-Received: by 2002:a2e:994f:0:b0:2ec:541b:4b3d with SMTP id 38308e7fff4ca-2ec5b31d5e4mr52153491fa.41.1719317672811;
-        Tue, 25 Jun 2024 05:14:32 -0700 (PDT)
+        bh=tmpNHRRU2OSWCKd+hVEeWAEb1vupeZqAg8vsnXJHwhU=;
+        b=uIf0392v9s1Am58JuFwyYfnXO6P5pS3Qi9e98c8lP9wSaW2CVvn4lr0NHnoUj3UZqk
+         +tXrzGeFHnVLvjTvLucR4HMo0lMMhvqA9NOI4ikKZldjDt+tj9rXC07T0kA+/KPzjzra
+         AQj2vWkFH20vsh8GjtuTgVv3wTdntGsaUxJ8r9xXx1ikMG7rB9oeFHsdFfC1sci0XJZr
+         b4TIV4rQErp3gxvzaBM9zraMEAS7jasntrGXllAQ1ZWUFAx6pEJZtlMGJjaIAPfrUxWS
+         UQJ1lCEREyaJojjNEZJ2h594pwSFE/PQzSYxgEelasTvlZm4pamuO0QMj2741/qcFJLl
+         X1yg==
+X-Forwarded-Encrypted: i=1; AJvYcCXhKZSvh8VvkhUrMMvj0EfDmoiFk/lETKhdm5prd+3ZhMWasvrBv7kTu9DFWbwPovCzOKAd1C6Cbi3Z+ac0jiYHbNBHLcA9k6PM
+X-Gm-Message-State: AOJu0YzA7D1VU8ufBA8avB15laAPavJTuKyXbWl4xJqNWYYaYq6ojtZz
+	saAWGMt6u1dufcfsqIHvASoET5k42vM4VM2XPyCR3uVwWFqry7KiQbty9leDTxc=
+X-Google-Smtp-Source: AGHT+IGAVzLeqxpQgHotNBmPQhFcmvugsk6GvG5kW90f7EiAkNWBop3X/RiZQeIe6Ry3+t47rKzRVg==
+X-Received: by 2002:a5d:6483:0:b0:366:ea17:94de with SMTP id ffacd0b85a97d-366ea17953amr6038644f8f.5.1719317674869;
+        Tue, 25 Jun 2024 05:14:34 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.70])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3663a8c8b32sm12798437f8f.92.2024.06.25.05.14.31
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3663a8c8b32sm12798437f8f.92.2024.06.25.05.14.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 25 Jun 2024 05:14:32 -0700 (PDT)
+        Tue, 25 Jun 2024 05:14:34 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: chris.brandt@renesas.com,
@@ -72,9 +72,9 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	claudiu.beznea@tuxon.dev,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH v2 07/12] i2c: riic: Define individual arrays to describe the register offsets
-Date: Tue, 25 Jun 2024 15:13:53 +0300
-Message-Id: <20240625121358.590547-8-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v2 08/12] dt-bindings: i2c: renesas,riic: Document the R9A08G045 support
+Date: Tue, 25 Jun 2024 15:13:54 +0300
+Message-Id: <20240625121358.590547-9-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240625121358.590547-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20240625121358.590547-1-claudiu.beznea.uj@bp.renesas.com>
@@ -88,100 +88,34 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Define individual arrays to describe the register offsets. In this way
-we can describe different IP variants that share the same register offsets
-but have differences in other characteristics. Commit prepares for the
-addition of fast mode plus.
+Document the Renesas RZ/G3S (R9A08G045) RIIC IP. This is compatible with
+the version available on Renesas RZ/V2H (R9A09G075).
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
 
 Changes in v2:
-- none
+- dropped the renesas,riic-no-fast-mode-plus
+- updated commit description
 
- drivers/i2c/busses/i2c-riic.c | 58 +++++++++++++++++++----------------
- 1 file changed, 31 insertions(+), 27 deletions(-)
+ Documentation/devicetree/bindings/i2c/renesas,riic.yaml | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/i2c/busses/i2c-riic.c b/drivers/i2c/busses/i2c-riic.c
-index 9fe007609076..8ffbead95492 100644
---- a/drivers/i2c/busses/i2c-riic.c
-+++ b/drivers/i2c/busses/i2c-riic.c
-@@ -91,7 +91,7 @@ enum riic_reg_list {
- };
+diff --git a/Documentation/devicetree/bindings/i2c/renesas,riic.yaml b/Documentation/devicetree/bindings/i2c/renesas,riic.yaml
+index 91ecf17b7a81..dde37a209b6e 100644
+--- a/Documentation/devicetree/bindings/i2c/renesas,riic.yaml
++++ b/Documentation/devicetree/bindings/i2c/renesas,riic.yaml
+@@ -25,6 +25,10 @@ properties:
+               - renesas,riic-r9a07g054  # RZ/V2L
+           - const: renesas,riic-rz      # RZ/A or RZ/G2L
  
- struct riic_of_data {
--	u8 regs[RIIC_REG_END];
-+	const u8 *regs;
- };
- 
- struct riic_dev {
-@@ -531,36 +531,40 @@ static void riic_i2c_remove(struct platform_device *pdev)
- 	pm_runtime_dont_use_autosuspend(dev);
- }
- 
-+static const u8 riic_rz_a_regs[RIIC_REG_END] = {
-+	[RIIC_ICCR1] = 0x00,
-+	[RIIC_ICCR2] = 0x04,
-+	[RIIC_ICMR1] = 0x08,
-+	[RIIC_ICMR3] = 0x10,
-+	[RIIC_ICSER] = 0x18,
-+	[RIIC_ICIER] = 0x1c,
-+	[RIIC_ICSR2] = 0x24,
-+	[RIIC_ICBRL] = 0x34,
-+	[RIIC_ICBRH] = 0x38,
-+	[RIIC_ICDRT] = 0x3c,
-+	[RIIC_ICDRR] = 0x40,
-+};
++      - items:
++          - const: renesas,riic-r9a08g045   # RZ/G3S
++          - const: renesas,riic-r9a09g057
 +
- static const struct riic_of_data riic_rz_a_info = {
--	.regs = {
--		[RIIC_ICCR1] = 0x00,
--		[RIIC_ICCR2] = 0x04,
--		[RIIC_ICMR1] = 0x08,
--		[RIIC_ICMR3] = 0x10,
--		[RIIC_ICSER] = 0x18,
--		[RIIC_ICIER] = 0x1c,
--		[RIIC_ICSR2] = 0x24,
--		[RIIC_ICBRL] = 0x34,
--		[RIIC_ICBRH] = 0x38,
--		[RIIC_ICDRT] = 0x3c,
--		[RIIC_ICDRR] = 0x40,
--	},
-+	.regs = riic_rz_a_regs,
-+};
-+
-+static const u8 riic_rz_v2h_regs[RIIC_REG_END] = {
-+	[RIIC_ICCR1] = 0x00,
-+	[RIIC_ICCR2] = 0x01,
-+	[RIIC_ICMR1] = 0x02,
-+	[RIIC_ICMR3] = 0x04,
-+	[RIIC_ICSER] = 0x06,
-+	[RIIC_ICIER] = 0x07,
-+	[RIIC_ICSR2] = 0x09,
-+	[RIIC_ICBRL] = 0x10,
-+	[RIIC_ICBRH] = 0x11,
-+	[RIIC_ICDRT] = 0x12,
-+	[RIIC_ICDRR] = 0x13,
- };
+       - const: renesas,riic-r9a09g057   # RZ/V2H(P)
  
- static const struct riic_of_data riic_rz_v2h_info = {
--	.regs = {
--		[RIIC_ICCR1] = 0x00,
--		[RIIC_ICCR2] = 0x01,
--		[RIIC_ICMR1] = 0x02,
--		[RIIC_ICMR3] = 0x04,
--		[RIIC_ICSER] = 0x06,
--		[RIIC_ICIER] = 0x07,
--		[RIIC_ICSR2] = 0x09,
--		[RIIC_ICBRL] = 0x10,
--		[RIIC_ICBRH] = 0x11,
--		[RIIC_ICDRT] = 0x12,
--		[RIIC_ICDRR] = 0x13,
--	},
-+	.regs = riic_rz_v2h_regs,
- };
- 
- static int riic_i2c_suspend(struct device *dev)
+   reg:
 -- 
 2.39.2
 
