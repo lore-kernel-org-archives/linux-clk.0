@@ -1,133 +1,108 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23DC91822C2;
-	Wed, 26 Jun 2024 14:40:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A60D3C136
+	for <linux-clk@vger.kernel.org>; Wed, 26 Jun 2024 14:55:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719412806; cv=none; b=ezK2PxzzIsbBtsy7Be09YGPxtuk3DbAdhLN8glsXzX2qcI7RWcqS+fqnvozuenlwjrB6Zh8IBrlholkVdwmJw6yBZe6xrjDo+yNBsBJrrVojvpFU0Lt4yYzWF7paOKbm4HOftUU5brAROtV7cG6LPSxP8HqZEM7wvuuth4O0a7M=
+	t=1719413741; cv=none; b=En41Gr6n4O79Rwd7GUqOv5TYOY9j3TEwvDJhjLIxtZMMFyZaqZkQvOwJTX71Y/atK17RK/KUxsds2IBRYJPJEB+pEFNwjzSqJ4dJU5auvYxV6LfCxBLzHvGkYhTKN0HCcInTVb9Ah9RNDk9M2XuvvBnuRSp66+p7RzYnoh9Fyuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719412806; c=relaxed/simple;
-	bh=92WMn47/SMqWMi8oEovsuTgdSAt2Ee1dk4LqjGvPG1A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=oi3CwLAJLudVfXdd1mx1b2UaaMw58sOH12E+ppBE2ilhamhxgyOfDoDV6nzmchbCDR4mcgnortc6wq/HDsioN5xizYkSnsA6RQvwRbAvRuxUXr8G62v7J/L8V2L/TB74aARWesLQDTcGv6XECU6Tw5XiKUy7c0ujxP9sT9nTSbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=U7c+bWoy; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1719413741; c=relaxed/simple;
+	bh=YmE/4qGInKDMcs6zPNt84Y1lpKPcj044cK+eW/NohFA=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=tJhKWr6bgQqAgn8BJgaNy+qzlu9wOKcTz934KZNq4AtGNQCyrZCfoMM90FgTlXfspnTqyS7gIPqR57I1ntSWv5Pao4trE7We/nz57+pSK4foDabLh+syDFG9mLmJWLiZXZ/Z+gjDjsr1uytJJwmhnPJfT+wF2k06Ojm9BARtDCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=p42KooGI; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="U7c+bWoy"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45QAfLv6010627;
-	Wed, 26 Jun 2024 14:39:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	7bd1WMpoeQPiMw7peuvDwQj9JkKYPUJrcCnSbue6gLw=; b=U7c+bWoyP53ycYa/
-	GUOTl9ZWRvgnBe19TMHi4GGLZeN31ij9LLVDU+GyRW4EiztMmFkebg+K51tG4+Ya
-	vhdYl9893gf6Pul81lXUcuuYjObOEDfOR88K6K7XIV9xjqhtZ26Ht/LU/lfwG+6o
-	/G4ALYjYzxsS5UUTJxgaFfCk3hUjtntsPFIMUahafOx1BtPqLKraZfdJhBGLv0cF
-	lbrMpHukzJdz+K5xgCqYpHRAJJ8Icq0NRSL8FQau1qr2oIhREKjjRAHuLslyikCM
-	owUjRB28zV/6N8hYgbbHVnWMsi42Ky17oksQvt5Xu+fR0PR8RedHLJKYhB3xy0fC
-	QCuTsQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 400bdq9juh-1
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="p42KooGI"
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45QB22hr030826;
+	Wed, 26 Jun 2024 10:55:36 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=heXmKtgsIkCDoVkk8+7Tnti/+2J
+	S+yDBNhRR/AftqA8=; b=p42KooGI7Xs3HFJ6KRjJbmJvbyv3P8QkA0JZtggr2vE
+	sazSYaL509TmjBffC80jtgeueJ6bV1/6GP15PbwItqbBBeE0RPDRQRXgXzuINwMS
+	BeFDimZUwOC8F9VPAKuy8tyIosRvuC6GekZOqlzMQuYYK+Due9meKtZYEVHFyL/l
+	hDkbtjnrpfmzTLq1uvoRbxGZtuc0mPGVV9iB3awk396noDWLrT+FU15HpfsdW/xk
+	8LN2WbygWQqu6Ca79kt/b0R58sWt4mwVLhPNkDEiOSmt++RZSWykZkGjsYlDn6kz
+	TmOPgZqVg5MuEuQgI0ENe4OuzWXshp17KfE8eFfT4CQ==
+Received: from nwd2mta3.analog.com ([137.71.173.56])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 3ywuh2qfb7-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 14:39:35 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45QEdX4O020731
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 14:39:33 GMT
-Received: from [10.50.52.175] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 26 Jun
- 2024 07:39:24 -0700
-Message-ID: <302298ef-7827-49e1-8b0f-04467cb38ad7@quicinc.com>
-Date: Wed, 26 Jun 2024 20:09:15 +0530
+	Wed, 26 Jun 2024 10:55:36 -0400 (EDT)
+Received: from ASHBMBX8.ad.analog.com (ASHBMBX8.ad.analog.com [10.64.17.5])
+	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 45QEtYQ3025199
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 26 Jun 2024 10:55:34 -0400
+Received: from ASHBMBX9.ad.analog.com (10.64.17.10) by ASHBMBX8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Wed, 26 Jun
+ 2024 10:55:33 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Wed, 26 Jun 2024 10:55:33 -0400
+Received: from [127.0.0.1] ([10.44.3.56])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 45QEtQfc015943;
+	Wed, 26 Jun 2024 10:55:29 -0400
+From: =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
+Subject: [PATCH RESEND 0/2] clk: fix possible use after free
+Date: Wed, 26 Jun 2024 16:59:16 +0200
+Message-ID: <20240626-dev-clk-misc-v1-0-e2975f2abb76@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V4 5/7] clk: qcom: Add NSS clock Controller driver for
- IPQ9574
-To: Andrew Lunn <andrew@lunn.ch>
-CC: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <konrad.dybcio@linaro.org>, <catalin.marinas@arm.com>,
-        <will@kernel.org>, <p.zabel@pengutronix.de>,
-        <richardcochran@gmail.com>, <geert+renesas@glider.be>,
-        <dmitry.baryshkov@linaro.org>, <neil.armstrong@linaro.org>,
-        <arnd@arndb.de>, <m.szyprowski@samsung.com>, <nfraprado@collabora.com>,
-        <u-kumar1@ti.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <netdev@vger.kernel.org>
-References: <20240625070536.3043630-1-quic_devipriy@quicinc.com>
- <20240625070536.3043630-6-quic_devipriy@quicinc.com>
- <f9d3f263-8559-4357-a1c6-8d4b5fa20b8c@lunn.ch>
-Content-Language: en-US
-From: Devi Priya <quic_devipriy@quicinc.com>
-In-Reply-To: <f9d3f263-8559-4357-a1c6-8d4b5fa20b8c@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: A22KNXbNeEJN8TyLa0AY4ccsaLyiPzaX
-X-Proofpoint-GUID: A22KNXbNeEJN8TyLa0AY4ccsaLyiPzaX
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+To: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@kernel.org>
+CC: <linux-clk@vger.kernel.org>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1719413959; l=662;
+ i=nuno.sa@analog.com; s=20231116; h=from:subject:message-id;
+ bh=YmE/4qGInKDMcs6zPNt84Y1lpKPcj044cK+eW/NohFA=;
+ b=Dbvizv8zOBnlsEh3NG/Bb/o0t8xB4D5pk29JkH1EUxnfy3vtLctYMWy6Phx0ZtR/rbQaaR8or
+ zYnfiYx+T+8BgUolKSW/Dew/VgB0aSW4SmSj2IndQ/AwUemViFzeCBU
+X-Developer-Key: i=nuno.sa@analog.com; a=ed25519;
+ pk=3NQwYA013OUYZsmDFBf8rmyyr5iQlxV/9H4/Df83o1E=
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-GUID: QQ1PtT_0dk3Vfs7kyLUZzOeYWnij0xcq
+X-Proofpoint-ORIG-GUID: QQ1PtT_0dk3Vfs7kyLUZzOeYWnij0xcq
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-06-26_07,2024-06-25_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 mlxlogscore=841
- adultscore=0 bulkscore=0 lowpriorityscore=0 impostorscore=0 malwarescore=0
- mlxscore=0 suspectscore=0 priorityscore=1501 clxscore=1011 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
- definitions=main-2406260107
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ impostorscore=0 spamscore=0 malwarescore=0 phishscore=0 clxscore=1011
+ priorityscore=1501 adultscore=0 mlxscore=0 bulkscore=0 mlxlogscore=369
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406260110
 
+The first patch is fixing a possible use after free in case a clk
+provider is removed before it's consumer (more details on the commit
+message.
 
+The second patch is a straightforward replacement of the open coded
 
-On 6/25/2024 8:09 PM, Andrew Lunn wrote:
->> +static struct clk_alpha_pll ubi32_pll_main = {
->> +	.offset = 0x28000,
->> +	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_NSS_HUAYRA],
->> +	.flags = SUPPORTS_DYNAMIC_UPDATE,
->> +	.clkr = {
->> +		.hw.init = &(const struct clk_init_data) {
->> +			.name = "ubi32_pll_main",
->> +			.parent_data = &(const struct clk_parent_data) {
->> +				.index = DT_XO,
->> +			},
->> +			.num_parents = 1,
->> +			.ops = &clk_alpha_pll_huayra_ops,
->> +		},
->> +	},
->> +};
->> +
->> +static struct clk_alpha_pll_postdiv ubi32_pll = {
->> +	.offset = 0x28000,
->> +	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_NSS_HUAYRA],
->> +	.width = 2,
->> +	.clkr.hw.init = &(const struct clk_init_data) {
->> +		.name = "ubi32_pll",
->> +		.parent_hws = (const struct clk_hw *[]) {
->> +			&ubi32_pll_main.clkr.hw
->> +		},
->> +		.num_parents = 1,
->> +		.ops = &clk_alpha_pll_postdiv_ro_ops,
->> +		.flags = CLK_SET_RATE_PARENT,
->> +	},
->> +};
-> 
-> Can these structures be made const? You have quite a few different
-> structures in this driver, some of which are const, and some which are
-> not.
-> 
-Sure, will check and update this in V6
+hlist_del(&clk->clks_node) ->  clk_core_unlink_consumer(clk)
 
-Thanks,
-Devi Priya
-> 	Andrew
-> 
+---
+Nuno Sá (2):
+      clk: fix clk not being unlinked from consumers list
+      clk: use clk_core_unlink_consumer() helper
+
+ drivers/clk/clk.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+---
+base-commit: 5029c56be4bab3bce7db6d9595b0bbd171a5b154
+change-id: 20240611-dev-clk-misc-a9e401b25032
+--
+
+Thanks!
+- Nuno Sá
+-- 
+Nuno Sa <nuno.sa@analog.com>
+
