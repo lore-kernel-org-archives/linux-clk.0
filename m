@@ -1,137 +1,207 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EFFA28DDF;
-	Wed, 26 Jun 2024 05:27:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB65A13D8A8
+	for <linux-clk@vger.kernel.org>; Wed, 26 Jun 2024 06:13:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719379646; cv=none; b=bQrk6ALJy3t7/olySEdkXgSyn8A+z6st5hlsQvYqNlwGVgtqVRDxjns/nCtaG2KRLOchBNdpV+z3elpZyn2toXibF/i+3o8q2WNBmIsZv9F8xa3LRYpUZh9m8EPAXxuXXSExdL5t/iYAdfTZQMRXBOpvxXtDI6KRoFICbVoniVA=
+	t=1719382429; cv=none; b=qjTbJ9cWO3Pi/n5L29BXCYSE0Gra04NtZNSr5Zo6404pjd9n+K2/wjxRYIZDlFArqbyHHsCSjOLxtmBvQlF/hngxpjzrVT8d0IOxs1f3+2w65rjQMU+fBjJkEX16E961XxFN857RVRLaiyR1FByptqLmitVK/h+NonlxigDdASs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719379646; c=relaxed/simple;
-	bh=tr6b7YzaNDp+6chz6an4To4uD1paZT/4oVgc4Ozi5zI=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KyyUtUN/rI5NpgGMc4H9I/hRgaagLPXo8ijybT0cttR/JAvHYHoqxas7TaURmk6sKnXyhI7WO6h4z8jGdpp4eSSFPvo67NRwL38eLZ2TDp21hZWyVQvliVD7QKHoz+pRFQ4wF4s3hbn17fy7X2buGg6Ixp8u3WlSez0sdQorCZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eAYW8kpP; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1719382429; c=relaxed/simple;
+	bh=BJtQ9l+V2WAR5BzRXmZ0v9xaywUqO0Ckllr4TBtCJU8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QIjN+9CoElrrFFBeqZ9wKlsN0iXJUg0ulEk9oVi7Dw9SGRquxGJMIP2jzlAaNJ5c8CoxUMtdIXYY678tUMG+d02dnbWPyouYrs1zNNSMFdF7GtRgZbGvetcJDAIFYzYMHabe0o7JKG5McQjOgSsuXiipRB4AGBQL/qlbQ1DStkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=l2KHR/DW; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eAYW8kpP"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45PIxMdE018107;
-	Wed, 26 Jun 2024 05:27:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=H1ebhpLl+WMhVtgvEy9phQd1
-	h+dpJM8YkGd3n9aCPWA=; b=eAYW8kpP+LYcT8KjW7aE8PIr9FMtcMSaxD0n2Fer
-	7nsAUzZz6aV4xqo6mV6DKbXzLBwxSRS1ASLsOBPVU1nOV+mEMdIM6axa448lj17d
-	FsR04ocxn2C+0qGguZRzvzeiurzUuhxxZrRlZaPfUcbmsSUOW+Xi7Yl5ebRoS10l
-	DDiZha5FFhb8V1p1jg/Q63/xQMXVfU9HBaCtdZBnJOv6FkDwfRa93urgUOPaMLeQ
-	ZeBW5jLlsai/Me83QDA75VPsVum3NkOknaSZw2l9VQscXYZvFqZi6kYKILMRf8Yz
-	XQI74PKdIclZ2SxmplIInyqAbWtCVIX4XhXY5JamY2qz8g==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywnm6r993-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 05:27:13 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45Q5RBqi022196
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 05:27:11 GMT
-Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 25 Jun 2024 22:27:06 -0700
-Date: Wed, 26 Jun 2024 10:57:02 +0530
-From: Varadarajan Narayanan <quic_varada@quicinc.com>
-To: Konrad Dybcio <konrad.dybcio@linaro.org>
-CC: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <djakov@kernel.org>, <dmitry.baryshkov@linaro.org>,
-        <quic_anusha@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <bryan.odonoghue@linaro.org>
-Subject: Re: [PATCH v11 0/6] Add interconnect driver for IPQ9574 SoC
-Message-ID: <ZnumpkYR2ILpbOwF@hu-varada-blr.qualcomm.com>
-References: <20240430064214.2030013-1-quic_varada@quicinc.com>
- <ZjXrTywO6+iRaEYk@hu-varada-blr.qualcomm.com>
- <90bb9256-d54d-4e01-aa06-4184e2b95d48@linaro.org>
- <Zmgc+Qzwt6Zbg/w+@hu-varada-blr.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="l2KHR/DW"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4248ea53493so23257645e9.3
+        for <linux-clk@vger.kernel.org>; Tue, 25 Jun 2024 23:13:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1719382425; x=1719987225; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3MYj1syjPNYZBySDVupnxlkb67gyc3eu/jDgMDAJ8cA=;
+        b=l2KHR/DWvmu3ZJJm7LyULj0+2SWeZjDRcYCUdV3x0MuunR04zGf+UCeZzW6HDqtRXc
+         Nllno76v51jDC5wMjhCKeJss/d3gD5Z7lrZCuN4vlzT9F9K4qBd3cyw3aF64KlTNUYj5
+         wXPRrBstOB7vhRaOHG3uMotE05PY4XTXgHBr6LSd4jP8Wm4Jz6pVlz74A7YZ1Aa37gCG
+         GihMrtUDHAoa8J/Shutxe22fgPe+Mr7kr9NWqQ8D8Se94s9I2HBbjWtdoH8ZmwIpxEa1
+         WeIA3U+hi/10hvmZLrxbxS1YHcMW4PcjRimqxbr/1NW/g9sg7WyfZbA7cxu7kO93wGt5
+         PSbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719382425; x=1719987225;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3MYj1syjPNYZBySDVupnxlkb67gyc3eu/jDgMDAJ8cA=;
+        b=xOV+a985Z9xgj8sei5AZmXqAKJWsZXjLb2/vJ618pWnB6ntZen3RIxjeS0RYuZGEhu
+         0XSUPFBzzF96Z90DKyAcJz5F8RNVxRuuJWSd9eu35JRhOEG/aoc/HDv6Amov98aGhIDo
+         R1zATBIQjdPgCIH+tHhC+aYu0K6oMHHBcqzhQssv7lxl8ZQJlssOUb7f4RF+nVhyn48W
+         u3NS6VqBZAUwouhAzpzowcVd0nCmp2xg3oCHQg4INZ0ofP7J/6TL5Rcr6PeHJvoTz+tD
+         6T1trOs4aXjVlqHXnO9qJ8KLILwT5PhmLTFEnDFqeqTPEkQS1w5dQ4hs+PwdRtbmgPVM
+         XY/g==
+X-Forwarded-Encrypted: i=1; AJvYcCW6u1xmSAu71slpDQ6vESpk++K3Mf3su0la/dY4tKQeVJuLVwwqLbxmzE0jNVjtNEr2m02Z3zb/fSLa1vVvY1GL3u63nozlh413
+X-Gm-Message-State: AOJu0Yzapmf6Tz8nwx2tn1Z3eeOImZbSLQ/Kvow+MSbYh2H0q8IbeaO3
+	vogqYtpRU0KHmgWxqQJlQJi7iB1FjzLFnCtU7kkvbOvjIzHdb5EM8kN7NXKUfPk=
+X-Google-Smtp-Source: AGHT+IHbF71gbIghJoYKFbrg4W+yIrq0Ui8qDFkKVSeUFQObkIKWpiU0iUTb4PgiFnvihuycMlGCFw==
+X-Received: by 2002:a5d:4689:0:b0:35f:275c:fb63 with SMTP id ffacd0b85a97d-366e948fa5emr7116687f8f.25.1719382424899;
+        Tue, 25 Jun 2024 23:13:44 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.70])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-366f466979dsm7064166f8f.7.2024.06.25.23.13.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 25 Jun 2024 23:13:44 -0700 (PDT)
+Message-ID: <14167607-e67b-4627-99f0-6e99acc7f880@tuxon.dev>
+Date: Wed, 26 Jun 2024 09:13:42 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <Zmgc+Qzwt6Zbg/w+@hu-varada-blr.qualcomm.com>
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: dWqOxM9yRy2tFHsSWLqgpDrfMRDaAXu3
-X-Proofpoint-ORIG-GUID: dWqOxM9yRy2tFHsSWLqgpDrfMRDaAXu3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-26_03,2024-06-25_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- priorityscore=1501 suspectscore=0 phishscore=0 clxscore=1015 spamscore=0
- mlxscore=0 malwarescore=0 mlxlogscore=999 lowpriorityscore=0
- impostorscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2406140001 definitions=main-2406260040
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 04/12] i2c: riic: Use pm_runtime_resume_and_get()
+Content-Language: en-US
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+ Chris Brandt <Chris.Brandt@renesas.com>,
+ "andi.shyti@kernel.org" <andi.shyti@kernel.org>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "geert+renesas@glider.be" <geert+renesas@glider.be>,
+ "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "sboyd@kernel.org" <sboyd@kernel.org>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>
+Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240625121358.590547-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240625121358.590547-5-claudiu.beznea.uj@bp.renesas.com>
+ <TY3PR01MB11346F03386D05D608041DE8D86D52@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <TY3PR01MB11346F03386D05D608041DE8D86D52@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jun 11, 2024 at 03:16:33PM +0530, Varadarajan Narayanan wrote:
-> On Thu, Jun 06, 2024 at 04:07:23PM +0200, Konrad Dybcio wrote:
-> > On 4.05.2024 10:01 AM, Varadarajan Narayanan wrote:
-> > > Bjorn,
-> > >
-> > >> On Tue, Apr 30, 2024 at 12:12:08PM +0530, Varadarajan Narayanan wrote:
-> > >> MSM platforms manage NoC related clocks and scaling from RPM.
-> > >> However, in IPQ SoCs, RPM is not involved in managing NoC
-> > >> related clocks and there is no NoC scaling.
-> > >>
-> > >> However, there is a requirement to enable some NoC interface
-> > >> clocks for the accessing the peripherals present in the
-> > >> system. Hence add a minimalistic interconnect driver that
-> > >> establishes a path from the processor/memory to those peripherals
-> > >> and vice versa.
-> > >>
-> > >> Change icc-clk driver to take master and slave ids instead
-> > >> of auto generating.
-> > >>
-> > >> Currently, drivers/clk/qcom/clk-cbf-8996.c is the only user of
-> > >> icc-clk. And, it had exactly one master and one slave node.
-> > >> For this the auto generated master (= 1) and slave (= 0) was
-> > >> enough.
-> > >>
-> > >> However, when drivers/clk/qcom/gcc-ipq9574.c wanted to make use
-> > >> of the icc-clk framework, it had more number of master and slave
-> > >> nodes and the auto generated ids did not suit the usage.
-> > >>
-> > >> ---
-> > >> v11:	No code changes
-> > >> 	Commit log changed for the first patch
-> > >> 	Added Acked-By: to 3 patches
-> > >
-> > > Can this be included in your driver changes for 6.10?
-> >
-> Konrad,
->
-> > FWIW there is still an open discussion at v9
-> > <CAA8EJpqENsojPQmCbma_nQLEZq8nK1fz1K0JdtvLd=kPrH_DBw@mail.gmail.com>
->
-> Thanks for reminding. Have responded to it.
-> https://lore.kernel.org/linux-arm-msm/Zmgb+OjdBNw71sC1@hu-varada-blr.qualcomm.com/
+Hi, Biju,
 
-Bjorn/Konrad,
+On 25.06.2024 18:53, Biju Das wrote:
+> Hi Claudiu,
+> 
+>> -----Original Message-----
+>> From: Claudiu <claudiu.beznea@tuxon.dev>
+>> Sent: Tuesday, June 25, 2024 1:14 PM
+>> Subject: [PATCH v2 04/12] i2c: riic: Use pm_runtime_resume_and_get()
+>>
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> pm_runtime_get_sync() may return with error. In case it returns with error
+>> dev->power.usage_count needs to be decremented.
+>> dev->pm_runtime_resume_and_get()
+>> takes care of this. Thus use it.
+>>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>> ---
+>>
+>> Changes in v2:
+>> - delete i2c adapter all the time in remove
+>>
+>>  drivers/i2c/busses/i2c-riic.c | 30 ++++++++++++++++++++++++------
+>>  1 file changed, 24 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/i2c/busses/i2c-riic.c b/drivers/i2c/busses/i2c-riic.c index
+>> 83e4d5e14ab6..002b11b020fa 100644
+>> --- a/drivers/i2c/busses/i2c-riic.c
+>> +++ b/drivers/i2c/busses/i2c-riic.c
+>> @@ -113,6 +113,8 @@ struct riic_irq_desc {
+>>  	char *name;
+>>  };
+>>
+>> +static const char * const riic_rpm_err_msg = "Failed to runtime
+>> +resume";
+>> +
+>>  static inline void riic_writeb(struct riic_dev *riic, u8 val, u8 offset)  {
+>>  	writeb(val, riic->base + riic->info->regs[offset]); @@ -133,10 +135,14 @@ static int
+>> riic_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
+>>  	struct riic_dev *riic = i2c_get_adapdata(adap);
+>>  	struct device *dev = adap->dev.parent;
+>>  	unsigned long time_left;
+>> -	int i;
+>> +	int i, ret;
+>>  	u8 start_bit;
+>>
+>> -	pm_runtime_get_sync(dev);
+>> +	ret = pm_runtime_resume_and_get(dev);
+>> +	if (ret) {
+>> +		dev_err(dev, riic_rpm_err_msg);
+> 
+> As at the moment we don't know how to reproduce this error condition
+> Can we use WARN_ON_ONCE() instead to catch detailed error condition here??
 
-Can this be merged for 6.11. I believe the discussion open at v9
-has been addressed. Please let me know if anything is still pending.
+[1] states "So, naturally, use of WARN_ON() is also now discouraged much of
+the time". I've go with dev_err() or something similar.
 
-Below patches depend on this series:
+Thank you,
+Claudiu Beznea
 
-	PCI: https://lore.kernel.org/linux-arm-msm/20240512082858.1806694-1-quic_devipriy@quicinc.com/
-	NSSCC: https://lore.kernel.org/linux-arm-msm/20240625070536.3043630-1-quic_devipriy@quicinc.com/
+[1] https://lwn.net/Articles/969923/
 
-Thanks
-Varada
+> 
+> Cheers,
+> Biju
+> 
+>> +		return ret;
+>> +	}
+>>
+>>  	if (riic_readb(riic, RIIC_ICCR2) & ICCR2_BBSY) {
+>>  		riic->err = -EBUSY;
+>> @@ -301,6 +307,7 @@ static const struct i2c_algorithm riic_algo = {
+>>
+>>  static int riic_init_hw(struct riic_dev *riic, struct i2c_timings *t)  {
+>> +	int ret;
+>>  	unsigned long rate;
+>>  	int total_ticks, cks, brl, brh;
+>>  	struct device *dev = riic->adapter.dev.parent; @@ -379,7 +386,11 @@ static int
+>> riic_init_hw(struct riic_dev *riic, struct i2c_timings *t)
+>>  		 t->scl_fall_ns / (1000000000 / rate),
+>>  		 t->scl_rise_ns / (1000000000 / rate), cks, brl, brh);
+>>
+>> -	pm_runtime_get_sync(dev);
+>> +	ret = pm_runtime_resume_and_get(dev);
+>> +	if (ret) {
+>> +		dev_err(dev, riic_rpm_err_msg);
+>> +		return ret;
+>> +	}
+>>
+>>  	/* Changing the order of accessing IICRST and ICE may break things! */
+>>  	riic_writeb(riic, ICCR1_IICRST | ICCR1_SOWP, RIIC_ICCR1); @@ -498,11 +509,18 @@ static void
+>> riic_i2c_remove(struct platform_device *pdev)  {
+>>  	struct riic_dev *riic = platform_get_drvdata(pdev);
+>>  	struct device *dev = &pdev->dev;
+>> +	int ret;
+>>
+>> -	pm_runtime_get_sync(dev);
+>> -	riic_writeb(riic, 0, RIIC_ICIER);
+>> -	pm_runtime_put(dev);
+>>  	i2c_del_adapter(&riic->adapter);
+>> +
+>> +	ret = pm_runtime_resume_and_get(dev);
+>> +	if (ret) {
+>> +		dev_err(dev, riic_rpm_err_msg);
+>> +	} else {
+>> +		riic_writeb(riic, 0, RIIC_ICIER);
+>> +		pm_runtime_put(dev);
+>> +	}
+>> +
+>>  	pm_runtime_disable(dev);
+>>  }
+>>
+>> --
+>> 2.39.2
+>>
+> 
