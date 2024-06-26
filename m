@@ -1,46 +1,54 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC5B42BD18;
-	Wed, 26 Jun 2024 04:31:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5594139CFA;
+	Wed, 26 Jun 2024 04:31:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719376262; cv=none; b=QmGJ7nHMZe7B95Y+8ar27rGiG0IsM/4ojKThJEH+XN0KGlwyQChSLXKL8L4yL2ejJzUK5y2UKuaABb0gcqF7oYYBm6f4kXIQuSzjaDg+wLMZF3M1f4sKhHm3fn2jq7hIuKaIRuf3caXLP71/GZO5/qNpLMwTTzmUxPcomO2qYQA=
+	t=1719376269; cv=none; b=OhpfaIs2gzeYexromUhKQ6+h5fJ8bWxX9EUWqwHYbq8C9f70GrdulqaQLOcwSCFtAYs2lYDK1i9kOC/+5jZ32MsGhcDVUlsa9Qw4RfMNLD7L91TgNhRPQmRaXw2nXxRrhnFD6yjmE7VTUS9Z38x1okMlI1Pxn/3bAROSFKxhmX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719376262; c=relaxed/simple;
-	bh=knPVfDMdmlEat3w4vzuf+eozheVcmSGemCMd1xP3vyE=;
+	s=arc-20240116; t=1719376269; c=relaxed/simple;
+	bh=xheFtNFg2IkR6SYEZ40DkWGQeQFXLKaIuvfLhxB0wpk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=THRr4zFsBzRuLA3tdE9uSIZpS4x49nLPXh+olTHS4s2wRyXTnHSFVIvYqABSjn3/7BmrZoBRlJAdWyAFdwGoIYs1cYkb/TDmVDUMh1dNrX2ysd0AKOpN6rDy9GJx+MYIICYzeRkDBdteve8bEFBfNTZYPPD3J8tZVWs5lErlERk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jVpVIev2; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=jRNHyAPSd/hvJs89GaNUCCYtfclm4/mx6dn+YxWj1EnCwjoGye968Og/88qd6IjrsT/WKjYDYunfICVQHe7R3SyRxUSYwYdlfDsqH3NYe12pIe60wubfAkxlVRLHTI/A8Uwr9u+A7d75oWBuht1Vs+ZdomdzDgkulBsGt3TtVpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tSfjXapy; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jVpVIev2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23CE1C2BD10;
-	Wed, 26 Jun 2024 04:31:00 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tSfjXapy"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 944DBC4AF0E;
+	Wed, 26 Jun 2024 04:31:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719376262;
-	bh=knPVfDMdmlEat3w4vzuf+eozheVcmSGemCMd1xP3vyE=;
+	s=k20201202; t=1719376269;
+	bh=xheFtNFg2IkR6SYEZ40DkWGQeQFXLKaIuvfLhxB0wpk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=jVpVIev2C06y9f+iYov9Ou6yWWNjkNBGIQ4A3hV+EI2GeZKgncPlHsQQYA/ziJ2Ql
-	 qOhXQHfQnWD+Bq2XUI0gGBP+RQdHhFSr0p/xNyaAaO6jxEXwcyQ5vgVWvyQb/T3Ng4
-	 HNB/zq5t0GXx598hDeZRPybVbgeYHrTlx/oIIm54ZJjCLPITXSmHSAM9qLYXpHzz+W
-	 aa07G9dKonWczogyqzvq0pO5xl3xtTpSQ8JvUt4nq2u93cSxvxwqlmLirvTb8+/Bg3
-	 R6SvFkpqpHBoagjlMivZX3k3L6x7BccTlI2cJrZ21fQcFhcUna8/Bya1veDDGXrcLU
-	 q+6QLgvMRXTxQ==
+	b=tSfjXapyvA2NWCibThOtDtRoicPakLWeU2h669LjBiYeMEVC6ebJlN5phusKEafDL
+	 k6lfWLPtU8jRmrvKfBi2RUjGpCXcI9LKlRQcsMdGlTX78SiFzqNVvb6xEnT6bbZ8yH
+	 vJngm/DW/SCN/5ok9NAy7Fjj0G2WhtDZ9pjU1g4bbjmBvGHDCVQfBkuROQGVsobMBS
+	 II1q8IvkaL5bXx3Hx2KB1YOGCWgSOuyi9tZGKUWeN2IdrXXxKKgtuXiGZ6n3Z0PR60
+	 osVN4lJTUPMCPoCLbNYiwLpzQcAkvGTmmIbDANXA7TgqF0ArR3XTylFnjzxFWqh4jk
+	 LFNrlLwmq2HQQ==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Chukun Pan <amadeus@jmu.edu.cn>
-Cc: Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
 	Conor Dooley <conor+dt@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Jagadeesh Kona <quic_jkona@quicinc.com>
+Cc: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
 	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: (subset) [PATCH v6 0/2] arm64: dts: qcom: ipq6018: add sdhci node
-Date: Tue, 25 Jun 2024 23:30:52 -0500
-Message-ID: <171937625572.44413.10274736381950818769.b4-ty@kernel.org>
+	linux-kernel@vger.kernel.org,
+	Taniya Das <quic_tdas@quicinc.com>,
+	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+	Ajit Pandey <quic_ajipan@quicinc.com>,
+	Imran Shaik <quic_imrashai@quicinc.com>
+Subject: Re: (subset) [PATCH V4 0/8] Add support for videocc and camcc on SM8650
+Date: Tue, 25 Jun 2024 23:30:56 -0500
+Message-ID: <171937625567.44413.15298354540853135885.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240620150122.1406631-1-amadeus@jmu.edu.cn>
-References: <20240620150122.1406631-1-amadeus@jmu.edu.cn>
+In-Reply-To: <20240602114439.1611-1-quic_jkona@quicinc.com>
+References: <20240602114439.1611-1-quic_jkona@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -51,20 +59,23 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Thu, 20 Jun 2024 23:01:20 +0800, Chukun Pan wrote:
-> It is difficult to add OPP table for sdhci node due to lack of
-> datasheet and other data. Limit the maximum clock frequency of
-> sdcc to avoid overclocking SD/eMMC cards.
+On Sun, 02 Jun 2024 17:14:31 +0530, Jagadeesh Kona wrote:
+> Add support for video and camera clock controllers on Qualcomm SM8650
+> platform.
 > 
-> Changes in v6:
->   Adjust the maximum clock frequency of sdcc to 200 MHz.
+> Changes in V4:
+> [PATCH 1/8]: Updated commit text. Replaced :: with : in SM8450 videocc
+>              YAML file as Krzysztof's comment in V3
+> [PATCH 5/8]: Replaced :: with : in SM8450 camcc YAML file. Updated commit
+>              text and dropped Fixes tag as per Johan's comments in V3
+> Added R-By tags received till V3
 > 
 > [...]
 
 Applied, thanks!
 
-[2/2] arm64: dts: qcom: ipq6018: add sdhci node
-      commit: 5db216f6e1f85394e79dca74ceceb83b2f8566b5
+[8/8] arm64: dts: qcom: sm8650: Add video and camera clock controllers
+      commit: 0bdb730e63f6628b0f8deb3f11991b1d10f9bca5
 
 Best regards,
 -- 
