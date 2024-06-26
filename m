@@ -1,98 +1,71 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35BDA335C0;
-	Wed, 26 Jun 2024 04:03:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC5B42BD18;
+	Wed, 26 Jun 2024 04:31:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719374620; cv=none; b=ZYfDNJRSwgfFy7HU10XCiLMxoW37GT8jBjYdvdWXpCmEKwsshBjZBd6vQ6+mL23dH3WfSaUedqMXtQ9YORq+63zDTnaEzmmXsxiJGYBNLvsC1GSltmeMWlQPTalgwtIth9tb3nigppvr8DkwP67wadt8wI3/wslUdkWQDJEFsBQ=
+	t=1719376262; cv=none; b=QmGJ7nHMZe7B95Y+8ar27rGiG0IsM/4ojKThJEH+XN0KGlwyQChSLXKL8L4yL2ejJzUK5y2UKuaABb0gcqF7oYYBm6f4kXIQuSzjaDg+wLMZF3M1f4sKhHm3fn2jq7hIuKaIRuf3caXLP71/GZO5/qNpLMwTTzmUxPcomO2qYQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719374620; c=relaxed/simple;
-	bh=E2nMg9UKWmP9KFaSZW6EtBkPMMSpI4G2E9huRAIIjRM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c7T6MWJDphOsEn/7OUkM13AWgeeWViJInsDC5aEXOtHqRpiR95ZYJ0J9n9M3S280AbUk+BY1Jj+BejCwMNZWfGsdpaOuUtdgfT2gqV8BdMUhbeySvKuakML6Ok2InHW0i67fIz9MbG3EnCIMSeN6CYaH3sFa+O46kMhDOoeebbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OyPiX2vA; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1719376262; c=relaxed/simple;
+	bh=knPVfDMdmlEat3w4vzuf+eozheVcmSGemCMd1xP3vyE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=THRr4zFsBzRuLA3tdE9uSIZpS4x49nLPXh+olTHS4s2wRyXTnHSFVIvYqABSjn3/7BmrZoBRlJAdWyAFdwGoIYs1cYkb/TDmVDUMh1dNrX2ysd0AKOpN6rDy9GJx+MYIICYzeRkDBdteve8bEFBfNTZYPPD3J8tZVWs5lErlERk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jVpVIev2; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OyPiX2vA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00007C2BD10;
-	Wed, 26 Jun 2024 04:03:38 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jVpVIev2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23CE1C2BD10;
+	Wed, 26 Jun 2024 04:31:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719374619;
-	bh=E2nMg9UKWmP9KFaSZW6EtBkPMMSpI4G2E9huRAIIjRM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OyPiX2vA74BdnluyeC6nQjPRiCh+HY5i+/Jnt7ika2mrTLxT1NhMgFEhCfLhWuG5i
-	 1q2P05rMq6zoLWQF4S0AM7C/shWBMkCz8rBDPyn0rMBd0YPRsohLQ1Y6L81ucEyJfn
-	 KdxiNXXF4O13BHSV6pSYvWAEww/63ULp8TpwEnZf0K35SQAFE1ewiu2VF7aku75m88
-	 FsZSaOi6dh6M4vdFl3Tm4Hevgd016HzDqw94xerpUD/3USXlPReWjpqcaTLxO2aNUt
-	 rihsq9uRWBc4orjC3dqOwEDQdrTL7yfW/7GNqrtcV2mDItbnqVHgbmXA4D7reA5Jpb
-	 25Bv0YHUZ6kbQ==
-Date: Tue, 25 Jun 2024 23:03:36 -0500
+	s=k20201202; t=1719376262;
+	bh=knPVfDMdmlEat3w4vzuf+eozheVcmSGemCMd1xP3vyE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=jVpVIev2C06y9f+iYov9Ou6yWWNjkNBGIQ4A3hV+EI2GeZKgncPlHsQQYA/ziJ2Ql
+	 qOhXQHfQnWD+Bq2XUI0gGBP+RQdHhFSr0p/xNyaAaO6jxEXwcyQ5vgVWvyQb/T3Ng4
+	 HNB/zq5t0GXx598hDeZRPybVbgeYHrTlx/oIIm54ZJjCLPITXSmHSAM9qLYXpHzz+W
+	 aa07G9dKonWczogyqzvq0pO5xl3xtTpSQ8JvUt4nq2u93cSxvxwqlmLirvTb8+/Bg3
+	 R6SvFkpqpHBoagjlMivZX3k3L6x7BccTlI2cJrZ21fQcFhcUna8/Bya1veDDGXrcLU
+	 q+6QLgvMRXTxQ==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Robert Marko <robimarko@gmail.com>
-Cc: Chukun Pan <amadeus@jmu.edu.cn>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v6 1/2] clk: qcom: gcc-ipq6018: update sdcc max clock
- frequency
-Message-ID: <byjfbjwizdxbdyft5duxgkxxfvopi3usufcx26k65ekz4qgiuw@qdd67ebh4a4z>
+To: Chukun Pan <amadeus@jmu.edu.cn>
+Cc: Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: (subset) [PATCH v6 0/2] arm64: dts: qcom: ipq6018: add sdhci node
+Date: Tue, 25 Jun 2024 23:30:52 -0500
+Message-ID: <171937625572.44413.10274736381950818769.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240620150122.1406631-1-amadeus@jmu.edu.cn>
 References: <20240620150122.1406631-1-amadeus@jmu.edu.cn>
- <20240620150122.1406631-2-amadeus@jmu.edu.cn>
- <e3ad7b57-65dc-4262-b523-8bb81b60892b@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e3ad7b57-65dc-4262-b523-8bb81b60892b@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Sat, Jun 22, 2024 at 04:36:20PM GMT, Robert Marko wrote:
+
+On Thu, 20 Jun 2024 23:01:20 +0800, Chukun Pan wrote:
+> It is difficult to add OPP table for sdhci node due to lack of
+> datasheet and other data. Limit the maximum clock frequency of
+> sdcc to avoid overclocking SD/eMMC cards.
 > 
-> On 20. 06. 2024. 17:01, Chukun Pan wrote:
-> > The mmc controller of the IPQ6018 does not support HS400 mode.
-> > So adjust the maximum clock frequency of sdcc to 200 MHz (HS200).
-> > 
-> > Signed-off-by: Chukun Pan <amadeus@jmu.edu.cn>
-> > ---
-> >   drivers/clk/qcom/gcc-ipq6018.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/clk/qcom/gcc-ipq6018.c b/drivers/clk/qcom/gcc-ipq6018.c
-> > index 7e69de34c310..6c764e3e2665 100644
-> > --- a/drivers/clk/qcom/gcc-ipq6018.c
-> > +++ b/drivers/clk/qcom/gcc-ipq6018.c
-> > @@ -1617,7 +1617,7 @@ static const struct freq_tbl ftbl_sdcc_apps_clk_src[] = {
-> >   	F(96000000, P_GPLL2, 12, 0, 0),
-> >   	F(177777778, P_GPLL0, 4.5, 0, 0),
-> >   	F(192000000, P_GPLL2, 6, 0, 0),
-> > -	F(384000000, P_GPLL2, 3, 0, 0),
-> > +	F(200000000, P_GPLL0, 4, 0, 0),
+> Changes in v6:
+>   Adjust the maximum clock frequency of sdcc to 200 MHz.
 > 
-> Hi,
-> Are you sure that 200MHz is even valid of a frequency, cause all IPQ SoC-s
-> use 192MHz for the HS200 mode instead.
-> 
+> [...]
 
-If I'm parsing the docs correctly, 192MHz, 200MHz and 384MHz are a valid
-frequencies for the clock output, but the SDCC expects to receive 200MHz.
+Applied, thanks!
 
-> I would just drop the 384MHz frequency as datasheet clearly states that
-> HS400
-> is not supported.
-> 
+[2/2] arm64: dts: qcom: ipq6018: add sdhci node
+      commit: 5db216f6e1f85394e79dca74ceceb83b2f8566b5
 
-I'll pick this patch as suggested. Please don't hesitate to send a
-follow up patch according to this suggestion if it turns out to be a
-better choice.
-
-Regards,
-Bjorn
-
-> Regards,
-> Robert
-> 
-> >   	{ }
-> >   };
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
