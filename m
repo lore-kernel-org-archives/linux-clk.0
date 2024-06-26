@@ -1,72 +1,71 @@
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7395D190482
-	for <linux-clk@vger.kernel.org>; Wed, 26 Jun 2024 18:14:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4021190462
+	for <linux-clk@vger.kernel.org>; Wed, 26 Jun 2024 18:21:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719425649; cv=none; b=ACDZNIIPdtevz5DGuXGwH7C9ViaOhXYJUI4hQbLHH1qihBz4j9THGMJbRIePGNCniGn6cfK26/WZT2PFWkjGNBDKjtvGnPYb8zW92rUkDraR65TwrLYsUoE2YjfWpOQeS3A+dTZbv3WCYnOZyPkv4WJJs0M05YQrzRqMrPwgyF4=
+	t=1719426110; cv=none; b=MQVjSZsZC2x25TWE3+GtaHBl6tpP5FK9K5O0aB/XGwVXXvLItv8yAkjl+0VYrweeNsuPxIWLeWd22Xl26sHsbZTnMFXkk+L83AEBn9AoSQQKu87GGnQ259OoRzEKaZVs1DeGIJSpffxcC/530fda/2aDF7MWB2jkQXySlCcy+3M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719425649; c=relaxed/simple;
-	bh=1zfWFg0hGp1JNJUfoZR3fDuVYNICs/moqP1qpkRSTWQ=;
+	s=arc-20240116; t=1719426110; c=relaxed/simple;
+	bh=6TYIPbPS4R6iweSpc2w1PZdKid1Wu6t/ISBPYdapvbM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fq3esJID/c4HGCxLZKXbw06f1FUKvkYGMC+VXmMSvrOz4JIPNoaK6j8kfILapWALQpapwUyxCHE5kSRcrjLN12yN6avJ0/1Hd++TKXuy0Saf+8r/YSqQ/rMa9lhIRyaEeEfmyEL8TjKCl+pPMzn2AGG7APEvq5lG/z13x/hqhks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Hr9JF10R; arc=none smtp.client-ip=209.85.208.173
+	 Content-Type:Content-Disposition:In-Reply-To; b=SvLmuqcgk3R07ksafNuEGJNk0dTULODPj/pp+gAHSy1h+6Atc2FHx9YaO2YW39aa8wGz/QTEP9AaLutVKXW0En0G/jbNjdn842tr1a7eLp4rTf9PWV6GGO/TrcBImZkZ185uWJmbjrGujpcbX8LmrJTbcKJ6GOSNahTxnsSbPX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fbYU32NS; arc=none smtp.client-ip=209.85.167.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Hr9JF10R"
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ec1620a956so84343741fa.1
-        for <linux-clk@vger.kernel.org>; Wed, 26 Jun 2024 11:14:06 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fbYU32NS"
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52ce6c93103so4754719e87.3
+        for <linux-clk@vger.kernel.org>; Wed, 26 Jun 2024 11:21:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719425645; x=1720030445; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1719426106; x=1720030906; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=4Rw5DgJfkqmChrhZK+6AbToGg1Sd58IidOonSm8zsNc=;
-        b=Hr9JF10Rj2neZ06N0A91z4wBtfAfu7Nit9bg+5dDZI8jDkCxoceE3baZDVdn0rdUKe
-         GkFVkRekFaNyWiZN/nnM4YrPYeVASQRWLa0MOv4T699mh29fE9Ep2hT/rCJ9H4Gezi2S
-         S884pdn4tmB9T6jl8V3mHRVsaupe0aFjEj6YoVGqRbf3s+0KHYOwymw6BD/ni1y1c5fO
-         +JbZcxUfwQaD9QNrEuMGdO6YGNn042CwUiWrj05qWgEaZYYtgSZxdQLB6fpH8H7XmQzD
-         T1RRi3pPY3aD18Zr/szpd2PIXpVHKR2fBV41NhxhTyIETxSo9CWC0RPc1jmtMrBJVr9I
-         jEMw==
+        bh=//MpmAILITzcKEizX/9gxPn9UDOA+9PRAYCNpg/DcRs=;
+        b=fbYU32NSCLChz93v6SvxehylSi91JXAVA0I7Iz1fvcq4LbVVs0mRyRCVxAprAv+RbP
+         CuDSPKJ2O+HNwe6zIGFI/4FRgcWsRDmexIGuneZtraj2I/E83LDkGyt1V0fG152OF262
+         5QjVOBCkf+IY5iKtLh7EdKXnSEwoQoukGmxL8gzBzLuAPX9bumVYy9kf5PwcVyA6M9j4
+         ECGDc+f1sRMqrvDHyvh8lSmAxE4PT5k0TfKOS4KadOMH9JP3SI8j4t6hPYogXGGcgE3U
+         q9KrzxTt+Hxcb8hqs2Rdap/JwqcyA2EsF2F8Tde/adb8HGOLQV8ezYVCEbUVV+U064on
+         ZyBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719425645; x=1720030445;
+        d=1e100.net; s=20230601; t=1719426106; x=1720030906;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=4Rw5DgJfkqmChrhZK+6AbToGg1Sd58IidOonSm8zsNc=;
-        b=NpnK3VSm270TUOajOrn6EM6q0xD5o6g9a2cYsP6sNRrLM6MWNhm69dRtp7TIJGEjTv
-         L0BL8WX1wkhcOMgjze16Xougz2wo6ZO38n5OVdlBDRPlz+XH+QGBUTOLaHcNEzDcZHpl
-         v5FWtApO5vdmSeGfcOv9hd+13qf+jorU7TqPJ/U3yarc2uC+x+ukUjmt1PDCWldQGKeT
-         /rdskGLZOssEnSLSY5W+HLMkGSwPWhhCwFi7sItlXDcQTI8GJ+Q4ubNxuVEH+98dMi82
-         GMrZBS8Ozfk1WYvq3xL/376AzAmzsJ8S9aT7EmX4FuwnezDcimooOU7Y0TpY8TZDU8GU
-         pLhw==
-X-Forwarded-Encrypted: i=1; AJvYcCXLeSJ2A4yVvMou/BLAJLJpCgU7KUCk+g/bYpplUMs3M1FJQA0UtP0dT3ow52MJbuM7MA3+tgFcPoTSSResehGKSBnJGoTNQ2w5
-X-Gm-Message-State: AOJu0YyHFeGWEiYJy4FhqXpF/os3xXC14t3HdHj/4XM3HxJOd4lVaHd5
-	2kdXM0wVKbMOBbnZZ7RCWd71TskMPUvfVJICTVtJpZoeK2inWAdFid8FSomEl+Q=
-X-Google-Smtp-Source: AGHT+IGRCK5IvIO9TLvRDM3DJP8mNy0jqc/vn+cLpORxslN2+hI26X0IxtdAO2AtmtUStvp0K/2qgg==
-X-Received: by 2002:a05:6512:ba1:b0:52c:88d7:ae31 with SMTP id 2adb3069b0e04-52ce185f67emr8532539e87.48.1719425644796;
-        Wed, 26 Jun 2024 11:14:04 -0700 (PDT)
+        bh=//MpmAILITzcKEizX/9gxPn9UDOA+9PRAYCNpg/DcRs=;
+        b=aKfoGh7k1gDbK40NoDPJ+wzzLYYQSKnp5ly+5SZ+NfRVZtQnPKDlRrvFb49B0P3cnz
+         8fAH+d+Zbzm03b/RDiQjlynYm8t6osMlpHe6RGiSlbJm4k8r1GjnvokVD3QPycGDgGXJ
+         Efu9fuvCVOBZ4IUWnHS45QI6B5U8Q2/jKEPG/cbybwihpohFP8FQYq0aopMa72HisO0P
+         tW55tAgSCbmQrJMRUJ8TwnG+ymDbOL0ER59ykK6XGF8+mRmWOKCoO28luUxUhD/vguSJ
+         1BVoQPTx+ZTgmpRxRDbj/sWr23qKp/38GtSBYXF5XvUyyHUctph60Ct2s2xeM55LdBtn
+         tN8g==
+X-Forwarded-Encrypted: i=1; AJvYcCX9CJsRByAwaFwZFPOIA/aef9BZBt3kBgjpJOnTYmXfsTQ7wIwE0rUoKwB9O5awSB6DL4WG4kw3RiVXN2QVBDwvE7LpYfbLDQEC
+X-Gm-Message-State: AOJu0YxLTB0yjiC+d29MfR7bJ46H2HnTdJ4Y527J2r+BcJiW1Trqs5i3
+	NvrXMXQx4qyU9Ns9flXJYJFf5blUfwmTr/uXh6963FjiLQBFGtT6gq9s9rH0xzY=
+X-Google-Smtp-Source: AGHT+IHJ4p//CH+AaNp/ZmyKwZ/tji9Ag3MV6cZw2C1QzU/zz+/aY3hOnCofp3e1KT6QUiZEBrnMNA==
+X-Received: by 2002:a05:6512:308c:b0:52c:c9e4:3291 with SMTP id 2adb3069b0e04-52ce185ce9amr11764612e87.60.1719426105827;
+        Wed, 26 Jun 2024 11:21:45 -0700 (PDT)
 Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cec15c9f2sm695437e87.276.2024.06.26.11.14.03
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52cdcdb981esm1450255e87.122.2024.06.26.11.21.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 11:14:03 -0700 (PDT)
-Date: Wed, 26 Jun 2024 21:14:02 +0300
+        Wed, 26 Jun 2024 11:21:45 -0700 (PDT)
+Date: Wed, 26 Jun 2024 21:21:43 +0300
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Devi Priya <quic_devipriy@quicinc.com>
-Cc: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	konrad.dybcio@linaro.org, catalin.marinas@arm.com, will@kernel.org, p.zabel@pengutronix.de, 
-	richardcochran@gmail.com, geert+renesas@glider.be, neil.armstrong@linaro.org, 
-	arnd@arndb.de, m.szyprowski@samsung.com, nfraprado@collabora.com, 
-	u-kumar1@ti.com, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org
-Subject: Re: [PATCH V5 7/7] arm64: defconfig: Build NSS Clock Controller
- driver for IPQ9574
-Message-ID: <rlqrgopsormclb7indayxgv54cnb3ukitfoed62rep3r6dn6qh@cllnbscbcidx>
-References: <20240626143302.810632-1-quic_devipriy@quicinc.com>
- <20240626143302.810632-8-quic_devipriy@quicinc.com>
+To: Varadarajan Narayanan <quic_varada@quicinc.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	angelogioacchino.delregno@collabora.com, andersson@kernel.org, konrad.dybcio@linaro.org, 
+	mturquette@baylibre.com, sboyd@kernel.org, ilia.lin@kernel.org, rafael@kernel.org, 
+	viresh.kumar@linaro.org, ulf.hansson@linaro.org, quic_sibis@quicinc.com, 
+	otto.pflueger@abscue.de, neil.armstrong@linaro.org, luca@z3ntu.xyz, abel.vesa@linaro.org, 
+	danila@jiaxyga.com, quic_ipkumar@quicinc.com, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-pm@vger.kernel.org
+Subject: Re: [PATCH v3 1/9] soc: qcom: cpr3: Fix 'acc_desc' usage
+Message-ID: <jgboqj56nfeuv7qmi34chan46u5urdxyezqhfmqdq3clvcv2k6@k7aktead5qbk>
+References: <20240626104002.420535-1-quic_varada@quicinc.com>
+ <20240626104002.420535-2-quic_varada@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -75,35 +74,61 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240626143302.810632-8-quic_devipriy@quicinc.com>
+In-Reply-To: <20240626104002.420535-2-quic_varada@quicinc.com>
 
-On Wed, Jun 26, 2024 at 08:03:02PM GMT, Devi Priya wrote:
-> NSSCC driver is needed to enable the ethernet interfaces and not
-> necessary for the bootup of the SoC, hence build it as a module.
-
-It is used on this-and-that device.
-
+On Wed, Jun 26, 2024 at 04:09:54PM GMT, Varadarajan Narayanan wrote:
+> cpr3 code assumes that 'acc_desc' is available for SoCs
+> implementing CPR version 4 or less. However, IPQ9574 SoC
+> implements CPRv4 without ACC. This causes NULL pointer accesses
+> resulting in crashes. Hence, check is 'acc_desc' is populated
+> before using it.
 > 
-> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
 > ---
->  Changes in V5:
-> 	- No change
+>  drivers/pmdomain/qcom/cpr3.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
 > 
->  arch/arm64/configs/defconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index dfaec2d4052c..40a5ea212518 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -1300,6 +1300,7 @@ CONFIG_IPQ_GCC_5332=y
->  CONFIG_IPQ_GCC_6018=y
->  CONFIG_IPQ_GCC_8074=y
->  CONFIG_IPQ_GCC_9574=y
-> +CONFIG_IPQ_NSSCC_9574=m
->  CONFIG_MSM_GCC_8916=y
->  CONFIG_MSM_MMCC_8994=m
->  CONFIG_MSM_GCC_8994=y
+> diff --git a/drivers/pmdomain/qcom/cpr3.c b/drivers/pmdomain/qcom/cpr3.c
+> index c7790a71e74f..c28028be50d8 100644
+> --- a/drivers/pmdomain/qcom/cpr3.c
+> +++ b/drivers/pmdomain/qcom/cpr3.c
+> @@ -2399,12 +2399,12 @@ static int cpr_pd_attach_dev(struct generic_pm_domain *domain,
+>  		if (ret)
+>  			goto exit;
+>  
+> -		if (acc_desc->config)
+> +		if (acc_desc && acc_desc->config)
+>  			regmap_multi_reg_write(drv->tcsr, acc_desc->config,
+>  					       acc_desc->num_regs_per_fuse);
+>  
+>  		/* Enable ACC if required */
+> -		if (acc_desc->enable_mask)
+> +		if (acc_desc && acc_desc->enable_mask)
+>  			regmap_update_bits(drv->tcsr, acc_desc->enable_reg,
+>  					   acc_desc->enable_mask,
+>  					   acc_desc->enable_mask);
+> @@ -2676,7 +2676,7 @@ static int cpr_probe(struct platform_device *pdev)
+>  	desc = data->cpr_desc;
+>  
+>  	/* CPRh disallows MEM-ACC access from the HLOS */
+> -	if (!data->acc_desc && desc->cpr_type < CTRL_TYPE_CPRH)
+> +	if (!data->acc_desc && desc->cpr_type < CTRL_TYPE_CPR4)
+>  		return -EINVAL;
+>  
+>  	drv = devm_kzalloc(dev, sizeof(*drv), GFP_KERNEL);
+> @@ -2703,7 +2703,7 @@ static int cpr_probe(struct platform_device *pdev)
+>  
+>  	mutex_init(&drv->lock);
+>  
+> -	if (desc->cpr_type < CTRL_TYPE_CPRH) {
+> +	if (desc->cpr_type < CTRL_TYPE_CPR4) {
+
+This is incorrect. This disables ACC usage for CPR4, while GFX CPR on
+MSM8998 (which is CPR4) seems to use ACC.
+
+>  		np = of_parse_phandle(dev->of_node, "qcom,acc", 0);
+>  		if (!np)
+>  			return -ENODEV;
 > -- 
 > 2.34.1
 > 
