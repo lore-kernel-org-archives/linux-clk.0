@@ -1,108 +1,120 @@
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE41218A936
-	for <linux-clk@vger.kernel.org>; Wed, 26 Jun 2024 19:17:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A5B41922F7
+	for <linux-clk@vger.kernel.org>; Wed, 26 Jun 2024 19:43:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719429441; cv=none; b=g5gcMwfjBB8gddLkwG3JEiEwRJqaJWrrwq2swO0Qd7G9cuzhnEWHLiNtaggeZf14kKf5RIwYpe/CT/MPyB1mIJFvj/Il8I6V8WI5rZoCCXZ6Fj6vqmyl7pVu6+Ex7vDtRCQNszv1/95bh32kJkI0tE6iZBtVQFo1ikbCa5v2Rg4=
+	t=1719430990; cv=none; b=kdziKgfw3KVBQ76SBOwpKaApUQb5I/huSjjLv0KxAgT89N3CVwx/Rgh6o8wLo9rwiIDF+yLyWinQNyydOfhcN7z8SF+QLoVdEQua7BFeQr532jv3ebiNC0j0LFVtn/W+lpcb0yR3LbrGL0nlWNkCkm3ADc5WR6Hgpv/mBv4o0Ts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719429441; c=relaxed/simple;
-	bh=wZPdg1xi4qRyJlyk7LfqlaJ7fDLSDBw9fw7OGRNwYl8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FGUSGNr7vkImLYySOCR7NIeXN8L7ozGnMivKP7/jg4e6WWS3F6F2cupSNY5CYzzBgsLtS4lMsRDpmRnBx8Jlk7We0AM+I6y3bkntaP/9IxZ1ZKE9fnXnGndmxWi0uFBbit2dPJz54klElEqxxUf63GI8VOLEpHhOd7F6dW7HuC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bdF6c38Q; arc=none smtp.client-ip=209.85.167.46
+	s=arc-20240116; t=1719430990; c=relaxed/simple;
+	bh=wQfLyPSaduwhoXhyw7tCofrvU/aH1SkdI6MXu0jHKKs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=K9VZxtYPU89dLR/Oqvolex3dYDZ7FQhQw7FlqgfVDzqrqREB62rFRzuGQ0IS4VIHZJxv7H4OhB4abVcp4uBR1alNMq5PHftWvUP3HHHBd2xNczB1h70I+dR9UG4moanV/OB75V7CZpclnQ/5gtrQg1mXa7eEYL54C9eKyjmKb/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UTNtSLMH; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bdF6c38Q"
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-52bbf73f334so5745132e87.2
-        for <linux-clk@vger.kernel.org>; Wed, 26 Jun 2024 12:17:19 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UTNtSLMH"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-424ad289949so10185655e9.2
+        for <linux-clk@vger.kernel.org>; Wed, 26 Jun 2024 12:43:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719429438; x=1720034238; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=XI3lZHAHMpMacrGr7sZ7TIX64kTZg51b8AujnGsu14Q=;
-        b=bdF6c38QBUdDjQCXET6Ae6XTz9eVDupe6JNWAxfkoLAy9v6hr0ZSWlAjvaA52Bi987
-         eA86ed5YG9ThpMRAaVIx67Pq1oKjVjFhaYXm18G4A5ipD0oEqlvgW+LwhC4DaXF3SAkB
-         E/pxdVjtDGJUMcRbBBp0xutTR/hgBU9udoeWZxLHkgk/NEIEQ6QxRpjmxyp+68G+KU6M
-         c/u6oTK61jxogveuRB4lhNVEI0WEvWULNBAJIvkjxVfiervIQlzdkWT0UrChocMIzyCd
-         XhgYZMghHlrFJEqLXYRv7tAbkO8DoMAMvjxzcZH68j7kSvIL00R5G/CsX02/pAvsO3ai
-         ZbEA==
+        d=linaro.org; s=google; t=1719430987; x=1720035787; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fnjsauIL/CcAxAa/bQLK55jPhlKZNz6Is4DxauRo/E0=;
+        b=UTNtSLMHPX6W4Z5ZTUik5X0mZtVQGth8+tRfRkfP8FWhXBztW4jN0GwCfb0zcoSe4d
+         CCIpKNW0qUTqfIO66Y5ttnKoNvTgIis9fo1mAcJ0JjascqfQYDgOCyb32pC66qn6lQzV
+         mp45YgWQKL7HG2S3502mqTQkH8ge5iT9EGe3vgFhCbDkPpNA6ajmM+GBgZ0ZVM0WwJv5
+         BBOZwrGLyB8oUGCyAJ1hE07nhSmAmTiCQ6zUvfXrR8PkHaYIPKyYDyLf6yIUjMu3pT+o
+         m7AdNN4PH1lUVnvGiWAvh9I8bph8m7G+DNLMn+0EFC6O1tD4/7ieQauWTzka/Wyds84B
+         fN1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719429438; x=1720034238;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XI3lZHAHMpMacrGr7sZ7TIX64kTZg51b8AujnGsu14Q=;
-        b=ksSjzOwLSdA9Ykw0SGyAXjYgxv5uqf5zrCQCh03jnThiqFuVLQyc3fXo7bHM49SfqZ
-         F3cK1d6I7jlVpg6n4SLDXVnzXzkSj1P+WFAOdFqs+7Ry/ypCdiPZQ6ERnBM6nGvSRXiz
-         /N83+6vj6ijtuHXeoG7kUd7H2DhQMV9oFsHflBonwq7N/pfabTY0+HqGRGCOPhb2Lrl8
-         dYjG/5KPYFhYN2meTgnNJO+yj12/I8RcpQShzW/IxkFCRm/TdHB+riaXweL1QgKz0G1P
-         yh97LTd2lTwDJJYqTUHhipAwJKYAsPTOMd+NeRFbBZCl+0nUlTseW0LI6atStf3IbuEm
-         Uyfw==
-X-Forwarded-Encrypted: i=1; AJvYcCUECP1tHyeMSjzabx0kxkKQwldzx6FHbMSPHoQ8i/wf1chT5VUXsSY0bD69oA+V1gYl+0L+MzSA6CrpyO5PBzePoAw0Ohj9t8E0
-X-Gm-Message-State: AOJu0Yw9i4NYrNRLrWf1K1VS08zX7jsRfMtr4ZhLHqRzSRQgrPZFyY5Q
-	SD4txtid8RvFE3tx7+Y4wFue3BGXOgINvomMHBLI0UVDCaDIYrpthrEYe7i+2mGky/k5Ya8IxsG
-	fiSU=
-X-Google-Smtp-Source: AGHT+IHV/jft8RtNZmUB7mEGILVCEPrignxw3W0VzQYDTf1gbiJqRpR7V0F3dldHCqlThMgWvlblJQ==
-X-Received: by 2002:a05:6512:60b:b0:52c:c5c4:43d2 with SMTP id 2adb3069b0e04-52cdf8209b9mr8426942e87.47.1719429437950;
-        Wed, 26 Jun 2024 12:17:17 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ce663d1d6sm1018227e87.157.2024.06.26.12.17.17
+        d=1e100.net; s=20230601; t=1719430987; x=1720035787;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fnjsauIL/CcAxAa/bQLK55jPhlKZNz6Is4DxauRo/E0=;
+        b=rri2kyLA95L7uZTE7/c1C6KDnEKjHBMA9TScknwt6ionpd8P9tBxRup3ZB0SGgaUTU
+         2GPrYXAwcr2OwYkH3pqvajTe12b4C61jmcvHWMfwbOsFsyUYPIk2cQd3OW/3nqQ77kMa
+         pW0GuFP/tktfOywU3CIpOCevebXW+mzdP1snvwa2gdoKVzUxJl50i3rqliVamzQvTuPc
+         3BedIi3MZeyde974t1mxPdmVbbvuyi3sgvwkv3dcxB2Kbbir6MCpzArGCIaXqpQzMUc4
+         SIVgk9pUcbRnUAoHDevX2I/mHQb3SXczi4bdHykmCIb6udPRPXel5p4CyzdCP+OurBXU
+         dohg==
+X-Forwarded-Encrypted: i=1; AJvYcCUPtqpb9cGJMSnhTP1153lLEBPm1RS4zyUFHv0dX8FjUFHrkA8QHz3OOzS/BB2bcRNbE4oibco91Q78fVwiKq+GDf0gds+0zmNw
+X-Gm-Message-State: AOJu0Yx41cW43dC5W5JARqBbRPgTLwhxsoXmtk9lbiPI5I3GnwAWurRX
+	aPRsT3a2YV2NRs2mgL1f2ZwrZL+gFjU47npl7ZxkF7Gs+1bi34UduHHNAD+TBCc=
+X-Google-Smtp-Source: AGHT+IG2LSoOJQA11RV0AZDKvrStmKskCO7Ie8cnMZ0Kw2R/ExVN3FkSauKy1goNEMtUgpFm9FC1NQ==
+X-Received: by 2002:a05:600c:3510:b0:424:76d7:2cca with SMTP id 5b1f17b1804b1-4248b9363d3mr74795175e9.4.1719430987018;
+        Wed, 26 Jun 2024 12:43:07 -0700 (PDT)
+Received: from gpeter-l.lan ([2a0d:3344:2e8:8510:24d9:a20a:2de5:8eda])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-424c837eb2bsm36728905e9.39.2024.06.26.12.43.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 12:17:17 -0700 (PDT)
-Date: Wed, 26 Jun 2024 22:17:15 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Gokul Sriram P <quic_gokulsri@quicinc.com>
-Cc: sboyd@kernel.org, andersson@kernel.org, bjorn.andersson@linaro.org, 
-	david.brown@linaro.org, devicetree@vger.kernel.org, jassisinghbrar@gmail.com, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-remoteproc@vger.kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, ohad@wizery.com, 
-	robh@kernel.org, sricharan@codeaurora.org, gokulsri@codeaurora.org
-Subject: Re: [PATCH v9 1/8] remoteproc: qcom: Add PRNG proxy clock
-Message-ID: <ga5kczcyn3dqoky4525c74rr7dct5uizun2smvyx3p3u6z6vtm@5vshoozpttod>
-References: <20240621114659.2958170-1-quic_gokulsri@quicinc.com>
- <20240621114659.2958170-2-quic_gokulsri@quicinc.com>
- <chi3pzh5ss3mivnhs3qeoen5hsecfcgzaj6qnrgxantvinrri2@bxsbmpufuqpe>
- <73cb638e-4982-49a2-ba79-0e78402b59ad@quicinc.com>
+        Wed, 26 Jun 2024 12:43:03 -0700 (PDT)
+From: Peter Griffin <peter.griffin@linaro.org>
+To: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	alim.akhtar@samsung.com,
+	s.nawrocki@samsung.com,
+	cw00.choi@samsung.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tudor.ambarus@linaro.org,
+	andre.draszik@linaro.org,
+	kernel-team@android.com,
+	willmcvicker@google.com,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Peter Griffin <peter.griffin@linaro.org>
+Subject: [PATCH 0/3] Add syscon-reboot and syscon-poweroff support for gs101/Pixel 6
+Date: Wed, 26 Jun 2024 20:42:57 +0100
+Message-ID: <20240626194300.302327-1-peter.griffin@linaro.org>
+X-Mailer: git-send-email 2.45.2.741.gdbec12cfda-goog
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <73cb638e-4982-49a2-ba79-0e78402b59ad@quicinc.com>
 
-On Tue, Jun 25, 2024 at 11:03:30AM GMT, Gokul Sriram P wrote:
-> 
-> On 6/22/2024 2:38 AM, Dmitry Baryshkov wrote:
-> > On Fri, Jun 21, 2024 at 05:16:52PM GMT, Gokul Sriram Palanisamy wrote:
-> > > PRNG clock is needed by the secure PIL, support for the same
-> > > is added in subsequent patches.
-> > Which 'same'?
-> > What is 'secure PIL'?
->   will elaborate in the updated version.
->   To answer your question, secure PIL is signed PIL image which only
-> TrustZone can authenticate and load.
+Hi Krzysztof,
 
-Fine. So, the current driver can not load WCSS firmware on IPQ8074, is
-that correct? Or was there some kind of firmware interface change? The
-driver was added in 2018, so I can only hope that at that point it
-worked. Could you please explain, what happened?
+This series adds support for syscon-reboot and syscon-poweroff to gs101/Oriole.
+It has been tested with reboot and poweroff commands respectively.
 
-> > > Signed-off-by: Nikhil Prakash V <quic_nprakash@quicinc.com>
-> > > Signed-off-by: Sricharan R <quic_srichara@quicinc.com>
-> > > Signed-off-by: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
-> > > ---
-> > >   drivers/remoteproc/qcom_q6v5_wcss.c | 65 +++++++++++++++++++++--------
-> > >   1 file changed, 47 insertions(+), 18 deletions(-)
+Note the syscon-reboot/poweroff has *runtime* dependencies on the exynos-pmu
+and clk-gs101 patches in this series, as well as [1] which was just queued by
+Lee. As you are the maintainer for exynos-pmu and samsung clock drivers I've
+included those patches in this series.
 
+For the moment I have left out syscon-reboot-mode dt node as whilst it uses the
+same SYSIP_DAT0 register as exynosautov9, and setting this the reboot mode is
+correctly reported in the Pixel bootloader. The bootloader is also checking a
+scratch register in max77779 chip that isn't currently enabled upstream, and
+thus the bootloader doesn't actually enter fastboot.
+
+Kind regards,
+
+Peter
+
+[1] https://lore.kernel.org/linux-arm-kernel/20240621115544.1655458-1-peter.griffin@linaro.org/
+
+Peter Griffin (3):
+  arm64: dts: exynos: gs101: add syscon-poweroff and syscon-reboot nodes
+  soc: samsung: exynos-pmu: add support for PMU_ALIVE non atomic
+    registers
+  clk: samsung: gs101: mark gout_hsi2_ufs_embd_i_clk_unipro as critical
+
+ arch/arm64/boot/dts/exynos/google/gs101.dtsi | 15 +++++++++++++++
+ drivers/clk/samsung/clk-gs101.c              |  2 +-
+ drivers/soc/samsung/exynos-pmu.c             | 16 ++++++++++++++--
+ include/linux/soc/samsung/exynos-regs-pmu.h  |  4 ++++
+ 4 files changed, 34 insertions(+), 3 deletions(-)
 
 -- 
-With best wishes
-Dmitry
+2.45.2.741.gdbec12cfda-goog
+
