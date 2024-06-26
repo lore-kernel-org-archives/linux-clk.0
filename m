@@ -1,83 +1,60 @@
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C652716089A
-	for <linux-clk@vger.kernel.org>; Wed, 26 Jun 2024 10:18:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 220821662F2;
+	Wed, 26 Jun 2024 10:40:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719397098; cv=none; b=NipNG9u+OfmpdYDDMPoySqFFRVjXTbkKr2cxagDrE3pf18z20xeYsKXj8CEMryGMqFOvwShdoo8TbNnLTgEbhIAlHXK9ZPrX8C1r8e3f8JCnw6QzhrRcnuBvWO2EYIL57QIhAXm1xgJrZbaqhsUhgJ9+wO+nMPg5jl9V1MfaQzg=
+	t=1719398450; cv=none; b=Rn0MUAzz3dXwbTpIY6mDohlUHgZ+PeQ+hBOKJm2ZXZTicUpsFzdsWEgu2ZZ4tYy2VRTixbMKXmpDEnmZH5ihRbSrPtIvafILNk21mQYl8n5kMT+Ipxh2Ljxp9nnAeXPMxwJc9BRBEmqITZjGeSLlV4ZGvr+f5mLHnVrEXJk3TAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719397098; c=relaxed/simple;
-	bh=HxFLn3EKFP9/3frs9V6iy9Q1+ai79dM4oSUWkrspkNY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SBRbcSX49wnL5KIsMtBJDrpHp4Yi2v0Kz/rsr+Konrn9wM2pSdk8mRc7/3Op+77EgKc5LYiryvb4mHbOzrnTjJ/97zy87hufC7FuR66cJ0O/FGEJKmkRdKIFsmdmK5bs0cWC69Z9DHdodFtX6IOpmP6lbT73DKEvDl/Fdmw6X4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FL/1rLlN; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1719398450; c=relaxed/simple;
+	bh=zCRL9/gXXtpPFsNeeqMdUUs3CU4qGSxZACUdLNNnGtw=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Ua8+RqLlW5v8UWbLGnDiH7+J/5s6yP8z3v8s+NsEn7UgZlpCC1S/PLdwuPnjJ5gmBvB0c6v8jsjG5thuG/IUhqI4kC5svdI/mxrrkyoQQAUo4iumQdsemhmEwdIABvPqk+DYfF3EcC/ap0fcHmfFGHxUImzPNq2GGj4x5dWP3UU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=W3QMCs7G; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FL/1rLlN"
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-57d1d614049so37508a12.1
-        for <linux-clk@vger.kernel.org>; Wed, 26 Jun 2024 03:18:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719397094; x=1720001894; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6bdjU3nE5ZipGzXPlrfx4tB5EjZjaLf/s1zAFQ4DTHQ=;
-        b=FL/1rLlN4StONzTTMqTS41LTLU5ZQTKm9+rF3c0+VuLgHk5lnbGed4BtNRiYSASwC+
-         kss4tFI1nBqblO7j2VR7x3C/FONV0as4aaMbL3Mb8qcT6DuYjjF+W1hKsMvMKwif1gU5
-         uGCQlNbraj668ebjVaqBAOR/CzOVkh8PSvOOta2lAm2aD7tduKtC1OM27OluSx1cOmt5
-         0M9ndOAlFoexzZY5Md2uKCRHAZy0X1CEI7AqNxHXlbRFk82I90ndUbrXQr5fdbdK5H3s
-         QWzlC9L/Ct9UUINI2RU6rIcLCl9oP7k5NGMBW6fL12WbboOioNw8hZSNNKqsDGogm7AE
-         uwzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719397094; x=1720001894;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6bdjU3nE5ZipGzXPlrfx4tB5EjZjaLf/s1zAFQ4DTHQ=;
-        b=ZFWHyjtnQ1A1O0BpGjqoaEnGmVxPnd/FfK3Zi/VIN1LpfiRmxHCcxsK/vj1eMM7yIZ
-         ntwKWTOo1VUPbFe+6rmwIonN7LWamhM8rbL4y48snJCCz3c+oX3Rx5k/H8KXxAbrzIHp
-         P0L07rLp9yS6Q3Vu3fbA/y8QNlGhkfieO0NVxym4qYLFnQ+msbdFpOLTpc4OYIweK3BB
-         XPKZDi35lLtPec9GaX3pUSVOoGVN25dzKPm3oddljQrZIbDqyACxZtybo08Q+2uzSl/i
-         QLW4qlgNvqbXsGVkncfCYkmnB3p3ADzuAPzkIScp5m7iqoRYl0dYE09hqUeLQsW2supf
-         DALQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWqEjl8wJ5GapIohlwqjLKILpVJBDQNDwdjKzMaSnrJbk+3z3AhjMAIQPIUCz4ZAcPKbU7Z16w7idCRCOL85LNpHvV/UET9spuK
-X-Gm-Message-State: AOJu0YwEj3LTs46dZDzRBRPOLW2xOHtGOuKtC3/lxK8ZI92U0oNaeTQ1
-	eDWHeXxnDba/V7f77wHvauTHvPZMF1I83UohgYN9TabWqNEt+a2Ozw8GaSXGSns=
-X-Google-Smtp-Source: AGHT+IFBNccWMI7NTYfI9iYETbbac/VKuBb+ZnQdRhtrnkDqFlLEVtbm0dPVcl4LOR3fqWpc0urpjg==
-X-Received: by 2002:a05:6402:340d:b0:582:5195:3a7a with SMTP id 4fb4d7f45d1cf-58251957777mr3714663a12.35.1719397094033;
-        Wed, 26 Jun 2024 03:18:14 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-57d3053558esm6965474a12.64.2024.06.26.03.18.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 26 Jun 2024 03:18:13 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Vinod Koul <vkoul@kernel.org>,
-	Pavel Machek <pavel@ucw.cz>,
-	Lee Jones <lee@kernel.org>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	Richard Weinberger <richard@nod.at>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Rahul Tanwar <rtanwar@maxlinear.com>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	dmaengine@vger.kernel.org,
-	linux-leds@vger.kernel.org,
-	linux-mtd@lists.infradead.org,
-	linux-phy@lists.infradead.org,
-	linux-gpio@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] dt-bindings: intel,lgm: drop inactive maintainers from intel
-Date: Wed, 26 Jun 2024 12:18:09 +0200
-Message-ID: <20240626101809.25227-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="W3QMCs7G"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45Q6j2a6020260;
+	Wed, 26 Jun 2024 10:40:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=dboRyQmNRvfH2Gc3HMujl+
+	eIW25tKRzlWNS6UNEYayw=; b=W3QMCs7Gl2a9x3bVIUo1DB8ACr/3MJGWap43c2
+	eXtakJSB/lskHAt0dp0VRCsYjLIF+qeo2TuDYyyESpELgfdIC70L8AyCO/YjLg47
+	s4nHqFFSC4IufzcphyBk5Kg0VMyk1pIP3HMU7jGRo+f3kxa09b2IJaQ/0BP7YEG5
+	ZbX7UU6kWomoeXJ/8flSTJbYh1PR7ml8JAy+8JHPRBzDdA7CRGtCfUFM4WqjPRvb
+	ZRMuLnr/wG92ZHnxrWoytHReqhBw4sosOiXwYmn09D4gqe6uWo2Nid+yIY0Z9WEA
+	AprVBprhshqxnWSRfyiqookSzN4rkO5inevqpjwjZGjpz2dQ==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywp6ys9dt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Jun 2024 10:40:36 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45QAeXQL029081
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 26 Jun 2024 10:40:33 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 26 Jun 2024 03:40:26 -0700
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <angelogioacchino.delregno@collabora.com>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <ilia.lin@kernel.org>, <rafael@kernel.org>,
+        <viresh.kumar@linaro.org>, <ulf.hansson@linaro.org>,
+        <quic_sibis@quicinc.com>, <otto.pflueger@abscue.de>,
+        <neil.armstrong@linaro.org>, <luca@z3ntu.xyz>, <abel.vesa@linaro.org>,
+        <danila@jiaxyga.com>, <quic_varada@quicinc.com>,
+        <quic_ipkumar@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-pm@vger.kernel.org>
+Subject: [PATCH v3 0/9] Enable CPR for IPQ9574
+Date: Wed, 26 Jun 2024 16:09:53 +0530
+Message-ID: <20240626104002.420535-1-quic_varada@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -85,126 +62,65 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 3bOWaSWhFbyXxF5Olo9uPfalRHmYkpnj
+X-Proofpoint-ORIG-GUID: 3bOWaSWhFbyXxF5Olo9uPfalRHmYkpnj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-26_05,2024-06-25_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 bulkscore=0
+ phishscore=0 adultscore=0 mlxscore=0 suspectscore=0 malwarescore=0
+ clxscore=1011 lowpriorityscore=0 spamscore=0 priorityscore=1501
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406260081
 
-Emails to chuanhua.lei@intel.com, mallikarjunax.reddy@intel.com,
-yixin.zhu@intel.com and vadivel.muruganx.ramuthevar@linux.intel.com
-bounce with the same message:
+This series tries to enable CPR on IPQ9574, that implements
+CPRv4. Since [1] is older, faced few minor issues. Those are
+addressed in [2].
 
-  Your message wasn't delivered to Yixin.zhu@intel.com because the
-  address couldn't be found or is unable to receive email.
+dt_binding_check and dtbs_check passed.
 
-The Intel LGM SoC was apparently part of Home Gateway division which was
-acquired by Maxlinear, so switch maintenance of affected bindings to the
-only known non-bouncing Maxlinear address: Rahul Tanwar.
+Depends:
+	[1] https://lore.kernel.org/lkml/20230217-topic-cpr3h-v14-0-9fd23241493d@linaro.org/T/
+	[2] https://github.com/quic-varada/cpr/tree/4de50be55a89eb29ab0d40d3fcfe9aa7a9ccf910
 
-I do not know if Rahul Tanwar or Maxlinear want to maintain the
-bindings, so regardless of this change we should consider bindings
-abandoned and probably drop soon.
+v3: Fix patch authorship for 2 patches
+    Include CPR3 file changes done to Konrad's patches in https://github.com/quic-varada/cpr/commits/konrad/
+    Change url for [2] to skip the cpr3 file changes
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- Documentation/devicetree/bindings/clock/intel,cgu-lgm.yaml    | 2 +-
- Documentation/devicetree/bindings/dma/intel,ldma.yaml         | 3 +--
- Documentation/devicetree/bindings/leds/leds-lgm.yaml          | 3 +--
- Documentation/devicetree/bindings/mtd/intel,lgm-ebunand.yaml  | 2 +-
- Documentation/devicetree/bindings/phy/intel,lgm-emmc-phy.yaml | 2 +-
- Documentation/devicetree/bindings/phy/intel,lgm-usb-phy.yaml  | 2 +-
- Documentation/devicetree/bindings/pinctrl/intel,lgm-io.yaml   | 2 +-
- 7 files changed, 7 insertions(+), 9 deletions(-)
+v2: Fix Signed-off-by order in 2 patches
+    Update constraints in qcom,cpr3.yaml
+    Add rbcpr_clk_src registration
+    Add Reviewed-by to one of the patches
+    Not adding Acked-by as the file has changed
+Praveenkumar I (2):
+  pmdomain: qcom: rpmpd: Add IPQ9574 power domains
+  soc: qcom: cpr3: Add IPQ9574 definitions
 
-diff --git a/Documentation/devicetree/bindings/clock/intel,cgu-lgm.yaml b/Documentation/devicetree/bindings/clock/intel,cgu-lgm.yaml
-index 76609a390429..bd7f96515ab9 100644
---- a/Documentation/devicetree/bindings/clock/intel,cgu-lgm.yaml
-+++ b/Documentation/devicetree/bindings/clock/intel,cgu-lgm.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Intel Lightning Mountain SoC's Clock Controller(CGU)
- 
- maintainers:
--  - Rahul Tanwar <rahul.tanwar@linux.intel.com>
-+  - Rahul Tanwar <rtanwar@maxlinear.com>
- 
- description: |
-   Lightning Mountain(LGM) SoC's Clock Generation Unit(CGU) driver provides
-diff --git a/Documentation/devicetree/bindings/dma/intel,ldma.yaml b/Documentation/devicetree/bindings/dma/intel,ldma.yaml
-index d6bb553a2c6f..af96d52922f6 100644
---- a/Documentation/devicetree/bindings/dma/intel,ldma.yaml
-+++ b/Documentation/devicetree/bindings/dma/intel,ldma.yaml
-@@ -7,8 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Lightning Mountain centralized DMA controllers.
- 
- maintainers:
--  - chuanhua.lei@intel.com
--  - mallikarjunax.reddy@intel.com
-+  - Rahul Tanwar <rtanwar@maxlinear.com>
- 
- allOf:
-   - $ref: dma-controller.yaml#
-diff --git a/Documentation/devicetree/bindings/leds/leds-lgm.yaml b/Documentation/devicetree/bindings/leds/leds-lgm.yaml
-index 8b3b3bf1eaf2..4ea6cf0af836 100644
---- a/Documentation/devicetree/bindings/leds/leds-lgm.yaml
-+++ b/Documentation/devicetree/bindings/leds/leds-lgm.yaml
-@@ -7,8 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Intel Lightning Mountain (LGM) SoC LED Serial Shift Output (SSO) Controller driver
- 
- maintainers:
--  - Zhu, Yi Xin <Yixin.zhu@intel.com>
--  - Amireddy Mallikarjuna reddy <mallikarjunax.reddy@intel.com>
-+  - Rahul Tanwar <rtanwar@maxlinear.com>
- 
- properties:
-   compatible:
-diff --git a/Documentation/devicetree/bindings/mtd/intel,lgm-ebunand.yaml b/Documentation/devicetree/bindings/mtd/intel,lgm-ebunand.yaml
-index 07bc7e3efd3a..2582380bf657 100644
---- a/Documentation/devicetree/bindings/mtd/intel,lgm-ebunand.yaml
-+++ b/Documentation/devicetree/bindings/mtd/intel,lgm-ebunand.yaml
-@@ -10,7 +10,7 @@ allOf:
-   - $ref: nand-controller.yaml
- 
- maintainers:
--  - Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
-+  - Rahul Tanwar <rtanwar@maxlinear.com>
- 
- properties:
-   compatible:
-diff --git a/Documentation/devicetree/bindings/phy/intel,lgm-emmc-phy.yaml b/Documentation/devicetree/bindings/phy/intel,lgm-emmc-phy.yaml
-index ca818f83579b..5af7e5f7e634 100644
---- a/Documentation/devicetree/bindings/phy/intel,lgm-emmc-phy.yaml
-+++ b/Documentation/devicetree/bindings/phy/intel,lgm-emmc-phy.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Intel Lightning Mountain(LGM) eMMC PHY
- 
- maintainers:
--  - Ramuthevar Vadivel Murugan <vadivel.muruganx.ramuthevar@linux.intel.com>
-+  - Rahul Tanwar <rtanwar@maxlinear.com>
- 
- description: |+
-   Bindings for eMMC PHY on Intel's Lightning Mountain SoC, syscon
-diff --git a/Documentation/devicetree/bindings/phy/intel,lgm-usb-phy.yaml b/Documentation/devicetree/bindings/phy/intel,lgm-usb-phy.yaml
-index 653a12286637..823a5fabf749 100644
---- a/Documentation/devicetree/bindings/phy/intel,lgm-usb-phy.yaml
-+++ b/Documentation/devicetree/bindings/phy/intel,lgm-usb-phy.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Intel LGM USB PHY
- 
- maintainers:
--  - Vadivel Murugan Ramuthevar <vadivel.muruganx.ramuthevar@linux.intel.com>
-+  - Rahul Tanwar <rtanwar@maxlinear.com>
- 
- properties:
-   compatible:
-diff --git a/Documentation/devicetree/bindings/pinctrl/intel,lgm-io.yaml b/Documentation/devicetree/bindings/pinctrl/intel,lgm-io.yaml
-index 1144ca2896e3..1cd19db1aa50 100644
---- a/Documentation/devicetree/bindings/pinctrl/intel,lgm-io.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/intel,lgm-io.yaml
-@@ -7,7 +7,7 @@ $schema: http://devicetree.org/meta-schemas/core.yaml#
- title: Intel Lightning Mountain SoC pinmux & GPIO controller
- 
- maintainers:
--  - Rahul Tanwar <rahul.tanwar@linux.intel.com>
-+  - Rahul Tanwar <rtanwar@maxlinear.com>
- 
- description: |
-   Pinmux & GPIO controller controls pin multiplexing & configuration including
+Varadarajan Narayanan (7):
+  soc: qcom: cpr3: Fix 'acc_desc' usage
+  cpufreq: qcom-nvmem: Add genpd names to match_data_kryo
+  dt-bindings: power: rpmpd: Add IPQ9574 power domains
+  dt-bindings: soc: qcom: cpr3: Add bindings for IPQ9574
+  dt-bindings: clock: Add CPR clock defines for IPQ9574
+  clk: qcom: gcc-ipq9574: Add CPR clock definition
+  dts: arm64: qcom: ipq9574: Enable CPR
+
+ .../devicetree/bindings/power/qcom,rpmpd.yaml |   1 +
+ .../bindings/soc/qcom/qcom,cpr3.yaml          |  35 +++
+ arch/arm64/boot/dts/qcom/ipq9574.dtsi         | 269 ++++++++++++++++--
+ drivers/clk/qcom/gcc-ipq9574.c                |  39 +++
+ drivers/cpufreq/qcom-cpufreq-nvmem.c          |   1 +
+ drivers/pmdomain/qcom/cpr3.c                  | 145 +++++++++-
+ drivers/pmdomain/qcom/rpmpd.c                 |  19 ++
+ include/dt-bindings/clock/qcom,ipq9574-gcc.h  |   2 +
+ include/dt-bindings/power/qcom-rpmpd.h        |   3 +
+ 9 files changed, 493 insertions(+), 21 deletions(-)
+
 -- 
-2.43.0
+2.34.1
 
