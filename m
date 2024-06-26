@@ -1,98 +1,97 @@
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D4C117D37E
-	for <linux-clk@vger.kernel.org>; Wed, 26 Jun 2024 11:53:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9BC7180A8B;
+	Wed, 26 Jun 2024 12:09:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719402839; cv=none; b=EL1Q57bjzFYnfmoDFcglk4svIr1EepyFPQTeSnOG7VyAgcvWHkmnk0fjLW5Sb011ciCmgoe2lUn+4cqgxQmdSJM/gkB0jsXCNRpeGZAFRP5sqOoEtWlnvpM0xFhZ7qP58qIjtl5K+n6+LOV6qL53vPFqe64Cu+1tUJRB6wj9djs=
+	t=1719403758; cv=none; b=uLtVLgk65cNM1yzwzAOzL5l2Rlh7TPPhwbHRuAkBJsed1y2xowzzHOIuycEPfbB0bmPRPUcZE9/rmUQ8+om3pmSsFGV7BigZmACKA2n06oUB0K1/jai4Dro4WKVG0E8f4rAk2vEgd6Xk8GZn3phx7nZ/XPgLyPeLVF2wQF0HZsM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719402839; c=relaxed/simple;
-	bh=t4QnQiAAvKS4rt9+w5OINOMssi64SFHO6cDlDm4yBRM=;
+	s=arc-20240116; t=1719403758; c=relaxed/simple;
+	bh=2+xH1mBOhPUluIxywXqOwQLxQ9N4Y9lY8NDxqSCdRcw=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pvsT7Y3lJhGVjJ7VPf2/6kjx+BltDZJvBqmhWCK4fQDFCDqwcqHA22lGQoent1SdB9uN2jUbEjtMv2GveYrM+05ZQaaDX4gnJj3uMJKOB06yLv4ykxyUH893RrX0NwvUjCOa8e95De891Rbf+3OCDO8CO15HNvnP59f6BoXFUhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Z7MzysBI; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z7MzysBI"
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52cecba8d11so2314004e87.1
-        for <linux-clk@vger.kernel.org>; Wed, 26 Jun 2024 04:53:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719402836; x=1720007636; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=t4QnQiAAvKS4rt9+w5OINOMssi64SFHO6cDlDm4yBRM=;
-        b=Z7MzysBIO35fPlQ3y4WF8omYoXMvdMqCx9APq80vkLyeug6M3jRguoa4/o0pya2FsQ
-         jIheL0Ywr8RSR3+ziLyOy3gH3/sypkPG2oFw86/ZcFEQzcZCt5mLUJVYQnrYblXGJoUH
-         RotHINvv1inuaeT0gxg/+xzV2IrQaEXmQTW7Kqs1M9KSUMv99IGQkmKdZy4hbLNecqms
-         TD+tZN1YrSwoPmzr6/T8xaw8ghKkROi45mBFDhXVVS0qQAMkTB63Mr/meamWxyDg9RR0
-         1B52+mqwK8W/NTxVSPpxYtR4x2XRKJGTWjub4k//CX3onckOld+qaPLrJe0Lvd1uBJvv
-         hxxw==
+	 To:Cc:Content-Type; b=G1j38JyX8+k5DdYRCVh6JVvZMDpfrgXY5smeU/io03ACZv26hNcLDQJP87aKetJ4UFFdUGk6PfE2CoJ2Tdca4+lp9coVzVnVf/RnWDV/qF2eGrYzxkJSQlPwy32JgmsxiBWGeqQtpce7rQNgyIZjI0ZZ00cFf0hXVa83qYxd2Zo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-dfe43dca3bfso6735833276.0;
+        Wed, 26 Jun 2024 05:09:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719402836; x=1720007636;
+        d=1e100.net; s=20230601; t=1719403755; x=1720008555;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=t4QnQiAAvKS4rt9+w5OINOMssi64SFHO6cDlDm4yBRM=;
-        b=nCf8FAQzf8vQ91CKqjuWgpms8wbxlyGiJzVa+xP+z0C91oujNn41MUDCj0uIb4Bgbk
-         BKVy9sN2ilV1Opxa0HlzshzaDDKYv3x60tm9q++LnuhenoXR+lVbnHOZwFycWKCfV7z3
-         xScsKTZfyb6TS5ev8r5fLfgdiTttdhbts1lHl6AwoYAuADSpS/HbQ4l/eVOUpaT2Xh9B
-         ukVBazo7ZulSisMSJelerAT2XmppIhqhnLq6uH5q5qodud/wzUG0ZRMNY6ljjJfmoA/z
-         nxTsg3DMsxIYOipZAm+PaySRWclm23OmUJmssEwr4No+orOeKOpdTlLH9kosdZYKz28c
-         4UuA==
-X-Forwarded-Encrypted: i=1; AJvYcCXcAFPvs/0eWbTZyvI7+pvDtvW12IkaSclgo3GpaIA6OzL/td6kjtsE5Zc2f3Pxj/Z0UWMfVBiKizmG9CUDml2cDsTuoqf+iGNa
-X-Gm-Message-State: AOJu0Yzf6Pb5MariIcKgmtMbUf9Qoi0KBQRvasCwjwYVvqvYq9Q7hIl9
-	kzT4iiUw4b+gISd07r3BpA+BZdYrckkVDAWgr0c3+uQZUMndZFQDL7a4uJub83iOGbxZhWsOjJB
-	M1j38Nul6Oqzq77zf+9sOaMWnzc5/gnJM60IZrA==
-X-Google-Smtp-Source: AGHT+IHfgQa2jdl41DM6WUs5TR/l+YzB0+Zt+uOHmxpLnkmqfkC8JZfrxv9WacloodOw0FsYNj3nJp5iaAX+hw9hdnM=
-X-Received: by 2002:a05:6512:3a8b:b0:52c:e402:4dc1 with SMTP id
- 2adb3069b0e04-52ce4024e00mr7078665e87.55.1719402835840; Wed, 26 Jun 2024
- 04:53:55 -0700 (PDT)
+        bh=R0mk92Bl3LQ3otRfOdnBzHIQx6l64HiZ4cpcn1DGppY=;
+        b=epqPNZcgvvO2GidJuls/Ew3B4Lc7CPtq1QApoRLmqZnSzoBpeLcrBZIexFWY1uHyRP
+         CWwrzSSAeDB+zf2oi5e7nXzpiFW6AIyIOc+1Qtkfh97TxgJ5HR0ll41VKM1SZHNoQhG4
+         zYjHkIf91lMlEOUnSuulD9f5QfA7vkEeBj0HQqF7MSjmP2aDXiu+tupYuuORBW+j1zv5
+         90O/aF+MrQp2qXHS+VMrZo8YphnbaxsmnWXFzNkGPAN7fTKj/Qq6u80KC013e6Pb6sFB
+         P897AMMDVfzk2EB8wEEIivx8RhMTouXdLhX0Fj8EjckaHJwt3NBw5XTwxcwzGSUjVRpI
+         SBAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUyubZWhzk3NHcgi+UjaCs0isjYj1CAwPa4IFnEud4OCHhLvbzSv2WweYXDW6gYnouL8kJDf/TWWeUbfg4cZm4mhWc+g/8QVeGrMZ7VqinMMUXBstOH9MkZQRVd2SfSPymk9pfbW/1f4zeinr9onSZLRkvz8PIGd6kczQ8j9R9hUxk96M2LpjlLMH3l5bcHhAileGVRTOizmdA188858ApvS18wqe+mFkK91L/73Vo3vZk+8oWHC71lQ4p7pIj1qeNZ
+X-Gm-Message-State: AOJu0YxabAcVDU77n0AJj2GajYDGnNT6TxLM1v33a5A7xmNlzGrUh6S4
+	Mq8vOnS2CCxewcpzlM0DIM2WIzabzjJH847bHBsobc0xz4fJQPAhzxTj4rui
+X-Google-Smtp-Source: AGHT+IHT8Ji9BSYpDePtcyLAvDd8mwMDstHI+WrAsMa+68ZO1QhEa1+74Lf08SYmALlC1gB1tMs0ug==
+X-Received: by 2002:a05:6902:102f:b0:e02:b7ee:5354 with SMTP id 3f1490d57ef6-e0300f893d9mr13313130276.20.1719403755045;
+        Wed, 26 Jun 2024 05:09:15 -0700 (PDT)
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e02e65dbbafsm4391812276.60.2024.06.26.05.09.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Jun 2024 05:09:14 -0700 (PDT)
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-63bdb089ffdso52892097b3.3;
+        Wed, 26 Jun 2024 05:09:14 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVtP+P2l7EssqxlAePpcX/HMKIobOWHioZsWMcxgSzIrdb+BLEpSGBhCcrIKIEV7TVe5zFJHHz6vXEhqwr9xssi6MI0XUmaClfFbRjdXM4D2PBS/O1ubTZgn58G/o50uBurHQpJhw/tgV2g7l2gGcQnbnc5Q4sXO3J+k2bV8bdUKLMn2xge4+swZw/trlMYJD7iQ/fT1WTBbS7qCh4v72Wylx5w0rqoPylIAbKTukrMT1h8Zxn0MRrs45SRbGMsW1DA
+X-Received: by 2002:a0d:eb84:0:b0:61a:ae79:816a with SMTP id
+ 00721157ae682-643413779ccmr91520187b3.31.1719403754668; Wed, 26 Jun 2024
+ 05:09:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240620-mbly-olb-v3-0-5f29f8ca289c@bootlin.com> <20240620-mbly-olb-v3-3-5f29f8ca289c@bootlin.com>
-In-Reply-To: <20240620-mbly-olb-v3-3-5f29f8ca289c@bootlin.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 26 Jun 2024 13:53:43 +0200
-Message-ID: <CACRpkdYLz3vMbft8dh_=dqd-yB+YUsbP2jbHBXGnUPZq49Mrug@mail.gmail.com>
-Subject: Re: [PATCH v3 3/9] Revert "dt-bindings: pinctrl: mobileye,eyeq5-pinctrl:
- add bindings"
-To: =?UTF-8?B?VGjDqW8gTGVicnVu?= <theo.lebrun@bootlin.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Lee Jones <lee@kernel.org>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, linux-mips@vger.kernel.org, 
+References: <20240614071932.1014067-1-claudiu.beznea.uj@bp.renesas.com> <20240614071932.1014067-2-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20240614071932.1014067-2-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 26 Jun 2024 14:09:02 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWMQJrEWEK-RK7Nv4Xoj=B84x9sRPiM=KCNpmx1Xk=Ktw@mail.gmail.com>
+Message-ID: <CAMuHMdWMQJrEWEK-RK7Nv4Xoj=B84x9sRPiM=KCNpmx1Xk=Ktw@mail.gmail.com>
+Subject: Re: [PATCH 01/12] clk: renesas: r9a08g045: Add clock, reset and power
+ domain support for the VBATTB IP
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, lee@kernel.org, 
+	alexandre.belloni@bootlin.com, magnus.damm@gmail.com, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
-	Gregory CLEMENT <gregory.clement@bootlin.com>, 
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Tawfik Bayouk <tawfik.bayouk@mobileye.com>
+	linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 20, 2024 at 7:31=E2=80=AFPM Th=C3=A9o Lebrun <theo.lebrun@bootl=
-in.com> wrote:
-
-> Switch from one sub-node per functionality in the system-controller to a
-> single node representing the entire OLB instance. This is the
-> recommended approach for controllers handling many different
-> functionalities; it is a single controller and should be represented by
-> a single devicetree node.
+On Fri, Jun 14, 2024 at 9:19=E2=80=AFAM Claudiu <claudiu.beznea@tuxon.dev> =
+wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 >
-> The pinctrl bindings is removed and all properties will be described by:
-> soc/mobileye/mobileye,eyeq5-olb.yaml
+> The Renesas RZ/G3S SoC has an IP named Battery Backup Function (VBATTB)
+> that generates the RTC clock. Add clock, reset and power domain support
+> for it.
 >
-> Signed-off-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.11.
 
-Yours,
-Linus Walleij
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
