@@ -1,138 +1,126 @@
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8481DA31;
-	Wed, 26 Jun 2024 07:11:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D8B1847;
+	Wed, 26 Jun 2024 07:22:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719385868; cv=none; b=emCGaV4R48J2K81o/jYgqjyji3intCNNBPcdvF8lO56724fHBHXAsWkJTsgyaVPldQUI24hxq8+sf2EWPjtVHNBlDXlHrryAPZWkIVPg/pNlx/ESw5W0XxQquVK7veBbQL8b+qHAx0yZHxatA34L+zOT/9ab9ZdFjGh9UWoOgms=
+	t=1719386548; cv=none; b=hTfbTOLk9Mtw6BuT+p6T+hv2ZrRi16OlQ3Ekjeg1NjNArtHR8FDHM4YzuJv/2JnhvlAm+ON88uD5jCAU5+zLLYka0PZKU/aMn03jCBKNzvu9B+I9hHrvBsnNdZSU8hLw/rAXw8u86Equ5K2k150slRhC18gAMhnj4fH+Q12cElY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719385868; c=relaxed/simple;
-	bh=fzxSia2agHN3X/RNLtdjuINsI+EbMnDIGmS892xRA6M=;
+	s=arc-20240116; t=1719386548; c=relaxed/simple;
+	bh=dDEYqs3Rdgi2+HOgiWUJgVkaqhGwL6aZWZJBSMLnYVo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f/FqoRX65DFMTdTmSzTPgvFPqCYnLkli//PZVOeITGpUJxBiSuDYmfEXJ430Ztrj7CTGxiPraqSMkokViRknNUCUlB3hcQg0RZJd1Ts5iCEnsFcE46ce1xwp5NDof7VyEk2a6uHYHUb6i5K1BKd04RYSwsPOBUGwVGo3KxDqa7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	 To:Cc:Content-Type; b=lplbPbHGUunRHblRCMvfZwyCC7vJMsSg2ry6yueJ+v03eGj1IPzOuBbMGdvQbCDFMyvpbfu48+HzJUNmuZn6Lss0BvJPdlJEcfDaIJ8tJosd+WumH/e6JGU50ZTv3mhIkNR6gInX1JLqZAWP9rQ7jHO3ZnCksor1RvPIqzh2gk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M441vDkn; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-64789495923so11678057b3.0;
-        Wed, 26 Jun 2024 00:11:06 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M441vDkn"
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-1f44b45d6abso49597995ad.0;
+        Wed, 26 Jun 2024 00:22:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1719386546; x=1719991346; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=NZafoQO29/Q6rTFpDKnwzpgXx4sA7xg8AQOuO4ZCtag=;
+        b=M441vDknjuqA2FqUqruLf2bTwkm2G/cE2L/7YGrMSebPKclO5n/7bae/YkzZfsE/Q+
+         mOMmSEe9F/g3oIM8UiBG4RcGUmgqM0GZSLDbank9sXNx80gVa7Y0blyxhZ1xPB7zjIFv
+         Rfq3hg2cVCte46sO41zOriyOUS3vPPTFwgeF08mCc5KTTe2jomJjcLe3ZW6SgJ65l/me
+         vAjMhcwjMSMKSkKtfIXBMahv5sFl9wep1JHyANnnsWTTMPfyGeJHgqBoqAdXcmb9InEv
+         zxZjbONMxAhH/YhMuOmx0ukybrwD9dIZKdKEJBe6wrqM0XBLsrrrmiczpAtXJcYRxrGo
+         6QXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719385864; x=1719990664;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=07yYxV7EnOmksXH2UcjyWNu5DW1U/oEUl8YKdbIe8Js=;
-        b=VNw+OZ6sxv3lcERUikJ311nzTknwAoGqfSKnJctP4NhEubGj5UmBEk26VRYrzEfWNe
-         xS7jn+Q9H8vU8NyXD8/KD5f4SlUISGeSWv0P8+o/RVe1TNB+/1ebrQF+BiBGURdKuYau
-         uhY46siRWxL3R4fHhWbyLk2L+ZI6IzOAepc9o7jUyjwZb+PlGNeYqVSifZaB8T+Z1+1C
-         ICS1/fA+r9+WAC4f2FCNfRzDPMtnf7VVH/BuLDCR+GwCHHTLj2tnGPVTozPOhbh2ESvJ
-         +CSgsI0w0BiuZTIcyPSWHWq1fOVFQPkjsyOQR1FGYGqc9qkVVpFv4vUrMDjwSxaXUkw+
-         rskg==
-X-Forwarded-Encrypted: i=1; AJvYcCUK41HoK9WWXsHYHlhUD7u/9hLzz8a+IbdHiN4Uw4m/GDAInw9P4HD58fh8RsUrCaYMPqsyfw8Ohk405mTW7f+ivDI7MEK0TW+yQxhpBvQ5kSlAoeMTvbDREV+fDluYFDH28G1Nc9ksGHQoqekz6rMbcu5bx8U3euphGTv4l2dMbFnp8s6HGmJ5qKrN2fR67h1y5YLFOOiFg3SVYGMhWs3fV4GlXm75sqf8TlnjiMxZqrH4TM0PAdzETtBsJgW9b+qG
-X-Gm-Message-State: AOJu0YwjIJTvyO0dxdPaQ6dXyx2Usx3rtatUVNHSiZClry+PiCf05b5+
-	L+ZjGfxBCrIrYGpdeRcj404jA+cHznhA99WRzHAsEGKwyymVFJ7AUoFPuRmc
-X-Google-Smtp-Source: AGHT+IH0zgec7hwqcLbCl46WL8YDXZcl/65syzLW1GAUrRVGI9HTo8JwM/PQVt6qYQrhGcpHiffkXA==
-X-Received: by 2002:a81:6057:0:b0:61a:bc2d:5186 with SMTP id 00721157ae682-643aba46495mr100522467b3.32.1719385864257;
-        Wed, 26 Jun 2024 00:11:04 -0700 (PDT)
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com. [209.85.219.182])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-63f154d6075sm38423587b3.113.2024.06.26.00.11.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Jun 2024 00:11:03 -0700 (PDT)
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-dfdff9771f8so5922062276.1;
-        Wed, 26 Jun 2024 00:11:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWaoQlIeEnSq1zgag1u614KipmMP2mHJXn0cJuJg60pQ21X6kB3HHMoLuFs7OOoROuvpqT5bu3iYOGQyY9syiNOavhbJI3yAnsBpTjxnK2g2gKEuex8QsdGNEbixwx3/HhDYhDZYlJ4Nu/ToN2k+9NZJDEetN9uLqcFNWdjcE6a/Qn3mHfS5p/YLlvqRAHM3EwPyCv61QSnMCNb1GjGyb0bzESFpzKrm+k2r06iwCJtea3cwtUMQy0cS65DK+M29JoB
-X-Received: by 2002:a25:97c5:0:b0:df7:7065:24cc with SMTP id
- 3f1490d57ef6-e0304045133mr9012192276.61.1719385863499; Wed, 26 Jun 2024
- 00:11:03 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719386546; x=1719991346;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NZafoQO29/Q6rTFpDKnwzpgXx4sA7xg8AQOuO4ZCtag=;
+        b=uGT/9qhu3NjzXVEPsOmYddEKjWlJt2IsvEAWZht6TxpzFym8/GNyxuK0aoMvfun/QC
+         hbLGxXZGtdQmRd3Jgil1hSHTPott6DaGQVwXBZC0U1Yv0NNp581hyaqfWFQX65/+/MPW
+         afCBsxOPGYKgrQCNZUDbshW076aZA12CW/gcZctlmUntTKZN+JzyHWutXMzorTPZdd5F
+         UIvnNUqL/D7K4s8cLtvAnZOsVlfAaGVAdDPmPdLucujIZ2atWY1KCF1D6Y1xa4mS0n0h
+         /sYJ/ww12No1/yGlxzYEqGH20YSOvbF/pbUNt4QeD1GFNpkUpqR1ad38JTSsx0bkzUco
+         I0MQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVMUjI8A8vj5G+jscqHIqAKrXoHx06Yd8Xen5+jBfpFdPgQE7/G/q11rT/KXGHkpwpuDCfTQ9laA389NN0bU15Vjtkur1F0B/zivMtu4yRDw8QvfeFWvxtRPUMpbScfAQt8PvT0Ntnc3mFpe8F4LqZ3r7wYXNPoBd4uZhdZOsdiyx7K+ANZ1VAeKe95vP7tM7lCcX2eu0pvFAWHIYy0RJP67XI=
+X-Gm-Message-State: AOJu0YzXSEWXDlc7yAg3XbOJQxCwRB5w4swbsahr3FusKq9nSMCyV4yw
+	0blWSJ7i/RGX0j0tGF0q49cO3W2zDgWUcuKWISIBnUXf+s6b6LbttQuNyn6TjdnyXfUFDADnyO8
+	diwXQfJKpSX+xyftQTguysJTI3E4=
+X-Google-Smtp-Source: AGHT+IH+qObITWZHk6PebRCUNTXi41wyCtr2DAlpoYkzjXVb5qw2T6xxkPH71QWMWsXJrJcBuEKHCXgRVEJNz3EfFKs=
+X-Received: by 2002:a17:90b:4f49:b0:2c7:838d:e96b with SMTP id
+ 98e67ed59e1d1-2c8582318e9mr8990205a91.26.1719386545607; Wed, 26 Jun 2024
+ 00:22:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240625121358.590547-1-claudiu.beznea.uj@bp.renesas.com>
- <20240625121358.590547-5-claudiu.beznea.uj@bp.renesas.com>
- <TY3PR01MB11346F03386D05D608041DE8D86D52@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <14167607-e67b-4627-99f0-6e99acc7f880@tuxon.dev> <TY3PR01MB11346A47493E0EE96CB2CF17B86D62@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-In-Reply-To: <TY3PR01MB11346A47493E0EE96CB2CF17B86D62@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 26 Jun 2024 09:10:51 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWDMMy-Q-1=DPcvpu9Co-oCQOvbStt-hLpdEwrLRdpt_A@mail.gmail.com>
-Message-ID: <CAMuHMdWDMMy-Q-1=DPcvpu9Co-oCQOvbStt-hLpdEwrLRdpt_A@mail.gmail.com>
-Subject: Re: [PATCH v2 04/12] i2c: riic: Use pm_runtime_resume_and_get()
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: "Claudiu.Beznea" <claudiu.beznea@tuxon.dev>, Chris Brandt <Chris.Brandt@renesas.com>, 
-	"andi.shyti@kernel.org" <andi.shyti@kernel.org>, "robh@kernel.org" <robh@kernel.org>, 
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
-	"magnus.damm@gmail.com" <magnus.damm@gmail.com>, "mturquette@baylibre.com" <mturquette@baylibre.com>, 
-	"sboyd@kernel.org" <sboyd@kernel.org>, "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>, 
-	"wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240620150122.1406631-1-amadeus@jmu.edu.cn> <20240620150122.1406631-2-amadeus@jmu.edu.cn>
+ <e3ad7b57-65dc-4262-b523-8bb81b60892b@gmail.com> <byjfbjwizdxbdyft5duxgkxxfvopi3usufcx26k65ekz4qgiuw@qdd67ebh4a4z>
+In-Reply-To: <byjfbjwizdxbdyft5duxgkxxfvopi3usufcx26k65ekz4qgiuw@qdd67ebh4a4z>
+From: Robert Marko <robimarko@gmail.com>
+Date: Wed, 26 Jun 2024 09:22:14 +0200
+Message-ID: <CAOX2RU55AENdibEBeatFDAFMmRM5Q1f2F96k1rTnU5fSAT32ew@mail.gmail.com>
+Subject: Re: [PATCH v6 1/2] clk: qcom: gcc-ipq6018: update sdcc max clock frequency
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Chukun Pan <amadeus@jmu.edu.cn>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-clk@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Biju,
-
-On Wed, Jun 26, 2024 at 8:23=E2=80=AFAM Biju Das <biju.das.jz@bp.renesas.co=
-m> wrote:
-> > From: claudiu beznea <claudiu.beznea@tuxon.dev>
-> > On 25.06.2024 18:53, Biju Das wrote:
-> > >> From: Claudiu <claudiu.beznea@tuxon.dev>
-> > >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> > >>
-> > >> pm_runtime_get_sync() may return with error. In case it returns with
-> > >> error
-> > >> dev->power.usage_count needs to be decremented.
-> > >> dev->pm_runtime_resume_and_get()
-> > >> takes care of this. Thus use it.
-> > >>
-> > >> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-
-> > >> -  pm_runtime_get_sync(dev);
-> > >> +  ret =3D pm_runtime_resume_and_get(dev);
-> > >> +  if (ret) {
-> > >> +          dev_err(dev, riic_rpm_err_msg);
-> > >
-> > > As at the moment we don't know how to reproduce this error condition
-> > > Can we use WARN_ON_ONCE() instead to catch detailed error condition h=
-ere??
+On Wed, 26 Jun 2024 at 06:03, Bjorn Andersson <andersson@kernel.org> wrote:
+>
+> On Sat, Jun 22, 2024 at 04:36:20PM GMT, Robert Marko wrote:
 > >
-> > [1] states "So, naturally, use of WARN_ON() is also now discouraged muc=
-h of the time". I've go with
-> > dev_err() or something similar.
+> > On 20. 06. 2024. 17:01, Chukun Pan wrote:
+> > > The mmc controller of the IPQ6018 does not support HS400 mode.
+> > > So adjust the maximum clock frequency of sdcc to 200 MHz (HS200).
+> > >
+> > > Signed-off-by: Chukun Pan <amadeus@jmu.edu.cn>
+> > > ---
+> > >   drivers/clk/qcom/gcc-ipq6018.c | 2 +-
+> > >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/clk/qcom/gcc-ipq6018.c b/drivers/clk/qcom/gcc-ipq6018.c
+> > > index 7e69de34c310..6c764e3e2665 100644
+> > > --- a/drivers/clk/qcom/gcc-ipq6018.c
+> > > +++ b/drivers/clk/qcom/gcc-ipq6018.c
+> > > @@ -1617,7 +1617,7 @@ static const struct freq_tbl ftbl_sdcc_apps_clk_src[] = {
+> > >     F(96000000, P_GPLL2, 12, 0, 0),
+> > >     F(177777778, P_GPLL0, 4.5, 0, 0),
+> > >     F(192000000, P_GPLL2, 6, 0, 0),
+> > > -   F(384000000, P_GPLL2, 3, 0, 0),
+> > > +   F(200000000, P_GPLL0, 4, 0, 0),
+> >
+> > Hi,
+> > Are you sure that 200MHz is even valid of a frequency, cause all IPQ SoC-s
+> > use 192MHz for the HS200 mode instead.
+> >
 >
-> WARN_ON_ONCE() should be ok I guess as people are using for printing this=
- info only once??
+> If I'm parsing the docs correctly, 192MHz, 200MHz and 384MHz are a valid
+> frequencies for the clock output, but the SDCC expects to receive 200MHz.
 >
-> Currently we don't know how to trigger pm_runtime_resume_and_get() error
-> condition in our setup using a testapp and we are expecting an error may
-> happen in future. If at all there is an error in future, we need detailed
-> error info so that we can handle it and fix the bug.
+> > I would just drop the 384MHz frequency as datasheet clearly states that
+> > HS400
+> > is not supported.
+> >
+>
+> I'll pick this patch as suggested. Please don't hesitate to send a
+> follow up patch according to this suggestion if it turns out to be a
+> better choice.
 
-On Renesas systems, pm_runtime_resume_and_get() never fails.
-That's the reason why originally we didn't care to check the return
-value of pm_runtime_get_sync().
+Since you have datasheet and 200MHz is a valid option that is fine
+by me.
 
-The various janitors disagreed, causing cascaded changes all over
-the place...
-
-IMHO, WARN_ON_ONCE() is definitely overkill, only bloating the code.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Regards,
+Robert
+>
+> Regards,
+> Bjorn
+>
+> > Regards,
+> > Robert
+> >
+> > >     { }
+> > >   };
