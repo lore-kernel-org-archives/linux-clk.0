@@ -1,100 +1,244 @@
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E402313D89B;
-	Wed, 26 Jun 2024 12:19:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7DA913CFBC;
+	Wed, 26 Jun 2024 13:55:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719404401; cv=none; b=lud2LSo/P8xrinDbgSan2mO0qTT3Q7NWdqe4Ly0S89epz9FbOYLIK2RJji5WG/VnsbsjV4OTTNc7V/THZMai5g6lc1gK24eClb0R5B2LqflPhQvl6uu45bCmzYDLJbiZIOeNEgBP4BH1oJdF5A84/6fdlDT5rQUCO1QDrcrbMHg=
+	t=1719410147; cv=none; b=u9TfYwJ4/zshoYCgJ91eAjVnlPqyLFrzPI/1+WHSqz2y4MpwVHHGuAfx+eTG7+4KGkyPrkh7MsNt27RD+pZ9NoZgi+CopixC4z9O8Twhia3H43i3PP9kiLWWkdHGT+sqxqPVi4e025NZeXCsz4x+RL8RJ2lxQaPfrbpfN9zUG30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719404401; c=relaxed/simple;
-	bh=NhwS/0jPcbT+SWSnFrU9D7JHNSM/dl5lWw89NP0DRpM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jh94BsK1lYd0KYq7vBGaOexRCI6ZFOixlm2F2s9CK0IbXUH1Wd/PKsbSnRzsKwl9leZyQdjpVbMvHq10YKg+aQJEKTmbOY4K3u1ATpPiPZ4Z58+jwTeAXGKlQdogzh3mDSRZ5y4zRW485h3Gw3aSM5qOeqrxdMgUmRnDc/vP4Uw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-64782323bbcso13134177b3.0;
-        Wed, 26 Jun 2024 05:19:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719404398; x=1720009198;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MDggygSOa6ZhSXSfpTpfRxS2RKvuyCdAPClaKesG9Ro=;
-        b=aocncRJys4RQWvmUit1Uy6wIuX3VdKDeSz5zL0XU7DlJnH1SMN3asTzeEUzqlRx/gP
-         ELNlHmMHRdiHppIHmpzi3GvRpIvXwE9rJ8JXoKs2UAhASzXyt34oIQg++2isI1YtWANz
-         uljflKbqXxIqD+z9qBVS7p9J7ACsY87P5q7H6xcSmz2s/CRE4nfPKLqvlGgoksvDkogA
-         TqtVrcyf+l99brWcimFzsyaPnVWYxX2ozeieVQxYt0VaFyS6x/pl+4wbgj3PDJM0yTdV
-         orp4SbgJr066FnXCfOV7y3sryKtm5m20cGWw2UHD0ktmjxMfEoBKEm7jPN5le6MfxoRV
-         hZlw==
-X-Forwarded-Encrypted: i=1; AJvYcCWasaTASBUFrmZ2zzUHLg44bT5p9nAqeHHVJD0W4ZTY43MsXzrxhnsUoe9GiGldMb2fqkKPdX3rK/HU9bsXhchJMark96FMsFUVAn1sCjFV5fMA/w7KQMMODzz6yfMKIb+MhFnb0rj3jelFsolHQnnkrWgrvktHmIsta3kEE8kqFME+3ig6OcPFhNZiXfIsCBJGmACI8TWolOQExqOKo5cc8y/H3+NsX9rsBT6tayOA7Uu9JrlYji+VHRIrCNUDByKL
-X-Gm-Message-State: AOJu0YyX6+lBYpxwetL0YOmyLO/Py9tNobS7ASWyYlZGkG8J4eYy84Fz
-	rkkT80/NEElWEUT43owhsVGjilOtVM3qyLRq+wDYuER5YHGb8BWG3ySi9uh9
-X-Google-Smtp-Source: AGHT+IGSU4qqzy0xMvoO4iDq9bk/h2bGl017/7n0ndbc9zZM0QvGHD4HWgPbc/FuX7go8vomx7jFIw==
-X-Received: by 2002:a81:c10c:0:b0:631:51f4:f3c6 with SMTP id 00721157ae682-64343ff1b0fmr87164997b3.47.1719404398275;
-        Wed, 26 Jun 2024 05:19:58 -0700 (PDT)
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com. [209.85.128.172])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-644bb43d712sm20014207b3.136.2024.06.26.05.19.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 26 Jun 2024 05:19:57 -0700 (PDT)
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-643efaf0786so34306907b3.1;
-        Wed, 26 Jun 2024 05:19:57 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUA1sQ5oqDoL1CL9lUqf7hGgxpilAmdcfo6HZD9ynOnc2ha1wBuniB5s/BFpvvLtmLT31ceKGx8FtqfMZe6lTdPTfOhIRA32Q5COd02H0eHeoANCMUPbLwoD76gQ1vN/gKQwMM4HXLY8mOsPd9zqAoNWenmPF5GwpNqXm+3+RPxjt34ZlrCeEeV3DjQdWzktVxXF/3GOYByJK8GYwtMQ59fYZKhYDGHpFC7/aiJ8dxRI2fUGRxzlytu3HT7HKu5cUz5
-X-Received: by 2002:a05:690c:1b:b0:62d:1eb6:87bf with SMTP id
- 00721157ae682-6433eaf087amr116831527b3.5.1719404397679; Wed, 26 Jun 2024
- 05:19:57 -0700 (PDT)
+	s=arc-20240116; t=1719410147; c=relaxed/simple;
+	bh=xrcpgoNgxm8C0Kb/r4R1lvvcHBnUSjrEZGydptIEOxE=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=Ay/VEHRYZUrCrcz8nSc6CkfU9c+r9sec0wEXWROZLNhVo9Mv/x0YxbsXg7yBrUkZMtAA+QnfYb8IlTHIKYM7Wr0KpBEbfmOBbg0W/Hmj6fgCPmT9eta0xsrdXHE5hJXfOySs1JpYyvJ65I271dviFliXe9e+5OnOj8xR5pB5CJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZTSlvyvh; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZTSlvyvh"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 11D77FF80B;
+	Wed, 26 Jun 2024 13:55:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1719410142;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zHHpcdUDLggegxHApua1aann/FKTPhiRh3POfuR1lgs=;
+	b=ZTSlvyvh5zkjPhU7ABPitVfc+ymxhXAB+dFOn3XkM4WDiGZSZcLzos9RfubbU7R8FuuFWq
+	tQWKkGpJq5veA0MQZ2DTH/tJRU6JXzBVTnWEjtbEY01A9sYvq4iy/S7VRLZ6epythFq5as
+	tfHrGKvthedApjlvHBFi7jZY8en0+sZpD9v9SclEOCE2PWsi6Uv0ujDCeSeIKbzWraS3AX
+	GjhNzp0RfasxejYxpUrTVPrk6I7zI9iQNnTIKT5+XaHN3OGW3QDJvT8X0XruGkO+4eqjMN
+	2OhZ7wSk3Rax7C1JBvViN8Bc3iI3MuBdB5SgscoyA0IMFHYl3wrFJbofndrBWA==
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240625121358.590547-1-claudiu.beznea.uj@bp.renesas.com> <20240625121358.590547-2-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20240625121358.590547-2-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 26 Jun 2024 14:19:46 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWd1jyvbiXZBOBL9Gzxp94HLV7D6LjKRdW8VVK1W6MVKw@mail.gmail.com>
-Message-ID: <CAMuHMdWd1jyvbiXZBOBL9Gzxp94HLV7D6LjKRdW8VVK1W6MVKw@mail.gmail.com>
-Subject: Re: [PATCH v2 01/12] clk: renesas: r9a08g045: Add clock, reset and
- power domain support for I2C
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: chris.brandt@renesas.com, andi.shyti@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com, 
-	mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, 
-	wsa+renesas@sang-engineering.com, linux-renesas-soc@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 26 Jun 2024 15:55:40 +0200
+Message-Id: <D2A00Y4TJYTS.1RMR2FSNW7KQ2@bootlin.com>
+Subject: Re: [PATCH v3 7/9] reset: eyeq: add platform driver
+Cc: <linux-mips@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+ <linux-gpio@vger.kernel.org>, "Vladimir Kondratiev"
+ <vladimir.kondratiev@mobileye.com>, "Gregory CLEMENT"
+ <gregory.clement@bootlin.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
+ <tawfik.bayouk@mobileye.com>
+To: "Philipp Zabel" <p.zabel@pengutronix.de>, "Rob Herring"
+ <robh@kernel.org>, "Krzysztof Kozlowski"
+ <krzysztof.kozlowski+dt@linaro.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ "Michael Turquette" <mturquette@baylibre.com>, "Stephen Boyd"
+ <sboyd@kernel.org>, "Linus Walleij" <linus.walleij@linaro.org>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Rafael J. Wysocki"
+ <rafael@kernel.org>, "Lee Jones" <lee@kernel.org>, "Thomas Bogendoerfer"
+ <tsbogend@alpha.franken.de>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+X-Mailer: aerc 0.17.0
+References: <20240620-mbly-olb-v3-0-5f29f8ca289c@bootlin.com>
+ <20240620-mbly-olb-v3-7-5f29f8ca289c@bootlin.com>
+ <e2f129fc42d26cde50e1de0bc80ef0db51b7f693.camel@pengutronix.de>
+In-Reply-To: <e2f129fc42d26cde50e1de0bc80ef0db51b7f693.camel@pengutronix.de>
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-On Tue, Jun 25, 2024 at 2:14=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
-wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Hello Philipp,
+
+On Tue Jun 25, 2024 at 11:17 AM CEST, Philipp Zabel wrote:
+> On Do, 2024-06-20 at 19:30 +0200, Th=C3=A9o Lebrun wrote:
+> > Add Mobileye EyeQ reset controller driver, for EyeQ5, EyeQ6L and EyeQ6H
+> > SoCs. Instances belong to a shared register region called OLB and gets
+> > spawned as auxiliary device to the platform driver for clock.
+> >=20
+> > There is one OLB instance for EyeQ5 and EyeQ6L. There are seven OLB
+> > instances on EyeQ6H; three have a reset controller embedded:
+> >  - West and east get handled by the same compatible.
+> >  - Acc (accelerator) is another one.
+> >=20
+> > Each instance vary in the number and types of reset domains.
+> > Instances with single domain expect a single cell, others two.
+> >=20
+> > Signed-off-by: Th=C3=A9o Lebrun <theo.lebrun@bootlin.com>
+> > ---
+> >  MAINTAINERS                |   1 +
+> >  drivers/reset/Kconfig      |  14 ++
+> >  drivers/reset/Makefile     |   1 +
+> >  drivers/reset/reset-eyeq.c | 563 +++++++++++++++++++++++++++++++++++++=
+++++++++
 >
-> Add clock, reset and power domain support for the I2C channels available
-> on the Renesas RZ/G3S SoC.
+> Should this be called reset-eyeq-olb or reset-eyeq5, in case a
+> different eyeq driver will have to be added in the future?
+
+What about keeping reset-eyeq for the simplicity of it and using
+reset-eyeq7 for a theoretical future driver that gets used by EyeQ7 and
+above? Or any other revision.
+
+Else it can be reset-eyeq5. OLB might be a concept that gets reused with
+different reset blocks inside (meaning reset-eyeq-olb wouldn't
+distinguish). You tell me if keeping *-eyeq is fine.
+
+> >  4 files changed, 579 insertions(+)
+> >=20
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index f386e9da2cd0..36f4001c7f51 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -14931,6 +14931,7 @@ F:	arch/mips/boot/dts/mobileye/
+> >  F:	arch/mips/configs/eyeq5_defconfig
+> >  F:	arch/mips/mobileye/board-epm5.its.S
+> >  F:	drivers/clk/clk-eyeq5.c
+> > +F:	drivers/reset/reset-eyeq5.c
 >
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> ---
+> See above, and this should match the actual file name.
 >
-> Changes in v2:
-> - updated clock names to match the documentation
+> Adding the MAINTAINERS change in the driver patches makes these patches
+> depend on each other. Otherwise they could be applied independently. Do
+> you intend this series to be merged together in one tree?
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-clk for v6.11.
+I'd prefer splitting it indeed.
 
-Gr{oetje,eeting}s,
+I had thought there were two reasons the patches were interdependent:
+1. MAINTAINERS file entries.
+2. Kconfig: "depends on COMMON_CLK_EYEQ".
 
-                        Geert
+About (1): what about creating a new patch that only touches
+MAINTAINERS? It would be taken as part of clk maybe (it contains the
+platform driver that instantiates the other auxdevs)?
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+About (2): Kconfig doesn't complain the symbol doesn't exist so it looks
+like a non-issue.
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+> >  F:	include/dt-bindings/clock/mobileye,eyeq5-clk.h
+> > =20
+> >  MODULE SUPPORT
+> > diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+> > index 85b27c42cf65..b79c18b75674 100644
+> > --- a/drivers/reset/Kconfig
+> > +++ b/drivers/reset/Kconfig
+> > @@ -66,6 +66,20 @@ config RESET_BRCMSTB_RESCAL
+> >  	  This enables the RESCAL reset controller for SATA, PCIe0, or PCIe1 =
+on
+> >  	  BCM7216.
+> > =20
+> > +config RESET_EYEQ
+> > +	bool "Mobileye EyeQ reset controller"
+> > +	depends on COMMON_CLK_EYEQ
+>
+> Is this a real dependency? It seems to compile just fine without it.
+> Please allow building under COMPILE_TEST without COMMON_CLK_EYEQ set.
+
+Not really. This made potential users notice they want the
+clk driver if they want this reset driver. I forgot
+handling test builds (ie COMPILE_TEST).
+
+Next revision will look like:
+
+config RESET_EYEQ
+	bool "Mobileye EyeQ reset controller"
+	depends on AUXILIARY_BUS
+	depends on MACH_EYEQ5 || MACH_EYEQ6H || COMPILE_TEST
+	default MACH_EYEQ5 || MACH_EYEQ6H
+	help: ...
+
+[...]
+
+> > +
+> > +#include <linux/array_size.h>
+> > +#include <linux/auxiliary_bus.h>
+> > +#include <linux/bitfield.h>
+> > +#include <linux/bits.h>
+> > +#include <linux/bug.h>
+> > +#include <linux/cleanup.h>
+> > +#include <linux/container_of.h>
+> > +#include <linux/device.h>
+> > +#include <linux/err.h>
+> > +#include <linux/errno.h>
+> > +#include <linux/init.h>
+> > +#include <linux/io.h>
+> > +#include <linux/iopoll.h>
+> > +#include <linux/lockdep.h>
+> > +#include <linux/mod_devicetable.h>
+> > +#include <linux/mutex.h>
+> > +#include <linux/of.h>
+> > +#include <linux/platform_device.h>
+>
+> Not needed, this being an aux driver now. Please check the other
+> headers as well.
+
+Looking at the diff, <linux/platform_device.h> is the only one.
+
+[...]
+
+> > +static int eqr_probe(struct auxiliary_device *adev,
+> > +		     const struct auxiliary_device_id *id)
+> > +{
+> > +	const struct of_device_id *match;
+> > +	struct device *dev =3D &adev->dev;
+> > +	struct eqr_private *priv;
+> > +	unsigned int i;
+> > +	int ret;
+> > +
+> > +	/*
+> > +	 * We are an auxiliary device of clk-eyeq. We do not have an OF node =
+by
+> > +	 * default; let's reuse our parent's OF node.
+> > +	 */
+> > +	WARN_ON(dev->of_node);
+> > +	device_set_of_node_from_dev(dev, dev->parent);
+> > +	if (!dev->of_node)
+> > +		return -ENODEV;
+> > +
+> > +	/*
+> > +	 * Using our newfound OF node, we can get match data. We cannot use
+> > +	 * device_get_match_data() because it does not match reused OF nodes.
+> > +	 */
+> > +	match =3D of_match_node(dev->driver->of_match_table, dev->of_node);
+> > +	if (!match || !match->data)
+> > +		return -ENODEV;
+> > +
+> > +	priv =3D devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
+> > +	if (!priv)
+> > +		return -ENOMEM;
+> > +
+> > +	priv->data =3D match->data;
+> > +	priv->base =3D dev_get_platdata(dev);
+>
+>   drivers/reset/reset-eyeq.c:437:20: warning: incorrect type in assignmen=
+t (different address spaces)
+>   drivers/reset/reset-eyeq.c:437:20:    expected void [noderef] __iomem *=
+base
+>   drivers/reset/reset-eyeq.c:437:20:    got void *
+>
+> I'd wrap this in a struct or explicitly cast to (void __iomem *) here.
+
+I'll cast to void iomem pointer explicitely.
+
+Thanks for the review Philipp,
+
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
