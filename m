@@ -1,160 +1,147 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 680031946B8;
-	Thu, 27 Jun 2024 13:48:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0FAD197A7A
+	for <linux-clk@vger.kernel.org>; Thu, 27 Jun 2024 15:01:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719496127; cv=none; b=njEvYTWa+gDmfWWcIFWnn5oQwAMW7QW7UrP7FLt+SYYT8X3RNjU07rSZdE4nTSSCTlcgLiJdBOYUHnMQX6sdaQ6T0va1mH0DuTXGXRlev267EpCxrMxOZPa32XBZGvuQwsXr75e8C6qJZUH8Jt0TeM+nIe99kbXQ4rEPYH+pqWE=
+	t=1719500469; cv=none; b=me6YldGkb01skmhwnkhPsR+HoZKDSe6e62nwxF51D9jPa46gHrROXx5a2G/8LgRJTCwwmav/DAMcyCoP8suylNG+Hyrwsdjq05DGHKmUHKseNVXaGnrnn47tLp1V7oA/ZCLolzHyTdkE8S3mgLTIpvt/zXlrQJzZeeYue68QLk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719496127; c=relaxed/simple;
-	bh=cocmvvpYzS373Zson0OV7k7L9zx2ghMdncO1Wj0A5Iw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=MmNiSP1/HovQ524O6Rx6MlVHUm6rvKbnzPoPPRc+sADOS70IR5tFC7CcLXmCadsDVwyHtaOlIAGJ4c2MlWOxhuZ+OoZTtVDIx/KepOzVqdCiTghheGgbIzQl4QV5zRvAPkcs0eTMf3zJfHDwNgG2SbiPqRTtnlXe4kWFIdsUL7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ftO65CXM; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1719500469; c=relaxed/simple;
+	bh=7o3IDq7dMnCJpDffLvbMK0yGcnevSZjTsnurFpsaims=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version; b=ik34cu9+Qnx0rrYOnq1MJ0SbIK7Z1DF0o0Ub6/l1+LoDE5rGTyM85TpLHH68Jz6XrMLT3bVALhgA87Cu67dZRFb+jB+IMquragpWFaDZRnn6L2P/JmHC0hPHCFvP8p2djbfiC+m/hMkYrt8r/oI4KMq1G1B5aCOijj2f7uPYgLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timesys.com; spf=pass smtp.mailfrom=timesys.com; dkim=pass (2048-bit key) header.d=timesys-com.20230601.gappssmtp.com header.i=@timesys-com.20230601.gappssmtp.com header.b=3dF+MPa8; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timesys.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=timesys.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ftO65CXM"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45RD6FXK027216;
-	Thu, 27 Jun 2024 13:47:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	0sunZxUyt487LjiCTkHh5aPa/ti1QKjKiGhk414XqTM=; b=ftO65CXM7pNHa55e
-	bb1t1xjhRJg/mjuSUUvgIPX4SEIKcHMwyQjm8STXEwnMPtjU1E68imvaKr/8wl3b
-	NLFTF5gGk2kh9V0F8Ej1dPYxg3fdMTCd8aMG2ripP0zA6k8HWtlvKWYTZ2Ib94q1
-	sPr24xj5OoPLjHzNcVZBzOFnjiSVY2tm6OtdIzolreM9oIX7JDcMgRIgE/pKZN0I
-	i2KWIuH1MdEbvRpUw0BWvFqGOsrcZdBnyTK1H8NaFWl8wBuQadlvMJOOZFcXNJst
-	GLebvFS7fq6DtB56wwMMWBvXcpIaXJammL3i8zDjd7/oiAswsxJsSZ5sH4RneDBQ
-	PBqm6Q==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywnjs42k3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Jun 2024 13:47:53 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45RDlqd6031310
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 27 Jun 2024 13:47:52 GMT
-Received: from [10.50.52.175] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 27 Jun
- 2024 06:47:42 -0700
-Message-ID: <62beeb3e-494c-43d8-b539-30ec4eac3fe6@quicinc.com>
-Date: Thu, 27 Jun 2024 19:17:38 +0530
+	dkim=pass (2048-bit key) header.d=timesys-com.20230601.gappssmtp.com header.i=@timesys-com.20230601.gappssmtp.com header.b="3dF+MPa8"
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-57d4ee2aaabso2069696a12.2
+        for <linux-clk@vger.kernel.org>; Thu, 27 Jun 2024 08:01:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=timesys-com.20230601.gappssmtp.com; s=20230601; t=1719500464; x=1720105264; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1Y7Vm7BbdgByjIx2Tu22DX4H6N9MAc4rl5R9/LnNe7E=;
+        b=3dF+MPa8o8dp1x44DeFM3u5DbGVTZoLlgtkPNbFzHMAehyzla7LK5LCtCvnLEuPsAg
+         ir9qk/PnebI30+9NRW6qlMNpyHDMDJ/Q3Jv8GwEUvct9gE5P/rSQraN1rNV2I1dtDw/W
+         Q5DF3cqJjHxEYh8pzIj+4VSxjxIYxT4EuvOU7EXaFOXWi3M3MyEg9HMG4UojfHpD2lep
+         B4hFx1kkPNUNBxCMHG6HeKghLXTIAbuSmmetbp4Qjv33xUBTxd6HSx0oRX2Nw0HuG1zp
+         lRfBNcnyhb3TVHqg0C6rkCK+7W0dArGYs8vTPrY0+3jmXPa72mBjQfGwwNEpVjBWeKcn
+         4iaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719500464; x=1720105264;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1Y7Vm7BbdgByjIx2Tu22DX4H6N9MAc4rl5R9/LnNe7E=;
+        b=PDKWOtvXMDCuUkO5Jgn0lygNiNrVHoXDI2IqhgXShs5NkrbV5PBk6wZHXjm+0GtoQS
+         vv6y22F8an4qkrRjDXhQalf6lfoDplY/ZMmKfboDoTPBLV63yQoirZwV3p2FG8PLBrP9
+         blq5wxhIUkit1cj3SL8M7HXHMBDe9aQabm3oc8yQSji2+AXwEILfT0N/cwcfbBljt5yK
+         PQWzZ2JvahwtkNW0vGnq0xcDY1FEIdfh9mE+6tOKPitSHSmAG30Og++72bGVqLgdU6rV
+         pWMihzOI8eEToovQy1oonzVwYG/iH+Vhman0Pc1jk7S9vv4S/eAxPccKQ038V72wDk4l
+         z3xQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVOkPanwzNiZFB66h5EYHrLLAN3E72C3dUkRanenVbEtZMWR/fHZZGYX1UVG+hUegyOS1soPUN1I+4BfWf/4ELRVrMHxChqWYTk
+X-Gm-Message-State: AOJu0YwgHZwMeCUibr3++uJdv2vIoyWZIYD2Fm5OO1vzSTNij/pb3sPO
+	XQTKWig3JoNdk5hLwS8k9EiE0eJP8n4mGnVu+MgFTuOsmlPsAC0nEvCMdRwb/ao=
+X-Google-Smtp-Source: AGHT+IFg9G5Qjr/NcWh7E3bulgGsi4BkD4axF+tIY1ZpcMPEHOlYWD36DNqKEQ2BHT5YOG2H3Pk0zw==
+X-Received: by 2002:a17:906:c2d5:b0:a6f:b9d3:343a with SMTP id a640c23a62f3a-a7245df6b0dmr710793766b.71.1719500464181;
+        Thu, 27 Jun 2024 08:01:04 -0700 (PDT)
+Received: from localhost.localdomain ([91.216.213.152])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a729d7ca289sm67189066b.222.2024.06.27.08.01.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Jun 2024 08:01:03 -0700 (PDT)
+From: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
+To: Vinod Koul <vkoul@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"J.M.B. Downing" <jonathan.downing@nautel.com>,
+	Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
+	Vladimir Zapolskiy <vz@mleia.com>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Yangtao Li <frank.li@vivo.com>,
+	Li Zetao <lizetao1@huawei.com>,
+	Chancel Liu <chancel.liu@nxp.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Corentin Labbe <clabbe@baylibre.com>,
+	dmaengine@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	alsa-devel@alsa-project.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-sound@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-i2c@vger.kernel.org,
+	linux-mtd@lists.infradead.org
+Subject: [Patch v5 00/12] Add audio support for LPC32XX CPUs
+Date: Thu, 27 Jun 2024 17:00:18 +0200
+Message-Id: <20240627150046.258795-1-piotr.wojtaszczyk@timesys.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V5 4/7] dt-bindings: clock: Add ipq9574 NSSCC clock and
- reset definitions
-To: Krzysztof Kozlowski <krzk@kernel.org>, Andrew Lunn <andrew@lunn.ch>
-CC: <catalin.marinas@arm.com>, <u-kumar1@ti.com>,
-        <linux-arm-kernel@lists.infradead.org>, <krzk+dt@kernel.org>,
-        <geert+renesas@glider.be>, <neil.armstrong@linaro.org>,
-        <nfraprado@collabora.com>, <mturquette@baylibre.com>,
-        <linux-kernel@vger.kernel.org>, <dmitry.baryshkov@linaro.org>,
-        <netdev@vger.kernel.org>, <konrad.dybcio@linaro.org>,
-        <m.szyprowski@samsung.com>, <arnd@arndb.de>,
-        <richardcochran@gmail.com>, <will@kernel.org>, <sboyd@kernel.org>,
-        <andersson@kernel.org>, <p.zabel@pengutronix.de>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>
-References: <20240626143302.810632-1-quic_devipriy@quicinc.com>
- <20240626143302.810632-5-quic_devipriy@quicinc.com>
- <171941612020.3280624.794530163562164163.robh@kernel.org>
- <eeea33c7-02bd-4ea4-a53f-fd6af839ca90@lunn.ch>
- <4bf9dff9-3cb4-4276-8d21-697850e01170@quicinc.com>
- <bf87c34e-a4ff-4e03-9d6a-dc365fec06a5@kernel.org>
-Content-Language: en-US
-From: Devi Priya <quic_devipriy@quicinc.com>
-In-Reply-To: <bf87c34e-a4ff-4e03-9d6a-dc365fec06a5@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 8HG0pE4TV2I03JOKoNoZ7ep-0x8WaxJ3
-X-Proofpoint-ORIG-GUID: 8HG0pE4TV2I03JOKoNoZ7ep-0x8WaxJ3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-27_09,2024-06-27_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- clxscore=1015 mlxscore=0 suspectscore=0 adultscore=0 mlxlogscore=999
- impostorscore=0 bulkscore=0 malwarescore=0 spamscore=0 phishscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406270104
+Content-Transfer-Encoding: 8bit
 
+This pach set is to bring back audio to machines with a LPC32XX CPU.
+The legacy LPC32XX SoC used to have audio spport in linux 2.6.27.
+The support was dropped due to lack of interest from mainaeners.
 
+Piotr Wojtaszczyk (12):
+  dt-bindings: dma: pl08x: Add dma-cells description
+  dt-bindings: dma: Add lpc32xx DMA mux binding
+  ASoC: dt-bindings: lpc32xx: Add lpc32xx i2s DT binding
+  ARM: dts: lpc32xx: Use simple-mfd for clock control block
+  ARM: dts: lpc32xx: Add missing dma properties
+  ARM: dts: lpc32xx: Add missing i2s properties
+  clk: lpc32xx: initialize regmap using parent syscon
+  dmaengine: Add dma router for pl08x in LPC32XX SoC
+  ARM: lpc32xx: Remove pl08x platform data in favor for device tree
+  mtd: rawnand: lpx32xx: Request DMA channels using DT entries
+  ASoC: fsl: Add i2s and pcm drivers for LPC32xx CPUs
+  i2x: pnx: Fix potential deadlock warning from del_timer_sync() call in
+    isr
 
-On 6/27/2024 1:12 PM, Krzysztof Kozlowski wrote:
-> On 27/06/2024 07:25, Devi Priya wrote:
->>
->>
->> On 6/26/2024 10:56 PM, Andrew Lunn wrote:
->>> On Wed, Jun 26, 2024 at 09:35:20AM -0600, Rob Herring (Arm) wrote:
->>>>
->>>> On Wed, 26 Jun 2024 20:02:59 +0530, Devi Priya wrote:
->>>>> Add NSSCC clock and reset definitions for ipq9574.
->>>>>
->>>>> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
->>>>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>>>> ---
->>>>>    Changes in V5:
->>>>> 	- Dropped interconnects and added interconnect-cells to NSS
->>>>> 	  clock provider so that it can be  used as icc provider.
->>>>>
->>>>>    .../bindings/clock/qcom,ipq9574-nsscc.yaml    |  74 +++++++++
->>>>>    .../dt-bindings/clock/qcom,ipq9574-nsscc.h    | 152 ++++++++++++++++++
->>>>>    .../dt-bindings/reset/qcom,ipq9574-nsscc.h    | 134 +++++++++++++++
->>>>>    3 files changed, 360 insertions(+)
->>>>>    create mode 100644 Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml
->>>>>    create mode 100644 include/dt-bindings/clock/qcom,ipq9574-nsscc.h
->>>>>    create mode 100644 include/dt-bindings/reset/qcom,ipq9574-nsscc.h
->>>>>
->>>>
->>>> My bot found errors running 'make dt_binding_check' on your patch:
->>>>
->>>> yamllint warnings/errors:
->>>>
->>>> dtschema/dtc warnings/errors:
->>>> Error: Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.example.dts:26.26-27 syntax error
->>>> FATAL ERROR: Unable to parse input tree
->>>
->>> Hi Devi
->>>
->>> Version 4 of these patches had the same exact problem. There was not
->>> an email explaining it is a false positive etc, so i have to assume it
->>> is a real error. So why has it not been fixed?
->>>
->>> Qualcomm patches are under a microscope at the moment because of how
->>> bad things went a couple of months ago with patches. You cannot ignore
->>> things like this, because the damage to Qualcomm reputation is going
->>> to make it impossible to get patches merged soon.
->>>
->> Hi Andrew,
->> Very sorry for the inconvenience.
->> I had run dt_binding_check locally on V4 patches and did not face any
->> errors. I somehow missed to notice the binding check error that was
->> reported on V4. Thus I went ahead and posted the same in V5.
->> Will ensure such things are not repeated henceforth.
-> 
-> If the warning is expected, e.g. due to missing patches, it's beneficial
-> to mention this in the changelog (---). Otherwise all maintainers my
-> ignore your patch because you have issues reported by automation.
-> 
-Sure, got it
+ .../devicetree/bindings/dma/arm-pl08x.yaml    |   7 +
+ .../bindings/dma/nxp,lpc3220-dmamux.yaml      |  49 +++
+ .../bindings/sound/nxp,lpc3220-i2s.yaml       |  73 ++++
+ MAINTAINERS                                   |  20 +
+ arch/arm/boot/dts/nxp/lpc/lpc32xx.dtsi        |  53 ++-
+ arch/arm/mach-lpc32xx/phy3250.c               |  54 ---
+ drivers/clk/Kconfig                           |   1 +
+ drivers/clk/nxp/clk-lpc32xx.c                 |  26 +-
+ drivers/dma/Kconfig                           |   9 +
+ drivers/dma/Makefile                          |   1 +
+ drivers/dma/lpc32xx-dmamux.c                  | 195 +++++++++
+ drivers/i2c/busses/i2c-pnx.c                  |  48 +--
+ drivers/mtd/nand/raw/lpc32xx_mlc.c            |  26 +-
+ drivers/mtd/nand/raw/lpc32xx_slc.c            |  26 +-
+ sound/soc/fsl/Kconfig                         |   7 +
+ sound/soc/fsl/Makefile                        |   2 +
+ sound/soc/fsl/lpc3xxx-i2s.c                   | 375 ++++++++++++++++++
+ sound/soc/fsl/lpc3xxx-i2s.h                   |  79 ++++
+ sound/soc/fsl/lpc3xxx-pcm.c                   |  72 ++++
+ 19 files changed, 993 insertions(+), 130 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/dma/nxp,lpc3220-dmamux.yaml
+ create mode 100644 Documentation/devicetree/bindings/sound/nxp,lpc3220-i2s.yaml
+ create mode 100644 drivers/dma/lpc32xx-dmamux.c
+ create mode 100644 sound/soc/fsl/lpc3xxx-i2s.c
+ create mode 100644 sound/soc/fsl/lpc3xxx-i2s.h
+ create mode 100644 sound/soc/fsl/lpc3xxx-pcm.c
 
-Thanks,
-Devi Priya
+-- 
+2.25.1
 
-> Anyway, up to you.
-> 
-> Best regards,
-> Krzysztof
-> 
