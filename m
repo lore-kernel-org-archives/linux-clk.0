@@ -1,140 +1,159 @@
-Received: from unicorn.mansr.com (unicorn.mansr.com [81.2.72.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C300C13AA4C;
-	Thu, 27 Jun 2024 11:45:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.2.72.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F94214F9DB
+	for <linux-clk@vger.kernel.org>; Thu, 27 Jun 2024 12:10:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719488718; cv=none; b=LWlMjP5rwOnzEUkAe9qPZefcX0cNR7kfStL93sNMLaF5eup10WDMMvbeJgztRRQdb9PTvZAFYqEDkHCK8Krj/TnwmryHHhpBs9gx6q2Ce0Na0vCk1wL4EC2TCdUGENHMobYjt8TM36jNWcmzDs12edUOh6zHmZG9KaOv8moOiTU=
+	t=1719490239; cv=none; b=LMoYvm/feAhAUEeD324MChpQF3HEeCwHzpc9xAIo1ph1vOXy/tgwkxuGm1e/KJuEZ7qLpbxHQ+1M/UIJ0j7wx9GvbAhV33ZKIQBUdWJdM5HZlPjSiVymRopwd7vFfZX9tb0piUuiLgc3vzEW4edKy5Jg6LUsFCwqeLejBfM4Re8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719488718; c=relaxed/simple;
-	bh=evSv+YzWBzT/rL+Ef3bDS+9leq4NZMD9hE/fznsNY7M=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=WvlFmcuH7rXMxZUg1fgWOjox0nqSdImpfUyCcFTq+S+b47pRESJxNJP7SrQta1MQe7K6m1ge0avzEEjJGnd/n4U3lIUjx8xHew5I/owMBEyKpyGDWP3pftQsE6EgMSNqqoSuns+6rzPiNEh9bn0RxAFQVIgfSUAIxwRIGSmKBbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mansr.com; spf=pass smtp.mailfrom=mansr.com; arc=none smtp.client-ip=81.2.72.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mansr.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mansr.com
-Received: from raven.mansr.com (raven.mansr.com [IPv6:2001:8b0:ca0d:1::3])
-	by unicorn.mansr.com (Postfix) with ESMTPS id F14E015360;
-	Thu, 27 Jun 2024 12:39:26 +0100 (BST)
-Received: by raven.mansr.com (Postfix, from userid 51770)
-	id DE143210C01; Thu, 27 Jun 2024 12:39:26 +0100 (BST)
-From: =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>
-To: Frank Oltmanns <frank@oltmanns.dev>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec
- <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, Maxime
- Ripard <mripard@kernel.org>, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
- linux-kernel@vger.kernel.org, "Robert J. Pafford"
- <pafford.9@buckeyemail.osu.edu>, stable@vger.kernel.org
-Subject: Re: [PATCH] clk: sunxi-ng: common: Don't call hw_to_ccu_common on
- hw without common
-In-Reply-To: <20240623-sunxi-ng_fix_common_probe-v1-1-7c97e32824a1@oltmanns.dev>
-	(Frank Oltmanns's message of "Sun, 23 Jun 2024 10:45:58 +0200")
-References: <20240623-sunxi-ng_fix_common_probe-v1-1-7c97e32824a1@oltmanns.dev>
-Date: Thu, 27 Jun 2024 12:39:26 +0100
-Message-ID: <yw1x4j9e62dt.fsf@mansr.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/29.3 (gnu/linux)
+	s=arc-20240116; t=1719490239; c=relaxed/simple;
+	bh=NkigWkA6VySFfvHgeE5oFW+QBC+cXkg9GyKrJbWRTzA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qRyzLNt2aw9HWZJIBk6ucZVnpiZlNqnFr+c7JbWCWR9RQzy0m4+hARU85JCLK4oy3Z5X0MF3y+Z3uT0jsdNxQvyQQgsrXxtbb4HBXmDwKbX8fBYLCs9MHNYjUUn/y6R5Z8GNBtvpiSFHjvpB/0i8ySrtFfRhaAg7tlZKm29U3G8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bqbmgB9m; arc=none smtp.client-ip=209.85.161.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bqbmgB9m"
+Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-5b9a35a0901so2436739eaf.0
+        for <linux-clk@vger.kernel.org>; Thu, 27 Jun 2024 05:10:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719490237; x=1720095037; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=cE4Bab1XKSgATh7IHyFiARbi4eUyFalxuUlRbbSbrnQ=;
+        b=bqbmgB9mpeGOWGv6XSkMtnZNCBoyYQFKDR2ohtG+PMSVhrmpK62yZ0XganCVFk/KUm
+         jBJM1DFeYYMHyT73QPMn9XEnlmr9tohINW/++deI0Vf8L+fXN8PRc+RCubAkibiL62Ls
+         mstzsgP/JxEUX36fillZzEJsb7nrdUthU6acz5ArYom6ibyiaTIj2SEmKYkPCPQggQwN
+         WLYgab6CuHC+aG14Wg7uYcFU87znXyckk5BvYcx/shQ6azeAEfSVAc/kHrcT4j+Bh0/5
+         ZJ4kZ4rZ0jqMElnsMb82FZTvOUFeYU3vYrQxkiaIzAxAihBNf5NjDK7rnV16FZWX2qd8
+         qylA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719490237; x=1720095037;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cE4Bab1XKSgATh7IHyFiARbi4eUyFalxuUlRbbSbrnQ=;
+        b=BE4Vgcf+s5xKdAzWs7hdO4XNCKqHgTXuVdUY8HeFrPN+jyP2pTCCY2wFFV8eKoXtkH
+         hYu3TVekR+L4eovm9k57Uhx769WaRUVUBMIex7+YE7dqMEAz81c5fUmoELWjdLMdHgTU
+         vR9sLP3/ykme6tzhk/HHMTaZtuTo0u7whhLP1efW+V2sVN30ShB0br5GmQPLeD6tpz3H
+         4ODUZOS/m3KAFs+D8dN6biRyVy4mM7euKef2rgXyXNcOupXj4AMHyQdo0yC7vWgV3PJE
+         bxxHA1M/3hCnGh8n8RI3EE4fZ/FWTFg50QcUz1CuvmxYBce19EXG2iqNLR2qgsqwUk57
+         JQHw==
+X-Forwarded-Encrypted: i=1; AJvYcCVxlEpQ42G9g+sVKvXO1w5ZRSorlSJVt8UQ2jo02b0r+inZxc+C7KpxmjQfvI63M2zsazS2vl3st+ruTAzJYfZRphNSqRS7tX0p
+X-Gm-Message-State: AOJu0Yz889ZBWRt1eYv3ya1l9v0HAzVNCVz1Q3TIqdKZM8mtfBoJOlRk
+	SKc9eRMOoZcXmbgwhSRJFQz6xgW1AhwZmO9BXfonmMpdPPpPoNkvteeEfI2hf8uwtN3tdnW46i7
+	XA68J+nHv4KODGt3WECNa95BRcm/GasoZtUppRA==
+X-Google-Smtp-Source: AGHT+IHAyaiJEmjGK1tayduKPakkTEDNumaseSBPgUWJsXu5w7UaamjrpjUQeIA3/oIdt38OMiLEdTZdpwGs2IfqBCk=
+X-Received: by 2002:a05:6871:3a28:b0:259:8805:b634 with SMTP id
+ 586e51a60fabf-25d06eb6695mr14671549fac.49.1719490237191; Thu, 27 Jun 2024
+ 05:10:37 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Transfer-Encoding: quoted-printable
+References: <20240626194300.302327-1-peter.griffin@linaro.org> <fd840123-31d5-4472-a755-ef6a47613e5c@kernel.org>
+In-Reply-To: <fd840123-31d5-4472-a755-ef6a47613e5c@kernel.org>
+From: Peter Griffin <peter.griffin@linaro.org>
+Date: Thu, 27 Jun 2024 13:10:26 +0100
+Message-ID: <CADrjBPqLT7e_eV9=ykDXG7_p3j8yJTbQNAc_dXVVRDP7Vqbtag@mail.gmail.com>
+Subject: Re: [PATCH 0/3] Add syscon-reboot and syscon-poweroff support for
+ gs101/Pixel 6
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	alim.akhtar@samsung.com, s.nawrocki@samsung.com, cw00.choi@samsung.com, 
+	mturquette@baylibre.com, sboyd@kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, tudor.ambarus@linaro.org, 
+	andre.draszik@linaro.org, kernel-team@android.com, willmcvicker@google.com, 
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Frank Oltmanns <frank@oltmanns.dev> writes:
+Hi Krzysztof,
 
-> In order to set the rate range of a hw sunxi_ccu_probe calls
-> hw_to_ccu_common() assuming all entries in desc->ccu_clks are contained
-> in a ccu_common struct. This assumption is incorrect and, in
-> consequence, causes invalid pointer de-references.
+On Thu, 27 Jun 2024 at 11:47, Krzysztof Kozlowski <krzk@kernel.org> wrote:
 >
-> Remove the faulty call. Instead, add one more loop that iterates over
-> the ccu_clks and sets the rate range, if required.
+> On 26/06/2024 21:42, Peter Griffin wrote:
+> > Hi Krzysztof,
+> >
+> > This series adds support for syscon-reboot and syscon-poweroff to gs101/Oriole.
+> > It has been tested with reboot and poweroff commands respectively.
+> >
+> > Note the syscon-reboot/poweroff has *runtime* dependencies on the exynos-pmu
 >
-> Fixes: b914ec33b391 ("clk: sunxi-ng: common: Support minimum and maximum =
-rate")
-> Reported-by: Robert J. Pafford <pafford.9@buckeyemail.osu.edu>
-> Closes: https://lore.kernel.org/lkml/DM6PR01MB58047C810DDD5D0AE397CADFF7C=
-22@DM6PR01MB5804.prod.exchangelabs.com/
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
-> ---
-> Robert, could you please test if this fixes the issue you reported.
->
-> I'm CC'ing M=E5ns here, because he observed some strange behavior [1] with
-> the original patch. Is it possible for you to look into if this patch
-> fixes your issue without the need for the following (seemingly
-> unrelated) patches:
->       cedb7dd193f6 "drm/sun4i: hdmi: Convert encoder to atomic"
->       9ca6bc246035 "drm/sun4i: hdmi: Move mode_set into enable"
+> How does the runtime dependency manifests? Something get broken if there
+> are no dependencies? Or maybe reboot does not work, but probably it did
+> not work before, either?
 
-This does indeed fix it.  6.9 is still broken, though, but that's
-probably for other reasons.
+Without [1] but with this series applied you will get an Serror
+interrupt and hang on poweroff, and reboot commands, as it will use a
+mmio syscon to write the protected register.
 
-> Thanks,
->   Frank
->
-> [1]: https://lore.kernel.org/lkml/yw1xo78z8ez0.fsf@mansr.com/
-> ---
->  drivers/clk/sunxi-ng/ccu_common.c | 18 ++++++++++++------
->  1 file changed, 12 insertions(+), 6 deletions(-)
->
-> diff --git a/drivers/clk/sunxi-ng/ccu_common.c b/drivers/clk/sunxi-ng/ccu=
-_common.c
-> index ac0091b4ce24..be375ce0149c 100644
-> --- a/drivers/clk/sunxi-ng/ccu_common.c
-> +++ b/drivers/clk/sunxi-ng/ccu_common.c
-> @@ -132,7 +132,6 @@ static int sunxi_ccu_probe(struct sunxi_ccu *ccu, str=
-uct device *dev,
->
->  	for (i =3D 0; i < desc->hw_clks->num ; i++) {
->  		struct clk_hw *hw =3D desc->hw_clks->hws[i];
-> -		struct ccu_common *common =3D hw_to_ccu_common(hw);
->  		const char *name;
->
->  		if (!hw)
-> @@ -147,14 +146,21 @@ static int sunxi_ccu_probe(struct sunxi_ccu *ccu, s=
-truct device *dev,
->  			pr_err("Couldn't register clock %d - %s\n", i, name);
->  			goto err_clk_unreg;
->  		}
-> +	}
-> +
-> +	for (i =3D 0; i < desc->num_ccu_clks; i++) {
-> +		struct ccu_common *cclk =3D desc->ccu_clks[i];
-> +
-> +		if (!cclk)
-> +			continue;
->
-> -		if (common->max_rate)
-> -			clk_hw_set_rate_range(hw, common->min_rate,
-> -					      common->max_rate);
-> +		if (cclk->max_rate)
-> +			clk_hw_set_rate_range(&cclk->hw, cclk->min_rate,
-> +					      cclk->max_rate);
->  		else
-> -			WARN(common->min_rate,
-> +			WARN(cclk->min_rate,
->  			     "No max_rate, ignoring min_rate of clock %d - %s\n",
-> -			     i, name);
-> +			     i, clk_hw_get_name(&cclk->hw));
->  	}
->
->  	ret =3D of_clk_add_hw_provider(node, of_clk_hw_onecell_get,
->
-> ---
-> base-commit: 2607133196c35f31892ee199ce7ffa717bea4ad1
-> change-id: 20240622-sunxi-ng_fix_common_probe-5677c3e487fc
->
-> Best regards,
-> --=20
->
-> Frank Oltmanns <frank@oltmanns.dev>
->
+[   74.680240][    T1] reboot: Restarting system
+[   74.680322][    C0] SError Interrupt on CPU0, code
+0x00000000be000011 -- SError
+[   74.680329][    C0] CPU: 0 PID: 1 Comm: systemd-shutdow Not tainted
+6.10.0-rc3-next-20240613-00009-g6ca503bd3c2b #476
+[   74.680336][    C0] Hardware name: Oriole (DT)
+[   74.680338][    C0] pstate: 604000c5 (nZCv daIF +PAN -UAO -TCO -DIT
+-SSBS BTYPE=--)
+[   74.680345][    C0] pc : _raw_spin_unlock_irqrestore+0x10/0x44
+[   74.680363][    C0] lr : regmap_unlock_spinlock+0x14/0x20
+[   74.680373][    C0] sp : ffff80008009bb40
+[   74.680375][    C0] x29: ffff80008009bb40 x28: ffff00da4587e158
+x27: ffffa38d3bc74708
+[   74.680386][    C0] x26: ffffa38d3d9c9ca8 x25: 0000000000000000
+x24: 0000000000000000
+[   74.680394][    C0] x23: 0000000000000000 x22: 0000000000000002
+x21: 0000000000000002
+[   74.680400][    C0] x20: 0000000000003a00 x19: 0000000000000000
+x18: ffffffffffffffff
+[   74.680407][    C0] x17: 0000000000000000 x16: ffffa38d3c6cf438
+x15: ffff80008009b6a0
+[   74.680414][    C0] x14: 0000000000000000 x13: ffff00dbb6980000
+x12: 00000000000007d4
+[   74.680421][    C0] x11: 000000000000029c x10: ffff00dbb6c40000 x9
+: ffff00dbb6980000
+[   74.680427][    C0] x8 : ffff80008009bc28 x7 : 0000000000000000 x6
+: 0000000000000000
+[   74.680434][    C0] x5 : ffffa38d3b83e074 x4 : 0000000000003a00 x3
+: 0000000000000000
+[   74.680440][    C0] x2 : ffffa38d3b831764 x1 : ffff00da40230000 x0
+: 0000000100000001
+[   74.680447][    C0] Kernel panic - not syncing: Asynchronous SError Interrupt
 
---=20
-M=E5ns Rullg=E5rd
+and
+
+[   49.448590][    T1] reboot: Power down
+[   49.448747][    C0] SError Interrupt on CPU0, code
+0x00000000be000011 -- SError
+[..]
+
+Without the clk-gs101 critical clock change, poweroff command will
+hang, when shutting down UFS.
+
+Without the exynos-pmu support for !atomic registers, the reboot
+command won't work when the DT is present as the register write to
+SYSTEM_CONFIGURATION register will fail.
+
+[  114.525217][    T1] reboot: Restarting system
+[  114.525290][    T1] tensor_sec_reg_write(): SMC failed: -22
+[  115.525434][    T1] Unable to restart system
+[  116.025576][    T1] Reboot failed -- System halted
+
+For poweroff, you are correct this has not been supported on Pixel 6
+so far upstream.
+
+However `echo b > /proc/sysrq-trigger ` has worked in previous kernel
+releases (it would reset the system using Watchdog). With the
+syscon-reboot DT present, but without [1] this will cause a Serror and
+no longer restart the system which would be a regression.
+
+Thanks,
+
+Peter.
+
+[1] https://lore.kernel.org/linux-arm-kernel/20240621115544.1655458-1-peter.griffin@linaro.org/
