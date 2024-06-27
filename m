@@ -1,344 +1,212 @@
-Received: from mx0b-002cfd01.pphosted.com (mx0b-002cfd01.pphosted.com [148.163.155.97])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2636360;
-	Thu, 27 Jun 2024 01:23:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=148.163.155.97
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719451431; cv=fail; b=pr7we4a7DGjMVoJFzz+98pnvit4d2Bf4vdw2sLYa8k5UIMReOiTiUto7jxZ0PBGuGAfKAyylouXgZhNhhe4h9RpfSkqkA8qypL/Fkax2mzajf3/z4mYN6DsDi8MDRwO0akrUytf7Rl84AWJJjf/jIud3UZQaeIzJ0ddkRHIqZi4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719451431; c=relaxed/simple;
-	bh=gdFuTi/cr9ufmT8xGlyfkLNobMajucnEf33MGJ3MiCY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=EeX8H0i8BNBccKGtOXiyaCx8gB4gvaPkPWxAPejeCoCHmf4sFn0YfvvjKPQs2l4k/kDdiLFQc8upJz8IgvdlCflt2TM4N+UmHAdTA8cbYBtJpljAh8r2NFjEr2EyNwcQDCFc/n5A7a59Mr6+PGAiFLaKJZxMzWF/qE8knHKnyHY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=buckeyemail.osu.edu; spf=pass smtp.mailfrom=buckeyemail.osu.edu; dkim=pass (2048-bit key) header.d=buckeyemail.osu.edu header.i=@buckeyemail.osu.edu header.b=qUIsAvaz; dkim=pass (1024-bit key) header.d=buckeyemail.osu.edu header.i=@buckeyemail.osu.edu header.b=gIhq5BhV; arc=fail smtp.client-ip=148.163.155.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=buckeyemail.osu.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=buckeyemail.osu.edu
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=buckeyemail.osu.edu header.i=@buckeyemail.osu.edu header.b="qUIsAvaz";
-	dkim=pass (1024-bit key) header.d=buckeyemail.osu.edu header.i=@buckeyemail.osu.edu header.b="gIhq5BhV"
-Received: from pps.filterd (m0130878.ppops.net [127.0.0.1])
-	by mx0a-002cfd01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45QLacww025210;
-	Wed, 26 Jun 2024 21:22:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	buckeyemail.osu.edu; h=from:to:cc:subject:date:message-id
-	:references:in-reply-to:content-type:content-transfer-encoding
-	:mime-version; s=pps1; bh=gdFuTi/cr9ufmT8xGlyfkLNobMajucnEf33MGJ
-	3MiCY=; b=qUIsAvazvV2c23vX3qFFhhYfLKNusW9LnrowOxQcObzXOc2mmkjgJv
-	RPO+eEoJeOHZquJHjTmSe1G0exohjdBT79IjgICbCkpgPaZQ5rBv9gSEdrotMvd7
-	jdk2BZo2bLGIgIQNcc3LSFb43zxii8fWsGfiO7oMnMjeo8fFhS+3U+9XL5CFNnle
-	QpVI+WZEp8Iz19H8RQ2T1XU9BlypmpQz5ep4g9OmY0kswOWaaZMccgEYhlHEvG1d
-	rqaY2FNGx+li6vesQd5fl2qbnzi5vtXrM8SM5wZlmlfCT10+UNPI05Hmj+7IwFMe
-	oHvbgBJKo5odBdLIQpjxRhHejKkaco7g==
-Received: from nam02-sn1-obe.outbound.protection.outlook.com (mail-sn1nam02lp2041.outbound.protection.outlook.com [104.47.57.41])
-	by mx0a-002cfd01.pphosted.com (PPS) with ESMTPS id 4004cm0fxd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 26 Jun 2024 21:22:51 -0400 (EDT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=IKxG/PseFODfAtQvvuDigAd6nTjd97ewqO073NeSYV1Gae2m/su/kk6yNk1ejqkeVriDOQ4endtvfxsQ6+w6lJIfa77DX/r0CGWh6dEpMen4QF9qBDsBCXPz+xoqUahxwdQW7suO9ymNKnG5HCrwCsyBN82mLLJoV/Ajn7jXNKhvAm/UVyvktnpBZNsxjPj0OWL05EnDRfyR7ZBMLvO2MUJWb+8kTCpzrEFR3hnFB/8cFPfvV7nYHlG+V3DBnWRLVfL7t7HQUXUinegzTMaZZ0aN1ZyGPQ0x0ON7wTjUnfaoRu9A5TB1L5+oPNnRqQd7bMIAj8JOm4lfgI3thgoWNg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=gdFuTi/cr9ufmT8xGlyfkLNobMajucnEf33MGJ3MiCY=;
- b=Ifto8M4oiLYSRMUGn3khDIN0Tlv28P/DqbUb+r7jBBWNn6/rZM4kzBTC62SoURvTuz92CeDggICBMUlq71u/YQjduUj8qyXc2mt5W01eVN7Bm7Q9YUzZkIzMqhrZC4MG0NzZV63a2pqloAjIp9/p41nhlV6PmrHhaSvesU3/LWMBIAy7Tm10T/ZC3aetjlxZ7r0Yv/mwuO8XDFsUNk8xRL+BmXToM9Zb1j5S11DkVt/MfyvGTJ7uavo5h/78qyqm3YwtI7nN5X7OEqg9OBXs9n3EeeGVWBEuV3tDYuWQKa4Pp8F0pVDS6UC7FA3wql/Ct+m5p56byTrq8km3ACsnVg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=buckeyemail.osu.edu; dmarc=pass action=none
- header.from=buckeyemail.osu.edu; dkim=pass header.d=buckeyemail.osu.edu;
- arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=buckeyemail.osu.edu;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=gdFuTi/cr9ufmT8xGlyfkLNobMajucnEf33MGJ3MiCY=;
- b=gIhq5BhVqL/yU6RUa9jiSPBS0CdiRLXUV5TICFpyf4saRev8zYwhXAAFNtzcvOXgnM2wdL2hseU9EN0ZJs0I3KfHidJXA75+Bcz3bvlKSPi1ay90PWcsAtAvwi9rkcPfAZKTWvz9WlbTZhjI1ENMSUfN97BhfCp8tiNFYiNNxmg=
-Received: from CH2PR01MB5799.prod.exchangelabs.com (2603:10b6:610:42::32) by
- DM8PR01MB7111.prod.exchangelabs.com (2603:10b6:8:3::13) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7698.32; Thu, 27 Jun 2024 01:22:47 +0000
-Received: from CH2PR01MB5799.prod.exchangelabs.com
- ([fe80::bc2:98b6:6a60:21e3]) by CH2PR01MB5799.prod.exchangelabs.com
- ([fe80::bc2:98b6:6a60:21e3%4]) with mapi id 15.20.7698.025; Thu, 27 Jun 2024
- 01:22:47 +0000
-From: "Pafford, Robert J." <pafford.9@buckeyemail.osu.edu>
-To: Frank Oltmanns <frank@oltmanns.dev>
-CC: Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
-	<sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
-        Jernej Skrabec
-	<jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        =?iso-8859-1?Q?Guido_G=FCnther?= <agx@sigxcpu.org>,
-        Purism Kernel Team
-	<kernel@puri.sm>, Ondrej Jirman <megi@xff.cz>,
-        Neil Armstrong
-	<neil.armstrong@linaro.org>,
-        Jessica Zhang <quic_jesszhan@quicinc.com>,
-        Sam
- Ravnborg <sam@ravnborg.org>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof
- Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-        "linux-sunxi@lists.linux.dev"
-	<linux-sunxi@lists.linux.dev>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "dri-devel@lists.freedesktop.org"
-	<dri-devel@lists.freedesktop.org>,
-        "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>,
-        "stable@vger.kernel.org"
-	<stable@vger.kernel.org>
-Subject: Re: [PATCH v4 1/5] clk: sunxi-ng: common: Support minimum and maximum
- rate
-Thread-Topic: [PATCH v4 1/5] clk: sunxi-ng: common: Support minimum and
- maximum rate
-Thread-Index: AQHavqzpBgj5D7bkhkG8vcHmuBIAebHH7mBAgAjhLiCACXU+bYAAFHSAgACCGds=
-Date: Thu, 27 Jun 2024 01:22:47 +0000
-Message-ID: 
- <CH2PR01MB57990FBF72970DECF96294E2F7D72@CH2PR01MB5799.prod.exchangelabs.com>
-References: <20240310-pinephone-pll-fixes-v4-1-46fc80c83637@oltmanns.dev>
- <DM6PR01MB58047C810DDD5D0AE397CADFF7C22@DM6PR01MB5804.prod.exchangelabs.com>
- <87wmmjfxcj.fsf@oltmanns.dev>
- <DM6PR01MB58043A518B836D1CC3509554F7D62@DM6PR01MB5804.prod.exchangelabs.com>
- <1b359d7e-fe85-48ca-87aa-37ab7e34aaf6@oltmanns.dev>
-In-Reply-To: <1b359d7e-fe85-48ca-87aa-37ab7e34aaf6@oltmanns.dev>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-msip_labels: 
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CH2PR01MB5799:EE_|DM8PR01MB7111:EE_
-x-ms-office365-filtering-correlation-id: 93cf9ce0-d52b-418d-30d6-08dc9647a722
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: 
- BCL:0;ARA:13230040|366016|376014|7416014|1800799024|38070700018;
-x-microsoft-antispam-message-info: 
- =?iso-8859-1?Q?1X4tBl4UxawPCRzqo/yjvLGpAlvCCKSyRZbJvE/JHnkFFzEtZHgpWTgXxL?=
- =?iso-8859-1?Q?iuUKjBS9hOMMaXwUmcWX0qGN9PuX+Tfp7SUwJHsjxZx5IKwL+QHExTglwE?=
- =?iso-8859-1?Q?CvhPUkJYX+KSr4rUCf5bJK2ZF2BVnO72yNC4y49+q24WygAHTuIEbpBBXa?=
- =?iso-8859-1?Q?Xr4AoAuDV9n1ANyYfBnGwyhmrQ9kFHlJE821b3d1X4oYUM3bs3C/l3yS36?=
- =?iso-8859-1?Q?URTwwrvZr3hOtb5rWq7Wz2M1Gd0LWcOXo8ykLGQLWad+PRTQGnEu/jF+e3?=
- =?iso-8859-1?Q?78OHpoUECVeYbhNq4dAnncUidyF7ERyH8u/LfOx/PVVfkj7jo/RuWrPn0E?=
- =?iso-8859-1?Q?VuL7Fl+tTJhHHpGHpqjAuCI3FPwDq7KjAekRJ2P4CtX2mFApmS+hjmXBOy?=
- =?iso-8859-1?Q?9/v7MzvN0U3Ei423UytALdq/wtS12VH1m10oSrOZCHQ7uGAHV/PohAe4QJ?=
- =?iso-8859-1?Q?rGqqbN0Pxn3DQru82MoEID7HVLuEsy1rgRl7+IfA7i/GNQ+rQpQW2pzScz?=
- =?iso-8859-1?Q?imxZwLjixzANNxeZ0KYlfqrV/J007wE16EoWRKD4p0MI0vafw2YiHI4vvO?=
- =?iso-8859-1?Q?WJ+nXfGLjNIdcu4MjRHM8BihJkVy5DQc+Z/B2bkyND+ZZvjOBpARuCSJuA?=
- =?iso-8859-1?Q?vN8xhlayYwKc/D2lD535Nd81r7j7KBJvmHPCDxltoQ12rkaUt+ggXGX4Fs?=
- =?iso-8859-1?Q?TtZALknTP5FMEjrmnt/ZfLADaGsTwzvXzNiRD/pdhiElPVgcndZBrB6QHd?=
- =?iso-8859-1?Q?Y/896CEYeQryaFGcKzzlXY51PZvOiyLMZVQicFZgRDqDfVmSxEXgMHnjxO?=
- =?iso-8859-1?Q?v2AnDxhzg0M1r9Z1aGthhBFn6COJfUXHPAsmtJ7Gy7B5F8/tn1jPGa2XUG?=
- =?iso-8859-1?Q?nqQhFOLFXrgugYxt+nCcspfNCypRHzMYmltLTvoEj6W7uC8VQBCR4uogex?=
- =?iso-8859-1?Q?vJER+6xzAln/vhgCWANJzuGkENzK16OVS5y/FaZfLr977eptcfSUPTn7RA?=
- =?iso-8859-1?Q?1NoQlyBXYvba/2zETFu3w3v9Ab+0Kxx2pREc9oDTwjQQaGQzSJkdaNqmMA?=
- =?iso-8859-1?Q?4+Ws2dRikqJ3DKGaiJuZLLaqwN7KMUJS6+B8eAWVLVU+JBLpnbx2gChtjz?=
- =?iso-8859-1?Q?inax7VWK0jBUBmaH1hQv/BnYnpTwN8uH73qp9IxULUbW4xZ8BD4DqxiFXc?=
- =?iso-8859-1?Q?bsCJ2PjROV+AOYtlMXIb2zLrrOSy4/rMl2UOsvEyXM/kWOiyyWleaiux2A?=
- =?iso-8859-1?Q?S5pjx6XR3DSjl19aj/i/+FqxPeZxk5jznZ8Ymbbg1o61GSIJkGibnv4m2g?=
- =?iso-8859-1?Q?6Y94RfXWQtdpXUZiowmTPcWFe3rrgdRJ6jHv3b3wi2ovwzJ+S/MwilHqUP?=
- =?iso-8859-1?Q?NY8mcqW4Ms?=
-x-forefront-antispam-report: 
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR01MB5799.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: 
- =?iso-8859-1?Q?tii2UVlEYsoKGkII79ZlVUb7c37VPN+2TwfjehtjL9JawaMSgXKQUFpi7Z?=
- =?iso-8859-1?Q?W9fRRlWmPjT8tcNwYnz6IiPmRyYPBvITq+i2+zXfYb+M6+rmkAlotDW7kH?=
- =?iso-8859-1?Q?bfVaQAIz7+Qw3Dy1iEuPCJ/+Y2dlUX/R2gLHR5o3uTAFBS49s2AAUMuwpX?=
- =?iso-8859-1?Q?lDCxXW+kR6Mle0VcAaqkcn63WfW2SUK+I2D6WwtjO9Pd6pqrBgHj8Zytvt?=
- =?iso-8859-1?Q?JsudDVwZNFEYqv4+3DLG+fTo5wD62NctJmAn9y9Doa1yVgzc+RIQpr9GwU?=
- =?iso-8859-1?Q?CTJ0nheQrsXAB8rqTiZQbbKVFDYH6xLsSxsx3V6fCpA8NuJIf+lqTFSM4F?=
- =?iso-8859-1?Q?Rhb+Ve5G+vNpQYNwKTbqE43WzE6OHF9zVA4LtJsD4b4HX5a/cw92q1tKbJ?=
- =?iso-8859-1?Q?lrnZ7sApjgrrYsvlRqxye+XPfXHRRyc5pfaF0tIjM+063jVSkJTPOlbVZC?=
- =?iso-8859-1?Q?Pq6Fuq/EAo6Cwj5/th0q8yTm2TYaNjIJ1WrkxFmLBCUHn7gyNNqt7xlLYm?=
- =?iso-8859-1?Q?xSL4wwCH/u+Y836KnJBRzV8TUWM+wdGz6XdVwlFdkUdO3I/FPcMNCu3GQK?=
- =?iso-8859-1?Q?N12lPnYrFT/n9uxw4UubPMkdXX2oh0idsgTJSb6+4mAo1yrBZyRfcsZa6z?=
- =?iso-8859-1?Q?s8I4Chvuc9d4BI2Ic1j+glWUUPmQxFvlMJasfMZVk5S6rK+T2jBqwYn8w1?=
- =?iso-8859-1?Q?js2cTJYEW8etxmID9TQhtd6aS+LjnZoR4D3nY0IUIm3FqI8df57M7KtFt7?=
- =?iso-8859-1?Q?BLPxUbtSr6OHuB4OXXFmyLcguE+5lUDJC3JCQhu7h68AVvoMDyTDKkQZDS?=
- =?iso-8859-1?Q?sAFvDpbjhePkE6t/XjPvV8+87Ima9zRRubVlFeWFiMZ0PdImgkoTToc6OG?=
- =?iso-8859-1?Q?xanW5B/G+PI1pgXHzLO64Mq/Tdpw9rkohM39HDuOivXumhrBIbM1QO2I2K?=
- =?iso-8859-1?Q?cpJmouJgMhhOvcuUoEsq+mJMBMECSjQGk9aa/HaIshqEiyngJvzunw+0vP?=
- =?iso-8859-1?Q?94V+ygmgzFech5q0ayEHK+fFagrITp3JnzL7zSWMeavmC8NvJ7kFBpGsBW?=
- =?iso-8859-1?Q?yC3R+4r0Fzx0vPk2G0HbgrBrVo2T+2KpTBQC8mzE5P7u6W5DfmHwoItCYB?=
- =?iso-8859-1?Q?l8uId5Zvd2A92zb9fHWO7Lh8E3X9L96xCAI2z1vu7xOGvQx1PFw5f9NXeP?=
- =?iso-8859-1?Q?kA02eJDVpV5oHE6OqgTSBT1LGOKzRE75lepKawag5KY6RLc6OYQapi8K+/?=
- =?iso-8859-1?Q?RYMlcgTf+VtaAIvmWPFyk9NTF6zGleVsap2LI6CYEz39GsOWg8Y4pvvbHG?=
- =?iso-8859-1?Q?/kcKIXHgkQW2ILISVBSCjaVI3Ci6v9ZUUTcI8r8qm0KF3P2NdCbAxVM9q6?=
- =?iso-8859-1?Q?Yr6HHXQQ5+LOwSnRd50l1VyoEjyGYEjlp1NLv9R9f81jNqsdT2OGyeIUAz?=
- =?iso-8859-1?Q?eFWZIF6eAdgCrD0QtS5GqvoVJ5Cm6nV3RCVZi/lT4UTvK3GBYQlTJwsQxo?=
- =?iso-8859-1?Q?nID6Lm2FUHhHiymDwuRsXCfS8nlPqtb0uFIGhz9RaerVy7JiwYjoI4Tbau?=
- =?iso-8859-1?Q?8sPkGsux+T79CYRMmFyY+4eJB2YSfi2aauwf4Gku8uAJg2KcxAWj6XMGss?=
- =?iso-8859-1?Q?elNG9bluXpuz/7B3OFPB/PaHEH56R4I6gN7MrxJuPXIPlazRR53vzzYqMl?=
- =?iso-8859-1?Q?sd8aRKzKdTVZxYrc9KsGDGGEBKNtaANC70kGJefynQzq4CkXfFSO2n8sLU?=
- =?iso-8859-1?Q?waUg=3D=3D?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 821361B285;
+	Thu, 27 Jun 2024 04:46:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719463601; cv=none; b=r8PVx5LfukfqW+U41kzOR7Eplu/FNF2bV26VRQUEYXexwVEtoAVbx7aWaLiNPEHpIBXkTG38eAQEOoLlvhhXXRvs+hit2hc148/mNkGvE1Vm7JkXQpGlgcx8M1rulAAKRlAiSkQOJYgXHXZjwcgLJmpeM+cLxfqqQqmHW0+2tBI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719463601; c=relaxed/simple;
+	bh=Eyzwyg/tu5NPQedjnVbHLIo0K6W0fq/cXYtZla4SNtM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pAlh1c3cXeZZ0e+/S+t1F6ug7CYZRAGUFCBwT8n+8JefQ5v2OtEwspcH8qaHOG4SBBGGy0ExkcJwuY5LirT26P0iql2yCxRJwrMWARD7kGGJ/HWqGIhnZWujrGmO4SE36fExsNV8iwUIbNKazOMCgzcw81mrJ/8QwXc7oonMnv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2ec17eb4493so101504291fa.2;
+        Wed, 26 Jun 2024 21:46:39 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719463595; x=1720068395;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=WKv2o+iwUcFccFiTIdN0pCkxYMcGxRiXtYwoj0O/Tas=;
+        b=rJ/U1NcTct1hfFPXXfbMIg0aiRi/PIPUJ6sYCMCO2V1UaPPhPI/jpLCXKAdJgy8UY9
+         EtTJRkEhdxoCQHHzPSkYQ4JoW94CPwMMBFzSuvKbx5Erq9gRGlvK/P8PC6ezu3uqS9r7
+         LCiFQokJQdgfifh0sephqksnvAF6NQJiD2KVIzZXY7UCGQjnQe1/8IRnW1BMbpXGdiBd
+         VEtSJqV2i4qcNvHRCQwN9dD5HsKgqu+RhW/cZqrNolLsyWqfStoG0sazOqobJ+Knyvvk
+         yQUpS9qeyxw7hgw1r+vdjiKb0qiguhBKXIzcOCb62HXh+DJ3k6HwRyvOPs6zu2K5QoNc
+         i2aw==
+X-Forwarded-Encrypted: i=1; AJvYcCVLGjoF4KGR6Tkenqv2bwoilDpnPOkuBA3JlwcOnCiI/vpNNhJNHYbyewiMO/lP32tXgl3smu2ABf8OJFui6lEnzlHQmTAsNoFrICFpcKJf+njpv1EHI/Dp2+QcX4AI2VAxWM8xotpnIoLdkcfXdBQWHwOaZGFgi6+xevBTD2qojdNw+PJTg8eitlwJRQy6tXSAH3xVW+APsQKGGQ==
+X-Gm-Message-State: AOJu0YzAkucKXxnzxTBCkc9WepboCq6FXYyC4Y3hSekjYgPjYfwnvMR1
+	zj8SbxyfUPsgpnhTpaOQ0vpSGCMrjXJ12REjG8rojRwH9DMtt7g27TUOIf++
+X-Google-Smtp-Source: AGHT+IG3ZKqvsw5dcd6YAEuwe3x+/pDx/otqCpF2/ukLZYX17P9RSQZShdLpby7WY+Us3Nm4zU/Inw==
+X-Received: by 2002:a2e:9917:0:b0:2ec:4bb7:d7f6 with SMTP id 38308e7fff4ca-2ec5b2c4daemr89803401fa.7.1719463595299;
+        Wed, 26 Jun 2024 21:46:35 -0700 (PDT)
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com. [209.85.208.181])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ee4a4cf7a3sm1050841fa.135.2024.06.26.21.46.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 26 Jun 2024 21:46:34 -0700 (PDT)
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2eaea28868dso99587741fa.3;
+        Wed, 26 Jun 2024 21:46:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUGLuBRbWOS6IWo/a8WzWleVtmdfmmxTJ01PYD1s+P6bzO0kp3d78TpsJ6prmfXP/pzthtqFVmJ6ocb1pof7y/RlZwJ6Vvgprg8470ElB7UUc8Lc4LzwFdONCBg+9P3iXYxgliq0YRQ9GxMuCGXTy/GKXHcgnb0Ol7mI1xzG12W2zNUsib67xFof77epaWQ7qlNrCjQUys/wfZ6ww==
+X-Received: by 2002:a2e:7c07:0:b0:2ec:4f0c:36f9 with SMTP id
+ 38308e7fff4ca-2ec5b31d140mr101577061fa.36.1719463593379; Wed, 26 Jun 2024
+ 21:46:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: buckeyemail.osu.edu
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CH2PR01MB5799.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 93cf9ce0-d52b-418d-30d6-08dc9647a722
-X-MS-Exchange-CrossTenant-originalarrivaltime: 27 Jun 2024 01:22:47.0481
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: eb095636-1052-4895-952b-1ff9df1d1121
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: /CrklcSRtRwd0eNcDQGRzHxOFEdozLuApcoQ6MnZGZCisNUHpXdwK6+DNbpYmzmZHuv/T2Tf4QfVhOcPuEuhjF7FQYLXtfTVXpqwY3SSBR0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM8PR01MB7111
-X-Proofpoint-ORIG-GUID: H7nkjiYEQhpIJrGf9AcuCD21uHgkdME8
-X-Proofpoint-GUID: H7nkjiYEQhpIJrGf9AcuCD21uHgkdME8
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-06-26_17,2024-06-25_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
- mlxlogscore=999 clxscore=1015 phishscore=0 mlxscore=0 suspectscore=0
- spamscore=0 impostorscore=0 priorityscore=1501 lowpriorityscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2406270008
+References: <20240310-pinephone-pll-fixes-v4-1-46fc80c83637@oltmanns.dev>
+ <DM6PR01MB58047C810DDD5D0AE397CADFF7C22@DM6PR01MB5804.prod.exchangelabs.com>
+ <87wmmjfxcj.fsf@oltmanns.dev> <DM6PR01MB58043A518B836D1CC3509554F7D62@DM6PR01MB5804.prod.exchangelabs.com>
+ <1b359d7e-fe85-48ca-87aa-37ab7e34aaf6@oltmanns.dev> <CH2PR01MB57990FBF72970DECF96294E2F7D72@CH2PR01MB5799.prod.exchangelabs.com>
+In-Reply-To: <CH2PR01MB57990FBF72970DECF96294E2F7D72@CH2PR01MB5799.prod.exchangelabs.com>
+Reply-To: wens@csie.org
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Thu, 27 Jun 2024 12:46:20 +0800
+X-Gmail-Original-Message-ID: <CAGb2v64hwUcU5QntuJgFi3mvBzbgTrG4_vuErDB8X1jKNMgvOA@mail.gmail.com>
+Message-ID: <CAGb2v64hwUcU5QntuJgFi3mvBzbgTrG4_vuErDB8X1jKNMgvOA@mail.gmail.com>
+Subject: Re: [PATCH v4 1/5] clk: sunxi-ng: common: Support minimum and maximum rate
+To: "Pafford, Robert J." <pafford.9@buckeyemail.osu.edu>
+Cc: Frank Oltmanns <frank@oltmanns.dev>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+	Samuel Holland <samuel@sholland.org>, =?UTF-8?Q?Guido_G=C3=BCnther?= <agx@sigxcpu.org>, 
+	Purism Kernel Team <kernel@puri.sm>, Ondrej Jirman <megi@xff.cz>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"linux-sunxi@lists.linux.dev" <linux-sunxi@lists.linux.dev>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
+	"stable@vger.kernel.org" <stable@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Frank Oltmanns <frank@oltmanns.dev> writes:=0A=
-=0A=
-> Hi Robert,=0A=
->=0A=
-> 26.06.2024 18:03:24 Pafford, Robert J. <pafford.9@buckeyemail.osu.edu>:=
-=0A=
->=0A=
->> Hi Frank,=0A=
->>=0A=
->> Moving to a new for loop makes sense. Let me know when you have a patch=
-=0A=
->=0A=
-> The patch is here, strange you didn't receive it:=0A=
-> https://lore.kernel.org/all/20240623-sunxi-ng_fix_common_probe-v1-1-7c97e=
-32824a1@oltmanns.dev/=0A=
-=0A=
-Ah, this must have slipped through my inbox. I just applied it on my board =
-and it is=0A=
-now cooperating with the min/max clock rates!=0A=
-=0A=
->=0A=
->> and I'll be glad to test it on my board. I do also wonder if this may=0A=
->> have contributed to some of the HDMI issues seen in the other thread.=0A=
->=0A=
-> My thought's exactly!=0A=
->=0A=
-> Best regards,=0A=
-> =A0 Frank=0A=
->=0A=
->>=0A=
->> Best,=0A=
->> Robert=0A=
->>=0A=
->>> Hi Robert,=0A=
->>>=0A=
->>> I'm truly sorry for the trouble the patch has caused you and for my lat=
-e=0A=
->>> reply!=0A=
->>>=0A=
->>> On 2024-06-14 at 23:52:08 +0000, "Pafford, Robert J." <pafford.9@buckey=
-email.osu.edu> wrote:=0A=
->>>>> The Allwinner SoC's typically have an upper and lower limit for their=
-=0A=
->>>>> clocks' rates. Up until now, support for that has been implemented=0A=
->>>>> separately for each clock type.=0A=
->>>>>=0A=
->>>>> Implement that functionality in the sunxi-ng's common part making use=
- of=0A=
->>>>> the CCF rate liming capabilities, so that it is available for all clo=
-ck=0A=
->>>>> types.=0A=
->>>>>=0A=
->>>>> Suggested-by: Maxime Ripard <mripard@kernel.org>=0A=
->>>>> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>=0A=
->>>>> Cc: stable@vger.kernel.org=0A=
->>>>> ---=0A=
->>>>> =A0 drivers/clk/sunxi-ng/ccu_common.c | 19 +++++++++++++++++++=0A=
->>>>> =A0 drivers/clk/sunxi-ng/ccu_common.h |=A0 3 +++=0A=
->>>>> =A0 2 files changed, 22 insertions(+)=0A=
->>>>=0A=
->>>> This patch appears to cause a buffer under-read bug due to the call to=
- 'hw_to_ccu_common', which assumes all entries=0A=
->>>> in the desc->hw_clocks->hws array are contained in ccu_common structs.=
-=0A=
->>>>=0A=
->>>> However, not all clocks in the array are contained in ccu_common struc=
-ts. For example, as part=0A=
->>>> of the "sun20i-d1-ccu" driver, the "pll-video0" clock holds the 'clk_h=
-w' struct inside of a 'clk_fixed_factor' struct,=0A=
->>>> as it is a fixed factor clock based on the "pll-video0-4x" clock, crea=
-ted with the CLK_FIXED_FACTOR_HWS macro.=0A=
->>>> This results in undefined behavior as the hw_to_ccu_common returns an =
-invalid pointer referencing memory before the=0A=
->>>> 'clk_fixed_factor' struct.=0A=
->>>>=0A=
->>>=0A=
->>> Great catch! At first glance, it seems to me that calling=0A=
->>> clk_hw_set_rate_range() in sunxi_ccu_probe() should not have happenend=
-=0A=
->>> in the loop that iterates over the hw_clks.=0A=
->>>=0A=
->>> Instead we should add one more loop that iterates over the ccu_clks.=0A=
->>> Note, that there is already one such loop but, unfortunately, we can't=
-=0A=
->>> use that as it happens before the hw_clks loop and we can only call=0A=
->>> clk_hw_set_rate_range() after the hw_clk has been registered.=0A=
->>>=0A=
->>> Hence, I propose to move the offending code to a new loop:=0A=
->>> =A0=A0=A0=A0=A0=A0=A0 for (i =3D 0; i < desc->num_ccu_clks; i++) {=0A=
->>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 struct ccu_common *cclk =
-=3D desc->ccu_clks[i];=0A=
->>>=0A=
->>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 if (!cclk)=0A=
->>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 c=
-ontinue;=0A=
->>>=0A=
->>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 if (cclk->max_rate)=0A=
->>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 c=
-lk_hw_set_rate_range(&cclk->hw, common->min_rate,=0A=
->>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 common->=
-max_rate);=0A=
->>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 else=0A=
->>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 W=
-ARN(cclk->min_rate,=0A=
->>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0 "No max_rate, ignoring min_rate of clock %d - %s\n",=0A=
->>> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=
-=A0=A0=A0=A0=A0 i, cclk->hw.init->name);=0A=
->>> =A0=A0=A0=A0=A0=A0=A0 }=0A=
->>>=0A=
->>> I haven't tested (or even compiled) the above, but I'll test and send a=
-=0A=
->>> patch within the next few days for you to test.=0A=
->>>=0A=
->>> Thanks again,=0A=
->>> =A0 Frank=0A=
->>>=0A=
->>>>=0A=
->>>> I have attached kernel warnings from a system based on the "sun8i-t113=
-s.dtsi" device tree, where the memory contains=0A=
->>>> a non-zero value for the min-rate but a zero value for the max-rate, t=
-riggering the "No max_rate, ignoring min_rate"=0A=
->>>> warning in the 'sunxi_ccu_probe' function.=0A=
->>>>=0A=
->>>> [...]=0A=
-=0A=
-Thanks,=0A=
-Robert=
+On Thu, Jun 27, 2024 at 9:23=E2=80=AFAM Pafford, Robert J.
+<pafford.9@buckeyemail.osu.edu> wrote:
+>
+> Frank Oltmanns <frank@oltmanns.dev> writes:
+>
+> > Hi Robert,
+> >
+> > 26.06.2024 18:03:24 Pafford, Robert J. <pafford.9@buckeyemail.osu.edu>:
+> >
+> >> Hi Frank,
+> >>
+> >> Moving to a new for loop makes sense. Let me know when you have a patc=
+h
+> >
+> > The patch is here, strange you didn't receive it:
+> > https://lore.kernel.org/all/20240623-sunxi-ng_fix_common_probe-v1-1-7c9=
+7e32824a1@oltmanns.dev/
+>
+> Ah, this must have slipped through my inbox. I just applied it on my boar=
+d and it is
+> now cooperating with the min/max clock rates!
+
+Please reply to the thread and give a Tested-by.
+
+ChenYu
+
+> >
+> >> and I'll be glad to test it on my board. I do also wonder if this may
+> >> have contributed to some of the HDMI issues seen in the other thread.
+> >
+> > My thought's exactly!
+> >
+> > Best regards,
+> >   Frank
+> >
+> >>
+> >> Best,
+> >> Robert
+> >>
+> >>> Hi Robert,
+> >>>
+> >>> I'm truly sorry for the trouble the patch has caused you and for my l=
+ate
+> >>> reply!
+> >>>
+> >>> On 2024-06-14 at 23:52:08 +0000, "Pafford, Robert J." <pafford.9@buck=
+eyemail.osu.edu> wrote:
+> >>>>> The Allwinner SoC's typically have an upper and lower limit for the=
+ir
+> >>>>> clocks' rates. Up until now, support for that has been implemented
+> >>>>> separately for each clock type.
+> >>>>>
+> >>>>> Implement that functionality in the sunxi-ng's common part making u=
+se of
+> >>>>> the CCF rate liming capabilities, so that it is available for all c=
+lock
+> >>>>> types.
+> >>>>>
+> >>>>> Suggested-by: Maxime Ripard <mripard@kernel.org>
+> >>>>> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
+> >>>>> Cc: stable@vger.kernel.org
+> >>>>> ---
+> >>>>>   drivers/clk/sunxi-ng/ccu_common.c | 19 +++++++++++++++++++
+> >>>>>   drivers/clk/sunxi-ng/ccu_common.h |  3 +++
+> >>>>>   2 files changed, 22 insertions(+)
+> >>>>
+> >>>> This patch appears to cause a buffer under-read bug due to the call =
+to 'hw_to_ccu_common', which assumes all entries
+> >>>> in the desc->hw_clocks->hws array are contained in ccu_common struct=
+s.
+> >>>>
+> >>>> However, not all clocks in the array are contained in ccu_common str=
+ucts. For example, as part
+> >>>> of the "sun20i-d1-ccu" driver, the "pll-video0" clock holds the 'clk=
+_hw' struct inside of a 'clk_fixed_factor' struct,
+> >>>> as it is a fixed factor clock based on the "pll-video0-4x" clock, cr=
+eated with the CLK_FIXED_FACTOR_HWS macro.
+> >>>> This results in undefined behavior as the hw_to_ccu_common returns a=
+n invalid pointer referencing memory before the
+> >>>> 'clk_fixed_factor' struct.
+> >>>>
+> >>>
+> >>> Great catch! At first glance, it seems to me that calling
+> >>> clk_hw_set_rate_range() in sunxi_ccu_probe() should not have happenen=
+d
+> >>> in the loop that iterates over the hw_clks.
+> >>>
+> >>> Instead we should add one more loop that iterates over the ccu_clks.
+> >>> Note, that there is already one such loop but, unfortunately, we can'=
+t
+> >>> use that as it happens before the hw_clks loop and we can only call
+> >>> clk_hw_set_rate_range() after the hw_clk has been registered.
+> >>>
+> >>> Hence, I propose to move the offending code to a new loop:
+> >>>         for (i =3D 0; i < desc->num_ccu_clks; i++) {
+> >>>                 struct ccu_common *cclk =3D desc->ccu_clks[i];
+> >>>
+> >>>                 if (!cclk)
+> >>>                         continue;
+> >>>
+> >>>                 if (cclk->max_rate)
+> >>>                         clk_hw_set_rate_range(&cclk->hw, common->min_=
+rate,
+> >>>                                               common->max_rate);
+> >>>                 else
+> >>>                         WARN(cclk->min_rate,
+> >>>                              "No max_rate, ignoring min_rate of clock=
+ %d - %s\n",
+> >>>                              i, cclk->hw.init->name);
+> >>>         }
+> >>>
+> >>> I haven't tested (or even compiled) the above, but I'll test and send=
+ a
+> >>> patch within the next few days for you to test.
+> >>>
+> >>> Thanks again,
+> >>>   Frank
+> >>>
+> >>>>
+> >>>> I have attached kernel warnings from a system based on the "sun8i-t1=
+13s.dtsi" device tree, where the memory contains
+> >>>> a non-zero value for the min-rate but a zero value for the max-rate,=
+ triggering the "No max_rate, ignoring min_rate"
+> >>>> warning in the 'sunxi_ccu_probe' function.
+> >>>>
+> >>>> [...]
+>
+> Thanks,
+> Robert
