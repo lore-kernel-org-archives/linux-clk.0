@@ -1,47 +1,56 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CEBA198A27;
-	Thu, 27 Jun 2024 15:15:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9D82198E69;
+	Thu, 27 Jun 2024 15:55:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719501311; cv=none; b=ggMY+v6J0dt/IwkO6o1QDELM3LHNFUglWMnHqh2ETgvNc+BY/iU4XiAkyK5Ti8iSNJuchmEA0k71Ymi/Xt9jh59qZzlMAkyVwKPVKFStSZQJX1NMZlPPtYE9RYlohESD5KSE8qjdmLfn69pWvYCjxjmt/XSYfDFXQ+HgC4ATC2Y=
+	t=1719503709; cv=none; b=rvm61Q9KdVzwf5hmo4+3Kjub6taJONwlEbm5kZ0cSqcnnIdcZRF89pTyOABMVnbJZKe+nGJgHKFTb8QexY6TxuqDn0bGido6pN7FvVnG2AByR5A8ajQ9SIMaawdrP8olK56BiBDf2z0cD1elq0AZMpniNFUnBKRAewipBawIdJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719501311; c=relaxed/simple;
-	bh=T6OmF/ctekeGX1Zyt8oH+D/SesyRhu4JpmwzDB/BBaE=;
+	s=arc-20240116; t=1719503709; c=relaxed/simple;
+	bh=9pMDF+LsTD/iBTbXNEpVt3s5aczAsdOLMMbKgkXR3BM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JFTpd2gNDVzy544rLwPyhobSNzIQgddQ0LLvJ8BAOMG0khMc0xlPHe7UrsrGFhx/9lpkuaPVEbiBct2snSWj9bSuNweP6bWaa9lvwlQcqEC9J5mB5b2VCQBEJhy19aIyXsMQhiz3Nz6oI3cmYNRxx3eOEB5KxYZNPEZmtufuO3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ujNF5EcT; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=kyF1wYEkCxnQus16w8JWEmKBm9ljFDF3Lz+RFWTJVG4/Snfi7UfZOyjgWDIs5hEw8/gC0kMLCJiyGokfvAlT62CXfTpEpUYTBnEDT/MG5r9REtY+3UX4Y1z5cVUPUyG/NyAFdtaSHNm22NlkVHAOsC07hFImtz5CMrtKSeLwDkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e+Uut/Wt; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ujNF5EcT"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 297EBC2BBFC;
-	Thu, 27 Jun 2024 15:15:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e+Uut/Wt"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B25E5C2BBFC;
+	Thu, 27 Jun 2024 15:55:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719501311;
-	bh=T6OmF/ctekeGX1Zyt8oH+D/SesyRhu4JpmwzDB/BBaE=;
+	s=k20201202; t=1719503709;
+	bh=9pMDF+LsTD/iBTbXNEpVt3s5aczAsdOLMMbKgkXR3BM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ujNF5EcTLkpuGhwln+D9eR9CwNbDWZ362RckP5So+6S8xhkveTo04eEQdsAIXsqxN
-	 +gSXyjsFeoF2K2UgkdB3t33SUJFLhtYNmIcrL9s7iLj2g8s1+mQksOVKMdX/aJp7/t
-	 wuyOZO5LPTvT70vmTAmo6uErzQiU4rbjwhubeuedBCGZ/VVBVAj74SI7zAIn8t9l5U
-	 2DAYeW1wQ3k7Oq1DY/O5Iru1PTiUq8yma0pNdl7qeP2PcPk9TQts4DZg39hq6GXttl
-	 rxNjWRWrWFHJdeN12uyKSJ5GasXWpme0ckb1qiejDOlj7giodka4kdN8gUAsS8K/Si
-	 eTKs/t2s3clrw==
-Date: Thu, 27 Jun 2024 16:15:05 +0100
+	b=e+Uut/Wt9ADdwIp7mwKF5gVeKXfcgyrdlzltjciB4aCsgjQYT4XjH95VEGKypJhPJ
+	 CRhnXj58LqLZCHFmnqKqHHEr0kxuflHifqjzgziQ72TE2vtjtJdgrOXlxPgJ73Q961
+	 XDuSekCpy1f+hoR2vwBK3hI+F/fJIc4+ccbBinorYMO4DQF9InBnJWcxIc62Y5hItR
+	 p8TALs/nL+wqdXLLzNyd8yleq1fXwUqabmjVqEFrbGvjVZ6nwFP8Dt7ieZOhd1Pqoe
+	 JZsgxtErgHl92YWYNGxBdcDEtl5d2NDn2EOJc+OCtSrh8phR256bsdFsSuYFl8VSVV
+	 WYbfj0m4w0Qsw==
+Date: Thu, 27 Jun 2024 16:55:03 +0100
 From: Conor Dooley <conor@kernel.org>
-To: Pengfei Li <pengfei.li_1@nxp.com>
-Cc: krzk+dt@kernel.org, robh@kernel.org, abelvesa@kernel.org,
-	mturquette@baylibre.com, sboyd@kernel.org, conor+dt@kernel.org,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, ping.bai@nxp.com,
-	ye.li@nxp.com, peng.fan@nxp.com, aisheng.dong@nxp.com,
-	frank.li@nxp.com, kernel@pengutronix.de, festevam@gmail.com,
-	linux-clk@vger.kernel.org, imx@lists.linux.dev,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] dt-bindings: clock: imx93: Drop IMX93_CLK_END
- macro definition
-Message-ID: <20240627-circus-tricolor-e53d077981bc@spud>
-References: <20240627082426.394937-1-pengfei.li_1@nxp.com>
- <20240627082426.394937-3-pengfei.li_1@nxp.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Yassine Oudjana <yassine.oudjana@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Daniel Golle <daniel@makrotopia.org>,
+	jason-ch chen <Jason-ch.Chen@mediatek.com>,
+	Sam Shih <sam.shih@mediatek.com>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Yassine Oudjana <y.oudjana@protonmail.com>,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-mediatek@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v4 1/2] dt-bindings: clock: Add MediaTek MT6735 clock and
+ reset bindings
+Message-ID: <20240627-deranged-yard-c84283135fbc@spud>
+References: <20240626202406.846961-1-y.oudjana@protonmail.com>
+ <20240626202406.846961-2-y.oudjana@protonmail.com>
+ <96b436c1-50c3-4091-9577-c00187518779@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -49,32 +58,46 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="u5klgZjrvwX9aHyj"
+	protocol="application/pgp-signature"; boundary="8CP9nh8xoEAPoXZZ"
 Content-Disposition: inline
-In-Reply-To: <20240627082426.394937-3-pengfei.li_1@nxp.com>
+In-Reply-To: <96b436c1-50c3-4091-9577-c00187518779@collabora.com>
 
 
---u5klgZjrvwX9aHyj
+--8CP9nh8xoEAPoXZZ
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jun 27, 2024 at 04:24:26PM +0800, Pengfei Li wrote:
-> IMX93_CLK_END should be dropped as it is not part of the ABI.
+On Thu, Jun 27, 2024 at 10:37:03AM +0200, AngeloGioacchino Del Regno wrote:
+> Il 26/06/24 22:24, Yassine Oudjana ha scritto:
+> > From: Yassine Oudjana <y.oudjana@protonmail.com>
+> >=20
+> > Add DT bindings for for the main clock and reset controllers of MT6735
+> > (apmixedsys, topckgen, infracfg and pericfg).
+> >=20
+> > Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
 >=20
-> Signed-off-by: Pengfei Li <pengfei.li_1@nxp.com>
+> This commit needs just one small nit to be fixed before being ready to be=
+ picked,
+> check below...
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+You say "one small nit" and follow it with "you *shall*", dunno if
+that's really a nit! With the namings fixed up
 
---u5klgZjrvwX9aHyj
+Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+
+Thanks,
+Conor.
+
+--8CP9nh8xoEAPoXZZ
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZn2B+AAKCRB4tDGHoIJi
-0mGeAQC500wqIOhI+jGHCLMnTXxAQyLeHsQUPCCXK4oumFncWwEAgio1+M+wJgzY
-1J1uWvaOISRjnyYvS/xA14tuJxE22go=
-=QaIO
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZn2LVwAKCRB4tDGHoIJi
+0nEKAP9yR5y++DNT8wYwjg3zQzQhwqljNZNTjvB5Hdghil7ztQEAlMDvABPPZ4jg
+vkp0P5ZlpPE0zRVgChCAysGnRoyg+gU=
+=Agy2
 -----END PGP SIGNATURE-----
 
---u5klgZjrvwX9aHyj--
+--8CP9nh8xoEAPoXZZ--
