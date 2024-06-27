@@ -1,159 +1,117 @@
-Received: from mail-oo1-f43.google.com (mail-oo1-f43.google.com [209.85.161.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F94214F9DB
-	for <linux-clk@vger.kernel.org>; Thu, 27 Jun 2024 12:10:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6C7415ECEF;
+	Thu, 27 Jun 2024 12:43:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719490239; cv=none; b=LMoYvm/feAhAUEeD324MChpQF3HEeCwHzpc9xAIo1ph1vOXy/tgwkxuGm1e/KJuEZ7qLpbxHQ+1M/UIJ0j7wx9GvbAhV33ZKIQBUdWJdM5HZlPjSiVymRopwd7vFfZX9tb0piUuiLgc3vzEW4edKy5Jg6LUsFCwqeLejBfM4Re8=
+	t=1719492210; cv=none; b=CZnuv/w2EF5TtssFPSqyCF8AcmqnVjSIxpTf3YxM69XXN2NHujZVvsOwVKGGMm2kgv7pVReQjEDuMkemfjZ/ld/x6oY0vQehrTYaaWqhjJD9tWmvMKlbXWAz7OlP0BJ3dRv2ZXpBmBNWHsXPHtpULjOPn+bWnHyiiWBDuDaZMu0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719490239; c=relaxed/simple;
-	bh=NkigWkA6VySFfvHgeE5oFW+QBC+cXkg9GyKrJbWRTzA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qRyzLNt2aw9HWZJIBk6ucZVnpiZlNqnFr+c7JbWCWR9RQzy0m4+hARU85JCLK4oy3Z5X0MF3y+Z3uT0jsdNxQvyQQgsrXxtbb4HBXmDwKbX8fBYLCs9MHNYjUUn/y6R5Z8GNBtvpiSFHjvpB/0i8ySrtFfRhaAg7tlZKm29U3G8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bqbmgB9m; arc=none smtp.client-ip=209.85.161.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1719492210; c=relaxed/simple;
+	bh=MIa5UbAwdN0MQZHDYIq4AocxOOiHJlQicygyyMYL9aU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lRF8Ul9G/vrjynbzR/FRX5lXRpyU0mGoGVk9aLgFdM7Q7TXQQC0Z9RUHpUnDtsEEw+rxyVfzs8Y6rKRRoqNh9hGvGXFHP3/2LhqEZ3yBqiPCdd6gJSuKIvkvXoahwcfYCf5zuI8GlANxUyUZ98CrP7Ty/Y42CuoBRpipr3smpXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ixL28et/; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bqbmgB9m"
-Received: by mail-oo1-f43.google.com with SMTP id 006d021491bc7-5b9a35a0901so2436739eaf.0
-        for <linux-clk@vger.kernel.org>; Thu, 27 Jun 2024 05:10:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719490237; x=1720095037; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=cE4Bab1XKSgATh7IHyFiARbi4eUyFalxuUlRbbSbrnQ=;
-        b=bqbmgB9mpeGOWGv6XSkMtnZNCBoyYQFKDR2ohtG+PMSVhrmpK62yZ0XganCVFk/KUm
-         jBJM1DFeYYMHyT73QPMn9XEnlmr9tohINW/++deI0Vf8L+fXN8PRc+RCubAkibiL62Ls
-         mstzsgP/JxEUX36fillZzEJsb7nrdUthU6acz5ArYom6ibyiaTIj2SEmKYkPCPQggQwN
-         WLYgab6CuHC+aG14Wg7uYcFU87znXyckk5BvYcx/shQ6azeAEfSVAc/kHrcT4j+Bh0/5
-         ZJ4kZ4rZ0jqMElnsMb82FZTvOUFeYU3vYrQxkiaIzAxAihBNf5NjDK7rnV16FZWX2qd8
-         qylA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719490237; x=1720095037;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cE4Bab1XKSgATh7IHyFiARbi4eUyFalxuUlRbbSbrnQ=;
-        b=BE4Vgcf+s5xKdAzWs7hdO4XNCKqHgTXuVdUY8HeFrPN+jyP2pTCCY2wFFV8eKoXtkH
-         hYu3TVekR+L4eovm9k57Uhx769WaRUVUBMIex7+YE7dqMEAz81c5fUmoELWjdLMdHgTU
-         vR9sLP3/ykme6tzhk/HHMTaZtuTo0u7whhLP1efW+V2sVN30ShB0br5GmQPLeD6tpz3H
-         4ODUZOS/m3KAFs+D8dN6biRyVy4mM7euKef2rgXyXNcOupXj4AMHyQdo0yC7vWgV3PJE
-         bxxHA1M/3hCnGh8n8RI3EE4fZ/FWTFg50QcUz1CuvmxYBce19EXG2iqNLR2qgsqwUk57
-         JQHw==
-X-Forwarded-Encrypted: i=1; AJvYcCVxlEpQ42G9g+sVKvXO1w5ZRSorlSJVt8UQ2jo02b0r+inZxc+C7KpxmjQfvI63M2zsazS2vl3st+ruTAzJYfZRphNSqRS7tX0p
-X-Gm-Message-State: AOJu0Yz889ZBWRt1eYv3ya1l9v0HAzVNCVz1Q3TIqdKZM8mtfBoJOlRk
-	SKc9eRMOoZcXmbgwhSRJFQz6xgW1AhwZmO9BXfonmMpdPPpPoNkvteeEfI2hf8uwtN3tdnW46i7
-	XA68J+nHv4KODGt3WECNa95BRcm/GasoZtUppRA==
-X-Google-Smtp-Source: AGHT+IHAyaiJEmjGK1tayduKPakkTEDNumaseSBPgUWJsXu5w7UaamjrpjUQeIA3/oIdt38OMiLEdTZdpwGs2IfqBCk=
-X-Received: by 2002:a05:6871:3a28:b0:259:8805:b634 with SMTP id
- 586e51a60fabf-25d06eb6695mr14671549fac.49.1719490237191; Thu, 27 Jun 2024
- 05:10:37 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ixL28et/"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1719492209; x=1751028209;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=MIa5UbAwdN0MQZHDYIq4AocxOOiHJlQicygyyMYL9aU=;
+  b=ixL28et/Cx921ZfyPz+SP9YS/Y8zAk8A0q/s2f/2/vx1Wq3FTTpTIKay
+   kLr1gw93kqlWb43HPx3YNg9tmp3z2f0clxiQGfZtt7FGMQ0RFVyjZnHwP
+   yNbSxr6A7XUyY1AY6slsmmVxQCBwzBoTb4iAhjQIBa8lWUSuPcKWmWlbI
+   orvV8wyNCb8IZv0QlzNSifGmHayLXqZ5LkOk7N5Kx4AdRpg6SOMBjRKY6
+   WVpWA4Hw4dlBOmAhQl2J06gCo3eBhfyJ2xIpp6HBX//gsc996jGri2hRv
+   EaeK+6+ftL+HtbmYBGmU2nkr4moG3tPKF1b97dv814D+xT4d5UySe+lj3
+   A==;
+X-CSE-ConnectionGUID: HXSwzJDbR3C8+M9dPg5xTw==
+X-CSE-MsgGUID: XEjtTFj6RhWK4/4+/+5I2g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11115"; a="20435161"
+X-IronPort-AV: E=Sophos;i="6.09,166,1716274800"; 
+   d="scan'208";a="20435161"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 05:43:27 -0700
+X-CSE-ConnectionGUID: wtTd6FqOQ+SyMrQRmMdeLg==
+X-CSE-MsgGUID: TxNoo/aqRMu0POgQB/IcaA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,166,1716274800"; 
+   d="scan'208";a="45022904"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 27 Jun 2024 05:43:23 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sMoTA-000GCo-17;
+	Thu, 27 Jun 2024 12:43:20 +0000
+Date: Thu, 27 Jun 2024 20:42:29 +0800
+From: kernel test robot <lkp@intel.com>
+To: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>, sboyd@kernel.org,
+	andersson@kernel.org, bjorn.andersson@linaro.org,
+	david.brown@linaro.org, devicetree@vger.kernel.org,
+	jassisinghbrar@gmail.com, linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org, mark.rutland@arm.com,
+	mturquette@baylibre.com, ohad@wizery.com, robh@kernel.org,
+	sricharan@codeaurora.org
+Cc: oe-kbuild-all@lists.linux.dev, gokulsri@codeaurora.org
+Subject: Re: [PATCH v9 8/8] arm64: dts: qcom: Enable Q6v5 WCSS for ipq8074 SoC
+Message-ID: <202406272012.krpg0wbC-lkp@intel.com>
+References: <20240621114659.2958170-9-quic_gokulsri@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240626194300.302327-1-peter.griffin@linaro.org> <fd840123-31d5-4472-a755-ef6a47613e5c@kernel.org>
-In-Reply-To: <fd840123-31d5-4472-a755-ef6a47613e5c@kernel.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Thu, 27 Jun 2024 13:10:26 +0100
-Message-ID: <CADrjBPqLT7e_eV9=ykDXG7_p3j8yJTbQNAc_dXVVRDP7Vqbtag@mail.gmail.com>
-Subject: Re: [PATCH 0/3] Add syscon-reboot and syscon-poweroff support for
- gs101/Pixel 6
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	alim.akhtar@samsung.com, s.nawrocki@samsung.com, cw00.choi@samsung.com, 
-	mturquette@baylibre.com, sboyd@kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, tudor.ambarus@linaro.org, 
-	andre.draszik@linaro.org, kernel-team@android.com, willmcvicker@google.com, 
-	devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240621114659.2958170-9-quic_gokulsri@quicinc.com>
 
-Hi Krzysztof,
+Hi Gokul,
 
-On Thu, 27 Jun 2024 at 11:47, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->
-> On 26/06/2024 21:42, Peter Griffin wrote:
-> > Hi Krzysztof,
-> >
-> > This series adds support for syscon-reboot and syscon-poweroff to gs101/Oriole.
-> > It has been tested with reboot and poweroff commands respectively.
-> >
-> > Note the syscon-reboot/poweroff has *runtime* dependencies on the exynos-pmu
->
-> How does the runtime dependency manifests? Something get broken if there
-> are no dependencies? Or maybe reboot does not work, but probably it did
-> not work before, either?
+kernel test robot noticed the following build warnings:
 
-Without [1] but with this series applied you will get an Serror
-interrupt and hang on poweroff, and reboot commands, as it will use a
-mmio syscon to write the protected register.
+[auto build test WARNING on remoteproc/rproc-next]
+[also build test WARNING on clk/clk-next robh/for-next linus/master v6.10-rc5 next-20240626]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-[   74.680240][    T1] reboot: Restarting system
-[   74.680322][    C0] SError Interrupt on CPU0, code
-0x00000000be000011 -- SError
-[   74.680329][    C0] CPU: 0 PID: 1 Comm: systemd-shutdow Not tainted
-6.10.0-rc3-next-20240613-00009-g6ca503bd3c2b #476
-[   74.680336][    C0] Hardware name: Oriole (DT)
-[   74.680338][    C0] pstate: 604000c5 (nZCv daIF +PAN -UAO -TCO -DIT
--SSBS BTYPE=--)
-[   74.680345][    C0] pc : _raw_spin_unlock_irqrestore+0x10/0x44
-[   74.680363][    C0] lr : regmap_unlock_spinlock+0x14/0x20
-[   74.680373][    C0] sp : ffff80008009bb40
-[   74.680375][    C0] x29: ffff80008009bb40 x28: ffff00da4587e158
-x27: ffffa38d3bc74708
-[   74.680386][    C0] x26: ffffa38d3d9c9ca8 x25: 0000000000000000
-x24: 0000000000000000
-[   74.680394][    C0] x23: 0000000000000000 x22: 0000000000000002
-x21: 0000000000000002
-[   74.680400][    C0] x20: 0000000000003a00 x19: 0000000000000000
-x18: ffffffffffffffff
-[   74.680407][    C0] x17: 0000000000000000 x16: ffffa38d3c6cf438
-x15: ffff80008009b6a0
-[   74.680414][    C0] x14: 0000000000000000 x13: ffff00dbb6980000
-x12: 00000000000007d4
-[   74.680421][    C0] x11: 000000000000029c x10: ffff00dbb6c40000 x9
-: ffff00dbb6980000
-[   74.680427][    C0] x8 : ffff80008009bc28 x7 : 0000000000000000 x6
-: 0000000000000000
-[   74.680434][    C0] x5 : ffffa38d3b83e074 x4 : 0000000000003a00 x3
-: 0000000000000000
-[   74.680440][    C0] x2 : ffffa38d3b831764 x1 : ffff00da40230000 x0
-: 0000000100000001
-[   74.680447][    C0] Kernel panic - not syncing: Asynchronous SError Interrupt
+url:    https://github.com/intel-lab-lkp/linux/commits/Gokul-Sriram-Palanisamy/remoteproc-qcom-Add-PRNG-proxy-clock/20240625-162317
+base:   git://git.kernel.org/pub/scm/linux/kernel/git/remoteproc/linux.git rproc-next
+patch link:    https://lore.kernel.org/r/20240621114659.2958170-9-quic_gokulsri%40quicinc.com
+patch subject: [PATCH v9 8/8] arm64: dts: qcom: Enable Q6v5 WCSS for ipq8074 SoC
+config: arm64-randconfig-051-20240627 (https://download.01.org/0day-ci/archive/20240627/202406272012.krpg0wbC-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project ad79a14c9e5ec4a369eed4adf567c22cc029863f)
+dtschema version: 2024.6.dev1+g833054f
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240627/202406272012.krpg0wbC-lkp@intel.com/reproduce)
 
-and
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202406272012.krpg0wbC-lkp@intel.com/
 
-[   49.448590][    T1] reboot: Power down
-[   49.448747][    C0] SError Interrupt on CPU0, code
-0x00000000be000011 -- SError
-[..]
+dtcheck warnings: (new ones prefixed by >>)
+   arch/arm64/boot/dts/qcom/ipq8074-hk01.dtb: phy@59000: 'vdda-pll-supply' is a required property
+   	from schema $id: http://devicetree.org/schemas/phy/qcom,qusb2-phy.yaml#
+   arch/arm64/boot/dts/qcom/ipq8074-hk01.dtb: phy@59000: 'vdda-phy-dpdm-supply' is a required property
+   	from schema $id: http://devicetree.org/schemas/phy/qcom,qusb2-phy.yaml#
+   arch/arm64/boot/dts/qcom/ipq8074-hk01.dtb: phy@79000: 'vdd-supply' is a required property
+   	from schema $id: http://devicetree.org/schemas/phy/qcom,qusb2-phy.yaml#
+   arch/arm64/boot/dts/qcom/ipq8074-hk01.dtb: phy@79000: 'vdda-pll-supply' is a required property
+   	from schema $id: http://devicetree.org/schemas/phy/qcom,qusb2-phy.yaml#
+   arch/arm64/boot/dts/qcom/ipq8074-hk01.dtb: phy@79000: 'vdda-phy-dpdm-supply' is a required property
+   	from schema $id: http://devicetree.org/schemas/phy/qcom,qusb2-phy.yaml#
+>> arch/arm64/boot/dts/qcom/ipq8074-hk01.dtb: /soc@0/remoteproc@cd00000: failed to match any schema with compatible: ['qcom,ipq8074-wcss-pil']
+--
+>> arch/arm64/boot/dts/qcom/ipq8074-hk10-c1.dtb: /soc@0/remoteproc@cd00000: failed to match any schema with compatible: ['qcom,ipq8074-wcss-pil']
+--
+>> arch/arm64/boot/dts/qcom/ipq8074-hk10-c2.dtb: /soc@0/remoteproc@cd00000: failed to match any schema with compatible: ['qcom,ipq8074-wcss-pil']
 
-Without the clk-gs101 critical clock change, poweroff command will
-hang, when shutting down UFS.
-
-Without the exynos-pmu support for !atomic registers, the reboot
-command won't work when the DT is present as the register write to
-SYSTEM_CONFIGURATION register will fail.
-
-[  114.525217][    T1] reboot: Restarting system
-[  114.525290][    T1] tensor_sec_reg_write(): SMC failed: -22
-[  115.525434][    T1] Unable to restart system
-[  116.025576][    T1] Reboot failed -- System halted
-
-For poweroff, you are correct this has not been supported on Pixel 6
-so far upstream.
-
-However `echo b > /proc/sysrq-trigger ` has worked in previous kernel
-releases (it would reset the system using Watchdog). With the
-syscon-reboot DT present, but without [1] this will cause a Serror and
-no longer restart the system which would be a regression.
-
-Thanks,
-
-Peter.
-
-[1] https://lore.kernel.org/linux-arm-kernel/20240621115544.1655458-1-peter.griffin@linaro.org/
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
