@@ -1,199 +1,208 @@
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01olkn2015.outbound.protection.outlook.com [40.92.102.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDAB213AA31;
-	Thu, 27 Jun 2024 10:20:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719483637; cv=none; b=unitLc3LXVFHYVZqSKjjPaMt1KVUCgEjAbnBsLBfDhKQ+cymVWeS/zzA6eFSnjDu9DMBDIYtzqRiIcIsutqhU22mwGZWa3OJL/AEkzcsakeuf91JUATk+ESUR1YrRAQs6apKGmpoIgOQoZmijt25jCaizmOgS16P+KkbMDcjHNc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719483637; c=relaxed/simple;
-	bh=x0pTPriGYq8/Oq6T3iZrhaAwgdpV3HDNcy08tazRkqg=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YR9aMr0VCU9gRBHIDiQkrZ4iiJkaVmDlB+j7pYq+xKdJK9Su2w+i+ZuLqMsUHDHaGISLRJxRhknaJEGZJl5EMECN+0bOZomrwGDasj9nryanlCjCyY4wVcHq9j69CXkhzva9THT6yKMhe3VD9krfyjTRzh+v/KpddyvadrqjYJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=tNvJw67x; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CFC613DB99
+	for <linux-clk@vger.kernel.org>; Thu, 27 Jun 2024 10:27:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.102.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719484022; cv=fail; b=nIVQEnebAHcVLFUrOD+SUs1cDo/0P+kp3pd/k3HTXa8TYchtonl1RzRNi3yZb44poWzzUxktwPCmXYWyia8ja+7mA7qev7W/BoJAoJMsDh9VGeGq70UkykjE7uzlbARIhj3QRFR7OplHSWK2D6nGrsUjNJMOZk+tAkV8Tk+50uE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719484022; c=relaxed/simple;
+	bh=/BWYnAtO312kx4i+XP5933tSKDsy82TF5QuYk8pVhgs=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=tOdbsrX5hfyExkvw41wa1vkxSZUcpMmyFFJe2qy2C6DeKmMkJYt1QhIAc9rddELauHCOoLVmfDTyoC9ZlyvEOWuro13Ju/Psh6Bo1/i/uddm9S8Z5wge6lKLrRCJ8MX3Mxfj93EmAx1xPA6vFF7GZH6KlOfrpMAZPb6WH4Q+B8A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=Iz4NEW8G; arc=fail smtp.client-ip=40.92.102.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="tNvJw67x"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1719483634; x=1751019634;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=x0pTPriGYq8/Oq6T3iZrhaAwgdpV3HDNcy08tazRkqg=;
-  b=tNvJw67xA37lyYPoSInI3MWHcAfn8Z72tOJhR5SP8pY1K8qTOtoyaw1K
-   z8ne6S92So2jR7NZAbkqjYRJas/OjSZFMdKEdn9d4GIbL/lczyfy6fNgV
-   dk5W0sWF4RLwMzaXu2fhypHo5q8VScGOOWpwxmzPRX1//JF0jnz3MOP2C
-   TXaQcN4/BJ0xUeIeF0m2ZO56q9D26FJP+URx/aZ3TWtAcjYNJgNNKODu1
-   NTkAgLd/Be+mrnwzb5NkOKi7i4nY+Ik4RnUv80mSfVI3rmOivja8WVub6
-   EExy3GPtr3GobKu5pYKB0N5Ue1o8C31unAivdmeMGy1yXq/NFAPLWKeLb
-   w==;
-X-CSE-ConnectionGUID: BdnfriUqTeKbI2LFOCpaDw==
-X-CSE-MsgGUID: qPqGnLYKTdG3f0rB3lHn5g==
-X-IronPort-AV: E=Sophos;i="6.08,269,1712646000"; 
-   d="asc'?scan'208";a="28543575"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 27 Jun 2024 03:20:33 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 27 Jun 2024 03:20:09 -0700
-Received: from wendy (10.10.85.11) by chn-vm-ex03.mchp-main.com (10.10.85.151)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
- Transport; Thu, 27 Jun 2024 03:20:06 -0700
-Date: Thu, 27 Jun 2024 11:19:50 +0100
-From: Conor Dooley <conor.dooley@microchip.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-CC: Lorenzo Bianconi <lorenzo@kernel.org>, <linux-clk@vger.kernel.org>,
-	<p.zabel@pengutronix.de>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-	<lorenzo.bianconi83@gmail.com>, <conor@kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <robh+dt@kernel.org>,
-	<krzysztof.kozlowski+dt@linaro.org>, <conor+dt@kernel.org>,
-	<devicetree@vger.kernel.org>, <nbd@nbd.name>, <john@phrozen.org>,
-	<dd@embedd.com>, <catalin.marinas@arm.com>, <will@kernel.org>,
-	<upstream@airoha.com>
-Subject: Re: [PATCH v3 1/4] dt-bindings: clock: airoha: Add reset support to
- EN7581 clock binding
-Message-ID: <20240627-woven-devourer-1869276e043f@wendy>
-References: <cover.1718282056.git.lorenzo@kernel.org>
- <ac557b6f4029cb3428d4c0ed1582d0c602481fb6.1718282056.git.lorenzo@kernel.org>
- <d1021a8d-6e7f-4839-845e-88e2c8673c34@collabora.com>
- <20240627-vending-lisp-4e1cf45e552c@wendy>
- <b5bb67e8-ebd6-43db-b9d6-2aae38f2a08d@collabora.com>
- <20240627-undying-overcoat-192e5aa20c55@wendy>
- <0ae5ff1c-1abe-4b45-a1dd-4599a867f8c8@collabora.com>
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="Iz4NEW8G"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=HVR3dXDRvM+lpkNM6VPf90erxnHWb6qEWsAW2fwwd3RDPOWwiWFUW1ws2dK7S1oyKN8+fxTldY9lpLeFY18NV4pUn+N5OpaizqCKa1XCmCOW6vAWGDfgklHf+2LkiOOWz8B7/ko9NwIHZ5T3qMYA/x7Y6gpdMP7YYdwvjLKgqKxowc/e4XhBJv+n8rqIgrC33u6aUrQuYxgGmAa7OFR/AZFnN0p8woYXjvqLbEhBjBt2R+PNkIL3fX43wqLMGL5um+9uBg/BL334lS5dNg6CMu1phkJRgUMkawO8wm6Dh+IUekX32zcVfT5S6cBmc3mKrMLIy83CzH5tROROJFOKFQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=uGQijwsUKmQcc+X0Df3FQaPFW5dPslKK3Eblr0nCLEw=;
+ b=M9lDjdmSopyIqHpmusxqNNRd20GUyIks2JI1EckWMb36XT3CAhZyWjpE9M+dBWGTPFdAjphMJVOwdMEg6rOSVZUKXthtxl6tt0O3oOlZ/OHgDZMFD5v7xx39U+9dX9eAkpSHnv6cPuNPR4NcoeSbNT8kaKH2ogt/SEO1Mo4vVFdaOVwzKnLo5Tj8ElgmhgCIifggw0NEwitESzFL7JEjSb6U8V1OcXx4slAs3/ihf6R2k6cGhmRKMJ4ai2Pml13e/+kOi11kc+sIjk4rMnDKuWpOecZOcHIcj7U4DkrAaDYXl+sJoPix6Onb/m0jDFfkkp98dAbJxAgLhkwEa11Pxg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=uGQijwsUKmQcc+X0Df3FQaPFW5dPslKK3Eblr0nCLEw=;
+ b=Iz4NEW8GVTJHq0McM622SJmhwP+yF6ReuTkm4C35SuWHAz3zP/aHIlST+lhrHAwX/goj4M0YVzvbJF2IcZxau0hKXdlvo7EQIiO0JjdWbj55vv62AWHshtOmeb2ElgpcPP2Y4K9DGYHwIGXqxlNhafpAroJr2WhARj1grwJXYWMt2XfXc9fyKgcFeE8Zbw2avg/cxdKxfTDPfVsNFmdkYNnxeNzk0TUAF7R3KZrZ4OSaHS706CaI8RVWHIh5Dqi+QIMJVikaMU9AKENYb6nez5dnqdnuDboVD0EJehuBDfDT3Ti0jM30NjmVXkd53w8geM0eP57z5k3YXxLjbPa9eA==
+Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:138::5)
+ by PN0P287MB2033.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:1be::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.32; Thu, 27 Jun
+ 2024 10:26:55 +0000
+Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ ([fe80::a94:ad0a:9071:806c]) by MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ ([fe80::a94:ad0a:9071:806c%3]) with mapi id 15.20.7698.033; Thu, 27 Jun 2024
+ 10:26:55 +0000
+Message-ID:
+ <MA0P287MB2822C5A4682AE9EA6AB3B9E4FED72@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+Date: Thu, 27 Jun 2024 18:26:45 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [GIT PULL] RISC-V Sophgo SG2042 clock drivers for v6.11
+To: Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org
+Cc: Conor Dooley <conor@kernel.org>,
+ linux-riscv <linux-riscv@lists.infradead.org>,
+ Inochi Amaoto <inochiama@outlook.com>,
+ Xiaoguang Xing <xiaoguang.xing@sophgo.com>, haijiao.liu@sophgo.com,
+ Chao Wei <chao.wei@sophgo.com>
+References: <MA0P287MB28221A333D852974F55E3228FEC22@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+From: Chen Wang <unicorn_wang@outlook.com>
+In-Reply-To: <MA0P287MB28221A333D852974F55E3228FEC22@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TMN: [frVb8Y0GZU91gVkt3KE1nnhhKncG4jGw]
+X-ClientProxiedBy: SG2P153CA0030.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c7::17)
+ To MA0P287MB2822.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:138::5)
+X-Microsoft-Original-Message-ID:
+ <c8c2a2e9-6732-4b8b-b885-11bd4f1658b4@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="bbQwYd7tdTi6asDw"
-Content-Disposition: inline
-In-Reply-To: <0ae5ff1c-1abe-4b45-a1dd-4599a867f8c8@collabora.com>
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MA0P287MB2822:EE_|PN0P287MB2033:EE_
+X-MS-Office365-Filtering-Correlation-Id: deea45d8-a615-4f06-f5ec-08dc9693a953
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|461199028|1602099012|3412199025|440099028|4302099013;
+X-Microsoft-Antispam-Message-Info:
+	f4jKOJU3RdoI292FPtmiG5Oqhr70eSX9OIRYDc1uLr39aX9ZljvZOij+haSt4WPuL6aBDJDU/aQbINQOuiC3M+d+IeYCwwLaxhVJLUO+fZ4eYc02KnhGiwax52Jv4uebFe9/uhLHm6yZ5s8Vl3fXVABzwzSbYbN75pawKTjMm141wNPvzmOsEWjSh+S/7dF1NWNLZmCyBpSLumsJvnxOrqTuvXbepCVa77GD1Gl1Vx2ScfX4Zvnqxr+C1l9ZBV5Fo16J9UwkBd+firAUXid08wb6NaZGOrW3F4pi0rmkRt6RJVsyPDKHF1yUj2NTVQE6ANgJPGOGYzs6AZHIQkzMtoxV83799zWZO5Q32mOLOQP1buOCmRz4imphO97aqgcgzXRQhoez8SJXtuKgPCf+THzwG7HaUWU3ZVToz9gdNuueKotEdb7yiIMaNnOnU2fI/wO/oUrg8Q/oiDfUB6veWNYXOD0OfEMEs5oelttNOpxMxH2FPEJfsK5qFEDTNFV9na2uaSG0DYDlNst09FIIXfIo8VEPcqP0ZdXEtGMbAfU5Qh1hftW0rB3hif++cCpqW6nr3nHqA3BqvBQPMbkD7u83rrAqcrIKVirhAQvMcsrAdOEl7Bpl+H3OYyNvtFGUKUJ7OLS6J6QUgzPHYwAmXntRWQxhCTNE0g8L/jG5D/zw2MzzbBgrS3+Q4ADqYwcbAxabXgRfJXCU+hKniZpqfw==
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?VksrRk91S2VvUmd0YkZWSi9uMHFKL3pka1FETGJkVk5UcDRUL3gvOFJEK0pt?=
+ =?utf-8?B?MzIvMi8vbkdXSzFXQ1lUQ1oreTlWbGd0NkZuZ0sxajdKVE8zK1RLcFJ6M2FF?=
+ =?utf-8?B?Rzh5dXk2NVdId1JIQ0FoVzk2eWQ3K2lWZjdwcGE4RGxPN0ozb05TTEdzZVpl?=
+ =?utf-8?B?K1R1eEgwcVFvS1FDbXFaR0h0bXkxM0NxKzV0N0grazY5TWFoNUhTZkg1ZWxV?=
+ =?utf-8?B?QjFMdFdjNHJxU3ozRHBTRVpZSmQzWmlqNllWaVhRcGJyanQzQWtZa0oyeTds?=
+ =?utf-8?B?K1pBU212WTBTNGhiQkM5a0M1WkdXM2REWHMxREQ4Z0JVb0hNUjBmVlJFNW1D?=
+ =?utf-8?B?cFJuMU5McFRRTjlMa09RQW1WQ290MFVOY0tvbDZ0dEdYYWswaGE1a01vRnBO?=
+ =?utf-8?B?ODVHT0VOVFpCRE5nNjNHMzl0RWJsOW1Icmg1QnB0UG8wZjFZUFZmRHhabm9T?=
+ =?utf-8?B?RGVhUzFpdFJXM3FwcDZVN3V0NXhIUnY5Ti9xYnN2WDNTaUJWTjNnWUZURDlP?=
+ =?utf-8?B?NnVuRXROOXNBZms1MGRCQlYycTB5WEJnL0x0RTRscXFoZnNTdWQwS3VSZWd0?=
+ =?utf-8?B?aGU2SS9NVnJLc3lHK2Z3SGxQcEpqMjNqZGpoMUY4bXJjWk5VSmJyckxzdVNW?=
+ =?utf-8?B?ekY4OGxkZmFndi9zTVdCaFFibDF5TjY3eDQ4WGRJZmF3dVc3OTVRTkdCS3lJ?=
+ =?utf-8?B?MDAzQVhNYTBCcmdtc1VtZEJHalArbEZ6a2ZPcUJva0cyc3BZWlBmT3EycVh5?=
+ =?utf-8?B?L0NNRE90QURza29sQUUxUFdDQzBqc3dsU1lNY3ZIQ1dHMktsd3ZRT20xRTRN?=
+ =?utf-8?B?a2tZNkl6ak9QTlh6NnZsMWkyME93OEVPOFlPQ2VBeFlWYU01ak5rTmgyR0pv?=
+ =?utf-8?B?ZHZ6TzdZQTg1Zm5JYUpwYWdZQ2JaTDFaQnF0eFdPU3VmR1k4K05TOEpXRjVl?=
+ =?utf-8?B?Tk9BSy9Yai9oWWxHNmdURVFVNWxOQ0o1Q0JkTERnWWdNdlNBYzBxS0dlcStp?=
+ =?utf-8?B?blJ4NDlha2U1a1M5VExUSGZzMHRuV0l2d01vSHZUK1hvN3VHNXFSbHZPUVR3?=
+ =?utf-8?B?R2NlcGU1WnJVYVllUmY1SEpydDV2RjBNTzByRVhZcFdTeUtjTHozdlNpQzcr?=
+ =?utf-8?B?ZjNCWE1POWNJWjE2VlE0cS9oanZOS3FvR3FPU0s4ZmNQSHFXNE1xR3crYWFw?=
+ =?utf-8?B?UzBSR1lHYkthbjA5WU1oMHV0TU9iK3p2OTNESFJSNHF3ZTROdWpBdzV0cFpx?=
+ =?utf-8?B?RGFEWURCcG1SNW5ncDRGU09CZDZXR3U3d0VGbXlPa0J1dHZhOXo3RmxJN05i?=
+ =?utf-8?B?OVZPWlAzVmR0K0lQdE9uTzZxaUk2YWU5cE5ZaUprMXdEbjM5Qy91ZDJkZ1ZP?=
+ =?utf-8?B?dm5sS2xNVWViSzBlUGIvNFNaSzlBUjNFQUZ3MFNid1paNWFNOHl2MjBJV2tp?=
+ =?utf-8?B?Q0JhQUVOSWYydlF5RS9Pd1dEc3g4U0tKdm5WWXdrenlMZUNHNFNHUC9CY3RC?=
+ =?utf-8?B?WGpobWZzRFRsTDF4akltQ2JGZFZEb1EvSGdiWUZXWThTNnBWc05QTDRqTmh4?=
+ =?utf-8?B?aWs1Z2xES29LMjljU3hodWpqL0EwMnNXTW9wQVFCL3lRNDJlVnVDTXNwcVVq?=
+ =?utf-8?B?TEpNKzZ2SjRtTnd4bnV6UnVneGs3aGFWdVdmdHBhRjJUaCsxeFNOWVU3VmRr?=
+ =?utf-8?Q?/ziYCfr13WXb7b2WUoYH?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: deea45d8-a615-4f06-f5ec-08dc9693a953
+X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Jun 2024 10:26:54.1101
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN0P287MB2033
 
---bbQwYd7tdTi6asDw
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Hi， Stephen，
 
-On Thu, Jun 27, 2024 at 12:03:38PM +0200, AngeloGioacchino Del Regno wrote:
-> Il 27/06/24 11:57, Conor Dooley ha scritto:
-> > On Thu, Jun 27, 2024 at 11:53:00AM +0200, AngeloGioacchino Del Regno wr=
-ote:
-> > > Il 27/06/24 11:47, Conor Dooley ha scritto:
-> > > > On Thu, Jun 27, 2024 at 11:33:47AM +0200, AngeloGioacchino Del Regn=
-o wrote:
-> > > > > Il 13/06/24 14:47, Lorenzo Bianconi ha scritto:
-> > > > > > Introduce reset capability to EN7581 device-tree clock binding
-> > > > > > documentation.
-> > > > > >=20
-> > > > > > Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
-> > > > > > ---
-> > > > > >     .../bindings/clock/airoha,en7523-scu.yaml     | 25 ++++++-
-> > > > > >     .../dt-bindings/reset/airoha,en7581-reset.h   | 66 ++++++++=
-+++++++++++
-> > > > > >     2 files changed, 90 insertions(+), 1 deletion(-)
-> > > > > >     create mode 100644 include/dt-bindings/reset/airoha,en7581-=
-reset.h
-> > > > > >=20
-> > > > > > diff --git a/Documentation/devicetree/bindings/clock/airoha,en7=
-523-scu.yaml b/Documentation/devicetree/bindings/clock/airoha,en7523-scu.ya=
-ml
-> > > > > > index 3f4266637733..84353fd09428 100644
-> > > > > > --- a/Documentation/devicetree/bindings/clock/airoha,en7523-scu=
-=2Eyaml
-> > > > > > +++ b/Documentation/devicetree/bindings/clock/airoha,en7523-scu=
-=2Eyaml
-> > > > > > @@ -35,7 +35,7 @@ properties:
-> > > > > >       reg:
-> > > > > >         minItems: 2
-> > > > > > -    maxItems: 3
-> > > > > > +    maxItems: 4
-> > > > > >       "#clock-cells":
-> > > > > >         description:
-> > > > > > @@ -43,6 +43,10 @@ properties:
-> > > > > >           clocks.
-> > > > > >         const: 1
-> > > > > > +  '#reset-cells':
-> > > > > > +    description: ID of the controller reset line
-> > > > > > +    const: 1
-> > > > > > +
-> > > > > >     required:
-> > > > > >       - compatible
-> > > > > >       - reg
-> > > > > > @@ -60,6 +64,8 @@ allOf:
-> > > > > >                 - description: scu base address
-> > > > > >                 - description: misc scu base address
-> > > > > > +        '#reset-cells': false
-> > > > > > +
-> > > > > >       - if:
-> > > > > >           properties:
-> > > > > >             compatible:
-> > > > > > @@ -70,6 +76,7 @@ allOf:
-> > > > > >               items:
-> > > > > >                 - description: scu base address
-> > > > > >                 - description: misc scu base address
-> > > > > > +            - description: reset base address
-> > > > >=20
-> > > > > Are you sure that the indentation is correct? :-)
-> > > > >=20
-> > > > > After fixing the indentation,
-> > > > >=20
-> > > > > Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregn=
-o@collabora.com>
-> > > > >=20
-> > > > > >                 - description: pb scu base address
-> > > >=20
-> > > > The indentation actually looks okay when I apply this locally, but =
-how is
-> > > > it backwards compatible to add this register in the middle of the l=
-ist??
-> > >=20
-> > > It's not, and this is actually something done on purpose - there is n=
-o DT using
-> > > this binding yet (here, nor uboot), and Lorenzo acknowledged the mist=
-ake before
-> > > it was too late...
-> > >=20
-> > > At least this time, it wasn't a misattention :-P
-> >=20
-> > The rationale for this being okay really should be in the commit
-> > message...
-> >=20
-> > > Btw, as far as I know, the reset base address is in between misc scu =
-and pb scu,
-> > > that's why it was put there in the middle.
-> >=20
-> > ...but I don't really see why this needs to be done incompatibly at all
-> > in the first place. Just put it at the end of the list, there's no rule
-> > that the order of reg properties needs to match the MMIO addresses.
-> >=20
->=20
-> It's just a perfection thing... but whatever, if that's unacceptable for =
-you,
-> putting it at the end of the list isn't a huge deal anyway.
->=20
-> Your call - it's okay for me either way.
+Is it ok for you to pull this patchset？ I readlly hope we can get this 
+in v6.11.
 
-It has not been in a release yet, so it's not a hard block for me,
-however, I would want to see a commit message update and a Fixes: tag.
-The patch should also appear in 6.10, rather than being 6.11 material.
+Thanks,
 
---bbQwYd7tdTi6asDw
-Content-Type: application/pgp-signature; name="signature.asc"
+Chen.
 
------BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZn08xgAKCRB4tDGHoIJi
-0kMGAQCMDsHLn9lDeNcWejLJHGUjpjdw3jCMv8jKUsVET3B8bwEAv/K1l1tGtfU/
-L8yqEyVZi0CQbtZ4ui3uZwx4h3nV9wA=
-=l0nE
------END PGP SIGNATURE-----
-
---bbQwYd7tdTi6asDw--
+On 2024/6/14 15:28, Chen Wang wrote:
+> Hey, Stephen,
+>
+> Please pull clock changes for RISC-V/Sophgo/SG2042.
+>
+> For dts part, I will handle it at my side.
+>
+> I send this PR just want to expedite patches for this clock driver. 
+> The patches have gone through 16 rounds of review [1], and I have 
+> carefully checked and revised all of them based on everyone's comments.
+>
+> Link: 
+> https://lore.kernel.org/linux-riscv/cover.1717661798.git.unicorn_wang@outlook.com/ 
+> [1]
+>
+> Thanks,
+> Chen.
+>
+> The following changes since commit 
+> 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
+>
+>   Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
+>
+> are available in the Git repository at:
+>
+>   https://github.com/sophgo/linux.git tags/riscv-sg2042-clk-for-v6.11
+>
+> for you to fetch changes up to 48cf7e01386e7e35ea12255bc401bdd484c34e7d:
+>
+>   clk: sophgo: Add SG2042 clock driver (2024-06-14 14:49:40 +0800)
+>
+> ----------------------------------------------------------------
+> RISC-V SG2042 clock driver changes for v6.11
+>
+> Sophgo:
+> Added clock support for sg2042
+>
+> Signed-off-by: Chen Wang <unicorn_wang@outlook.com>
+>
+> ----------------------------------------------------------------
+> Chen Wang (4):
+>       dt-bindings: clock: sophgo: add pll clocks for SG2042
+>       dt-bindings: clock: sophgo: add RP gate clocks for SG2042
+>       dt-bindings: clock: sophgo: add clkgen for SG2042
+>       clk: sophgo: Add SG2042 clock driver
+>
+>  Documentation/devicetree/bindings/clock/sophgo,sg2042-clkgen.yaml |   
+> 61 +++++
+>  Documentation/devicetree/bindings/clock/sophgo,sg2042-pll.yaml |   53 
+> ++++
+>  Documentation/devicetree/bindings/clock/sophgo,sg2042-rpgate.yaml |   
+> 49 ++++
+>  drivers/clk/sophgo/Kconfig |   28 +++
+>  drivers/clk/sophgo/Makefile |    4 +
+>  drivers/clk/sophgo/clk-sg2042-clkgen.c | 1152 
+> ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+>  drivers/clk/sophgo/clk-sg2042-pll.c |  570 
+> ++++++++++++++++++++++++++++++++++++++++++
+>  drivers/clk/sophgo/clk-sg2042-rpgate.c |  291 +++++++++++++++++++++
+>  drivers/clk/sophgo/clk-sg2042.h |   18 ++
+>  include/dt-bindings/clock/sophgo,sg2042-clkgen.h |  111 ++++++++
+>  include/dt-bindings/clock/sophgo,sg2042-pll.h |   14 ++
+>  include/dt-bindings/clock/sophgo,sg2042-rpgate.h |   58 +++++
+>  12 files changed, 2409 insertions(+)
+>  create mode 100644 
+> Documentation/devicetree/bindings/clock/sophgo,sg2042-clkgen.yaml
+>  create mode 100644 
+> Documentation/devicetree/bindings/clock/sophgo,sg2042-pll.yaml
+>  create mode 100644 
+> Documentation/devicetree/bindings/clock/sophgo,sg2042-rpgate.yaml
+>  create mode 100644 drivers/clk/sophgo/clk-sg2042-clkgen.c
+>  create mode 100644 drivers/clk/sophgo/clk-sg2042-pll.c
+>  create mode 100644 drivers/clk/sophgo/clk-sg2042-rpgate.c
+>  create mode 100644 drivers/clk/sophgo/clk-sg2042.h
+>  create mode 100644 include/dt-bindings/clock/sophgo,sg2042-clkgen.h
+>  create mode 100644 include/dt-bindings/clock/sophgo,sg2042-pll.h
+>  create mode 100644 include/dt-bindings/clock/sophgo,sg2042-rpgate.h
+>
+>
