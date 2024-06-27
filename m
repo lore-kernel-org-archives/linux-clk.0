@@ -1,146 +1,124 @@
-Received: from mail-qv1-f51.google.com (mail-qv1-f51.google.com [209.85.219.51])
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45BAE13E40D
-	for <linux-clk@vger.kernel.org>; Thu, 27 Jun 2024 11:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5729C13FD72
+	for <linux-clk@vger.kernel.org>; Thu, 27 Jun 2024 11:08:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719486368; cv=none; b=Vf71r48LjZb4HpjxKNRciJBf5U6f41OR2RPyOMT9qJG4lJ25YDXsXCEOvn66jnfuzsEZQfZM8s143vaEAbQpbrIYKzC0ONQ0AU5aXza82ik8C52k8cPiS7d0lSRvrue8S/6M09Ipd/tPOkSuI7zoZs/OOhJkwSaTYkhQ3Wk/KFk=
+	t=1719486504; cv=none; b=NQhIqkStI7yzp8ssJ/YReC3uq8ukl9+Ljf7b3sqxyGKAFQSDEafLy3AjCbUkzEqgVLOkxwFjXfdWZMsriEDwSxci6l2lV68jvHRfB2llnLhDefloNodRx22vK2JW+YNGjG/DLRydhqtQYbzQNBNm643UO7ppoOqXI8XQEFdvu/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719486368; c=relaxed/simple;
-	bh=q8pm1cQ32txw1WRPKTanNTmvRox3c7g4AlMuHhl+D20=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hEs3MVL/sPwp89P2M+YRYbk+3pS6+076dseEn3sIL1MFyf03xAYJzXMLpAgGxh2wabtwl1vr3BYeP8MJ4ITNRRmzOa1Keaaucrp8ixC8hMSAb1xwvlcJdNzqVYWTf0ezY9BkjFNOO5z9Nz3VFLs6+J38V5M+I5Vd5fRKVuOUY4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timesys.com; spf=pass smtp.mailfrom=timesys.com; dkim=pass (2048-bit key) header.d=timesys-com.20230601.gappssmtp.com header.i=@timesys-com.20230601.gappssmtp.com header.b=fBhAyFjK; arc=none smtp.client-ip=209.85.219.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=timesys.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=timesys.com
+	s=arc-20240116; t=1719486504; c=relaxed/simple;
+	bh=d2qDTrmbKUsr+Rx4meYIaCNy4rxF3QmIbu+x1J2u7qI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SDcIak/6CXlZiyOmyq65TJ3HTbctz217uwKfKOuu6/xRNlF34mfL0HbCwQ4UbOuYRw8qeKYYWaXEOgoFRZnORwwfu0oIVK2AEgPjMqeKS0owqiazqf6WzWU9n8nR4ECWWb+KGf+ZF2MrUG3uAy1OQ7KSwsTGJOllmyw/AtXrgOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SniUivUt; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=timesys-com.20230601.gappssmtp.com header.i=@timesys-com.20230601.gappssmtp.com header.b="fBhAyFjK"
-Received: by mail-qv1-f51.google.com with SMTP id 6a1803df08f44-6b5932383e0so3472926d6.0
-        for <linux-clk@vger.kernel.org>; Thu, 27 Jun 2024 04:06:06 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SniUivUt"
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ec59193468so13603141fa.1
+        for <linux-clk@vger.kernel.org>; Thu, 27 Jun 2024 04:08:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=timesys-com.20230601.gappssmtp.com; s=20230601; t=1719486365; x=1720091165; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=q8pm1cQ32txw1WRPKTanNTmvRox3c7g4AlMuHhl+D20=;
-        b=fBhAyFjKVQH9Q7d5wuaZPgNCYT5JZ3kprAQjwr592CkBHUhnX3a5lAKlC+LXqlNXK6
-         IKK8qoY5lh5I5yR79PDRkGPX/5QQU+UXnW/wz+RYa/Jl6D9eDMGTT2zTYn9BxKtqPQvv
-         Sgr1yE824hNKoxfryHz8F8/9KFp9SALgaX0ApbIIi/stoOt+V6g7RGoCQ6LoBfr9loHz
-         9JV1cvDWtjwK0C4A6+1DlYe2isjwsVZmtHoPVYtVx+6k/T2WtcYngryOKSmglxBONKMj
-         kkhYSnsqi9hes+wu35KzkfUeFxqPQIjZBifRRIbZYREauaV1ZbL/e0JeaYxaWrwRLYq0
-         4ChA==
+        d=linaro.org; s=google; t=1719486500; x=1720091300; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=LDIZ8jZNwgR+9ADgTc91LrJE3ciGgVcooiq9Tz2ImAg=;
+        b=SniUivUtEHA81Og4mGlKsZA9+IR1j9Q772AfYEmvjB8/n3PbkqmwkGqBKql7FvyehN
+         Cy0R4bAmDLQSO69VBDni1T0y28rYVwz9oLz9Xyq+Ra9RCg/eaECGCDo5enyJMCXwuIqv
+         7M1/uImXvC4aTDG8O9JZ5KyYncFyiQf8nQcWSnRRYJ0/suhRVdDHto+xPJnP0T6993Ze
+         tlOW/+bzDImw4xYOUFeDJ1hkNeLK+e5qYboUGWzVCk46dYHJLkufJhWtZaGJXJgC/E37
+         iH3cFaCcL7d7R5oyP25IzfTmtKEUAE6OAko2YNSDu51BM41n8coFf9UWGJ3gU3+VSIj8
+         HjDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719486365; x=1720091165;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=q8pm1cQ32txw1WRPKTanNTmvRox3c7g4AlMuHhl+D20=;
-        b=bt9K1RFT9TKbePypuw+kPQw3U/5Jjx2V2ZHJAQtLKv+B44NZD/1Oj1D1UJ6Zss3dPA
-         zK5i1YMYK7xw83WC7czSCSBsi2nkRZDxQzdK1MjVaP+S9ydPjFkcD6K2eRNNCsGaDLR2
-         X96cBDzJXRSHa3DtVnb9cfP+N+2kLGQKZhNkReb5ds0GHHy+SepfhRwv+coKcBmRYws1
-         lxCQg5y9btd1PcUIopqL/aUs615sKNopemfvJn9ZVQ7oLWsnSY4wL7JT3GZZqO0IE4i8
-         QcM6ajGJtXLliJzFNQSYqCPvsTBh2yapFrjOrWxQqlmH4qxVzGYSzsd5WJoHCjx+CYE8
-         dp+w==
-X-Forwarded-Encrypted: i=1; AJvYcCXYaO+LqJYKbCUofeUTpDlRXNUBeJlnAYdW93wdK6RcWYpymqh7sD4wSykiNFlNc8Is8Zaxqvd5PeDnGeDRHTWEbZTD1Wt4DjFI
-X-Gm-Message-State: AOJu0Yz8gqlwWnReTjOPAOJzauM07X1pYcSex4gKxSrlQuZ7E97zLjP4
-	IsonojP0NaiP+6QAdeP/O4RLXldRjq8cdAA1X7NalhWtTSnshe5XZWHQ3Di/4TKXSHVGKQ6gM1a
-	ltOuO2iYkXKeW+VeBpEwhKsfovrWzw6Pcoso1lg==
-X-Google-Smtp-Source: AGHT+IG2MNKNNOGC761uBwvpqX9lGsPO6rQNPCNWhEy1V6ZqnINWb303gmPma/KMWKNSmIVuRVUQ+Leug+4DoYkVHJE=
-X-Received: by 2002:a0c:f2cd:0:b0:6b4:f7bb:6d69 with SMTP id
- 6a1803df08f44-6b56380939dmr109313566d6.32.1719486364821; Thu, 27 Jun 2024
- 04:06:04 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1719486500; x=1720091300;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=LDIZ8jZNwgR+9ADgTc91LrJE3ciGgVcooiq9Tz2ImAg=;
+        b=AgRx+5d3N7WHZrkpcME67r77ZDkmcOUT3t95lVZmho0ftfmzJERQSMg1nvdqAX/x7h
+         lG1111StYD3yCKZW+VVVxdgI4THQADK6lp1GZlOnpt/5K6LoUu96E/MoKAJSeYkWcJmW
+         KeGk7au+r3iKl9jsq1b6wH0l4P086Q1mgtRNcL3a7wP1l3x6xsR88h3/xxxCo0LjFve4
+         vY/qqsEWPo44uHk/EMoMLiKKQ4pkDAX3uAc9fEvkfdwqU3NUqD04AUCGA8fyQ7RKL2W7
+         yWvvJ+DfrkRIUk9IItAqhczYSIprfXWjaZzjtaS/wyzQF3dhuTWIHoeKJV9XFdGA+sK9
+         209A==
+X-Forwarded-Encrypted: i=1; AJvYcCVEWIjXxTWlBPAtk8IujL2gg68fMl652dAmJhWvVJ3Ei4DWolkLxvJ+82LASsjoDiKz6y2meooeg/QaiXiRw2n22omvO8Kt0Vtc
+X-Gm-Message-State: AOJu0YxG4ydsd7UTtghpRYLpyr+OgW3DmAZztYTg1CrcWKeP5JCN2qwL
+	vqFwGK3M8HC8p5wMWImtEJsHGIslx7vigCunR7N19aPtCtoAVAgetEuZ3a8ePR8=
+X-Google-Smtp-Source: AGHT+IHwZv+z93couUdcfrBSYJbEjitjwBpwPIxQ5GGLRkyBz5sbtXa96C/INZ7K24jqhX2BnvOu1Q==
+X-Received: by 2002:a2e:9e8f:0:b0:2ec:514f:89af with SMTP id 38308e7fff4ca-2ee4803f58bmr7341271fa.6.1719486500528;
+        Thu, 27 Jun 2024 04:08:20 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ee4a4bef67sm2157101fa.122.2024.06.27.04.08.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 27 Jun 2024 04:08:20 -0700 (PDT)
+Date: Thu, 27 Jun 2024 14:08:18 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Gokul Sriram P <quic_gokulsri@quicinc.com>
+Cc: sboyd@kernel.org, andersson@kernel.org, bjorn.andersson@linaro.org, 
+	david.brown@linaro.org, devicetree@vger.kernel.org, jassisinghbrar@gmail.com, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-remoteproc@vger.kernel.org, mark.rutland@arm.com, mturquette@baylibre.com, ohad@wizery.com, 
+	robh@kernel.org, sricharan@codeaurora.org, gokulsri@codeaurora.org
+Subject: Re: [PATCH v9 1/8] remoteproc: qcom: Add PRNG proxy clock
+Message-ID: <dyh3vxosjjfztgwgpb5jtoqhzfyf5jyfndaujqoslepzvbet4o@kx6xaotzazcs>
+References: <20240621114659.2958170-1-quic_gokulsri@quicinc.com>
+ <20240621114659.2958170-2-quic_gokulsri@quicinc.com>
+ <chi3pzh5ss3mivnhs3qeoen5hsecfcgzaj6qnrgxantvinrri2@bxsbmpufuqpe>
+ <73cb638e-4982-49a2-ba79-0e78402b59ad@quicinc.com>
+ <ga5kczcyn3dqoky4525c74rr7dct5uizun2smvyx3p3u6z6vtm@5vshoozpttod>
+ <2617940e-72ad-4214-be26-7a5b15374609@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240620175657.358273-1-piotr.wojtaszczyk@timesys.com>
- <20240620175657.358273-11-piotr.wojtaszczyk@timesys.com> <jgqhlnysuwajlfxjwetas53jzdk6nnmewead2xzyt3xngwpcvl@xbooed6cwlq4>
- <CAG+cZ04suU53wR5f0PhudgNmkxTRtwEXTS1cWH1o9_rTNM94Cg@mail.gmail.com> <73yvglxha45d5ft74m3y5fdmkgatm2yftvhza2msg4ombjz42f@wz43pubhbpdz>
-In-Reply-To: <73yvglxha45d5ft74m3y5fdmkgatm2yftvhza2msg4ombjz42f@wz43pubhbpdz>
-From: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
-Date: Thu, 27 Jun 2024 13:05:53 +0200
-Message-ID: <CAG+cZ05uam3LkvLXG3xAc8FY_p6jx4p=zinNeWbkKUbcLxSTrg@mail.gmail.com>
-Subject: Re: [Patch v4 10/10] i2x: pnx: Use threaded irq to fix warning from del_timer_sync()
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	"J.M.B. Downing" <jonathan.downing@nautel.com>, Vladimir Zapolskiy <vz@mleia.com>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Russell King <linux@armlinux.org.uk>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Miquel Raynal <miquel.raynal@bootlin.com>, 
-	Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, Jaroslav Kysela <perex@perex.cz>, 
-	Takashi Iwai <tiwai@suse.com>, Arnd Bergmann <arnd@arndb.de>, Yangtao Li <frank.li@vivo.com>, 
-	Li Zetao <lizetao1@huawei.com>, Chancel Liu <chancel.liu@nxp.com>, 
-	Michael Ellerman <mpe@ellerman.id.au>, dmaengine@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org, 
-	linux-sound@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, linux-mtd@lists.infradead.org, 
-	Markus Elfring <Markus.Elfring@web.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <2617940e-72ad-4214-be26-7a5b15374609@quicinc.com>
 
-On Tue, Jun 25, 2024 at 11:12=E2=80=AFPM Andi Shyti <andi.shyti@kernel.org>=
- wrote:
->
-> Hi Piotr,
->
-> On Fri, Jun 21, 2024 at 02:08:03PM GMT, Piotr Wojtaszczyk wrote:
-> > On Fri, Jun 21, 2024 at 12:57=E2=80=AFAM Andi Shyti <andi.shyti@kernel.=
-org> wrote:
-> > > On Thu, Jun 20, 2024 at 07:56:41PM GMT, Piotr Wojtaszczyk wrote:
-> > > > When del_timer_sync() is called in an interrupt context it throws a=
- warning
-> > > > because of potential deadlock. Threaded irq handler fixes the poten=
-tial
-> > > > problem.
-> > > >
-> > > > Signed-off-by: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
-> > >
-> > > did you run into a lockdep splat?
-> > >
-> > > Anything against using del_timer(), instead? Have you tried?
-> >
-> > I didn't get a lockdep splat but console was flooded with warnings from
-> > https://github.com/torvalds/linux/blob/v6.10-rc4/kernel/time/timer.c#L1=
-655
-> > In the linux kernel v5.15 I didn't see these warnings.
-> >
-> > I'm not a maintainer of the driver and I didn't do any research on
-> > what kind of impact
-> > would have using del_timer() instad. Maybe Vladimir Zapolskiy will know=
- that.
->
-> Your patch is definitely correct, no doubt about that.
->
-> And I don't have anything aginast changing irq handlers to
-> threaded handlers. But I would be careful at doing that depending
-> on the use of the controller and for accepting such change I
-> would need an ack from someone who knows the device. Vladimir,
-> perhaps?
->
-> There are cases where using threaded handlers are not totally
-> right, for example when the controller is used at early boot for
-> power management handling. I don't think it's the case for this
-> driver, but I can't be 100% sure.
->
-> If you were able to see the flood of WARN_ON's, would be
-> interesting to know how it behaves with del_timer(). Mind
-> giving it a test?
->
-> Thanks,
-> Andi
+On Thu, Jun 27, 2024 at 03:31:01PM GMT, Gokul Sriram P wrote:
+> 
+> On 6/27/2024 12:47 AM, Dmitry Baryshkov wrote:
+> > On Tue, Jun 25, 2024 at 11:03:30AM GMT, Gokul Sriram P wrote:
+> > > On 6/22/2024 2:38 AM, Dmitry Baryshkov wrote:
+> > > > On Fri, Jun 21, 2024 at 05:16:52PM GMT, Gokul Sriram Palanisamy wrote:
+> > > > > PRNG clock is needed by the secure PIL, support for the same
+> > > > > is added in subsequent patches.
+> > > > Which 'same'?
+> > > > What is 'secure PIL'?
+> > >    will elaborate in the updated version.
+> > >    To answer your question, secure PIL is signed PIL image which only
+> > > TrustZone can authenticate and load.
+> > Fine. So, the current driver can not load WCSS firmware on IPQ8074, is
+> > that correct? Or was there some kind of firmware interface change? The
+> > driver was added in 2018, so I can only hope that at that point it
+> > worked. Could you please explain, what happened?
+> The existing wcss driver can load unsigned PIL images without the
+> involvement of TrustZone. That works even now.
+> With the current change, we are trying to add signed PIL as an option based
+> on "wcss->need_mem_protection" if set. For signed PIL alone, we send a PAS
+> request to TrustZone to authenticate and load.
 
-I took some time to take a closer look at this and it turns out that the
-timer is used only to exit from the wait_for_completion(), after each
-del_timer_sync() there is a complete() call. So I will remove the timer
-all together and replace wait_for_completion() with
-wait_for_completion_timeout()
+I see that you are enabling it unconditionally for IPQ8074. How is it
+going to work?
 
+> I also just noticed that Bjorn had suggested to submit a new driver for the
+> PAS based IPQ WCSS instead of overloading this driver. Will also address
+> that and post a new driver in updated revision.
+> 
+> Regards,
+> Gokul
+> > > > > Signed-off-by: Nikhil Prakash V <quic_nprakash@quicinc.com>
+> > > > > Signed-off-by: Sricharan R <quic_srichara@quicinc.com>
+> > > > > Signed-off-by: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
+> > > > > ---
+> > > > >    drivers/remoteproc/qcom_q6v5_wcss.c | 65 +++++++++++++++++++++--------
+> > > > >    1 file changed, 47 insertions(+), 18 deletions(-)
+> > 
 
---=20
-Piotr Wojtaszczyk
-Timesys
+-- 
+With best wishes
+Dmitry
