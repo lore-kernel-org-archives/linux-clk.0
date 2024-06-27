@@ -1,162 +1,94 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5628E249F9;
-	Thu, 27 Jun 2024 21:43:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 155FA2837F;
+	Thu, 27 Jun 2024 22:21:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719524637; cv=none; b=YKl/alV7LH+X9hTBmqXiwcUHQqwIGwWa/+hdEnE9XN5YZgVn6x+Spksu4zbNvPMXAGZvM5nK18FpUSPyQDsNy3CZPTrnEy7/PTlqtPHNG/M9N+VyVq8reLJY4Yyk9xQb/soxD42a1KkovpyHyLqp0Txvbm1wnJk3HuUmtU0opAw=
+	t=1719526907; cv=none; b=R4q+d32QN5Hzq8Udan72dqHTfg8b5HUJ6K/kFTsTKmQw4VUYdSZlGe23MtOMANjHwMKUFggbex2Cem6kcgT2KBHfMmTMJzKymA4JW2ZbRvksquCFtLugJJgupeKNhB7pk9O1q9B93IpxQtS6RB5dPFZB4V97xfQ+9i6MhCQAqpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719524637; c=relaxed/simple;
-	bh=LoSc8x+ZYO2DbQ6k06wW/rHJbFqw9BW9Fn/mAoYoxNs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lj1Q6KUbSLGkjvuFtqEOp8G4+gINZ0epKf6Q3vwFFxzchc/R6fL7Y9WcAjFeLuwOm0fvWdvX5eyjqvsVgadmJ0KdcPM2uYhwBxQGypM7B4zdLqhL0LU0BztaHYgBUurcS4Ha68sDzn5WLi0SUwjRqav3NEX88zURnpexDovBGY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OW9K8bQs; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1719526907; c=relaxed/simple;
+	bh=SmASSkNIQUG8VLWsW1zspcVeuBuoZnFMDAEdYCsTYBs=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=J1hc5l7a5/QT2CTI9d0NJZGwzHMJJNActvqFZ7gmdHDecw6m8df0eQs6VnBIptHjup8JHtKasE5ya7PobjrYNKMOsubOjdm+mJfA4BbqjksxD7J5IIAxa1wli9zQCeGQsnJXRPJinbQsI8V80sKjzfcSRhXWeWAxftnFmzbcpIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ASJTHe7v; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OW9K8bQs"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C76CAC2BBFC;
-	Thu, 27 Jun 2024 21:43:56 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ASJTHe7v"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F891C2BBFC;
+	Thu, 27 Jun 2024 22:21:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719524637;
-	bh=LoSc8x+ZYO2DbQ6k06wW/rHJbFqw9BW9Fn/mAoYoxNs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OW9K8bQshV4fI4PJ4ukdJ+HwrMS8pqrrVEbuTv1pC2P9Xmpmo20UtxVF0gjbLxHmH
-	 N83WbKbsH6ZOKEqCQm6gxojWE06gwKSN4AqqGKgGk00HwrR/8M388gT08mSLiAsbFt
-	 6VxmcyworkMWTVL9HRWjvqQE8V8b6NdsPMY61dX/K4L0P8zaUfAmdiBWa7reHb63bK
-	 IX9S/Kt2/ohUvq/GRWbuQHQZ0Yg6+7S+Uh2rF9HPLJsBXO7dJ8f7j8LQTAe1yGEgqk
-	 BUq+DEqcGBh4q/4RJfaOgpPSptCUhaEriFBScQns5e/5qnG+nHWucW1W3d8HT50+eh
-	 /RAob/Yfz+18A==
-Date: Thu, 27 Jun 2024 15:43:55 -0600
-From: Rob Herring <robh@kernel.org>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Saravana Kannan <saravanak@google.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
-	Peng Fan <peng.fan@nxp.com>
-Subject: Re: [PATCH 1/2] of: property: add of_property_for_each_u64
-Message-ID: <20240627214355.GA601888-robh@kernel.org>
-References: <20240621-clk-u64-v1-0-d28a611b2621@nxp.com>
- <20240621-clk-u64-v1-1-d28a611b2621@nxp.com>
+	s=k20201202; t=1719526906;
+	bh=SmASSkNIQUG8VLWsW1zspcVeuBuoZnFMDAEdYCsTYBs=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=ASJTHe7vt4y9L8Iu4knPDGP7pRfaBnA5Z1mUInqj4snW5blWqtw3tlkAo7Io0Q2xP
+	 a34gjjD75dqr1K+JD8W6ZL11+G5CaT1zbK03uZsLqGew1yjRTDC0eEFJ7nRCJcokOb
+	 Ex+VFojXTf6vItVZzcuMZMj/Rstm4RSBodu/FATJKXOIIgp2L7uNPdw4fZX09OesSB
+	 MpMlDGRLMlwmHjrIjb+WcxET1GIcGk2fWcTUwRka6D3ksrIxaluPs0isJNp/hM0lrF
+	 Yn+MuDhesEHHDtD4nVSgc3uZa6TikiraaBwZ/JqqOZjPOZ7wuE1Sjvu3lTbUVbs59l
+	 C8qtdeKu/FYrQ==
+Date: Thu, 27 Jun 2024 16:21:45 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240621-clk-u64-v1-1-d28a611b2621@nxp.com>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-clk@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>, 
+ linux-arm-kernel@lists.infradead.org, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ linux-mediatek@lists.infradead.org, 
+ Matthias Brugger <matthias.bgg@gmail.com>
+In-Reply-To: <20240627205309.28742-2-ansuelsmth@gmail.com>
+References: <20240627205309.28742-1-ansuelsmth@gmail.com>
+ <20240627205309.28742-2-ansuelsmth@gmail.com>
+Message-Id: <171952690505.706895.16327382675464090624.robh@kernel.org>
+Subject: Re: [PATCH 2/2] dt-bindings: clock: mediatek: add syscon
+ compatible for mt7622 pciesys
 
-+Luca
 
-On Fri, Jun 21, 2024 at 08:36:39PM +0800, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
+On Thu, 27 Jun 2024 22:52:57 +0200, Christian Marangi wrote:
+> Add required syscon compatible for mt7622 pciesys. This is required for
+> SATA interface as the regs are shared.
 > 
-> Preparing for assigned-clock-rates-u64 support, add function
-> of_property_for_each_u64 to iterate each u64 value
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 > ---
->  drivers/of/property.c | 23 +++++++++++++++++++++++
->  include/linux/of.h    | 24 ++++++++++++++++++++++++
->  2 files changed, 47 insertions(+)
+>  .../bindings/clock/mediatek,mt7622-pciesys.yaml           | 8 +++++---
+>  1 file changed, 5 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/of/property.c b/drivers/of/property.c
-> index 164d77cb9445..b89c3ab01d44 100644
-> --- a/drivers/of/property.c
-> +++ b/drivers/of/property.c
-> @@ -548,6 +548,29 @@ const __be32 *of_prop_next_u32(struct property *prop, const __be32 *cur,
->  }
->  EXPORT_SYMBOL_GPL(of_prop_next_u32);
->  
-> +const __be32 *of_prop_next_u64(struct property *prop, const __be32 *cur,
-> +			       u64 *pu)
 
-struct property can be const
+My bot found errors running 'make dt_binding_check' on your patch:
 
-> +{
-> +	const void *curv = cur;
-> +
-> +	if (!prop)
-> +		return NULL;
-> +
-> +	if (!cur) {
-> +		curv = prop->value;
-> +		goto out_val;
-> +	}
-> +
-> +	curv += sizeof(*cur) * 2;
-> +	if (curv >= prop->value + prop->length)
-> +		return NULL;
-> +
-> +out_val:
-> +	*pu = of_read_number(curv, 2);
-> +	return curv;
-> +}
-> +EXPORT_SYMBOL_GPL(of_prop_next_u64);
-> +
->  const char *of_prop_next_string(struct property *prop, const char *cur)
->  {
->  	const void *curv = cur;
-> diff --git a/include/linux/of.h b/include/linux/of.h
-> index 13cf7a43b473..464eca6a4636 100644
-> --- a/include/linux/of.h
-> +++ b/include/linux/of.h
-> @@ -439,6 +439,18 @@ extern int of_detach_node(struct device_node *);
->   */
->  const __be32 *of_prop_next_u32(struct property *prop, const __be32 *cur,
->  			       u32 *pu);
-> +
-> +/*
-> + * struct property *prop;
-> + * const __be32 *p;
-> + * u64 u;
-> + *
-> + * of_property_for_each_u64(np, "propname", prop, p, u)
-> + *         printk("U64 value: %llx\n", u);
-> + */
-> +const __be32 *of_prop_next_u64(struct property *prop, const __be32 *cur,
-> +			       u64 *pu);
-> +
->  /*
->   * struct property *prop;
->   * const char *s;
-> @@ -834,6 +846,12 @@ static inline const __be32 *of_prop_next_u32(struct property *prop,
->  	return NULL;
->  }
->  
-> +static inline const __be32 *of_prop_next_u64(struct property *prop,
-> +		const __be32 *cur, u64 *pu)
-> +{
-> +	return NULL;
-> +}
-> +
->  static inline const char *of_prop_next_string(struct property *prop,
->  		const char *cur)
->  {
-> @@ -1437,6 +1455,12 @@ static inline int of_property_read_s32(const struct device_node *np,
->  		p;						\
->  		p = of_prop_next_u32(prop, p, &u))
->  
-> +#define of_property_for_each_u64(np, propname, prop, p, u)	\
-> +	for (prop = of_find_property(np, propname, NULL),	\
-> +		p = of_prop_next_u64(prop, NULL, &u);		\
-> +		p;						\
-> +		p = of_prop_next_u64(prop, p, &u))
+yamllint warnings/errors:
 
-I think we want to define this differently to avoid exposing struct 
-property and the property data directly. Like this:
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/mediatek,mt7622-pciesys.example.dtb: clock-controller@1a100800: compatible: 'oneOf' conditional failed, one must be fixed:
+	['mediatek,mt7622-pciesys'] is too short
+	'mediatek,mt7629-pciesys' was expected
+	from schema $id: http://devicetree.org/schemas/clock/mediatek,mt7622-pciesys.yaml#
 
-#define of_property_for_each_u64(np, propname, u) \
-  for (struct property *_prop = of_find_property(np, propname, NULL),
-         const __be32 *_p = of_prop_next_u64(_prop, NULL, &u);
-         _p;
-         _p = of_prop_next_u64(_prop, _p, &u))
+doc reference errors (make refcheckdocs):
 
-See this discussion for context[1].
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240627205309.28742-2-ansuelsmth@gmail.com
 
-Rob
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
 
-[1] https://lore.kernel.org/all/20240624232122.3cfe03f8@booty/
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
