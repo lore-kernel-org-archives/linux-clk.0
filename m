@@ -1,148 +1,140 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+Received: from unicorn.mansr.com (unicorn.mansr.com [81.2.72.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BECF413A409;
-	Thu, 27 Jun 2024 11:31:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C300C13AA4C;
+	Thu, 27 Jun 2024 11:45:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.2.72.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719487892; cv=none; b=HDoyZCU1HIc8m1/LS4SmNC+PJWsA7Nl3a1cQKkoZYRyusQbD7a8r7bcRvBtUJlP2UN6jelz34ENOs6dlZbJektulE6xbPokAgAOzQv07iXxNVfHd79WSL/TdXbJ35ehDrzZNoDLVMF1sA2yq+BTdgaecXIsb5Z3i6rQ4CRTK0lo=
+	t=1719488718; cv=none; b=LWlMjP5rwOnzEUkAe9qPZefcX0cNR7kfStL93sNMLaF5eup10WDMMvbeJgztRRQdb9PTvZAFYqEDkHCK8Krj/TnwmryHHhpBs9gx6q2Ce0Na0vCk1wL4EC2TCdUGENHMobYjt8TM36jNWcmzDs12edUOh6zHmZG9KaOv8moOiTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719487892; c=relaxed/simple;
-	bh=JmabHIiJCTQRE0VWY8FRGcaEwDamGVU8PUlw709Ef0Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pxgZCGsVQ8sd3prCc+VnP7ZuenXJ8L4Vl4dQN/4Q+4uJKM5SPR25sDEd+rti+6ZawpgzC3Ej5U++3yl84M0oIo5P5UhlMSLWNgMUYnyig5nlgAGwDoaT0w9miE8GMifZLLpuOHhtBQKhgRO7wu0MlIC2fkYxkiZ5Xc5IwoZubZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KHiCYvfG; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KHiCYvfG"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1719487891; x=1751023891;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=JmabHIiJCTQRE0VWY8FRGcaEwDamGVU8PUlw709Ef0Q=;
-  b=KHiCYvfG335rXwoc7guun7LeTLDTfG1xLhyO3NCtq1uKT6KauixqED2t
-   yF0NP3L6alcTQ2YIaakWpLp6huzH5/N01PhZh+9txpO4WmPCYyOImBown
-   8buWt/iEJGGMcMMrlV3FovTgF3Nul0hvHEPj+ipQjCHYQC7K3+jkZbBAq
-   DXSh5ne7/Utawc544TLMvS4I/zr+KOiS3J/ECmK4CdspHi5uO5KkwEhXr
-   CyzoFoaD9lR4kHOuIjekRfd3awZAN5WlAhjSAIhPyM2R8a3Qpx3PmDZB5
-   +sxdL2rpV5nyJjNuC9/H0IDsUssnCfMNaITBway18sl+Bb6TJB9woT/QH
-   g==;
-X-CSE-ConnectionGUID: HeL2QwivR96p9ieb09SedA==
-X-CSE-MsgGUID: vpy8guUtR/CptF+RQryQqw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11115"; a="16427442"
-X-IronPort-AV: E=Sophos;i="6.09,270,1716274800"; 
-   d="scan'208";a="16427442"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 27 Jun 2024 04:31:30 -0700
-X-CSE-ConnectionGUID: F3/UQkc4R8W1dskgzKKJhw==
-X-CSE-MsgGUID: llqONCmBT5O6W8lPncT3Vw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,270,1716274800"; 
-   d="scan'208";a="44164257"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa006.fm.intel.com with ESMTP; 27 Jun 2024 04:31:27 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sMnLY-000G9u-2t;
-	Thu, 27 Jun 2024 11:31:24 +0000
-Date: Thu, 27 Jun 2024 19:31:07 +0800
-From: kernel test robot <lkp@intel.com>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: Re: [PATCH 3/3] arm64: dts: qcom: x1e80100: add soundwire controller
- resets
-Message-ID: <202406271923.v945xTG8-lkp@intel.com>
-References: <20240624-x1e-swr-reset-v1-3-da326d0733d4@linaro.org>
+	s=arc-20240116; t=1719488718; c=relaxed/simple;
+	bh=evSv+YzWBzT/rL+Ef3bDS+9leq4NZMD9hE/fznsNY7M=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=WvlFmcuH7rXMxZUg1fgWOjox0nqSdImpfUyCcFTq+S+b47pRESJxNJP7SrQta1MQe7K6m1ge0avzEEjJGnd/n4U3lIUjx8xHew5I/owMBEyKpyGDWP3pftQsE6EgMSNqqoSuns+6rzPiNEh9bn0RxAFQVIgfSUAIxwRIGSmKBbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mansr.com; spf=pass smtp.mailfrom=mansr.com; arc=none smtp.client-ip=81.2.72.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mansr.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mansr.com
+Received: from raven.mansr.com (raven.mansr.com [IPv6:2001:8b0:ca0d:1::3])
+	by unicorn.mansr.com (Postfix) with ESMTPS id F14E015360;
+	Thu, 27 Jun 2024 12:39:26 +0100 (BST)
+Received: by raven.mansr.com (Postfix, from userid 51770)
+	id DE143210C01; Thu, 27 Jun 2024 12:39:26 +0100 (BST)
+From: =?iso-8859-1?Q?M=E5ns_Rullg=E5rd?= <mans@mansr.com>
+To: Frank Oltmanns <frank@oltmanns.dev>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec
+ <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, Maxime
+ Ripard <mripard@kernel.org>, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ linux-kernel@vger.kernel.org, "Robert J. Pafford"
+ <pafford.9@buckeyemail.osu.edu>, stable@vger.kernel.org
+Subject: Re: [PATCH] clk: sunxi-ng: common: Don't call hw_to_ccu_common on
+ hw without common
+In-Reply-To: <20240623-sunxi-ng_fix_common_probe-v1-1-7c97e32824a1@oltmanns.dev>
+	(Frank Oltmanns's message of "Sun, 23 Jun 2024 10:45:58 +0200")
+References: <20240623-sunxi-ng_fix_common_probe-v1-1-7c97e32824a1@oltmanns.dev>
+Date: Thu, 27 Jun 2024 12:39:26 +0100
+Message-ID: <yw1x4j9e62dt.fsf@mansr.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/29.3 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240624-x1e-swr-reset-v1-3-da326d0733d4@linaro.org>
+Content-Type: text/plain; charset=iso-8859-1
+Content-Transfer-Encoding: quoted-printable
 
-Hi Srinivas,
+Frank Oltmanns <frank@oltmanns.dev> writes:
 
-kernel test robot noticed the following build warnings:
+> In order to set the rate range of a hw sunxi_ccu_probe calls
+> hw_to_ccu_common() assuming all entries in desc->ccu_clks are contained
+> in a ccu_common struct. This assumption is incorrect and, in
+> consequence, causes invalid pointer de-references.
+>
+> Remove the faulty call. Instead, add one more loop that iterates over
+> the ccu_clks and sets the rate range, if required.
+>
+> Fixes: b914ec33b391 ("clk: sunxi-ng: common: Support minimum and maximum =
+rate")
+> Reported-by: Robert J. Pafford <pafford.9@buckeyemail.osu.edu>
+> Closes: https://lore.kernel.org/lkml/DM6PR01MB58047C810DDD5D0AE397CADFF7C=
+22@DM6PR01MB5804.prod.exchangelabs.com/
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
+> ---
+> Robert, could you please test if this fixes the issue you reported.
+>
+> I'm CC'ing M=E5ns here, because he observed some strange behavior [1] with
+> the original patch. Is it possible for you to look into if this patch
+> fixes your issue without the need for the following (seemingly
+> unrelated) patches:
+>       cedb7dd193f6 "drm/sun4i: hdmi: Convert encoder to atomic"
+>       9ca6bc246035 "drm/sun4i: hdmi: Move mode_set into enable"
 
-[auto build test WARNING on 781025f172e19ca5682d7bfc5243e7aa74c4977f]
+This does indeed fix it.  6.9 is still broken, though, but that's
+probably for other reasons.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Srinivas-Kandagatla/dt-bindings-clock-Add-x1e80100-LPASS-AUDIOCC-reset-controller/20240625-210534
-base:   781025f172e19ca5682d7bfc5243e7aa74c4977f
-patch link:    https://lore.kernel.org/r/20240624-x1e-swr-reset-v1-3-da326d0733d4%40linaro.org
-patch subject: [PATCH 3/3] arm64: dts: qcom: x1e80100: add soundwire controller resets
-config: arm64-randconfig-051-20240627 (https://download.01.org/0day-ci/archive/20240627/202406271923.v945xTG8-lkp@intel.com/config)
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project 326ba38a991250a8587a399a260b0f7af2c9166a)
-dtschema version: 2024.6.dev1+g833054f
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240627/202406271923.v945xTG8-lkp@intel.com/reproduce)
+> Thanks,
+>   Frank
+>
+> [1]: https://lore.kernel.org/lkml/yw1xo78z8ez0.fsf@mansr.com/
+> ---
+>  drivers/clk/sunxi-ng/ccu_common.c | 18 ++++++++++++------
+>  1 file changed, 12 insertions(+), 6 deletions(-)
+>
+> diff --git a/drivers/clk/sunxi-ng/ccu_common.c b/drivers/clk/sunxi-ng/ccu=
+_common.c
+> index ac0091b4ce24..be375ce0149c 100644
+> --- a/drivers/clk/sunxi-ng/ccu_common.c
+> +++ b/drivers/clk/sunxi-ng/ccu_common.c
+> @@ -132,7 +132,6 @@ static int sunxi_ccu_probe(struct sunxi_ccu *ccu, str=
+uct device *dev,
+>
+>  	for (i =3D 0; i < desc->hw_clks->num ; i++) {
+>  		struct clk_hw *hw =3D desc->hw_clks->hws[i];
+> -		struct ccu_common *common =3D hw_to_ccu_common(hw);
+>  		const char *name;
+>
+>  		if (!hw)
+> @@ -147,14 +146,21 @@ static int sunxi_ccu_probe(struct sunxi_ccu *ccu, s=
+truct device *dev,
+>  			pr_err("Couldn't register clock %d - %s\n", i, name);
+>  			goto err_clk_unreg;
+>  		}
+> +	}
+> +
+> +	for (i =3D 0; i < desc->num_ccu_clks; i++) {
+> +		struct ccu_common *cclk =3D desc->ccu_clks[i];
+> +
+> +		if (!cclk)
+> +			continue;
+>
+> -		if (common->max_rate)
+> -			clk_hw_set_rate_range(hw, common->min_rate,
+> -					      common->max_rate);
+> +		if (cclk->max_rate)
+> +			clk_hw_set_rate_range(&cclk->hw, cclk->min_rate,
+> +					      cclk->max_rate);
+>  		else
+> -			WARN(common->min_rate,
+> +			WARN(cclk->min_rate,
+>  			     "No max_rate, ignoring min_rate of clock %d - %s\n",
+> -			     i, name);
+> +			     i, clk_hw_get_name(&cclk->hw));
+>  	}
+>
+>  	ret =3D of_clk_add_hw_provider(node, of_clk_hw_onecell_get,
+>
+> ---
+> base-commit: 2607133196c35f31892ee199ce7ffa717bea4ad1
+> change-id: 20240622-sunxi-ng_fix_common_probe-5677c3e487fc
+>
+> Best regards,
+> --=20
+>
+> Frank Oltmanns <frank@oltmanns.dev>
+>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202406271923.v945xTG8-lkp@intel.com/
-
-dtcheck warnings: (new ones prefixed by >>)
-   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: domain-idle-states: cluster-sleep-0: 'idle-state-name' does not match any of the regexes: 'pinctrl-[0-9]+'
-   	from schema $id: http://devicetree.org/schemas/power/domain-idle-state.yaml#
-   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: domain-idle-states: cluster-sleep-1: 'idle-state-name' does not match any of the regexes: 'pinctrl-[0-9]+'
-   	from schema $id: http://devicetree.org/schemas/power/domain-idle-state.yaml#
-   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: /soc@0/thermal-sensor@c271000: failed to match any schema with compatible: ['qcom,x1e80100-tsens', 'qcom,tsens-v2']
-   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: /soc@0/thermal-sensor@c272000: failed to match any schema with compatible: ['qcom,x1e80100-tsens', 'qcom,tsens-v2']
-   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: /soc@0/thermal-sensor@c273000: failed to match any schema with compatible: ['qcom,x1e80100-tsens', 'qcom,tsens-v2']
-   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: /soc@0/thermal-sensor@c274000: failed to match any schema with compatible: ['qcom,x1e80100-tsens', 'qcom,tsens-v2']
-   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: pci@1bf8000: Unevaluated properties are not allowed ('vddpe-3v3-supply' was unexpected)
-   	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-x1e80100.yaml#
->> arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: clock-controller@6b6c000: compatible: ['qcom,x1e80100-lpassaudiocc', 'qcom,sc8280xp-lpassaudiocc'] is too long
-   	from schema $id: http://devicetree.org/schemas/clock/qcom,sc8280xp-lpasscc.yaml#
->> arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: clock-controller@6ea0000: compatible: ['qcom,x1e80100-lpasscc', 'qcom,sc8280xp-lpasscc'] is too long
-   	from schema $id: http://devicetree.org/schemas/clock/qcom,sc8280xp-lpasscc.yaml#
-   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: usb@a2f8800: interrupt-names: ['pwr_event', 'dp_hs_phy_irq', 'dm_hs_phy_irq'] is too short
-   	from schema $id: http://devicetree.org/schemas/usb/qcom,dwc3.yaml#
-   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: /soc@0/arbiter@c400000/spmi@c42d000/pmic@3: failed to match any schema with compatible: ['qcom,pmc8380', 'qcom,spmi-pmic']
-   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: /soc@0/arbiter@c400000/spmi@c42d000/pmic@3/gpio@8800: failed to match any schema with compatible: ['qcom,pmc8380-gpio', 'qcom,spmi-gpio']
-   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: /soc@0/arbiter@c400000/spmi@c42d000/pmic@4: failed to match any schema with compatible: ['qcom,pmc8380', 'qcom,spmi-pmic']
-   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: /soc@0/arbiter@c400000/spmi@c42d000/pmic@4/gpio@8800: failed to match any schema with compatible: ['qcom,pmc8380-gpio', 'qcom,spmi-gpio']
-   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: /soc@0/arbiter@c400000/spmi@c42d000/pmic@5: failed to match any schema with compatible: ['qcom,pmc8380', 'qcom,spmi-pmic']
-   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: /soc@0/arbiter@c400000/spmi@c42d000/pmic@5/gpio@8800: failed to match any schema with compatible: ['qcom,pmc8380-gpio', 'qcom,spmi-gpio']
-   arch/arm64/boot/dts/qcom/x1e80100-crd.dtb: /soc@0/arbiter@c400000/spmi@c42d000/pmic@6: failed to match any schema with compatible: ['qcom,pmc8380', 'qcom,spmi-pmic']
---
-   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: domain-idle-states: cluster-sleep-0: 'idle-state-name' does not match any of the regexes: 'pinctrl-[0-9]+'
-   	from schema $id: http://devicetree.org/schemas/power/domain-idle-state.yaml#
-   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: domain-idle-states: cluster-sleep-1: 'idle-state-name' does not match any of the regexes: 'pinctrl-[0-9]+'
-   	from schema $id: http://devicetree.org/schemas/power/domain-idle-state.yaml#
-   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: /soc@0/thermal-sensor@c271000: failed to match any schema with compatible: ['qcom,x1e80100-tsens', 'qcom,tsens-v2']
-   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: /soc@0/thermal-sensor@c272000: failed to match any schema with compatible: ['qcom,x1e80100-tsens', 'qcom,tsens-v2']
-   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: /soc@0/thermal-sensor@c273000: failed to match any schema with compatible: ['qcom,x1e80100-tsens', 'qcom,tsens-v2']
-   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: /soc@0/thermal-sensor@c274000: failed to match any schema with compatible: ['qcom,x1e80100-tsens', 'qcom,tsens-v2']
-   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: pci@1bf8000: Unevaluated properties are not allowed ('vddpe-3v3-supply' was unexpected)
-   	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-x1e80100.yaml#
->> arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: clock-controller@6b6c000: compatible: ['qcom,x1e80100-lpassaudiocc', 'qcom,sc8280xp-lpassaudiocc'] is too long
-   	from schema $id: http://devicetree.org/schemas/clock/qcom,sc8280xp-lpasscc.yaml#
->> arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: clock-controller@6ea0000: compatible: ['qcom,x1e80100-lpasscc', 'qcom,sc8280xp-lpasscc'] is too long
-   	from schema $id: http://devicetree.org/schemas/clock/qcom,sc8280xp-lpasscc.yaml#
-   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: usb@a2f8800: interrupt-names: ['pwr_event', 'dp_hs_phy_irq', 'dm_hs_phy_irq'] is too short
-   	from schema $id: http://devicetree.org/schemas/usb/qcom,dwc3.yaml#
-   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: /soc@0/arbiter@c400000/spmi@c42d000/pmic@3: failed to match any schema with compatible: ['qcom,pmc8380', 'qcom,spmi-pmic']
-   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: /soc@0/arbiter@c400000/spmi@c42d000/pmic@3/gpio@8800: failed to match any schema with compatible: ['qcom,pmc8380-gpio', 'qcom,spmi-gpio']
-   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: /soc@0/arbiter@c400000/spmi@c42d000/pmic@4: failed to match any schema with compatible: ['qcom,pmc8380', 'qcom,spmi-pmic']
-   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: /soc@0/arbiter@c400000/spmi@c42d000/pmic@4/gpio@8800: failed to match any schema with compatible: ['qcom,pmc8380-gpio', 'qcom,spmi-gpio']
-   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: /soc@0/arbiter@c400000/spmi@c42d000/pmic@5: failed to match any schema with compatible: ['qcom,pmc8380', 'qcom,spmi-pmic']
-   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: /soc@0/arbiter@c400000/spmi@c42d000/pmic@5/gpio@8800: failed to match any schema with compatible: ['qcom,pmc8380-gpio', 'qcom,spmi-gpio']
-   arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: /soc@0/arbiter@c400000/spmi@c42d000/pmic@6: failed to match any schema with compatible: ['qcom,pmc8380', 'qcom,spmi-pmic']
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--=20
+M=E5ns Rullg=E5rd
