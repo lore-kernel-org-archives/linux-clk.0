@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03A5B13E8B9;
-	Thu, 27 Jun 2024 11:05:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50805143C7D;
+	Thu, 27 Jun 2024 11:05:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719486310; cv=none; b=FyKVp6T3ro+YH8F31OUBED+eL2BRBrX2qyiqRFknq+i6QMRGEQ8w/3ZW1XY+oOBT87VCn2/t32GOZOEZCzfTHBGi1nFgQHCCPs21v5zMW6wF0+4l/BMfai0JdV84PyUVdyqhVLjCPyS58nF5jciOhr1awg216GITfxjF2IRS1hY=
+	t=1719486313; cv=none; b=dyPTeVgRllvsJQQT9GnJiNrKUG4+FtK7jqGpXhKOr2HDEhLZkIZoYyHltPxC8mGqSzJxc4gc11TgSaFzcbok8l3vhqTMFLMAcGbwyjS8+vdlXbKjGIEX2vvcbGdNDErVqliS34cH5fyQmDoxAl5fQM/EiSHKY2W/x49mLb0yUaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719486310; c=relaxed/simple;
-	bh=ek4+PAY8/cvLVH71a4c19ArzDNAgRpGILNbEZyd11sY=;
+	s=arc-20240116; t=1719486313; c=relaxed/simple;
+	bh=CHPj1ScjgYdVyznC3pgzpXrR/68/AlaRg0dR6cJ7qLc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=V9dBzBsVMhT1uNikPu4ZadrDnjHWjVCTkP2Qx96IcvLquFaSVYAmmwx4desKinvK41Bs0L58VZyJb628ycVM9xnzMXqB/d2bWyJjjTyJUrb1x0SAlutUIMHCkP2W8M+eNSgF8qtujmpC8X63CyBUrpo4roVt5z8OQUWJjmDMdBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aJGm5V25; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version; b=J9JyBH5Wvi6cigocd9I8pjIlhEneF8XUu7+eUhKDBQ8fnpx44yJopLZ8iPZPtwlksy5XRk/0GJZ0zJpE/Mt4scaobnzL2EswWNzS91Elk9sQ3WxK+W7dvSw/RSdS6rOaqeuQKDnh+6DX9dZt6TTE8M3fFQevVIq0He05vPPUN84=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T8XMc63r; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aJGm5V25"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D79AC2BBFC;
-	Thu, 27 Jun 2024 11:05:09 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T8XMc63r"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D26D4C2BBFC;
+	Thu, 27 Jun 2024 11:05:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719486309;
-	bh=ek4+PAY8/cvLVH71a4c19ArzDNAgRpGILNbEZyd11sY=;
+	s=k20201202; t=1719486313;
+	bh=CHPj1ScjgYdVyznC3pgzpXrR/68/AlaRg0dR6cJ7qLc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=aJGm5V25tVsLgQelED4y4Z6pYyluil36uImoHRkDs2A3cgHLAuOxxkzwF3Zm6Ys9h
-	 sRwULjUNEyrXpmbM3XwxE+ebFzlHnPaL5b+7+3mPe4Vs/qY33vsHq/QiL9/C5D/ahG
-	 7pBthLmBj5IOpeW1xJTt8mjbn4KIkeIvHpGlQe/y6XwOVtSCHZvbEMzOx4iDnMjQbF
-	 yfKhBNcGUK4FQhSX+SINCdyc5hBuyOy/9/dPxJNAAoZ4+t2oy3qPK2ztNC+qSZ/mYL
-	 2Lbqp8JN+AdB2ibQ4EkoLTjrgEAgFR5YgxvgIT+sZ3f6dSXhL+jRSZr3YQ+hziOUtB
-	 DMOJz+WZGlY7w==
+	b=T8XMc63rUSyUjf3w5SjrCw9rLNMNNrHG2wu4Ani4jr+NFkzmU9opOMAJd6YXCGKOY
+	 UvksEtyOvS1wJLAQcfgHBim+uBvp7DCHS6036/foKPAO/2s3htlsSNV42V8G1NCuSz
+	 00nZ9axcC2P6SAOQj0qaUl5R+tWd9ovzz3eyJ0R66mRdK3+zAZMyPEBxluF+UNR/ke
+	 o2YH4vdA7+f2Uxe6zFyPTj0kd/eiR7i5N9QKJxHrVcp5aGS4wG9ORZewWd050RCtK/
+	 qVTIuXIW8AN3Od9Nwb9X1miOZCgoIjjxEh0vsVrwjAm7xzJ1la5QIuTPWOtp0Bh9OJ
+	 TwaVRgqFCPDkg==
 From: Lorenzo Bianconi <lorenzo@kernel.org>
 To: linux-clk@vger.kernel.org
 Cc: p.zabel@pengutronix.de,
@@ -45,9 +45,9 @@ Cc: p.zabel@pengutronix.de,
 	will@kernel.org,
 	upstream@airoha.com,
 	angelogioacchino.delregno@collabora.com
-Subject: [PATCH v4 3/4] clk: en7523: Remove pcie prepare/unpreare callbacks for EN7581 SoC
-Date: Thu, 27 Jun 2024 13:04:24 +0200
-Message-ID: <16df149975514d3030499c48fc1c64f090093595.1719485847.git.lorenzo@kernel.org>
+Subject: [PATCH v4 4/4] clk: en7523: Remove PCIe reset open drain configuration for EN7581
+Date: Thu, 27 Jun 2024 13:04:25 +0200
+Message-ID: <43276af5f08a554b4ab2e52e8d437fff5c06a732.1719485847.git.lorenzo@kernel.org>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <cover.1719485847.git.lorenzo@kernel.org>
 References: <cover.1719485847.git.lorenzo@kernel.org>
@@ -59,91 +59,65 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Get rid of prepare and unpreare callbacks for PCIe clock since they can
-be modeled as a reset line cosumed by the PCIe driver
-(pcie-mediatek-gen3)
+PCIe reset open drain configuration will be managed by pinctrl driver.
 
 Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Tested-by: Zhengping Zhang <zhengping.zhang@airoha.com>
 Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
 ---
- drivers/clk/clk-en7523.c | 41 ++--------------------------------------
- 1 file changed, 2 insertions(+), 39 deletions(-)
+ drivers/clk/clk-en7523.c | 12 ++----------
+ 1 file changed, 2 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
-index 5cd501b86557..b134821b23c1 100644
+index b134821b23c1..e10c73c29ee2 100644
 --- a/drivers/clk/clk-en7523.c
 +++ b/drivers/clk/clk-en7523.c
-@@ -361,9 +361,8 @@ static struct clk_hw *en7523_register_pcie_clk(struct device *dev,
- 	cg->base = np_base;
- 	cg->hw.init = &init;
+@@ -37,8 +37,6 @@
+ #define REG_PCIE1_MEM_MASK		0x0c
+ #define REG_PCIE2_MEM			0x10
+ #define REG_PCIE2_MEM_MASK		0x14
+-#define REG_PCIE_RESET_OPEN_DRAIN	0x018c
+-#define REG_PCIE_RESET_OPEN_DRAIN_MASK	GENMASK(2, 0)
+ #define REG_NP_SCU_PCIC			0x88
+ #define REG_NP_SCU_SSTR			0x9c
+ #define REG_PCIE_XSI0_SEL_MASK		GENMASK(14, 13)
+@@ -85,8 +83,7 @@ struct en_clk_soc_data {
+ 		const u16 *idx_map;
+ 		u16 idx_map_nr;
+ 	} reset;
+-	int (*hw_init)(struct platform_device *pdev, void __iomem *base,
+-		       void __iomem *np_base);
++	int (*hw_init)(struct platform_device *pdev, void __iomem *np_base);
+ };
  
--	if (init.ops->disable)
--		init.ops->disable(&cg->hw);
--	init.ops->unprepare(&cg->hw);
-+	if (init.ops->unprepare)
-+		init.ops->unprepare(&cg->hw);
- 
- 	if (clk_hw_register(dev, &cg->hw))
- 		return NULL;
-@@ -381,23 +380,6 @@ static int en7581_pci_is_enabled(struct clk_hw *hw)
- 	return (val & mask) == mask;
+ static const u32 gsw_base[] = { 400000000, 500000000 };
+@@ -411,7 +408,6 @@ static void en7581_pci_disable(struct clk_hw *hw)
  }
  
--static int en7581_pci_prepare(struct clk_hw *hw)
--{
--	struct en_clk_gate *cg = container_of(hw, struct en_clk_gate, hw);
--	void __iomem *np_base = cg->base;
--	u32 val, mask;
--
--	mask = REG_RESET_CONTROL_PCIE1 | REG_RESET_CONTROL_PCIE2 |
--	       REG_RESET_CONTROL_PCIEHB;
--	val = readl(np_base + REG_RESET_CONTROL1);
--	writel(val & ~mask, np_base + REG_RESET_CONTROL1);
--	val = readl(np_base + REG_RESET_CONTROL2);
--	writel(val & ~REG_RESET2_CONTROL_PCIE2, np_base + REG_RESET_CONTROL2);
--	usleep_range(5000, 10000);
--
--	return 0;
--}
--
- static int en7581_pci_enable(struct clk_hw *hw)
+ static int en7581_clk_hw_init(struct platform_device *pdev,
+-			      void __iomem *base,
+ 			      void __iomem *np_base)
  {
- 	struct en_clk_gate *cg = container_of(hw, struct en_clk_gate, hw);
-@@ -414,23 +396,6 @@ static int en7581_pci_enable(struct clk_hw *hw)
+ 	void __iomem *pb_base;
+@@ -434,10 +430,6 @@ static int en7581_clk_hw_init(struct platform_device *pdev,
+ 	writel(0x28000000, pb_base + REG_PCIE2_MEM);
+ 	writel(0xfc000000, pb_base + REG_PCIE2_MEM_MASK);
+ 
+-	val = readl(base + REG_PCIE_RESET_OPEN_DRAIN);
+-	writel(val | REG_PCIE_RESET_OPEN_DRAIN_MASK,
+-	       base + REG_PCIE_RESET_OPEN_DRAIN);
+-
  	return 0;
  }
  
--static void en7581_pci_unprepare(struct clk_hw *hw)
--{
--	struct en_clk_gate *cg = container_of(hw, struct en_clk_gate, hw);
--	void __iomem *np_base = cg->base;
--	u32 val, mask;
--
--	mask = REG_RESET_CONTROL_PCIE1 | REG_RESET_CONTROL_PCIE2 |
--	       REG_RESET_CONTROL_PCIEHB;
--	val = readl(np_base + REG_RESET_CONTROL1);
--	writel(val | mask, np_base + REG_RESET_CONTROL1);
--	mask = REG_RESET_CONTROL_PCIE1 | REG_RESET_CONTROL_PCIE2;
--	writel(val | mask, np_base + REG_RESET_CONTROL1);
--	val = readl(np_base + REG_RESET_CONTROL2);
--	writel(val | REG_RESET_CONTROL_PCIE2, np_base + REG_RESET_CONTROL2);
--	msleep(100);
--}
--
- static void en7581_pci_disable(struct clk_hw *hw)
- {
- 	struct en_clk_gate *cg = container_of(hw, struct en_clk_gate, hw);
-@@ -651,9 +616,7 @@ static const struct en_clk_soc_data en7523_data = {
- static const struct en_clk_soc_data en7581_data = {
- 	.pcie_ops = {
- 		.is_enabled = en7581_pci_is_enabled,
--		.prepare = en7581_pci_prepare,
- 		.enable = en7581_pci_enable,
--		.unprepare = en7581_pci_unprepare,
- 		.disable = en7581_pci_disable,
- 	},
- 	.reset = {
+@@ -577,7 +569,7 @@ static int en7523_clk_probe(struct platform_device *pdev)
+ 
+ 	soc_data = device_get_match_data(&pdev->dev);
+ 	if (soc_data->hw_init) {
+-		r = soc_data->hw_init(pdev, base, np_base);
++		r = soc_data->hw_init(pdev, np_base);
+ 		if (r)
+ 			return r;
+ 	}
 -- 
 2.45.2
 
