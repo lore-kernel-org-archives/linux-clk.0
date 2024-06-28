@@ -1,125 +1,252 @@
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4389444374;
-	Fri, 28 Jun 2024 11:18:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39031155CA8
+	for <linux-clk@vger.kernel.org>; Fri, 28 Jun 2024 11:25:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719573497; cv=none; b=JZ2A0rnPdekn0PFnN8coPea8hwK2IDUSwGfjI2xHutzcmPRTzsKauaCuOfmcv/SzGTUe+YfkGuiRMawY8LNCQ25J55wVRwr3WjLi3m+3/QxuqS8A/MomIc7jHT7P22tQxnIudAXU+QDNp+tgMDhR4NYWrA62qAGeDDN0o06peb4=
+	t=1719573904; cv=none; b=FhsR0mY8WKxXrgaZ1ovS9WJdRro5YCtJE6J9Psv+7Kt9PpTBQS2t9ww2Cr3tQGopMC1Hd+1B3jC5WPnVioEkHAQqrRRy+875CekIMiIbBkgy50ahGoyX5XdKJ32L7H4MBABrYCq81mQthxGX9+H7EdVYBGsTOAjIxfyWXG1yvqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719573497; c=relaxed/simple;
-	bh=jjoqqDqblGrGqFau/qCZ/+dyhF/oGX1o7bJOsP/hCcI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EdVoaYtuSmi1Ul2k7VdxdRx5SzzVy0jO53TcLWJPNWoYFN+SqFLRPgb49cF7wN4s/XQgeSR52wsMqzh2djIUM6YdkPK48Y55KXV2sN3jkPhezRyvr+e1K3EC70CgGBmaOQK/pJRVpluswpW6TptvfbV+qptXNiMCBclCYXXgksU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BYoK0saa; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1719573904; c=relaxed/simple;
+	bh=V9KXg+SCmWZafo6obrdRFIhSGLezPfhb2JXZvNu0exU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=L84GJWg/qTNVgmWIT7cqAU9fngvXnkBeRhu5ojYq/TR837FbFbDwG9rTtMcJZKZ5X7zxr5llm1jwtv8/ejNcNta1yUXpsXPu1TjpZCwoM5MO/dOiImZgzPyOWC7GJFFZSOd+KLqMaEs4iM5g0NXhu3gGgamBjf0vt232QOFMXl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=Sc3S8tdq; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BYoK0saa"
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-367339bd00aso412358f8f.3;
-        Fri, 28 Jun 2024 04:18:15 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="Sc3S8tdq"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3674e1931b7so391049f8f.2
+        for <linux-clk@vger.kernel.org>; Fri, 28 Jun 2024 04:25:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1719573494; x=1720178294; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jGjvAzjDwlAq0rCpEO+mGer2SS+9hXiF0BPt0Wfq6d0=;
-        b=BYoK0saakmAwJf6/GJhrxpqg7vlHdCromvqMhm0jGTQsD1Dxhaut9rC93kKZ1x5qcI
-         3S8KJythO6h2wdZLZ60I3I49h0qE1/J1GWxyULP1M3usN/MbdznDuw5B/lAa5KwqVnj9
-         FE4+MXT6SQ29cvhTfxTQgY3oQJHgbQ70pqSWnNuEnbl88nioE348bvIzVrWVPHwsuA8T
-         8XUVyKrmMnH6Pewk12S7DeEuKlxrTJG+tF5sWdJxJB7Xv+7JpvJUoxmrh95bgSU950Iu
-         LX+nRw21hO5z8xNKQJKb4QRVDmexq/LKu+Lg2cYC86Wqn7YfKbUSIpCbClPOKgk5mF7p
-         ieJA==
+        d=tuxon.dev; s=google; t=1719573899; x=1720178699; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+vT0oI1WLiPKuk+C4WN1sqVJ5ks3XibkeL1J+rw6OW0=;
+        b=Sc3S8tdq6Qx2OwJ5Jx4wgA/ImXi3UzAfdyuprMGELe8b0lLzRsXwr/VQXnhCy5MHSP
+         Q+88jtRepdzRcr2QUKOVz9GAY61c2gRM2UX3bYncyT++SNoq8wjnJBR6UQvYehijMRi3
+         F+o1YuDhw35FqIelK07ar674laPUQfD59EB4cS0q1BxWwW8LwZcOJnP16LHgBufcjVQT
+         OORu8jYR+gWQTsc/ANAxhDAIxuEjfW/Yi2pI48Ke22CpkhNt+7neOQ2HltRWm3na65bX
+         3oGtA4eRavGfrQ91Sz2bm8WLgtw4nVDIJBTS3jZErkkUFtNYfYZwC7qoxj9Pr4/IE5La
+         GhEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719573494; x=1720178294;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jGjvAzjDwlAq0rCpEO+mGer2SS+9hXiF0BPt0Wfq6d0=;
-        b=X+oVe0OuTLL0vwTV80jVtvN1dUPMN8yxjBB6iBHjbqUqmTqNhY4ONmw1XMdfedCM0G
-         UORPbFArvxO3zcvqpVkIAN3dUwzObm65YLdFvk4mmp7hBpgXbp0bdrY183ZiRXCwkNZI
-         Fj4tKcqb40HfOq2F4Us7aqbkQB0qRhaYCacnPOblMBA9osHYmRaPzBEnnNKwh2c5iGQl
-         t5hgohQn6ERKyHqyjYJyE35C27QN8/fCxUY9BeL2ctsWzOP4pzqx4IBkWUiix47YzJbe
-         9eZ3aMem3b+sesBxjQXz9SJZ5RIn4fkcifUjh0fzBom7mGIfdW3eIAvU/5YlojkX7Z3i
-         AoBA==
-X-Forwarded-Encrypted: i=1; AJvYcCUzeHNi/AqjynFKqNTjqdrFtRn0JMcp/j3sV6Z+urRcb2rfwv6S7It9mGO6ohwjHAFglwiZEmiVKI7gfFv0ccHWld3lcTVGX+cLZc/bpm3GNxfKTDCUTi9/w61z3CeZn2SJzYSOP0NUVnmJVUZVusg3NvNIl2Bkh2kQ213/hCNUQ9KbhQ==
-X-Gm-Message-State: AOJu0YxxqXmdkIr8n6o7FKUgh/iquGE7adcyHZmhS16AyZ+4JiNJZBqy
-	/x3LSxpTdfYkdVNw/DFUEnzF9tCbNDWUuN+KSxBg636/4hn9L5UO2U5Viw==
-X-Google-Smtp-Source: AGHT+IGpmgVVWhDU6L0Eg9bKaM5Un6mfYJKGEM6lzS/aXInSUCuH83Z2b5aWXKfw/hIZ/mcUBgHX5w==
-X-Received: by 2002:adf:e507:0:b0:367:4165:ad4 with SMTP id ffacd0b85a97d-36741650be0mr3754348f8f.16.1719573494282;
-        Fri, 28 Jun 2024 04:18:14 -0700 (PDT)
-Received: from localhost.localdomain (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3675a1055b9sm1979495f8f.95.2024.06.28.04.18.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 04:18:13 -0700 (PDT)
-From: Christian Marangi <ansuelsmth@gmail.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	=?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Cc: Christian Marangi <ansuelsmth@gmail.com>
-Subject: [PATCH v2 2/2] dt-bindings: clock: mediatek: add syscon compatible for mt7622 pciesys
-Date: Fri, 28 Jun 2024 12:55:41 +0200
-Message-ID: <20240628105542.5456-2-ansuelsmth@gmail.com>
-X-Mailer: git-send-email 2.45.1
-In-Reply-To: <20240628105542.5456-1-ansuelsmth@gmail.com>
-References: <20240628105542.5456-1-ansuelsmth@gmail.com>
+        d=1e100.net; s=20230601; t=1719573899; x=1720178699;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+vT0oI1WLiPKuk+C4WN1sqVJ5ks3XibkeL1J+rw6OW0=;
+        b=DEIQ1DoWfL3qCxq9KeXOzfabsGUt9f3DybpY0o4VGPUG33aB6hWXTUDCi1XatxB36M
+         P8MITXQ4kGznUUrrOjmeEjaLCTI3UeTYMZbIsmPScucH1gV+XvFnzS+W9OhSdFfIYjzk
+         yN5M7rkfDnT27DZUmRJTQ5/BMfFVcpzuukFmAJGeN2OKfkxi7i+OpOBV+yVzXL2pCLDO
+         rsYQLf4sEOZgcglrMZbpt/eEtxGQHf/feDQYU6vDicx6fbOT2K8O7GQ0Ob8g9zENN8Pj
+         4RjGwvb6sW33s2JF4hI0uRGlyAW1wYQBgPMvawnhN3oiXxMlw6kfwL7kRk0Tvpbdj1Pv
+         ic0w==
+X-Forwarded-Encrypted: i=1; AJvYcCXPRCRV7Upl4GNFJIyKTSp8CO6aC0Qjw4MLU7LzP5GAeTxVScs4Pj3/fkYwH7x34vM322EN7ywBGqW1s89fKrYGEcdyrM4NgTkf
+X-Gm-Message-State: AOJu0Yx2Qc3xUCH0iQQ13u06T5P6UDxokvi09VTcgriB4QllVjnmmHB0
+	+PDMKor4KLa2wvitlFi/E6vtLRUAxHMwMAu+nICQ2ZiAT0W1n276F13P+zti+RU=
+X-Google-Smtp-Source: AGHT+IEg/llQOTje8PQzJ/D61BuZ9d+OzSn6/FeavrJj+1FuwRfzHkTT7CRfYqx6QCghqsKlm9fzjQ==
+X-Received: by 2002:a05:6000:2c2:b0:366:eb45:6d55 with SMTP id ffacd0b85a97d-366eb456ecemr14224463f8f.49.1719573899534;
+        Fri, 28 Jun 2024 04:24:59 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.70])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0d8cb4sm2019563f8f.25.2024.06.28.04.24.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 28 Jun 2024 04:24:59 -0700 (PDT)
+Message-ID: <ae2223f8-4058-4bd1-b480-ed2b4b1d526f@tuxon.dev>
+Date: Fri, 28 Jun 2024 14:24:57 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 07/12] i2c: riic: Define individual arrays to describe
+ the register offsets
+Content-Language: en-US
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+ Chris Brandt <Chris.Brandt@renesas.com>,
+ "andi.shyti@kernel.org" <andi.shyti@kernel.org>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "geert+renesas@glider.be" <geert+renesas@glider.be>,
+ "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "sboyd@kernel.org" <sboyd@kernel.org>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>
+Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240625121358.590547-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240625121358.590547-8-claudiu.beznea.uj@bp.renesas.com>
+ <TY3PR01MB11346EF9A001F68162148B70F86D02@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <6289f329-118f-4970-a525-75c3a48bd28b@tuxon.dev>
+ <TY3PR01MB1134603F92C72D9B6C6C3733C86D02@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <2f162986-33c5-4d80-958c-4f857adaad20@tuxon.dev>
+ <TY3PR01MB11346CA73575CF61B2024F3B386D02@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <79c26030-4b92-4ef3-b8ce-d011f492161b@tuxon.dev>
+ <TY3PR01MB11346A2DFBD7FE81337A748D386D02@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <20ff64a8-e619-4281-894f-1aa08ea67f18@tuxon.dev>
+ <TY3PR01MB1134678E3A8485DB152BD66D386D02@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <TY3PR01MB1134678E3A8485DB152BD66D386D02@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add required syscon compatible for mt7622 pciesys. This is required for
-SATA interface as the regs are shared.
 
-Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
----
-Changes v2:
-- Fix broken schema example
 
- .../bindings/clock/mediatek,mt7622-pciesys.yaml        | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+On 28.06.2024 13:49, Biju Das wrote:
+> Hi Claudiu,
+> 
+>> -----Original Message-----
+>> From: claudiu beznea <claudiu.beznea@tuxon.dev>
+>> Sent: Friday, June 28, 2024 11:25 AM
+>> Subject: Re: [PATCH v2 07/12] i2c: riic: Define individual arrays to describe the register offsets
+>>
+>>
+>>
+>> On 28.06.2024 11:24, Biju Das wrote:
+>>> Hi Claudiu,
+>>>
+>>>> -----Original Message-----
+>>>> From: claudiu beznea <claudiu.beznea@tuxon.dev>
+>>>> Sent: Friday, June 28, 2024 9:13 AM
+>>>> Subject: Re: [PATCH v2 07/12] i2c: riic: Define individual arrays to
+>>>> describe the register offsets
+>>>>
+>>>>
+>>>>
+>>>> On 28.06.2024 11:09, Biju Das wrote:
+>>>>>
+>>>>> Hi Claudiu,
+>>>>>
+>>>>>> -----Original Message-----
+>>>>>> From: claudiu beznea <claudiu.beznea@tuxon.dev>
+>>>>>> Sent: Friday, June 28, 2024 9:03 AM
+>>>>>> Subject: Re: [PATCH v2 07/12] i2c: riic: Define individual arrays
+>>>>>> to describe the register offsets
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>> On 28.06.2024 10:55, Biju Das wrote:
+>>>>>>> Hi Claudiu,
+>>>>>>>
+>>>>>>>> -----Original Message-----
+>>>>>>>> From: claudiu beznea <claudiu.beznea@tuxon.dev>
+>>>>>>>> Sent: Friday, June 28, 2024 8:32 AM
+>>>>>>>> Subject: Re: [PATCH v2 07/12] i2c: riic: Define individual arrays
+>>>>>>>> to describe the register offsets
+>>>>>>>>
+>>>>>>>> Hi, Biju,
+>>>>>>>>
+>>>>>>>> On 28.06.2024 08:59, Biju Das wrote:
+>>>>>>>>> Hi Claudiu,
+>>>>>>>>>
+>>>>>>>>>> -----Original Message-----
+>>>>>>>>>> From: Claudiu <claudiu.beznea@tuxon.dev>
+>>>>>>>>>> Sent: Tuesday, June 25, 2024 1:14 PM
+>>>>>>>>>> Subject: [PATCH v2 07/12] i2c: riic: Define individual arrays
+>>>>>>>>>> to describe the register offsets
+>>>>>>>>>>
+>>>>>>>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>>>>>>>>
+>>>>>>>>>> Define individual arrays to describe the register offsets. In
+>>>>>>>>>> this way we can describe different IP variants that share the
+>>>>>>>>>> same register offsets but have differences in other characteristics.
+>>>>>>>>>> Commit prepares for the addition
+>>>>>>>> of fast mode plus.
+>>>>>>>>>>
+>>>>>>>>>> Signed-off-by: Claudiu Beznea
+>>>>>>>>>> <claudiu.beznea.uj@bp.renesas.com>
+>>>>>>>>>> ---
+>>>>>>>>>>
+>>>>>>>>>> Changes in v2:
+>>>>>>>>>> - none
+>>>>>>>>>>
+>>>>>>>>>>  drivers/i2c/busses/i2c-riic.c | 58
+>>>>>>>>>> +++++++++++++++++++----------------
+>>>>>>>>>>  1 file changed, 31 insertions(+), 27 deletions(-)
+>>>>>>>>>>
+>>>>>>>>>> diff --git a/drivers/i2c/busses/i2c-riic.c
+>>>>>>>>>> b/drivers/i2c/busses/i2c-riic.c index
+>>>>>>>>>> 9fe007609076..8ffbead95492 100644
+>>>>>>>>>> --- a/drivers/i2c/busses/i2c-riic.c
+>>>>>>>>>> +++ b/drivers/i2c/busses/i2c-riic.c
+>>>>>>>>>> @@ -91,7 +91,7 @@ enum riic_reg_list {  };
+>>>>>>>>>>
+>>>>>>>>>>  struct riic_of_data {
+>>>>>>>>>> -	u8 regs[RIIC_REG_END];
+>>>>>>>>>> +	const u8 *regs;
+>>>>>>>>>
+>>>>>>>>>
+>>>>>>>>> Since you are touching this part, can we drop struct and Use u8*
+>>>>>>>>> as device_data instead?
+>>>>>>>>
+>>>>>>>> Patch 09/12 "i2c: riic: Add support for fast mode plus" adds a
+>>>>>>>> new member to struct
+>>>>>> riic_of_data.
+>>>>>>>> That new member is needed to differentiate b/w hardware versions
+>>>>>>>> supporting fast mode plus based on compatible.
+>>>>>>>
+>>>>>>> Are we sure RZ/A does not support fast mode plus?
+>>>>>>
+>>>>>> From commit description of patch 09/12:
+>>>>>>
+>>>>>> Fast mode plus is available on most of the IP variants that RIIC
+>>>>>> driver is working with. The exception is (according to HW manuals
+>>>>>> of the SoCs where this IP is
+>>>> available) the Renesas RZ/A1H.
+>>>>>> For this, patch introduces the struct riic_of_data::fast_mode_plus.
+>>>>>>
+>>>>>> I checked the manuals of all the SoCs where this driver is used.
+>>>>>>
+>>>>>> I haven't checked the H/W manual?
+>>>>>>
+>>>>>> On the manual I've downloaded from Renesas web site the FMPE bit of
+>>>>>> RIICnFER is not available on RZ/A1H.
+>>>>>
+>>>>> I just found RZ/A2M manual, it supports FMP and register layout looks similar to RZ/G2L.
+>>>>
+>>>> I introduced struct riic_of_data::fast_mode_plus because of RZ/A1H.
+>>>
+>>> Maybe make the register layout as per SoC
+>>>
+>>> RZ/A1 --> &riic_rz_a_info
+>>> RZ/A2 and RZ/{G2L,G2LC,V2L,G2UL,FIVE} --> &riic_rz_g2_info RZ/G3S and
+>>> RZ/V2H --> &riic_rz_v2h_info
+>>
+>> Sorry, but I don't understand. Patch 09/12 already does that but a bit
+>> differently:
+> 
+> Now register layout is added to differentiate the SoCs for adding support
+> to RZ/G3S and this layout should match with the hardware manual for all supported SoCs.
+> Currently it is wrong for RZ/A2 SoC, while you fixed it for all other SoCs.
 
-diff --git a/Documentation/devicetree/bindings/clock/mediatek,mt7622-pciesys.yaml b/Documentation/devicetree/bindings/clock/mediatek,mt7622-pciesys.yaml
-index c77111d10f90..9c3913f9092c 100644
---- a/Documentation/devicetree/bindings/clock/mediatek,mt7622-pciesys.yaml
-+++ b/Documentation/devicetree/bindings/clock/mediatek,mt7622-pciesys.yaml
-@@ -14,9 +14,11 @@ maintainers:
- 
- properties:
-   compatible:
--    enum:
--      - mediatek,mt7622-pciesys
--      - mediatek,mt7629-pciesys
-+    oneOf:
-+      - items:
-+          - const: mediatek,mt7622-pciesys
-+          - const: syscon
-+      - const: mediatek,mt7629-pciesys
- 
-   reg:
-     maxItems: 1
-@@ -38,7 +40,7 @@ additionalProperties: false
- examples:
-   - |
-     clock-controller@1a100800 {
--        compatible = "mediatek,mt7622-pciesys";
-+        compatible = "mediatek,mt7622-pciesys", "syscon";
-         reg = <0x1a100800 0x1000>;
-         #clock-cells = <1>;
-         #reset-cells = <1>;
--- 
-2.45.1
+I checked RZ/A2M. There is nothing broken. The only thing that I see is
+that the FP+ is not enabled on RZ/A2M (please let me know if there is
+anything else I missed). I don't see this broken. It is the same behavior
+that was before this patch.
 
+Anyway, I'll update it for that too, if nobody has something against, but I
+cannot test it. If any hardware bug for it, I cannot say.
+
+> 
+>>
+>> RZ/{G2L, G2LC, G2UL, V2L, FIVE} -> riic_rz_g2_info RZ/G3S and RZ/V2H -> riic_rz_v2h_info Everything
+>> else: riic_rz_a_info
+>>
+>> I don't have anything at hand to test the "everything else" thus I enabled it for RZ/{G2L, G2LC,
+>> G2UL, V2L, FIVE}, RZ/G3S and RZ/V2H.
+> 
+> You don't need to test, as 
+> the existing other users don't have FMP+ enabled in device tree.
+
+It's the same as today (w/o adding specific entry for it).
+
+> 
+> Cheers,
+> Biju
