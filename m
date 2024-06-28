@@ -1,256 +1,262 @@
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2060.outbound.protection.outlook.com [40.107.21.60])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8A1655893;
-	Fri, 28 Jun 2024 06:28:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719556124; cv=fail; b=SRNF0qgoVKiEimKPUd9xkXD6YTWA6DhIgBWQxZCywc9yAdx66/V/HvMrFLsRjyFJFPhjcPpIcTbCbnIHmiiTOp6tXrb9GspjkEl86kp0/LfQ2BBwxYGjXcMxgGxeEPQUTVwjrRBgv7ccxovxvsS6TyV1iXeWE8fAbIz/LMAbyf8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719556124; c=relaxed/simple;
-	bh=9810tIGPJKUYzId1p5AGF1J6iJmw22VMzDtc5SWzgJQ=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=pftMVVOgq43xkErg4GlcL8FerXL+FSBHS01EzyzCn7q2mpDeiagqKJAD4QFQ/dfdYitvY/hKK054rA9Zr55ETafr1+PpandABrCdN6WOISBrAv7jxCepZiwkNjoqeWwg6LMDE1mUcOIGU9AyDUgr2avFUAPC2l2VXGfz7qtJNrw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=OxzdGetO; arc=fail smtp.client-ip=40.107.21.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3D887D07E;
+	Fri, 28 Jun 2024 06:33:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719556401; cv=none; b=rTHi+TEJLa1vsUSx1erUPq87eQA3lnQHECWdkg7felPtPOD5hhuwG2LQ7CoOEpQJzmy+hcXXE0V7jdbEb2TFVD7SxVGHmL4R9sjWOCb23+Kih63kYOCRgFy5HuOhxyJBSBqpVrZoymzIj6Oxc28KWXHl/eIX/ize1JPJyElYRmM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719556401; c=relaxed/simple;
+	bh=DSuk/g9EQGxxaw9OBuQaAAoFp2D2AXWfCawqxyeRdLM=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RRGMGFCEuDTkU3kbl5uYnjyc/hmXkgJc9TPEtybrRtFl26rCJHXcLUKTeyPfzQhDjsd/H9zo+Cz99hO/ZXCoNlvbAfPdG7TTH7n+r6tnavMB0nTi4tHJ//QggXj/930RvmvW4uhfgrSb3monGh97WOZZLrp4J/935N8IaAfE/yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cJUubSwQ; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="OxzdGetO"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=HSmgM8IsX53tCExBDJ1buOFTDC3GveITip89Fwfbnrlr9s92fSCekkyw4qy8sCpFKDaIuzjisWtUV1FlPru8tUZu9pJnMEevhSfaQBg+DvxPWH/Oqt+bQRLtHedxVA7MYY//fXC7JzB/OQ3Ryipmrt5FO14aUfa4VYoTePtSG2HFCAEBrnHgoKdMcGSmQeUqjW+TXx4i4IrnpsU2iol3FRLvceAY435NUaVmvMTOIQLrVajHlD6qGxVFk+Wb3zf0cRy5vS+HijlbELqKA2LH15btck1R8MpZe60benhbO01SZu34mpY7UZ7h/mZCzQ0XAthkFlwLuz1XSSKGwTclbw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9810tIGPJKUYzId1p5AGF1J6iJmw22VMzDtc5SWzgJQ=;
- b=IO0u/8ahwEHzGhms+pnak8Hi7am8vxQJPfBcj7jo9alDCKsH/XTFjUx6X1tsXSf+IOk4spSRl+R4+lrLG1IGhnA6/OC9npCcqGZplt0Dha+mYtHZdhgBedOKq9iCfIVtVgoGNg2b5c29RKlCOZGuJvXNtMLOBKdo6By802Kmrl7ZWnq+7WD037VqRx/tp9hnIYX2HnFkJgF217GBuz0nLStPoXPO0LmxAFOIQkrswl4j2WBWX6rdvtJry868XBlcI4Puz8TjSRXXu0QQE3NBEL1MclWahrNsnk1cGSiGiXTDxY1l9JFceryfdXpiWuaYvufi2VqS4OsTu9hL2KBqYg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9810tIGPJKUYzId1p5AGF1J6iJmw22VMzDtc5SWzgJQ=;
- b=OxzdGetOTx2xXaMlu9x+bEEuJJjyz3Av0S0QuGx94Dkq5baVlTKHhKaio5jiv71Mwqr/bBGFgVh5Nc4TlM83YLK85KO36wSr75Og1rsVGxFlxA76L5EEEXnKOuLMh98oMKWhOIa+rOO1pRk98suQ6Y5TwXbxPJOARi84ajjMr+E=
-Received: from AM6PR04MB5941.eurprd04.prod.outlook.com (2603:10a6:20b:9e::16)
- by PA1PR04MB10625.eurprd04.prod.outlook.com (2603:10a6:102:48a::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.35; Fri, 28 Jun
- 2024 06:28:38 +0000
-Received: from AM6PR04MB5941.eurprd04.prod.outlook.com
- ([fe80::9f4e:b695:f5f0:5256]) by AM6PR04MB5941.eurprd04.prod.outlook.com
- ([fe80::9f4e:b695:f5f0:5256%4]) with mapi id 15.20.7698.025; Fri, 28 Jun 2024
- 06:28:38 +0000
-From: Peng Fan <peng.fan@nxp.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Pengfei Li <pengfei.li_1@nxp.com>
-CC: "krzk+dt@kernel.org" <krzk+dt@kernel.org>, "robh@kernel.org"
-	<robh@kernel.org>, "abelvesa@kernel.org" <abelvesa@kernel.org>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@kernel.org"
-	<sboyd@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"shawnguo@kernel.org" <shawnguo@kernel.org>, "s.hauer@pengutronix.de"
-	<s.hauer@pengutronix.de>, Jacky Bai <ping.bai@nxp.com>, Ye Li
-	<ye.li@nxp.com>, Aisheng Dong <aisheng.dong@nxp.com>, Frank Li
-	<frank.li@nxp.com>, "kernel@pengutronix.de" <kernel@pengutronix.de>,
-	"festevam@gmail.com" <festevam@gmail.com>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 1/2] clk: imx93: Drop macro IMX93_CLK_END
-Thread-Topic: [PATCH 1/2] clk: imx93: Drop macro IMX93_CLK_END
-Thread-Index:
- AQHaxqICs0HdElmggEaM9UqDqnF2eLHYGdAAgAAyBQCAADFugIAD5tIAgABVXYCAAADGEA==
-Date: Fri, 28 Jun 2024 06:28:38 +0000
-Message-ID:
- <AM6PR04MB5941D63D1AD2CE63E8D0388F88D02@AM6PR04MB5941.eurprd04.prod.outlook.com>
-References: <20240625175147.94985-1-pengfei.li_1@nxp.com>
- <20240625175147.94985-2-pengfei.li_1@nxp.com>
- <39bcab8b-ed9c-4da9-b1ee-32dbfb2a23a4@kernel.org>
- <ZnqfIudepX4sH4oL@pengfei-OptiPlex-Tower-Plus-7010>
- <61c1eb8b-b8fd-4e9e-b0fc-27ce1c2eb2b1@kernel.org>
- <AM6PR04MB5941061D0DCA71B31F44497488D02@AM6PR04MB5941.eurprd04.prod.outlook.com>
- <79955001-132c-4eef-b741-9e6a35da1361@kernel.org>
-In-Reply-To: <79955001-132c-4eef-b741-9e6a35da1361@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AM6PR04MB5941:EE_|PA1PR04MB10625:EE_
-x-ms-office365-filtering-correlation-id: 9b3b9ed9-fedd-4a62-7b72-08dc973b8bda
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|7416014|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?cTByUENsa3FLVHViN2s2dmNTbFFEOWYvekVOTUxjR01wTEFEaldIMzJwWUxV?=
- =?utf-8?B?Q1NjbG1GZ1ovbGc0cThTODVTVDNPNGw0UW9tajB4TmVNbTZmWXV0MXN5V0Rj?=
- =?utf-8?B?cmp6OWhxcTE2MmIwSGh0OGpseXpPWFFCMUVzQjZ5ZndSY2l1UTNNNkVKSElI?=
- =?utf-8?B?T2dHcVI3Zm9qUXk3ZmlTZndkaXBkRVI5V1k2UzNESGdQZ1N3RjhEaGFBMDNa?=
- =?utf-8?B?VkJDSU5ZTDVMeGZadjEwZXdIVXJ4alNjU1dLMlQ2T0NRYXp1MURUaGFEdm9T?=
- =?utf-8?B?bHFyRDRocG1ESHF1UEFLbi9YOEl1Zys0MnRHVDZRczlHSnNZTllkQy82dXUz?=
- =?utf-8?B?QjV3UXg5RUM1VmdOdTQ1cGtuVWY3a2UvYmNFMzQ4TCs0K0lobmdzOGg5RjA5?=
- =?utf-8?B?RUJDUzNkUmZCRzhqeXVFdFR2azU3RDlBajJZbzZhNEZqS2dMMlp4WFA0OUhx?=
- =?utf-8?B?NGM2UUxoMEptUm1XZzBPSmR4ZXNOZEEyWk54TmI5MGRMVEtYMXpyK1JrQlNR?=
- =?utf-8?B?TkNIeUhvV2xKenYwc0ZoQ2h5amVZODgyczJNRHhaVi91YWRGQUh3QjQ0TW1V?=
- =?utf-8?B?TWQwZUw1aGg0Qk5TUHRVUW1IN0c2cDMzMzdpQzBVbzVxMG1jWWtMWnJlRk1K?=
- =?utf-8?B?MGJUSE5SSmlxNGJpUHd6S042ektUaG45MXo5YTBWVTZEQm9ycTNwNDRrQUha?=
- =?utf-8?B?M0FmVk1zSi9NV0FNZXpaVGswSFMxQXNEREd1dGQ5YllhN1dtbERTR2p4NTBD?=
- =?utf-8?B?Z2Myekd0eWw4Mk9OaExuM0M5VkdTSjg0YXpWQXMxUDZSSStlVnhiRlBHWkg1?=
- =?utf-8?B?L3BxM1BhMEhVWktrL0dvaFRnTGQ3WFpmcVlWbzlQMS9CbVR3RWlvaU5wZDYy?=
- =?utf-8?B?dTc3RVc1UzA0bW9SNC9mc0xaZXExRFRQOFlPL1ExWkVsZkx1TXRVTWRvMUJ0?=
- =?utf-8?B?K1ZsK3Y5Tkh3WnZSbFN1U3ZMK3VjNnVkYy9DMU8veUw2NXB5Yk52TExLSnZZ?=
- =?utf-8?B?ZEFKenMrZWFaekJNaTBGNHl4ZE11UlJRUUx6bE5nVndrWjF4MktqQ3VxV1JD?=
- =?utf-8?B?Qi9QS3BHUldUZms5bGk1eEFQNWIrY0tsWGNWWlNjQXp1Qzh4ZVQ4aWdwOXBy?=
- =?utf-8?B?b25WNXIyNmlqWEpDUkk0d0ZmYWpqSnVpTnFzNWZTMlFFelJ3cW9BUTJKUEVo?=
- =?utf-8?B?aVUzNU5zWE1jVkR3WGZKRC91bms5UkJxUWlyY21SZTZ3QVhKWlB4WjVCbEw4?=
- =?utf-8?B?M0NLbjFwUEVjdS8wd0owL24rcTRNYi92bFBtanhVaDg1UHpUWTF2MUI0QVV6?=
- =?utf-8?B?d2RwR2MxNVBrd2dGcWdGbUZhbGxZQnpZM01ZLzFGeTZSZTVReE11MWw4REpF?=
- =?utf-8?B?emp6LytXMTNrZjJleUlHRklSVjFwWkF0OGhMeWlRTTMwdnBoY2JONWpZdHhP?=
- =?utf-8?B?V1hPbUFLVTRaMG9WVDZpQ3o5d2dPWjZSVVMza3haaS9DVCtyV2NMNUt1VTFI?=
- =?utf-8?B?LzUxUjIzb28zUWprUVZJVG9IRk5WNzl4OWNxelZIRVNuekdlditLNWRlMEdP?=
- =?utf-8?B?aGRxOUxkYTFQOEFPc0F5Mk9aZzh0SVRybzRPNXdIU0g5elFZN3JTdDE2dW13?=
- =?utf-8?B?cERZNkdtQ1dXdlhCQjRXeFp2Zk1WL01GOVhqMGt2Q1BoZ0lNRDdZdEZvUktu?=
- =?utf-8?B?T29KK1dzdUE1bDdQdWZjZENDeUlyWUZjcTl5RTRES0tPUFlkbHIybGdOSjF5?=
- =?utf-8?B?U213bVRkMmJrWDczUDBsUVZkbDlDOUhPWEFudFFTaHRMVjVSN2tLMUZpZmZ5?=
- =?utf-8?B?T3ZXVS9CZGJkMmM4SUs3YWtkblJWbDhDeHN6VjNiSnpwZlNWemtSa1E5YlJD?=
- =?utf-8?B?b0hzRmovclBBRm1lSjk4cDlZeWJTOGJUS1RVRmtkd1RNYlE9PQ==?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM6PR04MB5941.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?NTQwWWE2YVBkM2MraUVoMXY5SWQ3QW9vb1BJSzFndjh4Qndvc0JaVDBLS3gy?=
- =?utf-8?B?U2RNNnQrR2dEOEdQS0xseko2UWUwVnQ2cGtidisvT2FCRytudkFpeXcvV0RT?=
- =?utf-8?B?OEd6MXc1SzFNcjZHSGpsWUQ1NC93VnFaWVcrN1crU2EyY2JxMVlvSHYvSzlQ?=
- =?utf-8?B?YS9OalZDTFZqWVkwaTRhTFF6ODFuSExNcVJIUjNWUHA5OGg5QVpLeW9iT3BO?=
- =?utf-8?B?NitxOWk2VzBmQXRQWVQzQ2dTT3U0NjUzcHByakVhUnNCdE5iTlVVNlVOUk92?=
- =?utf-8?B?cnUwckszOXJNdnl3anFMN2RabWNIZFlxRHBMajhnenJnQ3kwaWhwaVUva3Nq?=
- =?utf-8?B?bGJyVnR1ZlZ6cWdFWjBKUVpLbjBHSWZNdmw2V2xyMUhtVkFscFBtN1VvQ0Ft?=
- =?utf-8?B?TmF3NzVMRUNmV3B2MTNFaHlIUlJSb01xeHVOSThqNXZqREdPRFp0R0g4UVR0?=
- =?utf-8?B?STdKS3MvZW9nOVBwOVFod29wN05RK1VrVHdBMUhUcWRoRXYwZW1kSlNFQ011?=
- =?utf-8?B?ekNWQnVKWVMyV1pOOVVQeUQ0MGplNWN6TEpjbWhUT0Zkd01WZWNTWWFqT0RF?=
- =?utf-8?B?RmdwdTRzZ1NzU3dkM1QvbXViaU5JSy9ieGhKZVNMR3U3MUxHZ3NYeXEyTXYy?=
- =?utf-8?B?STlnaU5rQUZDWHpPbFFDWEZTZm04VEF0dGFwR2ZQaEJ5MFFaTHVsR1dZS3Iv?=
- =?utf-8?B?ejVsSlJYM3I4ZTdDMDd5TFhqdEFad05UZk1BL2lMYS9qd3laMFp1akt0Y0tW?=
- =?utf-8?B?L3V0U3RHMmErS0NRczNjSnNXNkZqVmRTeHZUTTA0MjZEaW1LWEdHbFBTVlVl?=
- =?utf-8?B?VUpGd3Nyb3ZNTTBKMlhreGV6UmhNanZ1ZEVDZDc2RDFxazhaZDVESHpaY3Vw?=
- =?utf-8?B?WTUydjAxLzlmQ2VVVUR2OTFqcEJjU1dKU0RibUJYM1hWZWw0bmxQMHo5VTFR?=
- =?utf-8?B?UENQSy9NckcwSDRtQlZQaVV0VGJmbU96aE1GNnlHSjVRZHM2ZXRVa21PTktv?=
- =?utf-8?B?QkdCZngybWduVG55eW9WbTlYck5BbDludXpUb0N6VU1VVTNEWUFVMEZyUUM2?=
- =?utf-8?B?WllyZXBuV1FMeHhuMmxySGM1eVhtN1VCMGlqK0JVQjRYd29XVG1tVnhPeWc5?=
- =?utf-8?B?K0pnZG4rM2xvZm5tNHFaa0ltZkhBbktEdnVnd0tuRTFHdlBEakhLSTlaMjRz?=
- =?utf-8?B?cnF2bEVJUW9Db1V1WDk3UzFrSUxiWVBHazhDRnlVK1RqVUN1c1BBMy9BTVg0?=
- =?utf-8?B?eEZSNCszQVlBVVBTZlNaaHduZXVlYVZPekR3Nm1DVkRJNDEzWVdtTVlnR2xZ?=
- =?utf-8?B?WHJVMTI2UWV5RU5Od3MvR0txL2ZyL05SOEl3VVgwQzN6OGJkWllLYm9aNG9O?=
- =?utf-8?B?MGl3NkpYY2c3T0pvRVVKRW5IRU9YY3VGWWJPMzIybnpLM2Qwa2M2T0tuZjdC?=
- =?utf-8?B?eVM5SXFDUkJXdUo2L2dETnlpSFBvS3hLTkYxdHJBL3VRV0ZVSEhTS1UybUtL?=
- =?utf-8?B?WjIzVEhBSUJaM3RWa1BLWFlCQ2YwZDR5aEkvS2x4Q0xRWmFrTFRud0FZbkRW?=
- =?utf-8?B?RmV6eHg5ckRIN3dkOTFHb3A1SjZ2ZlM0dEcwZmRJSGNpcWR6N1lWUERpaFBZ?=
- =?utf-8?B?SWd6M01XSGV5M3B4SzRaR1QzM1VQMXlsYWF6VERyQUdZb2N6MkQ4Wm5XeUxp?=
- =?utf-8?B?NmVpWkpxcnNUbTNaa2RRaGRjWGhSR0grQURETmdxWW1xZkpaV0Z1RkNtZERH?=
- =?utf-8?B?TWNiNVJJOWU1cHN6NEI0OWpMaVM5SnNtemhodWJKQ1N0ZkVRYWlYUktybjRZ?=
- =?utf-8?B?WjdwNkR1YjZwNHBIeE4wZlg0WGRPTk1RMlcwcSt5d0lpWklZajVKbndBcFhB?=
- =?utf-8?B?ZGpiM3FOWnB2ejlxZWxMVXQweHBtd0s1Q0paY0gxaGo1M1BNSGFVYy94MTl3?=
- =?utf-8?B?M3hGUFQxTFh3eG96b2Ewb3hpRXRoMnpHMFZSTlM0cVZzeVMxOGZKU1ZGTVhq?=
- =?utf-8?B?cjNoZU5seHhtTU5aYmV0b0FOaFhZZWExWUZVY1hkblpWYWxpN2oxMCt2ajNL?=
- =?utf-8?B?SnRLazk1OXdBRWdYdnhwT2lVVURzVUJ4UnM4b3VZQjk3TCtENkZsQVJZK05U?=
- =?utf-8?Q?Vc+k=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cJUubSwQ"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45S4wLGG028111;
+	Fri, 28 Jun 2024 06:33:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=TdrgMjfEA3UbEPOJ4pvIezuJ
+	SWBOJDpU11yem8J7nec=; b=cJUubSwQJifl3Bfp5/pKnH3yrj7LopVymvxPeLaW
+	b/SRJPyChviElaFUb1n2EoTSV7W18ts/ohH4BRT+9bF18uCX0rrsxkl/AEoV9N6h
+	8ecMRPx3nMNSCv9AEmBw0SM+BeJGv5ds0EkEAgZdOGiys70LbbtA9/9KvLwxfKr1
+	EnDSp+PR43J8rfWXroPW2RI1DiNAcKlY4aH5TTVaZOBpGNidj1LEDCFeqiqMRniX
+	TcWLBlLwjmIVBiKk1QkvctKc36h8ET8NyayjLwhuqoTvJgsGvKVONJr2bLb845z/
+	Gvm3uIAeL0gCY1ifoRIrL346TZhHvbJe0wZcA3WaPeLK3A==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 401pm305gf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 28 Jun 2024 06:33:01 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45S6X0hF027827
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 28 Jun 2024 06:33:00 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 27 Jun 2024 23:32:53 -0700
+Date: Fri, 28 Jun 2024 12:02:48 +0530
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <angelogioacchino.delregno@collabora.com>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <ilia.lin@kernel.org>, <rafael@kernel.org>,
+        <viresh.kumar@linaro.org>, <ulf.hansson@linaro.org>,
+        <quic_sibis@quicinc.com>, <otto.pflueger@abscue.de>,
+        <neil.armstrong@linaro.org>, <luca@z3ntu.xyz>, <abel.vesa@linaro.org>,
+        <danila@jiaxyga.com>, <quic_ipkumar@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH v3 2/9] cpufreq: qcom-nvmem: Add genpd names to
+ match_data_kryo
+Message-ID: <Zn5ZEI1m4jImz/Wp@hu-varada-blr.qualcomm.com>
+References: <20240626104002.420535-1-quic_varada@quicinc.com>
+ <20240626104002.420535-3-quic_varada@quicinc.com>
+ <za7t6ltttq2o5qwahfrzftsb7xfzbzdtg4zx3bvnf3fewhfeqf@vjrq7na5ioqm>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AM6PR04MB5941.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9b3b9ed9-fedd-4a62-7b72-08dc973b8bda
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Jun 2024 06:28:38.4767
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 89MqxKYX5vd+mf9BP9UXGcGRbuAwmBtoiR7LG44I36cz5CgyfpVezpAErDWevVxXsK4uAgYBjRw0N4x5kEIjnQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB10625
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <za7t6ltttq2o5qwahfrzftsb7xfzbzdtg4zx3bvnf3fewhfeqf@vjrq7na5ioqm>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 4RFBM3tIvXlTgmaI6gxR1EeOUt3opYXj
+X-Proofpoint-GUID: 4RFBM3tIvXlTgmaI6gxR1EeOUt3opYXj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-28_02,2024-06-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ impostorscore=0 adultscore=0 phishscore=0 lowpriorityscore=0
+ malwarescore=0 priorityscore=1501 suspectscore=0 mlxscore=0 bulkscore=0
+ clxscore=1015 spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2406280046
 
-PiBTdWJqZWN0OiBSZTogW1BBVENIIDEvMl0gY2xrOiBpbXg5MzogRHJvcCBtYWNybyBJTVg5M19D
-TEtfRU5EDQo+IA0KPiBPbiAyOC8wNi8yMDI0IDAzOjE3LCBQZW5nIEZhbiB3cm90ZToNCj4gPj4g
-U3ViamVjdDogUmU6IFtQQVRDSCAxLzJdIGNsazogaW14OTM6IERyb3AgbWFjcm8gSU1YOTNfQ0xL
-X0VORA0KPiA+Pg0KPiA+PiBPbiAyNS8wNi8yMDI0IDEyOjQzLCBQZW5nZmVpIExpIHdyb3RlOg0K
-PiA+Pj4gT24gVHVlLCBKdW4gMjUsIDIwMjQgYXQgMDk6NDQ6NDJBTSArMDIwMCwgS3J6eXN6dG9m
-IEtvemxvd3NraQ0KPiA+PiB3cm90ZToNCj4gPj4+PiBPbiAyNS8wNi8yMDI0IDE5OjUxLCBQZW5n
-ZmVpIExpIHdyb3RlOg0KPiA+Pj4+PiBJTVg5M19DTEtfRU5EIHdhcyBwcmV2aW91c2x5IGRlZmlu
-ZWQgaW4gaW14OTMtY2xvY2suaCB0bw0KPiA+PiBpbmRpY2F0ZQ0KPiA+Pj4+PiB0aGUgbnVtYmVy
-IG9mIGNsb2NrcywgYnV0IGl0IGlzIG5vdCBwYXJ0IG9mIHRoZSBBQkksIHNvIGl0IHNob3VsZA0K
-PiA+Pj4+PiBiZSBkcm9wcGVkLg0KPiA+Pj4+Pg0KPiA+Pj4+PiBOb3csIHRoZSBkcml2ZXIgZ2V0
-cyB0aGUgbnVtYmVyIG9mIGNsa3MgYnkgcXVlcnlpbmcgdGhlDQo+IG1heGltdW0NCj4gPj4+Pj4g
-aW5kZXggaW4gdGhlIGNsayBhcnJheS4gRHVlIHRvIHRoZSBkaXNjb250aW51aXR5IGluIHRoZSBk
-ZWZpbml0aW9uDQo+ID4+Pj4+IG9mIGNsayBpbmRleCwgd2l0aCBzb21lIGdhcHMgcHJlc2VudCwg
-dGhlIHRvdGFsIGNvdW50IGNhbm5vdCBiZQ0KPiA+Pj4+PiBvYnRhaW5lZCBieSBzdW1taW5nIHRo
-ZSBhcnJheSBzaXplLg0KPiA+Pj4+Pg0KPiA+Pj4+PiBTaWduZWQtb2ZmLWJ5OiBQZW5nZmVpIExp
-IDxwZW5nZmVpLmxpXzFAbnhwLmNvbT4NCj4gPj4+Pj4gLS0tDQo+ID4+Pj4+ICBkcml2ZXJzL2Ns
-ay9pbXgvY2xrLWlteDkzLmMgfCAyNSArKysrKysrKysrKysrKysrKysrKystLS0tDQo+ID4+Pj4+
-ICAxIGZpbGUgY2hhbmdlZCwgMjEgaW5zZXJ0aW9ucygrKSwgNCBkZWxldGlvbnMoLSkNCj4gPj4+
-Pj4NCj4gPj4+Pj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvY2xrL2lteC9jbGstaW14OTMuYw0KPiA+
-Pj4+PiBiL2RyaXZlcnMvY2xrL2lteC9jbGstaW14OTMuYyBpbmRleA0KPiBjNmE5YmM4ZWNjMWYu
-LjY4YzkyOTUxMmUxNg0KPiA+Pj4+PiAxMDA2NDQNCj4gPj4+Pj4gLS0tIGEvZHJpdmVycy9jbGsv
-aW14L2Nsay1pbXg5My5jDQo+ID4+Pj4+ICsrKyBiL2RyaXZlcnMvY2xrL2lteC9jbGstaW14OTMu
-Yw0KPiA+Pj4+PiBAQCAtMjU3LDYgKzI1NywyMCBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IGlteDkz
-X2Nsa19jY2dyDQo+ID4+IHsgIHN0YXRpYw0KPiA+Pj4+PiBzdHJ1Y3QgY2xrX2h3X29uZWNlbGxf
-ZGF0YSAqY2xrX2h3X2RhdGE7ICBzdGF0aWMgc3RydWN0IGNsa19odw0KPiA+Pj4+PiAqKmNsa3M7
-DQo+ID4+Pj4+DQo+ID4+Pj4+ICtzdGF0aWMgaW50IGlteF9jbGtzX2dldF9udW0odm9pZCkgew0K
-PiA+Pj4+PiArCXUzMiB2YWwgPSAwOw0KPiA+Pj4+PiArCWludCBpOw0KPiA+Pj4+PiArDQo+ID4+
-Pj4+ICsJZm9yIChpID0gMDsgaSA8IEFSUkFZX1NJWkUocm9vdF9hcnJheSk7IGkrKykNCj4gPj4+
-Pj4gKwkJdmFsID0gbWF4X3QodTMyLCB2YWwsIHJvb3RfYXJyYXlbaV0uY2xrKTsNCj4gPj4+Pj4g
-Kw0KPiA+Pj4+PiArCWZvciAoaSA9IDA7IGkgPCBBUlJBWV9TSVpFKGNjZ3JfYXJyYXkpOyBpKysp
-DQo+ID4+Pj4+ICsJCXZhbCA9IG1heF90KHUzMiwgdmFsLCBjY2dyX2FycmF5W2ldLmNsayk7DQo+
-ID4+Pj4+ICsNCj4gPj4+Pj4gKwlyZXR1cm4gdmFsICsgMTsNCj4gPj4+Pj4gK30NCj4gPj4+Pj4g
-Kw0KPiA+Pj4+PiAgc3RhdGljIGludCBpbXg5M19jbG9ja3NfcHJvYmUoc3RydWN0IHBsYXRmb3Jt
-X2RldmljZSAqcGRldikgIHsNCj4gPj4+Pj4gIAlzdHJ1Y3QgZGV2aWNlICpkZXYgPSAmcGRldi0+
-ZGV2OyBAQCAtMjY0LDE0ICsyNzgsMTcgQEANCj4gc3RhdGljDQo+ID4+Pj4+IGludCBpbXg5M19j
-bG9ja3NfcHJvYmUoc3RydWN0DQo+ID4+IHBsYXRmb3JtX2RldmljZSAqcGRldikNCj4gPj4+Pj4g
-IAljb25zdCBzdHJ1Y3QgaW14OTNfY2xrX3Jvb3QgKnJvb3Q7DQo+ID4+Pj4+ICAJY29uc3Qgc3Ry
-dWN0IGlteDkzX2Nsa19jY2dyICpjY2dyOw0KPiA+Pj4+PiAgCXZvaWQgX19pb21lbSAqYmFzZSwg
-KmFuYXRvcF9iYXNlOw0KPiA+Pj4+PiArCWludCBjbGtzX251bTsNCj4gPj4+Pj4gIAlpbnQgaSwg
-cmV0Ow0KPiA+Pj4+Pg0KPiA+Pj4+PiArCWNsa3NfbnVtID0gaW14X2Nsa3NfZ2V0X251bSgpOw0K
-PiA+Pj4+PiArDQo+ID4+Pj4+ICAJY2xrX2h3X2RhdGEgPSBkZXZtX2t6YWxsb2MoZGV2LCBzdHJ1
-Y3Rfc2l6ZShjbGtfaHdfZGF0YSwNCj4gPj4gaHdzLA0KPiA+Pj4+PiAtCQkJCQkgIElNWDkzX0NM
-S19FTkQpLA0KPiA+PiBHRlBfS0VSTkVMKTsNCj4gPj4+Pj4gKwkJCQkJICBjbGtzX251bSksIEdG
-UF9LRVJORUwpOw0KPiA+Pj4+PiAgCWlmICghY2xrX2h3X2RhdGEpDQo+ID4+Pj4+ICAJCXJldHVy
-biAtRU5PTUVNOw0KPiA+Pj4+Pg0KPiA+Pj4+PiAtCWNsa19od19kYXRhLT5udW0gPSBJTVg5M19D
-TEtfRU5EOw0KPiA+Pj4+PiArCWNsa19od19kYXRhLT5udW0gPSBjbGtzX251bTsNCj4gPj4+Pg0K
-PiA+Pj4+IFdoeSBzbyBjb21wbGljYXRlZCBjb2RlIGluc3RlYWQgb2YgcHJlLXByb2Nlc3NvciBk
-ZWZpbmUgb3IgYXJyYXkNCj4gPj4gc2l6ZT8NCj4gPj4+Pg0KPiA+Pj4+IEJlc3QgcmVnYXJkcywN
-Cj4gPj4+PiBLcnp5c3p0b2YNCj4gPj4+Pg0KPiA+Pj4+DQo+ID4+Pg0KPiA+Pj4gSGkgS3J6eXN6
-dG9mLA0KPiA+Pj4NCj4gPj4+IFRoYW5rcyBmb3IgdGhlIGNvbW1lbnQsIGhlcmUgYXJlIHNvbWUg
-b2Ygb3VyIHRob3VnaHRzLg0KPiA+Pj4NCj4gPj4+IFJlZ2FyZGluZyB0aGUgcHJlZGVmaW5lZCBt
-ZXRob2QsIGl0J3MgZWFzeSB0byBmb3JnZXQgdG8gdXBkYXRlIHRoZQ0KPiA+Pj4gbWFjcm8gZGVm
-aW5pdGlvbiB3aGVuIGFkZGluZyBzb21lIG5ldyBjbG9ja3MgdG8gaW14OTMtY2xvY2suaCBpbg0K
-PiA+PiB0aGUgZnV0dXJlLg0KPiA+Pg0KPiA+PiBTb21laG93IG1vc3QgZGV2ZWxvcGVycyBpbiBt
-b3N0IHBsYXRmb3JtcyBjYW4gZG8gaXQuLi4gQW55d2F5LA0KPiB0aGF0DQo+ID4+IHdvdWxkIGJl
-IGJ1aWxkIHRpbWUgZGV0ZWN0YWJsZSBzbyBubyBwcm9ibGVtIGF0IGFsbC4NCj4gPj4NCj4gPj4+
-DQo+ID4+PiBBbHNvLCB3ZSBjYW5ub3QgdXNlIHRoZSBhcnJheSBzaXplIG1ldGhvZCBpbiB0aGlz
-IHNjZW5hcmlvLCBhcyBzb21lDQo+ID4+PiB1bm5lY2Vzc2FyeSBjbG9ja3MgaGF2ZSBiZWVuIHJl
-bW92ZWQgaW4gdGhlIHBhc3QsIHJlc3VsdGluZyBpbg0KPiA+Pj4gZGlzY29udGludW91cyBkZWZp
-bml0aW9ucyBvZiBjbG9jayBpbmRleGVzLiBUaGlzIG1lYW5zIHRoYXQgdGhlDQo+ID4+PiBtYXhp
-bXVtIGNsb2NrIGluZGV4IGNhbiBiZSBsYXJnZXIgdGhhbiB0aGUgYWxsb2NhdGVkIGNsa19odw0K
-PiBhcnJheQ0KPiA+PiBzaXplLiBBdCB0aGlzIHBvaW50LCB1c2luZyB0aGUgbWF4aW11bSBpbmRl
-eCB0byBhY2Nlc3MgdGhlIGNsa19odw0KPiA+PiBhcnJheSB3aWxsIHJlc3VsdCBpbiBhbiBvdXQg
-b2YgYm91bmRzIGVycm9yLg0KPiA+Pg0KPiA+PiBZb3UgbWl4IGJpbmRpbmdzIHdpdGggYXJyYXkg
-ZW50cmllcy4gVGhhdCdzIGluZGVwZW5kZW50IG9yIGp1c3QgY2xvY2sNCj4gPj4gZHJpdmVycyBh
-cmUgYnJva2VuLg0KPiA+DQo+ID4gQnV0IHRoZXJlIGlzIGlzc3VlIHRoYXQgYmluZGluZyB1cGRh
-dGUgYW5kIGNsb2NrIGRyaXZlciBhcmUgbm9ybWFsbHkNCj4gPiBpbiB0d28gcGF0Y2hlcy4gIFNv
-IGlmIGp1c3QgdXNlIHRoZSBJTVg5M19DTEtfRU5EIGluIHRoaXMgZmlsZSwgaXQNCj4gPiB3aWxs
-IGJlIGVhc3kgdG8gYnJlYWsgYGdpdCBiaXNlY3RgLg0KPiANCj4gVGhlcmUgaXMgbm8gaXNzdWUu
-IFNyc2x5LCB0aGlzIHdvdWxkIGJlIHRoZSBvbmx5LCBvbmx5IG9uZSBkcml2ZXIgaGF2aW5nDQo+
-IHRoYXQgaXNzdWUuDQo+IA0KPiBIb3cgaXMgdGhpcyBldmVuIHBvc3NpYmxlPyBIb3cgYWRkaW5n
-IG9uZSBuZXcgZGVmaW5lIGZvciBwcmUtDQo+IHByb2Nlc3NvciB3b3VsZCBjYXVzZSBkcml2ZXIg
-aXNzdWVzIG9yIHNvbWUgc29ydCBvZiBiaXNlY3RhYmlsaXR5DQo+IHByb2JsZW1zPw0KDQpBaCwg
-SSB3YXMgd3JvbmcsIEkganVzdCB0aG91Z2h0IGRyaXZlciB1cGRhdGUgaXMgYXBwbGllZCBmaXJz
-dC4NCg0KV2l0aCBiaW5kaW5nIHVwZGF0ZSBhcHBsaWVkIGZpcnN0LCB0aGVuIGRyaXZlciB1cGRh
-dGUgYXBwbGllZCwNCnRoZXJlIGlzIG5vIGlzc3VlLg0KDQpSZWdhcmRzLA0KUGVuZy4NCg0KPiAN
-Cj4gVGhlc2UgYXJlIGJhc2ljcyBvZiBDIHdlIHRhbGsgYWJvdXQgbm93Li4uDQo+IA0KPiBCZXN0
-IHJlZ2FyZHMsDQo+IEtyenlzenRvZg0KPiANCg0K
+On Wed, Jun 26, 2024 at 09:23:17PM +0300, Dmitry Baryshkov wrote:
+> On Wed, Jun 26, 2024 at 04:09:55PM GMT, Varadarajan Narayanan wrote:
+> > This is used for tying up the cpu@N nodes with the power domains.
+> > Without this, 'cat /sys/kernel/debug/qcom_cpr3/thread0'
+> > crashes with NULL pointer access.
+>
+> Add the interesting part of the backtrace, please.
+
+        if (thread->drv->desc->cpr_type < CTRL_TYPE_CPRH) {
+                seq_printf(s, "current_volt = %d uV\n", thread->drv->last_uV);
+                seq_printf(s, "requested voltage: %d uV\n", thread->corner->last_uV);
+        }
+
+thread->corner is NULL in the second printf above.
+
+	# cat /sys/kernel/debug/qcom_cpr3/thread0
+	[   16.965241] Unable to handle kernel NULL pointer dereference at virtual address 000000000000000c
+	[   16.965270] Mem abort info:
+	[   16.973181]   ESR = 0x0000000096000004
+	[   16.975607]   EC = 0x25: DABT (current EL), IL = 32 bits
+	[   16.979425]   SET = 0, FnV = 0
+	[   16.984889]   EA = 0, S1PTW = 0
+	[   16.987756]   FSC = 0x04: level 0 translation fault
+	[   16.990792] Data abort info:
+	[   16.995652]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+	[   16.998779]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+	[   17.004074]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+	[   17.009196] user pgtable: 4k pages, 48-bit VAs, pgdp=00000000481b1000
+	[   17.014579] [000000000000000c] pgd=0000000000000000, p4d=0000000000000000
+	[   17.020919] Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
+	[   17.020921] Modules linked in:
+	[   17.020926] CPU: 0 UID: 0 PID: 118 Comm: cat Not tainted 6.10.0-rc4-next-20240620-00020-g125eb3184fc1-dirty #9
+	[   17.020931] Hardware name: Qualcomm Technologies, Inc. IPQ9574/AP-AL02-C7 (DT)
+	[   17.020933] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+	[   17.020936] pc : cpr3_debug_info_show+0x3a0/0x3ac
+	[   17.020945] lr : cpr3_debug_info_show+0x390/0x3ac
+	[   17.020948] sp : ffff800086293b90
+	[   17.020949] x29: ffff800086293b90 x28: ffff0000034ae038 x27: 0000000000400cc0
+	[   17.020953] x26: 000000007ffff000 x25: ffff0000034ae028 x24: 0000000000000000
+	[   17.020957] x23: ffff800086293c80 x22: ffff000002399880 x21: ffff000002a8fa80
+	[   17.020960] x20: ffff0000034ae000 x19: 0000000000000000 x18: ffffffffffffffff
+	[   17.020964] x17: 0000000000000000 x16: 0000000000000000 x15: ffff800086293a40
+	[   17.020967] x14: ffff000002913000 x13: ffff00000291200f x12: 0000000000000000
+	[   17.020970] x11: 0000000000000000 x10: 0000000000000000 x9 : ffff0000034a9000
+	[   17.020973] x8 : 000000000a567520 x7 : 0000000000000001 x6 : 000000000a567520
+	[   17.020976] x5 : ffff000002912014 x4 : ffff800080e1f3a5 x3 : 0000000000000014
+	[   17.020979] x2 : 0000000000000000 x1 : ffff800080e1f848 x0 : ffff0000034ae000
+	[   17.020983] Call trace:
+	[   17.020984]  cpr3_debug_info_show+0x3a0/0x3ac
+	[   17.020987]  seq_read_iter+0xe0/0x45c
+	[   17.020993]  seq_read+0xec/0x130
+	[   17.020996]  full_proxy_read+0x60/0xb4
+	[   17.020999]  vfs_read+0xc0/0x31c
+	[   17.021003]  ksys_read+0x70/0x104
+	[   17.021006]  __arm64_sys_read+0x1c/0x28
+	[   17.021008]  invoke_syscall+0x48/0x114
+	[   17.021014]  el0_svc_common+0x3c/0xe8
+	[   17.021017]  do_el0_svc+0x20/0x2c
+	[   17.021020]  el0_svc+0x34/0xd8
+	[   17.021024]  el0t_64_sync_handler+0x120/0x12c
+	[   17.021027]  el0t_64_sync+0x190/0x194
+	[   17.021031] Code: f94012c2 aa1403e0 b0004701 91212021 (b9400c42)
+	[   17.021033] ---[ end trace 0000000000000000 ]---
+	Segmentation fault
+
+> > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> > ---
+> >  drivers/cpufreq/qcom-cpufreq-nvmem.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/drivers/cpufreq/qcom-cpufreq-nvmem.c b/drivers/cpufreq/qcom-cpufreq-nvmem.c
+> > index 939702dfa73f..5e6525c7788c 100644
+> > --- a/drivers/cpufreq/qcom-cpufreq-nvmem.c
+> > +++ b/drivers/cpufreq/qcom-cpufreq-nvmem.c
+> > @@ -399,6 +399,7 @@ static const char *generic_genpd_names[] = { "perf", NULL };
+> >
+> >  static const struct qcom_cpufreq_match_data match_data_kryo = {
+> >  	.get_version = qcom_cpufreq_kryo_name_version,
+> > +	.genpd_names = generic_genpd_names,
+>
+> This forces that every Kryo SoC has "perf" genpd, which obviously isn't
+> corret (at least from the upstream support point of view).
+
+While trying to get the above backtrace, randomly during boot
+I see the following BUG too.
+
+	[    1.562847] ------------[ cut here ]------------
+	[    1.574342] kernel BUG at drivers/cpufreq/cpufreq.c:1542!
+	[    1.579203] Internal error: Oops - BUG: 00000000f2000800 [#1] PREEMPT SMP
+	[    1.579209] Modules linked in:
+	[    1.579217] CPU: 2 UID: 0 PID: 11 Comm: kworker/u16:0 Not tainted 6.10.0-rc4-next-20240620-00020-g125eb3184fc1-dirty #10
+	[    1.579227] Hardware name: Qualcomm Technologies, Inc. IPQ9574/AP-AL02-C7 (DT)
+	[    1.579232] Workqueue: events_unbound deferred_probe_work_func
+	[    1.579249] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+	[    1.579257] pc : cpufreq_online+0x938/0x954
+	[    1.579271] lr : cpufreq_online+0x788/0x954
+	[    1.579281] sp : ffff8000817c3520
+	[    1.579283] x29: ffff8000817c3520 x28: ffff0000029efa50 x27: 0000000000000001
+	[    1.579294] x26: 0000000000000001 x25: ffff8000814d8da0 x24: 0000000000000000
+	[    1.579303] x23: ffff0000029ef9d0 x22: ffff800081735000 x21: 0000000000000000
+	[    1.579312] x20: 00000000000c15c0 x19: ffff0000029ef800 x18: ffff00000183481c
+	[    1.579321] x17: ffff8000818a3638 x16: 0000000000000000 x15: ffff8000818a3670
+	[    1.579330] x14: 0000000000000003 x13: ffff00000192b140 x12: ffff8000814d8c58
+	[    1.579338] x11: ffff00000192b140 x10: 00000000000009b0 x9 : ffff8000817c3240
+	[    1.579347] x8 : ffff00000192bad0 x7 : 0000000000000001 x6 : ffff8000814d8da0
+	[    1.579355] x5 : ffff8000812c32d0 x4 : 0000000000000000 x3 : 0000000000000000
+	[    1.579363] x2 : 0000000000000000 x1 : 0000000000000000 x0 : 00000000fffffff0
+	[    1.579372] Call trace:
+	[    1.579375]  cpufreq_online+0x938/0x954
+	[    1.579386]  cpufreq_add_dev+0x80/0x98
+	[    1.579395]  subsys_interface_register+0x100/0x130
+	[    1.579404]  cpufreq_register_driver+0x150/0x244
+	[    1.579413]  dt_cpufreq_probe+0x8c/0x440
+	[    1.579420]  platform_probe+0x68/0xc8
+	[    1.579430]  really_probe+0xbc/0x29c
+	[    1.579438]  __driver_probe_device+0x78/0x12c
+	[    1.579446]  driver_probe_device+0xd8/0x15c
+	[    1.579454]  __device_attach_driver+0xb8/0x134
+	[    1.579463]  bus_for_each_drv+0x84/0xe0
+	[    1.579470]  __device_attach+0x9c/0x188
+	[    1.579478]  device_initial_probe+0x14/0x20
+	[    1.579487]  bus_probe_device+0xac/0xb0
+	[    1.579494]  device_add+0x55c/0x720
+	[    1.579500]  platform_device_add+0x1b8/0x244
+	[    1.579510]  platform_device_register_full+0xfc/0x184
+	[    1.579516]  platform_device_register_resndata.constprop.0+0x5c/0x8c
+	[    1.579524]  qcom_cpufreq_probe+0x1e4/0x498
+	[    1.579531]  platform_probe+0x68/0xc8
+	[    1.579540]  really_probe+0xbc/0x29c
+	[    1.579548]  __driver_probe_device+0x78/0x12c
+	[    1.579556]  driver_probe_device+0xd8/0x15c
+	[    1.579564]  __device_attach_driver+0xb8/0x134
+	[    1.579573]  bus_for_each_drv+0x84/0xe0
+	[    1.579580]  __device_attach+0x9c/0x188
+	[    1.579588]  device_initial_probe+0x14/0x20
+	[    1.579596]  bus_probe_device+0xac/0xb0
+	[    1.579603]  deferred_probe_work_func+0x88/0xc0
+	[    1.579611]  process_one_work+0x148/0x28c
+	[    1.579623]  worker_thread+0x2e8/0x3f8
+	[    1.579633]  kthread+0x110/0x114
+	[    1.579641]  ret_from_fork+0x10/0x20
+	[    1.579653] Code: aa1703e0 52800021 97e38ed5 17ffffea (d4210000)
+	[    1.579657] ---[ end trace 0000000000000000 ]---
+	[    1.851078] note: kworker/u16:0[11] exited with irqs disabled
+	[    1.855791] note: kworker/u16:0[11] exited with preempt_count 1
+	[    1.861586] ------------[ cut here ]------------
+
+Randomly, the following call seems to return -EBUSY causing
+the above BUG().
+
+	ret = __cpufreq_driver_target(policy, old_freq - 1,
+				      CPUFREQ_RELATION_L);
+
+	/*
+	 * Reaching here after boot in a few seconds may not
+	 * mean that system will remain stable at "unknown"
+	 * frequency for longer duration. Hence, a BUG_ON().
+	 */
+	BUG_ON(ret);
+
+Not sure why this does not happen in every boot, and how it
+is tied to genpd_names. Will debug and update.
+
+Thanks
+Varada
+
+> >  };
+> >
+> >  static const struct qcom_cpufreq_match_data match_data_krait = {
+> > --
+> > 2.34.1
+> >
+>
+> --
+> With best wishes
+> Dmitry
