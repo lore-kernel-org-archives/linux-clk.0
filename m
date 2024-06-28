@@ -1,59 +1,59 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F6C21103
-	for <linux-clk@vger.kernel.org>; Fri, 28 Jun 2024 10:06:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32BC514A60A
+	for <linux-clk@vger.kernel.org>; Fri, 28 Jun 2024 10:25:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719569202; cv=none; b=Csg0mDDK1UFvIeYUduoSOtWhwQqIgDkIgxDCk6D+bIP2cE2DxpYHnc605bmXzLRXUYl027WajYjv6KNJ8MfZ3Wm+hA9/ccfhpfQiKrEf0yHTV6ZMUrbLFe6oR48ruIvRxOE6wA3BKWoAME6dKwpgs6KDb6wL0qHTLzzs9wUR29s=
+	t=1719570308; cv=none; b=FBc7es4Z3rzCudR0MzrSNV5Wby6IbKg/H4i/kdateE+dvwfPtLAAzkDF1YREo1kBI9hszFGNyia5TxjbOk1CzfwQ8iFmL0nBSxYBXQHbH6pWpietS6hgs9DCUjBbfJwDGSXRPs98d33uqFQu7hbUvafP+vXDosNHHa+4gmSikmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719569202; c=relaxed/simple;
-	bh=554rv7ILaI0W5+ES2xN0Mj80VLudjNToHmaWVUKUFz4=;
+	s=arc-20240116; t=1719570308; c=relaxed/simple;
+	bh=MVyx2NMoaPvHZCjJ1KTjnoPDy9zuh97wN1Tq2drBNvs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MdLzcif0O4Vr22syWtdseFdpAYIGBwYwBMrbQStHHSQV6wvl5BH9vE6KbTZojdjob4znbqepzWVXxEqQHl5sCdPAe434/zauKBE8oluAYrpI1tyMB1F+RSEBOxa/rvOu/eDzLa/kgluJ6X8Wj1YO4hSuXKSAKUqJ3fqN7bXsMX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=m6x7R2n8; arc=none smtp.client-ip=209.85.221.54
+	 In-Reply-To:Content-Type; b=QSZdb5/RsIXe7k5rA+xtrlGM5hyepeqL0PtGxL+0XA3u1cuj600h3JJ9Yz6otKqWpl8cYrvfBEniH/k+xIQPV/wfcDSd8HzWzqxBXZruNcrw1Mio+AxL1/lXjmNN9h5/SJjMZj2pZmZnQ1BfqBaax/RrVZglHAzdBU/xoqPgFKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=QOIo8kNK; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="m6x7R2n8"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-36733f09305so239085f8f.3
-        for <linux-clk@vger.kernel.org>; Fri, 28 Jun 2024 03:06:39 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="QOIo8kNK"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-424ad289949so3488215e9.2
+        for <linux-clk@vger.kernel.org>; Fri, 28 Jun 2024 03:25:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1719569198; x=1720173998; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1719570305; x=1720175105; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=Gw70QDn056qg7oaUBIoXRrI2jVe7rzNbyDJqb6JO4Ps=;
-        b=m6x7R2n8KIQTb7E7G7PRldpCYcSX+Zgvw20dJ7WyxbgnOYGrfNUKvVqtcVlx9PNZ3/
-         JSsFprpTW6RZiboUg46iY4+9E7Y/GJGH2+2765BmtKBIdssyrSSDWjNWEswV/v/gZDA8
-         Kjnaj72I9p7nqh859DQXGD36jf4vrCPrT5XJgH5zYFBvF5m2uDAMkBGMB7wGLvIEYoE7
-         929QJzNgJFjeOs4BORXS0E7CUsK3fwVILFTiCG4ar9BgSaWIXMfiskxiM/yFeh1SGagd
-         nrM//NtXdQZcPY16w18lOq7i3qljeMvy1XtJ3LE6W4PMeLLknhMlhb7Ie1Wp5yNQ3IRo
-         BUEg==
+        bh=Nx+ADCri5fDjbQqI/n1BCN4tgTo26I/0S6XiQblv+fE=;
+        b=QOIo8kNKjOXfcLyvqzGniNagnIzAh5pB+Dm22li7mP+r7r1lgCQUD4tyIm4YE8TlKW
+         lYp7DKP0TnhTIOtzm6MxN56cQVsLwfApCBCtf6BW5Hi9hCM7KG98coMPdSDwdN1fTiSM
+         HPEphyYCsdPksBvoJjB7tkyzPZRacYsDLe9DYNTAkrIrLo9aje03dEqyckO5wC9iir51
+         WOXpoFcpnQykJ3rXt/gbX3v6vuGcI3Ka/SNEWCb62BCujmSfUtnBagzbiQNiuBPq3T/9
+         wFgV9dgW91JbRt8ZNJZBznGJ53xYqulx8Bi5bLyiKzFo5aruTh99vTtPKfCNeZkVVAJF
+         C5tQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719569198; x=1720173998;
+        d=1e100.net; s=20230601; t=1719570305; x=1720175105;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Gw70QDn056qg7oaUBIoXRrI2jVe7rzNbyDJqb6JO4Ps=;
-        b=HhfZbzcVv9Ulj/Nhq2vp8+Eg4dHh7kjKSX9TYpqsCZ/w1r+nW7Rk9PlkDmlJus0CzK
-         /8URM33jjbBlvF4oyCYJuFNbrjLmeZHirxHvV08ZLXR+xu7W8h4KXmLSVYMhu5Z0NlWe
-         ePBzArpxFGdTi8oCjXsnaDOvBooz9uCS5A7EdqLZvj29VdWQxwJ4eMP9ccA9+p/UabOb
-         /BD5weTbe8BPqYPAqk7lyZiLzMzYBz2MPv3H8Ycqnc7RSZo4Pt6lSDm6NMONboI26VFo
-         H/deuRrj66CuF8Ad2tScK+WD+8JOAUnrcnjkeXcMd8aJqMDA7DnfW9hWJZaBaK4VoSA+
-         CFqA==
-X-Forwarded-Encrypted: i=1; AJvYcCXrO7RJjQYtkYwxIq/6TkDoz0Lp0NqB52VpMlzG2Qmw8mM1vL7lRIyDHRENtjh2dXANr4LV8E2+L2rNebSWyNVZeEa/LkCrBfX4
-X-Gm-Message-State: AOJu0YzkKPbPqTSQqpR6BypuXHv1H4WJeTEDARf8ia+7NfY2bTZhDiOQ
-	Zn0OJURS5WL0u5QEaCA2Imnwloye1hlK5tXmBeACIjsJ2Q2eh5rasp4evzHdJ4o=
-X-Google-Smtp-Source: AGHT+IG/cTqSbLLJarU954uRr4h4rooJb5GMdKHqFk3VcZ04Ym71tvdsyg6BUa/QaZ22pRgr5ASXug==
-X-Received: by 2002:a05:6000:184f:b0:366:ee84:6a79 with SMTP id ffacd0b85a97d-366ee846c15mr14725435f8f.51.1719569197705;
-        Fri, 28 Jun 2024 03:06:37 -0700 (PDT)
+        bh=Nx+ADCri5fDjbQqI/n1BCN4tgTo26I/0S6XiQblv+fE=;
+        b=Tk0Ot6f+9FtZXIke0pAWSoEWW/0ZUoLEeRAtSNLjRi3hly+MzJDhgTjdv+PjhKc7Lj
+         nKG6rWqxk0B4FWRMtehsWrbiX7jtukdgzdI//BkAr9qKUBSnXYJYhBa5ntrz0tncTrZB
+         WGxKh4sv/OXpl60Px77Yeevvmb03+VZeCZm0T9Vl5eSOaZViNSmaQHBcv8KZIosnecvB
+         c2XSg+AehHkbM6F4w9a2KX0lMncr3eIMHhm2qtY/U4/XXsBqidXM6diRS/Nlo+HYPnXa
+         xhfHqeHyQOF0YNrzbI2X26AjruNH/cOhjkB/CPI4uqH7slx2xjuOXH2iI5babble0JDv
+         6VIg==
+X-Forwarded-Encrypted: i=1; AJvYcCVt/jVdLEUv79Cq5JrSgkVQljaq1GvlhwrsI4kvCbK0sZ8448xhtI8X0WRVV5L8zzuyoQtJsrr9RXYL3QdNVJmBpsS23Fz1rSmc
+X-Gm-Message-State: AOJu0Yxnb3pM/vbZ1HHqbXqCdRYKylRGxqAP1Noi18q87ih6wVlHqQmf
+	x4LqXzkRKjUbkRClawD0oEEYQjlu/GIk6WRrCmiEpv6BthEVMbPyqLVIdapIVhk=
+X-Google-Smtp-Source: AGHT+IGUDm5010syq/xgTlajOkXN6zAoeyuTKEY0ravbOpM9vA1f4/yUpyZq5hWbTISTc4r4z0fWqA==
+X-Received: by 2002:a05:600c:3016:b0:424:a721:1d0f with SMTP id 5b1f17b1804b1-424a7211e6bmr61113515e9.29.1719570304552;
+        Fri, 28 Jun 2024 03:25:04 -0700 (PDT)
 Received: from [192.168.50.4] ([82.78.167.70])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0fb950sm1758171f8f.83.2024.06.28.03.06.35
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4249b133b44sm89189805e9.0.2024.06.28.03.25.02
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Jun 2024 03:06:37 -0700 (PDT)
-Message-ID: <89b7f219-8e22-408d-b49f-c69f59377b88@tuxon.dev>
-Date: Fri, 28 Jun 2024 13:06:35 +0300
+        Fri, 28 Jun 2024 03:25:04 -0700 (PDT)
+Message-ID: <20ff64a8-e619-4281-894f-1aa08ea67f18@tuxon.dev>
+Date: Fri, 28 Jun 2024 13:25:02 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -61,73 +61,174 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 09/12] i2c: riic: Add support for fast mode plus
+Subject: Re: [PATCH v2 07/12] i2c: riic: Define individual arrays to describe
+ the register offsets
 Content-Language: en-US
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: chris.brandt@renesas.com, andi.shyti@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com,
- mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
- wsa+renesas@sang-engineering.com, linux-renesas-soc@vger.kernel.org,
- linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+ Chris Brandt <Chris.Brandt@renesas.com>,
+ "andi.shyti@kernel.org" <andi.shyti@kernel.org>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "geert+renesas@glider.be" <geert+renesas@glider.be>,
+ "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "sboyd@kernel.org" <sboyd@kernel.org>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>
+Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
  Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 References: <20240625121358.590547-1-claudiu.beznea.uj@bp.renesas.com>
- <20240625121358.590547-10-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdX4hWou9OtdE8XgU7-U0ghJ6vk2kVqgT90U0ZjsxzR5DA@mail.gmail.com>
+ <20240625121358.590547-8-claudiu.beznea.uj@bp.renesas.com>
+ <TY3PR01MB11346EF9A001F68162148B70F86D02@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <6289f329-118f-4970-a525-75c3a48bd28b@tuxon.dev>
+ <TY3PR01MB1134603F92C72D9B6C6C3733C86D02@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <2f162986-33c5-4d80-958c-4f857adaad20@tuxon.dev>
+ <TY3PR01MB11346CA73575CF61B2024F3B386D02@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <79c26030-4b92-4ef3-b8ce-d011f492161b@tuxon.dev>
+ <TY3PR01MB11346A2DFBD7FE81337A748D386D02@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <CAMuHMdX4hWou9OtdE8XgU7-U0ghJ6vk2kVqgT90U0ZjsxzR5DA@mail.gmail.com>
+In-Reply-To: <TY3PR01MB11346A2DFBD7FE81337A748D386D02@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
 
 
-On 28.06.2024 12:22, Geert Uytterhoeven wrote:
+On 28.06.2024 11:24, Biju Das wrote:
 > Hi Claudiu,
 > 
-> On Tue, Jun 25, 2024 at 2:14 PM Claudiu <claudiu.beznea@tuxon.dev> wrote:
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>> -----Original Message-----
+>> From: claudiu beznea <claudiu.beznea@tuxon.dev>
+>> Sent: Friday, June 28, 2024 9:13 AM
+>> Subject: Re: [PATCH v2 07/12] i2c: riic: Define individual arrays to describe the register offsets
 >>
->> Fast mode plus is available on most of the IP variants that RIIC driver
->> is working with. The exception is (according to HW manuals of the SoCs
->> where this IP is available) the Renesas RZ/A1H. For this, patch
->> introduces the struct riic_of_data::fast_mode_plus.
 >>
->> Fast mode plus was tested on RZ/G3S, RZ/G2{L,UL,LC}, RZ/Five by
->> instantiating the RIIC frequency to 1MHz and issuing i2c reads on the
->> fast mode plus capable devices (and the i2c clock frequency was checked on
->> RZ/G3S).
 >>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>> On 28.06.2024 11:09, Biju Das wrote:
+>>>
+>>> Hi Claudiu,
+>>>
+>>>> -----Original Message-----
+>>>> From: claudiu beznea <claudiu.beznea@tuxon.dev>
+>>>> Sent: Friday, June 28, 2024 9:03 AM
+>>>> Subject: Re: [PATCH v2 07/12] i2c: riic: Define individual arrays to
+>>>> describe the register offsets
+>>>>
+>>>>
+>>>>
+>>>> On 28.06.2024 10:55, Biju Das wrote:
+>>>>> Hi Claudiu,
+>>>>>
+>>>>>> -----Original Message-----
+>>>>>> From: claudiu beznea <claudiu.beznea@tuxon.dev>
+>>>>>> Sent: Friday, June 28, 2024 8:32 AM
+>>>>>> Subject: Re: [PATCH v2 07/12] i2c: riic: Define individual arrays
+>>>>>> to describe the register offsets
+>>>>>>
+>>>>>> Hi, Biju,
+>>>>>>
+>>>>>> On 28.06.2024 08:59, Biju Das wrote:
+>>>>>>> Hi Claudiu,
+>>>>>>>
+>>>>>>>> -----Original Message-----
+>>>>>>>> From: Claudiu <claudiu.beznea@tuxon.dev>
+>>>>>>>> Sent: Tuesday, June 25, 2024 1:14 PM
+>>>>>>>> Subject: [PATCH v2 07/12] i2c: riic: Define individual arrays to
+>>>>>>>> describe the register offsets
+>>>>>>>>
+>>>>>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>>>>>>
+>>>>>>>> Define individual arrays to describe the register offsets. In
+>>>>>>>> this way we can describe different IP variants that share the
+>>>>>>>> same register offsets but have differences in other characteristics.
+>>>>>>>> Commit prepares for the addition
+>>>>>> of fast mode plus.
+>>>>>>>>
+>>>>>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>>>>>> ---
+>>>>>>>>
+>>>>>>>> Changes in v2:
+>>>>>>>> - none
+>>>>>>>>
+>>>>>>>>  drivers/i2c/busses/i2c-riic.c | 58
+>>>>>>>> +++++++++++++++++++----------------
+>>>>>>>>  1 file changed, 31 insertions(+), 27 deletions(-)
+>>>>>>>>
+>>>>>>>> diff --git a/drivers/i2c/busses/i2c-riic.c
+>>>>>>>> b/drivers/i2c/busses/i2c-riic.c index
+>>>>>>>> 9fe007609076..8ffbead95492 100644
+>>>>>>>> --- a/drivers/i2c/busses/i2c-riic.c
+>>>>>>>> +++ b/drivers/i2c/busses/i2c-riic.c
+>>>>>>>> @@ -91,7 +91,7 @@ enum riic_reg_list {  };
+>>>>>>>>
+>>>>>>>>  struct riic_of_data {
+>>>>>>>> -	u8 regs[RIIC_REG_END];
+>>>>>>>> +	const u8 *regs;
+>>>>>>>
+>>>>>>>
+>>>>>>> Since you are touching this part, can we drop struct and Use u8*
+>>>>>>> as device_data instead?
+>>>>>>
+>>>>>> Patch 09/12 "i2c: riic: Add support for fast mode plus" adds a new
+>>>>>> member to struct
+>>>> riic_of_data.
+>>>>>> That new member is needed to differentiate b/w hardware versions
+>>>>>> supporting fast mode plus based on compatible.
+>>>>>
+>>>>> Are we sure RZ/A does not support fast mode plus?
+>>>>
+>>>> From commit description of patch 09/12:
+>>>>
+>>>> Fast mode plus is available on most of the IP variants that RIIC
+>>>> driver is working with. The exception is (according to HW manuals of the SoCs where this IP is
+>> available) the Renesas RZ/A1H.
+>>>> For this, patch introduces the struct riic_of_data::fast_mode_plus.
+>>>>
+>>>> I checked the manuals of all the SoCs where this driver is used.
+>>>>
+>>>> I haven't checked the H/W manual?
+>>>>
+>>>> On the manual I've downloaded from Renesas web site the FMPE bit of
+>>>> RIICnFER is not available on RZ/A1H.
+>>>
+>>> I just found RZ/A2M manual, it supports FMP and register layout looks similar to RZ/G2L.
+>>
+>> I introduced struct riic_of_data::fast_mode_plus because of RZ/A1H.
 > 
-> Thanks for your patch!
+> Maybe make the register layout as per SoC
 > 
->> --- a/drivers/i2c/busses/i2c-riic.c
->> +++ b/drivers/i2c/busses/i2c-riic.c
->> @@ -407,6 +413,9 @@ static int riic_init_hw(struct riic_dev *riic)
->>         riic_writeb(riic, 0, RIIC_ICSER);
->>         riic_writeb(riic, ICMR3_ACKWP | ICMR3_RDRFS, RIIC_ICMR3);
->>
->> +       if (info->fast_mode_plus && t->bus_freq_hz == I2C_MAX_FAST_MODE_PLUS_FREQ)
->> +               riic_clear_set_bit(riic, 0, ICFER_FMPE, RIIC_ICFER);
-> 
-> Unless FM+ is specified, RIIC_ICFER is never written to.
-> Probably the register should always be initialized, also to make sure
-> the FMPE bit is cleared when it was set by the boot loader, but FM+
-> is not to be used.
+> RZ/A1 --> &riic_rz_a_info
+> RZ/A2 and RZ/{G2L,G2LC,V2L,G2UL,FIVE} --> &riic_rz_g2_info
+> RZ/G3S and RZ/V2H --> &riic_rz_v2h_info
 
-OK, that's a good point.
+Sorry, but I don't understand. Patch 09/12 already does that but a bit
+differently:
+
+RZ/{G2L, G2LC, G2UL, V2L, FIVE} -> riic_rz_g2_info
+RZ/G3S and RZ/V2H -> riic_rz_v2h_info
+Everything else: riic_rz_a_info
+
+I don't have anything at hand to test the "everything else" thus I enabled
+it for RZ/{G2L, G2LC, G2UL, V2L, FIVE}, RZ/G3S and RZ/V2H.
+
+> 
+> Then except RZ/A1, set FMP. 
+
+I cannot test all these.
+
+> 
+> Currently register layout of RZ/A2 is not matching with
+> Hardware manual.
+
+I cannot test this either. Also, I think this is not the purpose of this
+series.
 
 Thank you,
 Claudiu Beznea
 
 > 
-> 
->> +
->>         riic_clear_set_bit(riic, ICCR1_IICRST, 0, RIIC_ICCR1);
->>
->>         pm_runtime_mark_last_busy(dev);
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
+> Cheers,
+> Biju
