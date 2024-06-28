@@ -1,219 +1,134 @@
-Received: from fout1-smtp.messagingengine.com (fout1-smtp.messagingengine.com [103.168.172.144])
+Received: from nbd.name (nbd.name [46.4.11.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49A967710F;
-	Fri, 28 Jun 2024 19:34:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4CC3757ED;
+	Fri, 28 Jun 2024 19:58:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.4.11.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719603275; cv=none; b=FwJHcXlIOiPRCAlknDM/73kDVdc7fkVaCdR/pmS4JIHn7wUIA4V5o3QUrgBfbKfvRWc0lk9x8WJRb2thfu79y7s9FxNN+qL/KB7KFxXuMJa3E2t8u2z8dBPcIOZHz28frg8YoJJwuSqefSweB6D3dI8lvi/Oln36E7nR1fyByCQ=
+	t=1719604698; cv=none; b=CtR0aHEnnAvDUwWN2B33jQDzjz1s9uJ1R7fixmQnxL25oqgkc3kWjJPmee3RVgtVKwgmFWC9JgeppjfpzG07u8KhyHp9mha0g7U+zsg0lyU8Y5MFyVMd+pCnqpS1AY0ErpDKNPmC54jIuGGxvYQR8wn7lkqZBQUfrYSy4wl7CKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719603275; c=relaxed/simple;
-	bh=AFMoDQdX7hn6J12nDvb9s2bIzDWeTMdWUsM9YsorTJQ=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=APxiBL+Zc7EBnaXRW4S7LkLuaEIIZCtQIhqpxOoKhQn76UZJfM+NzK9EpiAS1MkEX2/yQWWosItgDu0h8CXhM+FGricJBDZfR3JDKwJAMGH/cpHCive8c6hXtBvte42ckOO0QRC649ci3T9xEFqZ3XobPvNLoLLUoNIaAfosMR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=XYTSJiQw; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=XUwSc8lz; arc=none smtp.client-ip=103.168.172.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+	s=arc-20240116; t=1719604698; c=relaxed/simple;
+	bh=HC7XejqTSDq8JmmZQR6kTmlT6s38ElC7/BJdCkeCDoE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pd+eMU6yI2kMyGN1wq/X/REyUhONtdlgr+Q1QLa6UrXejTKPvxKrvyK9r5yNNkT9v2vB4XfQ7JGVNO3Rt9WpDJaqp45jC/4FuTJS5mE64UXB8I5a6crM0y6MtPTRMxZcA4xG16I4L/30n6kX70CShKIrgeQDDkUa7xezb+ouybs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name; spf=none smtp.mailfrom=nbd.name; dkim=pass (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b=POcrKtHK; arc=none smtp.client-ip=46.4.11.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nbd.name
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nbd.name
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="XYTSJiQw";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="XUwSc8lz"
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 36D3F13802A7;
-	Fri, 28 Jun 2024 15:34:32 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Fri, 28 Jun 2024 15:34:32 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm1; t=1719603272; x=1719689672; bh=Wxu9sEJ1TD
-	kI5LBy6kIUfNj65JHyIWj4yuKsUbp66t8=; b=XYTSJiQw2dIYD2vwjt+lihbq+v
-	Dwx4pnN4pLkywVzOgqLgBViSvNo7mji6p/ddP/PY04kxkIUgYOLpbtbNHp5vOoyA
-	0n5oHJ3PbCduekFH6IlOr9uB5a5TSsmSJvf691C4BMBWbF/0Hc+XPIn4Xq2WN/sm
-	c0qhU1k/IuPp4jwRQBourv/BcktlbC4/U885m+LZyXSszG4410Wz4lLgwrizoydy
-	SiT2W3IHih7YRGt1JjDO9RHVlFfTo/jODB/Svh3+Y6YZ79JC5WpURbyApB7qNSz1
-	ZCf9VSjgB9psp4WjC3ECf7zzXc71M2H5/ZI7O3VkYCpyjmnnyIMf+8osF2+Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1719603272; x=1719689672; bh=Wxu9sEJ1TDkI5LBy6kIUfNj65JHy
-	IWj4yuKsUbp66t8=; b=XUwSc8lzOMy/aZr13G+qyB8U0OO4/Eg8O0DE93ZBeqQE
-	YlHWzfUSqviEB7SpDpQkASIaqOypPBDkAMkJfTreW5wQuIEKWy2TfvKlRHT9M+g+
-	n46zUlEgSB1JbjyMT6LtYm/W0AxWOphV1P2npA46isXxTI1TF3DmXU+9zd9qnRWV
-	/jj3wcPIFsTlZsxblhNWSAfVNBBKLPOTpVFXa73DrRjQHX4+qZ3ZcLA/YIG2RlUR
-	17K8nUphQ3I9ya+Pc6FN+jAnJ5UJZJgFLePZ8i2qkOAo6Jqp2G3YegM40vpx+wEy
-	TJDysX1f8B9P5TzBFI4Qg0nUX6bTJMPGOhuo2WavEw==
-X-ME-Sender: <xms:RhB_ZltGMuYHFFTD1nxrxJ4b0Bj7ELjnqJGADvNm6cIRI4pqwERLRQ>
-    <xme:RhB_ZufSdzzfzC9aSwDsuu3zW8w-EsmqNi_UC0SrpU-h8FFKKWdOe5mDrsXc5udac
-    BjX03KA4Qa1xyp9QbQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrtdejgdekgecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
-    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
-    gvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedtkeet
-    ffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
-    hnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:RhB_Zoyu1BxahTZCfqo_8xbPFIyjw8jNwBSHsq1erqfDqAakxSWkYw>
-    <xmx:RhB_ZsOFU_EMomsUr2WPFlcG8rvQzoZmdvf59HkF6Lj8yVEG_Bjkmw>
-    <xmx:RhB_Zl_qxHB41NBLNjtOW8xP5BrQLetZ9CAYGfE_5FMpO3j86LXF3Q>
-    <xmx:RhB_ZsXA4-AtNmdVYeQro8UjzJv8aap6DrPXlbz3cr-xLvOFCwDDjQ>
-    <xmx:SBB_ZhuqCGnt_zDaitfVCTQzqqP6z-AmelM_awCtY1zuhtNZdxqdqa-s>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 64557B6008D; Fri, 28 Jun 2024 15:34:30 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-538-g1508afaa2-fm-20240616.001-g1508afaa
+	dkim=pass (1024-bit key) header.d=nbd.name header.i=@nbd.name header.b="POcrKtHK"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=nbd.name;
+	s=20160729; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Sh9NkNmBlbDEM3+46XPxqidE2npRUNTYyIv5P3xGwTA=; b=POcrKtHKpHJ4edH2e1sV8hKbbq
+	DFFK9Tc5qH8t5Vug4hNLTYNByL6I6H4sR8txYjlsImlhj9w8tSsyN4jaDTLEv5y3pS8PWgt8octaw
+	Ho2ZSINdacuPDxgHF0yIjiwzc8Lun46GcCVC7TSb38WRmicfUzf4IsO+BDZxj3BSrabo=;
+Received: from p4ff13dca.dip0.t-ipconnect.de ([79.241.61.202] helo=nf.local)
+	by ds12 with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96)
+	(envelope-from <nbd@nbd.name>)
+	id 1sNHj6-000Pxz-2M;
+	Fri, 28 Jun 2024 21:57:44 +0200
+Message-ID: <6c9f98de-4090-4fe2-8fa3-446c1907f50b@nbd.name>
+Date: Fri, 28 Jun 2024 21:57:43 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <6b234ecb-e870-4e5b-b942-bee98e139590@app.fastmail.com>
-In-Reply-To: <Zn7ykZeBWXN3cObh@lore-desk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 net-next 2/2] net: airoha: Introduce ethernet support
+ for EN7581 SoC
+To: Arnd Bergmann <arnd@arndb.de>, Lorenzo Bianconi <lorenzo@kernel.org>
+Cc: Netdev <netdev@vger.kernel.org>, lorenzo.bianconi83@gmail.com,
+ "David S . Miller" <davem@davemloft.net>, Eric Dumazet
+ <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+ Paolo Abeni <pabeni@redhat.com>, Conor Dooley <conor@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, Rob Herring <robh+dt@kernel.org>,
+ krzysztof.kozlowski+dt@linaro.org, Conor Dooley <conor+dt@kernel.org>,
+ devicetree@vger.kernel.org, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>, upstream@airoha.com,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ benjamin.larsson@genexis.eu, linux-clk@vger.kernel.org,
+ Ratheesh Kannoth <rkannoth@marvell.com>, Sunil Goutham
+ <sgoutham@marvell.com>, Andrew Lunn <andrew@lunn.ch>
 References: <cover.1718696209.git.lorenzo@kernel.org>
  <f146a6f58492394a77f7d159f3c650a268fbe489.1718696209.git.lorenzo@kernel.org>
  <2d74f9c1-2b46-4544-a9c2-aa470ce36f80@app.fastmail.com>
  <Zn7ykZeBWXN3cObh@lore-desk>
-Date: Fri, 28 Jun 2024 21:34:08 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Lorenzo Bianconi" <lorenzo@kernel.org>
-Cc: Netdev <netdev@vger.kernel.org>, "Felix Fietkau" <nbd@nbd.name>,
- lorenzo.bianconi83@gmail.com, "David S . Miller" <davem@davemloft.net>,
- "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
- "Paolo Abeni" <pabeni@redhat.com>, "Conor Dooley" <conor@kernel.org>,
- linux-arm-kernel@lists.infradead.org, "Rob Herring" <robh+dt@kernel.org>,
- krzysztof.kozlowski+dt@linaro.org, "Conor Dooley" <conor+dt@kernel.org>,
- devicetree@vger.kernel.org, "Catalin Marinas" <catalin.marinas@arm.com>,
- "Will Deacon" <will@kernel.org>, upstream@airoha.com,
- "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>,
- benjamin.larsson@genexis.eu, linux-clk@vger.kernel.org,
- "Ratheesh Kannoth" <rkannoth@marvell.com>,
- "Sunil Goutham" <sgoutham@marvell.com>, "Andrew Lunn" <andrew@lunn.ch>
-Subject: Re: [PATCH v2 net-next 2/2] net: airoha: Introduce ethernet support for EN7581
- SoC
-Content-Type: text/plain
+ <6b234ecb-e870-4e5b-b942-bee98e139590@app.fastmail.com>
+From: Felix Fietkau <nbd@nbd.name>
+Content-Language: en-US
+Autocrypt: addr=nbd@nbd.name; keydata=
+ xsDiBEah5CcRBADIY7pu4LIv3jBlyQ/2u87iIZGe6f0f8pyB4UjzfJNXhJb8JylYYRzIOSxh
+ ExKsdLCnJqsG1PY1mqTtoG8sONpwsHr2oJ4itjcGHfn5NJSUGTbtbbxLro13tHkGFCoCr4Z5
+ Pv+XRgiANSpYlIigiMbOkide6wbggQK32tC20QxUIwCg4k6dtV/4kwEeiOUfErq00TVqIiEE
+ AKcUi4taOuh/PQWx/Ujjl/P1LfJXqLKRPa8PwD4j2yjoc9l+7LptSxJThL9KSu6gtXQjcoR2
+ vCK0OeYJhgO4kYMI78h1TSaxmtImEAnjFPYJYVsxrhay92jisYc7z5R/76AaELfF6RCjjGeP
+ wdalulG+erWju710Bif7E1yjYVWeA/9Wd1lsOmx6uwwYgNqoFtcAunDaMKi9xVQW18FsUusM
+ TdRvTZLBpoUAy+MajAL+R73TwLq3LnKpIcCwftyQXK5pEDKq57OhxJVv1Q8XkA9Dn1SBOjNB
+ l25vJDFAT9ntp9THeDD2fv15yk4EKpWhu4H00/YX8KkhFsrtUs69+vZQwc0cRmVsaXggRmll
+ dGthdSA8bmJkQG5iZC5uYW1lPsJgBBMRAgAgBQJGoeQnAhsjBgsJCAcDAgQVAggDBBYCAwEC
+ HgECF4AACgkQ130UHQKnbvXsvgCgjsAIIOsY7xZ8VcSm7NABpi91yTMAniMMmH7FRenEAYMa
+ VrwYTIThkTlQzsFNBEah5FQQCACMIep/hTzgPZ9HbCTKm9xN4bZX0JjrqjFem1Nxf3MBM5vN
+ CYGBn8F4sGIzPmLhl4xFeq3k5irVg/YvxSDbQN6NJv8o+tP6zsMeWX2JjtV0P4aDIN1pK2/w
+ VxcicArw0VYdv2ZCarccFBgH2a6GjswqlCqVM3gNIMI8ikzenKcso8YErGGiKYeMEZLwHaxE
+ Y7mTPuOTrWL8uWWRL5mVjhZEVvDez6em/OYvzBwbkhImrryF29e3Po2cfY2n7EKjjr3/141K
+ DHBBdgXlPNfDwROnA5ugjjEBjwkwBQqPpDA7AYPvpHh5vLbZnVGu5CwG7NAsrb2isRmjYoqk
+ wu++3117AAMFB/9S0Sj7qFFQcD4laADVsabTpNNpaV4wAgVTRHKV/kC9luItzwDnUcsZUPdQ
+ f3MueRJ3jIHU0UmRBG3uQftqbZJj3ikhnfvyLmkCNe+/hXhPu9sGvXyi2D4vszICvc1KL4RD
+ aLSrOsROx22eZ26KqcW4ny7+va2FnvjsZgI8h4sDmaLzKczVRIiLITiMpLFEU/VoSv0m1F4B
+ FtRgoiyjFzigWG0MsTdAN6FJzGh4mWWGIlE7o5JraNhnTd+yTUIPtw3ym6l8P+gbvfoZida0
+ TspgwBWLnXQvP5EDvlZnNaKa/3oBes6z0QdaSOwZCRA3QSLHBwtgUsrT6RxRSweLrcabwkkE
+ GBECAAkFAkah5FQCGwwACgkQ130UHQKnbvW2GgCeMncXpbbWNT2AtoAYICrKyX5R3iMAoMhw
+ cL98efvrjdstUfTCP2pfetyN
+In-Reply-To: <6b234ecb-e870-4e5b-b942-bee98e139590@app.fastmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jun 28, 2024, at 19:27, Lorenzo Bianconi wrote:
->> > +static void airoha_qdma_set_irqmask(struct airoha_eth *eth, int index,
->> > +				    u32 clear, u32 set)
->> > +{
->> > +	unsigned long flags;
->> > +
->> > +	if (WARN_ON_ONCE(index >= ARRAY_SIZE(eth->irqmask)))
->> > +		return;
->> > +
->> > +	spin_lock_irqsave(&eth->irq_lock, flags);
->> > +
->> > +	eth->irqmask[index] &= ~clear;
->> > +	eth->irqmask[index] |= set;
->> > +	airoha_qdma_wr(eth, REG_INT_ENABLE(index), eth->irqmask[index]);
->> > +
->> > +	spin_unlock_irqrestore(&eth->irq_lock, flags);
->> > +}
->> 
->> spin_lock_irqsave() is fairly expensive here, and it doesn't
->> actually protect the register write since that is posted
->> and can leak out of the spinlock.
->> 
->> You can probably just remove the lock and instead do the mask
->> with atomic_cmpxchg() here.
->
-> I did not get what you mean here. I guess the spin_lock is used to avoid
-> concurrent irq registers updates from user/bh context or irq handler.
-> Am I missing something?
+On 28.06.24 21:34, Arnd Bergmann wrote:
+>>> > +static irqreturn_t airoha_irq_handler(int irq, void *dev_instance)
+>>> > +{
+>>> > +	struct airoha_eth *eth = dev_instance;
+>>> > +	u32 intr[ARRAY_SIZE(eth->irqmask)];
+>>> > +	int i;
+>>> > +
+>>> > +	for (i = 0; i < ARRAY_SIZE(eth->irqmask); i++) {
+>>> > +		intr[i] = airoha_qdma_rr(eth, REG_INT_STATUS(i));
+>>> > +		intr[i] &= eth->irqmask[i];
+>>> > +		airoha_qdma_wr(eth, REG_INT_STATUS(i), intr[i]);
+>>> > +	}
+>>> 
+>>> This looks like you send an interrupt Ack to each
+>>> interrupt in order to re-arm it, but then you disable
+>>> it again. Would it be possible to leave the interrupt enabled
+>>> but defer the Ack until the napi poll function is completed?
+>>
+>> I guess doing so we are not using NAPIs as expected since they are
+>> supposed to run with interrupt disabled. Agree?
+> 
+> The idea of NAPI is that you don't get the same interrupt
+> again until all remaining events have been processed.
+> 
+> How this is achieved is device dependent, and it can either
+> be done by masking the interrupt as you do here, or by
+> not rearming the interrupt if it gets turned off automatically
+> by the hardware. My guess is that writing to REG_INT_STATUS(i)
+> is the rearming here, but the device documentation should
+> clarify that. It's also possible that this is an Ack that
+> is required so you don't immediately get another interrupt.
 
-What I meant is that the airoha_qdma_wr() doesn't complete
-until after the unlock because this is a normal 'posted' ioremap()
-mapping.
+The interrupt handling of this hardware is pretty much the same as what 
+many other devices do: the interrupt status is not automatically cleared 
+by the hardware, so the write at the beginning of the interrupt handler 
+does that explicitly.
+Within the same handler, the interrupt is then masked to ensure that it 
+does not fire again until the NAPI poll has completed.
 
->> > +static irqreturn_t airoha_irq_handler(int irq, void *dev_instance)
->> > +{
->> > +	struct airoha_eth *eth = dev_instance;
->> > +	u32 intr[ARRAY_SIZE(eth->irqmask)];
->> > +	int i;
->> > +
->> > +	for (i = 0; i < ARRAY_SIZE(eth->irqmask); i++) {
->> > +		intr[i] = airoha_qdma_rr(eth, REG_INT_STATUS(i));
->> > +		intr[i] &= eth->irqmask[i];
->> > +		airoha_qdma_wr(eth, REG_INT_STATUS(i), intr[i]);
->> > +	}
->> 
->> This looks like you send an interrupt Ack to each
->> interrupt in order to re-arm it, but then you disable
->> it again. Would it be possible to leave the interrupt enabled
->> but defer the Ack until the napi poll function is completed?
->
-> I guess doing so we are not using NAPIs as expected since they are
-> supposed to run with interrupt disabled. Agree?
+Performing the status write after the poll has completed would be wrong, 
+since that leaves open a small race window where events might be missed.
 
-The idea of NAPI is that you don't get the same interrupt
-again until all remaining events have been processed.
-
-How this is achieved is device dependent, and it can either
-be done by masking the interrupt as you do here, or by
-not rearming the interrupt if it gets turned off automatically
-by the hardware. My guess is that writing to REG_INT_STATUS(i)
-is the rearming here, but the device documentation should
-clarify that. It's also possible that this is an Ack that
-is required so you don't immediately get another interrupt.
-
->> > +	if (!test_bit(DEV_STATE_INITIALIZED, &eth->state))
->> > +		return IRQ_NONE;
->> > +
->> > +	if (intr[1] & RX_DONE_INT_MASK) {
->> > +		airoha_qdma_irq_disable(eth, QDMA_INT_REG_IDX1,
->> > +					RX_DONE_INT_MASK);
->> > +		airoha_qdma_for_each_q_rx(eth, i) {
->> > +			if (intr[1] & BIT(i))
->> > +				napi_schedule(&eth->q_rx[i].napi);
->> > +		}
->> > +	}
->> 
->> Something seems wrong here, but that's probably just me
->> misunderstanding the design: if all queues are signaled
->> through the same interrupt handler, and you then do
->> napi_schedule() for each queue, I would expect them to
->> just all get run on the same CPU.
->> 
->> If you have separate queues, doesn't that mean you also need
->> separate irq numbers here so they can be distributed to the
->> available CPUs?
->
-> Actually I missed to mark the NAPI as threaded. Doing so, even if we have a
-> single irq line shared by all Rx queues, the scheduler can run the NAPIs in
-> parallel on different CPUs. I will fix it in v4.
-
-Ok. It's a bit disappointing that the hardware integration
-messed this up by not having multiple IRQ lines because
-that adds a lot of latency, but I guess there is not much else
-you can do about it.
-
->> > b/drivers/net/ethernet/mediatek/airoha_eth.h
->> > new file mode 100644
->> > index 000000000000..fcd684e1418a
->> > --- /dev/null
->> > +++ b/drivers/net/ethernet/mediatek/airoha_eth.h
->> > @@ -0,0 +1,793 @@
->> > +// SPDX-License-Identifier: GPL-2.0
->> > +/*
->> > + * Copyright (C) 2024 Lorenzo Bianconi <lorenzo@kernel.org>
->> > + */
->> > +
->> > +#define AIROHA_MAX_NUM_RSTS		3
->> > +#define AIROHA_MAX_NUM_XSI_RSTS		4
->> 
->> If your driver only has a single .c file, I would suggest moving all the
->> contents of the .h file into that as well for better readability.
->
-> I do not have a strong opinion about it but since we will extend the driver
-> in the future, keeping .c and .h in different files, seems a bit more tidy.
-> What do you think?
-
-I would still keep it all in one file. If you extend it to multiple
-files later, it's easy to move those parts that you actually need to
-share into an interface header. Most likely the majority of the current contents won't be needed by other files.
-
-      Arnd
+- Felix
