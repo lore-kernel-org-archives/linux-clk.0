@@ -1,267 +1,330 @@
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C4A14389B
-	for <linux-clk@vger.kernel.org>; Fri, 28 Jun 2024 08:04:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B81CE4436A
+	for <linux-clk@vger.kernel.org>; Fri, 28 Jun 2024 08:08:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719561898; cv=none; b=syk7DclAgxkQOoYRaTJDhYthxA5Vhf2LqzQ3q4PosKBkj4o4AmT68Gv4dZwFrg1MoGU/qO2IJKAdTgvDrj6/dshvAOpHmgHwYwSoDn/4gY8lsizvgqJxPX6Z4aocl2BF11vl6wkWf/8rg9gCOQoIqe5yVU+5LQOulStQpePx4/U=
+	t=1719562091; cv=none; b=tLyi4ECIvjIRazlUDMxv7qpXacYpUfZwdLzqFpdok7RtFrig7U0L0LLDARSz53YV6DkWnkPymc4I8HHVNWOah9SkpsZxM0h6w18VTXVTCNMyh9mwHADgnmqlSTvaYy16j20M6dEqy/O/oJPPyAnOPDv4cLQaTyfg+i7aLimWCU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719561898; c=relaxed/simple;
-	bh=lnOtj8I56jMsFfYKFuX/EzixqJd4tPPdOFoxBK7Mu48=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=X4QK7Go5+h2/oTxqrgTK+eV4UEPMZsqtVN7OuGceNuZmqv1PZ4qII3BAx6Jnp6OFoRD8pmih0m5XjuQFSbTSxDdyA92JEr4/cvUhtUsfV3v9P/F0KIB9vA4PgKOgnCiFWEM33t/PkQXLq4Q4CLLVtz4/hxuNH+eJxL1cqhkZkb8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=GkEwpIVp; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1719562091; c=relaxed/simple;
+	bh=41oNDz5c7oUAokOmMhFzKnI6wjskS3LVFUFAxJD2zSo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=jhmBfMEkDssoTmiTQQNth38ncdzF7hU3Z6k1mBYclNCp4Sbq8TnotCYa8u4P7suLh2zYwG082O6hmR+g2psu5GoyVn7dWEjDMD2Ta4QZrQRqXJG+orgU64RehowrhZiAkDhwr1MZmW3vgQfnkgQ9Vu4UBd7oVKT0U+HzGTFrmtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bmPOOXus; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="GkEwpIVp"
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5295eb47b48so425564e87.1
-        for <linux-clk@vger.kernel.org>; Fri, 28 Jun 2024 01:04:55 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bmPOOXus"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-42565670e20so8694165e9.0
+        for <linux-clk@vger.kernel.org>; Fri, 28 Jun 2024 01:08:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1719561894; x=1720166694; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=aQTbdcsWjYj1lBw9v1FiUsxFG/GqhZjpAf7y14wz4Vc=;
-        b=GkEwpIVpS92RWV1cE9aWm1m+G+YrK5uHuO8ropmUb1/V3LuJ7kJC3/+D+FiccOBJl1
-         VNO4iLm5+VR7aNNtv/IrSc+29QwrnmKH4qUi2DZw7EZJ97ROVnpOsQ2jrrdVjEyzLsTX
-         D2npllU+0OxD8mJTejuvKZ0u0sVMs7pRne2xSggBOasCaVF5KTheB9idNMtKY9VLaB/1
-         VwkJhWfAy0ODz2Cx8ywy3uhc2yvtCcT7HqTeKSphetE4ATKCWtRZa3B6c/cXBW83tp7t
-         J+dp/SwTtQlL8hZBo3KHt+yKZnWwr1zgzoX599LuxLg9FU0Stjc/GGs3lQkb/EDqFdjR
-         Fnaw==
+        d=linaro.org; s=google; t=1719562088; x=1720166888; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=06TDJZgyAHNoK7t/slRh8KPNLeMLNVUhost2fyavEJg=;
+        b=bmPOOXusJE+eU0MfzucwbY6aCDlYkjP2Qvu8dw+Zap/A3Zgs87ZW6XRTLcWTvL8sgU
+         0gfxSdZb4ceG+mn6qMeAzZrHYSaFQMALab+khCYNuhMv2CnkRJC4JSAKcD4/afaJQ5Eq
+         nH5/gskVQhoENBl0/letkrG/8/v4ucx3AVEzrc5SyzPtNFg+0GLJ9ukONAQvqfxrp5rV
+         kWHjOPAb5dMRAk2QnK0W4L3nFG2mE0bjIx1KTXloqhAQ6illDNUHOsqG2gUTUXkH+nkP
+         dulfWvqHN4WNaStbOeqqD18HiS7Uvvmlh0W+YX22GV2/n1aHJwzOWyMcI3kBHSPKheqJ
+         rHjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719561894; x=1720166694;
-        h=content-transfer-encoding:in-reply-to:references:cc:to:from
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=aQTbdcsWjYj1lBw9v1FiUsxFG/GqhZjpAf7y14wz4Vc=;
-        b=RBFSs8oilpllOi3lIJ1NXPNLDRBdtkl0G2Nfqj8nxCEv1v1OrufQjxNe/0Vsrgm7Kp
-         4H6HfYy62S+Sl6B5GxiSdbMMe9NOOOjWBmDAZT3w9KrtpZCREG2OWdxR51FA7NYiSZo3
-         IcV27b+FUsjQKeOSXjSVqWhxT1+BoiM6kNgD5GAPNqUXRORKmZsS9urvjsbhg0i+7pQX
-         +5xHdjPoDTH/kPltWnEVUx/Bis9D+qmh74dnfa+yKu/4i4+yzvnPSLCqumcsRkFH8Oxa
-         Q3O5g2k7jXaL6xCaEFfAkdjqtxWsgxDc2lIiAvZCmUST3/oR7cgWyIQs/TzAGeuLVo7v
-         bFbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXT7Fb9gjlmQxV9tWMvMxobJgcgSabsYOljU9PPYZjIcj+51y06E+K3ReJPAqpe4DNxXX1nCxyjY1WCijREOymqVkuzib/AiQmY
-X-Gm-Message-State: AOJu0Yxq+0FZxJ1tE1wR0hNiJLlFCxvTZvGz7FGx05H9+hku+DMLoFu2
-	+i5zRXW/LMyRXMGX7fCDrAHxnNfX8t1nJvpwFCjPYQtLIKqzavrFVkHXc2LICYU=
-X-Google-Smtp-Source: AGHT+IHNu9Q8Wq3NTTfdUge/DFwXYvXY70ZuXmhDK16DCxvOvq5z2lwiF6FDZR3J+aYhaLMBsqf6Jg==
-X-Received: by 2002:a19:c514:0:b0:52c:8591:1f7b with SMTP id 2adb3069b0e04-52ce061b07dmr11458375e87.24.1719561893435;
-        Fri, 28 Jun 2024 01:04:53 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.70])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256b099c72sm22804585e9.37.2024.06.28.01.04.51
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Jun 2024 01:04:52 -0700 (PDT)
-Message-ID: <471b8375-3966-4e0a-98ba-3aee4254c969@tuxon.dev>
-Date: Fri, 28 Jun 2024 11:04:51 +0300
+        d=1e100.net; s=20230601; t=1719562088; x=1720166888;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=06TDJZgyAHNoK7t/slRh8KPNLeMLNVUhost2fyavEJg=;
+        b=mhkEQyfolRLEMQ3RkLY177Rm8BBn/d+jW/i/qTt5bQ2Kx2KX/TWR2tWKZpYbQaX9Wc
+         jwUnyEt1unbxA8YYiJL/LTWylf9TmdyeUjxl/rEr44PStfL62yuVGkvF7AFZ8jKZFDHH
+         ygeR8M9BBVunkUUtKJt2A6BZTcmYSntkmB/hTWHZLvdB9Tu5S46uocQ1drG5kuH71rt8
+         EiABvH51WmS2SK/gjyq+ytGa1hqNe9o9CdVSOAbLUGCWptBZBokHPJtyiyoYat21J5Zf
+         RQeqrqq/zG0cV4TzrPF2HSvPA350beOUY5FguIVjUAdohw57X9BYS2lL/QrbB5NEXW/Q
+         M44A==
+X-Forwarded-Encrypted: i=1; AJvYcCUkdyHnLzCpvYgVyvJ+1Oe9DjShdX3xRTVbFrymVTi52W/HILjbuLgJo4Q+4oEE/5Hio04StoxDSOCbvdD+eKWCAY+jk1tSGBdb
+X-Gm-Message-State: AOJu0YyggzsvH+hjC/17DULddscWF3ANvkgd3OcUlDZuz+AjP29ckKu3
+	Lo/KdXTWPdup6+WV5lU4zpdBJqVtBeB5JUpnZAngF4ij5NYGwaBNf44MooXYbOA=
+X-Google-Smtp-Source: AGHT+IEIq35I7WeKeHK0Wc3gJvM94orx6EJ4F9tXOSc1HodODK7qNv0a6SRLI0lKd1nzuFPTLdWpkg==
+X-Received: by 2002:a5d:468a:0:b0:35f:fd7:6102 with SMTP id ffacd0b85a97d-36760a975d9mr728000f8f.35.1719562088034;
+        Fri, 28 Jun 2024 01:08:08 -0700 (PDT)
+Received: from [127.0.1.1] ([82.79.124.209])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a103f0bsm1447899f8f.110.2024.06.28.01.08.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 28 Jun 2024 01:08:07 -0700 (PDT)
+From: Abel Vesa <abel.vesa@linaro.org>
+Date: Fri, 28 Jun 2024 11:08:00 +0300
+Subject: [PATCH v2] clk: qcom: gcc-x1e80100: Fix halt_check for all pipe
+ clocks
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 07/12] i2c: riic: Define individual arrays to describe
- the register offsets
-Content-Language: en-US
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-To: Biju Das <biju.das.jz@bp.renesas.com>,
- Chris Brandt <Chris.Brandt@renesas.com>,
- "andi.shyti@kernel.org" <andi.shyti@kernel.org>,
- "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "geert+renesas@glider.be" <geert+renesas@glider.be>,
- "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "sboyd@kernel.org" <sboyd@kernel.org>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>
-Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
- "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240625121358.590547-1-claudiu.beznea.uj@bp.renesas.com>
- <20240625121358.590547-8-claudiu.beznea.uj@bp.renesas.com>
- <TY3PR01MB11346EF9A001F68162148B70F86D02@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <6289f329-118f-4970-a525-75c3a48bd28b@tuxon.dev>
- <TY3PR01MB1134603F92C72D9B6C6C3733C86D02@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <2f162986-33c5-4d80-958c-4f857adaad20@tuxon.dev>
-In-Reply-To: <2f162986-33c5-4d80-958c-4f857adaad20@tuxon.dev>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20240628-x1e80100-clk-gcc-fix-halt-check-for-usb-phy-pipe-clks-v2-1-db3be54b1143@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAF9vfmYC/6WOQQqEMAxFryJdT4ZWrcis5h6DCxtTGxQrrSOKe
+ PepXmHI6oX/83KISIEpild2iEArR/ZTgvyRCXTt1BNwl1jkMi+lLiRsimqppAQcB+gRwfIGrh0
+ XQEc4gPUBvtHA7HaYeaYrF4FsjVYbXRXKiHR7DpR6t/fTJHYcFx/2+41VXdt/jauCNBVWtuwQT
+ affI09t8E8fetGc5/kDixX33fsAAAA=
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rajendra Nayak <quic_rjendra@quicinc.com>, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Taniya Das <quic_tdas@quicinc.com>, Johan Hovold <johan@kernel.org>, 
+ Sibi Sankar <quic_sibis@quicinc.com>, linux-arm-msm@vger.kernel.org, 
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Abel Vesa <abel.vesa@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=8179; i=abel.vesa@linaro.org;
+ h=from:subject:message-id; bh=41oNDz5c7oUAokOmMhFzKnI6wjskS3LVFUFAxJD2zSo=;
+ b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBmfm9iRYHd+6ihAwGxJxdAYY5fH15cJ0bJgWh5k
+ dMnF9nlHPWJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZn5vYgAKCRAbX0TJAJUV
+ VoeWEAC8JBNMHMFMaqXaXmLlWmtrGtgQsO42AAOrzNHgkTr1CLDDrHgkcbfDSXkxiHzhbUZujyJ
+ QMFvewNA9zIvVAnVj0NakfJ4LKXDYYGMMDV28ejfEcwbAHWvbRO965v3XwoMeDomZMjD8FzTg5y
+ LljZ9UpDNrD8a07lOindseFdq6Kg7grzezHQqcZ/ezOD3RWsGW+iLLxMfoe/8ieZLNVRz7yrePq
+ 40b6kpwx+VhwGlLyXAyQM510Y4RXgkrgweBXETOrWQynPEaxBiEiEBYaEFJU+R2ILmmZ5O5AJzd
+ 0ZUbRjDUXRMZ242BwPDAeDIohrP+Q2Vrgd8f6Z9zEaK1o8Romc0WYER8KyCIHhRwzZYcuAwJwgQ
+ C0VdvcE4hyWIdPEAObTC8V51VVU9CAIWfg6olFFQXyDBVqPMTtmakjecmKHcIY5CMRSoYAplj5w
+ VUgLLSFvR6GFOfCsxpUddN0aL85RfzNw2vERNMzBJBTVveDNAQybWPKAol260OnkpePefg5PQXN
+ qQsk6D9OsCpBDXgAc4qW/7mSChHj+KAgVLhyIEPcMH2S3PxHtpJnEKXeKTcrur0bHPPOYUiA/JF
+ Sd1mS1cgJosR6y2yKvHtqRKGKVjkc0bKMCaDZFs9cR/Wg9+a3oRvC5qd/MGlbmmrUG8z27yDiLd
+ k9qbCNigPsMFY3w==
+X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
+ fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
 
+In case of all pipe clocks, there is a QMP PHY clock that is feeding them.
+If, for whatever reason, the clock from the PHY is not enabled, halt bit
+will not get set, and the clock controller driver will assume the clock
+is stuck in a specific state. The way this is supposed to be properly
+fixed is to defer the checking of the halt bit until after the PHY clock
+has been initialized, but doing so complicates the clock controller
+driver. In fact, since these pipe clocks are consumed by the PHY, while
+the PHY is also the one providing the source, if clock gets stuck, the PHY
+driver would be to blame. So instead of checking the halt bit in here,
+just skip it and assume the PHY driver is handling the source clock
+correctly.
 
+Fixes: 161b7c401f4b ("clk: qcom: Add Global Clock controller (GCC) driver for X1E80100")
+Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+---
+Changes in v2:
+- Re-worded the commit message from scratch.
+- Changed all pipe clocks halt_check to skip.
+- Link to v1: https://lore.kernel.org/r/20240530-x1e80100-clk-gcc-fix-halt-check-for-usb-phy-pipe-clks-v1-1-16c6f4dccbd5@linaro.org
+---
+ drivers/clk/qcom/gcc-x1e80100.c | 44 ++++++++++++++++++++---------------------
+ 1 file changed, 22 insertions(+), 22 deletions(-)
 
-On 28.06.2024 11:02, claudiu beznea wrote:
-> 
-> 
-> On 28.06.2024 10:55, Biju Das wrote:
->> Hi Claudiu,
->>
->>> -----Original Message-----
->>> From: claudiu beznea <claudiu.beznea@tuxon.dev>
->>> Sent: Friday, June 28, 2024 8:32 AM
->>> Subject: Re: [PATCH v2 07/12] i2c: riic: Define individual arrays to describe the register offsets
->>>
->>> Hi, Biju,
->>>
->>> On 28.06.2024 08:59, Biju Das wrote:
->>>> Hi Claudiu,
->>>>
->>>>> -----Original Message-----
->>>>> From: Claudiu <claudiu.beznea@tuxon.dev>
->>>>> Sent: Tuesday, June 25, 2024 1:14 PM
->>>>> Subject: [PATCH v2 07/12] i2c: riic: Define individual arrays to
->>>>> describe the register offsets
->>>>>
->>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>>>
->>>>> Define individual arrays to describe the register offsets. In this
->>>>> way we can describe different IP variants that share the same
->>>>> register offsets but have differences in other characteristics. Commit prepares for the addition
->>> of fast mode plus.
->>>>>
->>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>>> ---
->>>>>
->>>>> Changes in v2:
->>>>> - none
->>>>>
->>>>>  drivers/i2c/busses/i2c-riic.c | 58
->>>>> +++++++++++++++++++----------------
->>>>>  1 file changed, 31 insertions(+), 27 deletions(-)
->>>>>
->>>>> diff --git a/drivers/i2c/busses/i2c-riic.c
->>>>> b/drivers/i2c/busses/i2c-riic.c index
->>>>> 9fe007609076..8ffbead95492 100644
->>>>> --- a/drivers/i2c/busses/i2c-riic.c
->>>>> +++ b/drivers/i2c/busses/i2c-riic.c
->>>>> @@ -91,7 +91,7 @@ enum riic_reg_list {  };
->>>>>
->>>>>  struct riic_of_data {
->>>>> -	u8 regs[RIIC_REG_END];
->>>>> +	const u8 *regs;
->>>>
->>>>
->>>> Since you are touching this part, can we drop struct and Use u8* as
->>>> device_data instead?
->>>
->>> Patch 09/12 "i2c: riic: Add support for fast mode plus" adds a new member to struct riic_of_data.
->>> That new member is needed to differentiate b/w hardware versions supporting fast mode plus based on
->>> compatible.
->>
->> Are we sure RZ/A does not support fast mode plus?
-> 
-> From commit description of patch 09/12:
-> 
-> Fast mode plus is available on most of the IP variants that RIIC driver
-> is working with. The exception is (according to HW manuals of the SoCs
-> where this IP is available) the Renesas RZ/A1H. For this, patch
-> introduces the struct riic_of_data::fast_mode_plus.
-> 
-> I checked the manuals of all the SoCs where this driver is used.
-> 
-> I haven't checked the H/W manual?
+diff --git a/drivers/clk/qcom/gcc-x1e80100.c b/drivers/clk/qcom/gcc-x1e80100.c
+index eb7e36ebd7ae..fc80011342da 100644
+--- a/drivers/clk/qcom/gcc-x1e80100.c
++++ b/drivers/clk/qcom/gcc-x1e80100.c
+@@ -2812,7 +2812,7 @@ static struct clk_branch gcc_pcie_0_mstr_axi_clk = {
+ 
+ static struct clk_branch gcc_pcie_0_pipe_clk = {
+ 	.halt_reg = 0xa0044,
+-	.halt_check = BRANCH_HALT_VOTED,
++	.halt_check = BRANCH_HALT_SKIP,
+ 	.clkr = {
+ 		.enable_reg = 0x52010,
+ 		.enable_mask = BIT(25),
+@@ -2901,7 +2901,7 @@ static struct clk_branch gcc_pcie_1_mstr_axi_clk = {
+ 
+ static struct clk_branch gcc_pcie_1_pipe_clk = {
+ 	.halt_reg = 0x2c044,
+-	.halt_check = BRANCH_HALT_VOTED,
++	.halt_check = BRANCH_HALT_SKIP,
+ 	.clkr = {
+ 		.enable_reg = 0x52020,
+ 		.enable_mask = BIT(30),
+@@ -2990,7 +2990,7 @@ static struct clk_branch gcc_pcie_2_mstr_axi_clk = {
+ 
+ static struct clk_branch gcc_pcie_2_pipe_clk = {
+ 	.halt_reg = 0x13044,
+-	.halt_check = BRANCH_HALT_VOTED,
++	.halt_check = BRANCH_HALT_SKIP,
+ 	.clkr = {
+ 		.enable_reg = 0x52020,
+ 		.enable_mask = BIT(23),
+@@ -3110,7 +3110,7 @@ static struct clk_branch gcc_pcie_3_phy_rchng_clk = {
+ 
+ static struct clk_branch gcc_pcie_3_pipe_clk = {
+ 	.halt_reg = 0x58050,
+-	.halt_check = BRANCH_HALT_VOTED,
++	.halt_check = BRANCH_HALT_SKIP,
+ 	.clkr = {
+ 		.enable_reg = 0x52020,
+ 		.enable_mask = BIT(3),
+@@ -3235,7 +3235,7 @@ static struct clk_branch gcc_pcie_4_phy_rchng_clk = {
+ 
+ static struct clk_branch gcc_pcie_4_pipe_clk = {
+ 	.halt_reg = 0x6b044,
+-	.halt_check = BRANCH_HALT_VOTED,
++	.halt_check = BRANCH_HALT_SKIP,
+ 	.clkr = {
+ 		.enable_reg = 0x52008,
+ 		.enable_mask = BIT(4),
+@@ -3360,7 +3360,7 @@ static struct clk_branch gcc_pcie_5_phy_rchng_clk = {
+ 
+ static struct clk_branch gcc_pcie_5_pipe_clk = {
+ 	.halt_reg = 0x2f044,
+-	.halt_check = BRANCH_HALT_VOTED,
++	.halt_check = BRANCH_HALT_SKIP,
+ 	.clkr = {
+ 		.enable_reg = 0x52018,
+ 		.enable_mask = BIT(17),
+@@ -3498,7 +3498,7 @@ static struct clk_branch gcc_pcie_6a_phy_rchng_clk = {
+ 
+ static struct clk_branch gcc_pcie_6a_pipe_clk = {
+ 	.halt_reg = 0x31050,
+-	.halt_check = BRANCH_HALT_VOTED,
++	.halt_check = BRANCH_HALT_SKIP,
+ 	.clkr = {
+ 		.enable_reg = 0x52018,
+ 		.enable_mask = BIT(26),
+@@ -3636,7 +3636,7 @@ static struct clk_branch gcc_pcie_6b_phy_rchng_clk = {
+ 
+ static struct clk_branch gcc_pcie_6b_pipe_clk = {
+ 	.halt_reg = 0x8d050,
+-	.halt_check = BRANCH_HALT_VOTED,
++	.halt_check = BRANCH_HALT_SKIP,
+ 	.clkr = {
+ 		.enable_reg = 0x52000,
+ 		.enable_mask = BIT(30),
+@@ -5109,7 +5109,7 @@ static struct clk_branch gcc_usb3_mp_phy_com_aux_clk = {
+ 
+ static struct clk_branch gcc_usb3_mp_phy_pipe_0_clk = {
+ 	.halt_reg = 0x17290,
+-	.halt_check = BRANCH_HALT,
++	.halt_check = BRANCH_HALT_SKIP,
+ 	.clkr = {
+ 		.enable_reg = 0x17290,
+ 		.enable_mask = BIT(0),
+@@ -5122,7 +5122,7 @@ static struct clk_branch gcc_usb3_mp_phy_pipe_0_clk = {
+ 
+ static struct clk_branch gcc_usb3_mp_phy_pipe_1_clk = {
+ 	.halt_reg = 0x17298,
+-	.halt_check = BRANCH_HALT,
++	.halt_check = BRANCH_HALT_SKIP,
+ 	.clkr = {
+ 		.enable_reg = 0x17298,
+ 		.enable_mask = BIT(0),
+@@ -5186,7 +5186,7 @@ static struct clk_regmap_mux gcc_usb3_prim_phy_pipe_clk_src = {
+ 
+ static struct clk_branch gcc_usb3_prim_phy_pipe_clk = {
+ 	.halt_reg = 0x39068,
+-	.halt_check = BRANCH_HALT_VOTED,
++	.halt_check = BRANCH_HALT_SKIP,
+ 	.hwcg_reg = 0x39068,
+ 	.hwcg_bit = 1,
+ 	.clkr = {
+@@ -5257,7 +5257,7 @@ static struct clk_regmap_mux gcc_usb3_sec_phy_pipe_clk_src = {
+ 
+ static struct clk_branch gcc_usb3_sec_phy_pipe_clk = {
+ 	.halt_reg = 0xa1068,
+-	.halt_check = BRANCH_HALT_VOTED,
++	.halt_check = BRANCH_HALT_SKIP,
+ 	.hwcg_reg = 0xa1068,
+ 	.hwcg_bit = 1,
+ 	.clkr = {
+@@ -5327,7 +5327,7 @@ static struct clk_regmap_mux gcc_usb3_tert_phy_pipe_clk_src = {
+ 
+ static struct clk_branch gcc_usb3_tert_phy_pipe_clk = {
+ 	.halt_reg = 0xa2068,
+-	.halt_check = BRANCH_HALT_VOTED,
++	.halt_check = BRANCH_HALT_SKIP,
+ 	.hwcg_reg = 0xa2068,
+ 	.hwcg_bit = 1,
+ 	.clkr = {
+@@ -5405,7 +5405,7 @@ static struct clk_branch gcc_usb4_0_master_clk = {
+ 
+ static struct clk_branch gcc_usb4_0_phy_p2rr2p_pipe_clk = {
+ 	.halt_reg = 0x9f0d8,
+-	.halt_check = BRANCH_HALT,
++	.halt_check = BRANCH_HALT_SKIP,
+ 	.clkr = {
+ 		.enable_reg = 0x9f0d8,
+ 		.enable_mask = BIT(0),
+@@ -5418,7 +5418,7 @@ static struct clk_branch gcc_usb4_0_phy_p2rr2p_pipe_clk = {
+ 
+ static struct clk_branch gcc_usb4_0_phy_pcie_pipe_clk = {
+ 	.halt_reg = 0x9f048,
+-	.halt_check = BRANCH_HALT_VOTED,
++	.halt_check = BRANCH_HALT_SKIP,
+ 	.clkr = {
+ 		.enable_reg = 0x52010,
+ 		.enable_mask = BIT(19),
+@@ -5457,7 +5457,7 @@ static struct clk_branch gcc_usb4_0_phy_rx1_clk = {
+ 
+ static struct clk_branch gcc_usb4_0_phy_usb_pipe_clk = {
+ 	.halt_reg = 0x9f0a4,
+-	.halt_check = BRANCH_HALT_VOTED,
++	.halt_check = BRANCH_HALT_SKIP,
+ 	.hwcg_reg = 0x9f0a4,
+ 	.hwcg_bit = 1,
+ 	.clkr = {
+@@ -5582,7 +5582,7 @@ static struct clk_branch gcc_usb4_1_master_clk = {
+ 
+ static struct clk_branch gcc_usb4_1_phy_p2rr2p_pipe_clk = {
+ 	.halt_reg = 0x2b0d8,
+-	.halt_check = BRANCH_HALT,
++	.halt_check = BRANCH_HALT_SKIP,
+ 	.clkr = {
+ 		.enable_reg = 0x2b0d8,
+ 		.enable_mask = BIT(0),
+@@ -5595,7 +5595,7 @@ static struct clk_branch gcc_usb4_1_phy_p2rr2p_pipe_clk = {
+ 
+ static struct clk_branch gcc_usb4_1_phy_pcie_pipe_clk = {
+ 	.halt_reg = 0x2b048,
+-	.halt_check = BRANCH_HALT_VOTED,
++	.halt_check = BRANCH_HALT_SKIP,
+ 	.clkr = {
+ 		.enable_reg = 0x52028,
+ 		.enable_mask = BIT(0),
+@@ -5634,7 +5634,7 @@ static struct clk_branch gcc_usb4_1_phy_rx1_clk = {
+ 
+ static struct clk_branch gcc_usb4_1_phy_usb_pipe_clk = {
+ 	.halt_reg = 0x2b0a4,
+-	.halt_check = BRANCH_HALT_VOTED,
++	.halt_check = BRANCH_HALT_SKIP,
+ 	.hwcg_reg = 0x2b0a4,
+ 	.hwcg_bit = 1,
+ 	.clkr = {
+@@ -5759,7 +5759,7 @@ static struct clk_branch gcc_usb4_2_master_clk = {
+ 
+ static struct clk_branch gcc_usb4_2_phy_p2rr2p_pipe_clk = {
+ 	.halt_reg = 0x110d8,
+-	.halt_check = BRANCH_HALT,
++	.halt_check = BRANCH_HALT_SKIP,
+ 	.clkr = {
+ 		.enable_reg = 0x110d8,
+ 		.enable_mask = BIT(0),
+@@ -5772,7 +5772,7 @@ static struct clk_branch gcc_usb4_2_phy_p2rr2p_pipe_clk = {
+ 
+ static struct clk_branch gcc_usb4_2_phy_pcie_pipe_clk = {
+ 	.halt_reg = 0x11048,
+-	.halt_check = BRANCH_HALT_VOTED,
++	.halt_check = BRANCH_HALT_SKIP,
+ 	.clkr = {
+ 		.enable_reg = 0x52028,
+ 		.enable_mask = BIT(1),
+@@ -5811,7 +5811,7 @@ static struct clk_branch gcc_usb4_2_phy_rx1_clk = {
+ 
+ static struct clk_branch gcc_usb4_2_phy_usb_pipe_clk = {
+ 	.halt_reg = 0x110a4,
+-	.halt_check = BRANCH_HALT_VOTED,
++	.halt_check = BRANCH_HALT_SKIP,
+ 	.hwcg_reg = 0x110a4,
+ 	.hwcg_bit = 1,
+ 	.clkr = {
 
-That's Biju's previous statement. Sorry for not formatting it properly.
+---
+base-commit: 0fc4bfab2cd45f9acb86c4f04b5191e114e901ed
+change-id: 20240530-x1e80100-clk-gcc-fix-halt-check-for-usb-phy-pipe-clks-ef8cf5b5631b
 
-> 
-> On the manual I've downloaded from Renesas web site the FMPE bit of
-> RIICnFER is not available on RZ/A1H.
-> 
-> Thank you,
-> Claudiu Beznea
-> 
->> If it does not, then it make sense to keep the patch as it is.
->>
->> Cheers,
->> Biju
->>
->>>
->>> Keeping struct riic_of_data is necessary (unless I misunderstood your proposal).
->>>
->>> Thank you,
->>> Claudiu Beznea
->>>
->>>>
->>>> ie, replace const struct riic_of_data *info->const u8 *regs in struct
->>>> riic_dev and use .data = riic_rz_xx_regs in of_match_table?
->>>>
->>>> Cheers,
->>>> Biju
->>>>>  };
->>>>>
->>>>>  struct riic_dev {
->>>>> @@ -531,36 +531,40 @@ static void riic_i2c_remove(struct platform_device *pdev)
->>>>>  	pm_runtime_dont_use_autosuspend(dev);
->>>>>  }
->>>>>
->>>>> +static const u8 riic_rz_a_regs[RIIC_REG_END] = {
->>>>> +	[RIIC_ICCR1] = 0x00,
->>>>> +	[RIIC_ICCR2] = 0x04,
->>>>> +	[RIIC_ICMR1] = 0x08,
->>>>> +	[RIIC_ICMR3] = 0x10,
->>>>> +	[RIIC_ICSER] = 0x18,
->>>>> +	[RIIC_ICIER] = 0x1c,
->>>>> +	[RIIC_ICSR2] = 0x24,
->>>>> +	[RIIC_ICBRL] = 0x34,
->>>>> +	[RIIC_ICBRH] = 0x38,
->>>>> +	[RIIC_ICDRT] = 0x3c,
->>>>> +	[RIIC_ICDRR] = 0x40,
->>>>> +};
->>>>> +
->>>>>  static const struct riic_of_data riic_rz_a_info = {
->>>>> -	.regs = {
->>>>> -		[RIIC_ICCR1] = 0x00,
->>>>> -		[RIIC_ICCR2] = 0x04,
->>>>> -		[RIIC_ICMR1] = 0x08,
->>>>> -		[RIIC_ICMR3] = 0x10,
->>>>> -		[RIIC_ICSER] = 0x18,
->>>>> -		[RIIC_ICIER] = 0x1c,
->>>>> -		[RIIC_ICSR2] = 0x24,
->>>>> -		[RIIC_ICBRL] = 0x34,
->>>>> -		[RIIC_ICBRH] = 0x38,
->>>>> -		[RIIC_ICDRT] = 0x3c,
->>>>> -		[RIIC_ICDRR] = 0x40,
->>>>> -	},
->>>>> +	.regs = riic_rz_a_regs,
->>>>> +};
->>>>> +
->>>>> +static const u8 riic_rz_v2h_regs[RIIC_REG_END] = {
->>>>> +	[RIIC_ICCR1] = 0x00,
->>>>> +	[RIIC_ICCR2] = 0x01,
->>>>> +	[RIIC_ICMR1] = 0x02,
->>>>> +	[RIIC_ICMR3] = 0x04,
->>>>> +	[RIIC_ICSER] = 0x06,
->>>>> +	[RIIC_ICIER] = 0x07,
->>>>> +	[RIIC_ICSR2] = 0x09,
->>>>> +	[RIIC_ICBRL] = 0x10,
->>>>> +	[RIIC_ICBRH] = 0x11,
->>>>> +	[RIIC_ICDRT] = 0x12,
->>>>> +	[RIIC_ICDRR] = 0x13,
->>>>>  };
->>>>>
->>>>>  static const struct riic_of_data riic_rz_v2h_info = {
->>>>> -	.regs = {
->>>>> -		[RIIC_ICCR1] = 0x00,
->>>>> -		[RIIC_ICCR2] = 0x01,
->>>>> -		[RIIC_ICMR1] = 0x02,
->>>>> -		[RIIC_ICMR3] = 0x04,
->>>>> -		[RIIC_ICSER] = 0x06,
->>>>> -		[RIIC_ICIER] = 0x07,
->>>>> -		[RIIC_ICSR2] = 0x09,
->>>>> -		[RIIC_ICBRL] = 0x10,
->>>>> -		[RIIC_ICBRH] = 0x11,
->>>>> -		[RIIC_ICDRT] = 0x12,
->>>>> -		[RIIC_ICDRR] = 0x13,
->>>>> -	},
->>>>> +	.regs = riic_rz_v2h_regs,
->>>>>  };
->>>>>
->>>>>  static int riic_i2c_suspend(struct device *dev)
->>>>> --
->>>>> 2.39.2
->>>>>
->>>>
+Best regards,
+-- 
+Abel Vesa <abel.vesa@linaro.org>
+
