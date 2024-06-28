@@ -1,266 +1,120 @@
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21C733F8F1
-	for <linux-clk@vger.kernel.org>; Fri, 28 Jun 2024 07:40:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EC4A558B9;
+	Fri, 28 Jun 2024 07:47:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719560430; cv=none; b=AUdi03HcnkTfTncnhpgBLgEDYw5m1qyiMgPFpj9V8wLPOc1U24q8fHcyiybCwqhDo9582I1XkPT6hEI8EaO5CZgvdREixE4xKOLNHIFv1YNlvM5dOlzmIwvjdggsLxNMejtLBTKhbL3ov4qVIL6d60KxXSD2SXnPuig6BxsXGXQ=
+	t=1719560864; cv=none; b=GylQ7F7kvNUN5Us9uMewYJOd4/Euf0zso1vTK3RwjGaN29WZmjuvt3V3EJel0GDPAWaTnTIAUJccmj9oviy3jWD1Cah/y6WeHL8RXh54Wox9ZaFHvpwSt0xweuJJi8CKApIOUR1rxalJ84zkj/+Upc8J6XrmDW5lQ4s1mRa8CYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719560430; c=relaxed/simple;
-	bh=b97aaavAT71gQuYxXVf5gNgk7XjtI4OnJYwefCGe79Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W7MBkWSBDFGPdPjFRyAp1OEIDvG3hfZHbybkr7RLzWDjuK3Y5aqd8veKzG/vKFqzdbun6CUgQnTpPiLlR1nOX1zcJepLQgbayDG2xfWTe4s12wbt0raI+GTR8SUF4lBu9YfwHEWD+SkPvZKPvWQ5NLn/QMSq7EuIAIe6XOB+/fM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Bs+1B7XV; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1719560864; c=relaxed/simple;
+	bh=uCD5TGiepGiYZ3McqKERrGy9PD1OaIIbz3xxYakKfFw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=mskmrTy5V75pPwgTf8lRm48goKqGCzZtz/4xtnvG/SQmTFl5w3nbT9CiVKEUNzxYF8mV5mZwPFq2NFQjO9WrOPjuFJ/8Q6bV0womYLwjxGjR7J6kGId4m5bjNkaMDrLlquamD5C1Z1I0INXFpHQB5lK4rLj+2Kup95X9yIGLbxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rw85o+ri; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Bs+1B7XV"
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52cdb9526e2so264914e87.0
-        for <linux-clk@vger.kernel.org>; Fri, 28 Jun 2024 00:40:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719560425; x=1720165225; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vqCKQJd1sf9No+GXy8/Bf8J5+zntEVmwkuLi0BwTjgI=;
-        b=Bs+1B7XVEComYxGgoxtF+crITOayPMauiFzKgyA2CfdikHu+7AbSO8iMS8SeGd8IsD
-         xovHN1/Xw/xIxjJspOvpnFgFmIJl9ZWiQdVVyO8tdQoqFwXmiPLuJC12uqjw01jfQ91i
-         lpY0RwsBod5G8Xr8W077KFHjB1YFjULjPjiA7bCrH+cPeyaoNk1drJm1q3AmXBM+Eu/6
-         Vqo7UazrxxYXiv8XRDDIqbeOZt/cKisDnaHrdqpUDFw/cZkEruYr3XJxRHM5zGeDD8Kh
-         yimsjFS3upDCA3TZdvyvDHc4gvOkgpZVQefJu8W/r1lZKgf0fzh9GRzhL55uF45zGdzo
-         jsEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719560425; x=1720165225;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vqCKQJd1sf9No+GXy8/Bf8J5+zntEVmwkuLi0BwTjgI=;
-        b=dhBpiuNLJLpWkTdL7KoW4U5uUueRdDCKkLrjjlR+9CJNnvP+IPD7W/T0siQ2ambMgj
-         GggHNMT4xmLaEoUKwnXb1ulPbsgbABySPxBKuV7Ls0nWV2CxTbTBW+dB0ncf5O6aWK/u
-         2Vz6AZCa0h1N3XPCfIt4aIATdwbmZz++LTdoG5es8gboYstyhgNxj1jv1FS8Nim5eeOW
-         J7St+qGpDcRZvQwJcUe9GfE7pTQb0XpJ/76Myr8F/lUoO4Xc36Gfgvm7DUObQJyPmAA2
-         ixbByJjhSj7eICw4wcE6RdR5mZU/RieOvL7dPRzP8YhZJRod1Bj7KfVyryqYMO+fse3c
-         yUoA==
-X-Forwarded-Encrypted: i=1; AJvYcCVmjwuirrRmcR+EmJwIT4cSQhiOm8Ihgn3ng9eBgc+JRcO37PVFUaYg8i867Hz7JA3ZgaHzGh5PFTxcLV9uwApEM7R/2WQNanLB
-X-Gm-Message-State: AOJu0YwBnuCsLHirR/9MooblGMVXSvdkuVSuTZza6xDXW8sXNslonIyI
-	leOxb4swuYDmcHC3fZsqaxxgon6pLQuGIRILv5B+YgMiOp6FSOY6o0cdnxAiLrKfRB2GRWrXhFF
-	p7lZ5Iw==
-X-Google-Smtp-Source: AGHT+IEYmcphSATZ2KnJCM6m7XxAIKEYZnMxajXKg1H7FmUiYvq5YVN4+QRc3naCioEhM8pQKheogw==
-X-Received: by 2002:ac2:58d0:0:b0:52e:74dc:95c6 with SMTP id 2adb3069b0e04-52e7b901f61mr214124e87.32.1719560425205;
-        Fri, 28 Jun 2024 00:40:25 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e7ab41c30sm192344e87.306.2024.06.28.00.40.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 28 Jun 2024 00:40:24 -0700 (PDT)
-Date: Fri, 28 Jun 2024 10:40:23 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	angelogioacchino.delregno@collabora.com, andersson@kernel.org, konrad.dybcio@linaro.org, 
-	mturquette@baylibre.com, sboyd@kernel.org, ilia.lin@kernel.org, rafael@kernel.org, 
-	viresh.kumar@linaro.org, ulf.hansson@linaro.org, quic_sibis@quicinc.com, 
-	otto.pflueger@abscue.de, neil.armstrong@linaro.org, luca@z3ntu.xyz, abel.vesa@linaro.org, 
-	danila@jiaxyga.com, quic_ipkumar@quicinc.com, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-pm@vger.kernel.org
-Subject: Re: [PATCH v3 2/9] cpufreq: qcom-nvmem: Add genpd names to
- match_data_kryo
-Message-ID: <kcgqm3ywdzdttllk357szirjdvdddsrcznfuwux6y237ncjnwb@3ots4rqreznu>
-References: <20240626104002.420535-1-quic_varada@quicinc.com>
- <20240626104002.420535-3-quic_varada@quicinc.com>
- <za7t6ltttq2o5qwahfrzftsb7xfzbzdtg4zx3bvnf3fewhfeqf@vjrq7na5ioqm>
- <Zn5ZEI1m4jImz/Wp@hu-varada-blr.qualcomm.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rw85o+ri"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2B71C116B1;
+	Fri, 28 Jun 2024 07:47:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719560863;
+	bh=uCD5TGiepGiYZ3McqKERrGy9PD1OaIIbz3xxYakKfFw=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=rw85o+rim2AaTbsryjVXocCSTIlky1QApL8M2f6EISMpuQnbVCy6DKELhPL2Y+ves
+	 ic0hueZT0Vhjw5W/WMP8ScUwtmWgYe5ddFkp0WSMnfwkKyOIaPm8g72GAP4a9oRYIh
+	 eczRGNHi2x+9ZbEtaBPBCMAIRUWwewUQq0n+9WN/mn+H0p/41j6p7w9R7UUftUP2wp
+	 p5aDOhdD69kHxVxNI4gy4WJqN98J5POMN/Lrn6XJI0YFiO5MZcM4CjWCO4LKStdKd5
+	 zLwOMKhLv6NWw5ozJgMSKa7zNwOjxzyqTMkrfFOmbmAxHjZrQPoRrM9g8di5jQbsrx
+	 llS6jAQ+ZH/pA==
+Message-ID: <c99dbf5e-9396-44bc-973f-cb7edaf6c0dc@kernel.org>
+Date: Fri, 28 Jun 2024 09:47:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zn5ZEI1m4jImz/Wp@hu-varada-blr.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Patch v5 02/12] dt-bindings: dma: Add lpc32xx DMA mux binding
+To: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>,
+ Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, "J.M.B. Downing" <jonathan.downing@nautel.com>,
+ Vladimir Zapolskiy <vz@mleia.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Russell King <linux@armlinux.org.uk>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+ Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ Yangtao Li <frank.li@vivo.com>, Arnd Bergmann <arnd@arndb.de>,
+ Li Zetao <lizetao1@huawei.com>, Michael Ellerman <mpe@ellerman.id.au>,
+ Chancel Liu <chancel.liu@nxp.com>, Corentin Labbe <clabbe@baylibre.com>,
+ dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org,
+ linux-sound@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-i2c@vger.kernel.org, linux-mtd@lists.infradead.org
+References: <20240627150046.258795-1-piotr.wojtaszczyk@timesys.com>
+ <20240627150046.258795-3-piotr.wojtaszczyk@timesys.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240627150046.258795-3-piotr.wojtaszczyk@timesys.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Jun 28, 2024 at 12:02:48PM GMT, Varadarajan Narayanan wrote:
-> On Wed, Jun 26, 2024 at 09:23:17PM +0300, Dmitry Baryshkov wrote:
-> > On Wed, Jun 26, 2024 at 04:09:55PM GMT, Varadarajan Narayanan wrote:
-> > > This is used for tying up the cpu@N nodes with the power domains.
-> > > Without this, 'cat /sys/kernel/debug/qcom_cpr3/thread0'
-> > > crashes with NULL pointer access.
-> >
-> > Add the interesting part of the backtrace, please.
+On 27/06/2024 17:00, Piotr Wojtaszczyk wrote:
+> LPC32XX SoCs use pl080 dma controller which have few request signals
+> multiplexed between peripherals. This binding describes how devices can
+> use the multiplexed request signals.
 > 
->         if (thread->drv->desc->cpr_type < CTRL_TYPE_CPRH) {
->                 seq_printf(s, "current_volt = %d uV\n", thread->drv->last_uV);
->                 seq_printf(s, "requested voltage: %d uV\n", thread->corner->last_uV);
->         }
-> 
-> thread->corner is NULL in the second printf above.
-> 
-> 	# cat /sys/kernel/debug/qcom_cpr3/thread0
-> 	[   16.965241] Unable to handle kernel NULL pointer dereference at virtual address 000000000000000c
-> 	[   16.965270] Mem abort info:
-> 	[   16.973181]   ESR = 0x0000000096000004
-> 	[   16.975607]   EC = 0x25: DABT (current EL), IL = 32 bits
-> 	[   16.979425]   SET = 0, FnV = 0
-> 	[   16.984889]   EA = 0, S1PTW = 0
-> 	[   16.987756]   FSC = 0x04: level 0 translation fault
-> 	[   16.990792] Data abort info:
-> 	[   16.995652]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
-> 	[   16.998779]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
-> 	[   17.004074]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
-> 	[   17.009196] user pgtable: 4k pages, 48-bit VAs, pgdp=00000000481b1000
-> 	[   17.014579] [000000000000000c] pgd=0000000000000000, p4d=0000000000000000
-> 	[   17.020919] Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
-> 	[   17.020921] Modules linked in:
-> 	[   17.020926] CPU: 0 UID: 0 PID: 118 Comm: cat Not tainted 6.10.0-rc4-next-20240620-00020-g125eb3184fc1-dirty #9
-> 	[   17.020931] Hardware name: Qualcomm Technologies, Inc. IPQ9574/AP-AL02-C7 (DT)
-> 	[   17.020933] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> 	[   17.020936] pc : cpr3_debug_info_show+0x3a0/0x3ac
-> 	[   17.020945] lr : cpr3_debug_info_show+0x390/0x3ac
-> 	[   17.020948] sp : ffff800086293b90
-> 	[   17.020949] x29: ffff800086293b90 x28: ffff0000034ae038 x27: 0000000000400cc0
-> 	[   17.020953] x26: 000000007ffff000 x25: ffff0000034ae028 x24: 0000000000000000
-> 	[   17.020957] x23: ffff800086293c80 x22: ffff000002399880 x21: ffff000002a8fa80
-> 	[   17.020960] x20: ffff0000034ae000 x19: 0000000000000000 x18: ffffffffffffffff
-> 	[   17.020964] x17: 0000000000000000 x16: 0000000000000000 x15: ffff800086293a40
-> 	[   17.020967] x14: ffff000002913000 x13: ffff00000291200f x12: 0000000000000000
-> 	[   17.020970] x11: 0000000000000000 x10: 0000000000000000 x9 : ffff0000034a9000
-> 	[   17.020973] x8 : 000000000a567520 x7 : 0000000000000001 x6 : 000000000a567520
-> 	[   17.020976] x5 : ffff000002912014 x4 : ffff800080e1f3a5 x3 : 0000000000000014
-> 	[   17.020979] x2 : 0000000000000000 x1 : ffff800080e1f848 x0 : ffff0000034ae000
-> 	[   17.020983] Call trace:
-> 	[   17.020984]  cpr3_debug_info_show+0x3a0/0x3ac
-> 	[   17.020987]  seq_read_iter+0xe0/0x45c
-> 	[   17.020993]  seq_read+0xec/0x130
-> 	[   17.020996]  full_proxy_read+0x60/0xb4
-> 	[   17.020999]  vfs_read+0xc0/0x31c
-> 	[   17.021003]  ksys_read+0x70/0x104
-> 	[   17.021006]  __arm64_sys_read+0x1c/0x28
-> 	[   17.021008]  invoke_syscall+0x48/0x114
-> 	[   17.021014]  el0_svc_common+0x3c/0xe8
-> 	[   17.021017]  do_el0_svc+0x20/0x2c
-> 	[   17.021020]  el0_svc+0x34/0xd8
-> 	[   17.021024]  el0t_64_sync_handler+0x120/0x12c
-> 	[   17.021027]  el0t_64_sync+0x190/0x194
-> 	[   17.021031] Code: f94012c2 aa1403e0 b0004701 91212021 (b9400c42)
-> 	[   17.021033] ---[ end trace 0000000000000000 ]---
-> 	Segmentation fault
+> Signed-off-by: Piotr Wojtaszczyk <piotr.wojtaszczyk@timesys.com>
 
-Well, I asked to add it, so please drop the timestamps and registers and
-include it into the commit message. While you are at it, please review
-Documentation/process/submitting-patches.rst and change the commit
-message to follow the guidelines.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-While doing so (and while responding to a comment below) you will notice
-that this change should not be applied to the generic match_data_kryo
-instance. Instead you should add a device-specific entry into match
-table and use struct qcom_cpufreq_match_data instance that has
-.genpd_names set.
+Best regards,
+Krzysztof
 
-> 
-> > > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> > > ---
-> > >  drivers/cpufreq/qcom-cpufreq-nvmem.c | 1 +
-> > >  1 file changed, 1 insertion(+)
-> > >
-> > > diff --git a/drivers/cpufreq/qcom-cpufreq-nvmem.c b/drivers/cpufreq/qcom-cpufreq-nvmem.c
-> > > index 939702dfa73f..5e6525c7788c 100644
-> > > --- a/drivers/cpufreq/qcom-cpufreq-nvmem.c
-> > > +++ b/drivers/cpufreq/qcom-cpufreq-nvmem.c
-> > > @@ -399,6 +399,7 @@ static const char *generic_genpd_names[] = { "perf", NULL };
-> > >
-> > >  static const struct qcom_cpufreq_match_data match_data_kryo = {
-> > >  	.get_version = qcom_cpufreq_kryo_name_version,
-> > > +	.genpd_names = generic_genpd_names,
-> >
-> > This forces that every Kryo SoC has "perf" genpd, which obviously isn't
-> > corret (at least from the upstream support point of view).
-> 
-> While trying to get the above backtrace, randomly during boot
-> I see the following BUG too.
-
-This isn't a response to my comment.
-
-> 
-> 	[    1.562847] ------------[ cut here ]------------
-> 	[    1.574342] kernel BUG at drivers/cpufreq/cpufreq.c:1542!
-> 	[    1.579203] Internal error: Oops - BUG: 00000000f2000800 [#1] PREEMPT SMP
-> 	[    1.579209] Modules linked in:
-> 	[    1.579217] CPU: 2 UID: 0 PID: 11 Comm: kworker/u16:0 Not tainted 6.10.0-rc4-next-20240620-00020-g125eb3184fc1-dirty #10
-> 	[    1.579227] Hardware name: Qualcomm Technologies, Inc. IPQ9574/AP-AL02-C7 (DT)
-> 	[    1.579232] Workqueue: events_unbound deferred_probe_work_func
-> 	[    1.579249] pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> 	[    1.579257] pc : cpufreq_online+0x938/0x954
-> 	[    1.579271] lr : cpufreq_online+0x788/0x954
-> 	[    1.579281] sp : ffff8000817c3520
-> 	[    1.579283] x29: ffff8000817c3520 x28: ffff0000029efa50 x27: 0000000000000001
-> 	[    1.579294] x26: 0000000000000001 x25: ffff8000814d8da0 x24: 0000000000000000
-> 	[    1.579303] x23: ffff0000029ef9d0 x22: ffff800081735000 x21: 0000000000000000
-> 	[    1.579312] x20: 00000000000c15c0 x19: ffff0000029ef800 x18: ffff00000183481c
-> 	[    1.579321] x17: ffff8000818a3638 x16: 0000000000000000 x15: ffff8000818a3670
-> 	[    1.579330] x14: 0000000000000003 x13: ffff00000192b140 x12: ffff8000814d8c58
-> 	[    1.579338] x11: ffff00000192b140 x10: 00000000000009b0 x9 : ffff8000817c3240
-> 	[    1.579347] x8 : ffff00000192bad0 x7 : 0000000000000001 x6 : ffff8000814d8da0
-> 	[    1.579355] x5 : ffff8000812c32d0 x4 : 0000000000000000 x3 : 0000000000000000
-> 	[    1.579363] x2 : 0000000000000000 x1 : 0000000000000000 x0 : 00000000fffffff0
-> 	[    1.579372] Call trace:
-> 	[    1.579375]  cpufreq_online+0x938/0x954
-> 	[    1.579386]  cpufreq_add_dev+0x80/0x98
-> 	[    1.579395]  subsys_interface_register+0x100/0x130
-> 	[    1.579404]  cpufreq_register_driver+0x150/0x244
-> 	[    1.579413]  dt_cpufreq_probe+0x8c/0x440
-> 	[    1.579420]  platform_probe+0x68/0xc8
-> 	[    1.579430]  really_probe+0xbc/0x29c
-> 	[    1.579438]  __driver_probe_device+0x78/0x12c
-> 	[    1.579446]  driver_probe_device+0xd8/0x15c
-> 	[    1.579454]  __device_attach_driver+0xb8/0x134
-> 	[    1.579463]  bus_for_each_drv+0x84/0xe0
-> 	[    1.579470]  __device_attach+0x9c/0x188
-> 	[    1.579478]  device_initial_probe+0x14/0x20
-> 	[    1.579487]  bus_probe_device+0xac/0xb0
-> 	[    1.579494]  device_add+0x55c/0x720
-> 	[    1.579500]  platform_device_add+0x1b8/0x244
-> 	[    1.579510]  platform_device_register_full+0xfc/0x184
-> 	[    1.579516]  platform_device_register_resndata.constprop.0+0x5c/0x8c
-> 	[    1.579524]  qcom_cpufreq_probe+0x1e4/0x498
-> 	[    1.579531]  platform_probe+0x68/0xc8
-> 	[    1.579540]  really_probe+0xbc/0x29c
-> 	[    1.579548]  __driver_probe_device+0x78/0x12c
-> 	[    1.579556]  driver_probe_device+0xd8/0x15c
-> 	[    1.579564]  __device_attach_driver+0xb8/0x134
-> 	[    1.579573]  bus_for_each_drv+0x84/0xe0
-> 	[    1.579580]  __device_attach+0x9c/0x188
-> 	[    1.579588]  device_initial_probe+0x14/0x20
-> 	[    1.579596]  bus_probe_device+0xac/0xb0
-> 	[    1.579603]  deferred_probe_work_func+0x88/0xc0
-> 	[    1.579611]  process_one_work+0x148/0x28c
-> 	[    1.579623]  worker_thread+0x2e8/0x3f8
-> 	[    1.579633]  kthread+0x110/0x114
-> 	[    1.579641]  ret_from_fork+0x10/0x20
-> 	[    1.579653] Code: aa1703e0 52800021 97e38ed5 17ffffea (d4210000)
-> 	[    1.579657] ---[ end trace 0000000000000000 ]---
-> 	[    1.851078] note: kworker/u16:0[11] exited with irqs disabled
-> 	[    1.855791] note: kworker/u16:0[11] exited with preempt_count 1
-> 	[    1.861586] ------------[ cut here ]------------
-> 
-> Randomly, the following call seems to return -EBUSY causing
-> the above BUG().
-> 
-> 	ret = __cpufreq_driver_target(policy, old_freq - 1,
-> 				      CPUFREQ_RELATION_L);
-> 
-> 	/*
-> 	 * Reaching here after boot in a few seconds may not
-> 	 * mean that system will remain stable at "unknown"
-> 	 * frequency for longer duration. Hence, a BUG_ON().
-> 	 */
-> 	BUG_ON(ret);
-> 
-> Not sure why this does not happen in every boot, and how it
-> is tied to genpd_names. Will debug and update.
-
-Thanks!
-
--- 
-With best wishes
-Dmitry
