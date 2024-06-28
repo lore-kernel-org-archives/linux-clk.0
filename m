@@ -1,44 +1,44 @@
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2053.outbound.protection.outlook.com [40.107.22.53])
+Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2050.outbound.protection.outlook.com [40.107.105.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB104D8DB;
-	Fri, 28 Jun 2024 12:33:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEDED3B79C;
+	Fri, 28 Jun 2024 13:10:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.105.50
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719578038; cv=fail; b=haTednKTGysiOJwp4BJmP9EKYntWv+6f816DSWNvH9SR2TBfYnn8lWei4Kh9qEEuB45Ca4UWC4TbrF4z+hZYGGR3JfWmPjWbO3HC6JACvujmC6dwwqqHHWf+aZ40EU/tw1ox3H6czdgWjrvHY6bSlE7jfl8+78xcsCX7ArYSDnE=
+	t=1719580240; cv=fail; b=mr9gY/EYdXl+u2m9XCh1ByjfYJu9Tzzqi+cU9YZOwgWZb+JouCAiiahCafAbPCiMkUsl90tyVuOP/9/u3l7i9l9iWk1XXNT//oo9viB4up0q0UyH2l+QMOPJaKtDqFjBEdNLjvKnN72kOLZu8c6ca0m8yULNcTtxdV7MOQnoCrI=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719578038; c=relaxed/simple;
-	bh=JMuKrz6zRCyi7lj838o6tPJX/yvk6B+sQJCFPyGH5zo=;
+	s=arc-20240116; t=1719580240; c=relaxed/simple;
+	bh=+jnC2NDuphw6JkU6CX72dcrUAM7HDUxsTz5OGSatNpc=;
 	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=AgItKc8yjreDo346R+npxQje96wtpXw0ycR2YIwDnCp1v8UGqAA5PmOUAdGqacbios/IWCT1JlCJzVSsu0YqSbQHZ+6Qzgfg6z236XWiKE/aOwtkzPe3FT1wwPu5d8RM8ewvFEDycMGkWB8/biUGJA+Lvb0x8WfyF2Ts2niKS3Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=G5cGWo0q; arc=fail smtp.client-ip=40.107.22.53
+	 Content-Type:MIME-Version; b=oVHSArYki/naQnClaW+4zQELC3yL343He3sW57IRVXVAKeG1Py++l1xFb4PZEqngfM40YrA876HmGpGGuS2NGcA/2qrH16q0SUkLaQCV9Gyzu2hS8wX/f7IKwY5R4gj1POpIjrrrtC+1XXZc3ZU16QFl6OCPpqcNmVmhhgw1s3o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=XpZs1lnQ; arc=fail smtp.client-ip=40.107.105.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="G5cGWo0q"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="XpZs1lnQ"
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=b7xatxdovw6odc2HAJASNhtVtOV5nJnSW5pwUOm/0nI2qk9hYnbrkcDSDVgFr/qZDxVTkPjx0+ljDE3d1w/MiSAqLhi7OPZT5JJlqCg8yzCqcxDkY8g7MNaajcNivZSsznD5sOK8EqsjukPOcp+SJ6132vZYeQ5c1/ZcfX9t2wwoRlIJR9khKuo4uYVAJffPBuSVImF0W9OJinV96R8ruJ8dFiH+9aQVb4XwP947M178l9zRuPuh5GK4U/lkBEbAz0t0yOirv/oTSZNm+/4UJV8V+Hb10nvQzRUhofy1egxANC6I9GfNCkPAL12DQL2ymLAW8/fwcoSp1mom04IuIw==
+ b=efb1+H+LkHpk3G1DJ78rfhMLY2rECcWxKQ2LiUpybP4JmwhNH8LXZF8izUPtuW/lwHsTyZHb7oj0cC8d51QzRMYz5xeFer7XEdj3p9k6bqUb56L49q77UGFPhrZCC9BwISmCDO2flie98Gjjt6Ab0WHluQ00ItTGW+PtavbFRAf3UeDXzBFjz6bcM40QtK62irx6ONhDClgFFmEicmiFkqdkdQGMOs7LxLxqpMfOzqaPyef3bV6LnR2PeRNgAZqAHBrnzpgu2okofkwAu+bVjhwUKczvoqghep1ZRsgcLSY7U4SMYjttK0Ek6F1VVRlqG+UnWvDKW8/0+PbePppMNw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector9901;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rXrtWTFSMRGU0VFisGTKQDl9B0coaotLGThkY0OONas=;
- b=RtER0ZxWI1NKTffleFNqt2Jtq5fh43dxbXxwJdthJmCpAczBIbQs8hJq98nfbq7k378Wfw/Tdf9n4Ty/6fHUTCEmNhoXZDK744NZNnT2WJSbPnOMyyta/WxZQrY/MWh82j4egkVHmNTpvZtSmfIl2IBjtS6+RmVwco+mCEiqlO2VdBwxn6Ui0G8GbOS/cQj3hkNEDSosCZE+Zf5oPNofxELAOE+ew5+fw8pNo3mBoH5ZndursQ3CKyJy/grzfrC86m/LQKvVDUWteCJMM135Vr+0rEc/7YvSiFS4Du2hWxep6y+atJ5Ubj20stLNf3lDqz4LwdSqkv4ytvhjq3FaIA==
+ bh=ht3oS351eES76RTC9zBDqt5B9yWWCjikSBYzpt7S6lo=;
+ b=eQAmD16ijbhYauQqCu0wQetE+/jLgWR1ZTKhEIA+UCTXsz/5pIyts9ZGLpwf42giaQBQeI0m0sGr/dp6Lx6TBSbGwEbIwAeWwSMJ3fa78pWisUn+gNCnr+m0gxiJvDaGZYL9p/LngmohmXzhVExuAlY9d1AbcXGJ6DKc/MnitJrbcVgCJd/75aQjbiJ1/CQUAhgl+vNWd9F/NE8zhBRYGix7yvVTvDuDC/AlJBs+qxVWcFKvo6AjkHbqJqOw74+/6OV2MFpy8Bp6mVnNZUML60WQCWk3gUsfG3T0kxtcplJwC8LvDH/dLdsgpI2lvSVw1lVsoP6FCjdSA2JIN0odag==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
  smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
  header.d=nxp.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rXrtWTFSMRGU0VFisGTKQDl9B0coaotLGThkY0OONas=;
- b=G5cGWo0qtuuqtrbVjpKRw/+IsblhIpaScyF/W36/DnMVgKWLOYpWHJjiSZySduBE+8zYty/KcGrV4yeti8MFxAQtbtMdr4yMjbCR4bxCNarmwzMDGE5WKywdB99q74Iyp1gmPEgijw/4EOjw0ZT7IMDnVRzUfCQHMUP2pusQ/tw=
+ bh=ht3oS351eES76RTC9zBDqt5B9yWWCjikSBYzpt7S6lo=;
+ b=XpZs1lnQI4/EX8IkMyQ3Yqw6RN4bVbkrO1MFIGOdz0eetxPvOGQWb7cdyttQngvXXU7pdj790ikafTnUCSKLYdA2VPpkuboBq2lJOGLzIsHahxiiPABjzDnOvEP78cREOBx/myAOt+wPE5DzSxrEPn3ANaz8S6tRil8L/301uXI=
 Received: from AM6PR04MB5941.eurprd04.prod.outlook.com (2603:10a6:20b:9e::16)
- by DU4PR04MB10768.eurprd04.prod.outlook.com (2603:10a6:10:585::19) with
+ by AS8PR04MB8658.eurprd04.prod.outlook.com (2603:10a6:20b:429::22) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7698.32; Fri, 28 Jun
- 2024 12:33:53 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.26; Fri, 28 Jun
+ 2024 13:10:35 +0000
 Received: from AM6PR04MB5941.eurprd04.prod.outlook.com
  ([fe80::9f4e:b695:f5f0:5256]) by AM6PR04MB5941.eurprd04.prod.outlook.com
  ([fe80::9f4e:b695:f5f0:5256%4]) with mapi id 15.20.7698.025; Fri, 28 Jun 2024
- 12:33:53 +0000
+ 13:10:34 +0000
 From: Peng Fan <peng.fan@nxp.com>
 To: Rob Herring <robh@kernel.org>, "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
 	Luca Ceresoli <luca.ceresoli@bootlin.com>
@@ -49,14 +49,16 @@ CC: Saravana Kannan <saravanak@google.com>, Michael Turquette
 	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
 Subject: RE: [PATCH 1/2] of: property: add of_property_for_each_u64
 Thread-Topic: [PATCH 1/2] of: property: add of_property_for_each_u64
-Thread-Index: AQHaw9ZmlXnGs5ZPSEao+eKKDoQ6w7HcLoqAgAD3VmA=
-Date: Fri, 28 Jun 2024 12:33:53 +0000
+Thread-Index: AQHaw9ZmlXnGs5ZPSEao+eKKDoQ6w7HcLoqAgAD3VmCAAAtK0A==
+Date: Fri, 28 Jun 2024 13:10:34 +0000
 Message-ID:
- <AM6PR04MB59416E3C8FFC904450F3B02D88D02@AM6PR04MB5941.eurprd04.prod.outlook.com>
+ <AM6PR04MB5941D30C26F2CB818FEC082C88D02@AM6PR04MB5941.eurprd04.prod.outlook.com>
 References: <20240621-clk-u64-v1-0-d28a611b2621@nxp.com>
  <20240621-clk-u64-v1-1-d28a611b2621@nxp.com>
  <20240627214355.GA601888-robh@kernel.org>
-In-Reply-To: <20240627214355.GA601888-robh@kernel.org>
+ <AM6PR04MB59416E3C8FFC904450F3B02D88D02@AM6PR04MB5941.eurprd04.prod.outlook.com>
+In-Reply-To:
+ <AM6PR04MB59416E3C8FFC904450F3B02D88D02@AM6PR04MB5941.eurprd04.prod.outlook.com>
 Accept-Language: en-US
 Content-Language: en-US
 X-MS-Has-Attach:
@@ -64,67 +66,67 @@ X-MS-TNEF-Correlator:
 authentication-results: dkim=none (message not signed)
  header.d=none;dmarc=none action=none header.from=nxp.com;
 x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AM6PR04MB5941:EE_|DU4PR04MB10768:EE_
-x-ms-office365-filtering-correlation-id: 496611f2-5e95-4d3c-a2a0-08dc976e9241
+x-ms-traffictypediagnostic: AM6PR04MB5941:EE_|AS8PR04MB8658:EE_
+x-ms-office365-filtering-correlation-id: 9b2e3898-49fb-4a09-381f-08dc9773b257
 x-ms-exchange-senderadcheck: 1
 x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700018;
 x-microsoft-antispam-message-info:
- =?us-ascii?Q?mVf9CamlrfjNGdW0XM3ZcyZEF7lAPh06tBSGAO0XsPpvwnPjTw2knwCJw2UL?=
- =?us-ascii?Q?Yvxy4A2QDXwaMQ/xPxIh4TYy/8rz0wShoW2JM8cOIzRknz6/q3W3R6CF1+WN?=
- =?us-ascii?Q?IpcSzLOYbCOdITnd2nner3MvjKUEvR5mAI8LMG0VtGgcgqI5ReX3fppU8/mQ?=
- =?us-ascii?Q?DQ4wgAv8VpkR9KCAeQfIiv9jDc3PUOQ9a4r1Kua83Q9OOeMqyj9zbEwLnUmN?=
- =?us-ascii?Q?mvhJICSZ9pZXH46YL3hqLRDj5JvlEJ93y0lTVTwrnWYGu2nwfrVifE2yMIF/?=
- =?us-ascii?Q?y+nLe9SCE9DWLAX1/C61Ri2CF+zTcuaPXaECW0XbDw9mTWPwRCl0vW6SMQMy?=
- =?us-ascii?Q?fJw4GeuknYG4oWlVtlOP9JDqGiRaIn6C07AkoIsN3QaLsq1JCqQzkeuSooHh?=
- =?us-ascii?Q?fMReNYfWUf8au/xpdA/gZhp7p7Rvt9nU/8fGGJdln6b+zjREkL2zOvG7ugQn?=
- =?us-ascii?Q?Hw5GHvSIKir6Nic/7VPsApC9SBxZfG2ZMfiljOs/cE19hELP7DArdMEPpbyP?=
- =?us-ascii?Q?pxQuMCiRfoCVQ+ViswfmeiYhh8SwqcpZdXp5AzNEGKZFn4iNPQ48abEk6LpW?=
- =?us-ascii?Q?t1dvrfKom7GuFz2PbHYoN2EodoJVULkjSKbgq/ZZN/+nOzcRJh9iJg9YfWdP?=
- =?us-ascii?Q?1qeB8G1AfhTLke0XPIhEicNsol7IK8BFwLCCgg1g+oGCJWRN3flotMO1Kn7L?=
- =?us-ascii?Q?SH0f1A4VWkKLaML3ukjME139Sd/85ZWgaU+aWt6KAjCBJOCqKxmoV/TpfqY3?=
- =?us-ascii?Q?Y7sWW+wyNqd4VTLgj0guJkzH5e6uzrJwU98OfExOryC3+KxeRhUIMcHE+rLo?=
- =?us-ascii?Q?74vUhpGcVJtBzyimXhLtOiAWRcJIV+nDX0QDrQvePaSaN7rxuRryt2JQpCfr?=
- =?us-ascii?Q?LTyCtoAo94vZv8YwLhEvWWKYVfkK8+/3SnI1KTk4bYSs8YLjMpJ9rivbQndF?=
- =?us-ascii?Q?QZiNe5LQkckZ7M4nQR1wPOBQzReBr031fFdf346ctsEets29WolNp5ZavCmm?=
- =?us-ascii?Q?6METbn0I+uQWJze+OTLN1IfNBVmo3yEqF7hQ8mrYil8ne7uW+KbM/ov73xTd?=
- =?us-ascii?Q?ofhfvanI8eeuPvR8ogkdnzINEnWp+JmZJ+bZFBdpS5WtwGJGtMfP6DsoaIdE?=
- =?us-ascii?Q?jIJ2mhB7wnMxJ266s6zYRXxiJa7jy3OifuGudtz6p25BButHyx17WEL8IAJZ?=
- =?us-ascii?Q?3clsf2xaYHK9Cc55UIwRaWTBUKXnvNniuphlH13YVJ558c7Q050l3Iq/i1/b?=
- =?us-ascii?Q?1A2PB1dzUhHxz/L+2noSgbVNvoml7jqKMmgJ7CEXeF0MR9mMRiGzlVEXMgrF?=
- =?us-ascii?Q?yTQ3bAMdrIqAFV2evRBnV7WRTeBrRv9bsCyjDUFNfPbJ5o/bn1/Ri/f1ErqF?=
- =?us-ascii?Q?Dh3F1tU=3D?=
+ =?us-ascii?Q?6Xj0CjmjGWBvOjCUkKEPdZT8OAeQ71W+S6HZDDFXxJppBTgXpwzQQVwqDUG5?=
+ =?us-ascii?Q?yx/KHN+ERAN6m9VMrDdGPK+20O9gISeimAo6Ljlto2UF8mpjdCqOTwdxlAIJ?=
+ =?us-ascii?Q?ORnk7xJ8ceii386qsNvQeDQwfVSLi0UXVVK0R5rz2zrR63SAr2cRU+MWd+yF?=
+ =?us-ascii?Q?74kGzlhZcHR4i4CXFBJIDGrCXMyviATB84F/PVrKekGsbHWcK3E3m1BrbGv2?=
+ =?us-ascii?Q?c5NVpYqVv6ppWarDhtepYE2asAjXKL7w3YNGj45HfskhnCdi0d2QtDtbf3LL?=
+ =?us-ascii?Q?bpTO7pqby3HX0ctmMJRmO7BFELcsptSBKfoSQUrxjm7O1J0mEa+vUqRu7jF4?=
+ =?us-ascii?Q?6nVVcs5zviDIqlo2DZDK11MnxxaVsSKofxyKP378Nx08RlbNW0Wijhg5rUnp?=
+ =?us-ascii?Q?7TZXE+H8lr7ErZ0AnB3gLzZezBLcNZKECWKDkZNCkqTf0SqCSxkSqje3zcW+?=
+ =?us-ascii?Q?E6ASegkxi2Zs7h5xhV9jNgl/qwnKz+iLHGB0XIa6WUiIEQgU5LISLCpSl9yj?=
+ =?us-ascii?Q?uUC6fYrz/9M7qcsbD+IemtK8opXwF/o4ccvb3zJ8AEloSexTF/wTjlpPjw2a?=
+ =?us-ascii?Q?RwJMvNGSDfAFK8sbq3wuDFOgJ++SnZm8qaspvGjgvhCrn1pwd4RobuWhyH3U?=
+ =?us-ascii?Q?do4pnF3AYz0Bt+0KWqE5D08KATtkmTQoZj1uv4J2DZug1+Bh/s2VCCqy84Gx?=
+ =?us-ascii?Q?sfiR25JS5wxQBp+cuxX08RobaSTFfIhiNIZMdBX/PMWegO0uH01SpMyOU/GJ?=
+ =?us-ascii?Q?j0VVH7ylAivd0NCyd7v1MMhf1gWRU58HnjufZPeanKJAFXUSKitbtWibij9p?=
+ =?us-ascii?Q?oKgw6Tg6VPYdytO8CRzPGU86WPLfrFfZPnH3iQVSD43u7g/h5XVEa1bDhpxs?=
+ =?us-ascii?Q?ON0kPbyTWyXsRtgRhrSiAjtzRQGi39RGmfwPh1uGaxt2J8GfyoJ0RMAcL2uQ?=
+ =?us-ascii?Q?16NceiFDztZmQsljbtb6MP0Su8ZxW+k9xn7hcZb7QCtc6oOfVtFkBkg3JvjQ?=
+ =?us-ascii?Q?Ck6xGQPXzcQk4ADv6TPiSC3BRQC1JTc2lj3PP0SZaOqUgAfLuFAusTVhAeWF?=
+ =?us-ascii?Q?a1d2OiWp9KAUBviN8zFl7R6hk1NZSnrBOrh++GWt+WcUVZMot809dstDv3lQ?=
+ =?us-ascii?Q?JDG4GqzVhBuIAH4t/ZeX0RG794hSRnwv0oowqOjy2rv0AGK0TF3wxQsPwMLh?=
+ =?us-ascii?Q?+i2/uTL9MC5gQOWdLuTQzdZ0VH+kjeHJCA6OIuRL5p4ETSM7XTa5VD4k6PT2?=
+ =?us-ascii?Q?lsJsu5z8OJ6zkLHLxqzAe9xBQ+TcLoSlYtwSYpAZqo9w4qTgOA9v3EkCkHlv?=
+ =?us-ascii?Q?lNwz8CLOYF0Edp+58KKptSn/Caxabc0nHpo6hAfcpbYFJAaSZ/VucGNWhWeO?=
+ =?us-ascii?Q?iFDVtjs=3D?=
 x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM6PR04MB5941.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM6PR04MB5941.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
 x-ms-exchange-antispam-messagedata-chunkcount: 1
 x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?IJXIPsXNRdgLYSY2+dAzTdQ17k6kiwSEUL4i8Bh66haecKy1W7RaIGn9b+uu?=
- =?us-ascii?Q?XRv9w0Ffd8Y2BE4imMzBr4nlH0fj0YufFFTX1Dz1JlJx2s+eM7nSxwh70Fqh?=
- =?us-ascii?Q?1+xwDSPprsVtvfReGx+lt1zd8cPNSnSLfRsXYv9HCAdoLIh69pBhuRcU+5Wa?=
- =?us-ascii?Q?0bCt5C5LiHyCEHATEtwC/TLUEqfgCmI0LA5NEdtc8bEcLOx3MIkpiWJMz0kQ?=
- =?us-ascii?Q?kmTyFpMnEHFzyfVLBgUhL5oA6/MaRr6BwhH3soEhDwxVgaceY5oTYxaRu2yV?=
- =?us-ascii?Q?LVOPzvz4aZ3CBvlggqWgsbcLu/snBNEga5C/+uFtLbunUO3/445QZQdulm5E?=
- =?us-ascii?Q?c9DXiOfnp3KQ6mFEPRQOOHIYapfXO8/bdcQgCBdkhN4p/dqs3l3dxunq1YkD?=
- =?us-ascii?Q?pyRBfKYfcF7f+UdA0wKbYS7+W5Iq38fWr96NsdO2Jj4tkDU8moTXWhP+Yrro?=
- =?us-ascii?Q?GG11rXeV9Q3afKtrEDMhZV5rypXgVlg3Ssys6uzMNwg8mgRifO6FRXbeDCJL?=
- =?us-ascii?Q?oSmWv8pQRm+VUNGkHU16ZFW6tAjgfdCVqyC0szlB+kwLNqDI4wdXoSZqOF5g?=
- =?us-ascii?Q?ATd5SSADiA3fiPSDOFyrdFjrVxLUtilqvaQpUkVXYEAUDVa1PTXvMCbBpEdC?=
- =?us-ascii?Q?bQ2Xb2vMHHlAJRCFsAk6Gsusfz7ZHlhshDVHT+mrUjNxUcAcNZYXE5gDzBvo?=
- =?us-ascii?Q?QfrqugIxK8MepbqMtLfQFq65mcpDllZxGdr8U4BYvnYHpAwYuDKWSYi1N02p?=
- =?us-ascii?Q?9c4uAPYLt5LLxlItaYOvYxALhJrg40kgBa0A3PUwH0ofXFuD4wXgxRik4VA0?=
- =?us-ascii?Q?D+lQ4ngfn8snSjFiHqOFy1+LaXz2g2scCDZm5I4gLW4FOjtV0q8RBxBmmorY?=
- =?us-ascii?Q?1N/h++HxNnykF1/aFGHWPxywmDZW2StXnZdTV69weQ6qSAvnI1UZymzEReWt?=
- =?us-ascii?Q?QDgsYqS60VUsajUwXy4AkaPtNbyKoPWSitKlORewDvuOUVCUazCrkVVfTXno?=
- =?us-ascii?Q?nhuiVRdq53xi6f6R4Q8Hk8VxjE1R3GidjHMFboqaV78j1ZGzQg9GrAZGJX1D?=
- =?us-ascii?Q?MiQnksusClRPXgXfR7+9sy5k/uC8O3A0ESs/g3o+1nml3FGj1j3w3zkINOES?=
- =?us-ascii?Q?U8fDkW752vRsI8UD/j0USd5kFpcivhkzxJgjPpbsh8a5kZRYhSyaTQ94ygOQ?=
- =?us-ascii?Q?f4CBrnR6iR1rBypeNpJ6Y0pWcwe8uHXC/OOVDnLHjdD844AqNjJwtYCdyfZV?=
- =?us-ascii?Q?a1XLvGG5i9/P1oJv3/iQIgJWo0bY+Y7BmkB4UdUYGhGIU2GAqzjuaCHqKm0D?=
- =?us-ascii?Q?pHqoU07n40XZoWhBbskyIIl7pLbuEw+uFfvh53cJkX4VLkDl+BHztMc+cdtb?=
- =?us-ascii?Q?rUMkLbFOFaJSLnQSkc4LDJ/fKSRkn5JytNh9wjyZ8DDrYlf7Sd3B7cH8RaL5?=
- =?us-ascii?Q?xwdm0me/42Z/lE85r6dO9QQCr7PHH9PPDYGjAWu7J4pL6Nfn1VYh8jtmYdb/?=
- =?us-ascii?Q?vhYOpW+QkoMnun3YFt5jrjax5Qnom5xAK+fz4xlmUQniTze4vVxErmwYacgu?=
- =?us-ascii?Q?q2z9ybTJaLAbKAtko1I=3D?=
+ =?us-ascii?Q?MMgQrivgr0F71GfUi0Wulq2xG45HaUWWeVlSVLqvkIKi6wtNa6qSXgZVAMt5?=
+ =?us-ascii?Q?JSte9DBQ9QiDbeGn9Cn1Bh20e5XLT3B8Y0hPhKFuJn+XR8ZeZNszv/BnWMQt?=
+ =?us-ascii?Q?lRvq2LceUiJVQECtFHLvXXohj0ARddMxmTS7IPEKFFQ0fSOuJaavX/Stf0uC?=
+ =?us-ascii?Q?m9/shJOHgupLQzv6zrSNihua+sw7edRJukh9vz0QDjV6voYYUO86fBhWWaai?=
+ =?us-ascii?Q?Ks+OXoYI0t03Q2j1gl0tRG2mlQlDL/+YkqJ+edczUY7jZYBBuld5eiPUu4Vq?=
+ =?us-ascii?Q?fTo0QFm2fpMZrkH3q0T6GdLs0vtq1yCaLW+0HStIkxE4C5leJMRnzlk3/JjI?=
+ =?us-ascii?Q?HqLoNgi/RVrtg4dpzXv9F4jH+ZY0z4qVR74BfYPf9UZIouGxRrnxXHmsqJm/?=
+ =?us-ascii?Q?GFUTe79xzljvRvNowY8DFt4mYeQyiLwXZMBenbnNs+B94adIH6aY4nj6foSv?=
+ =?us-ascii?Q?bh08Ib20omwuoeiY3KOTFXQURSQSX5kCDtNSaBF88wKPML/Y0Ji42W+I/cSk?=
+ =?us-ascii?Q?aoy+Fg5KvaoAy69PQq4PWrSmf09J/XmQDGncxQ0+I4ccW77g6f+H6SJBcE30?=
+ =?us-ascii?Q?QWRAFNxIDrUzG0PAjJwD9Co1mXlozSD1W8shyk0gMvNX7P7SLpyKziiW98xn?=
+ =?us-ascii?Q?vJsg/nMXvFI1ls1r0AEC2YHNWvrmtm6RrrDgoIC9kpl1TxbDO3ym5bJ972os?=
+ =?us-ascii?Q?2c+xd623xWSPLNTCBa3YFK7LUd47tFVD9u/HhF5u/bEnQ4TWwPXSPG/EQupq?=
+ =?us-ascii?Q?huk+gfmN4TEjUXYbE1J6Bg8NzKeyqJOXIbh3U7HTKup5hAZ105tMiRB+LVqW?=
+ =?us-ascii?Q?NW9UoDWKZ2ZFOLdUOzuAlDB8tZ5uEQjSRUxg+PrtnukBkz8Xit4Io8Ccf8/P?=
+ =?us-ascii?Q?GEyRjzJBSnLKsVx1ZyKmJMW47/Gsn4dCtsnnIeIzgfHkeb/kCeOEBkPIVrBv?=
+ =?us-ascii?Q?+hWKJDlL3ab84Rqa+Ol8YS3T2jzvxXD73MpDk5arKgUrHTGgZdUhfRGX9uK4?=
+ =?us-ascii?Q?9vG+W1Zw5uITOsjpK0mh2HjIDdg5Gg7fg5mR2L6vL2uxpxFTLPyUbTDBupg7?=
+ =?us-ascii?Q?+U3Zal/jrmLpcHQCWFfAscPr6Q1i4C2YRUwus71yQqe4mslzZJFrIhyXBE1s?=
+ =?us-ascii?Q?cMHt5Sox1gHHBwLXQ/breaE3GVkzjU7Vwc60aZWH1V59yN+xVINw4AHqodLV?=
+ =?us-ascii?Q?1Rr9nL8fmYdANkp4YXkRIvA8eoxqYdqpWZma7Z3shIUpRX+NAN//+/PEmsWs?=
+ =?us-ascii?Q?SIklsewv2KHSAn69TcjNf16LvWJGnXeXlmH2zAWN6ddjCwBo5aezpR/TTiRs?=
+ =?us-ascii?Q?gC/yGYRFTTHB7xfJDS5ehPJOyeJdhxVx5Sm65VO32NXdKjiXDK22jLhiPeGq?=
+ =?us-ascii?Q?9AXVptjFjfRhHflQ6SeN1kXlPxaYJVJuSp/TmoOPANxoabS76jHU3CWqNYrj?=
+ =?us-ascii?Q?qkQ2V7XnM3TXmJ4C99tMKsZClzq0j8oScUMbuamrpNoL0goQB21lePuqg/sh?=
+ =?us-ascii?Q?hobzzJhxA2T6xu9yyqI5oRSALoeO6nKGhm3tOCrLJiqbB9yRmfTbjBwR25GX?=
+ =?us-ascii?Q?MNgBQAcGoFFPNctpxTY=3D?=
 Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
@@ -136,186 +138,177 @@ MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
 X-MS-Exchange-CrossTenant-AuthSource: AM6PR04MB5941.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 496611f2-5e95-4d3c-a2a0-08dc976e9241
-X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Jun 2024 12:33:53.5670
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9b2e3898-49fb-4a09-381f-08dc9773b257
+X-MS-Exchange-CrossTenant-originalarrivaltime: 28 Jun 2024 13:10:34.8710
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
 X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: mBYmQiGw+Y4H8LsT2PTVexLzxxsE06pFppCTAccs3IPZ3LYBrGVjVLXWalDOcnFYWuLcInhPh0nW5b20ahvNyg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DU4PR04MB10768
+X-MS-Exchange-CrossTenant-userprincipalname: X3W8WscAflClIiT0ixYC+GusMAUHPlZ4xtyBaq6leKISKMDTXKcoOzJr7vkW5N+fJyysAba2pQiD9ubI9IjC6w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8658
 
-> Subject: Re: [PATCH 1/2] of: property: add of_property_for_each_u64
+> Subject: RE: [PATCH 1/2] of: property: add of_property_for_each_u64
 >=20
-> +Luca
+> > Subject: Re: [PATCH 1/2] of: property: add of_property_for_each_u64
+> >
+> > +Luca
+> >
+> > On Fri, Jun 21, 2024 at 08:36:39PM +0800, Peng Fan (OSS) wrote:
+> > > From: Peng Fan <peng.fan@nxp.com>
+> > >
+> > > Preparing for assigned-clock-rates-u64 support, add function
+> > > of_property_for_each_u64 to iterate each u64 value
+> > >
+> > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > > ---
+> > >  drivers/of/property.c | 23 +++++++++++++++++++++++
+> > >  include/linux/of.h    | 24 ++++++++++++++++++++++++
+> > >  2 files changed, 47 insertions(+)
+> > >
+> > > diff --git a/drivers/of/property.c b/drivers/of/property.c index
+> > > 164d77cb9445..b89c3ab01d44 100644
+> > > --- a/drivers/of/property.c
+> > > +++ b/drivers/of/property.c
+> > > @@ -548,6 +548,29 @@ const __be32 *of_prop_next_u32(struct
+> > property
+> > > *prop, const __be32 *cur,  }
+> > EXPORT_SYMBOL_GPL(of_prop_next_u32);
+> > >
+> > > +const __be32 *of_prop_next_u64(struct property *prop, const
+> > __be32 *cur,
+> > > +			       u64 *pu)
+> >
+> > struct property can be const
 >=20
-> On Fri, Jun 21, 2024 at 08:36:39PM +0800, Peng Fan (OSS) wrote:
-> > From: Peng Fan <peng.fan@nxp.com>
-> >
-> > Preparing for assigned-clock-rates-u64 support, add function
-> > of_property_for_each_u64 to iterate each u64 value
-> >
-> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> > ---
-> >  drivers/of/property.c | 23 +++++++++++++++++++++++
-> >  include/linux/of.h    | 24 ++++++++++++++++++++++++
-> >  2 files changed, 47 insertions(+)
-> >
-> > diff --git a/drivers/of/property.c b/drivers/of/property.c index
-> > 164d77cb9445..b89c3ab01d44 100644
-> > --- a/drivers/of/property.c
-> > +++ b/drivers/of/property.c
-> > @@ -548,6 +548,29 @@ const __be32 *of_prop_next_u32(struct
-> property
-> > *prop, const __be32 *cur,  }
-> EXPORT_SYMBOL_GPL(of_prop_next_u32);
-> >
-> > +const __be32 *of_prop_next_u64(struct property *prop, const
-> __be32 *cur,
-> > +			       u64 *pu)
+> Fix in v2. BTW, I am thinking something as below:
 >=20
-> struct property can be const
+> const __be64 *of_prop_next_u64(const struct property *prop, const
+> __be64 *cur,
+>                                u64 *pu)
+> {
+>         const void *curv =3D cur;
+>=20
+>         if (!prop)
+>                 return NULL;
+>=20
+>         if (!cur) {
+>                 curv =3D prop->value;
+>                 goto out_val;
+>         }
+>=20
+>         curv +=3D sizeof(*cur);
+>         if (curv >=3D prop->value + prop->length)
+>                 return NULL;
+>=20
+> out_val:
+>         *pu =3D be64_to_cpup(curv);
+>         return curv;
+> }
+> EXPORT_SYMBOL_GPL(of_prop_next_u64);
+>=20
+> >
+> > > +{
+> > > +	const void *curv =3D cur;
+> > > +
+> > > +	if (!prop)
+> > > +		return NULL;
+> > > +
+> > > +	if (!cur) {
+> > > +		curv =3D prop->value;
+> > > +		goto out_val;
+> > > +	}
+> > > +
+> > > +	curv +=3D sizeof(*cur) * 2;
+> > > +	if (curv >=3D prop->value + prop->length)
+> > > +		return NULL;
+> > > +
+> > > +out_val:
+> > > +	*pu =3D of_read_number(curv, 2);
+> > > +	return curv;
+> > > +}
+> > > +EXPORT_SYMBOL_GPL(of_prop_next_u64);
+> > > +
+> > >  const char *of_prop_next_string(struct property *prop, const char
+> > > *cur)  {
+> > >  	const void *curv =3D cur;
+> > > diff --git a/include/linux/of.h b/include/linux/of.h index
+> > > 13cf7a43b473..464eca6a4636 100644
+> > > --- a/include/linux/of.h
+> > > +++ b/include/linux/of.h
+> > > @@ -439,6 +439,18 @@ extern int of_detach_node(struct
+> > device_node *);
+> > >   */
+> > >  const __be32 *of_prop_next_u32(struct property *prop, const
+> > __be32 *cur,
+> > >  			       u32 *pu);
+> > > +
+> > > +/*
+> > > + * struct property *prop;
+> > > + * const __be32 *p;
+> > > + * u64 u;
+> > > + *
+> > > + * of_property_for_each_u64(np, "propname", prop, p, u)
+> > > + *         printk("U64 value: %llx\n", u);
+> > > + */
+> > > +const __be32 *of_prop_next_u64(struct property *prop, const
+> > __be32 *cur,
+> > > +			       u64 *pu);
+> > > +
+> > >  /*
+> > >   * struct property *prop;
+> > >   * const char *s;
+> > > @@ -834,6 +846,12 @@ static inline const __be32
+> > *of_prop_next_u32(struct property *prop,
+> > >  	return NULL;
+> > >  }
+> > >
+> > > +static inline const __be32 *of_prop_next_u64(struct property
+> *prop,
+> > > +		const __be32 *cur, u64 *pu)
+> > > +{
+> > > +	return NULL;
+> > > +}
+> > > +
+> > >  static inline const char *of_prop_next_string(struct property *prop,
+> > >  		const char *cur)
+> > >  {
+> > > @@ -1437,6 +1455,12 @@ static inline int
+> > of_property_read_s32(const struct device_node *np,
+> > >  		p;						\
+> > >  		p =3D of_prop_next_u32(prop, p, &u))
+> > >
+> > > +#define of_property_for_each_u64(np, propname, prop, p, u)	\
+> > > +	for (prop =3D of_find_property(np, propname, NULL),	\
+> > > +		p =3D of_prop_next_u64(prop, NULL, &u);		\
+> > > +		p;						\
+> > > +		p =3D of_prop_next_u64(prop, p, &u))
+> >
+> > I think we want to define this differently to avoid exposing struct
+> > property and the property data directly. Like this:
+> >
+> > #define of_property_for_each_u64(np, propname, u) \
+> >   for (struct property *_prop =3D of_find_property(np, propname, NULL),
+> >          const __be32 *_p =3D of_prop_next_u64(_prop, NULL, &u);
+> >          _p;
+> >          _p =3D of_prop_next_u64(_prop, _p, &u))
 
-Fix in v2. BTW, I am thinking something as below:=20
-
-const __be64 *of_prop_next_u64(const struct property *prop, const __be64 *c=
-ur,                     =20
-                               u64 *pu)                                    =
-                        =20
-{                                                                          =
-                        =20
-        const void *curv =3D cur;                                          =
-                          =20
-                                                                           =
-                        =20
-        if (!prop)                                                         =
-                        =20
-                return NULL;                                               =
-                        =20
-                                                                           =
-                        =20
-        if (!cur) {                                                        =
-                        =20
-                curv =3D prop->value;                                      =
-                          =20
-                goto out_val;                                              =
-                        =20
-        }                                                                  =
-                        =20
-                                                                           =
-                        =20
-        curv +=3D sizeof(*cur);                                            =
-                          =20
-        if (curv >=3D prop->value + prop->length)                          =
-                          =20
-                return NULL;                                               =
-                        =20
-                                                                           =
-                        =20
-out_val:                                                                   =
-                        =20
-        *pu =3D be64_to_cpup(curv);                                        =
-                          =20
-        return curv;                                                       =
-                        =20
-}                                                                          =
-                        =20
-EXPORT_SYMBOL_GPL(of_prop_next_u64);
-
->=20
-> > +{
-> > +	const void *curv =3D cur;
-> > +
-> > +	if (!prop)
-> > +		return NULL;
-> > +
-> > +	if (!cur) {
-> > +		curv =3D prop->value;
-> > +		goto out_val;
-> > +	}
-> > +
-> > +	curv +=3D sizeof(*cur) * 2;
-> > +	if (curv >=3D prop->value + prop->length)
-> > +		return NULL;
-> > +
-> > +out_val:
-> > +	*pu =3D of_read_number(curv, 2);
-> > +	return curv;
-> > +}
-> > +EXPORT_SYMBOL_GPL(of_prop_next_u64);
-> > +
-> >  const char *of_prop_next_string(struct property *prop, const char
-> > *cur)  {
-> >  	const void *curv =3D cur;
-> > diff --git a/include/linux/of.h b/include/linux/of.h index
-> > 13cf7a43b473..464eca6a4636 100644
-> > --- a/include/linux/of.h
-> > +++ b/include/linux/of.h
-> > @@ -439,6 +439,18 @@ extern int of_detach_node(struct
-> device_node *);
-> >   */
-> >  const __be32 *of_prop_next_u32(struct property *prop, const
-> __be32 *cur,
-> >  			       u32 *pu);
-> > +
-> > +/*
-> > + * struct property *prop;
-> > + * const __be32 *p;
-> > + * u64 u;
-> > + *
-> > + * of_property_for_each_u64(np, "propname", prop, p, u)
-> > + *         printk("U64 value: %llx\n", u);
-> > + */
-> > +const __be32 *of_prop_next_u64(struct property *prop, const
-> __be32 *cur,
-> > +			       u64 *pu);
-> > +
-> >  /*
-> >   * struct property *prop;
-> >   * const char *s;
-> > @@ -834,6 +846,12 @@ static inline const __be32
-> *of_prop_next_u32(struct property *prop,
-> >  	return NULL;
-> >  }
-> >
-> > +static inline const __be32 *of_prop_next_u64(struct property *prop,
-> > +		const __be32 *cur, u64 *pu)
-> > +{
-> > +	return NULL;
-> > +}
-> > +
-> >  static inline const char *of_prop_next_string(struct property *prop,
-> >  		const char *cur)
-> >  {
-> > @@ -1437,6 +1455,12 @@ static inline int
-> of_property_read_s32(const struct device_node *np,
-> >  		p;						\
-> >  		p =3D of_prop_next_u32(prop, p, &u))
-> >
-> > +#define of_property_for_each_u64(np, propname, prop, p, u)	\
-> > +	for (prop =3D of_find_property(np, propname, NULL),	\
-> > +		p =3D of_prop_next_u64(prop, NULL, &u);		\
-> > +		p;						\
-> > +		p =3D of_prop_next_u64(prop, p, &u))
->=20
-> I think we want to define this differently to avoid exposing struct
-> property and the property data directly. Like this:
->=20
-> #define of_property_for_each_u64(np, propname, u) \
->   for (struct property *_prop =3D of_find_property(np, propname, NULL),
->          const __be32 *_p =3D of_prop_next_u64(_prop, NULL, &u);
->          _p;
->          _p =3D of_prop_next_u64(_prop, _p, &u))
->=20
-
-Sure, I will fix in v2.
+This will trigger a compilation error, because C not allow
+declare two variables with different types as for loop expression 1.
+Need to think about other methods.
 
 Thanks,
 Peng.
 
-> See this discussion for context[1].
+> >
 >=20
-> Rob
+> Sure, I will fix in v2.
 >=20
-> [1] https://lore.kernel.org/all/20240624232122.3cfe03f8@booty/
+> Thanks,
+> Peng.
+>=20
+> > See this discussion for context[1].
+> >
+> > Rob
+> >
+> > [1] https://lore.kernel.org/all/20240624232122.3cfe03f8@booty/
 
