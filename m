@@ -1,162 +1,190 @@
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8313113F44F;
-	Fri, 28 Jun 2024 11:39:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFB171865A;
+	Fri, 28 Jun 2024 11:54:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719574795; cv=none; b=AA69OJshiQ58XnTzXim7kzmTCF8UlIQHd1pByy0uzTmaZSpVUxA5Z4M3ZhoQZa1fSgLHPbqKFD8JvOpWmMyGu3ZFLpgRjaKF7DQUnrmty1g0Lkd7VKw2UsBtPKpf9hD3VSSdHGLWCyosAlpFKOo2w0Zr3T0F/XvMVUR6Gyb71Xs=
+	t=1719575646; cv=none; b=LO8Suj/5CdLG3aRcgE/nypKF7gq6YnYq9g+lj10FHmcZ15l7sJ8KcEIV5BBmT5BYHitqNy2vaZqoUNBo6uWxLAe6245mDZYeCSvSexv15BKSwDU6bEuPXLPG1Nc+t2zP3osyQFBbz/TkbJwd73xMG0scqA2+dcWnRRvbsoy8crc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719574795; c=relaxed/simple;
-	bh=7CrPAXcPKhfEjKnjhT8dQmsOipY8Ut2f9IbeD8GaVuo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EyvSuNPNGLW6nqfyIMI/5wPoyRCNUeXSfdLPaqE9Iy8Psw75xs1TAcIwETwjHGMpXOWA6PKd3JzeVGsS/6QlNgDaCk7zZYhCVB7rGM4sb9Vziy2Vu40gksh4JTFx4zgP2QAg8LyzgGmKnrEZ8vPLn+/wr14mQu1TDv9xYJ2zGKg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e02748b2402so498728276.0;
-        Fri, 28 Jun 2024 04:39:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719574790; x=1720179590;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Yf5oCP+uOrf4HAgLodjrgrRn0kpZejxKOMnUP4LFbpU=;
-        b=R6wRnHwPNfMs36gROvEUy/TVO/FzTpsxT5KEZ1Itf6ArC9WHtmqwK9e0UVrlls1ojR
-         ZW/5ativDaypljoEW2k6HiMckfVYHTHNz3oC2SiarsAk6IsWrKuq1eA5D4AQksnAvlgP
-         462tHjPrpn93S7D9NdnW9Dynv6WuOPJrtdChvwJo2/dnS9ZyH52cGlGRShAmUThELRKR
-         PkGFzxgBk0LmY3b2GT16KW5QGUeeCsEogl38vAHN6nT21qtjQXV5ODCwnXH8yyr0xLCE
-         VRRiXgaS2bkCY0cWmWpgjW1KOy/uuT275IzHbIg1g9zEdQF+pMjJhLl0TZlvHY3seDmz
-         MlSA==
-X-Forwarded-Encrypted: i=1; AJvYcCUfipS5yZ0mwMyRCRzMmVsMZMzFnMWlvs6XeZlBk2D8TUuASvfrzFXrv/xr1D1Mh87kkpUA0gWnyWgxrJKC35oCFpKj7G402Ok1imgM9qVV7GZ2gwkcoN6XdJIBALkWRgci4/tR7qxfQktSnhAc+fkLVa5z1hBaEVahxmRkNtS2MDKcHg676uzXzAunVoUJOz/Oak4EA7zMLx5Kc/eM9bHpJ+961Tg1NiRDR1vyeVkVn25pAJXyD/qIng/ULDVvjM8u
-X-Gm-Message-State: AOJu0YwT95y01fYoatkXsoJ0irwv2fEWZQhh24QzvHziI9v7d5J/iXVc
-	kFFWH2RDcQbu/x82H69q4Xqatk2ba4n8NTNPpNLEskk2UAaWYlWRmu1neE/0
-X-Google-Smtp-Source: AGHT+IEC0FGfudbZ4MaiadWj1vV90uT3Vjbdz1zWUd5ua1+C/cJpm42NRUeAt9NDiEBFNZg8njRUrQ==
-X-Received: by 2002:a81:b049:0:b0:64b:4a32:850a with SMTP id 00721157ae682-64b4a328848mr7174597b3.29.1719574790455;
-        Fri, 28 Jun 2024 04:39:50 -0700 (PDT)
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com. [209.85.128.173])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-64a9c4fe1adsm2937327b3.140.2024.06.28.04.39.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Jun 2024 04:39:49 -0700 (PDT)
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-64b417e1511so3195877b3.3;
-        Fri, 28 Jun 2024 04:39:49 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVxG2pN49QAcFz3lGwlWPUMmfFa4AGCc30lwr9fnr6iTkcirMOW5EukLEtn9JEDQVUVhLOew8EZydbq/sQ1mhpCdElbFVybRtsmqOE9aMfexqylLCH6WmS05ohNr9sGuxjcXY0/3FF0fZ4eKvwHkM+R4wvTY93mqGi2kri55QrqLd5UEQN2Yx9BgVc9NtYztQjteq5mE38jWFqwaWC64sC6g8C5ed4sA4BR4SF9x6EYDOKw0KdrPb+b3QlcmHG7kSxQ
-X-Received: by 2002:a05:690c:3403:b0:627:ddc5:eb5c with SMTP id
- 00721157ae682-643ab854633mr189231727b3.34.1719574789421; Fri, 28 Jun 2024
- 04:39:49 -0700 (PDT)
+	s=arc-20240116; t=1719575646; c=relaxed/simple;
+	bh=EfZPK4bQlzDxBEzFkfeTiecD2ZjbyZUL5K5NzJWy8bM=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gP8SZ4mIyLczJl21V0bqqa02J0DNMull+0ECpNhOo5kFamoo51GguooSFJ9wJjkFHJH51iE35mGDnYLGiUaIS7I1VjSTxrOV2pIuCdVoFoHOmhOMzTS0FCt2sNt8huK/3BeLNed6FEke9HVUb6XjHSpWzE+5LV1SWNCyvQHRE3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Gwv3z3k5; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Gwv3z3k5"
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 45S8EoQN015125;
+	Fri, 28 Jun 2024 11:53:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=9At5m60WgpAapqFuAPwU1Hli
+	wnsb0FkeiKytGYb9+YA=; b=Gwv3z3k5DjFBLwP9W3KTTI9oJm6iGxryDIbMJw0e
+	XzhN7ngX3Ge1+hr3Z2FaFSj/kH+y4UJHbckJ4qLvOxDbzAAywGJlAK/jrrbkK/4o
+	L4t1jJTAE9Ejw36cg5OrKeV+I0RWnw/4LS9eEX65pQwmkW48m5e1n0q4Zk6C7/Lv
+	dOaxMf8bxiJET7kkVWprAm9EmHk3OkO0LjCxdZ1E0IzzouM/VaC34EOaTQu3HUJW
+	2A/q72AGincj8xFb2+7R5tNEufuTLZgCXoELHz/1Ev+gtBV/zCk5sDbTT+ep+ybT
+	jfSf+kSO1YPhoFSUsA8RM4RAfnY2QaoHJeWJHMwsgCJ8Mg==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 3ywqshysxs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 28 Jun 2024 11:53:50 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 45SBrnnD027966
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 28 Jun 2024 11:53:49 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 28 Jun 2024 04:53:42 -0700
+Date: Fri, 28 Jun 2024 17:23:38 +0530
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <angelogioacchino.delregno@collabora.com>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <ilia.lin@kernel.org>, <rafael@kernel.org>,
+        <viresh.kumar@linaro.org>, <ulf.hansson@linaro.org>,
+        <quic_sibis@quicinc.com>, <otto.pflueger@abscue.de>,
+        <neil.armstrong@linaro.org>, <luca@z3ntu.xyz>, <abel.vesa@linaro.org>,
+        <danila@jiaxyga.com>, <quic_ipkumar@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>
+Subject: Re: [PATCH v3 8/9] soc: qcom: cpr3: Add IPQ9574 definitions
+Message-ID: <Zn6kQuw1Fm9ylppX@hu-varada-blr.qualcomm.com>
+References: <20240626104002.420535-1-quic_varada@quicinc.com>
+ <20240626104002.420535-9-quic_varada@quicinc.com>
+ <txid2b47zhnuknz35xaosfctuojrnrskcjehhqmyqubuxdimqj@7q7pzxlavk6k>
+ <Zn0TZiIDQ9W/ttox@hu-varada-blr.qualcomm.com>
+ <3mzerxpsa2gj227pryu2pg5rgaoqya7y3fplvpdsq5cnffuzj3@puwzk4j2t2t5>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240625121358.590547-1-claudiu.beznea.uj@bp.renesas.com>
- <20240625121358.590547-8-claudiu.beznea.uj@bp.renesas.com>
- <TY3PR01MB11346EF9A001F68162148B70F86D02@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <6289f329-118f-4970-a525-75c3a48bd28b@tuxon.dev> <TY3PR01MB1134603F92C72D9B6C6C3733C86D02@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <2f162986-33c5-4d80-958c-4f857adaad20@tuxon.dev> <TY3PR01MB11346CA73575CF61B2024F3B386D02@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <79c26030-4b92-4ef3-b8ce-d011f492161b@tuxon.dev> <CAMuHMdXJ8eKLzMqCPR2ewS9gr_m5OQPneETPMC-rOOmW+--f5A@mail.gmail.com>
- <7c542f46-c644-4f22-bbc4-408b7dad8273@tuxon.dev>
-In-Reply-To: <7c542f46-c644-4f22-bbc4-408b7dad8273@tuxon.dev>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 28 Jun 2024 13:39:37 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUmiQjsKt93jM62V5YR_NdtUDXhcxFs+F+BCu3NTNsx8Q@mail.gmail.com>
-Message-ID: <CAMuHMdUmiQjsKt93jM62V5YR_NdtUDXhcxFs+F+BCu3NTNsx8Q@mail.gmail.com>
-Subject: Re: [PATCH v2 07/12] i2c: riic: Define individual arrays to describe
- the register offsets
-To: "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>, 
-	"andi.shyti@kernel.org" <andi.shyti@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>, claudiu beznea <claudiu.beznea@tuxon.dev>, 
-	Chris Brandt <Chris.Brandt@renesas.com>, "robh@kernel.org" <robh@kernel.org>, 
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
-	"magnus.damm@gmail.com" <magnus.damm@gmail.com>, "mturquette@baylibre.com" <mturquette@baylibre.com>, 
-	"sboyd@kernel.org" <sboyd@kernel.org>, "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <3mzerxpsa2gj227pryu2pg5rgaoqya7y3fplvpdsq5cnffuzj3@puwzk4j2t2t5>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: eEv0sBU4hXyiL4tztb316o4l1ifuEe84
+X-Proofpoint-GUID: eEv0sBU4hXyiL4tztb316o4l1ifuEe84
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-06-28_08,2024-06-28_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 clxscore=1015
+ bulkscore=0 phishscore=0 suspectscore=0 lowpriorityscore=0 malwarescore=0
+ mlxscore=0 impostorscore=0 mlxlogscore=999 priorityscore=1501 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
+ definitions=main-2406280087
 
-On Fri, Jun 28, 2024 at 12:29=E2=80=AFPM claudiu beznea
-<claudiu.beznea@tuxon.dev> wrote:
-> On 28.06.2024 12:13, Geert Uytterhoeven wrote:
-> > On Fri, Jun 28, 2024 at 10:12=E2=80=AFAM claudiu beznea
-> > <claudiu.beznea@tuxon.dev> wrote:
-> >> On 28.06.2024 11:09, Biju Das wrote:
-> >>>> -----Original Message-----
-> >>>> From: claudiu beznea <claudiu.beznea@tuxon.dev>
-> >>>> On 28.06.2024 10:55, Biju Das wrote:
-> >>>>>> -----Original Message-----
-> >>>>>> From: claudiu beznea <claudiu.beznea@tuxon.dev>
-> >>>>>> Patch 09/12 "i2c: riic: Add support for fast mode plus" adds a new=
- member to struct
-> >>>> riic_of_data.
-> >>>>>> That new member is needed to differentiate b/w hardware versions
-> >>>>>> supporting fast mode plus based on compatible.
-> >>>>>
-> >>>>> Are we sure RZ/A does not support fast mode plus?
-> >>>>
-> >>>> From commit description of patch 09/12:
-> >>>>
-> >>>> Fast mode plus is available on most of the IP variants that RIIC dri=
-ver is working with. The
-> >>>> exception is (according to HW manuals of the SoCs where this IP is a=
-vailable) the Renesas RZ/A1H.
-> >>>> For this, patch introduces the struct riic_of_data::fast_mode_plus.
-> >>>>
-> >>>> I checked the manuals of all the SoCs where this driver is used.
-> >>>>
-> >>>> I haven't checked the H/W manual?
-> >>>>
-> >>>> On the manual I've downloaded from Renesas web site the FMPE bit of =
-RIICnFER is not available on
-> >>>> RZ/A1H.
-> >>>
-> >>> I just found RZ/A2M manual, it supports FMP and register layout looks=
- similar to RZ/G2L.
-> >>
-> >> I introduced struct riic_of_data::fast_mode_plus because of RZ/A1H.
+On Thu, Jun 27, 2024 at 04:46:05PM +0300, Dmitry Baryshkov wrote:
+> On Thu, Jun 27, 2024 at 12:53:18PM GMT, Varadarajan Narayanan wrote:
+> > On Wed, Jun 26, 2024 at 09:27:53PM +0300, Dmitry Baryshkov wrote:
+> > > On Wed, Jun 26, 2024 at 04:10:01PM GMT, Varadarajan Narayanan wrote:
+> > > > From: Praveenkumar I <quic_ipkumar@quicinc.com>
+> > > >
+> > > > Add thread, scaling factor, CPR descriptor defines to enable CPR
+> > > > on IPQ9574.
+> > > >
+> > > > Signed-off-by: Praveenkumar I <quic_ipkumar@quicinc.com>
+> > > > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> > > > ---
+> > > > v3: Fix patch author
+> > > >     Included below information in cover letter
+> > > > v2: Fix Signed-off-by order
+> > > > Depends:
+> > > > 	[1] https://lore.kernel.org/lkml/20230217-topic-cpr3h-v14-0-9fd23241493d@linaro.org/T/
+> > > > 	[2] https://github.com/quic-varada/cpr/commits/konrad/
+> > > > ---
+> > > >  drivers/pmdomain/qcom/cpr3.c | 137 +++++++++++++++++++++++++++++++++++
+> > > >  1 file changed, 137 insertions(+)
+> > > >
+> > > > diff --git a/drivers/pmdomain/qcom/cpr3.c b/drivers/pmdomain/qcom/cpr3.c
+> > > > index c28028be50d8..66c8a4bd9adc 100644
+> > > > --- a/drivers/pmdomain/qcom/cpr3.c
+> > > > +++ b/drivers/pmdomain/qcom/cpr3.c
+> > >
+> > > > +
+> > > > +static const struct cpr_desc ipq9574_cpr_desc = {
+> > > > +	.cpr_type = CTRL_TYPE_CPR4,
+> > >
+> > > So, is it CPR4 or CPRh?
 > >
-> > Do you need to check for that?
+> > CPR4.
+>
+> Then why do you have cprh in the compatible?
+
+Sorry, copy-paste from msm8998. Will fix that in the next version.
+
+Thanks
+Varada
+
+> > > > +	.num_threads = 1,
+> > > > +	.apm_threshold = 850000,
+> > > > +	.apm_crossover = 880000,
+> > > > +	.apm_hysteresis = 0,
+> > > > +	.cpr_base_voltage = 700000,
+> > > > +	.cpr_max_voltage = 1100000,
+> > > > +	.timer_delay_us = 5000,
+> > > > +	.timer_cons_up = 0,
+> > > > +	.timer_cons_down = 0,
+> > > > +	.up_threshold = 2,
+> > > > +	.down_threshold = 2,
+> > > > +	.idle_clocks = 15,
+> > > > +	.count_mode = CPR3_CPR_CTL_COUNT_MODE_ALL_AT_ONCE_MIN,
+> > > > +	.count_repeat = 1,
+> > > > +	.gcnt_us = 1,
+> > > > +	.vreg_step_fixed = 12500,
+> > > > +	.vreg_step_up_limit = 1,
+> > > > +	.vreg_step_down_limit = 1,
+> > > > +	.vdd_settle_time_us = 34,
+> > > > +	.corner_settle_time_us = 6,
+> > > > +	.reduce_to_corner_uV = true,
+> > > > +	.hw_closed_loop_en = false,
+> > > > +	.threads = (const struct cpr_thread_desc *[]) {
+> > > > +		&ipq9574_thread_silver,
+> > >
+> > > If it's silver, where is gold or bronze?
 > >
-> > The ICFER_FMPE bit won't be set unless the user specifies the FM+
-> > clock-frequency.  Setting clock-frequency beyond Fast Mode on RZ/A1H
-> > would be very wrong.
+> > Will rename this as "ipq9574_thread"
+> >
+> > Thanks
+> > Varada
+> >
+> > > > +	},
+> > > > +};
+> > > > +
+> > > > +static const struct cpr_acc_desc ipq9574_cpr_acc_desc = {
+> > > > +	.cpr_desc = &ipq9574_cpr_desc,
+> > > > +};
+> > > > +
+> > > >  static const int sdm630_gold_scaling_factor[][CPR3_RO_COUNT] = {
+> > > >  	/* Same RO factors for all fuse corners */
+> > > >  	{
+> > > > @@ -2828,6 +2964,7 @@ static void cpr_remove(struct platform_device *pdev)
+> > > >  }
+> > > >
+> > > >  static const struct of_device_id cpr3_match_table[] = {
+> > > > +	{ .compatible = "qcom,ipq9574-cprh", .data = &ipq9574_cpr_acc_desc },
+> > > >  	{ .compatible = "qcom,msm8998-cprh", .data = &msm8998_cpr_acc_desc },
+> > > >  	{ .compatible = "qcom,sdm630-cprh", .data = &sdm630_cpr_acc_desc },
+> > > >  	{ }
+> > > > --
+> > > > 2.34.1
+> > > >
+> > >
+> > > --
+> > > With best wishes
+> > > Dmitry
 >
-> I need it to avoid this scenario ^. In patch 09/12 there is this code:
->
-> +       if ((!info->fast_mode_plus && t->bus_freq_hz > I2C_MAX_FAST_MODE_=
-FREQ) ||
-> +           (info->fast_mode_plus && t->bus_freq_hz > I2C_MAX_FAST_MODE_P=
-LUS_FREQ)) {
-> +               dev_err(dev, "unsupported bus speed (%dHz). %d max\n", t-=
->bus_freq_hz,
-> +                       info->fast_mode_plus ? I2C_MAX_FAST_MODE_PLUS_FRE=
-Q :
-> +                       I2C_MAX_FAST_MODE_FREQ);
->                 return -EINVAL;
->
-> to avoid giving the user the possibility to set FM+ freq on platforms not
-> supporting it.
->
-> Please let me know if I'm missing something (or wrongly understood your
-> statement).
-
-Wolfram/Andi: what is your view on this?
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+> --
+> With best wishes
+> Dmitry
