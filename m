@@ -1,60 +1,60 @@
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C1BF1DA5F
-	for <linux-clk@vger.kernel.org>; Sat, 29 Jun 2024 13:25:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57A0F4AEF7
+	for <linux-clk@vger.kernel.org>; Sat, 29 Jun 2024 13:30:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719667557; cv=none; b=B9ziHW7/GnWkjahxbzeRL/HDVp+JHXu27y8/MplflaYsT/xqvxjdgQPnn2EqCDbAsG0XU2fAXQM1NulroEwXsp5kkXB35qcaqSIJj4B6TcvFTcjSINEpHaGm2C/vfSXHOaXp4C4+TJKgIXsY563uL79NEo8ZwuBr00anyMOYvOw=
+	t=1719667843; cv=none; b=f7qOsYAi+rQK5azmQVxAI0Ljf4BOyDIeF9yW2GDxadvLx2wQEQnh6Vb88TFywOMEwwk563Dbepa+bD5E3tyscRFPPYzCLiYK1NhltDAk0/0FGx5iQOkylcWmgdR5V2gX4sk7HUxG4I1Do4SGlNBlpsikr21v3DOieRbji/hHLTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719667557; c=relaxed/simple;
-	bh=6EhUsA3UxVX3IQKQ+u+Zt+mCTBTcxt3GZzyVOlXeRrs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=g/0kvsEHMu/bIiHADpIsAAaQcaI+6z9eVHK+2i2PMLXka8gVAcEhOQdqp2ThnQrRRKwq/uDralRciTtcsAnerzGq3sDE7Q/Awj9R6YXMhLzuZW1A/+pLq1ZLK0lKAD4+t9UYTXV0c++ZHO5vA53iaQnoqJA1ER22nF2ncgBq/nc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=khB+ZG3o; arc=none smtp.client-ip=209.85.218.49
+	s=arc-20240116; t=1719667843; c=relaxed/simple;
+	bh=SOSRf2xGbABYyJkyrOzqdHzZoZvGbDKQu4Io0KKd4fY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=p0li4lCLKTl6m38VfFAE1NAE/j4rYYP7tyktYjcaGPFKEYEOVH2ShazZ0nS37YuSh4xh98/U7baU4n7GI7AkkTmeRxO3GMlpjtniwFxlFbZ+BOJjEmqvn5OVBRlFm1l23GzPPhhem9iKsP7FuOTQJ8JkAtN7KR6Rp2SHZXUxH5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BRwOZJI0; arc=none smtp.client-ip=209.85.208.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="khB+ZG3o"
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a725ea1a385so183702266b.3
-        for <linux-clk@vger.kernel.org>; Sat, 29 Jun 2024 06:25:55 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BRwOZJI0"
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-57d0eca877cso1790337a12.2
+        for <linux-clk@vger.kernel.org>; Sat, 29 Jun 2024 06:30:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1719667554; x=1720272354; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1719667841; x=1720272641; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=3fkbnmyjpmYb5mPmveRTWfsHhRYjv7G8dpWohhpks2o=;
-        b=khB+ZG3oz6xg97Dv+97B1Rq9EV9P8O/N9G8NpUhsOT42mjr3bzUNDiZDppf4bBDwN3
-         qXlMPHFX7LrUivXG4XhIiWW4udYh9+iEuOF+T/zJ4M09VMrFdhIJvPIkvLGNjld3lzTZ
-         xWQkfnurcLohiHo8MzwT0B5m5FSGccpNnDNh0plZ33YLadNo24lK3lHldrTncwgujjjY
-         DPtOwJ7Nu5b6VP7VBRDIlHyRV8e1rqonqB5GnfvBqPvG21UF7Zg2U1eVPjxjBNsMYkLd
-         9ksfI9C9IDH78FznmmmEDmjutsFtp5nuRoLLMoobMbOxzPn716U4xMhllXWz/RHXJdBx
-         kdzw==
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=CEplqgc1EUkrDgRyxKM1jdjFJoZG/7QBpRIZ5p4DyMg=;
+        b=BRwOZJI0Xnfwvf5YKZ2EILQPoWNVohSRmYbpOpooDMn2cBYr3xq8kvocTFbYrY1QOY
+         3LqKWPGVraMt7vSwaCLGrmNqVAE0rFl3KKHu0iG8m+lBcJf8RJghaEU8XwcVpZSU1a/h
+         I+4cnaLKs9eBF5pWGwD/QhvCWKRp9JbA+kLVXVRfOiNZAp8/815LxEd6dJfM6xatqzSz
+         x1BFPUknWdIfFi5bpg64QzO1We6DDhbnwFKP69tuqzxlNRiXI5ASGMX1WsFXS1AxBLcS
+         cDV0POA35OkBstjiF6tko4s5DFIjPRvH04x+SK9FMTl4HzsJofalg1yRdKbZCV0E6q4j
+         gMuA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719667554; x=1720272354;
+        d=1e100.net; s=20230601; t=1719667841; x=1720272641;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3fkbnmyjpmYb5mPmveRTWfsHhRYjv7G8dpWohhpks2o=;
-        b=YVCu2DDCbHAJPuKiqCasxtHZMJw35u+r5z0QYOqxkfOy/gnByhX3ztTpnRBv1BZDyT
-         jtV9358/u08q/+bpw6oG/fyHdc3yOv9AgMksPVkF8/Mj11CFn1ighKchwbXN9sWMCiRv
-         DhpHb03FzMaLmaihYedqjThnQbH8jucqHIatCpca2GrCXj5a9vN3GiorywlaJrkCh/iq
-         ELxlWnHZMsgG23S8tK7y5ccAImPiROCZbdaewmyAEm+WPHbaHUfs+yVAXuNEGHuYKuOO
-         GWx1rJpzDcIlXBMpUUAaFOC2z0jzqB9Lmj074UCA/IG4IsRdRyZN6174VOWHd37egT7O
-         hAxA==
-X-Forwarded-Encrypted: i=1; AJvYcCUbxOs63VdjL0m77vPAI7gP1KMwmVM1N9aGn2PTHm8ZTq3cBmVlKa5tqlC5G8NKTHfLzefawwPfvD+MgfJGYu5Nkrz7XthdoIUq
-X-Gm-Message-State: AOJu0YzlzWPJScISCOVqQxYXZOq/IR6SrtYTVGwP2WeLx0ZcL4Ev6APX
-	nnq1ssNfli1G/RN5u6M/BPimVrJn0DZ4nsyenpCLDs7lMCQLP6RcKmQZLbwR/PI=
-X-Google-Smtp-Source: AGHT+IHxXY3GnqAyDZpcxtE7Yybd2qLLCguisyhttFM3FF7Lao1hk9scg++tV+vI4pVCEzZTgoMfnQ==
-X-Received: by 2002:a17:907:9620:b0:a72:88e2:c30f with SMTP id a640c23a62f3a-a751447b26cmr88092866b.48.1719667554305;
-        Sat, 29 Jun 2024 06:25:54 -0700 (PDT)
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CEplqgc1EUkrDgRyxKM1jdjFJoZG/7QBpRIZ5p4DyMg=;
+        b=n49eRXEJoKep9Fl4ubjLaiWY1uJjNpqhXwBs97BrK/si6ILJpwkqAQsvWWfevD2Gf3
+         ml7M6iJhJhxHutlJlbIU76qNfbES1eoL014hr86DvkM+tkXohmARrhcjKQVpfebasLu0
+         sBly4WJ/J3a94Kf57pHlDBf+i0IAuVFPM3IYv/6x24kbAteRUHqsUQ8WAgjPRymyRVwO
+         kNk6GY4oAcY7cZQu4XDRvvnfCK1+M9pZ+ZTT85fJutuXWmLynF/SHccTYYKc6RpmO/HK
+         F/Ny7+mBr2Jse8YJKVNx2uNFM4eiaNXBwJ5ZVg9aWBit9DuI+XDc8Ww/cIewEtNC7z/n
+         uOyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVNSoMHpFLngwyXE+vm60uLaIwZkeBIdKRlE0ND7C0zvN5FbF2CCrs1+tei4zIP8Nl0yl/05jkpxXrbW/KqLgN1ZiUYc3wSCY8E
+X-Gm-Message-State: AOJu0YwddPf37mQqJMxU297k5+X7CZsGt6F8d1h6MEr/yy5xD6gKn4Fr
+	ZeD6hj97T45neWSc1eND1VY87+BeswlEINIbgwMUPr7Ykv8UsrjIvknTo8mFgjU=
+X-Google-Smtp-Source: AGHT+IFjYFA5Bwi5YkXtp2KPgMk/XhRypC3d/N4WcAg/MPXc1RhesuL87S0Eo6vXB5XJD873lymEfw==
+X-Received: by 2002:a05:6402:50cb:b0:57c:80bf:9267 with SMTP id 4fb4d7f45d1cf-5879ede2ab6mr801572a12.6.1719667840341;
+        Sat, 29 Jun 2024 06:30:40 -0700 (PDT)
 Received: from [192.168.215.29] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72ab0b7dcfsm164134366b.209.2024.06.29.06.25.52
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-58614d504cesm2248129a12.71.2024.06.29.06.30.38
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 29 Jun 2024 06:25:53 -0700 (PDT)
-Message-ID: <e758edc4-49b5-4b3c-abe2-7d5cbce52ee2@linaro.org>
-Date: Sat, 29 Jun 2024 15:25:51 +0200
+        Sat, 29 Jun 2024 06:30:40 -0700 (PDT)
+Message-ID: <8ffd8a3c-83e6-4753-8bdf-7daa3a3d8306@linaro.org>
+Date: Sat, 29 Jun 2024 15:30:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -62,27 +62,20 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 6/6] arm64: dts: qcom: ipq9574: Add icc provider
- ability to gcc
-To: Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc: Georgi Djakov <djakov@kernel.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, andersson@kernel.org,
+Subject: Re: [PATCH V5 6/7] arm64: dts: qcom: ipq9574: Add support for nsscc
+ node
+To: Devi Priya <quic_devipriy@quicinc.com>, andersson@kernel.org,
  mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, quic_anusha@quicinc.com,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org
-References: <1a08ef42-b52f-4c97-90d7-e7fdee7725b4@linaro.org>
- <Zmgb+OjdBNw71sC1@hu-varada-blr.qualcomm.com>
- <176137e5-6312-4d46-97b6-c4494bc1c61b@kernel.org>
- <ZmlAdETV0+6Md8HC@hu-varada-blr.qualcomm.com>
- <e24cfd23-6f77-46a0-b020-9cb3daef6930@kernel.org>
- <Zml4RQ5R5s3mVMnI@hu-varada-blr.qualcomm.com>
- <8e32a8be-dbbf-49ca-92a1-2fe3c8bfb571@kernel.org>
- <ZmpsOdsl9AMTSH88@hu-varada-blr.qualcomm.com>
- <ZnKKjomRQtJS2ZgL@hu-varada-blr.qualcomm.com>
- <9938a67b-1f6b-4955-b4c0-a9f78c55f276@linaro.org>
- <Zn54xhM/qfBv58e2@hu-varada-blr.qualcomm.com>
+ krzk+dt@kernel.org, conor+dt@kernel.org, catalin.marinas@arm.com,
+ will@kernel.org, p.zabel@pengutronix.de, richardcochran@gmail.com,
+ geert+renesas@glider.be, dmitry.baryshkov@linaro.org,
+ neil.armstrong@linaro.org, arnd@arndb.de, m.szyprowski@samsung.com,
+ nfraprado@collabora.com, u-kumar1@ti.com, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ netdev@vger.kernel.org
+References: <20240626143302.810632-1-quic_devipriy@quicinc.com>
+ <20240626143302.810632-7-quic_devipriy@quicinc.com>
 Content-Language: en-US
 From: Konrad Dybcio <konrad.dybcio@linaro.org>
 Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
@@ -120,93 +113,26 @@ Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
  nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
  izWDgYvmBE8=
-In-Reply-To: <Zn54xhM/qfBv58e2@hu-varada-blr.qualcomm.com>
+In-Reply-To: <20240626143302.810632-7-quic_devipriy@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 28.06.2024 10:48 AM, Varadarajan Narayanan wrote:
-> On Thu, Jun 27, 2024 at 12:00:35AM +0200, Konrad Dybcio wrote:
->> On 19.06.2024 9:36 AM, Varadarajan Narayanan wrote:
->>
->> [...]
->>
->>
->>> Tested the patches with both gcc and nsscc providers having
->>> 'sync_state' set to icc_sync_state.
->>>
->>> 	# dmesg | grep synced
->>> 	[    3.029820] qcom,gcc-ipq9574 1800000.clock-controller: interconnect provider is in synced state
->>> 	[    3.470106] qcom,nsscc-ipq9574 39b00000.clock-controller: interconnect provider is in synced state
->>>
->>> I can see that icc_sync_state is getting called and clocks
->>> related to paths with zero bandwidth are getting disabled.
->>>
->>> Will post the NSSCC patches to get the full picture.
->>
->> Going back to the original question, does removing interconnects = from
->> things like PCIe now make them not work / crash the device, which would
->> indicate the NoC clocks were indeed gated?
+On 26.06.2024 4:33 PM, Devi Priya wrote:
+> Add a node for the nss clock controller found on ipq9574 based devices.
 > 
-> Yes. With and without 'interconnects =', the following behaviour
-> is same
-> 	* Boot completes
-> 	* PCIe devices were probed succesfully and can be
-> 	  seen in /proc/bus/pci/devices.
-> 	* icc_sync_state is called. The system has 4 pcie nodes
-> 	  in the DT, out of which pcie0 is not enabled.
-> 
-> The difference is seen in icc_sync_state
-> 
->     With 'interconnects ='
-> 
-> 	* During icc_sync_state, the following 2 clocks
-> 	  corresponding to the interconnects of 'pcie0' get
-> 	  disabled.
-> 
-> 	[    2.986356] ---> clk_core_disable_lock: gcc_anoc_pcie0_1lane_m_clk
-> 	[    3.012486] ---> clk_core_disable_lock: gcc_snoc_pcie0_1lane_s_clk
-> 
-> 	* System shutdown also completes without issues
-> 
->     Without the 'interconnects =',
-> 
-> 	* During icc_sync_state, the following clocks
-> 	  corresponding to the interconnects of all the 4 PCIe
-> 	  nodes get disabled.
-> 
-> 	[    2.887860] ---> clk_core_disable_lock: gcc_anoc_pcie0_1lane_m_clk
-> 	[    2.913988] ---> clk_core_disable_lock: gcc_snoc_pcie0_1lane_s_clk
-> 	[    2.939857] ---> clk_core_disable_lock: gcc_anoc_pcie1_1lane_m_clk
-> 	[    2.965725] ---> clk_core_disable_lock: gcc_snoc_pcie1_1lane_s_clk
-> 	[    2.991594] ---> clk_core_disable_lock: gcc_anoc_pcie2_2lane_m_clk
-> 	[    3.017463] ---> clk_core_disable_lock: gcc_snoc_pcie2_2lane_s_clk
-> 	[    3.043328] ---> clk_core_disable_lock: gcc_anoc_pcie3_2lane_m_clk
-> 	[    3.069201] ---> clk_core_disable_lock: gcc_snoc_pcie3_2lane_s_clk
-> 
-> 	* System shutdown hangs (possibly due to un-clocked
-> 	  access of PCIe register) in pcie_pme_interrupt_enable
-> 
-> 		[   10.773134]  dump_stack+0x18/0x24
-> 		[   10.776779]  pcie_pme_remove+0x2c/0x88
-> 		[   10.780078]  pcie_port_remove_service+0x50/0x74
-> 		[   10.783725]  device_remove+0x12c/0x148
-> 		[   10.788151]  __device_release_driver+0x65c/0x8cc
-> 		[   10.791972]  device_release_driver+0x2c/0x44
-> 		[   10.796746]  bus_remove_device+0xcc/0x10c
-> 		[   10.800999]  device_del+0x14c/0x400
-> 		[   10.804904]  device_unregister+0x18/0x34
-> 		[   10.808203]  remove_iter+0x2c/0x3c
-> 		[   10.812369]  device_for_each_child+0x60/0xb4
-> 		[   10.815583]  pcie_portdrv_shutdown+0x34/0x90
-> 		[   10.820009]  pci_device_shutdown+0x34/0x74
-> 		[   10.824263]  device_shutdown+0x150/0x258
-> 		[   10.828169]  kernel_restart_prepare+0x98/0xbc
-> 		[   10.832249]  kernel_restart+0x44/0x110
-> 		[   10.836502]  __do_sys_reboot+0x18c/0x304
-> 
-> I believe, this is confirms NOC clocks getting disabled by
-> icc_sync_state.
+> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
+> ---
 
-Yes, this looks good now, thanks.
+Title: s/support for//
+
+You're adding the node, not the support for it.
+
+The nodes look good. Looking at the driver, the interconnect paths that will
+be sync_state'd away due to no consumers don't seem to be super critical for
+the system, so I'm assuming this doesn't crash
+
+So, with the title fixed:
+
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
 Konrad
