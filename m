@@ -1,59 +1,60 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47E9944C93
-	for <linux-clk@vger.kernel.org>; Sat, 29 Jun 2024 11:13:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C1BF1DA5F
+	for <linux-clk@vger.kernel.org>; Sat, 29 Jun 2024 13:25:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719659591; cv=none; b=sdnhqd4zEg93b3hm56P0VJAX6PtMOBCsDCwjQq8tuFYfCs9cLFPPuFvM4Zq5cE/H/ISSDwpJmGz9jAxQ594vU0HwMrGiEUvsyA9UxJRdGTT5XDfCeZkZSsYLvS6989Rk83qDO7SXgEz2tMM2+WlSAl/+SHPWz3DvXQiN+6BXHzc=
+	t=1719667557; cv=none; b=B9ziHW7/GnWkjahxbzeRL/HDVp+JHXu27y8/MplflaYsT/xqvxjdgQPnn2EqCDbAsG0XU2fAXQM1NulroEwXsp5kkXB35qcaqSIJj4B6TcvFTcjSINEpHaGm2C/vfSXHOaXp4C4+TJKgIXsY563uL79NEo8ZwuBr00anyMOYvOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719659591; c=relaxed/simple;
-	bh=/dp17x5002ikclb97825w7caZSX3GVvSUransIBMOtw=;
+	s=arc-20240116; t=1719667557; c=relaxed/simple;
+	bh=6EhUsA3UxVX3IQKQ+u+Zt+mCTBTcxt3GZzyVOlXeRrs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lm5cIu1D91o2z2vG7dgysJikM/RFIwYuSGv1q+wkdxR9ZADkjDp/4c9CocsktKGQQ90juYEIF5Oo1vEC+KbyDEoEE9hJVwPcfH5XVOCSOXaLqjbBsGCQVg4QdYDHHLHoICarNbVajTZS1bhbdSF3rXdOXn9Y9AyOP6XPnIH/K/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=qEpszVVv; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	 In-Reply-To:Content-Type; b=g/0kvsEHMu/bIiHADpIsAAaQcaI+6z9eVHK+2i2PMLXka8gVAcEhOQdqp2ThnQrRRKwq/uDralRciTtcsAnerzGq3sDE7Q/Awj9R6YXMhLzuZW1A/+pLq1ZLK0lKAD4+t9UYTXV0c++ZHO5vA53iaQnoqJA1ER22nF2ncgBq/nc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=khB+ZG3o; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="qEpszVVv"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4255fa23f7bso11098875e9.2
-        for <linux-clk@vger.kernel.org>; Sat, 29 Jun 2024 04:13:10 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="khB+ZG3o"
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a725ea1a385so183702266b.3
+        for <linux-clk@vger.kernel.org>; Sat, 29 Jun 2024 06:25:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1719659588; x=1720264388; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=B/67vxFTB/Tf7zkDCTNnAYduxcKlutFylo1YUBym3r4=;
-        b=qEpszVVv1INNXgDt14jlgde3GcbXNdJMf6jropF6FzqxitPPcc3hrXNp9vUWgO0fdw
-         n4z+8+MVH8uqu6UrcK+8UGqU+3n+fIitZsB5CQcMqEgsU0Hj/HiQcpKEG5lZTpsp25Px
-         CfLVPjGQE89xS45VFqMGuTEhqt2n4PKoIPejBWP2U/DWLEZoLdoCAL+U19nwXIsRkrOW
-         AHbCcWVpwKimqpo/wYzarH7/wZRokoA/Ckj/bNU9O/ezvC555Q/7G+wKV9FK7r5EvPB3
-         fZWL7mAI9xzSslUtj/vsBxogFikbmCQsrHnD9DWyLrdYkyKU+uLggODkTHNXfkiE6tM1
-         iMzw==
+        d=linaro.org; s=google; t=1719667554; x=1720272354; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=3fkbnmyjpmYb5mPmveRTWfsHhRYjv7G8dpWohhpks2o=;
+        b=khB+ZG3oz6xg97Dv+97B1Rq9EV9P8O/N9G8NpUhsOT42mjr3bzUNDiZDppf4bBDwN3
+         qXlMPHFX7LrUivXG4XhIiWW4udYh9+iEuOF+T/zJ4M09VMrFdhIJvPIkvLGNjld3lzTZ
+         xWQkfnurcLohiHo8MzwT0B5m5FSGccpNnDNh0plZ33YLadNo24lK3lHldrTncwgujjjY
+         DPtOwJ7Nu5b6VP7VBRDIlHyRV8e1rqonqB5GnfvBqPvG21UF7Zg2U1eVPjxjBNsMYkLd
+         9ksfI9C9IDH78FznmmmEDmjutsFtp5nuRoLLMoobMbOxzPn716U4xMhllXWz/RHXJdBx
+         kdzw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719659588; x=1720264388;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=B/67vxFTB/Tf7zkDCTNnAYduxcKlutFylo1YUBym3r4=;
-        b=DzNIPpFsxy2J1iyeAe5Hqlu6ddhekb+L2daiIUVB09JWsdUgIU47kcDlcJeC20y7Ud
-         9TCK/WCdFOhDpctyR+Td5rApiAH3GGXblhM+m7znz3SeKZqq2GHYi8jP+A1PmD1xIu/Z
-         LIikyi1IykxELYuMcwGdsKZ54dZk2eAYcvTcwzdx/mmHSyk//3YEjf0S+cIfrYdlfhp8
-         cXoZD/tiE6GH+Q3795RczHQP9LvOlA6j/y+RQuTkXfJC9PP5I8ez9xLl5TR4PeFtdVnP
-         yMrx9DUfrVKDv9vFh8ZKfO8Ef5nBMAmBgD+706bzh1kEX/KyumjjmRTl1D/aXNMiihk4
-         F6Yw==
-X-Forwarded-Encrypted: i=1; AJvYcCVnjNDnfujZcUMjs+apAOGWWIlYsKJac5AqFQTJjoBI0G9ZL7mbkPm343DLIv6y5ju4+Riz8vPsckmc464xpxSi1iS8BUA2KPJu
-X-Gm-Message-State: AOJu0YzXWs/Ei/hEd+z2YuVLmhLxZOHpQWRmIfQk96iduB4AnDAuGrYt
-	ExsChepzI2RXfwtzp0wfn2sGvXNDjcJ9JJ7cWg+Pk2k/ta/V6dKnWowitM0m6pA=
-X-Google-Smtp-Source: AGHT+IHLIjqMJEiyHVN+CTfuUSwTaj/zjdcMyGfcReaCyCRO87H0bgYYtZ52eeEV4ihXBZh4WcElXQ==
-X-Received: by 2002:a05:600c:1550:b0:425:7a6b:4e82 with SMTP id 5b1f17b1804b1-4257a6b5129mr3985625e9.27.1719659588371;
-        Sat, 29 Jun 2024 04:13:08 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.171])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4256af5ba51sm71224295e9.12.2024.06.29.04.13.06
+        d=1e100.net; s=20230601; t=1719667554; x=1720272354;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3fkbnmyjpmYb5mPmveRTWfsHhRYjv7G8dpWohhpks2o=;
+        b=YVCu2DDCbHAJPuKiqCasxtHZMJw35u+r5z0QYOqxkfOy/gnByhX3ztTpnRBv1BZDyT
+         jtV9358/u08q/+bpw6oG/fyHdc3yOv9AgMksPVkF8/Mj11CFn1ighKchwbXN9sWMCiRv
+         DhpHb03FzMaLmaihYedqjThnQbH8jucqHIatCpca2GrCXj5a9vN3GiorywlaJrkCh/iq
+         ELxlWnHZMsgG23S8tK7y5ccAImPiROCZbdaewmyAEm+WPHbaHUfs+yVAXuNEGHuYKuOO
+         GWx1rJpzDcIlXBMpUUAaFOC2z0jzqB9Lmj074UCA/IG4IsRdRyZN6174VOWHd37egT7O
+         hAxA==
+X-Forwarded-Encrypted: i=1; AJvYcCUbxOs63VdjL0m77vPAI7gP1KMwmVM1N9aGn2PTHm8ZTq3cBmVlKa5tqlC5G8NKTHfLzefawwPfvD+MgfJGYu5Nkrz7XthdoIUq
+X-Gm-Message-State: AOJu0YzlzWPJScISCOVqQxYXZOq/IR6SrtYTVGwP2WeLx0ZcL4Ev6APX
+	nnq1ssNfli1G/RN5u6M/BPimVrJn0DZ4nsyenpCLDs7lMCQLP6RcKmQZLbwR/PI=
+X-Google-Smtp-Source: AGHT+IHxXY3GnqAyDZpcxtE7Yybd2qLLCguisyhttFM3FF7Lao1hk9scg++tV+vI4pVCEzZTgoMfnQ==
+X-Received: by 2002:a17:907:9620:b0:a72:88e2:c30f with SMTP id a640c23a62f3a-a751447b26cmr88092866b.48.1719667554305;
+        Sat, 29 Jun 2024 06:25:54 -0700 (PDT)
+Received: from [192.168.215.29] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72ab0b7dcfsm164134366b.209.2024.06.29.06.25.52
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 29 Jun 2024 04:13:07 -0700 (PDT)
-Message-ID: <37b5839c-696a-4d82-a6f9-dc37733e03e0@tuxon.dev>
-Date: Sat, 29 Jun 2024 14:13:06 +0300
+        Sat, 29 Jun 2024 06:25:53 -0700 (PDT)
+Message-ID: <e758edc4-49b5-4b3c-abe2-7d5cbce52ee2@linaro.org>
+Date: Sat, 29 Jun 2024 15:25:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -61,182 +62,151 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 09/12] i2c: riic: Add support for fast mode plus
+Subject: Re: [PATCH v9 6/6] arm64: dts: qcom: ipq9574: Add icc provider
+ ability to gcc
+To: Varadarajan Narayanan <quic_varada@quicinc.com>
+Cc: Georgi Djakov <djakov@kernel.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, andersson@kernel.org,
+ mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, quic_anusha@quicinc.com,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org
+References: <1a08ef42-b52f-4c97-90d7-e7fdee7725b4@linaro.org>
+ <Zmgb+OjdBNw71sC1@hu-varada-blr.qualcomm.com>
+ <176137e5-6312-4d46-97b6-c4494bc1c61b@kernel.org>
+ <ZmlAdETV0+6Md8HC@hu-varada-blr.qualcomm.com>
+ <e24cfd23-6f77-46a0-b020-9cb3daef6930@kernel.org>
+ <Zml4RQ5R5s3mVMnI@hu-varada-blr.qualcomm.com>
+ <8e32a8be-dbbf-49ca-92a1-2fe3c8bfb571@kernel.org>
+ <ZmpsOdsl9AMTSH88@hu-varada-blr.qualcomm.com>
+ <ZnKKjomRQtJS2ZgL@hu-varada-blr.qualcomm.com>
+ <9938a67b-1f6b-4955-b4c0-a9f78c55f276@linaro.org>
+ <Zn54xhM/qfBv58e2@hu-varada-blr.qualcomm.com>
 Content-Language: en-US
-To: Biju Das <biju.das.jz@bp.renesas.com>,
- Chris Brandt <Chris.Brandt@renesas.com>,
- "andi.shyti@kernel.org" <andi.shyti@kernel.org>,
- "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "geert+renesas@glider.be" <geert+renesas@glider.be>,
- "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
- "mturquette@baylibre.com" <mturquette@baylibre.com>,
- "sboyd@kernel.org" <sboyd@kernel.org>,
- "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>
-Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
- "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240625121358.590547-1-claudiu.beznea.uj@bp.renesas.com>
- <20240625121358.590547-10-claudiu.beznea.uj@bp.renesas.com>
- <TY3PR01MB113465270C36ED9A2F2C8DFEE86D12@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <TY3PR01MB113465270C36ED9A2F2C8DFEE86D12@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <Zn54xhM/qfBv58e2@hu-varada-blr.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi, Biju,
+On 28.06.2024 10:48 AM, Varadarajan Narayanan wrote:
+> On Thu, Jun 27, 2024 at 12:00:35AM +0200, Konrad Dybcio wrote:
+>> On 19.06.2024 9:36 AM, Varadarajan Narayanan wrote:
+>>
+>> [...]
+>>
+>>
+>>> Tested the patches with both gcc and nsscc providers having
+>>> 'sync_state' set to icc_sync_state.
+>>>
+>>> 	# dmesg | grep synced
+>>> 	[    3.029820] qcom,gcc-ipq9574 1800000.clock-controller: interconnect provider is in synced state
+>>> 	[    3.470106] qcom,nsscc-ipq9574 39b00000.clock-controller: interconnect provider is in synced state
+>>>
+>>> I can see that icc_sync_state is getting called and clocks
+>>> related to paths with zero bandwidth are getting disabled.
+>>>
+>>> Will post the NSSCC patches to get the full picture.
+>>
+>> Going back to the original question, does removing interconnects = from
+>> things like PCIe now make them not work / crash the device, which would
+>> indicate the NoC clocks were indeed gated?
+> 
+> Yes. With and without 'interconnects =', the following behaviour
+> is same
+> 	* Boot completes
+> 	* PCIe devices were probed succesfully and can be
+> 	  seen in /proc/bus/pci/devices.
+> 	* icc_sync_state is called. The system has 4 pcie nodes
+> 	  in the DT, out of which pcie0 is not enabled.
+> 
+> The difference is seen in icc_sync_state
+> 
+>     With 'interconnects ='
+> 
+> 	* During icc_sync_state, the following 2 clocks
+> 	  corresponding to the interconnects of 'pcie0' get
+> 	  disabled.
+> 
+> 	[    2.986356] ---> clk_core_disable_lock: gcc_anoc_pcie0_1lane_m_clk
+> 	[    3.012486] ---> clk_core_disable_lock: gcc_snoc_pcie0_1lane_s_clk
+> 
+> 	* System shutdown also completes without issues
+> 
+>     Without the 'interconnects =',
+> 
+> 	* During icc_sync_state, the following clocks
+> 	  corresponding to the interconnects of all the 4 PCIe
+> 	  nodes get disabled.
+> 
+> 	[    2.887860] ---> clk_core_disable_lock: gcc_anoc_pcie0_1lane_m_clk
+> 	[    2.913988] ---> clk_core_disable_lock: gcc_snoc_pcie0_1lane_s_clk
+> 	[    2.939857] ---> clk_core_disable_lock: gcc_anoc_pcie1_1lane_m_clk
+> 	[    2.965725] ---> clk_core_disable_lock: gcc_snoc_pcie1_1lane_s_clk
+> 	[    2.991594] ---> clk_core_disable_lock: gcc_anoc_pcie2_2lane_m_clk
+> 	[    3.017463] ---> clk_core_disable_lock: gcc_snoc_pcie2_2lane_s_clk
+> 	[    3.043328] ---> clk_core_disable_lock: gcc_anoc_pcie3_2lane_m_clk
+> 	[    3.069201] ---> clk_core_disable_lock: gcc_snoc_pcie3_2lane_s_clk
+> 
+> 	* System shutdown hangs (possibly due to un-clocked
+> 	  access of PCIe register) in pcie_pme_interrupt_enable
+> 
+> 		[   10.773134]  dump_stack+0x18/0x24
+> 		[   10.776779]  pcie_pme_remove+0x2c/0x88
+> 		[   10.780078]  pcie_port_remove_service+0x50/0x74
+> 		[   10.783725]  device_remove+0x12c/0x148
+> 		[   10.788151]  __device_release_driver+0x65c/0x8cc
+> 		[   10.791972]  device_release_driver+0x2c/0x44
+> 		[   10.796746]  bus_remove_device+0xcc/0x10c
+> 		[   10.800999]  device_del+0x14c/0x400
+> 		[   10.804904]  device_unregister+0x18/0x34
+> 		[   10.808203]  remove_iter+0x2c/0x3c
+> 		[   10.812369]  device_for_each_child+0x60/0xb4
+> 		[   10.815583]  pcie_portdrv_shutdown+0x34/0x90
+> 		[   10.820009]  pci_device_shutdown+0x34/0x74
+> 		[   10.824263]  device_shutdown+0x150/0x258
+> 		[   10.828169]  kernel_restart_prepare+0x98/0xbc
+> 		[   10.832249]  kernel_restart+0x44/0x110
+> 		[   10.836502]  __do_sys_reboot+0x18c/0x304
+> 
+> I believe, this is confirms NOC clocks getting disabled by
+> icc_sync_state.
 
-On 29.06.2024 08:38, Biju Das wrote:
-> Hi Claudiu,
-> 
-> Thanks for the patch.
-> 
->> -----Original Message-----
->> From: Claudiu <claudiu.beznea@tuxon.dev>
->> Sent: Tuesday, June 25, 2024 1:14 PM
->> Subject: [PATCH v2 09/12] i2c: riic: Add support for fast mode plus
->>
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> Fast mode plus is available on most of the IP variants that RIIC driver is working with. The
->> exception is (according to HW manuals of the SoCs where this IP is available) the Renesas RZ/A1H.
->> For this, patch introduces the struct riic_of_data::fast_mode_plus.
->>
->> Fast mode plus was tested on RZ/G3S, RZ/G2{L,UL,LC}, RZ/Five by instantiating the RIIC frequency to
->> 1MHz and issuing i2c reads on the fast mode plus capable devices (and the i2c clock frequency was
->> checked on RZ/G3S).
->>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->> ---
->>
->> Changes in v2:
->> - dropped code that handles the renesas,riic-no-fast-mode-plus
->> - updated commit description
->>
->>  drivers/i2c/busses/i2c-riic.c | 28 ++++++++++++++++++++++++----
->>  1 file changed, 24 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/i2c/busses/i2c-riic.c b/drivers/i2c/busses/i2c-riic.c index
->> 8ffbead95492..c07317f95e82 100644
->> --- a/drivers/i2c/busses/i2c-riic.c
->> +++ b/drivers/i2c/busses/i2c-riic.c
->> @@ -63,6 +63,8 @@
->>  #define ICMR3_ACKWP	0x10
->>  #define ICMR3_ACKBT	0x08
->>
->> +#define ICFER_FMPE	0x80
->> +
->>  #define ICIER_TIE	0x80
->>  #define ICIER_TEIE	0x40
->>  #define ICIER_RIE	0x20
->> @@ -80,6 +82,7 @@ enum riic_reg_list {
->>  	RIIC_ICCR2,
->>  	RIIC_ICMR1,
->>  	RIIC_ICMR3,
->> +	RIIC_ICFER,
->>  	RIIC_ICSER,
->>  	RIIC_ICIER,
->>  	RIIC_ICSR2,
->> @@ -92,6 +95,7 @@ enum riic_reg_list {
->>
->>  struct riic_of_data {
->>  	const u8 *regs;
->> +	bool fast_mode_plus;
->>  };
->>
->>  struct riic_dev {
->> @@ -315,11 +319,13 @@ static int riic_init_hw(struct riic_dev *riic)
->>  	int total_ticks, cks, brl, brh;
->>  	struct i2c_timings *t = &riic->i2c_t;
->>  	struct device *dev = riic->adapter.dev.parent;
->> +	const struct riic_of_data *info = riic->info;
->>
->> -	if (t->bus_freq_hz > I2C_MAX_FAST_MODE_FREQ) {
->> -		dev_err(dev,
->> -			"unsupported bus speed (%dHz). %d max\n",
->> -			t->bus_freq_hz, I2C_MAX_FAST_MODE_FREQ);
->> +	if ((!info->fast_mode_plus && t->bus_freq_hz > I2C_MAX_FAST_MODE_FREQ) ||
->> +	    (info->fast_mode_plus && t->bus_freq_hz > I2C_MAX_FAST_MODE_PLUS_FREQ)) {
->> +		dev_err(dev, "unsupported bus speed (%dHz). %d max\n", t->bus_freq_hz,
->> +			info->fast_mode_plus ? I2C_MAX_FAST_MODE_PLUS_FREQ :
->> +			I2C_MAX_FAST_MODE_FREQ);
->>  		return -EINVAL;
->>  	}
->>
->> @@ -407,6 +413,9 @@ static int riic_init_hw(struct riic_dev *riic)
->>  	riic_writeb(riic, 0, RIIC_ICSER);
->>  	riic_writeb(riic, ICMR3_ACKWP | ICMR3_RDRFS, RIIC_ICMR3);
->>
->> +	if (info->fast_mode_plus && t->bus_freq_hz == I2C_MAX_FAST_MODE_PLUS_FREQ)
->> +		riic_clear_set_bit(riic, 0, ICFER_FMPE, RIIC_ICFER);
->> +
->>  	riic_clear_set_bit(riic, ICCR1_IICRST, 0, RIIC_ICCR1);
->>
->>  	pm_runtime_mark_last_busy(dev);
->> @@ -536,6 +545,7 @@ static const u8 riic_rz_a_regs[RIIC_REG_END] = {
->>  	[RIIC_ICCR2] = 0x04,
->>  	[RIIC_ICMR1] = 0x08,
->>  	[RIIC_ICMR3] = 0x10,
->> +	[RIIC_ICFER] = 0x14,
->>  	[RIIC_ICSER] = 0x18,
->>  	[RIIC_ICIER] = 0x1c,
->>  	[RIIC_ICSR2] = 0x24,
->> @@ -549,11 +559,17 @@ static const struct riic_of_data riic_rz_a_info = {
->>  	.regs = riic_rz_a_regs,
->>  };
->>
->> +static const struct riic_of_data riic_rz_g2_info = {
->> +	.regs = riic_rz_a_regs,
->> +	.fast_mode_plus = true,
->> +};
->> +
->>  static const u8 riic_rz_v2h_regs[RIIC_REG_END] = {
->>  	[RIIC_ICCR1] = 0x00,
->>  	[RIIC_ICCR2] = 0x01,
->>  	[RIIC_ICMR1] = 0x02,
->>  	[RIIC_ICMR3] = 0x04,
->> +	[RIIC_ICFER] = 0x05,
->>  	[RIIC_ICSER] = 0x06,
->>  	[RIIC_ICIER] = 0x07,
->>  	[RIIC_ICSR2] = 0x09,
->> @@ -565,6 +581,7 @@ static const u8 riic_rz_v2h_regs[RIIC_REG_END] = {
->>
->>  static const struct riic_of_data riic_rz_v2h_info = {
->>  	.regs = riic_rz_v2h_regs,
->> +	.fast_mode_plus = true,
->>  };
->>
->>  static int riic_i2c_suspend(struct device *dev) @@ -613,6 +630,9 @@ static const struct dev_pm_ops
->> riic_i2c_pm_ops = {
->>
->>  static const struct of_device_id riic_i2c_dt_ids[] = {
->>  	{ .compatible = "renesas,riic-rz", .data = &riic_rz_a_info },
->> +	{ .compatible = "renesas,riic-r9a07g043", .data =  &riic_rz_g2_info, },
->> +	{ .compatible = "renesas,riic-r9a07g044", .data =  &riic_rz_g2_info, },
->> +	{ .compatible = "renesas,riic-r9a07g054", .data =  &riic_rz_g2_info,
->> +},
-> 
-> I feel, the better way is 
-> 
-> { .compatible = "renesas, renesas,r7s72100", .data = &riic_rz_a_info },--> As this SoC does not support FMP
-> { .compatible = "renesas,riic-rz", .data =  &riic_rz_g2_info, },--> As this SoCs has FMP+ support
-> { .compatible = "renesas,riic-r9a09g057", .data = &riic_rz_v2h_info },--> As this SoCs has different register layout and FMP+
+Yes, this looks good now, thanks.
 
-This is the natural way going forward if we enable it for all platforms
-supporting FM+ (not only for those that could be currently tested).
-
-If there are no comments against it I'll go with this compatible list.
-
-Thank you,
-Claudiu Beznea
-
-> 
-> With this the number of compatible entries in the device tables reduced from 5 to 3.
-> 
-> Cheers,
-> Biju
-> 
+Konrad
