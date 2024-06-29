@@ -1,173 +1,188 @@
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 469171FC4;
-	Sat, 29 Jun 2024 06:40:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDAA142A98
+	for <linux-clk@vger.kernel.org>; Sat, 29 Jun 2024 11:11:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719643232; cv=none; b=TaqK50mNFg90w1R6fe0/MjchnG8LDQHJ5TKYgSE45OWe+an55lRUq5evTChPBi2LIJN/mGWjs4zsl7D5t6H2cFJ7DTvTGYpoXdH7c8Hok4ljpuckCDbaGaYmJzk9shsALDxN4HIsNpkXRauau0+n1Pi2zgh6yYMCmForLfnpG2o=
+	t=1719659472; cv=none; b=uioHjtnI7YDiLU5orE2SeBIzomgiNPp+vEfZPWyAlhL6mDCQE60PSYXr/Lvnn/Vml6satho/hWI6EHroGcnC9M4WHgqwRBMSR3IYFvVt4Lqw49AA5RJEuK2a5LXsoALFeUw4p7xUr8fgv3OBSknjIaaBiX2L6jcIDWLL36F2d9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719643232; c=relaxed/simple;
-	bh=Cn09Ef8gCqLXly+Rs3FB1Boi9qEevm3VkSEoUZ3h5tQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OUAZs55Q+p9sOwRjhFsCm5S6Efm9UdN+mKvtk7ikdcDzSFjIGozJp/0C6O55E9BZfH1NP1quHrc68jrCMWYxhFQRCTkOjswa5gySiug5bqFCQr2JpcsIGbsE9dYhYcvIjgw6hC5oqVk4XWjromXUQl74Hm+5gVQgzPWVYrsLcFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52cdb0d816bso1317439e87.1;
-        Fri, 28 Jun 2024 23:40:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1719643226; x=1720248026;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+	s=arc-20240116; t=1719659472; c=relaxed/simple;
+	bh=vExeczRnVrI7UT25v1lNxQKRkxT3BOGoqkI3DI6fywQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t2PTz+PwucoOIfhyrHbu6mwpXipUlX7Ny0/cvw1uuCZ2K3Rt4Eqhk2KXjxaP/qXfNxCklf11fIaN/8lVCSTcvw5GWO3xCKTqkq32oG/Ra3WjxIWZaJ8aYBpi30fSZrLjSEBmHeQRFeojYYQ71yjSwgYMYWsjNnO0izGdRqq4qTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=jE0sRWgR; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="jE0sRWgR"
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3674e1931b7so1014267f8f.2
+        for <linux-clk@vger.kernel.org>; Sat, 29 Jun 2024 04:11:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1719659468; x=1720264268; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=9VvrX6QrJoZbVIAjkNDDZQYHf2ppstlZCyPEGAhFB7E=;
-        b=X67D/5/1n5jmf0dQKWFSIvtmw3nppCtZlaBY2vgNoK3xDvsRCBbIauwQN7KPRta5u5
-         jW3N34KjqQ+F0AQpPs+aNnd9GTsMfxznVijpAkid1FBKleldOG98kidKCJJ4C+KHKUrr
-         ab7b89K7IhQy8hHF9YPnEu5bM1NRCQOkgJI29FSRtxOBPLYm4CwV2iISYiUHuX/S0lHv
-         fg5xtKBxQi79tQ71sbAHsgR+LfnOrlXp8K+hIhWTQO/wwi5EDKnMDkyH3NkTRIOAj+qV
-         ZRYIUt9tSoc5yQtu+xtSXQXr3MwlbIxbCTuVnb5omoH0W4EJwGDztbmedCEUmfU9H8h+
-         wVWA==
-X-Forwarded-Encrypted: i=1; AJvYcCX1rvHFvbCZCaSrUVuTiFMfM36PqbHB00LzGpSNaln985WgiSZDEALegE8C4t83kD9t32bOvcnqLDTCkmLDfgSQCSHHR19s/9dJa8Y39jp8sQv7gOu9gZNPOb5yCLnPazj/dVp63ogPRTs36K5VDWISmKcDFGbUxqvnyMPz1osF
-X-Gm-Message-State: AOJu0YwagGx5+GbcKgv0SP9pVb7kvVYjs5g1pTlTTc5X9w5c85QDrhN/
-	qVulOIdofeeKca+h9MO4+zqfrEVcijTJCbYMN9KncH+KAaoI2RCKPkkPB5wR
-X-Google-Smtp-Source: AGHT+IFA7ugnhEf1xJP1uidTDJA7jOk1oGHqKAQ620msPV8LOpgs9etJjcusPNCUBD2oPeIAQBJltg==
-X-Received: by 2002:a05:6512:33d2:b0:52c:d5a8:496 with SMTP id 2adb3069b0e04-52e825cb663mr127761e87.22.1719643225834;
-        Fri, 28 Jun 2024 23:40:25 -0700 (PDT)
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com. [209.85.208.175])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e7ab2780asm505088e87.178.2024.06.28.23.40.25
+        bh=5Xt/KmvrgieieUb7BSBOgm30lvwqq55l4c9xKge1N7E=;
+        b=jE0sRWgRU8OczQsiIUwwAw3w+OCmYdN0L3ChHI/n04+F462FoWmgIx4UPYa0yAnlVF
+         TC1/Mwx16aQC0a+CKIlofW4W32YuZIV0ZG1f6J5uiSk/hENlRetq1NtufZONCK/8oDnr
+         qrjPeaViTG+OQlbXuzfLaiYPIfTnBwe78iKU2YprE2cR2hL/sxo0Mlp5gM5fazyyZcnz
+         11kHafgZ7stqW3HGYOM5PtUlP/Z6TT/40mDgq9iUNhFvO7SlHaMKGhUCOxuluuIaH6Ez
+         qpaB1+MZ8AInnHGjfK+gRtZYl2/Z3RJJWBOmTlZtzbzKvy8MhPFsN0fhmKf75o1WX4W3
+         9Pxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719659468; x=1720264268;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5Xt/KmvrgieieUb7BSBOgm30lvwqq55l4c9xKge1N7E=;
+        b=X7Xf1LqoGh9kzELJYvna/mzQ61iyxmTsQZgaTxTPfb2XrOaR4rO81bEijZ4RRMMB8w
+         WpSkaBTJoOOwnMYZUdT4Y5mvnL+WorrqMr82yl6sHHVTfwHa07WK61cENSZTBBEo4SrR
+         i5yuq7HVfQeot12WlaOlhLhp0yl46jfWpFfpPpjYVfdF4kTykuoJWWToRlR3/53MoWl7
+         NClTPH1nCyENY1xsGSfBQNRvPpzNbsGIe1LFqfDpINWBfKRpvl3BBweZ8aq5IiOd6/wY
+         6OHGzbAjEPOaFbaIA+j2msajiOCjafZnNw92BzXWjB6Go1IkicC7KVOjxP1CDLsG0M4r
+         dUuA==
+X-Forwarded-Encrypted: i=1; AJvYcCVo4jtvV4rO+GuxwFCkSH0HOmmB7WxUULNwmCxYsDpVUxulVzhyfF44plZ8d0aZcGzCPJjSnaeclPNhZWYWBnSsKSmvwWYZ7pWz
+X-Gm-Message-State: AOJu0YyN2/OtPKBePpUvcoqU5wlEO1qJVsFgQSXN7CxdxXpL2VrYyzFX
+	B6OpentMYGVQ//bNLcDgakxNErQUTv5IxrRykRWN+syWa8t/0vIzFf84LotUmPw=
+X-Google-Smtp-Source: AGHT+IFqpLX+00lyexUlkVp9WFDAXonVuJYiPnYyITmMVz0K/9z+LFGOHYAxHvC+6+cwE40Yy3Dg1Q==
+X-Received: by 2002:a5d:4949:0:b0:366:e9f2:a551 with SMTP id ffacd0b85a97d-36775721668mr630762f8f.43.1719659467926;
+        Sat, 29 Jun 2024 04:11:07 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.171])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0fc434sm4581330f8f.76.2024.06.29.04.11.06
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 28 Jun 2024 23:40:25 -0700 (PDT)
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ee4ab5958dso21076501fa.1;
-        Fri, 28 Jun 2024 23:40:25 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUCw4DN2qw3Eg08nIlIMw6YRheG4FNQu0Lzl3fMtGthCjfHHpft6K67r7dUeS8n+v3f5RruMRPPtgzwdNi4Rkf1CTdcl9PvRCiSewN0bSr81gC4qq8dE5YGgnTzE4N9pF3/0blChg6+a9t/LRXdiD3PKYSlvJ+zk/nBHrE+EE2d
-X-Received: by 2002:a05:651c:21a:b0:2ec:4e05:8d99 with SMTP id
- 38308e7fff4ca-2ee5e6c5e60mr958211fa.20.1719643225204; Fri, 28 Jun 2024
- 23:40:25 -0700 (PDT)
+        Sat, 29 Jun 2024 04:11:07 -0700 (PDT)
+Message-ID: <e2a3672a-5f1b-4969-8ddb-aad63a776db3@tuxon.dev>
+Date: Sat, 29 Jun 2024 14:11:05 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240623-sunxi-ng_fix_common_probe-v1-1-7c97e32824a1@oltmanns.dev>
- <yw1x4j9e62dt.fsf@mansr.com>
-In-Reply-To: <yw1x4j9e62dt.fsf@mansr.com>
-Reply-To: wens@csie.org
-From: Chen-Yu Tsai <wens@csie.org>
-Date: Sat, 29 Jun 2024 14:40:11 +0800
-X-Gmail-Original-Message-ID: <CAGb2v67GbUF7S9hKdNb=az0ZsoEU=fXjKzyQvEd+tSHrWf4eCg@mail.gmail.com>
-Message-ID: <CAGb2v67GbUF7S9hKdNb=az0ZsoEU=fXjKzyQvEd+tSHrWf4eCg@mail.gmail.com>
-Subject: Re: [PATCH] clk: sunxi-ng: common: Don't call hw_to_ccu_common on hw
- without common
-To: =?UTF-8?B?TcOlbnMgUnVsbGfDpXJk?= <mans@mansr.com>
-Cc: Frank Oltmanns <frank@oltmanns.dev>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Samuel Holland <samuel@sholland.org>, Maxime Ripard <mripard@kernel.org>, linux-clk@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, 
-	"Robert J. Pafford" <pafford.9@buckeyemail.osu.edu>, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 07/12] i2c: riic: Define individual arrays to describe
+ the register offsets
+To: Geert Uytterhoeven <geert@linux-m68k.org>,
+ "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>,
+ "andi.shyti@kernel.org" <andi.shyti@kernel.org>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+ Chris Brandt <Chris.Brandt@renesas.com>, "robh@kernel.org"
+ <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "sboyd@kernel.org" <sboyd@kernel.org>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240625121358.590547-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240625121358.590547-8-claudiu.beznea.uj@bp.renesas.com>
+ <TY3PR01MB11346EF9A001F68162148B70F86D02@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <6289f329-118f-4970-a525-75c3a48bd28b@tuxon.dev>
+ <TY3PR01MB1134603F92C72D9B6C6C3733C86D02@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <2f162986-33c5-4d80-958c-4f857adaad20@tuxon.dev>
+ <TY3PR01MB11346CA73575CF61B2024F3B386D02@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <79c26030-4b92-4ef3-b8ce-d011f492161b@tuxon.dev>
+ <CAMuHMdXJ8eKLzMqCPR2ewS9gr_m5OQPneETPMC-rOOmW+--f5A@mail.gmail.com>
+ <7c542f46-c644-4f22-bbc4-408b7dad8273@tuxon.dev>
+ <CAMuHMdUmiQjsKt93jM62V5YR_NdtUDXhcxFs+F+BCu3NTNsx8Q@mail.gmail.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <CAMuHMdUmiQjsKt93jM62V5YR_NdtUDXhcxFs+F+BCu3NTNsx8Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 27, 2024 at 7:39=E2=80=AFPM M=C3=A5ns Rullg=C3=A5rd <mans@mansr=
-.com> wrote:
->
-> Frank Oltmanns <frank@oltmanns.dev> writes:
->
-> > In order to set the rate range of a hw sunxi_ccu_probe calls
-> > hw_to_ccu_common() assuming all entries in desc->ccu_clks are contained
-> > in a ccu_common struct. This assumption is incorrect and, in
-> > consequence, causes invalid pointer de-references.
-> >
-> > Remove the faulty call. Instead, add one more loop that iterates over
-> > the ccu_clks and sets the rate range, if required.
-> >
-> > Fixes: b914ec33b391 ("clk: sunxi-ng: common: Support minimum and maximu=
-m rate")
-> > Reported-by: Robert J. Pafford <pafford.9@buckeyemail.osu.edu>
-> > Closes: https://lore.kernel.org/lkml/DM6PR01MB58047C810DDD5D0AE397CADFF=
-7C22@DM6PR01MB5804.prod.exchangelabs.com/
-> > Cc: stable@vger.kernel.org
-> > Signed-off-by: Frank Oltmanns <frank@oltmanns.dev>
-> > ---
-> > Robert, could you please test if this fixes the issue you reported.
-> >
-> > I'm CC'ing M=C3=A5ns here, because he observed some strange behavior [1=
-] with
-> > the original patch. Is it possible for you to look into if this patch
-> > fixes your issue without the need for the following (seemingly
-> > unrelated) patches:
-> >       cedb7dd193f6 "drm/sun4i: hdmi: Convert encoder to atomic"
-> >       9ca6bc246035 "drm/sun4i: hdmi: Move mode_set into enable"
->
-> This does indeed fix it.  6.9 is still broken, though, but that's
-> probably for other reasons.
 
-Can I take that as a Tested-by?
 
-> > Thanks,
-> >   Frank
-> >
-> > [1]: https://lore.kernel.org/lkml/yw1xo78z8ez0.fsf@mansr.com/
-> > ---
-> >  drivers/clk/sunxi-ng/ccu_common.c | 18 ++++++++++++------
-> >  1 file changed, 12 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/drivers/clk/sunxi-ng/ccu_common.c b/drivers/clk/sunxi-ng/c=
-cu_common.c
-> > index ac0091b4ce24..be375ce0149c 100644
-> > --- a/drivers/clk/sunxi-ng/ccu_common.c
-> > +++ b/drivers/clk/sunxi-ng/ccu_common.c
-> > @@ -132,7 +132,6 @@ static int sunxi_ccu_probe(struct sunxi_ccu *ccu, s=
-truct device *dev,
-> >
-> >       for (i =3D 0; i < desc->hw_clks->num ; i++) {
-> >               struct clk_hw *hw =3D desc->hw_clks->hws[i];
-> > -             struct ccu_common *common =3D hw_to_ccu_common(hw);
-> >               const char *name;
-> >
-> >               if (!hw)
-> > @@ -147,14 +146,21 @@ static int sunxi_ccu_probe(struct sunxi_ccu *ccu,=
- struct device *dev,
-> >                       pr_err("Couldn't register clock %d - %s\n", i, na=
-me);
-> >                       goto err_clk_unreg;
-> >               }
-> > +     }
-> > +
-> > +     for (i =3D 0; i < desc->num_ccu_clks; i++) {
-> > +             struct ccu_common *cclk =3D desc->ccu_clks[i];
-> > +
-> > +             if (!cclk)
-> > +                     continue;
-> >
-> > -             if (common->max_rate)
-> > -                     clk_hw_set_rate_range(hw, common->min_rate,
-> > -                                           common->max_rate);
-> > +             if (cclk->max_rate)
-> > +                     clk_hw_set_rate_range(&cclk->hw, cclk->min_rate,
-> > +                                           cclk->max_rate);
-> >               else
-> > -                     WARN(common->min_rate,
-> > +                     WARN(cclk->min_rate,
-> >                            "No max_rate, ignoring min_rate of clock %d =
-- %s\n",
-> > -                          i, name);
-> > +                          i, clk_hw_get_name(&cclk->hw));
-> >       }
-> >
-> >       ret =3D of_clk_add_hw_provider(node, of_clk_hw_onecell_get,
-> >
-> > ---
-> > base-commit: 2607133196c35f31892ee199ce7ffa717bea4ad1
-> > change-id: 20240622-sunxi-ng_fix_common_probe-5677c3e487fc
-> >
-> > Best regards,
-> > --
-> >
-> > Frank Oltmanns <frank@oltmanns.dev>
-> >
->
-> --
-> M=C3=A5ns Rullg=C3=A5rd
+On 28.06.2024 14:39, Geert Uytterhoeven wrote:
+> On Fri, Jun 28, 2024 at 12:29 PM claudiu beznea
+> <claudiu.beznea@tuxon.dev> wrote:
+>> On 28.06.2024 12:13, Geert Uytterhoeven wrote:
+>>> On Fri, Jun 28, 2024 at 10:12 AM claudiu beznea
+>>> <claudiu.beznea@tuxon.dev> wrote:
+>>>> On 28.06.2024 11:09, Biju Das wrote:
+>>>>>> -----Original Message-----
+>>>>>> From: claudiu beznea <claudiu.beznea@tuxon.dev>
+>>>>>> On 28.06.2024 10:55, Biju Das wrote:
+>>>>>>>> -----Original Message-----
+>>>>>>>> From: claudiu beznea <claudiu.beznea@tuxon.dev>
+>>>>>>>> Patch 09/12 "i2c: riic: Add support for fast mode plus" adds a new member to struct
+>>>>>> riic_of_data.
+>>>>>>>> That new member is needed to differentiate b/w hardware versions
+>>>>>>>> supporting fast mode plus based on compatible.
+>>>>>>>
+>>>>>>> Are we sure RZ/A does not support fast mode plus?
+>>>>>>
+>>>>>> From commit description of patch 09/12:
+>>>>>>
+>>>>>> Fast mode plus is available on most of the IP variants that RIIC driver is working with. The
+>>>>>> exception is (according to HW manuals of the SoCs where this IP is available) the Renesas RZ/A1H.
+>>>>>> For this, patch introduces the struct riic_of_data::fast_mode_plus.
+>>>>>>
+>>>>>> I checked the manuals of all the SoCs where this driver is used.
+>>>>>>
+>>>>>> I haven't checked the H/W manual?
+>>>>>>
+>>>>>> On the manual I've downloaded from Renesas web site the FMPE bit of RIICnFER is not available on
+>>>>>> RZ/A1H.
+>>>>>
+>>>>> I just found RZ/A2M manual, it supports FMP and register layout looks similar to RZ/G2L.
+>>>>
+>>>> I introduced struct riic_of_data::fast_mode_plus because of RZ/A1H.
+>>>
+>>> Do you need to check for that?
+>>>
+>>> The ICFER_FMPE bit won't be set unless the user specifies the FM+
+>>> clock-frequency.  Setting clock-frequency beyond Fast Mode on RZ/A1H
+>>> would be very wrong.
+>>
+>> I need it to avoid this scenario ^. In patch 09/12 there is this code:
+>>
+>> +       if ((!info->fast_mode_plus && t->bus_freq_hz > I2C_MAX_FAST_MODE_FREQ) ||
+>> +           (info->fast_mode_plus && t->bus_freq_hz > I2C_MAX_FAST_MODE_PLUS_FREQ)) {
+>> +               dev_err(dev, "unsupported bus speed (%dHz). %d max\n", t->bus_freq_hz,
+>> +                       info->fast_mode_plus ? I2C_MAX_FAST_MODE_PLUS_FREQ :
+>> +                       I2C_MAX_FAST_MODE_FREQ);
+>>                 return -EINVAL;
+>>
+
+FTR, the full context of this change is (from patch 09/12):
+
+@@ -315,11 +319,13 @@ static int riic_init_hw(struct riic_dev *riic)
+ 	int total_ticks, cks, brl, brh;
+ 	struct i2c_timings *t = &riic->i2c_t;
+ 	struct device *dev = riic->adapter.dev.parent;
++	const struct riic_of_data *info = riic->info;
+
+-	if (t->bus_freq_hz > I2C_MAX_FAST_MODE_FREQ) {
+-		dev_err(dev,
+-			"unsupported bus speed (%dHz). %d max\n",
+-			t->bus_freq_hz, I2C_MAX_FAST_MODE_FREQ);
++	if ((!info->fast_mode_plus && t->bus_freq_hz > I2C_MAX_FAST_MODE_FREQ) ||
++	    (info->fast_mode_plus && t->bus_freq_hz > I2C_MAX_FAST_MODE_PLUS_FREQ)) {
++		dev_err(dev, "unsupported bus speed (%dHz). %d max\n", t->bus_freq_hz,
++			info->fast_mode_plus ? I2C_MAX_FAST_MODE_PLUS_FREQ :
++			I2C_MAX_FAST_MODE_FREQ);
+ 		return -EINVAL;
+ 	}
+
+Thank you,
+Claudiu Beznea
+
+>> to avoid giving the user the possibility to set FM+ freq on platforms not
+>> supporting it.
+>>
+>> Please let me know if I'm missing something (or wrongly understood your
+>> statement).
+> 
+> Wolfram/Andi: what is your view on this?
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
