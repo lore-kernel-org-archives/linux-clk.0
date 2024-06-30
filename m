@@ -1,108 +1,81 @@
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6749D200AF;
-	Sat, 29 Jun 2024 17:58:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C792282F1;
+	Sun, 30 Jun 2024 15:34:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719683939; cv=none; b=P3twygdiG0edW04bTOPtQFsIuLpOgnctoST0bJ45L3chovND59ZcGtPpZ4ZplOwhXIiL8OG4LsFpK9TWQscXRSyuuAsA/lMHeyrSkbhMDunyYNzhl7NUqQWBCbAcBBEXY5fW6SKNYtSSVATQsU7bEU6C3Em1nBSQEvdC4sPp374=
+	t=1719761646; cv=none; b=MRj/EOB1XPsKsrk9O9Rd9om8mEw01PihpQzraOfk1MYoDrHrlMbrAM0yAVrAF61um6GNOicYm9r/JShO0RQntvcRU6zuFGtJ+G6+cBR0+J0FNRubE9GavlYzsxpNLu3V4LySJLXNeqLZCIvcXHLEBUQ6t2RJH2dh512d8PqcgTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719683939; c=relaxed/simple;
-	bh=aLrT4oOnpymwjd8DVpGHvZEJrdv2DOdEX0kQWZpJWRA=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=qvQ38NKBFrT/3N3syaYx57AeLX2LwxcKt43Qig/cYsjkn1vQ7JeM5RQGlAIVIAgwrtxhzlQT7RUvoyzLJu/+qzfvKOxdeWrkxRGhWK96k2nxtd2aLWRzXRIOUh3QTBbrxFsO4xK/dbFcFjl35H0WKv53lbkGaVDM2iitjPf95Yg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de; spf=pass smtp.mailfrom=public-files.de; dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b=HyvcYbt8; arc=none smtp.client-ip=212.227.15.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=public-files.de
+	s=arc-20240116; t=1719761646; c=relaxed/simple;
+	bh=oBsDaIgWwOPsN5NcDJk1MTGtGIh9YzY81gZmoTW+7Vg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Bh+j8JOGxXoenUlwVcBOBqrtMZYqzYRnkarx95uEOfIk8gRJTJBFR/cB/6qjrOKxRujyqUwuUTzZXQJbozT/MTXYghHuFxo7hzXFHVM9bLEegRiW/r/em0D+Pz3tptR6oieFM3pUohqf8d+4X21w7VWA05s3hKAvxBDYfuiPMuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fc7zUtxh; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b="HyvcYbt8"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=public-files.de;
-	s=s31663417; t=1719683920; x=1720288720; i=frank-w@public-files.de;
-	bh=aLrT4oOnpymwjd8DVpGHvZEJrdv2DOdEX0kQWZpJWRA=;
-	h=X-UI-Sender-Class:Date:From:To:CC:Subject:Reply-to:In-Reply-To:
-	 References:Message-ID:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=HyvcYbt8SJ7A8KWkB1a032mAMta423UnsOZPh6Z/cAD08ObBFIif9W+6xAiEx7Uf
-	 gUfW9YnxAseq0SsQcg3bajeU4DOPvCoIuBT3R3Jv4Yfr/ernWvBFi1nOrWefPcfnt
-	 cdEpjSH7YbYC0HjHdcDXKnEk2nAPkXzOhBkuFXOEeZJzyLEa586GF8a+mhRUtKJAz
-	 YZv1dWrI8V6YJdXqzwmXV+r/y3n+MWj1TPcrs8yWhGtvnZnmmdwFLnvI+gBq+pYto
-	 Rmu0qsOA1Pg1oEKjhG/uhcG7Jqvb5qg7u6TCKVTcsPqOZddt8rBDmdaICck4uYEGW
-	 aJ6nwhBUZfIRNW6CYQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [127.0.0.1] ([80.245.77.57]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1M6Ue3-1sUV2E3kxl-008jaY; Sat, 29
- Jun 2024 19:58:40 +0200
-Date: Sat, 29 Jun 2024 19:58:38 +0200
-From: Frank Wunderlich <frank-w@public-files.de>
-To: Markus Elfring <Markus.Elfring@web.de>,
- Christian Marangi <ansuelsmth@gmail.com>, linux-mediatek@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org,
- Angelo Gioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- =?UTF-8?Q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>,
- Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>
-CC: stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v2_1/2=5D_arm64=3A_dts=3A_mediate?=
- =?US-ASCII?Q?k=3A_mt7622=3A_readd_syscon_to_pciesys_node?=
-User-Agent: K-9 Mail for Android
-Reply-to: frank-w@public-files.de
-In-Reply-To: <9f67af8b-9c8c-4ad6-88c3-03d9fd9673d2@web.de>
-References: <20240628105542.5456-1-ansuelsmth@gmail.com> <9f67af8b-9c8c-4ad6-88c3-03d9fd9673d2@web.de>
-Message-ID: <7B85B9EF-589B-4025-9933-847C6BDCF284@public-files.de>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fc7zUtxh"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62F8EC2BD10;
+	Sun, 30 Jun 2024 15:34:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719761645;
+	bh=oBsDaIgWwOPsN5NcDJk1MTGtGIh9YzY81gZmoTW+7Vg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Fc7zUtxhDWhgTkv4LQ29OHLe2IiluCwDUiWsZj2GETG+towrxRViQgzgjTuWsPozG
+	 kRdD9A9a63BkxcSMjqUA9UV8+5S6oPqO1Aj7umyUgMuSYxLJPv67BixCDpWvVpuhaS
+	 sNT/a+7/Em3FM89w1RU0k9DQ2aB6dvUIj+ZBa1AC+dSbP0WAGZgjeQr4wRF82iVNIj
+	 7YeR1cYPzf4+nzSMthbtVEjXpnjkRCmQJwK/PrALsN09FA4IE/MGXmZfoXZJHsHA4j
+	 Aiv9JBtUWJa5h/iAou+T8cEu2ymT6JXb6b/gFt/PfD/fjcVpmr+ehXXV8hTDlrKu8X
+	 tFzix+OVM05Xw==
+Received: by wens.tw (Postfix, from userid 1000)
+	id 58B8C5FD47; Sun, 30 Jun 2024 23:34:03 +0800 (CST)
+From: Chen-Yu Tsai <wens@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Maxime Ripard <mripard@kernel.org>,
+	Frank Oltmanns <frank@oltmanns.dev>
+Cc: Chen-Yu Tsai <wens@csie.org>,
+	=?UTF-8?q?M=C3=A5ns=20Rullg=C3=A5rd?= <mans@mansr.com>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	"Robert J. Pafford" <pafford.9@buckeyemail.osu.edu>,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] clk: sunxi-ng: common: Don't call hw_to_ccu_common on hw without common
+Date: Sun, 30 Jun 2024 23:34:02 +0800
+Message-Id: <171976163761.1183893.10044135406471629615.b4-ty@csie.org>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240623-sunxi-ng_fix_common_probe-v1-1-7c97e32824a1@oltmanns.dev>
+References: <20240623-sunxi-ng_fix_common_probe-v1-1-7c97e32824a1@oltmanns.dev>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:/XeJwdnckIOl1ojd6eCqyn4n7VHLmaLRB1MmDzcRq4iP+LgaqM9
- aoGV8ocSw5XCK4SmmZ1AbuTshcCrdsRGiL+8VJHOJ1BlVgb4RS0Rd85iUeJ2E7Mg0xQbLRM
- pR5Ahj6teUQXjEAd/oS/GXWScw0jHEKyEElJ3x6U02BecSyNGKNtGAs0Rx3ZO2Qs+NeqDgk
- trX5YINi4Ej7VdcpAZinA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:aXtMXo6gijc=;daTEpV3dzaZ3Xfnp2LUT3IOkcIi
- ITveyJxrT/X8ytrJYBRNKr/x95owVeX/C9T7qBD/Kmtd2U3QUSPqpXFR5E4dUzjgE7g35amDP
- /zkpkeIHV8ipLjst1NnPEG0iarLJVo9Hs1Ijkzop02rQMhBEb4Bx3j4S3YB5ZvNL3n7M8oKGw
- fPdMJJduhdtG1ToRI1EpPWczgVYycNv0UBfi8yMKzwy/o6t6eEkxPNmaMrunHK8yERfyvEVEX
- NnK6zUkDwaqLEmqE7LAuNpseuRZgRFff9npL2cK5HC+PXDh3vvidymtN7GJ/UZcG5RZ7zwSdg
- RKSNV0JH1wux420g3qhWF5ovJHiOyOmOrDAaIe4nbVy37B7vgoeuXEv5tiE5BQV55XeHd+Rng
- KIS0JcpFyh6lAhixklb/llgvBEmo8SQfY1VoEYL+bYItPnghx70X4TDQNYYNN9QvsEfsF1VcG
- Eo4vsgx9MFWnawBrIMyYvil9UDpNE+MUc8ABhnF357XiVNMp1E4Wwjjctq4cRRnA0UeZrSZmc
- gKlG7PmI90ODmiecKDgsE9nOftb/zbBChNgGNKbQC5Zv88CKepaAES6A2a432Yi7nSmmPY8RV
- RMJwXhhS5xfd3x7uAaSucm1K3FZrAjsVZl3Fky+eWGhMHtOfabaTj6x3hyJsHcknYhjwotnsj
- Upg+TXk6bxPGRRIJ4uCZSbLO27nl5eZAI2VS4WODbF6RO4NgVcFBvIxu6nJv8irTJ1mnOFhAu
- G/a62lLZuVX8YJDT689FohWgNFXt92hDEOC+lz36w6rptZkal8xiTnIkhTMeLRpJIXZnRSQ98
- 1vgJich+5VizoOGmB27nJlslGE7vaoitXvpEbb+5sOhuY=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Am 29=2E Juni 2024 19:35:01 MESZ schrieb Markus Elfring <Markus=2EElfring@w=
-eb=2Ede>:
->> Sata node reference the pciesys with the property mediatek,phy-node
->> and that is used as a syscon to access the pciesys regs=2E
->>
->> Readd the syscon compatible to pciesys node to restore correct
->> functionality of the SATA interface=2E
->=E2=80=A6
->> Reported-by: Frank Wunderlich =E2=80=A6
->
->Was any related information published?
->
->Regards,
->Markus
->
+From: Chen-Yu Tsai <wens@csie.org>
 
-Hi,
+On Sun, 23 Jun 2024 10:45:58 +0200, Frank Oltmanns wrote:
+> In order to set the rate range of a hw sunxi_ccu_probe calls
+> hw_to_ccu_common() assuming all entries in desc->ccu_clks are contained
+> in a ccu_common struct. This assumption is incorrect and, in
+> consequence, causes invalid pointer de-references.
+> 
+> Remove the faulty call. Instead, add one more loop that iterates over
+> the ccu_clks and sets the rate range, if required.
+> 
+> [...]
 
-I found this while changing uboot to of_upstream and fixed it there (not y=
-et send to mailinglist)=2E As of_upstream uses linux dts,i rechecked if it =
-is broken there too and yes it is=2E
+Applied to clk-fixes-for-6.10 in git@github.com:linux-sunxi/linux-sunxi.git, thanks!
 
-But i have not sent issue to mailinglist because we fixed it before :)
-regards Frank
+[1/1] clk: sunxi-ng: common: Don't call hw_to_ccu_common on hw without common
+      commit: ea977d742507e534d9fe4f4d74256f6b7f589338
+
+Best regards,
+-- 
+Chen-Yu Tsai <wens@csie.org>
