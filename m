@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E527D16EB71;
-	Mon,  1 Jul 2024 20:11:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F023316DC09
+	for <linux-clk@vger.kernel.org>; Mon,  1 Jul 2024 20:17:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719864720; cv=none; b=n6RT0JlYA2GFdEenRtZ/fwgEz7ZQUOKGGoALIhLOng85sFrrwJa5vCio5PmYDmbmyvGWlZhYHSuHxKB29A4ay+INjOdc4oc883/y+ZwTOixKv4zA/lidG6S41bCQhc+a3TTLmkED8Is+yF123SR22G3z2mBd49GALqI+2ELK85c=
+	t=1719865079; cv=none; b=rcxrCmHCSYvDXOfAEs8zL5HU06rqA1BG2akn4gDaQxI3gOFQM0tFZhJG4i0bEB4UX/QQU1izpIhGwTyXQO/8MV8hpjASyeRS+boEq1+oeLkR8hBNpF9UO8Ot3lajOYeEA8UVLTc7b18Trv7mKMxbuNvOdOzu5Cy2CwuLixjT0q8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719864720; c=relaxed/simple;
-	bh=JOdyWIp4JdjCdIHJT0/xXlGViUBjHD/Mwa/JTAO5VzY=;
+	s=arc-20240116; t=1719865079; c=relaxed/simple;
+	bh=k37LkV27AerqxXOKVO2onHf2LK7R0wvTJ9sByqdD0ag=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=s1NJRh+Mi6ThoX+RY3v1YQaYgC0qlrf1N4nPzfOJPDxWF93VOU28HnR4/TXmUj/uAdZqC2yTS6ZCmgizJLk7z4j2MtFVohQTQW6DzvaiMX2L35XJufbNXNEOaKvKrXft6gNYKoU8rr+cwHdxH0a1qBlzbB0wKqSG+mI6Jz3irWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p4+M3zV8; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=JuH7THm/hlScx7wMARhrOjQ/bYWb7IUxj8zv6++ag4LQfyd7l8S33jxH5ccdy5aoVNQ+8Yokw5Sn1unS3ge6vBDUj3mytUYs/1IrlsIL0XyY89qfH/nBPDLJdNNT2xeU2t/v5rf5kRxOzz6Vm3pG+QknlsR9KMAFcLXuNNXMIJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C56USqln; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p4+M3zV8"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66F16C116B1;
-	Mon,  1 Jul 2024 20:11:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C56USqln"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D871C116B1;
+	Mon,  1 Jul 2024 20:17:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719864719;
-	bh=JOdyWIp4JdjCdIHJT0/xXlGViUBjHD/Mwa/JTAO5VzY=;
+	s=k20201202; t=1719865078;
+	bh=k37LkV27AerqxXOKVO2onHf2LK7R0wvTJ9sByqdD0ag=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=p4+M3zV86FqA3xQMiDN8yPR2jvL+rD6zLP4EXPtRnFOoc7ze1NtVKpKA+0xFuHx7Q
-	 zK2m3rFrsD7SzTFrbFGa1hc349mcECwoNDWhUOYA8/mIIa3wUeEDXVuMLzY7087Jzl
-	 JP6T5GTwC5vZmU5hGwLMq9yl9W8wspUZxiEgIhpBT5WXsyl8rKBZosOUgPruE8LcF/
-	 hYxj7d52OV7FZ5NsghWdknvg7JKxuUgV//tij5RDzmrYwtjI0frZKbnWvuUet9F83d
-	 MF2/I7fdC2r6inulDqNetLuMHqzhwUVv0P8f74sTW13a6LctV3KdkWzRiLGyunMtTT
-	 ZcQ4PejO6YpgA==
-Message-ID: <625009ed3aa0d406144c01cfd53c0506.sboyd@kernel.org>
+	b=C56USqlnrrv0eHrhetLyIW1Fue5mfmJ3435Wld+Egr6tRoVa9LyNvIAalYTXOCt5b
+	 1HKa4pLDcOsmYuSv3QN9hqESUVmZ5hVMV/TTWM2JXXBatumPy7q5y+yDzEXpyN7/D9
+	 AgPi+hStaThTdGNALjBdPuBEMwhslKSzDejNo0z4Ctqm229cMRqgFf+xh9se5290dt
+	 +0/GQddxwT/vlMQkrbPf3GGvNTXLIgd6BmqZzT5TM5b8StwqhxRYi4XxxxsYM/xGdm
+	 lI0USP9+LOzQCm7+hg3gjLhufCry5CwWFlxrasu6j6HeD7851mKhQs0H8QkwbNnK9K
+	 e/QHWc1z4tibg==
+Message-ID: <8e5b6bf0fe9748a675d967143a1bd1db.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,32 +35,41 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <cover.1719579479.git.geert+renesas@glider.be>
-References: <cover.1719579479.git.geert+renesas@glider.be>
-Subject: Re: [GIT PULL] clk: renesas: Updates for v6.11 (take two)
+In-Reply-To: <1j34oxxhyo.fsf@starbuckisacylon.baylibre.com>
+References: <1j34oxxhyo.fsf@starbuckisacylon.baylibre.com>
+Subject: Re: [GIT PULL] clk: meson: amlogic clock updates for v6.11
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-renesas-soc@vger.kernel.org, Geert Uytterhoeven <geert+renesas@glider.be>
-To: Geert Uytterhoeven <geert+renesas@glider.be>, Michael Turquette <mturquette@baylibre.com>
-Date: Mon, 01 Jul 2024 13:11:57 -0700
+Cc: linux-clk@vger.kernel.org <linux-clk@vger.kernel.org>, linux-amlogic@lists.infradead.org <linux-amlogic@lists.infradead.org>, Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>
+To: Jerome Brunet <jbrunet@baylibre.com>
+Date: Mon, 01 Jul 2024 13:17:56 -0700
 User-Agent: alot/0.10
 
-Quoting Geert Uytterhoeven (2024-06-28 06:15:59)
->         Hi Mike, Stephen,
+Quoting Jerome Brunet (2024-06-28 07:25:19)
 >=20
-> The following changes since commit f92d44a00bd559f411b2c70b677afbc7c47230=
-19:
+> Hi Stephen,
 >=20
->   clk: renesas: r8a779h0: Add VIN clocks (2024-06-11 09:36:27 +0200)
+> Here is the Amlogic clock update for v6.11
+> The biggest part is the introduction of a new SoC support (C3), the rest
+> is regular house keeping as described below.
+>=20
+> Please pull
+> Cheers
+>=20
+> Jerome
+>=20
+> The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfab=
+d0:
+>=20
+>   Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
 >=20
 > are available in the Git repository at:
 >=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git=
- tags/renesas-clk-for-v6.11-tag2
+>   https://github.com/BayLibre/clk-meson.git tags/clk-meson-v6.11-1
 >=20
-> for you to fetch changes up to c7e58843d1e49a6b54d528a8ea34933cafb713f2:
+> for you to fetch changes up to befe87380e21f0d37633273e1068c9318f8135ff:
 >=20
->   clk: renesas: r9a08g045: Add clock, reset and power domain support for =
-I2C (2024-06-27 18:17:13 +0200)
+>   clk: meson: add missing MODULE_DESCRIPTION() macros (2024-06-14 09:29:4=
+1 +0200)
 >=20
 > ----------------------------------------------------------------
 
