@@ -1,198 +1,159 @@
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01rlnn2073.outbound.protection.outlook.com [40.95.53.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4680620ED
-	for <linux-clk@vger.kernel.org>; Mon,  1 Jul 2024 01:15:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.95.53.73
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719796533; cv=fail; b=RLaCePybS3nPagC8L3cbJzXTWCWcu6iO+wwwQWhIHJ4RMvE8f7buIeMtbFBZmX30APHZmUMQL0C5JTarL44BgMM0N0wfBUaxDueaFB+KdqsbxFkC5V+jMX7lY9rTkVfvmC5k4AktYW8JMTJP5Ty5ohW8IeW9j7JO/75oMIOOl8s=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719796533; c=relaxed/simple;
-	bh=GnyfSv7QkhA7zPkRFFrDoA5veH+tHW0eFScv/1PKOkA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=rMtjZiSF349Qe5S0Rer2nK0gP595Qz8Y6xVe3JQNyjKwaAWw8OjCvGhvDp/2FvxjBTGShrkDjFGwIO+csiOqA08xYsclAzdG4tIKEHorctvylFyL6nsYZ/1C22kt8d3Ty8W+cifzpHxlz2VSvyCfCt0IVMByKAdQdF3++RUfTY0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=none smtp.mailfrom=taln60.nuvoton.co.il; dkim=pass (1024-bit key) header.d=nuvoton.onmicrosoft.com header.i=@nuvoton.onmicrosoft.com header.b=M05Yp/Vh; arc=fail smtp.client-ip=40.95.53.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=taln60.nuvoton.co.il
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E3C39855
+	for <linux-clk@vger.kernel.org>; Mon,  1 Jul 2024 05:42:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719812526; cv=none; b=RgtMpcgbFrrVxZTlKN4S5ch24FJK5aT7GF3kcht/wtuq+wpFr69uCMn0kQPryxoVnQQJXvqcLdvp5Df5iJqnUQuXwZHM5PF0Nd/3RvF3TxNL49h69Fy+JVZB22F808zYtxRvzVgP4NErUDtr+XLJYKQWtoQzd85xQ35mG6fbZpI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719812526; c=relaxed/simple;
+	bh=URBql0tdkG8weo7qslMgXtQqS7z1an3iLJvVeKwFk6E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SSF7yk9jUIgow5eHg0Vibb6duWAiHIOj7F3rdKuZtZ9Nw360aZMoOy+KMO/JwGH0iOm/AZMthwgIYaR54S2T8QnvX3bvBbjO4NeHvtQZwHSApSBKYJiP96jDTQfYWMqO6qKrlS8t+QaaGCMg4h1Lka9yjx/wDlTj4dUV5+XP2+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SdnCP3L6; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nuvoton.onmicrosoft.com header.i=@nuvoton.onmicrosoft.com header.b="M05Yp/Vh"
-Received: from SEYPR03MB6652.apcprd03.prod.outlook.com (2603:1096:101:80::7)
- by SEYPR03MB8227.apcprd03.prod.outlook.com (2603:1096:101:1ab::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.26; Sun, 30 Jun
- 2024 20:42:59 +0000
-Received: from SEZPR03MB7631.apcprd03.prod.outlook.com (2603:1096:101:10d::5)
- by SEYPR03MB6652.apcprd03.prod.outlook.com (2603:1096:101:80::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.28; Sun, 30 Jun
- 2024 09:39:07 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=mApApJUHv925GvHu9o5DOSruOGH4hDrH6M5alAV10Io61/7JieNiI/Y10AsIxMoqkmuwXjSGhlvcD3p/Ww6YLugBG1oB81aGbC+zDDCSUaxGtnqqKW9sZsH5k0qCpoGGSM5CR7Sb8pmU2r8jqkcV+klcpsmVEf9BaX8k4ijHeG1wQKNPt49gDF/vsWLsreNd003JcOfofh7M4AsJIPYsLxxGRsbMsSSknxgL+x0LuS4wYZlxJWCiFdl1wOrMoicxUHXhU3O3GwuCK2mLDdoD1yQ2wARxY3itA2NagQGkvrsYvIlOBgYaZia71lORzaUfZW+ZhsoekqtD2FC9x7wzQQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=nCm8erJtZ8rIaLo0k+IVn4iwFBzpQAbEX9Y7vJpHDns=;
- b=OEGi3qw+pPBOHyhnXnlEC4lvOKc72tbTGi0N41dsgfFii2hfsNEAzbmTOwIT4DE66twSCKWrdu+v6RujdQvlzvY86ks15tqDF5lb8NYsRf/NtQsskkaHPzS4U22rhgaNWWMVWsU02FTMiSOibVL1VLogydqALeIpBwlrEPqk2CrlN5hMXAbkcO33TulF2eq0uk6Wv/DMo/PX5BMvB1sGMv9OFY/ioWI5FC9F/L+1uvdskQ2W6ASb4hSlBeqgBOAVMk/7S0xmIiVwYWq/D+b5BwBb/4nOAhJ3ke2Ku19H4tM1uSukXFzvzAXLU3SXnefO7azGf5Inna9YY0Pqzm8Vew==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=temperror (sender ip
- is 175.98.123.7) smtp.rcpttodomain=gmail.com
- smtp.mailfrom=taln60.nuvoton.co.il; dmarc=fail (p=none sp=quarantine pct=100)
- action=none header.from=gmail.com; dkim=none (message not signed); arc=none
- (0)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SdnCP3L6"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4257d5fc9b7so7236405e9.2
+        for <linux-clk@vger.kernel.org>; Sun, 30 Jun 2024 22:42:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=nuvoton.onmicrosoft.com; s=selector2-nuvoton-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=nCm8erJtZ8rIaLo0k+IVn4iwFBzpQAbEX9Y7vJpHDns=;
- b=M05Yp/VhtrXCWCW3AWkH8REUtGGPbPAkVUk//ZVe0msecY8FZLNS3WXOnPjyiYRrERnmB61D62jI5tEtmIkhJYlTcGtBsB7kk3leqNkSsRGYFrbLUuiRblwBNCa099fu0ZvT89Rq9pzkpcEKypmtpZNfhLcm7WLUDwjYD9gE8BM=
-Received: from SI2PR02CA0005.apcprd02.prod.outlook.com (2603:1096:4:194::6) by
- SEZPR03MB7631.apcprd03.prod.outlook.com (2603:1096:101:10d::5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7719.26; Sun, 30 Jun 2024 09:01:10 +0000
-Received: from SG1PEPF000082E2.apcprd02.prod.outlook.com
- (2603:1096:4:194:cafe::3e) by SI2PR02CA0005.outlook.office365.com
- (2603:1096:4:194::6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.29 via Frontend
- Transport; Sun, 30 Jun 2024 09:01:09 +0000
-X-MS-Exchange-Authentication-Results: spf=temperror (sender IP is
- 175.98.123.7) smtp.mailfrom=taln60.nuvoton.co.il; dkim=none (message not
- signed) header.d=none;dmarc=fail action=none header.from=gmail.com;
-Received-SPF: TempError (protection.outlook.com: error in processing during
- lookup of taln60.nuvoton.co.il: DNS Timeout)
-Received: from NTHCCAS02.nuvoton.com (175.98.123.7) by
- SG1PEPF000082E2.mail.protection.outlook.com (10.167.240.5) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.7741.18 via Frontend Transport; Sun, 30 Jun 2024 09:01:08 +0000
-Received: from NTHCCAS01.nuvoton.com (10.1.8.28) by NTHCCAS02.nuvoton.com
- (10.1.9.121) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Sun, 30 Jun
- 2024 17:01:07 +0800
-Received: from taln58.nuvoton.co.il (10.191.1.178) by NTHCCAS01.nuvoton.com
- (10.1.8.28) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
- Transport; Sun, 30 Jun 2024 17:01:07 +0800
-Received: from taln60.nuvoton.co.il (taln60 [10.191.1.180])
-	by taln58.nuvoton.co.il (Postfix) with ESMTP id 5E0005F5B9;
-	Sun, 30 Jun 2024 12:01:06 +0300 (IDT)
-Received: by taln60.nuvoton.co.il (Postfix, from userid 10070)
-	id 51637DC0913; Sun, 30 Jun 2024 12:01:06 +0300 (IDT)
-From: Tomer Maimon <tmaimon77@gmail.com>
-To: <linus.walleij@linaro.org>, <robh+dt@kernel.org>,
-	<krzysztof.kozlowski+dt@linaro.org>, <tali.perry1@gmail.com>,
-	<joel@jms.id.au>, <venture@google.com>, <yuenn@google.com>,
-	<benjaminfair@google.com>
-CC: <openbmc@lists.ozlabs.org>, <linux-clk@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Tomer Maimon
-	<tmaimon77@gmail.com>
-Subject: [PATCH v2] dt-bindings: pinctrl: npcm8xx: add missing pin group and mux function
-Date: Sun, 30 Jun 2024 12:01:04 +0300
-Message-ID: <20240630090104.565779-1-tmaimon77@gmail.com>
-X-Mailer: git-send-email 2.34.1
+        d=linaro.org; s=google; t=1719812523; x=1720417323; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=K1RP7Fpk8x/fLqAOvJCm2fvlERvfv14/xhETHMn8PzY=;
+        b=SdnCP3L6fLRyDuWCSl2PrHaSybYB1c8hyciiYFPAn3OBIyVs77uVYSo/gsc18XJvn0
+         1GVs3lgubddxKwegjInCCOwumPOU8GZI3lEuRRhLBYCEx7hoPnBznkhyb78UIv5ae1/8
+         ekY7LSt/cQRiIsE0cMmL1wT8irmB+6LhkQwiTeTy6CRjiGvQRqnTS5mhy5RMquzvr6kN
+         7dfAbFIW5Xm2bephIUEnfSTcaHQQNlH5dnBRwBDjzzuqypem4zDU6yQKzrGAn6UMXwH2
+         RP1dad90jW+xBi5DjgkL2GsT2UbDKZnl+POnhFRaZciGEtH5bX78kMn8CV1n+Uxx2gc/
+         g4tA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719812523; x=1720417323;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=K1RP7Fpk8x/fLqAOvJCm2fvlERvfv14/xhETHMn8PzY=;
+        b=jrcdBQwJnbOXKptyWKbf/AIfABE7RB+yJyOxJDS+WJ4GWN2LAGpNgKJCe5yy/ddH/W
+         9z4cARYct+ZJuVOIf48APH7NaJCaPfbkytUkR1PsFzE7qjmD077xri2aBgkayxFoJyHN
+         i9SXVGos3CqIBLjBjyEar55RPGPNlYninnNtSnXfxhMVZH91iDX0XAt5TyGLGc/IRK86
+         XDASRifE1SQtCcqpy/cjtxuYpOtRPxJoWDMCW2fkOBmQldgxmiPvcuYu0RJJaHY0RKgu
+         mXwvg+dbfQQVZLY6GP4eiKDrkq9tcvnECaLzcuxerX9qa9z4KULN5Dd1gmKcvL9uDjiS
+         u4aA==
+X-Forwarded-Encrypted: i=1; AJvYcCUh5bKzgH1z2NC9etrw+HerHxx5RDg0pjmjPUuMDPVCUAbcs8IMEG2YSxP0bHv6ib2bptwQLCOt+Oy/ZOgJEFIRVSQ4p8cp9/de
+X-Gm-Message-State: AOJu0YwSGhJfUnMgHqOwJPg8bM1Q8mddS9BP4bpLXUTea+YvvFdYdejn
+	q3mAZjCAgkj1hqchLpRhRxa6bjKy5Vc1kHABDte2Plb5p5vLGmGjhBvV0pTGGWw=
+X-Google-Smtp-Source: AGHT+IHSKBmHrhw/AYhWM82y6sx7nEDDCK+Cj+oGMZFjhX97MXohzQV+8dJGlqZohNNB2+Ja+HNgaA==
+X-Received: by 2002:a5d:47c6:0:b0:367:2d2f:e634 with SMTP id ffacd0b85a97d-367757249a4mr5411546f8f.55.1719812522948;
+        Sun, 30 Jun 2024 22:42:02 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0cd687sm9063218f8f.14.2024.06.30.22.42.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 30 Jun 2024 22:42:02 -0700 (PDT)
+Message-ID: <9f1fa742-28c1-428a-9f85-2d3b352abb44@linaro.org>
+Date: Mon, 1 Jul 2024 07:42:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NotSetDelaration: True
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic:
-	SG1PEPF000082E2:EE_|SEZPR03MB7631:EE_|SEYPR03MB6652:EE_|SEYPR03MB8227:EE_
-X-MS-Office365-Filtering-Correlation-Id: cac945f9-1151-407b-ff05-08dc98e32ea0
-X-MS-Exchange-SenderADCheck: 2
-X-MS-Exchange-AntiSpam-Relay: 1
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|35950700016|7093399012|376014|7416014|48200799018|82310400026|61400799027|35450700002;
-X-Microsoft-Antispam-Message-Info:
- =?us-ascii?Q?y/rNCl6B4Iqot5drCgUDScFUmNao9HYR9PEUQOdbfzXu3IQ6DIwZi+UXtChq?=
- =?us-ascii?Q?oFeXOh3CzK+G8rtSu90Qxc8ByvlBEwLuWlN5lGKM97E/u5EzR8laMpqQi8EA?=
- =?us-ascii?Q?WhdEpAa8rlg+4R8+R47terb4LG6p4icvFIN6v45G/Pk9Kwo0IY+sqBPpnwdx?=
- =?us-ascii?Q?JTyUVc5apyj2kaAPlw18otRyjDyJipsKsWGkRPG9bHIq8CH5+vbTWqoHOUc/?=
- =?us-ascii?Q?zUuujPoo9SbXhI23nbqQt44uGBFnakmSnfz1gMCnL4i2tQ9zb3S2kDZJ8Rkk?=
- =?us-ascii?Q?1abRb6Y4RbyUJmtaDw0qvUlitkhsAAf00qmVri3udwkEKrsOp8vFxGecEXxu?=
- =?us-ascii?Q?yK9kIDNbkHyX8ZRbFGZc6uYVNKoV1bCd3h63OrZvkX5AHYE/WsHfPswVCjRN?=
- =?us-ascii?Q?NqSBLTUjoO17c5DWKItDyp7q/+zHHXHVx1vn15YMov2GdP0dW5sUomr0vatf?=
- =?us-ascii?Q?tCLYVCAJriDa5IatOqg2L+EmpF4hGJY/r/Z91m8X0o8tgbflgfK51/xBX4Nm?=
- =?us-ascii?Q?8Wff4iVXLdkIU1MMSkeA1qKjmOkye0lDIowc4WtOCeHDMvkxzFEzka0Po6Ru?=
- =?us-ascii?Q?i+7IeIW8rdJJYj11EAq5MPBsY9LeeMHt+X1bwtANAOXgShknXBebEt04izhS?=
- =?us-ascii?Q?7mdMnOOAOAadAX/TgHdfUWn7TETHNE6xeUe58JJ1w8qXI6yazt5D9bGBT/4P?=
- =?us-ascii?Q?NcxmZwSy0pyPT7g5Ds/ZlqixfOwo8WaUEgt1LdXEv+cfM47RBenxa/6Y9p2W?=
- =?us-ascii?Q?KQLYlpy5kAqoACJ3tEXcYi5k1w+2WWxH96tipAqB3R34gLo8Qwmwcn+fCg0Q?=
- =?us-ascii?Q?oy68KMou6JRgB8p+yHILltV/egqZqiQS4DlDXvfVC2OYahpayACsWnnJvURG?=
- =?us-ascii?Q?A4LgfT8uIFW61lPgJF00IEsfDjuTOG3RjCf6sLMfisV3ALZlEf7w+nONmfyW?=
- =?us-ascii?Q?8hXAQRtWtP+DCurl6s7+RKZdA48SKnjfcqtwccl6HurnY70CmZdLm7i+2JjD?=
- =?us-ascii?Q?pczdwnRDHuzboR0obiMqdBq3DQS4APJSuMFUqZSmGMqt2A8MoYMxok9+ITEp?=
- =?us-ascii?Q?1KIh7yRww8v/hVI6Zb1eqkU8jyt9ga+HM3UpdXVHrAVqmXoiILg6qYSo6FcD?=
- =?us-ascii?Q?nwFEVLtjl/QEnXjwZL6m83JH/sq9ZFa2Mzju0pH4grXHUAAT8jC1nbYtLmg+?=
- =?us-ascii?Q?T7g4yLfwgcl3IHhnM9vsLb4c0QtfnOLc5o+Mjys7Y4dbCmcCkabNGbKRSTjH?=
- =?us-ascii?Q?d7bHsBkPVp/mkCiGirC0kNFqGuuIDmnvYxjtkOgs86Z9J4mAdYa8JkKcN9WQ?=
- =?us-ascii?Q?FGMxe4zoqsC4ho41dFx+ktNn5dvdPhpofk/fKGzhTiMqcIaXMVCwk4LfE/qD?=
- =?us-ascii?Q?RtICv2hUoQN15+bBWuas3XiXWJ2JSiD/ZBNrGaUzsViJaoi8Zy/tM4PmUR82?=
- =?us-ascii?Q?B3J4YNJd/NxF4Fi+HD1yakZjIgdlFH7X6PfKSGvF4EX/WQZaI9fM0A=3D=3D?=
-X-Forefront-Antispam-Report:
- CIP:175.98.123.7;CTRY:TW;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:NTHCCAS02.nuvoton.com;PTR:175-98-123-7.static.tfn.net.tw;CAT:NONE;SFS:(13230040)(35950700016)(7093399012)(376014)(7416014)(48200799018)(82310400026)(61400799027)(35450700002);DIR:OUT;SFP:1022;
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Jun 2024 09:01:08.6131
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: cac945f9-1151-407b-ff05-08dc98e32ea0
-X-MS-Exchange-CrossTenant-Id: a3f24931-d403-4b4a-94f1-7d83ac638e07
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=a3f24931-d403-4b4a-94f1-7d83ac638e07;Ip=[175.98.123.7];Helo=[NTHCCAS02.nuvoton.com]
-X-MS-Exchange-CrossTenant-AuthSource:
- SG1PEPF000082E2.apcprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR03MB7631
-X-OriginatorOrg: nuvoton.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: intel,lgm: drop inactive maintainers from
+ intel
+To: Rob Herring <robh@kernel.org>, Chuanhua Lei <lchuanhua@maxlinear.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+ Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+ Miquel Raynal <miquel.raynal@bootlin.com>,
+ Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
+ Kishon Vijay Abraham I <kishon@kernel.org>,
+ Linus Walleij <linus.walleij@linaro.org>,
+ Rahul Tanwar <rtanwar@maxlinear.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dmaengine@vger.kernel.org, linux-leds@vger.kernel.org,
+ linux-mtd@lists.infradead.org, linux-phy@lists.infradead.org,
+ linux-gpio@vger.kernel.org
+References: <20240626101809.25227-1-krzysztof.kozlowski@linaro.org>
+ <20240628215350.GA267712-robh@kernel.org>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+FiEE
+ m9B+DgxR+NWWd7dUG5NDfTtBYpsFAmI+BxMCGwMFCRRfreEFCwkIBwIGFQoJCAsCBBYCAwEC
+ HgECF4AACgkQG5NDfTtBYptgbhAAjAGunRoOTduBeC7V6GGOQMYIT5n3OuDSzG1oZyM4kyvO
+ XeodvvYv49/ng473E8ZFhXfrre+c1olbr1A8pnz9vKVQs9JGVa6wwr/6ddH7/yvcaCQnHRPK
+ mnXyP2BViBlyDWQ71UC3N12YCoHE2cVmfrn4JeyK/gHCvcW3hUW4i5rMd5M5WZAeiJj3rvYh
+ v8WMKDJOtZFXxwaYGbvFJNDdvdTHc2x2fGaWwmXMJn2xs1ZyFAeHQvrp49mS6PBQZzcx0XL5
+ cU9ZjhzOZDn6Apv45/C/lUJvPc3lo/pr5cmlOvPq1AsP6/xRXsEFX/SdvdxJ8w9KtGaxdJuf
+ rpzLQ8Ht+H0lY2On1duYhmro8WglOypHy+TusYrDEry2qDNlc/bApQKtd9uqyDZ+rx8bGxyY
+ qBP6bvsQx5YACI4p8R0J43tSqWwJTP/R5oPRQW2O1Ye1DEcdeyzZfifrQz58aoZrVQq+innR
+ aDwu8qDB5UgmMQ7cjDSeAQABdghq7pqrA4P8lkA7qTG+aw8Z21OoAyZdUNm8NWJoQy8m4nUP
+ gmeeQPRc0vjp5JkYPgTqwf08cluqO6vQuYL2YmwVBIbO7cE7LNGkPDA3RYMu+zPY9UUi/ln5
+ dcKuEStFZ5eqVyqVoZ9eu3RTCGIXAHe1NcfcMT9HT0DPp3+ieTxFx6RjY3kYTGLOwU0EVUNc
+ NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
+ hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
+ oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
+ H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
+ yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
+ 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
+ 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
+ +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
+ FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
+ 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
+ DFH41ZZ3t1Qbk0N9O0FimwUCYDzvagUJFF+UtgAKCRAbk0N9O0Fim9JzD/0auoGtUu4mgnna
+ oEEpQEOjgT7l9TVuO3Qa/SeH+E0m55y5Fjpp6ZToc481za3xAcxK/BtIX5Wn1mQ6+szfrJQ6
+ 59y2io437BeuWIRjQniSxHz1kgtFECiV30yHRgOoQlzUea7FgsnuWdstgfWi6LxstswEzxLZ
+ Sj1EqpXYZE4uLjh6dW292sO+j4LEqPYr53hyV4I2LPmptPE9Rb9yCTAbSUlzgjiyyjuXhcwM
+ qf3lzsm02y7Ooq+ERVKiJzlvLd9tSe4jRx6Z6LMXhB21fa5DGs/tHAcUF35hSJrvMJzPT/+u
+ /oVmYDFZkbLlqs2XpWaVCo2jv8+iHxZZ9FL7F6AHFzqEFdqGnJQqmEApiRqH6b4jRBOgJ+cY
+ qc+rJggwMQcJL9F+oDm3wX47nr6jIsEB5ZftdybIzpMZ5V9v45lUwmdnMrSzZVgC4jRGXzsU
+ EViBQt2CopXtHtYfPAO5nAkIvKSNp3jmGxZw4aTc5xoAZBLo0OV+Ezo71pg3AYvq0a3/oGRG
+ KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
+ fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20240628215350.GA267712-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add the following missing pin group and mux function:
-smb6b, smb6c, smb6d, smb7b, smb7c, smb7d, bu4, bu4b, bu5, bu5b, bu6,
-gpo187.
+On 28/06/2024 23:53, Rob Herring wrote:
+> On Wed, Jun 26, 2024 at 12:18:09PM +0200, Krzysztof Kozlowski wrote:
+>> Emails to chuanhua.lei@intel.com, mallikarjunax.reddy@intel.com,
+>> yixin.zhu@intel.com and vadivel.muruganx.ramuthevar@linux.intel.com
+>> bounce with the same message:
+>>
+>>   Your message wasn't delivered to Yixin.zhu@intel.com because the
+>>   address couldn't be found or is unable to receive email.
+>>
+>> The Intel LGM SoC was apparently part of Home Gateway division which was
+>> acquired by Maxlinear, so switch maintenance of affected bindings to the
+>> only known non-bouncing Maxlinear address: Rahul Tanwar.
+>>
+>> I do not know if Rahul Tanwar or Maxlinear want to maintain the
+>> bindings, so regardless of this change we should consider bindings
+>> abandoned and probably drop soon.
+> 
+> No bounces on this? According to this[1], Rahul is not with Maxlinear 
+> any more. Maybe an address in that thread will work. But seems like it 
+> is abandoned.
 
-Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
----
-V1 -> V2: clean tabs.
+I did not get any bounces, maybe there is some sort of redirection
+within Maxlinear. I can change the maintainer to Chuanhua Lei.
 
- .../pinctrl/nuvoton,npcm845-pinctrl.yaml      | 22 ++++++++++---------
- 1 file changed, 12 insertions(+), 10 deletions(-)
-
-diff --git a/Documentation/devicetree/bindings/pinctrl/nuvoton,npcm845-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/nuvoton,npcm845-pinctrl.yaml
-index b55d9c316659..814b9598edd1 100644
---- a/Documentation/devicetree/bindings/pinctrl/nuvoton,npcm845-pinctrl.yaml
-+++ b/Documentation/devicetree/bindings/pinctrl/nuvoton,npcm845-pinctrl.yaml
-@@ -85,11 +85,12 @@ patternProperties:
-                   smb2c, smb2b, smb1c, smb1b, smb8, smb9, smb10, smb11, sd1,
-                   sd1pwr, pwm4, pwm5, pwm6, pwm7, pwm8, pwm9, pwm10, pwm11,
-                   mmc8, mmc, mmcwp, mmccd, mmcrst, clkout, serirq, lpcclk,
--                  scipme, smi, smb6, smb7, spi1, faninx, r1, spi3, spi3cs1,
--                  spi3quad, spi3cs2, spi3cs3, nprd_smi, smb0b, smb0c, smb0den,
--                  smb0d, ddc, rg2mdio, wdog1, wdog2, smb12, smb13, spix,
--                  spixcs1, clkreq, hgpio0, hgpio1, hgpio2, hgpio3, hgpio4,
--                  hgpio5, hgpio6, hgpio7 ]
-+                  scipme, smi, smb6, smb6b, smb6c, smb6d, smb7, smb7b, smb7c,
-+                  smb7d, spi1, faninx, r1, spi3, spi3cs1, spi3quad, spi3cs2,
-+                  spi3cs3, nprd_smi, smb0b, smb0c, smb0den, smb0d, ddc, rg2mdio,
-+                  wdog1, wdog2, smb12, smb13, spix, spixcs1, clkreq, hgpio0,
-+                  hgpio1, hgpio2, hgpio3, hgpio4, hgpio5, hgpio6, hgpio7, bu4,
-+                  bu4b, bu5, bu5b, bu6, gpo187 ]
- 
-       function:
-         description:
-@@ -109,11 +110,12 @@ patternProperties:
-                 smb2c, smb2b, smb1c, smb1b, smb8, smb9, smb10, smb11, sd1,
-                 sd1pwr, pwm4, pwm5, pwm6, pwm7, pwm8, pwm9, pwm10, pwm11,
-                 mmc8, mmc, mmcwp, mmccd, mmcrst, clkout, serirq, lpcclk,
--                scipme, smi, smb6, smb7, spi1, faninx, r1, spi3, spi3cs1,
--                spi3quad, spi3cs2, spi3cs3, nprd_smi, smb0b, smb0c, smb0den,
--                smb0d, ddc, rg2mdio, wdog1, wdog2, smb12, smb13, spix,
--                spixcs1, clkreq, hgpio0, hgpio1, hgpio2, hgpio3, hgpio4,
--                hgpio5, hgpio6, hgpio7 ]
-+                scipme, smi, smb6, smb6b, smb6c, smb6d, smb7, smb7b, smb7c,
-+                smb7d, spi1, faninx, r1, spi3, spi3cs1, spi3quad, spi3cs2,
-+                spi3cs3, nprd_smi, smb0b, smb0c, smb0den, smb0d, ddc, rg2mdio,
-+                wdog1, wdog2, smb12, smb13, spix, spixcs1, clkreq, hgpio0,
-+                hgpio1, hgpio2, hgpio3, hgpio4, hgpio5, hgpio6, hgpio7, bu4,
-+                bu4b, bu5, bu5b, bu6, gpo187 ]
- 
-     dependencies:
-       groups: [ function ]
--- 
-2.34.1
+Best regards,
+Krzysztof
 
