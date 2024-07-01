@@ -1,79 +1,113 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 829EB15A865;
-	Mon,  1 Jul 2024 15:03:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D8B14D2AC;
+	Mon,  1 Jul 2024 16:31:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719846222; cv=none; b=gwB2QtzktBbhpatWGgKGwrG//pe6FjE/AFWJ5SVLVqKseHaw8P8yVq7M0+us11wnArU0k9YTl0iQjuf1eHufTmEHFbnSt+SsAmOwMyFLtOjRctONIGIzxnwMUYjlxRWSLdUSW5NjXdkbD9CpnUixqfdLyAO3JpGUh+4S7dR2gaM=
+	t=1719851468; cv=none; b=kXDUotvwWLYc0BZGC9CXWhbu939XC9s9YCPaMXmwiydeJdwQ3nOCyav8t+Xulg2BnoNp+armnN9ADqzA+sa8g0oaseMRh3alrUuP++W+nCFJrSmDOqMncXBjzbPO4uk9SRrNv0qBr2EkIhbPTHJ/kLADrDUZbzjJjoFddveZfYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719846222; c=relaxed/simple;
-	bh=U/EJ8D/Tfr6OznzJRJUQtg9hf0KFmSbGxB7rMS1TF5A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PjNowoFH0YGLJwAUuJrxZctAxb18muaHg1QuH5X2BXFEUArJ4b+Xwxr4QJP8v9LLPf/UItaxwwi5EDArcIS+X9nGqT87uWTc7ETthTGpRDRvaKS0oQhzA9fATNwMDtvtAg/NDhl8kfDdSdBdvpPWdwSKqXZHHSVQmx2Eyr/T28A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GrqXYAsl; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1719851468; c=relaxed/simple;
+	bh=9pyJvPtweb1UHSGE+8KU62A6fqLPa5bzsQ1lE0/LcU0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
+	 References:In-Reply-To; b=Oe+p993rJwVqp6DES6psMLXPU0By+Ozu7y4NzBH+g/1Lmy6DbYSJa39a32kM8f9O132Cvci6WrtbHozhd5qmlSunlfbi26kR+Fk4nBBPzUhZcz8ouxGDLEFr7v02Tnq4YQmncby86pgcflIn4XB5ZbOvztLhSP85phYGSm6aKmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JT/7HuBB; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GrqXYAsl"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82747C116B1;
-	Mon,  1 Jul 2024 15:03:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719846222;
-	bh=U/EJ8D/Tfr6OznzJRJUQtg9hf0KFmSbGxB7rMS1TF5A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GrqXYAslaCu2jiWxD12Vy0N0SS2Uwx67L5z927STQmY3ibxz+qkf8/XzfdjCdzh9M
-	 W0ONax2L4+PXgPPunra9AK/ieVr54F8I+AfQg7VtbEPvolFbABu1Iz1/mhYJEkqEVD
-	 ZbhSIJRS0LHwakM7ZYbbl7hv5rgliOtv14waBSRQsjf8yb+WxssKNZVKActCcZ0NS4
-	 2PE5Ppm/fXD+JyJoTnPA7vQZhJE81839aPqArsuctjloddfCGtdYB47fR9+8z++i9j
-	 aRlbwTWqUBYROXHyXlXoIRe+1KdiCfBXVs/iTvpEeh3ul9vRk8FSUVIz3DrCzrOQRq
-	 QzxcURxkippNQ==
-Date: Mon, 1 Jul 2024 16:03:37 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Tomer Maimon <tmaimon77@gmail.com>
-Cc: linus.walleij@linaro.org, robh+dt@kernel.org,
-	krzysztof.kozlowski+dt@linaro.org, tali.perry1@gmail.com,
-	joel@jms.id.au, venture@google.com, yuenn@google.com,
-	benjaminfair@google.com, openbmc@lists.ozlabs.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v2] dt-bindings: pinctrl: npcm8xx: add missing pin group
- and mux function
-Message-ID: <20240701-unreal-fester-477720e68dae@spud>
-References: <20240630090104.565779-1-tmaimon77@gmail.com>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JT/7HuBB"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id A44F320005;
+	Mon,  1 Jul 2024 16:31:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1719851464;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9pyJvPtweb1UHSGE+8KU62A6fqLPa5bzsQ1lE0/LcU0=;
+	b=JT/7HuBBhBruZABWwdrYHaof3kr2CIBvYXpPf4wr1GJpwr2XbNjvzVtkA6rQqclFs+npbl
+	gc2aOIoAkc955HAVqHq3PVlT0wg1C2ifdZGqjfHAoitjZMFJz10P2mBcg7RvWo1mCAFNyO
+	8LvIvXHKMX0eJjHO2LpjkYtucxYBT0QLwjkAHVcgqVtB2zV4/MXLF592ysxzQny76lp2/F
+	T8GSDcl8cpKS+LT0L2xvE/P3Jyvqea0MhnNDDHh8cr5rDudb+el41fKz91s2JZ0FmValVS
+	pVYZJxGsaxTBTKy/qU3eXje4bitHxfHGONcwuL4T2EaDCarZ6QM9kTUJMLPS3g==
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="2UZrTae3B0K5RTNy"
-Content-Disposition: inline
-In-Reply-To: <20240630090104.565779-1-tmaimon77@gmail.com>
-
-
---2UZrTae3B0K5RTNy
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Mon, 01 Jul 2024 18:31:03 +0200
+Message-Id: <D2ECGMYXJWZ9.GNRJ1NAG4MF8@bootlin.com>
+To: "Krzysztof Kozlowski" <krzk@kernel.org>, "Michael Turquette"
+ <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Rob Herring"
+ <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
+ Dooley" <conor+dt@kernel.org>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: Re: [PATCH 1/4] Revert "dt-bindings: clock: mobileye,eyeq5-clk: add
+ bindings"
+Cc: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, "Vladimir Kondratiev"
+ <vladimir.kondratiev@mobileye.com>, =?utf-8?q?Gr=C3=A9gory_Clement?=
+ <gregory.clement@bootlin.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
+ <tawfik.bayouk@mobileye.com>
+X-Mailer: aerc 0.17.0
+References: <20240628-mbly-clk-v1-0-edb1e29ea4c1@bootlin.com>
+ <20240628-mbly-clk-v1-1-edb1e29ea4c1@bootlin.com>
+ <2846186f-a0e1-4cd3-85bf-f029053bf98c@kernel.org>
+In-Reply-To: <2846186f-a0e1-4cd3-85bf-f029053bf98c@kernel.org>
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-On Sun, Jun 30, 2024 at 12:01:04PM +0300, Tomer Maimon wrote:
-> Add the following missing pin group and mux function:
-> smb6b, smb6c, smb6d, smb7b, smb7c, smb7d, bu4, bu4b, bu5, bu5b, bu6,
-> gpo187.
->=20
-> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+Hello Krzysztof,
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
+On Mon Jul 1, 2024 at 11:14 AM CEST, Krzysztof Kozlowski wrote:
+> On 28/06/2024 18:10, Th=C3=A9o Lebrun wrote:
+> > Switch from one sub-node per functionality in the system-controller to =
+a
+> > single node representing the entire OLB instance. This is the
+> > recommended approach for controllers handling many different
+> > functionalities; it is a single controller and should be represented by
+> > a single devicetree node.
+> >=20
+> > The clock bindings is removed and all properties will be described by:
+> > soc/mobileye/mobileye,eyeq5-olb.yaml
+> >=20
+> > Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+>
+> This is v1, so where did this happen?
 
---2UZrTae3B0K5RTNy
-Content-Type: application/pgp-signature; name="signature.asc"
+This is a split of the previous Mobileye EyeQ5 system-controller series.
 
------BEGIN PGP SIGNATURE-----
+I started my cover letter [4] by mentioning it. I should most probably
+have kept incrementing on the previous version number, sorry about
+that.
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZoLFSQAKCRB4tDGHoIJi
-0kWlAQDrib++ORF3992J5J2D4JW60q9UtcZJrVsV7tMdu3oHcAEAys1Wd9QhBgAV
-bXzA+/Vev8OlNVlUYuwH7Fb6xGNl4wc=
-=6aKU
------END PGP SIGNATURE-----
+Relevant extract from this series' cover letter:
 
---2UZrTae3B0K5RTNy--
+On Fri Jun 28, 2024 at 6:10 PM CEST, Th=C3=A9o Lebrun wrote:
+> This is a new iteration on the Mobileye system-controller series [0].
+> It has been split into separate series to facilitate merging.
+[...]
+> Related series are targeted at reset [1], pinctrl [2] and MIPS [3].
+[...]
+> [0]: https://lore.kernel.org/lkml/20240620-mbly-olb-v3-0-5f29f8ca289c@boo=
+tlin.com/
+> [1]: https://lore.kernel.org/lkml/20240628-mbly-reset-v1-0-2a8294fd4392@b=
+ootlin.com/
+> [2]: https://lore.kernel.org/lkml/20240628-mbly-pinctrl-v1-0-c878192d6b0a=
+@bootlin.com/
+> [3]: https://lore.kernel.org/lkml/20240628-mbly-mips-v1-0-f53f5e4c422b@bo=
+otlin.com/
+
+Regards,
+
+[4]: https://lore.kernel.org/lkml/20240628-mbly-clk-v1-0-edb1e29ea4c1@bootl=
+in.com/
+
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
