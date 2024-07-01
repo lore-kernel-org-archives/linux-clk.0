@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F023316DC09
-	for <linux-clk@vger.kernel.org>; Mon,  1 Jul 2024 20:17:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 471D116F265;
+	Mon,  1 Jul 2024 20:20:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719865079; cv=none; b=rcxrCmHCSYvDXOfAEs8zL5HU06rqA1BG2akn4gDaQxI3gOFQM0tFZhJG4i0bEB4UX/QQU1izpIhGwTyXQO/8MV8hpjASyeRS+boEq1+oeLkR8hBNpF9UO8Ot3lajOYeEA8UVLTc7b18Trv7mKMxbuNvOdOzu5Cy2CwuLixjT0q8=
+	t=1719865232; cv=none; b=DratVT+es8XacwQy6VvIRyudbUqWTTvZEbZWKgJ8wnYkv6MVevUT6a5Kbo8O5DPG+VV7vN1O7SBg6C2cKUeLFejhXPSzejRzc/P32eGqJmOYiyj7xYJvk49raRniGfq0Kpd1aXf/R7oi1OdJD8n/eSuPG0sBHKB47R5JISSoxzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719865079; c=relaxed/simple;
-	bh=k37LkV27AerqxXOKVO2onHf2LK7R0wvTJ9sByqdD0ag=;
+	s=arc-20240116; t=1719865232; c=relaxed/simple;
+	bh=ln5DZqMN9sVxtFbCsPgmgtK5W3yfYtcekuUMlck41pg=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=JuH7THm/hlScx7wMARhrOjQ/bYWb7IUxj8zv6++ag4LQfyd7l8S33jxH5ccdy5aoVNQ+8Yokw5Sn1unS3ge6vBDUj3mytUYs/1IrlsIL0XyY89qfH/nBPDLJdNNT2xeU2t/v5rf5kRxOzz6Vm3pG+QknlsR9KMAFcLXuNNXMIJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C56USqln; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=WFbmiC0UZBYh5dGxxrRa0gDIQWfer4OyT4KBM0mUA/JFFIkB3MvsO/rU6k99s4T1lTs9Zgs74Olec2U/mvkBEYaWxOKqbUcAxTZ7vzdUh3AV1A2G+2Uj0gIP7jAhoYRXY74UlUB3IVsA6Ffbbi5IrK4W/4Zv1ZWmPxD6QOSsb8U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MGE+9Kj0; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C56USqln"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D871C116B1;
-	Mon,  1 Jul 2024 20:17:58 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MGE+9Kj0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0F35C116B1;
+	Mon,  1 Jul 2024 20:20:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719865078;
-	bh=k37LkV27AerqxXOKVO2onHf2LK7R0wvTJ9sByqdD0ag=;
+	s=k20201202; t=1719865231;
+	bh=ln5DZqMN9sVxtFbCsPgmgtK5W3yfYtcekuUMlck41pg=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=C56USqlnrrv0eHrhetLyIW1Fue5mfmJ3435Wld+Egr6tRoVa9LyNvIAalYTXOCt5b
-	 1HKa4pLDcOsmYuSv3QN9hqESUVmZ5hVMV/TTWM2JXXBatumPy7q5y+yDzEXpyN7/D9
-	 AgPi+hStaThTdGNALjBdPuBEMwhslKSzDejNo0z4Ctqm229cMRqgFf+xh9se5290dt
-	 +0/GQddxwT/vlMQkrbPf3GGvNTXLIgd6BmqZzT5TM5b8StwqhxRYi4XxxxsYM/xGdm
-	 lI0USP9+LOzQCm7+hg3gjLhufCry5CwWFlxrasu6j6HeD7851mKhQs0H8QkwbNnK9K
-	 e/QHWc1z4tibg==
-Message-ID: <8e5b6bf0fe9748a675d967143a1bd1db.sboyd@kernel.org>
+	b=MGE+9Kj0zPc+O/IyNCes62ApTH0o4aftzBuKg/B5XH8s18DtkYZ+Ut7E4+9QVwaGA
+	 awPFMFGWB/1T3Z8jvHTxcKOHbiBsHmlsvxageJ7eVUuBH3YlWLVJ8p86FXWiGtnlQt
+	 9c5xFHLq5bPd6nhCJb+XCZIVywbXCEHp+eOr2kyEcB8mh4KQ0CAgliUMP0bRNZywG0
+	 NqH5PWR9a7Qgx5blCv7DAnicbkTghb7RoWNHnNjx5XKUd1lFHIBfFc4pTSRz/GfvmP
+	 KYLnn+2Y29KDJ1ISk8Rle6gzhlECSq5GDKemrduNO8EaWcwCr96iYRdt3NR+KbNV9O
+	 Mn5txaAfPzUgA==
+Message-ID: <85ecc8484e318a07a8b02f96ad316be5.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,27 +35,25 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1j34oxxhyo.fsf@starbuckisacylon.baylibre.com>
-References: <1j34oxxhyo.fsf@starbuckisacylon.baylibre.com>
-Subject: Re: [GIT PULL] clk: meson: amlogic clock updates for v6.11
+In-Reply-To: <ZoLqC7gTDxEkNPsE@wens.tw>
+References: <ZoLqC7gTDxEkNPsE@wens.tw>
+Subject: Re: [GIT PULL] Allwinner clock fixes for 6.10
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org <linux-clk@vger.kernel.org>, linux-amlogic@lists.infradead.org <linux-amlogic@lists.infradead.org>, Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>
-To: Jerome Brunet <jbrunet@baylibre.com>
-Date: Mon, 01 Jul 2024 13:17:56 -0700
+Cc: Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej@kernel.org>, Samuel Holland <samuel@sholland.org>, linux-sunxi@lists.linux.dev, linux-clk@vger.kernel.org
+To: Chen-Yu Tsai <wens@kernel.org>
+Date: Mon, 01 Jul 2024 13:20:29 -0700
 User-Agent: alot/0.10
 
-Quoting Jerome Brunet (2024-06-28 07:25:19)
->=20
+Quoting Chen-Yu Tsai (2024-07-01 10:40:27)
 > Hi Stephen,
 >=20
-> Here is the Amlogic clock update for v6.11
-> The biggest part is the introduction of a new SoC support (C3), the rest
-> is regular house keeping as described below.
+> We have (hopefully) just one fix for the 6.10 cycle.
 >=20
-> Please pull
-> Cheers
+> Please pull.
 >=20
-> Jerome
+>=20
+> Thanks
+> ChenYu
 >=20
 > The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfab=
 d0:
@@ -64,13 +62,14 @@ d0:
 >=20
 > are available in the Git repository at:
 >=20
->   https://github.com/BayLibre/clk-meson.git tags/clk-meson-v6.11-1
+>   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/su=
+nxi-clk-fixes-for-6.10
 >=20
-> for you to fetch changes up to befe87380e21f0d37633273e1068c9318f8135ff:
+> for you to fetch changes up to ea977d742507e534d9fe4f4d74256f6b7f589338:
 >=20
->   clk: meson: add missing MODULE_DESCRIPTION() macros (2024-06-14 09:29:4=
-1 +0200)
+>   clk: sunxi-ng: common: Don't call hw_to_ccu_common on hw without common=
+ (2024-06-30 23:12:44 +0800)
 >=20
 > ----------------------------------------------------------------
 
-Thanks. Pulled into clk-next
+Thanks. Pulled into clk-fixes
