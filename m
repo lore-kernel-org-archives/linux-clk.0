@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E3D92AD0C;
-	Mon,  1 Jul 2024 20:29:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B21551366;
+	Mon,  1 Jul 2024 20:49:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719865777; cv=none; b=b1uBy1+smIdrd34bqD2+oSvjnqxYCSfAUfI+UErP4nU2xg+bzAvKKXlNNjoBW1FOE7ijAb4BgRrb4sM9zBxJ3OH7AAAORKFj923uPb5w6jYkUKrjYnOBkgCVBOEIynM3dQfR05jhr+yhU1lwlWetUsY0kK5zuv+q1C11kTQsmdU=
+	t=1719866972; cv=none; b=ndrNtKYDDBC/Ew8IomnIMFyKU43nYEtG3DnmudzkjuwcqjaDAOF+kvFa20V9003LUlMC3SZ/cMdUvMFHgTMlh8klsS+SiUmbhBRHyn0wVeImqh5sF5Lt3eF7MEv9WwHjwQE1KNzv1nSGctNL6/a+5bKe4Fq2fcU+eBnuE4GL0CQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719865777; c=relaxed/simple;
-	bh=DfY6xZJ0wJtz6unu308rhQqHaFInyGavjVB1DMTESBU=;
+	s=arc-20240116; t=1719866972; c=relaxed/simple;
+	bh=o37moTC+5VU1Fr6qsrcOG49psStRpz07mCbTVh78s7U=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=kAwLXWZvsBA0XlOn5Rf4nEKhoesxhhsZkUtGijhWFCK+c8JeiZIyxxHmKErrr1sdzSFOClVFCrzE0uoAbpXmbsIcqc6FS0D5vnDv3Mp2v//j5rS1DpA/R/D0tsQHm84YLBaPv8RJIDDAccbfQ8iq3RxtKM4S3mKFu7bT4G8G1N0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s64hNPq2; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=N91p7lNgz7OpfH923kWGDX9bQbIRS3Vw48rKpl9d7bot6AlTOK/U4NH0b+Opt0xcywM3sRU0N0WEVrM25EiNupFa74SRYNPh0lRH1skg+WrnddaS3SDMcl+eURtMgO6Ig5LyDZZADIKQ5xVpYYIjY0+Oz2GcwV+tcUjcNi4RkiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dlXoM50E; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s64hNPq2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CBFFC116B1;
-	Mon,  1 Jul 2024 20:29:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dlXoM50E"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38276C32781;
+	Mon,  1 Jul 2024 20:49:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719865777;
-	bh=DfY6xZJ0wJtz6unu308rhQqHaFInyGavjVB1DMTESBU=;
+	s=k20201202; t=1719866972;
+	bh=o37moTC+5VU1Fr6qsrcOG49psStRpz07mCbTVh78s7U=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=s64hNPq2WcJEVn8yTfUfT4SUceN8dFomnlhmy+p/E3CFuncAOQGkfJxMMv5uDMVv9
-	 zrsHR/JzpRrKtioUNApt8A4z41P2YTd0LX76SnA5SEZ8MWqZYmlAKkb/cmo574RXKb
-	 VO5opsh+xZL1eSlfpE3MOL+xi+y0+KUzcAIGoLvk5tx/s7CzdH5quE9q6Y9NI7RBdn
-	 Hm795HNUZ2qluh9ioF2yMVBW60wMHWEJHe1tLFLADZALK3XsxrvpP19p/e/yxBxsdL
-	 sOY/cLlArI1xSUACho8+/sooQW9LVyWSsmdYFI4TNCrV5Va7xjqFEJ06iakvOI31Lm
-	 hMiZvfZ3IYNTw==
-Message-ID: <9ed5affb3e67a6848dad5c108804f8bd.sboyd@kernel.org>
+	b=dlXoM50ET/DFPIP98MA4aGem9DZ33eTUGGpgQCjjqavEEEu2Ro6OrQFAmT4lqTD50
+	 cF8pPcsyihN7QN/ynIulJMOCoBGFV4l2eCCEXShkCHYVO4KxkUJg5K5B4vEifAZr7C
+	 ryG4aQGCvuKqU2awr2d8VW/pRDN2oflo7DBhQ6s6E0auDAjY4kpxgkEJZpSW1CzzZH
+	 JMO1qdD8jWOkHjbnKffN2/9naEEpQTYz/OQKViAahPG6afRRPaEMciyTmQarHU23/4
+	 mnnG9YbmIswv8s/ACvCSFZS6UYzpuSnsSqazmbVPE/7dj7ip7HM9B0Qea6dSxvh85E
+	 rQ3rmAjMHzbwQ==
+Message-ID: <d3d91a26f205925c4d0197fbd977a6d3.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,31 +35,36 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240701181825.916610-1-abel.vesa@linaro.org>
-References: <20240701181825.916610-1-abel.vesa@linaro.org>
-Subject: Re: [GIT PULL] clk: imx: Updates for v6.11
+In-Reply-To: <20240613120357.1043342-1-treapking@chromium.org>
+References: <20240613120357.1043342-1-treapking@chromium.org>
+Subject: Re: [PATCH] clk: mediatek: mt8183: Only enable runtime PM on mt8183-mfgcfg
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: imx@lists.linux.dev, NXP Linux Team <linux-imx@nxp.com>, linux-clk@vger.kernel.org, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-To: Abel Vesa <abel.vesa@linaro.org>, Mike Turquette <mturquette@baylibre.com>
-Date: Mon, 01 Jul 2024 13:29:34 -0700
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, Chen-Yu Tsai <wenst@chromium.org>, linux-clk@vger.kernel.org, Pin-yen Lin <treapking@chromium.org>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Matthias Brugger <matthias.bgg@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Pin-yen Lin <treapking@chromium.org>
+Date: Mon, 01 Jul 2024 13:49:30 -0700
 User-Agent: alot/0.10
 
-Quoting Abel Vesa (2024-07-01 11:18:25)
-> The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfab=
-d0:
+Quoting Pin-yen Lin (2024-06-13 05:02:28)
+> Commit 2f7b1d8b5505 ("clk: mediatek: Do a runtime PM get on controllers
+> during probe") enabled runtime PM for all mediatek clock controllers,
+> but this introduced an issue on the resume path.
 >=20
->   Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
+> If a device resumes earlier than the clock controller and calls
+> clk_prepare() when runtime PM is enabled on the controller, it will end
+> up calling clk_pm_runtime_get(). But the subsequent
+> pm_runtime_resume_and_get() call will fail because the runtime PM is
+> temporarily disabled during suspend.
 >=20
-> are available in the Git repository at:
+> To workaround this, introduce a need_runtime_pm flag and only enable it
+> on mt8183-mfgcfg, which is the driver that observed deadlock previously.
+> Hopefully mt8183-cfgcfg won't run into the issue at the resume stage
+> because the GPU should have stopped rendering before the system calls
+> suspend.
 >=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/abelvesa/linux.git/ tags/=
-clk-imx-6.11
+> Fixes: 2f7b1d8b5505 ("clk: mediatek: Do a runtime PM get on controllers d=
+uring probe")
+> Signed-off-by: Pin-yen Lin <treapking@chromium.org>
 >=20
-> for you to fetch changes up to 466da3d2d967ee87d82060df2bc9c6ad4fc4af49:
->=20
->   clk: imx: composite-7ulp: Use NULL instead of 0 (2024-06-24 14:22:08 +0=
-300)
->=20
-> ----------------------------------------------------------------
+> ---
 
-Thanks. Pulled into clk-next
+Applied to clk-fixes
