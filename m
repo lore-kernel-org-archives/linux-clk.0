@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1503A839FE;
-	Mon,  1 Jul 2024 08:49:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 695D084FAC;
+	Mon,  1 Jul 2024 09:14:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719823776; cv=none; b=ruQ7DvGV1UNBRGUJFpCS/OaOgx4Jp6d6HlEmvTyrDV3rnElpU1KghrVTsSkQhRZdZKK2z9w4Tfxn54hxQFPE8aO4Yrwur6xwEsWSqspD3IQYVib22SgKLhOuAmvEAAPritZgPBs8vjqC17pkw9QS8Xu1KdpJj6TdoNjE0twiEXA=
+	t=1719825299; cv=none; b=nDr3LtaKNPiEFRJyTL5WDvnWrphvzXJyq6udA3A77PufQFp6v6J6fLImd0oosLWTD6kZcH7ftZQXLTqeGZd8fgvKUFhYms07b29UPArgGTuk0G2fFY7qt2ZjsNOYNiE1tvwbYd1mOPQiyPD3L6MSxA+EtIFv2s22PEUp6D696qI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719823776; c=relaxed/simple;
-	bh=gRx8I7JNrYgeeWyLRMuDCb5U4qMprUikUw+lgCQ0Iqk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=owG+fTgssAS2/x5nIqgIRBky25+RkrWvkSAnqOSuWQotH8TX+ww2/R1t1RH5UpiJAVqo+p/FQD9J3qhb78MQ2UrnSNsgU5UIfwQZ8vBxmkWXrPbE8+aUvo82GUXSuvZV1Hye9k94nQtAgIgl9pRaERnbyHaS33i2th/AJqIbr48=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SITYTDuB; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1719825299; c=relaxed/simple;
+	bh=PgjyUSjOCZMPiGj083/oRWZ0LENV4KyCnDvRUHUEh8Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U+Acdue6A7vvoJBE0dMGiDnDCKsSknCl8c+6HYKweVi50hHKweVyu6mlqizUW3GAaNTMwYLmYIxt2eok8WdvlDoVCLXvyG8ZaOW16SkzAhe2+nVhzEg9WJmYXql+2f91t1+ANc1Vfz4jntYPt4BydRczK1AHgAQNDmsW+G+B1zg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ONYCqlEh; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SITYTDuB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB7D5C116B1;
-	Mon,  1 Jul 2024 08:49:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ONYCqlEh"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F8ADC116B1;
+	Mon,  1 Jul 2024 09:14:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719823775;
-	bh=gRx8I7JNrYgeeWyLRMuDCb5U4qMprUikUw+lgCQ0Iqk=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=SITYTDuBYBjZmHBDshNQNXz8GoayFhGOtq5KHOrdaxcqHdU/OQjaFQoJ5JR+Zu/si
-	 UG7Eee1UoK5QImo+JYZOkd2zmEzpTgISR5NJtMDwJWf+/hzXQV8A0fopUf2kFhZ5Ek
-	 0g5F4SEQw6t+axL6BaSFX7OewNYEsMJtpFoOFZ6W+cBcEeMENuAHmoOevNS2/JjjMb
-	 MZEcxNNHC9vXHhmreJjNY41ID3qbjzr/S3bJq/SUyHfVuiQnow1m+jjzyatKTM6Rrs
-	 0JMdogYZIdnB6ppUpfYemf6ju3ZED7d+tSFOFcEnqun7/X0L8Za5lgXoLfNRGb/QIY
-	 //bf6umATx34g==
-Message-ID: <5da26249-0389-4a39-b1ad-fc8228d38986@kernel.org>
-Date: Mon, 1 Jul 2024 10:49:28 +0200
+	s=k20201202; t=1719825299;
+	bh=PgjyUSjOCZMPiGj083/oRWZ0LENV4KyCnDvRUHUEh8Y=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ONYCqlEhD0ZYF069dTKt02GLWB1cNqp+nORwE9TNiemhE6ThQplvk1WJE9dhIdE3r
+	 bCKtuXqMSCj501Y93cXHcRJsMp//LbIlvoGlXcSUqSHKL1mI8v9uIsLec4GphktmP4
+	 FwtHUAReKnwKCiHNA3Ykx+vwUQ0GnmXuCiIjfCPnSQEuXTHQkyY3ZojrWh0p4QVyuk
+	 55q4UDfQH8UDQdqWk1PDjxomkKzY8ASAOJLPa7Z5rAB6a7Ir9kpANjMdeB9D2Fc9Fo
+	 NZmIj7APPaXmoqrKjnWZ6buAYJab8+O7gnoUl+VvrdTR+868bzEJf6NZlrwr6ZMzMO
+	 VrvxRrgPjPuzA==
+Message-ID: <2846186f-a0e1-4cd3-85bf-f029053bf98c@kernel.org>
+Date: Mon, 1 Jul 2024 11:14:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,22 +35,22 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] dt-bindings: clock: mediatek: add syscon
- compatible for mt7622 pciesys
-To: Christian Marangi <ansuelsmth@gmail.com>,
+Subject: Re: [PATCH 1/4] Revert "dt-bindings: clock: mobileye,eyeq5-clk: add
+ bindings"
+To: =?UTF-8?Q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-References: <20240628105542.5456-1-ansuelsmth@gmail.com>
- <20240628105542.5456-2-ansuelsmth@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+ =?UTF-8?Q?Gr=C3=A9gory_Clement?= <gregory.clement@bootlin.com>,
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>
+References: <20240628-mbly-clk-v1-0-edb1e29ea4c1@bootlin.com>
+ <20240628-mbly-clk-v1-1-edb1e29ea4c1@bootlin.com>
 Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -94,20 +94,25 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240628105542.5456-2-ansuelsmth@gmail.com>
+In-Reply-To: <20240628-mbly-clk-v1-1-edb1e29ea4c1@bootlin.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 28/06/2024 12:55, Christian Marangi wrote:
-> Add required syscon compatible for mt7622 pciesys. This is required for
-> SATA interface as the regs are shared.
+On 28/06/2024 18:10, Théo Lebrun wrote:
+> Switch from one sub-node per functionality in the system-controller to a
+> single node representing the entire OLB instance. This is the
+> recommended approach for controllers handling many different
+> functionalities; it is a single controller and should be represented by
+> a single devicetree node.
 > 
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
-> ---
-> Changes v2:
-> - Fix broken schema example
+> The clock bindings is removed and all properties will be described by:
+> soc/mobileye/mobileye,eyeq5-olb.yaml
+> 
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+This is v1, so where did this happen?
+
+
 
 Best regards,
 Krzysztof
