@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 471D116F265;
-	Mon,  1 Jul 2024 20:20:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB25916FF47;
+	Mon,  1 Jul 2024 20:25:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719865232; cv=none; b=DratVT+es8XacwQy6VvIRyudbUqWTTvZEbZWKgJ8wnYkv6MVevUT6a5Kbo8O5DPG+VV7vN1O7SBg6C2cKUeLFejhXPSzejRzc/P32eGqJmOYiyj7xYJvk49raRniGfq0Kpd1aXf/R7oi1OdJD8n/eSuPG0sBHKB47R5JISSoxzg=
+	t=1719865506; cv=none; b=b50sEpPv2mDDgbp6/2wN8eQFRjk7hUhiftrFG8w2IdS6efLacZjDamZbDIf5+Lwg/19pW0YMmeB3z/YtXqJgXH0Ts1S374bpVLuc7phN4+d6yaZV/Jkn1MGNNPb+6gwKUepbQqZx9x3tZWyuPX8oSKeVQLqpbHKtElx6wfkWo0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719865232; c=relaxed/simple;
-	bh=ln5DZqMN9sVxtFbCsPgmgtK5W3yfYtcekuUMlck41pg=;
+	s=arc-20240116; t=1719865506; c=relaxed/simple;
+	bh=6YtYYht39tEACUCXWZi+0yf/GOTTkHqOKqMiZxb4zhk=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=WFbmiC0UZBYh5dGxxrRa0gDIQWfer4OyT4KBM0mUA/JFFIkB3MvsO/rU6k99s4T1lTs9Zgs74Olec2U/mvkBEYaWxOKqbUcAxTZ7vzdUh3AV1A2G+2Uj0gIP7jAhoYRXY74UlUB3IVsA6Ffbbi5IrK4W/4Zv1ZWmPxD6QOSsb8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MGE+9Kj0; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=WAXF99RQ+PEqgokPFMUrPL+BxMASI6UuaSYpGHa9Mqu1Itj+DIylaNuyk8i/+tsRQl0xw8x0eeEhcWfUT/HQ54f535RtQlIxpwka0Te99n2gdV/kGsD183Zwy6xZFvKOrgMYhIbTWZROX9u03FLDd9nzcQjl8t3+PCw90qovrMQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UKe1GziL; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MGE+9Kj0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0F35C116B1;
-	Mon,  1 Jul 2024 20:20:31 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UKe1GziL"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F46EC116B1;
+	Mon,  1 Jul 2024 20:25:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719865231;
-	bh=ln5DZqMN9sVxtFbCsPgmgtK5W3yfYtcekuUMlck41pg=;
+	s=k20201202; t=1719865506;
+	bh=6YtYYht39tEACUCXWZi+0yf/GOTTkHqOKqMiZxb4zhk=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=MGE+9Kj0zPc+O/IyNCes62ApTH0o4aftzBuKg/B5XH8s18DtkYZ+Ut7E4+9QVwaGA
-	 awPFMFGWB/1T3Z8jvHTxcKOHbiBsHmlsvxageJ7eVUuBH3YlWLVJ8p86FXWiGtnlQt
-	 9c5xFHLq5bPd6nhCJb+XCZIVywbXCEHp+eOr2kyEcB8mh4KQ0CAgliUMP0bRNZywG0
-	 NqH5PWR9a7Qgx5blCv7DAnicbkTghb7RoWNHnNjx5XKUd1lFHIBfFc4pTSRz/GfvmP
-	 KYLnn+2Y29KDJ1ISk8Rle6gzhlECSq5GDKemrduNO8EaWcwCr96iYRdt3NR+KbNV9O
-	 Mn5txaAfPzUgA==
-Message-ID: <85ecc8484e318a07a8b02f96ad316be5.sboyd@kernel.org>
+	b=UKe1GziLjtR0vW+L/lEPW9VoYH95mzZS1foBbDqIzGFFfJVDyUTTp+TeN4nTPPQZY
+	 Zu3smfaKLuIVO6nUKQkPlh/+iarvZpOcujTC040ODzyRbj9W0HBo2LoVdd3JhyWZLp
+	 LtfKaQJR1kDw4eCY7+1zve8lt1pGlGxFYJz/a9yU2dc3Ooq3Oi2qGJ4GFvV0jUnf3O
+	 z5gTb9fgwhCLgu/Y9qME+iRumny+y7qcLLCSYgjMuegIB8KSuIPhKCin6R0GFHy4ho
+	 XK8VlcpZTaTCLkQjfGok9H1otCOr1LUXEQG1MH4v1dyK4jYZTXGuTy3UzVVeDoqCjI
+	 O97YVGftBXebQ==
+Message-ID: <559ea2104181196c9b5f8869662e1b3b.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,25 +35,30 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <ZoLqC7gTDxEkNPsE@wens.tw>
-References: <ZoLqC7gTDxEkNPsE@wens.tw>
-Subject: Re: [GIT PULL] Allwinner clock fixes for 6.10
+In-Reply-To: <ZoLswiclc8k4DHi-@wens.tw>
+References: <ZoLswiclc8k4DHi-@wens.tw>
+Subject: Re: [GIT PULL] Allwinner clock changes for 6.11
 From: Stephen Boyd <sboyd@kernel.org>
 Cc: Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej@kernel.org>, Samuel Holland <samuel@sholland.org>, linux-sunxi@lists.linux.dev, linux-clk@vger.kernel.org
 To: Chen-Yu Tsai <wens@kernel.org>
-Date: Mon, 01 Jul 2024 13:20:29 -0700
+Date: Mon, 01 Jul 2024 13:25:04 -0700
 User-Agent: alot/0.10
 
-Quoting Chen-Yu Tsai (2024-07-01 10:40:27)
+Quoting Chen-Yu Tsai (2024-07-01 10:52:02)
 > Hi Stephen,
 >=20
-> We have (hopefully) just one fix for the 6.10 cycle.
+> Here are the changes for 6.11 for the Allwinner SoCs.
+>=20
+> As the tag message mentions, there is one commit that is shared between
+> the clk branch and the soc branch.
+>=20
 >=20
 > Please pull.
 >=20
 >=20
 > Thanks
 > ChenYu
+>=20
 >=20
 > The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfab=
 d0:
@@ -63,13 +68,13 @@ d0:
 > are available in the Git repository at:
 >=20
 >   https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/su=
-nxi-clk-fixes-for-6.10
+nxi-clk-for-6.11
 >=20
-> for you to fetch changes up to ea977d742507e534d9fe4f4d74256f6b7f589338:
+> for you to fetch changes up to 002cf0dfa201e44685e3b96ae06b8de258b8b2c2:
 >=20
->   clk: sunxi-ng: common: Don't call hw_to_ccu_common on hw without common=
- (2024-06-30 23:12:44 +0800)
+>   clk: sunxi-ng: h616: Add clock/reset for GPADC (2024-06-22 20:09:20 +08=
+00)
 >=20
 > ----------------------------------------------------------------
 
-Thanks. Pulled into clk-fixes
+Thanks. Pulled into clk-next
