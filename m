@@ -1,113 +1,108 @@
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03D8B14D2AC;
-	Mon,  1 Jul 2024 16:31:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F59E2A1D3;
+	Mon,  1 Jul 2024 17:40:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719851468; cv=none; b=kXDUotvwWLYc0BZGC9CXWhbu939XC9s9YCPaMXmwiydeJdwQ3nOCyav8t+Xulg2BnoNp+armnN9ADqzA+sa8g0oaseMRh3alrUuP++W+nCFJrSmDOqMncXBjzbPO4uk9SRrNv0qBr2EkIhbPTHJ/kLADrDUZbzjJjoFddveZfYg=
+	t=1719855630; cv=none; b=HljV2hyXzzlagTEEx4ymHgyq1hGWCkuewOBlssNUbPbgXfAc3Z5RKpMjuMUca0KfCn90bgOg3I+LJjwWZ+SZSDOR9olAGTVrFGDpyDQUJcmpqHXo0Pb1vg+NP2Gy8cxqx+NzgbAzCoKmxRmGcoyfHBHHMbPSJE8ETv33XMCWF/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719851468; c=relaxed/simple;
-	bh=9pyJvPtweb1UHSGE+8KU62A6fqLPa5bzsQ1lE0/LcU0=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
-	 References:In-Reply-To; b=Oe+p993rJwVqp6DES6psMLXPU0By+Ozu7y4NzBH+g/1Lmy6DbYSJa39a32kM8f9O132Cvci6WrtbHozhd5qmlSunlfbi26kR+Fk4nBBPzUhZcz8ouxGDLEFr7v02Tnq4YQmncby86pgcflIn4XB5ZbOvztLhSP85phYGSm6aKmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JT/7HuBB; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1719855630; c=relaxed/simple;
+	bh=E5f6qHZVxjrXFAD48QF0CGUhGy9Va81Pd+F+wrb6l34=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ToRp2AZWB+DFpgJ0sbBtGszNbcp9/Sm9psvORq/Hwd7fnZODAD5mdhZkP7iKwFBdoiiD1yBIoghktnUafvUAee1N/va75pmlUmEyf2ujrSvDllH3eDVwADd+2MUg/mJH+o/OFIqs+jn5qfjEEVSyd2g3Xyy/6ARhRxf6OXPNO3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nu+EreWM; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JT/7HuBB"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id A44F320005;
-	Mon,  1 Jul 2024 16:31:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1719851464;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9pyJvPtweb1UHSGE+8KU62A6fqLPa5bzsQ1lE0/LcU0=;
-	b=JT/7HuBBhBruZABWwdrYHaof3kr2CIBvYXpPf4wr1GJpwr2XbNjvzVtkA6rQqclFs+npbl
-	gc2aOIoAkc955HAVqHq3PVlT0wg1C2ifdZGqjfHAoitjZMFJz10P2mBcg7RvWo1mCAFNyO
-	8LvIvXHKMX0eJjHO2LpjkYtucxYBT0QLwjkAHVcgqVtB2zV4/MXLF592ysxzQny76lp2/F
-	T8GSDcl8cpKS+LT0L2xvE/P3Jyvqea0MhnNDDHh8cr5rDudb+el41fKz91s2JZ0FmValVS
-	pVYZJxGsaxTBTKy/qU3eXje4bitHxfHGONcwuL4T2EaDCarZ6QM9kTUJMLPS3g==
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nu+EreWM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB3D3C116B1;
+	Mon,  1 Jul 2024 17:40:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1719855629;
+	bh=E5f6qHZVxjrXFAD48QF0CGUhGy9Va81Pd+F+wrb6l34=;
+	h=Date:From:To:Cc:Subject:From;
+	b=nu+EreWM9O4lKeWsKkp2Lcqr0vGnzV7aD/1YAtlUn2zDqrCJaywNGO5icEnxRP2sq
+	 sfoPZIh2tcTMgTJUhkMRi0w2/AYVPC8BthMfyXpDNIyUM13fZI0zNcjBpy/4zIbJTs
+	 gxSLzpxbIGWvlm21DN5xuj/oOGlsosRVlFgcup8yUj59m8cVktUCq+MFB/n8YSbhPk
+	 wAWPEMAMQIS/7a4BeTsupq0ZHmtACd7xsUsmDdSPmFx/7+6pMegR+HlW68IALnjN/t
+	 ldsgzh9lqjbaNI6Ri2ILUdM16SIzy2FuZQ0h9tRHE4GMxh4b2llZaoC7+slswwBXCS
+	 jxaa3CXqRx5DA==
+Received: by wens.tw (Postfix, from userid 1000)
+	id 9495B5FADF; Tue,  2 Jul 2024 01:40:27 +0800 (CST)
+Date: Tue, 2 Jul 2024 01:40:27 +0800
+From: Chen-Yu Tsai <wens@kernel.org>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej@kernel.org>,
+	Samuel Holland <samuel@sholland.org>, linux-sunxi@lists.linux.dev,
+	linux-clk@vger.kernel.org
+Subject: [GIT PULL] Allwinner clock fixes for 6.10
+Message-ID: <ZoLqC7gTDxEkNPsE@wens.tw>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Mon, 01 Jul 2024 18:31:03 +0200
-Message-Id: <D2ECGMYXJWZ9.GNRJ1NAG4MF8@bootlin.com>
-To: "Krzysztof Kozlowski" <krzk@kernel.org>, "Michael Turquette"
- <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Rob Herring"
- <robh@kernel.org>, "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Subject: Re: [PATCH 1/4] Revert "dt-bindings: clock: mobileye,eyeq5-clk: add
- bindings"
-Cc: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, "Vladimir Kondratiev"
- <vladimir.kondratiev@mobileye.com>, =?utf-8?q?Gr=C3=A9gory_Clement?=
- <gregory.clement@bootlin.com>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
- <tawfik.bayouk@mobileye.com>
-X-Mailer: aerc 0.17.0
-References: <20240628-mbly-clk-v1-0-edb1e29ea4c1@bootlin.com>
- <20240628-mbly-clk-v1-1-edb1e29ea4c1@bootlin.com>
- <2846186f-a0e1-4cd3-85bf-f029053bf98c@kernel.org>
-In-Reply-To: <2846186f-a0e1-4cd3-85bf-f029053bf98c@kernel.org>
-X-GND-Sasl: theo.lebrun@bootlin.com
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="yuP47/a85TH1IIqh"
+Content-Disposition: inline
 
-Hello Krzysztof,
 
-On Mon Jul 1, 2024 at 11:14 AM CEST, Krzysztof Kozlowski wrote:
-> On 28/06/2024 18:10, Th=C3=A9o Lebrun wrote:
-> > Switch from one sub-node per functionality in the system-controller to =
-a
-> > single node representing the entire OLB instance. This is the
-> > recommended approach for controllers handling many different
-> > functionalities; it is a single controller and should be represented by
-> > a single devicetree node.
-> >=20
-> > The clock bindings is removed and all properties will be described by:
-> > soc/mobileye/mobileye,eyeq5-olb.yaml
-> >=20
-> > Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
->
-> This is v1, so where did this happen?
+--yuP47/a85TH1IIqh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-This is a split of the previous Mobileye EyeQ5 system-controller series.
+Hi Stephen,
 
-I started my cover letter [4] by mentioning it. I should most probably
-have kept incrementing on the previous version number, sorry about
-that.
+We have (hopefully) just one fix for the 6.10 cycle.
 
-Relevant extract from this series' cover letter:
+Please pull.
 
-On Fri Jun 28, 2024 at 6:10 PM CEST, Th=C3=A9o Lebrun wrote:
-> This is a new iteration on the Mobileye system-controller series [0].
-> It has been split into separate series to facilitate merging.
-[...]
-> Related series are targeted at reset [1], pinctrl [2] and MIPS [3].
-[...]
-> [0]: https://lore.kernel.org/lkml/20240620-mbly-olb-v3-0-5f29f8ca289c@boo=
-tlin.com/
-> [1]: https://lore.kernel.org/lkml/20240628-mbly-reset-v1-0-2a8294fd4392@b=
-ootlin.com/
-> [2]: https://lore.kernel.org/lkml/20240628-mbly-pinctrl-v1-0-c878192d6b0a=
-@bootlin.com/
-> [3]: https://lore.kernel.org/lkml/20240628-mbly-mips-v1-0-f53f5e4c422b@bo=
-otlin.com/
 
-Regards,
+Thanks
+ChenYu
 
-[4]: https://lore.kernel.org/lkml/20240628-mbly-clk-v1-0-edb1e29ea4c1@bootl=
-in.com/
+The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
 
---
-Th=C3=A9o Lebrun, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+  Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
 
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/sunxi/linux.git tags/sunxi-clk-fixes-for-6.10
+
+for you to fetch changes up to ea977d742507e534d9fe4f4d74256f6b7f589338:
+
+  clk: sunxi-ng: common: Don't call hw_to_ccu_common on hw without common (2024-06-30 23:12:44 +0800)
+
+----------------------------------------------------------------
+Allwinner SoC clk fixes for 6.10
+
+- Fix min/max rate clamping that caused a regression back in 6.9
+
+----------------------------------------------------------------
+Frank Oltmanns (1):
+      clk: sunxi-ng: common: Don't call hw_to_ccu_common on hw without common
+
+ drivers/clk/sunxi-ng/ccu_common.c | 18 ++++++++++++------
+ 1 file changed, 12 insertions(+), 6 deletions(-)
+
+--yuP47/a85TH1IIqh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE2nN1m/hhnkhOWjtHOJpUIZwPJDAFAmaC6gYACgkQOJpUIZwP
+JDDNDA//cpQNm16JnmmttGesxB4FBQR8mDBHQwVPRoVMVoGHSEY7KKZCwFhGPnkN
+AvrAl6RkvD2Mf1VNinQmJC3jnH9YYwQjF3euhRKEX1R4suypnHIpWcFYlj67Qvbj
+BVGdEFv4v4YG7haMLzh+miO88gjmHT2tgMQ74xmNTgmDqM1csRGKA0Tp7HcZZR67
+FUBX9/dK6kFiBhXEuDRLsKjV8NkpXI0xxEcgWqzBouxdcI9BaFHawkb8foG6dM59
+/mgBlC2bxPBxSneh4NjMJ4iVO+LdwA4oxdjvSb9qUkUB9/ZVsGg/2Xkhv0QPM/TS
+bqIDvoW8jdMviA4Qhhoj0EK6+nD892TDUN42fr34slTRp0ct4umaCLOFcjJTlIVi
+wdkmO4bLz28i22kBWDxoFgt2V/+IN8sjXXB+ZFGU86PvohPT/TMtlsafTA7hnroC
+CJw7MONfvNbO9+dIWzSOIgA+SNI7SIoCeaB1Ng/4LOFA/mmP+2zqKatu4fyJJ+Rx
+XdM3Dit9DXeaoqdZ5d5N8Tg/rPWDDjPgQA6ZtPqGY7T9hHEpsDA2zql4jAqiPYy7
+tficBTqWi+1rj8QMXFaF7Pw/7Ar7pXrHBhDZKejAnStTTrl2A3p30Zjaj9FEZbvo
+JvByB5Y2S9L8mMhL5B6aBi9kWc1mwFZPw+T9RFj2CusF2Naxja4=
+=hoz3
+-----END PGP SIGNATURE-----
+
+--yuP47/a85TH1IIqh--
