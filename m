@@ -1,168 +1,166 @@
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2044.outbound.protection.outlook.com [40.107.22.44])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4A1D157483;
-	Tue,  2 Jul 2024 10:14:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719915259; cv=fail; b=dOB9x1JK+zLY1MBAJm9FauBJxkLN0DLd6Q1ZpGOTiTaBa4Xosr7+HCLM6vxypJgjyNNChaeT902bB9UeUutUSEuFe7hcr0sb4sfbwsYjeIPji2ifHeysM/uWshBYSppN5yS3YiDTOyAhvTOidqQ0fGglWscM2qY7EUjtHOusCgI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719915259; c=relaxed/simple;
-	bh=netccLHQ3C1Vtu11xm7yMgzLiN3po910nesUzBQem/U=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=lvgiubO6BGgPdnK8IrZ/nSg0JKUkasfMnAokZFDKJbnzDy6df4G+FgK/9E2kXnrL3NDj9ta5MOQT/5rp+yzCLufld20JNA6NB2xlURhYzemQiccXwic2Z/OlNxJZMxaDBPyzC8k8y3U4HvOpLraNj6dsobzLN9WMySNEja+R/yA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=px7fKEdD; arc=fail smtp.client-ip=40.107.22.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5DF915D5AB;
+	Tue,  2 Jul 2024 12:14:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1719922446; cv=none; b=EHcD2YqLWLFKl8Kt53kjdI/xy4iML3U2AH8wP38a/SIQtJtIERRvaWNxV7DhfXFYjHDSM7/21lupqUvbKOAX7K0XLqUHS3tBiZ7pYNwREJisURSgCtLhri7gGb2sZbPjS2qF7b6F4PZVRB5J+L+S/tHT9clUr4g/BrLkG6thRI0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1719922446; c=relaxed/simple;
+	bh=+s6jgiAJELxreoow36uUgrgozKOOjkSRma04ypAOOY0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=i2CECPgR7vanVt3qnUaATEWkV9DTLW8+zpE1LL/6MkqYysRYh1ijh/zlUWtbEpKrWogqavOzKppLxbfa3n8X5RKkZDw+LZfomXpgOFU3ImoB1eNYzuffLhTmprNdQC5u886Z56REOau3i1IZOFBm9u2pAX2lokiSmW4Z0qyMuZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LxwkcBQV; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="px7fKEdD"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=G+sa+XtOz/B7cTTs/sNuSopSA+rMJSB+98AchA5rrsFaZAg8QLG4X3f15Zn8X891n084jDs3vyGOv3tnJKlAAYxuUnxpMgplfuGiFJYZZD0qtUzWAsxoUvhWQ3y6t2YG2ZMQFcVsZnY6YAqbNQM+jEKsaryEyFweEbAE02hhnyxIeWYd67/+GU2L3xia1VvW/LB1DdviuVioTJ3RISZMNOT+Z4/C0tqx97eFmKpxlZBrVqvt/uuZ7nFtVllSKmWSBbJuahpz661BSbdVxzSYyEsFIKP9XjUWl+NmSdt1mA44qNT6nOGL35HqYAB0QmrWFFoOEmqzikGBg7CJ0vegwg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=netccLHQ3C1Vtu11xm7yMgzLiN3po910nesUzBQem/U=;
- b=J1y3ZNnzc/exw9QZQOVWanv6ZaUSdLt5MtRu2i7hfj2YuLF8QsLGSjNgm+lHCjPTuwQxe3VFxq1n46i1kYONqSwtM9CgYdN43qVVR8e7ZP+Glz5l/PVHouMEvytBQ38SE3iBP1YZQ0lEG5GR6cWPLWQuE1s2Gc+0dWOGVup0bM6+eN8WH4zVuYDIgG9/SJXkvTPjjD2Z1XrdY0j/wi3AnKwtLFKJXdW9NZeWtdhNpa6438JzLOd7Umulql6+ELPapww34jz2HD1p4cv4SwL3sqjzIV02qZs1BnF01RFt10jWnVUChxzfc3UrVfL2/eIDnSyZyCewUJqWQWNgWwD+6Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=netccLHQ3C1Vtu11xm7yMgzLiN3po910nesUzBQem/U=;
- b=px7fKEdDtshV2hlXn8IH2Syc+aFCWHzclB6ZpiWZT0cOMC+ap2jdXT+SUjfOwEAE3cqo/RtbJQ6cCV5DPPTw1W4ch67j3RzlO6GTqBj/uad6fkWN+w30ak7Czj/bVdsb08A51Iugxu8oIS9GLe9iZXfHs3kkKX3sA8MYzYCPPIs=
-Received: from DB7PR04MB5948.eurprd04.prod.outlook.com (2603:10a6:10:8b::21)
- by VI1PR04MB9833.eurprd04.prod.outlook.com (2603:10a6:800:1da::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7719.32; Tue, 2 Jul
- 2024 10:14:14 +0000
-Received: from DB7PR04MB5948.eurprd04.prod.outlook.com
- ([fe80::c0af:95ea:134a:5cda]) by DB7PR04MB5948.eurprd04.prod.outlook.com
- ([fe80::c0af:95ea:134a:5cda%6]) with mapi id 15.20.7741.017; Tue, 2 Jul 2024
- 10:14:14 +0000
-From: Peng Fan <peng.fan@nxp.com>
-To: Diogo Manuel Pais Silva <diogo.pais@ttcontrol.com>
-CC: "abelvesa@kernel.org" <abelvesa@kernel.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "shawnguo@kernel.org" <shawnguo@kernel.org>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>, "s.hauer@pengutronix.de"
-	<s.hauer@pengutronix.de>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "sboyd@kernel.org"
-	<sboyd@kernel.org>, "mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"festevam@gmail.com" <festevam@gmail.com>, "imx@lists.linux.dev"
-	<imx@lists.linux.dev>, "EMC: linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v2] clk: imx8qxp: Defer instead of failing probe
-Thread-Topic: [PATCH v2] clk: imx8qxp: Defer instead of failing probe
-Thread-Index: AQHazFdj9R9W+yCzk0Gpome//ZzQy7HjOF/A
-Date: Tue, 2 Jul 2024 10:14:14 +0000
-Message-ID:
- <DB7PR04MB594880A7CE8BA67F493044B188DC2@DB7PR04MB5948.eurprd04.prod.outlook.com>
-References:
- <DU0PR01MB93828B0E6808E33C608BC0E29DD32@DU0PR01MB9382.eurprd01.prod.exchangelabs.com>
- <AM6PR04MB5941651E3920794104B3D24F88D32@AM6PR04MB5941.eurprd04.prod.outlook.com>
- <DU0PR01MB9382F1AC496F22A20C074BDE9DDC2@DU0PR01MB9382.eurprd01.prod.exchangelabs.com>
-In-Reply-To:
- <DU0PR01MB9382F1AC496F22A20C074BDE9DDC2@DU0PR01MB9382.eurprd01.prod.exchangelabs.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_6d12e765-bdb3-4a42-8d1e-507ff5c9fe67_ActionId=feb09c1b-e3b6-48ef-89cf-48121eb19752;MSIP_Label_6d12e765-bdb3-4a42-8d1e-507ff5c9fe67_ContentBits=0;MSIP_Label_6d12e765-bdb3-4a42-8d1e-507ff5c9fe67_Enabled=true;MSIP_Label_6d12e765-bdb3-4a42-8d1e-507ff5c9fe67_Method=Privileged;MSIP_Label_6d12e765-bdb3-4a42-8d1e-507ff5c9fe67_Name=TTControl-Public;MSIP_Label_6d12e765-bdb3-4a42-8d1e-507ff5c9fe67_SetDate=2024-07-02T08:05:07Z;MSIP_Label_6d12e765-bdb3-4a42-8d1e-507ff5c9fe67_SiteId=5638dc0c-ffa2-418f-8078-70f739ff781f;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DB7PR04MB5948:EE_|VI1PR04MB9833:EE_
-x-ms-office365-filtering-correlation-id: d40862a9-15f9-485f-1b8d-08dc9a7fb9ab
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|376014|7416014|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?PucJl7ITv0BNonft9VL8n7L1+nQSKWjBUjP7yLuaNt+93k+FfKgYEhVYzQtr?=
- =?us-ascii?Q?6+3eqXm1F6THxUZ9Q01MammOAAwpT2mk5Q+3SeomRPPKMSbgGGmkDTKJItAF?=
- =?us-ascii?Q?oXjfh3zkqEsL1+AkSO9ZggzkdBLSNNRHWWrQ4X3VZmfDB8CTDoE5xiKJ5JFb?=
- =?us-ascii?Q?pRUnXLVK7rRMjc5lIg9xEaIC4v95id95sJeQj5HI7/2AFCUe8bWakcd0Kk3f?=
- =?us-ascii?Q?CbQf0yTxZFy12EMmZ0k3jvgW6jAW3mKGERHE8z8/+Wma8L8jtlHa3/qqnR/d?=
- =?us-ascii?Q?UNH7gQNatsALuJxhpoTRzltU/qhPO+4o4XqQI+bqveZhwPQq2j24C0tFjzZk?=
- =?us-ascii?Q?cHOPH8tgT/dXoBy/fJfrfRgtuzs574dC4LbwkjYaVBKT/yQ3+KOANpFpXkAl?=
- =?us-ascii?Q?tcoxKAsT5rGppwfg7rq/LFy74o8WJr2UFZlmhLU83scn0c3G4LlsgDdcMeQl?=
- =?us-ascii?Q?aoNIGpa2lrSZVehXhS+uvD8gUWBCVfCMzdhrRttu7ycS2ux3duIUj8Wu+CEB?=
- =?us-ascii?Q?P8vJOOx9Jwi+Fe2gl9ncAUE1XwPMxNx53wNx+bKi6lN8qY4+QvSeW8Frstdk?=
- =?us-ascii?Q?UMmheIXXMwR+KmLJ4S/354IZRlvDRYDh2yVsdV9lz3mSTUIevyXBOUBgVC8s?=
- =?us-ascii?Q?JzKI0k+ox/ya1X1+uC77IFdyNG9Lyc05evkOkxXBEW6l6QQybFtsl1s23FOt?=
- =?us-ascii?Q?XMCXt+Biq00x2jZAsK3JxAr5ZIuz+qDuZoyDEi44oX3ve7fpd5C5m1mSTGnE?=
- =?us-ascii?Q?fXvydbYg4eBeNiIMvggf/UZmDVfPkwBaZopBReJeo/HzoZDUnET/c7d6BQQj?=
- =?us-ascii?Q?pq6m2wI9xETeUxdEVRyZS2NEIprUDL3xGhVpwd9O/ZrNBfNb8dyhq/EIekCS?=
- =?us-ascii?Q?Pdy8UMvltLFE8B3gtSL9ENfGnWPh8qzTBB863RkiO27u1ggPtGLSdbOzeAtW?=
- =?us-ascii?Q?X3njJvHbt2nwX1wboBSDJ/7f/ED8W8RYB43FV6ow8h/4qrfCEApk/3hKHFup?=
- =?us-ascii?Q?MLGSTagFhm8BDrM/YIPonC9Blmj+DcDsIL/fesZ70h8gBbZTsKdifUPznmwb?=
- =?us-ascii?Q?P8//2PaT6yg+VLQwU/76nrP+iApFwu/bpyedeBFU5QC751AoRS+M68ZyZo4g?=
- =?us-ascii?Q?JILcAuZKqQoss4O6A2uIfaIaJkmYPnFhRRY+Hkhkzr45mihN1WOayTJW4tfP?=
- =?us-ascii?Q?9orN3V9QBRboDfg3tpowHJ+01zC0M2fqUThuYS1IxW8J5063rqtaD1NLBoTJ?=
- =?us-ascii?Q?A9m94fHn/ovhypN6bN/fPnAWwoZ/FsqT2XY2AAnECyGN4crippJGcwMZ5CFC?=
- =?us-ascii?Q?tAcPuvVULXP7F1fEfaJHGEuIztQuA1z+bACrzzNi+tN47T5p3p1GLuK89MVc?=
- =?us-ascii?Q?vVSgZCiDRNop/4j43ipJswtnvBlKovQtaicza2L2glHanLfU3A=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB7PR04MB5948.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?AMF+ol67QAUuCBpW7BrnMu0icbIpFKEO91bCCJto6kXJhOJVXHe5O0xAKQP8?=
- =?us-ascii?Q?60BvtpzK79lexBnh2+FJbuCV1xO6KX610PCyK6K/cgodBPFFYDUNWfF+5/4B?=
- =?us-ascii?Q?ycj0kLJXxDAVX0TvQGbYE4395mhsPqbVpbtSgFSq4MkQnpt0T7ZUG6rz48bx?=
- =?us-ascii?Q?qCd+wnnJ8cBBGt4cv3VcShMYCLkuVazhI4OiXLt81CZK0EAkahmV5VJEqQY2?=
- =?us-ascii?Q?82Mt37Jhz+KUsG15kx0bjGZhS17k5taAp4v7kB3V7vx1H5ce/RnbiqAMkMKz?=
- =?us-ascii?Q?O/ALPINqQ45rwTL7gC8FqLUTqTsF/+KWLCg8tcbTXl4cYz7RnwkqcV1g0j7O?=
- =?us-ascii?Q?bI6duhZYu4pae4GBhMy8QIEcvs5hCHiig+E6znFMh/ayhpt6gzP4Lhoo9+Ly?=
- =?us-ascii?Q?D40i01IgGs+QRWMygn4wq8Q7oJa8k+AOPvtMa70yBpUWz8j9VPDcVsVsjQEC?=
- =?us-ascii?Q?FnKw5UxTplnzGeOT2PKfF11zI+M9kWCVc+weYle89VjWE/lCTvhondSj234T?=
- =?us-ascii?Q?lpwlMQLuH8EvVktCSRCPFXRI562YZ8NjuNGk0U8zTnf4B20HNEvRF/qg/TBI?=
- =?us-ascii?Q?Bh/UIB6Aj52oFer6GOxs8AF7k5zNEwRpTTfbE5DiIE2xUANugagTcRjjLz77?=
- =?us-ascii?Q?xcvVtTDlu3VxL8Zwy+ovjb7wZ2/38r2OAw8LtFUwGtkDLuwloIidczTr+Kj7?=
- =?us-ascii?Q?AUSt8QE+LyRiO4E8/a2I4Vv2gAbHlMKjZhJKS+CFEBfhPsslOAH8x5+tTiBu?=
- =?us-ascii?Q?NYB5goRKW8osQi8OR/IDTOIgxsgmTJMOTdaarkzO0U0lunElNqDomU7LJISo?=
- =?us-ascii?Q?xryoSJBW1xSaFm6SXHII5pqEii+6tyWGjv8Ig445PFWzA61tSgDbiyTeocWS?=
- =?us-ascii?Q?VJ5pfjLOVV/rim2GDm8nNdebVaGuTyAbum9o/HNBVrSwZzCmPGL46r+JRsLw?=
- =?us-ascii?Q?ZxsdABeoDS2qR7aQ5VLn7QKE64UpQxtA2m59WT/PUUU83mStq51dJRImWRFo?=
- =?us-ascii?Q?xFIR+cdZKWUKXsZlnPNoeA7e0+SvoS0JSnKjdVV6GUMfDamaCyA6fTL7pfww?=
- =?us-ascii?Q?SLcJM5wu25nOuGzK0uEQi04SMPOCnjmfhMf15nXtUZSJkoEMvm61Sf8Lv0rx?=
- =?us-ascii?Q?YUoXAnYNQQOj8PdGYYo7Ir4DG1r/OWmK892inbahrAbBsnGM6DLxwmopPS5a?=
- =?us-ascii?Q?rxap2AaBOVnNhJCQVLGmdTbcmal7txSgTsAGgBKmDb0UIWxMSM5h5hP9+NwF?=
- =?us-ascii?Q?Wl/EJDSbc/pkrd7CoRczEspuNPtxyAo9rGNCnPPH+CJfIDWrJA8gGMg11eGC?=
- =?us-ascii?Q?UujYYOUyAUbUvb5n4TNCrqUQjeHLqQUbWWq+YIlwR6+Mkd7EnHoFoSZcx4Wn?=
- =?us-ascii?Q?5sg39ERnGZUZeLHoiKLa2KH1y9MNY/Nu90EKw55ErmVcw0+9WALONjdcE2CY?=
- =?us-ascii?Q?G1kdj1+higSj3lVturNDWD/JchSSjhKzZyjdEHu4iyp16ro2Gn91tTnwj8cV?=
- =?us-ascii?Q?+ZJkhuCvu666W5hbl3kqWVIsT967+Qj6vZl1HxTl0vwmJbo7TzRGtvr7yQ1D?=
- =?us-ascii?Q?l10tMhOq5QxaoszMolA=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LxwkcBQV"
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4628FSIe006162;
+	Tue, 2 Jul 2024 12:13:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	WAc+27O8bp3KbN84Q0eAMJawfTO1NX5ZOKDBTeZA1oQ=; b=LxwkcBQVgolmjPWK
+	Uas18qBtOu04XZDaSHgpyE5C9Cg21ukIWiiNLzxqUx+MsxbQpaSFuicy5TQ8k+xs
+	OIoS1VBRzxbtC8CbLst03UWR8BRTRSZKtBZ9MFCYeT9UCV4qr2zF0N3Hb4LEv0fd
+	Nsx/92Z0ezvnRQwbpN3A5u2rCbutpShj98y633QSI5U1O0BAItQQDuQMNy9sTgfa
+	S27VV8GjNZ4UMMB3HRTsUjZv6TnKA2dK0EJ4d4yAdFzU8rk39iTYJ0vYik6S2Z4W
+	bNOcTgtBm60jhLdOd3GIkPc1CyJ9L40GlniIkWcw7Xl5Aeipo9ta36i7dCncSD+j
+	6siugQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 402bj87n5v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 02 Jul 2024 12:13:23 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 462CDM4C026821
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 2 Jul 2024 12:13:22 GMT
+Received: from [10.50.55.70] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 2 Jul 2024
+ 05:13:12 -0700
+Message-ID: <5ccbfde6-f26a-4796-abac-e8d6a18c74e7@quicinc.com>
+Date: Tue, 2 Jul 2024 17:43:08 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DB7PR04MB5948.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d40862a9-15f9-485f-1b8d-08dc9a7fb9ab
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Jul 2024 10:14:14.5698
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: UHTniWPUmpVYj10J6WKVo+C7MkQy29rJhk1PSADjf/sQB4jRckEG+XmID+lznYZD0qfO0Qj7PtB2jhEeSPjBrg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB9833
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V5 4/7] dt-bindings: clock: Add ipq9574 NSSCC clock and
+ reset definitions
+To: "Rob Herring (Arm)" <robh@kernel.org>
+CC: <catalin.marinas@arm.com>, <u-kumar1@ti.com>,
+        <linux-arm-kernel@lists.infradead.org>, <krzk+dt@kernel.org>,
+        <geert+renesas@glider.be>, <neil.armstrong@linaro.org>,
+        <nfraprado@collabora.com>, <mturquette@baylibre.com>,
+        <linux-kernel@vger.kernel.org>, <dmitry.baryshkov@linaro.org>,
+        <netdev@vger.kernel.org>, <konrad.dybcio@linaro.org>,
+        <m.szyprowski@samsung.com>, <arnd@arndb.de>,
+        <richardcochran@gmail.com>, <will@kernel.org>, <sboyd@kernel.org>,
+        <andersson@kernel.org>, <p.zabel@pengutronix.de>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>
+References: <20240626143302.810632-1-quic_devipriy@quicinc.com>
+ <20240626143302.810632-5-quic_devipriy@quicinc.com>
+ <171941612020.3280624.794530163562164163.robh@kernel.org>
+Content-Language: en-US
+From: Devi Priya <quic_devipriy@quicinc.com>
+In-Reply-To: <171941612020.3280624.794530163562164163.robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 6shE0fNeo2vFEYGKXPuqETHTSuM8sMwR
+X-Proofpoint-GUID: 6shE0fNeo2vFEYGKXPuqETHTSuM8sMwR
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-02_08,2024-07-02_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
+ spamscore=0 suspectscore=0 mlxlogscore=999 mlxscore=0 priorityscore=1501
+ malwarescore=0 adultscore=0 bulkscore=0 phishscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2406140001
+ definitions=main-2407020090
 
-> Subject: [PATCH v2] clk: imx8qxp: Defer instead of failing probe
->=20
-> When of_clk_parent_fill is ran without all the parent clocks having
-> been probed then the probe function will return -EINVAL, making it so
-> that the probe isn't attempted again. As fw_devlink is on by default
-> this does not usually happen, but if fw_devlink is disabled then it is
-> very possible that the parent clock will be probed after the lpcg first
-> attempt.
->=20
-> Signed-off-by: Diogo Silva <diogo.pais@ttcontrol.com>
 
-Reviewed-by: Peng Fan <peng.fan@nxp.com>
 
+On 6/26/2024 9:05 PM, Rob Herring (Arm) wrote:
+> 
+> On Wed, 26 Jun 2024 20:02:59 +0530, Devi Priya wrote:
+>> Add NSSCC clock and reset definitions for ipq9574.
+>>
+>> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
+>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>> ---
+>>   Changes in V5:
+>> 	- Dropped interconnects and added interconnect-cells to NSS
+>> 	  clock provider so that it can be  used as icc provider.
+>>
+>>   .../bindings/clock/qcom,ipq9574-nsscc.yaml    |  74 +++++++++
+>>   .../dt-bindings/clock/qcom,ipq9574-nsscc.h    | 152 ++++++++++++++++++
+>>   .../dt-bindings/reset/qcom,ipq9574-nsscc.h    | 134 +++++++++++++++
+>>   3 files changed, 360 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml
+>>   create mode 100644 include/dt-bindings/clock/qcom,ipq9574-nsscc.h
+>>   create mode 100644 include/dt-bindings/reset/qcom,ipq9574-nsscc.h
+>>
+> 
+> My bot found errors running 'make dt_binding_check' on your patch:
+> 
+> yamllint warnings/errors:
+> 
+> dtschema/dtc warnings/errors:
+> Error: Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.example.dts:26.26-27 syntax error
+> FATAL ERROR: Unable to parse input tree
+> make[2]: *** [scripts/Makefile.lib:427: Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.example.dtb] Error 1
+> make[2]: *** Waiting for unfinished jobs....
+> make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1430: dt_binding_check] Error 2
+> make: *** [Makefile:240: __sub-make] Error 2
+> 
+> doc reference errors (make refcheckdocs):
+> 
+> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240626143302.810632-5-quic_devipriy@quicinc.com
+> 
+> The base for the series is generally the latest rc1. A different dependency
+> should be noted in *this* patch.
+> 
+> If you already ran 'make dt_binding_check' and didn't see the above
+> error(s), then make sure 'yamllint' is installed and dt-schema is up to
+> date:
+> 
+> pip3 install dtschema --upgrade
+> 
+> Please check and re-submit after running the above command yourself. Note
+> that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+> your schema. However, it must be unset to test all examples with your schema.
+> Hi Rob,
+
+We tried running dt_binding_check on linux-next and we do not face any
+sort of errors.
+
+However in case of v6.10-rc1, patch[1] failed to apply as the dependent
+patch[2] is not available on rc1.
+
+[1] 
+https://patchwork.kernel.org/project/linux-arm-msm/patch/20240626143302.810632-3-quic_devipriy@quicinc.com/
+
+[2] 
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?h=next-20240531&id=475beea0b9f631656b5cc39429a39696876af613
+
+Patch [2] does not hold any functional dependency on this series but has 
+a patch rebase dependency.
+
+The Bot has went ahead and tried running the dt_binding_check on patch 
+https://patchwork.kernel.org/project/linux-arm-msm/patch/20240626143302.810632-5-quic_devipriy@quicinc.com/
+which is dependent on patch [1] and hence the issue was reported.
+
+Is this the expected behaviour?
+
+Thanks & Regards,
+Devi Priya
+> 
