@@ -1,42 +1,72 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1A0914293;
-	Tue,  2 Jul 2024 03:19:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DC77347C2
+	for <linux-clk@vger.kernel.org>; Tue,  2 Jul 2024 06:31:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1719890350; cv=none; b=AIiueMQPvdkK0LcGs4rAgK+jzhLm3yv2vgzCirEokQSF4dByl+jAwh9b/p0xpwXgCCvzhUXR1jZnw6mHVlnU4IFABBmvQLgnh+Pj2aUmFUlvwdNRTPfZvaZ6ew77EegY8wFppWV9t8HL8Xd7rWQiS/jLquJX2X2ntxBRL5hzznU=
+	t=1719901888; cv=none; b=P6BN8tIgWxnTGjQ3podewZoGOMgL0egMKBVI53DEda1AXIBgXZx+YwsstijXO5r4NIMB4mmOwMODeiQRNIzQBSu+3uBzGcRVArADvYw9TWM+pvFd9Fc3cwiQTfGqIkdo9PFHynyCnvy1GBbXQ3Q0nAUwUiYg0exx9V2CQkcs98Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1719890350; c=relaxed/simple;
-	bh=WpodWV6+pvEFIAIUsTJbwIsKB7qDeFJY3RdXcq4REQI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cvQ4YTXpsdu3qLNv7m0Htp40xf7VMzxlXkzCNGuUJ+7MxmhIWFTuY1euq3VMOLA134U5GVdSMZ8AH2XevZqKN5oWHYwjYQK1lummQ5b9YO8fGDQusbIgEg75oId0Xnf4flYlUpd94cPevYEaBQVd7bmY6d52rxf/TpZRdJkvDPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jVk2veC5; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1719901888; c=relaxed/simple;
+	bh=bUusz5MFGQbk320lmZ7nHwxfWZl+U6GCDeO9USqryDo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bsGLPvgtmvRIQk+C30SH6Qf7l5u+jDxOfXIoDjJrlo5nDX4RBWT9UMqGdJLHxl6fNXV3Rz1yBkXPrU/1JfAKmVVgDP1R3OzujcEsY3DyQsehf7zNZbXF6rzi6embV3CmXX+GKFd0R9Wsf9lmVtRX8Klw2JSj7w6WLU8ZpoQ2Izk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xuwpcWJp; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jVk2veC5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92FADC116B1;
-	Tue,  2 Jul 2024 03:19:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1719890350;
-	bh=WpodWV6+pvEFIAIUsTJbwIsKB7qDeFJY3RdXcq4REQI=;
-	h=From:To:Cc:Subject:Date:From;
-	b=jVk2veC5B+qbX+hPzPJ/m0EU0nUwDQy5htn0QMGdmD/TLDT8mHI7KppYKydKNfIB1
-	 V99zXSRKW43QcJT9H1awUnzht2okB1blWZd+2ChMutvfzlAe52Urdu5+in1JMKHj04
-	 uTSB7EJFJIhk4IDvFm6Dl1Oi1qpm7o3YJJPjYF4bfOUwYiInJyH5T3pPtu2pp9TXEe
-	 b2/uder4x/XfxczecDaS3b99NDPzjP0Pm2raUZxpEvquKezE7ElDVUtItNvl/Hpf4N
-	 +Xa2SWSDjeoxPPMEFid2FKtqd5re+KF7/zIqJgqp/He3xcL+goNw+VMNeqDAB4gw5+
-	 TaOnzPHyShGBg==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org
-Cc: linux-arm-msm@vger.kernel.org,
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xuwpcWJp"
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-365663f51adso2303996f8f.1
+        for <linux-clk@vger.kernel.org>; Mon, 01 Jul 2024 23:31:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1719901885; x=1720506685; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DPU0iTtV1+7oVrxQo2zcnXjCL251x61XTIALxv2H0OM=;
+        b=xuwpcWJpfu9hX+kviR7IeaDp+qgQfcKixUZFep0aTL4442AMPwSO5GJEkSxplFEQck
+         jbSi8wtV/qJsl0xb3Lajws/jJnf6b+f0nJ6Z43lrquw+ChRYGGPTaSXqOibEwSDaQkZ6
+         klOQWqp9sxMbXS5AqwH3r0SuycCl1GzcUu+ffgsNfE2wkCdFawsGZ7k+kcOKFXSjQypp
+         z9j4KwC+tnH4YdD/YhdcyHbb7vJ6tpXrazhr1KguLWka8GiQWq/maVDswIZiQefFXAqE
+         fYT7demAZ3lG4PB3KideQeYX4iecCQE4oaK5J4MpwsKnpS0E3JnWRsETtu5AO+2uNK13
+         ZQ5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1719901885; x=1720506685;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DPU0iTtV1+7oVrxQo2zcnXjCL251x61XTIALxv2H0OM=;
+        b=DEnx99vLksr5/tlzKnouSzenETxo2Otob0/eQkiAuCWwv5XIvDwMZAUzyMS1gDYPyd
+         IY5EnNEnvY+s11am4Lg5XNs6mVH4l2cFgqTkklDGo9PMhOu+z0x+p6kssE5hB3cxV9Y8
+         HRp4aYiW2Lvv2fudjocT2GiThSm79mj8PnFIKm9KdSBYkJPs9ZJfNwBiPNOnVdW4Xhjj
+         Ks6dI1xoJBOcUZR2hVWQV/XeDxCChsbNGeo9WvmjwSuF2CphzO1oVEtO7SRWgWLr3HEi
+         WeejyPqMRBaGF06LTxFTs79RXEtGMFH3U5A1RrnpfkHACHmw2uSgf/UprG8Q/Ka+Cws7
+         0Ukg==
+X-Forwarded-Encrypted: i=1; AJvYcCXI56nG2AGO7rZwkfunEB9ePWruwr6VWODoYwkSmGhYBQe3fUieL0z0HMJ7dZKVdBkyxJ/I8K6DRFI+PsSrvhEJpeUWJ8Lby9XH
+X-Gm-Message-State: AOJu0YzoHlggYZX1nEmchNl2s1fNnBEZ1dl5cDO8vj339wRM82ILbzAQ
+	5Kq4N1g+hZKFja7K4rKeMAMvB69odl2vwy1GhI+30essb3aHhjv3pl6ctg74+mI=
+X-Google-Smtp-Source: AGHT+IH7TeWOJbXnfMxDaKJe3iYWxiALr9fPl4REF5wkT0sXVKtGKpAgu6H+zyO3BCdKZKl9oco8NQ==
+X-Received: by 2002:adf:f30b:0:b0:362:b906:99c4 with SMTP id ffacd0b85a97d-3677572829amr4407346f8f.58.1719901884817;
+        Mon, 01 Jul 2024 23:31:24 -0700 (PDT)
+Received: from krzk-bin.. ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3675a0d8daasm12107097f8f.30.2024.07.01.23.31.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 01 Jul 2024 23:31:24 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	linux-clk@vger.kernel.org,
+	Sylwester Nawrocki <snawrocki@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Peter Griffin <peter.griffin@linaro.org>,
 	linux-arm-kernel@lists.infradead.org,
-	Gabor Juhos <j4g8y7@gmail.com>,
-	Luca Weiss <luca.weiss@fairphone.com>,
-	Md Sadre Alam <quic_mdalam@quicinc.com>
-Subject: [GIT PULL] Qualcomm clock fixes for v6.10
-Date: Mon,  1 Jul 2024 22:19:08 -0500
-Message-ID: <20240702031909.341332-1-andersson@kernel.org>
-X-Mailer: git-send-email 2.45.2
+	linux-samsung-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [GIT PULL] clk: samsung: drivers for v6.11
+Date: Tue,  2 Jul 2024 08:31:19 +0200
+Message-ID: <20240702063120.5821-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -45,44 +75,44 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-
 The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfabd0:
 
   Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
 
 are available in the Git repository at:
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git tags/qcom-clk-fixes-for-6.10
+  https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git tags/samsung-clk-6.11
 
-for you to fetch changes up to 72ceafb587a56e26c905472418c7dc2033c294d3:
+for you to fetch changes up to e61f400d6cf3d598ac3ff88a47b34823f9e1f2d5:
 
-  clk: qcom: gcc-ipq9574: Add BRANCH_HALT_VOTED flag (2024-05-28 16:32:47 -0500)
-
-----------------------------------------------------------------
-Qualcomm clock fixes for v6.10
-
-Correct the Stromer Plus PLL set_rate to explicitly set ALPHA_EN bit and
-remove unnecessary upper parts of CONFIG_CTL values.
-
-Mark the recently added IPQ9574 GCC crypto clocks BRANCH_HALT_VOTED, to
-address stuck clock warnings.
-
-Lastly fix the GPLL6 and GPLL7 parents on SM6350 to avoid issues with
-these reportedly running at ~25GHz.
+  clk: samsung: gs101: mark gout_hsi2_ufs_embd_i_clk_unipro as critical (2024-07-01 10:15:30 +0200)
 
 ----------------------------------------------------------------
-Gabor Juhos (2):
-      clk: qcom: clk-alpha-pll: set ALPHA_EN bit for Stromer Plus PLLs
-      clk: qcom: apss-ipq-pll: remove 'config_ctl_hi_val' from Stromer pll configs
+Samsung SoC clock drivers changes for 6.11
 
-Luca Weiss (1):
-      clk: qcom: gcc-sm6350: Fix gpll6* & gpll7 parents
+1. exynos-clkout: Remove usage of of_device_id table as .of_match_table,
+   because the driver is instantiated as MFD cell, not as standalone
+   platform driver.  Populated .of_match_table confused people few times
+   to convert the code to device_get_match_data(), which broke the
+   driver.
 
-Md Sadre Alam (1):
-      clk: qcom: gcc-ipq9574: Add BRANCH_HALT_VOTED flag
+2. Mark one of UFS clocks as critical, because having it off stops the
+   system from shutdown.
 
- drivers/clk/qcom/apss-ipq-pll.c  |  2 --
- drivers/clk/qcom/clk-alpha-pll.c |  3 +++
- drivers/clk/qcom/gcc-ipq9574.c   | 10 ++++++----
- drivers/clk/qcom/gcc-sm6350.c    | 10 +++++-----
- 4 files changed, 14 insertions(+), 11 deletions(-)
+3. Cleanup: Use kmemdup_array() when applicable.
+
+----------------------------------------------------------------
+Andy Shevchenko (1):
+      clk: samsung: Switch to use kmemdup_array()
+
+Marek Szyprowski (1):
+      clk: samsung: exynos-clkout: Remove misleading of_match_table/MODULE_DEVICE_TABLE
+
+Peter Griffin (1):
+      clk: samsung: gs101: mark gout_hsi2_ufs_embd_i_clk_unipro as critical
+
+ drivers/clk/samsung/clk-cpu.c           | 4 ++--
+ drivers/clk/samsung/clk-exynos-clkout.c | 7 ++++---
+ drivers/clk/samsung/clk-gs101.c         | 2 +-
+ drivers/clk/samsung/clk-pll.c           | 8 ++++----
+ 4 files changed, 11 insertions(+), 10 deletions(-)
