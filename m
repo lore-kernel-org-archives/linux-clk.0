@@ -1,88 +1,136 @@
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F20616DEAC
-	for <linux-clk@vger.kernel.org>; Wed,  3 Jul 2024 12:50:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2482B13DDA6;
+	Wed,  3 Jul 2024 13:09:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720011018; cv=none; b=qqwpFOOaIBKTxe1CA0hEyFyP5hQW94ryZz1RcycpDGKLtvRzdeB/D9HgznlUwsyVrJkcPI8gJZluH0HuA1TKZZ/CNIaoNLYS8HZhfjV1ryAszn7GLL5oIhcC0yw4R1+JO4TXWPLmUo+ly4fhOZUZVIhVfT9GHjBaRUBhfWVI/rA=
+	t=1720012168; cv=none; b=nv7MEfG3FNCOvPbqzTVUwEgyghlZVtsMysLpL3piHkRemeXN5sJ1tCOX4hnnhvFxqhe0k83Dodi+BS1h44qpmNT2xrdkArfhaR6Ix7573N4sPpToFh4foNitjEJhThlngUsqXYS65ncUntsCzSFOUqEfRuO52fvw9WnEqSP582c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720011018; c=relaxed/simple;
-	bh=Ay2o4WtDijauKlhrR6+yTpXR47/mNk6cJuyin80HfuI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bCtUkhbBhQnPuUMTlhUnHkc42ay4f2O4Eq+bgCz33Upaz+caX1PwpKVdC6QhBPnOO8J1HdpqRKqqqps2Pu1vjH3I85Epo5AJ/yc7yt8vj42ak3hv8fV1wxqwmm8jWpKdrFybS0LHGkPFd5ElzCFICNnF6+imNpokBE8rq9A8mDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FtTaelz4; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1720012168; c=relaxed/simple;
+	bh=W8KnSELxoOeLFO4Bkg8ypBzvhOg9ofBU1heW/xaRe4k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=KUhXTWIBUcGJyrpGl9mRkHUag8woUY3otXdtjRNvvabYEdY73vcDJFBl9fA5XE6aFhbD2PrzCDHV6YWjq+3eFALhAP5PAzno3U2KyHs+nA2KruyiT3S8xqQIqoXyOGO7HSJLYrEnTXLOlP0GiTNkrw03jVXoNrDDzfwqmEgEo7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=fail smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Rj5CV6gj; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FtTaelz4"
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e036eabc97dso4166977276.3
-        for <linux-clk@vger.kernel.org>; Wed, 03 Jul 2024 05:50:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720011015; x=1720615815; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ay2o4WtDijauKlhrR6+yTpXR47/mNk6cJuyin80HfuI=;
-        b=FtTaelz4YRB+f5hz7MIj/9z4epvBEFucKwjJTikZ6npevnUBcMv1E0CxmUTxUoZTO/
-         ansuLhPpS5zrNSFcwlEImOFCUQ2ubEViDgS/xHJeNlYyFYx3izv8/0J76C/UuIayQYFy
-         ebJ5Ir5D8+dmAAnFG6LPauiVMFppsfrV5eoKaYfvk60XFGnMIYSU4gf7q1dSzCwZwxAA
-         wCFuZcQb/bi7AKBJvvbkGfapcxUUfiIAJTI9clWvcJ+n38b+ktktOnSugKSYIpWbUSAb
-         XYOUMNqsig5gN53jyJ6Q/+usQjmpBdPehsHVnKNRCbG8JBFH/9yoY+BPo9dIUTGLOP9+
-         yh+g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720011015; x=1720615815;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ay2o4WtDijauKlhrR6+yTpXR47/mNk6cJuyin80HfuI=;
-        b=lGNwPz3jYpbH77UM9zhSoElDsd8yHL6eEgsnjNElXTJJJpEns802Ot6HaW+5uFE6cw
-         CyJTLgCcCVKaS77cHfFCGuTAul6G5NxNMLGcMnRZHKj5IbNqxkcI22UEyZZ+J5bdvd/G
-         Oveckx6P9jplPABC/Tmb8LqJXlNLs/+qeSm3qqbsLxGeDcgL6JPgy9R4JOdgXGy7zxWS
-         Troj9+d2rumS7Q+5qu+bqBGQtcmc2IBz6ulgemUlhEDn9Nb7J4fTOfZYDKFO36O6yz3j
-         8MXzp5i50ZIi8aSE9MRoquBbAGfewFIOvZk8Gx0kLAEcch+6ka8z54SQ37KVL8+wDpnv
-         Z3gg==
-X-Forwarded-Encrypted: i=1; AJvYcCUjtrrTOy8bORFOtBwQAZaLeXPGHY+hPDaW3nk9O/HZIPCs/aGOW+T1Xlnhd5PEJBnOJHOhmMhuKCnwQ8R9PxmZfEPS9j3RXVo2
-X-Gm-Message-State: AOJu0YywtyDcyk7EPFR/nGHcUUh3c5+4oE50Fb9sWtICaRfONBk+EtqN
-	OKXh6szztWJdBvs0QAKGfOTrSWE6iFijBG3bVj1Ym9GVIi6E64RrpgeILYm5dgtcsN6CWex6Lp9
-	QJxtgoD+jh5DmKV3YlSJP1c8gTSnIc2n3BXrJ1w==
-X-Google-Smtp-Source: AGHT+IFV7ffdIp7JTsaJwTFxWYFq9NuhbSHtLDocDtRDoyzt9ojWdD5kwz70sA2j6Gk3nNxPEzRj0IyN26XVuILWwJY=
-X-Received: by 2002:a5b:f09:0:b0:e02:c70d:d292 with SMTP id
- 3f1490d57ef6-e036eb6e1b9mr12602914276.33.1720011015300; Wed, 03 Jul 2024
- 05:50:15 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Rj5CV6gj"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1720012167; x=1751548167;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=W8KnSELxoOeLFO4Bkg8ypBzvhOg9ofBU1heW/xaRe4k=;
+  b=Rj5CV6gjA7bdouczrb90jR05EmC8s1gMOWvzhsKmCBE2E7JT4vVZzOdS
+   uBUAswn6AJt3J0nSb+5FoxsxGyLZ8Qjxbfu2zmiNjjSxvu3WcD7WYWqAw
+   oaL948Izy4XK6SU6PNJj+gGWNskvdmGM16iSYixj+uE9bizQTgIeC96WQ
+   jjhud9EqkR3dkpschvbXGcx6IIodTZym3NgjEus87t6wVzF7FWhj8WJbu
+   N9q0TBlMOh7Imj2TJnnXptonwil+6DUI/YFI1Gcz2Bxy0O0NlYYzOOR1K
+   jJPxapoEb0zIRrd1OwkSQ3tjgKtWYGanpCYw+DuuPYiytBf/vuZz1EKfX
+   Q==;
+X-CSE-ConnectionGUID: EqW5S7eWRE2aTexdHZiS+A==
+X-CSE-MsgGUID: NasQoXC7S5Kaxo5UL3Vsag==
+X-IronPort-AV: E=Sophos;i="6.09,182,1716274800"; 
+   d="scan'208";a="28777735"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 03 Jul 2024 06:09:24 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 3 Jul 2024 06:09:03 -0700
+Received: from [10.180.116.202] (10.10.85.11) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Wed, 3 Jul 2024 06:08:46 -0700
+Message-ID: <a8cc31a9-d58f-4a4e-98fb-a7ba47bc744e@microchip.com>
+Date: Wed, 3 Jul 2024 15:09:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240630090104.565779-1-tmaimon77@gmail.com>
-In-Reply-To: <20240630090104.565779-1-tmaimon77@gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 3 Jul 2024 14:50:03 +0200
-Message-ID: <CACRpkdajqsFdqdJHx8EshL1Caew_7RZdun2poY2HceptozNg7g@mail.gmail.com>
-Subject: Re: [PATCH v2] dt-bindings: pinctrl: npcm8xx: add missing pin group
- and mux function
-To: Tomer Maimon <tmaimon77@gmail.com>
-Cc: robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
-	tali.perry1@gmail.com, joel@jms.id.au, venture@google.com, yuenn@google.com, 
-	benjaminfair@google.com, openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 11/20] irqchip/atmel-aic: convert to
+ of_property_for_each_u32_new()
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>, Miguel Ojeda
+	<ojeda@kernel.org>, Rob Herring <robh@kernel.org>, Saravana Kannan
+	<saravanak@google.com>, Nathan Chancellor <nathan@kernel.org>, Michael
+ Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Tony
+ Lindgren <tony@atomide.com>, Bjorn Andersson <andersson@kernel.org>,
+	=?UTF-8?Q?Emilio_L=C3=B3pez?= <emilio@elopez.com.ar>, Chen-Yu Tsai
+	<wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
+	<samuel@sholland.org>, Krzysztof Kozlowski <krzk@kernel.org>, Daniel Lezcano
+	<daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Florian
+ Fainelli <florian.fainelli@broadcom.com>, Broadcom internal kernel review
+ list <bcm-kernel-feedback-list@broadcom.com>, Linus Walleij
+	<linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Jonathan
+ Cameron <jic23@kernel.org>, Lee Jones <lee@kernel.org>, Shawn Guo
+	<shawnguo@kernel.org>, Pengutronix Kernel Team <kernel@pengutronix.de>,
+	=?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, Greg Kroah-Hartman
+	<gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, Richard
+ Leitner <richard.leitner@linux.dev>, Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy
+	<christophe.leroy@csgroup.eu>, "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
+	Damien Le Moal <dlemoal@kernel.org>
+CC: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Thomas Petazzoni
+	<thomas.petazzoni@bootlin.com>, <linux-kernel@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <llvm@lists.linux.dev>,
+	<linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
+	<linux-arm-msm@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-sunxi@lists.linux.dev>, <linux-samsung-soc@vger.kernel.org>,
+	<linux-gpio@vger.kernel.org>, <linux-iio@vger.kernel.org>,
+	<linux-pwm@vger.kernel.org>, <linux-serial@vger.kernel.org>,
+	<linux-usb@vger.kernel.org>, <patches@opensource.cirrus.com>,
+	<linux-sound@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
+	<linux-riscv@lists.infradead.org>
+References: <20240703-of_property_for_each_u32-v1-0-42c1fc0b82aa@bootlin.com>
+ <20240703-of_property_for_each_u32-v1-11-42c1fc0b82aa@bootlin.com>
+Content-Language: en-US, fr-FR
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
+Organization: microchip
+In-Reply-To: <20240703-of_property_for_each_u32-v1-11-42c1fc0b82aa@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, Jun 30, 2024 at 11:01=E2=80=AFAM Tomer Maimon <tmaimon77@gmail.com>=
- wrote:
+On 03/07/2024 at 12:36, Luca Ceresoli wrote:
+> Simplify code using of_property_for_each_u32_new() as the two additional
+> parameters in of_property_for_each_u32() are not used here.
+> 
+> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 
-> Add the following missing pin group and mux function:
-> smb6b, smb6c, smb6d, smb7b, smb7c, smb7d, bu4, bu4b, bu5, bu5b, bu6,
-> gpo187.
->
-> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+
 > ---
-> V1 -> V2: clean tabs.
+>   drivers/irqchip/irq-atmel-aic-common.c | 4 +---
+>   1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/drivers/irqchip/irq-atmel-aic-common.c b/drivers/irqchip/irq-atmel-aic-common.c
+> index 072bd227b6c6..543ea249df53 100644
+> --- a/drivers/irqchip/irq-atmel-aic-common.c
+> +++ b/drivers/irqchip/irq-atmel-aic-common.c
+> @@ -111,8 +111,6 @@ static void __init aic_common_ext_irq_of_init(struct irq_domain *domain)
+>          struct device_node *node = irq_domain_get_of_node(domain);
+>          struct irq_chip_generic *gc;
+>          struct aic_chip_data *aic;
+> -       struct property *prop;
+> -       const __be32 *p;
+>          u32 hwirq;
+> 
+>          gc = irq_get_domain_generic_chip(domain, 0);
+> @@ -120,7 +118,7 @@ static void __init aic_common_ext_irq_of_init(struct irq_domain *domain)
+>          aic = gc->private;
+>          aic->ext_irqs |= 1;
+> 
+> -       of_property_for_each_u32(node, "atmel,external-irqs", prop, p, hwirq) {
+> +       of_property_for_each_u32_new(node, "atmel,external-irqs", hwirq) {
+>                  gc = irq_get_domain_generic_chip(domain, hwirq);
+>                  if (!gc) {
+>                          pr_warn("AIC: external irq %d >= %d skip it\n",
+> 
+> --
+> 2.34.1
+> 
 
-Patch applied!
-
-Yours,
-Linus Walleij
