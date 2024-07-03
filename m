@@ -1,191 +1,170 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E256A17B518;
-	Wed,  3 Jul 2024 14:37:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85B7F181312
+	for <linux-clk@vger.kernel.org>; Wed,  3 Jul 2024 15:09:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720017430; cv=none; b=YRqhev9yZZKnDFyd8I6CiboAPQwJftTqXpCHRejV2bU+nMY72H5J+BB/U00zH5oPkXvZBYeeTx1i72bzjnXZLhIK5/5i6bWoPQAiXyBt/PH1RWjKYkO1CgkkKRtr0HxD4JBZmUx6kFBi1UZPsXL7f6TCrJsEfB77G8+HsprWkd0=
+	t=1720019393; cv=none; b=Nu5yImcqweQAsaI+wk0c0yumF80wm0M7iHuhkcFX+fAYxegCgAr1DuBQhcS+hZolDyb9H6nGEnNfxAEthsJa1wqvp+4mW51UMJWxIa+VZs4BSbgNu0QukOiZJhcam0ARKPHKb7Z5/dsxZEa1KB2H4+xh8OWvGWX6uen9GsfOP5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720017430; c=relaxed/simple;
-	bh=2HKsoTPO70jWY8GNUtboK7NINwmpeSOEj8p0y/gUHZE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=GHCXOUw5L33qUECrL2gb6pVB4q+qnJydKDUYQqv8QwuwRwJUqZ4F4+3QWlNLyOjONna24P199gYOcN4vyvE1T9T7AOQ5YZlvj0HYt/XZOIKTSzrSYTvuees0n3d5ZrBwUn44eG3UPHO7JBmhIwj9p0XMisrdc46oMD9AtF+As9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Dov1aW0h; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1720019393; c=relaxed/simple;
+	bh=fhpejWcF/vfLe6nwrakqQTsElpgre49BCBgEinb2+BE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BtRczKpIP7scZXaSv1dZ+2QFHeMS3uPlzAnv80eEZWs8dVGGGujjNOzpDOHfqwkzzm8FvrZFoNMF2UiGJ9yNyYxW/vLHmuIZ12c1O2hrreVjeKiJMd+iwJfa+vCnWE9a1B4dKZP1BE2EM7eogv4b7UaiH7endBPVJgT+ka6BYXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dKp/vQ9G; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Dov1aW0h"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 463BHewl028772;
-	Wed, 3 Jul 2024 14:36:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	yrGsbPro8nNIIllkEn91AAHo9TfT4jh0MI6fm3MOhQI=; b=Dov1aW0h4w5PeN4l
-	K8QNMaFITdtbldqYe1TzptznRTb/l6xkkMTzDYTHQb7f+C+EQD87eK7CYbZ1t8jp
-	LrydP3Pg++81pmAFfwcjX72ED2UZ5UBBjvKrQVFdJjzWDBvHiczhmdYZLf8/4DXi
-	1ZMWPolpsS3K1Kbjra7mgip86HUIT2rC1Yd+0Qv8wnRKwzLeowSjtIE3Qx6+aoVl
-	WsiXwgfBitx0Win+cWq9d4Xggwx/1aglPfh9GaygAEf4RLK8fgbMqtER1JvZ1TLw
-	FcKxAQKypblmfQdkNWbqqTbAzM1QyE4A/HV+keDjRU19iyK4BM6eMBwME1ta+GR0
-	YZhM2A==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 404kctka3q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 03 Jul 2024 14:36:42 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 463Eafuo003014
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 3 Jul 2024 14:36:41 GMT
-Received: from [10.50.18.28] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 3 Jul 2024
- 07:36:31 -0700
-Message-ID: <f00442b3-9e49-4f78-b09c-52fb72e8322c@quicinc.com>
-Date: Wed, 3 Jul 2024 20:06:21 +0530
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dKp/vQ9G"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1720019390;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OwJT/oF0rqnt+S31sg05vpTbadEupYIHlD2ocZCHgDI=;
+	b=dKp/vQ9GGSFN+L78ZmGOFvxuM2IzPdiFXdTONgTEnqtpX+SvRhU+6cZSHrn0touN6k9Yys
+	jRBgU8v1+ISylBhyNUYfOZflXybqMvl+KrSVXRvWSomGBeQ0xLMA4V5oqcJbG9LHCFVvfQ
+	btaY0BvBFLVKbt3COIYT/3Rqo6citSA=
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com
+ [209.85.160.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-605-ox6Yl_9INQKHBOkpWhCsaQ-1; Wed, 03 Jul 2024 11:09:46 -0400
+X-MC-Unique: ox6Yl_9INQKHBOkpWhCsaQ-1
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4450544eaadso69205171cf.1
+        for <linux-clk@vger.kernel.org>; Wed, 03 Jul 2024 08:09:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720019382; x=1720624182;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OwJT/oF0rqnt+S31sg05vpTbadEupYIHlD2ocZCHgDI=;
+        b=jN2Wdir1xUICg+6J9juqfj6EXhJd8jG1HZufYHI2VY1sEaJ9zmjSan/ajRvXHP1/nG
+         Pv4NaEPpU0ZkUxlsU2ArinVffardjfabzBSlBMN1SFYU7IVCrv0/SGQ/wcDP26DVd/GS
+         X3tBElgWiQSTll9C2VMEly+0klEXK9+9FkxSHIyVQywzcB9io8KzXDCb4UK2+qNbbFlu
+         VZZrRMm/pOozFJMEmf4i/Kj7B5afeevb2iFFiZLCNd8X0Sznabh8PsoOHeYoWxvaz2IV
+         /AGx+fGxJyx0PBRsj0KIw3Y53kYMfgYLpgm2g2e/geyNT4R/oBvkqewTQDe6tTU52rVd
+         cOlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWR69VvbtGsFdc1kP5xcyZakmB7Zxd3FNKFsxqTIVoVux2DuPhZuDoFWC32iF5vG3yccqqGQ9y1I0SmYqMh5Bh/osOqyXSIETQk
+X-Gm-Message-State: AOJu0YwALsABsa1l8fusEPCy+PasWO9uiKj9v9R0QZuNVS0cQbw4AD7G
+	j9TobIRXLUidfAI35pDLQ/t25fwT/FoDWxQkeYiPbc7qVL4ie1Lj6aqj1Lf/04EwI/gevp9zq0W
+	O8SeH21i2iWrg9WXhmmxjtZLAlifZIgRGWMZ3OXxAr3pqgu79DUXQKcFsBA==
+X-Received: by 2002:ac8:7d84:0:b0:444:b495:e94d with SMTP id d75a77b69052e-44662c99f4bmr119752701cf.3.1720019381959;
+        Wed, 03 Jul 2024 08:09:41 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE8jWmpy5/3+Y1qV1pkAlEofbtK+RF6spB2E3wXQKII8gdILaaxSAxoLFic14g5Q4iTwcc7CA==
+X-Received: by 2002:ac8:7d84:0:b0:444:b495:e94d with SMTP id d75a77b69052e-44662c99f4bmr119751991cf.3.1720019381501;
+        Wed, 03 Jul 2024 08:09:41 -0700 (PDT)
+Received: from x1gen2nano ([2600:1700:1ff0:d0e0::40])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4465c4bf7ecsm43222571cf.80.2024.07.03.08.09.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jul 2024 08:09:41 -0700 (PDT)
+Date: Wed, 3 Jul 2024 10:09:36 -0500
+From: Andrew Halaney <ahalaney@redhat.com>
+To: Tengfei Fan <quic_tengfan@quicinc.com>
+Cc: andersson@kernel.org, konrad.dybcio@linaro.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, djakov@kernel.org, mturquette@baylibre.com, 
+	sboyd@kernel.org, jassisinghbrar@gmail.com, herbert@gondor.apana.org.au, 
+	davem@davemloft.net, manivannan.sadhasivam@linaro.org, will@kernel.org, 
+	joro@8bytes.org, conor@kernel.org, tglx@linutronix.de, amitk@kernel.org, 
+	thara.gopinath@gmail.com, linus.walleij@linaro.org, wim@linux-watchdog.org, 
+	linux@roeck-us.net, rafael@kernel.org, viresh.kumar@linaro.org, vkoul@kernel.org, 
+	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com, 
+	robimarko@gmail.com, quic_gurus@quicinc.com, bartosz.golaszewski@linaro.org, 
+	kishon@kernel.org, quic_wcheng@quicinc.com, alim.akhtar@samsung.com, 
+	avri.altman@wdc.com, bvanassche@acm.org, agross@kernel.org, 
+	gregkh@linuxfoundation.org, quic_tdas@quicinc.com, robin.murphy@arm.com, 
+	daniel.lezcano@linaro.org, rui.zhang@intel.com, lukasz.luba@arm.com, 
+	quic_rjendra@quicinc.com, ulf.hansson@linaro.org, quic_sibis@quicinc.com, 
+	otto.pflueger@abscue.de, quic_rohiagar@quicinc.com, luca@z3ntu.xyz, 
+	neil.armstrong@linaro.org, abel.vesa@linaro.org, bhupesh.sharma@linaro.org, 
+	alexandre.torgue@foss.st.com, peppe.cavallaro@st.com, joabreu@synopsys.com, 
+	netdev@vger.kernel.org, lpieralisi@kernel.org, kw@linux.com, bhelgaas@google.com, 
+	krzysztof.kozlowski@linaro.org, u.kleine-koenig@pengutronix.de, dmitry.baryshkov@linaro.org, 
+	quic_cang@quicinc.com, danila@jiaxyga.com, quic_nitirawa@quicinc.com, 
+	mantas@8devices.com, athierry@redhat.com, quic_kbajaj@quicinc.com, 
+	quic_bjorande@quicinc.com, quic_msarkar@quicinc.com, quic_devipriy@quicinc.com, 
+	quic_tsoni@quicinc.com, quic_rgottimu@quicinc.com, quic_shashim@quicinc.com, 
+	quic_kaushalk@quicinc.com, quic_tingweiz@quicinc.com, quic_aiquny@quicinc.com, 
+	srinivas.kandagatla@linaro.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-phy@lists.infradead.org, linux-crypto@vger.kernel.org, linux-scsi@vger.kernel.org, 
+	linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev, 
+	linux-riscv@lists.infradead.org, linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org, 
+	linux-pci@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, kernel@quicinc.com
+Subject: Re: [PATCH 29/47] dt-bindings: net: qcom,ethqos: add description for
+ qcs9100
+Message-ID: <u5ekupjqvgoehkl76pv7ljyqqzbnnyh6ci2dilfxfkcdvdy3dp@ehdujhkul7ow>
+References: <20240703025850.2172008-1-quic_tengfan@quicinc.com>
+ <20240703025850.2172008-30-quic_tengfan@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V5 4/7] dt-bindings: clock: Add ipq9574 NSSCC clock and
- reset definitions
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        "Rob Herring (Arm)"
-	<robh@kernel.org>
-CC: <catalin.marinas@arm.com>, <linux-arm-kernel@lists.infradead.org>,
-        <krzk+dt@kernel.org>, <geert+renesas@glider.be>,
-        <neil.armstrong@linaro.org>, <nfraprado@collabora.com>,
-        <mturquette@baylibre.com>, <linux-kernel@vger.kernel.org>,
-        <dmitry.baryshkov@linaro.org>, <netdev@vger.kernel.org>,
-        <konrad.dybcio@linaro.org>, <m.szyprowski@samsung.com>,
-        <arnd@arndb.de>, <richardcochran@gmail.com>, <will@kernel.org>,
-        <sboyd@kernel.org>, <andersson@kernel.org>, <p.zabel@pengutronix.de>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>
-References: <20240626143302.810632-1-quic_devipriy@quicinc.com>
- <20240626143302.810632-5-quic_devipriy@quicinc.com>
- <171941612020.3280624.794530163562164163.robh@kernel.org>
- <5ccbfde6-f26a-4796-abac-e8d6a18c74e7@quicinc.com>
- <f0f08f0d-3bc6-4649-ad31-b46f0748c6ef@kernel.org>
-Content-Language: en-US
-From: Devi Priya <quic_devipriy@quicinc.com>
-In-Reply-To: <f0f08f0d-3bc6-4649-ad31-b46f0748c6ef@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: AlDgz2VtBQjYPE6TC5dNIOmTCA-TKeM4
-X-Proofpoint-ORIG-GUID: AlDgz2VtBQjYPE6TC5dNIOmTCA-TKeM4
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-03_10,2024-07-03_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
- bulkscore=0 mlxlogscore=999 priorityscore=1501 impostorscore=0
- suspectscore=0 mlxscore=0 lowpriorityscore=0 clxscore=1015 malwarescore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407030107
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240703025850.2172008-30-quic_tengfan@quicinc.com>
 
+On Wed, Jul 03, 2024 at 10:58:32AM GMT, Tengfei Fan wrote:
+> Add the compatible for the MAC controller on qcs9100 platforms. This MAC
+> works with a single interrupt so add minItems to the interrupts property.
+> The fourth clock's name is different here so change it. Enable relevant
+> PHY properties. Add the relevant compatibles to the binding document for
+> snps,dwmac as well.
 
+This description doesn't match what was done in this patch, its what
+Bart did when he made changes to add the sa8775 changes. Please consider
+using a blurb indicating that this is the same SoC as sa8775p, just with
+different firmware strategies or something along those lines?
 
-On 7/2/2024 6:44 PM, Krzysztof Kozlowski wrote:
-> On 02/07/2024 14:13, Devi Priya wrote:
->>
->>
->> On 6/26/2024 9:05 PM, Rob Herring (Arm) wrote:
->>>
->>> On Wed, 26 Jun 2024 20:02:59 +0530, Devi Priya wrote:
->>>> Add NSSCC clock and reset definitions for ipq9574.
->>>>
->>>> Signed-off-by: Devi Priya <quic_devipriy@quicinc.com>
->>>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>>> ---
->>>>    Changes in V5:
->>>> 	- Dropped interconnects and added interconnect-cells to NSS
->>>> 	  clock provider so that it can be  used as icc provider.
->>>>
->>>>    .../bindings/clock/qcom,ipq9574-nsscc.yaml    |  74 +++++++++
->>>>    .../dt-bindings/clock/qcom,ipq9574-nsscc.h    | 152 ++++++++++++++++++
->>>>    .../dt-bindings/reset/qcom,ipq9574-nsscc.h    | 134 +++++++++++++++
->>>>    3 files changed, 360 insertions(+)
->>>>    create mode 100644 Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.yaml
->>>>    create mode 100644 include/dt-bindings/clock/qcom,ipq9574-nsscc.h
->>>>    create mode 100644 include/dt-bindings/reset/qcom,ipq9574-nsscc.h
->>>>
->>>
->>> My bot found errors running 'make dt_binding_check' on your patch:
->>>
->>> yamllint warnings/errors:
->>>
->>> dtschema/dtc warnings/errors:
->>> Error: Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.example.dts:26.26-27 syntax error
->>> FATAL ERROR: Unable to parse input tree
->>> make[2]: *** [scripts/Makefile.lib:427: Documentation/devicetree/bindings/clock/qcom,ipq9574-nsscc.example.dtb] Error 1
->>> make[2]: *** Waiting for unfinished jobs....
->>> make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1430: dt_binding_check] Error 2
->>> make: *** [Makefile:240: __sub-make] Error 2
->>>
->>> doc reference errors (make refcheckdocs):
->>>
->>> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240626143302.810632-5-quic_devipriy@quicinc.com
->>>
->>> The base for the series is generally the latest rc1. A different dependency
->>> should be noted in *this* patch.
->>>
->>> If you already ran 'make dt_binding_check' and didn't see the above
->>> error(s), then make sure 'yamllint' is installed and dt-schema is up to
->>> date:
->>>
->>> pip3 install dtschema --upgrade
->>>
->>> Please check and re-submit after running the above command yourself. Note
->>> that DT_SCHEMA_FILES can be set to your schema file to speed up checking
->>> your schema. However, it must be unset to test all examples with your schema.
->>> Hi Rob,
->>
->> We tried running dt_binding_check on linux-next and we do not face any
->> sort of errors.
->>
->> However in case of v6.10-rc1, patch[1] failed to apply as the dependent
->> patch[2] is not available on rc1.
->>
->> [1]
->> https://patchwork.kernel.org/project/linux-arm-msm/patch/20240626143302.810632-3-quic_devipriy@quicinc.com/
->>
->> [2]
->> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/commit/?h=next-20240531&id=475beea0b9f631656b5cc39429a39696876af613
->>
->> Patch [2] does not hold any functional dependency on this series but has
->> a patch rebase dependency.
->>
->> The Bot has went ahead and tried running the dt_binding_check on patch
->> https://patchwork.kernel.org/project/linux-arm-msm/patch/20240626143302.810632-5-quic_devipriy@quicinc.com/
->> which is dependent on patch [1] and hence the issue was reported.
->>
->> Is this the expected behaviour?
 > 
-> If you expect your patch not to be ignored after such feedback, explain
-> briefly missing dependency in changelog. I think Rob told it many times
-> already.
+> Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
+> ---
+>  Documentation/devicetree/bindings/net/qcom,ethqos.yaml | 1 +
+>  Documentation/devicetree/bindings/net/snps,dwmac.yaml  | 3 +++
+>  2 files changed, 4 insertions(+)
 > 
-> Otherwise you will get this message *every time* and maintainers might
-> ignore your patch, due to unresolved reports from automation.
-
-Hi Krzysztof,
-
-We posted our patches based on linux-next and the bot was trying to run
-the dt_binding_checks on rc1 wherein patch [1] failed to apply as
-patch [2] was missing on rc1 but was available on linux-next. The patch
-application failure on rc1 was the reason behind the binding error and 
-there were no dependencies on linux-next.
-
-Thanks & Regards,
-Devi Priya
+> diff --git a/Documentation/devicetree/bindings/net/qcom,ethqos.yaml b/Documentation/devicetree/bindings/net/qcom,ethqos.yaml
+> index 6672327358bc..8ab11e00668c 100644
+> --- a/Documentation/devicetree/bindings/net/qcom,ethqos.yaml
+> +++ b/Documentation/devicetree/bindings/net/qcom,ethqos.yaml
+> @@ -20,6 +20,7 @@ properties:
+>    compatible:
+>      enum:
+>        - qcom,qcs404-ethqos
+> +      - qcom,qcs9100-ethqos
+>        - qcom,sa8775p-ethqos
+>        - qcom,sc8280xp-ethqos
+>        - qcom,sm8150-ethqos
+> diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> index 3bab4e1f3fbf..269c21779396 100644
+> --- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> +++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> @@ -67,6 +67,7 @@ properties:
+>          - loongson,ls2k-dwmac
+>          - loongson,ls7a-dwmac
+>          - qcom,qcs404-ethqos
+> +        - qcom,qcs9100-ethqos
+>          - qcom,sa8775p-ethqos
+>          - qcom,sc8280xp-ethqos
+>          - qcom,sm8150-ethqos
+> @@ -582,6 +583,7 @@ allOf:
+>                - ingenic,x1600-mac
+>                - ingenic,x1830-mac
+>                - ingenic,x2000-mac
+> +              - qcom,qcs9100-ethqos
+>                - qcom,sa8775p-ethqos
+>                - qcom,sc8280xp-ethqos
+>                - snps,dwmac-3.50a
+> @@ -639,6 +641,7 @@ allOf:
+>                - ingenic,x1830-mac
+>                - ingenic,x2000-mac
+>                - qcom,qcs404-ethqos
+> +              - qcom,qcs9100-ethqos
+>                - qcom,sa8775p-ethqos
+>                - qcom,sc8280xp-ethqos
+>                - qcom,sm8150-ethqos
+> -- 
+> 2.25.1
 > 
-> Best regards,
-> Krzysztof
-> 
+
