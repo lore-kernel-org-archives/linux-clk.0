@@ -1,145 +1,129 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D315A1411E3;
-	Wed,  3 Jul 2024 10:05:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19DF31428EA
+	for <linux-clk@vger.kernel.org>; Wed,  3 Jul 2024 10:08:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720001137; cv=none; b=FR/6cdKiE6xaZQObm1jXaiifnE5L3YqigWPI9E595nX/0BPRel1P3uMiyrviTcCN5O48h6UOGHIAZDiho3Pp9j+OBKZHdlEvFrPL3AcQ7327ID3RkKp2YpMqtdDb0w3rcwru0oU4hr7hmwATN2v4pi22uS/fy4fmBfQa5uSdOYM=
+	t=1720001298; cv=none; b=dABRZf/q/klHxi1qgXeJHY63t9KXfj9JvvQZH+720OHGELHJ8PUGvNw5q+Z6hJoCE8K1pdHDUvCf75mQlgauI1/ue0Op2L31A5HXFVluGbZXyGIeCG80Eeti3Du8j//DI9eAoeqviWUycrmJ2hpUMht4Wbz4p08PGLNKBzEiXBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720001137; c=relaxed/simple;
-	bh=btIei9/sNOh68L5VxbSRNJ6/SY9lrijEipZIFbe55Cs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=aiNfFrxYcZx1qyiwqy4MW0B9IRVVKKI5g+YW6CqLlIAe8SDj3HTEBTU4kyKhZT1qaLDRFFRWADq9upt6pdh1t0QVQre68O3/C5osXYqwUxzVP0x+FWtXYO4DMteTFahp03LJ4a59dK6ak4cx0aZj9+bhdrYgPEpFJzTkt5lM1z4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LO3g+rXT; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1720001298; c=relaxed/simple;
+	bh=ypzrZcIwZiiS+8SrhLAXiVNNIok0NmG+vdJlnoa5bEY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TfXb5nfvI+xBG2QhhER1+PJimtKH03S+W3I7CeL0uZKe/7w5oQUA8uc2l/Vgk8dudcnr5CfTy08LtYXaV7e5Pg4uAHv/jFdT8tMoEJWvqdRXZj27Pz1Vk3VZ2iJLmSAytLYQ+wtrBKyPzHvAdW5qzi16e9DCnQTxv3YeKfRh4Ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jJoCd2Ty; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LO3g+rXT"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4632V6vL028807;
-	Wed, 3 Jul 2024 10:04:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	MTYyEqDPQFUg534+DSkldx2EQ4hiUNnVI33QmvBczZk=; b=LO3g+rXTgZGcl6je
-	Rl00DBC52bV/FNAWASeog2Cru0JsaypLW3GIlbDU7M6yXixixBpgsVS2g2s6hP2o
-	gOg3MVIiGXxM6foWGxKOVE1pNpCDabVLLy7ME1un5mROUZvVVAUGSvRzFcJpYuV7
-	pjwKBkQRG3eBpSiiMK1gx+osblIsz7gUs0nknVyMDFSjRtQBFO17oJABopAwn4KR
-	6MqqXHYgtie84G7tLEvErF4Hcb/C+bXioNXyzOE51JB/+SvPv8DkEyF37FC5fBac
-	mxeUAbIeHw5CyFdS7RkAl0DOQkQVXfm5ynLxaZlU05YfyJ41Z0MTSCICSG3KUucn
-	FjDZgQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 404kctjq2w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 03 Jul 2024 10:04:37 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 463A4a3Q012329
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 3 Jul 2024 10:04:36 GMT
-Received: from [10.239.132.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 3 Jul 2024
- 03:04:14 -0700
-Message-ID: <312b699d-1ca4-4a58-877b-af9d91132724@quicinc.com>
-Date: Wed, 3 Jul 2024 18:04:11 +0800
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jJoCd2Ty"
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ec3f875e68so57922191fa.0
+        for <linux-clk@vger.kernel.org>; Wed, 03 Jul 2024 03:08:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720001295; x=1720606095; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=4k83HUkLUmDIGlVbWOWQ6orsM1XoadeMJUgBNXrUMAg=;
+        b=jJoCd2TyYmA+46A2tieUao2dTPBDhYoOJREsCpr7kaidkDboUVRfE7ZyCorFyHuFnk
+         cvncfKMCA57mM/6HBHMI16aUHlKWRod7Nuf9HIPzLBbqkWsgJxbRQIA+c/TcmC/KzyIp
+         DGg5AJ3MKOb+aVstjiNHLfvnzj6ZHD+Ynl354q7W4rYs2S/gDNi6c0przU3BKthcFxSC
+         vvooZR0T9VEp/NxeofAcQw7s2GENN7zIZa5SoVpreCTlsNhJczN9FXfTLwp5f0F0q7Oi
+         kQAsxvarjMHFmoyOtkEIJwHK7HtUr3IVfYYuSAU81iZW+EY/xyY+X4LsOkNT5Mq5c5dt
+         aiKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720001295; x=1720606095;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4k83HUkLUmDIGlVbWOWQ6orsM1XoadeMJUgBNXrUMAg=;
+        b=FraDuC/bCWlgCkzWtMN6TZaOEg4PSCyFkEFjeYgPeHGfSv/LovxSEbQ55/2rFhwlu6
+         HkplbMuHACdNaNE7U9xo5Q3ZMFIx0nFkzrUYOfy7z1x3owjl4V1CrEYQijhf0fyLV685
+         9su9nZoAUBTgntXU8cXGymbhAqL1b8bNGOi9K6m+OpJoi7xo3kR+UtGJ3g6rSTnvqRm8
+         2HDlc2Di6I5gpznpUf3abt1IDhNQPRUPuQUiA9Y/cGmtR0m5IANAuYpM6B5raDvX3a5P
+         D7VX84lRtau7zpmhcTG1OMgmtjPoL9x6BA/mj0WOUsF1wzPpnmyO9YC1DDJ/UcyETrwY
+         pf9w==
+X-Forwarded-Encrypted: i=1; AJvYcCVUa4SI2JdSQmICxGZZkR+5yHRMvrNF6ZqZl2ZU9R2XO6OrGlUE5pw7NEXa+FXRQQUzq1g50VcnxDTYU4vo5JJ40OcbaTQOzYlE
+X-Gm-Message-State: AOJu0Yz7JVE/8K7A/fWsBX0kUVTgmqDxEwxOkqYdgzn4z0lVZqw8T/Jy
+	wNVQz0xH39g8uVhfUc9MhwO9sE5HlwXCk1tufCSwpvRjEzC8CvTtVDp6cXrbOrY=
+X-Google-Smtp-Source: AGHT+IFeGjoeFVuYs4mjQ5B1qszzT/eYdaDEn12VXFnuiHjLpsvLv38GLADABzzvIgEg3uJdpUVMZw==
+X-Received: by 2002:a2e:a813:0:b0:2ee:6b86:b0ab with SMTP id 38308e7fff4ca-2ee6b86b2b9mr66901001fa.20.1720001293291;
+        Wed, 03 Jul 2024 03:08:13 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ee8758e4c2sm748241fa.110.2024.07.03.03.08.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jul 2024 03:08:12 -0700 (PDT)
+Date: Wed, 3 Jul 2024 13:08:11 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Abhishek Sahu <absahu@codeaurora.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, Ajit Pandey <quic_ajipan@quicinc.com>, 
+	Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, 
+	Jagadeesh Kona <quic_jkona@quicinc.com>, stable@vger.kernel.org, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: Re: [PATCH v2 0/6] clk: qcom: sm8150: Add camera clock controller
+ support for SM8150
+Message-ID: <qf6vv2eyvhl74qylx3da5c6wa5vzz726mnwi4dflehlpfubqwd@e522wwslmgyn>
+References: <20240702-camcc-support-sm8150-v2-0-4baf54ec7333@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 41/47] clk: qcom: rpmh: Add support for QCS9100 rpmh
- clocks
-To: Taniya Das <quic_tdas@quicinc.com>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <djakov@kernel.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <jassisinghbrar@gmail.com>,
-        <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
-        <manivannan.sadhasivam@linaro.org>, <will@kernel.org>,
-        <joro@8bytes.org>, <conor@kernel.org>, <tglx@linutronix.de>,
-        <amitk@kernel.org>, <thara.gopinath@gmail.com>,
-        <linus.walleij@linaro.org>, <wim@linux-watchdog.org>,
-        <linux@roeck-us.net>, <rafael@kernel.org>, <viresh.kumar@linaro.org>,
-        <vkoul@kernel.org>, <edumazet@google.com>, <kuba@kernel.org>,
-        <pabeni@redhat.com>, <mcoquelin.stm32@gmail.com>
-CC: <robimarko@gmail.com>, <bartosz.golaszewski@linaro.org>,
-        <kishon@kernel.org>, <quic_wcheng@quicinc.com>,
-        <alim.akhtar@samsung.com>, <avri.altman@wdc.com>, <bvanassche@acm.org>,
-        <agross@kernel.org>, <gregkh@linuxfoundation.org>,
-        <robin.murphy@arm.com>, <daniel.lezcano@linaro.org>,
-        <rui.zhang@intel.com>, <lukasz.luba@arm.com>,
-        <quic_rjendra@quicinc.com>, <ulf.hansson@linaro.org>,
-        <quic_sibis@quicinc.com>, <otto.pflueger@abscue.de>, <luca@z3ntu.xyz>,
-        <neil.armstrong@linaro.org>, <abel.vesa@linaro.org>,
-        <bhupesh.sharma@linaro.org>, <alexandre.torgue@foss.st.com>,
-        <peppe.cavallaro@st.com>, <joabreu@synopsys.com>,
-        <netdev@vger.kernel.org>, <lpieralisi@kernel.org>, <kw@linux.com>,
-        <bhelgaas@google.com>, <ahalaney@redhat.com>,
-        <krzysztof.kozlowski@linaro.org>, <u.kleine-koenig@pengutronix.de>,
-        <dmitry.baryshkov@linaro.org>, <quic_cang@quicinc.com>,
-        <danila@jiaxyga.com>, <quic_nitirawa@quicinc.com>,
-        <mantas@8devices.com>, <athierry@redhat.com>,
-        <quic_kbajaj@quicinc.com>, <quic_bjorande@quicinc.com>,
-        <quic_msarkar@quicinc.com>, <quic_devipriy@quicinc.com>,
-        <quic_tsoni@quicinc.com>, <quic_rgottimu@quicinc.com>,
-        <quic_shashim@quicinc.com>, <quic_kaushalk@quicinc.com>,
-        <quic_tingweiz@quicinc.com>, <quic_aiquny@quicinc.com>,
-        <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>, <linux-crypto@vger.kernel.org>,
-        <linux-scsi@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
-        <linux-gpio@vger.kernel.org>, <linux-watchdog@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>, <kernel@quicinc.com>
-References: <20240703025850.2172008-1-quic_tengfan@quicinc.com>
- <20240703035154.2182083-1-quic_tengfan@quicinc.com>
- <20240703035154.2182083-12-quic_tengfan@quicinc.com>
- <e08b4798-b1fe-4e8a-80a4-716696dfdcd6@quicinc.com>
-From: Tengfei Fan <quic_tengfan@quicinc.com>
-In-Reply-To: <e08b4798-b1fe-4e8a-80a4-716696dfdcd6@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: tMRDhs9g2i136rzis9EqfAfQCqfDYtjd
-X-Proofpoint-ORIG-GUID: tMRDhs9g2i136rzis9EqfAfQCqfDYtjd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-03_06,2024-07-02_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 adultscore=0
- bulkscore=0 mlxlogscore=771 priorityscore=1501 impostorscore=0
- suspectscore=0 mlxscore=0 lowpriorityscore=0 clxscore=1015 malwarescore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407030074
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240702-camcc-support-sm8150-v2-0-4baf54ec7333@quicinc.com>
 
-
-
-On 7/3/2024 1:33 PM, Taniya Das wrote:
+On Tue, Jul 02, 2024 at 09:20:38PM GMT, Satya Priya Kakitapalli wrote:
+> Add camcc support and Regera PLL ops. Also, fix the pll post div mask.
 > 
+> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+> ---
+> Changes in v2:
+> - As per Konrad's comments, re-use the zonda pll code for regera, as
+>   both are mostly same.
+> - Fix the zonda_set_rate API and also the pll_post_div shift used in
+>   trion pll post div set rate API
+> - Link to v1: https://lore.kernel.org/r/20240229-camcc-support-sm8150-v1-0-8c28c6c87990@quicinc.com
 > 
-> On 7/3/2024 9:21 AM, Tengfei Fan wrote:
->> { .compatible = "qcom,qcs9100-rpmh-clk", .data = &clk_rpmh_sa8775p},
+> ---
+> Satya Priya Kakitapalli (5):
+>       clk: qcom: alpha-pll: Fix the pll post div mask and shift
+>       clk: qcom: clk-alpha-pll: Update set_rate for Zonda PLL
+>       dt-bindings: clock: qcom: Add SM8150 camera clock controller
+>       clk: qcom: Add camera clock controller driver for SM8150
+>       arm64: dts: qcom: Add camera clock controller for sm8150
 > 
-> This is not required, we already have sa8775p bindings.
+> Taniya Das (1):
+>       clk: qcom: clk-alpha-pll: Add support for Regera PLL ops
+> 
+>  .../bindings/clock/qcom,sm8150-camcc.yaml          |   77 +
+>  arch/arm64/boot/dts/qcom/sa8155p.dtsi              |    4 +
+>  arch/arm64/boot/dts/qcom/sm8150.dtsi               |   13 +
+>  drivers/clk/qcom/Kconfig                           |    9 +
+>  drivers/clk/qcom/Makefile                          |    1 +
+>  drivers/clk/qcom/camcc-sm8150.c                    | 2159 ++++++++++++++++++++
+>  drivers/clk/qcom/clk-alpha-pll.c                   |   56 +-
+>  drivers/clk/qcom/clk-alpha-pll.h                   |    5 +
+>  include/dt-bindings/clock/qcom,sm8150-camcc.h      |  135 ++
+>  9 files changed, 2455 insertions(+), 4 deletions(-)
+> ---
+> base-commit: 20af1ca418d2c0b11bc2a1fe8c0c88f67bcc2a7e
 
-This patch is necessary, and the cover letter provides detailed 
-explanations for why we are making this change.
+20240228 is very very old. Please don't base your changes on historical
+linux-next trees. Currently your patchset doesn't even apply cleanly.
 
-In this patch series, we are renaming sa8775p.dtsi to qcs9100.dtsi. 
-Additionally, in the coming weeks, the auto team will submit a new 
-sa8775p-related dtsi to upstream.
-
-Within qcs9100.dtsi, we are updating all compatible names from sa8775p-* 
-to qcs9100-*(only have qcs9100-*, remove all sa8775p-*). Consequently, 
-we need to add support for qcs9100-* in the driver as well.
-
+> change-id: 20240229-camcc-support-sm8150-d3f72a4a1a2b
+> 
+> Best regards,
+> -- 
+> Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+> 
 
 -- 
-Thx and BRs,
-Tengfei Fan
+With best wishes
+Dmitry
