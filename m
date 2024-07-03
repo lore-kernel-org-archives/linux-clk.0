@@ -1,139 +1,99 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D201CF9D4;
-	Wed,  3 Jul 2024 18:07:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F04217A5B0;
+	Wed,  3 Jul 2024 18:49:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720030064; cv=none; b=i9XdwKQC4XV3xSPFlK/JYqpMJIbcTREXhPXjgN0PglgwgMJJxS/+FIgelBReg3LS8Wzr9omICAep/mLO8s/VRcYZWAgXPeH3ibLmzwNTHG0n6qRVW0wTQiJm72dFqXlMnCR8jdlYTenorftNIGnZvhQN6COL5MjlO98R8wLz1qE=
+	t=1720032597; cv=none; b=WE22ywmJmHRtS6u/MFaxb+9nO+2vFc7NhL8o/LpFMpzUKOKrWOJD9w0uM0GjMwZMS7Y8kQaPlF7AdFRcZHJ0xTMAg1HmG1jTH21c98pMFBgn18EDfNCEBm1ck8Hdrn0H0s8rk2NgKsC1fsVpt9PLOZHFrlDoCwF3PshI5WHxgd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720030064; c=relaxed/simple;
-	bh=7VkdfXXbnQAAagurnl0t1uowHfXXxqv6JWqV5yzvHyc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CiMPUxASSVAdQ8N1jrJ4jlLETUK7VWDp3bpK1DeOHc+gim4rshy99CIXb9XQjsp7n9GbL6+VnGBgMdVXmLlMVfo34rFFswixa9gasJlyUYqZ0OkyMARPECxh1EncSIm+fCuZJJ8KcUj3zfgBnQWwkNnfSOHqyyF1gRKjH2P3384=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X3bpvJgx; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1720032597; c=relaxed/simple;
+	bh=tL3e/ur6/KMkg7mh3t7r3ZIFeZQ4xi5Q34S/7FlZ2qA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SLq2w25GpHpJBUellizhaTjqXXk76DXYVeBiRdvDL7I8h7/vRs3pjJ1J40oIPwxA/uls4pJOVx7u1tzsLEceO+TuGQgjyA1/QA+yKbeX5uuaueX724HZHO5boF25b4Bkxs49NUb2f8Y7/MrgRLdac44sLslW72RIbiIdV51tqBk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SQ7eo1Ak; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X3bpvJgx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2346AC2BD10;
-	Wed,  3 Jul 2024 18:07:43 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SQ7eo1Ak"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82B6EC2BD10;
+	Wed,  3 Jul 2024 18:49:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720030063;
-	bh=7VkdfXXbnQAAagurnl0t1uowHfXXxqv6JWqV5yzvHyc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X3bpvJgxZPWMXNOzcyielDafYLsorlGeMfGsYxZsE3DcfgNG38u+IpqkFauqV7JBb
-	 5vrbm1WYc3A6PpB/BYRkykAD7OTF0Cj7mNGz1MOi0sa5ZMS/EgfduMIqZfBT2ojOEE
-	 bFo2aTY3NN6jY868V+Ef+HPG5nwsrIILcL4gaARoEmQ/3VJxlw8KNvls5K1NJbvrcL
-	 liQUqmGsYZrzJg5w0kk4/LvcK6Tdp62Zk7+kzOZ/GnWL+VAWuwzwfMk9DNJ/Cy73bN
-	 +KSVQC/fntqBgC8EoMj80EdF4hoVvz6Kgpa3QHWVeUvUPp8LsLtGUtLPC5Ip21htEj
-	 aLChwBO4AdEcA==
-Date: Wed, 3 Jul 2024 12:07:42 -0600
-From: Rob Herring <robh@kernel.org>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Saravana Kannan <saravanak@google.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Tony Lindgren <tony@atomide.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Emilio =?iso-8859-1?Q?L=F3pez?= <emilio@elopez.com.ar>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Jonathan Cameron <jic23@kernel.org>, Lee Jones <lee@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Richard Leitner <richard.leitner@linux.dev>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	"Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	"Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	llvm@lists.linux.dev, linux-clk@vger.kernel.org,
-	linux-omap@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
-	linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
-	linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org,
-	linux-serial@vger.kernel.org, linux-usb@vger.kernel.org,
-	patches@opensource.cirrus.com, linux-sound@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH 00/20] Simplify of_property_for_each_u32()
-Message-ID: <20240703180742.GB1245093-robh@kernel.org>
-References: <20240703-of_property_for_each_u32-v1-0-42c1fc0b82aa@bootlin.com>
+	s=k20201202; t=1720032596;
+	bh=tL3e/ur6/KMkg7mh3t7r3ZIFeZQ4xi5Q34S/7FlZ2qA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=SQ7eo1AkC8LjRWberzbfTrXdEmn8AVAPTH1nI5h830+ubxo1C5MaKmEtPRy9gsG1o
+	 M8aW67LDGZEnsrCM4Q/GRKRYn+r39JIjjMUn4+wwhQ4mb+Nyw7/6h4NQGIjateXcmW
+	 XAfTSrhx2kUyLwJweon5gGjsH9sMGD6YpKO/TIf9EwzO/u3UL14SYAuIKAMoMlbYkK
+	 bxKEJlfNCtFdikjht8PVx57e+Ez2TZA0kY1xDB4xr5o96jrOLhYPq5oX8riaz0aLMe
+	 pQxRIT/WAYj12CgJvmnxQibErDTaKj3syhCujN4MjJ27ACtbE6kpJopp6TU3GIN89Q
+	 vkEmm7DBvS+3g==
+Date: Wed, 3 Jul 2024 11:49:52 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: patchwork-bot+netdevbpf@kernel.org
+Cc: Tengfei Fan <quic_tengfan@quicinc.com>, andersson@kernel.org,
+ konrad.dybcio@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, djakov@kernel.org, mturquette@baylibre.com,
+ sboyd@kernel.org, jassisinghbrar@gmail.com, herbert@gondor.apana.org.au,
+ davem@davemloft.net, manivannan.sadhasivam@linaro.org, will@kernel.org,
+ joro@8bytes.org, conor@kernel.org, tglx@linutronix.de, amitk@kernel.org,
+ thara.gopinath@gmail.com, linus.walleij@linaro.org, wim@linux-watchdog.org,
+ linux@roeck-us.net, rafael@kernel.org, viresh.kumar@linaro.org,
+ vkoul@kernel.org, edumazet@google.com, pabeni@redhat.com,
+ mcoquelin.stm32@gmail.com, robimarko@gmail.com, quic_gurus@quicinc.com,
+ bartosz.golaszewski@linaro.org, kishon@kernel.org, quic_wcheng@quicinc.com,
+ alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org,
+ agross@kernel.org, gregkh@linuxfoundation.org, quic_tdas@quicinc.com,
+ robin.murphy@arm.com, daniel.lezcano@linaro.org, rui.zhang@intel.com,
+ lukasz.luba@arm.com, quic_rjendra@quicinc.com, ulf.hansson@linaro.org,
+ quic_sibis@quicinc.com, otto.pflueger@abscue.de, quic_rohiagar@quicinc.com,
+ luca@z3ntu.xyz, neil.armstrong@linaro.org, abel.vesa@linaro.org,
+ bhupesh.sharma@linaro.org, alexandre.torgue@foss.st.com,
+ peppe.cavallaro@st.com, joabreu@synopsys.com, netdev@vger.kernel.org,
+ lpieralisi@kernel.org, kw@linux.com, bhelgaas@google.com,
+ ahalaney@redhat.com, krzysztof.kozlowski@linaro.org,
+ u.kleine-koenig@pengutronix.de, dmitry.baryshkov@linaro.org,
+ quic_cang@quicinc.com, danila@jiaxyga.com, quic_nitirawa@quicinc.com,
+ mantas@8devices.com, athierry@redhat.com, quic_kbajaj@quicinc.com,
+ quic_bjorande@quicinc.com, quic_msarkar@quicinc.com,
+ quic_devipriy@quicinc.com, quic_tsoni@quicinc.com,
+ quic_rgottimu@quicinc.com, quic_shashim@quicinc.com,
+ quic_kaushalk@quicinc.com, quic_tingweiz@quicinc.com,
+ quic_aiquny@quicinc.com, srinivas.kandagatla@linaro.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-phy@lists.infradead.org,
+ linux-crypto@vger.kernel.org, linux-scsi@vger.kernel.org,
+ linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ iommu@lists.linux.dev, linux-riscv@lists.infradead.org,
+ linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
+ linux-pci@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ kernel@quicinc.com
+Subject: Re: [PATCH 00/47] arm64: qcom: dts: add QCS9100 support
+Message-ID: <20240703114952.6013f05e@kernel.org>
+In-Reply-To: <171998042970.21654.12559535993133117436.git-patchwork-notify@kernel.org>
+References: <20240703025850.2172008-1-quic_tengfan@quicinc.com>
+	<171998042970.21654.12559535993133117436.git-patchwork-notify@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240703-of_property_for_each_u32-v1-0-42c1fc0b82aa@bootlin.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 03, 2024 at 12:36:44PM +0200, Luca Ceresoli wrote:
-> [Note: to reduce the noise I have trimmed the get_maintainers list
-> manually. Should you want to be removed, or someone else added, to future
-> versions, just tell me. Sorry for the noise.]
-> 
-> This series aims at simplifying of_property_for_each_u32() as well as
-> making it more difficult to misuse it in the future.
-> 
-> The long-term goal is changing this pattern:
-> 
->   struct property *prop;
->   const __be32 *p;
->   u32 val;
->  
->   of_property_for_each_u32(np, "xyz", prop, p, val) { ... }
-> 
-> to this:
-> 
->   u32 val;
-> 
->   of_property_for_each_u32(np, "xyz", val) { ... }
-> 
-> So, removing the 3rd and 4th arguments which are typically meant to be
-> internal. Those two parameters used to be unavoidable until the kernel
-> moved to building with the C11 standard unconditionally. Since then, it is
-> now possible to get rid of them. However a few users of
-> of_property_for_each_u32() do actually use those arguments, which
-> complicates the transition. For this reason this series does the following:
-> 
->  * Add of_property_for_each_u32_new(), which does not have those two
->    arguments (patch 1)
->  * Convert _almost_ every usage to of_property_for_each_u32_new()
->  * Rename of_property_for_each_u32() to of_property_for_each_u32_old() and
->    deprecate it, as a incentive to code not (yet) in mainline to upgrade
->    to the *_new() version (last patch)
+On Wed, 03 Jul 2024 04:20:29 +0000 patchwork-bot+netdevbpf@kernel.org
+wrote:
+> This series was applied to netdev/net-next.git (main)
+> by Jakub Kicinski <kuba@kernel.org>:
 
-I don't really see the point of introducing the _old variant. Let's get 
-this done in one step.
+> Here is the summary with links:
+>   - [01/47] dt-bindings: arm: qcom: Document QCS9100 SoC and RIDE board
+>     (no matching commit)
+>   - [02/47] arm64: dts: qcom: qcs9100: Introduce QCS9100 SoC dtsi
+>     (no matching commit)
+>   - [03/47] arm64: dts: qcom: qcs9100: Introduce QCS9100 PMIC dtsi
+>     https://git.kernel.org/netdev/net-next/c/df18948d331e
 
-> 
-> The plan for the next series is to additionally:
-> 
->  * Convert the few remaining of_property_for_each_u32_old() instantes to
->    of_property_for_each_u32_new()
->  * Remove of_property_for_each_u32_old()
->  * Rename of_property_for_each_u32_new() to of_property_for_each_u32()
-
-Honestly, I think there's few enough users we could just convert the 
-whole thing in one patch. It's all got to go thru 1 tree anyways. If 
-there's new cases in -next, then I'd be happy to send it to Linus at the 
-end of the merge window.
-
-Rob
+This is some bug / false positive in the bot, to be clear.
+Commit df18948d331e is ("Merge branch 'device-memory-tcp'").
+No idea how it got from that to DTS.
