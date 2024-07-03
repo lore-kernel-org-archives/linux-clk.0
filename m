@@ -1,104 +1,121 @@
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04902172798;
-	Wed,  3 Jul 2024 10:42:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89CB71741FC
+	for <linux-clk@vger.kernel.org>; Wed,  3 Jul 2024 10:46:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720003372; cv=none; b=aS+yHD59NUrfAw9x5Y88UI7ZHd8BHCTVYz2O7xMLZr51cYV0SlbZNIqmIywgZZoFD2ffd9VTBmB8YkCR0gw11iK0WOg8ThdbVTttqqKNaINgu/8P5tbZj/jIJ8XFk6SWS+w2dqEtC1dmks0lUIEfwtJUPXizo7+G2D4hovxM42Y=
+	t=1720003621; cv=none; b=AsOGMSBkngqegVy3y1kQj43VNvq12tM5sDnsirP/hCBzm7eNgZWi7zv6sTW32zYq6Bz7tic0+AocLj6wMQR8G9yA9jSQrEktG1NM3ZjLJ6WqgIqJAWhjOmmKDQuzpstvHA5cVD0c+ZlAYvwZaHEj6q4s04MJQ9J2ph25IVYUqB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720003372; c=relaxed/simple;
-	bh=3cfOFBtgSSaF4cSn4MpRGAygi+1KrqpFeLc5bisuTrg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=n7LJoUtlOD31O0T4P3PO3tZsdBHz4uClDfsFAvrNdSpBl7+Ub+qs7Yl4WMt8sGOcUr6+1TOoLhvRMOI6vpzmCZ4SrdNDv6YXqGHK7z9k7vK48HVkPmRjWPANI4ak4MGZ1JtcYLqjojidS/AG6NkQNAmBiKcUVUNkDAUsABMH4dU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Kn0Xavx1; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1720003621; c=relaxed/simple;
+	bh=foPMIvvTPseXesFoCi3Y6Msx3NpMb+EdXsD3e3zHHT8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SxGwsAERaepDofX8WD93bGpo1RxF8wsosnMRCxIUqEVscwJibtXiFZVWX8yczfOgDL9Vnn3/Z+XoosCCV9fqVu3nIbBDHM1nVzPhBNxEjvfCVBfFXJjwptP8VEcIGLZGABRY6vwm23Owa0JNcPoFPMMUOK4pKl40qctQENYCMTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Bv+mtDSc; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Kn0Xavx1"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id B0A411C0003;
-	Wed,  3 Jul 2024 10:42:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1720003362;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JD7lzSbNvDLaEngDHvpQyOlHXKS5REtsvCW8NYDsEt0=;
-	b=Kn0Xavx1zSLZ8bgamyqsUbcFuSL5EOFzlejUwiPrFqdzY+YqYx3jZ4VKvVxAeoiAW/ZOur
-	IFJNzqbm01fG+4stjXyofsaH7WyZOTpt9qh5/4Udv6jl6o0KG4wVhsUCji76EN5ZgTAjJj
-	H/qW9msg5B5nv8sEjz7sFN53f6/JuCF5EziR19UutXQT8OGkcF8yxGfZ6W82JVyNZVRLx8
-	gNjGqez4Jb1UNCulg4Z3ymy0PyqKqGth44pfUdHm1UNrAFb2kTp5kbF1RoY/LGTaGXvI2Y
-	TBbcsYBYl6tzHiDfY0xeU9zgK8uEC3Fl1vwDJM2zWNe7iqxQuE3lWiKBTX++CA==
-Date: Wed, 3 Jul 2024 12:42:36 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Peng Fan <peng.fan@nxp.com>
-Cc: Rob Herring <robh@kernel.org>, "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
- Saravana Kannan <saravanak@google.com>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH 1/2] of: property: add of_property_for_each_u64
-Message-ID: <20240703124236.6f505329@booty>
-In-Reply-To: <20240628161617.6bc9ca3c@booty>
-References: <20240621-clk-u64-v1-0-d28a611b2621@nxp.com>
-	<20240621-clk-u64-v1-1-d28a611b2621@nxp.com>
-	<20240627214355.GA601888-robh@kernel.org>
-	<AM6PR04MB59416E3C8FFC904450F3B02D88D02@AM6PR04MB5941.eurprd04.prod.outlook.com>
-	<AM6PR04MB5941D30C26F2CB818FEC082C88D02@AM6PR04MB5941.eurprd04.prod.outlook.com>
-	<20240628161617.6bc9ca3c@booty>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Bv+mtDSc"
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52db11b1d31so7300666e87.0
+        for <linux-clk@vger.kernel.org>; Wed, 03 Jul 2024 03:46:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720003618; x=1720608418; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z6RqGX8VTMC710d07ZkPLdr6JCBvXddZZa+hWl6qD7c=;
+        b=Bv+mtDSc4VpJyl9o7hOA8LPvSe6ExZzmRTBwgM+K5p17KkSLGR7Xu2EnogWzZmxnjJ
+         SeSuN8ib18XT508IFxgEDgLdqHRTbCgt+h14MR0u8bvGVfrhVsHup1QTytsViZ4a4g9A
+         B7Vd7WcDZtfIxEWZ+8uOnXej6MxTJkXpcvEwKIEEfDXMl/DHekHAV76bIjoZ7PjwNqyh
+         PtV1M/Brnq7cUHOPflAfrUkppolTA2lwxslsR1PJqB2hlSnHpZhyjeet2CVAkKt2r4QW
+         tCOR9nddCLRIqQF5RUnhmvCPk0tz5Geor3AGQls+Sz1BUembO8Gu8RVbp9Vx7kdBhCld
+         MLBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720003618; x=1720608418;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Z6RqGX8VTMC710d07ZkPLdr6JCBvXddZZa+hWl6qD7c=;
+        b=N04p5BFq+uqt9lMgY6fofr3orxQysJAwDnGYCGU9bG2f1CV0zGQuxVRkeAFJM7DIet
+         LZVMS9yIOxy+XSfbYBX+ew1G+fud7lAkQDsrpKZ0FZ811Zg9d/n7QGTeMbDO8Fr0OHjY
+         SHyq9m3gvjL39XMbApdhrfpIQP1sZtPy2oEIdPUTZ3M6dApJLJ7uhp6rLcpveSsTzjOY
+         Gj2pxlYdz8ufSjv4r7UYQFVeqYsjVEDTbFyDHfnNODm85nyrgNHVezbvgY4kBnxpG2u9
+         uHymKYyEaj5IsdoxjB4u5kH8C2Fhm8JEcEhpW/vOrexAOSb7LqF3GDaVIoroE9FWKJVB
+         hYgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCULqh5eNacltEGBMXx1CDTCEUC/U7qqrKyNtByv0VRrmGTUTNgiC43tFZii6xRUE9C+32+i8wr/OPp2Uzn0V9ojB/nIrTGq+RUV
+X-Gm-Message-State: AOJu0YwAXHcfmxLpbedUR1YV7g1ZCJuX9i9sLqBeNcJBlK1Qurp/TYW6
+	TfzC+B2mYl50Jw4uQonNmiwtpwBlU6RQH2gYFozCJ/N8/5JcuUZ6UJeTIb1MAcU=
+X-Google-Smtp-Source: AGHT+IEP56pHbP4DCZFL0TzwnwRKdgriFsrjpsNp9TvUXF81k3NcrKi5DJQNSBnNphOP/g4IRsep+w==
+X-Received: by 2002:a05:6512:6d2:b0:52c:84d1:180e with SMTP id 2adb3069b0e04-52e827344e4mr7597722e87.67.1720003616744;
+        Wed, 03 Jul 2024 03:46:56 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e7ab3b263sm2093468e87.268.2024.07.03.03.46.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jul 2024 03:46:56 -0700 (PDT)
+Date: Wed, 3 Jul 2024 13:46:54 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Varadarajan Narayanan <quic_varada@quicinc.com>
+Cc: vireshk@kernel.org, nm@ti.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, angelogioacchino.delregno@collabora.com, 
+	andersson@kernel.org, konrad.dybcio@linaro.org, mturquette@baylibre.com, 
+	ilia.lin@kernel.org, rafael@kernel.org, ulf.hansson@linaro.org, 
+	quic_sibis@quicinc.com, quic_rjendra@quicinc.com, quic_rohiagar@quicinc.com, 
+	abel.vesa@linaro.org, otto.pflueger@abscue.de, danila@jiaxyga.com, 
+	quic_ipkumar@quicinc.com, luca@z3ntu.xyz, stephan.gerhold@kernkonzept.com, nks@flawful.org, 
+	linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4 01/10] soc: qcom: cpr3: Fix 'acc_desc' usage
+Message-ID: <u4hzxnecdyow6h4vhddcp53tuxrqhbqu6cv4cznytihsyshzy4@lqxhsn3qvjbz>
+References: <20240703091651.2820236-1-quic_varada@quicinc.com>
+ <20240703091651.2820236-2-quic_varada@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: luca.ceresoli@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240703091651.2820236-2-quic_varada@quicinc.com>
 
-Hello Peng,
-
-On Fri, 28 Jun 2024 16:16:17 +0200
-Luca Ceresoli <luca.ceresoli@bootlin.com> wrote:
-
-[...]
-
-> > > > > +#define of_property_for_each_u64(np, propname, prop, p, u)	\
-> > > > > +	for (prop = of_find_property(np, propname, NULL),	\
-> > > > > +		p = of_prop_next_u64(prop, NULL, &u);		\
-> > > > > +		p;						\
-> > > > > +		p = of_prop_next_u64(prop, p, &u))    
-> > > >
-> > > > I think we want to define this differently to avoid exposing struct
-> > > > property and the property data directly. Like this:
-> > > >
-> > > > #define of_property_for_each_u64(np, propname, u) \
-> > > >   for (struct property *_prop = of_find_property(np, propname, NULL),
-> > > >          const __be32 *_p = of_prop_next_u64(_prop, NULL, &u);
-> > > >          _p;
-> > > >          _p = of_prop_next_u64(_prop, _p, &u))    
-> > 
-> > This will trigger a compilation error, because C not allow
-> > declare two variables with different types as for loop expression 1.
-> > Need to think about other methods.  
+On Wed, Jul 03, 2024 at 02:46:42PM GMT, Varadarajan Narayanan wrote:
+> cpr3 code assumes that 'acc_desc' is available for SoCs
+> implementing CPR version 4 or less. However, IPQ9574 SoC
+> implements CPRv4 without ACC. This causes NULL pointer accesses
+> resulting in crashes. Hence, check if 'acc_desc' is populated
+> before using it.
 > 
-> I have a working draft here where I solved it somehow, let me just find
-> the proper branch and send it. Perhaps next week, but I'm striving to do
-> that by Mon-Tue.
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> ---
+> v4: Undo the acc_desc validation in probe function as that could
+>     affect other SoC.
+> ---
+>  drivers/pmdomain/qcom/cpr3.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pmdomain/qcom/cpr3.c b/drivers/pmdomain/qcom/cpr3.c
+> index c7790a71e74f..6ceb7605f84d 100644
+> --- a/drivers/pmdomain/qcom/cpr3.c
+> +++ b/drivers/pmdomain/qcom/cpr3.c
+> @@ -2399,12 +2399,12 @@ static int cpr_pd_attach_dev(struct generic_pm_domain *domain,
+>  		if (ret)
+>  			goto exit;
+>  
+> -		if (acc_desc->config)
+> +		if (acc_desc && acc_desc->config)
+>  			regmap_multi_reg_write(drv->tcsr, acc_desc->config,
+>  					       acc_desc->num_regs_per_fuse);
+>  
+>  		/* Enable ACC if required */
+> -		if (acc_desc->enable_mask)
+> +		if (acc_desc && acc_desc->enable_mask)
+>  			regmap_update_bits(drv->tcsr, acc_desc->enable_reg,
+>  					   acc_desc->enable_mask,
+>  					   acc_desc->enable_mask);
 
-Ok, that slipped to Wednesday, but here it is:
-https://lore.kernel.org/all/20240703-of_property_for_each_u32-v1-1-42c1fc0b82aa@bootlin.com/
-
-I think you can reuse the technique I used in that patch to write
-of_property_for_each_u64(np, propname, u), taking only 3 parameters.
-
-Luca
+Should the same fix be applied to other places which access acc_desc?
+For example cpr_pre_voltage() and cpr_post_voltage() which call
+cpr_set_acc()?
 
 -- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+With best wishes
+Dmitry
