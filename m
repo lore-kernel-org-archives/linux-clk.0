@@ -1,99 +1,160 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F04217A5B0;
-	Wed,  3 Jul 2024 18:49:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E26186E2D
+	for <linux-clk@vger.kernel.org>; Wed,  3 Jul 2024 21:23:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720032597; cv=none; b=WE22ywmJmHRtS6u/MFaxb+9nO+2vFc7NhL8o/LpFMpzUKOKrWOJD9w0uM0GjMwZMS7Y8kQaPlF7AdFRcZHJ0xTMAg1HmG1jTH21c98pMFBgn18EDfNCEBm1ck8Hdrn0H0s8rk2NgKsC1fsVpt9PLOZHFrlDoCwF3PshI5WHxgd0=
+	t=1720041808; cv=none; b=WyBKZb7UlaU+8icrMxCqnSTNVnLB90H6bN90G4AVf+u3vZ7MILxk4CUFaUwFVg2nrsxN4ZvJM8ywEUmtuOwD2EKsL/7Y3dR/Ip1G/YVDMpJrzqQzYaIQzHehRel/HDulLXjNLo6ZpzqcG7xfKjlXWSZBjYywnXK/Dl4cj1oSDGg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720032597; c=relaxed/simple;
-	bh=tL3e/ur6/KMkg7mh3t7r3ZIFeZQ4xi5Q34S/7FlZ2qA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SLq2w25GpHpJBUellizhaTjqXXk76DXYVeBiRdvDL7I8h7/vRs3pjJ1J40oIPwxA/uls4pJOVx7u1tzsLEceO+TuGQgjyA1/QA+yKbeX5uuaueX724HZHO5boF25b4Bkxs49NUb2f8Y7/MrgRLdac44sLslW72RIbiIdV51tqBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SQ7eo1Ak; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1720041808; c=relaxed/simple;
+	bh=1yCUJShNVEleKhhq5ttC7d+C2KlI7KvONMEvrwhI5X0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Siq8mOAljeb2pVCBevrvw36FmvU9mAJpz8qHdzURwS4Pp/exUBLOt3k20+ina5nSOOn64tf5zVwNMnwyqOY4bf87vk87QajWhPImthjrv4N0tKkUzgkAyUUUe1BO1DKMu67X3EkKc/OoXuvWU7haUlZB7SBiWD6fieG5NTPqwEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=nXfomUYn; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SQ7eo1Ak"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82B6EC2BD10;
-	Wed,  3 Jul 2024 18:49:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720032596;
-	bh=tL3e/ur6/KMkg7mh3t7r3ZIFeZQ4xi5Q34S/7FlZ2qA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=SQ7eo1AkC8LjRWberzbfTrXdEmn8AVAPTH1nI5h830+ubxo1C5MaKmEtPRy9gsG1o
-	 M8aW67LDGZEnsrCM4Q/GRKRYn+r39JIjjMUn4+wwhQ4mb+Nyw7/6h4NQGIjateXcmW
-	 XAfTSrhx2kUyLwJweon5gGjsH9sMGD6YpKO/TIf9EwzO/u3UL14SYAuIKAMoMlbYkK
-	 bxKEJlfNCtFdikjht8PVx57e+Ez2TZA0kY1xDB4xr5o96jrOLhYPq5oX8riaz0aLMe
-	 pQxRIT/WAYj12CgJvmnxQibErDTaKj3syhCujN4MjJ27ACtbE6kpJopp6TU3GIN89Q
-	 vkEmm7DBvS+3g==
-Date: Wed, 3 Jul 2024 11:49:52 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: patchwork-bot+netdevbpf@kernel.org
-Cc: Tengfei Fan <quic_tengfan@quicinc.com>, andersson@kernel.org,
- konrad.dybcio@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, djakov@kernel.org, mturquette@baylibre.com,
- sboyd@kernel.org, jassisinghbrar@gmail.com, herbert@gondor.apana.org.au,
- davem@davemloft.net, manivannan.sadhasivam@linaro.org, will@kernel.org,
- joro@8bytes.org, conor@kernel.org, tglx@linutronix.de, amitk@kernel.org,
- thara.gopinath@gmail.com, linus.walleij@linaro.org, wim@linux-watchdog.org,
- linux@roeck-us.net, rafael@kernel.org, viresh.kumar@linaro.org,
- vkoul@kernel.org, edumazet@google.com, pabeni@redhat.com,
- mcoquelin.stm32@gmail.com, robimarko@gmail.com, quic_gurus@quicinc.com,
- bartosz.golaszewski@linaro.org, kishon@kernel.org, quic_wcheng@quicinc.com,
- alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org,
- agross@kernel.org, gregkh@linuxfoundation.org, quic_tdas@quicinc.com,
- robin.murphy@arm.com, daniel.lezcano@linaro.org, rui.zhang@intel.com,
- lukasz.luba@arm.com, quic_rjendra@quicinc.com, ulf.hansson@linaro.org,
- quic_sibis@quicinc.com, otto.pflueger@abscue.de, quic_rohiagar@quicinc.com,
- luca@z3ntu.xyz, neil.armstrong@linaro.org, abel.vesa@linaro.org,
- bhupesh.sharma@linaro.org, alexandre.torgue@foss.st.com,
- peppe.cavallaro@st.com, joabreu@synopsys.com, netdev@vger.kernel.org,
- lpieralisi@kernel.org, kw@linux.com, bhelgaas@google.com,
- ahalaney@redhat.com, krzysztof.kozlowski@linaro.org,
- u.kleine-koenig@pengutronix.de, dmitry.baryshkov@linaro.org,
- quic_cang@quicinc.com, danila@jiaxyga.com, quic_nitirawa@quicinc.com,
- mantas@8devices.com, athierry@redhat.com, quic_kbajaj@quicinc.com,
- quic_bjorande@quicinc.com, quic_msarkar@quicinc.com,
- quic_devipriy@quicinc.com, quic_tsoni@quicinc.com,
- quic_rgottimu@quicinc.com, quic_shashim@quicinc.com,
- quic_kaushalk@quicinc.com, quic_tingweiz@quicinc.com,
- quic_aiquny@quicinc.com, srinivas.kandagatla@linaro.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-phy@lists.infradead.org,
- linux-crypto@vger.kernel.org, linux-scsi@vger.kernel.org,
- linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- iommu@lists.linux.dev, linux-riscv@lists.infradead.org,
- linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
- kernel@quicinc.com
-Subject: Re: [PATCH 00/47] arm64: qcom: dts: add QCS9100 support
-Message-ID: <20240703114952.6013f05e@kernel.org>
-In-Reply-To: <171998042970.21654.12559535993133117436.git-patchwork-notify@kernel.org>
-References: <20240703025850.2172008-1-quic_tengfan@quicinc.com>
-	<171998042970.21654.12559535993133117436.git-patchwork-notify@kernel.org>
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="nXfomUYn"
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a77abe5c709so60595266b.2
+        for <linux-clk@vger.kernel.org>; Wed, 03 Jul 2024 14:23:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1720041805; x=1720646605; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rmKjZalCS3qgqBNUJ2X1ny0z1S/+Ouz6++2zspqi0Zc=;
+        b=nXfomUYnbzj9LIVMPNRYyGPrGSgzQo3TYNnoG9X6sbtMdvka2gkBTWeWFH82v3YY6y
+         FpKutlnlUYALdpJAw5zXMSlyPvSu9EOBXKZO6nM48K2lmmuMVaihjB2V4N8NIAeLICoA
+         8Uu26Fln/UY28RYLPeehl3Nqzi8hopZLB4IgW8EaEqF9COvqp8YTsl4SWDtCjS2PFUzL
+         tygWBTwykzO88IpSKXeemkGeoic+DrezgiZcsHKtkACDRstfeu+ctDVlME2MjqdFZz+x
+         j8jWMtVy55HHvUxAKVW7SN1SWTLn/M5rn5xatBJuTs1sdL2Mq/8rTtvNj3n3KPEq2RrC
+         6LzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720041805; x=1720646605;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rmKjZalCS3qgqBNUJ2X1ny0z1S/+Ouz6++2zspqi0Zc=;
+        b=AYhbh9NYRtBWnPghuaKcRn8beJxL9G5P9taUNOp+ZoiGoF1FEph7tSHYNUPlM75cOm
+         pdX83hBixmTAucAzsSJKVXyjJwFHQyb6nzetOKykHXXmAj1zhzO2Vj3kP4YhtWUqj2Oq
+         SvML9YeuDc2ubtM8JGQZ1TbcLT/VaJZuJ3rQ2Q/U5qIBaQx80YgmR+VqVbJiuiErgyGM
+         +8EKcgB54YP6Kt104BZJfAHGobpONW2U2o1W8tVxNPw+vsyvhmeALUEYCq3sCzTohtsd
+         /D59yy51DsLECL3KSqyoYz88wCaZYzW3LXFGEOq82RzLylD7bv/7Z4FCtNagR67eM5aF
+         glgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXaSdEu9aS/D1vq7IvwvDEqpBKlhnnLDjUAyBba0pnhsAwQVg6Wyln9w+LoiWFBC+eZpu8t9ywwCKiDFJHJfOTRpGr9ojMyjlEK
+X-Gm-Message-State: AOJu0YyappU/qQEstB/5+jOqCUIpTUfFJjvFr2THE9DqrWKe5PaY4Iub
+	+Qhoter/gZINaro+Nxr4aFFs8j3c1WvsWLn4Y0uVJ/+Mz8vxo1RMPzo0ov4i/sA=
+X-Google-Smtp-Source: AGHT+IEiDeirJZbiRR9WOgvKVRp5lPoOHJBTmQD67pQvhrzI/8nB0fQNgTn38F10sD2qUfAawYddVg==
+X-Received: by 2002:a17:907:1c15:b0:a72:883f:f3dd with SMTP id a640c23a62f3a-a75144a8a02mr1042146966b.56.1720041804879;
+        Wed, 03 Jul 2024 14:23:24 -0700 (PDT)
+Received: from localhost ([2a02:8071:b783:6940:5696:f293:6e5e:98bf])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72ab0651c0sm541105666b.123.2024.07.03.14.23.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jul 2024 14:23:24 -0700 (PDT)
+Date: Wed, 3 Jul 2024 23:23:22 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Saravana Kannan <saravanak@google.com>, Nathan Chancellor <nathan@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Tony Lindgren <tony@atomide.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Emilio =?utf-8?B?TMOzcGV6?= <emilio@elopez.com.ar>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Krzysztof Kozlowski <krzk@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Jonathan Cameron <jic23@kernel.org>, Lee Jones <lee@kernel.org>, 
+	Shawn Guo <shawnguo@kernel.org>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
+	Richard Leitner <richard.leitner@linux.dev>, Liam Girdwood <lgirdwood@gmail.com>, 
+	Mark Brown <broonie@kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, 
+	Damien Le Moal <dlemoal@kernel.org>, "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, 
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	llvm@lists.linux.dev, linux-clk@vger.kernel.org, linux-omap@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org, linux-serial@vger.kernel.org, 
+	linux-usb@vger.kernel.org, patches@opensource.cirrus.com, linux-sound@vger.kernel.org, 
+	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 13/20] pwm: samsung: convert to
+ of_property_for_each_u32_new()
+Message-ID: <l2xret6kx4qwee3c3abmmhz5uop7zuobxath2eou2utklztkgl@c7lskt3xk3wj>
+References: <20240703-of_property_for_each_u32-v1-0-42c1fc0b82aa@bootlin.com>
+ <20240703-of_property_for_each_u32-v1-13-42c1fc0b82aa@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="3uu6b6ybcnfri4lk"
+Content-Disposition: inline
+In-Reply-To: <20240703-of_property_for_each_u32-v1-13-42c1fc0b82aa@bootlin.com>
 
-On Wed, 03 Jul 2024 04:20:29 +0000 patchwork-bot+netdevbpf@kernel.org
-wrote:
-> This series was applied to netdev/net-next.git (main)
-> by Jakub Kicinski <kuba@kernel.org>:
 
-> Here is the summary with links:
->   - [01/47] dt-bindings: arm: qcom: Document QCS9100 SoC and RIDE board
->     (no matching commit)
->   - [02/47] arm64: dts: qcom: qcs9100: Introduce QCS9100 SoC dtsi
->     (no matching commit)
->   - [03/47] arm64: dts: qcom: qcs9100: Introduce QCS9100 PMIC dtsi
->     https://git.kernel.org/netdev/net-next/c/df18948d331e
+--3uu6b6ybcnfri4lk
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-This is some bug / false positive in the bot, to be clear.
-Commit df18948d331e is ("Merge branch 'device-memory-tcp'").
-No idea how it got from that to DTS.
+Hello,
+
+On Wed, Jul 03, 2024 at 12:36:57PM +0200, Luca Ceresoli wrote:
+> Simplify code using of_property_for_each_u32_new() as the two additional
+> parameters in of_property_for_each_u32() are not used here.
+>=20
+> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> ---
+>  drivers/pwm/pwm-samsung.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+>=20
+> diff --git a/drivers/pwm/pwm-samsung.c b/drivers/pwm/pwm-samsung.c
+> index efb60c9f0cb3..fef02a0b023e 100644
+> --- a/drivers/pwm/pwm-samsung.c
+> +++ b/drivers/pwm/pwm-samsung.c
+> @@ -510,8 +510,6 @@ static int pwm_samsung_parse_dt(struct pwm_chip *chip)
+>  	struct samsung_pwm_chip *our_chip =3D to_samsung_pwm_chip(chip);
+>  	struct device_node *np =3D pwmchip_parent(chip)->of_node;
+>  	const struct of_device_id *match;
+> -	struct property *prop;
+> -	const __be32 *cur;
+>  	u32 val;
+> =20
+>  	match =3D of_match_node(samsung_pwm_matches, np);
+> @@ -520,7 +518,7 @@ static int pwm_samsung_parse_dt(struct pwm_chip *chip)
+> =20
+>  	memcpy(&our_chip->variant, match->data, sizeof(our_chip->variant));
+> =20
+> -	of_property_for_each_u32(np, "samsung,pwm-outputs", prop, cur, val) {
+> +	of_property_for_each_u32_new(np, "samsung,pwm-outputs", val) {
+>  		if (val >=3D SAMSUNG_PWM_NUM) {
+>  			dev_err(pwmchip_parent(chip),
+>  				"%s: invalid channel index in samsung,pwm-outputs property\n",
+>=20
+
+Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@baylibre.com>
+
+Feel free to merge this together with the change from the first patch.
+
+Best regards
+Uwe
+
+--3uu6b6ybcnfri4lk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmaFwUcACgkQj4D7WH0S
+/k6PuggAu8WCVFGH6QIMKU3X2rf+i2w61Hm9yGoz/E1JXjYYwhvN07D9QQrg3lFk
+uuvOlwgkdfuIHAsZupm4B503z6Cr+9e1c0yd2UsXZkR+Y5e5uAcWpFrqQPpsUjg6
+K4y5iO46KFiNdoyIw5vaEqa9r+2MGaV/6utEBzK71uNVzWWnYAxGJSrp9BXXUlRN
+ZUz4u7b3Yp+kmsIoFWF2SYjPB08bXS+XlNegSLFuhFLAklD1WtMgdfiyFyqVm20f
+wxAtUX4pOe9E7HV+9qcyWKkbxhOVOOD6iG1CnatgtZoAeRfvmcNx+o2M4x8H0qXK
+hetCnR7IsLL80SX5lvKiYYw2At4OEA==
+=UQNH
+-----END PGP SIGNATURE-----
+
+--3uu6b6ybcnfri4lk--
