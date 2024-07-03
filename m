@@ -1,258 +1,144 @@
-Received: from fout6-smtp.messagingengine.com (fout6-smtp.messagingengine.com [103.168.172.149])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 700E3194083;
-	Wed,  3 Jul 2024 10:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FC05179955
+	for <linux-clk@vger.kernel.org>; Wed,  3 Jul 2024 11:03:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720004261; cv=none; b=fpTmNNCqAMYI5s2g471jMTF/WVNpPhgU9ZzFpSRTPvq3lYNMGAVoUkggHQBEis/fgGUXBlhVVRShBsq5EQxZrZY4O9vBsK7u97I8JFn2SVqiT/QETitRGs3sDjpOiaVK1HjwxDp/dCD0tdkhym8vQoC8VSe01RQZMy4rFBYHrdI=
+	t=1720004582; cv=none; b=AYu0Cpb4JM1UY6yI3CC4D+La9PZvurTfhok861pYhZTgrFb5xv6S/85zUzrUMxdz/hy0DmqFcFr0T4zNyEr5OfDhzlylMalTSL9VbEHN1OxFjZek8nWc4Tzv5bqAw9M5vPtzk7bg4wOFWPD6L9CXl0pLCpZ0FKr5yVhvM6w1bSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720004261; c=relaxed/simple;
-	bh=6YFtYoYSnHJuAOHlWCH6SB6++OxwuIqRQRXJu2woyvw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TAOnTHEX+8LPF3nNN6/Pb1ZJS2NT+aDxCp991Y4Hy1OIqwtDBXS8pqInkoM6GS7p6665xUyqF/BYiV7f8JEr1J7ev2OWsExecEdi1nM+/6+4GSuthl0FWJu8zCUeYeh8iqWZELS5c/rMai9XDD3cv/D7REgT64lKgqlUQh/oNUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com; spf=pass smtp.mailfrom=testtoast.com; dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b=brIQeKnv; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=uQrks9X7; arc=none smtp.client-ip=103.168.172.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=testtoast.com
+	s=arc-20240116; t=1720004582; c=relaxed/simple;
+	bh=LvSBtxEWxuVYS7CxvKWKkwY51EhpTRzSAwu7h7K0Wqs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QgGr/K4mKRkXwVAlG0DtiTgjIMZ2Dzrt4d7kO6fgL5gUjLfkq7ljY5++5wAeiSzpqWAVqZ80j4yEk9PD+1UKc+Ou/WQaiLgrbjrP9mhy9je9+sZUbKnly2J+WADTw1qx2dMZ3NFYC+g8U/7zbif9c+HOwsz4iE6OHQ11pUZhtB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oFAdw+/f; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b="brIQeKnv";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="uQrks9X7"
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-	by mailfout.nyi.internal (Postfix) with ESMTP id C5C4813805FA;
-	Wed,  3 Jul 2024 06:57:38 -0400 (EDT)
-Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Wed, 03 Jul 2024 06:57:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=testtoast.com;
-	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
-	:from:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1720004258; x=
-	1720090658; bh=dh4jgHU7dqTQKxlK6pguYFC4g/IfdITeRgccK+k+z4w=; b=b
-	rIQeKnvni8DerlYTxW4jyui+epUYXIcJPPed2TjDJiwTjc9kgyI9AatnCAyXPRsd
-	kJAtxQkzvfJFVmoASuwDSTVdM0Tok/qCSoVFAsfny0ShnFRdQHTd1VqUyXMbAUK9
-	6Er9M9A+59RXVhXGoZGKNJ2JPWzUUNVh7IPPg/AP0LF0vqoUziMt5o/8aMAW91La
-	b6E9RxtTC2G+Y2fWB3wbpANnautngPqa5t2DPZE46lvS17v6A3zMScCN6A5ZLYRr
-	eeRD0DlOVP2LuMHeXzs6DUeyeoNHnOJF4Eszuph7988ZnkhzidS4MSWyaMTtVXL0
-	OHojyHDOgf82BII25hbVA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1720004258; x=
-	1720090658; bh=dh4jgHU7dqTQKxlK6pguYFC4g/IfdITeRgccK+k+z4w=; b=u
-	Qrks9X7M6WVJ+sZn//jqJ/H4GFPThEt539pb4//yTiMBL1MyZCiRrf9QbmjGHcdc
-	l7PIh/CKr74hPRh4dBx3FHhxWqlEljdADJNn+9Jtc810K+0otx/HnMmcsgyGiH1z
-	lecihxSFmxXc48OEHFj6Ag0pNW0P7krt63jqURlGHl9mvu65j8kgdm6rCPA7cNaX
-	AeLrV+8iHf/HkJpfJH1diCNvdTWhcH8maFIXYpL+A7xtVNelwqosNngtv9Rx8Fl7
-	D5Suo8lSh6MUX/bcoEJP+qeXMLPAlingyvKWRPda2SQshn/buXd1np0FVQqn8w1w
-	nSuR5GhABuBg5AwQagMZA==
-X-ME-Sender: <xms:oi6FZt7Af9472MQDofuUxHyPjTR2L7_C8cW0JzHg8PEW3QbyPGrplQ>
-    <xme:oi6FZq6uShyBaqUjVPk33u78g-pgZnAzB8Ll9y8i_mbvqdP_TV_yGQ0Wxj0bU_kgO
-    Hh3pb9v8Y_GLW0CtA>
-X-ME-Received: <xmr:oi6FZkcMhQgrWKdaM6LxVZPVUYDThD3b7VjYWX5suOBYqUj4rDWBAGFpiDB_4MegzKPUoTAoKqAPplB3DdMfPVuInmwPjIOG3Xd_XCAJJEvW-w6H>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudejgdefgecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpefthigrnhcu
-    hggrlhhklhhinhcuoehrhigrnhesthgvshhtthhorghsthdrtghomheqnecuggftrfgrth
-    htvghrnhepffehieffgedtgfffjeetveegfeekleeileekveeuteffteetudffveegieei
-    heetnecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpehmrghilhhfrhhomheprh
-    ihrghnsehtvghsthhtohgrshhtrdgtohhm
-X-ME-Proxy: <xmx:oi6FZmJwBVICf6pp00IglTauZ2BOAnUTBsKBPTy-Xm9NP8Vl-r-FXQ>
-    <xmx:oi6FZhKq5KHUEC3NlEM_5V5dqq4LBVIUZ_p_u7s84VoLw8v5i1-Ifg>
-    <xmx:oi6FZvwxp0ROgKnEAk6g1pf8Hi3-p5yF4GLNkx04Vrcd3FoVhHjCAg>
-    <xmx:oi6FZtJBBoGd_lE0mlIDxpD9axZs1yrtE09fmicl_fBmcHoipFbA8g>
-    <xmx:oi6FZh6i7F42k3NlrXT-wgOWnUIzRYLdzZPZCdzWMQYAjSX7dBrlZBT->
-Feedback-ID: idc0145fc:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 3 Jul 2024 06:57:32 -0400 (EDT)
-From: Ryan Walklin <ryan@testtoast.com>
-To: Maxime Ripard <mripard@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: Andre Przywara <andre.przywara@arm.com>,
-	Chris Morgan <macroalpha82@gmail.com>,
-	John Watts <contact@jookia.org>,
-	dri-devel@lists.freedesktop.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-sunxi@lists.linux.dev,
-	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Ryan Walklin <ryan@testtoast.com>
-Subject: [PATCH v2 23/23] drm: sun4i: de33: csc: add Display Engine 3.3 (DE33) support
-Date: Wed,  3 Jul 2024 22:51:13 +1200
-Message-ID: <20240703105454.41254-24-ryan@testtoast.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240703105454.41254-1-ryan@testtoast.com>
-References: <20240703105454.41254-1-ryan@testtoast.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oFAdw+/f"
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52ce6c8db7bso8101312e87.1
+        for <linux-clk@vger.kernel.org>; Wed, 03 Jul 2024 04:03:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720004579; x=1720609379; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=im1b/RxdrHSt8wujFjtbUuQ9aPQyW+sjarxKVIwXx4I=;
+        b=oFAdw+/f1idHUvfxWukDmGGg4gwyh24US0VfGO7j+l48Wsciwtpcyl9gfIT+oY4XZi
+         bNfuqTtLMMklH42qRUkw175u8tCjZ+qv0WN4m2iGcg+fx2Af8B/WxryD4WlgBV8S5KN1
+         lWR5YPfAFYpWaFJCbnkXERJsdyB+aIVNjqYbi3NM0F7vy0XfYm1V6mYIYemiI6Ib8Apw
+         GGoTCGXt02+6bwwZ/kivtH/GbK1dPnvpSfHD/OssU33PPb0eUMjkD2moPb2rxBUV/s6M
+         /GnyGww6hSz87qNLZ8dogFRUMUYEpl43XbYUvIstrpUEclVB+/VkrC1WOaOwmxvK8imX
+         RM9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720004579; x=1720609379;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=im1b/RxdrHSt8wujFjtbUuQ9aPQyW+sjarxKVIwXx4I=;
+        b=LFq04epCqPCTdg+YqTD3N9DvVJlWDgze4JszJPjo+XN3WnsG1Lcsl24Jl9vVcwpmAD
+         A4TIHHxrQ+pRmZMtFGb25vMOFTmUTRYfdxQiE6GDxWGwmKNCU929GMbiLnR1V5HzOnQT
+         ZcvFaIo2lE8usVWgawxtEBulEw5B9Xl1vcpobWNCwz2rBcop0MpE5lc1BpoN1C0jKz58
+         t8IeIM/9lMx8GPdQXCDrIa7qz6TqEyOnQMw7DLzwPLmElVKUTVw59xBwTH6UZU2HJR2n
+         VFjAn2JhfOhg9qGzVsSbl5tA51QAAYKY/N/9qHMgcw0KwelgJ+t98ent/mFZM0CTU6Um
+         b6Qg==
+X-Forwarded-Encrypted: i=1; AJvYcCXGJ/pgn0wcygCvH+Riv64NC1HZ93PnPtNNUDhwHNbIM0l7uPZ4ionwxAv27gvGWMUC3HLnp78YmUk/Sohj+yA2rBvnWAY2YUGb
+X-Gm-Message-State: AOJu0YxZenHiHkrxO05JdmisbrVyL6hpjH4Ywaur/sUHn8GuXr5vzqrd
+	hMh0eXGdlgrSDet4+SUwxm/YDhQP+KD8Ww5GmLZ9KDqfn1R6eCuR079M8xBPTUw=
+X-Google-Smtp-Source: AGHT+IEDg1CPm96hk7pBzbU18xhMMyXjzJowHnqih7mx71cOA9L6GtsgW5xU8ZTdE5oORxO75UsBvw==
+X-Received: by 2002:a05:6512:b14:b0:52c:db80:d694 with SMTP id 2adb3069b0e04-52e82679565mr7964235e87.20.1720004578743;
+        Wed, 03 Jul 2024 04:02:58 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52e7ab101c5sm2110487e87.79.2024.07.03.04.02.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jul 2024 04:02:58 -0700 (PDT)
+Date: Wed, 3 Jul 2024 14:02:56 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Varadarajan Narayanan <quic_varada@quicinc.com>
+Cc: vireshk@kernel.org, nm@ti.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, angelogioacchino.delregno@collabora.com, 
+	andersson@kernel.org, konrad.dybcio@linaro.org, mturquette@baylibre.com, 
+	ilia.lin@kernel.org, rafael@kernel.org, ulf.hansson@linaro.org, 
+	quic_sibis@quicinc.com, quic_rjendra@quicinc.com, quic_rohiagar@quicinc.com, 
+	abel.vesa@linaro.org, otto.pflueger@abscue.de, danila@jiaxyga.com, 
+	quic_ipkumar@quicinc.com, luca@z3ntu.xyz, stephan.gerhold@kernkonzept.com, nks@flawful.org, 
+	linux-pm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH v4 02/10] cpufreq: qcom-nvmem: Add support for IPQ9574
+Message-ID: <lhpdxlbmjsfgmsr5edjg4io3bwb6rkp7xz6ztvphdb4cme264e@j7mr6wp7bmnq>
+References: <20240703091651.2820236-1-quic_varada@quicinc.com>
+ <20240703091651.2820236-3-quic_varada@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240703091651.2820236-3-quic_varada@quicinc.com>
 
-From: Jernej Skrabec <jernej.skrabec@gmail.com>
+On Wed, Jul 03, 2024 at 02:46:43PM GMT, Varadarajan Narayanan wrote:
+> Add qcom_cpufreq_match_data for IPQ9574. This is used for tying
+> up the cpu@N nodes with the power domains. match_data_kryo is not
+> used since it doesn't set genpd_names. If genpd_names is not set,
+> 'cat /sys/kernel/debug/qcom_cpr3/thread0' causes cpr3_debug_info_show()
+> to crash while trying to read thread->corner->last_uV as
+> thread->corner is NULL.
+> 
+> 	Call trace:
+> 		cpr3_debug_info_show
+> 		seq_read_iter
+> 		seq_read
 
-Like earlier DE versions, the DE33 has a CSC (Color Space Correction)
-module. which provides color space conversion between BT2020/BT709, and
-dynamic range conversion between SDR/ST2084/HLG.
+I'd say, the commit message might be simpler:
 
-Add support for the DE33.
+IPQ9574 uses CPR4 power domain to manage core supplies. Use
+device-specific match data for this platform that includes genpd_names
+configuration.
 
-Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
-Signed-off-by: Ryan Walklin <ryan@testtoast.com>
----
- drivers/gpu/drm/sun4i/sun8i_csc.c | 96 +++++++++++++++++++++++++++++++
- drivers/gpu/drm/sun4i/sun8i_csc.h |  3 +
- 2 files changed, 99 insertions(+)
+Anyway:
 
-diff --git a/drivers/gpu/drm/sun4i/sun8i_csc.c b/drivers/gpu/drm/sun4i/sun8i_csc.c
-index 2d5a2cf7cba24..45bd1ca06400e 100644
---- a/drivers/gpu/drm/sun4i/sun8i_csc.c
-+++ b/drivers/gpu/drm/sun4i/sun8i_csc.c
-@@ -238,6 +238,14 @@ static const u32 yuv2yuv_de3[2][3][3][12] = {
- 	},
- };
- 
-+static u32 sun8i_csc_base(struct sun8i_mixer *mixer, int layer)
-+{
-+	if (mixer->cfg->de_type == sun8i_mixer_de33)
-+		return sun8i_channel_base(mixer, layer) - 0x800;
-+	else
-+		return ccsc_base[mixer->cfg->ccsc][layer];
-+}
-+
- static void sun8i_csc_setup(struct regmap *map, u32 base,
- 			    enum format_type fmt_type,
- 			    enum drm_color_encoding encoding,
-@@ -358,6 +366,90 @@ static void sun8i_de3_ccsc_setup(struct sunxi_engine *engine, int layer,
- 			   mask, val);
- }
- 
-+/* extract constant from high word and invert sign if necessary */
-+static u32 sun8i_de33_ccsc_get_constant(u32 value)
-+{
-+	value >>= 16;
-+
-+	if (value & BIT(15))
-+		return 0x400 - (value & 0x3ff);
-+
-+	return value;
-+}
-+
-+static void sun8i_de33_convert_table(const u32 *src, u32 *dst)
-+{
-+	dst[0] = sun8i_de33_ccsc_get_constant(src[3]);
-+	dst[1] = sun8i_de33_ccsc_get_constant(src[7]);
-+	dst[2] = sun8i_de33_ccsc_get_constant(src[11]);
-+	memcpy(&dst[3], src, sizeof(u32) * 12);
-+	dst[6] &= 0xffff;
-+	dst[10] &= 0xffff;
-+	dst[14] &= 0xffff;
-+}
-+
-+static void sun8i_de33_ccsc_setup(struct sun8i_mixer *mixer, int layer,
-+				  enum format_type fmt_type,
-+				  enum drm_color_encoding encoding,
-+				  enum drm_color_range range)
-+{
-+	u32 addr, val = 0, base, csc[15];
-+	struct sunxi_engine *engine;
-+	struct regmap *map;
-+	const u32 *table;
-+	int i;
-+
-+	table = yuv2rgb_de3[range][encoding];
-+	base = sun8i_csc_base(mixer, layer);
-+	engine = &mixer->engine;
-+	map = engine->regs;
-+
-+	switch (fmt_type) {
-+	case FORMAT_TYPE_RGB:
-+		if (engine->format == MEDIA_BUS_FMT_RGB888_1X24)
-+			break;
-+		val = SUN8I_CSC_CTRL_EN;
-+		sun8i_de33_convert_table(rgb2yuv_de3[engine->encoding], csc);
-+		regmap_bulk_write(map, SUN50I_CSC_COEFF(base, 0), csc, 15);
-+		break;
-+	case FORMAT_TYPE_YUV:
-+		table = sun8i_csc_get_de3_yuv_table(encoding, range,
-+						    engine->format,
-+						    engine->encoding);
-+		if (!table)
-+			break;
-+		val = SUN8I_CSC_CTRL_EN;
-+		sun8i_de33_convert_table(table, csc);
-+		regmap_bulk_write(map, SUN50I_CSC_COEFF(base, 0), csc, 15);
-+		break;
-+	case FORMAT_TYPE_YVU:
-+		table = sun8i_csc_get_de3_yuv_table(encoding, range,
-+						    engine->format,
-+						    engine->encoding);
-+		if (!table)
-+			table = yuv2yuv_de3[range][encoding][encoding];
-+		val = SUN8I_CSC_CTRL_EN;
-+		sun8i_de33_convert_table(table, csc);
-+		for (i = 0; i < 15; i++) {
-+			addr = SUN50I_CSC_COEFF(base, i);
-+			if (i > 3) {
-+				if (((i - 3) & 3) == 1)
-+					addr = SUN50I_CSC_COEFF(base, i + 1);
-+				else if (((i - 3) & 3) == 2)
-+					addr = SUN50I_CSC_COEFF(base, i - 1);
-+			}
-+			regmap_write(map, addr, csc[i]);
-+		}
-+		break;
-+	default:
-+		val = 0;
-+		DRM_WARN("Wrong CSC mode specified.\n");
-+		return;
-+	}
-+
-+	regmap_write(map, SUN8I_CSC_CTRL(base), val);
-+}
-+
- void sun8i_csc_set_ccsc(struct sun8i_mixer *mixer, int layer,
- 			enum format_type fmt_type,
- 			enum drm_color_encoding encoding,
-@@ -369,6 +461,10 @@ void sun8i_csc_set_ccsc(struct sun8i_mixer *mixer, int layer,
- 		sun8i_de3_ccsc_setup(&mixer->engine, layer,
- 				     fmt_type, encoding, range);
- 		return;
-+	} else if (mixer->cfg->de_type == sun8i_mixer_de33) {
-+		sun8i_de33_ccsc_setup(mixer, layer, fmt_type,
-+				      encoding, range);
-+		return;
- 	}
- 
- 	if (layer < mixer->cfg->vi_num) {
-diff --git a/drivers/gpu/drm/sun4i/sun8i_csc.h b/drivers/gpu/drm/sun4i/sun8i_csc.h
-index b7546e06e315c..2b762cb79f02c 100644
---- a/drivers/gpu/drm/sun4i/sun8i_csc.h
-+++ b/drivers/gpu/drm/sun4i/sun8i_csc.h
-@@ -20,6 +20,9 @@ struct sun8i_mixer;
- #define SUN8I_CSC_CTRL(base)		((base) + 0x0)
- #define SUN8I_CSC_COEFF(base, i)	((base) + 0x10 + 4 * (i))
- 
-+#define SUN50I_CSC_COEFF(base, i)	((base) + 0x04 + 4 * (i))
-+#define SUN50I_CSC_ALPHA(base)		((base) + 0x40)
-+
- #define SUN8I_CSC_CTRL_EN		BIT(0)
- 
- enum format_type {
+Acked-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
+
+> 
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> ---
+> v4: Update commit log to include stack trace
+>     Introduce qcom_cpufreq_match_data for IPQ9574
+> ---
+>  drivers/cpufreq/qcom-cpufreq-nvmem.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/cpufreq/qcom-cpufreq-nvmem.c b/drivers/cpufreq/qcom-cpufreq-nvmem.c
+> index 939702dfa73f..95558586c2e6 100644
+> --- a/drivers/cpufreq/qcom-cpufreq-nvmem.c
+> +++ b/drivers/cpufreq/qcom-cpufreq-nvmem.c
+> @@ -428,6 +428,11 @@ static const struct qcom_cpufreq_match_data match_data_ipq8074 = {
+>  	.get_version = qcom_cpufreq_ipq8074_name_version,
+>  };
+>  
+> +static const struct qcom_cpufreq_match_data match_data_ipq9574 = {
+> +	.get_version = qcom_cpufreq_kryo_name_version,
+> +	.genpd_names = generic_genpd_names,
+> +};
+> +
+>  static void qcom_cpufreq_suspend_virt_devs(struct qcom_cpufreq_drv *drv, unsigned int cpu)
+>  {
+>  	const char * const *name = drv->data->genpd_names;
+> @@ -621,7 +626,7 @@ static const struct of_device_id qcom_cpufreq_match_list[] __initconst = {
+>  	{ .compatible = "qcom,ipq8064", .data = &match_data_ipq8064 },
+>  	{ .compatible = "qcom,ipq8074", .data = &match_data_ipq8074 },
+>  	{ .compatible = "qcom,apq8064", .data = &match_data_krait },
+> -	{ .compatible = "qcom,ipq9574", .data = &match_data_kryo },
+> +	{ .compatible = "qcom,ipq9574", .data = &match_data_ipq9574 },
+>  	{ .compatible = "qcom,msm8974", .data = &match_data_krait },
+>  	{ .compatible = "qcom,msm8960", .data = &match_data_krait },
+>  	{},
+> -- 
+> 2.34.1
+> 
+
 -- 
-2.45.2
-
+With best wishes
+Dmitry
