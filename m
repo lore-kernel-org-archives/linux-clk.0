@@ -1,136 +1,253 @@
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2482B13DDA6;
-	Wed,  3 Jul 2024 13:09:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38C9A17996;
+	Wed,  3 Jul 2024 13:32:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720012168; cv=none; b=nv7MEfG3FNCOvPbqzTVUwEgyghlZVtsMysLpL3piHkRemeXN5sJ1tCOX4hnnhvFxqhe0k83Dodi+BS1h44qpmNT2xrdkArfhaR6Ix7573N4sPpToFh4foNitjEJhThlngUsqXYS65ncUntsCzSFOUqEfRuO52fvw9WnEqSP582c=
+	t=1720013530; cv=none; b=ZzDuUdEIcAYLn3u3irTOKM8GrgLRtf3qcWXwbTWo59CqT5BTf+XV6Oc88Ev1/4XyTsbE2CGnAqyHtCtO7dYE+fPS8ka0PqAFlc+G3WCw0FkgwV8HJWLcPbvfBsSEUWvrT1ZNsEHzmEYVdFV1xLdEunXjvuiwOhV9QxoXCaFsB5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720012168; c=relaxed/simple;
-	bh=W8KnSELxoOeLFO4Bkg8ypBzvhOg9ofBU1heW/xaRe4k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=KUhXTWIBUcGJyrpGl9mRkHUag8woUY3otXdtjRNvvabYEdY73vcDJFBl9fA5XE6aFhbD2PrzCDHV6YWjq+3eFALhAP5PAzno3U2KyHs+nA2KruyiT3S8xqQIqoXyOGO7HSJLYrEnTXLOlP0GiTNkrw03jVXoNrDDzfwqmEgEo7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=fail smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Rj5CV6gj; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=microchip.com
+	s=arc-20240116; t=1720013530; c=relaxed/simple;
+	bh=cC9yez9ru5tz6L+ZBQOiScXqAx6CzS9LIQV+YWh1sK0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=VT3qZ7WvBQidigqZMbZ05ldeuk3UKJBnIK6Pl2ntrrgIAUKPUgtUAxBbZDLny7nTVCV+4keNBxEKHkmYpb1MHoh7XAMuVIbJ/Xb6jPuUn6ZBUF78uyffmcfxpPZCIt557wWTrrm6MYZ0eEjvL+ol56hKD9ikZsqo05NiaM+G3MU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j27u54KE; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Rj5CV6gj"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1720012167; x=1751548167;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=W8KnSELxoOeLFO4Bkg8ypBzvhOg9ofBU1heW/xaRe4k=;
-  b=Rj5CV6gjA7bdouczrb90jR05EmC8s1gMOWvzhsKmCBE2E7JT4vVZzOdS
-   uBUAswn6AJt3J0nSb+5FoxsxGyLZ8Qjxbfu2zmiNjjSxvu3WcD7WYWqAw
-   oaL948Izy4XK6SU6PNJj+gGWNskvdmGM16iSYixj+uE9bizQTgIeC96WQ
-   jjhud9EqkR3dkpschvbXGcx6IIodTZym3NgjEus87t6wVzF7FWhj8WJbu
-   N9q0TBlMOh7Imj2TJnnXptonwil+6DUI/YFI1Gcz2Bxy0O0NlYYzOOR1K
-   jJPxapoEb0zIRrd1OwkSQ3tjgKtWYGanpCYw+DuuPYiytBf/vuZz1EKfX
-   Q==;
-X-CSE-ConnectionGUID: EqW5S7eWRE2aTexdHZiS+A==
-X-CSE-MsgGUID: NasQoXC7S5Kaxo5UL3Vsag==
-X-IronPort-AV: E=Sophos;i="6.09,182,1716274800"; 
-   d="scan'208";a="28777735"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 03 Jul 2024 06:09:24 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Wed, 3 Jul 2024 06:09:03 -0700
-Received: from [10.180.116.202] (10.10.85.11) by chn-vm-ex01.mchp-main.com
- (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Wed, 3 Jul 2024 06:08:46 -0700
-Message-ID: <a8cc31a9-d58f-4a4e-98fb-a7ba47bc744e@microchip.com>
-Date: Wed, 3 Jul 2024 15:09:07 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j27u54KE"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42565697036so4223575e9.1;
+        Wed, 03 Jul 2024 06:32:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720013527; x=1720618327; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Kl2pjHJm1h/ffi90DDR4egoLaMikdE5VLzt8GYsReJI=;
+        b=j27u54KEkeaOJ/hpCovl49EhB3PwY1SQoO0frasIk4SLBOhay3FyssplmclzqGdDOh
+         MrvrdBHA7bnvoNTUUZk+cx02NnTUV3kMBr0x3ek+p6ZEfG1B8VvYJmW+OW2rORlWLZ7n
+         F+mDEzsMEIONTW3hW9MMVRVQQc7CbBqQzn8aFaA2PrrWe54DIJKvCxA6UB6LJ+LU7X3I
+         yIePtmARZgO5rRmWjEtOdwHd+a17XCC2e1w5PdZRFeE2VmFkuDbeXfgegRrkW0+CqCfd
+         c9AtAk1CfAdo3eQu77l/GKtDCZlIhjfQZX2V2KxKN8ZTtph6R9OKt8OfrWmzjtOfOkQ2
+         b9yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720013527; x=1720618327;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Kl2pjHJm1h/ffi90DDR4egoLaMikdE5VLzt8GYsReJI=;
+        b=uVuxXVDdCO0YxLabK7zI/BM5VPGab7izON+05AOD6jE5WRN2fkM4TUSVUcYXGy2Hb1
+         mDf6dlIjoCtQhKqqwhgdRjHokgOl5rOwaTiRwZZbSjbF7vQk2dGaQgqgXTrrKAOKY6Yk
+         DV4ANWIbZYb+KU1XEP1tBOK8L0B+bJ3aQjNWudobvQoHI0Wmd6bGDhqMa3zgFFmKqeKX
+         EKIhWGOArkBMXmMQSkPuQb1INywl6+a/QwysdH8/cL2HKVgC7hzXkqSV/2OpGIB9PWl+
+         SNjpTuETXV0/h2N8RMfJALFQscHv/kg3J61JNQYFT/k2taEWHqVA/X7TOrZmtNwxZuHC
+         xy4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXnblhw4J3vKiuGwIhKt9r54CaP9YLR35Q56MpIFrq555HMkGukBVbpVQR3hOyexWdA/Qh93gH55/d0NkXoxLjYjuJOi0h542qh8s/wxWzAsMehZfxqDGrqE7OU9ILCF+Dk8/LY/MHzgw==
+X-Gm-Message-State: AOJu0YwwqwhDlIzJ+iF4K3PKPd3RGpJsgjSDlPPe42KW+IMYiFW49KYv
+	iXKHVW+Avv1Ogm03oO1H2YmdSLD4iVg6kqVaILnfhSWxHY/YrUMV
+X-Google-Smtp-Source: AGHT+IGFr7nyIVzVY5CNAur2UEQy1puK2wRucx6U1PuVyGu1HvCbNL+KZoL1fXuTJC/SwvxI1gnpgw==
+X-Received: by 2002:a05:600c:4ca5:b0:424:895c:b84b with SMTP id 5b1f17b1804b1-426408e4d90mr16230135e9.4.1720013527265;
+        Wed, 03 Jul 2024 06:32:07 -0700 (PDT)
+Received: from standask-GA-A55M-S2HP (lu-nat-113-247.ehs.sk. [188.123.113.247])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42573c55ff4sm216113945e9.46.2024.07.03.06.32.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 03 Jul 2024 06:32:06 -0700 (PDT)
+Date: Wed, 3 Jul 2024 15:32:04 +0200
+From: Stanislav Jakubek <stano.jakubek@gmail.com>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Baolin Wang <baolin.wang7@gmail.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: clock: sprd,sc9860-clk: convert to YAML
+Message-ID: <ZoVS1GAC28Zpzok4@standask-GA-A55M-S2HP>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 11/20] irqchip/atmel-aic: convert to
- of_property_for_each_u32_new()
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>, Miguel Ojeda
-	<ojeda@kernel.org>, Rob Herring <robh@kernel.org>, Saravana Kannan
-	<saravanak@google.com>, Nathan Chancellor <nathan@kernel.org>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Tony
- Lindgren <tony@atomide.com>, Bjorn Andersson <andersson@kernel.org>,
-	=?UTF-8?Q?Emilio_L=C3=B3pez?= <emilio@elopez.com.ar>, Chen-Yu Tsai
-	<wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
-	<samuel@sholland.org>, Krzysztof Kozlowski <krzk@kernel.org>, Daniel Lezcano
-	<daniel.lezcano@linaro.org>, Thomas Gleixner <tglx@linutronix.de>, Florian
- Fainelli <florian.fainelli@broadcom.com>, Broadcom internal kernel review
- list <bcm-kernel-feedback-list@broadcom.com>, Linus Walleij
-	<linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Jonathan
- Cameron <jic23@kernel.org>, Lee Jones <lee@kernel.org>, Shawn Guo
-	<shawnguo@kernel.org>, Pengutronix Kernel Team <kernel@pengutronix.de>,
-	=?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, Greg Kroah-Hartman
-	<gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, Richard
- Leitner <richard.leitner@linux.dev>, Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy
-	<christophe.leroy@csgroup.eu>, "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-	Damien Le Moal <dlemoal@kernel.org>
-CC: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Thomas Petazzoni
-	<thomas.petazzoni@bootlin.com>, <linux-kernel@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <llvm@lists.linux.dev>,
-	<linux-clk@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-	<linux-arm-msm@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-sunxi@lists.linux.dev>, <linux-samsung-soc@vger.kernel.org>,
-	<linux-gpio@vger.kernel.org>, <linux-iio@vger.kernel.org>,
-	<linux-pwm@vger.kernel.org>, <linux-serial@vger.kernel.org>,
-	<linux-usb@vger.kernel.org>, <patches@opensource.cirrus.com>,
-	<linux-sound@vger.kernel.org>, <linuxppc-dev@lists.ozlabs.org>,
-	<linux-riscv@lists.infradead.org>
-References: <20240703-of_property_for_each_u32-v1-0-42c1fc0b82aa@bootlin.com>
- <20240703-of_property_for_each_u32-v1-11-42c1fc0b82aa@bootlin.com>
-Content-Language: en-US, fr-FR
-From: Nicolas Ferre <nicolas.ferre@microchip.com>
-Organization: microchip
-In-Reply-To: <20240703-of_property_for_each_u32-v1-11-42c1fc0b82aa@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 03/07/2024 at 12:36, Luca Ceresoli wrote:
-> Simplify code using of_property_for_each_u32_new() as the two additional
-> parameters in of_property_for_each_u32() are not used here.
-> 
-> Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+Convert the Spreadtrum SC9860 clock bindings to DT schema.
 
-Acked-by: Nicolas Ferre <nicolas.ferre@microchip.com>
+Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
+---
+ .../bindings/clock/sprd,sc9860-clk.txt        | 63 -------------
+ .../bindings/clock/sprd,sc9860-clk.yaml       | 90 +++++++++++++++++++
+ 2 files changed, 90 insertions(+), 63 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/sprd,sc9860-clk.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/sprd,sc9860-clk.yaml
 
-> ---
->   drivers/irqchip/irq-atmel-aic-common.c | 4 +---
->   1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/irqchip/irq-atmel-aic-common.c b/drivers/irqchip/irq-atmel-aic-common.c
-> index 072bd227b6c6..543ea249df53 100644
-> --- a/drivers/irqchip/irq-atmel-aic-common.c
-> +++ b/drivers/irqchip/irq-atmel-aic-common.c
-> @@ -111,8 +111,6 @@ static void __init aic_common_ext_irq_of_init(struct irq_domain *domain)
->          struct device_node *node = irq_domain_get_of_node(domain);
->          struct irq_chip_generic *gc;
->          struct aic_chip_data *aic;
-> -       struct property *prop;
-> -       const __be32 *p;
->          u32 hwirq;
-> 
->          gc = irq_get_domain_generic_chip(domain, 0);
-> @@ -120,7 +118,7 @@ static void __init aic_common_ext_irq_of_init(struct irq_domain *domain)
->          aic = gc->private;
->          aic->ext_irqs |= 1;
-> 
-> -       of_property_for_each_u32(node, "atmel,external-irqs", prop, p, hwirq) {
-> +       of_property_for_each_u32_new(node, "atmel,external-irqs", hwirq) {
->                  gc = irq_get_domain_generic_chip(domain, hwirq);
->                  if (!gc) {
->                          pr_warn("AIC: external irq %d >= %d skip it\n",
-> 
-> --
-> 2.34.1
-> 
+diff --git a/Documentation/devicetree/bindings/clock/sprd,sc9860-clk.txt b/Documentation/devicetree/bindings/clock/sprd,sc9860-clk.txt
+deleted file mode 100644
+index aaaf02ca2a6a..000000000000
+--- a/Documentation/devicetree/bindings/clock/sprd,sc9860-clk.txt
++++ /dev/null
+@@ -1,63 +0,0 @@
+-Spreadtrum SC9860 Clock Binding
+-------------------------
+-
+-Required properties:
+-- compatible: should contain the following compatible strings:
+-	- "sprd,sc9860-pmu-gate"
+-	- "sprd,sc9860-pll"
+-	- "sprd,sc9860-ap-clk"
+-	- "sprd,sc9860-aon-prediv"
+-	- "sprd,sc9860-apahb-gate"
+-	- "sprd,sc9860-aon-gate"
+-	- "sprd,sc9860-aonsecure-clk"
+-	- "sprd,sc9860-agcp-gate"
+-	- "sprd,sc9860-gpu-clk"
+-	- "sprd,sc9860-vsp-clk"
+-	- "sprd,sc9860-vsp-gate"
+-	- "sprd,sc9860-cam-clk"
+-	- "sprd,sc9860-cam-gate"
+-	- "sprd,sc9860-disp-clk"
+-	- "sprd,sc9860-disp-gate"
+-	- "sprd,sc9860-apapb-gate"
+-
+-- #clock-cells: must be 1
+-
+-- clocks : Should be the input parent clock(s) phandle for the clock, this
+-	   property here just simply shows which clock group the clocks'
+-	   parents are in, since each clk node would represent many clocks
+-	   which are defined in the driver.  The detailed dependency
+-	   relationship (i.e. how many parents and which are the parents)
+-	   are implemented in driver code.
+-
+-Optional properties:
+-
+-- reg:	Contain the registers base address and length. It must be configured
+-	only if no 'sprd,syscon' under the node.
+-
+-- sprd,syscon: phandle to the syscon which is in the same address area with
+-	       the clock, and so we can get regmap for the clocks from the
+-	       syscon device.
+-
+-Example:
+-
+-	pmu_gate: pmu-gate {
+-		compatible = "sprd,sc9860-pmu-gate";
+-		sprd,syscon = <&pmu_regs>;
+-		clocks = <&ext_26m>;
+-		#clock-cells = <1>;
+-	};
+-
+-	pll: pll {
+-		compatible = "sprd,sc9860-pll";
+-		sprd,syscon = <&ana_regs>;
+-		clocks = <&pmu_gate 0>;
+-		#clock-cells = <1>;
+-	};
+-
+-	ap_clk: clock-controller@20000000 {
+-		compatible = "sprd,sc9860-ap-clk";
+-		reg = <0 0x20000000 0 0x400>;
+-		clocks = <&ext_26m>, <&pll 0>,
+-			 <&pmu_gate 0>;
+-		#clock-cells = <1>;
+-	};
+diff --git a/Documentation/devicetree/bindings/clock/sprd,sc9860-clk.yaml b/Documentation/devicetree/bindings/clock/sprd,sc9860-clk.yaml
+new file mode 100644
+index 000000000000..21ed023a928c
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/sprd,sc9860-clk.yaml
+@@ -0,0 +1,90 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/sprd,sc9860-clk.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Spreadtrum SC9860 clock
++
++maintainers:
++  - Orson Zhai <orsonzhai@gmail.com>
++  - Baolin Wang <baolin.wang7@gmail.com>
++  - Chunyan Zhang <zhang.lyra@gmail.com>
++
++properties:
++  compatible:
++    enum:
++      - sprd,sc9860-agcp-gate
++      - sprd,sc9860-aonsecure-clk
++      - sprd,sc9860-aon-gate
++      - sprd,sc9860-aon-prediv
++      - sprd,sc9860-apahb-gate
++      - sprd,sc9860-apapb-gate
++      - sprd,sc9860-ap-clk
++      - sprd,sc9860-cam-clk
++      - sprd,sc9860-cam-gate
++      - sprd,sc9860-disp-clk
++      - sprd,sc9860-disp-gate
++      - sprd,sc9860-gpu-clk
++      - sprd,sc9860-pll
++      - sprd,sc9860-pmu-gate
++      - sprd,sc9860-vsp-clk
++      - sprd,sc9860-vsp-gate
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    minItems: 1
++    maxItems: 3
++    description:
++      Should be the input parent clock(s) phandle for the clock, this
++      property just simply shows which clock group the clocks' parents
++      are in, since each clk node would represent many clocks which are
++      defined in the driver. The detailed dependency relationship
++      (i.e. how many parents and which are the parents) are implemented
++      in driver code.
++
++  '#clock-cells':
++    const: 1
++
++  sprd,syscon:
++    $ref: /schemas/types.yaml#/definitions/phandle
++    description:
++      phandle to the syscon which is in the same address area with the
++      clock, and so we can get regmap for the clocks from the syscon device
++
++oneOf:
++  - required:
++      - reg
++  - required:
++      - sprd,syscon
++
++required:
++  - compatible
++  - clocks
++  - '#clock-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    soc {
++      #address-cells = <2>;
++      #size-cells = <2>;
++
++      pmu-gate {
++        compatible = "sprd,sc9860-pmu-gate";
++        clocks = <&ext_26m>;
++        #clock-cells = <1>;
++        sprd,syscon = <&pmu_regs>;
++      };
++
++      clock-controller@20000000 {
++        compatible = "sprd,sc9860-ap-clk";
++        reg = <0 0x20000000 0 0x400>;
++        clocks = <&ext_26m>, <&pll 0>, <&pmu_gate 0>;
++        #clock-cells = <1>;
++      };
++    };
++...
+-- 
+2.34.1
 
