@@ -1,215 +1,104 @@
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACA7D174EFC;
-	Wed,  3 Jul 2024 10:38:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04902172798;
+	Wed,  3 Jul 2024 10:42:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720003131; cv=none; b=r4/INWpD/I9EOj9UDIXdTMaNMby767ttIzrf3cMjwucmSYapYJCK2Z4Vnutd55U36A0crQEhWw8N9ZTKm1KYqR7JMVQWG1Wcxk3pqjGn4xdmsUCAYTZ75j41+OlV9XKKsxM00/KngC4Qd9VsLoNGB+ETHr7KD+YjWbC4+EEluuI=
+	t=1720003372; cv=none; b=aS+yHD59NUrfAw9x5Y88UI7ZHd8BHCTVYz2O7xMLZr51cYV0SlbZNIqmIywgZZoFD2ffd9VTBmB8YkCR0gw11iK0WOg8ThdbVTttqqKNaINgu/8P5tbZj/jIJ8XFk6SWS+w2dqEtC1dmks0lUIEfwtJUPXizo7+G2D4hovxM42Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720003131; c=relaxed/simple;
-	bh=imYEkBXowZEctWnX7RSJaxD8kZRYLJFmccuWAyTSK7w=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=hZ2gaGvWk4rLmnrliowh1iqj/3YZRPWUPmgcwqPFC7lNG/mQQtdUsPGiuur27Hhc8aJ2r1dE+Xh6ZTLqLibDuCYJTJFyOHCEKTEgesAWowM80FjkFiBoOvYGof5d9pIObXqkAEDjr3S4V0luWQ8L6V0ayVrIpMfdKmZAGcrFrMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=aLctC95x; arc=none smtp.client-ip=217.70.183.194
+	s=arc-20240116; t=1720003372; c=relaxed/simple;
+	bh=3cfOFBtgSSaF4cSn4MpRGAygi+1KrqpFeLc5bisuTrg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=n7LJoUtlOD31O0T4P3PO3tZsdBHz4uClDfsFAvrNdSpBl7+Ub+qs7Yl4WMt8sGOcUr6+1TOoLhvRMOI6vpzmCZ4SrdNDv6YXqGHK7z9k7vK48HVkPmRjWPANI4ak4MGZ1JtcYLqjojidS/AG6NkQNAmBiKcUVUNkDAUsABMH4dU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Kn0Xavx1; arc=none smtp.client-ip=217.70.183.197
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="aLctC95x"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 42E2C40006;
-	Wed,  3 Jul 2024 10:38:42 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Kn0Xavx1"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B0A411C0003;
+	Wed,  3 Jul 2024 10:42:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1720003126;
+	t=1720003362;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=1Bx2CQCZLnvl2mGaHzoLhHeTCe30chHxVgbi6fu5d+s=;
-	b=aLctC95xt2Q6rMLnoKMX3FJ/PPaRdMHQEBg8Yh4ab3FSY9cbwu/dUFTyd2apLZ20deWbHL
-	p+IzkHN10jVZ1AG9Zn60wT53j8GY4YjZh45RcrSYSRiZO/UmHE3QPIVv0XvnhM2mXl2hWz
-	VOJOVdL5ZPhpZJKh1jWQ96KV9qbUgn5W/5TTMt7H+C2eSDixGWwEKYYBbQX1xXqSkyGHz5
-	91ju+rAKcnrwNcrolgluBFlh3QFO+/DQF5Wl+7Xbh+KtpnaGIUDYbYcsxewuu+9dpHQeok
-	x6ehLSPvrF/uwBxNqrMB68JqQwCZNKNJ8SkpeUBfTvTBYcpghA0kpCr+80jVbg==
+	bh=JD7lzSbNvDLaEngDHvpQyOlHXKS5REtsvCW8NYDsEt0=;
+	b=Kn0Xavx1zSLZ8bgamyqsUbcFuSL5EOFzlejUwiPrFqdzY+YqYx3jZ4VKvVxAeoiAW/ZOur
+	IFJNzqbm01fG+4stjXyofsaH7WyZOTpt9qh5/4Udv6jl6o0KG4wVhsUCji76EN5ZgTAjJj
+	H/qW9msg5B5nv8sEjz7sFN53f6/JuCF5EziR19UutXQT8OGkcF8yxGfZ6W82JVyNZVRLx8
+	gNjGqez4Jb1UNCulg4Z3ymy0PyqKqGth44pfUdHm1UNrAFb2kTp5kbF1RoY/LGTaGXvI2Y
+	TBbcsYBYl6tzHiDfY0xeU9zgK8uEC3Fl1vwDJM2zWNe7iqxQuE3lWiKBTX++CA==
+Date: Wed, 3 Jul 2024 12:42:36 +0200
 From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Wed, 03 Jul 2024 12:37:04 +0200
-Subject: [PATCH 20/20] of: deprecate and rename of_property_for_each_u32()
+To: Peng Fan <peng.fan@nxp.com>
+Cc: Rob Herring <robh@kernel.org>, "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
+ Saravana Kannan <saravanak@google.com>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH 1/2] of: property: add of_property_for_each_u64
+Message-ID: <20240703124236.6f505329@booty>
+In-Reply-To: <20240628161617.6bc9ca3c@booty>
+References: <20240621-clk-u64-v1-0-d28a611b2621@nxp.com>
+	<20240621-clk-u64-v1-1-d28a611b2621@nxp.com>
+	<20240627214355.GA601888-robh@kernel.org>
+	<AM6PR04MB59416E3C8FFC904450F3B02D88D02@AM6PR04MB5941.eurprd04.prod.outlook.com>
+	<AM6PR04MB5941D30C26F2CB818FEC082C88D02@AM6PR04MB5941.eurprd04.prod.outlook.com>
+	<20240628161617.6bc9ca3c@booty>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240703-of_property_for_each_u32-v1-20-42c1fc0b82aa@bootlin.com>
-References: <20240703-of_property_for_each_u32-v1-0-42c1fc0b82aa@bootlin.com>
-In-Reply-To: <20240703-of_property_for_each_u32-v1-0-42c1fc0b82aa@bootlin.com>
-To: Miguel Ojeda <ojeda@kernel.org>, Rob Herring <robh@kernel.org>, 
- Saravana Kannan <saravanak@google.com>, 
- Nathan Chancellor <nathan@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Tony Lindgren <tony@atomide.com>, 
- Bjorn Andersson <andersson@kernel.org>, 
- =?utf-8?q?Emilio_L=C3=B3pez?= <emilio@elopez.com.ar>, 
- Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Samuel Holland <samuel@sholland.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, 
- Thomas Gleixner <tglx@linutronix.de>, 
- Florian Fainelli <florian.fainelli@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, Jonathan Cameron <jic23@kernel.org>, 
- Lee Jones <lee@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Jiri Slaby <jirislaby@kernel.org>, 
- Richard Leitner <richard.leitner@linux.dev>, 
- Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
- Nicolas Ferre <nicolas.ferre@microchip.com>, 
- Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
- Christophe Leroy <christophe.leroy@csgroup.eu>, 
- "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, 
- Damien Le Moal <dlemoal@kernel.org>
-Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- llvm@lists.linux.dev, linux-clk@vger.kernel.org, linux-omap@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-sunxi@lists.linux.dev, linux-samsung-soc@vger.kernel.org, 
- linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org, 
- linux-pwm@vger.kernel.org, linux-serial@vger.kernel.org, 
- linux-usb@vger.kernel.org, patches@opensource.cirrus.com, 
- linux-sound@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
- linux-riscv@lists.infradead.org, Luca Ceresoli <luca.ceresoli@bootlin.com>
-X-Mailer: b4 0.14.0
 X-GND-Sasl: luca.ceresoli@bootlin.com
 
-of_property_for_each_u32() is meant to disappear. All the call sites not
-using the 3rd and 4th arguments have already been replaced by
-of_property_for_each_u32_new().
+Hello Peng,
 
-Deprecate the old macro. Also rename it to minimize the number of new
-usages and encourage conversion to the of_property_for_each_u32_new() macro
-in not(-yet)-upstream code.
+On Fri, 28 Jun 2024 16:16:17 +0200
+Luca Ceresoli <luca.ceresoli@bootlin.com> wrote:
 
-Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+[...]
 
----
+> > > > > +#define of_property_for_each_u64(np, propname, prop, p, u)	\
+> > > > > +	for (prop = of_find_property(np, propname, NULL),	\
+> > > > > +		p = of_prop_next_u64(prop, NULL, &u);		\
+> > > > > +		p;						\
+> > > > > +		p = of_prop_next_u64(prop, p, &u))    
+> > > >
+> > > > I think we want to define this differently to avoid exposing struct
+> > > > property and the property data directly. Like this:
+> > > >
+> > > > #define of_property_for_each_u64(np, propname, u) \
+> > > >   for (struct property *_prop = of_find_property(np, propname, NULL),
+> > > >          const __be32 *_p = of_prop_next_u64(_prop, NULL, &u);
+> > > >          _p;
+> > > >          _p = of_prop_next_u64(_prop, _p, &u))    
+> > 
+> > This will trigger a compilation error, because C not allow
+> > declare two variables with different types as for loop expression 1.
+> > Need to think about other methods.  
+> 
+> I have a working draft here where I solved it somehow, let me just find
+> the proper branch and send it. Perhaps next week, but I'm striving to do
+> that by Mon-Tue.
 
-Notes:
+Ok, that slipped to Wednesday, but here it is:
+https://lore.kernel.org/all/20240703-of_property_for_each_u32-v1-1-42c1fc0b82aa@bootlin.com/
 
- * The following files have not been build-tested simply because I haven't
-   managed to have a config that enables them so far:
+I think you can reuse the technique I used in that patch to write
+of_property_for_each_u64(np, propname, u), taking only 3 parameters.
 
-     drivers/irqchip/irq-pic32-evic.c
-     drivers/pinctrl/pinctrl-k210.c
-
- * These have not been converted yet as they are not trivial, and they will
-   need to use a more specific function that does the lookup they need and
-   returns the result:
-
-     drivers/clk/clk-si5351.c
-     drivers/clk/clk.c
----
- .clang-format                    | 2 +-
- drivers/clk/clk-si5351.c         | 4 ++--
- drivers/clk/clk.c                | 2 +-
- drivers/irqchip/irq-pic32-evic.c | 2 +-
- drivers/pinctrl/pinctrl-k210.c   | 2 +-
- include/linux/of.h               | 3 ++-
- 6 files changed, 8 insertions(+), 7 deletions(-)
-
-diff --git a/.clang-format b/.clang-format
-index db25cde2651a..a91b9bb39d9b 100644
---- a/.clang-format
-+++ b/.clang-format
-@@ -569,8 +569,8 @@ ForEachMacros:
-   - 'nr_node_for_each_safe'
-   - 'of_for_each_phandle'
-   - 'of_property_for_each_string'
--  - 'of_property_for_each_u32'
-   - 'of_property_for_each_u32_new'
-+  - 'of_property_for_each_u32_old'
-   - 'pci_bus_for_each_resource'
-   - 'pci_dev_for_each_resource'
-   - 'pcl_for_each_chunk'
-diff --git a/drivers/clk/clk-si5351.c b/drivers/clk/clk-si5351.c
-index 4ce83c5265b8..ff990b15d616 100644
---- a/drivers/clk/clk-si5351.c
-+++ b/drivers/clk/clk-si5351.c
-@@ -1191,7 +1191,7 @@ static int si5351_dt_parse(struct i2c_client *client,
- 	 * property silabs,pll-source : <num src>, [<..>]
- 	 * allow to selectively set pll source
- 	 */
--	of_property_for_each_u32(np, "silabs,pll-source", prop, p, num) {
-+	of_property_for_each_u32_old(np, "silabs,pll-source", prop, p, num) {
- 		if (num >= 2) {
- 			dev_err(&client->dev,
- 				"invalid pll %d on pll-source prop\n", num);
-@@ -1232,7 +1232,7 @@ static int si5351_dt_parse(struct i2c_client *client,
- 	pdata->pll_reset[0] = true;
- 	pdata->pll_reset[1] = true;
- 
--	of_property_for_each_u32(np, "silabs,pll-reset-mode", prop, p, num) {
-+	of_property_for_each_u32_old(np, "silabs,pll-reset-mode", prop, p, num) {
- 		if (num >= 2) {
- 			dev_err(&client->dev,
- 				"invalid pll %d on pll-reset-mode prop\n", num);
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 8ea168c00997..aae940c18459 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -5383,7 +5383,7 @@ const char *of_clk_get_parent_name(const struct device_node *np, int index)
- 	/* if there is an indices property, use it to transfer the index
- 	 * specified into an array offset for the clock-output-names property.
- 	 */
--	of_property_for_each_u32(clkspec.np, "clock-indices", prop, vp, pv) {
-+	of_property_for_each_u32_old(clkspec.np, "clock-indices", prop, vp, pv) {
- 		if (index == pv) {
- 			index = count;
- 			break;
-diff --git a/drivers/irqchip/irq-pic32-evic.c b/drivers/irqchip/irq-pic32-evic.c
-index 1d9bb28d13e5..d9aec87f8b59 100644
---- a/drivers/irqchip/irq-pic32-evic.c
-+++ b/drivers/irqchip/irq-pic32-evic.c
-@@ -196,7 +196,7 @@ static void __init pic32_ext_irq_of_init(struct irq_domain *domain)
- 	int i = 0;
- 	const char *pname = "microchip,external-irqs";
- 
--	of_property_for_each_u32(node, pname, prop, p, hwirq) {
-+	of_property_for_each_u32_old(node, pname, prop, p, hwirq) {
- 		if (i >= ARRAY_SIZE(priv->ext_irqs)) {
- 			pr_warn("More than %d external irq, skip rest\n",
- 				ARRAY_SIZE(priv->ext_irqs));
-diff --git a/drivers/pinctrl/pinctrl-k210.c b/drivers/pinctrl/pinctrl-k210.c
-index b6d1ed9ec9a3..03acca8b01ef 100644
---- a/drivers/pinctrl/pinctrl-k210.c
-+++ b/drivers/pinctrl/pinctrl-k210.c
-@@ -797,7 +797,7 @@ static int k210_pinctrl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
- 	if (ret < 0)
- 		goto exit;
- 
--	of_property_for_each_u32(np, "pinmux", prop, p, pinmux_group) {
-+	of_property_for_each_u32_old(np, "pinmux", prop, p, pinmux_group) {
- 		const char *group_name, *func_name;
- 		u32 pin = FIELD_GET(K210_PG_PIN, pinmux_group);
- 		u32 func = FIELD_GET(K210_PG_FUNC, pinmux_group);
-diff --git a/include/linux/of.h b/include/linux/of.h
-index 756847539384..15c291ab6e71 100644
---- a/include/linux/of.h
-+++ b/include/linux/of.h
-@@ -1429,7 +1429,8 @@ static inline int of_property_read_s32(const struct device_node *np,
- 	     err == 0;							\
- 	     err = of_phandle_iterator_next(it))
- 
--#define of_property_for_each_u32(np, propname, prop, p, u)	\
-+/* deprecated - will be removed */
-+#define of_property_for_each_u32_old(np, propname, prop, p, u)	\
- 	for (prop = of_find_property(np, propname, NULL),	\
- 		p = of_prop_next_u32(prop, NULL, &u);		\
- 		p;						\
+Luca
 
 -- 
-2.34.1
-
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
