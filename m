@@ -1,57 +1,57 @@
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B91EF13D2BE
-	for <linux-clk@vger.kernel.org>; Wed,  3 Jul 2024 10:01:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B48F617741
+	for <linux-clk@vger.kernel.org>; Wed,  3 Jul 2024 10:02:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720000907; cv=none; b=FGBjuH3GGkCmm2HRXpAw7Pkl0mOBZOMBpe1/MIY5fogZ9s16ruurOrWM+59LJJSJu+ccwzm7G2ef/RcpvH3SWw8VArI2yJA4xPFIIq+S7fJ1UxhhVH8X/zH1T1uN3hMHW0QIgikgjXpjaNDelIHIQPpbrVn6VXIWGRmtjzmEo54=
+	t=1720000959; cv=none; b=I7KrWdMxLTjqOMJAD0OQJ+55G3NmIZQqutwAD6R6XKYvcVSxanslwoaJS+OR86lODYDS/4DOl2lVoY6r2zCd+bjS8sRgpUROAmJpn2lOnfImH4ruwbOm3cLESe0axWUM2lFcxthY9taEfIFOvbILy2Hj8VKXo1irB672wXyzkXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720000907; c=relaxed/simple;
-	bh=IoztH7c3ObPzPyOJzXRpFf3OvcHSvttFXXjWl6mAImk=;
+	s=arc-20240116; t=1720000959; c=relaxed/simple;
+	bh=10Mu0LIhKDTYtSfcuq6JGEEaI5HtHH/2L1wNR2pXhHc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uvi9ZG/On8xjbWwezxxxJkg+ejDQhg1QoDLaYlloTc3EtCEWPQLnLyAYf40sHj8ZifR5cTcuI5VZx1zzwF3n/XFRyO94kil7YzUE0gFqs+WLcthLHj9gKa6GrK2c8WUD+Y/+2c85a4/wQm1FTd2FEaquR5sCP5rYmWX316rGNR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cOnYZ6xK; arc=none smtp.client-ip=209.85.208.170
+	 Content-Type:Content-Disposition:In-Reply-To; b=bUeouQM1PxeOHewfpHt0duTJBlJ+L9Ii5lXKFE6y8JMF9jY4fbbZ2uWo/hEaWRPPm7untZDftnqWuMCVS8ite14/3N/UII7YGwYVxmdC8b3q9EO0YC1kMbx0Sq29Y/lWkOIK26Lkh0QtEIMXuGjulRlGAPQu79XAnVApaqrPK7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ReHHKmDg; arc=none smtp.client-ip=209.85.208.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cOnYZ6xK"
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ec408c6d94so53244121fa.3
-        for <linux-clk@vger.kernel.org>; Wed, 03 Jul 2024 03:01:44 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ReHHKmDg"
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2e72224c395so59404161fa.3
+        for <linux-clk@vger.kernel.org>; Wed, 03 Jul 2024 03:02:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720000903; x=1720605703; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1720000956; x=1720605756; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ba8TVs0WiPW/mrVDZB1JnVEfDtu3H86gU8ZQ9MafN2c=;
-        b=cOnYZ6xKRBAttW8/AJvS8G3KoH4Xq2Pua85oqMMlKvuZnD9DaxAk1oNZ91SIqt9BgB
-         YJ+EMEOmZgbKA7m8b1oky8TZjPibE4vdTr8Nx+EhMa2rYI9RGXatFmFyZhruLz6Az+it
-         HmQJdRLPwJ5ILE7IKV5uNq8jQu9XEJdAGEtSN/+vkb/vt5qtDFuKrMd1MpkwyDPHv5I8
-         mov4gifDGzBZRkRMQHn1wd6zF5xRHf1RDXU1bz8FXXdLiZju9SZsqDBvd1nICZR1hGaD
-         jG7+ab8VaTLiN80H20o/x9Gkuxw76DOL+QoCJLC4LfCZST9fOJkqzOESlyyvHK2s6Q3l
-         xfWA==
+        bh=9pL8DbkCHgymdSkljEzIwaY+82euVKxIINYVvOUjWCU=;
+        b=ReHHKmDgiAadlzOBLr50T27b18+xD7fcsZ0JWb45pgP0PfhJY+/w6eX+nZAlqa7Ewn
+         qAyyxrsAY+pZxb7lcBavu6wWxKHQVt/VM/4WVfqFzguLUrPZmkxLo2gmP0wK+JQQLFvg
+         8/ngB1mUEuGeny8jaEIj/gbXpzuEjRqblDlxYMQYhXnQNZX9KuQTzo9gcfg1Y5MnMIpO
+         BMQVRKsRBeRzGw38A2AZdenRzvTe7JZY7jij6nFpzmNqRGOiM6N5SlWPqVn1PrY+D8pu
+         IhC4NZR4Az3kugdXte/1wDKeGZbozKLU4fkMgTa6pLSCNqWZeJ1t1KSCJ1AwxiwQnweD
+         hpRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720000903; x=1720605703;
+        d=1e100.net; s=20230601; t=1720000956; x=1720605756;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Ba8TVs0WiPW/mrVDZB1JnVEfDtu3H86gU8ZQ9MafN2c=;
-        b=p5XL2X8BKwhFfKbceDZbrYSteN06fRxGIY/3pYkZmifuH4h8RmAF48YoYa0uXvt+at
-         RdAlQMy43r98vD7Vky4TcicUVe0wQ5MZWKaClTIS8ZweyorbS/B6EXCmR9AdgJ+TCWtz
-         hIy/eWgSFkK7RVyr7dfoFAt7ni5h91r3kbk+cPsXJyAaZ3qS6IDdV3h69ltWnXik4NsZ
-         Ym3bXlzKUah5ChSqFXkxQ2xuI8iPQMOTYtB0z64f02/hW12mjmZTPvn3jIfTyz8EI4WA
-         NDVbaVsyBGmJPsj55C6l8uzevnjYoS/6rJspcowuwE83zinCoWlkLh0o6hS00pLjUsXo
-         7IAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWP7VO3dNVxzl6ytM3QcWgh1f5bKHv9UQWvDIUKUaIB+gsVjjNwxtoOEKedB3khRwlIZsNqimfXmVxqRBHxEsVcW5ZhvvbkWHT9
-X-Gm-Message-State: AOJu0YyEUux+XAuopdOD1Zll4gm6W6X2TDUG4w9Qt/eCn0lo/a+G2K5F
-	wAiaLkT8TEAiN7gpbGnVrma5ESFndI+rPODviGn8+kDarYs2FmGQdp8s7ZeewRc=
-X-Google-Smtp-Source: AGHT+IFt0NIPlTRfTacZKad2D9AAb0rB8mNH1GSrB71JnEIIs0lwsvAcQ1VQLk1LTElL0scOqic9Gg==
-X-Received: by 2002:a2e:9849:0:b0:2ec:4e59:a3e with SMTP id 38308e7fff4ca-2ee5e4bb7a5mr70347281fa.23.1720000900854;
-        Wed, 03 Jul 2024 03:01:40 -0700 (PDT)
+        bh=9pL8DbkCHgymdSkljEzIwaY+82euVKxIINYVvOUjWCU=;
+        b=klFmzbz8sA3g4pb2pAiTJddGuxt0Knh8EqHo5XI3wWz8jb+NfXIPjcybrFI+aHTWX2
+         DwCECvE9kuJfft84zgFDXqCdKMs1mtxrFLxRD/qSoXavJ/XgCsUHjUX4QWY5q7QjbcdG
+         3OWEuqRUgTjhvJ27SX+Uy+tocCklXpKKEBYHLaRFAZHGmHVeL4pYTIX5YXaNPoC5BDmM
+         lxLtBgVI0Z/vqMB8tfncNbq1+Lc6ojUVNLV1/xENhOdsAanRc0Ej1oUrx3MsTWmBFsCB
+         b5lh1rExobD0BHjPgmXRtZaiIqPuu3zPomqGch+EKrJDsoozNtvzb+u7AuB/IYL0GLIa
+         V7bg==
+X-Forwarded-Encrypted: i=1; AJvYcCU8+AEQqSViM9zhBVWA8OavFYrBLHfMRhYMnryyAnAJxk3uI7KYCJi7mmOBi9ToJfQN/uZ9y3ygEFIUkCabA3g64ashnE0Nqy4a
+X-Gm-Message-State: AOJu0Yw6FmHTOZ9ingJuKfaBXWnWTHj8cCOBARKrhUmD81r12144Li8C
+	jlS2PS+F6qS/n9caM/LtZpZuJ38KjKJjzA3NCXvsQDOMI1RndR09kpin1RqNX3c=
+X-Google-Smtp-Source: AGHT+IE/GYi8OYn4QCZxmJ7Okzw9g5+fbHAXWRqvNbmCY+VpnWF1LZ/N4KxL8LKQwszZSTWHQsoeAw==
+X-Received: by 2002:a2e:a1c5:0:b0:2ec:4eda:6b55 with SMTP id 38308e7fff4ca-2ee5e6d74c4mr67198081fa.50.1720000954067;
+        Wed, 03 Jul 2024 03:02:34 -0700 (PDT)
 Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ee59fd21a5sm16276051fa.129.2024.07.03.03.01.40
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2ee516802bdsm19370891fa.84.2024.07.03.03.02.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 03 Jul 2024 03:01:40 -0700 (PDT)
-Date: Wed, 3 Jul 2024 13:01:38 +0300
+        Wed, 03 Jul 2024 03:02:33 -0700 (PDT)
+Date: Wed, 3 Jul 2024 13:02:32 +0300
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
 Cc: Bjorn Andersson <andersson@kernel.org>, 
@@ -62,12 +62,12 @@ Cc: Bjorn Andersson <andersson@kernel.org>,
 	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
 	devicetree@vger.kernel.org, Ajit Pandey <quic_ajipan@quicinc.com>, 
 	Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, 
-	Jagadeesh Kona <quic_jkona@quicinc.com>, stable@vger.kernel.org
-Subject: Re: [PATCH v2 1/6] clk: qcom: alpha-pll: Fix the pll post div mask
- and shift
-Message-ID: <gx3vhkjvwwzxvbh36c3bwp5kw7pxiki2rvsp7ig6rdo3gw6fju@afmhwuwdqquj>
+	Jagadeesh Kona <quic_jkona@quicinc.com>
+Subject: Re: [PATCH v2 2/6] clk: qcom: clk-alpha-pll: Update set_rate for
+ Zonda PLL
+Message-ID: <jni3b6l4mw6aismxxytzlediepitakand5m4dkqy6diwnmd6xu@r6zaslz722ed>
 References: <20240702-camcc-support-sm8150-v2-0-4baf54ec7333@quicinc.com>
- <20240702-camcc-support-sm8150-v2-1-4baf54ec7333@quicinc.com>
+ <20240702-camcc-support-sm8150-v2-2-4baf54ec7333@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -76,52 +76,27 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240702-camcc-support-sm8150-v2-1-4baf54ec7333@quicinc.com>
+In-Reply-To: <20240702-camcc-support-sm8150-v2-2-4baf54ec7333@quicinc.com>
 
-On Tue, Jul 02, 2024 at 09:20:39PM GMT, Satya Priya Kakitapalli wrote:
-> The PLL_POST_DIV_MASK should be 0 to (width - 1) bits. Fix it.
-> Also, correct the pll postdiv shift used in trion pll postdiv
-> set rate API. The shift value is not same for different types of
-> plls and should be taken from the pll's .post_div_shift member.
+On Tue, Jul 02, 2024 at 09:20:40PM GMT, Satya Priya Kakitapalli wrote:
+> The Zonda PLL has a 16 bit signed alpha and in the cases where the alpha
+> value is greater than 0.5, the L value needs to be adjusted accordingly.
+> Thus update the logic for the same.
+> 
+> Also, fix zonda set_rate failure when PLL is disabled. Currently,
+> clk_zonda_pll_set_rate polls for the PLL to lock even if the PLL is
+> disabled. However, if the PLL is disabled then LOCK_DET will never
+> assert and we'll return an error. There is no reason to poll LOCK_DET
+> if the PLL is already disabled, so skip polling in this case.
 
-Two separate commits for two different fixes, please.
+Two separate commits, missing Fixes tags.
 
 > 
-> Fixes: 1c3541145cbf ("clk: qcom: support for 2 bit PLL post divider")
-> Cc: stable@vger.kernel.org
 > Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
 > ---
->  drivers/clk/qcom/clk-alpha-pll.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-> index 8a412ef47e16..6107c144c0f5 100644
-> --- a/drivers/clk/qcom/clk-alpha-pll.c
-> +++ b/drivers/clk/qcom/clk-alpha-pll.c
-> @@ -40,7 +40,7 @@
->  
->  #define PLL_USER_CTL(p)		((p)->offset + (p)->regs[PLL_OFF_USER_CTL])
->  # define PLL_POST_DIV_SHIFT	8
-> -# define PLL_POST_DIV_MASK(p)	GENMASK((p)->width, 0)
-> +# define PLL_POST_DIV_MASK(p)	GENMASK((p)->width - 1, 0)
->  # define PLL_ALPHA_EN		BIT(24)
->  # define PLL_ALPHA_MODE		BIT(25)
->  # define PLL_VCO_SHIFT		20
-> @@ -1496,8 +1496,8 @@ clk_trion_pll_postdiv_set_rate(struct clk_hw *hw, unsigned long rate,
->  	}
->  
->  	return regmap_update_bits(regmap, PLL_USER_CTL(pll),
-> -				  PLL_POST_DIV_MASK(pll) << PLL_POST_DIV_SHIFT,
-> -				  val << PLL_POST_DIV_SHIFT);
-> +				  PLL_POST_DIV_MASK(pll) << pll->post_div_shift,
-> +				  val << pll->post_div_shift);
->  }
->  
->  const struct clk_ops clk_alpha_pll_postdiv_trion_ops = {
-> 
-> -- 
-> 2.25.1
-> 
+>  drivers/clk/qcom/clk-alpha-pll.c | 18 ++++++++++++++++++
+>  1 file changed, 18 insertions(+)
+
 
 -- 
 With best wishes
