@@ -1,137 +1,99 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D63C14430D;
-	Wed,  3 Jul 2024 10:24:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E84F8172773;
+	Wed,  3 Jul 2024 10:27:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720002277; cv=none; b=M4JhlszjgQTMXkJORTSq6wzf2zjXd3CDp/kc8x9iyGgVTb2O1ktxuPYzkYOpRFZ1earhtccQl3kE6FtCe+ujQkpCZFJ01YVkgFsyLPWBg6ABV10PgSA8uVPl4xrxrbTO2V1n0SZa+KK8LdUZHdPqjQE3egu31YVxFDAl4eJ7I2g=
+	t=1720002457; cv=none; b=R91ArcQK+/Jd71V788OT2qLmXiUMR4bKwo316fZGf94EZSisGLLfpYCfti404k4c/QmtWLH3a1VrPoo3KrO43RmX3ztt2Rc8UC5ZXAIWil94pzlTXn8GhZYgcbClOGIMKv1l8kU4Xjjfv6RgpCyukFlW5/vXX25bqzP7bb3RPkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720002277; c=relaxed/simple;
-	bh=VlMke9/MAyPWh0km8onK0q3jYF77Mesj4vmu5K7fKAI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=KRQF7toUbIlVGhKba/G/V6duckny3hSBi7UHuHU8t7roR0MX3D4qbO3F6EzdAo9rnDlwI0eeBg77JTP1Zrc5RTCXUd452ClhGF7fyiPNHfcrZwZYzftEKwCByEzdjmQKURYVNuG+2OHcYfAaeqSCjAKoqZ6ZuOjvMF4FumromM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MPBGboiD; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1720002457; c=relaxed/simple;
+	bh=oXxCxXX+oZh8HsttkMvFbmyP3JdiAor+JVZTWRVjC28=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dAYGivqGpRvoiEuZjrIHI0w7kajBPpjnUYVp9jKtDU9PDTu1Im6kj37leIHb3IiXml5eXZB6NE8nR4CTlc2UsMwyzO4UAxSUn/LNAjyP9grGLJ/z2TZdhcxJj0se3eB9LcKcarDfQ/QE3BPgS5KUKfiYzpAKge5cWo2+6H9l1mM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=fail smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=VvMmnWfc; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MPBGboiD"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4634MZEL026763;
-	Wed, 3 Jul 2024 10:22:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	WJ4OnCz046UbEw8QxyCK0QrEWS4jubaPabe072kzd94=; b=MPBGboiDw+jAbje8
-	y6LN10YkftB1qyXbDq26qKk2JNyro6pL4GWYFQI/bQ5Qy2c6nEjKu64WNazcJrkF
-	JBm+GQB9jpLmaeQ1BCbsomrTBJRUQDSafJfwKlDoETUZ0h9CJpp+ujSwxjcvAYyr
-	/txFWLk5oEhOeDakAEuYsT7z7K1sn+oXPPUTxyWYFwnwC59WxYFzRVEBOewtRHg/
-	X3Lbz9LepgtMU3QBUFFCCZdvyCfmITPSinamwN52h4SI86SYU4l9xcW9j+ThQNGW
-	K4jU8tI//niKqL7FG3GlC5Z+0T/kfOlVjDmfFVhaiUHVp1jFzcb7WMxtCb4Mekq6
-	FqCI+A==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 404yjhrspf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 03 Jul 2024 10:22:42 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 463AMe3H007270
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 3 Jul 2024 10:22:40 GMT
-Received: from [10.239.132.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 3 Jul 2024
- 03:22:19 -0700
-Message-ID: <ac4830e3-2945-4021-9c2e-0819e26c8069@quicinc.com>
-Date: Wed, 3 Jul 2024 18:22:17 +0800
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="VvMmnWfc"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1720002455; x=1751538455;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=oXxCxXX+oZh8HsttkMvFbmyP3JdiAor+JVZTWRVjC28=;
+  b=VvMmnWfc9AlC/HVwcFQ/t5jctJl//cBnq05TJxK/KWXtnVb9mJvwfGB9
+   69Og4yLSrFAa86GYUr37Q5KjG6987YgPJ11N/iX91pvMJncu0jeWGO/nm
+   0azDVXZsipdCK+r73oJax434bHTSVwpVBOtJ1yPMJpSb4RIFCeXZCXSz/
+   hgqW0P9lBAQkjak4yZ4HxYlBdy1IHn2TPHBHFXV+5iJLg+e934QkINZNT
+   2bMXsrGnJ9uG0AxwTyI1U844z5p0UvcJpaYpsSjlyfaplfLwn1nqs56SF
+   3R62Moy79nimfgw8SOYeqQtTKXimuhoSyQDWuQtCs6fKhVaNeUQpbPfLM
+   A==;
+X-CSE-ConnectionGUID: 6if5lKZrRRahkqLSM+7f7Q==
+X-CSE-MsgGUID: ufnVsza6TNa7T767oet9bw==
+X-IronPort-AV: E=Sophos;i="6.09,181,1716274800"; 
+   d="scan'208";a="196197031"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 03 Jul 2024 03:27:33 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Wed, 3 Jul 2024 03:27:22 -0700
+Received: from che-lt-i67070.microchip.com (10.10.85.11) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Wed, 3 Jul 2024 03:27:17 -0700
+From: Varshini Rajendran <varshini.rajendran@microchip.com>
+To: <mturquette@baylibre.com>, <sboyd@kernel.org>, <robh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <nicolas.ferre@microchip.com>,
+	<alexandre.belloni@bootlin.com>, <claudiu.beznea@tuxon.dev>,
+	<linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+CC: <varshini.rajendran@microchip.com>, Conor Dooley
+	<conor.dooley@microchip.com>
+Subject: [PATCH v5 07/27] dt-bindings: clocks: atmel,at91sam9x5-sckc
+Date: Wed, 3 Jul 2024 15:57:14 +0530
+Message-ID: <20240703102714.195661-1-varshini.rajendran@microchip.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240703102011.193343-1-varshini.rajendran@microchip.com>
+References: <20240703102011.193343-1-varshini.rajendran@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 27/47] dt-bindings: cpufreq: cpufreq-qcom-hw: Add QCS9100
- compatibles
-To: Taniya Das <quic_tdas@quicinc.com>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <djakov@kernel.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <jassisinghbrar@gmail.com>,
-        <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
-        <manivannan.sadhasivam@linaro.org>, <will@kernel.org>,
-        <joro@8bytes.org>, <conor@kernel.org>, <tglx@linutronix.de>,
-        <amitk@kernel.org>, <thara.gopinath@gmail.com>,
-        <linus.walleij@linaro.org>, <wim@linux-watchdog.org>,
-        <linux@roeck-us.net>, <rafael@kernel.org>, <viresh.kumar@linaro.org>,
-        <vkoul@kernel.org>, <edumazet@google.com>, <kuba@kernel.org>,
-        <pabeni@redhat.com>, <mcoquelin.stm32@gmail.com>
-CC: <robimarko@gmail.com>, <bartosz.golaszewski@linaro.org>,
-        <kishon@kernel.org>, <quic_wcheng@quicinc.com>,
-        <alim.akhtar@samsung.com>, <avri.altman@wdc.com>, <bvanassche@acm.org>,
-        <agross@kernel.org>, <gregkh@linuxfoundation.org>,
-        <robin.murphy@arm.com>, <daniel.lezcano@linaro.org>,
-        <rui.zhang@intel.com>, <lukasz.luba@arm.com>,
-        <quic_rjendra@quicinc.com>, <ulf.hansson@linaro.org>,
-        <quic_sibis@quicinc.com>, <otto.pflueger@abscue.de>, <luca@z3ntu.xyz>,
-        <neil.armstrong@linaro.org>, <abel.vesa@linaro.org>,
-        <bhupesh.sharma@linaro.org>, <alexandre.torgue@foss.st.com>,
-        <peppe.cavallaro@st.com>, <joabreu@synopsys.com>,
-        <netdev@vger.kernel.org>, <lpieralisi@kernel.org>, <kw@linux.com>,
-        <bhelgaas@google.com>, <ahalaney@redhat.com>,
-        <krzysztof.kozlowski@linaro.org>, <u.kleine-koenig@pengutronix.de>,
-        <dmitry.baryshkov@linaro.org>, <quic_cang@quicinc.com>,
-        <danila@jiaxyga.com>, <quic_nitirawa@quicinc.com>,
-        <mantas@8devices.com>, <athierry@redhat.com>,
-        <quic_kbajaj@quicinc.com>, <quic_bjorande@quicinc.com>,
-        <quic_msarkar@quicinc.com>, <quic_devipriy@quicinc.com>,
-        <quic_tsoni@quicinc.com>, <quic_rgottimu@quicinc.com>,
-        <quic_shashim@quicinc.com>, <quic_kaushalk@quicinc.com>,
-        <quic_tingweiz@quicinc.com>, <quic_aiquny@quicinc.com>,
-        <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>, <linux-crypto@vger.kernel.org>,
-        <linux-scsi@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
-        <linux-gpio@vger.kernel.org>, <linux-watchdog@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>, <kernel@quicinc.com>
-References: <20240703025850.2172008-1-quic_tengfan@quicinc.com>
- <20240703035735.2182165-1-quic_tengfan@quicinc.com>
- <20240703035735.2182165-28-quic_tengfan@quicinc.com>
- <23303bc2-4fa2-4b28-af5d-2cadf6795b94@quicinc.com>
-From: Tengfei Fan <quic_tengfan@quicinc.com>
-In-Reply-To: <23303bc2-4fa2-4b28-af5d-2cadf6795b94@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: fmqj1c2QtSYfPoaxODgL9LrlxrCldNNV
-X-Proofpoint-ORIG-GUID: fmqj1c2QtSYfPoaxODgL9LrlxrCldNNV
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-03_06,2024-07-02_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 bulkscore=0
- mlxlogscore=633 clxscore=1015 lowpriorityscore=0 suspectscore=0
- malwarescore=0 mlxscore=0 priorityscore=1501 adultscore=0 impostorscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407030076
+Content-Type: text/plain
 
+Add bindings for SAM9X7's slow clock controller.
 
+Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+---
+Changes in v5:
+- Changed subject according to suggestion.
+- Alphanumerically sorted entries.
+- Updated Acked-by tag.
+---
+ .../devicetree/bindings/clock/atmel,at91sam9x5-sckc.yaml      | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-On 7/3/2024 1:35 PM, Taniya Das wrote:
-> 
-> 
-> On 7/3/2024 9:27 AM, Tengfei Fan wrote:
->> +              - qcom,qcs9100-cpufreq-epss
-> 
-> This is not required as we already have sa8775p bindings.
-
-This is necessary. The reason is same as my reply in patch 41/47.
-
-> 
-
+diff --git a/Documentation/devicetree/bindings/clock/atmel,at91sam9x5-sckc.yaml b/Documentation/devicetree/bindings/clock/atmel,at91sam9x5-sckc.yaml
+index 7be29877e6d2..c2283cd07f05 100644
+--- a/Documentation/devicetree/bindings/clock/atmel,at91sam9x5-sckc.yaml
++++ b/Documentation/devicetree/bindings/clock/atmel,at91sam9x5-sckc.yaml
+@@ -18,7 +18,9 @@ properties:
+           - atmel,sama5d4-sckc
+           - microchip,sam9x60-sckc
+       - items:
+-          - const: microchip,sama7g5-sckc
++          - enum:
++              - microchip,sam9x7-sckc
++              - microchip,sama7g5-sckc
+           - const: microchip,sam9x60-sckc
+ 
+   reg:
 -- 
-Thx and BRs,
-Tengfei Fan
+2.25.1
+
