@@ -1,85 +1,151 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB0D74964E;
-	Wed,  3 Jul 2024 23:02:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A6D9746E;
+	Thu,  4 Jul 2024 00:59:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720047737; cv=none; b=j9GblyqmqkSKR0Y8vAVRM0vC/axNNC920wh5yf9Mg3y58J7QyG56zmZL2o6VpW6/Pwc0mPp5pTOQE8SR4XF6AhVJaNe6f6jJSs9STINmZNdwVMN9HWIoX+dMoKHXWQW3MGgqY1ZG+vOwG54vHDM0MDSCalqZzjNqEAcORP64EI0=
+	t=1720054746; cv=none; b=J60FGi8GTeZFeAQ9LOC3DD8D4uHsXd1XAeqps8+v3duKV3qBVl40LXYRWt1QER2O7djDmhjWvvsWkYAN7sPfRP3eEsJRA6nDUnJxIWybey23Y7G+g4eDeIPTclBJN/aoX44vqTA3BUueO1vjNUpsoVpFvnZqXuJ3irFcOBpVUso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720047737; c=relaxed/simple;
-	bh=323AARVAbsuqgisnRvoVpG6coTMv5pU6DvWTb8N8kDs=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=KH1pt8dIIEGbmgDnt6CnrwIqAVcyZKE/Uc3q87aHYNsxW7wkwteFpeQsrbys2TOa539BhLo8qQevRaMKybUZNgxedaI/JVYUJzpWex8ijrjn3BdUqUD8b8MQjSm+3QsLA1HLE4TnojqFKWRttLgutbs9bdREifhsDsLBYaW2ReA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SyW7zLRQ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1720054746; c=relaxed/simple;
+	bh=uGkt73nDgGqWhK7coLd29VBDAnB/RU/avdNFQwiqkeA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=uMmJVtUuyarH6Z+RDPM3Fsl3bFFr2NA3iYzLhw3+HhP1pT9pBOvd0giVP7fq0N609tNDV3pEzCzOuLAQLQ7rOcd8pl3dg5s/Ge2CB+Rf0+g6l/VsjpC88ZhTj7nk/Wh9Fe0hS/fTXuthvZ5fvKAFaSNTQioTGOoYInTrotnKzzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fbaaApgw; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SyW7zLRQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39878C2BD10;
-	Wed,  3 Jul 2024 23:02:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720047737;
-	bh=323AARVAbsuqgisnRvoVpG6coTMv5pU6DvWTb8N8kDs=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=SyW7zLRQqEUsF3R7njKMze0tJN6sYAo2v3HfdCpIhTKysCzrL4GfENdHiWwE8dNMD
-	 wpI9kxWE9iFgKz74LTQQv7D4FaqQHsi9XbIOP6/SvmzrJxbL6ScbaC/cFT8AZIXFzq
-	 NRAaN3muBi4sVDM30qmdX4gdNcMH5MQQ9vo4a5XuvmGq6b5vQAjLjn0FAimCWjbvER
-	 69/S9sZvWykTB6EsjfwWTB68SXYyXxQa8iBLQe1hNNiKRudLeYZ157U2Ln+nG6G3cH
-	 u8JU5G5yo196FznjoasDSsIaYmzbKEag9ARgW7RhGWQFr6QGxcpMizQw2I6aQDobfL
-	 9HI9Mp+N/ewyA==
-Message-ID: <dc00b9daafe6a88ffaaaf4aace29e136.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fbaaApgw"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 463HXxnI031975;
+	Thu, 4 Jul 2024 00:58:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	k+v8hKKqQzTQAKxChzMkw5arZNejlV7Pr3r0pQa7uSw=; b=fbaaApgwtTd9tOjm
+	fQQjkj/uPIbngXgbJZoorsNdKf4g5zh2SG669zZk/xPJjtVPnnp5ZI5q0v3PZrjc
+	kbjxGJ/Bt9E3Wi75TORyL5+qbPWTrR3kX29GmjmzAQQmcE4q//M7i1S+GAEC3r4G
+	Y/49M+SDBS4mYPazmgeZwKsrvXrrBaziYUE6ca3+dUIwgfpISL7mWKjL1ikkptDL
+	loswFddKfw/4OriGjCPtmkU09doCsqG69nkmYAe4y6fJB3lBacwlcJsQWupYiBtX
+	VHrrCcED+ywxMB3sDZbz9F8B6CXlF9+qa0pAGlkljLPVLuh2OuGstcnM1PWgfsmP
+	retbDA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 402abtt5h4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 04 Jul 2024 00:58:19 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4640wH94001093
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 4 Jul 2024 00:58:17 GMT
+Received: from [10.239.132.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 3 Jul 2024
+ 17:57:56 -0700
+Message-ID: <fa63aa02-6a62-417a-a946-9ecd2d6071e6@quicinc.com>
+Date: Thu, 4 Jul 2024 08:57:54 +0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240703105454.41254-20-ryan@testtoast.com>
-References: <20240703105454.41254-1-ryan@testtoast.com> <20240703105454.41254-20-ryan@testtoast.com>
-Subject: Re: [PATCH v2 19/23] clk: sunxi-ng: ccu: add Display Engine 3.3 (DE33) support
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Andre Przywara <andre.przywara@arm.com>, Chris Morgan <macroalpha82@gmail.com>, John Watts <contact@jookia.org>, dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, Ryan Walklin <ryan@testtoast.com>
-To: Chen-Yu Tsai <wens@csie.org>, Conor Dooley <conor+dt@kernel.org>, Daniel Vetter <daniel@ffwll.ch>, David Airlie <airlied@gmail.com>, Jernej Skrabec <jernej.skrabec@gmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Ryan Walklin <ryan@testtoast.com>, Samuel Holland <samuel@sholland.org>, Thomas Zimmermann <tzimmermann@suse.de>
-Date: Wed, 03 Jul 2024 16:02:15 -0700
-User-Agent: alot/0.10
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/47] arm64: qcom: dts: add QCS9100 support
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <andersson@kernel.org>, <konrad.dybcio@linaro.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <djakov@kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <jassisinghbrar@gmail.com>, <herbert@gondor.apana.org.au>,
+        <davem@davemloft.net>, <manivannan.sadhasivam@linaro.org>,
+        <will@kernel.org>, <joro@8bytes.org>, <conor@kernel.org>,
+        <tglx@linutronix.de>, <amitk@kernel.org>, <thara.gopinath@gmail.com>,
+        <linus.walleij@linaro.org>, <wim@linux-watchdog.org>,
+        <linux@roeck-us.net>, <rafael@kernel.org>, <viresh.kumar@linaro.org>,
+        <vkoul@kernel.org>, <edumazet@google.com>, <kuba@kernel.org>,
+        <pabeni@redhat.com>, <mcoquelin.stm32@gmail.com>,
+        <robimarko@gmail.com>, <quic_gurus@quicinc.com>,
+        <bartosz.golaszewski@linaro.org>, <kishon@kernel.org>,
+        <quic_wcheng@quicinc.com>, <alim.akhtar@samsung.com>,
+        <avri.altman@wdc.com>, <bvanassche@acm.org>, <agross@kernel.org>,
+        <gregkh@linuxfoundation.org>, <quic_tdas@quicinc.com>,
+        <robin.murphy@arm.com>, <daniel.lezcano@linaro.org>,
+        <rui.zhang@intel.com>, <lukasz.luba@arm.com>,
+        <quic_rjendra@quicinc.com>, <ulf.hansson@linaro.org>,
+        <quic_sibis@quicinc.com>, <otto.pflueger@abscue.de>,
+        <quic_rohiagar@quicinc.com>, <luca@z3ntu.xyz>,
+        <neil.armstrong@linaro.org>, <abel.vesa@linaro.org>,
+        <bhupesh.sharma@linaro.org>, <alexandre.torgue@foss.st.com>,
+        <peppe.cavallaro@st.com>, <joabreu@synopsys.com>,
+        <netdev@vger.kernel.org>, <lpieralisi@kernel.org>, <kw@linux.com>,
+        <bhelgaas@google.com>, <ahalaney@redhat.com>,
+        <krzysztof.kozlowski@linaro.org>, <u.kleine-koenig@pengutronix.de>,
+        <quic_cang@quicinc.com>, <danila@jiaxyga.com>,
+        <quic_nitirawa@quicinc.com>, <mantas@8devices.com>,
+        <athierry@redhat.com>, <quic_kbajaj@quicinc.com>,
+        <quic_bjorande@quicinc.com>, <quic_msarkar@quicinc.com>,
+        <quic_devipriy@quicinc.com>, <quic_tsoni@quicinc.com>,
+        <quic_rgottimu@quicinc.com>, <quic_shashim@quicinc.com>,
+        <quic_kaushalk@quicinc.com>, <quic_tingweiz@quicinc.com>,
+        <quic_aiquny@quicinc.com>, <srinivas.kandagatla@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+        <linux-crypto@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <iommu@lists.linux.dev>, <linux-riscv@lists.infradead.org>,
+        <linux-gpio@vger.kernel.org>, <linux-watchdog@vger.kernel.org>,
+        <linux-pci@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>, <kernel@quicinc.com>
+References: <20240703025850.2172008-1-quic_tengfan@quicinc.com>
+ <20240703035735.2182165-1-quic_tengfan@quicinc.com>
+ <43nktnqp6mthafojiph7ouzfchmudtht634gtxwg7gmutb5l7y@a5j27mpl7d23>
+From: Tengfei Fan <quic_tengfan@quicinc.com>
+In-Reply-To: <43nktnqp6mthafojiph7ouzfchmudtht634gtxwg7gmutb5l7y@a5j27mpl7d23>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 0KuPc1MkWau3uWN3TtPR5ge92T_hyVGL
+X-Proofpoint-ORIG-GUID: 0KuPc1MkWau3uWN3TtPR5ge92T_hyVGL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-03_18,2024-07-03_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0
+ priorityscore=1501 mlxscore=0 clxscore=1015 suspectscore=0 malwarescore=0
+ lowpriorityscore=0 phishscore=0 adultscore=0 spamscore=0 impostorscore=0
+ mlxlogscore=894 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407040006
 
-Quoting Ryan Walklin (2024-07-03 03:51:09)
-> diff --git a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c b/drivers/clk/sunxi-ng/=
-ccu-sun8i-de2.c
-> index b0b8dba239aec..36b9eadb80bb5 100644
-> --- a/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-> +++ b/drivers/clk/sunxi-ng/ccu-sun8i-de2.c
-> @@ -7,6 +7,7 @@
->  #include <linux/clk-provider.h>
->  #include <linux/module.h>
->  #include <linux/of.h>
-> +#include <linux/of_address.h>
 
-What is this include for?
 
->  #include <linux/platform_device.h>
->  #include <linux/reset.h>
-> =20
-> @@ -290,6 +301,16 @@ static int sunxi_de2_clk_probe(struct platform_devic=
-e *pdev)
->                         "Couldn't deassert reset control: %d\n", ret);
->                 goto err_disable_mod_clk;
->         }
-> +=20
-> +       /*
-> +        * The DE33 requires these additional (unknown) registers set
-> +        * during initialisation.
-> +        */
-> +       if (of_device_is_compatible(pdev->dev.of_node,
-> +                                   "allwinner,sun50i-h616-de33-clk")) {
-> +               writel(0, reg + 0x24);
-> +               writel(0x0000A980, reg + 0x28);
+On 7/3/2024 6:33 PM, Dmitry Baryshkov wrote:
+> On Wed, Jul 03, 2024 at 11:56:48AM GMT, Tengfei Fan wrote:
+>> Introduce support for the QCS9100 SoC device tree (DTSI) and the
+>> QCS9100 RIDE board DTS. The QCS9100 is a variant of the SA8775p.
+>> While the QCS9100 platform is still in the early design stage, the
+>> QCS9100 RIDE board is identical to the SA8775p RIDE board, except it
+>> mounts the QCS9100 SoC instead of the SA8775p SoC.
+> 
+> Your patch series includes a second copy of your patches, wich have
+> different Message-IDs:
+> 
+> 20240703035735.2182165-1-quic_tengfan@quicinc.com vs
+> 20240703025850.2172008-1-quic_tengfan@quicinc.com
+> 
+> Please consider switching to the b4 tool or just
+> checking what is being sent.
+> 
 
-Lowercase hex please. Did the downstream driver have names for these
-register offsets by way of some sort of #define?
+This is because I encountered a "Connection timed out" error while 
+sending this patch series using "git send-email". I wanted to add 
+"--in-reply-to=" git paramater to resend the patches that haven't been 
+pushed yet, which resulted in this second copy error result.
 
-> +       }
-> =20
->         ret =3D devm_sunxi_ccu_probe(&pdev->dev, reg, ccu_desc);
->         if (ret)
+I'll following your suggestion and use the b4 tool when sending the new 
+version patch series to avoid similar error.
+
+-- 
+Thx and BRs,
+Tengfei Fan
