@@ -1,83 +1,97 @@
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16963143871;
-	Thu,  4 Jul 2024 07:43:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A7AD1A072E;
+	Thu,  4 Jul 2024 12:21:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720079018; cv=none; b=sxdhl2sBaO69qsBdXy5zI3v192GrRZBZZAYK0PDA/36J+FgT/5vfBzvpnFsESWFiqgEaEGtsqRpCWY5bfsv9W30fMf7VAd/TeiRoQpVOmikABVKIZ/GuiS6JwmqMEnTdIZVj1ZauxbFRFPiAOiOyDWQtyyd/kMsTolFdVi5yNr4=
+	t=1720095681; cv=none; b=IwDEtEySvX7tbnsBiPisyjsg5DZ2KUVH8MYnZh95VaVYLHNmCPmO0NQ7AzV4Jxfn18cx5eL+RudUI6BuqoPB3ehHyjnfHIF0jeZv6dMC32eMtPSmIlFI5w1Lg+UBfeIijPJ+uk/SxJqoY+pzxNRR2xksT1XjhhIFrHxd4sPeQeQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720079018; c=relaxed/simple;
-	bh=aLvPUr6ct/l1w6Xw+7pvRDuLqnCTPtfIyAVjtJ/tQL4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Uvtm7uz751QfTA6UIVqS7CmE4GXe3yvziv6ArA1R9z94HdxVfduY7crkvtNAyQOHpZOv2VetLGhgE+zj1Jp/IujUa7kPqaMWY82FEC/vmBH9U9WMoVVNfWzs53WjvwPEWt17rDXHB/ile3wIDI1n5mPDF2W7Jc3LnFNyCHG4ssk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost (unknown [124.16.138.129])
-	by APP-01 (Coremail) with SMTP id qwCowABHKE2bUoZmJEeDAQ--.3809S2;
-	Thu, 04 Jul 2024 15:43:24 +0800 (CST)
-From: Chen Ni <nichen@iscas.ac.cn>
-To: andersson@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	ansuelsmth@gmail.com
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Chen Ni <nichen@iscas.ac.cn>
-Subject: [PATCH] clk: qcom: kpss-xcc: Return of_clk_add_hw_provider to transfer the error
-Date: Thu,  4 Jul 2024 15:36:06 +0800
-Message-Id: <20240704073606.1976936-1-nichen@iscas.ac.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1720095681; c=relaxed/simple;
+	bh=HxsvT81qKePcMxn8Vt6TAWWT85euwfj751GojjeLcOo=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=SlnN6s4cfnkq7ik/1nNc2/z2kUesyjbfYiQQFkvLGsQ0w6goG0MB/wNaf6Awxf1TJOsosvJ9iyIF3kr8Wfu3HCkfAXpwfT81j8ddBiWgQGTk/EGLWu9oIEtJS6hp3rfFic9ks5QxhRkS4U8880keSJ1CErxtTey/M/wMNfS5DfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=FPG1Gpwq; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="FPG1Gpwq"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1720095657; x=1720700457; i=markus.elfring@web.de;
+	bh=RkwvNaNtMTa/E1eey+qDqTLd5BXYMTgaMsbsOtcI6eY=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=FPG1Gpwq9oxaMJdRBNG/DPztQODGZDU1TKFOeqxHqndD4Pbs8hb0fokYtndiIFNk
+	 mX6pnXZwkgbUMjb44Le6zTFmzWOxntEGzB2zZFVC/UiDxejmNF7qt67yxWfc2RV9R
+	 Tn4EIgk5ijq+RQl31ezeSZ/zSUXRb1ybRZWCssIOwPRLIVXk/qbNuLJImIisxMo7O
+	 C+zCohjmLTav5Q/7oJID1coRw9UPHUczcDRnVybYU1rXQEPJjG4CLa434Bz9uSf7/
+	 sZzTaQTXFvUcgLf/tMeEOzZ0uElGnhjiZdp4TsiH2nbrs/hxfhkgYdPHV/HXH8/HF
+	 Z6SvLx8A+xSgOAqzIA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.91.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MuVGC-1s77oh2Lxq-016qBk; Thu, 04
+ Jul 2024 14:20:57 +0200
+Message-ID: <0fd113ef-67f9-4510-ab28-8b49089ef4ff@web.de>
+Date: Thu, 4 Jul 2024 14:20:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowABHKE2bUoZmJEeDAQ--.3809S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrZF43XrW8Zw45CryDuF4fuFg_yoWfJwc_Cr
-	18WFWxXw18CF4FkF18Jw45Ar9IyasIvrsa9F4jga4akryxXr1jqry7ZFs3Cw45Jw4UJF90
-	gry3GrW3CrWrGjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb2AFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Cr0_
-	Gr1UM28EF7xvwVC2z280aVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY02Avz4vE14v_GF4l
-	42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJV
-	WUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAK
-	I48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r
-	4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY
-	6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x0JUBpB-UUUUU=
-X-CM-SenderInfo: xqlfxv3q6l2u1dvotugofq/
+User-Agent: Mozilla Thunderbird
+To: Taniya Das <quic_tdas@quicinc.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>,
+ Stephen Boyd <sboyd@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Imran Shaik <quic_imrashai@quicinc.com>,
+ Jagadeesh Kona <quic_jkona@quicinc.com>
+References: <20240612-sa8775p-mm-clock-controllers-v1-3-db295a846ee7@quicinc.com>
+Subject: Re: [PATCH 3/8] dt-bindings: clock: qcom: Add SA8775P camera clock
+ controller
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240612-sa8775p-mm-clock-controllers-v1-3-db295a846ee7@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:w1JpRox6PEFAAvDdVOuSIdokeECm0Nb9I2VXa0A3zhcX8CkCoVi
+ EY/TvlgYk7yoVjyr62ckdf+BU6IEO6MKiTbc9kTzO9CaFbrwgLIWy4Xu3ghHLcjOl3dUd60
+ uooblIDaF+wXNiSFL53ZwmZQjjTf1GpnxBboW20+tXTqUj+hjJwesQc5WLySMaR6CrrA2Li
+ W+8nWJut+sQn9iGxQYL/g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:kg9mRIQBY6M=;42unBiiR+YXfe+cQ+fl8JPqiA4i
+ o4rstFvyCG2ouiUFMBwEQCcvjzjMfBFObW7sPaU81trk1bYBkWiFFcnZlItPK5rBmf3iG5IrD
+ PbvwnUZZAoBqghKTIw9oSCuYzYeOvEY1ge7Gh7thR+P33y5rtNr8vpHuUXZQ2VGQeXajRlIfA
+ RW/NwlHT86Rqa4GRVd2l8/2u/G7iDByahoxT6KEkCXOzmBEZFRLjwRCtL4/dv8ygHGkQw/jnU
+ 5SmshY40SAHXkidfQ8CARSYyGYS61ICWOxTY2uPy5Oxez3doeLxRDwB5TXUBIFQWJVthkcSWA
+ D44+jW2MuxNUZbNq6OmtCKR3o+tc/R9KxZHVP9wOrNtduCsZqgLoOQWKL34Ta++GfDnPxQyen
+ /e2rKtMyh3QZs+h2exPlUh8HStJu2hMJZiEF0LeF3jYxhA36aO3lfEDKl1rB7UrzrdDUEiFyU
+ SV5DwhnC7JRRmKJoMbc4TSkYOLWCM6Q2iuuBACudafAuY2s8OtLPrR5GU4p1T5t8DP0O6mMOV
+ laBpVRBEQfFMHpDncZk/JZuQWGJUcp34fmGoK4okJ/dYLR/GxcXUTWTjMURr0Sax89otafevW
+ jCdMrm9B0jIAJNoAkSo8CPU19G2Ubsi1YQTPV2uqZ3ZwzyA3C2tFjEZQ9HlPiMuNlbNhPSF//
+ 5mzJXTeukIxmm9QYZj/6Nf1l8Ps68Ort+htQwPEXuLdwjEjiYoP94OCrb5/opXVfdzMV7uYjr
+ aZ5/w/m8U2irQRJ3QrgQyDI+Ab6Nee0GHghIW7xPYk47REC89jjIDFJblq9HU0bwPxSwk2zyR
+ 6vJxZVFJb7bqtCqAqROi1KLLodLyjMHjltt+WAsCGSYxM=
 
-Return of_clk_add_hw_provider() in order to transfer the error if it
-fails.
+=E2=80=A6
+> +++ b/include/dt-bindings/clock/qcom,sa8775p-camcc.h
+> @@ -0,0 +1,107 @@
+=E2=80=A6
+> +/* CAM_CC clocks */
+> +#define CAM_CC_CAMNOC_AXI_CLK					0
+> +#define CAM_CC_CAMNOC_AXI_CLK_SRC				1
+> +#define CAM_CC_CAMNOC_DCD_XO_CLK				2
+> +#define CAM_CC_CAMNOC_XO_CLK					3
+=E2=80=A6
 
-Fixes: 09be1a39e685 ("clk: qcom: kpss-xcc: register it as clk provider")
-Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
----
- drivers/clk/qcom/kpss-xcc.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+How do you think about to offer such information as an enumeration?
 
-diff --git a/drivers/clk/qcom/kpss-xcc.c b/drivers/clk/qcom/kpss-xcc.c
-index 23b0b11f0007..e7cfa8d22044 100644
---- a/drivers/clk/qcom/kpss-xcc.c
-+++ b/drivers/clk/qcom/kpss-xcc.c
-@@ -58,9 +58,7 @@ static int kpss_xcc_driver_probe(struct platform_device *pdev)
- 	if (IS_ERR(hw))
- 		return PTR_ERR(hw);
- 
--	of_clk_add_hw_provider(dev->of_node, of_clk_hw_simple_get, hw);
--
--	return 0;
-+	return of_clk_add_hw_provider(dev->of_node, of_clk_hw_simple_get, hw);
- }
- 
- static struct platform_driver kpss_xcc_driver = {
--- 
-2.25.1
-
+Regards,
+Markus
