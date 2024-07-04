@@ -1,147 +1,113 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3733419B3FF;
-	Thu,  4 Jul 2024 13:38:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 459E11B29CD;
+	Thu,  4 Jul 2024 16:04:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720100336; cv=none; b=cYt6YF1uaCD93VdEKT30OO+V7bEcKXMhKWUFyMLlOMOf+x4itnXOSDCgc66720CvsXa5AiWN9bnVIfBUHC+JChYouOvtyp4loFxSpbNBA9tNexM1ynCBrO1sIZgUky46aASGxAJ0h9FqivB4klnfUUAG4MlEvv+quLpmpsDDsq4=
+	t=1720109064; cv=none; b=dtotdWw6xNKVeLbu9nkBsgl+d+Ed+1vwQeHAagnj/e11FE65YnwU6qlhWO9BGGh57KKu/4TV+ENUh768lDIG/SqPxv9e66cSOD/382TzdLqDlrU56elUvJWfSxf3PVKVoS21PCxC75KusaT0wmia6/RCBJfaLdayoKyefWf4LC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720100336; c=relaxed/simple;
-	bh=SDS3JwI8uIwueZHrycc2kurJPpeiYqV+PQztqKE6RKQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bI9iXrMO3dE5LIAzglPIu6ykYgu0Z9a/xDNKWfpJeWFOq9Logq78zgeEQL/Rw85pSuB/mw9hbi9P86fyuZFRS1Py9yPLOFiqApPrUrRdZtQc4IBVizvW/v7NdLXBXDokjKEjA+cc3baNL8zXo1YxsCCztfGexBxar/kF/CHDTrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tHneWBKj; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1720109064; c=relaxed/simple;
+	bh=1+toRJY35/129MSR44qFWaryqVoiascuVBFB3NmaZ/M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Tvy2tcntNmsqvvyfx7GRr4698K+UJKCPlS582UAIpLc0LbyuwfhuvStqlafx/vfeO2vBDPvFSJpXbYjJKO0E8g7YPCjOsPQRamI2/vrn/+eLnpWPL2KDaxbDaOIOwKwvCJwFuYZm/Oj01MidtxcDaio519FI6guNC5V/3e7Swkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=uctUXtst; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tHneWBKj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0AF7C3277B;
-	Thu,  4 Jul 2024 13:38:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720100335;
-	bh=SDS3JwI8uIwueZHrycc2kurJPpeiYqV+PQztqKE6RKQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=tHneWBKjLuV8M+BPBEa1/R4iapFaVInRzRQ8xuNq8fL0AVxEQKPEY7KvSMF28W38w
-	 th9ihIGF2VK/YN8stSMqdKdInpsSAPkXgWcUuX5UkyfvRCORQBRD63e1ruEEChz9tv
-	 bBTQGlypWyR8rQaduw0qUwPwm1DHDWffSpxA5mlcYtsdGREvUBC9oWrulepBw8JDwH
-	 aj0RM6mhInWhpJqMMVwMlD0eoGIK2oij7tD9oADCDQNhVKZ6/YtQkbVSeMqG7NJZgB
-	 EZBGSBodBgitMpFlivykPlMTLthjNKrcLf7ZphiM2tDEIMTv4SEGxHo9ZAgZDJGaBS
-	 FhqwPy9/EY2oQ==
-Message-ID: <d0b3248d-ef2d-4583-98d0-6b4b28a75ef6@kernel.org>
-Date: Thu, 4 Jul 2024 15:38:48 +0200
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="uctUXtst"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=NUvYT0Apw8SqjInlbdvt2ov0pZsd3AGE3tETszdRDzg=; b=uctUXtstqOdYStp1RAdEevee8A
+	og2m1rbeRGyNCyWKUOMtyM5AqIVxQFyxOPDwVFm9FnkbszNQ36vazTBa9yXYKCDMQBhsJURhhsCMA
+	j1mTGX2YuuLQQvVFM9F5PJp4GaLgK5ASkZXssZl/rnBc5yDOus60fNPX7zh7xaHLB3Ec=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sPOvS-001pKc-Qp; Thu, 04 Jul 2024 18:03:14 +0200
+Date: Thu, 4 Jul 2024 18:03:14 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Tengfei Fan <quic_tengfan@quicinc.com>
+Cc: Andrew Halaney <ahalaney@redhat.com>, andersson@kernel.org,
+	konrad.dybcio@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, djakov@kernel.org, mturquette@baylibre.com,
+	sboyd@kernel.org, jassisinghbrar@gmail.com,
+	herbert@gondor.apana.org.au, davem@davemloft.net,
+	manivannan.sadhasivam@linaro.org, will@kernel.org, joro@8bytes.org,
+	conor@kernel.org, tglx@linutronix.de, amitk@kernel.org,
+	thara.gopinath@gmail.com, linus.walleij@linaro.org,
+	wim@linux-watchdog.org, linux@roeck-us.net, rafael@kernel.org,
+	viresh.kumar@linaro.org, vkoul@kernel.org, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, mcoquelin.stm32@gmail.com,
+	robimarko@gmail.com, bartosz.golaszewski@linaro.org,
+	kishon@kernel.org, quic_wcheng@quicinc.com, alim.akhtar@samsung.com,
+	avri.altman@wdc.com, bvanassche@acm.org, agross@kernel.org,
+	gregkh@linuxfoundation.org, quic_tdas@quicinc.com,
+	robin.murphy@arm.com, daniel.lezcano@linaro.org,
+	rui.zhang@intel.com, lukasz.luba@arm.com, quic_rjendra@quicinc.com,
+	ulf.hansson@linaro.org, quic_sibis@quicinc.com,
+	otto.pflueger@abscue.de, luca@z3ntu.xyz, neil.armstrong@linaro.org,
+	abel.vesa@linaro.org, bhupesh.sharma@linaro.org,
+	alexandre.torgue@foss.st.com, peppe.cavallaro@st.com,
+	joabreu@synopsys.com, netdev@vger.kernel.org, lpieralisi@kernel.org,
+	kw@linux.com, bhelgaas@google.com, krzysztof.kozlowski@linaro.org,
+	u.kleine-koenig@pengutronix.de, dmitry.baryshkov@linaro.org,
+	quic_cang@quicinc.com, danila@jiaxyga.com,
+	quic_nitirawa@quicinc.com, mantas@8devices.com, athierry@redhat.com,
+	quic_kbajaj@quicinc.com, quic_bjorande@quicinc.com,
+	quic_msarkar@quicinc.com, quic_devipriy@quicinc.com,
+	quic_tsoni@quicinc.com, quic_rgottimu@quicinc.com,
+	quic_shashim@quicinc.com, quic_kaushalk@quicinc.com,
+	quic_tingweiz@quicinc.com, quic_aiquny@quicinc.com,
+	srinivas.kandagatla@linaro.org, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-phy@lists.infradead.org, linux-crypto@vger.kernel.org,
+	linux-scsi@vger.kernel.org, linux-usb@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+	linux-gpio@vger.kernel.org, linux-watchdog@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+	kernel@quicinc.com
+Subject: Re: [PATCH 29/47] dt-bindings: net: qcom,ethqos: add description for
+ qcs9100
+Message-ID: <add1bdda-2321-4c47-91ef-299f99385bc8@lunn.ch>
+References: <20240703025850.2172008-1-quic_tengfan@quicinc.com>
+ <20240703025850.2172008-30-quic_tengfan@quicinc.com>
+ <u5ekupjqvgoehkl76pv7ljyqqzbnnyh6ci2dilfxfkcdvdy3dp@ehdujhkul7ow>
+ <f4162b7f-d957-4dd6-90a0-f65c1cbc213a@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dt-bindings: clock: sprd,sc9860-clk: convert to YAML
-To: Stanislav Jakubek <stano.jakubek@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Orson Zhai <orsonzhai@gmail.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Baolin Wang <baolin.wang7@gmail.com>, Chunyan Zhang <zhang.lyra@gmail.com>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <ZoaYPg2avtYpKQjB@standask-GA-A55M-S2HP>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <ZoaYPg2avtYpKQjB@standask-GA-A55M-S2HP>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f4162b7f-d957-4dd6-90a0-f65c1cbc213a@quicinc.com>
 
-On 04/07/2024 14:40, Stanislav Jakubek wrote:
-> Convert the Spreadtrum SC9860 clock bindings to DT schema.
+On Thu, Jul 04, 2024 at 09:13:59AM +0800, Tengfei Fan wrote:
 > 
-> Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
+> 
+> On 7/3/2024 11:09 PM, Andrew Halaney wrote:
+> > On Wed, Jul 03, 2024 at 10:58:32AM GMT, Tengfei Fan wrote:
+> > > Add the compatible for the MAC controller on qcs9100 platforms. This MAC
+> > > works with a single interrupt so add minItems to the interrupts property.
+> > > The fourth clock's name is different here so change it. Enable relevant
+> > > PHY properties. Add the relevant compatibles to the binding document for
+> > > snps,dwmac as well.
+> > 
+> > This description doesn't match what was done in this patch, its what
+> > Bart did when he made changes to add the sa8775 changes. Please consider
+> > using a blurb indicating that this is the same SoC as sa8775p, just with
+> > different firmware strategies or something along those lines?
+> 
+> I will update this commit message as you suggested.
 
-Thank you for your patch. There is something to discuss/improve.
+Hi Andrew, Tengfei
 
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - sprd,sc9860-aonsecure-clk
-> +              - sprd,sc9860-aon-prediv
-> +              - sprd,sc9860-ap-clk
-> +              - sprd,sc9860-cam-clk
-> +              - sprd,sc9860-disp-clk
-> +              - sprd,sc9860-gpu-clk
-> +              - sprd,sc9860-vsp-clk
-> +    then:
-> +      required:
-> +        - reg
+Please trim emails when replying to just the needed context.
 
-  properties:
-    sprd,syscon: false
-
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - sprd,sc9860-agcp-gate
-> +              - sprd,sc9860-aon-gate
-> +              - sprd,sc9860-apahb-gate
-> +              - sprd,sc9860-apapb-gate
-> +              - sprd,sc9860-cam-gate
-> +              - sprd,sc9860-disp-gate
-> +              - sprd,sc9860-pll
-> +              - sprd,sc9860-pmu-gate
-> +              - sprd,sc9860-vsp-gate
-> +    then:
-> +      required:
-> +        - sprd,syscon
-
-  properties:
-    reg: false
-
-Best regards,
-Krzysztof
-
+Thanks
+	Andrew
