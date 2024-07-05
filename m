@@ -1,181 +1,145 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8A1279D3;
-	Fri,  5 Jul 2024 01:51:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21679FC11
+	for <linux-clk@vger.kernel.org>; Fri,  5 Jul 2024 02:11:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720144267; cv=none; b=PpjjxvjgU7iOmWtI7YmZbCOSQ5QsvNFFrITLd6NE7O7lYyF+iIsPw/rwx5yTFatMcvshibgPUp8uy9HPyIQMiB6uXisHUxWoT9kZbW3ZBQJe4D+RlGeDTnf0lbgvIvo2ZSE6qczIXFMDJ9gNBUMISfckbQxzqqFjOcC6ya61FIQ=
+	t=1720145480; cv=none; b=uE7z4Ab3/x1AltaJZZraBai1ZHJ7fYtW/fxyf5oIYkj6Zlr8JRjCUy6ZdJeBnenEuHBnkNRmfn6bZqKWd7iQtO2MERU0d4yW/HWWq62xP71RTIlgBrebfxWb88Ad4U4IXzAoQLpy8jkkOZx5fl2q4vCxBcdXVYX0qx2nBeKZIHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720144267; c=relaxed/simple;
-	bh=CRRfXqrbQs7tLcrxZpfuE5Kh1RIwcGT87Lps4lI9koU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JbBYOaErqFDN/mh1pti2znfUygoEPuGHytvD6YpSoJURJnyllEVuwkQm9MP/1CvyzqJRtlDWZenyfmc0nlphMop4cb9IEh1+cV92ULkqmz7aidIDWk7//kmujEFj1pzKQh6ln3E+UKGXODvFEsHkkCYAx9ufCXajlDn+ghlFIls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IWYLNnSZ; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1720145480; c=relaxed/simple;
+	bh=MHkY24Dv7WD+fs05hwqba+KuOzcsESVBhdZchAukMaM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
+	 References; b=h9RUX/Y2vAl0zFOmbzwpUhAV50mdElqM5cgksos0R3+Y6Ty8UKQzFEdJaDjsv3DwQ/5/FuY9sTxmjgB4Y4CNPxIO+k0zmfisHAtYL4uSqlU7vf+qnKvZwWnAMVdCOA+ddvahuBE4oKjDGaGW47+CuQcLbDetyg5uC50pVU8TSlc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=N1lFP1dX; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IWYLNnSZ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1720144264; x=1751680264;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=CRRfXqrbQs7tLcrxZpfuE5Kh1RIwcGT87Lps4lI9koU=;
-  b=IWYLNnSZVCro8PlEsvNuvfTA8fz7bYy3XIloLaCvrQ5nYNA+meHOn2Og
-   C4lTjR/3NLQBY0U88EY/ydBpX3YhdIf5L61Wbo4MXQxDcRsAEdX624KPN
-   tUgZDQGrc2Lt0eoIe21JyD5pDO1ecvk5sIXI57MJp3PnOrqk7OtqOHtXG
-   CX8nHdP+/uKtYdGKrAJMbCSveuaRS85cypNxJsqVwqS2YrQYZxXUCt0OV
-   AxOXuLBGC36e1QeQ8FsXEctZ/IQdNdLy1QsJi66fWSImfm/TFkJUb/Gj5
-   J3DDHif2U3Sh7+qFicABOBW6JNMGbKPEvjbmmteWm6w7Nhm6bnC5KufG3
-   w==;
-X-CSE-ConnectionGUID: NIBPJVoxQL2l7WhcOxyOaQ==
-X-CSE-MsgGUID: J94FQyDgQeqEgXXInLVVqA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11123"; a="21239041"
-X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
-   d="scan'208";a="21239041"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2024 18:51:04 -0700
-X-CSE-ConnectionGUID: wGr7m+PyRo+lra4tO7HwPw==
-X-CSE-MsgGUID: Fawo+R7ISN+VwmUeHScWeQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
-   d="scan'208";a="46699156"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 04 Jul 2024 18:50:59 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sPY6D-000RlE-27;
-	Fri, 05 Jul 2024 01:50:57 +0000
-Date: Fri, 5 Jul 2024 09:50:41 +0800
-From: kernel test robot <lkp@intel.com>
-To: =?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
-	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
-	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>
-Subject: Re: [PATCH v2 4/4] clk: eyeq: add driver
-Message-ID: <202407050921.S41aCBdD-lkp@intel.com>
-References: <20240703-mbly-clk-v2-4-fe8c6199a579@bootlin.com>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="N1lFP1dX"
+Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240705021116epoutp01e9b0038d68d44295cdc8dafd58b87edd~fLzJt8sJq2725827258epoutp01F
+	for <linux-clk@vger.kernel.org>; Fri,  5 Jul 2024 02:11:16 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240705021116epoutp01e9b0038d68d44295cdc8dafd58b87edd~fLzJt8sJq2725827258epoutp01F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1720145476;
+	bh=wwOTOcR6jUDFYsddHvTGmzoibfOdVBtmVR6pvBluhJs=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=N1lFP1dXOLTJs0lRM0VQQjPyFTe+wE7qpgyK2DXzQo3Sz7htuJNJK9r2uQv49FmaK
+	 dNRRWq6hEjVIUdQUiqKLSvsjQzzH1195Di+iSFJtzl+YWyFB0MEJfpuA9BpXjkw2RV
+	 QOg2sAu0oiiRgUfKDhXTHmzBWOW1ufS0pOxITLHQ=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTP id
+	20240705021115epcas2p12e2ad83efd561ce329c453d87eb29ac6~fLzJBYund1971819718epcas2p1R;
+	Fri,  5 Jul 2024 02:11:15 +0000 (GMT)
+Received: from epsmgec2p1-new.samsung.com (unknown [182.195.36.99]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4WFcSg1HYWz4x9QJ; Fri,  5 Jul
+	2024 02:11:15 +0000 (GMT)
+Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
+	epsmgec2p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	64.8D.25328.34657866; Fri,  5 Jul 2024 11:11:15 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
+	20240705021114epcas2p4bad9380e73d2681aabc6074905e112ab~fLzITV8j-2870328703epcas2p45;
+	Fri,  5 Jul 2024 02:11:14 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240705021114epsmtrp1d5f56136fe83724be89c56b94f50ffc4~fLzIRgZ1z0593405934epsmtrp1M;
+	Fri,  5 Jul 2024 02:11:14 +0000 (GMT)
+X-AuditID: b6c32a4d-001ff700000262f0-70-668756430b18
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	60.0A.18846.24657866; Fri,  5 Jul 2024 11:11:14 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.229.9.60]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240705021114epsmtip250ab3cb5d6404e669af930df6f667712~fLzIFGkWO0030900309epsmtip2j;
+	Fri,  5 Jul 2024 02:11:14 +0000 (GMT)
+From: Sunyeal Hong <sunyeal.hong@samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki
+	<s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar
+	<alim.akhtar@samsung.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Sunyeal Hong <sunyeal.hong@samsung.com>
+Subject: [PATCH 0/5] initial clock support for exynosauto v920 SoC
+Date: Fri,  5 Jul 2024 11:11:05 +0900
+Message-ID: <20240705021110.2495344-1-sunyeal.hong@samsung.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240703-mbly-clk-v2-4-fe8c6199a579@bootlin.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFupkk+LIzCtJLcpLzFFi42LZdljTVNc5rD3NYM1RdosH87axWVz/8pzV
+	4vz5DewWH3vusVpc3jWHzWLG+X1MFhdPuVocftPOavHv2kYWi6Zl65kcuDze32hl99i0qpPN
+	o2/LKkaPz5vkAliism0yUhNTUosUUvOS81My89JtlbyD453jTc0MDHUNLS3MlRTyEnNTbZVc
+	fAJ03TJzgO5RUihLzCkFCgUkFhcr6dvZFOWXlqQqZOQXl9gqpRak5BSYF+gVJ+YWl+al6+Wl
+	llgZGhgYmQIVJmRnPDtWU7CNq2L1zE9sDYyzOboYOTkkBEwkPnauYe1i5OIQEtjDKDHvzR52
+	COcTo0TrqW5WkCow5/oMMZiO403XGSGKdjJKXLx5kwXC+cgoce1aM3MXIwcHm4CuxJ9/DiBx
+	EYHvjBL9b/eBFTELdDJKXD26nQlklLCAk8SPMwvYQGwWAVWJB8ems4A08wrYS6x/XAexTV7i
+	4prnYCW8AoISJ2c+YQGxmYHizVtnM4PMlBC4xS6x/8oXsMUSAi4Ss85FQfQKS7w6voUdwpaS
+	eNnfBmXnS0y+/pYJorcB6Oh/3cwQCXuJRWd+soPMYRbQlFi/Sx9ipLLEkVtQa/kkOg7/ZYcI
+	80p0tAlBNKpJfLpyGWqIjMSxE8+gjvGQePc+CRKEsRLHnk5gncAoPwvJL7OQ/DILYe0CRuZV
+	jFKpBcW56anJRgWGunmp5fBYTc7P3cQITpNavjsYX6//q3eIkYmD8RCjBAezkgiv1PvmNCHe
+	lMTKqtSi/Pii0pzU4kOMpsAAnsgsJZqcD0zUeSXxhiaWBiZmZobmRqYG5krivPda56YICaQn
+	lqRmp6YWpBbB9DFxcEo1MC2ZOf+/FnOs9ooNS+y6Mo1jv9pU5TBwTT9q9z8o0/jEpbjDv5RT
+	H9wOee/JHzz536lpx9QqP19ZPe+gRMjEniOcuv9kX0wv2tKW6H2PQ1ypWXk5R9/bTWtVWb2f
+	/HkVOmfiiZe1XMUZX7kS3v886jPFXczzSCjz+QtSItx67yu/1n7heCg+Wf/A59lGWnV6d96k
+	nj5vxHvP68yaP22zL5lY1K5hNZ6fKfkq/aLs3QPTPm1zP+opr2ZzbFVS4RGVWt5nUYJqgUki
+	kW86Oq5vjJEo0Wi+/K2ZlUtiZURlfVfnPk1v07ibIafkTjJVBlxbIM7NP//Rm1aJR9yPN5q+
+	0IyfdWR7tefak91Nf9qOuSuxFGckGmoxFxUnAgD3enlnHAQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMLMWRmVeSWpSXmKPExsWy7bCSvK5TWHuaQc9ETYsH87axWVz/8pzV
+	4vz5DewWH3vusVpc3jWHzWLG+X1MFhdPuVocftPOavHv2kYWi6Zl65kcuDze32hl99i0qpPN
+	o2/LKkaPz5vkAliiuGxSUnMyy1KL9O0SuDKeHasp2MZVsXrmJ7YGxtkcXYycHBICJhLHm64z
+	djFycQgJbGeUmLX2ADtEQkZiY8N/KFtY4n7LEVaIoveMEjeuXWDpYuTgYBPQlfjzzwEkLiLw
+	m1Hix97vYJOYBXoZJe7c/scE0i0s4CTx48wCNhCbRUBV4sGx6WDNvAL2Eusf10EskJe4uOY5
+	WAmvgKDEyZlPWEBsZqB489bZzBMY+WYhSc1CklrAyLSKUTS1oDg3PTe5wFCvODG3uDQvXS85
+	P3cTIzhctYJ2MC5b/1fvECMTB+MhRgkOZiURXqn3zWlCvCmJlVWpRfnxRaU5qcWHGKU5WJTE
+	eZVzOlOEBNITS1KzU1MLUotgskwcnFINTGmrVIpdX6XzB5ZJtGxfq+mhY73ZZUK/pC8/S6v6
+	8h9XpvD0/du29qxc+P2oE0ps0mHfe6tmm725FVy8M5dj/1+t5IK8qQ2ft0fc337U6f+tim+c
+	azSFM+dO3L/Q++P7DBuGlc/EtjD9uG04RWz3tLXV1x2CPh8UeSH1cr8wx0fLL7dMyxSS7WqC
+	WPTC5n6ar9b78Ypa0oIXaTEHvJ/JsH1Z/a1Dx/J4gv7hyXn5/DfeezyRPvMyo/4z98eJOasv
+	aT7fxc8TL/nR9IBX4fTpHcmTf6ybWK0yueHa+71HWH3knSY0m8c8WSvNpdHKxJkbr3fMtT3w
+	fNmphWeMwxhUfk28+uv3pbmdhz96uAWnCyixFGckGmoxFxUnAgD7k0RGxgIAAA==
+X-CMS-MailID: 20240705021114epcas2p4bad9380e73d2681aabc6074905e112ab
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240705021114epcas2p4bad9380e73d2681aabc6074905e112ab
+References: <CGME20240705021114epcas2p4bad9380e73d2681aabc6074905e112ab@epcas2p4.samsung.com>
 
-Hi Théo,
+This patchset adds initial clock driver support for Exynos Auto v920 SoC.
+This driver uses HW Auto Clock gating. So all gate clocks did not register.
 
-kernel test robot noticed the following build errors:
+Below CMU blocks are supported in this patchset and remains will be
+implemented later.
 
-[auto build test ERROR on f2661062f16b2de5d7b6a5c42a9a5c96326b8454]
+- CMU_TOP
+- CMU_PERIC0
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Th-o-Lebrun/Revert-dt-bindings-clock-mobileye-eyeq5-clk-add-bindings/20240704-211515
-base:   f2661062f16b2de5d7b6a5c42a9a5c96326b8454
-patch link:    https://lore.kernel.org/r/20240703-mbly-clk-v2-4-fe8c6199a579%40bootlin.com
-patch subject: [PATCH v2 4/4] clk: eyeq: add driver
-config: hexagon-allyesconfig (https://download.01.org/0day-ci/archive/20240705/202407050921.S41aCBdD-lkp@intel.com/config)
-compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project a0c6b8aef853eedaa0980f07c0a502a5a8a9740e)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240705/202407050921.S41aCBdD-lkp@intel.com/reproduce)
+Sunyeal Hong (5):
+  dt-bindings: clock: add Exynos Auto v920 SoC CMU bindings
+  dt-bindings: clock: add clock binding definitions for Exynos Auto v920
+  arm64: dts: exynos: add initial CMU clock nodes in Exynos Auto v920
+  clk: samsung: clk-pll: Add support for pll_531x
+  clk: samsung: add top clock support for Exynos Auto v920 SoC
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407050921.S41aCBdD-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from drivers/clk/clk-eyeq.c:30:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     548 |         val = __raw_readb(PCI_IOBASE + addr);
-         |                           ~~~~~~~~~~ ^
-   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
-      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
-         |                                                   ^
-   In file included from drivers/clk/clk-eyeq.c:30:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
-         |                                                   ^
-   In file included from drivers/clk/clk-eyeq.c:30:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     585 |         __raw_writeb(value, PCI_IOBASE + addr);
-         |                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
->> drivers/clk/clk-eyeq.c:264:9: error: call to undeclared function 'readq'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     264 |                 val = readq(priv->base + pll->reg64);
-         |                       ^
-   drivers/clk/clk-eyeq.c:724:9: error: call to undeclared function 'readq'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-     724 |                 val = readq(base + pll->reg64);
-         |                       ^
-   6 warnings and 2 errors generated.
-
-
-vim +/readq +264 drivers/clk/clk-eyeq.c
-
-   249	
-   250	static void eqc_probe_init_plls(struct device *dev, struct eqc_priv *priv)
-   251	{
-   252		const struct eqc_match_data *data = priv->data;
-   253		unsigned long mult, div, acc;
-   254		const struct eqc_pll *pll;
-   255		struct clk_hw *hw;
-   256		unsigned int i;
-   257		u32 r0, r1;
-   258		u64 val;
-   259		int ret;
-   260	
-   261		for (i = 0; i < data->pll_count; i++) {
-   262			pll = &data->plls[i];
-   263	
- > 264			val = readq(priv->base + pll->reg64);
-   265			r0 = val;
-   266			r1 = val >> 32;
-   267	
-   268			ret = eqc_pll_parse_registers(r0, r1, &mult, &div, &acc);
-   269			if (ret) {
-   270				dev_warn(dev, "failed parsing state of %s\n", pll->name);
-   271				priv->cells->hws[pll->index] = ERR_PTR(ret);
-   272				continue;
-   273			}
-   274	
-   275			hw = clk_hw_register_fixed_factor_with_accuracy_fwname(dev,
-   276					dev->of_node, pll->name, "ref", 0, mult, div, acc);
-   277			priv->cells->hws[pll->index] = hw;
-   278			if (IS_ERR(hw))
-   279				dev_warn(dev, "failed registering %s: %pe\n", pll->name, hw);
-   280		}
-   281	}
-   282	
+ .../clock/samsung,exynosautov920-clock.yaml   |  115 ++
+ .../arm64/boot/dts/exynos/exynosautov920.dtsi |   40 +-
+ drivers/clk/samsung/Makefile                  |    1 +
+ drivers/clk/samsung/clk-exynosautov920.c      | 1176 +++++++++++++++++
+ drivers/clk/samsung/clk-pll.c                 |   45 +
+ drivers/clk/samsung/clk-pll.h                 |    1 +
+ .../clock/samsung,exynosautov920.h            |  191 +++
+ 7 files changed, 1556 insertions(+), 13 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynosautov920-clock.yaml
+ create mode 100644 drivers/clk/samsung/clk-exynosautov920.c
+ create mode 100644 include/dt-bindings/clock/samsung,exynosautov920.h
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.43.2
+
