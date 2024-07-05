@@ -1,112 +1,115 @@
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EE2B13B5BB;
-	Fri,  5 Jul 2024 10:03:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CBA5149C52;
+	Fri,  5 Jul 2024 12:14:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720173840; cv=none; b=q13Alp1OODoTnHnsgUs90P6IOYWGnPEUY/Kp1ANtCe77Gc6y0enVUH4t9K5qG43DucJtwem4nY80e3PJSoBHSH5gPeLVPDcWZs1AKWLeGVR5Gmhmu+s5aKTcl/lcE86Ttaexecv2Jey+2QIpD+qtga7al++qbT0fOekjL9rsRlE=
+	t=1720181670; cv=none; b=QjRIFi9qDHWpIgLp5jp0radH/eiKhgDU/R6gFtgnx7wZBhz+ZSpmzPL7KEdnuHvVn/pdUOu4hNLBFI30v/8ds8pCAMUG+1SZ6fW0Z7xiJJn6VUKXCwaPwC//AFlcxpk6aZuGg6fFc6VfcYZYWN8CiIP7U28LFtbFAkRAYikqceM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720173840; c=relaxed/simple;
-	bh=WgDu9ZpACAJvm7Pa4gqk+rNT3auetxE4+ckzl7sJ1ig=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
-	 References:In-Reply-To; b=ozOyeiiFL78nCEZNQUXlBGd2JFuBODbkB7PkvBJVSpeDQkxpcjqgIvRk39NaUlsKebEHrYOHAzX+vg8qqWsteLmAjYivQRc6zV/YP/zv6xK9E1u1CsXrb20ddPnRKDTqLp0IGc7n/jIDbGZoJbUm6+82NzlUbmyv7vrWSVFhxLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=TVq8H7Lj; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1720181670; c=relaxed/simple;
+	bh=KFWQMJ6Wph6R6V0qaI65f80zhp/w/EFE5FRhTDDL+xg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gslrTJwPZ3IfG6OVaZ//bEWdQCPcEwVbnaXVJYCAYzkTOAzNK1QwgvoOADrpPmKsqcS/7/JjUl+NqWzC58WUrKDp8PcACZVK4ylCXhMWrOA7z1tmnaiHLyeTbv5SB+8+WhF6VO6DUCFZ1m8KABaYO+QyDgfJzUeDF91ouS8aD+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mRNLJr9+; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="TVq8H7Lj"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id BDA511C0012;
-	Fri,  5 Jul 2024 10:03:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1720173836;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=63549/JWR8ZN81iPpBOmB7VHeCd6i6W3nkUlZJSwKPA=;
-	b=TVq8H7Ljl3Cxhy3s5+zVlF60lJwrKbloXTFbbA1uBzXwUN4L9IFxGZn0Ppmd7mjAhknM+t
-	dH28EleXtEiNik7Uu/HeIMf50fGEPNEHmYegErsdPcqWQ8WIr3Ltcoi9ddSmvN1MFjvHej
-	Btbt/MHZBMveLeIv+jeblBjBMafXI4Cu8gZYUXeQk7SgWekwoRykFGXrmM9cWokCDbQS8M
-	rsW0UKLi2KY8RY3GeouyXr4KxL6EiaaAtlNrMX/lr5vXEL53BXRtB3ADULbpULwT4QTDEA
-	gq98IZRL1BGKxBdYhfcf9uW8g17wE/ONuaYHUDFYHruhwheM2i0T/G3STUP24A==
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mRNLJr9+"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F2ADC116B1;
+	Fri,  5 Jul 2024 12:14:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720181669;
+	bh=KFWQMJ6Wph6R6V0qaI65f80zhp/w/EFE5FRhTDDL+xg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mRNLJr9+eR+eutN+367lEVtaOqpNnKGvCTQZ2J7AXumKZGhVIy2hFWSw+9+My+beK
+	 p35b7s0npFsbQ04UczaxtAgee0ohsHYhIo9y+fOMrlYD83MLEXfBN84ztD8HV3W2Vd
+	 VU9+MEma+qXB5Qv8W4jtvmd2Z6890skNsd0YJQgRoosgTVYIxfjd2xqe2CgUWU27rf
+	 ej+u02/dINuhMO0G9sSRD8ATCRoTO/zoKbHWdRsROZXXNNhje4D9FLqIzV3ONUOT3p
+	 eppRfldJi30VRs5U1FzVD9dQlouh9Tk2EsRoAn0dWR3zsIWmplyrA/Rrx8Y5RHi+4C
+	 If4IMfXLtvoBA==
+Date: Fri, 5 Jul 2024 14:14:26 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Claudiu <claudiu.beznea@tuxon.dev>, chris.brandt@renesas.com, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com, 
+	mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, 
+	wsa+renesas@sang-engineering.com, linux-renesas-soc@vger.kernel.org, linux-i2c@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH v2 04/12] i2c: riic: Use pm_runtime_resume_and_get()
+Message-ID: <5pg2ubwv5gl7md55rjo3n6qgssirdryyou3gsbwbm35gxk4boo@q3hcnrminnzm>
+References: <20240625121358.590547-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240625121358.590547-5-claudiu.beznea.uj@bp.renesas.com>
+ <2wm6vd4dib7tqpdq2eusjhyvfl3sofyvy65w6axvdjbkmgm5cn@bjltpbwwilc2>
+ <CAMuHMdV=Uhqar6k_z_wo5jzge_7oY4tBK5zNiBbpsWa39Wvabw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 05 Jul 2024 12:03:55 +0200
-Message-Id: <D2HIQELPOBJD.1HJZS16QJSSZJ@bootlin.com>
-Cc: <llvm@lists.linux.dev>, <oe-kbuild-all@lists.linux.dev>,
- <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, "Vladimir Kondratiev"
- <vladimir.kondratiev@mobileye.com>, =?utf-8?q?Gr=C3=A9gory_Clement?=
- <gregory.clement@bootlin.com>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
- <tawfik.bayouk@mobileye.com>
-To: "kernel test robot" <lkp@intel.com>, "Michael Turquette"
- <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>, "Rob Herring"
- <robh@kernel.org>, "Krzysztof Kozlowski" <krzk@kernel.org>, "Conor Dooley"
- <conor+dt@kernel.org>
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Subject: Re: [PATCH v2 4/4] clk: eyeq: add driver
-X-Mailer: aerc 0.17.0-0-g6ea74eb30457
-References: <20240703-mbly-clk-v2-4-fe8c6199a579@bootlin.com>
- <202407050921.S41aCBdD-lkp@intel.com>
-In-Reply-To: <202407050921.S41aCBdD-lkp@intel.com>
-X-GND-Sasl: theo.lebrun@bootlin.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdV=Uhqar6k_z_wo5jzge_7oY4tBK5zNiBbpsWa39Wvabw@mail.gmail.com>
 
-Hello,
+Hi Geert,
 
-*Grasp*, I forgot addressing this topic.
+> > >  static inline void riic_writeb(struct riic_dev *riic, u8 val, u8 offset)
+> > >  {
+> > >       writeb(val, riic->base + riic->info->regs[offset]);
+> > > @@ -133,10 +135,14 @@ static int riic_xfer(struct i2c_adapter *adap, struct i2c_msg msgs[], int num)
+> > >       struct riic_dev *riic = i2c_get_adapdata(adap);
+> > >       struct device *dev = adap->dev.parent;
+> > >       unsigned long time_left;
+> > > -     int i;
+> > > +     int i, ret;
+> > >       u8 start_bit;
+> > >
+> > > -     pm_runtime_get_sync(dev);
+> > > +     ret = pm_runtime_resume_and_get(dev);
+> >
+> > In principle I like the error message to be always checked and I
+> 
+> s/message/condition/?
 
-On Fri Jul 5, 2024 at 3:50 AM CEST, kernel test robot wrote:
-> kernel test robot noticed the following build errors:
+yes :-)
 
-[...]
+> > will always approve it. Whenever there is a return value, even
+> > when we are sure it's always '0', it needs to be checked.
+> >
+> > I had lots of discussions in the past about this topic but I
+> > haven't always found support. I'd love to have the ack from a
+> > renesas maintainer here.
+> 
+> I don't mind checking for the error here.
+> 
+> >
+> > > +     if (ret) {
+> > > +             dev_err(dev, riic_rpm_err_msg);
+> 
+> Do you need to print these error messages?
 
-> All errors (new ones prefixed by >>):
->
->    In file included from drivers/clk/clk-eyeq.c:30:
->    In file included from include/linux/io.h:14:
->    In file included from arch/hexagon/include/asm/io.h:328:
->    include/asm-generic/io.h:548:31: warning: performing pointer
->        arithmetic on a null pointer has undefined behavior [-Wnull-pointe=
-r-arithmetic]
->      548 |         val =3D __raw_readb(PCI_IOBASE + addr);
->          |                           ~~~~~~~~~~ ^
-[...]
+I don't think it's needed, indeed.
 
-Ignoring all the warnings relative to <linux/io.h> as they appear on all
-objects using this config, nothing specific to clk-eyeq.
+> AFAIU, this cannot happen anyway.
 
-> >> drivers/clk/clk-eyeq.c:264:9: error: call to undeclared function
-> >>     'readq'; ISO C99 and later do not support implicit function
-> >>     declarations [-Wimplicit-function-declaration]
->      264 |                 val =3D readq(priv->base + pll->reg64);
->          |                       ^
+That's what I was saying earlier. It's just a different point of
+view.
 
-Options are:
-
- - #include <linux/io-64-nonatomic-lo-hi.h> or
-            <linux/io-64-nonatomic-hi-lo.h> or
-
- - in Kconfig, add "depends on 64BIT # for readq()"
-
-I'm leaning towards the Kconfig option. Build testing this driver on
-32bit platforms makes no sense, this is a SoC clk platform driver used
-on 64bit SoCs. Including a compat layer is a more complex solution.
-
-I'll wait a bit before sending next revision.
-You can ping if you want it straight away of course.
+To be honest, I don't really mind.
 
 Thanks,
+Andi
 
---
-Th=C3=A9o Lebrun, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
+> Ultimately, I expect the device driver that requested the transfer to
+> handle failures, and print a message when needed.
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> -- 
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
