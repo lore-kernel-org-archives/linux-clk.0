@@ -1,146 +1,180 @@
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2977139D1B;
-	Fri,  5 Jul 2024 07:20:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D1E51411FD
+	for <linux-clk@vger.kernel.org>; Fri,  5 Jul 2024 07:50:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720164004; cv=none; b=LGowiwmzHuF8lQopT/Wrzlt/2WvILdSaGY5f/xr63Xzm/c/US1i35avnJcBws1DRFe57uQlR4myXNnfTZUy2x2Wv7s5roKojX0zsjUPEiUiF3+RzGDM3MKr8p5cILgizJVOQkfEIYt8pHPUpLsb9gOO75VWpGJpP0Kp3OwjKET0=
+	t=1720165844; cv=none; b=OG1EBHbZvAB2osUQjPN4QgTwdXt7UPmcFjJ02bOsxAMLlsHOWrqziRZzs1rPtClHNj6xDqQSvuqpLDPpsmgw3hob2+WWzO6wFjRzwWQqFud0eCW+qzwj0HOKonX+p6162/Efc3o9XbE4AwFY3Y5YoEGemNt24QsXE6ACA99ZC6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720164004; c=relaxed/simple;
-	bh=hrYys/hSWnTYJsfYNVQHw8oZRpFWHaSeNxp6S+CTrwo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KfSI+6x0gT06K8gavYGtdjZVUVOOSGiKk2EsAlypZUNas/0GRzYKBXCDGwSpmZS45hteL4/WBIsJaLKrH5ORLx+V9D+dXtfEKyJxzw/Lp6ahd5ezU+hWv0Akfh5HPE1YFy/94CBnQb+xfcTAvTJxbvsmwkkWWMt7u7kvxqLmgqU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-dfef5980a69so1355209276.3;
-        Fri, 05 Jul 2024 00:20:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720164000; x=1720768800;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mQlRvdEIl3wW/T9tWerBdCapYf+E5WFW4Sl9gBRQc3I=;
-        b=KZvg8wCaXk4yDecd3ULRgiTgPhrQeuCM+JYP0BKEN8AuBM2SAg4lXFI7vZI+FGOnMa
-         1mfUG9GpjmTLtXmmgTxDn/Wzv0P6qRLTtg0U9/JtCmlgxmFxrAx1q9VXiDHdgnqsZbD5
-         rI2SCHX1CMdx+6/T8i1GzGBhswMkf1jlwa9r/8gUD57Lz98y4HgC2TyGSzdwMR0whI0N
-         4oAEDJHyJgESpPcXRw6oi461ZlXl1TwH7JcnNtsmP71bQxN54ycjTP+Bygp8TS4AIpSe
-         e9pR54I8k3Tjf9IeVDF7hZtU7FUTaFX6raJForsII9ETIcIHk7YyiDspb/HrAUifAw58
-         TYOw==
-X-Forwarded-Encrypted: i=1; AJvYcCVa6uKtLPUtsYzNfGWSR5ezmMcwXlcsUveMARmRetvJbMdPzNNOKAC6AbvFQGpy1is8vYLFZYz6S39uSQG56VD65tTMg20c7uKXVPqtbkWZuQUF808UqOgTvXh+vb9LxO+iLyRvTZfSDGSE7AvopMRz5GV+CkxLCBIc3uYOLW5cKyIS57874zGFZudaX+gDqUr5SnC5YaiIalf8GlYohJQYkFvmGAdGvKtHBFgkNdwXQ+Z3FdgjhlKBx6UzN7FAXOKl
-X-Gm-Message-State: AOJu0Yz+y8qgO2XwLfNTIis0aF9mdjIdZNwyJ4+WEFEabnuWmnu3GTTp
-	wLDk+vMFJNiPXaXi5ohCVRlgNTUOnJGwj0Te/l+DTELuHLhdSXgtlEFRkNBC
-X-Google-Smtp-Source: AGHT+IEdn+yZNpYbqFWcod6LpgXMbCvrh3sPAXeeQuLwG6G/P623/Qckq+WZefCWwErV7FFkjqu8Ew==
-X-Received: by 2002:a05:690c:6ac1:b0:64b:313f:d7cb with SMTP id 00721157ae682-652d5ef9153mr45515107b3.22.1720163999739;
-        Fri, 05 Jul 2024 00:19:59 -0700 (PDT)
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com. [209.85.128.170])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-64a9bf32efdsm27722627b3.123.2024.07.05.00.19.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 05 Jul 2024 00:19:59 -0700 (PDT)
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6515b824117so11494207b3.3;
-        Fri, 05 Jul 2024 00:19:59 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWJjjFaLtdaAoJjiJEU+Ze07kQ5fEjatGeqDRl+zsBYroSrexw/cLT/JUy8ZgbjfDDHxlkjbmt+cB81CjQ1TT348a6fysTZh85sKRKA9+T/S4HT3eLecz4STYPJdZwzRyq9wPEXAa3+nsDygiCVgh0qEFibUpj84nrwYh52Shro6czGIVnhOHfLLdE7gRbEsfvITko0efYh4rfYHZqv4EfjlK819rbw2NEOsxgF01ZGQkrcqSumWeXGGNUC2vKD0elt
-X-Received: by 2002:a0d:e8cd:0:b0:643:ed61:11bb with SMTP id
- 00721157ae682-652d5338f0dmr40312717b3.7.1720163999140; Fri, 05 Jul 2024
- 00:19:59 -0700 (PDT)
+	s=arc-20240116; t=1720165844; c=relaxed/simple;
+	bh=MMVTLAVubIbYiEHwabXP4l+cQEWDqi9C2DuEC2dIrVc=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=TwN5mtKjrqbjYwEYz7H42w4fNc6CCiP7vuCteuUIE+wKV3uvMCkDn5CRbCY0z/pQIGWDaUq3p3uYD8SCpR4pGKFU7ug+k9m0ZY3PlveYTA9fYGNc77OMHMA/utlbIuFGZR63hmEoeqZbIduUbZ8JKCBRjKtvm+Ubu8K7GHH2rmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ZmHU9K3s; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ZmHU9K3s"
+Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240705075039epoutp045eb12782088c21326ea625ec57fdbc03~fQbeCmpRK0264502645epoutp04Y
+	for <linux-clk@vger.kernel.org>; Fri,  5 Jul 2024 07:50:39 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240705075039epoutp045eb12782088c21326ea625ec57fdbc03~fQbeCmpRK0264502645epoutp04Y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1720165839;
+	bh=csMb2MY47N1/AKiDIqhcJHPOZbKTKiqWJQiltE8sVvg=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=ZmHU9K3sbqhjO1fn+KG9DGpahI/ROB6MAyDeqDAm4f4BrqqNtCqxYhIV+TBe2Yn4f
+	 FAAE2vIYlWjFQoM3gjh37D+HIfcbPJKyNEonAritSEkHqzh1og038cpi8bwxLgQeTt
+	 McMSEiEcuoFZJ0h7tt2Gwvb9fGw8xVN3FkYioX8Q=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTP id
+	20240705075038epcas2p411a2d139c67266058eb7b4928e1714bd~fQbdlGY1L2856628566epcas2p4A;
+	Fri,  5 Jul 2024 07:50:38 +0000 (GMT)
+Received: from epsmges2p3.samsung.com (unknown [182.195.36.90]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4WFm0G241Gz4x9Pr; Fri,  5 Jul
+	2024 07:50:38 +0000 (GMT)
+Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
+	epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+	05.CA.09806.EC5A7866; Fri,  5 Jul 2024 16:50:38 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240705075037epcas2p2b25139952de4e4ec5582d2942024c6d2~fQbcXaIKk2847628476epcas2p2Z;
+	Fri,  5 Jul 2024 07:50:37 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240705075037epsmtrp2807a1b8b494f8b913682028e7efacc16~fQbcWnp7R0839308393epsmtrp2_;
+	Fri,  5 Jul 2024 07:50:37 +0000 (GMT)
+X-AuditID: b6c32a47-c6bff7000000264e-a8-6687a5ceb545
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	60.1C.29940.DC5A7866; Fri,  5 Jul 2024 16:50:37 +0900 (KST)
+Received: from KORCO118965 (unknown [10.229.18.201]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20240705075037epsmtip16a1929880f30fdc922968a609b0a2d01~fQbcHTMDT2267022670epsmtip1U;
+	Fri,  5 Jul 2024 07:50:37 +0000 (GMT)
+From: "sunyeal.hong" <sunyeal.hong@samsung.com>
+To: "'Jaewon Kim'" <jaewon02.kim@samsung.com>, "'Krzysztof Kozlowski'"
+	<krzk@kernel.org>, "'Sylwester Nawrocki'" <s.nawrocki@samsung.com>,
+	"'Chanwoo Choi'" <cw00.choi@samsung.com>, "'Alim Akhtar'"
+	<alim.akhtar@samsung.com>, "'Michael	Turquette'" <mturquette@baylibre.com>,
+	"'Stephen Boyd'" <sboyd@kernel.org>
+Cc: <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+In-Reply-To: <494ac55c-7bd0-79a9-8a56-21aaf0611f81@samsung.com>
+Subject: RE: [PATCH 2/5] dt-bindings: clock: add clock binding definitions
+ for Exynos Auto v920
+Date: Fri, 5 Jul 2024 16:50:36 +0900
+Message-ID: <01b801daceb0$05dd0df0$119729d0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240625121358.590547-1-claudiu.beznea.uj@bp.renesas.com>
- <20240625121358.590547-5-claudiu.beznea.uj@bp.renesas.com> <2wm6vd4dib7tqpdq2eusjhyvfl3sofyvy65w6axvdjbkmgm5cn@bjltpbwwilc2>
-In-Reply-To: <2wm6vd4dib7tqpdq2eusjhyvfl3sofyvy65w6axvdjbkmgm5cn@bjltpbwwilc2>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 5 Jul 2024 09:19:46 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdV=Uhqar6k_z_wo5jzge_7oY4tBK5zNiBbpsWa39Wvabw@mail.gmail.com>
-Message-ID: <CAMuHMdV=Uhqar6k_z_wo5jzge_7oY4tBK5zNiBbpsWa39Wvabw@mail.gmail.com>
-Subject: Re: [PATCH v2 04/12] i2c: riic: Use pm_runtime_resume_and_get()
-To: Andi Shyti <andi.shyti@kernel.org>
-Cc: Claudiu <claudiu.beznea@tuxon.dev>, chris.brandt@renesas.com, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com, 
-	mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, 
-	wsa+renesas@sang-engineering.com, linux-renesas-soc@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQIPebKt0SL2hL1PGxWEYogtVpy49QFdVAxIAswtgRoCP1wtuLFLJS1A
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrAJsWRmVeSWpSXmKPExsWy7bCmqe65pe1pBhe6eSwezNvGZnH9y3NW
+	ix0NR1gtzp/fwG7xseceq8XlXXPYLGac38dkcfGUq8XhN+2sFv+ubWRx4PJ4f6OV3WPTqk42
+	j74tqxg9Pm+SC2CJyrbJSE1MSS1SSM1Lzk/JzEu3VfIOjneONzUzMNQ1tLQwV1LIS8xNtVVy
+	8QnQdcvMAbpHSaEsMacUKBSQWFyspG9nU5RfWpKqkJFfXGKrlFqQklNgXqBXnJhbXJqXrpeX
+	WmJlaGBgZApUmJCdMf/OCfaCxXwVu7b9ZW5gvMzdxcjJISFgIjGhbyJrFyMXh5DADkaJTWdn
+	soMkhAQ+MUr8u20NkfjGKLFiyVQ2mI6Tl5sZIRJ7GSWmtH1ig3BeMkrMeD+dEaSKTUBfYnX3
+	bbAOEYE9TBIL3taD2MwCaRIrTm0BW8EpYC/RducFC4gtLJAoMf3DFFYQm0VAReLOlxlgcV4B
+	S4mna7cwQ9iCEidnPmGBmCMvsf3tHGaIixQkfj5dxgqxy01i/7J7bBA1IhKzO9uYQY6TEFjK
+	ITFl2z8WiAYXif6t/6CahSVeHYc4SEJASuLzu71Qb+ZLTL7+lgmiuYFR4tq/bqgGe4lFZ34C
+	NXAAbdCUWL9LH8SUEFCWOHIL6jY+iY7Df9khwrwSHW1CEI1qEp+uXIYaIiNx7MQz5gmMSrOQ
+	fDYLyWezkHwwC2HXAkaWVYxiqQXFuempxUYFxvDITs7P3cQITqpa7jsYZ7z9oHeIkYmD8RCj
+	BAezkgiv1PvmNCHelMTKqtSi/Pii0pzU4kOMpsCwnsgsJZqcD0zreSXxhiaWBiZmZobmRqYG
+	5krivPda56YICaQnlqRmp6YWpBbB9DFxcEo1MMV927hr8unQ6arHb7zfcbBuybyVhyqZBGOO
+	sl7fbKO8VUDk2qvzbpt7K27znfq14/ycbfw8ZsWHOXmW/m+eKxW/I+6f+Ed1+3N5Hpcv6RmH
+	J0674W4ZeMZdcBfbhn3P74TOXHaaNVzdZ+evC7f45izpSN9VxLHE3ypVVmhTzIdDW/i5Xhz9
+	bfN/89OyFmO5njWz0pfoTQu6OLu9uT166eHzb2xPTn7jmb15R5h2f+IKha1OS6akvaz9oywk
+	ZCLXq9j+ZPrU7ze35szPfKBy8+nybM9C7cdTHy8UbHuq7bf9heqmpRm9mT8uXc4MSv2sc3XD
+	l3XOIV+FT6h8vj47MvdrVdQsV60Hhuu/z3leryldq8RSnJFoqMVcVJwIALPc5f0zBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFuplkeLIzCtJLcpLzFFi42LZdlhJTvfs0vY0g12fOC0ezNvGZnH9y3NW
+	ix0NR1gtzp/fwG7xseceq8XlXXPYLGac38dkcfGUq8XhN+2sFv+ubWRx4PJ4f6OV3WPTqk42
+	j74tqxg9Pm+SC2CJ4rJJSc3JLEst0rdL4MqYf+cEe8Fivopd2/4yNzBe5u5i5OSQEDCROHm5
+	mbGLkYtDSGA3o8T5/guMEAkZiY0N/9khbGGJ+y1HWCGKnjNKbP+3nAkkwSagL7G6+zYbSEJE
+	4ACTxLMze5lBEswCGRKHrr1ng+j4wSjx48tBFpAEp4C9RNudF0A2B4ewQLxE71N7kDCLgIrE
+	nS8zwEp4BSwlnq7dwgxhC0qcnPmEBWKmtsTTm0+hbHmJ7W/nMENcpyDx8+kyVhBbRMBNYv+y
+	e2wQNSISszvbmCcwCs9CMmoWklGzkIyahaRlASPLKkbJ1ILi3PTcYsMCw7zUcr3ixNzi0rx0
+	veT83E2M4BjT0tzBuH3VB71DjEwcjIcYJTiYlUR4pd43pwnxpiRWVqUW5ccXleakFh9ilOZg
+	URLnFX/RmyIkkJ5YkpqdmlqQWgSTZeLglGpgmvfmcZhWzMtG37BH+qws6VfPbLp4/qPNDt6q
+	m4dlCj3cE97f25r4Z1pvY+KKrfOX/p7T2GYadeJnlqDXDA+ta7k5Rzefi5u8+36Pwf67cvfy
+	/v1eWVt3K0xcqrL17LNkr/1p4pc1n+xfkdMyteJRsY5/dt79pp+hazj+BES/vXxqQrpYrLx6
+	mq5UxpyQoI91D4OebZNJKWEPnluS/mKB7KbFSzwyAxgfab4qOCjhHXA4OqJdx9zCNb7lc2dY
+	366VlywsGA/vc/lRsHF72TKWWr9fEXkJNe5XPqk8+dF4xOWoweQ7Lxv67Q+qOvGzhj2Y+H3t
+	jNdv5u3u+F8Wu/Ouy+3JzJs/b+uoqJotWnSqUYmlOCPRUIu5qDgRAKWFqzcgAwAA
+X-CMS-MailID: 20240705075037epcas2p2b25139952de4e4ec5582d2942024c6d2
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240705021200epcas2p273ca089c2cb9882f121e864ec8407367
+References: <20240705021110.2495344-1-sunyeal.hong@samsung.com>
+	<CGME20240705021200epcas2p273ca089c2cb9882f121e864ec8407367@epcas2p2.samsung.com>
+	<20240705021110.2495344-3-sunyeal.hong@samsung.com>
+	<494ac55c-7bd0-79a9-8a56-21aaf0611f81@samsung.com>
 
-Hi Andi,
+Hello Jaewon,
 
-On Fri, Jul 5, 2024 at 12:42=E2=80=AFAM Andi Shyti <andi.shyti@kernel.org> =
-wrote:
-> > diff --git a/drivers/i2c/busses/i2c-riic.c b/drivers/i2c/busses/i2c-rii=
-c.c
-> > index 83e4d5e14ab6..002b11b020fa 100644
-> > --- a/drivers/i2c/busses/i2c-riic.c
-> > +++ b/drivers/i2c/busses/i2c-riic.c
-> > @@ -113,6 +113,8 @@ struct riic_irq_desc {
-> >       char *name;
-> >  };
+> -----Original Message-----
+> From: Jaewon Kim <jaewon02.kim@samsung.com>
+> Sent: Friday, July 5, 2024 12:08 PM
+> To: Sunyeal Hong <sunyeal.hong@samsung.com>; Krzysztof Kozlowski
+> <krzk@kernel.org>; Sylwester Nawrocki <s.nawrocki@samsung.com>; Chanwoo
+> Choi <cw00.choi@samsung.com>; Alim Akhtar <alim.akhtar@samsung.com>;
+> Michael Turquette <mturquette@baylibre.com>; Stephen Boyd
+> <sboyd@kernel.org>
+> Cc: linux-samsung-soc@vger.kernel.org; linux-clk@vger.kernel.org; linux-
+> kernel@vger.kernel.org
+> Subject: Re: [PATCH 2/5] dt-bindings: clock: add clock binding definitions
+> for Exynos Auto v920
+> 
+> Hi Sunyeal,
+> 
+> 
+> On 7/5/24 11:11, Sunyeal Hong wrote:
+> > Add device tree clock binding definitions for below CMU blocks.
 > >
-> > +static const char * const riic_rpm_err_msg =3D "Failed to runtime resu=
-me";
->
-> Please, don't do this. Much clearer to write the message
-> explicitly.
-
-And the compiler will merge all identical strings, emitting
-just a single string.
-
->
-> > +
-> >  static inline void riic_writeb(struct riic_dev *riic, u8 val, u8 offse=
-t)
-> >  {
-> >       writeb(val, riic->base + riic->info->regs[offset]);
-> > @@ -133,10 +135,14 @@ static int riic_xfer(struct i2c_adapter *adap, st=
-ruct i2c_msg msgs[], int num)
-> >       struct riic_dev *riic =3D i2c_get_adapdata(adap);
-> >       struct device *dev =3D adap->dev.parent;
-> >       unsigned long time_left;
-> > -     int i;
-> > +     int i, ret;
-> >       u8 start_bit;
+> > - CMU_TOP
+> > - CMU_PERIC0
 > >
-> > -     pm_runtime_get_sync(dev);
-> > +     ret =3D pm_runtime_resume_and_get(dev);
->
-> In principle I like the error message to be always checked and I
+> > Signed-off-by: Sunyeal Hong <sunyeal.hong@samsung.com>
+> > ---
+> >   .../clock/samsung,exynosautov920.h            | 191 ++++++++++++++++++
+> >   1 file changed, 191 insertions(+)
+> >   create mode 100644 include/dt-bindings/clock/samsung,exynosautov920.h
+> >
+> > diff --git a/include/dt-bindings/clock/samsung,exynosautov920.h
+> b/include/dt-bindings/clock/samsung,exynosautov920.h
+> > new file mode 100644
+> > index 000000000000..bbddf7583e61
+> > --- /dev/null
+> > +++ b/include/dt-bindings/clock/samsung,exynosautov920.h
+> > @@ -0,0 +1,191 @@
+> > +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> > +/*
+> > + * Copyright (c) 2024 Samsung Electronics Co., Ltd.
+> > + * Author: Sunyeal Hong <sunyeal.hong@samsung.com>
+> > + *
+> > + * Device Tree binding constants for Exynos Auto V209 clock controller.
+> 
+> Typo : V209 -> V920
+> 
+> 
+> Thanks
+> 
+> Jaewon Kim
+> 
 
-s/message/condition/?
+There was a typo for the SoC name. I will revise it as you mentioned. 
+Thank you.
 
-> will always approve it. Whenever there is a return value, even
-> when we are sure it's always '0', it needs to be checked.
->
-> I had lots of discussions in the past about this topic but I
-> haven't always found support. I'd love to have the ack from a
-> renesas maintainer here.
+Sunyeal Hong
 
-I don't mind checking for the error here.
-
->
-> > +     if (ret) {
-> > +             dev_err(dev, riic_rpm_err_msg);
-
-Do you need to print these error messages?
-AFAIU, this cannot happen anyway.
-Ultimately, I expect the device driver that requested the transfer to
-handle failures, and print a message when needed.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
