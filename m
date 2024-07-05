@@ -1,217 +1,263 @@
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD0D145B3E
-	for <linux-clk@vger.kernel.org>; Fri,  5 Jul 2024 09:21:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDB566F09C
+	for <linux-clk@vger.kernel.org>; Fri,  5 Jul 2024 09:47:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720171290; cv=none; b=oHwMEV6UDPhLmMZuHC+1wMjEM3aNiAxTFxIFZ5jsrYgoYuF7baqLXv5sHCLg379yKvRRGpDB6fl2d+/sBpAfAzt8m5W7SHZN7pjQh/f8YIrzGqe7D7G/ZFWaeySq4ME3oEHn6sFbArC8JIq0ERo5p0RKTZUmuQfZbeR72+pZ8RA=
+	t=1720172839; cv=none; b=JVeh8OTEBwNQGkBtuFq3EBs/IH1uSq3TNofPpTsH36dpsMgZxEBqnluOv1FzrECxuCDIo4GhO2QhddllZB9s6TQoqG3GKiw+brItXEhj2Dx33B63LLMzvh+om2ZCRTI5rBLVROa6kovQokR0i1m+mBDIlWazOAQn+ibrm5hCY90=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720171290; c=relaxed/simple;
-	bh=DAsvD8/mLkcQAkkYRWz+VC5gPXf282xVyAGgndXBPhk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eKsUP/fbdIak/oHCopZET/OFbuuKBWXLnHsulp/3gNh2eSsIoEQxgxEHwtV7wjC5jS885eNqfVk9Hwrfs9gms9V7heHh15TGMsT+eGh+Zwh0ZgOEtHsXSrPhCe152Ib9ZzNIT2qNDQmXVqo0hgpbBs+qP4B2Q0y+kXtoRA/GaHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=BHxXWldj; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1720172839; c=relaxed/simple;
+	bh=SNVIq8IzEq/+ixojpoOnQcqrIQtEdZaAPkEwmaEt8/Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=IelGstnh8oS9SL3/BAZN84/8knwvxCa7qFBKkuGXov2vO3UmPenDy6YMKlqUD9cG1UYHQHAQ7BHuO4qsQVlp/74bCKR4CaotwY5t0ILW+M7SvCkMmVUQ/VYr7zXcw28jHWyLRQsGPmpGbMRmvnlrXT6+HUHbQiJMyXJqYjYOi1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=ZE0Jjlel; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="BHxXWldj"
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a77c349bb81so93378266b.3
-        for <linux-clk@vger.kernel.org>; Fri, 05 Jul 2024 02:21:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1720171286; x=1720776086; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=DAsvD8/mLkcQAkkYRWz+VC5gPXf282xVyAGgndXBPhk=;
-        b=BHxXWldj+hHqE2ns8S7/HAU42Z7MkYBmemSuhBWSrNKLJElFlh+Q7FcO+aA+P9LbaA
-         EAYq1RdO44rOCVBQIN7NgVzw5+vw9GZXvknaG0YFg/JZExIY6Ex6YAvsSbvIyrCbT1Fk
-         SymdVF1FI8op/8C6GBynndXKuBvrUlCd7+Orq+SdWWRrmREve0aOYgn+m9F7lNz8pCmy
-         FX7mtN7hJUMBz7mmYMIbddHt6ohOM24jP83x4BCkktmhK91m4j7HsLvHwH7jy1VI5k4S
-         M7Qyb+ARd26QRITXmUIfMXUvfuVm+MhhkaFkNiZglCxndpvv5En9S08MJPo8WpnSxewy
-         oRRQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720171286; x=1720776086;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DAsvD8/mLkcQAkkYRWz+VC5gPXf282xVyAGgndXBPhk=;
-        b=eD+yDeQhDXO4Oc2ty5jqfMjTlp5dO01d4gBClwj3ALMFs2iUDgrQ0oilgFavhuLHr5
-         yWpGYAZVjGsaQEQbF9SDPddydj/WtjZPyh2U8s4964uNL6vjYPpcPWjGIuDOzkQwY/dv
-         U+Sy5orz6N0yOhBw2CtLuQip8kRLjxLG4liIXQObu1Fbcv/1jBxyl2gfOR/WZLXsDag+
-         JCl9E4UDUevj4A4ZCSTateb9fANJcK++Od3PCNR8MXpMZeR+zkf9Grkzh7rpKlbGMDXV
-         WlqxG3ZPn/MHpwfTGKfbQ5xUmD++hTqnBHn4fXvDabGFQoD9l3lxC9Q4cOqYhPUzdBQj
-         /q0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUgmZ0H9M7GngPZlVTCHkosLaiq4qE05M2UkVPRTAfcq+s1mjuZCnUzzy+Yv+OjVoJlHGNPHI1h7Sj1SR6DgVr1G7MbAK8YOYPy
-X-Gm-Message-State: AOJu0YzsVSSMRRyPQk+KxhnBEOBgRo8mdC+Ida7xZhzEYXtNSP4ksjPR
-	XADLJx+nO3e0c+wGh66SwYhMUQblse2epfJvhPhRZZvyP9irfa+qiy9QN7ddYTk=
-X-Google-Smtp-Source: AGHT+IH5GBzifj2YL+uV1tph7kmD/UU37Fput+e22tUxmHwQFDW0cLo/eN2fRQ1OiC6xRmZjvtbAaw==
-X-Received: by 2002:a17:906:fb95:b0:a6f:b400:4751 with SMTP id a640c23a62f3a-a77ba46ccffmr181755366b.22.1720171286291;
-        Fri, 05 Jul 2024 02:21:26 -0700 (PDT)
-Received: from localhost (p50915e7b.dip0.t-ipconnect.de. [80.145.94.123])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a77d9cdf337sm10855266b.53.2024.07.05.02.21.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 05 Jul 2024 02:21:25 -0700 (PDT)
-Date: Fri, 5 Jul 2024 11:21:25 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Nikita Shubin <nikita.shubin@maquefel.me>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Stephen Boyd <sboyd@kernel.org>, 
-	Hartley Sweeten <hsweeten@visionengravers.com>, Alexander Sverdlin <alexander.sverdlin@gmail.com>, 
-	Russell King <linux@armlinux.org.uk>, Lukasz Majewski <lukma@denx.de>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Andy Shevchenko <andy@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Sebastian Reichel <sre@kernel.org>, Rob Herring <robh+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, 
-	Thierry Reding <thierry.reding@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Miquel Raynal <miquel.raynal@bootlin.com>, Richard Weinberger <richard@nod.at>, 
-	Vignesh Raghavendra <vigneshr@ti.com>, Damien Le Moal <dlemoal@kernel.org>, 
-	Sergey Shtylyov <s.shtylyov@omp.ru>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Ralf Baechle <ralf@linux-mips.org>, "Wu, Aaron" <Aaron.Wu@analog.com>, Lee Jones <lee@kernel.org>, 
-	Olof Johansson <olof@lixom.net>, Niklas Cassel <cassel@kernel.org>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
-	dmaengine@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	linux-spi@vger.kernel.org, netdev@vger.kernel.org, linux-mtd@lists.infradead.org, 
-	linux-ide@vger.kernel.org, linux-input@vger.kernel.org, linux-sound@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Andrew Lunn <andrew@lunn.ch>, Vinod Koul <vkoul@kernel.org>
-Subject: Re: [PATCH v10 00/38] ep93xx device tree conversion
-Message-ID: <jyvlqfvqn5bp3jmvxvwyrcqmihjohuq3o757mfph7x37kbwvtq@gtgyh4fca4fq>
-References: <20240617-ep93xx-v10-0-662e640ed811@maquefel.me>
- <CAHp75VfSC9gAD9ipeWRPdQOxUp4FXqYYei-cJTs38nbz0cHpkg@mail.gmail.com>
- <48c242838c77034485a9e667dc0e867207c5beed.camel@maquefel.me>
- <241a4cf9830b0118f01e8fcf2853c62527636049.camel@maquefel.me>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="ZE0Jjlel"
+Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240705094715epoutp02314b92f7efc79aec96566a521d4df0d7~fSBRuXx1Y0466104661epoutp02E
+	for <linux-clk@vger.kernel.org>; Fri,  5 Jul 2024 09:47:15 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240705094715epoutp02314b92f7efc79aec96566a521d4df0d7~fSBRuXx1Y0466104661epoutp02E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1720172835;
+	bh=7hc5/Ebz+qisnzZvFIi0bERvrPY/X5FNJfe7LrCQvt0=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=ZE0JjlelrQGOXDOc0N6mOpV4Cq5SLI8Eo5LnUvrfzMZPQ/rP283wrT9VCdyqJwH0V
+	 okC4QM2bCWDHvhBdom9H8Cl2s3+/9ZtfuXH0eT8WLC0/tSugWbQvY7rwhuKKXAZCsR
+	 CxivUyG9xGroWRsZywQbSSKGC6WFawcuPziXTtkY=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTP id
+	20240705094714epcas2p35ee03825b0f502c44fd0949d3ca05a08~fSBRCaKql2339523395epcas2p3F;
+	Fri,  5 Jul 2024 09:47:14 +0000 (GMT)
+Received: from epsmges2p2.samsung.com (unknown [182.195.36.92]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4WFpZn6v0gz4x9Q1; Fri,  5 Jul
+	2024 09:47:13 +0000 (GMT)
+Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
+	epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+	9C.F0.09485.121C7866; Fri,  5 Jul 2024 18:47:13 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
+	20240705094713epcas2p332450ad4dae04cd2fa599994c7956c29~fSBPzzBco1873818738epcas2p3p;
+	Fri,  5 Jul 2024 09:47:13 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240705094713epsmtrp23c0002a7d4d994b458bbdffd07d94add~fSBPyzKuO0969009690epsmtrp2k;
+	Fri,  5 Jul 2024 09:47:13 +0000 (GMT)
+X-AuditID: b6c32a46-f3bff7000000250d-86-6687c121bfdc
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	36.2C.18846.021C7866; Fri,  5 Jul 2024 18:47:13 +0900 (KST)
+Received: from [10.229.8.168] (unknown [10.229.8.168]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240705094712epsmtip1d0be6d4a507a0b0d376e8e996576570c~fSBPjTUmS2580925809epsmtip1T;
+	Fri,  5 Jul 2024 09:47:12 +0000 (GMT)
+Message-ID: <c1891fb7-748b-62ad-a115-ee143fd05784@samsung.com>
+Date: Fri, 5 Jul 2024 18:46:55 +0900
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="icynwgj6p72h37hs"
-Content-Disposition: inline
-In-Reply-To: <241a4cf9830b0118f01e8fcf2853c62527636049.camel@maquefel.me>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+	Thunderbird/102.11.0
+Subject: Re: [PATCH 1/5] dt-bindings: clock: add Exynos Auto v920 SoC CMU
+ bindings
+To: Sunyeal Hong <sunyeal.hong@samsung.com>, Krzysztof Kozlowski
+	<krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi
+	<cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Michael
+	Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Content-Language: en-US
+From: Jaewon Kim <jaewon02.kim@samsung.com>
+In-Reply-To: <20240705021110.2495344-2-sunyeal.hong@samsung.com>
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprPJsWRmVeSWpSXmKPExsWy7bCmua7iwfY0g4ltZhYP5m1js7j+5Tmr
+	xfnzG9gtPvbcY7W4vGsOm8WM8/uYLC6ecrU4/Kad1eLftY0sFk3L1jM5cHm8v9HK7rFpVSeb
+	R9+WVYwenzfJBbBEZdtkpCampBYppOYl56dk5qXbKnkHxzvHm5oZGOoaWlqYKynkJeam2iq5
+	+AToumXmAN2jpFCWmFMKFApILC5W0rezKcovLUlVyMgvLrFVSi1IySkwL9ArTswtLs1L18tL
+	LbEyNDAwMgUqTMjOmDP/P3PBOdWK+U1NzA2MW2W6GDk5JARMJGZcXsfexcjFISSwg1HiydQd
+	UM4nRonzXV+YQarAnLvr5boYOcA63nzXhqjZySjR2nyZCcJ5zSix9P9CFpAGXgE7iT9rXzOB
+	2CwCKhILZj1jhIgLSpyc+QSsRlQgWqJ12X02EFtYIETiwIufjCCDRAQWMEmc37WXFSTBLJAg
+	seTwBzYIW1zi1pP5YEPZBLQlvq9fDFbDKeAgcfTeMqh6eYntb+cwgwySEJjKIdGyZwszxKMu
+	Ek3XPzJB2MISr45vYYewpSQ+v9vLBmHnS7RdOQMVr5HYuOASI4RtL7HozE92kPeZBTQl1u/S
+	h4SEssSRWywQa/kkOg7/ZYcI80p0tAlBNKpJ3J96Dmq4jMSkIyuhDvCQmL53AesERsVZSKEy
+	C8mTs5A8Mwth7wJGllWMYqkFxbnpqcVGBUbwuE7Oz93ECE6pWm47GKe8/aB3iJGJg/EQowQH
+	s5IIr9T75jQh3pTEyqrUovz4otKc1OJDjKbAuJnILCWanA9M6nkl8YYmlgYmZmaG5kamBuZK
+	4rz3WuemCAmkJ5akZqemFqQWwfQxcXBKNTDpd4r2i159kOByvz7njuhPtvPz8q+s8lh6nS1t
+	3WufW7kVjdU1VkVS34REY5neZ7hMutZ1Njdqe3/LYY+Fa3U+duZyle1wnrR65rKgiA/cFb1P
+	J33ez+j/Pvfnzdr6GMmayUt2u9efUk003jON2efzQu5Xsz7cbKvaGsl0bcnFybu6bPV0W84+
+	MD3XIPTX+vD+pqMa2Uz1imwTl937dl+w4fmWbXrJ3nfX1m/onn2KxXvvAuZNua4ZTGlPWnpC
+	5DxLwvUj9Hb96Sy/MY/9RfHjI7Ee+m37r15le9H3p+O8xLEYLpZcq5agHqXrdlr/csuWfQ0Q
+	D8wy/nlp6t/W7+ZqL51mmIimb5mrV94S36vEUpyRaKjFXFScCACOdnq5MgQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrLLMWRmVeSWpSXmKPExsWy7bCSnK7iwfY0g12zmS0ezNvGZnH9y3NW
+	i/PnN7BbfOy5x2pxedccNosZ5/cxWVw85Wpx+E07q8W/axtZLJqWrWdy4PJ4f6OV3WPTqk42
+	j74tqxg9Pm+SC2CJ4rJJSc3JLEst0rdL4MqYM/8/c8E51Yr5TU3MDYxbZboYOTgkBEwk3nzX
+	7mLk4hAS2M4ocbnrCGMXIydQXEZi+bM+NghbWOJ+yxFWiKKXjBKnZu9lAknwCthJ/Fn7Gsxm
+	EVCRWDDrGSNEXFDi5MwnLCC2qEC0xOrPF1hBbGGBEIkDL34yggwSEVjEJDFvSRs7SIJZIEHi
+	/tbdbBAbTjJKbJxzgQkiIS5x68l8MJtNQFvi+/rFYJM4BRwkjt5bxgpRYybRtbWLEcKWl9j+
+	dg7zBEahWUgOmYVk1CwkLbOQtCxgZFnFKJpaUJybnptcYKhXnJhbXJqXrpecn7uJERxDWkE7
+	GJet/6t3iJGJg/EQowQHs5IIr9T75jQh3pTEyqrUovz4otKc1OJDjNIcLErivMo5nSlCAumJ
+	JanZqakFqUUwWSYOTqkGpl2NO8tzVhvs4HSyfurKISK35oq6IfMtUY+itetrYoXYAm7sfiWW
+	mR15jMFX53WxV2vPzGxdQVP9e9kPj1v2CXc++NQzsaBr//5Lple/GMcq3a/VM4uWXV/ww6Or
+	mme5NVNZAX/thcc1k9K0RHK22c9/Grk76vN2ruWVM3KUi32usn65qf6Xs9kpRCX3UG7wplPz
+	N/qdUbktbRnIptqTe0v9Y7HwfD4hIcVbfu0arFVMmwq3LeER+p5Qc1ds6o7PpW/qLfM4DZ7e
+	vjSRtWT1mp02i8rSdzF+XP/+9pTm+fWP/edWPwtV/PZusYu098KlB6def7HR2TDz6PoPX7MY
+	LUv1jmfskzuzYdkO/62zlViKMxINtZiLihMB4HpyxBADAAA=
+X-CMS-MailID: 20240705094713epcas2p332450ad4dae04cd2fa599994c7956c29
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240705021148epcas2p2f460d561d647a3f02ee01b3ad8979706
+References: <20240705021110.2495344-1-sunyeal.hong@samsung.com>
+	<CGME20240705021148epcas2p2f460d561d647a3f02ee01b3ad8979706@epcas2p2.samsung.com>
+	<20240705021110.2495344-2-sunyeal.hong@samsung.com>
+
+Hi Sunyeal,
 
 
---icynwgj6p72h37hs
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 7/5/24 11:11, Sunyeal Hong wrote:
+> Add dt-schema for Exynos Auto v920 SoC clock controller.
+>
+> Signed-off-by: Sunyeal Hong <sunyeal.hong@samsung.com>
+> ---
+>   .../clock/samsung,exynosautov920-clock.yaml   | 115 ++++++++++++++++++
+>   1 file changed, 115 insertions(+)
+>   create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynosautov920-clock.yaml
+>
+> diff --git a/Documentation/devicetree/bindings/clock/samsung,exynosautov920-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynosautov920-clock.yaml
+> new file mode 100644
+> index 000000000000..3e5e408c8336
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/samsung,exynosautov920-clock.yaml
+> @@ -0,0 +1,115 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: https://protect2.fireeye.com/v1/url?k=804ccde6-e1c7d8c9-804d46a9-74fe485cbfe7-c44fcfa897bd4340&q=1&e=65af0c33-026a-42d4-92cd-09b6c91c9bfb&u=http%3A%2F%2Fdevicetree.org%2Fschemas%2Fclock%2Fsamsung%2Cexynosautov920-clock.yaml%23
+> +$schema: https://protect2.fireeye.com/v1/url?k=8a40f68c-ebcbe3a3-8a417dc3-74fe485cbfe7-63f39e48f537ca7e&q=1&e=65af0c33-026a-42d4-92cd-09b6c91c9bfb&u=http%3A%2F%2Fdevicetree.org%2Fmeta-schemas%2Fcore.yaml%23
+> +
+> +title: Samsung Exynos Auto v920 SoC clock controller
+> +
+> +maintainers:
+> +  - Sunyeal Hong <sunyeal.hong@samsung.com>
+> +  - Chanwoo Choi <cw00.choi@samsung.com>
+> +  - Krzysztof Kozlowski <krzk@kernel.org>
+> +  - Sylwester Nawrocki <s.nawrocki@samsung.com>
+> +
+> +description: |
+> +  Exynos Auto v920 clock controller is comprised of several CMU units, generating
+> +  clocks for different domains. Those CMU units are modeled as separate device
+> +  tree nodes, and might depend on each other. Root clocks in that clock tree are
+> +  two external clocks:: OSCCLK/XTCXO (38.4 MHz) and RTCCLK/XrtcXTI (32768 Hz).
+> +  The external OSCCLK must be defined as fixed-rate clock in dts.
+> +
+> +  CMU_TOP is a top-level CMU, where all base clocks are prepared using PLLs and
+> +  dividers; all other clocks of function blocks (other CMUs) are usually
+> +  derived from CMU_TOP.
+> +
+> +  Each clock is assigned an identifier and client nodes can use this identifier
+> +  to specify the clock which they consume. All clocks available for usage
+> +  in clock consumer nodes are defined as preprocessor macros in
+> +  'include/dt-bindings/clock/samsung,exynosautov920.h' header.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - samsung,exynosautov920-cmu-top
+> +      - samsung,exynosautov920-cmu-peric0
+> +
+> +  clocks:
+> +    minItems: 1
+> +    maxItems: 3
+> +
+> +  clock-names:
+> +    minItems: 1
+> +    maxItems: 3
+> +
+> +  "#clock-cells":
+> +    const: 1
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: samsung,exynosautov920-cmu-top
+> +
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: External reference clock (38.4 MHz)
+> +
+> +        clock-names:
+> +          items:
+> +            - const: oscclk
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: samsung,exynosautov920-cmu-peric0
+> +
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: External reference clock (38.4 MHz)
+> +            - description: CMU_PERIC0 NOC clock (from CMU_TOP)
+> +            - description: CMU_PERIC0 IP clock (from CMU_TOP)
+> +
+> +        clock-names:
+> +          items:
+> +            - const: oscclk
+> +            - const: dout_clkcmu_peric0_noc
+> +            - const: dout_clkcmu_peric0_ip
+> +
+> +required:
+> +  - compatible
+> +  - "#clock-cells"
+> +  - clocks
+> +  - clock-names
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  # Clock controller node for CMU_PERIC0
+> +  - |
+> +    #include <dt-bindings/clock/samsung,exynosautov920.h>
+> +
+> +    cmu_peric0: clock-controller@10800000 {
+> +        compatible = "samsung,exynosautov920-cmu-peric0";
+> +        reg = <0x10800000 0x8000>;
+> +        #clock-cells = <1>;
+> +
+> +        clocks = <&xtcxo>,
+> +                 <&cmu_top DOUT_CLKCMU_PERIC0_NOC>,
+> +                 <&cmu_top DOUT_CLKCMU_PERIC0_IP>;
+> +        clock-names = "oscclk",
+> +                      "dout_clkcmu_peric0_noc",
+> +                      "dout_clkcmu_peric0_ip";
 
-Hello,
+There was a review with clock name.
+Please consider modifying the clock-name by referring to the review below.
+https://lore.kernel.org/linux-samsung-soc/20231220150726.GA223267-robh@kernel.org/
 
-On Thu, Jun 27, 2024 at 11:29:44AM +0300, Nikita Shubin wrote:
-> On Tue, 2024-06-18 at 19:20 +0300, Nikita Shubin wrote:
-> > Hello Andy!
-> > On Mon, 2024-06-17 at 12:58 +0200, Andy Shevchenko wrote:
-> > > On Mon, Jun 17, 2024 at 11:38=E2=80=AFAM Nikita Shubin via B4 Relay
-> > > <devnull+nikita.shubin.maquefel.me@kernel.org> wrote:
-> > > >=20
-> > > > The goal is to recieve ACKs for all patches in series to merge it
-> > > > via Arnd branch.
-> > >=20
-> > > 'receive'
-> > >=20
-> > > > Unfortunately, CLK subsystem suddenly went silent on clk portion
-> > > > of
-> > > > series V2 reroll,
-> > > > tried to ping them for about a month but no luck.
-> > > >=20
-> > > > Link:
-> > > > https://lore.kernel.org/r/20240408-ep93xx-clk-v2-1-adcd68c13753@maq=
-uefel.me
-> > > >=20
-> > > > Some changes since last version (v9) - see "Changes in v10",
-> > > > mostly
-> > > > cosmetic.
-> > >=20
-> > > ...
-> > >=20
-> > > > Patches should be formated with '--histogram'
-> > >=20
-> > > 'formatted'
-> > >=20
-> > > ...
-> > >=20
-> > > > Changes in v10:
-> > > >=20
-> > > > Reordered SoB tags to make sure they appear before Rb and Acked
-> > > > tags.
-> > >=20
-> > > This is not required. The importance is only the order of SoBs
-> > > themselves. If they are interleaved with other tags, it's fine.
-> >=20
-> > Ah - ok. Just saw someone was complaining about b4 reordering them.=20
-> >=20
-> > >=20
-> > > ...
-> > >=20
-> > >=20
-> > > Hopefully to see this series being eventually applied soon.
-> > > Arnd? (Do we have all necessary subsystem maintainers' tags, btw?)
-> > >=20
-> > >=20
-> >=20
-> > As i see from my perspective only three left:
-> >=20
-> > Clk subsystem:
-> >=20
-> > - clk: ep93xx: add DT support for Cirrus EP93xx
-> >=20
-> > DMA subsystem (but the only request from Vinod, as far as i remember,
-> > was fixing commits titles):
-> >=20
-> > - dmaengine: cirrus: Convert to DT for Cirrus EP93xx
-> > - dmaengine: cirrus: remove platform code
-> >=20
-> > Beside that tags missing on platform code removal (which can be Acked
-> > by Arnd himself i believe) and dtsi/dts files (same ?).
->=20
-> Vinod acked the above two patches:
->=20
-> https://lore.kernel.org/all/ZnkIp8bOcZK3yVKP@matsya/
-> https://lore.kernel.org/all/ZnkImp8BtTdxl7O3@matsya/
->=20
-> so only:
->=20
-> - clk: ep93xx: add DT support for Cirrus EP93xx
->=20
-> https://lore.kernel.org/all/20240617-ep93xx-v10-3-662e640ed811@maquefel.m=
-e/
->=20
-> left.
->=20
-> Hope Stephen will find some time for this one.
+> +    };
+> +
+> +...
 
-As we're approaching the merge window and this is still unclear, I
-applied the pwm bits (i.e. patches 12, 13). If I understand correctly,
-patch 33 isn't suitable for application yet as it has a dependency on
-pinctrl changes in that series.
+Thanks
+Jaewon Kim
 
-(side note: Your patches are signed, but that doesn't bring any benefit
-if the receivers don't have your key. I didn't find it neither on
-keys.openpgp.org nor in the kernel pgp key collection.)
-
-Best regards
-Uwe
-
---icynwgj6p72h37hs
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmaHuxIACgkQj4D7WH0S
-/k63agf/ctyXHUSwirhdvMJNeHEME1eqwJPf8P71cxUigi0cvcf0NrTT4jEqglzC
-BqT8dRZCw6LKUShZlhwO7ymRXcAjNYTvFLuJKQYOGuVQZQEtoK7PDa80NeQjFhZP
-r0CwuOQfcg2ovACIA1T/iSX2APqGatvsO4Ke7h2u5kawsGxQIu2TZnfPDhwTIdqj
-Ib33BChvzlU45YrMZrQUHKE3/3XOHyxVvZSutJmaHLtSdIOE/fPr/U5anDzjdWFS
-gxrbDGE0Z3LyDIb0OB8iZiVIeyXDjysmlTdYpfPQi3/4JT+ohaNXgpSC5dmYo/s+
-R6QHGSe+ahTTQGyCjdYkOM/hMh/CiQ==
-=1/WB
------END PGP SIGNATURE-----
-
---icynwgj6p72h37hs--
