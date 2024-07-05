@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A0B11C6A0;
-	Fri,  5 Jul 2024 06:02:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CDA18565E;
+	Fri,  5 Jul 2024 06:17:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720159356; cv=none; b=dY+EXFFjKDKl2wCp1GUNHppYIkdwylCK2XdHy8KIW5hCuD99notY/Z1YNnqhHSgWuT63zBH21Wt2pHgNs/h6wfJi46OpaiSSL2ZnYKGlaJYCp1whc14ny90YD3v+KQJD6EmRnNT1/OkkQ75pnnz1eT/k/x+30IaLZtZLrzU+t5M=
+	t=1720160228; cv=none; b=E7lVoEAn9/XDqVXSWoa6T+g6W+RO+UfUQZdO/Ze5JWY66TRz6tX3+GhskJvsHFIemdTyEZzZ+QMHei9cvlyMd9mm7h7IvQ0CDE0ATZc1pVIqnyfJRO86WOce4+jw69Bc54b2vU5stZQNK67RYYxoXVJJmUAkxxM8PeTz85PCq8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720159356; c=relaxed/simple;
-	bh=4cDtFbBGomg/7dv2zNoG56ixsJZ7lwwLgniIuxOLZfo=;
+	s=arc-20240116; t=1720160228; c=relaxed/simple;
+	bh=T48CbPd8oKK03dmzapoceQlkXY2cP+5ZvDAHe22Hyew=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D4ZpP8rTTkg1jNwrkfRuD27kcnhS1cFCuYw/zt9Z6wOsq3b/Gnf9XTRnvFezWLpX6HZ3pMDbu9BxCpKesYQopGngZCzVs+Mqm76evFv1h3wufquJbFGFw9/oRIbGTH/PXL9b4CWZ7Xf4PI8RGkExxu46CCHTy5LOtI7L58sCVgI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kX/Qdixj; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=hwuX5DzHNBN7sFF6+sYeMl56JzdC0dgbnbvTxDWeUu1100PqLNIGv9BXTBIWrG58Q4cEaj8G5uLbaHGrv7ySiKowenISr7SJkU8gSg3e4JsIPlHZLGPd02F6esK7+p2L+Lwzn0uuCBwEVpzERyoms1mVyS77lvGLqJPdmKMBZuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uQvoNjNx; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kX/Qdixj"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3D45C116B1;
-	Fri,  5 Jul 2024 06:02:32 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uQvoNjNx"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5C43C116B1;
+	Fri,  5 Jul 2024 06:17:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720159355;
-	bh=4cDtFbBGomg/7dv2zNoG56ixsJZ7lwwLgniIuxOLZfo=;
+	s=k20201202; t=1720160227;
+	bh=T48CbPd8oKK03dmzapoceQlkXY2cP+5ZvDAHe22Hyew=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=kX/QdixjwSH2Do3jBNgSOWlgOlsi3OJhs3soVDC0BCYFRRF6c+HiRTdxoRQHZpDI0
-	 sQ42x43dbbMj/tBkdTgmBj479+HCYGh0Xm1ac8GJmgYGbKWFWv5qiyZPg0Xb3K5ds7
-	 hDQWG4gzz+5TKYeld9pOHKHUhLhW0+1uoAR6fVPJbfEAGPZR+E9UWIjYbZfpJj3fL1
-	 87F2lxfwf42OfTMHDTfVUMNlvaoq9UvB0qQi/FnUmtqSlrMnWrNIoA9W/Vf5obc08C
-	 91ImeZ7kZdZJdruwJb6jQwAAhCDDKh2Ds9H1HO9XsoiMyWOYhO/wBzIQ6/Qs8dWCeE
-	 2oMtrPAQQio7Q==
-Message-ID: <8f4deb36-2a44-414a-9b9f-40b87bc7c949@kernel.org>
-Date: Fri, 5 Jul 2024 08:02:30 +0200
+	b=uQvoNjNxYdwSxWeqOu6Mr7PgNlSXzaFCjR/7sG+J9pCDsfUHt4qXRCsT3YA+twASn
+	 eNw/AvXsNkRhBJZwGiY4YdMFiNofPG6Uz3qOyTTa+bsZ3+HP5PnlWxfAkF5Q4SMIWf
+	 8VnyqSFPH/INJslQ5IdY1D5uNhqfGkPOEW2alolNgoVruq9PmYRnO56KAIWV+/AFTd
+	 MgXxa03CuIJEiuGLVwmfIeUMeJ9jp8AryZEwIDIjQC5SO7Ng7VtVIMH7niXqRG2KZ9
+	 R9yDhGtLP/00YW0W/BNbhwH2hQgbVn1ZUmSYyJlbgB53DneEpFbbNOLvS2/+ZUH+pq
+	 iTaQELJOAg7nA==
+Message-ID: <b3bab20a-371b-4a0a-b5d5-c0f9419826c7@kernel.org>
+Date: Fri, 5 Jul 2024 08:17:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,17 +35,17 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/5] dt-bindings: clock: add clock binding definitions for
- Exynos Auto v920
-To: Sunyeal Hong <sunyeal.hong@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+Subject: Re: [PATCH v3] dt-bindings: clock: sprd,sc9860-clk: convert to YAML
+To: Stanislav Jakubek <stano.jakubek@gmail.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Orson Zhai <orsonzhai@gmail.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Baolin Wang <baolin.wang7@gmail.com>, Chunyan Zhang <zhang.lyra@gmail.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org
-References: <20240705021110.2495344-1-sunyeal.hong@samsung.com>
- <CGME20240705021200epcas2p273ca089c2cb9882f121e864ec8407367@epcas2p2.samsung.com>
- <20240705021110.2495344-3-sunyeal.hong@samsung.com>
+References: <ZobghvwZAyMjl4eB@standask-GA-A55M-S2HP>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -91,39 +91,17 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240705021110.2495344-3-sunyeal.hong@samsung.com>
+In-Reply-To: <ZobghvwZAyMjl4eB@standask-GA-A55M-S2HP>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 05/07/2024 04:11, Sunyeal Hong wrote:
-> Add device tree clock binding definitions for below CMU blocks.
+On 04/07/2024 19:48, Stanislav Jakubek wrote:
+> Convert the Spreadtrum SC9860 clock bindings to DT schema.
 > 
-> - CMU_TOP
-> - CMU_PERIC0
-> 
-> Signed-off-by: Sunyeal Hong <sunyeal.hong@samsung.com>
+> Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
+> ---
 
-Headers are part of bindings patch.
-
-<form letter>
-Please use scripts/get_maintainers.pl to get a list of necessary people
-and lists to CC. It might happen, that command when run on an older
-kernel, gives you outdated entries. Therefore please be sure you base
-your patches on recent Linux kernel.
-
-Tools like b4 or scripts/get_maintainer.pl provide you proper list of
-people, so fix your workflow. Tools might also fail if you work on some
-ancient tree (don't, instead use mainline) or work on fork of kernel
-(don't, instead use mainline). Just use b4 and everything should be
-fine, although remember about `b4 prep --auto-to-cc` if you added new
-patches to the patchset.
-
-You missed at least devicetree list (maybe more), so this won't be
-tested by automated tooling. Performing review on untested code might be
-a waste of time.
-
-Please kindly resend and include all necessary To/Cc entries.
-</form letter>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
