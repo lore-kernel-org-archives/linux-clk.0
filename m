@@ -1,112 +1,139 @@
-Received: from fout2-smtp.messagingengine.com (fout2-smtp.messagingengine.com [103.168.172.145])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4969D145A0E;
-	Fri,  5 Jul 2024 08:43:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A100B145FE0;
+	Fri,  5 Jul 2024 08:51:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720168988; cv=none; b=W5KOTkUrHWHAFSPouKTjQda9sKXWBewPxq1Ay3HA6tiLxd6hxWemLWPPuFQp51iv6r+RJJtbumlP/EWJZfODSwFATLxRADQNWS3/jp2v61nKwQbsoEt9G92d/esPrBir6u0jhCjkaXpCMmRaNHaaxM8ve+NWDNsJqmrdMFZ0Jx4=
+	t=1720169504; cv=none; b=AJqp9Wk+TdQTLzU/jKCzoNPzdNYMbX9Y52y5Fuo9IkTva0h+dSCSlEnpUkj8r2nAfvhfHZjFbdNDCo5kFGFtVyngT/X4EuUL2CBmcgg2n9da5NKH8NUtW4+Tdg+EOIrZ81UVuhDx3SYlekzu3M56MlzVDXwDO+OLdrdftPtq82I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720168988; c=relaxed/simple;
-	bh=IltzSQ/5X4Ajsi1LSF7L+gqy/2Zwm5dKRi9xBtY40KI=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=cm258UNtnQ02esgJd97oILF9vFUbEgEcnX+L5ImOl9KP7iwsfqBU8U/LD1dWh2lqwSMDXWCpmta1LdOIjEjhdc7J2VEgG45LTQoQhhMsKBYtkVKz20JQUrP8HhtFLDIv0vAZzTi8V9gA+Uq0UL4xyQA2Fec+sLxzHbHGX9OFMZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com; spf=pass smtp.mailfrom=testtoast.com; dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b=3tdvylt0; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=cjslrqmf; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=testtoast.com
+	s=arc-20240116; t=1720169504; c=relaxed/simple;
+	bh=dQ5AnLTlTbUKWBiHqk3Dtw/86b4E3MmIzdNFGDLYa2E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=f4cbH4zahzGbF0OvbG1cusX0dAPW2jsiSD5CC55XQM2cV3rYcAR4H+1QVQvWAkQy7ZbB89855j5z1de60xpfebMUfwy+ylZF+bJ0Lq1d769wsV2PkbjyKitiFaCIU34T6oUU5Rul8wvYvO4GGF0aMPlp1gg4LczY01SFGLmoTkU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kQvfWC36; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b="3tdvylt0";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="cjslrqmf"
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailfout.nyi.internal (Postfix) with ESMTP id 797B41380461;
-	Fri,  5 Jul 2024 04:43:06 -0400 (EDT)
-Received: from imap47 ([10.202.2.97])
-  by compute5.internal (MEProxy); Fri, 05 Jul 2024 04:43:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=testtoast.com;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1720168986; x=
-	1720255386; bh=RKV00q6lSm2tO3hKipSYrp0qt46JHSY9gtuafqcyWeU=; b=3
-	tdvylt0coff7sn2DlN4UnLxawJqN2MlPBuSCUyGfqfxe80aB0xe8fcyVPFO8hVUp
-	LoJAEKyl9UnAVzekwbwRVdYFEphSegZDZjzh9wMO38Kl0wqE0In10xBCY5C68RAE
-	Ktp5Emsj3ldxPSvcNadLD20MePj/Be1zIbxp3zDiIGaGVuqSPCdQIoBer/pWRylJ
-	rW3R2n4btdvnvMEfG4oXmln5CmRfsA9C/YtT1kwnjYy2gIOvZuACjHoZlhG6UXy2
-	HLl+vHjoSSMqtMLjdrzgPo5IVorqpIgpmjLIUzVfb7pHBw+qsn65zBWgfFINZrkS
-	tyuAEN+BKW5KALVciqQrg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1720168986; x=1720255386; bh=RKV00q6lSm2tO3hKipSYrp0qt46J
-	HSY9gtuafqcyWeU=; b=cjslrqmfXdY6hETVXHDgnL6HyNqrQrS4icGId5yd5SjI
-	5eVLk8VWoRf8KWC6GiGWLacTNiqlO8IEaSbEvV+LhVEGeyLqNqRX+vBGHcmQvcvv
-	9/Bc2YkR87FZSnxLaozSkBvSrZZ6IcG6OWD5RAvtfMBeTKg8dXxf/dPCFF9LH5Ej
-	1Z8l9nT/gv4mO5pirRMTIIE0gwVNhc1HphGad5rQ7/e6hftXhceBprD22hXByOxS
-	BCySGXA6NkyKZDZMCKAGIgHotH0+Uywz2xpOoCW+IjCbE9MUFmeN7WvzYPQJbWYV
-	N4hDA+T7tog9dbPv4R/3kM4opBT4FRd8vy7m0+hL/A==
-X-ME-Sender: <xms:GbKHZvInD--y0myNt-IrD8_EkS7ozWVgW8pcig0wCQi4iWXWvR9sQA>
-    <xme:GbKHZjKKZV468F9xn8tYoKUPEQSL-YPA2DYi96vHFn3XyUdXeC-V2rcwQZNfZXmp9
-    kB9hTW4eZlKf4Yfbg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvddugddtjecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdfthigr
-    nhcuhggrlhhklhhinhdfuceorhihrghnsehtvghsthhtohgrshhtrdgtohhmqeenucggtf
-    frrghtthgvrhhnpeehvdevieegudejueefgeffhefhffevudfhieejgfdtffetlefgteeu
-    veeiudeijeenucevlhhushhtvghrufhiiigvpedvnecurfgrrhgrmhepmhgrihhlfhhroh
-    hmpehrhigrnhesthgvshhtthhorghsthdrtghomh
-X-ME-Proxy: <xmx:GrKHZnsb3SR0FV3e5O0EfNseDorhA4j9fx3Fs1WRTFUKPg3mRXWPGw>
-    <xmx:GrKHZoahHJ1QufOL2rOPmRdGHSOn7XDVihL-obblfxaS-xxegeUflw>
-    <xmx:GrKHZmbuGvblbSyv0FTLI0T_ZtsANEKpkB_7INRG6Mtr0PWTJotNMw>
-    <xmx:GrKHZsDBlbZDJ2W7zDiKVLCmEMuHoQTRpQXPBAMlYJWhRMQYd1ppoA>
-    <xmx:GrKHZox9r7c7mE_WnPAxJGejGc7XKXbISUeI6_0qi6grBwI24iE-8MT_>
-Feedback-ID: idc0145fc:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id E1469A60078; Fri,  5 Jul 2024 04:43:05 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-566-g3812ddbbc-fm-20240627.001-g3812ddbb
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kQvfWC36"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92DEAC116B1;
+	Fri,  5 Jul 2024 08:51:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720169504;
+	bh=dQ5AnLTlTbUKWBiHqk3Dtw/86b4E3MmIzdNFGDLYa2E=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=kQvfWC36abuTRmrWOySTTlnFpfGN0VDxsic+Zao3hmF1kFVdBvJhgl9l7SoVrilHh
+	 llKdh0RsnPnslpBpqIKEdQI5tZOZrnSca4yJWuq4z7etf4IgJMgz/M/Ohu5QN0gk6G
+	 JZGhZmNGEn2uj/7YgSsMCIU7EPhLTGMQWOQYg42yCrd9trgGiYZd+OguzArYGJmbm8
+	 9dYo5xurWz2wr+uuuR7J56jiQTI/ckG2Vn1fNuQDrN0hJKL6P/HpR7CeCdYkNsvYl0
+	 CA6t5VcZJr4wyim8IbrQCqH8Cq9UnKJb82Gw/ui9/rghwPaNqYUovV2fKBV1YPCb1O
+	 gvvG65qdaDjGA==
+Message-ID: <31778ed0-e4b5-4961-99a5-41ce44ddac26@kernel.org>
+Date: Fri, 5 Jul 2024 10:51:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <cd8652aa-2272-4f07-ac65-e414e83925e6@app.fastmail.com>
-In-Reply-To: <20240703-concerned-geranium-dd89f3f82375@spud>
-References: <20240703105454.41254-1-ryan@testtoast.com>
- <20240703105454.41254-19-ryan@testtoast.com>
- <20240703-concerned-geranium-dd89f3f82375@spud>
-Date: Fri, 05 Jul 2024 20:42:45 +1200
-From: "Ryan Walklin" <ryan@testtoast.com>
-To: "Conor Dooley" <conor@kernel.org>
-Cc: "Maxime Ripard" <mripard@kernel.org>, "Chen-Yu Tsai" <wens@csie.org>,
- "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
- "Thomas Zimmermann" <tzimmermann@suse.de>,
- "David Airlie" <airlied@gmail.com>, "Daniel Vetter" <daniel@ffwll.ch>,
- "Jernej Skrabec" <jernej.skrabec@gmail.com>,
- "Samuel Holland" <samuel@sholland.org>, "Rob Herring" <robh@kernel.org>,
- "Krzysztof Kozlowski" <krzk+dt@kernel.org>,
- "Conor Dooley" <conor+dt@kernel.org>,
- "Michael Turquette" <mturquette@baylibre.com>,
- "Stephen Boyd" <sboyd@kernel.org>, "Andre Przywara" <andre.przywara@arm.com>,
- "Chris Morgan" <macroalpha82@gmail.com>, "John Watts" <contact@jookia.org>,
- dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 18/23] dt-bindings: allwinner: add H616 DE33 bus, clock and
- display bindings
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/5] dt-bindings: clock: add clock binding definitions for
+ Exynos Auto v920
+To: "sunyeal.hong" <sunyeal.hong@samsung.com>,
+ 'Sylwester Nawrocki' <s.nawrocki@samsung.com>,
+ 'Chanwoo Choi' <cw00.choi@samsung.com>,
+ 'Alim Akhtar' <alim.akhtar@samsung.com>,
+ 'Michael Turquette' <mturquette@baylibre.com>,
+ 'Stephen Boyd' <sboyd@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240705021110.2495344-1-sunyeal.hong@samsung.com>
+ <CGME20240705021200epcas2p273ca089c2cb9882f121e864ec8407367@epcas2p2.samsung.com>
+ <20240705021110.2495344-3-sunyeal.hong@samsung.com>
+ <8f4deb36-2a44-414a-9b9f-40b87bc7c949@kernel.org>
+ <01c401daceb1$d64e7450$82eb5cf0$@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <01c401daceb1$d64e7450$82eb5cf0$@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, 4 Jul 2024, at 3:28 AM, Conor Dooley wrote:
->> Add display engine bus, clock and mixer bindings for the DE33.
->> 
->> Signed-off-by: Ryan Walklin <ryan@testtoast.com>
->
-> Probably this should be 3 patches given 3 subsystems, but the content is
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
->
-> Cheers,
-> Conor.
->
-Thanks Conor, will separate for v3 but ack noted.
+On 05/07/2024 10:03, sunyeal.hong wrote:
+> 
+>> <form letter>
+>> Please use scripts/get_maintainers.pl to get a list of necessary people
+>> and lists to CC. It might happen, that command when run on an older kernel,
+>> gives you outdated entries. Therefore please be sure you base your patches
+>> on recent Linux kernel.
+>>
+>> Tools like b4 or scripts/get_maintainer.pl provide you proper list of
+>> people, so fix your workflow. Tools might also fail if you work on some
+>> ancient tree (don't, instead use mainline) or work on fork of kernel
+>> (don't, instead use mainline). Just use b4 and everything should be fine,
+>> although remember about `b4 prep --auto-to-cc` if you added new patches to
+>> the patchset.
+>>
+>> You missed at least devicetree list (maybe more), so this won't be tested
+>> by automated tooling. Performing review on untested code might be a waste
+>> of time.
+>>
+>> Please kindly resend and include all necessary To/Cc entries.
+>> </form letter>
+>>
+>> Best regards,
+>> Krzysztof
+> 
+> The mail list was created using get_maintainer.pl. If there is any problem, please let me know.
+> 
+> ./scripts/get_maintainer.pl -f drivers/clk/samsung/
+
+That's not how you run the command. You ALWAYS (unless you are Linus)
+run it on the patches. ALWAYS. See submitting patches or numerous
+presentations how to contribute upstream.
+
+Read my form letter accurately, e.g. switch to b4.
+
+Best regards,
+Krzysztof
+
