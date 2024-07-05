@@ -1,154 +1,181 @@
-Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2015.outbound.protection.outlook.com [40.92.103.15])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67B5E139E
-	for <linux-clk@vger.kernel.org>; Fri,  5 Jul 2024 00:28:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.103.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720139293; cv=fail; b=Wb7axN/w38fVQeM/+9g3hJgIm4shWOj1+z+EV17RGpX1rIYRwOnnnuN4ADP1wkRrzlAmRWOMxwxE/r7QSPjN1SMOJ+3t/aXUdrCw+Ebb4Wc4j016DqnHvKSmXf5cnwERsUtDedvGDE2wSgXlknDSMArorDerkkgOWvh0htelRXI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720139293; c=relaxed/simple;
-	bh=Fu7KADpQSHiHV4CwT7gTca+fD/ZdLoe12pq8ImXhRt8=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=eLe+x9XpTxQ4P4wJPJvk6uOJbf06TCxm/VSn9PCgn6QK7u7s5mKFhN4Vmrv5jCkmjGK8WeBLqSzEfroAecZ5BDA42dHXyKxhZnj1YMJ8pl9SiA81TANo0d/omyzRPBo8Hvz6cPICPl4y/O6rdc8Gzv4T2MRwvrQzLCZLgawnFZ8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=s/Yf51Op; arc=fail smtp.client-ip=40.92.103.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8A1279D3;
+	Fri,  5 Jul 2024 01:51:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720144267; cv=none; b=PpjjxvjgU7iOmWtI7YmZbCOSQ5QsvNFFrITLd6NE7O7lYyF+iIsPw/rwx5yTFatMcvshibgPUp8uy9HPyIQMiB6uXisHUxWoT9kZbW3ZBQJe4D+RlGeDTnf0lbgvIvo2ZSE6qczIXFMDJ9gNBUMISfckbQxzqqFjOcC6ya61FIQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720144267; c=relaxed/simple;
+	bh=CRRfXqrbQs7tLcrxZpfuE5Kh1RIwcGT87Lps4lI9koU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JbBYOaErqFDN/mh1pti2znfUygoEPuGHytvD6YpSoJURJnyllEVuwkQm9MP/1CvyzqJRtlDWZenyfmc0nlphMop4cb9IEh1+cV92ULkqmz7aidIDWk7//kmujEFj1pzKQh6ln3E+UKGXODvFEsHkkCYAx9ufCXajlDn+ghlFIls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IWYLNnSZ; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="s/Yf51Op"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=Xyaw13p+7WmdSPpDdWgwi0Jyt/QNyjlWKboG6XISMQ7WReUjNK/lNDE6ZQphOoK9TYid0whKbS0iuiFsh1mc8rYWk7K9a0cafId0/64F6uwc8moDzp9eWX7cxuTJA7YPIvkaoBZt4o+1DkmhCaOKZYWQyHrMtge49nmoICYVHTKy8wq7d47CV7BgdxaePjrEs34ZePJRUew1wtqCbybV5M/VM+ycGPfo9n4EAYfYnpRPjqE9WXhKLxtOS/IRr172Ms+ZV1q/MO8Z1dDhDepx+tGCzHhzA5jlKQelMpbfpQOnNlgmAm2YztV1FuPp/VH0FaK9MsZKADa2dynQwP2WRQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JC+6U897gfvIv/yr7ldc6PDNa7Hn0cMdLACtANo2Ai4=;
- b=inc+H7mHXDBJzil2OSNlBYfIryMxX53E6zgaFn8h5AyqFuhHlNp6Iaa7oby6/k2HZJ8B0UtYKH2VFZqRCtQ/B8pO9hwPGV+pALK3X1I9MypYfu+7sOwZOGOlP63Ks+0fAYv0OM9pzoMG7u5G5SyA7Zl/gsFhyQIc9cZDrW1tAItgslGMGR0sXkxdtRt8nNQ7S5TMxx3V8T+99lilyL6lfPqudpvKyJxiqyfsnPpy40fzQ704KTsmRXnK2U8RLJLZZRG9byeUiTJIGG/rKc+dj4dXH/d1lYa52YmYtf1TorIYFGHkmDSimjD5mzfZds+YwGZh+iAgcRmIkRaDBbZP9A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JC+6U897gfvIv/yr7ldc6PDNa7Hn0cMdLACtANo2Ai4=;
- b=s/Yf51OpccVVWpWWQrD0/gd1q6oaygzKSTCiKq6eDhXV/hjaRb300XPodVMGWiNG+uOnouWZP7m8TTmU8kUClwOeYEnRbxmS0ysIoQ8RpN5Q28K/qRhZF7ayqmPRL0iSyWt5q4uiO6PCoWjahF0Z18KAbDe1LA6o95nIb5P2oUhF2SBag+V600QstLcdTpK71g+BQJ15w7IaNUaOfbu/zOU7QzREHWlKoFQ8H0Fq24AcppqdpSH2lVwMUGcuCEF2HYocb7KTXg5ael7NbHL+YHe7JUAWSOZc+fvf1V8aj60pSmr4Cqoo8ljCXrrK0DVNlI6pvVej7p7oPpJ+NHsI4g==
-Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:138::5)
- by PN0P287MB0601.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:163::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.31; Fri, 5 Jul
- 2024 00:28:05 +0000
-Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- ([fe80::a94:ad0a:9071:806c]) by MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- ([fe80::a94:ad0a:9071:806c%3]) with mapi id 15.20.7741.027; Fri, 5 Jul 2024
- 00:28:05 +0000
-Message-ID:
- <MA0P287MB2822A3AD8FA3BDA01F54BF45FEDF2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
-Date: Fri, 5 Jul 2024 08:27:58 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk/sophgo: Using BUG() instead of unreachable() in
- mmux_get_parent_id()
-To: Li Qiang <liqiang01@kylinos.cn>, mturquette@baylibre.com,
- sboyd@kernel.org, inochiama@outlook.com
-Cc: linux-clk@vger.kernel.org
-References: <20240704073558.117894-1-liqiang01@kylinos.cn>
-From: Chen Wang <unicorn_wang@outlook.com>
-In-Reply-To: <20240704073558.117894-1-liqiang01@kylinos.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TMN: [4A1UYkQ/lkRf4UtwzpHdVTQ7PcIFXEiz]
-X-ClientProxiedBy: SI2P153CA0023.APCP153.PROD.OUTLOOK.COM (2603:1096:4:190::6)
- To MA0P287MB2822.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:138::5)
-X-Microsoft-Original-Message-ID:
- <2e1dd2ef-5bd8-4b63-8f37-ae047022dc4b@outlook.com>
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IWYLNnSZ"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1720144264; x=1751680264;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=CRRfXqrbQs7tLcrxZpfuE5Kh1RIwcGT87Lps4lI9koU=;
+  b=IWYLNnSZVCro8PlEsvNuvfTA8fz7bYy3XIloLaCvrQ5nYNA+meHOn2Og
+   C4lTjR/3NLQBY0U88EY/ydBpX3YhdIf5L61Wbo4MXQxDcRsAEdX624KPN
+   tUgZDQGrc2Lt0eoIe21JyD5pDO1ecvk5sIXI57MJp3PnOrqk7OtqOHtXG
+   CX8nHdP+/uKtYdGKrAJMbCSveuaRS85cypNxJsqVwqS2YrQYZxXUCt0OV
+   AxOXuLBGC36e1QeQ8FsXEctZ/IQdNdLy1QsJi66fWSImfm/TFkJUb/Gj5
+   J3DDHif2U3Sh7+qFicABOBW6JNMGbKPEvjbmmteWm6w7Nhm6bnC5KufG3
+   w==;
+X-CSE-ConnectionGUID: NIBPJVoxQL2l7WhcOxyOaQ==
+X-CSE-MsgGUID: J94FQyDgQeqEgXXInLVVqA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11123"; a="21239041"
+X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
+   d="scan'208";a="21239041"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Jul 2024 18:51:04 -0700
+X-CSE-ConnectionGUID: wGr7m+PyRo+lra4tO7HwPw==
+X-CSE-MsgGUID: Fawo+R7ISN+VwmUeHScWeQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,183,1716274800"; 
+   d="scan'208";a="46699156"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa008.fm.intel.com with ESMTP; 04 Jul 2024 18:50:59 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sPY6D-000RlE-27;
+	Fri, 05 Jul 2024 01:50:57 +0000
+Date: Fri, 5 Jul 2024 09:50:41 +0800
+From: kernel test robot <lkp@intel.com>
+To: =?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>,
+	=?iso-8859-1?Q?Gr=E9gory?= Clement <gregory.clement@bootlin.com>,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Tawfik Bayouk <tawfik.bayouk@mobileye.com>,
+	=?iso-8859-1?Q?Th=E9o?= Lebrun <theo.lebrun@bootlin.com>
+Subject: Re: [PATCH v2 4/4] clk: eyeq: add driver
+Message-ID: <202407050921.S41aCBdD-lkp@intel.com>
+References: <20240703-mbly-clk-v2-4-fe8c6199a579@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MA0P287MB2822:EE_|PN0P287MB0601:EE_
-X-MS-Office365-Filtering-Correlation-Id: 324a2299-9e7e-48a2-49bd-08dc9c89564d
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|19110799003|8060799006|461199028|3412199025|4302099013|440099028|1602099012;
-X-Microsoft-Antispam-Message-Info:
-	J9p1tPy3piBY3SCcOni1pEMc00Rhvdi5fcaR/P9zHGiLSVjiaq0ZwApzPux/xxqrJg8zC3JuBMiHbXWnRBMg+suMBAi/DsKbb5zxjqT8o2Y9+jYMM53AKszz/pghGT68ypxQeXnaqhKpKieM165Yk1NCbSUENQ9DXRWHUFaS9rpvBmMhBSTj/Qf3qcVt38lBKiy5XJNBHyaJ9XeeEZBkFESzBzCFq4XSulMKsmtex3hbLzJVSiI9qu7qV7ZotiJFbtHgcV44B5WUMPrEtu7MCtszlg9LJHq9Z/GtEHfiGWhhmFYE/Jtv6CNjIL9zT6I6QGR6RnK0x0m2KGtQkb3AEx2SY96BUHe4CLkKdse0Pc0MIIwAkO8Gv+yRVJllmTA6O5AHIEuEtHe/SlHavhZLh0hKOK/7aB4gBP8oUrk0Uczi7S/f4hPMAy3D6kNcJEP+pjnnTnXfVOCrHwUuz/3aSMh/qRj3pXkmRWNra+VNWsB8GN7U0+Gr1qQ1H+KpZQAJM3r6kli2PcDHbNuByGK14LiVsN7PhIKP19SPHXNsS5OrB7vSJBHIHledkgRlRj+l4b/UK/85I0RDsieo1nIpPj8V7I0Bwswxu8LJYFseaHwVGmeapYOpcfMxxAOcRzPu+ZGNzpCk5Y+SIT/rdqWxWQq6pUIB1yA/A2vtm1DzNqpQ2pM+QYt7ZV52TAdx8sfkDgMPXlMSlxTLhA/lnd1JW6X7LjFcQ70G+6BE2YRHfzD3OV7pvFZn3Tj50Eod5hF3Z/pP40Z36/VffbRdFG7BnA==
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MGFBYW1ZbDF6TEtJMTNuTlQxQ01DUFplU2dwYU5JSmtuSUZrR3RFWTR1cTdW?=
- =?utf-8?B?bEVhWm1vWXphc0s3d1Rtc3JkaDdVaHo1SFQwd0N1WVduWjNZTE43UkZRZ0Ru?=
- =?utf-8?B?V25QdEYvU21HNjFsTkpZUURnSEZya1NnY0FVblpETmFPYkxNMysyaUx4NkZq?=
- =?utf-8?B?d3BlTXZveVZNQzhoQ3hqZ0lDTTREcDdWeTFqM0pHT3hkc2tJRkEwaTZySktV?=
- =?utf-8?B?OHZzVHowRXJocytBZnJ1U1JqL0lDZy9JYmt6elhnMkJXbG1YQ0xYL1ErbmVG?=
- =?utf-8?B?cy9JcnlCaks4WTh0MnJFczFJQXRwcllaL0NJMC8vUHJoR1FHZGVOVXhnODFC?=
- =?utf-8?B?REFJQjE3T2JKb1NEUE9HZDdNT0ZMWTFjTEpsOTR4TVdiT1dERWZ0ZDkybWRZ?=
- =?utf-8?B?aHdsb25RQ1dTbytuekR0V1R3T3BVbU1QNWFQdzJmRE1ESlJYMlB6dThSeE8z?=
- =?utf-8?B?Y0VJVnhmdldUMXJ0RzBEZlBVczJxZ2xuWTZ3T01KaERLMUxXTjkrb1lPNzJF?=
- =?utf-8?B?VkNsU3VJdlNvL2hoYUJlSmYreXpLaXJySi92SjNSdUpoU2oxWk1QTkJidmcv?=
- =?utf-8?B?dm5YZFVTYm1odjRjMmxkRTlGYUxXMlQ5MkE0SUlMWXdZbnNoOW1xNEVJRkpj?=
- =?utf-8?B?YlBLUGh1MkZicmVLb3RLTTRWWGUxblBSRndVZVI4TzMwQ1ZIeVBpQVRJRllz?=
- =?utf-8?B?K0pWNFMyKzRLV3BBUVhjTUtOQ0lXeVdudjhWUzgwbkRCa0lZQ2dsMS90TUxl?=
- =?utf-8?B?NnZsWkdiWGZFejQ3TXgxNjR5SEJOa1RSQlpXQ2h3QzZmbW9ZckszS0Z4R2dD?=
- =?utf-8?B?YXRPNFlseVpYdWNzbUpnbCtMYktWWThTZndnaXpvSTN5SHJRSnZjUVdFQm43?=
- =?utf-8?B?M0ZYS2FWQlpCcWQ5c0pLUGVQczBUcmdTRXJKeXFKaklCNDQ1dktqa0VrQm1N?=
- =?utf-8?B?WHVjV1Fxdm1KQUx1dk0wdFFwa040WENjdGZZOHBJaHB5U2VrYzU1a1ZnSS9x?=
- =?utf-8?B?czlNV3ltYytKWDE0a1ZOYm51VmZPOGlneEVwejN6ZnJYMS8vc3I3NUdsWXhS?=
- =?utf-8?B?b1hNUFFsaktrR0VjNVJodnRwQ2JiK0czN2JVaUdTcFN3ZGpad2xwK1dwT1ZS?=
- =?utf-8?B?VHJURW1XTzRsZUhSOHhNdnZzRjQwODZ3b1kwOHZNV1ZzQW1sdjRneUtENTA1?=
- =?utf-8?B?KzQ2VllaU2xONTVmeTF4bysva0Z5NjhDU2kzckhvOHBJYllBN1lleHI1b1dE?=
- =?utf-8?B?VlkyaCtYeGU1Snk0cm5jZmNKQmRzckZLVGhpb2IvTks0VHhNdUlQWmRGc216?=
- =?utf-8?B?MG5MTy9kcDQ2WHVHOHZnMmhzWXh1V0M3M1VYS1ZsclNhb2Z3Wk1pZG5Wa2RM?=
- =?utf-8?B?UDhEYW55UXFGaUpBYUdtMXpZZmVsTGpINWM0cUR4WHVRNyswbTRQMWlLVHpv?=
- =?utf-8?B?MFNXTzFuZlZMZGZtdlJMWllQV3IwTGRhdGxDWHZyT2NLUnRQWmpwWktLS0Fq?=
- =?utf-8?B?bVdNRDFPYzFKQXNrenEvVWpyempxQTBXazEzNnVjNk1kYWxERDVUTElERXJn?=
- =?utf-8?B?eGRSZHJJQTRxZmNVMSt6YndMNGpHNjNLSFowUFhyVENNOUIzUjFMSWZNVWFO?=
- =?utf-8?B?K3UwVndzZFNLUGUxbGRaN3FaNUVvNlZXTXpFKzJtdmxvK0laT0NzemtjOHor?=
- =?utf-8?Q?9VIyVbP7IPq9Ug3zGwjO?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 324a2299-9e7e-48a2-49bd-08dc9c89564d
-X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Jul 2024 00:28:05.4570
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN0P287MB0601
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240703-mbly-clk-v2-4-fe8c6199a579@bootlin.com>
+
+Hi Théo,
+
+kernel test robot noticed the following build errors:
+
+[auto build test ERROR on f2661062f16b2de5d7b6a5c42a9a5c96326b8454]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Th-o-Lebrun/Revert-dt-bindings-clock-mobileye-eyeq5-clk-add-bindings/20240704-211515
+base:   f2661062f16b2de5d7b6a5c42a9a5c96326b8454
+patch link:    https://lore.kernel.org/r/20240703-mbly-clk-v2-4-fe8c6199a579%40bootlin.com
+patch subject: [PATCH v2 4/4] clk: eyeq: add driver
+config: hexagon-allyesconfig (https://download.01.org/0day-ci/archive/20240705/202407050921.S41aCBdD-lkp@intel.com/config)
+compiler: clang version 19.0.0git (https://github.com/llvm/llvm-project a0c6b8aef853eedaa0980f07c0a502a5a8a9740e)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240705/202407050921.S41aCBdD-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407050921.S41aCBdD-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   In file included from drivers/clk/clk-eyeq.c:30:
+   In file included from include/linux/io.h:14:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     548 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
+         |                                                   ^
+   In file included from drivers/clk/clk-eyeq.c:30:
+   In file included from include/linux/io.h:14:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
+         |                                                   ^
+   In file included from drivers/clk/clk-eyeq.c:30:
+   In file included from include/linux/io.h:14:
+   In file included from arch/hexagon/include/asm/io.h:328:
+   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     585 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+>> drivers/clk/clk-eyeq.c:264:9: error: call to undeclared function 'readq'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     264 |                 val = readq(priv->base + pll->reg64);
+         |                       ^
+   drivers/clk/clk-eyeq.c:724:9: error: call to undeclared function 'readq'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
+     724 |                 val = readq(base + pll->reg64);
+         |                       ^
+   6 warnings and 2 errors generated.
 
 
-On 2024/7/4 15:35, Li Qiang wrote:
-> In general it's a good idea to avoid using bare unreachable() because it
-> introduces undefined behavior in compiled code. but it caused a compilation warning,
-> Using BUG() instead of unreachable() to resolve compilation warnings.
->
-> Fixes the following warnings:
->      drivers/clk/sophgo/clk-cv18xx-ip.o: warning: objtool: mmux_round_rate() falls through to next function bypass_div_round_rate()
->
-> Signed-off-by: Li Qiang <liqiang01@kylinos.cn>
+vim +/readq +264 drivers/clk/clk-eyeq.c
 
-If your patch fixesÂ  bug in a specific commit, please use the 'Fixes:' tag.
+   249	
+   250	static void eqc_probe_init_plls(struct device *dev, struct eqc_priv *priv)
+   251	{
+   252		const struct eqc_match_data *data = priv->data;
+   253		unsigned long mult, div, acc;
+   254		const struct eqc_pll *pll;
+   255		struct clk_hw *hw;
+   256		unsigned int i;
+   257		u32 r0, r1;
+   258		u64 val;
+   259		int ret;
+   260	
+   261		for (i = 0; i < data->pll_count; i++) {
+   262			pll = &data->plls[i];
+   263	
+ > 264			val = readq(priv->base + pll->reg64);
+   265			r0 = val;
+   266			r1 = val >> 32;
+   267	
+   268			ret = eqc_pll_parse_registers(r0, r1, &mult, &div, &acc);
+   269			if (ret) {
+   270				dev_warn(dev, "failed parsing state of %s\n", pll->name);
+   271				priv->cells->hws[pll->index] = ERR_PTR(ret);
+   272				continue;
+   273			}
+   274	
+   275			hw = clk_hw_register_fixed_factor_with_accuracy_fwname(dev,
+   276					dev->of_node, pll->name, "ref", 0, mult, div, acc);
+   277			priv->cells->hws[pll->index] = hw;
+   278			if (IS_ERR(hw))
+   279				dev_warn(dev, "failed registering %s: %pe\n", pll->name, hw);
+   280		}
+   281	}
+   282	
 
-See 
-https://docs.kernel.org/process/submitting-patches.html#submittingpatches, 
-google "fixes"
-
-And an example: 
-https://lore.kernel.org/all/SEYPR01MB4221943C7B101DD2318DA0D3D7CE2@SEYPR01MB4221.apcprd01.prod.exchangelabs.com/
-
-> ---
->   drivers/clk/sophgo/clk-cv18xx-ip.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/sophgo/clk-cv18xx-ip.c b/drivers/clk/sophgo/clk-cv18xx-ip.c
-> index 805f561725ae..b186e64d4813 100644
-> --- a/drivers/clk/sophgo/clk-cv18xx-ip.c
-> +++ b/drivers/clk/sophgo/clk-cv18xx-ip.c
-> @@ -613,7 +613,7 @@ static u8 mmux_get_parent_id(struct cv1800_clk_mmux *mmux)
->   			return i;
->   	}
->   
-> -	unreachable();
-> +	BUG();
->   }
->   
->   static int mmux_enable(struct clk_hw *hw)
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
