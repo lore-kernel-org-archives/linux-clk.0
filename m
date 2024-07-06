@@ -1,60 +1,60 @@
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D0678676
-	for <linux-clk@vger.kernel.org>; Sat,  6 Jul 2024 13:39:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3221B4D8BD
+	for <linux-clk@vger.kernel.org>; Sat,  6 Jul 2024 13:45:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720273187; cv=none; b=InElUrxaTk37hZoqVEPPY1xLLirWFM1r155wB2UwqASzm+D5rDsY/SHwsfkluLhKuz0vEHORs8H+7QnL1Vi94JtFh3DoZieWLXDGHt+fFzGhalwJrlWpJqldYsBzoNpBf4SGvaIW3Dy5nDjURv+EY1GQ7M87C35+Hka/f4TE3h0=
+	t=1720273524; cv=none; b=NmCoBfERgDApTe2+d8EvSRHsC5wKWxXve6OJqT6e54CksA2r31Et7Lu9NpiH8Omh+8t4erTc7+vGsZnsjlf2Kyf26mEuc6dqcrHtuVJR5ULL8GXL+K0DryH9DwDTo/ZS7w1kp79Fyi+YIn0FfB0z5X/vq0n6zFL9C5vA4ydlC8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720273187; c=relaxed/simple;
-	bh=jqIO9PtF3Kc1L3VYD56gt6cNcLUYYBsDSS5jH3CuGo4=;
+	s=arc-20240116; t=1720273524; c=relaxed/simple;
+	bh=PF0h1+oGkiFyh2lUW1h5DQmynoUC4x0O+nlOXzEkh5E=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=js9QRdHa20pBt2G4Ggsn2Tc7NKS/W6YBrxN6zLXjxd/sjuyH4ZAh5/b0g4fGxNq8dljDsXk+UA4fVZ3g9UO7AaBk6wXptiL9yXH8E3912XcY+LmtdS6bwesvXrsv4zTVzCayzqaBVWQCPScTl3XCHEZq2CpEU9Ei0PitQhweCOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oUxT4UJy; arc=none smtp.client-ip=209.85.208.44
+	 In-Reply-To:Content-Type; b=Hjn7FYnIcOohw8e1m0ygHr+HznV4FKIRHyniUiMmC1Cn8VAW1mnyDO9yfm1zRmDU9KNIIjWAI1/fyBGuRLQqN8wqPMU6caGScWBz4ufvIUgjsSaQptqq1rRmzf/PQc1IxCVso2oDt3cqqNFjk7I+gpWqk1r21+lYuPFRHQrOq+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nTQfCDnf; arc=none smtp.client-ip=209.85.218.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oUxT4UJy"
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57cb9a370ddso3229916a12.1
-        for <linux-clk@vger.kernel.org>; Sat, 06 Jul 2024 06:39:45 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nTQfCDnf"
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a77af4cd570so150909466b.1
+        for <linux-clk@vger.kernel.org>; Sat, 06 Jul 2024 06:45:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720273184; x=1720877984; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1720273521; x=1720878321; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=aLaGeABuo22IKbCJ19S9kGM6QaZsE7VgK9tDKh+bfiY=;
-        b=oUxT4UJyxbWqgA4xqi8eQNqdq48gNwemhC+4aVFaK+/XO0AThTg55SRhj37yZvmF6C
-         B6M/vx8JDaYYhc0lmhHRDvllO5MFQogcXd3oD7y7LNB9vZoPEbhYWTBb+yynYvsfPsz7
-         k3ZHEgFwvpbM4coz1ctBRQONbEWU+G37jf/EnkpApT04a7VSzZkj43z3BLs02NTQbmNI
-         Fe5NqB6lRloe9CZuRq4sr1nHwXr2y705PSVLj9aFfi3m/8RoDnnHvIHTUqsLuZbEYSJA
-         xy63TKo4TUpD5qzEnVe6i9Nkr3LvzcYl3cYiZSiUwUcvK5TanBPf4WLStsGYoXs2UzKx
-         xbMQ==
+        bh=2S1DHxM0yx23XpwNFbOt5pMvU94CeRa/2MwtXb40TCw=;
+        b=nTQfCDnfubl7qGD73RX7JTbK5FGfU3jPxBc86X9V1+5jdX1fu3rNXF+2Gwd4QiEvlf
+         7Qi49Ip0b9SaONvtnyLZ3a3EJ8FAKO5TF2ZruZchhEGW95vXz8ryiSGNgXF0mzPIaUCd
+         0e3ymDTa5bBWlAnAiB/YVymIa6Jd9JhqGjj+7N1yBfBbSsUpaBlD1Cwq02sOyiweLnyP
+         F5WGOCQvL/P2WR0cRzXgJG4eTy39y/jiJWheK562Uf2umeiAkDfmbPlE4XVfI+KRLOWA
+         L/NegsxqHQ0b2INHfF1IiZ+v388W/UeQ9VjgKoI71/jt/xHLU9aNB0g+iS6cTQJfE6gY
+         V/Nw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720273184; x=1720877984;
+        d=1e100.net; s=20230601; t=1720273521; x=1720878321;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=aLaGeABuo22IKbCJ19S9kGM6QaZsE7VgK9tDKh+bfiY=;
-        b=RKAHd5gvFnAYLkVIdPQ/0V+TLeEdfgj8u8xY7bV5rM1VG0q1xmoBpEt1p/XS1WHqsn
-         AhmQow8MOzcu3vYrKKJL7CAxzFYcRYivhKBWirQ8mT93D/3ThiD3K1rqjjhFchYs3uCa
-         Zqej1EQM6iKtyIzzDih37B4Xa0dbq3T4diXN5poYKkRMsVpBYH8ypcj29a449rap/cCe
-         m9Hxt0kvhLp/uQme5UIlKYI6IFZTI3YxMA04UgA5RtSOqbSrOnWq+WeuL1XH9Yn2rb+3
-         HQGKuAfwaFsz9ysSbkau/SMwCutxSMPX3HOGZSCqmLElkVUJ3spCB2RtVTQj/nJDluXz
-         cCjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVl+Tz5B6aCiKQdsvEb4Egf1nxMItCUB5IfjACUp9pT9TRFWGZhig622Pi9mv4M+/PTyPhBMnPWqg0roz9LrkQVwUpnLdoaF8NH
-X-Gm-Message-State: AOJu0YzREzHaoiODb/bCBvwbY8RSy1f5b7D/lG8fS3YMqwUGepVUZarP
-	X4Mi4ysfanqLz0r0ge/1a/nX6ccDjHfy2s+LtNAvgmQPBU+zgQkVdSMCZxk37yk=
-X-Google-Smtp-Source: AGHT+IFAoehJjp/+4dx7+u2sPKkChGIxTTTUsqzPOJ2ThVjyIiUITZKYrBakHLo9QU6SlWhvQYmPeg==
-X-Received: by 2002:a17:906:7704:b0:a77:c96b:a113 with SMTP id a640c23a62f3a-a77c96ba1b5mr309327266b.60.1720273183969;
-        Sat, 06 Jul 2024 06:39:43 -0700 (PDT)
+        bh=2S1DHxM0yx23XpwNFbOt5pMvU94CeRa/2MwtXb40TCw=;
+        b=jB5E4BiHTYBNKXrJuDQpCUJUyKe9oBBcSoqAACoMoc2eEmVI904VSL7v5pWATqUVRS
+         gVaYFoPZsEn7+VqYQKWpA4C0tcU6p+tgOVQj4AhFJpiHV10zGu/UbuqqHUHUhXurYNQ4
+         8EFrGHQ3KKW5C4M/771sm2pIQPAT5pqC1i73VSJ5YAXaK4zZptsPhxXoJeL5h3ON1KtY
+         bSIkGGd8BR5O6flHGY1Xsd0b1M9G68OBPbvRrs5745VQq3NZs80pMaMkuPHboQnDYTto
+         3B1EFgo9haBPPQCkDPJYtkijGZ1tvljpoTu+IA9i/j6qI4NH6IHw/NCQ6tQTyHJXVrLd
+         hVfA==
+X-Forwarded-Encrypted: i=1; AJvYcCU7XR5868r8dZ+Cu8TlKsAqkX1HlG7kpXL4gdrcNkz5j+AbXyDeFBM/7bB+ehZZB68XRWLwMV5T+jCudcWjr2wuJfAU6gIARfN6
+X-Gm-Message-State: AOJu0Yyfx15pv0TAZ1YAa1Zh1e/OlQ1M8EIp5Vd3OS+8dRJsdOEZxAws
+	utgaGnKUQC8ToUJqx6N+oQNR4w/o2TV8BfJca+ojoOpDY15ecIf1v+yGT0GOJsk=
+X-Google-Smtp-Source: AGHT+IGzECxaHWskymi62jCPiAax/L3GFDIo+8EkygkRsWMoNFAievbEM7ZIgnZH2Ki65uCIyugg4g==
+X-Received: by 2002:a05:6402:5215:b0:57c:a7dc:b0dc with SMTP id 4fb4d7f45d1cf-58e5994e4a0mr7338244a12.4.1720273521400;
+        Sat, 06 Jul 2024 06:45:21 -0700 (PDT)
 Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72ab0900f1sm763063066b.168.2024.07.06.06.39.41
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5861324dfaasm11091582a12.32.2024.07.06.06.45.19
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 06 Jul 2024 06:39:43 -0700 (PDT)
-Message-ID: <eb71f14d-bf27-4f23-870e-7dfa01e44e80@linaro.org>
-Date: Sat, 6 Jul 2024 15:39:40 +0200
+        Sat, 06 Jul 2024 06:45:21 -0700 (PDT)
+Message-ID: <a70f01cf-386e-43cd-b744-ec71aae923d9@linaro.org>
+Date: Sat, 6 Jul 2024 15:45:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -62,22 +62,24 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/6] clk: qcom: clk-alpha-pll: Update set_rate for
- Zonda PLL
-To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
+Subject: Re: [PATCH v2 3/6] clk: qcom: clk-alpha-pll: Add support for Regera
+ PLL ops
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Abhishek Sahu <absahu@codeaurora.org>,
  Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>
-Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, Ajit Pandey <quic_ajipan@quicinc.com>,
+ Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ Ajit Pandey <quic_ajipan@quicinc.com>,
  Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
  Jagadeesh Kona <quic_jkona@quicinc.com>
 References: <20240702-camcc-support-sm8150-v2-0-4baf54ec7333@quicinc.com>
- <20240702-camcc-support-sm8150-v2-2-4baf54ec7333@quicinc.com>
+ <20240702-camcc-support-sm8150-v2-3-4baf54ec7333@quicinc.com>
+ <kxoxr5cxxedckh7q45zhhyssqx4ahdfbqw7sdsrxx2ddplummh@2s6jv62ipnhb>
 Content-Language: en-US
 From: Konrad Dybcio <konrad.dybcio@linaro.org>
 Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
@@ -115,33 +117,21 @@ Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
  nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
  izWDgYvmBE8=
-In-Reply-To: <20240702-camcc-support-sm8150-v2-2-4baf54ec7333@quicinc.com>
+In-Reply-To: <kxoxr5cxxedckh7q45zhhyssqx4ahdfbqw7sdsrxx2ddplummh@2s6jv62ipnhb>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 2.07.2024 5:50 PM, Satya Priya Kakitapalli wrote:
-> The Zonda PLL has a 16 bit signed alpha and in the cases where the alpha
-> value is greater than 0.5, the L value needs to be adjusted accordingly.
-> Thus update the logic for the same.
+On 3.07.2024 12:05 PM, Dmitry Baryshkov wrote:
+> On Tue, Jul 02, 2024 at 09:20:41PM GMT, Satya Priya Kakitapalli wrote:
+>> From: Taniya Das <quic_tdas@quicinc.com>
+>>
+>> Regera PLL ops are required to control the Regera PLL from clock
+>> controller drivers, thus add support for the same.
 > 
-> Also, fix zonda set_rate failure when PLL is disabled. Currently,
-> clk_zonda_pll_set_rate polls for the PLL to lock even if the PLL is
-> disabled. However, if the PLL is disabled then LOCK_DET will never
-> assert and we'll return an error. There is no reason to poll LOCK_DET
-> if the PLL is already disabled, so skip polling in this case.
-> 
-> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-> ---
+> the same what?
 
-[...]
-
-> @@ -2077,9 +2089,15 @@ static int clk_zonda_pll_set_rate(struct clk_hw *hw, unsigned long rate,
->  	if (ret < 0)
->  		return ret;
->  
-> +	if (a & BIT(15))
-> +		zonda_pll_adjust_l_val(rate, prate, &l);
-
-A random check for a seemingly random, undocumented bit only confuses the reader
+I think it bears a similar meaning to "this" in OPP, as in referring to
+the main subject in the sentence.. Although I think I've only seen this
+phrasing in QC commit messages so far /shrug
 
 Konrad
