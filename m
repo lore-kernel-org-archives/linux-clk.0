@@ -1,60 +1,60 @@
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6C8D77102
-	for <linux-clk@vger.kernel.org>; Sat,  6 Jul 2024 12:25:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D0678676
+	for <linux-clk@vger.kernel.org>; Sat,  6 Jul 2024 13:39:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720268745; cv=none; b=k1bwYZ6UrW6+60cJvXDFbBzX7Nkx5/am/2WWI8DPklZ0uvZojUj9WICvtZBC30w1Y/8lUSdxtbjjdW1izXEkhEg+2q3KQA8bVU+1fgis00W8oZgFmytT7vFT6jinej5b78N2IFvDmTuCUMZDBRuQFJAbrnyD4I6gIXFTHXfRFZI=
+	t=1720273187; cv=none; b=InElUrxaTk37hZoqVEPPY1xLLirWFM1r155wB2UwqASzm+D5rDsY/SHwsfkluLhKuz0vEHORs8H+7QnL1Vi94JtFh3DoZieWLXDGHt+fFzGhalwJrlWpJqldYsBzoNpBf4SGvaIW3Dy5nDjURv+EY1GQ7M87C35+Hka/f4TE3h0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720268745; c=relaxed/simple;
-	bh=DFZp1w3U1zLZ9mYRVJJhPbbkzweHlhuPmDJD27v2LZU=;
+	s=arc-20240116; t=1720273187; c=relaxed/simple;
+	bh=jqIO9PtF3Kc1L3VYD56gt6cNcLUYYBsDSS5jH3CuGo4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rZo0tuGuWtvUHovNjdgxJD5uqMz0pW2rdEhWl7uExyS8AEnfMJ4dciolEFSWXurRWsJlzaeu/Gai6bSH0aStRHOEgqi+xOV7IG8F3rWBX8CzxZcu7Jfg1QZ0ayhbgphOp0r328DS5c6GvA5WDS9fmWyhOt5IYHQZXMKzk6fdYQQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IIbfvqXf; arc=none smtp.client-ip=209.85.218.52
+	 In-Reply-To:Content-Type; b=js9QRdHa20pBt2G4Ggsn2Tc7NKS/W6YBrxN6zLXjxd/sjuyH4ZAh5/b0g4fGxNq8dljDsXk+UA4fVZ3g9UO7AaBk6wXptiL9yXH8E3912XcY+LmtdS6bwesvXrsv4zTVzCayzqaBVWQCPScTl3XCHEZq2CpEU9Ei0PitQhweCOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oUxT4UJy; arc=none smtp.client-ip=209.85.208.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IIbfvqXf"
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a77e5929033so32883366b.0
-        for <linux-clk@vger.kernel.org>; Sat, 06 Jul 2024 05:25:43 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oUxT4UJy"
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-57cb9a370ddso3229916a12.1
+        for <linux-clk@vger.kernel.org>; Sat, 06 Jul 2024 06:39:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720268742; x=1720873542; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1720273184; x=1720877984; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=GzVcGfV+V/qu8k2Xj2lgZCFxGBSRmb7rl1SXjaVtCD8=;
-        b=IIbfvqXfUlPCVyHb+vb3Lrwh1pgXHI0EMD5FC4NXGiT4wrej0cTo9GAGYsBNNXI2Ax
-         EVIyxQ4O5Z+cDJ3tbbMO8cgD6dLNepBr/fub21ZybbJuGEXYyXIj6xmsJuef0Akxq1LX
-         MLhH1yGlD+HBZT1BImApEO+N5UeurOz8C97HzQ9gRqG66/N1jXXIyXHnJWkIn+ow/xrx
-         iobHWe6RSHRNHZ9IhJHsnoiDlHuNTu4XRzN5vLvNj+zQaKNkj1q6e+W5hiVatKRGGTxV
-         R1P/vITlryhwe0SquRC0Fmg8D6mCs6OVt0D0K0z1+HfP7kXjtVN+txb01zY4bqZlA8vI
-         sOfQ==
+        bh=aLaGeABuo22IKbCJ19S9kGM6QaZsE7VgK9tDKh+bfiY=;
+        b=oUxT4UJyxbWqgA4xqi8eQNqdq48gNwemhC+4aVFaK+/XO0AThTg55SRhj37yZvmF6C
+         B6M/vx8JDaYYhc0lmhHRDvllO5MFQogcXd3oD7y7LNB9vZoPEbhYWTBb+yynYvsfPsz7
+         k3ZHEgFwvpbM4coz1ctBRQONbEWU+G37jf/EnkpApT04a7VSzZkj43z3BLs02NTQbmNI
+         Fe5NqB6lRloe9CZuRq4sr1nHwXr2y705PSVLj9aFfi3m/8RoDnnHvIHTUqsLuZbEYSJA
+         xy63TKo4TUpD5qzEnVe6i9Nkr3LvzcYl3cYiZSiUwUcvK5TanBPf4WLStsGYoXs2UzKx
+         xbMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720268742; x=1720873542;
+        d=1e100.net; s=20230601; t=1720273184; x=1720877984;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=GzVcGfV+V/qu8k2Xj2lgZCFxGBSRmb7rl1SXjaVtCD8=;
-        b=UU4Ufp/h7Jhg3TaFL26KwH1A2ozATbj9Ng/e9LtTcIts2260RRd3uEhT4VRsCcMW2u
-         Ehi6tPPcRL4C/+UWqYxYaCACbfse9Q1w83z/N/0aS79XMGrQAnjYPuD2jU2f5HZl6Uri
-         VA49Ww1uXtiQA4J/fVjcgL1gRob7o8EysMd8on/KNKRC8N2OcnTVAXXO6lRwDKMQPfHt
-         UB11WSsjcwIOkIevQ9xSC5lJVNEzxJ+fpULTZakbUDHqOwsJg3hw816Wbk5Ufye141qD
-         GP5bqDtP9VUmS3jjfMT73skkSPXhteanqCXb6C+wnXzam2rti+rhW0qAFpEDX4bFQX+G
-         qy6g==
-X-Forwarded-Encrypted: i=1; AJvYcCXNMiLSUUYzgp6P/BY6SqEn/BJ5XTi9kL3BL6YeQCzMscpq6ZxOJfNJfOnuWwivylV2/QrjC7OtTLPlDsQkerUVi5Djf+xCez1k
-X-Gm-Message-State: AOJu0YwfzsvTtuit87/v1Yu2HsUzS0G40PS8lKf1cY4ulKjRiPV5bYsA
-	XqacDDgshhU3h6FyzldA2sVFVeoNPw+s++6im3QkdbU2Zo4Jgc8Dokt0D6P0ltk=
-X-Google-Smtp-Source: AGHT+IFesui1g3h3kXHDuok+m5oigNedPmIZKPMtcnYCh6HpEOC2GIsFKqa6U0WqyvXH/75yivsacA==
-X-Received: by 2002:a17:906:6b19:b0:a77:c9cc:f96f with SMTP id a640c23a62f3a-a77c9ccfaaamr310088666b.7.1720268741610;
-        Sat, 06 Jul 2024 05:25:41 -0700 (PDT)
+        bh=aLaGeABuo22IKbCJ19S9kGM6QaZsE7VgK9tDKh+bfiY=;
+        b=RKAHd5gvFnAYLkVIdPQ/0V+TLeEdfgj8u8xY7bV5rM1VG0q1xmoBpEt1p/XS1WHqsn
+         AhmQow8MOzcu3vYrKKJL7CAxzFYcRYivhKBWirQ8mT93D/3ThiD3K1rqjjhFchYs3uCa
+         Zqej1EQM6iKtyIzzDih37B4Xa0dbq3T4diXN5poYKkRMsVpBYH8ypcj29a449rap/cCe
+         m9Hxt0kvhLp/uQme5UIlKYI6IFZTI3YxMA04UgA5RtSOqbSrOnWq+WeuL1XH9Yn2rb+3
+         HQGKuAfwaFsz9ysSbkau/SMwCutxSMPX3HOGZSCqmLElkVUJ3spCB2RtVTQj/nJDluXz
+         cCjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVl+Tz5B6aCiKQdsvEb4Egf1nxMItCUB5IfjACUp9pT9TRFWGZhig622Pi9mv4M+/PTyPhBMnPWqg0roz9LrkQVwUpnLdoaF8NH
+X-Gm-Message-State: AOJu0YzREzHaoiODb/bCBvwbY8RSy1f5b7D/lG8fS3YMqwUGepVUZarP
+	X4Mi4ysfanqLz0r0ge/1a/nX6ccDjHfy2s+LtNAvgmQPBU+zgQkVdSMCZxk37yk=
+X-Google-Smtp-Source: AGHT+IFAoehJjp/+4dx7+u2sPKkChGIxTTTUsqzPOJ2ThVjyIiUITZKYrBakHLo9QU6SlWhvQYmPeg==
+X-Received: by 2002:a17:906:7704:b0:a77:c96b:a113 with SMTP id a640c23a62f3a-a77c96ba1b5mr309327266b.60.1720273183969;
+        Sat, 06 Jul 2024 06:39:43 -0700 (PDT)
 Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a77c25b6b47sm186760066b.199.2024.07.06.05.25.39
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a72ab0900f1sm763063066b.168.2024.07.06.06.39.41
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 06 Jul 2024 05:25:40 -0700 (PDT)
-Message-ID: <1d8e3779-aebf-4f27-bd54-58007b80192a@linaro.org>
-Date: Sat, 6 Jul 2024 14:25:37 +0200
+        Sat, 06 Jul 2024 06:39:43 -0700 (PDT)
+Message-ID: <eb71f14d-bf27-4f23-870e-7dfa01e44e80@linaro.org>
+Date: Sat, 6 Jul 2024 15:39:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -62,24 +62,22 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/8] clk: qcom: Add support for Display clock Controllers
- on SA8775P
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Taniya Das <quic_tdas@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
+Subject: Re: [PATCH v2 2/6] clk: qcom: clk-alpha-pll: Update set_rate for
+ Zonda PLL
+To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- quic_jkona@quicinc.com, quic_imrashai@quicinc.com
-References: <20240612-sa8775p-mm-clock-controllers-v1-0-db295a846ee7@quicinc.com>
- <20240612-sa8775p-mm-clock-controllers-v1-6-db295a846ee7@quicinc.com>
- <37bbd466-742a-4a23-b3f7-97f8da109608@linaro.org>
- <053e047b-7594-48bc-ac1b-2368c0c8f1cc@quicinc.com>
- <8b19c43e-6b13-4b09-9498-ee0b24749d3f@quicinc.com>
- <ucgeexs6impgapot4a55cwzqy5kv374jkyhylojvpmstm7cf42@r4i5toizchn2>
+ <sboyd@kernel.org>, Abhishek Sahu <absahu@codeaurora.org>,
+ Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Stephen Boyd <sboyd@codeaurora.org>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, Ajit Pandey <quic_ajipan@quicinc.com>,
+ Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
+ Jagadeesh Kona <quic_jkona@quicinc.com>
+References: <20240702-camcc-support-sm8150-v2-0-4baf54ec7333@quicinc.com>
+ <20240702-camcc-support-sm8150-v2-2-4baf54ec7333@quicinc.com>
 Content-Language: en-US
 From: Konrad Dybcio <konrad.dybcio@linaro.org>
 Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
@@ -117,32 +115,33 @@ Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
  nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
  izWDgYvmBE8=
-In-Reply-To: <ucgeexs6impgapot4a55cwzqy5kv374jkyhylojvpmstm7cf42@r4i5toizchn2>
+In-Reply-To: <20240702-camcc-support-sm8150-v2-2-4baf54ec7333@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 5.07.2024 5:04 PM, Dmitry Baryshkov wrote:
-> On Wed, Jul 03, 2024 at 11:17:01PM GMT, Taniya Das wrote:
->>
->>
->> On 6/21/2024 10:03 AM, Taniya Das wrote:
->>>> Please merge this into one to save on boilerplate, take a look
->>>> at dispcc-sc8280xp.c
->>>>
->>>
->>> I did take a look at the dispcc for SC8280XP before posting the series,
->>> but it kind of looked tricky to add fixes for a particular dispcc.
->>> Debugging could also be difficult in my opinion.
->>> Though I understand that we are trying to optimize by re-using few
->>> common structures/probe but from clocks side they are all redefined.
->>> That was the reason to keep them separate.
->>
->> Konrad, are you good with the proposal to keep the two instance of display
->> clock controllers as separate drivers? As I looking to post
->> the next patch series, please let me know your comments.
+On 2.07.2024 5:50 PM, Satya Priya Kakitapalli wrote:
+> The Zonda PLL has a 16 bit signed alpha and in the cases where the alpha
+> value is greater than 0.5, the L value needs to be adjusted accordingly.
+> Thus update the logic for the same.
 > 
-> I'd say, continue with the separate drivers.
+> Also, fix zonda set_rate failure when PLL is disabled. Currently,
+> clk_zonda_pll_set_rate polls for the PLL to lock even if the PLL is
+> disabled. However, if the PLL is disabled then LOCK_DET will never
+> assert and we'll return an error. There is no reason to poll LOCK_DET
+> if the PLL is already disabled, so skip polling in this case.
+> 
+> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+> ---
 
-+1
+[...]
+
+> @@ -2077,9 +2089,15 @@ static int clk_zonda_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+>  	if (ret < 0)
+>  		return ret;
+>  
+> +	if (a & BIT(15))
+> +		zonda_pll_adjust_l_val(rate, prate, &l);
+
+A random check for a seemingly random, undocumented bit only confuses the reader
 
 Konrad
