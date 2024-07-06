@@ -1,314 +1,148 @@
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE5B744375
-	for <linux-clk@vger.kernel.org>; Sat,  6 Jul 2024 08:04:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6C8D77102
+	for <linux-clk@vger.kernel.org>; Sat,  6 Jul 2024 12:25:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720253081; cv=none; b=Z8EqU4pt0Ed16hzI9zaTUG/Zob+cWaMmN3OydwXDyd1l7hcveY+Gs8V9OOB6a2w0BfG1bzvN9E7w8SdtK36Y8dBLKw7tsONhSOLYRwRtIaZgNXSiWCWHwqqx4KHS6LZ/Ct8KqAa8GVfKZRpuovy46hUNIVjEK4rn0qJUphHJDo8=
+	t=1720268745; cv=none; b=k1bwYZ6UrW6+60cJvXDFbBzX7Nkx5/am/2WWI8DPklZ0uvZojUj9WICvtZBC30w1Y/8lUSdxtbjjdW1izXEkhEg+2q3KQA8bVU+1fgis00W8oZgFmytT7vFT6jinej5b78N2IFvDmTuCUMZDBRuQFJAbrnyD4I6gIXFTHXfRFZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720253081; c=relaxed/simple;
-	bh=+TkIwPMMjD/RrA4ELTry70wUnpctTbr1IyBFul6q+0A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rtkl4cVOq7gfxZGPZt6vYkq/Sj6vYoXid/56cU7lZCx2H16xwgF5hQ8DtxtKBfq+j+owFLw3IKGbdsRnqjrd5cs0t08YaIPT2/83Ttm9cnzPyooQU4z/byqQ4cXloQRUZk2rjIqxkijyJP9EPsw3I/ufTLxKmy6IUdqjBWr9jf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DxAMLXjj; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+	s=arc-20240116; t=1720268745; c=relaxed/simple;
+	bh=DFZp1w3U1zLZ9mYRVJJhPbbkzweHlhuPmDJD27v2LZU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rZo0tuGuWtvUHovNjdgxJD5uqMz0pW2rdEhWl7uExyS8AEnfMJ4dciolEFSWXurRWsJlzaeu/Gai6bSH0aStRHOEgqi+xOV7IG8F3rWBX8CzxZcu7Jfg1QZ0ayhbgphOp0r328DS5c6GvA5WDS9fmWyhOt5IYHQZXMKzk6fdYQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IIbfvqXf; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DxAMLXjj"
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-447dabd9562so288241cf.0
-        for <linux-clk@vger.kernel.org>; Sat, 06 Jul 2024 01:04:38 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IIbfvqXf"
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a77e5929033so32883366b.0
+        for <linux-clk@vger.kernel.org>; Sat, 06 Jul 2024 05:25:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1720253077; x=1720857877; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=8+nVEDKQt1NixutvHnIH49Y9R1mdpCFFD5Q2M6AUrkg=;
-        b=DxAMLXjjKjgQNpML1Wm8iNWF+sqYTCsgy7JDhd0GISHFmSiQX3HbDWv+ox/6jL5bVo
-         dimYZ7GOPZv3fEqlnnomyZuqrehgs8Q22OB+vlNJM5De9SBp4KbLG83yUzCJXotd1m7n
-         fRvp9nblTMEvDe34q8OTacFt45WP0hf5uRBHZyX2lmNIZcxUHgDEOoWXFatyESbog/nF
-         +OkVGOb2Fmo38CSMHh2gW5ZoiRCVc7CiybwWbyGXGWYvXUfZy3cjwsnzSneaye766k8m
-         fUq/MMdU7MbxdNX/J51mFvXAhYk+EMfxkj9MLLcjXOvXnm9S0lJhGQI+atF4WUpbg4i4
-         NAFA==
+        d=linaro.org; s=google; t=1720268742; x=1720873542; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=GzVcGfV+V/qu8k2Xj2lgZCFxGBSRmb7rl1SXjaVtCD8=;
+        b=IIbfvqXfUlPCVyHb+vb3Lrwh1pgXHI0EMD5FC4NXGiT4wrej0cTo9GAGYsBNNXI2Ax
+         EVIyxQ4O5Z+cDJ3tbbMO8cgD6dLNepBr/fub21ZybbJuGEXYyXIj6xmsJuef0Akxq1LX
+         MLhH1yGlD+HBZT1BImApEO+N5UeurOz8C97HzQ9gRqG66/N1jXXIyXHnJWkIn+ow/xrx
+         iobHWe6RSHRNHZ9IhJHsnoiDlHuNTu4XRzN5vLvNj+zQaKNkj1q6e+W5hiVatKRGGTxV
+         R1P/vITlryhwe0SquRC0Fmg8D6mCs6OVt0D0K0z1+HfP7kXjtVN+txb01zY4bqZlA8vI
+         sOfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720253077; x=1720857877;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8+nVEDKQt1NixutvHnIH49Y9R1mdpCFFD5Q2M6AUrkg=;
-        b=EDCJBnLcLzrchyAFRo7ri2tpCClUb8smmRNq3lmT9txievjW+3cgw2K5IVG+Qyao1h
-         URLl67/oDLEwQHsuKgA17DlFCjzkHJcuub0FBPglFC6/L6CWCPDdwK51fQQVPvbz/OHg
-         EShtrCbhqHQPXi87fqmXevNjAy99DFelH0MLH1l5Sbs8JYaysVlhtlZ8kutTxmYWx+ro
-         uy6Th/6Gel9ZLnR64gzaVhbqk/FB4zBn7EMhQC8iUorxEm5C8DgOhzpH/4z6ptP7Stub
-         1wHCHfLz6nsXvysHwRUbWJ1yuDOD+RY35p8ZwZobh/s7U2Dwnk5y15chFnXpdjKiGMap
-         JZxA==
-X-Forwarded-Encrypted: i=1; AJvYcCU5101V9u/W0pHP+gZYx3rJ+GGde+Qk7u0WYVONbgHii8VubqTSEuzSB0L2Uxwic63aXTFwMp67Au4jqLa4mrch+U6po/NLGBL+
-X-Gm-Message-State: AOJu0Yz2C/qE+Pn16zLLC5IzKPyEgL/QPL4F7E+GjnjPGbx+4OSGIz6f
-	Fpi1vSZg8sBvKMJEU70Hrg7g1XmqlmbqEk3brxmCoahOUAl7Hi1IK6x0HfsHwA3wTpacIwcd/+B
-	RkvSG03nAaU9kdA1/kKyV1vJp1JfuTkxMbWlAHHP3BvgBxvs82Rae/bFfo37HMovRm1Rz9t0I6w
-	df84Bj+1/bPD4WHpcUixWhmw==
-X-Google-Smtp-Source: AGHT+IFk6KCbaDsXl2afarYxBOGDDy2MP5xRWVqZtzvoHFwPnXGVZOKcYa+mrdDolqM61xnDbL+qAWuXcUO1eaRdBVI=
-X-Received: by 2002:a05:622a:8098:b0:446:693e:4d63 with SMTP id
- d75a77b69052e-447c8fbb043mr5711591cf.16.1720253077363; Sat, 06 Jul 2024
- 01:04:37 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720268742; x=1720873542;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GzVcGfV+V/qu8k2Xj2lgZCFxGBSRmb7rl1SXjaVtCD8=;
+        b=UU4Ufp/h7Jhg3TaFL26KwH1A2ozATbj9Ng/e9LtTcIts2260RRd3uEhT4VRsCcMW2u
+         Ehi6tPPcRL4C/+UWqYxYaCACbfse9Q1w83z/N/0aS79XMGrQAnjYPuD2jU2f5HZl6Uri
+         VA49Ww1uXtiQA4J/fVjcgL1gRob7o8EysMd8on/KNKRC8N2OcnTVAXXO6lRwDKMQPfHt
+         UB11WSsjcwIOkIevQ9xSC5lJVNEzxJ+fpULTZakbUDHqOwsJg3hw816Wbk5Ufye141qD
+         GP5bqDtP9VUmS3jjfMT73skkSPXhteanqCXb6C+wnXzam2rti+rhW0qAFpEDX4bFQX+G
+         qy6g==
+X-Forwarded-Encrypted: i=1; AJvYcCXNMiLSUUYzgp6P/BY6SqEn/BJ5XTi9kL3BL6YeQCzMscpq6ZxOJfNJfOnuWwivylV2/QrjC7OtTLPlDsQkerUVi5Djf+xCez1k
+X-Gm-Message-State: AOJu0YwfzsvTtuit87/v1Yu2HsUzS0G40PS8lKf1cY4ulKjRiPV5bYsA
+	XqacDDgshhU3h6FyzldA2sVFVeoNPw+s++6im3QkdbU2Zo4Jgc8Dokt0D6P0ltk=
+X-Google-Smtp-Source: AGHT+IFesui1g3h3kXHDuok+m5oigNedPmIZKPMtcnYCh6HpEOC2GIsFKqa6U0WqyvXH/75yivsacA==
+X-Received: by 2002:a17:906:6b19:b0:a77:c9cc:f96f with SMTP id a640c23a62f3a-a77c9ccfaaamr310088666b.7.1720268741610;
+        Sat, 06 Jul 2024 05:25:41 -0700 (PDT)
+Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a77c25b6b47sm186760066b.199.2024.07.06.05.25.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 06 Jul 2024 05:25:40 -0700 (PDT)
+Message-ID: <1d8e3779-aebf-4f27-bd54-58007b80192a@linaro.org>
+Date: Sat, 6 Jul 2024 14:25:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240706045454.215701-1-sboyd@kernel.org> <20240706045454.215701-6-sboyd@kernel.org>
-In-Reply-To: <20240706045454.215701-6-sboyd@kernel.org>
-From: David Gow <davidgow@google.com>
-Date: Sat, 6 Jul 2024 16:04:25 +0800
-Message-ID: <CABVgOSk93mNY4diXppGWJZgWJhrHpGqECBXNROWkRCaZjFi2tw@mail.gmail.com>
-Subject: Re: [PATCH v6 5/8] platform: Add test managed platform_device/driver APIs
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, patches@lists.linux.dev, 
-	kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org, 
-	devicetree@vger.kernel.org, Brendan Higgins <brendan.higgins@linux.dev>, 
-	Rae Moar <rmoar@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Saravana Kannan <saravanak@google.com>, Daniel Latypov <dlatypov@google.com>, 
-	Christian Marangi <ansuelsmth@gmail.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Maxime Ripard <maxime@cerno.tech>
-X-ccpol: medium
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000a2a133061c8fa162"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/8] clk: qcom: Add support for Display clock Controllers
+ on SA8775P
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Taniya Das <quic_tdas@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ quic_jkona@quicinc.com, quic_imrashai@quicinc.com
+References: <20240612-sa8775p-mm-clock-controllers-v1-0-db295a846ee7@quicinc.com>
+ <20240612-sa8775p-mm-clock-controllers-v1-6-db295a846ee7@quicinc.com>
+ <37bbd466-742a-4a23-b3f7-97f8da109608@linaro.org>
+ <053e047b-7594-48bc-ac1b-2368c0c8f1cc@quicinc.com>
+ <8b19c43e-6b13-4b09-9498-ee0b24749d3f@quicinc.com>
+ <ucgeexs6impgapot4a55cwzqy5kv374jkyhylojvpmstm7cf42@r4i5toizchn2>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <ucgeexs6impgapot4a55cwzqy5kv374jkyhylojvpmstm7cf42@r4i5toizchn2>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
---000000000000a2a133061c8fa162
-Content-Type: text/plain; charset="UTF-8"
+On 5.07.2024 5:04 PM, Dmitry Baryshkov wrote:
+> On Wed, Jul 03, 2024 at 11:17:01PM GMT, Taniya Das wrote:
+>>
+>>
+>> On 6/21/2024 10:03 AM, Taniya Das wrote:
+>>>> Please merge this into one to save on boilerplate, take a look
+>>>> at dispcc-sc8280xp.c
+>>>>
+>>>
+>>> I did take a look at the dispcc for SC8280XP before posting the series,
+>>> but it kind of looked tricky to add fixes for a particular dispcc.
+>>> Debugging could also be difficult in my opinion.
+>>> Though I understand that we are trying to optimize by re-using few
+>>> common structures/probe but from clocks side they are all redefined.
+>>> That was the reason to keep them separate.
+>>
+>> Konrad, are you good with the proposal to keep the two instance of display
+>> clock controllers as separate drivers? As I looking to post
+>> the next patch series, please let me know your comments.
+> 
+> I'd say, continue with the separate drivers.
 
-On Sat, 6 Jul 2024 at 12:55, Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Introduce KUnit resource wrappers around platform_driver_register(),
-> platform_device_alloc(), and platform_device_add() so that test authors
-> can register platform drivers/devices from their tests and have the
-> drivers/devices automatically be unregistered when the test is done.
->
-> This makes test setup code simpler when a platform driver or platform
-> device is needed. Add a few test cases at the same time to make sure the
-> APIs work as intended.
->
-> Cc: Brendan Higgins <brendan.higgins@linux.dev>
-> Reviewed-by: David Gow <davidgow@google.com>
-> Cc: Rae Moar <rmoar@google.com>
-> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: "Rafael J. Wysocki" <rafael@kernel.org>
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-> ---
++1
 
-Hmm... this is failing under KASAN for me. I'll take a closer look
-next week, but in case there's anything super-obvious, here's the
-report:
-
-> [15:54:33] BUG: KASAN: slab-use-after-free in kobject_put+0x224/0x280
-> [15:54:33] Read of size 1 at addr ffff888002ca484c by task kunit_try_catch/226
-> [15:54:33]
-> [15:54:33] CPU: 0 PID: 226 Comm: kunit_try_catch Tainted: G      D          N 6.10.0-rc1-g21fbb4cfd3cc #25
-> [15:54:33] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-> [15:54:33] Call Trace:
-> [15:54:33]  <TASK>
-> [15:54:33]  dump_stack_lvl+0x3f/0x50
-> [15:54:33]  print_report+0xcd/0x620
-> [15:54:33]  ? kobject_put+0x224/0x280
-> [15:54:33]  kasan_report+0xde/0x110
-> [15:54:33]  ? kobject_put+0x224/0x280
-> [15:54:33]  kobject_put+0x224/0x280
-> [15:54:33]  kunit_remove_resource+0x12c/0x1d0
-> [15:54:33]  kunit_cleanup+0x8d/0x130
-> [15:54:33]  ? __pfx_kunit_try_run_case_cleanup+0x10/0x10
-> [15:54:33]  ? __pfx_kunit_generic_run_threadfn_adapter+0x10/0x10
-> [15:54:33]  kunit_generic_run_threadfn_adapter+0x7b/0xe0
-> [15:54:33]  kthread+0x289/0x360
-> [15:54:33]  ? __pfx_kthread+0x10/0x10
-> [15:54:33]  ret_from_fork+0x2f/0x70
-> [15:54:33]  ? __pfx_kthread+0x10/0x10
-> [15:54:33]  ret_from_fork_asm+0x19/0x30
-> [15:54:33]  </TASK>
-> [15:54:33]
-> [15:54:33] Allocated by task 225:
-> [15:54:33]  kasan_save_stack+0x33/0x60
-> [15:54:33]  kasan_save_track+0x14/0x30
-> [15:54:33]  __kasan_kmalloc+0x8f/0xa0
-> [15:54:33]  platform_device_alloc+0x26/0x200
-> [15:54:33]  kunit_platform_device_alloc_init+0x52/0xc0
-> [15:54:33]  __kunit_add_resource+0x98/0x1e0
-> [15:54:33]  kunit_platform_device_alloc+0xe7/0x170
-> [15:54:33]  kunit_platform_device_add_test+0x91/0x560
-> [15:54:33]  kunit_try_run_case+0x1ad/0x490
-> [15:54:33]  kunit_generic_run_threadfn_adapter+0x7b/0xe0
-> [15:54:33]  kthread+0x289/0x360
-> [15:54:33]  ret_from_fork+0x2f/0x70
-> [15:54:33]  ret_from_fork_asm+0x19/0x30
-> [15:54:33]
-> [15:54:33] Freed by task 226:
-> [15:54:33]  kasan_save_stack+0x33/0x60
-> [15:54:33]  kasan_save_track+0x14/0x30
-> [15:54:33]  kasan_save_free_info+0x3b/0x60
-> [15:54:33]  __kasan_slab_free+0x101/0x160
-> [15:54:33]  kfree+0x94/0x190
-> [15:54:33]  device_release+0x9a/0x210
-> [15:54:33]  kobject_put+0x150/0x280
-> [15:54:33]  kunit_remove_resource+0x12c/0x1d0
-> [15:54:33]  kunit_cleanup+0x8d/0x130
-> [15:54:33]  kunit_generic_run_threadfn_adapter+0x7b/0xe0
-> [15:54:33]  kthread+0x289/0x360
-> [15:54:33]  ret_from_fork+0x2f/0x70
-> [15:54:33]  ret_from_fork_asm+0x19/0x30
-> [15:54:33]
-> [15:54:33] The buggy address belongs to the object at ffff888002ca4800
-> [15:54:33]  which belongs to the cache kmalloc-1k of size 1024
-> [15:54:33] The buggy address is located 76 bytes inside of
-> [15:54:33]  freed 1024-byte region [ffff888002ca4800, ffff888002ca4c00)
-> [15:54:33]
-> [15:54:33] The buggy address belongs to the physical page:
-> [15:54:33] page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x2ca4
-> [15:54:33] head: order:2 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-> [15:54:33] flags: 0x4000000000000040(head|zone=1)
-> [15:54:33] page_type: 0xffffefff(slab)
-> [15:54:33] raw: 4000000000000040 ffff888001041b00 dead000000000122 0000000000000000
-> [15:54:33] raw: 0000000000000000 0000000080080008 00000001ffffefff 0000000000000000
-> [15:54:33] head: 4000000000000040 ffff888001041b00 dead000000000122 0000000000000000
-> [15:54:33] head: 0000000000000000 0000000080080008 00000001ffffefff 0000000000000000
-> [15:54:33] head: 4000000000000002 ffffea00000b2901 ffffffffffffffff 0000000000000000
-> [15:54:33] head: 0000000000000004 0000000000000000 00000000ffffffff 0000000000000000
-> [15:54:33] page dumped because: kasan: bad access detected
-> [15:54:33]
-> [15:54:33] Memory state around the buggy address:
-> [15:54:33]  ffff888002ca4700: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> [15:54:33]  ffff888002ca4780: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> [15:54:33] >ffff888002ca4800: fa fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> [15:54:33]                                               ^
-> [15:54:33]  ffff888002ca4880: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> [15:54:33]  ffff888002ca4900: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> [15:54:33] ==================================================================
-> [15:54:33] ------------[ cut here ]------------
-> [15:54:33] refcount_t: underflow; use-after-free.
-> [15:54:33] WARNING: CPU: 0 PID: 226 at lib/refcount.c:28 refcount_warn_saturate+0xf2/0x150
-> [15:54:33] CPU: 0 PID: 226 Comm: kunit_try_catch Tainted: G    B D          N 6.10.0-rc1-g21fbb4cfd3cc #25
-> [15:54:33] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-> [15:54:33] RIP: 0010:refcount_warn_saturate+0xf2/0x150
-> [15:54:33] Code: 3b aa cb 00 01 e8 3e c1 b0 ff 0f 0b eb 91 80 3d 2a aa cb 00 00 75 88 48 c7 c7 40 f3 88 ad c6 05 1a aa cb 00 01 e8 1e c1 b0 ff <0f> 0b e9 6e ff ff ff 80 3d 0a aa cb 00 00 0f 85 61 ff ff ff 48 c7
-> [15:54:33] RSP: 0018:ffff88800357fe58 EFLAGS: 00000286
-> [15:54:33] RAX: 0000000000000000 RBX: ffff888002ca4848 RCX: 1ffffffff5b920d4
-> [15:54:33] RDX: 0000000000000000 RSI: 0000000000000004 RDI: ffffffffadc906a0
-> [15:54:33] RBP: 0000000000000003 R08: 0000000000000000 R09: fffffbfff5b920d4
-> [15:54:33] R10: 0000000000000003 R11: 0000000000000001 R12: ffff88800111fb28
-> [15:54:33] R13: ffff88800111fb28 R14: ffff88800111fb28 R15: 0000000000000286
-> [15:54:33] FS:  0000000000000000(0000) GS:ffffffffadc6f000(0000) knlGS:0000000000000000
-> [15:54:33] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-> [15:54:33] CR2: dffffc0000000000 CR3: 000000000a25a000 CR4: 00000000000006f0
-> [15:54:33] Call Trace:
-> [15:54:33]  <TASK>
-> [15:54:33]  ? __warn+0xb0/0x170
-> [15:54:33]  ? refcount_warn_saturate+0xf2/0x150
-> [15:54:33]  ? report_bug+0x298/0x350
-> [15:54:33]  ? handle_bug+0x6d/0x90
-> [15:54:33]  ? exc_invalid_op+0x17/0x40
-> [15:54:33]  ? asm_exc_invalid_op+0x1a/0x20
-> [15:54:33]  ? refcount_warn_saturate+0xf2/0x150
-> [15:54:33]  ? refcount_warn_saturate+0xf2/0x150
-> [15:54:33]  kunit_remove_resource+0x12c/0x1d0
-> [15:54:33]  kunit_cleanup+0x8d/0x130
-> [15:54:33]  ? __pfx_kunit_try_run_case_cleanup+0x10/0x10
-> [15:54:33]  ? __pfx_kunit_generic_run_threadfn_adapter+0x10/0x10
-> [15:54:33]  kunit_generic_run_threadfn_adapter+0x7b/0xe0
-> [15:54:33]  kthread+0x289/0x360
-> [15:54:33]  ? __pfx_kthread+0x10/0x10
-> [15:54:33]  ret_from_fork+0x2f/0x70
-> [15:54:33]  ? __pfx_kthread+0x10/0x10
-> [15:54:33]  ret_from_fork_asm+0x19/0x30
-> [15:54:33]  </TASK>
-> [15:54:33] ---[ end trace 0000000000000000 ]---
-> [15:54:33] [FAILED] kunit_platform_device_add_test
-
-It repros here with:
-./tools/testing/kunit/kunit.py run --arch x86_64 --kconfig_add
-CONFIG_KASAN=y --kconfig_add CONFIG_KASAN_VMALLOC=y
-kunit_platform_driver
-
-Seems to otherwise pass on all of my default configs/archs.
-
-Cheers,
--- David
-
---000000000000a2a133061c8fa162
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
-
-MIIPqgYJKoZIhvcNAQcCoIIPmzCCD5cCAQExDzANBglghkgBZQMEAgEFADALBgkqhkiG9w0BBwGg
-gg0EMIIEtjCCA56gAwIBAgIQeAMYYHb81ngUVR0WyMTzqzANBgkqhkiG9w0BAQsFADBMMSAwHgYD
-VQQLExdHbG9iYWxTaWduIFJvb3QgQ0EgLSBSMzETMBEGA1UEChMKR2xvYmFsU2lnbjETMBEGA1UE
-AxMKR2xvYmFsU2lnbjAeFw0yMDA3MjgwMDAwMDBaFw0yOTAzMTgwMDAwMDBaMFQxCzAJBgNVBAYT
-AkJFMRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFz
-IFIzIFNNSU1FIENBIDIwMjAwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCvLe9xPU9W
-dpiHLAvX7kFnaFZPuJLey7LYaMO8P/xSngB9IN73mVc7YiLov12Fekdtn5kL8PjmDBEvTYmWsuQS
-6VBo3vdlqqXZ0M9eMkjcKqijrmDRleudEoPDzTumwQ18VB/3I+vbN039HIaRQ5x+NHGiPHVfk6Rx
-c6KAbYceyeqqfuJEcq23vhTdium/Bf5hHqYUhuJwnBQ+dAUcFndUKMJrth6lHeoifkbw2bv81zxJ
-I9cvIy516+oUekqiSFGfzAqByv41OrgLV4fLGCDH3yRh1tj7EtV3l2TngqtrDLUs5R+sWIItPa/4
-AJXB1Q3nGNl2tNjVpcSn0uJ7aFPbAgMBAAGjggGKMIIBhjAOBgNVHQ8BAf8EBAMCAYYwHQYDVR0l
-BBYwFAYIKwYBBQUHAwIGCCsGAQUFBwMEMBIGA1UdEwEB/wQIMAYBAf8CAQAwHQYDVR0OBBYEFHzM
-CmjXouseLHIb0c1dlW+N+/JjMB8GA1UdIwQYMBaAFI/wS3+oLkUkrk1Q+mOai97i3Ru8MHsGCCsG
-AQUFBwEBBG8wbTAuBggrBgEFBQcwAYYiaHR0cDovL29jc3AyLmdsb2JhbHNpZ24uY29tL3Jvb3Ry
-MzA7BggrBgEFBQcwAoYvaHR0cDovL3NlY3VyZS5nbG9iYWxzaWduLmNvbS9jYWNlcnQvcm9vdC1y
-My5jcnQwNgYDVR0fBC8wLTAroCmgJ4YlaHR0cDovL2NybC5nbG9iYWxzaWduLmNvbS9yb290LXIz
-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
-JEfDtvHU6wy3MSBE3/TrMFcGA1UdIARQME4wCQYHZ4EMAQUBATBBBgkrBgEEAaAyASgwNDAyBggr
-BgEFBQcCARYmaHR0cHM6Ly93d3cuZ2xvYmFsc2lnbi5jb20vcmVwb3NpdG9yeS8wDAYDVR0TAQH/
-BAIwADCBmgYIKwYBBQUHAQEEgY0wgYowPgYIKwYBBQUHMAGGMmh0dHA6Ly9vY3NwLmdsb2JhbHNp
-Z24uY29tL2NhL2dzYXRsYXNyM3NtaW1lY2EyMDIwMEgGCCsGAQUFBzAChjxodHRwOi8vc2VjdXJl
-Lmdsb2JhbHNpZ24uY29tL2NhY2VydC9nc2F0bGFzcjNzbWltZWNhMjAyMC5jcnQwHwYDVR0jBBgw
-FoAUfMwKaNei6x4schvRzV2Vb4378mMwRgYDVR0fBD8wPTA7oDmgN4Y1aHR0cDovL2NybC5nbG9i
-YWxzaWduLmNvbS9jYS9nc2F0bGFzcjNzbWltZWNhMjAyMC5jcmwwDQYJKoZIhvcNAQELBQADggEB
-AGwXYwvLVjByVooZ+uKzQVW2nnClCIizd0jfARuMRTPNAWI2uOBSKoR0T6XWsGsVvX1vBF0FA+a9
-DQOd8GYqzEaKOiHDIjq/o455YXkiKhPpxDSIM+7st/OZnlkRbgAyq4rAhAjbZlceKp+1vj0wIvCa
-4evQZvJNnJvTb4Vcnqf4Xg2Pl57hSUAgejWvIGAxfiAKG8Zk09I9DNd84hucIS2UIgoRGGWw3eIg
-GQs0EfiilyTgsH8iMOPqUJ1h4oX9z1FpaiJzfxcvcGG46SCieSFP0USs9aMl7GeERue37kBf14Pd
-kOYIfx09Pcv/N6lHV6kXlzG0xeUuV3RxtLtszQgxggJqMIICZgIBATBoMFQxCzAJBgNVBAYTAkJF
-MRkwFwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSowKAYDVQQDEyFHbG9iYWxTaWduIEF0bGFzIFIz
-IFNNSU1FIENBIDIwMjACEAFsPHWl8lqMEwx3lAnpufYwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZI
-hvcNAQkEMSIEILka1JbeM2Mf4vSSDr9UXvy4i9tS7HHhtQIvutSATvliMBgGCSqGSIb3DQEJAzEL
-BgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MDcwNjA4MDQzN1owaQYJKoZIhvcNAQkPMVww
-WjALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkq
-hkiG9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQAgt9dq
-OjVs0XuCkcPhux7Jk39YKUXa6QnEMiFfgA/LSl2NBfpS+5SKkcuP2fsInBvFTFf0hAo24jClwM8H
-Wm1UIYxf6knOcVG7aIXS7eJ1ubb3jQMvkoDnkGVQri2O+b6/WDlEnCzAarnVDTGdx7JyLIy/FZhZ
-hHYd36cJxup9PV3w6g+hNa2SsnEbBSSyLNV5wCtsrluUVxG+z0AeeVoN/mqjSv0kT8jLxnuI0dIP
-4XmdSqwcUuqHwK5xhvzabOpJ3eAHS1m5Mv9iCP95ldQFfxhdpHeSqGkG8xkbOpGY5jC9q67rIsQm
-XixEhiTsTOEFCTzJyxid500pVLP7L5GI
---000000000000a2a133061c8fa162--
+Konrad
