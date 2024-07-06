@@ -1,45 +1,55 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD8621459F6;
-	Sat,  6 Jul 2024 22:01:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D2014901B;
+	Sat,  6 Jul 2024 22:01:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720303302; cv=none; b=jU3mQ288z+4XRZKW9ppphfehEtYXvpesFCwKcvV73SwJ/re/oVwbVGkCGxlKpIgiWWdytSWWtIGSdboHWylXp4I2DisoBBsm1s2QYLzCgQgXRu+k9ozSAdUheRd1y8HZjGf6sYcG7BkLRTP9nWU5SNAO/ZsF/jY/PSD6/7e866c=
+	t=1720303306; cv=none; b=ll/M8QrhhdgKBa6mhvS9nYahrZbTZ+qkSZXW67XIc4g2Mp7N2gAW0AyD7EM8m0LhgSpMIqXn1wy0BbsJNKKcvmUSMgsqnZMytlMuYg2oDOvKMQSZcgB26XIFD2c5Lsw4E5somqWRYrBXVXls2gqQgasCzUbclgho7Fd9+uNRm5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720303302; c=relaxed/simple;
-	bh=k3NqKbmpti9Yr+egPC2rVOimUuKEGA/mgxNPyUyTfhU=;
+	s=arc-20240116; t=1720303306; c=relaxed/simple;
+	bh=ePJh3+Ne745NCmr6nKsuv12wrAyiUwTKvImIFCXbgPc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=h7537vvAa7kaTaB0DA673MbQkhoYvWOpwbPVucWOL22FA/IqnJFru+d0qNYbQBdamHnXsK5m9X4BzR/cOAuQ5tl0QaBRrLHfdcPBmPOoPQ4U1aUX9mIPuDu7bZprL4KxQjsDrAkYBsRhUYVSafJCcZDhz97JRvvdlxR5IUQfSvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TfLuSL72; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=WttBeRdZdumaem1HJzpcnZnNZXCQgd3dCx6hiM0VF58gQO4IGZsWxbgAfuvA8fM17XcGb0WFevtUxFpOfVTiL9J20NXfFqg571fYXmEoYqhYVOEZMI0hmS14hzxODpC6T6faKw1AKq1Pozm1lhAmjrpr6FEFUuub/mkD/IaD0zM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DPifaK64; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TfLuSL72"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CC295C4AF0B;
-	Sat,  6 Jul 2024 22:01:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DPifaK64"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51CAFC4AF0E;
+	Sat,  6 Jul 2024 22:01:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720303302;
-	bh=k3NqKbmpti9Yr+egPC2rVOimUuKEGA/mgxNPyUyTfhU=;
+	s=k20201202; t=1720303306;
+	bh=ePJh3+Ne745NCmr6nKsuv12wrAyiUwTKvImIFCXbgPc=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=TfLuSL7299Cb3u/c+vaKIsRhBakJSulCfQYRCdZ8lwNVS7GzZ1D1JhKLGfHFG1DIP
-	 3NfGKoI84O/jb06wyD+MAfMFyjs94lpsVCAmQdoy9azsw971c0Z+R7xQYUzzQSG3ua
-	 WDwjtPsc/+z7gZjS9iB/qxycATnVanN2ui/AQR/qfKyQRVeIvMMozj5915mN8J4UCb
-	 g4o4rS6t6nDsza520n2Gsy27uO7tKmZtiL9ikCDroZ+wQPh/3kISFavwTkKN5JRntl
-	 HU4d+BWW6KSk+2gjCkCZXbnAKsdUtgN+kYTdnubOBCvzWzlb1utXO6auqU+cRhzSDI
-	 IAtCdMOEPrbrg==
+	b=DPifaK64tLk0jiUlV16+PViEF76M3PXYUBnFQhFKeo77XSbejHPPi89WwmISizHOw
+	 WuBdL/s6J3szZl45Dk3YfuHwea4xTGp/I4sFhCzkfT2GKlbiTt11j3yVDT36XIniHm
+	 uK+XIB+IXJ1K2fRJEq0VR0L/9Lb9MX2iPAqUcNW0Mi/apOqjPaYAhJPLiyPWUOVmes
+	 3PQhiWUYawG2vO7zk6B5F6L9+yLS1JPSgdPQUglDL1DuZ8HMqCE9Lz6Ds6U6NgJxZK
+	 jWwBiYBhbFTGDgp+RUOixbpOBA3qCVeURPwpJf6zhAY12lUpKjPQa+QeihRMEwM2Si
+	 Gg2uhXOYvfdaA==
 From: Bjorn Andersson <andersson@kernel.org>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org,
-	ansuelsmth@gmail.com,
-	Chen Ni <nichen@iscas.ac.cn>
+To: Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Taniya Das <quic_tdas@quicinc.com>,
+	Jonathan Marek <jonathan@marek.ca>,
+	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
 Cc: linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: kpss-xcc: Return of_clk_add_hw_provider to transfer the error
-Date: Sat,  6 Jul 2024 17:01:25 -0500
-Message-ID: <172030328804.28909.10939951639905101858.b4-ty@kernel.org>
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Ajit Pandey <quic_ajipan@quicinc.com>,
+	Imran Shaik <quic_imrashai@quicinc.com>,
+	Jagadeesh Kona <quic_jkona@quicinc.com>
+Subject: Re: (subset) [PATCH v4 0/2] Add DT support for video clock controller on SM8150
+Date: Sat,  6 Jul 2024 17:01:28 -0500
+Message-ID: <172030328813.28909.17799012486731501951.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240704073606.1976936-1-nichen@iscas.ac.cn>
-References: <20240704073606.1976936-1-nichen@iscas.ac.cn>
+In-Reply-To: <20240509-videocc-sm8150-dt-node-v4-0-e9617f65e946@quicinc.com>
+References: <20240509-videocc-sm8150-dt-node-v4-0-e9617f65e946@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,16 +60,14 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Thu, 04 Jul 2024 15:36:06 +0800, Chen Ni wrote:
-> Return of_clk_add_hw_provider() in order to transfer the error if it
-> fails.
+On Thu, 09 May 2024 15:54:02 +0530, Satya Priya Kakitapalli wrote:
 > 
-> 
+
 
 Applied, thanks!
 
-[1/1] clk: qcom: kpss-xcc: Return of_clk_add_hw_provider to transfer the error
-      commit: 9db4585eca22fcd0422a94ac792f87dcbf74b643
+[2/2] arm64: dts: qcom: sm8150: Add video clock controller node
+      commit: cfe9685473add0ae76952f0eb54489c3547db335
 
 Best regards,
 -- 
