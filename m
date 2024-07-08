@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF7541D69E
-	for <linux-clk@vger.kernel.org>; Mon,  8 Jul 2024 18:37:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEC3714884B
+	for <linux-clk@vger.kernel.org>; Mon,  8 Jul 2024 18:56:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720463848; cv=none; b=nU3xak612nLt+RNwN060tnsSB7RvPeArYJ3HTjefgoX8PVR/6pj8XQjheqWX4e5SVKyIoV0/uukvjaBxV9x78M0Toz3EH7mP46KtyS2/VaCLT/pwBjfQlFj5TYveUxxwNfAb5o4aKJBU+qc7RmY+b/uST0VOuXb9Zfc5EuEymqI=
+	t=1720464996; cv=none; b=FwFA+CqNfhgXIF+Mh6LNP6WVYzafTj9yzAMWPc08eSUo/ml6WkqQaSCbEbVlGgG7CHUddg4cQs13uokmX07+kaZNEa8GdXH1aZbVL8Yji9BYUDZK6nFwWPb2Jo5n7MJMzbdevZoYXw9TM5MUbk7clD8Titgui80PsxIAL7DiMFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720463848; c=relaxed/simple;
-	bh=J9c9tO6yrHhrIS2lx9KzhXbGxf2R8uI8yEfQd2h2EzU=;
+	s=arc-20240116; t=1720464996; c=relaxed/simple;
+	bh=auiFw9awF6KFKSRYHtSJbuHVjTlY6sK/YO7BzeVw8ZA=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=jHDXVGg0MYdf3uznHGptJA96qmUJP/Cm38KSHOS4brof3wqWX0kkdTz3oj62Ji88qw2oMfDsbZsekNMvM2LUzXn7AwmpfEOTV1MF3D/NvlN3B9sX8gmxePTJijdr0buR8ZhucY3PaDfVjggeEu4viErpMBy1icy++63CZPTDUYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UOk3yiUF; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=n/wOMdEBdIO/9uNUIBfer/Gi5WaXXn1dLu2FJRQKGzlKXgvHXs9Xlud3mpTAnVyMZtWh2uqRAwUpG8C7t57lppnJ1LLuANsCaRuj+scNZm8OnLy6CvByp87/qiUh0kDzsBLJKNrY5jN2xKllbUzkQwS5vUc9onx+ehXr6Llk1OM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q2+KXTCF; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UOk3yiUF"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62436C116B1;
-	Mon,  8 Jul 2024 18:37:28 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q2+KXTCF"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EF69C116B1;
+	Mon,  8 Jul 2024 18:56:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720463848;
-	bh=J9c9tO6yrHhrIS2lx9KzhXbGxf2R8uI8yEfQd2h2EzU=;
+	s=k20201202; t=1720464996;
+	bh=auiFw9awF6KFKSRYHtSJbuHVjTlY6sK/YO7BzeVw8ZA=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=UOk3yiUFDwlSsRkG+i1xT3tbLXho4Zhc4b/HdwbSS8NXeJNOh0uBlQURY+ZspmlNo
-	 TIUEi+0bPQwmymLrZJ0JO5u7xYh/7Ibh3lwhmB2t7ppn5rrkjnbmM1ShRdOZZBMKQz
-	 ZcH4hAWAiWm1/TOejGxNxMrhzY/3CEAuJ5bXKlzA2aJ9Am6dTAYJM4eHgIH3xy3bv9
-	 pc+SmIKriXmODbefcpv6PWIWpePBaRqkB2+MqI2X3jmRzRt8dvl74pvnr5kDCto/TJ
-	 oR0o2uvGnX9tUHRyq+AZ5SfT7Xq/VVDErB3GqV7C+cuBR2szWy0Sg3hTwaXWh76vNF
-	 izXk8yeqmmrMQ==
-Message-ID: <556bb2b286c4fdbebc46360a714ebfc6.sboyd@kernel.org>
+	b=q2+KXTCFUIzUl2gz3qHDLvrScrBgQdRYrcNG8RKW9FzFqLqNV9+sYr3V91YziR5Fn
+	 DZF4YzexK47fgJLS/rrg8gPdoz7VNImWmCtOYbuuZzon41O4LfMpI9KOOlp2XoP4vo
+	 7bK8bhuzkaUgX9B7OhFQYbN6WnejqW2E7BNzxTysfx/wJWSY8mKABrw5EOuJNZoGwW
+	 3JcsHGNHCtMG5Rc381cXatEfKs75MQ8sGJfEUY9w2rNyxvZiLIFjDbLkeQAYzEqmQR
+	 tRcSW9C/5d0jM+4mmWpIMD3j2T87F8RlJ7qbJFzsgC15wsrXr2QE/zyki8UEYCNHQO
+	 KLeGIjKGm6tRA==
+Message-ID: <b8dbdde2412d974baa24611b16cda5f7.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,42 +35,47 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <8961259.VV5PYv0bhD@diego>
-References: <8961259.VV5PYv0bhD@diego>
-Subject: Re: [GIT PULL] Rockchip clock changes for 6.11 #1
+In-Reply-To: <MA0P287MB28221A333D852974F55E3228FEC22@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+References: <MA0P287MB28221A333D852974F55E3228FEC22@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+Subject: Re: [GIT PULL] RISC-V Sophgo SG2042 clock drivers for v6.11
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-rockchip@lists.infradead.org
-To: Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com
-Date: Mon, 08 Jul 2024 11:37:26 -0700
+Cc: Conor Dooley <conor@kernel.org>, linux-riscv <linux-riscv@lists.infradead.org>, Inochi Amaoto <inochiama@outlook.com>, Xiaoguang Xing <xiaoguang.xing@sophgo.com>, haijiao.liu@sophgo.com, Chao Wei <chao.wei@sophgo.com>, unicorn_wang@outlook.com
+To: Chen Wang <unicorn_wang@outlook.com>, linux-clk@vger.kernel.org
+Date: Mon, 08 Jul 2024 11:56:33 -0700
 User-Agent: alot/0.10
 
-Quoting Heiko Stuebner (2024-07-04 12:17:58)
-> Hi Mike, Stephen,
+Quoting Chen Wang (2024-06-14 00:28:22)
+> Hey, Stephen,
 >=20
-> please find below a pull-request with some Rockchip clock changes for 6.11
+> Please pull clock changes for RISC-V/Sophgo/SG2042.
 >=20
-> Nothing really stands out, it's just some small changes.
+> For dts part, I will handle it at my side.
 >=20
-> Please pull.
+> I send this PR just want to expedite patches for this clock driver. The=20
+> patches have gone through 16 rounds of review [1], and I have carefully=20
+> checked and revised all of them based on everyone's comments.
 >=20
-> Thanks
-> Heiko
+> Link:=20
+> https://lore.kernel.org/linux-riscv/cover.1717661798.git.unicorn_wang@out=
+look.com/=20
+> [1]
 >=20
+> Thanks,
+> Chen.
 >=20
 > The following changes since commit 1613e604df0cd359cf2a7fbd9be7a0bcfacfab=
 d0:
 >=20
->   Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
+>  =C2=A0 Linux 6.10-rc1 (2024-05-26 15:20:12 -0700)
 >=20
 > are available in the Git repository at:
 >=20
->   git://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git =
-tags/v6.11-rockchip-clk1
+>  =C2=A0 https://github.com/sophgo/linux.git tags/riscv-sg2042-clk-for-v6.=
+11
 >=20
-> for you to fetch changes up to d89e8096957e35742c9922d3f6628f24de0d6163:
+> for you to fetch changes up to 48cf7e01386e7e35ea12255bc401bdd484c34e7d:
 >=20
->   dt-bindings: clock: rk3188-cru-common: remove CLK_NR_CLKS (2024-07-04 1=
-9:48:31 +0200)
+>  =C2=A0 clk: sophgo: Add SG2042 clock driver (2024-06-14 14:49:40 +0800)
 >=20
 > ----------------------------------------------------------------
 
