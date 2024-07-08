@@ -1,48 +1,59 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDA35812;
-	Mon,  8 Jul 2024 04:49:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65FD1B64C
+	for <linux-clk@vger.kernel.org>; Mon,  8 Jul 2024 05:13:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720414156; cv=none; b=no/spolrRRRe2Sm9+mhPKQUE5lD0jCxkg24mG62XTIkF54MRwitJ4+H6hGMNq/wE1XmEGdCNwQwcNllBL6d4iJ7Hk8OzB6PmSJqaGmixcJF+kNlA0YYoKTEJ8o5lPc/s+ac60yJZsA1G8IvCyk3p8Hzx2BpqXLHvdbuVKMyeBPo=
+	t=1720415630; cv=none; b=ip30BDY+DcpdBYjuy00MwlqeYyRK1Nsuf+NclqyEB18b7naBRB3Zw9oZmMV0MgiX9DETbx5usPGUYAaOQzqTm0lZl/0oaS3rY4I2bslJNMhdF+3KN2vGOPqljANxt1fQb7z3EZJZ3CMQKHuIbgvWHQWtRTTTWd95axkXSuG0n2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720414156; c=relaxed/simple;
-	bh=kldhXik17AMoxW+Je/3rPUwcD8RYnLflDyuBD3i6GJ0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=rP6oDSycCEHfAMsVTjwxx99BUFsYv31Y702k5U8zr5fKCoNSkI2Fjttp9ITlncu/TpdNPLFa5dkEAymwZneiqGJIpIDhNulZ/5o5Y6WKP+aXelC3otPlGu1/kKbNcMBxgEQq8dcS9wfj6/ptKBcIUwn4/HSznqyQTe5sUkPe34I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Pt3k0/gw; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1720415630; c=relaxed/simple;
+	bh=wRFbwZCq6fW6VzKrR2D+pZJuBoE0qYdTiZYmsY+SkVY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J+uONnn5Oh5MtJBvvAXaNSOkje1jgsgpbaHAB4FQvNKuoYR02cxP8MHGBQcJuK/kTR3XqdBfz17dutIflissp1b2/m8hG+a4iUHi4z+ahbiJJeEwnfMgOKDEu3EPvFIinhrilgoSKgFYkwO5bTDS6hEQc2T56tNSDMnb5ofRCkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=fHl0yuG2; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Pt3k0/gw"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 467NgQ4V005778;
-	Mon, 8 Jul 2024 04:47:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Mt2UNk9pZ3nG8SWY8ZJK5DyYFCJPucDgybc6SM6D4P4=; b=Pt3k0/gw3nDfHRL1
-	WH1j0zn74Dskno6RYtKxvoY3Lwqbkt4uZsKApdf64uz3Pm7tV/ZyBTzyLbVY/reC
-	5KhibpPMVXBub8eExpHBtzs27kr8trEIVEdEdu4Mh+R7budCktV5doOBpW6z9Gbo
-	c3RZ4vpPwS06yLqQcSRAarpHRbnLNmFXHfsKtBxeA56EyPkBE0RLPxGBmigNeLz3
-	1c1yEW0jXzHKbusYo1u80ekw2pJE5hQV7up0yOSh5e+u5jTWVuHAPgjgAcisY1Wg
-	L6n4Y9coVABsQWN1xD+OWOi4hMqd20I586+hLj2RnTxfgxfHzfolfdA0kuzk6QvO
-	41Is5g==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406we8tnpx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 08 Jul 2024 04:47:15 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4684lDsl027084
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 8 Jul 2024 04:47:13 GMT
-Received: from [10.239.132.150] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Sun, 7 Jul 2024
- 21:46:52 -0700
-Message-ID: <63eb3f58-d4a4-4a27-b78c-f4cb83e62c63@quicinc.com>
-Date: Mon, 8 Jul 2024 12:45:52 +0800
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="fHl0yuG2"
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2ee9505cd37so26064371fa.2
+        for <linux-clk@vger.kernel.org>; Sun, 07 Jul 2024 22:13:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1720415625; x=1721020425; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bz7wWMAmp35kfVIWuAo+lyRhJVw4zZS6mIxOLkavesk=;
+        b=fHl0yuG2ZDSE0q3bihnJP3u1s51SrFuMYERyIIzOzxQrrkUyao9hRfzD7dja8QU20P
+         tg1HQUaj3Jz/lmpP33MfzBbZZXHp3RVrSBRaXSkGhwO+KhUbT2MeMzQd+5N4iUfBX3r3
+         6N0HM2KkUFuq79bnZmCjYqGojiO8i1pN5ipG+Ob+7BUKj6OmvjqwCBRbis1DnwFmjOq1
+         Fik9F/0Mc/YMXdQc0ApVXK+cAebcLDf9VLozTlNkbcsrdGguH9ZaWr0wz832+nnMqLXd
+         dW4v1McBu+vKMGn9tGZldJSB6kk03XsDtqKkZqMvfbhTGT6suh7Q94yxGh57XVXH/Az7
+         6d1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720415625; x=1721020425;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bz7wWMAmp35kfVIWuAo+lyRhJVw4zZS6mIxOLkavesk=;
+        b=h4RoANnJUHk+CGLFvYNxaTclK1t9WHOwJxHWSmuPI6vdE73EF/v4gKWxg6Ea7g3Sy+
+         MeNuDy3ZNiu3zVlmQF5+a7hkSSKGH7qi41ebj3jSnQpg6Xu+mDw4sKPVB0mjKRDIu5kB
+         Uo7ouFmRxavWJmr9eqlPLiSDjV0Y5QKrVXH901ywWwPuZORuX4KvMI3DyEnYsFTZ5zIN
+         nCjVxGRlCbWqwUv/luQbpE7OXNm9smP/WmmViPodAe8BvtH+GmVZAIIdNMjUcgUd2rkx
+         R1rpoOFj6pfDmYIZwj9tJiYpPcs2834TjqmoF9529sov6EeayzMz8cZVf+xM7+urYWE0
+         g8ag==
+X-Forwarded-Encrypted: i=1; AJvYcCXbjE35xEVvWbLaf+xrP4WIAioSdjVqZ2vtn3p6pZKxsWWfndraBaHxJmbIFy2nh44OYCu8DMWOz8NSPGI9k0MWLmUWxmwpWoL/
+X-Gm-Message-State: AOJu0YwkHHUXDGdvjyQEdpPJWC5kRJfZOmRqG5rN5+x35s2xizKinJec
+	Zb0VK9+K0OKPdRcoodv3H3bPKEo1tWs1MVemEkDCiRi/5qjS9Q1swPCmwaoC05Q=
+X-Google-Smtp-Source: AGHT+IFISF4UwewGpBvBho0EppedjUfcSuAVkq8b8GaHaZZCaF0Hi57425EYZnXMa6pjbT4HHeqobA==
+X-Received: by 2002:a2e:9953:0:b0:2ec:7300:d02f with SMTP id 38308e7fff4ca-2ee8edd7b73mr65514061fa.49.1720415625292;
+        Sun, 07 Jul 2024 22:13:45 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.171])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367a40a6d4bsm8433845f8f.51.2024.07.07.22.13.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 07 Jul 2024 22:13:44 -0700 (PDT)
+Message-ID: <b487595b-d215-4e7e-8e61-71cd6dbf7db6@tuxon.dev>
+Date: Mon, 8 Jul 2024 08:13:42 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,113 +61,70 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/47] dt-bindings: arm: qcom: Document QCS9100 SoC and
- RIDE board
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Tengfei Fan
-	<quic_tengfan@quicinc.com>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <djakov@kernel.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <jassisinghbrar@gmail.com>,
-        <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
-        <manivannan.sadhasivam@linaro.org>, <will@kernel.org>,
-        <joro@8bytes.org>, <conor@kernel.org>, <tglx@linutronix.de>,
-        <amitk@kernel.org>, <thara.gopinath@gmail.com>,
-        <linus.walleij@linaro.org>, <wim@linux-watchdog.org>,
-        <linux@roeck-us.net>, <rafael@kernel.org>, <viresh.kumar@linaro.org>,
-        <vkoul@kernel.org>, <edumazet@google.com>, <kuba@kernel.org>,
-        <pabeni@redhat.com>, <mcoquelin.stm32@gmail.com>
-CC: <robimarko@gmail.com>, <bartosz.golaszewski@linaro.org>,
-        <kishon@kernel.org>, <quic_wcheng@quicinc.com>,
-        <alim.akhtar@samsung.com>, <avri.altman@wdc.com>, <bvanassche@acm.org>,
-        <agross@kernel.org>, <gregkh@linuxfoundation.org>,
-        <quic_tdas@quicinc.com>, <robin.murphy@arm.com>,
-        <daniel.lezcano@linaro.org>, <rui.zhang@intel.com>,
-        <lukasz.luba@arm.com>, <quic_rjendra@quicinc.com>,
-        <ulf.hansson@linaro.org>, <quic_sibis@quicinc.com>,
-        <otto.pflueger@abscue.de>, <luca@z3ntu.xyz>,
-        <neil.armstrong@linaro.org>, <abel.vesa@linaro.org>,
-        <bhupesh.sharma@linaro.org>, <alexandre.torgue@foss.st.com>,
-        <peppe.cavallaro@st.com>, <joabreu@synopsys.com>,
-        <netdev@vger.kernel.org>, <lpieralisi@kernel.org>, <kw@linux.com>,
-        <bhelgaas@google.com>, <ahalaney@redhat.com>,
-        <krzysztof.kozlowski@linaro.org>, <u.kleine-koenig@pengutronix.de>,
-        <dmitry.baryshkov@linaro.org>, <quic_cang@quicinc.com>,
-        <danila@jiaxyga.com>, <quic_nitirawa@quicinc.com>,
-        <mantas@8devices.com>, <athierry@redhat.com>,
-        <quic_kbajaj@quicinc.com>, <quic_bjorande@quicinc.com>,
-        <quic_msarkar@quicinc.com>, <quic_devipriy@quicinc.com>,
-        <quic_tsoni@quicinc.com>, <quic_rgottimu@quicinc.com>,
-        <quic_shashim@quicinc.com>, <quic_kaushalk@quicinc.com>,
-        <quic_tingweiz@quicinc.com>, <srinivas.kandagatla@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-phy@lists.infradead.org>,
-        <linux-crypto@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <iommu@lists.linux.dev>, <linux-riscv@lists.infradead.org>,
-        <linux-gpio@vger.kernel.org>, <linux-watchdog@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>, <kernel@quicinc.com>
-References: <20240703025850.2172008-1-quic_tengfan@quicinc.com>
- <20240703025850.2172008-2-quic_tengfan@quicinc.com>
- <665f6c8c-4f43-4d20-90e9-9e037a942066@kernel.org>
- <fbeb5969-0b3a-455e-88eb-b83734bf2c50@quicinc.com>
- <97c9484b-e257-4163-a104-3457d59bc69b@kernel.org>
-From: "Aiqun Yu (Maria)" <quic_aiquny@quicinc.com>
+Subject: Re: [PATCH v2 02/12] i2c: riic: Use temporary variable for struct
+ device
 Content-Language: en-US
-In-Reply-To: <97c9484b-e257-4163-a104-3457d59bc69b@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+To: Andi Shyti <andi.shyti@kernel.org>
+Cc: chris.brandt@renesas.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, geert+renesas@glider.be, magnus.damm@gmail.com,
+ mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
+ wsa+renesas@sang-engineering.com, linux-renesas-soc@vger.kernel.org,
+ linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240625121358.590547-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240625121358.590547-3-claudiu.beznea.uj@bp.renesas.com>
+ <mzuqdxb2dthfg6xa5jhodj6d54b6zlcnby35hmxe4jvfw3oghm@uunqpeg5wcdd>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <mzuqdxb2dthfg6xa5jhodj6d54b6zlcnby35hmxe4jvfw3oghm@uunqpeg5wcdd>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: NaHbB22mWdLnCeOe5WUMhaQTLB8iQPsZ
-X-Proofpoint-ORIG-GUID: NaHbB22mWdLnCeOe5WUMhaQTLB8iQPsZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-08_01,2024-07-05_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 adultscore=0
- malwarescore=0 priorityscore=1501 clxscore=1011 impostorscore=0
- lowpriorityscore=0 spamscore=0 mlxlogscore=976 phishscore=0 mlxscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407080035
 
+Hi, Andi,
 
-
-On 7/3/2024 5:33 PM, Krzysztof Kozlowski wrote:
-> On 03/07/2024 11:21, Tengfei Fan wrote:
->>>>         - items:
->>>>             - enum:
->>>> +              - qcom,qcs9100-ride
->>>>                 - qcom,sa8775p-ride
->>>> +          - const: qcom,qcs9100
->>>
->>> This changes existing compatible for sa8775p without any explanation in
->>> commit msg.
->>>
->>> Best regards,
->>> Krzysztof
->>>
->>
->> In the next verion patch series, I will provide relevant explanatory 
->> information in this patch commit message.
+On 05.07.2024 01:30, Andi Shyti wrote:
+> Hi Claudiu,
 > 
-> TBH, I cannot think of any reasonable explanation for this, especially
-> considering rest of the patchset which does not fix resulting dtbs_check
-> warning.
-
-The existing compatible "sa8775p" warning can only be addressed When
-@Nikunj's "sa8775p" changes merged.
-
-Let me know if you have other suggestions for this.
-
+> ...
 > 
-> Best regards,
-> Krzysztof
+>> Use a temporary variable for the struct device pointers to avoid
+>> dereferencing.
 > 
+> So far just refactoring...
+> 
+>> While at it, replace riic->adapter.dev argument of
+>> dev_err() from riic_init_hw() with the temporary variable (pointing to
+>> riic->adapter.dev.parent).
+> 
+> This is the real change in this patch and you are not explaining
+> why you did it.
+> 
+> ...
+> 
+>> @@ -303,11 +304,12 @@ static int riic_init_hw(struct riic_dev *riic, struct i2c_timings *t)
+>>  	int ret = 0;
+>>  	unsigned long rate;
+>>  	int total_ticks, cks, brl, brh;
+>> +	struct device *dev = riic->adapter.dev.parent;
+>>  
+>> -	pm_runtime_get_sync(riic->adapter.dev.parent);
+>> +	pm_runtime_get_sync(dev);
+>>  
+>>  	if (t->bus_freq_hz > I2C_MAX_FAST_MODE_FREQ) {
+>> -		dev_err(&riic->adapter.dev,
+>> +		dev_err(dev,
+>>  			"unsupported bus speed (%dHz). %d max\n",
+>>  			t->bus_freq_hz, I2C_MAX_FAST_MODE_FREQ);
+> 
+> I personally prefer the reference to the current device, it's
+> more traceable. If you think it's not providing enough
 
--- 
-Thx and BRs,
-Aiqun(Maria) Yu
+OK, I'll keep it as it was initially.
+
+Thank you,
+Claudiu Beznea
+
+> information, then you can improve it, but I wouldn't like to lose
+> reference to this driver in the log.
+> 
+> Andi
