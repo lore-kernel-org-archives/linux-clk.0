@@ -1,104 +1,152 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D54D81442FB;
-	Mon,  8 Jul 2024 15:55:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84F0714388F
+	for <linux-clk@vger.kernel.org>; Mon,  8 Jul 2024 18:09:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720454130; cv=none; b=EfoRHoj8qpRyYYd3BvpbYnngjzQrGvZMDvJvISUO3XNkBCc3fuQq7qYV1CA+JhcD3NOuqwiHBvOPEg2cTkACt3HunOIYnRnf2UZP8GCjygQ7WMCCQl38e3DzBcRHTX2KRP3nSQ8I4kCF+I65Y8mFcrKUFjgsrywKwcIYGWdOaV8=
+	t=1720462147; cv=none; b=Sm/ubTSP1ggFDhpZKgbx9oEHgRvqF6dtsV+ZvxCX0yI6VAXolkLeW1wdera0XhZS0QT1u40djf0aAghyU9hKvNRas2c2F6pecjVEys3/qh2QWlPz/EBQbqBAcdZxDqckDxw8Gdo6BlZ2MCtN+2g3mIkH5ZSHiWSM3bcbS/ERIM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720454130; c=relaxed/simple;
-	bh=klBVxy8IiZUybk4NUjWGo9X6b6GwYIN3vkEddYVTDBM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HmKs9WnhwUv1M2xY40cgQdBt1hhB8F2z8p0PYJc3HR/X21eK1DeuqJyvaicxOudVuMtbvyWGZwwwY8qBKiZCvt0UUoJGDs9lVTe37/rdUCa9vpMXEQn8sXlJYU6CjTs/1AgiJuvzsHXRMZn4hZQQE70OkqSesoLtSLbka38g5kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UuYXxDIw; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1720462147; c=relaxed/simple;
+	bh=CG707koYbJnede1fww7JQ7JLqlDrWGnQkLN5J+JJjnM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GWvbGld9oPD4P2WkR5mjVdrVKLcI7TXGpkmXcgR7hg5NJ9KY7tds49kdBLaB3maAjcLLG7GLSiSq1XCWZMrddNVCOM5D0bqFmZmhplaZ7yrbsgZdlBZv4fe2nxWmS9e+FmPaE4534N+RUnqtsQUoRZYJAGh+H1MnBOQTulK6M+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iSv0hOMT; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UuYXxDIw"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F2E3C116B1;
-	Mon,  8 Jul 2024 15:55:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720454130;
-	bh=klBVxy8IiZUybk4NUjWGo9X6b6GwYIN3vkEddYVTDBM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UuYXxDIwcX4c9njAFXgqD6kPCnPvkqX13R4dwZkTjIwWzz9OlnkW+7lI2+BXng8Ex
-	 HlueLCAKnas2BmaNAh8QSG+hNMLtbnRy4vkD6hZIxgpC9QQluc2SdJPnXlJrlZMWf6
-	 28++49Pxyc8yqDP+VuaugpaSlF+qhCUagZeOQc+WrV9NL6UtEW3Klsz7G68LZWFZTo
-	 QEySb4mqzeqfsZCdbu5dyK0D4OF8BzcNmgLCSKA4/RbdAIQM8L04RHG2DgZNQ8Uuh4
-	 9G3rpoNOteMmvTxDGL2r26Udlv6QoM0cnjch5TTdK42W/BPN8UVVs5rMiTpjJ5Glfq
-	 dZykVd8kygQfg==
-Date: Mon, 8 Jul 2024 09:55:29 -0600
-From: Rob Herring <robh@kernel.org>
-To: Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc: vireshk@kernel.org, nm@ti.com, sboyd@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, angelogioacchino.delregno@collabora.com,
-	andersson@kernel.org, konrad.dybcio@linaro.org,
-	mturquette@baylibre.com, ilia.lin@kernel.org, rafael@kernel.org,
-	ulf.hansson@linaro.org, quic_sibis@quicinc.com,
-	quic_rjendra@quicinc.com, quic_rohiagar@quicinc.com,
-	abel.vesa@linaro.org, otto.pflueger@abscue.de, danila@jiaxyga.com,
-	quic_ipkumar@quicinc.com, luca@z3ntu.xyz,
-	stephan.gerhold@kernkonzept.com, nks@flawful.org,
-	linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH v4 09/10] dt-bindings: opp: v2-qcom-level: Update
- minItems for oloop-vadj & cloop-vadj
-Message-ID: <20240708155529.GA3244015-robh@kernel.org>
-References: <20240703091651.2820236-1-quic_varada@quicinc.com>
- <20240703091651.2820236-10-quic_varada@quicinc.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iSv0hOMT"
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-57cd26347d3so5544182a12.1
+        for <linux-clk@vger.kernel.org>; Mon, 08 Jul 2024 11:09:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720462144; x=1721066944; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=h9SclVHHKmhSqXdWBkdjpfcUGGg73PYZ76UnLpmlrPA=;
+        b=iSv0hOMTxQjy252hK+lJdahNOjRMvdEM754WGhaHmKvdZn+uL5HbMYCm5HzFGCd9Mg
+         Qoh8rPuVsmMt1d0R9toj0TW3zv85+OeMpy0TRr4AJxPM7DROF4Pb7AVTtMF1mzCHIymm
+         m7bXDqZ7oOYAZf4unDE3AMj0MlBzdaqHCUUdsXjQHLVnXB8bOWUCcIRVkpbh/X0lvl7n
+         SEfogpmSKiTN7i1eY8Ro0Z6Y6ja506Ilq3iP+/IQLa5QaNo7iuYwWjeW4xZXsNmTQ9t7
+         pL4zmJ93Uhyx3J11MP7tSG9d/LOi/Azji0lTSgX7jXaaIMEH4A5k9QlBAfk91VgYzBYT
+         paTw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720462144; x=1721066944;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=h9SclVHHKmhSqXdWBkdjpfcUGGg73PYZ76UnLpmlrPA=;
+        b=P94dKpBw5AylTKFXRbcGu6VJZNbkIX5bAfdl6RcwtKZ0Ya0aLRWoXMcMiTPA5DoEBj
+         E6VjKqhMhFq5BqhfYaT6S4C5bYIobq3h+MSup3UzMYEuA4PG5SFu6gDBBfOt3kSQBaE1
+         VtUT2g5dvSNY3nsBl81vVwj3oecOyfaOSUoz3m2MJW8pxmOw1XuoMJ/9v+g9Li9e3Spt
+         yfS2DKuz30dLyjhArFPcMKHQp6kiSjr+K00soJpah7mjpFnofUOd7cjXNGsdRw+6FUwc
+         UmdFx+5uccotQVDMX7/Ckruvm9FGEfG1ki1TAdI36fHTpF2jz3UCl9m8zk8iiC4ew1bc
+         Z7fg==
+X-Forwarded-Encrypted: i=1; AJvYcCWbr0fhGqvHgabujbNbPNLkjYHxCIOxe+GLyuuSWZnpSlBlFaIViO0l/Vm8E1y+YoSYLlP29o7DoNiBpVYpjbkofLWFmyGDhgqg
+X-Gm-Message-State: AOJu0YxMMPDYMSccWr2MG+esxEkD7M/0q4Yr+9rKBlNSFuJm0cFgJRxn
+	sgJjZ3ZvZK1evKM0pubHiMxWMNFzEkJa1ifPBz6bz36da+NAYNLMRgiRhE2b9HXY4sAxDwl2WJy
+	+
+X-Google-Smtp-Source: AGHT+IEY4wUlDLgxf2i3rdkVHcpk1OUK0j5ihUIo/iySjtcBRkZ3zUlg7nzE4G/y1pYBhf9gKCamKg==
+X-Received: by 2002:a05:6402:84c:b0:58e:2b65:385b with SMTP id 4fb4d7f45d1cf-594ba0c9e5dmr286249a12.14.1720462143775;
+        Mon, 08 Jul 2024 11:09:03 -0700 (PDT)
+Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-594bda308efsm98182a12.81.2024.07.08.11.08.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 08 Jul 2024 11:09:03 -0700 (PDT)
+Message-ID: <d83ff8c4-15de-4e20-9c27-eb0247184b5f@linaro.org>
+Date: Mon, 8 Jul 2024 20:08:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240703091651.2820236-10-quic_varada@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 23/23] arm64: dts: qcom: starqltechn: add new features
+To: Dzmitry Sankouski <dsankouski@gmail.com>
+Cc: Sebastian Reichel <sre@kernel.org>, Bjorn Andersson
+ <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>,
+ phone-devel@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-input@vger.kernel.org,
+ linux-leds@vger.kernel.org, linux-pwm@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org
+References: <20240618-starqltechn_integration_upstream-v3-0-e3f6662017ac@gmail.com>
+ <20240618-starqltechn_integration_upstream-v3-23-e3f6662017ac@gmail.com>
+ <13fea5c0-5906-4075-b734-52649e35eb69@linaro.org>
+ <CABTCjFDebBxf=XcvTbVtifROFHrQLXtArLtj0wHVF_e529NVAg@mail.gmail.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <CABTCjFDebBxf=XcvTbVtifROFHrQLXtArLtj0wHVF_e529NVAg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 03, 2024 at 02:46:50PM +0530, Varadarajan Narayanan wrote:
-> Since IPQ9574 has only one CPR thread it will specify
-> only one voltage adjustment value. Hence update min items
-> accordingly for oloop-vadj and cloop-vadj. Without
-> constraining min items, dt_binding_check gives errors
+On 8.07.2024 5:54 PM, Dzmitry Sankouski wrote:
+> вт, 18 июн. 2024 г. в 17:12, Konrad Dybcio <konrad.dybcio@linaro.org>:
+>>
+>>
+> ...
+>>
+>>>       gpio-reserved-ranges = <0 4>, <27 4>, <81 4>, <85 4>;
+>>
+>> Do you know what these are for?
+>>
+>> Konrad
 > 
-> 	opp-table-cpr4:opp-0:qcom,opp-cloop-vadj:0: [0] is too short
-> 	opp-table-cpr4:opp-0:qcom,opp-oloop-vadj:0: [0] is too short
-> 
-> 	Failed validating 'minItems' in schema . . .
-> 		{'maxItems': 2, 'minItems': 2}
-> 
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> ---
-> v4: Fix dt_bindings_check error
-> ---
->  Documentation/devicetree/bindings/opp/opp-v2-qcom-level.yaml | 2 ++
->  1 file changed, 2 insertions(+)
+> <85 4> is spi for fingerprint.
+> <27 4> is spi for eSE(embedded Secure Element)
+> The rest shouldn't be reserved.
 
-This is going to need to be rolled into your dependency because it needs 
-the same fix.
+Thanks for digging this up!
 
-> 
-> diff --git a/Documentation/devicetree/bindings/opp/opp-v2-qcom-level.yaml b/Documentation/devicetree/bindings/opp/opp-v2-qcom-level.yaml
-> index b203ea01b17a..1c1a9e12d57a 100644
-> --- a/Documentation/devicetree/bindings/opp/opp-v2-qcom-level.yaml
-> +++ b/Documentation/devicetree/bindings/opp/opp-v2-qcom-level.yaml
-> @@ -39,6 +39,7 @@ patternProperties:
->            An array of per-thread values representing the closed-loop
->            voltage adjustment value associated with this OPP node.
->          $ref: /schemas/types.yaml#/definitions/int32-array
-> +        minItems: 1
->          maxItems: 2
->  
->        qcom,opp-oloop-vadj:
-> @@ -46,6 +47,7 @@ patternProperties:
->            An array of per-thread values representing the open-loop
->            voltage adjustment value associated with this OPP node.
->          $ref: /schemas/types.yaml#/definitions/int32-array
-> +        minItems: 1
->          maxItems: 2
->  
->      required:
-> -- 
-> 2.34.1
-> 
+Please add a comment for it, like in x1e80100-crd.dts
+
+Konrad
