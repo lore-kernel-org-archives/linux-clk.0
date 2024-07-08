@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EBF050276;
-	Mon,  8 Jul 2024 22:30:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B068845BEF;
+	Mon,  8 Jul 2024 22:45:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720477825; cv=none; b=pDfss6TO13tBHEYgmUsuszEkjU1/I1kwHUN8fddzu6kGqff1hWh9Cs4qZif3D7IAN7LhXKewDBlfOPFJAMUUCGyjJUnuN1m4ugo2jBw3Lxd1WvddCAyi+fk/znMS3hC7cSMiJ5+1OUsIU9bbJVLhPYzkHYwR3h9/O7ofozLBpGo=
+	t=1720478743; cv=none; b=fTybRQDwbVUrT+MLJ0zWGgR+xE+qgArhbXgehnzsehxaUquRpAi7gTyRb/5fI7xtQWBW5ZYIW2xgbl304lgDyn9VIU8IYLoM8KyVSBKImIeHei91G5FAu3EPa2d7AWCVjVK3Huqc8k97igqBBFCK/0fPzWfTvrbFMEMc9PobSc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720477825; c=relaxed/simple;
-	bh=6JE4nXgPjNuNNKkaz7S9Z+jMtV6+A3O6FZtrLMEM12A=;
+	s=arc-20240116; t=1720478743; c=relaxed/simple;
+	bh=5Bj4mfHABx1NE5EIeXJOYIM0rpkZPkJMea6TmXqAFOE=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=fOtb2M9YhNBgl4SY3zwXRQgghH6d9Dtln9CjhvXbZHNaP/AP0MpxyjdDLbyQw9jzv6e1VUKRh14XHWvuoaAoPX32mrGj2LnWGpdqh1kkUA+H54LBGuNeRw6Z0oMlgknT4VcCnp5uV5Oqh8IiNUY6n6HVFryL6jy9CdrJmpnm704=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IJjYzmFq; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=YqNHi84L6uwEi1s9Rdyz/32GGM2+Obe1O377du6OmzW1MgUaXm+d29Z2mwTHxaQGJkyJpMaVD3pf0bqKjc7okVln8xz+ERr8CeOZQRKslrO7j6yFLhG30svYZhex7JmBSFK2sZ5bpbM7OMt2tFaFThSpUQJXFm7qc1XK7JXRvlE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I+xozJoN; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IJjYzmFq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 840FEC116B1;
-	Mon,  8 Jul 2024 22:30:24 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I+xozJoN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23195C116B1;
+	Mon,  8 Jul 2024 22:45:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720477824;
-	bh=6JE4nXgPjNuNNKkaz7S9Z+jMtV6+A3O6FZtrLMEM12A=;
+	s=k20201202; t=1720478743;
+	bh=5Bj4mfHABx1NE5EIeXJOYIM0rpkZPkJMea6TmXqAFOE=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=IJjYzmFqXld0rCCL1yctkm1fasws1Rm+7t1VBj2mq0b6euuf8ABB71wzAJrty8O2G
-	 K5CywZPbZtVyyR8hH9SYhOY39tKlEN93AFDVc88R6OffnYyoRd57NFYWQAZZXnGzbr
-	 z7xTYQe9XikxLKRkm4gXbD2/H3aZshD4GMy/kf/zShqFz7WCL924biOkRfoEkCVteW
-	 urLIIHbHWDZsugmMuUcI4w6lSY9L+MPHNOZYIRTHzFBmXVPpFfsS1Qw0ErrnM2EL2A
-	 gwHfK06RmPSm4SeVhnqLpHv1pdNz/B6+yk7brHL+f/nBZ3LtZrx1RA6A8OcEKnw/9r
-	 nWdcmU+rgCBEA==
-Message-ID: <5153b8f8a6c6ffdc1254e00c47a888ed.sboyd@kernel.org>
+	b=I+xozJoNsd4zVOsALiXWV96n36e7MJp4cZ4XcSlGG8x4EsVSEy+CULfd2+jFDkHMw
+	 VLPxhrQxYnjGwbg2h0yskTbMhAEexZc34OohD1N6Jyh9z8jQMXswUsga+viODi0mbW
+	 NvAQaRGrht1EZGbmm2pU7KZM5XR9qUl1o4t5wuqj/vY7SClwIn+MadEVPQPXCY2qBU
+	 +gm6ERKxktjJAMlyG81RsIon0e6SpXKAv0GqzdFVTdky26NazKWpUgTDjxZgr6xVeM
+	 UikPXyp5yRpwwdcCAIEB5IlDspIfUrtYADoKNaTag1DlRNuWPNfe/FVE5bvgoMyU4q
+	 4pFoVIDhGWKDA==
+Message-ID: <232c2342061b17b9f750c4ad52b0766e.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,20 +35,40 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240628-gpucc-no-request-v1-1-b680c2f90817@linaro.org>
-References: <20240628-gpucc-no-request-v1-0-b680c2f90817@linaro.org> <20240628-gpucc-no-request-v1-1-b680c2f90817@linaro.org>
-Subject: Re: [PATCH 1/2] clk: qocm: add qcom_cc_map_norequest
+In-Reply-To: <1719996771-11220-1-git-send-email-shengjiu.wang@nxp.com>
+References: <1719996771-11220-1-git-send-email-shengjiu.wang@nxp.com>
+Subject: Re: [PATCH] clk: imx: imx8: Add .name for "acm_aud_clk0_sel" and "acm_aud_clk1_sel"
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Rob Clark <robdclark@gmail.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-To: Bjorn Andersson <andersson@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Michael Turquette <mturquette@baylibre.com>
-Date: Mon, 08 Jul 2024 15:30:22 -0700
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org, festevam@gmail.com, imx@lists.linux.dev, kernel@pengutronix.de, mturquette@baylibre.com, peng.fan@nxp.com, s.hauer@pengutronix.de, shawnguo@kernel.org, shengjiu.wang@gmail.com
+Date: Mon, 08 Jul 2024 15:45:40 -0700
 User-Agent: alot/0.10
 
-Quoting Dmitry Baryshkov (2024-06-27 22:20:22)
-> The GPU clock controllers use memory region that is a part of the GMU's
-> memory region. Add qcom_cc_map_norequest() to be used by GPUCC, so that
-> GPU driver can use devm_ioremap_resource for GMU resources.
+Quoting Shengjiu Wang (2024-07-03 01:52:51)
+> "acm_aud_clk0_sel" and "acm_aud_clk1_sel" are registered by this ACM
+> driver, but they are the parent clocks for other clocks, in order to
+> use assigned-clock-parents in device tree, they need to have the
+> global name.
+>=20
+> Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> ---
+>  drivers/clk/imx/clk-imx8-acm.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+>=20
+> diff --git a/drivers/clk/imx/clk-imx8-acm.c b/drivers/clk/imx/clk-imx8-ac=
+m.c
+> index 1bdb480cc96c..a1affcf6daff 100644
+> --- a/drivers/clk/imx/clk-imx8-acm.c
+> +++ b/drivers/clk/imx/clk-imx8-acm.c
+> @@ -114,8 +114,8 @@ static const struct clk_parent_data imx8qm_mclk_out_s=
+els[] =3D {
+>  static const struct clk_parent_data imx8qm_mclk_sels[] =3D {
+>         { .fw_name =3D "aud_pll_div_clk0_lpcg_clk" },
+>         { .fw_name =3D "aud_pll_div_clk1_lpcg_clk" },
+> -       { .fw_name =3D "acm_aud_clk0_sel" },
+> -       { .fw_name =3D "acm_aud_clk1_sel" },
+> +       { .fw_name =3D "acm_aud_clk0_sel", .name =3D "acm_aud_clk0_sel" },
+> +       { .fw_name =3D "acm_aud_clk1_sel", .name =3D "acm_aud_clk1_sel" },
 
-Why does GMU map the gpu clk controller? Does it use those registers? We
-don't want to allow two different drivers to map the same region because
-then they don't coordinate and write over things.
+This doesn't make any sense. Why are we adding fallback names?  Is
+"acm_aud_clk0_sel" not part of the DT binding for this clk controller?
