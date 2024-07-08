@@ -1,160 +1,177 @@
-Received: from IND01-BMX-obe.outbound.protection.outlook.com (mail-bmxind01olkn2061.outbound.protection.outlook.com [40.92.103.61])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C375413ACC
-	for <linux-clk@vger.kernel.org>; Mon,  8 Jul 2024 07:08:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.103.61
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720422493; cv=fail; b=Wh7p1BHfa+6Ov+GzsmKKKKzieEg1mlvRXv32uib9KmSKLIx0HJoVvGo/mdKw3Dgj+nqtRjffkU9bNRthGv6Wu0ve2zB/43+nkkrisL4UD7eEKcl10V1MkvuFzMzdUGdWTNMyoCn7tAbefqykVuBWT9oAmkmzJBqM+hfdnyjJKtI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720422493; c=relaxed/simple;
-	bh=zpLG0lCXjE3GxEcMgzxrQTIbveuF2udlLohs004AUBw=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=oi72gz9FSc7RHf4fIB4S5KUcTuLOSNQOljOoOJzcbo9LwUNLPpqe8f330pRRegB24cajo+GchTSXK5u4x5Sg+ofxHoOFiEiV9s6xjgewt0CZMZSgzmT7FvAFVcQ3WFlq96q5K1gqsaF2dPA877TjAhsMjXUvAJmimfsGmaE2ufg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=IDkK2nxQ; arc=fail smtp.client-ip=40.92.103.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C24421C68F;
+	Mon,  8 Jul 2024 07:14:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720422883; cv=none; b=NMknlXC7eHKbvs+wQeZvhttJn8sE5vgb1jZhPvgRnUuJAKgbwsUxDVZbj/UfnRLBcWvbMmE7JBvqghtTGwOftV4T5fmC4T+7wS3P37xVmERL0BfqEB0ZDZjgfWgG/PrErwqNspWaI0Ltb3XEp/NYiJ9PnA9y/LvVWFyGpbfmYBo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720422883; c=relaxed/simple;
+	bh=CsZBoXzk0XIRrdPyPdyogoIooR3030G2XvdRQtmGPcQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=bt8Bsbn0Ah9hQc5BQp2GYj6J+S65oqzmJz3aYJkicaQdf0chE5ASV8ld2KbTf1MQ8BgS+upQOJieNUAp1aClAUbjpZBZadzMwGrHNeXTLsvi3v2YYy4WZWdi4tw467fB8N8TkCXOxc+CN3qUtUWnwdXqbst22qItU29sIeXBC8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=k4k0gjOT; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="IDkK2nxQ"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=oGja6fHqmBIgPRVU/2K9JxRBQ+Pg+8/uzT2Lx9Lxtzw9Uh3ahgEx2mtMUj5l2ddKtI2raFztTyZevekZJGWJn+5QI+mnbQIv7800DaHoiXflSyxRT0uGqpGMAZBnCa7wYeGBwFLVDbNuEUb7G8b9R5Qpop7DrLxnYNCnSACpg3wXvgYYq0hBesVc5S4bMWXCaJ5BeGPxoKpFrTynOeFi4X/ScTGYRPThAxWBvD+scm0vy4XHPXrO/MarPfWnwj/wB8KvP6wjjO/VlZj8v/bWiOJXfmJ0/cmfVgCGZK2jbzD7oeDZPF3DkEx8zzPmaMtAxV4z8xymgCsW9quDPhFTqA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5fdWm+fa2tkDIgkj8ofGkHPYwGVRjfPe36uXqgE5yNQ=;
- b=n0wYfYxpSsS8w/DfmcwwhSpdfPVtqLweaP1adObLGeKw2yfF3ERYXIknjta0l6HnqFIlYeZwOge7glF4fA2FsyuapjU9OSpTMcwEd2jZKJGnKKowCFFdpQ072hitCCSNfUH3XbUGgcQVE0KiUJvYuMGoKJWT7SJBcNv78N/9NbgQu++VvlyFel7AxxZESrqHf5jgRbe9yR2h2xAbUSela97cEkU/ozhgLJSoeB708cCggDmasqPzogFlT5UJY+usFYS3P692yj9nZeyiIo0M6vwbMIm8s5P8hG88wUWNbej2KpXZJ6f5iMCe4axXkomtmiCEKMFi4XxjKF515zpF2Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5fdWm+fa2tkDIgkj8ofGkHPYwGVRjfPe36uXqgE5yNQ=;
- b=IDkK2nxQmTCsKPnaUPOlqI9zBuMr8CHWBVMwVMAW0jYV7B9wcUORrS4qzC5lTpzExsUyBim2jAcYaou2RzaUm+y/D7vJM2lYZQqjXYwscgTDnzQnsYCDjC1Uve9yqsvQuWu502+LotYTu3zAxEyDYOs8ZHaqTZHwRPGFx+TWyB7Uu6I59MQ4tVqYkETG54Fz7Ry/gFcXTS/IaSmqSJZ9L8gdIbexMLTC5J6ceFEcPOi5VAvXPdqSJZKvN0/gh8KCg8XaNZvIsycDhU+2FHKZjD4XDjV9ObleWYZhLjorRl1VQ8tD3S+qviE1oZM3jdLitlqI9rJxXBga4yqmsat5/Q==
-Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:138::5)
- by PN3P287MB0082.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:d6::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.35; Mon, 8 Jul
- 2024 07:08:05 +0000
-Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- ([fe80::a94:ad0a:9071:806c]) by MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- ([fe80::a94:ad0a:9071:806c%3]) with mapi id 15.20.7741.033; Mon, 8 Jul 2024
- 07:08:05 +0000
-Message-ID:
- <MA0P287MB2822A84857D59A4A3445C422FEDA2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
-Date: Mon, 8 Jul 2024 15:08:01 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk/sophgo: Using BUG() instead of unreachable() in
- mmux_get_parent_id()
-To: Li Qiang <liqiang01@kylinos.cn>, mturquette@baylibre.com,
- sboyd@kernel.org, inochiama@outlook.com
-Cc: linux-clk@vger.kernel.org
-References: <MA0P287MB2822A3AD8FA3BDA01F54BF45FEDF2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
- <20240708042701.80846-1-liqiang01@kylinos.cn>
-From: Chen Wang <unicorn_wang@outlook.com>
-In-Reply-To: <20240708042701.80846-1-liqiang01@kylinos.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TMN: [btYx18/qwJbqvO+4tWFALrWfntMJ1OVJ]
-X-ClientProxiedBy: SI1PR02CA0034.apcprd02.prod.outlook.com
- (2603:1096:4:1f6::10) To MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
- (2603:1096:a01:138::5)
-X-Microsoft-Original-Message-ID:
- <e2cf0684-b3a9-4fe3-9a31-a881442149ac@outlook.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="k4k0gjOT"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4680R1T3031488;
+	Mon, 8 Jul 2024 07:13:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	oVQgIh72nNA4GfK+pn5YNj9SZPpD84n0grZ2Sjd1hiM=; b=k4k0gjOTh+Vxo9s/
+	h9S8/RA7yKThjmbvcW/tFXO+sXXLk07A8ojbHYxPlHvFElRS9CX2tSmoPlG0WvoA
+	BD3e0KVxPgnJK5C7Q8ARMoE5DvnYQmSnBTz8b/EusqvvIUmk+krrOnkSUZLTcUko
+	yPM5CWKPOhDhwHhIninv839irig80p5xHdCayzX+4VCwSAyLd2RjWvHwkb+yrAxA
+	I3JL/ihKAuVbLfn6472ACWvJdbgeUUMZcaWc4u+iE9EbBg7NrSKPSxvdd0FcVLUv
+	1//BmZOHCzJnmVQqJkSlzIdbXEXACBKgaJ8/R3Nel/axg3KwBECd7MtoM431QbS4
+	zpDsQQ==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406wgwjvnj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 08 Jul 2024 07:13:46 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4687DiCn028522
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 8 Jul 2024 07:13:44 GMT
+Received: from [10.239.132.150] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 8 Jul 2024
+ 00:13:23 -0700
+Message-ID: <c9822569-896c-4d5f-b917-2826bf414e67@quicinc.com>
+Date: Mon, 8 Jul 2024 15:13:20 +0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MA0P287MB2822:EE_|PN3P287MB0082:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3fd4122e-89f8-4923-f788-08dc9f1cb68d
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199028|19110799003|8060799006|4302099013|3412199025|440099028|1602099012;
-X-Microsoft-Antispam-Message-Info:
-	ocJm9iSYG8/wvXVxVd7Ix2payKg71Cll0DGNkNui4oH4Li2Vv3QBl5gEeDujC5KoFC6FIZAYqV9spqfudQYiKtDtWehtrTX0KRcq/CYCFtSdr+QPHr936m3o8WuH/jf7aFPUHtMOu1jRmxYOtQG4Jmwx/W7S79bNtaiKDxh9i9aKcONq5AD3rbZ7ScHWNMRE+PAC/GFsD9JzVVSTNsm7BalBzB2wVnp9DIqDKIP3cbFfJpCsgcS8KI5Niq9ilH3yAdw+ApMXkxVOAwR3F8gnJW+Y7yUVeYkINRCdOWL/MtIFV6oY0Jcnz6i7eg18HCJeBjl9TJRDFGDeDin8gCPvqtuQKJ2IIzG9SstvGsHuJf354hWcfBzaOWpmd+hhT943Ck3wbMugoSSXNe4NJ1jqusike8PaJyYZhk5y3YdNAhObLm4euQ9udId8J7SEQbkt1dJkAmwrRVBZ1hvwr1MLh5Eb59ATXUOHDnovW8U8LYI6nWD3pH6Vv0BZkI54lVQz2Y6BMqlxkPtUszSumQsQ9bbBjHo1RB7Gq9oC/nuTPxqEfEjOpdEG05ah5dTquQpU3hRi96syu3mO8Vp6CJx9yoODm18HS4Ne4lnstiytzpBCAKAxahYw5jKdA6MM8iGHm5KGvATZ+gH5c0wQ/Z9EUbpCn6U6/VcHFvy0sRn0h4dN/kZkQcnC4f+WvrDzp/4HKnTLqwbtBEKRfXH1yUu59tOvxw6q0Kf5PfVbMS4Jg7vSu5N7OH+uk9q6/EieYIgyneM1E6aKMs748S4zfA7lcQ==
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZTFEYWVveU9Bb1JQRTE2bFBVaXk3dW5KMzJrZmtobUhiSkFtSERWM01VUU41?=
- =?utf-8?B?b1Y1NjcvZk1GV2gzdWF4bDRUQWRySG5jV1pJRzQvdXZYMVRCMkNPMkhZYzBk?=
- =?utf-8?B?ZlZxdXdPRzF6aXdnNmtpdE5NVlFBb3hPb2VnYzZISDJjVWErM0ozRVFGSFh1?=
- =?utf-8?B?VktMZnFnRHpMaWJXM2FZUExvSThFMGJsRVltaElwZ1FYWHBzMlJ4bEZLa2Nx?=
- =?utf-8?B?YkhoeUhUcUdSYVFBWlYweG9QbW0vQmtMNjJEY3owV2dWeEMwQi82SjVKdHZB?=
- =?utf-8?B?Uk1WRDg4VjNwSDg3b2Eya29MM0hlRnZsTktZcy84WGR1SWFwdU9sLzlOUWFH?=
- =?utf-8?B?WkszdHQ1RDFMREpBYVRna0l2SDhhOWx0SCtyRmZ3STYwNFVDUE5DeEpoeGE0?=
- =?utf-8?B?UnR1RHBLZGFOU3pTUWtiNXV0U2lnVWs0NnB0K2tha0NHWUROaUtmbSs1VnR6?=
- =?utf-8?B?Ri9PUldQWjBQOStNeFVNM1JTSytBV1loRGtzbllKcXhqWFo3QmMva2xEVDZo?=
- =?utf-8?B?V1Rnd2VCUzVjT0FadWwrMkdlSWNsSWJuMlNyWm80NnF1UzlUMXljaGVVSkNO?=
- =?utf-8?B?V2liaHV4SFl2bHlGT0NUK1NjdWVRSzloZTF3VngyZ3hVTUdEbitOK05Oa3F0?=
- =?utf-8?B?RE1YRFhldHFyaFkrb3dDcTBOWEpRU3BDRFdGSXJHKzludjJ6TEoxdjV5SjN5?=
- =?utf-8?B?MS91dWdEM1pGVVc3eVNnL0pHTE5tMWlnQjFpWHh1VVBXckZRMDJZLzhXV0FB?=
- =?utf-8?B?WHJkeEo1aXhER1BDSHhPS2lyREJRQjY5c1hpMGs4QW9IQlpaK2hzcXl5WFcx?=
- =?utf-8?B?SGRoUkNXUXVJWU5xYXpPNTRGbHpUaU04WVJQWGN0V1FTVSt0OUUvamttbkNl?=
- =?utf-8?B?SnBmVUFmSXFCM1NBVnJuZkpnLzIyNnpZT0Q3b2lMV2xOcWlmeGUybTVyYU9Y?=
- =?utf-8?B?cG42dFhsT0lyNEpUMGNrbk5RMzN4dlJtRmFFZDdCdmhTMzZ6dlR0RCswbEJF?=
- =?utf-8?B?L0pYOEREZXd1Z28vSWVzUjhSakVuL3FsM21saVdCeXg5MExOSjVtcWhFNTBD?=
- =?utf-8?B?TGw5UnVpZUo1NkdlR3FmaTM3dUc0eWYxLzVUYkcrT2srS0Z6dGhkc1B0anJ0?=
- =?utf-8?B?VVVaUlhBVUYwdUF0SFhpUHFyd3VzN3JwK0ZPeWVLUW5xUE5ZblduOVVnTXZF?=
- =?utf-8?B?c0F0NytGOTFDSEZUd1Qzanp1UU05UlFXR1dsQWdVdWxrSmszalhsU2tOVUlB?=
- =?utf-8?B?cFB0QnV3ZFRCRDRmeTVObXVVV0I2MUEyMW9KQ3R2VWRMdVY1dXpJc2hJR0ti?=
- =?utf-8?B?TjcvWEdXV2FISnJqK3JBZmhZbk5weTVBZjhMamdGZFU3NDBWSENWenlzemdO?=
- =?utf-8?B?OXlMNVFzaHhQOFQ0Q0FWa0dHVWpZN2xIZXRQbVVpaFpRTmMyVkRtcFp0S2Vp?=
- =?utf-8?B?eGxUUXYyNWNkZDh0dE4zTXRPNE5kZTJVUmJUWTVHcW9UL254dVJTWkZIQTVs?=
- =?utf-8?B?ZlJZNzNZYkpuZDNQYktpMm9ZWkJqdzlCZ0F2NDlIL0VIbWoxMUdDWUp2OW9C?=
- =?utf-8?B?d0lLakJkMFZMTHNtbC9KaGcwVW9VdmZoM1RDOGZaNFUxUjNmODcyQVkyNXJ2?=
- =?utf-8?B?UkQyMmUvc2JGL0x0ak1LWjhxMTBtWHNoVkxBT1FTeS9uU2RKNUtkY2hnZTky?=
- =?utf-8?Q?2Wp9BLCmc+GVcq2OaMJ5?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3fd4122e-89f8-4923-f788-08dc9f1cb68d
-X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 08 Jul 2024 07:08:05.3303
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN3P287MB0082
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/47] dt-bindings: arm: qcom: Document QCS9100 SoC and
+ RIDE board
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Krzysztof Kozlowski
+	<krzk@kernel.org>,
+        Tengfei Fan <quic_tengfan@quicinc.com>, <andersson@kernel.org>,
+        <konrad.dybcio@linaro.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <djakov@kernel.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <jassisinghbrar@gmail.com>,
+        <herbert@gondor.apana.org.au>, <davem@davemloft.net>,
+        <manivannan.sadhasivam@linaro.org>, <will@kernel.org>,
+        <joro@8bytes.org>, <conor@kernel.org>, <tglx@linutronix.de>,
+        <amitk@kernel.org>, <thara.gopinath@gmail.com>,
+        <linus.walleij@linaro.org>, <wim@linux-watchdog.org>,
+        <linux@roeck-us.net>, <rafael@kernel.org>, <viresh.kumar@linaro.org>,
+        <vkoul@kernel.org>, <edumazet@google.com>, <kuba@kernel.org>,
+        <pabeni@redhat.com>, <mcoquelin.stm32@gmail.com>
+CC: <robimarko@gmail.com>, <bartosz.golaszewski@linaro.org>,
+        <kishon@kernel.org>, <quic_wcheng@quicinc.com>,
+        <alim.akhtar@samsung.com>, <avri.altman@wdc.com>, <bvanassche@acm.org>,
+        <agross@kernel.org>, <gregkh@linuxfoundation.org>,
+        <quic_tdas@quicinc.com>, <robin.murphy@arm.com>,
+        <daniel.lezcano@linaro.org>, <rui.zhang@intel.com>,
+        <lukasz.luba@arm.com>, <quic_rjendra@quicinc.com>,
+        <ulf.hansson@linaro.org>, <quic_sibis@quicinc.com>,
+        <otto.pflueger@abscue.de>, <luca@z3ntu.xyz>,
+        <neil.armstrong@linaro.org>, <abel.vesa@linaro.org>,
+        <bhupesh.sharma@linaro.org>, <alexandre.torgue@foss.st.com>,
+        <peppe.cavallaro@st.com>, <joabreu@synopsys.com>,
+        <netdev@vger.kernel.org>, <lpieralisi@kernel.org>, <kw@linux.com>,
+        <bhelgaas@google.com>, <ahalaney@redhat.com>,
+        <u.kleine-koenig@pengutronix.de>, <dmitry.baryshkov@linaro.org>,
+        <quic_cang@quicinc.com>, <danila@jiaxyga.com>,
+        <quic_nitirawa@quicinc.com>, <mantas@8devices.com>,
+        <athierry@redhat.com>, <quic_kbajaj@quicinc.com>,
+        <quic_bjorande@quicinc.com>, <quic_msarkar@quicinc.com>,
+        <quic_devipriy@quicinc.com>, <quic_tsoni@quicinc.com>,
+        <quic_rgottimu@quicinc.com>, <quic_shashim@quicinc.com>,
+        <quic_kaushalk@quicinc.com>, <quic_tingweiz@quicinc.com>,
+        <srinivas.kandagatla@linaro.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-phy@lists.infradead.org>, <linux-crypto@vger.kernel.org>,
+        <linux-scsi@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
+        <linux-riscv@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
+        <linux-watchdog@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>, <kernel@quicinc.com>
+References: <20240703025850.2172008-1-quic_tengfan@quicinc.com>
+ <20240703025850.2172008-2-quic_tengfan@quicinc.com>
+ <665f6c8c-4f43-4d20-90e9-9e037a942066@kernel.org>
+ <fbeb5969-0b3a-455e-88eb-b83734bf2c50@quicinc.com>
+ <97c9484b-e257-4163-a104-3457d59bc69b@kernel.org>
+ <63eb3f58-d4a4-4a27-b78c-f4cb83e62c63@quicinc.com>
+ <f8f3c4d4-bf24-4195-a7b0-eec95cd64b57@linaro.org>
+From: "Aiqun Yu (Maria)" <quic_aiquny@quicinc.com>
+Content-Language: en-US
+In-Reply-To: <f8f3c4d4-bf24-4195-a7b0-eec95cd64b57@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Xv0uyNlFtYweTJimUd2_Zu7YnPGml5J3
+X-Proofpoint-ORIG-GUID: Xv0uyNlFtYweTJimUd2_Zu7YnPGml5J3
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-08_02,2024-07-05_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=966 mlxscore=0
+ adultscore=0 malwarescore=0 spamscore=0 bulkscore=0 lowpriorityscore=0
+ suspectscore=0 clxscore=1015 priorityscore=1501 phishscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407080054
 
-You may need a cover email to describe the changes and with patch email 
-replied to it. See an example FYI: 
-https://lore.kernel.org/linux-riscv/20240705-sg2002-adc-v2-0-83428c20a9b2@bootlin.com/
-
-And this should be the second version and you have to updated the title 
-of the cover email to add "v2", and describes the changes from last one.
-
-`git format-patch -1 --cover-letter --thread --base=xxxx -v 2 -o ..` 
-should help you.
-
-See 
-https://www.kernel.org/doc/html/v4.17/process/submitting-patches.html#the-canonical-patch-format
 
 
-On 2024/7/8 12:27, Li Qiang wrote:
-> In general it's a good idea to avoid using bare unreachable() because it
-> introduces undefined behavior in compiled code. but it caused a compilation warning,
-> Using BUG() instead of unreachable() to resolve compilation warnings.
->
-> Fixes the following warnings:
->      drivers/clk/sophgo/clk-cv18xx-ip.o: warning: objtool: mmux_round_rate() falls through to next function bypass_div_round_rate()
->
-> Fixes: 80fd61ec46124 ("clk: sophgo: Add clock support for CV1800 SoC")
-> Signed-off-by: Li Qiang <liqiang01@kylinos.cn>
-> ---
->   drivers/clk/sophgo/clk-cv18xx-ip.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/clk/sophgo/clk-cv18xx-ip.c b/drivers/clk/sophgo/clk-cv18xx-ip.c
-> index 805f561725ae..b186e64d4813 100644
-> --- a/drivers/clk/sophgo/clk-cv18xx-ip.c
-> +++ b/drivers/clk/sophgo/clk-cv18xx-ip.c
-> @@ -613,7 +613,7 @@ static u8 mmux_get_parent_id(struct cv1800_clk_mmux *mmux)
->   			return i;
->   	}
->   
-> -	unreachable();
-> +	BUG();
->   }
->   
->   static int mmux_enable(struct clk_hw *hw)
+On 7/8/2024 2:07 PM, Krzysztof Kozlowski wrote:
+> On 08/07/2024 06:45, Aiqun Yu (Maria) wrote:
+>>
+>>
+>> On 7/3/2024 5:33 PM, Krzysztof Kozlowski wrote:
+>>> On 03/07/2024 11:21, Tengfei Fan wrote:
+>>>>>>         - items:
+>>>>>>             - enum:
+>>>>>> +              - qcom,qcs9100-ride
+>>>>>>                 - qcom,sa8775p-ride
+>>>>>> +          - const: qcom,qcs9100
+>>>>>
+>>>>> This changes existing compatible for sa8775p without any explanation in
+>>>>> commit msg.
+>>>>>
+>>>>> Best regards,
+>>>>> Krzysztof
+>>>>>
+>>>>
+>>>> In the next verion patch series, I will provide relevant explanatory 
+>>>> information in this patch commit message.
+>>>
+>>> TBH, I cannot think of any reasonable explanation for this, especially
+>>> considering rest of the patchset which does not fix resulting dtbs_check
+>>> warning.
+>>
+>> The existing compatible "sa8775p" warning can only be addressed When
+>> @Nikunj's "sa8775p" changes merged.
+>>
+>> Let me know if you have other suggestions for this.
+> 
+> I don't have, because I don't understand why do you want/need to change
+> existing board compatible.
+
+We can left the current existing sa8775p board compatible as it is. And
+have a brand new qcs9100 and qcs9100-board item for current non-scmi
+resources compatible.
+
+Will that be more reasonable from your end?
+
+> 
+> Best regards,
+> Krzysztof
+> 
+
+-- 
+Thx and BRs,
+Aiqun(Maria) Yu
