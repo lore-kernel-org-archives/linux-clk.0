@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3297A1474AF;
-	Mon,  8 Jul 2024 19:02:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E1814B952;
+	Mon,  8 Jul 2024 19:05:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720465323; cv=none; b=BdgiZ/aJXIbivpKa5tje9R39klOkUIo5P9upQeMPVEMxJlUZhbAa0JxnRUGDUnm0zg0moSrkyx5kEE0q2hMq6sqdMXq+woNyvEZfZdBRFiB0XrPpi1qlUivxMpAjaQDf+GOKjTFNdK5XBImqvcjnH3QQo6QtKrcz7CI5OMxA2wM=
+	t=1720465549; cv=none; b=cLPuU3FKwo6ta5n9mt+ANDMq5Gdt20T5byanyd/9bDGTbng5X8rNICieSQRf0TLjLh0AAWJClN3kn0EB5Tf50AxrdaVUPK/dPLlnaA2Ysfd0xSLMtRBfAdwvWMowXfMrSyaqh/+tcLr5Cf7J+jEmpxdnP1iKiLTKjVMhwAsFBkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720465323; c=relaxed/simple;
-	bh=zNv3CdsAy7qnE1vDIXu/jgdGKJhS4oc7HIXXOYD1i14=;
+	s=arc-20240116; t=1720465549; c=relaxed/simple;
+	bh=mZ0UcWrET9TN2UFV+2vHkASsXRUgEGjwDnmMrlrBnSQ=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=g8KE26JiYrzpvEQnpWzE8HbHG8PmM3o/T6jaKspSxCOJDlmoZqtkdV4/3xDqNHNYXZYGZsEt9dLpd4coWHST7y90KwLsaV51NZW3eEcgrZ1kQqlSjgwSDCozfs1jACPXSRpXkd4Bw5GrqBWf2pjqI+ObH8wrCz5Qh1783LdT+ec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S56rDTsv; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=Joy70k2D/fbx99UM32Rx6Svrqo6p/N//hIXWwrkMYrts+WBCR4u1QzkPjDF5GGN9OzNQzZYr7cusE9TxvgyNI4Oi0uLGxNsiyq9jU7opFqM5HU+cxP4cObWfcNJmzCcG1asQTRBoGypyiaqdd26WVuC3OpfQmvJYR/ifonmsSKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U0V6jff8; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S56rDTsv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF4F0C116B1;
-	Mon,  8 Jul 2024 19:02:02 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U0V6jff8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 105A7C116B1;
+	Mon,  8 Jul 2024 19:05:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720465323;
-	bh=zNv3CdsAy7qnE1vDIXu/jgdGKJhS4oc7HIXXOYD1i14=;
+	s=k20201202; t=1720465549;
+	bh=mZ0UcWrET9TN2UFV+2vHkASsXRUgEGjwDnmMrlrBnSQ=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=S56rDTsvxnKU7hnenU0RfZ6yBrZu1MiLkuj/HIuSoKmmEfa777Ht9t7yuBjdCx4rP
-	 IXB4s0EmoFbxiHQeCdwfCe1seXuq7KoCCkbNTd0hnI/tGPTjvr8OmJYEf0TaS27fSh
-	 x9PuhP0IkbJEaopUjYx8rgi+/UZpqn+hr9hrTape9fgilQbv2oeI3sqybxE9dVHB5D
-	 cAdIzvkreDQJFoQ8ajU3cpUzuXQK36PnQG3d3XOrtMOFQ4y8gnRDi9p6GOu39qRM7x
-	 +XYcumJhfJwOvDEoopzga59lOgu64Rlt/WFI5L7txvQ71C5URoPtSqaUPAN3ugJJhz
-	 u3hdCrTPd5+aw==
-Message-ID: <977bf1136272701662ca7bd8b0a38319.sboyd@kernel.org>
+	b=U0V6jff8dEHzKrQ+nlQSGnWEnWk3mQuDwXWt8hIBbx22u3fuQvKIp7dThZkLEVsLq
+	 ErjHD1yF+JtPoc+o6UQHRu6v+nZWHhg+JhvEGpuKeCVs0pXjE8onTsglqSHFbSEKRR
+	 9BhtrAr9dbd0oH9Lxz9KU8t9XsZjB1eK1LvtzGY7FnUmZ9GrO38pKhhSArcgdk06TX
+	 baIQLTT/mwcufERMOCNpC4J/vtuvUhrcN+GVI/jMvFGT9qWyDt8YWHz7datmuhb56U
+	 BcI+WVADgq7ZegBhMXWZZbsWu7GJNutTspywHWx4RT42b4d3jndOVK8GerI7XI2ENi
+	 y1nE64c3RRjQw==
+Message-ID: <9b455698a33ec5d01c12424ea67c8e88.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,20 +35,30 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240628105542.5456-2-ansuelsmth@gmail.com>
-References: <20240628105542.5456-1-ansuelsmth@gmail.com> <20240628105542.5456-2-ansuelsmth@gmail.com>
-Subject: Re: [PATCH v2 2/2] dt-bindings: clock: mediatek: add syscon compatible for mt7622 pciesys
+In-Reply-To: <20240612201211.91683-1-alpernebiyasak@gmail.com>
+References: <20240612201211.91683-1-alpernebiyasak@gmail.com>
+Subject: Re: [PATCH RESEND v2 1/2] clk: mediatek: mt8173-infracfg: Handle unallocated infracfg when module
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Christian Marangi <ansuelsmth@gmail.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Christian Marangi <ansuelsmth@gmail.com>, Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Michael Turquette <mturquette@baylibre.com>, =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
-Date: Mon, 08 Jul 2024 12:02:00 -0700
+Cc: linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Uwe =?utf-8?q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Conor Dooley <conor+dt@kernel.org>, linux-arm-kernel@lists.infradead.org, Chen-Yu Tsai <wenst@chromium.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, linux-clk@vger.kernel.org, Alper Nebi Yasak <alpernebiyasak@gmail.com>
+To: Alper Nebi Yasak <alpernebiyasak@gmail.com>, AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, linux-mediatek@lists.infradead.org
+Date: Mon, 08 Jul 2024 12:05:46 -0700
 User-Agent: alot/0.10
 
-Quoting Christian Marangi (2024-06-28 03:55:41)
-> Add required syscon compatible for mt7622 pciesys. This is required for
-> SATA interface as the regs are shared.
+Quoting Alper Nebi Yasak (2024-06-12 13:11:00)
+> The MT8173 infracfg clock driver does initialization in two steps, via a
+> CLK_OF_DECLARE_DRIVER declaration. However its early init function
+> doesn't get to run when it's built as a module, presumably since it's
+> not loaded by the time it would have been called by of_clk_init(). This
+> causes its second-step probe() to return -ENOMEM when trying to register
+> clocks, as the necessary clock_data struct isn't initialized by the
+> first step.
 >=20
-> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+> MT2701 and MT6797 clock drivers also use this mechanism, but they try to
+> allocate the necessary clock_data structure if missing in the second
+> step. Mimic that for the MT8173 infracfg clock as well to make it work
+> as a module.
+>=20
+> Signed-off-by: Alper Nebi Yasak <alpernebiyasak@gmail.com>
 > ---
 
 Applied to clk-next
