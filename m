@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5002614EC61
-	for <linux-clk@vger.kernel.org>; Mon,  8 Jul 2024 21:43:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B426B1CAB1;
+	Mon,  8 Jul 2024 22:18:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720475015; cv=none; b=otj9prVjIny5hu8HB3MI68HM6NlzRdEa9WqyBVgV/NTdB8Atvkh48XKMz64YnVX7I2ucQm0tmIrBQ5Nl33OqH0N1tjGxgqKIClOtxmx1HjNlFvlAbwRrXsLb+TeLNPdtiC3rhsF3E77K1GfQGULujuXPgLLUbx6E7CWm06LM2K0=
+	t=1720477126; cv=none; b=J9sXpaMTsw1/NS9jCxGYQN5N9LXqKvIC5MD5+cSzBO/LQ2TpMifprH1VJvdXkWhdTk7sFLCzKDNACUq9c328UZl/R58DQ+4nb5QWRC128EtlXESyq6fcOSMJ3fK1oCEp8SIObWYrlqHB+KCDMwXPjNm2T8xUOUi4LMuEIB25Ig0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720475015; c=relaxed/simple;
-	bh=OKOMrRX8lEkX8tOP8acsg+59i2/BtwUafoJAS6aCxv0=;
+	s=arc-20240116; t=1720477126; c=relaxed/simple;
+	bh=cU8H6Bif4LESAVrZggzoDOjewrXPpFQprPeYSGmE6rk=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=IKmvmdsWqzYxWxZXVy/6RVplrfkXXCYyKWobJ/gO8WDE04MNzz26x+HVuIBuP0tNzHHDTvosIg6Jst7Ikda3vvYlNDbvMEXq5o3nsh5TmBZFR7zonTp2i5WsIMqQbEqgeot5eMs1qO63iUquTVA87JHiPa4Rww4tzX/HLi5DgOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m95TX3d+; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=g8cp0qqyREDo6NdZuOtIim76Kb30WBlGrTwdlWjbBAaEOrHhxEe14UTy/gvyVAq4xMb21j300VMV4HsKO492kcmj6lnh+olX3+EuU7Xql9IutRuyGvVFJ4sCSszvj7QHqeOkIAHXg29HpZLRxGpW/HXJZ4tboOM/KGGxFouBJp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uehsCfh6; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m95TX3d+"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C897BC116B1;
-	Mon,  8 Jul 2024 21:43:34 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uehsCfh6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0980BC116B1;
+	Mon,  8 Jul 2024 22:18:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720475014;
-	bh=OKOMrRX8lEkX8tOP8acsg+59i2/BtwUafoJAS6aCxv0=;
+	s=k20201202; t=1720477126;
+	bh=cU8H6Bif4LESAVrZggzoDOjewrXPpFQprPeYSGmE6rk=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=m95TX3d+uFnOG3iL5l3dlve+aas0bqszJ/j/Ik3ZzFxxlcmXLOev4zTbVbo8lTv13
-	 6XyAm12UDqtPYY3M4QxrEqopuBimzxVd2RLwSczoxWjhrgbjo/2aV/rH6iu1UKGrpV
-	 GkX6g3fTKj/aXt8C3uuqz2iisjM63xp8vjJChJRq0nPJMyFym85WJ2ZI1UDMr3/OXE
-	 Q+l3mU6b62gg6knXvhAcOaVP0B82qfAUu18UJHDNY3S9C3WZUXzZkvH+HmyerG1anR
-	 ToLZgJ+jEOlRBPrZOsO+s6f1Pu5ALWEgXsnEv7PMBW4a1hLZn87v6OluMt08HacsZr
-	 PNASVIbpQ7grA==
-Message-ID: <629a59c29c5230a0a3875373d80556d2.sboyd@kernel.org>
+	b=uehsCfh6UfBo77U0FtaULfdGBO4IIJUUsXQFPEiyns6oY7m67Jw4VijgoOlcCm2NU
+	 uKZStTPs2Rpq17fcaJnE0NaQoOFZY3zp9mlMzTywhJ8n/4JPzIeMRw0WMGPq2F+Pe1
+	 0XDU1S+FmVHtD9G4cK9UvGtA6CJPfFnTtaizpdiNX5TqXiyGpjpD/JzW3ho7TQLZj0
+	 mN0TxDFox76mxB9+DKDGluegcS9awx5G0nThr50Il21PXGH0uDQ3HvjLTVdKXg8evA
+	 zvI0CGrGs2NSMMlnLJjXRWGsv2lc9wvQ4I1iC4iDv3D/12NT4pjsV+arZz9ZhYkWPl
+	 Q3ZRhvlYPQ6mw==
+Message-ID: <6c5d6c0730698969ef613ec9ec4aa14a.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,24 +35,144 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <c491bdea05d847f1f1294b94f14725d292eb95d0.1718615934.git.lorenzo@kernel.org>
-References: <c491bdea05d847f1f1294b94f14725d292eb95d0.1718615934.git.lorenzo@kernel.org>
-Subject: Re: [PATCH] clk: en7523: fix rate divider for slic and spi clocks
+In-Reply-To: <20240617-ep93xx-v10-3-662e640ed811@maquefel.me>
+References: <20240617-ep93xx-v10-0-662e640ed811@maquefel.me> <20240617-ep93xx-v10-3-662e640ed811@maquefel.me>
+Subject: Re: [PATCH v10 03/38] clk: ep93xx: add DT support for Cirrus EP93xx
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: p.zabel@pengutronix.de, mturquette@baylibre.com, lorenzo.bianconi83@gmail.com, linux-arm-kernel@lists.infradead.org, nbd@nbd.name, john@phrozen.org, upstream@airoha.com, angelogioacchino.delregno@collabora.com
-To: Lorenzo Bianconi <lorenzo@kernel.org>, linux-clk@vger.kernel.org
-Date: Mon, 08 Jul 2024 14:43:32 -0700
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+To: Michael Turquette <mturquette@baylibre.com>, Nikita Shubin via B4 Relay <devnull+nikita.shubin.maquefel.me@kernel.org>, nikita.shubin@maquefel.me
+Date: Mon, 08 Jul 2024 15:18:43 -0700
 User-Agent: alot/0.10
 
-Quoting Lorenzo Bianconi (2024-06-17 02:25:49)
-> Introduce div_offset field in en_clk_desc struct in order to fix rate
-> divider estimation in en7523_get_div routine for slic and spi fixed
-> rate clocks.
-> Moreover, fix base_shift for crypto clock.
->=20
-> Fixes: 1e6273179190 ("clk: en7523: Add clock driver for Airoha EN7523 SoC=
-")
-> Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
-> ---
+Quoting Nikita Shubin via B4 Relay (2024-06-17 02:36:37)
+> diff --git a/drivers/clk/clk-ep93xx.c b/drivers/clk/clk-ep93xx.c
+> new file mode 100644
+> index 000000000000..a0430a5ae4da
+> --- /dev/null
+> +++ b/drivers/clk/clk-ep93xx.c
+> @@ -0,0 +1,834 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+[...]
+> +
+> +static int ep93xx_clk_enable(struct clk_hw *hw)
+> +{
+> +       struct ep93xx_clk *clk =3D ep93xx_clk_from(hw);
+> +       struct ep93xx_clk_priv *priv =3D ep93xx_priv_from(clk);
+> +       u32 val;
+> +
+> +       guard(spinlock_irqsave)(&priv->lock);
 
-Applied to clk-next
+I thought guard() was most important when there were multiple exit paths
+from a function, but OK.
+
+> +
+[...]
+> +
+> +static int ep93xx_plls_init(struct ep93xx_clk_priv *priv)
+> +{
+> +       const char fclk_divisors[] =3D { 1, 2, 4, 8, 16, 1, 1, 1 };
+> +       const char hclk_divisors[] =3D { 1, 2, 4, 5, 6, 8, 16, 32 };
+[...]
+> +       if (!(value & EP93XX_SYSCON_CLKSET2_NBYP2))
+> +               clk_pll2_rate =3D EP93XX_EXT_CLK_RATE;
+> +       else if (value & EP93XX_SYSCON_CLKSET2_PLL2_EN)
+> +               clk_pll2_rate =3D calc_pll_rate(EP93XX_EXT_CLK_RATE, valu=
+e);
+> +       else
+> +               clk_pll2_rate =3D 0;
+> +
+> +       hw =3D devm_clk_hw_register_fixed_rate(dev, "pll2", "xtali", 0, c=
+lk_pll2_rate);
+
+Please use clk_parent_data for topology descriptions.
+
+> +       if (IS_ERR(hw))
+> +               return PTR_ERR(hw);
+> +
+> +       priv->fixed[EP93XX_CLK_PLL2] =3D hw;
+> +
+> +       return 0;
+> +}
+> +
+> +static int ep93xx_clk_probe(struct auxiliary_device *adev,
+> +                              const struct auxiliary_device_id *id)
+> +{
+> +       struct ep93xx_regmap_adev *rdev =3D to_ep93xx_regmap_adev(adev);
+> +       struct clk_parent_data xtali =3D { .index =3D 0 };
+> +       struct clk_parent_data ddiv_pdata[3] =3D { };
+> +       unsigned int clk_spi_div, clk_usb_div;
+> +       struct clk_parent_data pdata =3D {};
+> +       struct device *dev =3D &adev->dev;
+> +       struct ep93xx_clk_priv *priv;
+> +       struct ep93xx_clk *clk;
+> +       struct clk_hw *hw;
+> +       unsigned int idx;
+> +       int ret;
+> +       u32 value;
+> +
+> +       priv =3D devm_kzalloc(dev, struct_size(priv, reg, 10), GFP_KERNEL=
+);
+> +       if (!priv)
+> +               return -ENOMEM;
+> +
+> +       spin_lock_init(&priv->lock);
+> +       priv->dev =3D dev;
+> +       priv->aux_dev =3D rdev;
+> +       priv->map =3D rdev->map;
+> +       priv->base =3D rdev->base;
+> +
+> +       ret =3D ep93xx_plls_init(priv);
+> +       if (ret)
+> +               return ret;
+> +
+> +       regmap_read(priv->map, EP93XX_SYSCON_CLKSET2, &value);
+> +       clk_usb_div =3D (value >> 28 & GENMASK(3, 0)) + 1;
+> +       hw =3D devm_clk_hw_register_fixed_factor(dev, "usb_clk", "pll2", =
+0, 1, clk_usb_div);
+
+This one can use clk_hw to reference pll2.
+
+> +       if (IS_ERR(hw))
+> +               return PTR_ERR(hw);
+> +
+> +       priv->fixed[EP93XX_CLK_USB] =3D hw;
+> +
+> +       ret =3D ep93xx_uart_clock_init(priv);
+> +       if (ret)
+> +               return ret;
+> +
+> +       ret =3D ep93xx_dma_clock_init(priv);
+> +       if (ret)
+> +               return ret;
+> +
+> +       clk_spi_div =3D id->driver_data;
+> +       hw =3D devm_clk_hw_register_fixed_factor(dev, "ep93xx-spi.0", "xt=
+ali",
+
+Are these clk names trying to match device names?
+
+> +                                              0, 1, clk_spi_div);
+> +       if (IS_ERR(hw))
+> +               return PTR_ERR(hw);
+> +
+> +       priv->fixed[EP93XX_CLK_SPI] =3D hw;
+> +
+> +       /* PWM clock */
+> +       hw =3D devm_clk_hw_register_fixed_factor(dev, "pwm_clk", "xtali",=
+ 0, 1, 1);
+> +       if (IS_ERR(hw))
+> +               return PTR_ERR(hw);
+> +
+> +       priv->fixed[EP93XX_CLK_PWM] =3D hw;
+> +
+> +       /* USB clock */
+> +       hw =3D devm_clk_hw_register_gate(priv->dev, "ohci-platform", "usb=
+_clk",
+> +                                      0, priv->base + EP93XX_SYSCON_PWRC=
+NT,
+> +                                      EP93XX_SYSCON_PWRCNT_USH_EN, 0,
+> +                                      &priv->lock);
+> +       if (IS_ERR(hw))
+> +               return PTR_ERR(hw);
+> +
