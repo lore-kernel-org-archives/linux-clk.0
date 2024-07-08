@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 817EA14B95B;
-	Mon,  8 Jul 2024 18:59:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3297A1474AF;
+	Mon,  8 Jul 2024 19:02:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720465169; cv=none; b=ElMILqqzCB+9tadTSgOt/A2Z7p5QOEhY4QVHWpDHEsbMiwm92zzPEhK1rSULrpDgkr/U65UNfwkozHah3b8K3Wbi5qDgeGafPZtOEOcneKK5vf22cKndHdBrm4SeJjccmgklikPv6fGz2q7xMH6mjOU99/dQyE9FBqHnhuQNsYQ=
+	t=1720465323; cv=none; b=BdgiZ/aJXIbivpKa5tje9R39klOkUIo5P9upQeMPVEMxJlUZhbAa0JxnRUGDUnm0zg0moSrkyx5kEE0q2hMq6sqdMXq+woNyvEZfZdBRFiB0XrPpi1qlUivxMpAjaQDf+GOKjTFNdK5XBImqvcjnH3QQo6QtKrcz7CI5OMxA2wM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720465169; c=relaxed/simple;
-	bh=sJzSE8UYwx+xboaLVPiHjNU7mUoRzdDujz4yLfcsBRk=;
+	s=arc-20240116; t=1720465323; c=relaxed/simple;
+	bh=zNv3CdsAy7qnE1vDIXu/jgdGKJhS4oc7HIXXOYD1i14=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=PfA1jcsJbZfE6GGtQUzoVBLh1er5GkJ9FXvcRlEIHpVOelGxII3AL82lZ/x/7WJ1UCo5X2IfBgr16XIOw4R1290FPuM4n7FnSB2I1rEu5rE6FtTblFPrbDR3pN/AQMSzU3gq8CJ4pRA1bUIpASfJ7QzUM44cbf5/Eefvxh+vERo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KI0cxyY4; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=g8KE26JiYrzpvEQnpWzE8HbHG8PmM3o/T6jaKspSxCOJDlmoZqtkdV4/3xDqNHNYXZYGZsEt9dLpd4coWHST7y90KwLsaV51NZW3eEcgrZ1kQqlSjgwSDCozfs1jACPXSRpXkd4Bw5GrqBWf2pjqI+ObH8wrCz5Qh1783LdT+ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S56rDTsv; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KI0cxyY4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF047C116B1;
-	Mon,  8 Jul 2024 18:59:28 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S56rDTsv"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF4F0C116B1;
+	Mon,  8 Jul 2024 19:02:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720465169;
-	bh=sJzSE8UYwx+xboaLVPiHjNU7mUoRzdDujz4yLfcsBRk=;
+	s=k20201202; t=1720465323;
+	bh=zNv3CdsAy7qnE1vDIXu/jgdGKJhS4oc7HIXXOYD1i14=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=KI0cxyY4DlNOn9IlVLb16B2D4HdBRobsyqRn7ZUNueTTcr4ipiS/yoxdc4J1a1lTb
-	 3KLSpmjJUG2gIv5wuePqSjyNjxidgpwir8l2cz95mXNFgZz2zHiTFIKwe7WEtGpBHh
-	 Xa0IWE69MQRurNOOu8Nf4PGRinr+gPSFncSaltSoIDJBxcmIFgi5eiJjGxhRi3Z+Rd
-	 yyLngqsAhkSCVNP41cBqa19KHw8DYb9ZBiyQwNGD33Y0ao1lI0aHMoz7+SA+8hK94Q
-	 ENc/U3AqasNRpkb6TuaCiLHsqQ+m9O1M2bxoPye+guWEmbPZxQQo8ZDkFDj63K0Oj+
-	 xtFoHaXssdMZA==
-Message-ID: <9bd992dcdd7e1531e71af60de5e58eea.sboyd@kernel.org>
+	b=S56rDTsvxnKU7hnenU0RfZ6yBrZu1MiLkuj/HIuSoKmmEfa777Ht9t7yuBjdCx4rP
+	 IXB4s0EmoFbxiHQeCdwfCe1seXuq7KoCCkbNTd0hnI/tGPTjvr8OmJYEf0TaS27fSh
+	 x9PuhP0IkbJEaopUjYx8rgi+/UZpqn+hr9hrTape9fgilQbv2oeI3sqybxE9dVHB5D
+	 cAdIzvkreDQJFoQ8ajU3cpUzuXQK36PnQG3d3XOrtMOFQ4y8gnRDi9p6GOu39qRM7x
+	 +XYcumJhfJwOvDEoopzga59lOgu64Rlt/WFI5L7txvQ71C5URoPtSqaUPAN3ugJJhz
+	 u3hdCrTPd5+aw==
+Message-ID: <977bf1136272701662ca7bd8b0a38319.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,19 +35,20 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <ZobghvwZAyMjl4eB@standask-GA-A55M-S2HP>
-References: <ZobghvwZAyMjl4eB@standask-GA-A55M-S2HP>
-Subject: Re: [PATCH v3] dt-bindings: clock: sprd,sc9860-clk: convert to YAML
+In-Reply-To: <20240628105542.5456-2-ansuelsmth@gmail.com>
+References: <20240628105542.5456-1-ansuelsmth@gmail.com> <20240628105542.5456-2-ansuelsmth@gmail.com>
+Subject: Re: [PATCH v2 2/2] dt-bindings: clock: mediatek: add syscon compatible for mt7622 pciesys
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-To: Baolin Wang <baolin.wang7@gmail.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Orson Zhai <orsonzhai@gmail.com>, Rob Herring <robh@kernel.org>, Stanislav Jakubek <stano.jakubek@gmail.com>
-Date: Mon, 08 Jul 2024 11:59:24 -0700
+Cc: Christian Marangi <ansuelsmth@gmail.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Christian Marangi <ansuelsmth@gmail.com>, Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Michael Turquette <mturquette@baylibre.com>, =?utf-8?q?Rafa=C5=82_Mi=C5=82ecki?= <rafal@milecki.pl>, Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
+Date: Mon, 08 Jul 2024 12:02:00 -0700
 User-Agent: alot/0.10
 
-Quoting Stanislav Jakubek (2024-07-04 10:48:54)
-> Convert the Spreadtrum SC9860 clock bindings to DT schema.
+Quoting Christian Marangi (2024-06-28 03:55:41)
+> Add required syscon compatible for mt7622 pciesys. This is required for
+> SATA interface as the regs are shared.
 >=20
-> Signed-off-by: Stanislav Jakubek <stano.jakubek@gmail.com>
+> Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
 > ---
 
 Applied to clk-next
