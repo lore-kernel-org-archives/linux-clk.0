@@ -1,121 +1,115 @@
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D50819DF95;
-	Tue,  9 Jul 2024 14:35:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEDC61E864;
+	Tue,  9 Jul 2024 14:49:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720535756; cv=none; b=fHOb9Xfa8jVJLoE+t7HmQKrJD0keZGXd1WbbtZB7ELNa4lI6Q4JhGZfS3xPPDXuowN2JZOD5Jusb8Dki1B9pZaLL4G8cR7hTk/CO4mkk4+wVoRjOBFV6vPk3TpqcqvvOkPXm/JFBHOjW71EtLqyvE2Yy75EA+d9UulNl1BgLXj8=
+	t=1720536599; cv=none; b=BvAON9oVAGDp6p9U1srZFJN2llws3uyvw4sU4NTAoyjY+MCBP57t0Et+Gv+MPvlJcRKG3cTJu4ZAhBXTCNEoV+uy3UThf2NBO1FaS9PzhUZhQtex99HgSg0IWVErxAdGdrC/fHi3KTBVJ7hAl5OBs9cAS4xZ9oYsSxDAyzn9ylM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720535756; c=relaxed/simple;
-	bh=/7V0EJxNZ4cEHLfTToLfwG5Wl7+cvEDF+WpH3vQtF7w=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=q1x9XpFUXqIC4jucECv5COUGy1BhPkM1MeN+V4/QAa2bcEm9ht1NtCRPuNvHF4JfeG6/E7obknBkHVS9V2GswgQRerQP+EYOKmWsytcwf/io1yR8AHjg902k49o1+fe+AxvXQL4qdNPs4AdcAbbdoohg+e6LaGV8+VlZo8M6u/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KvM8Muqj; arc=none smtp.client-ip=205.220.180.131
+	s=arc-20240116; t=1720536599; c=relaxed/simple;
+	bh=eUc+cFJM93ToUxIeXBBcTJX5lkcVp3Njq6FM8ite3AA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=IaeHde/PXKlwt+4JeLJ1bqcfY9kaUS3bnmnq8TaIfdRBwjuPsypeJEG+LYEBabTpSl+mh9eBKGer4PXzp5OHuonP1oBug7CUpfM2n83MAV0PKariSy5JsJwIDdsFZU0eZLDsMvP7/OkRIJrz3+HonbReSwN/LgLq9dZ/Ym3TKuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LyGZp5l/; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KvM8Muqj"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469AnSba004577;
-	Tue, 9 Jul 2024 14:35:52 GMT
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LyGZp5l/"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469AS6md013357;
+	Tue, 9 Jul 2024 14:49:43 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	k0srZcHoiWjDGghk0/Pm9qidtO9mjix4a5MwTnpiZZY=; b=KvM8MuqjWSyTOivi
-	nT94+it1he54P5muVnSyOrrEhHxhBJfCc2aJeCFAqk0fLxmBAxFW6UPEUma58dwf
-	QhhtRgItOPZrvDuEY0lKhyeDIBf4u5fZLnIddToJ8EFpqSRAL8ijxYx5Q+/Co01i
-	oWCrEtTC6XDxyJYMjWh2C4s9jaSteGggxvbfSFFpoD2Y3GwwkW+gatQPA2ROqggp
-	z4vAdXwJ79XgWi6aTK8Kd7uHvssLUqdBj5WmLbM2RGd4ivjz+ZyuYlmaoMz04erP
-	QTtpXRTgOVXEtAGmC80dEX2x+orKGb1rC/tcXkgGecEYGH5xq8RTPdrT5oPuBDVN
-	FQm55g==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406xa66n1v-1
+	OBm02fxuS7z1vUEhqNdVoOYXznK1XRbcSRWqIJsv2XQ=; b=LyGZp5l/1Scu4Dfv
+	aZOcPyX9nbvWaP3MMjCtE9I15eIaRsWpwnX163dRdu8TRGOAFDxLaDUFeZCT+ydJ
+	RQ9aVMOvvi3ukoiL1xibMCwJpU1wvTpq7fF8iEXXOA3koUrmXcSAbF/koNUEBFgT
+	Givr1Dt7m2RGfXTIpkHmtiyySX1wjIHFDT0kllAlwTXS6BFlxT9Unj8RbXB4J0Ix
+	3MUqk2NzUACL8ZzEV7S5AGWwL2CAEitcB5QzDG4cqtPrKEHxaFnTDXjLQwV/Mh8S
+	KkqjaLBFTcybUm5jtI6bVPsX9GrfOdr78fZ/aA6X+dAlObTDmVBTxKrneKcpT6hJ
+	bZS9zA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406x0t702b-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Jul 2024 14:35:51 +0000 (GMT)
+	Tue, 09 Jul 2024 14:49:43 +0000 (GMT)
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 469EZorF030812
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 469Enfqg015379
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 9 Jul 2024 14:35:50 GMT
-Received: from tengfan-gv.ap.qualcomm.com (10.80.80.8) by
- nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 9 Jul 2024 07:35:45 -0700
-From: Tengfei Fan <quic_tengfan@quicinc.com>
-Date: Tue, 9 Jul 2024 22:35:30 +0800
-Subject: [PATCH v2 2/2] clk: qcom: rpmh: Add support for QCS9100 rpmh
- clocks
+	Tue, 9 Jul 2024 14:49:41 GMT
+Received: from [10.81.24.74] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 9 Jul 2024
+ 07:49:41 -0700
+Message-ID: <dd7278f5-8da9-46c5-8db2-6d3882f7d674@quicinc.com>
+Date: Tue, 9 Jul 2024 07:49:40 -0700
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240709-add_qcs9100_rpmh_clk_compatible-v2-2-b6f516c36818@quicinc.com>
-References: <20240709-add_qcs9100_rpmh_clk_compatible-v2-0-b6f516c36818@quicinc.com>
-In-Reply-To: <20240709-add_qcs9100_rpmh_clk_compatible-v2-0-b6f516c36818@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 4/8] of: Add a KUnit test for overlays and test managed
+ APIs
+To: Stephen Boyd <sboyd@kernel.org>,
         Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>
-CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Tengfei Fan <quic_tengfan@quicinc.com>
-X-Mailer: b4 0.15-dev-a66ce
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1720535739; l=1122;
- i=quic_tengfan@quicinc.com; s=20240709; h=from:subject:message-id;
- bh=/7V0EJxNZ4cEHLfTToLfwG5Wl7+cvEDF+WpH3vQtF7w=;
- b=VpBE2NUBCpPrPTAvozBOwJ3ZD1QF/Tk8aXbOOt6tGJckq6t95+fFXeHuaWuKvracxK5BktQji
- 3OEMb2MT2E6ABkmXMI36czryXAJ/MNOLudcHMXrk6CeXacppkKGUg2H
-X-Developer-Key: i=quic_tengfan@quicinc.com; a=ed25519;
- pk=4VjoTogHXJhZUM9XlxbCAcZ4zmrLeuep4dfOeKqQD0c=
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+	<mturquette@baylibre.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <patches@lists.linux.dev>, <kunit-dev@googlegroups.com>,
+        <linux-kselftest@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        Brendan
+ Higgins <brendan.higgins@linux.dev>,
+        David Gow <davidgow@google.com>, Rae
+ Moar <rmoar@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael J . Wysocki" <rafael@kernel.org>,
+        Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
+        Daniel Latypov <dlatypov@google.com>,
+        Christian Marangi <ansuelsmth@gmail.com>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>, Maxime Ripard <maxime@cerno.tech>
+References: <20240706045454.215701-1-sboyd@kernel.org>
+ <20240706045454.215701-5-sboyd@kernel.org>
+Content-Language: en-US
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <20240706045454.215701-5-sboyd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Izs8vD4YGjESvH9WrxZXJaupdSjquVGc
-X-Proofpoint-ORIG-GUID: Izs8vD4YGjESvH9WrxZXJaupdSjquVGc
+X-Proofpoint-GUID: sVmcQBlxh3ZJarXvw8zoA9zj2IvZgBlK
+X-Proofpoint-ORIG-GUID: sVmcQBlxh3ZJarXvw8zoA9zj2IvZgBlK
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-07-09_04,2024-07-09_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=915
- suspectscore=0 lowpriorityscore=0 impostorscore=0 phishscore=0 spamscore=0
- clxscore=1015 adultscore=0 malwarescore=0 mlxscore=0 bulkscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407090095
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 bulkscore=0
+ lowpriorityscore=0 impostorscore=0 adultscore=0 suspectscore=0
+ phishscore=0 mlxlogscore=999 priorityscore=1501 malwarescore=0 spamscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407090096
 
-Adds the RPMH clocks present in QCS9100 SoC.
-QCS9100 is drived from SA8775p. Currently, both the QCS9100 and SA8775p
-platform use non-SCMI resource. In the future, the SA8775p platform will
-move to use SCMI resources and it will have new sa8775p-related device
-tree. Consequently, introduce "qcom,qcs9100-rpmh-clk" to the rpmh clock
-device match table.
+On 7/5/24 21:54, Stephen Boyd wrote:
+> Test the KUnit test managed overlay APIs. Confirm that platform devices
+> are created and destroyed properly. This provides us confidence that the
+> test managed APIs work correctly and can be relied upon to provide tests
+> with fake platform devices and device nodes via overlays compiled into
+> the kernel image.
 
-Signed-off-by: Tengfei Fan <quic_tengfan@quicinc.com>
----
- drivers/clk/qcom/clk-rpmh.c | 1 +
- 1 file changed, 1 insertion(+)
+...
 
-diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
-index bb82abeed88f..8131afba85d6 100644
---- a/drivers/clk/qcom/clk-rpmh.c
-+++ b/drivers/clk/qcom/clk-rpmh.c
-@@ -876,6 +876,7 @@ static int clk_rpmh_probe(struct platform_device *pdev)
- }
- 
- static const struct of_device_id clk_rpmh_match_table[] = {
-+	{ .compatible = "qcom,qcs9100-rpmh-clk", .data = &clk_rpmh_sa8775p},
- 	{ .compatible = "qcom,qdu1000-rpmh-clk", .data = &clk_rpmh_qdu1000},
- 	{ .compatible = "qcom,sa8775p-rpmh-clk", .data = &clk_rpmh_sa8775p},
- 	{ .compatible = "qcom,sc7180-rpmh-clk", .data = &clk_rpmh_sc7180},
+> +kunit_test_suites(
+> +	&of_overlay_apply_kunit_suite,
+> +);
+> +MODULE_LICENSE("GPL");
 
--- 
-2.25.1
+Multiple patches in this series introduce new instances of 
+MODULE_LICENSE() without an accompanying MODULE_DESCRIPTION().
 
+Building a module without a MODULE_DESCRIPTION() will result in a 
+warning when building with make W=1.
+
+/jeff
