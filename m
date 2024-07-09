@@ -1,126 +1,175 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45872157466;
-	Tue,  9 Jul 2024 10:56:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59827158A30
+	for <linux-clk@vger.kernel.org>; Tue,  9 Jul 2024 11:15:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720522616; cv=none; b=jQFrduEpNIlmiXhpqo1lIPPIXZ93PeqyuNcfYAafrGcuuCuslDxuq+agD+71KUJPk3OaO3Hh+SuSB3h7+yFdyDV+ClSUPo9DrpQYXN8rqQBqJHP2YL7i0isxnghDZpiBTEtScSbPM7ZYTK+6XMoLAJIiWCqR5IWRrjNyqT2Y6xo=
+	t=1720523719; cv=none; b=lvny+fyo97+Dm6UOe/ZJC2Z7GVSeZeF/4Lmw6oSf9yGrBpd2IkQeR2YkyKoCXaQy4j+hbAZrwQoEipQ6BexFlA9qVzrEymquUdcaFKqhCM0EJaDl/nVDsyPFt9XFbp6sCPzyPWEo5QEUM9cGAsrAJLEAZNJ0sUVPnVHFY2hl19U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720522616; c=relaxed/simple;
-	bh=84F1L1sHzWlLsLS7ya9AqFpPG7XUdqgHj/9UGtgoTMo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=b73sH1+6BSeHn/QmLnC2Aykhg7vypAxjBEIBegb72A9yqSa6gUal4+6MyLmFkFuXDIo/Rvw3yaBphZUVAjpwEWqOK/+w/pW+UJrhw1pX7b8Uv5c5ECmGF7Rv7q5PnPTYfCdy0J9j7o116Xc1F7vxB7W2QFWDhDYZHfeH9PLWymk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=g/51zbrS; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1720523719; c=relaxed/simple;
+	bh=cfcx6G8p3T8pC/pq4nZ7H1nIBaEARkP7ojw1BAnGFG0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NQETKZGToUZsOOJPBRRwDX/pvOO/E3a89jh/piMsQwql/euqhpyv9GXjZN+EB+TZtShbEDmCYwl7PhRZ9KdxWyemoQ+eB8CIgePrtcecTzkvhsEJUK1RmqEQ/5sLnk3z8gSg6ABqtjHqmu4jMgrGP5u5UfTwMYiAseCe6vUrBD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WLwlrZRf; arc=none smtp.client-ip=209.85.128.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="g/51zbrS"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469AnSJG004577;
-	Tue, 9 Jul 2024 10:56:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	fHwmQdirbf7RLBWn75SXhPKkKCFB1DZbgj07ksairGA=; b=g/51zbrScIQZQTQE
-	o+y+lNZcAkxc4AIbGxiIlUmGiptHNI/0TszYkdmV2KIUmjfJiUEr3eNz4hWreL3I
-	LT0C0f69HIfvXK3R1m+TiVsSihHyveHDA5ktWjPF3pxusjKC1FBynKPepLe6AQJy
-	I5/NOD9mmKR9753aUutSMsDoytp3ROglS/LTD1Qlr9U5NevJRdf9R2mBFBIYlHrJ
-	G2jeeZ+WLWMJNkg9lKq4/jayF+fJUbO4nVA9G9bj5+yVV8vEtEX8hbXq8RXAyLbk
-	b9dYejy3tA7heuzkeMS8GZDGUBq0GxLKP3KBC/IJ9jsQq8XrYPiDJctOzhG+j5kB
-	Pbq1Sw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406xa6656m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Jul 2024 10:56:36 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 469AuXvB029013
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 9 Jul 2024 10:56:33 GMT
-Received: from [10.216.26.146] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 9 Jul 2024
- 03:56:27 -0700
-Message-ID: <60d64abc-a43b-2bdb-812f-8e1198274702@quicinc.com>
-Date: Tue, 9 Jul 2024 16:26:23 +0530
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WLwlrZRf"
+Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-64f4c11d2c9so39514427b3.2
+        for <linux-clk@vger.kernel.org>; Tue, 09 Jul 2024 04:15:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720523716; x=1721128516; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=GlQ34hWtefyEDU5dsZPE3mnjpMGOHGSvbEad+DgwTis=;
+        b=WLwlrZRfXU4/nkeYYua6LJKjOR9j4k+LedhjrmnEGz4M/+dV19iIxybeISAeA8qJoK
+         P6jcZmhyq9kePrlntRFttCA4scxKtfd+nFnsTs2NrZVWybHVQw72WMRI6cLL1A0Csipm
+         DT8JvrgdEVM6MWBzIypKAM4r/1M/2Jh2d2bpgBcChRHJSm0EgYUv4LKoacc95mn5egx3
+         PWFXILVWfQy38jrebqaxMoBCDRUB24V4OXnP+SJ6NYrlt7zvzOl6j2kfldwlWOsFTEwL
+         2hft1E0HJSMb1GMeLhYTM2VndH5DFHWGganGRdIy+3BSiH0OSc0QTAb9/I5XYmyexh3F
+         tUpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720523716; x=1721128516;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GlQ34hWtefyEDU5dsZPE3mnjpMGOHGSvbEad+DgwTis=;
+        b=d7pOOu9OnQhkiAZI2j3DzoSK5Y9LSXpGGI1ruegyo9K1IBJzpsDeZ6XGqGtxZqAGqW
+         ujuyca7ZlZfqQMq0mYclioDX01IDqzFv/sAcoBgRC2yGpyI42mZGBdUb6HsU+sNmlo42
+         UjQF7yXWA90rzKJVOgZRQwHo8h74VS1Bu5c3jQtFXFQVBAkDXhTTc2ptGg5Ha8BJDB66
+         5XzEvyjLPomwWetB3p3E8tjCQCKCmezZh5kLKcKLtjgO6510AWKEAE5+6pVD4LXS8Gaa
+         QP8V6W6qQfCct+KvnBhkjcf5uPb/eYIA7TPH3w3ze99zbN2L6hctjYPcjk5RgNzB24Vh
+         rkJA==
+X-Forwarded-Encrypted: i=1; AJvYcCVqX92SZOfxVKr90Ov/tffua/6okIV75WC3WJrOkFKDd0PAIGK/dE+jUt1JNeElNQPYRx3NHzIsESzWr1IQ7ffMjnFPfi8hEnEP
+X-Gm-Message-State: AOJu0Yx0I+cY3DxflX9rL0tiUHPnwlhfMxYIi9OQpt8c6O4j2+tTS+FB
+	MTq+cRN4pWpOd7XXZpGX2fgB0q050rBgDyFWRxdOgeWfSOPq8TWoFJM0pjdq5gLfoHPWafIWq0x
+	rnJOe96Y1/pghht0twZa0y7o+eiSkXNFoE35OzA==
+X-Google-Smtp-Source: AGHT+IEgeYpQ++Ei1107Pb2oobiMNHnFYl3Xkll12Nu66YXrsXqO+F2PEVXSr3dncViJMvsjSPSuVJafM5bdiPbCO3c=
+X-Received: by 2002:a81:9142:0:b0:643:9333:9836 with SMTP id
+ 00721157ae682-658f09c9102mr24651797b3.38.1720523716323; Tue, 09 Jul 2024
+ 04:15:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH v2 2/6] clk: qcom: clk-alpha-pll: Update set_rate for
- Zonda PLL
-Content-Language: en-US
-To: Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Stephen
- Boyd" <sboyd@kernel.org>,
-        Abhishek Sahu <absahu@codeaurora.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: Stephen Boyd <sboyd@codeaurora.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>,
-        "Imran
- Shaik" <quic_imrashai@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>
-References: <20240702-camcc-support-sm8150-v2-0-4baf54ec7333@quicinc.com>
- <20240702-camcc-support-sm8150-v2-2-4baf54ec7333@quicinc.com>
- <eb71f14d-bf27-4f23-870e-7dfa01e44e80@linaro.org>
-From: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
-In-Reply-To: <eb71f14d-bf27-4f23-870e-7dfa01e44e80@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: l1P5Rx6oLNtvbmNnY38HR_q6B_My_C7G
-X-Proofpoint-ORIG-GUID: l1P5Rx6oLNtvbmNnY38HR_q6B_My_C7G
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-09_02,2024-07-08_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- suspectscore=0 lowpriorityscore=0 impostorscore=0 phishscore=0 spamscore=0
- clxscore=1015 adultscore=0 malwarescore=0 mlxscore=0 bulkscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407090075
+References: <20240624044809.17751-1-quic_jkona@quicinc.com> <jgokew5qc5oxjlxvmawgkzfve4eov2shfz2ke5l4nisnidetko@ylcp4iesj3mg>
+In-Reply-To: <jgokew5qc5oxjlxvmawgkzfve4eov2shfz2ke5l4nisnidetko@ylcp4iesj3mg>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Tue, 9 Jul 2024 13:14:40 +0200
+Message-ID: <CAPDyKFqjw6i_fbgQQ_BaSgGN6FMtJShh1g-qZxOxGw4+JZM-oA@mail.gmail.com>
+Subject: Re: [PATCH V7 0/5] Add control for switching back and forth to HW control
+To: Bjorn Andersson <andersson@kernel.org>, Jagadeesh Kona <quic_jkona@quicinc.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, Vikash Garodia <quic_vgarodia@quicinc.com>, 
+	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Kevin Hilman <khilman@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
+	Len Brown <len.brown@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Andy Gross <agross@kernel.org>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Abel Vesa <abel.vesa@linaro.org>, 
+	linux-pm@vger.kernel.org, linux-media@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Taniya Das <quic_tdas@quicinc.com>, 
+	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, 
+	Ajit Pandey <quic_ajipan@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
 
-
-On 7/6/2024 7:09 PM, Konrad Dybcio wrote:
-> On 2.07.2024 5:50 PM, Satya Priya Kakitapalli wrote:
->> The Zonda PLL has a 16 bit signed alpha and in the cases where the alpha
->> value is greater than 0.5, the L value needs to be adjusted accordingly.
->> Thus update the logic for the same.
->>
->> Also, fix zonda set_rate failure when PLL is disabled. Currently,
->> clk_zonda_pll_set_rate polls for the PLL to lock even if the PLL is
->> disabled. However, if the PLL is disabled then LOCK_DET will never
->> assert and we'll return an error. There is no reason to poll LOCK_DET
->> if the PLL is already disabled, so skip polling in this case.
->>
->> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
->> ---
-> [...]
+On Wed, 3 Jul 2024 at 05:11, Bjorn Andersson <andersson@kernel.org> wrote:
 >
->> @@ -2077,9 +2089,15 @@ static int clk_zonda_pll_set_rate(struct clk_hw *hw, unsigned long rate,
->>   	if (ret < 0)
->>   		return ret;
->>   
->> +	if (a & BIT(15))
->> +		zonda_pll_adjust_l_val(rate, prate, &l);
-> A random check for a seemingly random, undocumented bit only confuses the reader
+> On Mon, Jun 24, 2024 at 10:18:04AM GMT, Jagadeesh Kona wrote:
+> > This series adds support for dev_pm_genpd_set_hwmode() and dev_pm_genpd_get_hwmode() APIs
+> > and support in gdsc genpd provider drivers to register respective callbacks and a venus
+> > consumer driver example using above API to switch the power domain(GDSC) to HW/SW modes
+> > dynamically at runtime.
+> >
+>
+> Ulf, I discussed the concerns I had with Taniya and I think this looks
+> good. Please pick the gdsc/clock patches through the pmdomain tree.
+>
+> Regards,
+> Bjorn
+
+The series applied for next, thanks!
+
+Kind regards
+Uffe
 
 
-Sure, I'll define a macro for this.
-
-
-Thanks.
-
+>
+> > Changes in V7:
+> > - [PATCH 3/5]: Updated the comment description in gdsc_set_hwmode as per V6 review comments
+> > - Added R-By tags received on V6
+> > - Link to V6: https://lore.kernel.org/all/20240619141413.7983-1-quic_jkona@quicinc.com/
+> >
+> > Changes in V6:
+> > - [PATCH 3/5]: Added details for 1usec delay in gdsc_set_hwmode()
+> > - [PATCH 4/5]: Updated commit text
+> > - Added R-By and T-By tags received on V5 RESEND
+> > - Link to V5 RESEND: https://lore.kernel.org/all/20240413152013.22307-1-quic_jkona@quicinc.com/
+> > - Link to V5: https://lore.kernel.org/all/20240315111046.22136-1-quic_jkona@quicinc.com/
+> >
+> > Changes in V5:
+> > - Updated 1st patch as per V4 review comments to synchronize the initial HW mode state by
+> >   invoking ->get_hwmode_dev()callback in genpd_add_device()
+> > - With above change, SW cached hwmode will contain correct value initially, and it will be
+> >   updated everytime mode is changed in set_hwmode, hence updated dev_pm_genpd_get_hwmode()
+> >   to just return SW cached hwmode in 1st patch
+> > - Updated commit text for 1st, 3rd, 4th and 5th patches
+> > - Updated 3rd and 5th patches as per review comments received on V4 series
+> > - Added R-By tags received in older series to 1st and 2nd patches
+> > - Link to V4: https://lore.kernel.org/all/20240122-gdsc-hwctrl-v4-0-9061e8a7aa07@linaro.org/
+> >
+> > Changes in V4:
+> >  - Re-worded 1st patch commit message, as per Bjorn's suggestion, and added
+> >    Dmitry's R-b tag
+> >  - Added Bjorn's and Dmitry's R-b tags to the 2nd patch
+> >  - Re-worded 3rd patch commit message, to better explain the HW_CTRL_TRIGGER flag.
+> >  - Added mode transition delay when setting mode for GDSC
+> >  - Added status polling if GDSSC is enabled when transitioning from HW to SW
+> >  - Re-worded 4th patch commit message to better explain why the
+> >    HW_CTRL_TRIGGER needs to be used instead
+> >  - Drop changes to SC7180, SDM845 and SM8550 video CC drivers, as only
+> >    SC7280 and SM8250 have been tested so far. More platforms (with v6 venus)
+> >    will be added eventually.
+> >  - Call genpd set_hwmode API only for v6 and dropped the vcodec_pmdomains_hwctrl.
+> >  - Re-worded 5th patch commit message accordingly.
+> >  - Link to V3: https://lore.kernel.org/lkml/20230823114528.3677667-1-abel.vesa@linaro.org/
+> >
+> > Changes in V3:
+> >  - 5th patch has been squashed in the 4th one
+> >  - Link to V2: https://lore.kernel.org/lkml/20230816145741.1472721-1-abel.vesa@linaro.org/
+> >
+> > Changes in V2:
+> >  - patch for printing domain HW-managed mode in the summary
+> >  - patch that adds one consumer (venus)
+> >  - patch for gdsc with new (different) flag
+> >  - patch for videocc GDSC provider to update flags
+> >  - Link to V1: https://lore.kernel.org/all/20230628105652.1670316-1-abel.vesa@linaro.org/
+> >
+> > Abel Vesa (1):
+> >   PM: domains: Add the domain HW-managed mode to the summary
+> >
+> > Jagadeesh Kona (3):
+> >   clk: qcom: gdsc: Add set and get hwmode callbacks to switch GDSC mode
+> >   clk: qcom: videocc: Use HW_CTRL_TRIGGER for SM8250, SC7280 vcodec
+> >     GDSC's
+> >   venus: pm_helpers: Use dev_pm_genpd_set_hwmode to switch GDSC mode on
+> >     V6
+> >
+> > Ulf Hansson (1):
+> >   PM: domains: Allow devices attached to genpd to be managed by HW
+> >
+> >  drivers/clk/qcom/gdsc.c                       | 41 ++++++++++
+> >  drivers/clk/qcom/gdsc.h                       |  1 +
+> >  drivers/clk/qcom/videocc-sc7280.c             |  2 +-
+> >  drivers/clk/qcom/videocc-sm8250.c             |  4 +-
+> >  .../media/platform/qcom/venus/pm_helpers.c    | 39 ++++++----
+> >  drivers/pmdomain/core.c                       | 78 ++++++++++++++++++-
+> >  include/linux/pm_domain.h                     | 17 ++++
+> >  7 files changed, 161 insertions(+), 21 deletions(-)
+> >
+> > --
+> > 2.43.0
+> >
