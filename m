@@ -1,153 +1,235 @@
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B1727713
-	for <linux-clk@vger.kernel.org>; Tue,  9 Jul 2024 11:28:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7A4C152160;
+	Tue,  9 Jul 2024 12:31:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720524534; cv=none; b=I5W4dr6IYGQF1zR5mp/7+NnpyKyYNe1Vh1H8dwa5fnOxAEwYDPd7oQCGPfVU578yR+I8YRyJPZ3XycgE+ZIF414bBwJeJx/+9ugO/y5NwHXw1JF3YpI6FjYYdcATJR/7HdEk34F3JBDOfy/zadh9ofDkz3Gv8da8KXwR7bhwdXE=
+	t=1720528309; cv=none; b=QIypttmvUatXwleLO4wczJD7HqXpv0xklxs3/WJXhN+jv0KC1ryFLr5ovNt6RhSD6T8CBb5mjdBUsNk88VqeRVhXdsCRqM8KfsNLCEglFLnKqO6biQp12EzfWUhXddGr+7vcYWvaKDmMMYGaBU4+XNgHUf6jmUM71nt0S5AAx6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720524534; c=relaxed/simple;
-	bh=ViVFjZGgS8dNPjz5ZsLdjn3yYXpL9aBl4uTllH3CRXM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hpLtVYD/rfh+3dqDIqgVB038J+fyw7WbIOJc+g/ikzvty9BSUoC4UpnerKJYLuT0Gr0QVVUSAKGuhlggpvRC3B+jHH2Dchhw1quEIqBNn86Y9XQFxvAGmY00bchWusM2ZOt/uoWL1gxhGTVLwcHoWBu/RlACbPLnI/v1LS0fck0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ayo1fYoB; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ayo1fYoB"
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2eaae2a6dc1so72874311fa.0
-        for <linux-clk@vger.kernel.org>; Tue, 09 Jul 2024 04:28:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720524531; x=1721129331; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=3qzAJjCuxDfaalc2old/6w/0ikvjZdAHEMZJhAtd5HY=;
-        b=ayo1fYoBJJWD+RtYUNvHxZokC1nykAxVgvPCnAaNsWoM9BbKuR3wO8oHwAZWB8oRmX
-         zM8wS32V8lEcBz3daIKPie4x/kjF2Bzi4AD/7M60ZPN06aTfxynRIy/RxOHotEUI1PU6
-         Rk0HJXzpMnIqAIAy0UTdH9RZZE2ax0CT9wWdLsOtfFoZSp7CmY9nQlRgLj9YOtE+s+YW
-         GfvGzndm/NvDNML8Pqt0nzCuEUgYH52uZlhzdErg0v3brT7yI/XoFwSM1qhFNuRA8zTQ
-         YGDDXbtXvAKtxJJxXlT32jIOYe6WBjjp4AUimxy/ncjZPRL7Fq7eBdsZOrqyvLwnl5et
-         mnBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720524531; x=1721129331;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3qzAJjCuxDfaalc2old/6w/0ikvjZdAHEMZJhAtd5HY=;
-        b=RJCLYu+gUmET41qUmTRcmug+PmojE+BBVqk9iBTmB27mdVZEQBhoPhrkfCFyxnaXkf
-         FJvk71DrhnjXWW6vDDjPCd/j0EE5ht1lYFK/wTmueb4rREkp+zXyXzbnD4LfRLryBLEq
-         m29ROBcaB5xyZ8/nlEo89hP3+tUi2+vjWEPToy0VKDk8l5401SHwyVu07tP4XMJfP4+U
-         /IXY6CZ7Q9wfWXVgRZb38pDZy0YHlgQwN+ZoyMtwD1MxaPt2wEK7zkQzKBkDcL10+cGf
-         sTwZwgJ3wJ9LUXw3J0s8DvOxtA2Dkd6GBZeTgfw/ud+kru+9vHw8pZGz3UKABneL0lUo
-         7cfg==
-X-Forwarded-Encrypted: i=1; AJvYcCWKaAOZh3Ea0RXsLILyimSA2CB28C2JhvTC4AOleZP4r2SG54z9px1xWCJLOFKK6ltaYJCFO1m5a3cAZDVnAWiPF1rpQ9I8PjDY
-X-Gm-Message-State: AOJu0YzfHiqG0C/1LQW8YAUer1NvWOqBt+ijtZelpZUMCVh2KLzgBDqZ
-	9ithK1n5ULPSIS1YGF8Q06e5gGskpGR2ADCseWtwxCeKV5xYWdVx1oSnPgLEDzk=
-X-Google-Smtp-Source: AGHT+IGS4L2H+hCKSxQz3uGyB0VuG6clhftOdyLInR1ymwePpLnvGZ+2GHobh0M7Xqc+cm/ImHJG3g==
-X-Received: by 2002:a2e:a7c7:0:b0:2ee:8d9a:811a with SMTP id 38308e7fff4ca-2eeb310233amr24871521fa.31.1720524530481;
-        Tue, 09 Jul 2024 04:28:50 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a7ff02dsm68784266b.110.2024.07.09.04.28.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 09 Jul 2024 04:28:50 -0700 (PDT)
-Message-ID: <1ec0dbfa-dbef-41e6-a871-7da61651572b@linaro.org>
-Date: Tue, 9 Jul 2024 13:28:46 +0200
+	s=arc-20240116; t=1720528309; c=relaxed/simple;
+	bh=QqcrMcNEe3gEb6AUHDLKLCxKMChxZ1Lo+kHZ5kpcc78=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=gqyeWI3XdCb2AVl0aFRkt5LviXEzZo+Z9zw1ZcLd/N8+6yx0j55On2+dOVnPCJcQeLScG9aR3VLGk402FzddqqQetYKP2tl1eUJOQQ2OFY4neTg0Yfkt/2+7FH7o2On1SRHIjOkziibGd2RwdbSpf+W2X4MvdJwxWagVb2pwNwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Received: from i5e860d18.versanet.de ([94.134.13.24] helo=phil.lan)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sRA0T-00074P-LW; Tue, 09 Jul 2024 14:31:41 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	heiko@sntech.de,
+	quentin.schulz@cherry.de,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org
+Subject: [PATCH 2/6] clk: add driver for generic clock generators
+Date: Tue,  9 Jul 2024 14:31:17 +0200
+Message-Id: <20240709123121.1452394-3-heiko@sntech.de>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240709123121.1452394-1-heiko@sntech.de>
+References: <20240709123121.1452394-1-heiko@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 09/10] dt-bindings: opp: v2-qcom-level: Update minItems
- for oloop-vadj & cloop-vadj
-To: Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc: vireshk@kernel.org, nm@ti.com, sboyd@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, angelogioacchino.delregno@collabora.com,
- andersson@kernel.org, mturquette@baylibre.com, ilia.lin@kernel.org,
- rafael@kernel.org, ulf.hansson@linaro.org, quic_sibis@quicinc.com,
- quic_rjendra@quicinc.com, quic_rohiagar@quicinc.com, abel.vesa@linaro.org,
- otto.pflueger@abscue.de, danila@jiaxyga.com, quic_ipkumar@quicinc.com,
- luca@z3ntu.xyz, stephan.gerhold@kernkonzept.com, nks@flawful.org,
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <20240703091651.2820236-1-quic_varada@quicinc.com>
- <20240703091651.2820236-10-quic_varada@quicinc.com>
- <20240708155529.GA3244015-robh@kernel.org>
- <ZozgNAYKAvhPr0qk@hu-varada-blr.qualcomm.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <ZozgNAYKAvhPr0qk@hu-varada-blr.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 9.07.2024 9:01 AM, Varadarajan Narayanan wrote:
-> On Mon, Jul 08, 2024 at 09:55:29AM -0600, Rob Herring wrote:
->> On Wed, Jul 03, 2024 at 02:46:50PM +0530, Varadarajan Narayanan wrote:
->>> Since IPQ9574 has only one CPR thread it will specify
->>> only one voltage adjustment value. Hence update min items
->>> accordingly for oloop-vadj and cloop-vadj. Without
->>> constraining min items, dt_binding_check gives errors
->>>
->>> 	opp-table-cpr4:opp-0:qcom,opp-cloop-vadj:0: [0] is too short
->>> 	opp-table-cpr4:opp-0:qcom,opp-oloop-vadj:0: [0] is too short
->>>
->>> 	Failed validating 'minItems' in schema . . .
->>> 		{'maxItems': 2, 'minItems': 2}
->>>
->>> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
->>> ---
->>> v4: Fix dt_bindings_check error
->>> ---
->>>  Documentation/devicetree/bindings/opp/opp-v2-qcom-level.yaml | 2 ++
->>>  1 file changed, 2 insertions(+)
->>
->> This is going to need to be rolled into your dependency because it needs
->> the same fix.
-> 
-> Konrad,
-> 
-> Can you please squash this into https://lore.kernel.org/lkml/20230217-topic-cpr3h-v14-2-9fd23241493d@linaro.org/
+In contrast to fixed clocks that are described as ungateable, boards
+sometimes use additional clock generators for things like PCIe reference
+clocks, that need actual supplies to get enabled and enable-gpios to be
+toggled for them to work.
 
-Yes, I'll do that in the next revision.. forgot to validate this..
+This adds a driver for those generic unconfigurable clock generators.
 
-Konrad
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ drivers/clk/Kconfig         |   7 ++
+ drivers/clk/Makefile        |   1 +
+ drivers/clk/clk-generator.c | 133 ++++++++++++++++++++++++++++++++++++
+ 3 files changed, 141 insertions(+)
+ create mode 100644 drivers/clk/clk-generator.c
+
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 3e9099504fad4..76c53ddc472ce 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -247,6 +247,13 @@ config COMMON_CLK_GEMINI
+ 	  This driver supports the SoC clocks on the Cortina Systems Gemini
+ 	  platform, also known as SL3516 or CS3516.
+ 
++config COMMON_CLK_GENERATOR
++	tristate "Clock driver for generic clock generators"
++	depends on GPIOLIB && REGULATOR
++	help
++	  This driver supports generic clock generators that are not
++	  configurable but need supplies to be enabled to run.
++
+ config COMMON_CLK_LAN966X
+ 	tristate "Generic Clock Controller driver for LAN966X SoC"
+ 	depends on HAS_IOMEM
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 4abe16c8ccdfe..9cb0801155771 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -36,6 +36,7 @@ obj-$(CONFIG_COMMON_CLK_FIXED_MMIO)	+= clk-fixed-mmio.o
+ obj-$(CONFIG_COMMON_CLK_FSL_FLEXSPI)	+= clk-fsl-flexspi.o
+ obj-$(CONFIG_COMMON_CLK_FSL_SAI)	+= clk-fsl-sai.o
+ obj-$(CONFIG_COMMON_CLK_GEMINI)		+= clk-gemini.o
++obj-$(CONFIG_COMMON_CLK_GENERATOR)	+= clk-generator.o
+ obj-$(CONFIG_COMMON_CLK_ASPEED)		+= clk-aspeed.o
+ obj-$(CONFIG_MACH_ASPEED_G6)		+= clk-ast2600.o
+ obj-$(CONFIG_ARCH_HIGHBANK)		+= clk-highbank.o
+diff --git a/drivers/clk/clk-generator.c b/drivers/clk/clk-generator.c
+new file mode 100644
+index 0000000000000..99737bab1f5ad
+--- /dev/null
++++ b/drivers/clk/clk-generator.c
+@@ -0,0 +1,133 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2024 Heiko Stuebner <heiko@sntech.de>
++ *
++ * Generic unconfigurable clock generators
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/err.h>
++#include <linux/gpio/consumer.h>
++#include <linux/module.h>
++#include <linux/platform_device.h>
++#include <linux/regulator/consumer.h>
++#include <linux/slab.h>
++
++struct clk_generator {
++	struct device *dev;
++	struct clk_hw hw;
++	u32 rate;
++	struct regulator *supply;
++	struct gpio_desc *enable_gpio;
++};
++
++#define to_clk_generator(_hw) container_of(_hw, struct clk_generator, hw)
++
++static int clk_generator_prepare(struct clk_hw *hw)
++{
++	return regulator_enable(to_clk_generator(hw)->supply);
++}
++
++static void clk_generator_unprepare(struct clk_hw *hw)
++{
++	regulator_disable(to_clk_generator(hw)->supply);
++}
++
++static int clk_generator_enable(struct clk_hw *hw)
++{
++	gpiod_set_value(to_clk_generator(hw)->enable_gpio, 1);
++	return 0;
++}
++
++static void clk_generator_disable(struct clk_hw *hw)
++{
++	gpiod_set_value(to_clk_generator(hw)->enable_gpio, 0);
++}
++
++static unsigned long clk_generator_recalc_rate(struct clk_hw *hw,
++					       unsigned long parent_rate)
++{
++	return to_clk_generator(hw)->rate;
++}
++
++const struct clk_ops clk_generator_ops = {
++	.prepare = clk_generator_prepare,
++	.unprepare = clk_generator_unprepare,
++	.enable = clk_generator_enable,
++	.disable = clk_generator_disable,
++	.recalc_rate = clk_generator_recalc_rate,
++};
++
++static int clk_generator_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct clk_generator *clkgen;
++	const char *clk_name;
++	int ret;
++
++	clkgen = devm_kzalloc(dev, sizeof(*clkgen), GFP_KERNEL);
++	if (!clkgen)
++		return -ENOMEM;
++
++	clkgen->dev = dev;
++
++	if (device_property_read_u32(dev, "clock-frequency", &clkgen->rate))
++		return -EIO;
++
++	ret = device_property_read_string(dev, "clock-output-names", &clk_name);
++	if (ret)
++		clk_name = fwnode_get_name(dev->fwnode);
++
++	clkgen->supply = devm_regulator_get_optional(dev, "vdd");
++	if (IS_ERR(clkgen->supply)) {
++		if (PTR_ERR(clkgen->supply) != -ENODEV)
++			return dev_err_probe(dev, PTR_ERR(clkgen->supply),
++					     "failed to get regulator\n");
++		clkgen->supply = NULL;
++	}
++
++	clkgen->enable_gpio = devm_gpiod_get_optional(dev, "enable",
++						      GPIOD_OUT_LOW);
++	if (IS_ERR(clkgen->enable_gpio))
++		return dev_err_probe(dev, PTR_ERR(clkgen->enable_gpio),
++				     "failed to get gpio\n");
++
++	ret = gpiod_direction_output(clkgen->enable_gpio, 0);
++	if (ret < 0)
++		return ret;
++
++	clkgen->hw.init = CLK_HW_INIT_NO_PARENT(clk_name, &clk_generator_ops, 0);
++
++	/* register the clock */
++	ret = devm_clk_hw_register(dev, &clkgen->hw);
++	if (ret)
++		return dev_err_probe(dev, ret,
++				     "failed to register clock\n");
++
++	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get,
++					  &clkgen->hw);
++	if (ret)
++		return dev_err_probe(dev, ret,
++				     "failed to register clock provider\n");
++
++	return 0;
++}
++
++static const struct of_device_id clk_generator_ids[] = {
++	{ .compatible = "clock-generator" },
++	{ }
++};
++MODULE_DEVICE_TABLE(of, clk_generator_ids);
++
++static struct platform_driver clk_generator_driver = {
++	.driver = {
++		.name = "clk_generator",
++		.of_match_table = clk_generator_ids,
++	},
++	.probe = clk_generator_probe,
++};
++module_platform_driver(clk_generator_driver);
++
++MODULE_AUTHOR("Heiko Stuebner <heiko@sntech.de>");
++MODULE_DESCRIPTION("Clock-generator driver");
++MODULE_LICENSE("GPL");
+-- 
+2.39.2
+
