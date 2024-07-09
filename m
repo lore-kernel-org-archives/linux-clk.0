@@ -1,115 +1,95 @@
-Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8738147F6B;
-	Tue,  9 Jul 2024 03:21:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CD1313DDC7
+	for <linux-clk@vger.kernel.org>; Tue,  9 Jul 2024 06:36:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720495269; cv=none; b=k7u/LwFLrSgaVUnN6nwgr/lJQPdrZlgqHLEU7379A6LvAyq8dD6GNJX0FPJcrHVSUP5Z/sc0ilwoSpHG07f/UW0OQ5J9NFpXkBD5U/lDfayhH2Uvxr39j6m+q2DRGOYltXuwpB5jeBf0f3DJbqQJoAHI8Cd/Wl6LT3T/9ahG2B8=
+	t=1720507018; cv=none; b=oIQVyiQqnyV7/9vzCIAxa4hQbH0JkMTb9MmVruTutwgPXaqdf4bGCK8GMcd4gmFxdd91/gXXKCf0sBYBL7ukAMtegH22YexyEQsZND1opKkH04lbGNKiWbH9jnMhx+8s3sS+WuOnnTvv32A5ucP8IKNxV7Kv4nB7n7g4vbaUgnE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720495269; c=relaxed/simple;
-	bh=ao0yuvoGESK5ztONeHNNgZ2DK/RhVIQhcs2Jo2M4dqs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lMdpObxLiKPV+/VKVtLPVAYKfDOZlCM2SxgGFwmasjK7M+U84wp4YfBHyBFgz/1671PVYgXGQj9yWR00evHyg64tfRylHQnUbMm44lI43TG+tLZWPWipk18g4RZBnNpbgFOS79lj8EUPAoFjhofrKl2JkK+Hh+QU9ldxTQkjxdY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=II3ze8gi; arc=none smtp.client-ip=209.85.166.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="II3ze8gi"
-Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-375e96f5fddso18049545ab.1;
-        Mon, 08 Jul 2024 20:21:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720495268; x=1721100068; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=v5x3hUylQoog2uNJJGGlDPCeKvEn4xMplYTvm1tLAKE=;
-        b=II3ze8giERMQckTjlIkQCdUfxkFMxfXbvMU/hHhZYeZmL7LIxp7DumGvOyXtSR3YE4
-         /Yudnci5CVQeAoikHlfLluQmcom4KrydlgfVcfQNvN628e6/i6b0lYCNOdbwVjgxtsFj
-         QZ9y4kQ2ewI4wK1aafE+kIv357NQPwyuF9EXX0Gz0AEzb9TR0WqbypRNEIKxSWAnLeTh
-         DExCc9fUt3w/nYdP6F3rmRjl0s+3gW4xz27DFpUsdHJ6f5aWKE/7DcH50WEIlXFvb23X
-         v5K7kmqZz9oW6jz7i2LzngFe1Ej49kqaCKhbktU8PC/XeRWv4YsFt9KMrwQXrJFCikfW
-         z0kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720495268; x=1721100068;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v5x3hUylQoog2uNJJGGlDPCeKvEn4xMplYTvm1tLAKE=;
-        b=ZYjHxMM+HmF0ztCn7VT4bqq0+VN9zeEnMT+cb0YNSpnAlbC1+rLOblLyAYwVf6rsJi
-         3/nUO5xakB3dU++EX3VQl0sPAmZVwqhkGkOvAmmzXbC2cbJ/1smkGLrn3AjmBaRIw3hn
-         Tajqw3tEDx9HEiTcfgjA01A6+9XqdzTuJPIfY6UHVpSN9d7I/uOipYnTOrWKXjFV6qbC
-         +bH+aQApk4wPGsZcovPS5znZ2Jz3HNmGhR3cQIY2WG7CkYKLrZSy96fxFeZJfIhTTZCT
-         nCz3qKmtmQhNvOy1YhOTpjm+7+2k/yjI6OUDtez1NcfjmkGJcL0RF7dhyYZWQ4SpcFU6
-         irOA==
-X-Forwarded-Encrypted: i=1; AJvYcCVlYpyGY6SIbx3x23zyW21lB6sqEzqi0SIPHp6ryDgce8MEXsoF74iuVPcMNNFU1l2QJgcfuHpjGNbICxRSzm22XQfRPOozO1VJKQh/s+ffmuwwofeo/EYW2cck062Md6d4fCMOYjZo
-X-Gm-Message-State: AOJu0Yz4s4Swz3QOGNiB2KBYaLGog4z1ugZxcqJsi6kEUt4CuoW+d1ai
-	/4+TzwwcVug+UenSA5WRFMGSzfbvl3drEwo7pSbFPZBdcqnebIeWFK/FuTDpIwrgSkqXKMYpRn2
-	qiu0QFGkjCOQflQzqgTla4SRwWfU=
-X-Google-Smtp-Source: AGHT+IEDeHIw0M3dms9M1TQ7pOStsM6niLKah4sS4MXdNOsgiHYC/fBdJqkh52w8HlhM4gaopahy21Ep/QLxviGgtOo=
-X-Received: by 2002:a05:6e02:18cd:b0:379:4564:1228 with SMTP id
- e9e14a558f8ab-38a598b3998mr15380945ab.30.1720495267594; Mon, 08 Jul 2024
- 20:21:07 -0700 (PDT)
+	s=arc-20240116; t=1720507018; c=relaxed/simple;
+	bh=x5BIL8YPCH1PyHXr5Bh0Pv+r4BZWPL89xEyYnm/84Qs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=nvWtITj+fgnO4FqU/RecdkAsiMrhGgWMdUXD4EhqK2THbj5xj6qxF+NPvntXjWBd1VT826KkUx12Whl3xdj94T4lSItu11iFO6kSGglmbX0YOUaAGhrHMccVAWqy3+L+2GABIkLmeqU15IBo4a3SmotzIxSGp/VScwWV6lasQwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 9b734aba3dbd11ef93f4611109254879-20240709
+X-CID-CACHE: Type:Local,Time:202407091400+08,HitQuantity:1
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:b94e3024-705e-41a1-a59b-0717b37f6a4c,IP:0,U
+	RL:0,TC:0,Content:0,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:25
+X-CID-META: VersionHash:82c5f88,CLOUDID:be8170e7c891ed3b4a4a150d428f5e93,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:5,IP:nil,URL:0,
+	File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:N
+	O,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 9b734aba3dbd11ef93f4611109254879-20240709
+Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
+	(envelope-from <liqiang01@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 1746295649; Tue, 09 Jul 2024 14:36:43 +0800
+Received: from mail.kylinos.cn (localhost [127.0.0.1])
+	by mail.kylinos.cn (NSMail) with SMTP id 95F70E000EB9;
+	Tue,  9 Jul 2024 14:36:43 +0800 (CST)
+X-ns-mid: postfix-668CDA7B-3937851568
+Received: from localhost.localdomain (unknown [10.42.12.14])
+	by mail.kylinos.cn (NSMail) with ESMTPA id A7C24E000EB9;
+	Tue,  9 Jul 2024 14:36:42 +0800 (CST)
+From: Li Qiang <liqiang01@kylinos.cn>
+To: unicorn_wang@outlook.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	inochiama@outlook.com
+Cc: linux-clk@vger.kernel.org,
+	Li Qiang <liqiang01@kylinos.cn>
+Subject: [PATCH v2 1/1] clk/sophgo: Using BUG() instead of unreachable() in mmux_get_parent_id()
+Date: Tue,  9 Jul 2024 14:36:38 +0800
+Message-Id: <c8e66d51f880127549e2a3e623be6787f62b310d.1720506143.git.liqiang01@kylinos.cn>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <cover.1720506143.git.liqiang01@kylinos.cn>
+References: <cover.1720506143.git.liqiang01@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1719996771-11220-1-git-send-email-shengjiu.wang@nxp.com> <232c2342061b17b9f750c4ad52b0766e.sboyd@kernel.org>
-In-Reply-To: <232c2342061b17b9f750c4ad52b0766e.sboyd@kernel.org>
-From: Shengjiu Wang <shengjiu.wang@gmail.com>
-Date: Tue, 9 Jul 2024 11:20:56 +0800
-Message-ID: <CAA+D8APumdP97QQHObF6NEw6jwDJRb+0R=aAjqftrX1wR170Yw@mail.gmail.com>
-Subject: Re: [PATCH] clk: imx: imx8: Add .name for "acm_aud_clk0_sel" and "acm_aud_clk1_sel"
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org, festevam@gmail.com, 
-	imx@lists.linux.dev, kernel@pengutronix.de, mturquette@baylibre.com, 
-	peng.fan@nxp.com, s.hauer@pengutronix.de, shawnguo@kernel.org, 
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 9, 2024 at 6:45=E2=80=AFAM Stephen Boyd <sboyd@kernel.org> wrot=
-e:
->
-> Quoting Shengjiu Wang (2024-07-03 01:52:51)
-> > "acm_aud_clk0_sel" and "acm_aud_clk1_sel" are registered by this ACM
-> > driver, but they are the parent clocks for other clocks, in order to
-> > use assigned-clock-parents in device tree, they need to have the
-> > global name.
-> >
-> > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> > ---
-> >  drivers/clk/imx/clk-imx8-acm.c | 12 ++++++------
-> >  1 file changed, 6 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/drivers/clk/imx/clk-imx8-acm.c b/drivers/clk/imx/clk-imx8-=
-acm.c
-> > index 1bdb480cc96c..a1affcf6daff 100644
-> > --- a/drivers/clk/imx/clk-imx8-acm.c
-> > +++ b/drivers/clk/imx/clk-imx8-acm.c
-> > @@ -114,8 +114,8 @@ static const struct clk_parent_data imx8qm_mclk_out=
-_sels[] =3D {
-> >  static const struct clk_parent_data imx8qm_mclk_sels[] =3D {
-> >         { .fw_name =3D "aud_pll_div_clk0_lpcg_clk" },
-> >         { .fw_name =3D "aud_pll_div_clk1_lpcg_clk" },
-> > -       { .fw_name =3D "acm_aud_clk0_sel" },
-> > -       { .fw_name =3D "acm_aud_clk1_sel" },
-> > +       { .fw_name =3D "acm_aud_clk0_sel", .name =3D "acm_aud_clk0_sel"=
- },
-> > +       { .fw_name =3D "acm_aud_clk1_sel", .name =3D "acm_aud_clk1_sel"=
- },
->
-> This doesn't make any sense. Why are we adding fallback names?  Is
-> "acm_aud_clk0_sel" not part of the DT binding for this clk controller?
+In general it's a good idea to avoid using bare unreachable() because it
+introduces undefined behavior in compiled code. but it caused a compilati=
+on warning,
+Using BUG() instead of unreachable() to resolve compilation warnings.
 
-It is not part of DT binding for this clk controller.  it is registered by =
-this
-clk controller itself.  As it is a parent clock, so my understanding
-is that we need to add a fallback name,  or change "fw_name" to "name",
-please correct me if I am wrong.
+Fixes the following warnings:
+    drivers/clk/sophgo/clk-cv18xx-ip.o: warning: objtool: mmux_round_rate=
+() falls through to next function bypass_div_round_rate()
 
-Best regards
-Shengjiu Wang
+Fixes: 80fd61ec46124 ("clk: sophgo: Add clock support for CV1800 SoC")
+Signed-off-by: Li Qiang <liqiang01@kylinos.cn>
+---
+ drivers/clk/sophgo/clk-cv18xx-ip.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/clk/sophgo/clk-cv18xx-ip.c b/drivers/clk/sophgo/clk-=
+cv18xx-ip.c
+index 805f561725ae..b186e64d4813 100644
+--- a/drivers/clk/sophgo/clk-cv18xx-ip.c
++++ b/drivers/clk/sophgo/clk-cv18xx-ip.c
+@@ -613,7 +613,7 @@ static u8 mmux_get_parent_id(struct cv1800_clk_mmux *=
+mmux)
+ 			return i;
+ 	}
+=20
+-	unreachable();
++	BUG();
+ }
+=20
+ static int mmux_enable(struct clk_hw *hw)
+--=20
+2.25.1
+
