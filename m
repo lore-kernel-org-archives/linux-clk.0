@@ -1,294 +1,115 @@
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EB602A8FE;
-	Tue,  9 Jul 2024 00:44:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Received: from mail-il1-f182.google.com (mail-il1-f182.google.com [209.85.166.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8738147F6B;
+	Tue,  9 Jul 2024 03:21:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720485858; cv=none; b=gBG9ZsiYpsEk4tDRrrTw6czY9jjRm3mMr2vD9BHbOwl/RKdABTM5nCR9wWh1OrjY3Aj9iacxVe3aLoi3phKutdLXlyXcdMkm8ALyoFuMkh+mb8wJQ0eQ2x6t0M9IcviJFx1FgukKdPLw6A9tchZIQVZqW5++C5qN6q7W8Vz55bs=
+	t=1720495269; cv=none; b=k7u/LwFLrSgaVUnN6nwgr/lJQPdrZlgqHLEU7379A6LvAyq8dD6GNJX0FPJcrHVSUP5Z/sc0ilwoSpHG07f/UW0OQ5J9NFpXkBD5U/lDfayhH2Uvxr39j6m+q2DRGOYltXuwpB5jeBf0f3DJbqQJoAHI8Cd/Wl6LT3T/9ahG2B8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720485858; c=relaxed/simple;
-	bh=mkMDPYFbxx1FptqvwTRdJB2ALENlrVB4g6QrIyguxpM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BuZSgAuPHToCiy718mpN3zFnBEYMADkzzGp70HgLldifocHKwPBjxh66+sc572vw5N+iTzUcBzV3sG1XUdNWYwGWAO8GLQTCgoVCNelXkAjjJ26rt0VLSWg1aMT8fd1C+u1GuQAcomZmTIF/VBVxAiaLgyaqtuNPhJOQT7gJF3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B0C061007;
-	Mon,  8 Jul 2024 17:44:39 -0700 (PDT)
-Received: from minigeek.lan (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F14C53F762;
-	Mon,  8 Jul 2024 17:44:11 -0700 (PDT)
-Date: Tue, 9 Jul 2024 01:42:10 +0100
-From: Andre Przywara <andre.przywara@arm.com>
-To: Ryan Walklin <ryan@testtoast.com>
-Cc: Maxime Ripard <mripard@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
- <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter
- <daniel@ffwll.ch>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel
- Holland <samuel@sholland.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Michael
- Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Chris
- Morgan <macroalpha82@gmail.com>, John Watts <contact@jookia.org>,
- dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org
-Subject: Re: [PATCH v2 02/23] drm: sun4i: de2/de3: Merge CSC functions into
- one
-Message-ID: <20240709014210.45ce6054@minigeek.lan>
-In-Reply-To: <20240703105454.41254-3-ryan@testtoast.com>
-References: <20240703105454.41254-1-ryan@testtoast.com>
-	<20240703105454.41254-3-ryan@testtoast.com>
-Organization: Arm Ltd.
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.31; x86_64-slackware-linux-gnu)
+	s=arc-20240116; t=1720495269; c=relaxed/simple;
+	bh=ao0yuvoGESK5ztONeHNNgZ2DK/RhVIQhcs2Jo2M4dqs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lMdpObxLiKPV+/VKVtLPVAYKfDOZlCM2SxgGFwmasjK7M+U84wp4YfBHyBFgz/1671PVYgXGQj9yWR00evHyg64tfRylHQnUbMm44lI43TG+tLZWPWipk18g4RZBnNpbgFOS79lj8EUPAoFjhofrKl2JkK+Hh+QU9ldxTQkjxdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=II3ze8gi; arc=none smtp.client-ip=209.85.166.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="II3ze8gi"
+Received: by mail-il1-f182.google.com with SMTP id e9e14a558f8ab-375e96f5fddso18049545ab.1;
+        Mon, 08 Jul 2024 20:21:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720495268; x=1721100068; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=v5x3hUylQoog2uNJJGGlDPCeKvEn4xMplYTvm1tLAKE=;
+        b=II3ze8giERMQckTjlIkQCdUfxkFMxfXbvMU/hHhZYeZmL7LIxp7DumGvOyXtSR3YE4
+         /Yudnci5CVQeAoikHlfLluQmcom4KrydlgfVcfQNvN628e6/i6b0lYCNOdbwVjgxtsFj
+         QZ9y4kQ2ewI4wK1aafE+kIv357NQPwyuF9EXX0Gz0AEzb9TR0WqbypRNEIKxSWAnLeTh
+         DExCc9fUt3w/nYdP6F3rmRjl0s+3gW4xz27DFpUsdHJ6f5aWKE/7DcH50WEIlXFvb23X
+         v5K7kmqZz9oW6jz7i2LzngFe1Ej49kqaCKhbktU8PC/XeRWv4YsFt9KMrwQXrJFCikfW
+         z0kg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720495268; x=1721100068;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=v5x3hUylQoog2uNJJGGlDPCeKvEn4xMplYTvm1tLAKE=;
+        b=ZYjHxMM+HmF0ztCn7VT4bqq0+VN9zeEnMT+cb0YNSpnAlbC1+rLOblLyAYwVf6rsJi
+         3/nUO5xakB3dU++EX3VQl0sPAmZVwqhkGkOvAmmzXbC2cbJ/1smkGLrn3AjmBaRIw3hn
+         Tajqw3tEDx9HEiTcfgjA01A6+9XqdzTuJPIfY6UHVpSN9d7I/uOipYnTOrWKXjFV6qbC
+         +bH+aQApk4wPGsZcovPS5znZ2Jz3HNmGhR3cQIY2WG7CkYKLrZSy96fxFeZJfIhTTZCT
+         nCz3qKmtmQhNvOy1YhOTpjm+7+2k/yjI6OUDtez1NcfjmkGJcL0RF7dhyYZWQ4SpcFU6
+         irOA==
+X-Forwarded-Encrypted: i=1; AJvYcCVlYpyGY6SIbx3x23zyW21lB6sqEzqi0SIPHp6ryDgce8MEXsoF74iuVPcMNNFU1l2QJgcfuHpjGNbICxRSzm22XQfRPOozO1VJKQh/s+ffmuwwofeo/EYW2cck062Md6d4fCMOYjZo
+X-Gm-Message-State: AOJu0Yz4s4Swz3QOGNiB2KBYaLGog4z1ugZxcqJsi6kEUt4CuoW+d1ai
+	/4+TzwwcVug+UenSA5WRFMGSzfbvl3drEwo7pSbFPZBdcqnebIeWFK/FuTDpIwrgSkqXKMYpRn2
+	qiu0QFGkjCOQflQzqgTla4SRwWfU=
+X-Google-Smtp-Source: AGHT+IEDeHIw0M3dms9M1TQ7pOStsM6niLKah4sS4MXdNOsgiHYC/fBdJqkh52w8HlhM4gaopahy21Ep/QLxviGgtOo=
+X-Received: by 2002:a05:6e02:18cd:b0:379:4564:1228 with SMTP id
+ e9e14a558f8ab-38a598b3998mr15380945ab.30.1720495267594; Mon, 08 Jul 2024
+ 20:21:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <1719996771-11220-1-git-send-email-shengjiu.wang@nxp.com> <232c2342061b17b9f750c4ad52b0766e.sboyd@kernel.org>
+In-Reply-To: <232c2342061b17b9f750c4ad52b0766e.sboyd@kernel.org>
+From: Shengjiu Wang <shengjiu.wang@gmail.com>
+Date: Tue, 9 Jul 2024 11:20:56 +0800
+Message-ID: <CAA+D8APumdP97QQHObF6NEw6jwDJRb+0R=aAjqftrX1wR170Yw@mail.gmail.com>
+Subject: Re: [PATCH] clk: imx: imx8: Add .name for "acm_aud_clk0_sel" and "acm_aud_clk1_sel"
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org, festevam@gmail.com, 
+	imx@lists.linux.dev, kernel@pengutronix.de, mturquette@baylibre.com, 
+	peng.fan@nxp.com, s.hauer@pengutronix.de, shawnguo@kernel.org, 
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed,  3 Jul 2024 22:50:52 +1200
-Ryan Walklin <ryan@testtoast.com> wrote:
+On Tue, Jul 9, 2024 at 6:45=E2=80=AFAM Stephen Boyd <sboyd@kernel.org> wrot=
+e:
+>
+> Quoting Shengjiu Wang (2024-07-03 01:52:51)
+> > "acm_aud_clk0_sel" and "acm_aud_clk1_sel" are registered by this ACM
+> > driver, but they are the parent clocks for other clocks, in order to
+> > use assigned-clock-parents in device tree, they need to have the
+> > global name.
+> >
+> > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> > ---
+> >  drivers/clk/imx/clk-imx8-acm.c | 12 ++++++------
+> >  1 file changed, 6 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/drivers/clk/imx/clk-imx8-acm.c b/drivers/clk/imx/clk-imx8-=
+acm.c
+> > index 1bdb480cc96c..a1affcf6daff 100644
+> > --- a/drivers/clk/imx/clk-imx8-acm.c
+> > +++ b/drivers/clk/imx/clk-imx8-acm.c
+> > @@ -114,8 +114,8 @@ static const struct clk_parent_data imx8qm_mclk_out=
+_sels[] =3D {
+> >  static const struct clk_parent_data imx8qm_mclk_sels[] =3D {
+> >         { .fw_name =3D "aud_pll_div_clk0_lpcg_clk" },
+> >         { .fw_name =3D "aud_pll_div_clk1_lpcg_clk" },
+> > -       { .fw_name =3D "acm_aud_clk0_sel" },
+> > -       { .fw_name =3D "acm_aud_clk1_sel" },
+> > +       { .fw_name =3D "acm_aud_clk0_sel", .name =3D "acm_aud_clk0_sel"=
+ },
+> > +       { .fw_name =3D "acm_aud_clk1_sel", .name =3D "acm_aud_clk1_sel"=
+ },
+>
+> This doesn't make any sense. Why are we adding fallback names?  Is
+> "acm_aud_clk0_sel" not part of the DT binding for this clk controller?
 
-Hi,
+It is not part of DT binding for this clk controller.  it is registered by =
+this
+clk controller itself.  As it is a parent clock, so my understanding
+is that we need to add a fallback name,  or change "fw_name" to "name",
+please correct me if I am wrong.
 
-> From: Jernej Skrabec <jernej.skrabec@gmail.com>
-> 
-> Merging both function into one lets this one decide on it's own if CSC
-> should be enabled or not.
-
-"both functions" is not very specific or telling, and left me a bit
-clueless, so can we maybe use:
-
-"At the moment the colour space conversion is handled by two functions:
-one to setup the conversion parameters, and another one to enable the
-conversion. Merging both into one gives more flexibility for upcoming
-extensions to support whole YUV pipelines, in the DE33."
-
-Maybe someone knows the real killer reason why this is required, this
-could then be added here.
-
-> Currently heuristics for that is pretty simple
-> - enable it for YUV formats and disable for RGB. However, DE3 can have
-> whole pipeline in RGB or YUV format. YUV pipeline will be supported in
-> later commits.
-
-The actual patch looks like a valid transformation to me, so with an
-amended commit message:
-
-> Signed-off-by: Jernej Skrabec <jernej.skrabec@gmail.com>
-> Signed-off-by: Ryan Walklin <ryan@testtoast.com>
-
-Reviewed-by: Andre Przywara <andre.przywara@arm.com>
-
-Cheers,
-Andre
-
-> ---
->  drivers/gpu/drm/sun4i/sun8i_csc.c      | 89 ++++++++++----------------
->  drivers/gpu/drm/sun4i/sun8i_csc.h      |  9 ++-
->  drivers/gpu/drm/sun4i/sun8i_vi_layer.c | 11 +---
->  3 files changed, 40 insertions(+), 69 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/sun4i/sun8i_csc.c b/drivers/gpu/drm/sun4i/sun8i_csc.c
-> index 6ebd1c3aa3ab5..0dcbc0866ae82 100644
-> --- a/drivers/gpu/drm/sun4i/sun8i_csc.c
-> +++ b/drivers/gpu/drm/sun4i/sun8i_csc.c
-> @@ -107,23 +107,28 @@ static const u32 yuv2rgb_de3[2][3][12] = {
->  	},
->  };
->  
-> -static void sun8i_csc_set_coefficients(struct regmap *map, u32 base,
-> -				       enum format_type fmt_type,
-> -				       enum drm_color_encoding encoding,
-> -				       enum drm_color_range range)
-> +static void sun8i_csc_setup(struct regmap *map, u32 base,
-> +			    enum format_type fmt_type,
-> +			    enum drm_color_encoding encoding,
-> +			    enum drm_color_range range)
->  {
-> +	u32 base_reg, val;
->  	const u32 *table;
-> -	u32 base_reg;
->  	int i;
->  
->  	table = yuv2rgb[range][encoding];
->  
->  	switch (fmt_type) {
-> +	case FORMAT_TYPE_RGB:
-> +		val = 0;
-> +		break;
->  	case FORMAT_TYPE_YUV:
-> +		val = SUN8I_CSC_CTRL_EN;
->  		base_reg = SUN8I_CSC_COEFF(base, 0);
->  		regmap_bulk_write(map, base_reg, table, 12);
->  		break;
->  	case FORMAT_TYPE_YVU:
-> +		val = SUN8I_CSC_CTRL_EN;
->  		for (i = 0; i < 12; i++) {
->  			if ((i & 3) == 1)
->  				base_reg = SUN8I_CSC_COEFF(base, i + 1);
-> @@ -135,28 +140,37 @@ static void sun8i_csc_set_coefficients(struct regmap *map, u32 base,
->  		}
->  		break;
->  	default:
-> +		val = 0;
->  		DRM_WARN("Wrong CSC mode specified.\n");
->  		return;
->  	}
-> +
-> +	regmap_write(map, SUN8I_CSC_CTRL(base), val);
->  }
->  
-> -static void sun8i_de3_ccsc_set_coefficients(struct regmap *map, int layer,
-> -					    enum format_type fmt_type,
-> -					    enum drm_color_encoding encoding,
-> -					    enum drm_color_range range)
-> +static void sun8i_de3_ccsc_setup(struct regmap *map, int layer,
-> +				 enum format_type fmt_type,
-> +				 enum drm_color_encoding encoding,
-> +				 enum drm_color_range range)
->  {
-> +	u32 addr, val, mask;
->  	const u32 *table;
-> -	u32 addr;
->  	int i;
->  
-> +	mask = SUN50I_MIXER_BLEND_CSC_CTL_EN(layer);
->  	table = yuv2rgb_de3[range][encoding];
->  
->  	switch (fmt_type) {
-> +	case FORMAT_TYPE_RGB:
-> +		val = 0;
-> +		break;
->  	case FORMAT_TYPE_YUV:
-> +		val = mask;
->  		addr = SUN50I_MIXER_BLEND_CSC_COEFF(DE3_BLD_BASE, layer, 0);
->  		regmap_bulk_write(map, addr, table, 12);
->  		break;
->  	case FORMAT_TYPE_YVU:
-> +		val = mask;
->  		for (i = 0; i < 12; i++) {
->  			if ((i & 3) == 1)
->  				addr = SUN50I_MIXER_BLEND_CSC_COEFF(DE3_BLD_BASE,
-> @@ -173,67 +187,30 @@ static void sun8i_de3_ccsc_set_coefficients(struct regmap *map, int layer,
->  		}
->  		break;
->  	default:
-> +		val = 0;
->  		DRM_WARN("Wrong CSC mode specified.\n");
->  		return;
->  	}
-> -}
-> -
-> -static void sun8i_csc_enable(struct regmap *map, u32 base, bool enable)
-> -{
-> -	u32 val;
-> -
-> -	if (enable)
-> -		val = SUN8I_CSC_CTRL_EN;
-> -	else
-> -		val = 0;
-> -
-> -	regmap_update_bits(map, SUN8I_CSC_CTRL(base), SUN8I_CSC_CTRL_EN, val);
-> -}
-> -
-> -static void sun8i_de3_ccsc_enable(struct regmap *map, int layer, bool enable)
-> -{
-> -	u32 val, mask;
-> -
-> -	mask = SUN50I_MIXER_BLEND_CSC_CTL_EN(layer);
-> -
-> -	if (enable)
-> -		val = mask;
-> -	else
-> -		val = 0;
->  
->  	regmap_update_bits(map, SUN50I_MIXER_BLEND_CSC_CTL(DE3_BLD_BASE),
->  			   mask, val);
->  }
->  
-> -void sun8i_csc_set_ccsc_coefficients(struct sun8i_mixer *mixer, int layer,
-> -				     enum format_type fmt_type,
-> -				     enum drm_color_encoding encoding,
-> -				     enum drm_color_range range)
-> -{
-> -	u32 base;
-> -
-> -	if (mixer->cfg->is_de3) {
-> -		sun8i_de3_ccsc_set_coefficients(mixer->engine.regs, layer,
-> -						fmt_type, encoding, range);
-> -		return;
-> -	}
-> -
-> -	base = ccsc_base[mixer->cfg->ccsc][layer];
-> -
-> -	sun8i_csc_set_coefficients(mixer->engine.regs, base,
-> -				   fmt_type, encoding, range);
-> -}
-> -
-> -void sun8i_csc_enable_ccsc(struct sun8i_mixer *mixer, int layer, bool enable)
-> +void sun8i_csc_set_ccsc(struct sun8i_mixer *mixer, int layer,
-> +			enum format_type fmt_type,
-> +			enum drm_color_encoding encoding,
-> +			enum drm_color_range range)
->  {
->  	u32 base;
->  
->  	if (mixer->cfg->is_de3) {
-> -		sun8i_de3_ccsc_enable(mixer->engine.regs, layer, enable);
-> +		sun8i_de3_ccsc_setup(mixer->engine.regs, layer,
-> +				     fmt_type, encoding, range);
->  		return;
->  	}
->  
->  	base = ccsc_base[mixer->cfg->ccsc][layer];
->  
-> -	sun8i_csc_enable(mixer->engine.regs, base, enable);
-> +	sun8i_csc_setup(mixer->engine.regs, base,
-> +			fmt_type, encoding, range);
->  }
-> diff --git a/drivers/gpu/drm/sun4i/sun8i_csc.h b/drivers/gpu/drm/sun4i/sun8i_csc.h
-> index 7322770f39f03..b7546e06e315c 100644
-> --- a/drivers/gpu/drm/sun4i/sun8i_csc.h
-> +++ b/drivers/gpu/drm/sun4i/sun8i_csc.h
-> @@ -28,10 +28,9 @@ enum format_type {
->  	FORMAT_TYPE_YVU,
->  };
->  
-> -void sun8i_csc_set_ccsc_coefficients(struct sun8i_mixer *mixer, int layer,
-> -				     enum format_type fmt_type,
-> -				     enum drm_color_encoding encoding,
-> -				     enum drm_color_range range);
-> -void sun8i_csc_enable_ccsc(struct sun8i_mixer *mixer, int layer, bool enable);
-> +void sun8i_csc_set_ccsc(struct sun8i_mixer *mixer, int layer,
-> +			enum format_type fmt_type,
-> +			enum drm_color_encoding encoding,
-> +			enum drm_color_range range);
->  
->  #endif
-> diff --git a/drivers/gpu/drm/sun4i/sun8i_vi_layer.c b/drivers/gpu/drm/sun4i/sun8i_vi_layer.c
-> index 76e2d3ec0a78c..6ee3790a2a812 100644
-> --- a/drivers/gpu/drm/sun4i/sun8i_vi_layer.c
-> +++ b/drivers/gpu/drm/sun4i/sun8i_vi_layer.c
-> @@ -281,14 +281,9 @@ static int sun8i_vi_layer_update_formats(struct sun8i_mixer *mixer, int channel,
->  			   SUN8I_MIXER_CHAN_VI_LAYER_ATTR_FBFMT_MASK, val);
->  
->  	fmt_type = sun8i_vi_layer_get_format_type(fmt);
-> -	if (fmt_type != FORMAT_TYPE_RGB) {
-> -		sun8i_csc_set_ccsc_coefficients(mixer, channel, fmt_type,
-> -						state->color_encoding,
-> -						state->color_range);
-> -		sun8i_csc_enable_ccsc(mixer, channel, true);
-> -	} else {
-> -		sun8i_csc_enable_ccsc(mixer, channel, false);
-> -	}
-> +	sun8i_csc_set_ccsc(mixer, channel, fmt_type,
-> +			   state->color_encoding,
-> +			   state->color_range);
->  
->  	if (!fmt->is_yuv)
->  		val = SUN8I_MIXER_CHAN_VI_LAYER_ATTR_RGB_MODE;
-
+Best regards
+Shengjiu Wang
