@@ -1,48 +1,48 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E117156967;
-	Tue,  9 Jul 2024 10:52:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04D3215278A;
+	Tue,  9 Jul 2024 10:53:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720522338; cv=none; b=o4m8byBitGemWOoeJI4qg+AEkqH/kUr4Q5Ppoz6r3KWBR0rYDiSy/L0Uo11uBQVSHpH/0bk1iaA10hZRcW/+IRBPx21/aebWLsSitvBlvaOgLGWPYuymM6d9J6Bu6zTq0Dv2ck8LSfNwCjzky7MSlRBXCSRGh2ciACScfpkcEr8=
+	t=1720522401; cv=none; b=ZWhEgjti72Q0mVrrSz4kSidZPhUBclwLPjfDq5EqrEgX2J1XHInB/guiugx4+S2nJqqv4B5J9snvJAQhUmCGaHU78MCsuZvI7nsU0rr6293ErYiAxofB1LGDTR5bIMMr9gTu6h0CsRzwRvsILqMi9VFhoJ9CgjPP9tu7FbHUGzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720522338; c=relaxed/simple;
-	bh=YdQdM4xh2TvaXiWwL+MAEKPz4S6pTyKfrWoVs5MiXbc=;
+	s=arc-20240116; t=1720522401; c=relaxed/simple;
+	bh=dHOeuJ/fUbf7/BQudVG04INtahpwVAVzOw8zSnqKO1A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=GCJOK4qHALaTn7NTac3JF/VcyAMWU3y6B80qKfCKNWb9rZ+QADKZna5nwMU2P6lwjkVMvmBNZfJTTOzg9HRU30nVdVtLnnERtFT8VxGD1gXw4nSoD+4t7bJ/ktFspj2/UOTNesDXUEXo0YkgiIIACinJVAEha3WFXMzCRcqq4IQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=I0ET5kgq; arc=none smtp.client-ip=205.220.168.131
+	 In-Reply-To:Content-Type; b=GtKwFfj4P1QTxCV7274X5QvJlPp8uOu2BsfTf5oOhBLp2/danNCeJdu7V0ns6g+rQko3MBI5DROakq028oAtpCgwIFVVKP9t9YbQH234m8ZkJD76WC7sZDJBLYdsMcyRvmlVGoSg7k4Hwque28gRrtBhzibnZYzTgaTEe/8In9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=bn5etg/B; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="I0ET5kgq"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46919w0X003975;
-	Tue, 9 Jul 2024 10:51:49 GMT
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="bn5etg/B"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469A5SN7026613;
+	Tue, 9 Jul 2024 10:53:00 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	jtlchnQOp+qiPnzd0Np2Gdw+hp5nOtyxLmguasiBaZ8=; b=I0ET5kgqIqnTLexz
-	kQDobNNWzQMUda0c/lsLbz5436ybQBkMjJgevy+0HlCWVknwCVbWcelEdZlN6Jgn
-	GlbXfRm/kRew/Xdp1xutO7BqY/OuhYrLYtWzu3eSIGQuTUjWimGM7YZfZOmgkeuV
-	LlEdTywnVVsg1pn41SyWYIbKwta9KxFXHhRNKpXY+4ZfUM3eQxRxQrwgSPhePzjb
-	j9noYa0afvaaBDpdqWftJHO1AT0XlVh7ISwd8YA2mR+Cpem86wEpPVTRdxltDSXi
-	4oEMPkyCExsPCQ3i2okkBoG0lfhF5YXYIWf0ITlauUGbrjCnceHCyRhjyjeJaR6J
-	x4X5aQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406wmmpap3-1
+	2tMabEDkukSFfEaVvcVxlVvVONtz8HMw08XPgSZAbiM=; b=bn5etg/BJES5T1zC
+	Z/m7k4qfzwXeftPMVnIvAlkkQ8FbyyI7jczlZXkAvV23N5UuB6XX9F2LeoSiGUWe
+	mEpoT6qgN+4MQ0AQpTNneCpmGx6tI4OqVFrgziacxkIHR1F9/ZwpJVZQRwFj2BcX
+	X2Avgyl3DXACgS8lOyJUHygFG/W3Zo0d/x3WuzhSNrS9FhPuqnWoPjbcmBK6C/hx
+	2EdtYZQN+NOhwcHwHCDGlavugnSV8JXX0g1rYyQVTav+Bfkt82lu11Q763kgOBtA
+	ldid32xrgYiHtN1NS58Lc8qR06N0ah7Xa7gpSJZISUS1pEsIS6TLJEx0dz+Hclok
+	58Dprw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406x0t6d1e-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 09 Jul 2024 10:51:49 +0000 (GMT)
+	Tue, 09 Jul 2024 10:52:59 +0000 (GMT)
 Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 469Apm2n023176
+	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 469Aqwij025653
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 9 Jul 2024 10:51:48 GMT
+	Tue, 9 Jul 2024 10:52:58 GMT
 Received: from [10.216.26.146] (10.80.80.8) by nalasex01c.na.qualcomm.com
  (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 9 Jul 2024
- 03:51:42 -0700
-Message-ID: <6adaca81-2751-ae48-850c-453a34c0e341@quicinc.com>
-Date: Tue, 9 Jul 2024 16:21:38 +0530
+ 03:52:52 -0700
+Message-ID: <cc1957af-17bc-cd71-e6da-013e3a740014@quicinc.com>
+Date: Tue, 9 Jul 2024 16:22:48 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -51,8 +51,8 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
  Thunderbird/91.9.0
-Subject: Re: [PATCH v2 3/6] clk: qcom: clk-alpha-pll: Add support for Regera
- PLL ops
+Subject: Re: [PATCH v2 5/6] clk: qcom: Add camera clock controller driver for
+ SM8150
 Content-Language: en-US
 To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 CC: Bjorn Andersson <andersson@kernel.org>,
@@ -71,133 +71,74 @@ CC: Bjorn Andersson <andersson@kernel.org>,
         "Imran
  Shaik" <quic_imrashai@quicinc.com>,
         Taniya Das <quic_tdas@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Bryan O'Donoghue
+	<bryan.odonoghue@linaro.org>
 References: <20240702-camcc-support-sm8150-v2-0-4baf54ec7333@quicinc.com>
- <20240702-camcc-support-sm8150-v2-3-4baf54ec7333@quicinc.com>
- <kxoxr5cxxedckh7q45zhhyssqx4ahdfbqw7sdsrxx2ddplummh@2s6jv62ipnhb>
+ <20240702-camcc-support-sm8150-v2-5-4baf54ec7333@quicinc.com>
+ <xbe7kmaxhfwy26qzxrmwgiijaaiap4kdkruaxjs6ymihaw5taf@hvj57wyncfea>
 From: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
-In-Reply-To: <kxoxr5cxxedckh7q45zhhyssqx4ahdfbqw7sdsrxx2ddplummh@2s6jv62ipnhb>
+In-Reply-To: <xbe7kmaxhfwy26qzxrmwgiijaaiap4kdkruaxjs6ymihaw5taf@hvj57wyncfea>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
  nalasex01c.na.qualcomm.com (10.47.97.35)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: bkMPp0JjqBcXkNi5caMNDOKNajXImBl5
-X-Proofpoint-ORIG-GUID: bkMPp0JjqBcXkNi5caMNDOKNajXImBl5
+X-Proofpoint-GUID: s1qDvv-1z7Wqj0GcQOAoOjAu9IgFUnMu
+X-Proofpoint-ORIG-GUID: s1qDvv-1z7Wqj0GcQOAoOjAu9IgFUnMu
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-07-09_02,2024-07-08_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
- priorityscore=1501 lowpriorityscore=0 spamscore=0 bulkscore=0 adultscore=0
- impostorscore=0 suspectscore=0 malwarescore=0 mlxscore=0 mlxlogscore=997
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
+ lowpriorityscore=0 impostorscore=0 adultscore=0 suspectscore=0
+ phishscore=0 mlxlogscore=999 priorityscore=1501 malwarescore=0 spamscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.19.0-2406140001 definitions=main-2407090074
 
 
-On 7/3/2024 3:35 PM, Dmitry Baryshkov wrote:
-> On Tue, Jul 02, 2024 at 09:20:41PM GMT, Satya Priya Kakitapalli wrote:
->> From: Taniya Das <quic_tdas@quicinc.com>
+On 7/3/2024 3:50 PM, Dmitry Baryshkov wrote:
+> On Tue, Jul 02, 2024 at 09:20:43PM GMT, Satya Priya Kakitapalli wrote:
+>> Add support for the camera clock controller for camera clients
+>> to be able to request for camcc clocks on SM8150 platform.
 >>
->> Regera PLL ops are required to control the Regera PLL from clock
->> controller drivers, thus add support for the same.
-> the same what?
-
-
-I'll rephrase the commit text.
-
-
->> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+>> Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 >> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
 >> ---
->>   drivers/clk/qcom/clk-alpha-pll.c | 32 +++++++++++++++++++++++++++++++-
->>   drivers/clk/qcom/clk-alpha-pll.h |  5 +++++
->>   2 files changed, 36 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
->> index d2bef078588f..afb7ab72c90d 100644
->> --- a/drivers/clk/qcom/clk-alpha-pll.c
->> +++ b/drivers/clk/qcom/clk-alpha-pll.c
->> @@ -1,7 +1,7 @@
->>   // SPDX-License-Identifier: GPL-2.0
->>   /*
->>    * Copyright (c) 2015, 2018, The Linux Foundation. All rights reserved.
->> - * Copyright (c) 2021, 2023, Qualcomm Innovation Center, Inc. All rights reserved.
->> + * Copyright (c) 2021, 2023-2024, Qualcomm Innovation Center, Inc. All rights reserved.
->>    */
->>   
->>   #include <linux/kernel.h>
->> @@ -2605,3 +2605,33 @@ const struct clk_ops clk_alpha_pll_stromer_plus_ops = {
->>   	.set_rate = clk_alpha_pll_stromer_plus_set_rate,
->>   };
->>   EXPORT_SYMBOL_GPL(clk_alpha_pll_stromer_plus_ops);
->> +
->> +void clk_regera_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
->> +			     const struct alpha_pll_config *config)
->> +{
->> +	clk_alpha_pll_write_config(regmap, PLL_L_VAL(pll), config->l);
->> +	clk_alpha_pll_write_config(regmap, PLL_ALPHA_VAL(pll), config->alpha);
->> +	clk_alpha_pll_write_config(regmap, PLL_CONFIG_CTL(pll), config->config_ctl_val);
->> +	clk_alpha_pll_write_config(regmap, PLL_CONFIG_CTL_U(pll), config->config_ctl_hi_val);
->> +	clk_alpha_pll_write_config(regmap, PLL_CONFIG_CTL_U1(pll), config->config_ctl_hi1_val);
->> +	clk_alpha_pll_write_config(regmap, PLL_USER_CTL(pll), config->user_ctl_val);
->> +	clk_alpha_pll_write_config(regmap, PLL_USER_CTL_U(pll), config->user_ctl_hi_val);
->> +	clk_alpha_pll_write_config(regmap, PLL_USER_CTL_U1(pll), config->user_ctl_hi1_val);
->> +	clk_alpha_pll_write_config(regmap, PLL_TEST_CTL(pll), config->test_ctl_val);
->> +	clk_alpha_pll_write_config(regmap, PLL_TEST_CTL_U(pll), config->test_ctl_hi_val);
->> +	clk_alpha_pll_write_config(regmap, PLL_TEST_CTL_U1(pll), config->test_ctl_hi1_val);
->> +
->> +	/* Set operation mode to STANDBY */
->> +	regmap_write(regmap, PLL_OPMODE(pll), PLL_STANDBY);
->> +}
->> +EXPORT_SYMBOL_GPL(clk_regera_pll_configure);
-> Does it make sense to call this function from clk_zonda_pll_configure()?
-
-
-Okay, I'll evaluate this internally and see if that can be done.
-
-
+>>   drivers/clk/qcom/Kconfig        |    9 +
+>>   drivers/clk/qcom/Makefile       |    1 +
+>>   drivers/clk/qcom/camcc-sm8150.c | 2159 +++++++++++++++++++++++++++++++++++++++
+>>   3 files changed, 2169 insertions(+)
+> The patch mostly LGTM, several quesitons:
 >
->> +
->> +const struct clk_ops clk_alpha_pll_regera_ops = {
->> +	.enable = clk_zonda_pll_enable,
->> +	.disable = clk_zonda_pll_disable,
->> +	.is_enabled = clk_alpha_pll_is_enabled,
->> +	.recalc_rate = clk_trion_pll_recalc_rate,
->> +	.round_rate = clk_alpha_pll_round_rate,
->> +	.set_rate = clk_zonda_pll_set_rate,
->> +};
->> +EXPORT_SYMBOL_GPL(clk_alpha_pll_regera_ops);
->> diff --git a/drivers/clk/qcom/clk-alpha-pll.h b/drivers/clk/qcom/clk-alpha-pll.h
->> index fb6d50263bb9..5bb0a07da53d 100644
->> --- a/drivers/clk/qcom/clk-alpha-pll.h
->> +++ b/drivers/clk/qcom/clk-alpha-pll.h
->> @@ -21,6 +21,7 @@ enum {
->>   	CLK_ALPHA_PLL_TYPE_LUCID = CLK_ALPHA_PLL_TYPE_TRION,
->>   	CLK_ALPHA_PLL_TYPE_AGERA,
->>   	CLK_ALPHA_PLL_TYPE_ZONDA,
->> +	CLK_ALPHA_PLL_TYPE_REGERA = CLK_ALPHA_PLL_TYPE_ZONDA,
->>   	CLK_ALPHA_PLL_TYPE_ZONDA_OLE,
->>   	CLK_ALPHA_PLL_TYPE_LUCID_EVO,
->>   	CLK_ALPHA_PLL_TYPE_LUCID_OLE,
->> @@ -189,6 +190,8 @@ extern const struct clk_ops clk_alpha_pll_postdiv_lucid_evo_ops;
->>   extern const struct clk_ops clk_alpha_pll_rivian_evo_ops;
->>   #define clk_alpha_pll_postdiv_rivian_evo_ops clk_alpha_pll_postdiv_fabia_ops
->>   
->> +extern const struct clk_ops clk_alpha_pll_regera_ops;
->> +
->>   void clk_alpha_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
->>   			     const struct alpha_pll_config *config);
->>   void clk_fabia_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
->> @@ -210,5 +213,7 @@ void clk_rivian_evo_pll_configure(struct clk_alpha_pll *pll, struct regmap *regm
->>   				  const struct alpha_pll_config *config);
->>   void clk_stromer_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
->>   			       const struct alpha_pll_config *config);
->> +void clk_regera_pll_configure(struct clk_alpha_pll *pll, struct regmap *regmap,
->> +			     const struct alpha_pll_config *config);
->>   
->>   #endif
->>
->> -- 
->> 2.25.1
->>
+> - There are no cam_cc_sleep_clk and no cam_cc_xo_clk_src. Why?
+
+
+These are not required for camcc sm8150 hence not modelled.
+
+
+> - Why is cam_cc_gdsc_clk not modelled in the clock framework?
+
+
+This clock is kept enabled from probe, hence not required to be modelled 
+explicitly.
+
+
+> - I see that most if not all RCG clocks use rcg2_shared ops instead of
+>    using simple rcg2 ops, could you please clarify that?
+
+
+As per the HW design recommendation, RCG needs to be parked at a safe 
+clock source(XO) in the disable path, shared_ops is used to achieve the 
+same.
+
+
+> - RETAIN_FF_ENABLE has been used for GDSCs for sc7280, sc8280xp, sm8550,
+>    sm8650 and x1e8 platforms. Should it really be set for sm8150? If so,
+>    should it also be added to other camcc drivers (if so, for which
+>    platforms)?
+
+
+I have rechecked this in downstream and seems it is not really needed 
+for sm8150, I'll drop in next post.
+
