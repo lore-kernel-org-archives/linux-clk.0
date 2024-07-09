@@ -1,175 +1,153 @@
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59827158A30
-	for <linux-clk@vger.kernel.org>; Tue,  9 Jul 2024 11:15:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97B1727713
+	for <linux-clk@vger.kernel.org>; Tue,  9 Jul 2024 11:28:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720523719; cv=none; b=lvny+fyo97+Dm6UOe/ZJC2Z7GVSeZeF/4Lmw6oSf9yGrBpd2IkQeR2YkyKoCXaQy4j+hbAZrwQoEipQ6BexFlA9qVzrEymquUdcaFKqhCM0EJaDl/nVDsyPFt9XFbp6sCPzyPWEo5QEUM9cGAsrAJLEAZNJ0sUVPnVHFY2hl19U=
+	t=1720524534; cv=none; b=I5W4dr6IYGQF1zR5mp/7+NnpyKyYNe1Vh1H8dwa5fnOxAEwYDPd7oQCGPfVU578yR+I8YRyJPZ3XycgE+ZIF414bBwJeJx/+9ugO/y5NwHXw1JF3YpI6FjYYdcATJR/7HdEk34F3JBDOfy/zadh9ofDkz3Gv8da8KXwR7bhwdXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720523719; c=relaxed/simple;
-	bh=cfcx6G8p3T8pC/pq4nZ7H1nIBaEARkP7ojw1BAnGFG0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NQETKZGToUZsOOJPBRRwDX/pvOO/E3a89jh/piMsQwql/euqhpyv9GXjZN+EB+TZtShbEDmCYwl7PhRZ9KdxWyemoQ+eB8CIgePrtcecTzkvhsEJUK1RmqEQ/5sLnk3z8gSg6ABqtjHqmu4jMgrGP5u5UfTwMYiAseCe6vUrBD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WLwlrZRf; arc=none smtp.client-ip=209.85.128.172
+	s=arc-20240116; t=1720524534; c=relaxed/simple;
+	bh=ViVFjZGgS8dNPjz5ZsLdjn3yYXpL9aBl4uTllH3CRXM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hpLtVYD/rfh+3dqDIqgVB038J+fyw7WbIOJc+g/ikzvty9BSUoC4UpnerKJYLuT0Gr0QVVUSAKGuhlggpvRC3B+jHH2Dchhw1quEIqBNn86Y9XQFxvAGmY00bchWusM2ZOt/uoWL1gxhGTVLwcHoWBu/RlACbPLnI/v1LS0fck0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ayo1fYoB; arc=none smtp.client-ip=209.85.208.173
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WLwlrZRf"
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-64f4c11d2c9so39514427b3.2
-        for <linux-clk@vger.kernel.org>; Tue, 09 Jul 2024 04:15:17 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ayo1fYoB"
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2eaae2a6dc1so72874311fa.0
+        for <linux-clk@vger.kernel.org>; Tue, 09 Jul 2024 04:28:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720523716; x=1721128516; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=GlQ34hWtefyEDU5dsZPE3mnjpMGOHGSvbEad+DgwTis=;
-        b=WLwlrZRfXU4/nkeYYua6LJKjOR9j4k+LedhjrmnEGz4M/+dV19iIxybeISAeA8qJoK
-         P6jcZmhyq9kePrlntRFttCA4scxKtfd+nFnsTs2NrZVWybHVQw72WMRI6cLL1A0Csipm
-         DT8JvrgdEVM6MWBzIypKAM4r/1M/2Jh2d2bpgBcChRHJSm0EgYUv4LKoacc95mn5egx3
-         PWFXILVWfQy38jrebqaxMoBCDRUB24V4OXnP+SJ6NYrlt7zvzOl6j2kfldwlWOsFTEwL
-         2hft1E0HJSMb1GMeLhYTM2VndH5DFHWGganGRdIy+3BSiH0OSc0QTAb9/I5XYmyexh3F
-         tUpw==
+        d=linaro.org; s=google; t=1720524531; x=1721129331; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=3qzAJjCuxDfaalc2old/6w/0ikvjZdAHEMZJhAtd5HY=;
+        b=ayo1fYoBJJWD+RtYUNvHxZokC1nykAxVgvPCnAaNsWoM9BbKuR3wO8oHwAZWB8oRmX
+         zM8wS32V8lEcBz3daIKPie4x/kjF2Bzi4AD/7M60ZPN06aTfxynRIy/RxOHotEUI1PU6
+         Rk0HJXzpMnIqAIAy0UTdH9RZZE2ax0CT9wWdLsOtfFoZSp7CmY9nQlRgLj9YOtE+s+YW
+         GfvGzndm/NvDNML8Pqt0nzCuEUgYH52uZlhzdErg0v3brT7yI/XoFwSM1qhFNuRA8zTQ
+         YGDDXbtXvAKtxJJxXlT32jIOYe6WBjjp4AUimxy/ncjZPRL7Fq7eBdsZOrqyvLwnl5et
+         mnBw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720523716; x=1721128516;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=GlQ34hWtefyEDU5dsZPE3mnjpMGOHGSvbEad+DgwTis=;
-        b=d7pOOu9OnQhkiAZI2j3DzoSK5Y9LSXpGGI1ruegyo9K1IBJzpsDeZ6XGqGtxZqAGqW
-         ujuyca7ZlZfqQMq0mYclioDX01IDqzFv/sAcoBgRC2yGpyI42mZGBdUb6HsU+sNmlo42
-         UjQF7yXWA90rzKJVOgZRQwHo8h74VS1Bu5c3jQtFXFQVBAkDXhTTc2ptGg5Ha8BJDB66
-         5XzEvyjLPomwWetB3p3E8tjCQCKCmezZh5kLKcKLtjgO6510AWKEAE5+6pVD4LXS8Gaa
-         QP8V6W6qQfCct+KvnBhkjcf5uPb/eYIA7TPH3w3ze99zbN2L6hctjYPcjk5RgNzB24Vh
-         rkJA==
-X-Forwarded-Encrypted: i=1; AJvYcCVqX92SZOfxVKr90Ov/tffua/6okIV75WC3WJrOkFKDd0PAIGK/dE+jUt1JNeElNQPYRx3NHzIsESzWr1IQ7ffMjnFPfi8hEnEP
-X-Gm-Message-State: AOJu0Yx0I+cY3DxflX9rL0tiUHPnwlhfMxYIi9OQpt8c6O4j2+tTS+FB
-	MTq+cRN4pWpOd7XXZpGX2fgB0q050rBgDyFWRxdOgeWfSOPq8TWoFJM0pjdq5gLfoHPWafIWq0x
-	rnJOe96Y1/pghht0twZa0y7o+eiSkXNFoE35OzA==
-X-Google-Smtp-Source: AGHT+IEgeYpQ++Ei1107Pb2oobiMNHnFYl3Xkll12Nu66YXrsXqO+F2PEVXSr3dncViJMvsjSPSuVJafM5bdiPbCO3c=
-X-Received: by 2002:a81:9142:0:b0:643:9333:9836 with SMTP id
- 00721157ae682-658f09c9102mr24651797b3.38.1720523716323; Tue, 09 Jul 2024
- 04:15:16 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720524531; x=1721129331;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3qzAJjCuxDfaalc2old/6w/0ikvjZdAHEMZJhAtd5HY=;
+        b=RJCLYu+gUmET41qUmTRcmug+PmojE+BBVqk9iBTmB27mdVZEQBhoPhrkfCFyxnaXkf
+         FJvk71DrhnjXWW6vDDjPCd/j0EE5ht1lYFK/wTmueb4rREkp+zXyXzbnD4LfRLryBLEq
+         m29ROBcaB5xyZ8/nlEo89hP3+tUi2+vjWEPToy0VKDk8l5401SHwyVu07tP4XMJfP4+U
+         /IXY6CZ7Q9wfWXVgRZb38pDZy0YHlgQwN+ZoyMtwD1MxaPt2wEK7zkQzKBkDcL10+cGf
+         sTwZwgJ3wJ9LUXw3J0s8DvOxtA2Dkd6GBZeTgfw/ud+kru+9vHw8pZGz3UKABneL0lUo
+         7cfg==
+X-Forwarded-Encrypted: i=1; AJvYcCWKaAOZh3Ea0RXsLILyimSA2CB28C2JhvTC4AOleZP4r2SG54z9px1xWCJLOFKK6ltaYJCFO1m5a3cAZDVnAWiPF1rpQ9I8PjDY
+X-Gm-Message-State: AOJu0YzfHiqG0C/1LQW8YAUer1NvWOqBt+ijtZelpZUMCVh2KLzgBDqZ
+	9ithK1n5ULPSIS1YGF8Q06e5gGskpGR2ADCseWtwxCeKV5xYWdVx1oSnPgLEDzk=
+X-Google-Smtp-Source: AGHT+IGS4L2H+hCKSxQz3uGyB0VuG6clhftOdyLInR1ymwePpLnvGZ+2GHobh0M7Xqc+cm/ImHJG3g==
+X-Received: by 2002:a2e:a7c7:0:b0:2ee:8d9a:811a with SMTP id 38308e7fff4ca-2eeb310233amr24871521fa.31.1720524530481;
+        Tue, 09 Jul 2024 04:28:50 -0700 (PDT)
+Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a7ff02dsm68784266b.110.2024.07.09.04.28.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 09 Jul 2024 04:28:50 -0700 (PDT)
+Message-ID: <1ec0dbfa-dbef-41e6-a871-7da61651572b@linaro.org>
+Date: Tue, 9 Jul 2024 13:28:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240624044809.17751-1-quic_jkona@quicinc.com> <jgokew5qc5oxjlxvmawgkzfve4eov2shfz2ke5l4nisnidetko@ylcp4iesj3mg>
-In-Reply-To: <jgokew5qc5oxjlxvmawgkzfve4eov2shfz2ke5l4nisnidetko@ylcp4iesj3mg>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Tue, 9 Jul 2024 13:14:40 +0200
-Message-ID: <CAPDyKFqjw6i_fbgQQ_BaSgGN6FMtJShh1g-qZxOxGw4+JZM-oA@mail.gmail.com>
-Subject: Re: [PATCH V7 0/5] Add control for switching back and forth to HW control
-To: Bjorn Andersson <andersson@kernel.org>, Jagadeesh Kona <quic_jkona@quicinc.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, Vikash Garodia <quic_vgarodia@quicinc.com>, 
-	"Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Kevin Hilman <khilman@kernel.org>, Pavel Machek <pavel@ucw.cz>, 
-	Len Brown <len.brown@intel.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Andy Gross <agross@kernel.org>, 
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Abel Vesa <abel.vesa@linaro.org>, 
-	linux-pm@vger.kernel.org, linux-media@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Taniya Das <quic_tdas@quicinc.com>, 
-	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, 
-	Ajit Pandey <quic_ajipan@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 09/10] dt-bindings: opp: v2-qcom-level: Update minItems
+ for oloop-vadj & cloop-vadj
+To: Varadarajan Narayanan <quic_varada@quicinc.com>
+Cc: vireshk@kernel.org, nm@ti.com, sboyd@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, angelogioacchino.delregno@collabora.com,
+ andersson@kernel.org, mturquette@baylibre.com, ilia.lin@kernel.org,
+ rafael@kernel.org, ulf.hansson@linaro.org, quic_sibis@quicinc.com,
+ quic_rjendra@quicinc.com, quic_rohiagar@quicinc.com, abel.vesa@linaro.org,
+ otto.pflueger@abscue.de, danila@jiaxyga.com, quic_ipkumar@quicinc.com,
+ luca@z3ntu.xyz, stephan.gerhold@kernkonzept.com, nks@flawful.org,
+ linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <20240703091651.2820236-1-quic_varada@quicinc.com>
+ <20240703091651.2820236-10-quic_varada@quicinc.com>
+ <20240708155529.GA3244015-robh@kernel.org>
+ <ZozgNAYKAvhPr0qk@hu-varada-blr.qualcomm.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <ZozgNAYKAvhPr0qk@hu-varada-blr.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, 3 Jul 2024 at 05:11, Bjorn Andersson <andersson@kernel.org> wrote:
->
-> On Mon, Jun 24, 2024 at 10:18:04AM GMT, Jagadeesh Kona wrote:
-> > This series adds support for dev_pm_genpd_set_hwmode() and dev_pm_genpd_get_hwmode() APIs
-> > and support in gdsc genpd provider drivers to register respective callbacks and a venus
-> > consumer driver example using above API to switch the power domain(GDSC) to HW/SW modes
-> > dynamically at runtime.
-> >
->
-> Ulf, I discussed the concerns I had with Taniya and I think this looks
-> good. Please pick the gdsc/clock patches through the pmdomain tree.
->
-> Regards,
-> Bjorn
+On 9.07.2024 9:01 AM, Varadarajan Narayanan wrote:
+> On Mon, Jul 08, 2024 at 09:55:29AM -0600, Rob Herring wrote:
+>> On Wed, Jul 03, 2024 at 02:46:50PM +0530, Varadarajan Narayanan wrote:
+>>> Since IPQ9574 has only one CPR thread it will specify
+>>> only one voltage adjustment value. Hence update min items
+>>> accordingly for oloop-vadj and cloop-vadj. Without
+>>> constraining min items, dt_binding_check gives errors
+>>>
+>>> 	opp-table-cpr4:opp-0:qcom,opp-cloop-vadj:0: [0] is too short
+>>> 	opp-table-cpr4:opp-0:qcom,opp-oloop-vadj:0: [0] is too short
+>>>
+>>> 	Failed validating 'minItems' in schema . . .
+>>> 		{'maxItems': 2, 'minItems': 2}
+>>>
+>>> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+>>> ---
+>>> v4: Fix dt_bindings_check error
+>>> ---
+>>>  Documentation/devicetree/bindings/opp/opp-v2-qcom-level.yaml | 2 ++
+>>>  1 file changed, 2 insertions(+)
+>>
+>> This is going to need to be rolled into your dependency because it needs
+>> the same fix.
+> 
+> Konrad,
+> 
+> Can you please squash this into https://lore.kernel.org/lkml/20230217-topic-cpr3h-v14-2-9fd23241493d@linaro.org/
 
-The series applied for next, thanks!
+Yes, I'll do that in the next revision.. forgot to validate this..
 
-Kind regards
-Uffe
-
-
->
-> > Changes in V7:
-> > - [PATCH 3/5]: Updated the comment description in gdsc_set_hwmode as per V6 review comments
-> > - Added R-By tags received on V6
-> > - Link to V6: https://lore.kernel.org/all/20240619141413.7983-1-quic_jkona@quicinc.com/
-> >
-> > Changes in V6:
-> > - [PATCH 3/5]: Added details for 1usec delay in gdsc_set_hwmode()
-> > - [PATCH 4/5]: Updated commit text
-> > - Added R-By and T-By tags received on V5 RESEND
-> > - Link to V5 RESEND: https://lore.kernel.org/all/20240413152013.22307-1-quic_jkona@quicinc.com/
-> > - Link to V5: https://lore.kernel.org/all/20240315111046.22136-1-quic_jkona@quicinc.com/
-> >
-> > Changes in V5:
-> > - Updated 1st patch as per V4 review comments to synchronize the initial HW mode state by
-> >   invoking ->get_hwmode_dev()callback in genpd_add_device()
-> > - With above change, SW cached hwmode will contain correct value initially, and it will be
-> >   updated everytime mode is changed in set_hwmode, hence updated dev_pm_genpd_get_hwmode()
-> >   to just return SW cached hwmode in 1st patch
-> > - Updated commit text for 1st, 3rd, 4th and 5th patches
-> > - Updated 3rd and 5th patches as per review comments received on V4 series
-> > - Added R-By tags received in older series to 1st and 2nd patches
-> > - Link to V4: https://lore.kernel.org/all/20240122-gdsc-hwctrl-v4-0-9061e8a7aa07@linaro.org/
-> >
-> > Changes in V4:
-> >  - Re-worded 1st patch commit message, as per Bjorn's suggestion, and added
-> >    Dmitry's R-b tag
-> >  - Added Bjorn's and Dmitry's R-b tags to the 2nd patch
-> >  - Re-worded 3rd patch commit message, to better explain the HW_CTRL_TRIGGER flag.
-> >  - Added mode transition delay when setting mode for GDSC
-> >  - Added status polling if GDSSC is enabled when transitioning from HW to SW
-> >  - Re-worded 4th patch commit message to better explain why the
-> >    HW_CTRL_TRIGGER needs to be used instead
-> >  - Drop changes to SC7180, SDM845 and SM8550 video CC drivers, as only
-> >    SC7280 and SM8250 have been tested so far. More platforms (with v6 venus)
-> >    will be added eventually.
-> >  - Call genpd set_hwmode API only for v6 and dropped the vcodec_pmdomains_hwctrl.
-> >  - Re-worded 5th patch commit message accordingly.
-> >  - Link to V3: https://lore.kernel.org/lkml/20230823114528.3677667-1-abel.vesa@linaro.org/
-> >
-> > Changes in V3:
-> >  - 5th patch has been squashed in the 4th one
-> >  - Link to V2: https://lore.kernel.org/lkml/20230816145741.1472721-1-abel.vesa@linaro.org/
-> >
-> > Changes in V2:
-> >  - patch for printing domain HW-managed mode in the summary
-> >  - patch that adds one consumer (venus)
-> >  - patch for gdsc with new (different) flag
-> >  - patch for videocc GDSC provider to update flags
-> >  - Link to V1: https://lore.kernel.org/all/20230628105652.1670316-1-abel.vesa@linaro.org/
-> >
-> > Abel Vesa (1):
-> >   PM: domains: Add the domain HW-managed mode to the summary
-> >
-> > Jagadeesh Kona (3):
-> >   clk: qcom: gdsc: Add set and get hwmode callbacks to switch GDSC mode
-> >   clk: qcom: videocc: Use HW_CTRL_TRIGGER for SM8250, SC7280 vcodec
-> >     GDSC's
-> >   venus: pm_helpers: Use dev_pm_genpd_set_hwmode to switch GDSC mode on
-> >     V6
-> >
-> > Ulf Hansson (1):
-> >   PM: domains: Allow devices attached to genpd to be managed by HW
-> >
-> >  drivers/clk/qcom/gdsc.c                       | 41 ++++++++++
-> >  drivers/clk/qcom/gdsc.h                       |  1 +
-> >  drivers/clk/qcom/videocc-sc7280.c             |  2 +-
-> >  drivers/clk/qcom/videocc-sm8250.c             |  4 +-
-> >  .../media/platform/qcom/venus/pm_helpers.c    | 39 ++++++----
-> >  drivers/pmdomain/core.c                       | 78 ++++++++++++++++++-
-> >  include/linux/pm_domain.h                     | 17 ++++
-> >  7 files changed, 161 insertions(+), 21 deletions(-)
-> >
-> > --
-> > 2.43.0
-> >
+Konrad
