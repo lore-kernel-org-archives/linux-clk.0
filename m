@@ -1,152 +1,98 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from forward502b.mail.yandex.net (forward502b.mail.yandex.net [178.154.239.146])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76C9719CD0D
-	for <linux-clk@vger.kernel.org>; Tue,  9 Jul 2024 15:22:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62A6517B425;
+	Tue,  9 Jul 2024 15:37:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720538532; cv=none; b=rZHxcueJn/nrWuDT4KV125D+r5Wwq1VqMA16MeAa3vI/1QkUwh4TH4t3uv1LJNx7pKYtC+qLnbEGGFXzh94vZo51PbfFWbr/f7r5rSA8NawM/fLBEPm5TEfDp9SCCAkruCeKnJ8Y37AnCcoN/jx8xERWlHncGV1WNiP4X2xxE/E=
+	t=1720539448; cv=none; b=QnuYR1rRYNXk+IuOVou6k4Jn/cGP/l/4XIX54mRJ21RHGGZbSPkPGaSAWP2+p0rtPeM0tt8JPx5hhDP5iTiBLj+2SnIDIMqEG9ezshQI4FHkWwUkFqPW4o6cY9qFEgAMXwqACWRl5Q6pofNJu4zJWTioA20gyKQcGIXZMXf53nw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720538532; c=relaxed/simple;
-	bh=JWAQLFqZkuWOfZpZyTRyc8jygVtPln2o1M5TZCpyi7E=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UlQJV4dwEe1ZivLocnzbiaZU3K8zwPqnoSXSxkXDc6rXvyUtYmKbmaUXxLuROfNBziGuBSf+41L6uofEbfstCD5KcCXOColQ0Ko/kvIF+YMcUDLpSDoWnHTt3gzXqfP9tKSW00WDaGh+wQhetERcwU79jiH/m/CUP1vCWXBMYYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=EkV/fz5J; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1720539448; c=relaxed/simple;
+	bh=Xk2dWsAOYkiRMa800QNsMJz1vPrBP/xB8HCyGAHzAO4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=GKQ1D+H6cOK5aCtkruqFD7zKdi0XIWM35P9Z5A3Sk9rlq0HAbovuEvV0QNE8Pl057friFKjMRAmyw99ysmtY46BVmlWSHIQAxcl8wna5ch5YcLAebkpJznFNePjlsI+REFO5fANPbMTz/gPv+GQ3uW5Oa/VwIZmP7R1WGGWtwso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me; spf=pass smtp.mailfrom=maquefel.me; dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b=qcKflvWK; arc=none smtp.client-ip=178.154.239.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maquefel.me
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="EkV/fz5J"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42122ac2f38so32368795e9.1
-        for <linux-clk@vger.kernel.org>; Tue, 09 Jul 2024 08:22:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1720538529; x=1721143329; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jfUB9ZJ69EL9GipUtbkxGBaJaIV82ecNhY+j5SzQ2gM=;
-        b=EkV/fz5JvvHmnnNHgq4YBGewGglZkbZNa2fXIL2HdY63vneGnl6IzcUIQrksC9fkk/
-         6v3opD75UBPoSNI/KtCHYFOEnw7OgYVBWRREW/oIUtl7vaXPOkkMmG9HZrakDH/E3/wT
-         AAv5y0kbebSyBPwOHK3auUFmOBjVElMRxmQ91soA6aOy2DUPXRqvytsQX5MU+1TW6s1D
-         ee+F6JjwCPNJlKf4yhsjIkNAGD3mQRc9B/V3TXOGssh95SVNZ1cDJ3rn+/xui/u2Y0kz
-         9RD6hXVj8Y3GfLtcRuwI/NQRz+mArYfTC2pAnm41DrP7QwtFEOb6h1OlYfXR4LF6/q50
-         TgEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720538529; x=1721143329;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jfUB9ZJ69EL9GipUtbkxGBaJaIV82ecNhY+j5SzQ2gM=;
-        b=p4I1e4NS6uD9KNzP1TDuKmbfzFWhmwMoi6oel27R6KUUoXdLG5jSYaFKtN/AwexwS+
-         g0itJeWSI+CzZsMOFC6ArrfMzgbpzsK0X8HTVJCKQ/6EBiSUPZTaKazu5KlKDY7CsYND
-         GCIIbXu2JU8MHcjj+r7fzheAmQmPcUqeRqFcoKZmq4ooJ+TOZRLcjRC3bHqpm9/8ZeCp
-         RaDK5j3Ns77wQHY8RPsRnDWVEOb1kFHCzohoTaEAMLUua7A0O4e9kO2TRHEMkfHUNCU/
-         rLqvi2ww4oHjd0Q6ZV2jZ3yIyAxB7b3E3DIOtqeRUMp59ID7CBcHZ15Y10FM4jQsfIQE
-         PeGA==
-X-Forwarded-Encrypted: i=1; AJvYcCWPBVyhnVxnEDFlGsJLJCkZC8e54fbzsSleZvKoii3Se0fFAhDwK1tIj3TEryUhEysOe2S1PCh00pDalU04jVk1+1uImkG8Rf+8
-X-Gm-Message-State: AOJu0YwF4E12V7jvUtdK0zDraCnlb4hDUxLv3UApBt8UfWmgzv7NAiHt
-	1ZOwoS5IR39hsJb6lPay39YEUStlNH7yHGT1WvvMTFwOqm10aLRF5MAXS3mopaU=
-X-Google-Smtp-Source: AGHT+IFKyuCi8F65Rnjy2ONu9WDc7c8zSBudZGwZQkQFlY9b9EBnNysV/fwsOhCmIH3gVuNNKX3o0A==
-X-Received: by 2002:a05:600c:4ba4:b0:424:aa83:ef27 with SMTP id 5b1f17b1804b1-426722c11a1mr22876765e9.1.1720538528867;
-        Tue, 09 Jul 2024 08:22:08 -0700 (PDT)
-Received: from localhost (p50915e7b.dip0.t-ipconnect.de. [80.145.94.123])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f6f5f51sm46910255e9.25.2024.07.09.08.22.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 09 Jul 2024 08:22:08 -0700 (PDT)
-Date: Tue, 9 Jul 2024 17:22:07 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Rob Herring <robh+dt@kernel.org>
-Cc: Nikita Shubin <nikita.shubin@maquefel.me>, 
-	Andy Shevchenko <andy.shevchenko@gmail.com>, Arnd Bergmann <arnd@arndb.de>, Stephen Boyd <sboyd@kernel.org>, 
-	Hartley Sweeten <hsweeten@visionengravers.com>, Alexander Sverdlin <alexander.sverdlin@gmail.com>, 
-	Russell King <linux@armlinux.org.uk>, Lukasz Majewski <lukma@denx.de>, 
-	Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, 
-	Andy Shevchenko <andy@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Sebastian Reichel <sre@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Wim Van Sebroeck <wim@linux-watchdog.org>, 
-	Guenter Roeck <linux@roeck-us.net>, Thierry Reding <thierry.reding@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Miquel Raynal <miquel.raynal@bootlin.com>, 
-	Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
-	Damien Le Moal <dlemoal@kernel.org>, Sergey Shtylyov <s.shtylyov@omp.ru>, 
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Ralf Baechle <ralf@linux-mips.org>, "Wu, Aaron" <Aaron.Wu@analog.com>, Lee Jones <lee@kernel.org>, 
-	Olof Johansson <olof@lixom.net>, Niklas Cassel <cassel@kernel.org>, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
-	dmaengine@vger.kernel.org, linux-watchdog@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	linux-spi@vger.kernel.org, netdev@vger.kernel.org, linux-mtd@lists.infradead.org, 
-	linux-ide@vger.kernel.org, linux-input@vger.kernel.org, linux-sound@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Andrew Lunn <andrew@lunn.ch>, Vinod Koul <vkoul@kernel.org>
-Subject: Re: [PATCH v10 00/38] ep93xx device tree conversion
-Message-ID: <fjbvn3p7nqtvllcohtmcwlyv45blulb47t62gz3xey37wrbie5@ke6xcrfq2ztq>
+	dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b="qcKflvWK"
+Received: from mail-nwsmtp-smtp-production-main-45.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-45.sas.yp-c.yandex.net [IPv6:2a02:6b8:c23:2146:0:640:e7:0])
+	by forward502b.mail.yandex.net (Yandex) with ESMTPS id BAD485F040;
+	Tue,  9 Jul 2024 18:30:45 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-45.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id iUf9TIBfvKo0-lQjVki5X;
+	Tue, 09 Jul 2024 18:30:45 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail;
+	t=1720539045; bh=Eu+Rbc6iPL4yDSVzK47roezPd1zllNytDY/2RCNIz64=;
+	h=References:Date:In-Reply-To:Cc:To:From:Subject:Message-ID;
+	b=qcKflvWKybTRl0Qt8dh+yLjzCPlXn9BxpnA/EE2mYP8thaE2ufVjvdX5+4UQm0aIh
+	 n28zE/ShiZIrUY0Ljuv44eWR9BJ0UlVs2pTqoelvwT6ck8t0kK7pJBPrJi1T8qIyp7
+	 nBoPMs3TYDYN+NmHNS1c13M3131VRemfop2zq2Rc=
+Authentication-Results: mail-nwsmtp-smtp-production-main-45.sas.yp-c.yandex.net; dkim=pass header.i=@maquefel.me
+Message-ID: <e935d937241f9bcbaeaad5100114b50dc0f97fbd.camel@maquefel.me>
+Subject: Re: [PATCH v10 03/38] clk: ep93xx: add DT support for Cirrus EP93xx
+From: Nikita Shubin <nikita.shubin@maquefel.me>
+To: Stephen Boyd <sboyd@kernel.org>, Michael Turquette
+ <mturquette@baylibre.com>,  Nikita Shubin via B4 Relay
+ <devnull+nikita.shubin.maquefel.me@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Arnd Bergmann
+	 <arnd@arndb.de>
+Date: Tue, 09 Jul 2024 18:30:44 +0300
+In-Reply-To: <6c5d6c0730698969ef613ec9ec4aa14a.sboyd@kernel.org>
 References: <20240617-ep93xx-v10-0-662e640ed811@maquefel.me>
- <CAHp75VfSC9gAD9ipeWRPdQOxUp4FXqYYei-cJTs38nbz0cHpkg@mail.gmail.com>
- <48c242838c77034485a9e667dc0e867207c5beed.camel@maquefel.me>
- <241a4cf9830b0118f01e8fcf2853c62527636049.camel@maquefel.me>
- <jyvlqfvqn5bp3jmvxvwyrcqmihjohuq3o757mfph7x37kbwvtq@gtgyh4fca4fq>
- <CAL_Jsq+9Jk90HovH8bwzgCHwwh9j4mBm_Aaiq+EOj1HT3R17_Q@mail.gmail.com>
+	 <20240617-ep93xx-v10-3-662e640ed811@maquefel.me>
+	 <6c5d6c0730698969ef613ec9ec4aa14a.sboyd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="piveefpjjxp5n6ob"
-Content-Disposition: inline
-In-Reply-To: <CAL_Jsq+9Jk90HovH8bwzgCHwwh9j4mBm_Aaiq+EOj1HT3R17_Q@mail.gmail.com>
 
+Hi Stephen,=20
 
---piveefpjjxp5n6ob
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thank you for looking into this.
 
-Hello Rob,
-
-On Tue, Jul 09, 2024 at 07:58:42AM -0600, Rob Herring wrote:
-> On Fri, Jul 5, 2024 at 3:21=E2=80=AFAM Uwe Kleine-K=C3=B6nig
-> <u.kleine-koenig@baylibre.com> wrote:
-> > As we're approaching the merge window and this is still unclear, I
-> > applied the pwm bits (i.e. patches 12, 13). If I understand correctly,
-> > patch 33 isn't suitable for application yet as it has a dependency on
-> > pinctrl changes in that series.
+On Mon, 2024-07-08 at 15:18 -0700, Stephen Boyd wrote:
+> Quoting Nikita Shubin via B4 Relay (2024-06-17 02:36:37)
+> > diff --git a/drivers/clk/clk-ep93xx.c b/drivers/clk/clk-ep93xx.c
+> > new file mode 100644
+> > index 000000000000..a0430a5ae4da
+> > --- /dev/null
+> > +++ b/drivers/clk/clk-ep93xx.c
+> > @@ -0,0 +1,834 @@
+> > +// SPDX-License-Identifier: GPL-2.0-or-later
+> > +/*
+> [...]
 >=20
-> Now causing an error in linux-next:
+> > +
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clk_spi_div =3D id->driver_data;
+> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 hw =3D devm_clk_hw_register_fixed=
+_factor(dev, "ep93xx-spi.0",
+> > "xtali",
 >=20
-> Documentation/devicetree/bindings/pwm/cirrus,ep9301-pwm.example.dts:18:18:
-> fatal error: dt-bindings/clock/cirrus,ep9301-syscon.h: No such file or
-> directory
->    18 |         #include <dt-bindings/clock/cirrus,ep9301-syscon.h>
->       |                  ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> compilation terminated.
-> make[2]: *** [scripts/Makefile.lib:442:
-> Documentation/devicetree/bindings/pwm/cirrus,ep9301-pwm.example.dtb]
-> Error 1
+> Are these clk names trying to match device names?
 
-Oh, I thought I had tested that, but obviously I didn't. I'll drop them
-again.
+Yes, ep93xx is still a pure platform SoC, so spi for example still uses
+devm_clk_get:
 
-Thanks for letting me know.
+	espi->clk =3D devm_clk_get(&pdev->dev, NULL);
+	[...]
+	.driver		=3D {
+		.name	=3D "ep93xx-spi",
+	},
 
-Best regards
-Uwe
+This, of course, is no longer necessary in these series (since we
+convert to DT).
 
---piveefpjjxp5n6ob
-Content-Type: application/pgp-signature; name="signature.asc"
+The clock names are from CLK conversion of arch/arm/mach-ep93xx/clock.c
+i made earlier:
 
------BEGIN PGP SIGNATURE-----
+9645ccc7bd7a16cd73c3be9dee70cd702b03be37 ep93xx: clock: convert in-
+place to COMMON_CLK
 
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmaNVZwACgkQj4D7WH0S
-/k4myggAuVPCnTKtBso6CgCuYoUSZB8cGFx1+fM36OQ0B75EHfb+T+oujbdiO1op
-Q/3NTb3vIUE2+lHn6n/WxHLdeKE1vhmOgiaHW3UabNSZZyT360OZNjin7rLPlQEy
-r1DW1w3QOUIS4g8P/v7skKSis2rOiAkICHLcRdDbW5K5dHLInEshegSKVLo+4McU
-8SqKoYP4acYJFTxAC+gPkDS663k7UCsJbnbHDLstfUnuxPbtKpbDx2z8zB9IXh89
-DMwNeZq7tszOWVZ3i0QEX9fZ/DBoFWY+lSL62ZKsQgh3fJucnwXkwqCdLWahNY0k
-Wth32xU/Xhmh//FAw+1Q2VDgLI37Kw==
-=z8zY
------END PGP SIGNATURE-----
+Where i kept the original names which were used before conversion.
 
---piveefpjjxp5n6ob--
