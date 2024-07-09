@@ -1,95 +1,102 @@
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CD1313DDC7
-	for <linux-clk@vger.kernel.org>; Tue,  9 Jul 2024 06:36:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A5AA620;
+	Tue,  9 Jul 2024 06:40:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720507018; cv=none; b=oIQVyiQqnyV7/9vzCIAxa4hQbH0JkMTb9MmVruTutwgPXaqdf4bGCK8GMcd4gmFxdd91/gXXKCf0sBYBL7ukAMtegH22YexyEQsZND1opKkH04lbGNKiWbH9jnMhx+8s3sS+WuOnnTvv32A5ucP8IKNxV7Kv4nB7n7g4vbaUgnE=
+	t=1720507219; cv=none; b=U0xTaNt2FaSPcdlKJWDjeGbT9nUIBGWHdjgmn73aTxVW7eAd4cOjUProI0P+ZSUSV9Hm+/PNrymlroqHv/ZBO0zHJKldO54ZUzydzNeL9Cc8A3HejEmYdx5fnV934zcxLIpEVyjwRgeydrHWBzB+gZMIg3VRNWqGNKMV41peUiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720507018; c=relaxed/simple;
-	bh=x5BIL8YPCH1PyHXr5Bh0Pv+r4BZWPL89xEyYnm/84Qs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=nvWtITj+fgnO4FqU/RecdkAsiMrhGgWMdUXD4EhqK2THbj5xj6qxF+NPvntXjWBd1VT826KkUx12Whl3xdj94T4lSItu11iFO6kSGglmbX0YOUaAGhrHMccVAWqy3+L+2GABIkLmeqU15IBo4a3SmotzIxSGp/VScwWV6lasQwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 9b734aba3dbd11ef93f4611109254879-20240709
-X-CID-CACHE: Type:Local,Time:202407091400+08,HitQuantity:1
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:b94e3024-705e-41a1-a59b-0717b37f6a4c,IP:0,U
-	RL:0,TC:0,Content:0,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:25
-X-CID-META: VersionHash:82c5f88,CLOUDID:be8170e7c891ed3b4a4a150d428f5e93,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:5,IP:nil,URL:0,
-	File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:N
-	O,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 9b734aba3dbd11ef93f4611109254879-20240709
-Received: from mail.kylinos.cn [(10.44.16.175)] by mailgw.kylinos.cn
-	(envelope-from <liqiang01@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1746295649; Tue, 09 Jul 2024 14:36:43 +0800
-Received: from mail.kylinos.cn (localhost [127.0.0.1])
-	by mail.kylinos.cn (NSMail) with SMTP id 95F70E000EB9;
-	Tue,  9 Jul 2024 14:36:43 +0800 (CST)
-X-ns-mid: postfix-668CDA7B-3937851568
-Received: from localhost.localdomain (unknown [10.42.12.14])
-	by mail.kylinos.cn (NSMail) with ESMTPA id A7C24E000EB9;
-	Tue,  9 Jul 2024 14:36:42 +0800 (CST)
-From: Li Qiang <liqiang01@kylinos.cn>
-To: unicorn_wang@outlook.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	inochiama@outlook.com
-Cc: linux-clk@vger.kernel.org,
-	Li Qiang <liqiang01@kylinos.cn>
-Subject: [PATCH v2 1/1] clk/sophgo: Using BUG() instead of unreachable() in mmux_get_parent_id()
-Date: Tue,  9 Jul 2024 14:36:38 +0800
-Message-Id: <c8e66d51f880127549e2a3e623be6787f62b310d.1720506143.git.liqiang01@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <cover.1720506143.git.liqiang01@kylinos.cn>
-References: <cover.1720506143.git.liqiang01@kylinos.cn>
+	s=arc-20240116; t=1720507219; c=relaxed/simple;
+	bh=m1+rZcWSHp9hTFpxjmpe4US5OdMzx1+M7STqT2rdjuw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Q43L/L0fBYtVcmQq0ZFtS71nXVoa+BiuIcZddHgS1BTt7Y1ncXt7PwqGSJyrUKF0mNlyxJyaCyU0faA46cIeznbytfHtbt6KrwtxA0iM+UNeIkddvqessq3XPjdLkd+aQOPm0yujdi+wJrag8KDtol0EIDK2oUITFxsZ5jtcfKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XX6Ujx2g; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XX6Ujx2g"
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4690BgpD030239;
+	Tue, 9 Jul 2024 06:40:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=kr+MUxbsqRoKLfSL2uykTT
+	Mh0PAGRr+eN9/6okrSIfw=; b=XX6Ujx2gWkBcpGRZRuQ79zJnAovObqCz/gVaZj
+	C4bTVz4ladTMZa940xzBiJ0BsTVmKCIlz2k0s6Ufp9aZ0wzRLDkXJWxv4or8A0Qs
+	zxCCeM/53CfKJXcmQTvKbqx847riHd7Ri5F7Qizf29oNvd5ZP3PXxXUyIwGZwaLE
+	gy3TA0CsYp5VWjKkmvzbHiXrbY7L294cYVXl1/ISUP8QtWhzcWVgEUHld6SSSE2N
+	Motpc/Cw8zUO1qYWSkZb2swqDf0CU3JxVEzmQodcYGFaRnABlrO6qMrr+BjCMBsw
+	zqbsBA6DPNzk2AL58vYGlddDO8CBCZqHslIjAuVI9kyhqrlQ==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406x515pes-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 09 Jul 2024 06:40:08 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4696e7GF022643
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 9 Jul 2024 06:40:07 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 8 Jul 2024 23:40:02 -0700
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <konrad.dybcio@linaro.org>, <djakov@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>
+CC: Varadarajan Narayanan <quic_varada@quicinc.com>
+Subject: [PATCH v1 0/3] Add interconnect driver for IPQ5332 SoC
+Date: Tue, 9 Jul 2024 12:09:45 +0530
+Message-ID: <20240709063949.4127310-1-quic_varada@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: ZLONHtspI8lxyEV3GCxp6oGO4vqd_m1w
+X-Proofpoint-ORIG-GUID: ZLONHtspI8lxyEV3GCxp6oGO4vqd_m1w
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-08_15,2024-07-08_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 adultscore=0
+ suspectscore=0 impostorscore=0 mlxlogscore=683 mlxscore=0 bulkscore=0
+ priorityscore=1501 malwarescore=0 lowpriorityscore=0 phishscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2406140001 definitions=main-2407090043
 
-In general it's a good idea to avoid using bare unreachable() because it
-introduces undefined behavior in compiled code. but it caused a compilati=
-on warning,
-Using BUG() instead of unreachable() to resolve compilation warnings.
+Enable icc-clk based interconnect driver for IPQ5332. This is
+similar to IPQ9574's icc-clk based driver.
 
-Fixes the following warnings:
-    drivers/clk/sophgo/clk-cv18xx-ip.o: warning: objtool: mmux_round_rate=
-() falls through to next function bypass_div_round_rate()
+dt_bindings_check and dtbs_check passed.
 
-Fixes: 80fd61ec46124 ("clk: sophgo: Add clock support for CV1800 SoC")
-Signed-off-by: Li Qiang <liqiang01@kylinos.cn>
----
- drivers/clk/sophgo/clk-cv18xx-ip.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Ensured that icc_sync_state is called and relevant clocks are
+disabled.
 
-diff --git a/drivers/clk/sophgo/clk-cv18xx-ip.c b/drivers/clk/sophgo/clk-=
-cv18xx-ip.c
-index 805f561725ae..b186e64d4813 100644
---- a/drivers/clk/sophgo/clk-cv18xx-ip.c
-+++ b/drivers/clk/sophgo/clk-cv18xx-ip.c
-@@ -613,7 +613,7 @@ static u8 mmux_get_parent_id(struct cv1800_clk_mmux *=
-mmux)
- 			return i;
- 	}
-=20
--	unreachable();
-+	BUG();
- }
-=20
- static int mmux_enable(struct clk_hw *hw)
---=20
-2.25.1
+Dependency:
+[1] https://lore.kernel.org/linux-arm-msm/20240430064214.2030013-1-quic_varada@quicinc.com/
+
+Varadarajan Narayanan (3):
+  dt-bindings: interconnect: Add Qualcomm IPQ5332 support
+  clk: qcom: ipq5332: Use icc-clk for enabling NoC related clocks
+  arm64: dts: qcom: ipq5332: Add icc provider ability to gcc
+
+ .../bindings/clock/qcom,ipq5332-gcc.yaml      |  2 +
+ arch/arm64/boot/dts/qcom/ipq5332.dtsi         |  2 +
+ drivers/clk/qcom/gcc-ipq5332.c                | 36 +++++++++++++--
+ .../dt-bindings/interconnect/qcom,ipq5332.h   | 46 +++++++++++++++++++
+ 4 files changed, 81 insertions(+), 5 deletions(-)
+ create mode 100644 include/dt-bindings/interconnect/qcom,ipq5332.h
+
+-- 
+2.34.1
 
