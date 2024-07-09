@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 539C217B02B;
-	Tue,  9 Jul 2024 20:04:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B8D3185600;
+	Tue,  9 Jul 2024 20:08:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720555462; cv=none; b=MEx2oemlO4RUO9d5rlncG9q7O7BPeu+zbV0SFiaQcWDPMkS74MV9u5oYEQ5IcN+2ntoihTGVca2otYnM60F5MZheQhCkHqo8XV/2Ene8cLqQs0ai8JFMiBxnpOI13/i1F8IT977Nyfu0XFLwxllJbmmuGkNNFe2IbEhr0RDb1QU=
+	t=1720555685; cv=none; b=aHLVVYq/vOcIjdQDcDbdWtyxMscopBOQ7cgoRN12Yxhh2tbNfWQJdpKzRgJv9n8X2FuVbRL2PTUWkipRmO0bCQlAeqI265OcVi/OZBFCR1nSCohJFY802gM2j9t6uEIhc26d7xXCIhw9QugR1+suZLfhD5czzDUqoVInoxhZFAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720555462; c=relaxed/simple;
-	bh=VivZPAUiRi+d5hAMjwMhS1EPUevBrj95yio+3IfbWeY=;
+	s=arc-20240116; t=1720555685; c=relaxed/simple;
+	bh=MoR3W7mtnrB2W6ItWK+BYwzrIvTxtgWGdPafp0dW8lc=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=U+Y5dj/guDlad1WpUDJXi5f9cJjFuQu7WhTYnUORSw1OPwRNzg9BOgYR7ZyTVAWHGLXlD2hQqluhYP2R6L+J5KDaS7x4I40RzUPkAa0lDuBkMvmcJLHd/WeHtyrNGKNR2muH3Wra8fYPqlfklgjaHLDzcytOYV8egCGqhhBelPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tRpSYZj8; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=Z6iT1/W7uKGLRu++i3zCwB0jJ75CrYLT98eMtJpTzyeoDsBlg4xEMdxVPsFtuwiELqu+WHCvrtYi+RtquSEomOCQEHaN2KFCfF/G/2FoyFpPfC02TplJZKOKgpxGKEV5qRKbStUp0ATGRoQq1P5e4XFxgzCRK96Dfn1gJeGHkMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vH2tVJe7; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tRpSYZj8"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF770C3277B;
-	Tue,  9 Jul 2024 20:04:21 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vH2tVJe7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2742DC3277B;
+	Tue,  9 Jul 2024 20:08:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720555461;
-	bh=VivZPAUiRi+d5hAMjwMhS1EPUevBrj95yio+3IfbWeY=;
+	s=k20201202; t=1720555685;
+	bh=MoR3W7mtnrB2W6ItWK+BYwzrIvTxtgWGdPafp0dW8lc=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=tRpSYZj8XzA5guBziaKhb+RjnQzqkVKVeWAsUesZC9EK/BTxINNsT96OEVvJfzNnn
-	 K0hv6RCEEpXmAcBCFwQjc2NyCxlobrQYFguZiWoDlzl5V1udPDrXBt+L85O2C1xumt
-	 2hWoGGSuAd0mzCQkAAUTGh56oMx/b/JKHPE/drBHGlR0iD9aWqLfPQhQtik4E5oNXR
-	 2pgT5hZjYB54QifJbZnraFw+AVc4IkEr52uDWKNhHW8c2NgBsZC3BZeILHYkp0sH2t
-	 xx0E684YZGZCu1suPAa86EMVeGjffkw4b9z3vVpmtc5uRJK6e1dOacK4ai26qYjqWU
-	 Kd7ASDoRrGAJQ==
-Message-ID: <d831eb2d5b1e11c4d1196fbf448a028a.sboyd@kernel.org>
+	b=vH2tVJe75PG/wmvoNdRJu7ygGtePWAHIyb649iPACNg40ONqxuqGCZP/tWo2/WK3C
+	 JTxUIXa3UAkNwoE21ghpoIY3HKuI1gWLQJk7YQy8D0yehvWlheOyzCRxm8nbQ2uwp1
+	 lC46OkDE9Sp2NsCLklpNT2nXjIOcXRoMUVZFUZxD/E6wyC5qsnitjjPZrDb+0OoMH6
+	 Kxxh62/Y2i86bkBWxvjWmyBjHX2r81Kzf6F11561hVwoYBVCNU3cQtzPpppuHz1SiP
+	 tNv/IbpFDd0QPw8RR2DGPt0b2cwAkWI2BTydh33dwhkSA1J8MvnegI4GXGI0GvB0S8
+	 woDB0JVC7iIeQ==
+Message-ID: <065ab85945db26eed25ea874fce92524.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,33 +35,55 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240709193927.4424-1-andersson@kernel.org>
-References: <20240709193927.4424-1-andersson@kernel.org>
-Subject: Re: [GIT PULL] A few more Qualcomm clk updates for v6.11
+In-Reply-To: <CAA+D8APumdP97QQHObF6NEw6jwDJRb+0R=aAjqftrX1wR170Yw@mail.gmail.com>
+References: <1719996771-11220-1-git-send-email-shengjiu.wang@nxp.com> <232c2342061b17b9f750c4ad52b0766e.sboyd@kernel.org> <CAA+D8APumdP97QQHObF6NEw6jwDJRb+0R=aAjqftrX1wR170Yw@mail.gmail.com>
+Subject: Re: [PATCH] clk: imx: imx8: Add .name for "acm_aud_clk0_sel" and "acm_aud_clk1_sel"
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Varadarajan Narayanan <quic_varada@quicinc.com>, Abel Vesa <abel.vesa@linaro.org>, Chen Ni <nichen@iscas.ac.cn>, Javier Carrasco <javier.carrasco.cruz@gmail.com>, Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>, linux-clk@vger.kernel.org
-Date: Tue, 09 Jul 2024 13:04:19 -0700
+Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org, festevam@gmail.com, imx@lists.linux.dev, kernel@pengutronix.de, mturquette@baylibre.com, peng.fan@nxp.com, s.hauer@pengutronix.de, shawnguo@kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+To: Shengjiu Wang <shengjiu.wang@gmail.com>
+Date: Tue, 09 Jul 2024 13:08:03 -0700
 User-Agent: alot/0.10
 
-Quoting Bjorn Andersson (2024-07-09 12:39:27)
+Quoting Shengjiu Wang (2024-07-08 20:20:56)
+> On Tue, Jul 9, 2024 at 6:45=E2=80=AFAM Stephen Boyd <sboyd@kernel.org> wr=
+ote:
+> >
+> > Quoting Shengjiu Wang (2024-07-03 01:52:51)
+> > > "acm_aud_clk0_sel" and "acm_aud_clk1_sel" are registered by this ACM
+> > > driver, but they are the parent clocks for other clocks, in order to
+> > > use assigned-clock-parents in device tree, they need to have the
+> > > global name.
+> > >
+> > > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> > > ---
+> > >  drivers/clk/imx/clk-imx8-acm.c | 12 ++++++------
+> > >  1 file changed, 6 insertions(+), 6 deletions(-)
+> > >
+> > > diff --git a/drivers/clk/imx/clk-imx8-acm.c b/drivers/clk/imx/clk-imx=
+8-acm.c
+> > > index 1bdb480cc96c..a1affcf6daff 100644
+> > > --- a/drivers/clk/imx/clk-imx8-acm.c
+> > > +++ b/drivers/clk/imx/clk-imx8-acm.c
+> > > @@ -114,8 +114,8 @@ static const struct clk_parent_data imx8qm_mclk_o=
+ut_sels[] =3D {
+> > >  static const struct clk_parent_data imx8qm_mclk_sels[] =3D {
+> > >         { .fw_name =3D "aud_pll_div_clk0_lpcg_clk" },
+> > >         { .fw_name =3D "aud_pll_div_clk1_lpcg_clk" },
+> > > -       { .fw_name =3D "acm_aud_clk0_sel" },
+> > > -       { .fw_name =3D "acm_aud_clk1_sel" },
+> > > +       { .fw_name =3D "acm_aud_clk0_sel", .name =3D "acm_aud_clk0_se=
+l" },
+> > > +       { .fw_name =3D "acm_aud_clk1_sel", .name =3D "acm_aud_clk1_se=
+l" },
+> >
+> > This doesn't make any sense. Why are we adding fallback names?  Is
+> > "acm_aud_clk0_sel" not part of the DT binding for this clk controller?
 >=20
-> The following changes since commit f27e42c7d3ff8ddfc57273efd1e8642ea89bad=
-90:
->=20
->   clk: qcom: gcc-x1e80100: Fix halt_check for all pipe clocks (2024-07-01=
- 22:28:05 -0500)
->=20
-> are available in the Git repository at:
->=20
->   https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git tags/qco=
-m-clk-for-6.11-2
->=20
-> for you to fetch changes up to 23711cabe122ef55bcb2e5c3e3835b5a2a688fc0:
->=20
->   clk: qcom: ipq9574: Use icc-clk for enabling NoC related clocks (2024-0=
-7-08 11:40:57 -0500)
->=20
-> ----------------------------------------------------------------
+> It is not part of DT binding for this clk controller.  it is registered b=
+y this
+> clk controller itself.  As it is a parent clock, so my understanding
+> is that we need to add a fallback name,  or change "fw_name" to "name",
+> please correct me if I am wrong.
 
-Thanks. Pulled into clk-next
+If it's registered by this clk controller itself then it should be a
+clk_hw pointer and not use any string name.
