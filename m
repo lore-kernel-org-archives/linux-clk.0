@@ -1,119 +1,158 @@
-Received: from forward500a.mail.yandex.net (forward500a.mail.yandex.net [178.154.239.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D25DC1E878;
-	Wed, 10 Jul 2024 13:57:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 501B8193455
+	for <linux-clk@vger.kernel.org>; Wed, 10 Jul 2024 14:20:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720619860; cv=none; b=sy98DrUBXGepTPdLMsrKoZJEeW/CSOKaGMiGzwCgk4yzfbUiSkMnHp6FDkdTdCpheyPoDEJ94yp53kjtQV1Uci6t21gftV3GCBA0MJa84hMe1K3ZFFliGB7QsYqY2OAjovsoVM20e2bbFbcb64aP3ljsohITNq+TiyAUI/QkclI=
+	t=1720621258; cv=none; b=hPGqldi1x6gcd1uN2nYPKUp8uX7TgeCMJpvTeVg9QcfxkcKg9r4pO345bjZObfjZxO4oS2d/a5M+/A+SKoxjSnJPvhMIh/c2DSsdAb4xeYt7f1WsgN2CF5T6lIx9Gxg8J1yFvfa/U+E2sSD9GXLOA76doC2vhRfxM7Z2cWXdUII=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720619860; c=relaxed/simple;
-	bh=dvNWlpITxM+kcZ2muxDh7Vnog/B/XqfEmWB2Ko9b+L0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=A9yABq3xNY3Qyc2Rlq7GMIWh7OHepCHoD51BHjJ0vqugDOZ2PsJJiolF17Uw/IyVqPeD8R7MWbh+A5HNFuNlfK6T5v1y6T3qOo5rZF7U1OV7GWlsWjiaMNEkjoZ74Bhs+dOvTWC+kdlv8kP1GGWvlfwkXMiOphVd+8kG/JpVz7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me; spf=pass smtp.mailfrom=maquefel.me; dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b=Lz4kK/pL; arc=none smtp.client-ip=178.154.239.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maquefel.me
+	s=arc-20240116; t=1720621258; c=relaxed/simple;
+	bh=W4h0IrOY8Uo6V+EuwKWOQCC/Cs9pfuzhIMe/Ba6k4+E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=vCHG+SBn8igHuVl9rITt8+2v9FpZARihrQ+K4/AbqSZO3KjdamLScLa8VT88J9HnycWihZD+WruzPXCaaXmt0mxqo6nb3gqmDbexDIkLCURkp1Pl455M1FeqZ10f/UQpc+m35X2PB4NDjUyeKy38tgObp2Qnn1pg+L+/HwIg/HQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=a5CBbBb0; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b="Lz4kK/pL"
-Received: from mail-nwsmtp-smtp-production-main-31.vla.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-31.vla.yp-c.yandex.net [IPv6:2a02:6b8:c0d:38a3:0:640:a710:0])
-	by forward500a.mail.yandex.net (Yandex) with ESMTPS id 7E56061E0D;
-	Wed, 10 Jul 2024 16:48:42 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-31.vla.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id Xmecr64OiuQ0-yRS0mYRs;
-	Wed, 10 Jul 2024 16:48:40 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail;
-	t=1720619320; bh=dvNWlpITxM+kcZ2muxDh7Vnog/B/XqfEmWB2Ko9b+L0=;
-	h=References:Date:In-Reply-To:Cc:To:From:Subject:Message-ID;
-	b=Lz4kK/pLIiP7TRsvVcCsyN/ENXOi/cbuOigQPGq6WepeV2OMr/VX7mIKmanRWGhgr
-	 BHxt03weitFN0X52cEW+k6DsO/fFgVBLHT5tNa8+AeAum0LY8n5C2G7QIul1NoywuN
-	 cqt18iShdPqpcuaqZATlZBHaI3uCXuLlRUg1hK8k=
-Authentication-Results: mail-nwsmtp-smtp-production-main-31.vla.yp-c.yandex.net; dkim=pass header.i=@maquefel.me
-Message-ID: <6a0b3b3b03706367e7bd2d3ed7132e9cc454af00.camel@maquefel.me>
-Subject: Re: [PATCH v10 00/38] ep93xx device tree conversion
-From: Nikita Shubin <nikita.shubin@maquefel.me>
-To: Arnd Bergmann <arnd@arndb.de>, Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?=
-	 <u.kleine-koenig@baylibre.com>
-Cc: Andy Shevchenko <andy.shevchenko@gmail.com>, Stephen Boyd
- <sboyd@kernel.org>,  Hartley Sweeten <hsweeten@visionengravers.com>,
- Alexander Sverdlin <alexander.sverdlin@gmail.com>, Russell King
- <linux@armlinux.org.uk>, Lukasz Majewski <lukma@denx.de>, Linus Walleij
- <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Andy
- Shevchenko <andy@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
- Sebastian Reichel <sre@kernel.org>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley
- <conor+dt@kernel.org>, Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter
- Roeck <linux@roeck-us.net>, Thierry Reding <thierry.reding@gmail.com>, Mark
- Brown <broonie@kernel.org>, "David S . Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>, Miquel Raynal <miquel.raynal@bootlin.com>,
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>,
- Damien Le Moal <dlemoal@kernel.org>, Sergey Shtylyov <s.shtylyov@omp.ru>, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Liam Girdwood
- <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>,  Takashi Iwai
- <tiwai@suse.com>, Ralf Baechle <ralf@linux-mips.org>, Aaron Wu
- <Aaron.Wu@analog.com>, Lee Jones <lee@kernel.org>, Olof Johansson
- <olof@lixom.net>, Niklas Cassel <cassel@kernel.org>,
- linux-arm-kernel@lists.infradead.org,  linux-kernel@vger.kernel.org, "open
- list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
- linux-clk@vger.kernel.org,  linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, dmaengine@vger.kernel.org, 
- linux-watchdog@vger.kernel.org, linux-pwm@vger.kernel.org, 
- linux-spi@vger.kernel.org, Netdev <netdev@vger.kernel.org>, 
- linux-mtd@lists.infradead.org, linux-ide@vger.kernel.org, 
- linux-input@vger.kernel.org, linux-sound@vger.kernel.org, Bartosz
- Golaszewski <bartosz.golaszewski@linaro.org>, Krzysztof Kozlowski
- <krzysztof.kozlowski@linaro.org>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Andrew Lunn <andrew@lunn.ch>, Vinod
- Koul <vkoul@kernel.org>
-Date: Wed, 10 Jul 2024 16:48:34 +0300
-In-Reply-To: <8f45a3d9-429c-441e-a17c-33a163eb86c2@app.fastmail.com>
-References: <20240617-ep93xx-v10-0-662e640ed811@maquefel.me>
-	 <CAHp75VfSC9gAD9ipeWRPdQOxUp4FXqYYei-cJTs38nbz0cHpkg@mail.gmail.com>
-	 <48c242838c77034485a9e667dc0e867207c5beed.camel@maquefel.me>
-	 <241a4cf9830b0118f01e8fcf2853c62527636049.camel@maquefel.me>
-	 <jyvlqfvqn5bp3jmvxvwyrcqmihjohuq3o757mfph7x37kbwvtq@gtgyh4fca4fq>
-	 <663b1749afeb5cec281149fdb445ed36fdcbc68e.camel@maquefel.me>
-	 <8f45a3d9-429c-441e-a17c-33a163eb86c2@app.fastmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="a5CBbBb0"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42795086628so4363085e9.3
+        for <linux-clk@vger.kernel.org>; Wed, 10 Jul 2024 07:20:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1720621253; x=1721226053; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hrBrrFwd71u927GXz6lBE6tAIH4agRf/nva9TIYQidY=;
+        b=a5CBbBb02yX1J/Q9l3BnEgt+YnO/DXVNOg4+4uXTm8daKJ2ZmjMWyFIG8xaYRiWe1C
+         NXpBGtu7lPVo5hm2PyUFHTmxLO5yxwSKvM+pavGEcWibds+gnjDkrS9cpYC2+f4+f8Ok
+         tLKyNm7dTAGCdULJe797B4hVgvauM9Is9DfRsB0XD328nQBbR4m+33DchU4hVTubCZr0
+         Ragyhc5qKR11VgKBTdG9+lMXuSYCOmdeaf/NEhN0XdP31FHY7h0rPEtD1a9MiPi1nrwQ
+         5etdCE9NFDTj08EsxMZGh1nQmd9oB8kyQMlE3DkolZyGntRrv9XKdflyMV0O4cGhM5We
+         28mw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720621253; x=1721226053;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hrBrrFwd71u927GXz6lBE6tAIH4agRf/nva9TIYQidY=;
+        b=HJ3OaIGEYhIz2iUwF8orMXdhKELU8ZC6HdJRvCE4B+LOlWHOW4PsOfAGURMx+x8P64
+         0S85//Ur8Cxhv4au/BPhE64tE4f55AWpeHB/5eVrBVjc4xXYzrzxTs+zg+AnYkw3anOF
+         XCaixUZmP+aUgMwcyydi8jKT+D/z/WJRpZRAHeeF/0qtL+gqII6dZZuL/Sj5dtqwK8HH
+         CZZ5YKim50ueDDCcp4T6AhpuTsChog2KJgNKvOa/gr8AkFAJEQh4BpP+YoKQYdSaeoj9
+         yZb5rZXNreRIy5E+F0iu43iLr9bVRHBxNkCjrrYvhBNS2S10k1Zwrr+tt+w0HYnsbpDm
+         xXFw==
+X-Forwarded-Encrypted: i=1; AJvYcCW3EYWqQRDyU16r9fkmxEjxlvVHXRU0amigSriC0Dwin/AVNEuMDqBMiTQastq2xzbZtq/I4+s7DB1zwElbskMGBokG+iqB4n3w
+X-Gm-Message-State: AOJu0YyiIQzsOIIkM+o4tom74DiKrhDUpJtUIxVFqIio1cFhFNqf/xrL
+	r6d/ouzU7NNNkyQgiB40aGXutIQVz148EA1zXlBZCnehNP7kcZhB4H5BYKecFac=
+X-Google-Smtp-Source: AGHT+IETxyB0snJNvMt9MaRxZtX7+j+x5oGjOWzm8oItSS/tUdUHCB4zwYBUxezahOThfFEGvBOjPA==
+X-Received: by 2002:a05:600c:6dca:b0:426:5269:983a with SMTP id 5b1f17b1804b1-426707cc00dmr43281485e9.8.1720621253364;
+        Wed, 10 Jul 2024 07:20:53 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.171])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f6f07dasm83508525e9.12.2024.07.10.07.20.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 10 Jul 2024 07:20:52 -0700 (PDT)
+Message-ID: <22db23bd-5872-49a0-990f-2a0e5f51bfb5@tuxon.dev>
+Date: Wed, 10 Jul 2024 17:20:50 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 09/12] i2c: riic: Add support for fast mode plus
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: chris.brandt@renesas.com, andi.shyti@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com,
+ mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
+ wsa+renesas@sang-engineering.com, linux-renesas-soc@vger.kernel.org,
+ linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240625121358.590547-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240625121358.590547-10-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdX4hWou9OtdE8XgU7-U0ghJ6vk2kVqgT90U0ZjsxzR5DA@mail.gmail.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <CAMuHMdX4hWou9OtdE8XgU7-U0ghJ6vk2kVqgT90U0ZjsxzR5DA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hello Arnd!
+Hi, Geert, all,
 
-On Wed, 2024-07-10 at 14:31 +0200, Arnd Bergmann wrote:
-> On Mon, Jul 8, 2024, at 09:34, Nikita Shubin wrote:
-> > Arnd,=20
-> >=20
-> > Are we continuing this patch series ?
-> >=20
-> > You are silent since last version submit, which makes me a bit
-> > worried.
-> >=20
-> > If you suddenly changed your mind please let us know, cause anyway
-> > we
-> > have no possibility to merge these series without you.
->=20
-> Hi Nikita,
->=20
-> I definitely still want to merge your work, I was just not paying
-> attention while there were others commenting on it, and I don't
-> know what the current state is. If you are ready to have some
-> or all of the patches included in the next merge window, can
-> you send either the set of patches that were reviewed to
-> soc@kernel.org=C2=A0for me to pick up, or prepare a pull request
-> to that address?
->=20
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Arnd
+On 28.06.2024 12:22, Geert Uytterhoeven wrote:
+> Hi Claudiu,
+> 
+> On Tue, Jun 25, 2024 at 2:14 PM Claudiu <claudiu.beznea@tuxon.dev> wrote:
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> Fast mode plus is available on most of the IP variants that RIIC driver
+>> is working with. The exception is (according to HW manuals of the SoCs
+>> where this IP is available) the Renesas RZ/A1H. For this, patch
+>> introduces the struct riic_of_data::fast_mode_plus.
+>>
+>> Fast mode plus was tested on RZ/G3S, RZ/G2{L,UL,LC}, RZ/Five by
+>> instantiating the RIIC frequency to 1MHz and issuing i2c reads on the
+>> fast mode plus capable devices (and the i2c clock frequency was checked on
+>> RZ/G3S).
+>>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+> Thanks for your patch!
+> 
+>> --- a/drivers/i2c/busses/i2c-riic.c
+>> +++ b/drivers/i2c/busses/i2c-riic.c
+>> @@ -407,6 +413,9 @@ static int riic_init_hw(struct riic_dev *riic)
+>>         riic_writeb(riic, 0, RIIC_ICSER);
+>>         riic_writeb(riic, ICMR3_ACKWP | ICMR3_RDRFS, RIIC_ICMR3);
+>>
+>> +       if (info->fast_mode_plus && t->bus_freq_hz == I2C_MAX_FAST_MODE_PLUS_FREQ)
+>> +               riic_clear_set_bit(riic, 0, ICFER_FMPE, RIIC_ICFER);
+> 
+> Unless FM+ is specified, RIIC_ICFER is never written to.
+> Probably the register should always be initialized, also to make sure
+> the FMPE bit is cleared when it was set by the boot loader, but FM+
+> is not to be used.
 
-Thanks for support!
+Instead of clearing only this bit, what do you think about using
+reset_control_reset() instead of reset_control_deassert() in riic_i2c_probe()?
 
-We still have a minor issue but AFAIS only a single patch left, but
-hoping to settle this one with Stephen soon.
+HW manuals for all the devices listed in
+Documentation/devicetree/bindings/i2c/renesas,riic.yaml specifies that
+ICFER_FMPE register is initialized with a default value by reset. All the
+other registers are initialized with default values at reset (according to
+HW manuals). I've checked it on RZ/G3S and it behaves like this.
 
+With this:
+
+diff --git a/drivers/i2c/busses/i2c-riic.c b/drivers/i2c/busses/i2c-riic.c
+index ba969ad5f015..150e7841f178 100644
+--- a/drivers/i2c/busses/i2c-riic.c
++++ b/drivers/i2c/busses/i2c-riic.c
+@@ -457,7 +457,7 @@ static int riic_i2c_probe(struct platform_device *pdev)
+                return dev_err_probe(dev, PTR_ERR(riic->rstc),
+                                     "Error: missing reset ctrl\n");
+
+-       ret = reset_control_deassert(riic->rstc);
++       ret = reset_control_reset(riic->rstc);
+        if (ret)
+                return ret;
+
+I've did basic tests (i2cdetect + i2cget with FM+ frequency) on RZ/G2{L,
+LC, UL}, RZ/V2L and all was good.
+
+Thank you,
+Claudiu Beznea
+
+> 
+> 
+>> +
+>>         riic_clear_set_bit(riic, ICCR1_IICRST, 0, RIIC_ICCR1);
+>>
+>>         pm_runtime_mark_last_busy(dev);
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
