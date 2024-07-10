@@ -1,152 +1,101 @@
-Received: from flow1-smtp.messagingengine.com (flow1-smtp.messagingengine.com [103.168.172.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4E9A128369;
-	Wed, 10 Jul 2024 12:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 506F11922CD
+	for <linux-clk@vger.kernel.org>; Wed, 10 Jul 2024 12:41:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720614729; cv=none; b=csrJvAVSUEZwOrRm+YLdXwbqvOhtdUAQMz6yiXysgDin4o5d/Tq2F5VJzcoH+bihh/UQA1tNwo/OQRFmQw69cdeSxLcDFr14MW4zcrACaB+4yR8Cm9W0e8G/EOChBcTNuld9WBl1IoBzdMAXo9LeNU9uhloVlYhG8esfyTpulV0=
+	t=1720615267; cv=none; b=O+IkDq8z5PYwKzLrPPiL/hXPYcawfYUTiZCYx5BlLg337dyr6gomdzEeoHZB3V8LAk6sz//u+pCZMtEQPILOJx9d6nRIIn57u9IylUPdWFtRDRkZ33zrD1HOhIGzKSNXxmuTWZnWnKzsXhqf8O33yvcLF0FaTJLUcMYPCg9Uzfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720614729; c=relaxed/simple;
-	bh=XU81jlqPSEHhklnXvmeUHF4K+FfBTeR9jSQAbMBRniM=;
-	h=MIME-Version:Message-Id:In-Reply-To:References:Date:From:To:Cc:
-	 Subject:Content-Type; b=PSiJXSZwPFZ9lSdvn0SeQa1cXNthHMILVhMvD1Ov+jLoKTKPVaV/HY4gD3AYavWa67MoocDaVNR/COKbSXu6UlRxtJsN5XfJbVE2q6qk3WoEbUWxIhVbVVAFgCVPiN3r/GFKOdJe3hidYzN2Pf6jNI/mR42Jfj9IhtcO042jCho=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=cOl7Zcvk; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=LpLxRYuW; arc=none smtp.client-ip=103.168.172.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+	s=arc-20240116; t=1720615267; c=relaxed/simple;
+	bh=Ool8JEcomupLYFCAVUceeyirLvgRl1G6dqSHkrYH0y8=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=i9465dftGrdrzbkMrp1zk2/wm8/InsqZesmfxkug3ayCdYwl6QZGf2m2bQDrVb27nxyQs9KDP/H4KgMATh7gBKTOl5QfJDcwip4wK9eleOXcx5DhGGAU4v1IH8F3jwXxFbzAYuyJNuRolVqlByKQS/dLaAGJdHjhm28qTifa6+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=gBKxwxnF; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="cOl7Zcvk";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="LpLxRYuW"
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-	by mailflow.nyi.internal (Postfix) with ESMTP id A4406200314;
-	Wed, 10 Jul 2024 08:32:06 -0400 (EDT)
-Received: from imap51 ([10.202.2.101])
-  by compute5.internal (MEProxy); Wed, 10 Jul 2024 08:32:06 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1720614726; x=1720621926; bh=C2Se+H9RzY
-	HkM+IvsyadLBKj3T9ynrUDq9Xcr2QdKUs=; b=cOl7Zcvkzf0wDdLrzY4XZ4nqyK
-	Q0n/RJfmgELZTtTqod2qQXQqjWvo6hLyv8ZupwoPZleV74KB7CrYe8SjUf4ceunh
-	CCahWbr44J1SkI4rlgeI03TRPOLSw5VTaOaCk8uarlYDXmbvY5gg6XFdGRnBLRmT
-	VFLQKnpwzfM4POIfXCcKIBRg/+pkVOQlBJ0GH3BxqYageTKlELXoNlTt4mw+Q4Aj
-	k2Im0F4pgLhehsHgB2bzs6UKs606OMlnCduj2/iYMXP59CpYQjVYC2vfu4cHRoAf
-	cyc43gZGXwtKhum8Bm+sgJK4LC6XjiAJWyjbEM9FItPgj+N5bQP6BT/4uDQw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1720614726; x=1720621926; bh=C2Se+H9RzYHkM+IvsyadLBKj3T9y
-	nrUDq9Xcr2QdKUs=; b=LpLxRYuWKtNXiN+vMol//S9HJvuDNvoMySy3IEcvEnBP
-	u9nXxRywgLMUEzBCTM0mYX9ux3yyTeKxg3a3Qgn4q/3Io5xtp/Vv1mphh8pcf9E6
-	vhNbLB9DALQvdlqA+SoPJLiJF9I1J2l9vi9JhSpyNJ/U2kN1jkcNAhlPjGeBJNuf
-	dq24Q8irGyqaVcPnhFTsXs+y9AUvU7g3iwOe2EAup6fP+ru5f+A7TeI4ed07Fl+D
-	8S+3VmfI4gOVzGcHNSOk1DfOPIUoqSrnh5pt7UgSz6xINcZRaJfz0qVD/8QFgZDt
-	zBwpgYQWHBL/Ev+vGiiYevpXhAYme5o7Y0QxcBEGaw==
-X-ME-Sender: <xms:Q3-OZurnKRkHBlEZMjc2PijwVnii3Ft7oAVSuLA0qFmezC5Y5EJm9Q>
-    <xme:Q3-OZsoW4lzanijF6DQpYWPbUfD-CFYt0QhuAlF3F1xQAlxGDVndb8vyQkcKdK_mG
-    3wR-2RmoSV2vmVg9Xc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrfedugdehfecutefuodetggdotefrodftvf
-    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
-    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
-    fjughrpefofgggkfgjfhffhffvvefutgesthdtredtreertdenucfhrhhomhepfdetrhhn
-    ugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusgdruggvqeenucggtffrrghtth
-    gvrhhnpeffheeugeetiefhgeethfejgfdtuefggeejleehjeeutefhfeeggefhkedtkeet
-    ffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegrrh
-    hnugesrghrnhgusgdruggv
-X-ME-Proxy: <xmx:Q3-OZjOIVdJEtnz-150-q7qjX0LUXM6RkvkquzoxolFuI1CETJjJiw>
-    <xmx:Q3-OZt47sHQWBMp4Sm_h9D_Itaa2UR7xRR6oz4VfTFgZl4xOrpRMow>
-    <xmx:Q3-OZt61vvUylUkBQV7eSWZtpYz_EP3x6iU3PqX4vtnbW2NiXElrdg>
-    <xmx:Q3-OZth_J6crv8zLOcicEfQqH5MMDIkvJ1IgWC5x8R0svP4D8xWqkw>
-    <xmx:Rn-OZgIBVQ1boHKoWWrW7KFkxPc4r84muU_5CzmiqF-M7CrvG824ufJd>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.nyi.internal (Postfix, from userid 501)
-	id 09148B6008D; Wed, 10 Jul 2024 08:32:03 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
-User-Agent: Cyrus-JMAP/3.11.0-alpha0-568-g843fbadbe-fm-20240701.003-g843fbadb
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="gBKxwxnF"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42561c16ffeso43325025e9.3
+        for <linux-clk@vger.kernel.org>; Wed, 10 Jul 2024 05:41:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1720615263; x=1721220063; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MQLVDFNoFuKRZg7eJdxMfqN4N8nKsyXTgSDfnf3uLGM=;
+        b=gBKxwxnFgp9AOzK/2lb/jr8A/NhFbZkPUvlg5TH0mYbtG80V2yXBxIIGQvh4g7ceFq
+         /p8TADEAgk5hHMbeU8Tukh32d9OIGqzZmfx95mc6DLzqR8snLBQlJQCAs/BkM6qpK4Hp
+         N6T2dw64rhaATV3XQn682pDmYgzZnjOyUe28zGdBZk9rtBdEKvAwBxUwtyxngbHCS4QR
+         zL2fucGqKtrty8SgITaWWyVyRhze8rY5iLuZ+Q4jsuVNssqLydBEXXYq86zPrfcvVZKI
+         3rTFR/GdzADTnvoVz8gMZo3ox3VRVv1SB7RBvQfcFu9D6CIOG9HqeYx5XbK+gFgGgdmn
+         u7QA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720615263; x=1721220063;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MQLVDFNoFuKRZg7eJdxMfqN4N8nKsyXTgSDfnf3uLGM=;
+        b=gzQlLKDx1Kw42rkAIniOmmIV20q9mNFL6tSxuC3m1j8nwZl5hvYo4d8BMz3qaoAE5z
+         d7pUN/dljzF1PtbvEc0FYotmNHVo5+Nty4rPjmb77KDHPcwCkGR+qXd1GcvSShNQ/akY
+         woZ8zUs2yvfDTpaJBSEj+JXxBznBV1enF7FO21fUF4S7uRKGLPFpG2UTob4/BbH4bnl7
+         CZuFpTrOXgizYudBRSEAoeDRoIRMqPrZ76HfmhuBNo8prxsB+3idtifG0Rtj5tBML228
+         U0Xc7gR7oN2M+rPxi3zWkaVAQ02IiLuz9qpyfbcOVZmt6rrNp8CWr/9cw/OOOKsA+Awc
+         WIQg==
+X-Forwarded-Encrypted: i=1; AJvYcCW+h2k2mclnxu3qnOsTFu5GwT4Ql/62TlkyrWWvrHnygJR19meq+tfPqdDBddQQtbrBN7jEasViY0BxmiFfbOnrw+xZ2EWzZbm2
+X-Gm-Message-State: AOJu0Yy826oAI9IlV4d6jnU5fjKyz7+ZXhXU2OZGIJwhkbav4GVVZ9aG
+	gfhcuVLI7GEltRguMltHlrjk+bq3b4dQcqiT1qlh+PeJPNx5TXanhhVTztLwXUifkKjkAS+/wlN
+	VR8k=
+X-Google-Smtp-Source: AGHT+IGT5ilXJSn/KNzsrB9+RCqhsbkJiqU3dqpEBIzoFB+Fcmer/Kih8Fhroy2GBRX27ac1gAp6gw==
+X-Received: by 2002:a05:600c:6c51:b0:426:51e8:5192 with SMTP id 5b1f17b1804b1-426709fac0bmr30666695e9.41.1720615262749;
+        Wed, 10 Jul 2024 05:41:02 -0700 (PDT)
+Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:f3cc:df72:f495:3b49])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-367cde890f6sm5214025f8f.53.2024.07.10.05.41.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jul 2024 05:41:02 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
+ Vladimir Zapolskiy <vz@mleia.com>, Bjorn Andersson <andersson@kernel.org>, 
+ Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
+ Samuel Holland <samuel@sholland.org>, Michal Simek <michal.simek@amd.com>, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ linux-arm-msm@vger.kernel.org, linux-sunxi@lists.linux.dev
+In-Reply-To: <20240703-clk-const-regmap-v1-0-7d15a0671d6f@gmail.com>
+References: <20240703-clk-const-regmap-v1-0-7d15a0671d6f@gmail.com>
+Subject: Re: (subset) [PATCH 00/10] clk: constify struct regmap_config
+Message-Id: <172061526145.2117005.2499091095196670705.b4-ty@baylibre.com>
+Date: Wed, 10 Jul 2024 14:41:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-Id: <8f45a3d9-429c-441e-a17c-33a163eb86c2@app.fastmail.com>
-In-Reply-To: <663b1749afeb5cec281149fdb445ed36fdcbc68e.camel@maquefel.me>
-References: <20240617-ep93xx-v10-0-662e640ed811@maquefel.me>
- <CAHp75VfSC9gAD9ipeWRPdQOxUp4FXqYYei-cJTs38nbz0cHpkg@mail.gmail.com>
- <48c242838c77034485a9e667dc0e867207c5beed.camel@maquefel.me>
- <241a4cf9830b0118f01e8fcf2853c62527636049.camel@maquefel.me>
- <jyvlqfvqn5bp3jmvxvwyrcqmihjohuq3o757mfph7x37kbwvtq@gtgyh4fca4fq>
- <663b1749afeb5cec281149fdb445ed36fdcbc68e.camel@maquefel.me>
-Date: Wed, 10 Jul 2024 14:31:42 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Nikita Shubin" <nikita.shubin@maquefel.me>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-Cc: "Andy Shevchenko" <andy.shevchenko@gmail.com>,
- "Stephen Boyd" <sboyd@kernel.org>,
- "Hartley Sweeten" <hsweeten@visionengravers.com>,
- "Alexander Sverdlin" <alexander.sverdlin@gmail.com>,
- "Russell King" <linux@armlinux.org.uk>,
- "Lukasz Majewski" <lukma@denx.de>,
- "Linus Walleij" <linus.walleij@linaro.org>,
- "Bartosz Golaszewski" <brgl@bgdev.pl>,
- "Andy Shevchenko" <andy@kernel.org>,
- "Michael Turquette" <mturquette@baylibre.com>,
- "Sebastian Reichel" <sre@kernel.org>, "Rob Herring" <robh+dt@kernel.org>,
- "Krzysztof Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
- "Conor Dooley" <conor+dt@kernel.org>,
- "Wim Van Sebroeck" <wim@linux-watchdog.org>,
- "Guenter Roeck" <linux@roeck-us.net>,
- "Thierry Reding" <thierry.reding@gmail.com>,
- "Mark Brown" <broonie@kernel.org>,
- "David S . Miller" <davem@davemloft.net>,
- "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
- "Paolo Abeni" <pabeni@redhat.com>,
- "Miquel Raynal" <miquel.raynal@bootlin.com>,
- "Richard Weinberger" <richard@nod.at>,
- "Vignesh Raghavendra" <vigneshr@ti.com>,
- "Damien Le Moal" <dlemoal@kernel.org>,
- "Sergey Shtylyov" <s.shtylyov@omp.ru>,
- "Dmitry Torokhov" <dmitry.torokhov@gmail.com>,
- "Liam Girdwood" <lgirdwood@gmail.com>,
- "Jaroslav Kysela" <perex@perex.cz>, "Takashi Iwai" <tiwai@suse.com>,
- "Ralf Baechle" <ralf@linux-mips.org>, "Aaron Wu" <Aaron.Wu@analog.com>,
- "Lee Jones" <lee@kernel.org>, "Olof Johansson" <olof@lixom.net>,
- "Niklas Cassel" <cassel@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
- linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
- devicetree@vger.kernel.org, dmaengine@vger.kernel.org,
- linux-watchdog@vger.kernel.org, linux-pwm@vger.kernel.org,
- linux-spi@vger.kernel.org, Netdev <netdev@vger.kernel.org>,
- linux-mtd@lists.infradead.org, linux-ide@vger.kernel.org,
- linux-input@vger.kernel.org, linux-sound@vger.kernel.org,
- "Bartosz Golaszewski" <bartosz.golaszewski@linaro.org>,
- "Krzysztof Kozlowski" <krzysztof.kozlowski@linaro.org>,
- "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
- "Andrew Lunn" <andrew@lunn.ch>, "Vinod Koul" <vkoul@kernel.org>
-Subject: Re: [PATCH v10 00/38] ep93xx device tree conversion
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.0
 
-On Mon, Jul 8, 2024, at 09:34, Nikita Shubin wrote:
-> Arnd, 
->
-> Are we continuing this patch series ?
->
-> You are silent since last version submit, which makes me a bit worried.
->
-> If you suddenly changed your mind please let us know, cause anyway we
-> have no possibility to merge these series without you.
+Applied to clk-meson (clk-meson-next), thanks!
 
-Hi Nikita,
+[01/10] clk: meson: a1: peripherals: Constify struct regmap_config
+        https://github.com/BayLibre/clk-meson/commit/4a7665b885b6
+[02/10] clk: meson: a1: pll: Constify struct regmap_config
+        https://github.com/BayLibre/clk-meson/commit/5c6ffe3537d5
+[03/10] clk: meson: c3: peripherals: Constify struct regmap_config
+        https://github.com/BayLibre/clk-meson/commit/af3e4505e6bc
+[04/10] clk: meson: c3: pll: Constify struct regmap_config
+        https://github.com/BayLibre/clk-meson/commit/11c7c1b94059
+[05/10] clk: meson: s4: peripherals: Constify struct regmap_config
+        https://github.com/BayLibre/clk-meson/commit/02cc1df92d75
+[06/10] clk: meson: s4: pll: Constify struct regmap_config
+        https://github.com/BayLibre/clk-meson/commit/3d0e8b6edd6b
 
-I definitely still want to merge your work, I was just not paying
-attention while there were others commenting on it, and I don't
-know what the current state is. If you are ready to have some
-or all of the patches included in the next merge window, can
-you send either the set of patches that were reviewed to
-soc@kernel.org for me to pick up, or prepare a pull request
-to that address?
+Best regards,
+--
+Jerome
 
-       Arnd
