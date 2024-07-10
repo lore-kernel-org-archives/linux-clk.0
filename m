@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BF5914B082;
-	Wed, 10 Jul 2024 23:17:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97A4D12C489;
+	Wed, 10 Jul 2024 23:21:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720653473; cv=none; b=cgfXYfNI9bPonY4h1u63iQfIcr44LZ4usMCZDDqwbI7M2BmJ/LlpRtecLpwFFV+E2gfU2NkFLKImdBShaq+ZSum0wXIcKX20wLBDLTZIDDZl0VVqef6VTEwMCJ/fNFXFmxg8Ctw2Hfnt1OrGnvw3FzAD50Stb4T6mDpS+Z4e8Qk=
+	t=1720653678; cv=none; b=eK8gaj5Mkkf4aD4D6kszIUqwWEGuusa30P51/sS/igw2aVCHkyvf8iAOxq55bPcJEiZU6IRMGxfetYldusYO3EBE86WqNgP6pyNZoTxhi1Xdd60dcOTohgCNDhHwfWU83C6VVLkbOrWPLTDI4DutC13ePuB8SGlZPyCg7hjLf4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720653473; c=relaxed/simple;
-	bh=67AV/g+XqsyhDAFqbAi12LGCJ7fOFWXjzSEQ2K49hOs=;
+	s=arc-20240116; t=1720653678; c=relaxed/simple;
+	bh=eCaFT3/kRTqxtksiSHjtW7/iheSU9qRWbGpJZIcucMY=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=hZGVum6HbMafRCSkzNT0Atv+OS4OlVa4jqBuGAjqxyt0do1thryH1n0kwird0MW2je0TQ3TQNQRK0srSTIcNug/0lW/3DEq0fdqvuIYBVJ8NJgOIZVUWzBZBhnWvwJup1KEJNn+RBYUGpW3Ec7T7pdBn9/Y5/YCR3oT5MZycOjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nefAygc3; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=hwjqXpnmLhjLKpYG64a1PTXqp3FnN781/peHZiYAIA/J8P2geV4pU2Dt1LYOM0PzcCFbLEkJUg011WBZaA8vT+59aGB+O28WqJai7PiAsgjHxnupmwmEyJO8Fg2hszzp76z6CKvO600N+fEIho60LrwC3515PLVkiP1LSshotC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hwyqFvL3; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nefAygc3"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC90EC32781;
-	Wed, 10 Jul 2024 23:17:52 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hwyqFvL3"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BCC8C32781;
+	Wed, 10 Jul 2024 23:21:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720653473;
-	bh=67AV/g+XqsyhDAFqbAi12LGCJ7fOFWXjzSEQ2K49hOs=;
+	s=k20201202; t=1720653678;
+	bh=eCaFT3/kRTqxtksiSHjtW7/iheSU9qRWbGpJZIcucMY=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=nefAygc3iGJngyPBt92Z+opttJ4pacy7p94Mca6aQ5dkVGqItLy2nbdt21J4IgNfm
-	 fn3+TnIohJNmhpurRk/T+vtr1w7mtn2zyFJQh2Qk36+aMO+822V5H0fVFNjKcXsrIc
-	 NyJjzNAbM6RSyzDd6q0FkdmB9ck5ogeMhXsf5IpvF/EKQVpvGJMA8ly4YXcgxqbIOt
-	 dfTHBaSLRTUHwqdVn1qHmZ3q4fyKzOjTPbjp2bSZ0o5SOjgE0e8bfXyD7+F2OWoID0
-	 2i4j2IM2Ud/3yvWwscI7+6o7P7n0ThMklJErgg7Hmd8DiNULJiXJWBIT3XeRMtets6
-	 T1QD6f/6uvgCQ==
-Message-ID: <57ef2eef45f2de15e6607da266b37b2a.sboyd@kernel.org>
+	b=hwyqFvL3uSKjrmCdyQQa4cq13kGOEJSEy2fkv2CKEDlZ5UMFNwKLgGMVZsgYHeYu9
+	 bBi8O03DbNfXd5Xid+5FjPy7cdpiYU2WKD1qoumUyhQTkMuIXMeb3nj0lK6aihOE5z
+	 2uZhahCucrQX9GuuXBymgbs5n7Gri8ly1kAIES4843NAlsfrFFvBtdJxOS1gLCl4iL
+	 oNcYTZtywrjftE5tJlqNIPWIOPHic2VmbhVgb4d7j728FUWe7fJnbokE3l3JEu1OVP
+	 99JoOsaBQoWiQsZlGA2nGl72MvoscnAHqoaikGe8rVqKF4t871gCC1ukaPGn/yJuIf
+	 0tFBwbzjAvA8w==
+Message-ID: <68f6dc44a8202fd83792e58aea137632.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,24 +35,30 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240623-th1520-clk-v2-1-ad8d6432d9fb@tenstorrent.com>
-References: <20240623-th1520-clk-v2-0-ad8d6432d9fb@tenstorrent.com> <20240623-th1520-clk-v2-1-ad8d6432d9fb@tenstorrent.com>
-Subject: Re: [PATCH v2 1/7] dt-bindings: clock: Document T-Head TH1520 AP_SUBSYS controller
+In-Reply-To: <21244242.0c2gjJ1VT2@diego>
+References: <20240709123121.1452394-1-heiko@sntech.de> <20240709123121.1452394-2-heiko@sntech.de> <12478313.O9o76ZdvQC@steina-w> <21244242.0c2gjJ1VT2@diego>
+Subject: Re:  Re: [PATCH 1/6] dt-bindings: clocks: add binding for generic clock-generators
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Drew Fustini <dfustini@tenstorrent.com>, Conor Dooley <conor.dooley@microchip.com>
-To: Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor+dt@kernel.org>, Drew Fustini <dfustini@tenstorrent.com>, Emil Renner Berthing <emil.renner.berthing@canonical.com>, Fu Wei <wefu@redhat.com>, Guo Ren <guoren@kernel.org>, Jisheng Zhang <jszhang@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, Rob Herring <robh@kernel.org>, Thomas Bonnefille <thomas.bonnefille@bootlin.com>, Yangtao Li <frank.li@vivo.com>
-Date: Wed, 10 Jul 2024 16:17:50 -0700
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, quentin.schulz@cherry.de, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
+To: Alexander Stein <alexander.stein@ew.tq-group.com>, Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>, mturquette@baylibre.com
+Date: Wed, 10 Jul 2024 16:21:15 -0700
 User-Agent: alot/0.10
 
-Quoting Drew Fustini (2024-06-23 19:12:31)
-> Document bindings for the T-Head TH1520 AP sub-system clock controller.
+Quoting Heiko St=C3=BCbner (2024-07-10 00:45:17)
+> Am Mittwoch, 10. Juli 2024, 09:02:34 CEST schrieb Alexander Stein:
+> >=20
+> > So essentially only enable-gpios and vdd-supply is added in comparison =
+to
+> > fixed-clock. Does it make sense to add that to the fixed-clocks instead?
+> > Similar to fixed-regulator.
 >=20
-> Link: https://openbeagle.org/beaglev-ahead/beaglev-ahead/-/blob/main/docs=
-/TH1520%20System%20User%20Manual.pdf
-> Co-developed-by: Yangtao Li <frank.li@vivo.com>
-> Signed-off-by: Yangtao Li <frank.li@vivo.com>
-> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-> Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
-> ---
+> I wasn't that sure which way to go in the first place.
+> The deciding point was reading that line about the fixed clock not
+> being gateable, so I opted to not touch the fixed-clock.
+>=20
+> But you're definitly right, this _could_ live inside the fixed-clock
+> as well, if we decide to get rid of the not-gateable thing above.
 
-Applied to clk-next
+It's probably more complicated to combine it with the fixed-clock
+binding after making properties required like vdd-supply. I'd just make
+a new binding and look at combining later.
