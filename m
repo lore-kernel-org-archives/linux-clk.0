@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBE541B86C7
-	for <linux-clk@vger.kernel.org>; Wed, 10 Jul 2024 21:16:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FCA08120F;
+	Wed, 10 Jul 2024 21:17:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720646191; cv=none; b=RSdl0h/+Sv2c+5NbnxtPH0oC9Mep8j3U6FZFKjmKBjBaKpEsrsEbDTDw5T6N9fCVYqDUqkBBN46VP6WSFHVKSKiEqumQhvVhMnRRhAvhJbwnVuMOdZAwDZk9DbAeEODn/qIDzOZ3ES0FzMlErxzZhJrMAsyLy2KJMnQYORvM5Fc=
+	t=1720646226; cv=none; b=RZhov+Lr3/fGY2ciYBKhHPPJLxuXoozmbv1Kr6MQGDXp3182NfG5kbDH5nqvVTDU2PxCdkahkicSgRkkNOGsbHvIuutsrp1aEIH62Q+kN5zgR40EkiW35E6OpN1eZ3kNQaai4u0/Jr2bAHARgN0aPYJPWMzA3NknsgN0zvi4SJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720646191; c=relaxed/simple;
-	bh=95Dt29olT49vD97o9Vn2sniM0ha5QyVnrsbHAJBjp7s=;
+	s=arc-20240116; t=1720646226; c=relaxed/simple;
+	bh=d9NIoNvAmXJAYWmjVWiD/n/PtWG7Ev/HfH7ECteYYgc=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=bDXWElAGj/sUGJwFb641o6wzBGYvH2AXRViM3ZKPlrU7RraW1oYDS0cuRNZI/xQTtJMF53saZWiJArrS4JTwgg+yGQvGZwSPjcNxmQs9ptKfcPZ8lcRJBGe2aI407uvKyK87Fc+5hAaGgF+hKajWI0a2GnlyXRDqpLJ9nzJAeNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TYlqNnOe; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=V6Sgfn100y8T+SpHZTLRpUeJMDoM3j2LQdPLYcHHZg+r8rZdv/XJp/tIMdz0h7K5sSOnK6rW92jYedEUQnAWrazBIqSyxOe10T9lx6bTAUEQsXjx9WnfPhjj8snntB3Oc3lmoLJIgKF1sEDX/s1nmPWAygvcDICk4o+x9f7G2bM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VFnwj8fr; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TYlqNnOe"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E6EDC32781;
-	Wed, 10 Jul 2024 21:16:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VFnwj8fr"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5108CC4AF07;
+	Wed, 10 Jul 2024 21:17:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720646190;
-	bh=95Dt29olT49vD97o9Vn2sniM0ha5QyVnrsbHAJBjp7s=;
+	s=k20201202; t=1720646226;
+	bh=d9NIoNvAmXJAYWmjVWiD/n/PtWG7Ev/HfH7ECteYYgc=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=TYlqNnOeF6/eqhe5oNP7qWKiBYsa9o34Jjyn1bdkOg1ZGUW5ZQ+M0uPPqnXH7i+Y/
-	 RSSGOLlCDQ32z/Vut0e59vkf2G1g1bk8pby9v8AR2T7Ujh0NS/ecwLhO+TzWtJGy1K
-	 EYOk4FNPsimEvuaHpIHtmtbSKebcNmTEj50hpmWSlJnED+Igub7AEyFBA9vRkH++PP
-	 0ImopJmF6IBWBVAvzq28KTKoQcpaH6HWUna3cqC6fPrHsVLoHNDVXld+CHDF1ajd0H
-	 07Su+Kp4L0dgjas6QfG3D0NMEzvV4SyIsJVRIRhjseI+pkyhVo4oyT4bPjT3tNw1Hr
-	 fMv4j/UF2X6pA==
-Message-ID: <2ccd17608ac2a21496a5e05fc2ca93ce.sboyd@kernel.org>
+	b=VFnwj8fr/kUfeYy6M2uXEDgC4wbdVbrCGBf24UiA0AGu753EMuQNsjOOWV0u9uUSD
+	 KM6i1JILZFnF+cxLKS2b60M31Eh1+S7VYuZyCfUfwYCzTbY075tcHDKRZ7Dbrx2byX
+	 GqXM/IivdRXA2+wJraUTI5lcxDudsB+VaFaGZGBDv51AATzCBEJ15MRpPri/Af/9KR
+	 LXNO+GeFZvEf3mxuUH2I4SWjcVyk+Q2fBNBh3uiedtny/R0IZLxQ5n33xSqNpCpmso
+	 7w/qCvgx5N4n8MT0MQxaDjFj90/M2lQ9Qx+QJ62TXotUrypIgHHYa6pdq47zBRIt1D
+	 CCfeY1TDuhR3A==
+Message-ID: <c9fe1a32e0e362a8b7732ea554625c55.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,27 +35,55 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <c8e66d51f880127549e2a3e623be6787f62b310d.1720506143.git.liqiang01@kylinos.cn>
-References: <cover.1720506143.git.liqiang01@kylinos.cn> <c8e66d51f880127549e2a3e623be6787f62b310d.1720506143.git.liqiang01@kylinos.cn>
-Subject: Re: [PATCH v2 1/1] clk/sophgo: Using BUG() instead of unreachable() in mmux_get_parent_id()
+In-Reply-To: <20240710-clk-sg2042-fix-sometimes-uninitialized-pll_set_rate-v1-1-538fa82dd539@kernel.org>
+References: <20240710-clk-sg2042-fix-sometimes-uninitialized-pll_set_rate-v1-1-538fa82dd539@kernel.org>
+Subject: Re: [PATCH] clk: sophgo: Avoid -Wsometimes-uninitialized in sg2042_clk_pll_set_rate()
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, Li Qiang <liqiang01@kylinos.cn>
-To: Li Qiang <liqiang01@kylinos.cn>, inochiama@outlook.com, mturquette@baylibre.com, unicorn_wang@outlook.com
-Date: Wed, 10 Jul 2024 14:16:28 -0700
+Cc: linux-clk@vger.kernel.org, llvm@lists.linux.dev, patches@lists.linux.dev, Nathan Chancellor <nathan@kernel.org>
+To: Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@outlook.com>, Michael Turquette <mturquette@baylibre.com>, Nathan Chancellor <nathan@kernel.org>
+Date: Wed, 10 Jul 2024 14:17:04 -0700
 User-Agent: alot/0.10
 
-Quoting Li Qiang (2024-07-08 23:36:38)
-> In general it's a good idea to avoid using bare unreachable() because it
-> introduces undefined behavior in compiled code. but it caused a compilati=
-on warning,
-> Using BUG() instead of unreachable() to resolve compilation warnings.
+Quoting Nathan Chancellor (2024-07-10 10:07:52)
+> Clang warns (or errors with CONFIG_WERROR=3Dy):
 >=20
-> Fixes the following warnings:
->     drivers/clk/sophgo/clk-cv18xx-ip.o: warning: objtool: mmux_round_rate=
-() falls through to next function bypass_div_round_rate()
+>   drivers/clk/sophgo/clk-sg2042-pll.c:396:6: error: variable 'ret' is use=
+d uninitialized whenever 'if' condition is true [-Werror,-Wsometimes-uninit=
+ialized]
+>     396 |         if (sg2042_pll_enable(pll, 0)) {
+>         |             ^~~~~~~~~~~~~~~~~~~~~~~~~
+>   drivers/clk/sophgo/clk-sg2042-pll.c:418:9: note: uninitialized use occu=
+rs here
+>     418 |         return ret;
+>         |                ^~~
+>   drivers/clk/sophgo/clk-sg2042-pll.c:396:2: note: remove the 'if' if its=
+ condition is always false
+>     396 |         if (sg2042_pll_enable(pll, 0)) {
+>         |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>     397 |                 pr_warn("Can't disable pll(%s), status error\n"=
+, pll->hw.init->name);
+>         |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~=
+~~~~~~~~~~~~~~~~~~~~~~
+>     398 |                 goto out;
+>         |                 ~~~~~~~~~
+>     399 |         }
+>         |         ~
+>   drivers/clk/sophgo/clk-sg2042-pll.c:393:9: note: initialize the variabl=
+e 'ret' to silence this warning
+>     393 |         int ret;
+>         |                ^
+>         |                 =3D 0
+>   1 error generated.
 >=20
-> Fixes: 80fd61ec46124 ("clk: sophgo: Add clock support for CV1800 SoC")
-> Signed-off-by: Li Qiang <liqiang01@kylinos.cn>
+> sg2042_pll_enable() only ever returns zero, so this situation cannot
+> happen, but clang does not perform interprocedural analysis, so it
+> cannot know this to avoid the warning. Make it clearer to the compiler
+> by making sg2042_pll_enable() void and eliminate the error handling in
+> sg2042_clk_pll_set_rate(), which clears up the warning, as ret will
+> always be initialized.
+>=20
+> Fixes: 48cf7e01386e ("clk: sophgo: Add SG2042 clock driver")
+> Signed-off-by: Nathan Chancellor <nathan@kernel.org>
 > ---
 
 Applied to clk-next
