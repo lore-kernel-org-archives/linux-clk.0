@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A54D714A605;
-	Wed, 10 Jul 2024 22:49:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F2991527A7;
+	Wed, 10 Jul 2024 23:17:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720651781; cv=none; b=h00owo4fnJ3GVzeG2NsMXOl2+vdmzNFs+UpO9Nw0heDfy6oA51APkA/tsnzNKO8WR4UHSqElwkWAP7jxu9etTqvgRJSQcyaQy0zo8smQaDZ2lZq19FGlNw92jFD+RjMrAibEAjz/NMeNqMFp/QlIQhqpgNYPrIHP5MhYfGP+N2U=
+	t=1720653435; cv=none; b=sY+kDCI8oYhjV0HqZvsLGd1Q1dtWqVg4sgmnGhJTZ7otYJHUW7Duaa/Qe7IWKW2FFw0dHpsk8Lz0WPzZPRP88xyOdCDsF3LqvMZnuGoMHLG7D2ZhVtPV/QA9zxR2s5+OkMHxIRd+wPTCMVKEEwAi3Xgw7HmuZVlIo94G6zn1YxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720651781; c=relaxed/simple;
-	bh=duthhsCiMaf6+uYQBqrPWZwMJtFLktyeXPQfhoZLBK8=;
+	s=arc-20240116; t=1720653435; c=relaxed/simple;
+	bh=Jd3wkWpGIxjVE8bZuw1tGBEUQpwx9hG4gsdHuzurtTM=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=rBwWkh421+kK/rXSH7FEJAPGJyXYjeERtv5h6/8po75mcCjhx+gm3qI2k5OeKR2D6kd7JLGYqcUQ2SOFS8OC2i/YsReheUxrsZyYOx05UuYOxOzf/cdP6SutYBsXfh0s4z+4gQC62BwLw0E1+fYFHX86wyRbPXi86uoqsEd1Jmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l2G6n3eI; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=INrFtldTCpPaz0e4n48DOVqUH2/M6A2NH3IcrZL+yU2X1Bd2BsnpLJVce+y2mcH69Dqf3sH0Blz71DbZtk8gmRabp5LsvLW07FsTUg7uDbcyzaxw8GgVjPamXXx5xD3skFl+wA9JJbqnF/SsZzTDm0cI9421s7AWDa+5Mu7cl78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t2haqyCc; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l2G6n3eI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A5EDC32781;
-	Wed, 10 Jul 2024 22:49:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t2haqyCc"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0ECB6C4AF07;
+	Wed, 10 Jul 2024 23:17:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720651781;
-	bh=duthhsCiMaf6+uYQBqrPWZwMJtFLktyeXPQfhoZLBK8=;
+	s=k20201202; t=1720653435;
+	bh=Jd3wkWpGIxjVE8bZuw1tGBEUQpwx9hG4gsdHuzurtTM=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=l2G6n3eIgTuRCXBmGTi2GFdLbX8g+Hpmz0n3jJIxIdhxE0yB9zIb47iyYSje/PRnf
-	 v6XPBi0MN4jip4cMkBo6D/ua15qWgK0WouDNoKaTygqPzzbXEjDLBPnLnldXlMxPaP
-	 Yv9idnlkozzWfdTqb3Wz9XQ2rbdBJ5Ro1LqZfQCadRLRMe1kgB0SeLwg5KiVc9IYQ2
-	 D276Iq6wWTeLP8WsmPvrxx0OLP/E7p/QDhUD0/qn8a7fQ6BIyaaZ4S9J5bGutsB9ui
-	 CAQLezJIEKyU/Ioa2HSdeViffBVLFOPdMlJDhkDUpAaL8CcyGmk9JqE1h/4OqLsPYi
-	 yGgq/EZYVsAWQ==
-Message-ID: <88d1dbd92e922ad002367d8dac67d0eb.sboyd@kernel.org>
+	b=t2haqyCcJw9sr2yZK5l1zj+YhLnEb/FRj6I69HzdAMOqFUg0ApMQesfJ95wG4i6N2
+	 pzDekhpOYN6r9sbty0qVx9g1Jvx+Y/8jCTEw/iL6sXgDvJn88FkIrR4croxZMHbl10
+	 /j4QO0CQWqxaSbmE2cZCtCT2nkwcuKFildztLjt3FSpqhyAEFVG+rFlsPpSlTGoPY2
+	 kKCZxDLLPKKkmaQ8mN4IgCNuSNq8d986tEHFVUvTszT9ipKROy0yGZbtXTe01fp0Ii
+	 jko+aFhjpzgeBBc3agNERAjpSmj6Qo7rP6ghntuTvWG1I59tup4bkc18Sq7acJ1ih3
+	 EqJtmZ46F9miw==
+Message-ID: <d36ff27b56b3e9c8ef490bfd9d24761d.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,107 +35,156 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240710162526.2341399-8-jbrunet@baylibre.com>
-References: <20240710162526.2341399-1-jbrunet@baylibre.com> <20240710162526.2341399-8-jbrunet@baylibre.com>
-Subject: Re: [PATCH 7/8] reset: amlogic: add auxiliary reset driver support
+In-Reply-To: <20240623-th1520-clk-v2-2-ad8d6432d9fb@tenstorrent.com>
+References: <20240623-th1520-clk-v2-0-ad8d6432d9fb@tenstorrent.com> <20240623-th1520-clk-v2-2-ad8d6432d9fb@tenstorrent.com>
+Subject: Re: [PATCH v2 2/7] clk: thead: Add support for T-Head TH1520 AP_SUBSYS clocks
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, Jan Dakinevich <jan.dakinevich@salutedevices.com>, linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org
-To: Jerome Brunet <jbrunet@baylibre.com>, Neil Armstrong <neil.armstrong@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>
-Date: Wed, 10 Jul 2024 15:49:38 -0700
+Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Drew Fustini <dfustini@tenstorrent.com>
+To: Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor+dt@kernel.org>, Drew Fustini <dfustini@tenstorrent.com>, Emil Renner Berthing <emil.renner.berthing@canonical.com>, Fu Wei <wefu@redhat.com>, Guo Ren <guoren@kernel.org>, Jisheng Zhang <jszhang@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, Rob Herring <robh@kernel.org>, Thomas Bonnefille <thomas.bonnefille@bootlin.com>, Yangtao Li <frank.li@vivo.com>
+Date: Wed, 10 Jul 2024 16:17:12 -0700
 User-Agent: alot/0.10
 
-Quoting Jerome Brunet (2024-07-10 09:25:16)
-> diff --git a/drivers/reset/reset-meson.c b/drivers/reset/reset-meson.c
-> index e34a10b15593..5cc767d50e8f 100644
-> --- a/drivers/reset/reset-meson.c
-> +++ b/drivers/reset/reset-meson.c
+Quoting Drew Fustini (2024-06-23 19:12:32)
+> diff --git a/drivers/clk/thead/clk-th1520-ap.c b/drivers/clk/thead/clk-th=
+1520-ap.c
+> new file mode 100644
+> index 000000000000..982d4d40f783
+> --- /dev/null
+> +++ b/drivers/clk/thead/clk-th1520-ap.c
+> @@ -0,0 +1,1086 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (C) 2023 Jisheng Zhang <jszhang@kernel.org>
+> + * Copyright (C) 2023 Vivo Communication Technology Co. Ltd.
+> + *  Authors: Yangtao Li <frank.li@vivo.com>
+> + */
+> +
+> +#include <dt-bindings/clock/thead,th1520-clk-ap.h>
+
+Preferably include dt-bindings after linux includes.
+
+> +#include <linux/bitfield.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/device.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +
+> +#define TH1520_PLL_POSTDIV2    GENMASK(26, 24)
+> +#define TH1520_PLL_POSTDIV1    GENMASK(22, 20)
+> +#define TH1520_PLL_FBDIV       GENMASK(19, 8)
+> +#define TH1520_PLL_REFDIV      GENMASK(5, 0)
+> +#define TH1520_PLL_BYPASS      BIT(30)
+> +#define TH1520_PLL_DSMPD       BIT(24)
+> +#define TH1520_PLL_FRAC                GENMASK(23, 0)
+> +#define TH1520_PLL_FRAC_BITS    24
 [...]
 > +
-> +int devm_meson_rst_aux_register(struct device *dev,
-> +                               struct regmap *map,
-> +                               const char *adev_name)
+> +static unsigned long th1520_pll_vco_recalc_rate(struct clk_hw *hw,
+> +                                               unsigned long parent_rate)
 > +{
-> +       struct meson_reset_adev *raux;
-> +       struct auxiliary_device *adev;
-> +       int ret;
+> +       struct ccu_pll *pll =3D hw_to_ccu_pll(hw);
+> +       unsigned long div, mul, frac, rate =3D parent_rate;
+> +       unsigned int cfg0, cfg1;
 > +
-> +       raux =3D kzalloc(sizeof(*raux), GFP_KERNEL);
-> +       if (!raux)
-> +               return -ENOMEM;
+> +       regmap_read(pll->common.map, pll->common.cfg0, &cfg0);
+> +       regmap_read(pll->common.map, pll->common.cfg1, &cfg1);
 > +
-> +       ret =3D ida_alloc(&meson_rst_aux_ida, GFP_KERNEL);
-
-Do we expect more than one device with the same name? I wonder if the
-IDA can be skipped.
-
-> +       if (ret < 0)
-> +               goto raux_free;
-> +
-> +       raux->map =3D map;
-> +
-> +       adev =3D &raux->adev;
-> +       adev->id =3D ret;
-> +       adev->name =3D adev_name;
-> +       adev->dev.parent =3D dev;
-> +       adev->dev.release =3D meson_rst_aux_release;
-> +       device_set_of_node_from_dev(&adev->dev, dev);
-> +
-> +       ret =3D auxiliary_device_init(adev);
-> +       if (ret)
-> +               goto ida_free;
-> +
-> +       ret =3D __auxiliary_device_add(adev, dev->driver->name);
-> +       if (ret) {
-> +               auxiliary_device_uninit(adev);
-> +               return ret;
+> +       mul =3D FIELD_GET(TH1520_PLL_FBDIV, cfg0);
+> +       div =3D FIELD_GET(TH1520_PLL_REFDIV, cfg0);
+> +       if (!(cfg1 & TH1520_PLL_DSMPD)) {
+> +               mul <<=3D TH1520_PLL_FRAC_BITS;
+> +               frac =3D FIELD_GET(TH1520_PLL_FRAC, cfg1);
+> +               mul +=3D frac;
+> +               div <<=3D TH1520_PLL_FRAC_BITS;
 > +       }
-> +
-> +       return devm_add_action_or_reset(dev, meson_rst_aux_unregister_ade=
-v,
-> +                                       adev);
-> +
-> +ida_free:
-> +       ida_free(&meson_rst_aux_ida, adev->id);
-> +raux_free:
-> +       kfree(raux);
-> +       return ret;
-> +
+> +       rate =3D parent_rate * mul;
+> +       do_div(rate, div);
 
-Nitpick: Drop extra newline?
+'rate' is only unsigned long, so do_div() isn't needed here. Perhaps if
+'parent_rate * mul' can overflow 32-bits then 'rate' should be
+u64.
 
+> +       return rate;
 > +}
-> +EXPORT_SYMBOL_GPL(devm_meson_rst_aux_register);
 > +
-> +MODULE_DESCRIPTION("Amlogic Meson Reset driver");
->  MODULE_AUTHOR("Neil Armstrong <narmstrong@baylibre.com>");
-> +MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
->  MODULE_LICENSE("Dual BSD/GPL");
-> diff --git a/include/soc/amlogic/meson-auxiliary-reset.h b/include/soc/am=
-logic/meson-auxiliary-reset.h
-> new file mode 100644
-> index 000000000000..8fdb02b18d8c
-> --- /dev/null
-> +++ b/include/soc/amlogic/meson-auxiliary-reset.h
-> @@ -0,0 +1,23 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +#ifndef __SOC_AMLOGIC_MESON_AUX_RESET_H
-> +#define __SOC_AMLOGIC_MESON_AUX_RESET_H
-> +
-> +#include <linux/err.h>
-> +
-> +struct device;
-> +struct regmap;
-> +
-> +#ifdef CONFIG_RESET_MESON
-> +int devm_meson_rst_aux_register(struct device *dev,
-> +                               struct regmap *map,
-> +                               const char *adev_name);
-> +#else
-> +static inline int devm_meson_rst_aux_register(struct device *dev,
-> +                                             struct regmap *map,
-> +                                             const char *adev_name)
+> +static unsigned long th1520_pll_postdiv_recalc_rate(struct clk_hw *hw,
+> +                                                   unsigned long parent_=
+rate)
 > +{
-> +       return -EOPNOTSUPP;
+> +       struct ccu_pll *pll =3D hw_to_ccu_pll(hw);
+> +       unsigned long rate =3D parent_rate;
+> +       unsigned int cfg0, cfg1;
+> +
+> +       regmap_read(pll->common.map, pll->common.cfg0, &cfg0);
+> +       regmap_read(pll->common.map, pll->common.cfg1, &cfg1);
+> +
+> +       if (cfg1 & TH1520_PLL_BYPASS)
+> +               return rate;
+> +
+> +       do_div(rate, FIELD_GET(TH1520_PLL_POSTDIV1, cfg0) *
 
-Shouldn't this be 'return 0' so that the clk driver doesn't have to care
-about the config?
+Same, 'rate' is unsigned long. Did you get some compilation error
+without this? How big is the divisor going to be? The fields are only
+3-bits wide, so the multiplication would fit into a u32 just fine. Given
+that 'rate' is unsigned long though I think you can just put the
+multiplication result into a local variable that's also unsigned long
+and then just write the divide with unsigned longs
+
+	div =3D FIELD_GET(...) * FIELD_GET(...);
+
+	return rate / div;
+
+> +                    FIELD_GET(TH1520_PLL_POSTDIV2, cfg0));
+> +
+> +       return rate;
+> +}
+> +
+> +static unsigned long ccu_pll_recalc_rate(struct clk_hw *hw,
+> +                                        unsigned long parent_rate)
+> +{
+> +       unsigned long rate =3D parent_rate;
+> +
+> +       rate =3D th1520_pll_vco_recalc_rate(hw, rate);
+> +       rate =3D th1520_pll_postdiv_recalc_rate(hw, rate);
+> +
+> +       return rate;
+> +}
+
+Please fold this in
+
+----8<---
+diff --git a/drivers/clk/thead/clk-th1520-ap.c b/drivers/clk/thead/clk-th15=
+20-ap.c
+index 982d4d40f783..0c3821d50765 100644
+--- a/drivers/clk/thead/clk-th1520-ap.c
++++ b/drivers/clk/thead/clk-th1520-ap.c
+@@ -411,7 +411,7 @@ static const struct clk_parent_data c910_i0_parents[] =
+=3D {
+ 	{ .index =3D 0 }
+ };
+=20
+-struct ccu_mux c910_i0_clk =3D {
++static struct ccu_mux c910_i0_clk =3D {
+ 	.mux	=3D TH_CCU_ARG(1, 1),
+ 	.common	=3D {
+ 		.clkid		=3D CLK_C910_I0,
+@@ -428,7 +428,7 @@ static const struct clk_parent_data c910_parents[] =3D {
+ 	{ .hw =3D &cpu_pll1_clk.common.hw }
+ };
+=20
+-struct ccu_mux c910_clk =3D {
++static struct ccu_mux c910_clk =3D {
+ 	.mux	=3D TH_CCU_ARG(0, 1),
+ 	.common	=3D {
+ 		.clkid		=3D CLK_C910,
+@@ -845,7 +845,7 @@ static const struct clk_parent_data uart_sclk_parents[]=
+ =3D {
+ 	{ .index =3D 0 },
+ };
+=20
+-struct ccu_mux uart_sclk =3D {
++static struct ccu_mux uart_sclk =3D {
+ 	.mux	=3D TH_CCU_ARG(0, 1),
+ 	.common	=3D {
+ 		.clkid          =3D CLK_UART_SCLK,
