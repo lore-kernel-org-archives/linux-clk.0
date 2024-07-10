@@ -1,16 +1,16 @@
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 988735CB8;
-	Wed, 10 Jul 2024 07:51:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3AE5E84A32;
+	Wed, 10 Jul 2024 08:03:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720597873; cv=none; b=q8sqywlCEIfm9lfjtr9dOAU+JLA1ncdmoNAzIi1SH6lGJgbrAopRCeCdVnB/8gST5mJmy1ECUpelhUAAE481Z8gEyCPGeHphtCTnsx6vqzUGDFLFNVag2WOty8NzV4fSZwe/Xw4XFxnlhcogio6rYxyYjhby2k/+Q9aMm0KKFC0=
+	t=1720598586; cv=none; b=FVm9Co1T+7Utt1rQyWnHHs560ERRmEXLAMuv24tZvObsJBnSgNRKeQX1BL6Im+WT32XDPcTzdcKzk64ulQIFsy+6AFkd7n8veRfoIlfkRN/I0X4jS10/mW2ugXBBOx/1R6hFoSCkganTEXLm8r6t7mEpAsPdBB5XVTqD8gc73Po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720597873; c=relaxed/simple;
-	bh=j9D8EnqCO6rUDfX2KsGZvRybWwMp5yvoLvK/MoKl9oY=;
+	s=arc-20240116; t=1720598586; c=relaxed/simple;
+	bh=iFeVLiw/azQMmEn8Sn1e8xF5y/X3PlVSkCCZesMwLok=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Wkv2R4R1Dnm7Y1cMtaPS3wNPZ6YX+QFCJcBxuEAeeajUQGMwRhU+k/1G/XicFqUBn/ANFIPnnqjjsraZ24gLLkwATKqYALgDikJAvw4iHyLfSMjNPiZSNKP9P1AO0brb3Ly5t0X4o9JCl0uP+/1QS4A5eUPhZeg20j42nyyXztM=
+	 MIME-Version:Content-Type; b=qPf6RhLXQQ3YZecR0g8AaveeXMJxdyvNAbAVJA//zcNFIjmZVHcq+c1SZuGWgUJOTUrGCgUXpl2gPpulPPi1INzILmChFncOGbwkRUHNx1l+qgYoJCes76R2RQdeIwAykqtw3n1uRm9QBZ577/obLC1E5GNE0UdLqOqCDrBK1p0=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
@@ -18,22 +18,22 @@ Received: from i5e860d18.versanet.de ([94.134.13.24] helo=diego.localnet)
 	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <heiko@sntech.de>)
-	id 1sRS6O-0005Or-Ip; Wed, 10 Jul 2024 09:51:00 +0200
+	id 1sRSHy-0005Wq-Iy; Wed, 10 Jul 2024 10:02:58 +0200
 From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, quentin.schulz@cherry.de,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH 0/6] Binding and driver for "dumb" clock generators
-Date: Wed, 10 Jul 2024 09:50:59 +0200
-Message-ID: <4022386.ZaRXLXkqSa@diego>
-In-Reply-To:
- <CANAwSgQGoeyy3V9hBNcxFynRgR-rUanUzVN41uFxu0-_OqKKZg@mail.gmail.com>
+To: mturquette@baylibre.com, Stephen Boyd <sboyd@kernel.org>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ quentin.schulz@cherry.de, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
+Subject:
+ Re: [PATCH 1/6] dt-bindings: clocks: add binding for generic clock-generators
+Date: Wed, 10 Jul 2024 10:02:57 +0200
+Message-ID: <1903511.1xdlsreqCQ@diego>
+In-Reply-To: <2e5852b9e94b9a8d0261ce7ad79f4329.sboyd@kernel.org>
 References:
  <20240709123121.1452394-1-heiko@sntech.de>
- <CANAwSgQGoeyy3V9hBNcxFynRgR-rUanUzVN41uFxu0-_OqKKZg@mail.gmail.com>
+ <20240709123121.1452394-2-heiko@sntech.de>
+ <2e5852b9e94b9a8d0261ce7ad79f4329.sboyd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -43,93 +43,134 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
 
-Hi Anand,
+Hi Stephen,
 
-Am Mittwoch, 10. Juli 2024, 05:02:57 CEST schrieb Anand Moon:
-> On Tue, 9 Jul 2024 at 18:02, Heiko Stuebner <heiko@sntech.de> wrote:
-> >
-> > Rockchip boards with PCIe3 controllers inside the soc (rk3568, rk3588) have
-> > external clock generators on the board to generate the needed 100MHz
-> > reference clock the PCIe3 controller needs.
-> >
-> > Often these clock generators need supplies to be enabled to run.
-> >
-> > Modelling this clock has taken a number of shapes:
-> > - The rk3568 Rock-3a modelled the generator-regulator as "phy-supply" [0]
-> >   &pcie30phy {
-> >         phy-supply = <&vcc3v3_pi6c_03>;
-> >         status = "okay";
-> >   };
-> >   which is of course not part of the binding
-> >
-> > - On the Rock-5-ITX the supply of the clock generator is controlled by
-> >   the same gpio as the regulator supplying the the port connected to the
-> >   pcie30x4 controller, so if this controller probes first, both
-> >   controllers will just run. But if the pcie30x2 controller probes first
-> >   (which has a different supply), the controller will stall at the first
-> >   dbi read.
-> >
-> > - Recent Theobroma-Systems boards (Jaguar and Tiger) modelled their
-> >   generator as a combination of fixed clock and gpio-gate, which works
-> >   because the generator's vdd-supply is always on and only the output-
-> >   enable pin needs to be toggled.
-> >
-> >
-> > So this series attempts to improve the situation by allowing to model
-> > these clock generators as actual entities in the devicetree, to not have
-> > them just accidentially work or break bindings.
-> >
+Am Dienstag, 9. Juli 2024, 23:45:20 CEST schrieb Stephen Boyd:
+> Quoting Heiko Stuebner (2024-07-09 05:31:16)
+> > In contrast to fixed clocks that are described as ungateable, boards
+> > sometimes use additional clock generators for things like PCIe reference
+> > clocks, that need actual supplies to get enabled and enable-gpios to be
+> > toggled for them to work.
+> > 
+> > This adds a binding for such clock generators that are not configurable
+> > themself, but need to handle supplies for them to work.
 > 
-> I was wondering if these changes apply to Radxa Rock 5b SbC, it does not have
-> pi6c557 clock generator but the schematic supports GEN_CLK_100MHZ is
-> input to CLKin0 which is generated via the VCC3V3_PI6C_05 (100MHz,3.3V,3225)
-> regulator.
+> Sounds like vdd-supply is required?
 
-yes, that is the same setup as on the Rock 5 ITX, see it's patch in
-this series.
+yeah, I guess this could move to required
 
-The difference being that for your Rock 5b it already works by accident,
-as the pcie30x4 port-supply and the supply for the clock-generator are
-controlled by the same gpio.
+> > 
+> > While in a lot of cases the type of the IC used is described in board
+> > schematics, in some cases just a generic type description like
+> > "100MHz, 3.3V" might also be used. The binding therefore allows both
+> > cases. Specifying the type is of course preferred.
+> > 
+> > The clock-frequency is set in devicetree, because while some clock
+> > generators have pins to decide between multipls output rates, those
+> > are generally set statically on the board-layout-level.
+> > 
+> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> > ---
+> >  .../bindings/clock/clock-generator.yaml       | 62 +++++++++++++++++++
+> >  1 file changed, 62 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/clock/clock-generator.yaml
+> > 
+> > diff --git a/Documentation/devicetree/bindings/clock/clock-generator.yaml b/Documentation/devicetree/bindings/clock/clock-generator.yaml
+> > new file mode 100644
+> > index 0000000000000..f44e61e414e89
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/clock-generator.yaml
+> > @@ -0,0 +1,62 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/clock/clock-generator.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Simple clock generators
+> > +
+> > +maintainers:
+> > +  - Heiko Stuebner <heiko@sntech.de>
+> > +
+> > +properties:
+> > +  $nodename:
+> > +    anyOf:
+> > +      - description:
+> > +          Preferred name is 'clock-<freq>' with <freq> being the output
+> > +          frequency as defined in the 'clock-frequency' property.
+> > +        pattern: "^clock-([0-9]+|[a-z0-9-]+)$"
+> > +      - description: Any name allowed
+> > +        deprecated: true
+> 
+> Drop the deprecated stuff from the fixed-clock binding?
 
-So it does make sense to model this correctly for correctness sake, but
-there is no immediate need for action, as there is no fault happening
-like on the Rock 5 ITX with its two separate ports.
+ok
+
+> 
+> > +
+> > +  compatible:
+> > +    oneOf:
+> > +      - const: clock-generator
+> > +      - items:
+> > +          - enum:
+> > +              - diodes,pi6c557-03b
+> 
+> I see this datasheet[1]. Can that link be included somewhere? That shows
+> there's a clock input pin, which means I expect a 'clocks' property.
+
+ok, I guess we could add a clock property and make it mandatory for the
+Diodes compatibles.
+
+
+> Maybe instead of creating a generic binding just make a binding for
+> these diodes parts? It certainly looks like a generic binding could come
+> later when another vendor supports the same binding.
+
+I was actually primarily aiming at solving the Rock 5 ITX clock generator
+issue described in patch 5, where the 100 MHz clock generator is just
+described as "100MHz,3.3V,3225" in the schematics, but definitly needs
+the supply regulator to be enabled [1].
+
+The Theobroma boards were addons because I felt they could also describe
+the hardware better instead of lumping together 2 existing bindings.
+
+
+> > +              - diodes,pi6c557-05b
+> > +          - const: clock-generator
+> > +
+> > +  "#clock-cells":
+> > +    const: 0
+> > +
+> > +  clock-frequency: true
+> > +
+> > +  clock-output-names:
+> > +    maxItems: 1
+> > +
+> > +  enable-gpios:
+> > +    description:
+> > +      Contains a single GPIO specifier for the GPIO that enables and disables
+> > +      the clock generator.
+> > +    maxItems: 1
+> > +
+> > +  vdd-supply:
+> > +    description: handle of the regulator that provides the supply voltage
+> > +
+> > +required:
+> > +  - compatible
+> > +  - "#clock-cells"
+> > +  - clock-frequency
+> 
+> This is the same required properties as fixed rate clocks. I'd guess
+> that at least 'enable-gpios' or 'vdd-supply' should also be required, or
+> the node would simply use fixed-clock compatible.
+
+ok, as said above, having the vdd-supply as requirement does make sense.
 
 
 Heiko
 
 
-> > [0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/rockchip/rk3568-rock-3a.dts#n605
-> >
-> > Heiko Stuebner (6):
-> >   dt-bindings: clocks: add binding for generic clock-generators
-> >   clk: add driver for generic clock generators
-> >   arm64: dts: rockchip: fix the pcie clock generator on Rock 5 ITX
-> >   arm64: dts: rockchip: use clock-generator for pcie-refclk on
-> >     rk3588-jaguar
-> >   arm64: dts: rockchip: use clock-generator for pcie-refclk on
-> >     rk3588-tiger
-> >   arm64: dts: rockchip: add pinctrl for clk-generator gpio on
-> >     rk3588-tiger
-> >
-> >  .../bindings/clock/clock-generator.yaml       |  62 ++++++++
-> >  .../arm64/boot/dts/rockchip/rk3588-jaguar.dts |  13 +-
-> >  .../boot/dts/rockchip/rk3588-rock-5itx.dts    |  34 ++++-
-> >  .../arm64/boot/dts/rockchip/rk3588-tiger.dtsi |  21 +--
-> >  drivers/clk/Kconfig                           |   7 +
-> >  drivers/clk/Makefile                          |   1 +
-> >  drivers/clk/clk-generator.c                   | 133 ++++++++++++++++++
-> >  7 files changed, 251 insertions(+), 20 deletions(-)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/clock-generator.yaml
-> >  create mode 100644 drivers/clk/clk-generator.c
-> >
-> > --
-> > 2.39.2
-> >
-> >
-> 
-
-
+[1] https://dl.radxa.com/rock5/5itx/radxa_rock_5_itx_X1100_schematic.pdf
+page 35, bottom left, to the left of the big Au5426 "clock buffer".
 
 
