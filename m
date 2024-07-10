@@ -1,30 +1,29 @@
 Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [195.130.137.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A1D5192B69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 223A6192B61
 	for <linux-clk@vger.kernel.org>; Wed, 10 Jul 2024 13:10:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720617057; cv=none; b=pYFgtr9wHyZjjlid8LkHrtN5ygbIifXq4aiVikQZJj0PeUh8FNv0cGkApZ7qyz9bG7dO/npQZtHTNzbt1HVmIXVqfn/h1EWpNJ05kTecKFKFyx4YBhaIqQq872bXMJyYDDCTsMi2L4DFy62DcXAJsV7Ebjs7cIbK8Tb7yNZ2v4E=
+	t=1720617057; cv=none; b=Eu5If83FvNu8Uhzs/TMolpS95Ds4JEy7XdsoUGCqHTDyK5jhilsvoZSEVlm18UY4fqzqYxMdZk/P6i9Npwzt5kb2URDY32vs3I4/rzwIufTqiolYLODROCJ9gIOsHb/HbtFsZOgpQ267NRk6k+WkmlgEeTjXY7ge9E5SkCbMI+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1720617057; c=relaxed/simple;
-	bh=i8FmB2FewFO6W+F454TlJcpbHgBsZJrrz/h/NZvUENM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=i+Sao53NFS1NvivU22WP4NUmVqAmtFHDO+7ZPi8QFF7/3ZsFmBRpS1GGEqFtT6xpzOr9c9kRhDzHBbd67NCLwUKXlcp/dyCdtNZr7ycqWj1lEfbR17I1wq4SmOd8plPEQwD58HLfau+CBkF1PvT4Q36sijOeziBS+sz0EcLGkvI=
+	bh=HLh/yn22aSDMr5VgxIVhK70/SBQGcxEryNkctjaaV2w=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XKQysVwjlznCDh9vgFIYZseN5iQl4xw5fCdXsrJOUF9pecf2WSOjWvRb500TswOYQWtTcq/ynaGKgGDDxevQY0HDYFt+5OeASDGqSajEAzUQpQhBfl8CMfIlStE52fO9Q1PIOTIfnsj3414lJhqrDJZb1qre/ps86rjH4x+w0ck=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.89
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:2340:18a1:4138:37d2])
 	by laurent.telenet-ops.be with bizsmtp
-	id lpAp2C00C4znMfS01pApEy; Wed, 10 Jul 2024 15:10:50 +0200
+	id lpAp2C00B4znMfS01pApEw; Wed, 10 Jul 2024 15:10:50 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sRX5f-001cTA-R4;
+	id 1sRX5f-001cT3-PC;
 	Wed, 10 Jul 2024 15:10:49 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sRX5t-00CQBl-DI;
+	id 1sRX5t-00CQBa-Ac;
 	Wed, 10 Jul 2024 15:10:49 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Michael Turquette <mturquette@baylibre.com>,
@@ -33,12 +32,10 @@ To: Michael Turquette <mturquette@baylibre.com>,
 Cc: linux-renesas-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 03/14] clk: renesas: rcar-gen4: Use FIELD_GET()
-Date: Wed, 10 Jul 2024 15:10:37 +0200
-Message-Id: <62ef9e93807f18e62b3f58445aedd7aeaa2adf5e.1720616233.git.geert+renesas@glider.be>
+Subject: [PATCH 00/14] clk: renesas: rcar-gen4: Fractional PLL improvements
+Date: Wed, 10 Jul 2024 15:10:34 +0200
+Message-Id: <cover.1720616233.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1720616233.git.geert+renesas@glider.be>
-References: <cover.1720616233.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,72 +44,65 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Improve readability by using the FIELD_GET() helper instead of
-open-coding the same operation, and by adding field definitions to get
-rid of hardcoded values.
+	Hi all,
 
-While at it, move register definitions that are only used inside the
-rcar-gen4-cpg.c source file out of the rcar-gen4-cpg.h header file.
-Add a "CPG_" prefix to SD0CKCR1.  Add comments where appropriate.
+Currently, almost all PLLs on R-Car Gen4 SoCs are modelled as fixed
+divider clocks, based on the state of the mode pins.  The only exception
+is PLL2 on R-Car V4H, which uses a custom clock driver to support High
+Performance mode on the Cortex-A76 CPU cores.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
- drivers/clk/renesas/rcar-gen4-cpg.c | 13 +++++++++++--
- drivers/clk/renesas/rcar-gen4-cpg.h |  3 ---
- 2 files changed, 11 insertions(+), 5 deletions(-)
+However, the boot loader stack may have changed the actual PLL
+configuration from the default, leading to incorrect clock frequencies.
+A typical sympton is a CPU core running much slower than reported by
+Linux.
 
-diff --git a/drivers/clk/renesas/rcar-gen4-cpg.c b/drivers/clk/renesas/rcar-gen4-cpg.c
-index cd8799e04b37556e..ae18470d9732ec3a 100644
---- a/drivers/clk/renesas/rcar-gen4-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen4-cpg.c
-@@ -55,6 +55,14 @@ static u32 cpg_mode __initdata;
- /* Fractional 8.25 PLL */
- #define CPG_PLLxCR0_NI8		GENMASK(27, 20)	/* Integer mult. factor */
- 
-+#define CPG_PLLxCR_STC		GENMASK(30, 24)	/* R_Car V3U PLLxCR */
-+
-+#define CPG_RPCCKCR		0x874	/* RPC Clock Freq. Control Register */
-+
-+#define CPG_SD0CKCR1		0x8a4	/* SD-IF0 Clock Freq. Control Reg. 1 */
-+
-+#define CPG_SD0CKCR1_SDSRC_SEL	GENMASK(30, 29)	/* SDSRC clock freq. select */
-+
- /* PLL Clocks */
- struct cpg_pll_clk {
- 	struct clk_hw hw;
-@@ -392,7 +400,7 @@ struct clk * __init rcar_gen4_cpg_clk_register(struct device *dev,
- 
- 	case CLK_TYPE_GEN4_PLL2X_3X:
- 		value = readl(base + core->offset);
--		mult = (((value >> 24) & 0x7f) + 1) * 2;
-+		mult = (FIELD_GET(CPG_PLLxCR_STC, value) + 1) * 2;
- 		break;
- 
- 	case CLK_TYPE_GEN4_Z:
-@@ -400,7 +408,8 @@ struct clk * __init rcar_gen4_cpg_clk_register(struct device *dev,
- 					  base, core->div, core->offset);
- 
- 	case CLK_TYPE_GEN4_SDSRC:
--		div = ((readl(base + SD0CKCR1) >> 29) & 0x03) + 4;
-+		value = readl(base + CPG_SD0CKCR1);
-+		div = FIELD_GET(CPG_SD0CKCR1_SDSRC_SEL, value) + 4;
- 		break;
- 
- 	case CLK_TYPE_GEN4_SDH:
-diff --git a/drivers/clk/renesas/rcar-gen4-cpg.h b/drivers/clk/renesas/rcar-gen4-cpg.h
-index 006537e29e4eb10e..d0329ac84730d681 100644
---- a/drivers/clk/renesas/rcar-gen4-cpg.h
-+++ b/drivers/clk/renesas/rcar-gen4-cpg.h
-@@ -67,9 +67,6 @@ struct rcar_gen4_cpg_pll_config {
- 	u8 osc_prediv;
- };
- 
--#define CPG_RPCCKCR	0x874
--#define SD0CKCR1	0x8a4
--
- struct clk *rcar_gen4_cpg_clk_register(struct device *dev,
- 	const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
- 	struct clk **clks, void __iomem *base,
+This patch series enhances PLL support on R-Car Gen4 support by
+obtaining the actual PLL configuration from the hardware.  As these PLLs
+can be configured for fractional multiplication, an old patch to add
+support fractional multiplication is revived, too.  Of course some
+cleanups are included, too.
+
+Note that struct rcar_gen4_cpg_pll_config still contains the default
+multipliers and dividers for PLL1/2/3/4/6, while they are no longer
+used. Probably they should be removed, too.  Or do you think we should
+retain them for documentation purposes>
+
+Thanks for your comments!
+
+Geert Uytterhoeven (14):
+  clk: renesas: rcar-gen4: Removed unused SSMODE_* definitions
+  clk: renesas: rcar-gen4: Clarify custom PLL clock support
+  clk: renesas: rcar-gen4: Use FIELD_GET()
+  clk: renesas: rcar-gen4: Use defines for common CPG registers
+  clk: renesas: rcar-gen4: Add support for fractional multiplication
+  clk: renesas: rcar-gen4: Add support for variable fractional PLLs
+  clk: renesas: rcar-gen4: Add support for fixed variable PLLs
+  clk: renesas: rcar-gen4: Add support for fractional 9.24 PLLs
+  clk: renesas: r8a779a0: Use defines for PLL control registers
+  clk: renesas: r8a779f0: Model PLL1/2/3/6 as fractional PLLs
+  clk: renesas: r8a779g0: Model PLL1/3/4/6 as fractional PLLs
+  clk: renesas: r8a779h0: Model PLL1/2/3/4/6 as fractional PLLs
+  clk: renesas: rcar-gen4: Remove unused variable PLL2 clock type
+  clk: renesas: rcar-gen4: Remove unused fixed PLL clock types
+
+ drivers/clk/renesas/r8a779a0-cpg-mssr.c |  25 +--
+ drivers/clk/renesas/r8a779f0-cpg-mssr.c |  18 +-
+ drivers/clk/renesas/r8a779g0-cpg-mssr.c |  26 +--
+ drivers/clk/renesas/r8a779h0-cpg-mssr.c |  22 +--
+ drivers/clk/renesas/rcar-gen4-cpg.c     | 209 ++++++++++++++++--------
+ drivers/clk/renesas/rcar-gen4-cpg.h     |  28 +++-
+ 6 files changed, 209 insertions(+), 119 deletions(-)
+
 -- 
 2.34.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
