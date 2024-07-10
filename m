@@ -1,129 +1,189 @@
-Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FB5524A08;
-	Wed, 10 Jul 2024 06:48:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 212EE41C72
+	for <linux-clk@vger.kernel.org>; Wed, 10 Jul 2024 06:59:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720594130; cv=none; b=PoLbupFTqEteoMS1RZfua29X/buFv7rNy9KheeB/dcJnbd22HlpXpMtvMLcwIhCDAkwoY7Iy2KBb9HsPHgqe/E56VMkpcuHzqpgumKiTsvoUWHZsZZzi4rPXj03s81gkTJPTWv9dODQdA4hi4v990wGGqsUzG22YWldr2yUQX3E=
+	t=1720594754; cv=none; b=TttT//2XnEMUf17iASdua/l6cih6DVhXO6v/cR8hxCAEr7D/7UU6vkD5+5X32r0SY8KjIZUxnxngYQqeIJ3nc7aM5GWJCsyVTmnLbX+BSe6DZajYp9L8FNYBpvkghoIuDsbLof0GMfWas0GURICj/xp5kMOORg6pfwXbYCs8ZgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720594130; c=relaxed/simple;
-	bh=d7E4pF3B/YC1SaQ5hGT1rdhUnlINXowoDQRGFU9KCU0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LQQQaaEdVpR+wsb5KZcq9YiYRBi8Jb/Ma8HYpd/oIVAYxz6W2GhQHU+9+VXncLs7EYAaAjnbfWhhCQoVIheKGi6kxZgqc71f6qjX6oj38MfVV3n4Kcz1rpEhne/BZnEkV9wtVCv2wzRNRySaBwfRtAg+qZ7nl0fXkstIJGf2wEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VwfghyZF; arc=none smtp.client-ip=209.85.166.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1720594754; c=relaxed/simple;
+	bh=nV5jIE+2AMLGXvB0BiaxonpdIBcsseaSPwEpPv+Ryq8=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=Ddz8oXYNUrsSZBj2GUjzJUVVLKFss7qE5M1ASAES/MZE2jWGfjW6gVLL3O30KX1JO3Upl2JCB46HLT+GdoIAsUKsO6vrmPf5XWLNI8ZOMF6oq8oE/EY7doMd3Z9L08QJTr1cR+I5Un/KECaY7tuoeZ/PQ+aatTTkm5IyXCcUfXE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=PNLtbWDm; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VwfghyZF"
-Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-36dd56cf5f5so22610415ab.3;
-        Tue, 09 Jul 2024 23:48:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720594128; x=1721198928; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AqJpJlQsOLg6grig5aAIY5nJC8Y497l/ww+yMkv+els=;
-        b=VwfghyZF+hXmMZkI7Y9Ovha8lep8DPVrN7ig26YolElhVTFmUxmwvTqdyHDoYwrzBx
-         S65ZR7Boo9jKxSXXZqNvlqPmrY5RoKjboCNVDeVtvcR+lsh6Bgta6+nayh3H0miwK+Tl
-         2JAN3GxzfWoVMeBUEbbu9xe1J+O4OiNy1ujPLTiuJNzP3rHE5hANsZIf0VhskDP54OYL
-         +yGz/x7wayAyB1QDW35xho5gCEZpmw7DqaWsPiTPyawXXbaaTyWzE8GDbhRTSxBjZScT
-         +Yv5hSUOPT2MkxE+wyi/rvkNFps1Mv7P64lmbZXbYZmsDlYVvE0784mFrtZta2/48Kyq
-         xq0w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720594128; x=1721198928;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=AqJpJlQsOLg6grig5aAIY5nJC8Y497l/ww+yMkv+els=;
-        b=tHhCKLHH9ROeDxxxdvEIR/04aABRbSaxcVcZMZQxxCEUaoT+RRCcy7zpYPFCjbTfn/
-         xTeoWVo4e7BPcKPGK5jh/Alz9PqkBY73sbm8jglVxdCWmQZcARvBUmVTyXXVvpSQmSRD
-         KAA6BLC9VT8V4yrG9BWnIPOBCFRn/drUEjV+fAXwXmrJ57CM0IjgVyy8cwPL5GBxTXtx
-         r6+oNKn9Yy8b/S9VDP91eHvAFQktpyaMUv2q0TIS0XfizoTjuO7xQZYTDiqFUlZm2+i8
-         m+CtfoY7KlHZFeygMpqO9s150nbK0Dc5SxYLDm2VfSzCmKgGY5w76uMaZXtXcLn6y4UT
-         bzDA==
-X-Forwarded-Encrypted: i=1; AJvYcCWk+WWUxsGbFSPFqMN9FlzdmAH++js8iWbMOU2mJLHHqlJuqZtnFeGgNCehOGDWfRiCYSLWsyanw1SJfhC6Cru6KeG17Z8NFwwzLEkt2oMAaL30H/jRN+Ro4Gzp1gmrBLhTuS9InAVc
-X-Gm-Message-State: AOJu0YwTtl9FWGzsVFtR6qZ1IEIY8DebVuYGzcvTeFn5311u8emvjDVk
-	TFwYpcevO7T4DYnRnIob18Kd3XgZkkFAjX88VyamVyLgzNASz8+XT7D+vxWwH6yLJRQfP87y2vn
-	egI6r5I7/FNtlxEscUx00U3oTG+o=
-X-Google-Smtp-Source: AGHT+IEXHEmoHb3TCymWx3QQxiI9X8NsPovHzCQ4rz0cdUtcFQXIiu6fSaiQ8WtQeUYBP0xVeQJ1acajWd3skRQPx0U=
-X-Received: by 2002:a05:6e02:1a23:b0:38b:48c9:55d5 with SMTP id
- e9e14a558f8ab-38b48c95c00mr29939745ab.13.1720594128346; Tue, 09 Jul 2024
- 23:48:48 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="PNLtbWDm"
+Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240710065910epoutp043b71ccd026c78ded6c43682a5d415a08~gx88sDGc_3123231232epoutp04c
+	for <linux-clk@vger.kernel.org>; Wed, 10 Jul 2024 06:59:10 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240710065910epoutp043b71ccd026c78ded6c43682a5d415a08~gx88sDGc_3123231232epoutp04c
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1720594750;
+	bh=i68rsdjhN74gfURbEk83UFLc56Rz05uORnulGuQAY9M=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=PNLtbWDmckbE9XIZeZijonHpYsUAcWEjx6lzhyuy/lhKkpUsjAEiRGmzi2TerVc6F
+	 LtDN5REo/+bUxiim7eLT19gv9tszb3DLI4kA5tswUOGbtyXG9s4jqMuhPcpC51s8RW
+	 atNglyy/X1CbMX0TIXxb8QLLHoYV4x351EUUYGP8=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTP id
+	20240710065909epcas2p13b0fcace1336d6b6da308f9370ee6ee6~gx878hbhq0868508685epcas2p13;
+	Wed, 10 Jul 2024 06:59:09 +0000 (GMT)
+Received: from epsmges2p3.samsung.com (unknown [182.195.36.90]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4WJpcY11jVz4x9Pw; Wed, 10 Jul
+	2024 06:59:09 +0000 (GMT)
+Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
+	epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+	8F.2A.09806.C313E866; Wed, 10 Jul 2024 15:59:09 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas2p3.samsung.com (KnoxPortal) with ESMTPA id
+	20240710065908epcas2p3cc1a8c3f755a62da93120a375f787b9f~gx87LiI970475404754epcas2p3V;
+	Wed, 10 Jul 2024 06:59:08 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240710065908epsmtrp22c9b6c55a1273c426fc3f69797974577~gx87Ki-QD0236702367epsmtrp2j;
+	Wed, 10 Jul 2024 06:59:08 +0000 (GMT)
+X-AuditID: b6c32a47-c6bff7000000264e-bf-668e313c9c50
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	71.29.18846.C313E866; Wed, 10 Jul 2024 15:59:08 +0900 (KST)
+Received: from KORCO118965 (unknown [10.229.18.201]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20240710065908epsmtip264fae288a733e20cfbdbd80636b1d988~gx865wmhw0897008970epsmtip20;
+	Wed, 10 Jul 2024 06:59:08 +0000 (GMT)
+From: "sunyeal.hong" <sunyeal.hong@samsung.com>
+To: "'Alim Akhtar'" <alim.akhtar@samsung.com>, "'Krzysztof Kozlowski'"
+	<krzk@kernel.org>, "'Sylwester Nawrocki'" <s.nawrocki@samsung.com>,
+	"'Chanwoo Choi'" <cw00.choi@samsung.com>, "'Michael Turquette'"
+	<mturquette@baylibre.com>, "'Stephen Boyd'" <sboyd@kernel.org>, "'Rob
+ Herring'" <robh@kernel.org>, "'Conor Dooley'" <conor+dt@kernel.org>
+Cc: <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+In-Reply-To: <015501dad271$30f54a10$92dfde30$@samsung.com>
+Subject: RE: [PATCH v2 2/4] arm64: dts: exynos: add initial CMU clock nodes
+ in Exynos Auto v920
+Date: Wed, 10 Jul 2024 15:59:08 +0900
+Message-ID: <008201dad296$a904ea90$fb0ebfb0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <1719996771-11220-1-git-send-email-shengjiu.wang@nxp.com>
- <232c2342061b17b9f750c4ad52b0766e.sboyd@kernel.org> <CAA+D8APumdP97QQHObF6NEw6jwDJRb+0R=aAjqftrX1wR170Yw@mail.gmail.com>
- <065ab85945db26eed25ea874fce92524.sboyd@kernel.org>
-In-Reply-To: <065ab85945db26eed25ea874fce92524.sboyd@kernel.org>
-From: Shengjiu Wang <shengjiu.wang@gmail.com>
-Date: Wed, 10 Jul 2024 14:48:37 +0800
-Message-ID: <CAA+D8AMvEVk9yLt70ROhDGzdd+A5C34611QnSyfbYr0OrLb75A@mail.gmail.com>
-Subject: Re: [PATCH] clk: imx: imx8: Add .name for "acm_aud_clk0_sel" and "acm_aud_clk1_sel"
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org, festevam@gmail.com, 
-	imx@lists.linux.dev, kernel@pengutronix.de, mturquette@baylibre.com, 
-	peng.fan@nxp.com, s.hauer@pengutronix.de, shawnguo@kernel.org, 
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQJHtUpDsgLCeLIQdS8546uqgvLWdQIAh4UhAdGvMNoB/Od1kAIfmP8eAl0shoCww2IzQA==
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrKJsWRmVeSWpSXmKPExsWy7bCmqa6tYV+aQecLZosH87axWazZe47J
+	4vqX56wW84+cY7U4f34Du8Wmx9dYLT723GO1uLxrDpvFjPP7mCwunnK1+L9nB7vF4TftrBb/
+	rm1kceD1eH+jld1j06pONo/NS+o9+rasYvT4vEkugDUq2yYjNTEltUghNS85PyUzL91WyTs4
+	3jne1MzAUNfQ0sJcSSEvMTfVVsnFJ0DXLTMH6EQlhbLEnFKgUEBicbGSvp1NUX5pSapCRn5x
+	ia1SakFKToF5gV5xYm5xaV66Xl5qiZWhgYGRKVBhQnbG44fr2AtmiVccu5rdwHhQpIuRk0NC
+	wETiz74ZrF2MXBxCAjsYJSZuPMYC4XxilJh36R8jnNO6tIUVpuV0/yNmiMRORokVR99Atbxk
+	lJiw+SkTSBWbgL7E6u7bbCAJEYE7TBK31z0E28IssI5RYvPMI+wgVZwCVhJHTs8DmysskCjx
+	+ckEsG4WAVWJJyfnsoHYvAKWEpNWf4GyBSVOznzCAmIzC2hLLFv4mhniJgWJn0+Xgc0REQiT
+	6D//HqpGRGJ2ZxvYrRICezgkTu0/ywTR4CJx7f0MFghbWOLV8S3sELaUxOd3e9kg7HyJydff
+	MkE0NzBKXPvXDbXNXmLRmZ9ADRxAGzQl1u/SBzElBJQljtyC2ssn0XH4LztEmFeio00IolFN
+	4tOVy1BDZCSOnXjGPIFRaRaSz2Yh+WwWkg9mIexawMiyilEstaA4Nz212KjAGB7dyfm5mxjB
+	6VfLfQfjjLcf9A4xMnEwHmKU4GBWEuGdf6M7TYg3JbGyKrUoP76oNCe1+BCjKTCsJzJLiSbn
+	AzNAXkm8oYmlgYmZmaG5kamBuZI4773WuSlCAumJJanZqakFqUUwfUwcnFINTNH7uxU2fos6
+	dPcmc7Y8w45GHtH8rL1e0slZoQkn1cRkVus+8HMTWHDTdE11tHthU86DTT/ElUSLS1xPTVWK
+	LthWozFhDwfHOV+lA0mK8y/dcjWaFXjlR6R02LaMoES/37u13s5QV5F6qnXpG+t7js3c3fq1
+	052mmzIX5GoH7ZXdJa91QPigXXpZv8fs6C8aJeVzV+hme/qIvBXy3BT/7fhcy6u3nlpvYtPU
+	zLiQFGiRu/ClpseUK8du6NYE9Mhwz8yuWipamvzbRzh/+93rGl9ly65eSXG3lubvnHBfTifw
+	1f2jHV6XTbNuTn/GsmWv/b7PIe3/U0/tttld1DvhnOaF2nymw9zB/6SNTDKUWIozEg21mIuK
+	EwFjT8uFSAQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHIsWRmVeSWpSXmKPExsWy7bCSvK6NYV+awcxPMhYP5m1js1iz9xyT
+	xfUvz1kt5h85x2px/vwGdotNj6+xWnzsucdqcXnXHDaLGef3MVlcPOVq8X/PDnaLw2/aWS3+
+	XdvI4sDr8f5GK7vHplWdbB6bl9R79G1ZxejxeZNcAGsUl01Kak5mWWqRvl0CV8afS81sBReF
+	Ky5MfczSwHiDv4uRk0NCwETidP8j5i5GLg4hge2MEs8+LmaCSMhIbGz4zw5hC0vcbznCClH0
+	nFHi9Jr9LCAJNgF9idXdt9lAEiICj5gkPv/cxQ7iMAtsYpQ4t/smG0TLeSaJk1PWM4O0cApY
+	SRw5PY8VxBYWiJd4++gdWJxFQFXiycm5bCA2r4ClxKTVX6BsQYmTM5+ArWMW0JZ4evMpnL1s
+	4WtmiPsUJH4+XQY2U0QgTKL//HuoGhGJ2Z1tzBMYhWchGTULyahZSEbNQtKygJFlFaNoakFx
+	bnpucoGhXnFibnFpXrpecn7uJkZwFGoF7WBctv6v3iFGJg7GQ4wSHMxKIrzzb3SnCfGmJFZW
+	pRblxxeV5qQWH2KU5mBREudVzulMERJITyxJzU5NLUgtgskycXBKNTDxL7WfJxwUsEx4tQfv
+	iWsOCqyZtqcu3PM1r3vl86Ra52LpTeNAHV2mywIVjRNumL9qyrlyOWWt0Y3gt78WPlSvS8/9
+	62zg8W7K5TC+7XOjrb/PT99rJ2jpse1aRXOaA9tbcZMDdzbsX3pz06bG0EUG57Xc76xXyH47
+	6Xbi/PQ5J9fmTNqdtPe3h9vOfZol7RcXbnrQacLXyhcosHQm44amDavv80SZZ75ctuJ98oY1
+	NuvP2hqceLlAfPKMq+pekb+nnAzytImQj3lj2uRveFZh3h2ZA48m/9gY43TtH+PqMEZWyStL
+	3hnYvWU3/9kpr+i480xfVJjB2rUWQr+ZtkhqbpQ5/Vpvv8zNa/Nemu86rMRSnJFoqMVcVJwI
+	ANfPWjQxAwAA
+X-CMS-MailID: 20240710065908epcas2p3cc1a8c3f755a62da93120a375f787b9f
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240707231445epcas2p2cf78684e3cbcf8ed914a0d8e52115216
+References: <20240707231331.3433340-1-sunyeal.hong@samsung.com>
+	<CGME20240707231445epcas2p2cf78684e3cbcf8ed914a0d8e52115216@epcas2p2.samsung.com>
+	<20240707231331.3433340-3-sunyeal.hong@samsung.com>
+	<000101dad126$b964e2d0$2c2ea870$@samsung.com>
+	<000101dad26f$0d0fc0f0$272f42d0$@samsung.com>
+	<015501dad271$30f54a10$92dfde30$@samsung.com>
 
-On Wed, Jul 10, 2024 at 4:08=E2=80=AFAM Stephen Boyd <sboyd@kernel.org> wro=
-te:
->
-> Quoting Shengjiu Wang (2024-07-08 20:20:56)
-> > On Tue, Jul 9, 2024 at 6:45=E2=80=AFAM Stephen Boyd <sboyd@kernel.org> =
-wrote:
-> > >
-> > > Quoting Shengjiu Wang (2024-07-03 01:52:51)
-> > > > "acm_aud_clk0_sel" and "acm_aud_clk1_sel" are registered by this AC=
-M
-> > > > driver, but they are the parent clocks for other clocks, in order t=
-o
-> > > > use assigned-clock-parents in device tree, they need to have the
-> > > > global name.
-> > > >
-> > > > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> > > > ---
-> > > >  drivers/clk/imx/clk-imx8-acm.c | 12 ++++++------
-> > > >  1 file changed, 6 insertions(+), 6 deletions(-)
-> > > >
-> > > > diff --git a/drivers/clk/imx/clk-imx8-acm.c b/drivers/clk/imx/clk-i=
-mx8-acm.c
-> > > > index 1bdb480cc96c..a1affcf6daff 100644
-> > > > --- a/drivers/clk/imx/clk-imx8-acm.c
-> > > > +++ b/drivers/clk/imx/clk-imx8-acm.c
-> > > > @@ -114,8 +114,8 @@ static const struct clk_parent_data imx8qm_mclk=
-_out_sels[] =3D {
-> > > >  static const struct clk_parent_data imx8qm_mclk_sels[] =3D {
-> > > >         { .fw_name =3D "aud_pll_div_clk0_lpcg_clk" },
-> > > >         { .fw_name =3D "aud_pll_div_clk1_lpcg_clk" },
-> > > > -       { .fw_name =3D "acm_aud_clk0_sel" },
-> > > > -       { .fw_name =3D "acm_aud_clk1_sel" },
-> > > > +       { .fw_name =3D "acm_aud_clk0_sel", .name =3D "acm_aud_clk0_=
-sel" },
-> > > > +       { .fw_name =3D "acm_aud_clk1_sel", .name =3D "acm_aud_clk1_=
-sel" },
-> > >
-> > > This doesn't make any sense. Why are we adding fallback names?  Is
-> > > "acm_aud_clk0_sel" not part of the DT binding for this clk controller=
-?
+Hello Alim,
+
+> -----Original Message-----
+> From: Alim Akhtar <alim.akhtar=40samsung.com>
+> Sent: Wednesday, July 10, 2024 11:31 AM
+> To: 'sunyeal.hong' <sunyeal.hong=40samsung.com>; 'Krzysztof Kozlowski'
+> <krzk=40kernel.org>; 'Sylwester Nawrocki' <s.nawrocki=40samsung.com>; 'Ch=
+anwoo
+> Choi' <cw00.choi=40samsung.com>; 'Michael Turquette'
+> <mturquette=40baylibre.com>; 'Stephen Boyd' <sboyd=40kernel.org>; 'Rob
+> Herring' <robh=40kernel.org>; 'Conor Dooley' <conor+dt=40kernel.org>
+> Cc: linux-samsung-soc=40vger.kernel.org; linux-clk=40vger.kernel.org;
+> devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; lin=
+ux-
+> kernel=40vger.kernel.org
+> Subject: RE: =5BPATCH v2 2/4=5D arm64: dts: exynos: add initial CMU clock
+> nodes in Exynos Auto v920
+>=20
+> Hello Sunyeal,
+>=20
+> > -----Original Message-----
+> > From: sunyeal.hong <sunyeal.hong=40samsung.com>
 > >
-> > It is not part of DT binding for this clk controller.  it is registered=
- by this
-> > clk controller itself.  As it is a parent clock, so my understanding
-> > is that we need to add a fallback name,  or change "fw_name" to "name",
-> > please correct me if I am wrong.
->
-> If it's registered by this clk controller itself then it should be a
-> clk_hw pointer and not use any string name.
-
-ok, will update it.
-
-Best regards
-Shengjiu Wang
+> =5Bsnip=5D
+> > > Subject: RE: =5BPATCH v2 2/4=5D arm64: dts: exynos: add initial CMU
+> > > clock nodes in Exynos Auto v920
+> > >
+> > >
+> > >
+> > > > -----Original Message-----
+> > > > From: Sunyeal Hong <sunyeal.hong=40samsung.com>
+> > > > Sent: Monday, July 8, 2024 4:43 AM
+> > > > To: Krzysztof Kozlowski <krzk=40kernel.org>; Sylwester Nawrocki
+> > > > <s.nawrocki=40samsung.com>; Chanwoo Choi
+> > <cw00.choi=40samsung.com>; Alim
+> > > > Akhtar <alim.akhtar=40samsung.com>; Michael Turquette
+> =5BSnip=5D
+> > > > +		cmu_peric0: clock-controller=4010800000 =7B
+> > > > +			compatible =3D =22samsung,exynosautov920-cmu-
+> > > > peric0=22;
+> > > > +			reg =3D <0x10800000 0x8000>;
+> > > Please cross check the size of the register range, this looks to be
+> > > more then what is needed.
+> > >
+> > In the case of preic0, the size is up to 0x7088. The CMU block SFR
+> > area of =E2=80=8B=20ExynosAuto=20v920=20is=20generally=20specified=20up=
+=20to=200x8000.=20There=0D=0A>=20>=20are=20differences=20for=20each=20block=
+,=20but=20the=20settings=20are=20the=20same.=0D=0A>=20>=20Do=20you=20think=
+=20it=20is=20necessary=20to=20change=20the=20actual=20size=20of=20each=20bl=
+ock?=0D=0A>=20To=20avoid=20any=20overlap=20between=20difference=20SFR=20reg=
+ion,=20better=20to=20mention=20the=0D=0A>=20exact=20size=20of=20the=20SFR=
+=20region.=0D=0A>=20=0D=0AIn=20ExynosAuto,=20the=20SFR=20of=20each=20block=
+=20has=20an=20offset=20of=200x10000.=20So=20I=20don't=20think=20SFR=20will=
+=20be=20overlapped.=0D=0AIn=20the=20case=20of=20CMU=20SFR,=20there=20is=20n=
+o=20size=20over=200x8000,=20so=20I=20think=20it=20would=20be=20better=20to=
+=20maintain=20that=20value.=0D=0APlease=20give=20me=20your=20opinion=20agai=
+n.=0D=0A>=20=5Bsnip=5D=0D=0A>=20>=20>=20>=20--=0D=0A>=20>=20>=20>=202.45.2=
+=0D=0A>=20>=20>=0D=0A>=20>=20>=0D=0A>=20>=0D=0A>=20>=20Please=20review=20my=
+=20answer=20again.=0D=0A>=20>=0D=0A>=20>=20Thanks,=0D=0A>=20>=20Sunyeal=20H=
+ong=0D=0A>=20>=0D=0A>=20=0D=0A>=20=0D=0A=0D=0AThanks,=0D=0ASunyeal=20Hong=
+=0D=0A=0D=0A
