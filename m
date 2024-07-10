@@ -1,96 +1,156 @@
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0242F194AFC
-	for <linux-clk@vger.kernel.org>; Wed, 10 Jul 2024 16:54:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BDE234545;
+	Wed, 10 Jul 2024 17:08:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720630452; cv=none; b=qq+53HVZrJklgfugXiI0KRjsVPt25AIhS926ITSXzUyLnx9DEDTAFEJf1vDF3Djr1RTBLBD+GJWFS7bNg7XlYY1khaqyNUPm66X5eL8BnHO2RzPgJ+n8yHqElvkzLJ8+My8OGN0LzuJYPhauoynTzZlxzYNJ7GLiobQ2onuH1BA=
+	t=1720631282; cv=none; b=Z+bsYBBxvPyKua4CtSL9YxI9ROIa3UrdGnLj6ORioyTUf9cZoJV2T/viCiGN8bvyU3ERAd0hXlo3g+rHCwZTUzXLaaQIeYKtzZj3VgeDYGzu43n82V54+3rBONn8/zkFeTxb8VkfsqbFMG8gkkqWapWYlX3lfOa8QXNnrMEHHYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720630452; c=relaxed/simple;
-	bh=O7d7vj0cWa1medwMa1Up+XPFhCEcppKLwXkWtO7sIRU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=A8XUkqPmFMRaepkycTTonxgnR20YwMDq5qGrS3uS8k2nYGSuiguKrAiHG0/AfpY3RX/ZnPoJoOxwd/F9xcinWviQtn8tkD324asF8rKfaMyA7Aqmy7+gQu7Zvfem9ZZKN3AQgsFsFwsuE3IeNZ2mZzMPbeDs9ByJ6KBUuNETeOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RzvPM4wW; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1720631282; c=relaxed/simple;
+	bh=yCXjZ5t+wLkF4jfSXS3RJ3beU8mDIWCl3YtDGYE1JFE=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=A5CTS+kkzd+pBwvOCkNIWcQppjhlrZa0zki8p3mnWB8uy/x34RvY/Jhb9nfOTjRgBJprPZEbLvu+L4+LCQoAn/06TNCLHoaaZJ6BxjgVfMaEJ3WMn4NgRBZPSh/F5SVC2Ppp3Abt9AzilH/ScCvlYEa1AOT6/tahXvudYfG0TkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pvtu1C3u; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RzvPM4wW"
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52e9944764fso7454997e87.3
-        for <linux-clk@vger.kernel.org>; Wed, 10 Jul 2024 09:54:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720630449; x=1721235249; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ahkeI5pe5nI5C8b4YHdNxlMMoYZSpHe4ITBlVeHfQ6U=;
-        b=RzvPM4wWfVDvX4SXAfapTqyS6ufJ48ZEI6NVJu3J5p2Lz6Gt2JZMXGtFbxMgnuvBs8
-         20/PkIZnckgA3RFrex1NVwRkqNQ+M1HrCCWpGcdYfVuiR4+AAYdj9muyLLaY+5n2arOg
-         tXWWuIip2ok84bPWbtBzUblGnYgFmcxtW8CmThOJvxm9l8HuZZEHOslqrwJuRbtUsbQ9
-         WQFuFc26IjtGAZH9fsBpZycWKUGuH84xRfbF+8kD4bL5MBKQexf6OAx1xQ+l44wVedWW
-         E18exziKCUZ3z83toMWpyVtVWzi8gOViZyWrJ/a3e0cP64l81QKpDarykT3i9q4yVhK4
-         OhFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720630449; x=1721235249;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ahkeI5pe5nI5C8b4YHdNxlMMoYZSpHe4ITBlVeHfQ6U=;
-        b=WEsrUETMPmm+zWgvU7Sw7rFFUgt8ptQ29DHc134teSMhfMrzMe8dTOqytYMH5odY0N
-         pzEygtWF1/J6PwOfDPDmM8M5u6UHCcyDO7dSfaP5VkXCuC1ZIjfT/BNmhuto1m/jY06G
-         jPQ9ADK7scJIn33tToAMCTDnUc2Wu6jzyX4FJRv+9K6EoVJEV+7s5RJ33Vevfe4zDs1+
-         0BeelX7KwM2a2blv7LwFQX1syxIAwx5a28bIGPTe8dFv6q9EtFJyb4myncFiHR5uoOgb
-         cvKXzuKm5h/Ue+UXJs8UVkbZ8YakxzoD9r7dBO9qDfm7QFyICqyivHcDWSOmcC8fukJ0
-         QDnw==
-X-Forwarded-Encrypted: i=1; AJvYcCU1aiAObjUWPwMFPfD5zju4NpWQBDQrfLuxvLnZ1kvk3D5fknC14PTtJiY04gq8gHv64d+jG77YuD3ZtC0V4YRj1+Tx+so3aws8
-X-Gm-Message-State: AOJu0Yx2qUlwcdclu3vpTmuHhgRO00SB2QORxI1GEF+a70Pv5S5nWuG4
-	ZWtXhY0w3Wh54fZXeFy3JudQxLs0oa5vsiDd5/z3qThWK7YYJvJ9yaRSI8dTmOnglw==
-X-Google-Smtp-Source: AGHT+IEajbdl4FT5qrhmmRB6BQbU0FfjqwFayr0atV/zCp78FbtWV3qlid4bhLaw/0aL4ILfg3e0Yw==
-X-Received: by 2002:ac2:4565:0:b0:52e:9c26:5c0c with SMTP id 2adb3069b0e04-52eb999a650mr3417514e87.37.1720630448268;
-        Wed, 10 Jul 2024 09:54:08 -0700 (PDT)
-Received: from localhost.localdomain ([95.161.223.172])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52eb8e346bcsm655293e87.20.2024.07.10.09.54.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jul 2024 09:54:07 -0700 (PDT)
-From: Alexander Shiyan <eagle.alexander923@gmail.com>
-To: linux-arm-kernel@lists.infradead.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	linux-clk@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Alexander Shiyan <eagle.alexander923@gmail.com>
-Subject: [PATCH v2] clk: rockchip: clk-rk3588: Fix 32k clock name for pmu_24m_32k_100m_src_p
-Date: Wed, 10 Jul 2024 19:53:54 +0300
-Message-Id: <20240710165354.1338287-1-eagle.alexander923@gmail.com>
-X-Mailer: git-send-email 2.38.2
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pvtu1C3u"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54F82C32781;
+	Wed, 10 Jul 2024 17:08:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1720631281;
+	bh=yCXjZ5t+wLkF4jfSXS3RJ3beU8mDIWCl3YtDGYE1JFE=;
+	h=From:Date:Subject:To:Cc:From;
+	b=Pvtu1C3uJ3zW+aleaBmVsAoqDNxbnudCCx4mHaoLN67zWJ04g6jPaGZkiY5k8Du9h
+	 In+XFS1ZtKi9OScZ8FLX2XEme/1Xj2M0BwZ8VkGVLDaHHlsXxbtS12i0WD6tfP/Qct
+	 Fm3QqoyWMWCo1dsStEvYtArhv/3GWWzMBXIYmt6YrGIQ3q+iIX3DqO3i31X/3tDEC3
+	 szdMDBwbUplm5mUnPvp6oF9NXKaAHdQuIbDi77Tz5gcBzC6gbyV4iZjPZsrtkCIyW5
+	 rCuHlC6NxZwwIbo2vvE0d81M2Z0qgGxLFPh/89t6ATWuDOxe6h7S13WGOdqv5u0EsP
+	 8EtTb/iayD6yA==
+From: Nathan Chancellor <nathan@kernel.org>
+Date: Wed, 10 Jul 2024 10:07:52 -0700
+Subject: [PATCH] clk: sophgo: Avoid -Wsometimes-uninitialized in
+ sg2042_clk_pll_set_rate()
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240710-clk-sg2042-fix-sometimes-uninitialized-pll_set_rate-v1-1-538fa82dd539@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAOe/jmYC/x2NwQrCMBAFf6Xs2YU0VCz+ikiJyWtdTNOSTUUs/
+ XeDxznMzE6KLFC6NjtlvEVlSRXaU0P+6dIEllCZrLGdubSGfXyxTtZ0lkf5sC4zisxQ3pIkKeK
+ ifBF4jXFQlCG7Au4D0PnxYXp/plpeM6r7v97ux/EDxS5tB4UAAAA=
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Chen Wang <unicorn_wang@outlook.com>, 
+ Inochi Amaoto <inochiama@outlook.com>
+Cc: linux-clk@vger.kernel.org, llvm@lists.linux.dev, 
+ patches@lists.linux.dev, Nathan Chancellor <nathan@kernel.org>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3702; i=nathan@kernel.org;
+ h=from:subject:message-id; bh=yCXjZ5t+wLkF4jfSXS3RJ3beU8mDIWCl3YtDGYE1JFE=;
+ b=owGbwMvMwCUmm602sfCA1DTG02pJDGl9+z9m6Gm2tbv/F1C5xVNt/Vp88pFe642RWRqbRRiEO
+ 54lX/zTUcrCIMbFICumyFL9WPW4oeGcs4w3Tk2CmcPKBDKEgYtTACYiI8TIMDvMTnGhJIvuLqms
+ P48a5A/XipQY3ehvqF5unP3b+tcCWYb/QTFhH1uiDgTZ7VH/7zdhJ49t+dadtw+8eb3i4vfoX/9
+ F+AA=
+X-Developer-Key: i=nathan@kernel.org; a=openpgp;
+ fpr=2437CB76E544CB6AB3D9DFD399739260CB6CB716
 
-The 32kHz input clock is named "xin32k" in the driver,
-so the name "32k" appears to be a typo in this case. Lets fix this.
+Clang warns (or errors with CONFIG_WERROR=y):
 
-Signed-off-by: Alexander Shiyan <eagle.alexander923@gmail.com>
+  drivers/clk/sophgo/clk-sg2042-pll.c:396:6: error: variable 'ret' is used uninitialized whenever 'if' condition is true [-Werror,-Wsometimes-uninitialized]
+    396 |         if (sg2042_pll_enable(pll, 0)) {
+        |             ^~~~~~~~~~~~~~~~~~~~~~~~~
+  drivers/clk/sophgo/clk-sg2042-pll.c:418:9: note: uninitialized use occurs here
+    418 |         return ret;
+        |                ^~~
+  drivers/clk/sophgo/clk-sg2042-pll.c:396:2: note: remove the 'if' if its condition is always false
+    396 |         if (sg2042_pll_enable(pll, 0)) {
+        |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    397 |                 pr_warn("Can't disable pll(%s), status error\n", pll->hw.init->name);
+        |                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    398 |                 goto out;
+        |                 ~~~~~~~~~
+    399 |         }
+        |         ~
+  drivers/clk/sophgo/clk-sg2042-pll.c:393:9: note: initialize the variable 'ret' to silence this warning
+    393 |         int ret;
+        |                ^
+        |                 = 0
+  1 error generated.
+
+sg2042_pll_enable() only ever returns zero, so this situation cannot
+happen, but clang does not perform interprocedural analysis, so it
+cannot know this to avoid the warning. Make it clearer to the compiler
+by making sg2042_pll_enable() void and eliminate the error handling in
+sg2042_clk_pll_set_rate(), which clears up the warning, as ret will
+always be initialized.
+
+Fixes: 48cf7e01386e ("clk: sophgo: Add SG2042 clock driver")
+Signed-off-by: Nathan Chancellor <nathan@kernel.org>
 ---
- drivers/clk/rockchip/clk-rk3588.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/clk/sophgo/clk-sg2042-pll.c | 17 +++++++----------
+ 1 file changed, 7 insertions(+), 10 deletions(-)
 
-diff --git a/drivers/clk/rockchip/clk-rk3588.c b/drivers/clk/rockchip/clk-rk3588.c
-index b30279a96dc8..3027379f2fdd 100644
---- a/drivers/clk/rockchip/clk-rk3588.c
-+++ b/drivers/clk/rockchip/clk-rk3588.c
-@@ -526,7 +526,7 @@ PNAME(pmu_200m_100m_p)			= { "clk_pmu1_200m_src", "clk_pmu1_100m_src" };
- PNAME(pmu_300m_24m_p)			= { "clk_300m_src", "xin24m" };
- PNAME(pmu_400m_24m_p)			= { "clk_400m_src", "xin24m" };
- PNAME(pmu_100m_50m_24m_src_p)		= { "clk_pmu1_100m_src", "clk_pmu1_50m_src", "xin24m" };
--PNAME(pmu_24m_32k_100m_src_p)		= { "xin24m", "32k", "clk_pmu1_100m_src" };
-+PNAME(pmu_24m_32k_100m_src_p)		= { "xin24m", "xin32k", "clk_pmu1_100m_src" };
- PNAME(hclk_pmu1_root_p)			= { "clk_pmu1_200m_src", "clk_pmu1_100m_src", "clk_pmu1_50m_src", "xin24m" };
- PNAME(hclk_pmu_cm0_root_p)		= { "clk_pmu1_400m_src", "clk_pmu1_200m_src", "clk_pmu1_100m_src", "xin24m" };
- PNAME(mclk_pdm0_p)			= { "clk_pmu1_300m_src", "clk_pmu1_200m_src" };
+diff --git a/drivers/clk/sophgo/clk-sg2042-pll.c b/drivers/clk/sophgo/clk-sg2042-pll.c
+index aa142897aa5e..9695e64fc23b 100644
+--- a/drivers/clk/sophgo/clk-sg2042-pll.c
++++ b/drivers/clk/sophgo/clk-sg2042-pll.c
+@@ -103,7 +103,7 @@ static inline void sg2042_pll_ctrl_decode(unsigned int reg_value,
+ 	ctrl->postdiv2 = FIELD_GET(PLLCTRL_POSTDIV2_MASK, reg_value);
+ }
+ 
+-static inline int sg2042_pll_enable(struct sg2042_pll_clock *pll, bool en)
++static inline void sg2042_pll_enable(struct sg2042_pll_clock *pll, bool en)
+ {
+ 	u32 value;
+ 
+@@ -132,8 +132,6 @@ static inline int sg2042_pll_enable(struct sg2042_pll_clock *pll, bool en)
+ 		value = readl(pll->base + R_PLL_CLKEN_CONTROL);
+ 		writel(value & (~(1 << pll->shift_enable)), pll->base + R_PLL_CLKEN_CONTROL);
+ 	}
+-
+-	return 0;
+ }
+ 
+ /**
+@@ -393,14 +391,13 @@ static int sg2042_clk_pll_set_rate(struct clk_hw *hw,
+ 	int ret;
+ 
+ 	spin_lock_irqsave(pll->lock, flags);
+-	if (sg2042_pll_enable(pll, 0)) {
+-		pr_warn("Can't disable pll(%s), status error\n", pll->hw.init->name);
+-		goto out;
+-	}
++
++	sg2042_pll_enable(pll, 0);
++
+ 	ret = sg2042_get_pll_ctl_setting(&pctrl_table, rate, parent_rate);
+ 	if (ret) {
+ 		pr_warn("%s: Can't find a proper pll setting\n", pll->hw.init->name);
+-		goto out2;
++		goto out;
+ 	}
+ 
+ 	value = sg2042_pll_ctrl_encode(&pctrl_table);
+@@ -408,9 +405,9 @@ static int sg2042_clk_pll_set_rate(struct clk_hw *hw,
+ 	/* write the value to top register */
+ 	writel(value, pll->base + pll->offset_ctrl);
+ 
+-out2:
+-	sg2042_pll_enable(pll, 1);
+ out:
++	sg2042_pll_enable(pll, 1);
++
+ 	spin_unlock_irqrestore(pll->lock, flags);
+ 
+ 	pr_debug("--> %s: pll_set_rate: val = 0x%x\n",
+
+---
+base-commit: 54cb3bb483379b0c070528974843e06aecbc9390
+change-id: 20240710-clk-sg2042-fix-sometimes-uninitialized-pll_set_rate-8dee4cfb08c5
+
+Best regards,
 -- 
-2.38.2
+Nathan Chancellor <nathan@kernel.org>
 
