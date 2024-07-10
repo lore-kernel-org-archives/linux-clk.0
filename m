@@ -1,101 +1,123 @@
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 506F11922CD
-	for <linux-clk@vger.kernel.org>; Wed, 10 Jul 2024 12:41:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 263741E4AF;
+	Wed, 10 Jul 2024 12:50:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720615267; cv=none; b=O+IkDq8z5PYwKzLrPPiL/hXPYcawfYUTiZCYx5BlLg337dyr6gomdzEeoHZB3V8LAk6sz//u+pCZMtEQPILOJx9d6nRIIn57u9IylUPdWFtRDRkZ33zrD1HOhIGzKSNXxmuTWZnWnKzsXhqf8O33yvcLF0FaTJLUcMYPCg9Uzfk=
+	t=1720615847; cv=none; b=usIbXsf28on+ovkmWvGdq8wsr16OJmq/VUD26FX1Gird08GB7J5xy3WErF3H2/5L45OSWWITWbb+H+84LBS6kUyyeHAAyW+Up5sakeRhkYsfKd5oDd159ezKhxSP4bJrlZWaPktfGiyfFXi1la3B9b1fTSbJnlb04PG1bXySwKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720615267; c=relaxed/simple;
-	bh=Ool8JEcomupLYFCAVUceeyirLvgRl1G6dqSHkrYH0y8=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=i9465dftGrdrzbkMrp1zk2/wm8/InsqZesmfxkug3ayCdYwl6QZGf2m2bQDrVb27nxyQs9KDP/H4KgMATh7gBKTOl5QfJDcwip4wK9eleOXcx5DhGGAU4v1IH8F3jwXxFbzAYuyJNuRolVqlByKQS/dLaAGJdHjhm28qTifa6+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=gBKxwxnF; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1720615847; c=relaxed/simple;
+	bh=sPxM8NaCsBvhlryktLPvPiUn7nj8vj/D3dzAifCOTmE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=V2GywiEH1xUDHDnRxwsO5yr/Yo6YaR3nKbhR96kum+HJ9BMIpyZwAEAiXG42MKiziTP5tt7YMqCNMuq9NcLVJOXvwiC5FoWsM1a/D6zNM2dZSFYge9v//JhCr2A80IKZxirU+/+tVTikO95ZLFDxaiyNuFRxzrPw95elN4Q+gag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=U3krA5jB; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="gBKxwxnF"
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42561c16ffeso43325025e9.3
-        for <linux-clk@vger.kernel.org>; Wed, 10 Jul 2024 05:41:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1720615263; x=1721220063; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MQLVDFNoFuKRZg7eJdxMfqN4N8nKsyXTgSDfnf3uLGM=;
-        b=gBKxwxnFgp9AOzK/2lb/jr8A/NhFbZkPUvlg5TH0mYbtG80V2yXBxIIGQvh4g7ceFq
-         /p8TADEAgk5hHMbeU8Tukh32d9OIGqzZmfx95mc6DLzqR8snLBQlJQCAs/BkM6qpK4Hp
-         N6T2dw64rhaATV3XQn682pDmYgzZnjOyUe28zGdBZk9rtBdEKvAwBxUwtyxngbHCS4QR
-         zL2fucGqKtrty8SgITaWWyVyRhze8rY5iLuZ+Q4jsuVNssqLydBEXXYq86zPrfcvVZKI
-         3rTFR/GdzADTnvoVz8gMZo3ox3VRVv1SB7RBvQfcFu9D6CIOG9HqeYx5XbK+gFgGgdmn
-         u7QA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720615263; x=1721220063;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MQLVDFNoFuKRZg7eJdxMfqN4N8nKsyXTgSDfnf3uLGM=;
-        b=gzQlLKDx1Kw42rkAIniOmmIV20q9mNFL6tSxuC3m1j8nwZl5hvYo4d8BMz3qaoAE5z
-         d7pUN/dljzF1PtbvEc0FYotmNHVo5+Nty4rPjmb77KDHPcwCkGR+qXd1GcvSShNQ/akY
-         woZ8zUs2yvfDTpaJBSEj+JXxBznBV1enF7FO21fUF4S7uRKGLPFpG2UTob4/BbH4bnl7
-         CZuFpTrOXgizYudBRSEAoeDRoIRMqPrZ76HfmhuBNo8prxsB+3idtifG0Rtj5tBML228
-         U0Xc7gR7oN2M+rPxi3zWkaVAQ02IiLuz9qpyfbcOVZmt6rrNp8CWr/9cw/OOOKsA+Awc
-         WIQg==
-X-Forwarded-Encrypted: i=1; AJvYcCW+h2k2mclnxu3qnOsTFu5GwT4Ql/62TlkyrWWvrHnygJR19meq+tfPqdDBddQQtbrBN7jEasViY0BxmiFfbOnrw+xZ2EWzZbm2
-X-Gm-Message-State: AOJu0Yy826oAI9IlV4d6jnU5fjKyz7+ZXhXU2OZGIJwhkbav4GVVZ9aG
-	gfhcuVLI7GEltRguMltHlrjk+bq3b4dQcqiT1qlh+PeJPNx5TXanhhVTztLwXUifkKjkAS+/wlN
-	VR8k=
-X-Google-Smtp-Source: AGHT+IGT5ilXJSn/KNzsrB9+RCqhsbkJiqU3dqpEBIzoFB+Fcmer/Kih8Fhroy2GBRX27ac1gAp6gw==
-X-Received: by 2002:a05:600c:6c51:b0:426:51e8:5192 with SMTP id 5b1f17b1804b1-426709fac0bmr30666695e9.41.1720615262749;
-        Wed, 10 Jul 2024 05:41:02 -0700 (PDT)
-Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:f3cc:df72:f495:3b49])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-367cde890f6sm5214025f8f.53.2024.07.10.05.41.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jul 2024 05:41:02 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Vladimir Zapolskiy <vz@mleia.com>, Bjorn Andersson <andersson@kernel.org>, 
- Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Samuel Holland <samuel@sholland.org>, Michal Simek <michal.simek@amd.com>, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, linux-sunxi@lists.linux.dev
-In-Reply-To: <20240703-clk-const-regmap-v1-0-7d15a0671d6f@gmail.com>
-References: <20240703-clk-const-regmap-v1-0-7d15a0671d6f@gmail.com>
-Subject: Re: (subset) [PATCH 00/10] clk: constify struct regmap_config
-Message-Id: <172061526145.2117005.2499091095196670705.b4-ty@baylibre.com>
-Date: Wed, 10 Jul 2024 14:41:01 +0200
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="U3krA5jB"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1720615844;
+	bh=sPxM8NaCsBvhlryktLPvPiUn7nj8vj/D3dzAifCOTmE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=U3krA5jBxVGjqTr4jjxuUNvlDgil7oP64q+KUqpJGEUP6+i1DMqZFNTgCHA14mqdx
+	 J5JZfEIQpi5VJYQUy69C3lWEaSVpab/097nZMmDl3ao9akZTBLsGtxcicNpKqehAKT
+	 asRnUAx+ysAr1FMXjKaX82z8pzzBE1tw7CdkqVsUt23rvqLRvO6v17QbYUSw/8ikbL
+	 gY7Cey1BX+s4I/0VkXwIfsQq0nh8Fo0BRiFehRHAQiHXD8MfMa6vZK+H3OMDDGbKn0
+	 knas+p3BJQZTxZK2ijQwlNZb6h37Ivo7P9jbduNRF1bXY8MFZ1QnqO6IagcLKVw99s
+	 vWrQ0q2hu9SCA==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 304093780029;
+	Wed, 10 Jul 2024 12:50:43 +0000 (UTC)
+Message-ID: <23369ea1-12d2-4386-a8ac-431620b75e2e@collabora.com>
+Date: Wed, 10 Jul 2024 14:50:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: Aw: Re: [PATCH v1 0/4] add syscon requirement for mt7988
+To: Frank Wunderlich <frank-w@public-files.de>
+Cc: Frank Wunderlich <linux@fw-web.de>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
+ <linux@roeck-us.net>, Daniel Golle <daniel@makrotopia.org>,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-watchdog@vger.kernel.org
+References: <20240709101328.102969-1-linux@fw-web.de>
+ <126053ef-3bfb-47c2-aa17-eb1d26d99102@collabora.com>
+ <trinity-93a5ed81-b890-4d49-bfec-1bbb1219cb65-1720611282583@3c-app-gmx-bs04>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <trinity-93a5ed81-b890-4d49-bfec-1bbb1219cb65-1720611282583@3c-app-gmx-bs04>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.0
 
-Applied to clk-meson (clk-meson-next), thanks!
+Il 10/07/24 13:34, Frank Wunderlich ha scritto:
+> Hi
+> 
+>> Gesendet: Mittwoch, 10. Juli 2024 um 12:45 Uhr
+>> Von: "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>
+>> Betreff: Re: [PATCH v1 0/4] add syscon requirement for mt7988
+>>
+>> Il 09/07/24 12:13, Frank Wunderlich ha scritto:
+>>> From: Frank Wunderlich <frank-w@public-files.de>
+>>>
+>>> Some nodes require the syscon fallback at least in u-boot when using
+>>> OF_UPSTREAM.
+>>>
+>>> This is because uboot driver uses syscon_node_to_regmap in mtk_eth.c for
+>>> "mediatek,toprgu", "mediatek,xfi_pll" and reset pointing to watchdog-node.
+>>>
+>>
+>> I wonder what's the major blocker here to modify the u-boot driver to take
+>> the upstream devicetree as-is, instead of using syscon_node_to_regmap?
+> 
+> in uboot there is no driver for all syscon and to handle parallel access this is done with the syscon fallback.
+> 
+> The syscon uclass is a small driver which is generic and only handle the regmap in global context.
+> 
+> In theory it could be possible that regmap is aquired twice when used from 2+ other drivers...to prevent this without
+> adding the syscon fallback each syscon needs a dedicated driver like in linux which does only syscon stuff (code
+> duplication at its best :) ).
+> 
+> of course i can use regmap_init_mem in the uboot ethernet driver
+> 
+> https://elixir.bootlin.com/u-boot/latest/source/drivers/core/regmap.c#L242
+> 
+> like it's done once for syscon-uclass.
+> 
+> but i will cause issues when a second device tries to access this regmap. So it was be much easier (for me) to add this
+> fallback and not writing 3 device-drivers in uboot doing the exactly same as syscon.
+> 
+> if you have a better idea how to handle it, let me know :)
+> 
 
-[01/10] clk: meson: a1: peripherals: Constify struct regmap_config
-        https://github.com/BayLibre/clk-meson/commit/4a7665b885b6
-[02/10] clk: meson: a1: pll: Constify struct regmap_config
-        https://github.com/BayLibre/clk-meson/commit/5c6ffe3537d5
-[03/10] clk: meson: c3: peripherals: Constify struct regmap_config
-        https://github.com/BayLibre/clk-meson/commit/af3e4505e6bc
-[04/10] clk: meson: c3: pll: Constify struct regmap_config
-        https://github.com/BayLibre/clk-meson/commit/11c7c1b94059
-[05/10] clk: meson: s4: peripherals: Constify struct regmap_config
-        https://github.com/BayLibre/clk-meson/commit/02cc1df92d75
-[06/10] clk: meson: s4: pll: Constify struct regmap_config
-        https://github.com/BayLibre/clk-meson/commit/3d0e8b6edd6b
+I see. The problem is that, from your description, it looks like u-boot
+uses that as a kind of workaround for concurrent access to MMIO...
 
-Best regards,
---
-Jerome
+...looks like a good topic to discuss in the u-boot mailing lists.
+
+Definitely, the TOPRGU and the XFI PLL are not system controllers, so the actual
+"syscon" definition would be wrong for these, that's it.
+
+Cheers
+
+> regards Frank
+> 
+>> Regards,
+>> Angelo
+> 
+
+
 
