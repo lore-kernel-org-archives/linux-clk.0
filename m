@@ -1,106 +1,96 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D329217FD;
-	Wed, 10 Jul 2024 10:42:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6B418FDB1;
+	Wed, 10 Jul 2024 10:46:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720608156; cv=none; b=G1BB13QfNR+DJfWLKoTyT1+7sB/OGe0cWfvn0hUxeLjmKA3xBuDw4T/Hf9SyzT1ssM0aeN9UYbgW4kEAegkUvDGl68WkwBAlS5QG6zOWQAGjkNj30fmDbIy0kdEndBBuqk2ALT7CHHpPjywGV/MtliXSO92iHu1+EA0rmEuACp0=
+	t=1720608362; cv=none; b=DYqL9o8RQzHYriTVGVVllhQLGohDQclw6vitBr5DHPuyLnhbtp34lQhKhchR8nZi8CXY5XNPkm2MkqDnxNk/PeBS9Z9PX6DMW0nEs58D8bEoxfEIO24Hw6P5m18tUnSYuHP00OcbIIn0D14+iEZBWG06/hYhQH59duZTLqlGnn8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720608156; c=relaxed/simple;
-	bh=ayD8gBlKt0AM6K9DCWhxBeDD+DoHF7KhDZstIfhcxLk=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q2rjf9BKUUeO3MrLuib2SwLAb5c27Ys4Zsg1a0DBepOXE39LoPM4ibCb+7g4beTGp8+fJLxlpHMsShweT5rWPQkxgMYKUYVImz4gPaTS6F4tNvNsNz8DTqQ1iPr/DS83Ki4n7tKBA0TBm5EyDpy5BnskSr6osWu8Vv/2t3Hhru8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aqStqJcK; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1720608362; c=relaxed/simple;
+	bh=OT6YCCN0htNhieZjFLd6a0qp/JNFJI1m8IJPRRTsawA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DA+tQtpyQYUqJihFam7KCt0oIMa+cGIHe9AZLG/3tTjz+CjfzPbAngrGWEUbJKbovd1IBqVHjFozgGyW4PXSGLSeQygwyJo5v9P1wrYIk1E2mQAYxrxYSn2hCERKQZ5JBUr3t0GzPz28I6Io8q6TDmWVeG86idkXRjGjd3EYkx8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=oac1qC1t; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aqStqJcK"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46A9ntvA016998;
-	Wed, 10 Jul 2024 10:42:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=ayD8gBlKt0AM6K9DCWhxBeDD
-	+DoHF7KhDZstIfhcxLk=; b=aqStqJcKqv1P7FccCVgOd2BTDmuaMS6G3JuPKpb1
-	x7vPR8z0Sbp65IbRd17FRCWx3FT1IRK7Vh/VC/ZVica6p9IGQ2KO/D5VSwWGjsBF
-	/WBzFvfBmcuMJolsJX/cxah2LVS6oIr3tsYTMc8SQZn6RgZ2q84KUlhTvZyjV2C6
-	D+zB3MV/ipxkOiPVYOxUij/BczsVGOOJSYX9oJ2l6swYiG7Dl4b4zpIplSRzmBwV
-	MiZ1VO8rGdBwBHdjz20jkQeFi2L/TqVBXsJui/o2i8m8GKyCMNcagSkMvRnNCSP+
-	WzTEKgs9dYCFckJq8lUUSoMwYMjhYLCiyWo86oAmn0qdaA==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406xa68yk4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 10 Jul 2024 10:42:30 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46AAgSwS011286
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 10 Jul 2024 10:42:28 GMT
-Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 10 Jul 2024 03:42:07 -0700
-Date: Wed, 10 Jul 2024 16:12:04 +0530
-From: Varadarajan Narayanan <quic_varada@quicinc.com>
-To: Konrad Dybcio <konrad.dybcio@linaro.org>
-CC: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <djakov@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH v1 3/3] arm64: dts: qcom: ipq5332: Add icc provider
- ability to gcc
-Message-ID: <Zo5lfDVVdgZ/iwi3@hu-varada-blr.qualcomm.com>
-References: <20240709063949.4127310-1-quic_varada@quicinc.com>
- <20240709063949.4127310-4-quic_varada@quicinc.com>
- <cef54c07-4ecb-44bd-ad7c-aea475b89ffb@linaro.org>
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="oac1qC1t"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1720608358;
+	bh=OT6YCCN0htNhieZjFLd6a0qp/JNFJI1m8IJPRRTsawA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=oac1qC1tpy0MhlTjXLhqCoClYM4Gfwh164dGc8lvoNoEfoVWoLMHJE1CNxOogNBe5
+	 cBj81asvYLMdrBhlfKP8xFrICNZjnCEX3KGjqZqD6grjIRSCNC0YcQhcvWjrLqyl1p
+	 0iowSCdUXo07D16fndDYL9/5dtvEojPQvNy2T8Ly/o1LJ7wCCaBYxCT2J/EmDR+Li/
+	 wPK+8G4EWdmdsjWqH+NbKQIt/UKV+U2KvzMS1iwX8U2L/99CqtwMFa1ebF8NmNXe1q
+	 bSNu0lr7BXkvK8C6Vt0J9OfgYShVrFook4OciW1BZdflq2W+2wol84bck2AOcklO6O
+	 CqR8kWSpcvrsA==
+Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id D67F437810CD;
+	Wed, 10 Jul 2024 10:45:57 +0000 (UTC)
+Message-ID: <126053ef-3bfb-47c2-aa17-eb1d26d99102@collabora.com>
+Date: Wed, 10 Jul 2024 12:45:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <cef54c07-4ecb-44bd-ad7c-aea475b89ffb@linaro.org>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: rkWirG9LXCcRGq27wtfX0eij9naWv6dL
-X-Proofpoint-ORIG-GUID: rkWirG9LXCcRGq27wtfX0eij9naWv6dL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-10_06,2024-07-10_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=724
- suspectscore=0 lowpriorityscore=0 impostorscore=0 phishscore=0 spamscore=0
- clxscore=1015 adultscore=0 malwarescore=0 mlxscore=0 bulkscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407100073
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 0/4] add syscon requirement for mt7988
+To: Frank Wunderlich <linux@fw-web.de>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>
+Cc: Frank Wunderlich <frank-w@public-files.de>,
+ Daniel Golle <daniel@makrotopia.org>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ linux-watchdog@vger.kernel.org
+References: <20240709101328.102969-1-linux@fw-web.de>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20240709101328.102969-1-linux@fw-web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 09, 2024 at 11:53:41AM +0200, Konrad Dybcio wrote:
-> On 9.07.2024 8:39 AM, Varadarajan Narayanan wrote:
-> > IPQ SoCs dont involve RPM in managing NoC related clocks and
-> > there is no NoC scaling. Linux itself handles these clocks.
-> > However, these should not be exposed as just clocks and align
-> > with other Qualcomm SoCs that handle these clocks from a
-> > interconnect provider.
-> >
-> > Hence include icc provider capability to the gcc node so that
-> > peripherals can use the interconnect facility to enable these
-> > clocks.
-> >
-> > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> > ---
->
-> Doesn't the USB host need to have its path described to keep working?
+Il 09/07/24 12:13, Frank Wunderlich ha scritto:
+> From: Frank Wunderlich <frank-w@public-files.de>
+> 
+> Some nodes require the syscon fallback at least in u-boot when using
+> OF_UPSTREAM.
+> 
+> This is because uboot driver uses syscon_node_to_regmap in mtk_eth.c for
+> "mediatek,toprgu", "mediatek,xfi_pll" and reset pointing to watchdog-node.
+> 
 
-Presently, USB host enables GCC_SNOC_USB_CLK directly using
-the clocks/clock-name entries. So it is not dependent on ICC.
+I wonder what's the major blocker here to modify the u-boot driver to take
+the upstream devicetree as-is, instead of using syscon_node_to_regmap?
 
-Shall I update the USB DT node to use interconnects now itself,
-or wait until this IPQ5332 ICC enablement series is approved?
-Please let me know.
+Regards,
+Angelo
 
-Thanks
-Varada
+> Frank Wunderlich (4):
+>    dt-bindings: watchdog: mediatek,mtk-wdt: add MT7988 syscon requirement
+>    dt-bindings: clock: mediatek: add syscon requirement for mt7988
+>      xfi-pll
+>    dt-bindings: clock: mediatek: add syscon requirement for mt7988
+>      ethwarp
+>    arm64: dts: mediatek: mt7988: add syscon for watchdog, xfi-pll and
+>      ethwarp
+> 
+>   .../devicetree/bindings/clock/mediatek,mt7988-ethwarp.yaml | 6 ++++--
+>   .../devicetree/bindings/clock/mediatek,mt7988-xfi-pll.yaml | 7 +++++--
+>   .../devicetree/bindings/watchdog/mediatek,mtk-wdt.yaml     | 5 ++++-
+>   arch/arm64/boot/dts/mediatek/mt7988a.dtsi                  | 6 +++---
+>   4 files changed, 16 insertions(+), 8 deletions(-)
+> 
+
+
