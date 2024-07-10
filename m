@@ -1,209 +1,532 @@
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2088.outbound.protection.outlook.com [40.107.20.88])
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94B905CB8;
-	Wed, 10 Jul 2024 02:09:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.88
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720577368; cv=fail; b=T080Akv/KPVc9E+vewin2FXJre4Y/C/CnJL7hlgbn0T7HfWwfjFenLUh0oIg3AEw17jQKdjH21eMu7cTlKaeNY1uR7F0mUYiTGYp/+8NSEUz8Zfz6+bS5e8DqI/pSFxXOTUWPEsn2VkLXSCSHKbeVX1ZYkL45nvGH11LP/Opo2A=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720577368; c=relaxed/simple;
-	bh=bGAVu/x9nls8AgBE8ZfpZaGhTh+EKuo8AXPGMUaqhnU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=rFtPeVyZlVfdE7eYS2X2ySNssMVFVyOq/BShXORs9oCZaOB3RMfq6nuOBVAkq2HiI+tPAXwQ+mbT82iBj60qFx/jGE0N1f3PhH9DSkTxQo/QqF+pM3A0fULUYLpKmB4UVqMlxPGnU7qnOTcHUTQxxnf5MsFoQL0u6m7WBp70TT4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=YQGg0A7B; arc=fail smtp.client-ip=40.107.20.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 137749476
+	for <linux-clk@vger.kernel.org>; Wed, 10 Jul 2024 02:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720577452; cv=none; b=qVu3eGi7QJqx/jJjTEd+WsyOQDd7qYGP91LxcBsHt69nUG3lgRBQScQjSGOrPeKCSs2wlLKbV9hby7xpKyseD/hFsoD1srs6G11axb5pxTxOzD2oMJfivpKnZtcOzkSct+fdehPlEeiZyB7w8kXSescOraylQfI5/urUmr1Ywx0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720577452; c=relaxed/simple;
+	bh=j5SUz3CTzqZ5KPXCF79ZAMIcfKGOMlcvDHyUhyxEd+I=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=e6To1boN9XVI+Ubbmo2UAw5AVaqjg/zLWgQI18l4ORY+SsfaMtVu6POy3ukPNikwIwX62PVn9Kj4DWaFDyEMKgEzQM1Mdenba0fOlAHT3R/uu5ZMZeGBs0yXr6pfwkj71L+y5+BDqfS6HCKVbWDaoCT4oXK3GqVfJBNRh8Hpl+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=MAh/owVm; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="YQGg0A7B"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=RPtqfpE46SrmX3INCeKvN8+gbtENvr4tvW1ET6KUU7IkhwGHw6Hq5N0HB5fEnXG6OuqHY6UDSjJmve3pdtADfnf7zTmrysrDUyo3MWFkyZQUpzp1eIbCyFi7ufL2NULuh/2xn/LsK1mAEXlyKbpDvGnzllcN9qw5uRCubUKVZZtNULxakKnAn0XjZQ0mp3Nmfj5BwtuUJvonrbOc2FByObtnbBRUgQ/peMOrtOfP65B2B2krS3/s+RpAMK9nNjRPcbmkhNcy+hATu+dxIQIf0vMgt/cymAPLqHfsivpmSxgipXO07MbEuASk4fi9GLYjXgrrmtSahBQrIxNLOkD0nA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bGAVu/x9nls8AgBE8ZfpZaGhTh+EKuo8AXPGMUaqhnU=;
- b=kCq639CqMoDbcYc3jGNJUoKpyK3KPBDyXewUVnW1ZIBaG+83zFdOFmayMr+24aEWP00VY03RJEUWukopHyoAw+4PlWLAKh1B8QX0VVjZQ8hmPkBLbaYqAqH8Zugs5+wZnf6ZDcosahUppAWkdYyMtJ1cKwovEw2nCl2xO/+9/3o1FzEwXKf72l8m+73TMWHNKMftrS1huAuEQGMxWezscEn1rttvKDzea7xqBOdHa7Wmm1FhUpQdd8eUgzpEvyDMCGH6cifLloKoe+rLIqb+NUSH7xadPXhNCCQ0fDvxIRjwti3Bq7oDNzc/ENmhEyNeaeFZtfVNkmtHQLJ56kCJAw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bGAVu/x9nls8AgBE8ZfpZaGhTh+EKuo8AXPGMUaqhnU=;
- b=YQGg0A7BWGrJP3kv3cP+roftoHdThG/Az0T+QT+OvU890lrUGrmf6hUGzNS60lv7GHBihHLGUCHbNiKBBWIDo3ntPnN2v3AJDXMYQU5tUROKxUDrbDC8hTXntfUWCrmAU7OgDafdGKfh92yc6oZq8ixjXmdK0JoR9p/B7bu992g=
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
- by PAXPR04MB8671.eurprd04.prod.outlook.com (2603:10a6:102:21e::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.36; Wed, 10 Jul
- 2024 02:09:21 +0000
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db%6]) with mapi id 15.20.7741.033; Wed, 10 Jul 2024
- 02:09:21 +0000
-From: Wei Fang <wei.fang@nxp.com>
-To: Peng Fan <peng.fan@nxp.com>, "mturquette@baylibre.com"
-	<mturquette@baylibre.com>, "sboyd@kernel.org" <sboyd@kernel.org>,
-	"robh@kernel.org" <robh@kernel.org>, "conor+dt@kernel.org"
-	<conor+dt@kernel.org>, "shawnguo@kernel.org" <shawnguo@kernel.org>,
-	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "festevam@gmail.com"
-	<festevam@gmail.com>, "abelvesa@kernel.org" <abelvesa@kernel.org>, Clark Wang
-	<xiaoning.wang@nxp.com>
-CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="MAh/owVm"
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240710021047epoutp02b8e1539de83dc41530148e40bb15997d~guBKqM8VA2910929109epoutp02S
+	for <linux-clk@vger.kernel.org>; Wed, 10 Jul 2024 02:10:47 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240710021047epoutp02b8e1539de83dc41530148e40bb15997d~guBKqM8VA2910929109epoutp02S
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1720577447;
+	bh=zhV1mj3ESdqw+Dll+VEagMSYECkklSZLtZx4BxBMZl0=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=MAh/owVmtoHuujk/g/bHiWBIzWT5TiMGr3zh3RVJV8/5E8gUmV1ajM69niahVPsCD
+	 xoKBlbNUwId3e2BcIox+bDYPZDFZoebZht4TjbOBIRP1wAbjMApJlHq/RYW2uTxkkL
+	 dLoc9CrUQut3tc83dLHLn/wHmhZMVOcXIdgC+kFs=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTP id
+	20240710021047epcas2p187a9cc458b1bf901006aa947a91642c2~guBKLaSUF1785417854epcas2p1f;
+	Wed, 10 Jul 2024 02:10:47 +0000 (GMT)
+Received: from epsmgec2p1-new.samsung.com (unknown [182.195.36.91]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4WJhCp65Xjz4x9Q8; Wed, 10 Jul
+	2024 02:10:46 +0000 (GMT)
+Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
+	epsmgec2p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	0C.13.25328.6ADED866; Wed, 10 Jul 2024 11:10:46 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
+	20240710021045epcas2p1d0732c0ac526df3e75dc543e0d3f8b10~guBI0n66T2260522605epcas2p1G;
+	Wed, 10 Jul 2024 02:10:45 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240710021045epsmtrp1ceb999d4a941850d33dfc293ff139357~guBIzQpoA2843328433epsmtrp15;
+	Wed, 10 Jul 2024 02:10:45 +0000 (GMT)
+X-AuditID: b6c32a4d-d53ff700000262f0-6b-668deda6f510
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	D0.57.29940.5ADED866; Wed, 10 Jul 2024 11:10:45 +0900 (KST)
+Received: from KORCO118965 (unknown [10.229.18.201]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20240710021045epsmtip2a5a227ba136a8af44580d17ffa50491d~guBIk8_QT3038530385epsmtip2j;
+	Wed, 10 Jul 2024 02:10:45 +0000 (GMT)
+From: "sunyeal.hong" <sunyeal.hong@samsung.com>
+To: "'Alim Akhtar'" <alim.akhtar@samsung.com>, "'Krzysztof Kozlowski'"
+	<krzk@kernel.org>, "'Sylwester Nawrocki'" <s.nawrocki@samsung.com>,
+	"'Chanwoo Choi'" <cw00.choi@samsung.com>, "'Michael Turquette'"
+	<mturquette@baylibre.com>, "'Stephen Boyd'" <sboyd@kernel.org>, "'Rob
+ Herring'" <robh@kernel.org>, "'Conor Dooley'" <conor+dt@kernel.org>
+Cc: <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
 	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 2/3] clk: imx95: enable the clock of NETCMIX block control
-Thread-Topic: [PATCH 2/3] clk: imx95: enable the clock of NETCMIX block
- control
-Thread-Index: AQHa0dSlmJsiuMOg1UmEpR/J2kHl/LHucI+AgADGRlA=
-Date: Wed, 10 Jul 2024 02:09:21 +0000
-Message-ID:
- <PAXPR04MB85108ED62C1178D9D0BED9F388A42@PAXPR04MB8510.eurprd04.prod.outlook.com>
-References: <20240709073603.1967609-1-wei.fang@nxp.com>
- <20240709073603.1967609-3-wei.fang@nxp.com>
- <PAXPR04MB8459C43A1D11FA8A9F4AD0FC88DB2@PAXPR04MB8459.eurprd04.prod.outlook.com>
-In-Reply-To:
- <PAXPR04MB8459C43A1D11FA8A9F4AD0FC88DB2@PAXPR04MB8459.eurprd04.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PAXPR04MB8510:EE_|PAXPR04MB8671:EE_
-x-ms-office365-filtering-correlation-id: 12c77ed6-7f0e-47cc-7495-08dca0855044
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|1800799024|376014|7416014|38070700018|921020;
-x-microsoft-antispam-message-info:
- =?gb2312?B?SHJYdnZmWmNVWkFwSGliUE9CUE9WUVUwaWYxSEhmTVNxeDZ4R1h1MGFoQUgz?=
- =?gb2312?B?WVk4aUp5c2J4YkxKZTVHYUpJZlgwTXVHb1Fmc3Evckd6clFVMnAyQjVIOEJV?=
- =?gb2312?B?V3RjaGRQdVdRY09oTmdpNVdObFAxK3J4NmVQaHIrWE42OC9MTVBEMVNtSUNK?=
- =?gb2312?B?N01JYWsyekp4Q2FNd2FERk1Ta1FCNlcveC9YNnJtWXpVYnZsVENLSHM3OXJL?=
- =?gb2312?B?K1ZpcU9tTU9yd2NjUEQzUXloQmxjR1FoU1RJYUpnTkF3Q3lLaDBSL29lbmtj?=
- =?gb2312?B?RXRxTUpHWFBJUWpwZ0tvRmc2QmtxYld4RFZzTDZGL3E4cjlKUzhEekltZnVw?=
- =?gb2312?B?eFlPem5XZUZKSUZhV2pkdGdsblJZdjlZeFNjQ05xZTVVcFlnbkJQa3lmWjJQ?=
- =?gb2312?B?cVZGL1J0VHdFc2s1VGxKRjVObGtKVHRkcEp4RzlCWHZ1UklLdVpMSGxlaFlS?=
- =?gb2312?B?eTRkMjJHUEo2SGI2VVVueXhNYU9WTFdCSXAyQmF4cVJQNGRJb2ZQelFCQ21P?=
- =?gb2312?B?cXlqNkRwaVlibVFSVDZXZXhkTUhUZG9uUzNKUHcwaEJWWnprOE1sbnNVMGJ2?=
- =?gb2312?B?WVlrVkVVNDM5eVpWb0RtZVM2N2hBaXhhYVZIKytaeE9Pd2NsWjU1TjB2YndY?=
- =?gb2312?B?eHpTY2FjU09HNFVHWmlENVYyeDQvYm9HN1N3WnFQdmNnQVZCbkd1UTN6YXJw?=
- =?gb2312?B?OHhUM2VTdEdwRkJkT0JaSnNuNXI2bDZZd0kydUZIbzh4WjJBaS9UekNFN3FK?=
- =?gb2312?B?MENQRVo1b2pkWXRqSEpCRHFEM2JSUkE3RS94S291U2VjdlhObUlZcFByZGRQ?=
- =?gb2312?B?SlVkUlNEczdrR2poak0rb0ptUnBBZWRHWXNzRUlMVEMvT2Z0VGpVNU53ZlBO?=
- =?gb2312?B?cDFDVTdnYjRXVWQrK3h3YzBZK1Z1SHJuMjZBazA1RFo5a1NnZDEvV1ovZVMx?=
- =?gb2312?B?LzJiMDVTNlpRdEREWUVZWXdaM09PaFB5ZElUaDZjc3ovNmZ4N0Y3SVlZUWdr?=
- =?gb2312?B?dE1RQTBmZ0JRSkh0V2Q4cHpTeFZyMy9DZlFrcVZQVjRzUWdOMExVNXI3T2wz?=
- =?gb2312?B?ekhtMEJxd0RBSVlwV3lrQzFramxOWDVOcXFxQ1RGczgrVURGcjVuYjJRSzJt?=
- =?gb2312?B?bGl4UG9ReUJBWUxGalRpUDBDV0kydUVrNWVRYVQxV3hSaGl2bGlBQzJPRnVI?=
- =?gb2312?B?ZkZKRU13WU00OUxObjdpQXZUaXNPZnRxR3BVaHl4aXAwM00xQ1h3RUZNOHJ0?=
- =?gb2312?B?WVdhR3B1N29IUU85ODFnY2JBRG81cXhaSGFsNzhHU293bGhuTmUxOVNUcUFw?=
- =?gb2312?B?Y2UvZGtEajljL1ZXbnFiUStiRGV6MmZtcVFvWGVMYklhY2sycFVvKzJzbE8w?=
- =?gb2312?B?TnJVUmV1bTRwVU1va0s2TUxOK3prWjJCQVV5OHVremg3bzJBQllOdkpBcktY?=
- =?gb2312?B?TFQyS1dWY2R4cU95cGpJV1ZTbE0rZkd3RlFRSk5YTXJLR29wN0JpdjF1S01G?=
- =?gb2312?B?MDFha1l0NzZqUmlhajdBMER1ckFCVWxkU0M5UGJ3NWtaR3Z1YnZRT3FhbHZW?=
- =?gb2312?B?NW95YTZGU3hNNUtEd21pcWdLZ2RRdWVWa3BDZVBrWGFJaXFRUk5NM1Vxb3ZP?=
- =?gb2312?B?TFpqL0srN1VtVGRUYkxOalFSOFd6a3J1OWJUTnpJTFJaT3dia1pZenc4enhR?=
- =?gb2312?B?ODNabHp4QkorSjEwVlFQazgwc1Z2akM3T29CSGF4V0dFQkVyWHdsRHJIbXQy?=
- =?gb2312?B?S0xhRjlMcVdab0RiR0dJVkRFWDhLN2hoZmxQMTVXZWtNTWFXL2dYUFZGd0lu?=
- =?gb2312?B?dUgvQVJNdHp4ZTR2KzhXaTZ0c29QZFd4QkdpWFFxRWVPRGNaakMzdFgxNFN4?=
- =?gb2312?B?SVJLbXltcnJlOUswblJqSkFTZThhbkJGL0NyU1JKY0RIenBMQnhveG1uWWdG?=
- =?gb2312?Q?ptA/CPeIQkM=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(38070700018)(921020);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?gb2312?B?Rmx0bGVSNVBQWUh0UllRKzNXZTREZUNCUzRxSHZjNkJpb2RwelQ3MElwWE5j?=
- =?gb2312?B?dWM3U1BzRjY0R1p6a3pGbXRlWUR6eEc3ZkZMbFZ5WWJpUGFTVUxxVVlVanpq?=
- =?gb2312?B?eitlcWtvbXNsL0xFRmZQUDg4ZXFSelBmOC8rSHhMS0JWRkg3WjdCTnJjVitN?=
- =?gb2312?B?U1ZSN0d2TllRbG5XM1ppQUtqV2JNdW9aQ2JMSDN0azJQOWtBR05PUW1tQlhz?=
- =?gb2312?B?cTFvaWNvUTFRT01ndWRxeVBWTU1WOWFKUWpOa0dLYWJONU9rd2tZS2V2NVRa?=
- =?gb2312?B?cGhKcit1S3FkWDYzYnBWcTV1WS84ak5UaFlmQm43VkIxWFRDcTllRE45T2hl?=
- =?gb2312?B?Tk5XZk45cWFIZTBuTDZQNUNuNkVZL0dqeGNjc2pFWDlBSE5oMnB0MWJsLy9l?=
- =?gb2312?B?eGNyTEFuZ2J4YWFNeDZ6S2NxdE41NTlNbUZSNHBodGFtbVk5dE9DNVJ3aVdO?=
- =?gb2312?B?V0FuODV0Wm8rMVE1VTZsTVJVeGJsZTNVY2s3SnE3Y0RncEg2QVNwYWRsUTFE?=
- =?gb2312?B?OUtPQzM1bGZTVk44eWdNaFRXZ3dhT1RLTSt5eUZMRHVUekZ3RUc2TXNobmd4?=
- =?gb2312?B?aHJJRVB1NGVYUVpSV3I4bG9WdEU5RlQ1eEM0SmlGUldGcEJyVkxhUkp5NE4w?=
- =?gb2312?B?OW5zNjdyOHJOOEN2Wi9RVnBaclo4L0ZLNjlWbVpKY21EdWZHWVAzaDZKOGtD?=
- =?gb2312?B?WGxDU3FxemZ3RnhpZnBiT3VncDN4U0taSmp2VktJTVZCUVA0U0dPK21yTFlh?=
- =?gb2312?B?VUtKZjBHYXVpOFYvdmkvUHZQRzhmUWV5dEl3L1haTzhZeFhQMkFod3d6Qko4?=
- =?gb2312?B?bWtmSVNSbUhLWHJqRjR3NWdKZVMxbG5QRUtjZjc2YWwwbjFHU3ZRRCtYSGRX?=
- =?gb2312?B?VlIzRENwTFFLbnluS0ZkT3VqNVZuYXczSmZhcTQzdk9RU0lkeS9EWHNBUDQy?=
- =?gb2312?B?bTc1dkVwZnNYOHNpUnhIT09YdVVkYkczU0ZrU2xkWi9JQWZtMGNRUVo3bjV0?=
- =?gb2312?B?SDhsejdvU0kyMmNiM3dqbzZVYTh2MXFLWDRLQm5EZEYyclovWHFHZ0R3RkNU?=
- =?gb2312?B?ek9CUEw5VnRuNUZGbUUvNjU3SUtoY0VrYjF6d0VzUlhlS21WUm15alFFVmdH?=
- =?gb2312?B?U0paaFFaRW03ZW1peDZ6WW1rZ0tIVU11K0hXcm5vd2ZMZm9GUnBHUDdRVUE2?=
- =?gb2312?B?TmtkeStvVUtVeFozVnBVSm5sWXlXTVd5UjFhdGFlbXYrejFua3FIQUd5T2lD?=
- =?gb2312?B?ZTVjd3B5a2JoaGpqaVFOWkxrc3J3YlozUlBwSnFYL0JxNnNBbVdoeDRibFYv?=
- =?gb2312?B?K0x0YklTMW5Cb0NPWHI1dXhKL1d2eUFXbDhVSkxsa3JJNUFTMFI4NCtZOFA1?=
- =?gb2312?B?OEJVQ2tJMS81TUM2MDE3dWx5Zzl3ZTBPSmZqbnNnTGVTYTBKTHgvMVBjdWpm?=
- =?gb2312?B?R3Z1Um1TWHZ1bnhJMzdKd0x2QmZHWWg3THo5dmVPTGk5NzJORGQ3NlJUUWJF?=
- =?gb2312?B?Y0ZDcnFwakF0T05Ea1VCV29zYXFOdGd5MW14aHRlWjBISWtUMFNXUVk3eHBo?=
- =?gb2312?B?bzB4ZUwxNUQxb3JyT0xvdmtYSTNkWXhUbHpRandhTEl3QmQzQ0FLSXNrY3Ex?=
- =?gb2312?B?V2pIeG1GM3F3N0xkZ0pwYnBCZFVGYXpubjlLVDdrcG1IamxiWDhiU3o0bDVP?=
- =?gb2312?B?UnJCd212SlZoa05mWjBaL3VrYlNvaENTVHphbnB0cm5salk3Skk4RFh6eFVu?=
- =?gb2312?B?QmtYdFE2YzcybEl0WFhyTWM1TDdqWkdxaFdXakc0dWhabW0rTU1EOG54L3hl?=
- =?gb2312?B?VHZ1K2k5QmJpVlRYTzRLbU9aRVlWTmJnaXRwMDZBc1AxZGZ2b1FtYUtwcUgy?=
- =?gb2312?B?d2tlbkpSVXZYZ3VsWHJjMnR4UXI2V0xXL2FLRlRlbnM3RXVZdU5LWURUcHpW?=
- =?gb2312?B?K0N6TTZzOFhndFAyS01nSWluSEFBbWJVSUswT3JNQURJbFpQcGRiMDhNL0JP?=
- =?gb2312?B?c1FtMjZlN2pkTTk2MCtOWE8xTDY1YW5JcE8wcW1KRVFoa004Snlsd2VxaFQr?=
- =?gb2312?B?eWNuVXhWZnNxZGY5clNiS2F0Yk1FT1hBY2c4VXUzTjJBR3YwTG1LZnhPaGc4?=
- =?gb2312?Q?NyHc=3D?=
-Content-Type: text/plain; charset="gb2312"
-Content-Transfer-Encoding: base64
+In-Reply-To: <000001dad121$bf3c0a80$3db41f80$@samsung.com>
+Subject: RE: [PATCH v2 1/4] dt-bindings: clock: add Exynos Auto v920 SoC CMU
+ bindings
+Date: Wed, 10 Jul 2024 11:10:45 +0900
+Message-ID: <000001dad26e$5fdf5bc0$1f9e1340$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 12c77ed6-7f0e-47cc-7495-08dca0855044
-X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jul 2024 02:09:21.7163
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: q1cSUvTg2RqQo/kyyqUegFM10AGgTsrXT/O/yTe0Yhh4VE3QjST2jpv7ZD4ADjbtiYQbhyk2x2zJO+jy8tjd9A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8671
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQJHtUpDsgLCeLIQdS8546uqgvLWdQE7Blz4AfM7P5wBaRtFEbDwtSEg
+Content-Language: ko
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOJsWRmVeSWpSXmKPExsWy7bCmqe6yt71pBuceaFk8mLeNzWLN3nNM
+	Fte/PGe1mH/kHKvF+fMb2C02Pb7GavGx5x6rxeVdc9gsZpzfx2Rx8ZSrxf89O9gtDr9pZ7X4
+	d20jiwOvx/sbrewem1Z1snlsXlLv0bdlFaPH501yAaxR2TYZqYkpqUUKqXnJ+SmZeem2St7B
+	8c7xpmYGhrqGlhbmSgp5ibmptkouPgG6bpk5QCcqKZQl5pQChQISi4uV9O1sivJLS1IVMvKL
+	S2yVUgtScgrMC/SKE3OLS/PS9fJSS6wMDQyMTIEKE7Iz7k3fylpwtLTiwe6jbA2MX2K7GDk5
+	JARMJM6c3scMYgsJ7GGUOLvHsIuRC8j+xCjx/+hsdgjnG6PEpL+rgarYwTrWpkCE9zJKbF/3
+	jxXCeckocf3kO1aQSWwC+hKru2+zgSREBO4wSdxe9xCsillgHaPE5plH2EGqOAWsJJre3gTr
+	EBYIl/h7YgJYnEVAVWLv8t+MIDavgKXEy+4mKFtQ4uTMJywgNrOAtsSyha+ZIX5QkPj5dBnY
+	HBEBN4m2zVfZIWpEJGZ3tjGDLJYQOMAhcePPChaIBheJ6SdusELYwhKvjm9hh7ClJF72t0HZ
+	+RKTr79lgmhuYJS49q8bapu9xKIzP4GKOIA2aEqs36UPYkoIKEscuQV1G59Ex+G/7BBhXomO
+	NiGIRjWJT1cuQw2RkTh24hnzBEalWUg+m4Xks1lIPpiFsGsBI8sqRqnUguLc9NRkowJD3bzU
+	cniEJ+fnbmIEp2At3x2Mr9f/1TvEyMTBeIhRgoNZSYR3/o3uNCHelMTKqtSi/Pii0pzU4kOM
+	psDwnsgsJZqcD8wCeSXxhiaWBiZmZobmRqYG5krivPda56YICaQnlqRmp6YWpBbB9DFxcEo1
+	MFXP25LVc3pv+Py9pQfWWFYJfPaRdv21tD/L4NFkr0Xe0iuXyu/i/nfm9iEVn7yXxzw8Uux/
+	X/C/slPoNbuX8qXowmdbHzdGOdyb76mRO5NFyXFu70rPbWc/ZTJqXXztNNmC5eqblPwjC+fv
+	V10UZnHq6u23P2dPqxQqFi34ceB80PbGPJ3JWznO6jieuW4iP8n4iMuSUt2kmWfKopgnrnRY
+	ZvvY4ZR66iz1a3Et+QUTkm7fstdTX7T/wuc98zYIzN1d8/2k5UnPL/9+CgmFnRJrXy++Zf8P
+	xeaWp4xL8t4q50kaHPS/fn17k+aZ1ER3iwOvK5t/cs0T2fdkrdHRhiKHtuad3Vfk907dufXJ
+	pB+3lFiKMxINtZiLihMBdb+APkoEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrAIsWRmVeSWpSXmKPExsWy7bCSvO7St71pBv8mmlg8mLeNzWLN3nNM
+	Fte/PGe1mH/kHKvF+fMb2C02Pb7GavGx5x6rxeVdc9gsZpzfx2Rx8ZSrxf89O9gtDr9pZ7X4
+	d20jiwOvx/sbrewem1Z1snlsXlLv0bdlFaPH501yAaxRXDYpqTmZZalF+nYJXBmXpv9kL3hU
+	WPHrziSmBsb2qC5Gdg4JAROJtSldjFwcQgK7GSU2LH3I0sXICRSWkdjY8J8dwhaWuN9yhBWi
+	6DmjRO+zG4wgCTYBfYnV3bfZQBIiAo+YJD7/3MUO4jALbGKUOLf7JhtEy2dGiW9dr1hBWjgF
+	rCSa3t4Es4UFQiX+3joBNopFQFVi7/LfYDavgKXEy+4mKFtQ4uTMJ2A3MQtoSzy9+RTOXrbw
+	NTPEfQoSP58uA5spIuAm0bb5KjtEjYjE7M425gmMwrOQjJqFZNQsJKNmIWlZwMiyilEytaA4
+	Nz232LDAMC+1XK84Mbe4NC9dLzk/dxMjOBK1NHcwbl/1Qe8QIxMH4yFGCQ5mJRHe+Te604R4
+	UxIrq1KL8uOLSnNSiw8xSnOwKInzir/oTRESSE8sSc1OTS1ILYLJMnFwSjUwTX626O+31s64
+	/UIfNkTtaG/dnRt9rOm36+LVST8yPXdfF76WwxHRN61oWvUsv+3lM3Xe9RorB/TEf3S62rfj
+	qoN6vO/GNaGce6M9ZA3bP2w7/klt4fUpogYBL8rOzYv2sjzEWm3vfKG9f2nzPCXGv9p2Fc6X
+	Iu31Prr/eWzDvpVx7avy7NX9Jx9VHzQ4MVf8hOvtD/v/8l6MWvB58fWC9oXOvK9KefT+Vhw7
+	NHfv/fvOHtrnfk3Xb4ww+Re25uBJriMGDWwiT7ufmubprZX305+lqJJ5hun/Hv3WqSbn6590
+	rvYL14oxfCsa0CeX/Xl9pNGib/mTWnV4L63t+99d9Idng+Vspl1XF4pEh6eVK7EUZyQaajEX
+	FScCAIyKAXszAwAA
+X-CMS-MailID: 20240710021045epcas2p1d0732c0ac526df3e75dc543e0d3f8b10
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240707231444epcas2p17d7c9842f0acaff0cc352d5c15f38e73
+References: <20240707231331.3433340-1-sunyeal.hong@samsung.com>
+	<CGME20240707231444epcas2p17d7c9842f0acaff0cc352d5c15f38e73@epcas2p1.samsung.com>
+	<20240707231331.3433340-2-sunyeal.hong@samsung.com>
+	<000001dad121$bf3c0a80$3db41f80$@samsung.com>
 
-PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBQZW5nIEZhbiA8cGVuZy5mYW5A
-bnhwLmNvbT4NCj4gU2VudDogMjAyNMTqN9TCOcjVIDIyOjEzDQo+IFRvOiBXZWkgRmFuZyA8d2Vp
-LmZhbmdAbnhwLmNvbT47IG10dXJxdWV0dGVAYmF5bGlicmUuY29tOw0KPiBzYm95ZEBrZXJuZWwu
-b3JnOyByb2JoQGtlcm5lbC5vcmc7IGNvbm9yK2R0QGtlcm5lbC5vcmc7DQo+IHNoYXduZ3VvQGtl
-cm5lbC5vcmc7IHMuaGF1ZXJAcGVuZ3V0cm9uaXguZGU7IGZlc3RldmFtQGdtYWlsLmNvbTsNCj4g
-YWJlbHZlc2FAa2VybmVsLm9yZw0KPiBDYzogbGludXgtY2xrQHZnZXIua2VybmVsLm9yZzsgZGV2
-aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc7DQo+IGlteEBsaXN0cy5saW51eC5kZXY7IGxpbnV4LWFy
-bS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsNCj4gbGludXgta2VybmVsQHZnZXIua2VybmVs
-Lm9yZw0KPiBTdWJqZWN0OiBSRTogW1BBVENIIDIvM10gY2xrOiBpbXg5NTogZW5hYmxlIHRoZSBj
-bG9jayBvZiBORVRDTUlYIGJsb2NrDQo+IGNvbnRyb2wNCj4gDQo+ID4gU3ViamVjdDogW1BBVENI
-IDIvM10gY2xrOiBpbXg5NTogZW5hYmxlIHRoZSBjbG9jayBvZiBORVRDTUlYIGJsb2NrDQo+ID4g
-Y29udHJvbA0KPiA+DQo+ID4gVGhlIE5FVENNSVggYmxvY2sgY29udHJvbCBjb25zaXN0cyBvZiBy
-ZWdpc3RlcnMgZm9yIGNvbmZpZ3VyYXRpb24gb2YNCj4gPiBwZXJpcGhlcmFscyBpbiB0aGUgTkVU
-QyBkb21haW4sIHNvIGVuYWJsZSB0aGUgY2xvY2sgb2YgTkVUQ01JWCB0bw0KPiA+IHN1cHBvcnQg
-dGhlIGNvbmZpZ3VyYXRpb24uDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBXZWkgRmFuZyA8d2Vp
-LmZhbmdAbnhwLmNvbT4NCj4gPiAtLS0NCj4gPiAgZHJpdmVycy9jbGsvaW14L2Nsay1pbXg5NS1i
-bGstY3RsLmMgfCAxICsNCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspDQo+ID4N
-Cj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbGsvaW14L2Nsay1pbXg5NS1ibGstY3RsLmMNCj4g
-PiBiL2RyaXZlcnMvY2xrL2lteC9jbGstIGlteDk1LWJsay1jdGwuYyBpbmRleA0KPiA+IDc0ZjU5
-NWY5ZTVlMy4uMDdjNzBjMGE1M2Q0IDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvY2xrL2lteC9j
-bGstaW14OTUtYmxrLWN0bC5jDQo+ID4gKysrIGIvZHJpdmVycy9jbGsvaW14L2Nsay1pbXg5NS1i
-bGstY3RsLmMNCj4gPiBAQCAtNDE5LDYgKzQxOSw3IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3Qgb2Zf
-ZGV2aWNlX2lkDQo+ID4gaW14OTVfYmNfb2ZfbWF0Y2hbXSA9IHsNCj4gPiAgCXsgLmNvbXBhdGli
-bGUgPSAibnhwLGlteDk1LWx2ZHMtY3NyIiwgLmRhdGEgPSAmbHZkc19jc3JfZGV2X2RhdGEgfSwN
-Cj4gPiAgCXsgLmNvbXBhdGlibGUgPSAibnhwLGlteDk1LWRpc3BsYXktY3NyIiwgLmRhdGEgPQ0K
-PiA+ICZkaXNwbWl4X2Nzcl9kZXZfZGF0YSB9LA0KPiA+ICAJeyAuY29tcGF0aWJsZSA9ICJueHAs
-aW14OTUtdnB1LWNzciIsIC5kYXRhID0gJnZwdWJsa19kZXZfZGF0YSB9LA0KPiA+ICsJeyAuY29t
-cGF0aWJsZSA9ICJueHAsaW14OTUtbmV0Y21peC1ibGstY3RybCIsIH0sDQo+IA0KPiBUaGlzIHNo
-b3VsZCBub3QgYmUgYWRkZWQgaGVyZSBpZiBubyByZWFsIGNsb2NrcyBhcmUgaW5jbHVkZWQuDQo+
-IA0KVGhpcyBpcyB0aGUgZmlyc3QgcGhhc2UsIGFuZCB3ZSBhcmUgY3VycmVudGx5IHByaW9yaXRp
-emluZyBzdXBwb3J0aW5nIHRoZSBSR01JSQ0KaW50ZXJmYWNlIG9mIEVORVRDIG9uIHVwc3RyZWFt
-LiBXZSB3aWxsIGFkZCBzdXBwb3J0IGZvciBtdWx0aXBsZXhpbmcgb2YgdGhlDQpSTUlJIHJlZmVy
-ZW5jZSBjbG9jayBsYXRlci4NCg0KPiANCj4gPiAgCXsgLyogU2VudGluZWwgKi8gfSwNCj4gPiAg
-fTsNCj4gPiAgTU9EVUxFX0RFVklDRV9UQUJMRShvZiwgaW14OTVfYmNfb2ZfbWF0Y2gpOw0KPiA+
-IC0tDQo+ID4gMi4zNC4xDQoNCg==
+Hello Alim,
+
+> -----Original Message-----
+> From: Alim Akhtar <alim.akhtar=40samsung.com>
+> Sent: Monday, July 8, 2024 7:30 PM
+> To: 'Sunyeal Hong' <sunyeal.hong=40samsung.com>; 'Krzysztof Kozlowski'
+> <krzk=40kernel.org>; 'Sylwester Nawrocki' <s.nawrocki=40samsung.com>; 'Ch=
+anwoo
+> Choi' <cw00.choi=40samsung.com>; 'Michael Turquette'
+> <mturquette=40baylibre.com>; 'Stephen Boyd' <sboyd=40kernel.org>; 'Rob
+> Herring' <robh=40kernel.org>; 'Conor Dooley' <conor+dt=40kernel.org>
+> Cc: linux-samsung-soc=40vger.kernel.org; linux-clk=40vger.kernel.org;
+> devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; lin=
+ux-
+> kernel=40vger.kernel.org
+> Subject: RE: =5BPATCH v2 1/4=5D dt-bindings: clock: add Exynos Auto v920 =
+SoC
+> CMU bindings
+>=20
+> Hello Sunyeal
+>=20
+> > -----Original Message-----
+> > From: Sunyeal Hong <sunyeal.hong=40samsung.com>
+> > Sent: Monday, July 8, 2024 4:43 AM
+> > To: Krzysztof Kozlowski <krzk=40kernel.org>; Sylwester Nawrocki
+> > <s.nawrocki=40samsung.com>; Chanwoo Choi <cw00.choi=40samsung.com>; Ali=
+m
+> > Akhtar <alim.akhtar=40samsung.com>; Michael Turquette
+> > <mturquette=40baylibre.com>; Stephen Boyd <sboyd=40kernel.org>; Rob
+> > Herring <robh=40kernel.org>; Conor Dooley <conor+dt=40kernel.org>
+> > Cc: linux-samsung-soc=40vger.kernel.org; linux-clk=40vger.kernel.org;
+> > devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org;
+> > linux- kernel=40vger.kernel.org; Sunyeal Hong <sunyeal.hong=40samsung.c=
+om>
+> > Subject: =5BPATCH v2 1/4=5D dt-bindings: clock: add Exynos Auto v920 So=
+C
+> > CMU bindings
+> >
+> > Add dt-schema for Exynos Auto v920 SoC clock controller.
+> Prefer to have Exynos Auto -> ExynosAuto to match with the naming
+> convention and the UM.
+>=20
+Okay, I will update.
+> > Add device tree clock binding definitions for below CMU blocks.
+> >
+> > - CMU_TOP
+> > - CMU_PERIC0
+> >
+> > Signed-off-by: Sunyeal Hong <sunyeal.hong=40samsung.com>
+> > ---
+> >  .../clock/samsung,exynosautov920-clock.yaml   =7C 115 +++++++++++
+> >  .../clock/samsung,exynosautov920.h            =7C 191 ++++++++++++++++=
+++
+> >  2 files changed, 306 insertions(+)
+> >  create mode 100644
+> > Documentation/devicetree/bindings/clock/samsung,exynosautov920-
+> > clock.yaml
+> >  create mode 100644 include/dt-bindings/clock/samsung,exynosautov920.h
+> >
+> > diff --git
+> > a/Documentation/devicetree/bindings/clock/samsung,exynosautov920-
+> > clock.yaml
+> > b/Documentation/devicetree/bindings/clock/samsung,exynosautov920-
+> > clock.yaml
+> > new file mode 100644
+> > index 000000000000..ade74d6e90c0
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/clock/samsung,exynosautov920-
+> > clo
+> > +++ ck.yaml
+> > =40=40 -0,0 +1,115 =40=40
+> > +=23 SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) %YAML 1.2
+> > +---
+> > +=24id:
+> > +http://devicetree.org/schemas/clock/samsung,exynosautov920-
+> > clock.yaml=23
+> > +=24schema: http://devicetree.org/meta-schemas/core.yaml=23
+> > +
+> > +title: Samsung Exynos Auto v920 SoC clock controller
+> > +
+> > +maintainers:
+> > +  - Sunyeal Hong <sunyeal.hong=40samsung.com>
+> > +  - Chanwoo Choi <cw00.choi=40samsung.com>
+> > +  - Krzysztof Kozlowski <krzk=40kernel.org>
+> > +  - Sylwester Nawrocki <s.nawrocki=40samsung.com>
+> > +
+> > +description: =7C
+> > +  Exynos Auto v920 clock controller is comprised of several CMU
+> > +units, generating
+> > +  clocks for different domains. Those CMU units are modeled as
+> > +separate device
+> > +  tree nodes, and might depend on each other. Root clocks in that
+> > +clock tree are
+> > +  two external clocks:: OSCCLK/XTCXO (38.4 MHz) and RTCCLK/XrtcXTI
+> > (32768 Hz).
+> > +  The external OSCCLK must be defined as fixed-rate clock in dts.
+> > +
+> > +  CMU_TOP is a top-level CMU, where all base clocks are prepared
+> > + using PLLs and  dividers; all other clocks of function blocks (other
+> > + CMUs) are usually  derived from CMU_TOP.
+> > +
+> > +  Each clock is assigned an identifier and client nodes can use this
+> > + identifier  to specify the clock which they consume. All clocks
+> > + available for usage  in clock consumer nodes are defined as
+> > + preprocessor macros in  'include/dt-
+> > bindings/clock/samsung,exynosautov920.h' header.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    enum:
+> > +      - samsung,exynosautov920-cmu-top
+> > +      - samsung,exynosautov920-cmu-peric0
+> > +
+> > +  clocks:
+> > +    minItems: 1
+> > +    maxItems: 3
+> > +
+> > +  clock-names:
+> > +    minItems: 1
+> > +    maxItems: 3
+> > +
+> > +  =22=23clock-cells=22:
+> > +    const: 1
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +allOf:
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            const: samsung,exynosautov920-cmu-top
+> > +
+> > +    then:
+> > +      properties:
+> > +        clocks:
+> > +          items:
+> > +            - description: External reference clock (38.4 MHz)
+> > +
+> > +        clock-names:
+> > +          items:
+> > +            - const: oscclk
+> > +
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          contains:
+> > +            const: samsung,exynosautov920-cmu-peric0
+> > +
+> > +    then:
+> > +      properties:
+> > +        clocks:
+> > +          items:
+> > +            - description: External reference clock (38.4 MHz)
+> > +            - description: CMU_PERIC0 NOC clock (from CMU_TOP)
+> > +            - description: CMU_PERIC0 IP clock (from CMU_TOP)
+> > +
+> > +        clock-names:
+> > +          items:
+> > +            - const: oscclk
+> > +            - const: noc
+> > +            - const: ip
+> These are too generic name, please add peric0_noc and peric0_ip, and this
+> is to match with the UM.
+> I am sure in future you would like to add other IPs like USI, I2C etc for
+> the peric0 block
+Like Jaewon and Rob's reviews, I think it's right to use a general clock na=
+me.
+> > +
+> > +required:
+> > +  - compatible
+> > +  - =22=23clock-cells=22
+> > +  - clocks
+> > +  - clock-names
+> > +  - reg
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  =23 Clock controller node for CMU_PERIC0
+> > +  - =7C
+> > +    =23include <dt-bindings/clock/samsung,exynosautov920.h>
+> > +
+> > +    cmu_peric0: clock-controller=4010800000 =7B
+> > +        compatible =3D =22samsung,exynosautov920-cmu-peric0=22;
+> > +        reg =3D <0x10800000 0x8000>;
+> > +        =23clock-cells =3D <1>;
+> > +
+> > +        clocks =3D <&xtcxo>,
+> > +                 <&cmu_top DOUT_CLKCMU_PERIC0_NOC>,
+> > +                 <&cmu_top DOUT_CLKCMU_PERIC0_IP>;
+> > +        clock-names =3D =22oscclk=22,
+> > +                      =22noc=22,
+> > +                      =22ip=22;
+> > +    =7D;
+> > +
+> > +...
+> > diff --git a/include/dt-bindings/clock/samsung,exynosautov920.h
+> > b/include/dt-bindings/clock/samsung,exynosautov920.h
+> > new file mode 100644
+> > index 000000000000..9daa617c3636
+> > --- /dev/null
+> > +++ b/include/dt-bindings/clock/samsung,exynosautov920.h
+> > =40=40 -0,0 +1,191 =40=40
+> > +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> > +/*
+> > + * Copyright (c) 2024 Samsung Electronics Co., Ltd.
+> > + * Author: Sunyeal Hong <sunyeal.hong=40samsung.com>
+> > + *
+> > + * Device Tree binding constants for Exynos Auto V920 clock controller=
+.
+> > + */
+> > +
+> > +=23ifndef _DT_BINDINGS_CLOCK_EXYNOSAUTOV920_H
+> > +=23define _DT_BINDINGS_CLOCK_EXYNOSAUTOV920_H
+> > +
+> > +/* CMU_TOP */
+> > +=23define FOUT_SHARED0_PLL		1
+> > +=23define FOUT_SHARED1_PLL		2
+> > +=23define FOUT_SHARED2_PLL		3
+> > +=23define FOUT_SHARED3_PLL		4
+> > +=23define FOUT_SHARED4_PLL		5
+> > +=23define FOUT_SHARED5_PLL		6
+> > +=23define FOUT_MMC_PLL			7
+> > +
+> > +/* MUX in CMU_TOP */
+> > +=23define MOUT_SHARED0_PLL		101
+> > +=23define MOUT_SHARED1_PLL		102
+> > +=23define MOUT_SHARED2_PLL		103
+> > +=23define MOUT_SHARED3_PLL		104
+> > +=23define MOUT_SHARED4_PLL		105
+> > +=23define MOUT_SHARED5_PLL		106
+> > +=23define MOUT_MMC_PLL			107
+> > +=23define MOUT_CLKCMU_CMU_BOOST		108
+> > +=23define MOUT_CLKCMU_CMU_CMUREF		109
+> > +=23define MOUT_CLKCMU_ACC_NOC		110
+> > +=23define MOUT_CLKCMU_ACC_ORB		111
+> > +=23define MOUT_CLKCMU_APM_NOC		112
+> > +=23define MOUT_CLKCMU_AUD_CPU		113
+> > +=23define MOUT_CLKCMU_AUD_NOC		114
+> > +=23define MOUT_CLKCMU_CPUCL0_SWITCH	115
+> > +=23define MOUT_CLKCMU_CPUCL0_CLUSTER	116
+> > +=23define MOUT_CLKCMU_CPUCL0_DBG		117
+> > +=23define MOUT_CLKCMU_CPUCL1_SWITCH	118
+> > +=23define MOUT_CLKCMU_CPUCL1_CLUSTER	119
+> > +=23define MOUT_CLKCMU_CPUCL2_SWITCH	120
+> > +=23define MOUT_CLKCMU_CPUCL2_CLUSTER	121
+> > +=23define MOUT_CLKCMU_DNC_NOC		122
+> > +=23define MOUT_CLKCMU_DPTX_NOC		123
+> > +=23define MOUT_CLKCMU_DPTX_DPGTC		124
+> > +=23define MOUT_CLKCMU_DPTX_DPOSC		125
+> > +=23define MOUT_CLKCMU_DPUB_NOC		126
+> > +=23define MOUT_CLKCMU_DPUB_DSIM		127
+> > +=23define MOUT_CLKCMU_DPUF0_NOC		128
+> > +=23define MOUT_CLKCMU_DPUF1_NOC		129
+> > +=23define MOUT_CLKCMU_DPUF2_NOC		130
+> > +=23define MOUT_CLKCMU_DSP_NOC		131
+> > +=23define MOUT_CLKCMU_G3D_SWITCH		132
+> > +=23define MOUT_CLKCMU_G3D_NOCP		133
+> > +=23define MOUT_CLKCMU_GNPU_NOC		134
+> > +=23define MOUT_CLKCMU_HSI0_NOC		135
+> > +=23define MOUT_CLKCMU_HSI1_NOC		136
+> > +=23define MOUT_CLKCMU_HSI1_USBDRD		137
+> > +=23define MOUT_CLKCMU_HSI1_MMC_CARD	138
+> > +=23define MOUT_CLKCMU_HSI2_NOC		139
+> > +=23define MOUT_CLKCMU_HSI2_NOC_UFS	140
+> > +=23define MOUT_CLKCMU_HSI2_UFS_EMBD	141
+> > +=23define MOUT_CLKCMU_HSI2_ETHERNET	142
+> > +=23define MOUT_CLKCMU_ISP_NOC		143
+> > +=23define MOUT_CLKCMU_M2M_NOC		144
+> > +=23define MOUT_CLKCMU_M2M_JPEG		145
+> > +=23define MOUT_CLKCMU_MFC_MFC		146
+> > +=23define MOUT_CLKCMU_MFC_WFD		147
+> > +=23define MOUT_CLKCMU_MFD_NOC		148
+> > +=23define MOUT_CLKCMU_MIF_SWITCH		149
+> > +=23define MOUT_CLKCMU_MIF_NOCP		150
+> > +=23define MOUT_CLKCMU_MISC_NOC		151
+> > +=23define MOUT_CLKCMU_NOCL0_NOC		152
+> > +=23define MOUT_CLKCMU_NOCL1_NOC		153
+> > +=23define MOUT_CLKCMU_NOCL2_NOC		154
+> > +=23define MOUT_CLKCMU_PERIC0_NOC		155
+> > +=23define MOUT_CLKCMU_PERIC0_IP		156
+> > +=23define MOUT_CLKCMU_PERIC1_NOC		157
+> > +=23define MOUT_CLKCMU_PERIC1_IP		158
+> > +=23define MOUT_CLKCMU_SDMA_NOC		159
+> > +=23define MOUT_CLKCMU_SNW_NOC		160
+> > +=23define MOUT_CLKCMU_SSP_NOC		161
+> > +=23define MOUT_CLKCMU_TAA_NOC		162
+> > +
+> > +/* DIV in CMU_TOP */
+> > +=23define DOUT_SHARED0_DIV1		201
+> > +=23define DOUT_SHARED0_DIV2		202
+> > +=23define DOUT_SHARED0_DIV3		203
+> > +=23define DOUT_SHARED0_DIV4		204
+> > +=23define DOUT_SHARED1_DIV1		205
+> > +=23define DOUT_SHARED1_DIV2		206
+> > +=23define DOUT_SHARED1_DIV3		207
+> > +=23define DOUT_SHARED1_DIV4		208
+> > +=23define DOUT_SHARED2_DIV1		209
+> > +=23define DOUT_SHARED2_DIV2		210
+> > +=23define DOUT_SHARED2_DIV3		211
+> > +=23define DOUT_SHARED2_DIV4		212
+> > +=23define DOUT_SHARED3_DIV1		213
+> > +=23define DOUT_SHARED3_DIV2		214
+> > +=23define DOUT_SHARED3_DIV3		215
+> > +=23define DOUT_SHARED3_DIV4		216
+> > +=23define DOUT_SHARED4_DIV1		217
+> > +=23define DOUT_SHARED4_DIV2		218
+> > +=23define DOUT_SHARED4_DIV3		219
+> > +=23define DOUT_SHARED4_DIV4		220
+> > +=23define DOUT_SHARED5_DIV1		221
+> > +=23define DOUT_SHARED5_DIV2		222
+> > +=23define DOUT_SHARED5_DIV3		223
+> > +=23define DOUT_SHARED5_DIV4		224
+> > +=23define DOUT_CLKCMU_CMU_BOOST		225
+> > +=23define DOUT_CLKCMU_ACC_NOC		226
+> > +=23define DOUT_CLKCMU_ACC_ORB		227
+> > +=23define DOUT_CLKCMU_APM_NOC		228
+> > +=23define DOUT_CLKCMU_AUD_CPU		229
+> > +=23define DOUT_CLKCMU_AUD_NOC		230
+> > +=23define DOUT_CLKCMU_CPUCL0_SWITCH	231
+> > +=23define DOUT_CLKCMU_CPUCL0_CLUSTER	232
+> > +=23define DOUT_CLKCMU_CPUCL0_DBG		233
+> > +=23define DOUT_CLKCMU_CPUCL1_SWITCH	234
+> > +=23define DOUT_CLKCMU_CPUCL1_CLUSTER	235
+> > +=23define DOUT_CLKCMU_CPUCL2_SWITCH	236
+> > +=23define DOUT_CLKCMU_CPUCL2_CLUSTER	237
+> > +=23define DOUT_CLKCMU_DNC_NOC		238
+> > +=23define DOUT_CLKCMU_DPTX_NOC		239
+> > +=23define DOUT_CLKCMU_DPTX_DPGTC		240
+> > +=23define DOUT_CLKCMU_DPTX_DPOSC		241
+> > +=23define DOUT_CLKCMU_DPUB_NOC		242
+> > +=23define DOUT_CLKCMU_DPUB_DSIM		243
+> > +=23define DOUT_CLKCMU_DPUF0_NOC		244
+> > +=23define DOUT_CLKCMU_DPUF1_NOC		245
+> > +=23define DOUT_CLKCMU_DPUF2_NOC		246
+> > +=23define DOUT_CLKCMU_DSP_NOC		247
+> > +=23define DOUT_CLKCMU_G3D_SWITCH		248
+> > +=23define DOUT_CLKCMU_G3D_NOCP		249
+> > +=23define DOUT_CLKCMU_GNPU_NOC		250
+> > +=23define DOUT_CLKCMU_HSI0_NOC		251
+> > +=23define DOUT_CLKCMU_HSI1_NOC		252
+> > +=23define DOUT_CLKCMU_HSI1_USBDRD		253
+> > +=23define DOUT_CLKCMU_HSI1_MMC_CARD	254
+> > +=23define DOUT_CLKCMU_HSI2_NOC		255
+> > +=23define DOUT_CLKCMU_HSI2_NOC_UFS	256
+> > +=23define DOUT_CLKCMU_HSI2_UFS_EMBD	257
+> > +=23define DOUT_CLKCMU_HSI2_ETHERNET	258
+> > +=23define DOUT_CLKCMU_ISP_NOC		259
+> > +=23define DOUT_CLKCMU_M2M_NOC		260
+> > +=23define DOUT_CLKCMU_M2M_JPEG		261
+> > +=23define DOUT_CLKCMU_MFC_MFC		262
+> > +=23define DOUT_CLKCMU_MFC_WFD		263
+> > +=23define DOUT_CLKCMU_MFD_NOC		264
+> > +=23define DOUT_CLKCMU_MIF_NOCP		265
+> > +=23define DOUT_CLKCMU_MISC_NOC		266
+> > +=23define DOUT_CLKCMU_NOCL0_NOC		267
+> > +=23define DOUT_CLKCMU_NOCL1_NOC		268
+> > +=23define DOUT_CLKCMU_NOCL2_NOC		269
+> > +=23define DOUT_CLKCMU_PERIC0_NOC		270
+> > +=23define DOUT_CLKCMU_PERIC0_IP		271
+> > +=23define DOUT_CLKCMU_PERIC1_NOC		272
+> > +=23define DOUT_CLKCMU_PERIC1_IP		273
+> > +=23define DOUT_CLKCMU_SDMA_NOC		274
+> > +=23define DOUT_CLKCMU_SNW_NOC		275
+> > +=23define DOUT_CLKCMU_SSP_NOC		276
+> > +=23define DOUT_CLKCMU_TAA_NOC		277
+> > +
+> > +/* CMU_PERIC0 */
+> > +=23define CLK_MOUT_PERIC0_IP_USER		1
+> > +=23define CLK_MOUT_PERIC0_NOC_USER	2
+> > +=23define CLK_MOUT_PERIC0_USI00_USI	3
+> > +=23define CLK_MOUT_PERIC0_USI01_USI	4
+> > +=23define CLK_MOUT_PERIC0_USI02_USI	5
+> > +=23define CLK_MOUT_PERIC0_USI03_USI	6
+> > +=23define CLK_MOUT_PERIC0_USI04_USI	7
+> > +=23define CLK_MOUT_PERIC0_USI05_USI	8
+> > +=23define CLK_MOUT_PERIC0_USI06_USI	9
+> > +=23define CLK_MOUT_PERIC0_USI07_USI	10
+> > +=23define CLK_MOUT_PERIC0_USI08_USI	11
+> > +=23define CLK_MOUT_PERIC0_USI_I2C		12
+> > +=23define CLK_MOUT_PERIC0_I3C		13
+> > +
+> > +=23define CLK_DOUT_PERIC0_USI00_USI	14
+> > +=23define CLK_DOUT_PERIC0_USI01_USI	15
+> > +=23define CLK_DOUT_PERIC0_USI02_USI	16
+> > +=23define CLK_DOUT_PERIC0_USI03_USI	17
+> > +=23define CLK_DOUT_PERIC0_USI04_USI	18
+> > +=23define CLK_DOUT_PERIC0_USI05_USI	19
+> > +=23define CLK_DOUT_PERIC0_USI06_USI	20
+> > +=23define CLK_DOUT_PERIC0_USI07_USI	21
+> > +=23define CLK_DOUT_PERIC0_USI08_USI	22
+> > +=23define CLK_DOUT_PERIC0_USI_I2C		23
+> > +=23define CLK_DOUT_PERIC0_I3C		24
+> > +
+> > +=23endif /* _DT_BINDINGS_CLOCK_EXYNOSAUTOV920_H */
+> > --
+> > 2.45.2
+>=20
+
+If there is anything you would like to review further, please check it out.
+
+Thanks,
+Sunyeal Hong
+
