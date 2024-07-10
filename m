@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43191197A7B;
-	Wed, 10 Jul 2024 19:55:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 151738F66;
+	Wed, 10 Jul 2024 19:56:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720641314; cv=none; b=ci/YGuoZajAgK3+y3jaGV4TBp4Js1zeOUuTSZB8jbtqvbMofXmKLIeUOrZkxjw529zINoYCVh7KPZdY/+KBpP/N/4Ec5Z145ICYRDfXcD3ixpTOW821UP1WnnqsgXffyy9/5JtA4DV/6pzv+feQRmadm1+tFGqWpziBNVFLGVSk=
+	t=1720641396; cv=none; b=enp99jBzFedeRYK9pt+dE31/CkMnPea0+Fk+cZ2YyqSeT6Cjk5rU9TiuPJ7D/7uPHXEQz+LGg11pFdcHeU3mBz6UJQVvKdXQ16p/8alTm3in4Qc8fL9w3sBxzlCupAak6Ku9cJwW8wPIL/OOfSi5TzVlCJwrchqDer4hKorfAq4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720641314; c=relaxed/simple;
-	bh=Fc7WfJ8WjVBITAc0LsbpI3K1B9HOodEyCX17XluKf04=;
+	s=arc-20240116; t=1720641396; c=relaxed/simple;
+	bh=ro7p272460qqn5pIA0OqMhCSJP2ZAay9e/58qs09Yn8=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=Iu0RM/TLw6aF1m5b2giZRqzUeGJOXclPiBELDe2Rbm5B60asxyjLs5zqArtSMPLW8HxxgH5vDsRMtPH3dtXUNLHzIvFbA/zcnOnu+VrsvjPlecjKlzguQGyPGLXlEmbHAsYF+sl/Jj2A3mn9X70FNpj9xMw+FMBxpBk3sU0BIIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M3Q4UuV0; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=kyPLT8JwpCsrTz/0mWjIT/Qk5qBBbQwYivY/yGMJOTS2/GswMl6aQc3cWCvB+JSaSAnRSeu009NzTbENZeJ00z6+NTTGThD7i5/gZlCVjUY5FGOm9keKXJI3gKal7DHM//I1eEVtLi9HzPlHvdEOi2E1eqtG6UDH8Yu8IBavBlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g+GcvbFU; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M3Q4UuV0"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93E7AC32781;
-	Wed, 10 Jul 2024 19:55:13 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g+GcvbFU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8CFA2C32781;
+	Wed, 10 Jul 2024 19:56:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720641313;
-	bh=Fc7WfJ8WjVBITAc0LsbpI3K1B9HOodEyCX17XluKf04=;
+	s=k20201202; t=1720641395;
+	bh=ro7p272460qqn5pIA0OqMhCSJP2ZAay9e/58qs09Yn8=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=M3Q4UuV0M3RAF8AKCVkJ7WG4OhqbcRfmEvgM8BJ5BJtQy/q/L+Po9Or55IagShd7c
-	 lV38juDbgZYUkZu266ZJFYeZZ2DCOskTRdNciD+en3ZMyjEf8A+N3wNNTTjf/6oR9e
-	 WREY5qV+y5ynuhss7J1545RALDOSrIzXfi6IalbEWzYGgHRBXFypGtpoURzgACFB5N
-	 +ZnHUkcEWpcQwA70wJttVYYZpIyF0rw1pI21wHRcrkUSeIvA94X2FZsS8KjsHD8Lns
-	 i4JNmNmuWgiX6NFtGkkY7CGurUeYLGYvxE73ePKi48SN4r2RDMgeMyWMPd48tj4hI1
-	 o7qwe2r30DulQ==
-Message-ID: <8e10f0736ea87ed3f7cea4cac506fc24.sboyd@kernel.org>
+	b=g+GcvbFU17imdNN+5jIeSNVEjrLfEx6xRL+ZTmSeQasNj6NEcqEnPhBNwDKrKIoSz
+	 ZQT1vXtO1WdqaNPbECyRVHeq7nOnkfwvN9B1UXfpa78pVcwWxykMthqUb5ER3cvhOp
+	 PI9cEKfIW9pnHebsbCXeHMGJLuhYaEWG2GTL4sshfC1ArFUX2Icb4jBBviLlNylwlU
+	 xzArOyHlz//+Zzc6I8fftyVtG5UxGkJT6S6SUor2P46SZen0ut9hOXuEYAbnEJfqmU
+	 8v+9N/elg96pMbi0g3K8PZnjHKkH01SwcHkrn/30BdURcOLlUXASOepaNl9Gu2t50C
+	 MqTojEPEjBjjw==
+Message-ID: <a2a41f77c854b2399a0d87142c5bfe39.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -41,13 +41,61 @@ Subject: Re: [PATCH v10 03/38] clk: ep93xx: add DT support for Cirrus EP93xx
 From: Stephen Boyd <sboyd@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
 To: Michael Turquette <mturquette@baylibre.com>, Nikita Shubin <nikita.shubin@maquefel.me>, Nikita Shubin via B4 Relay <devnull+nikita.shubin.maquefel.me@kernel.org>
-Date: Wed, 10 Jul 2024 12:55:11 -0700
+Date: Wed, 10 Jul 2024 12:56:33 -0700
 User-Agent: alot/0.10
 
 Quoting Nikita Shubin (2024-07-10 03:34:12)
+> Hello Stephen!
+>=20
 > On Mon, 2024-07-08 at 15:18 -0700, Stephen Boyd wrote:
 > > Quoting Nikita Shubin via B4 Relay (2024-06-17 02:36:37)
 > > > diff --git a/drivers/clk/clk-ep93xx.c b/drivers/clk/clk-ep93xx.c
+> > > new file mode 100644
+> > > index 000000000000..a0430a5ae4da
+> > > --- /dev/null
+> > > +++ b/drivers/clk/clk-ep93xx.c
+> > > @@ -0,0 +1,834 @@
+> > > +// SPDX-License-Identifier: GPL-2.0-or-later
+> > > +/*
+> > [...]
+> > > +
+> > > +static int ep93xx_clk_enable(struct clk_hw *hw)
+> > > +{
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct ep93xx_clk *clk =3D ep93=
+xx_clk_from(hw);
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct ep93xx_clk_priv *priv =
+=3D ep93xx_priv_from(clk);
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u32 val;
+> > > +
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 guard(spinlock_irqsave)(&priv->=
+lock);
+> >=20
+> > I thought guard() was most important when there were multiple exit
+> > paths
+> > from a function, but OK.
+> >=20
+> > > +
+> > [...]
+> > > +
+> > > +static int ep93xx_plls_init(struct ep93xx_clk_priv *priv)
+> > > +{
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const char fclk_divisors[] =3D =
+{ 1, 2, 4, 8, 16, 1, 1, 1 };
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const char hclk_divisors[] =3D =
+{ 1, 2, 4, 5, 6, 8, 16, 32 };
+> > [...]
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (!(value & EP93XX_SYSCON_CLK=
+SET2_NBYP2))
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 clk_pll2_rate =3D EP93XX_EXT_CLK_RATE;
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 else if (value & EP93XX_SYSCON_=
+CLKSET2_PLL2_EN)
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 clk_pll2_rate =3D calc_pll_rate(EP93XX_EXT_CLK_RATE,
+> > > value);
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 else
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 clk_pll2_rate =3D 0;
 > > > +
 > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 hw =3D devm_clk_hw_register_fix=
 ed_rate(dev, "pll2", "xtali",
@@ -58,5 +106,8 @@ ed_rate(dev, "pll2", "xtali",
 > It's look like clk_hw_register_fixed_rate_parent_hw() is missing devm_
 > version of this function. Is it ok to provide wrapper for
 > __clk_hw_register_fixed_rate() in drivers/clk/clk-ep93xx.c ?
+>=20
 
-Yes, of course.
+It's not very hard to put it in the header file though, so why not
+implement the wrapper in include/linux/clk-provider.h like
+devm_clk_hw_register_fixed_rate()?
