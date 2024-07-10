@@ -1,114 +1,126 @@
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88BFE192B69
-	for <linux-clk@vger.kernel.org>; Wed, 10 Jul 2024 13:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E54D19246F
+	for <linux-clk@vger.kernel.org>; Wed, 10 Jul 2024 13:29:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720617061; cv=none; b=R15FNC6Xui4dGipd4+8NG3sCmaGdWUuH3oLT6A8OW3lKh2/Si0S2gXSn3rUIQtMig8927HpYVLmNIbHA1PfAgCouIeI8ThBk/hZ1IaP+bo4gver5b9CqRmtvDlskNyvNrPR0fgTuouzkLwUONPMedX0FlUagHBPo36mD2Julsyg=
+	t=1720618159; cv=none; b=A19bfV9NSo5TVEt/GtfUqT8wzYxASMXDDln2/M1thlnx7YPaVrRst876LRO3yd9wgLOb8sOufK0uffFT+e8yR3Z7Cso9EBHagTlhH7xMiDI7ZJsH4y5nLcjnL9XBEDQdXtQVRtdD8BWH65tO/KzUFnRFRbMQTKwdygvYnZWGT/Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720617061; c=relaxed/simple;
-	bh=qc9jySmhbhghor/UZ/lBr/egEY0xGdfx8JHomyvn0FA=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=tEF8Y0wi2LTrBhgbo/KSa5UQTX5SpTdYHCrJbjVSyQs+ddNqwQEQinWNE4/5TiUS2f4oi3AhttxBZQlPAYQUQwyqDy3emml8HxykVeTozFACa+4qL6BtxIpRMq2bFUgo7ZPmkQkY9FX6H3KvXnKhAnWaWwcL8OfdR3CIyVefUhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:2340:18a1:4138:37d2])
-	by baptiste.telenet-ops.be with bizsmtp
-	id lpAp2C00k4znMfS01pApdG; Wed, 10 Jul 2024 15:10:50 +0200
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1sRX5g-001cTs-5q;
-	Wed, 10 Jul 2024 15:10:49 +0200
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1sRX5t-00CQCd-Ok;
-	Wed, 10 Jul 2024 15:10:49 +0200
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 14/14] clk: renesas: rcar-gen4: Remove unused fixed PLL clock types
-Date: Wed, 10 Jul 2024 15:10:48 +0200
-Message-Id: <ac9ec7b9b9bb1ea4c82cf1420448aec776bb7876.1720616233.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1720616233.git.geert+renesas@glider.be>
-References: <cover.1720616233.git.geert+renesas@glider.be>
+	s=arc-20240116; t=1720618159; c=relaxed/simple;
+	bh=hmDdPq+Ml7N5KSGIoFc3upULiXo/C6/HEWo6DoDhM3g=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=GdK1i6mNBpsegEMYPGg2XF6vRn8k5Aa30W+PvBxCErWi4MuKgRF8sFf5DuhlQ9QvKeYH3Pet+5H+pYzkjveTQCHv6YO2jWpn6n1ImEsN+0EaBPLuUprgoLfTKS+Uc7mG916E29vFWOCfknHYBZFxw9TLBlc+di1x7I7wideRKf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=P+eqcgPg; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P+eqcgPg"
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a77bf336171so158327066b.1
+        for <linux-clk@vger.kernel.org>; Wed, 10 Jul 2024 06:29:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720618155; x=1721222955; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fqkUDQRLOhVOBxGwhtG+94Ov7Hs2ibJxuA1/lSFMk8I=;
+        b=P+eqcgPg8DN7B2J1lsAezXzy7DoZV+BbKEvMt5gR570V2VqXnvYylJ+/0zwEt57OAf
+         9s51H5Zc5t7r8JWDjuuF4pCJU5hsaTzPxle/5fSm4MV9zRCwYEO51FiBvvpj2nAbTp80
+         wQfkp0+2uscnFvcH3MD/wBC7AsoVUgO+vx2L0E/qM+fDkcBIqa8Wi8exYlltqhJOaILC
+         eKA3f/z/cVcp8dZlwBdxLb0NniZYevZVC76TOYa51cZ/tibUQO3hxg0+ARZwZEVpz1Zo
+         93IY50Mi9JQMwZqqEfBaM7j84sXetO9tTGHShf+HP3Tv+Y1XHuSu6hwgtK/Kw7EmL9Vu
+         PFEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720618155; x=1721222955;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fqkUDQRLOhVOBxGwhtG+94Ov7Hs2ibJxuA1/lSFMk8I=;
+        b=or9Z9cbbTtdj2VZx0yIcdsxdfPp7RcV+JxwOyQO+jv776+pbH1kFMJCQgXdW2LLxr+
+         L86mwbmyjsHCleKkQ+dZqI5MkjEJlPUDbayk4sO/PhjAFxNSQqyl6zaoUq6tmA42BeJl
+         AbXTiYDPoS8B6NKK5etrmwAUcrYkEJGLDJonIqwSK9++QEwDrjegzC8bnq/Stgk/GcSr
+         fDboqbWXQYoKQVr4gGR0n3E9JDpa4s7OSam5XJlVyHXeWI9hytqSUg/1V4MguX1YzqYK
+         CBiGHyKSJfJ0QVKfh5j/PZR9IetSqJUOrh5TtSQuRPiAQ4xDCcRdfvoO+8GBwEdK6XVi
+         j4lw==
+X-Forwarded-Encrypted: i=1; AJvYcCWrqtH/v9l1t1n1nj4X4o4DNQxYJmi2kB0XvZSfyT/gW7WNgm0b3Gz89gD8nkHWbn+R+A8N095mnheTCGqTpFwWTTJzloJoXJUa
+X-Gm-Message-State: AOJu0Yxt9qGfLCGJ2W+ZtlUpvIdIsShK8pWI5JSv9yslGRCOz+/0HLdQ
+	kh5dqciEMHD6G2zMoiHUiUwV3twBlpTdVO0hbm8m882egFSjLFBCBT+UaioHRoY=
+X-Google-Smtp-Source: AGHT+IHSy01Wy6Dt26CFpsV4fBDVFgMdKfVhr2nI8OmMjxpgSQCjsvn8YeKN5v4jdEUlosAgoIYCfA==
+X-Received: by 2002:a17:907:9710:b0:a72:4207:479b with SMTP id a640c23a62f3a-a780d205cc9mr468422466b.5.1720618155461;
+        Wed, 10 Jul 2024 06:29:15 -0700 (PDT)
+Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-594bd45a162sm2204844a12.68.2024.07.10.06.29.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 10 Jul 2024 06:29:15 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Subject: [PATCH v3 0/2] gs101 oriole: UART clock fixes
+Date: Wed, 10 Jul 2024 14:29:13 +0100
+Message-Id: <20240710-gs101-non-essential-clocks-2-v3-0-5dcb8d040d1c@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAKqMjmYC/0XMwQ6CMAwA0F8xO1uybojoyf8wHioUaMDNtMQYC
+ f8u8eLxXd7ijFXY3Hm3OOWXmOS0Ie53rhko9QzSbnbBh9KX0UNv6BFSTsBmnGahCZopN6NBgIp
+ iqH1HeOfabcVTuZP3r7/eNneaHzAPyvRPMXp/ijWGAo9ldcAACJRa5aJVso+Ml0kSaS6y9m5dv
+ 5yNNMCyAAAA
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Sam Protsenko <semen.protsenko@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.13.0
 
-All users of the fixed default PLL2/3/4/6 clock types have been
-converted to fixed or variable fractional PLL clock types.
+Hi,
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+This series fixes two issues in the gs101 clocking / uart handling & related
+device tree binding:
+1) the binding omitted specifying the required number of clocks for the UART
+2) an incorrect work-around in the gs101 clock driver
+
+The 2nd point is essentially the last remaining patch [1] with all review
+comments addressed, from the series [2] that was sent earlier this year, see
+lore links below.
+
+As requested, I'm also documenting (in the binding) the hand-over issue
+between earlycon and (real) console driver that we have on gs101, see [3].
+While doing that, I noticed the omission mentioned in point 1) above, hence
+this series.
+
+To avoid confusion, I'm marking this whole series as v3 because the patch to
+clk-gs101.c had been sent as v2 previously, and this supersedes it.
+
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+
+[1] https://lore.kernel.org/all/20240130093812.1746512-6-andre.draszik@linaro.org/
+[2] https://lore.kernel.org/all/20240130093812.1746512-1-andre.draszik@linaro.org/
+[3] https://lore.kernel.org/all/d45de3b2bb6b48653842cf1f74e58889ed6783ae.camel@linaro.org/
+
 ---
- drivers/clk/renesas/rcar-gen4-cpg.c | 20 --------------------
- drivers/clk/renesas/rcar-gen4-cpg.h |  4 ----
- 2 files changed, 24 deletions(-)
+André Draszik (2):
+      dt-bindings: serial: samsung: fix maxItems for gs101 & document earlycon requirements
+      clk: samsung: gs101: don't mark non-essential (UART) clocks critical
 
-diff --git a/drivers/clk/renesas/rcar-gen4-cpg.c b/drivers/clk/renesas/rcar-gen4-cpg.c
-index 5fcfd0b4f1216beb..b180ca286c913c6c 100644
---- a/drivers/clk/renesas/rcar-gen4-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen4-cpg.c
-@@ -439,31 +439,11 @@ struct clk * __init rcar_gen4_cpg_clk_register(struct device *dev,
- 		div = cpg_pll_config->pll1_div;
- 		break;
- 
--	case CLK_TYPE_GEN4_PLL2:
--		mult = cpg_pll_config->pll2_mult;
--		div = cpg_pll_config->pll2_div;
--		break;
--
--	case CLK_TYPE_GEN4_PLL3:
--		mult = cpg_pll_config->pll3_mult;
--		div = cpg_pll_config->pll3_div;
--		break;
--
--	case CLK_TYPE_GEN4_PLL4:
--		mult = cpg_pll_config->pll4_mult;
--		div = cpg_pll_config->pll4_div;
--		break;
--
- 	case CLK_TYPE_GEN4_PLL5:
- 		mult = cpg_pll_config->pll5_mult;
- 		div = cpg_pll_config->pll5_div;
- 		break;
- 
--	case CLK_TYPE_GEN4_PLL6:
--		mult = cpg_pll_config->pll6_mult;
--		div = cpg_pll_config->pll6_div;
--		break;
--
- 	case CLK_TYPE_GEN4_PLL2X_3X:
- 		value = readl(base + core->offset);
- 		mult = (FIELD_GET(CPG_PLLxCR_STC, value) + 1) * 2;
-diff --git a/drivers/clk/renesas/rcar-gen4-cpg.h b/drivers/clk/renesas/rcar-gen4-cpg.h
-index 9bca280a924fde13..13f4ae28c5041433 100644
---- a/drivers/clk/renesas/rcar-gen4-cpg.h
-+++ b/drivers/clk/renesas/rcar-gen4-cpg.h
-@@ -12,12 +12,8 @@
- enum rcar_gen4_clk_types {
- 	CLK_TYPE_GEN4_MAIN = CLK_TYPE_CUSTOM,
- 	CLK_TYPE_GEN4_PLL1,
--	CLK_TYPE_GEN4_PLL2,
- 	CLK_TYPE_GEN4_PLL2X_3X,	/* r8a779a0 only */
--	CLK_TYPE_GEN4_PLL3,
--	CLK_TYPE_GEN4_PLL4,
- 	CLK_TYPE_GEN4_PLL5,
--	CLK_TYPE_GEN4_PLL6,
- 	CLK_TYPE_GEN4_PLL_F8_25,	/* Fixed fractional 8.25 PLL */
- 	CLK_TYPE_GEN4_PLL_V8_25,	/* Variable fractional 8.25 PLL */
- 	CLK_TYPE_GEN4_PLL_F9_24,	/* Fixed fractional 9.24 PLL */
+ Documentation/devicetree/bindings/serial/samsung_uart.yaml | 14 ++++++++++++++
+ drivers/clk/samsung/clk-gs101.c                            |  6 ++----
+ 2 files changed, 16 insertions(+), 4 deletions(-)
+---
+base-commit: 523b23f0bee3014a7a752c9bb9f5c54f0eddae88
+change-id: 20240430-gs101-non-essential-clocks-2-6a3280fa1be8
+
+Best regards,
 -- 
-2.34.1
+André Draszik <andre.draszik@linaro.org>
 
