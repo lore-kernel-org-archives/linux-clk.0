@@ -1,196 +1,146 @@
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D868F23A0
-	for <linux-clk@vger.kernel.org>; Wed, 10 Jul 2024 02:34:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A40C364BA;
+	Wed, 10 Jul 2024 03:03:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720578897; cv=none; b=f7WkrqNok+POr1vhE4jJpO+FtG0kREWD/+HdH/ekeILOi8CLG666os1ZhVQ/siwrARYjRROXCgjjj80Sb9swJz3vgHOuUwYdR+Hj9GibH4coEyWtkHDB8FlmGinyu6hv/Cl8OFJTQ+HUBQnSvj+dNHHAyFZ5tt0u1SBtBrg9pgs=
+	t=1720580593; cv=none; b=ZT1e1vkjhCc/klHi1hhps1WMnkr/aCz3tmQKoWsv8ppZPMZdxJN9IGhrTq8mG17c9Af2xy56ECd1CBlsb8Zb5XW5rE36Spd9LnX1GTgH6Udu9ctcSNS7Bh4ANPaTBk1Q1XuGZm4wjY7i4UwWGiPFv6DrltxokrfSGPV2TlTckxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720578897; c=relaxed/simple;
-	bh=GQhZ9NiweAuXcUzMZDobgANyOOU4DoNB9IAhUaTU288=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=cvXlnhLH1yrZlug3DBT+ARpLRUJtjZVKckgUoAKzzaacHSQe/yxaxR8r6OufNzMGwYzyz/uRsqYEofkqQM0XpsbSd/mhpnY+PuikBu6JKzyhYstQlXOJQQrTyTvrsEo5q8RDLkcLFhx55hIgWNwJRoqjPz0AgL9JN2S6PFO4mk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=cxZCyDY8; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1720580593; c=relaxed/simple;
+	bh=GfbEa+uUizZaGzhN5tqQlx1HsH4nAvdKwuYdZKmllR8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Rt8K7tZ3BWi4I10CIv+VTkHMvNS4mjilQMzEcTyhvn4vJPmReIrgJ4TI48pApu1kv9d8lzlqGbVGzff4yeO2VYMkqctswwRfO6y/xRhpKAbw++7RuppFsFl1D6XvT0hzXRRB5xPgdkv8azzjISrXb2MNmQ2UMCqyCkdmB6lqKmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PjZEXkQh; arc=none smtp.client-ip=209.85.167.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="cxZCyDY8"
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240710023453epoutp040403798ba06c3ee4a3dc11ed07b7fa13~guWNLdF400999809998epoutp04K
-	for <linux-clk@vger.kernel.org>; Wed, 10 Jul 2024 02:34:53 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240710023453epoutp040403798ba06c3ee4a3dc11ed07b7fa13~guWNLdF400999809998epoutp04K
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1720578893;
-	bh=GQhZ9NiweAuXcUzMZDobgANyOOU4DoNB9IAhUaTU288=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=cxZCyDY8FdHvnGbWY4F+s4xcuNtZN5kuq1LzpaCKMDSTF0T+oVXgNoYC+CjDkC18Z
-	 gNcOccN6U9b1DQ4lhrdU/zds2gMSPoZF0y9yTM9OJVKi4TmiwevbtBZFEWnXdM6Ewq
-	 tO8XzR3Hh1iXEgY93Z9mjPy6Iurh0FSMQZ3IE4dc=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTP id
-	20240710023453epcas5p1480efc2119468f7bee3f379b7fd6e9be~guWMx_ItE0967409674epcas5p1B;
-	Wed, 10 Jul 2024 02:34:53 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.181]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4WJhlb2Qzyz4x9Q2; Wed, 10 Jul
-	2024 02:34:51 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	16.2A.11095.B43FD866; Wed, 10 Jul 2024 11:34:51 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240710023450epcas5p144d272af968fa2897bd7a87f0e9d7b7a~guWKbAGgi0428204282epcas5p1Z;
-	Wed, 10 Jul 2024 02:34:50 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240710023450epsmtrp12dd603a4386918c3f504e65c6d224533~guWKaHn8v0997209972epsmtrp1Y;
-	Wed, 10 Jul 2024 02:34:50 +0000 (GMT)
-X-AuditID: b6c32a49-423b770000012b57-30-668df34bfdce
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	9A.1C.18846.A43FD866; Wed, 10 Jul 2024 11:34:50 +0900 (KST)
-Received: from INBRO002756 (unknown [107.122.12.5]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240710023448epsmtip1bce226b48afaba14252ccadac227b492~guWIm4V5X2932829328epsmtip18;
-	Wed, 10 Jul 2024 02:34:48 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'sunyeal.hong'" <sunyeal.hong@samsung.com>, "'Krzysztof Kozlowski'"
-	<krzk@kernel.org>, "'Sylwester Nawrocki'" <s.nawrocki@samsung.com>,
-	"'Chanwoo Choi'" <cw00.choi@samsung.com>, "'Michael Turquette'"
-	<mturquette@baylibre.com>, "'Stephen Boyd'" <sboyd@kernel.org>, "'Rob
- Herring'" <robh@kernel.org>, "'Conor Dooley'" <conor+dt@kernel.org>
-Cc: <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-In-Reply-To: <000201dad26f$b18c3690$14a4a3b0$@samsung.com>
-Subject: RE: [PATCH v2 3/4] clk: samsung: clk-pll: Add support for pll_531x
-Date: Wed, 10 Jul 2024 08:04:47 +0530
-Message-ID: <015601dad271$bcd53e00$367fba00$@samsung.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PjZEXkQh"
+Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-3d9234b77dfso2201113b6e.0;
+        Tue, 09 Jul 2024 20:03:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720580590; x=1721185390; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=KKkEn8gtIME2o7SskHC2V7w9XB0tpg/NcovnDfSPb3k=;
+        b=PjZEXkQhxPnEMnRRCvq5b5G1IcF+f9gmDK4v1lbZ366OW5kbFsy/x3l2dbSkXuQmhY
+         ntr1ijHbefLwrn70cbZaGsLUX320CCqJgWIZWYxtHXKi4BCh/0M2fGrewMgJSL1iRHAN
+         yPlfLGVCQVE7s0Km5QSB3KD3TI5Xa/mW72aQhXcxR4893ZMvTIMgvt/VQk63R3hAKUEW
+         8OslhbumcDLuVRtoxrtvkodU2xgqDGvHfqnaGQq0RgDIWLY8mHjyS6kO5JGzCR5hpnjx
+         qkEEkmP3mJJ7Z2SpV900k8uuxxR8AQWSnVB5iGEATZzJVIOl69LN47n4ILIjmKbb1CUK
+         kDVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720580590; x=1721185390;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KKkEn8gtIME2o7SskHC2V7w9XB0tpg/NcovnDfSPb3k=;
+        b=pj4X5gsFxtR+eg6dEddMJ8VxamEKIn3QYa2ib7qeGshe2QlchKmnz5n45mdmuMSRBK
+         XUNWW1xUztkL2hq8gZDs/qwTYkOxFZWqWGD4uM0VXhb6DzQ0SXUG+sKPWsumNgcX5MHa
+         nf0A9fqCEWAGs8RI8++QRzkU3L/+7bBVZG+8Tzm4xPqqjWyRB8zpFkCCnrZyresNOZLS
+         2JdG9dVFfuCqZJeTCOB1D6jR5+nfzUC+L+QMx1f95eWdB54RRu+2uIteiAiel/SPu+/y
+         CwZRDa6ww6uZ982mvEjVm6ziebZrjZnaMsZW6ODGBHxTKgt4GT7IN0z7vcjObM4OH5kY
+         5otQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUZXSWFke9NciJySGFFvpU5e9tu1CoyAr09K1c57MrhVpvWsIrQWAxbst+jz5N+1c/bmoPaFkDa8rO/CimAl+iPtPCNopmbARurIia0DEjjHdl8WHA6jJzfI/t5poaKGAjdbsRY9YgpDzGEBsf8+oLdOW9i9UrQ5WD+f4G/JUvTKdOA2A==
+X-Gm-Message-State: AOJu0YyfYdxSzl6QL0VkpL01dAaQ6wd0LtiwWWNywjCRoqpszdzsYlMX
+	+Kc3UrMM2SFDKIY2cZae5czy/RvL4iuXssEhQSVxu825HeV+RF93Y0BDhkz9g7K3U31d6RJrAGY
+	wuSp1LXWr0ghZ4i7heO5JY48MuNE=
+X-Google-Smtp-Source: AGHT+IFgagPufhfO3kVQfItv3SWrXC3htPT/1kAkqIC6JWUhjoj+56zpXjnNVV8XcysieMT0AiF5k6pFInYg5EvGmSk=
+X-Received: by 2002:a05:6808:bd4:b0:3d9:3649:908a with SMTP id
+ 5614622812f47-3d93c0b5c09mr4527199b6e.58.1720580590556; Tue, 09 Jul 2024
+ 20:03:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQJHtUpDsgLCeLIQdS8546uqgvLWdQHhk3nlAbaaqcQDPX93AAGcPnKhsNHoffA=
-Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrOJsWRmVeSWpSXmKPExsWy7bCmpq735940g3ULBCzW7D3HZHH9y3NW
-	i/lHzrFanD+/gd1i0+NrrBYfe+6xWlzeNYfNYsb5fUwWF0+5Wvzfs4Pd4vCbdlaLf9c2slg0
-	LVvP5MDr8f5GK7vHplWdbB6bl9R79G1ZxejxeZNcAGtUtk1GamJKapFCal5yfkpmXrqtkndw
-	vHO8qZmBoa6hpYW5kkJeYm6qrZKLT4CuW2YO0IlKCmWJOaVAoYDE4mIlfTubovzSklSFjPzi
-	Elul1IKUnAKTAr3ixNzi0rx0vbzUEitDAwMjU6DChOyMeeeOsxT8FquY+PgfUwPjFuEuRk4O
-	CQETiQu3ZjB1MXJxCAnsZpS482QOlPOJUeJo6z9GOKdvcicTTMvtCZNZIBI7GSXOfV/NDOG8
-	YJS41NrCClLFJqArsWNxGxtIQkTgHpPEgx/tYIOZBdYxSmyeeYQdpIpTwEqi/U0zUDsHh7CA
-	t8T71hyQMIuAqsT8L1+YQWxeAUuJlXeuskPYghInZz5hAbGZBbQlli18zQxxkoLEz6fLwBaL
-	CPhJTD1+EapGXOLlUZBVXEA1Ozgktr06wgiyS0LAReL6XAWIXmGJV8e3sEPYUhIv+9ug7GyJ
-	4xdnsUHYFRLdrR+h4vYSOx/dZAEZwyygKbF+lz7EKj6J3t9PmCCm80p0tAlBVKtKNL+7ygJh
-	S0tM7O5mhbA9JA682cg0gVFxFpLHZiF5bBaSB2YhLFvAyLKKUTK1oDg3PbXYtMAwL7UcHuHJ
-	+bmbGMEpWMtzB+PdBx/0DjEycTAeYpTgYFYS4Z1/oztNiDclsbIqtSg/vqg0J7X4EKMpMLQn
-	MkuJJucDs0BeSbyhiaWBiZmZmYmlsZmhkjjv69a5KUIC6YklqdmpqQWpRTB9TBycUg1MMoJ1
-	L8T39snrHatrYWm9fDzLrWbbah3bJa6rvrIt1PrfxbIztG3mezVvbg3GMi6doKCHHy9G+lRn
-	XS1e+U/xqUQ7f7L9nQ7Ha6v/tj5u3OA72eO+xF+H4qsBCxZdmnl8pUSYPY8X7/sLHUfKZEJ3
-	7plSyr/0WpqWH6vyrrVf9FSDH3Ff+Dyv9otqsqzS/fzsV9NbNd9wH1t5pK5d47FaibibuMAC
-	pvwtxZOFFsSsnLVMoG5Z36kp7O6iGe/fH7zfYB/uf7lnocIsgxevb/77XXRJjmV/z5o31vfj
-	GdUP2S4y3XJ938VFptEvRKXvPds/ccPCKws+sPfuUS1Z9nlXOR/bfs6jMhoG7oU7nmm8UGIp
-	zkg01GIuKk4EAEObiUNKBAAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprDIsWRmVeSWpSXmKPExsWy7bCSnK7X5940gye/NS3W7D3HZHH9y3NW
-	i/lHzrFanD+/gd1i0+NrrBYfe+6xWlzeNYfNYsb5fUwWF0+5Wvzfs4Pd4vCbdlaLf9c2slg0
-	LVvP5MDr8f5GK7vHplWdbB6bl9R79G1ZxejxeZNcAGsUl01Kak5mWWqRvl0CV0bvhLNsBRPE
-	Kn4d/MvcwHhcqIuRk0NCwETi9oTJLF2MXBxCAtsZJW78PskKkZCWuL5xAjuELSyx8t9zdoii
-	Z4wSO4+eZAZJsAnoSuxY3MYGYosIPGGSuPShHKSIWWATo8S53TfZIDoWMklc2fEarINTwEqi
-	/U0zkM3BISzgLfG+NQckzCKgKjH/yxewEl4BS4mVd66yQ9iCEidnPmEBsZkFtCWe3nwKZy9b
-	CDFSQkBB4ufTZawQR/hJTD1+EapGXOLl0SPsExiFZyEZNQvJqFlIRs1C0rKAkWUVo2hqQXFu
-	em5ygaFecWJucWleul5yfu4mRnAEagXtYFy2/q/eIUYmDsZDjBIczEoivPNvdKcJ8aYkVlal
-	FuXHF5XmpBYfYpTmYFES51XO6UwREkhPLEnNTk0tSC2CyTJxcEo1MK2rn7WJOYXBMzlnFvOB
-	jKJZz3KuR/or17Bu1Lwrojx/7R8J6SmRs3z6jW/xtKf/E13o98blupZNe+KfG8m5PQL/3hQH
-	mwRNVD17cS9v4R7frM89qV2GpbNnnOjxyI+9Gzt5SShb9PMvd1V9Wqwj9rb2sBY+P+X4S3dL
-	tqQKo/SaqJhLf1zvOeaqlQnffqXufsxpRd1txQ1/hC+/2J56KuTHslKva7tz/ou1ts6+f8fm
-	IuuGeXzpLf3stv0V1g0zn1UmmUc/3crv8bHSZ7umVcb8poif3goLRX53hrHJP2FyndrgJSIy
-	9fOapWd4pjq2TBeafq5y+corXKYZAZqaMsekeD79/GwQ927vAnFLJZbijERDLeai4kQAKJFF
-	ni8DAAA=
-X-CMS-MailID: 20240710023450epcas5p144d272af968fa2897bd7a87f0e9d7b7a
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240707231445epcas2p18815fee7d176f63619d244d836ab64fc
-References: <20240707231331.3433340-1-sunyeal.hong@samsung.com>
-	<CGME20240707231445epcas2p18815fee7d176f63619d244d836ab64fc@epcas2p1.samsung.com>
-	<20240707231331.3433340-4-sunyeal.hong@samsung.com>
-	<000601dad12e$19ff3f30$4dfdbd90$@samsung.com>
-	<000201dad26f$b18c3690$14a4a3b0$@samsung.com>
+References: <20240709123121.1452394-1-heiko@sntech.de>
+In-Reply-To: <20240709123121.1452394-1-heiko@sntech.de>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Wed, 10 Jul 2024 08:32:57 +0530
+Message-ID: <CANAwSgQGoeyy3V9hBNcxFynRgR-rUanUzVN41uFxu0-_OqKKZg@mail.gmail.com>
+Subject: Re: [PATCH 0/6] Binding and driver for "dumb" clock generators
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, quentin.schulz@cherry.de, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hello Sunyeal,
+Hi Heiko,
 
-> -----Original Message-----
-> From: sunyeal.hong <sunyeal.hong=40samsung.com>
-> Sent: Wednesday, July 10, 2024 7:50 AM
-> To: 'Alim Akhtar' <alim.akhtar=40samsung.com>; 'Krzysztof Kozlowski'
-> <krzk=40kernel.org>; 'Sylwester Nawrocki' <s.nawrocki=40samsung.com>;
-> 'Chanwoo Choi' <cw00.choi=40samsung.com>; 'Michael Turquette'
-> <mturquette=40baylibre.com>; 'Stephen Boyd' <sboyd=40kernel.org>; 'Rob
-> Herring' <robh=40kernel.org>; 'Conor Dooley' <conor+dt=40kernel.org>
-> Cc: linux-samsung-soc=40vger.kernel.org; linux-clk=40vger.kernel.org;
-> devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org; lin=
-ux-
-> kernel=40vger.kernel.org
-> Subject: RE: =5BPATCH v2 3/4=5D clk: samsung: clk-pll: Add support for pl=
-l_531x
->=20
-> Hello Alim,
->=20
-> > -----Original Message-----
-> > From: Alim Akhtar <alim.akhtar=40samsung.com>
-> > Sent: Monday, July 8, 2024 8:58 PM
-> > To: 'Sunyeal Hong' <sunyeal.hong=40samsung.com>; 'Krzysztof Kozlowski'
-> > <krzk=40kernel.org>; 'Sylwester Nawrocki' <s.nawrocki=40samsung.com>;
-> > 'Chanwoo Choi' <cw00.choi=40samsung.com>; 'Michael Turquette'
-> > <mturquette=40baylibre.com>; 'Stephen Boyd' <sboyd=40kernel.org>; 'Rob
-> > Herring' <robh=40kernel.org>; 'Conor Dooley' <conor+dt=40kernel.org>
-> > Cc: linux-samsung-soc=40vger.kernel.org; linux-clk=40vger.kernel.org;
-> > devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org;
-> > linux- kernel=40vger.kernel.org
-> > Subject: RE: =5BPATCH v2 3/4=5D clk: samsung: clk-pll: Add support for
-> > pll_531x
-> >
-> > Hello Sunyeal,
-> >
-> > > -----Original Message-----
-> > > From: Sunyeal Hong <sunyeal.hong=40samsung.com>
-> > > Sent: Monday, July 8, 2024 4:44 AM
-> > > To: Krzysztof Kozlowski <krzk=40kernel.org>; Sylwester Nawrocki
-> > > <s.nawrocki=40samsung.com>; Chanwoo Choi
-> <cw00.choi=40samsung.com>; Alim
-> > > Akhtar <alim.akhtar=40samsung.com>; Michael Turquette
-> > > <mturquette=40baylibre.com>; Stephen Boyd <sboyd=40kernel.org>; Rob
-> > > Herring <robh=40kernel.org>; Conor Dooley <conor+dt=40kernel.org>
-> > > Cc: linux-samsung-soc=40vger.kernel.org; linux-clk=40vger.kernel.org;
-> > > devicetree=40vger.kernel.org; linux-arm-kernel=40lists.infradead.org;
-> > > linux- kernel=40vger.kernel.org; Sunyeal Hong
-> > > <sunyeal.hong=40samsung.com>
-> > > Subject: =5BPATCH v2 3/4=5D clk: samsung: clk-pll: Add support for
-> > > pll_531x
-> > >
-> > > pll531x PLL is used in Exynos Auto v920 SoC for shared pll.
-> > > pll531x: Integer/fractional PLL with mid frequency FVCO (800 to 3120
-> > > MHz)
-> > >
-> > > PLL531x
-> > > FOUT =3D (MDIV + F/2=5E32-F=5B31=5D) * FIN/(PDIV x 2=5ESDIV)
-> > >
-> > Any reason for not mentioning equation for integer PLL?
-> >
-> If the F value is 0, it operates as an integer PLL.
-Thanks for clarification, it is good to mention the same in the commit mess=
-age.=20
+On Tue, 9 Jul 2024 at 18:02, Heiko Stuebner <heiko@sntech.de> wrote:
+>
+> Rockchip boards with PCIe3 controllers inside the soc (rk3568, rk3588) have
+> external clock generators on the board to generate the needed 100MHz
+> reference clock the PCIe3 controller needs.
+>
+> Often these clock generators need supplies to be enabled to run.
+>
+> Modelling this clock has taken a number of shapes:
+> - The rk3568 Rock-3a modelled the generator-regulator as "phy-supply" [0]
+>   &pcie30phy {
+>         phy-supply = <&vcc3v3_pi6c_03>;
+>         status = "okay";
+>   };
+>   which is of course not part of the binding
+>
+> - On the Rock-5-ITX the supply of the clock generator is controlled by
+>   the same gpio as the regulator supplying the the port connected to the
+>   pcie30x4 controller, so if this controller probes first, both
+>   controllers will just run. But if the pcie30x2 controller probes first
+>   (which has a different supply), the controller will stall at the first
+>   dbi read.
+>
+> - Recent Theobroma-Systems boards (Jaguar and Tiger) modelled their
+>   generator as a combination of fixed clock and gpio-gate, which works
+>   because the generator's vdd-supply is always on and only the output-
+>   enable pin needs to be toggled.
+>
+>
+> So this series attempts to improve the situation by allowing to model
+> these clock generators as actual entities in the devicetree, to not have
+> them just accidentially work or break bindings.
+>
 
-=5Bsnip=5D
-> > > --
-> > > 2.45.2
-> >
->=20
+I was wondering if these changes apply to Radxa Rock 5b SbC, it does not have
+pi6c557 clock generator but the schematic supports GEN_CLK_100MHZ is
+input to CLKin0 which is generated via the VCC3V3_PI6C_05 (100MHz,3.3V,3225)
+regulator.
 
+[1] https://dl.radxa.com/rock5/5b/docs/hw/radxa_rock5b_v13_sch.pdf
 
+Thanks
+-Anand
+
+>
+> [0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/rockchip/rk3568-rock-3a.dts#n605
+>
+> Heiko Stuebner (6):
+>   dt-bindings: clocks: add binding for generic clock-generators
+>   clk: add driver for generic clock generators
+>   arm64: dts: rockchip: fix the pcie clock generator on Rock 5 ITX
+>   arm64: dts: rockchip: use clock-generator for pcie-refclk on
+>     rk3588-jaguar
+>   arm64: dts: rockchip: use clock-generator for pcie-refclk on
+>     rk3588-tiger
+>   arm64: dts: rockchip: add pinctrl for clk-generator gpio on
+>     rk3588-tiger
+>
+>  .../bindings/clock/clock-generator.yaml       |  62 ++++++++
+>  .../arm64/boot/dts/rockchip/rk3588-jaguar.dts |  13 +-
+>  .../boot/dts/rockchip/rk3588-rock-5itx.dts    |  34 ++++-
+>  .../arm64/boot/dts/rockchip/rk3588-tiger.dtsi |  21 +--
+>  drivers/clk/Kconfig                           |   7 +
+>  drivers/clk/Makefile                          |   1 +
+>  drivers/clk/clk-generator.c                   | 133 ++++++++++++++++++
+>  7 files changed, 251 insertions(+), 20 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/clock/clock-generator.yaml
+>  create mode 100644 drivers/clk/clk-generator.c
+>
+> --
+> 2.39.2
+>
+>
