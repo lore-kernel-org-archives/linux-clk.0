@@ -1,161 +1,209 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2088.outbound.protection.outlook.com [40.107.20.88])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CEB739FD9;
-	Tue,  9 Jul 2024 21:45:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720561523; cv=none; b=OlKlFXnk5c2C9begasYHcl4lXoDUHU6HahdCjmi1dweG6oedrMebTZwtOGhNeN1DgJgOCFqAi3Vs6N27b/wZypDNK2H4UwDE5PvKpu/8b1EVOK4CB/EMuCXKX19THuuhySMBnctNhztDS49MLBB0TH5neNRB8w6OOyYAxgb3s6I=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720561523; c=relaxed/simple;
-	bh=L7UCNM+c3AvSjhbiLx4WoUJDX1N1mNGU5BEXO5uWjzc=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=ftJrsdkShBx3pxMU79sL83MPNV+Pd6wEFVSHzp5aTJT3wOj55aM1r9lMLwDwnwIXh1HJ8kekryMVIkWtupiwJu+DdhCELhgi+CfrMXQMY8jRrKORR6T1H8v2+Kz2NplKDE1gTyEDY6yav4RL09kr0O0LyhVMH3vC1tu4R2/DbD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=frC0CHfX; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94B905CB8;
+	Wed, 10 Jul 2024 02:09:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.88
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1720577368; cv=fail; b=T080Akv/KPVc9E+vewin2FXJre4Y/C/CnJL7hlgbn0T7HfWwfjFenLUh0oIg3AEw17jQKdjH21eMu7cTlKaeNY1uR7F0mUYiTGYp/+8NSEUz8Zfz6+bS5e8DqI/pSFxXOTUWPEsn2VkLXSCSHKbeVX1ZYkL45nvGH11LP/Opo2A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1720577368; c=relaxed/simple;
+	bh=bGAVu/x9nls8AgBE8ZfpZaGhTh+EKuo8AXPGMUaqhnU=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=rFtPeVyZlVfdE7eYS2X2ySNssMVFVyOq/BShXORs9oCZaOB3RMfq6nuOBVAkq2HiI+tPAXwQ+mbT82iBj60qFx/jGE0N1f3PhH9DSkTxQo/QqF+pM3A0fULUYLpKmB4UVqMlxPGnU7qnOTcHUTQxxnf5MsFoQL0u6m7WBp70TT4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=YQGg0A7B; arc=fail smtp.client-ip=40.107.20.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="frC0CHfX"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5AA9C3277B;
-	Tue,  9 Jul 2024 21:45:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720561523;
-	bh=L7UCNM+c3AvSjhbiLx4WoUJDX1N1mNGU5BEXO5uWjzc=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=frC0CHfXu1bTRMyhetfceQWH82xLTzJheQuXuE0434yrS81Mb5rQudZ/hcCgMHeBs
-	 ENsAbpfbkyWHg2pXiLNjfCuH+3EDroTgysl/0iZP8DRVr/ohdG7ajVfKrg85paOdr1
-	 ufJw+uUDx/vcJpwXj/5x0Zf+plkcsiHR9Hc8/5dThk+6zpimocysjXtYohnaYXCRfq
-	 940XequIFcEM893M5FJQXsD48a7SUeDOCZR8fMbysS43IlO+V/DkQmoHH9wWoaoVuP
-	 ZT6yoVsSsimYP4MaH8fkUPEWF3R/l2gXLBbs6Ob3iUky1KWexnO9/tb7piaMvZEVYV
-	 s8+6xMozhLbfQ==
-Message-ID: <2e5852b9e94b9a8d0261ce7ad79f4329.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="YQGg0A7B"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=RPtqfpE46SrmX3INCeKvN8+gbtENvr4tvW1ET6KUU7IkhwGHw6Hq5N0HB5fEnXG6OuqHY6UDSjJmve3pdtADfnf7zTmrysrDUyo3MWFkyZQUpzp1eIbCyFi7ufL2NULuh/2xn/LsK1mAEXlyKbpDvGnzllcN9qw5uRCubUKVZZtNULxakKnAn0XjZQ0mp3Nmfj5BwtuUJvonrbOc2FByObtnbBRUgQ/peMOrtOfP65B2B2krS3/s+RpAMK9nNjRPcbmkhNcy+hATu+dxIQIf0vMgt/cymAPLqHfsivpmSxgipXO07MbEuASk4fi9GLYjXgrrmtSahBQrIxNLOkD0nA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=bGAVu/x9nls8AgBE8ZfpZaGhTh+EKuo8AXPGMUaqhnU=;
+ b=kCq639CqMoDbcYc3jGNJUoKpyK3KPBDyXewUVnW1ZIBaG+83zFdOFmayMr+24aEWP00VY03RJEUWukopHyoAw+4PlWLAKh1B8QX0VVjZQ8hmPkBLbaYqAqH8Zugs5+wZnf6ZDcosahUppAWkdYyMtJ1cKwovEw2nCl2xO/+9/3o1FzEwXKf72l8m+73TMWHNKMftrS1huAuEQGMxWezscEn1rttvKDzea7xqBOdHa7Wmm1FhUpQdd8eUgzpEvyDMCGH6cifLloKoe+rLIqb+NUSH7xadPXhNCCQ0fDvxIRjwti3Bq7oDNzc/ENmhEyNeaeFZtfVNkmtHQLJ56kCJAw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=bGAVu/x9nls8AgBE8ZfpZaGhTh+EKuo8AXPGMUaqhnU=;
+ b=YQGg0A7BWGrJP3kv3cP+roftoHdThG/Az0T+QT+OvU890lrUGrmf6hUGzNS60lv7GHBihHLGUCHbNiKBBWIDo3ntPnN2v3AJDXMYQU5tUROKxUDrbDC8hTXntfUWCrmAU7OgDafdGKfh92yc6oZq8ixjXmdK0JoR9p/B7bu992g=
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
+ by PAXPR04MB8671.eurprd04.prod.outlook.com (2603:10a6:102:21e::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7741.36; Wed, 10 Jul
+ 2024 02:09:21 +0000
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db%6]) with mapi id 15.20.7741.033; Wed, 10 Jul 2024
+ 02:09:21 +0000
+From: Wei Fang <wei.fang@nxp.com>
+To: Peng Fan <peng.fan@nxp.com>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>, "sboyd@kernel.org" <sboyd@kernel.org>,
+	"robh@kernel.org" <robh@kernel.org>, "conor+dt@kernel.org"
+	<conor+dt@kernel.org>, "shawnguo@kernel.org" <shawnguo@kernel.org>,
+	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "festevam@gmail.com"
+	<festevam@gmail.com>, "abelvesa@kernel.org" <abelvesa@kernel.org>, Clark Wang
+	<xiaoning.wang@nxp.com>
+CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 2/3] clk: imx95: enable the clock of NETCMIX block control
+Thread-Topic: [PATCH 2/3] clk: imx95: enable the clock of NETCMIX block
+ control
+Thread-Index: AQHa0dSlmJsiuMOg1UmEpR/J2kHl/LHucI+AgADGRlA=
+Date: Wed, 10 Jul 2024 02:09:21 +0000
+Message-ID:
+ <PAXPR04MB85108ED62C1178D9D0BED9F388A42@PAXPR04MB8510.eurprd04.prod.outlook.com>
+References: <20240709073603.1967609-1-wei.fang@nxp.com>
+ <20240709073603.1967609-3-wei.fang@nxp.com>
+ <PAXPR04MB8459C43A1D11FA8A9F4AD0FC88DB2@PAXPR04MB8459.eurprd04.prod.outlook.com>
+In-Reply-To:
+ <PAXPR04MB8459C43A1D11FA8A9F4AD0FC88DB2@PAXPR04MB8459.eurprd04.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8510:EE_|PAXPR04MB8671:EE_
+x-ms-office365-filtering-correlation-id: 12c77ed6-7f0e-47cc-7495-08dca0855044
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|1800799024|376014|7416014|38070700018|921020;
+x-microsoft-antispam-message-info:
+ =?gb2312?B?SHJYdnZmWmNVWkFwSGliUE9CUE9WUVUwaWYxSEhmTVNxeDZ4R1h1MGFoQUgz?=
+ =?gb2312?B?WVk4aUp5c2J4YkxKZTVHYUpJZlgwTXVHb1Fmc3Evckd6clFVMnAyQjVIOEJV?=
+ =?gb2312?B?V3RjaGRQdVdRY09oTmdpNVdObFAxK3J4NmVQaHIrWE42OC9MTVBEMVNtSUNK?=
+ =?gb2312?B?N01JYWsyekp4Q2FNd2FERk1Ta1FCNlcveC9YNnJtWXpVYnZsVENLSHM3OXJL?=
+ =?gb2312?B?K1ZpcU9tTU9yd2NjUEQzUXloQmxjR1FoU1RJYUpnTkF3Q3lLaDBSL29lbmtj?=
+ =?gb2312?B?RXRxTUpHWFBJUWpwZ0tvRmc2QmtxYld4RFZzTDZGL3E4cjlKUzhEekltZnVw?=
+ =?gb2312?B?eFlPem5XZUZKSUZhV2pkdGdsblJZdjlZeFNjQ05xZTVVcFlnbkJQa3lmWjJQ?=
+ =?gb2312?B?cVZGL1J0VHdFc2s1VGxKRjVObGtKVHRkcEp4RzlCWHZ1UklLdVpMSGxlaFlS?=
+ =?gb2312?B?eTRkMjJHUEo2SGI2VVVueXhNYU9WTFdCSXAyQmF4cVJQNGRJb2ZQelFCQ21P?=
+ =?gb2312?B?cXlqNkRwaVlibVFSVDZXZXhkTUhUZG9uUzNKUHcwaEJWWnprOE1sbnNVMGJ2?=
+ =?gb2312?B?WVlrVkVVNDM5eVpWb0RtZVM2N2hBaXhhYVZIKytaeE9Pd2NsWjU1TjB2YndY?=
+ =?gb2312?B?eHpTY2FjU09HNFVHWmlENVYyeDQvYm9HN1N3WnFQdmNnQVZCbkd1UTN6YXJw?=
+ =?gb2312?B?OHhUM2VTdEdwRkJkT0JaSnNuNXI2bDZZd0kydUZIbzh4WjJBaS9UekNFN3FK?=
+ =?gb2312?B?MENQRVo1b2pkWXRqSEpCRHFEM2JSUkE3RS94S291U2VjdlhObUlZcFByZGRQ?=
+ =?gb2312?B?SlVkUlNEczdrR2poak0rb0ptUnBBZWRHWXNzRUlMVEMvT2Z0VGpVNU53ZlBO?=
+ =?gb2312?B?cDFDVTdnYjRXVWQrK3h3YzBZK1Z1SHJuMjZBazA1RFo5a1NnZDEvV1ovZVMx?=
+ =?gb2312?B?LzJiMDVTNlpRdEREWUVZWXdaM09PaFB5ZElUaDZjc3ovNmZ4N0Y3SVlZUWdr?=
+ =?gb2312?B?dE1RQTBmZ0JRSkh0V2Q4cHpTeFZyMy9DZlFrcVZQVjRzUWdOMExVNXI3T2wz?=
+ =?gb2312?B?ekhtMEJxd0RBSVlwV3lrQzFramxOWDVOcXFxQ1RGczgrVURGcjVuYjJRSzJt?=
+ =?gb2312?B?bGl4UG9ReUJBWUxGalRpUDBDV0kydUVrNWVRYVQxV3hSaGl2bGlBQzJPRnVI?=
+ =?gb2312?B?ZkZKRU13WU00OUxObjdpQXZUaXNPZnRxR3BVaHl4aXAwM00xQ1h3RUZNOHJ0?=
+ =?gb2312?B?WVdhR3B1N29IUU85ODFnY2JBRG81cXhaSGFsNzhHU293bGhuTmUxOVNUcUFw?=
+ =?gb2312?B?Y2UvZGtEajljL1ZXbnFiUStiRGV6MmZtcVFvWGVMYklhY2sycFVvKzJzbE8w?=
+ =?gb2312?B?TnJVUmV1bTRwVU1va0s2TUxOK3prWjJCQVV5OHVremg3bzJBQllOdkpBcktY?=
+ =?gb2312?B?TFQyS1dWY2R4cU95cGpJV1ZTbE0rZkd3RlFRSk5YTXJLR29wN0JpdjF1S01G?=
+ =?gb2312?B?MDFha1l0NzZqUmlhajdBMER1ckFCVWxkU0M5UGJ3NWtaR3Z1YnZRT3FhbHZW?=
+ =?gb2312?B?NW95YTZGU3hNNUtEd21pcWdLZ2RRdWVWa3BDZVBrWGFJaXFRUk5NM1Vxb3ZP?=
+ =?gb2312?B?TFpqL0srN1VtVGRUYkxOalFSOFd6a3J1OWJUTnpJTFJaT3dia1pZenc4enhR?=
+ =?gb2312?B?ODNabHp4QkorSjEwVlFQazgwc1Z2akM3T29CSGF4V0dFQkVyWHdsRHJIbXQy?=
+ =?gb2312?B?S0xhRjlMcVdab0RiR0dJVkRFWDhLN2hoZmxQMTVXZWtNTWFXL2dYUFZGd0lu?=
+ =?gb2312?B?dUgvQVJNdHp4ZTR2KzhXaTZ0c29QZFd4QkdpWFFxRWVPRGNaakMzdFgxNFN4?=
+ =?gb2312?B?SVJLbXltcnJlOUswblJqSkFTZThhbkJGL0NyU1JKY0RIenBMQnhveG1uWWdG?=
+ =?gb2312?Q?ptA/CPeIQkM=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(38070700018)(921020);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?gb2312?B?Rmx0bGVSNVBQWUh0UllRKzNXZTREZUNCUzRxSHZjNkJpb2RwelQ3MElwWE5j?=
+ =?gb2312?B?dWM3U1BzRjY0R1p6a3pGbXRlWUR6eEc3ZkZMbFZ5WWJpUGFTVUxxVVlVanpq?=
+ =?gb2312?B?eitlcWtvbXNsL0xFRmZQUDg4ZXFSelBmOC8rSHhMS0JWRkg3WjdCTnJjVitN?=
+ =?gb2312?B?U1ZSN0d2TllRbG5XM1ppQUtqV2JNdW9aQ2JMSDN0azJQOWtBR05PUW1tQlhz?=
+ =?gb2312?B?cTFvaWNvUTFRT01ndWRxeVBWTU1WOWFKUWpOa0dLYWJONU9rd2tZS2V2NVRa?=
+ =?gb2312?B?cGhKcit1S3FkWDYzYnBWcTV1WS84ak5UaFlmQm43VkIxWFRDcTllRE45T2hl?=
+ =?gb2312?B?Tk5XZk45cWFIZTBuTDZQNUNuNkVZL0dqeGNjc2pFWDlBSE5oMnB0MWJsLy9l?=
+ =?gb2312?B?eGNyTEFuZ2J4YWFNeDZ6S2NxdE41NTlNbUZSNHBodGFtbVk5dE9DNVJ3aVdO?=
+ =?gb2312?B?V0FuODV0Wm8rMVE1VTZsTVJVeGJsZTNVY2s3SnE3Y0RncEg2QVNwYWRsUTFE?=
+ =?gb2312?B?OUtPQzM1bGZTVk44eWdNaFRXZ3dhT1RLTSt5eUZMRHVUekZ3RUc2TXNobmd4?=
+ =?gb2312?B?aHJJRVB1NGVYUVpSV3I4bG9WdEU5RlQ1eEM0SmlGUldGcEJyVkxhUkp5NE4w?=
+ =?gb2312?B?OW5zNjdyOHJOOEN2Wi9RVnBaclo4L0ZLNjlWbVpKY21EdWZHWVAzaDZKOGtD?=
+ =?gb2312?B?WGxDU3FxemZ3RnhpZnBiT3VncDN4U0taSmp2VktJTVZCUVA0U0dPK21yTFlh?=
+ =?gb2312?B?VUtKZjBHYXVpOFYvdmkvUHZQRzhmUWV5dEl3L1haTzhZeFhQMkFod3d6Qko4?=
+ =?gb2312?B?bWtmSVNSbUhLWHJqRjR3NWdKZVMxbG5QRUtjZjc2YWwwbjFHU3ZRRCtYSGRX?=
+ =?gb2312?B?VlIzRENwTFFLbnluS0ZkT3VqNVZuYXczSmZhcTQzdk9RU0lkeS9EWHNBUDQy?=
+ =?gb2312?B?bTc1dkVwZnNYOHNpUnhIT09YdVVkYkczU0ZrU2xkWi9JQWZtMGNRUVo3bjV0?=
+ =?gb2312?B?SDhsejdvU0kyMmNiM3dqbzZVYTh2MXFLWDRLQm5EZEYyclovWHFHZ0R3RkNU?=
+ =?gb2312?B?ek9CUEw5VnRuNUZGbUUvNjU3SUtoY0VrYjF6d0VzUlhlS21WUm15alFFVmdH?=
+ =?gb2312?B?U0paaFFaRW03ZW1peDZ6WW1rZ0tIVU11K0hXcm5vd2ZMZm9GUnBHUDdRVUE2?=
+ =?gb2312?B?TmtkeStvVUtVeFozVnBVSm5sWXlXTVd5UjFhdGFlbXYrejFua3FIQUd5T2lD?=
+ =?gb2312?B?ZTVjd3B5a2JoaGpqaVFOWkxrc3J3YlozUlBwSnFYL0JxNnNBbVdoeDRibFYv?=
+ =?gb2312?B?K0x0YklTMW5Cb0NPWHI1dXhKL1d2eUFXbDhVSkxsa3JJNUFTMFI4NCtZOFA1?=
+ =?gb2312?B?OEJVQ2tJMS81TUM2MDE3dWx5Zzl3ZTBPSmZqbnNnTGVTYTBKTHgvMVBjdWpm?=
+ =?gb2312?B?R3Z1Um1TWHZ1bnhJMzdKd0x2QmZHWWg3THo5dmVPTGk5NzJORGQ3NlJUUWJF?=
+ =?gb2312?B?Y0ZDcnFwakF0T05Ea1VCV29zYXFOdGd5MW14aHRlWjBISWtUMFNXUVk3eHBo?=
+ =?gb2312?B?bzB4ZUwxNUQxb3JyT0xvdmtYSTNkWXhUbHpRandhTEl3QmQzQ0FLSXNrY3Ex?=
+ =?gb2312?B?V2pIeG1GM3F3N0xkZ0pwYnBCZFVGYXpubjlLVDdrcG1IamxiWDhiU3o0bDVP?=
+ =?gb2312?B?UnJCd212SlZoa05mWjBaL3VrYlNvaENTVHphbnB0cm5salk3Skk4RFh6eFVu?=
+ =?gb2312?B?QmtYdFE2YzcybEl0WFhyTWM1TDdqWkdxaFdXakc0dWhabW0rTU1EOG54L3hl?=
+ =?gb2312?B?VHZ1K2k5QmJpVlRYTzRLbU9aRVlWTmJnaXRwMDZBc1AxZGZ2b1FtYUtwcUgy?=
+ =?gb2312?B?d2tlbkpSVXZYZ3VsWHJjMnR4UXI2V0xXL2FLRlRlbnM3RXVZdU5LWURUcHpW?=
+ =?gb2312?B?K0N6TTZzOFhndFAyS01nSWluSEFBbWJVSUswT3JNQURJbFpQcGRiMDhNL0JP?=
+ =?gb2312?B?c1FtMjZlN2pkTTk2MCtOWE8xTDY1YW5JcE8wcW1KRVFoa004Snlsd2VxaFQr?=
+ =?gb2312?B?eWNuVXhWZnNxZGY5clNiS2F0Yk1FT1hBY2c4VXUzTjJBR3YwTG1LZnhPaGc4?=
+ =?gb2312?Q?NyHc=3D?=
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240709123121.1452394-2-heiko@sntech.de>
-References: <20240709123121.1452394-1-heiko@sntech.de> <20240709123121.1452394-2-heiko@sntech.de>
-Subject: Re: [PATCH 1/6] dt-bindings: clocks: add binding for generic clock-generators
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de, quentin.schulz@cherry.de, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-To: Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com
-Date: Tue, 09 Jul 2024 14:45:20 -0700
-User-Agent: alot/0.10
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 12c77ed6-7f0e-47cc-7495-08dca0855044
+X-MS-Exchange-CrossTenant-originalarrivaltime: 10 Jul 2024 02:09:21.7163
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: q1cSUvTg2RqQo/kyyqUegFM10AGgTsrXT/O/yTe0Yhh4VE3QjST2jpv7ZD4ADjbtiYQbhyk2x2zJO+jy8tjd9A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8671
 
-Quoting Heiko Stuebner (2024-07-09 05:31:16)
-> In contrast to fixed clocks that are described as ungateable, boards
-> sometimes use additional clock generators for things like PCIe reference
-> clocks, that need actual supplies to get enabled and enable-gpios to be
-> toggled for them to work.
->=20
-> This adds a binding for such clock generators that are not configurable
-> themself, but need to handle supplies for them to work.
-
-Sounds like vdd-supply is required?
-
->=20
-> While in a lot of cases the type of the IC used is described in board
-> schematics, in some cases just a generic type description like
-> "100MHz, 3.3V" might also be used. The binding therefore allows both
-> cases. Specifying the type is of course preferred.
->=20
-> The clock-frequency is set in devicetree, because while some clock
-> generators have pins to decide between multipls output rates, those
-> are generally set statically on the board-layout-level.
->=20
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
->  .../bindings/clock/clock-generator.yaml       | 62 +++++++++++++++++++
->  1 file changed, 62 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/clock-generat=
-or.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/clock/clock-generator.yaml=
- b/Documentation/devicetree/bindings/clock/clock-generator.yaml
-> new file mode 100644
-> index 0000000000000..f44e61e414e89
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/clock-generator.yaml
-> @@ -0,0 +1,62 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/clock-generator.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Simple clock generators
-> +
-> +maintainers:
-> +  - Heiko Stuebner <heiko@sntech.de>
-> +
-> +properties:
-> +  $nodename:
-> +    anyOf:
-> +      - description:
-> +          Preferred name is 'clock-<freq>' with <freq> being the output
-> +          frequency as defined in the 'clock-frequency' property.
-> +        pattern: "^clock-([0-9]+|[a-z0-9-]+)$"
-> +      - description: Any name allowed
-> +        deprecated: true
-
-Drop the deprecated stuff from the fixed-clock binding?
-
-> +
-> +  compatible:
-> +    oneOf:
-> +      - const: clock-generator
-> +      - items:
-> +          - enum:
-> +              - diodes,pi6c557-03b
-
-I see this datasheet[1]. Can that link be included somewhere? That shows
-there's a clock input pin, which means I expect a 'clocks' property.
-
-Maybe instead of creating a generic binding just make a binding for
-these diodes parts? It certainly looks like a generic binding could come
-later when another vendor supports the same binding.
-
-> +              - diodes,pi6c557-05b
-> +          - const: clock-generator
-> +
-> +  "#clock-cells":
-> +    const: 0
-> +
-> +  clock-frequency: true
-> +
-> +  clock-output-names:
-> +    maxItems: 1
-> +
-> +  enable-gpios:
-> +    description:
-> +      Contains a single GPIO specifier for the GPIO that enables and dis=
-ables
-> +      the clock generator.
-> +    maxItems: 1
-> +
-> +  vdd-supply:
-> +    description: handle of the regulator that provides the supply voltage
-> +
-> +required:
-> +  - compatible
-> +  - "#clock-cells"
-> +  - clock-frequency
-
-This is the same required properties as fixed rate clocks. I'd guess
-that at least 'enable-gpios' or 'vdd-supply' should also be required, or
-the node would simply use fixed-clock compatible.
-
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    clock {
-> +      compatible =3D "clock-generator";
-> +      #clock-cells =3D <0>;
-> +      clock-frequency =3D <1000000000>;
-> +    };
-
-[1] https://diodes.com/assets/Datasheets/PI6C557-03B.pdf
+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBQZW5nIEZhbiA8cGVuZy5mYW5A
+bnhwLmNvbT4NCj4gU2VudDogMjAyNMTqN9TCOcjVIDIyOjEzDQo+IFRvOiBXZWkgRmFuZyA8d2Vp
+LmZhbmdAbnhwLmNvbT47IG10dXJxdWV0dGVAYmF5bGlicmUuY29tOw0KPiBzYm95ZEBrZXJuZWwu
+b3JnOyByb2JoQGtlcm5lbC5vcmc7IGNvbm9yK2R0QGtlcm5lbC5vcmc7DQo+IHNoYXduZ3VvQGtl
+cm5lbC5vcmc7IHMuaGF1ZXJAcGVuZ3V0cm9uaXguZGU7IGZlc3RldmFtQGdtYWlsLmNvbTsNCj4g
+YWJlbHZlc2FAa2VybmVsLm9yZw0KPiBDYzogbGludXgtY2xrQHZnZXIua2VybmVsLm9yZzsgZGV2
+aWNldHJlZUB2Z2VyLmtlcm5lbC5vcmc7DQo+IGlteEBsaXN0cy5saW51eC5kZXY7IGxpbnV4LWFy
+bS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsNCj4gbGludXgta2VybmVsQHZnZXIua2VybmVs
+Lm9yZw0KPiBTdWJqZWN0OiBSRTogW1BBVENIIDIvM10gY2xrOiBpbXg5NTogZW5hYmxlIHRoZSBj
+bG9jayBvZiBORVRDTUlYIGJsb2NrDQo+IGNvbnRyb2wNCj4gDQo+ID4gU3ViamVjdDogW1BBVENI
+IDIvM10gY2xrOiBpbXg5NTogZW5hYmxlIHRoZSBjbG9jayBvZiBORVRDTUlYIGJsb2NrDQo+ID4g
+Y29udHJvbA0KPiA+DQo+ID4gVGhlIE5FVENNSVggYmxvY2sgY29udHJvbCBjb25zaXN0cyBvZiBy
+ZWdpc3RlcnMgZm9yIGNvbmZpZ3VyYXRpb24gb2YNCj4gPiBwZXJpcGhlcmFscyBpbiB0aGUgTkVU
+QyBkb21haW4sIHNvIGVuYWJsZSB0aGUgY2xvY2sgb2YgTkVUQ01JWCB0bw0KPiA+IHN1cHBvcnQg
+dGhlIGNvbmZpZ3VyYXRpb24uDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBXZWkgRmFuZyA8d2Vp
+LmZhbmdAbnhwLmNvbT4NCj4gPiAtLS0NCj4gPiAgZHJpdmVycy9jbGsvaW14L2Nsay1pbXg5NS1i
+bGstY3RsLmMgfCAxICsNCj4gPiAgMSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspDQo+ID4N
+Cj4gPiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9jbGsvaW14L2Nsay1pbXg5NS1ibGstY3RsLmMNCj4g
+PiBiL2RyaXZlcnMvY2xrL2lteC9jbGstIGlteDk1LWJsay1jdGwuYyBpbmRleA0KPiA+IDc0ZjU5
+NWY5ZTVlMy4uMDdjNzBjMGE1M2Q0IDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvY2xrL2lteC9j
+bGstaW14OTUtYmxrLWN0bC5jDQo+ID4gKysrIGIvZHJpdmVycy9jbGsvaW14L2Nsay1pbXg5NS1i
+bGstY3RsLmMNCj4gPiBAQCAtNDE5LDYgKzQxOSw3IEBAIHN0YXRpYyBjb25zdCBzdHJ1Y3Qgb2Zf
+ZGV2aWNlX2lkDQo+ID4gaW14OTVfYmNfb2ZfbWF0Y2hbXSA9IHsNCj4gPiAgCXsgLmNvbXBhdGli
+bGUgPSAibnhwLGlteDk1LWx2ZHMtY3NyIiwgLmRhdGEgPSAmbHZkc19jc3JfZGV2X2RhdGEgfSwN
+Cj4gPiAgCXsgLmNvbXBhdGlibGUgPSAibnhwLGlteDk1LWRpc3BsYXktY3NyIiwgLmRhdGEgPQ0K
+PiA+ICZkaXNwbWl4X2Nzcl9kZXZfZGF0YSB9LA0KPiA+ICAJeyAuY29tcGF0aWJsZSA9ICJueHAs
+aW14OTUtdnB1LWNzciIsIC5kYXRhID0gJnZwdWJsa19kZXZfZGF0YSB9LA0KPiA+ICsJeyAuY29t
+cGF0aWJsZSA9ICJueHAsaW14OTUtbmV0Y21peC1ibGstY3RybCIsIH0sDQo+IA0KPiBUaGlzIHNo
+b3VsZCBub3QgYmUgYWRkZWQgaGVyZSBpZiBubyByZWFsIGNsb2NrcyBhcmUgaW5jbHVkZWQuDQo+
+IA0KVGhpcyBpcyB0aGUgZmlyc3QgcGhhc2UsIGFuZCB3ZSBhcmUgY3VycmVudGx5IHByaW9yaXRp
+emluZyBzdXBwb3J0aW5nIHRoZSBSR01JSQ0KaW50ZXJmYWNlIG9mIEVORVRDIG9uIHVwc3RyZWFt
+LiBXZSB3aWxsIGFkZCBzdXBwb3J0IGZvciBtdWx0aXBsZXhpbmcgb2YgdGhlDQpSTUlJIHJlZmVy
+ZW5jZSBjbG9jayBsYXRlci4NCg0KPiANCj4gPiAgCXsgLyogU2VudGluZWwgKi8gfSwNCj4gPiAg
+fTsNCj4gPiAgTU9EVUxFX0RFVklDRV9UQUJMRShvZiwgaW14OTVfYmNfb2ZfbWF0Y2gpOw0KPiA+
+IC0tDQo+ID4gMi4zNC4xDQoNCg==
