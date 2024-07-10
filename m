@@ -1,123 +1,91 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [195.130.132.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 263741E4AF;
-	Wed, 10 Jul 2024 12:50:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C14C192490
+	for <linux-clk@vger.kernel.org>; Wed, 10 Jul 2024 13:10:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720615847; cv=none; b=usIbXsf28on+ovkmWvGdq8wsr16OJmq/VUD26FX1Gird08GB7J5xy3WErF3H2/5L45OSWWITWbb+H+84LBS6kUyyeHAAyW+Up5sakeRhkYsfKd5oDd159ezKhxSP4bJrlZWaPktfGiyfFXi1la3B9b1fTSbJnlb04PG1bXySwKI=
+	t=1720617054; cv=none; b=E+A5psNpxPf4o0oOg70W5q7/xeNZFbJ1TQO+fN+28nmU/LIBmc9Gi7AvYjf2ueK46kHbXZoAa7XDYkSTbqFgoMAdz8kaDG3uXVE7LIZN4OPDlqXU9P9wHzC3s9BJtOfs9VRjHfnv3dMh2tITvUoFNavyT9qzB+4vCUI7E5yCwFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720615847; c=relaxed/simple;
-	bh=sPxM8NaCsBvhlryktLPvPiUn7nj8vj/D3dzAifCOTmE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V2GywiEH1xUDHDnRxwsO5yr/Yo6YaR3nKbhR96kum+HJ9BMIpyZwAEAiXG42MKiziTP5tt7YMqCNMuq9NcLVJOXvwiC5FoWsM1a/D6zNM2dZSFYge9v//JhCr2A80IKZxirU+/+tVTikO95ZLFDxaiyNuFRxzrPw95elN4Q+gag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=U3krA5jB; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="U3krA5jB"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1720615844;
-	bh=sPxM8NaCsBvhlryktLPvPiUn7nj8vj/D3dzAifCOTmE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=U3krA5jBxVGjqTr4jjxuUNvlDgil7oP64q+KUqpJGEUP6+i1DMqZFNTgCHA14mqdx
-	 J5JZfEIQpi5VJYQUy69C3lWEaSVpab/097nZMmDl3ao9akZTBLsGtxcicNpKqehAKT
-	 asRnUAx+ysAr1FMXjKaX82z8pzzBE1tw7CdkqVsUt23rvqLRvO6v17QbYUSw/8ikbL
-	 gY7Cey1BX+s4I/0VkXwIfsQq0nh8Fo0BRiFehRHAQiHXD8MfMa6vZK+H3OMDDGbKn0
-	 knas+p3BJQZTxZK2ijQwlNZb6h37Ivo7P9jbduNRF1bXY8MFZ1QnqO6IagcLKVw99s
-	 vWrQ0q2hu9SCA==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 304093780029;
-	Wed, 10 Jul 2024 12:50:43 +0000 (UTC)
-Message-ID: <23369ea1-12d2-4386-a8ac-431620b75e2e@collabora.com>
-Date: Wed, 10 Jul 2024 14:50:42 +0200
+	s=arc-20240116; t=1720617054; c=relaxed/simple;
+	bh=2zaL63BasDX6Cc1M1ENcL5Tg9TJHWj4bAbNE170bn+s=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=I70XSrOF3jvIrSxUWMc5LrbzSVyNY3FrH/FCZ7WkmncG8dQXWMRSYTKta+n1C+HDoueAZizZxiXVyDlm1287remZT8Hc+lTH3EvtZnHh9rAInovcej9JFQ3ZyN/Se6xlmK5J7zi2j8e8LYZKnudf6RhzP96bGj8yUjdM8s53uSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:2340:18a1:4138:37d2])
+	by xavier.telenet-ops.be with bizsmtp
+	id lpAp2C00P4znMfS01pApdy; Wed, 10 Jul 2024 15:10:50 +0200
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1sRX5g-001cTb-0j;
+	Wed, 10 Jul 2024 15:10:49 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1sRX5t-00CQCE-Is;
+	Wed, 10 Jul 2024 15:10:49 +0200
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH 09/14] clk: renesas: r8a779a0: Use defines for PLL control registers
+Date: Wed, 10 Jul 2024 15:10:43 +0200
+Message-Id: <baff62509ec185713380c2f306ae37061b5a467a.1720616233.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1720616233.git.geert+renesas@glider.be>
+References: <cover.1720616233.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Aw: Re: [PATCH v1 0/4] add syscon requirement for mt7988
-To: Frank Wunderlich <frank-w@public-files.de>
-Cc: Frank Wunderlich <linux@fw-web.de>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck
- <linux@roeck-us.net>, Daniel Golle <daniel@makrotopia.org>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-watchdog@vger.kernel.org
-References: <20240709101328.102969-1-linux@fw-web.de>
- <126053ef-3bfb-47c2-aa17-eb1d26d99102@collabora.com>
- <trinity-93a5ed81-b890-4d49-bfec-1bbb1219cb65-1720611282583@3c-app-gmx-bs04>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <trinity-93a5ed81-b890-4d49-bfec-1bbb1219cb65-1720611282583@3c-app-gmx-bs04>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Il 10/07/24 13:34, Frank Wunderlich ha scritto:
-> Hi
-> 
->> Gesendet: Mittwoch, 10. Juli 2024 um 12:45 Uhr
->> Von: "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.com>
->> Betreff: Re: [PATCH v1 0/4] add syscon requirement for mt7988
->>
->> Il 09/07/24 12:13, Frank Wunderlich ha scritto:
->>> From: Frank Wunderlich <frank-w@public-files.de>
->>>
->>> Some nodes require the syscon fallback at least in u-boot when using
->>> OF_UPSTREAM.
->>>
->>> This is because uboot driver uses syscon_node_to_regmap in mtk_eth.c for
->>> "mediatek,toprgu", "mediatek,xfi_pll" and reset pointing to watchdog-node.
->>>
->>
->> I wonder what's the major blocker here to modify the u-boot driver to take
->> the upstream devicetree as-is, instead of using syscon_node_to_regmap?
-> 
-> in uboot there is no driver for all syscon and to handle parallel access this is done with the syscon fallback.
-> 
-> The syscon uclass is a small driver which is generic and only handle the regmap in global context.
-> 
-> In theory it could be possible that regmap is aquired twice when used from 2+ other drivers...to prevent this without
-> adding the syscon fallback each syscon needs a dedicated driver like in linux which does only syscon stuff (code
-> duplication at its best :) ).
-> 
-> of course i can use regmap_init_mem in the uboot ethernet driver
-> 
-> https://elixir.bootlin.com/u-boot/latest/source/drivers/core/regmap.c#L242
-> 
-> like it's done once for syscon-uclass.
-> 
-> but i will cause issues when a second device tries to access this regmap. So it was be much easier (for me) to add this
-> fallback and not writing 3 device-drivers in uboot doing the exactly same as syscon.
-> 
-> if you have a better idea how to handle it, let me know :)
-> 
+Add symbolic definitions for the various PLL control registers.
+Replace hardcoded register offsets by the new definitions.
 
-I see. The problem is that, from your description, it looks like u-boot
-uses that as a kind of workaround for concurrent access to MMIO...
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
+ drivers/clk/renesas/r8a779a0-cpg-mssr.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-...looks like a good topic to discuss in the u-boot mailing lists.
-
-Definitely, the TOPRGU and the XFI PLL are not system controllers, so the actual
-"syscon" definition would be wrong for these, that's it.
-
-Cheers
-
-> regards Frank
-> 
->> Regards,
->> Angelo
-> 
-
-
+diff --git a/drivers/clk/renesas/r8a779a0-cpg-mssr.c b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
+index 291e08ae7321670c..caa7e0ff2ed3efdb 100644
+--- a/drivers/clk/renesas/r8a779a0-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
+@@ -61,6 +61,11 @@ enum clk_ids {
+ 	DEF_BASE(_name, _id, CLK_TYPE_GEN4_PLL2X_3X, CLK_MAIN, \
+ 		 .offset = _offset)
+ 
++#define CPG_PLL20CR	0x0834	/* PLL20 Control Register */
++#define CPG_PLL21CR	0x0838	/* PLL21 Control Register */
++#define CPG_PLL30CR	0x083c	/* PLL30 Control Register */
++#define CPG_PLL31CR	0x0840	/* PLL31 Control Register */
++
+ static const struct cpg_core_clk r8a779a0_core_clks[] __initconst = {
+ 	/* External Clock Inputs */
+ 	DEF_INPUT("extal",  CLK_EXTAL),
+@@ -70,10 +75,10 @@ static const struct cpg_core_clk r8a779a0_core_clks[] __initconst = {
+ 	DEF_BASE(".main", CLK_MAIN,	CLK_TYPE_GEN4_MAIN, CLK_EXTAL),
+ 	DEF_BASE(".pll1", CLK_PLL1,	CLK_TYPE_GEN4_PLL1, CLK_MAIN),
+ 	DEF_BASE(".pll5", CLK_PLL5,	CLK_TYPE_GEN4_PLL5, CLK_MAIN),
+-	DEF_PLL(".pll20", CLK_PLL20,	0x0834),
+-	DEF_PLL(".pll21", CLK_PLL21,	0x0838),
+-	DEF_PLL(".pll30", CLK_PLL30,	0x083c),
+-	DEF_PLL(".pll31", CLK_PLL31,	0x0840),
++	DEF_PLL(".pll20", CLK_PLL20,	CPG_PLL20CR),
++	DEF_PLL(".pll21", CLK_PLL21,	CPG_PLL21CR),
++	DEF_PLL(".pll30", CLK_PLL30,	CPG_PLL30CR),
++	DEF_PLL(".pll31", CLK_PLL31,	CPG_PLL31CR),
+ 
+ 	DEF_FIXED(".pll1_div2",		CLK_PLL1_DIV2,	CLK_PLL1,	2, 1),
+ 	DEF_FIXED(".pll20_div2",	CLK_PLL20_DIV2,	CLK_PLL20,	2, 1),
+-- 
+2.34.1
 
