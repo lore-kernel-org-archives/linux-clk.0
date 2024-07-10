@@ -1,30 +1,30 @@
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [195.130.137.90])
+Received: from laurent.telenet-ops.be (laurent.telenet-ops.be [195.130.137.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FEFB192495
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B60A192B6B
 	for <linux-clk@vger.kernel.org>; Wed, 10 Jul 2024 13:10:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.90
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.89
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720617056; cv=none; b=HIvNEEpRCoJlrqsyEdbdB/JXEDoHEgMcxfo1daIUb0psGLPoXcTlO8+OqwEy1P2nokGzFqJ0oAb2CLPGoTnzlap3JxQC57zYgvyG22u8cckx6s1VFc1lqwieoBEC1KnqIN1P2xo29tz1UXdjBCJiHnTG4d4zUrKBvwug/zGcOQ0=
+	t=1720617056; cv=none; b=fN58D71H2IctY+35sZKNqGTEPAcFDiknrDB6J6MexQ/2CXW2H36nkorqy/KptWWPgbFg4lSxgW0EOWYDh3S0AGZtxbVcnp9YeFZwNx3Jme1oHeSBFHs4X/NwHu8r1Bn0YQFs3TUiLPNzOpf/r9pwhdFenndgku+UBEx6kl5zElQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1720617056; c=relaxed/simple;
-	bh=toEv1WiIOz4QU6thm8faf6vC+AVh7DW0g9ChKijADQM=;
+	bh=n2TASd3TZdWoh9fgkpoKHEQ7tawGZgtX3/NFoowI/A0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rP/fg8yWyAsvL3Et2yOqeollyoeokR3bIb1ZegrrNcoNFII9wgi0/7Vh2r2C7R687oLxPOtCVvTTeTlp9JwF8m7z3j4Debv/TYU7ta/9bT8vxN+4WNA69EGWz5KL3Sis5x0tEYP51/sdgyj2wmZSKm8kVG0RaUs0j72C+DiCgxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.90
+	 MIME-Version; b=DcMFA0JE1NFqtSlgZeazb9hNBhVI1BdhdViD62A5UfL3TB4AHuxtzSAqGQm8qhWQUtaV3CqExYnpxQ4HTv53rlYyRIlchurES9DDgy9KxV+oI9Ldk6HnG1iJBnwbmAPR0jy0pY9UdN/BVDJ23hOjteHJkkB5zUdZe/9ewsoTVE0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.89
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:2340:18a1:4138:37d2])
-	by albert.telenet-ops.be with bizsmtp
-	id lpAp2C00D4znMfS06pApDF; Wed, 10 Jul 2024 15:10:50 +0200
+	by laurent.telenet-ops.be with bizsmtp
+	id lpAp2C00G4znMfS01pApF0; Wed, 10 Jul 2024 15:10:50 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sRX5f-001cTB-Rf;
+	id 1sRX5g-001cTf-1g;
 	Wed, 10 Jul 2024 15:10:49 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sRX5t-00CQBp-Dz;
+	id 1sRX5t-00CQCK-KC;
 	Wed, 10 Jul 2024 15:10:49 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Michael Turquette <mturquette@baylibre.com>,
@@ -33,9 +33,9 @@ To: Michael Turquette <mturquette@baylibre.com>,
 Cc: linux-renesas-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 04/14] clk: renesas: rcar-gen4: Use defines for common CPG registers
-Date: Wed, 10 Jul 2024 15:10:38 +0200
-Message-Id: <915cc5c8d84469e5401cb2ae71da6aa8eb524dd4.1720616233.git.geert+renesas@glider.be>
+Subject: [PATCH 10/14] clk: renesas: r8a779f0: Model PLL1/2/3/6 as fractional PLLs
+Date: Wed, 10 Jul 2024 15:10:44 +0200
+Message-Id: <7f0f381e43debbcf86a8fbe2a1295e6e6e7f2200.1720616233.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1720616233.git.geert+renesas@glider.be>
 References: <cover.1720616233.git.geert+renesas@glider.be>
@@ -47,134 +47,46 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add symbolic definitions for common CPG registers.
-Replace hardcoded register offsets by the new definitions.
+Currently, all PLLs are modelled as fixed divider clocks, based on the
+state of the mode pins.  However, the boot loader stack may have changed
+the actual PLL configuration from the default, leading to incorrect
+clock frequencies.
+
+Describe PLL1 as a fixed fractional PLL instead, and PLL2, PLL3, and
+PLL6 as variable fractional PLLs.  Note that the R-Car Gen4 clock driver
+does not support variable 9.24 PLLs yet, so the driver will downgrade
+them to fixed fractional PLLs, too.
+
+Reformat nearby lines to retain a consistent layout.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 ---
- drivers/clk/renesas/r8a779a0-cpg-mssr.c | 12 ++++++------
- drivers/clk/renesas/r8a779f0-cpg-mssr.c |  6 +++---
- drivers/clk/renesas/r8a779g0-cpg-mssr.c | 12 ++++++------
- drivers/clk/renesas/r8a779h0-cpg-mssr.c | 12 ++++++------
- drivers/clk/renesas/rcar-gen4-cpg.h     |  6 ++++++
- 5 files changed, 27 insertions(+), 21 deletions(-)
+ drivers/clk/renesas/r8a779f0-cpg-mssr.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/clk/renesas/r8a779a0-cpg-mssr.c b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
-index ff3f85e906fe17e1..291e08ae7321670c 100644
---- a/drivers/clk/renesas/r8a779a0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a779a0-cpg-mssr.c
-@@ -116,17 +116,17 @@ static const struct cpg_core_clk r8a779a0_core_clks[] __initconst = {
- 	DEF_FIXED("cp",		R8A779A0_CLK_CP,	CLK_EXTAL,	2, 1),
- 	DEF_FIXED("cl16mck",	R8A779A0_CLK_CL16MCK,	CLK_PLL1_DIV2,	64, 1),
- 
--	DEF_GEN4_SDH("sd0h",	R8A779A0_CLK_SD0H,	CLK_SDSRC,	   0x870),
--	DEF_GEN4_SD("sd0",	R8A779A0_CLK_SD0,	R8A779A0_CLK_SD0H, 0x870),
-+	DEF_GEN4_SDH("sd0h",	R8A779A0_CLK_SD0H,	CLK_SDSRC,	   CPG_SD0CKCR),
-+	DEF_GEN4_SD("sd0",	R8A779A0_CLK_SD0,	R8A779A0_CLK_SD0H, CPG_SD0CKCR),
- 
- 	DEF_BASE("rpc",		R8A779A0_CLK_RPC, CLK_TYPE_GEN4_RPC, CLK_RPCSRC),
- 	DEF_BASE("rpcd2",	R8A779A0_CLK_RPCD2, CLK_TYPE_GEN4_RPCD2,
- 		 R8A779A0_CLK_RPC),
- 
--	DEF_DIV6P1("mso",	R8A779A0_CLK_MSO,	CLK_PLL5_DIV4,	0x87c),
--	DEF_DIV6P1("canfd",	R8A779A0_CLK_CANFD,	CLK_PLL5_DIV4,	0x878),
--	DEF_DIV6P1("csi0",	R8A779A0_CLK_CSI0,	CLK_PLL5_DIV4,	0x880),
--	DEF_DIV6P1("dsi",	R8A779A0_CLK_DSI,	CLK_PLL5_DIV4,	0x884),
-+	DEF_DIV6P1("mso",	R8A779A0_CLK_MSO,	CLK_PLL5_DIV4,	CPG_MSOCKCR),
-+	DEF_DIV6P1("canfd",	R8A779A0_CLK_CANFD,	CLK_PLL5_DIV4,	CPG_CANFDCKCR),
-+	DEF_DIV6P1("csi0",	R8A779A0_CLK_CSI0,	CLK_PLL5_DIV4,	CPG_CSICKCR),
-+	DEF_DIV6P1("dsi",	R8A779A0_CLK_DSI,	CLK_PLL5_DIV4,	CPG_DSIEXTCKCR),
- 
- 	DEF_GEN4_OSC("osc",	R8A779A0_CLK_OSC,	CLK_EXTAL,	8),
- 	DEF_GEN4_MDSEL("r",	R8A779A0_CLK_R, 29, CLK_EXTALR, 1, CLK_OCO, 1),
 diff --git a/drivers/clk/renesas/r8a779f0-cpg-mssr.c b/drivers/clk/renesas/r8a779f0-cpg-mssr.c
-index cc06127406ab5737..f05390558a22a367 100644
+index f05390558a22a367..46b21cca7409010f 100644
 --- a/drivers/clk/renesas/r8a779f0-cpg-mssr.c
 +++ b/drivers/clk/renesas/r8a779f0-cpg-mssr.c
-@@ -115,13 +115,13 @@ static const struct cpg_core_clk r8a779f0_core_clks[] __initconst = {
- 	DEF_FIXED("sasyncperd2",R8A779F0_CLK_SASYNCPERD2, CLK_SASYNCPER,2, 1),
- 	DEF_FIXED("sasyncperd4",R8A779F0_CLK_SASYNCPERD4, CLK_SASYNCPER,4, 1),
+@@ -57,12 +57,12 @@ static const struct cpg_core_clk r8a779f0_core_clks[] __initconst = {
+ 	DEF_INPUT("extalr",	CLK_EXTALR),
  
--	DEF_GEN4_SDH("sd0h",	R8A779F0_CLK_SD0H,	CLK_SDSRC,	   0x870),
--	DEF_GEN4_SD("sd0",	R8A779F0_CLK_SD0,	R8A779F0_CLK_SD0H, 0x870),
-+	DEF_GEN4_SDH("sd0h",	R8A779F0_CLK_SD0H,	CLK_SDSRC,	   CPG_SD0CKCR),
-+	DEF_GEN4_SD("sd0",	R8A779F0_CLK_SD0,	R8A779F0_CLK_SD0H, CPG_SD0CKCR),
+ 	/* Internal Core Clocks */
+-	DEF_BASE(".main", CLK_MAIN,	CLK_TYPE_GEN4_MAIN, CLK_EXTAL),
+-	DEF_BASE(".pll1", CLK_PLL1,	CLK_TYPE_GEN4_PLL1, CLK_MAIN),
+-	DEF_BASE(".pll2", CLK_PLL2,	CLK_TYPE_GEN4_PLL2, CLK_MAIN),
+-	DEF_BASE(".pll3", CLK_PLL3,	CLK_TYPE_GEN4_PLL3, CLK_MAIN),
+-	DEF_BASE(".pll5", CLK_PLL5,	CLK_TYPE_GEN4_PLL5, CLK_MAIN),
+-	DEF_BASE(".pll6", CLK_PLL6,	CLK_TYPE_GEN4_PLL6, CLK_MAIN),
++	DEF_BASE(".main", CLK_MAIN,	CLK_TYPE_GEN4_MAIN,	CLK_EXTAL),
++	DEF_GEN4_PLL_F9_24(".pll1", 1,	CLK_PLL1,		CLK_MAIN),
++	DEF_GEN4_PLL_V9_24(".pll2", 2,	CLK_PLL2,		CLK_MAIN),
++	DEF_GEN4_PLL_V9_24(".pll3", 3,	CLK_PLL3,		CLK_MAIN),
++	DEF_BASE(".pll5", CLK_PLL5,	CLK_TYPE_GEN4_PLL5,	CLK_MAIN),
++	DEF_GEN4_PLL_V9_24(".pll6", 6,	CLK_PLL6,		CLK_MAIN),
  
- 	DEF_BASE("rpc",		R8A779F0_CLK_RPC,	CLK_TYPE_GEN4_RPC, CLK_RPCSRC),
- 	DEF_BASE("rpcd2",	R8A779F0_CLK_RPCD2,	CLK_TYPE_GEN4_RPCD2, R8A779F0_CLK_RPC),
- 
--	DEF_DIV6P1("mso",	R8A779F0_CLK_MSO,	CLK_PLL5_DIV4,	0x87c),
-+	DEF_DIV6P1("mso",	R8A779F0_CLK_MSO,	CLK_PLL5_DIV4,	CPG_MSOCKCR),
- 
- 	DEF_GEN4_OSC("osc",	R8A779F0_CLK_OSC,	CLK_EXTAL,	8),
- 	DEF_GEN4_MDSEL("r",	R8A779F0_CLK_R, 29, CLK_EXTALR, 1, CLK_OCO, 1),
-diff --git a/drivers/clk/renesas/r8a779g0-cpg-mssr.c b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
-index c4b1938db76b35f4..3c13645f45871700 100644
---- a/drivers/clk/renesas/r8a779g0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a779g0-cpg-mssr.c
-@@ -146,14 +146,14 @@ static const struct cpg_core_clk r8a779g0_core_clks[] __initconst = {
- 	DEF_FIXED("viobusd2",	R8A779G0_CLK_VIOBUSD2,	CLK_VIO,	2, 1),
- 	DEF_FIXED("vcbus",	R8A779G0_CLK_VCBUS,	CLK_VC,		1, 1),
- 	DEF_FIXED("vcbusd2",	R8A779G0_CLK_VCBUSD2,	CLK_VC,		2, 1),
--	DEF_DIV6P1("canfd",     R8A779G0_CLK_CANFD,	CLK_PLL5_DIV4,	0x878),
--	DEF_DIV6P1("csi",	R8A779G0_CLK_CSI,	CLK_PLL5_DIV4,	0x880),
-+	DEF_DIV6P1("canfd",     R8A779G0_CLK_CANFD,	CLK_PLL5_DIV4,	CPG_CANFDCKCR),
-+	DEF_DIV6P1("csi",	R8A779G0_CLK_CSI,	CLK_PLL5_DIV4,	CPG_CSICKCR),
- 	DEF_FIXED("dsiref",	R8A779G0_CLK_DSIREF,	CLK_PLL5_DIV4,	48, 1),
--	DEF_DIV6P1("dsiext",	R8A779G0_CLK_DSIEXT,	CLK_PLL5_DIV4,	0x884),
-+	DEF_DIV6P1("dsiext",	R8A779G0_CLK_DSIEXT,	CLK_PLL5_DIV4,	CPG_DSIEXTCKCR),
- 
--	DEF_GEN4_SDH("sd0h",	R8A779G0_CLK_SD0H,	CLK_SDSRC,	   0x870),
--	DEF_GEN4_SD("sd0",	R8A779G0_CLK_SD0,	R8A779G0_CLK_SD0H, 0x870),
--	DEF_DIV6P1("mso",	R8A779G0_CLK_MSO,	CLK_PLL5_DIV4,	0x87c),
-+	DEF_GEN4_SDH("sd0h",	R8A779G0_CLK_SD0H,	CLK_SDSRC,	   CPG_SD0CKCR),
-+	DEF_GEN4_SD("sd0",	R8A779G0_CLK_SD0,	R8A779G0_CLK_SD0H, CPG_SD0CKCR),
-+	DEF_DIV6P1("mso",	R8A779G0_CLK_MSO,	CLK_PLL5_DIV4,	CPG_MSOCKCR),
- 
- 	DEF_BASE("rpc",		R8A779G0_CLK_RPC,	CLK_TYPE_GEN4_RPC, CLK_RPCSRC),
- 	DEF_BASE("rpcd2",	R8A779G0_CLK_RPCD2,	CLK_TYPE_GEN4_RPCD2, R8A779G0_CLK_RPC),
-diff --git a/drivers/clk/renesas/r8a779h0-cpg-mssr.c b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
-index e00e247a056fc96e..93a490474ce1b2fc 100644
---- a/drivers/clk/renesas/r8a779h0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
-@@ -156,14 +156,14 @@ static const struct cpg_core_clk r8a779h0_core_clks[] = {
- 	DEF_FIXED("viobusd2",	R8A779H0_CLK_VIOBUSD2,	CLK_VIOSRC,	2, 1),
- 	DEF_FIXED("vcbusd1",	R8A779H0_CLK_VCBUSD1,	CLK_VCSRC,	1, 1),
- 	DEF_FIXED("vcbusd2",	R8A779H0_CLK_VCBUSD2,	CLK_VCSRC,	2, 1),
--	DEF_DIV6P1("canfd",	R8A779H0_CLK_CANFD,	CLK_PLL5_DIV4,	0x878),
--	DEF_DIV6P1("csi",	R8A779H0_CLK_CSI,	CLK_PLL5_DIV4,	0x880),
-+	DEF_DIV6P1("canfd",	R8A779H0_CLK_CANFD,	CLK_PLL5_DIV4,	CPG_CANFDCKCR),
-+	DEF_DIV6P1("csi",	R8A779H0_CLK_CSI,	CLK_PLL5_DIV4,	CPG_CSICKCR),
- 	DEF_FIXED("dsiref",	R8A779H0_CLK_DSIREF,	CLK_PLL5_DIV4,	48, 1),
--	DEF_DIV6P1("dsiext",	R8A779H0_CLK_DSIEXT,	CLK_PLL5_DIV4,	0x884),
--	DEF_DIV6P1("mso",	R8A779H0_CLK_MSO,	CLK_PLL5_DIV4,	0x87c),
-+	DEF_DIV6P1("dsiext",	R8A779H0_CLK_DSIEXT,	CLK_PLL5_DIV4,	CPG_DSIEXTCKCR),
-+	DEF_DIV6P1("mso",	R8A779H0_CLK_MSO,	CLK_PLL5_DIV4,	CPG_MSOCKCR),
- 
--	DEF_GEN4_SDH("sd0h",	R8A779H0_CLK_SD0H,	CLK_SDSRC,	   0x870),
--	DEF_GEN4_SD("sd0",	R8A779H0_CLK_SD0,	R8A779H0_CLK_SD0H, 0x870),
-+	DEF_GEN4_SDH("sd0h",	R8A779H0_CLK_SD0H,	CLK_SDSRC,	   CPG_SD0CKCR),
-+	DEF_GEN4_SD("sd0",	R8A779H0_CLK_SD0,	R8A779H0_CLK_SD0H, CPG_SD0CKCR),
- 
- 	DEF_BASE("rpc",		R8A779H0_CLK_RPC,	CLK_TYPE_GEN4_RPC, CLK_RPCSRC),
- 	DEF_BASE("rpcd2",	R8A779H0_CLK_RPCD2,	CLK_TYPE_GEN4_RPCD2, R8A779H0_CLK_RPC),
-diff --git a/drivers/clk/renesas/rcar-gen4-cpg.h b/drivers/clk/renesas/rcar-gen4-cpg.h
-index d0329ac84730d681..748c69240dae755f 100644
---- a/drivers/clk/renesas/rcar-gen4-cpg.h
-+++ b/drivers/clk/renesas/rcar-gen4-cpg.h
-@@ -67,6 +67,12 @@ struct rcar_gen4_cpg_pll_config {
- 	u8 osc_prediv;
- };
- 
-+#define CPG_SD0CKCR	0x870	/* SD-IF0 Clock Frequency Control Register */
-+#define CPG_MSOCKCR	0x87c	/* MSIOF Clock Frequency Control Register */
-+#define CPG_CANFDCKCR	0x878	/* CAN-FD Clock Frequency Control Register */
-+#define CPG_CSICKCR	0x880	/* CSI Clock Frequency Control Register */
-+#define CPG_DSIEXTCKCR	0x884	/* DSI Clock Frequency Control Register */
-+
- struct clk *rcar_gen4_cpg_clk_register(struct device *dev,
- 	const struct cpg_core_clk *core, const struct cpg_mssr_info *info,
- 	struct clk **clks, void __iomem *base,
+ 	DEF_FIXED(".pll1_div2",	CLK_PLL1_DIV2,	CLK_PLL1,	2, 1),
+ 	DEF_FIXED(".pll2_div2",	CLK_PLL2_DIV2,	CLK_PLL2,	2, 1),
 -- 
 2.34.1
 
