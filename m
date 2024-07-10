@@ -1,218 +1,189 @@
-Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9799C3B2BB
-	for <linux-clk@vger.kernel.org>; Wed, 10 Jul 2024 07:00:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED518522E;
+	Wed, 10 Jul 2024 07:02:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720594837; cv=none; b=CYprBa4yOa7XUj11CG67htmQR1m7EuhG3f2sFOc8S91N6PTcJs5ILlMpYtOSLN+82MttyR4eMlRj2rNOW4MNljisvWlT1+NRT1/sWOm+cj9/jBqli7HfHjQ1YjoXOXRRXeZalRRc44k6VCYmdjMn7BXaW9HSuSQ11vfiW+QOAEo=
+	t=1720594970; cv=none; b=Plual1z1cEBBvW5XD8X89SC1cIV+cGaIO0084yeEvGcjNw+uynF7vnsZd17DzbqxP1n3mWsK13y2enA8Cj5hF0LpncfHy8e4jFWPQrjrdn4YhWd0YPubABLgyGJpGwDSrLYzRLoOFYJvihPkDJkxBuJfraSUe+hy+cpXvw5rXmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720594837; c=relaxed/simple;
-	bh=lmWnavcWYNnA9w4yaiLxKtCBf+Hmy3W5TqDesqm4LIs=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=JEQWosQMvYbROJiBDgekJCwsYjuL9VFsRGQl68hV/AR+A+/XT+wphYFFgcaB2CANzFoBbsf60L4PihKPQHGzikg1FThO0wn+srLPdgzjigekx7fsZ/4cbFZTFBsz4MAbrqOZ/UK92FLR4s648YO3rE2o0CAja6noPtEMX+Fiw34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=VoNctXk7; arc=none smtp.client-ip=203.254.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1720594970; c=relaxed/simple;
+	bh=sJl7Rz+GcER65wxtjYPs/fPGXxgpyGib7ftBsz5718A=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=r4Tp+gY5vWwvQwmaO07gFuJPge/VuPfyZh1qpdEZ/2Ph2XXoZseja57jcxB51cE4+Fdz67QlHE0/FkOEwXmKDx2EI9K+I51XJJCbMDn5vgIW5a+iwv2dSPmpjnlo73UxpPwBGxsmg4iaD7IqplRSc/x8Mm/VE/bDMqWrgv4apAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=EOU/33GD; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=baMM5hTK reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="VoNctXk7"
-Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
-	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240710070033epoutp0403fa38c14443d466ffd7d8281ca72aa2~gx_KcMdR63123731237epoutp04a
-	for <linux-clk@vger.kernel.org>; Wed, 10 Jul 2024 07:00:33 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240710070033epoutp0403fa38c14443d466ffd7d8281ca72aa2~gx_KcMdR63123731237epoutp04a
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1720594833;
-	bh=AMGGSEWVpLUcxbg6opPMlbCGNJ7+oLViCeJNNcptUEw=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=VoNctXk7eTQHVFtbmseDz9LJVWMhYpY/YHLsd92ejkz7XIhoSP+3JFzP9UOH9fC6D
-	 F10eGnS5kD7+pCHb56OijR/FT4QoSwgS/raXVqYzEdBQOlUxYlxmP/F7BJ0bOhTDJQ
-	 Zr6CS0LBHKEfELuFDVKpbkgGCiSGFfybEh/PAjWc=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas2p2.samsung.com (KnoxPortal) with ESMTP id
-	20240710070033epcas2p2c958ef7a829e1bb5ca05322eeeea8828~gx_J6kxJs0932209322epcas2p2l;
-	Wed, 10 Jul 2024 07:00:33 +0000 (GMT)
-Received: from epsmges2p1.samsung.com (unknown [182.195.36.70]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4WJpf85b6xz4x9Q0; Wed, 10 Jul
-	2024 07:00:32 +0000 (GMT)
-Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
-	epsmges2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	14.17.09848.0913E866; Wed, 10 Jul 2024 16:00:32 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas2p1.samsung.com (KnoxPortal) with ESMTPA id
-	20240710070032epcas2p11c0695b1f82f4aa0629f9fb687e4423c~gx_JDoMWk0753507535epcas2p1C;
-	Wed, 10 Jul 2024 07:00:32 +0000 (GMT)
-Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240710070032epsmtrp2c7d6010654185bd3dad5b7e15ec9016c~gx_JBlmXT0387703877epsmtrp2S;
-	Wed, 10 Jul 2024 07:00:32 +0000 (GMT)
-X-AuditID: b6c32a45-447fe70000002678-9b-668e31905ca6
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	C2.C7.29940.0913E866; Wed, 10 Jul 2024 16:00:32 +0900 (KST)
-Received: from KORCO118965 (unknown [10.229.18.201]) by epsmtip1.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240710070031epsmtip1d0862aed5457d3421775ea20d535338d~gx_IyP7jl2654326543epsmtip1Q;
-	Wed, 10 Jul 2024 07:00:31 +0000 (GMT)
-From: "sunyeal.hong" <sunyeal.hong@samsung.com>
-To: "'Alim Akhtar'" <alim.akhtar@samsung.com>, "'Krzysztof Kozlowski'"
-	<krzk@kernel.org>, "'Sylwester Nawrocki'" <s.nawrocki@samsung.com>,
-	"'Chanwoo Choi'" <cw00.choi@samsung.com>, "'Michael Turquette'"
-	<mturquette@baylibre.com>, "'Stephen Boyd'" <sboyd@kernel.org>, "'Rob
- Herring'" <robh@kernel.org>, "'Conor Dooley'" <conor+dt@kernel.org>
-Cc: <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-In-Reply-To: <015601dad271$bcd53e00$367fba00$@samsung.com>
-Subject: RE: [PATCH v2 3/4] clk: samsung: clk-pll: Add support for pll_531x
-Date: Wed, 10 Jul 2024 16:00:31 +0900
-Message-ID: <008301dad296$dadd6240$909826c0$@samsung.com>
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="EOU/33GD";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="baMM5hTK"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1720594966; x=1752130966;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=w75KCVl1Td1dl0039xM1BsGqYrMvcTNH87jh0lAScys=;
+  b=EOU/33GD4l/N94zDVdbrzg56eZlYOHi9p6abo/LbQnwr1THn1A09iyz7
+   nRIupboBxGxISYE4pWQGbPhttmNPH3pSrh3oEb7tusxL6YYROlyjooMlr
+   1eVhhi1Kc5o0FYlOzxUOvw38n03XBSHRD2yjXZMjrDaRnY/0sqYwLOLk9
+   fo1UlbuEUdRty62sHy4LofGeBOP1nG07Xfua/mlheZJZpuwASZHSe7YV8
+   t9ppN2KR7Va/Tijs54BsAt/WkyNMwcBhPShaIbbhJETxeTgn8rYW4uotv
+   y4GfRRIUWUglJkP5CgOcmomOOSxXm87p06FoT41qwQ9IVW1H/vzf3em6Y
+   Q==;
+X-CSE-ConnectionGUID: 2yIqFFj+QO6gEzYvhSB3Wg==
+X-CSE-MsgGUID: atSQGguxQDaJCRTyhvgKTw==
+X-IronPort-AV: E=Sophos;i="6.09,197,1716242400"; 
+   d="scan'208";a="37830570"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 10 Jul 2024 09:02:37 +0200
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 97D90160B01;
+	Wed, 10 Jul 2024 09:02:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1720594953;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=w75KCVl1Td1dl0039xM1BsGqYrMvcTNH87jh0lAScys=;
+	b=baMM5hTKK9U7Kk5F66IsBtrSnvDEhXUiejxLGjkaw95uST9cvyVdd3IxVt090QStWpibyV
+	VJZcGODYCWb/Bx+Lh456quPMQSVTAf5XxJSeSVoGWjSlF+KJ629MalaZPPfEFct9L7NQb6
+	pNVqBRZ6Q2WEgrox/ZQF0CBgdrven+rhl6d5JwnAvBllYr7AfNWYcQxIqbFnCZwYCVuMEt
+	dWKJCxIng/pTW2Uv+Zn0abkCi/lvVqtLonOOY/16o+ZWGaIRXLEQIhC9+kkN/nqx0tHQdM
+	Ku2kz+RQhsyw6j3crdk2XhXf0WcXVINXstho9z3T+Gbg4v1/gbkKRLjyORU0lw==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: mturquette@baylibre.com, sboyd@kernel.org, Heiko Stuebner <heiko@sntech.de>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de, quentin.schulz@cherry.de, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH 1/6] dt-bindings: clocks: add binding for generic clock-generators
+Date: Wed, 10 Jul 2024 09:02:34 +0200
+Message-ID: <12478313.O9o76ZdvQC@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <20240709123121.1452394-2-heiko@sntech.de>
+References: <20240709123121.1452394-1-heiko@sntech.de> <20240709123121.1452394-2-heiko@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQJHtUpDsgLCeLIQdS8546uqgvLWdQHhk3nlAbaaqcQDPX93AAGcPnKhAnj/odSwvmtrcA==
-Content-Language: ko
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMJsWRmVeSWpSXmKPExsWy7bCmqe4Ew740gz/ztS0ezNvGZrFm7zkm
-	i+tfnrNazD9yjtXi/PkN7BabHl9jtfjYc4/V4vKuOWwWM87vY7K4eMrV4v+eHewWh9+0s1r8
-	u7aRxYHX4/2NVnaPTas62Tw2L6n36NuyitHj8ya5ANaobJuM1MSU1CKF1Lzk/JTMvHRbJe/g
-	eOd4UzMDQ11DSwtzJYW8xNxUWyUXnwBdt8wcoBOVFMoSc0qBQgGJxcVK+nY2RfmlJakKGfnF
-	JbZKqQUpOQXmBXrFibnFpXnpenmpJVaGBgZGpkCFCdkZF/dPYyvYJ1ux9vlJ5gbGoxJdjJwc
-	EgImEv1tSxi7GLk4hAR2MErs/gTjfGKUeLS2mwXC+cYo0bBiKTtMy+ZPt6Gq9jJKHFvaxwqS
-	EBJ4ySgxo60cxGYT0JdY3X2bDaRIROAOk8TtdQ9ZQRxmgXWMEptnHgEbxSlgJbHlyVPmLkYO
-	DmEBb4n3rTkgJouAqkTnnUSQCl4BS4knZ3tYIGxBiZMzn4DZzALyEtvfzmGGOEhB4ufTZWA3
-	iAiESfzc+QeqRkRidmcbM8haCYETHBITNu5ghWhwkTg+fTkThC0s8er4FqjPpCQ+v9vLBmHn
-	S0y+/pYJormBUeLav26obfYSi878ZAc5lFlAU2L9Ln0QU0JAWeLILai9fBIdh/+yQ4R5JTra
-	hCAa1SQ+XbkMNURG4tiJZ8wTGJVmIflsFpLPZiH5YBbCrgWMLKsYxVILinPTU4uNCgzhkZ2c
-	n7uJEZx6tVx3ME5++0HvECMTB+MhRgkOZiUR3vk3utOEeFMSK6tSi/Lji0pzUosPMZoCg3oi
-	s5Rocj4w+eeVxBuaWBqYmJkZmhuZGpgrifPea52bIiSQnliSmp2aWpBaBNPHxMEp1cA01dr/
-	zt1t3yw+Xy7b8UpkxvSv2tx2X6xPFj2ykZO/n6Vtr1/z9cxF374od8XMoh+X9xZ3X1444eFt
-	P8347+ub/dme+UVY/6lriZpe5VhgtuDfro/6TJfeaHBM2Tplq7DFLM5kma/cW60CV/TmXD60
-	xdz1/PPbpy6VKj+wknFRvbPqclWovfWrzbf9nO+cUYl+4jHPZRb/rxgTvpyw3ev0+OLO1H1f
-	9MPRtjTnYD3fsjs/pnnZO/kuFuzzZHPozg0RvNKce5uh5tYSTut9+fe+qbAdPDuHaSnjdc6W
-	y8bMvpVVa6w3r+SXefP2R5ZP577c5ptHhW5abCv4uigyM/uBZt9yln15nvbrV8WxGKxTYinO
-	SDTUYi4qTgQAMDuDgkYEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprPIsWRmVeSWpSXmKPExsWy7bCSnO4Ew740g8/7WS0ezNvGZrFm7zkm
-	i+tfnrNazD9yjtXi/PkN7BabHl9jtfjYc4/V4vKuOWwWM87vY7K4eMrV4v+eHewWh9+0s1r8
-	u7aRxYHX4/2NVnaPTas62Tw2L6n36NuyitHj8ya5ANYoLpuU1JzMstQifbsEroyL+6exFeyT
-	rVj7/CRzA+NRiS5GTg4JAROJzZ9uM3YxcnEICexmlOg/dZoVIiEjsbHhPzuELSxxv+UIK0TR
-	c0aJ3w2/GEESbAL6Equ7b7OBJEQEHjFJfP65ix3EYRbYxChxbvdNNpAqIYHzTBIL16mB2JwC
-	VhJbnjxl7mLk4BAW8JZ435oDYrIIqEp03kkEqeAVsJR4craHBcIWlDg58wmYzSygLfH05lMo
-	W15i+9s5zBDHKUj8fLoM7GgRgTCJnzv/QNWISMzubGOewCg8C8moWUhGzUIyahaSlgWMLKsY
-	JVMLinPTc4sNCwzzUsv1ihNzi0vz0vWS83M3MYLjUEtzB+P2VR/0DjEycTAeYpTgYFYS4Z1/
-	oztNiDclsbIqtSg/vqg0J7X4EKM0B4uSOK/4i94UIYH0xJLU7NTUgtQimCwTB6dUA1PXq8a9
-	F8+fK00ImnrL8YtOUDbL9msqmb41oSxTTFzeLPiw8NwH/tr5cYerHTu1bST69uw2ZHP6KVZq
-	2P1Yhvl15Of8mYH3JO2Zee+KLS/TmlBhzr6oIdhabJ40n+jcF0zJX5bGpogGf93U0rl43cdi
-	8VZG4YdHLurUe1QejpumMSnkvMGepIJc+8rQy7bO04xNNmw9e2P1jZ8cd7/0rZA7PWEuU7Q9
-	r6jSGrVlRYmxwpMbe5t27uLfMOeByR+pduP4gut2s7eU/PBbzP5g7rwjK/5ZnOromxmUdmll
-	1+uXaQskXjmEJV6+6MI6//cyN5mMJQbfco73fZIKnXiGW3d6Z29f84Zb0sxim6yv1CixFGck
-	GmoxFxUnAgCmqFJkMgMAAA==
-X-CMS-MailID: 20240710070032epcas2p11c0695b1f82f4aa0629f9fb687e4423c
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240707231445epcas2p18815fee7d176f63619d244d836ab64fc
-References: <20240707231331.3433340-1-sunyeal.hong@samsung.com>
-	<CGME20240707231445epcas2p18815fee7d176f63619d244d836ab64fc@epcas2p1.samsung.com>
-	<20240707231331.3433340-4-sunyeal.hong@samsung.com>
-	<000601dad12e$19ff3f30$4dfdbd90$@samsung.com>
-	<000201dad26f$b18c3690$14a4a3b0$@samsung.com>
-	<015601dad271$bcd53e00$367fba00$@samsung.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hello Alim,
+Hello Heiko,
 
-> -----Original Message-----
-> From: Alim Akhtar <alim.akhtar@samsung.com>
-> Sent: Wednesday, July 10, 2024 11:35 AM
-> To: 'sunyeal.hong' <sunyeal.hong@samsung.com>; 'Krzysztof Kozlowski'
-> <krzk@kernel.org>; 'Sylwester Nawrocki' <s.nawrocki@samsung.com>; 'Chanwoo
-> Choi' <cw00.choi@samsung.com>; 'Michael Turquette'
-> <mturquette@baylibre.com>; 'Stephen Boyd' <sboyd@kernel.org>; 'Rob
-> Herring' <robh@kernel.org>; 'Conor Dooley' <conor+dt@kernel.org>
-> Cc: linux-samsung-soc@vger.kernel.org; linux-clk@vger.kernel.org;
-> devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
-> kernel@vger.kernel.org
-> Subject: RE: [PATCH v2 3/4] clk: samsung: clk-pll: Add support for
-> pll_531x
-> 
-> Hello Sunyeal,
-> 
-> > -----Original Message-----
-> > From: sunyeal.hong <sunyeal.hong@samsung.com>
-> > Sent: Wednesday, July 10, 2024 7:50 AM
-> > To: 'Alim Akhtar' <alim.akhtar@samsung.com>; 'Krzysztof Kozlowski'
-> > <krzk@kernel.org>; 'Sylwester Nawrocki' <s.nawrocki@samsung.com>;
-> > 'Chanwoo Choi' <cw00.choi@samsung.com>; 'Michael Turquette'
-> > <mturquette@baylibre.com>; 'Stephen Boyd' <sboyd@kernel.org>; 'Rob
-> > Herring' <robh@kernel.org>; 'Conor Dooley' <conor+dt@kernel.org>
-> > Cc: linux-samsung-soc@vger.kernel.org; linux-clk@vger.kernel.org;
-> > devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
-> > linux- kernel@vger.kernel.org
-> > Subject: RE: [PATCH v2 3/4] clk: samsung: clk-pll: Add support for
-> > pll_531x
-> >
-> > Hello Alim,
-> >
-> > > -----Original Message-----
-> > > From: Alim Akhtar <alim.akhtar@samsung.com>
-> > > Sent: Monday, July 8, 2024 8:58 PM
-> > > To: 'Sunyeal Hong' <sunyeal.hong@samsung.com>; 'Krzysztof Kozlowski'
-> > > <krzk@kernel.org>; 'Sylwester Nawrocki' <s.nawrocki@samsung.com>;
-> > > 'Chanwoo Choi' <cw00.choi@samsung.com>; 'Michael Turquette'
-> > > <mturquette@baylibre.com>; 'Stephen Boyd' <sboyd@kernel.org>; 'Rob
-> > > Herring' <robh@kernel.org>; 'Conor Dooley' <conor+dt@kernel.org>
-> > > Cc: linux-samsung-soc@vger.kernel.org; linux-clk@vger.kernel.org;
-> > > devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
-> > > linux- kernel@vger.kernel.org
-> > > Subject: RE: [PATCH v2 3/4] clk: samsung: clk-pll: Add support for
-> > > pll_531x
-> > >
-> > > Hello Sunyeal,
-> > >
-> > > > -----Original Message-----
-> > > > From: Sunyeal Hong <sunyeal.hong@samsung.com>
-> > > > Sent: Monday, July 8, 2024 4:44 AM
-> > > > To: Krzysztof Kozlowski <krzk@kernel.org>; Sylwester Nawrocki
-> > > > <s.nawrocki@samsung.com>; Chanwoo Choi
-> > <cw00.choi@samsung.com>; Alim
-> > > > Akhtar <alim.akhtar@samsung.com>; Michael Turquette
-> > > > <mturquette@baylibre.com>; Stephen Boyd <sboyd@kernel.org>; Rob
-> > > > Herring <robh@kernel.org>; Conor Dooley <conor+dt@kernel.org>
-> > > > Cc: linux-samsung-soc@vger.kernel.org; linux-clk@vger.kernel.org;
-> > > > devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
-> > > > linux- kernel@vger.kernel.org; Sunyeal Hong
-> > > > <sunyeal.hong@samsung.com>
-> > > > Subject: [PATCH v2 3/4] clk: samsung: clk-pll: Add support for
-> > > > pll_531x
-> > > >
-> > > > pll531x PLL is used in Exynos Auto v920 SoC for shared pll.
-> > > > pll531x: Integer/fractional PLL with mid frequency FVCO (800 to
-> > > > 3120
-> > > > MHz)
-> > > >
-> > > > PLL531x
-> > > > FOUT = (MDIV + F/2^32-F[31]) * FIN/(PDIV x 2^SDIV)
-> > > >
-> > > Any reason for not mentioning equation for integer PLL?
-> > >
-> > If the F value is 0, it operates as an integer PLL.
-> Thanks for clarification, it is good to mention the same in the commit
-> message.
-> 
-Okay. I will update comment for integer PLL description.
-> [snip]
-> > > > --
-> > > > 2.45.2
-> > >
-> >
-> 
+Am Dienstag, 9. Juli 2024, 14:31:16 CEST schrieb Heiko Stuebner:
+> In contrast to fixed clocks that are described as ungateable, boards
+> sometimes use additional clock generators for things like PCIe reference
+> clocks, that need actual supplies to get enabled and enable-gpios to be
+> toggled for them to work.
 
-Thanks,
-Sunyeal Hong
+=46ixed clocks are intended to be ungateable? Where does this come from?
+
+> This adds a binding for such clock generators that are not configurable
+> themself, but need to handle supplies for them to work.
+>=20
+> While in a lot of cases the type of the IC used is described in board
+> schematics, in some cases just a generic type description like
+> "100MHz, 3.3V" might also be used. The binding therefore allows both
+> cases. Specifying the type is of course preferred.
+>=20
+> The clock-frequency is set in devicetree, because while some clock
+> generators have pins to decide between multipls output rates, those
+> are generally set statically on the board-layout-level.
+>=20
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> ---
+>  .../bindings/clock/clock-generator.yaml       | 62 +++++++++++++++++++
+>  1 file changed, 62 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/clock-generat=
+or.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/clock/clock-generator.yaml=
+ b/Documentation/devicetree/bindings/clock/clock-generator.yaml
+> new file mode 100644
+> index 0000000000000..f44e61e414e89
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/clock-generator.yaml
+> @@ -0,0 +1,62 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/clock-generator.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Simple clock generators
+> +
+> +maintainers:
+> +  - Heiko Stuebner <heiko@sntech.de>
+> +
+> +properties:
+> +  $nodename:
+> +    anyOf:
+> +      - description:
+> +          Preferred name is 'clock-<freq>' with <freq> being the output
+> +          frequency as defined in the 'clock-frequency' property.
+> +        pattern: "^clock-([0-9]+|[a-z0-9-]+)$"
+> +      - description: Any name allowed
+> +        deprecated: true
+> +
+> +  compatible:
+> +    oneOf:
+> +      - const: clock-generator
+> +      - items:
+> +          - enum:
+> +              - diodes,pi6c557-03b
+> +              - diodes,pi6c557-05b
+> +          - const: clock-generator
+> +
+> +  "#clock-cells":
+> +    const: 0
+> +
+> +  clock-frequency: true
+> +
+> +  clock-output-names:
+> +    maxItems: 1
+> +
+> +  enable-gpios:
+> +    description:
+> +      Contains a single GPIO specifier for the GPIO that enables and dis=
+ables
+> +      the clock generator.
+> +    maxItems: 1
+> +
+> +  vdd-supply:
+> +    description: handle of the regulator that provides the supply voltage
+
+So essentially only enable-gpios and vdd-supply is added in comparison to
+fixed-clock. Does it make sense to add that to the fixed-clocks instead?
+Similar to fixed-regulator.
+
+> +
+> +required:
+> +  - compatible
+> +  - "#clock-cells"
+> +  - clock-frequency
+
+With this list it's essentially the same as fixed-clock.
+
+Best regards,
+Alexander
+
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    clock {
+> +      compatible =3D "clock-generator";
+> +      #clock-cells =3D <0>;
+> +      clock-frequency =3D <1000000000>;
+> +    };
+> +...
+>=20
+
+
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
+
 
