@@ -1,108 +1,129 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CC414174C;
-	Wed, 10 Jul 2024 06:15:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FB5524A08;
+	Wed, 10 Jul 2024 06:48:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720592150; cv=none; b=WU8BmBZ9ttc7fjqqRi5plQ8bPdLIXN71mpPdkk964P1kVs378zEmB1uab6TDEyjYZpGuAXlHgJo0xgCnnYyHqxxu3BuFlTYutOz6vaSCARKtKvKkgDn4Ee+W725M1j2SNFzMCLyjxrKToZlOPcJCrrb/Mt7UK4x6mn/lrSR7n/I=
+	t=1720594130; cv=none; b=PoLbupFTqEteoMS1RZfua29X/buFv7rNy9KheeB/dcJnbd22HlpXpMtvMLcwIhCDAkwoY7Iy2KBb9HsPHgqe/E56VMkpcuHzqpgumKiTsvoUWHZsZZzi4rPXj03s81gkTJPTWv9dODQdA4hi4v990wGGqsUzG22YWldr2yUQX3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720592150; c=relaxed/simple;
-	bh=y0Ae7eA352rTkkXZKhSY1RsSKoR9JQgMBiR1kM95uRU=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tnUCP/kVs+lGSTr2cDyQX7ROuP8Q0atyYMA22jhtO2pJWffbNFpF0qoSZGX3CKNP0on8RlhZxtI9/YINz6DDCK5Y7yN7O0jERGxBA+KsP1YmVwNz+ptkgKWQ2bbxqnIddix2rpZD2bxo+9jABU6ncik594wBM14+aeawxmWTsOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Ua5hpEGa; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1720594130; c=relaxed/simple;
+	bh=d7E4pF3B/YC1SaQ5hGT1rdhUnlINXowoDQRGFU9KCU0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LQQQaaEdVpR+wsb5KZcq9YiYRBi8Jb/Ma8HYpd/oIVAYxz6W2GhQHU+9+VXncLs7EYAaAjnbfWhhCQoVIheKGi6kxZgqc71f6qjX6oj38MfVV3n4Kcz1rpEhne/BZnEkV9wtVCv2wzRNRySaBwfRtAg+qZ7nl0fXkstIJGf2wEQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VwfghyZF; arc=none smtp.client-ip=209.85.166.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Ua5hpEGa"
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 469KpLt7016975;
-	Wed, 10 Jul 2024 06:15:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=Xm/hz+/GEvN/jtsQGBaziK4j
-	+UZetj/kf80vnczSJW8=; b=Ua5hpEGaUV6XFrEeyrXHVBziUKBB+hcTG3XGVlOf
-	7FjwCu8xAnYuHm2m0IZLknvwt3aoot663M6ZAHYDJn/gwJqjg+snun3rZYZsshcj
-	v6xPf6l9D2t38CV0bw2VZSSXOC6MvUOkUF3fqqLXmtnRYj3dHaxlX0bC0aUdd2xS
-	aJ+I1mfOd6yExyZSSTKjR6jT3DN4ER/+e6G4m1LHjiXmVqrrhWSlj5rvRyGuSRwP
-	0+EFNiSLJT6FibDr+Lj826Gg707IBPLl5WiaEpKYQhPIGcnd6Ew5kvxHo77oq1t6
-	06ifM/+Uq/y/8pg722pNiAgtBmk9PpJ+KKfooI6ElQupxg==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406x0t8kx9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 10 Jul 2024 06:15:27 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46A6FL2h004000
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 10 Jul 2024 06:15:21 GMT
-Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 9 Jul 2024 23:15:14 -0700
-Date: Wed, 10 Jul 2024 11:45:10 +0530
-From: Varadarajan Narayanan <quic_varada@quicinc.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <angelogioacchino.delregno@collabora.com>, <andersson@kernel.org>,
-        <konrad.dybcio@linaro.org>, <mturquette@baylibre.com>,
-        <sboyd@kernel.org>, <ilia.lin@kernel.org>, <rafael@kernel.org>,
-        <viresh.kumar@linaro.org>, <ulf.hansson@linaro.org>,
-        <quic_sibis@quicinc.com>, <quic_rjendra@quicinc.com>,
-        <otto.pflueger@abscue.de>, <luca@z3ntu.xyz>, <danila@jiaxyga.com>,
-        <quic_ipkumar@quicinc.com>, <stephan.gerhold@kernkonzept.com>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH v5 9/9] dts: arm64: qcom: ipq9574: Enable CPR
-Message-ID: <Zo4m7pBhXbzNLZh4@hu-varada-blr.qualcomm.com>
-References: <20240709090132.117077-1-quic_varada@quicinc.com>
- <20240709090132.117077-10-quic_varada@quicinc.com>
- <94e9aea3-6231-4dbe-9a7d-07f79216e78b@kernel.org>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VwfghyZF"
+Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-36dd56cf5f5so22610415ab.3;
+        Tue, 09 Jul 2024 23:48:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1720594128; x=1721198928; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AqJpJlQsOLg6grig5aAIY5nJC8Y497l/ww+yMkv+els=;
+        b=VwfghyZF+hXmMZkI7Y9Ovha8lep8DPVrN7ig26YolElhVTFmUxmwvTqdyHDoYwrzBx
+         S65ZR7Boo9jKxSXXZqNvlqPmrY5RoKjboCNVDeVtvcR+lsh6Bgta6+nayh3H0miwK+Tl
+         2JAN3GxzfWoVMeBUEbbu9xe1J+O4OiNy1ujPLTiuJNzP3rHE5hANsZIf0VhskDP54OYL
+         +yGz/x7wayAyB1QDW35xho5gCEZpmw7DqaWsPiTPyawXXbaaTyWzE8GDbhRTSxBjZScT
+         +Yv5hSUOPT2MkxE+wyi/rvkNFps1Mv7P64lmbZXbYZmsDlYVvE0784mFrtZta2/48Kyq
+         xq0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720594128; x=1721198928;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AqJpJlQsOLg6grig5aAIY5nJC8Y497l/ww+yMkv+els=;
+        b=tHhCKLHH9ROeDxxxdvEIR/04aABRbSaxcVcZMZQxxCEUaoT+RRCcy7zpYPFCjbTfn/
+         xTeoWVo4e7BPcKPGK5jh/Alz9PqkBY73sbm8jglVxdCWmQZcARvBUmVTyXXVvpSQmSRD
+         KAA6BLC9VT8V4yrG9BWnIPOBCFRn/drUEjV+fAXwXmrJ57CM0IjgVyy8cwPL5GBxTXtx
+         r6+oNKn9Yy8b/S9VDP91eHvAFQktpyaMUv2q0TIS0XfizoTjuO7xQZYTDiqFUlZm2+i8
+         m+CtfoY7KlHZFeygMpqO9s150nbK0Dc5SxYLDm2VfSzCmKgGY5w76uMaZXtXcLn6y4UT
+         bzDA==
+X-Forwarded-Encrypted: i=1; AJvYcCWk+WWUxsGbFSPFqMN9FlzdmAH++js8iWbMOU2mJLHHqlJuqZtnFeGgNCehOGDWfRiCYSLWsyanw1SJfhC6Cru6KeG17Z8NFwwzLEkt2oMAaL30H/jRN+Ro4Gzp1gmrBLhTuS9InAVc
+X-Gm-Message-State: AOJu0YwTtl9FWGzsVFtR6qZ1IEIY8DebVuYGzcvTeFn5311u8emvjDVk
+	TFwYpcevO7T4DYnRnIob18Kd3XgZkkFAjX88VyamVyLgzNASz8+XT7D+vxWwH6yLJRQfP87y2vn
+	egI6r5I7/FNtlxEscUx00U3oTG+o=
+X-Google-Smtp-Source: AGHT+IEXHEmoHb3TCymWx3QQxiI9X8NsPovHzCQ4rz0cdUtcFQXIiu6fSaiQ8WtQeUYBP0xVeQJ1acajWd3skRQPx0U=
+X-Received: by 2002:a05:6e02:1a23:b0:38b:48c9:55d5 with SMTP id
+ e9e14a558f8ab-38b48c95c00mr29939745ab.13.1720594128346; Tue, 09 Jul 2024
+ 23:48:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <94e9aea3-6231-4dbe-9a7d-07f79216e78b@kernel.org>
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ilmjQJAGn6569mie9UNxTYJjYMuM1Z_i
-X-Proofpoint-ORIG-GUID: ilmjQJAGn6569mie9UNxTYJjYMuM1Z_i
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-10_02,2024-07-09_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
- lowpriorityscore=0 impostorscore=0 adultscore=0 suspectscore=0
- phishscore=0 mlxlogscore=407 priorityscore=1501 malwarescore=0 spamscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407100047
+References: <1719996771-11220-1-git-send-email-shengjiu.wang@nxp.com>
+ <232c2342061b17b9f750c4ad52b0766e.sboyd@kernel.org> <CAA+D8APumdP97QQHObF6NEw6jwDJRb+0R=aAjqftrX1wR170Yw@mail.gmail.com>
+ <065ab85945db26eed25ea874fce92524.sboyd@kernel.org>
+In-Reply-To: <065ab85945db26eed25ea874fce92524.sboyd@kernel.org>
+From: Shengjiu Wang <shengjiu.wang@gmail.com>
+Date: Wed, 10 Jul 2024 14:48:37 +0800
+Message-ID: <CAA+D8AMvEVk9yLt70ROhDGzdd+A5C34611QnSyfbYr0OrLb75A@mail.gmail.com>
+Subject: Re: [PATCH] clk: imx: imx8: Add .name for "acm_aud_clk0_sel" and "acm_aud_clk1_sel"
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Shengjiu Wang <shengjiu.wang@nxp.com>, abelvesa@kernel.org, festevam@gmail.com, 
+	imx@lists.linux.dev, kernel@pengutronix.de, mturquette@baylibre.com, 
+	peng.fan@nxp.com, s.hauer@pengutronix.de, shawnguo@kernel.org, 
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 09, 2024 at 11:04:52AM +0200, Krzysztof Kozlowski wrote:
-> On 09/07/2024 11:01, Varadarajan Narayanan wrote:
-> > * Add CPR, RPMPD, OPP table nodes as applicable to IPQ9574 to
-> >   enable CPR functionality on IPQ9574.
-> >
-> > * Bootloader set frequency 792MHz is added to the OPP table to
-> >   the avoid 'need at least 2 OPPs to use CPR' error
-> >
-> > * Remove 1.2GHz as it is not supported in any of the IPQ9574 SKUs.
-> >
-> > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+On Wed, Jul 10, 2024 at 4:08=E2=80=AFAM Stephen Boyd <sboyd@kernel.org> wro=
+te:
 >
-> Please use subject prefixes matching the subsystem. You can get them for
-> example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
-> your patch is touching. For bindings, the preferred subjects are
-> explained here:
-> https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+> Quoting Shengjiu Wang (2024-07-08 20:20:56)
+> > On Tue, Jul 9, 2024 at 6:45=E2=80=AFAM Stephen Boyd <sboyd@kernel.org> =
+wrote:
+> > >
+> > > Quoting Shengjiu Wang (2024-07-03 01:52:51)
+> > > > "acm_aud_clk0_sel" and "acm_aud_clk1_sel" are registered by this AC=
+M
+> > > > driver, but they are the parent clocks for other clocks, in order t=
+o
+> > > > use assigned-clock-parents in device tree, they need to have the
+> > > > global name.
+> > > >
+> > > > Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> > > > ---
+> > > >  drivers/clk/imx/clk-imx8-acm.c | 12 ++++++------
+> > > >  1 file changed, 6 insertions(+), 6 deletions(-)
+> > > >
+> > > > diff --git a/drivers/clk/imx/clk-imx8-acm.c b/drivers/clk/imx/clk-i=
+mx8-acm.c
+> > > > index 1bdb480cc96c..a1affcf6daff 100644
+> > > > --- a/drivers/clk/imx/clk-imx8-acm.c
+> > > > +++ b/drivers/clk/imx/clk-imx8-acm.c
+> > > > @@ -114,8 +114,8 @@ static const struct clk_parent_data imx8qm_mclk=
+_out_sels[] =3D {
+> > > >  static const struct clk_parent_data imx8qm_mclk_sels[] =3D {
+> > > >         { .fw_name =3D "aud_pll_div_clk0_lpcg_clk" },
+> > > >         { .fw_name =3D "aud_pll_div_clk1_lpcg_clk" },
+> > > > -       { .fw_name =3D "acm_aud_clk0_sel" },
+> > > > -       { .fw_name =3D "acm_aud_clk1_sel" },
+> > > > +       { .fw_name =3D "acm_aud_clk0_sel", .name =3D "acm_aud_clk0_=
+sel" },
+> > > > +       { .fw_name =3D "acm_aud_clk1_sel", .name =3D "acm_aud_clk1_=
+sel" },
+> > >
+> > > This doesn't make any sense. Why are we adding fallback names?  Is
+> > > "acm_aud_clk0_sel" not part of the DT binding for this clk controller=
+?
+> >
+> > It is not part of DT binding for this clk controller.  it is registered=
+ by this
+> > clk controller itself.  As it is a parent clock, so my understanding
+> > is that we need to add a fallback name,  or change "fw_name" to "name",
+> > please correct me if I am wrong.
+>
+> If it's registered by this clk controller itself then it should be a
+> clk_hw pointer and not use any string name.
 
-Sorry. Have posted V6 rebased on top of Konrad's latest version
-and rectifying the subject prefix. Please take a look.
+ok, will update it.
 
-Thanks
-Varada
+Best regards
+Shengjiu Wang
