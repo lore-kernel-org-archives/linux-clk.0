@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1BE315E88;
-	Wed, 10 Jul 2024 19:47:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43191197A7B;
+	Wed, 10 Jul 2024 19:55:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720640869; cv=none; b=NnO1qjA9q7VNzQtp0ZXXPKYmrtHx+hf+iMa4mtAWXhEabZoV6cbNI8FRSh3Hpbun40YMKe8k4AlXxErbLTR7Laq+1IJ79AvMaAH9QfvzfioQRwP+KZ5EyQr02h09uyH/oe6MzkImBc8+5iMBsHSFeP/Ji3bBQ6a+oI66w2j55KE=
+	t=1720641314; cv=none; b=ci/YGuoZajAgK3+y3jaGV4TBp4Js1zeOUuTSZB8jbtqvbMofXmKLIeUOrZkxjw529zINoYCVh7KPZdY/+KBpP/N/4Ec5Z145ICYRDfXcD3ixpTOW821UP1WnnqsgXffyy9/5JtA4DV/6pzv+feQRmadm1+tFGqWpziBNVFLGVSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720640869; c=relaxed/simple;
-	bh=UuJMlch6WraU5bI9HL7iYn7FKqFuRq32/WSvkM0/YRU=;
+	s=arc-20240116; t=1720641314; c=relaxed/simple;
+	bh=Fc7WfJ8WjVBITAc0LsbpI3K1B9HOodEyCX17XluKf04=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=KaWy+mmS4P5CxXmAdBfiYCGroOfwi0m5HBVDGJ+WgNUT6IAOcYrrggUIQlRPgb3r/mUi4pPwmQoMWYFtgqfalNGt7LHGIkKV008r+KQBtOO3fBy0j12XBXt8hAD9cT5YZAIcLmdheb9v94/KHr3RKLRm5iwAxz1/q2varlVAGcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kRrlAxsg; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=Iu0RM/TLw6aF1m5b2giZRqzUeGJOXclPiBELDe2Rbm5B60asxyjLs5zqArtSMPLW8HxxgH5vDsRMtPH3dtXUNLHzIvFbA/zcnOnu+VrsvjPlecjKlzguQGyPGLXlEmbHAsYF+sl/Jj2A3mn9X70FNpj9xMw+FMBxpBk3sU0BIIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M3Q4UuV0; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kRrlAxsg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F70EC32781;
-	Wed, 10 Jul 2024 19:47:48 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M3Q4UuV0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93E7AC32781;
+	Wed, 10 Jul 2024 19:55:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720640868;
-	bh=UuJMlch6WraU5bI9HL7iYn7FKqFuRq32/WSvkM0/YRU=;
+	s=k20201202; t=1720641313;
+	bh=Fc7WfJ8WjVBITAc0LsbpI3K1B9HOodEyCX17XluKf04=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=kRrlAxsg/ofRQNnJkliK4cbH50GLBLqqkzChA0cmrQglOc2GBRPVh9DhWtAbiFIjR
-	 svKrNUmyoVeyuHeOxl2FvxVMkGfkojVL5El+Kj3HCaELlZZxCBvrUApB++1iA9sagy
-	 SdqVbDTvCXM7bRb58V4IikN0rGjVZnP70IvFOiKQVOSBwCcORWU94A/mEdxyOiGPYn
-	 3EQZx7DrCTp/MrWn7fx2V7qTqOKU4VNkbxyNXvcoFmH0lVAq9z7fmm2aYYPCFZXPPw
-	 TXWONDFVZwpkeU0y7l0Lz7TMFtDbu/fvjnDaJ8xDIBHCWzXUndFqnNykZNlTf4crAN
-	 flcWmNkmoDNHA==
-Message-ID: <cc91609f78905a8c5d5bf28590a1a23b.sboyd@kernel.org>
+	b=M3Q4UuV0M3RAF8AKCVkJ7WG4OhqbcRfmEvgM8BJ5BJtQy/q/L+Po9Or55IagShd7c
+	 lV38juDbgZYUkZu266ZJFYeZZ2DCOskTRdNciD+en3ZMyjEf8A+N3wNNTTjf/6oR9e
+	 WREY5qV+y5ynuhss7J1545RALDOSrIzXfi6IalbEWzYGgHRBXFypGtpoURzgACFB5N
+	 +ZnHUkcEWpcQwA70wJttVYYZpIyF0rw1pI21wHRcrkUSeIvA94X2FZsS8KjsHD8Lns
+	 i4JNmNmuWgiX6NFtGkkY7CGurUeYLGYvxE73ePKi48SN4r2RDMgeMyWMPd48tj4hI1
+	 o7qwe2r30DulQ==
+Message-ID: <8e10f0736ea87ed3f7cea4cac506fc24.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,20 +35,28 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240703-clk-const-regmap-v1-9-7d15a0671d6f@gmail.com>
-References: <20240703-clk-const-regmap-v1-0-7d15a0671d6f@gmail.com> <20240703-clk-const-regmap-v1-9-7d15a0671d6f@gmail.com>
-Subject: Re: [PATCH 09/10] clk: sunxi-ng r40: Constify struct regmap_config
+In-Reply-To: <7f2bf860ffaccd10899b72fdda6a3ca9c50d2107.camel@maquefel.me>
+References: <20240617-ep93xx-v10-0-662e640ed811@maquefel.me> <20240617-ep93xx-v10-3-662e640ed811@maquefel.me> <6c5d6c0730698969ef613ec9ec4aa14a.sboyd@kernel.org> <7f2bf860ffaccd10899b72fdda6a3ca9c50d2107.camel@maquefel.me>
+Subject: Re: [PATCH v10 03/38] clk: ep93xx: add DT support for Cirrus EP93xx
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-sunxi@lists.linux.dev, Javier Carrasco <javier.carrasco.cruz@gmail.com>
-To: Bjorn Andersson <andersson@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Javier Carrasco <javier.carrasco.cruz@gmail.com>, Jernej Skrabec <jernej.skrabec@gmail.com>, Jerome Brunet <jbrunet@baylibre.com>, Kevin Hilman <khilman@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, Michael Turquette <mturquette@baylibre.com>, Michal Simek <michal.simek@amd.com>, Neil Armstrong <neil.armstrong@linaro.org>, Samuel Holland <samuel@sholland.org>, Vladimir Zapolskiy <vz@mleia.com>
-Date: Wed, 10 Jul 2024 12:47:46 -0700
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+To: Michael Turquette <mturquette@baylibre.com>, Nikita Shubin <nikita.shubin@maquefel.me>, Nikita Shubin via B4 Relay <devnull+nikita.shubin.maquefel.me@kernel.org>
+Date: Wed, 10 Jul 2024 12:55:11 -0700
 User-Agent: alot/0.10
 
-Quoting Javier Carrasco (2024-07-03 02:50:22)
-> `sun8i_r40_ccu_regmap_config` is not modified and can be declared as
-> const to move its data to a read-only section.
+Quoting Nikita Shubin (2024-07-10 03:34:12)
+> On Mon, 2024-07-08 at 15:18 -0700, Stephen Boyd wrote:
+> > Quoting Nikita Shubin via B4 Relay (2024-06-17 02:36:37)
+> > > diff --git a/drivers/clk/clk-ep93xx.c b/drivers/clk/clk-ep93xx.c
+> > > +
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 hw =3D devm_clk_hw_register_fix=
+ed_rate(dev, "pll2", "xtali",
+> > > 0, clk_pll2_rate);
+> >=20
+> > Please use clk_parent_data for topology descriptions.
 >=20
-> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-> ---
+> It's look like clk_hw_register_fixed_rate_parent_hw() is missing devm_
+> version of this function. Is it ok to provide wrapper for
+> __clk_hw_register_fixed_rate() in drivers/clk/clk-ep93xx.c ?
 
-Applied to clk-next
+Yes, of course.
