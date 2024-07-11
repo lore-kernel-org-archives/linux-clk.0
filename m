@@ -1,120 +1,105 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1577A29CF0;
-	Thu, 11 Jul 2024 04:58:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A5E142042;
+	Thu, 11 Jul 2024 05:27:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720673913; cv=none; b=eLBZF1Bjs5ikxH7Cc1nPm/fEm8AJ8ajSO7C9Fv4omwKs+NExUHtnL9KTg2JjToRdF/8fFN4rZSZ1FIN0o9SWKQiaji9XHrP01pUEbwNDrkGG33GxOau5Kg4415hQVvXS5NIVXcmiI5H1gxw0oLPz5+FgVxfz6ENq3D/rVCpc0Es=
+	t=1720675667; cv=none; b=lm/wZbEOu5HRixZLHXQPaVnTb9Kf4NOs1lQB7o2aKX4/6ONaYwc/Sc1kHg6ymyGhKN35wPi3I7SyAgiPpl6hxWxudzO1S1GgYD88sScVRfaNJTBjcZSAAoiqXOHHUautucGrZVcxDYT/BXcqzH5/VUWUwp/VDSE2qymxYW7q4N4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720673913; c=relaxed/simple;
-	bh=d87vYux2oYnYK80Z/hqKA457vpsQNT+AIQcJKMK6NbQ=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YplIKy6F4Gw9awuPmyhp0fb4HTA5M1GNHPleermHPm15E0j3ZephWA/xIRpNVuryzQMPAOxkZWuTFJlkOMzz82N1fgWRNhcHIQVLzxKdswbWd+8D6X5Td0LJ2nqu4agijcUL23Knmxd26HSPawpvPm6bD8/OnO+oj+kqeltdbkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=d2r500OM; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1720675667; c=relaxed/simple;
+	bh=HSsX0RnRuDFdjgHKzOQtBjgv2nX0He6FmULrIZgV2do=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Mi5md1nnfk3nCvfIsOTX1BRlNGkUnUtiw6ugn3koiLVrOe1mk/sywHm1hfL3Mcr+GLZLLMkRfpg9hjoPSzBSrhCzhKX24NL86RfUD1O8wk8kwsjocaLS5/a0ilUl0uA8pMsLrsEYZ78MrNs2/6vcFmPkCcgmuwWENkIg3AsOhYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=ZOXrs43I; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=CSwpWI6L reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="d2r500OM"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46B4mucc008113;
-	Thu, 11 Jul 2024 04:58:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=QfexAfiFTGJbsV6Jlp1wIh2D
-	0ABmelrFAt2LL9NkLGc=; b=d2r500OM1kEgbdT7lgvsRYvg6u164GQXn1UeQe2s
-	6r9L5GadhK0Zi56M8+9dMFbC4tg8yfgj8Z7HP0ldGd/ep6rEImhMSQCzdhsAiUiJ
-	u4fcSxx9NVODKCxuD7gQ6dch9ZcaSSZsIzSVmV4gUvOB99CNLhw6SwvnM56AfBI8
-	ZMQqS9NVVlyuqpGGVQAS2qO6saig6WEpam+yfTT3g/uAvzGWWTnMYQmnI43TdaLV
-	k8SzwFObPJdtVyntsrKcBRsP/irW+PmfNr8fSIy7UpNQMtdnslhDsDigzBtGJVMD
-	fKbIW7y+ikN3DrqZhBG6YnbklV4KzBLYls1umljOhjDt6g==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 406wg43gm4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Jul 2024 04:58:12 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46B4wCLD004693
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 11 Jul 2024 04:58:12 GMT
-Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 10 Jul 2024 21:58:04 -0700
-Date: Thu, 11 Jul 2024 10:28:00 +0530
-From: Varadarajan Narayanan <quic_varada@quicinc.com>
-To: Konrad Dybcio <konrad.dybcio@linaro.org>
-CC: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <ilia.lin@kernel.org>, <rafael@kernel.org>, <viresh.kumar@linaro.org>,
-        <ulf.hansson@linaro.org>, <quic_sibis@quicinc.com>,
-        <quic_rjendra@quicinc.com>, <danila@jiaxyga.com>,
-        <neil.armstrong@linaro.org>, <otto.pflueger@abscue.de>,
-        <abel.vesa@linaro.org>, <luca@z3ntu.xyz>, <geert+renesas@glider.be>,
-        <stephan.gerhold@kernkonzept.com>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        Praveenkumar I
-	<quic_ipkumar@quicinc.com>
-Subject: Re: [PATCH v6 8/9] soc: qcom: cpr3: Add IPQ9574 definitions
-Message-ID: <Zo9mWMUJiTJoj2b+@hu-varada-blr.qualcomm.com>
-References: <20240710061102.1323550-1-quic_varada@quicinc.com>
- <20240710061102.1323550-9-quic_varada@quicinc.com>
- <4c3ada32-1476-4d98-89d7-7b2ffa0f9a65@linaro.org>
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="ZOXrs43I";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="CSwpWI6L"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1720675664; x=1752211664;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=HSsX0RnRuDFdjgHKzOQtBjgv2nX0He6FmULrIZgV2do=;
+  b=ZOXrs43ISmbjEKXnExZdRQfpw/PvqOwc5L5J3d2g76O7m45M5zFMSn/8
+   FKco8rFUHGOwZRFy+VQqPpJzNJYopbpoddA44j61JrP2CUQdVv10AMzj0
+   bl01lb6a74ui400RoGqQI4Qph96MCx+/i8ivFzmzpuBhgBXLNmrnviecU
+   C/kvsi/EZ/LOlkc9psUPHx4QADTxxlS14LZ/ah/9BVZrOux71s+DE6pTB
+   mSUDNerO5qgbZ+9VvWQGyl/3eVimDrqzOYPwfzyk/JkWN+iS0NPQbPXLD
+   AHvM0JbaW7f2tSAE/mO7mkdWl1sZyXY993yD0NsEgrxKjGPj0+nKX490n
+   A==;
+X-CSE-ConnectionGUID: 4R+YyxF4TvuAdyuF6HKwhg==
+X-CSE-MsgGUID: Fn3IlePpQkWP6bFs1b+N/A==
+X-IronPort-AV: E=Sophos;i="6.09,199,1716242400"; 
+   d="scan'208";a="37850448"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 11 Jul 2024 07:27:40 +0200
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A54FD16337A;
+	Thu, 11 Jul 2024 07:27:35 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1720675656;
+	h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=HSsX0RnRuDFdjgHKzOQtBjgv2nX0He6FmULrIZgV2do=;
+	b=CSwpWI6Lf4xrqzWYv5+Hmj2pkBU90Gz5eSk8N1mrQhjPh9iid9DEuc3WNe/CBO2vvRCExT
+	hjwwRzC+dNFp3HjXY1mfa1T4re9x2giweXhnmJhZTtfGmzLUZIRf7NdRIoxcLlIfRFGzE0
+	ejAQfvXWaP1AWJ5im+lmoYtF4QDEU3kuUJZdBcfY3L2gJPWXUgJh3qBIAI02iTxLQHL1mT
+	RBAQi/t5pPQONzWEOqokoAVFyiLLeCUIx3R0QESg0Z1SQ70S5oweDGm22Ibw6H/xQaVuIC
+	sztdr1U8B/GpEW3FoKO8JmKS146OS9hgGNJ2Udwkn35e9BV3xH+AqJ7iGjfaCw==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>, mturquette@baylibre.com, Stephen Boyd <sboyd@kernel.org>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, quentin.schulz@cherry.de, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH 1/6] dt-bindings: clocks: add binding for generic clock-generators
+Date: Thu, 11 Jul 2024 07:27:40 +0200
+Message-ID: <1899010.tdWV9SEqCh@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <68f6dc44a8202fd83792e58aea137632.sboyd@kernel.org>
+References: <20240709123121.1452394-1-heiko@sntech.de> <21244242.0c2gjJ1VT2@diego> <68f6dc44a8202fd83792e58aea137632.sboyd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <4c3ada32-1476-4d98-89d7-7b2ffa0f9a65@linaro.org>
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: GILWLXyo901De_1Xy6p6ZkeSDHKiScW7
-X-Proofpoint-GUID: GILWLXyo901De_1Xy6p6ZkeSDHKiScW7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-11_02,2024-07-10_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- mlxlogscore=995 clxscore=1015 impostorscore=0 malwarescore=0 mlxscore=0
- bulkscore=0 spamscore=0 adultscore=0 suspectscore=0 lowpriorityscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407110031
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Wed, Jul 10, 2024 at 01:12:19PM +0200, Konrad Dybcio wrote:
-> On 10.07.2024 8:11 AM, Varadarajan Narayanan wrote:
-> > From: Praveenkumar I <quic_ipkumar@quicinc.com>
-> >
-> > * Add thread, scaling factor, CPR descriptor defines to enable
-> >   CPR on IPQ9574.
-> >
-> > * Skip 'acc' usage since IPQ9574 does not have acc
-> >
-> > Signed-off-by: Praveenkumar I <quic_ipkumar@quicinc.com>
-> > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> > ---
->
-> [...]
->
-> >
-> >  	/* CPRh disallows MEM-ACC access from the HLOS */
-> > -	if (!(data->acc_desc || desc->cpr_type == CTRL_TYPE_CPRH))
-> > +	if (!(data->acc_desc || desc->cpr_type == CTRL_TYPE_CPRH ||
-> > +	      of_device_is_compatible(dev->of_node, "qcom,ipq9574-cpr4")))
-> >  		return dev_err_probe(dev, -EINVAL, "Invalid ACC data\n");
->
-> This is something I'd also like to fold into v16.. perhaps
->
-> if (data->acc_desc && desc->cpr_type == CTRL_TYPE_CPRH)
->
-> could work instead? this way we trust the programmer that
-> acc_desc's presence/absence is intentional and only throw and
-> error if it's present with type == CPRH
+Am Donnerstag, 11. Juli 2024, 01:21:15 CEST schrieb Stephen Boyd:
+> Quoting Heiko St=FCbner (2024-07-10 00:45:17)
+> > Am Mittwoch, 10. Juli 2024, 09:02:34 CEST schrieb Alexander Stein:
+> > >=20
+> > > So essentially only enable-gpios and vdd-supply is added in compariso=
+n to
+> > > fixed-clock. Does it make sense to add that to the fixed-clocks inste=
+ad?
+> > > Similar to fixed-regulator.
+> >=20
+> > I wasn't that sure which way to go in the first place.
+> > The deciding point was reading that line about the fixed clock not
+> > being gateable, so I opted to not touch the fixed-clock.
+> >=20
+> > But you're definitly right, this _could_ live inside the fixed-clock
+> > as well, if we decide to get rid of the not-gateable thing above.
+>=20
+> It's probably more complicated to combine it with the fixed-clock
+> binding after making properties required like vdd-supply. I'd just make
+> a new binding and look at combining later.
 
-I tried this change and it works for ipq9574.
+Maybe I am missing something IMHO adding optional vdd-supply and
+enable-gpios doesn't seem a big deal.
+Anyway I don't have a hard opinion here. To me fixed-clocks still
+seems very appropriate for having a controlling GPIO and power supply.
+I just would get rid of the (comment only) hint they are ungatable.
 
-Thanks
-Varada
+Best regards,
+Alexander
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
+
+
