@@ -1,219 +1,143 @@
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AF4712C54A
-	for <linux-clk@vger.kernel.org>; Thu, 11 Jul 2024 06:55:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BB4014B943;
+	Thu, 11 Jul 2024 07:53:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720680944; cv=none; b=I/MiDvqQa4T6poF5K8P7oyzYwvKWenEfIwtdHQP69cG+sZyn4Z9/HlOJqrQl/l0zoOt03IZmvMiuSnWx5qxYQJFwgsqPYCIX6AfX0XWzIAVFw2CMCw1fT8qSiAv1b/r8tI9DwTDVLglzi6G85roOtnZE5CzR1yWQx1b548KYO6c=
+	t=1720684441; cv=none; b=FhrojNOldj1AHV1veNQkQXXIYOdM2zjC3l/rxHl4LHjO9xTJGNllV31aQwWn7WlV7WDhn9CUJkDE9x1S7tCaWl819Lb6LQswQJQV5vogGPVSTRMoMPX0L804iFfFUv5PetHyGesSyLfrLG0r3yH26MScIrI13SrE+scHOorcMDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720680944; c=relaxed/simple;
-	bh=iEJSZWwibei49W28C7OkAYWo9n7vnO08kdlEvcJpxGo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=isNEgrHPyU8cIe0sye8hx4UBkEVhlnEES7bhilAzBcyEam4uq6fg+zW2cJjCodnQKO9yWPecgP9X2sNVdRS1PxmS194Eo+MlA8Vayr61CWWaKwf66kOnFlnodLuXPKScWWlIsUaYHTfrFECXe2jBmKNe8NkY0qdk6csP23acReA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=Yv0ln3Ci; arc=none smtp.client-ip=209.85.214.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="Yv0ln3Ci"
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-1fb8781ef1bso4159405ad.3
-        for <linux-clk@vger.kernel.org>; Wed, 10 Jul 2024 23:55:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tenstorrent.com; s=google; t=1720680941; x=1721285741; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qj5fKPvxGvM7Ufw7p7EXOjC4sCCpwaohueruAgBqnWk=;
-        b=Yv0ln3Ci4lEz8nKwr+OyTAlWn28+KXzI8JSsx4OuGvK5iJ/T5ZzI7OSFux4IacNoyi
-         PEmvmGHac29c8q9QSD2AFtW2O8IBdwkPKQnNKqDM99/Bazat/E6RmKEfwz8CNLy+jq22
-         tmskqk0LNQVjAsPC1iyd1haMA8xvrdzQnbAWaeZ/3rq7oTQ36TdcvfefTdLqlv9sBcYB
-         LECQxRAGMHekhZtNObI2n7SYNhF11+CG8P9ipCoLnGSEzR6AD+waTur4D6D0Xu7sYRXG
-         FaDNcUDyluhOAfi2xXhieURzUMkt9cimVdEyjUuU2fjQlpytiQ7TAxhyK0/z/taaLOnd
-         wYhQ==
+	s=arc-20240116; t=1720684441; c=relaxed/simple;
+	bh=0BgnDHiX/TK+JQoHQMsUy+eteShtWavkLMpjkahy91M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JayWjUhQDYYEJGCFY4tH2VxIl8dePcVqMy0NhWgwQsa2hru0kzhgbgYcK6zSfPpfZPIGD3XY9cU/M5WEEF69v1HdXMYfOVkbA8jCU8I3wMuQBcmhtCBpSPuESE8mx5lnNOg43sFvZuauCZ6oVS7noUC0j42B4I1IJSxmRPs6MmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-650b8e0a6ceso5874147b3.3;
+        Thu, 11 Jul 2024 00:53:59 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720680941; x=1721285741;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qj5fKPvxGvM7Ufw7p7EXOjC4sCCpwaohueruAgBqnWk=;
-        b=FWgTY+m8jzh4RpEB5+v0q4oJvdv9O4/07BpEi4caNERXJyYYcgWJ9GCjAV2N91LiZa
-         cHE9aSIBRVhUXE778sW1JO2hGVovpaNsGfMCBA0+wH5HRrDndPva/zl4FKeV3K1CH6fa
-         BI7f0mbY59OZ9ehztN5GI2KcinoprvhVmHDeJMv+Ggsj5DL0hwZS8DyiutimByfR+5bQ
-         FOP+6KJAMNsL2fz7zZmtL8nQjDxA1x5KJS999L3Ni5kmOvdZeDQSELPJbGrP4BYEPs9v
-         SRCRyOzezltX0Q9Vkq/E4gexpeBn8XLk30FK403A8FOV6HtAV9RLJ966DvNM/YyDwJRl
-         Wrcg==
-X-Forwarded-Encrypted: i=1; AJvYcCXhx+E15HsMcRWVNysM6DjuZyJO+Fv2THykgQx1XgrpB0SVXr0sZfar8Pl+AOPJVe19gsxcf29gQcQUWVCP46hHCYbeZsB7Vbe0
-X-Gm-Message-State: AOJu0Yyv1e62pINNV5ZvawQD5zMn9juciZO+BZIxen6RA6Bk1laKCWqw
-	gRAntTh+xEZb9sFGtZeiLJX8fdIYeuPzlTgbey59m3ompxpXVtmYpJJ6prKS7Hc=
-X-Google-Smtp-Source: AGHT+IGb4ybc/OK3k0d6iCqvD55Ro9+I1kKUFnh6M3hL2RGrJ7WIIrCEMAeRoySTG0NPFBmMi9Af/g==
-X-Received: by 2002:a17:902:e2c5:b0:1fb:64da:b13a with SMTP id d9443c01a7336-1fbb6ec5f62mr49719405ad.59.1720680941493;
-        Wed, 10 Jul 2024 23:55:41 -0700 (PDT)
-Received: from x1 ([2601:1c2:1802:170:5ee9:fea0:d9de:cee8])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fbb6a11a4csm43497305ad.15.2024.07.10.23.55.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 10 Jul 2024 23:55:41 -0700 (PDT)
-Date: Wed, 10 Jul 2024 23:55:39 -0700
-From: Drew Fustini <dfustini@tenstorrent.com>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor+dt@kernel.org>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Fu Wei <wefu@redhat.com>, Guo Ren <guoren@kernel.org>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Rob Herring <robh@kernel.org>,
-	Thomas Bonnefille <thomas.bonnefille@bootlin.com>,
-	Yangtao Li <frank.li@vivo.com>, linux-riscv@lists.infradead.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/7] clk: thead: Add support for T-Head TH1520
- AP_SUBSYS clocks
-Message-ID: <Zo+B6yzFwRwSkPpH@x1>
-References: <20240623-th1520-clk-v2-0-ad8d6432d9fb@tenstorrent.com>
- <20240623-th1520-clk-v2-2-ad8d6432d9fb@tenstorrent.com>
- <d36ff27b56b3e9c8ef490bfd9d24761d.sboyd@kernel.org>
+        d=1e100.net; s=20230601; t=1720684438; x=1721289238;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5fRVbJjcNb5I05e6Xfep3Il3HTd1wTS3dEeZLYGEQtM=;
+        b=PHJazHFGAmjv8X4bkxbaxB44Cf7U0Ug2b5psUq5CJGn5i0U0CLxDGz8F5jjQU9QCV4
+         17RhVbblJNQVQlJIRArMzHv3oKlscj9Ue4B2SFZz1PIXZS4kgh3z7LfALD+1lZocL/8K
+         EAwHQA87fnqgR10yq2Ru06sm7qjQEKUkk0DuFG23Do/c4XLBmLw6jC2XIdivyLqeJLr1
+         55oMzKoSbmiEO9q/ewEHnWvyyrJPyi2JYGR1HvBFz3VKkYFCLWP87yzklgdNqmdPbg5I
+         drriOOcReUTkJklqDrvv9j6E6k6iVEjSS5o4QA39JwgRSknZZ+jq4ki7D0bM/v7u1mWH
+         1DKw==
+X-Forwarded-Encrypted: i=1; AJvYcCXDBMQYnO30WcFt0oqS5+NBuTIGoSB2HEVDciE2KtRgLUWF0zFTXEvoHOSXGuBbpblt/qcJlY9wsTVHGyvaU4Odt6C3fg4nRCHrXFfKXwSbFcH3G1aZCPGurxZq74xrH3PRnTEmJyrWr0f6X68e0MRQCbV9kW6YpsNVI3FykAQD4fRWov6yxohpMY3w/k5ZfDkKdPpIZn2oEsirL+t8kAJFzMdM1MtXVB//9NgkDrS9K868Rv7sxc2oKp5vF9CqEkAT
+X-Gm-Message-State: AOJu0YwSBnf3ov5Q802WsxFshwxxwxPp8CszsF+U6AUN4yZbH5vOdL9S
+	ev2P16PvMe6h9rlPOSj+rwZWWdpp50u9SMzb+Flz/F0qzbRs3HNAG6u0EXfi
+X-Google-Smtp-Source: AGHT+IEAVEVDvRPumjsbsdvUEKBWr+nCV0eoncFS6xMhbJf5JHh93sDmEHKqPscdEqfNwYteTbffWg==
+X-Received: by 2002:a25:6801:0:b0:e05:6d47:57a4 with SMTP id 3f1490d57ef6-e056d475973mr3452925276.10.1720684437720;
+        Thu, 11 Jul 2024 00:53:57 -0700 (PDT)
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e041a8acf85sm925002276.9.2024.07.11.00.53.56
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Jul 2024 00:53:56 -0700 (PDT)
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-64789495923so5634487b3.0;
+        Thu, 11 Jul 2024 00:53:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU4AQsv5jhWFuUQz0NAtfh4lw8g73dBZSHrV+2Jm5LEAFZta8ZV8wHZmu8OQpncIPgolXa65Dm91ZogINUS+8oBOSrfVVVC2FDeHGlbtTS4n85KK7/Tpv1WIPc5sO/3t7J1RUauL419dilUXE3zCfYrYa+78/2B6FkRUCIk1ofQ6LIXLmFLKwvn7x+mokD9Z2WTA/+qjwHZ2PrNpgTDLwkQ1ez7mskWCQ54pAkrunEGcxmjbkpACdSo6tMQDIJ7KYQe
+X-Received: by 2002:a81:8d49:0:b0:63b:df6e:3f6d with SMTP id
+ 00721157ae682-658f02f3720mr78529147b3.37.1720684436126; Thu, 11 Jul 2024
+ 00:53:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d36ff27b56b3e9c8ef490bfd9d24761d.sboyd@kernel.org>
+References: <20240625121358.590547-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240625121358.590547-10-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdX4hWou9OtdE8XgU7-U0ghJ6vk2kVqgT90U0ZjsxzR5DA@mail.gmail.com> <22db23bd-5872-49a0-990f-2a0e5f51bfb5@tuxon.dev>
+In-Reply-To: <22db23bd-5872-49a0-990f-2a0e5f51bfb5@tuxon.dev>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 11 Jul 2024 09:53:43 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWTYfK6aVi5BzBtQg_zQWjuZX7d7QHr3a4GAb+dQOWyvQ@mail.gmail.com>
+Message-ID: <CAMuHMdWTYfK6aVi5BzBtQg_zQWjuZX7d7QHr3a4GAb+dQOWyvQ@mail.gmail.com>
+Subject: Re: [PATCH v2 09/12] i2c: riic: Add support for fast mode plus
+To: claudiu beznea <claudiu.beznea@tuxon.dev>
+Cc: chris.brandt@renesas.com, andi.shyti@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com, 
+	mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, 
+	wsa+renesas@sang-engineering.com, linux-renesas-soc@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 10, 2024 at 04:17:12PM -0700, Stephen Boyd wrote:
-> Quoting Drew Fustini (2024-06-23 19:12:32)
-> > diff --git a/drivers/clk/thead/clk-th1520-ap.c b/drivers/clk/thead/clk-th1520-ap.c
-> > new file mode 100644
-> > index 000000000000..982d4d40f783
-> > --- /dev/null
-> > +++ b/drivers/clk/thead/clk-th1520-ap.c
-> > @@ -0,0 +1,1086 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * Copyright (C) 2023 Jisheng Zhang <jszhang@kernel.org>
-> > + * Copyright (C) 2023 Vivo Communication Technology Co. Ltd.
-> > + *  Authors: Yangtao Li <frank.li@vivo.com>
-> > + */
-> > +
-> > +#include <dt-bindings/clock/thead,th1520-clk-ap.h>
-> 
-> Preferably include dt-bindings after linux includes.
+Hi Claudiu,
 
-Okay, I will move it.
+On Wed, Jul 10, 2024 at 4:20=E2=80=AFPM claudiu beznea <claudiu.beznea@tuxo=
+n.dev> wrote:
+> On 28.06.2024 12:22, Geert Uytterhoeven wrote:
+> > On Tue, Jun 25, 2024 at 2:14=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.d=
+ev> wrote:
+> >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> >>
+> >> Fast mode plus is available on most of the IP variants that RIIC drive=
+r
+> >> is working with. The exception is (according to HW manuals of the SoCs
+> >> where this IP is available) the Renesas RZ/A1H. For this, patch
+> >> introduces the struct riic_of_data::fast_mode_plus.
+> >>
+> >> Fast mode plus was tested on RZ/G3S, RZ/G2{L,UL,LC}, RZ/Five by
+> >> instantiating the RIIC frequency to 1MHz and issuing i2c reads on the
+> >> fast mode plus capable devices (and the i2c clock frequency was checke=
+d on
+> >> RZ/G3S).
+> >>
+> >> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> >
+> > Thanks for your patch!
+> >
+> >> --- a/drivers/i2c/busses/i2c-riic.c
+> >> +++ b/drivers/i2c/busses/i2c-riic.c
+> >> @@ -407,6 +413,9 @@ static int riic_init_hw(struct riic_dev *riic)
+> >>         riic_writeb(riic, 0, RIIC_ICSER);
+> >>         riic_writeb(riic, ICMR3_ACKWP | ICMR3_RDRFS, RIIC_ICMR3);
+> >>
+> >> +       if (info->fast_mode_plus && t->bus_freq_hz =3D=3D I2C_MAX_FAST=
+_MODE_PLUS_FREQ)
+> >> +               riic_clear_set_bit(riic, 0, ICFER_FMPE, RIIC_ICFER);
+> >
+> > Unless FM+ is specified, RIIC_ICFER is never written to.
+> > Probably the register should always be initialized, also to make sure
+> > the FMPE bit is cleared when it was set by the boot loader, but FM+
+> > is not to be used.
+>
+> Instead of clearing only this bit, what do you think about using
+> reset_control_reset() instead of reset_control_deassert() in riic_i2c_pro=
+be()?
+>
+> HW manuals for all the devices listed in
+> Documentation/devicetree/bindings/i2c/renesas,riic.yaml specifies that
+> ICFER_FMPE register is initialized with a default value by reset. All the
+> other registers are initialized with default values at reset (according t=
+o
+> HW manuals). I've checked it on RZ/G3S and it behaves like this.
 
-> 
-> > +#include <linux/bitfield.h>
-> > +#include <linux/clk-provider.h>
-> > +#include <linux/device.h>
-> > +#include <linux/module.h>
-> > +#include <linux/platform_device.h>
-> > +#include <linux/regmap.h>
-> > +
-> > +#define TH1520_PLL_POSTDIV2    GENMASK(26, 24)
-> > +#define TH1520_PLL_POSTDIV1    GENMASK(22, 20)
-> > +#define TH1520_PLL_FBDIV       GENMASK(19, 8)
-> > +#define TH1520_PLL_REFDIV      GENMASK(5, 0)
-> > +#define TH1520_PLL_BYPASS      BIT(30)
-> > +#define TH1520_PLL_DSMPD       BIT(24)
-> > +#define TH1520_PLL_FRAC                GENMASK(23, 0)
-> > +#define TH1520_PLL_FRAC_BITS    24
-> [...]
-> > +
-> > +static unsigned long th1520_pll_vco_recalc_rate(struct clk_hw *hw,
-> > +                                               unsigned long parent_rate)
-> > +{
-> > +       struct ccu_pll *pll = hw_to_ccu_pll(hw);
-> > +       unsigned long div, mul, frac, rate = parent_rate;
-> > +       unsigned int cfg0, cfg1;
-> > +
-> > +       regmap_read(pll->common.map, pll->common.cfg0, &cfg0);
-> > +       regmap_read(pll->common.map, pll->common.cfg1, &cfg1);
-> > +
-> > +       mul = FIELD_GET(TH1520_PLL_FBDIV, cfg0);
-> > +       div = FIELD_GET(TH1520_PLL_REFDIV, cfg0);
-> > +       if (!(cfg1 & TH1520_PLL_DSMPD)) {
-> > +               mul <<= TH1520_PLL_FRAC_BITS;
-> > +               frac = FIELD_GET(TH1520_PLL_FRAC, cfg1);
-> > +               mul += frac;
-> > +               div <<= TH1520_PLL_FRAC_BITS;
-> > +       }
-> > +       rate = parent_rate * mul;
-> > +       do_div(rate, div);
-> 
-> 'rate' is only unsigned long, so do_div() isn't needed here. Perhaps if
-> 'parent_rate * mul' can overflow 32-bits then 'rate' should be
-> u64.
+RZ/A1 and RZ/A2M do not have reset controller support yet, so calling
+reset_control_reset() is a no-op on these SoCs.
 
-Thanks for pointing that out. I will make 'rate' u64 as I believe
-'parent_rate * mul' could overflow:
+However, I overlooked that riic_init_hw() does an internal reset first
+by setting the ICCR1_IICRST bit in RIIC_ICCR1.
+Is that sufficient to reset the FMPE bit?
 
-The ref clock for all the PLLs on this SoC is intended to be 24 MHz
-(section 4.3.2 PLL Resources [1]). Thus it is expected that parent_rate
-will use 24 bits.
+Gr{oetje,eeting}s,
 
-'mul' is set to TH1520_PLL_FBDIV which is 12 bits. In DSMPD mode, 'mul'
-gets shifted left by TH1520_PLL_FRAC_BITS which is 24 bits.
+                        Geert
 
-> > +       return rate;
-> > +}
-> > +
-> > +static unsigned long th1520_pll_postdiv_recalc_rate(struct clk_hw *hw,
-> > +                                                   unsigned long parent_rate)
-> > +{
-> > +       struct ccu_pll *pll = hw_to_ccu_pll(hw);
-> > +       unsigned long rate = parent_rate;
-> > +       unsigned int cfg0, cfg1;
-> > +
-> > +       regmap_read(pll->common.map, pll->common.cfg0, &cfg0);
-> > +       regmap_read(pll->common.map, pll->common.cfg1, &cfg1);
-> > +
-> > +       if (cfg1 & TH1520_PLL_BYPASS)
-> > +               return rate;
-> > +
-> > +       do_div(rate, FIELD_GET(TH1520_PLL_POSTDIV1, cfg0) *
-> 
-> Same, 'rate' is unsigned long. Did you get some compilation error
-> without this? How big is the divisor going to be? The fields are only
-> 3-bits wide, so the multiplication would fit into a u32 just fine. Given
-> that 'rate' is unsigned long though I think you can just put the
-> multiplication result into a local variable that's also unsigned long
-> and then just write the divide with unsigned longs
-> 
-> 	div = FIELD_GET(...) * FIELD_GET(...);
-> 
-> 	return rate / div;
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-I didn't get any compiler errors. I had copied do_div() from another
-driver that I was looking at.
-
-You are right that TH1520_PLL_POSTDIV1 and TH1520_PLL_POSTDIV2 are both
-just 3 bits each. Thus I think the maximum divisor is 64. I'll change
-to the simpler "rate / div" that you suggest.
-
-> > +                    FIELD_GET(TH1520_PLL_POSTDIV2, cfg0));
-> > +
-> > +       return rate;
-> > +}
-> > +
-> > +static unsigned long ccu_pll_recalc_rate(struct clk_hw *hw,
-> > +                                        unsigned long parent_rate)
-> > +{
-> > +       unsigned long rate = parent_rate;
-> > +
-> > +       rate = th1520_pll_vco_recalc_rate(hw, rate);
-> > +       rate = th1520_pll_postdiv_recalc_rate(hw, rate);
-> > +
-> > +       return rate;
-> > +}
-> 
-> Please fold this in
-
-Will do.
-
-Thanks for the review,
-Drew
-
-[1] https://openbeagle.org/beaglev-ahead/beaglev-ahead/-/blob/main/docs/TH1520%20System%20User%20Manual.pdf
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
