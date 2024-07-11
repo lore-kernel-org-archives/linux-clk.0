@@ -1,60 +1,59 @@
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14267155CBA
-	for <linux-clk@vger.kernel.org>; Thu, 11 Jul 2024 09:55:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AC35158DC4
+	for <linux-clk@vger.kernel.org>; Thu, 11 Jul 2024 10:55:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720691744; cv=none; b=uyuwzSyOnGqFKi3aiW5o9AKp9556WSJpMgHmRn9wpcvieavViVicNu8BfZqdZUPF+AP70g2nrNkLK202kl3hUk3eK92xF2TrILkiV2TNeRQoFmlYipcWNMArXctFV4SCX/VKy8ibHujTEJwRYRgu0yhFrSDgOKv0VDdAciw4EAU=
+	t=1720695330; cv=none; b=RTKw1ge1wNbcRUF84bkmIJmGEo9XdO+eauZxs+JbLufmmGLerwvzO1TixN5RkDAAEBQGIo6D35cNf/+5R2P24GU2+4NOD7xp3UK5GGcgM9vtv7HP69OIKApZvvAzAyQry9L8btL3Nsrfp4jJN7I/RX7LZCUDubtMlzUX3YdAihE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720691744; c=relaxed/simple;
-	bh=yYWC/VveCTOiGUoQj5SkfspQMI1tcDAhWmZ6kBA+/YE=;
+	s=arc-20240116; t=1720695330; c=relaxed/simple;
+	bh=ObMpbEximSI8alc70FW/UfPZ4bMtmbUEXU+rnP6lHYI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nP7eyz+xAZrMtJ7C0dSwpZyetztCJx1DOtI4LLvdR39nW9PevmPyZ14bNsmOC3p4GYh7YDJFj5fMlsucaV4MjEpIMxWSm2Olf+r9UjvlbtrXjDLRbGvpvsVwT+Z120p4hzBvzAbJzfD1E+dfOCpufNPdIuTVpwvCjZFtLlQXLDU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GpAK8J1c; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 In-Reply-To:Content-Type; b=AQJlJIEV1YML3fV7+bEF3kguW0a8YgAi4TpnEHl/BQEY8agPpvk5Ol/gTzBEovMpJWOljWF7tNNuN7bbZWvzjVwmTGyNKW0pKwrXCylccHeLLneKeAu2WR7OBrsso0aB8LevOEvehJCDT1sjtWxS9tlmPDSMEZM+3Vn+FeE3H7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=o4aLvvEN; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GpAK8J1c"
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-59589a9be92so953280a12.2
-        for <linux-clk@vger.kernel.org>; Thu, 11 Jul 2024 02:55:42 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="o4aLvvEN"
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52ea5dc3c79so1044171e87.1
+        for <linux-clk@vger.kernel.org>; Thu, 11 Jul 2024 03:55:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720691741; x=1721296541; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=maLqMD3ICvk1EK1NREQo247Hu1y1Wvub0TIIfxIt6Vw=;
-        b=GpAK8J1c5wH9+cIkvnvEGOII0m9UX4IZ3OH/VRprbJ4K766BCRRlTvPNvYdYacZ4c/
-         2qGPL1FxH+EWfaBw1Z5CXMKcJzVJ4JtrUfMTiLvCjhaSRL0L5ZCfgCPuYHpQI96sSUKt
-         A7P2q1YeviwGBRtdOvTDEuwCqQnjkPRNqfSR3i21g+CDCrTIDFpBeXQnW92jPjuS5fmw
-         CM7PsYWyLtFAqZju4zmnzsC4sSa019ugXpRu81sIfuFOgKra7oJ8MQbQIiu+9SSiLCGG
-         nUd/yLZx/d7Xi9u/5dLOMuaXi6Lafau+/Vz0Dz1So8DaePQuuuQZSnAM2JIvWRFTp1WB
-         /z8w==
+        d=tuxon.dev; s=google; t=1720695325; x=1721300125; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=d4SjRvd/Gf0tvdBBNCaypISbkCCPsgLpujJHRu2p8Vw=;
+        b=o4aLvvENk6rCATrGKLwBCRtm7ksXTzrZjAuHMXh17yA/jSyJRctRSPJItByRaJtXYT
+         0Pft3liimlgdkZvhFwT9AYgu/OsWK/bk+S0otmRGqspnI+usOnOILlMR1fWxRkIVzawy
+         Wb16rMe+B1Uyq3EAWbCs5GvCgFJd7FiEBDlw5x9yqw29jUNWFATiLM6W7uOFIt1FvsWM
+         X+yQWW0sVrSdgBrDh/CQZFeaG8fuixy+lrX/GM9ngSNttGx9u6/6uyTvt44SuIMfHG8o
+         /Y9u3grBrdJyU9e5+E2cS9VAE+AqV+t8J992T4r6of+yTmSftEkmYxBqoGfKbomxArj1
+         6Vtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720691741; x=1721296541;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=maLqMD3ICvk1EK1NREQo247Hu1y1Wvub0TIIfxIt6Vw=;
-        b=I/Zfhyh97UuUsxqxUWVsUvU8Wg47XBQefpCYqmzTk2RiCsugNAll+qcb1d5dOT5CCT
-         CdL3CXSeEYDoWYUgri5KFy+bI/pmwmwPNI7b06tQPZIN4SlettWE/iwgsF9bJKcM1xeB
-         oHZzacPM7rDBsrvSgh8lxsTSde+zcFkoCQ2PFsYFpML0aJ2wbo4Ri8+T7C9mpKmC8I4L
-         it6bqqbKtwiikDNKUTCmOZhUmvOm2+T7AlgAcTAeKjR5ae1PU1yiJ9+wCUVRVh77MZzE
-         th3GcZKLjCHz9+5NxcAg6GqWYBGQsn9tkuSqwNw/cQrELfLPf0c6a6GK9mklTB2Bnwvp
-         vAEA==
-X-Forwarded-Encrypted: i=1; AJvYcCXrIOJXvkHNWk8uWZEkUPtFZQCBLf61ooy1uxCgmJMNH2KAIVpqxNJFJlKciGQio2OMNHVBrmFM5fa9EcQLn5zf/FuzVRio1oN6
-X-Gm-Message-State: AOJu0YznOBuXf67mVXKC3bRR8MM1q9y5ixNRgEoDmqpxsjJmSlWFnaXd
-	Mgq0lgQ4QqzLbgHViaoEiuLQQ2SwOEC8Vv9XLVi6SDdMIi4QLrp/EYFkuNOBjbM=
-X-Google-Smtp-Source: AGHT+IExGLqNXPyV85QLGJwuneesorCc1iI3eg2vhxQ8Am7jEngbHqpcbHnK1n/eI7Hqf5CY4Tsk9Q==
-X-Received: by 2002:a05:6402:210f:b0:58b:6096:5554 with SMTP id 4fb4d7f45d1cf-594bcba7e40mr6465201a12.37.1720691740940;
-        Thu, 11 Jul 2024 02:55:40 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-594bbe2cf93sm3251364a12.33.2024.07.11.02.55.38
+        d=1e100.net; s=20230601; t=1720695325; x=1721300125;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=d4SjRvd/Gf0tvdBBNCaypISbkCCPsgLpujJHRu2p8Vw=;
+        b=F73swCp9kcdZB9HtrH/x4HZO/5dZlYMBlqLPVp3b8O2zywQmxdcgJUbVRSlx5xOcWK
+         RsckKSYXWiJ0yk27FP64EI64cq2p1ys1bH/eOgMxMZYE4YioW64icsP8QL2MxjAwvHC/
+         gKA00QZ7lw+G7qXuBQuX35sonG/sXmyJN5c/EWkbrjX1LLUui9hkB9eXC3qDH0GizHGa
+         ZE5ZVXg+zB5a7AkZuxq3MYfVYih/b30//Y3x//3aTbCjIMR+Yk5TGcrCR6S4n08fH/L2
+         ZH2lWWjJxtxmOFmpOwUBuSpEzdivTsT6lyk+aGii+P4xVy2ygiimfv8/tJwxxXVBuW8d
+         Rjdw==
+X-Forwarded-Encrypted: i=1; AJvYcCXMrMrcNd88HrdHJK7ZBZmrTqKiBOmBRwvZK4wg5YAlLppJbl+xaxwYjXGXJTTQnIoFtVyBGT/QkTPKm+BlEuRmoNuSxdhkiGn/
+X-Gm-Message-State: AOJu0Yyejn6vPt1DbRRM4VRswGoHNgdO4ql5kV8G4PMuvRHNPj3iSomQ
+	wO5nQ4/J0BXmtaebAx/tQ2qr3sVeKij5b3RQLP1uOOt1GBm3TsPwOoACL2Ra5/c=
+X-Google-Smtp-Source: AGHT+IFyURXGCB/ZWatM2zsqpItEbE9ARS0oWeAG/0s7yJAUURbplkg2wS4Wiw1poVUzIJzmirJqIA==
+X-Received: by 2002:a05:6512:1388:b0:52e:9caf:d2fa with SMTP id 2adb3069b0e04-52eb999a6e4mr5924441e87.19.1720695325216;
+        Thu, 11 Jul 2024 03:55:25 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.171])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f741fa6sm115097855e9.45.2024.07.11.03.55.23
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Jul 2024 02:55:40 -0700 (PDT)
-Message-ID: <95a835e2-9fd9-467b-bd0a-8eeb80ddf678@linaro.org>
-Date: Thu, 11 Jul 2024 11:55:37 +0200
+        Thu, 11 Jul 2024 03:55:24 -0700 (PDT)
+Message-ID: <beb2082e-b7fb-462f-be14-8be4f1400404@tuxon.dev>
+Date: Thu, 11 Jul 2024 13:55:22 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -62,90 +61,89 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V4 8/8] arm64: dts: qcom: sm4450: add camera, display and
- gpu clock controller
-To: Ajit Pandey <quic_ajipan@quicinc.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Vinod Koul <vkoul@kernel.org>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Taniya Das <quic_tdas@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>,
- Imran Shaik <quic_imrashai@quicinc.com>,
- Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-References: <20240611133752.2192401-1-quic_ajipan@quicinc.com>
- <20240611133752.2192401-9-quic_ajipan@quicinc.com>
- <76f5e3c7-a90b-42d2-8169-e5e2211a14a1@linaro.org>
- <ba7d12d3-c582-45ec-beed-e81182fe3252@quicinc.com>
+Subject: Re: [PATCH v2 09/12] i2c: riic: Add support for fast mode plus
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <ba7d12d3-c582-45ec-beed-e81182fe3252@quicinc.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: chris.brandt@renesas.com, andi.shyti@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com,
+ mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
+ wsa+renesas@sang-engineering.com, linux-renesas-soc@vger.kernel.org,
+ linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240625121358.590547-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240625121358.590547-10-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdX4hWou9OtdE8XgU7-U0ghJ6vk2kVqgT90U0ZjsxzR5DA@mail.gmail.com>
+ <22db23bd-5872-49a0-990f-2a0e5f51bfb5@tuxon.dev>
+ <CAMuHMdWTYfK6aVi5BzBtQg_zQWjuZX7d7QHr3a4GAb+dQOWyvQ@mail.gmail.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <CAMuHMdWTYfK6aVi5BzBtQg_zQWjuZX7d7QHr3a4GAb+dQOWyvQ@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 3.07.2024 11:16 AM, Ajit Pandey wrote:
+Hi, Geert,
+
+On 11.07.2024 10:53, Geert Uytterhoeven wrote:
+> Hi Claudiu,
 > 
-> 
-> On 6/13/2024 1:11 PM, Konrad Dybcio wrote:
->>
->>
->> On 6/11/24 15:37, Ajit Pandey wrote:
->>> Add device node for camera, display and graphics clock controller on
->>> Qualcomm SM4450 platform.
+> On Wed, Jul 10, 2024 at 4:20 PM claudiu beznea <claudiu.beznea@tuxon.dev> wrote:
+>> On 28.06.2024 12:22, Geert Uytterhoeven wrote:
+>>> On Tue, Jun 25, 2024 at 2:14 PM Claudiu <claudiu.beznea@tuxon.dev> wrote:
+>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>>
+>>>> Fast mode plus is available on most of the IP variants that RIIC driver
+>>>> is working with. The exception is (according to HW manuals of the SoCs
+>>>> where this IP is available) the Renesas RZ/A1H. For this, patch
+>>>> introduces the struct riic_of_data::fast_mode_plus.
+>>>>
+>>>> Fast mode plus was tested on RZ/G3S, RZ/G2{L,UL,LC}, RZ/Five by
+>>>> instantiating the RIIC frequency to 1MHz and issuing i2c reads on the
+>>>> fast mode plus capable devices (and the i2c clock frequency was checked on
+>>>> RZ/G3S).
+>>>>
+>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 >>>
->>> Signed-off-by: Ajit Pandey <quic_ajipan@quicinc.com>
->>> ---
+>>> Thanks for your patch!
+>>>
+>>>> --- a/drivers/i2c/busses/i2c-riic.c
+>>>> +++ b/drivers/i2c/busses/i2c-riic.c
+>>>> @@ -407,6 +413,9 @@ static int riic_init_hw(struct riic_dev *riic)
+>>>>         riic_writeb(riic, 0, RIIC_ICSER);
+>>>>         riic_writeb(riic, ICMR3_ACKWP | ICMR3_RDRFS, RIIC_ICMR3);
+>>>>
+>>>> +       if (info->fast_mode_plus && t->bus_freq_hz == I2C_MAX_FAST_MODE_PLUS_FREQ)
+>>>> +               riic_clear_set_bit(riic, 0, ICFER_FMPE, RIIC_ICFER);
+>>>
+>>> Unless FM+ is specified, RIIC_ICFER is never written to.
+>>> Probably the register should always be initialized, also to make sure
+>>> the FMPE bit is cleared when it was set by the boot loader, but FM+
+>>> is not to be used.
 >>
->> None of these nodes reference a power domain (which would usually be
->> CX/MX/MMCX). This way, the RPMhPDs will never be scaled.
+>> Instead of clearing only this bit, what do you think about using
+>> reset_control_reset() instead of reset_control_deassert() in riic_i2c_probe()?
 >>
->> The current upstream implementation only allows one power domain to be
->> scaled, but that's better than none (see other DTs for recent SoCs).
->>
->> Konrad
+>> HW manuals for all the devices listed in
+>> Documentation/devicetree/bindings/i2c/renesas,riic.yaml specifies that
+>> ICFER_FMPE register is initialized with a default value by reset. All the
+>> other registers are initialized with default values at reset (according to
+>> HW manuals). I've checked it on RZ/G3S and it behaves like this.
 > 
-> SM4450 doesn't support MMCX and CX/MX domains will remain active so
-> power-domains property is actually not required for SM4450 clock nodes.
+> RZ/A1 and RZ/A2M do not have reset controller support yet, so calling
+> reset_control_reset() is a no-op on these SoCs.
+> 
+> However, I overlooked that riic_init_hw() does an internal reset first
+> by setting the ICCR1_IICRST bit in RIIC_ICCR1.
+> Is that sufficient to reset the FMPE bit?
 
-It's not only about them being active.. some PLLs require e.g. MX to be
-at a certain level, or the system will be unstable
+Yes, that also restores the content of RIIC_ICFER register to the default
+value (including clearing the FMPE bit). Thanks for pointing it, I
+overlooked it, too.
 
-Konrad
+Thank you,
+Claudiu Beznea
+
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
