@@ -1,128 +1,127 @@
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CA481514D1
-	for <linux-clk@vger.kernel.org>; Thu, 11 Jul 2024 08:41:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A0C813B59F;
+	Thu, 11 Jul 2024 08:53:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720687272; cv=none; b=P3owT5mbBBadGbThYZkC0ACA3EMdnnDvUEO5z8XZI8MncCpEnKuPr2YcnCn3udGlY4u+yT3DqGDJkfmrH7UveDjYjQuOmY2QbjebKHKZiOzMQJ88PgLLDGKSitRS5wD5f6HkoiNWMiDAlC4LSB+0lkl2KqJw8h/nY7fyDAdLKJ0=
+	t=1720687999; cv=none; b=rv/PoAUbdUrvihnaCDJZdHYDx5PZaE+ZJ7RcBdqhlgsoABvBhuW8htBLlpypEBfOpTuMROgf2p3o1yatUwIpk90hROO+AoF8k8BoikLinpngJ1vbD+jVEwIIbHFJN0S3JEkczu+4zHq5NRisoMKPoRbzy42DeCvpOiHk4m/Hm7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720687272; c=relaxed/simple;
-	bh=x4i1N1H6Wn0xiFNAiQw1PCFby+j9cdKd2mhVJ7jEYqs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=SzLKyRxsr+jUFtKmI+EoOaMNR41RBPMEjB7EXrEfK0NezrRHJzHeAkhsCHWeWA+edgNRn7t4GGr0KJAaCMJZWxfq6o/Jxc54sgy0J8L1JX3KT4p4Sxm/iBePkGIH6TCFaEZtsPUMC3ERUlt+/L8uJL5KdsfGVqBrmQCYK6L7u1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=NDFmcVtM; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="NDFmcVtM"
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52ea0f18500so660813e87.3
-        for <linux-clk@vger.kernel.org>; Thu, 11 Jul 2024 01:41:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1720687268; x=1721292068; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=F4hJMe1Yb9yi4VSSBc6ZDJo7fdcuCbEK9DIjftRMu7s=;
-        b=NDFmcVtMzWgb5vU8bsrFMkRe4dzyDf2F3BrjchFR6lKv8GMCxt+XrFZkk+9WntsfSE
-         IQkwYOeQeuc74EfSov8enRgiZvDjfaxpY/TlO7oYqronu2htABsEHfYPaOKfMhZ5yXar
-         gjWYEfOtryk9fgpSi9NyvwYMtHrKVikIkyDkLUuIHPw5NRrI9PU9R7viJqFAJvP1h3eq
-         e57ZhjylQdnYSkNmivHnWuEMOgn/CLfMyMWWbGrKTRLaGCjsPBDGlrWB+oqsjX1JnVL3
-         sKOUQzNBrm3r0j2+ITfDzl+KYrilpQop5vkxKbyIt/ItvBpa+hmbKJ6MTahTbzNPsKfm
-         /7UA==
+	s=arc-20240116; t=1720687999; c=relaxed/simple;
+	bh=2ou+YsYEEugMGdtQXAJCZ+aAgYO2v5aJq4d7CBht9bA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TyZ/s6lDTEtVGTrdy7DBwk2w50grxhTvWbEiL5if/LWiMkYc9RM8QgvcB3749Mb0zGRM+j3JfI731Bd4BP/0AtZBQpQTsQhNAbouWkvHjh1F51gT15atkmVvFBAmzfgbW2QX7GqgyMV1oYRetxlBPqfm4VBf+yHcfmpFjYiz9Y4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-654ce021660so6656817b3.1;
+        Thu, 11 Jul 2024 01:53:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720687268; x=1721292068;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=F4hJMe1Yb9yi4VSSBc6ZDJo7fdcuCbEK9DIjftRMu7s=;
-        b=MF525pr9kEGohsYK6enwBsq1ir0FJ9jMAv7Fme4iqMtMKooFr0apiLCzhSKv7hHkVv
-         cgWohDStepd8jKeu57MCdbWyjLUTZ6NL1j+5CVaiDOH9FNFtPMluNUiMF0eVbHCvTyDB
-         q2mETCg/412BLpOpLGvq2go29BDXbzluPlGKx4X++aaDq6azHC2mf8O/ZCKSrGYKsFwZ
-         dkM63AhOTRbR6J6hn0Dg/9AjzaUVj0zk/zCXpWT7qaolyA6Ab+66/ARgbvK9hMMj1XQy
-         E1IwYiQPegU0hFn3GrtyO1llBDzOPNFelbN3l8qpgNn5we9SrIuIWg0vs3bPN3Q4RDW6
-         YNBA==
-X-Forwarded-Encrypted: i=1; AJvYcCXoQTMYTRlbogHRyUNIIILw4O+eFZGI/0JscQeX0JvtySseePWlziURZNrT1fvFKhGyjsNB4dnHpPC0bG/GeHmXd19KuRO53JoT
-X-Gm-Message-State: AOJu0YyROr3dIGtClcdUNJrf+ug1CxZ4MgH1tR2/URghB8sBaCm2gYol
-	+NyhZTrX2hAL4LMcAJTWleAUFtb0XavYZ1Mj26TMkQtkXjvGA5bdY1L65z5Pu/k=
-X-Google-Smtp-Source: AGHT+IEJO/nqHAjigZAZduBXhYWRYVbv9hRi6m8XTEKnVPN3/RPTQHv6P0+rtwA6HcT8K1XGWUuONA==
-X-Received: by 2002:ac2:5f6d:0:b0:52d:b182:9664 with SMTP id 2adb3069b0e04-52eb99d7698mr3637237e87.69.1720687267614;
-        Thu, 11 Jul 2024 01:41:07 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:a9e9:c71a:10d8:7f63])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427272c4371sm73269515e9.22.2024.07.11.01.41.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Jul 2024 01:41:07 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,  Philipp Zabel
- <p.zabel@pengutronix.de>,  Jan Dakinevich
- <jan.dakinevich@salutedevices.com>,  linux-kernel@vger.kernel.org,
-  linux-amlogic@lists.infradead.org,  linux-clk@vger.kernel.org
-Subject: Re: [PATCH 5/8] reset: amlogic: add reset status support
-In-Reply-To: <c34a2d1613da179a27123be95eaf4ddf.sboyd@kernel.org> (Stephen
-	Boyd's message of "Wed, 10 Jul 2024 15:40:16 -0700")
-References: <20240710162526.2341399-1-jbrunet@baylibre.com>
-	<20240710162526.2341399-6-jbrunet@baylibre.com>
-	<c34a2d1613da179a27123be95eaf4ddf.sboyd@kernel.org>
-Date: Thu, 11 Jul 2024 10:41:06 +0200
-Message-ID: <1jzfqogw2l.fsf@starbuckisacylon.baylibre.com>
+        d=1e100.net; s=20230601; t=1720687995; x=1721292795;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=W6f3oSyeWf8yYBWfaEbvUGQAKgtspXaPeuysnNn5pHw=;
+        b=GR8CClR260goFc+bhr2rkbeYznRn1zNKHiahW5GWiabsgVjcrqn4V9+pjz6XVa/ZxT
+         jlE8C4s5CLNxFxkvG9sum0QXFsO6OtT7i6xVcQ1simPdcIn5nSAJPgvv+GCRLwwNo+QV
+         1JAyB9lXlb4fxqWu6WjR0qVxROHsrR1g92lcyy8pDejvgjAnqGFVFEdB8bUkAkHxd6VY
+         yanWigzaB4pOAtcwkb4/bmaXZFEdhE+q0RlIVfJwnQhoq5TGXJ/r06RufICKOVrPEHkH
+         g9hQ1yXnSz6zEe5WGmraOlpH8qXUIuayHGOvNpGITebRgdVRZeTurvuLLU12PRopFZ58
+         f2TA==
+X-Forwarded-Encrypted: i=1; AJvYcCWfg6ekCf+r7uj5xphUPdixZ4jtozeIhAg6R8opZvBQHMa2SUkw4f4wKn8JqJ1NdVL1mqQBxEPfV1u+Uc0dPnBWlSP3GSCLREsu
+X-Gm-Message-State: AOJu0YyPSW9ou/yQcSajDr29mYM9snOJHdQAbBMZ+ynbORyj64LsaJLl
+	3gRKo1X5wJhHchb/1Gq60VGfVASiTEHkrWt5YzsnEAB/UlI50HZ8qC1TLZOd
+X-Google-Smtp-Source: AGHT+IHUdxAbZMOJ1MqrAUxn4ANA6HwI9JatpKzYhOcm/ziAyjFj1DHBkPWB2+D7AsAPIoXpUIakpQ==
+X-Received: by 2002:a0d:dcc1:0:b0:647:eaea:f4de with SMTP id 00721157ae682-658f11a56d1mr75338347b3.47.1720687994975;
+        Thu, 11 Jul 2024 01:53:14 -0700 (PDT)
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com. [209.85.219.174])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-658e4a316e9sm10287977b3.17.2024.07.11.01.53.14
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 11 Jul 2024 01:53:14 -0700 (PDT)
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e03a9f7c6a6so594779276.3;
+        Thu, 11 Jul 2024 01:53:14 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX/Jmj9JnikEJV7mYh4fJGpGq2guoZRMSy0CB/f2ZITn7JxOzaL5mcYH29ztAxwH7tajANbW+loTYWrhnBg2OjDPSAdjPDOBOfN
+X-Received: by 2002:a81:5b42:0:b0:650:8f3a:2ac6 with SMTP id
+ 00721157ae682-658ee790066mr90288287b3.1.1720687994228; Thu, 11 Jul 2024
+ 01:53:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <cover.1720616233.git.geert+renesas@glider.be> <3b3e769977dba9c487ec12cf9594e99af4eaceb7.1720616233.git.geert+renesas@glider.be>
+In-Reply-To: <3b3e769977dba9c487ec12cf9594e99af4eaceb7.1720616233.git.geert+renesas@glider.be>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 11 Jul 2024 10:53:01 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdWa26+9BCz9Hokn+9HNjAqwG_V+G1JJ07X2ye0m7bWS-A@mail.gmail.com>
+Message-ID: <CAMuHMdWa26+9BCz9Hokn+9HNjAqwG_V+G1JJ07X2ye0m7bWS-A@mail.gmail.com>
+Subject: Re: [PATCH 05/14] clk: renesas: rcar-gen4: Add support for fractional multiplication
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed 10 Jul 2024 at 15:40, Stephen Boyd <sboyd@kernel.org> wrote:
+On Wed, Jul 10, 2024 at 3:10=E2=80=AFPM Geert Uytterhoeven
+<geert+renesas@glider.be> wrote:
+> R-Car Gen4 PLLs support fractional multiplication, which can improve
+> accuracy when configuring a specific frequency.
+>
+> Add support for fractional multiplication to the custom clock driver
+> for PLLs, which is currently used only for PLL2 on R-Car V4H.
+> While at it, add the missing blank line after the function.
+>
+> Note that Fractional Multiplication is not enabled by the driver,
+> but used only if the boot loaded enabled it before.
+>
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-> Quoting Jerome Brunet (2024-07-10 09:25:14)
->> Add a callback to check the status of the level reset, as done in
->> the reset driver of the audio clock controller.
->
-> Why? Presumably so that this driver has equivalent functionality to the
-> reset code in the audio clk controller?
+> --- a/drivers/clk/renesas/rcar-gen4-cpg.c
+> +++ b/drivers/clk/renesas/rcar-gen4-cpg.c
+> @@ -77,17 +79,26 @@ static unsigned long cpg_pll_8_25_clk_recalc_rate(str=
+uct clk_hw *hw,
+>                                                   unsigned long parent_ra=
+te)
+>  {
+>         struct cpg_pll_clk *pll_clk =3D to_pll_clk(hw);
+> -       unsigned int mult;
+> -
+> -       mult =3D FIELD_GET(CPG_PLLxCR0_NI8, readl(pll_clk->pllcr0_reg)) +=
+ 1;
+> +       u32 cr0 =3D readl(pll_clk->pllcr0_reg);
+> +       unsigned int ni, nf;
+> +       unsigned long rate;
+> +
+> +       ni =3D (FIELD_GET(CPG_PLLxCR0_NI8, cr0) + 1) * 2;
+> +       rate =3D parent_rate * ni;
+> +       if (cr0 & CPG_PLLxCR0_SSMODE_FM) {
+> +               nf =3D FIELD_GET(CPG_PLLxCR1_NF25, readl(pll_clk->pllcr1_=
+reg));
+> +               rate +=3D ((u64)parent_rate * nf) >> 24;
 
-I thought the description was saying so. I'll be more explicit in v2
+This (and every other similar calculation in this series) can use
+mul_u64_u32_shr(), for better performance when reused on 32-bit,
+at the cost of a slight code increase on arm64.
 
+> +       }
 >
->> 
->> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
->> ---
->>  drivers/reset/reset-meson.c | 18 ++++++++++++++++++
->>  1 file changed, 18 insertions(+)
->> 
->> diff --git a/drivers/reset/reset-meson.c b/drivers/reset/reset-meson.c
->> index 3e0447366ba6..65ba9190cb53 100644
->> --- a/drivers/reset/reset-meson.c
->> +++ b/drivers/reset/reset-meson.c
->> @@ -69,6 +69,23 @@ static int meson_reset_level(struct reset_controller_dev *rcdev,
->>                                   BIT(bit), assert ? BIT(bit) : 0);
->>  }
->>  
->> +static int meson_reset_status(struct reset_controller_dev *rcdev,
->> +                             unsigned long id)
->> +{
->> +       struct meson_reset *data =
->> +               container_of(rcdev, struct meson_reset, rcdev);
->
-> Nitpick: One line.
->
->> +       unsigned int val, offset, bit;
->> +
->> +       meson_reset_offset_and_bit(data, id, &offset, &bit);
->> +       offset += data->param->level_offset;
->> +
->> +       regmap_read(data->map, offset, &val);
->> +       val = !!(BIT(bit) & val);
->> +
->> +
->
-> Nitpick: Drop the extra newline?
->
->> +       return val ^ data->param->level_low_reset;
->> +}
->> +
->>  static int meson_reset_assert(struct reset_controller_dev *rcdev,
->>                               unsigned long id)
+> -       return parent_rate * mult * 2;
+> +       return rate;
+>  }
 
--- 
-Jerome
+Gr{oetje,eeting}s,
+
+                        Geert
+
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
