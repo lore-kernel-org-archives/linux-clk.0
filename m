@@ -1,143 +1,110 @@
 Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BB4014B943;
-	Thu, 11 Jul 2024 07:53:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A0461514F3
+	for <linux-clk@vger.kernel.org>; Thu, 11 Jul 2024 08:20:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720684441; cv=none; b=FhrojNOldj1AHV1veNQkQXXIYOdM2zjC3l/rxHl4LHjO9xTJGNllV31aQwWn7WlV7WDhn9CUJkDE9x1S7tCaWl819Lb6LQswQJQV5vogGPVSTRMoMPX0L804iFfFUv5PetHyGesSyLfrLG0r3yH26MScIrI13SrE+scHOorcMDQ=
+	t=1720686008; cv=none; b=SzGYTHQDsCgmUsr2Z03WmbeedSS4/eNKSnFQEg3zgH3CEUzwvxqPSdo9WAVl0+l4ArZi2VRZd2yvF6FRJhjohi5q3gWCNqYztgKf5MrYw+o9DuYtsZlZyWv15qKhyWVsrU0UqRtXB1XGL97sZ2PwV+OTseGdq/hKv4Li9MKJ3f4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720684441; c=relaxed/simple;
-	bh=0BgnDHiX/TK+JQoHQMsUy+eteShtWavkLMpjkahy91M=;
+	s=arc-20240116; t=1720686008; c=relaxed/simple;
+	bh=zUXuuTdZC1gW6ONubxV+eGQkbjsKypgRFVdFLS0VZRM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JayWjUhQDYYEJGCFY4tH2VxIl8dePcVqMy0NhWgwQsa2hru0kzhgbgYcK6zSfPpfZPIGD3XY9cU/M5WEEF69v1HdXMYfOVkbA8jCU8I3wMuQBcmhtCBpSPuESE8mx5lnNOg43sFvZuauCZ6oVS7noUC0j42B4I1IJSxmRPs6MmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-650b8e0a6ceso5874147b3.3;
-        Thu, 11 Jul 2024 00:53:59 -0700 (PDT)
+	 To:Cc:Content-Type; b=aiAgpd/39aMQZ6/66CiHDPBoU4gvaciMPo2a4MEskt2y4kRgL8HZDYUzxgu6E6huNW7mvgnZ0XGRgTbXqMepMUhpzs+bY5kXwhnpWQer9FXVz0pfDbZm/yaWwT2BX2i0dAub4UZYZcfshW1mQMOh845Avoc//HDqcZoH2/52MpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gFCuKmKb; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gFCuKmKb"
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6510c0c8e29so6204177b3.0
+        for <linux-clk@vger.kernel.org>; Thu, 11 Jul 2024 01:20:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720686005; x=1721290805; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=yCOXCel+OkgFY3x3XxhTpu9K68s0AxsfBCkZfuzSswU=;
+        b=gFCuKmKbJ0Y+tzsp6D7knrd7jxrUSwmh9Fc7aqc5S+Y/IjI0wfny0Hai5Ns3teRqaT
+         kOvCLHiAQL0/oIt51/ODE0Zz4R0FDuK7rxRLK5rHNayE+azKhM6XUk0FGWNp+P0G0MjV
+         MvcAE+T1i12ND5CqG1urUanIoJvAG38k+s0plmgmqKN8Swct9NM3TLLYTh63qu8XsqEG
+         78OglYp5SLEB3IpY4pwVaBVbxrBXC2TJ85RSN5q40twCQYKCGp1UhALHZyimQPJPima4
+         m8/w5Z/4ISud+/GO9e5FEBgQCJoWmkOHznb2LmTDMm9Ssenkz7GigJ+ch8T5MufLGSQK
+         CS6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720684438; x=1721289238;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5fRVbJjcNb5I05e6Xfep3Il3HTd1wTS3dEeZLYGEQtM=;
-        b=PHJazHFGAmjv8X4bkxbaxB44Cf7U0Ug2b5psUq5CJGn5i0U0CLxDGz8F5jjQU9QCV4
-         17RhVbblJNQVQlJIRArMzHv3oKlscj9Ue4B2SFZz1PIXZS4kgh3z7LfALD+1lZocL/8K
-         EAwHQA87fnqgR10yq2Ru06sm7qjQEKUkk0DuFG23Do/c4XLBmLw6jC2XIdivyLqeJLr1
-         55oMzKoSbmiEO9q/ewEHnWvyyrJPyi2JYGR1HvBFz3VKkYFCLWP87yzklgdNqmdPbg5I
-         drriOOcReUTkJklqDrvv9j6E6k6iVEjSS5o4QA39JwgRSknZZ+jq4ki7D0bM/v7u1mWH
-         1DKw==
-X-Forwarded-Encrypted: i=1; AJvYcCXDBMQYnO30WcFt0oqS5+NBuTIGoSB2HEVDciE2KtRgLUWF0zFTXEvoHOSXGuBbpblt/qcJlY9wsTVHGyvaU4Odt6C3fg4nRCHrXFfKXwSbFcH3G1aZCPGurxZq74xrH3PRnTEmJyrWr0f6X68e0MRQCbV9kW6YpsNVI3FykAQD4fRWov6yxohpMY3w/k5ZfDkKdPpIZn2oEsirL+t8kAJFzMdM1MtXVB//9NgkDrS9K868Rv7sxc2oKp5vF9CqEkAT
-X-Gm-Message-State: AOJu0YwSBnf3ov5Q802WsxFshwxxwxPp8CszsF+U6AUN4yZbH5vOdL9S
-	ev2P16PvMe6h9rlPOSj+rwZWWdpp50u9SMzb+Flz/F0qzbRs3HNAG6u0EXfi
-X-Google-Smtp-Source: AGHT+IEAVEVDvRPumjsbsdvUEKBWr+nCV0eoncFS6xMhbJf5JHh93sDmEHKqPscdEqfNwYteTbffWg==
-X-Received: by 2002:a25:6801:0:b0:e05:6d47:57a4 with SMTP id 3f1490d57ef6-e056d475973mr3452925276.10.1720684437720;
-        Thu, 11 Jul 2024 00:53:57 -0700 (PDT)
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e041a8acf85sm925002276.9.2024.07.11.00.53.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Jul 2024 00:53:56 -0700 (PDT)
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-64789495923so5634487b3.0;
-        Thu, 11 Jul 2024 00:53:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU4AQsv5jhWFuUQz0NAtfh4lw8g73dBZSHrV+2Jm5LEAFZta8ZV8wHZmu8OQpncIPgolXa65Dm91ZogINUS+8oBOSrfVVVC2FDeHGlbtTS4n85KK7/Tpv1WIPc5sO/3t7J1RUauL419dilUXE3zCfYrYa+78/2B6FkRUCIk1ofQ6LIXLmFLKwvn7x+mokD9Z2WTA/+qjwHZ2PrNpgTDLwkQ1ez7mskWCQ54pAkrunEGcxmjbkpACdSo6tMQDIJ7KYQe
-X-Received: by 2002:a81:8d49:0:b0:63b:df6e:3f6d with SMTP id
- 00721157ae682-658f02f3720mr78529147b3.37.1720684436126; Thu, 11 Jul 2024
- 00:53:56 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720686005; x=1721290805;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yCOXCel+OkgFY3x3XxhTpu9K68s0AxsfBCkZfuzSswU=;
+        b=Vp2IM9Oqkd35xz8TDOkASO3xyYColUlSlHOfPaSrca7UHR+KlOpBn6qenBJiDUfHlH
+         r9a4KDYs0dy+MTn2Xe3c3aO/jR2AHVFgRdl+4LP3/BOz9IY1hpxohWWjx7x9iKS7iVeI
+         Yg7/tJLcXfrdVQziSRA5vbNFz/HvFjFvdpL/cYt1woKmCSpcGLv3I1n66Qe2JITedJ17
+         2WoP0738ncMOmPBsH7l+VsUU5f9ehlvOPVst87MxyqEvZV5VRKgMuGT9wfnmV3ZdNht5
+         BuUxLBET459mYl2zc+CwORi/DWfJzDHJ0oaPGYHrlzW2qpFDBPeZZTwZa+Qocaor1LS1
+         /ClA==
+X-Forwarded-Encrypted: i=1; AJvYcCWeLNZjjBeE9eYCRL98WRgZNizvEDo6ck4S0nkqHZCwFoUv9OktxE375SYW7/TMAS9QrC7jvPnRq9ELczkDQKP9F4/sH0PECmjo
+X-Gm-Message-State: AOJu0YwvkpCCLLUHTlMHh5YSPdd7YvYAKk5fPFgts+rLAwC6nU2PcaTg
+	XpsIq4Xip8kKa/FRc5jwJz07U7syb+mkyOBq79JYurR+IJUj1lGyABHUKDfjvBD9XBTxAJl4w4G
+	LJC4tGdpe7nNYFSZ+QafCDtZcGvi86OsGigdtPg==
+X-Google-Smtp-Source: AGHT+IHES1E6Jos117gUDZhq9HN4sMFmUNFMxL9n1Xf9pBOpCOipbf6kJgCp8kRnNRqsB2zfpRqhPvb9GEPeIaC9oZk=
+X-Received: by 2002:a81:b50f:0:b0:632:58ba:cbae with SMTP id
+ 00721157ae682-658f0fb34d3mr73868857b3.52.1720686005368; Thu, 11 Jul 2024
+ 01:20:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240625121358.590547-1-claudiu.beznea.uj@bp.renesas.com>
- <20240625121358.590547-10-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdX4hWou9OtdE8XgU7-U0ghJ6vk2kVqgT90U0ZjsxzR5DA@mail.gmail.com> <22db23bd-5872-49a0-990f-2a0e5f51bfb5@tuxon.dev>
-In-Reply-To: <22db23bd-5872-49a0-990f-2a0e5f51bfb5@tuxon.dev>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 11 Jul 2024 09:53:43 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWTYfK6aVi5BzBtQg_zQWjuZX7d7QHr3a4GAb+dQOWyvQ@mail.gmail.com>
-Message-ID: <CAMuHMdWTYfK6aVi5BzBtQg_zQWjuZX7d7QHr3a4GAb+dQOWyvQ@mail.gmail.com>
-Subject: Re: [PATCH v2 09/12] i2c: riic: Add support for fast mode plus
-To: claudiu beznea <claudiu.beznea@tuxon.dev>
-Cc: chris.brandt@renesas.com, andi.shyti@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, magnus.damm@gmail.com, 
-	mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, 
-	wsa+renesas@sang-engineering.com, linux-renesas-soc@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240628-gpucc-no-request-v1-0-b680c2f90817@linaro.org>
+ <20240628-gpucc-no-request-v1-1-b680c2f90817@linaro.org> <5153b8f8a6c6ffdc1254e00c47a888ed.sboyd@kernel.org>
+ <CAA8EJpqOD-JKGCJiC7yAkiG3oAOEbHQ-_aCmDiP5HdeEVZm8fw@mail.gmail.com> <9cb3f57ed4b41fb51600610a3a1c9437.sboyd@kernel.org>
+In-Reply-To: <9cb3f57ed4b41fb51600610a3a1c9437.sboyd@kernel.org>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Thu, 11 Jul 2024 11:19:54 +0300
+Message-ID: <CAA8EJpq+Mgbrh_M+WN7VT90hC=5TPAC1dkgC5PzSeO22WOyGUw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: qocm: add qcom_cc_map_norequest
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Rob Clark <robdclark@gmail.com>, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Claudiu,
-
-On Wed, Jul 10, 2024 at 4:20=E2=80=AFPM claudiu beznea <claudiu.beznea@tuxo=
-n.dev> wrote:
-> On 28.06.2024 12:22, Geert Uytterhoeven wrote:
-> > On Tue, Jun 25, 2024 at 2:14=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.d=
-ev> wrote:
-> >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >>
-> >> Fast mode plus is available on most of the IP variants that RIIC drive=
-r
-> >> is working with. The exception is (according to HW manuals of the SoCs
-> >> where this IP is available) the Renesas RZ/A1H. For this, patch
-> >> introduces the struct riic_of_data::fast_mode_plus.
-> >>
-> >> Fast mode plus was tested on RZ/G3S, RZ/G2{L,UL,LC}, RZ/Five by
-> >> instantiating the RIIC frequency to 1MHz and issuing i2c reads on the
-> >> fast mode plus capable devices (and the i2c clock frequency was checke=
-d on
-> >> RZ/G3S).
-> >>
-> >> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >
-> > Thanks for your patch!
-> >
-> >> --- a/drivers/i2c/busses/i2c-riic.c
-> >> +++ b/drivers/i2c/busses/i2c-riic.c
-> >> @@ -407,6 +413,9 @@ static int riic_init_hw(struct riic_dev *riic)
-> >>         riic_writeb(riic, 0, RIIC_ICSER);
-> >>         riic_writeb(riic, ICMR3_ACKWP | ICMR3_RDRFS, RIIC_ICMR3);
-> >>
-> >> +       if (info->fast_mode_plus && t->bus_freq_hz =3D=3D I2C_MAX_FAST=
-_MODE_PLUS_FREQ)
-> >> +               riic_clear_set_bit(riic, 0, ICFER_FMPE, RIIC_ICFER);
-> >
-> > Unless FM+ is specified, RIIC_ICFER is never written to.
-> > Probably the register should always be initialized, also to make sure
-> > the FMPE bit is cleared when it was set by the boot loader, but FM+
-> > is not to be used.
+On Thu, 11 Jul 2024 at 03:04, Stephen Boyd <sboyd@kernel.org> wrote:
 >
-> Instead of clearing only this bit, what do you think about using
-> reset_control_reset() instead of reset_control_deassert() in riic_i2c_pro=
-be()?
+> Quoting Dmitry Baryshkov (2024-07-10 16:32:18)
+> > On Tue, 9 Jul 2024 at 01:30, Stephen Boyd <sboyd@kernel.org> wrote:
+> > >
+> > > Quoting Dmitry Baryshkov (2024-06-27 22:20:22)
+> > > > The GPU clock controllers use memory region that is a part of the GMU's
+> > > > memory region. Add qcom_cc_map_norequest() to be used by GPUCC, so that
+> > > > GPU driver can use devm_ioremap_resource for GMU resources.
+> > >
+> > > Why does GMU map the gpu clk controller? Does it use those registers? We
+> > > don't want to allow two different drivers to map the same region because
+> > > then they don't coordinate and write over things.
+> >
+> > It's not that GMU maps gpu CC separately. It looks more like gpucc is
+> > a part of the GMU address space. I think GMU manages some of the
+> > clocks or GDSCs directly.
+> >
 >
-> HW manuals for all the devices listed in
-> Documentation/devicetree/bindings/i2c/renesas,riic.yaml specifies that
-> ICFER_FMPE register is initialized with a default value by reset. All the
-> other registers are initialized with default values at reset (according t=
-o
-> HW manuals). I've checked it on RZ/G3S and it behaves like this.
+> I imagine GMU is a collection of stuff, so the register range is large
+> because it's basically a subsystem unto itself. Can the range in DT be
+> split up, or changed so that different devices within GMU are split out?
 
-RZ/A1 and RZ/A2M do not have reset controller support yet, so calling
-reset_control_reset() is a no-op on these SoCs.
+No, we have to remain compatible with existing DT. It's not a problem
+of a single new platform, the issue has always been present there.
 
-However, I overlooked that riic_init_hw() does an internal reset first
-by setting the ICCR1_IICRST bit in RIIC_ICCR1.
-Is that sufficient to reset the FMPE bit?
+> Or maybe the gpu clk controller can be made into a child of some GMU
+> node, where the GMU node has a driver that populates devices that match
+> drivers in different subsystems.
 
-Gr{oetje,eeting}s,
+Well... Technically yes, but this brings another pack of issues. There
+is no separate GMU driver, so we will likely have a chicken-and-egg
+problem, as probing of the GPU driver will also create the gpucc
+device which is further used by the GPU.
 
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+-- 
+With best wishes
+Dmitry
