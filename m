@@ -1,127 +1,200 @@
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A0C813B59F;
-	Thu, 11 Jul 2024 08:53:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BEC1653
+	for <linux-clk@vger.kernel.org>; Thu, 11 Jul 2024 09:01:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720687999; cv=none; b=rv/PoAUbdUrvihnaCDJZdHYDx5PZaE+ZJ7RcBdqhlgsoABvBhuW8htBLlpypEBfOpTuMROgf2p3o1yatUwIpk90hROO+AoF8k8BoikLinpngJ1vbD+jVEwIIbHFJN0S3JEkczu+4zHq5NRisoMKPoRbzy42DeCvpOiHk4m/Hm7A=
+	t=1720688481; cv=none; b=Da+Yen1PoimPg8kp+3zs4F6fMAib16c6TWy+x2A/DLRPmdyCHg1Svbg94I4TZz+5bheOD4Ot/xkiWkqFL0AOhOcK2RGUQqWmF38UA/OQvyGS5WdzkualGRHG+Too6XMOgy0DdHHbvnZZVrPAuVdtVyE1CfdJzlYs3YVfaJuHy8I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720687999; c=relaxed/simple;
-	bh=2ou+YsYEEugMGdtQXAJCZ+aAgYO2v5aJq4d7CBht9bA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TyZ/s6lDTEtVGTrdy7DBwk2w50grxhTvWbEiL5if/LWiMkYc9RM8QgvcB3749Mb0zGRM+j3JfI731Bd4BP/0AtZBQpQTsQhNAbouWkvHjh1F51gT15atkmVvFBAmzfgbW2QX7GqgyMV1oYRetxlBPqfm4VBf+yHcfmpFjYiz9Y4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-654ce021660so6656817b3.1;
-        Thu, 11 Jul 2024 01:53:16 -0700 (PDT)
+	s=arc-20240116; t=1720688481; c=relaxed/simple;
+	bh=py/S5YhDTfUOlw/+tXf9jV6Hv7YWRbSfk7va1FaCeWw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=UUq0moVq4w1HTMRyXpNpCMMuS0le8714pMi9ZU6r2cAm9ZdPIby5aWLTyklLN1VDL5uzq/w5d7Xb9BSulgfimsoCsL/BA241PZ5jrg8rH8sjGUue+C8/BAl7GnvExAbNcg/WN4zLF2eQkwHYKOTLYkAKx/L3GnVho6Ca93puM3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=IprCWz9x; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="IprCWz9x"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4266f3e0df8so4121005e9.2
+        for <linux-clk@vger.kernel.org>; Thu, 11 Jul 2024 02:01:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1720688478; x=1721293278; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=O76Wd1xdw6NT3rqbN+Mq89J6tI9yqcUKeCRTu1LWxmk=;
+        b=IprCWz9xcgirnEPFCwyAbA3nriCVul6nNQni0MtRqkWJkhflYVvIwrdXTtGsDO0JjH
+         PZkdR92h2+ynAusM8WkdTSz3gn02lQ2cawGv0rLBvtDuMk0MpE1u3kbpiRNyy9dERwbT
+         fSJfsHMjrSb4wjvhJ/mx5IkGQWENo4m7yeMh2TqM9UeHwVwvRGj+mSzCsvaNfnRJ9tQZ
+         CdBpXboC8ZCCNQba5L5+Y+helrwmJCGBXZwRyXRIzM+HY7wc+JMpGPKkcXtQQDHgm93s
+         Riy/2xRxPgGQx7CFHiTYae+apOPUilA6WBxc8wW34+F5UUEAWFmg2cC1YjJ/hNUB1l6D
+         1Mgw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720687995; x=1721292795;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=W6f3oSyeWf8yYBWfaEbvUGQAKgtspXaPeuysnNn5pHw=;
-        b=GR8CClR260goFc+bhr2rkbeYznRn1zNKHiahW5GWiabsgVjcrqn4V9+pjz6XVa/ZxT
-         jlE8C4s5CLNxFxkvG9sum0QXFsO6OtT7i6xVcQ1simPdcIn5nSAJPgvv+GCRLwwNo+QV
-         1JAyB9lXlb4fxqWu6WjR0qVxROHsrR1g92lcyy8pDejvgjAnqGFVFEdB8bUkAkHxd6VY
-         yanWigzaB4pOAtcwkb4/bmaXZFEdhE+q0RlIVfJwnQhoq5TGXJ/r06RufICKOVrPEHkH
-         g9hQ1yXnSz6zEe5WGmraOlpH8qXUIuayHGOvNpGITebRgdVRZeTurvuLLU12PRopFZ58
-         f2TA==
-X-Forwarded-Encrypted: i=1; AJvYcCWfg6ekCf+r7uj5xphUPdixZ4jtozeIhAg6R8opZvBQHMa2SUkw4f4wKn8JqJ1NdVL1mqQBxEPfV1u+Uc0dPnBWlSP3GSCLREsu
-X-Gm-Message-State: AOJu0YyPSW9ou/yQcSajDr29mYM9snOJHdQAbBMZ+ynbORyj64LsaJLl
-	3gRKo1X5wJhHchb/1Gq60VGfVASiTEHkrWt5YzsnEAB/UlI50HZ8qC1TLZOd
-X-Google-Smtp-Source: AGHT+IHUdxAbZMOJ1MqrAUxn4ANA6HwI9JatpKzYhOcm/ziAyjFj1DHBkPWB2+D7AsAPIoXpUIakpQ==
-X-Received: by 2002:a0d:dcc1:0:b0:647:eaea:f4de with SMTP id 00721157ae682-658f11a56d1mr75338347b3.47.1720687994975;
-        Thu, 11 Jul 2024 01:53:14 -0700 (PDT)
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com. [209.85.219.174])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-658e4a316e9sm10287977b3.17.2024.07.11.01.53.14
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Jul 2024 01:53:14 -0700 (PDT)
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e03a9f7c6a6so594779276.3;
-        Thu, 11 Jul 2024 01:53:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX/Jmj9JnikEJV7mYh4fJGpGq2guoZRMSy0CB/f2ZITn7JxOzaL5mcYH29ztAxwH7tajANbW+loTYWrhnBg2OjDPSAdjPDOBOfN
-X-Received: by 2002:a81:5b42:0:b0:650:8f3a:2ac6 with SMTP id
- 00721157ae682-658ee790066mr90288287b3.1.1720687994228; Thu, 11 Jul 2024
- 01:53:14 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720688478; x=1721293278;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=O76Wd1xdw6NT3rqbN+Mq89J6tI9yqcUKeCRTu1LWxmk=;
+        b=eUvZyKf257xAYjCkFF1BgmDFUPwMjtNQFT+rJk1+kzk4vV3l70UEMLRHM0z1zUt07v
+         iBSYiBwjE63XBYztzp1adBq32Q9UO7uSYF9b9lsywIKRDSIiPUvEfpjz+SQTlGAUh9ea
+         yxQ2Vio2/Qs95StPNQ53a1PTYHIPglF8X23Y4KXesSkvHZL01D9licCx3C6mbjq9hjyX
+         fWCqAIL9mbHZCUslIIu9tFGNdv3HB3/XCtYCcBreNcXoI5B0DmJiFrJ7duVB4AUmNabb
+         TehE5jBiD43RmhrKSlLtwByfl6ZRdTiiNftcbOtU5Ygnv5jP5jBOZhDyP3cbjC56Ju4W
+         qQyg==
+X-Forwarded-Encrypted: i=1; AJvYcCUoYSMLY1TzEYD0n4sEHBbTXfYHFsJ9Sp1e/uNaUIATIl1+V5EHqSNy+SEHc7nD/lr+GOrun0laXLDiJK+RUDjWMSt6ERWapFhi
+X-Gm-Message-State: AOJu0YzqbHtHW3g1sKpxk/dC6ge3y4wHu/RxNgDs8jCO8QxQukovQLDK
+	BG6BJemuWlzWHdeJJ9o74yTMpBv+aUp5bH5ueqHewt7KwEqsZmbQUzMudGjRFao=
+X-Google-Smtp-Source: AGHT+IF8lHe9Es5HF0Ko8Tr5R/zHyd6BopakSB0f7nBr2KdNcKTrn7lbuxyBJzEVMvldK1lXJtcgrA==
+X-Received: by 2002:a05:600c:358f:b0:426:8ee5:5d24 with SMTP id 5b1f17b1804b1-4268ef4a0b6mr39316115e9.20.1720688477752;
+        Thu, 11 Jul 2024 02:01:17 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:a9e9:c71a:10d8:7f63])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f6e9666sm108670895e9.9.2024.07.11.02.01.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Jul 2024 02:01:17 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,  Philipp Zabel
+ <p.zabel@pengutronix.de>,  Jan Dakinevich
+ <jan.dakinevich@salutedevices.com>,  linux-kernel@vger.kernel.org,
+  linux-amlogic@lists.infradead.org,  linux-clk@vger.kernel.org
+Subject: Re: [PATCH 7/8] reset: amlogic: add auxiliary reset driver support
+In-Reply-To: <88d1dbd92e922ad002367d8dac67d0eb.sboyd@kernel.org> (Stephen
+	Boyd's message of "Wed, 10 Jul 2024 15:49:38 -0700")
+References: <20240710162526.2341399-1-jbrunet@baylibre.com>
+	<20240710162526.2341399-8-jbrunet@baylibre.com>
+	<88d1dbd92e922ad002367d8dac67d0eb.sboyd@kernel.org>
+Date: Thu, 11 Jul 2024 11:01:16 +0200
+Message-ID: <1jv81cgv4z.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1720616233.git.geert+renesas@glider.be> <3b3e769977dba9c487ec12cf9594e99af4eaceb7.1720616233.git.geert+renesas@glider.be>
-In-Reply-To: <3b3e769977dba9c487ec12cf9594e99af4eaceb7.1720616233.git.geert+renesas@glider.be>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 11 Jul 2024 10:53:01 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWa26+9BCz9Hokn+9HNjAqwG_V+G1JJ07X2ye0m7bWS-A@mail.gmail.com>
-Message-ID: <CAMuHMdWa26+9BCz9Hokn+9HNjAqwG_V+G1JJ07X2ye0m7bWS-A@mail.gmail.com>
-Subject: Re: [PATCH 05/14] clk: renesas: rcar-gen4: Add support for fractional multiplication
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Wed, Jul 10, 2024 at 3:10=E2=80=AFPM Geert Uytterhoeven
-<geert+renesas@glider.be> wrote:
-> R-Car Gen4 PLLs support fractional multiplication, which can improve
-> accuracy when configuring a specific frequency.
+On Wed 10 Jul 2024 at 15:49, Stephen Boyd <sboyd@kernel.org> wrote:
+
+> Quoting Jerome Brunet (2024-07-10 09:25:16)
+>> diff --git a/drivers/reset/reset-meson.c b/drivers/reset/reset-meson.c
+>> index e34a10b15593..5cc767d50e8f 100644
+>> --- a/drivers/reset/reset-meson.c
+>> +++ b/drivers/reset/reset-meson.c
+> [...]
+>> +
+>> +int devm_meson_rst_aux_register(struct device *dev,
+>> +                               struct regmap *map,
+>> +                               const char *adev_name)
+>> +{
+>> +       struct meson_reset_adev *raux;
+>> +       struct auxiliary_device *adev;
+>> +       int ret;
+>> +
+>> +       raux = kzalloc(sizeof(*raux), GFP_KERNEL);
+>> +       if (!raux)
+>> +               return -ENOMEM;
+>> +
+>> +       ret = ida_alloc(&meson_rst_aux_ida, GFP_KERNEL);
 >
-> Add support for fractional multiplication to the custom clock driver
-> for PLLs, which is currently used only for PLL2 on R-Car V4H.
-> While at it, add the missing blank line after the function.
+> Do we expect more than one device with the same name? I wonder if the
+> IDA can be skipped.
+
+I've wondered about that too.
+
+I don't think it is the case right now but I'm not 100% sure.
+Since I spent time thinking about it, I thought it would just be safer (and
+relatively cheap) to put in and enough annoying debugging the
+expectation does not hold true.
+
+I don't have a strong opinion on this. What do you prefer ?
+
 >
-> Note that Fractional Multiplication is not enabled by the driver,
-> but used only if the boot loaded enabled it before.
+>> +       if (ret < 0)
+>> +               goto raux_free;
+>> +
+>> +       raux->map = map;
+>> +
+>> +       adev = &raux->adev;
+>> +       adev->id = ret;
+>> +       adev->name = adev_name;
+>> +       adev->dev.parent = dev;
+>> +       adev->dev.release = meson_rst_aux_release;
+>> +       device_set_of_node_from_dev(&adev->dev, dev);
+>> +
+>> +       ret = auxiliary_device_init(adev);
+>> +       if (ret)
+>> +               goto ida_free;
+>> +
+>> +       ret = __auxiliary_device_add(adev, dev->driver->name);
+>> +       if (ret) {
+>> +               auxiliary_device_uninit(adev);
+>> +               return ret;
+>> +       }
+>> +
+>> +       return devm_add_action_or_reset(dev, meson_rst_aux_unregister_adev,
+>> +                                       adev);
+>> +
+>> +ida_free:
+>> +       ida_free(&meson_rst_aux_ida, adev->id);
+>> +raux_free:
+>> +       kfree(raux);
+>> +       return ret;
+>> +
 >
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-
-> --- a/drivers/clk/renesas/rcar-gen4-cpg.c
-> +++ b/drivers/clk/renesas/rcar-gen4-cpg.c
-> @@ -77,17 +79,26 @@ static unsigned long cpg_pll_8_25_clk_recalc_rate(str=
-uct clk_hw *hw,
->                                                   unsigned long parent_ra=
-te)
->  {
->         struct cpg_pll_clk *pll_clk =3D to_pll_clk(hw);
-> -       unsigned int mult;
-> -
-> -       mult =3D FIELD_GET(CPG_PLLxCR0_NI8, readl(pll_clk->pllcr0_reg)) +=
- 1;
-> +       u32 cr0 =3D readl(pll_clk->pllcr0_reg);
-> +       unsigned int ni, nf;
-> +       unsigned long rate;
-> +
-> +       ni =3D (FIELD_GET(CPG_PLLxCR0_NI8, cr0) + 1) * 2;
-> +       rate =3D parent_rate * ni;
-> +       if (cr0 & CPG_PLLxCR0_SSMODE_FM) {
-> +               nf =3D FIELD_GET(CPG_PLLxCR1_NF25, readl(pll_clk->pllcr1_=
-reg));
-> +               rate +=3D ((u64)parent_rate * nf) >> 24;
-
-This (and every other similar calculation in this series) can use
-mul_u64_u32_shr(), for better performance when reused on 32-bit,
-at the cost of a slight code increase on arm64.
-
-> +       }
+> Nitpick: Drop extra newline?
 >
-> -       return parent_rate * mult * 2;
-> +       return rate;
->  }
+>> +}
+>> +EXPORT_SYMBOL_GPL(devm_meson_rst_aux_register);
+>> +
+>> +MODULE_DESCRIPTION("Amlogic Meson Reset driver");
+>>  MODULE_AUTHOR("Neil Armstrong <narmstrong@baylibre.com>");
+>> +MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
+>>  MODULE_LICENSE("Dual BSD/GPL");
+>> diff --git a/include/soc/amlogic/meson-auxiliary-reset.h b/include/soc/amlogic/meson-auxiliary-reset.h
+>> new file mode 100644
+>> index 000000000000..8fdb02b18d8c
+>> --- /dev/null
+>> +++ b/include/soc/amlogic/meson-auxiliary-reset.h
+>> @@ -0,0 +1,23 @@
+>> +/* SPDX-License-Identifier: GPL-2.0 */
+>> +#ifndef __SOC_AMLOGIC_MESON_AUX_RESET_H
+>> +#define __SOC_AMLOGIC_MESON_AUX_RESET_H
+>> +
+>> +#include <linux/err.h>
+>> +
+>> +struct device;
+>> +struct regmap;
+>> +
+>> +#ifdef CONFIG_RESET_MESON
+>> +int devm_meson_rst_aux_register(struct device *dev,
+>> +                               struct regmap *map,
+>> +                               const char *adev_name);
+>> +#else
+>> +static inline int devm_meson_rst_aux_register(struct device *dev,
+>> +                                             struct regmap *map,
+>> +                                             const char *adev_name)
+>> +{
+>> +       return -EOPNOTSUPP;
+>
+> Shouldn't this be 'return 0' so that the clk driver doesn't have to care
+> about the config?
 
-Gr{oetje,eeting}s,
+I don't think the system (in general) would be able function without the reset
+driver, so the question is rather phylosophical.
 
-                        Geert
+Let's say it could, if this returns 0, consumers of the reset controller
+will defer indefinitely ... which is always a bit more difficult to sort
+out.
 
+If it returns an error, the problem is pretty obvious, helping people
+solve it quickly.
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+Also the actual device we trying to register provides clocks and reset.
+It is not like the reset is an optional part we don't care about.
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+On this instance it starts from clock, but it could have been the other
+way around. Both are equally important.
+
+I'd prefer if it returns an error when the registration can't even start.
+
+-- 
+Jerome
