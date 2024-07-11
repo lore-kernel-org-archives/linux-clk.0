@@ -1,141 +1,254 @@
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D37F16EB67
-	for <linux-clk@vger.kernel.org>; Thu, 11 Jul 2024 16:56:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 305647F492
+	for <linux-clk@vger.kernel.org>; Thu, 11 Jul 2024 18:13:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720716998; cv=none; b=K0FFzj3e73ai7Wd6BFafcfoKGR0bcXS9EHxkWxqQXnU1JwbOa+bgZUSK5DhSJKcJS2gfgymWC88N+I8QExvi8QNQtdUvPjvfl+f7EnZi5xRYtKsmTkuFnoHzEOKWQhqZy+pjkCB0hWHEUORmvyYWW7hYCbzY5dnTi6+oIOk+omI=
+	t=1720721602; cv=none; b=gLgvpaCZxEq0oqJDVQK41AyrXuMcbEXwIE6s6dzB68rtUCPVmS5UrxcV4GvfTplUZjW4yU/YwlfQeRT2iBbhf+I0jVrDCwZFici2GgW35B4JhuPB7U9j7H4W7QsWQJEqOqEG6/rQ2j5PVPMc1e2f2wGvf9d389HSr6qAFowOIuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720716998; c=relaxed/simple;
-	bh=1YUFcjPStRQXnRCkm7LFCYqYtH2keuIc2Ndi6ymcweU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ftIfLux7g1cVlgU4ZaE4+JjR8YoFTnHnevv/yOseqfo6TucoW6IciCFbLoqSmXq/wRbCAGJVv9Tr27qmYY5VPpFBvulMvISZ7lD3bDM2W4i3EOp+Y8OsWySgdm9FagLYXhzEbxSnLMClYjAe/RzBvbl8BfzSlN/4kSQmrruW7OI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=QLu8Yi8W; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
+	s=arc-20240116; t=1720721602; c=relaxed/simple;
+	bh=/dG2UvQ+EH+yqXZlVbqRDI/un7i5XAyyN6aOd95/g/E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Qz63tRHb4p+xzic+WOmSSBSWO/UPyZ00DWLu/ULqis9i2OIfiCq/2GuRX8pqoCTqh4ewSM23u6ZIRJSw4Q6m8OsIYuxPZnBc1L0h8N15BS639l3X9uL7yz6B553emzvYU23J+JSvb2jxgf5oStdYftaPRwwSH9tB6VMm/tKcriY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=x6c9Ar9c; arc=none smtp.client-ip=209.85.128.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="QLu8Yi8W"
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-70b09cb7776so979079b3a.1
-        for <linux-clk@vger.kernel.org>; Thu, 11 Jul 2024 09:56:37 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="x6c9Ar9c"
+Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6561850a7bcso11920297b3.3
+        for <linux-clk@vger.kernel.org>; Thu, 11 Jul 2024 11:13:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tenstorrent.com; s=google; t=1720716997; x=1721321797; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RnFMVS1MfqfzWdRfEx5FfQB3Afj3yo7GkFlPsBGziDs=;
-        b=QLu8Yi8W9jXhBwmTH8L5/MsKKkFI/yMruLTuhGBDK7XuCDsTbEC7BxNsjrwW+IxBuf
-         me1C51CHACd5fGWZoUjetloR5FVyfmjCzcxnz0rucexDJm02R2cTz8lFMvhHlGe7JvzF
-         yNn5YD8W0X+MFwJso43xJzq0JWmnK4HsWLSWwo/xztHaaf5IbvET385haQ4xULjFWFWm
-         tpbr98yvtrQDaoyAgZGCMZp8PUI/cumQMP3I9L1eWU0tQrBRSUv0sipqEnxIz/76g0e8
-         b6VT4l5/86PbHYHTbI8OVhrc2mk+2PQh1p+PZk3mxmG7AB1JN34SbWp1Lq7qw4fbIUW4
-         F05A==
+        d=google.com; s=20230601; t=1720721600; x=1721326400; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=nyJ6P+FkdwGhVRPUnMvVBafw0z1eayMg2GyL0TyLrvU=;
+        b=x6c9Ar9ckdFW3hKUFiVdTDuAj9/vIslMcR8xWNTjijnNRO94C5jfz24UgpVzmUEr6R
+         TzgxuyVAWkE198HkDME6Xtw9PVLSqWzQXmUjF77njHs81cF6EEkDUXG36+rOKtKgfP6n
+         oSP3V+lJVOK/QzHWXXN+61b8gCWzFJLbc9JlyrBzrliBMSSKluZ5YIR/KnpoE1QZsjIi
+         KCJuu32G55jiu0B81CH8sr6aGh77uIiZCxioiB/hh4Mz21jA/fd7Y1OVHnl6uwKc7svr
+         c+Lb/hgzbPoWpYcOmHnmXgJ7qH4K8r76vRFs/qR/jJqO1VzNCfP9LANAulNBE5rXeo8o
+         RCvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720716997; x=1721321797;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RnFMVS1MfqfzWdRfEx5FfQB3Afj3yo7GkFlPsBGziDs=;
-        b=bcxoggpKZZIGi+Q/TwnCI52TiOOxW042Kq4b3gdiNAjDjInJjQjt4vvOvknmj7eVE7
-         wzig3zq4ZhdEx/Do28yxuTCHey9CngpV/J/8dxowF2Uk0TfxG7Tj4II63oMOdeDFnItn
-         nWeBGzPIZN3ilKgsy7aYv1FK1rW2T1X3E2LX6JVkJoz8AglNNtBtsVuUy6XrepssyJsh
-         TbE9DvzAM1uQ1XtRrtQCdeFH2zKjeae940VhQgbqeqpAsbgrt6qw2FKN7MZKKGLVYoJl
-         dSzW+/Lj95NCuUJ86QiWPixL/tjBwVYSwGtyFGAgJl5Zu3o7O41SHyP+N/35PjT0N7xF
-         m0Ow==
-X-Forwarded-Encrypted: i=1; AJvYcCWAXxdOe9bTLmFSem8oPYvLDWBzqZi9CuyqbyYwBaNf6meMKuteejamKf8pANWTwWWfp8kk1Ek0plCLz2CppcBq3EuCb515kO6e
-X-Gm-Message-State: AOJu0YyZcsJ9DmvnW1UBdaLaI7dIrGUBe4gPyWlpzX2x+NuPh/wuKvY1
-	enR0d/eNkckqB2dsNUn4kugi7V8jMNVC7GairkVN78qvMS00VNc3FZ4wdkvBm+Q=
-X-Google-Smtp-Source: AGHT+IGS+uYFXfGJ90lMZHo8zEZEN9G4YU5Eh+g8USyZFzpQSYTOEhmT81CJZkVjdrCsmZvpPP5WZQ==
-X-Received: by 2002:a05:6a00:982:b0:70a:97d9:5b9e with SMTP id d2e1a72fcca58-70b435422ccmr9355831b3a.10.1720716996791;
-        Thu, 11 Jul 2024 09:56:36 -0700 (PDT)
-Received: from [127.0.1.1] ([2601:1c2:1802:170:5ee9:fea0:d9de:cee8])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-787089bc5f6sm1360038a12.92.2024.07.11.09.56.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Jul 2024 09:56:36 -0700 (PDT)
-From: Drew Fustini <dfustini@tenstorrent.com>
-Date: Thu, 11 Jul 2024 09:56:25 -0700
-Subject: [PATCH v3 7/7] riscv: dts: thead: add clock to TH1520 gpio nodes
+        d=1e100.net; s=20230601; t=1720721600; x=1721326400;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nyJ6P+FkdwGhVRPUnMvVBafw0z1eayMg2GyL0TyLrvU=;
+        b=dEzLR9+rQNkfntSE6ciwwmGhAvC+CMXBQ8++Zu9Vrm1gxWVaL0TcmbKGp52vv96BDd
+         X+TUTHAKSmGgMxFFBbimb9145kgs4yQK3KXA1fT8dE/W9e9BuSowbCiDPO8de2h0j6r6
+         zCtm0r8DC0pK8SjIOBjk748PUyf7IZS6vIUdocmIuhWHWA19MMpX/1hphNBBfpM67JIL
+         VILztdmbAqbDg8yXDEw9yRbCdEKqc5NH3ylyolu8b9g/eQYubmT32h7Y+N4c8iCqyesa
+         HsB05tmTIZRmwLCssEmMTw58Y9+ih/5UjKRc0V3kVs62lg2NIyhQ/2hhomjGtX6ttuGr
+         4nhw==
+X-Forwarded-Encrypted: i=1; AJvYcCX8WnWbQTaTc13HZLeYOBOdbFVzMgvn39ynrnYfBAsauKlaaGF9GbA2kVMdyj5TXFSLN/n8qazGhk0mGdiiYZQp6EIIPLC9k8c4
+X-Gm-Message-State: AOJu0Yzl/od3SRrRZSQQFZhSDOn1mF905peaaGGvrhOjdMSCi/8fU584
+	TIYghGzBNTZ5oMnLYiqGhgADicgRdLitFOrOY3z0ZPxoTPwsvLDOnhKYsdrgrN/dBDxc0VyTw7F
+	grw8OZF9ZBRDfb29OlT4o2G3Yx/f7s76NNQ82
+X-Google-Smtp-Source: AGHT+IEEQU5biwkInlxNgBrM2IpMWrKKZsCPM/P2i2VC7zYaPlXK0eCVtc6vDTBA+rUofvGyIoZFTCjIctuVqbLEHM4=
+X-Received: by 2002:a05:690c:6112:b0:631:ffc1:4397 with SMTP id
+ 00721157ae682-658ef34a2e9mr120082367b3.29.1720721599990; Thu, 11 Jul 2024
+ 11:13:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240711-th1520-clk-v3-7-6ff17bb318fb@tenstorrent.com>
-References: <20240711-th1520-clk-v3-0-6ff17bb318fb@tenstorrent.com>
-In-Reply-To: <20240711-th1520-clk-v3-0-6ff17bb318fb@tenstorrent.com>
-To: Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>, 
- Fu Wei <wefu@redhat.com>, Yangtao Li <frank.li@vivo.com>, 
- Thomas Bonnefille <thomas.bonnefille@bootlin.com>, 
- Emil Renner Berthing <emil.renner.berthing@canonical.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>
-Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Drew Fustini <dfustini@tenstorrent.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1720716985; l=1705;
- i=dfustini@tenstorrent.com; s=20230430; h=from:subject:message-id;
- bh=1YUFcjPStRQXnRCkm7LFCYqYtH2keuIc2Ndi6ymcweU=;
- b=xWMNMMf5ekN/VYMwCX4FKmLzMFMloIZ7DBupsg48lPSc0R8C8P8pGDv0fotGiJvk2zgTldVTs
- naf1OfccBxoDU7TIFEin5viNRAEti7jbOgJfpdSDyNt29e7mjJpUsBG
-X-Developer-Key: i=dfustini@tenstorrent.com; a=ed25519;
- pk=p3GKE9XFmjhwAayAHG4U108yag7V8xQVd4zJLdW0g7g=
+References: <20240702191650.57364-1-tmaimon77@gmail.com> <20240702191650.57364-3-tmaimon77@gmail.com>
+In-Reply-To: <20240702191650.57364-3-tmaimon77@gmail.com>
+From: Benjamin Fair <benjaminfair@google.com>
+Date: Thu, 11 Jul 2024 11:12:42 -0700
+Message-ID: <CADKL2t4F20iFdwxDH0PXCa8-HO_cDhYzu+ObyzwaazWWkKj-tg@mail.gmail.com>
+Subject: Re: [PATCH v26 2/3] reset: npcm: register npcm8xx clock auxiliary bus device
+To: Tomer Maimon <tmaimon77@gmail.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, 
+	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, tali.perry1@gmail.com, 
+	joel@jms.id.au, venture@google.com, yuenn@google.com, 
+	openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Add clock property to TH1520 gpio controller nodes. These clock gates
-refer to corresponding enable bits in the peripheral clock gate control
-register. Refer to register PERI_CLK_CFG in section 4.4.2.2.52 of the
-TH1520 System User Manual.
+On Tue, 2 Jul 2024 at 12:17, Tomer Maimon <tmaimon77@gmail.com> wrote:
+>
+> Add NPCM8xx clock controller auxiliary bus device registration.
+>
+> The NPCM8xx clock controller is registered as an aux device because the
+> reset and the clock controller share the same register region.
+>
+> Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
 
-Link: https://git.beagleboard.org/beaglev-ahead/beaglev-ahead/-/tree/main/docs
-Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
----
- arch/riscv/boot/dts/thead/th1520.dtsi | 4 ++++
- 1 file changed, 4 insertions(+)
+I booted a kernel with this driver and verified that basic
+functionality works fine.
 
-diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
-index d05002ad7c96..351e09beab70 100644
---- a/arch/riscv/boot/dts/thead/th1520.dtsi
-+++ b/arch/riscv/boot/dts/thead/th1520.dtsi
-@@ -237,6 +237,7 @@ gpio2: gpio@ffe7f34000 {
- 			reg = <0xff 0xe7f34000 0x0 0x1000>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-+			clocks = <&clk CLK_GPIO2>;
- 
- 			portc: gpio-controller@0 {
- 				compatible = "snps,dw-apb-gpio-port";
-@@ -255,6 +256,7 @@ gpio3: gpio@ffe7f38000 {
- 			reg = <0xff 0xe7f38000 0x0 0x1000>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-+			clocks = <&clk CLK_GPIO3>;
- 
- 			portd: gpio-controller@0 {
- 				compatible = "snps,dw-apb-gpio-port";
-@@ -273,6 +275,7 @@ gpio0: gpio@ffec005000 {
- 			reg = <0xff 0xec005000 0x0 0x1000>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-+			clocks = <&clk CLK_GPIO0>;
- 
- 			porta: gpio-controller@0 {
- 				compatible = "snps,dw-apb-gpio-port";
-@@ -291,6 +294,7 @@ gpio1: gpio@ffec006000 {
- 			reg = <0xff 0xec006000 0x0 0x1000>;
- 			#address-cells = <1>;
- 			#size-cells = <0>;
-+			clocks = <&clk CLK_GPIO1>;
- 
- 			portb: gpio-controller@0 {
- 				compatible = "snps,dw-apb-gpio-port";
+Tested-by: Benjamin Fair <benjaminfair@google.com>
 
--- 
-2.34.1
-
+> ---
+>  drivers/reset/Kconfig               |  1 +
+>  drivers/reset/reset-npcm.c          | 74 ++++++++++++++++++++++++++++-
+>  include/soc/nuvoton/clock-npcm8xx.h | 16 +++++++
+>  3 files changed, 90 insertions(+), 1 deletion(-)
+>  create mode 100644 include/soc/nuvoton/clock-npcm8xx.h
+>
+> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+> index 7112f5932609..31ec8795c105 100644
+> --- a/drivers/reset/Kconfig
+> +++ b/drivers/reset/Kconfig
+> @@ -148,6 +148,7 @@ config RESET_MESON_AUDIO_ARB
+>  config RESET_NPCM
+>         bool "NPCM BMC Reset Driver" if COMPILE_TEST
+>         default ARCH_NPCM
+> +       select AUXILIARY_BUS
+>         help
+>           This enables the reset controller driver for Nuvoton NPCM
+>           BMC SoCs.
+> diff --git a/drivers/reset/reset-npcm.c b/drivers/reset/reset-npcm.c
+> index 8935ef95a2d1..aa68b947226a 100644
+> --- a/drivers/reset/reset-npcm.c
+> +++ b/drivers/reset/reset-npcm.c
+> @@ -1,6 +1,7 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  // Copyright (c) 2019 Nuvoton Technology corporation.
+>
+> +#include <linux/auxiliary_bus.h>
+>  #include <linux/delay.h>
+>  #include <linux/err.h>
+>  #include <linux/io.h>
+> @@ -10,11 +11,14 @@
+>  #include <linux/property.h>
+>  #include <linux/reboot.h>
+>  #include <linux/reset-controller.h>
+> +#include <linux/slab.h>
+>  #include <linux/spinlock.h>
+>  #include <linux/mfd/syscon.h>
+>  #include <linux/regmap.h>
+>  #include <linux/of_address.h>
+>
+> +#include <soc/nuvoton/clock-npcm8xx.h>
+> +
+>  /* NPCM7xx GCR registers */
+>  #define NPCM_MDLR_OFFSET       0x7C
+>  #define NPCM7XX_MDLR_USBD0     BIT(9)
+> @@ -89,6 +93,7 @@ struct npcm_rc_data {
+>         const struct npcm_reset_info *info;
+>         struct regmap *gcr_regmap;
+>         u32 sw_reset_number;
+> +       struct device *dev;
+>         void __iomem *base;
+>         spinlock_t lock;
+>  };
+> @@ -372,6 +377,67 @@ static const struct reset_control_ops npcm_rc_ops = {
+>         .status         = npcm_rc_status,
+>  };
+>
+> +static void npcm_clock_unregister_adev(void *_adev)
+> +{
+> +       struct auxiliary_device *adev = _adev;
+> +
+> +       auxiliary_device_delete(adev);
+> +       auxiliary_device_uninit(adev);
+> +}
+> +
+> +static void npcm_clock_adev_release(struct device *dev)
+> +{
+> +       struct auxiliary_device *adev = to_auxiliary_dev(dev);
+> +       struct npcm_clock_adev *rdev = to_npcm_clock_adev(adev);
+> +
+> +       kfree(rdev);
+> +}
+> +
+> +static struct auxiliary_device *npcm_clock_adev_alloc(struct npcm_rc_data *rst_data, char *clk_name)
+> +{
+> +       struct npcm_clock_adev *rdev;
+> +       struct auxiliary_device *adev;
+> +       int ret;
+> +
+> +       rdev = kzalloc(sizeof(*rdev), GFP_KERNEL);
+> +       if (!rdev)
+> +               return ERR_PTR(-ENOMEM);
+> +
+> +       rdev->base = rst_data->base;
+> +
+> +       adev = &rdev->adev;
+> +       adev->name = clk_name;
+> +       adev->dev.parent = rst_data->dev;
+> +       adev->dev.release = npcm_clock_adev_release;
+> +       adev->id = 555u;
+> +
+> +       ret = auxiliary_device_init(adev);
+> +       if (ret) {
+> +               kfree(rdev);
+> +               return ERR_PTR(ret);
+> +       }
+> +
+> +       return adev;
+> +}
+> +
+> +static int npcm8xx_clock_controller_register(struct npcm_rc_data *rst_data, char *clk_name)
+> +{
+> +       struct auxiliary_device *adev;
+> +       int ret;
+> +
+> +       adev = npcm_clock_adev_alloc(rst_data, clk_name);
+> +       if (IS_ERR(adev))
+> +               return PTR_ERR(adev);
+> +
+> +       ret = auxiliary_device_add(adev);
+> +       if (ret) {
+> +               auxiliary_device_uninit(adev);
+> +               return ret;
+> +       }
+> +
+> +       return devm_add_action_or_reset(rst_data->dev, npcm_clock_unregister_adev, adev);
+> +}
+> +
+>  static int npcm_rc_probe(struct platform_device *pdev)
+>  {
+>         struct npcm_rc_data *rc;
+> @@ -392,6 +458,7 @@ static int npcm_rc_probe(struct platform_device *pdev)
+>         rc->rcdev.of_node = pdev->dev.of_node;
+>         rc->rcdev.of_reset_n_cells = 2;
+>         rc->rcdev.of_xlate = npcm_reset_xlate;
+> +       rc->dev = &pdev->dev;
+>
+>         ret = devm_reset_controller_register(&pdev->dev, &rc->rcdev);
+>         if (ret) {
+> @@ -413,7 +480,12 @@ static int npcm_rc_probe(struct platform_device *pdev)
+>                 }
+>         }
+>
+> -       return ret;
+> +       switch (rc->info->bmc_id) {
+> +       case BMC_NPCM8XX:
+> +               return npcm8xx_clock_controller_register(rc, "clk-npcm8xx");
+> +       default:
+> +               return ret;
+> +       }
+>  }
+>
+>  static struct platform_driver npcm_rc_driver = {
+> diff --git a/include/soc/nuvoton/clock-npcm8xx.h b/include/soc/nuvoton/clock-npcm8xx.h
+> new file mode 100644
+> index 000000000000..139130e98c51
+> --- /dev/null
+> +++ b/include/soc/nuvoton/clock-npcm8xx.h
+> @@ -0,0 +1,16 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +#ifndef __SOC_NPCM8XX_CLOCK_H
+> +#define __SOC_NPCM8XX_CLOCK_H
+> +
+> +#include <linux/auxiliary_bus.h>
+> +#include <linux/container_of.h>
+> +
+> +struct npcm_clock_adev {
+> +       void __iomem *base;
+> +       struct auxiliary_device adev;
+> +};
+> +
+> +#define to_npcm_clock_adev(_adev) \
+> +       container_of((_adev), struct npcm_clock_adev, adev)
+> +
+> +#endif
+> --
+> 2.34.1
+>
