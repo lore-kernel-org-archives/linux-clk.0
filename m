@@ -1,57 +1,58 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E449515B971
-	for <linux-clk@vger.kernel.org>; Thu, 11 Jul 2024 12:34:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E705515E5CD
+	for <linux-clk@vger.kernel.org>; Thu, 11 Jul 2024 12:34:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720701255; cv=none; b=Ec3uGEDNIoln85s5jVSNedL8BKOo1tvqeAmydZwPxGC9GD0IHc3vpZQHaNxMtcusehTQEbjZ06SOwLQlOjFjksdH83PMf8tW+aa9jJQNh2iSH40ohY5w1e3picFrrf/VX4icrx9XJZ7RvBPpaj8vtPn5OmtTRwgYeV8Dq8x9nAs=
+	t=1720701257; cv=none; b=MCqZo4DGFfiJjeeRUtLjUufbFBoZc76fLwBn0DiJ4b61hn9aabhcV7mOGejQ+XjOIjT+JVkDAFIj0GRoS2wKU33iC+zobRE9uc89HEQOkw/IPW22gg0xWf92HUm8oCh2DqAMNfZWCVzhHxFn6rrTf4Fo5lrapO8uMV/VarNLIsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720701255; c=relaxed/simple;
-	bh=dY61pVfeYdptbpc1CWeooXje6VkidAQD5fhpL0AyjXQ=;
+	s=arc-20240116; t=1720701257; c=relaxed/simple;
+	bh=anyTZDR8z5WRrk92lV1AqqFVw3vzwnayWuwr06UEE/o=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ZUu6d1LVKzPvuyOyLzO5mArpMl1GNW/HB645KqXfXn3SVQZlnZJ9M5whtSTcUYi9lpRSL662uxVxZg5Btfsfp1KX6W5IVuA7aVOgHCDH50BnXsIBzANnBPvt6Y3i/DOwLwBp3hLsuIYGD8X9yv9ZXDw7yxnEv6XJ4haJ/z9ZgVA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=reIq8+ku; arc=none smtp.client-ip=209.85.128.41
+	 MIME-Version; b=FzKvC37HDTCMAUP7Wys8lj0ghvVtOuXmLstaqgsc4jHUZI4Jv3pVGPZ0K92CTHjr5HjpN7uonp1iU3Y32x6K4j/GwAIcjq0OroE9kNMyE0EJArRNKMN+5dcQpswb8pLBRS4zqx7Ez1/08MbwHNGgltdKet5PvuAVmbCYOPwxBw8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=N9Z/wi9f; arc=none smtp.client-ip=209.85.208.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="reIq8+ku"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4266f344091so6856355e9.0
-        for <linux-clk@vger.kernel.org>; Thu, 11 Jul 2024 05:34:12 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="N9Z/wi9f"
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2ee77db6f97so13742491fa.2
+        for <linux-clk@vger.kernel.org>; Thu, 11 Jul 2024 05:34:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1720701251; x=1721306051; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1720701253; x=1721306053; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=LAFQBuBHIxkQvbv8fOdzuOd5saHrgFyg5FB8jBW+qBE=;
-        b=reIq8+ku8dLPzXdOR/+4yeP7tX03CHvSovobC+OsHWrzWNRNjY3DGIMRuqSjgQ+EjH
-         MuSjdLH/DcBKYJi854NYsUwPEtnN6B7ItGztFkO3A3w+MGMJagKrj01xeLFOnWMCdBkK
-         cDAQ46yJ/3PCht9picOteYdOa1djQ0AfbvEYMlb414R0GoBdtnuIdIs8wNBmMy+pek+M
-         xblNvBLLziD+/cLsslUlaaK/qrDmXahyBkcFqS3jXvbgMAOmis5rDcRoMhTwTDbXO6Fb
-         h/cRu0g19QqlpvQDcTNtfZ7oppzE89pwhCGoqVh242BPzj2SCxHTAxTM1D5UKJAweH50
-         g31A==
+        bh=FRm9MV2QsUuuDK1Fw5/6bS0CUgxR45/yetEFUEnJL8w=;
+        b=N9Z/wi9frPDUvPTG9PsRi7UpNbA0022OOJcO2YzVzsVoSusRbd8DJDve2m0ZEsPjYs
+         g9bN2qKrau6F07j4BJg4bgrREQ7LCrIiQta2Z1gS6kI81VrUx3W4Nb6Bnd9ldg+oBLQP
+         PB/UV77EUIkbGuHdwpRREHPnZ4EuWQeL0FS/0gafEZnYgb73M1dvqGSfDw9lKMoyRDxm
+         /y2QS97cXa3cY4dr2rjplJ1sxV7DIgjD/g01gs6NUE+KJA9i2VbOe3W/SSumvByuTlV+
+         c5yzEHJDPWwQ5fVkwi+pMY2zJIbWfVN/ryx4ihJdoDY8bCiJeB8OH2Fp9m2r/5dC/tSR
+         eflA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720701251; x=1721306051;
+        d=1e100.net; s=20230601; t=1720701253; x=1721306053;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=LAFQBuBHIxkQvbv8fOdzuOd5saHrgFyg5FB8jBW+qBE=;
-        b=jF60nsNAR8aKQ02MNKmnh/yhalUl3dtGguoGFg8UTBc/tELQmEhmU2JXk/gbnt2goS
-         73VMM8IN9nEzBeMnLcYTQUdS2snOxfXbVH/Z1rbYJKr1UenjTLJmLTzFqeiua2Vidzd7
-         fetFbaNbONnCsnvemjAo2BpF2wYWqmtH9QuE33R+8xyh8qb4OslfhcqEtfLtSaSbwbwl
-         FaRdD19IJGEGOcunHdHkn2SVpMK4Hnwjj0mU5gxRaclopZfBBZV1+hiSSHHXpI7qsaWO
-         YPgCzgXE4ar153H2TfJxvm7vhTnc0kd1AuEuJ4mvXI+95E5Zkb6bsvzIk27McDGatCys
-         x0uA==
-X-Forwarded-Encrypted: i=1; AJvYcCUi9vLKo6NRe5RKLjIuiu+DfwpGbG1HusuAawIuCH90cdQcCnvGcmFnTZNYNhoIsTgNtpuoQa76pqiaudevwKT7a+5CRO0k4++V
-X-Gm-Message-State: AOJu0YxuXRA8OTE1ByJU09logZ0qWGUJVJxnbtQZY7g+qzBfBLOjkaQC
-	xMj0xq9BNFOuV2qwNO9Qlqs+2JRe3b3fA10dDpmHSRB8jUIHaHPJDg5KNJ5lCug=
-X-Google-Smtp-Source: AGHT+IFpavZbQE94svJyuAh6eTlEt3fIERDL3R/CcPSJlAFPUb9Zk6IvoUXtrZbD2FDIq2wriausKA==
-X-Received: by 2002:a05:600c:6d4:b0:426:6b85:bafb with SMTP id 5b1f17b1804b1-426707db6e7mr45894665e9.20.1720701251335;
-        Thu, 11 Jul 2024 05:34:11 -0700 (PDT)
+        bh=FRm9MV2QsUuuDK1Fw5/6bS0CUgxR45/yetEFUEnJL8w=;
+        b=nV6hniNhXg2+ho2zwmiCqcykv1uvQCwUCkzpHLYkU29L9J72k8JZuHW/CjvNb3iqO7
+         3doxQAGgzdu8ae+DLpW2ZaAwSdV73f6YRlcIeMs7VljgQt3qQilgczPcmM+caTH1OcHI
+         0Sqi0ZYQXONXh0owKSdnDYV12x1ZaZFEAL055OisKZ6BOh9fJPSMPIlajMGes/cOnSEo
+         1FvJFwOFmVp4CQ+dsCBOt2pASlAoX/BocHviNNEkL/3jw2C2Gte1NvSqgiMjlW8up6hr
+         e4osOQWs7f/2LndrY+Yj8abpTt/ScTsR35hpQGBgOcYqZ/A/obgjuBD6pUm1IWQV8QZD
+         SXNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU9dqtnzk9OH8o+L4cZSGDWw9SiiyoB+l1VMQUSRBgjlxu4z5KwwDYo98Ajr3pOkn74p5Wsm+YGHn/+1W7CIzhgIOOxkOcHJgU2
+X-Gm-Message-State: AOJu0YwF4/7FHzgepWd5xoZyyYUgo9d3XMQ5MOeAK8WGMCURyc+T7FsN
+	eLDxGBVzIWwI6U4uQrCLLA6l57vugwopfseWAD05hUzO0Tk7cBPEK55T0URpuwUfxIFe0u1wttw
+	Z
+X-Google-Smtp-Source: AGHT+IHlStw8pkUI0m/gKpxbqlO3SjmTUiBXCsceti/P1YsQWpbFVQ75dwQXkOgOjQaJi/XIXvVCsw==
+X-Received: by 2002:a2e:9695:0:b0:2ee:8817:422d with SMTP id 38308e7fff4ca-2eeb30bae90mr68233611fa.5.1720701252954;
+        Thu, 11 Jul 2024 05:34:12 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.171])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f741fa6sm118583955e9.45.2024.07.11.05.34.09
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4266f741fa6sm118583955e9.45.2024.07.11.05.34.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 11 Jul 2024 05:34:10 -0700 (PDT)
+        Thu, 11 Jul 2024 05:34:12 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: vkoul@kernel.org,
@@ -70,9 +71,9 @@ Cc: dmaengine@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	claudiu.beznea@tuxon.dev,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 1/3] clk: renesas: r9a08g045-cpg: Add DMA clocks and resets
-Date: Thu, 11 Jul 2024 15:34:03 +0300
-Message-Id: <20240711123405.2966302-2-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 2/3] dt-bindings: dma: rz-dmac: Document RZ/G3S SoC
+Date: Thu, 11 Jul 2024 15:34:04 +0300
+Message-Id: <20240711123405.2966302-3-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240711123405.2966302-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20240711123405.2966302-1-claudiu.beznea.uj@bp.renesas.com>
@@ -86,34 +87,26 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Add the missing DMA clock and resets.
+Document the Renesas RZ/G3S DMAC block. This is identical to the one found
+on the RZ/G2L SoC.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/clk/renesas/r9a08g045-cpg.c | 3 +++
- 1 file changed, 3 insertions(+)
+ Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/renesas/r9a08g045-cpg.c b/drivers/clk/renesas/r9a08g045-cpg.c
-index 1e471426d4af..8a3ec5780722 100644
---- a/drivers/clk/renesas/r9a08g045-cpg.c
-+++ b/drivers/clk/renesas/r9a08g045-cpg.c
-@@ -193,6 +193,7 @@ static const struct rzg2l_mod_clk r9a08g045_mod_clks[] = {
- 	DEF_MOD("ia55_pclk",		R9A08G045_IA55_PCLK, R9A08G045_CLK_P2, 0x518, 0),
- 	DEF_MOD("ia55_clk",		R9A08G045_IA55_CLK, R9A08G045_CLK_P1, 0x518, 1),
- 	DEF_MOD("dmac_aclk",		R9A08G045_DMAC_ACLK, R9A08G045_CLK_P3, 0x52c, 0),
-+	DEF_MOD("dmac_pclk",		R9A08G045_DMAC_PCLK, CLK_P3_DIV2, 0x52c, 1),
- 	DEF_MOD("wdt0_pclk",		R9A08G045_WDT0_PCLK, R9A08G045_CLK_P0, 0x548, 0),
- 	DEF_MOD("wdt0_clk",		R9A08G045_WDT0_CLK, R9A08G045_OSCCLK, 0x548, 1),
- 	DEF_MOD("sdhi0_imclk",		R9A08G045_SDHI0_IMCLK, CLK_SD0_DIV4, 0x554, 0),
-@@ -233,6 +234,8 @@ static const struct rzg2l_reset r9a08g045_resets[] = {
- 	DEF_RST(R9A08G045_GIC600_GICRESET_N, 0x814, 0),
- 	DEF_RST(R9A08G045_GIC600_DBG_GICRESET_N, 0x814, 1),
- 	DEF_RST(R9A08G045_IA55_RESETN, 0x818, 0),
-+	DEF_RST(R9A08G045_DMAC_ARESETN, 0x82c, 0),
-+	DEF_RST(R9A08G045_DMAC_RST_ASYNC, 0x82c, 1),
- 	DEF_RST(R9A08G045_WDT0_PRESETN, 0x848, 0),
- 	DEF_RST(R9A08G045_SDHI0_IXRST, 0x854, 0),
- 	DEF_RST(R9A08G045_SDHI1_IXRST, 0x854, 1),
+diff --git a/Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml b/Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml
+index a42b6a26a6d3..ca24cf48769f 100644
+--- a/Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml
++++ b/Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml
+@@ -19,6 +19,7 @@ properties:
+           - renesas,r9a07g043-dmac # RZ/G2UL and RZ/Five
+           - renesas,r9a07g044-dmac # RZ/G2{L,LC}
+           - renesas,r9a07g054-dmac # RZ/V2L
++          - renesas,r9a08g045-dmac # RZ/G3S
+       - const: renesas,rz-dmac
+ 
+   reg:
 -- 
 2.39.2
 
