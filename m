@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09D0563A5;
-	Wed, 10 Jul 2024 23:56:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C1B13201;
+	Thu, 11 Jul 2024 00:04:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720655809; cv=none; b=ZaPM2IZN4C5F6SGInis3JUjyMieYX1N+jJMCi63lODBLHTuRWoba4bAcahCfxoSCadD4gYYQ5T2ziXZeoHqYBAKhiPFnEK9V7Un1m90V2P5ixN3rFIK+kWjAFYDrVrYHry/aGT5oTuVW+NxZXb5TlpU9bCt/71X9698fzQIUkkg=
+	t=1720656284; cv=none; b=pUBNZxQWg8EgmfHll6tvybxh0odT5522KmyloyDjk3fAWTNBCpXATRafXgKA1r+SW6z/fGKK4u9sc3ovQsDfM4ru1s/zvnT9mW5q2doM3MEAmtp7aMbjty5X+26bRIlOQ4hr4L/Wy6gfRcLBKWISnpv3eiJ7HQODU14NDNn65IE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720655809; c=relaxed/simple;
-	bh=2tc8RIIyfHOiaSxzCTfQKeyqP8HdT8b53uA/ghjOZWg=;
+	s=arc-20240116; t=1720656284; c=relaxed/simple;
+	bh=LoH2ZoYa2mnasOzoozuE/n+8G7gQuYpt7BBzCX/pdtI=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=VubvFZvZCBMd9tju/DKp8BIyTnS9BRxTkJlYugCagmV+w2BlYantRcjyWmClud/cvZRchnkiHATeSbnZLWp7euxe/0+qncdgBY/euM+2QIDdlaRNM2sV7A2/6Zc8PAmTppvIiDvZMyrrZheXASLO/UPDNth9PTV/02n9AflwC9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fAM7wnhe; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=sKNn3qQWcBlxWtzSUz/ojwPW4qtMApA7/0MlUsMX64QE3gN0bgpJXBLjwAnKZ+/goUj8TjMTp93wFg3XNv06Mdd1vM5V2Vquv/dKZPhZY1fWQTgl3ChJ8PlxGk4DHWb40E0BanZ1zYIIZhhTFUUEpn9dK83WG0yLSJDs3nsJk3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HJaV/ZUM; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fAM7wnhe"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63FD9C32781;
-	Wed, 10 Jul 2024 23:56:48 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HJaV/ZUM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B460DC32781;
+	Thu, 11 Jul 2024 00:04:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720655808;
-	bh=2tc8RIIyfHOiaSxzCTfQKeyqP8HdT8b53uA/ghjOZWg=;
+	s=k20201202; t=1720656283;
+	bh=LoH2ZoYa2mnasOzoozuE/n+8G7gQuYpt7BBzCX/pdtI=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=fAM7wnhekV4nm0zqMszEdt5ToIwVrIMloMD303uJBTeDCflfCUZkQmRHxSUd+8Vda
-	 tS8rIyA3sIc6/9uLhyZVsMlO295+nC9Mr0a1ZHOT2kRua0kmkZvVf2x9cE/JJnQuDO
-	 sR/+bjAIBXl4ALv+wBUETS8lnrtgij+RjLLlnNsoIZO68tc6rKl3EeNPS4JOsB0Lwt
-	 6VPrXmMMZ0pO6Fw4nKzQbUXcotOuf3CUkT1HkR5rNI3M6fvYsQAyYD+o8bfykkY7Qu
-	 GKO5yEXfoTNlCGr16m/9thGN+UThWRgOX8yf2c4Tir6myf71DaCsxmbGIsZTG/hrGC
-	 pDAyn21p2eI/g==
-Message-ID: <b3c450a94bcb4ad0bc5b3c7ee8712cb8.sboyd@kernel.org>
+	b=HJaV/ZUMnZTRLGyfiuXbJbUmRL7yDm1gJ9K3gHULJ8mRPiN+iz1B+3NYQZHr8GCME
+	 ruwg/2gcwwQTn+7AZDO4le8WS5O+EJFUVLFOqkzYUz9lWzf5b5+HDXpeaYqdaoUCiq
+	 nIJeYz/XIm041sjjShE5ftHZUL1cR/iefzPLpimZgYBCW83d6nMG2tyJD6Yb2ljVDu
+	 hpTseJ/7C6rtKMENy8IwftS07vgymquHBH4stH1vdZo7FVMv3DJeM73tesNWMPgAvr
+	 4/dDEBVg6ub6wunrinM190eKNqZI3tb1rFXoEmi2d7DjZ60ink6PyLV54UnW3EQY7z
+	 hVHtO/McBRTKg==
+Message-ID: <9cb3f57ed4b41fb51600610a3a1c9437.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,46 +35,37 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1903511.1xdlsreqCQ@diego>
-References: <20240709123121.1452394-1-heiko@sntech.de> <20240709123121.1452394-2-heiko@sntech.de> <2e5852b9e94b9a8d0261ce7ad79f4329.sboyd@kernel.org> <1903511.1xdlsreqCQ@diego>
-Subject: Re:  Re: [PATCH 1/6] dt-bindings: clocks: add binding for generic clock-generators
+In-Reply-To: <CAA8EJpqOD-JKGCJiC7yAkiG3oAOEbHQ-_aCmDiP5HdeEVZm8fw@mail.gmail.com>
+References: <20240628-gpucc-no-request-v1-0-b680c2f90817@linaro.org> <20240628-gpucc-no-request-v1-1-b680c2f90817@linaro.org> <5153b8f8a6c6ffdc1254e00c47a888ed.sboyd@kernel.org> <CAA8EJpqOD-JKGCJiC7yAkiG3oAOEbHQ-_aCmDiP5HdeEVZm8fw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clk: qocm: add qcom_cc_map_norequest
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, quentin.schulz@cherry.de, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-To: Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>, mturquette@baylibre.com
-Date: Wed, 10 Jul 2024 16:56:46 -0700
+Cc: Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rob Clark <robdclark@gmail.com>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Wed, 10 Jul 2024 17:04:41 -0700
 User-Agent: alot/0.10
 
-Quoting Heiko St=C3=BCbner (2024-07-10 01:02:57)
-> Am Dienstag, 9. Juli 2024, 23:45:20 CEST schrieb Stephen Boyd:
-> > Quoting Heiko Stuebner (2024-07-09 05:31:16)
-> > > diff --git a/Documentation/devicetree/bindings/clock/clock-generator.=
-yaml b/Documentation/devicetree/bindings/clock/clock-generator.yaml
-> > > new file mode 100644
-> > > index 0000000000000..f44e61e414e89
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/clock/clock-generator.yaml
-> > > @@ -0,0 +1,62 @@
-[...]
+Quoting Dmitry Baryshkov (2024-07-10 16:32:18)
+> On Tue, 9 Jul 2024 at 01:30, Stephen Boyd <sboyd@kernel.org> wrote:
+> >
+> > Quoting Dmitry Baryshkov (2024-06-27 22:20:22)
+> > > The GPU clock controllers use memory region that is a part of the GMU=
+'s
+> > > memory region. Add qcom_cc_map_norequest() to be used by GPUCC, so th=
+at
+> > > GPU driver can use devm_ioremap_resource for GMU resources.
+> >
+> > Why does GMU map the gpu clk controller? Does it use those registers? We
+> > don't want to allow two different drivers to map the same region because
+> > then they don't coordinate and write over things.
 >=20
+> It's not that GMU maps gpu CC separately. It looks more like gpucc is
+> a part of the GMU address space. I think GMU manages some of the
+> clocks or GDSCs directly.
 >=20
-> > Maybe instead of creating a generic binding just make a binding for
-> > these diodes parts? It certainly looks like a generic binding could come
-> > later when another vendor supports the same binding.
->=20
-> I was actually primarily aiming at solving the Rock 5 ITX clock generator
-> issue described in patch 5, where the 100 MHz clock generator is just
-> described as "100MHz,3.3V,3225" in the schematics, but definitly needs
-> the supply regulator to be enabled [1].
 
-That looks like a VCO (voltage controlled oscillator). Maybe the
-compatible string can be "voltage-oscillator" or "clock-vco" and it can
-require the vdd-supply.
-
-Those diodes parts look different. They look like PLLs that have a
-reference clock, hence the 'clocks' property I was expecting to see.
-That would use the VCO you have to make the PCIE reference clk
-frequencies. A generic compatible for those diodes parts is likely
-"phase-locked-loop", or "clock-pll", but I'd avoid that given that PLLs
-are almost always complicated and can have multiple output frequencies
-if they have post and pre-dividers, etc. It's easier to be specific
-here and make a binding for the part you have.
+I imagine GMU is a collection of stuff, so the register range is large
+because it's basically a subsystem unto itself. Can the range in DT be
+split up, or changed so that different devices within GMU are split out?
+Or maybe the gpu clk controller can be made into a child of some GMU
+node, where the GMU node has a driver that populates devices that match
+drivers in different subsystems.
