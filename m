@@ -1,59 +1,60 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57100155CA5
-	for <linux-clk@vger.kernel.org>; Thu, 11 Jul 2024 09:51:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14267155CBA
+	for <linux-clk@vger.kernel.org>; Thu, 11 Jul 2024 09:55:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720691511; cv=none; b=Lv7DS9ay79qxARGCI9sYspWYLfVRWaSBm2ZYiHGLrzsmAMbNie7nYi15tV5H3mSK6MCc3ESsBLvwFfHApvNRWRUG6HwFy351HK79VMP/5/VhO35VB37yTaFNlVURi9h+c1T3qQIEwRq+d6GWHECbCntSt2vuSJMAR6sBoz7IfWk=
+	t=1720691744; cv=none; b=uyuwzSyOnGqFKi3aiW5o9AKp9556WSJpMgHmRn9wpcvieavViVicNu8BfZqdZUPF+AP70g2nrNkLK202kl3hUk3eK92xF2TrILkiV2TNeRQoFmlYipcWNMArXctFV4SCX/VKy8ibHujTEJwRYRgu0yhFrSDgOKv0VDdAciw4EAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720691511; c=relaxed/simple;
-	bh=6W/qVczYJkuz3Z8DNHsspunOTZVIxcTUdrjw9u/h48E=;
+	s=arc-20240116; t=1720691744; c=relaxed/simple;
+	bh=yYWC/VveCTOiGUoQj5SkfspQMI1tcDAhWmZ6kBA+/YE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kMt4zZc3YrG19uxvlmvkqUheZ4nSi3QcOMRQGTOqYN+ocGQv0D/uQ4ZTEvfQXAmkNmtjiqfx3o5e3U0GKHNAAIBpIFwhmYCyIzcuxRX2T/RTqzULQsAWEprmYCP7E6Ov/kgwM63ZP3GiNjSbBvC4gZXY0CvTKhE30+hybrYtYqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DANXKutz; arc=none smtp.client-ip=209.85.221.50
+	 In-Reply-To:Content-Type; b=nP7eyz+xAZrMtJ7C0dSwpZyetztCJx1DOtI4LLvdR39nW9PevmPyZ14bNsmOC3p4GYh7YDJFj5fMlsucaV4MjEpIMxWSm2Olf+r9UjvlbtrXjDLRbGvpvsVwT+Z120p4hzBvzAbJzfD1E+dfOCpufNPdIuTVpwvCjZFtLlQXLDU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GpAK8J1c; arc=none smtp.client-ip=209.85.208.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DANXKutz"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-367993463b8so351432f8f.2
-        for <linux-clk@vger.kernel.org>; Thu, 11 Jul 2024 02:51:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GpAK8J1c"
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-59589a9be92so953280a12.2
+        for <linux-clk@vger.kernel.org>; Thu, 11 Jul 2024 02:55:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720691508; x=1721296308; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=p4smDoC8Q8mWiYpTnz73mXw1qS9kVwzA6CajD1cC+rw=;
-        b=DANXKutzYjdK7YMIIU2/uRYJQOBKdH9z4XEXz3WWyFgEMmIr5YOHqNToBg+454eo3e
-         IzptyStDAd9Z8sHwxecJuLsgtrNYwL+gh8aVy5fDXoDA8AeVAmQDPNTUt6Zp1rwf7wIo
-         Ixaug0kgOmnW+AUaPar+u4QKrBPqvJzXf9+WIzfGtUANmILxxqyrOTAv39TyEZIpu5ZI
-         SCLysRR7aOz8+8EfCi//XY+RBYYbZFIAY2+V4UjiLhWHZTX198XzD8E2gwxyS9vF/yOr
-         QVXNStei7cHeffZbbagp7/L+R6uH5FDIWJskNTcD+1s3S61IWEJPIjvd5CyHtMK7FBfV
-         ahDA==
+        d=linaro.org; s=google; t=1720691741; x=1721296541; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=maLqMD3ICvk1EK1NREQo247Hu1y1Wvub0TIIfxIt6Vw=;
+        b=GpAK8J1c5wH9+cIkvnvEGOII0m9UX4IZ3OH/VRprbJ4K766BCRRlTvPNvYdYacZ4c/
+         2qGPL1FxH+EWfaBw1Z5CXMKcJzVJ4JtrUfMTiLvCjhaSRL0L5ZCfgCPuYHpQI96sSUKt
+         A7P2q1YeviwGBRtdOvTDEuwCqQnjkPRNqfSR3i21g+CDCrTIDFpBeXQnW92jPjuS5fmw
+         CM7PsYWyLtFAqZju4zmnzsC4sSa019ugXpRu81sIfuFOgKra7oJ8MQbQIiu+9SSiLCGG
+         nUd/yLZx/d7Xi9u/5dLOMuaXi6Lafau+/Vz0Dz1So8DaePQuuuQZSnAM2JIvWRFTp1WB
+         /z8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720691508; x=1721296308;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=p4smDoC8Q8mWiYpTnz73mXw1qS9kVwzA6CajD1cC+rw=;
-        b=EuVSyZl5Bp+p9Spl8b0eyHnNXP+coIOIHQeQRJBjPeN5N5GRov5d3jE2XMc6zdWPZ0
-         odDzUd1Bm3niAa72/4OFkX0/qbTIEPyupZZewxIXjVfAk84l2NLyP8yWQ36vCfZPi539
-         2N7DrhjZOSp4+oFVlYD+eeejXVpe30WpbNVMauRqjmlRHH2NT+ULBIzIjIxVgXYZfO7k
-         3UKRillHb2Fm1H4fYSOyiOGykzWgMNNC6gZju824w+40BF2704HxmyyLMgAW9XY+UXzP
-         daeGBizAaboCH5Bn5pNYHWy/kD7+RNj3wT0XScEwHua7tPuN6vVtBJW934MDApMmeA3O
-         zRKg==
-X-Forwarded-Encrypted: i=1; AJvYcCXdEEAFlGHhkILMf8RYQluU29bnlI1Cc7Lfstqo4zjq7cWhosU436sHMDKonRCG0kKeTGPH7vJy3fggm0DJdbuAzTdalClMQVnF
-X-Gm-Message-State: AOJu0YzBzEP9Wx15XMKAYiHtaqWQFlCq/6X9BqUpzwYfVmACbDF2WQWD
-	IBV2TDU44iQs4juK0BQI3ykDN0HZjGY4kEPqwbgWpJq/nkHl/b0oibAt++5Essg=
-X-Google-Smtp-Source: AGHT+IFtPH1XXTzpe+ZeiotMiBUKnIw0rtLtXdrEEVTNTDfCBJZjKL4CcUCeuZDut/QwViYvR4OaUg==
-X-Received: by 2002:adf:ea8d:0:b0:367:99fd:a9a8 with SMTP id ffacd0b85a97d-367cea73735mr5694718f8f.26.1720691507676;
-        Thu, 11 Jul 2024 02:51:47 -0700 (PDT)
-Received: from [192.168.0.16] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cde7e19dsm7274556f8f.15.2024.07.11.02.51.46
+        d=1e100.net; s=20230601; t=1720691741; x=1721296541;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=maLqMD3ICvk1EK1NREQo247Hu1y1Wvub0TIIfxIt6Vw=;
+        b=I/Zfhyh97UuUsxqxUWVsUvU8Wg47XBQefpCYqmzTk2RiCsugNAll+qcb1d5dOT5CCT
+         CdL3CXSeEYDoWYUgri5KFy+bI/pmwmwPNI7b06tQPZIN4SlettWE/iwgsF9bJKcM1xeB
+         oHZzacPM7rDBsrvSgh8lxsTSde+zcFkoCQ2PFsYFpML0aJ2wbo4Ri8+T7C9mpKmC8I4L
+         it6bqqbKtwiikDNKUTCmOZhUmvOm2+T7AlgAcTAeKjR5ae1PU1yiJ9+wCUVRVh77MZzE
+         th3GcZKLjCHz9+5NxcAg6GqWYBGQsn9tkuSqwNw/cQrELfLPf0c6a6GK9mklTB2Bnwvp
+         vAEA==
+X-Forwarded-Encrypted: i=1; AJvYcCXrIOJXvkHNWk8uWZEkUPtFZQCBLf61ooy1uxCgmJMNH2KAIVpqxNJFJlKciGQio2OMNHVBrmFM5fa9EcQLn5zf/FuzVRio1oN6
+X-Gm-Message-State: AOJu0YznOBuXf67mVXKC3bRR8MM1q9y5ixNRgEoDmqpxsjJmSlWFnaXd
+	Mgq0lgQ4QqzLbgHViaoEiuLQQ2SwOEC8Vv9XLVi6SDdMIi4QLrp/EYFkuNOBjbM=
+X-Google-Smtp-Source: AGHT+IExGLqNXPyV85QLGJwuneesorCc1iI3eg2vhxQ8Am7jEngbHqpcbHnK1n/eI7Hqf5CY4Tsk9Q==
+X-Received: by 2002:a05:6402:210f:b0:58b:6096:5554 with SMTP id 4fb4d7f45d1cf-594bcba7e40mr6465201a12.37.1720691740940;
+        Thu, 11 Jul 2024 02:55:40 -0700 (PDT)
+Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-594bbe2cf93sm3251364a12.33.2024.07.11.02.55.38
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 11 Jul 2024 02:51:47 -0700 (PDT)
-Message-ID: <f4072105-e0e2-46c8-82ed-92105b43a345@linaro.org>
-Date: Thu, 11 Jul 2024 10:51:48 +0100
+        Thu, 11 Jul 2024 02:55:40 -0700 (PDT)
+Message-ID: <95a835e2-9fd9-467b-bd0a-8eeb80ddf678@linaro.org>
+Date: Thu, 11 Jul 2024 11:55:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -61,46 +62,90 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/6] clk: qcom: Add camera clock controller driver for
- SM8150
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
+Subject: Re: [PATCH V4 8/8] arm64: dts: qcom: sm4450: add camera, display and
+ gpu clock controller
+To: Ajit Pandey <quic_ajipan@quicinc.com>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Abhishek Sahu <absahu@codeaurora.org>,
- Rob Herring <robh@kernel.org>,
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- Ajit Pandey <quic_ajipan@quicinc.com>,
- Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
- Jagadeesh Kona <quic_jkona@quicinc.com>
-References: <20240702-camcc-support-sm8150-v2-0-4baf54ec7333@quicinc.com>
- <20240702-camcc-support-sm8150-v2-5-4baf54ec7333@quicinc.com>
- <xbe7kmaxhfwy26qzxrmwgiijaaiap4kdkruaxjs6ymihaw5taf@hvj57wyncfea>
- <cc1957af-17bc-cd71-e6da-013e3a740014@quicinc.com>
- <CAA8EJpqmJZJfd2famarx-FKFb1_+-nZM3N+FwK_hiOurG8n9=A@mail.gmail.com>
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Vinod Koul <vkoul@kernel.org>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Taniya Das <quic_tdas@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>,
+ Imran Shaik <quic_imrashai@quicinc.com>,
+ Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+References: <20240611133752.2192401-1-quic_ajipan@quicinc.com>
+ <20240611133752.2192401-9-quic_ajipan@quicinc.com>
+ <76f5e3c7-a90b-42d2-8169-e5e2211a14a1@linaro.org>
+ <ba7d12d3-c582-45ec-beed-e81182fe3252@quicinc.com>
 Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <CAA8EJpqmJZJfd2famarx-FKFb1_+-nZM3N+FwK_hiOurG8n9=A@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <ba7d12d3-c582-45ec-beed-e81182fe3252@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 10/07/2024 23:10, Dmitry Baryshkov wrote:
->>> - Why is cam_cc_gdsc_clk not modelled in the clock framework?
+On 3.07.2024 11:16 AM, Ajit Pandey wrote:
+> 
+> 
+> On 6/13/2024 1:11 PM, Konrad Dybcio wrote:
 >>
->> This clock is kept enabled from probe, hence not required to be modelled
->> explicitly.
-> Yes, I'm asking why it's kept up enabled from probe rather than via
-> clock framework?
+>>
+>> On 6/11/24 15:37, Ajit Pandey wrote:
+>>> Add device node for camera, display and graphics clock controller on
+>>> Qualcomm SM4450 platform.
+>>>
+>>> Signed-off-by: Ajit Pandey <quic_ajipan@quicinc.com>
+>>> ---
+>>
+>> None of these nodes reference a power domain (which would usually be
+>> CX/MX/MMCX). This way, the RPMhPDs will never be scaled.
+>>
+>> The current upstream implementation only allows one power domain to be
+>> scaled, but that's better than none (see other DTs for recent SoCs).
+>>
+>> Konrad
+> 
+> SM4450 doesn't support MMCX and CX/MX domains will remain active so
+> power-domains property is actually not required for SM4450 clock nodes.
 
-FWIW my preference is to do it as Dmitry is suggesting here.
+It's not only about them being active.. some PLLs require e.g. MX to be
+at a certain level, or the system will be unstable
 
-I'm not a big fan of hitting the register and leaving it as-is, would 
-much prefer to move to the model of having the CCF do it - so that for 
-example the clock appears in the /sys clock summary.
-
----
-bod
+Konrad
