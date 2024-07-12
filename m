@@ -1,74 +1,64 @@
-Received: from mail-vk1-f179.google.com (mail-vk1-f179.google.com [209.85.221.179])
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E05B716EB6E;
-	Fri, 12 Jul 2024 13:48:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85B59171E66;
+	Fri, 12 Jul 2024 13:55:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720792140; cv=none; b=MNtuf9hoO23v+p8WVQGZfETFkKfJs1ERJUTYPHjpSAGESM8KF8/ZBBeJQS9vCPipcV8K420wSZPBVoT4Kr5vLLBivRhXibqOPEo4Kgp/wIqjwuwkbK5wXvI8yjGjXYNLDRE+z+WbDP3Zj1sQTU/pMe8p1sTXKQWfYE+Lxap0jaE=
+	t=1720792512; cv=none; b=suUE8rnjF3Ll0w8PLt/OCxVasFG8nu4a95I83cEzQ2vfXc697kivpvrtyh62dXH/HQLiyKKnfbr7+itaHlFp/hFHPwcKGy4cuh5XJh3Hwg2E5xQ/C0szhMjdPhtVM51B8dV6ZBELcAUDtyvWhEPu+5GlZmIU2Wa5az608+6eW0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720792140; c=relaxed/simple;
-	bh=Tu42nau61uQUrM2WkU0xQHoUNzdUiCiLufs8uTvML20=;
+	s=arc-20240116; t=1720792512; c=relaxed/simple;
+	bh=PG7WDG2wxP6E4zUX9w3RjCYf8TYepGOJj7vXvWmU9zk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dau1Na2BE8Z7EUCffRu2L8fcfzbSjdemTnUD+5NEeSBpXI720edKLKp3hjuNAIW+neY287n9I8v8GVVsOTgnNkDgUNuFuxRHebtn+bsVlMrOcpkew5eVNrn/FpA+Ca1auU7AtQDGMLeYcWSqyKr+aeoZBkkmSubzE/2L1/VQHh4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VWCWqkEp; arc=none smtp.client-ip=209.85.221.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	 To:Cc:Content-Type; b=cZNKL5fS4udFglMIKKUB1glPZSwOIXookq+gv5yT5w8JBb2eiTkHhLu+iCeXbmpxu/4juxU5Uvs1j2Or3s/5//wX3IZpwIMDVxWeIFeEQkg2C22CGLFyTx4z4S5kEmmbl7I26EPPO6FBD6z3QFpofjDvwUSPgoMg9TxsPS5HyBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VWCWqkEp"
-Received: by mail-vk1-f179.google.com with SMTP id 71dfb90a1353d-4ef76f04977so667966e0c.2;
-        Fri, 12 Jul 2024 06:48:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720792137; x=1721396937; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CNeMMGyKMUpPSQSPubxQiT+hSpfRpgXCDkgjBJjYMQA=;
-        b=VWCWqkEpmrLYYAAi6RSLkFhP9XA1iya9+W+R+f/5LhnSDKLjbXlEmtsmpbSayacbW3
-         qKXF5c4PDOJqvobdhwBVX7LjEvQAMeswibXu1OIBTKES1hbkML79KwflC5ie+imN9G3V
-         PvWsIvWts7YM38Cw/eDHULufuN54tGSwYc6IlWbzVJygJ1asntRTFi4OaZhZ29W89KOG
-         3w1HrRx2Lh5ixhsAof7L9cD3AxbWDqSePxOMWc73zvxtx2B+C87xs4rWNasrmwXsEogh
-         PXMmfTxOrNuNx/iF7Qq9u5jqzTmvDV7OlFlO9/1zo4Yh5ztCylOd1eLP01xK17KudiXd
-         S32g==
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-651da7c1531so19825387b3.0;
+        Fri, 12 Jul 2024 06:55:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720792137; x=1721396937;
+        d=1e100.net; s=20230601; t=1720792507; x=1721397307;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=CNeMMGyKMUpPSQSPubxQiT+hSpfRpgXCDkgjBJjYMQA=;
-        b=JErKuJzgma2aDIcmr5TQcqSlviSd9vTeHizvHSY3CXxS/JEDls4QW8EtMRJ6lJ0f+f
-         jnoh4FuUklpQoKJAtLv7qhBoUbjAsO8pHNDC2UOjZncgUTO+N0smUbfk4KLBLljOZIYC
-         IvQKhgYb0YVF4JSeHLSv3+gyu8xZBA7t9eGIdGI4UgOWkFirIMTBaZF0Zov4Qp4TtRW2
-         uuYSegfTOJwut5I59lyVBUB9UBj7wcDG57g/4e+kNDEluMOhfY0dkoakBaNmDiBLsrKj
-         EFpwbWLrH+7zB13s748m7xHANB1U5cyMk/t8RD1XQRCZvBhvp9Wx/h1535bjYtI6wJ9m
-         Qx7w==
-X-Forwarded-Encrypted: i=1; AJvYcCUp4zKAVFjhSvjGfTXBDRFIf0Jq8w/00YrGx0f8sWqi04Lb/miJ4x9AXcOT8QDGdy2ekEpXRSQfWE9ChyakBnWP8YlGaN+KxqMOxTe1LERsqXQCBNsGdv9b0UzGN+5PthR8FzBYxpdHz5zZScxcy6L7kjgxnI7c5UAUdA+KURFh8Bzkj4Vf5Mc/mzj2N/3haC4ZsZk1RdqI3MVWxpvIQsFHxvqH0zaO
-X-Gm-Message-State: AOJu0Yzujh3AwkofQ0tmxar71oorpHpErfweHz8FT6J4t9l9yeMnaqak
-	x1wAyYf9CXpnJiFOE35XVD5EtYTJaDG9j2yQb2KvMkcUcEsRozQVKYR3g2fzbkY7yowopl8vgXF
-	L6Kd/SWIglwKYn6Qi9gu+zVmonwQ=
-X-Google-Smtp-Source: AGHT+IEVNhqRMz9n9crf1r6WaUvNgJ/dyDPHlu7D7kgnmKPUhB8R0X+CUwUXHsUwxzcfSlFGxKZUeQJI5wevih/Gk48=
-X-Received: by 2002:a05:6122:21ac:b0:4ef:52e2:6763 with SMTP id
- 71dfb90a1353d-4f33f318833mr13257634e0c.13.1720792137495; Fri, 12 Jul 2024
- 06:48:57 -0700 (PDT)
+        bh=66ZxvuflQ1CFAf8nLezfYlKzbT94Oozorkv5Eix20iA=;
+        b=Jho4WBH+1ZJq8L0X1xykC0sIJ9uz3mhsOe2dwNRivYno71uAI0lmEGksMtVe457aFw
+         yj49DaGr1cxdVoPzwBvhPSYIVm0nUXZ/4FTxyD2azXgneAN3v9DclnhPPrFnFLB6iZ5v
+         OGFTFugPP+ArtxJAi07483Z7gg0W6RelrI+4rUnIDKPWNKNoBTdXtSvukNmUjyG+n/Nt
+         AsKs8MlQBoexgkULiY8POo/n5jvZF3/0B6vHBuogCvB4bwCIDorCRBho991MLBNixXbt
+         wcu7MzE77DiDQPi1xzu0lyVtxmRcu6LSxFxcb9zM6WpWK7S3ja3ydSifmAaw8PF2LK0f
+         578g==
+X-Forwarded-Encrypted: i=1; AJvYcCWRIus5vYtqoG/Uag2dSUcXyE3OVdY0vIbtiXgBsy5iKCgrBOCRkwFC8HCenrXU5gFi9fZC6U50hUx2cDW7/xnqWMlPJRas7WswJXmD5vIDN7/V1s3BYdlm9j6oq+b997Hd2bmE9K+dVuuiTjcoJgAVu+ZbC7wTo89oNvBCwZTXU7MX/VRpe7e+nSM=
+X-Gm-Message-State: AOJu0YwMtUsCxlqVq4hGacc7SPozY4sZvBZ/zJBO/0Pyz/0ng5xHm6N9
+	t1hRuQyyuOBkCE5TAgM0imSUrf/NfHaQDqeIozfhzEUmfCItIUGyJunxFBu9
+X-Google-Smtp-Source: AGHT+IGlpMZ4Bh2/+PjLddF/OgtvWciafZOaq/PuNY40RMa1Y8XZBmGVRjK412QkLzARZdMakpvZzw==
+X-Received: by 2002:a81:8a84:0:b0:648:2c60:fdee with SMTP id 00721157ae682-658f0bc6201mr114554107b3.38.1720792507472;
+        Fri, 12 Jul 2024 06:55:07 -0700 (PDT)
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com. [209.85.219.169])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-658e521c7bcsm14706647b3.65.2024.07.12.06.55.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Jul 2024 06:55:07 -0700 (PDT)
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e03a581276eso1850321276.2;
+        Fri, 12 Jul 2024 06:55:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVp+rs2cuTf1yUBSBZlkLGyQzuj8EVY11psplgqPcwlcP0vKkIL6lz4cyrRaIoSiOKPNVcygngaEvGQYPlIvfUBgdG1clryrnuy2WLHUyOHelkKa8fYAjmzVR6ur7Ejd1tAe4pR8UuP1WJZQSZ5yljgd7JQV4qA38vuU/swIeMZC3g3dzPwIezx75Q=
+X-Received: by 2002:a25:c787:0:b0:e03:606b:ad2b with SMTP id
+ 3f1490d57ef6-e041b15aae9mr13588579276.57.1720792506677; Fri, 12 Jul 2024
+ 06:55:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240627161315.98143-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240627161315.98143-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdV4GUKc=LFStKHO47vPJLZs3Vmvz-L7L81bC5DmdK5ztA@mail.gmail.com>
-In-Reply-To: <CAMuHMdV4GUKc=LFStKHO47vPJLZs3Vmvz-L7L81bC5DmdK5ztA@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Fri, 12 Jul 2024 14:47:27 +0100
-Message-ID: <CA+V-a8t3GVMo8N=uBn58=S9=0MtuaCtxxN4OC5F-i7Vp8ntcpg@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] dt-bindings: clock: renesas: Document RZ/V2H(P)
- SoC CPG
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Magnus Damm <magnus.damm@gmail.com>, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+References: <20240628131021.177866-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240628131021.177866-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240628131021.177866-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 12 Jul 2024 15:54:55 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVd2k7WsPU9htW1LmDrjOgoQ1C8J=8i7ZAs7LS5XYBCXQ@mail.gmail.com>
+Message-ID: <CAMuHMdVd2k7WsPU9htW1LmDrjOgoQ1C8J=8i7ZAs7LS5XYBCXQ@mail.gmail.com>
+Subject: Re: [PATCH 1/4] clk: renesas: rzg2l-cpg: Use devres API to register clocks
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, 
 	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
 	Biju Das <biju.das.jz@bp.renesas.com>, 
 	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
@@ -76,76 +66,62 @@ Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Geert,
+Hi Prabhakar,
 
-Thank you for the review.
+On Fri, Jun 28, 2024 at 3:11=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
+om> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> We are using devres APIs for divider, mux and pll5 clocks so for
+> consistency use the devres APIs for module and PLL clocks.
+>
+> While at it switched to clk_hw_register() instead of clk_register()
+> as this has been marked as deprecated interface.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On Fri, Jul 12, 2024 at 12:58=E2=80=AFPM Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
->
-<snip>
-> > +++ b/Documentation/devicetree/bindings/clock/renesas,rzv2h-cpg.yaml
-> > +  '#clock-cells':
-> > +    description: |
-> > +      - For CPG core clocks, the two clock specifier cells must be "CP=
-G_CORE"
-> > +        and a core clock reference, as defined in
-> > +        <dt-bindings/clock/renesas,r9a09g057-cpg.h>,
-> > +      - For module clocks, the two clock specifier cells must be "CPG_=
-MOD" and
-> > +        a module number.  The module number is calculated as the CLKON=
- register
-> > +        offset index multiplied by 16, plus the actual bit in the regi=
-ster
-> > +        used to turn the CLK ON. For example, for CGC_GIC_0_GICCLK, th=
-e
-> > +        calculation is (1 * 16 + 3) =3D 19.
->
-> Using hexadecimal for the final number may be more readable,
-> also in the DTS?
->
-> (1 * 16 + 3) =3D 0x13?
->
-Agreed I will update the value to hex.
+Thanks for your patch!
 
-> > +    const: 2
-> > +
-> > +  '#power-domain-cells':
-> > +    const: 0
-> > +
-> > +  '#reset-cells':
-> > +    description:
-> > +      The single reset specifier cell must be the reset number. The re=
-set number
-> > +      is calculated as the reset register offset index multiplied by 1=
-6, plus the
-> > +      actual bit in the register used to reset the specific IP block. =
-For example,
-> > +      for SYS_0_PRESETN, the calculation is (3 * 16 + 0) =3D 48.
+> --- a/drivers/clk/renesas/rzg2l-cpg.c
+> +++ b/drivers/clk/renesas/rzg2l-cpg.c
+> @@ -1023,6 +1023,7 @@ rzg2l_cpg_pll_clk_register(const struct cpg_core_cl=
+k *core,
+>         struct clk_init_data init;
+>         const char *parent_name;
+>         struct pll_clk *pll_clk;
+> +       int ret;
 >
-> (3 * 16 + 0) =3D 0x30?
+>         parent =3D clks[core->parent & 0xffff];
+>         if (IS_ERR(parent))
+> @@ -1045,7 +1046,11 @@ rzg2l_cpg_pll_clk_register(const struct cpg_core_c=
+lk *core,
+>         pll_clk->priv =3D priv;
+>         pll_clk->type =3D core->type;
 >
-OK.
+> -       return clk_register(NULL, &pll_clk->hw);
+> +       ret =3D devm_clk_hw_register(dev, &pll_clk->hw);
+> +       if (ret)
+> +               return NULL;
 
-> > --- /dev/null
-> > +++ b/include/dt-bindings/clock/renesas,r9a09g057-cpg.h
-> > @@ -0,0 +1,21 @@
-> > +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > + *
-> > + * Copyright (C) 2024 Renesas Electronics Corp.
-> > + */
-> > +#ifndef __DT_BINDINGS_CLOCK_R9A09G057_CPG_H__
-> > +#define __DT_BINDINGS_CLOCK_R9A09G057_CPG_H__
->
-> __DT_BINDINGS_CLOCK_RENESAS_R9A09G057_CPG_H__
->
-> [...]
->
-> > +#endif /* __DT_BINDINGS_CLOCK_R9A09G057_CPG_H__ */
->
-> __DT_BINDINGS_CLOCK_RENESAS_R9A09G057_CPG_H__
->
-Oops, I missed updating it after the file name change.
+rzg2l_cpg_pll_clk_register() can return an ERR_PTR, so please
+propagate the error code.
 
-Cheers,
-Prabhakar
+> +
+> +       return pll_clk->hw.clk;
+>  }
+
+The rest LGTM.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
