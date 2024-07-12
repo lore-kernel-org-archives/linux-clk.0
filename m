@@ -1,183 +1,217 @@
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0099172BAC
-	for <linux-clk@vger.kernel.org>; Fri, 12 Jul 2024 14:54:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E2A91094E;
+	Fri, 12 Jul 2024 15:14:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720796096; cv=none; b=Pl+2/nTIU9jE+KW58uCY9SQ89bWkXF+Idc8+vRrNedDW8Q0DelMcHgwfGLTc2ytOYhNn+ijYEjphm8oaaG+MqaaDjlLivDbgjPHd8PZTjruj/brA9Q5kFU7JX6sav3OVtvsUfExhV7y3y0SE39rks3jLDpmaH3/Ara7DZoNNUEQ=
+	t=1720797284; cv=none; b=eDFjBmWHVVq1QvM8K++zSW5i3XuYhr1W++TxSdQB80E8SF57VS+1SuILcevxMZ1WhlGQbPyk2G+wAG37Ons3GTvZvmzPFacezmakDx6Pr3nDFfUOq2hVTeQAtgj7zqM2pgtjRT6Ksfzb6pQMt8teWxDK1k7X65XlxsoBl9wYWfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720796096; c=relaxed/simple;
-	bh=WDglpmo/fuT9b60jkJXCilxw4M6p9jGli+nqE9TxKz0=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=LoCUAbMd742xr/H1EJtei+6dBbx6aaeZqrZvCMD8/5hfphL4vfA7wSVqPoKBkS9Z9u6iX5BjyNWqyPzou54mrlEkHFqyxu76AgQBjscHfpqpZYIXsL+jDX4uJerahhgQjDcFhEb6fv0UgPXT032fA9SS3MqZL9cOFC+qpnpI4ds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dwe/ODxS; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1720797284; c=relaxed/simple;
+	bh=BuRuxbp1j4lIF3rtudJiZ1PZKRLDEWAvMXu1lcTHuBY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nfa9nHjjE/jgsyt4rEiXjAhzaJe8UpZcTBsVyk7LpwF0/DZmoqBNZif/BJzS0m52fwoGpTjJ4Q5klzHrm1JVJW8JDtnO5rG3feMopxo79ccluwMCcQImgRR/u8w58UvBm0Es96OqitwMzkkK8uj2kmJtetQqYbwbUTLPu9DyKN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CxjAhFr7; arc=none smtp.client-ip=209.85.221.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dwe/ODxS"
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2eec7e43229so24061001fa.3
-        for <linux-clk@vger.kernel.org>; Fri, 12 Jul 2024 07:54:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CxjAhFr7"
+Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-4f2fcaa2a3aso732236e0c.0;
+        Fri, 12 Jul 2024 08:14:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720796093; x=1721400893; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=WDglpmo/fuT9b60jkJXCilxw4M6p9jGli+nqE9TxKz0=;
-        b=dwe/ODxSoHzs57C2ar+EytAtmV/DwRbrKTn3lVdr1EXQSqbLHVGI6ihfqChwyAPE2b
-         nKVGgmwIebc1dz2nimDeb9TbwGEyq4bMdFUbZmkK6kZYoUJL5mckrE/7U5wcLzQqe9/o
-         BOe5dOSE8/Xn5w0Bt+PHMF0ZguC8sQJ/XoItHZV9+x3+pzuxPZhVOsy1vjJbiV/ZtCTU
-         eHf6ZIyWCaY+hiyCp3MB7M0Y6AJVtFkyLnrY1fqmsD7v2jYlJ43yfZrXopmzZc2Dgw+p
-         +3rrm4hgxSj1WC5oyo7yoi2sCRUktEWyp3zPDlL22MYYBzYzuED0G3rdbwVmdUmGsU2U
-         6azw==
+        d=gmail.com; s=20230601; t=1720797281; x=1721402081; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CEBYznYNSb51V+MSGkUWIxYPLdRWDRMJsAQfhGOICts=;
+        b=CxjAhFr7PHz+dAxrdl77F9KQr+fj1OJd+EAkiyuM+ad9L3buXiZWgUhjX04ZzB3HzY
+         0dIWX9Brby2g6C9+jikkohQAJ6BX/jMe1nz9Umw0YMKD7x0pYx8GnX3Y3tc0c/5qsqn6
+         EEwpMCfj2fJvpAF3ojE9L/1b+rCSDbFvA8WClWUykl4CEcqUuQXBpbQnnW5hzCg8xmKf
+         Ahi/Yroykjpn0Y9oK65ZicE9gwGqR0t/cROeHRToKh9WJpUaTfku06mHwPaLr+OZRFtO
+         EPy3Woum9H7GgrYxHv7flZg12NdGpQVA0BkW4ZjvF3WQd8Zj7mmRepiE3lvH/NBzKfMg
+         AkTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720796093; x=1721400893;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WDglpmo/fuT9b60jkJXCilxw4M6p9jGli+nqE9TxKz0=;
-        b=Y6l4oo+/VbCMH/NfVkrPQDMJrp+jAd5BpD5rCvXrKpsK9ZA8T9i0/gm1FBqDcEwB21
-         UCX2ZPHsY3mAevjv+MjzP/FPvKArNXNTqXYeKyiOppQl5y57NWoZYTu7x3bywk6ujean
-         aPTYgwVyhqBiqOesanD/ssF0GmTE9iLm1mcSVKbWcx78MesB8MzQ6b5FHnzdpfibm5WF
-         LTmNDInGttBicANyuJv0sbZR7bKCn6NWuktJeq0JcXWcKcB8dZ0yOpASiE4YbrJiP1LY
-         1LQx4PooFWLX0iOf4g0C423/7To7DTVPjo+hA5MeB1Mj3HULGNRIVFiynaj6bYHSPTc7
-         lc3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXIy/vVhB2tB0v7/Ew1IbXx0/6cGX13qc5Qn8/RE/ql3fJc/tLMQXgiuLVJjj3dUnC9Sf6ojFcM+Wm/8hVn7K4OOKHRUWWAlyfB
-X-Gm-Message-State: AOJu0Yx9Gchfl27vWmxtCTJxgdNI442cC3AA2a9+JqkWdRuoiRLoKNTR
-	mwwbbNw+nW9CV8dYtJBmyjQly12NxIu63vLhSw1XgnXXgBPRNNalNLWVPUiVc1Q=
-X-Google-Smtp-Source: AGHT+IHvPxH1nBAWvxsjHSCNyZ9t61rhyU1cxyB6YJQEzy0OWWC+/dfZi6vmuDEorYBOF0SyCrzU7w==
-X-Received: by 2002:a2e:3c16:0:b0:2ec:4d48:75f3 with SMTP id 38308e7fff4ca-2eeb3198617mr74112911fa.45.1720796091727;
-        Fri, 12 Jul 2024 07:54:51 -0700 (PDT)
-Received: from draszik.lan ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cde8491dsm10421734f8f.45.2024.07.12.07.54.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jul 2024 07:54:51 -0700 (PDT)
-Message-ID: <58e355454db3670157645c0b6e727d8058ef0324.camel@linaro.org>
-Subject: Re: [PATCH v3 1/2] dt-bindings: serial: samsung: fix maxItems for
- gs101 & document earlycon requirements
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
- <jirislaby@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi
- <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Michael
- Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>, Sam
- Protsenko <semen.protsenko@linaro.org>, Tudor Ambarus
- <tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>, 
- kernel-team@android.com, linux-kernel@vger.kernel.org, 
- linux-serial@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-clk@vger.kernel.org
-Date: Fri, 12 Jul 2024 15:54:50 +0100
-In-Reply-To: <20240711212359.GA3023490-robh@kernel.org>
-References: 
-	<20240710-gs101-non-essential-clocks-2-v3-0-5dcb8d040d1c@linaro.org>
-	 <20240710-gs101-non-essential-clocks-2-v3-1-5dcb8d040d1c@linaro.org>
-	 <CAL_JsqLsZAEx-c_12RPcR+HCjPcA_d12oKgZ7frX2Wo47sGTnA@mail.gmail.com>
-	 <e2f4a37e7c31d26449125a6265239c88162a1085.camel@linaro.org>
-	 <20240711212359.GA3023490-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3-1 
+        d=1e100.net; s=20230601; t=1720797281; x=1721402081;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CEBYznYNSb51V+MSGkUWIxYPLdRWDRMJsAQfhGOICts=;
+        b=MAHEAaYvb7IRTEMczEd9RxvCye+TzNuCnaIrpwNBOL6d8LVUlIFFspALNCs8cC1pmo
+         PHEvcxhgSjMz0SP6ZyduIUQIp4nHLbtk/IOfp4LHF4v576zP4mkYOagsoRybAuEQJyWk
+         /VF/2pLpBNicKiwZSfZX5KP07OZMlLrE8SOle7zYhPFXWRBmwtQJv/E0e7RLLjLyWpgl
+         kwhXnMSyQ+p6q7tUxS9S5px++T69koo3TeRN0wyVefinVICe3P5T+lUHvWuS1PAgj+Cm
+         CR2tUUWde6JcLh7CY+DH6U730hSHLZqpR8gFPYcZoUPHIvCAfTE5ygAvN2XBdbCYEKBa
+         zO8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWwYkt/4iRJslJOKU9WIJsEXB9doyCHw8SlbfWuxT+HQkDS4zLTegrGQQD34gymJ8YDXLsKi4E2ABsvg9YqAPwsW5oATYqlJU9wi4pGCmMJzUvgaCbvY8teEdHh1aQvp7IAJQ1xC9UMmU7sFblU9/Qu0+lXHnoUL6+TgUCUS5/q3x7kZ9wcQw+vjvIyqn6RoeijGgHi+8IYmfE0Gv0WP9RTTxOBlrHR
+X-Gm-Message-State: AOJu0YxAgwUcEdBAxHAH8FrfvX3yrx5KY+BURyQiPEPt5FN1pWDFTu0K
+	10t2az+sAjVID7FOxJuUikrDaGMme3RRYaNJTCxoc535t1x78usS74P4rYGGLLqwUK7q9pCAaSv
+	zvyO/lzYbpCsEW8H60nne2tR+jNA=
+X-Google-Smtp-Source: AGHT+IHQ6IpoHvKkeEH62ea/1TZE+/IXyIUpQ/aXUL1PycE6cUD6mYEhLLA4N/tmpGBWaQwn7Ug6D9KxPBXweK2A13I=
+X-Received: by 2002:a05:6122:2026:b0:4ef:630f:d579 with SMTP id
+ 71dfb90a1353d-4f33f29a48bmr14472986e0c.8.1720797279917; Fri, 12 Jul 2024
+ 08:14:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20240627161315.98143-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240627161315.98143-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdVLSpaUtdXFv3VXFc5G61dmRX2C1iW9C+km23g6EgZJOg@mail.gmail.com>
+In-Reply-To: <CAMuHMdVLSpaUtdXFv3VXFc5G61dmRX2C1iW9C+km23g6EgZJOg@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Fri, 12 Jul 2024 16:13:10 +0100
+Message-ID: <CA+V-a8vABF6vg+J7DAGzgnw8612oe6VfJkc5y-krySvnpAnPkQ@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] clk: renesas: Add family-specific clock driver for RZ/V2H(P)
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Magnus Damm <magnus.damm@gmail.com>, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Rob,
+Hi Geert,
 
-On Thu, 2024-07-11 at 15:23 -0600, Rob Herring wrote:
-> On Thu, Jul 11, 2024 at 05:09:50PM +0100, Andr=C3=A9 Draszik wrote:
-> > Hi Rob,
-> >=20
-> > On Thu, 2024-07-11 at 09:51 -0600, Rob Herring wrote:
-> > > On Wed, Jul 10, 2024 at 7:29=E2=80=AFAM Andr=C3=A9 Draszik <andre.dra=
-szik@linaro.org> wrote:
-> > > > --- a/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-> > > > +++ b/Documentation/devicetree/bindings/serial/samsung_uart.yaml
-> > > > @@ -145,6 +145,20 @@ allOf:
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - samsung,uart-fif=
-osize
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 properties:
-> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 reg-io-width: fals=
-e
-> > >=20
-> > > blank line between properties
-> >=20
-> > Do mean before clocks: below and before clock-names: below?=20
->=20
-> Yes.
->=20
-> > We don't do that normally,
-> > at least none of the bindings I looked at do that. Or did I misundersta=
-nd?
->=20
-> That style is pretty universal. If in doubt, look at example-schema.yaml=
-=20
-> for best practices. The exception is only for cases like this:
->=20
-> =C2=A0 foo: true
-> =C2=A0 bar: true
+Thank you for the review.
 
-example-schema.yaml doesn't have an example for that, so I suspect that's w=
-hy
-many (Samsung?) bindings ended up without the blank line. I have fixed it f=
-or
-this schema in the next version in
-https://lore.kernel.org/all/20240712-gs101-uart-binding-v4-1-24e9f8d4bdcb@l=
-inaro.org/
+On Fri, Jul 12, 2024 at 12:59=E2=80=AFPM Geert Uytterhoeven
+<geert@linux-m68k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Thu, Jun 27, 2024 at 6:14=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail=
+.com> wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Add family-specific clock driver for RZ/V2H(P) SoCs.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> > v2->v3
+> > - Dropped num_hw_resets from struct rzv2h_cpg_priv
+> > - Dropped range_check for module clocks
+> > - Made mon_index to s8 instead of u8 in struct rzv2h_mod_clk
+> > - Added support for critical module clocks with DEF_MOD_CRITICAL
+> > - Added check for mon_index in rzv2h_mod_clock_endisable and
+> >   rzv2h_mod_clock_is_enabled()
+>
+> Thanks for the update!
+>
+> > --- /dev/null
+> > +++ b/drivers/clk/renesas/rzv2h-cpg.c
+>
+> > +static struct clk * __init
+> > +rzv2h_cpg_pll_clk_register(const struct cpg_core_clk *core,
+> > +                          struct rzv2h_cpg_priv *priv,
+> > +                          const struct clk_ops *ops)
+> > +{
+> > +       void __iomem *base =3D priv->base;
+> > +       struct clk **clks =3D priv->clks;
+> > +       struct device *dev =3D priv->dev;
+> > +       struct clk_init_data init;
+> > +       const struct clk *parent;
+> > +       const char *parent_name;
+> > +       struct pll_clk *pll_clk;
+> > +
+> > +       parent =3D clks[core->parent & 0xffff];
+>
+> No need to mask with 0xffff, as nothing is ever stored in the high bits.
+>
+OK, I will drop it.
 
-> > >=20
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 maxItems: 2
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 clock-names:
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 items:
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- - const: uart
-> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
- - const: clk_uart_baud0
-> > >=20
-> > > Which clock is pclk and ipclk?
-> >=20
-> > uart is pclk, clk_uart_baud0 is ipclk.
-> >=20
-> > > 'baud' would be sufficient for the
-> > > name. 'clk_' and 'uart' are redundant because it's all clocks and the=
-y
-> > > are all for the uart.
-> >=20
-> > TBH, this patch is just following the existing style & names as already=
- exist for
-> > various other SoCs in this same file. Furthermore, up until this patch =
-the default
-> > from this file applies, which is:
-> >=20
-> > =C2=A0 clock-names:
-> > =C2=A0=C2=A0=C2=A0 description: N =3D 0 is allowed for SoCs without int=
-ernal baud clock mux.
-> > =C2=A0=C2=A0=C2=A0 minItems: 2
-> > =C2=A0=C2=A0=C2=A0 items:
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: uart
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - pattern: '^clk_uart_baud[0-3]$'
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - pattern: '^clk_uart_baud[0-3]$'
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - pattern: '^clk_uart_baud[0-3]$'
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - pattern: '^clk_uart_baud[0-3]$'
->=20
-> Then don't duplicate it. Ideally, the names are defined at the top level=
-=20
-> and the conditional schema just limits the number of clocks, and this is=
-=20
-> an example of why we want it that way. I have no context to see if this=
-=20
-> is consistent or not.
+> > +static void __init
+> > +rzv2h_cpg_register_mod_clk(const struct rzv2h_mod_clk *mod,
+> > +                          struct rzv2h_cpg_priv *priv)
+> > +{
+> > +       struct mod_clock *clock =3D NULL;
+> > +       struct device *dev =3D priv->dev;
+> > +       struct clk_init_data init;
+> > +       unsigned int id =3D mod->id;
+>
+> This is the sole user of mod->id, which can be calculated easily from
+> mod->on_index and mod->on_bit.
+>
+Agreed, I will drop id.
 
-I've fixed it in https://lore.kernel.org/all/20240712-gs101-uart-binding-v4=
--1-24e9f8d4bdcb@linaro.org/
+> > --- /dev/null
+> > +++ b/drivers/clk/renesas/rzv2h-cpg.h
+>
+> > +/**
+> > + * struct rzv2h_mod_clk - Module Clocks definitions
+> > + *
+> > + * @name: handle between common and hardware-specific interfaces
+> > + * @parent: id of parent clock
+> > + * @id: clock index in array containing all Core and Module Clocks
+> > + * @critical: flag to indicate the clock is critical
+> > + * @on_index: control register index
+> > + * @on_bit: ON bit
+> > + * @mon_index: monitor register index
+> > + * @mon_bit: monitor bit
+> > + */
+> > +struct rzv2h_mod_clk {
+> > +       const char *name;
+> > +       unsigned int parent;
+> > +       unsigned int id;
+>
+> No need to store the id, as it can be calculated when needed.
+>
+OK.
 
-Hopefully you'll that's more acceptable :-)
+> > +       bool critical;
+> > +       u8 on_index;
+> > +       u8 on_bit;
+> > +       s8 mon_index;
+> > +       u8 mon_bit;
+>
+> That leaves us with 1 64-bit pointer, 1 32-bit integer, and 5 bytes.
+> Using bitfields for the latter is complicated due to the mix of signed
+> and unsigned values.
+> However, parent can be reduced to u16, shaving off one 64-bit word
+> from each entry.
+>
+Agreed, I will update parent to u16.
+
+> > +};
+>
+> > +/**
+> > + * struct rzv2h_reset - Reset definitions
+> > + *
+> > + * @reset_index: reset register index
+> > + * @reset_bit: reset bit
+> > + * @mon_index: monitor register index
+> > + * @mon_bit: monitor bit
+> > + */
+> > +struct rzv2h_reset {
+> > +       u8 reset_index;
+> > +       u8 reset_bit;
+> > +       u8 mon_index;
+> > +       u8 mon_bit;
+> > +};
+> > +
+> > +#define RST_ID(x, y)   ((((x) * 16)) + (y))
+> > +
+> > +#define DEF_RST_BASE(_id, _resindex, _resbit, _monindex, _monbit)     =
+ \
+> > +       [_id] =3D { \
+>
+> Indexing by _id means the reset array will be very sparse.  E.g. the
+> innocent-looking r9a09g057_resets[] with only a single entry takes
+> 600 bytes.
+>
+> If you do need the full array for indexing, please allocate and
+> populate it at runtime.
+>
+OK, I will use the radix tree for resets (is that OK)?
+
+> As a bonus, you would no longer need rzv2h_cpg_info.info, and
+> r9a09g057_resets[] and r9a09g057_cpg_info[] can become __initconst.
+>
+Agreed (and also r9a09g057_mod_clks).
 
 Cheers,
-Andre'
-
+Prabhakar
