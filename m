@@ -1,144 +1,164 @@
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E492638DCC;
-	Fri, 12 Jul 2024 12:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 750FB16D9BE
+	for <linux-clk@vger.kernel.org>; Fri, 12 Jul 2024 12:22:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720785648; cv=none; b=lwlm2R9GsYe54DdFVuVYyMg8UQqQepZvX9GZKAQYhcDyNUbkdAFwLj7qFXBl3WFTdzK2RfvZNeRwVgvK7JuZUSZTS8G9Ml/vSpyttBJgBPEj/W0K11YWYiuakh5I4H7oFDcoUig3WbV1iHUT7hGyscoUHzTyHPNmpwgkWqLGVrc=
+	t=1720786954; cv=none; b=cvySh8XBlgSufYgepl0XWqWMfdO43gTHNoEbytVEz64C6AOH5G74dAa7bFURnmAGQlFhGmFVNgzFkhe8pQMRZ7XqtdjVJz2om8ayvIS2NA0o8ND/sLbqKOt2POFtRve9PohTGBO0lSH1Wn3SuVmqs8oBu7fdbFf/Z+8q0DMLc6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720785648; c=relaxed/simple;
-	bh=In64+BK1f95T8kQ3bF8ZWFRLmfrggmOQVRLQ1JlCY38=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dzV99z3ltveFtgnywDk5eb7aU3+zFwbGWwQavIeucP2qJf9JuPYBuo1lXF5/PEx464nhml1PzGvscxfwPJWcYL+fExcUE9IN2M1ZcEgTJ3rqesoryW/CHC/8s6dEeCCj3aIaT8puhKYwFHo4I2fPcJXJkr7drJhBhh2pmyAwgcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-64b417e1511so18983707b3.3;
-        Fri, 12 Jul 2024 05:00:46 -0700 (PDT)
+	s=arc-20240116; t=1720786954; c=relaxed/simple;
+	bh=ndh8+cmiTmrlJG6pBn2MdCEewaZhfKn+jDdb2M86r7o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tXYFgHiRDACKnmDoeRSn7aYdQkMVQ011H1P8UQR1EYxPc2nBJATQzPWI17xfSe00vaRcuBnQ+FSXyEHqDC0m1gkzK8aC/VxPjvphQRul2YK3xOEEvshp+NqKn+wbObpOj/x7jZqmdQa6kPs4YYNv5vB0cZa4BSOpLJd1N8z7rHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JHcOaI9u; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JHcOaI9u"
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a77e7420697so280118366b.1
+        for <linux-clk@vger.kernel.org>; Fri, 12 Jul 2024 05:22:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720786951; x=1721391751; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=PsV8xHFAWYzRcbpc0Ef1sOYCY8HDad4uEnIegVbVHc8=;
+        b=JHcOaI9uk6WqyvUslKrGuXkXC/iNH2/ETsks2fKiWCPRRoW73juyKnjQ+xD1maC8Y+
+         fvLTW9NrOlXhn9c7maLDyw9DG8VmGiHOqjW9U4LnUC+kRRAcQpNmqRxGNDk5R8HGBX2g
+         KltlJvtSUA3lRaTOaOVK0TA6ILuIloNmYtcZ0l8OyELVnMujpoPjXUq31XRg8XAlEoGU
+         o4S+7TKpqVGx1PnumI/QAAVjeM2QRGkWyfdcmclgwDtuE4GiG/8rZYth2ur3hzHXMRtc
+         ziHnMJ3mUB4ZTu7xyUgMhrMeklasUgbvqcgFCln1JMuMiwwHNcpcsGKWZBIySfir8zgs
+         NcKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720785645; x=1721390445;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=p4Wd774CAaehOrbdx8VCAr7EdqZrXN0YFUIfMg8Pkdk=;
-        b=YMPu2q3I8B/RvUCL82jHV6MgX1EAVwaVCdNa2K6l4YaaX9xFtuHnVaf34ZftVWxb28
-         PFtHvBM1/s635gDO4tKgY1HbSjxQUYjg5kr0X5Zj1+Xi69MzWAYvcDAdMkb7TWHDq+5N
-         519DKDX0/Miz+rLxmSJUlCCLJWA18+ESal7OsuYTHElEPCZMGn8GqXTWe31d/MWdHZyJ
-         B/tOUH33xpEJDjPEZWDuiBxjgTEHq774xWU0RKUN/EN7jC/d9LnGoGH1G2otKc4LrXf1
-         yRoc+P5/gEWs5Mg+pEKu/s7UyjP7kEAH8ICxrELWDHhFTq9mABy2EwNiwpMPZ49n6txe
-         j8FA==
-X-Forwarded-Encrypted: i=1; AJvYcCVHXwey8llu/WOCzkI7DDwSUkwbNMD+eAy3gKbHH5CTTevDI/D2SeOLOG9DWIdJMVPm2iB+IPxiNxiHJ3/egkfA1o4WLuN4lKWkQpJBHmg1MBRlgKyDnai3ikKWtlC0ktth95tXcgCehDV52vFSdvPZvw14QczWcs8SK/dmZ5/xlgJC4sC0Tue4sjnDG8l1003zYR+D9OTi/C5XHwe7vqUxS+LgBPb7
-X-Gm-Message-State: AOJu0YzicLG6lzta/NaskiCTltIITnK2vYFE8q04Pj+sWkfMesZnz+bp
-	g1c6aEmELIN/8psRn/WTZFAKMRS16Lxeye49eLsqmEvTjMVAisAPBANcuMZA
-X-Google-Smtp-Source: AGHT+IHhpLR3kvHemArCQTx3acNRJmito+FVEQ8fbnMfIQfCV8IxM0kzewzCcqSH75hJXTSijSm5pg==
-X-Received: by 2002:a05:690c:6c84:b0:651:79ee:d14b with SMTP id 00721157ae682-658ef24bc7fmr133580527b3.29.1720785615423;
-        Fri, 12 Jul 2024 05:00:15 -0700 (PDT)
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com. [209.85.128.171])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-658e6ad81f4sm14722237b3.122.2024.07.12.05.00.14
+        d=1e100.net; s=20230601; t=1720786951; x=1721391751;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PsV8xHFAWYzRcbpc0Ef1sOYCY8HDad4uEnIegVbVHc8=;
+        b=vP14rMJRo4zQb/qVCKCjCNBWWEc3iaKV6fmdfRKJraE1npuklD6uEMoSLLhTIBy675
+         dF6/OZNcR1WSOdgzHPRnnhW65/xfEKNysNjfGOQYxxh7tulNdyT/4Emy/NDgmycl4/W7
+         /GKtJ4KUL+jDgx3cOnRVltNlhxcpc1+y7hnkus2Qen7j3sEh5ciw06u9+sGAry+AHyWN
+         GRuLZ0jRcv36rBKjrA3Zl+xwvbmJeBGjlX1vi1L+sC/udpCeDGEHs6Bsxgwx6dafcwIO
+         qUnecvKGFGaGQoFsFNal/vBFeeU0ee7RuAo4Dxnqbl2WaDP5taS8kYVV//cV+HZCTFEQ
+         /vEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUU1HLGf6vad7UkcH/fGsDsQUMcNh9zca1aGWt8u6p6dT7DsLE689GBKMTuaxs2hVTXBGSSL/5/DMEUp1n7r3pSolLXY6kbFxYe
+X-Gm-Message-State: AOJu0YzpGsSm8wx9OV0Opc2uwtp0TKTI9Cwz6j86mQS8Qw55HgB8QX50
+	Y+ohyG5la57UAN8trWnFtMycLJF+b/R7AtTrfNzWE8OqUoX6Y9S/gvmCNkhuQEA=
+X-Google-Smtp-Source: AGHT+IFEW92C6jkuYK4GmK7kAHGgYMU+sl8qqPgOsPMuKMLNFoXSimzJQApUK+Hemh/ZiAiRy8Ft/A==
+X-Received: by 2002:a17:906:f592:b0:a79:7dd2:5b99 with SMTP id a640c23a62f3a-a797dd25c52mr633458466b.28.1720786950649;
+        Fri, 12 Jul 2024 05:22:30 -0700 (PDT)
+Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a855e24sm346648466b.177.2024.07.12.05.22.28
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Jul 2024 05:00:14 -0700 (PDT)
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-65240d22f7cso17599367b3.0;
-        Fri, 12 Jul 2024 05:00:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXvkrjfV0d1QpRa8i2d9mJkRXfcMiuWeOfzbYNJOstwNv8LEg2EnSNLv/5qC8d5A5c2TfREJl3DXvwh1+BBQDkGnFQD5N8yuR7yOCyVxZRaBbY6vLoESEhKaeqENeUJXQ/BSD2NO+TKj5eNtlMGR+I77n5T0wwSZ7k/zan3tke+CiTz+zu9+eBfwY5tUP32735fvzFQ1iz7xlcN69v1Bpusi79iz9gl
-X-Received: by 2002:a81:84d0:0:b0:64a:3d7c:2782 with SMTP id
- 00721157ae682-658f02f4b2dmr123670157b3.41.1720785614119; Fri, 12 Jul 2024
- 05:00:14 -0700 (PDT)
+        Fri, 12 Jul 2024 05:22:30 -0700 (PDT)
+Message-ID: <8f7cdb31-c50d-4690-b878-518bad545612@linaro.org>
+Date: Fri, 12 Jul 2024 14:22:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240627161315.98143-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240627161315.98143-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240627161315.98143-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 12 Jul 2024 14:00:02 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdV5Pyy=5-N9nUZZSOnnpGf2Kp3miDMM5H3b+ah2QUUMtA@mail.gmail.com>
-Message-ID: <CAMuHMdV5Pyy=5-N9nUZZSOnnpGf2Kp3miDMM5H3b+ah2QUUMtA@mail.gmail.com>
-Subject: Re: [PATCH v3 3/3] clk: renesas: Add RZ/V2H(P) CPG driver
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Magnus Damm <magnus.damm@gmail.com>, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V4 8/8] arm64: dts: qcom: sm4450: add camera, display and
+ gpu clock controller
+To: Ajit Pandey <quic_ajipan@quicinc.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Vinod Koul <vkoul@kernel.org>,
+ Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Taniya Das <quic_tdas@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>,
+ Imran Shaik <quic_imrashai@quicinc.com>,
+ Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+References: <20240611133752.2192401-1-quic_ajipan@quicinc.com>
+ <20240611133752.2192401-9-quic_ajipan@quicinc.com>
+ <76f5e3c7-a90b-42d2-8169-e5e2211a14a1@linaro.org>
+ <ba7d12d3-c582-45ec-beed-e81182fe3252@quicinc.com>
+ <95a835e2-9fd9-467b-bd0a-8eeb80ddf678@linaro.org>
+ <9c3de930-47b7-45a9-bf7e-6e506ea2accc@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <9c3de930-47b7-45a9-bf7e-6e506ea2accc@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Prabhakar,
+On 12.07.2024 11:53 AM, Ajit Pandey wrote:
+> 
+> 
+> On 7/11/2024 3:25 PM, Konrad Dybcio wrote:
+>> On 3.07.2024 11:16 AM, Ajit Pandey wrote:
+>>>
+>>>
+>>> On 6/13/2024 1:11 PM, Konrad Dybcio wrote:
+>>>>
+>>>>
+>>>> On 6/11/24 15:37, Ajit Pandey wrote:
+>>>>> Add device node for camera, display and graphics clock controller on
+>>>>> Qualcomm SM4450 platform.
+>>>>>
+>>>>> Signed-off-by: Ajit Pandey <quic_ajipan@quicinc.com>
+>>>>> ---
+>>>>
+>>>> None of these nodes reference a power domain (which would usually be
+>>>> CX/MX/MMCX). This way, the RPMhPDs will never be scaled.
+>>>>
+>>>> The current upstream implementation only allows one power domain to be
+>>>> scaled, but that's better than none (see other DTs for recent SoCs).
+>>>>
+>>>> Konrad
+>>>
+>>> SM4450 doesn't support MMCX and CX/MX domains will remain active so
+>>> power-domains property is actually not required for SM4450 clock nodes.
+>>
+>> It's not only about them being active.. some PLLs require e.g. MX to be
+>> at a certain level, or the system will be unstable
+>>
+>> Konrad
+> 
+> With active I mean CX/MX rails will be default running at minimum level required for clock controllers. Adding power-domains property for CX/MX rails is like a redundant code as that will also scale such rails at default specified minimum level only. Also we hadn't added such property for other targets DT nodes to scale up CX/MX at minimum level.
 
-On Thu, Jun 27, 2024 at 6:14=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
-om> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Add RZ/V2H(P) CPG driver.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> ---
-> v2->v3
-> - Added CLK_PLLDTY
-> - Added core clocks sys_0_pclk and iotop_0_shclk
-> - Dropped r9a09g057_crit_mod_clks
+What I mean here is that, the minimum level may not be enough. In such case
+you would also add a required-opps = <&handle_to_rpmhpd_opp_level>
 
-Thanks for the update!
-
-> --- /dev/null
-> +++ b/drivers/clk/renesas/r9a09g057-cpg.c
-
-> +static const struct cpg_core_clk r9a09g057_core_clks[] __initconst =3D {
-> +       /* External Clock Inputs */
-> +       DEF_INPUT("audio_extal", CLK_AUDIO_EXTAL),
-> +       DEF_INPUT("rtxin", CLK_RTXIN),
-> +       DEF_INPUT("qextal", CLK_QEXTAL),
-> +
-> +       /* PLL Clocks */
-> +       DEF_FIXED(".pllcm33", CLK_PLLCM33, CLK_QEXTAL, 200, 3),
-> +       DEF_FIXED(".plldty", CLK_PLLDTY, CLK_QEXTAL, 200, 3),
-> +       DEF_PLL(".pllca55", CLK_PLLCA55, CLK_QEXTAL, PLL_CONF(0x64)),
-> +
-> +       /* Internal Core Clocks */
-> +       DEF_FIXED(".pllcm33_div16", CLK_PLLCM33_DIV16, CLK_PLLCM33, 1, 16=
-),
-> +
-
-Missing comment "/* Core Clocks */"?
-
-> +       DEF_FIXED("sys_0_pclk", R9A09G057_SYS_0_PCLK, CLK_QEXTAL, 1, 1),
-> +       DEF_FIXED("iotop_0_shclk", R9A09G057_IOTOP_0_SHCLK, CLK_PLLCM33_D=
-IV16, 1, 1),
-> +};
-> +
-> +static const struct rzv2h_mod_clk r9a09g057_mod_clks[] =3D {
-
-__initconst
-
-> +       DEF_MOD("scif_0_clk_pck",               CLK_PLLCM33_DIV16, 8, 15,=
- 4, 15),
-> +};
-> +
-> +static const struct rzv2h_reset r9a09g057_resets[] =3D {
-> +       DEF_RST(9, 5, 4, 6),            /* SCIF_0_RST_SYSTEM_N */
-> +};
->
-> +const struct rzv2h_cpg_info r9a09g057_cpg_info =3D {
-
-With my suggested changes to [2/3], these two can be __initconst, too.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Konrad
