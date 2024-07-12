@@ -1,155 +1,123 @@
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D8BD17085D;
-	Fri, 12 Jul 2024 15:29:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B1B916FF45
+	for <linux-clk@vger.kernel.org>; Fri, 12 Jul 2024 17:09:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720798181; cv=none; b=ZG2UOqCOp+2pAyGEBGrCt2bm8hqbrICEFBmwRnEo+CzdBlNKDq+JobroMmenfPwlgD64QM2WUupDzJd791MqOqemaJioUaNjcw7RQDu2XJyi4DXvhIXdeLyTLNX5IjLX04/cWcmg6V70grp2G+6HJK5KZoDr0cLjpFVSzWAUtY8=
+	t=1720804188; cv=none; b=discxIuax78gp3D9CYTdNwPhg9xLvLTLFTuqWkZJIC6povMIi43CDhqUib+TPjYymNLhkrRp0u0Jxx7OqAMb2uNsMj8YAsoeLDqbnqXMd8LhJW0w7of0ljPZLqVB2hzJ9AVKJrYO9fNb1/to0k6g7qtEj8BLta5/Fu1aq1Vbwtc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720798181; c=relaxed/simple;
-	bh=+IMZBOwNJ5AwNiX0hjiRah2gQJchIdnWIXPtSSevNfU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gDNx5UtgIzDxKaCWkeYPCigEpjqsD81yX6r8CLDqHOCVpmL+jys03WnBqT3LCOTcp/sgthkCF3TzgNbkjRwisPyZmccKdg4CKyVetln+hM2rKqDg2pO4N7C6ZjjDjKTzciLlcLpaOi6TM/mpBbdo5PuNIL0Ks7piDqjmG/wRlxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Gs/ng3Sm; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1720804188; c=relaxed/simple;
+	bh=IvYiOk43NNLFvoIso1SMpTkb2IyLTMaSDdcgZBde4sM=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=rXYS7XHGyFenJsRSGmR6dFtApxJxppCjmMk/F0OhPAkL/cIfQ0Jl8RQ+WABRkkYHzbFRaSKB0TwpI4gGqzPeTxxwTlrFA69yFVTei1gbZuuNrbw7Rdli7cQrJe7v/pdq7Tm3DdfoWH02oO/siY9h/hd7WJaqYELCpodJ0/m0J0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IB5B9ht1; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gs/ng3Sm"
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-447e1eb0117so11454851cf.3;
-        Fri, 12 Jul 2024 08:29:39 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IB5B9ht1"
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a7523f0870cso261740266b.3
+        for <linux-clk@vger.kernel.org>; Fri, 12 Jul 2024 10:09:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1720798179; x=1721402979; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ve3CcOjeMtMU8bzJnjUvgQ5PtDwAZqsbHa46kIGMMDU=;
-        b=Gs/ng3SmCWOHPfHf9Kx4U32hL24IXUw9X8PM/AxENhOrwkybRcT8uAb2L9aXZR2dAi
-         pS0j1gm8oE0wy61CdzgIbufthnb+8iQFd3BhSgxHSuoC1Dm5vZz4u0BIirfN/y63Zk9t
-         udEXZc311R3vXqNWd2lwMaH4c0kkdXq8FhiImutgrvp1EmIIddVeJ53+WD2zUb3hswgR
-         kGbXbi1GGfvIKxTMWiEXwzusvAJYSzMAMT0bI5t9TeHCWjX75l+u3xJRVsXY5D1YJ9jo
-         VGuH2uwJM8VCUEAMORHCEjl5GL0kHcPym4SfdLVIk+Q1T5UmN8Wv0U9SXe6ZWt7qfyva
-         eT5A==
+        d=linaro.org; s=google; t=1720804184; x=1721408984; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fnhm523hS4IDFhkj8U4RWRolcD19Piba7MrN9aiVgQE=;
+        b=IB5B9ht1UpjPgaKNp3hX4EaNj7ilkCF7om9IWRRprM5l97yh1/wzDcybyGnY+/TQcj
+         i1Xeygq7aP6FHHfYTh+ohhvEeOlqU/PgcvIL0px24xIvmQiW3YwNGdfxFdZexld85Yf5
+         ATsWIkksb1zfsFyyRTTVCUHMxvlhw6Wn/K0fQaLj+jhMsuhGPc0rH7G4VRjwCTrSCmeT
+         6n3izTnz6zA46Leeeg6JKYEL42IJHFz7K8090HdhU/OvMGBrazWiLQRhlAeh4SfSsIV4
+         LjMCguGW8Z+8lVsfYK5MLhv1bWszm0tbLxzvg5ZGm4in5NCkE1BAn0fl0gfxGF7kaW6D
+         eKUg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720798179; x=1721402979;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ve3CcOjeMtMU8bzJnjUvgQ5PtDwAZqsbHa46kIGMMDU=;
-        b=F85XHUhepzZqCV2QLPHeAOFb/M4Iag/AnY/TzDXsfVu0vxp/TSlgVNJ916VA4TuikR
-         IzjNdTX7hPRiQp4pG2hHx49zcHi7dcDc2uZG+PVhD3+5yYdWS+cTPLYZQDk8EuUoUKAx
-         jUPgkuIQiX1xJnsPH5WoaC7HVISxMmwougCCSYx4gv4ohbCVDdvVVwCqE+JTfiBgsVeV
-         1t/ytZViUBmZOtf80EOGsYFtVlwXMsWaWpL9ghN9B1R5ORwVAP2ZJ7DnMz+E99bE7kC6
-         ah/Ova79DiA/WFWnnuLY92QOKUxdEqDnAX8camHXSmZeTxid4nCd3fT9OexfeEkOvQVi
-         K3sA==
-X-Forwarded-Encrypted: i=1; AJvYcCU4Qz3iabkSWcbTmnrdl3pGpkdhnvijJMhwPGgQUAXIUqfhSlGSVXIRUcHBhzB1Xbs8BXkVSazeGauamGHiBaNeV6n0qfJq7MjC7NcbgMk6iLIQ2+WNjHFTxBIewCACfIaFoTUdDO+Wv75ttNF3nyVBvhFvNpyUTDONuRPkbftsBENJj8x1vezAHSjlAg6bMPqPJEqO68vsXhR1W+gZhe8UGjTfSKlj
-X-Gm-Message-State: AOJu0YwP/60a7lw7PNCn+CiV42nakblYO3IpBQwkFVPQz9dFx/zktrm1
-	zBLRFGBTXKdZldoU9NALeFOC3ADD0+nw0yaMptzN3AQ96JsxZbMnEATQ1M0pI1UfSaNcQKnSUWJ
-	29Z9qSGgBRIwRPQp6cIgCx1Qbn4bg5sKl
-X-Google-Smtp-Source: AGHT+IHedDfgr4oxy9l8g1SV0quzS/13qgZuFj80DhQ5BESrPL+1aCpiI5uk0XVyzQs7IElyHA+EFOWUbNnnwSnOSC8=
-X-Received: by 2002:a05:622a:3c9:b0:446:49f1:79a with SMTP id
- d75a77b69052e-447fa89dfc5mr148250941cf.24.1720798178892; Fri, 12 Jul 2024
- 08:29:38 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1720804184; x=1721408984;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Fnhm523hS4IDFhkj8U4RWRolcD19Piba7MrN9aiVgQE=;
+        b=lWpHBP/GXSi3g15dny7fNT8d5DQ7qFU1iAttIdrAUrL+YZdxEVytAW66W48rnSMZTp
+         KOB/2Q+gRtBjOaMlR3v5j2aZ1qBVsbBFYQRfP6iff8EbTUGdbs64qtDfAVWh6U6JKUzv
+         m7viFiRddR/kj7P4Y9bGKX8MnaC5FAjRZgaQYrvJcb+Hg2v8z5GnU9ll/2dngoXDA//9
+         f+kk51mUPBAMhGmU2w0Vnq/fF/+FAL2lhi+vZSZNxu3ZRpKzO8ehp1m9JazQCTMxBoDO
+         ERoU0K8ADfmFagA1bzwFp6SRzD4rJ0Xu6uFAOx8XO/UzuGkU4i+PYYWw2hJiROPcxO3o
+         ADdw==
+X-Forwarded-Encrypted: i=1; AJvYcCW2zJo/6f5LNDOz1Ughmqmvzlh3vBb3Or+KsJMNDEk6yGdbdZl1cYMo420PXqFmhpR9urNIAVD3OnokEfXkfGwF8lwS/IdwvkVk
+X-Gm-Message-State: AOJu0YzXTXiZ6767DfEdUbzCgVc2kYzgyC6IXXU2XwXvA+YdQWzQQGhE
+	4Pwuk2PYMxGhhu1e1Opo/YRWH7ZYa7YHoJwxXfEUc8eUmJeLAnzY4kSqtVEo5E0=
+X-Google-Smtp-Source: AGHT+IG4TH6RpE92PDuHakkWNmOybXTmwNcx+nqarKFaRp+ljxkRFFwn0hjm78OZrfbRQp1qxbfQAw==
+X-Received: by 2002:a17:907:3f12:b0:a72:7736:9e03 with SMTP id a640c23a62f3a-a780b881c7cmr1089046766b.52.1720804184549;
+        Fri, 12 Jul 2024 10:09:44 -0700 (PDT)
+Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a871f0esm363750466b.194.2024.07.12.10.09.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 12 Jul 2024 10:09:44 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Subject: [PATCH v4 0/2] gs101 oriole: UART clock fixes
+Date: Fri, 12 Jul 2024 18:09:42 +0100
+Message-Id: <20240712-gs101-non-essential-clocks-2-v4-0-310aee0de46e@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240627161315.98143-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240627161315.98143-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CAMuHMdVLSpaUtdXFv3VXFc5G61dmRX2C1iW9C+km23g6EgZJOg@mail.gmail.com>
- <CA+V-a8vABF6vg+J7DAGzgnw8612oe6VfJkc5y-krySvnpAnPkQ@mail.gmail.com> <CAMuHMdXuyQZ=SFfQa5kvZTwYa0uRXc7khJ-vOYBRE5SCd11rPw@mail.gmail.com>
-In-Reply-To: <CAMuHMdXuyQZ=SFfQa5kvZTwYa0uRXc7khJ-vOYBRE5SCd11rPw@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Fri, 12 Jul 2024 16:28:08 +0100
-Message-ID: <CA+V-a8ui9AKDOZzg_dgPXeGhGE-+rBHU8O1tpdb8w8myo-1p5Q@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] clk: renesas: Add family-specific clock driver for RZ/V2H(P)
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Magnus Damm <magnus.damm@gmail.com>, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAFdjkWYC/4XOsW7CMBCA4VdBnnvRnW0gZeI9KgZjXxKL1EZ3U
+ dQW5d0JMLRbx3/59N+MsmRWc9jcjPCcNdeyhn/bmDiE0jPktLaxaD16h9ArIUGpBViVy5TDCHG
+ s8aJgYRecbbELdObWrMRVuMtfT/7jtHYn9ROmQTj8ouQQ311LtqG9323JAkEoSbhJEvQnX45jL
+ kFqU6V/mEPWqcr383h2D/nl7OmfudkBwjbFc5vQY6L4Fz4ty3IHts1uLA0BAAA=
+To: Peter Griffin <peter.griffin@linaro.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Sam Protsenko <semen.protsenko@linaro.org>
+Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, 
+ Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.13.0
 
-Hi Geert,
+Hi,
 
-On Fri, Jul 12, 2024 at 4:23=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
->
-> Hi Prabhakar,
->
-> On Fri, Jul 12, 2024 at 5:14=E2=80=AFPM Lad, Prabhakar
-> <prabhakar.csengg@gmail.com> wrote:
-> > On Fri, Jul 12, 2024 at 12:59=E2=80=AFPM Geert Uytterhoeven
-> > > On Thu, Jun 27, 2024 at 6:14=E2=80=AFPM Prabhakar <prabhakar.csengg@g=
-mail.com> wrote:
-> > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > >
-> > > > Add family-specific clock driver for RZ/V2H(P) SoCs.
-> > > >
-> > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.c=
-om>
-> > > > ---
-> > > > v2->v3
-> > > > - Dropped num_hw_resets from struct rzv2h_cpg_priv
-> > > > - Dropped range_check for module clocks
-> > > > - Made mon_index to s8 instead of u8 in struct rzv2h_mod_clk
-> > > > - Added support for critical module clocks with DEF_MOD_CRITICAL
-> > > > - Added check for mon_index in rzv2h_mod_clock_endisable and
-> > > >   rzv2h_mod_clock_is_enabled()
->
-> > > > --- /dev/null
-> > > > +++ b/drivers/clk/renesas/rzv2h-cpg.h
->
-> > > > +/**
-> > > > + * struct rzv2h_reset - Reset definitions
-> > > > + *
-> > > > + * @reset_index: reset register index
-> > > > + * @reset_bit: reset bit
-> > > > + * @mon_index: monitor register index
-> > > > + * @mon_bit: monitor bit
-> > > > + */
-> > > > +struct rzv2h_reset {
-> > > > +       u8 reset_index;
-> > > > +       u8 reset_bit;
-> > > > +       u8 mon_index;
-> > > > +       u8 mon_bit;
-> > > > +};
-> > > > +
-> > > > +#define RST_ID(x, y)   ((((x) * 16)) + (y))
-> > > > +
-> > > > +#define DEF_RST_BASE(_id, _resindex, _resbit, _monindex, _monbit) =
-     \
-> > > > +       [_id] =3D { \
-> > >
-> > > Indexing by _id means the reset array will be very sparse.  E.g. the
-> > > innocent-looking r9a09g057_resets[] with only a single entry takes
-> > > 600 bytes.
-> > >
-> > > If you do need the full array for indexing, please allocate and
-> > > populate it at runtime.
-> > >
-> > OK, I will use the radix tree for resets (is that OK)?
->
-> You mean XArray? include/linux/radix-tree.h has:
->
->     /* Keep unconverted code working */
->     #define radix_tree_root         xarray
->     #define radix_tree_node         xa_node
->
-Yes, I meant the above.
+This series fixes a long-standing issue in the gs101 clocking / uart
+handling.
 
-> Given a single xa_node is already 576 bytes, just allocating the full
-> linear reset array at runtime is probably better.
->
-Agreed, I will create a linear reset array and loop through the array
-based on reset index and reset bit to match with id whenever required.
+We can now disable clocks that had previously been marked critical, and
+still get a working earlycon.
 
-Cheers,
-Prabhakar
+There is a preparatory patch, and then a patch to drop an incorrect clock
+counting work-around. That 2nd patch is essentially the last remaining patch
+[1] with all review comments addressed, from the series [2] that was sent
+earlier this year, see lore links below.
+
+Patch 2 can not come before or without patch 1.
+
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+
+[1] https://lore.kernel.org/all/20240130093812.1746512-6-andre.draszik@linaro.org/
+[2] https://lore.kernel.org/all/20240130093812.1746512-1-andre.draszik@linaro.org/
+[3] https://lore.kernel.org/all/d45de3b2bb6b48653842cf1f74e58889ed6783ae.camel@linaro.org/
+
+Changes in v4:
+- new patch "clk: samsung: gs101: allow earlycon to work unconditionally"
+- update commit message for patch 2
+- Link to v3: https://lore.kernel.org/r/20240710-gs101-non-essential-clocks-2-v3-0-5dcb8d040d1c@linaro.org
+
+---
+André Draszik (2):
+      clk: samsung: gs101: allow earlycon to work unconditionally
+      clk: samsung: gs101: don't mark non-essential (UART) clocks critical
+
+ drivers/clk/samsung/clk-gs101.c | 106 ++++++++++++++++++++++++++++++++++++++--
+ 1 file changed, 102 insertions(+), 4 deletions(-)
+---
+base-commit: 523b23f0bee3014a7a752c9bb9f5c54f0eddae88
+change-id: 20240430-gs101-non-essential-clocks-2-6a3280fa1be8
+
+Best regards,
+-- 
+André Draszik <andre.draszik@linaro.org>
+
