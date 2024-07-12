@@ -1,120 +1,99 @@
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B3D7172BCA;
-	Fri, 12 Jul 2024 13:19:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E67E143C42;
+	Fri, 12 Jul 2024 13:44:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720790357; cv=none; b=lkFTKCz4+abUc59ivDI/RENX0LloR7+NjIsfJ2ny8MUgnWiBMlqD8sDWj/c2UsJQJI0Mc38l1yTDma+HbEh40X5QeCA3d9FJjS9OLt6Qib3HFNmF9hk1vEZXBqO5QNfHcK99MiMoDhwyGuTUa++i26B9cvELxXvHTKT0iXis1e0=
+	t=1720791866; cv=none; b=oDyivnh2oQujq7IK80GOZVkdFI8KikTRFVsbYykPUVpImZsOmJg/gMogr29ngOsetstRo56XH1XQnONPK2Jg23H5MKpikW48SZzOYuFFNuBCq8QZHkdKp8LP04kL54U1Cnj5qinNPuQMETSSDVpH+Ibyl2oRKGo8JJzZpPPizA4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720790357; c=relaxed/simple;
-	bh=mXGw4Pyo/ielLaWf8Gb5/Yt58SdNsOJV5cA8yoYd0VI=;
+	s=arc-20240116; t=1720791866; c=relaxed/simple;
+	bh=mNZZrJQ1BcgwfEMr2him+jJJtRk5W+AL/XnamSR+qv0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YXe/r4dWoqQ1UaXLjra4YXh7CZqoq6Xa6IjEr8P5hwG0KPZYDbUtANtGhvs00RnkNwVFxhQAxQz9YyQzu8nGPoYbck5Z2vVAY2M1B8++K1dOZEqCs6rtJNbYbw2DbyG5tVlKLz9GhZMRpzHuAKZNMShEyLeNkvSYzFJ4gWk/f4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.175
+	 To:Cc:Content-Type; b=jdhejhbH5rVSO6KpNCnNcl1owBqCSCpMwmete3fJZhPeQ8cuEs1nDpfxcYpiPYTj7DZDbObOcF0i4jy0xJEZnQFTsU6R9kI2x1giBQSnSVKyc8F0ePrkd15ShqubUBp8k8aF0Kgj+R5lg535gvx3TsFi5Orazw0sQfUWEtWOSaY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.180
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-64b5617ba47so19034177b3.3;
-        Fri, 12 Jul 2024 06:19:15 -0700 (PDT)
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e035dc23a21so2073300276.0;
+        Fri, 12 Jul 2024 06:44:24 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720790353; x=1721395153;
+        d=1e100.net; s=20230601; t=1720791862; x=1721396662;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=5m8Dv6cTOGGwM6bmhOvskwBBfCg05bDh2a7ctEmgVw0=;
-        b=NwmtDhVQWmPgSmhC9HAz4nminKs03wIgi8oeAm/yL8CuLeF+4KMGX+a52CsNpmfIor
-         +WzIrI3uK5xN1dKzQPQ/iFdywYsHuyTemd2k5ZZHp9MzTRUzMwpyE8Vt/pHDpEYTDcZn
-         RdaZHOknwWOVW0GRypf2U9yxulJ1eF3XkEvd8J5OXNwsAvUZmVk97KMPQquCcsA0Ed6f
-         ixvdR5kiSyX/DnNOPHeelA3KF2K4bDz/qNAx+J/V8ZcSnQXdV5TxRTAsCH7paOXnQXwY
-         iCr287w3NZUuGrt9SKjHC/z5hHdx6jujil3JpgEOsDODhnC6sD8W/dVJ0+kX9U8GkdNq
-         WR1w==
-X-Forwarded-Encrypted: i=1; AJvYcCVgjzw8CxCT8cI8DguwoyMPLsaxunLYW20DXp3Z68Dsavq+mmNgRo39qEPMXAn+F/FwH1AuS3uZraCfvDJRPtbTU6co31IFxO9vyojiwog6YkbPnhUffc5BUHfxE7iCAnHVySMIkMDUdrb2tyZGq4ejXN3ZAJkk0uJbrJGU1QxKZAmsPLddM20R
-X-Gm-Message-State: AOJu0YxEAqsOTp0c0jOAgVQeUvexxS26636WRU1S8CS0SwOAA2yo5w9a
-	E4G5cO+Ks6PmRnTanm29zoXAjpYMUwtyZgPvqMWxsAjQqPK/5ekI2p8/SKmm
-X-Google-Smtp-Source: AGHT+IFk/F5gymxwuzUvdh9yEDcaYMvqnfaxwg3qXR2mQLlRYrxQGm8NAJHWoh8TIBdlKyMKcU7m1Q==
-X-Received: by 2002:a81:fe0e:0:b0:648:857c:1530 with SMTP id 00721157ae682-658f07d74camr126481647b3.34.1720790353539;
-        Fri, 12 Jul 2024 06:19:13 -0700 (PDT)
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com. [209.85.219.177])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-658e5317d85sm14701247b3.63.2024.07.12.06.19.13
+        bh=iRFsX6Omh1AOXFZOKxNNO0aJQIdP6NLCM1kxRp7fxzM=;
+        b=L6J0SO95aGwdtqN1TdoTYnjcCGDUzELWPSjU2Q97n2JdmJhre/70AGpa5BtBwo1kRW
+         Z9g4cULbNVnOkfgdA2s/kOH4xmNErMrGwUvm2dENgATP/p+ao8mEfVpp2ZMc4zAjRkTz
+         wdZfvJoK1j9Smsrdag/jCmS2Rdy6VTOW94jldBe1nCKbFrByEHflT0cZaGep9abmsSC2
+         soAs3iGGFtgF2SUlBud/mQhm+9ondhjAQ+ctl+Z2L570qe99d0YJpanheoNkObsGl7ck
+         gr2uKeux3vzZrUQjbOr01Wd3Gt5KA3xpr5A+Xwd527r8CYP44o7ysm+2do/ruw1oIgXG
+         g/Fg==
+X-Forwarded-Encrypted: i=1; AJvYcCW7Idq7DhJAvOkTPeBDHrVQyV9ZSdkOZ87yWuctYL7Y4hDuyXN8GEUGGtM2+HoIbM0dDSv4EBtawmN+WlVRqGWWY9NEz5Tqp66piZzNL161IkLivftCsDoYIjXbw6/paqx8j5bFfnva+lWjsUc=
+X-Gm-Message-State: AOJu0YxCYt8YyUEoeMKLUk6UwRI3TkQZQh7wlNnpc5A1HtUrlzoG7xwh
+	kJFiVCAYS6nXDQZW9poPcNvpatbawQqX4h8Bs+aauBte6Q7fBgCkxLsv+h0h
+X-Google-Smtp-Source: AGHT+IFerKHojhaDSmLDlUUZcv05+hWyIMp0nOfQ5wAdTiRV/GqqiV+pA82/34RhY4GEVBdl3c2Rrw==
+X-Received: by 2002:a25:bcc2:0:b0:dff:4a3:2de9 with SMTP id 3f1490d57ef6-e041b0549c2mr13422352276.20.1720791862368;
+        Fri, 12 Jul 2024 06:44:22 -0700 (PDT)
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com. [209.85.128.174])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e041a9817cbsm1352087276.40.2024.07.12.06.44.21
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 12 Jul 2024 06:19:13 -0700 (PDT)
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e03d49ff259so1793415276.2;
-        Fri, 12 Jul 2024 06:19:13 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUUgdkSlZ2TcK8XkP1HwlJs4sMDvmbIFREPVs53rt+bjmmHw8xlmkw46Vp1VBaGu2mAVxHgDpmOr8lf2nIn2dugufcMDaAag+3ex8a9U2c5RbUNcpBf9R86OSs2/OS5iaG5hAiBPIhX0S/d6/Ec7JCnWlj525hq08x+WRZ4BhJsTQvGbUnV19E9
-X-Received: by 2002:a25:d38e:0:b0:e02:c6fe:aea2 with SMTP id
- 3f1490d57ef6-e041b03fe9fmr13773034276.7.1720790352960; Fri, 12 Jul 2024
- 06:19:12 -0700 (PDT)
+        Fri, 12 Jul 2024 06:44:21 -0700 (PDT)
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6519528f44fso18637817b3.1;
+        Fri, 12 Jul 2024 06:44:21 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWoG+0moPZRV6Jg54UZj4CPnthZfAsY2qLmzUNVLKNXZ4CVcyftC/lM3fMQZnMSkRoVzgbBZpmZwql4+Q7ojBPjHECPHA1H+3aQMUOhMj2nTjJT1n9veeoEnqFbfL7ZRqFh1falJcX7HtYZ+q8=
+X-Received: by 2002:a81:4324:0:b0:64a:e220:bfbc with SMTP id
+ 00721157ae682-658ee69ad3amr126778077b3.4.1720791861504; Fri, 12 Jul 2024
+ 06:44:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <d4abb688d666be35e99577a25b16958cbb4c3c98.1718796005.git.geert+renesas@glider.be>
- <20240619-explain-sip-97568f8ac726@spud> <43a57696-eb4f-4ae3-970a-cee0640baa17@mailbox.org>
- <CAMuHMdV2M6zKwy=Qqv4XR1Zjz4yRGWcp_EYO2d68DUyLp2O1Cw@mail.gmail.com> <20240620-paver-fidgeting-70946d975eac@wendy>
-In-Reply-To: <20240620-paver-fidgeting-70946d975eac@wendy>
+References: <20240709135152.185042-1-biju.das.jz@bp.renesas.com> <20240709135152.185042-5-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20240709135152.185042-5-biju.das.jz@bp.renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 12 Jul 2024 15:19:00 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWO9hqyktvkB96qjOdN6zBro-Yi0EF8qVxX8eEA8Oyv0w@mail.gmail.com>
-Message-ID: <CAMuHMdWO9hqyktvkB96qjOdN6zBro-Yi0EF8qVxX8eEA8Oyv0w@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: clock: rcar-gen2: Remove obsolete header files
-To: Conor Dooley <conor.dooley@microchip.com>
-Cc: Marek Vasut <marek.vasut@mailbox.org>, Conor Dooley <conor@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org, 
-	marek.vasut+renesas@mailbox.org
+Date: Fri, 12 Jul 2024 15:44:09 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVgnSwb5FwdgNZ1O2NtYGiY+9j1oC_2YTTUYq0W8+PoXQ@mail.gmail.com>
+Message-ID: <CAMuHMdVgnSwb5FwdgNZ1O2NtYGiY+9j1oC_2YTTUYq0W8+PoXQ@mail.gmail.com>
+Subject: Re: [PATCH v2 4/9] clk: renesas: r9a07g043: Add LCDC clock and reset entries
+To: Biju Das <biju.das.jz@bp.renesas.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, Conor Dooley <conor+dt@kernel.org>, 
+	Biju Das <biju.das.au@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Conor,
-
-On Thu, Jun 20, 2024 at 11:06=E2=80=AFAM Conor Dooley
-<conor.dooley@microchip.com> wrote:
-> On Thu, Jun 20, 2024 at 10:30:25AM +0200, Geert Uytterhoeven wrote:
-> > On Wed, Jun 19, 2024 at 9:17=E2=80=AFPM Marek Vasut <marek.vasut@mailbo=
-x.org> wrote:
-> > > On 6/19/24 7:48 PM, Conor Dooley wrote:
-> > > > On Wed, Jun 19, 2024 at 01:22:46PM +0200, Geert Uytterhoeven wrote:
-> > > >> The clock definitions in <dt-bindings/clock/r8a779?-clock.h> were
-> > > >> superseded by those in <dt-bindings/clock/r8a779?-cpg-mssr.h> a lo=
-ng
-> > > >> time ago.
-> > > >>
-> > > >> The last DTS user of these files was removed in commit 362b334b179=
-43d84
-> > > >> ("ARM: dts: r8a7791: Convert to new CPG/MSSR bindings") in v4.15.
-> > > >> Driver support for the old bindings was removed in commit
-> > > >> 58256143cff7c2e0 ("clk: renesas: Remove R-Car Gen2 legacy DT clock
-> > > >> support") in v5.5, so there is no point to keep on carrying these.
-> > > >>
-> > > >> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > > >
-> > > > If U-Boot is not using them,
-> > > > Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> > > > (and if it is, another task for Marek I guess!)
-> >
-> > Good point!
-> >
-> > U-Boot does have include/dt-bindings/clock/r8a779?-clock.h, despite
-> > never having used them.  The unused headers and the corresponding
-> > r8a779?.dtsi files were introduced together, in the various "ARM: dts:
-> > rmobile: Import R8A779[0-4] DTS from Linux 4.15-rc8") commits in U-Boot
-> > v2018.03, i.e. after the conversion to the CPG/MSSR DT bindings.
-> >
-> > > U-Boot is using upstream DTs on R-Car via OF_UPSTREAM, so whatever
-> > > happens in Linux also happens in U-Boot since 2024.07 ... with slight
-> > > sync delay . I don't expect much breakage.
-> >
-> > So the obsolete headers will be removed automatically from U-Boot
-> > soon, too?
+On Tue, Jul 9, 2024 at 3:52=E2=80=AFPM Biju Das <biju.das.jz@bp.renesas.com=
+> wrote:
+> Add LCDC clock and reset entries to CPG driver.
 >
-> Not if it is is include/dt-bindings/, only if it is in
-> dts/upstream/include/dt-bindings AFAIU.
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-OK, U-Boot patch sent
-https://lore.kernel.org/linux-renesas-soc/6355fbaa5e3c40d6790cb5aa6ffc1c573=
-c1f08ed.1720790104.git.geert+renesas@glider.be
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.12.
+
+> --- a/drivers/clk/renesas/r9a07g043-cpg.c
+> +++ b/drivers/clk/renesas/r9a07g043-cpg.c
+> @@ -209,6 +214,12 @@ static const struct rzg2l_mod_clk r9a07g043_mod_clks=
+[] =3D {
+>                                 0x564, 2),
+>         DEF_MOD("cru_aclk",     R9A07G043_CRU_ACLK, R9A07G043_CLK_M0,
+>                                 0x564, 3),
+> +       DEF_COUPLED("lcdc_clka", R9A07G043_LCDC_CLK_A, R9A07G043_CLK_M0,
+> +                               0x56c, 0),
+> +       DEF_COUPLED("lcdc_clkp", R9A07G043_LCDC_CLK_P, R9A07G043_CLK_ZT,
+> +                               0x56c, 0),
+> +       DEF_MOD("lcdc_clkd",    R9A07G043_LCDC_CLK_D, R9A07G043_CLK_M3,
+> +                               0x56c, 1),
+
+With the above clock names changed to "lcdc_clk_[apd]" to match
+the clock definitions.
 
 Gr{oetje,eeting}s,
 
