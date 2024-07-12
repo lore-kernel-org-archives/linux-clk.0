@@ -1,68 +1,105 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F5F319FA96;
-	Thu, 11 Jul 2024 22:53:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E6717741
+	for <linux-clk@vger.kernel.org>; Fri, 12 Jul 2024 05:00:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720738427; cv=none; b=uElyiG7mDBWX4h+OcJ/Tnon7VC0EEo1w0Fmlp5u0bNE3HZ+CyJ7AyJgPbL1Vtl2X38sPwqoXgyqC/47v0/libc0mg9tSQuuYpGtI4zhd1mPvWD+JcIQ1vScBZuV86S02ce56AYYBJ8QT6A7LKQmRX+b23c5gSgsf/ZwoSOGHmzw=
+	t=1720760424; cv=none; b=jzGUJdohc+8uWoaoZ/nmamdRQaExqig99EG7m7SLHqF9pzPTalGLKik0pcNpq5klH9bjqxxZWVOvHs1IOoJqj/VFsdWNj7p3N79+HJJKTBTHNocsZUfp8chuwIy0RYsSnx7psGL3prFpjrBaEZKnfmIzVtl5XIxLfYBO5NCy6yM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720738427; c=relaxed/simple;
-	bh=XI0JQ5+wMzOU7+T9tpSRMedqhV5Ai9rJgS5QcKd8d6U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A/vDEVmLoXjDyHEGLx583eeYQUlznRDFKjTLBG+AgbeqP9SyeHcU3reoTeESE+sVlpPgVYNuUk264MpUqC8XEbhXAfHZ52gIEFlnPLZ1P7OMbaAx0jLXFEGfnNP5YJzY+DjSgWmLTWEGKzWw0ucqnhD6Td6ndWiuelml4ZfVSdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vCTampXI; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1720760424; c=relaxed/simple;
+	bh=xtREc+nIH3/pIs22PXknrsxKAv9mk8z/DpRw7fu7kso=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=ix3Fey0ucEu1H/CGtikyY7Ta3oCAZ9j3cHwTUTyADfe4xOPEsA6zPhuOPs6RAW8ZZePyNzo9SUPePev/jyNnQ98Ka3T9/xMCu9QxlVdfCZBfYqwpIdpbY9jdM+RWEHe6nVKGzKmNnF4d9dwG7uSte285XEAuhvQSV0ajeirPypY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pB7faLpe; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vCTampXI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68108C32782;
-	Thu, 11 Jul 2024 22:53:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1720738426;
-	bh=XI0JQ5+wMzOU7+T9tpSRMedqhV5Ai9rJgS5QcKd8d6U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vCTampXID1ylnvLTVA6LVYE3FtZ8sabDqQulHG+WSBEzOzwZ0boAeW1pNVVi3b5rA
-	 S5a/au/367ajASu4EO7UgcfvAfVk25eu8Ytacf9nZ1zGAHJJ/AUwy7lCPrsvBOdsdK
-	 zsus4btiyF5dYTsxDfoDx42IOEcRSi3g4xhfTvOdOtEKqi2cCYJxp68OhWBBvW8frT
-	 slIGWeFxNGUy9x7tTjJVogCEieZnj4REmfRRwl/s+wUIUPpL1F+uGwBZZAQ4Ttmm+s
-	 lE3AdZFCT53XpbKooUyfkCxVcD6Yn2ecAi/YUF5j1SJGTSqbU7Wyn9TNBvN9Fgnhnq
-	 YXh5h22R+8sXA==
-Date: Thu, 11 Jul 2024 16:53:45 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: devicetree@vger.kernel.org, geert+renesas@glider.be,
-	conor+dt@kernel.org, linux-renesas-soc@vger.kernel.org,
-	mturquette@baylibre.com, vkoul@kernel.org,
-	linux-kernel@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
-	biju.das.jz@bp.renesas.com, sboyd@kernel.org,
-	dmaengine@vger.kernel.org, krzk+dt@kernel.org,
-	linux-clk@vger.kernel.org, magnus.damm@gmail.com
-Subject: Re: [PATCH 2/3] dt-bindings: dma: rz-dmac: Document RZ/G3S SoC
-Message-ID: <172073842432.3270356.13976305487495641614.robh@kernel.org>
-References: <20240711123405.2966302-1-claudiu.beznea.uj@bp.renesas.com>
- <20240711123405.2966302-3-claudiu.beznea.uj@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pB7faLpe"
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-427a0efdb9bso590315e9.0
+        for <linux-clk@vger.kernel.org>; Thu, 11 Jul 2024 22:00:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720760421; x=1721365221; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=xtREc+nIH3/pIs22PXknrsxKAv9mk8z/DpRw7fu7kso=;
+        b=pB7faLpeVi+WDWOq3IWH+hnI0QFI+KQGUj9uO4ENgazkYZg/8+gdHfguV9/fhEGip6
+         GaLl72DnNJZV4NKmdXk+sjUcAKRDt65rH5HZsrC3uS8YynIpgz6/CQGPFwcvNiA10pvd
+         m7zAdOxfsoyCLsPOTVi0UCjW6zwW2fzBrjJE4xjRKsiHCT1qt5KnR1ZvdXSroJBgIn/Z
+         qMlY6S1ufdNYC+pzE6LLcWHjT/YAmRG3mHPk/Ta7MTjx53k+rK4a7EVwAKXDCNvCcOjR
+         1fxomeSf7pKaWfryWiEU0fCCdBdIyasWkS73BE4TRtXjEQTgu8tuzDku4k5V1QYnMrSX
+         mD0g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720760421; x=1721365221;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xtREc+nIH3/pIs22PXknrsxKAv9mk8z/DpRw7fu7kso=;
+        b=miKHWJlQLuIDHaNPXJhe3V/swNe7si7ZCRAWaVJYVuhDqCp5qmNKJbm+T1q6t3a0WS
+         Xfy/vT1lP/Q/RTDYj+6jIaH5mYNHRubV/JSH+f58FMhKiU2oBEYroTqoFdaXRijA9jLh
+         4RFW78Plx2HdYx+97rBnwqyhI87ywzuoVasa6cMLAEW1tcS+01dQdSD+1Rgt+fiMoENX
+         HMRNtjoIaco/4wnoxVstMTGHlWhV5+1u8Xaji3eGyDz1opQ55KpcWujEzSFWyn+LyGfn
+         5WO2skeUKtgECkHTd9GDZ7mNzVMWwTp5nVbB5/s8ZjPm9TyyuxUUICjdhqubMGW/3DY9
+         PDJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWnjBeK7aNEqQvqegHatdmGFKsrbK30+q/cwHceTE7GPHatXusHuok4dANq0f8laHvWnf+zekWYjxQBikZjyC2tf9LvBUQwT8QE
+X-Gm-Message-State: AOJu0Yw5cL3BwL2eSLnUjPf4D9yTmPGlst9drch2G2/K6Id+d71THp5d
+	oQn0BZF8YxzPqgVjZCt2yurqLSKhva5FCwzCvFA+nBQUuCQ0YfNIbgDdeRs50Jc=
+X-Google-Smtp-Source: AGHT+IFiYFIGKJfQyPnchd/fwzShUwNh2360VhDrC8CiwYOSi3Z+91egB0zDkeO+M7mP7Zw60Obmkg==
+X-Received: by 2002:adf:f584:0:b0:367:993e:874f with SMTP id ffacd0b85a97d-367cea8f98fmr7195391f8f.34.1720760420550;
+        Thu, 11 Jul 2024 22:00:20 -0700 (PDT)
+Received: from draszik.lan ([80.111.64.44])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-367cde89198sm9143958f8f.60.2024.07.11.22.00.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 11 Jul 2024 22:00:20 -0700 (PDT)
+Message-ID: <74fd5d7cabfda98f578b5a4d4f4df1adba05ca3d.camel@linaro.org>
+Subject: Re: [PATCH v3 2/2] clk: samsung: gs101: don't mark non-essential
+ (UART) clocks critical
+From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
+To: Marek Szyprowski <m.szyprowski@samsung.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, Rob
+ Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+ Dooley <conor+dt@kernel.org>, Peter Griffin <peter.griffin@linaro.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi
+ <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Michael
+ Turquette <mturquette@baylibre.com>,  Stephen Boyd <sboyd@kernel.org>, Sam
+ Protsenko <semen.protsenko@linaro.org>, Tudor Ambarus
+ <tudor.ambarus@linaro.org>
+Cc: Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Date: Fri, 12 Jul 2024 06:00:19 +0100
+In-Reply-To: <0faacbeb-2ca3-4749-89a8-6dd81621a07d@samsung.com>
+References: 
+	<20240710-gs101-non-essential-clocks-2-v3-0-5dcb8d040d1c@linaro.org>
+	 <CGME20240710132933eucas1p1b4367ec7a3938a39e732b3079eff6f32@eucas1p1.samsung.com>
+	 <20240710-gs101-non-essential-clocks-2-v3-2-5dcb8d040d1c@linaro.org>
+	 <0faacbeb-2ca3-4749-89a8-6dd81621a07d@samsung.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.50.3-1 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240711123405.2966302-3-claudiu.beznea.uj@bp.renesas.com>
+
+On Wed, 2024-07-10 at 16:35 +0200, Marek Szyprowski wrote:
+> I think that it would be much better to check if earlycon is specified=
+=20
+> in kernel's cmdline and if so, simply mark those problematic clocks=20
+> critical in this driver. Make this code hidden under=20
+> IS_ENABLED(CONFIG_SERIAL_EARLYCON) to avoid polluting release builds.=20
+> Any comments?
+
+Good idea, I've found that i.MX appears to suffer from a similar problem,
+and I'm testing something similar now:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/dri=
+vers/clk/imx/clk.c#n157
 
 
-On Thu, 11 Jul 2024 15:34:04 +0300, Claudiu wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> 
-> Document the Renesas RZ/G3S DMAC block. This is identical to the one found
-> on the RZ/G2L SoC.
-> 
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> ---
->  Documentation/devicetree/bindings/dma/renesas,rz-dmac.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
-
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+Cheers,
+Andre'
 
