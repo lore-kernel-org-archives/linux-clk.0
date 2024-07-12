@@ -1,29 +1,30 @@
-Received: from albert.telenet-ops.be (albert.telenet-ops.be [195.130.137.90])
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E29EF171677
-	for <linux-clk@vger.kernel.org>; Fri, 12 Jul 2024 14:26:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.90
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69211171E40
+	for <linux-clk@vger.kernel.org>; Fri, 12 Jul 2024 14:26:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720794416; cv=none; b=WrlDFRD5iqIuJgwkGM4ob9UAXG4ra+n5IFz1qEVQBnieDK2oeYm0mp0YWl5K+dv3qlQPXRHDSyJyujBaCDs/wOXVxDvEUE6M5ooSfOHM/mcadyzbJlKBkuO61tWJbLU71Q9BglzAy/TaXU2Kgzh1HVWkNSoBuEJdqlt9m8qdhRE=
+	t=1720794417; cv=none; b=tLDKbPzbXXi3KTl+ccf5UTOVvqDueRqVMWvNFMe1ycukly7uwkTqYk76ON1Z3kbfkGhl9+zvuGbnTPKRqAOLsoMS/8Dato7R4fo1sFsrtCo8SHjkzsArtfm+4k1g3pXH3oEx5JMT5DWc7o6/bDNBKBPFjzooZURJhFphwXT7jcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720794416; c=relaxed/simple;
-	bh=REkr3/yN87QKBJpm42EiGbnGL8UNIlL7O/zy/7ekFfw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YCpJn5L0IUEJf17A3hVAVlDOkzTGYYfS0Jx/2RCOUQFrr5xcO0lFhq5dI4nhezYdFC154UBWQZpOx834e493KcPoZ2xca0BkECTRQOoFrCxicmrJYMSamUFOh4hPiC/Ew6uBkYTF1GfxPaRpyptjPcjZ1LSiK4eQF2zX9XEpfDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.90
+	s=arc-20240116; t=1720794417; c=relaxed/simple;
+	bh=Ew9ul4QX+Ed1bCKg/2+jzoS3pMNlMsXQNVLL4SjjyMs=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=OF77iszusdDYbu5Wmoxd/wkhV1GRGW07ifDBGGrcFIaY4CXEGSKQ0apQqr3DGKgwfV+FZKnFFlZ4WC7I19ucOdHZrKF8souu0mcWsLIVbAF/xq7e/+6mpruOB+Ak5gcjMJih1kajHD5LVCkhmS6uece2VoQHwitDZeSbDnX/75E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:9b6b:6da0:997b:7165])
-	by albert.telenet-ops.be with bizsmtp
-	id meSn2C00646XLxg06eSnNF; Fri, 12 Jul 2024 16:26:47 +0200
+	by baptiste.telenet-ops.be with bizsmtp
+	id meSn2C00446XLxg01eSnYf; Fri, 12 Jul 2024 16:26:47 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sSHEG-001qJ2-7I;
+	id 1sSHEG-001qJ4-7j;
 	Fri, 12 Jul 2024 16:26:46 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sSHEU-000W9U-QN;
+	id 1sSHEU-000W9a-SO;
 	Fri, 12 Jul 2024 16:26:46 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Michael Turquette <mturquette@baylibre.com>,
@@ -34,10 +35,12 @@ To: Michael Turquette <mturquette@baylibre.com>,
 Cc: linux-renesas-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH 0/4] clk: renesas: rcar-gen4: Initial clock descriptions should be __initconst
-Date: Fri, 12 Jul 2024 16:26:42 +0200
-Message-Id: <cover.1720794214.git.geert+renesas@glider.be>
+Subject: [PATCH 2/4] clk: renesas: r8a779f0: cpg_pll_configs should be __initconst
+Date: Fri, 12 Jul 2024 16:26:44 +0200
+Message-Id: <2261fc8291099445e1b319812dfd4f79c90296d2.1720794214.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <cover.1720794214.git.geert+renesas@glider.be>
+References: <cover.1720794214.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -46,40 +49,28 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-	Hi all,
+cpg_pll_configs[] is only used during initialization.  Hence make it
+__initconst, so it will be freed later.
 
-The various R-Car Gen4 clock drivers missed a few opportunities to put
-constant clock description data in the __init section.  Fix this to
-reduce memory consumption.
-
-To be queued in renesas-clk-for-v6.12 (unless I get to doing a fixes
-branch for v6.11).
-
-Thanks for your comments!
-
-Geert Uytterhoeven (4):
-  clk: renesas: r8a779a0: cpg_pll_configs should be __initconst
-  clk: renesas: r8a779f0: cpg_pll_configs should be __initconst
-  clk: renesas: r8a779g0: cpg_pll_configs should be __initconst
-  clk: renesas: r8a779h0: Initial clock descriptions should be
-    __initconst
-
- drivers/clk/renesas/r8a779a0-cpg-mssr.c | 2 +-
+Fixes: 24aaff6a6ce4c4de ("clk: renesas: cpg-mssr: Add support for R-Car S4-8")
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+---
  drivers/clk/renesas/r8a779f0-cpg-mssr.c | 2 +-
- drivers/clk/renesas/r8a779g0-cpg-mssr.c | 2 +-
- drivers/clk/renesas/r8a779h0-cpg-mssr.c | 6 +++---
- 4 files changed, 6 insertions(+), 6 deletions(-)
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/drivers/clk/renesas/r8a779f0-cpg-mssr.c b/drivers/clk/renesas/r8a779f0-cpg-mssr.c
+index cc06127406ab5737..0a14f34105d0fadd 100644
+--- a/drivers/clk/renesas/r8a779f0-cpg-mssr.c
++++ b/drivers/clk/renesas/r8a779f0-cpg-mssr.c
+@@ -187,7 +187,7 @@ static const unsigned int r8a779f0_crit_mod_clks[] __initconst = {
+ #define CPG_PLL_CONFIG_INDEX(md)	((((md) & BIT(14)) >> 13) | \
+ 					 (((md) & BIT(13)) >> 13))
+ 
+-static const struct rcar_gen4_cpg_pll_config cpg_pll_configs[4] = {
++static const struct rcar_gen4_cpg_pll_config cpg_pll_configs[4] __initconst = {
+ 	/* EXTAL div	PLL1 mult/div	PLL2 mult/div	PLL3 mult/div	PLL4 mult/div	PLL5 mult/div	PLL6 mult/div	OSC prediv */
+ 	{ 1,		200,	1,	150,	1,	200,	1,	0,	0,	200,	1,	134,	1,	15,	},
+ 	{ 1,		160,	1,	120,	1,	160,	1,	0,	0,	160,	1,	106,	1,	19,	},
 -- 
 2.34.1
 
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
