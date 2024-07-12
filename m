@@ -1,150 +1,165 @@
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2753714EC5E
-	for <linux-clk@vger.kernel.org>; Fri, 12 Jul 2024 17:09:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C54A176ABA;
+	Fri, 12 Jul 2024 17:11:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720804189; cv=none; b=a+ulwjPTCUgnz7PfHt9hOiRuochdYzt46LaO7sOGy633DbhnhmnIGvTE71dGKvCfC0EHNjqZv01mjqlXTm5MKZ2998JEgHf9dDmrCfDwSoacIF0etteyRFLEu1K1LuWncLrDZr9JzTOfUYW/vexVDZC2benUujohDr8wW1aSQUs=
+	t=1720804314; cv=none; b=k1csL7gvAhsPDWF0XYzZSSVxmoPDHQPj3WF5YvDRH61Nh6kWZLQ/DcuPJLj+SkMIp6umJxSNzyxPFG4rzNypqXrdwJ7ekVdpM3DJLg17D1ERLcdk66ZlXoet3jRBv8YKS/NdDvEckuT/S+QQssWdBWMHfmUBwJkb9i+m8p37Q+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720804189; c=relaxed/simple;
-	bh=bSuhaMRom2cOObZWO5sZ0z5SXM43/G/at3phYRV+d3A=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=iHoP9Ac3XFOT6FJ/6/E/Jj+0/SMkwWdOWYwMY0K8R7eeir0AQcXRXmN1ghkJClVerVkWB3Sd24RXvnaKB+Gi697wkpMZsdYwFchpL8DE1Qnwm3BS61T+nr3/axUYPEWK0EuyXr24BZ/Qgogw8qWrrvxoCMDGr8jbqZy91FowCYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j0e0W9M2; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j0e0W9M2"
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-58c947a6692so2984224a12.0
-        for <linux-clk@vger.kernel.org>; Fri, 12 Jul 2024 10:09:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720804185; x=1721408985; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=oV5839hmVClg70c+3TJ1+3UQGJnal/6xSUyTsvV9VcQ=;
-        b=j0e0W9M2sjT9AJ3H9DQG1Yp2zQKHsyqhw/2eQZnlSppZrG+oOX04uT6LiwE49nCy+w
-         TKgHQtKZSxFIjfWTdk9Zi7u6YE6MAiMdlD5rJEPQn7r/5STckStcyAGDNVipEsgHkDTh
-         XgHM4KenKEwoFgtGcbSBvv8V+1p84ljjjHiSaQQD0JgIuSkSnJLYFtoPXuv2tefXtNaQ
-         9k5jP9c+78R0swbdoyxlUxF66U+quuzFKe8bqOs6zhugiDgtGRi6J2QoZNtNpWp4x4V5
-         2FVzTyVT3eqb1Jg+N7JYIsdUT7yD5hWmec0b0rBWbM/HkDn050xtnw5RnX+tB/+zPmmq
-         5Axg==
+	s=arc-20240116; t=1720804314; c=relaxed/simple;
+	bh=ToX8IFguKI6AuYIu5THsWwJhz6qwI3H0hiFjFo2ZBhU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O4UyBBpGz17T2bYut6pyIMYKAKq4cmQkaCzk6NxpsbMXOl8dRg2+v49ucW0+h1bfLpGsqWGR+gyXXk6Et3tQt+r7Y0S+npkqDRFgzN1jHMuWC+CSA90egoqF5x6xr3HNd/tC6jVTty3ArDeEBJGgmpTqhIQifYPU2Tox6nSmscQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e03a17a50a9so2432306276.1;
+        Fri, 12 Jul 2024 10:11:52 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720804185; x=1721408985;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1720804311; x=1721409111;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=oV5839hmVClg70c+3TJ1+3UQGJnal/6xSUyTsvV9VcQ=;
-        b=nblU3aM4ZFkDd8NemV1EoBc8q5MLGiheeDkVfhLJvL1DKwfSCxBZXSxvJD6M8tgbo6
-         /Xivt5zFPejMdBRqPfjKpNq4F1jinO2A2ej2V4hoGfQ8KwaK1qCYRa1UY+ZWqCJ1zY6a
-         KXlf43yeX5LrcPJbMmiOIkSsLMeIjjocHIUZMxRutyeWvBLFdJWbp2Ggx5keG8zsIKLp
-         V4WipqbriIvMeEv3vEvaDigdT3OrmVhFVZWp6fiDb5b31X6MygSS3npbRN0niROph2/J
-         GHe3INrEMF5zvxnL42Jebe3HXxb0HRXBwbjT9arVDCjeV5pZEAY6v/+MnOYv/cijv0b6
-         r9CQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW9wC/tUKdF636sCjpyoD/1tP9GpfmH5KILnNiQUzQ67MW+GjLELr8vJ1wWLRC1IqJUc560iM2TtywlDupRDV6Sw76ao2Jr139I
-X-Gm-Message-State: AOJu0Yw86+9sBMdlEVVL1t2Q4xiA+kKSV4ZI+8Guq6DL0mGlvsNDGIFz
-	lg+CBiMErxh9+xprkrLZGKm8dvTzdK05xWd0whV4YQIB4avCAlBgid2e5rOjZVw=
-X-Google-Smtp-Source: AGHT+IE0X62zA1SBHKfJXtmQHhmzvuqxC+xWaR1cQ47oVYBeYJTjmS0OEYuGETVV0+yrZAnB2M1JfQ==
-X-Received: by 2002:a17:907:ea1:b0:a75:110d:fa53 with SMTP id a640c23a62f3a-a780b885565mr1041251666b.49.1720804185474;
-        Fri, 12 Jul 2024 10:09:45 -0700 (PDT)
-Received: from puffmais.c.googlers.com (8.239.204.35.bc.googleusercontent.com. [35.204.239.8])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a780a871f0esm363750466b.194.2024.07.12.10.09.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 12 Jul 2024 10:09:45 -0700 (PDT)
-From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Fri, 12 Jul 2024 18:09:44 +0100
-Subject: [PATCH v4 2/2] clk: samsung: gs101: don't mark non-essential
- (UART) clocks critical
+        bh=/nkm6YLkplxvAGXzVBdoGkR8cn0AreohBASNrv2JryM=;
+        b=W60o/9zDv5jHa9dYyLfte0gmQTMUE2xpqh+A4BjwDgpy9Lya4if9Cg29LD/alo+ccM
+         dOusYt0tA43xW43az0a2nLwb0+mBxuBvGJTDQVf5SrjlInx8mTyMK2peUDVb0Wb65Htk
+         +KKsv1LjojGljZHiaYxA9CrifrgLA0hhjMhRvMFMif6HHeeiYkogsh86kXTQwPBYubCV
+         8KypJXNTMrVnYA0k8dccQhWs66Udrl1RLsjkvkH01Ro2s0miPmh63VOrJiVKHi262Dg8
+         A918EbA2P+9wzAB9L0Ga1KIZ1a+evLkd2JygFa/snDGVQG6VXtTIpRZ6b+8vYhDb4Khu
+         FqSA==
+X-Forwarded-Encrypted: i=1; AJvYcCW3/QKQmqJeC4DxhTMbw0DjohSKxZh3mFY792UVCVtMgsv2jSsbBBGdgjaqFbThIkKRtb/SDBalvsCQVgV2VLsaThme0x5hgdF3BxjnGj/mbX22JYASB1s3/LO9QP4oWCDoPEldqNsmXJyulqRGyJ4Ziu8A2B+wI1oj3vVKr63cnsePa/U6lZzEP6z0ncr0OBZK3IaVeMUo63oyZG38H3FG0+8PncE9
+X-Gm-Message-State: AOJu0Yw/djsJy9fmV95FETkrrMeueWMNxKqmxzRV13whSiujGSMg/Exc
+	mdX/0RsdlocpDg6YpK2b1QLc/RHEEGuLeYCtFXchdPYd9cOYjDEOr6jXBKQA
+X-Google-Smtp-Source: AGHT+IE91bI4TtQdMlMmUqo/ujIqZ+GzMKeXKzadtp6pU+2IDLsOLZjp+hanPxXO5E0PjRrrzWkOhA==
+X-Received: by 2002:a05:690c:3403:b0:631:2dc5:34ef with SMTP id 00721157ae682-658ee790bb1mr151417827b3.2.1720804310680;
+        Fri, 12 Jul 2024 10:11:50 -0700 (PDT)
+Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com. [209.85.128.178])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-658e4d2a8d9sm15669467b3.34.2024.07.12.10.11.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 12 Jul 2024 10:11:50 -0700 (PDT)
+Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-650469f59d7so23285087b3.2;
+        Fri, 12 Jul 2024 10:11:50 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXs33hHv7wvlPb7RJrdsWfGefTKb3OV7yHSZkJv6bfV5Lxzt0ndbZ3KU/7Qje/K6Uy0Ul9OoHVl94C/nDz7ZkHmvzcK6qaGJutQXgqcYLzaTScbcKgIndG401BRr0Hbig/rKUBjdoqDoWME0ztn0cw/zZozxfqjNuWdX7vHmVAk3wUGni2aU/fhB8vmwi/jdQIjjrxG9iL2hhMAeyPHpVOla5AY/sQ9
+X-Received: by 2002:a81:84cc:0:b0:627:de70:f2f8 with SMTP id
+ 00721157ae682-658eed5e08fmr121918067b3.14.1720804309901; Fri, 12 Jul 2024
+ 10:11:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20240712-gs101-non-essential-clocks-2-v4-2-310aee0de46e@linaro.org>
-References: <20240712-gs101-non-essential-clocks-2-v4-0-310aee0de46e@linaro.org>
-In-Reply-To: <20240712-gs101-non-essential-clocks-2-v4-0-310aee0de46e@linaro.org>
-To: Peter Griffin <peter.griffin@linaro.org>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Sam Protsenko <semen.protsenko@linaro.org>
-Cc: Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-X-Mailer: b4 0.13.0
+References: <20240627161315.98143-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240627161315.98143-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CAMuHMdVLSpaUtdXFv3VXFc5G61dmRX2C1iW9C+km23g6EgZJOg@mail.gmail.com>
+ <CA+V-a8vABF6vg+J7DAGzgnw8612oe6VfJkc5y-krySvnpAnPkQ@mail.gmail.com>
+ <CAMuHMdXuyQZ=SFfQa5kvZTwYa0uRXc7khJ-vOYBRE5SCd11rPw@mail.gmail.com> <CA+V-a8ui9AKDOZzg_dgPXeGhGE-+rBHU8O1tpdb8w8myo-1p5Q@mail.gmail.com>
+In-Reply-To: <CA+V-a8ui9AKDOZzg_dgPXeGhGE-+rBHU8O1tpdb8w8myo-1p5Q@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 12 Jul 2024 19:11:38 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVyqBmipMLeYd0nw3kEHwc=RvWJvrD8EYKVt+36E7oS+A@mail.gmail.com>
+Message-ID: <CAMuHMdVyqBmipMLeYd0nw3kEHwc=RvWJvrD8EYKVt+36E7oS+A@mail.gmail.com>
+Subject: Re: [PATCH v3 2/3] clk: renesas: Add family-specific clock driver for RZ/V2H(P)
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Magnus Damm <magnus.damm@gmail.com>, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The peric0_top1_ipclk_0 and peric0_top1_pclk_0 are the clocks going to
-peric0/uart_usi, with pclk being the bus clock. Without pclk running,
-any bus access will hang.
-Unfortunately, in commit d97b6c902a40 ("arm64: dts: exynos: gs101:
-update USI UART to use peric0 clocks") the gs101 DT ended up specifying
-an incorrect pclk in the respective node and instead the two clocks
-here were marked as critical.
+Hi Prabhakar,
 
-Since then, the DT has been updated to use the correct clock in
-commit 21e4e8807bfc ("arm64: dts: exynos: gs101: use correct clocks for
-usi_uart") and the driver here should be corrected and the work-around
-removed.
+On Fri, Jul 12, 2024 at 5:29=E2=80=AFPM Lad, Prabhakar
+<prabhakar.csengg@gmail.com> wrote:
+> On Fri, Jul 12, 2024 at 4:23=E2=80=AFPM Geert Uytterhoeven <geert@linux-m=
+68k.org> wrote:
+> > On Fri, Jul 12, 2024 at 5:14=E2=80=AFPM Lad, Prabhakar
+> > <prabhakar.csengg@gmail.com> wrote:
+> > > On Fri, Jul 12, 2024 at 12:59=E2=80=AFPM Geert Uytterhoeven
+> > > > On Thu, Jun 27, 2024 at 6:14=E2=80=AFPM Prabhakar <prabhakar.csengg=
+@gmail.com> wrote:
+> > > > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > > > >
+> > > > > Add family-specific clock driver for RZ/V2H(P) SoCs.
+> > > > >
+> > > > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas=
+.com>
+> > > > > ---
+> > > > > v2->v3
+> > > > > - Dropped num_hw_resets from struct rzv2h_cpg_priv
+> > > > > - Dropped range_check for module clocks
+> > > > > - Made mon_index to s8 instead of u8 in struct rzv2h_mod_clk
+> > > > > - Added support for critical module clocks with DEF_MOD_CRITICAL
+> > > > > - Added check for mon_index in rzv2h_mod_clock_endisable and
+> > > > >   rzv2h_mod_clock_is_enabled()
+> >
+> > > > > --- /dev/null
+> > > > > +++ b/drivers/clk/renesas/rzv2h-cpg.h
+> >
+> > > > > +/**
+> > > > > + * struct rzv2h_reset - Reset definitions
+> > > > > + *
+> > > > > + * @reset_index: reset register index
+> > > > > + * @reset_bit: reset bit
+> > > > > + * @mon_index: monitor register index
+> > > > > + * @mon_bit: monitor bit
+> > > > > + */
+> > > > > +struct rzv2h_reset {
+> > > > > +       u8 reset_index;
+> > > > > +       u8 reset_bit;
+> > > > > +       u8 mon_index;
+> > > > > +       u8 mon_bit;
+> > > > > +};
+> > > > > +
+> > > > > +#define RST_ID(x, y)   ((((x) * 16)) + (y))
+> > > > > +
+> > > > > +#define DEF_RST_BASE(_id, _resindex, _resbit, _monindex, _monbit=
+)      \
+> > > > > +       [_id] =3D { \
+> > > >
+> > > > Indexing by _id means the reset array will be very sparse.  E.g. th=
+e
+> > > > innocent-looking r9a09g057_resets[] with only a single entry takes
+> > > > 600 bytes.
+> > > >
+> > > > If you do need the full array for indexing, please allocate and
+> > > > populate it at runtime.
+> > > >
+> > > OK, I will use the radix tree for resets (is that OK)?
+> >
+> > You mean XArray? include/linux/radix-tree.h has:
+> >
+> >     /* Keep unconverted code working */
+> >     #define radix_tree_root         xarray
+> >     #define radix_tree_node         xa_node
+> >
+> Yes, I meant the above.
+>
+> > Given a single xa_node is already 576 bytes, just allocating the full
+> > linear reset array at runtime is probably better.
+> >
+> Agreed, I will create a linear reset array and loop through the array
+> based on reset index and reset bit to match with id whenever required.
 
-Link: https://lore.kernel.org/all/d45de3b2bb6b48653842cf1f74e58889ed6783ae.camel@linaro.org/ [1]
-Fixes: 893f133a040b ("clk: samsung: gs101: add support for cmu_peric0")
-Signed-off-by: André Draszik <andre.draszik@linaro.org>
-Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
-Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
+With a full allocated linear reset array you do not need to loop,
+but you can just index it by the reset ID??
 
----
-v4:
-- the earlycon issue described in the commit message in previous
-  versions of this patch is gone with "clk: samsung: gs101: allow
-  earlycon to work unconditionally", so no need to mention anything
+Gr{oetje,eeting}s,
 
-v3:
-- add git commit SHA1s (Krzysztof)
-- add link to wordier description of earlycon issue
+                        Geert
 
-v2:
-- commit message typo fixed
-- collect Reviewed-by: tags
----
- drivers/clk/samsung/clk-gs101.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-diff --git a/drivers/clk/samsung/clk-gs101.c b/drivers/clk/samsung/clk-gs101.c
-index 429690757923..a6fc4d7e47fd 100644
---- a/drivers/clk/samsung/clk-gs101.c
-+++ b/drivers/clk/samsung/clk-gs101.c
-@@ -3951,20 +3951,18 @@ static const struct samsung_gate_clock peric0_gate_clks[] __initconst = {
- 	     "gout_peric0_peric0_top0_pclk_9", "mout_peric0_bus_user",
- 	     CLK_CON_GAT_GOUT_BLK_PERIC0_UID_PERIC0_TOP0_IPCLKPORT_PCLK_9,
- 	     21, 0, 0),
--	/* Disabling this clock makes the system hang. Mark the clock as critical. */
- 	GATE(CLK_GOUT_PERIC0_PERIC0_TOP1_IPCLK_0,
- 	     "gout_peric0_peric0_top1_ipclk_0", "dout_peric0_usi0_uart",
- 	     CLK_CON_GAT_GOUT_BLK_PERIC0_UID_PERIC0_TOP1_IPCLKPORT_IPCLK_0,
--	     21, CLK_IS_CRITICAL, 0),
-+	     21, 0, 0),
- 	GATE(CLK_GOUT_PERIC0_PERIC0_TOP1_IPCLK_2,
- 	     "gout_peric0_peric0_top1_ipclk_2", "dout_peric0_usi14_usi",
- 	     CLK_CON_GAT_GOUT_BLK_PERIC0_UID_PERIC0_TOP1_IPCLKPORT_IPCLK_2,
- 	     21, CLK_SET_RATE_PARENT, 0),
--	/* Disabling this clock makes the system hang. Mark the clock as critical. */
- 	GATE(CLK_GOUT_PERIC0_PERIC0_TOP1_PCLK_0,
- 	     "gout_peric0_peric0_top1_pclk_0", "mout_peric0_bus_user",
- 	     CLK_CON_GAT_GOUT_BLK_PERIC0_UID_PERIC0_TOP1_IPCLKPORT_PCLK_0,
--	     21, CLK_IS_CRITICAL, 0),
-+	     21, 0, 0),
- 	GATE(CLK_GOUT_PERIC0_PERIC0_TOP1_PCLK_2,
- 	     "gout_peric0_peric0_top1_pclk_2", "mout_peric0_bus_user",
- 	     CLK_CON_GAT_GOUT_BLK_PERIC0_UID_PERIC0_TOP1_IPCLKPORT_PCLK_2,
-
--- 
-2.45.2.993.g49e7a77208-goog
-
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
