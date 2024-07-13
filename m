@@ -1,110 +1,177 @@
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39CF747A53;
-	Sat, 13 Jul 2024 10:47:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C33B33CD1
+	for <linux-clk@vger.kernel.org>; Sat, 13 Jul 2024 15:12:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720867666; cv=none; b=cNQJEWG93O9ph2MVQBtthuNk4NFv7XIXoL2jZFXQ81MedbOLHL+nas3tQo8h8IQb+C/Sq/wtwX7FxsbJEl5z1d+8Li7LsUzsrdSfKhAO7/HjLn6ebX3KoBjb83W1lWwBq3e9TexdmyoysH7mC/Xe1Pk6mGmnXOLnFeLCu/a35NQ=
+	t=1720883532; cv=none; b=hI/P7RZN55h4FJaz+EDtIqFRjuR7mKeFE/nW2sm15BmG99M1KSYlaJjMMj/BIbdDHytP5lzTWbsbPpjrwq/y5a5+QDsSeECSovtTWKJx+3w3ha+buaePzpsAP39zkvo+tvXHAT8Cp/klmkkiYJ8PVQkbiKDHNrVvtZzOcSYO1Ww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720867666; c=relaxed/simple;
-	bh=6Rd/PEeMiqexHiwaSOQ1xuaoeBDAi/qd5v9AWNzziaQ=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=J2aJwoCrE+zo/QYQn+gzQGLlNCJffuiqGJQfCfV+7NnwXF+NOREAWXxSwDjE0xmEb93Daq2GbfR0KOWglFFSTjMRDBoIRaXZZ1aeJulRuFdAF1M+LDAlCMQ1wNJt/RR5a4uFmZwuuyrUw3ImQ2ePoHxt1erjFkHrvxAl4V/rFcI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de; spf=pass smtp.mailfrom=public-files.de; dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b=K26DenVp; arc=none smtp.client-ip=212.227.15.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=public-files.de
+	s=arc-20240116; t=1720883532; c=relaxed/simple;
+	bh=P+1NX49KdiTObOO1WSEpuyHFp24rwPSmBcOarxZn/uE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rT6z/3vxISA/ywdQhr0v0E1omjm4HfNSNaKFmdsJI8GG6jvrBKdd1ZR9edEzc939XcYHMT8Qh/o/NIg4Ebif5ZN11aN0xdh36saxQGa65Fqo6tPVKrAddku8IqUKuEDkfxoItdYrzyuMpwUT0LMUTV3N5E4mKSvF4JQ+TIUNUHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TVU++5Kh; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b="K26DenVp"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=public-files.de;
-	s=s31663417; t=1720867623; x=1721472423; i=frank-w@public-files.de;
-	bh=6Rd/PEeMiqexHiwaSOQ1xuaoeBDAi/qd5v9AWNzziaQ=;
-	h=X-UI-Sender-Class:Date:From:To:CC:Subject:Reply-to:In-Reply-To:
-	 References:Message-ID:MIME-Version:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=K26DenVpAOM12XFxLVW2HTOzeEb9UP9Wopq+Zd+I3K0jsuybfB9ZPx5BthXcR6+t
-	 0z8fu6N+k5+zKeHNxNuCh5WpD5trpFLbDRJeVTkhSC/f6nbHTneO4Rcyt3IieKo1z
-	 BJNw60T10sZ1lHtXQkiWUe80Y/4Lem97Sfpf35Ls1u/n8GjZBADVGajbqbFnp+ANm
-	 8dPbmv6WzVaxikP/sf3Bc7pfJQCEaLRN5DkMS/1+QmQ7WaC32cPcnKHNMOapB/HZ2
-	 hrgCjn/PBs/qAaWNAKMQNuF1eJYwJete8TCONf7QfCKx9hn3dv8wi31NJRyl3Q1Tj
-	 IegYx1yF9pvye2oiWA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [127.0.0.1] ([217.61.145.51]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1MdNY2-1rtWZq38Ma-00iLMZ; Sat, 13
- Jul 2024 12:47:02 +0200
-Date: Sat, 13 Jul 2024 12:47:00 +0200
-From: Frank Wunderlich <frank-w@public-files.de>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Frank Wunderlich <linux@fw-web.de>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Wim Van Sebroeck <wim@linux-watchdog.org>,
- Guenter Roeck <linux@roeck-us.net>
-CC: Daniel Golle <daniel@makrotopia.org>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-watchdog@vger.kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v1_1/4=5D_dt-bindings=3A_watchdog=3A_me?=
- =?US-ASCII?Q?diatek=2Cmtk-wdt=3A_add_MT7988_syscon_requirement?=
-User-Agent: K-9 Mail for Android
-Reply-to: frank-w@public-files.de
-In-Reply-To: <58cba30d-af53-47a6-9258-8b36eab6cbfb@kernel.org>
-References: <20240709101328.102969-1-linux@fw-web.de> <20240709101328.102969-2-linux@fw-web.de> <58cba30d-af53-47a6-9258-8b36eab6cbfb@kernel.org>
-Message-ID: <F5A59950-5D16-4780-A64C-806A6324D467@public-files.de>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TVU++5Kh"
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2eedebccfa4so7770041fa.1
+        for <linux-clk@vger.kernel.org>; Sat, 13 Jul 2024 08:12:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1720883529; x=1721488329; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7vZWs4SOfcSjJ/0xdBRqV6rLIfc/Pb5SSC5NFGypgNg=;
+        b=TVU++5KhLNFzzX2GpfO8RH0NO6Q93zmBH06qvL39caARSEyGSAxgSswywwDDYuyUJS
+         G5T+I9XHhMykwUNOz/I2WkZTHIky13ahy3/WqALXjXa+O1zBK4TbPCchcWAP5skRsoEY
+         iCmiVJGZWWoFziIsHsByn7Y1sFoRWBq6fSqKV0i9qmEfG4Cnmbjbg+cIhoN7MQiDeVkT
+         4HbcNBEF6upbxlROLjxKRmasXS2OQWHSfzliJ63FmK02yuFxLj7eUa354oNRaTvtWl+L
+         37eEN7I+hVNt+tfJm+iTNSv0mYmnD9fTVUUu2nRcRQEnmVMEnhi8bg69yl9wUdJLPmEt
+         RnuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1720883529; x=1721488329;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7vZWs4SOfcSjJ/0xdBRqV6rLIfc/Pb5SSC5NFGypgNg=;
+        b=YBId7KyOw6qrLEF9qPTuLs6UJcOhbk3a9TrEmgaf0GkCWPeuhdC0fTN6FYxcM9bwJ7
+         IxRabgqbESgBJsjU2ptdJdhvxy96hFYdwK+UD5MYd/9C65rsJOkfFNh9gAZPQDGQCt6X
+         +w8v9A4T41xvc1jfttYDMaSgSxsaBytBYnVJEvBNxKyJkCA4jAEudANgJAq2vDb9lzPa
+         L9oL236eTCzwny/ttemEMHmIyPg1O5nn7ASfIYi/SSoon2zJWp2h7cK8WRiftiMrVHnp
+         6MZq2eQ3vaZXDTBhTfNoKhrdC3mYfdol7kLmux6JX8SNrECi9ackI1Co/WDacnlOov07
+         NP7w==
+X-Forwarded-Encrypted: i=1; AJvYcCVrReg1lqUwYPKU9I9P4J0ICDnN3122SazqBjvnUxW5v3ymfSKbMkC43NJzE4mt/Es645BG9TBSg+cofjoexy4yy0G8I3wt+Fe8
+X-Gm-Message-State: AOJu0YxqT9rzDH8odZ68Iz+ZnxpuPuEextuiR+Lt71t/+xKwWB+vkoOb
+	TJnw+KIbIgVRcd5AHvzaUctPnGCZra+1UdDW1Bx+STP6LvHZRVTazZEFU3n0kPI=
+X-Google-Smtp-Source: AGHT+IFMusu1I1v9BiB+eX9P6K0cuf9+FX4dmBbKL7gKF1mkzWuTYbZHowp3wA74HK8woE+7U2QRYA==
+X-Received: by 2002:a2e:9bcc:0:b0:2ee:493f:d751 with SMTP id 38308e7fff4ca-2eeb30fd3admr103931631fa.23.1720883528753;
+        Sat, 13 Jul 2024 08:12:08 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2eee179e733sm2304031fa.12.2024.07.13.08.12.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 13 Jul 2024 08:12:08 -0700 (PDT)
+Date: Sat, 13 Jul 2024 18:12:06 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Varadarajan Narayanan <quic_varada@quicinc.com>
+Cc: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	konrad.dybcio@linaro.org, djakov@kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org
+Subject: Re: [PATCH v1 2/3] clk: qcom: ipq5332: Use icc-clk for enabling NoC
+ related clocks
+Message-ID: <c2s5xsquekvdf4vj3jdbuzjgbeeuarsyj6ummgvq5q7chydp6x@37eti6jhpt2e>
+References: <20240709063949.4127310-1-quic_varada@quicinc.com>
+ <20240709063949.4127310-3-quic_varada@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:dfQVnBpIteXjdR8ttejmmx8V5KDS9dWqIXsSefOdM2sLE/Obzco
- NGDmA4NYZJB7TLC2wDsEaXEpgf6Xsx332EYdG0YfLBz0/8wsNk7+hpg4Itwu2I3DUCcOb0w
- msuBv+/Xb0nDwy+ySkjfwRlAToGV+uz3y5kI4J44Pkay2s66a7DBZI7b1JXLpsZapc5cAW0
- dxdy9GJLKI/j6SjG0lDkg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:7d5/pH8sfOY=;kZxM77vMuE7lzEFRj2it8hMElOb
- XfUwf6PpqfVT6w35/xDyxLXkd35plIy0+Ix3IXfqwLS8q67xbsOjI2UEmx4Q01LoOhF+1d25e
- t1wbbK1QfPNMrMMwDYKayZcNi5nmZqHQjFktyMYC4KhTxI9hRT0DhO4bn5g/tGEqAMFGOcmgY
- Sulc9zWvKtnkX4G5oL/FceF6nm4/joU9GzZo6XqBzClqoq3kkKtrLTtIofPvPBwhYipdn8HB6
- ZtIs9TZwqyByvlSrk/kLn1HJRQyXfoSeYsPA5YsQ4It0wIIpY7MQOC7rsFp/103FEgayRYik2
- h6GKbWQrRv2jaU00V45KtiVVvUXtY4sMQD66tF3C9VrSBVvQzSDSzSVZ0IBzJNfYETB6I1YFC
- 8t60Wu+ms6rM+TF8L1AYT5GyFAwXhZkfjpK4Uqs9ZgEFY5MyQmKRn3DF3u++8mY+9zJ11/ylw
- W9Z01g4C4STe2483/xiUV3FBps2s2cL3pKgH9XKBtMAXGHB+FUgSk2iDPmLHZ53ZbCNzsNcAY
- MP77ljfHtbwC60yPXReUmOxZMHFhb3j1DP5T0ivfrtSKeJ2CMm+QcLG1B2xXk82ed0jb2OtAY
- eqIqhU3gch1KgXPpwVl3ZTNRJF4EGDQrRt9/BGHhyDiVHFDLNdf1wzgqO49zVpdzV7bEo1O79
- 9gqvnb3z8tph1gI2uCwLtPizYyl4gCyeRBzITWzgSkEXXsy18ytGV1uZBf1erunhQXdKePRHB
- EIrompkqsMh3FSLQyfP8eUKENAH5Ju+yhDvbsKgZJiyiDd3yD/hhSK8mdebk+Ji5mz6qaXzWR
- hNM+bQeiUUEaJILs+UEYi5/g==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240709063949.4127310-3-quic_varada@quicinc.com>
 
-Am 13=2E Juli 2024 12:21:46 MESZ schrieb Krzysztof Kozlowski <krzk@kernel=
-=2Eorg>:
->On 09/07/2024 12:13, Frank Wunderlich wrote:
->> From: Frank Wunderlich <frank-w@public-files=2Ede>
->>=20
->> This is needed by u-boot-driver when using OF_UPSTREAM=2E
->
->Thanks for providing context=2E What we miss here still, is the
->description of the hardware and for what this syscon is used=2E Why this
->become system controller and before was not? Or this is just for regmap
->- then it does not work that way=2E=2E=2E You cannot have whatever driver
->poking all around then claim - I have crappy driver poking to every
->driver without implementing proper driver model, so I add syscon to
->bindings=2E
->
->
->
->Best regards,
->Krzysztof
->
+On Tue, Jul 09, 2024 at 12:09:47PM GMT, Varadarajan Narayanan wrote:
+> Use the icc-clk framework to enable few clocks to be able to
+> create paths and use the peripherals connected on those NoCs.
+> 
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> ---
+>  drivers/clk/qcom/gcc-ipq5332.c | 36 +++++++++++++++++++++++++++++-----
+>  1 file changed, 31 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/gcc-ipq5332.c b/drivers/clk/qcom/gcc-ipq5332.c
+> index f98591148a97..6d7672cae0f7 100644
+> --- a/drivers/clk/qcom/gcc-ipq5332.c
+> +++ b/drivers/clk/qcom/gcc-ipq5332.c
+> @@ -4,12 +4,14 @@
+>   */
+>  
+>  #include <linux/clk-provider.h>
+> +#include <linux/interconnect-provider.h>
+>  #include <linux/mod_devicetable.h>
+>  #include <linux/module.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/regmap.h>
+>  
+>  #include <dt-bindings/clock/qcom,ipq5332-gcc.h>
+> +#include <dt-bindings/interconnect/qcom,ipq5332.h>
+>  
+>  #include "clk-alpha-pll.h"
+>  #include "clk-branch.h"
+> @@ -131,12 +133,14 @@ static struct clk_alpha_pll gpll4_main = {
+>  			 * (will be added soon), so the clock framework
+>  			 * disables this source. But some of the clocks
+>  			 * initialized by boot loaders uses this source. So we
+> -			 * need to keep this clock ON. Add the
+> -			 * CLK_IGNORE_UNUSED flag so the clock will not be
+> -			 * disabled. Once the consumer in kernel is added, we
+> -			 * can get rid of this flag.
+> +			 * need to keep this clock ON.
+> +			 *
+> +			 * After initial bootup, when the ICC framework turns
+> +			 * off unused paths, as part of the icc-clk dependencies
+> +			 * this clock gets disabled resulting in a hang. Marking
+> +			 * it as critical to ensure it is not turned off.
 
-The nodes here are linked to the ethernet-node and syscon is only needed t=
-o get the regmap=2E=2E=2Ethe access to it is done by ethernet driver=2E It =
-does work,but maybe not the right way=2E=2E=2E
-regards Frank
+Are there any other users for this clocks? What exactly causes the hang?
+
+>  			 */
+> -			.flags = CLK_IGNORE_UNUSED,
+> +			.flags = CLK_IS_CRITICAL,
+>  		},
+>  	},
+>  };
+> @@ -3628,6 +3632,24 @@ static const struct qcom_reset_map gcc_ipq5332_resets[] = {
+>  	[GCC_UNIPHY1_XPCS_ARES] = { 0x16060 },
+>  };
+>  
+> +#define IPQ_APPS_ID			5332	/* some unique value */
+> +
+> +static struct qcom_icc_hws_data icc_ipq5332_hws[] = {
+> +	{ MASTER_SNOC_PCIE3_1_M, SLAVE_SNOC_PCIE3_1_M, GCC_SNOC_PCIE3_1LANE_M_CLK },
+> +	{ MASTER_ANOC_PCIE3_1_S, SLAVE_ANOC_PCIE3_1_S, GCC_SNOC_PCIE3_1LANE_S_CLK },
+> +	{ MASTER_SNOC_PCIE3_2_M, SLAVE_SNOC_PCIE3_2_M, GCC_SNOC_PCIE3_2LANE_M_CLK },
+> +	{ MASTER_ANOC_PCIE3_2_S, SLAVE_ANOC_PCIE3_2_S, GCC_SNOC_PCIE3_2LANE_S_CLK },
+> +	{ MASTER_SNOC_USB, SLAVE_SNOC_USB, GCC_SNOC_USB_CLK },
+> +	{ MASTER_NSSNOC_NSSCC, SLAVE_NSSNOC_NSSCC, GCC_NSSNOC_NSSCC_CLK },
+> +	{ MASTER_NSSNOC_SNOC_0, SLAVE_NSSNOC_SNOC_0, GCC_NSSNOC_SNOC_CLK },
+> +	{ MASTER_NSSNOC_SNOC_1, SLAVE_NSSNOC_SNOC_1, GCC_NSSNOC_SNOC_1_CLK },
+> +	{ MASTER_NSSNOC_ATB, SLAVE_NSSNOC_ATB, GCC_NSSNOC_ATB_CLK },
+> +	{ MASTER_NSSNOC_PCNOC_1, SLAVE_NSSNOC_PCNOC_1, GCC_NSSNOC_PCNOC_1_CLK },
+> +	{ MASTER_NSSNOC_QOSGEN_REF, SLAVE_NSSNOC_QOSGEN_REF, GCC_NSSNOC_QOSGEN_REF_CLK },
+> +	{ MASTER_NSSNOC_TIMEOUT_REF, SLAVE_NSSNOC_TIMEOUT_REF, GCC_NSSNOC_TIMEOUT_REF_CLK },
+> +	{ MASTER_NSSNOC_XO_DCD, SLAVE_NSSNOC_XO_DCD, GCC_NSSNOC_XO_DCD_CLK },
+> +};
+> +
+>  static const struct regmap_config gcc_ipq5332_regmap_config = {
+>  	.reg_bits = 32,
+>  	.reg_stride = 4,
+> @@ -3656,6 +3678,9 @@ static const struct qcom_cc_desc gcc_ipq5332_desc = {
+>  	.num_resets = ARRAY_SIZE(gcc_ipq5332_resets),
+>  	.clk_hws = gcc_ipq5332_hws,
+>  	.num_clk_hws = ARRAY_SIZE(gcc_ipq5332_hws),
+> +	.icc_hws = icc_ipq5332_hws,
+> +	.num_icc_hws = ARRAY_SIZE(icc_ipq5332_hws),
+> +	.icc_first_node_id = IPQ_APPS_ID,
+>  };
+>  
+>  static int gcc_ipq5332_probe(struct platform_device *pdev)
+> @@ -3674,6 +3699,7 @@ static struct platform_driver gcc_ipq5332_driver = {
+>  	.driver = {
+>  		.name = "gcc-ipq5332",
+>  		.of_match_table = gcc_ipq5332_match_table,
+> +		.sync_state = icc_sync_state,
+>  	},
+>  };
+>  
+> -- 
+> 2.34.1
+> 
+
+-- 
+With best wishes
+Dmitry
