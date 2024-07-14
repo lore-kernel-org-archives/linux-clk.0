@@ -1,136 +1,143 @@
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from fhigh2-smtp.messagingengine.com (fhigh2-smtp.messagingengine.com [103.168.172.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23E4C139590
-	for <linux-clk@vger.kernel.org>; Sat, 13 Jul 2024 16:21:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FCB3F505;
+	Sun, 14 Jul 2024 05:36:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1720887695; cv=none; b=FSkuQD6sTI6KM9WFx9d4jcnzI5UzQf9tZYcNR1u/G9Fy4PHc1fpy9PTMobncX3HWX8QoMiqTyOavh6S2Dsm8vVnhvMwRBt3ZsndM7NEMz4mKVo+zgc9HCF8DXcJ7PF9migIg5xiktGBuxTT+m3zLdQZ9ZyiMsKkzXKZaA2ezJEM=
+	t=1720935380; cv=none; b=jUTP5BzHtU7qjYa8MPwkuzw3RxpvcolDzD0UVgbwKqEgxzUZwBp0fC2DfnXGYNUhlMPwI84tjozsGJc+CgF+pb00OjRdkFbEgS1W9LBZ6tc+Tqo6/Ck5UDMkmvM+J/Rt/wEGCSlyaxaIOpYnj6jmUpSx6H79gk2tsYyUQakTH4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1720887695; c=relaxed/simple;
-	bh=RGu5t9fq+Gwj1ue/OlUbeB/Z/w6gGnri4eNigjCFeMM=;
+	s=arc-20240116; t=1720935380; c=relaxed/simple;
+	bh=xS19+sp17d5w9uukIbZLfcn+Ywz3oyK+S374Ds5EouY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ge54VGb3YcA9nH0daKK/B12XRH2uRgiW0u9YWgieASAxu6ofl9EpWVmKuFHCJhWq6RkIAXKi45uKy1TlkBWfnq2koMoWNeah5Na8prNRc1ojx7wmzeuSpVsb2dPtgmerV20Vh+aikas61N5WXkOg7ysmTeZ2gHSFV31kEYVcWPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=indgmcJT; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 Content-Type:Content-Disposition:In-Reply-To; b=B8m8DCL7giGo9L0TW38D91VAyXMuxxhHoSaz+aOcoEPFxlIqoHwsIa33NsE1ubGGK9F2u4qC8FMWZ3XOjcv/pTgcMmGOjATo9CyT8NloFaF3nmMV9nmTV8mPtNXzdzsDuWeg2qc/gDgl38iBpJ/xlV307y0/nLAI0dZO02AT1hE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=iODBTGt2; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=h94rPcSR; arc=none smtp.client-ip=103.168.172.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="indgmcJT"
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2ebe40673e8so40985231fa.3
-        for <linux-clk@vger.kernel.org>; Sat, 13 Jul 2024 09:21:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1720887691; x=1721492491; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mSMThvRAo9pmovVRN14rKunXMUYZuHRsMvJiDzKtBMU=;
-        b=indgmcJTlVA48sldqql7EmBIpclLhEaFXgP2Iu3wAlT+l689X45W6XjZYkzjSWuTPP
-         ChZsOUfMY/f2JHUzeZ2XdaPNCPdzt9qZzdesrFDUzPEbIfPf3CILXWIlJ5xmqyROhnQv
-         tekMJMU1UdpqwB0pqu41jrXNOdSba7wCDTofaD0S+0tdkBL5v7PN0g7LRrOjZfHTZ9S2
-         aVtaOCLIX/ASXm39T0GcTYWozbFcadp88Nbv7GrJbfo6YTVGwdZW3wX1IEMzFw3upOcZ
-         rtWS6QBkU/LxDfThd844AlbAYX0t3z+WJCw+czdREqWCQc3Bp8Pg8fYSghJCS1aEtBYs
-         UU2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1720887691; x=1721492491;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mSMThvRAo9pmovVRN14rKunXMUYZuHRsMvJiDzKtBMU=;
-        b=TYLzD1SKjRox564jSTVkVKBeuiDK+watw9gQu4j5z7X7Cx3DVEfShyaPSOivj+cYd8
-         jVMYpjagLcguvH/SvTW04wAXFyfJSoFBKjdpyDlLUQHWNWPFxMREFvbcIbfO9fgWUpYs
-         zJrxz519OZnhaFXbDjKgEyVEPQs39+L+ebeuDMHskzCrciN2YRR4XaDiVizC5R6Qipp5
-         63Bim8TbAmHbRdYzEjrwer0hzHGp1kgQniPada4vhlveqlR8n/I4oHJcNubfZJywMuks
-         A7BmwI3ngVx31zDLQR8KfXHGFqfvLvELV+Ozjzbm6JU6EKkDuerQ2dLOopqQAnQ0/Mrg
-         kMiA==
-X-Forwarded-Encrypted: i=1; AJvYcCWnZ1PmCeyS8HcsWJvOzB6BBUeP1FYs6gX9iuX005uMteGF+RBIezsib7iPRzXeS0yaL8V9y0QC8J7cKWOF7cPQrBBbUJdRZk+S
-X-Gm-Message-State: AOJu0YzAoaPFrmd783Wy9raBVkRkTh6mFbB4l3OZo5BXVCw+SDQqZhGv
-	yRPoTB8FIxoxp46JzB4laqTXbZIwETkBzlrWC4goyrlCVLaFBWOR+8ptB+2cvnQ=
-X-Google-Smtp-Source: AGHT+IFxjnxFBxILxeAI4QbWroaSsUouY5N4Hn5ddE/vqCHXgfDQegcXUigo9LiyRZiaaNkqHQ2/yg==
-X-Received: by 2002:a2e:9dd0:0:b0:2ee:8dce:2fa0 with SMTP id 38308e7fff4ca-2eeb30fd48cmr93869131fa.25.1720887691330;
-        Sat, 13 Jul 2024 09:21:31 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2eee17ad43dsm2535181fa.42.2024.07.13.09.21.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 13 Jul 2024 09:21:30 -0700 (PDT)
-Date: Sat, 13 Jul 2024 19:21:29 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	gregkh@linuxfoundation.org, konrad.dybcio@linaro.org, djakov@kernel.org, 
-	quic_wcheng@quicinc.com, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
-	linux-pm@vger.kernel.org
-Subject: Re: [PATCH v2 3/4] clk: qcom: ipq5332: Use icc-clk for enabling NoC
- related clocks
-Message-ID: <iwdennlw4njxefulw5e2wofu4pylep65el4hiiso6xqmoaq5fb@i4hrltrn2o6z>
-References: <20240711113239.3063546-1-quic_varada@quicinc.com>
- <20240711113239.3063546-4-quic_varada@quicinc.com>
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="iODBTGt2";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="h94rPcSR"
+Received: from compute2.internal (compute2.nyi.internal [10.202.2.46])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id CF1221141598;
+	Sun, 14 Jul 2024 01:36:14 -0400 (EDT)
+Received: from mailfrontend1 ([10.202.2.162])
+  by compute2.internal (MEProxy); Sun, 14 Jul 2024 01:36:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1720935374;
+	 x=1721021774; bh=NjoaWqbmCCAWb0YfWSZt7I3ScVnBYV3ErTKM36lGPLc=; b=
+	iODBTGt2SZGEl69ClpKrnNMBCezvBbue8dNnluMmHDM92DkeGl3SBB8TspkgAsQY
+	JPYf/8KDrPN0+IShXVngT16qf6ypllGQJgrCEeDO4wnGa1kYbxiGd7RGNPojGD+G
+	6/qyso9gD1es4ID3ZgKvGLHS9n2o4qCOngzhnGcCmTjVvPxn9eVVPjXnSkKp/7Yi
+	J+zOuXSD3zYT3fghKZmt9S/gg5rNeHFVEEiQEog2d7mfEzPOejWZRa2C7ZH4VnuX
+	BZZKSNHXSJddbvEnSoNxfBaLRzSl0kLyGjIHM5v5QmZ1lJs+uUQ0Uim8HEKRYpdp
+	Fur7Koy/JqKZ8CMbny2o7Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1720935374; x=
+	1721021774; bh=NjoaWqbmCCAWb0YfWSZt7I3ScVnBYV3ErTKM36lGPLc=; b=h
+	94rPcSRXTfwdTLRCtV3X4Kqm8qCFXCWDLKHKg0iX1QhMgcWaF6I/ZrC+8w4P+NA/
+	nLZOh1gBxUcbpHzcQfWd7/0pDdjPkI5CTixEWOiwetGdS/fzbyH7325i6Ud5xZ47
+	NlC7xAG5MmiDg3oXmdMN3IoJTBDPiAYa4DMFo3lAkIYwUmg1E1Gfc6Lm83CY7ayE
+	0Ne+ItYOY8jPueY0XvOpSrHH8I4qV0Xx0EErrB2N2X7885+hTHzyTQmulG5lEhMX
+	M8rd1rCtmXn68ufe8DT+6q8RoxhvDfaNRN3k9pBWJkXAwCEG8Cb70VgJo4QemS3s
+	q5sHY9xvTmVMrEWO6uy1w==
+X-ME-Sender: <xms:zWOTZkE_6KX-zpyqliZ4XJBKnz6CR1UflKCRdYsH_fU1gfajafmo9g>
+    <xme:zWOTZtVwmULPm89IQOtdHFW8aXALLkyDNMEq6PPcgoZeZq3iZ8jztlOIbf98GeQZs
+    FOZ5YSOauMnNHDJCRo>
+X-ME-Received: <xmr:zWOTZuLAcOjDztfRgt6EZgCgD1d1qVJ29ZiALvab5h9s3sVdan5_0EJiZU754YTj1jvC8WZvQhsZF-L4nizzHth8VorcxEM>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrfeelgdelkecutefuodetggdotefrodftvf
+    curfhrohhfihhlvgemucfhrghsthforghilhdpqfgfvfdpuffrtefokffrpgfnqfghnecu
+    uegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenuc
+    fjughrpeffhffvvefukfhfgggtugfgjgesthekredttddtjeenucfhrhhomheppfhikhhl
+    rghsucfunpguvghrlhhunhguuceonhhikhhlrghsrdhsohguvghrlhhunhguodhrvghnvg
+    hsrghssehrrghgnhgrthgvtghhrdhsvgeqnecuggftrfgrthhtvghrnhepfefhleelhfff
+    jefgfedugfegjeelhfevheeikefhueelgfdtfeeuhefftddvleeinecuvehluhhsthgvrh
+    fuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhhikhhlrghsrdhsohguvghr
+    lhhunhguodhrvghnvghsrghssehrrghgnhgrthgvtghhrdhsvg
+X-ME-Proxy: <xmx:zWOTZmGYiFZAioT6Yv91woyX3g-GCrvmUpVCd0Y_w8GVwKHGNn6cJw>
+    <xmx:zWOTZqXLv2TMHxNrwjdKkdbRszxAJFM0JDfIc66BiPzuXX-w3cW_ug>
+    <xmx:zWOTZpOPoolqdJaSuAld4cEgfthlAfLrMmWqLKkqa8alDqKwi6XllQ>
+    <xmx:zWOTZh3FVu__bFLgPwwOGRZSoT-z-dD40X3Wz4kDrhuRcnMXzFV5xA>
+    <xmx:zmOTZlHaxA5c0-CHsFg8EYC3782eTzCd43YUIYfuMyxN1oGxeUdVu7tm>
+Feedback-ID: i80c9496c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 14 Jul 2024 01:36:12 -0400 (EDT)
+Date: Sun, 14 Jul 2024 07:36:11 +0200
+From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund+renesas@ragnatech.se>
+To: Geert Uytterhoeven <geert+renesas@glider.be>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Cong Dang <cong.dang.xn@renesas.com>,
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Subject: Re: [PATCH 0/4] clk: renesas: rcar-gen4: Initial clock descriptions
+ should be __initconst
+Message-ID: <20240714053611.GB3428@ragnatech.se>
+References: <cover.1720794214.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240711113239.3063546-4-quic_varada@quicinc.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cover.1720794214.git.geert+renesas@glider.be>
 
-On Thu, Jul 11, 2024 at 05:02:38PM GMT, Varadarajan Narayanan wrote:
-> Use the icc-clk framework to enable few clocks to be able to
-> create paths and use the peripherals connected on those NoCs.
+Hi Geert,
+
+Thanks for your work.
+
+On 2024-07-12 16:26:42 +0200, Geert Uytterhoeven wrote:
+> 	Hi all,
 > 
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> ---
->  drivers/clk/qcom/gcc-ipq5332.c | 36 +++++++++++++++++++++++++++++-----
->  1 file changed, 31 insertions(+), 5 deletions(-)
+> The various R-Car Gen4 clock drivers missed a few opportunities to put
+> constant clock description data in the __init section.  Fix this to
+> reduce memory consumption.
 > 
-> diff --git a/drivers/clk/qcom/gcc-ipq5332.c b/drivers/clk/qcom/gcc-ipq5332.c
-> index f98591148a97..6d7672cae0f7 100644
-> --- a/drivers/clk/qcom/gcc-ipq5332.c
-> +++ b/drivers/clk/qcom/gcc-ipq5332.c
-> @@ -4,12 +4,14 @@
->   */
->  
->  #include <linux/clk-provider.h>
-> +#include <linux/interconnect-provider.h>
->  #include <linux/mod_devicetable.h>
->  #include <linux/module.h>
->  #include <linux/platform_device.h>
->  #include <linux/regmap.h>
->  
->  #include <dt-bindings/clock/qcom,ipq5332-gcc.h>
-> +#include <dt-bindings/interconnect/qcom,ipq5332.h>
->  
->  #include "clk-alpha-pll.h"
->  #include "clk-branch.h"
-> @@ -131,12 +133,14 @@ static struct clk_alpha_pll gpll4_main = {
->  			 * (will be added soon), so the clock framework
->  			 * disables this source. But some of the clocks
->  			 * initialized by boot loaders uses this source. So we
-> -			 * need to keep this clock ON. Add the
-> -			 * CLK_IGNORE_UNUSED flag so the clock will not be
-> -			 * disabled. Once the consumer in kernel is added, we
-> -			 * can get rid of this flag.
-> +			 * need to keep this clock ON.
-> +			 *
-> +			 * After initial bootup, when the ICC framework turns
-> +			 * off unused paths, as part of the icc-clk dependencies
-> +			 * this clock gets disabled resulting in a hang. Marking
-> +			 * it as critical to ensure it is not turned off.
+> To be queued in renesas-clk-for-v6.12 (unless I get to doing a fixes
+> branch for v6.11).
+> 
+> Thanks for your comments!
 
-Previous comment was pretty clear: there are missing consumers, the flag
-will be removed once they are added. Current comment doesn't make sense.
-What is the reason for the device hang if we have all the consumers in
-place?
+For the whole series,
 
->  			 */
-> -			.flags = CLK_IGNORE_UNUSED,
-> +			.flags = CLK_IS_CRITICAL,
->  		},
->  	},
->  };
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
+> 
+> Geert Uytterhoeven (4):
+>   clk: renesas: r8a779a0: cpg_pll_configs should be __initconst
+>   clk: renesas: r8a779f0: cpg_pll_configs should be __initconst
+>   clk: renesas: r8a779g0: cpg_pll_configs should be __initconst
+>   clk: renesas: r8a779h0: Initial clock descriptions should be
+>     __initconst
+> 
+>  drivers/clk/renesas/r8a779a0-cpg-mssr.c | 2 +-
+>  drivers/clk/renesas/r8a779f0-cpg-mssr.c | 2 +-
+>  drivers/clk/renesas/r8a779g0-cpg-mssr.c | 2 +-
+>  drivers/clk/renesas/r8a779h0-cpg-mssr.c | 6 +++---
+>  4 files changed, 6 insertions(+), 6 deletions(-)
+> 
+> -- 
+> 2.34.1
+> 
+> Gr{oetje,eeting}s,
+> 
+> 						Geert
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+> 							    -- Linus Torvalds
 
 -- 
-With best wishes
-Dmitry
+Kind Regards,
+Niklas Söderlund
