@@ -1,280 +1,168 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74FDD1850AD;
-	Mon, 15 Jul 2024 08:40:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40330185627
+	for <linux-clk@vger.kernel.org>; Mon, 15 Jul 2024 08:43:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721032803; cv=none; b=GUe+d/iKLq6RGiD6yzUrc81+9uFCNuBWKR1Egx72yU/pTbMyQMoc/kjuiIsias1WzDLgBkmV4OGTd3EgrF0WsT0YQGPztDJYaWgfNWqa5DBolpH5f94GAG6/EJL6o3E8aeiJfB1ittJSGbJmfkM4QEohpgTyJdRUXp0ZUKg5O/s=
+	t=1721033031; cv=none; b=Rllqhv72VPUkaSZvZv+cdbda7VVlM15gKBSOt/Lhg5OvAjjxR92BGLH/NZfWybBs9TTSzK3Xjx3I1YlW1aMJAU6wN5AbuU8jaQ3wPa1nl7W9lyBLYhrxxEeof66XGWQ68JgvTFO1NH8XUdU2ucgXEur2ygBK8g1bRJIq96gbjSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721032803; c=relaxed/simple;
-	bh=zv3gOiLnT6e7x2kyU/07S/W45M5GmXrbiqEXY9uKY5s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=T/I2cGOTJDL9DFQkj9otjBVfH+7ezk+wa2cKdUZGn/K6x6yMXHal9ykDHc60AmjpLe8SCpairFUC2qTbNkI0K3XZQjX8YxI1LcgdQfy0lOWKWcFIp1oJAFlrLaLmr8O8/lH8E4ms7vTaXqIzXMOkCj7s25MzCO20ySfrPO7F+eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XNPo2OH6; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1721033031; c=relaxed/simple;
+	bh=S6vkVSNbhG89L370XvJhZTmegxYe3oPBTnuAUQ0eJrI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HOmU8zRcUOXTEBwIdgOkI3Q2r0dw+pSY0QcwSsYgWZPb3T6/QrV+csKIC4KQ1uIA/cvFty8n7Fx4fgp03rfpE9sDI07A2tm4myLkldWN32eDmy8Fq1KLYMpiyjxxmdSka7nLf+S/cLZZokaFE+IUbRnqSAFbQpOAPs5cAcwwz5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=B/SerU87; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XNPo2OH6"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 061A9C4AF49;
-	Mon, 15 Jul 2024 08:40:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721032803;
-	bh=zv3gOiLnT6e7x2kyU/07S/W45M5GmXrbiqEXY9uKY5s=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=XNPo2OH6aQKZPbS4uuXZiP4lgjImuZAsAUrj1jRFIJLDxv78N6Gs+smXRQhm8IufI
-	 UzmgNIrruKPLTpVjuDG8n+hGjVFq9qe7BFDek+rNNHjJzN3vGPS577zCwVSJ4zdR4/
-	 9FuG4avKEOa+pE+hXY+aaBT+nFLomdcc3pIMIQ5RHYd+RXIL/n/ebYJGPPxOja3Jkm
-	 HGyJ704IBSbh2PyJyfDc3oBt8Ysj17W+HrAp13MCFTiZKku6hidUT+4FqUmkfemved
-	 h4claUqf++JlBBvZJCP2AwRJP4NbXbXxzRlti2Zu/PzXAKcv3BSW2Z281asHy3AyQS
-	 dtMOoGZXwTTmQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE298C2BD09;
-	Mon, 15 Jul 2024 08:40:02 +0000 (UTC)
-From: Nikita Shubin via B4 Relay <devnull+nikita.shubin.maquefel.me@kernel.org>
-Date: Mon, 15 Jul 2024 11:38:10 +0300
-Subject: [PATCH v11 06/38] dt-bindings: soc: Add Cirrus EP93xx
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="B/SerU87"
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52ea5dc3c79so5635884e87.1
+        for <linux-clk@vger.kernel.org>; Mon, 15 Jul 2024 01:43:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721033027; x=1721637827; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EsdzpTRLXnS6olUqpcfoyueExAl5OEraVlLDAUpRwyY=;
+        b=B/SerU870wcbZokm85hUBUHwM+9z6ZL7qOIDyFTS43Wc3xw5Id9ydGmQ99eJkCkep5
+         iO9NtuD9iTSNFJENzvyIwv+69hz8JjbPLH35lqpPuyHKlRZxInOTM9gsCAbocD9rKvvl
+         2gikCfDvdnWfwfBWC/PumTOelhnXcxkos0rZuS5xehTl8477ogd3CGJ6nQHy6iUCbg05
+         WAsDRspgyn8oKdhrLgaN7XI3bwohymNQ5udHvNQWjqeXUd9GQQAUw5padNCk6kCZk+iS
+         eszqwMJu35bf/qM0XsimphjUKzHQBEeB6tJU8mal9YyCZm7hZf2J/SL5eSsGjaI5wGrn
+         Oshg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721033027; x=1721637827;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EsdzpTRLXnS6olUqpcfoyueExAl5OEraVlLDAUpRwyY=;
+        b=o64iQHcrtA0pHNPA2gfU2Zi2ltk54sO8+M+eabIjn18pXrZftxKQJOAol1h6COASh5
+         zE1wwDpXikz4yhSbPvFnRs+R73Gqb9kAl4ku3Y05b66oZDS7kvpyc/VOnccuM1vujGDw
+         fZEkB1Hl2ULJwFHkfa/0ELTLjBpbYtrlndxMS8QezZZxGwj9rGssfpyAtRbNX/hxXjij
+         RPCF6OshTmPcMctFHOQQTdUszGMLT5dJDNsLq4iGdZNkFQYBUXLR/0w+urIzn2FtBEoN
+         9J3b/Fz3cBb76p9H0U2L8H4VzifjlP6J8WVoL/6m19y6JyUKkVh2bvHyNY1k3UQOycyZ
+         ZwPg==
+X-Forwarded-Encrypted: i=1; AJvYcCVKtvhVK783W6WLfWeK/OPPKWG/xicEcRp1ChClg/37r0m9Dvt5Kl3qTmkRoQI0flQpVf0upTae5gJTGsJ577YTLC6wqodg20rk
+X-Gm-Message-State: AOJu0YwiG6EpmrGJmuxHM2Y0CBllZc4CIPdhxxLCTJyMKZ7nAWB45zho
+	k/2Mv9/8CdwGPx3Q+u/As/vMtf8sGVvHU6EMsRBZyGWDY+tfD/ZGGN/GaLZe0o0=
+X-Google-Smtp-Source: AGHT+IFZ06GISOlCShv8E0xL7DUeyBRRoifs+3mdHj6HmVdE1N6FRa5TrRxeP5KnzTakGhRCH+kIzw==
+X-Received: by 2002:a05:6512:3f0c:b0:52c:de00:9c04 with SMTP id 2adb3069b0e04-52eb99d338amr14103866e87.48.1721033027358;
+        Mon, 15 Jul 2024 01:43:47 -0700 (PDT)
+Received: from rayyan-pc.broadband ([2a0a:ef40:ee7:2401:197d:e048:a80f:bc44])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427a5edb489sm77226925e9.37.2024.07.15.01.43.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Jul 2024 01:43:46 -0700 (PDT)
+From: Rayyan Ansari <rayyan.ansari@linaro.org>
+To: devicetree@vger.kernel.org
+Cc: Rayyan Ansari <rayyan.ansari@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: clock: qcom,turingcc: convert to dtschema
+Date: Mon, 15 Jul 2024 09:43:10 +0100
+Message-ID: <20240715084313.14098-1-rayyan.ansari@linaro.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240715-ep93xx-v11-6-4e924efda795@maquefel.me>
-References: <20240715-ep93xx-v11-0-4e924efda795@maquefel.me>
-In-Reply-To: <20240715-ep93xx-v11-0-4e924efda795@maquefel.me>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Nikita Shubin <nikita.shubin@maquefel.me>, 
- Alexander Sverdlin <alexander.sverdlin@gmail.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-clk@vger.kernel.org
-X-Mailer: b4 0.13-dev-e3e53
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1721032799; l=6134;
- i=nikita.shubin@maquefel.me; s=20230718; h=from:subject:message-id;
- bh=3qRH8iBzDzq1XDMd29PQTUf0/U/lo+zRZQ47DrczBzM=;
- b=RjB/JAhhA5VLyteob8W1OGdQSth/21/AC5heCSD9XABCeWwEMZ2c87T2qh+0OAau9NDoPS6aoWnt
- fxIRFa6sBqN4xhpZ5Qe6RGrRkbPnVIBV6jjaoVrVMgyHo9QbP5G6
-X-Developer-Key: i=nikita.shubin@maquefel.me; a=ed25519;
- pk=vqf5YIUJ7BJv3EJFaNNxWZgGuMgDH6rwufTLflwU9ac=
-X-Endpoint-Received: by B4 Relay for nikita.shubin@maquefel.me/20230718
- with auth_id=65
-X-Original-From: Nikita Shubin <nikita.shubin@maquefel.me>
-Reply-To: nikita.shubin@maquefel.me
+Content-Transfer-Encoding: 8bit
 
-From: Nikita Shubin <nikita.shubin@maquefel.me>
+Convert the bindings for the Turing Clock Controller, currently only
+used for QCS404, from the old text format to yaml.
 
-Add device tree bindings for the Cirrus Logic EP93xx SoC.
-
-Signed-off-by: Nikita Shubin <nikita.shubin@maquefel.me>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Reviewed-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Rayyan Ansari <rayyan.ansari@linaro.org>
 ---
- .../bindings/arm/cirrus/cirrus,ep9301.yaml         | 38 +++++++++
- .../bindings/soc/cirrus/cirrus,ep9301-syscon.yaml  | 94 ++++++++++++++++++++++
- include/dt-bindings/clock/cirrus,ep9301-syscon.h   | 46 +++++++++++
- 3 files changed, 178 insertions(+)
+ .../bindings/clock/qcom,turingcc.txt          | 19 --------
+ .../bindings/clock/qcom,turingcc.yaml         | 47 +++++++++++++++++++
+ 2 files changed, 47 insertions(+), 19 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/qcom,turingcc.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,turingcc.yaml
 
-diff --git a/Documentation/devicetree/bindings/arm/cirrus/cirrus,ep9301.yaml b/Documentation/devicetree/bindings/arm/cirrus/cirrus,ep9301.yaml
+diff --git a/Documentation/devicetree/bindings/clock/qcom,turingcc.txt b/Documentation/devicetree/bindings/clock/qcom,turingcc.txt
+deleted file mode 100644
+index 126517de5f9a..000000000000
+--- a/Documentation/devicetree/bindings/clock/qcom,turingcc.txt
++++ /dev/null
+@@ -1,19 +0,0 @@
+-Qualcomm Turing Clock & Reset Controller Binding
+-------------------------------------------------
+-
+-Required properties :
+-- compatible: shall contain "qcom,qcs404-turingcc".
+-- reg: shall contain base register location and length.
+-- clocks: ahb clock for the TuringCC
+-- #clock-cells: from common clock binding, shall contain 1.
+-- #reset-cells: from common reset binding, shall contain 1.
+-
+-Example:
+-	turingcc: clock-controller@800000 {
+-		compatible = "qcom,qcs404-turingcc";
+-		reg = <0x00800000 0x30000>;
+-		clocks = <&gcc GCC_CDSP_CFG_AHB_CLK>;
+-
+-		#clock-cells = <1>;
+-		#reset-cells = <1>;
+-	};
+diff --git a/Documentation/devicetree/bindings/clock/qcom,turingcc.yaml b/Documentation/devicetree/bindings/clock/qcom,turingcc.yaml
 new file mode 100644
-index 000000000000..170aad5dd7ed
+index 000000000000..0a57e42fb4d9
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/arm/cirrus/cirrus,ep9301.yaml
-@@ -0,0 +1,38 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++++ b/Documentation/devicetree/bindings/clock/qcom,turingcc.yaml
+@@ -0,0 +1,47 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/arm/cirrus/cirrus,ep9301.yaml#
++$id: http://devicetree.org/schemas/clock/qcom,turingcc.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Cirrus Logic EP93xx platforms
-+
-+description:
-+  The EP93xx SoC is a ARMv4T-based with 200 MHz ARM9 CPU.
++title: Qualcomm Turing Clock & Reset Controller
 +
 +maintainers:
-+  - Alexander Sverdlin <alexander.sverdlin@gmail.com>
-+  - Nikita Shubin <nikita.shubin@maquefel.me>
-+
-+properties:
-+  $nodename:
-+    const: '/'
-+  compatible:
-+    oneOf:
-+      - description: The TS-7250 is a compact, full-featured Single Board
-+          Computer (SBC) based upon the Cirrus EP9302 ARM9 CPU
-+        items:
-+          - const: technologic,ts7250
-+          - const: cirrus,ep9301
-+
-+      - description: The Liebherr BK3 is a derivate from ts7250 board
-+        items:
-+          - const: liebherr,bk3
-+          - const: cirrus,ep9301
-+
-+      - description: EDB302 is an evaluation board by Cirrus Logic,
-+          based on a Cirrus Logic EP9302 CPU
-+        items:
-+          - const: cirrus,edb9302
-+          - const: cirrus,ep9301
-+
-+additionalProperties: true
-diff --git a/Documentation/devicetree/bindings/soc/cirrus/cirrus,ep9301-syscon.yaml b/Documentation/devicetree/bindings/soc/cirrus/cirrus,ep9301-syscon.yaml
-new file mode 100644
-index 000000000000..7cb1b4114985
---- /dev/null
-+++ b/Documentation/devicetree/bindings/soc/cirrus/cirrus,ep9301-syscon.yaml
-@@ -0,0 +1,94 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/soc/cirrus/cirrus,ep9301-syscon.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Cirrus Logic EP93xx Platforms System Controller
-+
-+maintainers:
-+  - Alexander Sverdlin <alexander.sverdlin@gmail.com>
-+  - Nikita Shubin <nikita.shubin@maquefel.me>
-+
-+description: |
-+  Central resources are controlled by a set of software-locked registers,
-+  which can be used to prevent accidental accesses. Syscon generates
-+  the various bus and peripheral clocks and controls the system startup
-+  configuration.
-+
-+  The System Controller (Syscon) provides:
-+  - Clock control
-+  - Power management
-+  - System configuration management
-+
-+  Syscon registers are common for all EP93xx SoC's, through some actual peripheral
-+  may be missing depending on actual SoC model.
++  - Bjorn Andersson <andersson@kernel.org>
 +
 +properties:
 +  compatible:
-+    oneOf:
-+      - items:
-+          - enum:
-+              - cirrus,ep9302-syscon
-+              - cirrus,ep9307-syscon
-+              - cirrus,ep9312-syscon
-+              - cirrus,ep9315-syscon
-+          - const: cirrus,ep9301-syscon
-+          - const: syscon
-+      - items:
-+          - const: cirrus,ep9301-syscon
-+          - const: syscon
++    const: qcom,qcs404-turingcc
 +
 +  reg:
 +    maxItems: 1
 +
-+  "#clock-cells":
++  clocks:
++    maxItems: 1
++
++  '#clock-cells':
 +    const: 1
 +
-+  clocks:
-+    items:
-+      - description: reference clock
-+
-+patternProperties:
-+  '^pins-':
-+    type: object
-+    description: pin node
-+    $ref: /schemas/pinctrl/pinmux-node.yaml
-+
-+    properties:
-+      function:
-+        enum: [ spi, ac97, i2s, pwm, keypad, pata, lcd, gpio ]
-+
-+      groups:
-+        enum: [ ssp, ac97, i2s_on_ssp, i2s_on_ac97, pwm1, gpio1agrp,
-+                gpio2agrp, gpio3agrp, gpio4agrp, gpio6agrp, gpio7agrp,
-+                rasteronsdram0grp, rasteronsdram3grp, keypadgrp, idegrp ]
-+
-+    required:
-+      - function
-+      - groups
-+
-+    unevaluatedProperties: false
++  '#reset-cells':
++    const: 1
 +
 +required:
 +  - compatible
 +  - reg
-+  - "#clock-cells"
 +  - clocks
++  - '#clock-cells'
++  - '#reset-cells'
 +
 +additionalProperties: false
 +
 +examples:
 +  - |
-+    syscon@80930000 {
-+      compatible = "cirrus,ep9301-syscon", "syscon";
-+      reg = <0x80930000 0x1000>;
++    #include <dt-bindings/clock/qcom,gcc-qcs404.h>
++    turingcc: clock-controller@800000 {
++        compatible = "qcom,qcs404-turingcc";
++        reg = <0x00800000 0x30000>;
++        clocks = <&gcc GCC_CDSP_CFG_AHB_CLK>;
 +
-+      #clock-cells = <1>;
-+      clocks = <&xtali>;
-+
-+      spi_default_pins: pins-spi {
-+        function = "spi";
-+        groups = "ssp";
-+      };
++        #clock-cells = <1>;
++        #reset-cells = <1>;
 +    };
-diff --git a/include/dt-bindings/clock/cirrus,ep9301-syscon.h b/include/dt-bindings/clock/cirrus,ep9301-syscon.h
-new file mode 100644
-index 000000000000..6bb8f532e7d0
---- /dev/null
-+++ b/include/dt-bindings/clock/cirrus,ep9301-syscon.h
-@@ -0,0 +1,46 @@
-+/* SPDX-License-Identifier: (GPL-2.0 OR MIT) */
-+#ifndef DT_BINDINGS_CIRRUS_EP93XX_CLOCK_H
-+#define DT_BINDINGS_CIRRUS_EP93XX_CLOCK_H
-+
-+#define EP93XX_CLK_PLL1		0
-+#define EP93XX_CLK_PLL2		1
-+
-+#define EP93XX_CLK_FCLK		2
-+#define EP93XX_CLK_HCLK		3
-+#define EP93XX_CLK_PCLK		4
-+
-+#define EP93XX_CLK_UART		5
-+#define EP93XX_CLK_SPI		6
-+#define EP93XX_CLK_PWM		7
-+#define EP93XX_CLK_USB		8
-+
-+#define EP93XX_CLK_M2M0		9
-+#define EP93XX_CLK_M2M1		10
-+
-+#define EP93XX_CLK_M2P0		11
-+#define EP93XX_CLK_M2P1		12
-+#define EP93XX_CLK_M2P2		13
-+#define EP93XX_CLK_M2P3		14
-+#define EP93XX_CLK_M2P4		15
-+#define EP93XX_CLK_M2P5		16
-+#define EP93XX_CLK_M2P6		17
-+#define EP93XX_CLK_M2P7		18
-+#define EP93XX_CLK_M2P8		19
-+#define EP93XX_CLK_M2P9		20
-+
-+#define EP93XX_CLK_UART1	21
-+#define EP93XX_CLK_UART2	22
-+#define EP93XX_CLK_UART3	23
-+
-+#define EP93XX_CLK_ADC		24
-+#define EP93XX_CLK_ADC_EN	25
-+
-+#define EP93XX_CLK_KEYPAD	26
-+
-+#define EP93XX_CLK_VIDEO	27
-+
-+#define EP93XX_CLK_I2S_MCLK	28
-+#define EP93XX_CLK_I2S_SCLK	29
-+#define EP93XX_CLK_I2S_LRCLK	30
-+
-+#endif /* DT_BINDINGS_CIRRUS_EP93XX_CLOCK_H */
-
 -- 
-2.43.2
-
+2.45.2
 
