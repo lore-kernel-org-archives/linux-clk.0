@@ -1,39 +1,33 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A2DB78C6C;
-	Mon, 15 Jul 2024 19:13:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80B3917BA4;
+	Mon, 15 Jul 2024 19:24:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721070841; cv=none; b=uB8e2exSefJSzCzlIchwxxoS1O6SlDOYuMthXJOsWWo7ccVIVo7DMwk25tiBHsCLIsnxGio9ttLRRCQHyu75odhRTXwvkMkTldgiAU21RBgB2MwlwhqF4+VRfoFS6zqlbvK8LfmoxG15EONviIKbs+jM79DtDkHAqlPePQMIX8Y=
+	t=1721071483; cv=none; b=Dfb1VJQe1MwO23XJ4M6rSwBft6R9zwXCUnQ+iIrfKMdkTCLJ4GbflU0mb9AkR6O9mQ+gNkFIas3XvNje9/tRSR7+a/7kEk4Gvtap7SBdLKFON9ccCxXq0yApnxC3UX9oDA6UY485Y6iEE5AiEhJzFHzGuTmt7Lg8iyXWvQJsLV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721070841; c=relaxed/simple;
-	bh=fIQ+ACZGPZuT+kNfAz7akNBEp4VxODJSdVsR/V97H90=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=o8T8osHMFMgqteXKWXhfQFI/tzJ3ML4e9SHEoMhGSWrCCM02G07JhWFSgL/MDkILVoSH04Bm1CvyjekAaV9hIkbqo3Av7cM+xp7pZriqHMPzVZe2UfbdiAwVWLgk8SSTJZ5FQBe/KLMBH275AdIspWIl3x0M+FV7xz79a3dRmPA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from i5e860d09.versanet.de ([94.134.13.9] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sTR8s-0001wA-Fu; Mon, 15 Jul 2024 21:13:46 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Dragan Simic <dsimic@manjaro.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-Subject:
- Re: [PATCH v2 1/3] dt-bindings: clocks: add binding for
- voltage-controlled-oscillators
-Date: Mon, 15 Jul 2024 21:13:45 +0200
-Message-ID: <2186398.KiezcSG77Q@diego>
-In-Reply-To: <3f0c241d39c5fedb674d7f9808d0be8f@manjaro.org>
-References:
- <20240715110251.261844-1-heiko@sntech.de> <2832997.XrmoMso0CX@diego>
- <3f0c241d39c5fedb674d7f9808d0be8f@manjaro.org>
+	s=arc-20240116; t=1721071483; c=relaxed/simple;
+	bh=YfTpG1xRuTzAEfH2c0EwXhhwpdT3fwRyhYT1rdSqm5s=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=N9+YErScBU8SBJzEp8AhWvLXPuGd5kpeJW9rFlRCMpFEzHBP6dboTP+CrJfk43R8v31G32Ah8Cy5oNE03kuZwGxYc68xzMV1x4GIgIzYvtV9XwHPHjZbN/B3A/inBq1l+kdyoQHVoMT/4Pl+vSm7/bbR00+FR5NuybbIM3EjpSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jpS5RaSh; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jpS5RaSh"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9DAAC4AF0B;
+	Mon, 15 Jul 2024 19:24:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721071483;
+	bh=YfTpG1xRuTzAEfH2c0EwXhhwpdT3fwRyhYT1rdSqm5s=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=jpS5RaShpA4mhlibAWQIatrVgYFEXqM8gqlAjz3bkIU6LQYPV7JXMGR1bw1hIQeOY
+	 tCUGYcgjp9t7EfHVjuH0wVvx2aX6eBOxmS/SjLsNDLNDXP0dhO0hzPvLU8xpI/mSP8
+	 bq5ejiL3+7k57AIaPMfKm15OlTkiB48K8glblr1X15KBypFFAmLxBPEZxWqcVD1mk0
+	 mPA2D4z5er9IyYoyaiSlRi8co9yFWaJ8ohdL/Ln8WM1K0RRoSbOZhRqJok6BgOVU0I
+	 otAYzIe/YIsOdWeaiTr80Ndjebnue7ONUhmQ3xyGKj8N3jr7Uwmm0HJ3pX5eyYbpvf
+	 3WwoqvXQbka4A==
+Message-ID: <7146be33ea70ab1febe1ef0bc81ef74e.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -41,99 +35,33 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+In-Reply-To: <20240710201246.1802189-2-sboyd@kernel.org>
+References: <20240710201246.1802189-1-sboyd@kernel.org> <20240710201246.1802189-2-sboyd@kernel.org>
+Subject: Re: [PATCH v7 1/8] of/platform: Allow overlays to create platform devices from the root node
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, patches@lists.linux.dev, kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org, devicetree@vger.kernel.org, Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rafael J . Wysocki <rafael@kernel.org>, Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, Daniel Latypov <dlatypov@google.com>, Christian Marangi <ansuelsmth@gmail.com>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Maxime Ripard <maxime@cerno.tech>
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Date: Mon, 15 Jul 2024 12:24:40 -0700
+User-Agent: alot/0.10
 
-Am Montag, 15. Juli 2024, 20:01:35 CEST schrieb Dragan Simic:
-> On 2024-07-15 19:46, Heiko St=FCbner wrote:
-> > Am Montag, 15. Juli 2024, 17:15:45 CEST schrieb Dragan Simic:
-> >> On 2024-07-15 13:02, Heiko Stuebner wrote:
-> >> > In contrast to fixed clocks that are described as ungateable, boards
-> >> > sometimes use additional oscillators for things like PCIe reference
-> >> > clocks, that need actual supplies to get enabled and enable-gpios to=
- be
-> >> > toggled for them to work.
-> >> >
-> >> > This adds a binding for such oscillators that are not configurable
-> >> > themself, but need to handle supplies for them to work.
-> >> >
-> >> > In schematics they often can be seen as
-> >> >
-> >> >          ----------------
-> >> > Enable - | 100MHz,3.3V, | - VDD
-> >> >          |    3225      |
-> >> >    GND - |              | - OUT
-> >> >          ----------------
-> >> >
-> >> > or similar. The enable pin might be separate but can also just be ti=
-ed
-> >> > to the vdd supply, hence it is optional in the binding.
-> >> >
-> >> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> >> > ---
-> >> >  .../bindings/clock/voltage-oscillator.yaml    | 49 ++++++++++++++++=
-+++
-> >> >  1 file changed, 49 insertions(+)
-> >> >  create mode 100644
-> >> > Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
-> >> >
-> >> > diff --git
-> >> > a/Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
-> >> > b/Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
-> >> > new file mode 100644
-> >> > index 0000000000000..8bff6b0fd582e
-> >> > --- /dev/null
-> >> > +++ b/Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
-> >> > @@ -0,0 +1,49 @@
-> >> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> >> > +%YAML 1.2
-> >> > +---
-> >> > +$id: http://devicetree.org/schemas/clock/voltage-oscillator.yaml#
-> >> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> >> > +
-> >> > +title: Voltage controlled oscillator
-> >>=20
-> >> Frankly, I find the "voltage-oscillator" and "voltage controlled
-> >> oscillator" names awkward.  In general, "clock" is used throughout
-> >> the entire kernel, when it comes to naming files and defining
-> >> "compatible" strings.  Thus, I'd suggest that "clock" is used here
-> >> instead of "oscillator", because it's consistent and shorter.
-> >>=20
-> >> How about using "gated-clock" for the "compatible" string, and
-> >> "Simple gated clock generator" instead of "voltage controlled
-> >> oscillator"?  Besides sounding awkward, "voltage controlled
-> >> oscillator" may suggest that the clock generator can be adjusted
-> >> or programmed somehow by applying the voltage, while it can only
-> >> be enabled or disabled that way, which is by definition clock
-> >> gating.  Thus, "gated-clock" and "Simple gated clock generator"
-> >> would fit very well.
-> >=20
-> > The naming came from Stephen - one of the clock maintainers ;-)
-> > See discussion in v1. Who also described these things as
-> > "voltage-controlled-oscillators".
-> >=20
-> > And from that discussion I also got the impression we should aim for
-> > more specific naming - especially when talking about dt-bindings, for=20
-> > this
-> > "usage in the Linux kernel" actually isn't a suitable metric and
-> > "gated-clock" is probably way too generic I think.
+Quoting Stephen Boyd (2024-07-10 13:12:37)
+> We'd like to apply overlays to the root node in KUnit so we can test
+> platform devices created as children of the root node.
 >=20
-> I see, thanks for the clarification.  Though, the generic nature of
-> "gated-clock" as the name may actually make this driver a bit more
-> future-proof, by allowing some other features to be added to it at
-> some point in the future, avoiding that way the need for yet another
-> kernel driver.
+> On some architectures (powerpc), the root node isn't marked with
+> OF_POPULATED_BUS. If an overlay tries to modify the root node on these
+> platforms it will fail, while on other platforms, such as ARM, it will
+> succeed. This is because the root node is marked with OF_POPULATED_BUS
+> by of_platform_default_populate_init() calling
+> of_platform_default_populate() with NULL as the first argument.
+>=20
+> Loosen the requirement here so that platform devices can be created for
+> nodes created as children of the root node via DT overlays even if the
+> platform bus wasn't populated for the root node.
+>=20
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> Cc: Saravana Kannan <saravanak@google.com>
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+> ---
 
-you're talking about the driver ... we're in the hardware-binding here.
-Those are two completely different topics ;-) .
-
-Devicetree is always about describing the hardware as best as possible,
-so you don't want too many "generics" there, because we're always talking
-about specific ICs soldered to some board.
-
-I also "violated" that in my v1 by grouping in the the Diodes parts, which
-as Stephen pointed out are quite different afterall.
-
-
-Heiko
-
-
+Applied to clk-next
