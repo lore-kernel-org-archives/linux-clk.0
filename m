@@ -1,92 +1,100 @@
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 491B123B1;
-	Mon, 15 Jul 2024 10:59:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B639D18411C;
+	Mon, 15 Jul 2024 11:04:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721041190; cv=none; b=hfmu3jvgiaE/DqJizcTMlsQHXHVQ8za9pNN2+yHxD7MaamJ4CMLYkQNREJXN/iIhmgpyL29pLtOInbGbZvaYqLxiJ3UAYIwSMV9jFTxjSzU8KGPB45KfDb1s0zgIQQMnszMLzgaBeNUVFtJmdr33b4IanRMI3mnIWrfsLFzJvxw=
+	t=1721041456; cv=none; b=Rjbkx0M/4id7eBYb5YWYbd5Ba3wiVFKA7Yi/f/9sHGD0pJzXu2nVSDBKhcxMQTWg4GQ4GBJLyHlXS5lplUtWesCD84pOp/3RkSqWHfuHk1r+PzDH0Nn7A6GN4sqH1qMf5vUPyBrFY/531qbRCUVhA3lRzJm0qynAlvxPHHW4pPg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721041190; c=relaxed/simple;
-	bh=4PQ0VHYlnUqz6Z1Wt6DgQytrj4AaL1dQwGvWmCFlPAY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Sqjv06RZ7g5TaqGtNl3skM0xDRWPd9YYVITNc4OhfXILcsJrYZg7qLQ1VwFGPQ9HbKE48pbGr1FCuxX2W3kLbC7VrfZK4wujxKGVp+uma9qPbCdrGiUUZEsNFPEwpPetbD362N9lToLr8TgurbtIlBjLWzVbuFtL57y00VZiLpc=
+	s=arc-20240116; t=1721041456; c=relaxed/simple;
+	bh=zERXhxbSPdCtg8ibfjvU/5ep9gYQ55E1S2QB8wtLjTw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UQhzk5+VOm0sgneqX6LgDwqtOTbcCfC3pvp1bQ4Xj1KtKBpGWHlzb26qAqYUdNBG80SXmC/6M+wz/0bql/iJPhnQgvx65giEdBvZvgxczf8wI60JfQQp1UPOsRusXGnP1I+Bxf1/2o6B3OoymHUFeoYkgzG/SC9PpeBnFaN5sgA=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from i5e860d09.versanet.de ([94.134.13.9] helo=diego.localnet)
+Received: from i5e860d09.versanet.de ([94.134.13.9] helo=phil.lan)
 	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <heiko@sntech.de>)
-	id 1sTJQU-0006Em-K0; Mon, 15 Jul 2024 12:59:26 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: mturquette@baylibre.com, Stephen Boyd <sboyd@kernel.org>,
- Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- quentin.schulz@cherry.de, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-Subject:
- Re: [PATCH 1/6] dt-bindings: clocks: add binding for generic clock-generators
-Date: Mon, 15 Jul 2024 12:59:25 +0200
-Message-ID: <3268030.0WQXIW03uk@diego>
-In-Reply-To: <1899010.tdWV9SEqCh@steina-w>
-References:
- <20240709123121.1452394-1-heiko@sntech.de>
- <68f6dc44a8202fd83792e58aea137632.sboyd@kernel.org>
- <1899010.tdWV9SEqCh@steina-w>
+	id 1sTJV3-0006GM-3Z; Mon, 15 Jul 2024 13:04:09 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	heiko@sntech.de,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org
+Subject: [PATCH v2 0/3] Binding and driver for voltage controlled oscillators
+Date: Mon, 15 Jul 2024 13:02:48 +0200
+Message-Id: <20240715110251.261844-1-heiko@sntech.de>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8bit
 
-Am Donnerstag, 11. Juli 2024, 07:27:40 CEST schrieb Alexander Stein:
-> Am Donnerstag, 11. Juli 2024, 01:21:15 CEST schrieb Stephen Boyd:
-> > Quoting Heiko St=FCbner (2024-07-10 00:45:17)
-> > > Am Mittwoch, 10. Juli 2024, 09:02:34 CEST schrieb Alexander Stein:
-> > > >=20
-> > > > So essentially only enable-gpios and vdd-supply is added in compari=
-son to
-> > > > fixed-clock. Does it make sense to add that to the fixed-clocks ins=
-tead?
-> > > > Similar to fixed-regulator.
-> > >=20
-> > > I wasn't that sure which way to go in the first place.
-> > > The deciding point was reading that line about the fixed clock not
-> > > being gateable, so I opted to not touch the fixed-clock.
-> > >=20
-> > > But you're definitly right, this _could_ live inside the fixed-clock
-> > > as well, if we decide to get rid of the not-gateable thing above.
-> >=20
-> > It's probably more complicated to combine it with the fixed-clock
-> > binding after making properties required like vdd-supply. I'd just make
-> > a new binding and look at combining later.
->=20
-> Maybe I am missing something IMHO adding optional vdd-supply and
-> enable-gpios doesn't seem a big deal.
-> Anyway I don't have a hard opinion here. To me fixed-clocks still
-> seems very appropriate for having a controlling GPIO and power supply.
-> I just would get rid of the (comment only) hint they are ungatable.
+Rockchip boards with PCIe3 controllers inside the soc (rk3568, rk3588) have
+external oscillators on the board to generate the needed 100MHz reference
+clock the PCIe3 controller needs.
 
-I think the main issue is that the fixed-rate code is not limited to the
-actual fixed-rate clock.
+Often these clock generators need supplies to be enabled to run.
 
-The clk_fixed_rate_ops is exported and used itself in a number of
-completely different clock drivers. The same is true for the
-clk_register_fixed_rate function, also exported and used in even more
-places throughout the kernel while implicitly using clk_fixed_rate_ops.
+Modelling this clock has taken a number of shapes:
+- The rk3568 Rock-3a modelled the generator-regulator as "phy-supply" [0]
+  &pcie30phy {
+  	phy-supply = <&vcc3v3_pi6c_03>;
+  	status = "okay";
+  };
+  which is of course not part of the binding
 
-=46or just being a simple always-on fixed rate clock, the clk-fixed-rate.c =
-is
-already pretty complex and adding supply handling will entail modifying
-the shared clk-ops, or defining a separate clk-ops and clk-register
-function, which is what we're doing here already.
+- On the Rock-5-ITX the supply of the clock generator is controlled by
+  the same gpio as the regulator supplying the the port connected to the
+  pcie30x4 controller, so if this controller probes first, both
+  controllers will just run. But if the pcie30x2 controller probes first
+  (which has a different supply), the controller will stall at the first
+  dbi read.
+
+There are other types too, where an 25MHz oscillator supplies a PLL
+chip like the diodes,pi6c557 used on Theobroma Jaguar and Tiger boards.
+
+As we established in v1 [1], these are essentially different types, so
+this series attempts to solve the first case of "voltage controlled
+oscillators" as Stephen called them.
+
+changes in v2:
+- drop the Diodes PLLs for now, to get the first variant right
+- rename stuff to voltage-oscillator / clk_vco as suggested by Stephen
+- require vdd-supply in the binding
+- enable-gpios stays optional, as they often are tied to vdd-supply
+- drop deprecated elements that were left in from the fixed clock binding
 
 
-Heiko
+[0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/rockchip/rk3568-rock-3a.dts#n605
+[1] https://lore.kernel.org/linux-clk/b3c450a94bcb4ad0bc5b3c7ee8712cb8.sboyd@kernel.org/
 
+Heiko Stuebner (3):
+  dt-bindings: clocks: add binding for voltage-controlled-oscillators
+  clk: add driver for voltage controlled oscillators
+  arm64: dts: rockchip: fix the pcie refclock oscillator on Rock 5 ITX
+
+ .../bindings/clock/voltage-oscillator.yaml    |  49 +++++++
+ .../boot/dts/rockchip/rk3588-rock-5-itx.dts   |  38 ++++-
+ drivers/clk/Kconfig                           |  10 ++
+ drivers/clk/Makefile                          |   1 +
+ drivers/clk/clk-vco.c                         | 133 ++++++++++++++++++
+ 5 files changed, 229 insertions(+), 2 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
+ create mode 100644 drivers/clk/clk-vco.c
+
+-- 
+2.39.2
 
