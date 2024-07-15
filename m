@@ -1,147 +1,112 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB9B818735C;
-	Mon, 15 Jul 2024 10:23:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2DB0186E3C;
+	Mon, 15 Jul 2024 10:37:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721039019; cv=none; b=awGOA650xB44e68o73cJyZVFCAxMglAdy/PGJvqFnglXS//dT0gjkI/1G64ov1MAkpYMKsYYxmVTpC4nBLktO1F8raEodWfcgqaahcFVhNV3qaD7pfdEmuadne2SgiN5S7uqv6WB4Ar4h/CO2u6gAFS8mDqK2CtHYm7VWolw6l4=
+	t=1721039843; cv=none; b=HzXmFxKYfwg7el6WuLrCDftGspGIYbPL3WPmrXxWo43LTB9mUZQw4PqbR5+mUNUNRh3KgtMN3qOyMk8Y0sEcGpZGE8Ck0n5t5hpeEtm+J1muXRrXcrRFQu9ntLksQtv3ijvDhcf1eckrgf+ir69trXPM29LjK0NNlB6RZCr2TGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721039019; c=relaxed/simple;
-	bh=qQQW60sjapLz/YaRqlnPupUF8fBVH0c+3KCxXriXV6s=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
-	 In-Reply-To:Content-Type; b=d13EdaeKA6I3ncWiKYirUOwjK8RyVdTXsuvsDlxrGCL5FcVD3o3QjYmKE6uXaV23jo1cWJ3eeTuuxVIDWUgf9couKOSMT4tJu1IwNdFyzrxfzBTFqxhi8+vE5eiEUXsGOTLTpEgNZ1jI10djGVbxXr4dCu+JV1qKaNdocYbQBu0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Re/uVVtL; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1721039843; c=relaxed/simple;
+	bh=e/ChqerirklhAli6n3y8FOc7mcwCV4vyLGJsStN+zYw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NEBY4ISnmvnu2AOgpvwEZyWh61GAg3tw29x+9SmxWzBAbZron59UPowQwtnpjIKUb0HN9MyFtJm3l7h9N0Z7E3ZHZNldOLJ8NLerMDsP/twmlNeAXaI9yuMortk+5BSqquQacAzu4X46LTT5epHhZ26DIYZ0FGqoVUT2a5Av55M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=koMEz510; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Re/uVVtL"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46F2dErR003170;
-	Mon, 15 Jul 2024 10:23:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	/EKdWAxwi8X/z7x3RZyNHctleqpG36KK6n8CH6XjAKc=; b=Re/uVVtLEZrCqBfd
-	6tL8Lk0uLS9hrPxAy2Gohtby0Pmy9+HOR5uNCOT7mPQOX8Sy9scP5UTbl65lde9p
-	o1t7JgkTqEhD/nQRlm01+VVB9KfsMmw2CEW2fi4ygY4yIdHoJJzor/r8eEBoJ/5V
-	qT9Grjj7TBY26dNj6kEUgXNQzKcfIRXHbrwTOaQPBQd35FprzQKdJz+bW94bEkUd
-	gYeWUi8sS0v3HRisUZ/T3mhkDJTmtq50yYOdZsmnCe6wtdIwX1iZ4IkIoqCyWnqP
-	vMeIlo0hKz6s34dEaYIcrpaY8KIesq3j/AfEoanx2lyp9PQb9IqEFzA2H/IGO86r
-	0cbcxQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40bhy6un3p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Jul 2024 10:23:05 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46FAN4tH010797
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 15 Jul 2024 10:23:04 GMT
-Received: from [10.216.4.154] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 15 Jul
- 2024 03:22:57 -0700
-Message-ID: <e235f19f-26b5-2cf7-ebb7-36e4dabe9b9b@quicinc.com>
-Date: Mon, 15 Jul 2024 15:52:53 +0530
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="koMEz510"
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52ea33671ffso4175818e87.3;
+        Mon, 15 Jul 2024 03:37:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721039840; x=1721644640; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=QuOSh0mOiXYGRirjRUmIdDiiRk5HgV74pBqp70qNevY=;
+        b=koMEz510NUZ2UI9IPVm1SQeynFBncyYUuk/dm9WsjjOfLYBBScZc0L4bGjRLA12rX1
+         zt37f+g469ZPv/02AfsjYIV25t+XjxqJ99MKnlSyUTAseoS4RXQYnrx+A/l7Qg6NkM0r
+         IrUK9W9wGtOwgibXZ/UEfjLiAHqz5lb5Lxa8lInbl+7C222aPrL8kDlW+uNlHq5BdS8t
+         attKZFfPwIztEFKfPeVDRJX2JopXM1oYF5t4mLebKuLfctlnra0Uq7VQFJ+6BwI3yEQm
+         DQBw4AHdbV2DjNWbrlXNKIUozVJhigzjDHC58uPYaE5Gj9IPjqAMn3kxhj04+uMqZdqk
+         fnHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721039840; x=1721644640;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QuOSh0mOiXYGRirjRUmIdDiiRk5HgV74pBqp70qNevY=;
+        b=Cp6modC3RSlAfOeK7uNv3hOM+7hsmsqgCUDgumovbR5lx+r0YqJn+QMVTXRgI8MzWR
+         M4h+4FqP0ozxmyk04CTCBPANUwGVrWt/X1Lqd20D21qLzM8EVBIZlxgBHlvLQjtf2DzS
+         H7Vy6xjAopxK/VBOSb0qQhJ8YSwqfWOsdZeAOfJWwO+xn16O4p0O+vNMzsGU40vxbr5Z
+         A0x32BiueVBy5Nczb//MlGJ4i8X5AKuxshWhh3zz6VbzkdsfRa5dxIZaKkRqpowhbWZd
+         mdAPGGqIheHkilxZ857Bx6zIeFCU1HUVpePyv7EWq9gG/zjjKwpuTEU8/3plnJxYazNQ
+         l9VQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVGLWLXDEcgExp9pphOqODll8DEKf0XaHC2+XILwJiZuj/q4i+iCw7dFX7y9pjw/oqVpODQD91ibD74mT+muuOxGjPvbKYMq2YApfllXXvoz4ANPF4aQABGv3GE78zW2JJtF8fIIU23
+X-Gm-Message-State: AOJu0Yx76wfmNxOKIiK26jsIwBlSPwLdvQwSiFHXhlM8b+Y05/balYDd
+	XNDYVRV/FbFABJmPek/ZPIDe1gOWSmFC9XzupBlRCTVmk5GJMeug
+X-Google-Smtp-Source: AGHT+IHa9H04Zqw9E6XpYe9VmaujmHV+eI/zxqEPsQ3I8Q4uTKklyeoQAs+F/meEE9Et4Z+hLbECPQ==
+X-Received: by 2002:a05:6512:114c:b0:52c:e0bc:ca3a with SMTP id 2adb3069b0e04-52eb99d76a5mr12299055e87.64.1721039839688;
+        Mon, 15 Jul 2024 03:37:19 -0700 (PDT)
+Received: from prasmi.home ([2a00:23c8:2500:a01:2595:4364:d152:dff3])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427a5edb454sm81153855e9.32.2024.07.15.03.37.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 15 Jul 2024 03:37:19 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2 0/2] clk: renesas: rzg2l-cpg: Refactor and simplify clock registration
+Date: Mon, 15 Jul 2024 11:35:53 +0100
+Message-Id: <20240715103555.507767-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-From: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
-Subject: Re: [PATCH v2 5/6] clk: qcom: Add camera clock controller driver for
- SM8150
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Abhishek Sahu <absahu@codeaurora.org>,
-        "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>,
-        "Imran
- Shaik" <quic_imrashai@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Bryan O'Donoghue
-	<bryan.odonoghue@linaro.org>
-References: <20240702-camcc-support-sm8150-v2-0-4baf54ec7333@quicinc.com>
- <20240702-camcc-support-sm8150-v2-5-4baf54ec7333@quicinc.com>
- <xbe7kmaxhfwy26qzxrmwgiijaaiap4kdkruaxjs6ymihaw5taf@hvj57wyncfea>
- <cc1957af-17bc-cd71-e6da-013e3a740014@quicinc.com>
- <CAA8EJpqmJZJfd2famarx-FKFb1_+-nZM3N+FwK_hiOurG8n9=A@mail.gmail.com>
-Content-Language: en-US
-In-Reply-To: <CAA8EJpqmJZJfd2famarx-FKFb1_+-nZM3N+FwK_hiOurG8n9=A@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: PIfqfjWbiZmZWdZfWtX92pJi-W229tWh
-X-Proofpoint-ORIG-GUID: PIfqfjWbiZmZWdZfWtX92pJi-W229tWh
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-15_06,2024-07-11_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- lowpriorityscore=0 spamscore=0 mlxscore=0 malwarescore=0 adultscore=0
- suspectscore=0 phishscore=0 priorityscore=1501 bulkscore=0 mlxlogscore=999
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407150081
+Content-Transfer-Encoding: 8bit
 
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On 7/11/2024 3:40 AM, Dmitry Baryshkov wrote:
-> On Tue, 9 Jul 2024 at 13:53, Satya Priya Kakitapalli (Temp)
-> <quic_skakitap@quicinc.com>  wrote:
->> On 7/3/2024 3:50 PM, Dmitry Baryshkov wrote:
->>> On Tue, Jul 02, 2024 at 09:20:43PM GMT, Satya Priya Kakitapalli wrote:
->>>> Add support for the camera clock controller for camera clients
->>>> to be able to request for camcc clocks on SM8150 platform.
->>>>
->>>> Reviewed-by: Bryan O'Donoghue<bryan.odonoghue@linaro.org>
->>>> Signed-off-by: Satya Priya Kakitapalli<quic_skakitap@quicinc.com>
->>>> ---
->>>>    drivers/clk/qcom/Kconfig        |    9 +
->>>>    drivers/clk/qcom/Makefile       |    1 +
->>>>    drivers/clk/qcom/camcc-sm8150.c | 2159 +++++++++++++++++++++++++++++++++++++++
->>>>    3 files changed, 2169 insertions(+)
->>> The patch mostly LGTM, several quesitons:
->>>
->>> - There are no cam_cc_sleep_clk and no cam_cc_xo_clk_src. Why?
->> These are not required for camcc sm8150 hence not modelled.
->>
->>
->>> - Why is cam_cc_gdsc_clk not modelled in the clock framework?
->> This clock is kept enabled from probe, hence not required to be modelled
->> explicitly.
-> Yes, I'm asking why it's kept up enabled from probe rather than via
-> clock framework?
+Hi,
 
+This patch series aims to refactor and simplify the clock registration
+code in the Renesas RZ/G2L CPG (Clock Pulse Generator) driver. The
+changes enhance consistency, simplify function signatures, and remove
+redundant parameters, thereby improving maintainability and reducing
+potential for errors.
 
->>> - I see that most if not all RCG clocks use rcg2_shared ops instead of
->>>     using simple rcg2 ops, could you please clarify that?
->> As per the HW design recommendation, RCG needs to be parked at a safe
->> clock source(XO) in the disable path, shared_ops is used to achieve the
->> same.
-> Does it apply to SM8150? For example, on SM8250 RCG2s are not parked.
+v1->v2
+- Propagate error code from rzg2l_cpg_pll_clk_register() if
+  devm_clk_hw_register() fails
+- Used devm_clk_hw_register_fixed_factor() for fixed factor clock
+- Set error pointer in rzg2l_cpg_register_mod_clk() if
+  devm_clk_hw_register() failed
+- Squashed patches (2,3,4)/4 into single patch
+- Dropped masking of parent clock with 0xffff
+- Dropped creating local variable clks
 
+v1: https://patchwork.kernel.org/project/linux-renesas-soc/cover/20240628131021.177866-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
 
-Yes, it applies to SM8150.
+Cheers,
+Prabhakar
 
+Lad Prabhakar (2):
+  clk: renesas: rzg2l-cpg: Use devres API to register clocks
+  clk: renesas: rzg2l-cpg: Refactor to use priv for clks and base in
+    clock register functions
 
->>> - RETAIN_FF_ENABLE has been used for GDSCs for sc7280, sc8280xp, sm8550,
->>>     sm8650 and x1e8 platforms. Should it really be set for sm8150? If so,
->>>     should it also be added to other camcc drivers (if so, for which
->>>     platforms)?
->> I have rechecked this in downstream and seems it is not really needed
->> for sm8150, I'll drop in next post.
->>
+ drivers/clk/renesas/rzg2l-cpg.c | 72 +++++++++++++++++----------------
+ 1 file changed, 38 insertions(+), 34 deletions(-)
+
+-- 
+2.34.1
+
