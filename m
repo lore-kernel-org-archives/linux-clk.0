@@ -1,58 +1,127 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4EF413A25D;
-	Mon, 15 Jul 2024 19:25:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7457613A3F7;
+	Mon, 15 Jul 2024 19:27:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721071545; cv=none; b=TpflnN+vgscyHvSgGBfK4cJTyXOqDpJVgJ9TkbIgYQ82MBb2XizQEL7MX7Iw4MpEljtz4kqmrXjKEbteKemJSZnIfLliEs8Z8GFJRjjePFJH7Tv+EXDGqfym31eej2IvPY11+5xg7t7IAfN+50mS7NQHZe+820QpA1fwBzx6quM=
+	t=1721071641; cv=none; b=mtQAb4ZnZLQa9L/mgRLY0BAgK/xteZ1UT999y7jbHRgkTEjFAuj61NXxa213cv5bUsm0Io2HaNf5gO8gPPXflThZSiAa6O/EhL9ThkGX4Y6SBGabLFfnQKiUEs7cKJuO9cVU7H+a8g+F8TDrM5cLTo0I8jDAw7LLe8hgNX5xHBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721071545; c=relaxed/simple;
-	bh=Chxr3Uuks9kyNfIoyGNkVK4Vg2r6tdc6gwgnwyG63do=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=bOu13gRcwWox1NeYF6szuJce0pUxwoHZYF4vVYZrv1ARmiMBGjMYdqfYXku5DlYjVJpApUg4FiThBUbMTZtrHR7EtWZL4DP301JImDD6twbg5JfVlL9YlnwLXA0QMysERP89F8aRysODmRw8uqDL2kRiE0jbdhVt/d6cN9mQ53Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kqRqWAd9; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1721071641; c=relaxed/simple;
+	bh=scvD8E1Th0WQEDOblbw8afBg6ubsAWbPK3/2sSh0+fU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a8U/x1nU5/M8qDzYs6/22xdN1aEpaFy8As+tuaVxgJn720jwj3ArrvpdfLaAQiVyWOet+GHaFKlCU8ocTcKgofDEJhQu6jyNI+A7DeH/zfOCfyOjLs0lsa3+ot1hr08l14Mu0JMI3M/XZ/nefynbCEoXbQYS8Gbmawrc0mEGqEg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HtXmA/F6; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kqRqWAd9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8821BC4AF0A;
-	Mon, 15 Jul 2024 19:25:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721071545;
-	bh=Chxr3Uuks9kyNfIoyGNkVK4Vg2r6tdc6gwgnwyG63do=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=kqRqWAd9bcejprhPo+5fMo5mIy3NShY7I5tA4bsem2pl0PPB+6CSBTb/X7NKnayvq
-	 xkDHsKl/hqmm8PDRT62rFfFw6CVIw2OkSSCN2PkqslCqo0F6oZjvnKN31qkXXMEq2k
-	 o4SE8V8rAM4NVKjYRK7VrZRI85g0BRXWLrvrcpa76kHau//q/vC5RlmhpMeU40Fy8l
-	 5aDoHjzDdbUvaCo5u3xBgcKF7kW669Lt5ZM1PjddWBT+k6DtB44UE3u2T0zuuXKbI9
-	 kIoV+N4i5p+ZlI//Mu2Sbl8N1BqA0QH7zfal+oXMQ7/aY02QCc2D8+EERaJi+RWM2A
-	 ImXaho6pi62+A==
-Message-ID: <97c4bc36e2584cc5258cd9feb0b283a3.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HtXmA/F6"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721071639; x=1752607639;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=scvD8E1Th0WQEDOblbw8afBg6ubsAWbPK3/2sSh0+fU=;
+  b=HtXmA/F6/KE2CMFkbPzZNMEa46dmYLgUq3aKvtZwf1D5iCxb8OOQW4TD
+   MEie7xahjkY25LpcCsY25wSBHzebFxGdN1O3oayoHwghBKnXHBLom0DaP
+   LYzCdMOTnfB94l7f7ag1q1IEgK6u+vH0DKF3WVuP8mr8h7yXw04W0gKfJ
+   zyRuC3yt1glqApmAl9Mu2s/ungdkqGTvf1Z1/6UmHyBBX5X4ExadgsNSi
+   ZcklIrIpP8qOcqvB1ex0KFAwvCJOmg/kjzRMMFL9cejujUDYDuLXe6ejn
+   i7qFLs757lVnePUITbRqk3QHG9sRS+tG8czAn0jYMB9S3g3WlpHpqxzvl
+   A==;
+X-CSE-ConnectionGUID: Sxq8eHrwSYO1cWImrQ8CMQ==
+X-CSE-MsgGUID: 9AmPuoaUSrCOCQ0lH6Oekg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11134"; a="18342895"
+X-IronPort-AV: E=Sophos;i="6.09,211,1716274800"; 
+   d="scan'208";a="18342895"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2024 12:27:19 -0700
+X-CSE-ConnectionGUID: 2Tdnb+rbRk+Wk2mkoCoccg==
+X-CSE-MsgGUID: 1KBBHSXLTp670BMn/kdLJQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,211,1716274800"; 
+   d="scan'208";a="72960660"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by fmviesa002.fm.intel.com with ESMTP; 15 Jul 2024 12:27:15 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sTRLt-000eWK-35;
+	Mon, 15 Jul 2024 19:27:13 +0000
+Date: Tue, 16 Jul 2024 03:26:47 +0800
+From: kernel test robot <lkp@intel.com>
+To: Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>,
+	openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-kernel@vger.kernel.org,
+	Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>
+Subject: Re: [PATCH RESEND v12 4/6] clk: wpcm450: Add Nuvoton WPCM450
+ clock/reset controller driver
+Message-ID: <202407160235.JYThNv91-lkp@intel.com>
+References: <20240708-wpcm-clk-v12-4-1afac539c37d@gmx.net>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240710201246.1802189-9-sboyd@kernel.org>
-References: <20240710201246.1802189-1-sboyd@kernel.org> <20240710201246.1802189-9-sboyd@kernel.org>
-Subject: Re: [PATCH v7 8/8] clk: Add KUnit tests for clks registered with struct clk_parent_data
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, patches@lists.linux.dev, kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org, devicetree@vger.kernel.org, Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Rafael J . Wysocki <rafael@kernel.org>, Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, Daniel Latypov <dlatypov@google.com>, Christian Marangi <ansuelsmth@gmail.com>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, Maxime Ripard <maxime@cerno.tech>
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Date: Mon, 15 Jul 2024 12:25:43 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240708-wpcm-clk-v12-4-1afac539c37d@gmx.net>
 
-Quoting Stephen Boyd (2024-07-10 13:12:44)
-> Test that clks registered with 'struct clk_parent_data' work as
-> intended and can find their parents.
->=20
-> Cc: Christian Marangi <ansuelsmth@gmail.com>
-> Cc: Brendan Higgins <brendan.higgins@linux.dev>
-> Reviewed-by: David Gow <davidgow@google.com>
-> Cc: Rae Moar <rmoar@google.com>
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
-> ---
+Hi Jonathan,
 
-Applied to clk-next
+kernel test robot noticed the following build warnings:
+
+[auto build test WARNING on 4cece764965020c22cff7665b18a012006359095]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Jonathan-Neusch-fer/dt-bindings-clock-Add-Nuvoton-WPCM450-clock-reset-controller/20240708-073926
+base:   4cece764965020c22cff7665b18a012006359095
+patch link:    https://lore.kernel.org/r/20240708-wpcm-clk-v12-4-1afac539c37d%40gmx.net
+patch subject: [PATCH RESEND v12 4/6] clk: wpcm450: Add Nuvoton WPCM450 clock/reset controller driver
+config: arm-randconfig-r064-20240715 (https://download.01.org/0day-ci/archive/20240716/202407160235.JYThNv91-lkp@intel.com/config)
+compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project 8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407160235.JYThNv91-lkp@intel.com/
+
+cocci warnings: (new ones prefixed by >>)
+>> drivers/clk/nuvoton/clk-wpcm450.c:55:1-7: WARNING: do_div() does a 64-by-32 division, please consider using div64_ul instead.
+
+vim +55 drivers/clk/nuvoton/clk-wpcm450.c
+
+    36	
+    37	static unsigned long wpcm450_clk_pll_recalc_rate(struct clk_hw *hw,
+    38							 unsigned long parent_rate)
+    39	{
+    40		struct wpcm450_clk_pll *pll = to_wpcm450_clk_pll(hw);
+    41		unsigned long fbdv, indv, otdv;
+    42		u64 rate;
+    43		u32 pllcon;
+    44	
+    45		if (parent_rate == 0)
+    46			return 0;
+    47	
+    48		pllcon = readl_relaxed(pll->pllcon);
+    49	
+    50		indv = FIELD_GET(PLLCON_INDV, pllcon) + 1;
+    51		fbdv = FIELD_GET(PLLCON_FBDV, pllcon) + 1;
+    52		otdv = FIELD_GET(PLLCON_OTDV, pllcon) + 1;
+    53	
+    54		rate = (u64)parent_rate * fbdv;
+  > 55		do_div(rate, indv * otdv);
+    56	
+    57		return rate;
+    58	}
+    59	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
