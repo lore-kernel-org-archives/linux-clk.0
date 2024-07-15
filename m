@@ -1,33 +1,39 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43CCF8120A;
-	Mon, 15 Jul 2024 19:10:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A2DB78C6C;
+	Mon, 15 Jul 2024 19:13:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721070643; cv=none; b=tULWUKN5Q+WuOSaM7Tlfqx05brdiwrPXkILXGPAQWf/OQ/wGgfJJwULeHJGrqCnKfeP94g67kI+jX1vNJtXnJV0ziANk0ntQu5wkvuVBd2GlB40C6PPOw39/SKQ/B9LH8UIN8A6jgZBLSEdJ7hLSFu7Yxvn/NYUOkjxTc1FYstU=
+	t=1721070841; cv=none; b=uB8e2exSefJSzCzlIchwxxoS1O6SlDOYuMthXJOsWWo7ccVIVo7DMwk25tiBHsCLIsnxGio9ttLRRCQHyu75odhRTXwvkMkTldgiAU21RBgB2MwlwhqF4+VRfoFS6zqlbvK8LfmoxG15EONviIKbs+jM79DtDkHAqlPePQMIX8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721070643; c=relaxed/simple;
-	bh=90dN1i/RdIaAfX4f5m/aBEH2BBi6U95fhiT1/0tgZfk=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=An6tg7+rridCpEXk0CQ1ZCzO4+SJZrygwX0QdLyXEoUzuGh9Jg8Q7Hjd9cTT3LaYS9vf+nmzllU5EOWQqeV9UgdCLU6LkVePCK1qsMCrac0qqFEaqYMcoUqCvqG0Zrn7ajJgHKEFpe8Wvz13rBMlYh3MbzxGOXFdK8V5XD5p2bo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m9QY4RYo; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m9QY4RYo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3F62C32782;
-	Mon, 15 Jul 2024 19:10:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721070642;
-	bh=90dN1i/RdIaAfX4f5m/aBEH2BBi6U95fhiT1/0tgZfk=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=m9QY4RYoPm9esneh9990iAT+gB5JatNPV7zSpAbttHTI1b0nF6OvwI9leLgL+sqWW
-	 DEFi08Jyw7v9WYpL1yvieLvro8uZHh243dqRpZdcJcLpKgoYbfSN3IVdDlvWbQiGo9
-	 p3hFXpEwy+cbnFwbvZU6g7FdeY3xWbU6FLFnnf2jnXEL1NahWAkHQHJA7judK3C2eQ
-	 OWui90fxBsnaN1AIx5lhO1XJbg1y/fGC5NSFA0GOVnN1Gbwdbld/MNMEpntO57DouS
-	 EJVKOsWZrzYvUfIMA2rcDXXlDdjIWCTgiZHZtx0tbXhdVsqbe91h7cGD77d6OHglgu
-	 58k/530JQSzaw==
-Message-ID: <91c750b79c9d2b2ae70f07177546a214.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1721070841; c=relaxed/simple;
+	bh=fIQ+ACZGPZuT+kNfAz7akNBEp4VxODJSdVsR/V97H90=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=o8T8osHMFMgqteXKWXhfQFI/tzJ3ML4e9SHEoMhGSWrCCM02G07JhWFSgL/MDkILVoSH04Bm1CvyjekAaV9hIkbqo3Av7cM+xp7pZriqHMPzVZe2UfbdiAwVWLgk8SSTJZ5FQBe/KLMBH275AdIspWIl3x0M+FV7xz79a3dRmPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Received: from i5e860d09.versanet.de ([94.134.13.9] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sTR8s-0001wA-Fu; Mon, 15 Jul 2024 21:13:46 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Dragan Simic <dsimic@manjaro.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
+Subject:
+ Re: [PATCH v2 1/3] dt-bindings: clocks: add binding for
+ voltage-controlled-oscillators
+Date: Mon, 15 Jul 2024 21:13:45 +0200
+Message-ID: <2186398.KiezcSG77Q@diego>
+In-Reply-To: <3f0c241d39c5fedb674d7f9808d0be8f@manjaro.org>
+References:
+ <20240715110251.261844-1-heiko@sntech.de> <2832997.XrmoMso0CX@diego>
+ <3f0c241d39c5fedb674d7f9808d0be8f@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,28 +41,99 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240711-th1520-clk-v3-2-6ff17bb318fb@tenstorrent.com>
-References: <20240711-th1520-clk-v3-0-6ff17bb318fb@tenstorrent.com> <20240711-th1520-clk-v3-2-6ff17bb318fb@tenstorrent.com>
-Subject: Re: [PATCH v3 2/7] clk: thead: Add support for T-Head TH1520 AP_SUBSYS clocks
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Drew Fustini <dfustini@tenstorrent.com>
-To: Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor+dt@kernel.org>, Drew Fustini <dfustini@tenstorrent.com>, Emil Renner Berthing <emil.renner.berthing@canonical.com>, Fu Wei <wefu@redhat.com>, Guo Ren <guoren@kernel.org>, Jisheng Zhang <jszhang@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, Rob Herring <robh@kernel.org>, Thomas Bonnefille <thomas.bonnefille@bootlin.com>, Yangtao Li <frank.li@vivo.com>
-Date: Mon, 15 Jul 2024 12:10:40 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset="iso-8859-1"
 
-Quoting Drew Fustini (2024-07-11 09:56:20)
-> Add support for the AP sub-system clock controller in the T-Head TH1520.
-> This include CPU, DPU, GMAC and TEE PLLs.
+Am Montag, 15. Juli 2024, 20:01:35 CEST schrieb Dragan Simic:
+> On 2024-07-15 19:46, Heiko St=FCbner wrote:
+> > Am Montag, 15. Juli 2024, 17:15:45 CEST schrieb Dragan Simic:
+> >> On 2024-07-15 13:02, Heiko Stuebner wrote:
+> >> > In contrast to fixed clocks that are described as ungateable, boards
+> >> > sometimes use additional oscillators for things like PCIe reference
+> >> > clocks, that need actual supplies to get enabled and enable-gpios to=
+ be
+> >> > toggled for them to work.
+> >> >
+> >> > This adds a binding for such oscillators that are not configurable
+> >> > themself, but need to handle supplies for them to work.
+> >> >
+> >> > In schematics they often can be seen as
+> >> >
+> >> >          ----------------
+> >> > Enable - | 100MHz,3.3V, | - VDD
+> >> >          |    3225      |
+> >> >    GND - |              | - OUT
+> >> >          ----------------
+> >> >
+> >> > or similar. The enable pin might be separate but can also just be ti=
+ed
+> >> > to the vdd supply, hence it is optional in the binding.
+> >> >
+> >> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> >> > ---
+> >> >  .../bindings/clock/voltage-oscillator.yaml    | 49 ++++++++++++++++=
++++
+> >> >  1 file changed, 49 insertions(+)
+> >> >  create mode 100644
+> >> > Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
+> >> >
+> >> > diff --git
+> >> > a/Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
+> >> > b/Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
+> >> > new file mode 100644
+> >> > index 0000000000000..8bff6b0fd582e
+> >> > --- /dev/null
+> >> > +++ b/Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
+> >> > @@ -0,0 +1,49 @@
+> >> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> >> > +%YAML 1.2
+> >> > +---
+> >> > +$id: http://devicetree.org/schemas/clock/voltage-oscillator.yaml#
+> >> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> >> > +
+> >> > +title: Voltage controlled oscillator
+> >>=20
+> >> Frankly, I find the "voltage-oscillator" and "voltage controlled
+> >> oscillator" names awkward.  In general, "clock" is used throughout
+> >> the entire kernel, when it comes to naming files and defining
+> >> "compatible" strings.  Thus, I'd suggest that "clock" is used here
+> >> instead of "oscillator", because it's consistent and shorter.
+> >>=20
+> >> How about using "gated-clock" for the "compatible" string, and
+> >> "Simple gated clock generator" instead of "voltage controlled
+> >> oscillator"?  Besides sounding awkward, "voltage controlled
+> >> oscillator" may suggest that the clock generator can be adjusted
+> >> or programmed somehow by applying the voltage, while it can only
+> >> be enabled or disabled that way, which is by definition clock
+> >> gating.  Thus, "gated-clock" and "Simple gated clock generator"
+> >> would fit very well.
+> >=20
+> > The naming came from Stephen - one of the clock maintainers ;-)
+> > See discussion in v1. Who also described these things as
+> > "voltage-controlled-oscillators".
+> >=20
+> > And from that discussion I also got the impression we should aim for
+> > more specific naming - especially when talking about dt-bindings, for=20
+> > this
+> > "usage in the Linux kernel" actually isn't a suitable metric and
+> > "gated-clock" is probably way too generic I think.
 >=20
-> Link: https://openbeagle.org/beaglev-ahead/beaglev-ahead/-/blob/main/docs=
-/TH1520%20System%20User%20Manual.pdf
-> Co-developed-by: Yangtao Li <frank.li@vivo.com>
-> Signed-off-by: Yangtao Li <frank.li@vivo.com>
-> Co-developed-by: Jisheng Zhang <jszhang@kernel.org>
-> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
-> Link: https://git.beagleboard.org/beaglev-ahead/beaglev-ahead/-/tree/main=
-/docs
-> Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
-> ---
+> I see, thanks for the clarification.  Though, the generic nature of
+> "gated-clock" as the name may actually make this driver a bit more
+> future-proof, by allowing some other features to be added to it at
+> some point in the future, avoiding that way the need for yet another
+> kernel driver.
 
-Applied to clk-next
+you're talking about the driver ... we're in the hardware-binding here.
+Those are two completely different topics ;-) .
+
+Devicetree is always about describing the hardware as best as possible,
+so you don't want too many "generics" there, because we're always talking
+about specific ICs soldered to some board.
+
+I also "violated" that in my v1 by grouping in the the Diodes parts, which
+as Stephen pointed out are quite different afterall.
+
+
+Heiko
+
+
