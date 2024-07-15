@@ -1,147 +1,123 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 922A217753;
-	Mon, 15 Jul 2024 16:12:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF2AE125D5;
+	Mon, 15 Jul 2024 17:46:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721059956; cv=none; b=GMNjQ9tooo6IkQ08g25Li5ePcH7MRldI/vIORrR4wMKE7UtaLcDXPE10KVV+8unmNvG2I03ZW5S9zDedIWRMk3WmH2csgILvNFCjOq7rqKSuxzbSstW7rtc0odYGNSYEuIgLtaP1m+MnFPpWdyR67l/+9g79ywRTCyx1IyyrczM=
+	t=1721065603; cv=none; b=QCeW6dCBdf7S3qsw6pNtcgad3Sy/qG3s16s+rrZ6tW9L4K+Cg5jRqwG/AYB+QEBYPdtDhz7G3yC07DYmGEGSjz40IrvhKclC/0wPHyn91w3QzVYGtun5HOV5bFwBAY3wcuV1is0y1HVgNlnX/s+vXqPlyNpzups5B2BBC5wUgPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721059956; c=relaxed/simple;
-	bh=wAfjnWEEmCh2B/ZHrv1VgTzWA3cAe3VidYlKsp5DMxU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bq0VV+GYhLpI2WAFXiCCcJAqQL7Jj41ZCfQdYejrBklpxXEHstStUqeQhJ4lzdCxy4wX/mX2URv4Do/hE2gt9YVNg//8F6NxNt51hRW0fQUDghcf3cmspiu1X1S+3p57Lq65sdHIgGroSQfFWlgCAvmsmFI537leA7ILT8B4tco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I4gr0mOd; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I4gr0mOd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E49BBC32782;
-	Mon, 15 Jul 2024 16:12:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721059956;
-	bh=wAfjnWEEmCh2B/ZHrv1VgTzWA3cAe3VidYlKsp5DMxU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=I4gr0mOdRYDg+eCHiPcFR0fOgQ7VpmYuHbda7gEimyuGVFGqeoYOEkMWXK5ZlTa+Z
-	 sqv1R4TzhWrneEIRODX7BI01lqcR+fWewyPe7rG55thcqKDUJOekjgzKk++YOJ05XY
-	 U0Ze66wlFIympcm32HZboIqxc3DBQlnG5eiDRi4pG9mFEZHYS+Tk1U9S1TIasn3Oxl
-	 wdXNLFlU07LvJ5rDTLSYHcdq212p6f3Z8y3bZrYQDAQsIV7kf9zPeCUNHpNijHICSS
-	 k6tjTxGEBz5hiZU/4tItDE6wkItObTUnTI72MsDsk6m3t4kAowNF3RuCgR3iWQKvsA
-	 fb5wYzsT4w5ug==
-Date: Mon, 15 Jul 2024 17:12:31 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Rayyan Ansari <rayyan.ansari@linaro.org>
-Cc: devicetree@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: clock: qcom,turingcc: convert to dtschema
-Message-ID: <20240715-colony-hacksaw-6729fca296c6@spud>
-References: <20240715084313.14098-1-rayyan.ansari@linaro.org>
- <20240715-spoiled-corroding-4e288446829d@spud>
+	s=arc-20240116; t=1721065603; c=relaxed/simple;
+	bh=VXVbN9kVctxpCLaC6fuPCB3UIf99V0ng/q0AjorBnUk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cS4Hj5xgdnSHYDO9KfM0dX5mKdQ/tS3nOqzWPu8t+H3+hu1JAmkIMBWJzTbNfh4mbMTw9fR7nOJXf8eJG3xKAvNy1et6Dx5Jv4nYnrZGqBghPz/2s/aHoEw5AcHG4TZmJzt9Zb/XPCE3kA7uhzs1MfPqfJfglVaGg6j9tuzXT8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Received: from i5e860d09.versanet.de ([94.134.13.9] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sTPmK-0001Bk-MA; Mon, 15 Jul 2024 19:46:24 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Dragan Simic <dsimic@manjaro.org>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
+Subject:
+ Re: [PATCH v2 1/3] dt-bindings: clocks: add binding for
+ voltage-controlled-oscillators
+Date: Mon, 15 Jul 2024 19:46:23 +0200
+Message-ID: <2832997.XrmoMso0CX@diego>
+In-Reply-To: <ec84dc37e2c421ee6d31294e08392d57@manjaro.org>
+References:
+ <20240715110251.261844-1-heiko@sntech.de>
+ <20240715110251.261844-2-heiko@sntech.de>
+ <ec84dc37e2c421ee6d31294e08392d57@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="CpDw71ypzQz04pYh"
-Content-Disposition: inline
-In-Reply-To: <20240715-spoiled-corroding-4e288446829d@spud>
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
+Hi Dragan,
 
---CpDw71ypzQz04pYh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Mon, Jul 15, 2024 at 05:11:49PM +0100, Conor Dooley wrote:
-> On Mon, Jul 15, 2024 at 09:43:10AM +0100, Rayyan Ansari wrote:
-> > diff --git a/Documentation/devicetree/bindings/clock/qcom,turingcc.yaml=
- b/Documentation/devicetree/bindings/clock/qcom,turingcc.yaml
+Am Montag, 15. Juli 2024, 17:15:45 CEST schrieb Dragan Simic:
+> On 2024-07-15 13:02, Heiko Stuebner wrote:
+> > In contrast to fixed clocks that are described as ungateable, boards
+> > sometimes use additional oscillators for things like PCIe reference
+> > clocks, that need actual supplies to get enabled and enable-gpios to be
+> > toggled for them to work.
+> > 
+> > This adds a binding for such oscillators that are not configurable
+> > themself, but need to handle supplies for them to work.
+> > 
+> > In schematics they often can be seen as
+> > 
+> >          ----------------
+> > Enable - | 100MHz,3.3V, | - VDD
+> >          |    3225      |
+> >    GND - |              | - OUT
+> >          ----------------
+> > 
+> > or similar. The enable pin might be separate but can also just be tied
+> > to the vdd supply, hence it is optional in the binding.
+> > 
+> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> > ---
+> >  .../bindings/clock/voltage-oscillator.yaml    | 49 +++++++++++++++++++
+> >  1 file changed, 49 insertions(+)
+> >  create mode 100644
+> > Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
+> > 
+> > diff --git
+> > a/Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
+> > b/Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
 > > new file mode 100644
-> > index 000000000000..0a57e42fb4d9
+> > index 0000000000000..8bff6b0fd582e
 > > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/qcom,turingcc.yaml
->=20
-> filename should match the compatible in the binding.
->=20
-> > @@ -0,0 +1,47 @@
+> > +++ b/Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
+> > @@ -0,0 +1,49 @@
 > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 > > +%YAML 1.2
 > > +---
-> > +$id: http://devicetree.org/schemas/clock/qcom,turingcc.yaml#
+> > +$id: http://devicetree.org/schemas/clock/voltage-oscillator.yaml#
 > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > > +
-> > +title: Qualcomm Turing Clock & Reset Controller
-> > +
-> > +maintainers:
-> > +  - Bjorn Andersson <andersson@kernel.org>
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: qcom,qcs404-turingcc
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  clocks:
-> > +    maxItems: 1
-> > +
-> > +  '#clock-cells':
-> > +    const: 1
-> > +
-> > +  '#reset-cells':
-> > +    const: 1
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - clocks
-> > +  - '#clock-cells'
-> > +  - '#reset-cells'
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    #include <dt-bindings/clock/qcom,gcc-qcs404.h>
-> > +    turingcc: clock-controller@800000 {
->=20
-> nit: drop the label
->=20
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> > +title: Voltage controlled oscillator
+> 
+> Frankly, I find the "voltage-oscillator" and "voltage controlled
+> oscillator" names awkward.  In general, "clock" is used throughout
+> the entire kernel, when it comes to naming files and defining
+> "compatible" strings.  Thus, I'd suggest that "clock" is used here
+> instead of "oscillator", because it's consistent and shorter.
+>
+> How about using "gated-clock" for the "compatible" string, and
+> "Simple gated clock generator" instead of "voltage controlled
+> oscillator"?  Besides sounding awkward, "voltage controlled
+> oscillator" may suggest that the clock generator can be adjusted
+> or programmed somehow by applying the voltage, while it can only
+> be enabled or disabled that way, which is by definition clock
+> gating.  Thus, "gated-clock" and "Simple gated clock generator"
+> would fit very well.
 
-gah, I forgot to say that ack was conditional on the filename being
-changed.
+The naming came from Stephen - one of the clock maintainers ;-)
+See discussion in v1. Who also described these things as
+"voltage-controlled-oscillators".
 
->=20
-> Cheers,
-> Conor.
->=20
-> > +        compatible =3D "qcom,qcs404-turingcc";
-> > +        reg =3D <0x00800000 0x30000>;
-> > +        clocks =3D <&gcc GCC_CDSP_CFG_AHB_CLK>;
-> > +
-> > +        #clock-cells =3D <1>;
-> > +        #reset-cells =3D <1>;
-> > +    };
-> > --=20
-> > 2.45.2
-> >=20
+And from that discussion I also got the impression we should aim for
+more specific naming - especially when talking about dt-bindings, for this
+"usage in the Linux kernel" actually isn't a suitable metric and
+"gated-clock" is probably way too generic I think.
+
+Though I'm not attached to any specific naming, so we'll simply
+wait for the clock- and dt-maintainers to weigh in ;-)
 
 
+Heiko
 
---CpDw71ypzQz04pYh
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZpVKbwAKCRB4tDGHoIJi
-0oYqAQCq5QbMDxbFh98PlEamJoy1CtzqagK7h6bREOwldxnPqgD9FEElV1dyyDNe
-31pyQVtw8iQHP6r0N0v/LZ1ACQVUsgE=
-=RLns
------END PGP SIGNATURE-----
-
---CpDw71ypzQz04pYh--
