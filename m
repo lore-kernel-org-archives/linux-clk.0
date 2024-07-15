@@ -1,244 +1,126 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CA95187321;
-	Mon, 15 Jul 2024 11:04:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4010518C16E;
+	Mon, 15 Jul 2024 12:08:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721041457; cv=none; b=Z7/VAlBs3dE4kkHxfJ/wopl4rfl4M+rjHfDBU/jr4xmdDm2h2mS/bsSmQWruBUlpFK5KkvLHQwwXKdKjsq4HZUwR9ZBqlvyCrklT0TEOiS4iE17UFXWWxgAkjtSpKziOtWg2Kr+K1Rbw3+j1oWrvM729e0oeXA2/tGU7IaPIBNc=
+	t=1721045304; cv=none; b=kzUeWub8z5vr4j1Dke2ev7u4ajBxdhxjTuCY1YL20SDnM7EGgGpHtx1z8JndROECtHYHyvgRmivxRxs9UTuOOvZB0WB1C7jEQKgqAnTA98S9fuv2qRk3XB3HEQV4RTIAmNUDfmLymk9Ci/G0jnfiugDbQGSqNUN0Dt3N9bqHh5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721041457; c=relaxed/simple;
-	bh=ouJC+8gRTfBbj5yxuVUTwSQl4xfN0ySlsCOV6/pgvts=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=P8KkA92nxvUSwPbLXblEjSysswOatIJGf4J1CBf8QspBQQmSBq+/MFiBeycRkR5OYxA4NEEHd+fhLTaKivfbRuAvtAFgZY00VUynsdgJar7bvouZK8j7bpdBnzahSscVr1X8WepN+uvYQySdeFilnlrDOhK+U3LxGP/Cnwa1k78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from i5e860d09.versanet.de ([94.134.13.9] helo=phil.lan)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sTJV4-0006GM-5V; Mon, 15 Jul 2024 13:04:10 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	heiko@sntech.de,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org
-Subject: [PATCH v2 2/3] clk: add driver for voltage controlled oscillators
-Date: Mon, 15 Jul 2024 13:02:50 +0200
-Message-Id: <20240715110251.261844-3-heiko@sntech.de>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240715110251.261844-1-heiko@sntech.de>
-References: <20240715110251.261844-1-heiko@sntech.de>
+	s=arc-20240116; t=1721045304; c=relaxed/simple;
+	bh=eOzKsJZ68Zti0agSsF1k6ZKZakTJy8YwzojJ5tl+3zU=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V8KOTaszVeCjLb/ONCCNUxspYGNTynhY7wdjBpoT8C5dymqnV4Pitmy6brqq3gT8sVv05ApALRtUFux4cyyb2d9WFX+KZwGTzB7gxw8+KQpHZZJRqg22DaKQbYyxe0nlXMHSzGirWW9kQFwhMrec7qdeQe2F2ztAQX8ErevS9z0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=salutedevices.com; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=CZDMmaSm; arc=none smtp.client-ip=37.18.73.165
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="CZDMmaSm"
+Received: from p-infra-ksmg-sc-msk01.sberdevices.ru (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 4E3C1100006;
+	Mon, 15 Jul 2024 15:08:14 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 4E3C1100006
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1721045294;
+	bh=5vyLVI9BUcQiXbKOPPF+ePjGPjESIUWqofEKwJ2vX2o=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:From;
+	b=CZDMmaSmlR1cR5+XJuk0LCuwSj3cp/3MVs4Oq5Fvave73qp84CMlqkJbhrtoqhI/y
+	 ooCjE+gijiqfKUmTZEF3sRDEiveEl/9bNs5njX4qHU9KAszdw4J5s35csVZaxKCZ0N
+	 Ap8HyT/RfYzx3T0i0Ll91yR67I4JbTYv4Vdpm1mItML1MYRAqJxH6MwaXLLnOowd4Y
+	 H6hGUz4fxXyPzaZ7vthzcUp1qZKvKRu+hQo04m8V9lL1oou3034th9IMoC+bOfIips
+	 rX9dRBKGOoq3Q3jTfG3FhMQtHLaR8DySrz0LSELN/PIk3t112QB7Ruj/TUDXzZTXkP
+	 lq3RnABnT9CSA==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Mon, 15 Jul 2024 15:08:14 +0300 (MSK)
+Received: from localhost (100.64.160.123) by p-i-exch-sc-m02.sberdevices.ru
+ (172.16.192.103) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1118.40; Mon, 15 Jul
+ 2024 15:08:13 +0300
+Date: Mon, 15 Jul 2024 15:08:13 +0300
+From: Dmitry Rokosov <ddrokosov@salutedevices.com>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+CC: Neil Armstrong <neil.armstrong@linaro.org>, Jerome Brunet
+	<jbrunet@baylibre.com>, Michael Turquette <mturquette@baylibre.com>, Stephen
+ Boyd <sboyd@kernel.org>, Kevin Hilman <khilman@baylibre.com>, Martin
+ Blumenstingl <martin.blumenstingl@googlemail.com>, Vladimir Zapolskiy
+	<vz@mleia.com>, Bjorn Andersson <andersson@kernel.org>, Chen-Yu Tsai
+	<wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
+	<samuel@sholland.org>, Michal Simek <michal.simek@amd.com>,
+	<linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-msm@vger.kernel.org>, <linux-sunxi@lists.linux.dev>
+Subject: Re: [DMARC error][DKIM error] [PATCH 01/10] clk: meson: a1:
+ peripherals: Constify struct regmap_config
+Message-ID: <20240715120813.m74t5y2br6yfhurk@CAB-WSD-L081021>
+References: <20240703-clk-const-regmap-v1-0-7d15a0671d6f@gmail.com>
+ <20240703-clk-const-regmap-v1-1-7d15a0671d6f@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240703-clk-const-regmap-v1-1-7d15a0671d6f@gmail.com>
+User-Agent: NeoMutt/20220415
+X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 186522 [Jul 15 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: ddrokosov@salutedevices.com
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 24 0.3.24 186c4d603b899ccfd4883d230c53f273b80e467f, {Tracking_uf_ne_domains}, {Track_E25351}, {Tracking_from_domain_doesnt_match_to}, smtp.sberdevices.ru:7.1.1,5.0.1;100.64.160.123:7.1.2;salutedevices.com:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;lists.infradead.org:7.1.1, FromAlignment: s, ApMailHostAddress: 100.64.160.123
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean, bases: 2024/07/15 09:24:00
+X-KSMG-LinksScanning: Clean, bases: 2024/07/15 09:25:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/07/15 05:41:00 #25996221
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-In contrast to fixed clocks that are described as ungateable, boards
-sometimes use additional oscillators for things like PCIe reference
-clocks, that need actual supplies to get enabled and enable-gpios to be
-toggled for them to work.
+On Wed, Jul 03, 2024 at 11:50:14AM +0200, Javier Carrasco wrote:
+> `a1_periphs_regmap_cfg` is not modified and can be declared as const to
+> move its data to a read-only section.
+> 
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
-This adds a driver for those generic voltage controlled oscillators,
-that can show up in schematics looking like
+Reviewed-by: Dmitry Rokosov <ddrokosov@salutedevices.com>
 
-         ----------------
-Enable - | 100MHz,3.3V, | - VDD
-         |    3225      |
-   GND - |              | - OUT
-         ----------------
+> ---
+>  drivers/clk/meson/a1-peripherals.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/meson/a1-peripherals.c b/drivers/clk/meson/a1-peripherals.c
+> index 99b5bc450446..728ad13924ad 100644
+> --- a/drivers/clk/meson/a1-peripherals.c
+> +++ b/drivers/clk/meson/a1-peripherals.c
+> @@ -2183,7 +2183,7 @@ static struct clk_regmap *const a1_periphs_regmaps[] = {
+>  	&dmc_sel2,
+>  };
+>  
+> -static struct regmap_config a1_periphs_regmap_cfg = {
+> +static const struct regmap_config a1_periphs_regmap_cfg = {
+>  	.reg_bits   = 32,
+>  	.val_bits   = 32,
+>  	.reg_stride = 4,
+> 
+> -- 
+> 2.40.1
+> 
+> 
+> _______________________________________________
+> linux-amlogic mailing list
+> linux-amlogic@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-amlogic
 
-Signed-off-by: Heiko Stuebner <heiko@sntech.de>
----
- drivers/clk/Kconfig   |  10 ++++
- drivers/clk/Makefile  |   1 +
- drivers/clk/clk-vco.c | 133 ++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 144 insertions(+)
- create mode 100644 drivers/clk/clk-vco.c
-
-diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-index 3e9099504fad4..e93a380b6ee47 100644
---- a/drivers/clk/Kconfig
-+++ b/drivers/clk/Kconfig
-@@ -414,6 +414,16 @@ config COMMON_CLK_VC7
- 	  Renesas Versaclock7 is a family of configurable clock generator
- 	  and jitter attenuator ICs with fractional and integer dividers.
- 
-+config COMMON_CLK_VCO
-+	tristate "Clock driver for voltage controlled oscillators"
-+	depends on GPIOLIB && REGULATOR
-+	help
-+	  This driver supports generic voltage controlled oscillators that
-+	  are not configurable but need supplies to be enabled to run.
-+	  Generally they need a supply voltage to be enabled and may also
-+	  require a separate enable pin, though in a lot of cases, vdd
-+	  and enable control might be tied to the same supply.
-+
- config COMMON_CLK_STM32F
- 	def_bool COMMON_CLK && (MACH_STM32F429 || MACH_STM32F469 || MACH_STM32F746)
- 	help
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index 4abe16c8ccdfe..ca7b7b7ddfd8d 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -79,6 +79,7 @@ obj-$(CONFIG_COMMON_CLK_SI521XX)	+= clk-si521xx.o
- obj-$(CONFIG_COMMON_CLK_VC3)		+= clk-versaclock3.o
- obj-$(CONFIG_COMMON_CLK_VC5)		+= clk-versaclock5.o
- obj-$(CONFIG_COMMON_CLK_VC7)		+= clk-versaclock7.o
-+obj-$(CONFIG_COMMON_CLK_VCO)		+= clk-vco.o
- obj-$(CONFIG_COMMON_CLK_WM831X)		+= clk-wm831x.o
- obj-$(CONFIG_COMMON_CLK_XGENE)		+= clk-xgene.o
- 
-diff --git a/drivers/clk/clk-vco.c b/drivers/clk/clk-vco.c
-new file mode 100644
-index 0000000000000..f7fe2bc627f36
---- /dev/null
-+++ b/drivers/clk/clk-vco.c
-@@ -0,0 +1,133 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (C) 2024 Heiko Stuebner <heiko@sntech.de>
-+ *
-+ * Generic voltage controlled oscillator
-+ */
-+
-+#include <linux/clk-provider.h>
-+#include <linux/err.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+#include <linux/regulator/consumer.h>
-+#include <linux/slab.h>
-+
-+struct clk_vco {
-+	struct device *dev;
-+	struct clk_hw hw;
-+	u32 rate;
-+	struct regulator *supply;
-+	struct gpio_desc *enable_gpio;
-+};
-+
-+#define to_clk_vco(_hw) container_of(_hw, struct clk_vco, hw)
-+
-+static int clk_vco_prepare(struct clk_hw *hw)
-+{
-+	return regulator_enable(to_clk_vco(hw)->supply);
-+}
-+
-+static void clk_vco_unprepare(struct clk_hw *hw)
-+{
-+	regulator_disable(to_clk_vco(hw)->supply);
-+}
-+
-+static int clk_vco_enable(struct clk_hw *hw)
-+{
-+	gpiod_set_value(to_clk_vco(hw)->enable_gpio, 1);
-+	return 0;
-+}
-+
-+static void clk_vco_disable(struct clk_hw *hw)
-+{
-+	gpiod_set_value(to_clk_vco(hw)->enable_gpio, 0);
-+}
-+
-+static unsigned long clk_vco_recalc_rate(struct clk_hw *hw,
-+					       unsigned long parent_rate)
-+{
-+	return to_clk_vco(hw)->rate;
-+}
-+
-+const struct clk_ops clk_vco_ops = {
-+	.prepare = clk_vco_prepare,
-+	.unprepare = clk_vco_unprepare,
-+	.enable = clk_vco_enable,
-+	.disable = clk_vco_disable,
-+	.recalc_rate = clk_vco_recalc_rate,
-+};
-+
-+static int clk_vco_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct clk_vco *clkgen;
-+	const char *clk_name;
-+	int ret;
-+
-+	clkgen = devm_kzalloc(dev, sizeof(*clkgen), GFP_KERNEL);
-+	if (!clkgen)
-+		return -ENOMEM;
-+
-+	clkgen->dev = dev;
-+
-+	if (device_property_read_u32(dev, "clock-frequency", &clkgen->rate))
-+		return dev_err_probe(dev, -EIO, "failed to get clock-frequency");
-+
-+	ret = device_property_read_string(dev, "clock-output-names", &clk_name);
-+	if (ret)
-+		clk_name = fwnode_get_name(dev->fwnode);
-+
-+	clkgen->supply = devm_regulator_get_optional(dev, "vdd");
-+	if (IS_ERR(clkgen->supply)) {
-+		if (PTR_ERR(clkgen->supply) != -ENODEV)
-+			return dev_err_probe(dev, PTR_ERR(clkgen->supply),
-+					     "failed to get regulator\n");
-+		clkgen->supply = NULL;
-+	}
-+
-+	clkgen->enable_gpio = devm_gpiod_get_optional(dev, "enable",
-+						      GPIOD_OUT_LOW);
-+	if (IS_ERR(clkgen->enable_gpio))
-+		return dev_err_probe(dev, PTR_ERR(clkgen->enable_gpio),
-+				     "failed to get gpio\n");
-+
-+	ret = gpiod_direction_output(clkgen->enable_gpio, 0);
-+	if (ret < 0)
-+		return dev_err_probe(dev, ret, "failed to set gpio output");
-+
-+	clkgen->hw.init = CLK_HW_INIT_NO_PARENT(clk_name, &clk_vco_ops, 0);
-+
-+	/* register the clock */
-+	ret = devm_clk_hw_register(dev, &clkgen->hw);
-+	if (ret)
-+		return dev_err_probe(dev, ret,
-+				     "failed to register clock\n");
-+
-+	ret = devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get,
-+					  &clkgen->hw);
-+	if (ret)
-+		return dev_err_probe(dev, ret,
-+				     "failed to register clock provider\n");
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id clk_vco_ids[] = {
-+	{ .compatible = "voltage-oscillator" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, clk_vco_ids);
-+
-+static struct platform_driver clk_vco_driver = {
-+	.driver = {
-+		.name = "clk_vco",
-+		.of_match_table = clk_vco_ids,
-+	},
-+	.probe = clk_vco_probe,
-+};
-+module_platform_driver(clk_vco_driver);
-+
-+MODULE_AUTHOR("Heiko Stuebner <heiko@sntech.de>");
-+MODULE_DESCRIPTION("Voltage controlled oscillator driver");
-+MODULE_LICENSE("GPL");
 -- 
-2.39.2
-
+Thank you,
+Dmitry
