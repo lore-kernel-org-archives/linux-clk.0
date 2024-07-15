@@ -1,127 +1,136 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7457613A3F7;
-	Mon, 15 Jul 2024 19:27:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BA626AB8;
+	Mon, 15 Jul 2024 19:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721071641; cv=none; b=mtQAb4ZnZLQa9L/mgRLY0BAgK/xteZ1UT999y7jbHRgkTEjFAuj61NXxa213cv5bUsm0Io2HaNf5gO8gPPXflThZSiAa6O/EhL9ThkGX4Y6SBGabLFfnQKiUEs7cKJuO9cVU7H+a8g+F8TDrM5cLTo0I8jDAw7LLe8hgNX5xHBI=
+	t=1721071824; cv=none; b=aBhfZ3O6D3WA+J8ZDHbBUqmBMrhn8IMl7IrDypbUPZxkEx8poXezl0zz/Li+aWlfA99WGtnB56JL8lcjOmMf/DKnF0V6/BQMV2BnsPBsxOGJV+SUvvc/by0uNjRUwo7COgZfyiowVO4O98rCWFGwFyhNvnTGV8pfGjkemtY797M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721071641; c=relaxed/simple;
-	bh=scvD8E1Th0WQEDOblbw8afBg6ubsAWbPK3/2sSh0+fU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a8U/x1nU5/M8qDzYs6/22xdN1aEpaFy8As+tuaVxgJn720jwj3ArrvpdfLaAQiVyWOet+GHaFKlCU8ocTcKgofDEJhQu6jyNI+A7DeH/zfOCfyOjLs0lsa3+ot1hr08l14Mu0JMI3M/XZ/nefynbCEoXbQYS8Gbmawrc0mEGqEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HtXmA/F6; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1721071824; c=relaxed/simple;
+	bh=tGsUF26rthjSBOBNFtY5VI/KJK9SJct6xyHxzeNGIcE=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=mzseMHk6Fm5WiB98vOs5SzuW1Baxeia23Yb4E3rATIyIi6YQTc0VhowC/NsnWieHvDATeQ6diRSgF0eVo52EiGd7053+Y/Lcw12IQ8u3zgFTC16bYm4YIQ1jZRgSVV/98RpHSE7ksdA4zTrGDWoNqF1bQ2oqiPisiBodAiyBQls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vERtmmL1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HtXmA/F6"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721071639; x=1752607639;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=scvD8E1Th0WQEDOblbw8afBg6ubsAWbPK3/2sSh0+fU=;
-  b=HtXmA/F6/KE2CMFkbPzZNMEa46dmYLgUq3aKvtZwf1D5iCxb8OOQW4TD
-   MEie7xahjkY25LpcCsY25wSBHzebFxGdN1O3oayoHwghBKnXHBLom0DaP
-   LYzCdMOTnfB94l7f7ag1q1IEgK6u+vH0DKF3WVuP8mr8h7yXw04W0gKfJ
-   zyRuC3yt1glqApmAl9Mu2s/ungdkqGTvf1Z1/6UmHyBBX5X4ExadgsNSi
-   ZcklIrIpP8qOcqvB1ex0KFAwvCJOmg/kjzRMMFL9cejujUDYDuLXe6ejn
-   i7qFLs757lVnePUITbRqk3QHG9sRS+tG8czAn0jYMB9S3g3WlpHpqxzvl
-   A==;
-X-CSE-ConnectionGUID: Sxq8eHrwSYO1cWImrQ8CMQ==
-X-CSE-MsgGUID: 9AmPuoaUSrCOCQ0lH6Oekg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11134"; a="18342895"
-X-IronPort-AV: E=Sophos;i="6.09,211,1716274800"; 
-   d="scan'208";a="18342895"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2024 12:27:19 -0700
-X-CSE-ConnectionGUID: 2Tdnb+rbRk+Wk2mkoCoccg==
-X-CSE-MsgGUID: 1KBBHSXLTp670BMn/kdLJQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,211,1716274800"; 
-   d="scan'208";a="72960660"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by fmviesa002.fm.intel.com with ESMTP; 15 Jul 2024 12:27:15 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sTRLt-000eWK-35;
-	Mon, 15 Jul 2024 19:27:13 +0000
-Date: Tue, 16 Jul 2024 03:26:47 +0800
-From: kernel test robot <lkp@intel.com>
-To: Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>,
-	openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-kernel@vger.kernel.org,
-	Jonathan =?iso-8859-1?Q?Neusch=E4fer?= <j.neuschaefer@gmx.net>
-Subject: Re: [PATCH RESEND v12 4/6] clk: wpcm450: Add Nuvoton WPCM450
- clock/reset controller driver
-Message-ID: <202407160235.JYThNv91-lkp@intel.com>
-References: <20240708-wpcm-clk-v12-4-1afac539c37d@gmx.net>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vERtmmL1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1AEEC4AF0A;
+	Mon, 15 Jul 2024 19:30:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721071823;
+	bh=tGsUF26rthjSBOBNFtY5VI/KJK9SJct6xyHxzeNGIcE=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=vERtmmL1W5S/u1Jf/veSawCHamOAtTMmNGMq1V1sKzAqWs3SE+8G7gPVxQkKheRLX
+	 MJDS+voZwuGaRu4KMYt36b8VCdF3j9V2RSxY7ZN0KEW4+QYDWKI9N58rnaulSrNyoZ
+	 r6tdoyTR6sM84yArcvrbwRQ9JC2GnG9bEqDvkEZSb0qOGEQo9T59bxxVHLZLYvhsMA
+	 kWh07SW1LzwKCS9TQwqRZHBVckNPGaainWN59/4mHIEb1mOfLHVSLAakB4RmLtNppd
+	 epWZmJEru0uTD7FKwuz2Rn7B6hnk/h3v/VX7XmLRmgdFJHqYZfGuwOGC1Jn3+L7ZXb
+	 GwUVZjy8yFocA==
+Message-ID: <7db2d8ae07a9ef1a226dfd08a3f88f8a.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240708-wpcm-clk-v12-4-1afac539c37d@gmx.net>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1jv81cgv4z.fsf@starbuckisacylon.baylibre.com>
+References: <20240710162526.2341399-1-jbrunet@baylibre.com> <20240710162526.2341399-8-jbrunet@baylibre.com> <88d1dbd92e922ad002367d8dac67d0eb.sboyd@kernel.org> <1jv81cgv4z.fsf@starbuckisacylon.baylibre.com>
+Subject: Re: [PATCH 7/8] reset: amlogic: add auxiliary reset driver support
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Philipp Zabel <p.zabel@pengutronix.de>, Jan Dakinevich <jan.dakinevich@salutedevices.com>, linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org
+To: Jerome Brunet <jbrunet@baylibre.com>
+Date: Mon, 15 Jul 2024 12:30:21 -0700
+User-Agent: alot/0.10
 
-Hi Jonathan,
+Quoting Jerome Brunet (2024-07-11 02:01:16)
+> On Wed 10 Jul 2024 at 15:49, Stephen Boyd <sboyd@kernel.org> wrote:
+>=20
+> > Quoting Jerome Brunet (2024-07-10 09:25:16)
+> >> diff --git a/drivers/reset/reset-meson.c b/drivers/reset/reset-meson.c
+> >> index e34a10b15593..5cc767d50e8f 100644
+> >> --- a/drivers/reset/reset-meson.c
+> >> +++ b/drivers/reset/reset-meson.c
+> > [...]
+> >> +
+> >> +int devm_meson_rst_aux_register(struct device *dev,
+> >> +                               struct regmap *map,
+> >> +                               const char *adev_name)
+> >> +{
+> >> +       struct meson_reset_adev *raux;
+> >> +       struct auxiliary_device *adev;
+> >> +       int ret;
+> >> +
+> >> +       raux =3D kzalloc(sizeof(*raux), GFP_KERNEL);
+> >> +       if (!raux)
+> >> +               return -ENOMEM;
+> >> +
+> >> +       ret =3D ida_alloc(&meson_rst_aux_ida, GFP_KERNEL);
+> >
+> > Do we expect more than one device with the same name? I wonder if the
+> > IDA can be skipped.
+>=20
+> I've wondered about that too.
+>=20
+> I don't think it is the case right now but I'm not 100% sure.
+> Since I spent time thinking about it, I thought it would just be safer (a=
+nd
+> relatively cheap) to put in and enough annoying debugging the
+> expectation does not hold true.
+>=20
+> I don't have a strong opinion on this. What do you prefer ?
 
-kernel test robot noticed the following build warnings:
+I don't have a strong opinion either so it's fine to leave it there.
 
-[auto build test WARNING on 4cece764965020c22cff7665b18a012006359095]
+> >> diff --git a/include/soc/amlogic/meson-auxiliary-reset.h b/include/soc=
+/amlogic/meson-auxiliary-reset.h
+> >> new file mode 100644
+> >> index 000000000000..8fdb02b18d8c
+> >> --- /dev/null
+> >> +++ b/include/soc/amlogic/meson-auxiliary-reset.h
+> >> @@ -0,0 +1,23 @@
+> >> +/* SPDX-License-Identifier: GPL-2.0 */
+> >> +#ifndef __SOC_AMLOGIC_MESON_AUX_RESET_H
+> >> +#define __SOC_AMLOGIC_MESON_AUX_RESET_H
+> >> +
+> >> +#include <linux/err.h>
+> >> +
+> >> +struct device;
+> >> +struct regmap;
+> >> +
+> >> +#ifdef CONFIG_RESET_MESON
+> >> +int devm_meson_rst_aux_register(struct device *dev,
+> >> +                               struct regmap *map,
+> >> +                               const char *adev_name);
+> >> +#else
+> >> +static inline int devm_meson_rst_aux_register(struct device *dev,
+> >> +                                             struct regmap *map,
+> >> +                                             const char *adev_name)
+> >> +{
+> >> +       return -EOPNOTSUPP;
+> >
+> > Shouldn't this be 'return 0' so that the clk driver doesn't have to care
+> > about the config?
+>=20
+> I don't think the system (in general) would be able function without the =
+reset
+> driver, so the question is rather phylosophical.
+>=20
+> Let's say it could, if this returns 0, consumers of the reset controller
+> will defer indefinitely ... which is always a bit more difficult to sort
+> out.
+>=20
+> If it returns an error, the problem is pretty obvious, helping people
+> solve it quickly.
+>=20
+> Also the actual device we trying to register provides clocks and reset.
+> It is not like the reset is an optional part we don't care about.
+>=20
+> On this instance it starts from clock, but it could have been the other
+> way around. Both are equally important.
+>=20
+> I'd prefer if it returns an error when the registration can't even start.
+>=20
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Jonathan-Neusch-fer/dt-bindings-clock-Add-Nuvoton-WPCM450-clock-reset-controller/20240708-073926
-base:   4cece764965020c22cff7665b18a012006359095
-patch link:    https://lore.kernel.org/r/20240708-wpcm-clk-v12-4-1afac539c37d%40gmx.net
-patch subject: [PATCH RESEND v12 4/6] clk: wpcm450: Add Nuvoton WPCM450 clock/reset controller driver
-config: arm-randconfig-r064-20240715 (https://download.01.org/0day-ci/archive/20240716/202407160235.JYThNv91-lkp@intel.com/config)
-compiler: clang version 15.0.7 (https://github.com/llvm/llvm-project 8dfdcc7b7bf66834a761bd8de445840ef68e4d1a)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407160235.JYThNv91-lkp@intel.com/
-
-cocci warnings: (new ones prefixed by >>)
->> drivers/clk/nuvoton/clk-wpcm450.c:55:1-7: WARNING: do_div() does a 64-by-32 division, please consider using div64_ul instead.
-
-vim +55 drivers/clk/nuvoton/clk-wpcm450.c
-
-    36	
-    37	static unsigned long wpcm450_clk_pll_recalc_rate(struct clk_hw *hw,
-    38							 unsigned long parent_rate)
-    39	{
-    40		struct wpcm450_clk_pll *pll = to_wpcm450_clk_pll(hw);
-    41		unsigned long fbdv, indv, otdv;
-    42		u64 rate;
-    43		u32 pllcon;
-    44	
-    45		if (parent_rate == 0)
-    46			return 0;
-    47	
-    48		pllcon = readl_relaxed(pll->pllcon);
-    49	
-    50		indv = FIELD_GET(PLLCON_INDV, pllcon) + 1;
-    51		fbdv = FIELD_GET(PLLCON_FBDV, pllcon) + 1;
-    52		otdv = FIELD_GET(PLLCON_OTDV, pllcon) + 1;
-    53	
-    54		rate = (u64)parent_rate * fbdv;
-  > 55		do_div(rate, indv * otdv);
-    56	
-    57		return rate;
-    58	}
-    59	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Ok. Fair enough.
