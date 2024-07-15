@@ -1,186 +1,142 @@
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5464713C675
-	for <linux-clk@vger.kernel.org>; Mon, 15 Jul 2024 08:06:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B115824B5B;
+	Mon, 15 Jul 2024 08:23:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721030805; cv=none; b=HsFkiwzx4pzFZcMXb+ylJRC4Cbr2/A8enYlBz8BOVXYRkWJso1QpZ3NnGnLeuXMWes8BWPRJUu22wmHRbUCzENPCR20RhlLROYbJaML6SeLd+YNawxDnzVu9Z20t2So3cZ7bA7kAXpzu6ZBR55ekIt3X7eoWAiSfMwbSyWPF61I=
+	t=1721031818; cv=none; b=W/fK5h68jRnDGQnL3wkQjr/49cPGOt5T8bDmvWrP5huLl/CCQ7svlGmhH6aWQAm6OCkuLOOLBHomGKmA0p9CcTtd57+Acgoj76d/IZqXB28lF4QT+sAk1oYM9gYcdP+GG/gK1PbNQ2y1JqIkXRY2bKr/Oeua9HALoqPQG3+WBMY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721030805; c=relaxed/simple;
-	bh=16bBhiqIhGVVdwo8yfoUKxnj03L+a4RhSQqjiGpjRjE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=XGxDFVeDJixFCUX8/CYlRW3p02/NSZP+DhT/ua6aoB3Tl7dSl74zwIIH8EhQYNyscre7gLlUwh5ScV5iES5m+wBSQfyuIsnY73Dmss1HM4hyxAmyDpaQdRQS8QAJ2uXvG/W5TwrXwG1t4cp/nJw2iCcTixAp1bOxyMY6LkOgL0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=kqqxF3pW; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1721031818; c=relaxed/simple;
+	bh=hlJ+5oqJCxwikNsWZHSJo1gIJmTcG8j5tNnNqq218EM=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=CIoAsknFu8njteQK0a+v4kT0K9pya0rd1eV3IzZzGTD4K8A2dNVhph6gV0R+gsjMoGW/Tk/xfrfXUj2ZQO7m18Y3y0v4HKRjzZEwtiTV2U5fWffkZFg5ilQUywQ78hrS71sa9TWhPLDC/XIaBez7JF0/bZlwjn9LsLHyTiaPhbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HSlpAX4I; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="kqqxF3pW"
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-367963ea053so3326953f8f.2
-        for <linux-clk@vger.kernel.org>; Mon, 15 Jul 2024 01:06:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1721030801; x=1721635601; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0ZZF6SHcFUEyiyR+Vm+15zWotXyhNbxhylYVl4y9i0Q=;
-        b=kqqxF3pWVvNmihRetXx70j2lIEY/dJu0DqcThwYNLb2JgXuxRnrdT3STOUYDfWDSle
-         tZmlWLeQnt/KnHh1X6Fdaqk/1iVwP0Olt//WGSeNqaXF3LWlrnEmAWEXh1XfASi5DfxO
-         MM3fT4dNoHS2vzbyRHaW8qEnvVDunYQ14Scbo0XqIMtQNvdVi6Y2q5IyUY3OfI1NZ8Od
-         PDF5uxASXK9MDVIK4LQ8L+pGftRYcF/Sk38e29TPnoLPQtDHxOuIJ8QMJrGveiKqkhc1
-         TzBSy3lquFmPz9NwgmVDTS/B61ZHboD18eXgsvsK5xQlZ8vrqkWlBxVsdkn4PknNGIHl
-         CitA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721030801; x=1721635601;
-        h=content-transfer-encoding:in-reply-to:from:references:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0ZZF6SHcFUEyiyR+Vm+15zWotXyhNbxhylYVl4y9i0Q=;
-        b=BMygnD1T0bwaQbowQ2qjViixKlKr5MaqQl1+9Xj7GexqgiLw71FLCGp0DLSbIoLWF9
-         ++g6gdkFPsI3mhVslyhYnSDJsX6n+K4UDpGe5ZVD/ER+ocMfLvVVXGtXxcgq4fpfnTOv
-         rPBoxV2OCaepfxuVXNbi6BqyjryFORLvFCfmjls226QgAvdOwZjSkwF5zgiO1/oOeggG
-         7kSgH/WFmpNU6h5hFY5afNapEZXjXqBRI6SSedYH2tYOK7nQgdPmWZuq2CS2DM12Rr6b
-         8x4b6pPEIzZewjAw+ZkS9nRossL3zTABzvV8ISKBHFybnskwVbvX0cJyEh4ELFvXYwOV
-         jJxw==
-X-Forwarded-Encrypted: i=1; AJvYcCVLa5Pv3OdeLUov9SO0sdl64S5/86kBt0CpYHx1yg2LLY/88R06HmNItbHa7+Rla91rf4uJUqCbd+Krsxu3lydX2hSxXEOIWpIw
-X-Gm-Message-State: AOJu0Yx/YSaNdepKtTpV7aOcpnmH+rqIMWNTbFxHL59f09id+Xamf26z
-	xOtBusr2fiuBg20uwpZu/wLpDvfvXJnmyj/nc1YI6VsJCHP6jiBq+52XvHVAtYU=
-X-Google-Smtp-Source: AGHT+IGQxkCi+Sc9wBZNomHEVlA4JrxK+a6uMp912PveNzQBaXW9hcRRP6sKp7S+aVLFF5/drBpXyA==
-X-Received: by 2002:adf:e5c4:0:b0:366:ecc4:aa70 with SMTP id ffacd0b85a97d-367cea46912mr13511131f8f.5.1721030801484;
-        Mon, 15 Jul 2024 01:06:41 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.171])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3680db047c4sm5607243f8f.108.2024.07.15.01.06.39
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 15 Jul 2024 01:06:41 -0700 (PDT)
-Message-ID: <c39a3967-1089-4113-917e-78fc14e788bf@tuxon.dev>
-Date: Mon, 15 Jul 2024 11:06:39 +0300
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HSlpAX4I"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46F2dEAh001859;
+	Mon, 15 Jul 2024 08:23:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=pDiXEl9bmaoZqbeEvBwani
+	dIAFfKFdjGFFzepEPHpHo=; b=HSlpAX4IzxHSCC4XvQnLBrP+qIT3wU77gzNcjj
+	3wDD68Y6UkJJ40ZGI06FKPytp56FQJRU+t0Srt+GeKH6VvxkXQsQE3T6hO12Fl7u
+	a0eECnFHezDYsOvTt1oAeexAw2BGtCABqdAQ1wTCBZyuykT0AZbZyZ+9lHUTD/gL
+	dMv3YkEWw/R0W1wozsBuY5HmuwDdEQWEl/doD3JM16q5ad/jpOPR7cO2PY52nn0f
+	3min8PU76HdpUggImpvTpgAJjRd779f3FcVa6a/qj2HKnGX32U5JtAZTaXdbbC75
+	KizQHrj9pVnbcsRnacX6NNuImKHCpH7Jsypb1TxjWHvz8A9Q==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40bf9ebcxw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 15 Jul 2024 08:23:31 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46F8NVi0013003
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 15 Jul 2024 08:23:31 GMT
+Received: from hu-tdas-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 15 Jul 2024 01:23:26 -0700
+From: Taniya Das <quic_tdas@quicinc.com>
+Subject: [PATCH v3 0/8] Add support for SA8775P Multimedia clock
+ controllers
+Date: Mon, 15 Jul 2024 13:53:15 +0530
+Message-ID: <20240715-sa8775p-mm-v3-v1-0-badaf35ed670@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 10/27] clk: at91: sam9x7: add support for HW PLL freq
- dividers
-Content-Language: en-US
-To: Varshini Rajendran <varshini.rajendran@microchip.com>,
- mturquette@baylibre.com, sboyd@kernel.org, nicolas.ferre@microchip.com,
- alexandre.belloni@bootlin.com, linux-clk@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240703102011.193343-1-varshini.rajendran@microchip.com>
- <20240703102736.195810-1-varshini.rajendran@microchip.com>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20240703102736.195810-1-varshini.rajendran@microchip.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHPclGYC/x2MQQqAIBAAvxJ7bsEsWekr0UFqqz1ooSCB+Peky
+ 8AcZgokjsIJ5q5A5CxJ7tBk6DvYLhdORtmbg1Z6UjQYTM4SmQe9xzyiJkdOG7aN0Jon8iHv/1s
+ gj7DW+gHbKnW6YwAAAA==
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        "Bartosz
+ Golaszewski" <bartosz.golaszewski@linaro.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_imrashai@quicinc.com>, <quic_jkona@quicinc.com>,
+        <quic_tdas@quicinc.com>
+X-Mailer: b4 0.14-dev-f7c49
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: aDqSBwBoOHYKcaZRFrBqgmBek5srBady
+X-Proofpoint-GUID: aDqSBwBoOHYKcaZRFrBqgmBek5srBady
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-15_03,2024-07-11_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
+ priorityscore=1501 bulkscore=0 lowpriorityscore=0 suspectscore=0
+ impostorscore=0 spamscore=0 phishscore=0 mlxlogscore=999 mlxscore=0
+ adultscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2406140001 definitions=main-2407150065
 
+Add support for videocc, camcc, dispcc0 and dispcc1 on Qualcomm SA8775P
+platform.
 
+Changes in [v3] compared to [v2]:
+  Update the qcom_cc_really_probe() to use &pdev->dev, for the CAMCC, DISPCC & VIDEOCC drivers.
 
-On 03.07.2024 13:27, Varshini Rajendran wrote:
-> Add support for hardware dividers for PLL IDs in sam9x7 SoC. The system
-> PLL - PLLA and the system PLL divided by 2 - PLLADIV2 with PLL ID 0 and
-> 4 respectively, both have a hardware divider /2. This has to be taken into
-> account in the software to obtain the right frequencies. Support for the
-> same is added in the PLL driver.
-> 
-> fcorepllack -----> HW Div = 2 -+--> fpllack
->                                |
->                                +--> HW Div = 2 ---> fplladiv2ck
-> 
-> In this case the corepll freq is 1600 MHz. So, the plla freq is 800 MHz
-> after the hardware divider and the plladiv2 freq is 400 MHz after the
-> hardware divider (given that the DIVPMC is 0).
-> 
-> Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
+[v2]
+https://lore.kernel.org/all/20240612-sa8775p-mm-clock-controllers-v1-0-db295a846ee7@quicinc.com/
+Changes in [v2] compared to [v1]:
+  [PATCH 1/8]: Updated bindings to reference qcom,gcc.yaml
+  [PATCH 3/8]: Updated bindings to reference qcom,gcc.yaml
+  [PATCH 5/8]: Updated bindings to reference qcom,gcc.yaml
+  [PATCH 7/8]: Split updating sleep_clk frequency to separate patch
+  [PATCH 8/8]: Newly added to update sleep_clk frequency to 32000
+  These multimedia clock controller and device tree patches are split from the below [v1] series.
 
-Reviewed-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+[v1]
+https://lore.kernel.org/all/20240531090249.10293-1-quic_tdas@quicinc.com/
 
-> ---
-> Changes in v5:
-> - Corrected typos in commit message.
-> - Rewrote the conditional statement.
-> ---
->  drivers/clk/at91/clk-sam9x60-pll.c | 30 ++++++++++++++++++++++++++++--
->  drivers/clk/at91/pmc.h             |  1 +
->  2 files changed, 29 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/at91/clk-sam9x60-pll.c b/drivers/clk/at91/clk-sam9x60-pll.c
-> index b0314dfd7393..fda041102224 100644
-> --- a/drivers/clk/at91/clk-sam9x60-pll.c
-> +++ b/drivers/clk/at91/clk-sam9x60-pll.c
-> @@ -73,9 +73,15 @@ static unsigned long sam9x60_frac_pll_recalc_rate(struct clk_hw *hw,
->  {
->  	struct sam9x60_pll_core *core = to_sam9x60_pll_core(hw);
->  	struct sam9x60_frac *frac = to_sam9x60_frac(core);
-> +	unsigned long freq;
->  
-> -	return parent_rate * (frac->mul + 1) +
-> +	freq = parent_rate * (frac->mul + 1) +
->  		DIV_ROUND_CLOSEST_ULL((u64)parent_rate * frac->frac, (1 << 22));
-> +
-> +	if (core->layout->div2)
-> +		freq >>= 1;
-> +
-> +	return freq;
->  }
->  
->  static int sam9x60_frac_pll_set(struct sam9x60_pll_core *core)
-> @@ -432,6 +438,12 @@ static unsigned long sam9x60_div_pll_recalc_rate(struct clk_hw *hw,
->  	return DIV_ROUND_CLOSEST_ULL(parent_rate, (div->div + 1));
->  }
->  
-> +static unsigned long sam9x60_fixed_div_pll_recalc_rate(struct clk_hw *hw,
-> +						       unsigned long parent_rate)
-> +{
-> +	return parent_rate >> 1;
-> +}
-> +
->  static long sam9x60_div_pll_compute_div(struct sam9x60_pll_core *core,
->  					unsigned long *parent_rate,
->  					unsigned long rate)
-> @@ -606,6 +618,16 @@ static const struct clk_ops sam9x60_div_pll_ops_chg = {
->  	.restore_context = sam9x60_div_pll_restore_context,
->  };
->  
-> +static const struct clk_ops sam9x60_fixed_div_pll_ops = {
-> +	.prepare = sam9x60_div_pll_prepare,
-> +	.unprepare = sam9x60_div_pll_unprepare,
-> +	.is_prepared = sam9x60_div_pll_is_prepared,
-> +	.recalc_rate = sam9x60_fixed_div_pll_recalc_rate,
-> +	.round_rate = sam9x60_div_pll_round_rate,
-> +	.save_context = sam9x60_div_pll_save_context,
-> +	.restore_context = sam9x60_div_pll_restore_context,
-> +};
-> +
->  struct clk_hw * __init
->  sam9x60_clk_register_frac_pll(struct regmap *regmap, spinlock_t *lock,
->  			      const char *name, const char *parent_name,
-> @@ -725,10 +747,14 @@ sam9x60_clk_register_div_pll(struct regmap *regmap, spinlock_t *lock,
->  	else
->  		init.parent_names = &parent_name;
->  	init.num_parents = 1;
-> -	if (flags & CLK_SET_RATE_GATE)
-> +
-> +	if (layout->div2)
-> +		init.ops = &sam9x60_fixed_div_pll_ops;
-> +	else if (flags & CLK_SET_RATE_GATE)
->  		init.ops = &sam9x60_div_pll_ops;
->  	else
->  		init.ops = &sam9x60_div_pll_ops_chg;
-> +
->  	init.flags = flags;
->  
->  	div->core.id = id;
-> diff --git a/drivers/clk/at91/pmc.h b/drivers/clk/at91/pmc.h
-> index bb9da35198d9..91d1c6305d95 100644
-> --- a/drivers/clk/at91/pmc.h
-> +++ b/drivers/clk/at91/pmc.h
-> @@ -64,6 +64,7 @@ struct clk_pll_layout {
->  	u8 frac_shift;
->  	u8 div_shift;
->  	u8 endiv_shift;
-> +	u8 div2;
->  };
->  
->  extern const struct clk_pll_layout at91rm9200_pll_layout;
+Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+---
+Taniya Das (8):
+      dt-bindings: clock: qcom: Add SA8775P video clock controller
+      clk: qcom: Add support for Video clock controller on SA8775P
+      dt-bindings: clock: qcom: Add SA8775P camera clock controller
+      clk: qcom: Add support for Camera Clock Controller on SA8775P
+      dt-bindings: clock: qcom: Add SA8775P display clock controllers
+      clk: qcom: Add support for Display clock Controllers on SA8775P
+      arm64: dts: qcom: Add support for multimedia clock controllers
+      arm64: dts: qcom: Update sleep_clk frequency to 32000 on SA8775P
+
+ .../bindings/clock/qcom,sa8775p-camcc.yaml         |   62 +
+ .../bindings/clock/qcom,sa8775p-dispcc.yaml        |   79 +
+ .../bindings/clock/qcom,sa8775p-videocc.yaml       |   62 +
+ arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi         |    2 +-
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi              |   56 +
+ drivers/clk/qcom/Kconfig                           |   31 +
+ drivers/clk/qcom/Makefile                          |    3 +
+ drivers/clk/qcom/camcc-sa8775p.c                   | 1849 ++++++++++++++++++++
+ drivers/clk/qcom/dispcc0-sa8775p.c                 | 1481 ++++++++++++++++
+ drivers/clk/qcom/dispcc1-sa8775p.c                 | 1481 ++++++++++++++++
+ drivers/clk/qcom/videocc-sa8775p.c                 |  576 ++++++
+ include/dt-bindings/clock/qcom,sa8775p-camcc.h     |  107 ++
+ include/dt-bindings/clock/qcom,sa8775p-dispcc.h    |   87 +
+ include/dt-bindings/clock/qcom,sa8775p-videocc.h   |   47 +
+ 14 files changed, 5922 insertions(+), 1 deletion(-)
+---
+base-commit: 3fe121b622825ff8cc995a1e6b026181c48188db
+change-id: 20240715-sa8775p-mm-v3-27a7a25e87a2
+
+Best regards,
+-- 
+Taniya Das <quic_tdas@quicinc.com>
+
