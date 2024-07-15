@@ -1,37 +1,37 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9ED113BAC4;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B6991849D3;
 	Mon, 15 Jul 2024 08:40:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721032803; cv=none; b=sf/p9Jo1yDe9YpqT0zOVqB5b12lgOALhQ0iZBHMvkBMhhtUQHv3esQGi54GLP3e145u3AJOyd23OX0mnji7YOtIyHqeBMN6I9yBRmzATnpg+NV009Nu2RtCjpzjaLwT0HxZmjJqQ5+q4lwp3KS+qvsaii4SLNIf8CkeqigOU75E=
+	t=1721032803; cv=none; b=vDceZbYsEdFvokwaYuaJ5o+rbZ+ig9y+9fORuqfxDeRwXsqizOyMNnnpeX/Bu3el1HB1eP5Qkq5nuZ9hYmtySTsw2J9KPrAxzXDDMPOSUZ/f3+aqqb0tuEA5ltAM0H554bB2gIdQ5P250/ZsiVitL4qoxXyk1UCZNNhyAYki1/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1721032803; c=relaxed/simple;
-	bh=cgReTSGMWq1nwfp1hGq8fafJ6L8M5y07d4am/D0znX0=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=YBYEYzpYe9A6nfe/6rb7r/MeMg5pp56JqRGlKvr3JgYydEcpot4Tm8VCnDPxxOR/N5eHTV9rh2qWBqBQ9TzANjjEMl1r47eWtJQYto8UQFbL/InNMgYxP8gYgUcxaPDrwsgjbN2kMDsP3LQLiUDG9T8MVQY+4ZdQyp5XBfHxWe4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b6fMBOYC; arc=none smtp.client-ip=10.30.226.201
+	bh=8MDxQIKkYOKh/dlpEO1nx1n2r3kIf9OrDi6ZkMWfW/U=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=hykU+DMIABuu2PDiIA/8Ecq/gYHuit15VQPVoIc9c/zvsTjNkvJRvws4VQmBEMij1LmrGTqryqDaVN1UTaaAvJBSCo+j4LL3qCB6ViJogmzJCP99Zfghb0gZsaMW6JGfj5sIoKpYAWyd6+gS0czW/Am1W+cwbVISxekm/Pz55Bc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ow6HpPX1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b6fMBOYC"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 9C2B5C32782;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ow6HpPX1"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C1EC1C4AF0E;
 	Mon, 15 Jul 2024 08:40:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1721032802;
-	bh=cgReTSGMWq1nwfp1hGq8fafJ6L8M5y07d4am/D0znX0=;
-	h=From:Subject:Date:To:Cc:Reply-To:From;
-	b=b6fMBOYCa2hMp5GFeBVWyqrUugCaGwOT3082rkZ4kdw21DU3DRq3tS7YKxHiMw+AN
-	 CM0+h3q5KtXUGyxHzGNXQlxEJ+gqohnymPDPUbWTFed5CTuJDRNZ/eSFi0AWYQJPug
-	 KwpZbqcCqOsNuNWdNx8Q/stVYQ6HkD6OvwqPbvcJEk97X2rwPkFu88SRgJWClAtYio
-	 QQOR3UkBOlHwYOmADABPa02xhxpbnojVfGtrgW7Rvv9z+g+xHqM+tVjFy41P81XwGv
-	 7x53TEsrCtWiCFGSORXyMfWkwhfKRFl3pQXaXFAplZV3/c/7JVg0l5wG10UACXoRV6
-	 b0cHq9Ny/SLZQ==
+	bh=8MDxQIKkYOKh/dlpEO1nx1n2r3kIf9OrDi6ZkMWfW/U=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=ow6HpPX1bK+d08j0DZrrGBMxgtOsjfA1fDpUjSyZb0ZVpefXK+f4f0bdNpFqaHrlW
+	 LFCAp+C+pNBLOynjKern/1/8kINC5JPpnempOZHpzv0eGRlMdmSZJxR3eqKd3zZn6V
+	 Dixzdhzryc3QGK1e/Jv4TTloG42QntwXCzPVVMPY+4GAcUIho/vR7W/edp/UiO89dk
+	 IOgim6iSGLvS5yKLct1tDhmFPrDnyhpf6nz27DJcqhGQazKfAeINaz8BfvqXUGzDtU
+	 0K3K9xc8vOLh3M86+ZwdleE/2fJ/iRLVJEarFstRsiYgrP6JFx+2MKAE0LnS9W6Fs8
+	 LrBwdTwMQuT7w==
 Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FB4BC2BD09;
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9879C3DA4D;
 	Mon, 15 Jul 2024 08:40:02 +0000 (UTC)
 From: Nikita Shubin via B4 Relay <devnull+nikita.shubin.maquefel.me@kernel.org>
-Subject: [PATCH v11 00/38] ep93xx device tree conversion
-Date: Mon, 15 Jul 2024 11:38:04 +0300
-Message-Id: <20240715-ep93xx-v11-0-4e924efda795@maquefel.me>
+Date: Mon, 15 Jul 2024 11:38:07 +0300
+Subject: [PATCH v11 03/38] clk: ep93xx: add DT support for Cirrus EP93xx
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -40,57 +40,18 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAOzflGYC/23QzU7DMAwH8FeZeiZT7DRfnHgPxMFNXBrButF21
- dC0dyedRAOUoxP/7H9yrUYeEo/V4+5aDTynMR37XAA87KrQUf/KIsV8UKFEJY3Ugk9eXS5CQrB
- GgWWMWOXmhkYWzUB96Jb2A40TD8vFaeA2Xe4rnl9y3Q7Hg5i6ganMrbEGVBpxD05JFCD69JYm2
- o/duUn904E+ztzy+/7Ay8gujdNx+LyHntUyeBNvVkIKFY0i3QJIxb9mLDnmukAPBdYZEkRrfQw
- cQG6hXiEA4gp1hlF7sibq2KLfQlMgQoEmw6CkbRwFT+S20H7DWgK4Fdplo9fK1YbYWthCVyCiW
- aFbPgeUiYEsKtduoS9Q/YA+Q9CGkTi/MfwTFWSRBuwqQWZqDLKpJUcHf8LebrcvjzZ7fIwCAAA
- =
-To: Arnd Bergmann <arnd@arndb.de>, 
- Hartley Sweeten <hsweeten@visionengravers.com>, 
- Alexander Sverdlin <alexander.sverdlin@gmail.com>, 
- Russell King <linux@armlinux.org.uk>, Lukasz Majewski <lukma@denx.de>, 
- Linus Walleij <linus.walleij@linaro.org>, 
- Bartosz Golaszewski <brgl@bgdev.pl>, Andy Shevchenko <andy@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Sebastian Reichel <sre@kernel.org>, 
- Rob Herring <robh+dt@kernel.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Nikita Shubin <nikita.shubin@maquefel.me>, Vinod Koul <vkoul@kernel.org>, 
- Wim Van Sebroeck <wim@linux-watchdog.org>, 
- Guenter Roeck <linux@roeck-us.net>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, 
- Mark Brown <broonie@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, Miquel Raynal <miquel.raynal@bootlin.com>, 
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
- Damien Le Moal <dlemoal@kernel.org>, Sergey Shtylyov <s.shtylyov@omp.ru>, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
- Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Ralf Baechle <ralf@linux-mips.org>, 
- "Wu, Aaron" <Aaron.Wu@analog.com>, Lee Jones <lee@kernel.org>, 
- Olof Johansson <olof@lixom.net>, Niklas Cassel <cassel@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- linux-gpio@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
- dmaengine@vger.kernel.org, linux-watchdog@vger.kernel.org, 
- linux-pwm@vger.kernel.org, linux-spi@vger.kernel.org, 
- netdev@vger.kernel.org, linux-mtd@lists.infradead.org, 
- linux-ide@vger.kernel.org, linux-input@vger.kernel.org, 
- linux-sound@vger.kernel.org, 
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
- Andy Shevchenko <andy.shevchenko@gmail.com>, Andrew Lunn <andrew@lunn.ch>
+Message-Id: <20240715-ep93xx-v11-3-4e924efda795@maquefel.me>
+References: <20240715-ep93xx-v11-0-4e924efda795@maquefel.me>
+In-Reply-To: <20240715-ep93xx-v11-0-4e924efda795@maquefel.me>
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
 X-Mailer: b4 0.13-dev-e3e53
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1721032799; l=19966;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1721032799; l=27185;
  i=nikita.shubin@maquefel.me; s=20230718; h=from:subject:message-id;
- bh=cgReTSGMWq1nwfp1hGq8fafJ6L8M5y07d4am/D0znX0=;
- b=8UAQLgkQE7v8JVIPeSrEISeZBya0aZYFlXqbhWjh9zC9WBppCZb2kerXr51xhHQ+ljpWRIFP8sxS
- lkB6gtgdABygZeQZ+F10XY95Ax2pTVGMXdJ4q+Tdy93rcmOi7TtQ
+ bh=U7fOx9Rodv4jx5K1uhFoktxaVXXtL2LyQJrXaMQwDm0=;
+ b=Bxjn73rQg4AwAXGGGDh2AbOeDHVTYe8koDOhLwKQtYcCANKSKS1FPRZrtnURIjkILVJ8aJ3SYq0E
+ IhSYbDKWDVUBxz7GLvBfX6vgFPmCe07sJlKGWjBz8P0T9E9oOGg7
 X-Developer-Key: i=nikita.shubin@maquefel.me; a=ed25519;
  pk=vqf5YIUJ7BJv3EJFaNNxWZgGuMgDH6rwufTLflwU9ac=
 X-Endpoint-Received: by B4 Relay for nikita.shubin@maquefel.me/20230718
@@ -98,498 +59,909 @@ X-Endpoint-Received: by B4 Relay for nikita.shubin@maquefel.me/20230718
 X-Original-From: Nikita Shubin <nikita.shubin@maquefel.me>
 Reply-To: nikita.shubin@maquefel.me
 
-The goal is to recieve ACKs for all patches in series to merge it via Arnd branch.
+From: Nikita Shubin <nikita.shubin@maquefel.me>
 
-It was decided from the very beginning of these series, mostly because
-it's a full conversion of platform code to DT and it seemed not
-convenient to maintain compatibility with both platform and DT.
+Rewrite EP93xx clock driver located in arch/arm/mach-ep93xx/clock.c
+trying to do everything the device tree way:
 
-Following patches require attention from Stephen Boyd or clk subsystem:
+- provide clock acces via of
+- drop clk_hw_register_clkdev
+- drop init code and use module_auxiliary_driver
 
-- clk: ep93xx: add DT support for Cirrus EP93xx
-
-It is purely possible to add something like devm_clk_hw_register_fixed_rate_parent_data() 
-for devm managed version clk_hw_register_fixed_rate_parent_data(), still i would like to 
-leave for the time after this series if it's all possible.
-
-Couse may be it's better to add something like
-devm_clk_hw_register_fixed_rate_index() like it's done for
-devm_clk_hw_register_fixed_factor_index().
-
-Changelog for this patch:
-- added devm_ep93xx_clk_hw_register_fixed_rate_parent_data() for
-  devm_ version of clk_hw_register_fixed_rate_parent_data()
-- s/devm_clk_hw_register_fixed_rate()/devm_ep93xx_clk_hw_register_fixed_rate_parent_data()/
-- replaced all devm_clk_hw_register_fixed_factor() to
-  devm_clk_hw_register_fixed_factor_parent_hw() or
-  devm_clk_hw_register_fixed_factor_index()
-- s/devm_clk_hw_register_gate()/devm_clk_hw_register_gate_parent_data()
-
-Stephen - it think that's you was aiming for - to get rid of all
-functions that are using const char* parent_name directly instead of
-clk_hw or clk_parent_data.
-
-Patches should be formated with '--histogram'
-
+Co-developed-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+Signed-off-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+Signed-off-by: Nikita Shubin <nikita.shubin@maquefel.me>
 ---
-Changes in v11:
-- clk: ep93xx: add DT support for Cirrus EP93xx
-  - added devm_ep93xx_clk_hw_register_fixed_rate_parent_data() for
-    devm_ version of clk_hw_register_fixed_rate_parent_data()
-  - s/devm_clk_hw_register_fixed_rate()/devm_ep93xx_clk_hw_register_fixed_rate_parent_data()/
-  - replaced all devm_clk_hw_register_fixed_factor() to
-    devm_clk_hw_register_fixed_factor_parent_hw() or
-    devm_clk_hw_register_fixed_factor_index()
-  - s/devm_clk_hw_register_gate()/devm_clk_hw_register_gate_parent_data()
+ drivers/clk/Kconfig      |   8 +
+ drivers/clk/Makefile     |   1 +
+ drivers/clk/clk-ep93xx.c | 846 +++++++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 855 insertions(+)
+
+diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+index 3e9099504fad..234b0a8b7650 100644
+--- a/drivers/clk/Kconfig
++++ b/drivers/clk/Kconfig
+@@ -218,6 +218,14 @@ config COMMON_CLK_EN7523
+ 	  This driver provides the fixed clocks and gates present on Airoha
+ 	  ARM silicon.
+ 
++config COMMON_CLK_EP93XX
++	bool "Clock driver for Cirrus Logic ep93xx SoC"
++	depends on ARCH_EP93XX || COMPILE_TEST
++	select MFD_SYSCON
++	select REGMAP
++	help
++	  This driver supports the SoC clocks on the Cirrus Logic ep93xx.
++
+ config COMMON_CLK_FSL_FLEXSPI
+ 	tristate "Clock driver for FlexSPI on Layerscape SoCs"
+ 	depends on ARCH_LAYERSCAPE || COMPILE_TEST
+diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+index 4abe16c8ccdf..19d599d706fe 100644
+--- a/drivers/clk/Makefile
++++ b/drivers/clk/Makefile
+@@ -30,6 +30,7 @@ obj-$(CONFIG_COMMON_CLK_CDCE706)	+= clk-cdce706.o
+ obj-$(CONFIG_COMMON_CLK_CDCE925)	+= clk-cdce925.o
+ obj-$(CONFIG_ARCH_CLPS711X)		+= clk-clps711x.o
+ obj-$(CONFIG_COMMON_CLK_CS2000_CP)	+= clk-cs2000-cp.o
++obj-$(CONFIG_COMMON_CLK_EP93XX)		+= clk-ep93xx.o
+ obj-$(CONFIG_ARCH_SPARX5)		+= clk-sparx5.o
+ obj-$(CONFIG_COMMON_CLK_EN7523)		+= clk-en7523.o
+ obj-$(CONFIG_COMMON_CLK_FIXED_MMIO)	+= clk-fixed-mmio.o
+diff --git a/drivers/clk/clk-ep93xx.c b/drivers/clk/clk-ep93xx.c
+new file mode 100644
+index 000000000000..bb1cf59a3d47
+--- /dev/null
++++ b/drivers/clk/clk-ep93xx.c
+@@ -0,0 +1,846 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
++/*
++ * Clock control for Cirrus EP93xx chips.
++ * Copyright (C) 2021 Nikita Shubin <nikita.shubin@maquefel.me>
++ *
++ * Based on a rewrite of arch/arm/mach-ep93xx/clock.c:
++ * Copyright (C) 2006 Lennert Buytenhek <buytenh@wantstofly.org>
++ */
++#define pr_fmt(fmt) "ep93xx " KBUILD_MODNAME ": " fmt
++
++#include <linux/bits.h>
++#include <linux/cleanup.h>
++#include <linux/clk-provider.h>
++#include <linux/math.h>
++#include <linux/platform_device.h>
++#include <linux/regmap.h>
++#include <linux/spinlock.h>
++
++#include <linux/soc/cirrus/ep93xx.h>
++#include <dt-bindings/clock/cirrus,ep9301-syscon.h>
++
++#include <asm/div64.h>
++
++#define EP93XX_EXT_CLK_RATE		14745600
++#define EP93XX_EXT_RTC_RATE		32768
++
++#define EP93XX_SYSCON_POWER_STATE	0x00
++#define EP93XX_SYSCON_PWRCNT		0x04
++#define EP93XX_SYSCON_PWRCNT_UARTBAUD	BIT(29)
++#define EP93XX_SYSCON_PWRCNT_USH_EN	28
++#define EP93XX_SYSCON_PWRCNT_DMA_M2M1	27
++#define EP93XX_SYSCON_PWRCNT_DMA_M2M0	26
++#define EP93XX_SYSCON_PWRCNT_DMA_M2P8	25
++#define EP93XX_SYSCON_PWRCNT_DMA_M2P9	24
++#define EP93XX_SYSCON_PWRCNT_DMA_M2P6	23
++#define EP93XX_SYSCON_PWRCNT_DMA_M2P7	22
++#define EP93XX_SYSCON_PWRCNT_DMA_M2P4	21
++#define EP93XX_SYSCON_PWRCNT_DMA_M2P5	20
++#define EP93XX_SYSCON_PWRCNT_DMA_M2P2	19
++#define EP93XX_SYSCON_PWRCNT_DMA_M2P3	18
++#define EP93XX_SYSCON_PWRCNT_DMA_M2P0	17
++#define EP93XX_SYSCON_PWRCNT_DMA_M2P1	16
++#define EP93XX_SYSCON_CLKSET1		0x20
++#define EP93XX_SYSCON_CLKSET1_NBYP1	BIT(23)
++#define EP93XX_SYSCON_CLKSET2		0x24
++#define EP93XX_SYSCON_CLKSET2_NBYP2	BIT(19)
++#define EP93XX_SYSCON_CLKSET2_PLL2_EN	BIT(18)
++#define EP93XX_SYSCON_DEVCFG		0x80
++#define EP93XX_SYSCON_DEVCFG_U3EN	24
++#define EP93XX_SYSCON_DEVCFG_U2EN	20
++#define EP93XX_SYSCON_DEVCFG_U1EN	18
++#define EP93XX_SYSCON_VIDCLKDIV		0x84
++#define EP93XX_SYSCON_CLKDIV_ENABLE	15
++#define EP93XX_SYSCON_CLKDIV_ESEL	BIT(14)
++#define EP93XX_SYSCON_CLKDIV_PSEL	BIT(13)
++#define EP93XX_SYSCON_CLKDIV_MASK	GENMASK(14, 13)
++#define EP93XX_SYSCON_CLKDIV_PDIV_SHIFT	8
++#define EP93XX_SYSCON_I2SCLKDIV		0x8c
++#define EP93XX_SYSCON_I2SCLKDIV_SENA	31
++#define EP93XX_SYSCON_I2SCLKDIV_ORIDE	BIT(29)
++#define EP93XX_SYSCON_I2SCLKDIV_SPOL	BIT(19)
++#define EP93XX_SYSCON_KEYTCHCLKDIV	0x90
++#define EP93XX_SYSCON_KEYTCHCLKDIV_TSEN	31
++#define EP93XX_SYSCON_KEYTCHCLKDIV_ADIV	16
++#define EP93XX_SYSCON_KEYTCHCLKDIV_KEN	15
++#define EP93XX_SYSCON_KEYTCHCLKDIV_KDIV	0
++#define EP93XX_SYSCON_CHIPID		0x94
++#define EP93XX_SYSCON_CHIPID_ID		0x9213
++
++static const char adc_divisors[] = { 16, 4 };
++static const char sclk_divisors[] = { 2, 4 };
++static const char lrclk_divisors[] = { 32, 64, 128 };
++
++struct ep93xx_clk {
++	struct clk_hw hw;
++	u16 idx;
++	u16 reg;
++	u32 mask;
++	u8 bit_idx;
++	u8 shift;
++	u8 width;
++	u8 num_div;
++	const char *div;
++};
++
++struct ep93xx_clk_priv {
++	spinlock_t lock;
++	struct ep93xx_regmap_adev *aux_dev;
++	struct device *dev;
++	void __iomem *base;
++	struct regmap *map;
++	struct clk_hw *fixed[21];
++	struct ep93xx_clk reg[];
++};
++
++static struct ep93xx_clk *ep93xx_clk_from(struct clk_hw *hw)
++{
++	return container_of(hw, struct ep93xx_clk, hw);
++}
++
++static struct ep93xx_clk_priv *ep93xx_priv_from(struct ep93xx_clk *clk)
++{
++	return container_of(clk, struct ep93xx_clk_priv, reg[clk->idx]);
++}
++
++static void ep93xx_clk_write(struct ep93xx_clk_priv *priv, unsigned int reg, unsigned int val)
++{
++	struct ep93xx_regmap_adev *aux = priv->aux_dev;
++
++	aux->write(aux->map, aux->lock, reg, val);
++}
++
++static int ep93xx_clk_is_enabled(struct clk_hw *hw)
++{
++	struct ep93xx_clk *clk = ep93xx_clk_from(hw);
++	struct ep93xx_clk_priv *priv = ep93xx_priv_from(clk);
++	u32 val;
++
++	regmap_read(priv->map, clk->reg, &val);
++
++	return !!(val & BIT(clk->bit_idx));
++}
++
++static int ep93xx_clk_enable(struct clk_hw *hw)
++{
++	struct ep93xx_clk *clk = ep93xx_clk_from(hw);
++	struct ep93xx_clk_priv *priv = ep93xx_priv_from(clk);
++	u32 val;
++
++	guard(spinlock_irqsave)(&priv->lock);
++
++	regmap_read(priv->map, clk->reg, &val);
++	val |= BIT(clk->bit_idx);
++
++	ep93xx_clk_write(priv, clk->reg, val);
++
++	return 0;
++}
++
++static void ep93xx_clk_disable(struct clk_hw *hw)
++{
++	struct ep93xx_clk *clk = ep93xx_clk_from(hw);
++	struct ep93xx_clk_priv *priv = ep93xx_priv_from(clk);
++	u32 val;
++
++	guard(spinlock_irqsave)(&priv->lock);
++
++	regmap_read(priv->map, clk->reg, &val);
++	val &= ~BIT(clk->bit_idx);
++
++	ep93xx_clk_write(priv, clk->reg, val);
++}
++
++static const struct clk_ops clk_ep93xx_gate_ops = {
++	.enable = ep93xx_clk_enable,
++	.disable = ep93xx_clk_disable,
++	.is_enabled = ep93xx_clk_is_enabled,
++};
++
++static int ep93xx_clk_register_gate(struct ep93xx_clk *clk,
++				    const char *name,
++				    struct clk_parent_data *parent_data,
++				    unsigned long flags,
++				    unsigned int reg,
++				    u8 bit_idx)
++{
++	struct ep93xx_clk_priv *priv = ep93xx_priv_from(clk);
++	struct clk_init_data init = { };
++
++	init.name = name;
++	init.ops = &clk_ep93xx_gate_ops;
++	init.flags = flags;
++	init.parent_data = parent_data;
++	init.num_parents = 1;
++
++	clk->reg = reg;
++	clk->bit_idx = bit_idx;
++	clk->hw.init = &init;
++
++	return devm_clk_hw_register(priv->dev, &clk->hw);
++}
++
++static u8 ep93xx_mux_get_parent(struct clk_hw *hw)
++{
++	struct ep93xx_clk *clk = ep93xx_clk_from(hw);
++	struct ep93xx_clk_priv *priv = ep93xx_priv_from(clk);
++	u32 val;
++
++	regmap_read(priv->map, clk->reg, &val);
++
++	val &= EP93XX_SYSCON_CLKDIV_MASK;
++
++	switch (val) {
++	case EP93XX_SYSCON_CLKDIV_ESEL:
++		return 1; /* PLL1 */
++	case EP93XX_SYSCON_CLKDIV_MASK:
++		return 2; /* PLL2 */
++	default:
++		return 0; /* XTALI */
++	};
++}
++
++static int ep93xx_mux_set_parent_lock(struct clk_hw *hw, u8 index)
++{
++	struct ep93xx_clk *clk = ep93xx_clk_from(hw);
++	struct ep93xx_clk_priv *priv = ep93xx_priv_from(clk);
++	u32 val;
++
++	if (index >= 3)
++		return -EINVAL;
++
++	guard(spinlock_irqsave)(&priv->lock);
++
++	regmap_read(priv->map, clk->reg, &val);
++	val &= ~(EP93XX_SYSCON_CLKDIV_MASK);
++	val |= index > 0 ? EP93XX_SYSCON_CLKDIV_ESEL : 0;
++	val |= index > 1 ? EP93XX_SYSCON_CLKDIV_PSEL : 0;
++
++	ep93xx_clk_write(priv, clk->reg, val);
++
++	return 0;
++}
++
++static bool is_best(unsigned long rate, unsigned long now,
++		     unsigned long best)
++{
++	return abs_diff(rate, now) < abs_diff(rate, best);
++}
++
++static int ep93xx_mux_determine_rate(struct clk_hw *hw,
++				struct clk_rate_request *req)
++{
++	unsigned long best_rate = 0, actual_rate, mclk_rate;
++	unsigned long rate = req->rate;
++	struct clk_hw *parent_best = NULL;
++	unsigned long parent_rate_best;
++	unsigned long parent_rate;
++	int div, pdiv;
++	unsigned int i;
++
++	/*
++	 * Try the two pll's and the external clock,
++	 * because the valid predividers are 2, 2.5 and 3, we multiply
++	 * all the clocks by 2 to avoid floating point math.
++	 *
++	 * This is based on the algorithm in the ep93xx raster guide:
++	 * http://be-a-maverick.com/en/pubs/appNote/AN269REV1.pdf
++	 *
++	 */
++	for (i = 0; i < clk_hw_get_num_parents(hw); i++) {
++		struct clk_hw *parent = clk_hw_get_parent_by_index(hw, i);
++
++		parent_rate = clk_hw_get_rate(parent);
++		mclk_rate = parent_rate * 2;
++
++		/* Try each predivider value */
++		for (pdiv = 4; pdiv <= 6; pdiv++) {
++			div = DIV_ROUND_CLOSEST(mclk_rate, rate * pdiv);
++			if (!in_range(div, 1, 127))
++				continue;
++
++			actual_rate = DIV_ROUND_CLOSEST(mclk_rate, pdiv * div);
++			if (is_best(rate, actual_rate, best_rate)) {
++				best_rate = actual_rate;
++				parent_rate_best = parent_rate;
++				parent_best = parent;
++			}
++		}
++	}
++
++	if (!parent_best)
++		return -EINVAL;
++
++	req->best_parent_rate = parent_rate_best;
++	req->best_parent_hw = parent_best;
++	req->rate = best_rate;
++
++	return 0;
++}
++
++static unsigned long ep93xx_ddiv_recalc_rate(struct clk_hw *hw,
++						unsigned long parent_rate)
++{
++	struct ep93xx_clk *clk = ep93xx_clk_from(hw);
++	struct ep93xx_clk_priv *priv = ep93xx_priv_from(clk);
++	unsigned int pdiv, div;
++	u32 val;
++
++	regmap_read(priv->map, clk->reg, &val);
++	pdiv = (val >> EP93XX_SYSCON_CLKDIV_PDIV_SHIFT) & GENMASK(1, 0);
++	div = val & GENMASK(6, 0);
++	if (!div)
++		return 0;
++
++	return DIV_ROUND_CLOSEST(parent_rate * 2, (pdiv + 3) * div);
++}
++
++static int ep93xx_ddiv_set_rate(struct clk_hw *hw, unsigned long rate,
++				unsigned long parent_rate)
++{
++	struct ep93xx_clk *clk = ep93xx_clk_from(hw);
++	struct ep93xx_clk_priv *priv = ep93xx_priv_from(clk);
++	int pdiv, div, npdiv, ndiv;
++	unsigned long actual_rate, mclk_rate, rate_err = ULONG_MAX;
++	u32 val;
++
++	regmap_read(priv->map, clk->reg, &val);
++	mclk_rate = parent_rate * 2;
++
++	for (pdiv = 4; pdiv <= 6; pdiv++) {
++		div = DIV_ROUND_CLOSEST(mclk_rate, rate * pdiv);
++		if (!in_range(div, 1, 127))
++			continue;
++
++		actual_rate = DIV_ROUND_CLOSEST(mclk_rate, pdiv * div);
++		if (abs(actual_rate - rate) < rate_err) {
++			npdiv = pdiv - 3;
++			ndiv = div;
++			rate_err = abs(actual_rate - rate);
++		}
++	}
++
++	if (rate_err == ULONG_MAX)
++		return -EINVAL;
++
++	/*
++	 * Clear old dividers.
++	 * Bit 7 is reserved bit in all ClkDiv registers.
++	 */
++	val &= ~(GENMASK(9, 0) & ~BIT(7));
++
++	/* Set the new pdiv and div bits for the new clock rate */
++	val |= (npdiv << EP93XX_SYSCON_CLKDIV_PDIV_SHIFT) | ndiv;
++
++	ep93xx_clk_write(priv, clk->reg, val);
++
++	return 0;
++}
++
++static const struct clk_ops clk_ddiv_ops = {
++	.enable = ep93xx_clk_enable,
++	.disable = ep93xx_clk_disable,
++	.is_enabled = ep93xx_clk_is_enabled,
++	.get_parent = ep93xx_mux_get_parent,
++	.set_parent = ep93xx_mux_set_parent_lock,
++	.determine_rate = ep93xx_mux_determine_rate,
++	.recalc_rate = ep93xx_ddiv_recalc_rate,
++	.set_rate = ep93xx_ddiv_set_rate,
++};
++
++static int clk_hw_register_ddiv(struct ep93xx_clk *clk,
++				const char *name,
++				struct clk_parent_data *parent_data,
++				u8 num_parents,
++				unsigned int reg,
++				u8 bit_idx)
++{
++	struct ep93xx_clk_priv *priv = ep93xx_priv_from(clk);
++	struct clk_init_data init = { };
++
++	init.name = name;
++	init.ops = &clk_ddiv_ops;
++	init.flags = 0;
++	init.parent_data = parent_data;
++	init.num_parents = num_parents;
++
++	clk->reg = reg;
++	clk->bit_idx = bit_idx;
++	clk->hw.init = &init;
++
++	return devm_clk_hw_register(priv->dev, &clk->hw);
++}
++
++static unsigned long ep93xx_div_recalc_rate(struct clk_hw *hw,
++					    unsigned long parent_rate)
++{
++	struct ep93xx_clk *clk = ep93xx_clk_from(hw);
++	struct ep93xx_clk_priv *priv = ep93xx_priv_from(clk);
++	u32 val;
++	u8 index;
++
++	regmap_read(priv->map, clk->reg, &val);
++	index = (val & clk->mask) >> clk->shift;
++	if (index > clk->num_div)
++		return 0;
++
++	return DIV_ROUND_CLOSEST(parent_rate, clk->div[index]);
++}
++
++static long ep93xx_div_round_rate(struct clk_hw *hw, unsigned long rate,
++				   unsigned long *parent_rate)
++{
++	struct ep93xx_clk *clk = ep93xx_clk_from(hw);
++	unsigned long best = 0, now;
++	unsigned int i;
++
++	for (i = 0; i < clk->num_div; i++) {
++		if ((rate * clk->div[i]) == *parent_rate)
++			return rate;
++
++		now = DIV_ROUND_CLOSEST(*parent_rate, clk->div[i]);
++		if (!best || is_best(rate, now, best))
++			best = now;
++	}
++
++	return best;
++}
++
++static int ep93xx_div_set_rate(struct clk_hw *hw, unsigned long rate,
++			       unsigned long parent_rate)
++{
++	struct ep93xx_clk *clk = ep93xx_clk_from(hw);
++	struct ep93xx_clk_priv *priv = ep93xx_priv_from(clk);
++	unsigned int i;
++	u32 val;
++
++	regmap_read(priv->map, clk->reg, &val);
++	val &= ~clk->mask;
++	for (i = 0; i < clk->num_div; i++)
++		if (rate == DIV_ROUND_CLOSEST(parent_rate, clk->div[i]))
++			break;
++
++	if (i == clk->num_div)
++		return -EINVAL;
++
++	val |= i << clk->shift;
++
++	ep93xx_clk_write(priv, clk->reg, val);
++
++	return 0;
++}
++
++static const struct clk_ops ep93xx_div_ops = {
++	.enable = ep93xx_clk_enable,
++	.disable = ep93xx_clk_disable,
++	.is_enabled = ep93xx_clk_is_enabled,
++	.recalc_rate = ep93xx_div_recalc_rate,
++	.round_rate = ep93xx_div_round_rate,
++	.set_rate = ep93xx_div_set_rate,
++};
++
++static int clk_hw_register_div(struct ep93xx_clk *clk,
++			       const char *name,
++			       struct clk_parent_data *parent_data,
++			       unsigned int reg,
++			       u8 enable_bit,
++			       u8 shift,
++			       u8 width,
++			       const char *clk_divisors,
++			       u8 num_div)
++{
++	struct ep93xx_clk_priv *priv = ep93xx_priv_from(clk);
++	struct clk_init_data init = { };
++
++	init.name = name;
++	init.ops = &ep93xx_div_ops;
++	init.flags = 0;
++	init.parent_data = parent_data;
++	init.num_parents = 1;
++
++	clk->reg = reg;
++	clk->bit_idx = enable_bit;
++	clk->mask = GENMASK(shift + width - 1, shift);
++	clk->shift = shift;
++	clk->div = clk_divisors;
++	clk->num_div = num_div;
++	clk->hw.init = &init;
++
++	return devm_clk_hw_register(priv->dev, &clk->hw);
++}
++
++struct ep93xx_gate {
++	unsigned int idx;
++	unsigned int bit;
++	const char *name;
++};
++
++static const struct ep93xx_gate ep93xx_uarts[] = {
++	{ EP93XX_CLK_UART1, EP93XX_SYSCON_DEVCFG_U1EN, "uart1" },
++	{ EP93XX_CLK_UART2, EP93XX_SYSCON_DEVCFG_U2EN, "uart2" },
++	{ EP93XX_CLK_UART3, EP93XX_SYSCON_DEVCFG_U3EN, "uart3" },
++};
++
++static int ep93xx_uart_clock_init(struct ep93xx_clk_priv *priv)
++{
++	struct clk_parent_data parent_data = { };
++	unsigned int i, idx, ret, clk_uart_div;
++	struct ep93xx_clk *clk;
++	u32 val;
++
++	regmap_read(priv->map, EP93XX_SYSCON_PWRCNT, &val);
++	if (val & EP93XX_SYSCON_PWRCNT_UARTBAUD)
++		clk_uart_div = 1;
++	else
++		clk_uart_div = 2;
++
++	priv->fixed[EP93XX_CLK_UART] =
++		clk_hw_register_fixed_factor(NULL, "uart", "xtali", 0, 1, clk_uart_div);
++	parent_data.hw = priv->fixed[EP93XX_CLK_UART];
++
++	/* parenting uart gate clocks to uart clock */
++	for (i = 0; i < ARRAY_SIZE(ep93xx_uarts); i++) {
++		idx = ep93xx_uarts[i].idx - EP93XX_CLK_UART1;
++		clk = &priv->reg[idx];
++		clk->idx = idx;
++		ret = ep93xx_clk_register_gate(clk,
++					ep93xx_uarts[i].name,
++					&parent_data, CLK_SET_RATE_PARENT,
++					EP93XX_SYSCON_DEVCFG,
++					ep93xx_uarts[i].bit);
++		if (ret)
++			return dev_err_probe(priv->dev, ret,
++					     "failed to register uart[%d] clock\n", i);
++	}
++
++	return 0;
++}
++
++static const struct ep93xx_gate ep93xx_dmas[] = {
++	{ EP93XX_CLK_M2M0, EP93XX_SYSCON_PWRCNT_DMA_M2M0, "m2m0" },
++	{ EP93XX_CLK_M2M1, EP93XX_SYSCON_PWRCNT_DMA_M2M1, "m2m1" },
++	{ EP93XX_CLK_M2P0, EP93XX_SYSCON_PWRCNT_DMA_M2P0, "m2p0" },
++	{ EP93XX_CLK_M2P1, EP93XX_SYSCON_PWRCNT_DMA_M2P1, "m2p1" },
++	{ EP93XX_CLK_M2P2, EP93XX_SYSCON_PWRCNT_DMA_M2P2, "m2p2" },
++	{ EP93XX_CLK_M2P3, EP93XX_SYSCON_PWRCNT_DMA_M2P3, "m2p3" },
++	{ EP93XX_CLK_M2P4, EP93XX_SYSCON_PWRCNT_DMA_M2P4, "m2p4" },
++	{ EP93XX_CLK_M2P5, EP93XX_SYSCON_PWRCNT_DMA_M2P5, "m2p5" },
++	{ EP93XX_CLK_M2P6, EP93XX_SYSCON_PWRCNT_DMA_M2P6, "m2p6" },
++	{ EP93XX_CLK_M2P7, EP93XX_SYSCON_PWRCNT_DMA_M2P7, "m2p7" },
++	{ EP93XX_CLK_M2P8, EP93XX_SYSCON_PWRCNT_DMA_M2P8, "m2p8" },
++	{ EP93XX_CLK_M2P9, EP93XX_SYSCON_PWRCNT_DMA_M2P9, "m2p9" },
++};
++
++static int ep93xx_dma_clock_init(struct ep93xx_clk_priv *priv)
++{
++	struct clk_parent_data parent_data = { };
++	unsigned int i, idx;
++
++	parent_data.hw = priv->fixed[EP93XX_CLK_HCLK];
++	for (i = 0; i < ARRAY_SIZE(ep93xx_dmas); i++) {
++		idx = ep93xx_dmas[i].idx;
++		priv->fixed[idx] = devm_clk_hw_register_gate_parent_data(priv->dev,
++					ep93xx_dmas[i].name,
++					&parent_data, 0,
++					priv->base + EP93XX_SYSCON_PWRCNT,
++					ep93xx_dmas[i].bit,
++					0,
++					&priv->lock);
++		if (IS_ERR(priv->fixed[idx]))
++			return PTR_ERR(priv->fixed[idx]);
++	}
++
++	return 0;
++}
++
++static struct clk_hw *of_clk_ep93xx_get(struct of_phandle_args *clkspec, void *data)
++{
++	struct ep93xx_clk_priv *priv = data;
++	unsigned int idx = clkspec->args[0];
++
++	if (idx < EP93XX_CLK_UART1)
++		return priv->fixed[idx];
++
++	if (idx <= EP93XX_CLK_I2S_LRCLK)
++		return &priv->reg[idx - EP93XX_CLK_UART1].hw;
++
++	return ERR_PTR(-EINVAL);
++}
++
++/*
++ * PLL rate = 14.7456 MHz * (X1FBD + 1) * (X2FBD + 1) / (X2IPD + 1) / 2^PS
++ */
++static unsigned long calc_pll_rate(u64 rate, u32 config_word)
++{
++	rate *= ((config_word >> 11) & GENMASK(4, 0)) + 1;	/* X1FBD */
++	rate *= ((config_word >> 5) & GENMASK(5, 0)) + 1;	/* X2FBD */
++	do_div(rate, (config_word & GENMASK(4, 0)) + 1);	/* X2IPD */
++	rate >>= (config_word >> 16) & GENMASK(1, 0);		/* PS */
++
++	return rate;
++}
++
++#define devm_ep93xx_clk_hw_register_fixed_rate_parent_data(dev, name, parent_data, flags, fixed_rate)  \
++	__clk_hw_register_fixed_rate((dev), NULL, (name), NULL, NULL, \
++				     (parent_data), (flags), (fixed_rate), 0, 0, true)
++
++static int ep93xx_plls_init(struct ep93xx_clk_priv *priv)
++{
++	const char fclk_divisors[] = { 1, 2, 4, 8, 16, 1, 1, 1 };
++	const char hclk_divisors[] = { 1, 2, 4, 5, 6, 8, 16, 32 };
++	const char pclk_divisors[] = { 1, 2, 4, 8 };
++	struct clk_parent_data xtali = { .index = 0 };
++	unsigned int clk_f_div, clk_h_div, clk_p_div;
++	unsigned long clk_pll1_rate, clk_pll2_rate;
++	struct device *dev = priv->dev;
++	struct clk_hw *hw, *pll1;
++	u32 value;
++
++	/* Determine the bootloader configured pll1 rate */
++	regmap_read(priv->map, EP93XX_SYSCON_CLKSET1, &value);
++
++	if (value & EP93XX_SYSCON_CLKSET1_NBYP1)
++		clk_pll1_rate = calc_pll_rate(EP93XX_EXT_CLK_RATE, value);
++	else
++		clk_pll1_rate = EP93XX_EXT_CLK_RATE;
++
++	pll1 = devm_ep93xx_clk_hw_register_fixed_rate_parent_data(dev, "pll1", &xtali,
++								  0, clk_pll1_rate);
++	if (IS_ERR(pll1))
++		return PTR_ERR(pll1);
++
++	priv->fixed[EP93XX_CLK_PLL1] = pll1;
++
++	/* Initialize the pll1 derived clocks */
++	clk_f_div = fclk_divisors[(value >> 25) & GENMASK(2, 0)];
++	clk_h_div = hclk_divisors[(value >> 20) & GENMASK(2, 0)];
++	clk_p_div = pclk_divisors[(value >> 18) & GENMASK(1, 0)];
++
++	hw = devm_clk_hw_register_fixed_factor_parent_hw(dev, "fclk", pll1, 0, 1, clk_f_div);
++	if (IS_ERR(hw))
++		return PTR_ERR(hw);
++
++	priv->fixed[EP93XX_CLK_FCLK] = hw;
++
++	hw = devm_clk_hw_register_fixed_factor_parent_hw(dev, "hclk", pll1, 0, 1, clk_h_div);
++	if (IS_ERR(hw))
++		return PTR_ERR(hw);
++
++	priv->fixed[EP93XX_CLK_HCLK] = hw;
++
++	hw = devm_clk_hw_register_fixed_factor_parent_hw(dev, "pclk", hw, 0, 1, clk_p_div);
++	if (IS_ERR(hw))
++		return PTR_ERR(hw);
++
++	priv->fixed[EP93XX_CLK_PCLK] = hw;
++
++	/* Determine the bootloader configured pll2 rate */
++	regmap_read(priv->map, EP93XX_SYSCON_CLKSET2, &value);
++	if (!(value & EP93XX_SYSCON_CLKSET2_NBYP2))
++		clk_pll2_rate = EP93XX_EXT_CLK_RATE;
++	else if (value & EP93XX_SYSCON_CLKSET2_PLL2_EN)
++		clk_pll2_rate = calc_pll_rate(EP93XX_EXT_CLK_RATE, value);
++	else
++		clk_pll2_rate = 0;
++
++	hw = devm_ep93xx_clk_hw_register_fixed_rate_parent_data(dev, "pll2", &xtali,
++								0, clk_pll2_rate);
++	if (IS_ERR(hw))
++		return PTR_ERR(hw);
++
++	priv->fixed[EP93XX_CLK_PLL2] = hw;
++
++	return 0;
++}
++
++static int ep93xx_clk_probe(struct auxiliary_device *adev,
++			       const struct auxiliary_device_id *id)
++{
++	struct ep93xx_regmap_adev *rdev = to_ep93xx_regmap_adev(adev);
++	struct clk_parent_data xtali = { .index = 0 };
++	struct clk_parent_data ddiv_pdata[3] = { };
++	unsigned int clk_spi_div, clk_usb_div;
++	struct clk_parent_data pdata = {};
++	struct device *dev = &adev->dev;
++	struct ep93xx_clk_priv *priv;
++	struct ep93xx_clk *clk;
++	struct clk_hw *hw;
++	unsigned int idx;
++	int ret;
++	u32 value;
++
++	priv = devm_kzalloc(dev, struct_size(priv, reg, 10), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	spin_lock_init(&priv->lock);
++	priv->dev = dev;
++	priv->aux_dev = rdev;
++	priv->map = rdev->map;
++	priv->base = rdev->base;
++
++	ret = ep93xx_plls_init(priv);
++	if (ret)
++		return ret;
++
++	regmap_read(priv->map, EP93XX_SYSCON_CLKSET2, &value);
++	clk_usb_div = (value >> 28 & GENMASK(3, 0)) + 1;
++	hw = devm_clk_hw_register_fixed_factor_parent_hw(dev, "usb_clk",
++							 priv->fixed[EP93XX_CLK_PLL2], 0, 1,
++							 clk_usb_div);
++	if (IS_ERR(hw))
++		return PTR_ERR(hw);
++
++	priv->fixed[EP93XX_CLK_USB] = hw;
++
++	ret = ep93xx_uart_clock_init(priv);
++	if (ret)
++		return ret;
++
++	ret = ep93xx_dma_clock_init(priv);
++	if (ret)
++		return ret;
++
++	clk_spi_div = id->driver_data;
++	hw = devm_clk_hw_register_fixed_factor_index(dev, "ep93xx-spi.0",
++						     0, /* XTALI external clock */
++						     0, 1, clk_spi_div);
++	if (IS_ERR(hw))
++		return PTR_ERR(hw);
++
++	priv->fixed[EP93XX_CLK_SPI] = hw;
++
++	/* PWM clock */
++	hw = devm_clk_hw_register_fixed_factor_index(dev, "pwm_clk", 0, /* XTALI external clock */
++						     0, 1, 1);
++	if (IS_ERR(hw))
++		return PTR_ERR(hw);
++
++	priv->fixed[EP93XX_CLK_PWM] = hw;
++
++	/* USB clock */
++	pdata.hw = priv->fixed[EP93XX_CLK_USB];
++	hw = devm_clk_hw_register_gate_parent_data(priv->dev, "ohci-platform", &pdata,
++						   0, priv->base + EP93XX_SYSCON_PWRCNT,
++						   EP93XX_SYSCON_PWRCNT_USH_EN, 0,
++						   &priv->lock);
++	if (IS_ERR(hw))
++		return PTR_ERR(hw);
++
++	priv->fixed[EP93XX_CLK_USB] = hw;
++
++	ddiv_pdata[0].index = 0; /* XTALI external clock */
++	ddiv_pdata[1].hw = priv->fixed[EP93XX_CLK_PLL1];
++	ddiv_pdata[2].hw = priv->fixed[EP93XX_CLK_PLL2];
++
++	/* touchscreen/ADC clock */
++	idx = EP93XX_CLK_ADC - EP93XX_CLK_UART1;
++	clk = &priv->reg[idx];
++	clk->idx = idx;
++	ret = clk_hw_register_div(clk, "ep93xx-adc", &xtali,
++				EP93XX_SYSCON_KEYTCHCLKDIV,
++				EP93XX_SYSCON_KEYTCHCLKDIV_TSEN,
++				EP93XX_SYSCON_KEYTCHCLKDIV_ADIV,
++				1,
++				adc_divisors,
++				ARRAY_SIZE(adc_divisors));
++
++
++	/* keypad clock */
++	idx = EP93XX_CLK_KEYPAD - EP93XX_CLK_UART1;
++	clk = &priv->reg[idx];
++	clk->idx = idx;
++	ret = clk_hw_register_div(clk, "ep93xx-keypad", &xtali,
++				EP93XX_SYSCON_KEYTCHCLKDIV,
++				EP93XX_SYSCON_KEYTCHCLKDIV_KEN,
++				EP93XX_SYSCON_KEYTCHCLKDIV_KDIV,
++				1,
++				adc_divisors,
++				ARRAY_SIZE(adc_divisors));
++
++	/*
++	 * On reset PDIV and VDIV is set to zero, while PDIV zero
++	 * means clock disable, VDIV shouldn't be zero.
++	 * So we set both video and i2s dividers to minimum.
++	 * ENA - Enable CLK divider.
++	 * PDIV - 00 - Disable clock
++	 * VDIV - at least 2
++	 */
++
++	/* Check and enable video clk registers */
++	regmap_read(priv->map, EP93XX_SYSCON_VIDCLKDIV, &value);
++	value |= BIT(EP93XX_SYSCON_CLKDIV_PDIV_SHIFT) | 2;
++	ep93xx_clk_write(priv, EP93XX_SYSCON_VIDCLKDIV, value);
++
++	/* Check and enable i2s clk registers */
++	regmap_read(priv->map, EP93XX_SYSCON_I2SCLKDIV, &value);
++	value |= BIT(EP93XX_SYSCON_CLKDIV_PDIV_SHIFT) | 2;
++
++	/*
++	 * Override the SAI_MSTR_CLK_CFG from the I2S block and use the
++	 * I2SClkDiv Register settings. LRCLK transitions on the falling SCLK
++	 * edge.
++	 */
++	value |= EP93XX_SYSCON_I2SCLKDIV_ORIDE | EP93XX_SYSCON_I2SCLKDIV_SPOL;
++	ep93xx_clk_write(priv, EP93XX_SYSCON_I2SCLKDIV, value);
++
++	/* video clk */
++	idx = EP93XX_CLK_VIDEO - EP93XX_CLK_UART1;
++	clk = &priv->reg[idx];
++	clk->idx = idx;
++	ret = clk_hw_register_ddiv(clk, "ep93xx-fb",
++				ddiv_pdata, ARRAY_SIZE(ddiv_pdata),
++				EP93XX_SYSCON_VIDCLKDIV,
++				EP93XX_SYSCON_CLKDIV_ENABLE);
++
++	/* i2s clk */
++	idx = EP93XX_CLK_I2S_MCLK - EP93XX_CLK_UART1;
++	clk = &priv->reg[idx];
++	clk->idx = idx;
++	ret = clk_hw_register_ddiv(clk, "mclk",
++				ddiv_pdata, ARRAY_SIZE(ddiv_pdata),
++				EP93XX_SYSCON_I2SCLKDIV,
++				EP93XX_SYSCON_CLKDIV_ENABLE);
++
++	/* i2s sclk */
++	idx = EP93XX_CLK_I2S_SCLK - EP93XX_CLK_UART1;
++	clk = &priv->reg[idx];
++	clk->idx = idx;
++	pdata.hw = &priv->reg[EP93XX_CLK_I2S_MCLK - EP93XX_CLK_UART1].hw;
++	ret = clk_hw_register_div(clk, "sclk", &pdata,
++				EP93XX_SYSCON_I2SCLKDIV,
++				EP93XX_SYSCON_I2SCLKDIV_SENA,
++				16, /* EP93XX_I2SCLKDIV_SDIV_SHIFT */
++				1,  /* EP93XX_I2SCLKDIV_SDIV_WIDTH */
++				sclk_divisors,
++				ARRAY_SIZE(sclk_divisors));
++
++	/* i2s lrclk */
++	idx = EP93XX_CLK_I2S_LRCLK - EP93XX_CLK_UART1;
++	clk = &priv->reg[idx];
++	clk->idx = idx;
++	pdata.hw = &priv->reg[EP93XX_CLK_I2S_SCLK - EP93XX_CLK_UART1].hw;
++	ret = clk_hw_register_div(clk, "lrclk", &pdata,
++				EP93XX_SYSCON_I2SCLKDIV,
++				EP93XX_SYSCON_I2SCLKDIV_SENA,
++				17, /* EP93XX_I2SCLKDIV_LRDIV32_SHIFT */
++				2,  /* EP93XX_I2SCLKDIV_LRDIV32_WIDTH */
++				lrclk_divisors,
++				ARRAY_SIZE(lrclk_divisors));
++
++	/* IrDa clk uses same pattern but no init code presents in original clock driver */
++	return devm_of_clk_add_hw_provider(priv->dev, of_clk_ep93xx_get, priv);
++}
++
++static const struct auxiliary_device_id ep93xx_clk_ids[] = {
++	{ .name = "soc_ep93xx.clk-ep93xx", .driver_data = 2, },
++	{ .name = "soc_ep93xx.clk-ep93xx.e2", .driver_data = 1, },
++	{ /* sentinel */ }
++};
++MODULE_DEVICE_TABLE(auxiliary, ep93xx_clk_ids);
++
++static struct auxiliary_driver ep93xx_clk_driver = {
++	.probe		= ep93xx_clk_probe,
++	.id_table	= ep93xx_clk_ids,
++};
++module_auxiliary_driver(ep93xx_clk_driver);
 
-- Link to v10: https://lore.kernel.org/r/20240617-ep93xx-v10-0-662e640ed811@maquefel.me
-
-Changes in v10:
-
-Reordered SoB tags to make sure they appear before Rb and Acked tags.
-
-dmaengine: cirrus: Convert to DT for Cirrus EP93xx
-    - s/dma/dmaengine/ title
-
-dmaengine: cirrus: remove platform code
-    - s/dma/dmaengine/ title
-
-soc: Add SoC driver for Cirrus ep93xx:
-    - added __init for ep93xx_adev_alloc(), ep93xx_controller_register()
-    - added static, __initconst for pinctrl_names[]
-    - clk revision for SPI is now resolved here through differently named
-      clk device
-    - more verbose Kconfig description
-
-clk: ep93xx: add DT support for Cirrus EP93xx:
-    - dropped includes
-    - dropped ep93xx_soc_table[]
-    - add different named clk and dropped involved includes
-    - moved pll's and fclk, hclk, pclk init to separate function
-    - fixed ep93xx_clk_ids[] explicit lines
-
-- Link to v9: https://lore.kernel.org/r/20240326-ep93xx-v9-0-156e2ae5dfc8@maquefel.me
-- Link to v2 clk: https://lore.kernel.org/r/20240408-ep93xx-clk-v2-1-adcd68c13753@maquefel.me
-
-Changes in v9:
-
-ARM: dts: add Cirrus EP93XX SoC .dtsi
-    - added #interrupt-cells to gpio nodes with interrupts-controller
-    - fixed EOF
-
-ARM: dts: ep93xx: Add EDB9302 DT
-    - Alexander Sverdlin: fixed bug in Device Tree resulting in CS4271 not working
-
-input: keypad: ep93xx: add DT support for Cirrus EP93xx
-    - fixed identation and type
-
-- Link to v8: https://lore.kernel.org/r/20240226-ep93xx-v8-0-3136dca7238f@maquefel.me/
-
-Changes in v8:
-
-soc: Add SoC driver for Cirrus ep93xx
-    - fixed freeing adev instead of rdev
-    - use __free() and no_free_ptr() for rdev allocation
-    - s/of_device_get_match_data()/device_get_match_data()/
-
-ata: pata_ep93xx: add device tree support
-    - more appropriate usage of dev_err_probe()
-
-pinctrl: add a Cirrus ep93xx SoC pin controller
-    - 8 per row in ide_9312_pins
-
-mtd: rawnand: add support for ts72xx
-    - fwnode_handle_put() for fwnode in ts72xx_nand_remove()
-
-- Link to v7: https://lore.kernel.org/r/20240118-ep93xx-v7-0-d953846ae771@maquefel.me
-
-Changes in v7:
-
-mtd: rawnand: add support for ts72xx
-    - fixed KConfig description
-
-ARM: ep93xx: Add terminator to gpiod_lookup_table
-    - + Reported-by, Fixes
-
-ARM: ep93xx: add regmap aux_dev
-    - + trailing comma
-    - - #include <linux/spinlock.h>
-
-clk: ep93xx: add DT support for Cirrus EP93xx
-    - dropped unused defines
-    - return from default in ep93xx_mux_get_parent()
-    - use guard() in ep93xx_mux_set_parent_lock()
-    - <math.h> header for abs_diff()
-    - fixed comments
-
-pinctrl: add a Cirrus ep93xx SoC pin controller
-    - dropped comments for DEVCFG defines
-    - <linux/array_size.h> for ARRAY_SIZE()
-    - + default in ep93xx_get_group_name()
-    - correct cast for id->driver_data
-    - s/device_set_of_node_from_dev()/device_set_node()/
-
-power: reset: Add a driver for the ep93xx reset
-    - Add <linux/container_of.h>, <linux/errno.h>, <linux/slab.h>
-    - Add <linux/module.h>, <linux/mod_devicetable.h>
-    - Remove <platform_device.h>
-
-spi: ep93xx: add DT support for Cirrus EP93xx
-    - Replace with ret = dev_err_probe(...);
-
-ata: pata_ep93xx: add device tree support
-    - fixed wrong rebase with some partes leaked in "ata: pata_ep93xx: remove legacy pinctrl use"
-    - fix dma_request_chan() error processing
-
-dma: cirrus: Convert to DT for Cirrus EP93xx
-    - fixed commit message (dropped explicit "only")
-    - fixed clk_get() processing to defer probe and log spamming
-    - refactor ep93xx_m2p_dma_filter()
-    - dropped blank line in ep93xx_m2p_dma_of_xlate()
-    - refactor ep93xx_m2m_dma_of_xlate()
-
-dma: cirrus: remove platform code
-    - s/dma/DMA/ in commit message
-
-soc: Add SoC driver for Cirrus ep93xx
-    - add period
-    - use cleanup and guard() for spinlocking
-    - correct cast for device_get_match_data()
-    - dropped dev_info() with SoC revision - i can't find it anywhere since 2.6 :/,
-      don't know why i was so sured that ep93xx always printed that
-
-ata: pata_ep93xx: remove legacy pinctrl use
-    - made error handling in DMA as Uwe suggested
-
-- Link to v6: https://lore.kernel.org/r/20231212-ep93xx-v6-0-c307b8ac9aa8@maquefel.me
-
-Changes in v6:
-
-- clk: ep93xx: add DT support for Cirrus EP93xx
-  - s/spin_lock_irqsave()/guard()/
-  - refactor index check in ep93xx_mux_set_parent_lock() to something more readable
-  - use in_range in ep93xx_mux_set_parent_lock()/ep93xx_ddiv_set_rate()
-  - use GENMASK() in ep93xx_ddiv_recalc_rate()
-  - comment reserved bit in ep93xx_ddiv_set_rate()
-  - move out from loop ClkDiv value assigment
-  - some style fixes
-
-Andy, i was i asked to set index of XTALI explicitly, i am not setting ddiv_pdata
-there becouse only XTALI is jnown in advance, and i think setting them in one place is more convenient.
-
-- pinctrl: add a Cirrus ep93xx SoC pin controller
-  - drop OF from Kconfig
-  - droped linux/of.h include
-  - add space to */ where it is applicable
-  - add coma in multiline assigment
-  - "return NULL" as default case in ep93xx_get_group_name()
-  - fixed casting id->driver_data
-  - use device_set_of_node_from_dev()
-  - use dev_err_probe()
-
-- power: reset: Add a driver for the ep93xx reset
-  - drop linux/of.h include
-
-- soc: Add SoC driver for Cirrus ep93xx
-  - s/GPL-2.0/GPL-2.0-only/
-  - drop linux/kernel.h include
-  - + blank line before linux/soc/cirrus/ep93xx.h
-  - + blank line after ep93xx_get_soc_rev()
-  - + coma for pinctrl_names
-  - valid casting to int for of_device_get_match_data() return value
-
-- mtd: rawnand: add support for ts72xx
-  - return as part of switch case
-  - s/iowrite8/iowrite8_rep/
-
-- net: cirrus: add DT support for Cirrus EP93xx
-  - fix header sorting
-
-- dma: cirrus: Convert to DT for Cirrus EP93xx
-  - use devm_clk_get
-  - use is_slave_direction
-
-Changes in v5:
-
-- gpio: ep93xx: split device in multiple
-  - ordered headers
-  - use irqd_to_hwirq()
-  - s/platform_get_irq()/platform_get_irq_optional()/
-
-- [PATCH v4 02/42] ARM: ep93xx: add swlocked prototypes
-  - replaced with ARM: ep93xx: add regmap aux_dev
-
-- [PATCH v4 03/42] dt-bindings: clock: Add Cirrus EP93xx
-  - fixed identation
-  - removed EP93XX_CLK_END
-  - and dropped it
-  - clock bindings moved to syscon with renaming to cirrus,ep9301-syscon.h
-
-- clk: ep93xx: add DT support for Cirrus EP93xx
-  - convert to auxiliary and use parent device tree node
-  - moved all clocks except XTALI here
-  - used devm version everywhere and *_parent_hw() instead of passing name where it's possible
-  - unfortunately devm_clk_hw_register_fixed_rate doesn't have a parent index version
-
-- [PATCH v4 05/42] dt-bindings: pinctrl: Add Cirrus EP93xx
-  - "unevaluatedProperties: false" for pins
-  - returned "additionalProperties: false" where it was
-  - and dropped it
-
-- pinctrl: add a Cirrus ep93xx SoC pin controller
-  - sorted includes
-  - convert to auxiliary and use parent device tree node
-
-- power: reset: Add a driver for the ep93xx reset
-  - convert to auxiliary device
-
-- dt-bindings: soc: Add Cirrus EP93xx
-  - dropped all ref to reboot, clk, pinctrl subnodes
-  - added pins, as it's now used for pinctrl
-  - added #clock-cells, as it's now used for clk
-
-- dt-bindings: pwm: Add Cirrus EP93xx
-  - $ref to pwm.yaml
-  - fixed 'pwm-cells'
-  - s/additionalProperties/unevaluatedProperties/
-
-- soc: Add SoC driver for Cirrus ep93xx
-  - removed clocks, they are moved to clk auxiliary driver, as we dropped the clk dt node
-  - removed all swlocked exported functions
-  - dropped static spinlock
-  - added instantiating auxiliary reboot, clk, pinctrl
-
-- dt-bindings: spi: Add Cirrus EP93xx
-  - Document DMA support
-
-- spi: ep93xx: add DT support for Cirrus EP93xx
-  - dropped CONFIG_OF and SPI/DMA platform data entirely
-  - s/master/host/
-  - reworked DMA setup so we can use probe defer
-
-- dt-bindings: dma: Add Cirrus EP93xx
-  - dropped bindings header (moved ports description to YAML)
-  - changed '#dma-cells' to 2, we use port, direction in cells so we can drop platform code completely
-
-- dma: cirrus: add DT support for Cirrus EP93xx
-  - dropped platform probing completely
-  - dropped struct ep93xx_dma_data replaced with internal struct ep93xx_dma_chan_cfg with port/direction
-  - added xlate functions for m2m/m2p
-  - we require filters to set dma_cfg before hw_setup
-
-- dt-bindings: ata: Add Cirrus EP93xx
-  - Document DMA support
-
-- ata: pata_ep93xx: add device tree support
-  - drop DMA platform header with data
-  - use DMA OF so we can defer probing until DMA is up
-
-- ARM: dts: add Cirrus EP93XX SoC .dtsi
-- ARM: dts: ep93xx: add ts7250 board
-- ARM: dts: ep93xx: Add EDB9302 DT
-  - replaced "eclk: clock-controller" to syscon reference
-  - replaced "pinctrl: pinctrl" to syscon reference
-  - gpios are now "enabled" by default
-  - reworked i2s node
-  - change all dma nodes and refs
-
-- new additions to I2S
-  - Document DMA
-  - Document Audio Port usage
-  - drop legacy DMA support
-
-- Link to v4: https://lore.kernel.org/r/20230915-ep93xx-v4-0-a1d779dcec10@maquefel.me
-
-Changes in v4:
-
-- gpio: ep93xx: split device in multiple
-  - s/generic_handle_irq/generic_handle_domain_irq/
-  - s/int offset/irq_hw_number_t offset/ though now it looks a bit odd to me
-  - drop i = 0
-  - drop 'error'
-  - use dev_err_probe withour printing devname once again
-
-dt-bindings: clock: Add Cirrus EP93xx
-  - renamed cirrus,ep93xx-clock.h -> cirrus,ep9301-clk.h
-
-clk: ep93xx: add DT support for Cirrus EP93xx
-  - drop unused includes
-  - use .name only for xtali, pll1, pll2 parents
-  - convert // to /*
-  - pass clk_parent_data instead of char* clock name
-
-dt-bindings: pinctrl: Add Cirrus EP93xx
-  - s/additionalProperties/unevaluatedProperties/
-
-dt-bindings: soc: Add Cirrus EP93xx
-  - move syscon to soc directory
-  - add vendor prefix
-  - make reboot same style as pinctrl, clk
-  - use absolute path for ref
-  - expand example
-
-soc: Add SoC driver for Cirrus ep93xx
-  - s/0xf0000000/GENMASK(31, 28)/
-  - s/ret/ep93xx_chip_revision(map)/
-  - drop symbol exports
-  - convert to platform driver
-
-dt-bindings: rtc: Add Cirrus EP93xx
-  - allOf: with $ref to rtc.yaml
-  - s/additionalProperties/unevaluatedProperties/
-
-dt-bindings: watchdog: Add Cirrus EP93x
-  - drop description
-  - reword
-
-power: reset: Add a driver for the ep93xx reset
-  - lets use 'GPL-2.0+' instead of '(GPL-2.0)'
-  - s/of_device/of/
-  - drop mdelay with warning
-  - return 0 at the end
-
-net: cirrus: add DT support for Cirrus EP93xx
-  - fix leaking np
-
-mtd: nand: add support for ts72xx
-  - +bits.h
-  - drop comment
-  - ok to fwnode_get_next_child_node
-  - use goto to put handle and nand and report error
-
-ARM: dts: add Cirrus EP93XX SoC .dtsi
-  - add simple-bus for ebi, as we don't require to setup anything
-  - add arm,pl011 compatible to uart nodes
-  - drop i2c-gpio, as it's isn't used anywhere
-
-ARM: dts: ep93xx: add ts7250 board
-  - generic node name for temperature-sensor
-  - drop i2c
-  - move nand, rtc, watchdog to ebi node
-
-- Link to v3: https://lore.kernel.org/r/20230605-ep93xx-v3-0-3d63a5f1103e@maquefel.me
-
----
-Alexander Sverdlin (3):
-      ASoC: ep93xx: Drop legacy DMA support
-      ARM: dts: ep93xx: Add EDB9302 DT
-      ASoC: cirrus: edb93xx: Delete driver
-
-Nikita Shubin (35):
-      gpio: ep93xx: split device in multiple
-      ARM: ep93xx: add regmap aux_dev
-      clk: ep93xx: add DT support for Cirrus EP93xx
-      pinctrl: add a Cirrus ep93xx SoC pin controller
-      power: reset: Add a driver for the ep93xx reset
-      dt-bindings: soc: Add Cirrus EP93xx
-      soc: Add SoC driver for Cirrus ep93xx
-      dt-bindings: dma: Add Cirrus EP93xx
-      dmaengine: cirrus: Convert to DT for Cirrus EP93xx
-      dt-bindings: watchdog: Add Cirrus EP93x
-      watchdog: ep93xx: add DT support for Cirrus EP93xx
-      dt-bindings: pwm: Add Cirrus EP93xx
-      pwm: ep93xx: add DT support for Cirrus EP93xx
-      dt-bindings: spi: Add Cirrus EP93xx
-      spi: ep93xx: add DT support for Cirrus EP93xx
-      dt-bindings: net: Add Cirrus EP93xx
-      net: cirrus: add DT support for Cirrus EP93xx
-      dt-bindings: mtd: Add ts7200 nand-controller
-      mtd: rawnand: add support for ts72xx
-      dt-bindings: ata: Add Cirrus EP93xx
-      ata: pata_ep93xx: add device tree support
-      dt-bindings: input: Add Cirrus EP93xx keypad
-      input: keypad: ep93xx: add DT support for Cirrus EP93xx
-      wdt: ts72xx: add DT support for ts72xx
-      gpio: ep93xx: add DT support for gpio-ep93xx
-      ASoC: dt-bindings: ep93xx: Document DMA support
-      ASoC: dt-bindings: ep93xx: Document Audio Port support
-      ARM: dts: add Cirrus EP93XX SoC .dtsi
-      ARM: dts: ep93xx: add ts7250 board
-      ARM: ep93xx: DT for the Cirrus ep93xx SoC platforms
-      pwm: ep93xx: drop legacy pinctrl
-      ata: pata_ep93xx: remove legacy pinctrl use
-      ARM: ep93xx: delete all boardfiles
-      ARM: ep93xx: soc: drop defines
-      dmaengine: cirrus: remove platform code
-
- .../bindings/arm/cirrus/cirrus,ep9301.yaml         |   38 +
- .../bindings/ata/cirrus,ep9312-pata.yaml           |   42 +
- .../bindings/dma/cirrus,ep9301-dma-m2m.yaml        |   84 ++
- .../bindings/dma/cirrus,ep9301-dma-m2p.yaml        |  144 ++
- .../bindings/input/cirrus,ep9307-keypad.yaml       |   87 ++
- .../devicetree/bindings/mtd/technologic,nand.yaml  |   45 +
- .../devicetree/bindings/net/cirrus,ep9301-eth.yaml |   59 +
- .../devicetree/bindings/pwm/cirrus,ep9301-pwm.yaml |   53 +
- .../bindings/soc/cirrus/cirrus,ep9301-syscon.yaml  |   94 ++
- .../bindings/sound/cirrus,ep9301-i2s.yaml          |   16 +
- .../devicetree/bindings/spi/cirrus,ep9301-spi.yaml |   70 +
- .../bindings/watchdog/cirrus,ep9301-wdt.yaml       |   42 +
- arch/arm/Makefile                                  |    1 -
- arch/arm/boot/dts/cirrus/Makefile                  |    4 +
- arch/arm/boot/dts/cirrus/ep93xx-bk3.dts            |  125 ++
- arch/arm/boot/dts/cirrus/ep93xx-edb9302.dts        |  181 +++
- arch/arm/boot/dts/cirrus/ep93xx-ts7250.dts         |  145 ++
- arch/arm/boot/dts/cirrus/ep93xx.dtsi               |  444 ++++++
- arch/arm/mach-ep93xx/Kconfig                       |   20 +-
- arch/arm/mach-ep93xx/Makefile                      |   11 -
- arch/arm/mach-ep93xx/clock.c                       |  733 ----------
- arch/arm/mach-ep93xx/core.c                        | 1018 --------------
- arch/arm/mach-ep93xx/dma.c                         |  114 --
- arch/arm/mach-ep93xx/edb93xx.c                     |  368 -----
- arch/arm/mach-ep93xx/ep93xx-regs.h                 |   38 -
- arch/arm/mach-ep93xx/gpio-ep93xx.h                 |  111 --
- arch/arm/mach-ep93xx/hardware.h                    |   25 -
- arch/arm/mach-ep93xx/irqs.h                        |   76 --
- arch/arm/mach-ep93xx/platform.h                    |   42 -
- arch/arm/mach-ep93xx/soc.h                         |  212 ---
- arch/arm/mach-ep93xx/timer-ep93xx.c                |  143 --
- arch/arm/mach-ep93xx/ts72xx.c                      |  422 ------
- arch/arm/mach-ep93xx/ts72xx.h                      |   94 --
- arch/arm/mach-ep93xx/vision_ep9307.c               |  321 -----
- drivers/ata/pata_ep93xx.c                          |  107 +-
- drivers/clk/Kconfig                                |    8 +
- drivers/clk/Makefile                               |    1 +
- drivers/clk/clk-ep93xx.c                           |  846 ++++++++++++
- drivers/dma/ep93xx_dma.c                           |  287 +++-
- drivers/gpio/gpio-ep93xx.c                         |  345 ++---
- drivers/input/keyboard/ep93xx_keypad.c             |   74 +-
- drivers/mtd/nand/raw/Kconfig                       |    6 +
- drivers/mtd/nand/raw/Makefile                      |    1 +
- drivers/mtd/nand/raw/technologic-nand-controller.c |  222 +++
- drivers/net/ethernet/cirrus/ep93xx_eth.c           |   63 +-
- drivers/pinctrl/Kconfig                            |    7 +
- drivers/pinctrl/Makefile                           |    1 +
- drivers/pinctrl/pinctrl-ep93xx.c                   | 1434 ++++++++++++++++++++
- drivers/power/reset/Kconfig                        |   10 +
- drivers/power/reset/Makefile                       |    1 +
- drivers/power/reset/ep93xx-restart.c               |   84 ++
- drivers/pwm/pwm-ep93xx.c                           |   26 +-
- drivers/soc/Kconfig                                |    1 +
- drivers/soc/Makefile                               |    1 +
- drivers/soc/cirrus/Kconfig                         |   17 +
- drivers/soc/cirrus/Makefile                        |    2 +
- drivers/soc/cirrus/soc-ep93xx.c                    |  252 ++++
- drivers/spi/spi-ep93xx.c                           |   66 +-
- drivers/watchdog/ep93xx_wdt.c                      |    8 +
- drivers/watchdog/ts72xx_wdt.c                      |    8 +
- include/dt-bindings/clock/cirrus,ep9301-syscon.h   |   46 +
- include/linux/platform_data/dma-ep93xx.h           |   94 --
- include/linux/platform_data/eth-ep93xx.h           |   10 -
- include/linux/platform_data/keypad-ep93xx.h        |   32 -
- include/linux/platform_data/spi-ep93xx.h           |   15 -
- include/linux/soc/cirrus/ep93xx.h                  |   47 +-
- sound/soc/cirrus/Kconfig                           |    9 -
- sound/soc/cirrus/Makefile                          |    4 -
- sound/soc/cirrus/edb93xx.c                         |  116 --
- sound/soc/cirrus/ep93xx-i2s.c                      |   19 -
- sound/soc/cirrus/ep93xx-pcm.c                      |   19 +-
- 71 files changed, 5161 insertions(+), 4550 deletions(-)
----
-base-commit: 0c3836482481200ead7b416ca80c68a29cfdaabd
-change-id: 20230605-ep93xx-01c76317e2d2
-
-Best regards,
 -- 
-Nikita Shubin <nikita.shubin@maquefel.me>
+2.43.2
 
 
