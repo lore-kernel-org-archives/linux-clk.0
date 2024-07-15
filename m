@@ -1,135 +1,67 @@
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 894E373446;
-	Mon, 15 Jul 2024 18:01:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0FDB762D7;
+	Mon, 15 Jul 2024 19:10:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721066502; cv=none; b=MahowsCBu7R1DWSG5jvAADPMOVrEttUylG6FffrSma1ukqwjbt0JdTsIUUK9BC5vGPLF4B/uQQibFP8dJ/GkAWf9ZuF2XutpzV7+6ZHosktHrOjqt3Vw579FqCTjipPMzDtd9l+H/TLxcJfVCMyvll/BD853eCurA7UMNTMwpA4=
+	t=1721070634; cv=none; b=Wm2OAeIOc721+gdmoXIlVgqdAP55PW0rYOO29TwMUl0Uc6qMQr3x0+H4gOxj9N+MWVWMaCs8yxkcfAFNTsKLn/Jhlg5jgu2VbqoYq9lUvGDzgrNJGRya0oyfxWwFrbPEDikdXQVSonKEL/0IdUMN7LJxz+ca982BBDFEP24e0bY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721066502; c=relaxed/simple;
-	bh=2y6Jp1rPf53DtC9wIknG4Z2HVl5H2BvZkwIS+gTvprI=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=h1/RtQTzwXJ9waNzPWoMr2Z8eQju19RbTAGMB/HP8spPWbv1PQgDubdmTlyM/XQi23Ff9urhVGuJF5zN2xZrIFSD+9Txy8+1VlQ85SEJdXNziy2rPtFGRSjGOdjwG+okfDYOoq22R0jzFuYtQ63un2IcPXWQfQreoHr2z/0Yvas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=UbThJeP6; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1721070634; c=relaxed/simple;
+	bh=i1YPP8GvnIotxIx3buh+wyZmCmdXEPtkuDjQhHiWPl4=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=Z5Uo5auoDw9qjVlqmo9FQ6pLxMmpaZL93kIsk0asQp8SYvGkVNQfBH/rXC9QZkhVmUtF93REuvgkPRGJpag43YrNA4z5BffCHS2mpRKeQAZiKbEnnSjtmWwOH96zFZ5i9IzAgOrXnJQ/LNeaudN9BbfYXmjekTX3agOVJsaAifw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aDmd1VLM; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="UbThJeP6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aDmd1VLM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D881C4AF0D;
+	Mon, 15 Jul 2024 19:10:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721070634;
+	bh=i1YPP8GvnIotxIx3buh+wyZmCmdXEPtkuDjQhHiWPl4=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=aDmd1VLMC+Z9X3Q5GUqgh57bYNGh/33JFHUQyxiX2ol+2nYPr0XBOgCPVSPQboAy8
+	 PJuC/1NOP0L6lq9hH+HHsJ/qs6Or517HUUOxXzIwNjEJtvhLr5Iwf45QePhwlAe9a1
+	 se3QUDf4SlRWFqJFW2b40ykLpKgGFgOQ6Bujx6aQb4IzwWam9NyTwDoxkt2mQfwEJK
+	 OUBwjV+xz33oMGmU91E0gVLgl8ydTlHC5mYHoW1jfQvK8JW3s5nKmO5WFpcxcQm8Ei
+	 LUYAxEyGoaQabRV4DXKCr/zPxzn9a7ENb499PIqenQfU4MTGT5lsYa31e/+R/R+T47
+	 sLpZF+Judc01w==
+Message-ID: <b6c9ece6ea9a0a476057ced63669017e.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1721066495;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yeO8aJl/IzUQi8xRcxq4p918nJT45vn5xNQbkPy3aAY=;
-	b=UbThJeP6VidW1MFNuqSAV0zqSYP2j81Zj8faTffFzPVYMWh92MH0YsqWXggiXNaovhU7Ck
-	8XNRTUywPPp6shDoExSB/o0OYowSbwYCu0laFqHnnnhcgTDEg3ZjVKlmxRPkGcrcrlNMQA
-	ejnu8WA2fp5ZAorGvARIqlKiKNya1oqsRYeHSEo3xBGSTqPif22YWr8GrDug2MCMOTJCgf
-	zlhtLEP7ylC7HdCofQntvYqSn6WYHT6svy1DZEs/GSo3xJa570SPrn7FclnS7fc2BdZIrB
-	BSZ6SLJB8FIk/3EZVOGMN0q55vEnWc0MAzUGSkGZ+R6HrkIRDF00xv/lwRUHCA==
-Date: Mon, 15 Jul 2024 20:01:35 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v2 1/3] dt-bindings: clocks: add binding for
- voltage-controlled-oscillators
-In-Reply-To: <2832997.XrmoMso0CX@diego>
-References: <20240715110251.261844-1-heiko@sntech.de>
- <20240715110251.261844-2-heiko@sntech.de>
- <ec84dc37e2c421ee6d31294e08392d57@manjaro.org> <2832997.XrmoMso0CX@diego>
-Message-ID: <3f0c241d39c5fedb674d7f9808d0be8f@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240711-th1520-clk-v3-0-6ff17bb318fb@tenstorrent.com>
+References: <20240711-th1520-clk-v3-0-6ff17bb318fb@tenstorrent.com>
+Subject: Re: [PATCH v3 0/7] clk: thead: Add support for TH1520 AP_SUBSYS clock controller
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>, Drew Fustini <dfustini@tenstorrent.com>
+To: Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor+dt@kernel.org>, Drew Fustini <dfustini@tenstorrent.com>, Emil Renner Berthing <emil.renner.berthing@canonical.com>, Fu Wei <wefu@redhat.com>, Guo Ren <guoren@kernel.org>, Jisheng Zhang <jszhang@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, Rob Herring <robh@kernel.org>, Thomas Bonnefille <thomas.bonnefille@bootlin.com>, Yangtao Li <frank.li@vivo.com>
+Date: Mon, 15 Jul 2024 12:10:32 -0700
+User-Agent: alot/0.10
 
-On 2024-07-15 19:46, Heiko Stübner wrote:
-> Am Montag, 15. Juli 2024, 17:15:45 CEST schrieb Dragan Simic:
->> On 2024-07-15 13:02, Heiko Stuebner wrote:
->> > In contrast to fixed clocks that are described as ungateable, boards
->> > sometimes use additional oscillators for things like PCIe reference
->> > clocks, that need actual supplies to get enabled and enable-gpios to be
->> > toggled for them to work.
->> >
->> > This adds a binding for such oscillators that are not configurable
->> > themself, but need to handle supplies for them to work.
->> >
->> > In schematics they often can be seen as
->> >
->> >          ----------------
->> > Enable - | 100MHz,3.3V, | - VDD
->> >          |    3225      |
->> >    GND - |              | - OUT
->> >          ----------------
->> >
->> > or similar. The enable pin might be separate but can also just be tied
->> > to the vdd supply, hence it is optional in the binding.
->> >
->> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
->> > ---
->> >  .../bindings/clock/voltage-oscillator.yaml    | 49 +++++++++++++++++++
->> >  1 file changed, 49 insertions(+)
->> >  create mode 100644
->> > Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
->> >
->> > diff --git
->> > a/Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
->> > b/Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
->> > new file mode 100644
->> > index 0000000000000..8bff6b0fd582e
->> > --- /dev/null
->> > +++ b/Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
->> > @@ -0,0 +1,49 @@
->> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> > +%YAML 1.2
->> > +---
->> > +$id: http://devicetree.org/schemas/clock/voltage-oscillator.yaml#
->> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> > +
->> > +title: Voltage controlled oscillator
->> 
->> Frankly, I find the "voltage-oscillator" and "voltage controlled
->> oscillator" names awkward.  In general, "clock" is used throughout
->> the entire kernel, when it comes to naming files and defining
->> "compatible" strings.  Thus, I'd suggest that "clock" is used here
->> instead of "oscillator", because it's consistent and shorter.
->> 
->> How about using "gated-clock" for the "compatible" string, and
->> "Simple gated clock generator" instead of "voltage controlled
->> oscillator"?  Besides sounding awkward, "voltage controlled
->> oscillator" may suggest that the clock generator can be adjusted
->> or programmed somehow by applying the voltage, while it can only
->> be enabled or disabled that way, which is by definition clock
->> gating.  Thus, "gated-clock" and "Simple gated clock generator"
->> would fit very well.
-> 
-> The naming came from Stephen - one of the clock maintainers ;-)
-> See discussion in v1. Who also described these things as
-> "voltage-controlled-oscillators".
-> 
-> And from that discussion I also got the impression we should aim for
-> more specific naming - especially when talking about dt-bindings, for 
-> this
-> "usage in the Linux kernel" actually isn't a suitable metric and
-> "gated-clock" is probably way too generic I think.
+Quoting Drew Fustini (2024-07-11 09:56:18)
+> This series adds support for the AP sub-system clock controller in the
+> T-Head TH1520 [1]. Yangtao Li originally submitted this series in May
+> 2023 [2]. Jisheng made additional improvements and then passed on the
+> work in progress to me.
+>=20
+> Link: https://openbeagle.org/beaglev-ahead/beaglev-ahead/-/blob/main/docs=
+/TH1520%20System%20User%20Manual.pdf [1]
+> Link: https://lore.kernel.org/all/20230515054402.27633-1-frank.li@vivo.co=
+m/ [2]
+>=20
+> Changes in v3:
+>  - dt-binding patch has been applied to clk-next by Stephen but I'm
+>    keeping it in the series for completeness.
+>  - move dt-bindings include after linux includes in driver
+>  - change rate to u64 in th1520_pll_vco_recalc_rate()
+>  - replace do_div() with normal division operation in both
+>    th1520_pll_vco_recalc_rate() and th1520_pll_postdiv_recalc_rate()
+>  - add static to ccu_mux structs: c910_i0_clk, c910_clk, uart_sclk
 
-I see, thanks for the clarification.  Though, the generic nature of
-"gated-clock" as the name may actually make this driver a bit more
-future-proof, by allowing some other features to be added to it at
-some point in the future, avoiding that way the need for yet another
-kernel driver.
-
-> Though I'm not attached to any specific naming, so we'll simply
-> wait for the clock- and dt-maintainers to weigh in ;-)
+This didn't happen, so I just did it myself.
