@@ -1,161 +1,178 @@
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29C9F18EA8;
-	Mon, 15 Jul 2024 15:15:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F2581BF24;
+	Mon, 15 Jul 2024 16:11:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721056549; cv=none; b=P99No/RYsJcB+6lVsZV3CIQQVd88L3lGMwKM87H45n9R7G+K3wPReROSENzj+V1ru7h4fZDz5T7+e7l9aA+n+E9YBBNdCPotYU5YryCq4WMEuPcNnDIS1iBlgrtab8n+euK3CeKH02TeshEPjlfdCy6bITZAylxglYBoXgip2PI=
+	t=1721059914; cv=none; b=W6TaYV0+rvqlbgL9g+97hS+YQrGDqgJTR0qWm/d5p/7h3kst4phnPFd+Ca/wh5Mx8lsmJdEk7VfNSwf4Uv/h5zPGCVf3ulb4TmBGzyd5brgMZgwsocHftNGkv39/fkybVyXA6oSvmZQM6paGRiWw+1hrayjA5IxXpNHuicrhoO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721056549; c=relaxed/simple;
-	bh=PrfWqZ+oyP+xbwWswn799ArjrVELnraTZtJ/Lt1Dsy0=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=jX2GuOPG8ekzNvVoNKyWPC/aE/QaKyYTYBQAMWXRtvFRpb4PSsRn7HP+fxKT7XjRT4OqCjTYHu1DF2ZNEZqbodJmhXR2vOZZ3hAeHHQ6frTlCQkN8Zc4RPV0MplRaMOqG88j+b6KqSv6FXEiwWeBqbGBs1bx9Z5wcosoeQ5WbQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=B0EJk0B9; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1721059914; c=relaxed/simple;
+	bh=KAWXfYtRXoroPXTdDPVF1jYnxaN+2UeJY5lgyg2ouj0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E3V1mPIDQuHtL0ockMVQQ52bOa4Q2/fItq/BtquUBW/fvCHRUdGi41CS302m6deDH3I5JCe0Y2JxvE5+ORbHviO0ZOj3Jc1hBVEmDH6/dvGSLZq9gRf7Zw1fYWizQRQbIcU+Y3n7QceXK0qHz9qBSui2VRYpBIsvhFkqhjs9+jA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XQbgNNid; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="B0EJk0B9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XQbgNNid"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ABE85C32782;
+	Mon, 15 Jul 2024 16:11:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721059913;
+	bh=KAWXfYtRXoroPXTdDPVF1jYnxaN+2UeJY5lgyg2ouj0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XQbgNNid0ud9NJ2CyMLe84gGaDHiukFhtpseoTIcw7QAXMt3C4bTW63IuFEbxazJ4
+	 qaPiBJsnKM9aQt9UUM62Pzl2QhHLvACHsfVQKuyxZcuvsjQMLoXpXCt8yNEwPV0eil
+	 xgGmlCC10vqKjOZzvH2gPb3hzoGiV7sD+tOdm5DKXdJmdnboifWPaykWuV1epkXrhz
+	 rYEg3/QGEwWDLGw80owH8mHgE5nJBUoj/ZDhyOxyxF/25UymSiO2nzjh8ITmLoApoO
+	 OFOsmXdY0jz2ZcPf52J7mC3sW0ZbDTx8PwGzvk3xbgdsOqt40PT4wXYKYElcHY/QF7
+	 3b/rjmMZqt9fA==
+Date: Mon, 15 Jul 2024 17:11:49 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Rayyan Ansari <rayyan.ansari@linaro.org>
+Cc: devicetree@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: clock: qcom,turingcc: convert to dtschema
+Message-ID: <20240715-spoiled-corroding-4e288446829d@spud>
+References: <20240715084313.14098-1-rayyan.ansari@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1721056545;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ve+HcnJKK/0EVhGwswCoyHDfbPprdzw5K51U2Jo6x/A=;
-	b=B0EJk0B941xU9Jc6UF4nz2OIfVUSQ5xWnDCQzRw366fRQ9I4f1pHLxM7AcPRFSX70uG2SM
-	WDvAWM1Xh/Rc9bSFqd06E/UQOsaj992OIxPvSueXLI78/wuRor44IG+CQLNu21YiM6iCaA
-	0kbfTTnbm8czhZQIGxEdV8BQFaEk1QJYkMMlxCK1QH/g7AzxY1FIAu2VsxyDYcX5+VLYCr
-	nh+TJYpSqXufAALuX1USpynn42z5UiZ/XtuMTgmkJNFURQpPCG4XcOwWnoY7bBkhrsfKHB
-	p8QYP6sbUVCnOE1ahYxv5WqaIJas5bphT3dXuSF2uWPdqc24beAzduCJuHFVYw==
-Date: Mon, 15 Jul 2024 17:15:45 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v2 1/3] dt-bindings: clocks: add binding for
- voltage-controlled-oscillators
-In-Reply-To: <20240715110251.261844-2-heiko@sntech.de>
-References: <20240715110251.261844-1-heiko@sntech.de>
- <20240715110251.261844-2-heiko@sntech.de>
-Message-ID: <ec84dc37e2c421ee6d31294e08392d57@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="ds0T2ivQi1ZswXGA"
+Content-Disposition: inline
+In-Reply-To: <20240715084313.14098-1-rayyan.ansari@linaro.org>
 
-Hello Heiko,
 
-Please see some comments below.
+--ds0T2ivQi1ZswXGA
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 2024-07-15 13:02, Heiko Stuebner wrote:
-> In contrast to fixed clocks that are described as ungateable, boards
-> sometimes use additional oscillators for things like PCIe reference
-> clocks, that need actual supplies to get enabled and enable-gpios to be
-> toggled for them to work.
-> 
-> This adds a binding for such oscillators that are not configurable
-> themself, but need to handle supplies for them to work.
-> 
-> In schematics they often can be seen as
-> 
->          ----------------
-> Enable - | 100MHz,3.3V, | - VDD
->          |    3225      |
->    GND - |              | - OUT
->          ----------------
-> 
-> or similar. The enable pin might be separate but can also just be tied
-> to the vdd supply, hence it is optional in the binding.
-> 
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+On Mon, Jul 15, 2024 at 09:43:10AM +0100, Rayyan Ansari wrote:
+> Convert the bindings for the Turing Clock Controller, currently only
+> used for QCS404, from the old text format to yaml.
+>=20
+> Signed-off-by: Rayyan Ansari <rayyan.ansari@linaro.org>
 > ---
->  .../bindings/clock/voltage-oscillator.yaml    | 49 +++++++++++++++++++
->  1 file changed, 49 insertions(+)
->  create mode 100644
-> Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
-> 
-> diff --git
-> a/Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
-> b/Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
+>  .../bindings/clock/qcom,turingcc.txt          | 19 --------
+>  .../bindings/clock/qcom,turingcc.yaml         | 47 +++++++++++++++++++
+>  2 files changed, 47 insertions(+), 19 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/qcom,turingcc=
+=2Etxt
+>  create mode 100644 Documentation/devicetree/bindings/clock/qcom,turingcc=
+=2Eyaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,turingcc.txt b/=
+Documentation/devicetree/bindings/clock/qcom,turingcc.txt
+> deleted file mode 100644
+> index 126517de5f9a..000000000000
+> --- a/Documentation/devicetree/bindings/clock/qcom,turingcc.txt
+> +++ /dev/null
+> @@ -1,19 +0,0 @@
+> -Qualcomm Turing Clock & Reset Controller Binding
+> -------------------------------------------------
+> -
+> -Required properties :
+> -- compatible: shall contain "qcom,qcs404-turingcc".
+> -- reg: shall contain base register location and length.
+> -- clocks: ahb clock for the TuringCC
+> -- #clock-cells: from common clock binding, shall contain 1.
+> -- #reset-cells: from common reset binding, shall contain 1.
+> -
+> -Example:
+> -	turingcc: clock-controller@800000 {
+> -		compatible =3D "qcom,qcs404-turingcc";
+> -		reg =3D <0x00800000 0x30000>;
+> -		clocks =3D <&gcc GCC_CDSP_CFG_AHB_CLK>;
+> -
+> -		#clock-cells =3D <1>;
+> -		#reset-cells =3D <1>;
+> -	};
+> diff --git a/Documentation/devicetree/bindings/clock/qcom,turingcc.yaml b=
+/Documentation/devicetree/bindings/clock/qcom,turingcc.yaml
 > new file mode 100644
-> index 0000000000000..8bff6b0fd582e
+> index 000000000000..0a57e42fb4d9
 > --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
-> @@ -0,0 +1,49 @@
+> +++ b/Documentation/devicetree/bindings/clock/qcom,turingcc.yaml
+
+filename should match the compatible in the binding.
+
+> @@ -0,0 +1,47 @@
 > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 > +%YAML 1.2
 > +---
-> +$id: http://devicetree.org/schemas/clock/voltage-oscillator.yaml#
+> +$id: http://devicetree.org/schemas/clock/qcom,turingcc.yaml#
 > +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > +
-> +title: Voltage controlled oscillator
-
-Frankly, I find the "voltage-oscillator" and "voltage controlled
-oscillator" names awkward.  In general, "clock" is used throughout
-the entire kernel, when it comes to naming files and defining
-"compatible" strings.  Thus, I'd suggest that "clock" is used here
-instead of "oscillator", because it's consistent and shorter.
-
-How about using "gated-clock" for the "compatible" string, and
-"Simple gated clock generator" instead of "voltage controlled
-oscillator"?  Besides sounding awkward, "voltage controlled
-oscillator" may suggest that the clock generator can be adjusted
-or programmed somehow by applying the voltage, while it can only
-be enabled or disabled that way, which is by definition clock
-gating.  Thus, "gated-clock" and "Simple gated clock generator"
-would fit very well.
-
+> +title: Qualcomm Turing Clock & Reset Controller
+> +
 > +maintainers:
-> +  - Heiko Stuebner <heiko@sntech.de>
+> +  - Bjorn Andersson <andersson@kernel.org>
 > +
 > +properties:
 > +  compatible:
-> +    const: voltage-oscillator
+> +    const: qcom,qcs404-turingcc
 > +
-> +  "#clock-cells":
-> +    const: 0
-> +
-> +  clock-frequency: true
-> +
-> +  clock-output-names:
+> +  reg:
 > +    maxItems: 1
 > +
-> +  enable-gpios:
-> +    description:
-> +      Contains a single GPIO specifier for the GPIO that enables and 
-> disables
-> +      the oscillator.
+> +  clocks:
 > +    maxItems: 1
 > +
-> +  vdd-supply:
-> +    description: handle of the regulator that provides the supply 
-> voltage
+> +  '#clock-cells':
+> +    const: 1
+> +
+> +  '#reset-cells':
+> +    const: 1
 > +
 > +required:
 > +  - compatible
-> +  - "#clock-cells"
-> +  - clock-frequency
-> +  - vdd-supply
+> +  - reg
+> +  - clocks
+> +  - '#clock-cells'
+> +  - '#reset-cells'
 > +
 > +additionalProperties: false
 > +
 > +examples:
 > +  - |
-> +    voltage-oscillator {
-> +      compatible = "voltage-oscillator";
-> +      #clock-cells = <0>;
-> +      clock-frequency = <1000000000>;
-> +      vdd-supply = <&reg_vdd>;
+> +    #include <dt-bindings/clock/qcom,gcc-qcs404.h>
+> +    turingcc: clock-controller@800000 {
+
+nit: drop the label
+
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+
+Cheers,
+Conor.
+
+> +        compatible =3D "qcom,qcs404-turingcc";
+> +        reg =3D <0x00800000 0x30000>;
+> +        clocks =3D <&gcc GCC_CDSP_CFG_AHB_CLK>;
+> +
+> +        #clock-cells =3D <1>;
+> +        #reset-cells =3D <1>;
 > +    };
-> +...
+> --=20
+> 2.45.2
+>=20
+
+--ds0T2ivQi1ZswXGA
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZpVKRQAKCRB4tDGHoIJi
+0tm3AP0ZaHe3RfopftyjdDG8HYnbvowVHRxhSkp9XSngm8h8YgD8CxJfhwu8W92d
+tfzu3VKpyuiBh5UCsffBGBEZ65E3tA8=
+=pJcP
+-----END PGP SIGNATURE-----
+
+--ds0T2ivQi1ZswXGA--
