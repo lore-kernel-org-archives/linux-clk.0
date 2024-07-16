@@ -1,135 +1,151 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1C0E1A2576;
-	Tue, 16 Jul 2024 19:29:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E19E919F477;
+	Tue, 16 Jul 2024 20:11:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721158152; cv=none; b=liU8xsFoE2VGqELiaWKthjV/4QfvrBCqlJe6I/7RsyXaTqMJmykIaVAPuWCqRVL1QHn81KRFJqhydRceAN6bhL8klVNobzignqq1oG0l0fbS0OIssKvfP23dolDHLpEArqAzkaKbNP02YlDY2jrS/xmc889n61K8eFFFkt0hJRA=
+	t=1721160669; cv=none; b=Mc2A9Fi2I887oeXFT8/6YHYzADykbP6Ge8jJGF9hk/q3YugSfHWvTdiszMqwXGeuVyGvdSZxEglzy5CQI6xwMeQdrEQSyp+6S8CFUEgHexfWr1Eo08MbZlpSsbgQ2mivr65BkuRBAA2KQyM3vKnfNChQM+YcIFemjwG3n5vKK5Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721158152; c=relaxed/simple;
-	bh=pfgrunSNV08j+nyo/rRomgYpSMwb5GITfLuj5yzXqik=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mvrb/6OcwmtKW5FBliBVsSQsRHnDPA8S5ISHJCw2Q17TrXiIq0dILhybX5gpUBJJNpVWKbCQYEkyc3rJOCtwR7evET6F7BvdTqHqAFJqt5+5Rm6PH2dcicKuFAALKIAcYOR/QeAx6YrNfTSK75lIJ8euKEDpGaSLxS7HURP1Z+c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DvDStntd; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1721160669; c=relaxed/simple;
+	bh=6pmHMEmUxMpbFQs48GQ6MskIRmBnGh3l7ycRIPEdiwQ=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=p5TIiPzqgh4wgRlY44ZJt/OYeGF4Q2nzVL8dV7WPUaZlj7XXLwoWVbWhQxn7dPIV/CjhcuKTIKxYHLztKDIzgLv3AveMdE3nwzhu2q9kg6Bn7J9JAR/JHXmES3yOsxYmOwBIHPPfWe5pE/f/tUygJM8XOT3jt7bf8XqxsbAsC5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=nK0+7Ki2; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DvDStntd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15E9BC4AF0D;
-	Tue, 16 Jul 2024 19:29:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721158152;
-	bh=pfgrunSNV08j+nyo/rRomgYpSMwb5GITfLuj5yzXqik=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=DvDStntdnncZJlKXYOH70zov5EuS+Wn3vo+xv/kR08NWGpdG8P5VmiayOBMlpz5IE
-	 iRwfNzJAa4bZwAvGYOVHm8ncTRq0y+DZ4SoJpUWltUuVVdromITPgGyoMK9cmfc5Da
-	 ZLqeF7iq6n8oYJj8Kxjj461Ou9NSBqP1N3ee8tu5Akbytyx95IRHFerUXRQAaZ4Ntw
-	 DKdNt/Vv8F9LZCn6XEFtqzasusxWaHsTANsy13DjQhyvxqJszfBvnitWDeja/JazR0
-	 +MiX23iCXZhv5rfi0Sgh7CkTispSyL51ozgmpGtnLNSEdLQObVjgE6Uy7KBFfp3fjL
-	 u1Pd+H/VRprUw==
-Message-ID: <b7457ae3-b8f3-4b16-9a21-090d99a97e48@kernel.org>
-Date: Tue, 16 Jul 2024 21:29:05 +0200
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="nK0+7Ki2"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 02/11] mfd: renesas-vbattb: Add a MFD driver for the
- Renesas VBATTB IP
-To: Claudiu <claudiu.beznea@tuxon.dev>, lee@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, alexandre.belloni@bootlin.com,
- geert+renesas@glider.be, magnus.damm@gmail.com, mturquette@baylibre.com,
- sboyd@kernel.org, p.zabel@pengutronix.de
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rtc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240716103025.1198495-1-claudiu.beznea.uj@bp.renesas.com>
- <20240716103025.1198495-3-claudiu.beznea.uj@bp.renesas.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240716103025.1198495-3-claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1721160663;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=6Gr4Tt/4RDJMqOyQSHRFnO0qkTxn2d0ynsCHySOLEAA=;
+	b=nK0+7Ki2CZmmn09ZBJ7KVoICHInvS0VwzHqyUESuXBGnJpRj6Qp6y1LTMRW1JttVsSwuB/
+	7LrvqJ3za/v+eAfs2exHrNOcv8v7sYfXDS9ay1wPimODWQUrBlrvUOurM8opXtfs7BVzEP
+	ygGOSichUAbQYbPWZFcZCTWFYROAk4qg1XciUjYoHgCq3Hlt9ypfFwkRvUchCnVJQYrHO6
+	/Sd+XdCcPTm1fEnMoJt9zRUkzBn6+SH5nUr7euH68ZNwPkiQCIAdsjM3/NitVcCnsjGIe8
+	t9xOZ2qiHj/q/S8V2aGQuMsXcKp3CaCuJoTheGpHCIA3z18JFmjudO76OXqExg==
+Date: Tue, 16 Jul 2024 22:11:02 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v2 1/3] dt-bindings: clocks: add binding for
+ voltage-controlled-oscillators
+In-Reply-To: <2186398.KiezcSG77Q@diego>
+References: <20240715110251.261844-1-heiko@sntech.de>
+ <2832997.XrmoMso0CX@diego> <3f0c241d39c5fedb674d7f9808d0be8f@manjaro.org>
+ <2186398.KiezcSG77Q@diego>
+Message-ID: <dca9e4c3e2ed61bf25a2d96a82a77e04@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On 16/07/2024 12:30, Claudiu wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Hello Heiko,
+
+On 2024-07-15 21:13, Heiko Stübner wrote:
+> Am Montag, 15. Juli 2024, 20:01:35 CEST schrieb Dragan Simic:
+>> On 2024-07-15 19:46, Heiko Stübner wrote:
+>> > Am Montag, 15. Juli 2024, 17:15:45 CEST schrieb Dragan Simic:
+>> >> On 2024-07-15 13:02, Heiko Stuebner wrote:
+>> >> > In contrast to fixed clocks that are described as ungateable, boards
+>> >> > sometimes use additional oscillators for things like PCIe reference
+>> >> > clocks, that need actual supplies to get enabled and enable-gpios to be
+>> >> > toggled for them to work.
+>> >> >
+>> >> > This adds a binding for such oscillators that are not configurable
+>> >> > themself, but need to handle supplies for them to work.
+>> >> >
+>> >> > In schematics they often can be seen as
+>> >> >
+>> >> >          ----------------
+>> >> > Enable - | 100MHz,3.3V, | - VDD
+>> >> >          |    3225      |
+>> >> >    GND - |              | - OUT
+>> >> >          ----------------
+>> >> >
+>> >> > or similar. The enable pin might be separate but can also just be tied
+>> >> > to the vdd supply, hence it is optional in the binding.
+>> >> >
+>> >> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+>> >> > ---
+>> >> >  .../bindings/clock/voltage-oscillator.yaml    | 49 +++++++++++++++++++
+>> >> >  1 file changed, 49 insertions(+)
+>> >> >  create mode 100644
+>> >> > Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
+>> >> >
+>> >> > diff --git
+>> >> > a/Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
+>> >> > b/Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
+>> >> > new file mode 100644
+>> >> > index 0000000000000..8bff6b0fd582e
+>> >> > --- /dev/null
+>> >> > +++ b/Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
+>> >> > @@ -0,0 +1,49 @@
+>> >> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> >> > +%YAML 1.2
+>> >> > +---
+>> >> > +$id: http://devicetree.org/schemas/clock/voltage-oscillator.yaml#
+>> >> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> >> > +
+>> >> > +title: Voltage controlled oscillator
+>> >>
+>> >> Frankly, I find the "voltage-oscillator" and "voltage controlled
+>> >> oscillator" names awkward.  In general, "clock" is used throughout
+>> >> the entire kernel, when it comes to naming files and defining
+>> >> "compatible" strings.  Thus, I'd suggest that "clock" is used here
+>> >> instead of "oscillator", because it's consistent and shorter.
+>> >>
+>> >> How about using "gated-clock" for the "compatible" string, and
+>> >> "Simple gated clock generator" instead of "voltage controlled
+>> >> oscillator"?  Besides sounding awkward, "voltage controlled
+>> >> oscillator" may suggest that the clock generator can be adjusted
+>> >> or programmed somehow by applying the voltage, while it can only
+>> >> be enabled or disabled that way, which is by definition clock
+>> >> gating.  Thus, "gated-clock" and "Simple gated clock generator"
+>> >> would fit very well.
+>> >
+>> > The naming came from Stephen - one of the clock maintainers ;-)
+>> > See discussion in v1. Who also described these things as
+>> > "voltage-controlled-oscillators".
+>> >
+>> > And from that discussion I also got the impression we should aim for
+>> > more specific naming - especially when talking about dt-bindings, for
+>> > this
+>> > "usage in the Linux kernel" actually isn't a suitable metric and
+>> > "gated-clock" is probably way too generic I think.
+>> 
+>> I see, thanks for the clarification.  Though, the generic nature of
+>> "gated-clock" as the name may actually make this driver a bit more
+>> future-proof, by allowing some other features to be added to it at
+>> some point in the future, avoiding that way the need for yet another
+>> kernel driver.
 > 
-> Renesas VBATTB IP has logic to control the RTC clock, tamper detection
-> and a small 128B memory. Add a MFD driver to do the basic initialization
-> of the VBATTB IP for the inner components to work.
+> you're talking about the driver ... we're in the hardware-binding here.
+> Those are two completely different topics ;-) .
 > 
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> ---
+> Devicetree is always about describing the hardware as best as possible,
+> so you don't want too many "generics" there, because we're always 
+> talking
+> about specific ICs soldered to some board.
+> 
+> I also "violated" that in my v1 by grouping in the the Diodes parts, 
+> which
+> as Stephen pointed out are quite different afterall.
 
-
-> +
-> +static struct platform_driver vbattb_driver = {
-> +	.probe = vbattb_probe,
-> +	.remove_new = vbattb_remove,
-> +	.driver = {
-> +		.name = "renesas-vbattb",
-> +		.of_match_table = vbattb_match,
-> +	},
-> +};
-> +module_platform_driver(vbattb_driver);
-> +
-> +MODULE_ALIAS("platform:renesas-vbattb");
-
-You should not need MODULE_ALIAS() in normal cases. If you need it,
-usually it means your device ID table is wrong (e.g. misses either
-entries or MODULE_DEVICE_TABLE()). MODULE_ALIAS() is not a substitute
-for incomplete ID table.
-
-
-> +MODULE_AUTHOR("Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>");
-> +MODULE_DESCRIPTION("Renesas VBATTB driver");
-> +MODULE_LICENSE("GPL");
-
-Best regards,
-Krzysztof
-
+I'll make sure to go through the v1 discussion in detail ASAP.  After
+that, I'll come back with some more thoughts.
