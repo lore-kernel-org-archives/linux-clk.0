@@ -1,61 +1,60 @@
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61919198857
-	for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2024 12:07:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5625119A284
+	for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2024 12:08:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721131642; cv=none; b=LWYDRFeYQoEhyNyNsQT4rHrXjiYXbMf3h9wmd4TMJniyjvhNx4atWwtPxNNjodDkGitXVfXRpMiP3nPe/LftucfOFMLOuxTXd6227nMthk6GCy4NpPgXF5B9/UOykMZKenTN+zSj9vBrQHtTKpcT8nSRJBC7dtCfZA1hTXDBGk8=
+	t=1721131696; cv=none; b=hLsn5vAEuE1JNUkkvj7jptNi84L8EySgoHFgS9zKnGrygS3NphtCou70n3ttAqgURt2KrO0aIS7AghEMsJB84TdWQrLmW7clWmQqcHWSkVs5N17YlN6aePBNi4byUIycYc8gVwpQ1XBvxJQvYQgH2H63vAHL/tc0SUY28JKDqYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721131642; c=relaxed/simple;
-	bh=ooHPNdSX10YK8g++HA/Wk1VhEtfHnP2xmnmulMeYjxE=;
+	s=arc-20240116; t=1721131696; c=relaxed/simple;
+	bh=s8Z+O228tQfuaHZEb7/g7rFvMfOHNdZjoYcdjOkXy5c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uDeVTNmVbOrUPzXHyc48awN7SGAdIJ+jtPida1Uu/fzanhLLm1RW9RFbyHaE5MIZTf8vDM7IxPGibtH4zn6ltKB5K+ZSxkqFpNRa43KzrBcgAi/Nck++trcuBOpcIgSg47TdRYQKKD7jkgj7zwyfc/2fcmbn0eUa04JsnbJwiwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cOnxYQGD; arc=none smtp.client-ip=209.85.208.53
+	 In-Reply-To:Content-Type; b=n0S+oHdZ/jiBoXc7rpdAYwW3wjPURr/GW415QiHiE57L0LdIKyX1Ql9NYCnCCtv9aR0eDfmQ0bzucohOGu+sdJx8nI22kI4L9JehD9nqAgFvEXzeJhxSctCn8mljzVBelByt8vxpdG0s7zJWWiOv2fRvGh/e8QHUR3jmLM1LWAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QX9aOG3Y; arc=none smtp.client-ip=209.85.167.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cOnxYQGD"
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-595850e7e11so6724934a12.1
-        for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2024 05:07:20 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QX9aOG3Y"
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-52ea2ce7abaso8977463e87.0
+        for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2024 05:08:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721131639; x=1721736439; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1721131692; x=1721736492; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=OitAEpQqJBIlmDOIGTj4gJsZSFyCWFUbY46ZEpYoa+4=;
-        b=cOnxYQGDiCPxID7hztarsd5BZmPgMuYKBl2ujzA/eLcyhN6wtpoV80u6Dmn/TUZ5ys
-         Jse43iVW3UEcENKg7uXcYUdmsDEvZeEVJLprMFy6UOUaezBhuz1n87qhsD6/PSwDsrMj
-         5mGd9VZzw4F7EX3n1rFAvLu5uSZdC4N3M0ASRwfNqUGI4mnPH/0K5O0vc57uN4JmXxrg
-         KV11EcUAbCo5njSVffjkiePuTYBWIlHU3dS6QEv16llUG0SAk6EEYMkO5QWFnDxZ3Ptr
-         pZ+iNojeGdIrK8ZFXL6/a9jx7xbXm62ejy24kx4dqOLdVn5Qqg5sAOIqME2mZdDFzsBU
-         ucQg==
+        bh=0SXkZ4YpK51gh8gONG1NqfFw+DKuGOBbEHG4lIyiX9Q=;
+        b=QX9aOG3Y7sqykny3oCvqfXI6i1EnOmznz7N9m13VOARFVjtkixGHM0d1pLAzaHfAj0
+         bBpM+1Wowkol65QfN1QOs8KRzz9JHl7dFun66JVQzHrnlgzfesKRpqWuy1IfhmS89LfA
+         OpHYnYIQzoXUMSriHLq430rMo0PtC/vpBvFM5+9wjCuHOmiODf3obPOu30n0zCd32TjK
+         +StmUxGHS839qyDFtKOij9tKO69oDu/nXW5wWlQvhOG2dlqWbiHQ05ld0UyFdNQkSCa/
+         GY4BG8e5uHeOVDJnlYchRsm/UrQ6BM1cXPiUNoZVjGVhpvTZfD4Gpl+GdADk6uSwLqm8
+         /moA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721131639; x=1721736439;
+        d=1e100.net; s=20230601; t=1721131692; x=1721736492;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=OitAEpQqJBIlmDOIGTj4gJsZSFyCWFUbY46ZEpYoa+4=;
-        b=A45NuqE9lkrz71MHUZsd1mhIWPru775UalDgOHysXSKLCkINYEIHSMB1N8H34rMfDy
-         WjcXRY2f8QythbvlQloKkCZwRRwu/Hit6aKf2eujr9Ad3Zj2LWblvb8vfN75sbITe/Yt
-         yvvfJ4XgZYo3tT3SMOjIDZaI3a6x/69LHYKMJQvPjB4UgqxzkmIAaB2R0y+qF/6qtlmR
-         e0RLs5o6cMh/a/3ws3RDr+K0rzD/8g3LLlMyHvMs/spQerep2g290ZP65QWZ5Iht3DWI
-         kxtovIxc/w/gwuDswW6LsLQvUgG23O4J/AcCLiEennJlimS5PgWYP5JOqvV+fJVY4riH
-         D8OA==
-X-Forwarded-Encrypted: i=1; AJvYcCVtqUHQdwkQjEj9TQqxd9UAGDFEEbPRNdde2uNFyEN+Kk7tWI6/nWv75m0PuHOXzuvTncLBIiVxiKdl8j1gAZIbza5umqbs0nSb
-X-Gm-Message-State: AOJu0YxvIeYUB1kxmz8myQK/nJ0ZSVc9+zOzSWEBwt4vKSivAxttEX+g
-	rjt2RkUMjc1EHAIDZkn7+aGjZBD05rqR9Ofk8vnYDbhChRXjFg3Fg2zCcRy8Sw40xeyPWsWyNEc
-	Z
-X-Google-Smtp-Source: AGHT+IFRxckN/LaVLeOedvoFoHuOf2HGAk055qS35Yqh8wYVv7r+i7UMnc+WVbdPJ9UqvvlobIlHpA==
-X-Received: by 2002:a17:906:af0e:b0:a77:cbe5:413f with SMTP id a640c23a62f3a-a79ea3ec461mr115457566b.4.1721131638520;
-        Tue, 16 Jul 2024 05:07:18 -0700 (PDT)
+        bh=0SXkZ4YpK51gh8gONG1NqfFw+DKuGOBbEHG4lIyiX9Q=;
+        b=ceXKbSDVMHjwvmeESv9krfjiSvDY27HzZrUYz2cwRWydiasp6ldSRqF3ymtlyJ3VHc
+         ryAqHjBEFFyVZ/pNG9Yn/grA7Et11LCC7Mt6MRyyqKLJysZ9FvWf+uobgaEfHl6IWHj2
+         fxRCmpOVxpuWEYLJBOnf5V+XhGXo/1aC8vc12GyjS6r4yDt9U7Q85JyxL8ewyD3OR1Ub
+         7/pelCG2fcet/2wEaG1xs5t4GpJKKclOzwkYZHjZCD8OfCO1ge+HGnizF6eJ9c3tkG1o
+         ZhJoVz0Bg3HHlsSnpI96ZxIbSrBtQ5ldam3S1Qp6/6xBTbKta+cpQ8rdgexmp4uGfp+7
+         f8gw==
+X-Forwarded-Encrypted: i=1; AJvYcCWQp1P57pn8DXaom47wJ9a/sKA1VMwWS51VNNsoZC5Jhucz3CfunSYeztkwf4tjCpojXAX5svzS11lPP/ZAZ7Q/koSDNJh4zybY
+X-Gm-Message-State: AOJu0Yw7bIKXkEBHLnEdugPoPLbC3NVFllStH3XJnW9wWZt+YATyLTOk
+	EadE3kfX4lNigwxRGfsGNxVwzdBSEYayfwxHTB6EcP5WybxP/vcPYH58meuzX00=
+X-Google-Smtp-Source: AGHT+IH5REozD0sKY25JTdt+cqqYFEBBtuk9VWnluPRMXvd07WRma7Ct7iYZZsYn3FzKkA0ePEgDRQ==
+X-Received: by 2002:a05:6512:1392:b0:52c:90b6:170f with SMTP id 2adb3069b0e04-52edf01926bmr1474002e87.29.1721131692061;
+        Tue, 16 Jul 2024 05:08:12 -0700 (PDT)
 Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc5a38cesm307296766b.9.2024.07.16.05.07.17
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc821809sm301800666b.208.2024.07.16.05.08.09
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Jul 2024 05:07:18 -0700 (PDT)
-Message-ID: <c3126e10-05f9-43a6-aa9d-d96354e27382@linaro.org>
-Date: Tue, 16 Jul 2024 14:07:16 +0200
+        Tue, 16 Jul 2024 05:08:11 -0700 (PDT)
+Message-ID: <6f696bf2-0694-4f5a-b71d-e5f0ac33ac25@linaro.org>
+Date: Tue, 16 Jul 2024 14:08:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -63,8 +62,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/8] clk: qcom: Add support for Camera Clock Controller
- on SA8775P
+Subject: Re: [PATCH v3 8/8] arm64: dts: qcom: Update sleep_clk frequency to
+ 32000 on SA8775P
 To: Taniya Das <quic_tdas@quicinc.com>, Bjorn Andersson
  <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
  Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
@@ -74,7 +73,7 @@ Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  quic_imrashai@quicinc.com, quic_jkona@quicinc.com
 References: <20240715-sa8775p-mm-v3-v1-0-badaf35ed670@quicinc.com>
- <20240715-sa8775p-mm-v3-v1-4-badaf35ed670@quicinc.com>
+ <20240715-sa8775p-mm-v3-v1-8-badaf35ed670@quicinc.com>
 Content-Language: en-US
 From: Konrad Dybcio <konrad.dybcio@linaro.org>
 Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
@@ -112,25 +111,18 @@ Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
  nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
  izWDgYvmBE8=
-In-Reply-To: <20240715-sa8775p-mm-v3-v1-4-badaf35ed670@quicinc.com>
+In-Reply-To: <20240715-sa8775p-mm-v3-v1-8-badaf35ed670@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 15.07.2024 10:23 AM, Taniya Das wrote:
-> Add support for Camera Clock Controller on SA8755P platform.
+> The HW supported sleep_clk frequency on SA8775P is 32000, hence
+> update the sleep_clk frequency with the correct value on SA8775P.
 > 
+> Fixes: 603f96d4c9d0 ("arm64: dts: qcom: add initial support for qcom sa8775p-ride")
 > Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
 > ---
 
-[...]
-
-> +
-> +static struct gdsc cam_cc_titan_top_gdsc = {
-> +	.gdscr = 0x131bc,
-> +	.en_rest_wait_val = 0x2,
-> +	.en_few_wait_val = 0x2,
-> +	.clk_dis_wait_val = 0xf,
-
-Shouldn't this also have a .cxcs relating to GCC_CAMERA_AHB_CLK?
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
 Konrad
