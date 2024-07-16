@@ -1,198 +1,235 @@
-Received: from mx1.sberdevices.ru (mx1.sberdevices.ru [37.18.73.165])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 487D73BBC2;
-	Mon, 15 Jul 2024 22:49:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.18.73.165
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 148B71CA9F;
+	Tue, 16 Jul 2024 00:02:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721083772; cv=none; b=XhRV/1kJ9zKAVaxZ3nR0rG8eAfF4DBgo+NXKC0L0U8fj9E7RNz4bJb0wJ09eR/ZEFrWq9/IzOgUHaGcWm0ZNJXbFM6HR+Lb4vyh2K2z1REkN8mepEWk8MZcu7qNP0tHLuIs/yPiFlXCu1GnlTrWYGbKhkcOypeevDQzG74GELwY=
+	t=1721088178; cv=none; b=h1OosmsDnVd/rccG2xvZO/Z0Bfnq4HK2ODlebjkFJVHJ+he7vhmAfo6RFvG/pawRsTFzLGOJsOYSPHxy3tuynYbNAWUxZ8Ozhy04U792vIcTW5mzwlUXRg1XAqeHCbl/n5tKFooUrG6jzsbtzvSeIsbN7dmEMNgguTjK3Bfa6JQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721083772; c=relaxed/simple;
-	bh=RRmx9ZfTgWIKG1f2ltDhoT7ufCCWhhdGor/QGS/lbRs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=n3SaYXPPbF+aGXMq0FeJGjXDbye4o3a0AWbGLarWZwnzKk8cDMEmo6KXHMaiAZ1aN9CT7KpSAqTc36anFyMqWJKgaPpGIDvpC+U0T8ZnuwAbBgN94fd230pOmyJ6frVHd9FH7gC/Uu10tSuU4O87Ywc+R9ee6OK5NgJF8EPakks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=t76uOPkv; arc=none smtp.client-ip=37.18.73.165
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sberdevices.ru
+	s=arc-20240116; t=1721088178; c=relaxed/simple;
+	bh=zSeIktFotF7MC0Z1hV2Kez5mmgh32C6omUyLCRc5ZZ4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uC9+7aPvhoG8MSu+Cawa0vU9CSkTM1P6b1Rdqc+0ktdLx7yW5ie3Kspz04k0bZ1VBR6okTZg0uAjNDkAKpQPlYEZVg4CSRIwVWqzRBl6xJkW7J96u4gWuB3WBLxE73ZYk3Ayn5314+1jm8d6TVLwaoj/3iA3hJOFFyNRhbUABrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dbRvFpgl; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="t76uOPkv"
-Received: from p-infra-ksmg-sc-msk01.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 38A91100006;
-	Tue, 16 Jul 2024 01:49:27 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 38A91100006
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1721083767;
-	bh=WND29VorzY0w6bH7gEw1lRw9RzKDdjhK4hntDg+MDfM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
-	b=t76uOPkvAdYgM49AoCJmc+0tAobQ5RLEXgwjOlE7jnPTLdQ+rVKkqfE3jZA5+9l8B
-	 uWmWcmNZgiivULJrjuzyDwtRITvu4iZVB8qcuXa++izOZ66jYYDB4n5f+tzldD4unp
-	 6zIcBFaGxIR8QRjaagfqK3VVIVyvUJ0CVbbGIfZdbCz2xmfZU72w1HjBy2QhkJarJu
-	 dfydv20/PxYAmSNSOI7jMXz3X8nHeoWJbgw5ZjgkMbmeThSICD5DKFN0hVdToDW56z
-	 /HOOL0A45t95eT23PRIqIOhNlMo8aiYhym58tlwTbnxkHWGCb/Ly2fUnSMiN84PFyc
-	 uvefHo2M1RRJw==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Tue, 16 Jul 2024 01:49:27 +0300 (MSK)
-Received: from [172.28.128.6] (100.64.160.123) by
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Tue, 16 Jul 2024 01:49:26 +0300
-Message-ID: <66ef4ff5-b472-44ee-a4fc-a68ceacea159@salutedevices.com>
-Date: Tue, 16 Jul 2024 01:48:18 +0300
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dbRvFpgl"
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-70af8062039so3264685b3a.0;
+        Mon, 15 Jul 2024 17:02:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721088176; x=1721692976; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6OllUJ9VLJq55ccW5uQ5M246KQQ6K4mJU68va+dsYyM=;
+        b=dbRvFpgl4Qzz/GS2STgWSZCPk2mKpNUWcJRQT7y4zJ7BMlL4Lx8MtnVnSLLi+H17vN
+         JE4jhuSLT5rNEbxW34iz94toDckjS74qWOl9eatS+X7Eq5zXLYEbSCwHUXjJw8nv6YDW
+         lZavJFkbJw4AgvpUIvMr56KEuqslag1BPWLXc+OgznlzHk2bEMUHwimi32ZaW93a0WO7
+         DyvLKHrd9I8JOYQuEbTkvkXMpY/5mGKSvP8DtiULQoc3FZC+yYd8O12ken/5Aa947K1/
+         yVBUnhQQNAdg6lRhAU/cBzubirEutth/ReXKAlmIHPuQxeZ6qwMFQnKSPhS80OHFA7pg
+         NTuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721088176; x=1721692976;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6OllUJ9VLJq55ccW5uQ5M246KQQ6K4mJU68va+dsYyM=;
+        b=QjBqUQvKvS50Ah/CGqq7B1T6y8sihAgRcfqY7OGah3NLs8t0pmMAeX9grwMzxcpUjY
+         +m5ae0XXSCM1afxLarHDzOvJve41oEaq3Oz1A9rtyUBfOLjtri0Ytt+isSEi/xw2N5bJ
+         YtTKfgE4xp1M3ureUPMDxW2AH5JW/MlTWQGkArRkZ3Zil/Auy+6Wb/ydlfO6gVzeIUsN
+         QHO98xph1iUNPj/Uvgf7h4OVh/vDHJItlcCB8Q/4cBwt++1BDEIjaCzMIS4c25AkuNcR
+         8WPgWWs0fI3+3odW8KKn4tP6Ct/UU0ixxTiu7SzNyiF9TYRZAFBvv9xMjiuilv8r4FBQ
+         Xjbg==
+X-Forwarded-Encrypted: i=1; AJvYcCVNHpnGMMTcv8inYvM++3kneQ0LAxxmHM3TvDwJhD+4KfRUU7dm0aEfWLf1+gjUITEkq6TibtYwsdh3tKcFqXWEIGTO+GBT1uj7qE9wSTcKUJsLYBMiazF/uhhbFNHAAbpp7Qf24aQU
+X-Gm-Message-State: AOJu0YwpKIB13xeil6z/65iN00nczisDfJf+3Rn3az43UG96JaSmtKo+
+	SNQsQ8IV9CQ8NKkzV3eYIjLtfo2xUdq4bM9zEQh9/eWvT43Yf/SFaz8BXfwSwPObHSnq6PJx4IP
+	9Yt7aXua4gwpJ858SxhNYou/Zl0A=
+X-Google-Smtp-Source: AGHT+IE4QMrZIlQ8B9v5YVwd5uq0vAhpYI3DROGAOO5sccBX4Fr/1ACHq+awzUc5R+yepVZ63AaSJQlFxKsCm5ZNTXA=
+X-Received: by 2002:a05:6a21:6b0a:b0:1c2:8949:5ba1 with SMTP id
+ adf61e73a8af0-1c3f12b4f4emr602954637.53.1721088176180; Mon, 15 Jul 2024
+ 17:02:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/8] reset: amlogic: split the device and platform probe
-To: Jerome Brunet <jbrunet@baylibre.com>, Philipp Zabel
-	<p.zabel@pengutronix.de>, Stephen Boyd <sboyd@kernel.org>, Neil Armstrong
-	<neil.armstrong@linaro.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-	<linux-clk@vger.kernel.org>
-References: <20240710162526.2341399-1-jbrunet@baylibre.com>
- <20240710162526.2341399-4-jbrunet@baylibre.com>
-Content-Language: en-US
-From: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-In-Reply-To: <20240710162526.2341399-4-jbrunet@baylibre.com>
+References: <20240607133347.3291040-1-peng.fan@oss.nxp.com>
+ <20240607133347.3291040-6-peng.fan@oss.nxp.com> <CAHCN7x+pzcdwSq19LefsyYAPUp8=kQYJeVbHm9sgSeaKXigMZg@mail.gmail.com>
+ <PAXPR04MB8459E0FEFFFC4F7FB257F32B88A12@PAXPR04MB8459.eurprd04.prod.outlook.com>
+In-Reply-To: <PAXPR04MB8459E0FEFFFC4F7FB257F32B88A12@PAXPR04MB8459.eurprd04.prod.outlook.com>
+From: Adam Ford <aford173@gmail.com>
+Date: Mon, 15 Jul 2024 19:02:44 -0500
+Message-ID: <CAHCN7xLDqLOe9Y8J7R5cEij9Xq=GS1Au8t3hrayf=-zSyorG-w@mail.gmail.com>
+Subject: Re: [PATCH V3 05/15] clk: imx: imx8mp-audiomix: remove sdma root clock
+To: Peng Fan <peng.fan@nxp.com>
+Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, "abelvesa@kernel.org" <abelvesa@kernel.org>, 
+	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@kernel.org" <sboyd@kernel.org>, 
+	"shawnguo@kernel.org" <shawnguo@kernel.org>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, 
+	"kernel@pengutronix.de" <kernel@pengutronix.de>, "festevam@gmail.com" <festevam@gmail.com>, 
+	"imx@lists.linux.dev" <imx@lists.linux.dev>, 
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "S.J. Wang" <shengjiu.wang@nxp.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 186528 [Jul 16 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: YVDakinevich@sberdevices.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 24 0.3.24 186c4d603b899ccfd4883d230c53f273b80e467f, {Tracking_smtp_not_equal_from}, {Tracking_from_domain_doesnt_match_to}, 100.64.160.123:7.1.2;sberdevices.ru:5.0.1,7.1.1;salutedevices.com:7.1.1;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;smtp.sberdevices.ru:5.0.1,7.1.1, FromAlignment: n, {Tracking_smtp_domain_mismatch}, {Tracking_smtp_domain_2level_mismatch}, {Tracking_white_helo}, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/07/15 21:24:00 #26011023
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Transfer-Encoding: quoted-printable
 
+On Sun, Jul 14, 2024 at 8:11=E2=80=AFPM Peng Fan <peng.fan@nxp.com> wrote:
+>
+> > Subject: Re: [PATCH V3 05/15] clk: imx: imx8mp-audiomix: remove
+> > sdma root clock
+> >
+> > On Fri, Jun 7, 2024 at 8:28=E2=80=AFAM Peng Fan (OSS) <peng.fan@oss.nxp=
+.com>
+> > wrote:
+> > >
+> > > From: Peng Fan <peng.fan@nxp.com>
+> > >
+> > > There is an issue:
+> > > SDMA3 can't work without setting AUDIOMIX_CLKEN0[SDMA2] (bit-
+> > 26) to 1
+> > >
+> > > The workaround is:
+> > > As the reset state of AUDIOMIX_CLKEN0[SDMA2] is enabled, we just
+> > need
+> > > to keep it on as reset state, don't touch it in kernel, then every
+> > > thing is same as before, if we register the clock in clk-audiomix,
+> > > then kernel will try to disable it in idle.
+> > >
+> > > Fixes: 6cd95f7b151c ("clk: imx: imx8mp: Add audiomix block
+> > control")
+> > > Reviewed-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+> > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > > ---
+> >
+> > With this patch,I found it broke the imx8mp-beacon board when
+> > running audio through a codec connected to sai3.  Reverting this patch
+> > made the crash go away.  Is there a way to mark the clock as critical s=
+o
+> > it doesn't get idled?
+>
+> Mark it as critical means the blk ctrl needs to be powered on always.
+>
+> You driver touched the SDMA2_ROOT clock?
 
+I have a WM8962 CODEC connected through sai3.  Without this patch, the
+sound plays just fine.  With this patch, I get the following:
 
-On 7/10/24 19:25, Jerome Brunet wrote:
-> To prepare the addition of the auxiliary device support, split
-> out the device probe from the probe of the platform device.
-> 
-> The device probe will be common to both the platform and auxiliary
-> driver.
-> 
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->  drivers/reset/reset-meson.c | 55 +++++++++++++++++++++++--------------
->  1 file changed, 34 insertions(+), 21 deletions(-)
-> 
-> diff --git a/drivers/reset/reset-meson.c b/drivers/reset/reset-meson.c
-> index 59126c9f194a..fec55321b52b 100644
-> --- a/drivers/reset/reset-meson.c
-> +++ b/drivers/reset/reset-meson.c
-> @@ -87,6 +87,27 @@ static const struct reset_control_ops meson_reset_ops = {
->  	.deassert	= meson_reset_deassert,
->  };
->  
-> +static int meson_reset_probe(struct device *dev, struct regmap *map,
-> +			     const struct meson_reset_param *param)
-> +{
-> +	unsigned int stride = regmap_get_reg_stride(map);
-> +	struct meson_reset *data;
-> +
-> +	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-> +	if (!data)
-> +		return -ENOMEM;
-> +
-> +	data->param = param;
-> +	data->map = map;
-> +	data->rcdev.owner = dev->driver->owner;
-> +	data->rcdev.nr_resets = param->reg_count * BITS_PER_BYTE
-> +		* stride;
-> +	data->rcdev.ops = &meson_reset_ops;
-> +	data->rcdev.of_node = dev->of_node;
+[   73.245199] imx-sdma 30e10000.dma-controller: Timeout waiting for CH0 re=
+ady
+[   73.252197] ------------[ cut here ]------------
+[   73.256816] WARNING: CPU: 1 PID: 1080 at kernel/dma/mapping.c:586
+dma_free_attrs+0x94/0xc0
+[   73.256832] Modules linked in: overlay af_alg dw_hdmi_gp_audio
+dw_hdmi_cec tpm_tis_spi snd_soc_hdmi_codec caam_jr tpm_tis_core
+caamhash_desc caamalg_desc crypto_engine authenc libdes hantro_vpu
+v4l2_jpeg v4l2_vp9 v4l2_h264 v4l2_mem2mem videobuf2_dma_contig
+videobuf2_memops videobuf2_v4l2 videodev imx8mp_hdmi_tx btnxpuart nvme
+videobuf2_common dw_hdmi mc nvme_core etnaviv imx_lcdif bluetooth
+fsl_imx8_ddr_perf drm_display_helper dwmac_imx gpu_sched
+phy_fsl_samsung_hdmi imx8mp_hdmi_pvi drm_dma_helper samsung_dsim
+snd_soc_fsl_sai stmmac_platform snd_soc_fsl_xcvr snd_soc_fsl_micfil
+snd_soc_fsl_aud2htx stmmac adv7511 ecdh_generic imx_pcm_dma
+snd_soc_fsl_utils ecc pcs_xpcs cec tcpci flexcan tcpm hd3ss3220
+snd_soc_wm8962 spi_imx can_dev typec at24 caam rtc_pcf85363 rtc_snvs
+error snvs_pwrkey imx8mm_thermal crct10dif_ce snd_soc_imx_hdmi
+coresight_tmc snd_soc_imx_card snd_soc_simple_card coresight_funnel
+snd_soc_simple_card_utils display_connector snd_soc_dmic coresight
+drm_kms_helper imx_cpufreq_dt imx_sdma mwifiex_sdio
+[   73.256997]  mwifiex cfg80211 rfkill fuse drm backlight ipv6
+[   73.257015] CPU: 1 UID: 0 PID: 1080 Comm: speaker-test Not tainted
+6.10.0-rc7-next-20240709-ga90ee5931efe-dirty #9
+[   73.257022] Hardware name: Beacon EmbeddedWorks i.MX8MPlus
+Development kit (DT)
+[   73.257025] pstate: 600000c5 (nZCv daIF -PAN -UAO -TCO -DIT -SSBS BTYPE=
+=3D--)
+[   73.257031] pc : dma_free_attrs+0x94/0xc0
+[   73.257037] lr : dma_free_attrs+0x50/0xc0
+[   73.257041] sp : ffff800084f6b980
+[   73.257043] x29: ffff800084f6b980 x28: 0000000000000010 x27: 00000000000=
+003c2
+[   73.257051] x26: 0000000000000005 x25: 0000000000000010 x24: 00000000000=
+00000
+[   73.257057] x23: 00000000c5504000 x22: 0000000000000000 x21: ffff8000831=
+83000
+[   73.257064] x20: 00000000000000c0 x19: ffff0000c0e54410 x18: 00000000000=
+00006
+[   73.257071] x17: 0000000000000000 x16: 0000000000000000 x15: ffff800084f=
+6b330
+[   73.257078] x14: 0000000000000000 x13: ffff8000826845d8 x12: 00000000000=
+00639
+[   73.257085] x11: 0000000000000213 x10: ffff8000826dc5d8 x9 : ffff8000826=
+845d8
+[   73.257092] x8 : 00000000ffffefff x7 : ffff8000826dc5d8 x6 : 00000000000=
+00040
+[   73.257098] x5 : 0000000000000000 x4 : 0000000000000000 x3 : 00000000c55=
+04000
+[   73.257105] x2 : ffff800083183000 x1 : 0000000000000000 x0 : 00000000000=
+000c0
+[   73.257112] Call trace:
+[   73.257115]  dma_free_attrs+0x94/0xc0
+[   73.257121]  sdma_free_bd+0x60/0x6c [imx_sdma]
+[   73.257130]  sdma_transfer_init+0x1e8/0x270 [imx_sdma]
+[   73.257137]  sdma_prep_dma_cyclic+0x74/0x200 [imx_sdma]
+[   73.257143]  snd_dmaengine_pcm_trigger+0xd8/0x18c
+[   73.257152]  dmaengine_pcm_trigger+0x18/0x24
+[   73.257159]  snd_soc_pcm_component_trigger+0x170/0x21c
+[   73.257168]  soc_pcm_trigger+0xdc/0x1c8
+[   73.257175]  snd_pcm_do_start+0x44/0x70
+[   73.257183]  snd_pcm_action_single+0x48/0xa4
+[   73.257189]  snd_pcm_action+0x80/0x9c
+[   73.257195]  snd_pcm_start+0x24/0x30
+[   73.257203]  __snd_pcm_lib_xfer+0x6a4/0x7d8
+[   73.257208]  snd_pcm_common_ioctl+0x1140/0x1780
+[   73.257215]  snd_pcm_ioctl+0x34/0x4c
+[   73.257222]  __arm64_sys_ioctl+0xac/0xf0
+[   73.257231]  invoke_syscall+0x48/0x114
+[   73.257239]  el0_svc_common.constprop.0+0x40/0xe0
+[   73.257246]  do_el0_svc+0x1c/0x28
+[   73.257252]  el0_svc+0x34/0xd8
+[   73.257260]  el0t_64_sync_handler+0x120/0x12c
+[   73.257267]  el0t_64_sync+0x190/0x194
+[   73.257273] ---[ end trace 0000000000000000 ]---
+[   73.565659] fsl-sai 30c30000.sai: ASoC: error at
+soc_component_trigger on 30c30000.sai: -12
 
-It will be good to add here something like this. Later it would help in
-reset debugging.
+Write error: -5,Input/output erro[   76.767120] imx-sdma
+30e10000.dma-controller: Timeout waiting for CH0 ready
 
-data->rcdev.dev = dev;
+No sound is heard.
 
-> +
-> +	return devm_reset_controller_register(dev, &data->rcdev);
-> +}
-> +
->  static const struct meson_reset_param meson8b_param = {
->  	.reg_count	= 8,
->  	.reset_offset	= 0x0,
-> @@ -125,46 +146,38 @@ static const struct regmap_config regmap_config = {
->  	.reg_stride = 4,
->  };
->  
-> -static int meson_reset_probe(struct platform_device *pdev)
-> +static int meson_reset_pltf_probe(struct platform_device *pdev)
->  {
-> +
-> +	const struct meson_reset_param *param;
->  	struct device *dev = &pdev->dev;
-> -	struct meson_reset *data;
-> +	struct regmap *map;
->  	void __iomem *base;
->  
-> -	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
-> -	if (!data)
-> -		return -ENOMEM;
-> -
->  	base = devm_platform_ioremap_resource(pdev, 0);
->  	if (IS_ERR(base))
->  		return PTR_ERR(base);
->  
-> -	data->param = of_device_get_match_data(dev);
-> -	if (!data->param)
-> +	param = of_device_get_match_data(dev);
-> +	if (!param)
->  		return -ENODEV;
->  
-> -	data->map = devm_regmap_init_mmio(dev, base, &regmap_config);
-> -	if (IS_ERR(data->map))
-> -		return dev_err_probe(dev, PTR_ERR(data->map),
-> +	map = devm_regmap_init_mmio(dev, base, &regmap_config);
-> +	if (IS_ERR(map))
-> +		return dev_err_probe(dev, PTR_ERR(map),
->  				     "can't init regmap mmio region\n");
->  
-> -	data->rcdev.owner = THIS_MODULE;
-> -	data->rcdev.nr_resets = data->param->reg_count * BITS_PER_BYTE
-> -		* regmap_config.reg_stride;
-> -	data->rcdev.ops = &meson_reset_ops;
-> -	data->rcdev.of_node = dev->of_node;
-> -
-> -	return devm_reset_controller_register(dev, &data->rcdev);
-> +	return meson_reset_probe(dev, map, param);
->  }
->  
-> -static struct platform_driver meson_reset_driver = {
-> -	.probe	= meson_reset_probe,
-> +static struct platform_driver meson_reset_pltf_driver = {
-> +	.probe	= meson_reset_pltf_probe,
->  	.driver = {
->  		.name		= "meson_reset",
->  		.of_match_table	= meson_reset_dt_ids,
->  	},
->  };
-> -module_platform_driver(meson_reset_driver);
-> +module_platform_driver(meson_reset_pltf_driver);
->  
->  MODULE_DESCRIPTION("Amlogic Meson Reset Controller driver");
->  MODULE_AUTHOR("Neil Armstrong <narmstrong@baylibre.com>");
+I haven't looked far into the driver to see what was touched, but I
+was able to reproduce this by enabling and disabling the patch several
+times, so it's repeatable. imx-sdma 30e10000.dma-controller seems to
+correspond to sdma2.
 
--- 
-Best regards
-Jan Dakinevich
+adam
+>
+> Regards,
+> Peng.
+>
+> >
+> > adam
+> > >  drivers/clk/imx/clk-imx8mp-audiomix.c | 1 -
+> > >  1 file changed, 1 deletion(-)
+> > >
+> > > diff --git a/drivers/clk/imx/clk-imx8mp-audiomix.c
+> > > b/drivers/clk/imx/clk-imx8mp-audiomix.c
+> > > index b381d6f784c8..88d8ba975b5a 100644
+> > > --- a/drivers/clk/imx/clk-imx8mp-audiomix.c
+> > > +++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
+> > > @@ -172,7 +172,6 @@ static struct clk_imx8mp_audiomix_sel sels[]
+> > =3D {
+> > >         CLK_GATE("ocrama", OCRAMA_IPG),
+> > >         CLK_GATE("aud2htx", AUD2HTX_IPG),
+> > >         CLK_GATE("earc_phy", EARC_PHY),
+> > > -       CLK_GATE("sdma2", SDMA2_ROOT),
+> > >         CLK_GATE("sdma3", SDMA3_ROOT),
+> > >         CLK_GATE("spba2", SPBA2_ROOT),
+> > >         CLK_GATE("dsp", DSP_ROOT),
+> > > --
+> > > 2.37.1
+> > >
+> > >
