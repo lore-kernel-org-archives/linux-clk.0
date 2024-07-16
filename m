@@ -1,196 +1,165 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D886617B031
-	for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2024 12:17:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A705617CA15
+	for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2024 12:27:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721132255; cv=none; b=Z1WdzEXp8Aj5A9ihdhT/FqgKwHzf+OmYtJYA8QjzE+kqEG1k0zvI26ZhAaOx7XzDrg5aNaYBvJjBNAiOIQhfs8EYFPKWWpWNFfpRVVaGpitSRhArJXXxmKGn5kMFos/egpKsAF26AuAjiqTYXEEMiiBTVQHzOCBY1ipYzOJ03Zg=
+	t=1721132861; cv=none; b=HbEHQvEt3R1AaKSLE8MlphyCNttLgEHmXeVkMZNm3YXljcI5+P52XaJgZ1pZNI4Xr0+rg7NPNy9m6RGZLt7xymeF74j7UtnZnYjY32Icy8eK2RqHc+zQnAY+4CBjcENHcWAmNwphmKoHxHc9MXtOifaoZdkRPccujRFuAC4DcPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721132255; c=relaxed/simple;
-	bh=3va6R3ZZDZxoqHLA+PQX1kiONoNUXEoXT6Gk7c/J2Ow=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=roqQ5pJ7TBTus58MAy4EvnMwCaG2jKKEkb7tqD0NTsN7MPnodBh+bP3UqQGZvJR7QhIbTJ7IiPzjkY6svhf4mR9aryV40HrFoGvUk97qIk9WHlIbPvqWnI0kl/FS/ZC6ns9g9eNtUXr+2GkVxFypwaE2cMSxCAtZmAlRcZoXoSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=axDj7KFv; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1721132861; c=relaxed/simple;
+	bh=noE6eKhFkhL3IVR0lAAzX4kMn+2KYTqP7aoIRc+XoIQ=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=EDQS0oHuRZQ8S/Pv7xXobY/TZEfMjYX1ES9x7icUPrAdllTo+GC1GChdjXNxQFb380QEuWioNljNN1smI2kFoObaUGygB6CLC5j5OO3wWrcBtQY9oNk0AzrJlh2kiNBYjGzp3C4KLTretPYWolXOzVi/SkBcsPCr4Zd24wYZsGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WYyo+/J7; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="axDj7KFv"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4266b1f1b21so37092305e9.1
-        for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2024 05:17:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WYyo+/J7"
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4277a5ed48bso40224405e9.2
+        for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2024 05:27:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1721132249; x=1721737049; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=FCyvorohijdRKm4vXZWOZPoWQcguYD1LDURxXWUj1WE=;
-        b=axDj7KFvCiHQJa66XkZMsZ9cUca9/MuF/SmaiJ14Ljzzk/KGOqTbI0HiNpE0R0STUe
-         4x5IPBXN5V2j/fXY6nvI1oOHJeicBdGnErY6hDTUgUlX8dJepzPUoFbl8iNjRaTtpN2p
-         dhFZQZZxdX3XvqqsCNwn5Afbwr72uUBu9lfz/lMIe4uDWT/iHDM7OvIv6Hq97nrnXSka
-         btoJ0Pv4WIK/y9QgVAkKOm5qinHUv0bMLkMhFyVo8cfP4LnvFKAzXuOtGON6KtWhg/IG
-         /A7hF34cEnH+SbHyybBLCJ5RuC8Whh/hEbhSwtbfvUvMW98wnIP4nOmDGwhnhBW5OFuE
-         Sl6w==
+        d=linaro.org; s=google; t=1721132858; x=1721737658; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qm9ABS7iFcDinPgaH1nBEt1SBECgZpBDBS6YVK4EY1Q=;
+        b=WYyo+/J7crdSm9XzkfPxjFIGYT35o4J8MbbmfbQdm3fVJ8HzkVCLKm3wqeLOQYx5Zl
+         H6GzvPrx54P+SHsUB5M27/Zcw2Vxyc/CLVPW8aAd+78A6PEHAMOPjcEh/4hwb35NYLKW
+         eoBV5chn+4FvOOXlTyoWAagjNUoDmPyeEHG6qD5CW5WMjVi51xHtfXXKrkj9iueNjsAT
+         wtrw57qev/zEP2M2GoJQSklWFIbe3qvThZMjnvN4ZCmn2Oc+bGhqh8NDcovgmt71qvUJ
+         pbSAdOAHGDfkxAao3aN7NEKHk761M8Pj1bT31lyiWyxg2lsyYucP7DVJlb24X/h4JXdx
+         vp5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721132249; x=1721737049;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FCyvorohijdRKm4vXZWOZPoWQcguYD1LDURxXWUj1WE=;
-        b=CKYRyrLKO5W8sQvouXl7FbYF/l9croe6y0PJRi9ku0Xy4/d891XGQVNVoX306Mz/dK
-         0C5tFQcBV0gwMJ93t89ofZaIX9070JCKX100L6HyPeQ4RFKHzMI7sg7tA6AeR/ygmyaV
-         QieGzGF4+LPYvSqfQu++EqhKFjXSh1LEACsLktjqiFcA7SeZ+RPtzHhw//9XFFq2ZuwS
-         +lhPDJbueFqedFKN5aiUfC1KMZ2CnqjCuhcM2AQYPknGRQWQHQdlo0LrJeLe3kPmCczd
-         r8h3yKWp749LNS2r96U+H7XkDq2lLSsVqGVz5UesufZhjy+OEphTE20xGYs1ByMUNPjE
-         aC9Q==
-X-Forwarded-Encrypted: i=1; AJvYcCX7SRAZPlzkotB5zODhrw7mBrTyLNQshI1RtbkQ2rjYLnsrXKhj7n43NYwwY/dEivUwk5DsoMgbUchBgZtPu1LbmIeHE+cTaUUV
-X-Gm-Message-State: AOJu0YzRHdL/q3z5Ul5hH2IM25CAPmmbN3KhvRltdAYT6rk+ov1n3Z7w
-	lDfOtMSVBG2gdbwubY4XWZfF7+AsKM17CAIjDdrkLS9V/4PHs36Y1i74IPyk9bI=
-X-Google-Smtp-Source: AGHT+IH4yigp1gkjcQxeAeOLYjio+1QZ5295mCJAsZNF/cho9G7FBybV0wRa9cSEe7GhaXwmooof4Q==
-X-Received: by 2002:a05:600c:46c9:b0:425:69b7:3361 with SMTP id 5b1f17b1804b1-427ba696a81mr12199525e9.18.1721132249171;
-        Tue, 16 Jul 2024 05:17:29 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:e816:4889:4177:9f12])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4279f2cc27asm159281425e9.34.2024.07.16.05.17.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jul 2024 05:17:28 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,  Stephen Boyd
- <sboyd@kernel.org>,  Neil Armstrong <neil.armstrong@linaro.org>,
-  <linux-kernel@vger.kernel.org>,  <linux-amlogic@lists.infradead.org>,
-  <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH 3/8] reset: amlogic: split the device and platform probe
-In-Reply-To: <66ef4ff5-b472-44ee-a4fc-a68ceacea159@salutedevices.com> (Jan
-	Dakinevich's message of "Tue, 16 Jul 2024 01:48:18 +0300")
-References: <20240710162526.2341399-1-jbrunet@baylibre.com>
-	<20240710162526.2341399-4-jbrunet@baylibre.com>
-	<66ef4ff5-b472-44ee-a4fc-a68ceacea159@salutedevices.com>
-Date: Tue, 16 Jul 2024 14:17:27 +0200
-Message-ID: <1j34o9pm3s.fsf@starbuckisacylon.baylibre.com>
+        d=1e100.net; s=20230601; t=1721132858; x=1721737658;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=qm9ABS7iFcDinPgaH1nBEt1SBECgZpBDBS6YVK4EY1Q=;
+        b=GbIp+HeEekGstlSZEBWZ1z0WTNUyxhri0kco844JV+SmyzQH2AhlgRyd9+s5+mpPbv
+         MICBp8CdcvsA/Ki7nT5XpBYFO7qvhoO8sGfoZaOaj0NnuSZSU4RJzC2NMeX7XQhWMsd1
+         zh0R+Bm0HgRImEO/RatPr1l8SR2Xd6+8iuQh1WUUsI1n5lvM7OQmPlx4x6CsZFMP5gou
+         zTeJoKTG0dw/GmKnlR9Ai+UJ6zKfJXk6zGKCptZmmPA8nF8e9IiofazA16My3MMmsf++
+         k9I/zhHaY3IUIGfLqQTcMTlOvq+C7vEH2l7AUL9HBTrZAmSr6DIEn6kG2mpUWP9dwelh
+         LzTg==
+X-Forwarded-Encrypted: i=1; AJvYcCXkgPHBugDxJ9d63gFf2QJsQTZxMVYFvkR26V6ppnrZ096XjHz21vf1WLGN4mYOruJ3QdRHHPaeFAxkhmH83lh2sIYTF5qrX/V3
+X-Gm-Message-State: AOJu0YwAvMGcewj9xEjrd57YKZkF+FcwNNS9GHxOgE7FAoHHu/TpqSir
+	hLumyPQuUWQsGeqwp2/635glhx7llOjS43oTvRqapoYIpk3CAXp+lFOakCnjA+Q=
+X-Google-Smtp-Source: AGHT+IHKhh5ttvcVkXx1Jjz8EBLUVPyKaDzcUwgeI6czkJaWIzlx4l4CsZNKslWB0xRhruQYfAaxWQ==
+X-Received: by 2002:a05:600c:4ed1:b0:426:6861:a1ab with SMTP id 5b1f17b1804b1-427ba73df6emr14641795e9.39.1721132857764;
+        Tue, 16 Jul 2024 05:27:37 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:f5ba:a94c:e43a:d197? ([2a01:e0a:982:cbb0:f5ba:a94c:e43a:d197])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427bb9988f6sm14072675e9.1.2024.07.16.05.27.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 16 Jul 2024 05:27:37 -0700 (PDT)
+Message-ID: <8b10fa58-4375-4738-9f7b-3299aeb00d36@linaro.org>
+Date: Tue, 16 Jul 2024 14:27:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v3 1/3] clk: qcom: dispcc-sm8650: Park RCG's clk source at
+ XO during disable
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240716-topic-sm8650-upstream-fix-dispcc-v3-0-5bfd56c899da@linaro.org>
+ <20240716-topic-sm8650-upstream-fix-dispcc-v3-1-5bfd56c899da@linaro.org>
+ <xzyphnxzkul77qrnxvxayzvschlwkhzun5jwom4pxeqsoxzbpj@k4o5cnitwc7z>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <xzyphnxzkul77qrnxvxayzvschlwkhzun5jwom4pxeqsoxzbpj@k4o5cnitwc7z>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue 16 Jul 2024 at 01:48, Jan Dakinevich <jan.dakinevich@salutedevices.com> wrote:
-
-> On 7/10/24 19:25, Jerome Brunet wrote:
->> To prepare the addition of the auxiliary device support, split
->> out the device probe from the probe of the platform device.
->> 
->> The device probe will be common to both the platform and auxiliary
->> driver.
->> 
->> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+On 16/07/2024 13:40, Dmitry Baryshkov wrote:
+> On Tue, Jul 16, 2024 at 11:05:21AM GMT, Neil Armstrong wrote:
+>> The RCG's clk src has to be parked at XO while disabling as per the
+>> HW recommendation, hence use clk_rcg2_shared_ops to achieve the same.
+>>
+>> It also changes dptx1_aux_clk_src to use the correct ops instead of
+>> clk_dp_ops.
+>>
+>> Fixes: 9e939f008338 ("clk: qcom: add the SM8650 Display Clock Controller driver")
+>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
 >> ---
->>  drivers/reset/reset-meson.c | 55 +++++++++++++++++++++++--------------
->>  1 file changed, 34 insertions(+), 21 deletions(-)
->> 
->> diff --git a/drivers/reset/reset-meson.c b/drivers/reset/reset-meson.c
->> index 59126c9f194a..fec55321b52b 100644
->> --- a/drivers/reset/reset-meson.c
->> +++ b/drivers/reset/reset-meson.c
->> @@ -87,6 +87,27 @@ static const struct reset_control_ops meson_reset_ops = {
->>  	.deassert	= meson_reset_deassert,
->>  };
->>  
->> +static int meson_reset_probe(struct device *dev, struct regmap *map,
->> +			     const struct meson_reset_param *param)
->> +{
->> +	unsigned int stride = regmap_get_reg_stride(map);
->> +	struct meson_reset *data;
->> +
->> +	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
->> +	if (!data)
->> +		return -ENOMEM;
->> +
->> +	data->param = param;
->> +	data->map = map;
->> +	data->rcdev.owner = dev->driver->owner;
->> +	data->rcdev.nr_resets = param->reg_count * BITS_PER_BYTE
->> +		* stride;
->> +	data->rcdev.ops = &meson_reset_ops;
->> +	data->rcdev.of_node = dev->of_node;
->
-> It will be good to add here something like this. Later it would help in
-> reset debugging.
->
-> data->rcdev.dev = dev;
+>>   drivers/clk/qcom/dispcc-sm8650.c | 6 +++---
+>>   1 file changed, 3 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/clk/qcom/dispcc-sm8650.c b/drivers/clk/qcom/dispcc-sm8650.c
+>> index c9d2751f5cb8..80fe25afccf7 100644
+>> --- a/drivers/clk/qcom/dispcc-sm8650.c
+>> +++ b/drivers/clk/qcom/dispcc-sm8650.c
+>> @@ -398,7 +398,7 @@ static struct clk_rcg2 disp_cc_mdss_dptx1_aux_clk_src = {
+>>   		.parent_data = disp_cc_parent_data_0,
+>>   		.num_parents = ARRAY_SIZE(disp_cc_parent_data_0),
+>>   		.flags = CLK_SET_RATE_PARENT,
+>> -		.ops = &clk_dp_ops,
+>> +		.ops = &clk_rcg2_ops,
+> 
+> Should this also be clk_rcg2_shared_ops ?
 
-That is not the purpose of this change.
-I'm merely re-organizing exiting code, not changing it.
+Nop, the only parent is tcxo
 
-Plus, if you refering to rcdev_name(), we already populate
-rcdev->of_node, so a name is provided.
+> 
+>>   	},
+>>   };
+>>   
+>> @@ -560,7 +560,7 @@ static struct clk_rcg2 disp_cc_mdss_esc0_clk_src = {
+>>   		.parent_data = disp_cc_parent_data_5,
+>>   		.num_parents = ARRAY_SIZE(disp_cc_parent_data_5),
+>>   		.flags = CLK_SET_RATE_PARENT,
+>> -		.ops = &clk_rcg2_ops,
+>> +		.ops = &clk_rcg2_shared_ops,
+>>   	},
+>>   };
+>>   
+>> @@ -575,7 +575,7 @@ static struct clk_rcg2 disp_cc_mdss_esc1_clk_src = {
+>>   		.parent_data = disp_cc_parent_data_5,
+>>   		.num_parents = ARRAY_SIZE(disp_cc_parent_data_5),
+>>   		.flags = CLK_SET_RATE_PARENT,
+>> -		.ops = &clk_rcg2_ops,
+>> +		.ops = &clk_rcg2_shared_ops,
+>>   	},
+>>   };
+>>   
+>>
+>> -- 
+>> 2.34.1
+>>
+> 
 
->
->> +
->> +	return devm_reset_controller_register(dev, &data->rcdev);
->> +}
->> +
->>  static const struct meson_reset_param meson8b_param = {
->>  	.reg_count	= 8,
->>  	.reset_offset	= 0x0,
->> @@ -125,46 +146,38 @@ static const struct regmap_config regmap_config = {
->>  	.reg_stride = 4,
->>  };
->>  
->> -static int meson_reset_probe(struct platform_device *pdev)
->> +static int meson_reset_pltf_probe(struct platform_device *pdev)
->>  {
->> +
->> +	const struct meson_reset_param *param;
->>  	struct device *dev = &pdev->dev;
->> -	struct meson_reset *data;
->> +	struct regmap *map;
->>  	void __iomem *base;
->>  
->> -	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
->> -	if (!data)
->> -		return -ENOMEM;
->> -
->>  	base = devm_platform_ioremap_resource(pdev, 0);
->>  	if (IS_ERR(base))
->>  		return PTR_ERR(base);
->>  
->> -	data->param = of_device_get_match_data(dev);
->> -	if (!data->param)
->> +	param = of_device_get_match_data(dev);
->> +	if (!param)
->>  		return -ENODEV;
->>  
->> -	data->map = devm_regmap_init_mmio(dev, base, &regmap_config);
->> -	if (IS_ERR(data->map))
->> -		return dev_err_probe(dev, PTR_ERR(data->map),
->> +	map = devm_regmap_init_mmio(dev, base, &regmap_config);
->> +	if (IS_ERR(map))
->> +		return dev_err_probe(dev, PTR_ERR(map),
->>  				     "can't init regmap mmio region\n");
->>  
->> -	data->rcdev.owner = THIS_MODULE;
->> -	data->rcdev.nr_resets = data->param->reg_count * BITS_PER_BYTE
->> -		* regmap_config.reg_stride;
->> -	data->rcdev.ops = &meson_reset_ops;
->> -	data->rcdev.of_node = dev->of_node;
->> -
->> -	return devm_reset_controller_register(dev, &data->rcdev);
->> +	return meson_reset_probe(dev, map, param);
->>  }
->>  
->> -static struct platform_driver meson_reset_driver = {
->> -	.probe	= meson_reset_probe,
->> +static struct platform_driver meson_reset_pltf_driver = {
->> +	.probe	= meson_reset_pltf_probe,
->>  	.driver = {
->>  		.name		= "meson_reset",
->>  		.of_match_table	= meson_reset_dt_ids,
->>  	},
->>  };
->> -module_platform_driver(meson_reset_driver);
->> +module_platform_driver(meson_reset_pltf_driver);
->>  
->>  MODULE_DESCRIPTION("Amlogic Meson Reset Controller driver");
->>  MODULE_AUTHOR("Neil Armstrong <narmstrong@baylibre.com>");
-
--- 
-Jerome
