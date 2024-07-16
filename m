@@ -1,104 +1,165 @@
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 417791DDCE
-	for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2024 21:24:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C13613D262;
+	Tue, 16 Jul 2024 22:28:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721165078; cv=none; b=Zw9epbEg2jY7BMLyQwwk/JprGhLifeHbdzEstvUIuu+GNUjTQe54slGkdUcDo/ZO7nxJXFiB1wgFefklD3Jgl+mohZKjXmgwUxCVZBMkAdWI106zGXxCB0DOiRRDDBlQoVC+UjOXzCcccwAjknvGN4C7XUD3QawTzPsLikV3r1E=
+	t=1721168888; cv=none; b=ajIVOJwFWDVTqlz4L0HBxz9dKq+upz6B4zteSgYqoOpc0T4ZH/XaGMQ4k7JAXGpIe3jAXzaPQRw7HDymw0D0MQL6uh6yDaKeCdxGYR42XjfFQJM1jjbOUJ8P18zmRKySvOGcPYRoEtg7Vdv1jw9qqeQn8dUivwmlq12ySTiyPCw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721165078; c=relaxed/simple;
-	bh=sPs4PNFGR4OdzkX2auFHc60O2CFGJjvXeNJujwKmTZ0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JiVs+LQt6sjAQ3aRFK8hugeWO9hAnFbcKSmSboMIrFEw4KmCWcMDQlgmP2XV04at63VanVamXcHTsnSeLc4GNx4lbYc5ePrLZ82ku0FR0QSAQEvD426pNAt3/wIc6U1QI2mp59K/BTEWk9iknQMHnBwSN/JNfhTf3WwUDvJb1VI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=biO6W0uk; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1721168888; c=relaxed/simple;
+	bh=NfPZkGC+r85TH2hak7B3uZ5xb2lxTRsz0Snd8QaZPZA=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=Qr/b1DfmA5errGWbnrYXEMM54AoCZQiQBF0jEFetK3lLGIMU1xvAdWhXOR73yY/CXJMq8sW2KJ8efwBILdA9+xz/UcLL8PvEf2OAvCRiyPycJH7WIWOy5GbIZj9Vo7zYmS1kuezi4iHdGNryZm+yGyzbaHGBDTNuJ8y/HPkXtVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hce1rIEZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="biO6W0uk"
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-65f9e25fffaso36389377b3.3
-        for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2024 14:24:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721165076; x=1721769876; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=gQRdC/2kvXyGkK2vcAJKjjyUUocgpd8dsZecLG2PFfY=;
-        b=biO6W0ukakZ4Qgh1P91F+E7cFAQgats/qTN1TuaQL58imdfpvCHvnXJlnUfRJFWAMO
-         l9zFQp+K4sEzQ4q3p3oUGbuDyS3H9QdsURJGdyHSYFOEH3I1ct1ucfEWLK9ZEAHK1vEo
-         1ZU4YfavXA86AdSB8n2el19KWPAZbecQAZpoDhopvIo6Xix8U0HB7Lbi0/RRP9gkJCvV
-         ZPSDThYlczU3HB7GMdTksmI415fLMY23fDmsqi97Wd/iRhGidmwzqDyMuVYFZ3S+W6eE
-         e3eCxsNeC+J/D324GvoSlc2m5A3x+V4YhfHR5O6ITedU/n+t/h5xoZ/DgZuh4R5zcmIJ
-         fwRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721165076; x=1721769876;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gQRdC/2kvXyGkK2vcAJKjjyUUocgpd8dsZecLG2PFfY=;
-        b=K2ACrgncbBSCJBXK2WahD4HRyXFfyriF0Wqd1SraX/ttB7osoFsn9KrUqcnRfwYauZ
-         Q1596by0MnmQYkxxj+Kw8fFVQDkmpi4ZNc6p+MViXQHRFTYA44CyPxDe40NqLChj4PkS
-         Irg2kSG9UKJl/nltafYCNhvjwg8IZt/8RT8DXE9x/pBNfHgEeLIWv1wkKL+VFkJGkrvU
-         YCnB5lE/z+0gMd2MdvsxTNuCMAWXFBlp8VMvvhNyqN3CgPE0bYq+4YZoLyT6/Xvrn6WX
-         aIZ9xC1/jpYPkueu0T6XdvhiXWhmIq/K54jLe9KRVWn9utc0ylPEAOMgGWYrdEsoAqQU
-         9Z1w==
-X-Forwarded-Encrypted: i=1; AJvYcCUh/68nMDQUVMLX3FDpVJK/VdoRf1yBg1F3NksZkEIdsgWF0sEuPgta1MDtO+VyZQf4jDQuIygx0WirWgdtULpaMrF1AqOdLQM1
-X-Gm-Message-State: AOJu0YzNX3ZvGrtpJlqe0F0ecjRhgxVOtx+0sb26y+hYU7Tdma0FyIsE
-	Zp4gzY32kuCd8yw8qvbeYhfp0tw0bzrfcCYiw8g5MTqVfrj00Nkv99Ly9O7NXbbNx/nPD1OXrqr
-	mGNNcGmMT3UEslPTpFCKshN+BIXpYDZ3z0r7vnQ==
-X-Google-Smtp-Source: AGHT+IHukAbIJAtIf+1bmFomAwMWZ4a7Sq2fAk/2Uja4FHdmLbwtMbr5cxth2mf7+/2iD5lynbk/3IwoC4vEU9YiHhk=
-X-Received: by 2002:a81:9e52:0:b0:65f:8209:3ede with SMTP id
- 00721157ae682-663811feeabmr36266767b3.44.1721165076195; Tue, 16 Jul 2024
- 14:24:36 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hce1rIEZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7C32C116B1;
+	Tue, 16 Jul 2024 22:28:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721168887;
+	bh=NfPZkGC+r85TH2hak7B3uZ5xb2lxTRsz0Snd8QaZPZA=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=Hce1rIEZ0Thyin4pnSSKLVdjqAvQt5o4Bi8Wljh+Q4reiza4WyXEcCRTWY+Z3l6iF
+	 yziZSPyhD3Y05kE8JY+eHXFL3qoH4h8/TUFDFWa+BkQe5w41h3WMkO7R5Ji55Hd4gn
+	 D1eXAIgPvKD4LltPe4u+48sJnfTki9tQqM1Pe3U/e5KEHLp++QOpzlpzm0RNg1p2cI
+	 X21mE4Px7LjIdWjLAkbqg97IMG4ri907ymCqjEjQLG60JAj94NbqyiWJ98r3kGhV9U
+	 v0L0F7+GfRqT5g+WKvPkjPxgtq+egE6G/63jwYwCFbhHOKJSKYrYYkWiRWRlVHB9ZZ
+	 0YT9Jt4a4HwEA==
+Message-ID: <2abcd440664067d95b1ac0e765ad55a3.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240717-dispcc-sm8550-fixes-v1-0-efb4d927dc9a@linaro.org> <20240717-dispcc-sm8550-fixes-v1-7-efb4d927dc9a@linaro.org>
-In-Reply-To: <20240717-dispcc-sm8550-fixes-v1-7-efb4d927dc9a@linaro.org>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Wed, 17 Jul 2024 00:24:24 +0300
-Message-ID: <CAA8EJpq69nuvQc9FkoBCZ-o1avH4kU2_msNNRZaTD+YASDkErg@mail.gmail.com>
-Subject: Re: [PATCH 7/7] dt-bindings: clock: qcom,sm8650-dispcc: replace with symlink
-To: Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240716103025.1198495-4-claudiu.beznea.uj@bp.renesas.com>
+References: <20240716103025.1198495-1-claudiu.beznea.uj@bp.renesas.com> <20240716103025.1198495-4-claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH v2 03/11] clk: renesas: clk-vbattb: Add VBATTB clock driver
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, claudiu.beznea@tuxon.dev, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+To: Claudiu <claudiu.beznea@tuxon.dev>, alexandre.belloni@bootlin.com, conor+dt@kernel.org, geert+renesas@glider.be, krzk+dt@kernel.org, lee@kernel.org, magnus.damm@gmail.com, mturquette@baylibre.com, p.zabel@pengutronix.de, robh@kernel.org
+Date: Tue, 16 Jul 2024 15:28:05 -0700
+User-Agent: alot/0.10
 
-On Wed, 17 Jul 2024 at 00:13, Dmitry Baryshkov
-<dmitry.baryshkov@linaro.org> wrote:
->
-> The display clock controller indices for SM8650 and SM8550 are
-> completely equal. Replace the header file for qcom,sm8650-dispcc with
-> the symlink to the qcom,sm8550-dispcc header file.
->
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->  drivers/clk/qcom/dispcc-sm8550.c               |   2 +-
->  include/dt-bindings/clock/qcom,sm8650-dispcc.h | 103 +------------------------
->  2 files changed, 2 insertions(+), 103 deletions(-)
->
-> diff --git a/drivers/clk/qcom/dispcc-sm8550.c b/drivers/clk/qcom/dispcc-sm8550.c
-> index 78e11eade2ea..9ffcd9eb9283 100644
-> --- a/drivers/clk/qcom/dispcc-sm8550.c
-> +++ b/drivers/clk/qcom/dispcc-sm8550.c
-> @@ -1776,7 +1776,7 @@ static int disp_cc_sm8550_probe(struct platform_device *pdev)
->         }
->
->         if (of_device_is_compatible(pdev->dev.of_node, "qcom,sm8650-dispcc")) {
-> -               lucid_ole_vco.max_freq = 2100000000;
-> +               lucid_ole_vco[0].max_freq = 2100000000;
->                 disp_cc_mdss_mdp_clk_src.freq_tbl = ftbl_disp_cc_mdss_mdp_clk_src_sm8650;
->         }
->
+Quoting Claudiu (2024-07-16 03:30:17)
+> diff --git a/drivers/clk/renesas/clk-vbattb.c b/drivers/clk/renesas/clk-v=
+battb.c
+> new file mode 100644
+> index 000000000000..8effe141fc0b
+> --- /dev/null
+> +++ b/drivers/clk/renesas/clk-vbattb.c
+> @@ -0,0 +1,212 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * VBATTB clock driver
+> + *
+> + * Copyright (C) 2024 Renesas Electronics Corp.
+> + */
+> +
+> +#include <linux/cleanup.h>
+> +#include <linux/clk.h>
 
-Of course this chunk should have been a part of the previous patch.
-I'll fix it for v2.
+Prefer clk providers to not be clk consumers.
 
--- 
-With best wishes
-Dmitry
+> +#include <linux/clk-provider.h>
+> +#include <linux/device.h>
+> +#include <linux/io.h>
+> +#include <linux/of.h>
+> +#include <linux/of_platform.h>
+
+Is of_platform.h used?
+
+Include mod_devicetable.h for of_device_id.
+
+> +#include <linux/platform_device.h>
+> +
+> +#define VBATTB_BKSCCR                  0x0
+> +#define VBATTB_BKSCCR_SOSEL            BIT(6)
+> +#define VBATTB_SOSCCR2                 0x8
+> +#define VBATTB_SOSCCR2_SOSTP2          BIT(0)
+[..]
+> +
+> +static int vbattb_clk_probe(struct platform_device *pdev)
+> +{
+> +       struct device_node *np =3D pdev->dev.of_node;
+> +       struct clk_parent_data parent_data =3D {};
+> +       struct device *dev =3D &pdev->dev;
+> +       struct clk_init_data init =3D {};
+> +       struct vbattb_clk *vbclk;
+> +       u32 load_capacitance;
+> +       struct clk_hw *hw;
+> +       int ret, bypass;
+> +
+> +       vbclk =3D devm_kzalloc(dev, sizeof(*vbclk), GFP_KERNEL);
+> +       if (!vbclk)
+> +               return -ENOMEM;
+> +
+> +       vbclk->base =3D devm_platform_ioremap_resource(pdev, 0);
+> +       if (IS_ERR(vbclk->base))
+> +               return PTR_ERR(vbclk->base);
+> +
+> +       bypass =3D vbattb_clk_need_bypass(dev);
+
+This is a tri-state bool :(
+
+> +       if (bypass < 0) {
+> +               return bypass;
+> +       } else if (bypass) {
+> +               parent_data.fw_name =3D "clkin";
+> +               bypass =3D VBATTB_BKSCCR_SOSEL;
+
+And now it is a mask value.
+
+> +       } else {
+> +               parent_data.fw_name =3D "xin";
+> +       }
+> +
+> +       ret =3D of_property_read_u32(np, "renesas,vbattb-load-nanofarads"=
+, &load_capacitance);
+> +       if (ret)
+> +               return ret;
+> +
+> +       ret =3D vbattb_clk_validate_load_capacitance(vbclk, load_capacita=
+nce);
+> +       if (ret)
+> +               return ret;
+> +
+> +       vbattb_clk_update_bits(vbclk->base, VBATTB_BKSCCR, VBATTB_BKSCCR_=
+SOSEL, bypass);
+
+Please don't overload 'bypass'. Use two variables or a conditional.
+
+I also wonder if this is really a mux, and either assigned-clock-parents
+should be used, or the clk_ops should have an init routine that looks at
+which parent is present by determining the index and then use that to
+set the mux. The framework can take care of failing to set the other
+parent when it isn't present.
+
+> +
+> +       spin_lock_init(&vbclk->lock);
+> +
+> +       init.name =3D "vbattclk";
+> +       init.ops =3D &vbattb_clk_ops;
+> +       init.parent_data =3D &parent_data;
+> +       init.num_parents =3D 1;
+> +       init.flags =3D 0;
+> +
+> +       vbclk->hw.init =3D &init;
+> +       hw =3D &vbclk->hw;
+> +
+> +       ret =3D devm_clk_hw_register(dev, hw);
+> +       if (ret)
+> +               return ret;
+> +
+> +       return of_clk_add_hw_provider(np, of_clk_hw_simple_get, hw);
+> +}
+> +
+> +static const struct of_device_id vbattb_clk_match[] =3D {
+> +       { .compatible =3D "renesas,r9a08g045-vbattb-clk" },
+> +       { /* sentinel */ }
+> +};
+
+Any MODULE_DEVICE_TABLE?
