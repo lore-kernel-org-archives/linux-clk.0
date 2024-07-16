@@ -1,60 +1,61 @@
-Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45C0776048
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2159076410
 	for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2024 21:13:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721164416; cv=none; b=KCDajHEIgzfJ0ebyjHH0FvC4PG3lVLGDvrJjkmTW0C/bVvxb4/zIK7MkZoAKroj8oPVZLyABuqB3ZpcBsbTiq4v42FSibgzh2Y8/S68MQTm2SDZLaImkFWtiktI6smzx3WvmlZQpNMqjJJkOp4pupQwoDYwiwLzyKblv79H6eb0=
+	t=1721164416; cv=none; b=TPbD8iiMzY/z8S/OQZWES5XXGoA20d3HhY6QTQ3snhcgWyJ7MAW+42Sv9kCYYuAYi3oLzySOctI31bFhfZrkaATdaF1cK2yEctuo6mJozX5m7/3owins0Hq7I/ktjRyb9Fef8sbMCWQc+LdFIHECf2MQOaPmBHYlHtZJtb4+lIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1721164416; c=relaxed/simple;
-	bh=LIN0yx+PW9SCk4wE5e0SuoaxcKfYVV9hcVWnhLF3lTE=;
+	bh=a2go+jGwlSDiQOgfMpQCSOKm3iOn59OWJW1jPgAWHmM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bZFAykVZr3dwwxlP/DSDY5++3T++rubgarW0UHtNPqNY9IPrDwnu4gixTWmI0TDpZR3rP1wR7GDcHEL4vKcy6a16y+c1+JHRoIaTY84RCrldkeRJLm1MxRKmXc+EeqpHQW3XW7EArC/5mDOLF1f4qlyoUfynTwDQiVIA+ZFDEuc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Wlp63vl6; arc=none smtp.client-ip=209.85.208.172
+	 In-Reply-To:To:Cc; b=cnz3my0GT0TFM2ndYXKUbIyR3RmmdPvzY1uE90MqAP6uoeDCKSUfcpIrhWuDWKfthpyD30vrEu0iNwNWvhpJGJJWqwEDcXQDaaJJPivM8wf5BUuVNdkvRXUg72TsU1y8D+kFcIjflFmBjYvknOTowmY/xfDpOiqdps5c+2Xnw38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=fVtV7x52; arc=none smtp.client-ip=209.85.208.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Wlp63vl6"
-Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2eea7e2b073so82154001fa.0
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="fVtV7x52"
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ee817dac89so1572211fa.1
         for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2024 14:13:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721164412; x=1721769212; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1721164413; x=1721769213; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=3amLLPBB6rKO1BoKCjmuE/VH2YFL0028y4kpPRjqvaY=;
-        b=Wlp63vl6qNpZWrufhQckVVLerCrqRiBVHdObyQYnhx9yYnItO100p40xTxQrFA26WW
-         QCw0RBJBnxY7r+C68g/ZZsSakZrmWDbI4X1wmeH5hr6ulJ1XOojnUwaYKBu1DBuLhehd
-         WG5ZluzNc0Se2FkeEGq+ygboSb0oB/d+46ggIZ1RTzpOFHiJ8dnCNLrvt6gs8b++uO3y
-         Y5wDnG3GAUXBuUtPwldep6dvxv1hunjOmwJuBr0x7sPmM+xdUR0N/JEZ1gBgk9SPNOBT
-         kzT73sWj+/IYNgSCL+P9pKXqFJi3oHFwm9Ru/JrHfZ6JEV9wwRiIDbSQN7DBI/VvNDhp
-         NM6A==
+        bh=mvoN5XWXNiKajtlpi1yXe7yyLXYYY7zXOAtfKaYfrlI=;
+        b=fVtV7x52GygcFpa3xAyNiVlKaGxmrYMU01PwcIDKfGRWBb3W0ZbgA4If3JTt0VHj/5
+         G+zF873J7Ds/tPj386FWQrNw1BytpzNFG52qEExogTochU8F0oPrCrOiq/AnqrTeEaj5
+         V9LQPNfzCXQYulCSPuJJz8doQTQ5Mr76z30DdRypNdMkQuHwTz4yiiENchvP5rJabYLl
+         r5QJeUB6iqa6PKwmsjKSBv6j2eiCrWcgNXyg86ayuVlFBQGjsSY9H/udPovbnv9rY0s/
+         EUuw3+EMV88wYyVkp7pFcpUnGiuxqD23LRR2NkI/Lo1t2ysZWkco6ZMF8tLKMRaHXTEX
+         Lujw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721164412; x=1721769212;
+        d=1e100.net; s=20230601; t=1721164413; x=1721769213;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3amLLPBB6rKO1BoKCjmuE/VH2YFL0028y4kpPRjqvaY=;
-        b=s/cS+lA+3BuCTaEVjEE1mrlY+4jov+IQO1drAfJhUcEoZ+ToYGKm4lgFRhZ5LN0axN
-         4mD5PeyKqxfUwfRj/TDl3bOmSI3TuZ8dyf8gm074Qcvri5BcmoSdTcJoU9pKisO7l8zl
-         bpPAa/69UmhhQzwM5+d3sDG5BCC01txnrr6eGzXdxTLozcVvBS/iAJun7zHDYm04mtFM
-         Xn0sigCF210Fn51ne8J+HO6vQJm0t6kHlWvSZR954dkP7Ic/+4EQ3ewRRN4zuiOd3Hm+
-         jlyyUELx2j7kIS3sIrkfS8JS67g9jyVGs9Renmt8nA+Ta1/THGqKmujPgIxbF5NCWQub
-         J/jw==
-X-Forwarded-Encrypted: i=1; AJvYcCUqBcVr/ZOggZPFaNBzq72uUm6+OcBTmj0fRY6Sqcra6lk6vk/HOQ+CdvB6IT77CHn7EJbVgM0TSpSTlZQHiGF6Tln5EzZtBwZc
-X-Gm-Message-State: AOJu0Yyp5j+QgaAfIdbqPx0NSOTm38/3gOYch36nWzyoAnUecfD/ltZ2
-	V7ZlyLB2zJe7pKOx8ZDV01FBDIddUDnWoaJIJ+Pdh8XCY/aDmaqpRnGkbZLAusM=
-X-Google-Smtp-Source: AGHT+IFr++J36/J6sBhIbX++Naf8qsHeDHwFrp0YC6s+rO9AsZf+TWlQh+VWGZF9+u9pn0B1KCQVzA==
-X-Received: by 2002:a05:651c:b24:b0:2ee:8817:422b with SMTP id 38308e7fff4ca-2eef418e0a4mr26178011fa.19.1721164412476;
-        Tue, 16 Jul 2024 14:13:32 -0700 (PDT)
+        bh=mvoN5XWXNiKajtlpi1yXe7yyLXYYY7zXOAtfKaYfrlI=;
+        b=YI8CbBeswP73Tl4aAomcO4QiwNOpz1DEP9YbTVVCTMOP+JLsU59xIBuFOyiVCEuxkm
+         yZzPJmCyLhgPoCZZXCdqKeKTslhjzFx1Kq8W6kAbF81tOd6r98A7qd99tjje2/0vzZh6
+         G4SowQlhff4fU4vBNJgHOaO41b6K8UvW5HwgrqPiMO1POlQBlxo/4ONklOqIQFu30T/X
+         YOCvrCyB2S35W70WZjNmUgIK3Wn5F//wD7aLNIyDXQ9W+66YAFq8K6c9sOeGkndMPbnt
+         +HXLJNBK5zck0oggqWwCm6UrcGytrIbTKH4oW06lLMn/N7NNnksUBs920j+fAuBYwlqv
+         i85Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWU6YLCZe11Do1FZhVlHom7/A4L3iELbdaLzV9mc25NS3cOvNRShLtqJsBt2GcPKsLaO6ol/lFfl+R01Vw33yVo8WDbWVZsOeNq
+X-Gm-Message-State: AOJu0YyK9YtaU4xacSqp10VFZlYNvnuLLojeNbIrqsJC70IFTes+FzDj
+	0i0mUIApXm+3arGu5gG89aSeF4qFOAydLB1LhbrocFAOqP2kmBb76dbaZbXfCYU=
+X-Google-Smtp-Source: AGHT+IELKvEuuFfv3x0tkkA2AkRpTpW53crvkZoxzdB2JA0Fy64RdcgxWzl7Wd2EbEDxHNoHEeG8Gw==
+X-Received: by 2002:a2e:6d12:0:b0:2ee:8a4b:3dd7 with SMTP id 38308e7fff4ca-2eef56e3cc8mr9882211fa.15.1721164413173;
+        Tue, 16 Jul 2024 14:13:33 -0700 (PDT)
 Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2eee179e723sm12433871fa.24.2024.07.16.14.13.31
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2eee179e723sm12433871fa.24.2024.07.16.14.13.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jul 2024 14:13:31 -0700 (PDT)
+        Tue, 16 Jul 2024 14:13:32 -0700 (PDT)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Wed, 17 Jul 2024 00:13:28 +0300
-Subject: [PATCH 1/7] clk: qcom: dispcc-sm8550: fix several supposed typos
+Date: Wed, 17 Jul 2024 00:13:29 +0300
+Subject: [PATCH 2/7] clk: qcom: dispcc-sm8550: use rcg2_ops for
+ mdss_dptx1_aux_clk_src
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -63,7 +64,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240717-dispcc-sm8550-fixes-v1-1-efb4d927dc9a@linaro.org>
+Message-Id: <20240717-dispcc-sm8550-fixes-v1-2-efb4d927dc9a@linaro.org>
 References: <20240717-dispcc-sm8550-fixes-v1-0-efb4d927dc9a@linaro.org>
 In-Reply-To: <20240717-dispcc-sm8550-fixes-v1-0-efb4d927dc9a@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -75,64 +76,41 @@ To: Bjorn Andersson <andersson@kernel.org>,
 Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
  linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
 X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1826;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=830;
  i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=LIN0yx+PW9SCk4wE5e0SuoaxcKfYVV9hcVWnhLF3lTE=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmluJ5pj8fx3Ug2+hP1eGZgmPf09TEgv3Bqj7HX
- +rU2qGhOVqJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZpbieQAKCRCLPIo+Aiko
- 1ZU0B/9uPspWpALzLLaf8LY4Q8GB2mBWktf/N8WU7H/3RSj6y0561NiB4FALpS4SOaHXCDY3nRC
- 9wjXkkjjgyOFZHdf/C48f2uLBBdTcsoT+jzma6jdq7DIkJi460ocHqFKo8YBIdcurKOyiahyv60
- kMxZHANk7vVaHsshqpJzbyXAxnM67XDusOkLT1cHAvtQ71RwTgyCJX+MyPBFULGFIdfKhxQT40n
- Mnqj76hswC1rmGT5/EyligfsBq4KjyHVjShs45bMLcGi/pudphQzt30nSGPxNc2QUbwARCKyn4g
- c5slzJRCTKB9b4Bu764FUQtMRYrpdgUkytmnW911r3Lf7T6E
+ bh=a2go+jGwlSDiQOgfMpQCSOKm3iOn59OWJW1jPgAWHmM=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmluJ5OAQE3OdhmzCYh6Z3HVU41rDsaaB0h9tfN
+ c5BjaM4Tc2JATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZpbieQAKCRCLPIo+Aiko
+ 1dHCCACvQ6XPrkbMjT8SZ6FIfOv9jPhBSRpmkAVgD8fQBBbEOIPRl6JvS1poSDXtaaxYAzWcDAA
+ jgl6TR4f5a08Eo9+JtZnmJqSy2XdA/NkD7MEHzB7TdVrg42F5u/u+jh3kaFL/CO1Wm/NwE7fgHU
+ 16HxlcnRVTU2SlIDKchliV6pPl65v6dy060vh6gyKhfeZbD4bqcVV9dZl3NNI6efUA1Q1fjcbRl
+ bmVycuRv60JgbMYcqKd0y1iq0dHIdHgIP4N4sbKfUDtcf0VeqIrlBAIHZwJ45TIwv6NGS25GnmL
+ PiG5b9H6z2x4qJPRILVJGBh9hNHqKAKs5Zff1Si8ssoBglGv
 X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-Fix seveal odd-looking places in SM8550's dispcc driver:
-
-- duplicate entries in disp_cc_parent_map_4 and disp_cc_parent_map_5
-- using &disp_cc_mdss_dptx0_link_div_clk_src as a source for
-  disp_cc_mdss_dptx1_usb_router_link_intf_clk
-
-The SM8650 driver has been used as a reference.
+clk_dp_ops should only be used for DisplayPort pixel clocks. Use
+clk_rcg2_ops for disp_cc_mdss_dptx1_aux_clk_src.
 
 Fixes: 90114ca11476 ("clk: qcom: add SM8550 DISPCC driver")
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/clk/qcom/dispcc-sm8550.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/clk/qcom/dispcc-sm8550.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/clk/qcom/dispcc-sm8550.c b/drivers/clk/qcom/dispcc-sm8550.c
-index 31ae46f180a5..09e4b1e40e20 100644
+index 09e4b1e40e20..8ceeb17bbb37 100644
 --- a/drivers/clk/qcom/dispcc-sm8550.c
 +++ b/drivers/clk/qcom/dispcc-sm8550.c
-@@ -196,7 +196,7 @@ static const struct clk_parent_data disp_cc_parent_data_3[] = {
- static const struct parent_map disp_cc_parent_map_4[] = {
- 	{ P_BI_TCXO, 0 },
- 	{ P_DP0_PHY_PLL_LINK_CLK, 1 },
--	{ P_DP1_PHY_PLL_VCO_DIV_CLK, 2 },
-+	{ P_DP0_PHY_PLL_VCO_DIV_CLK, 2 },
- 	{ P_DP3_PHY_PLL_VCO_DIV_CLK, 3 },
- 	{ P_DP1_PHY_PLL_VCO_DIV_CLK, 4 },
- 	{ P_DP2_PHY_PLL_VCO_DIV_CLK, 6 },
-@@ -213,7 +213,7 @@ static const struct clk_parent_data disp_cc_parent_data_4[] = {
- 
- static const struct parent_map disp_cc_parent_map_5[] = {
- 	{ P_BI_TCXO, 0 },
--	{ P_DSI0_PHY_PLL_OUT_BYTECLK, 4 },
-+	{ P_DSI0_PHY_PLL_OUT_BYTECLK, 2 },
- 	{ P_DSI1_PHY_PLL_OUT_BYTECLK, 4 },
+@@ -400,7 +400,7 @@ static struct clk_rcg2 disp_cc_mdss_dptx1_aux_clk_src = {
+ 		.parent_data = disp_cc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(disp_cc_parent_data_0),
+ 		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_dp_ops,
++		.ops = &clk_rcg2_ops,
+ 	},
  };
  
-@@ -1146,7 +1146,7 @@ static struct clk_branch disp_cc_mdss_dptx1_usb_router_link_intf_clk = {
- 		.hw.init = &(struct clk_init_data) {
- 			.name = "disp_cc_mdss_dptx1_usb_router_link_intf_clk",
- 			.parent_hws = (const struct clk_hw*[]) {
--				&disp_cc_mdss_dptx0_link_div_clk_src.clkr.hw,
-+				&disp_cc_mdss_dptx1_link_div_clk_src.clkr.hw,
- 			},
- 			.num_parents = 1,
- 			.flags = CLK_SET_RATE_PARENT,
 
 -- 
 2.39.2
