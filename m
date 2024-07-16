@@ -1,129 +1,183 @@
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7013196D8F
-	for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2024 09:05:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28B0715EA6;
+	Tue, 16 Jul 2024 09:49:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721120735; cv=none; b=MqNqbBQsEp5L4slXGnOMHNDZ61p8sJV7PEu+ZHeBbpAIaQcfxzGPoWilWMz4/dt/ce6SlZldHmjjiRgYlw8eU6ITVTRTydSVRsiKuEZOucrjDtz/sKx6kkmwbW8sAy7jqlu1JTrw85Po1X1xas7isdJ3tBzpRADGiBsvi2Ne6xc=
+	t=1721123349; cv=none; b=TDMeeOtQFKGy3K+TWY4R2XtpJkK9x9M/yVEhY269Tv17tm4jRm3XcedpRqeJnf9tN4JKLYbC16PX+etBT7Rrt8pP6z4nzsv0S9cKfeE+8F/0z90/N3CsqaVwM+UGHWJGopDofnkSvPQ2RB00zZWeAzVj9dg55SWRXjKOOLcYz+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721120735; c=relaxed/simple;
-	bh=MZMZPoolHX3qMdGwUMz1yB9aEjsIJY7Yl7a/GHyQBoE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=YFbtSr+1R4iW8jhG7urPUihxWkD4Q9qzV19MYX0if1LhdxPPMHkzjuKB5gwGlF1dkGlJ3d+x6v0Mc9Nr/jYqHusfT1DYDSzZ1wJKaBZblVnsDbOVZHQon5uiHd4ptjxwaoK6Zlcru57Io3XuO9WgATUrMFbWglTYiS60Ha3ABEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yBiAhxsI; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yBiAhxsI"
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2eede876fcbso31932271fa.2
-        for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2024 02:05:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721120732; x=1721725532; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Us3Hv664jfEqjZ3ciHUK1driKOnsZFNkqmoGNoj/7B0=;
-        b=yBiAhxsINP9aXEJ/C+4zd6bfet8bPoUQb0NSxsfJDJ27t3EDFoV6Xz8a7xTtelqCJr
-         97tUu4LDdKWn5tuBSMjvAB7wqIP1J+aqofx3sY3uvSrfNVFo0ys5wvSeM3YIIjmlcAH0
-         /tlCFPxSdmUA3VHCatztv0VD7iLsY6qpYNFHbeSUo7Ad2UhbzWWczdEMWF1yuWJVBXDb
-         0vcvFSpAkrGiG7QDEHLRDCg0Eul83eQb/1Tup4h1/Jr0FaNZRNW+Kx0avNMOI+IQXJdX
-         wljai69B+nWeG/JSyx8fLsDgl8xVNZ2SVZcg+ar1/DxjD//GbqDTBxIbQa3S8ctsLRS5
-         0zMQ==
+	s=arc-20240116; t=1721123349; c=relaxed/simple;
+	bh=8UvQU7I9knuWhkpzd9TO9Fs/k8V16zg/peOwYTNUXUo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QgKtUNrQkAIttaPf4CLx9xeMyBzEp3hDIy+Re/5bhz3wCnaMozLSB9j5z5blrCaVutbkryl6V967eQIYMXPy0n6VwrhzNePIaKVQtZOjz/7wA31OelixlrAq9gAyJB48IFlimke2+RKqUY1Ersnq9Tnmhc9sy4hzgQyNmpWGR7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e057bdc936fso5240665276.1;
+        Tue, 16 Jul 2024 02:49:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721120732; x=1721725532;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1721123345; x=1721728145;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Us3Hv664jfEqjZ3ciHUK1driKOnsZFNkqmoGNoj/7B0=;
-        b=md623EPbaFBlUBqCSFSesaKhOI4uwRNG4JbZGYMK7ujcfzd2KmwFIX8swXujYalkd2
-         8PNK+O/qCauUCr4KX1KwwE4oJ0yK/MHyVyAa7fKnTllwzS8Jp5dECU4UWLrmVSvDLrMQ
-         /d6ey7DJWdzfQ7sfbwWBVL7Ns9rhonZwQQAiUUis5hMCFHeGv+rUaM1DXYY/lM8ioYfG
-         7fC2+gEwOZOdt3U39MD6R2mVRGYYaSM2Gw406nwCVRlLCvwIPSs55lvT68HyYgGhpwVS
-         M0JAuyjieyYBaaVSgk0ZVkBRjYnSLnhMVZv7yEj0ZIo0enwiYkpQ7GLdlTD+DzkZok7y
-         Cxvg==
-X-Forwarded-Encrypted: i=1; AJvYcCWnirkWzwgrx7TE/q84YwQpclyVShXLDyxfqKD6hINVRTu9+shYJ9i/SJfP2zEej1IFmYUtM00l+PU5bjopHjvPKWSEqW3O8VH+
-X-Gm-Message-State: AOJu0YzBA4N45+MiBazi5Ytx4p1mmowh+/9sdWT4Kcy5voNCuSVT0oZt
-	/NPDh81buH6ivWNGzC+2DZcza1NfoMrTMCceMYK7aaaA9ekhC+aeWaEhvbj2K/8=
-X-Google-Smtp-Source: AGHT+IGEPnIV2C4Xr3faXysx0L8tpOiMUBCIIbqgWwZSCkQ98IJiCgcs0GH9suvRSaEHxRG/LIYk+g==
-X-Received: by 2002:a2e:a365:0:b0:2ee:7bcd:a52 with SMTP id 38308e7fff4ca-2eef41ea33fmr10001781fa.46.1721120731269;
-        Tue, 16 Jul 2024 02:05:31 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4279f25a962sm148687875e9.12.2024.07.16.02.05.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jul 2024 02:05:30 -0700 (PDT)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Date: Tue, 16 Jul 2024 11:05:23 +0200
-Subject: [PATCH v3 3/3] clk: qcom: dispcc-sm8650: Update the GDSC flags
+        bh=pRQTvYVjx0Y6w3qpoyzLPKWPbAyGp8ArajcCwsaEB18=;
+        b=vvxaKZ692zESgqP/WvRtkSb4pea3vkbR134MeYOFaxvD1pHKdE5d0n1zBuK1wUFk1d
+         SOEeIyvUfC1l5MdMOA7h4C6jau9yxt0Tw2zpLDMxh8TytP3FHGVvfGQsAdExIvt6dZic
+         9SNHiBjzQc3LdWm8ME2tVL7FeU8/L9fE9gBpmQH0nYlOqBe0TC1/Oslk77CUvO1zHY3E
+         OliidOAORXzeHiHD4HBCy8S7n9h0eefMj8c4CsXTZtQf1tCTuWaSAzLqvrUkOmhidCon
+         aKr8q25hL0eCw4eWjMD+ytKIsoGQBUN/e6pt5nFXzfe+yzFtFOy3t7Ea2tFk5LTRMWqZ
+         pIcg==
+X-Forwarded-Encrypted: i=1; AJvYcCXd7wVgKxW2I36bxri0IaAadBU16HAjtZcV3Exeunj4vPQwkvueCnDZ3q7UgWi7jmp2AY0bYi3m2XU22hHXeKIXd4IAAfSFZETH3kAQ6/jV+7wLNhbenaABxwe5Ha0jVW2+21jaE/v0QspZJTwbuZMRH4TcIOv/WeP+G5KUNHf8Hi++YUjUz8rgBAS43BVTdkIQTAQYXLZGtS0UW2nG173D+UB4sGhH9VqOwoW/O2zcnSNdBrbYf3orO14z2WY04Q==
+X-Gm-Message-State: AOJu0Yz9bUvCziP77YdPGk0nJ6V6DqXRwO2Iihjb3r8cTbsgUm2CKiOM
+	Ol7/BE4uPOYJNi/ONlku8LDGTf9KQMf/mYm1CTKqYwnRRfy+0eefXEWIYgBM
+X-Google-Smtp-Source: AGHT+IHDOwQCXxlWls2E2WxUggo4e7W62NofTFzO/4waHMBDxD1Zf7wxldMc/f+Fl559sgNJpfnelg==
+X-Received: by 2002:a25:84c6:0:b0:dff:4a3:2df4 with SMTP id 3f1490d57ef6-e05d56e718dmr1732478276.31.1721123344902;
+        Tue, 16 Jul 2024 02:49:04 -0700 (PDT)
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com. [209.85.219.177])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e05a4695bc9sm1175809276.36.2024.07.16.02.49.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 16 Jul 2024 02:49:04 -0700 (PDT)
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e057bdc936fso5240607276.1;
+        Tue, 16 Jul 2024 02:49:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXgDyR8h2fuF4Bem3aMKDcoht3tPwUfIDktipVKZT16ilBXlxTqMOBwzJ/pEV6KpHQKrfz21fzGuM9fLLUPt69g2xJpOTkw/chjkTRGOs25MgFH+EL/3R6F0SDV7oTq8IYxBAUi0dim5ICHZy+YXoyFDXMfKTGDdxXVyX5KGw2nXDLVSyQBtZNfovbmdUc4Idw7+lktHg2UcSel+VLB0s5DZTDv6XsJPlStgej5l6zLyBdESnqSGI2agW5PSX+PLw==
+X-Received: by 2002:a0d:de04:0:b0:63b:f8cb:9281 with SMTP id
+ 00721157ae682-663817d8a34mr15909167b3.41.1721123342440; Tue, 16 Jul 2024
+ 02:49:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240716-topic-sm8650-upstream-fix-dispcc-v3-3-5bfd56c899da@linaro.org>
-References: <20240716-topic-sm8650-upstream-fix-dispcc-v3-0-5bfd56c899da@linaro.org>
-In-Reply-To: <20240716-topic-sm8650-upstream-fix-dispcc-v3-0-5bfd56c899da@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
- Taniya Das <quic_tdas@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1187;
- i=neil.armstrong@linaro.org; h=from:subject:message-id;
- bh=MZMZPoolHX3qMdGwUMz1yB9aEjsIJY7Yl7a/GHyQBoE=;
- b=owEBbQKS/ZANAwAKAXfc29rIyEnRAcsmYgBmljfXaHYyFKQV+fSSyqGNqBRsHNmgNpSIXSNX35On
- 5OzrfYmJAjMEAAEKAB0WIQQ9U8YmyFYF/h30LIt33NvayMhJ0QUCZpY31wAKCRB33NvayMhJ0WmMD/
- 4wsWFo4a6vme47ZbsTis/pj3iRJEsYHc/sZZYffEZfC124nALG4AiQDoMbQgkwWEKHWsgYH17BkUbS
- t4ukQ2uxKDDcYN9sjMzSduAik6nCX++Bz3TuMpz9NI8nlc/3OEz7WEnuWCyb8R9k1ApevLT0I7Nam1
- 3WEao2gCMCRlfW7Svnjl1/mRuYPZ8RfleHCtsx8QeyiCR36TDKsYqOnA5yIpw6MwNySrFz3SS/BchQ
- mF8dzQCA+E5S1eGk4XiM8O0i+eFASdKXg3CVoL8hfh0DX+K5IsEGFcPuSOL3s1MYBYF4h59OMnOpAB
- Evu0u5IzS00BCXiap4qoF73hPssJ7Z1fKF3oHuVa41VtvAqa9KHGdyqlwqQYYZrH+Vb9Jv6/BH08V3
- G7n52hXf4/sJ9pnyIwzPO72z4iMICh6APc8hTaKfiSbibjoG0KCpQPz59vIJmejqDNgu4fY3/Ci3Zr
- nRQs/sMPc+25q6aT/0BBl1SgwZRiiIA0zFNhDQDeTt832sdcfmT1OXUT7sI7JS13/hRwvsh5Ya5TWR
- qTZbj9XE/Ov+J0oeQ0KfbYcnAOeDR4jFmLDw2MXGaBjbVPZK/TSQpyvBpvAk4QxNQxNvwXH+eyK4Pv
- EW1k/I3tW9yWagP4tD1x9kIawfIV2y+PU7L1vhEg/qnHN8l3TDkUxEVVaK6A==
-X-Developer-Key: i=neil.armstrong@linaro.org; a=openpgp;
- fpr=89EC3D058446217450F22848169AB7B1A4CFF8AE
+References: <20240710201246.1802189-1-sboyd@kernel.org> <20240710201246.1802189-2-sboyd@kernel.org>
+In-Reply-To: <20240710201246.1802189-2-sboyd@kernel.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Tue, 16 Jul 2024 11:48:49 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdV56nezM9cj1bVo4+gqi0OPvKjktu7i4Ov9ZKeyNkoiOg@mail.gmail.com>
+Message-ID: <CAMuHMdV56nezM9cj1bVo4+gqi0OPvKjktu7i4Ov9ZKeyNkoiOg@mail.gmail.com>
+Subject: Re: [PATCH v7 1/8] of/platform: Allow overlays to create platform
+ devices from the root node
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org, patches@lists.linux.dev, 
+	kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org, 
+	devicetree@vger.kernel.org, Brendan Higgins <brendan.higgins@linux.dev>, 
+	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J . Wysocki" <rafael@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
+	Daniel Latypov <dlatypov@google.com>, Christian Marangi <ansuelsmth@gmail.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Maxime Ripard <maxime@cerno.tech>, Peter Rosin <peda@axentia.se>, 
+	Wolfram Sang <wsa+renesas@sang-engineering.com>, Linux I2C <linux-i2c@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Update the GDSC flags by adding missing POLL_CFG_GDSCR flag.
+Hi Stephen,
 
-Fixes: 9e939f008338 ("clk: qcom: add the SM8650 Display Clock Controller driver")
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
----
- drivers/clk/qcom/dispcc-sm8650.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On Wed, Jul 10, 2024 at 10:14=E2=80=AFPM Stephen Boyd <sboyd@kernel.org> wr=
+ote:
+> We'd like to apply overlays to the root node in KUnit so we can test
+> platform devices created as children of the root node.
+>
+> On some architectures (powerpc), the root node isn't marked with
+> OF_POPULATED_BUS. If an overlay tries to modify the root node on these
+> platforms it will fail, while on other platforms, such as ARM, it will
+> succeed. This is because the root node is marked with OF_POPULATED_BUS
+> by of_platform_default_populate_init() calling
+> of_platform_default_populate() with NULL as the first argument.
+>
+> Loosen the requirement here so that platform devices can be created for
+> nodes created as children of the root node via DT overlays even if the
+> platform bus wasn't populated for the root node.
+>
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> Cc: Saravana Kannan <saravanak@google.com>
+> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 
-diff --git a/drivers/clk/qcom/dispcc-sm8650.c b/drivers/clk/qcom/dispcc-sm8650.c
-index f38f5f43acb2..bb99c1325717 100644
---- a/drivers/clk/qcom/dispcc-sm8650.c
-+++ b/drivers/clk/qcom/dispcc-sm8650.c
-@@ -1610,7 +1610,7 @@ static struct gdsc mdss_gdsc = {
- 		.name = "mdss_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
--	.flags = HW_CTRL | RETAIN_FF_ENABLE,
-+	.flags = POLL_CFG_GDSCR | HW_CTRL | RETAIN_FF_ENABLE,
- };
- 
- static struct gdsc mdss_int2_gdsc = {
-@@ -1619,7 +1619,7 @@ static struct gdsc mdss_int2_gdsc = {
- 		.name = "mdss_int2_gdsc",
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
--	.flags = HW_CTRL | RETAIN_FF_ENABLE,
-+	.flags = POLL_CFG_GDSCR | HW_CTRL | RETAIN_FF_ENABLE,
- };
- 
- static struct clk_regmap *disp_cc_sm8650_clocks[] = {
+Thanks for your patch, which is now commit 98290f295fbcf18f
+("of/platform: Allow overlays to create platform devices from the
+root node") in clk/clk-next.
 
--- 
-2.34.1
+This causes i2c-demux-pinctrl to fail on the Koelsch development board:
 
+        i2c-demux-pinctrl i2c-mux1: failed to setup demux-adapter 0 (-19)
+        i2c-demux-pinctrl i2c-mux2: failed to setup demux-adapter 0 (-19)
+        i2c-demux-pinctrl i2c-mux3: failed to setup demux-adapter 0 (-19)
+        i2c-demux-pinctrl i2c-mux2: Failed to create device link
+(0x180) with e6ef0000.video
+        i2c-demux-pinctrl i2c-mux2: Failed to create device link
+(0x180) with e6ef1000.video
+        i2c-demux-pinctrl i2c-mux2: Failed to create device link
+(0x180) with hdmi-in
+        i2c-demux-pinctrl i2c-mux2: Failed to create device link
+(0x180) with hdmi-out
+
+and anything relying on I2C connected to these muxes fails, too.
+
+Also, loading the 25LC040 DT overlay[1] on Ebisu using the out-of-tree
+of-configfs now fails, too.
+
+> --- a/drivers/of/platform.c
+> +++ b/drivers/of/platform.c
+> @@ -732,11 +732,14 @@ static int of_platform_notify(struct notifier_block=
+ *nb,
+>         struct of_reconfig_data *rd =3D arg;
+>         struct platform_device *pdev_parent, *pdev;
+>         bool children_left;
+> +       struct device_node *parent;
+>
+>         switch (of_reconfig_get_state_change(action, rd)) {
+>         case OF_RECONFIG_CHANGE_ADD:
+> -               /* verify that the parent is a bus */
+> -               if (!of_node_check_flag(rd->dn->parent, OF_POPULATED_BUS)=
+)
+> +               parent =3D rd->dn->parent;
+> +               /* verify that the parent is a bus (or the root node) */
+> +               if (!of_node_is_root(parent) &&
+
+Parent =3D /soc, so this returns early. Hence of_changeset_apply() [2]
+didn't add the I2C mux bus, causing of_get_i2c_adapter_by_node() [3]
+to fail.
+
+> +                   of_node_check_flag(parent, OF_POPULATED_BUS))
+
+Oh, you inverted the check for of_node_check_flag(); was that
+intentional?  Re-adding the "!" fixes all issues for me.
+
+>                         return NOTIFY_OK;       /* not for us */
+>
+>                 /* already populated? (driver using of_populate manually)=
+ */
+> @@ -749,7 +752,7 @@ static int of_platform_notify(struct notifier_block *=
+nb,
+>                  */
+>                 rd->dn->fwnode.flags &=3D ~FWNODE_FLAG_NOT_DEVICE;
+>                 /* pdev_parent may be NULL when no bus platform device */
+> -               pdev_parent =3D of_find_device_by_node(rd->dn->parent);
+> +               pdev_parent =3D of_find_device_by_node(parent);
+>                 pdev =3D of_platform_device_create(rd->dn, NULL,
+>                                 pdev_parent ? &pdev_parent->dev : NULL);
+>                 platform_device_put(pdev_parent);
+
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.g=
+it/tree/arch/arm64/boot/dts/renesas/r8a77990-ebisu-cn41-msiof0-25lc040.dtso=
+?h=3Dtopic/renesas-overlays
+[2] https://elixir.bootlin.com/linux/latest/source/drivers/i2c/muxes/i2c-de=
+mux-pinctrl.c#L60
+[3] https://elixir.bootlin.com/linux/latest/source/drivers/i2c/muxes/i2c-de=
+mux-pinctrl.c#L64
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
