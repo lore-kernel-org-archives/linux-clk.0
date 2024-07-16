@@ -1,297 +1,109 @@
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA94E322B;
-	Tue, 16 Jul 2024 01:50:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D018817588
+	for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2024 05:36:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721094626; cv=none; b=IKcIjHUNOZGL4+QGREYAPSzIbozbarocPkux7qqghseGIVyVuEE0K95/WJPNBPZCZaLx4YFfO6g/dZWzj/6Df+pYhikfIIEwRHqCXajknGsNvsBTo9gSFJRSPCegdSMO5y/365GE6K17ze4XomTle1/ejscXmWX+BxOYly9aios=
+	t=1721108193; cv=none; b=dTIoE95OkCNh6Vriqk3htX/A1A9RL4f3EtzLDIVyzJUAOoDBQ03kJ6hqaoImE9BkMX8qFhMUUBGDwMcwZoYs1VA5MpHpCUS5/tptSBMH8An8c/eReg0n4llJ0J7WhF/Lw72HYA9mBWdt/IJalfleT0WuHyoRq4NQ5Ix1CqJmnl4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721094626; c=relaxed/simple;
-	bh=NbxExGiGYA8cRfXkTxyvsjJQkGIt7pvHcQuUS2+31uI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VBg9aeB3p5mPl38KywpmUmJ6sXzz5hlxvX4GAzi24x75OP01mfKJw2XhasLzGYY1ygw2KXuI4hgGtHgy8lXVrfmhAL6KCyoTVu9ntf9DP6gxn0Rk98a/iBA6x6vClN10t2G5iPg3TAXomxr8vLvMau4ctZM4WC2BPxTLyGUJ5no=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NJBX4TXC; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1721108193; c=relaxed/simple;
+	bh=h6TWkDoziHBaJBlkDkyJ2AMrDokzRXzfJGIdXI/Mn68=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=a/BpXm2KUhRGkMoZGzNPFRpgvSxFWJXJ7Hs8YbC0nRmQsi76T4z2srSAPtnHx80zwE9SUGDveDPdPee2AuJ2QHGcgvfclHAXOyQ+R+3K1f9j2h0SflJFi45jEEkrQiYKh2TPUNa3I4/flw+BRn9rQR+MwsvXVXAW4bW4VRAg+pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RdZGXrU2; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NJBX4TXC"
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70b07bdbfbcso4445990b3a.0;
-        Mon, 15 Jul 2024 18:50:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721094624; x=1721699424; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kF76jgngFNSA0+6Yc/C9VyeZCVr+gqQa8EoK0I1uvRg=;
-        b=NJBX4TXCahAduF63BTubp1RCtw8K41yF0TZ6osB83pcsDvfF15oMGZ4DtaY4RR+x0n
-         PouI6BVl31PHIJngpDQnVOy7MASQOBFf9ROxP1IPK2s2IeDCIPvn1yced+PztJMuWlgP
-         yKampePFzDNgWTTBh2DZRzpnMVQdogiX2C3OjPJJsXNPY1/Zty5/X+apKwWoQM3icYP5
-         VwBk2MoYrRUK/NhgKy0qYqvbdOo9mTvsZSuKn2dT/unGsXUj1gxo6RMYpAKc5gt6iApM
-         cS2wCPETu8nty2Yfi8GHENLIOkKvPX38gIFiorsqiQ3EMtlmG0f2HENvfrAYPAS7Z4T5
-         Wmlg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721094624; x=1721699424;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kF76jgngFNSA0+6Yc/C9VyeZCVr+gqQa8EoK0I1uvRg=;
-        b=LnB6e7ZZ3V9wa+Rjnyp5BmQH6idXBTFTT9/xoWJzAroQQ67f5xkbNuAUQWlMwvfEWk
-         rpY4j78vNC2Epo1zfo7MxJynuxV3Gq81c20jRM+VAWKtwy80vZ8npmJVDEU6FYtmXv/Q
-         +f1piVeeQLUQt7rylbyKjHiDRpV64qhtJSCwRoBuTa8oIXm/5xXMtE1fEV2bPSfDOelk
-         3aqVoDsP7xTy2NFvnvVxinjy6qC3Yshp4o/+IQFg4FBMncUn/FJzU26KIepg7pQlSU5X
-         bzp2kiK0LcPTrEe7KQd7j503f3GXAdP5CkZpqFBKw4Tfkt3HUhKu+xYdRC/2HEB7xVkM
-         /XtQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUKCq50Mf+glVWOHoFEGz4zL9PtJ7fhwBB6YlaP293YW/tDYIw44FJWADqplt2Drj0u0VNtnGbS/z1yj2yx2u7JFgX8CWo9sFrNQOO/yGM5j6958gNG3NctVZosMO0IeG7CQM/DiyK5
-X-Gm-Message-State: AOJu0YwGACUlCUDTS5f5LKDnFaWbZAwab26H8vb33V0VnmHvCw7oL0V8
-	9FFqVVcNLg/SmJjQXq4TFLmcR6LMyQJ6Vf6Oe1qJ1GmgI0FtY2lQUTclvu51Hvvn7/+KvE30/rH
-	gVF653XqjA364mqOI7E7Kcuy2ooY=
-X-Google-Smtp-Source: AGHT+IEH7Pz0+M8TK9vfrdLutYz/7p0g+XzWbqP83luKBEpdMLNXXHy0QG2/ZEccF49uIZncRRjm0N9o9za0XZqoPqY=
-X-Received: by 2002:a05:6a20:1593:b0:1c0:e1a5:9588 with SMTP id
- adf61e73a8af0-1c3f1e7721fmr757612637.2.1721094623616; Mon, 15 Jul 2024
- 18:50:23 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RdZGXrU2"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721108191; x=1752644191;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=h6TWkDoziHBaJBlkDkyJ2AMrDokzRXzfJGIdXI/Mn68=;
+  b=RdZGXrU2sEV4jfOrDDcscYuUjcYfgFSlzVFH0xHBGyP9a+VYJ+BLumm0
+   jgyIuyVSaLWq40E7cYnFPBQ2dx7ZhR4yWEcYA9m9N2tRfKfsKHCHMwziF
+   6+qiOAjPYDq4EBEwqQCdFvFF3Rsi7vwiClaExdDK9TYmXrlGEbNXpiDOV
+   wd5hiUbJWtdNsLBmz/y6U40/ODw0hxY1Q4NgdtswoqcWUE/vnjj1kDHiB
+   3Ol877dU2qvnPi8opXHwzBaamKie4aYanB2wGpcJM/VCWfFeRkB2dKLyY
+   bPWaa4DVhKwfD/JrpFnvwD4SMXsbafabkabV051qfpBM2FePJ6dktDgWH
+   w==;
+X-CSE-ConnectionGUID: grliGSTeQO6wlzhpKPHIQA==
+X-CSE-MsgGUID: o9BgKYeeTFqSWLM8UQJi9A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11134"; a="43948380"
+X-IronPort-AV: E=Sophos;i="6.09,211,1716274800"; 
+   d="scan'208";a="43948380"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 15 Jul 2024 22:36:30 -0700
+X-CSE-ConnectionGUID: Bus7ArYtQxa27yB5uMibCg==
+X-CSE-MsgGUID: 7w4vyixoRpqvxQFJFPxmOg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,211,1716274800"; 
+   d="scan'208";a="55035023"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa004.jf.intel.com with ESMTP; 15 Jul 2024 22:36:29 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sTarR-000exZ-2v;
+	Tue, 16 Jul 2024 05:36:25 +0000
+Date: Tue, 16 Jul 2024 13:36:01 +0800
+From: kernel test robot <lkp@intel.com>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	David Gow <davidgow@google.com>,
+	"Rob Herring (Arm)" <robh@kernel.org>
+Subject: [clk:clk-kunit 6/10] ERROR: modpost:
+ "__dtbo_kunit_overlay_test_begin" [drivers/of/overlay_test.ko] undefined!
+Message-ID: <202407161349.6AIQsgSE-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240607133347.3291040-1-peng.fan@oss.nxp.com>
- <20240607133347.3291040-6-peng.fan@oss.nxp.com> <CAHCN7x+pzcdwSq19LefsyYAPUp8=kQYJeVbHm9sgSeaKXigMZg@mail.gmail.com>
- <PAXPR04MB8459E0FEFFFC4F7FB257F32B88A12@PAXPR04MB8459.eurprd04.prod.outlook.com>
- <CAHCN7xLDqLOe9Y8J7R5cEij9Xq=GS1Au8t3hrayf=-zSyorG-w@mail.gmail.com> <DB9PR04MB8461113195809FE1680E5FA488A22@DB9PR04MB8461.eurprd04.prod.outlook.com>
-In-Reply-To: <DB9PR04MB8461113195809FE1680E5FA488A22@DB9PR04MB8461.eurprd04.prod.outlook.com>
-From: Adam Ford <aford173@gmail.com>
-Date: Mon, 15 Jul 2024 20:50:11 -0500
-Message-ID: <CAHCN7xKSzfqBSnLrr7rxa2NC+kkwpK0JmueiY4aXBH4A+oTBjA@mail.gmail.com>
-Subject: Re: [PATCH V3 05/15] clk: imx: imx8mp-audiomix: remove sdma root clock
-To: Peng Fan <peng.fan@nxp.com>
-Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, "abelvesa@kernel.org" <abelvesa@kernel.org>, 
-	"mturquette@baylibre.com" <mturquette@baylibre.com>, "sboyd@kernel.org" <sboyd@kernel.org>, 
-	"shawnguo@kernel.org" <shawnguo@kernel.org>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, 
-	"kernel@pengutronix.de" <kernel@pengutronix.de>, "festevam@gmail.com" <festevam@gmail.com>, 
-	"imx@lists.linux.dev" <imx@lists.linux.dev>, 
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "S.J. Wang" <shengjiu.wang@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Mon, Jul 15, 2024 at 8:25=E2=80=AFPM Peng Fan <peng.fan@nxp.com> wrote:
->
-> > Subject: Re: [PATCH V3 05/15] clk: imx: imx8mp-audiomix: remove
-> > sdma root clock
-> >
-> > On Sun, Jul 14, 2024 at 8:11=E2=80=AFPM Peng Fan <peng.fan@nxp.com> wro=
-te:
-> > >
-> > > > Subject: Re: [PATCH V3 05/15] clk: imx: imx8mp-audiomix: remove
-> > sdma
-> > > > root clock
-> > > >
-> > > > On Fri, Jun 7, 2024 at 8:28=E2=80=AFAM Peng Fan (OSS)
-> > <peng.fan@oss.nxp.com>
-> > > > wrote:
-> > > > >
-> > > > > From: Peng Fan <peng.fan@nxp.com>
-> > > > >
-> > > > > There is an issue:
-> > > > > SDMA3 can't work without setting AUDIOMIX_CLKEN0[SDMA2]
-> > (bit-
-> > > > 26) to 1
-> > > > >
-> > > > > The workaround is:
-> > > > > As the reset state of AUDIOMIX_CLKEN0[SDMA2] is enabled, we
-> > just
-> > > > need
-> > > > > to keep it on as reset state, don't touch it in kernel, then ever=
-y
-> > > > > thing is same as before, if we register the clock in clk-audiomix=
-,
-> > > > > then kernel will try to disable it in idle.
-> > > > >
-> > > > > Fixes: 6cd95f7b151c ("clk: imx: imx8mp: Add audiomix block
-> > > > control")
-> > > > > Reviewed-by: Shengjiu Wang <shengjiu.wang@nxp.com>
-> > > > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> > > > > ---
-> > > >
-> > > > With this patch,I found it broke the imx8mp-beacon board when
-> > > > running audio through a codec connected to sai3.  Reverting this
-> > > > patch made the crash go away.  Is there a way to mark the clock as
-> > > > critical so it doesn't get idled?
-> > >
-> > > Mark it as critical means the blk ctrl needs to be powered on always.
-> > >
-> > > You driver touched the SDMA2_ROOT clock?
-> >
-> > I have a WM8962 CODEC connected through sai3.  Without this patch,
-> > the sound plays just fine.  With this patch, I get the following:
->
-> Try use this for SDMA2.
->                                 clocks =3D <&clk IMX8MP_CLK_AUDIO_AHB_ROO=
-T>,
->                                          <&clk IMX8MP_CLK_AUDIO_AHB_ROOT>=
-;
->
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-kunit
+head:   9f8bbc66021282d0646d1f8422265c72e671b5d1
+commit: aa46879db9ac9672a04eb4755169086cb3e49311 [6/10] of: Add a KUnit test for overlays and test managed APIs
+config: i386-randconfig-001-20240716 (https://download.01.org/0day-ci/archive/20240716/202407161349.6AIQsgSE-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240716/202407161349.6AIQsgSE-lkp@intel.com/reproduce)
 
-Unfortunately, that didn't work either.  Changing the SDMA2 clocks to
-the above yields the following:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407161349.6AIQsgSE-lkp@intel.com/
 
-[   20.714987] fsl-micfil-dai 30ca0000.audio-controller: failed to pcm regi=
-ster
-[   20.728904] fsl-aud2htx 30cb0000.aud2htx: failed to pcm register
-[   20.755070] fsl,imx8mp-audio-xcvr 30cc0000.xcvr: failed to pcm register
-[   20.766373] platform 30c50000.sai: deferred probe pending: fsl-sai:
-PCM DMA init failed
-[   20.774497] platform 30ca0000.audio-controller: deferred probe
-pending: (reason unknown)
-[   20.786387] platform 30cb0000.aud2htx: deferred probe pending:
-(reason unknown)
-[   20.793761] platform sound-dmic: deferred probe pending:
-asoc-simple-card: parse error
-[   20.806374] platform sound-wm8962: deferred probe pending:
-asoc-simple-card: parse error
-[   20.814526] platform sound-hdmi: deferred probe pending: imx-hdmi:
-snd_soc_register_card failed
-[   20.826370] platform 30c30000.sai: deferred probe pending: fsl-sai:
-PCM DMA init failed
-[   20.834429] platform sound-xcvr: deferred probe pending: imx-card:
-XCVR PCM: error getting cpu dai info
-[   20.846402] platform 30cc0000.xcvr: deferred probe pending: (reason unkn=
-own)
-[   20.858378] platform sound-adv7535: deferred probe pending:
-asoc-simple-card: parse error
+All errors (new ones prefixed by >>, old ones prefixed by <<):
 
+WARNING: modpost: missing MODULE_DESCRIPTION() in vmlinux.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/locking/locktorture.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/locking/test-ww_mutex.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/rcu/rcutorture.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/rcu/rcuscale.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/rcu/refscale.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/time/time_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/torture.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/ext4/ext4-inode-test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/fat/fat_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs/nfsv4.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/unicode/utf8-selftest.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/smb/common/cifs_arc4.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/smb/common/cifs_md4.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/kunit/kunit-test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/kunit/kunit-example-test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firewire/uapi-test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firewire/packet-serdes-test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/input/tests/input_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/of/of_test.o
+ERROR: modpost: missing MODULE_LICENSE() in drivers/of/kunit_overlay_test.dtbo.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/of/kunit_overlay_test.dtbo.o
+>> ERROR: modpost: "__dtbo_kunit_overlay_test_begin" [drivers/of/overlay_test.ko] undefined!
+>> ERROR: modpost: "__dtbo_kunit_overlay_test_end" [drivers/of/overlay_test.ko] undefined!
 
-adam
-
-> I will give a look and see how to address the issue.
->
-> Thanks for the report.
->
-> Thanks,
-> Peng.
->
-> >
-> > [   73.245199] imx-sdma 30e10000.dma-controller: Timeout waiting
-> > for CH0 ready
-> > [   73.252197] ------------[ cut here ]------------
-> > [   73.256816] WARNING: CPU: 1 PID: 1080 at
-> > kernel/dma/mapping.c:586
-> > dma_free_attrs+0x94/0xc0
-> > [   73.256832] Modules linked in: overlay af_alg dw_hdmi_gp_audio
-> > dw_hdmi_cec tpm_tis_spi snd_soc_hdmi_codec caam_jr tpm_tis_core
-> > caamhash_desc caamalg_desc crypto_engine authenc libdes
-> > hantro_vpu v4l2_jpeg v4l2_vp9 v4l2_h264 v4l2_mem2mem
-> > videobuf2_dma_contig videobuf2_memops videobuf2_v4l2 videodev
-> > imx8mp_hdmi_tx btnxpuart nvme videobuf2_common dw_hdmi mc
-> > nvme_core etnaviv imx_lcdif bluetooth fsl_imx8_ddr_perf
-> > drm_display_helper dwmac_imx gpu_sched phy_fsl_samsung_hdmi
-> > imx8mp_hdmi_pvi drm_dma_helper samsung_dsim snd_soc_fsl_sai
-> > stmmac_platform snd_soc_fsl_xcvr snd_soc_fsl_micfil
-> > snd_soc_fsl_aud2htx stmmac adv7511 ecdh_generic imx_pcm_dma
-> > snd_soc_fsl_utils ecc pcs_xpcs cec tcpci flexcan tcpm hd3ss3220
-> > snd_soc_wm8962 spi_imx can_dev typec at24 caam rtc_pcf85363
-> > rtc_snvs error snvs_pwrkey imx8mm_thermal crct10dif_ce
-> > snd_soc_imx_hdmi coresight_tmc snd_soc_imx_card
-> > snd_soc_simple_card coresight_funnel snd_soc_simple_card_utils
-> > display_connector snd_soc_dmic coresight drm_kms_helper
-> > imx_cpufreq_dt imx_sdma mwifiex_sdio
-> > [   73.256997]  mwifiex cfg80211 rfkill fuse drm backlight ipv6
-> > [   73.257015] CPU: 1 UID: 0 PID: 1080 Comm: speaker-test Not
-> > tainted
-> > 6.10.0-rc7-next-20240709-ga90ee5931efe-dirty #9
-> > [   73.257022] Hardware name: Beacon EmbeddedWorks i.MX8MPlus
-> > Development kit (DT)
-> > [   73.257025] pstate: 600000c5 (nZCv daIF -PAN -UAO -TCO -DIT -SSBS
-> > BTYPE=3D--)
-> > [   73.257031] pc : dma_free_attrs+0x94/0xc0
-> > [   73.257037] lr : dma_free_attrs+0x50/0xc0
-> > [   73.257041] sp : ffff800084f6b980
-> > [   73.257043] x29: ffff800084f6b980 x28: 0000000000000010 x27:
-> > 00000000000003c2
-> > [   73.257051] x26: 0000000000000005 x25: 0000000000000010 x24:
-> > 0000000000000000
-> > [   73.257057] x23: 00000000c5504000 x22: 0000000000000000 x21:
-> > ffff800083183000
-> > [   73.257064] x20: 00000000000000c0 x19: ffff0000c0e54410 x18:
-> > 0000000000000006
-> > [   73.257071] x17: 0000000000000000 x16: 0000000000000000 x15:
-> > ffff800084f6b330
-> > [   73.257078] x14: 0000000000000000 x13: ffff8000826845d8 x12:
-> > 0000000000000639
-> > [   73.257085] x11: 0000000000000213 x10: ffff8000826dc5d8 x9 :
-> > ffff8000826845d8
-> > [   73.257092] x8 : 00000000ffffefff x7 : ffff8000826dc5d8 x6 :
-> > 0000000000000040
-> > [   73.257098] x5 : 0000000000000000 x4 : 0000000000000000 x3 :
-> > 00000000c5504000
-> > [   73.257105] x2 : ffff800083183000 x1 : 0000000000000000 x0 :
-> > 00000000000000c0
-> > [   73.257112] Call trace:
-> > [   73.257115]  dma_free_attrs+0x94/0xc0
-> > [   73.257121]  sdma_free_bd+0x60/0x6c [imx_sdma]
-> > [   73.257130]  sdma_transfer_init+0x1e8/0x270 [imx_sdma]
-> > [   73.257137]  sdma_prep_dma_cyclic+0x74/0x200 [imx_sdma]
-> > [   73.257143]  snd_dmaengine_pcm_trigger+0xd8/0x18c
-> > [   73.257152]  dmaengine_pcm_trigger+0x18/0x24
-> > [   73.257159]  snd_soc_pcm_component_trigger+0x170/0x21c
-> > [   73.257168]  soc_pcm_trigger+0xdc/0x1c8
-> > [   73.257175]  snd_pcm_do_start+0x44/0x70
-> > [   73.257183]  snd_pcm_action_single+0x48/0xa4
-> > [   73.257189]  snd_pcm_action+0x80/0x9c
-> > [   73.257195]  snd_pcm_start+0x24/0x30
-> > [   73.257203]  __snd_pcm_lib_xfer+0x6a4/0x7d8
-> > [   73.257208]  snd_pcm_common_ioctl+0x1140/0x1780
-> > [   73.257215]  snd_pcm_ioctl+0x34/0x4c
-> > [   73.257222]  __arm64_sys_ioctl+0xac/0xf0
-> > [   73.257231]  invoke_syscall+0x48/0x114
-> > [   73.257239]  el0_svc_common.constprop.0+0x40/0xe0
-> > [   73.257246]  do_el0_svc+0x1c/0x28
-> > [   73.257252]  el0_svc+0x34/0xd8
-> > [   73.257260]  el0t_64_sync_handler+0x120/0x12c
-> > [   73.257267]  el0t_64_sync+0x190/0x194
-> > [   73.257273] ---[ end trace 0000000000000000 ]---
-> > [   73.565659] fsl-sai 30c30000.sai: ASoC: error at
-> > soc_component_trigger on 30c30000.sai: -12
-> >
-> > Write error: -5,Input/output erro[   76.767120] imx-sdma
-> > 30e10000.dma-controller: Timeout waiting for CH0 ready
-> >
-> > No sound is heard.
-> >
-> > I haven't looked far into the driver to see what was touched, but I was
-> > able to reproduce this by enabling and disabling the patch several
-> > times, so it's repeatable. imx-sdma 30e10000.dma-controller seems to
-> > correspond to sdma2.
-> >
-> > adam
-> > >
-> > > Regards,
-> > > Peng.
-> > >
-> > > >
-> > > > adam
-> > > > >  drivers/clk/imx/clk-imx8mp-audiomix.c | 1 -
-> > > > >  1 file changed, 1 deletion(-)
-> > > > >
-> > > > > diff --git a/drivers/clk/imx/clk-imx8mp-audiomix.c
-> > > > > b/drivers/clk/imx/clk-imx8mp-audiomix.c
-> > > > > index b381d6f784c8..88d8ba975b5a 100644
-> > > > > --- a/drivers/clk/imx/clk-imx8mp-audiomix.c
-> > > > > +++ b/drivers/clk/imx/clk-imx8mp-audiomix.c
-> > > > > @@ -172,7 +172,6 @@ static struct clk_imx8mp_audiomix_sel
-> > sels[]
-> > > > =3D {
-> > > > >         CLK_GATE("ocrama", OCRAMA_IPG),
-> > > > >         CLK_GATE("aud2htx", AUD2HTX_IPG),
-> > > > >         CLK_GATE("earc_phy", EARC_PHY),
-> > > > > -       CLK_GATE("sdma2", SDMA2_ROOT),
-> > > > >         CLK_GATE("sdma3", SDMA3_ROOT),
-> > > > >         CLK_GATE("spba2", SPBA2_ROOT),
-> > > > >         CLK_GATE("dsp", DSP_ROOT),
-> > > > > --
-> > > > > 2.37.1
-> > > > >
-> > > > >
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
