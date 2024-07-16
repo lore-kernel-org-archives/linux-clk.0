@@ -1,171 +1,120 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96EFD47A5D;
-	Tue, 16 Jul 2024 16:15:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 306421E528
+	for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2024 16:46:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721146512; cv=none; b=YKjAHjql38DDXWzFzctSuqyX4nzKG9mgt9HAodF1fm2S8JvGkLQxIbPfZfz6SX9jVqUNweP2bgE12ElTWoYDgu/b+BDy2QgNCNs/b4VJOh0jjnYu5DXU9arBHKKxp86xM8qcOQj/MDOEjgkIBY7PzcB4kKvUy/3Rh0LbeN5aCI0=
+	t=1721148395; cv=none; b=rmZbydoOhBnJXjicfa4KKyWS2DuFKUjkLyTIwhM5BFd79ex4E4/eG40RmcGiwICvdH1HH1EWUMsHWVUqNKiUncPc3UVFK+FOfavXhwvsSXlE6OPGBvhgmsvBhuwhdN2OeUlXPya02rHQpLVig/itLo+ymRNJtYiS6v3wuJoL3ns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721146512; c=relaxed/simple;
-	bh=xVoIA/hZZjTnIxgzUKxyW47Uq6kbP2T9RxSH+7zEYBE=;
+	s=arc-20240116; t=1721148395; c=relaxed/simple;
+	bh=/uO28JIzVjT3o+pteNKJcM0A5ixMT0fdtKUaIBjY+XA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MlO0pnUPKoW6T/BIdkwYbvLWCciRyBhXuqDcH0PNmxSBkuc5DP7Tg1+9DCs9atn7ubg1E2AQimrh6WLdy+ZMrKOOT5Tfcx7Cw7GrZDOQN3PTA4aUh3iIm+GqQ57PQaPahCWrMKcyhWkYgeMMkA5YF55gKGXCUn0VT7IRB35aLO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ckFqTloY; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wzk7dHFOoKa8uu9m0jTFzPs4pe/JJgrbC6OaiTWNmw04YdSh9CX7xZiVIMkE4qWMEBi8S3RBq5lYu2J1ApAPi88tncGqXR/idI3cLdnzLZNlgV+mPv/HHQ+mAE1rZLM8fbmX8RKVd6LznVJ9EPoCSfry753wsSE0LF1Ke9L+byM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=saqgYE8M; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ckFqTloY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34458C4AF0B;
-	Tue, 16 Jul 2024 16:15:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721146512;
-	bh=xVoIA/hZZjTnIxgzUKxyW47Uq6kbP2T9RxSH+7zEYBE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ckFqTloYfGO1uNi6YwoI7DX5QDWICLBrJxwQvmADy57TS35mJLdghheKG9ePvkEUJ
-	 d5x1TEykHudu9Y7zDowaJ8dWLcfVwbpnWwhv5PlKIYi6ySY83Pr53p1lnzV/xhi9Ip
-	 ubnkrUFQ52M5P87HxS04vOXS6utjCV/QefOrL0YErsNP64PfT7QEkT+CkEp0Y8BpXQ
-	 vNY+aVsSJTGktS0EFweKb4F2yU/ecQb2nsgjNcSEX++4ddLTdiNK4LFysvXj0oN/r3
-	 Kh+CwiAdez88VcdmFNLib8xow+6z2bjVHwIVFf5YLdyFC7TGLVn4PW9LRV3fZP5Ubx
-	 yxI5KLbAyje6g==
-Date: Tue, 16 Jul 2024 17:15:08 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v2 1/3] dt-bindings: clocks: add binding for
- voltage-controlled-oscillators
-Message-ID: <20240716-deceiving-saucy-851fb2303c1f@spud>
-References: <20240715110251.261844-1-heiko@sntech.de>
- <20240715110251.261844-2-heiko@sntech.de>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="saqgYE8M"
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52e94eaf5efso7196631e87.2
+        for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2024 09:46:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721148390; x=1721753190; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UdlcGvPV4rMkeD613/ZfNJun3YfIW1JB7Y540EAzI4A=;
+        b=saqgYE8M0ftR2nbP5DxHECYBBnLZaf4K3mgxJwXRQWPIohsd5GZ7gFu2w+AbdivJBI
+         T6PxtFRY0zshmzfSobXiOV/IHV2ILKu2g0awIbxv4VekTuE+4F9cWNTDCYSEsdutbCo0
+         9M67xcWKOZShoEPxq/wd1gCEE/LStzL1V01c3uT/CJFOA9watrRtMPEHZBpVxPQGvm02
+         vPVYLDHfVDsJAqsRq6x8dYZlbpzNbeW/Re6AzfS2Qqc+cXPw2lU7fiQxxiVDe29bzzfJ
+         9EdYBkccpH9JT/xrscrs8JRjgA3o+zCH4t37ldGA+3U2PYd9AQ9oF2Z9S//dSGIqTh3I
+         B3FA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721148390; x=1721753190;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UdlcGvPV4rMkeD613/ZfNJun3YfIW1JB7Y540EAzI4A=;
+        b=XBT1JIyvHEmAS7YyZUiNm0DVhTlz3nZmElDY5KhagdzIwrPsHULVn6MOS/72IBHSra
+         1ZU//Ena5xs3k8qzsMPmeL2lb3bcNpq4UCALVzZJqgzKQVZ4yYZ8wS7vq7zsW5Cr60lI
+         75iSzrDtvvcqRWRLbw49ZaRK1yL+uN9ts+xaDGK416E1LO8biq9NmdHjWKDJAUg9GbRQ
+         v/CxIQSyJgavNbr+rCI/Z7zrz5R/ZdOIVgwR9N5ThhbfcjqEUIgjVKNP+zSIf6sr+9w3
+         DfSznwneLwdyrZ1KypI0GiCxQpzg4whX5uuUr29Z6Bqgfwjbk6zdZHNEn5qMSlUMN9De
+         cvYw==
+X-Forwarded-Encrypted: i=1; AJvYcCXbpeYLdTgVx6lAS54EEsa+vhJQorvbLq4HnrQu+h9ZMfzMIXc4PbhCgkcDww6Q2LcTaoDkOE+MAdpQ1sgQl/lTRTu4VNwpxHCW
+X-Gm-Message-State: AOJu0YykfnXK66qROkaPZH1r0FFACoyJ+j3Mq3WUkF2CVK542u+Ypnwv
+	dpIzu+b29vrFrjZtaU0NIie/rLQAzB4yx4IG25JgxTPjK+s80uBhu9tOhd6AWT0=
+X-Google-Smtp-Source: AGHT+IH1Umt4AGKUi97EA/xp39tZETdjijAkzPUgbnJvzG0aE8B3zUOXJakTJA6Nzb4q5X83AOT3QQ==
+X-Received: by 2002:a05:6512:3f29:b0:52e:9d6c:4462 with SMTP id 2adb3069b0e04-52edf01c462mr1777240e87.23.1721148390000;
+        Tue, 16 Jul 2024 09:46:30 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ed24e2b66sm1202263e87.59.2024.07.16.09.46.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Jul 2024 09:46:29 -0700 (PDT)
+Date: Tue, 16 Jul 2024 19:46:28 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: neil.armstrong@linaro.org
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Taniya Das <quic_tdas@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/3] clk: qcom: dispcc-sm8650: add missing
+ CLK_SET_RATE_PARENT flag
+Message-ID: <kxrhhb3vdojbnqfbwks2qmob55fwm3onleood73qfk6esl7g2c@q66kw5am4emc>
+References: <20240716-topic-sm8650-upstream-fix-dispcc-v3-0-5bfd56c899da@linaro.org>
+ <20240716-topic-sm8650-upstream-fix-dispcc-v3-2-5bfd56c899da@linaro.org>
+ <dccttz5b44bl3lwmcaqz6wjx3n4sv3eq4yh6276vzwrtkcvqcw@qxhbo7bylnsg>
+ <9ad10d92-d755-4fae-b206-6e8648be6d48@linaro.org>
+ <CAA8EJpr9L+AKDhuHfQa=Nco7fvG9vLH3a+gxVhENrhz12b3n=Q@mail.gmail.com>
+ <278354ec-532b-48de-8ee1-5477ddb4a285@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="G8ATB5gbIqKT+Pmv"
-Content-Disposition: inline
-In-Reply-To: <20240715110251.261844-2-heiko@sntech.de>
-
-
---G8ATB5gbIqKT+Pmv
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <278354ec-532b-48de-8ee1-5477ddb4a285@linaro.org>
 
-On Mon, Jul 15, 2024 at 01:02:49PM +0200, Heiko Stuebner wrote:
-> In contrast to fixed clocks that are described as ungateable, boards
-> sometimes use additional oscillators for things like PCIe reference
-> clocks, that need actual supplies to get enabled and enable-gpios to be
-> toggled for them to work.
->=20
-> This adds a binding for such oscillators that are not configurable
-> themself, but need to handle supplies for them to work.
->=20
-> In schematics they often can be seen as
->=20
->          ----------------
-> Enable - | 100MHz,3.3V, | - VDD
->          |    3225      |
->    GND - |              | - OUT
->          ----------------
->=20
-> or similar. The enable pin might be separate but can also just be tied
-> to the vdd supply, hence it is optional in the binding.
->=20
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
->  .../bindings/clock/voltage-oscillator.yaml    | 49 +++++++++++++++++++
->  1 file changed, 49 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/voltage-oscil=
-lator.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/clock/voltage-oscillator.y=
-aml b/Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
-> new file mode 100644
-> index 0000000000000..8bff6b0fd582e
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
-> @@ -0,0 +1,49 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/voltage-oscillator.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Voltage controlled oscillator
+On Tue, Jul 16, 2024 at 03:46:24PM GMT, neil.armstrong@linaro.org wrote:
+> On 16/07/2024 15:44, Dmitry Baryshkov wrote:
+> > On Tue, 16 Jul 2024 at 15:32, Neil Armstrong <neil.armstrong@linaro.org> wrote:
+> > > 
+> > > On 16/07/2024 13:20, Dmitry Baryshkov wrote:
+> > > > On Tue, Jul 16, 2024 at 11:05:22AM GMT, Neil Armstrong wrote:
+> > > > > Add the missing CLK_SET_RATE_PARENT for the byte0_div_clk_src
+> > > > > and byte1_div_clk_src, the clock rate should propagate to
+> > > > > the corresponding _clk_src.
+> > > > > 
+> > > > > Fixes: 9e939f008338 ("clk: qcom: add the SM8650 Display Clock Controller driver")
+> > > > > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > > > > Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> > > > > ---
+> > > > >    drivers/clk/qcom/dispcc-sm8650.c | 2 ++
+> > > > >    1 file changed, 2 insertions(+)
+> > > > 
+> > > > This doesn't seem correct, the byte1_div_clk_src is a divisor, so the
+> > > > rate should not be propagated. Other platforms don't set this flag.
+> > > > 
+> > > 
+> > > Why not ? the disp_cc_mdss_byte1_clk_src has CLK_SET_RATE_PARENT and a div_table,
+> > > and we only pass DISP_CC_MDSS_BYTE1_CLK to the dsi controller.
+> > 
+> > Yes, the driver sets byte_clk with the proper rate, then it sets
+> > byte_intf_clk, which results in a proper divisor.
+> > If we have CLK_SET_RATE_PARENT for byte1_div_clk_src, then setting
+> > byte_intf_clk rate will also result in a rate change for the byte_clk
+> > rate.
+> > 
+> > Note, all other platforms don't set that flag for this reason (I think
+> > I had to remove it during sm8450 development for this reason).
+> > 
+> 
+> Ack, I think this deserves a comment explaining this, I'll add it.
 
-Voltage controlled oscillator? Really? That sounds far too similar to a
-VCO to me, and the input voltage here (according to the description at
-least) does not affect the frequency of oscillation.
+But where to place it? This applies to _all_ dispcc controllers.
 
-Why the dedicated binding, rather than adding a supply and enable-gpio
-to the existing "fixed-clock" binding? I suspect that a large portion of
-"fixed-clock"s actually require a supply that is (effectively)
-always-on.
-
-Cheers,
-Conor.
-
-> +
-> +maintainers:
-> +  - Heiko Stuebner <heiko@sntech.de>
-> +
-> +properties:
-> +  compatible:
-> +    const: voltage-oscillator
-> +
-> +  "#clock-cells":
-> +    const: 0
-> +
-> +  clock-frequency: true
-> +
-> +  clock-output-names:
-> +    maxItems: 1
-> +
-> +  enable-gpios:
-> +    description:
-> +      Contains a single GPIO specifier for the GPIO that enables and dis=
-ables
-> +      the oscillator.
-> +    maxItems: 1
-> +
-> +  vdd-supply:
-> +    description: handle of the regulator that provides the supply voltage
-> +
-> +required:
-> +  - compatible
-> +  - "#clock-cells"
-> +  - clock-frequency
-> +  - vdd-supply
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    voltage-oscillator {
-> +      compatible =3D "voltage-oscillator";
-> +      #clock-cells =3D <0>;
-> +      clock-frequency =3D <1000000000>;
-> +      vdd-supply =3D <&reg_vdd>;
-> +    };
-> +...
-> --=20
-> 2.39.2
->=20
-
---G8ATB5gbIqKT+Pmv
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZpacjAAKCRB4tDGHoIJi
-0qETAQDGaH3SBfzHPXQYUAVTiBQ/XIU3y1OlFEVoD2vuaqVeKAD/e904hzaE9/Z3
-xKoAg5ft4w3HfNOSbYMic53og10LmAI=
-=h/cC
------END PGP SIGNATURE-----
-
---G8ATB5gbIqKT+Pmv--
+-- 
+With best wishes
+Dmitry
