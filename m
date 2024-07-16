@@ -1,48 +1,61 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03B6913CF8E;
-	Tue, 16 Jul 2024 08:39:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F7BC6FBE
+	for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2024 08:45:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721119166; cv=none; b=n8FeUaSZS74tu11kYtf9TXWq++Seb75ymNXSG6UtqdcnDHW9laLL6qeelf/U3j8mBk5Z7BCjebyL3HEIgvpJKSTlQKq1M9IGq7wzx1LORR+B7ns85ZT53UIMZFUzv+xcbG948Ub51b4COLPksm49oQY8k3qjdq6IQ00UwDsSQjw=
+	t=1721119556; cv=none; b=KyGc6nT6B/S5mb4A76nnhyk8HZCKvpMGoDf5cEYbBhP+m6/BjWfboSoLbrS5avFs02eWY2FK/RIN+aiC5eBWrUfOuR1dtmI5bpxGPsMBDmFF7cH0REhg6pgUFcP88New8ZyKOE67nwvrN5+GQi5qIRA8fsk+uuwgSnxGHxIUpJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721119166; c=relaxed/simple;
-	bh=pnBIBVWhf5BT7kXBetHfhRVjUopJwG8oDLrBX4fP/vU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=S4RqWo9beYfTAv5Z0z3m60S2RTU/eZCsof+Dlp009pC06yHwvS/U/nouKcVtBAtCNQu05rVuoaR9w4m6WvEiGROj9H49NZ8msmSnudffqOyu119k3lMzmQQ/iXhwnHZOpa0277ieTkmTs2gk7LQhoSdXdfdvJyNX/PK1LAt7wso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=I8vBcSIy; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1721119556; c=relaxed/simple;
+	bh=X5aozxsgQPt0Z9u6SRxwxtxCCCmMBtxOA/XYiClzMnI=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=KSCa8BJ2hhV7MN7SA3nEVxw4HrYEzbp34qcneenfBdtHIV7azKdJ6C+OW55yGsed6HOZA5zrPNBcyStSVTnO5opc9o1UyPgM/y8xGbjoUdmrUX+4y75jWcwnig4bVfyZMMj+MFMr3F38c7ilEM7iBtux9WSXfxjWnJGwIIx1jGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ocDw7hfw; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="I8vBcSIy"
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46G4XQPm031357;
-	Tue, 16 Jul 2024 08:39:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	EeHaRWYXiK3/lLN0S5rke1NcA+FU45aTCk2uQSql5dI=; b=I8vBcSIy1sFRlY4L
-	Us32aFsxGOXp6B68Wafh7n7lb7D+ySERR0ngeiSZO04vrmV5TAsGy99ZCwLCCATq
-	K15IMbFNUo9HrUZc7z+Cf3pb1xOEgnLCxyRiZmnmCo0KNDGtm71Dh3Hptw1CAahP
-	t0uSv+NtI0+LOiyKC2fSt5Ff3O6euqT5Sr4F0CxqU5JqHgI8HcSz2A9vWVAXR8p8
-	2CPm3lSEbCm/MQ0sRw/98j34VC0gG6YpUpf8RBONqauZS+iiMv5rOpxhKKS2FWJX
-	ao8UkmBy2kiRdDY9UvgWy8g5OKillyqZ7WVapjAuL3wqyLam0xx8GVM32F8zGzWF
-	5i/tbg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40bgwg6few-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 16 Jul 2024 08:39:20 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46G8dIk1022098
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 16 Jul 2024 08:39:18 GMT
-Received: from [10.217.216.152] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 16 Jul
- 2024 01:39:13 -0700
-Message-ID: <dd8ad439-f74c-4bb6-9066-73394bb9befe@quicinc.com>
-Date: Tue, 16 Jul 2024 14:09:10 +0530
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ocDw7hfw"
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-367a464e200so3198535f8f.2
+        for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2024 01:45:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721119553; x=1721724353; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Od8eoem5ZvtrMl3ot96NWevDW1Y3aItVShfEvpSJQ0U=;
+        b=ocDw7hfwP+jpyZneVq8XHnJDcm4RvYuB6oLgGDDVRUONS/RRogTHRBO36cyTinj8hX
+         MTh89aHnFelkmoE+veGASzVV8wX0Uo9efz6/0pzGO3QjY8P3KjPDJuQRu3lvxWtoBbvg
+         xWv5Viya0ST78yYDltaWS6Z3ik1zwx4j8J6m3DXw+sRc3rsH/oxmTDm3qp7zWDOHCLz2
+         mbCvtQfcc/l56bMM/Gfu8wNnwM+A71eN6P4cuQgYavyXO5+3AWjbA+0mgd+Aq8SYCADD
+         kNT7iReBV8Zq8sFWpY3TGDKq2eE+g/Fy+fom+vsxBbdVEnHIXIKYVF1ViH2RTrCh7QsV
+         Rbtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721119553; x=1721724353;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Od8eoem5ZvtrMl3ot96NWevDW1Y3aItVShfEvpSJQ0U=;
+        b=TNdmJsQi/ZmyuBkX4Eaq5myxLMEeJWUDnMOGmRg5wRLPOr6Nlfe57uyRYP1A6vX4UG
+         Xl30u0nveUGzQA1Pb56zKWVSnK93B4giPa9cW4dsBFddbFjJ4sRj1lTrMhQcR05YaEY0
+         LD/mIF7L/AmcCdksjuEKzHUptdUNr4bZV+HdhjrNAuQRJY4ztmGqrWCAmHukCHX53D9W
+         zVq2Ksf+LBREkKtPNr5ZJlXes3VOmQb3du3BV1doN3aUa9VLhWqZ1TbeGi5NvqDTzs/P
+         s7nldEqbwMkByVCnd2mD+2+ziyfYIYt0JlIIVQM1bRvvXH8Sk4uWU4wo3fetCULj3e4E
+         EUlQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVYTBadHHyT9xCEvawcnhJH9v6S8uVeun3oYmUGwlzX/ObNRob8K+U4JPM8iwb7Bv86n0lsw2Skbl8D0DsuYQBhbnhhu0uVT0hP
+X-Gm-Message-State: AOJu0YwBej3PzTzJ9Lba1VvFzS6Y/byP3/GipeSbf5FAxNv9SRJofOfv
+	zr//lO+fpT+pVCBtzylgoC2erkS/1GEll3IeJYR6QEe2eT/7Mb6Aj2m7FJ/XH0w=
+X-Google-Smtp-Source: AGHT+IEoLoBkY3NE+Yk4hRQ8Tyy/whLpLhzHEnpcyct1yrPP88x3jqK2vAE1K9KvDTgA+saot+i+CQ==
+X-Received: by 2002:a5d:4a46:0:b0:367:9625:bd05 with SMTP id ffacd0b85a97d-368261051cemr867962f8f.15.1721119553131;
+        Tue, 16 Jul 2024 01:45:53 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:f5ba:a94c:e43a:d197? ([2a01:e0a:982:cbb0:f5ba:a94c:e43a:d197])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427a5e77493sm116329675e9.7.2024.07.16.01.45.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 16 Jul 2024 01:45:52 -0700 (PDT)
+Message-ID: <ed8e519d-2b02-47a4-ac2b-9ae341b2ef88@linaro.org>
+Date: Tue, 16 Jul 2024 10:45:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,124 +63,144 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V4 8/8] arm64: dts: qcom: sm4450: add camera, display and
- gpu clock controller
-To: Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Ajit Pandey
-	<quic_ajipan@quicinc.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>, Vinod Koul
-	<vkoul@kernel.org>,
-        Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Jagadeesh Kona
-	<quic_jkona@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        "Satya
- Priya Kakitapalli" <quic_skakitap@quicinc.com>
-References: <20240611133752.2192401-1-quic_ajipan@quicinc.com>
- <20240611133752.2192401-9-quic_ajipan@quicinc.com>
- <76f5e3c7-a90b-42d2-8169-e5e2211a14a1@linaro.org>
- <ba7d12d3-c582-45ec-beed-e81182fe3252@quicinc.com>
- <95a835e2-9fd9-467b-bd0a-8eeb80ddf678@linaro.org>
- <9c3de930-47b7-45a9-bf7e-6e506ea2accc@quicinc.com>
- <8f7cdb31-c50d-4690-b878-518bad545612@linaro.org>
- <46e6f1f0-d244-4e53-99ce-9fee339dc4de@quicinc.com>
- <f9a23663-7a1d-44dc-8e0b-8463c3c88a29@linaro.org>
-Content-Language: en-US
-From: Taniya Das <quic_tdas@quicinc.com>
-In-Reply-To: <f9a23663-7a1d-44dc-8e0b-8463c3c88a29@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v2 1/3] clk: qcom: dispcc-sm8650: Park RCG's clk source at
+ XO during disable
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240624-topic-sm8650-upstream-fix-dispcc-v2-0-ddaa13f3b207@linaro.org>
+ <20240624-topic-sm8650-upstream-fix-dispcc-v2-1-ddaa13f3b207@linaro.org>
+ <4skm6zab2xf2e4qgh4l45xzhuncmls7yfw4y77yufb7pvs2zew@rmzcgb6ozamf>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <4skm6zab2xf2e4qgh4l45xzhuncmls7yfw4y77yufb7pvs2zew@rmzcgb6ozamf>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: WkTPEf-BUhFJZI68eqwGh_Cp_RhYmNsp
-X-Proofpoint-ORIG-GUID: WkTPEf-BUhFJZI68eqwGh_Cp_RhYmNsp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-15_19,2024-07-16_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 malwarescore=0
- adultscore=0 spamscore=0 priorityscore=1501 mlxscore=0 suspectscore=0
- mlxlogscore=999 lowpriorityscore=0 clxscore=1011 bulkscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2406140001 definitions=main-2407160063
 
-
-
-On 7/12/2024 6:10 PM, Konrad Dybcio wrote:
-> On 12.07.2024 2:31 PM, Ajit Pandey wrote:
+On 24/06/2024 11:25, Dmitry Baryshkov wrote:
+> On Mon, Jun 24, 2024 at 10:05:50AM GMT, Neil Armstrong wrote:
+>> The RCG's clk src has to be parked at XO while disabling as per the
+>> HW recommendation, hence use clk_rcg2_shared_ops to achieve the same.
 >>
+>> It also changes dptx1_aux_clk_src to use the correct ops instead of
+>> clk_dp_ops.
 >>
->> On 7/12/2024 5:52 PM, Konrad Dybcio wrote:
->>> On 12.07.2024 11:53 AM, Ajit Pandey wrote:
->>>>
->>>>
->>>> On 7/11/2024 3:25 PM, Konrad Dybcio wrote:
->>>>> On 3.07.2024 11:16 AM, Ajit Pandey wrote:
->>>>>>
->>>>>>
->>>>>> On 6/13/2024 1:11 PM, Konrad Dybcio wrote:
->>>>>>>
->>>>>>>
->>>>>>> On 6/11/24 15:37, Ajit Pandey wrote:
->>>>>>>> Add device node for camera, display and graphics clock controller on
->>>>>>>> Qualcomm SM4450 platform.
->>>>>>>>
->>>>>>>> Signed-off-by: Ajit Pandey <quic_ajipan@quicinc.com>
->>>>>>>> ---
->>>>>>>
->>>>>>> None of these nodes reference a power domain (which would usually be
->>>>>>> CX/MX/MMCX). This way, the RPMhPDs will never be scaled.
->>>>>>>
->>>>>>> The current upstream implementation only allows one power domain to be
->>>>>>> scaled, but that's better than none (see other DTs for recent SoCs).
->>>>>>>
->>>>>>> Konrad
->>>>>>
->>>>>> SM4450 doesn't support MMCX and CX/MX domains will remain active so
->>>>>> power-domains property is actually not required for SM4450 clock nodes.
->>>>>
->>>>> It's not only about them being active.. some PLLs require e.g. MX to be
->>>>> at a certain level, or the system will be unstable
->>>>>
->>>>> Konrad
->>>>
->>>> With active I mean CX/MX rails will be default running at minimum level required for clock controllers. Adding power-domains property for CX/MX rails is like a redundant code as that will also scale such rails at default specified minimum level only. Also we hadn't added such property for other targets DT nodes to scale up CX/MX at minimum level.
->>>
->>> What I mean here is that, the minimum level may not be enough. In such case
->>> you would also add a required-opps = <&handle_to_rpmhpd_opp_level>
->>>
->>> Konrad
->>>
+>> Fixes: 9e939f008338 ("clk: qcom: add the SM8650 Display Clock Controller driver")
+>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+>> ---
+>>   drivers/clk/qcom/dispcc-sm8650.c | 14 +++++++-------
+>>   1 file changed, 7 insertions(+), 7 deletions(-)
 >>
->> Apologies, but could you please elaborate the use-case where minimum level isn't enough ? I guess for clock controllers configuration min level of CX/MX would be suffice, client will anyhow scale such rails to higher levels depending on their use-case.
+>> diff --git a/drivers/clk/qcom/dispcc-sm8650.c b/drivers/clk/qcom/dispcc-sm8650.c
+>> index c9d2751f5cb8..360b80377ed6 100644
+>> --- a/drivers/clk/qcom/dispcc-sm8650.c
+>> +++ b/drivers/clk/qcom/dispcc-sm8650.c
+>> @@ -339,7 +339,7 @@ static struct clk_rcg2 disp_cc_mdss_dptx0_aux_clk_src = {
+>>   		.parent_data = disp_cc_parent_data_0,
+>>   		.num_parents = ARRAY_SIZE(disp_cc_parent_data_0),
+>>   		.flags = CLK_SET_RATE_PARENT,
+>> -		.ops = &clk_rcg2_ops,
+>> +		.ops = &clk_rcg2_shared_ops,
+>>   	},
+>>   };
+>>   
+>> @@ -398,7 +398,7 @@ static struct clk_rcg2 disp_cc_mdss_dptx1_aux_clk_src = {
+>>   		.parent_data = disp_cc_parent_data_0,
+>>   		.num_parents = ARRAY_SIZE(disp_cc_parent_data_0),
+>>   		.flags = CLK_SET_RATE_PARENT,
+>> -		.ops = &clk_dp_ops,
+>> +		.ops = &clk_rcg2_shared_ops,
+>>   	},
+>>   };
+>>   
+>> @@ -457,7 +457,7 @@ static struct clk_rcg2 disp_cc_mdss_dptx2_aux_clk_src = {
+>>   		.parent_data = disp_cc_parent_data_0,
+>>   		.num_parents = ARRAY_SIZE(disp_cc_parent_data_0),
+>>   		.flags = CLK_SET_RATE_PARENT,
+>> -		.ops = &clk_rcg2_ops,
+>> +		.ops = &clk_rcg2_shared_ops,
+>>   	},
+>>   };
+>>   
+>> @@ -516,7 +516,7 @@ static struct clk_rcg2 disp_cc_mdss_dptx3_aux_clk_src = {
+>>   		.parent_data = disp_cc_parent_data_0,
+>>   		.num_parents = ARRAY_SIZE(disp_cc_parent_data_0),
+>>   		.flags = CLK_SET_RATE_PARENT,
+>> -		.ops = &clk_rcg2_ops,
+>> +		.ops = &clk_rcg2_shared_ops,
+>>   	},
+>>   };
 > 
-> The main issue here is with PLLs within the clock controllers. Nobody
-> votes for them. It's an unsolved problem and we currently work around
-> cases where it's necessary by requiring that (with runtime pm, so when
-> there's active consumers of the clock controller) the attached power
-> domain is at >= SOME_LEVEL
+> The only parent for these three clocks is the DT_BI_TCXO. Is this really
+> going to work as expected? Also what's the point of parking the
+> TCXO-sourced clocks?
 > 
-> Konrad
 
-Konrad, this target (SM4450) have all the PLLs connected to CX/MX(again 
-this is not collapsible). At boot the RPMHPD driver would keep the rails 
-at minimum level and which is good to operate for the clock controller. 
-I do not see currently this requirement you pose here specifically for 
-SM4450.
+Indeed will drop
 
-As part of the PLL requirement within clock controller, this is 
-definitely a requirement which we plan to RFC soon. There are 
-discussions already in progress on how to handle this requirement.
+Thanks,
+Neil
 
--- 
-Thanks & Regards,
-Taniya Das.
+>>   
+>> @@ -560,7 +560,7 @@ static struct clk_rcg2 disp_cc_mdss_esc0_clk_src = {
+>>   		.parent_data = disp_cc_parent_data_5,
+>>   		.num_parents = ARRAY_SIZE(disp_cc_parent_data_5),
+>>   		.flags = CLK_SET_RATE_PARENT,
+>> -		.ops = &clk_rcg2_ops,
+>> +		.ops = &clk_rcg2_shared_ops,
+>>   	},
+>>   };
+>>   
+>> @@ -575,7 +575,7 @@ static struct clk_rcg2 disp_cc_mdss_esc1_clk_src = {
+>>   		.parent_data = disp_cc_parent_data_5,
+>>   		.num_parents = ARRAY_SIZE(disp_cc_parent_data_5),
+>>   		.flags = CLK_SET_RATE_PARENT,
+>> -		.ops = &clk_rcg2_ops,
+>> +		.ops = &clk_rcg2_shared_ops,
+>>   	},
+>>   };
+>>   
+>> @@ -647,7 +647,7 @@ static struct clk_rcg2 disp_cc_mdss_vsync_clk_src = {
+>>   		.parent_data = disp_cc_parent_data_0,
+>>   		.num_parents = ARRAY_SIZE(disp_cc_parent_data_0),
+>>   		.flags = CLK_SET_RATE_PARENT,
+>> -		.ops = &clk_rcg2_ops,
+>> +		.ops = &clk_rcg2_shared_ops,
+>>   	},
+>>   };
+>>   
+>>
+>> -- 
+>> 2.34.1
+>>
+> 
+
