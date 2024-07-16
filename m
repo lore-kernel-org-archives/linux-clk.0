@@ -1,130 +1,142 @@
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0917198A29
-	for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2024 11:40:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8C5319923D
+	for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2024 12:05:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721130014; cv=none; b=W8HdkeC8VNPTiU24Gkqm6+Zztki0ZCW1vIEvxsrFvjWFhgYh5RtX1f+uGt2zY3JsWSqSktDTDv8YVVmIidDhLPBt2OqBU+p6nya5ibH8JLS54/OWDXAeJbe7KH152Uns9axw5TtnG4hWg+ejOf9bLooAp7FAii7MMrtTtXkLeE8=
+	t=1721131538; cv=none; b=DNk+pUV5BhoykbQD0ibKVDxIqfpjA77B/8IhsJG6jHBdGNqKSGB3Mqykzw/wyAraTCmGSQWlV+K1vAAKOWZgOQIZnoc1A8UFKSi3zNChW8kq6RFc9sbtWDCkb5525TiOWETRE3BZJIjEdp61NJbHlu9uRYD9b9BRC4g6zkXgZ4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721130014; c=relaxed/simple;
-	bh=IBZgoReNaHXUcuRQgPtMcqDYue6zAjXJSkCXCFB1OjQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mdQ8mb0jorAUWe+qIDNeXTY785IXnp/iOSQGn2kZmdHWtW26ivC8R3ga4vZHKufm0L2QammWjZ4TYvSw/A0UvMssgwmP0yTnYe6S/FTmppDAsttoNAI4CrNGgAYG2/lqINmVZMLDrs1DQkXznCskqOYpz5JTKjPhpK15vNcaRqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eX8KDIqH; arc=none smtp.client-ip=209.85.167.48
+	s=arc-20240116; t=1721131538; c=relaxed/simple;
+	bh=a/QNnE3VTY48ir/BbA7peHC4ohzSHYH11rn3ny9ooY0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cjgLpb8ncJzpEXGkbLFbffN+lD/j+IsckqCjCxkVDuj9aQacq6KtfHireR2ZwaqRsTgiqgFRncYGaxhpSzIL4626f63jb7I5/5pudj8vrbZTF4SrhoPhMTBiN6NTPX2OrES4BcKRbMFDIdYmuAwsvzIB4UDQygm09IfQS6nDpUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ux7QEief; arc=none smtp.client-ip=209.85.208.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eX8KDIqH"
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52ea952ce70so5701624e87.3
-        for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2024 04:40:11 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ux7QEief"
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-59589a9be92so7442338a12.2
+        for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2024 05:05:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721130010; x=1721734810; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=G6xEuYpVtXnG3aS4nIpX/q6zWD8h3Xaat6dOgx90q54=;
-        b=eX8KDIqHUP/R8H4lrknqTj1ZtSavQp2d1vh0+kxnvCjZvmn73f3EyuNN2xsCjNk7XB
-         ZO2Amp3S12ytkAJU3tUp/lxGhYnEeI5lOA0+BgMNunZ6mecPav7Be2njn1n/aTRLjpFZ
-         rGXmqHIcRD8BQWcPZfwmZE4upmeIS7TYanF5CA+wRUCho9VYS1EArfQ6sQOoEsrEHqJl
-         x25TtMl5EwLtw9bsk3oX+Qp4m8RlR7GQzRVON7CalObHiBvgYfKvIDY5Pxp+jZ5dQgtF
-         yfwcify5xMZH0cnpFAP+9PqPg0Y8PnrL1iPOjDucyTVGcM7F7CLbgQDhaH2Do/RNbfOQ
-         zA6Q==
+        d=linaro.org; s=google; t=1721131535; x=1721736335; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=4DQiUv2nV2q5zKISm+bmewPqftcl86SPYzZg0JZrEy0=;
+        b=Ux7QEiefPbq7h4ztZUTCMmfLYaUPYlsNyXKq+tdiY0Gx5PzTX55CnSna2tJZdg4Eow
+         FgfoUdTAqKeZQdl638xxXMuKmCqY2m4G/rRVIwYUL6fbuUdGoCLi9/CqFUa9Vua5JhrM
+         shHNZvEWijn1KzUdtY4GV7VU09FDpCdoXdCJwI+jh2AvOCdPKXccMgSKIFVK3RV0eoT5
+         G7/sn88uaswysfVJGADR/DXBRMhGETK2/ndR5P2aY6LvZXvjVaw8TblmJUwhtTs6FwUd
+         bOt0g0oubfegsAK2dvXy/0RDU1Yrm4tLEvCh1NXEBd0M4UD05DYU6n80vVxBi/7ZSM51
+         V2Kg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721130010; x=1721734810;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1721131535; x=1721736335;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=G6xEuYpVtXnG3aS4nIpX/q6zWD8h3Xaat6dOgx90q54=;
-        b=QahRoUsiHvs6uGDOv0ssw44n2W59RPf9r5yBSIx2w7Xoy52jNuyrQwM18hetjhYHve
-         z8/Qxhc+4r0gdO3a7CD4jZYJWaDDUl7ssG800ZYlyiDYV0w6OkjodHur4oCMEVhXF2/J
-         1yApRlNKmEqnpYAmWUvTgoVq8cYZokYEkI8XDegGFOKXdzJAXbRq5N48vh28PsgS8MAn
-         VOHcsFzYtpPg6R/227g9+I1wS3wbIqz9eYn9jswsnFHRslZPtp9cTYmaN8QaMMkUIDSG
-         udcpHhRyfS2nGpv2+Tk0jVfhK5GElraH4A0VhkxK/jLhzze3OflEVr5ni9+Hdl5IN6SZ
-         mw8g==
-X-Forwarded-Encrypted: i=1; AJvYcCU6BpVW8BFQeS4r33j68rqqKPbe/8aWlPVRTwAl8kkjynoLTD2tHruYmmFQ7DTBAR7eh6bfuJrPo0BQfx0MDAjHX3s/hvKkLcFl
-X-Gm-Message-State: AOJu0Yx+rls6nH/ipoUV3Cmg6sEDhQQ8svFT0AhrpEgSADjPb98o/Yct
-	REKLDwSbVdV7N7wPgEc0GPlvIq6YO2LOjmFsoCAskdcjRVBR1H9MN7JilW3onpI=
-X-Google-Smtp-Source: AGHT+IGNeELJAWlQzNylXKeMqsQ5zbqL+PcjSDrqgMkM2cimJQ9/3Fz7a/4zQML6t+WKg3RknFfDcA==
-X-Received: by 2002:a05:6512:131a:b0:52c:e184:3dd6 with SMTP id 2adb3069b0e04-52edeecea1cmr1398248e87.0.1721130010100;
-        Tue, 16 Jul 2024 04:40:10 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ed2531fbdsm1140499e87.195.2024.07.16.04.40.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 16 Jul 2024 04:40:09 -0700 (PDT)
-Date: Tue, 16 Jul 2024 14:40:08 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Taniya Das <quic_tdas@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/3] clk: qcom: dispcc-sm8650: Park RCG's clk source
- at XO during disable
-Message-ID: <xzyphnxzkul77qrnxvxayzvschlwkhzun5jwom4pxeqsoxzbpj@k4o5cnitwc7z>
-References: <20240716-topic-sm8650-upstream-fix-dispcc-v3-0-5bfd56c899da@linaro.org>
- <20240716-topic-sm8650-upstream-fix-dispcc-v3-1-5bfd56c899da@linaro.org>
+        bh=4DQiUv2nV2q5zKISm+bmewPqftcl86SPYzZg0JZrEy0=;
+        b=GqiwHSyHMGpXd2xxw1I9cog3dm10VoITqygEOi+QbmNC57h2mxi6Im/9tZBAoLHlDG
+         ub48+K+W2GVq90ZPcXiBfFd/3Xae8XTai4pfe/9KiVmDcUpEbHjr6ZEO5RjRztye31Lq
+         QNa463+1XwiivwkkNxXRJiyETVO7qz8Ie2rQlrhxGSy2SNGpsiNat/AjJISKPF7UHylf
+         /pEjnypPPXy38nLWArZNirnE2FLYmSX4zfr0zqzrKHL5EY3nXRVua0SMjSmcqPLTQtB9
+         Uy/ND0rswjEO13mBOu8ip/B/uhhBkwvddXVCB/tYA1gi3pv/DOP7RsXKgbUq9IgoKybz
+         xE9w==
+X-Forwarded-Encrypted: i=1; AJvYcCVf71n3bZQczLKEz7je3eNHKXbxApVM82/ZbG9izISej5ICNTIXP+21Ye00Jq4Jte24kJ5asdZgemUSPLZE9yOV+PesLG1yiIM3
+X-Gm-Message-State: AOJu0YxfMaXqqTKbKMlzblgi5Ds+GsCa2qM4pM8sFqB3/FDookcVXfU0
+	R4QOEwcrwWjdsS9pwU+D/91okCYQRHxvLm2zsaiDgLoL8qQP3a8Jv6c7xqDsDDs=
+X-Google-Smtp-Source: AGHT+IEUH3gRh6QTjYG53o7YCNbofILlhkib5QZLUpoUNe7aKkPvuxXcgCnjYgiZ+rYcFHKNwnZ5HA==
+X-Received: by 2002:a05:6402:2791:b0:59e:a1a6:11bb with SMTP id 4fb4d7f45d1cf-59eeb4dc106mr1654868a12.0.1721131535063;
+        Tue, 16 Jul 2024 05:05:35 -0700 (PDT)
+Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-59b26f62bd9sm4812439a12.94.2024.07.16.05.05.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 16 Jul 2024 05:05:34 -0700 (PDT)
+Message-ID: <8916840a-e5e1-406c-a1e8-a073ad344d56@linaro.org>
+Date: Tue, 16 Jul 2024 14:05:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240716-topic-sm8650-upstream-fix-dispcc-v3-1-5bfd56c899da@linaro.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/8] clk: qcom: Add support for Video clock controller
+ on SA8775P
+To: Taniya Das <quic_tdas@quicinc.com>, Bjorn Andersson
+ <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ quic_imrashai@quicinc.com, quic_jkona@quicinc.com
+References: <20240715-sa8775p-mm-v3-v1-0-badaf35ed670@quicinc.com>
+ <20240715-sa8775p-mm-v3-v1-2-badaf35ed670@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <20240715-sa8775p-mm-v3-v1-2-badaf35ed670@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 16, 2024 at 11:05:21AM GMT, Neil Armstrong wrote:
-> The RCG's clk src has to be parked at XO while disabling as per the
-> HW recommendation, hence use clk_rcg2_shared_ops to achieve the same.
+On 15.07.2024 10:23 AM, Taniya Das wrote:
+> Add support for Video Clock Controller for SA8775P platform.
 > 
-> It also changes dptx1_aux_clk_src to use the correct ops instead of
-> clk_dp_ops.
-> 
-> Fixes: 9e939f008338 ("clk: qcom: add the SM8650 Display Clock Controller driver")
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
 > ---
->  drivers/clk/qcom/dispcc-sm8650.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/dispcc-sm8650.c b/drivers/clk/qcom/dispcc-sm8650.c
-> index c9d2751f5cb8..80fe25afccf7 100644
-> --- a/drivers/clk/qcom/dispcc-sm8650.c
-> +++ b/drivers/clk/qcom/dispcc-sm8650.c
-> @@ -398,7 +398,7 @@ static struct clk_rcg2 disp_cc_mdss_dptx1_aux_clk_src = {
->  		.parent_data = disp_cc_parent_data_0,
->  		.num_parents = ARRAY_SIZE(disp_cc_parent_data_0),
->  		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_dp_ops,
-> +		.ops = &clk_rcg2_ops,
 
-Should this also be clk_rcg2_shared_ops ?
+[...]
 
->  	},
->  };
->  
-> @@ -560,7 +560,7 @@ static struct clk_rcg2 disp_cc_mdss_esc0_clk_src = {
->  		.parent_data = disp_cc_parent_data_5,
->  		.num_parents = ARRAY_SIZE(disp_cc_parent_data_5),
->  		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_shared_ops,
->  	},
->  };
->  
-> @@ -575,7 +575,7 @@ static struct clk_rcg2 disp_cc_mdss_esc1_clk_src = {
->  		.parent_data = disp_cc_parent_data_5,
->  		.num_parents = ARRAY_SIZE(disp_cc_parent_data_5),
->  		.flags = CLK_SET_RATE_PARENT,
-> -		.ops = &clk_rcg2_ops,
-> +		.ops = &clk_rcg2_shared_ops,
->  	},
->  };
->  
-> 
-> -- 
-> 2.34.1
-> 
+> +
+> +static struct gdsc video_cc_mvs0_gdsc = {
+> +	.gdscr = 0x809c,
+> +	.en_rest_wait_val = 0x2,
+> +	.en_few_wait_val = 0x2,
+> +	.clk_dis_wait_val = 0x6,
+> +	.pd = {
+> +		.name = "video_cc_mvs0_gdsc",
+> +	},
+> +	.pwrsts = PWRSTS_OFF_ON,
+> +	.parent = &video_cc_mvs0c_gdsc.pd,
+> +	.flags = RETAIN_FF_ENABLE | POLL_CFG_GDSCR | HW_CTRL,
 
--- 
-With best wishes
-Dmitry
+HW_CTRL_TRIGGER? Not sure why HW_CTRL wasn't removed altogether with
+the hwctrl patchset..
+
+Konrad
