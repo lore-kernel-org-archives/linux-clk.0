@@ -1,135 +1,196 @@
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8DD413C690
-	for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2024 12:15:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D886617B031
+	for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2024 12:17:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721132119; cv=none; b=QopZaeJIqOlgsfVa59nQz85q7tRLDxsqA+LiTCd3Sq6IICcCIFf+0DwlCMSvbeJqO+NZqd/l8fOnqk+hyu0utNrIncD4e3OZID3foQCaa2Cy8nEu0HK50S7uxU0sImKFmb35FP+CbBpx15R52iDS1DY3GuQs5/F8QNRuyrpREVs=
+	t=1721132255; cv=none; b=Z1WdzEXp8Aj5A9ihdhT/FqgKwHzf+OmYtJYA8QjzE+kqEG1k0zvI26ZhAaOx7XzDrg5aNaYBvJjBNAiOIQhfs8EYFPKWWpWNFfpRVVaGpitSRhArJXXxmKGn5kMFos/egpKsAF26AuAjiqTYXEEMiiBTVQHzOCBY1ipYzOJ03Zg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721132119; c=relaxed/simple;
-	bh=/mJSEHVWWL/+/TzG4vXCLTvtSyApfM55zicTRypWeIw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OO/01C81FCLL9I7sVjcaAZZ3pApkoRYRujGULOP7l81trrP+fZ3Yq84OWwiC2oiFBifNYN+OsInmQsU6OOHrpWKbiOLVZLeDfogApxoJQhhiyD51UYs95pUlj/y90Ut1HO+NuGLmtWUoWk8q7KXedi3B1wLB9wPr4EpUNdxhRg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OcNOrxf3; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1721132255; c=relaxed/simple;
+	bh=3va6R3ZZDZxoqHLA+PQX1kiONoNUXEoXT6Gk7c/J2Ow=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=roqQ5pJ7TBTus58MAy4EvnMwCaG2jKKEkb7tqD0NTsN7MPnodBh+bP3UqQGZvJR7QhIbTJ7IiPzjkY6svhf4mR9aryV40HrFoGvUk97qIk9WHlIbPvqWnI0kl/FS/ZC6ns9g9eNtUXr+2GkVxFypwaE2cMSxCAtZmAlRcZoXoSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=axDj7KFv; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OcNOrxf3"
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-58ef19aa6c4so7144335a12.2
-        for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2024 05:15:17 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="axDj7KFv"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4266b1f1b21so37092305e9.1
+        for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2024 05:17:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721132116; x=1721736916; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=iQwj37Z64kkWkq1QNNNRBOD95NNDPJjcOzXptOwbtXo=;
-        b=OcNOrxf3FUK8MfZDS0v5z5fks207JeddgsHbPSNuDyPWiH2bxC1aHMnj44pkhQ4dli
-         CzE6dicMDQ6q+TrkT1t5f9tdbGxAPp/WZrIm0zAZiEmt3b+vfcKdVDSl/9XB0/SVsf5Q
-         WcbAwmQnlGEm3jgDPT97829aYEIo4KeAUJjeAtLrQscdk3pH61ezuBvyy24WkUbjoueX
-         GHEpAw/cu3ip6ZZabTv2L3FQm7WjkF6zhoIVj8P96zLaA3ij5jrk5g9huRMYS954JCkh
-         nAzCjSMjw0/rJYnm9ZX975JIqjd0LwAqvxvO96mNNmOd/uIUBa5Z/dkAoTLZFJPGLpEX
-         HDTA==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1721132249; x=1721737049; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FCyvorohijdRKm4vXZWOZPoWQcguYD1LDURxXWUj1WE=;
+        b=axDj7KFvCiHQJa66XkZMsZ9cUca9/MuF/SmaiJ14Ljzzk/KGOqTbI0HiNpE0R0STUe
+         4x5IPBXN5V2j/fXY6nvI1oOHJeicBdGnErY6hDTUgUlX8dJepzPUoFbl8iNjRaTtpN2p
+         dhFZQZZxdX3XvqqsCNwn5Afbwr72uUBu9lfz/lMIe4uDWT/iHDM7OvIv6Hq97nrnXSka
+         btoJ0Pv4WIK/y9QgVAkKOm5qinHUv0bMLkMhFyVo8cfP4LnvFKAzXuOtGON6KtWhg/IG
+         /A7hF34cEnH+SbHyybBLCJ5RuC8Whh/hEbhSwtbfvUvMW98wnIP4nOmDGwhnhBW5OFuE
+         Sl6w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721132116; x=1721736916;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iQwj37Z64kkWkq1QNNNRBOD95NNDPJjcOzXptOwbtXo=;
-        b=Z+Pl8013s9Wd/t/A40pQESYb1TIxqbJpVPoamWfdrpLE7t9YMFu8zbDSKzwK5YjIBb
-         Ppfne+dR/ihYqGYwRlEQcswLBwAoim+b97Ns1fhELgsCCeZ1FPq4f0lBZ3yJAF9JA9mg
-         VqKiN52w5tX/EIt+6O2e2k97zumNch0FEFUdYn5YFNTQESf6fh8gkfvupgM2YlfnPw4C
-         QiIKXrp2r90zheHoQAXgMbuy1v4LJzjmVhm7+Kom/2nrlheA6PZqbZUEB0PrdTLFfnpT
-         gEEo/nHoLvDCCWcayZH3JyjzvJT0HSI5YLiuMxsx6m2XcUHHbPA0zugLCUAInzP0YDtJ
-         ubsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUrQCxp4fc0FoB1i8j0GxOpJCrwJsHC7QqUI1LZVi41B9WOo8E2/CIwkc6Gk7smoBg98LIlLrstUfsf9Ny9xjkXRfmi1jjXagTG
-X-Gm-Message-State: AOJu0YzZoAXOPDwOr9lNLuZ5TJCbeh4jedhfomnirEr29sgk1elFNknr
-	qCLUiUkQTdG9/UznoHwrbrx6bLzRjS0dB+5491P9x7gVxfNzQkiNnJmj5iR1DuA=
-X-Google-Smtp-Source: AGHT+IHfEm9rSiHqbH+SusBNneyOosPqVrpvY7RwUkyFYFz6O61G1Ifzfw53sglOfpelrIaM3lCSvg==
-X-Received: by 2002:a05:6402:3486:b0:58e:4088:ed2 with SMTP id 4fb4d7f45d1cf-59eeee44bc9mr1445338a12.16.1721132115994;
-        Tue, 16 Jul 2024 05:15:15 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-59e663e4a6esm1594433a12.80.2024.07.16.05.15.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Jul 2024 05:15:15 -0700 (PDT)
-Message-ID: <d454e01f-3d6b-4a02-87cf-3d289bc6957c@linaro.org>
-Date: Tue, 16 Jul 2024 14:15:12 +0200
+        d=1e100.net; s=20230601; t=1721132249; x=1721737049;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FCyvorohijdRKm4vXZWOZPoWQcguYD1LDURxXWUj1WE=;
+        b=CKYRyrLKO5W8sQvouXl7FbYF/l9croe6y0PJRi9ku0Xy4/d891XGQVNVoX306Mz/dK
+         0C5tFQcBV0gwMJ93t89ofZaIX9070JCKX100L6HyPeQ4RFKHzMI7sg7tA6AeR/ygmyaV
+         QieGzGF4+LPYvSqfQu++EqhKFjXSh1LEACsLktjqiFcA7SeZ+RPtzHhw//9XFFq2ZuwS
+         +lhPDJbueFqedFKN5aiUfC1KMZ2CnqjCuhcM2AQYPknGRQWQHQdlo0LrJeLe3kPmCczd
+         r8h3yKWp749LNS2r96U+H7XkDq2lLSsVqGVz5UesufZhjy+OEphTE20xGYs1ByMUNPjE
+         aC9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX7SRAZPlzkotB5zODhrw7mBrTyLNQshI1RtbkQ2rjYLnsrXKhj7n43NYwwY/dEivUwk5DsoMgbUchBgZtPu1LbmIeHE+cTaUUV
+X-Gm-Message-State: AOJu0YzRHdL/q3z5Ul5hH2IM25CAPmmbN3KhvRltdAYT6rk+ov1n3Z7w
+	lDfOtMSVBG2gdbwubY4XWZfF7+AsKM17CAIjDdrkLS9V/4PHs36Y1i74IPyk9bI=
+X-Google-Smtp-Source: AGHT+IH4yigp1gkjcQxeAeOLYjio+1QZ5295mCJAsZNF/cho9G7FBybV0wRa9cSEe7GhaXwmooof4Q==
+X-Received: by 2002:a05:600c:46c9:b0:425:69b7:3361 with SMTP id 5b1f17b1804b1-427ba696a81mr12199525e9.18.1721132249171;
+        Tue, 16 Jul 2024 05:17:29 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:e816:4889:4177:9f12])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4279f2cc27asm159281425e9.34.2024.07.16.05.17.28
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Jul 2024 05:17:28 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Jan Dakinevich <jan.dakinevich@salutedevices.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,  Stephen Boyd
+ <sboyd@kernel.org>,  Neil Armstrong <neil.armstrong@linaro.org>,
+  <linux-kernel@vger.kernel.org>,  <linux-amlogic@lists.infradead.org>,
+  <linux-clk@vger.kernel.org>
+Subject: Re: [PATCH 3/8] reset: amlogic: split the device and platform probe
+In-Reply-To: <66ef4ff5-b472-44ee-a4fc-a68ceacea159@salutedevices.com> (Jan
+	Dakinevich's message of "Tue, 16 Jul 2024 01:48:18 +0300")
+References: <20240710162526.2341399-1-jbrunet@baylibre.com>
+	<20240710162526.2341399-4-jbrunet@baylibre.com>
+	<66ef4ff5-b472-44ee-a4fc-a68ceacea159@salutedevices.com>
+Date: Tue, 16 Jul 2024 14:17:27 +0200
+Message-ID: <1j34o9pm3s.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 5/9] pmdomain: qcom: rpmpd: Add IPQ9574 power domains
-To: Varadarajan Narayanan <quic_varada@quicinc.com>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
- mturquette@baylibre.com, sboyd@kernel.org, ilia.lin@kernel.org,
- rafael@kernel.org, viresh.kumar@linaro.org, ulf.hansson@linaro.org,
- quic_sibis@quicinc.com, quic_rjendra@quicinc.com, danila@jiaxyga.com,
- neil.armstrong@linaro.org, otto.pflueger@abscue.de, abel.vesa@linaro.org,
- luca@z3ntu.xyz, geert+renesas@glider.be, stephan.gerhold@kernkonzept.com,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
- linux-clk@vger.kernel.org
-Cc: Praveenkumar I <quic_ipkumar@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-References: <20240710061102.1323550-1-quic_varada@quicinc.com>
- <20240710061102.1323550-6-quic_varada@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <20240710061102.1323550-6-quic_varada@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 10.07.2024 8:10 AM, Varadarajan Narayanan wrote:
-> From: Praveenkumar I <quic_ipkumar@quicinc.com>
-> 
-> Add the APC power domain definitions used in IPQ9574.
-> 
-> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> Signed-off-by: Praveenkumar I <quic_ipkumar@quicinc.com>
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> ---
+On Tue 16 Jul 2024 at 01:48, Jan Dakinevich <jan.dakinevich@salutedevices.com> wrote:
 
-Could you please confirm [1]?
+> On 7/10/24 19:25, Jerome Brunet wrote:
+>> To prepare the addition of the auxiliary device support, split
+>> out the device probe from the probe of the platform device.
+>> 
+>> The device probe will be common to both the platform and auxiliary
+>> driver.
+>> 
+>> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+>> ---
+>>  drivers/reset/reset-meson.c | 55 +++++++++++++++++++++++--------------
+>>  1 file changed, 34 insertions(+), 21 deletions(-)
+>> 
+>> diff --git a/drivers/reset/reset-meson.c b/drivers/reset/reset-meson.c
+>> index 59126c9f194a..fec55321b52b 100644
+>> --- a/drivers/reset/reset-meson.c
+>> +++ b/drivers/reset/reset-meson.c
+>> @@ -87,6 +87,27 @@ static const struct reset_control_ops meson_reset_ops = {
+>>  	.deassert	= meson_reset_deassert,
+>>  };
+>>  
+>> +static int meson_reset_probe(struct device *dev, struct regmap *map,
+>> +			     const struct meson_reset_param *param)
+>> +{
+>> +	unsigned int stride = regmap_get_reg_stride(map);
+>> +	struct meson_reset *data;
+>> +
+>> +	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+>> +	if (!data)
+>> +		return -ENOMEM;
+>> +
+>> +	data->param = param;
+>> +	data->map = map;
+>> +	data->rcdev.owner = dev->driver->owner;
+>> +	data->rcdev.nr_resets = param->reg_count * BITS_PER_BYTE
+>> +		* stride;
+>> +	data->rcdev.ops = &meson_reset_ops;
+>> +	data->rcdev.of_node = dev->of_node;
+>
+> It will be good to add here something like this. Later it would help in
+> reset debugging.
+>
+> data->rcdev.dev = dev;
 
-Konrad
+That is not the purpose of this change.
+I'm merely re-organizing exiting code, not changing it.
 
-[1] https://lore.kernel.org/linux-arm-msm/57dadb35-5dde-4127-87aa-962613730336@linaro.org/
+Plus, if you refering to rcdev_name(), we already populate
+rcdev->of_node, so a name is provided.
+
+>
+>> +
+>> +	return devm_reset_controller_register(dev, &data->rcdev);
+>> +}
+>> +
+>>  static const struct meson_reset_param meson8b_param = {
+>>  	.reg_count	= 8,
+>>  	.reset_offset	= 0x0,
+>> @@ -125,46 +146,38 @@ static const struct regmap_config regmap_config = {
+>>  	.reg_stride = 4,
+>>  };
+>>  
+>> -static int meson_reset_probe(struct platform_device *pdev)
+>> +static int meson_reset_pltf_probe(struct platform_device *pdev)
+>>  {
+>> +
+>> +	const struct meson_reset_param *param;
+>>  	struct device *dev = &pdev->dev;
+>> -	struct meson_reset *data;
+>> +	struct regmap *map;
+>>  	void __iomem *base;
+>>  
+>> -	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+>> -	if (!data)
+>> -		return -ENOMEM;
+>> -
+>>  	base = devm_platform_ioremap_resource(pdev, 0);
+>>  	if (IS_ERR(base))
+>>  		return PTR_ERR(base);
+>>  
+>> -	data->param = of_device_get_match_data(dev);
+>> -	if (!data->param)
+>> +	param = of_device_get_match_data(dev);
+>> +	if (!param)
+>>  		return -ENODEV;
+>>  
+>> -	data->map = devm_regmap_init_mmio(dev, base, &regmap_config);
+>> -	if (IS_ERR(data->map))
+>> -		return dev_err_probe(dev, PTR_ERR(data->map),
+>> +	map = devm_regmap_init_mmio(dev, base, &regmap_config);
+>> +	if (IS_ERR(map))
+>> +		return dev_err_probe(dev, PTR_ERR(map),
+>>  				     "can't init regmap mmio region\n");
+>>  
+>> -	data->rcdev.owner = THIS_MODULE;
+>> -	data->rcdev.nr_resets = data->param->reg_count * BITS_PER_BYTE
+>> -		* regmap_config.reg_stride;
+>> -	data->rcdev.ops = &meson_reset_ops;
+>> -	data->rcdev.of_node = dev->of_node;
+>> -
+>> -	return devm_reset_controller_register(dev, &data->rcdev);
+>> +	return meson_reset_probe(dev, map, param);
+>>  }
+>>  
+>> -static struct platform_driver meson_reset_driver = {
+>> -	.probe	= meson_reset_probe,
+>> +static struct platform_driver meson_reset_pltf_driver = {
+>> +	.probe	= meson_reset_pltf_probe,
+>>  	.driver = {
+>>  		.name		= "meson_reset",
+>>  		.of_match_table	= meson_reset_dt_ids,
+>>  	},
+>>  };
+>> -module_platform_driver(meson_reset_driver);
+>> +module_platform_driver(meson_reset_pltf_driver);
+>>  
+>>  MODULE_DESCRIPTION("Amlogic Meson Reset Controller driver");
+>>  MODULE_AUTHOR("Neil Armstrong <narmstrong@baylibre.com>");
+
+-- 
+Jerome
