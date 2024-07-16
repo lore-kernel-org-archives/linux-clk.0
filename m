@@ -1,183 +1,121 @@
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com [209.85.219.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28B0715EA6;
-	Tue, 16 Jul 2024 09:49:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CBD4195F17
+	for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2024 09:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721123349; cv=none; b=TDMeeOtQFKGy3K+TWY4R2XtpJkK9x9M/yVEhY269Tv17tm4jRm3XcedpRqeJnf9tN4JKLYbC16PX+etBT7Rrt8pP6z4nzsv0S9cKfeE+8F/0z90/N3CsqaVwM+UGHWJGopDofnkSvPQ2RB00zZWeAzVj9dg55SWRXjKOOLcYz+c=
+	t=1721123694; cv=none; b=bUjw8CeBD0QSIKabM+dO2awucE+ocgJlSklO1AM3U3SrUypeTFwNNJ3l3H7fTnCGzHPKyVCnI5jSvF+Y3MV9iR5SSjyp0EO15V+KKS0prP6KHUxIahTQ/x/XICOpQH9nisKmu31ZTZoLB85WZg+F+1sbX5ET7+P6ztSH0xF/mMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721123349; c=relaxed/simple;
-	bh=8UvQU7I9knuWhkpzd9TO9Fs/k8V16zg/peOwYTNUXUo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QgKtUNrQkAIttaPf4CLx9xeMyBzEp3hDIy+Re/5bhz3wCnaMozLSB9j5z5blrCaVutbkryl6V967eQIYMXPy0n6VwrhzNePIaKVQtZOjz/7wA31OelixlrAq9gAyJB48IFlimke2+RKqUY1Ersnq9Tnmhc9sy4hzgQyNmpWGR7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f174.google.com with SMTP id 3f1490d57ef6-e057bdc936fso5240665276.1;
-        Tue, 16 Jul 2024 02:49:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721123345; x=1721728145;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pRQTvYVjx0Y6w3qpoyzLPKWPbAyGp8ArajcCwsaEB18=;
-        b=vvxaKZ692zESgqP/WvRtkSb4pea3vkbR134MeYOFaxvD1pHKdE5d0n1zBuK1wUFk1d
-         SOEeIyvUfC1l5MdMOA7h4C6jau9yxt0Tw2zpLDMxh8TytP3FHGVvfGQsAdExIvt6dZic
-         9SNHiBjzQc3LdWm8ME2tVL7FeU8/L9fE9gBpmQH0nYlOqBe0TC1/Oslk77CUvO1zHY3E
-         OliidOAORXzeHiHD4HBCy8S7n9h0eefMj8c4CsXTZtQf1tCTuWaSAzLqvrUkOmhidCon
-         aKr8q25hL0eCw4eWjMD+ytKIsoGQBUN/e6pt5nFXzfe+yzFtFOy3t7Ea2tFk5LTRMWqZ
-         pIcg==
-X-Forwarded-Encrypted: i=1; AJvYcCXd7wVgKxW2I36bxri0IaAadBU16HAjtZcV3Exeunj4vPQwkvueCnDZ3q7UgWi7jmp2AY0bYi3m2XU22hHXeKIXd4IAAfSFZETH3kAQ6/jV+7wLNhbenaABxwe5Ha0jVW2+21jaE/v0QspZJTwbuZMRH4TcIOv/WeP+G5KUNHf8Hi++YUjUz8rgBAS43BVTdkIQTAQYXLZGtS0UW2nG173D+UB4sGhH9VqOwoW/O2zcnSNdBrbYf3orO14z2WY04Q==
-X-Gm-Message-State: AOJu0Yz9bUvCziP77YdPGk0nJ6V6DqXRwO2Iihjb3r8cTbsgUm2CKiOM
-	Ol7/BE4uPOYJNi/ONlku8LDGTf9KQMf/mYm1CTKqYwnRRfy+0eefXEWIYgBM
-X-Google-Smtp-Source: AGHT+IHDOwQCXxlWls2E2WxUggo4e7W62NofTFzO/4waHMBDxD1Zf7wxldMc/f+Fl559sgNJpfnelg==
-X-Received: by 2002:a25:84c6:0:b0:dff:4a3:2df4 with SMTP id 3f1490d57ef6-e05d56e718dmr1732478276.31.1721123344902;
-        Tue, 16 Jul 2024 02:49:04 -0700 (PDT)
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com. [209.85.219.177])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e05a4695bc9sm1175809276.36.2024.07.16.02.49.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Jul 2024 02:49:04 -0700 (PDT)
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e057bdc936fso5240607276.1;
-        Tue, 16 Jul 2024 02:49:02 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXgDyR8h2fuF4Bem3aMKDcoht3tPwUfIDktipVKZT16ilBXlxTqMOBwzJ/pEV6KpHQKrfz21fzGuM9fLLUPt69g2xJpOTkw/chjkTRGOs25MgFH+EL/3R6F0SDV7oTq8IYxBAUi0dim5ICHZy+YXoyFDXMfKTGDdxXVyX5KGw2nXDLVSyQBtZNfovbmdUc4Idw7+lktHg2UcSel+VLB0s5DZTDv6XsJPlStgej5l6zLyBdESnqSGI2agW5PSX+PLw==
-X-Received: by 2002:a0d:de04:0:b0:63b:f8cb:9281 with SMTP id
- 00721157ae682-663817d8a34mr15909167b3.41.1721123342440; Tue, 16 Jul 2024
- 02:49:02 -0700 (PDT)
+	s=arc-20240116; t=1721123694; c=relaxed/simple;
+	bh=ZPb5imWfzGDWAAu2GyDOPfBLXm3faEwF4zRISOWssjA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=ekYnnT3XyPZ/3fnTAm78AoMGy6Umuuzqokuty3BW2GCd7v9mMJ8E0Xt0FTLpiTn0PjQ3RqEDwSeu5ofVLm1uHcdyC5TWNZpxdDOHqN8cl0/zFX9FiQAnL8fmIu16+6AE2Jq4bM2cXiiO9N2h28/2AI5tJf7nPA40BsLcHkE7Oj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RfMEffS8; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RfMEffS8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1721123691; x=1752659691;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=ZPb5imWfzGDWAAu2GyDOPfBLXm3faEwF4zRISOWssjA=;
+  b=RfMEffS8jA+jRbg0LqVf1L32qb3rAOHnaQuMO0YQJ1WnDjRJ1SszK9Jc
+   k1fiB95zR4qZTBviBbiMecffGXIGMW/39Pyj7X2RVMW/eDlOrKcaIRKcl
+   fZQ+rzqBdWhuX+vTPytA/qkfKWR3qqPbM9Pjm121ntP0yDCnAG+5uk6Ek
+   0rXqaOXo8/ZJFd6X7e5KkhS/gxSDk7CqSJrOInzS8k9OXszKaPnNBb95u
+   UqZaWZElhEp5AiQHKkHkQy5oXvJ1GNm1rfnA2YEK2QJVLqN4zOo+YLyf/
+   rJWHZ/TxTxQkFuRTKMQFI4bbYy7lCGZFDYRTdnI/GlARUXNonro0vHGdI
+   g==;
+X-CSE-ConnectionGUID: zZS6gQaTSyaff57PTMhlBQ==
+X-CSE-MsgGUID: MTPrI4prT/WNAm1uurzcbw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11134"; a="21462921"
+X-IronPort-AV: E=Sophos;i="6.09,211,1716274800"; 
+   d="scan'208";a="21462921"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2024 02:54:50 -0700
+X-CSE-ConnectionGUID: Up+zKD7xTg2MmG728Q/ZMQ==
+X-CSE-MsgGUID: BMrmQZyKTwmYNPrUkDcEvw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,211,1716274800"; 
+   d="scan'208";a="50342627"
+Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
+  by orviesa006.jf.intel.com with ESMTP; 16 Jul 2024 02:54:49 -0700
+Received: from kbuild by 68891e0c336b with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sTetS-000f6Y-1a;
+	Tue, 16 Jul 2024 09:54:46 +0000
+Date: Tue, 16 Jul 2024 17:54:01 +0800
+From: kernel test robot <lkp@intel.com>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	David Gow <davidgow@google.com>
+Subject: [clk:clk-kunit 10/10] ERROR: modpost:
+ "__dtbo_kunit_clk_parent_data_test_begin" [drivers/clk/clk_test.ko]
+ undefined!
+Message-ID: <202407161711.qDtiW4s1-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240710201246.1802189-1-sboyd@kernel.org> <20240710201246.1802189-2-sboyd@kernel.org>
-In-Reply-To: <20240710201246.1802189-2-sboyd@kernel.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 16 Jul 2024 11:48:49 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdV56nezM9cj1bVo4+gqi0OPvKjktu7i4Ov9ZKeyNkoiOg@mail.gmail.com>
-Message-ID: <CAMuHMdV56nezM9cj1bVo4+gqi0OPvKjktu7i4Ov9ZKeyNkoiOg@mail.gmail.com>
-Subject: Re: [PATCH v7 1/8] of/platform: Allow overlays to create platform
- devices from the root node
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, patches@lists.linux.dev, 
-	kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org, 
-	devicetree@vger.kernel.org, Brendan Higgins <brendan.higgins@linux.dev>, 
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J . Wysocki" <rafael@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
-	Daniel Latypov <dlatypov@google.com>, Christian Marangi <ansuelsmth@gmail.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Maxime Ripard <maxime@cerno.tech>, Peter Rosin <peda@axentia.se>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, Linux I2C <linux-i2c@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
 Hi Stephen,
 
-On Wed, Jul 10, 2024 at 10:14=E2=80=AFPM Stephen Boyd <sboyd@kernel.org> wr=
-ote:
-> We'd like to apply overlays to the root node in KUnit so we can test
-> platform devices created as children of the root node.
->
-> On some architectures (powerpc), the root node isn't marked with
-> OF_POPULATED_BUS. If an overlay tries to modify the root node on these
-> platforms it will fail, while on other platforms, such as ARM, it will
-> succeed. This is because the root node is marked with OF_POPULATED_BUS
-> by of_platform_default_populate_init() calling
-> of_platform_default_populate() with NULL as the first argument.
->
-> Loosen the requirement here so that platform devices can be created for
-> nodes created as children of the root node via DT overlays even if the
-> platform bus wasn't populated for the root node.
->
-> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-> Cc: Saravana Kannan <saravanak@google.com>
-> Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+First bad commit (maybe != root cause):
 
-Thanks for your patch, which is now commit 98290f295fbcf18f
-("of/platform: Allow overlays to create platform devices from the
-root node") in clk/clk-next.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-kunit
+head:   9f8bbc66021282d0646d1f8422265c72e671b5d1
+commit: 9f8bbc66021282d0646d1f8422265c72e671b5d1 [10/10] clk: Add KUnit tests for clks registered with struct clk_parent_data
+config: i386-randconfig-001-20240716 (https://download.01.org/0day-ci/archive/20240716/202407161711.qDtiW4s1-lkp@intel.com/config)
+compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240716/202407161711.qDtiW4s1-lkp@intel.com/reproduce)
 
-This causes i2c-demux-pinctrl to fail on the Koelsch development board:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202407161711.qDtiW4s1-lkp@intel.com/
 
-        i2c-demux-pinctrl i2c-mux1: failed to setup demux-adapter 0 (-19)
-        i2c-demux-pinctrl i2c-mux2: failed to setup demux-adapter 0 (-19)
-        i2c-demux-pinctrl i2c-mux3: failed to setup demux-adapter 0 (-19)
-        i2c-demux-pinctrl i2c-mux2: Failed to create device link
-(0x180) with e6ef0000.video
-        i2c-demux-pinctrl i2c-mux2: Failed to create device link
-(0x180) with e6ef1000.video
-        i2c-demux-pinctrl i2c-mux2: Failed to create device link
-(0x180) with hdmi-in
-        i2c-demux-pinctrl i2c-mux2: Failed to create device link
-(0x180) with hdmi-out
+All errors (new ones prefixed by >>, old ones prefixed by <<):
 
-and anything relying on I2C connected to these muxes fails, too.
+WARNING: modpost: missing MODULE_DESCRIPTION() in vmlinux.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/locking/locktorture.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/locking/test-ww_mutex.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/rcu/rcutorture.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/rcu/rcuscale.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/rcu/refscale.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/time/time_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/torture.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/ext4/ext4-inode-test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/fat/fat_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs/nfsv4.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/unicode/utf8-selftest.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/smb/common/cifs_arc4.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in fs/smb/common/cifs_md4.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/kunit/kunit-test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in lib/kunit/kunit-example-test.o
+ERROR: modpost: missing MODULE_LICENSE() in drivers/clk/kunit_clk_parent_data_test.dtbo.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/kunit_clk_parent_data_test.dtbo.o
+ERROR: modpost: missing MODULE_LICENSE() in drivers/clk/kunit_clk_fixed_rate_test.dtbo.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/kunit_clk_fixed_rate_test.dtbo.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firewire/uapi-test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firewire/packet-serdes-test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/input/tests/input_test.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/of/of_test.o
+ERROR: modpost: missing MODULE_LICENSE() in drivers/of/kunit_overlay_test.dtbo.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/of/kunit_overlay_test.dtbo.o
+>> ERROR: modpost: "__dtbo_kunit_clk_parent_data_test_begin" [drivers/clk/clk_test.ko] undefined!
+>> ERROR: modpost: "__dtbo_kunit_clk_parent_data_test_end" [drivers/clk/clk_test.ko] undefined!
+ERROR: modpost: "__dtbo_kunit_clk_fixed_rate_test_begin" [drivers/clk/clk-fixed-rate_test.ko] undefined!
+ERROR: modpost: "__dtbo_kunit_clk_fixed_rate_test_end" [drivers/clk/clk-fixed-rate_test.ko] undefined!
+ERROR: modpost: "__dtbo_kunit_overlay_test_begin" [drivers/of/overlay_test.ko] undefined!
+ERROR: modpost: "__dtbo_kunit_overlay_test_end" [drivers/of/overlay_test.ko] undefined!
 
-Also, loading the 25LC040 DT overlay[1] on Ebisu using the out-of-tree
-of-configfs now fails, too.
-
-> --- a/drivers/of/platform.c
-> +++ b/drivers/of/platform.c
-> @@ -732,11 +732,14 @@ static int of_platform_notify(struct notifier_block=
- *nb,
->         struct of_reconfig_data *rd =3D arg;
->         struct platform_device *pdev_parent, *pdev;
->         bool children_left;
-> +       struct device_node *parent;
->
->         switch (of_reconfig_get_state_change(action, rd)) {
->         case OF_RECONFIG_CHANGE_ADD:
-> -               /* verify that the parent is a bus */
-> -               if (!of_node_check_flag(rd->dn->parent, OF_POPULATED_BUS)=
-)
-> +               parent =3D rd->dn->parent;
-> +               /* verify that the parent is a bus (or the root node) */
-> +               if (!of_node_is_root(parent) &&
-
-Parent =3D /soc, so this returns early. Hence of_changeset_apply() [2]
-didn't add the I2C mux bus, causing of_get_i2c_adapter_by_node() [3]
-to fail.
-
-> +                   of_node_check_flag(parent, OF_POPULATED_BUS))
-
-Oh, you inverted the check for of_node_check_flag(); was that
-intentional?  Re-adding the "!" fixes all issues for me.
-
->                         return NOTIFY_OK;       /* not for us */
->
->                 /* already populated? (driver using of_populate manually)=
- */
-> @@ -749,7 +752,7 @@ static int of_platform_notify(struct notifier_block *=
-nb,
->                  */
->                 rd->dn->fwnode.flags &=3D ~FWNODE_FLAG_NOT_DEVICE;
->                 /* pdev_parent may be NULL when no bus platform device */
-> -               pdev_parent =3D of_find_device_by_node(rd->dn->parent);
-> +               pdev_parent =3D of_find_device_by_node(parent);
->                 pdev =3D of_platform_device_create(rd->dn, NULL,
->                                 pdev_parent ? &pdev_parent->dev : NULL);
->                 platform_device_put(pdev_parent);
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.g=
-it/tree/arch/arm64/boot/dts/renesas/r8a77990-ebisu-cn41-msiof0-25lc040.dtso=
-?h=3Dtopic/renesas-overlays
-[2] https://elixir.bootlin.com/linux/latest/source/drivers/i2c/muxes/i2c-de=
-mux-pinctrl.c#L60
-[3] https://elixir.bootlin.com/linux/latest/source/drivers/i2c/muxes/i2c-de=
-mux-pinctrl.c#L64
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
