@@ -1,115 +1,162 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFCE544369;
-	Tue, 16 Jul 2024 10:12:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 593251953A8
+	for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2024 10:30:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721124748; cv=none; b=bd/JXEWrad1OzdYHjQxm43TdEeY3yO5POViwu2H7sddDSLhvbNfScVUcFPJUqCxNoWwOvxN4Vlpg1EjCTMVSAfmguZO82EE7ZRgNJPnX+OnhBA5hKIfaEKPewoX9YyD1nL/22XvkR2PS2cSRhzd+3cLyb2lL1H3vbxSWpd+4jAc=
+	t=1721125839; cv=none; b=c0dbx3gEwIX7Y7uT+clTQeRUUBRkoxjA4Xd2wQ+2W4Gz+F4F4a7qvCQ/kcGwUFGa5pVoI+afNNDSgiEck7YYGZTAFkDRu22gSG5j+mWTQ4lH/DuCrghdM0o/X7+H57FuKZVIHQ7W2y75AObSLf8BIeIpZXeFUCMpvk3hM5KmeqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721124748; c=relaxed/simple;
-	bh=a+rn5HmuqlMgGCBgTMZioOeZqzZXeL1WsrH2Fg4uVec=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EPtu5IJVKiKAwn11hQtgsCxxPv8v6wTgeGnYshJ+ZYDeUSPb+uRB22iiK77satzrHcz+/88cdHE7tpjlUMqgJtWkq8j59SFxJzE/h4cW6IonkhKHTxmxiJ+PbrTb82zhNpV277viK0I3C/t+k9HQYEIiwZ5KkUP3hHqPISJA37Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jU5H2ozQ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1721125839; c=relaxed/simple;
+	bh=6VyR9TNhbMrQhPhYEUVNJpdMEkYjK1X2W/9Ih6F1hpQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Op404i2hR/fn7FfwB04fVNpkzO9/lxTv+fd9p59cT7uSRIJBi8S8ZijscoUdKO+pbh2cvzcLRg6hpS9XjnRH3CNF+MfSHGgaiAeNEkW1NdZ75gFO1GgskehlG8eidWYSYR3slCr8uV3SeEPKENLzGkH6POH8xSLcI3dI0T0LJKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=P+p0GZwm; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jU5H2ozQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33C54C4AF0C;
-	Tue, 16 Jul 2024 10:12:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721124748;
-	bh=a+rn5HmuqlMgGCBgTMZioOeZqzZXeL1WsrH2Fg4uVec=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jU5H2ozQ1X7ZQvwsS4cBN6WmensBTHO64MdlYslRas47ym1/EzJFbsyAxiY6s0Hbs
-	 CC/kiIhTSZKmRz2lhBvpdX6YmSyQmJ2XOvAMFGrSDoZxdjzOQt/csXAr4G+Fp45FYx
-	 6kHhhLBAVTu/chsdATcQ0l/kELFNHuk7Sv/KgcEZ/b31NrpTdAghDQWasrMF3tICau
-	 /r5coEHWYwoCF/tSQACx7qRdlugG81bepwYh+MtjwKYiCDDDlEYkG/tSo3tQ1mKBjf
-	 ZHKOmnuWOCFKBVghwKW+eXQ0nTd2NDBkhEmsALfnjP5okniWEDTn36+2Lijmhphujx
-	 v6JI2NTeXOWyA==
-Message-ID: <78bcb4c5-1b1e-4bf6-a86f-8496804901ae@kernel.org>
-Date: Tue, 16 Jul 2024 12:12:21 +0200
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="P+p0GZwm"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3679f806223so3716507f8f.0
+        for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2024 03:30:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1721125836; x=1721730636; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=N2oAUOUIr8Inm5CAOgiH6h0kthoIy+ddKKLth4dhl9c=;
+        b=P+p0GZwmVtXD/CIc70JXy7hhGnW5KX1y7+CCYj8/Mf+NeyCcWe5vgCRsiYJz4wtFFG
+         P56BGhcHi5YGBkTMM1+IdvtERmjYPXqo2mW0nJ4rZDSD+Y0772I3iHRnKQF0QU+SGy9U
+         jK6Yi2JUCjtEksast60/KsvqDbA3Bn5rSMKz5FX1rRPgUSJoGBhwWG6F2FVfeieptBgW
+         aa3U7VjcIP+dIya0/Y5DuHvZap3k68Bs48yZssC5/NIvtwpEGL/m71A+S8IJd6Vstb+4
+         oNpxNDLdvTSFBnJlQ35rPCKIuwKLvSspztc8XArwA4YSSYJUv2UXFpLHmawVmQMtC4n+
+         oTRA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721125836; x=1721730636;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=N2oAUOUIr8Inm5CAOgiH6h0kthoIy+ddKKLth4dhl9c=;
+        b=LHbER93WuMYrKiCsMVp0Dsz/5Nx21lDJt2zlIa3wbSn1r6fkRSKffxf0s2ueipX63B
+         4Rn/VbUHyA5IKs5usQUGFS1J3sgKu+8WcCBE2xqfuFmNbW9VvOJjW3kw9ijOloDKCLSf
+         LJBQqdUs9hy4KvBffcHcmQ5Say2M0Gcc4EGSO9PSkwqweTLbn9PvxhQzyDVf6DChFGOa
+         vQxjuCk3oH0fzMMgbti2IkqzN/b47kca1YruIz6Q0mvPFNYlt4gEILQy5hbsfEZ22XaG
+         RuwEdGI8SsTkGDXTDCsJR2K5YRZmAobHD46cSMXnyhCVz8zc+6ytIVYf9TblO40jKgDt
+         GeSg==
+X-Forwarded-Encrypted: i=1; AJvYcCVVdES/Kd6S4EJTkaVrtw8KDcJe5LipiHbB7bIgMs8giL4UHbCzFMVbfLNxy9IiqjwFF1R/5YDIdb4Y23dn9FqHZhUKFJUvZvBt
+X-Gm-Message-State: AOJu0Yz1JzWvHYln0SwvMEiBl4TO45EF7hOCTJ0Nbiox3lTfgZFXldxI
+	0qxG2zZ1bQ7DnkGSCrH1uujcE496slI+FsAwWitHw/l7aC7f8UCP9pU+VkvwYvA=
+X-Google-Smtp-Source: AGHT+IFfQhmkb59uH7LLa18F1SN7rqCnC4h7YO13ztbZBrn/+rB64CFv3oFG71YVR5qVnFq44xDcDA==
+X-Received: by 2002:a5d:62c8:0:b0:366:ea4a:17ec with SMTP id ffacd0b85a97d-368273575b2mr1107731f8f.2.1721125835619;
+        Tue, 16 Jul 2024 03:30:35 -0700 (PDT)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.171])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427a5e77488sm121546145e9.9.2024.07.16.03.30.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Jul 2024 03:30:35 -0700 (PDT)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: lee@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	alexandre.belloni@bootlin.com,
+	geert+renesas@glider.be,
+	magnus.damm@gmail.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	p.zabel@pengutronix.de
+Cc: devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-rtc@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	claudiu.beznea@tuxon.dev,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v2 00/11] Add RTC support for the Renesas RZ/G3S SoC
+Date: Tue, 16 Jul 2024 13:30:14 +0300
+Message-Id: <20240716103025.1198495-1-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dt-bindings: clock: qcom,qcs404-turingcc: convert to
- dtschema
-To: Rayyan Ansari <rayyan.ansari@linaro.org>, devicetree@vger.kernel.org
-Cc: Conor Dooley <conor.dooley@microchip.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240716085622.12182-2-rayyan.ansari@linaro.org>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240716085622.12182-2-rayyan.ansari@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 16/07/2024 10:56, Rayyan Ansari wrote:
-> Convert the bindings for the Turing Clock Controller on QCS404 from
-> the old text format to yaml.
-> 
-> Signed-off-by: Rayyan Ansari <rayyan.ansari@linaro.org>
-> Acked-by: Conor Dooley <conor.dooley@microchip.com>
-> ---
-> v1 -> v2: rename file to compatible string, remove label in example dt,
->           add acked-by tag
-> v1: https://lore.kernel.org/all/20240715084313.14098-1-rayyan.ansari@linaro.org/
-> 
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Hi,
 
+On the Renesas RZ/G3S SoC the RTC clock is provided by the VBATTB
+IP. A 32 KHz crystall oscillator could be connected to the VBATTB
+input pins. The logic to control this clock (and pass it to RTC)
+is inside the VBATTB IP. For this, the clk-vbattb driver was added
+(patches 01-03/11).
 
-Best regards,
-Krzysztof
+Patches 04-05/11 add the RTC driver.
+
+Patches 06-09/11 update the device trees with proper nodes to enable RTC.
+
+Patches 10-11/11 enable proper config flags for RTC to work on RZ/G3S SoC.
+
+Thank you,
+Claudiu Beznea
+
+Changes in v2:
+- dropped patch "clk: renesas: r9a08g045: Add clock, reset and power domain
+  support for the VBATTB IP" as it was already integrated
+- kept only a documentation file for both VBATT MFD and clock drivers as
+  suggested
+- addressed review comments
+- used cleanup.h lock helpers
+- update startup sequence for the RTC driver
+- switch to 24 hours mode on the RTC driver
+- fixed range for the RTC driver
+- added a generic compatible for the RTC driver as this will also be
+  used by RZ/V2H
+- used clkin/xin clock names for the VBATTB clock driver to determine
+  if bypass should be configured on registers instead of having
+  dedicated DT property
+- added mfd driver for VBATTB
+- updated Kconfig flag names to include vendor name
+- removed DT node labels from Documentation files
+- used items to describe the interrupts and clocks
+
+Claudiu Beznea (11):
+  dt-bindings: mfd: renesas,r9a08g045-vbattb: Document VBATTB
+  mfd: renesas-vbattb: Add a MFD driver for the Renesas VBATTB IP
+  clk: renesas: clk-vbattb: Add VBATTB clock driver
+  dt-bindings: rtc: renesas,rzg3s-rtc: Document the Renesas RTCA-3 IP
+  rtc: renesas-rtca3: Add driver for RTCA-3 available on Renesas RZ/G3S
+    SoC
+  arm64: dts: renesas: r9a08g045: Add VBATTB node
+  arm64: dts: renesas: r9a08g045: Add RTC node
+  arm64: dts: renesas: rzg3s-smarc-som: Enable VBATTB clock
+  arm64: dts: renesas: rzg3s-smarc-som: Enable RTC
+  arm64: defconfig: Enable VBATTB
+  arm64: defconfig: Enable Renesas RTCA-3 flag
+
+ .../mfd/renesas,r9a08g045-vbattb.yaml         | 136 +++
+ .../bindings/rtc/renesas,rz-rtca3.yaml        |  69 ++
+ MAINTAINERS                                   |   8 +
+ arch/arm64/boot/dts/renesas/r9a08g045.dtsi    |  43 +
+ .../boot/dts/renesas/rzg3s-smarc-som.dtsi     |  17 +
+ arch/arm64/configs/defconfig                  |   3 +
+ drivers/clk/renesas/Kconfig                   |   5 +
+ drivers/clk/renesas/Makefile                  |   1 +
+ drivers/clk/renesas/clk-vbattb.c              | 212 +++++
+ drivers/mfd/Kconfig                           |   8 +
+ drivers/mfd/Makefile                          |   1 +
+ drivers/mfd/renesas-vbattb.c                  |  78 ++
+ drivers/rtc/Kconfig                           |  10 +
+ drivers/rtc/Makefile                          |   1 +
+ drivers/rtc/rtc-renesas-rtca3.c               | 853 ++++++++++++++++++
+ 15 files changed, 1445 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/renesas,r9a08g045-vbattb.yaml
+ create mode 100644 Documentation/devicetree/bindings/rtc/renesas,rz-rtca3.yaml
+ create mode 100644 drivers/clk/renesas/clk-vbattb.c
+ create mode 100644 drivers/mfd/renesas-vbattb.c
+ create mode 100644 drivers/rtc/rtc-renesas-rtca3.c
+
+-- 
+2.39.2
 
