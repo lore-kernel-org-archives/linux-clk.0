@@ -1,195 +1,319 @@
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011046.outbound.protection.outlook.com [52.101.125.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25A3443146
-	for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2024 10:40:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721126403; cv=none; b=ovmZhIUgzh5euI3QxXo1svXDutJPNPoS65Hme2nzmBHylVaEJMuwrJufAMC5/FjGJNIpugg9D9ZtawatB8LLkrKAP7e3wc8WHTP6pjcFYXUHZzcCN6QN/Sppcc1V/dD6hDvEw1uxH/ejgtKQWsvVnFw4QbqGrDOaXsYVJogX1eo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721126403; c=relaxed/simple;
-	bh=5zhf6MBHcV+KwPv8QLPRAgDrb+JU8ql7pWuuMnSdvk0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ctQCoAkzhcoRY0UTRA+7kdDRvDwv1wb+iIunRdz+1glSU9Izd3AEgo2Z+9zg9h78a2U6i950XrmZSu11y37279UX2Ler/j0aTFeuy6HkHs4iiSbzea731bPbt7f/rYwdw6SbZWsMGOdZuiMBn76CqHCEQ0aMj/YRJ3tsqT6TXmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LtbHk4tp; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C74155897;
+	Tue, 16 Jul 2024 11:00:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721127629; cv=fail; b=ZY2nxXdz8RhCcpOV/zYZFmfujEzdkRDDP4hn5mj+rLI0lJv5PWyRHiDDv34RsbAVkDgpcK2D/fP52PBR7g/y1Hx/+uR/+zHtArbRvWo5EHF6QDQzYvLkfdFvDUS24o5p0KQBHBT8jucphcqLpRQx5myRT29mAeF/qFQpO+xo9V0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721127629; c=relaxed/simple;
+	bh=2ywnEYsYOqRO/GnR21/NttY2o0DtkncH6/pYmI3nAgg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=awBb7G9LsYJJ+9Ou8wOPBcvYqbLYmsscKtnJ/HyBlbqKLigdqVRNRgyPzm+onyufxI9e7Ufxt1SWTQ7Q+IkmaCdnChsR/Bj9goNrWGlQ3tel63GCcq+/7fZppJBih1NH3GWiOIUOOcC+h/mRPc8UiECGg+j/5JWon/3mCRXp/4E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=WkXHJY+/; arc=fail smtp.client-ip=52.101.125.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LtbHk4tp"
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a77d85f7fa3so846352066b.0
-        for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2024 03:40:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721126400; x=1721731200; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=QaWTAq8P5qO+8/wPF+BsM6nD7nPFlgC2cCjQXdWWicI=;
-        b=LtbHk4tpqnMTrcOLS6UqHbFlOaoz+K6K//wJYSNwrInsUDB+GOiN1hsqLIStyUNKQx
-         REdWRVJ0Ul38WIOwIcGZhYEIxSUgrp5Ba1vHigPYs0wLPo4LG/zhZ4JuIt25I87FLzbb
-         GTd4VrL/uihbrd5fU/4RlCdYMBFu3LEeLvt48hSU7CKnfWVwQ9w4mAj3xcZqgIFBPQMY
-         p0/aJeLQdj6AIaKGvWBbB+vGB12gRV/0w4yQAPPepE79fggo5EQBVZe867WX7v0QZjY4
-         DFBqv+IUbIWc4bOrX6v5LXlYXMiB1Zyfz95BWZlLFpa3gYEGzdcOxLXq7jM45EVYF/zo
-         zArA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721126400; x=1721731200;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QaWTAq8P5qO+8/wPF+BsM6nD7nPFlgC2cCjQXdWWicI=;
-        b=o/wJKZNCiApgwUUJAicC+EuxJo9GeH6ldOsnr7sGWx6kdkxONIj77hW5QiNsdwi52S
-         vu/D94DTjYti9VYN6g6acDQW5rAeDnCipk0SXJgAnKupyNgSuVMhJIlV71jDuqnSNVS/
-         AdDD+qtAqxnWo67L3Vbdf5SQscgbNQIienMLj4CqdrWJHeLkCnWQSWQB0N/M2vF05YGg
-         MbxE0j8Ify+Rqx0lGTQ28OCwHUpZ9ESnMyYNkn7GxfW6brPtOQh7PN+pWyZAjMsSoHbW
-         lL/FitwxMSQ1ChINNP5S1cIH2XAqsiI9PMYzfq8eM0XXzlmbGmfSLLasMfxXeF7F+wnU
-         ILLA==
-X-Forwarded-Encrypted: i=1; AJvYcCWoLSlp10KjmZbyLHW+RmTI8OxcrrF9Dx6UH5486+UdM/zBGWNc5iVltqkUMIspESGFpT90biWM4dciDa+i/p+6UH/AwQcJnQ1M
-X-Gm-Message-State: AOJu0YxNSNeWIftp5vN48OpvxQkT0WUL12SviNuhyjHIJfWVn8XD+Ulg
-	DaUIdRox7XbooKLQebKHa+7tAVPrBVeg7BW5/bY6t7OfzaQRDWXDASQ6AkwzoZE=
-X-Google-Smtp-Source: AGHT+IGnc0tWHsoCCr4HZ/C0xe3WXQMG3HvmVlLPG7mbZo9iU3KE34uXowAQAIhLCBMg6IYjIPCwOg==
-X-Received: by 2002:a17:906:4c43:b0:a77:b349:ffd8 with SMTP id a640c23a62f3a-a79edd4f2d0mr138445366b.32.1721126400382;
-        Tue, 16 Jul 2024 03:40:00 -0700 (PDT)
-Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc7ff87dsm294058166b.150.2024.07.16.03.39.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Jul 2024 03:40:00 -0700 (PDT)
-Message-ID: <164c62e8-6846-4d0b-81f5-8ed6e76abd5f@linaro.org>
-Date: Tue, 16 Jul 2024 12:39:56 +0200
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="WkXHJY+/"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=eVJwChShDkAU2M6fAiujOJEdJCiWk7hzr41n2hq89X60YPHwHQmcd1FnB2Zr6W+upJic24+xJQcOxlUmOdNHBcDOc08gFnERbecETOg2+2uo8dJZ1NWzRNsOfVYPN5SxUBGbRcJ5/fhBDe9lnxRIgjLVBRQKbJnldtVMaTZnxMMfiAmOERX5IhJ7WV5ngSROgYTTzM4L9E4B5wGV71Z3Htw0sELK9OyoxoZA4+ljpyF8VNrIkP6peKuqKwVSWNhvcLXXar/AIqnoNROpNv8lYnKu3Xo33FAWYLZ+c/a9AVUEHpdYmnCFjgYTQhZPsL6dVxp/8cLeLyctZRo57iknWw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=/QWtmvxme2DQx/d/cSaJWDNY0Crpc6Py2gYETU50iwA=;
+ b=nBcGSY0V6b4Vy4xF0wzggQV9ksCAwhrrq9aV2GGFhZHbMViMpt7Qrc0RnHd/5s6GJ20maVSe0GGM7spOJD2aGR2J4E42AxwMy/FmEPKz1sruJCEAHW9PI27GsOqO5zvXqNT5ItlebtfeO/QBCLS+tm6xJCjPG8/aRipEV7ZwlVNtUpXcKg343IWGwdbfj0gAaFTMkWx65O/jdnHh6H+OlNkiyFzptT8FZ4a22523PdGeAUGtmdw9FEjf3T7HO79GEMIFs48Vkj3Zcfu+z4rV9sTvZujbPoJxSGgTkZtss9DlPn7O4908wlPrB0kIqgGObI1HIza1lmaOdblNXdOq0Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=/QWtmvxme2DQx/d/cSaJWDNY0Crpc6Py2gYETU50iwA=;
+ b=WkXHJY+/aqDvy30epRjT91lke8Itq1zg//8KwAjudHZ5M1WN3JkoJo0d6W8nojwBQBHbvak21PdKRZnqFQV6eef1I1gYlpElXQqa9ARSikjE1gJuA+Ruml1q1AITqrCiYtj/Yr/0n7csbzO0wuD02grHjwnOnywE934J2q+5ctI=
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
+ by TY3PR01MB9903.jpnprd01.prod.outlook.com (2603:1096:400:229::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.29; Tue, 16 Jul
+ 2024 11:00:21 +0000
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::86ef:ca98:234d:60e1%4]) with mapi id 15.20.7762.027; Tue, 16 Jul 2024
+ 11:00:21 +0000
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Claudiu.Beznea <claudiu.beznea@tuxon.dev>, "lee@kernel.org"
+	<lee@kernel.org>, "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+	"geert+renesas@glider.be" <geert+renesas@glider.be>, "magnus.damm@gmail.com"
+	<magnus.damm@gmail.com>, "mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"sboyd@kernel.org" <sboyd@kernel.org>, "p.zabel@pengutronix.de"
+	<p.zabel@pengutronix.de>
+CC: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-clk@vger.kernel.org"
+	<linux-clk@vger.kernel.org>, Claudiu.Beznea <claudiu.beznea@tuxon.dev>,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: RE: [PATCH v2 02/11] mfd: renesas-vbattb: Add a MFD driver for the
+ Renesas VBATTB IP
+Thread-Topic: [PATCH v2 02/11] mfd: renesas-vbattb: Add a MFD driver for the
+ Renesas VBATTB IP
+Thread-Index: AQHa12tDxiFdQX5gCUGHOGSoT2m2RLH5LPRg
+Date: Tue, 16 Jul 2024 11:00:21 +0000
+Message-ID:
+ <TY3PR01MB11346ABDBA306410646D3861A86A22@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+References: <20240716103025.1198495-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240716103025.1198495-3-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20240716103025.1198495-3-claudiu.beznea.uj@bp.renesas.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|TY3PR01MB9903:EE_
+x-ms-office365-filtering-correlation-id: b389d543-8be5-4d5d-d1da-08dca5867cdc
+x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|1800799024|7416014|376014|921020|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?kXvk7BeZY20IQZX4hWQYjqLUOK+TKc/+TBA5Ktb/vnXdYQFWGDcmKnLMYVDD?=
+ =?us-ascii?Q?CLtd34tzrFcmk9smZzQuXfNMm34PyNaov8NPIHLA3VBf+uOhhLgX247IiyH3?=
+ =?us-ascii?Q?VAmrKfeB9rURnkXxORabk9QBakOgL0E/8ad2Cz13gHxhOV9NV188SwlVuGTI?=
+ =?us-ascii?Q?w953YFVnScN9X4wSz36T7SteXlkt/YpONLbBnWynK5jOSATP0mMAlfgKL39N?=
+ =?us-ascii?Q?pDdp56qRuFzL9McEZaIXNP19Ze7Ymw6YYEy9hXPXxDLcwaBnsQOtr0m/vAp6?=
+ =?us-ascii?Q?4P4GJ8nMSg/oGBV+LQO2MzKuaeQciNUrdyZ1jdpW0Y1+rnUytK8BPPNbm1Pk?=
+ =?us-ascii?Q?LhPnFC5l1BcVRTpT5hKnFME6j9FSqLP8ljinVoQkGB9IHO6JL/92R2wag+5j?=
+ =?us-ascii?Q?U49tKBlpS+mxgoQKEPmvztqKgmXVxVonNFft9E+P8g8PBIRIyp8IFEsUb37a?=
+ =?us-ascii?Q?pP8I54+i0VsieSsrQimuRcfWyBmMtdE40Tq4ldIZ/GB1r845LYyleQwQ2raB?=
+ =?us-ascii?Q?h/t6prgRAnx2dTBDK4/QHJgWCaLppEsOjbzqI0Mxti7YyJnKk698b1GsI7WU?=
+ =?us-ascii?Q?bz9F75hbQFKxTIUCGeIlkiTwKTquOKnjVn9zZGBeVoiXvz4AYVs+O8jAivAD?=
+ =?us-ascii?Q?SKwp2494WGETyc6UYCOat9e+42MzLJZyYoNsGPVplgH/xN7+ozBiPDDoGGzC?=
+ =?us-ascii?Q?JH5NAb6gi6iWO8zUvd1lP0ctQdlXCT6cpIMRq9z2OIdcoBPznGmSw842qsf+?=
+ =?us-ascii?Q?T5TaAtzRiHCcSwb9h8fuBEuijwSCBcvx+WWGHMJjwkUm1Hu9dGX1pWRCsIxo?=
+ =?us-ascii?Q?xFZiqvrQWlpOntLRKOMMFVToyYy2PBVVY0lWeePsgKCPbdfsSjA74KKWIsC8?=
+ =?us-ascii?Q?hky6i/2o11idEqqeGqQIlKbnkqOy9KLu9cemfxhEhP0dt3NM08Wau+DZ4uL5?=
+ =?us-ascii?Q?RIuFmg8856kmWDg2PURFkVXGlMWJWiM7Spa1EZJCnCdDkZxxN7h718ZhTvoP?=
+ =?us-ascii?Q?vJAm6kJwDF7h0d6lL5dR8vuLLOlPA60HCnVWJvYLqNOj4EKQYvnRQ+7h0Bwl?=
+ =?us-ascii?Q?ZGKAgBoKaraqlMlCgJFYGF5YxqMZGTW9tNxSLXTp3D2gJdPfXJI+5ubx8SFW?=
+ =?us-ascii?Q?PM3DSiPMHOMaRD/1h0C8bVy4Pcgh19i7/lCRW2sl0kD6whvEIHrzqo3PMfD+?=
+ =?us-ascii?Q?0DcRMHyl8gJAGrc8SD2tpmAz/higXTwCbVLk/y6tiMvSOHnWoZ4aqFTgSTFl?=
+ =?us-ascii?Q?/AY4XwqX7QTjomhyVCwoP7/Svt8yb9iIUtQLjGX29Z+rH5j09kf4jOhCrVQn?=
+ =?us-ascii?Q?9Gg25A6Qi5cBr9+lmnl/biN+7u375RFqitAeX7G+B0NARPWsXkfKBfYrf7LH?=
+ =?us-ascii?Q?JTvRkRkjrz+irvkce4csS3YmmseT6mZXNGEc1G3dMYQKOR3EBrHWHyRVK4p7?=
+ =?us-ascii?Q?Ek4s7a1w/ko=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(921020)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?IK58bhSSNf5japrHqweo/6D/YSpFUsxYu7cfmseoCsUoobM6dZEMRskK+Ogx?=
+ =?us-ascii?Q?K0/r3hM4c88SRdu3BIce/ICe6Evwo2tf2BS13/bpIy1sFFvZwFvYMEhnASLc?=
+ =?us-ascii?Q?3kSa/Wf52QQW5evZqjpNjN9K6AVUrM8ozoYQLMA8GaJ04zJmkvcHKM1JXv5u?=
+ =?us-ascii?Q?CkIeOv77DTml7HLimK2ko4gDCb6pUFi0eAbeX9Omjem6rJdkDRgvqWgUW5k9?=
+ =?us-ascii?Q?YIoU/l/4Fi21UUwU0KQqEkvlMV5JTrlNCyW32tJAIdsPrRY0/EntZa1pQKTq?=
+ =?us-ascii?Q?Ti9XvGAeR3SSZzzCGQa95hnaDU43qwEPm/0aQtjXqz7HVevaBQiOwcsl87gf?=
+ =?us-ascii?Q?KopBE8vDJVqpLuSURwIGK4PvLsw5Jmv4cyNceLhREifBP6skllOujkfkKReV?=
+ =?us-ascii?Q?V8EK4ptmyhBE68PQcprelf2RtozD5w+JSKuU0uUZpxvSHwl4biARzltCRrmu?=
+ =?us-ascii?Q?NZu8GpK/yR4GcN9LgcS59KBTqqktZuJHj/9pLcIViU3hLwkuwqVqXGCcpbgL?=
+ =?us-ascii?Q?7/JawrYX1PwB+OPZu96sNjIbukwAqQSGPhnowP4OCwwury9U7FgTYUZNYkDY?=
+ =?us-ascii?Q?oOsfC2WIxuspmDfRG55/fI0xq2ztB/bNon9MOPLVJmn9FqGe9JZ2hU3Td4sK?=
+ =?us-ascii?Q?9/gixqSAhDXuBiAAflHUNQMemLRZGQK5KI1wYAR6XvOtiGMBM/cI4sgffmI+?=
+ =?us-ascii?Q?m7jZAv6T6jrmv/CLRuu0yplXJof7uMQUEluQGJleaw0/Ykml7AFYz9ydk2Z+?=
+ =?us-ascii?Q?rwTKzq8PZqor5vPJt9uKWx2W5tepnojtqo14NZkGz7KTuusScQ5XHWgVwkBx?=
+ =?us-ascii?Q?6AiKd8AWHG1wyTEDAE8J9mpLqwTpQom1GmkgPyftjFnc3ykOwP/VNcLZ1E/q?=
+ =?us-ascii?Q?/a4Kcu0lVQGhpBuUV45pJAesk2EFWkV0N8qq8MuegRC3JLLB9YenwX30tAVL?=
+ =?us-ascii?Q?8aMP+uRv2HPqIAV0YLMbRIAfllgNQnBc/w2eoRnXZA3275A/SmNCkdBBTQf9?=
+ =?us-ascii?Q?qU4kQtkEk++lQms1M/5hlivrJA9OD390w3q6uX8e0kruU+3oocKFQV1EYEot?=
+ =?us-ascii?Q?5zt3hnvcyBfQ+1BtzyY233oorHC3huL0QidlDOcUNQAErDtSoSZpehObbapS?=
+ =?us-ascii?Q?ToBOZhP46+OKybm8AF3w4OXR2/vW2PWGPQW9+wQLKOw/Vcr0c6hNw4fhg2ok?=
+ =?us-ascii?Q?C0F7sMy+P6acpT21Zvse9Fhcx7HHrhFXC+39ARjts+X2UgdwW3+8EGKj9EfS?=
+ =?us-ascii?Q?i7UL3WDbbyaljTUCo886AUY6KXtsqF/uZkQcF+JjUcF3pTYnU5HK8KlJJZyY?=
+ =?us-ascii?Q?LWPavgjzEVfcHN35fjq3/nip613udFPJIr0X+HnbmwU7xoRr1SaRmAwtwWIs?=
+ =?us-ascii?Q?/bUKpq8+FugNKbti/N5GHrdS3Havnr4Zu2CQcdzdKpLOWvQ/s1Zf2TKEPSp2?=
+ =?us-ascii?Q?DQz9kb1u/DNVfYpjbwjIB8ASelDQFbANLUXgUVCOs/9J8hBxTV0f9eA6M3fB?=
+ =?us-ascii?Q?Jv9ndSKnKAkyhFkhQ2N3dpJTzwIX6/FYAAIUa/zQXRCboHdY5vJpqwPn5fiv?=
+ =?us-ascii?Q?AJpKjN7Jr7hqI5hsAktv4qvX4LfZnNZKAXnhUEgXbAe4A4v/Wqmi+ayBgYIx?=
+ =?us-ascii?Q?IA=3D=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V4 8/8] arm64: dts: qcom: sm4450: add camera, display and
- gpu clock controller
-To: Taniya Das <quic_tdas@quicinc.com>, Ajit Pandey
- <quic_ajipan@quicinc.com>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Vinod Koul <vkoul@kernel.org>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Jagadeesh Kona <quic_jkona@quicinc.com>,
- Imran Shaik <quic_imrashai@quicinc.com>,
- Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-References: <20240611133752.2192401-1-quic_ajipan@quicinc.com>
- <20240611133752.2192401-9-quic_ajipan@quicinc.com>
- <76f5e3c7-a90b-42d2-8169-e5e2211a14a1@linaro.org>
- <ba7d12d3-c582-45ec-beed-e81182fe3252@quicinc.com>
- <95a835e2-9fd9-467b-bd0a-8eeb80ddf678@linaro.org>
- <9c3de930-47b7-45a9-bf7e-6e506ea2accc@quicinc.com>
- <8f7cdb31-c50d-4690-b878-518bad545612@linaro.org>
- <46e6f1f0-d244-4e53-99ce-9fee339dc4de@quicinc.com>
- <f9a23663-7a1d-44dc-8e0b-8463c3c88a29@linaro.org>
- <dd8ad439-f74c-4bb6-9066-73394bb9befe@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@linaro.org>
-Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
- 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
- izWDgYvmBE8=
-In-Reply-To: <dd8ad439-f74c-4bb6-9066-73394bb9befe@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b389d543-8be5-4d5d-d1da-08dca5867cdc
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Jul 2024 11:00:21.8774
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: eOUs9+3FPrbhxDD9gELzlAa1oJCS2PAObpJRXbe7KzlXv/CjMM4LswjpkzBpmddRofWe6+wpTlMlaRFaZ8x1RsAyESxIuZ0I2Id/gcCFpHg=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY3PR01MB9903
 
-On 16.07.2024 10:39 AM, Taniya Das wrote:
-> 
-> 
-> On 7/12/2024 6:10 PM, Konrad Dybcio wrote:
->> On 12.07.2024 2:31 PM, Ajit Pandey wrote:
->>>
->>>
->>> On 7/12/2024 5:52 PM, Konrad Dybcio wrote:
->>>> On 12.07.2024 11:53 AM, Ajit Pandey wrote:
->>>>>
->>>>>
->>>>> On 7/11/2024 3:25 PM, Konrad Dybcio wrote:
->>>>>> On 3.07.2024 11:16 AM, Ajit Pandey wrote:
->>>>>>>
->>>>>>>
->>>>>>> On 6/13/2024 1:11 PM, Konrad Dybcio wrote:
->>>>>>>>
->>>>>>>>
->>>>>>>> On 6/11/24 15:37, Ajit Pandey wrote:
->>>>>>>>> Add device node for camera, display and graphics clock controller on
->>>>>>>>> Qualcomm SM4450 platform.
->>>>>>>>>
->>>>>>>>> Signed-off-by: Ajit Pandey <quic_ajipan@quicinc.com>
->>>>>>>>> ---
->>>>>>>>
->>>>>>>> None of these nodes reference a power domain (which would usually be
->>>>>>>> CX/MX/MMCX). This way, the RPMhPDs will never be scaled.
->>>>>>>>
->>>>>>>> The current upstream implementation only allows one power domain to be
->>>>>>>> scaled, but that's better than none (see other DTs for recent SoCs).
->>>>>>>>
->>>>>>>> Konrad
->>>>>>>
->>>>>>> SM4450 doesn't support MMCX and CX/MX domains will remain active so
->>>>>>> power-domains property is actually not required for SM4450 clock nodes.
->>>>>>
->>>>>> It's not only about them being active.. some PLLs require e.g. MX to be
->>>>>> at a certain level, or the system will be unstable
->>>>>>
->>>>>> Konrad
->>>>>
->>>>> With active I mean CX/MX rails will be default running at minimum level required for clock controllers. Adding power-domains property for CX/MX rails is like a redundant code as that will also scale such rails at default specified minimum level only. Also we hadn't added such property for other targets DT nodes to scale up CX/MX at minimum level.
->>>>
->>>> What I mean here is that, the minimum level may not be enough. In such case
->>>> you would also add a required-opps = <&handle_to_rpmhpd_opp_level>
->>>>
->>>> Konrad
->>>>
->>>
->>> Apologies, but could you please elaborate the use-case where minimum level isn't enough ? I guess for clock controllers configuration min level of CX/MX would be suffice, client will anyhow scale such rails to higher levels depending on their use-case.
->>
->> The main issue here is with PLLs within the clock controllers. Nobody
->> votes for them. It's an unsolved problem and we currently work around
->> cases where it's necessary by requiring that (with runtime pm, so when
->> there's active consumers of the clock controller) the attached power
->> domain is at >= SOME_LEVEL
->>
->> Konrad
-> 
-> Konrad, this target (SM4450) have all the PLLs connected to CX/MX(again this is not collapsible). At boot the RPMHPD driver would keep the rails at minimum level and which is good to operate for the clock controller. I do not see currently this requirement you pose here specifically for SM4450.
-> 
-> As part of the PLL requirement within clock controller, this is definitely a requirement which we plan to RFC soon. There are discussions already in progress on how to handle this requirement.
+Hi Claudiu,
 
-Ok, if it works, let's keep it as is until that RFC
+Thanks for the patch.
 
-Konrad
+
+> -----Original Message-----
+> From: Claudiu <claudiu.beznea@tuxon.dev>
+> Sent: Tuesday, July 16, 2024 11:30 AM
+> Subject: [PATCH v2 02/11] mfd: renesas-vbattb: Add a MFD driver for the R=
+enesas VBATTB IP
+>=20
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>=20
+> Renesas VBATTB IP has logic to control the RTC clock, tamper detection an=
+d a small 128B memory. Add a
+> MFD driver to do the basic initialization of the VBATTB IP for the inner =
+components to work.
+>=20
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
+>=20
+> Changes in v2:
+> - none; this driver is new
+>=20
+>  drivers/mfd/Kconfig          |  8 ++++
+>  drivers/mfd/Makefile         |  1 +
+>  drivers/mfd/renesas-vbattb.c | 78 ++++++++++++++++++++++++++++++++++++
+>  3 files changed, 87 insertions(+)
+>  create mode 100644 drivers/mfd/renesas-vbattb.c
+>=20
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig index bc8be2e593b6=
+..df93e8b05065 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -1383,6 +1383,14 @@ config MFD_SC27XX_PMIC
+>  	  This driver provides common support for accessing the SC27xx PMICs,
+>  	  and it also adds the irq_chip parts for handling the PMIC chip events=
+.
+>=20
+> +config MFD_RENESAS_VBATTB
+> +	tristate "Renesas VBATTB driver"
+> +	depends on (ARCH_RZG2L && OF) || COMPILE_TEST
+> +	select MFD_CORE
+
+There is no MFD calls??  What is the purpose of selecting MFD_CORE??
+
+> +	help
+> +	  Select this option to enable Renesas RZ/G3S VBATTB driver which
+> +	  provides support for the RTC clock, tamper detector and 128B SRAM.
+> +
+>  config RZ_MTU3
+>  	tristate "Renesas RZ/G2L MTU3a core driver"
+>  	depends on (ARCH_RZG2L && OF) || COMPILE_TEST diff --git a/drivers/mfd/=
+Makefile
+> b/drivers/mfd/Makefile index 02b651cd7535..cd2f27492df2 100644
+> --- a/drivers/mfd/Makefile
+> +++ b/drivers/mfd/Makefile
+> @@ -186,6 +186,7 @@ pcf50633-objs			:=3D pcf50633-core.o pcf50633-irq.o
+>  obj-$(CONFIG_MFD_PCF50633)	+=3D pcf50633.o
+>  obj-$(CONFIG_PCF50633_ADC)	+=3D pcf50633-adc.o
+>  obj-$(CONFIG_PCF50633_GPIO)	+=3D pcf50633-gpio.o
+> +obj-$(CONFIG_MFD_RENESAS_VBATTB)	+=3D renesas-vbattb.o
+>  obj-$(CONFIG_RZ_MTU3)		+=3D rz-mtu3.o
+>  obj-$(CONFIG_ABX500_CORE)	+=3D abx500-core.o
+>  obj-$(CONFIG_MFD_DB8500_PRCMU)	+=3D db8500-prcmu.o
+> diff --git a/drivers/mfd/renesas-vbattb.c b/drivers/mfd/renesas-vbattb.c =
+new file mode 100644 index
+> 000000000000..5d71565b8cbf
+> --- /dev/null
+> +++ b/drivers/mfd/renesas-vbattb.c
+> @@ -0,0 +1,78 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * VBATTB driver
+> + *
+> + * Copyright (C) 2024 Renesas Electronics Corp.
+> + */
+> +
+> +#include <linux/mod_devicetable.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/pm_runtime.h>
+> +#include <linux/reset.h>
+> +
+> +static int vbattb_probe(struct platform_device *pdev) {
+> +	struct device *dev =3D &pdev->dev;
+> +	struct reset_control *rstc;
+> +	int ret;
+> +
+> +	rstc =3D devm_reset_control_array_get_exclusive(dev);
+> +	if (IS_ERR(rstc))
+> +		return PTR_ERR(rstc);
+> +
+> +	ret =3D devm_pm_runtime_enable(dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret =3D pm_runtime_resume_and_get(dev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret =3D reset_control_deassert(rstc);
+> +	if (ret)
+> +		goto rpm_put;
+> +
+> +	platform_set_drvdata(pdev, rstc);
+> +
+> +	ret =3D devm_of_platform_populate(dev);
+> +	if (ret)
+> +		goto reset_assert;
+> +
+> +	return 0;
+> +
+> +reset_assert:
+> +	reset_control_assert(rstc);
+> +rpm_put:
+> +	pm_runtime_put(dev);
+> +	return ret;
+> +}
+> +
+> +static void vbattb_remove(struct platform_device *pdev) {
+> +	struct reset_control *rstc =3D platform_get_drvdata(pdev);
+> +
+> +	reset_control_assert(rstc);
+> +	pm_runtime_put(&pdev->dev);
+> +}
+> +
+> +static const struct of_device_id vbattb_match[] =3D {
+> +	{ .compatible =3D "renesas,r9a08g045-vbattb" },
+> +	{ /* sentinel */ },
+
+Drop comma.
+
+> +};
+> +MODULE_DEVICE_TABLE(of, vbattb_match);
+> +
+> +static struct platform_driver vbattb_driver =3D {
+> +	.probe =3D vbattb_probe,
+> +	.remove_new =3D vbattb_remove,
+
+Maybe remove canbe replaced with devm_add_action_or_reset()
+That simplifies probe() aswell??
+
+> +	.driver =3D {
+> +		.name =3D "renesas-vbattb",
+> +		.of_match_table =3D vbattb_match,
+> +	},
+> +};
+> +module_platform_driver(vbattb_driver);
+> +
+> +MODULE_ALIAS("platform:renesas-vbattb");
+> +MODULE_AUTHOR("Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>");
+> +MODULE_DESCRIPTION("Renesas VBATTB driver"); MODULE_LICENSE("GPL");
+> --
+> 2.39.2
+>=20
+
