@@ -1,206 +1,174 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F7BC6FBE
-	for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2024 08:45:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 592102EAEA
+	for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2024 09:00:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721119556; cv=none; b=KyGc6nT6B/S5mb4A76nnhyk8HZCKvpMGoDf5cEYbBhP+m6/BjWfboSoLbrS5avFs02eWY2FK/RIN+aiC5eBWrUfOuR1dtmI5bpxGPsMBDmFF7cH0REhg6pgUFcP88New8ZyKOE67nwvrN5+GQi5qIRA8fsk+uuwgSnxGHxIUpJM=
+	t=1721120458; cv=none; b=kvuvSsOwMtn/sFwCr1p1hhj4JAaLqMXhWxQv0f+ebY3KtzULm91rsFoe1guGt7pvFbdQFdcFCHbhIEYGtKD7LkTNf2Lu1f+vJsj6/wC7ij/1H2ZgG+348Ib3OXwlpgDjZvRfj3yuJBMUUTT0Z1YMhWxG+clRXFO2izpdd6fa5YY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721119556; c=relaxed/simple;
-	bh=X5aozxsgQPt0Z9u6SRxwxtxCCCmMBtxOA/XYiClzMnI=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=KSCa8BJ2hhV7MN7SA3nEVxw4HrYEzbp34qcneenfBdtHIV7azKdJ6C+OW55yGsed6HOZA5zrPNBcyStSVTnO5opc9o1UyPgM/y8xGbjoUdmrUX+4y75jWcwnig4bVfyZMMj+MFMr3F38c7ilEM7iBtux9WSXfxjWnJGwIIx1jGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ocDw7hfw; arc=none smtp.client-ip=209.85.221.50
+	s=arc-20240116; t=1721120458; c=relaxed/simple;
+	bh=kMvlsHzy31bD+tkxP6TK51Gz+HLsC2XGrwhsJjRb0Zk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LEKHkXteCiQ8k+4O+QgUAd72U4dOugtmpIODG8/tnd4FSojR6VDDx30NGsFnDE/+PfZHztkFaCzKk6Oegxmcj8snltWFzl+9QbxuS2zON2GzY/2ZnHvCdH15sW2dKjpeieD8i2bSkCbbeR/RRfK1SdU6Ysc94b68+ig0o2BqdDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uQTSgASk; arc=none smtp.client-ip=209.85.221.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ocDw7hfw"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-367a464e200so3198535f8f.2
-        for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2024 01:45:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uQTSgASk"
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3680667d831so2104478f8f.3
+        for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2024 02:00:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721119553; x=1721724353; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Od8eoem5ZvtrMl3ot96NWevDW1Y3aItVShfEvpSJQ0U=;
-        b=ocDw7hfwP+jpyZneVq8XHnJDcm4RvYuB6oLgGDDVRUONS/RRogTHRBO36cyTinj8hX
-         MTh89aHnFelkmoE+veGASzVV8wX0Uo9efz6/0pzGO3QjY8P3KjPDJuQRu3lvxWtoBbvg
-         xWv5Viya0ST78yYDltaWS6Z3ik1zwx4j8J6m3DXw+sRc3rsH/oxmTDm3qp7zWDOHCLz2
-         mbCvtQfcc/l56bMM/Gfu8wNnwM+A71eN6P4cuQgYavyXO5+3AWjbA+0mgd+Aq8SYCADD
-         kNT7iReBV8Zq8sFWpY3TGDKq2eE+g/Fy+fom+vsxBbdVEnHIXIKYVF1ViH2RTrCh7QsV
-         Rbtw==
+        d=linaro.org; s=google; t=1721120455; x=1721725255; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xbEQC0Xl3QFDIRJBV+fNJ9ehNb0IYgGGn7Mg/g7ZnHg=;
+        b=uQTSgASkkanR6sGNCo64lKk+9MMcRpt3fmr+Xf5EpaLjbCW9+b4hx2Mn6mXqN2O5VA
+         cTiCNlEasOYOiuN6KE1QXrnGvYOmc7mCLh9b2A8ZJtrCU6Bw3UySFNx8Yfoo1lssDNnS
+         riitucLqv2/akSD3RBaPx18fYE64DvmLh+664Y8VZE0LZEaqyDrudiTHkkx4vsDkFvbA
+         rAilVdDmfOvvIBg5jJhvH7O/g3c4n3shpNS9p7WNCsREetE00D2GP89cSZwIj9I75YLC
+         B6CinR+whGWJB8INTbDPBzlqGeUsHO1PcBeDR0RSm792ypmcwpRLDeRe8/gVsmz0qgur
+         wV9Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721119553; x=1721724353;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Od8eoem5ZvtrMl3ot96NWevDW1Y3aItVShfEvpSJQ0U=;
-        b=TNdmJsQi/ZmyuBkX4Eaq5myxLMEeJWUDnMOGmRg5wRLPOr6Nlfe57uyRYP1A6vX4UG
-         Xl30u0nveUGzQA1Pb56zKWVSnK93B4giPa9cW4dsBFddbFjJ4sRj1lTrMhQcR05YaEY0
-         LD/mIF7L/AmcCdksjuEKzHUptdUNr4bZV+HdhjrNAuQRJY4ztmGqrWCAmHukCHX53D9W
-         zVq2Ksf+LBREkKtPNr5ZJlXes3VOmQb3du3BV1doN3aUa9VLhWqZ1TbeGi5NvqDTzs/P
-         s7nldEqbwMkByVCnd2mD+2+ziyfYIYt0JlIIVQM1bRvvXH8Sk4uWU4wo3fetCULj3e4E
-         EUlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVYTBadHHyT9xCEvawcnhJH9v6S8uVeun3oYmUGwlzX/ObNRob8K+U4JPM8iwb7Bv86n0lsw2Skbl8D0DsuYQBhbnhhu0uVT0hP
-X-Gm-Message-State: AOJu0YwBej3PzTzJ9Lba1VvFzS6Y/byP3/GipeSbf5FAxNv9SRJofOfv
-	zr//lO+fpT+pVCBtzylgoC2erkS/1GEll3IeJYR6QEe2eT/7Mb6Aj2m7FJ/XH0w=
-X-Google-Smtp-Source: AGHT+IEoLoBkY3NE+Yk4hRQ8Tyy/whLpLhzHEnpcyct1yrPP88x3jqK2vAE1K9KvDTgA+saot+i+CQ==
-X-Received: by 2002:a5d:4a46:0:b0:367:9625:bd05 with SMTP id ffacd0b85a97d-368261051cemr867962f8f.15.1721119553131;
-        Tue, 16 Jul 2024 01:45:53 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:f5ba:a94c:e43a:d197? ([2a01:e0a:982:cbb0:f5ba:a94c:e43a:d197])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427a5e77493sm116329675e9.7.2024.07.16.01.45.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Jul 2024 01:45:52 -0700 (PDT)
-Message-ID: <ed8e519d-2b02-47a4-ac2b-9ae341b2ef88@linaro.org>
-Date: Tue, 16 Jul 2024 10:45:51 +0200
+        d=1e100.net; s=20230601; t=1721120455; x=1721725255;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xbEQC0Xl3QFDIRJBV+fNJ9ehNb0IYgGGn7Mg/g7ZnHg=;
+        b=dnhxYkQszbfgnMxeJgmXLx19/lNlNLQ3p4Li5mZUqkkz5+84CsAunoOP0PEs9Z32tB
+         qQWoqJDsTL9mRz4en1bPH9bLTMmz9KqqhSkLWLwgDNWOjRRKjlXmsj3MpjO6Q0/gmExY
+         mDyZLEXB4Tyvbja5do3khw07VlYNKowy8If7bV2MtoJv6BWJxxoSiRfkEj62eR85dhRD
+         FrHdMu1qHCBTcNtZSgg9Jg40vD5KAI84FPFJ8Aqh5VeBiGaimbdIa+Bs2PFlKAw0gdGw
+         fR0wIouvgjsWeW0BUGGUCqZw1IQyZkP9OdUKZN0/JCRLoqBEhgb1+UrYVbwB5aueOtQD
+         dcFA==
+X-Forwarded-Encrypted: i=1; AJvYcCV4j5OLR9UPcwKx+eU0JsvVdTqcRIapbjk8SP4hWpXm1r9OAGgBzvQcCSAtcQIp4hGWDTG0Xobh3c/IV0KCSDZyyuF6lkzdWGb/
+X-Gm-Message-State: AOJu0Yy7D1+BbWdZFsWYDSBXAZeIvUE4IdXALBF/N20kvveJUOVlckzp
+	bB/1X4x84mrAL+ZbJyc6JzuXOkKGYrw+CoROfRtgVWMFuc6zhkRStCyfn0ojiDM=
+X-Google-Smtp-Source: AGHT+IG27clWzSV6W8iZaTI9YjO6zoit2okTMA2etw6G3YpXIOmBPezlqo50dPpTno+mPQIphFBs9Q==
+X-Received: by 2002:adf:fe46:0:b0:361:bcc5:2e26 with SMTP id ffacd0b85a97d-368260d4ceemr946401f8f.19.1721120454694;
+        Tue, 16 Jul 2024 02:00:54 -0700 (PDT)
+Received: from rayyan-pc.broadband ([2a0a:ef40:ee7:2401:197d:e048:a80f:bc44])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3680daccbe9sm8325078f8f.59.2024.07.16.02.00.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Jul 2024 02:00:54 -0700 (PDT)
+From: Rayyan Ansari <rayyan.ansari@linaro.org>
+To: devicetree@vger.kernel.org
+Cc: Rayyan Ansari <rayyan.ansari@linaro.org>,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] dt-bindings: clock: qcom,qcs404-turingcc: convert to dtschema
+Date: Tue, 16 Jul 2024 09:56:20 +0100
+Message-ID: <20240716085622.12182-2-rayyan.ansari@linaro.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v2 1/3] clk: qcom: dispcc-sm8650: Park RCG's clk source at
- XO during disable
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>,
- Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240624-topic-sm8650-upstream-fix-dispcc-v2-0-ddaa13f3b207@linaro.org>
- <20240624-topic-sm8650-upstream-fix-dispcc-v2-1-ddaa13f3b207@linaro.org>
- <4skm6zab2xf2e4qgh4l45xzhuncmls7yfw4y77yufb7pvs2zew@rmzcgb6ozamf>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <4skm6zab2xf2e4qgh4l45xzhuncmls7yfw4y77yufb7pvs2zew@rmzcgb6ozamf>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 24/06/2024 11:25, Dmitry Baryshkov wrote:
-> On Mon, Jun 24, 2024 at 10:05:50AM GMT, Neil Armstrong wrote:
->> The RCG's clk src has to be parked at XO while disabling as per the
->> HW recommendation, hence use clk_rcg2_shared_ops to achieve the same.
->>
->> It also changes dptx1_aux_clk_src to use the correct ops instead of
->> clk_dp_ops.
->>
->> Fixes: 9e939f008338 ("clk: qcom: add the SM8650 Display Clock Controller driver")
->> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
->> ---
->>   drivers/clk/qcom/dispcc-sm8650.c | 14 +++++++-------
->>   1 file changed, 7 insertions(+), 7 deletions(-)
->>
->> diff --git a/drivers/clk/qcom/dispcc-sm8650.c b/drivers/clk/qcom/dispcc-sm8650.c
->> index c9d2751f5cb8..360b80377ed6 100644
->> --- a/drivers/clk/qcom/dispcc-sm8650.c
->> +++ b/drivers/clk/qcom/dispcc-sm8650.c
->> @@ -339,7 +339,7 @@ static struct clk_rcg2 disp_cc_mdss_dptx0_aux_clk_src = {
->>   		.parent_data = disp_cc_parent_data_0,
->>   		.num_parents = ARRAY_SIZE(disp_cc_parent_data_0),
->>   		.flags = CLK_SET_RATE_PARENT,
->> -		.ops = &clk_rcg2_ops,
->> +		.ops = &clk_rcg2_shared_ops,
->>   	},
->>   };
->>   
->> @@ -398,7 +398,7 @@ static struct clk_rcg2 disp_cc_mdss_dptx1_aux_clk_src = {
->>   		.parent_data = disp_cc_parent_data_0,
->>   		.num_parents = ARRAY_SIZE(disp_cc_parent_data_0),
->>   		.flags = CLK_SET_RATE_PARENT,
->> -		.ops = &clk_dp_ops,
->> +		.ops = &clk_rcg2_shared_ops,
->>   	},
->>   };
->>   
->> @@ -457,7 +457,7 @@ static struct clk_rcg2 disp_cc_mdss_dptx2_aux_clk_src = {
->>   		.parent_data = disp_cc_parent_data_0,
->>   		.num_parents = ARRAY_SIZE(disp_cc_parent_data_0),
->>   		.flags = CLK_SET_RATE_PARENT,
->> -		.ops = &clk_rcg2_ops,
->> +		.ops = &clk_rcg2_shared_ops,
->>   	},
->>   };
->>   
->> @@ -516,7 +516,7 @@ static struct clk_rcg2 disp_cc_mdss_dptx3_aux_clk_src = {
->>   		.parent_data = disp_cc_parent_data_0,
->>   		.num_parents = ARRAY_SIZE(disp_cc_parent_data_0),
->>   		.flags = CLK_SET_RATE_PARENT,
->> -		.ops = &clk_rcg2_ops,
->> +		.ops = &clk_rcg2_shared_ops,
->>   	},
->>   };
-> 
-> The only parent for these three clocks is the DT_BI_TCXO. Is this really
-> going to work as expected? Also what's the point of parking the
-> TCXO-sourced clocks?
-> 
+Convert the bindings for the Turing Clock Controller on QCS404 from
+the old text format to yaml.
 
-Indeed will drop
+Signed-off-by: Rayyan Ansari <rayyan.ansari@linaro.org>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+---
+v1 -> v2: rename file to compatible string, remove label in example dt,
+          add acked-by tag
+v1: https://lore.kernel.org/all/20240715084313.14098-1-rayyan.ansari@linaro.org/
 
-Thanks,
-Neil
+ .../bindings/clock/qcom,qcs404-turingcc.yaml  | 47 +++++++++++++++++++
+ .../bindings/clock/qcom,turingcc.txt          | 19 --------
+ 2 files changed, 47 insertions(+), 19 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,qcs404-turingcc.yaml
+ delete mode 100644 Documentation/devicetree/bindings/clock/qcom,turingcc.txt
 
->>   
->> @@ -560,7 +560,7 @@ static struct clk_rcg2 disp_cc_mdss_esc0_clk_src = {
->>   		.parent_data = disp_cc_parent_data_5,
->>   		.num_parents = ARRAY_SIZE(disp_cc_parent_data_5),
->>   		.flags = CLK_SET_RATE_PARENT,
->> -		.ops = &clk_rcg2_ops,
->> +		.ops = &clk_rcg2_shared_ops,
->>   	},
->>   };
->>   
->> @@ -575,7 +575,7 @@ static struct clk_rcg2 disp_cc_mdss_esc1_clk_src = {
->>   		.parent_data = disp_cc_parent_data_5,
->>   		.num_parents = ARRAY_SIZE(disp_cc_parent_data_5),
->>   		.flags = CLK_SET_RATE_PARENT,
->> -		.ops = &clk_rcg2_ops,
->> +		.ops = &clk_rcg2_shared_ops,
->>   	},
->>   };
->>   
->> @@ -647,7 +647,7 @@ static struct clk_rcg2 disp_cc_mdss_vsync_clk_src = {
->>   		.parent_data = disp_cc_parent_data_0,
->>   		.num_parents = ARRAY_SIZE(disp_cc_parent_data_0),
->>   		.flags = CLK_SET_RATE_PARENT,
->> -		.ops = &clk_rcg2_ops,
->> +		.ops = &clk_rcg2_shared_ops,
->>   	},
->>   };
->>   
->>
->> -- 
->> 2.34.1
->>
-> 
+diff --git a/Documentation/devicetree/bindings/clock/qcom,qcs404-turingcc.yaml b/Documentation/devicetree/bindings/clock/qcom,qcs404-turingcc.yaml
+new file mode 100644
+index 000000000000..033e010754a2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,qcs404-turingcc.yaml
+@@ -0,0 +1,47 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/qcom,qcs404-turingcc.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm Turing Clock & Reset Controller on QCS404
++
++maintainers:
++  - Bjorn Andersson <andersson@kernel.org>
++
++properties:
++  compatible:
++    const: qcom,qcs404-turingcc
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    maxItems: 1
++
++  '#clock-cells':
++    const: 1
++
++  '#reset-cells':
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - '#clock-cells'
++  - '#reset-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/qcom,gcc-qcs404.h>
++    clock-controller@800000 {
++        compatible = "qcom,qcs404-turingcc";
++        reg = <0x00800000 0x30000>;
++        clocks = <&gcc GCC_CDSP_CFG_AHB_CLK>;
++
++        #clock-cells = <1>;
++        #reset-cells = <1>;
++    };
+diff --git a/Documentation/devicetree/bindings/clock/qcom,turingcc.txt b/Documentation/devicetree/bindings/clock/qcom,turingcc.txt
+deleted file mode 100644
+index 126517de5f9a..000000000000
+--- a/Documentation/devicetree/bindings/clock/qcom,turingcc.txt
++++ /dev/null
+@@ -1,19 +0,0 @@
+-Qualcomm Turing Clock & Reset Controller Binding
+-------------------------------------------------
+-
+-Required properties :
+-- compatible: shall contain "qcom,qcs404-turingcc".
+-- reg: shall contain base register location and length.
+-- clocks: ahb clock for the TuringCC
+-- #clock-cells: from common clock binding, shall contain 1.
+-- #reset-cells: from common reset binding, shall contain 1.
+-
+-Example:
+-	turingcc: clock-controller@800000 {
+-		compatible = "qcom,qcs404-turingcc";
+-		reg = <0x00800000 0x30000>;
+-		clocks = <&gcc GCC_CDSP_CFG_AHB_CLK>;
+-
+-		#clock-cells = <1>;
+-		#reset-cells = <1>;
+-	};
+-- 
+2.45.2
 
