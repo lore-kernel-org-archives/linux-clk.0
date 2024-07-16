@@ -1,121 +1,115 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CBD4195F17
-	for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2024 09:54:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFCE544369;
+	Tue, 16 Jul 2024 10:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721123694; cv=none; b=bUjw8CeBD0QSIKabM+dO2awucE+ocgJlSklO1AM3U3SrUypeTFwNNJ3l3H7fTnCGzHPKyVCnI5jSvF+Y3MV9iR5SSjyp0EO15V+KKS0prP6KHUxIahTQ/x/XICOpQH9nisKmu31ZTZoLB85WZg+F+1sbX5ET7+P6ztSH0xF/mMM=
+	t=1721124748; cv=none; b=bd/JXEWrad1OzdYHjQxm43TdEeY3yO5POViwu2H7sddDSLhvbNfScVUcFPJUqCxNoWwOvxN4Vlpg1EjCTMVSAfmguZO82EE7ZRgNJPnX+OnhBA5hKIfaEKPewoX9YyD1nL/22XvkR2PS2cSRhzd+3cLyb2lL1H3vbxSWpd+4jAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721123694; c=relaxed/simple;
-	bh=ZPb5imWfzGDWAAu2GyDOPfBLXm3faEwF4zRISOWssjA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ekYnnT3XyPZ/3fnTAm78AoMGy6Umuuzqokuty3BW2GCd7v9mMJ8E0Xt0FTLpiTn0PjQ3RqEDwSeu5ofVLm1uHcdyC5TWNZpxdDOHqN8cl0/zFX9FiQAnL8fmIu16+6AE2Jq4bM2cXiiO9N2h28/2AI5tJf7nPA40BsLcHkE7Oj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RfMEffS8; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1721124748; c=relaxed/simple;
+	bh=a+rn5HmuqlMgGCBgTMZioOeZqzZXeL1WsrH2Fg4uVec=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EPtu5IJVKiKAwn11hQtgsCxxPv8v6wTgeGnYshJ+ZYDeUSPb+uRB22iiK77satzrHcz+/88cdHE7tpjlUMqgJtWkq8j59SFxJzE/h4cW6IonkhKHTxmxiJ+PbrTb82zhNpV277viK0I3C/t+k9HQYEIiwZ5KkUP3hHqPISJA37Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jU5H2ozQ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RfMEffS8"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1721123691; x=1752659691;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=ZPb5imWfzGDWAAu2GyDOPfBLXm3faEwF4zRISOWssjA=;
-  b=RfMEffS8jA+jRbg0LqVf1L32qb3rAOHnaQuMO0YQJ1WnDjRJ1SszK9Jc
-   k1fiB95zR4qZTBviBbiMecffGXIGMW/39Pyj7X2RVMW/eDlOrKcaIRKcl
-   fZQ+rzqBdWhuX+vTPytA/qkfKWR3qqPbM9Pjm121ntP0yDCnAG+5uk6Ek
-   0rXqaOXo8/ZJFd6X7e5KkhS/gxSDk7CqSJrOInzS8k9OXszKaPnNBb95u
-   UqZaWZElhEp5AiQHKkHkQy5oXvJ1GNm1rfnA2YEK2QJVLqN4zOo+YLyf/
-   rJWHZ/TxTxQkFuRTKMQFI4bbYy7lCGZFDYRTdnI/GlARUXNonro0vHGdI
-   g==;
-X-CSE-ConnectionGUID: zZS6gQaTSyaff57PTMhlBQ==
-X-CSE-MsgGUID: MTPrI4prT/WNAm1uurzcbw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11134"; a="21462921"
-X-IronPort-AV: E=Sophos;i="6.09,211,1716274800"; 
-   d="scan'208";a="21462921"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 16 Jul 2024 02:54:50 -0700
-X-CSE-ConnectionGUID: Up+zKD7xTg2MmG728Q/ZMQ==
-X-CSE-MsgGUID: BMrmQZyKTwmYNPrUkDcEvw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,211,1716274800"; 
-   d="scan'208";a="50342627"
-Received: from lkp-server01.sh.intel.com (HELO 68891e0c336b) ([10.239.97.150])
-  by orviesa006.jf.intel.com with ESMTP; 16 Jul 2024 02:54:49 -0700
-Received: from kbuild by 68891e0c336b with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sTetS-000f6Y-1a;
-	Tue, 16 Jul 2024 09:54:46 +0000
-Date: Tue, 16 Jul 2024 17:54:01 +0800
-From: kernel test robot <lkp@intel.com>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	David Gow <davidgow@google.com>
-Subject: [clk:clk-kunit 10/10] ERROR: modpost:
- "__dtbo_kunit_clk_parent_data_test_begin" [drivers/clk/clk_test.ko]
- undefined!
-Message-ID: <202407161711.qDtiW4s1-lkp@intel.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jU5H2ozQ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33C54C4AF0C;
+	Tue, 16 Jul 2024 10:12:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721124748;
+	bh=a+rn5HmuqlMgGCBgTMZioOeZqzZXeL1WsrH2Fg4uVec=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jU5H2ozQ1X7ZQvwsS4cBN6WmensBTHO64MdlYslRas47ym1/EzJFbsyAxiY6s0Hbs
+	 CC/kiIhTSZKmRz2lhBvpdX6YmSyQmJ2XOvAMFGrSDoZxdjzOQt/csXAr4G+Fp45FYx
+	 6kHhhLBAVTu/chsdATcQ0l/kELFNHuk7Sv/KgcEZ/b31NrpTdAghDQWasrMF3tICau
+	 /r5coEHWYwoCF/tSQACx7qRdlugG81bepwYh+MtjwKYiCDDDlEYkG/tSo3tQ1mKBjf
+	 ZHKOmnuWOCFKBVghwKW+eXQ0nTd2NDBkhEmsALfnjP5okniWEDTn36+2Lijmhphujx
+	 v6JI2NTeXOWyA==
+Message-ID: <78bcb4c5-1b1e-4bf6-a86f-8496804901ae@kernel.org>
+Date: Tue, 16 Jul 2024 12:12:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] dt-bindings: clock: qcom,qcs404-turingcc: convert to
+ dtschema
+To: Rayyan Ansari <rayyan.ansari@linaro.org>, devicetree@vger.kernel.org
+Cc: Conor Dooley <conor.dooley@microchip.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240716085622.12182-2-rayyan.ansari@linaro.org>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240716085622.12182-2-rayyan.ansari@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Stephen,
+On 16/07/2024 10:56, Rayyan Ansari wrote:
+> Convert the bindings for the Turing Clock Controller on QCS404 from
+> the old text format to yaml.
+> 
+> Signed-off-by: Rayyan Ansari <rayyan.ansari@linaro.org>
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> ---
+> v1 -> v2: rename file to compatible string, remove label in example dt,
+>           add acked-by tag
+> v1: https://lore.kernel.org/all/20240715084313.14098-1-rayyan.ansari@linaro.org/
+> 
 
-First bad commit (maybe != root cause):
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-kunit
-head:   9f8bbc66021282d0646d1f8422265c72e671b5d1
-commit: 9f8bbc66021282d0646d1f8422265c72e671b5d1 [10/10] clk: Add KUnit tests for clks registered with struct clk_parent_data
-config: i386-randconfig-001-20240716 (https://download.01.org/0day-ci/archive/20240716/202407161711.qDtiW4s1-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240716/202407161711.qDtiW4s1-lkp@intel.com/reproduce)
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202407161711.qDtiW4s1-lkp@intel.com/
+Best regards,
+Krzysztof
 
-All errors (new ones prefixed by >>, old ones prefixed by <<):
-
-WARNING: modpost: missing MODULE_DESCRIPTION() in vmlinux.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/locking/locktorture.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/locking/test-ww_mutex.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/rcu/rcutorture.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/rcu/rcuscale.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/rcu/refscale.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/time/time_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in kernel/torture.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/ext4/ext4-inode-test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/fat/fat_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/nfs/nfsv4.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/unicode/utf8-selftest.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/smb/common/cifs_arc4.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in fs/smb/common/cifs_md4.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/kunit/kunit-test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in lib/kunit/kunit-example-test.o
-ERROR: modpost: missing MODULE_LICENSE() in drivers/clk/kunit_clk_parent_data_test.dtbo.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/kunit_clk_parent_data_test.dtbo.o
-ERROR: modpost: missing MODULE_LICENSE() in drivers/clk/kunit_clk_fixed_rate_test.dtbo.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/clk/kunit_clk_fixed_rate_test.dtbo.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firewire/uapi-test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/firewire/packet-serdes-test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/input/tests/input_test.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/of/of_test.o
-ERROR: modpost: missing MODULE_LICENSE() in drivers/of/kunit_overlay_test.dtbo.o
-WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/of/kunit_overlay_test.dtbo.o
->> ERROR: modpost: "__dtbo_kunit_clk_parent_data_test_begin" [drivers/clk/clk_test.ko] undefined!
->> ERROR: modpost: "__dtbo_kunit_clk_parent_data_test_end" [drivers/clk/clk_test.ko] undefined!
-ERROR: modpost: "__dtbo_kunit_clk_fixed_rate_test_begin" [drivers/clk/clk-fixed-rate_test.ko] undefined!
-ERROR: modpost: "__dtbo_kunit_clk_fixed_rate_test_end" [drivers/clk/clk-fixed-rate_test.ko] undefined!
-ERROR: modpost: "__dtbo_kunit_overlay_test_begin" [drivers/of/overlay_test.ko] undefined!
-ERROR: modpost: "__dtbo_kunit_overlay_test_end" [drivers/of/overlay_test.ko] undefined!
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
