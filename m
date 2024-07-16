@@ -1,60 +1,60 @@
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C36AC1990DE
-	for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2024 12:09:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8DD413C690
+	for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2024 12:15:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721131794; cv=none; b=DrKcHhbI5mgM8oRvqDSwbzpGN/OXHLgdg1xVJaRtjbNv5T59T+usYy57onL+iY18yHQWcBsnILqj619BPyLS8zzmZGlw65yFm7ddMhIPNY0seezwO7GiLRWLzgblnLZDcc31l+u9EZbfVlHM/Nx0wfx2zqX2oAglaNO/A4erxA4=
+	t=1721132119; cv=none; b=QopZaeJIqOlgsfVa59nQz85q7tRLDxsqA+LiTCd3Sq6IICcCIFf+0DwlCMSvbeJqO+NZqd/l8fOnqk+hyu0utNrIncD4e3OZID3foQCaa2Cy8nEu0HK50S7uxU0sImKFmb35FP+CbBpx15R52iDS1DY3GuQs5/F8QNRuyrpREVs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721131794; c=relaxed/simple;
-	bh=BNL9xfmru+xlaynuTe3brre09ZofiAu+ZGUkIKuel9c=;
+	s=arc-20240116; t=1721132119; c=relaxed/simple;
+	bh=/mJSEHVWWL/+/TzG4vXCLTvtSyApfM55zicTRypWeIw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GVmVt91J7rtwEnxhDIIwkNZh2z7iNX9GxGVbn7bbNp+9+mpFjCPhUhlIRz0Mv0sSArEKdYyBd66mM+StCA7X73XkikN5aWhbfdS+0m0TMQhmRwMxQA/ItEuu+PmgESQZ15Ax9QNgPryop7W2GO6J6/Ba0um1htTE4IJdvNymtK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=koNq9oN+; arc=none smtp.client-ip=209.85.167.50
+	 In-Reply-To:Content-Type; b=OO/01C81FCLL9I7sVjcaAZZ3pApkoRYRujGULOP7l81trrP+fZ3Yq84OWwiC2oiFBifNYN+OsInmQsU6OOHrpWKbiOLVZLeDfogApxoJQhhiyD51UYs95pUlj/y90Ut1HO+NuGLmtWUoWk8q7KXedi3B1wLB9wPr4EpUNdxhRg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OcNOrxf3; arc=none smtp.client-ip=209.85.208.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="koNq9oN+"
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-52e9c55febcso6985090e87.2
-        for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2024 05:09:52 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OcNOrxf3"
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-58ef19aa6c4so7144335a12.2
+        for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2024 05:15:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721131791; x=1721736591; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1721132116; x=1721736916; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=XJwiace0C0RrXaVWU9MXxXzi/aJ9SZxUn71Vk4+fUAc=;
-        b=koNq9oN+i+rV2Sq/Wi2RNN8PVI/xggjv9mCnGyQsFEakBVOEIDO/FVcmy4AEBpIqLj
-         pQ9KiETovi9MEOiiBmRMdGyk+ivasnWyHvFhCeKkai13k3EUpIh7i5wkznz1PBmP3eW9
-         GC7OkHt8LqciX5Mp1mG2CX3sXwoUez5mHpdh6dkD/aHUaETeqEK+pU3GDT1Dzp8qylCV
-         6WyAmEO93/Sxrq/AIz7Evti4XCM/T0MTR+Wvj1P25j67h89Kjw5GCFs4UuZ4CTzbcZHi
-         UA/N+LXZyiioyxGdY9BuWW++NOzm1NttD1o0Wv92ac/VS8/TLER2hpwt8biibdDl07+Q
-         dVyw==
+        bh=iQwj37Z64kkWkq1QNNNRBOD95NNDPJjcOzXptOwbtXo=;
+        b=OcNOrxf3FUK8MfZDS0v5z5fks207JeddgsHbPSNuDyPWiH2bxC1aHMnj44pkhQ4dli
+         CzE6dicMDQ6q+TrkT1t5f9tdbGxAPp/WZrIm0zAZiEmt3b+vfcKdVDSl/9XB0/SVsf5Q
+         WcbAwmQnlGEm3jgDPT97829aYEIo4KeAUJjeAtLrQscdk3pH61ezuBvyy24WkUbjoueX
+         GHEpAw/cu3ip6ZZabTv2L3FQm7WjkF6zhoIVj8P96zLaA3ij5jrk5g9huRMYS954JCkh
+         nAzCjSMjw0/rJYnm9ZX975JIqjd0LwAqvxvO96mNNmOd/uIUBa5Z/dkAoTLZFJPGLpEX
+         HDTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721131791; x=1721736591;
+        d=1e100.net; s=20230601; t=1721132116; x=1721736916;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XJwiace0C0RrXaVWU9MXxXzi/aJ9SZxUn71Vk4+fUAc=;
-        b=gmPgqvzvSzgBmVQPwqJbmE8oYNoHhiRZ+4quVWC6MJSAisGk+2DlwYUu6v22YFkyIJ
-         hP/MoJGAL2gz8Y82gRThWOtSQPMl8P0yCZhKg47sGHs6NjCEU0Ke5/P3FNcqfkfW33zE
-         48U1djd+S2qOpt8eIm/Pma2aume5RD+xBOhxLM84bILkssgW1nOaZOgYcIruc4LrNz/Y
-         8r7tyeIJeRXWWY8qRM9F4iomO7gfyQBHrliE33xABh43xu9pwOA4QsJGZW94/0EGmyLz
-         m+L+fPcKoJc1sQYggkZezRBftqQS//WkxqvmAWjkBkQtXqA2P4zutgN1XKRs5KYeZoDk
-         ictQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUDGphfOBJOYYvUCNkmcDfjOweuvxq13POuAJ450APbkjNRNoQU4mLMm6Q3RAKyOTt17X3kg2OrZifuQBrZYHjBkdV/gRNsbCah
-X-Gm-Message-State: AOJu0Yys8ALOsa5vdwyMI/kAzt5TLIh580ia75SzuBeBCG4p+rIfNJot
-	7wfY3LH9rCV4/g4xlwS3JQ/nX6KJpbmMZdDcKrOZJqiMQG/g5DC3QD1pDpJL85I=
-X-Google-Smtp-Source: AGHT+IG7C1TNMx7NHCUMXnw1EqOzzElmA0hmzDn0ZdPsWYCJ5cp/cC80KMfLd3HFmNCQdoUmzHUZqg==
-X-Received: by 2002:a05:6512:b24:b0:52b:8ef7:bf1f with SMTP id 2adb3069b0e04-52edef1ee77mr1157682e87.17.1721131790554;
-        Tue, 16 Jul 2024 05:09:50 -0700 (PDT)
+        bh=iQwj37Z64kkWkq1QNNNRBOD95NNDPJjcOzXptOwbtXo=;
+        b=Z+Pl8013s9Wd/t/A40pQESYb1TIxqbJpVPoamWfdrpLE7t9YMFu8zbDSKzwK5YjIBb
+         Ppfne+dR/ihYqGYwRlEQcswLBwAoim+b97Ns1fhELgsCCeZ1FPq4f0lBZ3yJAF9JA9mg
+         VqKiN52w5tX/EIt+6O2e2k97zumNch0FEFUdYn5YFNTQESf6fh8gkfvupgM2YlfnPw4C
+         QiIKXrp2r90zheHoQAXgMbuy1v4LJzjmVhm7+Kom/2nrlheA6PZqbZUEB0PrdTLFfnpT
+         gEEo/nHoLvDCCWcayZH3JyjzvJT0HSI5YLiuMxsx6m2XcUHHbPA0zugLCUAInzP0YDtJ
+         ubsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUrQCxp4fc0FoB1i8j0GxOpJCrwJsHC7QqUI1LZVi41B9WOo8E2/CIwkc6Gk7smoBg98LIlLrstUfsf9Ny9xjkXRfmi1jjXagTG
+X-Gm-Message-State: AOJu0YzZoAXOPDwOr9lNLuZ5TJCbeh4jedhfomnirEr29sgk1elFNknr
+	qCLUiUkQTdG9/UznoHwrbrx6bLzRjS0dB+5491P9x7gVxfNzQkiNnJmj5iR1DuA=
+X-Google-Smtp-Source: AGHT+IHfEm9rSiHqbH+SusBNneyOosPqVrpvY7RwUkyFYFz6O61G1Ifzfw53sglOfpelrIaM3lCSvg==
+X-Received: by 2002:a05:6402:3486:b0:58e:4088:ed2 with SMTP id 4fb4d7f45d1cf-59eeee44bc9mr1445338a12.16.1721132115994;
+        Tue, 16 Jul 2024 05:15:15 -0700 (PDT)
 Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc5a359asm311005166b.19.2024.07.16.05.09.48
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-59e663e4a6esm1594433a12.80.2024.07.16.05.15.13
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Jul 2024 05:09:49 -0700 (PDT)
-Message-ID: <12be3f5a-5bc6-40cc-a7af-7f098a7be04e@linaro.org>
-Date: Tue, 16 Jul 2024 14:09:47 +0200
+        Tue, 16 Jul 2024 05:15:15 -0700 (PDT)
+Message-ID: <d454e01f-3d6b-4a02-87cf-3d289bc6957c@linaro.org>
+Date: Tue, 16 Jul 2024 14:15:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -62,20 +62,21 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 7/8] arm64: dts: qcom: Add support for multimedia clock
- controllers
-To: Krzysztof Kozlowski <krzk@kernel.org>, Taniya Das
- <quic_tdas@quicinc.com>, Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- quic_imrashai@quicinc.com, quic_jkona@quicinc.com
-References: <20240715-sa8775p-mm-v3-v1-0-badaf35ed670@quicinc.com>
- <20240715-sa8775p-mm-v3-v1-7-badaf35ed670@quicinc.com>
- <d40d540c-a3b9-449d-8f34-cb2972ddc2ef@kernel.org>
+Subject: Re: [PATCH v6 5/9] pmdomain: qcom: rpmpd: Add IPQ9574 power domains
+To: Varadarajan Narayanan <quic_varada@quicinc.com>, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
+ mturquette@baylibre.com, sboyd@kernel.org, ilia.lin@kernel.org,
+ rafael@kernel.org, viresh.kumar@linaro.org, ulf.hansson@linaro.org,
+ quic_sibis@quicinc.com, quic_rjendra@quicinc.com, danila@jiaxyga.com,
+ neil.armstrong@linaro.org, otto.pflueger@abscue.de, abel.vesa@linaro.org,
+ luca@z3ntu.xyz, geert+renesas@glider.be, stephan.gerhold@kernkonzept.com,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ linux-clk@vger.kernel.org
+Cc: Praveenkumar I <quic_ipkumar@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+References: <20240710061102.1323550-1-quic_varada@quicinc.com>
+ <20240710061102.1323550-6-quic_varada@quicinc.com>
 Content-Language: en-US
 From: Konrad Dybcio <konrad.dybcio@linaro.org>
 Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
@@ -113,46 +114,22 @@ Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
  nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
  izWDgYvmBE8=
-In-Reply-To: <d40d540c-a3b9-449d-8f34-cb2972ddc2ef@kernel.org>
+In-Reply-To: <20240710061102.1323550-6-quic_varada@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 16.07.2024 9:45 AM, Krzysztof Kozlowski wrote:
-> On 15/07/2024 10:23, Taniya Das wrote:
->> Add support for video, camera, display0 and display1 clock
->> controllers on SA8775P platform.
->>
->> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
->> ---
->>  arch/arm64/boot/dts/qcom/sa8775p.dtsi | 56 +++++++++++++++++++++++++++++++++++
->>  1 file changed, 56 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
->> index 23f1b2e5e624..8fd68a8aa916 100644
->> --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
->> +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
->> @@ -2911,6 +2911,47 @@ llcc: system-cache-controller@9200000 {
->>  			interrupts = <GIC_SPI 580 IRQ_TYPE_LEVEL_HIGH>;
->>  		};
->>  
->> +		videocc: clock-controller@abf0000 {
->> +			compatible = "qcom,sa8775p-videocc";
->> +			reg = <0x0 0x0abf0000 0x0 0x10000>;
->> +			clocks = <&gcc GCC_VIDEO_AHB_CLK>,
->> +				 <&rpmhcc RPMH_CXO_CLK>,
->> +				 <&rpmhcc RPMH_CXO_CLK_A>,
->> +				 <&sleep_clk>;
->> +			power-domains = <&rpmhpd SA8775P_MMCX>;
+On 10.07.2024 8:10 AM, Varadarajan Narayanan wrote:
+> From: Praveenkumar I <quic_ipkumar@quicinc.com>
 > 
-> Not sure if these are correct. I had impression the clocks are going
-> away from sa8775p?
+> Add the APC power domain definitions used in IPQ9574.
+> 
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Signed-off-by: Praveenkumar I <quic_ipkumar@quicinc.com>
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> ---
 
-Right, the patches look mostly good, but are still going to be on hold
-until the 8775 situation is cleared out.. We recently had the gigantic
-patchset [1] that shifted things around, and seemingly there was rather
-little closure on that, so we're waiting for the dust to settle and
-people to agree on things..
+Could you please confirm [1]?
 
 Konrad
 
-[1] https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
+[1] https://lore.kernel.org/linux-arm-msm/57dadb35-5dde-4127-87aa-962613730336@linaro.org/
