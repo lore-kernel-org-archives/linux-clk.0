@@ -1,60 +1,61 @@
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8C5319923D
-	for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2024 12:05:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61919198857
+	for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2024 12:07:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721131538; cv=none; b=DNk+pUV5BhoykbQD0ibKVDxIqfpjA77B/8IhsJG6jHBdGNqKSGB3Mqykzw/wyAraTCmGSQWlV+K1vAAKOWZgOQIZnoc1A8UFKSi3zNChW8kq6RFc9sbtWDCkb5525TiOWETRE3BZJIjEdp61NJbHlu9uRYD9b9BRC4g6zkXgZ4g=
+	t=1721131642; cv=none; b=LWYDRFeYQoEhyNyNsQT4rHrXjiYXbMf3h9wmd4TMJniyjvhNx4atWwtPxNNjodDkGitXVfXRpMiP3nPe/LftucfOFMLOuxTXd6227nMthk6GCy4NpPgXF5B9/UOykMZKenTN+zSj9vBrQHtTKpcT8nSRJBC7dtCfZA1hTXDBGk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721131538; c=relaxed/simple;
-	bh=a/QNnE3VTY48ir/BbA7peHC4ohzSHYH11rn3ny9ooY0=;
+	s=arc-20240116; t=1721131642; c=relaxed/simple;
+	bh=ooHPNdSX10YK8g++HA/Wk1VhEtfHnP2xmnmulMeYjxE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cjgLpb8ncJzpEXGkbLFbffN+lD/j+IsckqCjCxkVDuj9aQacq6KtfHireR2ZwaqRsTgiqgFRncYGaxhpSzIL4626f63jb7I5/5pudj8vrbZTF4SrhoPhMTBiN6NTPX2OrES4BcKRbMFDIdYmuAwsvzIB4UDQygm09IfQS6nDpUw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ux7QEief; arc=none smtp.client-ip=209.85.208.41
+	 In-Reply-To:Content-Type; b=uDeVTNmVbOrUPzXHyc48awN7SGAdIJ+jtPida1Uu/fzanhLLm1RW9RFbyHaE5MIZTf8vDM7IxPGibtH4zn6ltKB5K+ZSxkqFpNRa43KzrBcgAi/Nck++trcuBOpcIgSg47TdRYQKKD7jkgj7zwyfc/2fcmbn0eUa04JsnbJwiwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cOnxYQGD; arc=none smtp.client-ip=209.85.208.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ux7QEief"
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-59589a9be92so7442338a12.2
-        for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2024 05:05:36 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cOnxYQGD"
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-595850e7e11so6724934a12.1
+        for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2024 05:07:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721131535; x=1721736335; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1721131639; x=1721736439; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=4DQiUv2nV2q5zKISm+bmewPqftcl86SPYzZg0JZrEy0=;
-        b=Ux7QEiefPbq7h4ztZUTCMmfLYaUPYlsNyXKq+tdiY0Gx5PzTX55CnSna2tJZdg4Eow
-         FgfoUdTAqKeZQdl638xxXMuKmCqY2m4G/rRVIwYUL6fbuUdGoCLi9/CqFUa9Vua5JhrM
-         shHNZvEWijn1KzUdtY4GV7VU09FDpCdoXdCJwI+jh2AvOCdPKXccMgSKIFVK3RV0eoT5
-         G7/sn88uaswysfVJGADR/DXBRMhGETK2/ndR5P2aY6LvZXvjVaw8TblmJUwhtTs6FwUd
-         bOt0g0oubfegsAK2dvXy/0RDU1Yrm4tLEvCh1NXEBd0M4UD05DYU6n80vVxBi/7ZSM51
-         V2Kg==
+        bh=OitAEpQqJBIlmDOIGTj4gJsZSFyCWFUbY46ZEpYoa+4=;
+        b=cOnxYQGDiCPxID7hztarsd5BZmPgMuYKBl2ujzA/eLcyhN6wtpoV80u6Dmn/TUZ5ys
+         Jse43iVW3UEcENKg7uXcYUdmsDEvZeEVJLprMFy6UOUaezBhuz1n87qhsD6/PSwDsrMj
+         5mGd9VZzw4F7EX3n1rFAvLu5uSZdC4N3M0ASRwfNqUGI4mnPH/0K5O0vc57uN4JmXxrg
+         KV11EcUAbCo5njSVffjkiePuTYBWIlHU3dS6QEv16llUG0SAk6EEYMkO5QWFnDxZ3Ptr
+         pZ+iNojeGdIrK8ZFXL6/a9jx7xbXm62ejy24kx4dqOLdVn5Qqg5sAOIqME2mZdDFzsBU
+         ucQg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721131535; x=1721736335;
+        d=1e100.net; s=20230601; t=1721131639; x=1721736439;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=4DQiUv2nV2q5zKISm+bmewPqftcl86SPYzZg0JZrEy0=;
-        b=GqiwHSyHMGpXd2xxw1I9cog3dm10VoITqygEOi+QbmNC57h2mxi6Im/9tZBAoLHlDG
-         ub48+K+W2GVq90ZPcXiBfFd/3Xae8XTai4pfe/9KiVmDcUpEbHjr6ZEO5RjRztye31Lq
-         QNa463+1XwiivwkkNxXRJiyETVO7qz8Ie2rQlrhxGSy2SNGpsiNat/AjJISKPF7UHylf
-         /pEjnypPPXy38nLWArZNirnE2FLYmSX4zfr0zqzrKHL5EY3nXRVua0SMjSmcqPLTQtB9
-         Uy/ND0rswjEO13mBOu8ip/B/uhhBkwvddXVCB/tYA1gi3pv/DOP7RsXKgbUq9IgoKybz
-         xE9w==
-X-Forwarded-Encrypted: i=1; AJvYcCVf71n3bZQczLKEz7je3eNHKXbxApVM82/ZbG9izISej5ICNTIXP+21Ye00Jq4Jte24kJ5asdZgemUSPLZE9yOV+PesLG1yiIM3
-X-Gm-Message-State: AOJu0YxfMaXqqTKbKMlzblgi5Ds+GsCa2qM4pM8sFqB3/FDookcVXfU0
-	R4QOEwcrwWjdsS9pwU+D/91okCYQRHxvLm2zsaiDgLoL8qQP3a8Jv6c7xqDsDDs=
-X-Google-Smtp-Source: AGHT+IEUH3gRh6QTjYG53o7YCNbofILlhkib5QZLUpoUNe7aKkPvuxXcgCnjYgiZ+rYcFHKNwnZ5HA==
-X-Received: by 2002:a05:6402:2791:b0:59e:a1a6:11bb with SMTP id 4fb4d7f45d1cf-59eeb4dc106mr1654868a12.0.1721131535063;
-        Tue, 16 Jul 2024 05:05:35 -0700 (PDT)
+        bh=OitAEpQqJBIlmDOIGTj4gJsZSFyCWFUbY46ZEpYoa+4=;
+        b=A45NuqE9lkrz71MHUZsd1mhIWPru775UalDgOHysXSKLCkINYEIHSMB1N8H34rMfDy
+         WjcXRY2f8QythbvlQloKkCZwRRwu/Hit6aKf2eujr9Ad3Zj2LWblvb8vfN75sbITe/Yt
+         yvvfJ4XgZYo3tT3SMOjIDZaI3a6x/69LHYKMJQvPjB4UgqxzkmIAaB2R0y+qF/6qtlmR
+         e0RLs5o6cMh/a/3ws3RDr+K0rzD/8g3LLlMyHvMs/spQerep2g290ZP65QWZ5Iht3DWI
+         kxtovIxc/w/gwuDswW6LsLQvUgG23O4J/AcCLiEennJlimS5PgWYP5JOqvV+fJVY4riH
+         D8OA==
+X-Forwarded-Encrypted: i=1; AJvYcCVtqUHQdwkQjEj9TQqxd9UAGDFEEbPRNdde2uNFyEN+Kk7tWI6/nWv75m0PuHOXzuvTncLBIiVxiKdl8j1gAZIbza5umqbs0nSb
+X-Gm-Message-State: AOJu0YxvIeYUB1kxmz8myQK/nJ0ZSVc9+zOzSWEBwt4vKSivAxttEX+g
+	rjt2RkUMjc1EHAIDZkn7+aGjZBD05rqR9Ofk8vnYDbhChRXjFg3Fg2zCcRy8Sw40xeyPWsWyNEc
+	Z
+X-Google-Smtp-Source: AGHT+IFRxckN/LaVLeOedvoFoHuOf2HGAk055qS35Yqh8wYVv7r+i7UMnc+WVbdPJ9UqvvlobIlHpA==
+X-Received: by 2002:a17:906:af0e:b0:a77:cbe5:413f with SMTP id a640c23a62f3a-a79ea3ec461mr115457566b.4.1721131638520;
+        Tue, 16 Jul 2024 05:07:18 -0700 (PDT)
 Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-59b26f62bd9sm4812439a12.94.2024.07.16.05.05.33
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc5a38cesm307296766b.9.2024.07.16.05.07.17
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Jul 2024 05:05:34 -0700 (PDT)
-Message-ID: <8916840a-e5e1-406c-a1e8-a073ad344d56@linaro.org>
-Date: Tue, 16 Jul 2024 14:05:33 +0200
+        Tue, 16 Jul 2024 05:07:18 -0700 (PDT)
+Message-ID: <c3126e10-05f9-43a6-aa9d-d96354e27382@linaro.org>
+Date: Tue, 16 Jul 2024 14:07:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -62,7 +63,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/8] clk: qcom: Add support for Video clock controller
+Subject: Re: [PATCH v3 4/8] clk: qcom: Add support for Camera Clock Controller
  on SA8775P
 To: Taniya Das <quic_tdas@quicinc.com>, Bjorn Andersson
  <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
@@ -73,7 +74,7 @@ Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  quic_imrashai@quicinc.com, quic_jkona@quicinc.com
 References: <20240715-sa8775p-mm-v3-v1-0-badaf35ed670@quicinc.com>
- <20240715-sa8775p-mm-v3-v1-2-badaf35ed670@quicinc.com>
+ <20240715-sa8775p-mm-v3-v1-4-badaf35ed670@quicinc.com>
 Content-Language: en-US
 From: Konrad Dybcio <konrad.dybcio@linaro.org>
 Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
@@ -111,12 +112,12 @@ Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
  bGqMHex48FVZhexNPYOd58EY9/7mL5u0sJmo+jTeb4JBgIbFPJCFyng4HwbniWgQJZ1WqaUC
  nas9J77uICis2WH7N8Bs9jy0wQYezNzqS+FxoNXmDQg2jetX8en4bO2Di7Pmx0jXA4TOb9TM
  izWDgYvmBE8=
-In-Reply-To: <20240715-sa8775p-mm-v3-v1-2-badaf35ed670@quicinc.com>
+In-Reply-To: <20240715-sa8775p-mm-v3-v1-4-badaf35ed670@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 15.07.2024 10:23 AM, Taniya Das wrote:
-> Add support for Video Clock Controller for SA8775P platform.
+> Add support for Camera Clock Controller on SA8755P platform.
 > 
 > Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
 > ---
@@ -124,19 +125,12 @@ On 15.07.2024 10:23 AM, Taniya Das wrote:
 [...]
 
 > +
-> +static struct gdsc video_cc_mvs0_gdsc = {
-> +	.gdscr = 0x809c,
+> +static struct gdsc cam_cc_titan_top_gdsc = {
+> +	.gdscr = 0x131bc,
 > +	.en_rest_wait_val = 0x2,
 > +	.en_few_wait_val = 0x2,
-> +	.clk_dis_wait_val = 0x6,
-> +	.pd = {
-> +		.name = "video_cc_mvs0_gdsc",
-> +	},
-> +	.pwrsts = PWRSTS_OFF_ON,
-> +	.parent = &video_cc_mvs0c_gdsc.pd,
-> +	.flags = RETAIN_FF_ENABLE | POLL_CFG_GDSCR | HW_CTRL,
+> +	.clk_dis_wait_val = 0xf,
 
-HW_CTRL_TRIGGER? Not sure why HW_CTRL wasn't removed altogether with
-the hwctrl patchset..
+Shouldn't this also have a .cxcs relating to GCC_CAMERA_AHB_CLK?
 
 Konrad
