@@ -1,138 +1,130 @@
-Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com [209.85.128.173])
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6ADA22309;
-	Tue, 16 Jul 2024 11:24:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0917198A29
+	for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2024 11:40:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721129052; cv=none; b=s28jxhNX3z6Unr4BQ63bf8RzHt7G0tJ2vmgD+StF7kSGnH8Ijc0RUeKezhiAXdvFESjXQaMlleoqpuil1WwO/09BmLu6AdFl7itRDL5bMxs3zaCSDIKKrhg2boLN5DwQNSbuLTLYGqvZsSqC9XqiP+KzjOIpuCyQzjJ/1KytMdc=
+	t=1721130014; cv=none; b=W8HdkeC8VNPTiU24Gkqm6+Zztki0ZCW1vIEvxsrFvjWFhgYh5RtX1f+uGt2zY3JsWSqSktDTDv8YVVmIidDhLPBt2OqBU+p6nya5ibH8JLS54/OWDXAeJbe7KH152Uns9axw5TtnG4hWg+ejOf9bLooAp7FAii7MMrtTtXkLeE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721129052; c=relaxed/simple;
-	bh=UlbGu3EkA+Lvmf3I3klsx8B2VOESek2LOyeDAUqvLIQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=F5aDVBEZsLLyAIoRlXkatJN2KFLKCHcdyU7J9ycNmnDkPlgTTpHVfLJtTEQXwde7KX6nWwBFu1echIUgP/EIodBIH1E0XF1Pl/nnbwoTj4lGc1aFsetSHbS0JgYtdXoXoAvQN4ANXNEXk10DUW6XSePw/4SctR9lkXJU6+PKGWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-65cd720cee2so48566747b3.1;
-        Tue, 16 Jul 2024 04:24:10 -0700 (PDT)
+	s=arc-20240116; t=1721130014; c=relaxed/simple;
+	bh=IBZgoReNaHXUcuRQgPtMcqDYue6zAjXJSkCXCFB1OjQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mdQ8mb0jorAUWe+qIDNeXTY785IXnp/iOSQGn2kZmdHWtW26ivC8R3ga4vZHKufm0L2QammWjZ4TYvSw/A0UvMssgwmP0yTnYe6S/FTmppDAsttoNAI4CrNGgAYG2/lqINmVZMLDrs1DQkXznCskqOYpz5JTKjPhpK15vNcaRqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eX8KDIqH; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eX8KDIqH"
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52ea952ce70so5701624e87.3
+        for <linux-clk@vger.kernel.org>; Tue, 16 Jul 2024 04:40:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721130010; x=1721734810; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=G6xEuYpVtXnG3aS4nIpX/q6zWD8h3Xaat6dOgx90q54=;
+        b=eX8KDIqHUP/R8H4lrknqTj1ZtSavQp2d1vh0+kxnvCjZvmn73f3EyuNN2xsCjNk7XB
+         ZO2Amp3S12ytkAJU3tUp/lxGhYnEeI5lOA0+BgMNunZ6mecPav7Be2njn1n/aTRLjpFZ
+         rGXmqHIcRD8BQWcPZfwmZE4upmeIS7TYanF5CA+wRUCho9VYS1EArfQ6sQOoEsrEHqJl
+         x25TtMl5EwLtw9bsk3oX+Qp4m8RlR7GQzRVON7CalObHiBvgYfKvIDY5Pxp+jZ5dQgtF
+         yfwcify5xMZH0cnpFAP+9PqPg0Y8PnrL1iPOjDucyTVGcM7F7CLbgQDhaH2Do/RNbfOQ
+         zA6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721129049; x=1721733849;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5tEqgeyPZzEuby1pRGoux5oH5BnRs53yKaWTX95zMy4=;
-        b=F7mM4c+Ma28YUeEYCQEnka8AIXgEnhpZYiRQztx3sGVIZ7LS76FS0NcrdmWLnQwbYn
-         hh+lw5HODOfij8yDYWBKsXknB8KyX5tbWRmgL22vi9fuHoT+N1bGs+hgwDhlwz7AdBAa
-         yTucGgy8qEj1rtGGvYZmhSZaBaE9ZgRs6JQMjCunAgAH3Nb5QOXyLyVz0mIIJCrRXwYR
-         1cd33dltB7MYGGTUzeJp8XVVivyEhnnYDXe1i1nkqLIKCBFC7wVdbTqBhDiQXFLkrtpD
-         XZLfHpc8Eh9ufmgyqEKMNNU1Bu0CJqbE2edCvNZfv/tiLtUD6sn4EvHQsGAgzdo8rH24
-         mGsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUuj4Ob/hIAg0pobOY1Q1wodgO39Br/uezNSuXdIOBz82Wt9F/gwl9wc9TdqKY1amkFoJE1nDK+aOhEoM7a4+Nw4rFDNxkE6WKX3UU7pxf0Eh4XEbmFrHmvloxUHrKJ/bq/mEVlJYdBvAsxz51PRzXYSZfKnkLFrABowd5uAuwsBfR/S5cwypn0QVLDT4N+z6hCuwBX1Yx7/g0OBE8lQKK6GVron1XLx1C0Bp8eTND0KP8cuBHBCQFjzXP4oRMhNA==
-X-Gm-Message-State: AOJu0YyynRSVOQ6pJZzxYIU171XDRDA063kd/S02paCcVOZfAfWybv6f
-	B8jCR1tw+5yKzB3OPTpgZsJDOjujgwtaJlB4QdCHnGbdftXSD5yjF3xFpk4B
-X-Google-Smtp-Source: AGHT+IHRqnHBIIsFYs75OEXLP+i+KlrxluxUBGG9UsNTTmTPDl6qYEa2wtiGCOvFVe6HF7EbkEv8/g==
-X-Received: by 2002:a81:a209:0:b0:660:56fb:7f00 with SMTP id 00721157ae682-66381ac112emr21533597b3.46.1721129048894;
-        Tue, 16 Jul 2024 04:24:08 -0700 (PDT)
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com. [209.85.128.182])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-65fc2af4232sm11106767b3.70.2024.07.16.04.24.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 16 Jul 2024 04:24:08 -0700 (PDT)
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-65cd720cee2so48566427b3.1;
-        Tue, 16 Jul 2024 04:24:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXxbWyXJ7cnklMJnBek3yformXt9KWDwYgrU1HFTRr74iVFw0+XWLYbyv3E2zXs7f+ENU6GjzHHH9m5kPu+atrODhg0E6nP0Y4EgBLD+hjZ52dERcm1GKg3pZh2WcbYxPAXF0us47Aob61uk9p/bijGTbIdSK6SBTTR7M2WUI1qW71VnVM89rDz2aAZk6H35oQNGBWbc6RyK4nc79axFaBhwpqa6GaazPpk9J6cQehKCIFUtQeCZUYLxfRGoG7scg==
-X-Received: by 2002:a05:690c:ece:b0:64a:3e36:7fd1 with SMTP id
- 00721157ae682-6637f2bc7c4mr23335497b3.10.1721129048431; Tue, 16 Jul 2024
- 04:24:08 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721130010; x=1721734810;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G6xEuYpVtXnG3aS4nIpX/q6zWD8h3Xaat6dOgx90q54=;
+        b=QahRoUsiHvs6uGDOv0ssw44n2W59RPf9r5yBSIx2w7Xoy52jNuyrQwM18hetjhYHve
+         z8/Qxhc+4r0gdO3a7CD4jZYJWaDDUl7ssG800ZYlyiDYV0w6OkjodHur4oCMEVhXF2/J
+         1yApRlNKmEqnpYAmWUvTgoVq8cYZokYEkI8XDegGFOKXdzJAXbRq5N48vh28PsgS8MAn
+         VOHcsFzYtpPg6R/227g9+I1wS3wbIqz9eYn9jswsnFHRslZPtp9cTYmaN8QaMMkUIDSG
+         udcpHhRyfS2nGpv2+Tk0jVfhK5GElraH4A0VhkxK/jLhzze3OflEVr5ni9+Hdl5IN6SZ
+         mw8g==
+X-Forwarded-Encrypted: i=1; AJvYcCU6BpVW8BFQeS4r33j68rqqKPbe/8aWlPVRTwAl8kkjynoLTD2tHruYmmFQ7DTBAR7eh6bfuJrPo0BQfx0MDAjHX3s/hvKkLcFl
+X-Gm-Message-State: AOJu0Yx+rls6nH/ipoUV3Cmg6sEDhQQ8svFT0AhrpEgSADjPb98o/Yct
+	REKLDwSbVdV7N7wPgEc0GPlvIq6YO2LOjmFsoCAskdcjRVBR1H9MN7JilW3onpI=
+X-Google-Smtp-Source: AGHT+IGNeELJAWlQzNylXKeMqsQ5zbqL+PcjSDrqgMkM2cimJQ9/3Fz7a/4zQML6t+WKg3RknFfDcA==
+X-Received: by 2002:a05:6512:131a:b0:52c:e184:3dd6 with SMTP id 2adb3069b0e04-52edeecea1cmr1398248e87.0.1721130010100;
+        Tue, 16 Jul 2024 04:40:10 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ed2531fbdsm1140499e87.195.2024.07.16.04.40.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 16 Jul 2024 04:40:09 -0700 (PDT)
+Date: Tue, 16 Jul 2024 14:40:08 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Taniya Das <quic_tdas@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/3] clk: qcom: dispcc-sm8650: Park RCG's clk source
+ at XO during disable
+Message-ID: <xzyphnxzkul77qrnxvxayzvschlwkhzun5jwom4pxeqsoxzbpj@k4o5cnitwc7z>
+References: <20240716-topic-sm8650-upstream-fix-dispcc-v3-0-5bfd56c899da@linaro.org>
+ <20240716-topic-sm8650-upstream-fix-dispcc-v3-1-5bfd56c899da@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240710201246.1802189-1-sboyd@kernel.org> <20240710201246.1802189-2-sboyd@kernel.org>
- <CAMuHMdV56nezM9cj1bVo4+gqi0OPvKjktu7i4Ov9ZKeyNkoiOg@mail.gmail.com>
-In-Reply-To: <CAMuHMdV56nezM9cj1bVo4+gqi0OPvKjktu7i4Ov9ZKeyNkoiOg@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Tue, 16 Jul 2024 13:23:55 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdV9EwBgmNYP9jZBZKNNn0ZX2XErcyeXu1xatFdBVzdXmw@mail.gmail.com>
-Message-ID: <CAMuHMdV9EwBgmNYP9jZBZKNNn0ZX2XErcyeXu1xatFdBVzdXmw@mail.gmail.com>
-Subject: Re: [PATCH v7 1/8] of/platform: Allow overlays to create platform
- devices from the root node
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, linux-kernel@vger.kernel.org, 
-	linux-clk@vger.kernel.org, patches@lists.linux.dev, 
-	kunit-dev@googlegroups.com, linux-kselftest@vger.kernel.org, 
-	devicetree@vger.kernel.org, Brendan Higgins <brendan.higgins@linux.dev>, 
-	David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J . Wysocki" <rafael@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>, 
-	Daniel Latypov <dlatypov@google.com>, Christian Marangi <ansuelsmth@gmail.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Maxime Ripard <maxime@cerno.tech>, Peter Rosin <peda@axentia.se>, 
-	Wolfram Sang <wsa+renesas@sang-engineering.com>, Linux I2C <linux-i2c@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240716-topic-sm8650-upstream-fix-dispcc-v3-1-5bfd56c899da@linaro.org>
 
-On Tue, Jul 16, 2024 at 11:48=E2=80=AFAM Geert Uytterhoeven
-<geert@linux-m68k.org> wrote:
-> On Wed, Jul 10, 2024 at 10:14=E2=80=AFPM Stephen Boyd <sboyd@kernel.org> =
-wrote:
-> > We'd like to apply overlays to the root node in KUnit so we can test
-> > platform devices created as children of the root node.
-> >
-> > On some architectures (powerpc), the root node isn't marked with
-> > OF_POPULATED_BUS. If an overlay tries to modify the root node on these
-> > platforms it will fail, while on other platforms, such as ARM, it will
-> > succeed. This is because the root node is marked with OF_POPULATED_BUS
-> > by of_platform_default_populate_init() calling
-> > of_platform_default_populate() with NULL as the first argument.
-> >
-> > Loosen the requirement here so that platform devices can be created for
-> > nodes created as children of the root node via DT overlays even if the
-> > platform bus wasn't populated for the root node.
-> >
-> > Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-> > Cc: Saravana Kannan <saravanak@google.com>
-> > Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+On Tue, Jul 16, 2024 at 11:05:21AM GMT, Neil Armstrong wrote:
+> The RCG's clk src has to be parked at XO while disabling as per the
+> HW recommendation, hence use clk_rcg2_shared_ops to achieve the same.
+> 
+> It also changes dptx1_aux_clk_src to use the correct ops instead of
+> clk_dp_ops.
+> 
+> Fixes: 9e939f008338 ("clk: qcom: add the SM8650 Display Clock Controller driver")
+> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+> ---
+>  drivers/clk/qcom/dispcc-sm8650.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/dispcc-sm8650.c b/drivers/clk/qcom/dispcc-sm8650.c
+> index c9d2751f5cb8..80fe25afccf7 100644
+> --- a/drivers/clk/qcom/dispcc-sm8650.c
+> +++ b/drivers/clk/qcom/dispcc-sm8650.c
+> @@ -398,7 +398,7 @@ static struct clk_rcg2 disp_cc_mdss_dptx1_aux_clk_src = {
+>  		.parent_data = disp_cc_parent_data_0,
+>  		.num_parents = ARRAY_SIZE(disp_cc_parent_data_0),
+>  		.flags = CLK_SET_RATE_PARENT,
+> -		.ops = &clk_dp_ops,
+> +		.ops = &clk_rcg2_ops,
 
-> > --- a/drivers/of/platform.c
-> > +++ b/drivers/of/platform.c
-> > @@ -732,11 +732,14 @@ static int of_platform_notify(struct notifier_blo=
-ck *nb,
-> >         struct of_reconfig_data *rd =3D arg;
-> >         struct platform_device *pdev_parent, *pdev;
-> >         bool children_left;
-> > +       struct device_node *parent;
-> >
-> >         switch (of_reconfig_get_state_change(action, rd)) {
-> >         case OF_RECONFIG_CHANGE_ADD:
-> > -               /* verify that the parent is a bus */
-> > -               if (!of_node_check_flag(rd->dn->parent, OF_POPULATED_BU=
-S))
-> > +               parent =3D rd->dn->parent;
-> > +               /* verify that the parent is a bus (or the root node) *=
-/
-> > +               if (!of_node_is_root(parent) &&
-> > +                   of_node_check_flag(parent, OF_POPULATED_BUS))
->
-> Oh, you inverted the check for of_node_check_flag(); was that
-> intentional?  Re-adding the "!" fixes all issues for me.
+Should this also be clk_rcg2_shared_ops ?
 
-I have sent a fix.
-https://lore.kernel.org/a9ada686e1f1c6f496e423deaf108f1bcfd94d7d.1721123679=
-.git.geert+renesas@glider.be/
+>  	},
+>  };
+>  
+> @@ -560,7 +560,7 @@ static struct clk_rcg2 disp_cc_mdss_esc0_clk_src = {
+>  		.parent_data = disp_cc_parent_data_5,
+>  		.num_parents = ARRAY_SIZE(disp_cc_parent_data_5),
+>  		.flags = CLK_SET_RATE_PARENT,
+> -		.ops = &clk_rcg2_ops,
+> +		.ops = &clk_rcg2_shared_ops,
+>  	},
+>  };
+>  
+> @@ -575,7 +575,7 @@ static struct clk_rcg2 disp_cc_mdss_esc1_clk_src = {
+>  		.parent_data = disp_cc_parent_data_5,
+>  		.num_parents = ARRAY_SIZE(disp_cc_parent_data_5),
+>  		.flags = CLK_SET_RATE_PARENT,
+> -		.ops = &clk_rcg2_ops,
+> +		.ops = &clk_rcg2_shared_ops,
+>  	},
+>  };
+>  
+> 
+> -- 
+> 2.34.1
+> 
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+-- 
+With best wishes
+Dmitry
