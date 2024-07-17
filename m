@@ -1,138 +1,101 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 658AC433AB;
-	Wed, 17 Jul 2024 11:09:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2241517F4E1
+	for <linux-clk@vger.kernel.org>; Wed, 17 Jul 2024 11:11:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721214564; cv=none; b=lsTbtTm2STQ9X+OHP86D/sBp8PYRejbebQvaz65YRmDvoCtGPE6elDqa4YrsopwCmt7QdL05Do4J/YixGwH6KMPjzXAHjMGoTpxAlYcH5nG2cG5JL+xC6Je3i1f/0KrEXlv6aPH4BEOpEhN8K8gTdTwKm2poMUuqPKsMudxqz6o=
+	t=1721214666; cv=none; b=VdSFMa5XvBsBHFggBK8OMNq2Ty8dhdJFZBJ2HVoo/S28p8hgY0rjo+MsJ0aEMeifZpVZChnClmha5TBtQVO/4lJ4r0yl700+9fWT2QJE9sDaw2KYvXH5UShjuMAIJGeO57b33bA3xPEkpqDuiAfn8SRWqzWxNMzlW7LiDjrLCz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721214564; c=relaxed/simple;
-	bh=FSbWIXHB9Zk0Ie4hV6sZMAyhTwetU0kPZD4So7/XoSs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=OJDoF6TWhpFZYjXvp89o26a/pLeYM2bIVUsD2n8IdITDBi1ymJzclQC7mRzUp0r8LQoYkcBkjRQXSk8Ipc9xMf9d8HbNazDK0vuvjCHGGETaCaFR/vuAuAAFCTa43bDRTaV6uAQU4x89fFQEucfJ3V2Y/qsQP31DBjmHxFtWpkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=L2X6NBvo; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1721214666; c=relaxed/simple;
+	bh=hhutUiK+ldZmbrgZE8Dzx0T70pv9+3yHYglk4hnsQuw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UOtUQJh2vyRwlUjbfKpbzbGOkPc/fQB0x0oiPf6zoX5kfCRyiQXm7bfg9yQFSYvjnaUgYcIj0iJYZqa0oV5Mktk3XSf/b+pHEx731kiivuXgQ1UzBGNH7ceVgCBZVU9Xj0Ja+cedg0J3X1Qm9DmeoeoAuqb4dNVaXKNCp9IgBjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sn/9Q3tV; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="L2X6NBvo"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46H70t7H031984;
-	Wed, 17 Jul 2024 11:08:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	4EVCHZ5xE0SMUtc/klFWgbFGZ8Pt1Q6yw5r9zCzdFC8=; b=L2X6NBvom4EPFIaD
-	agzvK2eGfihO6cgSy/uq7gO0O4D5shVh6OeIejrK6ZDXv4gZRQ5rlEmtvEutwGOo
-	NbFRQ8N0ZNQ+/lvDvjO4DV6s4TvyXUEhHLH8ro/MOuitnxVgFUY7QgTed+CGh6w1
-	OAVy01HNrkvySoBInvDbd8AugJTi8ZO83z0y03fps/YmB4G8b9PARiJ8gCTr7If6
-	Z4yMtfVXX54pMGaqyvGf8G6XMgEI/RUHrdzsIZX+SxWhv6qMUdtAROzWqq77sbBt
-	6lzANCtbkAktoGlvDQVM3efsuNdJV94dXLD2r39KvnudgpDZ+OP4+fV0xsAJH+0v
-	e8+40Q==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40dwfs242f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Jul 2024 11:08:54 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46HB8rHK031983
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 17 Jul 2024 11:08:53 GMT
-Received: from [10.218.19.46] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 17 Jul
- 2024 04:08:46 -0700
-Message-ID: <b6aefcee-808c-77cd-7632-52ab21a14a54@quicinc.com>
-Date: Wed, 17 Jul 2024 16:38:43 +0530
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sn/9Q3tV"
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-58b447c519eso8709728a12.3
+        for <linux-clk@vger.kernel.org>; Wed, 17 Jul 2024 04:11:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721214663; x=1721819463; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=3OdeLjPoqRmUlYr25okuYc8K1yPtbJFc4x5bOz0ESpo=;
+        b=sn/9Q3tV2y8D5NljrD1M4k5h51yxGuYK2ztENjPHvWgCCLDaWxsmclqb3sfwIj4Nvn
+         cKDiOWg/A7CxC2n0ALQ0tySOE+uLARTZNWFTwuFqOo05aCMzgV+kaMUMlv7BRuqxWaw/
+         k5B0sJUXSPiDXu/RR2lCxjN+6IWRa9JSqP45rrNsHQrNsHWs7yqmRWkABHjfIlQpS7OZ
+         2A02PrQFIxjIzzub+h1eHcTHG6D5+p5JmH7aE3Sb+R0YeqtfcIrcIpMBDQbISd3jXr9f
+         GTU+0RBfdj6Tr68hu9sxARmTbbtL2hqMMyBM9EoVpQyAAjvrsYVcThZATmfY5O+zu//0
+         JLGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721214663; x=1721819463;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=3OdeLjPoqRmUlYr25okuYc8K1yPtbJFc4x5bOz0ESpo=;
+        b=gBIJ8z6aKfOEEfhnyywDKLjCD0Wfa5hClbPg7xPrAhR5e5DRRhnRFzFg4Jo4Mm5kj0
+         JXU9h7usCtNG2439iNul2/f8mIvJxHlAVK9PQkBaAlydJnsiZF+K57wMFwpxe5U33kyU
+         s5OkLXaEfYIGUXdlfSneMOtVmfpxKU6CqMo6dKgwRz/lxZ7QdRWKFlRTDRoZ2QFfaJr1
+         HGyX9dZD8Z/acisKBk5WHlhfVpSQs+DBBlDziDey0cAEU36kt8Ldrjhb/COgnUDdyo0t
+         XQBUA8DYxnDfywkrCqBA/R+IhAzBKe7jIqsGjDnQQTlW0sYJtVmca9mI+maf2g0DOZRd
+         2RUg==
+X-Forwarded-Encrypted: i=1; AJvYcCWfVKF+Qnv2Q6AjmiEib7wY2yBjQHjzx7elOMQrRYsLhJYFz7CRr7P+ejs7h3hn9CpyA2kCCvXIB3RiuYXUZPuK/yKoalp/iBCA
+X-Gm-Message-State: AOJu0YzZtijzyjOzQVQMf7psAlLqlaB3Gmv35LTSv4o8cOPUR15YZBYA
+	tPRjPq5WyO9XyylUafkC8YTXprWkdkWXA+L8ALAyeb/WnarfhWSvMT+Gqb3aLDI=
+X-Google-Smtp-Source: AGHT+IF/SD5/dNu9jj11HFGPBp5Nm6wXSVMHns1m4v4DrAtWWsNwrOpe57aeSit2bIQ3BRxkaPO4Ow==
+X-Received: by 2002:a05:6402:268c:b0:58d:836e:5d83 with SMTP id 4fb4d7f45d1cf-5a05bfaae65mr1337759a12.22.1721214663479;
+        Wed, 17 Jul 2024 04:11:03 -0700 (PDT)
+Received: from [192.168.0.3] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-59b268a28e8sm6733080a12.63.2024.07.17.04.11.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Jul 2024 04:11:03 -0700 (PDT)
+Message-ID: <ce14800d-7411-47c5-ad46-6baa6fb678f4@linaro.org>
+Date: Wed, 17 Jul 2024 12:11:02 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.0
-Subject: Re: [PATCH v2 5/6] clk: qcom: Add camera clock controller driver for
- SM8150
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: qcom: camcc-sc8280xp: Remove always-on GDSC
+ hard-coding
+To: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: dmitry.baryshkov@linaro.org, stable@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240715-linux-next-24-07-13-sc8280xp-camcc-fixes-v1-1-fadb5d9445c1@linaro.org>
+ <f0d4b7a3-2b61-3d42-a430-34b30eeaa644@quicinc.com>
+ <86068581-0ce7-47b5-b1c6-fda4f7d1037f@linaro.org>
+ <02679111-1a35-b931-fecd-01c952553652@quicinc.com>
 Content-Language: en-US
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Abhishek Sahu <absahu@codeaurora.org>,
-        "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Stephen Boyd <sboyd@codeaurora.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>,
-        "Imran
- Shaik" <quic_imrashai@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>
-References: <20240702-camcc-support-sm8150-v2-0-4baf54ec7333@quicinc.com>
- <20240702-camcc-support-sm8150-v2-5-4baf54ec7333@quicinc.com>
- <xbe7kmaxhfwy26qzxrmwgiijaaiap4kdkruaxjs6ymihaw5taf@hvj57wyncfea>
- <cc1957af-17bc-cd71-e6da-013e3a740014@quicinc.com>
- <CAA8EJpqmJZJfd2famarx-FKFb1_+-nZM3N+FwK_hiOurG8n9=A@mail.gmail.com>
- <f4072105-e0e2-46c8-82ed-92105b43a345@linaro.org>
- <6124f9e9-3fdf-29b1-128f-c58f5ebe1424@quicinc.com>
- <7fcc309e-f1c9-4693-a2d1-76df85021dff@linaro.org>
-From: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
-In-Reply-To: <7fcc309e-f1c9-4693-a2d1-76df85021dff@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: Td_8iWVgCZSbdibr1qBp4yCOfwUBrQld
-X-Proofpoint-GUID: Td_8iWVgCZSbdibr1qBp4yCOfwUBrQld
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-17_06,2024-07-17_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- priorityscore=1501 malwarescore=0 impostorscore=0 bulkscore=0 adultscore=0
- suspectscore=0 phishscore=0 spamscore=0 mlxlogscore=999 mlxscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407170086
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <02679111-1a35-b931-fecd-01c952553652@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 17/07/2024 12:08, Satya Priya Kakitapalli (Temp) wrote:
+>> How would it break ?
+>>
+>> We park the clock to XO it never gets turned off this way.
+>>
+> 
+> Parking the parent at XO doesn't ensure the branch clock is always on, 
+> it can be disabled by consumers or CCF if modelled.
+> 
+> If the CCF disables this clock in late init, then the clock stays in 
+> disabled state until it is enabled again explicitly. Hence it is 
+> recommended to not model such always-on clocks.
 
-On 7/17/2024 4:23 PM, Bryan O'Donoghue wrote:
-> On 15/07/2024 11:36, Satya Priya Kakitapalli (Temp) wrote:
->> This clock is PoR ON clock and expected to be always enabled from HW 
->> perspective, we are just re-ensuring it is ON from probe. Modelling 
->> this clock is unnecessary, and we have been following this approach 
->> for  gdsc clock in all the recent chipsets, like for example sm8550 
->> camcc.
->
-> Having a difficult time following the logic
->
-> - Re-enabling an already enabled always-on clock is necessary
+What is the use-case to keep that clock always-on unless/util someone 
+wants camss ?
 
+I've tested this patch on sc8280xp and it works just fine.
 
-There is no hard requirement to enable it again , but to be on safe side 
-incase bootloaders disabled this clock, we are enabling it again in probe.
-
-
-> - Modelling the always-on clock in the CCF to park it at XO is
->   unnecessary
->
-
-Modelling the clock will cause the CCF to disable the clock in late 
-init. I have tested on SM8150 by modelling the gdsc clock now and I see 
-it is getting disabled in late init.
-
-
-Parking the parent clock(rcg) at XO, doesn't ensure the branch clock to 
-be ON. If CCF disables the clock it gets disabled.
-
-
-> I think that's a pretty vague argument to be honest.
->
-> ---
-> bod
+---
+bod
