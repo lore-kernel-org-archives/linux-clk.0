@@ -1,107 +1,128 @@
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A213517DE26
-	for <linux-clk@vger.kernel.org>; Wed, 17 Jul 2024 10:05:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 039C519A
+	for <linux-clk@vger.kernel.org>; Wed, 17 Jul 2024 10:12:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721210749; cv=none; b=Qzz97em/Yxv/1Enha53mLnCIzKEbbvJwB+blRHA8dWGAJpp9gNyaSpX3/9ZkZXSb4Lp0RzF5clGX9YCBX2GqAg8xBJlCd4RlPVxJZfEkZJqaYnwRehbp8CcDkTnwwci9NgQGTlV0jp7bxCKP2oTewdbgz9GJYQTZjuMUwfZ6gTk=
+	t=1721211138; cv=none; b=TaqT4ULvEii1QrHJCAA1gKewBhPs1RnJzRe7gwDvtREhJRAKCP5fJGi/LkhmeZTdgPqpOttazrmrJ29UA6GZUnhilg/DwsFab2wsZwTYsnOdofu0NX4QZH2kam1S1Cz7wQhDY3aY1rlwwWzJhlENid5EQcE4aowO1zomJ805wOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721210749; c=relaxed/simple;
-	bh=chH+ucYVFollBpWofReK7yIO2W2cQCdc+Y402fQusJQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tt3yR7fVZZRXJMnY0Oh2i3d3RnEq3L4xeRGHECqyh18eTv5XhPYVtQ7uUPdxAdrQMtRCh6PQGwl666PouP48gwoGtzwSQCY20izXMc5QatrkoyRRjjunC0AktpI/bcwk8YY95vnUfkaBoJEeFRhK/pWWzii9jk1Gc6dm5GwAj8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MHgaUbjT; arc=none smtp.client-ip=209.85.219.175
+	s=arc-20240116; t=1721211138; c=relaxed/simple;
+	bh=+zhFi1Don8ii4Gugp268OJkuD4CFngXRF46lzJVIwV0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TrzLEwAeVERrg2r6WK5XwTrQSEB/phEU60JCUqe9WxHwvU5wMYEhWmvFZH/XMAjRp+8zB6/eF6UjrMD9nizU7dbTmlTw4zXJxvw+JWU4W4khhgu7fyc7tkfkpd1gVblvOp1tq2joYcG6WlGoRgfILOFNiPmjdlWqQpZ+eOj1NpA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uvLs/If5; arc=none smtp.client-ip=209.85.208.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MHgaUbjT"
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e035f4e3473so5987160276.3
-        for <linux-clk@vger.kernel.org>; Wed, 17 Jul 2024 03:05:47 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uvLs/If5"
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-58b447c513aso6994377a12.2
+        for <linux-clk@vger.kernel.org>; Wed, 17 Jul 2024 03:12:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721210747; x=1721815547; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZoUdOZLlQAAmruOrbVsxcaV8sc5lR/mg/6r1PDCx+D4=;
-        b=MHgaUbjTxFa4sb3U5Fe1s+s4pJjXrLw7qPqmKCOFZbVB6VLZADtVn+tKOUFmmCxJ3e
-         nJ8fRj4TsTJJ0W04Bt+aL+4CUT5wOhEeME9v4GrGoVh1oBStUmYNllqbiAhCVGZkLpxV
-         hz//tbw5mCesmkSJZ4mwKppTtAQG+wsSh+5JlXv3/daW29hDSDgh1EkIBnd8vG6Cyls2
-         VsBovnQbDH1N6BBC9vWtXsoZDp+ATUlSY9XrOfR5bzsuxELo7EKQWCZLBao+5rDjlGDp
-         k437e+X2b/wVjtisDb3bqo+njXYZVUiHrmvsrb/V+RCmql+9LcP6nH2qhdk1t00ergMZ
-         mQJA==
+        d=linaro.org; s=google; t=1721211135; x=1721815935; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=eGm3FeokUWIOIUtopwWGWZKooK3DZEJFATyKucI6ucU=;
+        b=uvLs/If5S6yxzFZdWKHHZ5dpFr0LoYgJru9K8c5dRNcfCCcFBrHyHflURAyBFwZEEs
+         xe2hciZS4MJkTF4Fuhb4dyeLrcvFanUAxxlSBtXS/DR/WyZ/d+Q7yJTE/WoH/5iMV1mA
+         BGhT4W4qlqJZiQrHSUhge4XPKtKlHm6P9sYCLHhYAVv4+IoyrjSNrC8rQXd4bdMfanWR
+         CVgmyaITlSrDaQJXlMqF5o5shacSD0i5z4cfjRrZjIcwHxR6ye+7UDg8ak26BR8CAda1
+         H0aOfcmwBimOIM6MArpvyptz1TJoJZZkLe0i+u6UoH5bAKrfD4vSr3ULgu2nT0hHF0OQ
+         YNMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721210747; x=1721815547;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZoUdOZLlQAAmruOrbVsxcaV8sc5lR/mg/6r1PDCx+D4=;
-        b=F1WnKnQVB9EMSMDHkKfhtRwKayVIHBSrRWB4hHvZdFogn31bclZsp5zj/qTfyk00tA
-         AwX2IaEn+80NxHJgsNZdCeFEmOc2vsMDnpI+H7WtPTAp549Ijd4+UK5cfMVls9G3jZb/
-         5IuwbQ2Gd98QCUHmqlkH97NXTE2gljzf4Yq6qZcD6kdhlm0G1RZyIQoO+AbUe+BQF3fY
-         G4Udnl7pU14m5FunDZYKGj46PXI76V9++w7X5U8vDqb0x6rT9k0OVLJ3p2UNhxsQ6qGl
-         1xVN3nXGJVEKN3E/DsIOzCmzkksmFHkdwVr5ID2dCs3GQeZ4/39YunOQpJESG/qd7TNl
-         Ha0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWUjapbJNwm5Fnaf29MEF9voCxE473uHOXujhycxeYs7WGn2jabIFZu2tXtXP0LFJreZFPG4KsB7IWUZcWzSNqatWnY/rnCWj6Q
-X-Gm-Message-State: AOJu0Yzs6I3Fr24+gLtG1PDQr6VKlY3XojaHt+6hQ80q0V9aGp+424w4
-	s+Uzw9mOimaxrsS4bh77UB/DaYTM1Ab0jFJAekjuRYYdckwb8VtEqS2YUOJNyVYS2wZMvL66Y+x
-	uHLeJn+/cYgvIkcdHiU0m6OhlYanJQ9dbYXAC6w==
-X-Google-Smtp-Source: AGHT+IHYh/6i/8hq7tpOwurvTcspC0p58XaYzPylkrOGMSKDPt0iy/Je6Pf446cf1ZySUgGleEGSE6zosAzFkMtIqyk=
-X-Received: by 2002:a05:6902:1102:b0:e03:4ead:a32c with SMTP id
- 3f1490d57ef6-e05ed6ed999mr1472948276.30.1721210746690; Wed, 17 Jul 2024
- 03:05:46 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721211135; x=1721815935;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eGm3FeokUWIOIUtopwWGWZKooK3DZEJFATyKucI6ucU=;
+        b=VdVwq8L3YEE3m3WvbCl1f+KUKJs1fD8aozI6MdLMd1qXZn7qPSBpfXJKBIVzPcfw/I
+         ePiCjFCSKGhxOkPz2LU7rajo/hI1SIvSc9dQdZJBWdp3gEwkUyEKoNTKzj7cJlBBW2CE
+         3GYGNM++nI1BpgX+PusX4w6OTvpS26bTlJVDkS5nZiubF+53hbN1+3BHQ9nFWXtRIL0j
+         9CVjPG2SK9LQKpH6bM0LGsRkZdjCvb9c2VU+IhohEYsydHovR0MDZQ8aLsy6u0RoJcsZ
+         GBf76969cXRyyUcVO8o0NvenZrezu6c5bYJCQ+gdCCs3BhB9541lJRzfdUJBuqgNqQ/G
+         bVQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVWv9A0IdyALZz2G5kVf0+E/8SNqVbgKlkKAXPC7a7lJSFhim+b/j0jeer6e8VM16r6nnZGcvtb7s8nUzeyTvOQ3rtFat0GBWRS
+X-Gm-Message-State: AOJu0Yww1rD3HMgWYNgYTbx1F/I/G4KIod8ukIdh4THG0ONZAslifqaW
+	iK+5O6PFEM78q6+oYsCkha/Hdmr9Q0qd3ZbNTI3g4natFmaKkWEkpIpOCn6kGC8=
+X-Google-Smtp-Source: AGHT+IHsryZu9IU2sHmq+IUn6qeZc6VMYpoTOyefskGIYKTHzTAYOg3LrD0Gk7D+bbzPb6EYf7v/WQ==
+X-Received: by 2002:a05:6402:5205:b0:58c:ea9e:2194 with SMTP id 4fb4d7f45d1cf-5a05d0f02c8mr1126575a12.32.1721211135170;
+        Wed, 17 Jul 2024 03:12:15 -0700 (PDT)
+Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-59b26f61fbfsm6622510a12.81.2024.07.17.03.12.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Jul 2024 03:12:14 -0700 (PDT)
+Message-ID: <e47883df-7464-4194-bc6c-7399dcea7466@linaro.org>
+Date: Wed, 17 Jul 2024 12:12:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240717-dispcc-sm8550-fixes-v1-0-efb4d927dc9a@linaro.org>
- <20240717-dispcc-sm8550-fixes-v1-2-efb4d927dc9a@linaro.org> <ef1e4d78-7e94-4853-90c0-73f0b80f9a63@linaro.org>
-In-Reply-To: <ef1e4d78-7e94-4853-90c0-73f0b80f9a63@linaro.org>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Wed, 17 Jul 2024 13:05:35 +0300
-Message-ID: <CAA8EJpoCtEOK=qgqKqFENiu1zCdXsBpR5EXzPZMrQQnuVMqnCQ@mail.gmail.com>
-Subject: Re: [PATCH 2/7] clk: qcom: dispcc-sm8550: use rcg2_ops for mdss_dptx1_aux_clk_src
-To: neil.armstrong@linaro.org
-Cc: Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 6/7] clk: qcom: fold dispcc-sm8650 info dispcc-sm8550
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20240717-dispcc-sm8550-fixes-v2-0-5c4a3128c40b@linaro.org>
+ <20240717-dispcc-sm8550-fixes-v2-6-5c4a3128c40b@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <20240717-dispcc-sm8550-fixes-v2-6-5c4a3128c40b@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, 17 Jul 2024 at 11:09, Neil Armstrong <neil.armstrong@linaro.org> wrote:
->
-> On 16/07/2024 23:13, Dmitry Baryshkov wrote:
-> > clk_dp_ops should only be used for DisplayPort pixel clocks. Use
-> > clk_rcg2_ops for disp_cc_mdss_dptx1_aux_clk_src.
-> >
-> > Fixes: 90114ca11476 ("clk: qcom: add SM8550 DISPCC driver")
-> > Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > ---
-> >   drivers/clk/qcom/dispcc-sm8550.c | 2 +-
-> >   1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/clk/qcom/dispcc-sm8550.c b/drivers/clk/qcom/dispcc-sm8550.c
-> > index 09e4b1e40e20..8ceeb17bbb37 100644
-> > --- a/drivers/clk/qcom/dispcc-sm8550.c
-> > +++ b/drivers/clk/qcom/dispcc-sm8550.c
-> > @@ -400,7 +400,7 @@ static struct clk_rcg2 disp_cc_mdss_dptx1_aux_clk_src = {
-> >               .parent_data = disp_cc_parent_data_0,
-> >               .num_parents = ARRAY_SIZE(disp_cc_parent_data_0),
-> >               .flags = CLK_SET_RATE_PARENT,
-> > -             .ops = &clk_dp_ops,
-> > +             .ops = &clk_rcg2_ops,
-> >       },
-> >   };
-> >
-> >
->
-> Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+On 17.07.2024 12:04 PM, Dmitry Baryshkov wrote:
+> There is a very minor difference between display clock controller
+> drivers for SM8550 and SM8650 platforms. Fold the second one into the
+> first one to reduce kernel footprint. The bindings for these two
+> hardware blocks are fully compatible.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
 
-Oops... Neil, excuse me, I didn't pick up your R-B tags for v2. I'll
-send v3 tomorrow, with your tags fixed.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
 
--- 
-With best wishes
-Dmitry
+Konrad
