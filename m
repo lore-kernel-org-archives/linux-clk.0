@@ -1,119 +1,108 @@
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DD103032A
-	for <linux-clk@vger.kernel.org>; Wed, 17 Jul 2024 08:48:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202F9210EC;
+	Wed, 17 Jul 2024 09:14:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721206138; cv=none; b=ckZrkcYmOHkecDfPOEm0Hy07vVBUbBf60QuBeyYEeJtEn2uBPwuPbAZ6vShd/kNtF5bZkt7rYfKTAWdsmeoOaUWkoAzf0ob/dY4o4N4RN7YEbnnq5i+aW5lp1EaJkaoag53kpKMTmZSnad9RghkKqkPg+1xLYF/w0FJxA9A+xxY=
+	t=1721207677; cv=none; b=a85HW5k6VHy/BHRaUAiE53ARyN3uCMKJP9UJNRDJXMgjVhzHrJZkW31lilWN7xZcnRFbEB9y7kS25SrsjdI++q+JwAOln/DJS+LO6MttBkRzYFM4qLj6RdAzBJSiKNdJKUH1jJimvED97hp9z56qXLDFl3EjXR3m3XH+wJjXwqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721206138; c=relaxed/simple;
-	bh=nzY12LURqFreLOoRBBXVuGx3rnSdBx0T3NTka/Pqc2A=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V0HtRuh+RNYzZCQLiLY3Rn9RarnB/Kc8+YhaxkLjTnE97xHydfaRch0AgUVHpGztgmf2qxJADRS9qN952WSUbodBTW9hTf1VK6x8aNLTT76X1rvA07idZmcxYUBJJ+uTrL85ohRDOVaNCLOPjA8uwhmt/DmqVvVdGd6djfaPOYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hlA+2e0s; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1721207677; c=relaxed/simple;
+	bh=TGtt0bW+t5XJtO6KzmFODkBvqD4p0IDOOckyrWKen7g=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o0iJPoycK0Az4uEPCu0B2tgNrqcNhbpOD7gPM12CpLabUDDU0Ch16DFIlN0CZbPLStMOyt/wl94TpVCJysyryjkfpEx8wUL6H4nJb4J0Gu5ISZWdWgV2E3JprperjSXSkjOPfUBO8vz3ennEViHg4LXYu5JVJSzrHLMadHfANWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ON01uFzo; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hlA+2e0s"
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a77ec5d3b0dso778918066b.0
-        for <linux-clk@vger.kernel.org>; Wed, 17 Jul 2024 01:48:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721206135; x=1721810935; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7DDc4nTJlk2bAuTF2yCWZzs3gZ7/jN3H28zpX2VIZt8=;
-        b=hlA+2e0sb4seKBKvC1S9KFRwuH1/GBtKvKqSWcjv89hRvjvNJlu3KpxlCk/P46vqHu
-         gRQgybVbqud46SUeovTmYYen+guyXAAtDTKH5qH8Gt0Yz1NxAS4Bc3OXJPsfgd3BAPvo
-         ZjYxlHBgctcxoth/euhy1TCdCtnhtfNYz9exewW3J/akYL36LKNBROfzLBuId5SHqE92
-         8gFfzz6MfULLBCrPPtRpRnTyFB5wImjdNu0v83e/NydHvRc1gZBYswdR9WTNN8AWysgz
-         wNzg8bUQNk0WS4ZRLueyekYn5ndV2Q1OP9VYrOX9i18fzL+zWSt61YvNP/ZoP6VZMycF
-         X59Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721206135; x=1721810935;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7DDc4nTJlk2bAuTF2yCWZzs3gZ7/jN3H28zpX2VIZt8=;
-        b=pdfm/GLcWu9FPL5na+ky1vy0sY6s5qYZNHBOLhB5fwdkSrvuUaNi0ZkRNvcD25y1Su
-         PY4qZf3Bx3rzy+RvTFCAL1DGz8iwrEuRuwmcq23bcRQGtZcP5ntzdWER/RUmLyM/3EjU
-         nysgnr0l7Spfd8hVxe/nK5tA9TTIsgpDxlaQmFMuDfH6ZwfPcxnJ6Q5a0YLafLtGfYt+
-         deQ7cj39PC/vEpgEL+M1J//D9TkUipIdoCrFJ/MLuNw4/9dENtSq7IXzQiE3LK+u7cEU
-         6j5m8G+43PkxLN362MeNzhqFZ/yJc1kWkRfcwMdxlGTdOPjddr71rolA2pEi9F1M/jp9
-         89MA==
-X-Forwarded-Encrypted: i=1; AJvYcCWnb5Dti9BMlEMYzDHb7MNkrc2U7F9wL+7b/UU/VG644pTKHz2Jk2zuVhUr7+CWkrjT7nYPIHvgQNlwQmtx2fvNMGMz+ACOUDQD
-X-Gm-Message-State: AOJu0YxDE/lsPXffn6QrtomxIWs4P5o5UgsgDHNnUqXB6oXYCP/AaIl2
-	YvnDxbGFE6PYBX92KLViaBokLT5cOB5EpmVdv8QY78jAdyippmfSCzTMExnIXCw=
-X-Google-Smtp-Source: AGHT+IHu8Af9F4tmhilVJBIgUg2laG6m+AW+q4qGN50kHMWoNZJ6AmGkL4NyGOMEhLGaxm6C7PnH2g==
-X-Received: by 2002:a17:907:d301:b0:a77:e0ed:8c2 with SMTP id a640c23a62f3a-a7a01352bccmr69171166b.71.1721206134724;
-        Wed, 17 Jul 2024 01:48:54 -0700 (PDT)
-Received: from [192.168.0.6] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc7ff89esm421513566b.158.2024.07.17.01.48.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Jul 2024 01:48:54 -0700 (PDT)
-Message-ID: <86068581-0ce7-47b5-b1c6-fda4f7d1037f@linaro.org>
-Date: Wed, 17 Jul 2024 09:49:18 +0100
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ON01uFzo"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46H6X66X023125;
+	Wed, 17 Jul 2024 09:14:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=TGtt0bW+t5XJtO6KzmFODkBv
+	qD4p0IDOOckyrWKen7g=; b=ON01uFzo5H0exnnJTG/2A140pxllPBpxzfJI/2DD
+	kdwj4Y7OYStZwTAPtWtLKeidFLFA4Fa93DizcwrDHviLV+BWQnPpc/IKYRJMrJRd
+	yzYio63r8HMfhcArjo6nYzSrv0ChhkaTSJglzncJT0pGwFLMziY4Q88gO5BqqSJH
+	jpnyADUTO25wJBsotdmB6nq/WP/MD6159bX0NaEJdTf5kyTXQNRgwbtINpFCPY9s
+	LQrbSax1aI8GBjPOIvdcAQt9Zb4Ul8vThpAnv303iJEM1o0WwIaUY0cywSDCFv3m
+	FqOXleV1LqaMt/yy3wE3KgdN195urPMOEdJIaw0IYvj+og==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40dwfnht8m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 17 Jul 2024 09:14:21 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46H9EJjr019519
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 17 Jul 2024 09:14:19 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 17 Jul 2024 02:14:11 -0700
+Date: Wed, 17 Jul 2024 14:44:08 +0530
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: Konrad Dybcio <konrad.dybcio@linaro.org>
+CC: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <ilia.lin@kernel.org>, <rafael@kernel.org>, <viresh.kumar@linaro.org>,
+        <ulf.hansson@linaro.org>, <quic_sibis@quicinc.com>,
+        <quic_rjendra@quicinc.com>, <danila@jiaxyga.com>,
+        <neil.armstrong@linaro.org>, <otto.pflueger@abscue.de>,
+        <abel.vesa@linaro.org>, <luca@z3ntu.xyz>, <geert+renesas@glider.be>,
+        <stephan.gerhold@kernkonzept.com>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        Praveenkumar I
+	<quic_ipkumar@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: Re: [PATCH v6 5/9] pmdomain: qcom: rpmpd: Add IPQ9574 power domains
+Message-ID: <ZpeLYG6vegJYZ5Rs@hu-varada-blr.qualcomm.com>
+References: <20240710061102.1323550-1-quic_varada@quicinc.com>
+ <20240710061102.1323550-6-quic_varada@quicinc.com>
+ <d454e01f-3d6b-4a02-87cf-3d289bc6957c@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: camcc-sc8280xp: Remove always-on GDSC
- hard-coding
-To: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: dmitry.baryshkov@linaro.org, stable@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240715-linux-next-24-07-13-sc8280xp-camcc-fixes-v1-1-fadb5d9445c1@linaro.org>
- <f0d4b7a3-2b61-3d42-a430-34b30eeaa644@quicinc.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <f0d4b7a3-2b61-3d42-a430-34b30eeaa644@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <d454e01f-3d6b-4a02-87cf-3d289bc6957c@linaro.org>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: ctY3uiSTACLzGBq0eIG6LP4jbRP4fj8x
+X-Proofpoint-ORIG-GUID: ctY3uiSTACLzGBq0eIG6LP4jbRP4fj8x
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-17_05,2024-07-16_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ lowpriorityscore=0 bulkscore=0 malwarescore=0 suspectscore=0
+ priorityscore=1501 clxscore=1015 spamscore=0 mlxscore=0 phishscore=0
+ mlxlogscore=386 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2407110000 definitions=main-2407170070
 
-On 17/07/2024 07:32, Satya Priya Kakitapalli (Temp) wrote:
-> 
-> On 7/15/2024 8:29 PM, Bryan O'Donoghue wrote:
->> We have both shared_ops for the Titan Top GDSC and a hard-coded always on
->> whack the register and forget about it in probe().
->>
->> @static struct clk_branch camcc_gdsc_clk = {}
->>
->> Only one representation of the Top GDSC is required. Use the CCF
->> representation not the hard-coded register write.
->>
->> Fixes: ff93872a9c61 ("clk: qcom: camcc-sc8280xp: Add sc8280xp CAMCC")
->> Tested-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org> # Lenovo X13s
->> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
->> ---
->>   drivers/clk/qcom/camcc-sc8280xp.c | 7 +------
->>   1 file changed, 1 insertion(+), 6 deletions(-)
->>
->> diff --git a/drivers/clk/qcom/camcc-sc8280xp.c 
->> b/drivers/clk/qcom/camcc-sc8280xp.c
->> index 479964f91608..f99cd968459c 100644
->> --- a/drivers/clk/qcom/camcc-sc8280xp.c
->> +++ b/drivers/clk/qcom/camcc-sc8280xp.c
->> @@ -3031,19 +3031,14 @@ static int camcc_sc8280xp_probe(struct 
->> platform_device *pdev)
->>       clk_lucid_pll_configure(&camcc_pll6, regmap, &camcc_pll6_config);
->>       clk_lucid_pll_configure(&camcc_pll7, regmap, &camcc_pll7_config);
->> -    /* Keep some clocks always-on */
->> -    qcom_branch_set_clk_en(regmap, 0xc1e4); /* CAMCC_GDSC_CLK */
-> 
-> 
-> As I mentioned on [1], this change might break the GDSC functionality. 
-> Hence this shouldn't be removed.
+On Tue, Jul 16, 2024 at 02:15:12PM +0200, Konrad Dybcio wrote:
+> On 10.07.2024 8:10 AM, Varadarajan Narayanan wrote:
+> > From: Praveenkumar I <quic_ipkumar@quicinc.com>
+> >
+> > Add the APC power domain definitions used in IPQ9574.
+> >
+> > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > Signed-off-by: Praveenkumar I <quic_ipkumar@quicinc.com>
+> > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> > ---
+>
+> Could you please confirm [1]?
+>
+> Konrad
+>
+> [1] https://lore.kernel.org/linux-arm-msm/57dadb35-5dde-4127-87aa-962613730336@linaro.org/
 
-How would it break ?
+The author is off for a few days. Will get back to you once he is in.
 
-We park the clock to XO it never gets turned off this way.
-
----
-bod
+Thanks
+Varada
