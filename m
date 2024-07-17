@@ -1,124 +1,171 @@
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com [209.85.219.177])
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F380617E8FD
-	for <linux-clk@vger.kernel.org>; Wed, 17 Jul 2024 09:49:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09AD317DE29
+	for <linux-clk@vger.kernel.org>; Wed, 17 Jul 2024 09:51:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721209801; cv=none; b=F3XAnUcruJcRIrD2TrStm+r7XEw0cyNzO4m6X+895V3xx+UKoPaquOxaO94lqd637T6E16ylg1BoL3tIF7vDdC7vyiYAeKw53hPYyQA+6aENQs7ZuiCjPQrIMOwCSBxyhv2CPpN2vkiyeF/9tfwelG0c0Up5NF58Oxg3RVA6PSw=
+	t=1721209915; cv=none; b=cO2ciIcVFFzuflpZm1oO8EzJpucjgmKIpYEPt/XNO+kBZuCzjqOJGcyWxZFs1KkT2SI+kPNA06BBWJwCwI3mhfJAhZOEgeNhV600DhvRFcz4+iVeN/LcxGkx7o0rxMT/do9SYvpI8PTiKrtvPFns5EP8jEilRn0c0JDczCsGvE8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721209801; c=relaxed/simple;
-	bh=H5PoAttukPkaOiwXWePhqYK3ZaPP5UucflmTGihpw98=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SCVCUWcccqfsB1p810Tt80ygMbplsQcwZdgMpzawquwvmwDe5EXZNIgQsjRfG6toX4kXP++nbmXuWvttN+uDwZXiudYe7X160cg/rYpSdHy+qSDYjSuYCEXFa6USmt9BKbiKmWne1ID+GOEJbKFUa3xzV41hC2RFd/zOn+Ll1yg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iyWj77tN; arc=none smtp.client-ip=209.85.219.177
+	s=arc-20240116; t=1721209915; c=relaxed/simple;
+	bh=D50a/bsym8k66l4W4yVVtVbuXzbNJeKpm8bQiLzOCYs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hkTg53hbWkQ8NoGjNpcSVMYS9uAMK89o6e/nx861Ts5dXhP+JAk4d3aDImIu/tNSiqHvRQGR6CDuRtkponJYS25ybs/DEeyyWrwQiyQOqkPUCFPHZ6dFhBjXkyqQ9+TjVHqegk2zNOAuCxHoRWtMqiG+0pJqBM86Zjbwcky45dM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GIFESpA9; arc=none smtp.client-ip=209.85.208.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iyWj77tN"
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-dff1ccdc17bso6770164276.0
-        for <linux-clk@vger.kernel.org>; Wed, 17 Jul 2024 02:49:59 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GIFESpA9"
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-58e76294858so1168054a12.0
+        for <linux-clk@vger.kernel.org>; Wed, 17 Jul 2024 02:51:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721209799; x=1721814599; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=dfAvVWLrB3F7/a07jguYyX27pLY+S5GzkT3MriOJkc0=;
-        b=iyWj77tNSpn4+oDU5y3bsCZSrpd3zDl7mTugJlLNZghh4NHMRgHP+seaoDT+X6Zp50
-         a9WE2gfNg/fgsmpoChdh44cCB9HZKKllzj287Cg0/bw99mPAX4SmKdOLFEhXGc6DnNNn
-         lsqLcRXZgzUimky24JoYcovDd2Kjia/ICstpky8kBPVY/zGhvZzRluC24t3Ic9CfKAD/
-         /F3A7qd8dp8VfR/xfCXQ/jDiuntJlYZYpQyg2LLwwvehoWBa90r/fPeZQLbiW0HWGv6k
-         oxYc/mwJ9+B7hJNhxsAiZ8fDByyOT3NmizKPUzl7Q0Lpu0p/CKcrWUZPLBCD+JcTyGYo
-         /7JA==
+        d=linaro.org; s=google; t=1721209912; x=1721814712; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=JYWQdXUBqRbzQMWarK74lvN5vFYbgETDCM/8fCXojZk=;
+        b=GIFESpA9cvZChPxqiAwoalmRiR4e+K2jVxOE/Xhk0zhsdu3h8HdYAzRdGIJ34TW+YR
+         onaJkmf/6Xe3hXqPcEWoTlMmGblg6E5ur7qGfshoTprU2oBC8NZP3WKPeLcnOG4YLdTu
+         q1URE3Dr/vFPy9Eq1bk9z6D/RSbyLLsiL5k4KVQHZh/lsyzeh+LIyzbUFPYKFQl7oCB5
+         QgLJAbr9+ABP/JQPHOanFVHM9WpE5cDPzCJosMEcOq47gTQTcEJC54pRUI33GvoHCKCp
+         I/DzbWPKJ+vrR9yvuMZe4N4L8Y7HkSkYJE5PQybAwQVTbPg8hPsecKq52q9Dan3vr0Js
+         q2/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721209799; x=1721814599;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=dfAvVWLrB3F7/a07jguYyX27pLY+S5GzkT3MriOJkc0=;
-        b=EOVa5A2XttdZeFMSvjx82w5ch0THV/+Z9OvqmhGpQuGFe420dFRrvOs7sZQTIusOJF
-         yY76AE/2T8j+SOjkkr/3ovAW/gSSaQXNZggDMI7hFDf8egf2U5H9nNEfwMVNqNWq5D83
-         ITdaS4PxDfMosvxK5oTqdwgcVA28xaO5Om2NQUx+741HjCiwujhZyXAw6CSqMNbBqYdj
-         QLL2mDddx3LLuSizKYa/FRhQFdcMQXbqh74+C0UdX2nT2rqD7MX1hoFj3zFxkzXdbPLX
-         YhhCzswwg+fMkVSLDBFRT6p0dkpzxrfKVDC0S7bzrwZoysoJL5K+Jt46uZkalx+jMtlh
-         5hMw==
-X-Forwarded-Encrypted: i=1; AJvYcCV/K7UbexrByYM8CNth7DrkltHIE4iQxgxOV35cz+vUvWbxQeTftbtxm3gJcs/s9IzciEHl79tTzVWfEpAXkwmLIUYp/kEsgBb/
-X-Gm-Message-State: AOJu0YxyHJRyGbWVT28hOh/8VTp3YeKZd8wJ+nGPeiuv8F6ZwhUScQPP
-	imLWIFKj5CxdY3pK7XA2ppCduQyTKardPVNv7YU/cmbqAm64bC+7aL96llV2qI+q0WRLJ81oeCS
-	wBVGbg+yTUHyFwv4MLcMezwG3lJVhJ/d6hQF9Rw==
-X-Google-Smtp-Source: AGHT+IF6nCzOpXaRWt9Ib3jOdlVzNTPk85lJ7twhcXVYMp8Nqyhe17ix7FKx2TyF92rD+HSwMWfOHwxPHQk1Q1iI7IA=
-X-Received: by 2002:a05:6902:1692:b0:e02:b9ac:1486 with SMTP id
- 3f1490d57ef6-e05ed82f82emr1265122276.57.1721209798862; Wed, 17 Jul 2024
- 02:49:58 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1721209912; x=1721814712;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JYWQdXUBqRbzQMWarK74lvN5vFYbgETDCM/8fCXojZk=;
+        b=Yls/KW8vnck1H1elF4uphUt+J9kkchAr7KobVKLgVOC32rN5Ji8byr8aZXXyPRW/OY
+         szsZL0bNGvybcb9IYwf3Ly1LQzz1ZSzCzKPgNH17wv4YC6gOPcVVg+LgreKi5JQccdpN
+         Y/7HHkdFarmkzA+v70TXk1lYc/GFVYrxfci6+MNvdlZfvbf+Xv9VIGDsBhgtFfKtsZ2M
+         3c4YdeG78l2FB4VeGe50MYz4bc51QYxBHVMFjkvgnTM/OFEi1t4jLuNSGQhtjFRS5DK/
+         u/TbWXZ++z3+DMAjS1zTHCznUc/47PflJZU0uTNxBfySf4ki1+9D1C6aXxHN0XYeFXFP
+         J++g==
+X-Forwarded-Encrypted: i=1; AJvYcCXgVBLowABt7xZzhC4i3Yua8ytwaGw4XkacryyPhbY0vXaiHbGAxHlpnnlb8Qzjye737BTMXit/gOqTaGfQoACg17x8md481Awt
+X-Gm-Message-State: AOJu0Yyxvl9dbH3+1vzL15iIgYv3VCtxAcuFdF1DKxUzAcq0tU3PFpIU
+	UMJFKbGdU41WqzNTDDN0+cmCugSLbd0D9Eqz0FYIuZ1+zpKmfDVIITr/G6AIegw=
+X-Google-Smtp-Source: AGHT+IE6xqtmcAQ6Jv4FHI4rFjOExi3bsv33fGVxUA6S9heAPZ0Zqq6o9Ifm7K6IiS4CdobXFOai4Q==
+X-Received: by 2002:a17:906:3d6:b0:a77:cd4f:e4f1 with SMTP id a640c23a62f3a-a79edcf5c09mr405881166b.27.1721209912216;
+        Wed, 17 Jul 2024 02:51:52 -0700 (PDT)
+Received: from [192.168.105.194] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a79bc5b7ebfsm421860566b.67.2024.07.17.02.51.50
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Jul 2024 02:51:51 -0700 (PDT)
+Message-ID: <6e770e3d-b1e1-4ecb-a14e-9e909fa8a8e6@linaro.org>
+Date: Wed, 17 Jul 2024 11:51:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/3] clk: qcom: dispcc-sm8650: add missing
+ CLK_SET_RATE_PARENT flag
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: neil.armstrong@linaro.org, Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
 References: <20240716-topic-sm8650-upstream-fix-dispcc-v3-0-5bfd56c899da@linaro.org>
  <20240716-topic-sm8650-upstream-fix-dispcc-v3-2-5bfd56c899da@linaro.org>
  <dccttz5b44bl3lwmcaqz6wjx3n4sv3eq4yh6276vzwrtkcvqcw@qxhbo7bylnsg>
- <9ad10d92-d755-4fae-b206-6e8648be6d48@linaro.org> <CAA8EJpr9L+AKDhuHfQa=Nco7fvG9vLH3a+gxVhENrhz12b3n=Q@mail.gmail.com>
- <278354ec-532b-48de-8ee1-5477ddb4a285@linaro.org> <kxrhhb3vdojbnqfbwks2qmob55fwm3onleood73qfk6esl7g2c@q66kw5am4emc>
+ <9ad10d92-d755-4fae-b206-6e8648be6d48@linaro.org>
+ <CAA8EJpr9L+AKDhuHfQa=Nco7fvG9vLH3a+gxVhENrhz12b3n=Q@mail.gmail.com>
+ <278354ec-532b-48de-8ee1-5477ddb4a285@linaro.org>
+ <kxrhhb3vdojbnqfbwks2qmob55fwm3onleood73qfk6esl7g2c@q66kw5am4emc>
  <94e48e19-781e-4de3-a4e6-da8e923a1294@linaro.org>
-In-Reply-To: <94e48e19-781e-4de3-a4e6-da8e923a1294@linaro.org>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Wed, 17 Jul 2024 12:49:48 +0300
-Message-ID: <CAA8EJpomVKiVrRxSEJmjvNXLGGKVvcr2wGWtE129eUoUfgYC4g@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] clk: qcom: dispcc-sm8650: add missing
- CLK_SET_RATE_PARENT flag
-To: Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: neil.armstrong@linaro.org, Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+ <CAA8EJpomVKiVrRxSEJmjvNXLGGKVvcr2wGWtE129eUoUfgYC4g@mail.gmail.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@linaro.org>
+Autocrypt: addr=konrad.dybcio@linaro.org; keydata=
+ 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
+ izWDgYvmBE8=
+In-Reply-To: <CAA8EJpomVKiVrRxSEJmjvNXLGGKVvcr2wGWtE129eUoUfgYC4g@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, 17 Jul 2024 at 12:47, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
->
-> On 16.07.2024 6:46 PM, Dmitry Baryshkov wrote:
-> > On Tue, Jul 16, 2024 at 03:46:24PM GMT, neil.armstrong@linaro.org wrote:
-> >> On 16/07/2024 15:44, Dmitry Baryshkov wrote:
-> >>> On Tue, 16 Jul 2024 at 15:32, Neil Armstrong <neil.armstrong@linaro.org> wrote:
-> >>>>
-> >>>> On 16/07/2024 13:20, Dmitry Baryshkov wrote:
-> >>>>> On Tue, Jul 16, 2024 at 11:05:22AM GMT, Neil Armstrong wrote:
-> >>>>>> Add the missing CLK_SET_RATE_PARENT for the byte0_div_clk_src
-> >>>>>> and byte1_div_clk_src, the clock rate should propagate to
-> >>>>>> the corresponding _clk_src.
-> >>>>>>
-> >>>>>> Fixes: 9e939f008338 ("clk: qcom: add the SM8650 Display Clock Controller driver")
-> >>>>>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> >>>>>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> >>>>>> ---
-> >>>>>>    drivers/clk/qcom/dispcc-sm8650.c | 2 ++
-> >>>>>>    1 file changed, 2 insertions(+)
-> >>>>>
-> >>>>> This doesn't seem correct, the byte1_div_clk_src is a divisor, so the
-> >>>>> rate should not be propagated. Other platforms don't set this flag.
-> >>>>>
-> >>>>
-> >>>> Why not ? the disp_cc_mdss_byte1_clk_src has CLK_SET_RATE_PARENT and a div_table,
-> >>>> and we only pass DISP_CC_MDSS_BYTE1_CLK to the dsi controller.
-> >>>
-> >>> Yes, the driver sets byte_clk with the proper rate, then it sets
-> >>> byte_intf_clk, which results in a proper divisor.
-> >>> If we have CLK_SET_RATE_PARENT for byte1_div_clk_src, then setting
-> >>> byte_intf_clk rate will also result in a rate change for the byte_clk
-> >>> rate.
-> >>>
-> >>> Note, all other platforms don't set that flag for this reason (I think
-> >>> I had to remove it during sm8450 development for this reason).
-> >>>
-> >>
-> >> Ack, I think this deserves a comment explaining this, I'll add it.
-> >
-> > But where to place it? This applies to _all_ dispcc controllers.
->
-> Commit message
+On 17.07.2024 11:49 AM, Dmitry Baryshkov wrote:
+> On Wed, 17 Jul 2024 at 12:47, Konrad Dybcio <konrad.dybcio@linaro.org> wrote:
+>>
+>> On 16.07.2024 6:46 PM, Dmitry Baryshkov wrote:
+>>> On Tue, Jul 16, 2024 at 03:46:24PM GMT, neil.armstrong@linaro.org wrote:
+>>>> On 16/07/2024 15:44, Dmitry Baryshkov wrote:
+>>>>> On Tue, 16 Jul 2024 at 15:32, Neil Armstrong <neil.armstrong@linaro.org> wrote:
+>>>>>>
+>>>>>> On 16/07/2024 13:20, Dmitry Baryshkov wrote:
+>>>>>>> On Tue, Jul 16, 2024 at 11:05:22AM GMT, Neil Armstrong wrote:
+>>>>>>>> Add the missing CLK_SET_RATE_PARENT for the byte0_div_clk_src
+>>>>>>>> and byte1_div_clk_src, the clock rate should propagate to
+>>>>>>>> the corresponding _clk_src.
+>>>>>>>>
+>>>>>>>> Fixes: 9e939f008338 ("clk: qcom: add the SM8650 Display Clock Controller driver")
+>>>>>>>> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+>>>>>>>> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
+>>>>>>>> ---
+>>>>>>>>    drivers/clk/qcom/dispcc-sm8650.c | 2 ++
+>>>>>>>>    1 file changed, 2 insertions(+)
+>>>>>>>
+>>>>>>> This doesn't seem correct, the byte1_div_clk_src is a divisor, so the
+>>>>>>> rate should not be propagated. Other platforms don't set this flag.
+>>>>>>>
+>>>>>>
+>>>>>> Why not ? the disp_cc_mdss_byte1_clk_src has CLK_SET_RATE_PARENT and a div_table,
+>>>>>> and we only pass DISP_CC_MDSS_BYTE1_CLK to the dsi controller.
+>>>>>
+>>>>> Yes, the driver sets byte_clk with the proper rate, then it sets
+>>>>> byte_intf_clk, which results in a proper divisor.
+>>>>> If we have CLK_SET_RATE_PARENT for byte1_div_clk_src, then setting
+>>>>> byte_intf_clk rate will also result in a rate change for the byte_clk
+>>>>> rate.
+>>>>>
+>>>>> Note, all other platforms don't set that flag for this reason (I think
+>>>>> I had to remove it during sm8450 development for this reason).
+>>>>>
+>>>>
+>>>> Ack, I think this deserves a comment explaining this, I'll add it.
+>>>
+>>> But where to place it? This applies to _all_ dispcc controllers.
+>>
+>> Commit message
+> 
+> It is already committed.
 
-It is already committed.
+You can mention in it the message of this patch.
 
--- 
-With best wishes
-Dmitry
+Konrad
