@@ -1,68 +1,89 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B34C38DC3;
-	Wed, 17 Jul 2024 12:51:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F340D180A8E;
+	Wed, 17 Jul 2024 14:12:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721220691; cv=none; b=HqcdNEQ179QRog9DZB1VLCZvNIhsLbOYKJMjhVs6Cw61Y+PqjKOSdG/OwzbG1zHI3mQwOsy2LvX+fHpq79/4Fc1ClyEOANjBNDg0sy1XtKYstrm4juNx+M0zMEOWE5F/6FBzp6WrKv1cjYwYQVxmY2yc1fap2LPFWactVMMFXNo=
+	t=1721225535; cv=none; b=cPObM2Bx3FR9w5Hbx8WRLVN/F2/3Czh6Ls3AfDffJuZPto4L+qDSeMQcCkr8n+JCLf7DV9Py2JKIDmtL3sELoKAg8ZJfUCl0IQwQQ67zYPtHjiun1IGzW31emCY056aKpFeWo3vtvk3dlyqeCSh+RIS5JCLTFeHs5Wl9wij6zbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721220691; c=relaxed/simple;
-	bh=gZwVFjzSRVTmALU1BmNQ8keVRNZSkGcSyT2qhAkCHmA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EKleTWe1Kvvb3gpjSMazDXNrDJWeT2H/7Sr96u8SJvQ6IgYMdC81rRiRn4OTFG+hhJ5I8kBRrKMc7WLe1mv8+97RIMX4L1+7MNDIJRf/gGTFRE9AnqFQA619A86fMgkju/1tjK0bKRfdCnr6oysu+ZMmxu3io1PrQAOxkDS7O9U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=acmYZ2c+; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1721225535; c=relaxed/simple;
+	bh=Y0nH3ByV5200W06bkaVQD7x7tp8lRjYmTsL0s2QRqUE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cP/tt0eddKzpxNra9yCIXH6yhqK0cNZ7sRNDHz+RaSH2/2Oa1sONjO/QMzvkOQ/p/76zTeeMCU0rKtxhCpOf/S1qgRdQVI6A68KZ4UdT+kTurvvKj36yfsGp69cvbni5jgWyvdzv3gmbIsaLZwlKPr2YJfMJ/irJuw1pGnLHcA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ARjwEpBf; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="acmYZ2c+"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1721220687;
-	bh=gZwVFjzSRVTmALU1BmNQ8keVRNZSkGcSyT2qhAkCHmA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=acmYZ2c+SQF3vKCNlalGE51ieTweRpud/cjgYlzKVq+P7EKQcfAb6MvS33njm2IQl
-	 CCU3Mq8ky4G1q3LB1B4/a9drmZ1zqEqjPZKUSJQqcpSlx9T8nbycVEY3xfdlkC9j0U
-	 19oi4BnJM2lNJQjbBrWrwsgvaYiuLVKxKtKQL51HTtgILUSNFj778hfM7mP3haNMh7
-	 wJzufg5YIowyAT4ocL60xMKqqXMulxJ7YItCv9vic+bR9WH+UOHtovIH31SKFVlELX
-	 XVM7uzl2JU+blLyThS/PW8noqjFFSoVYrh5e71qsLy/itEQWUaBsccQBj7BBXFu1yZ
-	 0Xm/HI2M7ffLA==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 851A53780480;
-	Wed, 17 Jul 2024 12:51:26 +0000 (UTC)
-Message-ID: <10cd2114-e809-48a7-939f-75d95e68d9d9@collabora.com>
-Date: Wed, 17 Jul 2024 14:51:25 +0200
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ARjwEpBf"
+Received: by mail.gandi.net (Postfix) with ESMTPA id 34AC9240003;
+	Wed, 17 Jul 2024 14:12:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1721225524;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=0cMHAF7GJKaYaEw27XTSd8T22HVixtecNYUERalZAYY=;
+	b=ARjwEpBfK6tZJ63z0co08mLrGjqIMVMMf8LONIX5NvYmEWmWtg/W3Ye3yPzhpOeGKTTBSv
+	hSCbmHmsrrwVIfJ072tIW1uPBYcFAypvZaoGqTphshNz5/4l+RlAEEKiDPLKwUDS/fU9D4
+	zgewBQ9Jiuw3nfYoA3kIyn+fPyvRwUI603xOo8Q1COAHC3oCKhRY6B+Pkg0vBh048J92gj
+	e+DVrFNzC47WoxTk6prDZSCyZsq7+baurUmRnmytEBKhdZXv2hvdtG8J5gFXwMdplxrHO1
+	n9DOAqiNBVagKbxmRt32uxeOa+yClKVT1sew9PQknSoSIYs+NyST5IYkqX09lA==
+From: Bastien Curutchet <bastien.curutchet@bootlin.com>
+To: David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Christopher Cordahi <christophercordahi@nanometrics.ca>,
+	Bastien Curutchet <bastien.curutchet@bootlin.com>
+Subject: [PATCH] clk: davinci: da8xx-cfgchip: Initialize clk_init_data before use
+Date: Wed, 17 Jul 2024 16:12:01 +0200
+Message-ID: <20240717141201.64125-1-bastien.curutchet@bootlin.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: mediatek: reset: Return regmap's error code
-To: Fei Shao <fshao@chromium.org>, Stephen Boyd <sboyd@kernel.org>
-Cc: Matthias Brugger <matthias.bgg@gmail.com>,
- Michael Turquette <mturquette@baylibre.com>,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
-References: <20240717115919.975474-1-fshao@chromium.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20240717115919.975474-1-fshao@chromium.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: bastien.curutchet@bootlin.com
 
-Il 17/07/24 13:58, Fei Shao ha scritto:
-> device_node_to_regmap() can return different errors, and it's better
-> practice to pass them to callers.
-> 
-> Clean up the hardcoded -EINVAL and use PTR_ERR(regmap) instead.
-> 
-> Signed-off-by: Fei Shao <fshao@chromium.org>
+The flag attribute of the struct clk_init_data isn't initialized before
+the devm_clk_hw_register() call. This can lead to unexpected behavior
+during registration.
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Initialize the entire clk_init_data to zero at declaration.
 
+Signed-off-by: Bastien Curutchet <bastien.curutchet@bootlin.com>
+---
+ drivers/clk/davinci/da8xx-cfgchip.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/clk/davinci/da8xx-cfgchip.c b/drivers/clk/davinci/da8xx-cfgchip.c
+index ad2d0df43dc6..ec60ecb517f1 100644
+--- a/drivers/clk/davinci/da8xx-cfgchip.c
++++ b/drivers/clk/davinci/da8xx-cfgchip.c
+@@ -508,7 +508,7 @@ da8xx_cfgchip_register_usb0_clk48(struct device *dev,
+ 	const char * const parent_names[] = { "usb_refclkin", "pll0_auxclk" };
+ 	struct clk *fck_clk;
+ 	struct da8xx_usb0_clk48 *usb0;
+-	struct clk_init_data init;
++	struct clk_init_data init = {};
+ 	int ret;
+ 
+ 	fck_clk = devm_clk_get(dev, "fck");
+@@ -583,7 +583,7 @@ da8xx_cfgchip_register_usb1_clk48(struct device *dev,
+ {
+ 	const char * const parent_names[] = { "usb0_clk48", "usb_refclkin" };
+ 	struct da8xx_usb1_clk48 *usb1;
+-	struct clk_init_data init;
++	struct clk_init_data init = {};
+ 	int ret;
+ 
+ 	usb1 = devm_kzalloc(dev, sizeof(*usb1), GFP_KERNEL);
+-- 
+2.45.0
 
