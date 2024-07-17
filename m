@@ -1,33 +1,59 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 056591862A;
-	Wed, 17 Jul 2024 06:57:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C921B948
+	for <linux-clk@vger.kernel.org>; Wed, 17 Jul 2024 07:37:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721199461; cv=none; b=sjTU/JFVWVk0A7gmRgkcUvx4BK4awDSrFWSfQpld7cdzD/sf6JXyea0xXj8QM67DiD407mXLcoWRrXRj8Q7tQiC1K1M0iRGff0x5gkMNLIPAgygoVFHMGC3ZgoJI8ivu7lUYq2wPJQdJ/ucfvcfiP5gwTMm1i4ou+rAtC2CxkVI=
+	t=1721201867; cv=none; b=ZivZObg3erYjyucwDEqpepC/HtSXKZ5GqSvFAsl9IsJVmhvKnFZ6ZePF9639paAEr1keZ5ZhEqKPX3ZZTqZhQbAsGWyPrtqfB9X+44s8veCfSMNg0H+XdsnPLITW6AQMxB0grNK7CQOP8gFE7yRHbOrYzSYcdV84BXlCxmNioxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721199461; c=relaxed/simple;
-	bh=afYYc5ZMw1Zwtvx/MJsUoi2l/Epdv3uYEQj/aDnM1Ww=;
+	s=arc-20240116; t=1721201867; c=relaxed/simple;
+	bh=ofiUS+uOsnjhuIaRefgaMe9r3ZaNznbQtZELpuQTjVs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tNDfNXiOgXWbqxTGko/X/QWdh5D6FPZX7eMnkAZWY1sy0j4Wpl/mFGqbWsHpGdxzgVof5szS+L1J5mBlMne2hjpMse5mGTwoer1B0AYurbK/aqAneRg7OIpfWr7l3PMNxjKi3rmNA4g3pYh0WBHsuk8jAJQtPtJX7uEBcrNHCig=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eYxZAGUa; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=FueVB/nELt9WGn22Bg/91vQK/blW6/f6u96KGXk9nxkVNoqb9xtNY2P59F6RrlvJdBvM6XNedHSwf1rHT8AY79XlLuRL4ddVGZP9EP0B6HNjxEWRo0zn0xR9a1D5IFnTCixiLRAR4lRsiTrEHEkdrdBEPfWurzA6VTmyNS1BSRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=AIBaoPGe; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eYxZAGUa"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C03E0C32782;
-	Wed, 17 Jul 2024 06:57:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721199460;
-	bh=afYYc5ZMw1Zwtvx/MJsUoi2l/Epdv3uYEQj/aDnM1Ww=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=eYxZAGUaJGe1MCy2RG3cW+lg+PhZp2xCCojWHk2H4+qemOCp8Jo49e8hBxR8psc23
-	 cQ2W+IHLsKzXCJvvUNv0j2GpL48MKoXufKTDGl5o+CS4fQpaA9jUlbttGUJrL69O6+
-	 Lc91tQHHc1cKY5V8ihr2XBb5WdsYYrNjClAaBkLiuK6GGkY2RN8G/Cpz+GLn2fO/j3
-	 zaYUo2a77QSk0cT5yQeHzvq0NgfMyz9kj+SDbSeoK2BmXU1WAHAmeqxtHJ2GMJ8FTG
-	 rzoRlOptcxyp2Qy+IOCBrvxhpIT5Wk46HbXewUyMtwbJrL6C0ggwLfvPmFAOeMecpe
-	 LFuAzUDO0gFHQ==
-Message-ID: <3e35995f-21e7-4c0c-9417-d96a82751cd9@kernel.org>
-Date: Wed, 17 Jul 2024 08:57:33 +0200
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="AIBaoPGe"
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52e976208f8so7014031e87.2
+        for <linux-clk@vger.kernel.org>; Wed, 17 Jul 2024 00:37:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1721201863; x=1721806663; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gfi0wbFlhXsEa5q0QzjbWGJUIMSELq3SCGvUCwT4j9c=;
+        b=AIBaoPGeH/uKzNjCKykwG1g1LixWb4q/Q2hcEryTEmD7SEvjZrOgBHqqTZ5pWK6DXF
+         DfGYuvpgNc4GA4H+Aib8A9n4NpMexhDBSDzCQcQaeTDlWUZjsYH8Wvg/a5OjywCvQ+Jb
+         8hZfuiSKL1QaWKaGfShTvaXRd62jC2GIKSMaBwKIjJmPrSUtuzYhAco25nEhfvIWxdd4
+         6vufqqgadMLOAXQl5lpGEzyLXuPgmI9BbA4cIVV63y8A+yFkrndc19zK4LkP3vfyrdX1
+         qc4/i8XLt3U2VM0fvKhphQM+JYXUC2ZqsR/FNY7tYOV5a0sLTrx8x4pkyPAKPDU67mpF
+         8w3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721201863; x=1721806663;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gfi0wbFlhXsEa5q0QzjbWGJUIMSELq3SCGvUCwT4j9c=;
+        b=DdNSRWJUSvt/XcqEaf8817wlIJYzyH/XBrIWOnZUt/YdzeLLTk8FcV5SEftJm1SEUM
+         MnFEBLROJzwYowHwL+MsSI9nuvBnxNx9qIheUijAS50r4kziEso1hAvbvTx9v2DfawCR
+         2geFGzamCehqIRxUAKMeVE3NrZPXY/fyT0y/DxzHkh4XS7S+886ZMpWBUocPZn4vxpFn
+         Yd7Viq+NICACFIqA1lIZoR0pKD331aWLNzjvyqzCNLbNzg1zEjVvD0yyl2BYODfpVh+x
+         PQlWV7xnd8gWICVNkINOombVhNasvSk4gNqsM3xprr4ZuJCyJm+3etMf5B5lE2eIQ+dp
+         YMWw==
+X-Forwarded-Encrypted: i=1; AJvYcCUCGaF9f4MvXIp27r9FaL7syAmrPGFPHHJcsufN6m6FcyvC+QjkIpem393u4hO6Jss+WmyyAzJE439Sx4FI2w5PCXis75Hj8pEj
+X-Gm-Message-State: AOJu0YxxlE9k78+nD90j4rp1+aaqFRHwUFFaPaM2QPdxoTJ5dEfSdpRJ
+	SMChxBaFrbDOrxH27yoOhq3aHD2T9uiuhqfLXZcn2GoMXded7EufuHwufvJXNl4=
+X-Google-Smtp-Source: AGHT+IH6DPWOFWGyrbuD3FoepHwzwFHt5aU7f9hN5MQgW4BxazZpRw+PU5n5TYh9enHix4deAENBmA==
+X-Received: by 2002:a05:6512:3f01:b0:52c:e3c7:941e with SMTP id 2adb3069b0e04-52ee5411942mr669554e87.47.1721201862870;
+        Wed, 17 Jul 2024 00:37:42 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.171])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427a5edb478sm160478315e9.33.2024.07.17.00.37.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 17 Jul 2024 00:37:42 -0700 (PDT)
+Message-ID: <42216215-4db1-4015-878f-25a7770d44c2@tuxon.dev>
+Date: Wed, 17 Jul 2024 10:37:40 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,91 +61,195 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/7] dt-bindings: clock: qcom,sm8650-dispcc: replace with
- symlink
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20240717-dispcc-sm8550-fixes-v1-0-efb4d927dc9a@linaro.org>
- <20240717-dispcc-sm8550-fixes-v1-7-efb4d927dc9a@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH v2 02/11] mfd: renesas-vbattb: Add a MFD driver for the
+ Renesas VBATTB IP
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240717-dispcc-sm8550-fixes-v1-7-efb4d927dc9a@linaro.org>
+To: Biju Das <biju.das.jz@bp.renesas.com>, "lee@kernel.org" <lee@kernel.org>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "alexandre.belloni@bootlin.com" <alexandre.belloni@bootlin.com>,
+ "geert+renesas@glider.be" <geert+renesas@glider.be>,
+ "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "sboyd@kernel.org" <sboyd@kernel.org>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-rtc@vger.kernel.org" <linux-rtc@vger.kernel.org>,
+ "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240716103025.1198495-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240716103025.1198495-3-claudiu.beznea.uj@bp.renesas.com>
+ <TY3PR01MB11346ABDBA306410646D3861A86A22@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <TY3PR01MB11346ABDBA306410646D3861A86A22@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 16/07/2024 23:13, Dmitry Baryshkov wrote:
-> The display clock controller indices for SM8650 and SM8550 are
-> completely equal. Replace the header file for qcom,sm8650-dispcc with
-> the symlink to the qcom,sm8550-dispcc header file.
+Hi, Biju,
+
+On 16.07.2024 14:00, Biju Das wrote:
+> Hi Claudiu,
 > 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->  drivers/clk/qcom/dispcc-sm8550.c               |   2 +-
->  include/dt-bindings/clock/qcom,sm8650-dispcc.h | 103 +------------------------
->  2 files changed, 2 insertions(+), 103 deletions(-)
+> Thanks for the patch.
 > 
-> diff --git a/drivers/clk/qcom/dispcc-sm8550.c b/drivers/clk/qcom/dispcc-sm8550.c
-> index 78e11eade2ea..9ffcd9eb9283 100644
-> --- a/drivers/clk/qcom/dispcc-sm8550.c
-> +++ b/drivers/clk/qcom/dispcc-sm8550.c
-> @@ -1776,7 +1776,7 @@ static int disp_cc_sm8550_probe(struct platform_device *pdev)
->  	}
->  
->  	if (of_device_is_compatible(pdev->dev.of_node, "qcom,sm8650-dispcc")) {
-> -		lucid_ole_vco.max_freq = 2100000000;
-> +		lucid_ole_vco[0].max_freq = 2100000000;
+> 
+>> -----Original Message-----
+>> From: Claudiu <claudiu.beznea@tuxon.dev>
+>> Sent: Tuesday, July 16, 2024 11:30 AM
+>> Subject: [PATCH v2 02/11] mfd: renesas-vbattb: Add a MFD driver for the Renesas VBATTB IP
+>>
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> Renesas VBATTB IP has logic to control the RTC clock, tamper detection and a small 128B memory. Add a
+>> MFD driver to do the basic initialization of the VBATTB IP for the inner components to work.
+>>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>> ---
+>>
+>> Changes in v2:
+>> - none; this driver is new
+>>
+>>  drivers/mfd/Kconfig          |  8 ++++
+>>  drivers/mfd/Makefile         |  1 +
+>>  drivers/mfd/renesas-vbattb.c | 78 ++++++++++++++++++++++++++++++++++++
+>>  3 files changed, 87 insertions(+)
+>>  create mode 100644 drivers/mfd/renesas-vbattb.c
+>>
+>> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig index bc8be2e593b6..df93e8b05065 100644
+>> --- a/drivers/mfd/Kconfig
+>> +++ b/drivers/mfd/Kconfig
+>> @@ -1383,6 +1383,14 @@ config MFD_SC27XX_PMIC
+>>  	  This driver provides common support for accessing the SC27xx PMICs,
+>>  	  and it also adds the irq_chip parts for handling the PMIC chip events.
+>>
+>> +config MFD_RENESAS_VBATTB
+>> +	tristate "Renesas VBATTB driver"
+>> +	depends on (ARCH_RZG2L && OF) || COMPILE_TEST
+>> +	select MFD_CORE
+> 
+> There is no MFD calls??  What is the purpose of selecting MFD_CORE??
 
-This part does not look related.
+I missed to remove it from here.
 
-Best regards,
-Krzysztof
+> 
+>> +	help
+>> +	  Select this option to enable Renesas RZ/G3S VBATTB driver which
+>> +	  provides support for the RTC clock, tamper detector and 128B SRAM.
+>> +
+>>  config RZ_MTU3
+>>  	tristate "Renesas RZ/G2L MTU3a core driver"
+>>  	depends on (ARCH_RZG2L && OF) || COMPILE_TEST diff --git a/drivers/mfd/Makefile
+>> b/drivers/mfd/Makefile index 02b651cd7535..cd2f27492df2 100644
+>> --- a/drivers/mfd/Makefile
+>> +++ b/drivers/mfd/Makefile
+>> @@ -186,6 +186,7 @@ pcf50633-objs			:= pcf50633-core.o pcf50633-irq.o
+>>  obj-$(CONFIG_MFD_PCF50633)	+= pcf50633.o
+>>  obj-$(CONFIG_PCF50633_ADC)	+= pcf50633-adc.o
+>>  obj-$(CONFIG_PCF50633_GPIO)	+= pcf50633-gpio.o
+>> +obj-$(CONFIG_MFD_RENESAS_VBATTB)	+= renesas-vbattb.o
+>>  obj-$(CONFIG_RZ_MTU3)		+= rz-mtu3.o
+>>  obj-$(CONFIG_ABX500_CORE)	+= abx500-core.o
+>>  obj-$(CONFIG_MFD_DB8500_PRCMU)	+= db8500-prcmu.o
+>> diff --git a/drivers/mfd/renesas-vbattb.c b/drivers/mfd/renesas-vbattb.c new file mode 100644 index
+>> 000000000000..5d71565b8cbf
+>> --- /dev/null
+>> +++ b/drivers/mfd/renesas-vbattb.c
+>> @@ -0,0 +1,78 @@
+>> +// SPDX-License-Identifier: GPL-2.0
+>> +/*
+>> + * VBATTB driver
+>> + *
+>> + * Copyright (C) 2024 Renesas Electronics Corp.
+>> + */
+>> +
+>> +#include <linux/mod_devicetable.h>
+>> +#include <linux/of_platform.h>
+>> +#include <linux/platform_device.h>
+>> +#include <linux/pm_runtime.h>
+>> +#include <linux/reset.h>
+>> +
+>> +static int vbattb_probe(struct platform_device *pdev) {
+>> +	struct device *dev = &pdev->dev;
+>> +	struct reset_control *rstc;
+>> +	int ret;
+>> +
+>> +	rstc = devm_reset_control_array_get_exclusive(dev);
+>> +	if (IS_ERR(rstc))
+>> +		return PTR_ERR(rstc);
+>> +
+>> +	ret = devm_pm_runtime_enable(dev);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	ret = pm_runtime_resume_and_get(dev);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	ret = reset_control_deassert(rstc);
+>> +	if (ret)
+>> +		goto rpm_put;
+>> +
+>> +	platform_set_drvdata(pdev, rstc);
+>> +
+>> +	ret = devm_of_platform_populate(dev);
+>> +	if (ret)
+>> +		goto reset_assert;
+>> +
+>> +	return 0;
+>> +
+>> +reset_assert:
+>> +	reset_control_assert(rstc);
+>> +rpm_put:
+>> +	pm_runtime_put(dev);
+>> +	return ret;
+>> +}
+>> +
+>> +static void vbattb_remove(struct platform_device *pdev) {
+>> +	struct reset_control *rstc = platform_get_drvdata(pdev);
+>> +
+>> +	reset_control_assert(rstc);
+>> +	pm_runtime_put(&pdev->dev);
+>> +}
+>> +
+>> +static const struct of_device_id vbattb_match[] = {
+>> +	{ .compatible = "renesas,r9a08g045-vbattb" },
+>> +	{ /* sentinel */ },
+> 
+> Drop comma.
+> 
+>> +};
+>> +MODULE_DEVICE_TABLE(of, vbattb_match);
+>> +
+>> +static struct platform_driver vbattb_driver = {
+>> +	.probe = vbattb_probe,
+>> +	.remove_new = vbattb_remove,
+> 
+> Maybe remove canbe replaced with devm_add_action_or_reset()
+> That simplifies probe() aswell??
 
+This approach needs a new structure to keep references to the rstc and dev,
+to be able to handle reset and runtime PM in action function. I wanted to
+avoid adding a new structure.
+
+Thank you for your review,
+Claudiu Beznea
+
+> 
+>> +	.driver = {
+>> +		.name = "renesas-vbattb",
+>> +		.of_match_table = vbattb_match,
+>> +	},
+>> +};
+>> +module_platform_driver(vbattb_driver);
+>> +
+>> +MODULE_ALIAS("platform:renesas-vbattb");
+>> +MODULE_AUTHOR("Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>");
+>> +MODULE_DESCRIPTION("Renesas VBATTB driver"); MODULE_LICENSE("GPL");
+>> --
+>> 2.39.2
+>>
+> 
