@@ -1,59 +1,59 @@
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27C921B948
-	for <linux-clk@vger.kernel.org>; Wed, 17 Jul 2024 07:37:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C0B61CD06
+	for <linux-clk@vger.kernel.org>; Wed, 17 Jul 2024 07:46:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721201867; cv=none; b=ZivZObg3erYjyucwDEqpepC/HtSXKZ5GqSvFAsl9IsJVmhvKnFZ6ZePF9639paAEr1keZ5ZhEqKPX3ZZTqZhQbAsGWyPrtqfB9X+44s8veCfSMNg0H+XdsnPLITW6AQMxB0grNK7CQOP8gFE7yRHbOrYzSYcdV84BXlCxmNioxE=
+	t=1721202395; cv=none; b=Cpp4WKRFMCRlkorI8NdBhIAr4E45rQ0bGehikiZgXb1JFLKKhDenaen1R53MU3h5LDe83R4lxZamMe2EU1t5WDQfYfE2kPGafMKugNReSIif8PFdYlOl0ZoZrEbToWJ/O/ADSs1ramNWtLmx181ACgH1AbIpL7VAsmbKdogJ6oU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721201867; c=relaxed/simple;
-	bh=ofiUS+uOsnjhuIaRefgaMe9r3ZaNznbQtZELpuQTjVs=;
+	s=arc-20240116; t=1721202395; c=relaxed/simple;
+	bh=VjQxQBGSxrzOKfnVurw4YR8PgK6Ja3I4dp+Q7ZlwA5Y=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FueVB/nELt9WGn22Bg/91vQK/blW6/f6u96KGXk9nxkVNoqb9xtNY2P59F6RrlvJdBvM6XNedHSwf1rHT8AY79XlLuRL4ddVGZP9EP0B6HNjxEWRo0zn0xR9a1D5IFnTCixiLRAR4lRsiTrEHEkdrdBEPfWurzA6VTmyNS1BSRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=AIBaoPGe; arc=none smtp.client-ip=209.85.167.44
+	 In-Reply-To:Content-Type; b=LVRknnHuwoeEtC7aEwTJmdTXJZup1+8LuwtMyTo7sh4Cp80VVk76zSQTX6HPQL2YisHNmcWZycvN3us05EctPIzxRZlQA8tYZHxHF5sAT1XxLBgWe6PrWNJSmSyqOKTmIXE1la7i3vxMN6oRgHSL+tbT+VRaqriywUNpfBCj200=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=oswepofU; arc=none smtp.client-ip=209.85.167.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="AIBaoPGe"
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-52e976208f8so7014031e87.2
-        for <linux-clk@vger.kernel.org>; Wed, 17 Jul 2024 00:37:44 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="oswepofU"
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52ea79e6979so7410984e87.2
+        for <linux-clk@vger.kernel.org>; Wed, 17 Jul 2024 00:46:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1721201863; x=1721806663; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1721202391; x=1721807191; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=gfi0wbFlhXsEa5q0QzjbWGJUIMSELq3SCGvUCwT4j9c=;
-        b=AIBaoPGeH/uKzNjCKykwG1g1LixWb4q/Q2hcEryTEmD7SEvjZrOgBHqqTZ5pWK6DXF
-         DfGYuvpgNc4GA4H+Aib8A9n4NpMexhDBSDzCQcQaeTDlWUZjsYH8Wvg/a5OjywCvQ+Jb
-         8hZfuiSKL1QaWKaGfShTvaXRd62jC2GIKSMaBwKIjJmPrSUtuzYhAco25nEhfvIWxdd4
-         6vufqqgadMLOAXQl5lpGEzyLXuPgmI9BbA4cIVV63y8A+yFkrndc19zK4LkP3vfyrdX1
-         qc4/i8XLt3U2VM0fvKhphQM+JYXUC2ZqsR/FNY7tYOV5a0sLTrx8x4pkyPAKPDU67mpF
-         8w3Q==
+        bh=hYmLVYWXk1bMWnCbE/bbshFQAVmL1hOp1kfOD1hykXU=;
+        b=oswepofUSVwWMKOA7U2Tv4EOWaSvEuKz1tRYaea2ahcZMTIyXaqv9Kn22GjeeJsn1c
+         UGDH8TUFcPjrUAxEJwDOhuOprpeeohcJEnsRCFHCqAU11kKWXuZJnaMRT8nJbJCYMUaQ
+         By9PiKf1FSAUMfTgSEkVCMVos5fa8Y5VsXm1SdebDJiBylM0/7LUg9DSr3ipmkcntGC6
+         ObgiOmLbmtf9uKrJMKdBCBnbZmV85DTtyWlIOg77DBEFWLm/rZTxq3MmJSGDklvwblxp
+         OxXnEswup9pIT6bm+UwA84sMEzOD8fxWICqBjpAdelnLr7BkZ5x/N+AGX7u88cs918N8
+         aWKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721201863; x=1721806663;
+        d=1e100.net; s=20230601; t=1721202391; x=1721807191;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gfi0wbFlhXsEa5q0QzjbWGJUIMSELq3SCGvUCwT4j9c=;
-        b=DdNSRWJUSvt/XcqEaf8817wlIJYzyH/XBrIWOnZUt/YdzeLLTk8FcV5SEftJm1SEUM
-         MnFEBLROJzwYowHwL+MsSI9nuvBnxNx9qIheUijAS50r4kziEso1hAvbvTx9v2DfawCR
-         2geFGzamCehqIRxUAKMeVE3NrZPXY/fyT0y/DxzHkh4XS7S+886ZMpWBUocPZn4vxpFn
-         Yd7Viq+NICACFIqA1lIZoR0pKD331aWLNzjvyqzCNLbNzg1zEjVvD0yyl2BYODfpVh+x
-         PQlWV7xnd8gWICVNkINOombVhNasvSk4gNqsM3xprr4ZuJCyJm+3etMf5B5lE2eIQ+dp
-         YMWw==
-X-Forwarded-Encrypted: i=1; AJvYcCUCGaF9f4MvXIp27r9FaL7syAmrPGFPHHJcsufN6m6FcyvC+QjkIpem393u4hO6Jss+WmyyAzJE439Sx4FI2w5PCXis75Hj8pEj
-X-Gm-Message-State: AOJu0YxxlE9k78+nD90j4rp1+aaqFRHwUFFaPaM2QPdxoTJ5dEfSdpRJ
-	SMChxBaFrbDOrxH27yoOhq3aHD2T9uiuhqfLXZcn2GoMXded7EufuHwufvJXNl4=
-X-Google-Smtp-Source: AGHT+IH6DPWOFWGyrbuD3FoepHwzwFHt5aU7f9hN5MQgW4BxazZpRw+PU5n5TYh9enHix4deAENBmA==
-X-Received: by 2002:a05:6512:3f01:b0:52c:e3c7:941e with SMTP id 2adb3069b0e04-52ee5411942mr669554e87.47.1721201862870;
-        Wed, 17 Jul 2024 00:37:42 -0700 (PDT)
+        bh=hYmLVYWXk1bMWnCbE/bbshFQAVmL1hOp1kfOD1hykXU=;
+        b=tcd4aOf3DFR79CGCFpDXi2Q3BHKw1X4TQdake4aB9zw6k5iVKO/qhR39zfMwU6RLq2
+         hDMpGxT9/cGUF3dM43cbPhzkC5sCDDPWmoeTLeOuKTsZqtFvYkO2cAxeGodMqW8GNR+9
+         AngxWdV8Dke/kUSokj18tKZFwIswoEZ0Fnj69yjJ7yTARtTkgL/IRCvnO6q0WEPyIDQ3
+         NiSfuymeuEsdg4O7io+IundNFoYx2Aha6AebCWyJwcmIbAB5wAiOPS2HPOkeUK5NZT78
+         rPAjC9G+2rYZAwvSsW3D5z8OvIrrfzWBHEU0CpCoYbwflCY5YKoaaMxlUJEp7z3/3BcN
+         terQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUUmROlwgh7ANJU5HXmTTWzpsMcY9ks5lxbs2OpO4wBMFzX9+Np4vnWtHD1emoRC1JDjtD5Jd1gX+qxK0lNG7tYrN7VLhD6DOz1
+X-Gm-Message-State: AOJu0YyN285utpNMQJ8rdiN68T+ANL/Y10bpDap/JdlKlzJFyNunoI+b
+	+X/EK1kBWe773eDyWNPB1dquuL1LdCwpQNB7zjBa/I3k1YHMR275j8bCEwqo0YI=
+X-Google-Smtp-Source: AGHT+IGszrXHx0KHBmy0iQwD3ICpkbfColejw+97LZhBsXwp+xoAEe4EMP07eMeEcMWmReOlcLiFBg==
+X-Received: by 2002:a05:6512:3a87:b0:52e:7ef1:7c6e with SMTP id 2adb3069b0e04-52ee5429389mr555426e87.51.1721202390445;
+        Wed, 17 Jul 2024 00:46:30 -0700 (PDT)
 Received: from [192.168.50.4] ([82.78.167.171])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427a5edb478sm160478315e9.33.2024.07.17.00.37.41
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427a5e9a809sm160194035e9.28.2024.07.17.00.46.28
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 17 Jul 2024 00:37:42 -0700 (PDT)
-Message-ID: <42216215-4db1-4015-878f-25a7770d44c2@tuxon.dev>
-Date: Wed, 17 Jul 2024 10:37:40 +0300
+        Wed, 17 Jul 2024 00:46:29 -0700 (PDT)
+Message-ID: <40d1bb5b-f8ff-4fdc-a2b3-b51ca8b11c10@tuxon.dev>
+Date: Wed, 17 Jul 2024 10:46:28 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -83,19 +83,16 @@ Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
  Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 References: <20240716103025.1198495-1-claudiu.beznea.uj@bp.renesas.com>
  <20240716103025.1198495-3-claudiu.beznea.uj@bp.renesas.com>
- <TY3PR01MB11346ABDBA306410646D3861A86A22@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <TY3PR01MB11346E71D18A145DA70441CF786A22@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <TY3PR01MB11346ABDBA306410646D3861A86A22@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+In-Reply-To: <TY3PR01MB11346E71D18A145DA70441CF786A22@TY3PR01MB11346.jpnprd01.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 Hi, Biju,
 
-On 16.07.2024 14:00, Biju Das wrote:
+On 16.07.2024 14:07, Biju Das wrote:
 > Hi Claudiu,
-> 
-> Thanks for the patch.
-> 
 > 
 >> -----Original Message-----
 >> From: Claudiu <claudiu.beznea@tuxon.dev>
@@ -130,12 +127,6 @@ On 16.07.2024 14:00, Biju Das wrote:
 >> +	tristate "Renesas VBATTB driver"
 >> +	depends on (ARCH_RZG2L && OF) || COMPILE_TEST
 >> +	select MFD_CORE
-> 
-> There is no MFD calls??  What is the purpose of selecting MFD_CORE??
-
-I missed to remove it from here.
-
-> 
 >> +	help
 >> +	  Select this option to enable Renesas RZ/G3S VBATTB driver which
 >> +	  provides support for the RTC clock, tamper detector and 128B SRAM.
@@ -188,6 +179,26 @@ I missed to remove it from here.
 >> +	ret = pm_runtime_resume_and_get(dev);
 >> +	if (ret)
 >> +		return ret;
+> 
+> Maybe as an optimization drop pm calls and use "devm_clk_get_enabled"
+> instead as it perfectly fits in this scenario??
+
+VBATTB is still part of a PM domain. That needs to be enabled as well.
+pm_runtime_* APIs takes care of both clock enable and power domain on
+operations.
+
+One thing to notice is that on RZ/G3S the VBATTB clock is CRITICAL (thus
+enabled in the probe of the clock driver), the PM domain is always ON (and
+also enabled by clock driver). We can get rid of pm_runtime_* at all for
+RZ/G3S but I think it would be better to have it here as well for future
+platforms and to emphasize from driver that these resources are needed by
+the VBATTB. The same approach is used for  other RZ/G2 drivers that
+declares critical clocks/always-on domains (e.g. dma driver, IA55 driver).
+
+Thank you,
+Claudiu Beznea
+
+> 
 >> +
 >> +	ret = reset_control_deassert(rstc);
 >> +	if (ret)
@@ -218,27 +229,12 @@ I missed to remove it from here.
 >> +static const struct of_device_id vbattb_match[] = {
 >> +	{ .compatible = "renesas,r9a08g045-vbattb" },
 >> +	{ /* sentinel */ },
-> 
-> Drop comma.
-> 
 >> +};
 >> +MODULE_DEVICE_TABLE(of, vbattb_match);
 >> +
 >> +static struct platform_driver vbattb_driver = {
 >> +	.probe = vbattb_probe,
 >> +	.remove_new = vbattb_remove,
-> 
-> Maybe remove canbe replaced with devm_add_action_or_reset()
-> That simplifies probe() aswell??
-
-This approach needs a new structure to keep references to the rstc and dev,
-to be able to handle reset and runtime PM in action function. I wanted to
-avoid adding a new structure.
-
-Thank you for your review,
-Claudiu Beznea
-
-> 
 >> +	.driver = {
 >> +		.name = "renesas-vbattb",
 >> +		.of_match_table = vbattb_match,
