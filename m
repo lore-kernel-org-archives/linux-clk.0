@@ -1,152 +1,231 @@
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC8A280C13
-	for <linux-clk@vger.kernel.org>; Thu, 18 Jul 2024 10:47:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B04F61B86FB;
+	Thu, 18 Jul 2024 10:53:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721299667; cv=none; b=p1LErcMBftUg2fCoT3uXDrZ2AwTMcurzsxIoL+65Hn6yCkfmNKYdWasJZREXEsJXzLeDDmCFI30Ct49JyQzhu0ZOHHzhooHZJ/XgniewaDqCRa+8CmSHAwsOIF9KD+WaL5Ipv8wEoW9PZux0/sSNjwFb8rBpKTFe7XWFhJ0/Oxg=
+	t=1721299994; cv=none; b=RgipHK920mK+LOEj0MUiyA8WmdElmjfIpHMjXx3oNbxNUb2atwhhPYKl0ylClGfnL9PZLLcx5qb5WGzzuX/0Q9HMhL/Jh7WTIuevkj/EnMLjWacXF7B+bXVTaXc2qodwefgfOh2MSiVySGYIUsEZgoToYCNJMqtvzphcIQhbV/0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721299667; c=relaxed/simple;
-	bh=3Y9BAwgP6XIa5xXGWechvJ9kadSZY/VGXziZ+qs5Pxw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MaXmC8pUMXuV2jljdAiYEPHfgddEK+/JV9J1iWRvtgXH0oVuHiAHYdLEsMS7FFfMMNBG2bMK1QTTn/v98/dVhpiKBgc0ZoPxgiHn1xKR4kDDHmCmYNw0+DtQh91cmnerhKkESCh6Or2ALMPYDP8vTzJ72xR+oSEeInrhKuWKYqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eZnm6wK8; arc=none smtp.client-ip=209.85.219.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1721299994; c=relaxed/simple;
+	bh=MtuNKtElwbMYRL6eZCRLlxZgH0OR2KgTnilGOdo2dAc=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=QT126/ox7btpWcdJi1SVRK5eY6lJ33g8bRNXHymQ3U4hDEOzD4ztj79NZcJtnbzNwrPFGDQNc//mn2yG9ziDQ5zmPyuI/yAsjni/FYM+BcEI+n4/iB/5CIGASk6FCmP6cj/E9hXD+EgR+lAn9nDVxnDlF9o9FwKO3PK2OaA51vw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=hCMeiDPf; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eZnm6wK8"
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-dfef5980a69so669856276.3
-        for <linux-clk@vger.kernel.org>; Thu, 18 Jul 2024 03:47:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721299665; x=1721904465; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=EOSrVvddOVQwstUiTu6OLUeFA5g05GRy+eeuqUuQXsU=;
-        b=eZnm6wK8/pUp2ZQnjHhmUD7MqyBfT8ClOiUXIWuYwS03lBOlIEVLfn/pW1vklEa5HZ
-         IkGJ1u1wXUcErw0V+koEGIk9rGUVVG3WaZ0RwN0X5dX1kUE5ec/nfoKcMg1iaUMMVJN7
-         X/RmIvBxTlqo/jYLsAQPTdVuAP2I+i2JGfN8IoYYmG/6xnSpmmUVRHVEF9LHfbP+LG+M
-         KvXkU6uN8pAKQQva8vuuBsUmFbeoxD+/CwbYDNmTxl3q3pxkWsfY89VQLswKXNTgSyGV
-         XTarAB3Br/ABkiF7cr4flfdr1X4O9AjFVSMxPDKRi/V0mDsWVl3nPEOETVzZ/IOmEPSp
-         moWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721299665; x=1721904465;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EOSrVvddOVQwstUiTu6OLUeFA5g05GRy+eeuqUuQXsU=;
-        b=GCNYAi4IVqywXb8RRSwNZWv3dIdkJdqcCV+DWc8T4S6NLdcZEblo8IVeQLTwh5vapd
-         ybDpAaNx+mUhLzPvdFMh19BykVzYuPo25XeXEpOF+oixc6iyTqw0CfeUpgIPGotzwSp8
-         rgVngTA6zN6vVCdQYGI7JsGVnUUIC8ztYGbobvGu9HsAEYXd9ITa7ckPEhG11aQPl6N8
-         7LiPBPlNmuhf3VaIigDKnv2Lov5mo+jAAl6cyEzf4OJnxYTpS7j3+HRbizVvw8diOqOj
-         yAC8OxWC6+MiyuUHGn0NlBPysxikThZjtszsiBSF8msr220yWvn7GrRWOHFBW0P9euMp
-         QM1A==
-X-Forwarded-Encrypted: i=1; AJvYcCVADIBqONo/MwIw6+VeTBQwh1D5ZEZAVDnjReIrKlN1on79Al1cGTvxaWxUP08d2AvFt0F3i4yV2kw/e1NBMV1WyhdcMnCa7Es7
-X-Gm-Message-State: AOJu0YwSudVcNxFbGAct2x9ft02Dj8gfIa0hAsf7OdV9MBodTrq1xqR8
-	w88ZKfKOqQNh5c/RYVaC4keDs8qAABO58ceqXLpsNM9oNjpsLocvsTq44wMgviWwlAtXvHL7BAm
-	fzV7qG4yEQ1JWuyFLtq0Xant7ryHAcy3daqg8TQ==
-X-Google-Smtp-Source: AGHT+IFbyLrhB20glSUg6tXgypStDYxGdybrHC3+jKDTj9v1v//cKeiq2dPFheABaKMOTeT6gcjOht+w9bcejT3MEwY=
-X-Received: by 2002:a05:6902:72b:b0:e03:52c6:b338 with SMTP id
- 3f1490d57ef6-e05ed6e6e7fmr4979440276.19.1721299664718; Thu, 18 Jul 2024
- 03:47:44 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="hCMeiDPf"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240711113239.3063546-1-quic_varada@quicinc.com>
- <20240711113239.3063546-4-quic_varada@quicinc.com> <iwdennlw4njxefulw5e2wofu4pylep65el4hiiso6xqmoaq5fb@i4hrltrn2o6z>
- <ZpjxobF6LZMMN8A9@hu-varada-blr.qualcomm.com>
-In-Reply-To: <ZpjxobF6LZMMN8A9@hu-varada-blr.qualcomm.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Thu, 18 Jul 2024 13:47:32 +0300
-Message-ID: <CAA8EJpqHrgi-AvfxGxwph0MEs0=ALV_7XWoUcSgGTG3vVj62FA@mail.gmail.com>
-Subject: Re: [PATCH v2 3/4] clk: qcom: ipq5332: Use icc-clk for enabling NoC
- related clocks
-To: Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	gregkh@linuxfoundation.org, konrad.dybcio@linaro.org, djakov@kernel.org, 
-	quic_wcheng@quicinc.com, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
-	linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1721299988;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=V+1QsAqW2xA+qMzjOir7Wv2Xl2gPA1X/BCk3htAg/Zw=;
+	b=hCMeiDPf1AmYQ4xI0ADfFBumTuV040UQDaZAuulhj39mAB4IVvS2/lypW/EBQUQgITjIBN
+	olUGkYXNGmxCQFuAwPJ+b9D0A9eSslBWmH+ya8dYXXmR6ex4z3XCGcAqfUwmg783kDldYZ
+	VnIXTFCdy2tJOYO93VFI10nsXEBNacGz1bJwiWuv2t5bTG8skPAbj5cq3HQUbv3EJo3+md
+	vG7RAle5txFznmw0ez+c2rrn6LnXAHeSlpxXdcxGmm0Yt7alxasATIzZi93/3WZQOFKWVh
+	QLvxBfyRbP7aBIfPscqJQd56Th1YAp6IjUucmf+iTKAKWC8kVcNdUlZHYCYCQA==
+Date: Thu, 18 Jul 2024 12:53:07 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
+Cc: Conor Dooley <conor@kernel.org>, mturquette@baylibre.com,
+ sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v2 1/3] dt-bindings: clocks: add binding for
+ voltage-controlled-oscillators
+In-Reply-To: <3178118.zE8UqtGg2D@diego>
+References: <20240715110251.261844-1-heiko@sntech.de>
+ <20240715110251.261844-2-heiko@sntech.de>
+ <20240716-deceiving-saucy-851fb2303c1f@spud> <3178118.zE8UqtGg2D@diego>
+Message-ID: <c60c8c462c6df23c1f1625bce5516525@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On Thu, 18 Jul 2024 at 13:42, Varadarajan Narayanan
-<quic_varada@quicinc.com> wrote:
->
-> On Sat, Jul 13, 2024 at 07:21:29PM +0300, Dmitry Baryshkov wrote:
-> > On Thu, Jul 11, 2024 at 05:02:38PM GMT, Varadarajan Narayanan wrote:
-> > > Use the icc-clk framework to enable few clocks to be able to
-> > > create paths and use the peripherals connected on those NoCs.
-> > >
-> > > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> > > ---
-> > >  drivers/clk/qcom/gcc-ipq5332.c | 36 +++++++++++++++++++++++++++++-----
-> > >  1 file changed, 31 insertions(+), 5 deletions(-)
-> > >
-> > > diff --git a/drivers/clk/qcom/gcc-ipq5332.c b/drivers/clk/qcom/gcc-ipq5332.c
-> > > index f98591148a97..6d7672cae0f7 100644
-> > > --- a/drivers/clk/qcom/gcc-ipq5332.c
-> > > +++ b/drivers/clk/qcom/gcc-ipq5332.c
-> > > @@ -4,12 +4,14 @@
-> > >   */
-> > >
-> > >  #include <linux/clk-provider.h>
-> > > +#include <linux/interconnect-provider.h>
-> > >  #include <linux/mod_devicetable.h>
-> > >  #include <linux/module.h>
-> > >  #include <linux/platform_device.h>
-> > >  #include <linux/regmap.h>
-> > >
-> > >  #include <dt-bindings/clock/qcom,ipq5332-gcc.h>
-> > > +#include <dt-bindings/interconnect/qcom,ipq5332.h>
-> > >
-> > >  #include "clk-alpha-pll.h"
-> > >  #include "clk-branch.h"
-> > > @@ -131,12 +133,14 @@ static struct clk_alpha_pll gpll4_main = {
-> > >                      * (will be added soon), so the clock framework
-> > >                      * disables this source. But some of the clocks
-> > >                      * initialized by boot loaders uses this source. So we
-> > > -                    * need to keep this clock ON. Add the
-> > > -                    * CLK_IGNORE_UNUSED flag so the clock will not be
-> > > -                    * disabled. Once the consumer in kernel is added, we
-> > > -                    * can get rid of this flag.
-> > > +                    * need to keep this clock ON.
-> > > +                    *
-> > > +                    * After initial bootup, when the ICC framework turns
-> > > +                    * off unused paths, as part of the icc-clk dependencies
-> > > +                    * this clock gets disabled resulting in a hang. Marking
-> > > +                    * it as critical to ensure it is not turned off.
-> >
-> > Previous comment was pretty clear: there are missing consumers, the flag
-> > will be removed once they are added. Current comment doesn't make sense.
-> > What is the reason for the device hang if we have all the consumers in
-> > place?
->
-> Earlier, since there were no consumers for this clock, it got
-> disabled via clk_disable_unused() and CLK_IGNORE_UNUSED helped
-> prevent that.
->
-> Now, since this clk is getting used indirectly via icc-clk
-> framework, it doesn't qualify for being disabled by
-> clk_disable_unused(). However, when icc_sync_state is called, if
-> it sees there are no consumers for a path and that path gets
-> disabled, the relevant clocks get disabled and eventually this
-> clock also gets disabled. To avoid this have changed 'flags' from
-> CLK_IGNORE_UNUSED -> CLK_IS_CRITICAL.
+Hello all,
 
-You don't seem to be answering my question: "What is the reason for
-the device hang if we have all the consumers in place?"
-Could you please answer it rather than describing the CCF / icc-clk behaviour?
+On 2024-07-18 11:25, Heiko Stübner wrote:
+> Am Dienstag, 16. Juli 2024, 18:15:08 CEST schrieb Conor Dooley:
+>> On Mon, Jul 15, 2024 at 01:02:49PM +0200, Heiko Stuebner wrote:
+>> > In contrast to fixed clocks that are described as ungateable, boards
+>> > sometimes use additional oscillators for things like PCIe reference
+>> > clocks, that need actual supplies to get enabled and enable-gpios to be
+>> > toggled for them to work.
+>> >
+>> > This adds a binding for such oscillators that are not configurable
+>> > themself, but need to handle supplies for them to work.
+>> >
+>> > In schematics they often can be seen as
+>> >
+>> >          ----------------
+>> > Enable - | 100MHz,3.3V, | - VDD
+>> >          |    3225      |
+>> >    GND - |              | - OUT
+>> >          ----------------
+>> >
+>> > or similar. The enable pin might be separate but can also just be tied
+>> > to the vdd supply, hence it is optional in the binding.
+>> >
+>> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+>> > ---
+>> >  .../bindings/clock/voltage-oscillator.yaml    | 49 +++++++++++++++++++
+>> >  1 file changed, 49 insertions(+)
+>> >  create mode 100644 Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
+>> >
+>> > diff --git a/Documentation/devicetree/bindings/clock/voltage-oscillator.yaml b/Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
+>> > new file mode 100644
+>> > index 0000000000000..8bff6b0fd582e
+>> > --- /dev/null
+>> > +++ b/Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
+>> > @@ -0,0 +1,49 @@
+>> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> > +%YAML 1.2
+>> > +---
+>> > +$id: http://devicetree.org/schemas/clock/voltage-oscillator.yaml#
+>> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> > +
+>> > +title: Voltage controlled oscillator
+>> 
+>> Voltage controlled oscillator? Really? That sounds far too similar to 
+>> a
+>> VCO to me, and the input voltage here (according to the description at
+>> least) does not affect the frequency of oscillation.
+> 
+> That naming was suggested by Stephen in v1 [0] .
+> 
+> Of course the schematics for the board I have only describe it as
+> "100MHz,3.3V,3225" , thumbing through some mouser parts matching that
+> only mentions "supply voltage" in their datasheets but not a dependency
+> between rate and voltage.
+> 
+> [0] 
+> https://lore.kernel.org/linux-arm-kernel/b3c450a94bcb4ad0bc5b3c7ee8712cb8.sboyd@kernel.org/
+> 
+>> Why the dedicated binding, rather than adding a supply and enable-gpio
+>> to the existing "fixed-clock" binding? I suspect that a large portion 
+>> of
+>> "fixed-clock"s actually require a supply that is (effectively)
+>> always-on.
+> 
+> I guess there are three aspects:
+> - I do remember discussions in the past about not extending generic
+>   bindings with device-specific stuff. I think generic power-sequences
+>   were the topic back then, though that might have changed over time?
+> - There are places that describe "fixed-clock" as
+>   "basic fixed-rate clock that cannot gate" [1]
+> - Stephen also suggested a separate binding [2]
+> 
+> With the fixed-clock being sort of the root for everything else on most
+> systems, I opted to leave it alone. I guess if the consenus really is 
+> that
+> this should go there, I can move it, but discussion in v1
+> 
+> Interestingly the fixed clock had a gpios property 10 years ago [3] :-) 
+> .
+> 
+> [1] 
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/clk/clk-fixed-rate.c#n18
+> [2] 
+> https://lore.kernel.org/linux-arm-kernel/68f6dc44a8202fd83792e58aea137632.sboyd@kernel.org/
+> [3] 
+> https://lore.kernel.org/linux-kernel//20140515064420.9521.47383@quantum/T/#t
 
-Are there any actual consumers for GPLL4 at this point? If not, why do
-you want to keep it running? Usually all PLLs are shut down when there
-are no consumers and then restarted when required. This is the
-expected and correct behaviour.
+After finally going through the v1 discussion [4] in detail,
+here are my further thoughts:
 
--- 
-With best wishes
-Dmitry
+- I agree with dropping the Diodes stuff, [5] because I see
+   no need for that at this point;  though, am I missing
+   something, where are they actually used?
+
+- I agree that "enable-gpios" and "vdd-supply" should be
+   required in the binding, [5] because that's the basis for
+   something to be actually represented this way
+
+- I agree that it should be better not to touch fixed-clock
+   at this point, simply because it's used in very many places,
+   and because in this case we need more than it requires (see
+   the bullet point above)
+
+- As I wrote already, [6] I highly disagree with this being
+   called voltage-controlled oscillator (VCO), [7] simply
+   because it isn't a VCO, but a clock that can be gated;
+   though, looking forward to what the last bullet point
+   asks to be clarified further
+
+- I still think that gated-clock is the best choice for the
+   name, because it uses "clock" that's used throughout the
+   entire codebase, and uses "gated" to reflect the nature
+   of the clock generator
+
+- Maybe we could actually use fixed-gated-clock as the name,
+   which would make more sense from the stanpoint of possibly
+   merging it into fixed-clock at some point, but I'd like
+   to hear first what's actually going on with the Diodes
+   stuff that was deleted in v2, which I already asked about
+   in the first bullet point
+
+[4] 
+https://lore.kernel.org/linux-rockchip/20240709123121.1452394-1-heiko@sntech.de/T/#u
+[5] 
+https://lore.kernel.org/linux-rockchip/2e5852b9e94b9a8d0261ce7ad79f4329.sboyd@kernel.org/
+[6] 
+https://lore.kernel.org/linux-rockchip/ec84dc37e2c421ee6d31294e08392d57@manjaro.org/
+[7] 
+https://lore.kernel.org/linux-rockchip/b3c450a94bcb4ad0bc5b3c7ee8712cb8.sboyd@kernel.org/
+
+>> > +
+>> > +maintainers:
+>> > +  - Heiko Stuebner <heiko@sntech.de>
+>> > +
+>> > +properties:
+>> > +  compatible:
+>> > +    const: voltage-oscillator
+>> > +
+>> > +  "#clock-cells":
+>> > +    const: 0
+>> > +
+>> > +  clock-frequency: true
+>> > +
+>> > +  clock-output-names:
+>> > +    maxItems: 1
+>> > +
+>> > +  enable-gpios:
+>> > +    description:
+>> > +      Contains a single GPIO specifier for the GPIO that enables and disables
+>> > +      the oscillator.
+>> > +    maxItems: 1
+>> > +
+>> > +  vdd-supply:
+>> > +    description: handle of the regulator that provides the supply voltage
+>> > +
+>> > +required:
+>> > +  - compatible
+>> > +  - "#clock-cells"
+>> > +  - clock-frequency
+>> > +  - vdd-supply
+>> > +
+>> > +additionalProperties: false
+>> > +
+>> > +examples:
+>> > +  - |
+>> > +    voltage-oscillator {
+>> > +      compatible = "voltage-oscillator";
+>> > +      #clock-cells = <0>;
+>> > +      clock-frequency = <1000000000>;
+>> > +      vdd-supply = <&reg_vdd>;
+>> > +    };
+>> > +...
