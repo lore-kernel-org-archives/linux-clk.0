@@ -1,117 +1,102 @@
-Received: from mail-oo1-f49.google.com (mail-oo1-f49.google.com [209.85.161.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E22D61B86F1;
-	Thu, 18 Jul 2024 07:52:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C7D336B17;
+	Thu, 18 Jul 2024 07:58:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721289143; cv=none; b=DTtymNZNHHtUAiPiptIXBTO0N0QT/rtiXNd5PaW9q70ot+vnTZ9I7NmkEpA9Rgre9DZAzabXv3Zoh6ww3oGb7tn1Ep4IZK1RveMsWza5Usql70YoZQbIUbVCG4P3evNHwzJ4V8kwjk0Mth7yOxAx0uVHsHHSIccMQZU9XLTApG4=
+	t=1721289540; cv=none; b=TvmGjM1KY7Xt1V3q673uDoTirlvLbp9LEXB09qYYgT5rvqUjecD93oVLA1p14mNtE8yXz2SIhuGOjknPFDdVlEnO2hFrZWeikVNXL8kpXgzu5by3qHm4SegtzIsI0f0mlYzOom7cOFwhQw/NcXhq7Nhfd4rJrZvxhi1+mDp5sf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721289143; c=relaxed/simple;
-	bh=DiV0p5o4n1qcmrSq9TJa++YItZSe+uOXJNWLTngzDTs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lfk12w64nn+iofFdBE/LJbFaE8FoN+Mas29vv4UWS1XH3m2BihkHUtRNFwLoJwV6bYy/f3jd7RD7gyfhNYzLN/XySWTQayyELskhlKynYtgQTy4UWHIAe4hugqPiGVNHFHVOsnWzNN/dCM4aQSNQvSp0ynqPDqaG4DTbFJ4PrKU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LdlbP7h4; arc=none smtp.client-ip=209.85.161.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1721289540; c=relaxed/simple;
+	bh=XMwFf7Wf1Zg2/2hGbaEOkR0HLHQZ2nU+Tgh5Y3+wV/s=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=Y6vbF9zOyK4/lAA5vj2eWeFUSYVEosKrl+4lt5R/m4yDedZOu/EwJXvTzEqXeIvbLIZzfaNDUavlN/HG4bmmRdYzqmwdIzmHO2QAl08U1rdKQrirnHghJvVrJf1F/9NNsJPU4++Z0OJTvtzYDCZvYzo/tODKdtSGIugsqBPEjwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=isS/dPJP; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LdlbP7h4"
-Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5c669a0b5d1so244961eaf.3;
-        Thu, 18 Jul 2024 00:52:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721289141; x=1721893941; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=HeudbiUTX343qNiEURPI5YAOVpjxRDTmOUF5CU1l3Yg=;
-        b=LdlbP7h4ojVhNqvV54h1lhiB01lnQHVM8tLTtEExrNXI6oPZl/tbaLSa08jDrc74cH
-         wGi46MwUGmkvN6yx/wa8W0FPyhdng63d+M5W9XhFut89/CuZ2jyFAQ03wSQCPWyUT5tR
-         WejUK9NPHbUy0SgP4Ylg6zNJAeOpQulup8xPl4L3iI4TwNg1+w+LoRbrXYtD/ovUGXG+
-         x2zRv1knWke3eYv+iiiekOYEJxM9mwRmUdG5DedVd/sXC4/MmJcECM1/coZprVXlJvEA
-         nFhIEcRXnSgOJyWwWZ0h+MblyCPraMLDTVWy4G0kVw0e+bRyCNPp5YbL2bYijrAQ0/jB
-         6mrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721289141; x=1721893941;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HeudbiUTX343qNiEURPI5YAOVpjxRDTmOUF5CU1l3Yg=;
-        b=M8we5Mx63qwNLmWCjZE2oMb4jsWa6TroVZ3hMDqrKEsjgNnSJwLQPInRyi3BJxOHab
-         hhBMlCno95aQPXaGooKNV2YAIjOygAHOMYlE+dlDENBk4gWaGxJcz0XqqNSzrFFNhydJ
-         6trIvulDyksh+hu8HQmzTjm9Ar2VJWNDL9ec8dBoX2oxwEZFktQJ3SmAehyFGntZYb5L
-         ZDN3swI/GKDhtIbp062DCnxqoK3rt9k3+C5VUCHtrguq5HGRQNNa14Vcog1enYNk4Nuh
-         tgU2rGSE4Ta0LcmuvWCO5Nn61OE8GncHFnX+e71jY4dWV0C3BhiaPlwEpGLzMBQxmqPW
-         SxRg==
-X-Forwarded-Encrypted: i=1; AJvYcCWt+0wwHHnaEapZocPQZ+4mYpgSMo0oZIbaEGBKErYcB0oXt76FS33CTgK5vGpXautD5TUi16gs/qDHueYMSywpQmLmO4tlRJyOmM8IZaWev2Y/wrRJYhC0HApJCT9O14XesgXv5XExrQX8OBLhOp+I2r/d8WRPZTgNXlhWHCtTNHtf+Q==
-X-Gm-Message-State: AOJu0Yzo7jqSZR3rmY9RU/4HfmGJA9s6Qwk3uxVFw8Ndb9mqUfAllVJ5
-	Yehrgb1pfrNgjxoqmzI9xXkXQ6ojMWIPhqKBBaLTAhSKYb1wA7Gv+OuOKqt5qf22365HB6TdwnP
-	zmLVqTwG4pgpi5tuEfatDMdtmBxU=
-X-Google-Smtp-Source: AGHT+IElzIEx7wtVYpF6wTHWDFLynANwFo8IX6K7B+fK3JlWZ76v8o9Oz+rqmBzF/VNzFntcaCU7zaa6RIubG5h0QfU=
-X-Received: by 2002:a05:6820:270f:b0:5cd:2e7:cc6 with SMTP id
- 006d021491bc7-5d41cade049mr4827457eaf.8.1721289140922; Thu, 18 Jul 2024
- 00:52:20 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="isS/dPJP"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240715110251.261844-1-heiko@sntech.de> <20240715110251.261844-4-heiko@sntech.de>
- <CANAwSgS_ZaEkt5-kKud9OwdN4za+xvW5SoBr34EmOdU2OQJWnw@mail.gmail.com> <8a16eb6a29a39719ba4e4c43bae3b6ec@manjaro.org>
-In-Reply-To: <8a16eb6a29a39719ba4e4c43bae3b6ec@manjaro.org>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Thu, 18 Jul 2024 13:22:03 +0530
-Message-ID: <CANAwSgRZR8cM9qDD0Xn5ims4GX+PNMQ1+PEMBDQtZq2GxFd6Rw@mail.gmail.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1721289536;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Mtt1ez6V0zk2MdNMt3EH626hc/PXnX2HobUacwKbti8=;
+	b=isS/dPJPsmGvct89HID4hfB8oq+ywJh8gDFL+VPEXkTdtceBFz7hmwbIek3nF0SHT7TmTu
+	WMxQqjAEUHsEJj/tmEJHePCo24CBXDaMBs+IsseCwXs7m29oz8B/EKnE5a8gC3+KrSdqNt
+	IO3zZr6Uon23rWJY9jF/qEpPVJ275go1ss34PqnNf+JcRS5wf02uwJ1TkD3WQWzlNxNR9N
+	seUrN4e4EGOxtb3SGpuulLiHSGL5noSabwfXNUxyAt8hCVT+1aiyS23U/Qu5zXSHOm8xqd
+	nEflpghE1dKnt92kLmy7m6T1QI3e8mI0EdUT+0MQnEAaosS2aD9Bqw45OPj/GQ==
+Date: Thu, 18 Jul 2024 09:58:56 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Anand Moon <linux.amoon@gmail.com>
+Cc: Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com,
+ sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org
 Subject: Re: [PATCH v2 3/3] arm64: dts: rockchip: fix the pcie refclock
  oscillator on Rock 5 ITX
-To: Dragan Simic <dsimic@manjaro.org>
-Cc: Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com, sboyd@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CANAwSgRZR8cM9qDD0Xn5ims4GX+PNMQ1+PEMBDQtZq2GxFd6Rw@mail.gmail.com>
+References: <20240715110251.261844-1-heiko@sntech.de>
+ <20240715110251.261844-4-heiko@sntech.de>
+ <CANAwSgS_ZaEkt5-kKud9OwdN4za+xvW5SoBr34EmOdU2OQJWnw@mail.gmail.com>
+ <8a16eb6a29a39719ba4e4c43bae3b6ec@manjaro.org>
+ <CANAwSgRZR8cM9qDD0Xn5ims4GX+PNMQ1+PEMBDQtZq2GxFd6Rw@mail.gmail.com>
+Message-ID: <72b84761ef93c1d4d6d61b16ef1bb1ce@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-Hi Dragan,
+On 2024-07-18 09:52, Anand Moon wrote:
+> On Thu, 18 Jul 2024 at 13:02, Dragan Simic <dsimic@manjaro.org> wrote:
+>> On 2024-07-18 09:26, Anand Moon wrote:
+>> > On Mon, 15 Jul 2024 at 16:35, Heiko Stuebner <heiko@sntech.de> wrote:
+>> >>
+>> >> The Rock 5 ITX uses two PCIe controllers to drive both a M.2 slot and
+>> >> its
+>> >> SATA controller with 2 lanes each. The supply for the refclk
+>> >> oscillator is
+>> >> the same that supplies the M.2 slot, but the SATA controller port is
+>> >> supplied by a different rail.
+>> >>
+>> >> This leads to the effect that if the PCIe30x4 controller for the M.2
+>> >> probes first, everything works normally. But if the PCIe30x2
+>> >> controller
+>> >> that is connected to the SATA controller probes first, it will hang on
+>> >> the first DBI read as nothing will have enabled the refclock before.
+>> >
+>> > I just checked the rk3588-rock-5-itx.dts in the linux-next.
+>> > You have not enabled sata0 and sata2, which might be the problem
+>> > for the SATA controller not getting initialized.
+>> 
+>> Rock 5 ITX doesn't use RK5588's built-in SATA interfaces, so that's
+>> fine.
+>> Please have a look at the board schematic, it uses a separate PCI
+>> Express
+>> SATA controller for its four SATA ports.
+>> 
+> yes, But I am referring to sata node not enabled which enable
+> the PHY_TYPE_SATA.
+> 
+> see rk3588-coolpi-cm5-evb.dts and rk3588-edgeble-neu6a-io.dtsi
+> rk3588-quartzpro64.dts
+> which have sata port on board.
+> 
+> &sata0 {
+>         status = "okay";
+> };
 
-On Thu, 18 Jul 2024 at 13:02, Dragan Simic <dsimic@manjaro.org> wrote:
->
-> Hello Anand,
->
-> On 2024-07-18 09:26, Anand Moon wrote:
-> > On Mon, 15 Jul 2024 at 16:35, Heiko Stuebner <heiko@sntech.de> wrote:
-> >>
-> >> The Rock 5 ITX uses two PCIe controllers to drive both a M.2 slot and
-> >> its
-> >> SATA controller with 2 lanes each. The supply for the refclk
-> >> oscillator is
-> >> the same that supplies the M.2 slot, but the SATA controller port is
-> >> supplied by a different rail.
-> >>
-> >> This leads to the effect that if the PCIe30x4 controller for the M.2
-> >> probes first, everything works normally. But if the PCIe30x2
-> >> controller
-> >> that is connected to the SATA controller probes first, it will hang on
-> >> the first DBI read as nothing will have enabled the refclock before.
-> >
-> > I just checked the rk3588-rock-5-itx.dts in the linux-next.
-> > You have not enabled sata0 and sata2, which might be the problem
-> > for the SATA controller not getting initialized.
->
-> Rock 5 ITX doesn't use RK5588's built-in SATA interfaces, so that's
-> fine.
-> Please have a look at the board schematic, it uses a separate PCI
-> Express
-> SATA controller for its four SATA ports.
->
-yes, But I am referring to sata node not enabled which enable the PHY_TYPE_SATA.
-
-see rk3588-coolpi-cm5-evb.dts and rk3588-edgeble-neu6a-io.dtsi
-rk3588-quartzpro64.dts
-which have sata port on board.
-
-&sata0 {
-        status = "okay";
-};
-
-Thanks
--Anand
+QuartzPro64, as an example, uses RK3588's built-in SATA interfaces,
+so it enables sata0 in its board dts.  Rock 5 ITX doesn't do that,
+as I already described.
