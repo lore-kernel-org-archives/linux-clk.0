@@ -1,326 +1,284 @@
-Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47364639;
-	Thu, 18 Jul 2024 11:02:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93875639;
+	Thu, 18 Jul 2024 11:31:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721300573; cv=none; b=hmlo7tBiSmcU0v36cKLlGuync8ny10y9iagAyJYtngpAGTWmJFmIfdLW3VkQkzDJ+y5nb7T9MUp/kUDlwTev0JudrhzEEAETB0b+ViZA1aJy8tn2ns2pOIU8H8ZxPDsQKJ1JKL8fB7vJ/z4tDkmZJ1gUdhK/gI4Zb+L0PPrTbFc=
+	t=1721302267; cv=none; b=GJaFnQZ/sXLEMpk/m79eqIcsRdL+2az1ZZB4n3yhxV+U77Ksuj36jvhRpizKdHLFB6za2pdrhNIOI5PdbT2wFKrKfaTOuMk5zQhNp208X/yXl5pSg1pXQ6dFPOTp9jGhxCgLdIQ/NjBLcRu2fAO2XDz9xE9gma5X3Al477fe3po=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721300573; c=relaxed/simple;
-	bh=X/HQm62ChmQqbf7vNuPH4/wMzrEn5xIr+iFUFrsKV1I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Zt2S/aGQ+QDYfW2oOCA/z+DphOUaZu4R+H88mUMD2nW4U21c3/vcZR0WKaXqX64ePLInzCPYD9O/qhHdY8L66J0ebbf6JKFrFczHwRbOZju3gFrE4K50ynM2edV1UmfPib18kdDWq9KmmJeX5NIW+6eZ5DV2l8Pok+xZR/3wi1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=qQxVXHas; arc=none smtp.client-ip=45.89.224.132
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sberdevices.ru
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="qQxVXHas"
-Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
-	by mx1.sberdevices.ru (Postfix) with ESMTP id 80F4412000C;
-	Thu, 18 Jul 2024 14:02:44 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 80F4412000C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
-	s=mail; t=1721300564;
-	bh=ZDQSOG3k8ZUK0B9MteuPszxC5L5ry7AyEP36vu1Itk4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
-	b=qQxVXHasMXN8r6lXaxzAK9/pPEFCfPJsyUPD988Ue1spPsgnoOsWmqwvdC1ftnMOb
-	 dsxjiA4h04AvZ3Ixut7YqRJ6sNrxLZKufHxHAqBYzkHiibPzelpEDt6tep00Y344Dk
-	 JwRqcyheNhncy7xR3EGERiFALa9duR9cWrcDKtFXPoVj2yrjuzIboe7H8zQdM1s/dQ
-	 fNlfAWIy1/6ZfTRXvvkHQew4ELq/jpTXycmZQFT8wULxZwOXy7syS8YlOxbdGo+aiJ
-	 WsapW2y8e3qv5qnuk84AZukVVnXAwnBayXUUAIGwRoETgnmU7feV8PfV++P0kdK+QQ
-	 xtfn0sN5GJBgg==
-Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.sberdevices.ru (Postfix) with ESMTPS;
-	Thu, 18 Jul 2024 14:02:44 +0300 (MSK)
-Received: from [172.28.192.11] (100.64.160.123) by
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.40; Thu, 18 Jul 2024 14:02:43 +0300
-Message-ID: <f5bc9590-f37e-491e-9978-c1eab8914c30@salutedevices.com>
-Date: Thu, 18 Jul 2024 14:01:28 +0300
+	s=arc-20240116; t=1721302267; c=relaxed/simple;
+	bh=+VCRrBTFKNdz5EkxjA9kfRiSj/jzGVTeICKcDIP6uFU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=q7jxHHM4qcRvxRP5+uoeVlYpbZzH//ldeYt6xdfhGJOgxXjAqgUV0VO5lsKesdrN4hurDNQ4GueT9dJ0Dm1ncuxhkDhi3GinImUSEDmNawhyw4gu4iZ1CZvWdONWnz4J0DiFCSAkB1lDsRQcJrl/GsnEsjMq/AmIVN4cdvu56mI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Received: from i5e860d09.versanet.de ([94.134.13.9] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sUPLe-0004Fb-Er; Thu, 18 Jul 2024 13:30:58 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Dragan Simic <dsimic@manjaro.org>
+Cc: Conor Dooley <conor@kernel.org>, mturquette@baylibre.com,
+ sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org
+Subject:
+ Re: [PATCH v2 1/3] dt-bindings: clocks: add binding for
+ voltage-controlled-oscillators
+Date: Thu, 18 Jul 2024 13:30:57 +0200
+Message-ID: <30200583.43St1lv6Oq@diego>
+In-Reply-To: <c60c8c462c6df23c1f1625bce5516525@manjaro.org>
+References:
+ <20240715110251.261844-1-heiko@sntech.de> <3178118.zE8UqtGg2D@diego>
+ <c60c8c462c6df23c1f1625bce5516525@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/8] reset: amlogic: convert driver to regmap
-To: Jerome Brunet <jbrunet@baylibre.com>
-CC: Philipp Zabel <p.zabel@pengutronix.de>, Stephen Boyd <sboyd@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>, <linux-kernel@vger.kernel.org>,
-	<linux-amlogic@lists.infradead.org>, <linux-clk@vger.kernel.org>
-References: <20240710162526.2341399-1-jbrunet@baylibre.com>
- <20240710162526.2341399-2-jbrunet@baylibre.com>
- <b12ac6b2-cb46-4410-9846-86ed4c3aea1f@salutedevices.com>
- <1jv813makr.fsf@starbuckisacylon.baylibre.com>
-Content-Language: en-US
-From: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-In-Reply-To: <1jv813makr.fsf@starbuckisacylon.baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) To
- p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
-X-KSMG-Rule-ID: 10
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 186588 [Jul 18 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: YVDakinevich@sberdevices.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 24 0.3.24 186c4d603b899ccfd4883d230c53f273b80e467f, {Tracking_smtp_not_equal_from}, {Tracking_from_domain_doesnt_match_to}, FromAlignment: n, {Tracking_smtp_domain_mismatch}, {Tracking_smtp_domain_2level_mismatch}, ApMailHostAddress: 100.64.160.123
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean
-X-KSMG-LinksScanning: Clean
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/07/18 08:29:00 #26061289
-X-KSMG-AntiVirus-Status: Clean, skipped
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+
+Hi Dragan,
+
+Am Donnerstag, 18. Juli 2024, 12:53:07 CEST schrieb Dragan Simic:
+> On 2024-07-18 11:25, Heiko St=FCbner wrote:
+> > Am Dienstag, 16. Juli 2024, 18:15:08 CEST schrieb Conor Dooley:
+> >> On Mon, Jul 15, 2024 at 01:02:49PM +0200, Heiko Stuebner wrote:
+> >> > In contrast to fixed clocks that are described as ungateable, boards
+> >> > sometimes use additional oscillators for things like PCIe reference
+> >> > clocks, that need actual supplies to get enabled and enable-gpios to=
+ be
+> >> > toggled for them to work.
+> >> >
+> >> > This adds a binding for such oscillators that are not configurable
+> >> > themself, but need to handle supplies for them to work.
+> >> >
+> >> > In schematics they often can be seen as
+> >> >
+> >> >          ----------------
+> >> > Enable - | 100MHz,3.3V, | - VDD
+> >> >          |    3225      |
+> >> >    GND - |              | - OUT
+> >> >          ----------------
+> >> >
+> >> > or similar. The enable pin might be separate but can also just be ti=
+ed
+> >> > to the vdd supply, hence it is optional in the binding.
+> >> >
+> >> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> >> > ---
+> >> >  .../bindings/clock/voltage-oscillator.yaml    | 49 ++++++++++++++++=
++++
+> >> >  1 file changed, 49 insertions(+)
+> >> >  create mode 100644 Documentation/devicetree/bindings/clock/voltage-=
+oscillator.yaml
+> >> >
+> >> > diff --git a/Documentation/devicetree/bindings/clock/voltage-oscilla=
+tor.yaml b/Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
+> >> > new file mode 100644
+> >> > index 0000000000000..8bff6b0fd582e
+> >> > --- /dev/null
+> >> > +++ b/Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
+> >> > @@ -0,0 +1,49 @@
+> >> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> >> > +%YAML 1.2
+> >> > +---
+> >> > +$id: http://devicetree.org/schemas/clock/voltage-oscillator.yaml#
+> >> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> >> > +
+> >> > +title: Voltage controlled oscillator
+> >>=20
+> >> Voltage controlled oscillator? Really? That sounds far too similar to=
+=20
+> >> a
+> >> VCO to me, and the input voltage here (according to the description at
+> >> least) does not affect the frequency of oscillation.
+> >=20
+> > That naming was suggested by Stephen in v1 [0] .
+> >=20
+> > Of course the schematics for the board I have only describe it as
+> > "100MHz,3.3V,3225" , thumbing through some mouser parts matching that
+> > only mentions "supply voltage" in their datasheets but not a dependency
+> > between rate and voltage.
+> >=20
+> > [0]=20
+> > https://lore.kernel.org/linux-arm-kernel/b3c450a94bcb4ad0bc5b3c7ee8712c=
+b8.sboyd@kernel.org/
+> >=20
+> >> Why the dedicated binding, rather than adding a supply and enable-gpio
+> >> to the existing "fixed-clock" binding? I suspect that a large portion=
+=20
+> >> of
+> >> "fixed-clock"s actually require a supply that is (effectively)
+> >> always-on.
+> >=20
+> > I guess there are three aspects:
+> > - I do remember discussions in the past about not extending generic
+> >   bindings with device-specific stuff. I think generic power-sequences
+> >   were the topic back then, though that might have changed over time?
+> > - There are places that describe "fixed-clock" as
+> >   "basic fixed-rate clock that cannot gate" [1]
+> > - Stephen also suggested a separate binding [2]
+> >=20
+> > With the fixed-clock being sort of the root for everything else on most
+> > systems, I opted to leave it alone. I guess if the consenus really is=20
+> > that
+> > this should go there, I can move it, but discussion in v1
+> >=20
+> > Interestingly the fixed clock had a gpios property 10 years ago [3] :-)=
+=20
+> > .
+> >=20
+> > [1]=20
+> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
+/drivers/clk/clk-fixed-rate.c#n18
+> > [2]=20
+> > https://lore.kernel.org/linux-arm-kernel/68f6dc44a8202fd83792e58aea1376=
+32.sboyd@kernel.org/
+> > [3]=20
+> > https://lore.kernel.org/linux-kernel//20140515064420.9521.47383@quantum=
+/T/#t
+>=20
+> After finally going through the v1 discussion [4] in detail,
+> here are my further thoughts:
+>=20
+> - I agree with dropping the Diodes stuff, [5] because I see
+>    no need for that at this point;  though, am I missing
+>    something, where are they actually used?
+
+On the Rock5 ITX that 100MHz clock comes the one single oscillator thing.
+
+The Diodes parts are not root sources for their clocks but instead sort
+PLLs or something, though their manual describes them as
+"clock generator supporting PCI Express and Ethernet requirements" [8]
+
+So they generate the 100MHz (frequency actually is
+selected by input pins of the chip) from a separate 25MHz source clock.
+
+One example are the Theobroma/Cherry embedded boards changed in v1 where
+they currently are described via existing generic things (no schematics).
+
+Another user is the rk3568-rock3b for example, where the diodes part
+is enabled by the same rail as the port itself, so in contrast to the
+Rock 5 ITX, it works "by accident" on the rock 3b [9]
+
+
+The interesting part of the Diodes ICs is that they actually allow
+configuration of the generated frequency via their S0 + S1 pins,
+though they might be statically set in the board layout without
+being user configurable. (Rock3b does it this way for example)
+
+
+> - I agree that "enable-gpios" and "vdd-supply" should be
+>    required in the binding, [5] because that's the basis for
+>    something to be actually represented this way
+
+I would only require the vdd supply though.
+
+On the Rock 5 ITX, the chip does have an enable-gpio input, but that is
+tied directly to the voltage rail and is not user controllable.
+
+
+> - I agree that it should be better not to touch fixed-clock
+>    at this point, simply because it's used in very many places,
+>    and because in this case we need more than it requires (see
+>    the bullet point above)
+>=20
+> - As I wrote already, [6] I highly disagree with this being
+>    called voltage-controlled oscillator (VCO), [7] simply
+>    because it isn't a VCO, but a clock that can be gated;
+>    though, looking forward to what the last bullet point
+>    asks to be clarified further
+>=20
+> - I still think that gated-clock is the best choice for the
+>    name, because it uses "clock" that's used throughout the
+>    entire codebase, and uses "gated" to reflect the nature
+>    of the clock generator
+
+"gated-oscillator" perhaps?=20
+
+This would make it more explicit that we're talking about a root
+for clock signals. "gated-clock" can be anything, in the middle
+of a clock tree. Having a very generic name, also invites misuse.
+
+
+> - Maybe we could actually use fixed-gated-clock as the name,
+>    which would make more sense from the stanpoint of possibly
+>    merging it into fixed-clock at some point, but I'd like
+>    to hear first what's actually going on with the Diodes
+>    stuff that was deleted in v2, which I already asked about
+>    in the first bullet point
+>=20
+> [4]=20
+> https://lore.kernel.org/linux-rockchip/20240709123121.1452394-1-heiko@snt=
+ech.de/T/#u
+> [5]=20
+> https://lore.kernel.org/linux-rockchip/2e5852b9e94b9a8d0261ce7ad79f4329.s=
+boyd@kernel.org/
+> [6]=20
+> https://lore.kernel.org/linux-rockchip/ec84dc37e2c421ee6d31294e08392d57@m=
+anjaro.org/
+> [7]=20
+> https://lore.kernel.org/linux-rockchip/b3c450a94bcb4ad0bc5b3c7ee8712cb8.s=
+boyd@kernel.org/
+
+[8] https://www.diodes.com/assets/Datasheets/PI6C557-03.pdf
+[9] https://dl.radxa.com/rock3/docs/hw/3b/Radxa_ROCK_3B_V1.51_SCH.pdf
+    page 31, bottom left of the page
+
+
+> >> > +
+> >> > +maintainers:
+> >> > +  - Heiko Stuebner <heiko@sntech.de>
+> >> > +
+> >> > +properties:
+> >> > +  compatible:
+> >> > +    const: voltage-oscillator
+> >> > +
+> >> > +  "#clock-cells":
+> >> > +    const: 0
+> >> > +
+> >> > +  clock-frequency: true
+> >> > +
+> >> > +  clock-output-names:
+> >> > +    maxItems: 1
+> >> > +
+> >> > +  enable-gpios:
+> >> > +    description:
+> >> > +      Contains a single GPIO specifier for the GPIO that enables an=
+d disables
+> >> > +      the oscillator.
+> >> > +    maxItems: 1
+> >> > +
+> >> > +  vdd-supply:
+> >> > +    description: handle of the regulator that provides the supply v=
+oltage
+> >> > +
+> >> > +required:
+> >> > +  - compatible
+> >> > +  - "#clock-cells"
+> >> > +  - clock-frequency
+> >> > +  - vdd-supply
+> >> > +
+> >> > +additionalProperties: false
+> >> > +
+> >> > +examples:
+> >> > +  - |
+> >> > +    voltage-oscillator {
+> >> > +      compatible =3D "voltage-oscillator";
+> >> > +      #clock-cells =3D <0>;
+> >> > +      clock-frequency =3D <1000000000>;
+> >> > +      vdd-supply =3D <&reg_vdd>;
+> >> > +    };
+> >> > +...
+>=20
 
 
 
-On 7/18/24 10:19, Jerome Brunet wrote:
-> On Thu 18 Jul 2024 at 05:39, Jan Dakinevich <jan.dakinevich@salutedevices.com> wrote:
-> 
->> On 7/10/24 19:25, Jerome Brunet wrote:
->>> To allow using the same driver for the main reset controller and the
->>> auxiliary ones embedded in the clock controllers, convert the
->>> the Amlogic reset driver to regmap.
->>>
->>> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
->>> ---
->>>  drivers/reset/reset-meson.c | 80 ++++++++++++++++++++-----------------
->>>  1 file changed, 44 insertions(+), 36 deletions(-)
->>>
->>> diff --git a/drivers/reset/reset-meson.c b/drivers/reset/reset-meson.c
->>> index f78be97898bc..8f3d6e9df235 100644
->>> --- a/drivers/reset/reset-meson.c
->>> +++ b/drivers/reset/reset-meson.c
->>> @@ -11,36 +11,44 @@
->>>  #include <linux/of.h>
->>>  #include <linux/module.h>
->>>  #include <linux/platform_device.h>
->>> +#include <linux/regmap.h>
->>>  #include <linux/reset-controller.h>
->>>  #include <linux/slab.h>
->>>  #include <linux/types.h>
->>>  
->>> -#define BITS_PER_REG	32
->>> -
->>>  struct meson_reset_param {
->>>  	int reg_count;
->>>  	int level_offset;
->>>  };
->>>  
->>>  struct meson_reset {
->>> -	void __iomem *reg_base;
->>>  	const struct meson_reset_param *param;
->>>  	struct reset_controller_dev rcdev;
->>> -	spinlock_t lock;
->>> +	struct regmap *map;
->>>  };
->>>  
->>> +static void meson_reset_offset_and_bit(struct meson_reset *data,
->>> +				       unsigned long id,
->>> +				       unsigned int *offset,
->>> +				       unsigned int *bit)
->>> +{
->>> +	unsigned int stride = regmap_get_reg_stride(data->map);
->>> +
->>> +	*offset = (id / (stride * BITS_PER_BYTE)) * stride;
->>> +	*bit = id % (stride * BITS_PER_BYTE);
->>> +}
->>> +
->>>  static int meson_reset_reset(struct reset_controller_dev *rcdev,
->>> -			      unsigned long id)
->>> +			     unsigned long id)
->>>  {
->>>  	struct meson_reset *data =
->>>  		container_of(rcdev, struct meson_reset, rcdev);
->>> -	unsigned int bank = id / BITS_PER_REG;
->>> -	unsigned int offset = id % BITS_PER_REG;
->>> -	void __iomem *reg_addr = data->reg_base + (bank << 2);
->>> +	unsigned int offset, bit;
->>>  
->>> -	writel(BIT(offset), reg_addr);
->>> +	meson_reset_offset_and_bit(data, id, &offset, &bit);
->>>  
->>> -	return 0;
->>> +	return regmap_update_bits(data->map, offset,
->>> +				  BIT(bit), BIT(bit));
->>
->> regmap_update_bits() is not equal to writel(), I suppose regmap_write()
->> should be here.
->>
->> I'm still under testing, but I see unexpected behavior on A1 SoC:
->>
->> [    1.482446] Call trace:
->> [    1.484860]  dump_backtrace+0x94/0xec
->> [    1.488482]  show_stack+0x18/0x24
->> [    1.491754]  dump_stack_lvl+0x78/0x90
->> [    1.495377]  dump_stack+0x18/0x24
->> [    1.498654]  __report_bad_irq+0x38/0xe4
->> [    1.502453]  note_interrupt+0x324/0x374
->> [    1.506244]  handle_irq_event+0x9c/0xac
->> [    1.510039]  handle_fasteoi_irq+0xa4/0x238
->> [    1.514093]  generic_handle_domain_irq+0x2c/0x44
->> [    1.518664]  gic_handle_irq+0x40/0xc4
->> [    1.522287]  call_on_irq_stack+0x24/0x4c
->> [    1.526168]  do_interrupt_handler+0x80/0x84
->> [    1.530308]  el1_interrupt+0x34/0x68
->> [    1.533844]  el1h_64_irq_handler+0x18/0x24
->> [    1.537898]  el1h_64_irq+0x64/0x68
->> [    1.541262]  default_idle_call+0x28/0x3c
->> [    1.545143]  do_idle+0x208/0x260
->> [    1.548334]  cpu_startup_entry+0x38/0x3c
->> [    1.552220]  kernel_init+0x0/0x1dc
->> [    1.555579]  start_kernel+0x5ac/0x6f0
->> [    1.559206]  __primary_switched+0x80/0x88
-> 
-> That stack trace is not helping
-> >>
->>
->> and using of regmap_write() (apparently) fixes it.
-> 
-> Nor does that conclusion.
-> > It is perfectly possible I have made mistake somewhere (I have already
-> fixed one in v2), but sending incomplete report like this, with
-> unargumented conclusion is just noise in the end.
-> 
-> No, there is no situation in which `regmap_write` would solve a problem
-> with `regmap_update_bits`.
-> 
 
-What is the default regs' value of this reset controller? The doc that I
-have doesn't clearly specifies it, but it tells that "the reset will
-auto-cover to 0 by HW". However pr_info() say that there is 0xffffffff
-before write (I am talking about A1).
-
-Also we know, that reset is triggered by writing 1 to specific bit. So,
-what will happen if 1 will be written where we did not intend to write it?
-
-> Either send a full analysis of the problem you found, if you did one, or
-> at least send the full dump, explaining that you don't know what is
-> happening.
-> 
-
-Full analysis is following:
-- using regmap_update_bits() instead of writel() is incorrect because
-this changes the behavior of the driver
-- regmap_update_bits() should not be used here because default value of
-regs isn't taken into account and (_apparently_, the doc is terse) these
-regs could be updated by hw itself.
-
-> I'll also point that I did not send g12 clock along with v1 and that a1
-> support is not upstream or even reviewed. So this 'tests' obviously rely
-> on an integration of v1, rfc and your custom develpment. That is hardly a
-> reference at this point.
-> 
-> This patches address g12 and sm1. If you want to contribute with tests,
-> please test on these platforms. a1 will be addressed in due time.
-> 
-
-Where did you find in my words any reference to not upstreamed
-functionality? Support of A1 SoC is here since commit bdb369e1e98a
-("reset: add support for the Meson-A1 SoC Reset Controller").
-
-> Testing is good but making complete report (trace and environment
-> details) is equally important, especially for maintainers who might not
-> be following Amlogic development as much as you do.
-> 
->>
->>>  }
->>>  
->>>  static int meson_reset_level(struct reset_controller_dev *rcdev,
->>> @@ -48,25 +56,13 @@ static int meson_reset_level(struct reset_controller_dev *rcdev,
->>>  {
->>>  	struct meson_reset *data =
->>>  		container_of(rcdev, struct meson_reset, rcdev);
->>> -	unsigned int bank = id / BITS_PER_REG;
->>> -	unsigned int offset = id % BITS_PER_REG;
->>> -	void __iomem *reg_addr;
->>> -	unsigned long flags;
->>> -	u32 reg;
->>> +	unsigned int offset, bit;
->>>  
->>> -	reg_addr = data->reg_base + data->param->level_offset + (bank << 2);
->>> +	meson_reset_offset_and_bit(data, id, &offset, &bit);
->>> +	offset += data->param->level_offset;
->>>  
->>> -	spin_lock_irqsave(&data->lock, flags);
->>> -
->>> -	reg = readl(reg_addr);
->>> -	if (assert)
->>> -		writel(reg & ~BIT(offset), reg_addr);
->>> -	else
->>> -		writel(reg | BIT(offset), reg_addr);
->>> -
->>> -	spin_unlock_irqrestore(&data->lock, flags);
->>> -
->>> -	return 0;
->>> +	return regmap_update_bits(data->map, offset,
->>> +				  BIT(bit), assert ? 0 : BIT(bit));
->>>  }
->>>  
->>>  static int meson_reset_assert(struct reset_controller_dev *rcdev,
->>> @@ -113,30 +109,42 @@ static const struct of_device_id meson_reset_dt_ids[] = {
->>>  };
->>>  MODULE_DEVICE_TABLE(of, meson_reset_dt_ids);
->>>  
->>> +static const struct regmap_config regmap_config = {
->>> +	.reg_bits   = 32,
->>> +	.val_bits   = 32,
->>> +	.reg_stride = 4,
->>> +};
->>> +
->>>  static int meson_reset_probe(struct platform_device *pdev)
->>>  {
->>> +	struct device *dev = &pdev->dev;
->>>  	struct meson_reset *data;
->>> +	void __iomem *base;
->>>  
->>> -	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
->>> +	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
->>>  	if (!data)
->>>  		return -ENOMEM;
->>>  
->>> -	data->reg_base = devm_platform_ioremap_resource(pdev, 0);
->>> -	if (IS_ERR(data->reg_base))
->>> -		return PTR_ERR(data->reg_base);
->>> +	base = devm_platform_ioremap_resource(pdev, 0);
->>> +	if (IS_ERR(base))
->>> +		return PTR_ERR(base);
->>>  
->>> -	data->param = of_device_get_match_data(&pdev->dev);
->>> +	data->param = of_device_get_match_data(dev);
->>>  	if (!data->param)
->>>  		return -ENODEV;
->>>  
->>> -	spin_lock_init(&data->lock);
->>> +	data->map = devm_regmap_init_mmio(dev, base, &regmap_config);
->>> +	if (IS_ERR(data->map))
->>> +		return dev_err_probe(dev, PTR_ERR(data->map),
->>> +				     "can't init regmap mmio region\n");
->>>  
->>>  	data->rcdev.owner = THIS_MODULE;
->>> -	data->rcdev.nr_resets = data->param->reg_count * BITS_PER_REG;
->>> +	data->rcdev.nr_resets = data->param->reg_count * BITS_PER_BYTE
->>> +		* regmap_config.reg_stride;
->>>  	data->rcdev.ops = &meson_reset_ops;
->>> -	data->rcdev.of_node = pdev->dev.of_node;
->>> +	data->rcdev.of_node = dev->of_node;
->>>  
->>> -	return devm_reset_controller_register(&pdev->dev, &data->rcdev);
->>> +	return devm_reset_controller_register(dev, &data->rcdev);
->>>  }
->>>  
->>>  static struct platform_driver meson_reset_driver = {
-> 
-
--- 
-Best regards
-Jan Dakinevich
