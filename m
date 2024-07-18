@@ -1,177 +1,238 @@
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011061.outbound.protection.outlook.com [52.101.70.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8B3A18059;
-	Thu, 18 Jul 2024 07:32:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721287965; cv=none; b=LU46Gc+zcrEGMkPcKnSdmYQwb/eya6aWHX1WSfwJByZPi82cn/8LanRPDwgFcBIDOpkb28hYsK8xRY5WfF7tt/aQEreuLqJSS5Gkrm1cH3uI7h/UFFpEw1WNfxbWvKNUHfL1j8jkD6ZC5Dy9JT4HCR2C4o3hA3XbuFej8ywJBcw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721287965; c=relaxed/simple;
-	bh=+7Y3LFgbbncCojZpFrvW1G08HFQyJI5GDnvzgLQQws4=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=tIlK78aukhLDYODqR6NJ7YUXLD2Q9/gMdRCX5TV38ch1bYxNnas3inxFfgftE/dCjYL4odH4lgZrUJPPXEWndLENZcOvquk4l+rh1KFvlMK+2XEFbz00nXI+OAqY3cMln/jPaINrhJ4KhD7sKHwzttmM4S8I3rnm5fI+XwUbXPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=vKdU09kP; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C087877F2F;
+	Thu, 18 Jul 2024 07:35:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721288127; cv=fail; b=KQOgiZ+wb+XqI7RE8jbcqVYupDqhxGcbGG7Q3jPE0V+/vjmQBhQGubdRLMvFTX6sEQDNsiNfA9yub57eFUCCwngQ7qwrfJ+qOFZkal39HmmjbjuCWh2+7Qz4nYOrxEyQ+VfMUIegC+lnpfn1i4gVOhw1a7+onVk4DxbYkdPjlDE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721288127; c=relaxed/simple;
+	bh=p3TjpqJ950cvFrREjleWZ9pXor0j+KGfFWY64SdBIzI=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=T6180cNymK3++xzPJ8EbmV/WWe9qUAwvTnVoG0Q8Sr7tf15FMztv02l0BaB+qg4ddlkikqQMZ9K8yqOlAAkxuZdbiA6Bcw1PRkTefoiHWfUuihzpctTzl0DYfMkBXSUtIs15egKZi+UDqzXOUmepTduwG57naZLmgmyTsn3pw4s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b=HF8MgdGj; arc=fail smtp.client-ip=52.101.70.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="vKdU09kP"
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="HF8MgdGj"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=DQrewb7sJVIHvtQFmeDDIb2t1T7KNQRae0eT2zJmz/OlxTRX4Va0y9wwCpVLsLXQo9jFwATjsIR+4Gk1VjUYvnWgMR6unjfrtHZOEIkt9I3ZhtPvE7VgQQoGMfV8I7FK2iI0N2VGPp8ZdA5vPVix2Z9cOfU+4LiIddhJB1URO7NaxZWLe4dG6ISm1KApGhTsIPaaqFOkgl0PH3u+nDQxvteBANTAFNLEoOO3Vm+WVxqPXZOn8rgDhkWSWWHhxH/uCBncf/AzsQCMzT+0Gb9pLB/WSCQ1lB0W4Lb3dUAMzAYbVN/Dl9QBBPWL6lS6985U9IMd50SOjWCw+Slh7BDxmw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WEsTjz92mLjxag9P46RaHzxdy0UqaWrIpOX4GFe6YRg=;
+ b=FVSi7hLL9wCSZrKaIKacIjR94V74CZV5uYRQuM+MgPOccAe2jc4JuGd4fzjGfVwnrG0Gv9N2kAHpnKcAK8w91QoidU3zCuYe0+Dqea4cPxBIvlMX8DtqU9rJnxES3ggTcbB8VU/5nXmSRBwYL5r2/yPMQtni+7fDco1Y4C62GD4iOW53qyMoeJDcXk+3AunPhuoUc7PljKABKWan/DGLR1Pq/1GAbgKCkkaq8K+sCQ4+u71MJKpT2dxy3ERB9PGr1T9AFZdappkbPX1fkMZLcd3lIHzlrgRtO+jACuw+6BWrWpLYIlUsK/lo6rNdKtLUIjNA5br5aqyVgxsB6S92tQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WEsTjz92mLjxag9P46RaHzxdy0UqaWrIpOX4GFe6YRg=;
+ b=HF8MgdGjgpg65GhM/M0M08xtCseXYY1gHA+7TEdlG1h4MpT4ocf1ZLlWMDEs/ot72S2o51y3MIWc86E35co/y+w2T1Es7UI/vrf4SZ+8/y6EFKefXT2qBlNDsXaLQVTX81FK1TxJJNXwsrnTMUy3NOR6ojkZ5uZeLun5MyXTw8Q=
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by VI2PR04MB10716.eurprd04.prod.outlook.com (2603:10a6:800:270::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.29; Thu, 18 Jul
+ 2024 07:35:21 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%4]) with mapi id 15.20.7762.020; Thu, 18 Jul 2024
+ 07:35:21 +0000
+From: Peng Fan <peng.fan@nxp.com>
+To: Wei Fang <wei.fang@nxp.com>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>, "sboyd@kernel.org" <sboyd@kernel.org>,
+	"robh@kernel.org" <robh@kernel.org>, "conor+dt@kernel.org"
+	<conor+dt@kernel.org>, "shawnguo@kernel.org" <shawnguo@kernel.org>,
+	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, "festevam@gmail.com"
+	<festevam@gmail.com>, "abelvesa@kernel.org" <abelvesa@kernel.org>
+CC: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v2 3/4] clk: imx95: enable the clock of NETCMIX block
+ control
+Thread-Topic: [PATCH v2 3/4] clk: imx95: enable the clock of NETCMIX block
+ control
+Thread-Index: AQHa0qcdca2IpPJJJkyywPIhPKTWr7H8JJyQ
+Date: Thu, 18 Jul 2024 07:35:21 +0000
+Message-ID:
+ <PAXPR04MB845905EAE0154106199AB81088AC2@PAXPR04MB8459.eurprd04.prod.outlook.com>
+References: <20240710084345.2016687-1-wei.fang@nxp.com>
+ <20240710084345.2016687-4-wei.fang@nxp.com>
+In-Reply-To: <20240710084345.2016687-4-wei.fang@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|VI2PR04MB10716:EE_
+x-ms-office365-filtering-correlation-id: b0fbc7f9-ad45-45cd-8c91-08dca6fc2e29
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|366016|7416014|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?BP1tiyd1akIZMPf9CaRSDbwdKw8NwcelIHkBux32rZhrMCLwi5kAcZu4D87f?=
+ =?us-ascii?Q?NINR+JPD+xfFx1+SJWu3jfkfTxeEQOajvCmHVapwd2B1u/utXM87AVIIZwZ0?=
+ =?us-ascii?Q?kQma/33RY1dp1NybJilxHdtQe1JnJ3ZdpCdhOTBdgfOfYgwjsQ8Glt/xecCa?=
+ =?us-ascii?Q?VH1JUu9EBMPMWmQ3oMTpSaCpdJUkdR/5OvSzj2rIZuQN/vOhzcs/Taj8eMGr?=
+ =?us-ascii?Q?8e7cQ0b57yj8bXb55+Y+cPVZF6LCr+V3n1hlgRH+oY6g2STmIFgIBlD0U3HC?=
+ =?us-ascii?Q?Mk3rO2Wpu1f7mqAKzUrdYKODTJEc245nckRnwt/eJMsjGbL6z0hyAKnvEOeY?=
+ =?us-ascii?Q?+pm0tOqjosT9sVhi5Ww/3fk1yM05k9ZOf5F5uRS1lpjymp3re+V7BQu+PwQW?=
+ =?us-ascii?Q?OxiLrwZyLUqQz3UxHt5iPWrDJs6debBiS6+ZZNi6Aeu4wJJA7A0J/cqUIeW0?=
+ =?us-ascii?Q?YmBxQ5g+whvtslB0ybc1fTHzHCXI/ooweTG7R3usMOIsL1lDKyM5uBlRlkr5?=
+ =?us-ascii?Q?QBwtsWTAdOy9lnjxDqJGk1AgBqNIuDeHP5gr9/PnjkrDPdnomz1Vm3sFUAk9?=
+ =?us-ascii?Q?8NHGKTGZodjsY6Z3Ek8rrAK31vjRq15nHylA6xhb1z/+Zn6mql3lCbsN6Qo+?=
+ =?us-ascii?Q?QQDKbv2UNw2BWlFdC9yz0e/SQE36OK6Iq8eg896BLPKdNLyUP3zw/ONhb8sF?=
+ =?us-ascii?Q?/2u6/6qKuUclaMA8xF5ujNg4fffnPGmyJ8SbkD68V5IC/eLvKNyASlnBp2av?=
+ =?us-ascii?Q?RYOAFVqxiBgqRxuTE5L5bw6ezx83DpW08IBqqxEutxga4vVzKO516RWYAAEn?=
+ =?us-ascii?Q?X5KEGe6iT4+HQUqvLtIo/h+teIcY8rSa70PpZZ8Q0qbAVp9IUyH1qKLzuCH4?=
+ =?us-ascii?Q?k3A9txABzFd7GUJoMAFw7/2yYcw06sQuQpPvJlxXVydnnvSnAh9tfiAZ4p6G?=
+ =?us-ascii?Q?CkDou6V9Bq7ZElxIlWK5ZmrCXp6SIK30kCM6mL6BsF7WSCfIFKI3E1IC/r8d?=
+ =?us-ascii?Q?8pqG9++evzgAYi2wNwRHP7INetcFluV3CuzgZ7DyDqy+ai9UqlqIMq3Quznv?=
+ =?us-ascii?Q?7fT29JSAcVem5jiQDGs4BjjRoEfP9bQFbkpm625n9XBPr7sh9McF8y3XxSG0?=
+ =?us-ascii?Q?BnE4S0RWJ9Lq0xGVd1xA8+p1FC/f/mIO9qa+EqI9v9X0XxXptbJArN2GWtfH?=
+ =?us-ascii?Q?4GOfbz9nqgsDYyuDu1OVg34AypN/7h43An7Ms3UJYuKCLHKJsUOpFeLrPKyD?=
+ =?us-ascii?Q?wKNWGHgcUTksXWgaGgA5lArRk8rPgzbfnkl/wGpLkvabbbdrk7mEX0xOhsN7?=
+ =?us-ascii?Q?720Q72zfhYPAFfubFMPLXAOt2Zu0QcFEoD2X0Mt+oXTwgU20WG8l4jYTnwXm?=
+ =?us-ascii?Q?SzIhHVNcyVMqfV2rGxoKTX6b/HTqxUxMqJSEzIPHDovoyn9hsQ=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?oJ8VJ8CAX1gbvKYZ9utzo221wxa7DRF+rpnW9fwVCHztGKHXRtpAIcDhZ11X?=
+ =?us-ascii?Q?4tbb/kKD3RTZXS0kTe4vFZD0ntyCSGW8Ezhv/os/JP8kR+5PVKFkSLyTlLud?=
+ =?us-ascii?Q?Hal1XqtTLVXvqLuoyd1q1VKz4XyhtxfJ+ebOMwqfjzwhWZJpHDv+mkCYE3NB?=
+ =?us-ascii?Q?VECFsAOZ+3GHkyXAxi0X+ivmawnBWeq3PWRn7Wjysi8XukIE6c2eeakhP70I?=
+ =?us-ascii?Q?YKWrvl9+L5/JxZJSeE08jjzlYAlR/4iX/1GLBDnbh+aOePXBWg/II1Y4Oind?=
+ =?us-ascii?Q?f/0ga8diKLDifKwIVntMKuLkJ66NQ3wIVyaE/foP5WNv2lrZhR/FoCwBroGM?=
+ =?us-ascii?Q?4m+G5LLrjBuxnF6GVSQwXi5HLKOpVfiFWLQFaX7sspqg30tHdP444kXMe+FL?=
+ =?us-ascii?Q?72nB7K7KyiVzPmAWiScjv0nmnKXjoag5yIDUqcXu/Y4ULlFMrKEBBqMWSFAH?=
+ =?us-ascii?Q?W+14PVC2eHfAhhQU7evJp374Sf+3mMB6utDGYTymMxzQfVRDsYZhF8oUf4Zu?=
+ =?us-ascii?Q?Uk87rIZB/ZYXxRFPOLll37ED//wsnKbFDR6HvbKhTvVcLkh67sK4POLC9NZc?=
+ =?us-ascii?Q?b5Fd2OsUy8WO9PIGe/Zh1wTU6aDGc8XLJcNgLJ8nFQC83WGEnHOVrln5jd2S?=
+ =?us-ascii?Q?YNwtqJuaPzzYDNEUvDGZeeRfqFRE3QMxnLYNBZ0/DZLhpv41BIw+mk420XJc?=
+ =?us-ascii?Q?Ei/vUzZI3NLyN+pO64KauDVUeYGZTYXeLwqbJUXxlHRg1roMrC33682vFULU?=
+ =?us-ascii?Q?JxVFNiTDsShkr/IsDLmTXBabihwxgg6fMA4e9m0RacdzLzPLpfz+NLq0vwkQ?=
+ =?us-ascii?Q?33AUP95aSup8WH4pb0dMGIT/GshgjGO5gSbwkMZ9rv4FD5AcwgSBPTTCYz84?=
+ =?us-ascii?Q?HsqdG7KCKKsa/uEJu62B61omiPHdDqdg0SBuGNyxudMcFv4RBvEqHD52AOiZ?=
+ =?us-ascii?Q?D0Tsq96W6FsOddIVS8htYSKGBBkfsd9CU2PFgjBCEoBuHslVDGPmyelOhcWV?=
+ =?us-ascii?Q?nCpsrqjeAk4mB8XcBUDOhDzw3+syrxx3FbKKxbDWqdfD+89FlWdWdY7L7U9D?=
+ =?us-ascii?Q?MksH6AIW8gcfEF/S7ENWV/gxSIv30rhrQPupdp0E4ZM3WJftc6laknlCECWq?=
+ =?us-ascii?Q?coDkXwoX2y7AZTG8GbA4Ii1LFeU88HDlK6M9U7UzMBQFWd8Xpz93xcaD0AOl?=
+ =?us-ascii?Q?JosTPvXr1B54nLdvCdWiYJuJPTXwYF/0FY8nM3H4lsi6kWvxS4g/nf6At4Cu?=
+ =?us-ascii?Q?Lpmk/4u9zp4/PEA7Fs/MqPkEgD7ggEvuvp4SvDlY+EnsRuxEtF1RYYvLOMdc?=
+ =?us-ascii?Q?pi7ZFScquhok5PmRb3WfZh9VaEO4RY+tCEtYfg3/9KBxsWK/Yksuj8ZwpygM?=
+ =?us-ascii?Q?kwj0aMFE/mbHeg9wPMXeXPYfMon8/dYWdeZLfL5vIrIuxOOhkqwAhcAlZ9uW?=
+ =?us-ascii?Q?WWGyI4Td9z7b4wfn/7I22GLReEBShbuVcFtcbwT4XviebXqtixju+oq7Rtr8?=
+ =?us-ascii?Q?3C7zYg/OBKIHOuBDV8sF/4xHknZEAvNINjsVAJ1JCZFAK3q6d6RjUON5feDB?=
+ =?us-ascii?Q?poict3ZtrYD+T8oiJ6Y=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1721287960;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YINdvKD33YyTGfXnNe9yIHuIAJ1Y5P1g98Nd0MhEVhE=;
-	b=vKdU09kP8ThxaRAAaUhbYImsfIb0nVxvGBahcIUzlA+IHpR3PJtZkglH71/3xCFf9kY3Fe
-	2c6oX6bCCVHqMFJqKEbF8k6yeuTt1FLUzYX/cOad1/FNt20v5nS843N467FbJjKbhe+Kxz
-	V4VBFn9rbhPk4KhuVZvqkppPGOafjeJ2DRR2M47aOQILjAngtj44v/c76kvEGUg0C+M+MS
-	lmEKAGCCd4YNAHLkRsKK2reD2HETFHK8nikimMYPMNxTUaLDZqavuDaJdQCITelFNVyjUB
-	WJVp/2UI3jHGXpP2OzegQpF47KIzwtpA7wHIyLfhAhqjYX00lUn1zLJ5fy9CcQ==
-Date: Thu, 18 Jul 2024 09:32:40 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com,
- sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v2 3/3] arm64: dts: rockchip: fix the pcie refclock
- oscillator on Rock 5 ITX
-In-Reply-To: <CANAwSgS_ZaEkt5-kKud9OwdN4za+xvW5SoBr34EmOdU2OQJWnw@mail.gmail.com>
-References: <20240715110251.261844-1-heiko@sntech.de>
- <20240715110251.261844-4-heiko@sntech.de>
- <CANAwSgS_ZaEkt5-kKud9OwdN4za+xvW5SoBr34EmOdU2OQJWnw@mail.gmail.com>
-Message-ID: <8a16eb6a29a39719ba4e4c43bae3b6ec@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b0fbc7f9-ad45-45cd-8c91-08dca6fc2e29
+X-MS-Exchange-CrossTenant-originalarrivaltime: 18 Jul 2024 07:35:21.5961
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: B7NmbrKv+hJ1/dGZIfi8oIPXmipslh+bbawGfnnCyWfh7PMRi7gaf1A+Pjka/IvajHhkYqNwhm98sy58GIv5CA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI2PR04MB10716
 
-Hello Anand,
+> Subject: [PATCH v2 3/4] clk: imx95: enable the clock of NETCMIX block
+> control
+>=20
+> The NETCMIX block control consists of registers for configuration of
+> peripherals in the NETC domain, so enable the clock of NETCMIX to
+> support the configuration.
+>=20
+> Signed-off-by: Wei Fang <wei.fang@nxp.com>
+> ---
+> V2:
+> Add RMII reference clock mux for ENETC0 and ENETC1.
+> ---
+>  drivers/clk/imx/clk-imx95-blk-ctl.c | 30
+> +++++++++++++++++++++++++++++
+>  1 file changed, 30 insertions(+)
+>=20
+> diff --git a/drivers/clk/imx/clk-imx95-blk-ctl.c b/drivers/clk/imx/clk-
+> imx95-blk-ctl.c
+> index 74f595f9e5e3..19a62da74be4 100644
+> --- a/drivers/clk/imx/clk-imx95-blk-ctl.c
+> +++ b/drivers/clk/imx/clk-imx95-blk-ctl.c
+> @@ -248,6 +248,35 @@ static const struct imx95_blk_ctl_dev_data
+> dispmix_csr_dev_data =3D {
+>  	.clk_reg_offset =3D 0,
+>  };
+>=20
+> +static const struct imx95_blk_ctl_clk_dev_data
+> netxmix_clk_dev_data[] =3D {
+> +	[IMX95_CLK_NETCMIX_ENETC0_RMII] =3D {
+> +		.name =3D "enetc0_rmii_sel",
+> +		.parent_names =3D (const char *[]){"ext_enetref",
+> "enetref"},
+> +		.num_parents =3D 2,
+> +		.reg =3D 4,
+> +		.bit_idx =3D 5,
+> +		.bit_width =3D 1,
+> +		.type =3D CLK_MUX,
+> +		.flags =3D CLK_SET_RATE_NO_REPARENT |
+> CLK_SET_RATE_PARENT,
+> +	},
+> +	[IMX95_CLK_NETCMIX_ENETC1_RMII] =3D {
+> +		.name =3D "enetc1_rmii_sel",
+> +		.parent_names =3D (const char *[]){"ext_enetref",
+> "enetref"},
+> +		.num_parents =3D 2,
+> +		.reg =3D 4,
 
-On 2024-07-18 09:26, Anand Moon wrote:
-> On Mon, 15 Jul 2024 at 16:35, Heiko Stuebner <heiko@sntech.de> wrote:
->> 
->> The Rock 5 ITX uses two PCIe controllers to drive both a M.2 slot and 
->> its
->> SATA controller with 2 lanes each. The supply for the refclk 
->> oscillator is
->> the same that supplies the M.2 slot, but the SATA controller port is
->> supplied by a different rail.
->> 
->> This leads to the effect that if the PCIe30x4 controller for the M.2
->> probes first, everything works normally. But if the PCIe30x2 
->> controller
->> that is connected to the SATA controller probes first, it will hang on
->> the first DBI read as nothing will have enabled the refclock before.
-> 
-> I just checked the rk3588-rock-5-itx.dts in the linux-next.
-> You have not enabled sata0 and sata2, which might be the problem
-> for the SATA controller not getting initialized.
+Both the entry use reg address 4, use a lock to protect?
 
-Rock 5 ITX doesn't use RK5588's built-in SATA interfaces, so that's 
-fine.
-Please have a look at the board schematic, it uses a separate PCI 
-Express
-SATA controller for its four SATA ports.
+Regards,
+Peng.
 
->> Fix this by describing the clock generator with its supplies so that
->> both controllers can reference it as needed.
->> 
->> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
->> ---
->>  .../boot/dts/rockchip/rk3588-rock-5-itx.dts   | 38 
->> ++++++++++++++++++-
->>  1 file changed, 36 insertions(+), 2 deletions(-)
->> 
->> diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts 
->> b/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts
->> index d0b922b8d67e8..37bc53f2796fc 100644
->> --- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts
->> +++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5-itx.dts
->> @@ -72,6 +72,15 @@ hdd-led2 {
->>                 };
->>         };
->> 
->> +       /* Unnamed voltage oscillator: 100MHz,3.3V,3225 */
->> +       pcie30_port0_refclk: pcie30_port1_refclk: 
->> pcie-voltage-oscillator {
->> +               compatible = "voltage-oscillator";
->> +               #clock-cells = <0>;
->> +               clock-frequency = <100000000>;
->> +               clock-output-names = "pcie30_refclk";
->> +               vdd-supply = <&vcc3v3_pi6c_05>;
->> +       };
->> +
->>         fan0: pwm-fan {
->>                 compatible = "pwm-fan";
->>                 #cooling-cells = <2>;
->> @@ -146,13 +155,14 @@ vcc3v3_lan: vcc3v3_lan_phy2: 
->> regulator-vcc3v3-lan {
->>                 vin-supply = <&vcc_3v3_s3>;
->>         };
->> 
->> -       vcc3v3_mkey: regulator-vcc3v3-mkey {
->> +       /* The PCIE30x4_PWREN_H controls two regulators */
->> +       vcc3v3_mkey: vcc3v3_pi6c_05: regulator-vcc3v3-pi6c-05 {
->>                 compatible = "regulator-fixed";
->>                 enable-active-high;
->>                 gpios = <&gpio1 RK_PA4 GPIO_ACTIVE_HIGH>;
->>                 pinctrl-names = "default";
->>                 pinctrl-0 = <&pcie30x4_pwren_h>;
->> -               regulator-name = "vcc3v3_mkey";
->> +               regulator-name = "vcc3v3_pi6c_05";
->>                 regulator-min-microvolt = <3300000>;
->>                 regulator-max-microvolt = <3300000>;
->>                 startup-delay-us = <5000>;
->> @@ -513,6 +523,18 @@ &pcie30phy {
->> 
->>  /* ASMedia ASM1164 Sata controller */
->>  &pcie3x2 {
->> +       /*
->> +        * The board has a "pcie_refclk" oscillator that needs 
->> enabling,
->> +        * so add it to the list of clocks.
->> +        */
->> +       clocks = <&cru ACLK_PCIE_2L_MSTR>, <&cru ACLK_PCIE_2L_SLV>,
->> +                <&cru ACLK_PCIE_2L_DBI>, <&cru PCLK_PCIE_2L>,
->> +                <&cru CLK_PCIE_AUX1>, <&cru CLK_PCIE2L_PIPE>,
->> +                <&pcie30_port1_refclk>;
->> +       clock-names = "aclk_mst", "aclk_slv",
->> +                     "aclk_dbi", "pclk",
->> +                     "aux", "pipe",
->> +                     "ref";
->>         pinctrl-names = "default";
->>         pinctrl-0 = <&pcie30x2_perstn_m1_l>;
->>         reset-gpios = <&gpio4 RK_PB0 GPIO_ACTIVE_HIGH>;
->> @@ -522,6 +544,18 @@ &pcie3x2 {
->> 
->>  /* M.2 M.key */
->>  &pcie3x4 {
->> +       /*
->> +        * The board has a "pcie_refclk" oscillator that needs 
->> enabling,
->> +        * so add it to the list of clocks.
->> +        */
->> +       clocks = <&cru ACLK_PCIE_4L_MSTR>, <&cru ACLK_PCIE_4L_SLV>,
->> +                <&cru ACLK_PCIE_4L_DBI>, <&cru PCLK_PCIE_4L>,
->> +                <&cru CLK_PCIE_AUX0>, <&cru CLK_PCIE4L_PIPE>,
->> +                <&pcie30_port0_refclk>;
->> +       clock-names = "aclk_mst", "aclk_slv",
->> +                     "aclk_dbi", "pclk",
->> +                     "aux", "pipe",
->> +                     "ref";
->>         num-lanes = <2>;
->>         pinctrl-names = "default";
->>         pinctrl-0 = <&pcie30x4_perstn_m1_l>;
->> --
->> 2.39.2
+> +		.bit_idx =3D 10,
+> +		.bit_width =3D 1,
+> +		.type =3D CLK_MUX,
+> +		.flags =3D CLK_SET_RATE_NO_REPARENT |
+> CLK_SET_RATE_PARENT,
+> +	},
+> +};
+> +
+> +static const struct imx95_blk_ctl_dev_data netcmix_dev_data =3D {
+> +	.num_clks =3D ARRAY_SIZE(netxmix_clk_dev_data),
+> +	.clk_dev_data =3D netxmix_clk_dev_data,
+> +	.clk_reg_offset =3D 0,
+> +};
+> +
+>  static int imx95_bc_probe(struct platform_device *pdev)  {
+>  	struct device *dev =3D &pdev->dev;
+> @@ -419,6 +448,7 @@ static const struct of_device_id
+> imx95_bc_of_match[] =3D {
+>  	{ .compatible =3D "nxp,imx95-lvds-csr", .data =3D
+> &lvds_csr_dev_data },
+>  	{ .compatible =3D "nxp,imx95-display-csr", .data =3D
+> &dispmix_csr_dev_data },
+>  	{ .compatible =3D "nxp,imx95-vpu-csr", .data =3D
+> &vpublk_dev_data },
+> +	{ .compatible =3D "nxp,imx95-netcmix-blk-ctrl", .data =3D
+> +&netcmix_dev_data},
+>  	{ /* Sentinel */ },
+>  };
+>  MODULE_DEVICE_TABLE(of, imx95_bc_of_match);
+> --
+> 2.34.1
+
