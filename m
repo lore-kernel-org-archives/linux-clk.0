@@ -1,193 +1,111 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167FA2AEE3;
-	Thu, 18 Jul 2024 15:59:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62369145321
+	for <linux-clk@vger.kernel.org>; Thu, 18 Jul 2024 17:19:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721318395; cv=none; b=LEHKAyZt2o8QXZZccqkm4T3f4QjSG0C7n88EcI++sA1NwYmCb+K66f+I+ZtyMflXGLsGmy/XlAuPLIhTOStIw6gQUO1wJV2RJRIf6M23S9pgiuxUftc1466zCbtj3NVF65E5oy1QyRLhs8YEnwOddwglACXQsIeTjv5X05rYNtQ=
+	t=1721323150; cv=none; b=FeVkC5MOVhyt12NZujxo8kOJTsAdXK04XJ7gCnOwRmJOs/lZ7Ktf1Q6gc+5t8RUg3cEQAOvafroCMY7bPIAZvonooP3XI1GvDa4JYYvh3J/lVMSUIXC2Hu84AMUqEJrrva68qqitDZOFuVyVBkd9+51UHWxp6PCh4KTQVpZvR/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721318395; c=relaxed/simple;
-	bh=T4DfjvkHoIEyUPZXgAngg+UvPIuZJXu0JXGh6sWNt+c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PFuGf+jQJyBMuhzl9f9r6JuNlWMI8/ollRxCYg/J9dE+FmbMA+znpVxm/9U+Ok/r+OABb4g0844Xwt9uuDO4tjH41g/zpBoFZLnw+F9CX6ewG66Dj0wbwvnUsL3D+yI6VrKcD3jBaeOE6VnA/0JWdrQlNEUlTIsSa+ntyHsjmMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H5vHfytm; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1721323150; c=relaxed/simple;
+	bh=BzZMlddkgrR7Vo48D78akGTXFNhJuilL61KLAQ3hDog=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ktqswNrZkT98xJXgUwLmXIo+NFfDJNpokwt4yBUFF8JLSxnymcml0VIgNL5U/gOGkaDBl7aeHahh1CNa7G/3pKW4eSUAXsYR4wry7gEGCeCiIbxo9DJjWPtxGmHiFKmzEfNRKw6kGlBr2i0fsJEntWzWKJts0hrbVhl3LWH+RhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Enq21rKn; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H5vHfytm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74CC4C116B1;
-	Thu, 18 Jul 2024 15:59:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721318394;
-	bh=T4DfjvkHoIEyUPZXgAngg+UvPIuZJXu0JXGh6sWNt+c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H5vHfytmqPrYO2pIj4jHkuG37Chv40x0l0h3Sl9muo3W743GzaXi685mZhYM0PxKX
-	 qY1W1G26W7T74h+GzelvwecVAFTeTXk9rS8s0mQ2GKIYdDO42kuRxaqVqrh2TahtTQ
-	 DeHvsXWD9ZivyLsPP2cPrfcRhHVGjhOpnAu6E2gVglYI8L5kBeOhdkdF7NyIHCE16+
-	 a5zjypcBX6vE5qs/Lv0EYy6aFU/RvxcL/edVsn3r695CfrtVLzE5ZixZJ7yRSkCZZ3
-	 xj91p5dsHYcjo2FApj2Eyy7dD3bzfk3avOiu1CvosShMilzoG3i6t+04/kuIvDFVu3
-	 OJDGaKacKGgbw==
-Date: Thu, 18 Jul 2024 16:59:50 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v2 1/3] dt-bindings: clocks: add binding for
- voltage-controlled-oscillators
-Message-ID: <20240718-prozac-specks-6b5fd8b83e3e@spud>
-References: <20240715110251.261844-1-heiko@sntech.de>
- <20240715110251.261844-2-heiko@sntech.de>
- <20240716-deceiving-saucy-851fb2303c1f@spud>
- <3178118.zE8UqtGg2D@diego>
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Enq21rKn"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4266f344091so4906715e9.0
+        for <linux-clk@vger.kernel.org>; Thu, 18 Jul 2024 10:19:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1721323146; x=1721927946; darn=vger.kernel.org;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=7uR+g2yKHQtKWUoZd9oU/bblecyRnWgI3idxDPFwBF0=;
+        b=Enq21rKnM+iRVH0jYK1FAus6D0Y//hS0KZYlPQef9utdVcxYFPXYlM+NI2xjQYOG5B
+         04GdY9bFebOZMgLojMEYlAbBVR0ud93x1Y8xZ/Vw8uS3u5gzmagrxqPlns4xpxxxErpF
+         xa+0muuV8pLU+ZVA/NanyWV9Ann9gzZT005fkBmsARlvJApCyz9WcwkrNDz+e3+Mv1WA
+         OfvQggIhAXD0SQ6TlbC8+h2TYcGR7lvqfHre41uUJvnLMvwXWDsdqssrgio7UI2t4EKX
+         fYDDvzateraB5OEwll6LVRGezv/4yTwuZ0RZeh0HRUFBYZ+QUGgqYAWJLRcuJY0kydgy
+         c9bw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721323146; x=1721927946;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7uR+g2yKHQtKWUoZd9oU/bblecyRnWgI3idxDPFwBF0=;
+        b=v2R2fzM71dKxD7Q6r9ecGUCqxoqWiKELd1nD7aQ6EQk7Bf4++VPeL0IyeyiYLLtrDi
+         BTcp4e9yySBQDEGrLfPhMHwJxOXuA8F7j2v2pjo1ij8kAgWW9avTUuUaP+TqfEUv3fO6
+         QdkcO3xl0qwuIqWyZ7KYhNYXcbfP+/8A+1fGb/Bn9NVnZUFEG2PQvVNakJzib0FAu0P1
+         udBs3dSWrWpWTy0sgoXbxPfHAvsEtXpLtt+wi+ts+wiTLNrSURh4vB3RIfjjVFAOsxnt
+         4AaRQ9kxCoOwGZt+p1pRqClaEDU9MEeoxGFqY7D3Ck/To4Y3EjPXl13wJXlKPdwShFda
+         jNIA==
+X-Forwarded-Encrypted: i=1; AJvYcCUfsxvpmbX7kj31h859zarMoFgFc4PX3843uKwE62M4TC5bIx8w8mo6Cxg4Kt4ebEfHifePQrJU41pilXhP38w1WxEd9WtLiZd4
+X-Gm-Message-State: AOJu0Yy7rQbAuoAXLP0PqD8WXrDPTiJcAnefQZ6mS7+BAIf6DT03bVCG
+	+mBY9Uy68lBfAN/4bwjddbxcYxSYYTHwtvGL6sT856nfQdKHbSZWqgKq3exvllM=
+X-Google-Smtp-Source: AGHT+IH5+9L9pwlWaj+Zw1XCZJjBadwkEba4ZohfVAwFN+aRmCq+OzHkIaw26350GTJ565KkhbpaZA==
+X-Received: by 2002:a05:600c:3b0f:b0:426:5ef5:bcb1 with SMTP id 5b1f17b1804b1-427c6ba30b4mr30710845e9.6.1721323145735;
+        Thu, 18 Jul 2024 10:19:05 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:bbf5:bf25:4f46:2ec8])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427d2a5c34bsm22577015e9.16.2024.07.18.10.19.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Jul 2024 10:19:05 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,  Stephen Boyd
+ <sboyd@kernel.org>,  Jan Dakinevich <jan.dakinevich@salutedevices.com>,
+  linux-kernel@vger.kernel.org,  linux-amlogic@lists.infradead.org,
+  linux-clk@vger.kernel.org
+Subject: Re: [PATCH v2 1/9] reset: amlogic: convert driver to regmap
+In-Reply-To: <2f094b21-aa55-4a81-b9af-ff06c34c5a67@linaro.org> (Neil
+	Armstrong's message of "Thu, 18 Jul 2024 14:45:35 +0200")
+References: <20240718095755.3511992-1-jbrunet@baylibre.com>
+	<20240718095755.3511992-2-jbrunet@baylibre.com>
+	<2f094b21-aa55-4a81-b9af-ff06c34c5a67@linaro.org>
+Date: Thu, 18 Jul 2024 19:19:04 +0200
+Message-ID: <1jr0bqmxdj.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="TA6tyFoqBwcLvbVt"
-Content-Disposition: inline
-In-Reply-To: <3178118.zE8UqtGg2D@diego>
+Content-Type: text/plain
 
+On Thu 18 Jul 2024 at 14:45, Neil Armstrong <neil.armstrong@linaro.org> wrote:
 
---TA6tyFoqBwcLvbVt
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+>> +
+>>   static int meson_reset_reset(struct reset_controller_dev *rcdev,
+>> -			      unsigned long id)
+>> +			     unsigned long id)
+>>   {
+>>   	struct meson_reset *data =
+>>   		container_of(rcdev, struct meson_reset, rcdev);
+>> -	unsigned int bank = id / BITS_PER_REG;
+>> -	unsigned int offset = id % BITS_PER_REG;
+>> -	void __iomem *reg_addr = data->reg_base + (bank << 2);
+>> +	unsigned int offset, bit;
+>>   -	writel(BIT(offset), reg_addr);
+>> +	meson_reset_offset_and_bit(data, id, &offset, &bit);
+>>   -	return 0;
+>> +	return regmap_update_bits(data->map, offset,
+>> +				  BIT(bit), BIT(bit));
+>
+> Here, you're converting a:
+> writel(BIT())
+> to a:
+> reg = readl()
+> reg |= BIT()
+> writel(reg)
+>
+> so indeed you should use regmap_write(data->map, offset, BIT(bit))
+>
 
-On Thu, Jul 18, 2024 at 11:25:28AM +0200, Heiko St=FCbner wrote:
-> Hi Conor,
->=20
-> Am Dienstag, 16. Juli 2024, 18:15:08 CEST schrieb Conor Dooley:
-> > On Mon, Jul 15, 2024 at 01:02:49PM +0200, Heiko Stuebner wrote:
-> > > In contrast to fixed clocks that are described as ungateable, boards
-> > > sometimes use additional oscillators for things like PCIe reference
-> > > clocks, that need actual supplies to get enabled and enable-gpios to =
-be
-> > > toggled for them to work.
-> > >=20
-> > > This adds a binding for such oscillators that are not configurable
-> > > themself, but need to handle supplies for them to work.
-> > >=20
-> > > In schematics they often can be seen as
-> > >=20
-> > >          ----------------
-> > > Enable - | 100MHz,3.3V, | - VDD
-> > >          |    3225      |
-> > >    GND - |              | - OUT
-> > >          ----------------
-> > >=20
-> > > or similar. The enable pin might be separate but can also just be tied
-> > > to the vdd supply, hence it is optional in the binding.
-> > >=20
-> > > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> > > ---
-> > >  .../bindings/clock/voltage-oscillator.yaml    | 49 +++++++++++++++++=
-++
-> > >  1 file changed, 49 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/clock/voltage-o=
-scillator.yaml
-> > >=20
-> > > diff --git a/Documentation/devicetree/bindings/clock/voltage-oscillat=
-or.yaml b/Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
-> > > new file mode 100644
-> > > index 0000000000000..8bff6b0fd582e
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
-> > > @@ -0,0 +1,49 @@
-> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > +%YAML 1.2
-> > > +---
-> > > +$id: http://devicetree.org/schemas/clock/voltage-oscillator.yaml#
-> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > +
-> > > +title: Voltage controlled oscillator
-> >=20
-> > Voltage controlled oscillator? Really? That sounds far too similar to a
-> > VCO to me, and the input voltage here (according to the description at
-> > least) does not affect the frequency of oscillation.
->=20
-> That naming was suggested by Stephen in v1 [0] .
+Ok the trouble is this particular register which is write only, not
+some writel vs regmap problem. The read value is probably undefined.
+I should not have changed which the migration anyway.
 
-I think "voltage-oscillator" is a confusing name, and having "voltage
-controlled oscillator" in the title doubly so as this isn't a binding
-for a VCO.
-A VCO is a more general case of the sort of device that you're talking
-about here, so a part of me can see it - but I think specific
-compatibles would be required for actual VCOs, since the "transfer
-function" would vary per device.
+Thanks for pointing it out, I'll fix that in v3
 
-> Of course the schematics for the board I have only describe it as
-> "100MHz,3.3V,3225" , thumbing through some mouser parts matching that
-> only mentions "supply voltage" in their datasheets but not a dependency
-> between rate and voltage.
->=20
-> [0] https://lore.kernel.org/linux-arm-kernel/b3c450a94bcb4ad0bc5b3c7ee871=
-2cb8.sboyd@kernel.org/
->=20
-> > Why the dedicated binding, rather than adding a supply and enable-gpio
-> > to the existing "fixed-clock" binding? I suspect that a large portion of
-> > "fixed-clock"s actually require a supply that is (effectively)
-> > always-on.
->=20
-> I guess there are three aspects:
-> - I do remember discussions in the past about not extending generic
->   bindings with device-specific stuff.
-
-FWIW, I wouldn't classify this as device-specific. "enable-gpios" and
-"vdd-supply" are pretty generic and I think the latter is missing from
-the vast majority of real* "fixed-clocks". I would expect that devices
-where the datasheet would call
-
-* Real because there's plenty of "fixed-clocks" (both in and out of tree)
-that are used to work around the lack of a clock-controller driver for an
-SoC.
-
-> I think generic power-sequences
->   were the topic back then, though that might have changed over time?
-> - There are places that describe "fixed-clock" as
->   "basic fixed-rate clock that cannot gate" [1]
-
-I think that that is something that could be changed, it's "just" a
-comment in some code! Sounds like Stephen disagrees though :)
-
-> - Stephen also suggested a separate binding [2]
-
-I liked your "gated-oscillator" suggestion in another reply, but
-"gated-fixed-clock" might be a better "thematic" fit since this is a
-special case of fixed-clocks?
-
-Cheers,
-Conor.
-
-> With the fixed-clock being sort of the root for everything else on most
-> systems, I opted to leave it alone. I guess if the consenus really is that
-> this should go there, I can move it, but discussion in v1=20
->=20
-> Interestingly the fixed clock had a gpios property 10 years ago [3] :-) .
-
-heh!
-
->=20
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tr=
-ee/drivers/clk/clk-fixed-rate.c#n18
-> [2] https://lore.kernel.org/linux-arm-kernel/68f6dc44a8202fd83792e58aea13=
-7632.sboyd@kernel.org/
-> [3] https://lore.kernel.org/linux-kernel//20140515064420.9521.47383@quant=
-um/T/#t
-
---TA6tyFoqBwcLvbVt
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZpk79gAKCRB4tDGHoIJi
-0ocpAQDlY1WVEOAb/tAnKL+v/4KqvF6yQjSSOa/QJ9Xn/KwzwQEA6xZbMOFj+ofl
-qMmgXTkeOunG/hACMIplnIyteyzFRwI=
-=RPQe
------END PGP SIGNATURE-----
-
---TA6tyFoqBwcLvbVt--
+-- 
+Jerome
