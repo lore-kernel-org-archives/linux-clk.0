@@ -1,97 +1,272 @@
-Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx1.sberdevices.ru (mx2.sberdevices.ru [45.89.224.132])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A07215C3
-	for <linux-clk@vger.kernel.org>; Thu, 18 Jul 2024 02:25:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B81FD1C36;
+	Thu, 18 Jul 2024 02:41:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.89.224.132
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721269560; cv=none; b=iKIZYfqy90NbPOqIODNczFDJrxPoJEqjU2BHa9iwDcZ99Uh/sBNN90Uez4SsIgzaT/UUNdVbYwE6f33GHM2EyqIa1MBPfi1cWi5FkJA0cQz/zkVwbscNYAoDgxfIw0jmIdTFbSOdIe5Z7WTPunCzaUwxJcL9T4634lrqZL0Abug=
+	t=1721270470; cv=none; b=X7ZhVGuzzEo3uDeSG4LqcixqnMTuYICShLPeUgh5HlsDtacmtZCbgLrIqf2o2nj8766UcSgqzRj1XPpekViNUfM2a3yctM5g2rMOFJw2bjYUFM3cDwU1hP8sXZ7LueoVdDLZq9dh+iSZhvGb8jCGuKc8FWl1GNYIeYMouAXwiBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721269560; c=relaxed/simple;
-	bh=M6VIKClxCKUTHKil/lftXivMZWewfbeoa7Xddd9eHf8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=d0mvIdqg/F/G/ubiB1UytFjBLjPs55BuHRKpledxZReQWY6WA9p6sIEpUoKswo1rmk/dQgJSz6qD+8oGx8Ux24CqGragj2OpTl8tQytXMCqlNcLl5zivgiAtQcQs6JnM4LniHxcxfQI2vcT2oc7d/tlQ3obHaZyoKp1/0j4MQs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xPKBNa0j; arc=none smtp.client-ip=209.85.160.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1721270470; c=relaxed/simple;
+	bh=fpdKWuhv2x0owBblJKhkhLzUcvdVAsU3+vJrOJDggFk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=AP/h67iAUr6WdMtNYUpV8bH8woXX4qJNAU8LkJzf8Nyt286ZLsXaFqbM5KzHLznHh/inKDa9qjjxVbcEGUuQTMTtIN1FzemDW+dIy6Es/WgAUxYMzOC1LnmyulYqQAf03T0GR5MUADZmFQJQjG9PYp0/0HQWfc6Hi8BGddPAO14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com; spf=pass smtp.mailfrom=sberdevices.ru; dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b=YRAseztT; arc=none smtp.client-ip=45.89.224.132
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=salutedevices.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sberdevices.ru
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xPKBNa0j"
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-250ca14422aso190117fac.0
-        for <linux-clk@vger.kernel.org>; Wed, 17 Jul 2024 19:25:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721269556; x=1721874356; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gklRP1Mg2lPJDFn6YnROe/wcKMjIXNM5Cvhi4UGcBq0=;
-        b=xPKBNa0jmD+kLpOtPIT1JsGpQgplR6ypUfDz/AjTVQUUGLhubdKwFnLmGiVP4MM0FA
-         KtiCK6+qNneo90+fSnQ5BFgm0F/OTPKiEMvim3EoT49k6bCMs4lQWelOSF22isfCBOhW
-         CesqKLr0Q8ThvHmXeB8q77wGxJn77gA53ddXfucNxKDBXqGMq+MXSYoQAlCw1q0/WVBH
-         bBuFtb38CbAcLniP0ICCmzFSZxmaZP2oEsL6b2h2ZHIbVK7wFQCQfMSroEThfVeoweaP
-         JWUD3IO+vAiurkQhI/6KhNuqrmQzsjhSFJPXpcXH9y115EFGXO/uThqQDSzRmRi1UEht
-         oFqw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721269556; x=1721874356;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gklRP1Mg2lPJDFn6YnROe/wcKMjIXNM5Cvhi4UGcBq0=;
-        b=aPcXzjAIBByavfqBV5NBP4THWR5k60V06hRhhe52JouqE77CqsrHi6pYTYDtsnGSJ8
-         ozcp/NRNLJPUQ21IYD2vw89Oc5jbh76Q+mpLmK52bfAlLO6ioiu0GCOrjT/5IoTo586U
-         gv1e7tZSiBCdaKRToUJLYxnsiqqXuU97Vefi2CwuFHsgmpJbc5EyJrZLr3UvoVxfIv9n
-         N5u48oOfUKU5To/RCvpy8r4eoMNHyHzw7zcBqKMFse69XwyGWfZn37AYUgezsFXP7mWQ
-         8k9dR5bULtAPxW9jxn3tJwZ2D7IJ1Yd0tEsiSa+6k1TQ2kTuiO1grOlG8tLodFjQMqWH
-         VJLA==
-X-Forwarded-Encrypted: i=1; AJvYcCWl7xpDNfbiMWwh4SddWpkQFlAB8Xm7On7ZOx3c/UUxAYD0gefPRFVT9FyMnpRIHdR2eBf8okeLGCUjr8kzBOdmKB27O9TWskoT
-X-Gm-Message-State: AOJu0YyhrHYn3j3INxR+WUqKkmARCIQEcvXNaSJhHYVHDYbUat3hbN2n
-	VWAc2yFLQ1YIAuVr+QHg4tKruqtbCEIUW2EHVc5d2H3qgOmEO+naQny1ZSnLmGI=
-X-Google-Smtp-Source: AGHT+IHupNh4IdHfYITPiJHzo+24fJypzIvoRScwFusZfpcnc4Pu3dq0o5eCy94zxrmTygwA8vdt/w==
-X-Received: by 2002:a05:6870:d206:b0:260:8f6d:f029 with SMTP id 586e51a60fabf-260d9504d8bmr3106193fac.42.1721269556637;
-        Wed, 17 Jul 2024 19:25:56 -0700 (PDT)
-Received: from localhost ([2603:8080:b800:f700:eef3:26c0:a400:406b])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-260ee947f82sm192994fac.50.2024.07.17.19.25.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 17 Jul 2024 19:25:56 -0700 (PDT)
-Date: Wed, 17 Jul 2024 21:25:53 -0500
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Chen Wang <unicorn_wang@outlook.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Inochi Amaoto <inochiama@outlook.com>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] clk: sophgo: clk-sg2042-pll: Fix uninitialized variable in
- debug output
-Message-ID: <baf0a490-d5ba-4528-90ba-80399684692d@stanley.mountain>
+	dkim=pass (2048-bit key) header.d=salutedevices.com header.i=@salutedevices.com header.b="YRAseztT"
+Received: from p-infra-ksmg-sc-msk02.sberdevices.ru (localhost [127.0.0.1])
+	by mx1.sberdevices.ru (Postfix) with ESMTP id 8C3AA120003;
+	Thu, 18 Jul 2024 05:40:54 +0300 (MSK)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mx1.sberdevices.ru 8C3AA120003
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=salutedevices.com;
+	s=mail; t=1721270454;
+	bh=o4NAt6NnN8e0tZRdE85vpVhfDEoJPhl2Xlh3U/Xudgk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type:From;
+	b=YRAseztTHOKabpUHNngJbF/wafbY/LBqO3Lpgn514cnPZtNHQmxRlZbqTMsyRmG+M
+	 pw+29MdzUWSKIaOx6l30gGefyFFweAhwJ9ICUiiYdHmeclURB1Us75DlBFrdZvZhFA
+	 /Q+uRfVNy6c5h8Hb5oyukiqEROPDdUuGyKa8iP4h8mlxn0qA4EAWAPcF6iZ9bPvDoU
+	 e69pZCTsQkj6wYTH2MI5ja4TQH1Xl35iN3GpOkUyU2MPMm+800MYlOFPJ4DYUDnJkp
+	 J/fNzWGP2EypodS6S5907s+jlwFswoXzHvP5PkxjTDNZj12nFrAlaDsTIAHoqAEWyx
+	 OCvNQDoY5uIwg==
+Received: from smtp.sberdevices.ru (p-i-exch-sc-m02.sberdevices.ru [172.16.192.103])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.sberdevices.ru (Postfix) with ESMTPS;
+	Thu, 18 Jul 2024 05:40:54 +0300 (MSK)
+Received: from [172.28.128.6] (100.64.160.123) by
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.40; Thu, 18 Jul 2024 05:40:54 +0300
+Message-ID: <b12ac6b2-cb46-4410-9846-86ed4c3aea1f@salutedevices.com>
+Date: Thu, 18 Jul 2024 05:39:39 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/8] reset: amlogic: convert driver to regmap
+To: Jerome Brunet <jbrunet@baylibre.com>, Philipp Zabel
+	<p.zabel@pengutronix.de>, Stephen Boyd <sboyd@kernel.org>, Neil Armstrong
+	<neil.armstrong@linaro.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>
+References: <20240710162526.2341399-1-jbrunet@baylibre.com>
+ <20240710162526.2341399-2-jbrunet@baylibre.com>
+Content-Language: en-US
+From: Jan Dakinevich <jan.dakinevich@salutedevices.com>
+In-Reply-To: <20240710162526.2341399-2-jbrunet@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: p-i-exch-sc-m01.sberdevices.ru (172.16.192.107) To
+ p-i-exch-sc-m02.sberdevices.ru (172.16.192.103)
+X-KSMG-Rule-ID: 10
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 186569 [Jul 17 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: YVDakinevich@sberdevices.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 24 0.3.24 186c4d603b899ccfd4883d230c53f273b80e467f, {Tracking_smtp_not_equal_from}, {Tracking_from_domain_doesnt_match_to}, smtp.sberdevices.ru:7.1.1,5.0.1;100.64.160.123:7.1.2;127.0.0.199:7.1.2;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;sberdevices.ru:7.1.1,5.0.1;salutedevices.com:7.1.1, FromAlignment: n, {Tracking_smtp_domain_mismatch}, {Tracking_smtp_domain_2level_mismatch}, {Tracking_white_helo}, ApMailHostAddress: 100.64.160.123
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean
+X-KSMG-LinksScanning: Clean
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.0.1.6960, bases: 2024/07/18 01:08:00 #26058129
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-If sg2042_get_pll_ctl_setting() fails then "value" isn't initialized and
-it is printed in the debug output.  Initialize it to zero.
 
-Fixes: 48cf7e01386e ("clk: sophgo: Add SG2042 clock driver")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/clk/sophgo/clk-sg2042-pll.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/sophgo/clk-sg2042-pll.c b/drivers/clk/sophgo/clk-sg2042-pll.c
-index aa142897aa5e..24b0eab6154b 100644
---- a/drivers/clk/sophgo/clk-sg2042-pll.c
-+++ b/drivers/clk/sophgo/clk-sg2042-pll.c
-@@ -387,7 +387,7 @@ static int sg2042_clk_pll_set_rate(struct clk_hw *hw,
- 	struct sg2042_pll_clock *pll = to_sg2042_pll_clk(hw);
- 	struct sg2042_pll_ctrl pctrl_table;
- 	unsigned long flags;
--	u32 value;
-+	u32 value = 0;
- 	int ret;
- 
- 	spin_lock_irqsave(pll->lock, flags);
+On 7/10/24 19:25, Jerome Brunet wrote:
+> To allow using the same driver for the main reset controller and the
+> auxiliary ones embedded in the clock controllers, convert the
+> the Amlogic reset driver to regmap.
+> 
+> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+> ---
+>  drivers/reset/reset-meson.c | 80 ++++++++++++++++++++-----------------
+>  1 file changed, 44 insertions(+), 36 deletions(-)
+> 
+> diff --git a/drivers/reset/reset-meson.c b/drivers/reset/reset-meson.c
+> index f78be97898bc..8f3d6e9df235 100644
+> --- a/drivers/reset/reset-meson.c
+> +++ b/drivers/reset/reset-meson.c
+> @@ -11,36 +11,44 @@
+>  #include <linux/of.h>
+>  #include <linux/module.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+>  #include <linux/reset-controller.h>
+>  #include <linux/slab.h>
+>  #include <linux/types.h>
+>  
+> -#define BITS_PER_REG	32
+> -
+>  struct meson_reset_param {
+>  	int reg_count;
+>  	int level_offset;
+>  };
+>  
+>  struct meson_reset {
+> -	void __iomem *reg_base;
+>  	const struct meson_reset_param *param;
+>  	struct reset_controller_dev rcdev;
+> -	spinlock_t lock;
+> +	struct regmap *map;
+>  };
+>  
+> +static void meson_reset_offset_and_bit(struct meson_reset *data,
+> +				       unsigned long id,
+> +				       unsigned int *offset,
+> +				       unsigned int *bit)
+> +{
+> +	unsigned int stride = regmap_get_reg_stride(data->map);
+> +
+> +	*offset = (id / (stride * BITS_PER_BYTE)) * stride;
+> +	*bit = id % (stride * BITS_PER_BYTE);
+> +}
+> +
+>  static int meson_reset_reset(struct reset_controller_dev *rcdev,
+> -			      unsigned long id)
+> +			     unsigned long id)
+>  {
+>  	struct meson_reset *data =
+>  		container_of(rcdev, struct meson_reset, rcdev);
+> -	unsigned int bank = id / BITS_PER_REG;
+> -	unsigned int offset = id % BITS_PER_REG;
+> -	void __iomem *reg_addr = data->reg_base + (bank << 2);
+> +	unsigned int offset, bit;
+>  
+> -	writel(BIT(offset), reg_addr);
+> +	meson_reset_offset_and_bit(data, id, &offset, &bit);
+>  
+> -	return 0;
+> +	return regmap_update_bits(data->map, offset,
+> +				  BIT(bit), BIT(bit));
+
+regmap_update_bits() is not equal to writel(), I suppose regmap_write()
+should be here.
+
+I'm still under testing, but I see unexpected behavior on A1 SoC:
+
+[    1.482446] Call trace:
+[    1.484860]  dump_backtrace+0x94/0xec
+[    1.488482]  show_stack+0x18/0x24
+[    1.491754]  dump_stack_lvl+0x78/0x90
+[    1.495377]  dump_stack+0x18/0x24
+[    1.498654]  __report_bad_irq+0x38/0xe4
+[    1.502453]  note_interrupt+0x324/0x374
+[    1.506244]  handle_irq_event+0x9c/0xac
+[    1.510039]  handle_fasteoi_irq+0xa4/0x238
+[    1.514093]  generic_handle_domain_irq+0x2c/0x44
+[    1.518664]  gic_handle_irq+0x40/0xc4
+[    1.522287]  call_on_irq_stack+0x24/0x4c
+[    1.526168]  do_interrupt_handler+0x80/0x84
+[    1.530308]  el1_interrupt+0x34/0x68
+[    1.533844]  el1h_64_irq_handler+0x18/0x24
+[    1.537898]  el1h_64_irq+0x64/0x68
+[    1.541262]  default_idle_call+0x28/0x3c
+[    1.545143]  do_idle+0x208/0x260
+[    1.548334]  cpu_startup_entry+0x38/0x3c
+[    1.552220]  kernel_init+0x0/0x1dc
+[    1.555579]  start_kernel+0x5ac/0x6f0
+[    1.559206]  __primary_switched+0x80/0x88
+
+
+and using of regmap_write() (apparently) fixes it.
+
+>  }
+>  
+>  static int meson_reset_level(struct reset_controller_dev *rcdev,
+> @@ -48,25 +56,13 @@ static int meson_reset_level(struct reset_controller_dev *rcdev,
+>  {
+>  	struct meson_reset *data =
+>  		container_of(rcdev, struct meson_reset, rcdev);
+> -	unsigned int bank = id / BITS_PER_REG;
+> -	unsigned int offset = id % BITS_PER_REG;
+> -	void __iomem *reg_addr;
+> -	unsigned long flags;
+> -	u32 reg;
+> +	unsigned int offset, bit;
+>  
+> -	reg_addr = data->reg_base + data->param->level_offset + (bank << 2);
+> +	meson_reset_offset_and_bit(data, id, &offset, &bit);
+> +	offset += data->param->level_offset;
+>  
+> -	spin_lock_irqsave(&data->lock, flags);
+> -
+> -	reg = readl(reg_addr);
+> -	if (assert)
+> -		writel(reg & ~BIT(offset), reg_addr);
+> -	else
+> -		writel(reg | BIT(offset), reg_addr);
+> -
+> -	spin_unlock_irqrestore(&data->lock, flags);
+> -
+> -	return 0;
+> +	return regmap_update_bits(data->map, offset,
+> +				  BIT(bit), assert ? 0 : BIT(bit));
+>  }
+>  
+>  static int meson_reset_assert(struct reset_controller_dev *rcdev,
+> @@ -113,30 +109,42 @@ static const struct of_device_id meson_reset_dt_ids[] = {
+>  };
+>  MODULE_DEVICE_TABLE(of, meson_reset_dt_ids);
+>  
+> +static const struct regmap_config regmap_config = {
+> +	.reg_bits   = 32,
+> +	.val_bits   = 32,
+> +	.reg_stride = 4,
+> +};
+> +
+>  static int meson_reset_probe(struct platform_device *pdev)
+>  {
+> +	struct device *dev = &pdev->dev;
+>  	struct meson_reset *data;
+> +	void __iomem *base;
+>  
+> -	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
+> +	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+>  	if (!data)
+>  		return -ENOMEM;
+>  
+> -	data->reg_base = devm_platform_ioremap_resource(pdev, 0);
+> -	if (IS_ERR(data->reg_base))
+> -		return PTR_ERR(data->reg_base);
+> +	base = devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(base))
+> +		return PTR_ERR(base);
+>  
+> -	data->param = of_device_get_match_data(&pdev->dev);
+> +	data->param = of_device_get_match_data(dev);
+>  	if (!data->param)
+>  		return -ENODEV;
+>  
+> -	spin_lock_init(&data->lock);
+> +	data->map = devm_regmap_init_mmio(dev, base, &regmap_config);
+> +	if (IS_ERR(data->map))
+> +		return dev_err_probe(dev, PTR_ERR(data->map),
+> +				     "can't init regmap mmio region\n");
+>  
+>  	data->rcdev.owner = THIS_MODULE;
+> -	data->rcdev.nr_resets = data->param->reg_count * BITS_PER_REG;
+> +	data->rcdev.nr_resets = data->param->reg_count * BITS_PER_BYTE
+> +		* regmap_config.reg_stride;
+>  	data->rcdev.ops = &meson_reset_ops;
+> -	data->rcdev.of_node = pdev->dev.of_node;
+> +	data->rcdev.of_node = dev->of_node;
+>  
+> -	return devm_reset_controller_register(&pdev->dev, &data->rcdev);
+> +	return devm_reset_controller_register(dev, &data->rcdev);
+>  }
+>  
+>  static struct platform_driver meson_reset_driver = {
+
 -- 
-2.43.0
-
+Best regards
+Jan Dakinevich
