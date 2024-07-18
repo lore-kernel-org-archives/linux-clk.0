@@ -1,203 +1,232 @@
-Received: from mail-vs1-f47.google.com (mail-vs1-f47.google.com [209.85.217.47])
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63E9B7F47F
-	for <linux-clk@vger.kernel.org>; Thu, 18 Jul 2024 09:42:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE03585285
+	for <linux-clk@vger.kernel.org>; Thu, 18 Jul 2024 09:58:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721295739; cv=none; b=A0d0YKFNWHGn5hKpk9mM4AfCLMTB78PG+S64oMmQYjS8Q2+P0HZ0osmeyDKGkOm0iiNyHSE31bSp7nMZi6G5FRylKcTaP6jVvsYnju/ONKtwwjBTmUrrdIUgTUURMDn7xT2ev2FoEE1yWq7WQmwiNUmv1toCrGDq5k2LsNpAzSU=
+	t=1721296688; cv=none; b=Cf1JMnRXd05v/OUfYB5Tr7Qe/30Et92hyxuhNyE9XBBX+CM7xOJb0M/rked2OF/7LHBbd+7/qM4fyGf78a6jdz6oDmvNRQEqJkhNFSTMmO1c4IqCshl1NBqk0D4jjOX+MesO4U4AfW88Jhy4MKRzC6IWEeHpJAtGLnhrn8GQgw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721295739; c=relaxed/simple;
-	bh=ma1jqCvpXLvw/qJ+K1BuBiSsJ9sT6SZ1Fzi3osTq3Nk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n4jTRGEoQqzmLxmHcfmhU/DYiGpBNZ15ea0Q3yfHzgHll7wmhAkd8ulBN/fRmCd5WwkoRsXMcVksdPIn+3SfZ1jxFEUhmDV0GIrmNyzCNC087TQvGjY0eBDM/yLnB4ywCpb9y3b/O79sIEOEElQmLs56mf1CefB+Ei6p4MmYsRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=IUlJO1ih; arc=none smtp.client-ip=209.85.217.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1721296688; c=relaxed/simple;
+	bh=cxaqUoQ9aguHyFdmx85j2AoRbVwkuszVVEgKQCGMEX8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=lGB5r+KG35ZbR7jO8WCEJgBpcxMdmmZKn8pli9FFp/adCfmvOBDy73sK0ydg/XGeKAvjEnXb8zuX4dXBTg+FcbkjGAujx6wpKFNZd47DujQj9pLTN0UXlBSNI7jMgWDK6yGYJH2obEeKaK3r5ODaQvbZQ8IlyDBzYe5jrZE9Uz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=JAp1nfl/; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IUlJO1ih"
-Received: by mail-vs1-f47.google.com with SMTP id ada2fe7eead31-48feaeaa705so211693137.2
-        for <linux-clk@vger.kernel.org>; Thu, 18 Jul 2024 02:42:17 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="JAp1nfl/"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-368380828d6so420423f8f.1
+        for <linux-clk@vger.kernel.org>; Thu, 18 Jul 2024 02:58:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1721295736; x=1721900536; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1721296684; x=1721901484; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=WurLU3I0ZY0rwZGNbG1KQfDTWM2GScsE4+HGMoCekcE=;
-        b=IUlJO1ihpZxhv1O/+rr5lj2aYpAESctxWkKByH88QcAfRDMRsqSptGLPPH3irrc8DD
-         M0Io2wnQVHn0bd2eKirP3w//RMBOFKp9XnJ+CA5lcv7UWZeEATyTBC7mLMD6df0auAhu
-         9iQTUE0ilsvGop1AiY/wCvNShT9Bu+duDdins=
+        bh=+f/3bReYMesF4TJq9BOi7hv3PG6ArjPAwHRzmWrlWAw=;
+        b=JAp1nfl/mUpnT3GSrT+5Dc8Y0mNb84sLVaWAmDyW8veLLmLKy9Qihv0oyqKOM6SvmU
+         YfWCtHUvb+LC7H3tMN7Urxfl5DWHdl6PHwGZV5zwMUP6JR97UYJBDZ1xFn+84pw2BXcu
+         AXGPpJzk/0dV3EgA3uxMnyzafslm8HNbkGo/xcz4MNPGM0U8//j+N4QlK1dqcTK1RGlB
+         asz5R3eajummhQQfwLfgNB3CctDFEIwQ9IwRmzkkgqMNsZwGBFOsXXQWQcTmPqUTw84d
+         kpLtbWXavKuuEMT2tYTODUA26ENtO3kz6B3J/6AQ4gc6REF63y0nQ7V1XR3YVC4I7OEd
+         NU2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721295736; x=1721900536;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1721296684; x=1721901484;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=WurLU3I0ZY0rwZGNbG1KQfDTWM2GScsE4+HGMoCekcE=;
-        b=i5heMbSyogBMF2e6h7YxiwF3PYrmTvWM8TnyILOE2rQkBaSNC2y1lYh4rRfLwqDdIV
-         iJcR4UVMkquOh+gFafBYqTm0YZh7laXuI2+R1k71ZXKOYF17oqH7E51zkLQ7igzOzHx9
-         06fYlssh/DkwPcFvcfBAT67Aa4I6fzbog9tIUhTuc2i7JPDRZx1jL1P0Ih85MajbRpSJ
-         loR0jscDpn+iAYgKApr9rYC6HblSxU7OLkGis6WkpaN5cFH5q9re1W8GEf5ePm4fjiiw
-         9U2Yfcxpxtl4UGmG3jDc+X9KL0AQAdTLHej6AvBckiqQG/owyScfP2IqUSh/URys2xKO
-         eStw==
-X-Forwarded-Encrypted: i=1; AJvYcCUwZKxcC64gvF/w3nYb/lN9bGvVhh1mNvoOaNqMy12Wu/NQ4XW8UfEDL2Xj5HFRWmvd1fBtz8p92a6w7Vbe9GwrcCsDwZ4Ex6Jd
-X-Gm-Message-State: AOJu0YxSHLj9GUhq7v2BB2W/AnD0yFeI95KuXVk934AJqOTMkVNfHXln
-	jeYYUH6va8S0Df5viMauIluUQ4E2It8MzwRL3be0BoqMTTeAswtMteV4CpaRg3ksKSVEjcjXfc2
-	oeg==
-X-Google-Smtp-Source: AGHT+IF6LCYaLDkgaT6psUafvk+fGYOBwF35C38nz1y3vezxNQgeIKpaZ+330KBohWUvMzyOAm3k9w==
-X-Received: by 2002:a05:6102:8014:b0:48f:bbf3:b8b5 with SMTP id ada2fe7eead31-4915986a8afmr5862888137.7.1721295736078;
-        Thu, 18 Jul 2024 02:42:16 -0700 (PDT)
-Received: from mail-ua1-f50.google.com (mail-ua1-f50.google.com. [209.85.222.50])
-        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-822c8ac4478sm128313241.29.2024.07.18.02.42.15
-        for <linux-clk@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Jul 2024 02:42:15 -0700 (PDT)
-Received: by mail-ua1-f50.google.com with SMTP id a1e0cc1a2514c-81177a1089fso182579241.2
-        for <linux-clk@vger.kernel.org>; Thu, 18 Jul 2024 02:42:15 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWj1S7bBQcHo1i5J8CxFb4xEezLt24z6yafxGy57iZMq7Wdw7gH2ccUw8NkpYyJxrGVnpF8vatBm9/bTyrgt+yp2VrzDxW0pla5
-X-Received: by 2002:a05:6102:8014:b0:48f:bbf3:b8b5 with SMTP id
- ada2fe7eead31-4915986a8afmr5862849137.7.1721295735028; Thu, 18 Jul 2024
- 02:42:15 -0700 (PDT)
+        bh=+f/3bReYMesF4TJq9BOi7hv3PG6ArjPAwHRzmWrlWAw=;
+        b=kgb6ny9vve9svSFvSnw8/1PB7JhjBzU27rPtTG16CBGM/leWwduqu9Tp/lx3xdQo3A
+         BPICZO2TQuxPRE7IZhrb6UqjQXEDbd17HsgkdJ1RFUiAuC445wR9H2BZzYAmFzCyDAok
+         BAVfEPujqSHMpLS/8ADunVUB4oryJZFo3GeuNd94COqoVVMBRs7w27wrdcgwloeg1AsO
+         v7qVZSJXwhsIKT8HMopLdTJIMTT1cds3/4o+j1L80gFvp/G3Ws4M4tykoMnStT54PYrP
+         47qWcdVi/g5+8GryVWDoTe1u2K5iJUkDObeRJUozX7F+e8Vql79vjGJFhH5Mfje2yx8p
+         kMNw==
+X-Forwarded-Encrypted: i=1; AJvYcCWJLv0oon0MwyBhJOcH6BToY5xqwjzynL52OO85zT8PMaBh9O5jmYCnL6uNrkJzbJiR0RuxD7RLJaB6vUqILFGYZxpJ1jYUqj/i
+X-Gm-Message-State: AOJu0YxwnAM3P0u3zdemhJ9i0iK3aOacfvBgcEdwo60Hg4wxTrdxYalq
+	Ws59Ia6PTbcWt0sojmcyrXxdOq7uN0BAHC0ZvLqwBDKgee4n1uzVksWboajPqN8=
+X-Google-Smtp-Source: AGHT+IF2wpylHtE0GsGjeKwrPISupVDdqlSWSz7Bc5nyMlVO3EB3+GjMC7UpkG8hkKpJnSbvcphnrQ==
+X-Received: by 2002:a5d:540d:0:b0:367:9803:bfe7 with SMTP id ffacd0b85a97d-3683171fe16mr2596315f8f.53.1721296684185;
+        Thu, 18 Jul 2024 02:58:04 -0700 (PDT)
+Received: from toaster.lan ([2a01:e0a:3c5:5fb1:8d37:f44a:c212:e320])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3680dab3be3sm13837155f8f.24.2024.07.18.02.58.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Jul 2024 02:58:03 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Philipp Zabel <p.zabel@pengutronix.de>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	Jan Dakinevich <jan.dakinevich@salutedevices.com>,
+	linux-kernel@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org
+Subject: [PATCH v2 1/9] reset: amlogic: convert driver to regmap
+Date: Thu, 18 Jul 2024 11:57:45 +0200
+Message-ID: <20240718095755.3511992-2-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240718095755.3511992-1-jbrunet@baylibre.com>
+References: <20240718095755.3511992-1-jbrunet@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240718082528.220750-1-angelogioacchino.delregno@collabora.com>
-In-Reply-To: <20240718082528.220750-1-angelogioacchino.delregno@collabora.com>
-From: Fei Shao <fshao@chromium.org>
-Date: Thu, 18 Jul 2024 17:41:39 +0800
-X-Gmail-Original-Message-ID: <CAC=S1nhmuGfaQrK-3TZzY3-c1_cDbB5g_Zp2nXOzg6zQZ-j4Lw@mail.gmail.com>
-Message-ID: <CAC=S1nhmuGfaQrK-3TZzY3-c1_cDbB5g_Zp2nXOzg6zQZ-j4Lw@mail.gmail.com>
-Subject: Re: [PATCH] clk: mediatek: reset: Remove unused mtk_register_reset_controller()
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: sboyd@kernel.org, matthias.bgg@gmail.com, mturquette@baylibre.com, 
-	p.zabel@pengutronix.de, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
-	linux-clk@vger.kernel.org, kernel@collabora.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 18, 2024 at 4:26=E2=80=AFPM AngeloGioacchino Del Regno
-<angelogioacchino.delregno@collabora.com> wrote:
->
-> Now that all clock controllers have been migrated to the new
-> mtk_register_reset_controller_with_dev() function, the one taking
-> struct device node is now unused: remove it.
->
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
-abora.com>
-> ---
->  drivers/clk/mediatek/reset.c | 59 ------------------------------------
->  drivers/clk/mediatek/reset.h | 10 ------
->  2 files changed, 69 deletions(-)
->
-> diff --git a/drivers/clk/mediatek/reset.c b/drivers/clk/mediatek/reset.c
-> index 290ceda84ce4..069f9e909cb0 100644
-> --- a/drivers/clk/mediatek/reset.c
-> +++ b/drivers/clk/mediatek/reset.c
-> @@ -110,65 +110,6 @@ static int reset_xlate(struct reset_controller_dev *=
-rcdev,
->         return data->desc->rst_idx_map[reset_spec->args[0]];
->  }
->
-> -int mtk_register_reset_controller(struct device_node *np,
-> -                                 const struct mtk_clk_rst_desc *desc)
-> -{
-> -       struct regmap *regmap;
-> -       const struct reset_control_ops *rcops =3D NULL;
-> -       struct mtk_clk_rst_data *data;
-> -       int ret;
-> -
-> -       if (!desc) {
-> -               pr_err("mtk clock reset desc is NULL\n");
-> -               return -EINVAL;
-> -       }
-> -
-> -       switch (desc->version) {
-> -       case MTK_RST_SIMPLE:
-> -               rcops =3D &mtk_reset_ops;
-> -               break;
-> -       case MTK_RST_SET_CLR:
-> -               rcops =3D &mtk_reset_ops_set_clr;
-> -               break;
-> -       default:
-> -               pr_err("Unknown reset version %d\n", desc->version);
-> -               return -EINVAL;
-> -       }
-> -
-> -       regmap =3D device_node_to_regmap(np);
-> -       if (IS_ERR(regmap)) {
-> -               pr_err("Cannot find regmap for %pOF: %pe\n", np, regmap);
-> -               return -EINVAL;
-> -       }
-> -
-> -       data =3D kzalloc(sizeof(*data), GFP_KERNEL);
-> -       if (!data)
-> -               return -ENOMEM;
-> -
-> -       data->desc =3D desc;
-> -       data->regmap =3D regmap;
-> -       data->rcdev.owner =3D THIS_MODULE;
-> -       data->rcdev.ops =3D rcops;
-> -       data->rcdev.of_node =3D np;
-> -
-> -       if (data->desc->rst_idx_map_nr > 0) {
-> -               data->rcdev.of_reset_n_cells =3D 1;
-> -               data->rcdev.nr_resets =3D desc->rst_idx_map_nr;
-> -               data->rcdev.of_xlate =3D reset_xlate;
-> -       } else {
-> -               data->rcdev.nr_resets =3D desc->rst_bank_nr * RST_NR_PER_=
-BANK;
-> -       }
-> -
-> -       ret =3D reset_controller_register(&data->rcdev);
-> -       if (ret) {
-> -               pr_err("could not register reset controller: %d\n", ret);
-> -               kfree(data);
-> -               return ret;
-> -       }
-> -
-> -       return 0;
-> -}
-> -
->  int mtk_register_reset_controller_with_dev(struct device *dev,
->                                            const struct mtk_clk_rst_desc =
-*desc)
+To allow using the same driver for the main reset controller and the
+auxiliary ones embedded in the clock controllers, convert the
+the Amlogic reset driver to regmap.
 
-I guess that means the "_with_dev" suffix here becomes redundant and
-therefore can be removed.
-Do you want to update it all together?
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/reset/reset-meson.c | 80 ++++++++++++++++++++-----------------
+ 1 file changed, 44 insertions(+), 36 deletions(-)
 
-Regards,
-Fei
+diff --git a/drivers/reset/reset-meson.c b/drivers/reset/reset-meson.c
+index f78be97898bc..8f3d6e9df235 100644
+--- a/drivers/reset/reset-meson.c
++++ b/drivers/reset/reset-meson.c
+@@ -11,36 +11,44 @@
+ #include <linux/of.h>
+ #include <linux/module.h>
+ #include <linux/platform_device.h>
++#include <linux/regmap.h>
+ #include <linux/reset-controller.h>
+ #include <linux/slab.h>
+ #include <linux/types.h>
+ 
+-#define BITS_PER_REG	32
+-
+ struct meson_reset_param {
+ 	int reg_count;
+ 	int level_offset;
+ };
+ 
+ struct meson_reset {
+-	void __iomem *reg_base;
+ 	const struct meson_reset_param *param;
+ 	struct reset_controller_dev rcdev;
+-	spinlock_t lock;
++	struct regmap *map;
+ };
+ 
++static void meson_reset_offset_and_bit(struct meson_reset *data,
++				       unsigned long id,
++				       unsigned int *offset,
++				       unsigned int *bit)
++{
++	unsigned int stride = regmap_get_reg_stride(data->map);
++
++	*offset = (id / (stride * BITS_PER_BYTE)) * stride;
++	*bit = id % (stride * BITS_PER_BYTE);
++}
++
+ static int meson_reset_reset(struct reset_controller_dev *rcdev,
+-			      unsigned long id)
++			     unsigned long id)
+ {
+ 	struct meson_reset *data =
+ 		container_of(rcdev, struct meson_reset, rcdev);
+-	unsigned int bank = id / BITS_PER_REG;
+-	unsigned int offset = id % BITS_PER_REG;
+-	void __iomem *reg_addr = data->reg_base + (bank << 2);
++	unsigned int offset, bit;
+ 
+-	writel(BIT(offset), reg_addr);
++	meson_reset_offset_and_bit(data, id, &offset, &bit);
+ 
+-	return 0;
++	return regmap_update_bits(data->map, offset,
++				  BIT(bit), BIT(bit));
+ }
+ 
+ static int meson_reset_level(struct reset_controller_dev *rcdev,
+@@ -48,25 +56,13 @@ static int meson_reset_level(struct reset_controller_dev *rcdev,
+ {
+ 	struct meson_reset *data =
+ 		container_of(rcdev, struct meson_reset, rcdev);
+-	unsigned int bank = id / BITS_PER_REG;
+-	unsigned int offset = id % BITS_PER_REG;
+-	void __iomem *reg_addr;
+-	unsigned long flags;
+-	u32 reg;
++	unsigned int offset, bit;
+ 
+-	reg_addr = data->reg_base + data->param->level_offset + (bank << 2);
++	meson_reset_offset_and_bit(data, id, &offset, &bit);
++	offset += data->param->level_offset;
+ 
+-	spin_lock_irqsave(&data->lock, flags);
+-
+-	reg = readl(reg_addr);
+-	if (assert)
+-		writel(reg & ~BIT(offset), reg_addr);
+-	else
+-		writel(reg | BIT(offset), reg_addr);
+-
+-	spin_unlock_irqrestore(&data->lock, flags);
+-
+-	return 0;
++	return regmap_update_bits(data->map, offset,
++				  BIT(bit), assert ? 0 : BIT(bit));
+ }
+ 
+ static int meson_reset_assert(struct reset_controller_dev *rcdev,
+@@ -113,30 +109,42 @@ static const struct of_device_id meson_reset_dt_ids[] = {
+ };
+ MODULE_DEVICE_TABLE(of, meson_reset_dt_ids);
+ 
++static const struct regmap_config regmap_config = {
++	.reg_bits   = 32,
++	.val_bits   = 32,
++	.reg_stride = 4,
++};
++
+ static int meson_reset_probe(struct platform_device *pdev)
+ {
++	struct device *dev = &pdev->dev;
+ 	struct meson_reset *data;
++	void __iomem *base;
+ 
+-	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
++	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+ 	if (!data)
+ 		return -ENOMEM;
+ 
+-	data->reg_base = devm_platform_ioremap_resource(pdev, 0);
+-	if (IS_ERR(data->reg_base))
+-		return PTR_ERR(data->reg_base);
++	base = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(base))
++		return PTR_ERR(base);
+ 
+-	data->param = of_device_get_match_data(&pdev->dev);
++	data->param = of_device_get_match_data(dev);
+ 	if (!data->param)
+ 		return -ENODEV;
+ 
+-	spin_lock_init(&data->lock);
++	data->map = devm_regmap_init_mmio(dev, base, &regmap_config);
++	if (IS_ERR(data->map))
++		return dev_err_probe(dev, PTR_ERR(data->map),
++				     "can't init regmap mmio region\n");
+ 
+ 	data->rcdev.owner = THIS_MODULE;
+-	data->rcdev.nr_resets = data->param->reg_count * BITS_PER_REG;
++	data->rcdev.nr_resets = data->param->reg_count * BITS_PER_BYTE
++		* regmap_config.reg_stride;
+ 	data->rcdev.ops = &meson_reset_ops;
+-	data->rcdev.of_node = pdev->dev.of_node;
++	data->rcdev.of_node = dev->of_node;
+ 
+-	return devm_reset_controller_register(&pdev->dev, &data->rcdev);
++	return devm_reset_controller_register(dev, &data->rcdev);
+ }
+ 
+ static struct platform_driver meson_reset_driver = {
+-- 
+2.43.0
 
-
->  {
-> diff --git a/drivers/clk/mediatek/reset.h b/drivers/clk/mediatek/reset.h
-> index 6a58a3d59165..562ffd290a22 100644
-> --- a/drivers/clk/mediatek/reset.h
-> +++ b/drivers/clk/mediatek/reset.h
-> @@ -59,16 +59,6 @@ struct mtk_clk_rst_data {
->         const struct mtk_clk_rst_desc *desc;
->  };
->
-> -/**
-> - * mtk_register_reset_controller - Register MediaTek clock reset control=
-ler
-> - * @np: Pointer to device node.
-> - * @desc: Constant pointer to description of clock reset.
-> - *
-> - * Return: 0 on success and errorno otherwise.
-> - */
-> -int mtk_register_reset_controller(struct device_node *np,
-> -                                 const struct mtk_clk_rst_desc *desc);
-> -
->  /**
->   * mtk_register_reset_controller - Register mediatek clock reset control=
-ler with device
->   * @np: Pointer to device.
-> --
-> 2.45.2
->
->
