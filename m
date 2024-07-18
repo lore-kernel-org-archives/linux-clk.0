@@ -1,278 +1,193 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 404791422C4
-	for <linux-clk@vger.kernel.org>; Thu, 18 Jul 2024 14:41:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167FA2AEE3;
+	Thu, 18 Jul 2024 15:59:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721313671; cv=none; b=AexE4AT7fVdVFZO6kUtJViItREYqBwcszchlYvVPZ/OMZPdakFhm9c5ZkSP84y1DFIeXdgPHeZle0KQMZ9KvrAoiWCPwxTA32I355VXnDYWB9vd6O9y31EF/B+OpKFo6Wnmg7YnRxKcg7R6ZICjjoJ72NcdKxEXj3HRn6KQE/9c=
+	t=1721318395; cv=none; b=LEHKAyZt2o8QXZZccqkm4T3f4QjSG0C7n88EcI++sA1NwYmCb+K66f+I+ZtyMflXGLsGmy/XlAuPLIhTOStIw6gQUO1wJV2RJRIf6M23S9pgiuxUftc1466zCbtj3NVF65E5oy1QyRLhs8YEnwOddwglACXQsIeTjv5X05rYNtQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721313671; c=relaxed/simple;
-	bh=8iksS6ZFnv53ZcAghL65KYmsNJMU8ft6S6eoiAhZaOk=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=mnuCkVFr0c/lZ1eAN1AiBW+XveLFP2gmuTSFY6r7dqkKm8rR8+WDjEv8xZ86lV2tieTStfXES1bRsYjI2Gk5oarpxS5/lL6iN5UUt/yk2QHXC3gUafL5k6jJBmOWo/siYRlPlv8TnxeBE1ObxLVADUVrd1OetOj5OtT1Jj2kV5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=HgVax8GW; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1721318395; c=relaxed/simple;
+	bh=T4DfjvkHoIEyUPZXgAngg+UvPIuZJXu0JXGh6sWNt+c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PFuGf+jQJyBMuhzl9f9r6JuNlWMI8/ollRxCYg/J9dE+FmbMA+znpVxm/9U+Ok/r+OABb4g0844Xwt9uuDO4tjH41g/zpBoFZLnw+F9CX6ewG66Dj0wbwvnUsL3D+yI6VrKcD3jBaeOE6VnA/0JWdrQlNEUlTIsSa+ntyHsjmMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H5vHfytm; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="HgVax8GW"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3684eb5be64so454915f8f.3
-        for <linux-clk@vger.kernel.org>; Thu, 18 Jul 2024 07:41:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1721313666; x=1721918466; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=d5zeQJ5Ow3UH0+RdZ7WJRjKIJGbUGTjL+v0QPQ6ApNI=;
-        b=HgVax8GWSB4R1kltVA/DXD5F3bYvs9nzcMo1TE75KXYE4mZNQsa7M4YXog31whlRoO
-         wNpaLOwqMIHbGcmstQU2Lwzp/khKUTLoQrZlz8tz7F1FjAaRghMZcuraCYbOHfDMPcXF
-         1vGgXDVJu6f+/Xp8nynyuzd6GYuaMZCE+flQ9LqUTKTh/KeuSM4Ym5BJ3qoDeukfrlIq
-         0XEzsmF2M/5Mp978T+woQvLKlkhiv3Vlnck+HETRVLcZKjLKhFJapu2Dd4UjxbW8vurn
-         OiRCcDf+Ch0B8yRglLobsL7MeCFPGSb8WyqQkVctOeRGzW540/rf0v/d/cFFWXIM5ArV
-         FyMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721313666; x=1721918466;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=d5zeQJ5Ow3UH0+RdZ7WJRjKIJGbUGTjL+v0QPQ6ApNI=;
-        b=krv100JuDUQ6ck91m+/REg1tjK5XRPf1ATOT0rxF//Nj3w6sX7TJTQKEmMVTXlyM5+
-         F6tgbIzP07t1XPMt5+v8j9aGivJo6K3pyD0/5E8SZKy0mCGKXTW7P0LMjY5ZAPJqavq4
-         GXGE+nI1XlpwiXc8uFwezIpjLGd//0RKzId22XyZYrYS3Xe1IOXQwRbD0hgq4oBRfrOd
-         TT0e4tHEmsJKP7FS2WO4lyYwFeRMhjYULq8JJzFimBosoiD89TMuY7quZKRc00erJDXN
-         0jPS3up15claQUbUimDA3zS5CQMbHwIOiOd/kIwoQJKC3rS5qd3ZPoILu3zGlITKMuCD
-         vPlg==
-X-Forwarded-Encrypted: i=1; AJvYcCVUHf3MRkEMbnqGB+nTqbGQjqESywYZ2Jlj3/LPwkVRU11/tuRFbvkFch4y1hheS4PgtfHsamjPSaGfcCwcZ4nPSZuEjMpFmQpW
-X-Gm-Message-State: AOJu0Yx9cDQxAn99NI6VUHE7n/ETtkQ5nwVab5GDDGm9kQGvRTAtS7fj
-	VmEdmOj0uS47lc9V5rA+B5+kkqAIAGbqFQOnPJzdvwJ9FfEknQR8E+s3Bo/Chtw=
-X-Google-Smtp-Source: AGHT+IHLLY7FV8d3TW5DeDftcP9CR4qKgZexsCdXD1McSEmqtB8zHI2JozSns5pNcAAnLe1mJiEB7g==
-X-Received: by 2002:a5d:59a2:0:b0:367:9073:3496 with SMTP id ffacd0b85a97d-3683160e527mr4242349f8f.29.1721313666237;
-        Thu, 18 Jul 2024 07:41:06 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.144])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3685043637fsm1903132f8f.66.2024.07.18.07.41.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 18 Jul 2024 07:41:05 -0700 (PDT)
-Message-ID: <fd8078cb-fe1c-4aef-9e83-be2baa529720@tuxon.dev>
-Date: Thu, 18 Jul 2024 17:41:03 +0300
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H5vHfytm"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74CC4C116B1;
+	Thu, 18 Jul 2024 15:59:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721318394;
+	bh=T4DfjvkHoIEyUPZXgAngg+UvPIuZJXu0JXGh6sWNt+c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=H5vHfytmqPrYO2pIj4jHkuG37Chv40x0l0h3Sl9muo3W743GzaXi685mZhYM0PxKX
+	 qY1W1G26W7T74h+GzelvwecVAFTeTXk9rS8s0mQ2GKIYdDO42kuRxaqVqrh2TahtTQ
+	 DeHvsXWD9ZivyLsPP2cPrfcRhHVGjhOpnAu6E2gVglYI8L5kBeOhdkdF7NyIHCE16+
+	 a5zjypcBX6vE5qs/Lv0EYy6aFU/RvxcL/edVsn3r695CfrtVLzE5ZixZJ7yRSkCZZ3
+	 xj91p5dsHYcjo2FApj2Eyy7dD3bzfk3avOiu1CvosShMilzoG3i6t+04/kuIvDFVu3
+	 OJDGaKacKGgbw==
+Date: Thu, 18 Jul 2024 16:59:50 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org
+Subject: Re: [PATCH v2 1/3] dt-bindings: clocks: add binding for
+ voltage-controlled-oscillators
+Message-ID: <20240718-prozac-specks-6b5fd8b83e3e@spud>
+References: <20240715110251.261844-1-heiko@sntech.de>
+ <20240715110251.261844-2-heiko@sntech.de>
+ <20240716-deceiving-saucy-851fb2303c1f@spud>
+ <3178118.zE8UqtGg2D@diego>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-Subject: Re: [PATCH v2 03/11] clk: renesas: clk-vbattb: Add VBATTB clock
- driver
-To: Stephen Boyd <sboyd@kernel.org>, alexandre.belloni@bootlin.com,
- conor+dt@kernel.org, geert+renesas@glider.be, krzk+dt@kernel.org,
- lee@kernel.org, magnus.damm@gmail.com, mturquette@baylibre.com,
- p.zabel@pengutronix.de, robh@kernel.org
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rtc@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240716103025.1198495-1-claudiu.beznea.uj@bp.renesas.com>
- <20240716103025.1198495-4-claudiu.beznea.uj@bp.renesas.com>
- <2abcd440664067d95b1ac0e765ad55a3.sboyd@kernel.org>
- <e3103f07-ce8a-4c34-af5c-bb271c7ec99a@tuxon.dev>
- <4cacf090dc56c3ffd15bccd960065769.sboyd@kernel.org>
-Content-Language: en-US
-In-Reply-To: <4cacf090dc56c3ffd15bccd960065769.sboyd@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="TA6tyFoqBwcLvbVt"
+Content-Disposition: inline
+In-Reply-To: <3178118.zE8UqtGg2D@diego>
 
 
+--TA6tyFoqBwcLvbVt
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 18.07.2024 03:39, Stephen Boyd wrote:
-> Quoting claudiu beznea (2024-07-17 01:31:20)
->> Hi, Stephen,
->>
->> On 17.07.2024 01:28, Stephen Boyd wrote:
->>> Quoting Claudiu (2024-07-16 03:30:17)
->>>> diff --git a/drivers/clk/renesas/clk-vbattb.c b/drivers/clk/renesas/clk-vbattb.c
->>>> new file mode 100644
->>>> index 000000000000..8effe141fc0b
->>>> --- /dev/null
->>>> +++ b/drivers/clk/renesas/clk-vbattb.c
->>>> @@ -0,0 +1,212 @@
->>>> +// SPDX-License-Identifier: GPL-2.0
->>>> +/*
->>>> + * VBATTB clock driver
->>>> + *
->>>> + * Copyright (C) 2024 Renesas Electronics Corp.
->>>> + */
->>>> +
->>>> +#include <linux/cleanup.h>
->>>> +#include <linux/clk.h>
->>>
->>> Prefer clk providers to not be clk consumers.
->>
->> I added it here to be able to use devm_clk_get_optional() as it was
->> proposed to me in v1 to avoid adding a new binding for bypass and detect if
->> it's needed by checking the input clock name.
->>
-> 
-> Understood.
-> 
->>
->>>
->>> I also wonder if this is really a mux, 
->>
->> It's a way to determine what type of clock (crystal oscillator or device
->> clock) is connected to RTXIN/RTXOUT pins of the module
->> (the module block diagram at [1]) based on the clock name. Depending on the
->> type of the clock connected to RTXIN/RTXOUT we need to select the XC or
->> XBYP as input for the mux at [1].
->>
->> [1] https://gcdnb.pbrd.co/images/QYsCvhfQlX6n.png
-> 
-> That diagram shows a mux block, so at least something in there is a mux.
-> From what I can tell the binding uses clock-names to describe the mux.
-> What I'd like to avoid is using clk_get() to determine how to configure
-> the mux. That's because clk_get() is a clk consumer API, and because we
-> want clk providers to be able to register clks without making sure that
-> the entire parent chain has been registered first. Eventually, we'd like
-> clk_get() to probe defer if the clk is an orphan. Having clk providers
-> use clk_get() breaks that pretty quickly.
-> 
->>
->>
->>> and either assigned-clock-parents should be used, 
->>> or the clk_ops should have an init routine that looks at
->>> which parent is present by determining the index and then use that to
->>> set the mux. The framework can take care of failing to set the other
->>> parent when it isn't present.
->>
->>
->> On the board, at any moment, it will be only one clock as input to the
->> VBATTB clock (either crystal oscillator or a clock device). If I'm getting
->> you correctly, this will involve describing both clocks in some scenarios.
->>
->> E.g. if want to use crystal osc, I can use this DT description:
->>
->> vbattclk: clock-controller@1c {
->>         compatible = "renesas,r9a08g045-vbattb-clk";
->>         reg = <0 0x1c 0 0x10>;
->>         clocks = <&vbattb_xtal>;
->>         clock-names = "xin";
->>         #clock-cells = <0>;
->>         status = "disabled";
->> };
->>
->> vbattb_xtal: vbattb-xtal {
->>         compatible = "fixed-clock";
->>         #clock-cells = <0>;
->>         clock-frequency = <32768>;
->> };
->>
->> If external clock device is to be used, I should describe a fake clock too:
->>
->> vbattclk: clock-controller@1c {
->>         compatible = "renesas,r9a08g045-vbattb-clk";
->>         reg = <0 0x1c 0 0x10>;
->>         clocks = <&vbattb_xtal>, <&ext_clk>;
-> 
-> Is vbattb_xtal the fake clk? If so, I'd expect this to be
-> 
-> 	clocks = <0>, <&ext_clk>;
-> 
-> so that we don't have a useless clk node.
-> 
->>         clock-names = "xin", "clkin";
->>         #clock-cells = <0>;
->>         status = "disabled";
->> };
->>
->> vbattb_xtal: vbattb-xtal {
->>         compatible = "fixed-clock";
->>         #clock-cells = <0>;
->>         clock-frequency = <0>;
->> };
->>
->> ext_clk: ext-clk {
->>         compatible = "fixed-clock";
->>         #clock-cells = <0>;
->>         clock-frequency = <32768>;
->> };
->>
->> Is this what you are suggesting?
->>
-> 
-> Sort of. Ignoring the problem with the subnode for the clk driver, I
-> don't really like having clock-names that don't match the hardware pin
-> names. From the diagram you provided, it looks like clock-names should
-> be "bclk" and "rtxin" for the bus clock and the rtxin signal. Then the
-> clock-cells should be "1" instead of "0", and the mux should be one of
-> those provided clks and "xc" and "xbyp" should be the other two. If that
-> was done, then assigned-clocks could be used to assign the parent of the
-> mux.
-> 
-> #define VBATTBCLK          0
-> #define VBATTB_XBYP        1
-> #define VBATTB_XC          2
-> 
->     vbattb: vbattb@1005c000 {
->         compatible = "renesas,r9a08g045-vbattb";
->         reg = <0x1005c000 0x1000>;
->         ranges = <0 0 0x1005c000 0 0x1000>;
->         interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
->         interrupt-names = "tampdi";
->         clocks = <&cpg CPG_MOD R9A08G045_VBAT_BCLK>, <&ext_clk>;
->         clock-names = "bclk", "rtxin";
->         power-domains = <&cpg>;
->         resets = <&cpg R9A08G045_VBAT_BRESETN>;
->         #clock-cells = <1>;
->         assigned-clocks = <&vbattb VBATTBCLK>;
-> 	assigned-clock-parents = <&vbattb VBATTB_XBYP>;
->         renesas,vbattb-load-nanofarads = <12500>;
->     };
+On Thu, Jul 18, 2024 at 11:25:28AM +0200, Heiko St=FCbner wrote:
+> Hi Conor,
+>=20
+> Am Dienstag, 16. Juli 2024, 18:15:08 CEST schrieb Conor Dooley:
+> > On Mon, Jul 15, 2024 at 01:02:49PM +0200, Heiko Stuebner wrote:
+> > > In contrast to fixed clocks that are described as ungateable, boards
+> > > sometimes use additional oscillators for things like PCIe reference
+> > > clocks, that need actual supplies to get enabled and enable-gpios to =
+be
+> > > toggled for them to work.
+> > >=20
+> > > This adds a binding for such oscillators that are not configurable
+> > > themself, but need to handle supplies for them to work.
+> > >=20
+> > > In schematics they often can be seen as
+> > >=20
+> > >          ----------------
+> > > Enable - | 100MHz,3.3V, | - VDD
+> > >          |    3225      |
+> > >    GND - |              | - OUT
+> > >          ----------------
+> > >=20
+> > > or similar. The enable pin might be separate but can also just be tied
+> > > to the vdd supply, hence it is optional in the binding.
+> > >=20
+> > > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> > > ---
+> > >  .../bindings/clock/voltage-oscillator.yaml    | 49 +++++++++++++++++=
+++
+> > >  1 file changed, 49 insertions(+)
+> > >  create mode 100644 Documentation/devicetree/bindings/clock/voltage-o=
+scillator.yaml
+> > >=20
+> > > diff --git a/Documentation/devicetree/bindings/clock/voltage-oscillat=
+or.yaml b/Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
+> > > new file mode 100644
+> > > index 0000000000000..8bff6b0fd582e
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
+> > > @@ -0,0 +1,49 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/clock/voltage-oscillator.yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: Voltage controlled oscillator
+> >=20
+> > Voltage controlled oscillator? Really? That sounds far too similar to a
+> > VCO to me, and the input voltage here (according to the description at
+> > least) does not affect the frequency of oscillation.
+>=20
+> That naming was suggested by Stephen in v1 [0] .
 
-I think I got it now. Thank you for the detailed explanation.
+I think "voltage-oscillator" is a confusing name, and having "voltage
+controlled oscillator" in the title doubly so as this isn't a binding
+for a VCO.
+A VCO is a more general case of the sort of device that you're talking
+about here, so a part of me can see it - but I think specific
+compatibles would be required for actual VCOs, since the "transfer
+function" would vary per device.
 
-> 
-> One last thing that I don't really understand is why this needs to be a
-> clk provider. In the diagram, the RTC is also part of vbattb, so it
-> looks odd to have this node be a clk provider with #clock-cells at all.
+> Of course the schematics for the board I have only describe it as
+> "100MHz,3.3V,3225" , thumbing through some mouser parts matching that
+> only mentions "supply voltage" in their datasheets but not a dependency
+> between rate and voltage.
+>=20
+> [0] https://lore.kernel.org/linux-arm-kernel/b3c450a94bcb4ad0bc5b3c7ee871=
+2cb8.sboyd@kernel.org/
+>=20
+> > Why the dedicated binding, rather than adding a supply and enable-gpio
+> > to the existing "fixed-clock" binding? I suspect that a large portion of
+> > "fixed-clock"s actually require a supply that is (effectively)
+> > always-on.
+>=20
+> I guess there are three aspects:
+> - I do remember discussions in the past about not extending generic
+>   bindings with device-specific stuff.
 
-I did it like this because the RTC is a different IP mapped at it's own
-address and considering the other VBATTB functionalities (tamper, SRAM)
-might be implemented at some point.
+FWIW, I wouldn't classify this as device-specific. "enable-gpios" and
+"vdd-supply" are pretty generic and I think the latter is missing from
+the vast majority of real* "fixed-clocks". I would expect that devices
+where the datasheet would call
 
-I also failed to notice that RTC might not work w/o bclk being enabled
-(thanks for pointing it).
+* Real because there's plenty of "fixed-clocks" (both in and out of tree)
+that are used to work around the lack of a clock-controller driver for an
+SoC.
 
-I saw that diagram more like describing the always-on power domain
-(PD_VBATTB) where the VBATTB logic and RTC resides. That power domain is
-backed by battery. From HW manual [1]: "PD_VBATT domain is the area where
-the RTC/backup register is located, works on battery power when the power
-of PD_VCC and PD_ISOVCC domain are turned off."
+> I think generic power-sequences
+>   were the topic back then, though that might have changed over time?
+> - There are places that describe "fixed-clock" as
+>   "basic fixed-rate clock that cannot gate" [1]
 
-[1]
-https://www.renesas.com/us/en/products/microcontrollers-microprocessors/rz-mpus/rzg3s-general-purpose-microprocessors-single-core-arm-cortex-a55-11-ghz-cpu-and-dual-core-cortex-m33-250
+I think that that is something that could be changed, it's "just" a
+comment in some code! Sounds like Stephen disagrees though :)
 
-> Is it the case that if the rtxin pin is connected, you mux that over,
-> and if the pin is disconnected you mux over the internal oscillator? 
+> - Stephen also suggested a separate binding [2]
 
-From the description here at [2] I'm getting that the "32-KHz clock
-oscillator" block is used when crystal oscillator is connected to RTXIN,
-RTXOUT pins and it is skipped if external clock device is connected.
+I liked your "gated-oscillator" suggestion in another reply, but
+"gated-fixed-clock" might be a better "thematic" fit since this is a
+special case of fixed-clocks?
 
-[2] https://i2.paste.pics/RFKJ0.png?rand=Xq8w1RLDvZ
+Cheers,
+Conor.
 
-> I'm
-> really wondering why a clk provider is implemented at all. Why not just
-> hit the registers directly from the RTC driver depending on a
-> devm_clk_get_optional() call?
+> With the fixed-clock being sort of the root for everything else on most
+> systems, I opted to leave it alone. I guess if the consenus really is that
+> this should go there, I can move it, but discussion in v1=20
+>=20
+> Interestingly the fixed clock had a gpios property 10 years ago [3] :-) .
 
-I did it like this because the RTC is a different IP mapped at it's own
-address with it's own interrupts, clock, power domain and considering that
-the other VBATTB functionalities (tamper, SRAM) might be used at some point
-in future. At the same time I failed to noticed the VBATTB clock might be
-needed for RTC.
+heh!
 
-Do you consider better to just take a regmap to VBATTB from RTC driver and
-set the VBATTB from RTC driver itself?
+>=20
+> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tr=
+ee/drivers/clk/clk-fixed-rate.c#n18
+> [2] https://lore.kernel.org/linux-arm-kernel/68f6dc44a8202fd83792e58aea13=
+7632.sboyd@kernel.org/
+> [3] https://lore.kernel.org/linux-kernel//20140515064420.9521.47383@quant=
+um/T/#t
 
-Thank you,
-Claudiu Beznea
+--TA6tyFoqBwcLvbVt
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZpk79gAKCRB4tDGHoIJi
+0ocpAQDlY1WVEOAb/tAnKL+v/4KqvF6yQjSSOa/QJ9Xn/KwzwQEA6xZbMOFj+ofl
+qMmgXTkeOunG/hACMIplnIyteyzFRwI=
+=RPQe
+-----END PGP SIGNATURE-----
+
+--TA6tyFoqBwcLvbVt--
