@@ -1,124 +1,124 @@
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A009F2CCA3;
-	Thu, 18 Jul 2024 06:57:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A15E41C7F
+	for <linux-clk@vger.kernel.org>; Thu, 18 Jul 2024 07:05:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721285833; cv=none; b=fNmUaH5/hDAeWsLLvkppIIirgmi1HtbJnuKnYqml9XcyWghm6dQ0du5cbbl9lGMp/uVT21LNCzIcGIFrEPxbQY+muuwMfwitKnnkwLQvTCyb6xuhA0REMgSsgoInLb+0Mq0qvqXOq9oC95A5W0TTZAbZj/VzxzslgLsYebixoxk=
+	t=1721286358; cv=none; b=f6wRuy+MGkL7MUDBeSN1urM4oQXQc70l1nG2Y2XgiS8ANrEqBCh/dE+pvCNdSTqKCWn6KndGyJurNL8FcFN0Wq7B+mcVQR1pjQUkjHZR3arVWNkR5d4z7TBLaoyN7t4z/dVesqXYiJ1G7UTYvAlXw8YA17dakgevGWPI96vGeZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721285833; c=relaxed/simple;
-	bh=z+aCMhKYfdvSH3LqcS7QRiHX5Ygt46joT7nhNjNOLXA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=R6V6ocq6oikBjxhzj8+vNfcMiWTu45ZEzHbhFgRHS4+nC6GeFhk81jBnyENm1YSo++iXzaZ1tfBJdxX+Dx2IpYBffxq1vvSDPIikQ1n9+bjxTEe0xWaT6Q7Ooc3L/Myt/6rFktvb5dlU/5RMviYmnc0bsfk8t91KKzRBpzY/tRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=OlB6nsD5; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1721286358; c=relaxed/simple;
+	bh=ONlCOr94Vlebt+Tj8R0yQblOSnVNxli5b/oS4OkJ2Rc=;
+	h=From:To:Cc:Subject:In-Reply-To:Message-ID:References:Date:
+	 MIME-Version:Content-Type; b=lOKyc0RwyuwqlUL8FRraUzjZXI+rVwqfoyUM1tc2UCj7ukwBc9+kM0ytYbZ1efI4Zwy7Mh+sa2sqFf2P108UVaf3UO2uekEXuCfA/zuox+qyrP25+55WssZ2ezeUPlC1Zde382mpCAcwAMQYlzKdxZTkW3DH2RJyIqMxMVUxE/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=o0qdFaQH; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="OlB6nsD5"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 66B00C0011;
-	Thu, 18 Jul 2024 06:56:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1721285821;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TgZHkXL2FGs1/bjZPDSboGR72yBe//NfgloPvNTjUQ0=;
-	b=OlB6nsD5RtGZmYjd7bhjEoZx7QMkbbOT8V45YhxxCFz4y2iiCJe+cf2PVPl+VsXD6UUMqk
-	Yc28bGhZQ13OubzP5CW/pjPqqFo91MRM0eVoREVGLvn0MLgNZy6pPxquFKWhNBkv4SbFT2
-	sax9ioW5vC5M5bokQz4XncM9ZdU0GCDemzBwA+l1XJdTnXTEUKHI48dxPqMAjv00+G3aQG
-	rBXI5/ojqb79XSjovNP74Rn6wSf1My85vfzfK9OmlUEoc3d8vGPg+knHhqSD5yHTRQLUcZ
-	BDxiKiWHxBRawYhcLiwX+N2Krj0xmgk4IRTokaqbJaztXMntEG+p6mo1v3ON7A==
-Date: Thu, 18 Jul 2024 08:56:51 +0200
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="o0qdFaQH"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42726d6eca5so3291475e9.1
+        for <linux-clk@vger.kernel.org>; Thu, 18 Jul 2024 00:05:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1721286354; x=1721891154; darn=vger.kernel.org;
+        h=mime-version:date:references:message-id:in-reply-to:subject:cc:to
+         :from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Dfv35sh3gYQtuyIGmcm2dQB4xPWrXbKxJ/DGyIqTwEg=;
+        b=o0qdFaQH/OYYxPAS1K9dRl+VCrf6PG8sE5zhGeq3uvZlPeoaMhn0OEESOz7uEt58MG
+         ykLc3SfJSqnrxpcoDaqGwvGxZqtEBNNDHLE29Vhk1na5t9+s5IMltaeUci4U7BSwXpeJ
+         I6AFkx2CdHY7f+fNjHCdrpfPzIbQNDg2r4yxA7/9Xu4UHpNMMxOWulLlVi4EmlUxNwpo
+         tggGtab7V4nmM8/pXrudfzPBK9HbGvHptXp302XEnpZpunw281HggJJs1oxmUEKRVC5T
+         NigE4dLE58HFcOJ4N40JbYBQNidnCwsPLn5ytC+DOxDcllWY1hCj81CYc1RAD0Ldc710
+         n4cA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721286354; x=1721891154;
+        h=mime-version:date:references:message-id:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Dfv35sh3gYQtuyIGmcm2dQB4xPWrXbKxJ/DGyIqTwEg=;
+        b=uiya+EEmSCtFATUpKbpx2sa811G4DBDYNm5tODsRzdcC7fuYpMz/jyNBMGJs7x9ksM
+         cbxiIubb8+4xCoV5OXYXMDLK+KQ8gBRIbdhb1OdYrmz85+rXpsjIB66l2uGD6LnEkQH9
+         HXdFfBX+yP6uYVj+LP+JwoP6HlzPDbZOslcb8srxVWjcqgRPP2zUQDyFSQumP0wp2vJR
+         xoIBtOKpcUcUBDy/+WfGF8lhE1dCoAdp1EuI05tz509GOxDT7gRp5Tn5oCXmwACaGsTw
+         NihShK3uogXkDj/+Gg1WPC3tIEa4wdbW25dbJ6tmAvfAxyBaElqVqfKmkL66bJCF6U2T
+         MMXA==
+X-Forwarded-Encrypted: i=1; AJvYcCVx5xUjXWG4Bze+tu33HoeuT07whEesIynjhIstXG8pvqVSMTD7cp1jWbRb6dU5XU7DHXKb1/8I69Un4gT+VjeuGMxb3VtDArRc
+X-Gm-Message-State: AOJu0YwtMsknmrT8pkhQvH1rHHoH0vzjzSL1mzoybPgGfxoryxQuqOt3
+	a6XXa+/EBwBQ9ImqW3kXxtpbewU3FHpOVNk7hcbjX4JRTPNqON2xj87FY6H33HI=
+X-Google-Smtp-Source: AGHT+IFTOfM/mQUajELxmAa5WkTAStnDIYPtSa8XPZN2j5zMvI+mGY2wGnKvPVh2ONzOHqDJuGcDdQ==
+X-Received: by 2002:a05:600c:1c9b:b0:426:66fb:fcd6 with SMTP id 5b1f17b1804b1-427c2c99bf0mr21833815e9.3.1721286354188;
+        Thu, 18 Jul 2024 00:05:54 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:8d37:f44a:c212:e320])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427c77efba3sm23784375e9.28.2024.07.18.00.05.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 18 Jul 2024 00:05:53 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
 To: Stephen Boyd <sboyd@kernel.org>
-Cc: Aaro Koskinen <aaro.koskinen@iki.fi>, Alexandre Belloni
- <alexandre.belloni@bootlin.com>, Alim Akhtar <alim.akhtar@samsung.com>,
- Andreas Kemnade <andreas@kemnade.info>, Bartosz Golaszewski
- <brgl@bgdev.pl>, Bjorn Andersson <andersson@kernel.org>, Broadcom internal
- kernel review list <bcm-kernel-feedback-list@broadcom.com>, Chen-Yu Tsai
- <wens@csie.org>, Chester Lin <chester62515@gmail.com>, Christophe Leroy
- <christophe.leroy@csgroup.eu>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Damien Le Moal <dlemoal@kernel.org>, Daniel Lezcano
- <daniel.lezcano@linaro.org>, Dong Aisheng <aisheng.dong@nxp.com>, Doug
- Berger <opendmb@gmail.com>, Emilio =?UTF-8?Q?L=C3=B3pez?=
- <emilio@elopez.com.ar>, Fabio Estevam <festevam@gmail.com>, Florian
- Fainelli <florian.fainelli@broadcom.com>, Ghennadi Procopciuc
- <ghennadi.procopciuc@oss.nxp.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Jacky Bai <ping.bai@nxp.com>, Jaroslav Kysela
- <perex@perex.cz>, Jernej Skrabec <jernej.skrabec@gmail.com>, Jiri Slaby 
- <jirislaby@kernel.org>, Jonathan Cameron <jic23@kernel.org>, Kevin Hilman
- <khilman@baylibre.com>, Krzysztof Kozlowski <krzk@kernel.org>, Lars-Peter
- Clausen <lars@metafoo.de>, Lee Jones <lee@kernel.org>, Liam Girdwood
- <lgirdwood@gmail.com>, Linus Walleij <linus.walleij@linaro.org>, Mark Brown
- <broonie@kernel.org>, Matthias Brugger <mbrugger@suse.com>, Michael
- Ellerman <mpe@ellerman.id.au>, Michael Turquette <mturquette@baylibre.com>,
- Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
- "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>, Nicholas Piggin
- <npiggin@gmail.com>, Nicolas Ferre <nicolas.ferre@microchip.com>,
- Pengutronix Kernel Team <kernel@pengutronix.de>, Richard Leitner
- <richard.leitner@linux.dev>, Rob Herring <robh@kernel.org>, Roger Quadros
- <rogerq@kernel.org>, Samuel Holland <samuel@sholland.org>, Saravana Kannan
- <saravanak@google.com>, Shawn Guo <shawnguo@kernel.org>, Takashi Iwai
- <tiwai@suse.com>, Thomas Gleixner  <tglx@linutronix.de>, Tony Lindgren
- <tony@atomide.com>, Uwe =?UTF-8?Q?Kleine-K=C3=B6nig?=
- <ukleinek@kernel.org>, "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, Thomas
- Petazzoni <thomas.petazzoni@bootlin.com>, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, llvm@lists.linux.dev,
- linux-clk@vger.kernel.org, linux-omap@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-samsung-soc@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-pwm@vger.kernel.org, linux-serial@vger.kernel.org,
- linux-usb@vger.kernel.org, patches@opensource.cirrus.com,
- linux-sound@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-riscv@lists.infradead.org, Andre Przywara <andre.przywara@arm.com>,
- Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Jonathan Cameron
- <Jonathan.Cameron@huawei.com>, Uwe =?UTF-8?Q?Kleine-K=C3=B6nig?=
- <u.kleine-koenig@baylibre.com>, Richard Fitzgerald
- <rf@opensource.cirrus.com>
-Subject: Re: [PATCH v2] of: remove internal arguments from
- of_property_for_each_u32()
-Message-ID: <20240718085651.63ddfb20@booty>
-In-Reply-To: <1e36b1ba8af3584128550822a70cb072.sboyd@kernel.org>
-References: <20240717-of_property_for_each_u32-v2-1-4060990f49c9@bootlin.com>
-	<1e36b1ba8af3584128550822a70cb072.sboyd@kernel.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,  Philipp Zabel
+ <p.zabel@pengutronix.de>,  Jan Dakinevich
+ <jan.dakinevich@salutedevices.com>,  linux-kernel@vger.kernel.org,
+  linux-amlogic@lists.infradead.org,  linux-clk@vger.kernel.org
+Subject: Re: [PATCH 7/8] reset: amlogic: add auxiliary reset driver support
+In-Reply-To: <7db2d8ae07a9ef1a226dfd08a3f88f8a.sboyd@kernel.org> (Stephen
+	Boyd's message of "Mon, 15 Jul 2024 12:30:21 -0700")
+Message-ID: <1jzfqho5pp.fsf@starbuckisacylon.baylibre.com>
+References: <20240710162526.2341399-1-jbrunet@baylibre.com>
+	<20240710162526.2341399-8-jbrunet@baylibre.com>
+	<88d1dbd92e922ad002367d8dac67d0eb.sboyd@kernel.org>
+	<1jv81cgv4z.fsf@starbuckisacylon.baylibre.com>
+	<7db2d8ae07a9ef1a226dfd08a3f88f8a.sboyd@kernel.org>
+Date: Thu, 18 Jul 2024 09:05:52 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: luca.ceresoli@bootlin.com
+Content-Type: text/plain
 
-Hello Stephen,
+On Mon 15 Jul 2024 at 12:30, Stephen Boyd <sboyd@kernel.org> wrote:
 
-On Wed, 17 Jul 2024 16:33:34 -0700
-Stephen Boyd <sboyd@kernel.org> wrote:
+>> >> +int devm_meson_rst_aux_register(struct device *dev,
+>> >> +                               struct regmap *map,
+>> >> +                               const char *adev_name);
+>> >> +#else
+>> >> +static inline int devm_meson_rst_aux_register(struct device *dev,
+>> >> +                                             struct regmap *map,
+>> >> +                                             const char *adev_name)
+>> >> +{
+>> >> +       return -EOPNOTSUPP;
+>> >
+>> > Shouldn't this be 'return 0' so that the clk driver doesn't have to care
+>> > about the config?
+>> 
+>> I don't think the system (in general) would be able function without the reset
+>> driver, so the question is rather phylosophical.
+>> 
+>> Let's say it could, if this returns 0, consumers of the reset controller
+>> will defer indefinitely ... which is always a bit more difficult to sort
+>> out.
+>> 
+>> If it returns an error, the problem is pretty obvious, helping people
+>> solve it quickly.
+>> 
+>> Also the actual device we trying to register provides clocks and reset.
+>> It is not like the reset is an optional part we don't care about.
+>> 
+>> On this instance it starts from clock, but it could have been the other
+>> way around. Both are equally important.
+>> 
+>> I'd prefer if it returns an error when the registration can't even start.
+>> 
+>
+> Ok. Fair enough.
 
-> > @@ -1191,20 +1191,24 @@ static int si5351_dt_parse(struct i2c_client *client,
-> >          * property silabs,pll-source : <num src>, [<..>]
-> >          * allow to selectively set pll source
-> >          */
-> > -       of_property_for_each_u32(np, "silabs,pll-source", prop, p, num) {
-> > +       sz = of_property_read_variable_u32_array(np, "silabs,pll-source", array, 2, 4);
-> > +       sz = (sz == -EINVAL) ? 0 : sz; /* Missing property is OK */
-> > +       if (sz < 0)
-> > +               return dev_err_probe(&client->dev, sz, "invalid pll-source");  
-> 
-> Needs a newline on the printk message.
+Actually, thinking about it more I changed my mind and I tend to agree
+on 'return 0' which I'll use in the next version.
 
-Ouch! Fix queued for v3.
+The initial request was to de-couple clk and reset. I was planning on
+having clk 'imply' reset to have a weak dependency. That does not make
+sense if an error is returned above. I would have to use 'depends on' and
+don't like it in that case, sooo weak dependency it is.
 
-Thanks,
-Luca
+It remains fairly easy to change later on if necessary
 
 -- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Jerome
