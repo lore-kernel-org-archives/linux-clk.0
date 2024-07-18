@@ -1,151 +1,84 @@
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DB868C06
-	for <linux-clk@vger.kernel.org>; Thu, 18 Jul 2024 17:20:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49AFD145348;
+	Thu, 18 Jul 2024 19:29:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721323207; cv=none; b=U4A7qg1MdTyqeZN/BW+ZG8GX1E8mDk+/UBsoD55WeQL9I6b0enAsHLH3fT7s/NLljksnCCWBGJHBiTH+ODZlu497Sil+nO1ic0HXWXbM3I87QQ5Yju6qTE9YOOhxwdAwUW5krEaJXVI/fA1orik80ftjBfHVyL9Q/3Vdv7wvAyg=
+	t=1721330956; cv=none; b=q4eXwx573IdJR7SdANaSAsgdw35J8yPC8fVyb01Pq1P+gy+0xb6zD0+stvgOERl7SqnjdolGC9sSz/vaDnW0ZhJC0VvQy0YhRqCBj1lX5d+rhDsJF58qPbaEUv344zxYueg5d2/bJ8kuaZadzw5rPeZ0wwlKkV5dfoiD+D7HQCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721323207; c=relaxed/simple;
-	bh=or0KWMw+hW1cJPDQYY2fZWLzTSZ73FjFZlNzmUyJ1GQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=SKiCu3apSdyCwiWq9M7ywz2PUw28YJ/LukxYbS1OZmCZiV4mOlkTBAxtyLmptJuuyvxZmvhaPxKpKuozX1MaeZCxCCcNCZvRUpcX/Ku5nGh7WWpkVONsdodwDiynZKFM0xTEz2C43x7+KyeXv+qpx0teK7TWxLexvLDmP4zH1Gs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=1F/IhVjz; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1721330956; c=relaxed/simple;
+	bh=AY7KZUhJSS2xHnx5qvpmw6/QZr8U0eAGcyvPvqwirm0=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=ty91qZD4G2tSmdv3PY3BjqRJQzdBlJzxQPlxnj1McbSBR6hDPudlj3UbdyBmTMs0xX4OnpUDXsj7FDsPUAXBZ/6UsW3lnRCiZcmis/gENwZ0a+A8ZpIuoipPjOtEVSCBSTXhkb9/4xkTVQsYJIQY5e5Tr3pi8/U8RshFzShE3DU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gNfAnuxC; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="1F/IhVjz"
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-368712acb8dso46222f8f.2
-        for <linux-clk@vger.kernel.org>; Thu, 18 Jul 2024 10:20:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1721323204; x=1721928004; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=raklK+nWPF9tIVCfKyWj3FXF/Vo9avQJrD5r1/ljkPw=;
-        b=1F/IhVjzhvEZQesukQRz6KDxx5ZGm6Wz1V1TiqOzhSJt1hVOp9Kqq4JKatgPKq/mzN
-         QT5N18BydOYbIs6Q31z2p7TvWVxqOreoPzAyg+Vh2BPLUiVphlfr9kTIpnMQeLoXn9Cd
-         nrow0dt2EmMy2DSN0/RjeTdkvHTdrru4gmqWL9TNCS5hiEOSe4ZJ1E/pFMbAFsVCrG+D
-         GHlyZUAwwssY2kJrLFoAuyBE/gqaLvUo1712oZSYnv/ie1jLVRVzEPhVb4qGNm4V9ti/
-         B2rf4h2kIbbw9CwfUm1kQGmd7LwK5UCa4evURiFYOsjnjCA54NBI4HCYyFks9qaOK78B
-         jEFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721323204; x=1721928004;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=raklK+nWPF9tIVCfKyWj3FXF/Vo9avQJrD5r1/ljkPw=;
-        b=kRUD0JDbZ89vqqeIn1cbzYLjwnrXr0xuJXhwrj+JpYvRSIMiucpHcbrG/wz3O9hqND
-         1YG7h1wV0yl1HyASaivJL5MuwGNp0KCyCiBU7OclmMM4PQHUpbQ99cGcq0hDJWpd8KRA
-         KisnGDtrJmnUjg3JRBwZRjgLsiWHWHbT1K6ofK5i7yWdaBQ3W/SVHmYXaVWa/ScNAclE
-         XYFurGdbon3bbunAXDneV0U3mODYIRV1yYx3PHuhAh4cabtmJuxIAZTCEG7g0fLyIGM9
-         L6FpE6DzWV9YPjdCwrw0dQFnBZnkWLeaSAgB+UajEneUmyDxTwzI6wvPQJco39PJj/yX
-         WCpg==
-X-Forwarded-Encrypted: i=1; AJvYcCUKmUtmFW3reBL+I4+vJgqKpntXS+hPqW4N7oTbZzwJAyqlN5ofTggP4SzS2HJrRcMtGOq9B21IpUU3iNLTW0Qajnc1EDGCNi3z
-X-Gm-Message-State: AOJu0YzFiHzw70xlqQ7E8O18ukwPkq6AgCjsXcYyGRbbFFzQfGrIue97
-	pPNL9FRyt5XG6bX0MkC64qnU2uqNFQoRXHy5F4c2O3Zer2GPVowEFkVZZYK/P9s=
-X-Google-Smtp-Source: AGHT+IEzUxzLEWSrQkAiFSgO8moaSXv2k0IxNFRMG+EkLW38PdnuAaPPdc63gHY5BK4R017qIX/IpA==
-X-Received: by 2002:a5d:4b90:0:b0:368:6f19:cbf5 with SMTP id ffacd0b85a97d-3686f19d013mr357275f8f.31.1721323203853;
-        Thu, 18 Jul 2024 10:20:03 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:bbf5:bf25:4f46:2ec8])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36872855309sm155510f8f.82.2024.07.18.10.20.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 18 Jul 2024 10:20:03 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Jan Dakinevich <jan.dakinevich@salutedevices.com>
-Cc: Philipp Zabel <p.zabel@pengutronix.de>,  Stephen Boyd
- <sboyd@kernel.org>,  Neil Armstrong <neil.armstrong@linaro.org>,
-  <linux-kernel@vger.kernel.org>,  <linux-amlogic@lists.infradead.org>,
-  <linux-clk@vger.kernel.org>
-Subject: Re: [PATCH v2 0/9] reset: amlogic: move audio reset drivers out of CCF
-In-Reply-To: <07b4e6b9-7448-45fb-b5a0-d069addb5dc2@salutedevices.com> (Jan
-	Dakinevich's message of "Thu, 18 Jul 2024 17:20:32 +0300")
-References: <20240718095755.3511992-1-jbrunet@baylibre.com>
-	<07b4e6b9-7448-45fb-b5a0-d069addb5dc2@salutedevices.com>
-Date: Thu, 18 Jul 2024 19:20:02 +0200
-Message-ID: <1jmsmemxbx.fsf@starbuckisacylon.baylibre.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gNfAnuxC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C779CC116B1;
+	Thu, 18 Jul 2024 19:29:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721330955;
+	bh=AY7KZUhJSS2xHnx5qvpmw6/QZr8U0eAGcyvPvqwirm0=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=gNfAnuxCO/xcTX51RbCvM9gaik01hcr7jaMt4URGH8qYT87MbfFVVww42i3wK9gPB
+	 1TtbK0ioS6GsDRe2CVCIzVz43FtBro51gkNaOwPDLTj/fjgIG5wfNdEk8PM5ymDkcG
+	 uFNGaqxWupm6RtvNvFQUhAGM3YRyuNxZY0hv5jH8JGgIC9Zt/R296EZ6ujLIP7YvQi
+	 7EimfjsVH+f+PU9zVVyXsbbXemEPWn9NYQDzjCzdUTRb6EBF1wOd7cH3FywH67vuU2
+	 PP2E95GB/cKpio13+ekvIkGDRmIDiv7B3Mu3LS6mxYFezfoHPplhgSv6IXOPNz/kIo
+	 r3UZd2gpwfmBg==
+Message-ID: <11e8dd92e07674133d8a291cc016c314.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <f5bc9590-f37e-491e-9978-c1eab8914c30@salutedevices.com>
+References: <20240710162526.2341399-1-jbrunet@baylibre.com> <20240710162526.2341399-2-jbrunet@baylibre.com> <b12ac6b2-cb46-4410-9846-86ed4c3aea1f@salutedevices.com> <1jv813makr.fsf@starbuckisacylon.baylibre.com> <f5bc9590-f37e-491e-9978-c1eab8914c30@salutedevices.com>
+Subject: Re: [PATCH 1/8] reset: amlogic: convert driver to regmap
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, Neil Armstrong <neil.armstrong@linaro.org>, linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org
+To: Jan Dakinevich <jan.dakinevich@salutedevices.com>, Jerome Brunet <jbrunet@baylibre.com>
+Date: Thu, 18 Jul 2024 12:29:13 -0700
+User-Agent: alot/0.10
 
-On Thu 18 Jul 2024 at 17:20, Jan Dakinevich <jan.dakinevich@salutedevices.com> wrote:
+Quoting Jan Dakinevich (2024-07-18 04:01:28)
+>=20
+>=20
+> On 7/18/24 10:19, Jerome Brunet wrote:
+> > On Thu 18 Jul 2024 at 05:39, Jan Dakinevich <jan.dakinevich@salutedevic=
+es.com> wrote:
+> >> and using of regmap_write() (apparently) fixes it.
+> >=20
+> > Nor does that conclusion.
+> > > It is perfectly possible I have made mistake somewhere (I have already
+> > fixed one in v2), but sending incomplete report like this, with
+> > unargumented conclusion is just noise in the end.
+> >=20
+> > No, there is no situation in which `regmap_write` would solve a problem
+> > with `regmap_update_bits`.
+> >=20
+>=20
+> What is the default regs' value of this reset controller? The doc that I
+> have doesn't clearly specifies it, but it tells that "the reset will
+> auto-cover to 0 by HW". However pr_info() say that there is 0xffffffff
+> before write (I am talking about A1).
+>=20
+> Also we know, that reset is triggered by writing 1 to specific bit. So,
+> what will happen if 1 will be written where we did not intend to write it?
+>=20
+> > Either send a full analysis of the problem you found, if you did one, or
+> > at least send the full dump, explaining that you don't know what is
+> > happening.
+> >=20
+>=20
+> Full analysis is following:
+> - using regmap_update_bits() instead of writel() is incorrect because
+> this changes the behavior of the driver
+> - regmap_update_bits() should not be used here because default value of
+> regs isn't taken into account and (_apparently_, the doc is terse) these
+> regs could be updated by hw itself.
 
-> In previous series there was a patch "[PATCH 8/8] clk: amlogic:
-> axg-audio: use the auxiliary reset driver", but I don't see it here. Did
-> you removed it, or I missed something?
-
-It is meant for another tree and will be sent seperately
-
->
->
-> On 7/18/24 12:57, Jerome Brunet wrote:
->> This patchset follows the discussion about having reset driver in the
->> clock tree [1]. Ideally those should reside in the reset part of tree.
->> 
->> Also the code of the amlogic reset driver is very similar between the 2
->> trees and could use the same driver code.
->> 
->> This patcheset alignes the reset drivers present in the reset and clock
->> then adds support for the reset driver of audio clock controller found in
->> the  g12 and sm1 SoC family to the reset tree, using the auxiliary bus.
->> 
->> The infrastructure put in place is meant to be generic enough so we may
->> eventually also move the reset drivers in the meson8b and aoclk clock
->> controllers.
->> 
->> Changes since v1 [3]:
->>  * Fixes formatting errors reported by Stephen.
->>  * Changed parameters type to unsigned
->>  * Fix usage of ops passed as parameters, previously ignored.
->>  * Return 0 instead of an error if reset support is absent
->>    to properly decouple from the clock and have a weak
->>    dependency
->>  * Split the platform and auxiliary modules in 2 distinct modules
->>    to fix the COMPILE_TEST error reported by ktest robot.
->> 
->> Change since RFC [2]:
->>  * Move the aux registration helper out of clock too.
->> 
->> [1] https://lore.kernel.org/linux-clk/e3a85852b911fdf16dd9ae158f42b3ef.sboyd@kernel.org
->> [2] https://lore.kernel.org/linux-clk/20240516150842.705844-1-jbrunet@baylibre.com
->> [3] https://lore.kernel.org/linux-clk/20240710162526.2341399-1-jbrunet@baylibre.com
->> 
->> Jerome Brunet (9):
->>   reset: amlogic: convert driver to regmap
->>   reset: amlogic: use generic data matching function
->>   reset: amlogic: make parameters unsigned
->>   reset: amlogic: add driver parameters
->>   reset: amlogic: use reset number instead of register count
->>   reset: amlogic: add reset status support
->>   reset: amlogic: move drivers to a dedicated directory
->>   reset: amlogic: split the device core and platform probe
->>   reset: amlogic: add auxiliary reset driver support
->> 
->>  drivers/reset/Kconfig                         |  15 +-
->>  drivers/reset/Makefile                        |   3 +-
->>  drivers/reset/amlogic/Kconfig                 |  27 ++++
->>  drivers/reset/amlogic/Makefile                |   4 +
->>  .../{ => amlogic}/reset-meson-audio-arb.c     |   0
->>  drivers/reset/amlogic/reset-meson-aux.c       | 136 ++++++++++++++++
->>  drivers/reset/amlogic/reset-meson-core.c      | 140 ++++++++++++++++
->>  drivers/reset/amlogic/reset-meson-pltf.c      |  95 +++++++++++
->>  drivers/reset/amlogic/reset-meson.h           |  28 ++++
->>  drivers/reset/reset-meson.c                   | 153 ------------------
->>  include/soc/amlogic/meson-auxiliary-reset.h   |  23 +++
->>  11 files changed, 455 insertions(+), 169 deletions(-)
->>  create mode 100644 drivers/reset/amlogic/Kconfig
->>  create mode 100644 drivers/reset/amlogic/Makefile
->>  rename drivers/reset/{ => amlogic}/reset-meson-audio-arb.c (100%)
->>  create mode 100644 drivers/reset/amlogic/reset-meson-aux.c
->>  create mode 100644 drivers/reset/amlogic/reset-meson-core.c
->>  create mode 100644 drivers/reset/amlogic/reset-meson-pltf.c
->>  create mode 100644 drivers/reset/amlogic/reset-meson.h
->>  delete mode 100644 drivers/reset/reset-meson.c
->>  create mode 100644 include/soc/amlogic/meson-auxiliary-reset.h
->> 
-
--- 
-Jerome
+Maybe use regmap_write_bits() instead.
