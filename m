@@ -1,284 +1,99 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93875639;
-	Thu, 18 Jul 2024 11:31:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FEBD136E0E;
+	Thu, 18 Jul 2024 11:55:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721302267; cv=none; b=GJaFnQZ/sXLEMpk/m79eqIcsRdL+2az1ZZB4n3yhxV+U77Ksuj36jvhRpizKdHLFB6za2pdrhNIOI5PdbT2wFKrKfaTOuMk5zQhNp208X/yXl5pSg1pXQ6dFPOTp9jGhxCgLdIQ/NjBLcRu2fAO2XDz9xE9gma5X3Al477fe3po=
+	t=1721303750; cv=none; b=WSvYZwUJvIDTkAHCqvdGCe3b7UCSQgZNEcrwUxcJNxiFgZP1p0Vohla6mjwyPlxo62d/FYSxDvPiktsrznU7TI4NaBvpbrJ5cJMmgi9vlxAjO+5t2oXDF4xpui8BNMiQhL/jHVpvLVSWAQtcoKBZvrdenmOq8KXCs47sw32khZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721302267; c=relaxed/simple;
-	bh=+VCRrBTFKNdz5EkxjA9kfRiSj/jzGVTeICKcDIP6uFU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=q7jxHHM4qcRvxRP5+uoeVlYpbZzH//ldeYt6xdfhGJOgxXjAqgUV0VO5lsKesdrN4hurDNQ4GueT9dJ0Dm1ncuxhkDhi3GinImUSEDmNawhyw4gu4iZ1CZvWdONWnz4J0DiFCSAkB1lDsRQcJrl/GsnEsjMq/AmIVN4cdvu56mI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-Received: from i5e860d09.versanet.de ([94.134.13.9] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sUPLe-0004Fb-Er; Thu, 18 Jul 2024 13:30:58 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Dragan Simic <dsimic@manjaro.org>
-Cc: Conor Dooley <conor@kernel.org>, mturquette@baylibre.com,
- sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org
-Subject:
- Re: [PATCH v2 1/3] dt-bindings: clocks: add binding for
- voltage-controlled-oscillators
-Date: Thu, 18 Jul 2024 13:30:57 +0200
-Message-ID: <30200583.43St1lv6Oq@diego>
-In-Reply-To: <c60c8c462c6df23c1f1625bce5516525@manjaro.org>
-References:
- <20240715110251.261844-1-heiko@sntech.de> <3178118.zE8UqtGg2D@diego>
- <c60c8c462c6df23c1f1625bce5516525@manjaro.org>
+	s=arc-20240116; t=1721303750; c=relaxed/simple;
+	bh=029LAo/pYKr35+tfCs0piM+iVcIGrKRcZIYKEHMEQFc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qLffVvWcVrmbxfiClJ4kRZ65JzCcIDUyFIGWc4ogsk2milVWlrPpjJPtC9LUpFjiBRvjUMg9X8OmbUeCfeggBaNZu3UQNq1anyLi/rJoR9wHuymdQldYmb6M2uu5QZ2PXN3AABR5C1rXjF7SF+6MCDcvV6Kkm20Jkv9vxpVfLgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ckuThTXe; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ckuThTXe"
+Received: by mail.gandi.net (Postfix) with ESMTPA id B8916FF80D;
+	Thu, 18 Jul 2024 11:55:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1721303739;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=+UjG9y/mBegZG+JDojXdJxow1fhyw1O/olkRn6CLmGs=;
+	b=ckuThTXeYm+mnHLisQk40c3sQqjwBRt4pI0wZByC3xJHL1aCsmdlFhXMaJG+1M1NUGD6uo
+	TEimUtgnSZN33ShpRNLqVt57Qr9yQRfr9cn7iFwxxZa0gACtqu9BjKLgnkh9ikHJl56WfK
+	GaWVl1JOt5j8eEo5uwgqDQXZRyS5Tcny4BOImma4XdNmdqx7Qidy5yPUcnntOPIXb1Qg0j
+	TQVg6GkEPKPJoIlpuwPpg5u3QVWYj1+TeZucWGgVx5yGyRS1Qyev8Ck7ZfY2tLPPApzXVZ
+	wRPLH3YLGu05aN5jZCsmdYPRJhrb2xNHcqgV0M0BP4bPP+yZIzqnoBYWx9Ra/Q==
+From: Bastien Curutchet <bastien.curutchet@bootlin.com>
+To: David Lechner <david@lechnology.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Christopher Cordahi <christophercordahi@nanometrics.ca>,
+	Bastien Curutchet <bastien.curutchet@bootlin.com>,
+	stable@vger.kernel.org
+Subject: [PATCH v2] clk: davinci: da8xx-cfgchip: Initialize clk_init_data before use
+Date: Thu, 18 Jul 2024 13:55:34 +0200
+Message-ID: <20240718115534.41513-1-bastien.curutchet@bootlin.com>
+X-Mailer: git-send-email 2.45.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8bit
+X-GND-Sasl: bastien.curutchet@bootlin.com
 
-Hi Dragan,
+The flag attribute of the struct clk_init_data isn't initialized before
+the devm_clk_hw_register() call. This can lead to unexpected behavior
+during registration.
 
-Am Donnerstag, 18. Juli 2024, 12:53:07 CEST schrieb Dragan Simic:
-> On 2024-07-18 11:25, Heiko St=FCbner wrote:
-> > Am Dienstag, 16. Juli 2024, 18:15:08 CEST schrieb Conor Dooley:
-> >> On Mon, Jul 15, 2024 at 01:02:49PM +0200, Heiko Stuebner wrote:
-> >> > In contrast to fixed clocks that are described as ungateable, boards
-> >> > sometimes use additional oscillators for things like PCIe reference
-> >> > clocks, that need actual supplies to get enabled and enable-gpios to=
- be
-> >> > toggled for them to work.
-> >> >
-> >> > This adds a binding for such oscillators that are not configurable
-> >> > themself, but need to handle supplies for them to work.
-> >> >
-> >> > In schematics they often can be seen as
-> >> >
-> >> >          ----------------
-> >> > Enable - | 100MHz,3.3V, | - VDD
-> >> >          |    3225      |
-> >> >    GND - |              | - OUT
-> >> >          ----------------
-> >> >
-> >> > or similar. The enable pin might be separate but can also just be ti=
-ed
-> >> > to the vdd supply, hence it is optional in the binding.
-> >> >
-> >> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> >> > ---
-> >> >  .../bindings/clock/voltage-oscillator.yaml    | 49 ++++++++++++++++=
-+++
-> >> >  1 file changed, 49 insertions(+)
-> >> >  create mode 100644 Documentation/devicetree/bindings/clock/voltage-=
-oscillator.yaml
-> >> >
-> >> > diff --git a/Documentation/devicetree/bindings/clock/voltage-oscilla=
-tor.yaml b/Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
-> >> > new file mode 100644
-> >> > index 0000000000000..8bff6b0fd582e
-> >> > --- /dev/null
-> >> > +++ b/Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
-> >> > @@ -0,0 +1,49 @@
-> >> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> >> > +%YAML 1.2
-> >> > +---
-> >> > +$id: http://devicetree.org/schemas/clock/voltage-oscillator.yaml#
-> >> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> >> > +
-> >> > +title: Voltage controlled oscillator
-> >>=20
-> >> Voltage controlled oscillator? Really? That sounds far too similar to=
-=20
-> >> a
-> >> VCO to me, and the input voltage here (according to the description at
-> >> least) does not affect the frequency of oscillation.
-> >=20
-> > That naming was suggested by Stephen in v1 [0] .
-> >=20
-> > Of course the schematics for the board I have only describe it as
-> > "100MHz,3.3V,3225" , thumbing through some mouser parts matching that
-> > only mentions "supply voltage" in their datasheets but not a dependency
-> > between rate and voltage.
-> >=20
-> > [0]=20
-> > https://lore.kernel.org/linux-arm-kernel/b3c450a94bcb4ad0bc5b3c7ee8712c=
-b8.sboyd@kernel.org/
-> >=20
-> >> Why the dedicated binding, rather than adding a supply and enable-gpio
-> >> to the existing "fixed-clock" binding? I suspect that a large portion=
-=20
-> >> of
-> >> "fixed-clock"s actually require a supply that is (effectively)
-> >> always-on.
-> >=20
-> > I guess there are three aspects:
-> > - I do remember discussions in the past about not extending generic
-> >   bindings with device-specific stuff. I think generic power-sequences
-> >   were the topic back then, though that might have changed over time?
-> > - There are places that describe "fixed-clock" as
-> >   "basic fixed-rate clock that cannot gate" [1]
-> > - Stephen also suggested a separate binding [2]
-> >=20
-> > With the fixed-clock being sort of the root for everything else on most
-> > systems, I opted to leave it alone. I guess if the consenus really is=20
-> > that
-> > this should go there, I can move it, but discussion in v1
-> >=20
-> > Interestingly the fixed clock had a gpios property 10 years ago [3] :-)=
-=20
-> > .
-> >=20
-> > [1]=20
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/drivers/clk/clk-fixed-rate.c#n18
-> > [2]=20
-> > https://lore.kernel.org/linux-arm-kernel/68f6dc44a8202fd83792e58aea1376=
-32.sboyd@kernel.org/
-> > [3]=20
-> > https://lore.kernel.org/linux-kernel//20140515064420.9521.47383@quantum=
-/T/#t
->=20
-> After finally going through the v1 discussion [4] in detail,
-> here are my further thoughts:
->=20
-> - I agree with dropping the Diodes stuff, [5] because I see
->    no need for that at this point;  though, am I missing
->    something, where are they actually used?
+Initialize the entire clk_init_data to zero at declaration.
 
-On the Rock5 ITX that 100MHz clock comes the one single oscillator thing.
+Cc: stable@vger.kernel.org
+Fixes: 58e1e2d2cd89 ("clk: davinci: cfgchip: Add TI DA8XX USB PHY clocks")
+Signed-off-by: Bastien Curutchet <bastien.curutchet@bootlin.com>
+Reviewed-by: David Lechner <david@lechnology.com>
+---
+Changes in v2:
+	Add Cc and Fixes tags
+	Add Reviewed-by David
 
-The Diodes parts are not root sources for their clocks but instead sort
-PLLs or something, though their manual describes them as
-"clock generator supporting PCI Express and Ethernet requirements" [8]
+v1: https://lore.kernel.org/all/20240717141201.64125-1-bastien.curutchet@bootlin.com/
 
-So they generate the 100MHz (frequency actually is
-selected by input pins of the chip) from a separate 25MHz source clock.
+ drivers/clk/davinci/da8xx-cfgchip.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-One example are the Theobroma/Cherry embedded boards changed in v1 where
-they currently are described via existing generic things (no schematics).
-
-Another user is the rk3568-rock3b for example, where the diodes part
-is enabled by the same rail as the port itself, so in contrast to the
-Rock 5 ITX, it works "by accident" on the rock 3b [9]
-
-
-The interesting part of the Diodes ICs is that they actually allow
-configuration of the generated frequency via their S0 + S1 pins,
-though they might be statically set in the board layout without
-being user configurable. (Rock3b does it this way for example)
-
-
-> - I agree that "enable-gpios" and "vdd-supply" should be
->    required in the binding, [5] because that's the basis for
->    something to be actually represented this way
-
-I would only require the vdd supply though.
-
-On the Rock 5 ITX, the chip does have an enable-gpio input, but that is
-tied directly to the voltage rail and is not user controllable.
-
-
-> - I agree that it should be better not to touch fixed-clock
->    at this point, simply because it's used in very many places,
->    and because in this case we need more than it requires (see
->    the bullet point above)
->=20
-> - As I wrote already, [6] I highly disagree with this being
->    called voltage-controlled oscillator (VCO), [7] simply
->    because it isn't a VCO, but a clock that can be gated;
->    though, looking forward to what the last bullet point
->    asks to be clarified further
->=20
-> - I still think that gated-clock is the best choice for the
->    name, because it uses "clock" that's used throughout the
->    entire codebase, and uses "gated" to reflect the nature
->    of the clock generator
-
-"gated-oscillator" perhaps?=20
-
-This would make it more explicit that we're talking about a root
-for clock signals. "gated-clock" can be anything, in the middle
-of a clock tree. Having a very generic name, also invites misuse.
-
-
-> - Maybe we could actually use fixed-gated-clock as the name,
->    which would make more sense from the stanpoint of possibly
->    merging it into fixed-clock at some point, but I'd like
->    to hear first what's actually going on with the Diodes
->    stuff that was deleted in v2, which I already asked about
->    in the first bullet point
->=20
-> [4]=20
-> https://lore.kernel.org/linux-rockchip/20240709123121.1452394-1-heiko@snt=
-ech.de/T/#u
-> [5]=20
-> https://lore.kernel.org/linux-rockchip/2e5852b9e94b9a8d0261ce7ad79f4329.s=
-boyd@kernel.org/
-> [6]=20
-> https://lore.kernel.org/linux-rockchip/ec84dc37e2c421ee6d31294e08392d57@m=
-anjaro.org/
-> [7]=20
-> https://lore.kernel.org/linux-rockchip/b3c450a94bcb4ad0bc5b3c7ee8712cb8.s=
-boyd@kernel.org/
-
-[8] https://www.diodes.com/assets/Datasheets/PI6C557-03.pdf
-[9] https://dl.radxa.com/rock3/docs/hw/3b/Radxa_ROCK_3B_V1.51_SCH.pdf
-    page 31, bottom left of the page
-
-
-> >> > +
-> >> > +maintainers:
-> >> > +  - Heiko Stuebner <heiko@sntech.de>
-> >> > +
-> >> > +properties:
-> >> > +  compatible:
-> >> > +    const: voltage-oscillator
-> >> > +
-> >> > +  "#clock-cells":
-> >> > +    const: 0
-> >> > +
-> >> > +  clock-frequency: true
-> >> > +
-> >> > +  clock-output-names:
-> >> > +    maxItems: 1
-> >> > +
-> >> > +  enable-gpios:
-> >> > +    description:
-> >> > +      Contains a single GPIO specifier for the GPIO that enables an=
-d disables
-> >> > +      the oscillator.
-> >> > +    maxItems: 1
-> >> > +
-> >> > +  vdd-supply:
-> >> > +    description: handle of the regulator that provides the supply v=
-oltage
-> >> > +
-> >> > +required:
-> >> > +  - compatible
-> >> > +  - "#clock-cells"
-> >> > +  - clock-frequency
-> >> > +  - vdd-supply
-> >> > +
-> >> > +additionalProperties: false
-> >> > +
-> >> > +examples:
-> >> > +  - |
-> >> > +    voltage-oscillator {
-> >> > +      compatible =3D "voltage-oscillator";
-> >> > +      #clock-cells =3D <0>;
-> >> > +      clock-frequency =3D <1000000000>;
-> >> > +      vdd-supply =3D <&reg_vdd>;
-> >> > +    };
-> >> > +...
->=20
-
-
-
+diff --git a/drivers/clk/davinci/da8xx-cfgchip.c b/drivers/clk/davinci/da8xx-cfgchip.c
+index ad2d0df43dc6..ec60ecb517f1 100644
+--- a/drivers/clk/davinci/da8xx-cfgchip.c
++++ b/drivers/clk/davinci/da8xx-cfgchip.c
+@@ -508,7 +508,7 @@ da8xx_cfgchip_register_usb0_clk48(struct device *dev,
+ 	const char * const parent_names[] = { "usb_refclkin", "pll0_auxclk" };
+ 	struct clk *fck_clk;
+ 	struct da8xx_usb0_clk48 *usb0;
+-	struct clk_init_data init;
++	struct clk_init_data init = {};
+ 	int ret;
+ 
+ 	fck_clk = devm_clk_get(dev, "fck");
+@@ -583,7 +583,7 @@ da8xx_cfgchip_register_usb1_clk48(struct device *dev,
+ {
+ 	const char * const parent_names[] = { "usb0_clk48", "usb_refclkin" };
+ 	struct da8xx_usb1_clk48 *usb1;
+-	struct clk_init_data init;
++	struct clk_init_data init = {};
+ 	int ret;
+ 
+ 	usb1 = devm_kzalloc(dev, sizeof(*usb1), GFP_KERNEL);
+-- 
+2.45.0
 
