@@ -1,16 +1,16 @@
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2B7A28DD1;
-	Thu, 18 Jul 2024 09:25:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 239878175F;
+	Thu, 18 Jul 2024 09:29:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721294744; cv=none; b=px6y1VsNcdLv1dEI5WhC23hMc3z0Ag3WqljUd7a9EiqGguVe/gQgXAZdGcdYIfqUACsvIqZYAlJUGtyfc5DOv8QXHZX7cSCr6p7+6nUPyBYH8Kl2oZW7WAmnrIbvYgJYfMt5vkj4BxE3TtkOcLgHV92hRZyOEU5oKu+mEyc5vzM=
+	t=1721294952; cv=none; b=FNso27zxegIlRGJLdv0rrZegnpWhb2WDkUWz+GmGEWJ0bBrC1ygauf75VPCC9jtVD5DH8yyDdBT854zov2x04b4OJRZ+/zAlHnrAeGC7lbWUM4ch9pkPGiMX+RW2l2PDzMNYSSa+yiJuYNi09SHfXpuakuVtFJ7LvlcFgsc/OiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721294744; c=relaxed/simple;
-	bh=sBpRG87XTr+lD5LPwEAV/IC2h5JXbj8qV0PXvNTPR9c=;
+	s=arc-20240116; t=1721294952; c=relaxed/simple;
+	bh=G0/oroUA5i1e4r678ciLn1khuf0vA7H4MhJ/quAll4w=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=J4FrZv3S9V7YRtAoUFLUWzqTumi7D36avutDKbZEpLaTv31MZRo18MyzLnQF2B4mKySzhBUNyCNhiOh94AkSNNSl3eMLEuLO+3i4MOa1sSZtF7lg+r05V6cH+sYSyaeedYG17mQEQuTEcuxc5ioDvCE0uB08lVruEykENMHJ0u4=
+	 MIME-Version:Content-Type; b=QtVHkzf/4IvKwY+iOKILAkXG7l5zRDWedwJBH7JC0XAiREeiej68nR9xXGzop64bie8Lr4fjYd8snYB5GAtrv4rESwdC0B0zuNzZ0ZKDOppmXdFbksQoJi3Ccez9TqPfElb9TTlmYS9+1PkJRkaYJ+tUcsyDbhb3enjeU8KeLZ8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; arc=none smtp.client-ip=185.11.138.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
@@ -18,23 +18,24 @@ Received: from i5e860d09.versanet.de ([94.134.13.9] helo=diego.localnet)
 	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <heiko@sntech.de>)
-	id 1sUNOD-0003Jt-IN; Thu, 18 Jul 2024 11:25:29 +0200
+	id 1sUNRf-0003M8-Iy; Thu, 18 Jul 2024 11:29:03 +0200
 From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Conor Dooley <conor@kernel.org>
+To: Dragan Simic <dsimic@manjaro.org>, Anand Moon <linux.amoon@gmail.com>
 Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
  krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
 Subject:
- Re: [PATCH v2 1/3] dt-bindings: clocks: add binding for
- voltage-controlled-oscillators
-Date: Thu, 18 Jul 2024 11:25:28 +0200
-Message-ID: <3178118.zE8UqtGg2D@diego>
-In-Reply-To: <20240716-deceiving-saucy-851fb2303c1f@spud>
+ Re: [PATCH v2 3/3] arm64: dts: rockchip: fix the pcie refclock oscillator on
+ Rock 5 ITX
+Date: Thu, 18 Jul 2024 11:29:02 +0200
+Message-ID: <1829575.Zkmt1EvEu4@diego>
+In-Reply-To:
+ <CANAwSgS7qFZ4wbvLOxZ+9k=F7c3mFGo=Ab4aJjLgVu+JhfQneg@mail.gmail.com>
 References:
  <20240715110251.261844-1-heiko@sntech.de>
- <20240715110251.261844-2-heiko@sntech.de>
- <20240716-deceiving-saucy-851fb2303c1f@spud>
+ <72b84761ef93c1d4d6d61b16ef1bb1ce@manjaro.org>
+ <CANAwSgS7qFZ4wbvLOxZ+9k=F7c3mFGo=Ab4aJjLgVu+JhfQneg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -44,133 +45,64 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 7Bit
 Content-Type: text/plain; charset="us-ascii"
 
-Hi Conor,
-
-Am Dienstag, 16. Juli 2024, 18:15:08 CEST schrieb Conor Dooley:
-> On Mon, Jul 15, 2024 at 01:02:49PM +0200, Heiko Stuebner wrote:
-> > In contrast to fixed clocks that are described as ungateable, boards
-> > sometimes use additional oscillators for things like PCIe reference
-> > clocks, that need actual supplies to get enabled and enable-gpios to be
-> > toggled for them to work.
-> > 
-> > This adds a binding for such oscillators that are not configurable
-> > themself, but need to handle supplies for them to work.
-> > 
-> > In schematics they often can be seen as
-> > 
-> >          ----------------
-> > Enable - | 100MHz,3.3V, | - VDD
-> >          |    3225      |
-> >    GND - |              | - OUT
-> >          ----------------
-> > 
-> > or similar. The enable pin might be separate but can also just be tied
-> > to the vdd supply, hence it is optional in the binding.
-> > 
-> > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> > ---
-> >  .../bindings/clock/voltage-oscillator.yaml    | 49 +++++++++++++++++++
-> >  1 file changed, 49 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
-> > 
-> > diff --git a/Documentation/devicetree/bindings/clock/voltage-oscillator.yaml b/Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
-> > new file mode 100644
-> > index 0000000000000..8bff6b0fd582e
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/voltage-oscillator.yaml
-> > @@ -0,0 +1,49 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/clock/voltage-oscillator.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Voltage controlled oscillator
+Am Donnerstag, 18. Juli 2024, 10:00:51 CEST schrieb Anand Moon:
+> Hi Dragan
 > 
-> Voltage controlled oscillator? Really? That sounds far too similar to a
-> VCO to me, and the input voltage here (according to the description at
-> least) does not affect the frequency of oscillation.
+> On Thu, 18 Jul 2024 at 13:28, Dragan Simic <dsimic@manjaro.org> wrote:
+> >
+> > On 2024-07-18 09:52, Anand Moon wrote:
+> > > On Thu, 18 Jul 2024 at 13:02, Dragan Simic <dsimic@manjaro.org> wrote:
+> > >> On 2024-07-18 09:26, Anand Moon wrote:
+> > >> > On Mon, 15 Jul 2024 at 16:35, Heiko Stuebner <heiko@sntech.de> wrote:
+> > >> >>
+> > >> >> The Rock 5 ITX uses two PCIe controllers to drive both a M.2 slot and
+> > >> >> its
+> > >> >> SATA controller with 2 lanes each. The supply for the refclk
+> > >> >> oscillator is
+> > >> >> the same that supplies the M.2 slot, but the SATA controller port is
+> > >> >> supplied by a different rail.
+> > >> >>
+> > >> >> This leads to the effect that if the PCIe30x4 controller for the M.2
+> > >> >> probes first, everything works normally. But if the PCIe30x2
+> > >> >> controller
+> > >> >> that is connected to the SATA controller probes first, it will hang on
+> > >> >> the first DBI read as nothing will have enabled the refclock before.
+> > >> >
+> > >> > I just checked the rk3588-rock-5-itx.dts in the linux-next.
+> > >> > You have not enabled sata0 and sata2, which might be the problem
+> > >> > for the SATA controller not getting initialized.
+> > >>
+> > >> Rock 5 ITX doesn't use RK5588's built-in SATA interfaces, so that's
+> > >> fine.
+> > >> Please have a look at the board schematic, it uses a separate PCI
+> > >> Express
+> > >> SATA controller for its four SATA ports.
+> > >>
+> > > yes, But I am referring to sata node not enabled which enable
+> > > the PHY_TYPE_SATA.
+> > >
+> > > see rk3588-coolpi-cm5-evb.dts and rk3588-edgeble-neu6a-io.dtsi
+> > > rk3588-quartzpro64.dts
+> > > which have sata port on board.
+> > >
+> > > &sata0 {
+> > >         status = "okay";
+> > > };
+> >
+> > QuartzPro64, as an example, uses RK3588's built-in SATA interfaces,
+> > so it enables sata0 in its board dts.  Rock 5 ITX doesn't do that,
+> > as I already described.
+> 
+> Ok no problem,
 
-That naming was suggested by Stephen in v1 [0] .
+For the Rock 5 ITX it really only routes 2 PCIe lanes to one M.2 port
+and the other 2 lanes to the separate ASMedia SATA controller.
+So from the Rock5 PoV, it's really just 2 PCIe 2-lane slots and the
+SATA controller simply gets probed as PCIe device.
 
-Of course the schematics for the board I have only describe it as
-"100MHz,3.3V,3225" , thumbing through some mouser parts matching that
-only mentions "supply voltage" in their datasheets but not a dependency
-between rate and voltage.
-
-[0] https://lore.kernel.org/linux-arm-kernel/b3c450a94bcb4ad0bc5b3c7ee8712cb8.sboyd@kernel.org/
-
-> Why the dedicated binding, rather than adding a supply and enable-gpio
-> to the existing "fixed-clock" binding? I suspect that a large portion of
-> "fixed-clock"s actually require a supply that is (effectively)
-> always-on.
-
-I guess there are three aspects:
-- I do remember discussions in the past about not extending generic
-  bindings with device-specific stuff. I think generic power-sequences
-  were the topic back then, though that might have changed over time?
-- There are places that describe "fixed-clock" as
-  "basic fixed-rate clock that cannot gate" [1]
-- Stephen also suggested a separate binding [2]
-
-With the fixed-clock being sort of the root for everything else on most
-systems, I opted to leave it alone. I guess if the consenus really is that
-this should go there, I can move it, but discussion in v1 
-
-Interestingly the fixed clock had a gpios property 10 years ago [3] :-) .
-
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/clk/clk-fixed-rate.c#n18
-[2] https://lore.kernel.org/linux-arm-kernel/68f6dc44a8202fd83792e58aea137632.sboyd@kernel.org/
-[3] https://lore.kernel.org/linux-kernel//20140515064420.9521.47383@quantum/T/#t
-
+I even have a sample of the Rock 5+ here, that actually drops the
+separate SATA controller and instead provides a 2nd M.2 slot ;-)
 
 Heiko
-
-
-> > +
-> > +maintainers:
-> > +  - Heiko Stuebner <heiko@sntech.de>
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: voltage-oscillator
-> > +
-> > +  "#clock-cells":
-> > +    const: 0
-> > +
-> > +  clock-frequency: true
-> > +
-> > +  clock-output-names:
-> > +    maxItems: 1
-> > +
-> > +  enable-gpios:
-> > +    description:
-> > +      Contains a single GPIO specifier for the GPIO that enables and disables
-> > +      the oscillator.
-> > +    maxItems: 1
-> > +
-> > +  vdd-supply:
-> > +    description: handle of the regulator that provides the supply voltage
-> > +
-> > +required:
-> > +  - compatible
-> > +  - "#clock-cells"
-> > +  - clock-frequency
-> > +  - vdd-supply
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    voltage-oscillator {
-> > +      compatible = "voltage-oscillator";
-> > +      #clock-cells = <0>;
-> > +      clock-frequency = <1000000000>;
-> > +      vdd-supply = <&reg_vdd>;
-> > +    };
-> > +...
-> 
-
-
 
 
