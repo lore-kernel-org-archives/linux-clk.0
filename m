@@ -1,130 +1,107 @@
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05B2B5CB8;
-	Fri, 19 Jul 2024 09:02:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 061F5824BC
+	for <linux-clk@vger.kernel.org>; Fri, 19 Jul 2024 09:39:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721379722; cv=none; b=VrTmIPgKQk7cAtvk/dWp5SZhdq7eVx1QDiEje3tynvijmHNqfjnlz9usEPJ2mY346g13Izs7gPOwsxCJMw8XcSPCnAPyr4czGRNZJorlN1nJnd8jYhWMxSP5bJLPwjt1BCnRWXhmhYaFAzBMbxsn1S4v+GLp5jmh+TKhPXOKsuY=
+	t=1721381990; cv=none; b=dUyNecZVhQDwVUG9qJmSAMiB0o61j/tusYAtXXvy2rYr0sE+QXt9K6SXKSgq4Oaa568gSDoN6Zr5uVhQh9v3qD4EpvCBFCxufKectuf03JCHZMRNSkTeh7he07AkN0m7e6mltGZxSwQbiTp7xEbI6TBpCvVsv4pcih079BM6xkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721379722; c=relaxed/simple;
-	bh=e8NqB4UXXfRhq7xibWmOKgLLvVoy7/cBoXSoL07ZZd8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o76o0GYU4/fcYeuwHK+BWb06TB4fXqRK36oTmn0JKf3fqjR2NnsTF2+AlH+7RzdjN4EFS6tU9edE7Cvki8xE6n0G1rjb/2mh8psPL8d5vCh7rN8Q7mjZ5swKLvk1OeuiU635LhtWSTkj5924WDIyp3EzwS1sYxmGJFzykEjlRXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gWIsad0+; arc=none smtp.client-ip=209.85.217.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1721381990; c=relaxed/simple;
+	bh=qeJlyBqsETHxFoWL51EbJtaruSa98HAkPjxf8ZXN+zc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=gdUHNtBtRnHy40Yenb1Hfy3xY4BUfNgBSsQKt/2jSHG4kOOhjmXxQaBa+NP4e49AwKzrZpiyl8o+ZoywtT3xxa5p3ouC+JjJmPO/u/4NIMID58gtPrFV3E38/02Wk1yMH3BpgRdolucOaTlqI6H7cXno9I2QljY2Zrz8pyJnDXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=xtQDCHUk; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gWIsad0+"
-Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-4926a732a8dso594491137.0;
-        Fri, 19 Jul 2024 02:02:00 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="xtQDCHUk"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42122ac2f38so7454465e9.1
+        for <linux-clk@vger.kernel.org>; Fri, 19 Jul 2024 02:39:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721379720; x=1721984520; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1721381986; x=1721986786; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=e8NqB4UXXfRhq7xibWmOKgLLvVoy7/cBoXSoL07ZZd8=;
-        b=gWIsad0+rK05aE2J0pIqWynBQvX5NXxf+dO/jYm9yr8gV2jqJIFwANJusPXVqMCmrH
-         jniY/TQ61EdnV3WrOK/m9w8eU8bnfzeGCqwv/T5TEBv22Iruk+HPMaNPkyq0PBhF4EWu
-         /YS8kjVlE/Kyw1qqiTFYSkOX6nn1357bZsLBFMfPjiEOrYNM1YkbdTJNywd5jzha9nnP
-         RyGOh2FhRjY+QkqikTJ7ZRyJQIwOsVcYVOXOYMQdNBmpQVZ6JZCb4TbtGKD7n4cf0/Tp
-         YR7ypVSick/YoE4JUY3Q4YUhETlTRznq5DOMZT9gXi1MxgcaeAhU+XfTJdUs119eqse3
-         iAsA==
+        bh=Ok8qT5sg/ukyA77onQiJddqngdYN/iGCzJwgTQrvtPQ=;
+        b=xtQDCHUkVqUpRH3WQLKTZb2YFypk3ZEJX5tn3xtAWXJVapLpQmK5LEEuvPfVaFtVug
+         NO7jbuitL4qmo0+a69tXAvtJfAfoKvbeq8KiDF5VfWYobdBCNsq6nKdwq753i9wuDFib
+         Fh5TabrdFhoD6bqO9ON2cEim79FH+GmBsQ+CEGXa0eAJB5dAHhxZ+tcLODVOx6kLCZjl
+         6d6QQiDf8JNzOuuMER5IhlrBdmThs2bOZ45HICPDHwB+ki69TihVaFGJbpolzMPmFSY6
+         TbwiQ/sm+uLmruqFu2dYpCcR5P6amzqCualEAMOBcgrPOoZB9t/Gm/vBM8HA+yQVnXNP
+         A+fA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721379720; x=1721984520;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1721381986; x=1721986786;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=e8NqB4UXXfRhq7xibWmOKgLLvVoy7/cBoXSoL07ZZd8=;
-        b=anXTFeDXvOgCp2jA0B2jP4IylWxt6720HtgVze121XboLnJ5RqGWWHLGYC3dhhg/pc
-         NmlD6YVWA0ccooEfXppi+hgRTHcITD3mUjls66T2ndN0bew8W+80FNysBeTkOD3fwp0J
-         t4tBMdniC8HhG3fWmBeG5UHtIjTAJ/lmY7/bxYl8B0yfPmOU3OU/WhQe1hxtEHEYB5jy
-         eoZkijlM8uLnx6tRW7Z/q9XxfjlbLWa3Nxq1+fMX5DOBwxyAQrbsf0a/UDNSTMjLjosq
-         3xev6uBi0vKauhfELu07o2k7tksBYYtyYpDhdJBhsKw19J89cIuSokfWjTWZrEnUhqvG
-         2jYg==
-X-Forwarded-Encrypted: i=1; AJvYcCViLsYqEB55E+Q2g0PR2N5Di2yzjY7QDgldXn+lNBJDClTW1dRo07iDRzO9Qt5QZu64j3wfbQ+Jt7LRjUZHpv8cpDMLdO8jPegIFMsbAcHjg9vqT+IpO+2Dt/R2groU7oeAxS/WdD+Z4NoyWzMoUACCwQWqc6PRQAP+1VrrPf0Cn0yvJwb+pCkbN/S074O5uOHeEqMD7y+wKzlWlDVb5mITRCu9Q9gbRfdw4aLJhnTOlP8qmTn1CYBAwRPdZkKbw/LtjiW/pJKnK+ultQDMXR8260A3kb3tQZ0slW7dDEcoQEYNzUaiEKZUenJP5vnl7rWehy1U2SY0J8kSnDlB/7jtQvxzC9EthZXa6YhMxgEaTtrhoU+u25AD4SQL0+wpEs4kSNlPmMNWSjE+NnTwPlq7VsPrFy3Lr3nkUY4aS1LJkoCtgsipKvh5YxPxIuxIlCs=
-X-Gm-Message-State: AOJu0YwT/5FysG9Is/GOIs0KT6geaz7AuOgWhS71fCORHg6Zh331R5rD
-	nH38otIhsT1rJOU7bxEiErQFxjktzz7wrpCGwLmU4KhtXpiYzHf5BiceGFYcgV3Wi9iQ1JkUzvt
-	L9cLL9Q2b43tU4OpQjXsJyvH3GyE=
-X-Google-Smtp-Source: AGHT+IEEXrAtw5qdg+6Tlto0/IkkAm7AL1K/G5e76SlvQXcdxQq43WWyLQGsGDvFSp5tU2oxcT8DtAITdKNEJ/5OAbQ=
-X-Received: by 2002:a05:6102:512a:b0:48f:eb37:fd86 with SMTP id
- ada2fe7eead31-491599ec471mr8207968137.30.1721379719734; Fri, 19 Jul 2024
- 02:01:59 -0700 (PDT)
+        bh=Ok8qT5sg/ukyA77onQiJddqngdYN/iGCzJwgTQrvtPQ=;
+        b=u8zuksiGbm1pM7hnKJfXXtxhSoubU1IQzj/V9OIju9yyViPtV0Cc+07v8qIUCiGd+b
+         mgS5A5UDpRhgt0BwILWQAd8i2cluODd3ScNPrEAwq/+7ZzCd+CR0DDEj+6OBFK4fk4sq
+         +MD+kZHhwIjXlpAbydrUgluIaJ3g6g9nu97kACpbxmOLH3kllMT+tETFH9T0Ln+NPsrz
+         VFAP1USA6ohmWmQUGJQdPkVtglKFnjJ4VYxct2QHKAscq/P4k3f7Uklc6FoWahRuO42L
+         mZG7KJp0jqPZkj8zPD5nd7UUYNBfJSfgfHYpsIXMHzjzl6BRovRNhhxRJJG4mSat/pWN
+         fCVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWytmKm0X/cMfMzXk6Qea4fjqKEv7lFJY9e9dnY/lTUqv14Km2iyxcKi019HHKR5mwTzZR0XkMHjlSRdxuW0TvCTzm9dnxz7I0c
+X-Gm-Message-State: AOJu0YwUQf9eCrPV/xMDEOfqgblDxU5zBKTXoJlXy1v71o5oSyyNP7xN
+	h80GJsxsfxRoMtvoYxXHjvZwCFDl2HNtaigvCrWWLjP0EvlhtSjwhiKKCjR/tVs=
+X-Google-Smtp-Source: AGHT+IFRBg62WuWS0T4N15ozxDHT5px+Wx0AGbkCxcIEYMBTBgmOQqIY2DCIWNCIKkRjdhVXnuc1yg==
+X-Received: by 2002:a05:600c:3110:b0:424:71f7:77f2 with SMTP id 5b1f17b1804b1-427d2ad9f96mr23848925e9.16.1721381986549;
+        Fri, 19 Jul 2024 02:39:46 -0700 (PDT)
+Received: from toaster.lan ([2a01:e0a:3c5:5fb1:5ac4:5655:4dfe:ce97])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3687868bc91sm1100956f8f.45.2024.07.19.02.39.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Jul 2024 02:39:46 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Jerome Brunet <jbrunet@baylibre.com>,
+	linux-kernel@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Subject: [PATCH 1/3] dt-bindings: clock: axg-audio: add earcrx clock ids
+Date: Fri, 19 Jul 2024 11:39:30 +0200
+Message-ID: <20240719093934.3985139-2-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240719093934.3985139-1-jbrunet@baylibre.com>
+References: <20240719093934.3985139-1-jbrunet@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240618-starqltechn_integration_upstream-v3-0-e3f6662017ac@gmail.com>
- <20240618-starqltechn_integration_upstream-v3-2-e3f6662017ac@gmail.com>
- <wnf3mfgdm4p4f5wrxdtlx4wccnizdvohc7iiyu5t22eeb67r57@xun3r73hksrg>
- <ad04e203-4244-4cd3-9c9a-fae002962990@linaro.org> <lwrz4rvn6ogseea5v6j7plc3yi3xnzo76dvrsl3muat3iswlkb@zmwa3xo3xgw4>
- <85e03d10-59a2-4f15-bb85-7b2c0354a5d1@linaro.org>
-In-Reply-To: <85e03d10-59a2-4f15-bb85-7b2c0354a5d1@linaro.org>
-From: Dzmitry Sankouski <dsankouski@gmail.com>
-Date: Fri, 19 Jul 2024 12:01:48 +0300
-Message-ID: <CABTCjFBxOEdpbdYnbvPyf2MRE5m-3gfvHtaPbDF5PmkQZ2kV1w@mail.gmail.com>
-Subject: Re: [PATCH v3 02/23] gcc-sdm845: Add rates to the GP clocks
-To: Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Sebastian Reichel <sre@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jessica Zhang <quic_jesszhan@quicinc.com>, Sam Ravnborg <sam@ravnborg.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Lee Jones <lee@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>, phone-devel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-input@vger.kernel.org, linux-leds@vger.kernel.org, 
-	linux-pwm@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-Patchwork-Bot: notify
+Content-Transfer-Encoding: 8bit
 
-Why cannot max values be defined as ((2 ^ mnd_width) - 1) and ((2 ^
-hid_width) - 1)?
+Add clock IDs for the eARC Rx device found on sm1 SoCs
 
-=D0=B2=D1=82, 18 =D0=B8=D1=8E=D0=BD. 2024=E2=80=AF=D0=B3. =D0=B2 22:12, Kon=
-rad Dybcio <konrad.dybcio@linaro.org>:
->
->
->
-> On 6/18/24 20:55, Dmitry Baryshkov wrote:
-> > On Tue, Jun 18, 2024 at 08:50:52PM GMT, Konrad Dybcio wrote:
-> >>
-> >>
-> >> On 6/18/24 19:50, Dmitry Baryshkov wrote:
-> >>> On Tue, Jun 18, 2024 at 04:59:36PM GMT, Dzmitry Sankouski wrote:
-> >>>> sdm845 has "General Purpose" clocks that can be muxed to
-> >>>> SoC pins.
-> >>>>
-> >>>> Those clocks may be used as e.g. PWM sources for external peripheral=
-s.
-> >>>> Add more frequencies to the table for those clocks so it's possible
-> >>>> for arbitrary peripherals to make use of them.
-> >>>>
-> >>>> See also: bf8bb8eaccf(clk: qcom: gcc-msm8916: Add rates to the GP cl=
-ocks)
-> >>>
-> >>> Each time I look at the table attached to the GP CLK, I feel that it'=
-s
-> >>> plain wrong. In the end the GPCLK can in theory have arbitrary value
-> >>> depending on the usecase.
-> >>>
-> >>> Bjorn, Konrad, maybe we should add special clk_ops for GP CLK which
-> >>> allow more flexibility than a default clk_rcg2_ops?
-> >>
-> >> If we can somehow get max m/n/d values for all possible parents, sure
-> >
-> > Calculate them at runtime?
->
-> We'd be calculating the mnd values for a frequency that's either equal or
-> reasonably close to the one requested. My worry is that we somehow need
-> to get the maximum values they can take (unless they're well-known)
->
-> Konrad
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ include/dt-bindings/clock/axg-audio-clkc.h | 7 +++++++
+ 1 file changed, 7 insertions(+)
+
+diff --git a/include/dt-bindings/clock/axg-audio-clkc.h b/include/dt-bindings/clock/axg-audio-clkc.h
+index 08c82c22fa5f..607f23b83fa7 100644
+--- a/include/dt-bindings/clock/axg-audio-clkc.h
++++ b/include/dt-bindings/clock/axg-audio-clkc.h
+@@ -155,5 +155,12 @@
+ #define AUD_CLKID_SYSCLK_B_DIV		175
+ #define AUD_CLKID_SYSCLK_A_EN		176
+ #define AUD_CLKID_SYSCLK_B_EN		177
++#define AUD_CLKID_EARCRX		178
++#define AUD_CLKID_EARCRX_CMDC_SEL	179
++#define AUD_CLKID_EARCRX_CMDC_DIV	180
++#define AUD_CLKID_EARCRX_CMDC		181
++#define AUD_CLKID_EARCRX_DMAC_SEL	182
++#define AUD_CLKID_EARCRX_DMAC_DIV	183
++#define AUD_CLKID_EARCRX_DMAC		184
+ 
+ #endif /* __AXG_AUDIO_CLKC_BINDINGS_H */
+-- 
+2.43.0
+
