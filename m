@@ -1,177 +1,441 @@
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10olkn2046.outbound.protection.outlook.com [40.92.40.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E85911E871;
-	Fri, 19 Jul 2024 12:21:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.40.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721391697; cv=fail; b=JqitrrzbzrYmC91q0jjc6hq5a2GSFSuAb7KhwJOmlsNgsoJAVXzUfCDerZM79Q02EUoD2VUvkLGm1NUzONBUU9uDPNRbqj2EPeKCu/zzkCecJe6TNpLfuYYjjEUrANmPBX2fLOLyP4m5HQNwmrC4ITuFdQtQxT3LUQIissSPO6o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721391697; c=relaxed/simple;
-	bh=ZR4GSMWIasNboXn7A4zReGRnezulBPhkmXt2u3aeTME=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=BXEBQjYAmNneEkET95kpctyDPypBXSbd8qJQr9VlIkirw9SuDjqDzVueT1pRXjn9MhybWwk6Y2mPy0y/IXgD2BxTZaubr4KbWkcgluce8Nnea2wTYKTz9fcxnFs9JOLUBHLMOpzX5ilZT2gok56JBW08N6gvBFXAo/i1W0B3vvc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=rfVCwQqo; arc=fail smtp.client-ip=40.92.40.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8991812CDAE;
+	Fri, 19 Jul 2024 12:55:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1721393731; cv=none; b=DIm/57niGqBqwhFTBz5pUj64lAt7mU2dprzhhSvsONwhG7/hHzZgdf/XnptH8bQU4Og1UXxvnN8vo6ORjsG/d6Ee2/s8XGYuUr/uwBDmOHUH4eWdCMO5J+55H0vmD3ia5pnhlSmzRYnWbbnE5atoCH0LCoz+LcLvLejhJL0rE7w=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1721393731; c=relaxed/simple;
+	bh=mpyTkbgGCFRMs46XWouCS/Cxqt92qMtpq+6g9okpfGA=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=r1r+T2r/71KW61DNpVHZwAvIcooMVIxyoTmANUeIl9pn7BOZOCwJMQcpKqpSrMWDoSHQ2q01G42YJOsehZdZWUy7r6wjp48gLcCNACVz7ivAWV5QpCXZOzvnDJO0Xot45ZRMK5RsokJMidmgOLtkJ7kED1Tq2UeI5IvJ+zVFsro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PAWxhZSn; arc=none smtp.client-ip=209.85.208.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="rfVCwQqo"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XEOA+0UYNb7e2Cmd0yWNri4B0V7JBEvvrUVvex81lpDElFX9huKceQ8IDs+lhb6YypoTQQuEGDdSl0coIAhy/xqm9twgoqIVJRUrrAf+Q+hZoVmGrie2t/SLsYt+CRsCmJ7FvUVP+V6bcfTQXvajBYcviIzVY1bXhrNOQOOqn6Vte0Fdtud59Oc+T+DJiDtYAiILUFSaA9qFcSrOyyjsn/sNgqPwNCbN6svvCMPdqVpXwvkyZs1IrPl6fqZPtf1favOmRfhVY6TZen6gYzi+bbOowpRwGrUBqWUOKOrm5V3tXE7boaHuAtwtoxP4LjgQQueD4AMo/BjPhTx9TfRgVQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tldqgHwrNX2VRPJfGlCdisHuFFXVMjkMz498lCn6uCY=;
- b=NYC1lqETPzCoYRpGUWbTt5Q26bdeVdC7KbSH6jMAhH0tv/cETC85jm2CsC0/O3HXjFuMNxUlP2pUHrle1FcflFL5Z+W9LIqxO/3/38lO89btNUvtAIJb2zzHC6b0v6J8f97iG+74SUxeQp1b4XWuhDfWO/g3rgreTJXUDQ11WtuByz/vlm9jf9b+vBaGH7M9abe5LUDq8/fy55Zw5+yVwKfyWVP2GWGzPK05q0KHXTFgipWFWolcokfhfEnhvbl889pePyYDl0waSEF88K0J7zT9qmgt3/WbzI8gEVvHaQpXBfswCGIw0PEhnqJzgWcvQwLCndPpD3PGny6Ut28M0Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tldqgHwrNX2VRPJfGlCdisHuFFXVMjkMz498lCn6uCY=;
- b=rfVCwQqosrYWK4Hok8cjosOYh7bnBFVz6OeO3IVos2l2LQk7O82Pw1hNWJrkC7KFUe8DPb6q7DiJiUccv34csgGUVQ+ofTAJ5Zp9OepW+FJtdwEVHU4J3lFOuF5643DD2r4k3nxOteDo6XhjMuAZ2eqYuTi0h/7ukgDw3hs1L8FNjFagSpYQ2e4MkygTIBF01M5yTcVmptCZVjPC2cJnWwY3zH8RIpOW3GSdIROitZz/dp7tbZjmKiRj5516VOsB4xsJ0cqjKHIHSoiwjdMJEIMUzyacRNP4N6T4wgnOq8dwEno9oihLE/S69QuNm752UaZlv1LNOxqk6Yhe/TDytA==
-Received: from IA1PR20MB4953.namprd20.prod.outlook.com (2603:10b6:208:3af::19)
- by MN0PR20MB4644.namprd20.prod.outlook.com (2603:10b6:208:377::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7762.29; Fri, 19 Jul
- 2024 12:21:30 +0000
-Received: from IA1PR20MB4953.namprd20.prod.outlook.com
- ([fe80::ab0b:c0d3:1f91:d149]) by IA1PR20MB4953.namprd20.prod.outlook.com
- ([fe80::ab0b:c0d3:1f91:d149%5]) with mapi id 15.20.7784.016; Fri, 19 Jul 2024
- 12:21:30 +0000
-Date: Fri, 19 Jul 2024 20:21:13 +0800
-From: Inochi Amaoto <inochiama@outlook.com>
-To: limiao <limiao870622@163.com>, mturquette@baylibre.com, 
-	sboyd@kernel.org, unicorn_wang@outlook.com, inochiama@outlook.com
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	limiao <limiao@kylinos.cn>
-Subject: Re: [PATCH] clk: sophgo: fix warning emitted by objtool
-Message-ID:
- <IA1PR20MB49535179A6C3D854420939D4BBAD2@IA1PR20MB4953.namprd20.prod.outlook.com>
-References: <20240719115727.27857-1-limiao870622@163.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240719115727.27857-1-limiao870622@163.com>
-X-TMN: [MxAeWPGvkM73f1SSdifJo6PUZcBFw2rS1feT65rSSAs=]
-X-ClientProxiedBy: TYWP286CA0007.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:178::15) To IA1PR20MB4953.namprd20.prod.outlook.com
- (2603:10b6:208:3af::19)
-X-Microsoft-Original-Message-ID:
- <uiopz3uhmsgtjz7fmrzntz7uadaseqkx6xgz57hmb3r6fvdpqx@uae6crqaja66>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PAWxhZSn"
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2eeb1ba0468so26360321fa.0;
+        Fri, 19 Jul 2024 05:55:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1721393728; x=1721998528; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jB0LDwWchQ1Y0yxYjXnm3lm5EUl7Kp4Z7xElCeC0Jdg=;
+        b=PAWxhZSniSV929pkvPWRXessRU4eU6mSC8LsP/7rXjxog7Jwgqow+5WfcQ39k8XGb9
+         N8WS3C1GrC0FWzh5oE2LCmp6J+zmWbrOJWWGb0HV+AKsDOZsOnvKlz7eSdsGR3eX+D91
+         g1r8Spr+teFqkxXsAgStp0a+tK8FKcoA2fDvNrtD3lCe/8iwzyEHl+KeU/EP3uy4y1R6
+         g9K2aO/eNTo1LC3N+5GxZL2Fq0rCntqY/jKy7d+0vd0xjHE4Lp9MSwJkhroxqLXYHsZp
+         CqbW6UDxVJOhBSeLqwRMbm8twK7NjQSJ48+RAZMtumOnP80AENQ5EkIsqy/JgBihCXeE
+         16dg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721393728; x=1721998528;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jB0LDwWchQ1Y0yxYjXnm3lm5EUl7Kp4Z7xElCeC0Jdg=;
+        b=TxetUu5xO4nUvnMDHCCtlsdeqoZGZgWwJ+yEQiyrCKzU8h5dUJ//BcX7b6IordSH6R
+         SiSb8YwINCSifmeVY1i6Zfje/VrFYDHh2uT1TX2/ySzzwptrL3LyqNroVQpplNe550Jp
+         XCgmujWDCVG9QGpxbuvGdM+zsnvqlWc3nWMdu7rvi6rBgSy33X8PPi0ZuQqa+jVtv1oc
+         pNoVjPMti3Wyb4BEChSWDp2tisrUcT6UV7YQI0ld9UWoqStFIg1OKKFvY6cdsAXyWSGN
+         4DHAUnTH9nVGr5gtOkq0z8KU5fTUI7sZCBBr5ghI9leEetKVhqbDiwhLiLFY5Tlnd6Ie
+         FbvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUIYnkYAIy7YcdCCtaqphSxOjyrwTQrTLaBIRUYRreiQreXVYmKQ311ffbnClqdHUU0A+jYglLi4EhmJR8okkQE6M6iew0t10DKsOSFZr3D0Bdj9rXjHG9a8pHNAWGJ2q2bn36W0ROUSsvcJLLzR3BenStv6evEK0+h+9jxgS0o0go7Xe5roLXA1eMvP5slOSL3vAA5g7r0jpOy/Km88W1zO/gzl+ZtcPBF73Su38DglAA/PY91KgbI2k2UryevMYRHs/jM6XK1HhdHcjUG614eh8KWQ+TdOCrc1juR0BmXo6Uh/GuMbfHE7iedipmBrhsyHhsh8Y3tPihU8K7UOgvbMOaB9Hy/gCC3oUO5VjhXAdOhC2geQDSh0WQvUhub0AJ6GWn62OC1L6MMWkXBWVV/1VTO
+X-Gm-Message-State: AOJu0YxK/raklaVQTXzTSgDzvWW9l4YbmSFzqHZY6dw64VwcqgFF+BDv
+	499GdzY/s7Tdp0+79qK0eSh4+fxC1pu2H9Mrvy1TaqCKE4jxE/yw
+X-Google-Smtp-Source: AGHT+IENeGFObXn002bsJy2Dx3tz0dd31Uv3EzT5Ns+vSMFzFDzaKz3p4bXCxbraMenhS2L/IJQOgg==
+X-Received: by 2002:a05:651c:2105:b0:2ee:8777:f868 with SMTP id 38308e7fff4ca-2ef05d28994mr44112771fa.35.1721393721865;
+        Fri, 19 Jul 2024 05:55:21 -0700 (PDT)
+Received: from debian.localdomain ([178.122.223.182])
+        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-5a30af84673sm1174448a12.50.2024.07.19.05.55.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 19 Jul 2024 05:55:21 -0700 (PDT)
+From: Dzmitry Sankouski <dsankouski@gmail.com>
+To: dmitry.baryshkov@linaro.org,
+	Sebastian Reichel <sre@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Sam Ravnborg <sam@ravnborg.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Lee Jones <lee@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Pavel Machek <pavel@ucw.cz>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	=?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Dzmitry Sankouski <dsankouski@gmail.com>,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-input@vger.kernel.org,
+	linux-leds@vger.kernel.org,
+	linux-pwm@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org
+Subject: [PATCH v4 27/28] gcc-sdm845: Add general purpose clock ops
+Date: Fri, 19 Jul 2024 15:55:04 +0300
+Message-Id: <20240719-starqltechn_integration_upstream-v4-27-a7f644821941@gmail.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240719-starqltechn_integration_upstream-v4-0-a7f644821941@gmail.com>
+References: <20240719-starqltechn_integration_upstream-v4-0-a7f644821941@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA1PR20MB4953:EE_|MN0PR20MB4644:EE_
-X-MS-Office365-Filtering-Correlation-Id: a7a63068-15b2-4a38-5599-08dca7ed518c
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|461199028|8060799006|19110799003|3412199025|4302099013|440099028|1602099012|1710799026;
-X-Microsoft-Antispam-Message-Info:
-	6jZIdlsoGuclGzfk39jpCqGhAcrzjkzp7wUgAee91B4FRF7i6lboO8eixaNmvgPyrR8oOcJHvrdbhJZJRhY+d0mB6++vgEFnGoiqTvva6sVKZZiUYhsoaaybkE+JvGwQD6jwCIZr5BrErJIHxVXJFALveBX6Bp6N9l/i3VNR7SyLNAWNTmmQsJTGkL8Ikxh4ao2j4NM0bEPPsD3TQuTMIQT1dRwDf/M7ZyNxq5rjazmA+CQpVlwI8VO2J2NSYP+q+AhZlh8cHyjKFQE9cUVrF0Y7O9/1A594jPlyXMJcfybIlDctsghNdmlu3sUfzN10/yozD4U7WmywVTGG1Y+8pcTlUUG0TasQQmyQw3U1/oGv2BGzhT2PuQ/7MfTXFsjAa/rvrPKxrIalrPrPTSHjaln8zZwfiCH2C7MrV6jdq/p0q7+9jdDkehra2Qouf3oLEN35XnKuViUinOXMwzKqtfanuY5a6F1QY7iuscKJAT7z2+fpQTRpEDRQrzcPw91uNJFVE1FdfkZ2fAWBpSlaX/E15wKOZ72sM418nVAxsFofkRcMM7Y57BzfSOyzZM98mPYvU7k/SgUowFZCOEJa/qTFZyi4mURo/44r/br1S6KG7y20TdAUFfbUISGMikhZKygHRM7IECNpn08jyM4C05sl8QeFIdxzbS5q8+kQw/n1I/LAdNWJ1TOfraCWM5wDUkjEP41mRvzBz8tp8au9U5VkaiP/F1wDMpuwjgdTLRaRja8SRNFKSJ8rXctsb//BFkbRF7FEq6WxyBvNt+tWKHCsJXHoZMtYNjkyPi89v1M=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?qW/LZSBQorppeSOU+5QfNwXOGKhcXD0UFPeBKBegCxihN/+nzb/3KJCs3Rrx?=
- =?us-ascii?Q?n7mjCAGfT9IHvR8sOBSlhb4P13BqYWNk651QPxLR9iV9VoHh+MQHzHLkM6iG?=
- =?us-ascii?Q?pmY2hxnTj9sNC2WyqJmiuTbiyfYK078O6tAS4VoKfY2nGSGk82STJD3NmR97?=
- =?us-ascii?Q?rUSGJnG1ox0Zj6o258kjdHy9D2NTAFSKM1w8y5eFyIgPdEV0hM/lf/abClvK?=
- =?us-ascii?Q?zVClYFeXi9xNBvNfOaoK8Gv8veS0zqTz8VJZqH9XUZ4nRDuJ7x/m6Hh8IiWL?=
- =?us-ascii?Q?QvvvxqTPbAH7ZAusIGjvUgEhYAHMiV6siMrEbcV02Kchb9C5JPWvT0wzsa9X?=
- =?us-ascii?Q?2xkeD+36huC/6rpOEG8w39mWu6xLbiP860CHB0DpI187epz3S4UZh2Krg0Tl?=
- =?us-ascii?Q?XqwxXSRBoVAsl4Nn9c8A9GgSm3erSqDzwcic88zfknAEZPeKBq2WR5Vtgch9?=
- =?us-ascii?Q?1KSKmnrjgtTQV89vFx8x2deG8f61vEi4ZelYiRZq6G1XThDV1ayqM4u5Lt93?=
- =?us-ascii?Q?QHyoTbb4XL0mGyVzdS3VmbnZH9XFXuGXenRwTaQ5ZTRFbB8oC2jo+2YmbYuu?=
- =?us-ascii?Q?wmw7F72/DccAor9bhD8MnVQk7GExp6isUIbbALyYmYZUCXdLTGiRE9sRXOeX?=
- =?us-ascii?Q?9P3lbDThmRN12oauA2PNTaasT9Ps/sCsr8D3s/dSbJvFtBjgTDba+ZXex4FB?=
- =?us-ascii?Q?V6/4yc01rUcucpxUYsUs0oMcd9hnMYvnIVAk2aj0V8By81vtjCb1yBzOOdd1?=
- =?us-ascii?Q?6yJajAwQuUzGdg1gCK1E5ILjAwEJCGddnXKsYwYdotm4ApYx5mx4XsekHWue?=
- =?us-ascii?Q?rLVjU8YbRoV7kZOHZlSJBm5iwRBxQmyDhU/LnmnYJLWbMgGmUOy40XNzLiY5?=
- =?us-ascii?Q?11mUbWB4DhaM2OkTkEuloB1gDdrzmZDEtBHo/PRubWjnNG4ppxGfzEkEwK8j?=
- =?us-ascii?Q?Wn6MKYiWxqK42KTnHINJJMz2qQiYq9y6rPaW/ZAQ2/pnXujAlmasJSp5uNYR?=
- =?us-ascii?Q?NsnY2yEETcIuJAmw/F6DCT3LnZbiVZVkUityRcmBcn9V3WK68Csokb1eJD7B?=
- =?us-ascii?Q?g40t5NF+XRRwZLEK25TeNQs3Z55HizmpzTCDHtw1cQ+jvBy2yPZuxUaOMBa3?=
- =?us-ascii?Q?4J5IK/7bGJe8p5fZxVKrGhHbnXLEi6bkpEb5FBJznn7hAyyV36dbEqWumeHY?=
- =?us-ascii?Q?0ARoq5aG8i9yq8inEJCpkJQkdikVzCNcnOUhASmRwy0kt/SHmWTs8r04m9ct?=
- =?us-ascii?Q?BugnIpUCEDZY7kSyijOI?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a7a63068-15b2-4a38-5599-08dca7ed518c
-X-MS-Exchange-CrossTenant-AuthSource: IA1PR20MB4953.namprd20.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 19 Jul 2024 12:21:30.0651
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR20MB4644
+Content-Type: text/plain; charset="utf-8"
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1721388867; l=9651; i=dsankouski@gmail.com; s=20240618; h=from:subject:message-id; bh=mpyTkbgGCFRMs46XWouCS/Cxqt92qMtpq+6g9okpfGA=; b=AUG0ZxeqIT+xenEivXpKb8DAzFAFAvNm9ssCvEHOBoffWOMSekeO8SyrRcrUWvlc6Gu96BgcB SWGbYrnziyfD2noh2tRrPzG4uXq7JgM2ftfjabjFU4v4acNIQp0I6gv
+X-Developer-Key: i=dsankouski@gmail.com; a=ed25519; pk=6pMMVVDDReSiRgPCbMOUauN5nS3ty4Sf5b7a2gi4x0M=
+Content-Transfer-Encoding: 8bit
 
-On Fri, Jul 19, 2024 at 07:57:27PM GMT, limiao wrote:
-> From: limiao <limiao@kylinos.cn>
-> 
-> for ARCH=x86, the combination of CONFIG_OBJTOOL=y enables
-> a host tool named 'objtool' which runs at compile time,
-> when CONFIG_CLK_SOPHGO_CV1800=y or m, objtool will produces
-> the following warning:
-> 
-> drivers/clk/sophgo/clk-cv18xx-ip.o: warning: objtool:
-> mmux_round_rate() falls through to next function aclk_set_rate()
-> 
-> we can find the reason from objtool help document(tools/objtool/
-> Documentation/objtool.txt):
-> 
+SDM845 has "General Purpose" clocks that can be muxed to
+SoC pins to clock various external devices.
+Those clocks may be used as e.g. PWM sources for external peripherals.
 
-I think it is duplicate of
-https://lore.kernel.org/linux-clk/c8e66d51f880127549e2a3e623be6787f62b310d.1720506143.git.liqiang01@kylinos.cn/
+GPCLK can in theory have arbitrary value depending on the use case, so
+the concept of frequency tables, used in rcg2 clock driver, is not
+efficient, because it allows only defined frequencies.
 
-> Objtool warnings
-> ----------------
-> ...
-> 8. file.o: warning: objtool: funcA() falls through to next function funcB()
-> ...
->    2) funcA() uses the unreachable() annotation in a section of code
->      that is actually reachable.
-> 
-> so we replace unreachable() with returning an errno to avoid this warning.
-> 
-> Signed-off-by: limiao<limiao@kylinos.cn>
-> ---
->  drivers/clk/sophgo/clk-cv18xx-ip.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/sophgo/clk-cv18xx-ip.c b/drivers/clk/sophgo/clk-cv18xx-ip.c
-> index 805f561725ae..0fe9a9bd3f49 100644
-> --- a/drivers/clk/sophgo/clk-cv18xx-ip.c
-> +++ b/drivers/clk/sophgo/clk-cv18xx-ip.c
-> @@ -602,7 +602,7 @@ static inline struct cv1800_clk_mmux *hw_to_cv1800_clk_mmux(struct clk_hw *hw)
->  	return container_of(common, struct cv1800_clk_mmux, common);
->  }
->  
-> -static u8 mmux_get_parent_id(struct cv1800_clk_mmux *mmux)
-> +static int mmux_get_parent_id(struct cv1800_clk_mmux *mmux)
->  {
->  	struct clk_hw *hw = &mmux->common.hw;
->  	struct clk_hw *parent = clk_hw_get_parent(hw);
-> @@ -613,7 +613,7 @@ static u8 mmux_get_parent_id(struct cv1800_clk_mmux *mmux)
->  			return i;
->  	}
->  
-> -	unreachable();
-> +	return -EINVAL;
->  }
->  
->  static int mmux_enable(struct clk_hw *hw)
-> @@ -648,6 +648,8 @@ static long mmux_round_rate(struct clk_hw *parent, unsigned long *parent_rate,
->  			return *parent_rate;
->  
->  		id = mmux_get_parent_id(mmux);
-> +		if (id < 0)
-> +			return *parent_rate;
->  	}
->  
->  	div_id = mmux->parent2sel[id];
-> -- 
-> 2.25.1
-> 
+Introduce clk_rcg2_gp_ops, which automatically calculate clock
+mnd values for arbitrary clock rate.
+
+Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
+---
+ drivers/clk/qcom/clk-rcg.h    |   1 +
+ drivers/clk/qcom/clk-rcg2.c   | 162 ++++++++++++++++++++++++++++++++++++++++--
+ drivers/clk/qcom/gcc-sdm845.c |  19 ++---
+ drivers/pwm/pwm-clk.c         |   5 ++
+ 4 files changed, 167 insertions(+), 20 deletions(-)
+
+diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
+index d7414361e432..5bd86bce0c4d 100644
+--- a/drivers/clk/qcom/clk-rcg.h
++++ b/drivers/clk/qcom/clk-rcg.h
+@@ -189,6 +189,7 @@ struct clk_rcg2_gfx3d {
+ 	container_of(to_clk_rcg2(_hw), struct clk_rcg2_gfx3d, rcg)
+ 
+ extern const struct clk_ops clk_rcg2_ops;
++extern const struct clk_ops clk_rcg2_gp_ops;
+ extern const struct clk_ops clk_rcg2_floor_ops;
+ extern const struct clk_ops clk_rcg2_fm_ops;
+ extern const struct clk_ops clk_rcg2_mux_closest_ops;
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index 9b3aaa7f20ac..addfa7f59be8 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -32,6 +32,7 @@
+ 
+ #define CFG_REG			0x4
+ #define CFG_SRC_DIV_SHIFT	0
++#define CFG_SRC_DIV_LENGTH	8
+ #define CFG_SRC_SEL_SHIFT	8
+ #define CFG_SRC_SEL_MASK	(0x7 << CFG_SRC_SEL_SHIFT)
+ #define CFG_MODE_SHIFT		12
+@@ -393,16 +394,103 @@ static int clk_rcg2_fm_determine_rate(struct clk_hw *hw,
+ 	return _freq_tbl_fm_determine_rate(hw, rcg->freq_multi_tbl, req);
+ }
+ 
+-static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f,
+-				u32 *_cfg)
++static inline u64 find_hcf(u64 a, u64 b)
++{
++	while (a != 0 && b != 0) {
++		if (a > b)
++			a %= b;
++		else
++			b %= a;
++	}
++	return a + b;
++}
++
++static int clk_calc_mnd(u64 parent_rate, u64 rate, struct freq_tbl *f)
++{
++	u64 hcf;
++	u64 hid_div = 1, n = 1;
++	int i = 2, count = 0;
++
++	hcf = find_hcf(parent_rate, rate);
++	u64 scaled_rate = rate / hcf;
++	u64 scaled_parent_rate = parent_rate / hcf;
++
++	while (scaled_parent_rate > 1) {
++		while (scaled_parent_rate % i == 0) {
++			scaled_parent_rate /= i;
++			if (count % 2 == 0)
++				hid_div *= i;
++			else
++				n *= i;
++		}
++		i++;
++		count++;
++	}
++
++	f->m = scaled_rate;
++	f->n = n;
++	f->pre_div = hid_div;
++
++	return 0;
++}
++
++static int clk_rcg2_determine_gp_rate(struct clk_hw *hw,
++				   struct clk_rate_request *req)
++{
++	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
++	struct freq_tbl *f;
++	int src = clk_rcg2_get_parent(hw);
++	int mnd_max = BIT(rcg->mnd_width) - 1;
++	int hid_max = BIT(rcg->hid_width) - 1;
++	u64 parent_rate;
++	int ret;
++
++	parent_rate = rcg->freq_tbl[src].freq;
++	f = kcalloc(MAX_PERF_LEVEL + 1, sizeof(f), GFP_KERNEL);
++
++	if (!f)
++		return 0;
++
++	ret = clk_calc_mnd(parent_rate, req->rate, f);
++	if (ret)
++		return 0;
++
++
++	while (f->n - f->m >= mnd_max) {
++		f->m = f->m >> 1;
++		f->n = f->n >> 1;
++	}
++	while (f->pre_div >= hid_max) {
++		f->pre_div = f->pre_div >> 1;
++		f->m = f->m >> 1;
++	}
++
++	req->rate = calc_rate(parent_rate, f->m, f->n, f->n, f->pre_div);
++
++	return 0;
++}
++
++static int __clk_rcg2_configure_parent(struct clk_rcg2 *rcg, int src, u32 *_cfg)
+ {
+-	u32 cfg, mask, d_val, not2d_val, n_minus_m;
+ 	struct clk_hw *hw = &rcg->clkr.hw;
+-	int ret, index = qcom_find_src_index(hw, rcg->parent_map, f->src);
++	u32 mask = CFG_SRC_SEL_MASK;
++	int index = qcom_find_src_index(hw, rcg->parent_map, src);
+ 
+ 	if (index < 0)
+ 		return index;
+ 
++	*_cfg &= ~mask;
++	*_cfg |= rcg->parent_map[index].cfg << CFG_SRC_SEL_SHIFT;
++
++	return 0;
++}
++
++static int __clk_rcg2_configure_mnd(struct clk_rcg2 *rcg, const struct freq_tbl *f,
++				u32 *_cfg)
++{
++	u32 cfg, mask, d_val, not2d_val, n_minus_m;
++	int ret;
++
+ 	if (rcg->mnd_width && f->n) {
+ 		mask = BIT(rcg->mnd_width) - 1;
+ 		ret = regmap_update_bits(rcg->clkr.regmap,
+@@ -431,9 +519,8 @@ static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f,
+ 	}
+ 
+ 	mask = BIT(rcg->hid_width) - 1;
+-	mask |= CFG_SRC_SEL_MASK | CFG_MODE_MASK | CFG_HW_CLK_CTRL_MASK;
++	mask |= CFG_MODE_MASK | CFG_HW_CLK_CTRL_MASK;
+ 	cfg = f->pre_div << CFG_SRC_DIV_SHIFT;
+-	cfg |= rcg->parent_map[index].cfg << CFG_SRC_SEL_SHIFT;
+ 	if (rcg->mnd_width && f->n && (f->m != f->n))
+ 		cfg |= CFG_MODE_DUAL_EDGE;
+ 	if (rcg->hw_clk_ctrl)
+@@ -445,6 +532,22 @@ static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f,
+ 	return 0;
+ }
+ 
++static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f,
++				u32 *_cfg)
++{
++	int ret;
++
++	ret = __clk_rcg2_configure_parent(rcg, f->src, _cfg);
++	if (ret)
++		return ret;
++
++	ret = __clk_rcg2_configure_mnd(rcg, f, _cfg);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++
+ static int clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
+ {
+ 	u32 cfg;
+@@ -465,6 +568,26 @@ static int clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
+ 	return update_config(rcg);
+ }
+ 
++static int clk_rcg2_configure_gp(struct clk_rcg2 *rcg, const struct freq_tbl *f)
++{
++	u32 cfg;
++	int ret;
++
++	ret = regmap_read(rcg->clkr.regmap, RCG_CFG_OFFSET(rcg), &cfg);
++	if (ret)
++		return ret;
++
++	ret = __clk_rcg2_configure_mnd(rcg, f, &cfg);
++	if (ret)
++		return ret;
++
++	ret = regmap_write(rcg->clkr.regmap, RCG_CFG_OFFSET(rcg), cfg);
++	if (ret)
++		return ret;
++
++	return update_config(rcg);
++}
++
+ static int __clk_rcg2_set_rate(struct clk_hw *hw, unsigned long rate,
+ 			       enum freq_policy policy)
+ {
+@@ -518,6 +641,22 @@ static int clk_rcg2_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	return __clk_rcg2_set_rate(hw, rate, CEIL);
+ }
+ 
++static int clk_rcg2_set_gp_rate(struct clk_hw *hw, unsigned long rate,
++			    unsigned long parent_rate)
++{
++	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
++	struct freq_tbl *f;
++
++	f = kcalloc(MAX_PERF_LEVEL + 1, sizeof(*f), GFP_KERNEL);
++
++	if (!f)
++		return -ENOMEM;
++
++	clk_calc_mnd(parent_rate, rate, f);
++
++	return clk_rcg2_configure_gp(rcg, f);
++}
++
+ static int clk_rcg2_set_floor_rate(struct clk_hw *hw, unsigned long rate,
+ 				   unsigned long parent_rate)
+ {
+@@ -645,6 +784,17 @@ const struct clk_ops clk_rcg2_ops = {
+ };
+ EXPORT_SYMBOL_GPL(clk_rcg2_ops);
+ 
++const struct clk_ops clk_rcg2_gp_ops = {
++	.is_enabled = clk_rcg2_is_enabled,
++	.get_parent = clk_rcg2_get_parent,
++	.set_parent = clk_rcg2_set_parent,
++	.determine_rate = clk_rcg2_determine_gp_rate,
++	.set_rate = clk_rcg2_set_gp_rate,
++	.get_duty_cycle = clk_rcg2_get_duty_cycle,
++	.set_duty_cycle = clk_rcg2_set_duty_cycle,
++};
++EXPORT_SYMBOL_GPL(clk_rcg2_gp_ops);
++
+ const struct clk_ops clk_rcg2_floor_ops = {
+ 	.is_enabled = clk_rcg2_is_enabled,
+ 	.get_parent = clk_rcg2_get_parent,
+diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
+index 8d61d5a31542..1fb617b0ee47 100644
+--- a/drivers/clk/qcom/gcc-sdm845.c
++++ b/drivers/clk/qcom/gcc-sdm845.c
+@@ -291,18 +291,9 @@ static struct clk_rcg2 gcc_sdm670_cpuss_rbcpr_clk_src = {
+  * See comment in gcc-mam8916.c at ftbl_gcc_gp1_3_clk.
+  */
+ static const struct freq_tbl ftbl_gcc_gp1_clk_src[] = {
+-	F(10000,   P_BI_TCXO,    16,  1, 120),
+-	F(20000,   P_BI_TCXO,    16,  1, 60),
+-	F(100000,  P_BI_TCXO,    16,  1,  12),
+-	F(500000,  P_GPLL0_OUT_EVEN, 12, 1, 100),
+-	F(1000000, P_GPLL0_OUT_EVEN, 12, 1, 50),
+-	F(2500000, P_GPLL0_OUT_EVEN, 12, 1, 10),
+-	F(5000000, P_GPLL0_OUT_EVEN, 12, 1, 5),
+ 	F(19200000, P_BI_TCXO, 1, 0, 0),
+-	F(25000000, P_GPLL0_OUT_EVEN, 12, 0, 0),
+-	F(50000000, P_GPLL0_OUT_EVEN, 6, 0, 0),
+-	F(100000000, P_GPLL0_OUT_MAIN, 6, 0, 0),
+-	F(200000000, P_GPLL0_OUT_MAIN, 3, 0, 0),
++	F(300000000, P_GPLL0_OUT_EVEN, 1, 0, 0),
++	F(600000000, P_GPLL0_OUT_MAIN, 1, 0, 0),
+ 	{ }
+ };
+ 
+@@ -316,7 +307,7 @@ static struct clk_rcg2 gcc_gp1_clk_src = {
+ 		.name = "gcc_gp1_clk_src",
+ 		.parent_data = gcc_parent_data_1,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_1),
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_gp_ops,
+ 	},
+ };
+ 
+@@ -330,7 +321,7 @@ static struct clk_rcg2 gcc_gp2_clk_src = {
+ 		.name = "gcc_gp2_clk_src",
+ 		.parent_data = gcc_parent_data_1,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_1),
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_gp_ops,
+ 	},
+ };
+ 
+@@ -344,7 +335,7 @@ static struct clk_rcg2 gcc_gp3_clk_src = {
+ 		.name = "gcc_gp3_clk_src",
+ 		.parent_data = gcc_parent_data_1,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_1),
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_gp_ops,
+ 	},
+ };
+ 
+diff --git a/drivers/pwm/pwm-clk.c b/drivers/pwm/pwm-clk.c
+index c19a482d7e28..1bfc7870e3aa 100644
+--- a/drivers/pwm/pwm-clk.c
++++ b/drivers/pwm/pwm-clk.c
+@@ -25,6 +25,7 @@
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/clk.h>
++#include <linux/clk/clk-conf.h>
+ #include <linux/pwm.h>
+ 
+ struct pwm_clk_chip {
+@@ -87,6 +88,10 @@ static int pwm_clk_probe(struct platform_device *pdev)
+ 	struct pwm_clk_chip *pcchip;
+ 	int ret;
+ 
++	ret = of_clk_set_defaults(pdev->dev.of_node, false);
++	if (ret < 0)
++		return -EINVAL;
++
+ 	chip = devm_pwmchip_alloc(&pdev->dev, 1, sizeof(*pcchip));
+ 	if (IS_ERR(chip))
+ 		return PTR_ERR(chip);
+
+-- 
+2.39.2
+
