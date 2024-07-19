@@ -1,57 +1,55 @@
 Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 061F5824BC
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D7167F487
 	for <linux-clk@vger.kernel.org>; Fri, 19 Jul 2024 09:39:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721381990; cv=none; b=dUyNecZVhQDwVUG9qJmSAMiB0o61j/tusYAtXXvy2rYr0sE+QXt9K6SXKSgq4Oaa568gSDoN6Zr5uVhQh9v3qD4EpvCBFCxufKectuf03JCHZMRNSkTeh7he07AkN0m7e6mltGZxSwQbiTp7xEbI6TBpCvVsv4pcih079BM6xkQ=
+	t=1721381990; cv=none; b=VZGTuy3aOBlvas6qRSIXh6ovHYcLuFlRfNurJl2QJRk0v8qgfXa+lTCpTH12l4IZZXCkGcFcinY4VS+apCclzeS+XkqPA83fItuVshVIKGAKDSj9+QQ1WCFABHsEYpCW1HnSOPYvRJNcTL8UrnKK/iegmaPC1vwXzc528/kpz0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1721381990; c=relaxed/simple;
-	bh=qeJlyBqsETHxFoWL51EbJtaruSa98HAkPjxf8ZXN+zc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gdUHNtBtRnHy40Yenb1Hfy3xY4BUfNgBSsQKt/2jSHG4kOOhjmXxQaBa+NP4e49AwKzrZpiyl8o+ZoywtT3xxa5p3ouC+JjJmPO/u/4NIMID58gtPrFV3E38/02Wk1yMH3BpgRdolucOaTlqI6H7cXno9I2QljY2Zrz8pyJnDXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=xtQDCHUk; arc=none smtp.client-ip=209.85.128.47
+	bh=ci+KcHwAigtpkpMNemilRAChZcTSbPV2xvcRYGetHnI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T4y1SOYuPa87pE9Pzn65TS+JXFrzVgNelAIKuvjHDmKxa3xv6Uf5Oxqthm6MFDlBv7j4h7H/Z58GD3/g5y2Gbqqkti0UzLbho9Dw3KKj23a6KVKE2Q5A8T6+hBZ+SdJT8zRSD8wB7nw4SGraqUuApbENC43YDXf7i5vWc6U4z+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ZImnCz6Q; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="xtQDCHUk"
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42122ac2f38so7454465e9.1
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ZImnCz6Q"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4277a5ed48bso10651565e9.2
         for <linux-clk@vger.kernel.org>; Fri, 19 Jul 2024 02:39:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1721381986; x=1721986786; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ok8qT5sg/ukyA77onQiJddqngdYN/iGCzJwgTQrvtPQ=;
-        b=xtQDCHUkVqUpRH3WQLKTZb2YFypk3ZEJX5tn3xtAWXJVapLpQmK5LEEuvPfVaFtVug
-         NO7jbuitL4qmo0+a69tXAvtJfAfoKvbeq8KiDF5VfWYobdBCNsq6nKdwq753i9wuDFib
-         Fh5TabrdFhoD6bqO9ON2cEim79FH+GmBsQ+CEGXa0eAJB5dAHhxZ+tcLODVOx6kLCZjl
-         6d6QQiDf8JNzOuuMER5IhlrBdmThs2bOZ45HICPDHwB+ki69TihVaFGJbpolzMPmFSY6
-         TbwiQ/sm+uLmruqFu2dYpCcR5P6amzqCualEAMOBcgrPOoZB9t/Gm/vBM8HA+yQVnXNP
-         A+fA==
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=rEbHlu47gMjntr/0lWZ1HMtnTqXHStCt809hwXsuo8g=;
+        b=ZImnCz6QdOO94SYv+5u/IVcyKMeeqTBSXtCgIJc3gq+EbRk39g5uhO2hPjtLtXqoTZ
+         V6WIUrksnZ8uJ2+MoRJuJP8VU7IAgu8oC/VMH5nILnOHRgV1KArPJ0SHH0gv7FPg/o7d
+         JKVtBaKYT7mz0sOKmbaPrImMQPalRd4kyndrDnl7KBqcAFwRBsLFDDWbmnXdDK9RbY3e
+         iPZTUVutIxqtIoLmr+B0An289Dg4Ehy0oEFHUkw1/s/1AGdU+8TFTBtnZDOa8UwpF4vM
+         CCWi2i8rowy256NEnm2vFYco9YNV3pjiN4Q9f/97zd2WCGf2pJLOAN8V5U4KAOT0fQoM
+         aqDw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20230601; t=1721381986; x=1721986786;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ok8qT5sg/ukyA77onQiJddqngdYN/iGCzJwgTQrvtPQ=;
-        b=u8zuksiGbm1pM7hnKJfXXtxhSoubU1IQzj/V9OIju9yyViPtV0Cc+07v8qIUCiGd+b
-         mgS5A5UDpRhgt0BwILWQAd8i2cluODd3ScNPrEAwq/+7ZzCd+CR0DDEj+6OBFK4fk4sq
-         +MD+kZHhwIjXlpAbydrUgluIaJ3g6g9nu97kACpbxmOLH3kllMT+tETFH9T0Ln+NPsrz
-         VFAP1USA6ohmWmQUGJQdPkVtglKFnjJ4VYxct2QHKAscq/P4k3f7Uklc6FoWahRuO42L
-         mZG7KJp0jqPZkj8zPD5nd7UUYNBfJSfgfHYpsIXMHzjzl6BRovRNhhxRJJG4mSat/pWN
-         fCVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWytmKm0X/cMfMzXk6Qea4fjqKEv7lFJY9e9dnY/lTUqv14Km2iyxcKi019HHKR5mwTzZR0XkMHjlSRdxuW0TvCTzm9dnxz7I0c
-X-Gm-Message-State: AOJu0YwUQf9eCrPV/xMDEOfqgblDxU5zBKTXoJlXy1v71o5oSyyNP7xN
-	h80GJsxsfxRoMtvoYxXHjvZwCFDl2HNtaigvCrWWLjP0EvlhtSjwhiKKCjR/tVs=
-X-Google-Smtp-Source: AGHT+IFRBg62WuWS0T4N15ozxDHT5px+Wx0AGbkCxcIEYMBTBgmOQqIY2DCIWNCIKkRjdhVXnuc1yg==
-X-Received: by 2002:a05:600c:3110:b0:424:71f7:77f2 with SMTP id 5b1f17b1804b1-427d2ad9f96mr23848925e9.16.1721381986549;
-        Fri, 19 Jul 2024 02:39:46 -0700 (PDT)
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=rEbHlu47gMjntr/0lWZ1HMtnTqXHStCt809hwXsuo8g=;
+        b=WODDssxqjoINzCWpbYfKn7tYRIG8onXf+k//QD1cdLMkfKcj3PWIK3ryWHi080+g1s
+         h1szRohMY7hm97sGIYprazjpNYMnFafn2p/AqfjBurp2ixZxLsKqx9SWVGcxr/SPspli
+         8kRstDtvlw786azYm0B6PoJqgfM07Psx9uCQtwB8HvJYydy2pFoxy4VIxDcD4kZXOz6/
+         Qcn3FQ0DEFsGvaZvbZggMySPvB8t8TSmt5x2mYbqK3f3mRsfHLVpPFUOWPjvusIdaOvR
+         i7XHRoB8mm2uCpbNqKcuPEZWHlqkDe9oVJrqcDxB9/XS8ZQk5pnmI9+RuwZ4PQ5UXVWA
+         kjSg==
+X-Forwarded-Encrypted: i=1; AJvYcCVTgHi6RaA1hIu+sid7njdbCUMag5toXy1K2rTs+BLIEkOdIx+yJk0W3GRpeJzlJtRmsH6m+RXYFvOeFo1MnhpXPD1A9YqlIf0l
+X-Gm-Message-State: AOJu0YyKmbqW0xW6APmL04HnF/djL4sC42l84QKJY+mbAjRa34S+GnOL
+	mxLEVFZRZw2OjQb6KAq/srMChHaOD1kHdgtZUxCg7JoR+cp+3S6giBVV32yel6I=
+X-Google-Smtp-Source: AGHT+IH4BxZr7nNiWWbM+lEJPkijyLd0iYBXu9qVNkbqOH0Fb5f61iPqIYleOo5sy/iDP8q/46Z88A==
+X-Received: by 2002:adf:a112:0:b0:368:71e9:4ee3 with SMTP id ffacd0b85a97d-36871e94f3dmr1106799f8f.18.1721381985670;
+        Fri, 19 Jul 2024 02:39:45 -0700 (PDT)
 Received: from toaster.lan ([2a01:e0a:3c5:5fb1:5ac4:5655:4dfe:ce97])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3687868bc91sm1100956f8f.45.2024.07.19.02.39.45
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3687868bc91sm1100956f8f.45.2024.07.19.02.39.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Jul 2024 02:39:46 -0700 (PDT)
+        Fri, 19 Jul 2024 02:39:45 -0700 (PDT)
 From: Jerome Brunet <jbrunet@baylibre.com>
 To: Stephen Boyd <sboyd@kernel.org>,
 	Neil Armstrong <neil.armstrong@linaro.org>
@@ -63,12 +61,10 @@ Cc: Jerome Brunet <jbrunet@baylibre.com>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>
-Subject: [PATCH 1/3] dt-bindings: clock: axg-audio: add earcrx clock ids
-Date: Fri, 19 Jul 2024 11:39:30 +0200
-Message-ID: <20240719093934.3985139-2-jbrunet@baylibre.com>
+Subject: [PATCH 0/3] clk: meson: sm1: add earcrx clocks
+Date: Fri, 19 Jul 2024 11:39:29 +0200
+Message-ID: <20240719093934.3985139-1-jbrunet@baylibre.com>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240719093934.3985139-1-jbrunet@baylibre.com>
-References: <20240719093934.3985139-1-jbrunet@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -78,30 +74,21 @@ MIME-Version: 1.0
 X-Patchwork-Bot: notify
 Content-Transfer-Encoding: 8bit
 
-Add clock IDs for the eARC Rx device found on sm1 SoCs
+This patchset adds the eARC-Rx clocks on sm1 SoCs.
 
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- include/dt-bindings/clock/axg-audio-clkc.h | 7 +++++++
- 1 file changed, 7 insertions(+)
+This pushes the maximum register of the axg-audio controller up
+again so a SoC parameter is inserted to handle that correctly.
 
-diff --git a/include/dt-bindings/clock/axg-audio-clkc.h b/include/dt-bindings/clock/axg-audio-clkc.h
-index 08c82c22fa5f..607f23b83fa7 100644
---- a/include/dt-bindings/clock/axg-audio-clkc.h
-+++ b/include/dt-bindings/clock/axg-audio-clkc.h
-@@ -155,5 +155,12 @@
- #define AUD_CLKID_SYSCLK_B_DIV		175
- #define AUD_CLKID_SYSCLK_A_EN		176
- #define AUD_CLKID_SYSCLK_B_EN		177
-+#define AUD_CLKID_EARCRX		178
-+#define AUD_CLKID_EARCRX_CMDC_SEL	179
-+#define AUD_CLKID_EARCRX_CMDC_DIV	180
-+#define AUD_CLKID_EARCRX_CMDC		181
-+#define AUD_CLKID_EARCRX_DMAC_SEL	182
-+#define AUD_CLKID_EARCRX_DMAC_DIV	183
-+#define AUD_CLKID_EARCRX_DMAC		184
- 
- #endif /* __AXG_AUDIO_CLKC_BINDINGS_H */
+Jerome Brunet (3):
+  dt-bindings: clock: axg-audio: add earcrx clock ids
+  clk: meson: axg-audio: setup regmap max_register based on the SoC
+  clk: meson: axg-audio: add sm1 earcrx clocks
+
+ drivers/clk/meson/axg-audio.c              | 38 ++++++++++++++++++++--
+ drivers/clk/meson/axg-audio.h              |  2 ++
+ include/dt-bindings/clock/axg-audio-clkc.h |  7 ++++
+ 3 files changed, 45 insertions(+), 2 deletions(-)
+
 -- 
 2.43.0
 
