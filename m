@@ -1,96 +1,145 @@
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C221A269
-	for <linux-clk@vger.kernel.org>; Fri, 19 Jul 2024 15:10:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A1041465A9
+	for <linux-clk@vger.kernel.org>; Fri, 19 Jul 2024 18:48:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721401845; cv=none; b=FDOud9mUPfZVvYOVl0xLxkBbFmpw1yyrDN4OcySDHKH382ok32enE3ojiQ17CtChlWdOZ6g+FpewGdoMQ9Re9lhf79IqbBwEqY/yzXdLO9KJKdM7Sbh8r3yCok1EzTvjuMH/6PT0ih6qkECPuu0+xlfzy8RogtXD/hIkMsTV1/E=
+	t=1721414907; cv=none; b=Js3XoVBfdgA2KxYxguStLMyCTly+vZ5DXy6WRkLz6BtS4vjPEOAIOrox+fgqCijQPbplCQYunBoEoEmzRak5JJGfSNM++k8RBoIGEdIlh8syWOG0wZDFDndtDev3aT2eiP0syE/jMhyiHKZuKe3WSkU41JgdSQLrbmre8MpRN0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721401845; c=relaxed/simple;
-	bh=Y8h40+hGzCh1f/VqyHlIyYZ9PFSZTGJrEzS5F3GcZgo=;
-	h=Subject:Date:Message-ID:MIME-Version:Cc:From:To; b=hV8Z8FCoYnFM6+HOP9S1cvy/ax56ISE+1TFhjbaFGmHYY6PJCIELqLiobzaclgH0WxUgxtDdLwjLnoINVjEFb6WNYNAaDrUAeEmu+5xWV4bZpWYtAHYoJ4lAQ0jVQ7T+n1xRWXjeUiEP1T65soxh8AAAWQHKD4AUlTBs6eikbJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=SgmMEbZ0; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+	s=arc-20240116; t=1721414907; c=relaxed/simple;
+	bh=KSP3qFQimIB/KWgpWhEu0lTlpGLv27AIGOdpzPyZz9Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=LcOeqt8lgwvKmh5jndEl+FhVXpUStXq1GuCqSK+P3Uv2GxfFSQFzI5EB5i73HazRHd5aju8nmICsgneQRNsAepcJN/nEZgSstHdF2AYNqKX9LlyIiVLFTzJR2FHALYgMmiNN25GYHzJMMRDJPsDuhawbTKt6GwBFM99RtIEo1Cs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=duoWER4E; arc=none smtp.client-ip=209.85.167.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="SgmMEbZ0"
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-70af81e8439so841273b3a.0
-        for <linux-clk@vger.kernel.org>; Fri, 19 Jul 2024 08:10:43 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="duoWER4E"
+Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3d96365dc34so1283380b6e.2
+        for <linux-clk@vger.kernel.org>; Fri, 19 Jul 2024 11:48:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1721401843; x=1722006643; darn=vger.kernel.org;
-        h=to:from:cc:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:to:cc:subject:date:message-id:reply-to;
-        bh=UANqZqiDc/hObQEPAeTfbPtjoPREHLRh8wuDH4Ya/0Q=;
-        b=SgmMEbZ0F7zXeO8j6NJIlJ5ZEuaALjcpQ0kOBd5EC1BllxKtuW3ULRBDoxomlL/uMq
-         tucWo+OtRrDAotcwgmq4dn49AylOTYx+AsuA8EJaa59Yz+FczeLcthCy4sDzPcH3yJAh
-         AA9QCDPH+jW7vMSd7RrMOFvKoAdhpC7sPaa3NLhLt4DQWcMbPmQmZSZh6TNOUlxVVvJU
-         D0eb8wLCIk/0Om3/5MoJ8gKd6/uOY4d5ZA1VfMRYj5+VWnKTfaTFKwPr5TWOBndafqU9
-         sLmtyrPoU19qSB2KITELOQmUv6mi29VJ2TGceclWXnqVWoIRQCppX5Qq1YD7IgnQpxJ4
-         M5bw==
+        d=linaro.org; s=google; t=1721414904; x=1722019704; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ukG7Uje2tjlYAEnwiivgrAC4JGlADujKudhRv8xZLpk=;
+        b=duoWER4ETLyOtzvtx3pESFee5UbZGzZdZ4QNrp8o8xPVJ010+G3kbX96zMFLVBfCKD
+         xPlo9rfLmvlrhv2GoHc+HM9vYiwdWeGQbgQFXwudCThREFbmOvODa9n/3J3+CZUk6GYM
+         80yWo/Xclr2mqRGOcmC6/18yBNBXArzpd5UpRlzI8CGjh0Vj9dzeZyC8r7tqIBXXVMF7
+         yRtIGVBF21ZByypqjLGaUlKLKa5XLOYqBb0/g6lLsUqP1P37gCzXQliA21HwPQfnGZxy
+         L1fsNTbc8Y9Rh7gaswpvOEqAWmtoF7hW4bS0qpMF9ZXZ4jIFd2II6Q9fn5pEVc00Ap4T
+         3oQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721401843; x=1722006643;
-        h=to:from:cc:content-transfer-encoding:mime-version:message-id:date
-         :subject:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1721414904; x=1722019704;
+        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
+         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=UANqZqiDc/hObQEPAeTfbPtjoPREHLRh8wuDH4Ya/0Q=;
-        b=HsPvtVdsrvg29wej14ZebGH9dE8D3vvP2AUDuXgi14M4CplOxMMoT6FUQ7Xmj4ZbCj
-         Tj52V2FSySIu+ehjS4lqiMnwKK89xG+/fQFBVjkYlcz8dDDcJgmo2CDrvhE7zTBSmuwB
-         jlN9yi9IlUY09Cly84SJ73uweUCizsBC06yUHvEGbVHxHEHl1zhRw3jxucZTrMIm90lR
-         VQKUwLlMyAXOiVNJX9AzzVcc9V8VMS3JSRB4sTaDOGyidcHnqtBwfrUSc9zg+cSk6j36
-         SSIGE47FqHO62sKD9J5Bf23M97ZTZReIyc3S7GoUiX9OV22XOX+XtbjvGW1td07cTaxX
-         4Fhg==
-X-Forwarded-Encrypted: i=1; AJvYcCVJ4eUs3AdgewUJM56uVcIPYomq7cy7gtjZxoz3TB9xfr9m4+L9HKCVCMC/pv9PSd2l2FevwduH/m3cSbVfAOUNsHY5XmPKtgHm
-X-Gm-Message-State: AOJu0YyZUTHWAZd2rhB3lQjf9gGU7+SRjPAw653hXLD+vu0qMWU63uQ2
-	ZyXLdjd54LHMIqsUYTP3Pjg/KiAwDxNY/e8K6zOkRCO8wRXroVRNL2luRogwbYQ=
-X-Google-Smtp-Source: AGHT+IEeLKc62kfiNIHZ+h+BGwnX8isvcMG21ge0LKswp626EPzjMdKnVDYLrVG7yFcOjbwUcbRqMA==
-X-Received: by 2002:a05:6a21:e94:b0:1c4:2151:7276 with SMTP id adf61e73a8af0-1c422857696mr347155637.10.1721401842734;
-        Fri, 19 Jul 2024 08:10:42 -0700 (PDT)
-Received: from localhost ([192.184.165.199])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fd6f319773sm5915795ad.171.2024.07.19.08.10.42
+        bh=ukG7Uje2tjlYAEnwiivgrAC4JGlADujKudhRv8xZLpk=;
+        b=dLJkcVULLsqXVi8EO1utSxlXr6oZtIha/v30u2AWP9zH5+k4/tVYGn7QHCRtX9pjtG
+         aQtHryhlitXgpztXeYXyHhGmZ2wdwZOQLm0jLbDvC9oOwPypdAkTj5PgIonnEDYCTU9p
+         z1v57HP7+dz5/dQpWmLfCesQz6WoAp9HW7MB25xqjXahpC4w79RkxXloBzEP0uVQ47EY
+         l1wO5FAxe75laU40Dby49wu07DhV5q2HafNCudlEiys5UAJIYv4Cfjvta+u6m+ltQzmg
+         Q9/sY7CBObqAXHzpvS33GkcM7ZQaset8tsM0YUFTPvrsNIF6SfYufVEXfazFyD1pGzbB
+         JxVw==
+X-Forwarded-Encrypted: i=1; AJvYcCVMOQ6HUP/nCnUQCyPOnKbgy3gvffJd/XXdyQ50L2bnfBzNSnq/d4l4HBO9ApEyR1wOePf9D3/nF5M6CuwbZvF05YQlY9ROxCP0
+X-Gm-Message-State: AOJu0YwdJJ+x129MGUVRxTavJ378biF8OBYUrDhOK2+XUkKmBuMeiiWT
+	B6y2CEFqAj6FwjdC2wbXvldzDrRUwY9mrUawxO62RejdSjjCFGMQifv8AwpNAP8=
+X-Google-Smtp-Source: AGHT+IFUGjfozpT7NMN/T1JZs9styGTo80iaJ/5feWyL+K6jzfZXUSsuGczjQ3mCsZm/CiHApe701Q==
+X-Received: by 2002:a05:6808:1b20:b0:3d2:1fdd:286f with SMTP id 5614622812f47-3dad1f7c310mr8527058b6e.49.1721414904156;
+        Fri, 19 Jul 2024 11:48:24 -0700 (PDT)
+Received: from localhost ([2603:8080:b800:f700:4528:a9e:1eaf:80c5])
+        by smtp.gmail.com with ESMTPSA id 5614622812f47-3dae09cf1ffsm386578b6e.36.2024.07.19.11.48.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 19 Jul 2024 08:10:42 -0700 (PDT)
-Subject: [PATCH] clk: T-Head: Disable on 32-bit Targets
-Date: Fri, 19 Jul 2024 08:10:27 -0700
-Message-ID: <20240719151027.16152-1-palmer@rivosinc.com>
-X-Mailer: git-send-email 2.45.2
+        Fri, 19 Jul 2024 11:48:23 -0700 (PDT)
+Date: Fri, 19 Jul 2024 13:48:21 -0500
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: oe-kbuild@lists.linux.dev, Sunyeal Hong <sunyeal.hong@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Sunyeal Hong <sunyeal.hong@samsung.com>
+Subject: Re: [PATCH v2 3/4] clk: samsung: clk-pll: Add support for pll_531x
+Message-ID: <a82340ab-a1db-4089-a804-acf9882782f4@suswa.mountain>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Cc: mturquette@baylibre.com, jszhang@kernel.org,
-  Palmer Dabbelt <palmer@rivosinc.com>, dfustini@tenstorrent.com, frank.li@vivo.com, linux-clk@vger.kernel.org,
-  linux-kernel@vger.kernel.org
-From: Palmer Dabbelt <palmer@rivosinc.com>
-To: sboyd@kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240707231331.3433340-4-sunyeal.hong@samsung.com>
 
-From: Palmer Dabbelt <palmer@rivosinc.com>
+Hi Sunyeal,
 
-This fails to build on 32-bit targets because of a missing __udivdi3.
-IIRC the right way to fix that is to avoid the division, but I just want
-a tree that builds and the only real T-Head platforms are 64-bit right
-now.
+kernel test robot noticed the following build warnings:
 
-Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
----
- drivers/clk/thead/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-diff --git a/drivers/clk/thead/Kconfig b/drivers/clk/thead/Kconfig
-index 1710d50bf9d4..95e0d9eb965e 100644
---- a/drivers/clk/thead/Kconfig
-+++ b/drivers/clk/thead/Kconfig
-@@ -3,6 +3,7 @@
- config CLK_THEAD_TH1520_AP
- 	bool "T-HEAD TH1520 AP clock support"
- 	depends on ARCH_THEAD || COMPILE_TEST
-+	depends on 64BIT
- 	default ARCH_THEAD
- 	select REGMAP_MMIO
- 	help
+url:    https://github.com/intel-lab-lkp/linux/commits/Sunyeal-Hong/dt-bindings-clock-add-Exynos-Auto-v920-SoC-CMU-bindings/20240708-072150
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git for-next
+patch link:    https://lore.kernel.org/r/20240707231331.3433340-4-sunyeal.hong%40samsung.com
+patch subject: [PATCH v2 3/4] clk: samsung: clk-pll: Add support for pll_531x
+config: arc-randconfig-r071-20240719 (https://download.01.org/0day-ci/archive/20240720/202407200028.5AADGhmj-lkp@intel.com/config)
+compiler: arc-elf-gcc (GCC) 13.2.0
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+| Closes: https://lore.kernel.org/r/202407200028.5AADGhmj-lkp@intel.com/
+
+smatch warnings:
+drivers/clk/samsung/clk-pll.c:1292 samsung_pll531x_recalc_rate() warn: mask and shift to zero: expr='fdiv >> 31'
+
+vim +1292 drivers/clk/samsung/clk-pll.c
+
+5c788df7a25de7 Sunyeal Hong 2024-07-08  1277  static unsigned long samsung_pll531x_recalc_rate(struct clk_hw *hw,
+5c788df7a25de7 Sunyeal Hong 2024-07-08  1278  						 unsigned long parent_rate)
+5c788df7a25de7 Sunyeal Hong 2024-07-08  1279  {
+5c788df7a25de7 Sunyeal Hong 2024-07-08  1280  	struct samsung_clk_pll *pll = to_clk_pll(hw);
+5c788df7a25de7 Sunyeal Hong 2024-07-08  1281  	u32 mdiv, pdiv, sdiv, pll_con0, pll_con8;
+5c788df7a25de7 Sunyeal Hong 2024-07-08  1282  	s32 fdiv;
+5c788df7a25de7 Sunyeal Hong 2024-07-08  1283  	u64 fout = parent_rate;
+5c788df7a25de7 Sunyeal Hong 2024-07-08  1284  
+5c788df7a25de7 Sunyeal Hong 2024-07-08  1285  	pll_con0 = readl_relaxed(pll->con_reg);
+5c788df7a25de7 Sunyeal Hong 2024-07-08  1286  	pll_con8 = readl_relaxed(pll->con_reg + 20);
+5c788df7a25de7 Sunyeal Hong 2024-07-08  1287  	mdiv = (pll_con0 >> PLL531X_MDIV_SHIFT) & PLL531X_MDIV_MASK;
+5c788df7a25de7 Sunyeal Hong 2024-07-08  1288  	pdiv = (pll_con0 >> PLL531X_PDIV_SHIFT) & PLL531X_PDIV_MASK;
+5c788df7a25de7 Sunyeal Hong 2024-07-08  1289  	sdiv = (pll_con0 >> PLL531X_SDIV_SHIFT) & PLL531X_SDIV_MASK;
+5c788df7a25de7 Sunyeal Hong 2024-07-08  1290  	fdiv = (s32)(pll_con8 & PLL531X_FDIV_MASK);
+
+PLL531X_FDIV_MASK is 0xffff.  Was this supposed to be a cast to s16
+instead of s32?  Why is fdiv signed?  Shifting negative values is
+undefined in C.
+
+5c788df7a25de7 Sunyeal Hong 2024-07-08  1291  
+5c788df7a25de7 Sunyeal Hong 2024-07-08 @1292  	if (fdiv >> 31)
+
+It's really unclear what's happening here.  If I had to guess, I'd say
+that this was testing to see if fdiv was negative.
+
+5c788df7a25de7 Sunyeal Hong 2024-07-08  1293  		mdiv--;
+5c788df7a25de7 Sunyeal Hong 2024-07-08  1294  
+5c788df7a25de7 Sunyeal Hong 2024-07-08  1295  	fout *= ((u64)mdiv << 24) + (fdiv >> 8);
+                                                                             ^^^^^^^^^
+More shifting.
+
+5c788df7a25de7 Sunyeal Hong 2024-07-08  1296  	do_div(fout, (pdiv << sdiv));
+5c788df7a25de7 Sunyeal Hong 2024-07-08  1297  	fout >>= 24;
+5c788df7a25de7 Sunyeal Hong 2024-07-08  1298  
+5c788df7a25de7 Sunyeal Hong 2024-07-08  1299  	return (unsigned long)fout;
+5c788df7a25de7 Sunyeal Hong 2024-07-08  1300  }
+
 -- 
-2.45.2
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
