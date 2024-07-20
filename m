@@ -1,89 +1,93 @@
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 167B7145B26;
-	Sat, 20 Jul 2024 12:02:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8190E10A0C;
+	Sat, 20 Jul 2024 14:30:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721476936; cv=none; b=ZWN5bhGmLs4awCnmpWnpRBQjzvUPba+Puaurpm48NaMeeWMaSBa8AEsZT02QD+byDBJXuUCabd+z5Nm/edOtOqaj3wsrHB53Xp1rvBLW7bQm8rx12vmQY3LMSbZXXQ7xaFNYGHSlK/1RzHItWfZMrWKDB0zuj8iFylUriA0vm2c=
+	t=1721485836; cv=none; b=cxYRU4nDw575TgI4Q7tyWfw8NKuHoGmmgKIBuWz9JjVBsj6PHfPR8CMFrGdSHME+ZJZy+Algs9e+emwQ783Z2p9mU3PXVrAlNzgnht5NrQv8Vjm1ZSMYEKJazWH+GND/j2XIuJ2MjC/ERBzWTwQbhBtv/iXAM3EtdGmQVBkYJX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721476936; c=relaxed/simple;
-	bh=FFI82Xg9C+mJWQFwrDNs+VNClbSmNxB8OQn/7KycysA=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FynYnff7gDg6vL/w99S9tO0ASaq+hzbmuBfOtFQ2lrGAnB0HVLNL4VxL2MiEjeo8l8/oJtvolo92YW+bohc+YvDr6B7mw97gsgYEpkSk817eCeCXaPYHXOZCa/f//ZXrnSvXhPAdYCGJgiHDvkVeA78/ECTSS8Br8urwve6fOas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=LX42+DEy; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+	s=arc-20240116; t=1721485836; c=relaxed/simple;
+	bh=NfbtvAWiMt9MczyRLWxn9ec6rKJ5Bqdhv3OIUpIXJZg=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=YIWCRqvqvyRQvokBGD9JidjwMFvKMGMc6k+WF19rFtxNoyUf4OK6iNszWUwDLMScLw0zHCdtVJCqTQ//6dasbaosSrJOlN9IKm6loRkR47YL6fYfrpYcf/YZtOYDJZ9r+zDM8RKqsz6IbgCRyWRUtL56d8eqOS8GNqUk96yITuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r671OLH8; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="LX42+DEy"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1721476933; x=1721736133;
-	bh=WJZ7g+kXXfL0wg2Zcx+pw02ts1r4ONFA7atCWwb1Qyc=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=LX42+DEyb0EgPt2nWmCNzgPg+PvCN5PlWxIb50EBjSK2RJl4ipxvbLgkD6GAqwKgL
-	 nneAdlOYq6lBD0/iauaVs6x8bNjj/D/n0R/PATNpvw8kwrT706F1ZDKndwhUD/WI0L
-	 LwFDjs3UA5T+vMXS7BhVNsGZe4fqRWFDpv6khvkmYGJUGxoslgbWZGd7ibfNhAT8Vd
-	 bB1t4JHvl7X+2sq0kGOo77U3w/4Wg0teYk0wi0jHkzCa8Poo8hutvn7yvLSmQDUGtH
-	 To5V6cpbzuc6ZDOButUx6J4YnnbRNoP9p7YUia7nghdxz2pPAL8Kjsi5Pc4tQPD6uS
-	 +t2mRJ8JzzvJQ==
-Date: Sat, 20 Jul 2024 12:01:58 +0000
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Michal Simek <michal.simek@amd.com>
-From: Harry Austen <hpausten@protonmail.com>
-Cc: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Harry Austen <hpausten@protonmail.com>
-Subject: [PATCH 6/7] dt-bindings: clock: xilinx: describe whether dynamic reconfig is enabled
-Message-ID: <20240720120048.36758-7-hpausten@protonmail.com>
-In-Reply-To: <20240720120048.36758-1-hpausten@protonmail.com>
-References: <20240720120048.36758-1-hpausten@protonmail.com>
-Feedback-ID: 53116287:user:proton
-X-Pm-Message-ID: db28f5ae1595ffc1bce3f290237154e5a921318d
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r671OLH8"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E85CC2BD10;
+	Sat, 20 Jul 2024 14:30:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721485836;
+	bh=NfbtvAWiMt9MczyRLWxn9ec6rKJ5Bqdhv3OIUpIXJZg=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=r671OLH8v15hwoXYlK9INmUs2I7htKx70mYiUmsSn96p+gwx831mC2zl5d9lxero7
+	 9wYQYZP2iv6s5pYKx9UVEfmy4GxO9STKfrVkTxZ58wqyIRLmMGLTC3Gy0g++gJJf2J
+	 uTjkCxWCZL0m4WVbXR4h8vsgQttfL1/9O0ZFxirQLh5DOJofhU8R5JrJpbjwBOfBSd
+	 pa6ATIfNnJ6fZI0U82smpt5uxy6CCGdWYzPwr3dKpmsuMpBmine412iUKTV/Xbt5mD
+	 6hlEZGq14vsbexfghx/CtzbnCvSs7A19yt3NIvlrGkWElHFxJNnTiepZvFPqEJRPQN
+	 7Uj+P44LgkBYw==
+Date: Sat, 20 Jul 2024 08:30:32 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Harry Austen <hpausten@protonmail.com>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ Michal Simek <michal.simek@amd.com>, Conor Dooley <conor+dt@kernel.org>, 
+ linux-arm-kernel@lists.infradead.org, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>
+In-Reply-To: <20240720120048.36758-5-hpausten@protonmail.com>
+References: <20240720120048.36758-1-hpausten@protonmail.com>
+ <20240720120048.36758-5-hpausten@protonmail.com>
+Message-Id: <172148583272.233332.12140036278167127685.robh@kernel.org>
+Subject: Re: [PATCH 4/7] dt-bindings: clock: xilinx: add description of
+ user monitor interrupt
 
-Xilinx clocking wizard IP core's dynamic reconfiguration support is
-optionally enabled at build time. Add a devicetree boolean property to
-describe whether the hardware supports this feature or not.
 
-Signed-off-by: Harry Austen <hpausten@protonmail.com>
----
- .../devicetree/bindings/clock/xlnx,clocking-wizard.yaml    | 7 +++++++
- 1 file changed, 7 insertions(+)
+On Sat, 20 Jul 2024 12:01:48 +0000, Harry Austen wrote:
+> This Xilinx clocking wizard IP core outputs this interrupt signal to
+> indicate when one of the four optional user clock inputs is either
+> stopped, overruns, underruns or glitches.
+> 
+> This functionality was only added from version 6.0 onwards, so restrict
+> it to particular compatible strings.
+> 
+> Signed-off-by: Harry Austen <hpausten@protonmail.com>
+> ---
+>  .../bindings/clock/xlnx,clocking-wizard.yaml  | 22 ++++++++++++++++++-
+>  1 file changed, 21 insertions(+), 1 deletion(-)
+> 
 
-diff --git a/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.y=
-aml b/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
-index 4609bb56b06b5..890aeebf6f375 100644
---- a/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
-+++ b/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
-@@ -40,6 +40,12 @@ properties:
-       - const: s_axi_aclk
-=20
-=20
-+  xlnx,dynamic-reconfig:
-+    type: boolean
-+    description:
-+      Indicate whether the core has been configured with support for dynam=
-ic
-+      runtime reconfguration of the clocking primitive MMCM/PLL.
-+
-   xlnx,speed-grade:
-     $ref: /schemas/types.yaml#/definitions/uint32
-     enum: [1, 2, 3]
-@@ -88,6 +94,7 @@ examples:
-         compatible =3D "xlnx,clocking-wizard-v6.0";
-         reg =3D <0xb0000000 0x10000>;
-         #clock-cells =3D <1>;
-+        xlnx,dynamic-reconfig;
-         xlnx,speed-grade =3D <1>;
-         xlnx,nr-outputs =3D <6>;
-         clock-names =3D "clk_in1", "s_axi_aclk";
---=20
-2.45.2
+My bot found errors running 'make dt_binding_check' on your patch:
 
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.example.dtb: clock-controller@b0000000: 'interrupt-names', 'interrupts-extended' do not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/clock/xlnx,clocking-wizard.yaml#
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240720120048.36758-5-hpausten@protonmail.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
