@@ -1,105 +1,123 @@
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from vern.gendns.com (vern.gendns.com [98.142.107.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A685B3209;
-	Sat, 20 Jul 2024 15:24:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D88D12E1CD;
+	Sat, 20 Jul 2024 16:18:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.142.107.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721489094; cv=none; b=Hu508zGIC23G1sOSbZj8JsUA9QnSP7gsGqo5zl9F42nRIacrt8E+tIqdKKscdLNtoJ/4w8ahvVy2IEFu7XIENP2tGZiWg176H+mQJZrtXL1Q5WEMjHADuk2iackUYGkzu0nae6ngNxUzqfD9LA24ikcf6W+VjfjXmLYsZVkZNKQ=
+	t=1721492314; cv=none; b=FevzRciWBwCwJTGMiLg3ddQ9aNtc1vFoQwlF7XvBi9Zh6Yrn1E+eanyA0dp4YAsrT4d1jj8tj13JGpz9KHz6/trIpMm0xim2tcWdzDd+2t+WwmIzmratMSj+tPov9coGDAVh5jE7H0Pb5Mb+swyvwtUFFJA/+IQAKxn30HhyogQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721489094; c=relaxed/simple;
-	bh=0VOLU6r2loi8im6TEqHcJqNsE6n0wRDa0+UEkQmBJVo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=T1mToj7/Yov6aKldrFEMXfLY6HthkoEqLdA36BjISLYH30RUKvM7cWonQHFXc2YRQwjNKPE917AZej0MksICzhmLWGjTPBvxSZiTpc8lg9XRcPGMH4I7Z+kN+b745+ChE1ila9NwDe2AwDs7Kyk1bP7hYLi/5xGHXrdPnbNdZ9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F1hK7tJV; arc=none smtp.client-ip=209.85.221.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1721492314; c=relaxed/simple;
+	bh=zOHjmfkhm4ksMg93fR7IApRTrXq7+FvCLeFtX/+jKVM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GOCRo4QGtPioL0J9DXhzTa0V1OAqQZa5QCbRCRS2OOb2RlKW7LRZJTP/L5uhZjp2LBgri+uKzYqQMFJFnaCwWCIrnjeMJSIzGn2B3308c8REZBDqjxJ58FVbtZSf+k8qVc2sLak6MGyOXgrzUrlDtLBXGz9N+fB+6FmV6p9rAXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com; spf=pass smtp.mailfrom=lechnology.com; dkim=pass (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b=n0xNjx5c; arc=none smtp.client-ip=98.142.107.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lechnology.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F1hK7tJV"
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-4f50c673e83so213815e0c.0;
-        Sat, 20 Jul 2024 08:24:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1721489091; x=1722093891; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8osbSZg73lAy8WNvoIihU4URXnwiHP8pcZuvQ5WSFoI=;
-        b=F1hK7tJV/v2kaqASfYCOvQ4Isz/wvLSc0HxoHRV5X2psuIk38+GEfzsDJ7wkjWRTGO
-         UhX/J2112QxngDjTFFCDab5NlcKel7Urct21NWXkxzxSplMyGTKP7oLwJHzVboGDxA8i
-         c32aQBuVNARwxq+fOhI0Kt4GATYwEcqqaEAJlgBODufoYr3f4X9+1xqcjxghz965e6EI
-         ZYYl3a3uEzZ0r4zyT2WVymKu3oAnhSInS7OufFf/HN2tA1c68hpLBZJRpmb4wQccd7em
-         pXv8mV/6vnmbLja6DY4sWixz85ZVVEcXp9yBZp2G2NVLNydjqkqEL/YLMiNkkLvalXMk
-         4lVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721489091; x=1722093891;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8osbSZg73lAy8WNvoIihU4URXnwiHP8pcZuvQ5WSFoI=;
-        b=aVrJ+VToqMndAL0LZjkfaE4O+4qwAIw9rLjalSQQ52Das81scXLndlpZZV/s6Ol8gi
-         bHjAuOIF8K0to/Z5FwiITAPPRqu03v+c2FxYpVdpT10FIJ3q0MiEHN+k1pmeQJBZOORq
-         iCGCa4KZyIMAQK8JwIa8YjhXg65ywV2GbqhEd9yjK+hDiqqtZmaDsk053uK3UxI9Fxw+
-         81rMVZgJP6Bv10nOC/4Ph0J6FYLOto2pmnsrV5y559QP6o/+vnbJa25HnfcwWBEckxZX
-         VEXBPjZtbkobUnL7m9pNpw7F5mScLYmqit0Kl51FJYrNZoijs/diU1Ghnwzdi8m34XfU
-         R4Vg==
-X-Forwarded-Encrypted: i=1; AJvYcCX7ijgYl/irNP70uRv1YuVjYHf02HEDDKPGskZcr+I1430FDs5qK1TF4B2sM7BAcKwRhN12x3F8e2z+/RHbBX6WGZXOwjqfvjEhTl6wbVhDTcfdmlJJZxcOF0ta8isUkwe6hsSjMb0d
-X-Gm-Message-State: AOJu0Yz6z634XCHLs24X5mBzczyMRTw1Vtik4yZ/vg75tSDBNLalaFcV
-	NRupFyjCkf25JLFT1XXRiHKnUKF1VD3IvW73nRMoTvpvtU6Pv1Uw
-X-Google-Smtp-Source: AGHT+IE5qce1dP74DEvxlnbA/wXSVRH18ghJgKGymPHSetCqpKn2eWfsdoUVoACITCbnQbq4Lafm5A==
-X-Received: by 2002:a05:6122:46a0:b0:4ed:682:7496 with SMTP id 71dfb90a1353d-4f50683459fmr3261159e0c.12.1721489091368;
-        Sat, 20 Jul 2024 08:24:51 -0700 (PDT)
-Received: from localhost (57-135-107-183.static4.bluestreamfiber.net. [57.135.107.183])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-4f4f9e85882sm444091e0c.28.2024.07.20.08.24.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 20 Jul 2024 08:24:51 -0700 (PDT)
-From: David Hunter <david.hunter.linux@gmail.com>
-To: david@lechnology.com,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: David Hunter <david.hunter.linux@gmail.com>,
-	julia.lawall@inria.fr,
-	skhan@linuxfoundation.org,
-	javier.carrasco.cruz@gmail.com
-Subject: [PATCH] da8xx-cfgchip.c: replace of_node_put with __free improves cleanup
-Date: Sat, 20 Jul 2024 11:24:47 -0400
-Message-Id: <20240720152447.311442-1-david.hunter.linux@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="n0xNjx5c"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=7RUyKBqr1tHQ8HsZylQB5pRCIIFlsbvyBhWOGsTNYow=; b=n0xNjx5cF0P+nEIjQrO3RSNIhA
+	Pkp8AhZYD7UasktE7dPm7aEwTAC2+skKOwwYsgOb9nRmMMa/MllzvZApiG0HlNO3tCudhetZZWXlx
+	GvbvpciQ3WlyMOE4FAQ5qEwlzvaoASOggFxhSLSzZte2Lhngk2XXcQM0iehREaJqqO+uucnbG4VKD
+	x0C3G9KejkYalkV8pWBLvsH236K8aCfT9tYhyC3CC5WGzx3ZZfFW7ct3nkUNhACVlzCCBxoaiLMSI
+	493a8IcW8SqyJcykKtZWM16nUXzc/vQ/yN5qWgD9my9XuXfTzVIHNdrXs/n6q+urEMSZbw6Lbx2C2
+	lfjSkWTg==;
+Received: from ip98-183-112-25.ok.ok.cox.net ([98.183.112.25]:55714 helo=[192.168.0.142])
+	by vern.gendns.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <david@lechnology.com>)
+	id 1sVCqz-00068H-1Z;
+	Sat, 20 Jul 2024 12:18:24 -0400
+Message-ID: <d90eb536-0608-4093-9e9d-643f8af6d1b0@lechnology.com>
+Date: Sat, 20 Jul 2024 11:18:22 -0500
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] da8xx-cfgchip.c: replace of_node_put with __free improves
+ cleanup
+To: David Hunter <david.hunter.linux@gmail.com>, mturquette@baylibre.com,
+ sboyd@kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: julia.lawall@inria.fr, skhan@linuxfoundation.org,
+ javier.carrasco.cruz@gmail.com
+References: <20240720152447.311442-1-david.hunter.linux@gmail.com>
+Content-Language: en-US
+From: David Lechner <david@lechnology.com>
+Autocrypt: addr=david@lechnology.com; keydata=
+ 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
+In-Reply-To: <20240720152447.311442-1-david.hunter.linux@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-The use of the __free function allows the cleanup to be based on scope
-instead of on another function called later. This makes the cleanup
-automatic and less susceptible to errors later.
+On 7/20/24 10:24 AM, David Hunter wrote:
+> The use of the __free function allows the cleanup to be based on scope
+> instead of on another function called later. This makes the cleanup
+> automatic and less susceptible to errors later.
+> 
+> This code was compiled without errors or warnings.
+> 
+> Signed-off-by: David Hunter <david.hunter.linux@gmail.com>
+> ---
 
-This code was compiled without errors or warnings.
+Reviewed-by: David Lechner <david@lechnology.com>
 
-Signed-off-by: David Hunter <david.hunter.linux@gmail.com>
----
- drivers/clk/davinci/da8xx-cfgchip.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
-
-diff --git a/drivers/clk/davinci/da8xx-cfgchip.c b/drivers/clk/davinci/da8xx-cfgchip.c
-index ad2d0df43dc6..5ea0c072bfbe 100644
---- a/drivers/clk/davinci/da8xx-cfgchip.c
-+++ b/drivers/clk/davinci/da8xx-cfgchip.c
-@@ -749,11 +749,9 @@ static int da8xx_cfgchip_probe(struct platform_device *pdev)
- 
- 	clk_init = device_get_match_data(dev);
- 	if (clk_init) {
--		struct device_node *parent;
-+		struct device_node *parent __free(device_node) = of_get_parent(dev->of_node);
- 
--		parent = of_get_parent(dev->of_node);
- 		regmap = syscon_node_to_regmap(parent);
--		of_node_put(parent);
- 	} else if (pdev->id_entry && pdata) {
- 		clk_init = (void *)pdev->id_entry->driver_data;
- 		regmap = pdata->cfgchip;
--- 
-2.34.1
 
