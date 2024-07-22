@@ -1,47 +1,43 @@
-Received: from riemann.telenet-ops.be (riemann.telenet-ops.be [195.130.137.80])
+Received: from cantor.telenet-ops.be (cantor.telenet-ops.be [195.130.132.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4298B16D308
-	for <linux-clk@vger.kernel.org>; Mon, 22 Jul 2024 11:59:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68D6A16D312
+	for <linux-clk@vger.kernel.org>; Mon, 22 Jul 2024 11:59:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721649561; cv=none; b=Qe2dTwmGArVx68UyX3i+M11ugIZQqsPDpd/NjHYEER0CXjCpNbpLgjpO0AuX6KoUvs1YTkQQk0CE8SqJ/leukhes8ZOH3bjdABjHQ4CMNO+F7DQFuDkMxCLs2If49cULKbYiTMaoO7QZnxZ/aDO51ThE+p2WlRbbmcJjIZOE7/o=
+	t=1721649564; cv=none; b=O0jgUS90pHDO7ntVLcx0EihVvAhP/8rt4X2PD/vRUQOd4sPQdUheXo8Od2f+EGkVjek5m1DuGnG5SDwrGjXC1JVKAKePp2mX6zaMDLZBqMEfvT3taO9BRqpjrDHWahKARHatqGaAZk7CYSqH3iVnaXGJM69ZZDNT8ClFp3XYvcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721649561; c=relaxed/simple;
-	bh=cpkPdZg+A+KYO3FY+yO1ed9F4coFyxL8qqcUTSIzXXQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=JRwvk5s+z6/ZeWYH1D51vMKxEHy7gcTyg+7R5NeDVsFMeb1b6teWtH22q1ea/scw2+EwUgbTaw+x3QW4malBg26gs7cH9+eX2t6MWlPtVhLZw7ZVxuG3drMwEx48a/V3lwse9tN62lpog9PqAbE9/CpnfJEnrtZApA9pbElt+J0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.80
+	s=arc-20240116; t=1721649564; c=relaxed/simple;
+	bh=kUKb0P/kAOE7X/86n/cs1pl3V+fDiAJiredd6AqrnCc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=SWa9KN75alMko44axH+krQ9F0sKmzLhowXMEacSkpCP4ZMlAPFWzF1rSBxKZaFGPsUs2/kVZstoNLcyjDs0VkIMfnQE6NtsKEmrVlLZqJtwQZBAJeBS0RZqvt4xrN4J9piEtMVuhGFNM7903Ey0gAEkrHRMdIaRUJ3lv4cAt7RA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from michel.telenet-ops.be (michel.telenet-ops.be [IPv6:2a02:1800:110:4::f00:18])
-	by riemann.telenet-ops.be (Postfix) with ESMTPS id 4WSJWS2cfvz4wwxv
+	by cantor.telenet-ops.be (Postfix) with ESMTPS id 4WSJWS2lpLz4x0K8
 	for <linux-clk@vger.kernel.org>; Mon, 22 Jul 2024 13:50:44 +0200 (CEST)
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:173b:9414:53f5:de4c])
 	by michel.telenet-ops.be with bizsmtp
-	id qbqc2C00H1wvoRx06bqcKl; Mon, 22 Jul 2024 13:50:37 +0200
+	id qbqc2C00G1wvoRx06bqcKi; Mon, 22 Jul 2024 13:50:37 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sVrYY-002zAg-8h;
+	id 1sVrYY-002zAE-3X;
 	Mon, 22 Jul 2024 13:50:36 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sVrYq-0020hz-Oq;
+	id 1sVrYq-0020hT-Gk;
 	Mon, 22 Jul 2024 13:50:36 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>
 Cc: linux-renesas-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 08/15] clk: renesas: rcar-gen4: Add support for fractional 9.24 PLLs
-Date: Mon, 22 Jul 2024 13:50:28 +0200
-Message-Id: <5684eda1260435c8eceabc274e0b18cb280a6341.1721648548.git.geert+renesas@glider.be>
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v2 00/15] clk: renesas: rcar-gen4: Fractional PLL improvements
+Date: Mon, 22 Jul 2024 13:50:20 +0200
+Message-Id: <cover.1721648548.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <cover.1721648548.git.geert+renesas@glider.be>
-References: <cover.1721648548.git.geert+renesas@glider.be>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,117 +46,70 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The custom clock driver that models the PLL clocks on R-Car Gen4
-supports only fractional 8.25 PLLs, as used on R-Car V4H/V4M.
-R-Car S4-8 uses integer and fractional multiplication fields that are
-one bit larger resp. smaller, and a slightly different formula.
+	Hi all,
 
-Extend the existing support to fractional 9.24 PLL, and introduce new
-clock types and helper macros to describe these PLLs.
+Currently, almost all PLLs on R-Car Gen4 SoCs are modelled as fixed
+divider clocks, based on the state of the mode pins.  The only exception
+is PLL2 on R-Car V4H, which uses a custom clock driver to support High
+Performance mode on the Cortex-A76 CPU cores.
 
-Note that there is no use case for variable fractional 9.24 PLLs yet, as
-the Cortex-A55 cores on R-Car S4-8 do not support High Performance mode.
-Hence the PLL is always modeled as a fixed PLL, regardless of the
-description,
+However, the boot loader stack may have changed the actual PLL
+configuration from the default, leading to incorrect clock frequencies.
+A typical sympton is a CPU core running much slower than reported by
+Linux.
 
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
----
-v2:
+This patch series enhances PLL support on R-Car Gen4 support by
+obtaining the actual PLL configuration from the hardware.  As these PLLs
+can be configured for fractional multiplication, an old patch to add
+support fractional multiplication is revived, too.  Of course some
+cleanups are included, too.
+
+Changes compared to v1:
   - Add Reviewed-by,
-  - Use mul_u64_u32_shr() helper.
----
- drivers/clk/renesas/rcar-gen4-cpg.c | 36 +++++++++++++++++++++++++++++
- drivers/clk/renesas/rcar-gen4-cpg.h |  8 +++++++
- 2 files changed, 44 insertions(+)
+  - Sort register definitions by register offset,
+  - Use mul_u64_u32_shr() and div64_ul() helpers,
+  - New patch "PATCH v2 15/15] clk: renesas: rcar-gen4: Remove unused
+    default PLL2/3/4/6 configs".
 
-diff --git a/drivers/clk/renesas/rcar-gen4-cpg.c b/drivers/clk/renesas/rcar-gen4-cpg.c
-index 1f3dddbd294a572b..d3db602d7c5ec617 100644
---- a/drivers/clk/renesas/rcar-gen4-cpg.c
-+++ b/drivers/clk/renesas/rcar-gen4-cpg.c
-@@ -56,6 +56,10 @@ static u32 cpg_mode __initdata;
- #define CPG_PLLxCR0_NI8		GENMASK(27, 20)	/* Integer mult. factor */
- #define CPG_PLLxCR1_NF25	GENMASK(24, 0)	/* Fractional mult. factor */
- 
-+/* Fractional 9.24 PLL */
-+#define CPG_PLLxCR0_NI9		GENMASK(28, 20)	/* Integer mult. factor */
-+#define CPG_PLLxCR1_NF24	GENMASK(23, 0)	/* Fractional mult. factor */
-+
- #define CPG_PLLxCR_STC		GENMASK(30, 24)	/* R_Car V3U PLLxCR */
- 
- #define CPG_RPCCKCR		0x874	/* RPC Clock Freq. Control Register */
-@@ -189,6 +193,30 @@ static const struct clk_ops cpg_pll_v8_25_clk_ops = {
- 	.set_rate = cpg_pll_8_25_clk_set_rate,
- };
- 
-+static unsigned long cpg_pll_9_24_clk_recalc_rate(struct clk_hw *hw,
-+						  unsigned long parent_rate)
-+{
-+	struct cpg_pll_clk *pll_clk = to_pll_clk(hw);
-+	u32 cr0 = readl(pll_clk->pllcr0_reg);
-+	unsigned int ni, nf;
-+	unsigned long rate;
-+
-+	ni = FIELD_GET(CPG_PLLxCR0_NI9, cr0) + 1;
-+	rate = parent_rate * ni;
-+	if (cr0 & CPG_PLLxCR0_SSMODE_FM) {
-+		nf = FIELD_GET(CPG_PLLxCR1_NF24, readl(pll_clk->pllcr1_reg));
-+		rate += mul_u64_u32_shr(parent_rate, nf, 24);
-+	} else {
-+		rate *= 2;
-+	}
-+
-+	return rate;
-+}
-+
-+static const struct clk_ops cpg_pll_f9_24_clk_ops = {
-+	.recalc_rate = cpg_pll_9_24_clk_recalc_rate,
-+};
-+
- static struct clk * __init cpg_pll_clk_register(const char *name,
- 						const char *parent_name,
- 						void __iomem *base,
-@@ -461,6 +489,14 @@ struct clk * __init rcar_gen4_cpg_clk_register(struct device *dev,
- 					    base, core->offset,
- 					    &cpg_pll_v8_25_clk_ops);
- 
-+	case CLK_TYPE_GEN4_PLL_V9_24:
-+		/* Variable fractional 9.24 is not yet supported, using fixed */
-+		fallthrough;
-+	case CLK_TYPE_GEN4_PLL_F9_24:
-+		return cpg_pll_clk_register(core->name, __clk_get_name(parent),
-+					    base, core->offset,
-+					    &cpg_pll_f9_24_clk_ops);
-+
- 	case CLK_TYPE_GEN4_Z:
- 		return cpg_z_clk_register(core->name, __clk_get_name(parent),
- 					  base, core->div, core->offset);
-diff --git a/drivers/clk/renesas/rcar-gen4-cpg.h b/drivers/clk/renesas/rcar-gen4-cpg.h
-index 69436309f19dfff2..80a455e62cc1321e 100644
---- a/drivers/clk/renesas/rcar-gen4-cpg.h
-+++ b/drivers/clk/renesas/rcar-gen4-cpg.h
-@@ -21,6 +21,8 @@ enum rcar_gen4_clk_types {
- 	CLK_TYPE_GEN4_PLL6,
- 	CLK_TYPE_GEN4_PLL_F8_25,	/* Fixed fractional 8.25 PLL */
- 	CLK_TYPE_GEN4_PLL_V8_25,	/* Variable fractional 8.25 PLL */
-+	CLK_TYPE_GEN4_PLL_F9_24,	/* Fixed fractional 9.24 PLL */
-+	CLK_TYPE_GEN4_PLL_V9_24,	/* Variable fractional 9.24 PLL */
- 	CLK_TYPE_GEN4_SDSRC,
- 	CLK_TYPE_GEN4_SDH,
- 	CLK_TYPE_GEN4_SD,
-@@ -55,6 +57,12 @@ enum rcar_gen4_clk_types {
- #define DEF_GEN4_PLL_V8_25(_name, _idx, _id, _parent)	\
- 	DEF_BASE(_name, _id, CLK_TYPE_GEN4_PLL_V8_25, _parent, .offset = _idx)
- 
-+#define DEF_GEN4_PLL_F9_24(_name, _idx, _id, _parent)	\
-+	DEF_BASE(_name, _id, CLK_TYPE_GEN4_PLL_F9_24, _parent, .offset = _idx)
-+
-+#define DEF_GEN4_PLL_V9_24(_name, _idx, _id, _parent)	\
-+	DEF_BASE(_name, _id, CLK_TYPE_GEN4_PLL_V9_24, _parent, .offset = _idx)
-+
- #define DEF_GEN4_Z(_name, _id, _type, _parent, _div, _offset)	\
- 	DEF_BASE(_name, _id, _type, _parent, .div = _div, .offset = _offset)
- 
+I plan to queue this series in renesas-clk-for-v6.12.
+
+Thanks for your comments!
+
+Geert Uytterhoeven (15):
+  clk: renesas: rcar-gen4: Removed unused SSMODE_* definitions
+  clk: renesas: rcar-gen4: Clarify custom PLL clock support
+  clk: renesas: rcar-gen4: Use FIELD_GET()
+  clk: renesas: rcar-gen4: Use defines for common CPG registers
+  clk: renesas: rcar-gen4: Add support for fractional multiplication
+  clk: renesas: rcar-gen4: Add support for variable fractional PLLs
+  clk: renesas: rcar-gen4: Add support for fixed variable PLLs
+  clk: renesas: rcar-gen4: Add support for fractional 9.24 PLLs
+  clk: renesas: r8a779a0: Use defines for PLL control registers
+  clk: renesas: r8a779f0: Model PLL1/2/3/6 as fractional PLLs
+  clk: renesas: r8a779g0: Model PLL1/3/4/6 as fractional PLLs
+  clk: renesas: r8a779h0: Model PLL1/2/3/4/6 as fractional PLLs
+  clk: renesas: rcar-gen4: Remove unused variable PLL2 clock type
+  clk: renesas: rcar-gen4: Remove unused fixed PLL clock types
+  clk: renesas: rcar-gen4: Remove unused default PLL2/3/4/6 configs
+
+ drivers/clk/renesas/r8a779a0-cpg-mssr.c |  35 ++--
+ drivers/clk/renesas/r8a779f0-cpg-mssr.c |  28 ++--
+ drivers/clk/renesas/r8a779g0-cpg-mssr.c |  36 ++--
+ drivers/clk/renesas/r8a779h0-cpg-mssr.c |  32 ++--
+ drivers/clk/renesas/rcar-gen4-cpg.c     | 210 ++++++++++++++++--------
+ drivers/clk/renesas/rcar-gen4-cpg.h     |  36 ++--
+ 6 files changed, 230 insertions(+), 147 deletions(-)
+
 -- 
 2.34.1
 
+Gr{oetje,eeting}s,
+
+						Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
