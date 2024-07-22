@@ -1,140 +1,128 @@
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D522160877
-	for <linux-clk@vger.kernel.org>; Mon, 22 Jul 2024 08:24:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC776182BD;
+	Mon, 22 Jul 2024 08:57:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721636680; cv=none; b=aP7xHtRTE5v1KSbheesj7/vmfhCtafU5++SAgpj6y9VEZLl40hG5hl8bD5s/+e4PoDYlBieADEID708v4KH/nvggY2/CgSsTrgDOFl/MjHo9V7+EDgRyGsYrxmBgi6pEGktcif6427bRKoglvlc1gev0rrhsmn3x9YvMn3BRFss=
+	t=1721638667; cv=none; b=crVXa6DY4oos289X9uB1+dJqlShW2xKSY6hEEXXZ8bh8rReFkORRxMfdodntrXKUtU6QCLg8+bVm/2D8pdkeiOLsNp7eCad9x8Ho6Xmz2PfeOtc656ZiRR2M6WmYvCmWOCceMcmf+UYyq2kqOG3InvobhVATnzTS5ZtBjezEPPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721636680; c=relaxed/simple;
-	bh=dOl0YE5EVmUekTPh1z3GkHps3RoYLWAbv+veTel0xyQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hodbLSfpSs0Jk0d9Bd+6pPlpzeqL1pEGY5EOPBWS40YM9N/9B3oQlkmglFynnrhntcAs8W+4ypwhsUr0nO0//e/0iP3D8bkMjfhffxeAA44kjnLH5pXcDyDaedEXGvvli1OCqP6ltmR+lI9Abm8+rWAxyNY7DidVQHnVy8tFBOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZMVgYA/S; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1721638667; c=relaxed/simple;
+	bh=Ynkt5jht3P7V4msgrdvDPMK/YT+rZLOmSP8colKEDIg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=jEx6AZBQrB77UQIPoriuBqbsxtTetStQGKwPCEjNY7EZ1IaSLYAkyD6wG6OV7l5iQrvIEaHbllpW20MGMRFnuwvuaXwezI8WGxPUjRl57fjMTDntM6b58I5zycy4Mogx7Cocwz39a+4vACnj/IkjX79rfjndxY5eeeoQaUY174s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kSZTdHNT; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZMVgYA/S"
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52f01b8738dso556810e87.1
-        for <linux-clk@vger.kernel.org>; Mon, 22 Jul 2024 01:24:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721636675; x=1722241475; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZgzE/IxCJWBRiP2I7PFm4ei8b0N+E/ct1yB02Kh58Sw=;
-        b=ZMVgYA/SKaQC5f2j9DZjl3cx19EfHbzZoFFI2Dgf89FGpjjssAdU0d9jLpGo8X5EwI
-         0D0hJpljANaOdVTKKpWxS7VY6NAFDjFGC3cYvu3NsHHag5Lc6V3xoeeRH6TZMxN/1J2j
-         3XyqnoBObhm+T5X9G4rDZf4fLsbACtWP+aUaN1to13U/wfMx/eoiUGyHQjBHQT19z25o
-         vXQHLD3tXrnGrOxhlC2uvGv3SEUgJiluoUT56KGQGxgHjRPx9y1ZShmDLpuNXbw7xc5x
-         EtjUEBOsZUanuusKaJIORj8nBzHtFlcWR2YMROUs+ivLpCodFkpgry/akJ8XcPJMyuU2
-         3rDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721636675; x=1722241475;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZgzE/IxCJWBRiP2I7PFm4ei8b0N+E/ct1yB02Kh58Sw=;
-        b=QbPLTysECttGbzxr9gxzi3O3pu2tOp5ItKeZOCVTh2H8xZkHxT62sxSDY6a2XEOzNQ
-         wbRfwQbRb/UfG9iCzLmMK1OIXLD0QmLWQUBLGOo+Tix+UnLCfyi3NIm1yFUVKcPW6i1O
-         RJ8Qy86MPHbVwbcheEplPp7WujWQUVQY6dtTsptK7Ak+uuZzAGUyYWGUQREJZEoqQXPl
-         f+Xu9tEFhQ6kM8fFnJEnp5hper5TVldRqxCXWGIn70Gjy+QMnOQtSKxMuhgf6gZ4i3Sh
-         4XEp4WzSZ/Zh0BwT1cVx59Uo3JYLRWvFYJHvY+wSOxI2hLzEKlZy8jmNZHp+AOpOrGv9
-         +mZg==
-X-Forwarded-Encrypted: i=1; AJvYcCW3ZWfucLgjTxC32/6FEUB6fh5yfEkgJF5+MtOL05X/Z/NrYduL8T0QnNBKPAKkeeccYq8P3xJRy/aHwSLEB0RaMATf4qTdGQ1Y
-X-Gm-Message-State: AOJu0Yz+Qth4gPAASI7MT6jdmbdzTmQqWSIPYXsljzZGSBRARpzv8e0J
-	rmW0yEFIcWx4Cg7rqXayUgBcXL8Nrkrs/eWSp4IJr40X+a7MwludTRkN/iknJWI=
-X-Google-Smtp-Source: AGHT+IFrF/v3D/EbEYt4Vwr1M6wYuXzOKRe+7Qed7iAdA18QZ/SGcjYDjEKN1Yi8ZAK82iRriZoPWw==
-X-Received: by 2002:a05:6512:a86:b0:52c:b008:3db8 with SMTP id 2adb3069b0e04-52efb77a765mr3360812e87.38.1721636675345;
-        Mon, 22 Jul 2024 01:24:35 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52ef5571de0sm1114612e87.202.2024.07.22.01.24.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 22 Jul 2024 01:24:34 -0700 (PDT)
-Date: Mon, 22 Jul 2024 11:24:33 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	gregkh@linuxfoundation.org, konrad.dybcio@linaro.org, djakov@kernel.org, 
-	quic_wcheng@quicinc.com, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
-	linux-pm@vger.kernel.org
-Subject: Re: [PATCH v3 3/5] clk: qcom: ipq5332: Register
- gcc_qdss_tsctr_clk_src
-Message-ID: <bgu4ii2lumk2afgendf2hrcj57gavqd7k3essblcqnhue2auy3@bkmfy4zjv3xs>
-References: <20240722055539.2594434-1-quic_varada@quicinc.com>
- <20240722055539.2594434-4-quic_varada@quicinc.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kSZTdHNT"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46LNfjQP022070;
+	Mon, 22 Jul 2024 08:57:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	RSSTUV2TQKIAMaYLBP7gP+3fe5NiDXh0YqWbwhegPLc=; b=kSZTdHNTFkFXMZs/
+	L7vpHbuHCVKRGDwSIpGgne07yxFPr9+NDfwSljtCy8h6Bmy7Ym4kDjXNrRsbsd2h
+	QWj37cz6W8mXsO5xPp0Cg8mq+Fu8Cwc9kj/gLni9/aTc3uZ5cYwukiKJtSDtCUfS
+	EWvZIEwWMcD74G0MMMuCQWJnmgkhRk6vI/L/chbInT07SBeGAzwEDYDojoFZbyWO
+	2qZ9kqSu7k3QBRENw5Hg/kVuNCj8aeds9CLjdnz3O+GOZxVhPFJHaTQgW357sP1C
+	bCB5ZkHv7pQFI4IegUmyReKCuItEFRdCkW4zqbF0mkmmvq/UGpZT3anMBvVb0JuT
+	clT0KQ==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40g487b75p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 22 Jul 2024 08:57:41 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46M8veOl011225
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 22 Jul 2024 08:57:40 GMT
+Received: from [10.218.19.46] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 22 Jul
+ 2024 01:57:36 -0700
+Message-ID: <6055cb14-de80-97bc-be23-7af8ffc89fcc@quicinc.com>
+Date: Mon, 22 Jul 2024 14:27:33 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240722055539.2594434-4-quic_varada@quicinc.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH] clk: qcom: camcc-sc8280xp: Remove always-on GDSC
+ hard-coding
+Content-Language: en-US
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen
+ Boyd <sboyd@kernel.org>
+CC: <dmitry.baryshkov@linaro.org>, <stable@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240715-linux-next-24-07-13-sc8280xp-camcc-fixes-v1-1-fadb5d9445c1@linaro.org>
+ <f0d4b7a3-2b61-3d42-a430-34b30eeaa644@quicinc.com>
+ <86068581-0ce7-47b5-b1c6-fda4f7d1037f@linaro.org>
+ <02679111-1a35-b931-fecd-01c952553652@quicinc.com>
+ <ce14800d-7411-47c5-ad46-6baa6fb678f4@linaro.org>
+ <dd588276-8f1c-4389-7b3a-88f483b7072e@quicinc.com>
+ <610efa39-e476-45ae-bd2b-3a0b8ea485dc@linaro.org>
+From: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
+In-Reply-To: <610efa39-e476-45ae-bd2b-3a0b8ea485dc@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: atiBSgbYmls0h1wd6btyARUF3lNZED8I
+X-Proofpoint-GUID: atiBSgbYmls0h1wd6btyARUF3lNZED8I
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-22_05,2024-07-18_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 spamscore=0
+ suspectscore=0 phishscore=0 priorityscore=1501 mlxlogscore=794
+ malwarescore=0 adultscore=0 impostorscore=0 clxscore=1015
+ lowpriorityscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2407110000 definitions=main-2407220069
 
-On Mon, Jul 22, 2024 at 11:25:37AM GMT, Varadarajan Narayanan wrote:
-> gcc_qdss_tsctr_clk_src (enabled in the boot loaders and dependent
-> on gpll4_main) was not registered as one of the ipq5332 clocks.
-> Hence clk_disable_unused() disabled 'gpll4_main' assuming there
-> were no consumers for 'gpll4_main' resulting in system freeze or
-> reboots.
-> 
-> After registering gcc_qdss_tsctr_clk_src, CLK_IGNORE_UNUSED can
-> be removed from gpll4_main.
 
-Commented below.
+On 7/20/2024 2:03 PM, Bryan O'Donoghue wrote:
+> On 19/07/2024 08:25, Satya Priya Kakitapalli (Temp) wrote:
+>>>
+>>> What is the use-case to keep that clock always-on unless/util 
+>>> someone wants camss ?
+>>>
+>>
+>> The clock also has dependency on MMCX rail, this rail anyway will be 
+>> OFF until there is a use-case. So the clock will also be OFF.
+>
+> arch/arm64/boot/dts/qcom/sc8280xp.dtsi
+>
+> camcc: clock-controller@ad00000 {
+>     power-domains = <&rpmhpd SC8280XP_MMCX>;
+> };
+>
+>>
+>>
+>>> I've tested this patch on sc8280xp and it works just fine.
+>>>
+>>
+>> Is the cam_cc_gdsc_clk clock ON after the boot up?
+>
+> I have no idea. Why does it matter ?
+>
 
-> 
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+This clock expected to be kept always ON, as per design, or else the 
+GDSC transition form ON to OFF (vice versa) wont work.
 
-Fixes?
+Want to know the clock status after bootup, to understand if the clock 
+got turned off during the late init. May I know exactly what you have 
+tested? Did you test the camera usecases as well?
+
 
 > ---
->  drivers/clk/qcom/gcc-ipq5332.c | 12 +-----------
->  1 file changed, 1 insertion(+), 11 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/gcc-ipq5332.c b/drivers/clk/qcom/gcc-ipq5332.c
-> index f98591148a97..237b6a766179 100644
-> --- a/drivers/clk/qcom/gcc-ipq5332.c
-> +++ b/drivers/clk/qcom/gcc-ipq5332.c
-> @@ -126,17 +126,6 @@ static struct clk_alpha_pll gpll4_main = {
->  			.parent_data = &gcc_parent_data_xo,
->  			.num_parents = 1,
->  			.ops = &clk_alpha_pll_stromer_ops,
-> -			/*
-> -			 * There are no consumers for this GPLL in kernel yet,
-> -			 * (will be added soon), so the clock framework
-> -			 * disables this source. But some of the clocks
-> -			 * initialized by boot loaders uses this source. So we
-> -			 * need to keep this clock ON. Add the
-> -			 * CLK_IGNORE_UNUSED flag so the clock will not be
-> -			 * disabled. Once the consumer in kernel is added, we
-> -			 * can get rid of this flag.
-> -			 */
-> -			.flags = CLK_IGNORE_UNUSED,
-
-You can't drop it in this patch, since GPLL4 still can get disabled if
-GCC_QDSS_TSCTR_CLK_SRC gets disabled. This chunk should go to the next
-patch (or you should reorder the patches).
-
->  		},
->  	},
->  };
-> @@ -3388,6 +3377,7 @@ static struct clk_regmap *gcc_ipq5332_clocks[] = {
->  	[GCC_QDSS_DAP_DIV_CLK_SRC] = &gcc_qdss_dap_div_clk_src.clkr,
->  	[GCC_QDSS_ETR_USB_CLK] = &gcc_qdss_etr_usb_clk.clkr,
->  	[GCC_QDSS_EUD_AT_CLK] = &gcc_qdss_eud_at_clk.clkr,
-> +	[GCC_QDSS_TSCTR_CLK_SRC] = &gcc_qdss_tsctr_clk_src.clkr,
->  	[GCC_QPIC_AHB_CLK] = &gcc_qpic_ahb_clk.clkr,
->  	[GCC_QPIC_CLK] = &gcc_qpic_clk.clkr,
->  	[GCC_QPIC_IO_MACRO_CLK] = &gcc_qpic_io_macro_clk.clkr,
-> -- 
-> 2.34.1
-> 
-
--- 
-With best wishes
-Dmitry
+> bod
