@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B133D7FD;
-	Mon, 22 Jul 2024 06:08:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A01301B27D;
+	Mon, 22 Jul 2024 06:26:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721628482; cv=none; b=qkQxUyifeUAVglz5zytJYDGAm5ccOdBLmbnDHYAiGTqijf7YQBPjBI64aqabLg8QzUItwQNPlEXBA8R2M5x4UmH/byXMy+YJDkPa80dOaoc40EjPzvpAIM/7JMrxyyDvOB4ffNv/p4AsnJyk19wvjzVCyFeLWmBE9+b6Hus1UCQ=
+	t=1721629591; cv=none; b=JV93MEewrBo2uuwuwLtVfbRwab8TbrgAwdMDg2drCLfL3ftCtEVaa87bLbXU2RCmcNrmhX/nMuwC41t7pc3YdrUXyvX+kt/wwwqJyQ7OzqdrZVQYop5T8KBar9kpjXw5OR0Jh3s6kVuorRDccF9y6mrBji85KEeCF/h8qOgn0CQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721628482; c=relaxed/simple;
-	bh=cBm1fn8CXUfypkaiHyAeslF7pre1gl+VwUV3RHx/0yM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Ng+MOL/gwG+BPqpd/Kpo/38QMWKofzpd4wH5sowCWac70UsmesRS6ZxbFD9nwsRY1jGZ3+6cMxFB5SQJPpVuhofnJbsWYhT3wNWXIjEvG4TzI+SdCJrQDwUm9nM+fKOXKJgU8+Env6Vh4rySRRmCxz0bZ1xrg/o410r2lCkzqmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a/X9o5ek; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1721629591; c=relaxed/simple;
+	bh=Vgd8rz6VKz/PJ87x6t7II+oz16zTQhbiVEanCi29xrI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WPAzT09RTHqZ4vQ6Fu6sW7vsDbChfrtyMMTLiC1NwyYI6bu0PJMLOfAAJxDADVbDQvdkkrcpxGy2sWX2KzgJWHn379jjfLJArEQ1nbhUdzQBb0EcgJs49MztSFtCXumRl9aD2elxuB3TW8o7oFmDKatwBtcG+djXF1Y7zaOyI0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cMF1jSnU; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a/X9o5ek"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D62BCC116B1;
-	Mon, 22 Jul 2024 06:07:56 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cMF1jSnU"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73EE3C116B1;
+	Mon, 22 Jul 2024 06:26:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721628482;
-	bh=cBm1fn8CXUfypkaiHyAeslF7pre1gl+VwUV3RHx/0yM=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=a/X9o5ekUejuRJARkEhOFlOPtthrE3BZVMxwgLILbUFhuQEPuZcUdg55J8lI7LlBh
-	 vu93SrejhClI+18stRDT3O9TAkDAXeLJ8sWZOaL/1KF5+u/F7q+UiqSZtwLD+/DTYC
-	 Z0bdAWddVtUKU+ukjVKtILQW00Ili05yFquFAZpANkB3m124UUS1NMFOvxhIuhJS88
-	 am4fc/xune3eA3u/JRgUCwbApfPAJz7Jmtf1LcFeqGGDDdh54Xb5Dnyk7FonAOoxEa
-	 ULA7znlniTMl+/MxFdN6IJKSX7/IaoAgS5Yg6ihlGL+bk/yPhawqdvkBpxAejZhkFi
-	 g8HAj8Nzp+/RA==
-Message-ID: <bc5a617f-3b83-47ff-ba27-5ba7b4f0b4b0@kernel.org>
-Date: Mon, 22 Jul 2024 08:07:54 +0200
+	s=k20201202; t=1721629590;
+	bh=Vgd8rz6VKz/PJ87x6t7II+oz16zTQhbiVEanCi29xrI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=cMF1jSnUM3g8UKZBXAeAvrzu1xpXuosIAhSzJf25GImqxovZiK3DVwxahVMXSeLP4
+	 VKvdT0MD/QvpEpjIHe/tWbOhNkvxaPNSaMicMZ4F8l4Cg1/tuQWm1ORU3NIxet1d1s
+	 BMu2UpsVeJXUcU8YkxY4jYlBKXg822J8td7gjJocyOzt29MnsHrwlAy5rKQAdPxvrH
+	 ONiDwqgU1YAHg0B++2LthoQAfSHobS2ay000z22JYpRGA62xPnYf0ca3zqnzZEEu7z
+	 ri1pGB8G09hXasm6yFyuRNa4qV+fOydNygKhGUBbd/Ks2leiSnl590KYlfT1tCcSAZ
+	 ibVLpMOVK6Fdg==
+Message-ID: <77380bf6-8651-4373-bb7d-3fc0497417c0@kernel.org>
+Date: Mon, 22 Jul 2024 08:26:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,17 +35,18 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/5] dt-bindings: interconnect: Add Qualcomm IPQ5332
- support
-To: Varadarajan Narayanan <quic_varada@quicinc.com>, andersson@kernel.org,
- mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, gregkh@linuxfoundation.org,
- konrad.dybcio@linaro.org, djakov@kernel.org, quic_wcheng@quicinc.com,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-usb@vger.kernel.org, linux-pm@vger.kernel.org
-References: <20240722055539.2594434-1-quic_varada@quicinc.com>
- <20240722055539.2594434-2-quic_varada@quicinc.com>
+Subject: Re: [PATCH v2] clk: samsung: Don't register clkdev lookup for the
+ fixed rate clocks
+To: Artur Weber <aweber.kernel@gmail.com>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Sam Protsenko <semen.protsenko@linaro.org>
+References: <CGME20240510065909eucas1p20067042a45b26e0a58110ff439dcc1b8@eucas1p2.samsung.com>
+ <20240510065901.535124-1-m.szyprowski@samsung.com>
+ <6227c1fb-d769-462a-b79b-abcc15d3db8e@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -91,44 +92,30 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240722055539.2594434-2-quic_varada@quicinc.com>
+In-Reply-To: <6227c1fb-d769-462a-b79b-abcc15d3db8e@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 22/07/2024 07:55, Varadarajan Narayanan wrote:
-> Add interconnect-cells to clock provider so that it can be
-> used as icc provider.
+On 18/07/2024 14:20, Artur Weber wrote:
+> On 10.05.2024 08:59, Marek Szyprowski wrote:
+>> Commit 4d11c62ca8d7 ("clkdev: report over-sized strings when creating
+>> clkdev entries") revealed that clock lookup is registered for all fixed
+>> clocks. The mentioned commit added a check if the registered name is not
+>> too long. This fails for some clocks registered for Exynos542x SoCs family.
+>> This lookup is a left-over from early common clock framework days, not
+>> really needed nowadays, so remove it to avoid further issues.
 > 
-> Add master/slave ids for Qualcomm IPQ5332 Network-On-Chip
-> interfaces. This will be used by the gcc-ipq5332 driver
-> for providing interconnect services using the icc-clk
-> framework.
+> This commit causes a warning to appear during startup on Exynos 4x12:>
+>  > [    0.000000] exynos4_clk_register_finpll: failed to lookup parent clock xusbxti, assuming fin_pll clock frequency is 24MHz
+>  > [    0.000000] Exynos4x12 clocks: sclk_apll = 400000000, sclk_mpll = 800000000
+>  >                	sclk_epll = 96000000, sclk_vpll = 108000000, arm_clk = 800000000
 > 
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> ---
-> v3: Not taking Reviewed-By: Krzysztof, fixed copy paste error
->     INTERCONNECT_QCOM_IPQ9574_H -> INTERCONNECT_QCOM_IPQ5332_H
+> The warning seems to come from exynos4_clk_register_finpll in
+> drivers/clk/samsung/clk-exynos4.c, where clk_get fails with error code -2.
 
-Really? You expect re-doing review because of guard typo? The guard name
-does not matter. Read submitting patches before posting.
 
-<form letter>
-This is a friendly reminder during the review process.
-
-It looks like you received a tag and forgot to add it.
-
-If you do not know the process, here is a short explanation:
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new
-versions, under or above your Signed-off-by tag. Tag is "received", when
-provided in a message replied to you on the mailing list. Tools like b4
-can help here. However, there's no need to repost patches *only* to add
-the tags. The upstream maintainer will do that for tags received on the
-version they apply.
-
-https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
-
-If a tag was not added on purpose, please state why and what changed.
-</form letter>
+Indeed, so clk_hw_register_clkdev() was needed for clk_get(). I have a
+fix for this.
 
 Best regards,
 Krzysztof
