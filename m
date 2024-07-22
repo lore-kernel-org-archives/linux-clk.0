@@ -1,30 +1,30 @@
-Received: from xavier.telenet-ops.be (xavier.telenet-ops.be [195.130.132.52])
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F69616C85F
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8711F16D30B
 	for <linux-clk@vger.kernel.org>; Mon, 22 Jul 2024 11:50:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.52
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721649048; cv=none; b=AYtNWO2fUIM07Tf/mRqyyMdEtHuX9hKIfeh36AjUac6xfIJ8eR5ygIDBKF+/3IbvEUrsh8/wFdSfCQFaHUkTAxnCREpYcny+/EIt8QKgt/tDo9u+J9jfK4vQUTkuk1tAfrmrMM9Hhkwdmhg1qYn1qfbr3nMZycg4MX+J0xUj1ZY=
+	t=1721649048; cv=none; b=VBmmka3SP0u13JHJ0lC8eNftnjAF2xK5EkifHtDhdPJm1gPe/jRx8cp5p1h+1jMfpZJKqLLGINwQVmLb59rZVv+yx+OiEh5Inoh9TUooQ9BiVT+zMKDUXxxVD6LDavBEZKrN7PwgZHE06WDE5lMZlZEOsJ7/kH8ZZ+Wngqz/HlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1721649048; c=relaxed/simple;
-	bh=2M8FpqNIfNn9DrciS1yaH5u7m71jg+Z/8C0CTidtaJs=;
+	bh=0vDPthtPTiECVi7PG2+Q5xFAmR/fIxbXzbcOEVdryt8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ZM7ZdTw34agwbccW6wORYykX4CGDKah2BKR1pEi8l5lJAvu5zPZbEJlJyasorokhOfJsa5fbgrIT9aLppP6hMZ0gUj5+9yOl5GJtgQZbVZlyOZMu/TROPI7Rzkv7b6qq3oapuhG6Y+iGF8aLMup4CFvEcgcLiBO678ZugVhfkNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.52
+	 MIME-Version; b=qWWZx92lxC4rc2cgCAmLRLXnoAFFjh5dnOn8r20tqAmHrBUc9EtZ6hhSx7Sg5BO02Q6KdkaC3nTr7mLLKVr2dUxUc2I42tlwkMGTeZ/kNwZoHm8rDEWXIpY76WxQIzzqCkO7jDh2GMh0jXPgZUb65KAVa6WhLWxvDZb3OB1K3Yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
 Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:173b:9414:53f5:de4c])
-	by xavier.telenet-ops.be with bizsmtp
-	id qbqd2C0011wvoRx01bqd6Q; Mon, 22 Jul 2024 13:50:37 +0200
+	by baptiste.telenet-ops.be with bizsmtp
+	id qbqc2C00N1wvoRx01bqcUD; Mon, 22 Jul 2024 13:50:37 +0200
 Received: from rox.of.borg ([192.168.97.57])
 	by ramsan.of.borg with esmtp (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sVrYY-002zAy-Cs;
+	id 1sVrYY-002zAF-3X;
 	Mon, 22 Jul 2024 13:50:36 +0200
 Received: from geert by rox.of.borg with local (Exim 4.95)
 	(envelope-from <geert@linux-m68k.org>)
-	id 1sVrYq-0020iM-S9;
+	id 1sVrYq-0020hW-I3;
 	Mon, 22 Jul 2024 13:50:36 +0200
 From: Geert Uytterhoeven <geert+renesas@glider.be>
 To: Michael Turquette <mturquette@baylibre.com>,
@@ -33,9 +33,9 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	Geert Uytterhoeven <geert+renesas@glider.be>,
 	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
-Subject: [PATCH v2 12/15] clk: renesas: r8a779h0: Model PLL1/2/3/4/6 as fractional PLLs
-Date: Mon, 22 Jul 2024 13:50:32 +0200
-Message-Id: <3beac7c44534ed153ce7cea5c31f4b0bb7b16ab0.1721648548.git.geert+renesas@glider.be>
+Subject: [PATCH v2 01/15] clk: renesas: rcar-gen4: Removed unused SSMODE_* definitions
+Date: Mon, 22 Jul 2024 13:50:21 +0200
+Message-Id: <19f84bfec94eab5f301a9c33563c285ab59b9b2a.1721648548.git.geert+renesas@glider.be>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <cover.1721648548.git.geert+renesas@glider.be>
 References: <cover.1721648548.git.geert+renesas@glider.be>
@@ -47,13 +47,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Currently, all PLLs are modelled as fixed divider clocks, based on the
-state of the mode pins.  However, the boot loader stack may have changed
-the actual PLL configuration from the default, leading to incorrect
-clock frequencies.
-
-Describe PLL1 as a fixed fractional PLL instead, and PLL2, PLL3, PLL4,
-and PLL6 as variable fractional PLLs.
+All SSMODE operations are done using CPG_PLLxCR0_SSMODE*.
 
 Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
 Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
@@ -61,31 +55,24 @@ Reviewed-by: Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>
 v2:
   - Add Reviewed-by.
 ---
- drivers/clk/renesas/r8a779h0-cpg-mssr.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+ drivers/clk/renesas/rcar-gen4-cpg.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/drivers/clk/renesas/r8a779h0-cpg-mssr.c b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
-index ae21e442a7a26d6e..389d4054a514e00d 100644
---- a/drivers/clk/renesas/r8a779h0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
-@@ -70,12 +70,12 @@ static const struct cpg_core_clk r8a779h0_core_clks[] __initconst = {
+diff --git a/drivers/clk/renesas/rcar-gen4-cpg.c b/drivers/clk/renesas/rcar-gen4-cpg.c
+index 77a4bb3e17f34848..72c740f18ac9b370 100644
+--- a/drivers/clk/renesas/rcar-gen4-cpg.c
++++ b/drivers/clk/renesas/rcar-gen4-cpg.c
+@@ -53,10 +53,6 @@ static u32 cpg_mode __initdata;
+ #define CPG_PLLxCR0_SSFREQ	GENMASK(14, 8)	/* SSCG Modulation Frequency */
+ #define CPG_PLLxCR0_SSDEPT	GENMASK(6, 0)	/* SSCG Modulation Depth */
  
- 	/* Internal Core Clocks */
- 	DEF_BASE(".main", CLK_MAIN,	CLK_TYPE_GEN4_MAIN,	CLK_EXTAL),
--	DEF_BASE(".pll1", CLK_PLL1,	CLK_TYPE_GEN4_PLL1,	CLK_MAIN),
--	DEF_BASE(".pll2", CLK_PLL2,	CLK_TYPE_GEN4_PLL2,	CLK_MAIN),
--	DEF_BASE(".pll3", CLK_PLL3,	CLK_TYPE_GEN4_PLL3,	CLK_MAIN),
--	DEF_BASE(".pll4", CLK_PLL4,	CLK_TYPE_GEN4_PLL4,	CLK_MAIN),
-+	DEF_GEN4_PLL_F8_25(".pll1", 1,	CLK_PLL1,		CLK_MAIN),
-+	DEF_GEN4_PLL_V8_25(".pll2", 2,	CLK_PLL2,		CLK_MAIN),
-+	DEF_GEN4_PLL_V8_25(".pll3", 3,	CLK_PLL3,		CLK_MAIN),
-+	DEF_GEN4_PLL_V8_25(".pll4", 4,	CLK_PLL4,		CLK_MAIN),
- 	DEF_BASE(".pll5", CLK_PLL5,	CLK_TYPE_GEN4_PLL5,	CLK_MAIN),
--	DEF_BASE(".pll6", CLK_PLL6,	CLK_TYPE_GEN4_PLL6,	CLK_MAIN),
-+	DEF_GEN4_PLL_V8_25(".pll6", 6,	CLK_PLL6,		CLK_MAIN),
- 
- 	DEF_FIXED(".pll1_div2",	CLK_PLL1_DIV2,	CLK_PLL1,	2, 1),
- 	DEF_FIXED(".pll2_div2",	CLK_PLL2_DIV2,	CLK_PLL2,	2, 1),
+-#define SSMODE_FM		BIT(2)	/* Fractional Multiplication */
+-#define SSMODE_DITHER		BIT(1)	/* Frequency Dithering */
+-#define SSMODE_CENTER		BIT(0)	/* Center (vs. Down) Spread Dithering */
+-
+ /* PLL Clocks */
+ struct cpg_pll_clk {
+ 	struct clk_hw hw;
 -- 
 2.34.1
 
