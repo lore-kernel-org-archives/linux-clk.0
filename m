@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C1ED1E891;
-	Mon, 22 Jul 2024 21:29:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D71931849;
+	Mon, 22 Jul 2024 21:45:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721683769; cv=none; b=IOkoNczs5y1/VsR+1kuHAbruhNDAbft1U0YRjvf/U8tXTLuNVXujT95T0Nh+NHunFbrqabrTNx/MK7Ucs+nXqVTjr5596wqPUNB6/8Hb2RhIJWT9xxIOES3zb7S47U3H9OuA+f8nyto979wuI10pWt1wCRLRfdS5dAxbCZcq8cY=
+	t=1721684753; cv=none; b=QHVH1UR98lS+kknTwroChauLxCv+qkX37vo+74u5NfzoVOM0BsB9jg8FTuJexYercgqWBQ17QWgw+b/xpB5pIaaanhTe0G3hq/wpPTMxpbTiFTs/gg5zEYZZt0ltU7Ye10NXZLlUQP1zN+nlaoOLplAasUGSQv0gIlK6zRkJ4pY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721683769; c=relaxed/simple;
-	bh=mFsP2LOfOyZ2jsPSJiZwcTQlSlLZNFN9s88E83z1WXk=;
+	s=arc-20240116; t=1721684753; c=relaxed/simple;
+	bh=/xZgTSrW9AosvGMvfW8XBKjOE8TQflictgJmmzfb074=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=GlbGCqNUT6ofp89Dj/CcJWKbyODzGTr/cWDI57Y+cVq2Iqhg/9xDyc1sP0WVJx5AqnECZnWRhKKVpP5jNb8zd/u2j0Ock4keKemnGKK61gACbLlOdYxtGHbGKYL6Gt3iNrUoUJ9PloniejKxiZADciX40H7RW/Vir+gojX0YeTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KSQAGpmP; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=oGlhsaq1MZvYArvFGMxDAVTxSu1zO+TgF003RzaN/xNZmZMkyhuUQxaW89WQspRuQmuntMtKyJLwl2fw3fBnROM45mkzDnYJhHqwljZ4ZLQFKSTq6lXV9go/BpJMRBml3iEJSQTO3p3Y2WPBHq0DTaRKS56+dXrLYNWFfdZPl7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pQqw+DMu; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KSQAGpmP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BD46C116B1;
-	Mon, 22 Jul 2024 21:29:28 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pQqw+DMu"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42A0EC116B1;
+	Mon, 22 Jul 2024 21:45:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721683768;
-	bh=mFsP2LOfOyZ2jsPSJiZwcTQlSlLZNFN9s88E83z1WXk=;
+	s=k20201202; t=1721684752;
+	bh=/xZgTSrW9AosvGMvfW8XBKjOE8TQflictgJmmzfb074=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=KSQAGpmPTiOgCqxkDiXIvL/FidGAvHrw2b+5pGiEnh6qgmVe+4KunryRr2PSjKCFE
-	 lmUwixp1nKlCLFaPKn8CD+fi0FWin9YjSyPDQuvedrKztcixLcDqw5znCtZk47bTKz
-	 7bAGPxjdq+dlQ4Z1iDOee1hcWKTv3q0szIEBfV5jbqNQ8mhs3F116PbXRvkjwZwohu
-	 iXBXKFQCjvRHmuQfWnJoKB70ccN3tMfBE0dRDPaPKWMwXBkPJevfJyU0HgcxJ/hQtF
-	 N6BCvCqwY3yY8KZ0pp5dfltk8s26V0AsNAR2Yp5dn0LALNk7j9k46stmSh3OQ/UUHr
-	 0ZNc1xcAKyWXA==
-Message-ID: <63662f96327389ef08dfdecf723de19f.sboyd@kernel.org>
+	b=pQqw+DMudSEJYFHKP1KhBtPXCUESakiC00Merfyp9wKwGuCSzl7HQ10xqjbZTdbED
+	 2vkySIwQyEXOnSjjCjcidQnEwyKcMkb9NGexT9hiYA4HXBEyytX/kNmft2KOp8EYBg
+	 TFp35nfykzlrpqZ9ubtFxX6jfEu5jrJRwcuKhoH5oynBTPyUHVrcFjdTKBDIZWzwlh
+	 l3RgWn/PQ0HDhJrcxe75g3ecNBUy6jt1VpfIHfGueRfmF3QyVRIJvmiOg+MNvhVMnW
+	 j+qJ2l4F5K20cfEv2uk66gM0FwT6nldACqP4dfieXnrcCB+BPPe7X8vajhuLnIrZVp
+	 2mfsVs9NAbDkA==
+Message-ID: <8147ecaa95ad514a6d8c13662ada7cdc.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,24 +35,86 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240719151027.16152-1-palmer@rivosinc.com>
-References: <20240719151027.16152-1-palmer@rivosinc.com>
-Subject: Re: [PATCH] clk: T-Head: Disable on 32-bit Targets
+In-Reply-To: <20240722094226.21602-9-ysionneau@kalrayinc.com>
+References: <20240722094226.21602-1-ysionneau@kalrayinc.com> <20240722094226.21602-9-ysionneau@kalrayinc.com>
+Subject: Re: [RFC PATCH v3 08/37] dt-bindings: Add binding for kalray,coolidge-dsu-clock
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: mturquette@baylibre.com, jszhang@kernel.org, Palmer Dabbelt <palmer@rivosinc.com>, dfustini@tenstorrent.com, frank.li@vivo.com, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-To: Palmer Dabbelt <palmer@rivosinc.com>
-Date: Mon, 22 Jul 2024 14:29:26 -0700
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org
+To: Conor Dooley <conor+dt@kernel.org>, Jonathan Borne <jborne@kalrayinc.com>, Julian Vetter <jvetter@kalrayinc.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Yann Sionneau <ysionneau@kalrayinc.com>, linux-kernel@vger.kernel.org
+Date: Mon, 22 Jul 2024 14:45:50 -0700
 User-Agent: alot/0.10
 
-Quoting Palmer Dabbelt (2024-07-19 08:10:27)
-> From: Palmer Dabbelt <palmer@rivosinc.com>
+Quoting ysionneau@kalrayinc.com (2024-07-22 02:41:19)
+> From: Yann Sionneau <ysionneau@kalrayinc.com>
 >=20
-> This fails to build on 32-bit targets because of a missing __udivdi3.
-> IIRC the right way to fix that is to avoid the division, but I just want
-> a tree that builds and the only real T-Head platforms are 64-bit right
-> now.
+> Add binding for Kalray Coolidge DSU (Debug System Unit) clock.
 >=20
-> Signed-off-by: Palmer Dabbelt <palmer@rivosinc.com>
+> Signed-off-by: Yann Sionneau <ysionneau@kalrayinc.com>
 > ---
+>=20
+> Notes:
+>=20
+> V2 -> V3: New patch
+> ---
+>  .../clock/kalray,coolidge-dsu-clock.yaml      | 39 +++++++++++++++++++
+>  1 file changed, 39 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/kalray,coolid=
+ge-dsu-clock.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/clock/kalray,coolidge-dsu-=
+clock.yaml b/Documentation/devicetree/bindings/clock/kalray,coolidge-dsu-cl=
+ock.yaml
+> new file mode 100644
+> index 0000000000000..a7f6239b17c12
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/kalray,coolidge-dsu-clock.y=
+aml
+> @@ -0,0 +1,39 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/kalray,coolidge-dsu-clock.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Kalray Coolidge DSU Clock
 
-Applied to clk-next
+Nobody knows what DSU is here. Just spell it out and then put the
+acronym:
+
+	Debug System Unit (DSU)
+
+> +
+> +maintainers:
+> +  - Jonathan Borne <jborne@kalrayinc.com>
+> +  - Julian Vetter <jvetter@kalrayinc.com>
+> +  - Yann Sionneau <ysionneau@kalrayinc.com>
+> +
+> +description: |
+> +  DSU Clock is a free running counter that runs at Cluster clock frequen=
+cy.
+> +
+> +properties:
+> +  compatible:
+> +    const: kalray,coolidge-dsu-clock
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +required:
+> +  - reg
+> +  - clocks
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    dsu_clock@a44180 {
+> +        compatible =3D "kalray,coolidge-dsu-clock";
+> +        reg =3D <0x00 0xa44180 0x00 0x08>;
+
+This looks like it's part of some bigger module, possible DSU in
+general. Is that true? If so, please implement the binding for DSU
+instead.
