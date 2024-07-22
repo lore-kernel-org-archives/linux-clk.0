@@ -1,120 +1,95 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E2E8C2FD;
-	Mon, 22 Jul 2024 17:14:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BDE117277F;
+	Mon, 22 Jul 2024 18:41:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721668444; cv=none; b=uN+PFFa3HweYEsdWoQfPVG6j2S5q7TiXb04B0DkNMp5Z/zRpS1Op1TmT5LOyM9wcxPcaGNbEVsC6bGH4TqoDfkuAlAlAkvqip75mTPfQ88Dezwb7nOq3tExagOyJBry4Sjy/Y2pa6BcFB2Lnn/dUVdQDVcMGfw/W7pHg9ckOrwU=
+	t=1721673702; cv=none; b=rrdjdGhNaAM5Qr94KVRhd0/D7m2qjN5eUyYgLhqfQrDaAXOAX5cPkXD9LEV7GnBJa9zBhr62QQ0lCScCF8k5LHcZ7zNApH7repQdDu4vwAcYy7gFaAJKO0LsORYY8AOKHftNidrYbbsSvgQHySRFMWSEYu9FKpiAh3aydkO7PXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721668444; c=relaxed/simple;
-	bh=nqDbSeOEjrZww2bjW5Y5ACpg5VESlrarvu6Mf3utbgM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IhnAySxiKN3xDfivQyo+db9P3OZ5ZpGnisW1EmDKjeZhQuNgRcQxHe+s/pl8jue2XF+UF/2Ts99vw6lS9bkgZdXoy4tUg+3gR2gIX7ltE5ewVknDIIThrLnsokGWI75kqQX4YG9BH7NHKEvZ9vdI+FywPal4XXYhgNR/dRv8VTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pStLs1D6; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1721673702; c=relaxed/simple;
+	bh=vxkBtcXPflRKx6JflN6P2jLEpplVf/tdl4WD1koeSng=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=jk81nDASK7hdQTJQJAheGlcT4u8PY10RCuQ2iEeclHnlao0Pjqw0GNFYpbVld3qZZt0bLNdQONqQ0X4mTzsXtVcuzq9b+UeuWdoZ5QLGMhczE80lGP0Eobw1UAbcGQ++tqhCBH5OgIsunRJ1xg+lQUpDzgqkIUyJvoz6HjD1K1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GD7ke6BJ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pStLs1D6"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F1E6C116B1;
-	Mon, 22 Jul 2024 17:14:00 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GD7ke6BJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD729C116B1;
+	Mon, 22 Jul 2024 18:41:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721668442;
-	bh=nqDbSeOEjrZww2bjW5Y5ACpg5VESlrarvu6Mf3utbgM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pStLs1D6atjirFbXkduIYobr0Ct/Sgjn0QoIpO1lee7/CbPaKgr9SafXtwvsS9rR+
-	 grD7yprXFyTh5Pj3ebz5U/dM9p2xvPwKIDWbpv8esG5k9yH0wnfOvqn9Yxx7H7h1ib
-	 acowwQN2rN5REX8JwQ0h4fAc9QfmWwSZTiBjA4I9FoGjBTcEv4bmu8GQXguEetAvg9
-	 eCujm5Jd7f7HG7WrGi03Bfb3JEElL6IQIG4qZd4tucw5HYeUcn42N7BN/4DrrqMwd4
-	 dbxA8RexnKPUsuDvsz2ccQfDgq2FbpN1Y97Ixv7HlgRn3IhbVgDMNS4TvIuR2pNAZ2
-	 3jY/05/z+kRIA==
-Date: Mon, 22 Jul 2024 18:13:58 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Harry Austen <hpausten@protonmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michal Simek <michal.simek@amd.com>,
-	Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 6/7] dt-bindings: clock: xilinx: describe whether dynamic
- reconfig is enabled
-Message-ID: <20240722-removal-grandma-92cfe99b8a88@spud>
-References: <20240720120048.36758-1-hpausten@protonmail.com>
- <20240720120048.36758-7-hpausten@protonmail.com>
+	s=k20201202; t=1721673702;
+	bh=vxkBtcXPflRKx6JflN6P2jLEpplVf/tdl4WD1koeSng=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=GD7ke6BJQ4NvY7j0sAZzg9/fN3sV6Tl43el4L6r5vFEcCkUPDydR7ShWtX7lexWLz
+	 f0MToOwe3KWy7eZyfqfhLIQYYe8qtT8//yUHzKsceEFdJeMAAnjYqaH48jdlh4YTcM
+	 xbndyQOrDs2HXYz7Uu2wlLK6VO+mLwJPp7BdqekeXgAwAML/Ytal+rzFjMOF8ml56m
+	 wl6vXa1rlmmLZJhVXzwNP79nNCku3Nh6jCzqIChbFPb7AT3zApNRWRzrLMMD/zYASO
+	 v3ynHY9xD5JUoi0LXFpoI1SpFoj+8paYTyUAsVnp+X93F+H8ef3d2AHov8HwvAsj95
+	 R/bmwzI7YZXtw==
+Date: Mon, 22 Jul 2024 12:41:38 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="dcnYdkiBJnjYH+Dp"
-Content-Disposition: inline
-In-Reply-To: <20240720120048.36758-7-hpausten@protonmail.com>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: ysionneau@kalrayinc.com
+Cc: Jonathan Borne <jborne@kalrayinc.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, 
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Julian Vetter <jvetter@kalrayinc.com>, 
+ Michael Turquette <mturquette@baylibre.com>
+In-Reply-To: <20240722094226.21602-9-ysionneau@kalrayinc.com>
+References: <20240722094226.21602-1-ysionneau@kalrayinc.com>
+ <20240722094226.21602-9-ysionneau@kalrayinc.com>
+Message-Id: <172167366276.4638.3235725980067495299.robh@kernel.org>
+Subject: Re: [RFC PATCH v3 08/37] dt-bindings: Add binding for
+ kalray,coolidge-dsu-clock
 
 
---dcnYdkiBJnjYH+Dp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-
-On Sat, Jul 20, 2024 at 12:01:58PM +0000, Harry Austen wrote:
-> Xilinx clocking wizard IP core's dynamic reconfiguration support is
-> optionally enabled at build time. Add a devicetree boolean property to
-> describe whether the hardware supports this feature or not.
->=20
-> Signed-off-by: Harry Austen <hpausten@protonmail.com>
+On Mon, 22 Jul 2024 11:41:19 +0200, ysionneau@kalrayinc.com wrote:
+> From: Yann Sionneau <ysionneau@kalrayinc.com>
+> 
+> Add binding for Kalray Coolidge DSU (Debug System Unit) clock.
+> 
+> Signed-off-by: Yann Sionneau <ysionneau@kalrayinc.com>
 > ---
->  .../devicetree/bindings/clock/xlnx,clocking-wizard.yaml    | 7 +++++++
->  1 file changed, 7 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard=
-=2Eyaml b/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
-> index 4609bb56b06b5..890aeebf6f375 100644
-> --- a/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
-> +++ b/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
-> @@ -40,6 +40,12 @@ properties:
->        - const: s_axi_aclk
-> =20
-> =20
-> +  xlnx,dynamic-reconfig:
-> +    type: boolean
+> 
+> Notes:
+> 
+> V2 -> V3: New patch
+> ---
+>  .../clock/kalray,coolidge-dsu-clock.yaml      | 39 +++++++++++++++++++
+>  1 file changed, 39 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/kalray,coolidge-dsu-clock.yaml
+> 
 
-The type here should be "flag" not boolean, boolean can be set to
-"false" and what you're likely doing is just checking for the property
-being present. "flag" doesn't allow false.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-> +    description:
-> +      Indicate whether the core has been configured with support for dyn=
-amic
-> +      runtime reconfguration of the clocking primitive MMCM/PLL.
-> +
->    xlnx,speed-grade:
->      $ref: /schemas/types.yaml#/definitions/uint32
->      enum: [1, 2, 3]
-> @@ -88,6 +94,7 @@ examples:
->          compatible =3D "xlnx,clocking-wizard-v6.0";
->          reg =3D <0xb0000000 0x10000>;
->          #clock-cells =3D <1>;
-> +        xlnx,dynamic-reconfig;
->          xlnx,speed-grade =3D <1>;
->          xlnx,nr-outputs =3D <6>;
->          clock-names =3D "clk_in1", "s_axi_aclk";
-> --=20
-> 2.45.2
->=20
->=20
+yamllint warnings/errors:
 
---dcnYdkiBJnjYH+Dp
-Content-Type: application/pgp-signature; name="signature.asc"
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/clock/kalray,coolidge-dsu-clock.example.dtb: dsu_clock@a44180: reg: [[0, 10764672], [0, 8]] is too long
+	from schema $id: http://devicetree.org/schemas/clock/kalray,coolidge-dsu-clock.yaml#
 
------BEGIN PGP SIGNATURE-----
+doc reference errors (make refcheckdocs):
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZp6TVQAKCRB4tDGHoIJi
-0hdmAQCqOMXx2CK3Q8yzIIBHMuERHAWGGfcI5gzwiytnYyIP9wEA7lTXK19quiSI
-Lk3aVqOddEgJEmbgqX2t6/H6W4duVw4=
-=2Kf6
------END PGP SIGNATURE-----
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240722094226.21602-9-ysionneau@kalrayinc.com
 
---dcnYdkiBJnjYH+Dp--
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
