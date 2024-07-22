@@ -1,163 +1,120 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E505216DEB1
-	for <linux-clk@vger.kernel.org>; Mon, 22 Jul 2024 15:18:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E2E8C2FD;
+	Mon, 22 Jul 2024 17:14:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721661508; cv=none; b=cu8HFVLCaTijvR1vr89pmTpoHO+6SIXvBYTgxEBRvoO4rs2ssVzxMmSPpYIEtko///tdpbjTErXnXHC2HW9mPpv6oQ7S4sSiQ43wWhZ5pdhBHAUsXK+McgKMcKxC/yuj4RVd8RbeqLKI4MZ532R9a/BCus5zWnb2YEu766WP4MQ=
+	t=1721668444; cv=none; b=uN+PFFa3HweYEsdWoQfPVG6j2S5q7TiXb04B0DkNMp5Z/zRpS1Op1TmT5LOyM9wcxPcaGNbEVsC6bGH4TqoDfkuAlAlAkvqip75mTPfQ88Dezwb7nOq3tExagOyJBry4Sjy/Y2pa6BcFB2Lnn/dUVdQDVcMGfw/W7pHg9ckOrwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721661508; c=relaxed/simple;
-	bh=zm5u8wZXEjdYWsoOLkmz2zH7ehYsVAsv9EcqDcypJq4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mJU/fKQt0lHDZpoNyBElNIBbLgRrfFvVM99eNOdYndAxggH4WdnmZBLRdbsMdZ77oWdAHDuSbTW2bvypdt+AdVMx6m6AT/4KnH0LwyVZuymaHpk4K6iBbq+/b3OyrKuqRTT581YirffesBtZq5Tn4Tl7JRS/jdc+s/1FSlNBrSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Q0l6Lj6p; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1721668444; c=relaxed/simple;
+	bh=nqDbSeOEjrZww2bjW5Y5ACpg5VESlrarvu6Mf3utbgM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IhnAySxiKN3xDfivQyo+db9P3OZ5ZpGnisW1EmDKjeZhQuNgRcQxHe+s/pl8jue2XF+UF/2Ts99vw6lS9bkgZdXoy4tUg+3gR2gIX7ltE5ewVknDIIThrLnsokGWI75kqQX4YG9BH7NHKEvZ9vdI+FywPal4XXYhgNR/dRv8VTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pStLs1D6; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Q0l6Lj6p"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1721661505;
-	bh=zm5u8wZXEjdYWsoOLkmz2zH7ehYsVAsv9EcqDcypJq4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Q0l6Lj6pVf5jYns2yr30sMv0IbtiubDDUm/fpJ3kDqghCxhPLeKV9r3hiupwV0J/d
-	 Fabc1z9YNf5djiyFPa4Wf5iWhtO1ODjbOswHlNtLJ87aVh9XCh/EH2Gu8HWJHUqrzP
-	 cs3dX0251qNrXDPbJ6a1kdascz4vY1melpM34ysOoZNPcxgqina+2s/cSjm8ImfZSV
-	 P8UrzWHuEdtp3Zc7//nNk7yBYKUxnrAA+tgEzuwbtmEH4VkQbQPJMWvFolpn7f9d8H
-	 l78Z7BZpuiBiUm15vSfbeNnFsewWxArx84+bt5b0vSTvox6XIfQ2rcc+AUuTbeNcSC
-	 vbFY8JSclqnSQ==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 749AE37800DE;
-	Mon, 22 Jul 2024 15:18:24 +0000 (UTC)
-Message-ID: <26151f58-9dd3-4e14-afaf-c62f539f8e26@collabora.com>
-Date: Mon, 22 Jul 2024 17:18:23 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pStLs1D6"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F1E6C116B1;
+	Mon, 22 Jul 2024 17:14:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721668442;
+	bh=nqDbSeOEjrZww2bjW5Y5ACpg5VESlrarvu6Mf3utbgM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pStLs1D6atjirFbXkduIYobr0Ct/Sgjn0QoIpO1lee7/CbPaKgr9SafXtwvsS9rR+
+	 grD7yprXFyTh5Pj3ebz5U/dM9p2xvPwKIDWbpv8esG5k9yH0wnfOvqn9Yxx7H7h1ib
+	 acowwQN2rN5REX8JwQ0h4fAc9QfmWwSZTiBjA4I9FoGjBTcEv4bmu8GQXguEetAvg9
+	 eCujm5Jd7f7HG7WrGi03Bfb3JEElL6IQIG4qZd4tucw5HYeUcn42N7BN/4DrrqMwd4
+	 dbxA8RexnKPUsuDvsz2ccQfDgq2FbpN1Y97Ixv7HlgRn3IhbVgDMNS4TvIuR2pNAZ2
+	 3jY/05/z+kRIA==
+Date: Mon, 22 Jul 2024 18:13:58 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Harry Austen <hpausten@protonmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michal Simek <michal.simek@amd.com>,
+	Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 6/7] dt-bindings: clock: xilinx: describe whether dynamic
+ reconfig is enabled
+Message-ID: <20240722-removal-grandma-92cfe99b8a88@spud>
+References: <20240720120048.36758-1-hpausten@protonmail.com>
+ <20240720120048.36758-7-hpausten@protonmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] clk: en7523: fix scuclk io region for upcoming
- pinctrl
-To: Lorenzo Bianconi <lorenzo@kernel.org>, linux-clk@vger.kernel.org
-Cc: mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
- lorenzo.bianconi83@gmail.com, linux-arm-kernel@lists.infradead.org,
- nbd@nbd.name, john@phrozen.org, upstream@airoha.com
-References: <cover.1720510991.git.lorenzo@kernel.org>
- <f1c8e114fb1370b9a3a602e3ed3e9eeb5824c2e7.1720510991.git.lorenzo@kernel.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <f1c8e114fb1370b9a3a602e3ed3e9eeb5824c2e7.1720510991.git.lorenzo@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="dcnYdkiBJnjYH+Dp"
+Content-Disposition: inline
+In-Reply-To: <20240720120048.36758-7-hpausten@protonmail.com>
 
-Il 09/07/24 09:48, Lorenzo Bianconi ha scritto:
-> EN7581 clock driver shares the IO region with the upcoming pinctrl
-> driver for Airoha EN7581 SoC. Fix it by reducing the clk mapped
-> region to only used registers in order to not overlap with pinctrl
-> one. This change is not introducing any backward compatibility issue
-> since the EN7581 dts is not upstream yet.
-> 
-> Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
+
+--dcnYdkiBJnjYH+Dp
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Sat, Jul 20, 2024 at 12:01:58PM +0000, Harry Austen wrote:
+> Xilinx clocking wizard IP core's dynamic reconfiguration support is
+> optionally enabled at build time. Add a devicetree boolean property to
+> describe whether the hardware supports this feature or not.
+>=20
+> Signed-off-by: Harry Austen <hpausten@protonmail.com>
 > ---
->   drivers/clk/clk-en7523.c | 23 +++++++++++++++--------
->   1 file changed, 15 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
-> index b20e56337a6b..d9ecbb6bf55a 100644
-> --- a/drivers/clk/clk-en7523.c
-> +++ b/drivers/clk/clk-en7523.c
-> @@ -31,7 +31,14 @@
->   #define   REG_RESET_CONTROL_PCIE1	BIT(27)
->   #define   REG_RESET_CONTROL_PCIE2	BIT(26)
->   /* EN7581 */
-> -#define REG_CRYPTO_CLKSRC2		0x20c
-> +#define REG_GSW_CLK_DIV_SEL2		0x00
-> +#define REG_EMI_CLK_DIV_SEL2		0x04
-> +#define REG_BUS_CLK_DIV_SEL2		0x08
-> +#define REG_SPI_CLK_DIV_SEL2		0x10
-> +#define REG_SPI_CLK_FREQ_SEL2		0x14
-> +#define REG_NPU_CLK_DIV_SEL2		0x48
-> +#define REG_CRYPTO_CLKSRC2		0x58
+>  .../devicetree/bindings/clock/xlnx,clocking-wizard.yaml    | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard=
+=2Eyaml b/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
+> index 4609bb56b06b5..890aeebf6f375 100644
+> --- a/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
+> +++ b/Documentation/devicetree/bindings/clock/xlnx,clocking-wizard.yaml
+> @@ -40,6 +40,12 @@ properties:
+>        - const: s_axi_aclk
+> =20
+> =20
+> +  xlnx,dynamic-reconfig:
+> +    type: boolean
+
+The type here should be "flag" not boolean, boolean can be set to
+"false" and what you're likely doing is just checking for the property
+being present. "flag" doesn't allow false.
+
+> +    description:
+> +      Indicate whether the core has been configured with support for dyn=
+amic
+> +      runtime reconfguration of the clocking primitive MMCM/PLL.
 > +
->   #define REG_PCIE0_MEM			0x00
->   #define REG_PCIE0_MEM_MASK		0x04
->   #define REG_PCIE1_MEM			0x08
-> @@ -203,7 +210,7 @@ static const struct en_clk_desc en7581_base_clks[] = {
->   		.id = EN7523_CLK_GSW,
->   		.name = "gsw",
->   
-> -		.base_reg = REG_GSW_CLK_DIV_SEL,
-> +		.base_reg = REG_GSW_CLK_DIV_SEL2,
+>    xlnx,speed-grade:
+>      $ref: /schemas/types.yaml#/definitions/uint32
+>      enum: [1, 2, 3]
+> @@ -88,6 +94,7 @@ examples:
+>          compatible =3D "xlnx,clocking-wizard-v6.0";
+>          reg =3D <0xb0000000 0x10000>;
+>          #clock-cells =3D <1>;
+> +        xlnx,dynamic-reconfig;
+>          xlnx,speed-grade =3D <1>;
+>          xlnx,nr-outputs =3D <6>;
+>          clock-names =3D "clk_in1", "s_axi_aclk";
+> --=20
+> 2.45.2
+>=20
+>=20
 
-This is practically just commit noise :-)
+--dcnYdkiBJnjYH+Dp
+Content-Type: application/pgp-signature; name="signature.asc"
 
-You are adding the en7581_base_clks[] in patch [1/2] with the wrong base register,
-then fixing it here ... and that's wrong.
+-----BEGIN PGP SIGNATURE-----
 
-Please squash the two patches.
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZp6TVQAKCRB4tDGHoIJi
+0hdmAQCqOMXx2CK3Q8yzIIBHMuERHAWGGfcI5gzwiytnYyIP9wEA7lTXK19quiSI
+Lk3aVqOddEgJEmbgqX2t6/H6W4duVw4=
+=2Kf6
+-----END PGP SIGNATURE-----
 
-Cheers,
-Angelo
-
->   		.base_bits = 1,
->   		.base_shift = 8,
->   		.base_values = gsw_base,
-> @@ -217,7 +224,7 @@ static const struct en_clk_desc en7581_base_clks[] = {
->   		.id = EN7523_CLK_EMI,
->   		.name = "emi",
->   
-> -		.base_reg = REG_EMI_CLK_DIV_SEL,
-> +		.base_reg = REG_EMI_CLK_DIV_SEL2,
->   		.base_bits = 2,
->   		.base_shift = 8,
->   		.base_values = emi7581_base,
-> @@ -231,7 +238,7 @@ static const struct en_clk_desc en7581_base_clks[] = {
->   		.id = EN7523_CLK_BUS,
->   		.name = "bus",
->   
-> -		.base_reg = REG_BUS_CLK_DIV_SEL,
-> +		.base_reg = REG_BUS_CLK_DIV_SEL2,
->   		.base_bits = 1,
->   		.base_shift = 8,
->   		.base_values = bus_base,
-> @@ -245,13 +252,13 @@ static const struct en_clk_desc en7581_base_clks[] = {
->   		.id = EN7523_CLK_SLIC,
->   		.name = "slic",
->   
-> -		.base_reg = REG_SPI_CLK_FREQ_SEL,
-> +		.base_reg = REG_SPI_CLK_FREQ_SEL2,
->   		.base_bits = 1,
->   		.base_shift = 0,
->   		.base_values = slic_base,
->   		.n_base_values = ARRAY_SIZE(slic_base),
->   
-> -		.div_reg = REG_SPI_CLK_DIV_SEL,
-> +		.div_reg = REG_SPI_CLK_DIV_SEL2,
->   		.div_bits = 5,
->   		.div_shift = 24,
->   		.div_val0 = 20,
-> @@ -260,7 +267,7 @@ static const struct en_clk_desc en7581_base_clks[] = {
->   		.id = EN7523_CLK_SPI,
->   		.name = "spi",
->   
-> -		.base_reg = REG_SPI_CLK_DIV_SEL,
-> +		.base_reg = REG_SPI_CLK_DIV_SEL2,
->   
->   		.base_value = 400000000,
->   
-> @@ -272,7 +279,7 @@ static const struct en_clk_desc en7581_base_clks[] = {
->   		.id = EN7523_CLK_NPU,
->   		.name = "npu",
->   
-> -		.base_reg = REG_NPU_CLK_DIV_SEL,
-> +		.base_reg = REG_NPU_CLK_DIV_SEL2,
->   		.base_bits = 2,
->   		.base_shift = 8,
->   		.base_values = npu7581_base,
-
+--dcnYdkiBJnjYH+Dp--
