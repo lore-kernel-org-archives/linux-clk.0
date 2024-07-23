@@ -1,122 +1,79 @@
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CFF2152179
-	for <linux-clk@vger.kernel.org>; Tue, 23 Jul 2024 11:49:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DD021527A7
+	for <linux-clk@vger.kernel.org>; Tue, 23 Jul 2024 12:58:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721735389; cv=none; b=gkIhSMHfqWybBoSIDKsfhgbsGDM5Wz4u0yRTE7Vcm7vhEfcZv/GbbvnCflDvp9OKU/duCNvTNz83vji5s2AVcxD6mJdxDS1DUTpijOLq1W8fEAjYGuPBwZe4xxOANCcGEBxzkHaD3Yd1VaWtMpEIjlUVqKFQ+zi+sz8eA6e6xR0=
+	t=1721739517; cv=none; b=joESvt4b+m7eFlqEKZ/sRcoYJzxahfDq4PlpsDHy9xEh6E/lvauZNp2reaUZxtSiUI/E2rppJi+ilFm1cioHpAgXsW1cLtIERu5MSsvIyMkLDEjcj8/jdlbYpW9jTDjGrqeU+cV9KDLxFMtIiRkQk2p/8akmBPYdjablTyipMmY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721735389; c=relaxed/simple;
-	bh=hCpkp5ANZ8OkyRK1jIyFubJUFgQl0f1cvXrspwfYuRk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qLUoDLtmh0cyFee0OuCZ97Mf6hcL5BBJdh2VBBU2hvUw93jjapKwPgHR1EZWyla5Bz/a5gio/8DAWuKhW7mW9XRdkzNDTXVgMgs81G1DI3HK/bDZWwTlpvKyOsJNPe70WQwvNGT5KHuAvueprY7AXHB8mlN2whzxThf1XwMcYM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dd2rXOqN; arc=none smtp.client-ip=209.85.219.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1721739517; c=relaxed/simple;
+	bh=WajohK/Qu4zEpddE3qakoWHVAncIfRVEiqpOcTt35YA=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=p0Q7heQ5I/1T4BN+vJTN40Tu6iymCmlttX5o22mzEbDD8KUMOaUEU5ttnwV4BV4RNDYWKo7WIMUJ8vPUSJZHFsUbS+scQoKFXJPCdLONr4SaJo5ktdWgmTgZaU6fM/XaVKWF+smCmKjrKCrZ2Xli1feLuF/HKG3Q88rwYqzPBG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vImnpBuv; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dd2rXOqN"
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e05f25fb96eso4947536276.1
-        for <linux-clk@vger.kernel.org>; Tue, 23 Jul 2024 04:49:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721735387; x=1722340187; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=llaCJsVSUmU+Pmrfx22YDYSfpr8wrINFhr1BhQOlVyc=;
-        b=dd2rXOqNr3sLwF0+oZwHXvguuj3L6yvtCV7VmzYHmD4wXCawQBgU8IGkDtwls2oXjT
-         myXzwIVvdNfxZY+mM2ud3pjdMK4IShzAdcT/21InXxosdmw6G0WdngbgFm8Jx4voYlwv
-         flfZJl6kvvd7CKw8NptA943+G5tXwWEQP9UJ4rU1m8Q8WUN7ThKzkZel7phk3DoIyQAg
-         L8Ue8iksb1lZ7e2IFrUg2VRB79+kA6xxub4aKZEdooE8oODzaX9y/z6lcYzcwrw7/t7U
-         oKP2iQbaV7vQWC9XvsnhZKS01xCK8tJcEP9Enbzbe7jfkoUBoromzjnVctIGaTwP8Uxo
-         3K2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721735387; x=1722340187;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=llaCJsVSUmU+Pmrfx22YDYSfpr8wrINFhr1BhQOlVyc=;
-        b=Xh3dkyhwSe4kFH4yyPf8pBPdKj0HHcaew6keg4QGJKhhnPsulDEguKF9W9pKplT+X6
-         i66yN88fXBN62JaOTr0yM8Mvw6/oYgsC0Q0hbHGp7k6Y/IAJzTxymVvDwoPRIj1nIekC
-         Dn0qa9Ayhxa5gnrt7EOauH1B+FtlWD0i3c2dmO/qKaVQ2I3gcF8LcVrj09iNGXrGe8p6
-         xwIAef+Lapt6QuKpJIH2Y8AGdkx+RKTVYgy4TmUxhBoYm6JtloeYpWLhr6vp0qRfO8i1
-         ia+9nn3sBI8vJv+pD6SEX/OuSvDY4SfbQf+5SpNc8S22taQ3aVu8/68zL+LGiOdd+uaQ
-         GIxw==
-X-Forwarded-Encrypted: i=1; AJvYcCXOaRZ89nfREDCjfRXDxpsVFnJYgLU4qazMVkVjs5QDmF2EGNLODoDjfpyuPSO4GLgTjYtR0lIfMGzNrtnIsEfJsj4MRtRrfmqW
-X-Gm-Message-State: AOJu0YwO5hPjE7mS1oWH2GO6NLn+QWf+uUanWp9Cgbjof/ToWuAEnGEQ
-	eRU7Apu2b37ZA1oPNXU2S7z5/7E29BpgM/2CwKfI8LNB8jAOkl1wQjunpq4cU86p4vGO9bLrUDI
-	PIK92CpHcT3J6/AJjXxvK4nQzigZmT4LgvdPzaQ==
-X-Google-Smtp-Source: AGHT+IGuO4i1P5RHinuVPAWDIVC3NOtN+MxiPreBx2aMxJvTATo97Thp/RKQ+zI6rh4tuhZUg++9l/QZJxL5swB8y84=
-X-Received: by 2002:a05:6902:1025:b0:e08:567c:c9c4 with SMTP id
- 3f1490d57ef6-e086fe5459emr11815420276.6.1721735387259; Tue, 23 Jul 2024
- 04:49:47 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vImnpBuv"
+Received: by smtp.kernel.org (Postfix) with ESMTPS id AD7A5C4AF50;
+	Tue, 23 Jul 2024 12:58:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721739516;
+	bh=WajohK/Qu4zEpddE3qakoWHVAncIfRVEiqpOcTt35YA=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=vImnpBuvXem+cpOSDW3F9q9E1IEBFU4A8s/5N5SrvOwHDpzfMIbP5X6ynpJq4SNut
+	 5f71/NrQsotHg+FugzxtfGfwE+D8OSnMLJeCfCCDgEu7CvWgcqn7Mi2GaF9UsK+eCu
+	 4rX7Goe5SBBhtkSuw+HDovjGIOJO86gBJ+IlJ0pSHtEr2/NIWgLC6ZFiwOOx9fhBM2
+	 smHI37p+HSHaIlkqFgRlojfESiHcbx9w0zDMx6zlOv95qeRWqf0B8jWRN1aUOXTS5y
+	 Ysj8ObXqLcB0lG4TUoLyRXk1VScwjdrLG7zZ/MRVdKwj3En5MY4eyO3NFBylPpvdR9
+	 3f4IGNEAy/iaA==
+Received: from aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by aws-us-west-2-korg-oddjob-1.ci.codeaurora.org (Postfix) with ESMTP id 97932C4333D;
+	Tue, 23 Jul 2024 12:58:36 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240715-linux-next-24-07-13-sc8280xp-camcc-fixes-v1-1-fadb5d9445c1@linaro.org>
- <f0d4b7a3-2b61-3d42-a430-34b30eeaa644@quicinc.com> <86068581-0ce7-47b5-b1c6-fda4f7d1037f@linaro.org>
- <02679111-1a35-b931-fecd-01c952553652@quicinc.com> <ce14800d-7411-47c5-ad46-6baa6fb678f4@linaro.org>
- <dd588276-8f1c-4389-7b3a-88f483b7072e@quicinc.com> <610efa39-e476-45ae-bd2b-3a0b8ea485dc@linaro.org>
- <6055cb14-de80-97bc-be23-7af8ffc89fcc@quicinc.com> <a0ac4c3b-3c46-4c89-9947-d91ba06309f4@linaro.org>
- <8dfc5456-861b-e01a-d2d2-1bb9adea1984@quicinc.com>
-In-Reply-To: <8dfc5456-861b-e01a-d2d2-1bb9adea1984@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Tue, 23 Jul 2024 14:49:36 +0300
-Message-ID: <CAA8EJpqrxCyeJJGSORtfvi-bBdqPOjr6xO4gff2W+LBCEVoxJQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: qcom: camcc-sc8280xp: Remove always-on GDSC hard-coding
-To: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
-Cc: "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, stable@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Subject: Re: [GIT PULL] RISC-V Sophgo SG2042 clock drivers for v6.11
+From: patchwork-bot+linux-riscv@kernel.org
+Message-Id: 
+ <172173951661.10883.11626056916219005908.git-patchwork-notify@kernel.org>
+Date: Tue, 23 Jul 2024 12:58:36 +0000
+References: <MA0P287MB28221A333D852974F55E3228FEC22@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+In-Reply-To: <MA0P287MB28221A333D852974F55E3228FEC22@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+To: Chen Wang <unicorn_wang@outlook.com>
+Cc: linux-riscv@lists.infradead.org, sboyd@kernel.org,
+ linux-clk@vger.kernel.org, conor@kernel.org, inochiama@outlook.com,
+ xiaoguang.xing@sophgo.com, haijiao.liu@sophgo.com, chao.wei@sophgo.com
 
-On Tue, 23 Jul 2024 at 14:37, Satya Priya Kakitapalli (Temp)
-<quic_skakitap@quicinc.com> wrote:
->
->
-> On 7/23/2024 2:59 PM, Bryan O'Donoghue wrote:
-> > On 22/07/2024 09:57, Satya Priya Kakitapalli (Temp) wrote:
-> >>> I have no idea. Why does it matter ?
-> >>>
-> >>
-> >> This clock expected to be kept always ON, as per design, or else the
-> >> GDSC transition form ON to OFF (vice versa) wont work.
-> >
-> > Yes, parking to XO per this patch works for me. So I guess its already
-> > on and is left in that state by the park.
-> >
->
-> Parking RCG to XO doesn't keep the branch clock always-on. It just keeps
-> the parent RCG at 19.2MHz, branch can still be disabled by clearing
-> bit(0). So during late init, the CCF will disable this clock(in
-> clk_disable_unused API) if modelled. Hence this clock shouldn't be modelled.
+Hello:
 
-But it is already modelled:
+This pull request was applied to riscv/linux.git (for-next)
+by Stephen Boyd <sboyd@kernel.org>:
 
-static struct clk_branch camcc_gdsc_clk = {
-        .halt_reg = 0xc1e4,
-        .halt_check = BRANCH_HALT,
-....
-};
+On Fri, 14 Jun 2024 15:28:22 +0800 you wrote:
+> Hey, Stephen,
+> 
+> Please pull clock changes for RISC-V/Sophgo/SG2042.
+> 
+> For dts part, I will handle it at my side.
+> 
+> I send this PR just want to expedite patches for this clock driver. The
+> patches have gone through 16 rounds of review [1], and I have carefully
+> checked and revised all of them based on everyone's comments.
+> 
+> [...]
 
->
->
-> >> Want to know the clock status after bootup, to understand if the
-> >> clock got turned off during the late init. May I know exactly what
-> >> you have tested? Did you test the camera usecases as well?
-> >
-> > Of course.
-> >
-> > The camera works on x13s with this patch. That's what I mean by tested.
-> >
-> > ---
-> > bod
+Here is the summary with links:
+  - [GIT,PULL] RISC-V Sophgo SG2042 clock drivers for v6.11
+    https://git.kernel.org/riscv/c/54cb3bb48337
 
-
-
+You are awesome, thank you!
 -- 
-With best wishes
-Dmitry
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
