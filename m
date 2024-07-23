@@ -1,185 +1,103 @@
-Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f52.google.com (mail-ot1-f52.google.com [209.85.210.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DC59156F23;
-	Tue, 23 Jul 2024 15:09:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B4BE14C5A1
+	for <linux-clk@vger.kernel.org>; Tue, 23 Jul 2024 16:33:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721747385; cv=none; b=ucYeCC0FO9A8MtI9SEiDAaXWCj9LTp/3RLbIWM8rDAi7gOT4u/Exoa/b8rWJ34ivOvojLKQ/nuHrNEtFg/XHGB+zQH/BB01tVMEl0hyLppbk1qfun3eRUgfseTsR9D7Ug3dxReMYrxOdjoxGIyYU3/PenE1dW8zI757AzLk1+Xc=
+	t=1721752394; cv=none; b=QUeQmGa2uvRa32snFONyxnxHOIam8SmCZ2ui8imLAby3nLBzS5RV8HSSyVMcqISe7i4zyr8GknXuAwl/OFVZHupq+YB3BJFZyia7fNffYSmWa/Wde7zOcytrs+/iUAl1yNrnEoBsTb6w7+SLws4RKtll2jK6zC56dShLHLuEmtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721747385; c=relaxed/simple;
-	bh=IFA0f0H2+BKUdtT7ASlZ9IlkMsU/NNr/hRsLL9ngWBo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=szxXGqOy3//3iKm8/o+aVVZWUxMLTTZ/Ssi5ag9PCscOBnXE4v7jBLF+qPki9OEm24/a3lgN0i4iJ+E+SmYtu/nDOa7k6FiStj5t+Izh+De+XX38t+rm29aW628mQtN8TklqsL0AZTNmwL1nc14VnxeL3pKH2Or19ebWy3uDcKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=MNVOINAr; arc=none smtp.client-ip=46.235.227.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	s=arc-20240116; t=1721752394; c=relaxed/simple;
+	bh=Rlsm3g465sL7REjC1ICV1eiOlwWaRmEDM1DT0XXv+YA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=NNxJ1178ZR6SAQBQLHAXIRm5/NXte4Z44s0h2BjNdzFG6I1aHBkVWmDQBWtklQDEmpOKA02OzUA5MKXET0/9heLlVT78GccHqKIKi9fU63qKfEk2HJBY07FmNXyiznjUleW7lcq4IDjsTRqOMyPdHIuTgrg0KCxmoC5JB5vTWkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=x/y2ICbV; arc=none smtp.client-ip=209.85.210.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="MNVOINAr"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1721747381;
-	bh=IFA0f0H2+BKUdtT7ASlZ9IlkMsU/NNr/hRsLL9ngWBo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=MNVOINArCTbTOujGas+WJjwodQFIc0zvFc7Xy9rkyRHfS/9IIdjtqmjybqodXl00x
-	 Ltx/jB5BV16CLDad5v65fBk5etR9p6Vd5crB1mE0JLLPww6itC/j+tR9gPNC+swjfj
-	 mDG1VdZPTHxWWO0pA963vZKiujzOPpfDogzGJUqZUlSn1F5ugkIqm98J5i+jYUKKTl
-	 CEfp2di0KcDEXGXcDvnnTQ3yJnHrht0JEg3LK1L5AvLXvBwL140CUT4Kb0/mjgSW/G
-	 vd2fuMg/lzLE1x9UWulYLDW4imSkDITqR8nNnsDJY9UbePOpzGKShjj2QKGe/pWqA4
-	 fwAHLs51ueOKw==
-Received: from [100.113.186.2] (cola.collaboradmins.com [195.201.22.229])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 22C4137804D4;
-	Tue, 23 Jul 2024 15:09:41 +0000 (UTC)
-Message-ID: <0e278e57-139b-4074-ab3a-d35cef79e7f8@collabora.com>
-Date: Tue, 23 Jul 2024 17:09:40 +0200
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="x/y2ICbV"
+Received: by mail-ot1-f52.google.com with SMTP id 46e09a7af769-708cf5138b6so4367083a34.0
+        for <linux-clk@vger.kernel.org>; Tue, 23 Jul 2024 09:33:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721752392; x=1722357192; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RgQLREszlba2w2e3rfY3g/vnEu09NDSRrgY7DbqY56U=;
+        b=x/y2ICbVqcUiU02XjFn/lUWlurBQ2umA/4pmmpitBbu6O1A+qVpdlbN4ziwSjR5QBZ
+         PLJkhXvYcPFqoqtqYFlT8+Rf/IikHevM1xRQjtNL3EvC2ia0G/WZQ9i3PNtS1Sr54KoC
+         QkTIkBjZEFG15PXcg4EOLw3m4wNeUG3lME/ZvXSNSSfqW4fNNaaeBH92nMTlf4eHz5t0
+         kb/3dHoLwijLz3W3KubM7LDbxKYF14O8/m0V74ngylrnDrwXSJnku46uHz1sx45CnRfh
+         HfKFFz16xjKgm6YxoE1mhGhX4/T3jpCP+jAHmkaej3WAFZQhTztSvjU0O00VbgwXBa0l
+         RQcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721752392; x=1722357192;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RgQLREszlba2w2e3rfY3g/vnEu09NDSRrgY7DbqY56U=;
+        b=iefCIpIEQnCTTo1vYL6y/wAAiCdrcCfi3u0X3RqLx8sEf4UEGkn1KnCVVLezcfzAIZ
+         F5rgoOdHI4LF4El07h66EjaXL8Rj2uGzJyqq/voi4p808jQHE10hvwd84fZVYw2Ejual
+         DEu9vlDtA3zSldP53T5d0SYDRhLoUSRlEaCubFz2KjHoY9wvuTpRBmpmMQ4uzWR0+JDW
+         vadACtcrNu0k0itFULVjAwDo7HLs9yZrGyysroPBVmFAZmLLPSPlsiQYZeW2Z2bSJBRI
+         /BAInq5ik84nX6RRWzB9HHKI35yBjA7dHwnMZrjxgjVK0yTjHVWlfpquDq1VwAmZaq4A
+         /CYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX2L2DXXKGIPzymdSxcs7xaFtbZs2P5B1EO2ZGlLBHekge9Ex7a8zdZ/ESUFOe+YlZ1p+ZI7zeZDx1809lBE9zSTwv7QCxG68CP
+X-Gm-Message-State: AOJu0YxhYNTTF9QQr+wefY5n0nGMwTHqO2wrGYfmQMVv1OQPtTRq4mcG
+	OUkX1iD6OB5WGz7JtsB8XqehyGZ/PoK2hG39VXtp9Uv2RwXAfZC92+zgH/xJZmE=
+X-Google-Smtp-Source: AGHT+IGBpe6peQ8ESbWSihyzWm1b4sHXIw/4hvjia5dWTqI2J3ZsUT5UEo2Jo5H2dBkib0oiHWbtaw==
+X-Received: by 2002:a05:6830:6f0b:b0:703:795b:f675 with SMTP id 46e09a7af769-709234ca4b2mr449959a34.28.1721752391805;
+        Tue, 23 Jul 2024 09:33:11 -0700 (PDT)
+Received: from localhost ([136.62.192.75])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-708f61913b8sm2059965a34.68.2024.07.23.09.33.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 23 Jul 2024 09:33:11 -0700 (PDT)
+From: Sam Protsenko <semen.protsenko@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Mateusz Majewski <m.majewski2@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH 1/2] dt-bindings: clock: exynos850: Add TMU clock
+Date: Tue, 23 Jul 2024 11:33:10 -0500
+Message-Id: <20240723163311.28654-1-semen.protsenko@linaro.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: mediatek: reset: Remove unused
- mtk_register_reset_controller()
-To: Fei Shao <fshao@chromium.org>
-Cc: sboyd@kernel.org, matthias.bgg@gmail.com, mturquette@baylibre.com,
- p.zabel@pengutronix.de, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-clk@vger.kernel.org, kernel@collabora.com
-References: <20240718082528.220750-1-angelogioacchino.delregno@collabora.com>
- <CAC=S1nhmuGfaQrK-3TZzY3-c1_cDbB5g_Zp2nXOzg6zQZ-j4Lw@mail.gmail.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <CAC=S1nhmuGfaQrK-3TZzY3-c1_cDbB5g_Zp2nXOzg6zQZ-j4Lw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Il 18/07/24 11:41, Fei Shao ha scritto:
-> On Thu, Jul 18, 2024 at 4:26 PM AngeloGioacchino Del Regno
-> <angelogioacchino.delregno@collabora.com> wrote:
->>
->> Now that all clock controllers have been migrated to the new
->> mtk_register_reset_controller_with_dev() function, the one taking
->> struct device node is now unused: remove it.
->>
->> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
->> ---
->>   drivers/clk/mediatek/reset.c | 59 ------------------------------------
->>   drivers/clk/mediatek/reset.h | 10 ------
->>   2 files changed, 69 deletions(-)
->>
->> diff --git a/drivers/clk/mediatek/reset.c b/drivers/clk/mediatek/reset.c
->> index 290ceda84ce4..069f9e909cb0 100644
->> --- a/drivers/clk/mediatek/reset.c
->> +++ b/drivers/clk/mediatek/reset.c
->> @@ -110,65 +110,6 @@ static int reset_xlate(struct reset_controller_dev *rcdev,
->>          return data->desc->rst_idx_map[reset_spec->args[0]];
->>   }
->>
->> -int mtk_register_reset_controller(struct device_node *np,
->> -                                 const struct mtk_clk_rst_desc *desc)
->> -{
->> -       struct regmap *regmap;
->> -       const struct reset_control_ops *rcops = NULL;
->> -       struct mtk_clk_rst_data *data;
->> -       int ret;
->> -
->> -       if (!desc) {
->> -               pr_err("mtk clock reset desc is NULL\n");
->> -               return -EINVAL;
->> -       }
->> -
->> -       switch (desc->version) {
->> -       case MTK_RST_SIMPLE:
->> -               rcops = &mtk_reset_ops;
->> -               break;
->> -       case MTK_RST_SET_CLR:
->> -               rcops = &mtk_reset_ops_set_clr;
->> -               break;
->> -       default:
->> -               pr_err("Unknown reset version %d\n", desc->version);
->> -               return -EINVAL;
->> -       }
->> -
->> -       regmap = device_node_to_regmap(np);
->> -       if (IS_ERR(regmap)) {
->> -               pr_err("Cannot find regmap for %pOF: %pe\n", np, regmap);
->> -               return -EINVAL;
->> -       }
->> -
->> -       data = kzalloc(sizeof(*data), GFP_KERNEL);
->> -       if (!data)
->> -               return -ENOMEM;
->> -
->> -       data->desc = desc;
->> -       data->regmap = regmap;
->> -       data->rcdev.owner = THIS_MODULE;
->> -       data->rcdev.ops = rcops;
->> -       data->rcdev.of_node = np;
->> -
->> -       if (data->desc->rst_idx_map_nr > 0) {
->> -               data->rcdev.of_reset_n_cells = 1;
->> -               data->rcdev.nr_resets = desc->rst_idx_map_nr;
->> -               data->rcdev.of_xlate = reset_xlate;
->> -       } else {
->> -               data->rcdev.nr_resets = desc->rst_bank_nr * RST_NR_PER_BANK;
->> -       }
->> -
->> -       ret = reset_controller_register(&data->rcdev);
->> -       if (ret) {
->> -               pr_err("could not register reset controller: %d\n", ret);
->> -               kfree(data);
->> -               return ret;
->> -       }
->> -
->> -       return 0;
->> -}
->> -
->>   int mtk_register_reset_controller_with_dev(struct device *dev,
->>                                             const struct mtk_clk_rst_desc *desc)
-> 
-> I guess that means the "_with_dev" suffix here becomes redundant and
-> therefore can be removed.
-> Do you want to update it all together?
-> 
+Add a constant for TMU PCLK clock. It acts simultaneously as an
+interface clock (to access TMU registers) and an operating clock which
+makes TMU IP-core functional.
 
-Makes sense to add another commit that performs the rename... yeah.
+Signed-off-by: Sam Protsenko <semen.protsenko@linaro.org>
+---
+ include/dt-bindings/clock/exynos850.h | 1 +
+ 1 file changed, 1 insertion(+)
 
-Cheers,
-Angelo
-
-> Regards,
-> Fei
-> 
-> 
->>   {
->> diff --git a/drivers/clk/mediatek/reset.h b/drivers/clk/mediatek/reset.h
->> index 6a58a3d59165..562ffd290a22 100644
->> --- a/drivers/clk/mediatek/reset.h
->> +++ b/drivers/clk/mediatek/reset.h
->> @@ -59,16 +59,6 @@ struct mtk_clk_rst_data {
->>          const struct mtk_clk_rst_desc *desc;
->>   };
->>
->> -/**
->> - * mtk_register_reset_controller - Register MediaTek clock reset controller
->> - * @np: Pointer to device node.
->> - * @desc: Constant pointer to description of clock reset.
->> - *
->> - * Return: 0 on success and errorno otherwise.
->> - */
->> -int mtk_register_reset_controller(struct device_node *np,
->> -                                 const struct mtk_clk_rst_desc *desc);
->> -
->>   /**
->>    * mtk_register_reset_controller - Register mediatek clock reset controller with device
->>    * @np: Pointer to device.
->> --
->> 2.45.2
->>
->>
-
+diff --git a/include/dt-bindings/clock/exynos850.h b/include/dt-bindings/clock/exynos850.h
+index 7666241520f8..80dacda57229 100644
+--- a/include/dt-bindings/clock/exynos850.h
++++ b/include/dt-bindings/clock/exynos850.h
+@@ -358,6 +358,7 @@
+ #define CLK_GOUT_UART_PCLK		32
+ #define CLK_GOUT_WDT0_PCLK		33
+ #define CLK_GOUT_WDT1_PCLK		34
++#define CLK_GOUT_BUSIF_TMU_PCLK		35
+ 
+ /* CMU_CORE */
+ #define CLK_MOUT_CORE_BUS_USER		1
+-- 
+2.39.2
 
