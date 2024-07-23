@@ -1,269 +1,281 @@
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA67114A4DA
-	for <linux-clk@vger.kernel.org>; Tue, 23 Jul 2024 07:10:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2910C14AD17
+	for <linux-clk@vger.kernel.org>; Tue, 23 Jul 2024 07:42:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721718611; cv=none; b=FJYsdy5cbSLVKPB4hU3CvkDwrF/SZ85COvywijVWVvbvz12uKX78K2jQX7LZo01CVThyMM6C5QtTTuygXWCYduJq6I4wu9YgJnYAg4u2kITR+TObQu04KdC/uteegidwFWXfmIOqt8EW8jRgLfXJ/77ky68jjTDXHBmOTshWmz4=
+	t=1721720549; cv=none; b=ZFIuqh74PQU8O3eaJHl8VAzN8iVf7Ue7OfkHwEiNhrUMg5WD2BsPr88yR6JomUfXS04sgVHylmhZiMAA0ZJC5XAOMoYCaye6hrAPrERBtDkHdTmLqhrSksfHqWr5WZR2cRS5PROrFDIi5pRuls1/f90zJzuwHGc5H8OD8VzAP8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721718611; c=relaxed/simple;
-	bh=pDrcpwPThooXOhuo8yBT0CKcsbido5m6PcRHkzyYUr0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HAemNyJ911G39QLq3WjEa17JG81HAKxKLuthwKn9rELq5NkRCg6WC+aHoAsMA/z5e8fBSi389/G9mwL8fsgl0z+ulUzGB4ngKuk398F+IIN848Ady6PEJcKpp7ab62mvglaa0cHXB0ELFNxU1mGpve+pouniPxDGNMu3k08PI14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=KQbaIA0/; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1721720549; c=relaxed/simple;
+	bh=S2WsnWxl661vGWXGcN0AZIv5Th2xKZ2vMpl2lvJc0R8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r45Sxp4ceM07FhadKtPp9XPA5UcB+muare5DJS+BLrIaTodGZO2fC9VwWBPSRYV+2mRQjFbtJuDuH55Lbiui0MD1ZRNUrn4cKJr51Na7/T1P3S5OMAO9YUADkQO25vJM86fQ/OtuJkE1FuD12a2L4+Qm+gkDkPKcepekhR/+Rz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FPxtm2kX; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="KQbaIA0/"
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a6265d3ba8fso35772866b.0
-        for <linux-clk@vger.kernel.org>; Tue, 23 Jul 2024 00:10:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1721718608; x=1722323408; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=NbY9hIILRpQ3t2kLWFKU5JlJAqMsH+KZEUPDJfybT0Y=;
-        b=KQbaIA0/TEPMsD24OnRsEErGVV7S5gq++zOE9txhTZoHwCUuhDlCYlHZyEaHDA3l5q
-         qy/hYWQ2K9HxXvJtlJW1NlCmNCZZte+2TpSd3ltHk5nV8X///HLiNyeMxcN09MBmGO7e
-         Ue5q+pUbrPrG2yy+3MI4FTLICSIyJ0KDrasM4TTu/5/vSmf3iZk5mZva15VpCFItUScI
-         m3pfStWFTmk3imN6nCkT0NZTmMClc/EWDd457AxdhhSoDIg6o6LW9Tfe2Dp+sXIiWvrl
-         kDARsfWOuRT8GcfDKkMmXsNHZ/LUAF5a1aptUXTStuV+f1FAGddZ+P5BRuTqQ3z5Ltl6
-         IRzw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721718608; x=1722323408;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NbY9hIILRpQ3t2kLWFKU5JlJAqMsH+KZEUPDJfybT0Y=;
-        b=bM+OwoU12p3WZvuNnoE48rfg/moLQ91KQnEBDTxs4ZMZ8akxZX5v/K5vmRTVJNBU20
-         8MtyfNgl8HjPRoFc6IXwg28KYb5s0jqrL00FQW0LtP+HV/n2FdoD43XoWdVwJ/5p/1dg
-         gWs3pxu+i2HfBWyFEaS9qBp8hc3PvmF1LbTc/NpurzbB2Pfllpn5LXrqUo/DNJxHmQqa
-         27x9YXwSU0tkbs2FO52XfT5VCDfzJuMc9vLedTxkGKymNMShZZZzmAgrSwfEOzoL4VFU
-         Pm2Q529hdRnk4viKb8krKUkQnIHLllqgUC//SXtEDEzXA7JpzIQC+8KHLLr7NvuB465v
-         LnJg==
-X-Forwarded-Encrypted: i=1; AJvYcCXAqFgLu2bqaSx1tYtBqaGulhNvg+DZ1KMmKYnsTcJ2mOcjOIbm3MWf92cxKelhnALt27qSpZjTZ45+GuhVTFXqfoD2uDERC3Sq
-X-Gm-Message-State: AOJu0YzwfHcoloHI8CVcrZXB91Pf/jaHSWJMN4yJyXnD9C6TDRsdPn0m
-	zcvaKRtxmhlY9YQQi2n2e+ilQaAdg3cH7c+bAD1VCmkRyHCiCryjPoVjOCmCHow=
-X-Google-Smtp-Source: AGHT+IE+F6g3SA1qf6FRpSztSzuggO/YnYuDsDxPqrtwq9kpss+HQL9yVbIZjttzYydPEUxBHj5Afg==
-X-Received: by 2002:a17:907:96a8:b0:a77:c364:c4ef with SMTP id a640c23a62f3a-a7a87c85d96mr158186366b.5.1721718607688;
-        Tue, 23 Jul 2024 00:10:07 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.75])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7a3c94fc2esm497807966b.210.2024.07.23.00.10.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Jul 2024 00:10:07 -0700 (PDT)
-Message-ID: <f0439b5c-1b93-48f3-a130-e4e7ef06c862@tuxon.dev>
-Date: Tue, 23 Jul 2024 10:10:05 +0300
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FPxtm2kX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28571C4AF09;
+	Tue, 23 Jul 2024 07:42:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721720548;
+	bh=S2WsnWxl661vGWXGcN0AZIv5Th2xKZ2vMpl2lvJc0R8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=FPxtm2kXDSOD0XO0y5cGiviDxvkYGyYQaTaUt1n77ddDAXs1IrX4Vk/0uM73zd/UG
+	 qTFJWfJTWtfaNu1RloHfK5qIeVwIWR8vghAe9f0zXz2WRQZnMcKRBUo4TwGpON6N+z
+	 gO1cWkxfXVJZzmYO7U9ihu0/gL6IxmP30JrycrIJ7U66NNbWCjU4FWYSFbtMS4BdTi
+	 wE8et/W/abugHzxxgsPl37dDGn9og3namU3K0oxX8vUz62kRMqFzuI+rDz1xwc6cAE
+	 MJUe+iW4q2Ii2s/NufCQNzh6Y1NuGV/C/YiWKhnIY7AvUNsGvimfsJUNels7aTe18g
+	 h0AEdMic37cWw==
+From: Lorenzo Bianconi <lorenzo@kernel.org>
+To: linux-clk@vger.kernel.org
+Cc: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	p.zabel@pengutronix.de,
+	lorenzo.bianconi83@gmail.com,
+	linux-arm-kernel@lists.infradead.org,
+	nbd@nbd.name,
+	john@phrozen.org,
+	upstream@airoha.com,
+	angelogioacchino.delregno@collabora.com
+Subject: [PATCH v2] clk: en7523: fix estimation of fixed rate for EN7581
+Date: Tue, 23 Jul 2024 09:42:20 +0200
+Message-ID: <ed151e5cedd4f6659d172141df655e851dcd482b.1721720316.git.lorenzo@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 01/11] dt-bindings: mfd: renesas,r9a08g045-vbattb:
- Document VBATTB
-Content-Language: en-US
-To: Rob Herring <robh@kernel.org>
-Cc: lee@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- alexandre.belloni@bootlin.com, geert+renesas@glider.be,
- magnus.damm@gmail.com, mturquette@baylibre.com, sboyd@kernel.org,
- p.zabel@pengutronix.de, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-clk@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240716103025.1198495-1-claudiu.beznea.uj@bp.renesas.com>
- <20240716103025.1198495-2-claudiu.beznea.uj@bp.renesas.com>
- <20240723021713.GA40385-robh@kernel.org>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <20240723021713.GA40385-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi, Rob,
+Introduce fixed_rate in en_clk_soc_data struct in order to
+define per-SoC fixed-rate clock parameters and fix wrong
+parameters for emi, npu and crypto EN7581 clocks.
+Moreover, since EN7581 clock driver shares the IO region with the
+upcoming pinctrl one for Airoha EN7581 SoC, reduce the clk mapped region
+to only used registers in order to not overlap with pinctrl ones.
+This change is not introducing any backward compatibility issue since
+the EN7581 dts is not upstream yet.
 
-On 23.07.2024 05:17, Rob Herring wrote:
-> On Tue, Jul 16, 2024 at 01:30:15PM +0300, Claudiu wrote:
->> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>
->> The VBATTB IP of the Renesas RZ/G3S SoC controls the clock for RTC,
->> the tamper detector and a small general usage memory of 128B. Add
->> documentation for it.
->>
->> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->> ---
->>
->> Changes in v2:
->> - changed file name and compatible
->> - updated title, description sections
->> - added clock controller part documentation and drop dedicated file
->>   for it included in v1
->> - used items to describe interrupts, interrupt-names, clocks, clock-names,
->>   resets
->> - dropped node labels and status
->> - updated clock-names for clock controller to cope with the new
->>   logic on detecting the necessity to setup bypass
->>
->>  .../mfd/renesas,r9a08g045-vbattb.yaml         | 136 ++++++++++++++++++
->>  1 file changed, 136 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/mfd/renesas,r9a08g045-vbattb.yaml
->>
->> diff --git a/Documentation/devicetree/bindings/mfd/renesas,r9a08g045-vbattb.yaml b/Documentation/devicetree/bindings/mfd/renesas,r9a08g045-vbattb.yaml
->> new file mode 100644
->> index 000000000000..30e4da65e2f6
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/mfd/renesas,r9a08g045-vbattb.yaml
->> @@ -0,0 +1,136 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/mfd/renesas,r9a08g045-vbattb.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->> +
->> +title: Renesas Battery Backup Function (VBATTB)
->> +
->> +description:
->> +  Renesas VBATTB is an always on powered module (backed by battery) which
->> +  controls the RTC clock (VBATTCLK), tamper detection logic and a small
->> +  general usage memory (128B).
->> +
->> +maintainers:
->> +  - Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->> +
->> +properties:
->> +  compatible:
->> +    const: renesas,r9a08g045-vbattb
->> +
->> +  reg:
->> +    maxItems: 1
->> +
->> +  ranges: true
->> +
->> +  interrupts:
->> +    items:
->> +      - description: tamper detector interrupt
->> +
->> +  interrupt-names:
->> +    items:
->> +      - const: tampdi
-> 
-> Don't really need -names with only 1 entry.
-> 
->> +
->> +  clocks:
->> +    items:
->> +      - description: VBATTB module clock
->> +
->> +  clock-names:
->> +    items:
->> +      - const: bclk
->> +
->> +  power-domains:
->> +    maxItems: 1
->> +
->> +  resets:
->> +    items:
->> +      - description: VBATTB module reset
->> +
->> +  '#address-cells':
->> +    const: 2
->> +
->> +  '#size-cells':
->> +    const: 2
->> +
->> +patternProperties:
->> +  "^clock-controller@1c+$":
->> +    type: object
->> +    description: VBATTCLK clock
->> +
->> +    properties:
->> +      compatible:
->> +        const: renesas,r9a08g045-vbattb-clk
->> +
->> +      reg:
->> +        maxItems: 1
->> +
->> +      clocks:
->> +        items:
->> +          - description: input clock for VBATTCLK
->> +
->> +      clock-names:
->> +        description: |
->> +          Use xin if connected to an external crystal oscillator.
->> +          Use clkin if connected to an external hardware device generating the
->> +          clock.
->> +        enum:
->> +          - xin
->> +          - clkin
->> +
->> +      '#clock-cells':
->> +        const: 0
->> +
->> +      renesas,vbattb-load-nanofarads:
->> +        description: load capacitance of the on board xtal
->> +        $ref: /schemas/types.yaml#/definitions/uint32
->> +        enum: [ 4000, 7000, 9000, 12500 ]
->> +
->> +    required:
->> +      - compatible
->> +      - reg
->> +      - clocks
->> +      - clock-names
->> +      - '#clock-cells'
->> +      - renesas,vbattb-load-nanofarads
->> +
->> +    additionalProperties: false
->> +
->> +required:
->> +  - compatible
->> +  - reg
->> +  - interrupts
->> +  - interrupt-names
->> +  - clocks
->> +  - clock-names
->> +  - power-domains
->> +  - resets
->> +
->> +additionalProperties: false
->> +
->> +examples:
->> +  - |
->> +    #include <dt-bindings/clock/r9a08g045-cpg.h>
->> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
->> +
->> +    vbattb@1005c000 {
->> +        compatible = "renesas,r9a08g045-vbattb";
->> +        reg = <0x1005c000 0x1000>;
->> +        ranges = <0 0 0x1005c000 0 0x1000>;
->> +        interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
->> +        interrupt-names = "tampdi";
->> +        clocks = <&cpg CPG_MOD R9A08G045_VBAT_BCLK>;
->> +        clock-names = "bclk";
->> +        power-domains = <&cpg>;
->> +        resets = <&cpg R9A08G045_VBAT_BRESETN>;
->> +        #address-cells = <2>;
->> +        #size-cells = <2>;
->> +
->> +        clock-controller@1c {
->> +            compatible = "renesas,r9a08g045-vbattb-clk";
->> +            reg = <0 0x1c 0 0x10>;
->> +            clocks = <&vbattb_xtal>;
->> +            clock-names = "xin";
->> +            #clock-cells = <0>;
->> +            renesas,vbattb-load-nanofarads = <12500>;
->> +        };
-> 
-> Is this really a separate device?
+Fixes: 66bc47326ce2 ("clk: en7523: Add EN7581 support")
+Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
+---
+Changes since v1:
+- squash patch 1/2 and 2/2
+---
+ drivers/clk/clk-en7523.c | 136 ++++++++++++++++++++++++++++++++++++---
+ 1 file changed, 128 insertions(+), 8 deletions(-)
 
-It's not.
+diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
+index 22fbea61c3dc..d9ecbb6bf55a 100644
+--- a/drivers/clk/clk-en7523.c
++++ b/drivers/clk/clk-en7523.c
+@@ -31,6 +31,14 @@
+ #define   REG_RESET_CONTROL_PCIE1	BIT(27)
+ #define   REG_RESET_CONTROL_PCIE2	BIT(26)
+ /* EN7581 */
++#define REG_GSW_CLK_DIV_SEL2		0x00
++#define REG_EMI_CLK_DIV_SEL2		0x04
++#define REG_BUS_CLK_DIV_SEL2		0x08
++#define REG_SPI_CLK_DIV_SEL2		0x10
++#define REG_SPI_CLK_FREQ_SEL2		0x14
++#define REG_NPU_CLK_DIV_SEL2		0x48
++#define REG_CRYPTO_CLKSRC2		0x58
++
+ #define REG_PCIE0_MEM			0x00
+ #define REG_PCIE0_MEM_MASK		0x04
+ #define REG_PCIE1_MEM			0x08
+@@ -78,6 +86,10 @@ struct en_rst_data {
+ };
+ 
+ struct en_clk_soc_data {
++	struct {
++		const struct en_clk_desc *desc;
++		u16 size;
++	} fixed_rate;
+ 	const struct clk_ops pcie_ops;
+ 	struct {
+ 		const u16 *bank_ofs;
+@@ -92,6 +104,10 @@ static const u32 emi_base[] = { 333000000, 400000000 };
+ static const u32 bus_base[] = { 500000000, 540000000 };
+ static const u32 slic_base[] = { 100000000, 3125000 };
+ static const u32 npu_base[] = { 333000000, 400000000, 500000000 };
++/* EN7581 */
++static const u32 emi7581_base[] = { 540000000, 480000000, 400000000, 300000000 };
++static const u32 npu7581_base[] = { 800000000, 750000000, 720000000, 600000000 };
++static const u32 crypto_base[] = { 540000000, 480000000 };
+ 
+ static const struct en_clk_desc en7523_base_clks[] = {
+ 	{
+@@ -189,6 +205,102 @@ static const struct en_clk_desc en7523_base_clks[] = {
+ 	}
+ };
+ 
++static const struct en_clk_desc en7581_base_clks[] = {
++	{
++		.id = EN7523_CLK_GSW,
++		.name = "gsw",
++
++		.base_reg = REG_GSW_CLK_DIV_SEL2,
++		.base_bits = 1,
++		.base_shift = 8,
++		.base_values = gsw_base,
++		.n_base_values = ARRAY_SIZE(gsw_base),
++
++		.div_bits = 3,
++		.div_shift = 0,
++		.div_step = 1,
++		.div_offset = 1,
++	}, {
++		.id = EN7523_CLK_EMI,
++		.name = "emi",
++
++		.base_reg = REG_EMI_CLK_DIV_SEL2,
++		.base_bits = 2,
++		.base_shift = 8,
++		.base_values = emi7581_base,
++		.n_base_values = ARRAY_SIZE(emi7581_base),
++
++		.div_bits = 3,
++		.div_shift = 0,
++		.div_step = 1,
++		.div_offset = 1,
++	}, {
++		.id = EN7523_CLK_BUS,
++		.name = "bus",
++
++		.base_reg = REG_BUS_CLK_DIV_SEL2,
++		.base_bits = 1,
++		.base_shift = 8,
++		.base_values = bus_base,
++		.n_base_values = ARRAY_SIZE(bus_base),
++
++		.div_bits = 3,
++		.div_shift = 0,
++		.div_step = 1,
++		.div_offset = 1,
++	}, {
++		.id = EN7523_CLK_SLIC,
++		.name = "slic",
++
++		.base_reg = REG_SPI_CLK_FREQ_SEL2,
++		.base_bits = 1,
++		.base_shift = 0,
++		.base_values = slic_base,
++		.n_base_values = ARRAY_SIZE(slic_base),
++
++		.div_reg = REG_SPI_CLK_DIV_SEL2,
++		.div_bits = 5,
++		.div_shift = 24,
++		.div_val0 = 20,
++		.div_step = 2,
++	}, {
++		.id = EN7523_CLK_SPI,
++		.name = "spi",
++
++		.base_reg = REG_SPI_CLK_DIV_SEL2,
++
++		.base_value = 400000000,
++
++		.div_bits = 5,
++		.div_shift = 8,
++		.div_val0 = 40,
++		.div_step = 2,
++	}, {
++		.id = EN7523_CLK_NPU,
++		.name = "npu",
++
++		.base_reg = REG_NPU_CLK_DIV_SEL2,
++		.base_bits = 2,
++		.base_shift = 8,
++		.base_values = npu7581_base,
++		.n_base_values = ARRAY_SIZE(npu7581_base),
++
++		.div_bits = 3,
++		.div_shift = 0,
++		.div_step = 1,
++		.div_offset = 1,
++	}, {
++		.id = EN7523_CLK_CRYPTO,
++		.name = "crypto",
++
++		.base_reg = REG_CRYPTO_CLKSRC2,
++		.base_bits = 1,
++		.base_shift = 0,
++		.base_values = crypto_base,
++		.n_base_values = ARRAY_SIZE(crypto_base),
++	}
++};
++
+ static const u16 en7581_rst_ofs[] = {
+ 	REG_RST_CTRL2,
+ 	REG_RST_CTRL1,
+@@ -252,9 +364,9 @@ static const u16 en7581_rst_map[] = {
+ 	[EN7581_XPON_MAC_RST]		= RST_NR_PER_BANK + 31,
+ };
+ 
+-static unsigned int en7523_get_base_rate(void __iomem *base, unsigned int i)
++static unsigned int en7523_get_base_rate(const struct en_clk_desc *desc,
++					 void __iomem *base)
+ {
+-	const struct en_clk_desc *desc = &en7523_base_clks[i];
+ 	u32 val;
+ 
+ 	if (!desc->base_bits)
+@@ -270,9 +382,8 @@ static unsigned int en7523_get_base_rate(void __iomem *base, unsigned int i)
+ 	return desc->base_values[val];
+ }
+ 
+-static u32 en7523_get_div(void __iomem *base, int i)
++static u32 en7523_get_div(const struct en_clk_desc *desc, void __iomem *base)
+ {
+-	const struct en_clk_desc *desc = &en7523_base_clks[i];
+ 	u32 reg, val;
+ 
+ 	if (!desc->div_bits)
+@@ -441,15 +552,16 @@ static int en7581_clk_hw_init(struct platform_device *pdev,
+ static void en7523_register_clocks(struct device *dev, struct clk_hw_onecell_data *clk_data,
+ 				   void __iomem *base, void __iomem *np_base)
+ {
++	const struct en_clk_soc_data *soc_data = device_get_match_data(dev);
+ 	struct clk_hw *hw;
+ 	u32 rate;
+ 	int i;
+ 
+-	for (i = 0; i < ARRAY_SIZE(en7523_base_clks); i++) {
+-		const struct en_clk_desc *desc = &en7523_base_clks[i];
++	for (i = 0; i < soc_data->fixed_rate.size; i++) {
++		const struct en_clk_desc *desc = &soc_data->fixed_rate.desc[i];
+ 
+-		rate = en7523_get_base_rate(base, i);
+-		rate /= en7523_get_div(base, i);
++		rate = en7523_get_base_rate(desc, base);
++		rate /= en7523_get_div(desc, base);
+ 
+ 		hw = clk_hw_register_fixed_rate(dev, desc->name, NULL, 0, rate);
+ 		if (IS_ERR(hw)) {
+@@ -603,6 +715,10 @@ static int en7523_clk_probe(struct platform_device *pdev)
+ }
+ 
+ static const struct en_clk_soc_data en7523_data = {
++	.fixed_rate = {
++		.desc = en7523_base_clks,
++		.size = ARRAY_SIZE(en7523_base_clks),
++	},
+ 	.pcie_ops = {
+ 		.is_enabled = en7523_pci_is_enabled,
+ 		.prepare = en7523_pci_prepare,
+@@ -611,6 +727,10 @@ static const struct en_clk_soc_data en7523_data = {
+ };
+ 
+ static const struct en_clk_soc_data en7581_data = {
++	.fixed_rate = {
++		.desc = en7581_base_clks,
++		.size = ARRAY_SIZE(en7581_base_clks),
++	},
+ 	.pcie_ops = {
+ 		.is_enabled = en7581_pci_is_enabled,
+ 		.enable = en7581_pci_enable,
+-- 
+2.45.2
 
-> Doesn't really look like it. This can 
-> all be moved to the parent node.
-
-I'll move it to the parent node.
-
-Thank you for your review,
-Claudiu Beznea
-
-> 
-> Rob
