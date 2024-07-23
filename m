@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BF7013D52B;
-	Tue, 23 Jul 2024 23:14:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 770F7148312;
+	Tue, 23 Jul 2024 23:29:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721776493; cv=none; b=f+SwDwk+tRhk0mllRSXGboIPAvZG2D4PocUJbyHhy+QetM4r5ZFcJjCH5EcooUSG+NAEkzt6zD4mqrcB0HQ+K8aCqA/JHANLAYTwKNQfly07Je1MXmfKYPKpwqGtovjrq4dXgV9RZcq8nOGx07zxxyX4pPRRvqxC5nW6e2dqMGc=
+	t=1721777394; cv=none; b=fKjYpEw/Pe6yf+5r042eLGwE5JJgwoh54hg5YOfKvc0fsGbDmfNIzMQh0uycCqAO22GDc4lsENZiGSrk3J1TSYKXolxUnN+omUg0L7RXIzuKk1leaOTsQXxBPTXILgB7Rk3NcsRYSKcBKd3xDmaHNXY97MY0A8ZJJwkvRzzhpxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721776493; c=relaxed/simple;
-	bh=1pFvVOYdC3aG8zafwOAeBQz7+yiKYaLx3PgD1yCE4yY=;
+	s=arc-20240116; t=1721777394; c=relaxed/simple;
+	bh=Tm9Wg4ZYS3BsEa6Y5aXqKa97xN1rGipxkXVPFSQTkWQ=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=gisfKvS9oR6KGk9j/RCj0P9MehfFOTNaxYFw5xzPZc7lZ2hUtzGHAk2383oRnXz2+wf0lB1KhAEzMQYpVwJd1r/6kFYzpVBfcrLY3MWg35wESHzzZbTdiZ/aBqhWNjB6MQAej4pcW3nwnGfpjWDzjTazU1hiCjqQBzk+gY7MJjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UwSMX40Z; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=PDhiIxdOClvCsO6/7LntbF+RosKiM6auijsWwtNN9xqoaovgfUnoUfwJiUw/Pm/+orxZcYCd9OMO0+W6xcnfbCzb4fofTm7s6rw+CW4jd6pi1tZvcKOo6Y53zg6LyHVxR79NdWtfomyGgXx/jxd/LMsEB8Bd/6+v6FLdxBQtHu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P3yvualI; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UwSMX40Z"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59F61C4AF0A;
-	Tue, 23 Jul 2024 23:14:52 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P3yvualI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9694C4AF09;
+	Tue, 23 Jul 2024 23:29:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721776492;
-	bh=1pFvVOYdC3aG8zafwOAeBQz7+yiKYaLx3PgD1yCE4yY=;
+	s=k20201202; t=1721777394;
+	bh=Tm9Wg4ZYS3BsEa6Y5aXqKa97xN1rGipxkXVPFSQTkWQ=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=UwSMX40ZQhju15eYYxKsc/VCfDx0/F18eNe3DNl8NKRZ8DFP3D6ambxC94LKSghnN
-	 OGqcUCdjdWnnJT6r7y+lpTLYUA5l4lDga2ux7r8I0E/f4y08FzKn5odoh4JJQa3c/f
-	 iQoS8lWPTKaGUCxbtvAP0piDmLjBIMqsdHdZRuoyFfUz0g+zLWy172iPIfsmGTTWMb
-	 pfje9z1O/xAq1CXVKUxKnDZ5OreOM8B8kAILKcPk4elCtgvnGt56zeOl76xGbLdxJa
-	 lsxltH3gxMBPtV7X+f5FO/1Rh6d25Oc8J07JzOanadkXnBwldHcWhpiM9CVJ+PWGme
-	 vmvwybi3IV0ng==
-Message-ID: <d02cd87b7a52067d6eb9b4ef3c5b7803.sboyd@kernel.org>
+	b=P3yvualILhDdNmqGdpBTQFFuhBysGCft6KZ3Quq9gft47GW1p4JEOfBnPtrTPdljv
+	 62CBE5z/NBOEW1CTWT7iCqEVzwkPEI4kuDeMhMGDYU8NMf2A5fPvfj4T3xlSVJgusR
+	 19eM3gEaAoFuaHCI+Yal6FwnSivXjNWGtsCvmxVGpa8KzvBQb9pMBmIAtsI8aOXz/g
+	 n4d8KrXVTMJMB/QRXS6Mpw6kPRumXJ6CJvKtomAQtUsB282vDfA0kLXu4ZxsFkny3h
+	 qUWcg9Gvh/GBATnwPv308a3mkyKMqNYL05LiKm21A6TM4tARBYmMBNiFh4UeKMbhC+
+	 Q4yT3Fu7jxqhA==
+Message-ID: <1cacce63c7263a3532cca148ad2c567f.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,106 +35,80 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240720120048.36758-3-hpausten@protonmail.com>
-References: <20240720120048.36758-1-hpausten@protonmail.com> <20240720120048.36758-3-hpausten@protonmail.com>
-Subject: Re: [PATCH 2/7] clk: clocking-wizard: use newer clk_hw API
+In-Reply-To: <20240720120048.36758-6-hpausten@protonmail.com>
+References: <20240720120048.36758-1-hpausten@protonmail.com> <20240720120048.36758-6-hpausten@protonmail.com>
+Subject: Re: [PATCH 5/7] clk: clocking-wizard: add user clock monitor support
 From: Stephen Boyd <sboyd@kernel.org>
 Cc: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Harry Austen <hpausten@protonmail.com>
 To: Conor Dooley <conor+dt@kernel.org>, Harry Austen <hpausten@protonmail.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Michal Simek <michal.simek@amd.com>, Rob Herring <robh@kernel.org>
-Date: Tue, 23 Jul 2024 16:14:50 -0700
+Date: Tue, 23 Jul 2024 16:29:51 -0700
 User-Agent: alot/0.10
 
-General comment: do one thing in one patch, i.e. use clk_hw API and
-don't also migrate to devm in one patch.
+Quoting Harry Austen (2024-07-20 05:01:53)
+> Xilinx clocking wizard IP core supports monitoring of up to four
+> optional user clock inputs, with a corresponding interrupt for
+> notification in change of clock state (stop, underrun, overrun or
+> glitch). Give userspace access to this monitor logic through use of the
+> UIO framework.
+>=20
+> Use presence of the user monitor interrupt description in devicetree to
+> indicate whether or not the UIO device should be registered. Also, this
+> functionality is only supported from v6.0 onwards, so add indication of
+> support to the device match data, in order to be tied to the utilised
+> compatible string.
+>=20
+> Signed-off-by: Harry Austen <hpausten@protonmail.com>
+> ---
+> diff --git a/drivers/clk/xilinx/Kconfig b/drivers/clk/xilinx/Kconfig
+> index 051756953558b..907a435694687 100644
+> --- a/drivers/clk/xilinx/Kconfig
+> +++ b/drivers/clk/xilinx/Kconfig
+> @@ -21,6 +21,7 @@ config COMMON_CLK_XLNX_CLKWZRD
+>         tristate "Xilinx Clocking Wizard"
+>         depends on OF
+>         depends on HAS_IOMEM
+> +       depends on UIO
 
-Quoting Harry Austen (2024-07-20 05:01:36)
+If I have a pre-v6.0 device I probably don't want UIO though. Perhaps
+you should use the auxiliary bus framework to register a device that is
+otherwise unused and then have the uio driver live in drivers/uio and
+match that device made here. I think you can have 'imply UIO' if you
+like to put a weak Kconfig dependency.
+
+>         help
+>           Support for the Xilinx Clocking Wizard IP core clock generator.
+>           Adds support for clocking wizard and compatible.
 > diff --git a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c b/drivers/clk/xil=
 inx/clk-xlnx-clock-wizard.c
-> index 0ca045849ea3e..30c5cc9dcd7e9 100644
+> index 7b262d73310fe..2d419e8ad4419 100644
 > --- a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
 > +++ b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
-> @@ -17,6 +17,7 @@
->  #include <linux/of.h>
->  #include <linux/math64.h>
->  #include <linux/module.h>
-> +#include <linux/overflow.h>
-
-What is this include for? __counted_by()?
-
->  #include <linux/err.h>
->  #include <linux/iopoll.h>
-> =20
-> @@ -121,24 +122,22 @@ enum clk_wzrd_int_clks {
->  /**
->   * struct clk_wzrd - Clock wizard private data structure
->   *
-> - * @clk_data:          Clock data
-> + * @clk_data:          Output clock data
->   * @nb:                        Notifier block
->   * @base:              Memory base
->   * @clk_in1:           Handle to input clock 'clk_in1'
->   * @axi_clk:           Handle to input clock 's_axi_aclk'
->   * @clks_internal:     Internal clocks
-> - * @clkout:            Output clocks
->   * @speed_grade:       Speed grade of the device
->   * @suspended:         Flag indicating power state of the device
->   */
->  struct clk_wzrd {
-> -       struct clk_onecell_data clk_data;
-> +       struct clk_hw_onecell_data *clk_data;
-
-It could be placed at the end and then one allocation could be used
-instead of two.
-
->         struct notifier_block nb;
->         void __iomem *base;
->         struct clk *clk_in1;
->         struct clk *axi_clk;
-> -       struct clk *clks_internal[wzrd_clk_int_max];
-> -       struct clk *clkout[WZRD_NUM_OUTPUTS];
-> +       struct clk_hw *clks_internal[wzrd_clk_int_max];
->         unsigned int speed_grade;
->         bool suspended;
->  };
-> @@ -1108,35 +1110,32 @@ static int clk_wzrd_probe(struct platform_device =
-*pdev)
->                 if (!div)
->                         div =3D 1;
-> =20
-> -               clk_mul_name =3D __clk_get_name(clk_wzrd->clks_internal[w=
-zrd_clk_mul]);
-> +               clk_mul_name =3D clk_hw_get_name(clk_wzrd->clks_internal[=
-wzrd_clk_mul]);
->                 clk_wzrd->clks_internal[wzrd_clk_mul_div] =3D
-> -                       clk_register_fixed_factor(&pdev->dev, clk_name,
-> -                                                 clk_mul_name, 0, 1, div=
-);
-> +                       clk_hw_register_fixed_factor(&pdev->dev, clk_name,
-> +                                                    clk_mul_name, 0, 1, =
-div);
->         } else {
->                 ctrl_reg =3D clk_wzrd->base + WZRD_CLK_CFG_REG(is_versal,=
- 0);
-> -               clk_wzrd->clks_internal[wzrd_clk_mul_div] =3D clk_registe=
-r_divider
-> +               clk_wzrd->clks_internal[wzrd_clk_mul_div] =3D clk_hw_regi=
-ster_divider
-
-Are these going to be using devm so that on failure they get
-unregistered?
-
->                         (&pdev->dev, clk_name,
-> -                        __clk_get_name(clk_wzrd->clks_internal[wzrd_clk_=
-mul]),
-> +                        clk_hw_get_name(clk_wzrd->clks_internal[wzrd_clk=
-_mul]),
->                         flags, ctrl_reg, 0, 8, CLK_DIVIDER_ONE_BASED |
->                         CLK_DIVIDER_ALLOW_ZERO, &clkwzrd_lock);
+> @@ -1165,6 +1209,17 @@ static int clk_wzrd_probe(struct platform_device *=
+pdev)
+>                 return -EINVAL;
 >         }
->         if (IS_ERR(clk_wzrd->clks_internal[wzrd_clk_mul_div])) {
->                 dev_err(&pdev->dev, "unable to register divider clock\n");
-> -               ret =3D PTR_ERR(clk_wzrd->clks_internal[wzrd_clk_mul_div]=
-);
-> -               goto err_rm_int_clk;
-> +               return PTR_ERR(clk_wzrd->clks_internal[wzrd_clk_mul_div]);
->         }
+> =20
+> +       data =3D device_get_match_data(&pdev->dev);
+> +       if (data && data->supports_monitor) {
+> +               irq =3D platform_get_irq(pdev, 0);
+> +               if (irq > 0) {
+> +                       ret =3D clk_wzrd_setup_monitor(&pdev->dev, irq,
+> +                                                    platform_get_resourc=
+e(pdev, IORESOURCE_IO, 0));
+
+Any reason this can't be
+
+		ret =3D clk_wzrd_setup_monitor(pdev);
+		if (ret)
+			return ret;
+
+and then all the surrounding code be moved into the function, including
+the dev_err_probe()?
+
+> +                       if (ret)
+> +                               return dev_err_probe(&pdev->dev, ret, "fa=
+iled to setup monitor\n");
+> +               }
+> +       }
+> +
+>         ret =3D of_property_read_u32(np, "xlnx,nr-outputs", &nr_outputs);
