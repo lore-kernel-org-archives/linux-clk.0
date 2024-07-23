@@ -1,73 +1,122 @@
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21E3F14D29C;
-	Tue, 23 Jul 2024 11:08:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD64813D8B3;
+	Tue, 23 Jul 2024 11:37:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721732885; cv=none; b=GZs5w6GmaSSdy3zJHWUCwV7iu87YHxdrTfJQMP0x214rzCzB8bPbDhaZGzO/niloixYowBRRtKF/3+qjTjRLcjRpW4O1C4PnSDBtVL8WdzNsXI1B5+pAAiC3kpnsAvk73QuZssuMN33TqqosCMbHwobyH2Yoe+demTpG2cG4HMI=
+	t=1721734648; cv=none; b=a+SEpWb/1fHejqJv7hGz3GGMjigr/1P6nMFCWCmECWcPVPs8ev7SJGF5PuoR/NDtgT67GXOJ6TUKLgs1mWxxHMJXcM3XB0ynl0AbD3hpTcDxi+QVdU8JdMRxHCssu143WvpsbKkD2Cb5Z+slGaxl/9qA0FKbhb5IDe54uOmaTvM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721732885; c=relaxed/simple;
-	bh=lxlqGX1vj2bh192s99+zh0KaN5T5g0e139+ZnUzSEqU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=tISiWO5khNGxcu8pgCmUSyob88j1dRKXbiBnzVUv1xW9/3SHg8wZylgsThJUd9TEck69TZjpiCpJnpbazrgeXgzGb0qIiBTfR5DP8Wq5e7qVgoHmJk8x5/iJ9N2ID/G0oFotq3ZJ65B6QsQUO7Y7OtS+ST9NhJfWRgtwh4gQcmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-X-IronPort-AV: E=Sophos;i="6.09,230,1716217200"; 
-   d="scan'208";a="216331953"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 23 Jul 2024 20:08:02 +0900
-Received: from localhost.localdomain (unknown [10.226.93.79])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id E5CB542F3F0C;
-	Tue, 23 Jul 2024 20:07:57 +0900 (JST)
-From: Oliver Rhodes <oliver.rhodes.aj@renesas.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Oliver Rhodes <oliver.rhodes.aj@renesas.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH V1 resend 3/6] dt-bindings: clock: renesas: Document RZ/G2M v3.0 (r8a774a3) clock
-Date: Tue, 23 Jul 2024 12:07:30 +0100
-Message-Id: <20240723110733.10988-4-oliver.rhodes.aj@renesas.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240723110733.10988-1-oliver.rhodes.aj@renesas.com>
-References: <20240723110733.10988-1-oliver.rhodes.aj@renesas.com>
+	s=arc-20240116; t=1721734648; c=relaxed/simple;
+	bh=21f6vTa4pMdaybeLwFSTCxfsREuOEw/KDAqXUGIyD9M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=NkSJXybAe6dyla2YpF2ZS3Irz141FDM2GrPiWdclBN5U1PpTp/IELLOTZ+xRiO3cjFDRqsmQcNvIQ04YCkV+O/LcfqbEQBtyNpCDpzDEH00gOJZf1xQAQk4hKs835KrlXE8nsWIgFsD9y0DsB85ZhDu4RN5rflZF8uWd/0MGARg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=W+YMj2sv; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="W+YMj2sv"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46NAXuks027111;
+	Tue, 23 Jul 2024 11:37:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	d5w51NTxkPijfWjcV+ypUl8aK0UhUtMWK45h0l7YIeU=; b=W+YMj2svoxP8uMej
+	PT377oMfKi1G4YOEOp1ParCvUu3SZRVOH8JrrCgVyk7hPRDBADc6rvtsPf/f1pMG
+	/8snfawT8QPcg20YhI1nU7P5LrsVhWhnJKAzI0gt6BpavKkQnlyb3wQW4gHE6+wF
+	DpkUFDVQWgarnONmv9dVwKVquJ+J9SLqb+lLUfgYQtiL0rUTSODI8wP4Y0XqGw2i
+	c+5JJHpUpnBLqGnfADIXsoD+fYjLr6mdc5p1O6pqRqITz6Y0F8AN8WCXm1HM1gGd
+	RzVOrtNhY8EKGlaXLGigzHO2RZfB6FWWBHxVtb5MYG6+iLIAHlcGbgLi6arEZupM
+	itPqnw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40gurtna39-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 23 Jul 2024 11:37:16 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46NBbFPO015688
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 23 Jul 2024 11:37:15 GMT
+Received: from [10.218.19.46] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 23 Jul
+ 2024 04:37:12 -0700
+Message-ID: <8dfc5456-861b-e01a-d2d2-1bb9adea1984@quicinc.com>
+Date: Tue, 23 Jul 2024 17:07:07 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH] clk: qcom: camcc-sc8280xp: Remove always-on GDSC
+ hard-coding
+Content-Language: en-US
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen
+ Boyd <sboyd@kernel.org>
+CC: <dmitry.baryshkov@linaro.org>, <stable@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240715-linux-next-24-07-13-sc8280xp-camcc-fixes-v1-1-fadb5d9445c1@linaro.org>
+ <f0d4b7a3-2b61-3d42-a430-34b30eeaa644@quicinc.com>
+ <86068581-0ce7-47b5-b1c6-fda4f7d1037f@linaro.org>
+ <02679111-1a35-b931-fecd-01c952553652@quicinc.com>
+ <ce14800d-7411-47c5-ad46-6baa6fb678f4@linaro.org>
+ <dd588276-8f1c-4389-7b3a-88f483b7072e@quicinc.com>
+ <610efa39-e476-45ae-bd2b-3a0b8ea485dc@linaro.org>
+ <6055cb14-de80-97bc-be23-7af8ffc89fcc@quicinc.com>
+ <a0ac4c3b-3c46-4c89-9947-d91ba06309f4@linaro.org>
+From: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
+In-Reply-To: <a0ac4c3b-3c46-4c89-9947-d91ba06309f4@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: feZzptoJ232DaBSYKX7Pn_7nbtgtKDDp
+X-Proofpoint-ORIG-GUID: feZzptoJ232DaBSYKX7Pn_7nbtgtKDDp
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-22_18,2024-07-23_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 mlxscore=0
+ phishscore=0 adultscore=0 priorityscore=1501 suspectscore=0
+ lowpriorityscore=0 bulkscore=0 spamscore=0 impostorscore=0 mlxlogscore=999
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407230082
 
-Add binding documentation for Renesas RZ/G2M v3.0 (a.k.a r8a774a3) Clock
-Pulse Generator driver.
 
-Signed-off-by: Oliver Rhodes <oliver.rhodes.aj@renesas.com>
----
-v1->v1 resend:
-* No change.
----
- Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml | 1 +
- 1 file changed, 1 insertion(+)
+On 7/23/2024 2:59 PM, Bryan O'Donoghue wrote:
+> On 22/07/2024 09:57, Satya Priya Kakitapalli (Temp) wrote:
+>>> I have no idea. Why does it matter ?
+>>>
+>>
+>> This clock expected to be kept always ON, as per design, or else the 
+>> GDSC transition form ON to OFF (vice versa) wont work.
+>
+> Yes, parking to XO per this patch works for me. So I guess its already 
+> on and is left in that state by the park.
+>
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
-index 084259d30232..77ce3615c65a 100644
---- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
-+++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
-@@ -31,6 +31,7 @@ properties:
-       - renesas,r8a7745-cpg-mssr  # RZ/G1E
-       - renesas,r8a77470-cpg-mssr # RZ/G1C
-       - renesas,r8a774a1-cpg-mssr # RZ/G2M
-+      - renesas,r8a774a3-cpg-mssr # RZ/G2M v3.0
-       - renesas,r8a774b1-cpg-mssr # RZ/G2N
-       - renesas,r8a774c0-cpg-mssr # RZ/G2E
-       - renesas,r8a774e1-cpg-mssr # RZ/G2H
--- 
-2.34.1
+Parking RCG to XO doesn't keep the branch clock always-on. It just keeps 
+the parent RCG at 19.2MHz, branch can still be disabled by clearing 
+bit(0). So during late init, the CCF will disable this clock(in 
+clk_disable_unused API) if modelled. Hence this clock shouldn't be modelled.
 
+
+>> Want to know the clock status after bootup, to understand if the 
+>> clock got turned off during the late init. May I know exactly what 
+>> you have tested? Did you test the camera usecases as well?
+>
+> Of course.
+>
+> The camera works on x13s with this patch. That's what I mean by tested.
+>
+> ---
+> bod
