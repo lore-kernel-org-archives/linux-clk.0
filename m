@@ -1,228 +1,180 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46DB214287;
-	Tue, 23 Jul 2024 02:17:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43E2713957B
+	for <linux-clk@vger.kernel.org>; Tue, 23 Jul 2024 06:25:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721701036; cv=none; b=H+opDT/Gg5HySoRyM5FBsdv/vQqhEITPFZYWqkGFx4hwA8+Yyw6VZz8EmAn2uyVp7wGjJoP0VmCQnE0hsqqwIMnZs6TeiVYA6SpoTbRzX036n8HecPe1n5YAfe6LggJeFkAL1cS7/ThPzR4fkm4VKYYVJgZmaUkufRtM29L8YrE=
+	t=1721715917; cv=none; b=EENDCgEuSgv/wxxatE7iwwhIUjF5uDadJkEcTWWMHbiRcKR+yJNn+ur54VYYCbzloLtgGSBpphJ4agRIdlZ5FqY4jzF8hveCA1PsFueop9Z/NrmV4KLldjYMoIqpiztludkPCLaXDdLzOREGMFJfmOJrhc+lx+33JdjPI1IBNNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721701036; c=relaxed/simple;
-	bh=gnkOYbEfx9zPzHePEL/WxD5v0iNAO66aAz2aJlnJpSU=;
+	s=arc-20240116; t=1721715917; c=relaxed/simple;
+	bh=Qij07p89kKJpR5FZpRTpoWuLS4TTtSsYb67fppzLAQM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XORJ/B1ApskxL9ZQ2+ZgoyOT0pjZ3N6+fznxRg/tvAI61O8j4GvtvuQpUXzLwatpWOm55yQkKKRyEvN96evFwaGluZg4n8/tTF8slPJQwRrQgoqaVCcn+EoTVCGOX3jF3fPfTZUGvxts1bbvQXT6j5N8Sj7a42/yQHYXxkNCswg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RxOuDL3m; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=LgCyw39YATaakPygPhW7fbpt+sktE0hwFIAeUv2pKCRcJ7p5E70Soyei8mT7Yxebclnq/aNzzCZI6Tm61vXF/2ayPmW/nqtYL1xWcG38J+ea98NoEPWeeykogVnP2F06sI4Qxi1Gyifhr4j9TMYAcueSraaGLPvThPwVSCkwuvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BxPFCcLk; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RxOuDL3m"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C68D9C116B1;
-	Tue, 23 Jul 2024 02:17:15 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BxPFCcLk"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 45486C4AF09;
+	Tue, 23 Jul 2024 06:25:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721701036;
-	bh=gnkOYbEfx9zPzHePEL/WxD5v0iNAO66aAz2aJlnJpSU=;
+	s=k20201202; t=1721715916;
+	bh=Qij07p89kKJpR5FZpRTpoWuLS4TTtSsYb67fppzLAQM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RxOuDL3mrORghbGY9jTuWQjgd2SP7GcjAZPVyjp3hU2M1TmgBi6NwPp8D9X5eUY/s
-	 FaQ0XUpyCBoHtPyz3lY2HoOUMew0FAxFxtLotpL5EqZXj+D+Fx/HQ4YQQd+FejrfEI
-	 Q9QT3y/Rdoy31gJeM1kqGRz1biqv/Lxy7q8mNEGCSlS9sivsTwN7lOpkoywP1llddd
-	 jtiuFux3oh+090v6KBkgxvS0y1ou+qfNYv8hED6vpiWHbs4/qb2qD2g0XdbkiQZIDY
-	 tKBvRxCBrN9e+2vQJ540AT1JpCsHiO6dQfhmuFnYxhSRyTj+ouGuc9cVSOIatcKgwi
-	 UxvT5COn+7daQ==
-Date: Mon, 22 Jul 2024 20:17:13 -0600
-From: Rob Herring <robh@kernel.org>
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: lee@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	alexandre.belloni@bootlin.com, geert+renesas@glider.be,
-	magnus.damm@gmail.com, mturquette@baylibre.com, sboyd@kernel.org,
-	p.zabel@pengutronix.de, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH v2 01/11] dt-bindings: mfd: renesas,r9a08g045-vbattb:
- Document VBATTB
-Message-ID: <20240723021713.GA40385-robh@kernel.org>
-References: <20240716103025.1198495-1-claudiu.beznea.uj@bp.renesas.com>
- <20240716103025.1198495-2-claudiu.beznea.uj@bp.renesas.com>
+	b=BxPFCcLkH8DfwuUW4vBr12chL7UK8W6e7EipVBnXmMm1J+9YqKsTE+9vTkDw/Nemu
+	 TAnwZPbYBHBdiI5+ylsggE0QtjoBj4CSIzZ00dvrrYrhC9X6qbzAFYEpy2w4msEUVd
+	 TEtClUcc98418Yh1ROJpEHWd/xLPDRXcIspyIPUa7Nkzlm+9zteM9MHFcuHU1WDT1A
+	 0/2dNpcbpjdtZ/aLoLrHXPeYCuILU447TwGotP30jyamN8BlOIq78ABwSqrEi9T9ph
+	 CFCfZPGUtOuoF5vnKL5FbKwfo6GTYA2OK1X0VRCIYXWrl3yzxPI44SuWXC0vhPx8d1
+	 qoG1FziYGBZ6g==
+Date: Tue, 23 Jul 2024 08:25:09 +0200
+From: Lorenzo Bianconi <lorenzo@kernel.org>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: linux-clk@vger.kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+	p.zabel@pengutronix.de, lorenzo.bianconi83@gmail.com,
+	linux-arm-kernel@lists.infradead.org, nbd@nbd.name,
+	john@phrozen.org, upstream@airoha.com
+Subject: Re: [PATCH 2/2] clk: en7523: fix scuclk io region for upcoming
+ pinctrl
+Message-ID: <Zp9MxSkxXctfe-F3@lore-rh-laptop>
+References: <cover.1720510991.git.lorenzo@kernel.org>
+ <f1c8e114fb1370b9a3a602e3ed3e9eeb5824c2e7.1720510991.git.lorenzo@kernel.org>
+ <26151f58-9dd3-4e14-afaf-c62f539f8e26@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="2m6eVZ4WKJf9tWRH"
+Content-Disposition: inline
+In-Reply-To: <26151f58-9dd3-4e14-afaf-c62f539f8e26@collabora.com>
+
+
+--2m6eVZ4WKJf9tWRH
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240716103025.1198495-2-claudiu.beznea.uj@bp.renesas.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 16, 2024 at 01:30:15PM +0300, Claudiu wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> 
-> The VBATTB IP of the Renesas RZ/G3S SoC controls the clock for RTC,
-> the tamper detector and a small general usage memory of 128B. Add
-> documentation for it.
-> 
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> ---
-> 
-> Changes in v2:
-> - changed file name and compatible
-> - updated title, description sections
-> - added clock controller part documentation and drop dedicated file
->   for it included in v1
-> - used items to describe interrupts, interrupt-names, clocks, clock-names,
->   resets
-> - dropped node labels and status
-> - updated clock-names for clock controller to cope with the new
->   logic on detecting the necessity to setup bypass
-> 
->  .../mfd/renesas,r9a08g045-vbattb.yaml         | 136 ++++++++++++++++++
->  1 file changed, 136 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mfd/renesas,r9a08g045-vbattb.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/renesas,r9a08g045-vbattb.yaml b/Documentation/devicetree/bindings/mfd/renesas,r9a08g045-vbattb.yaml
-> new file mode 100644
-> index 000000000000..30e4da65e2f6
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mfd/renesas,r9a08g045-vbattb.yaml
-> @@ -0,0 +1,136 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mfd/renesas,r9a08g045-vbattb.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Renesas Battery Backup Function (VBATTB)
-> +
-> +description:
-> +  Renesas VBATTB is an always on powered module (backed by battery) which
-> +  controls the RTC clock (VBATTCLK), tamper detection logic and a small
-> +  general usage memory (128B).
-> +
-> +maintainers:
-> +  - Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> +
-> +properties:
-> +  compatible:
-> +    const: renesas,r9a08g045-vbattb
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  ranges: true
-> +
-> +  interrupts:
-> +    items:
-> +      - description: tamper detector interrupt
-> +
-> +  interrupt-names:
-> +    items:
-> +      - const: tampdi
+> Il 09/07/24 09:48, Lorenzo Bianconi ha scritto:
+> > EN7581 clock driver shares the IO region with the upcoming pinctrl
+> > driver for Airoha EN7581 SoC. Fix it by reducing the clk mapped
+> > region to only used registers in order to not overlap with pinctrl
+> > one. This change is not introducing any backward compatibility issue
+> > since the EN7581 dts is not upstream yet.
+> >=20
+> > Signed-off-by: Lorenzo Bianconi <lorenzo@kernel.org>
+> > ---
+> >   drivers/clk/clk-en7523.c | 23 +++++++++++++++--------
+> >   1 file changed, 15 insertions(+), 8 deletions(-)
+> >=20
+> > diff --git a/drivers/clk/clk-en7523.c b/drivers/clk/clk-en7523.c
+> > index b20e56337a6b..d9ecbb6bf55a 100644
+> > --- a/drivers/clk/clk-en7523.c
+> > +++ b/drivers/clk/clk-en7523.c
+> > @@ -31,7 +31,14 @@
+> >   #define   REG_RESET_CONTROL_PCIE1	BIT(27)
+> >   #define   REG_RESET_CONTROL_PCIE2	BIT(26)
+> >   /* EN7581 */
+> > -#define REG_CRYPTO_CLKSRC2		0x20c
+> > +#define REG_GSW_CLK_DIV_SEL2		0x00
+> > +#define REG_EMI_CLK_DIV_SEL2		0x04
+> > +#define REG_BUS_CLK_DIV_SEL2		0x08
+> > +#define REG_SPI_CLK_DIV_SEL2		0x10
+> > +#define REG_SPI_CLK_FREQ_SEL2		0x14
+> > +#define REG_NPU_CLK_DIV_SEL2		0x48
+> > +#define REG_CRYPTO_CLKSRC2		0x58
+> > +
+> >   #define REG_PCIE0_MEM			0x00
+> >   #define REG_PCIE0_MEM_MASK		0x04
+> >   #define REG_PCIE1_MEM			0x08
+> > @@ -203,7 +210,7 @@ static const struct en_clk_desc en7581_base_clks[] =
+=3D {
+> >   		.id =3D EN7523_CLK_GSW,
+> >   		.name =3D "gsw",
+> > -		.base_reg =3D REG_GSW_CLK_DIV_SEL,
+> > +		.base_reg =3D REG_GSW_CLK_DIV_SEL2,
+>=20
+> This is practically just commit noise :-)
+>=20
+> You are adding the en7581_base_clks[] in patch [1/2] with the wrong base =
+register,
+> then fixing it here ... and that's wrong.
+>=20
+> Please squash the two patches.
 
-Don't really need -names with only 1 entry.
+ack, I will do.
 
-> +
-> +  clocks:
-> +    items:
-> +      - description: VBATTB module clock
-> +
-> +  clock-names:
-> +    items:
-> +      - const: bclk
-> +
-> +  power-domains:
-> +    maxItems: 1
-> +
-> +  resets:
-> +    items:
-> +      - description: VBATTB module reset
-> +
-> +  '#address-cells':
-> +    const: 2
-> +
-> +  '#size-cells':
-> +    const: 2
-> +
-> +patternProperties:
-> +  "^clock-controller@1c+$":
-> +    type: object
-> +    description: VBATTCLK clock
-> +
-> +    properties:
-> +      compatible:
-> +        const: renesas,r9a08g045-vbattb-clk
-> +
-> +      reg:
-> +        maxItems: 1
-> +
-> +      clocks:
-> +        items:
-> +          - description: input clock for VBATTCLK
-> +
-> +      clock-names:
-> +        description: |
-> +          Use xin if connected to an external crystal oscillator.
-> +          Use clkin if connected to an external hardware device generating the
-> +          clock.
-> +        enum:
-> +          - xin
-> +          - clkin
-> +
-> +      '#clock-cells':
-> +        const: 0
-> +
-> +      renesas,vbattb-load-nanofarads:
-> +        description: load capacitance of the on board xtal
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        enum: [ 4000, 7000, 9000, 12500 ]
-> +
-> +    required:
-> +      - compatible
-> +      - reg
-> +      - clocks
-> +      - clock-names
-> +      - '#clock-cells'
-> +      - renesas,vbattb-load-nanofarads
-> +
-> +    additionalProperties: false
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - interrupt-names
-> +  - clocks
-> +  - clock-names
-> +  - power-domains
-> +  - resets
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/clock/r9a08g045-cpg.h>
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +
-> +    vbattb@1005c000 {
-> +        compatible = "renesas,r9a08g045-vbattb";
-> +        reg = <0x1005c000 0x1000>;
-> +        ranges = <0 0 0x1005c000 0 0x1000>;
-> +        interrupts = <GIC_SPI 43 IRQ_TYPE_LEVEL_HIGH>;
-> +        interrupt-names = "tampdi";
-> +        clocks = <&cpg CPG_MOD R9A08G045_VBAT_BCLK>;
-> +        clock-names = "bclk";
-> +        power-domains = <&cpg>;
-> +        resets = <&cpg R9A08G045_VBAT_BRESETN>;
-> +        #address-cells = <2>;
-> +        #size-cells = <2>;
-> +
-> +        clock-controller@1c {
-> +            compatible = "renesas,r9a08g045-vbattb-clk";
-> +            reg = <0 0x1c 0 0x10>;
-> +            clocks = <&vbattb_xtal>;
-> +            clock-names = "xin";
-> +            #clock-cells = <0>;
-> +            renesas,vbattb-load-nanofarads = <12500>;
-> +        };
+Regards,
+Lorenzo
 
-Is this really a separate device? Doesn't really look like it. This can 
-all be moved to the parent node.
+>=20
+> Cheers,
+> Angelo
+>=20
+> >   		.base_bits =3D 1,
+> >   		.base_shift =3D 8,
+> >   		.base_values =3D gsw_base,
+> > @@ -217,7 +224,7 @@ static const struct en_clk_desc en7581_base_clks[] =
+=3D {
+> >   		.id =3D EN7523_CLK_EMI,
+> >   		.name =3D "emi",
+> > -		.base_reg =3D REG_EMI_CLK_DIV_SEL,
+> > +		.base_reg =3D REG_EMI_CLK_DIV_SEL2,
+> >   		.base_bits =3D 2,
+> >   		.base_shift =3D 8,
+> >   		.base_values =3D emi7581_base,
+> > @@ -231,7 +238,7 @@ static const struct en_clk_desc en7581_base_clks[] =
+=3D {
+> >   		.id =3D EN7523_CLK_BUS,
+> >   		.name =3D "bus",
+> > -		.base_reg =3D REG_BUS_CLK_DIV_SEL,
+> > +		.base_reg =3D REG_BUS_CLK_DIV_SEL2,
+> >   		.base_bits =3D 1,
+> >   		.base_shift =3D 8,
+> >   		.base_values =3D bus_base,
+> > @@ -245,13 +252,13 @@ static const struct en_clk_desc en7581_base_clks[=
+] =3D {
+> >   		.id =3D EN7523_CLK_SLIC,
+> >   		.name =3D "slic",
+> > -		.base_reg =3D REG_SPI_CLK_FREQ_SEL,
+> > +		.base_reg =3D REG_SPI_CLK_FREQ_SEL2,
+> >   		.base_bits =3D 1,
+> >   		.base_shift =3D 0,
+> >   		.base_values =3D slic_base,
+> >   		.n_base_values =3D ARRAY_SIZE(slic_base),
+> > -		.div_reg =3D REG_SPI_CLK_DIV_SEL,
+> > +		.div_reg =3D REG_SPI_CLK_DIV_SEL2,
+> >   		.div_bits =3D 5,
+> >   		.div_shift =3D 24,
+> >   		.div_val0 =3D 20,
+> > @@ -260,7 +267,7 @@ static const struct en_clk_desc en7581_base_clks[] =
+=3D {
+> >   		.id =3D EN7523_CLK_SPI,
+> >   		.name =3D "spi",
+> > -		.base_reg =3D REG_SPI_CLK_DIV_SEL,
+> > +		.base_reg =3D REG_SPI_CLK_DIV_SEL2,
+> >   		.base_value =3D 400000000,
+> > @@ -272,7 +279,7 @@ static const struct en_clk_desc en7581_base_clks[] =
+=3D {
+> >   		.id =3D EN7523_CLK_NPU,
+> >   		.name =3D "npu",
+> > -		.base_reg =3D REG_NPU_CLK_DIV_SEL,
+> > +		.base_reg =3D REG_NPU_CLK_DIV_SEL2,
+> >   		.base_bits =3D 2,
+> >   		.base_shift =3D 8,
+> >   		.base_values =3D npu7581_base,
+>=20
 
-Rob
+--2m6eVZ4WKJf9tWRH
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTquNwa3Txd3rGGn7Y6cBh0uS2trAUCZp9MwgAKCRA6cBh0uS2t
+rF5eAP9AYHsoVKv5YP+LfG61ITUZJQAfTb/vYDnk3EBbuqniCwD8DPpNRGzgRjMM
+cOaMynYKucUcfHh8jHL5UtI01iVnegA=
+=b8hY
+-----END PGP SIGNATURE-----
+
+--2m6eVZ4WKJf9tWRH--
