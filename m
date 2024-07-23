@@ -1,59 +1,59 @@
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B67E714F109
-	for <linux-clk@vger.kernel.org>; Tue, 23 Jul 2024 09:29:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4C5413C818;
+	Tue, 23 Jul 2024 10:34:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721727001; cv=none; b=XYj4OyE0+qKBgexB+VD4M+mrcT8pl4Tg7gk9Xr9MbN7k6FuCJWZEwYG+1cFD9mC04fFSM7Dpig2rg7+O0QlaHxZfnH/JwkLMQA5B0Zf8hgQOb2gmNXS2uC/3yICfFax3ySnKKMbRkHpPBg6JvS/Sal2zfYgOQq5MqpEe+gS0rrg=
+	t=1721730842; cv=none; b=aAioX7qxB52HfZtNrBH97+m8uew9Vdkm/HVfx5dC7h4DLllXxyqHWNgwHXK5zo9FdAiXp97ckCD4U3iyRxC1yKJ35PobJWo0f4PyKTKiNvZN7pFzIFrnnj9++pT/PeMfobTVHdWM1Iz6e21RZbwL6pwoE38rS/OvCp3WkKGvw08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721727001; c=relaxed/simple;
-	bh=FAuZ0UAD+vdkUjJ0UlsabJSfZQUX4W2wFDKeefUEpgY=;
+	s=arc-20240116; t=1721730842; c=relaxed/simple;
+	bh=YuVwqKdXt1E8MkGQq6NQ2AXq+9zlpqlhszfi98LBZXU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HpHfo/1veWjCOmOZNBb33YT9slOKqtQay3UkE0Wz+r00J8xknw8wra41SU07g/FwnQVNl8SeFh8FUu1Law6hrlTHBSchu3fyVBdUjSD3u3N7d6ypNyi8JjFIW3FyMP7fKV61w5fuGGT9LDSlLlkjtKYOp2ghOMKQLRhxY7DXC/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Vn1U5ZZs; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 In-Reply-To:Content-Type; b=ZJ1yxne76JOqJpoUbfXY2eZXGDEUN55sexwFpAPnphLMnABJssckbEgmhKvuzAa2fchlxk+ER+9jP0RmPXnnuWRBqCImVlfaiI2duqZkCFQU+Jjplb7veE9fSMh74/AYCWTJ+VPT6n2hfnzw+xeKniYijDu8zXb7TcmpdCLoNnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HiTZk/jQ; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Vn1U5ZZs"
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5a156556fb4so4391534a12.3
-        for <linux-clk@vger.kernel.org>; Tue, 23 Jul 2024 02:29:59 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HiTZk/jQ"
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52f04c29588so2641929e87.3;
+        Tue, 23 Jul 2024 03:34:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721726998; x=1722331798; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1721730839; x=1722335639; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=+vEOkvbFbp3f9Cjx9et2nB6QuzkeXuOLLdhC4BThQFM=;
-        b=Vn1U5ZZsU9hWnaEzg8S6MRZrUZQ167gaEgEawz6E19Vmj5QL9k5h8ZnP0oBYF5yY2o
-         5lpxJslsC0+ZhYLh7SUCP7MsW9hriP0gg1f6C6UBa5I7tjNel724WwW+PGhj+Swwimsh
-         iJnZ920wbB2NW/MJCma5Vpz0+K2hz0cvr6PgeilDzauW/e+2NLgGGjo/diqkEPRU0dOe
-         k8GPWOp2GZ4G7NBCKDTP6WduDrHB5KAzhY/u/JgqICIaGZWdTH85A2F9VCZeMWSo/prh
-         mRS3CJ9DHr7R/uUqIvzUJTbeu+pp/VdDMlAIPgyQ3hQ8vuYyhx+o89lKMnBZ/wCZdXON
-         lAUg==
+        bh=Cz8+Y1QSeSSuHfxWaaeZn1X4P75aV5338HCWDu/yjTA=;
+        b=HiTZk/jQ1zVFd/oaZiH9vy7eeKLe9kHBDViYr36uJiGCdsnUUdfWwHbgovRYaDLIoo
+         CFLMkv4lrVk0yZL0dJXYFiKpE8wfO8T7YBdQA3Auasi8AAHShU3TIfe78ybmsSu82fsB
+         sjnaEZZSGmIo+CchQWy1S8PxuiA4HuS1C1EGWzxcjfvAArfa6BMzqQE0HNSbDgA5GBqw
+         rC+K7V1Z66w/WP/nyMYiL3k4Dk4L3nW9m9wcMLovT3IqdVKK832eQ/t00xZ/Tu5zTFhM
+         6xhVCFnnvUPUq5VakpUAkCb3D+p/fHXt8LbG3VGRTFfhdDKWBNYON+uIaPikmzyxxD94
+         YY4Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721726998; x=1722331798;
+        d=1e100.net; s=20230601; t=1721730839; x=1722335639;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+vEOkvbFbp3f9Cjx9et2nB6QuzkeXuOLLdhC4BThQFM=;
-        b=IpYuFhiLzWpRcIep0cEycChsi/mp3dcxfjTgTfVVulNvCjgERFtjeV7eoar6NpkbTy
-         EHVTJnWSBeejaQUpBhY1vzWg1DB605w8Gsytkq1Vt3Z58fCJf0bR8b4PZ7gPGF8KWga3
-         3ZfgBAYjeaeCkGMJ/d5NdhhOrGhmDGZBi5jLqTiBo6314RknM7utATvfdaRfe1fYDDEB
-         frMA+bZ9747o1Aq9bOL95KT/nqJpqxw28AH7sgmrMWekBStLU2BWptlnoML2nO5uIAg5
-         B4QHBL6JeYNZ675Nm74wJtq0JuSBaNJJdak8hAUwmqVrf4KPwUlvZwEiC3+5x6sdGvMo
-         ksPA==
-X-Forwarded-Encrypted: i=1; AJvYcCVnxptM4cQy31lGdGPqxkxwXq7rkvjdqXrnpL9cLIB6KXmS5WC6Pwok3k1C1SrRkw1hXS3RspuGYT4dIoLLfmI+0j1xzwgYndnW
-X-Gm-Message-State: AOJu0Yx2UvD2ufJ8Jwp/C757uLRLwqrikv40ZtLsweXUYKaHmKD0k+tO
-	csiUAMnhDjeGEvDzIoz6Zrt94JLJ2F9U+GeMGzpXGEqBA2IlAYEiuHFvYBoGyR8=
-X-Google-Smtp-Source: AGHT+IGrHFX9JiQx/Eykl83Z2R2uBLLYPpx8qq7c7tKOtjvgIyTkMQ510ZsluMgEq+if+UaXKvMqgg==
-X-Received: by 2002:a17:907:9408:b0:a6f:1ad5:20e0 with SMTP id a640c23a62f3a-a7a4c2a3323mr642854066b.45.1721726998064;
-        Tue, 23 Jul 2024 02:29:58 -0700 (PDT)
-Received: from [192.168.0.3] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7a8a4de922sm84336066b.56.2024.07.23.02.29.57
+        bh=Cz8+Y1QSeSSuHfxWaaeZn1X4P75aV5338HCWDu/yjTA=;
+        b=XaTIidKICK7s6PRpTruPNGhJZJ1DSDExxApIXQwsBLXSVIbJaGVHwgLjPzuhyjzIU8
+         ol/U0zJFZOAr9PWckpQasseUYKZj5QVcqve468eDmxUX2qy7jVf3942cK05Eingg8Rl0
+         pzUjAQG9mOrZv52XeXlpm8E9ESJ+mYLCmfL7hRPBlC+AHCvIgCJ8AOS5aPqDvsiKoV7A
+         tMYXOQzPtvgNcYHw5DmoJEe7QKDz6pBIKmm8/cbKHpIvpzK8MOVWhgufKuYyob+SPCaY
+         lwg7V0cF3NIOR1/SdhMXbBf4d70PcNX3k+IDVjnJUZFMXXPSMGVthBZYKxINr9nqAW9w
+         YYkA==
+X-Forwarded-Encrypted: i=1; AJvYcCV2A+EuOBrikkcBtBRnj7USFw8uGqXyxK9XqprVwhugHNIMVZQVjSyhaXhqhms/he+9Qk4y9cpkNUbU6Ajqj2Znj9hL7KyyZDrlkEdojD7A2FmErNGYCmNSjlb80wAqua8TTGRlil2AsdLxyO1YskSIcztxPw4f8YkPN8fWNSNYLU1mwlo1g2PzTOI=
+X-Gm-Message-State: AOJu0YxiUKa59vfkWlG0H3hK3ztsaNVGxCPfc3BfXRx7qYxZ658r1M3Z
+	THc+u/9g2kz+Us5T/9wX5NDIMh+V8Td7rIhOnR1T+o76ho48XRFM
+X-Google-Smtp-Source: AGHT+IFjnE70mtfjkdEyZtp93m8AclelDcFP6Zxzv9/eLhU2xaX0d/Zs+3zxDczpL4HXw4gB75j6Ug==
+X-Received: by 2002:a05:6512:3b82:b0:52c:d8e9:5d8b with SMTP id 2adb3069b0e04-52efb7c7e96mr6589657e87.25.1721730838585;
+        Tue, 23 Jul 2024 03:33:58 -0700 (PDT)
+Received: from [192.168.8.101] ([37.31.142.39])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7a3c8bed67sm521179566b.124.2024.07.23.03.33.56
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 23 Jul 2024 02:29:57 -0700 (PDT)
-Message-ID: <a0ac4c3b-3c46-4c89-9947-d91ba06309f4@linaro.org>
-Date: Tue, 23 Jul 2024 10:29:56 +0100
+        Tue, 23 Jul 2024 03:33:57 -0700 (PDT)
+Message-ID: <249c4534-2fb5-4968-a761-473fe9faca96@gmail.com>
+Date: Tue, 23 Jul 2024 12:33:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -61,45 +61,46 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: camcc-sc8280xp: Remove always-on GDSC
- hard-coding
-To: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: dmitry.baryshkov@linaro.org, stable@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240715-linux-next-24-07-13-sc8280xp-camcc-fixes-v1-1-fadb5d9445c1@linaro.org>
- <f0d4b7a3-2b61-3d42-a430-34b30eeaa644@quicinc.com>
- <86068581-0ce7-47b5-b1c6-fda4f7d1037f@linaro.org>
- <02679111-1a35-b931-fecd-01c952553652@quicinc.com>
- <ce14800d-7411-47c5-ad46-6baa6fb678f4@linaro.org>
- <dd588276-8f1c-4389-7b3a-88f483b7072e@quicinc.com>
- <610efa39-e476-45ae-bd2b-3a0b8ea485dc@linaro.org>
- <6055cb14-de80-97bc-be23-7af8ffc89fcc@quicinc.com>
+Subject: Re: [PATCH] clk: samsung: fix getting Exynos4 fin_pll rate from
+ external clocks
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Marek Szyprowski <m.szyprowski@samsung.com>,
+ Sam Protsenko <semen.protsenko@linaro.org>,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
+References: <20240722063309.60054-1-krzysztof.kozlowski@linaro.org>
 Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <6055cb14-de80-97bc-be23-7af8ffc89fcc@quicinc.com>
+From: Artur Weber <aweber.kernel@gmail.com>
+In-Reply-To: <20240722063309.60054-1-krzysztof.kozlowski@linaro.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 22/07/2024 09:57, Satya Priya Kakitapalli (Temp) wrote:
->> I have no idea. Why does it matter ?
->>
+On 22.07.2024 08:33, Krzysztof Kozlowski wrote:
+> Commit 0dc83ad8bfc9 ("clk: samsung: Don't register clkdev lookup for the
+> fixed rate clocks") claimed registering clkdev lookup is not necessary
+> anymore, but that was not entirely true: Exynos4210/4212/4412 clock code
+> still relied on it to get the clock rate of xxti or xusbxti external
+> clocks.
 > 
-> This clock expected to be kept always ON, as per design, or else the 
-> GDSC transition form ON to OFF (vice versa) wont work.
+> Drop that requirement by accessing already registered clk_hw when
+> looking up the xxti/xusbxti rate.
+> 
+> Reported-by: Artur Weber <aweber.kernel@gmail.com>
+> Closes: https://lore.kernel.org/all/6227c1fb-d769-462a-b79b-abcc15d3db8e@gmail.com/
+> Fixes: 0dc83ad8bfc9 ("clk: samsung: Don't register clkdev lookup for the fixed rate clocks")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Yes, parking to XO per this patch works for me. So I guess its already 
-on and is left in that state by the park.
+Seems to fix the warning for me on the Samsung Galaxy Tab 3 8.0, so:
 
-> Want to know the clock status after bootup, to understand if the clock 
-> got turned off during the late init. May I know exactly what you have 
-> tested? Did you test the camera usecases as well?
+Tested-by: Artur Weber <aweber.kernel@gmail.com> # Exynos4212
 
-Of course.
+Thanks for the patch!
 
-The camera works on x13s with this patch. That's what I mean by tested.
-
----
-bod
+Best regards
+Artur
