@@ -1,100 +1,120 @@
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A75FD1509BC
-	for <linux-clk@vger.kernel.org>; Tue, 23 Jul 2024 11:40:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CFF2152179
+	for <linux-clk@vger.kernel.org>; Tue, 23 Jul 2024 11:49:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721734836; cv=none; b=mPys93b8adlJvWlGIGzKumpKJYEwsedHft/YXLFS9Su0TwjzFWVozYUEijwYcrXs7oyiWYpg3VOoLvwi+iEGLYmaJXjtqE2J73lQ0nsh9Gr0T8w5Qf5JHGBIXYgT7yBzoazaCODJ1x/uxK8EfIz9ulbSMHr5V/GF8FIgLXJDWAY=
+	t=1721735389; cv=none; b=gkIhSMHfqWybBoSIDKsfhgbsGDM5Wz4u0yRTE7Vcm7vhEfcZv/GbbvnCflDvp9OKU/duCNvTNz83vji5s2AVcxD6mJdxDS1DUTpijOLq1W8fEAjYGuPBwZe4xxOANCcGEBxzkHaD3Yd1VaWtMpEIjlUVqKFQ+zi+sz8eA6e6xR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721734836; c=relaxed/simple;
-	bh=W7OW3Ejgfp7G5j4icOUna0C6UGhzfYE5ZoNeOw3JMyA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PL/FFplKqqqqCed+SevhWbAFP9Rwu9AnlJw5BHhC2aCIBfpKxT9wmyUf0Y64iJEkeXCBBmplwZWK1ok/9q4cIfcZhOFoVPUtgonx9raKnhfeDjWkIJSRzE089Ly90tdUmpkKw1ASnp43gopLIDwYOAuQ5H8O412CTOCjG5wiHgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mkLk4Mfp; arc=none smtp.client-ip=209.85.167.53
+	s=arc-20240116; t=1721735389; c=relaxed/simple;
+	bh=hCpkp5ANZ8OkyRK1jIyFubJUFgQl0f1cvXrspwfYuRk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qLUoDLtmh0cyFee0OuCZ97Mf6hcL5BBJdh2VBBU2hvUw93jjapKwPgHR1EZWyla5Bz/a5gio/8DAWuKhW7mW9XRdkzNDTXVgMgs81G1DI3HK/bDZWwTlpvKyOsJNPe70WQwvNGT5KHuAvueprY7AXHB8mlN2whzxThf1XwMcYM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dd2rXOqN; arc=none smtp.client-ip=209.85.219.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mkLk4Mfp"
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-52efd530a4eso4228337e87.0
-        for <linux-clk@vger.kernel.org>; Tue, 23 Jul 2024 04:40:33 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dd2rXOqN"
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e05f25fb96eso4947536276.1
+        for <linux-clk@vger.kernel.org>; Tue, 23 Jul 2024 04:49:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721734832; x=1722339632; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hjlt0t66AG+BzODJZGyLjit24PidKbfoYtsLZ8osE8U=;
-        b=mkLk4Mfpu++PmPspTzfAPROfQVTLJb4zyW8J5JDYdzz4HdmEWQEDsVJ4Uzv3e40u2l
-         cIQ2YJbz6mBuxV8AFeSFUxGIYIbTfKMXjqan1uU3O+O8KRjuFKn9LJiJgmMrzFn7Umyr
-         tRK0JXYvn4OKTW5olRIX4T+kKPsfPp4YW8eaYWTRO9VNKB3txk/jQHB8NN7bhnP5TVLS
-         fNpNCIbbNR/qt45HwfM6hGKcMwFr69tnTqGlHjr+mQQoyiXIlscPxeTgdlvHsSfpJfqg
-         5uSto9NVi9Hw+NBjdsZoAUyuJYOExnIr8QNoEoLaUOx25cZboXsrtWifnhy2aXJJyhFf
-         3m0g==
+        d=linaro.org; s=google; t=1721735387; x=1722340187; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=llaCJsVSUmU+Pmrfx22YDYSfpr8wrINFhr1BhQOlVyc=;
+        b=dd2rXOqNr3sLwF0+oZwHXvguuj3L6yvtCV7VmzYHmD4wXCawQBgU8IGkDtwls2oXjT
+         myXzwIVvdNfxZY+mM2ud3pjdMK4IShzAdcT/21InXxosdmw6G0WdngbgFm8Jx4voYlwv
+         flfZJl6kvvd7CKw8NptA943+G5tXwWEQP9UJ4rU1m8Q8WUN7ThKzkZel7phk3DoIyQAg
+         L8Ue8iksb1lZ7e2IFrUg2VRB79+kA6xxub4aKZEdooE8oODzaX9y/z6lcYzcwrw7/t7U
+         oKP2iQbaV7vQWC9XvsnhZKS01xCK8tJcEP9Enbzbe7jfkoUBoromzjnVctIGaTwP8Uxo
+         3K2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721734832; x=1722339632;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hjlt0t66AG+BzODJZGyLjit24PidKbfoYtsLZ8osE8U=;
-        b=g0hsmwVmCEzo/wRHnunQsQQvSIaiiFF0Ekl4gzcKDb5YvqDSKhSbMm6K7k3LOJBY87
-         uON6zEjIeXhC/o5XsZld+WJf9aHh4lo7g1LfCpZXRJ2wd0fMrCCH0tk4g240HunHkcux
-         /nJh/2bIdxlSdKPazw90psYGhiXySY8Jrv+iPbMwI39dpiaBQs3d0Lq9FpujMrVGb3nn
-         Szgz6ai4JLIUXOPWqDmFDbLTyYBTecI4aZr+J/qE5OGNjfquEVCINBdOVWmL0eBhJP5P
-         XGWpFu/c5JRxn6MRYdq0/JcOo3mSeZ3UgeMhhiuKCf5RaMWwRi87tzxgDgM/M8pnHSS4
-         CoKg==
-X-Forwarded-Encrypted: i=1; AJvYcCVqxVIGNropjx7wIjl9jyXemQywF1YPHARhVnr8ScqyvAz1lFUl/lHX754ucSEcTx35tRhzQLxrPzTp7I3jH5uRnGaUQIS1j5GM
-X-Gm-Message-State: AOJu0Yzj2EOtfnlcBAQ/GhdvNbG/E40//dXbXai68CbBU//nAu2yHJnE
-	CeNVLy9dwpwATo6sbNfVsSO8CJ0FFSs6TftVc71rmSFNdr6xfk6y2JbHmVyD1kw=
-X-Google-Smtp-Source: AGHT+IEbGSdRnrn1tMqSaQIsvU2xtF9ZvhQfnBkvrzoX6ZyDx0qPmdCjK7nDuJdNYROSEalcudqrEQ==
-X-Received: by 2002:a05:6512:b84:b0:52c:d645:eda7 with SMTP id 2adb3069b0e04-52fc4046b22mr2098202e87.18.1721734831905;
-        Tue, 23 Jul 2024 04:40:31 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52f0212c743sm881109e87.26.2024.07.23.04.40.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 23 Jul 2024 04:40:31 -0700 (PDT)
-Date: Tue, 23 Jul 2024 14:40:30 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	gregkh@linuxfoundation.org, konrad.dybcio@linaro.org, djakov@kernel.org, 
-	quic_wcheng@quicinc.com, quic_kathirav@quicinc.com, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v4 4/5] clk: qcom: ipq5332: Use icc-clk for enabling NoC
- related clocks
-Message-ID: <tg6wzvgiv67gpf6cc3wwubrj7hmpj3tdzsxtkce5shwjhbw5lx@kxa3umil5q5g>
-References: <20240723090304.336428-1-quic_varada@quicinc.com>
- <20240723090304.336428-5-quic_varada@quicinc.com>
+        d=1e100.net; s=20230601; t=1721735387; x=1722340187;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=llaCJsVSUmU+Pmrfx22YDYSfpr8wrINFhr1BhQOlVyc=;
+        b=Xh3dkyhwSe4kFH4yyPf8pBPdKj0HHcaew6keg4QGJKhhnPsulDEguKF9W9pKplT+X6
+         i66yN88fXBN62JaOTr0yM8Mvw6/oYgsC0Q0hbHGp7k6Y/IAJzTxymVvDwoPRIj1nIekC
+         Dn0qa9Ayhxa5gnrt7EOauH1B+FtlWD0i3c2dmO/qKaVQ2I3gcF8LcVrj09iNGXrGe8p6
+         xwIAef+Lapt6QuKpJIH2Y8AGdkx+RKTVYgy4TmUxhBoYm6JtloeYpWLhr6vp0qRfO8i1
+         ia+9nn3sBI8vJv+pD6SEX/OuSvDY4SfbQf+5SpNc8S22taQ3aVu8/68zL+LGiOdd+uaQ
+         GIxw==
+X-Forwarded-Encrypted: i=1; AJvYcCXOaRZ89nfREDCjfRXDxpsVFnJYgLU4qazMVkVjs5QDmF2EGNLODoDjfpyuPSO4GLgTjYtR0lIfMGzNrtnIsEfJsj4MRtRrfmqW
+X-Gm-Message-State: AOJu0YwO5hPjE7mS1oWH2GO6NLn+QWf+uUanWp9Cgbjof/ToWuAEnGEQ
+	eRU7Apu2b37ZA1oPNXU2S7z5/7E29BpgM/2CwKfI8LNB8jAOkl1wQjunpq4cU86p4vGO9bLrUDI
+	PIK92CpHcT3J6/AJjXxvK4nQzigZmT4LgvdPzaQ==
+X-Google-Smtp-Source: AGHT+IGuO4i1P5RHinuVPAWDIVC3NOtN+MxiPreBx2aMxJvTATo97Thp/RKQ+zI6rh4tuhZUg++9l/QZJxL5swB8y84=
+X-Received: by 2002:a05:6902:1025:b0:e08:567c:c9c4 with SMTP id
+ 3f1490d57ef6-e086fe5459emr11815420276.6.1721735387259; Tue, 23 Jul 2024
+ 04:49:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240723090304.336428-5-quic_varada@quicinc.com>
+References: <20240715-linux-next-24-07-13-sc8280xp-camcc-fixes-v1-1-fadb5d9445c1@linaro.org>
+ <f0d4b7a3-2b61-3d42-a430-34b30eeaa644@quicinc.com> <86068581-0ce7-47b5-b1c6-fda4f7d1037f@linaro.org>
+ <02679111-1a35-b931-fecd-01c952553652@quicinc.com> <ce14800d-7411-47c5-ad46-6baa6fb678f4@linaro.org>
+ <dd588276-8f1c-4389-7b3a-88f483b7072e@quicinc.com> <610efa39-e476-45ae-bd2b-3a0b8ea485dc@linaro.org>
+ <6055cb14-de80-97bc-be23-7af8ffc89fcc@quicinc.com> <a0ac4c3b-3c46-4c89-9947-d91ba06309f4@linaro.org>
+ <8dfc5456-861b-e01a-d2d2-1bb9adea1984@quicinc.com>
+In-Reply-To: <8dfc5456-861b-e01a-d2d2-1bb9adea1984@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Tue, 23 Jul 2024 14:49:36 +0300
+Message-ID: <CAA8EJpqrxCyeJJGSORtfvi-bBdqPOjr6xO4gff2W+LBCEVoxJQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: qcom: camcc-sc8280xp: Remove always-on GDSC hard-coding
+To: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
+Cc: "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, stable@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Jul 23, 2024 at 02:33:03PM GMT, Varadarajan Narayanan wrote:
-> Use the icc-clk framework to enable few clocks to be able to
-> create paths and use the peripherals connected on those NoCs.
-> 
-> Remove CLK_IGNORE_UNUSED from gpll4_main as all consumers have
-> been identified.
-> 
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> ---
-> v4: Remove CLK_IGNORE_UNUSED from gpll4_main
-> 
-> v3: Not taking Reviewed-by: Konrad as NAK-ed by Dmitry
->     Remove CLK_IGNORE_UNUSED -> CLK_IS_CRITICAL change and fix
->     that in a separate patch
-> ---
->  drivers/clk/qcom/gcc-ipq5332.c | 35 +++++++++++++++++++++++-----------
->  1 file changed, 24 insertions(+), 11 deletions(-)
-> 
+On Tue, 23 Jul 2024 at 14:37, Satya Priya Kakitapalli (Temp)
+<quic_skakitap@quicinc.com> wrote:
+>
+>
+> On 7/23/2024 2:59 PM, Bryan O'Donoghue wrote:
+> > On 22/07/2024 09:57, Satya Priya Kakitapalli (Temp) wrote:
+> >>> I have no idea. Why does it matter ?
+> >>>
+> >>
+> >> This clock expected to be kept always ON, as per design, or else the
+> >> GDSC transition form ON to OFF (vice versa) wont work.
+> >
+> > Yes, parking to XO per this patch works for me. So I guess its already
+> > on and is left in that state by the park.
+> >
+>
+> Parking RCG to XO doesn't keep the branch clock always-on. It just keeps
+> the parent RCG at 19.2MHz, branch can still be disabled by clearing
+> bit(0). So during late init, the CCF will disable this clock(in
+> clk_disable_unused API) if modelled. Hence this clock shouldn't be modelled.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+But it is already modelled:
+
+static struct clk_branch camcc_gdsc_clk = {
+        .halt_reg = 0xc1e4,
+        .halt_check = BRANCH_HALT,
+....
+};
+
+>
+>
+> >> Want to know the clock status after bootup, to understand if the
+> >> clock got turned off during the late init. May I know exactly what
+> >> you have tested? Did you test the camera usecases as well?
+> >
+> > Of course.
+> >
+> > The camera works on x13s with this patch. That's what I mean by tested.
+> >
+> > ---
+> > bod
+
 
 
 -- 
