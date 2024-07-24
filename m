@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04B8513957C;
-	Wed, 24 Jul 2024 08:08:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE835158871;
+	Wed, 24 Jul 2024 10:12:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721808498; cv=none; b=nDEI4TM14QZc09jeGOxYOR22JN2zuXyZuPQ0RLk0MGZ2Tqy+bg0IVfmkYEf/5N8DMZFbAdRtg/duJAxPYD1RW7ZRjeW69OFbQ21oyMkJZ5j6I9Q+eZVy8TrMp5Yvo89cImDR6Gkryd1cWH1UlSul3Oi7hzq4ciV2YrMIMDopqj8=
+	t=1721815928; cv=none; b=Up68s+FDJpmWBxrbhnoylmrHu/B6GlNJGqxZCZBK09tftMEPqeUI2Gcf1MrGh6T9fkJXc5zr6yQUS/VKpKPv2YVjOL0ic+xeaoeNmKMiE+6q5N38g6Y3daZyM43vkFTOHX6qL2UFXp/UVEnlAHY5EPDOTHvNO8GOqxoBciS6RZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721808498; c=relaxed/simple;
-	bh=3iI4LQNfIFMmQKl7mTJvx9fak4tI16w7TQnMXLRC6P8=;
+	s=arc-20240116; t=1721815928; c=relaxed/simple;
+	bh=Uqbvr11D9AdAvRrO/Gx+qH47OKL06kpUfqsqfplLr44=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LmMsVj7wiNKqmWdrPbSTdZhNG+TPHpTNWzs82r+OQ7IHFszG6bCnyKanSqx8asWLM3Fdocwt8KTfdlyiXMx2Mx4rSxxaGZezSYVtlSZMHOrZPpvn4NMS/6Ljvwn3wTnAj+JVWiqqXg2qFFtWhuFwTafkY4t+A9sybBhSYfNmQJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Afh4//Jn; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=YOI9iqqHv/NjQWinHZ4LQKGcRmkqGPnV2HJAumFJhfxBNmSov08xnxIIgM+Jv4OKs4y3fDADw2m+PaWmQ5zuXRE7Ghh49tVTHY0WctEOoO2NTT4mXhbKMJi6EjE6cd3cNCHqbJeXnsspcOeJ3RfVfLqVJVQrqyg6qyYuXjS4hco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AyhsA9nH; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Afh4//Jn"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3270FC32782;
-	Wed, 24 Jul 2024 08:08:12 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AyhsA9nH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C163C4AF0C;
+	Wed, 24 Jul 2024 10:12:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721808497;
-	bh=3iI4LQNfIFMmQKl7mTJvx9fak4tI16w7TQnMXLRC6P8=;
+	s=k20201202; t=1721815928;
+	bh=Uqbvr11D9AdAvRrO/Gx+qH47OKL06kpUfqsqfplLr44=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Afh4//JnNVD1VuDOCFR7dnSHf5VvHfvu0jiXLDDMVdZQnolFbzxsUEpVy2P/oYTkc
-	 eBj0zFuWGKJtExIdBcpSuWz5LIVhwrZXv7SJLd4I8py7kh7BM298u7cHp5zjpxYgAc
-	 +kpcuCPwLQ+n6vcO4GoV7YeCs0Dpc4kPJcgYVrMGDe6jEM1bJLvaa6dsRLS1VqOmFW
-	 vZuhCd3v2jG+7UpGBSYRifF4KOORnbYwZfu2umJuvNwT1JINcDNiUkrODvzCM/zKpj
-	 pDmxf7ckPYZnPtdKaxEv/o6j5LfwIq04R22wrLRgXoups7iEnrjdkZmuf/lMjVJqJ9
-	 dkNOD/Ji8e8yA==
-Message-ID: <497c9438-5bb3-42d9-9df9-661235a556d2@kernel.org>
-Date: Wed, 24 Jul 2024 10:08:09 +0200
+	b=AyhsA9nHW5INzi1KByBWIblUwgL59r4vkjiK5TJdPIP4Y+QGqwnJmudUSFfb4v+2K
+	 DvD5MgWjcYh1RlxhAuwUiwaPOF1tATyEOteGpUFM5OIsTpTUpUU7j0WjTVJyU+ValF
+	 ZVWQYlLTNHcjH8xITeWv0rRZ80shTwkkZOcpScL3wb+j+R++Smx9qER+XT0fTy1Gq6
+	 3cFNwVwWt56RkVAkCp8S2d2CTwAIe+O6lPE2r0vh/WkfQiHC5OBMRYUlUBK0InkkwQ
+	 5R8AHESTtcWQty8ShWW2G7kVRYVmHrShUU0oGeKqoOqrarOAO9DfPToh83OZHiPQ1X
+	 cBWYgcrdSBASQ==
+Message-ID: <18f5565f-11f5-49ce-a816-366cff25b703@kernel.org>
+Date: Wed, 24 Jul 2024 12:12:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,24 +35,20 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] dt-bindings: clock: qcom: Remove required-opps from
- required list on SM8650
-To: Jagadeesh Kona <quic_jkona@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
+Subject: Re: [PATCH v4 1/4] dt-bindings: clock: add ExynosAuto v920 SoC CMU
+ bindings
+To: Sunyeal Hong <sunyeal.hong@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
  <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Taniya Das <quic_tdas@quicinc.com>,
- Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
- Imran Shaik <quic_imrashai@quicinc.com>,
- Ajit Pandey <quic_ajipan@quicinc.com>, kernel test robot <lkp@intel.com>
-References: <20240720052818.26441-1-quic_jkona@quicinc.com>
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240722223333.1137947-1-sunyeal.hong@samsung.com>
+ <CGME20240722223340epcas2p4ab83b1e8dbc64eaaf32f4f8b7e3f015d@epcas2p4.samsung.com>
+ <20240722223333.1137947-2-sunyeal.hong@samsung.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -98,101 +94,177 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240720052818.26441-1-quic_jkona@quicinc.com>
+In-Reply-To: <20240722223333.1137947-2-sunyeal.hong@samsung.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 20/07/2024 07:28, Jagadeesh Kona wrote:
-> On SM8650, the minimum voltage corner supported on MMCX from cmd-db is
-> sufficient for clock controllers to operate and there is no need to specify
-> the required-opps. Hence remove the required-opps property from the list of
-> required properties for SM8650 camcc and videocc bindings.
+On 23/07/2024 00:33, Sunyeal Hong wrote:
+> Add dt-schema for ExynosAuto v920 SoC clock controller.
+> Add device tree clock binding definitions for below CMU blocks.
 > 
-> This fixes:
-> arch/arm64/boot/dts/qcom/sm8650-mtp.dtb: clock-controller@aaf0000:
-> 'required-opps' is a required property
+> - CMU_TOP
+> - CMU_PERIC0
 > 
-> arch/arm64/boot/dts/qcom/sm8650-mtp.dtb: clock-controller@ade0000:
-> 'required-opps' is a required property
-> 
-> Fixes: a6a61b9701d1 ("dt-bindings: clock: qcom: Add SM8650 video clock controller")
-> Fixes: 1ae3f0578e0e ("dt-bindings: clock: qcom: Add SM8650 camera clock controller")
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202407070147.C9c3oTqS-lkp@intel.com/
-> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+> Signed-off-by: Sunyeal Hong <sunyeal.hong@samsung.com>
 > ---
-> Changes in V2:
->  - Made required: conditional and dropped required-opps from it only for SM8650 platform
->  - Dropped Krzysztof Acked-by tag due to above changes
->  - Link to V1: https://lore.kernel.org/all/20240708130836.19273-1-quic_jkona@quicinc.com/#r
+>  .../clock/samsung,exynosautov920-clock.yaml   | 115 +++++++++++
+>  .../clock/samsung,exynosautov920.h            | 191 ++++++++++++++++++
+>  2 files changed, 306 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynosautov920-clock.yaml
+>  create mode 100644 include/dt-bindings/clock/samsung,exynosautov920.h
 > 
-> .../bindings/clock/qcom,sm8450-camcc.yaml     | 26 +++++++++++++------
->  .../bindings/clock/qcom,sm8450-videocc.yaml   | 25 +++++++++++++-----
->  2 files changed, 36 insertions(+), 15 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
-> index f58edfc10f4c..8698c801ed11 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
-> @@ -21,9 +21,6 @@ description: |
->      include/dt-bindings/clock/qcom,sm8650-camcc.h
->      include/dt-bindings/clock/qcom,x1e80100-camcc.h
->  
-> -allOf:
-> -  - $ref: qcom,gcc.yaml#
-> -
->  properties:
->    compatible:
->      enum:
-> @@ -53,11 +50,24 @@ properties:
->    reg:
->      maxItems: 1
->  
-> -required:
-
-You cannot remove required block.
-
-> -  - compatible
-> -  - clocks
-> -  - power-domains
-> -  - required-opps
+> diff --git a/Documentation/devicetree/bindings/clock/samsung,exynosautov920-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynosautov920-clock.yaml
+> new file mode 100644
+> index 000000000000..90f9f17da959
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/samsung,exynosautov920-clock.yaml
+> @@ -0,0 +1,115 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/samsung,exynosautov920-clock.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Samsung ExynosAuto v920 SoC clock controller
+> +
+> +maintainers:
+> +  - Sunyeal Hong <sunyeal.hong@samsung.com>
+> +  - Chanwoo Choi <cw00.choi@samsung.com>
+> +  - Krzysztof Kozlowski <krzk@kernel.org>
+> +  - Sylwester Nawrocki <s.nawrocki@samsung.com>
+> +
+> +description: |
+> +  ExynosAuto v920 clock controller is comprised of several CMU units, generating
+> +  clocks for different domains. Those CMU units are modeled as separate device
+> +  tree nodes, and might depend on each other. Root clocks in that clock tree are
+> +  two external clocks:: OSCCLK/XTCXO (38.4 MHz) and RTCCLK/XrtcXTI (32768 Hz).
+> +  The external OSCCLK must be defined as fixed-rate clock in dts.
+> +
+> +  CMU_TOP is a top-level CMU, where all base clocks are prepared using PLLs and
+> +  dividers; all other clocks of function blocks (other CMUs) are usually
+> +  derived from CMU_TOP.
+> +
+> +  Each clock is assigned an identifier and client nodes can use this identifier
+> +  to specify the clock which they consume. All clocks available for usage
+> +  in clock consumer nodes are defined as preprocessor macros in
+> +  'include/dt-bindings/clock/samsung,exynosautov920.h' header.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - samsung,exynosautov920-cmu-top
+> +      - samsung,exynosautov920-cmu-peric0
+> +
+> +  clocks:
+> +    minItems: 1
+> +    maxItems: 3
+> +
+> +  clock-names:
+> +    minItems: 1
+> +    maxItems: 3
+> +
+> +  "#clock-cells":
+> +    const: 1
+> +
+> +  reg:
+> +    maxItems: 1
+> +
 > +allOf:
-> +  - $ref: qcom,gcc.yaml#
 > +  - if:
 > +      properties:
 > +        compatible:
 > +          contains:
-> +            const: qcom,sm8650-camcc
+> +            const: samsung,exynosautov920-cmu-top
+> +
 > +    then:
-> +      required:
-> +        - compatible
-> +        - clocks
-> +        - power-domains
-> +    else:
-> +      required:
-> +        - compatible
-> +        - clocks
-> +        - power-domains
-> +        - required-opps
->  
->  unevaluatedProperties: false
->  
-> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
-> index b2792b4bb554..2e5a061f33d6 100644
-> --- a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
-> @@ -40,15 +40,26 @@ properties:
->      description:
->        A phandle to an OPP node describing required MMCX performance point.
->  
-> -required:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: External reference clock (38.4 MHz)
+> +
+> +        clock-names:
+> +          items:
+> +            - const: oscclk
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: samsung,exynosautov920-cmu-peric0
+> +
+> +    then:
+> +      properties:
+> +        clocks:
+> +          items:
+> +            - description: External reference clock (38.4 MHz)
+> +            - description: CMU_PERIC0 NOC clock (from CMU_TOP)
+> +            - description: CMU_PERIC0 IP clock (from CMU_TOP)
+> +
+> +        clock-names:
+> +          items:
+> +            - const: oscclk
+> +            - const: noc
+> +            - const: ip
+> +
+> +required:
+> +  - compatible
+> +  - "#clock-cells"
+> +  - clocks
+> +  - clock-names
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  # Clock controller node for CMU_PERIC0
+> +  - |
+> +    #include <dt-bindings/clock/samsung,exynosautov920.h>
+> +
+> +    cmu_peric0: clock-controller@10800000 {
+> +        compatible = "samsung,exynosautov920-cmu-peric0";
+> +        reg = <0x10800000 0x8000>;
+> +        #clock-cells = <1>;
+> +
+> +        clocks = <&xtcxo>,
+> +                 <&cmu_top DOUT_CLKCMU_PERIC0_NOC>,
+> +                 <&cmu_top DOUT_CLKCMU_PERIC0_IP>;
+> +        clock-names = "oscclk",
+> +                      "noc",
+> +                      "ip";
+> +    };
+> +
+> +...
+> diff --git a/include/dt-bindings/clock/samsung,exynosautov920.h b/include/dt-bindings/clock/samsung,exynosautov920.h
+> new file mode 100644
+> index 000000000000..ad89728a4396
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/samsung,exynosautov920.h
+> @@ -0,0 +1,191 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
+> +/*
+> + * Copyright (c) 2024 Samsung Electronics Co., Ltd.
+> + * Author: Sunyeal Hong <sunyeal.hong@samsung.com>
+> + *
+> + * Device Tree binding constants for ExynosAuto v920 clock controller.
+> + */
+> +
+> +#ifndef _DT_BINDINGS_CLOCK_EXYNOSAUTOV920_H
+> +#define _DT_BINDINGS_CLOCK_EXYNOSAUTOV920_H
+> +
+> +/* CMU_TOP */
+> +#define FOUT_SHARED0_PLL		1
+> +#define FOUT_SHARED1_PLL		2
+> +#define FOUT_SHARED2_PLL		3
+> +#define FOUT_SHARED3_PLL		4
+> +#define FOUT_SHARED4_PLL		5
+> +#define FOUT_SHARED5_PLL		6
+> +#define FOUT_MMC_PLL			7
+> +
+> +/* MUX in CMU_TOP */
+> +#define MOUT_SHARED0_PLL		101
 
-No, you cannot remove required block.
+This is some odd numbering. Numbers start from 0 or 1 and are continuous.
 
-To clarify: there is almost no single binding using your style. Even if
-there is one, then 99 others are using it differently. Do not implement
-things entirely different than everyone else. This is the same for C
-code you send upstream. No difference here...
 
 Best regards,
 Krzysztof
