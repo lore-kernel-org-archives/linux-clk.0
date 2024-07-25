@@ -1,42 +1,58 @@
-Received: from relmlie6.idc.renesas.com (relmlor2.renesas.com [210.160.252.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFF02198A10;
-	Thu, 25 Jul 2024 10:06:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.160.252.172
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 828D2481A3;
+	Thu, 25 Jul 2024 10:45:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721901966; cv=none; b=c2AsrUqm7GjdRFEPIl52xG5qaDr0JvMUrNKTxnKS1fVaCR71X+M57JlpckwdKAcneKxDzGFmN8oYcOCnN4qBdiymX+c76vwcG5ltHO1D9Sqd3tghKJ4RztdqZRheBGz8SiEvK4NnYhGS95CHDSJcghhKi2R/dHxkOz7NVQ9xDAA=
+	t=1721904354; cv=none; b=ZQST3BPqg2VrtUzEPD/aIacR7YnBPHTCflGbexYc7gTTDIJhkCv//0AC1rUZT8n9ci7hXZBlI0rvgeZXsxCZBeNz3Dnmh7YQywABZXoFQhpjC1OKnt22PmUW/Qf2qpxTNrZE+sDhPvGFrW8ctqN+Nefba1OSZpqp2Pe0qVekQ0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721901966; c=relaxed/simple;
-	bh=aE5qboIhoA622hMP1lNkLNFcI34wq3KRqsnK+UblE6Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Exdf6zt+C4Mr3kCkzSs3W7aEhbw7IdJ16isje3lsWgc7jog6ovRBUYV3rhfhH3nARPck25CSkTgzZe0Z4MTuzjEYZ39Bxa0or+7qciwsxS9e6hxFjx2fsyvwUCp6f25Jss9VW2tZDIdXDFcPIdvX1CS2yj/Lha4QbAKbAijj61E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com; spf=pass smtp.mailfrom=renesas.com; arc=none smtp.client-ip=210.160.252.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=renesas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=renesas.com
-X-IronPort-AV: E=Sophos;i="6.09,235,1716217200"; 
-   d="scan'208";a="216709312"
-Received: from unknown (HELO relmlir6.idc.renesas.com) ([10.200.68.152])
-  by relmlie6.idc.renesas.com with ESMTP; 25 Jul 2024 19:06:03 +0900
-Received: from localhost.localdomain (unknown [10.226.93.56])
-	by relmlir6.idc.renesas.com (Postfix) with ESMTP id 9AED141F581D;
-	Thu, 25 Jul 2024 19:05:57 +0900 (JST)
-From: Oliver Rhodes <oliver.rhodes.aj@renesas.com>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: Oliver Rhodes <oliver.rhodes.aj@renesas.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH V2 3/6] dt-bindings: clock: renesas: Document RZ/G2M v3.0 (r8a774a3) clock
-Date: Thu, 25 Jul 2024 11:05:31 +0100
-Message-Id: <20240725100534.5374-4-oliver.rhodes.aj@renesas.com>
+	s=arc-20240116; t=1721904354; c=relaxed/simple;
+	bh=dYgriG+MyvNEUrTvLG/wwytgoO45SByZA1OLcH7HkZ0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=COMtDtBws9EOE4IX3x6ss/Qi7omLz/9Ej/J61sp//czKW0GYzHgAkJ07/95hpaYpbmuIPJkhAwaiOV+Xjw0l1GAH4i1weZufhbgafHFTkePtC4pcOfQhn+k6kg+Qb2souGt1w61XMYqtExdSNn7/QLh9SH3wYNYlns73jFB47Z0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MUfDQ+xC; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MUfDQ+xC"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46P8OcU6014343;
+	Thu, 25 Jul 2024 10:45:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=Y/58zRqrmDm6A+EToepvzU
+	J9h1KoyMcqu86qgh08Y6c=; b=MUfDQ+xChuGQ5tsMaI/tWquelFkrgvbou2jtPk
+	4pcAaZqVPDZx47nzaoiqumtVRpnvEzs/8jRrz03c//OnpA189I9zmSsoagXuPlbC
+	my3YZTNtHzMMpb6Q2l7Hib2yKCrZGyxVceEfYt8bNGraGNFKe7AlxFapimbMSPGM
+	ro8iRFrmI/4OYIulAoUi9DQyv4sAT7gVd+1qsPOIq/Gizv3Z9lOIN/GvDD8l10N5
+	V9RCPxzoCR+s+pYgto4vldxRnIFv10u5jXtVx4CPsW47gHe9PDJCLnv+2jRGiwZr
+	afax1EggR4VOmmnllo/sCDlzwbzZftomW1lx9jWyvPHMZu+A==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40g5auvx1a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 25 Jul 2024 10:45:47 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46PAjkOh029253
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 25 Jul 2024 10:45:46 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 25 Jul 2024 03:45:40 -0700
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <gregkh@linuxfoundation.org>, <konrad.dybcio@linaro.org>,
+        <djakov@kernel.org>, <quic_wcheng@quicinc.com>,
+        <quic_kathirav@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>
+CC: Varadarajan Narayanan <quic_varada@quicinc.com>
+Subject: [PATCH v5 0/5] Add interconnect driver for IPQ5332 SoC
+Date: Thu, 25 Jul 2024 16:15:23 +0530
+Message-ID: <20240725104528.3504967-1-quic_varada@quicinc.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240725100534.5374-1-oliver.rhodes.aj@renesas.com>
-References: <20240725100534.5374-1-oliver.rhodes.aj@renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -44,36 +60,64 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: c4Q21Gt8uTTCdX5Ak_tUfWrr7j-19sEU
+X-Proofpoint-GUID: c4Q21Gt8uTTCdX5Ak_tUfWrr7j-19sEU
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-25_11,2024-07-25_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 bulkscore=0 malwarescore=0 suspectscore=0 mlxscore=0
+ clxscore=1015 phishscore=0 spamscore=0 adultscore=0 mlxlogscore=776
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407250073
 
-Add binding documentation for Renesas RZ/G2M v3.0 (a.k.a r8a774a3) Clock
-Pulse Generator driver. The r8a774a3 cpg is similar to the r8a774a1 cpg
-however, it lacks some modules such as the FCPCI.
+Enable icc-clk based interconnect driver for IPQ5332. This is
+similar to IPQ9574's icc-clk based driver.
 
-Signed-off-by: Oliver Rhodes <oliver.rhodes.aj@renesas.com>
----
-v2->v2 resend:
-* Updated the patch description.
-v1 resend->v2:
-* Updated the commit description detailing the difference between the
-  r8a774a3 cpg and the r8a774a1 cpg.
-v1->v1 resend:
-* No change.
----
- Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml | 1 +
- 1 file changed, 1 insertion(+)
+dt_bindings_check and dtbs_check passed.
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
-index 084259d30232..77ce3615c65a 100644
---- a/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
-+++ b/Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml
-@@ -31,6 +31,7 @@ properties:
-       - renesas,r8a7745-cpg-mssr  # RZ/G1E
-       - renesas,r8a77470-cpg-mssr # RZ/G1C
-       - renesas,r8a774a1-cpg-mssr # RZ/G2M
-+      - renesas,r8a774a3-cpg-mssr # RZ/G2M v3.0
-       - renesas,r8a774b1-cpg-mssr # RZ/G2N
-       - renesas,r8a774c0-cpg-mssr # RZ/G2E
-       - renesas,r8a774e1-cpg-mssr # RZ/G2H
+Ensured that icc_sync_state is called and relevant clocks are
+disabled.
+
+v5: Fix dt-bindings entry in 'dt-bindings: usb: qcom,dwc3: Update ipq5332 clock details'
+
+v4: Add Reviewed-By for the first patch
+    Move the gpll4_main change to next patch as suggested in review
+
+v3: Not taking Reviewed-By: Krzysztof, due to minor change in file
+
+    Add 'clk: qcom: ipq5332: Register gcc_qdss_tsctr_clk_src' to fix
+    gpll4_main's CLK_IGNORE_UNUSED issue.
+
+v2: Removed dependency as it is merged
+    dt-bindings update to accommodate USB clock names change
+    Use icc-clk for USB also
+
+v1:
+Dependency:
+[1] https://lore.kernel.org/linux-arm-msm/20240430064214.2030013-1-quic_varada@quicinc.com/
+
+
+Varadarajan Narayanan (5):
+  dt-bindings: interconnect: Add Qualcomm IPQ5332 support
+  dt-bindings: usb: qcom,dwc3: Update ipq5332 clock details
+  clk: qcom: ipq5332: Register gcc_qdss_tsctr_clk_src
+  clk: qcom: ipq5332: Use icc-clk for enabling NoC related clocks
+  arm64: dts: qcom: ipq5332: Add icc provider ability to gcc
+
+ .../bindings/clock/qcom,ipq5332-gcc.yaml      |  2 +
+ .../devicetree/bindings/usb/qcom,dwc3.yaml    |  2 +-
+ arch/arm64/boot/dts/qcom/ipq5332.dtsi         |  7 ++-
+ drivers/clk/qcom/gcc-ipq5332.c                | 36 ++++++++++-----
+ .../dt-bindings/interconnect/qcom,ipq5332.h   | 46 +++++++++++++++++++
+ 5 files changed, 79 insertions(+), 14 deletions(-)
+ create mode 100644 include/dt-bindings/interconnect/qcom,ipq5332.h
+
 -- 
 2.34.1
 
