@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA2743FB3B;
-	Thu, 25 Jul 2024 14:19:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 617CC19D091;
+	Thu, 25 Jul 2024 14:22:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721917188; cv=none; b=MAGnlrS5ThwlZFETY85gaKN99yVbzO2bfWO55y8A7SWZ2dpg3HXNdVXCZMLrcURmJfXcCXGRN3kuX/qThy8cE/cHTparDNYjw0ReFlIu20YpNn/AhJYHwe07rGy4QgLt6GrA8nq0a0OHSAq2bx+TavLugSN7+PhdquHZCpAO1hg=
+	t=1721917349; cv=none; b=TPGkoPxutiBbvtaeebpd4tbnosaVcNrkZvLxDrjM0+EWXKdUQqu1Yg6VLdjbg0tRz31lHpQhzgfH7cWkWVzSerQOFylUWRKab7/jNabEcYnZczoj/y+5bEG5RgxJZCFbbS3ZsPnJpxTihThtRqReA7woB38sU6uqUuXR88JlXTA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721917188; c=relaxed/simple;
-	bh=xSXbpBKVBhuZ4AyMY+6MQuhpMHVCd4YhhxciNhrGcMk=;
+	s=arc-20240116; t=1721917349; c=relaxed/simple;
+	bh=Xr7gwIkEtfygg5zDHKVTVXXd8+oxncye9yOKYkaCVy0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JOVbEgO2cunEJ+TmQEIL+dL0X3zNre8rMjRdHMTTcR/6CR8umrtr6RFGee0/v1PIqPdZv7WFGGSUlLPqOHeUrT1hxsNUiFFB0EbnyTGFbmTSRVAyGYcfEKLaMbAhTAfVeb5CTpZu2X9gouL6f3TZmeNZ629P/H+ZHEGE2RsyqdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vOIwYLb4; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=pye1o7E1pWwbU3z8HJvfbTHgYkQll/yFvOl/gdBo3glz/tSOmPgoEg7hRMIRDT/+qH5yf++fMGI3pqX7VrkDT0kWMKonNf7JCDP0/ZXkx2eso8MGv6rUm96Kd4ud7F2zoNAYVYDz+fvORiT3bQdy/5C3qTIihhlVNioJPvrQvdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=REUUdLqI; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vOIwYLb4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BA61C116B1;
-	Thu, 25 Jul 2024 14:19:45 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="REUUdLqI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5341C32782;
+	Thu, 25 Jul 2024 14:22:26 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721917188;
-	bh=xSXbpBKVBhuZ4AyMY+6MQuhpMHVCd4YhhxciNhrGcMk=;
+	s=k20201202; t=1721917348;
+	bh=Xr7gwIkEtfygg5zDHKVTVXXd8+oxncye9yOKYkaCVy0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vOIwYLb4PE900cdK78Zk1zR+oad48KV56rFvEz0yj57Nt7qkbpnCBJW8vukMvV/gb
-	 gBs1EhqtoLtDT1rkEIdxxD7x5ssQow1s1ahbS6nSbU3cysVyVUK+6kt+EdrI0KvdG+
-	 xCf2dSxfBC6EfQNtHMM/tPmCmukVPN8dFK/DXcWRelYSZNqCH2Nc5Stl8U2wc1UgRf
-	 LhnmnM8w6Aeplpc4X6YXiB6nuZxTTtnDQg2Ulur9SwKsht4OWOZVCV97jkJEiBz9F2
-	 D77BtymVLs0lg5LiOg6SRFaSiAFL9TbU0feh4ngdaYFODeleZmRXIQDH0vjYy/HcLO
-	 Sdrxd0YJmkufg==
-Date: Thu, 25 Jul 2024 15:19:43 +0100
+	b=REUUdLqIyoeSYhmWzkbITk+xAAkWffbxWAah6GwSlP/RmvesVWI0DCdssNefjCA44
+	 rsAsvhhyTlip8ypB18FsjBBeNJrRe55Qh7H/qsZ6tNf1EWJyRPT1YMgE+6aEhMOy7D
+	 /XVMrDWxQ54LdkqWjDmIHlrx/m+R6+uX1vS5UYpwIvT5iu98TnUwOqAU1GbO+MZqNE
+	 UPNIsXO6H930srHPnFRFRYElOhuc6rGIp9+3vrub+a14j+lRzcZkYNlzYKP9SRaKtW
+	 0Fe84o8hTFqhuNUjX5isLyxE59yTS+dD2ZN5IFO9gDxcDDKxpFXyJKnauAhlL1Cl6Q
+	 VB5D6nQoU5WNg==
+Date: Thu, 25 Jul 2024 15:22:24 +0100
 From: Conor Dooley <conor@kernel.org>
 To: pierre-henry.moussay@microchip.com
 Cc: Conor Dooley <conor.dooley@microchip.com>,
@@ -36,11 +36,11 @@ Cc: Conor Dooley <conor.dooley@microchip.com>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 07/17] dt-bindings: clock: mpfs-ccc: Add PIC64GX
+Subject: Re: [PATCH 08/17] dt-bindings: clock: mpfs-clkcfg: Add PIC64GX
  compatibility
-Message-ID: <20240725-trance-creme-d71484a00581@spud>
+Message-ID: <20240725-upstream-smokeless-6d0eb847a594@spud>
 References: <20240725121609.13101-1-pierre-henry.moussay@microchip.com>
- <20240725121609.13101-8-pierre-henry.moussay@microchip.com>
+ <20240725121609.13101-9-pierre-henry.moussay@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -48,47 +48,54 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="duUHs0Bth47OpGBI"
+	protocol="application/pgp-signature"; boundary="oUQL6fU2J0AJLRVY"
 Content-Disposition: inline
-In-Reply-To: <20240725121609.13101-8-pierre-henry.moussay@microchip.com>
+In-Reply-To: <20240725121609.13101-9-pierre-henry.moussay@microchip.com>
 
 
---duUHs0Bth47OpGBI
+--oUQL6fU2J0AJLRVY
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 25, 2024 at 01:15:59PM +0100, pierre-henry.moussay@microchip.co=
+On Thu, Jul 25, 2024 at 01:16:00PM +0100, pierre-henry.moussay@microchip.co=
 m wrote:
 > From: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
 >=20
-> PIC64GX SoC has clock compatibles with the MPFS IP
-
-These commit messages don't really make sense. It should read something
-like "The pic64gx SoC has has Clock Conditioning Circuitry compatible
-with that on PolarFire SoC" or something along those lines.
-
+> PIC64GX has a clock controller compatible whith mpfs-clkcfg
 >=20
 > Signed-off-by: Pierre-Henry Moussay <pierre-henry.moussay@microchip.com>
 > ---
->  .../devicetree/bindings/clock/microchip,mpfs-ccc.yaml       | 6 +++++-
+>  .../devicetree/bindings/clock/microchip,mpfs-clkcfg.yaml    | 6 +++++-
 >  1 file changed, 5 insertions(+), 1 deletion(-)
 >=20
-> diff --git a/Documentation/devicetree/bindings/clock/microchip,mpfs-ccc.y=
-aml b/Documentation/devicetree/bindings/clock/microchip,mpfs-ccc.yaml
-> index f1770360798f..9a6b50527c42 100644
-> --- a/Documentation/devicetree/bindings/clock/microchip,mpfs-ccc.yaml
-> +++ b/Documentation/devicetree/bindings/clock/microchip,mpfs-ccc.yaml
-> @@ -17,7 +17,11 @@ description: |
+> diff --git a/Documentation/devicetree/bindings/clock/microchip,mpfs-clkcf=
+g.yaml b/Documentation/devicetree/bindings/clock/microchip,mpfs-clkcfg.yaml
+> index e4e1c31267d2..ca889f5df87a 100644
+> --- a/Documentation/devicetree/bindings/clock/microchip,mpfs-clkcfg.yaml
+> +++ b/Documentation/devicetree/bindings/clock/microchip,mpfs-clkcfg.yaml
+> @@ -19,7 +19,11 @@ description: |
 > =20
 >  properties:
 >    compatible:
-> -    const: microchip,mpfs-ccc
+> -    const: microchip,mpfs-clkcfg
 > +    oneOf:
 > +      - items:
-> +          - const: microchip,pic64gx-ccc
-> +          - const: microchip,mpfs-ccc
-> +      - const: microchip,mpfs-ccc
+> +          - const: microchip,pic64gx-clkcfg
+> +          - const: microchip,mpfs-clkcfg
+> +      - const: microchip,mpfs-clkcfg
+
+Ditto here, the mpfs binding is wrong and I don't want the pic64gx to
+ape that. Instead, we should take the opportunity to fix the binding.
+You're gonna need to do that so that the pinctrl driver can access the
+IOMUX registers correctly. As with the mailbox, either simplemfd or
+syscon are needed here. I mocked something up a few weeks ago while
+talking to someone about a hwmon driver, I'll dig it up when I am back
+to work.
+
+Cheers,
+Conor.
+
 > =20
 >    reg:
 >      items:
@@ -96,20 +103,16 @@ aml b/Documentation/devicetree/bindings/clock/microchip,mpfs-ccc.yaml
 > 2.30.2
 >=20
 >=20
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
---duUHs0Bth47OpGBI
+--oUQL6fU2J0AJLRVY
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZqJe/wAKCRB4tDGHoIJi
-0slGAP4wp/zEDCscW2AIhOJSwQdtzjmmLTjj+1JuMn38oqByKgEA6ThBH9tWmOYa
-PvNEFcO75zEzmND+DCX0MJSXwX4tZwE=
-=GAWT
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZqJfoAAKCRB4tDGHoIJi
+0suUAQC/tzIWQ+Mg2NnvUYdGhSkTvOGO4cDGQ05zxeqfGSiiWgEA7Rwx2eJ2o5Ny
+E6x8AuEC/cU5wHg6AoUfsPnTv8QKGw4=
+=tflQ
 -----END PGP SIGNATURE-----
 
---duUHs0Bth47OpGBI--
+--oUQL6fU2J0AJLRVY--
