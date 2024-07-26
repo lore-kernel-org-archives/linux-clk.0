@@ -1,245 +1,122 @@
-Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D045A17A598;
-	Fri, 26 Jul 2024 11:09:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BCD97F8;
+	Fri, 26 Jul 2024 11:10:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721992151; cv=none; b=rxvEUjYYJap4Yeo4l/+Y1b476dK+kJA5WKpim5G3XYJWy0cV/FvzPw9gtc/SfUNzqMldCScjP3crkR6toHqt/CpyiWNH4Y/Nz/c7DhQeXnr7BQSc2PHspkMCqCZpzjjchWrYVXDU0Et/twDBz1uLro7HDPymzKWQ5KIttqtGKaI=
+	t=1721992227; cv=none; b=E70verhpYuw2g3ntTkKt3khknHygDAr4J/exB6RY//str5BQ6Oqa0dq2VxrUqcGVW4P3Dyn69wywDydVPQMgjlO98NTs9nbcaE30ATxnbx8L95WhHnqOmBNp7wIIbkwZX7O3IDhoocfO+0xohJrwSEojvDNfg5G5l6DtVSxBaA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721992151; c=relaxed/simple;
-	bh=53qo2fRlS84JcaC3p7uyglqqd9gYsmYoqdHuioxzSuU=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BmAEej5nPrOwgBw2dUH6bmzr6CuS0JN9iw3/84dABj/kO1HXIr425CouV8+t8yMTWid5lB+EeiJdACDOmjXtxewUG+jdty3NR1XQbP/AMYmt405F3rszus86331ZfdNS+/bn1YTAFCndUlActF8sdY8QIAtO9BD884VN3ZxFeYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
-Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12; Fri, 26 Jul
- 2024 19:04:00 +0800
-Received: from localhost.localdomain (192.168.10.10) by TWMBX01.aspeed.com
- (192.168.0.62) with Microsoft SMTP Server id 15.2.1258.12 via Frontend
- Transport; Fri, 26 Jul 2024 19:03:59 +0800
-From: Kevin Chen <kevin_chen@aspeedtech.com>
-To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-	<joel@jms.id.au>, <andrew@codeconstruct.com.au>, <lee@kernel.org>,
-	<catalin.marinas@arm.com>, <will@kernel.org>, <arnd@arndb.de>,
-	<olof@lixom.net>, <soc@kernel.org>, <mturquette@baylibre.com>,
-	<sboyd@kernel.org>, <p.zabel@pengutronix.de>, <quic_bjorande@quicinc.com>,
-	<geert+renesas@glider.be>, <dmitry.baryshkov@linaro.org>,
-	<shawnguo@kernel.org>, <neil.armstrong@linaro.org>,
-	<m.szyprowski@samsung.com>, <nfraprado@collabora.com>, <u-kumar1@ti.com>,
-	<kevin_chen@aspeedtech.com>, <devicetree@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-aspeed@lists.ozlabs.org>,
-	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
-Subject: [PATCH v1 02/10] dt-binding: clk: ast2700: Add binding for Aspeed AST27xx Clock
-Date: Fri, 26 Jul 2024 19:03:47 +0800
-Message-ID: <20240726110355.2181563-3-kevin_chen@aspeedtech.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240726110355.2181563-1-kevin_chen@aspeedtech.com>
-References: <20240726110355.2181563-1-kevin_chen@aspeedtech.com>
+	s=arc-20240116; t=1721992227; c=relaxed/simple;
+	bh=+EAwi1gqPbbkqWMdFpWlW4xjFm/kUHBQaYtn6UFQVxM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=CvmjaWMjrIqbHO8V3Ej1qN8K6HVLachD3bAtBReFb/9E/mw3395WbFita/0Xy6Wk5uZY5vMa1K2SPfRGvLTSMRe2qcKsK2Y0Ks7RyYvocwk1OgqGQ2gku8/DJOPu9eAAoZicF/So/1QC23ZW0ezuN34KxkxU0SdB63M1KTSF38A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tRN+WeYJ; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tRN+WeYJ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 073D6C32782;
+	Fri, 26 Jul 2024 11:10:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1721992226;
+	bh=+EAwi1gqPbbkqWMdFpWlW4xjFm/kUHBQaYtn6UFQVxM=;
+	h=Date:Subject:List-Id:To:References:From:In-Reply-To:From;
+	b=tRN+WeYJOPpXbVyEurbIF0U9isYsfrPsvJdzckOo8qao/UY7WS+JIPPkqR8/hCPOV
+	 1vkOm1tscAJycetC5Ep2V5Mk2Kh0UhO0hKkZOqPazm/6DK73nPO24UADdqjTOc8jh/
+	 cbmmtDjTdAxA/JR65q2rosG407Gy4FnAoDsxjobudTh1WJ0Me6VPdFklx2yaD2yyXX
+	 hjVS4Aq7eYGC7GTBnoJqGt21c9/41bnmlX/5bidmgqqRkTHapBCapFY7XnZ9e+dYKR
+	 VK9DucKCE96WH7rTRVO0X1M7GwQb3qFTlcaZ2t9rPzw1AIg9F7MREAUCVifhQPQkxT
+	 zdEXasxDH7N7g==
+Message-ID: <e6cb6f26-fef2-49bc-ab25-fdc9a659f593@kernel.org>
+Date: Fri, 26 Jul 2024 13:10:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 01/10] dt-binding: mfd: aspeed,ast2x00-scu: Add binding
+ for ASPEED AST2700 SCU
+To: Kevin Chen <kevin_chen@aspeedtech.com>, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
+ andrew@codeconstruct.com.au, lee@kernel.org, catalin.marinas@arm.com,
+ will@kernel.org, arnd@arndb.de, olof@lixom.net, soc@kernel.org,
+ mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
+ quic_bjorande@quicinc.com, geert+renesas@glider.be,
+ dmitry.baryshkov@linaro.org, shawnguo@kernel.org, neil.armstrong@linaro.org,
+ m.szyprowski@samsung.com, nfraprado@collabora.com, u-kumar1@ti.com,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <20240726110355.2181563-1-kevin_chen@aspeedtech.com>
+ <20240726110355.2181563-2-kevin_chen@aspeedtech.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240726110355.2181563-2-kevin_chen@aspeedtech.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Signed-off-by: Kevin Chen <kevin_chen@aspeedtech.com>
----
- .../dt-bindings/clock/aspeed,ast2700-clk.h    | 180 ++++++++++++++++++
- 1 file changed, 180 insertions(+)
- create mode 100644 include/dt-bindings/clock/aspeed,ast2700-clk.h
+On 26/07/2024 13:03, Kevin Chen wrote:
+> Signed-off-by: Kevin Chen <kevin_chen@aspeedtech.com>
 
-diff --git a/include/dt-bindings/clock/aspeed,ast2700-clk.h b/include/dt-bindings/clock/aspeed,ast2700-clk.h
-new file mode 100644
-index 000000000000..5ca85503736d
---- /dev/null
-+++ b/include/dt-bindings/clock/aspeed,ast2700-clk.h
-@@ -0,0 +1,180 @@
-+/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-+/*
-+ * Device Tree binding constants for AST2700 clock controller.
-+ *
-+ * Copyright (c) 2023 Aspeed Technology Inc.
-+ */
-+
-+#ifndef __DT_BINDINGS_CLOCK_AST2700_H
-+#define __DT_BINDINGS_CLOCK_AST2700_H
-+
-+/* SOC0 clk-gate */
-+#define SCU0_CLK_GATE_MCLK	(0)
-+#define SCU0_CLK_GATE_ECLK	(1)
-+#define SCU0_CLK_GATE_GCLK	(2)
-+#define SCU0_CLK_GATE_VCLK	(3)
-+#define SCU0_CLK_GATE_BCLK	(4)
-+#define SCU0_CLK_GATE_D1CLK	(5)
-+#define SCU0_CLK_GATE_REFCLK	(6)
-+#define SCU0_CLK_GATE_USB0CLK	(7)
-+#define SCU0_CLK_GATE_RSV8	(8)
-+#define SCU0_CLK_GATE_USB1CLK	(9)
-+#define SCU0_CLK_GATE_D2CLK	(10)
-+#define SCU0_CLK_GATE_RSV11	(11)
-+#define SCU0_CLK_GATE_RSV12	(12)
-+#define SCU0_CLK_GATE_YCLK	(13)
-+#define SCU0_CLK_GATE_USB2CLK	(14)
-+#define SCU0_CLK_GATE_UART4CLK	(15)
-+#define SCU0_CLK_GATE_SLICLK	(16)
-+#define SCU0_CLK_GATE_DACCLK	(17)
-+#define SCU0_CLK_GATE_DP	(18)
-+#define SCU0_CLK_GATE_RSV19	(19)
-+#define SCU0_CLK_GATE_CRT1CLK	(20)
-+#define SCU0_CLK_GATE_CRT2CLK	(21)
-+#define SCU0_CLK_GATE_VLCLK	(22)
-+#define SCU0_CLK_GATE_ECCCLK	(23)
-+#define SCU0_CLK_GATE_RSACLK	(24)
-+#define SCU0_CLK_GATE_RVAS0CLK	(25)
-+#define SCU0_CLK_GATE_UFSCLK	(26)
-+#define SCU0_CLK_GATE_EMMCCLK	(27)
-+#define SCU0_CLK_GATE_RVAS1CLK	(28)
-+/* reserved 29 ~ 31*/
-+#define SOC0_CLK_GATE_NUM	(SCU0_CLK_GATE_RVAS1CLK + 1)
-+
-+/* SOC0 clk */
-+#define SCU0_CLKIN		(SOC0_CLK_GATE_NUM + 0)
-+#define SCU0_CLK_24M		(SOC0_CLK_GATE_NUM + 1)
-+#define SCU0_CLK_192M		(SOC0_CLK_GATE_NUM + 2)
-+#define SCU0_CLK_UART		(SOC0_CLK_GATE_NUM + 3)
-+#define SCU0_CLK_PSP		(SOC0_CLK_GATE_NUM + 4)
-+#define SCU0_CLK_HPLL		(SOC0_CLK_GATE_NUM + 5)
-+#define SCU0_CLK_HPLL_DIV2	(SOC0_CLK_GATE_NUM + 6)
-+#define SCU0_CLK_HPLL_DIV4	(SOC0_CLK_GATE_NUM + 7)
-+#define SCU0_CLK_DPLL		(SOC0_CLK_GATE_NUM + 8)
-+#define SCU0_CLK_MPLL		(SOC0_CLK_GATE_NUM + 9)
-+#define SCU0_CLK_MPLL_DIV2	(SOC0_CLK_GATE_NUM + 10)
-+#define SCU0_CLK_MPLL_DIV4	(SOC0_CLK_GATE_NUM + 11)
-+#define SCU0_CLK_MPLL_DIV8	(SOC0_CLK_GATE_NUM + 12)
-+#define SCU0_CLK_D1CLK		(SOC0_CLK_GATE_NUM + 13)
-+#define SCU0_CLK_D2CLK		(SOC0_CLK_GATE_NUM + 14)
-+#define SCU0_CLK_CRT1		(SOC0_CLK_GATE_NUM + 15)
-+#define SCU0_CLK_CRT2		(SOC0_CLK_GATE_NUM + 16)
-+#define SCU0_CLK_MPHY		(SOC0_CLK_GATE_NUM + 17)
-+#define SCU0_CLK_AXI		(SOC0_CLK_GATE_NUM + 18)
-+#define SCU0_CLK_AXI1		(SOC0_CLK_GATE_NUM + 19)
-+#define SCU0_CLK_AHB		(SOC0_CLK_GATE_NUM + 20)
-+#define SCU0_CLK_APB		(SOC0_CLK_GATE_NUM + 21)
-+#define SCU0_CLK_MCLK		(SOC0_CLK_GATE_NUM + 22)
-+#define SCU0_CLK_ECLK		(SOC0_CLK_GATE_NUM + 23)
-+#define SCU0_CLK_GCLK		(SOC0_CLK_GATE_NUM + 24)
-+#define SCU0_CLK_VCLK		(SOC0_CLK_GATE_NUM + 25)
-+#define SCU0_CLK_BCLK		(SOC0_CLK_GATE_NUM + 26)
-+#define SCU0_CLK_REF		(SOC0_CLK_GATE_NUM + 27)
-+#define SCU0_CLK_USB0CLK	(SOC0_CLK_GATE_NUM + 28)
-+#define SCU0_CLK_USB1CLK	(SOC0_CLK_GATE_NUM + 29)
-+#define SCU0_CLK_USB2CLK	(SOC0_CLK_GATE_NUM + 30)
-+#define SCU0_CLK_YCLK		(SOC0_CLK_GATE_NUM + 31)
-+#define SCU0_CLK_UART4		(SOC0_CLK_GATE_NUM + 32)
-+#define SCU0_CLK_SLI		(SOC0_CLK_GATE_NUM + 33)
-+#define SCU0_CLK_ECC		(SOC0_CLK_GATE_NUM + 34)
-+#define SCU0_CLK_RSA		(SOC0_CLK_GATE_NUM + 35)
-+#define SCU0_CLK_RVAS0		(SOC0_CLK_GATE_NUM + 36)
-+#define SCU0_CLK_UFS		(SOC0_CLK_GATE_NUM + 37)
-+#define SCU0_CLK_RVAS1		(SOC0_CLK_GATE_NUM + 38)
-+#define SCU0_CLK_EMMCMUX	(SOC0_CLK_GATE_NUM + 39)
-+#define SCU0_CLK_EMMC		(SOC0_CLK_GATE_NUM + 40)
-+#define SCU0_CLK_U2PHY_CLK12M	(SOC0_CLK_GATE_NUM + 41)
-+#define SCU0_CLK_U2PHY_REFCLK	(SOC0_CLK_GATE_NUM + 42)
-+
-+#define SOC0_NUM_CLKS		(SCU0_CLK_U2PHY_REFCLK + 1)
-+
-+/* SOC1 clk gate */
-+#define SCU1_CLK_GATE_LCLK0       (0)
-+#define SCU1_CLK_GATE_LCLK1       (1)
-+#define SCU1_CLK_GATE_ESPI0CLK    (2)
-+#define SCU1_CLK_GATE_ESPI1CLK    (3)
-+#define SCU1_CLK_GATE_SDCLK       (4)
-+#define SCU1_CLK_GATE_REFCLK      (5)
-+#define SCU1_CLK_GATE_RSV5CLK     (6)
-+#define SCU1_CLK_GATE_LPCHCLK     (7)
-+#define SCU1_CLK_GATE_MAC0CLK     (8)
-+#define SCU1_CLK_GATE_MAC1CLK     (9)
-+#define SCU1_CLK_GATE_MAC2CLK     (10)
-+#define SCU1_CLK_GATE_UART0CLK    (11)
-+#define SCU1_CLK_GATE_UART1CLK    (12)
-+#define SCU1_CLK_GATE_UART2CLK    (13)
-+#define SCU1_CLK_GATE_UART3CLK    (14)
-+/* reserved bit 15*/
-+#define SCU1_CLK_GATE_I3C0CLK     (16)
-+#define SCU1_CLK_GATE_I3C1CLK     (17)
-+#define SCU1_CLK_GATE_I3C2CLK     (18)
-+#define SCU1_CLK_GATE_I3C3CLK     (19)
-+#define SCU1_CLK_GATE_I3C4CLK     (20)
-+#define SCU1_CLK_GATE_I3C5CLK     (21)
-+#define SCU1_CLK_GATE_I3C6CLK     (22)
-+#define SCU1_CLK_GATE_I3C7CLK     (23)
-+#define SCU1_CLK_GATE_I3C8CLK     (24)
-+#define SCU1_CLK_GATE_I3C9CLK     (25)
-+#define SCU1_CLK_GATE_I3C10CLK    (26)
-+#define SCU1_CLK_GATE_I3C11CLK    (27)
-+#define SCU1_CLK_GATE_I3C12CLK    (28)
-+#define SCU1_CLK_GATE_I3C13CLK    (29)
-+#define SCU1_CLK_GATE_I3C14CLK    (30)
-+#define SCU1_CLK_GATE_I3C15CLK    (31)
-+
-+#define SCU1_CLK_GATE_UART5CLK    (32 + 0)
-+#define SCU1_CLK_GATE_UART6CLK	  (32 + 1)
-+#define SCU1_CLK_GATE_UART7CLK    (32 + 2)
-+#define SCU1_CLK_GATE_UART8CLK    (32 + 3)
-+#define SCU1_CLK_GATE_UART9CLK	  (32 + 4)
-+#define SCU1_CLK_GATE_UART10CLK   (32 + 5)
-+#define SCU1_CLK_GATE_UART11CLK   (32 + 6)
-+#define SCU1_CLK_GATE_UART12CLK   (32 + 7)
-+#define SCU1_CLK_GATE_FSICLK      (32 + 8)
-+#define SCU1_CLK_GATE_LTPIPHYCLK  (32 + 9)
-+#define SCU1_CLK_GATE_LTPICLK     (32 + 10)
-+#define SCU1_CLK_GATE_VGALCLK     (32 + 11)
-+#define SCU1_CLK_GATE_USBUARTCLK  (32 + 12)
-+#define SCU1_CLK_GATE_CANCLK      (32 + 13)
-+#define SCU1_CLK_GATE_PCICLK	  (32 + 14)
-+#define SCU1_CLK_GATE_SLICLK      (32 + 15)
-+
-+#define SOC1_CLK_GATE_NUM	(SCU1_CLK_GATE_SLICLK + 1)
-+
-+/* SOC1 clk */
-+#define SCU1_CLKIN		(SOC1_CLK_GATE_NUM + 0)
-+#define SCU1_CLK_HPLL		(SOC1_CLK_GATE_NUM + 1)
-+#define SCU1_CLK_APLL		(SOC1_CLK_GATE_NUM + 2)
-+#define SCU1_CLK_APLL_DIV2	(SOC1_CLK_GATE_NUM + 3)
-+#define SCU1_CLK_APLL_DIV4	(SOC1_CLK_GATE_NUM + 4)
-+#define SCU1_CLK_DPLL		(SOC1_CLK_GATE_NUM + 5)
-+#define SCU1_CLK_UXCLK		(SOC1_CLK_GATE_NUM + 6)
-+#define SCU1_CLK_HUXCLK		(SOC1_CLK_GATE_NUM + 7)
-+#define SCU1_CLK_UARTX		(SOC1_CLK_GATE_NUM + 8)
-+#define SCU1_CLK_HUARTX		(SOC1_CLK_GATE_NUM + 9)
-+#define SCU1_CLK_AHB		(SOC1_CLK_GATE_NUM + 10)
-+#define SCU1_CLK_APB		(SOC1_CLK_GATE_NUM + 11)
-+#define SCU1_CLK_UART0		(SOC1_CLK_GATE_NUM + 12)
-+#define SCU1_CLK_UART1		(SOC1_CLK_GATE_NUM + 13)
-+#define SCU1_CLK_UART2		(SOC1_CLK_GATE_NUM + 14)
-+#define SCU1_CLK_UART3		(SOC1_CLK_GATE_NUM + 15)
-+#define SCU1_CLK_UART5		(SOC1_CLK_GATE_NUM + 16)
-+#define SCU1_CLK_UART6		(SOC1_CLK_GATE_NUM + 17)
-+#define SCU1_CLK_UART7		(SOC1_CLK_GATE_NUM + 18)
-+#define SCU1_CLK_UART8		(SOC1_CLK_GATE_NUM + 19)
-+#define SCU1_CLK_UART9		(SOC1_CLK_GATE_NUM + 20)
-+#define SCU1_CLK_UART10		(SOC1_CLK_GATE_NUM + 21)
-+#define SCU1_CLK_UART11		(SOC1_CLK_GATE_NUM + 22)
-+#define SCU1_CLK_UART12		(SOC1_CLK_GATE_NUM + 23)
-+#define SCU1_CLK_APLL_DIVN	(SOC1_CLK_GATE_NUM + 24)
-+#define SCU1_CLK_SDMUX		(SOC1_CLK_GATE_NUM + 25)
-+#define SCU1_CLK_SDCLK		(SOC1_CLK_GATE_NUM + 26)
-+#define SCU1_CLK_RMII		(SOC1_CLK_GATE_NUM + 27)
-+#define SCU1_CLK_RGMII		(SOC1_CLK_GATE_NUM + 28)
-+#define SCU1_CLK_MACHCLK	(SOC1_CLK_GATE_NUM + 29)
-+#define SCU1_CLK_MAC0RCLK	(SOC1_CLK_GATE_NUM + 30)
-+#define SCU1_CLK_MAC1RCLK	(SOC1_CLK_GATE_NUM + 31)
-+
-+#define SOC1_NUM_CLKS		(SCU1_CLK_MAC1RCLK + 1)
-+
-+#endif
--- 
-2.34.1
+Missing commit msg.
+
+Please use subject prefixes matching the subsystem. You can get them for
+example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
+your patch is touching. For bindings, the preferred subjects are
+explained here:
+https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+
+A nit, subject: drop second/last, redundant "bindings for". The
+"dt-bindings" prefix is already stating that these are bindings.
+See also:
+https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+
+
+
+Best regards,
+Krzysztof
 
