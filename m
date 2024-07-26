@@ -1,94 +1,83 @@
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9429F17BB30;
-	Fri, 26 Jul 2024 13:52:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB7BDBA53;
+	Fri, 26 Jul 2024 14:11:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722001969; cv=none; b=ik+FYQEf2XyHxldvmwUH3HwPacm9MgkyiCIu4BqS+fb/dHfogUOWdigTtSaPDOiijueposTTNmBYQ6yw47ohYfmde28zoI30JUdV3H5mZg/SCfm9zBXCHxZ3Jnm+V/ynNW92gicdP1XTzR4Xu6stvE59ZgQEBuqQwI6lktieL1M=
+	t=1722003079; cv=none; b=pyZ9p7EPe35u2koAfZu+agd7sKLtRMAqWcJuPPKusBzDY2dEHfFjYO2msp1th9vnFcFqK/yC3S1G7z2NG2nfZSyufjpQj6AWW9ca2OhVqCOhqk+cgZpm6w+RTh8wQQf35iVUDQQR6lMdM2+AYOj+b39Xchip9HWy76QNczGTTcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722001969; c=relaxed/simple;
-	bh=9nRC/P4M2rkDbHl7kazpwZ0dMCuQn5ae5OBYCZPr8e4=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jc/w/T+YZ+ZY4KAROubepoBytKj+l5v9KVl/Nx8qb6nQH/lETGM/w3DbBoh/zs97wE7TXF7q/47pAQVi8RjsHagp3WBrJODGiWANTvnRNJe1aiX8xsJokeT7FjawNcqD1sSqSmvn+/AFKwAb9HuEkD3nt/F6AFv6dvBy5qvSBgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=vrHiqUMz; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="vrHiqUMz"
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 46QDqWGK050842;
-	Fri, 26 Jul 2024 08:52:32 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1722001952;
-	bh=jga0bcOBHnO3aeHr699McPj2Z8f4UdLGZUMJlsQl6NI=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=vrHiqUMz1RKAZkeMfI7b+WwuZrEP+HMmCFtVM0nu5vYJu7PZf36kUsWwovmz+Wntt
-	 SHHrWkssKug1JGdGdU5DgeA+uXmsSmhNMWRSvwytDTz7KNBRkJ6+BDhVL0BakPHlEC
-	 4RqqWtT8YKiZ5+RLJGCFpmsXk96p/UyCGcPaKWUc=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 46QDqWua068323
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 26 Jul 2024 08:52:32 -0500
-Received: from DLEE109.ent.ti.com (157.170.170.41) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 26
- Jul 2024 08:52:32 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 26 Jul 2024 08:52:32 -0500
-Received: from localhost (dhruva.dhcp.ti.com [172.24.227.68])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 46QDqVxW024066;
-	Fri, 26 Jul 2024 08:52:32 -0500
-Date: Fri, 26 Jul 2024 19:22:31 +0530
-From: Dhruva Gole <d-gole@ti.com>
-To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
-CC: <sudeep.holla@arm.com>, <cristian.marussi@arm.com>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <arm-scmi@vger.kernel.org>,
-        Peng Fan <peng.fan@nxp.com>
+	s=arc-20240116; t=1722003079; c=relaxed/simple;
+	bh=zEr9H7Wa1FABRd3qLNtLWStAv6BKpQSiyLtESCv1J/s=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QlL1hacpAulBt++/lPKC8vCDWMYMRsbKy4hZ2qEsb2DxmaHf8q/6eJDud2tNJVFGL8jvoV3/AdqWjwcNPN6n4NNT9+m8drlXWzC1wxG8jldDnfj6g0fojRMzvJyeOikYz6TUuzXpwvdlWElSSEuV/TG3zKcRzVCkbIUWV8xt/a8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 579471007;
+	Fri, 26 Jul 2024 07:11:42 -0700 (PDT)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 311973F5A1;
+	Fri, 26 Jul 2024 07:11:15 -0700 (PDT)
+Date: Fri, 26 Jul 2024 15:11:08 +0100
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: Dhruva Gole <d-gole@ti.com>
+Cc: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, sudeep.holla@arm.com,
+	cristian.marussi@arm.com, mturquette@baylibre.com, sboyd@kernel.org,
+	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, arm-scmi@vger.kernel.org,
+	Peng Fan <peng.fan@nxp.com>
 Subject: Re: [PATCH V2] clk: scmi: add is_prepared hook
-Message-ID: <20240726135231.hhzp3dqgx64e6kiw@dhruva>
+Message-ID: <ZqOuWbgCORuk9Qu5@pluto>
 References: <20240726131007.1651996-1-peng.fan@oss.nxp.com>
+ <20240726134414.2ctbtt53sd3lyfjl@dhruva>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240726131007.1651996-1-peng.fan@oss.nxp.com>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <20240726134414.2ctbtt53sd3lyfjl@dhruva>
 
-On Jul 26, 2024 at 21:10:07 +0800, Peng Fan (OSS) wrote:
-> From: Peng Fan <peng.fan@nxp.com>
+On Fri, Jul 26, 2024 at 07:14:14PM +0530, Dhruva Gole wrote:
+> On Jul 26, 2024 at 21:10:07 +0800, Peng Fan (OSS) wrote:
+> > From: Peng Fan <peng.fan@nxp.com>
+> > 
+> > Some clks maybe default enabled by hardware, so add is_prepared hook
+> > for non-atomic clk_ops to get the status of the clk. Then when disabling
+> > unused clks, those unused clks but default hardware on clks could be
+> > in off state to save power.
+> > 
+> > Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> > ---
+> > 
+> > V2:
+> >  Provider helper __scmi_clk_is_enabled for atomic and non-atomic usage
+> >  Move is_prepared hook out of SCMI_CLK_STATE_CTRL_SUPPORTED
+> > 
+> >  drivers/clk/clk-scmi.c | 16 ++++++++++++++--
+> >  1 file changed, 14 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
+> > index d86a02563f6c..15510c2ff21c 100644
+> > --- a/drivers/clk/clk-scmi.c
+> > +++ b/drivers/clk/clk-scmi.c
+> > @@ -156,13 +156,13 @@ static void scmi_clk_atomic_disable(struct clk_hw *hw)
+> >  	scmi_proto_clk_ops->disable(clk->ph, clk->id, ATOMIC);
+> >  }
+> >  
+> > -static int scmi_clk_atomic_is_enabled(struct clk_hw *hw)
+> > +static int __scmi_clk_is_enabled(struct clk_hw *hw, bool atomic)
 > 
-> Some clks maybe default enabled by hardware, so add is_prepared hook
-> for non-atomic clk_ops to get the status of the clk. Then when disabling
-> unused clks, those unused clks but default hardware on clks could be
-> in off state to save power.
+> I think we can combine other atomic/non atomic in the same way no?
+> Let me know if I should send a follow up patch based on this to make
+> __scmi_clk_enable(hw,atomic) and __scmi_clk_disable(hw,atomic)
 
-Just a nit - reword the commit message as:
-Then when disabling the unused clocks, they can be simply turned OFF to
-save power.
+I dont think that it is worth unifying also the disable/enable atomic and
+non_atomic versions because if you look at their implementations they are
+indeed already wrappers around the state_get()....this new is_prepared/is_enabled
+were more 'thick' and so there was  a lot of duplicated code.
 
-Also if you can make it still verbose, explain when you expect this
-disabling of unused clks to take place exactly? During boot?  Driver probe sequence?
-or By some user commands?
-
-> 
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
-> 
-> V2:
->  Provider helper __scmi_clk_is_enabled for atomic and non-atomic usage
->  Move is_prepared hook out of SCMI_CLK_STATE_CTRL_SUPPORTED
-[...]
-
-
--- 
-Best regards,
-Dhruva Gole <d-gole@ti.com>
+Thanks
+Cristian
