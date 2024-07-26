@@ -1,90 +1,81 @@
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB141EA6F;
-	Fri, 26 Jul 2024 15:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A81BF225D9;
+	Fri, 26 Jul 2024 15:39:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722006605; cv=none; b=JGdQyUmpR2DaovP7O6FSqE1tdt/oGdzv3ZhOtCD93yBsjy5kccjGN2c7hMAAWqdeHsC7k1wE1WhvRaiEhiK05kJO8Vg/amI2l6V3KRslH5VPI+yUkABh28DdSwOPhpaV/nNIl+0jZNxEsRULLZ4hKh2Y7NQ/eZph8gNZqzPo0AE=
+	t=1722008378; cv=none; b=jT49bul5L1OTJG8pSuS4Wm+1b7KMKMX+SiFxGv5tcu/EXbQWxoxYAC8b0QcUkm/IQEdhyuOxveEWab7Ickjhd6rdR93jF5udgf7c+IH+zVTHpelK8wvwyISJnPXDFvNsPd3gfeD94sxOyLa8LuuJbhAQQwIiD+UzAazhTajMMC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722006605; c=relaxed/simple;
-	bh=lbj7+/EBYhSUTgiIfynocRVBV5Tyfr3JqTeNfACTxtc=;
+	s=arc-20240116; t=1722008378; c=relaxed/simple;
+	bh=l6xaj9SSWGDgac/61fGC0+u7a2rM6/MOdfTjew4kTrY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HDGtlrTjxriQhCMKaIUO+p82WMVdnP2ZMpf/NQpqbjIc80xqiq7jmD3q3VDuARQMFaCVD0HUXuQdnXHwrEPS11l9BHvN24EYqHgkyQy8vlyT5CazxxqcgDdLzWvR+RZrbzTq+uLAeI+iyyzcv/SLAXhkm5v+1GAT6biO9cFWAsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.170
+	 To:Cc:Content-Type; b=bln/0NxHdpjG56HigomF1stolKLL99We2vZ2PvKY8Jel3gOi4IdoPGyg+VNBdRjDMittbOPw/d4NSuu+/hdkWeKjRCsz6p3CrdUgVdlN+1SQK7Ua3Nv+apr0iItbRddjqGIDjd7nBLwd/bsE5RWPBsO0i4fG1ud5MNArZni8tyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.176
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6512866fa87so21618547b3.2;
-        Fri, 26 Jul 2024 08:10:03 -0700 (PDT)
+Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e0b2d502c6eso1867196276.0;
+        Fri, 26 Jul 2024 08:39:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722006602; x=1722611402;
+        d=1e100.net; s=20230601; t=1722008374; x=1722613174;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=6NPObEJcy4MbaYeuqnmDPLpIdxEgAN/QMYLotXg1FKQ=;
-        b=pOKuJ2t+EJzb/HRXO8wPM7mrdHKoQv1NnbNfsDBg/GqGRSDALTSFdKKBtsO71e9jwc
-         zSoZU5EL7TlwH7IkMgCJQmlNA0CEQPVGg2yb1yKar8iOnKFrBZScrgpCd4tcBCLkJth8
-         MH4wu8XjdIm+LUczGz+osRyVH8t3DNao8ThHS3cuB8uO5Lkepfs3VOVRtxBdeq7LETnF
-         79J1WuV8/bE43LmHDlQP/hDCayO+KEHanX6yBBu5CUgNxsJHFofLXIcTHhaoPTDEYNbG
-         78Wgc18qDqS/5BQfYRW/7b8z1pk3jGOTHi7bn7TQhXTGSaIZB3cHHrEgxbE/dUGW8cIf
-         YL8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUjKpGEWj/TZT+CcKP+LQd43PL4WodSxqPuauSX/18T7cp57sK7Wq2cFpMpOEZmkmwAHpzY5b9XZNbY98cHV6/6vPNVt6CIk2+KHkFULcXf3pX5mrAT/G8lCptCVlmFP4vn/C6xvpu5C1PqL3pykPnJfXPu1+dCd+Joq+jrfuVhHN/g3iNVdbbqCdA=
-X-Gm-Message-State: AOJu0YwlPsrWaWv4nsuzlq1GOhSoT7vnXK/BsE3aAMaZ6iy8yB4aiBfQ
-	hqNy26RuvXplC8gXm91zWE+SXuusNK0hwNsQSBkJvlprIrAmxcLW7nBK9KDmF8Y=
-X-Google-Smtp-Source: AGHT+IGRgTS6NfIbHWyf2TEZQIusREDCPpG5LTGPaH+l2dXC6HiI5/9KWK7c1PZ2N330tBPY35/RPw==
-X-Received: by 2002:a81:9e14:0:b0:651:6888:9fee with SMTP id 00721157ae682-67a0653ec57mr956467b3.18.1722006602550;
-        Fri, 26 Jul 2024 08:10:02 -0700 (PDT)
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com. [209.85.128.177])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6756bc9ec42sm9231807b3.115.2024.07.26.08.10.02
+        bh=zIUzZYTVG5EcGsz2D8PrezjmVjdD58axd6gvQfxDp7Y=;
+        b=nJ806MLYiKfOo+sIufTwdjzxqot7PqBqpjafFROD9561ezuSOL27EP7XeNuyQdE6IY
+         k8pptwWcWbttFY/3KJtuY6t76/KZ4krPfW+9TrBKtwwwwuY5k5nVv5h2sd5+9mc2tDcr
+         xDrMv9GdvUOkdoWz25767aFAX15ESFCgXz9HbR4vjTKDs2dOzJdjtzsr7yuYOvNylRzu
+         BmJLAb6GmO6UG/424UpnO/hLdY2iQmDkvz8IDscdyrmbruI6E2zP8EJnTDea1xTIfXuy
+         C+qnzgCauV4MLcTk/9ElHDdl36F0urXQ8I4G5+CJaqzgl9vhfW69kuipV80Pw7CYEX34
+         cdGw==
+X-Forwarded-Encrypted: i=1; AJvYcCWIkDlRdFPF+q/9GglcDWCIZGMSpaLsb0QtUO7DFCsy1JyifWmHWkvnVG8CbQwAEzhFgUCj1gZ2nZ/rhlayB4bvAW0rY9wsm6WAI4glGOPyAWk1GUb1+2bX+8jJsB1ozZvbzJKLnwS4Y27ZWKCyKQiNEGGI22yARJ5xhzNLYgRO79rZ/DDbPYys
+X-Gm-Message-State: AOJu0Yzyfl/gmBzpEthEJdNAq1Ia5i7otti2eCw/Jaw2yVWk9e09drvu
+	0OR0ERb287234B6AfF+p0b9w8xI/TAjP1hseLW5tDmgpwVhfTTNIpR8u1i93/ag=
+X-Google-Smtp-Source: AGHT+IFvt2XrboZQMM7P/tmij/zhK8apVa10em7nZFQf3hZB7KcaDFTbMRKa5degC8kytWUUNGnV+w==
+X-Received: by 2002:a05:6902:150b:b0:e06:405a:27e7 with SMTP id 3f1490d57ef6-e0b5449c2damr204956276.1.1722008373937;
+        Fri, 26 Jul 2024 08:39:33 -0700 (PDT)
+Received: from mail-yw1-f173.google.com (mail-yw1-f173.google.com. [209.85.128.173])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e0b2960b4f6sm787477276.0.2024.07.26.08.39.33
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Jul 2024 08:10:02 -0700 (PDT)
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-65fe1239f12so19325007b3.0;
-        Fri, 26 Jul 2024 08:10:02 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU+Jnb5SImmRPS3NvYHnzekh2fRfgEzy/P7Yau0h//DX3LKNOFzvvI3dcRhOVI5gANayVNawq/iAPT90hTNLACKtxtWdEcLf4/9Wd1sCyB2rJ4EyXdVQ7IKuxgwE0qT3ihFLKHTYF8IGTwOTmWCKv6xEzGOOAb30eXocALK7fDTjU9Psi5B2u61wwA=
-X-Received: by 2002:a05:690c:4a09:b0:64a:5443:7cba with SMTP id
- 00721157ae682-67a090a645amr979837b3.31.1722006601729; Fri, 26 Jul 2024
- 08:10:01 -0700 (PDT)
+        Fri, 26 Jul 2024 08:39:33 -0700 (PDT)
+Received: by mail-yw1-f173.google.com with SMTP id 00721157ae682-64b29539d86so21121327b3.2;
+        Fri, 26 Jul 2024 08:39:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUdDT6Va9cBMf0CQQx5StCBF0kHHrE9ml401uIsy6EAVSLvb49zmOsGl6qg3R73rFj26yrMa47Qln2UdL6UG92UGPkO0vQGZw8sm91tJV/A41rQ8C1TJe66xdS6q6A/Cc1dt756csxLscvkYt/62Lyt9aTThj4IXqFd7R7TmblJh56QjtBuouKC
+X-Received: by 2002:a0d:f886:0:b0:652:d0a9:87de with SMTP id
+ 00721157ae682-67a09f4ca84mr1733827b3.35.1722008373286; Fri, 26 Jul 2024
+ 08:39:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240715103555.507767-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240715103555.507767-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240715103555.507767-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20240725100534.5374-1-oliver.rhodes.aj@renesas.com> <20240725100534.5374-4-oliver.rhodes.aj@renesas.com>
+In-Reply-To: <20240725100534.5374-4-oliver.rhodes.aj@renesas.com>
 From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 26 Jul 2024 17:09:49 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXUWqtPwKV1-yqogJ8K552fHgveZRHh0W9Xqh37J3FbKA@mail.gmail.com>
-Message-ID: <CAMuHMdXUWqtPwKV1-yqogJ8K552fHgveZRHh0W9Xqh37J3FbKA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] clk: renesas: rzg2l-cpg: Refactor to use priv for
- clks and base in clock register functions
-To: Prabhakar <prabhakar.csengg@gmail.com>
+Date: Fri, 26 Jul 2024 17:39:21 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdW_4JFyauEHxRYfshin6iWFAP1XY4e9fOzvpLHZNzgYww@mail.gmail.com>
+Message-ID: <CAMuHMdW_4JFyauEHxRYfshin6iWFAP1XY4e9fOzvpLHZNzgYww@mail.gmail.com>
+Subject: Re: [PATCH V2 3/6] dt-bindings: clock: renesas: Document RZ/G2M v3.0
+ (r8a774a3) clock
+To: Oliver Rhodes <oliver.rhodes.aj@renesas.com>
 Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Jul 15, 2024 at 12:37=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.=
-com> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Thu, Jul 25, 2024 at 12:06=E2=80=AFPM Oliver Rhodes
+<oliver.rhodes.aj@renesas.com> wrote:
+> Add binding documentation for Renesas RZ/G2M v3.0 (a.k.a r8a774a3) Clock
+> Pulse Generator driver. The r8a774a3 cpg is similar to the r8a774a1 cpg
+> however, it lacks some modules such as the FCPCI.
 >
-> Simplify the `rzg2l-cpg` driver by removing explicit passing of `clks` an=
-d
-> `base` parameters in various clock registration functions. These values
-> are now accessed directly from the `priv` structure.
->
-> While at it, drop masking of parent clocks with 0xffff as nothing is ever
-> stored in the high bits.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Signed-off-by: Oliver Rhodes <oliver.rhodes.aj@renesas.com>
 > ---
-> v1->v2
-> - Squashed patches (2,3,4)/4 into single patch
-> - Dropped masking of parent clock with 0xffff
-> - Dropped creating local variable clks
+> v2->v2 resend:
+> * Updated the patch description.
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 i.e. will queue in renesas-clk for v6.12.
