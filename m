@@ -1,162 +1,105 @@
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCA382B9C4;
-	Fri, 26 Jul 2024 10:21:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE772178372
+	for <linux-clk@vger.kernel.org>; Fri, 26 Jul 2024 10:44:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721989294; cv=none; b=quSXOEU0H6gxEp1n1TGe9KbYWJPmJjRLqgfththPPD1G3/4YhZFJ+WOboCAC6Sl4agX9AmJhv/hNOD9erK4IN7B7b8yodlt6Vn5O1Q6GOFMQGONVpWzdrUOGVb4qxyqe1qeNWDMIvW4964J98mlw/3CKJ4JcyGRLnJQImEERsZ4=
+	t=1721990648; cv=none; b=YKrVq4yXxeJlvQFuLNRUCN3yJG7mkimH45laiAuwPw3z1Zf0oSijU9y8Pnpta4H44bmHKWbuMY+bn50SPMXHyIc77xDhm5Md3ByTLq/OD6InAhzbso0ITwYr57eBQ5Fk48zoukuihWNwn2no1NSY65B2g7JHQyrhuW7XKEj6K7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721989294; c=relaxed/simple;
-	bh=S/x4OJAKOpbCcalQ3AmuCSpX6cHV4yf/SgFn4iRJr34=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=evgth7cYJV6PFEf7WQA9ZWPmAkgBIGtpJi9a2/eEjxFnwrxoznpFMjAqQyT8DmV2ebnwxEZ5mId6AwOz2E2626rSuhjRSDcyqjmvG6YFAX4azwrr8u3WIMtDXsGOt5KFsOS2qsNMLn0jMXwPznWX15tnWzK1LBci6BGwo1QLhQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=DcZeFSwA; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+	s=arc-20240116; t=1721990648; c=relaxed/simple;
+	bh=gmcvBh8tAxM7U4muCR4NnBCWSdONDoqi+ah/t3fRe7M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JqIIEYfpdbfg+ll6tJLpoGmUFjp/A2UnDk/nb2xQrPWSKRLo+2GdklssBkCVW1xjasmXLXOuTFdK3fVhG2Sonb5cXjxmqQxIvAvurzC/NhxmGxahUQ9net616Qz6j8I5oalsGq+Zg9MKwD8X0SLs3wdiWqMm0jP/Q/4bvdDklPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XmrMoLFH; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="DcZeFSwA"
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 46QAL4Wk043121;
-	Fri, 26 Jul 2024 05:21:04 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1721989264;
-	bh=DDWXHd+C8mav68s6sbzJJqLpFP/Y42ZVqzrbT7u/foo=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=DcZeFSwA0qqtfUyqsNflK8Q/HpG2kzTmKjEuo1CeCePlnYZzgFRQtDFTNW/97zkRd
-	 w+xTRjEt0rj4c6fv8WfrXb8TmUpKBsFZ2dvGpmQQfiADbRq6F2i9+v6ZCZhzVx9zl9
-	 GhEXwIpNHNqnAiqbpMZZYL8SylY5UBUvUSSWtuCY=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 46QAL4n3085116
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 26 Jul 2024 05:21:04 -0500
-Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 26
- Jul 2024 05:21:04 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE111.ent.ti.com
- (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 26 Jul 2024 05:21:04 -0500
-Received: from localhost (dhruva.dhcp.ti.com [172.24.227.68])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 46QAL31v067014;
-	Fri, 26 Jul 2024 05:21:04 -0500
-Date: Fri, 26 Jul 2024 15:51:03 +0530
-From: Dhruva Gole <d-gole@ti.com>
-To: Peng Fan <peng.fan@nxp.com>
-CC: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>,
-        "sudeep.holla@arm.com"
-	<sudeep.holla@arm.com>,
-        "cristian.marussi@arm.com"
-	<cristian.marussi@arm.com>,
-        "mturquette@baylibre.com"
-	<mturquette@baylibre.com>,
-        "sboyd@kernel.org" <sboyd@kernel.org>,
-        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>,
-        "arm-scmi@vger.kernel.org"
-	<arm-scmi@vger.kernel.org>,
-        "vigneshr@ti.com" <vigneshr@ti.com>, "kamlesh@ti.com" <kamlesh@ti.com>
-Subject: Re: [PATCH] clk: scmi: add is_prepared hook
-Message-ID: <20240726102103.dh6upqdeq2tj4hgn@dhruva>
-References: <20240725090741.1039642-1-peng.fan@oss.nxp.com>
- <20240726085305.sb57f3i2ezvtwrwz@dhruva>
- <PAXPR04MB8459C5A372FADDD970BCA33088B42@PAXPR04MB8459.eurprd04.prod.outlook.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XmrMoLFH"
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e02c4983bfaso1863156276.2
+        for <linux-clk@vger.kernel.org>; Fri, 26 Jul 2024 03:44:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721990646; x=1722595446; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=RN8ATHGy693sEWHqxL7yZGVaFgF60XWH6I6eHMXS/Kw=;
+        b=XmrMoLFH1HoXwj7ELHd3mGqFCCSqwXnKueKik1ObjVNTP+CaKfrPZY8tBnpTcmC37A
+         30BVdO5/Csr9bFtJ+EPGG0A/G1grTLlJkmCbGe3WDLL/VXEgH487at+oPHF6vfHN7bhe
+         //M6j3w/j6uOOuB8koWClfGpk8knujLz4DHJi+5doWLz7dtsNBTf6084YLuH5gJAZbmA
+         dsqoI429VmlsvEYs+RIA0i/yoHlw1uyg6aHkmuVpb8gEmhO8LRW2pv6F4BHbOSecft+S
+         SODqmUzH/iG30/tFkdxfqsmU/gLBMcSl+6A5VYYUkqM0EM4nfrs2vslPmLji9bqKSG7v
+         JYNw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721990646; x=1722595446;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RN8ATHGy693sEWHqxL7yZGVaFgF60XWH6I6eHMXS/Kw=;
+        b=UxFidPAtvLdohO47qIaNQt8hBnxMiNQ6TZIbfnAq1HHHHwiyTU7tuZc3IuiS6xaqby
+         ZTm+JK+h520lED+tgWH2iOXzojMwb/UUy2Ic2cz2mF14S/HNsW1N1TZaHxWMb19KusfX
+         3Psn6P14c3nlyArIpRV+CbJaN7LNYcMCTaJS7myyaSjaN1UX6iIVNjU1hIyyMxRKk0T8
+         2awb+0YnZ116Knj9LqFy+mB0caJElvLujAiwtsyuydfF7Lq9ZrCuVdn6benlprsEKvyI
+         ErDnWhKzi1fZvPfHSsrRIgRnqpIkCQ01FL/WijOp9BMZq5XYELMcrz3m1pvasTOS+KOr
+         uwXA==
+X-Forwarded-Encrypted: i=1; AJvYcCUH5oJpWewJFjW3JzjsWK+uwK040wHu+/rc816E30hW+LJ9seU1VUpc9YkVxKE5vEcGzKt2LxtxJ4mZqOT/YU7dWcP4Wq8P6Tc7
+X-Gm-Message-State: AOJu0YziI6D/zAWgWC2roToZCfa9/XSBl9xUmfe+l/0N9Gyg6542QmHx
+	e60ABcNYz9OmRzhIDiXO+dj7tSGA4otULhb6E2i2m2A9h0v+oQYvsYpyw/zm3PNHsUwKX9Rg4Gy
+	0Epj+etiL6K6BAfss+JTfEKi/+i5ZQC4UYeFA1w==
+X-Google-Smtp-Source: AGHT+IHb3A9j5z62UT6v6zQ6mW1WzMgmZNVqDkZSftx/n6W05QEmmC+a/Z/IWs5gAqZ401gu+abgWbO02bBNZXq3SLc=
+X-Received: by 2002:a05:6902:c0b:b0:e03:5f40:1ecf with SMTP id
+ 3f1490d57ef6-e0b23233e44mr7064004276.44.1721990645837; Fri, 26 Jul 2024
+ 03:44:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <PAXPR04MB8459C5A372FADDD970BCA33088B42@PAXPR04MB8459.eurprd04.prod.outlook.com>
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+References: <20240702-camcc-support-sm8150-v2-0-4baf54ec7333@quicinc.com>
+ <20240702-camcc-support-sm8150-v2-5-4baf54ec7333@quicinc.com>
+ <xbe7kmaxhfwy26qzxrmwgiijaaiap4kdkruaxjs6ymihaw5taf@hvj57wyncfea>
+ <cc1957af-17bc-cd71-e6da-013e3a740014@quicinc.com> <CAA8EJpqmJZJfd2famarx-FKFb1_+-nZM3N+FwK_hiOurG8n9=A@mail.gmail.com>
+ <e235f19f-26b5-2cf7-ebb7-36e4dabe9b9b@quicinc.com> <CAA8EJpob5Qov78JfNN5BE+c1WyvnuBcQLYENHL0c1GTS+PPfSQ@mail.gmail.com>
+ <7ecfe568-6897-6dc5-fda7-50d6424298d9@quicinc.com>
+In-Reply-To: <7ecfe568-6897-6dc5-fda7-50d6424298d9@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Fri, 26 Jul 2024 13:43:55 +0300
+Message-ID: <CAA8EJpovn=eAj21R=Q7mDXcb1SmHpRhYNnNpHpx+YHyaT7S0tw@mail.gmail.com>
+Subject: Re: [PATCH v2 5/6] clk: qcom: Add camera clock controller driver for SM8150
+To: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Abhishek Sahu <absahu@codeaurora.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Stephen Boyd <sboyd@codeaurora.org>, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, Ajit Pandey <quic_ajipan@quicinc.com>, 
+	Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, 
+	Jagadeesh Kona <quic_jkona@quicinc.com>, "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Jul 26, 2024 at 09:28:52 +0000, Peng Fan wrote:
-> > Subject: Re: [PATCH] clk: scmi: add is_prepared hook
-> > 
-> > On Jul 25, 2024 at 17:07:41 +0800, Peng Fan (OSS) wrote:
-> > > From: Peng Fan <peng.fan@nxp.com>
-> > >
-> > > Some clks maybe default enabled by hardware, so add is_prepared
-> > hook
-> > 
-> > Why is_prepared when there is an is_enabled hook?
-> 
-> This patch is for non-atomic clk ops. The is_enabled hook is
-> In atomic clk ops.
-> 
-> > See in the atomic case we already have something similar:
-> > 
-> > ops->is_enabled = scmi_clk_atomic_is_enabled;
-> > 
-> > > to get the status of the clk. Then when disabling unused clks, those
-> > > unused clks but default hardware on clks could be in off state to save
-> > > power.
-> > >
-> > > Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> > > ---
-> > >  drivers/clk/clk-scmi.c | 15 +++++++++++++++
-> > >  1 file changed, 15 insertions(+)
-> > >
-> > > diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c index
-> > > d86a02563f6c..d2d370337ba5 100644
-> > > --- a/drivers/clk/clk-scmi.c
-> > > +++ b/drivers/clk/clk-scmi.c
-> > > @@ -142,6 +142,20 @@ static void scmi_clk_disable(struct clk_hw
-> > *hw)
-> > >  	scmi_proto_clk_ops->disable(clk->ph, clk->id, NOT_ATOMIC);  }
-> > >
-> > > +static int scmi_clk_is_enabled(struct clk_hw *hw) {
-> > > +	int ret;
-> > > +	bool enabled = false;
-> > > +	struct scmi_clk *clk = to_scmi_clk(hw);
-> > > +
-> > > +	ret = scmi_proto_clk_ops->state_get(clk->ph, clk->id, &enabled,
-> > NOT_ATOMIC);
-> > > +	if (ret)
-> > > +		dev_warn(clk->dev,
-> > > +			 "Failed to get state for clock ID %d\n", clk-
-> > >id);
-> > > +
-> > > +	return !!enabled;
-> > > +}
-> > > +
-> > >  static int scmi_clk_atomic_enable(struct clk_hw *hw)  {
-> > >  	struct scmi_clk *clk = to_scmi_clk(hw); @@ -280,6 +294,7
-> > @@
-> > > scmi_clk_ops_alloc(struct device *dev, unsigned long feats_key)
-> > >  		} else {
-> > >  			ops->prepare = scmi_clk_enable;
-> > >  			ops->unprepare = scmi_clk_disable;
-> > > +			ops->is_prepared = scmi_clk_is_enabled;
-> > 
-> > IMO from the decription and what the function is doing is_enabled
-> > makes
-> > more sense here to me, unless there's a better explanation.
-> > 
-> > Ref: linux/clk-provider.h
-> > is_prepared: Queries the hardware to determine if the clock is prepared
-> > vs
-> > is_enabled: Queries the hardware to determine if the clock is enabled
-> 
-> SCMI firmware has no knowledge of prepare/unprepared.
-> 
-> As wrote in the beginning, this patch is for non atomic clk ops.
+On Fri, 26 Jul 2024 at 11:26, Satya Priya Kakitapalli (Temp)
+<quic_skakitap@quicinc.com> wrote:
+>
+>
+> >>>>> - I see that most if not all RCG clocks use rcg2_shared ops instead of
+> >>>>>      using simple rcg2 ops, could you please clarify that?
+> >>>> As per the HW design recommendation, RCG needs to be parked at a safe
+> >>>> clock source(XO) in the disable path, shared_ops is used to achieve the
+> >>>> same.
+> >>> Does it apply to SM8150? For example, on SM8250 RCG2s are not parked.
+> >>
+> >> Yes, it applies to SM8150.
+> > Should the same logic be applied to other chipsets supported upstream?
+> > If this is the case, which chipsets?
+>
+>
+> I will evaluate for what all chipsets it is applicable and post a series
+> to fix it.
 
-OK, I got carried away with the wording of is_prepared a bit but it
-seems like prepare/unprepare are inter changeably used to enable/disable
-in non atomic cases and so it makes sense to follow suit with is_prepared.
-
-Thanks for clarifying,
-
-Reviewed-by: Dhruva Gole <d-gole@ti.com>
+Thanks a lot!
 
 
 -- 
-Best regards,
-Dhruva
+With best wishes
+Dmitry
