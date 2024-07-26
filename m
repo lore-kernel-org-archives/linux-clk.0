@@ -1,105 +1,126 @@
-Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1862176AC6
-	for <linux-clk@vger.kernel.org>; Fri, 26 Jul 2024 08:45:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02B6A17799B;
+	Fri, 26 Jul 2024 08:53:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721983549; cv=none; b=uV7aEFnP3QmyeWg1kSmj1U5iM4lgXUd7T36/NhK/clIs/j6j7UdfocUwyRbp19T/tkf6pANko0y9lejKAYwqefpY8PNPQckWJZW3dD113DpwvVMzyuu6OcHVd7MbP99VyKfh8oTsWv2BVhAmkeF/HT0hlvZAc4rpLjHPbOTWRnQ=
+	t=1721984007; cv=none; b=GE0Bq1pRg2RhGrfiA+oKdy0arO2gbYQ5/ckA0cRyxd8QbfTkKVHsuMXhhX25T/BitBY4Nt6UVFKUWlpP2AdLgahPeNHyfbF/0bbc3etOs2Y5FpNN+7l4dJOqTciuoEVPsBaldgNN8CND8aXCAnk8BFhVeygvpT7p52STc1pABN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721983549; c=relaxed/simple;
-	bh=cpFuacOOU9PyOYqB0WWoaM9Cjcgmb9kMiCLGqJP8J2A=;
-	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pKNIzZhd8Wq9wKpi6R19G3IZiLAt4QXcJhhWSGt5FwAjS1V8XUfhrT534d543CPS0ITj29w2gxb9PzBYADh9xU5QhIIx7zUdOcEihoWeKVc2VgsN9r/Ohy3RtQqEBLdN2ItDF2D6v5MZ5sCSgd1jyRswl0o0Gov9FNZfOVv54/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=bO4k0fkB; arc=none smtp.client-ip=185.125.188.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+	s=arc-20240116; t=1721984007; c=relaxed/simple;
+	bh=2Y6CmgvW3y7wt9simLTPtNm1Xvf9suGCMEAqYc1psKU=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pBUNP6kaZIyjRSrzOhmtw78RUf/4s9Nl/+VkdgLvke+40lw0wZnd9CHvDQC/nVNYnxdrmn0Eqal7Pr5XiqOEc4kWuAq+0QsrHOaYmR9Yx8QaMOWepQ0Q4tFP5CvL50l2XovOW8GvccRFv/X/TDNAibrksqOoYEV2r8aX1ZzGu3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=IPD6iSfz; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="bO4k0fkB"
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id DC9963F48A
-	for <linux-clk@vger.kernel.org>; Fri, 26 Jul 2024 08:45:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
-	s=20210705; t=1721983538;
-	bh=cpFuacOOU9PyOYqB0WWoaM9Cjcgmb9kMiCLGqJP8J2A=;
-	h=From:In-Reply-To:References:Mime-Version:Date:Message-ID:Subject:
-	 To:Cc:Content-Type;
-	b=bO4k0fkBQRe173m3CGMT0PkuDlWQf0DRFORGVfmvJ6cLdIAMdDmlabedI2uoD7LIn
-	 3FVUGPNjv7tIAjP7GLndUsNIxNiAyit4TuL37W3iUNKONaWtNmVqE4JXayJeCj2dXj
-	 l6vutWhxz8LuSVhqnwiEyxMeC0bRScka3j9jZJn4t24hY1FQX9xq0/LkDZqednmL3g
-	 WBu8On4K3XeSgnhf4grrQ1/GAYsHR93E3s4mQKpB4TybMPA/DQeI19CDhRi4BxclGk
-	 t1LCF1d1yOVrHJgIX3kZ5lsy6tfVWL/GES9z5OQW6lfUFb4Yo5U9UdVS0OYHK58niO
-	 wozh72TVF2T8A==
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-44fe49fa389so5708781cf.1
-        for <linux-clk@vger.kernel.org>; Fri, 26 Jul 2024 01:45:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721983537; x=1722588337;
-        h=cc:to:subject:message-id:date:mime-version:references:in-reply-to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cpFuacOOU9PyOYqB0WWoaM9Cjcgmb9kMiCLGqJP8J2A=;
-        b=jr7csER0pT4NcWNELnoUh/Cj1Reh7oSF5u6+BcD9X4GJGcFL8BZJ7KU752aRkt2TkP
-         AApBUtrtpJjoh+5nPXJKH5u5RrFpkA4aIdrEBs131TXEmpUn+xYQr2U9a8m/zMLBwnkk
-         cZvpLqsXVS2rCrNf4wHhF5J84Ss5eacbVNOLL00rxZreW6pSZnFrb+bm33bP7wwTug/d
-         CptMh+KakxxjgOBaroJr1jdOiPA46z2Bg+MEIZDzt5cjv9jBjldWwQ4VQ1qLI8/m+Fia
-         wfuGFnrXp4Pb7C4rwavz5Z6Lm+P9TMrxInjWueIlsR/9Xt602wElaTxR6rIaqvzUq2lj
-         ZgpA==
-X-Forwarded-Encrypted: i=1; AJvYcCVN3TqFmQeeb46Rx9B/aHZdB5yt4tLK72FCvF21bq6Y2hzMOKXW0XW5FEPYfTXGdWsb2bkWzfjMMQ+Tzo4Ny6PsR8mcKAskemV/
-X-Gm-Message-State: AOJu0YxRFZHFX3ZYw3hVeTVolbwmB8h3cDJTESw1Wah4/MJnohnDCuu3
-	sI8Fe/kCGPT9kfUT9m4ORblxZp0PLeasgeIw+qTbRwHN5c0TiJ+t82uH7cr3niNiC1AXpstlJrc
-	zO12BqErIDdPoAbHrnk8EVseGIIyVv0Y54y/4YpdjxuZMMeq7BfuZkgTMhXorP+k1JyAy2/1DJ9
-	LCtv7abr85GhZWkMg8fc27od6dn8gAH2k0GbBt5LUYEGb9NMB4
-X-Received: by 2002:a05:622a:11c9:b0:446:5bbd:4802 with SMTP id d75a77b69052e-44fe92731famr52404441cf.56.1721983537676;
-        Fri, 26 Jul 2024 01:45:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEfWGnnFaUTMrdZkP7xOyuSJUp3K4zWzDQyC1gqU+SG7p0SaPT/1zgZF/fTQCd4H5ucjGPzcBLx8KLTXn+dlRM=
-X-Received: by 2002:a05:622a:11c9:b0:446:5bbd:4802 with SMTP id
- d75a77b69052e-44fe92731famr52404111cf.56.1721983537186; Fri, 26 Jul 2024
- 01:45:37 -0700 (PDT)
-Received: from 348282803490 named unknown by gmailapi.google.com with
- HTTPREST; Fri, 26 Jul 2024 03:45:36 -0500
-From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-In-Reply-To: <57ef2eef45f2de15e6607da266b37b2a.sboyd@kernel.org>
-References: <20240623-th1520-clk-v2-0-ad8d6432d9fb@tenstorrent.com>
- <20240623-th1520-clk-v2-1-ad8d6432d9fb@tenstorrent.com> <57ef2eef45f2de15e6607da266b37b2a.sboyd@kernel.org>
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="IPD6iSfz"
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 46Q8r7ww066495;
+	Fri, 26 Jul 2024 03:53:07 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1721983987;
+	bh=O/uow5tUi6p+KYTJeircOQo9Nkglx2i1OnNlTDinozI=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=IPD6iSfzrI9BNSqD0Uf104eNnIEqraCUISCobNZdX1Rs88r5dhVV6cHTVsA5osxH1
+	 Gwb3cCDkqYZGzz+K2iKfbTlA/Z8tYy8ZdS0xsbDztSIJ7jFU2U3S/lGUBnfsmJYHpj
+	 4Mk++UfA2m4AMC8mLZQ6+vAlE81dR4LRqgYoLgHo=
+Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 46Q8r7tN031537
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 26 Jul 2024 03:53:07 -0500
+Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE112.ent.ti.com
+ (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 26
+ Jul 2024 03:53:07 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE104.ent.ti.com
+ (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 26 Jul 2024 03:53:07 -0500
+Received: from localhost (dhruva.dhcp.ti.com [172.24.227.68])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 46Q8r6mr066490;
+	Fri, 26 Jul 2024 03:53:06 -0500
+Date: Fri, 26 Jul 2024 14:23:05 +0530
+From: Dhruva Gole <d-gole@ti.com>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+CC: <sudeep.holla@arm.com>, <cristian.marussi@arm.com>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <arm-scmi@vger.kernel.org>,
+        Peng Fan <peng.fan@nxp.com>, <vigneshr@ti.com>, <kamlesh@ti.com>
+Subject: Re: [PATCH] clk: scmi: add is_prepared hook
+Message-ID: <20240726085305.sb57f3i2ezvtwrwz@dhruva>
+References: <20240725090741.1039642-1-peng.fan@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Date: Fri, 26 Jul 2024 03:45:36 -0500
-Message-ID: <CAJM55Z8iF8yV5JK5v6ZtQqS5AaWwCZ7uwhSYb7hdxh0juDFdqg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/7] dt-bindings: clock: Document T-Head TH1520
- AP_SUBSYS controller
-To: Stephen Boyd <sboyd@kernel.org>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Conor Dooley <conor+dt@kernel.org>, Drew Fustini <dfustini@tenstorrent.com>, 
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>, Fu Wei <wefu@redhat.com>, 
-	Guo Ren <guoren@kernel.org>, Jisheng Zhang <jszhang@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Rob Herring <robh@kernel.org>, Thomas Bonnefille <thomas.bonnefille@bootlin.com>, 
-	Yangtao Li <frank.li@vivo.com>
-Cc: linux-riscv@lists.infradead.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Conor Dooley <conor.dooley@microchip.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240725090741.1039642-1-peng.fan@oss.nxp.com>
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 
-Stephen Boyd wrote:
-> Quoting Drew Fustini (2024-06-23 19:12:31)
-> > Document bindings for the T-Head TH1520 AP sub-system clock controller.
-> >
-> > Link: https://openbeagle.org/beaglev-ahead/beaglev-ahead/-/blob/main/docs/TH1520%20System%20User%20Manual.pdf
-> > Co-developed-by: Yangtao Li <frank.li@vivo.com>
-> > Signed-off-by: Yangtao Li <frank.li@vivo.com>
-> > Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-> > Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
-> > ---
->
-> Applied to clk-next
+On Jul 25, 2024 at 17:07:41 +0800, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
+> 
+> Some clks maybe default enabled by hardware, so add is_prepared hook
 
-Thanks, but this driver seems a bit incomplete. With this applied the Lichee Pi
-4A no longer boots without the clk_ignore_unused kernel parameter.
+Why is_prepared when there is an is_enabled hook?
+See in the atomic case we already have something similar:
 
-/Emil
+ops->is_enabled = scmi_clk_atomic_is_enabled;
+
+> to get the status of the clk. Then when disabling unused clks, those
+> unused clks but default hardware on clks could be in off state to save
+> power.
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>  drivers/clk/clk-scmi.c | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> 
+> diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
+> index d86a02563f6c..d2d370337ba5 100644
+> --- a/drivers/clk/clk-scmi.c
+> +++ b/drivers/clk/clk-scmi.c
+> @@ -142,6 +142,20 @@ static void scmi_clk_disable(struct clk_hw *hw)
+>  	scmi_proto_clk_ops->disable(clk->ph, clk->id, NOT_ATOMIC);
+>  }
+>  
+> +static int scmi_clk_is_enabled(struct clk_hw *hw)
+> +{
+> +	int ret;
+> +	bool enabled = false;
+> +	struct scmi_clk *clk = to_scmi_clk(hw);
+> +
+> +	ret = scmi_proto_clk_ops->state_get(clk->ph, clk->id, &enabled, NOT_ATOMIC);
+> +	if (ret)
+> +		dev_warn(clk->dev,
+> +			 "Failed to get state for clock ID %d\n", clk->id);
+> +
+> +	return !!enabled;
+> +}
+> +
+>  static int scmi_clk_atomic_enable(struct clk_hw *hw)
+>  {
+>  	struct scmi_clk *clk = to_scmi_clk(hw);
+> @@ -280,6 +294,7 @@ scmi_clk_ops_alloc(struct device *dev, unsigned long feats_key)
+>  		} else {
+>  			ops->prepare = scmi_clk_enable;
+>  			ops->unprepare = scmi_clk_disable;
+> +			ops->is_prepared = scmi_clk_is_enabled;
+
+IMO from the decription and what the function is doing is_enabled makes
+more sense here to me, unless there's a better explanation.
+
+Ref: linux/clk-provider.h
+is_prepared: Queries the hardware to determine if the clock is prepared
+vs
+is_enabled: Queries the hardware to determine if the clock is enabled
+
+-- 
+Best regards,
+Dhruva Gole <d-gole@ti.com>
