@@ -1,158 +1,133 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA25123A8;
-	Fri, 26 Jul 2024 13:09:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06EE317BB0B
+	for <linux-clk@vger.kernel.org>; Fri, 26 Jul 2024 13:13:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721999385; cv=none; b=pTFzD1gHEz0DBGyOWJup4ENVsRuMrnceA1hm0B+eYm2BLFUd7Iw8SI0HxzAzPN6y0P+xPQ7UDBoYDRuSuLAqBrXf53yHrWEOL660ByecHSx88hfT5QKdhXpKbpDypCS44CBbOgSW+F4Gp5egEyx3I2TjZQhRnyWhu6xvPFr6Z00=
+	t=1721999636; cv=none; b=pqszcrqOp1nwfTCZdN7NxSh6+7TiO1zxM9jfrxfbikYXyu+M4DFfbYQW8EI8Ogh11aX/CcriZuc3GAz34FMiKXhTSzwqhNi8ulLaPzFPqfPEwxPZh+kCrq4aF60z0XYCwOhK0imXsHoP7z4KswkzmUxHVJDMbfnMEyy9FBAkp7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721999385; c=relaxed/simple;
-	bh=iAGrV52cHbMBboTdMq+gQQiOugUcN8ulkje4eUWYYyA=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=moqiNkEXlrnajUL93vkisCO0tt+JVAVKpYNz5W3byLqZ5oyg/EY9YFZZWObkfmufVK6GbU9AtFaNcSY6ym2OuzCQMJj1hgWJLJWZs7O5MRBqAMnOsavqHJ9quCYY2IJveTNmkHbdaX9YJG+Ryic2QCtPFWGGrnZVUouTtFrHJdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jwuOjQTf; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1721999636; c=relaxed/simple;
+	bh=Cdmr1wNOXg3YuxF+fm5Dem5hL4V7dSar/S6BwJB33LY=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=JT0DNGpF56ZkL34csQhboXJifxwcyZy7H19JyEUWTsY48ey/YhtCWsHqtQ+jPSadT1rP6L46Klf5lH+kSqZqSG8tpBpqGu2O6wuUNkkNI83jNM3Xo7SO281LNmxVceXvt3spF+KAwJRPR4nyk4FBDM3S5H6fNGSeRsi/R1EeI9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lpq8sHos; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jwuOjQTf"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B1CEC32782;
-	Fri, 26 Jul 2024 13:09:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721999385;
-	bh=iAGrV52cHbMBboTdMq+gQQiOugUcN8ulkje4eUWYYyA=;
-	h=Date:From:To:List-Id:Cc:In-Reply-To:References:Subject:From;
-	b=jwuOjQTfOTALWQKlNPyD+08Hxfy0tgwRB+EgBd3M3sinbPmynriEgYq5+4ElVcZgk
-	 Thk51IQCg9IsD7xNwbAljuKoxIqGoo+OF5TbXF1nEcyod/IQrIJ7ryCAEy3XmNmukv
-	 Y6t3J2FFTF/qFNWqgr5KcMhlakDydgU/YiX81uHfDlvkg3ydt1WCxh/CqPXEZ6Y/rR
-	 cOGZyWS8I4owxuAHLIPJKZ1JGptEAmRCVmXzUjLP6fiHQTPi0lbinTVonh3mj9dG/E
-	 tkfMaCTAmDS1AwrU/MJI/2SvopiOkDWkG7MqqMIXtixC9zSTgqY1nR3XtoDqnHxkNj
-	 zA0UB/ogwaD/Q==
-Date: Fri, 26 Jul 2024 08:09:43 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lpq8sHos"
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2ef2c56d9dcso14738131fa.2
+        for <linux-clk@vger.kernel.org>; Fri, 26 Jul 2024 06:13:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1721999629; x=1722604429; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zh3vyC1WH4G3/hH1Lds2F5b/d+/by8NtQNhwTrmTrdY=;
+        b=lpq8sHosHFvYj/G4H4eyCI5FkUEXF5DO8WxdFevId+KpjjJxpyugP1IWUD4D4Oq2+L
+         bxOafjX9um/OIBUE7y7/5W+r5rPGDZg/wA8crFrxSJoHsScEE3NPhR03WfusuYlGSZLV
+         fj16c++4JdTXfjQZlX6Xbu8sOYgiFSlnUcxqG4TRJGBGiVe3dJnVedzKFGMr6mBud9dF
+         2ekAaVNvTadEXoAKPlKbBYwSJTV070mWwUMXHZVWNWKE8qjDcpBcFFvI23Dhsw46GotL
+         WcWFHcKowjXPrvz1jqZcSRsytZ2+1CuzOBHC2HxgOiK+676TG8WvM+tNty4v0VSGuVEr
+         NeOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1721999629; x=1722604429;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=zh3vyC1WH4G3/hH1Lds2F5b/d+/by8NtQNhwTrmTrdY=;
+        b=j86RnOxN3y5bKprVlKSN0uImeNe/PXsaogBRoVEEutPjxQnQdFRGMz7fWd4wiqiRux
+         xp4JZ5zjd4doNxUORptP0/PSs2U1vkJJRKD5enDcpun6ICpC5CzC7z7e+5U5DUCTQk1f
+         bOfRdqXOMjaGkdj9suien1bn46iQotpSw7j4BMfs2Pl8c/Xa7+8FqLrqNAb0vTUJnT19
+         Oc71bdpiT27GNotG3wHe2ZHImuaZJX8T8z6WEkhKZJnD2TIPCqZcUsPiso97RIWp5hUL
+         mH8B+HwB76s6nfR85VNNONrcSNZtjF+/8IfoYuHzWGEB1zmDCPxbh0tABvBhhFcg9EHZ
+         LB7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW27Bue5sbtxgp6YDRJUcMWMHgkgKqud5ARlvb2xSYZMzA8m0mlr9zRpMvtqYGoSrHT6GYQEZJOmKz1blmQsaU6N2UyGgS331b2
+X-Gm-Message-State: AOJu0Yx8xYnUrfstuJHWkfo8Y0SzQDe8gVFoQ/sDJk2AjKvSb5FBEeIB
+	M/jv7fGtrT/q0bbnjHddCJnrKBGyavAQ2V4/sj/71al6OE5pF6ImzwPZ80XO9m8=
+X-Google-Smtp-Source: AGHT+IHnthYvJSLZi9A6Pf8OaQCOFLwe8XfHMSX3Suyha+VZUk+mAsZml7xZkNIcx932RlRPoxus5w==
+X-Received: by 2002:a2e:9f57:0:b0:2ef:18ae:5cc2 with SMTP id 38308e7fff4ca-2f03db8e156mr37629931fa.21.1721999628861;
+        Fri, 26 Jul 2024 06:13:48 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:414f:cfed:daba:4cb? ([2a01:e0a:982:cbb0:414f:cfed:daba:4cb])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4280574a8a2sm80575835e9.23.2024.07.26.06.13.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 26 Jul 2024 06:13:48 -0700 (PDT)
+Message-ID: <d1bee4fe-03c6-427c-ac3d-7a33f1533ecd@linaro.org>
+Date: Fri, 26 Jul 2024 15:13:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Kevin Chen <kevin_chen@aspeedtech.com>
-Cc: soc@kernel.org, m.szyprowski@samsung.com, nfraprado@collabora.com, 
- olof@lixom.net, will@kernel.org, mturquette@baylibre.com, 
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
- conor+dt@kernel.org, devicetree@vger.kernel.org, 
- andrew@codeconstruct.com.au, catalin.marinas@arm.com, sboyd@kernel.org, 
- p.zabel@pengutronix.de, u-kumar1@ti.com, arnd@arndb.de, joel@jms.id.au, 
- quic_bjorande@quicinc.com, lee@kernel.org, krzk+dt@kernel.org, 
- linux-arm-kernel@lists.infradead.org, neil.armstrong@linaro.org, 
- linux-aspeed@lists.ozlabs.org, dmitry.baryshkov@linaro.org, 
- shawnguo@kernel.org, geert+renesas@glider.be
-In-Reply-To: <20240726110355.2181563-1-kevin_chen@aspeedtech.com>
-References: <20240726110355.2181563-1-kevin_chen@aspeedtech.com>
-Message-Id: <172199921352.1507193.4411331020670815695.robh@kernel.org>
-Subject: Re: [PATCH v1 00/10] Introduce ASPEED AST27XX BMC SoC
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH 1/3] mailmap: Add an entry for Konrad Dybcio
+To: Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+ linux-pm@vger.kernel.org, iommu@lists.linux.dev, linux-gpio@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org, Konrad Dybcio <konradybcio@kernel.org>
+References: <20240726-topic-konrad_email-v1-0-f94665da2919@kernel.org>
+ <20240726-topic-konrad_email-v1-1-f94665da2919@kernel.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20240726-topic-konrad_email-v1-1-f94665da2919@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-
-On Fri, 26 Jul 2024 19:03:45 +0800, Kevin Chen wrote:
-> This patchset adds initial support for the ASPEED.
-> AST27XX Board Management controller (BMC) SoC family.
+On 26/07/2024 13:18, Konrad Dybcio wrote:
+> Map my old addresses.
 > 
-> AST2700 is ASPEED's 8th-generation server management processor.
-> Featuring a quad-core ARM Cortex A35 64-bit processor and two
-> independent ARM Cortex M4 processors
+> Signed-off-by: Konrad Dybcio <konradybcio@kernel.org>
+> ---
+>   .mailmap | 2 ++
+>   1 file changed, 2 insertions(+)
 > 
-> This patchset adds minimal architecture and drivers such as:
-> Clocksource, Clock and Reset
-> 
-> This patchset was tested on the ASPEED AST2700 evaluation board.
-> 
-> Kevin Chen (10):
->   dt-binding: mfd: aspeed,ast2x00-scu: Add binding for ASPEED AST2700
->     SCU
->   dt-binding: clk: ast2700: Add binding for Aspeed AST27xx Clock
->   clk: ast2700: add clock controller
->   dt-bindings: reset: ast2700: Add binding for ASPEED AST2700 Reset
->   dt-bindings: arm: aspeed: Add maintainer
->   dt-bindings: arm: aspeed: Add aspeed,ast2700-evb compatible string
->   arm64: aspeed: Add support for ASPEED AST2700 BMC SoC
->   arm64: dts: aspeed: Add initial AST27XX device tree
->   arm64: dts: aspeed: Add initial AST2700 EVB device tree
->   arm64: defconfig: Add ASPEED AST2700 family support
-> 
->  .../bindings/arm/aspeed/aspeed.yaml           |    6 +
->  .../bindings/mfd/aspeed,ast2x00-scu.yaml      |    3 +
->  MAINTAINERS                                   |    3 +
->  arch/arm64/Kconfig.platforms                  |   14 +
->  arch/arm64/boot/dts/Makefile                  |    1 +
->  arch/arm64/boot/dts/aspeed/Makefile           |    4 +
->  arch/arm64/boot/dts/aspeed/aspeed-g7.dtsi     |  217 +++
->  arch/arm64/boot/dts/aspeed/ast2700-evb.dts    |   50 +
->  arch/arm64/configs/defconfig                  |    1 +
->  drivers/clk/Makefile                          |    1 +
->  drivers/clk/clk-ast2700.c                     | 1166 +++++++++++++++++
->  .../dt-bindings/clock/aspeed,ast2700-clk.h    |  180 +++
->  .../dt-bindings/reset/aspeed,ast2700-reset.h  |  126 ++
->  13 files changed, 1772 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/aspeed/Makefile
->  create mode 100644 arch/arm64/boot/dts/aspeed/aspeed-g7.dtsi
->  create mode 100644 arch/arm64/boot/dts/aspeed/ast2700-evb.dts
->  create mode 100644 drivers/clk/clk-ast2700.c
->  create mode 100644 include/dt-bindings/clock/aspeed,ast2700-clk.h
->  create mode 100644 include/dt-bindings/reset/aspeed,ast2700-reset.h
-> 
-> --
-> 2.34.1
-> 
-> 
+> diff --git a/.mailmap b/.mailmap
+> index e51d76df75c2..d189c6424697 100644
+> --- a/.mailmap
+> +++ b/.mailmap
+> @@ -353,6 +353,8 @@ Kenneth Westfield <quic_kwestfie@quicinc.com> <kwestfie@codeaurora.org>
+>   Kiran Gunda <quic_kgunda@quicinc.com> <kgunda@codeaurora.org>
+>   Kirill Tkhai <tkhai@ya.ru> <ktkhai@virtuozzo.com>
+>   Kishon Vijay Abraham I <kishon@kernel.org> <kishon@ti.com>
+> +Konrad Dybcio <konradybcio@kernel.org> <konrad.dybcio@linaro.org>
+> +Konrad Dybcio <konradybcio@kernel.org> <konrad.dybcio@somainline.org>
+>   Konstantin Khlebnikov <koct9i@gmail.com> <khlebnikov@yandex-team.ru>
+>   Konstantin Khlebnikov <koct9i@gmail.com> <k.khlebnikov@samsung.com>
+>   Koushik <raghavendra.koushik@neterion.com>
 > 
 
-
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-New warnings running 'make CHECK_DTBS=y aspeed/ast2700-evb.dtb' for 20240726110355.2181563-1-kevin_chen@aspeedtech.com:
-
-arch/arm64/boot/dts/aspeed/ast2700-evb.dtb: /: failed to match any schema with compatible: ['aspeed,ast2700a1-evb', 'aspeed,ast2700']
-arch/arm64/boot/dts/aspeed/ast2700-evb.dtb: /: failed to match any schema with compatible: ['aspeed,ast2700a1-evb', 'aspeed,ast2700']
-arch/arm64/boot/dts/aspeed/ast2700-evb.dtb: l2-cache0: 'cache-unified' is a dependency of 'cache-size'
-	from schema $id: http://devicetree.org/schemas/cache.yaml#
-arch/arm64/boot/dts/aspeed/ast2700-evb.dtb: l2-cache0: 'cache-unified' is a dependency of 'cache-sets'
-	from schema $id: http://devicetree.org/schemas/cache.yaml#
-arch/arm64/boot/dts/aspeed/ast2700-evb.dtb: l2-cache0: 'cache-unified' is a dependency of 'cache-line-size'
-	from schema $id: http://devicetree.org/schemas/cache.yaml#
-arch/arm64/boot/dts/aspeed/ast2700-evb.dtb: l2-cache0: 'cache-unified' is a required property
-	from schema $id: http://devicetree.org/schemas/cache.yaml#
-arch/arm64/boot/dts/aspeed/ast2700-evb.dtb: l2-cache0: Unevaluated properties are not allowed ('cache-level', 'cache-line-size', 'cache-sets', 'cache-size' were unexpected)
-	from schema $id: http://devicetree.org/schemas/cache.yaml#
-arch/arm64/boot/dts/aspeed/ast2700-evb.dtb: sram@10000000: #address-cells: 1 was expected
-	from schema $id: http://devicetree.org/schemas/sram/sram.yaml#
-arch/arm64/boot/dts/aspeed/ast2700-evb.dtb: sram@10000000: #size-cells: 1 was expected
-	from schema $id: http://devicetree.org/schemas/sram/sram.yaml#
-arch/arm64/boot/dts/aspeed/ast2700-evb.dtb: sram@10000000: 'exported@0' does not match any of the regexes: '^([a-z0-9]*-)?sram(-section)?@[a-f0-9]+$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/sram/sram.yaml#
-arch/arm64/boot/dts/aspeed/ast2700-evb.dtb: /soc@10000000/syscon@12c02000: failed to match any schema with compatible: ['aspeed,ast2700-scu0', 'syscon', 'simple-mfd']
-arch/arm64/boot/dts/aspeed/ast2700-evb.dtb: /soc@10000000/syscon@12c02000/interrupt-controller@1D0: failed to match any schema with compatible: ['aspeed,ast2700-scu-ic0']
-arch/arm64/boot/dts/aspeed/ast2700-evb.dtb: /soc@10000000/syscon@12c02000/interrupt-controller@1E0: failed to match any schema with compatible: ['aspeed,ast2700-scu-ic1']
-arch/arm64/boot/dts/aspeed/ast2700-evb.dtb: /soc@14000000/syscon@14c02000: failed to match any schema with compatible: ['aspeed,ast2700-scu1', 'syscon', 'simple-mfd']
-arch/arm64/boot/dts/aspeed/ast2700-evb.dtb: serial@14c33b00: 'oneOf' conditional failed, one must be fixed:
-	'interrupts' is a required property
-	'interrupts-extended' is a required property
-	from schema $id: http://devicetree.org/schemas/serial/8250.yaml#
-arch/arm64/boot/dts/aspeed/ast2700-evb.dtb: serial@14c33b00: 'pinctrl-0' is a dependency of 'pinctrl-names'
-	from schema $id: http://devicetree.org/schemas/pinctrl/pinctrl-consumer.yaml#
-
-
-
-
-
+Acked-by: Neil Armstrong <neil.armstrong@linaro.org>
