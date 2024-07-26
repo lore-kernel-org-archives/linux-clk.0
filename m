@@ -1,123 +1,112 @@
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1532524B29
-	for <linux-clk@vger.kernel.org>; Fri, 26 Jul 2024 20:31:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CAFA748A
+	for <linux-clk@vger.kernel.org>; Fri, 26 Jul 2024 20:50:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722025874; cv=none; b=Fplzbn8o8t7WN0qg4auVmcsGsK+yiRhiD32c1D5uXzhDKMH/jRev1NF8LbnAwRTEmRZEZQNQBBpzFgy93vhYHM2vXpgG0xYyZnHBCd70OFz8GIv25jDE/Iu00dYlDO+cbBxOwXoX3/oofSZQnCpYSnjGtsM30MdffNAVUW8OkgU=
+	t=1722027033; cv=none; b=rxKX1T56GE8ZTmEPIarW1xm0FcwJ8v3pfA/2g+NRfzD8FQd0BzR8NBpijCKA9oV+inWJdzo6VXZvm7GA8W2QBjpM3buepVHdVetoIPEAlfHDRyfmMHz1zsNCSmDF8qZLjhA9du+50pQ5WhkFld5xcxBmSMSc1JNtQ2/QjxB3naM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722025874; c=relaxed/simple;
-	bh=YNqfB4JN0cyuaOlR8gcaNiIJmuLDMcvQ6VgnnrubLwU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=E3VIHrzmJ+ow4E++3ATG+ll2JAJdJjgm+lT+ShjLUCI1fNeNnCPUVuztGG8G0VAFMBAJGF7X6ln/xBDRUY57OlPbdV+/YWxketWIH+KtXIWttfauLsK35ImUxmthb84LWNmPp7hsF9DtaiQUa86w8qhR+UoLxhXqysn63Wk4vtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=advkXPBD; arc=none smtp.client-ip=209.85.208.173
+	s=arc-20240116; t=1722027033; c=relaxed/simple;
+	bh=KogmYRFSz2W2+mhD6V6jG3/dYCuZTqrU9wdwTpVNdWI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ee2aXTzn2IX6zKTPzJ9sHXrA18VoHgG8bytliJobv+X16xeAF2kFTeRBA+je0VUgw/rgTpbYn2008y6V4H76jFMpVnXpC/pvjGoRmz3kcutVn6XPYKrtx7WR7AXdqSWD8QAz5WbkgS26nagfZOQ+rA3hEAL5U1kaI40XHvrj+0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Od3TB5DT; arc=none smtp.client-ip=209.85.167.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="advkXPBD"
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2eeb1ba0468so24257041fa.0
-        for <linux-clk@vger.kernel.org>; Fri, 26 Jul 2024 13:31:12 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Od3TB5DT"
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52f01993090so2493067e87.2
+        for <linux-clk@vger.kernel.org>; Fri, 26 Jul 2024 13:50:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722025871; x=1722630671; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=6Zt2ODlLE04BgAxJc/6BvoAiLfGrGxxqjsHDD+m0CXA=;
-        b=advkXPBDG8enLekJvYkCpBFGrWwKyRTIf7OFzlR7FITNhrVnEzEUEMwOXfSFx9i5s0
-         taML/QQwpaIsyfmTlqBQv58i10uTOuth/GztbP9AOc01cMdVWYsoMI2QsGcZk//g/bQW
-         DHnxH+KKiLXBD9aSJCFFie9nRfINA/ZDSCU2ZcsVu+dnxf3QXS6zCOmWU9ZMT/DaEfVH
-         xa4ZFjdJSkTeXWrK4+xmacL+DsZh7f2f2XZnr8vofYcdY511IBkiIX7dwF049oeELvHw
-         MmTUQccdYmBt21Xk/QBwsqHeXbOakwPFBThfOTj7FxtYLUdIWOfUMKCvYts8yoOc2iDE
-         0Dcg==
+        d=linaro.org; s=google; t=1722027030; x=1722631830; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sW23BR/or2MMuYF31lJOR7RMa4C6ZEhZGo6Oj9/Pb3Q=;
+        b=Od3TB5DT1KbNLDO4XyQzumnKCWM80b/szVLnruv8B/gqtD8Kza5DQe3OA2yHGHRzm4
+         nfKK0heMXTSckqurOqxkGxISsPtmPKZp7XkQjnYxURKXcmEGvOQOuG94cfAiMN8xhiLP
+         zqgCUN9+9wO8Zw279XHYJECa6ej/0MtWniQ2XbQp9utEPKdl8DsnPVX4b0h75VntJxst
+         LbwzhIMJmE0h8TP/bD4Ag8CfmPEWSWX7dhBi446lp2P/FaBd2aY7meHIZ5xNzNWnh+Bx
+         n4GRIXwreAWUrajAkE2DUQ1IAkAPtr/hZ9rVmN2qPy1xxrw7tAO2W7TeUDwnH+9irlEY
+         opKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722025871; x=1722630671;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6Zt2ODlLE04BgAxJc/6BvoAiLfGrGxxqjsHDD+m0CXA=;
-        b=dVnhNsLYVFzhZALwv5AZ5yzCtZEm5aFOlIwez0lQYeMbUpOHAsJh/d4cisHXXgSjBV
-         kyiUMfyT83FNkApgGzpFLMc5uB0FgYAG2Th+1sKFuu5SEF4ooL7XK5sO/8CEwOnsmfNq
-         0hvH5IxVIFzyJaEwrBnyAfcxmgmYsmLgeHGGd3SNRSwE+n4p4e80f/qdW/TSbpYzd9vr
-         difSS1aVWiYbAqsz9uSKjihXL5P+3bf40Vefidj3S7DPw5HGcjvwmYDPPwzH6X1+gWlh
-         pf+l8MVLVzDpj9aOfGRkXYb8jtsaRV8xmUQHiMaokRRZ1gw0AdYp21eSAs2GQAR5BPw5
-         SWKg==
-X-Forwarded-Encrypted: i=1; AJvYcCUbyXKa0SSTy8UzM7mkK3ChT7TMZC/+drJ/iWvetaAEQ1p5AZtUbpfm1PlDoT9rN+HJFis81nR/xoe0X932rzZMY9cbaYORGizr
-X-Gm-Message-State: AOJu0YwHroVwPfeRy0AFE8SHaEEBRCfdY10u50pj2oYxA85Egg8K2ycf
-	7ar6en7N0l3KEwwfkw2GNQC6FQ7OHo+0oq0jDT3CzQDYm/5PEjv0CSUWSmRRuYg=
-X-Google-Smtp-Source: AGHT+IGzAE+43DRMEiarplxQZPQegnGNyyQ3zfbArMcAkizj5FCUjoQvWUv32KBI/e3AFMWdCP3Vkg==
-X-Received: by 2002:a2e:9949:0:b0:2ee:7a3e:4721 with SMTP id 38308e7fff4ca-2f12ee422admr4603671fa.39.1722025871040;
-        Fri, 26 Jul 2024 13:31:11 -0700 (PDT)
-Received: from [192.168.0.3] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-427f938d9besm129568515e9.24.2024.07.26.13.31.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Jul 2024 13:31:10 -0700 (PDT)
-Message-ID: <8d31cbfb-f223-4539-b61a-a30a12dfd99c@linaro.org>
-Date: Fri, 26 Jul 2024 21:31:09 +0100
+        d=1e100.net; s=20230601; t=1722027030; x=1722631830;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sW23BR/or2MMuYF31lJOR7RMa4C6ZEhZGo6Oj9/Pb3Q=;
+        b=YWrrQB0N+D/AbGEYCTEXSWYzBdGh/ho++VChN1bZkSjJbz4NMj7dAkEjZqkdvBWoH1
+         ZvtfBbchA4j4Lsj3ovAQLjfhkf+EMwTq6o5XtZaINj0RJZO658Q1Fr4L4Di+OEzfmrkK
+         WiXTXNQBt4w7yl9H3wJawGKdiLW+Ht6JfiKqsjKFHm6teouRyoFVo1SDZHyBkaUzxdQS
+         SmmFBM52Bw0M0xFcZK9j/l16x8WmauCpZuVNUrcMXu36nD3sMRCpFgtQMIaac6pA2rF0
+         YpbN3PSJgyUbvbYLZDjeldCEyaGgiJsQds5XUDDGSana/5psOFzbgFvFdKSCQmPy4QCd
+         Bu1A==
+X-Forwarded-Encrypted: i=1; AJvYcCWCtkxhFhb8B2u2QEBLVXGhhpaZ0mRUNBQwciDdgj62n+oW/8eBYjuSEUtg6ZnZabXsPB1cKtvirWd5dUmD/vtmj2sLCI+47QI6
+X-Gm-Message-State: AOJu0YxT39UJB9deAeG6sSCmSGn/Z9mx849n9vYU9jFhaFNjA9Q774lz
+	I5XFGJ0oVfmYWnDI+8zTcbIJ3vpJBe/yWW1dtiRDvuNwE7esSZIJc4twyceAfOYl8PwKY+6vzJe
+	ZQXB+lN1TddAQDTPnEbCtXbKngF92fyL4d5K3UQ==
+X-Google-Smtp-Source: AGHT+IFX49EtxpZmo3lCBvR7LAjeTkZmE2Z3kScGsck8eI7LPC1PBQoOA3czp83TviYDk42LHWvS4Ey6OgvmOSAZBX8=
+X-Received: by 2002:a05:6512:32b6:b0:52e:9762:2ba4 with SMTP id
+ 2adb3069b0e04-5309b274931mr464874e87.25.1722027030326; Fri, 26 Jul 2024
+ 13:50:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: camcc-sc8280xp: Remove always-on GDSC
- hard-coding
-To: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: dmitry.baryshkov@linaro.org, stable@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240715-linux-next-24-07-13-sc8280xp-camcc-fixes-v1-1-fadb5d9445c1@linaro.org>
- <f0d4b7a3-2b61-3d42-a430-34b30eeaa644@quicinc.com>
- <86068581-0ce7-47b5-b1c6-fda4f7d1037f@linaro.org>
- <02679111-1a35-b931-fecd-01c952553652@quicinc.com>
- <ce14800d-7411-47c5-ad46-6baa6fb678f4@linaro.org>
- <dd588276-8f1c-4389-7b3a-88f483b7072e@quicinc.com>
- <610efa39-e476-45ae-bd2b-3a0b8ea485dc@linaro.org>
- <6055cb14-de80-97bc-be23-7af8ffc89fcc@quicinc.com>
- <a0ac4c3b-3c46-4c89-9947-d91ba06309f4@linaro.org>
- <fe44268d-76bb-bdbd-e54e-39a38e4e5a49@quicinc.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <fe44268d-76bb-bdbd-e54e-39a38e4e5a49@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240722160022.454226-1-valentin.caron@foss.st.com> <20240722160022.454226-4-valentin.caron@foss.st.com>
+In-Reply-To: <20240722160022.454226-4-valentin.caron@foss.st.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 26 Jul 2024 22:50:19 +0200
+Message-ID: <CACRpkdZTntS7K4aLqoXKbfdO2xumx9nLnA7CXysuYML=ptTCzQ@mail.gmail.com>
+Subject: Re: [PATCH v3 3/4] rtc: stm32: add Low Speed Clock Output (LSCO) support
+To: Valentin Caron <valentin.caron@foss.st.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, linux-rtc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Amelie Delaunay <amelie.delaunay@foss.st.com>, linux-clk <linux-clk@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 26/07/2024 08:01, Satya Priya Kakitapalli (Temp) wrote:
-> 
-> On 7/23/2024 2:59 PM, Bryan O'Donoghue wrote:
->> On 22/07/2024 09:57, Satya Priya Kakitapalli (Temp) wrote:
->>>> I have no idea. Why does it matter ?
->>>>
->>>
->>> This clock expected to be kept always ON, as per design, or else the 
->>> GDSC transition form ON to OFF (vice versa) wont work.
->>
->> Yes, parking to XO per this patch works for me. So I guess its already 
->> on and is left in that state by the park.
->>
->>> Want to know the clock status after bootup, to understand if the 
->>> clock got turned off during the late init. May I know exactly what 
->>> you have tested? Did you test the camera usecases as well?
->>
->> Of course.
->>
->> The camera works on x13s with this patch. That's what I mean by tested.
->>
-> 
-> It might be working in your case, but it is not the HW design 
-> recommended way to do. The same should not be propagated to other 
-> target's camcc drivers, as I already observed it is not working on SM8150.
+Hi Valentin,
 
-I don't think the argument here really stands up.
+On Mon, Jul 22, 2024 at 6:02=E2=80=AFPM Valentin Caron
+<valentin.caron@foss.st.com> wrote:
 
-We've established that the GDSC clock and PDs will remain on when the 
-clock gets parked right ?
+> RTC is able to output on a pin the "LSE" internal clock.
+>
+> STM32 RTC is now registered as a clock provider.
+> It provides rtc_lsco clock, that means RTC_LSCO is output on either
+> RTC_OUT1 or RTC_OUT2_RMP, depending on pinmux DT property.
+> The clock is marked as CLK_IGNORE_UNUSED and CLK_IS_CRITICAL because
+> RTC_LSCO can be early required by devices needed it to init.
+>
+> Add LSCO in pinmux functions.
+>
+> Add "stm32_rtc_clean_outs" to disable LSCO. As RTC is part of "backup"
+> power domain, it is not reset during shutdown or reboot. So force LSCO
+> disable at probe.
+>
+> Co-developed-by: Amelie Delaunay <amelie.delaunay@foss.st.com>
+> Signed-off-by: Amelie Delaunay <amelie.delaunay@foss.st.com>
+> Signed-off-by: Valentin Caron <valentin.caron@foss.st.com>
+(...)
 
-Am I missing something obvious here ?
+> @@ -1928,6 +1928,7 @@ config RTC_DRV_STM32
+>         select PINMUX
+>         select PINCONF
+>         select GENERIC_PINCONF
+> +       depends on COMMON_CLK
 
----
-bod
+Just
+select COMMON_CLK
 
+Why not, it will with 100% certainty be needed anyway by the system
+clock controller.
+
+Yours,
+Linus Walleij
