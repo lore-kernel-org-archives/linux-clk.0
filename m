@@ -1,105 +1,190 @@
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from TWMBX01.aspeed.com (mail.aspeedtech.com [211.20.114.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE772178372
-	for <linux-clk@vger.kernel.org>; Fri, 26 Jul 2024 10:44:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90B1D14277;
+	Fri, 26 Jul 2024 11:05:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.20.114.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721990648; cv=none; b=YKrVq4yXxeJlvQFuLNRUCN3yJG7mkimH45laiAuwPw3z1Zf0oSijU9y8Pnpta4H44bmHKWbuMY+bn50SPMXHyIc77xDhm5Md3ByTLq/OD6InAhzbso0ITwYr57eBQ5Fk48zoukuihWNwn2no1NSY65B2g7JHQyrhuW7XKEj6K7o=
+	t=1721991912; cv=none; b=esOSl9Ip15TSS64g85HvqkVy0V+2vDXOI/sjLxJtEfF0do7tzQMxnPjJbaPG7DMkKWFc2o+zjfmzXfEurLIof/tjaIaIgBOjVaLixU/mIXrgqGOTV77LpV8EFu128g55FSUM+u4e5U2iJoWv3li7PDaNb5SyD8D+v4f9w0Ie/io=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721990648; c=relaxed/simple;
-	bh=gmcvBh8tAxM7U4muCR4NnBCWSdONDoqi+ah/t3fRe7M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JqIIEYfpdbfg+ll6tJLpoGmUFjp/A2UnDk/nb2xQrPWSKRLo+2GdklssBkCVW1xjasmXLXOuTFdK3fVhG2Sonb5cXjxmqQxIvAvurzC/NhxmGxahUQ9net616Qz6j8I5oalsGq+Zg9MKwD8X0SLs3wdiWqMm0jP/Q/4bvdDklPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XmrMoLFH; arc=none smtp.client-ip=209.85.219.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XmrMoLFH"
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e02c4983bfaso1863156276.2
-        for <linux-clk@vger.kernel.org>; Fri, 26 Jul 2024 03:44:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721990646; x=1722595446; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=RN8ATHGy693sEWHqxL7yZGVaFgF60XWH6I6eHMXS/Kw=;
-        b=XmrMoLFH1HoXwj7ELHd3mGqFCCSqwXnKueKik1ObjVNTP+CaKfrPZY8tBnpTcmC37A
-         30BVdO5/Csr9bFtJ+EPGG0A/G1grTLlJkmCbGe3WDLL/VXEgH487at+oPHF6vfHN7bhe
-         //M6j3w/j6uOOuB8koWClfGpk8knujLz4DHJi+5doWLz7dtsNBTf6084YLuH5gJAZbmA
-         dsqoI429VmlsvEYs+RIA0i/yoHlw1uyg6aHkmuVpb8gEmhO8LRW2pv6F4BHbOSecft+S
-         SODqmUzH/iG30/tFkdxfqsmU/gLBMcSl+6A5VYYUkqM0EM4nfrs2vslPmLji9bqKSG7v
-         JYNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721990646; x=1722595446;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RN8ATHGy693sEWHqxL7yZGVaFgF60XWH6I6eHMXS/Kw=;
-        b=UxFidPAtvLdohO47qIaNQt8hBnxMiNQ6TZIbfnAq1HHHHwiyTU7tuZc3IuiS6xaqby
-         ZTm+JK+h520lED+tgWH2iOXzojMwb/UUy2Ic2cz2mF14S/HNsW1N1TZaHxWMb19KusfX
-         3Psn6P14c3nlyArIpRV+CbJaN7LNYcMCTaJS7myyaSjaN1UX6iIVNjU1hIyyMxRKk0T8
-         2awb+0YnZ116Knj9LqFy+mB0caJElvLujAiwtsyuydfF7Lq9ZrCuVdn6benlprsEKvyI
-         ErDnWhKzi1fZvPfHSsrRIgRnqpIkCQ01FL/WijOp9BMZq5XYELMcrz3m1pvasTOS+KOr
-         uwXA==
-X-Forwarded-Encrypted: i=1; AJvYcCUH5oJpWewJFjW3JzjsWK+uwK040wHu+/rc816E30hW+LJ9seU1VUpc9YkVxKE5vEcGzKt2LxtxJ4mZqOT/YU7dWcP4Wq8P6Tc7
-X-Gm-Message-State: AOJu0YziI6D/zAWgWC2roToZCfa9/XSBl9xUmfe+l/0N9Gyg6542QmHx
-	e60ABcNYz9OmRzhIDiXO+dj7tSGA4otULhb6E2i2m2A9h0v+oQYvsYpyw/zm3PNHsUwKX9Rg4Gy
-	0Epj+etiL6K6BAfss+JTfEKi/+i5ZQC4UYeFA1w==
-X-Google-Smtp-Source: AGHT+IHb3A9j5z62UT6v6zQ6mW1WzMgmZNVqDkZSftx/n6W05QEmmC+a/Z/IWs5gAqZ401gu+abgWbO02bBNZXq3SLc=
-X-Received: by 2002:a05:6902:c0b:b0:e03:5f40:1ecf with SMTP id
- 3f1490d57ef6-e0b23233e44mr7064004276.44.1721990645837; Fri, 26 Jul 2024
- 03:44:05 -0700 (PDT)
+	s=arc-20240116; t=1721991912; c=relaxed/simple;
+	bh=t4NsvVg1Gv795Pe/g9tN705vAhz3rbG3/WX1Q3qQQjA=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QU7REP6BBGsKE2JOTcVbxiuAchWVbQwVp8y+o66ZCVVBSa725c4dgizeEOhVF3oRjWGVfxLEViiLTxYaauy4bQ5EDuSCal6SI5Q6zGkDTh3mZzMHucU5D3yit6ii9hgxwOrBhu5e6gfosJ4Y2tBxMVpZaIbtPMHCxXGH5H8olBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; arc=none smtp.client-ip=211.20.114.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+Received: from TWMBX01.aspeed.com (192.168.0.62) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.12; Fri, 26 Jul
+ 2024 19:04:00 +0800
+Received: from localhost.localdomain (192.168.10.10) by TWMBX01.aspeed.com
+ (192.168.0.62) with Microsoft SMTP Server id 15.2.1258.12 via Frontend
+ Transport; Fri, 26 Jul 2024 19:04:00 +0800
+From: Kevin Chen <kevin_chen@aspeedtech.com>
+To: <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+	<joel@jms.id.au>, <andrew@codeconstruct.com.au>, <lee@kernel.org>,
+	<catalin.marinas@arm.com>, <will@kernel.org>, <arnd@arndb.de>,
+	<olof@lixom.net>, <soc@kernel.org>, <mturquette@baylibre.com>,
+	<sboyd@kernel.org>, <p.zabel@pengutronix.de>, <quic_bjorande@quicinc.com>,
+	<geert+renesas@glider.be>, <dmitry.baryshkov@linaro.org>,
+	<shawnguo@kernel.org>, <neil.armstrong@linaro.org>,
+	<m.szyprowski@samsung.com>, <nfraprado@collabora.com>, <u-kumar1@ti.com>,
+	<kevin_chen@aspeedtech.com>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-aspeed@lists.ozlabs.org>,
+	<linux-kernel@vger.kernel.org>, <linux-clk@vger.kernel.org>
+Subject: [PATCH v1 04/10] dt-bindings: reset: ast2700: Add binding for ASPEED AST2700 Reset
+Date: Fri, 26 Jul 2024 19:03:49 +0800
+Message-ID: <20240726110355.2181563-5-kevin_chen@aspeedtech.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20240726110355.2181563-1-kevin_chen@aspeedtech.com>
+References: <20240726110355.2181563-1-kevin_chen@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240702-camcc-support-sm8150-v2-0-4baf54ec7333@quicinc.com>
- <20240702-camcc-support-sm8150-v2-5-4baf54ec7333@quicinc.com>
- <xbe7kmaxhfwy26qzxrmwgiijaaiap4kdkruaxjs6ymihaw5taf@hvj57wyncfea>
- <cc1957af-17bc-cd71-e6da-013e3a740014@quicinc.com> <CAA8EJpqmJZJfd2famarx-FKFb1_+-nZM3N+FwK_hiOurG8n9=A@mail.gmail.com>
- <e235f19f-26b5-2cf7-ebb7-36e4dabe9b9b@quicinc.com> <CAA8EJpob5Qov78JfNN5BE+c1WyvnuBcQLYENHL0c1GTS+PPfSQ@mail.gmail.com>
- <7ecfe568-6897-6dc5-fda7-50d6424298d9@quicinc.com>
-In-Reply-To: <7ecfe568-6897-6dc5-fda7-50d6424298d9@quicinc.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Fri, 26 Jul 2024 13:43:55 +0300
-Message-ID: <CAA8EJpovn=eAj21R=Q7mDXcb1SmHpRhYNnNpHpx+YHyaT7S0tw@mail.gmail.com>
-Subject: Re: [PATCH v2 5/6] clk: qcom: Add camera clock controller driver for SM8150
-To: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Abhishek Sahu <absahu@codeaurora.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Stephen Boyd <sboyd@codeaurora.org>, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, Ajit Pandey <quic_ajipan@quicinc.com>, 
-	Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, 
-	Jagadeesh Kona <quic_jkona@quicinc.com>, "Bryan O'Donoghue" <bryan.odonoghue@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Fri, 26 Jul 2024 at 11:26, Satya Priya Kakitapalli (Temp)
-<quic_skakitap@quicinc.com> wrote:
->
->
-> >>>>> - I see that most if not all RCG clocks use rcg2_shared ops instead of
-> >>>>>      using simple rcg2 ops, could you please clarify that?
-> >>>> As per the HW design recommendation, RCG needs to be parked at a safe
-> >>>> clock source(XO) in the disable path, shared_ops is used to achieve the
-> >>>> same.
-> >>> Does it apply to SM8150? For example, on SM8250 RCG2s are not parked.
-> >>
-> >> Yes, it applies to SM8150.
-> > Should the same logic be applied to other chipsets supported upstream?
-> > If this is the case, which chipsets?
->
->
-> I will evaluate for what all chipsets it is applicable and post a series
-> to fix it.
+---
+ .../dt-bindings/reset/aspeed,ast2700-reset.h  | 126 ++++++++++++++++++
+ 1 file changed, 126 insertions(+)
+ create mode 100644 include/dt-bindings/reset/aspeed,ast2700-reset.h
 
-Thanks a lot!
-
-
+diff --git a/include/dt-bindings/reset/aspeed,ast2700-reset.h b/include/dt-bindings/reset/aspeed,ast2700-reset.h
+new file mode 100644
+index 000000000000..704cdaac3fdc
+--- /dev/null
++++ b/include/dt-bindings/reset/aspeed,ast2700-reset.h
+@@ -0,0 +1,126 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Device Tree binding constants for AST2700 reset controller.
++ *
++ * Copyright (c) 2023 Aspeed Technology Inc.
++ */
++
++#ifndef _MACH_ASPEED_AST2700_RESET_H_
++#define _MACH_ASPEED_AST2700_RESET_H_
++
++/* SOC0 */
++#define SCU0_RESET_SDRAM		(0)
++#define SCU0_RESET_DDRPHY		(1)
++#define SCU0_RESET_RSA		(2)
++#define SCU0_RESET_SHA3		(3)
++#define SCU0_RESET_HACE		(4)
++#define SCU0_RESET_SOC		(5)
++#define SCU0_RESET_VIDEO		(6)
++#define SCU0_RESET_2D			(7)
++#define SCU0_RESET_PCIS		(8)
++#define SCU0_RESET_RVAS0		(9)
++#define SCU0_RESET_RVAS1		(10)
++#define SCU0_RESET_SM3		(11)
++#define SCU0_RESET_SM4		(12)
++#define SCU0_RESET_CRT0		(13)
++#define SCU0_RESET_ECC		(14)
++#define SCU0_RESET_DP_PCI		(15)
++#define SCU0_RESET_UFS		(16)
++#define SCU0_RESET_EMMC		(17)
++#define SCU0_RESET_PCIE1RST		(18)
++#define SCU0_RESET_PCIE1RSTOE		(19)
++#define SCU0_RESET_PCIE0RST		(20)
++#define SCU0_RESET_PCIE0RSTOE		(21)
++#define SCU0_RESET_JTAG0		(22)
++#define SCU0_RESET_MCTP0		(23)
++#define SCU0_RESET_MCTP1		(24)
++#define SCU0_RESET_XDMA0		(25)
++#define SCU0_RESET_XDMA1		(26)
++#define SCU0_RESET_H2X1		(27)
++#define SCU0_RESET_DP			(28)
++#define SCU0_RESET_DP_MCU		(29)
++#define SCU0_RESET_GP_MCU		(30)
++#define SCU0_RESET_H2X0		(31)
++#define SCU0_RESET_P0_VHUB2		(32)
++#define SCU0_RESET_P0_PHY3		(33)
++#define SCU0_RESET_P0_XHCI		(34)
++#define SCU0_RESET_P1_VHUB2		(35)
++#define SCU0_RESET_P1_PHY3		(36)
++#define SCU0_RESET_P1_XHCI		(37)
++#define SCU0_RESET_P0_USB2		(38)
++#define SCU0_RESET_P1_USB2		(39)
++#define SCU0_RESET_USB11		(40)
++#define SCU0_RESET_RESERVED		(41)
++#define SCU0_RESET_E2M0		(42)
++#define SCU0_RESET_E2M1		(43)
++
++#define SOC0_RESET_NUMS		(SCU0_RESET_E2M1 + 1)
++
++/* SOC1 */
++#define SCU1_RESET_LPC0		(0)
++#define SCU1_RESET_LPC1		(1)
++#define SCU1_RESET_MII		(2)
++#define SCU1_RESET_PECI		(3)
++#define SCU1_RESET_PWM		(4)
++#define SCU1_RESET_MAC0		(5)
++#define SCU1_RESET_MAC1		(6)
++#define SCU1_RESET_MAC2		(7)
++#define SCU1_RESET_ADC		(8)
++#define SCU1_RESET_SD			(9)
++#define SCU1_RESET_ESPI0		(10)
++#define SCU1_RESET_ESPI1		(11)
++#define SCU1_RESET_JTAG1		(12)
++#define SCU1_RESET_SPI0		(13)
++#define SCU1_RESET_SPI1		(14)
++#define SCU1_RESET_SPI2		(15)
++#define SCU1_RESET_I3C0		(16)
++#define SCU1_RESET_I3C1		(17)
++#define SCU1_RESET_I3C2		(18)
++#define SCU1_RESET_I3C3		(19)
++#define SCU1_RESET_I3C4		(20)
++#define SCU1_RESET_I3C5		(21)
++#define SCU1_RESET_I3C6		(22)
++#define SCU1_RESET_I3C7		(23)
++#define SCU1_RESET_I3C8		(24)
++#define SCU1_RESET_I3C9		(25)
++#define SCU1_RESET_I3C10		(26)
++#define SCU1_RESET_I3C11		(27)
++#define SCU1_RESET_I3C12		(28)
++#define SCU1_RESET_I3C13		(29)
++#define SCU1_RESET_I3C14		(30)
++#define SCU1_RESET_I3C15		(31)
++/* reserved 32 */
++#define SCU1_RESET_IOMCU		(33)
++#define SCU1_RESET_H2A_SPI1		(34)
++#define SCU1_RESET_H2A_SPI2		(35)
++#define SCU1_RESET_UART0		(36)
++#define SCU1_RESET_UART1		(37)
++#define SCU1_RESET_UART2		(38)
++#define SCU1_RESET_UART3		(39)
++#define SCU1_RESET_I2C_FILTER		(40)
++#define SCU1_RESET_CALIPTRA		(41)
++/* reserved 42:43 */
++#define SCU1_RESET_FSI		(44)
++#define SCU1_RESET_CAN		(45)
++#define SCU1_RESET_MCTP		(46)
++#define SCU1_RESET_I2C		(47)
++#define SCU1_RESET_UART6		(48)
++#define SCU1_RESET_UART7		(49)
++#define SCU1_RESET_UART8		(50)
++#define SCU1_RESET_UART9		(51)
++#define SCU1_RESET_LTPI		(52)
++#define SCU1_RESET_VGAL		(53)
++#define SCU1_RESET_LTPI1		(54)
++#define SCU1_RESET_ACE		(55)
++#define SCU1_RESET_E2M2		(56)
++#define SCU1_RESET_UHCI		(57)
++#define SCU1_RESET_PORTC_USB2H	(58)
++#define SCU1_RESET_PORTC_USB2V	(59)
++#define SCU1_RESET_PORTD_USB2H	(60)
++#define SCU1_RESET_PORTD_USB2V	(61)
++#define SCU1_RESET_H2X2		(62)
++#define SCU1_RESET_I3CDMA             (63)
++
++#define SOC1_RESET_NUMS		(SCU1_RESET_I3CDMA + 1)
++
++#endif  /* _MACH_ASPEED_AST2700_RESET_H_ */
 -- 
-With best wishes
-Dmitry
+2.34.1
+
