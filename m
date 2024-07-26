@@ -1,58 +1,96 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA45F63CB;
-	Fri, 26 Jul 2024 16:44:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CA5B3BBC1;
+	Fri, 26 Jul 2024 18:57:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722012267; cv=none; b=GJFyEG90S5QmIoBRlHwuP69Dmk+FbTNROxPG9R6h6ohURGtuFsFbN2VBNjCKiB9wg23/LSjnzM/fCV3G9cl00mufGSxW46rbPvd2Uqi37K0S7RLZAtsplGQLRfh9bPREYs1ltGx7Ij/EDlSUTNP1dAHEqWC6TQoNs+zMMdyiIJk=
+	t=1722020237; cv=none; b=Cc0sqpaopJK7Y0ACVVI7f0Ta1haAHF5qZv4EPkR9R10vACA5YcYUlw0Pib/8sDlfhPt2IUvFAxqhG14a6GgD5WT1x108VRvlWlpxZZRwoJRlp5+OhS7qNf/20RII7eh9zVDJs3OLrZlWmIeBlUoN4CYozGHs+HepwqgUO/NuBlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722012267; c=relaxed/simple;
-	bh=9youBC6MiVIpwrFNTCy5T5voV/G4s6p+REdUfBArF/U=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=iD/ehvqG/+a0k0Nf5DDcAyWOnOugI96fcxM11TQspPMbV+ALJBIg58Se2pASnMm4zxCNsBKzV/WLx8qhEEwQmzoeVDX08anr7oPfhPRiHYx8h4hoLpYc8O+DbQt09PD8CWUZNPcUvhwTx4u+pNlPVcE7ZSba+O4Ec3fT1PodY/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=StIKHOPn; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1722020237; c=relaxed/simple;
+	bh=VPARTokuI49hwdCTuZE5J9fKaft2WQrXZnJAoM3nQ0s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d46ZpduMOMV65ixOiVftdiF3yJw9nZ5dLkpdefAajxt1nP/UuVDZAOP0FXsCWpwpseLZ2lmV1aPQhkM238l1m2hjuLTs/70+ctR7vkdolOt84AldJYCIvOckD6IZxdi/NWOCLzxX0uFMchqL1Hqv/8FbJnVU8KngtHiP+G5fjl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QNAfXJpZ; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="StIKHOPn"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E8DFC32782;
-	Fri, 26 Jul 2024 16:44:27 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QNAfXJpZ"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B007C32782;
+	Fri, 26 Jul 2024 18:57:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722012267;
-	bh=9youBC6MiVIpwrFNTCy5T5voV/G4s6p+REdUfBArF/U=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=StIKHOPnykRDZZRdGrF3Oxugwi6NJfR+EwNkf912hwC3yVs7BnhXqKQwAHh8ws4zb
-	 NC5Vh5GqtBS94AzcftxjmbHPVB8GKjwGbLyRaKCkYSuPhpI+ka7Kxig+698BUqzh7V
-	 Xyjso+5vyujXGYutg9D1tN6RVeFn9Rf6xN6+9fYnwmSmuAMli7FA/eeeK9quYd+4nQ
-	 24yhOYdD3Cy4IxQNcTYdOyQ3FyDuqmdjSEgOi06LplH82poCadqBc1NqfzBwV8Vcjo
-	 l5SgS7NytDp3pFygYTy6/Dl3OkJ7+ldIuvX1x1JhcXsDbGIqtAQXzysw3qHw07FLMu
-	 2upLbZJGTWlUw==
-Message-ID: <936d1eaa5089b2b2834bb60dd10ceae4.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1722020236;
+	bh=VPARTokuI49hwdCTuZE5J9fKaft2WQrXZnJAoM3nQ0s=;
+	h=From:To:Cc:Subject:Date:From;
+	b=QNAfXJpZMgjIMf9NKa4asjosQ0Z1aZJfiJ9881Sbu1uLXEZDEV0SCKT64LkvpCdg+
+	 CxeSEJjkswgrpthEAaoyzKgJOhlxwK0hst7+RNriMdIfOoXrvGgHTWOJGggYK4NWi2
+	 xQHHEEJkqHm6KFVNGWOYTGJORtt5p/MQAANj98lvp2r52UiVuOn58qqohunBNWjKsU
+	 6FZSst9fl5ywCk6Wz7lD5z80EPnni3WJ50h8q4PwWOCXrxZClUl5A6o9NGoCKwfCpT
+	 xYP/HqYHBy0mr2MjArbaZyAC5yxPIERAROEDnVcas9noIe5N6KBNz3rFg5ki3DTI3G
+	 IWBDepurmpZvg==
+From: Stephen Boyd <sboyd@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] clk fixes for the merge window
+Date: Fri, 26 Jul 2024 11:57:14 -0700
+Message-ID: <20240726185715.3655728-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.46.0.rc1.232.g9752f9e123-goog
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <298d204a7d9c8dce1f1a2f180b12bd3887ea4802.camel@linaro.org>
-References: <20240712-gs101-non-essential-clocks-2-v4-0-310aee0de46e@linaro.org> <d17567eb0ad9a6082d55ca016771abbc.sboyd@kernel.org> <298d204a7d9c8dce1f1a2f180b12bd3887ea4802.camel@linaro.org>
-Subject: Re: [PATCH v4 0/2] gs101 oriole: UART clock fixes
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Will McVicker <willmcvicker@google.com>, kernel-team@android.com, linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-To: Alim Akhtar <alim.akhtar@samsung.com>, =?utf-8?q?Andr=C3=A9?= Draszik <andre.draszik@linaro.org>, Chanwoo Choi <cw00.choi@samsung.com>, Krzysztof Kozlowski <krzk@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Peter Griffin <peter.griffin@linaro.org>, Sam Protsenko <semen.protsenko@linaro.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Tudor Ambarus <tudor.ambarus@linaro.org>
-Date: Fri, 26 Jul 2024 09:44:25 -0700
-User-Agent: alot/0.10
+Content-Transfer-Encoding: 8bit
 
-Quoting Andr=C3=A9 Draszik (2024-07-25 00:12:48)
->=20
-> I didn't think that was necessary (and no, I don't have a binding update =
-at
-> the moment). It gets the clock associated with the serial port (of_stdout=
-),
-> if any, and works off that.
->=20
-> Did I miss something?
+The following changes since commit 589eb11498fbf7de7a1bc8ff1f4b7592687dfd46:
 
-No, I missed it. I was thinking it was the chosen node but it's actually
-the serial node.
+  Merge branches 'clk-qcom', 'clk-rockchip', 'clk-sophgo' and 'clk-thead' into clk-next (2024-07-16 11:24:25 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-for-linus
+
+for you to fetch changes up to f99b3feb3b0e9fca2257c90fc8317be8ee44c19a:
+
+  clk: samsung: fix getting Exynos4 fin_pll rate from external clocks (2024-07-23 11:29:23 -0700)
+
+----------------------------------------------------------------
+A few clk driver fixes for the merge window to fix the build and boot on
+some SoCs.
+
+ - Initialize struct clk_init_data in the TI da8xx-cfgchip driver so
+   that stack contents aren't used for things like clk flags leading to
+   unexpected behavior
+
+ - Don't leak stack contents in a debug print in the new Sophgo clk
+   driver
+
+ - Disable the new T-Head clk driver on 32-bit targets to fix the build
+   due to a division
+
+ - Fix Samsung Exynos4 fin_pll wreckage from the clkdev rework done last
+   cycle by using a struct clk_hw directly instead of a struct clk
+   consumer
+
+----------------------------------------------------------------
+Bastien Curutchet (1):
+      clk: davinci: da8xx-cfgchip: Initialize clk_init_data before use
+
+Dan Carpenter (1):
+      clk: sophgo: clk-sg2042-pll: Fix uninitialized variable in debug output
+
+Krzysztof Kozlowski (1):
+      clk: samsung: fix getting Exynos4 fin_pll rate from external clocks
+
+Palmer Dabbelt (1):
+      clk: T-Head: Disable on 32-bit Targets
+
+ drivers/clk/davinci/da8xx-cfgchip.c |  4 ++--
+ drivers/clk/samsung/clk-exynos4.c   | 13 +++++++------
+ drivers/clk/sophgo/clk-sg2042-pll.c |  2 +-
+ drivers/clk/thead/Kconfig           |  1 +
+ 4 files changed, 11 insertions(+), 9 deletions(-)
+
+-- 
+https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
+https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
