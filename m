@@ -1,61 +1,33 @@
-Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B64D17BB39
-	for <linux-clk@vger.kernel.org>; Fri, 26 Jul 2024 13:13:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E31DC17BB09;
+	Fri, 26 Jul 2024 13:34:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721999639; cv=none; b=glzfmjX9D00l6OgGCUVws0yCYmHGRgaNDiKowhA2G3C07/Dc4LSoZBl0lH8mXO74NM2iZRXBO4UibQBgUeDnO4otQ1DIvBFriYnnhilmLHTqsh6+GZTlZa/FPCPqgw56+02j3xVhtve1420eTg/jpaEbO0L3zKyhTjDNs4Fgosw=
+	t=1722000849; cv=none; b=IfdNF3hjEU+JHSmklrg7rTjVgxcB5dKnWS0SeISlGOwNYu1ftU7i5zMke2NpThLWhM2rB8QRjToZ1pmys9W6EsOtlXqCg89Z04Ol+KLU9nfcbl3ai9pI6FSeFwfRYaZ1D+lYj4ChJqxFmGqyTsuFTiwDjlzg2R0oT2OcWVhgi30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721999639; c=relaxed/simple;
-	bh=tjpx7XT6hKUt3wpwXlT3BRKarZaJsCaSbE3FIg3d2mQ=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=BlsZeiZpPCYPJM8d+EoXSPfPV9rVQQvL26RYH5VOeL7j0rXMDU3dBSPwKPNOiSy4n0aiM+rt3+caeJanV/IH71YMEwgAs4SW6NuJ89z4YAzbtzSgpafZ6M1mJOIU6H/gZ/P2VTX50orU42h+BYpLYjVBDRHUEliTCajp1Y8r79Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MPI3hs3Q; arc=none smtp.client-ip=209.85.221.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1722000849; c=relaxed/simple;
+	bh=gwnxVuoN7LswP7v77zQc6e/qC4v2vnpedCk7vhQDPIM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IJqedqhiMJeZ8MlvhH0835orv1XapKmA+u6IbNoqsu36rzSvWT4KO9MLmmx8jM6fUN8tmIgAgCChJ0jd+aqhQutz6Tk9o5F1feAJ3AfKO5Alw4Z/EtEcwItAw208zNhswG7bN791Do6LKW7/QcTpmvVGxIqOzf64yk9SS1EtvjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PbJq1pUe; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MPI3hs3Q"
-Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-369c609d0c7so1492053f8f.3
-        for <linux-clk@vger.kernel.org>; Fri, 26 Jul 2024 06:13:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1721999635; x=1722604435; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9azynhyEIv7gjWRDwglaDMiOV6j4zfrdOibDd2jjuA0=;
-        b=MPI3hs3QjzV9+Vli7EY47Mm+C0DlBF1qp6/aE3kQi318wrxkgPXQQ2IFHHjnlg5Grd
-         +w7HFQE9O5fBcZcyyqhZJpds3Efkp/Efv8vv3v7V+S77az7Sy/fH33yPxeV8gZN0EH8e
-         3lxP6F0BbkTSkvyGROwA3are5mWqh2yE0TQyXYON0af4s9keuCpt1oAPNJveFrjC2yKG
-         i1FlrqV93oCoCE8smd7tobex2aVdFCxb+07IlcmrzjvS+fPFACDrRLujCq9Mjrba1XeZ
-         OAWz4lq1gygA1Jlr1ae8whKtX0diazVDRc0WqbS9wvKGmVBPKlzUJyMZuNOwrp/+/2ju
-         jZYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1721999635; x=1722604435;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=9azynhyEIv7gjWRDwglaDMiOV6j4zfrdOibDd2jjuA0=;
-        b=FXuR2zQy6FZLX6/0rFxeNbcaXKy7VU9lmxJiG7RPyPihIz6vVEuTLjAQZ7T1A2Rzng
-         9h5UeyrSyWVui7iBWpUKnh04DalES3tlsk492ZuCZ3+nY+yySnsNzHYrvQ6+iJL3P3Oe
-         CPIzmHH+9qCEUWbWoNYHXeehnFR3bBa5/s3VicCYvsCQJywxkgPAKEAPbnq4kOH3vWNc
-         o7LUZO2wWLVYu7Gh1jHEc4rOMWybGLhDgeqfmZI121+mrPAtwYKd6s049cWAezgixNaL
-         rWIm73CV/ILGczmhNsy0VngE7cneuYDtR+zL8cnNkMD5oX3kgeRetttrbyXGZ+249avx
-         lTHA==
-X-Forwarded-Encrypted: i=1; AJvYcCXoKzdGnvtVriP7VJZ+Z6/q/eq/vZE+OK6P8nqbhLQLWFpiw9PgUp3gl3B0jsJczGti8gTntq0R/Cg+v6OArMmwN/advqUeXCo0
-X-Gm-Message-State: AOJu0Yy69zaFsXUysxvQLTq3RLHMQ1uPqChp6UcJ709neLNp0A19L0sl
-	kz6Oab6qvVzj7cL1JgRjlUkaRaduyQUnAJu7kyJP/i/1DWzwFO95Mcksv9dyciQ=
-X-Google-Smtp-Source: AGHT+IFYFvUqydDA1IhhpeDf3coci+AwNSrGJucxAODHhP4+wvMCDNWfwzzxwPzjvhRpI/Srd3Dybg==
-X-Received: by 2002:a5d:588a:0:b0:367:9903:a91 with SMTP id ffacd0b85a97d-36b363ad791mr5579706f8f.11.1721999635029;
-        Fri, 26 Jul 2024 06:13:55 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:414f:cfed:daba:4cb? ([2a01:e0a:982:cbb0:414f:cfed:daba:4cb])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4280574a8a2sm80575835e9.23.2024.07.26.06.13.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 26 Jul 2024 06:13:54 -0700 (PDT)
-Message-ID: <9bdd46a7-c018-4dc9-89e4-20377b5e6570@linaro.org>
-Date: Fri, 26 Jul 2024 15:13:53 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PbJq1pUe"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59867C32786;
+	Fri, 26 Jul 2024 13:34:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722000848;
+	bh=gwnxVuoN7LswP7v77zQc6e/qC4v2vnpedCk7vhQDPIM=;
+	h=Date:Subject:To:List-Id:Cc:References:From:In-Reply-To:From;
+	b=PbJq1pUetzKP6lj7XNFrYOOTl5lJv8br/1+1uE2CMP2Dj8alrSuV8IrdinHcb3a5h
+	 tECFC8hIiT8kDDA1+LpOCFLotvRRYutUJ2QaJKoBY8Lnqm5+7Nga/aQBFXS7n6bpfG
+	 ABrv0ztX4nsnr7r50pBScYtkab+tyMaxk96umPr/v1SL4js/+gcgu5HQ56f1xHcAaB
+	 nMBE/NNEgqln/udZJJ9yoXM+kFoDEq9GBkJNEHWiMltY0kE2Ac0JLgJ1/24pnQ0hp7
+	 ZUX/KEtcx0QENKkfZVeeEHezJ6B6stnDg3BLvMMzxxmHPuP3P+O9MpmsZk5gB5U4Un
+	 0Dfswh17+Ej6A==
+Message-ID: <241ceb9b-b29f-41fd-8987-2feba2e5e08e@kernel.org>
+Date: Fri, 26 Jul 2024 15:33:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -63,89 +35,150 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 2/3] MAINTAINERS: Update Konrad Dybcio's email address
-To: Konrad Dybcio <konrad.dybcio@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
- linux-pm@vger.kernel.org, iommu@lists.linux.dev, linux-gpio@vger.kernel.org,
- linux-remoteproc@vger.kernel.org, Konrad Dybcio <konradybcio@kernel.org>
-References: <20240726-topic-konrad_email-v1-0-f94665da2919@kernel.org>
- <20240726-topic-konrad_email-v1-2-f94665da2919@kernel.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240726-topic-konrad_email-v1-2-f94665da2919@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v1 00/10] Introduce ASPEED AST27XX BMC SoC
+To: Kevin Chen <kevin_chen@aspeedtech.com>
+Cc: soc@kernel.org, m.szyprowski@samsung.com, nfraprado@collabora.com,
+ olof@lixom.net, will@kernel.org, mturquette@baylibre.com,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ conor+dt@kernel.org, devicetree@vger.kernel.org,
+ andrew@codeconstruct.com.au, catalin.marinas@arm.com, sboyd@kernel.org,
+ p.zabel@pengutronix.de, u-kumar1@ti.com, arnd@arndb.de, joel@jms.id.au,
+ quic_bjorande@quicinc.com, lee@kernel.org, krzk+dt@kernel.org,
+ linux-arm-kernel@lists.infradead.org, neil.armstrong@linaro.org,
+ linux-aspeed@lists.ozlabs.org, dmitry.baryshkov@linaro.org,
+ shawnguo@kernel.org, geert+renesas@glider.be,
+ "Rob Herring (Arm)" <robh@kernel.org>
+References: <20240726110355.2181563-1-kevin_chen@aspeedtech.com>
+ <172199921352.1507193.4411331020670815695.robh@kernel.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <172199921352.1507193.4411331020670815695.robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 26/07/2024 13:18, Konrad Dybcio wrote:
-> Use my @kernel.org address everywhere.
+On 26/07/2024 15:09, Rob Herring (Arm) wrote:
 > 
-> Signed-off-by: Konrad Dybcio <konradybcio@kernel.org>
-> ---
->   MAINTAINERS | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
+> On Fri, 26 Jul 2024 19:03:45 +0800, Kevin Chen wrote:
+>> This patchset adds initial support for the ASPEED.
+>> AST27XX Board Management controller (BMC) SoC family.
+>>
+>> AST2700 is ASPEED's 8th-generation server management processor.
+>> Featuring a quad-core ARM Cortex A35 64-bit processor and two
+>> independent ARM Cortex M4 processors
+>>
+>> This patchset adds minimal architecture and drivers such as:
+>> Clocksource, Clock and Reset
+>>
+>> This patchset was tested on the ASPEED AST2700 evaluation board.
+>>
+>> Kevin Chen (10):
+>>   dt-binding: mfd: aspeed,ast2x00-scu: Add binding for ASPEED AST2700
+>>     SCU
+>>   dt-binding: clk: ast2700: Add binding for Aspeed AST27xx Clock
+>>   clk: ast2700: add clock controller
+>>   dt-bindings: reset: ast2700: Add binding for ASPEED AST2700 Reset
+>>   dt-bindings: arm: aspeed: Add maintainer
+>>   dt-bindings: arm: aspeed: Add aspeed,ast2700-evb compatible string
+>>   arm64: aspeed: Add support for ASPEED AST2700 BMC SoC
+>>   arm64: dts: aspeed: Add initial AST27XX device tree
+>>   arm64: dts: aspeed: Add initial AST2700 EVB device tree
+>>   arm64: defconfig: Add ASPEED AST2700 family support
+>>
+>>  .../bindings/arm/aspeed/aspeed.yaml           |    6 +
+>>  .../bindings/mfd/aspeed,ast2x00-scu.yaml      |    3 +
+>>  MAINTAINERS                                   |    3 +
+>>  arch/arm64/Kconfig.platforms                  |   14 +
+>>  arch/arm64/boot/dts/Makefile                  |    1 +
+>>  arch/arm64/boot/dts/aspeed/Makefile           |    4 +
+>>  arch/arm64/boot/dts/aspeed/aspeed-g7.dtsi     |  217 +++
+>>  arch/arm64/boot/dts/aspeed/ast2700-evb.dts    |   50 +
+>>  arch/arm64/configs/defconfig                  |    1 +
+>>  drivers/clk/Makefile                          |    1 +
+>>  drivers/clk/clk-ast2700.c                     | 1166 +++++++++++++++++
+>>  .../dt-bindings/clock/aspeed,ast2700-clk.h    |  180 +++
+>>  .../dt-bindings/reset/aspeed,ast2700-reset.h  |  126 ++
+>>  13 files changed, 1772 insertions(+)
+>>  create mode 100644 arch/arm64/boot/dts/aspeed/Makefile
+>>  create mode 100644 arch/arm64/boot/dts/aspeed/aspeed-g7.dtsi
+>>  create mode 100644 arch/arm64/boot/dts/aspeed/ast2700-evb.dts
+>>  create mode 100644 drivers/clk/clk-ast2700.c
+>>  create mode 100644 include/dt-bindings/clock/aspeed,ast2700-clk.h
+>>  create mode 100644 include/dt-bindings/reset/aspeed,ast2700-reset.h
+>>
+>> --
+>> 2.34.1
+>>
+>>
+>>
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 9200d953868e..6c7d3951192f 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -2745,7 +2745,7 @@ F:	include/linux/soc/qcom/
->   
->   ARM/QUALCOMM SUPPORT
->   M:	Bjorn Andersson <andersson@kernel.org>
-> -M:	Konrad Dybcio <konrad.dybcio@linaro.org>
-> +M:	Konrad Dybcio <konradybcio@kernel.org>
->   L:	linux-arm-msm@vger.kernel.org
->   S:	Maintained
->   T:	git git://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git
-> @@ -7107,7 +7107,7 @@ F:	drivers/gpu/drm/tiny/panel-mipi-dbi.c
->   DRM DRIVER for Qualcomm Adreno GPUs
->   M:	Rob Clark <robdclark@gmail.com>
->   R:	Sean Paul <sean@poorly.run>
-> -R:	Konrad Dybcio <konrad.dybcio@linaro.org>
-> +R:	Konrad Dybcio <konradybcio@kernel.org>
->   L:	linux-arm-msm@vger.kernel.org
->   L:	dri-devel@lists.freedesktop.org
->   L:	freedreno@lists.freedesktop.org
-> @@ -18765,7 +18765,7 @@ F:	include/uapi/drm/qaic_accel.h
->   
->   QUALCOMM CORE POWER REDUCTION (CPR) AVS DRIVER
->   M:	Bjorn Andersson <andersson@kernel.org>
-> -M:	Konrad Dybcio <konrad.dybcio@linaro.org>
-> +M:	Konrad Dybcio <konradybcio@kernel.org>
->   L:	linux-pm@vger.kernel.org
->   L:	linux-arm-msm@vger.kernel.org
->   S:	Maintained
 > 
+> My bot found new DTB warnings on the .dts files added or changed in this
+> series.
+> 
+> Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
+> are fixed by another series. Ultimately, it is up to the platform
+> maintainer whether these warnings are acceptable or not. No need to reply
+> unless the platform maintainer has comments.
+> 
+> If you already ran DT checks and didn't see these error(s), then
+> make sure dt-schema is up to date:
+> 
+>   pip3 install dtschema --upgrade
+> 
+> 
+> New warnings running 'make CHECK_DTBS=y aspeed/ast2700-evb.dtb' for 20240726110355.2181563-1-kevin_chen@aspeedtech.com:
 
-Acked-by: Neil Armstrong <neil.armstrong@linaro.org>
+Kevin,
+Just to clarify. Looking at the patches it was quite obvious you did not
+test it with dtbs_check. For a new arm64 platform without any legacy,
+having 0 warnings is a must.
+
+Consider Documentation/process/maintainer-soc-clean-dts.rst being
+implied for this platform.
+
+Best regards,
+Krzysztof
+
