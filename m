@@ -1,113 +1,96 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 285AD1B27D;
-	Fri, 26 Jul 2024 11:22:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19457179204;
+	Fri, 26 Jul 2024 11:27:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721992939; cv=none; b=hbfLUC0vVkqImsnY14+pA1Olfxeulz9vTcyACWVxDFcODworIvmuf3b9d/aH4Epp4Dz+HWxSjQVplcKwcaZc6KhWdLjoTHoYwHYSzOA2SQiDGi1+3JJiOidg4wpXlgG6onnLETrEPSIdVvM+2FBZaO27jTbeMGsPWPZ36HtKUmc=
+	t=1721993244; cv=none; b=Z0M0fKW7RJeYC/JSVAFYT5Jow/VobJQr+FIxNNjRNFh2F9HmwYVBVp2Mtd8EBvi9mlj56LDLDzkNMwI8+eymIxTzdfIeOOZnuzcYCCyjanyAnDc8FKjJJfSLs97QeLxQcq03FAzzblVZPoGvtlQ/97f1S2Y64d5/t7dzEf2wsDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721992939; c=relaxed/simple;
-	bh=LEUQO2+MQzeVymYBL/y5WvxXo6z+GYdPnvia7nP6//U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OFBEst0eEUqtlSxaBtzTsV658g18L3CEyKZabXgqb3K7g4mSqb2iVt0/0mqYQXMxAK5lC+oOWhFuU1YeKiri5zZAwBHCNX5THWZ5oVyApem2fhvTouDUFxAUMAAVY57Xrx29X2SKZQ1jBPMjS+S6WQLH4iPwsQaqJjDcSxXOkY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UsqgcODR; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UsqgcODR"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CC14C4AF07;
-	Fri, 26 Jul 2024 11:22:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721992938;
-	bh=LEUQO2+MQzeVymYBL/y5WvxXo6z+GYdPnvia7nP6//U=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UsqgcODRr7BEYNATkMPqX37VLaBlKpF4SEU314vb4fXt6TLm27Z7xequ2g6pkWd9R
-	 Q+OZpKbacvzuPoS+kfXbO10nVr9hBkTzWvF5lxiTbJGzOHpXA1ql+CPxVBVSs3rwkk
-	 lTpBGE6U8fZfPzoRtkThJEyqbm865YtBL47aZu24H3r3x9DjKHs2SvzgbmhCnfkg/s
-	 FblC+9OY/19T2OgbG7jWvLaSpPiEw0/y4+PMyv1dn8ETmHZvkoQU8S+g8ELVb8p/3S
-	 VpDFkPfN79UMD+O7lGKonIQVSltQT6D3PF5pUe/LjUQtKp4U5ovcs5PjxYlOwjCjyH
-	 vHf2ssbAfULuw==
-Message-ID: <a783ddc2-6313-419d-936b-0af633c30aad@kernel.org>
-Date: Fri, 26 Jul 2024 13:22:10 +0200
+	s=arc-20240116; t=1721993244; c=relaxed/simple;
+	bh=38jF0AoqXiOEq+fWlBN3oGDUYImZ8nnMr24hxlQDdjY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eJcgLK/ZhUrWtlxu+3pgQcAbba9icISCa++MQqUeB6IO4BuTnwJyDpFHAwYIx1IoEvz3oxL6g6v+MFjPu0PMhQdj5k6THpoMfi2MNjD4sBqWus4nrAWUq9NhLYQPLyPv/G/rALHyUPSPdpdsKBR3CThqfLJ7bjCFUWYrUA2wOQo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ED9BC1007;
+	Fri, 26 Jul 2024 04:27:46 -0700 (PDT)
+Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0501D3F73F;
+	Fri, 26 Jul 2024 04:27:19 -0700 (PDT)
+Date: Fri, 26 Jul 2024 12:27:17 +0100
+From: Cristian Marussi <cristian.marussi@arm.com>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: sudeep.holla@arm.com, cristian.marussi@arm.com, mturquette@baylibre.com,
+	sboyd@kernel.org, linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	arm-scmi@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
+Subject: Re: [PATCH] clk: scmi: add is_prepared hook
+Message-ID: <ZqOIFfkxylcdIIFB@pluto>
+References: <20240725090741.1039642-1-peng.fan@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] dt-bindings: Batch-update Konrad Dybcio's email
-To: Konrad Dybcio <konrad.dybcio@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
- linux-pm@vger.kernel.org, iommu@lists.linux.dev, linux-gpio@vger.kernel.org,
- linux-remoteproc@vger.kernel.org, Konrad Dybcio <konradybcio@kernel.org>
-References: <20240726-topic-konrad_email-v1-0-f94665da2919@kernel.org>
- <20240726-topic-konrad_email-v1-3-f94665da2919@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240726-topic-konrad_email-v1-3-f94665da2919@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240725090741.1039642-1-peng.fan@oss.nxp.com>
 
-On 26/07/2024 13:18, Konrad Dybcio wrote:
-> Use my @kernel.org address everywhere.
+On Thu, Jul 25, 2024 at 05:07:41PM +0800, Peng Fan (OSS) wrote:
+> From: Peng Fan <peng.fan@nxp.com>
 > 
-> Signed-off-by: Konrad Dybcio <konradybcio@kernel.org>
+
+.... one more remark..
+
+> Some clks maybe default enabled by hardware, so add is_prepared hook
+> to get the status of the clk. Then when disabling unused clks, those
+> unused clks but default hardware on clks could be in off state to save
+> power.
+> 
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 > ---
+>  drivers/clk/clk-scmi.c | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
+> 
+> diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
+> index d86a02563f6c..d2d370337ba5 100644
+> --- a/drivers/clk/clk-scmi.c
+> +++ b/drivers/clk/clk-scmi.c
+> @@ -142,6 +142,20 @@ static void scmi_clk_disable(struct clk_hw *hw)
+>  	scmi_proto_clk_ops->disable(clk->ph, clk->id, NOT_ATOMIC);
+>  }
+>  
+> +static int scmi_clk_is_enabled(struct clk_hw *hw)
+> +{
+> +	int ret;
+> +	bool enabled = false;
+> +	struct scmi_clk *clk = to_scmi_clk(hw);
+> +
+> +	ret = scmi_proto_clk_ops->state_get(clk->ph, clk->id, &enabled, NOT_ATOMIC);
+> +	if (ret)
+> +		dev_warn(clk->dev,
+> +			 "Failed to get state for clock ID %d\n", clk->id);
+> +
+> +	return !!enabled;
+> +}
+> +
+>  static int scmi_clk_atomic_enable(struct clk_hw *hw)
+>  {
+>  	struct scmi_clk *clk = to_scmi_clk(hw);
+> @@ -280,6 +294,7 @@ scmi_clk_ops_alloc(struct device *dev, unsigned long feats_key)
+>  		} else {
+>  			ops->prepare = scmi_clk_enable;
+>  			ops->unprepare = scmi_clk_disable;
+> +			ops->is_prepared = scmi_clk_is_enabled;
 
-FWIW:
+... you should NOT add the is_prepared ops here, since this would mean
+that you will have the is_prepared ops available only when
+SCMI_CLK_STATE_CTRL_SUPPORTED, WHILE you most probably want to be able
+to check (non atomically) the current enabled-status for a clock EVEN IF
+you are allowed to change its state...please add the is_prepared in the
+else-branch down below where the ATOMIC is_enabled is added
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Rob, will you take it directly?
-
-Best regards,
-Krzysztof
-
+Thanks,
+Cristian
