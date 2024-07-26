@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B687017A588;
-	Fri, 26 Jul 2024 11:20:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 285AD1B27D;
+	Fri, 26 Jul 2024 11:22:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721992801; cv=none; b=SL3zmTW+t4x7SLzoPqiOU1HOv6R/YF9Vch+XkFAM8zjnjZ8rQVTwk69iZY2WTIRMCAJyB+N7Ly1XKZeiqon42ee3PXBnH5K2rSWFhQZPKTV0HP/MpEj2DEOR6zbYzrbW+qSFL5L5OveNj/TpJVpTtAMnrUFdZHXKwVf8S1noi0s=
+	t=1721992939; cv=none; b=hbfLUC0vVkqImsnY14+pA1Olfxeulz9vTcyACWVxDFcODworIvmuf3b9d/aH4Epp4Dz+HWxSjQVplcKwcaZc6KhWdLjoTHoYwHYSzOA2SQiDGi1+3JJiOidg4wpXlgG6onnLETrEPSIdVvM+2FBZaO27jTbeMGsPWPZ36HtKUmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721992801; c=relaxed/simple;
-	bh=JSPYffs55xXRqX4bf9t+uyKOhPgSMTwYlz+FFIt/4v8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=YL42ZhwBvYuo92Mkf3zUs4KEutoIt6ijvMC/lWgiLibzv4iBeH5VzzkHU6UiHDEttffOOPIkhub1vxgXRclr8+ol12xCkxAzgBAaPXRG/gHj2XkyVsUXyz99YnflobpmdCFRdNVww8kGFEsC/rMwqBwntAkNt0STUSbgUbIIS0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HOpz+coo; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1721992939; c=relaxed/simple;
+	bh=LEUQO2+MQzeVymYBL/y5WvxXo6z+GYdPnvia7nP6//U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OFBEst0eEUqtlSxaBtzTsV658g18L3CEyKZabXgqb3K7g4mSqb2iVt0/0mqYQXMxAK5lC+oOWhFuU1YeKiri5zZAwBHCNX5THWZ5oVyApem2fhvTouDUFxAUMAAVY57Xrx29X2SKZQ1jBPMjS+S6WQLH4iPwsQaqJjDcSxXOkY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UsqgcODR; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HOpz+coo"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F9DBC4AF07;
-	Fri, 26 Jul 2024 11:19:52 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UsqgcODR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3CC14C4AF07;
+	Fri, 26 Jul 2024 11:22:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721992801;
-	bh=JSPYffs55xXRqX4bf9t+uyKOhPgSMTwYlz+FFIt/4v8=;
-	h=Date:Subject:List-Id:To:References:From:In-Reply-To:From;
-	b=HOpz+cooQJHu8PFlXEjzy1VcLfdxSQZeESqN2hlEtpO6OY5ONBtss55HbKRfH9NOA
-	 YyicSxeqwzVz5ZX/mrbbhH6oOg2MizKmRCNEwQfU30DeZRzJELW+wJpzNn+cse22w/
-	 i8PIfUiNFoBJsn/kKtTQMcqscchv1QUbil+qZ1afEtc2U+pYW5lR4vM165I7D0OiX2
-	 dtl+bgz9zK6TGCsWPkYf7YvldK8TpeVYfzjWZvx/Cq4KnNVwi6RabJTGFlkRtCBvOz
-	 1hkiu9HefIaecs2tIrc+yVEFEeeUpEaH35aFuAM+yd6PBX20GSe4Twjb5NTTucvdkd
-	 yfTyG1XC+mx9g==
-Message-ID: <b6be1531-d8e2-44d1-a81a-6db8f9ae4ad4@kernel.org>
-Date: Fri, 26 Jul 2024 13:19:50 +0200
+	s=k20201202; t=1721992938;
+	bh=LEUQO2+MQzeVymYBL/y5WvxXo6z+GYdPnvia7nP6//U=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=UsqgcODRr7BEYNATkMPqX37VLaBlKpF4SEU314vb4fXt6TLm27Z7xequ2g6pkWd9R
+	 Q+OZpKbacvzuPoS+kfXbO10nVr9hBkTzWvF5lxiTbJGzOHpXA1ql+CPxVBVSs3rwkk
+	 lTpBGE6U8fZfPzoRtkThJEyqbm865YtBL47aZu24H3r3x9DjKHs2SvzgbmhCnfkg/s
+	 FblC+9OY/19T2OgbG7jWvLaSpPiEw0/y4+PMyv1dn8ETmHZvkoQU8S+g8ELVb8p/3S
+	 VpDFkPfN79UMD+O7lGKonIQVSltQT6D3PF5pUe/LjUQtKp4U5ovcs5PjxYlOwjCjyH
+	 vHf2ssbAfULuw==
+Message-ID: <a783ddc2-6313-419d-936b-0af633c30aad@kernel.org>
+Date: Fri, 26 Jul 2024 13:22:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,21 +35,18 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 08/10] arm64: dts: aspeed: Add initial AST27XX device
- tree
-To: Kevin Chen <kevin_chen@aspeedtech.com>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
- andrew@codeconstruct.com.au, lee@kernel.org, catalin.marinas@arm.com,
- will@kernel.org, arnd@arndb.de, olof@lixom.net, soc@kernel.org,
- mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
- quic_bjorande@quicinc.com, geert+renesas@glider.be,
- dmitry.baryshkov@linaro.org, shawnguo@kernel.org, neil.armstrong@linaro.org,
- m.szyprowski@samsung.com, nfraprado@collabora.com, u-kumar1@ti.com,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <20240726110355.2181563-1-kevin_chen@aspeedtech.com>
- <20240726110355.2181563-9-kevin_chen@aspeedtech.com>
+Subject: Re: [PATCH 3/3] dt-bindings: Batch-update Konrad Dybcio's email
+To: Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+ linux-pm@vger.kernel.org, iommu@lists.linux.dev, linux-gpio@vger.kernel.org,
+ linux-remoteproc@vger.kernel.org, Konrad Dybcio <konradybcio@kernel.org>
+References: <20240726-topic-konrad_email-v1-0-f94665da2919@kernel.org>
+ <20240726-topic-konrad_email-v1-3-f94665da2919@kernel.org>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -95,287 +92,21 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240726110355.2181563-9-kevin_chen@aspeedtech.com>
+In-Reply-To: <20240726-topic-konrad_email-v1-3-f94665da2919@kernel.org>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 26/07/2024 13:03, Kevin Chen wrote:
-> ---
->  arch/arm64/boot/dts/Makefile              |   1 +
->  arch/arm64/boot/dts/aspeed/aspeed-g7.dtsi | 217 ++++++++++++++++++++++
->  2 files changed, 218 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/aspeed/aspeed-g7.dtsi
+On 26/07/2024 13:18, Konrad Dybcio wrote:
+> Use my @kernel.org address everywhere.
 > 
-> diff --git a/arch/arm64/boot/dts/Makefile b/arch/arm64/boot/dts/Makefile
-> index 21cd3a87f385..c909c19dc5dd 100644
-> --- a/arch/arm64/boot/dts/Makefile
-> +++ b/arch/arm64/boot/dts/Makefile
-> @@ -34,3 +34,4 @@ subdir-y += tesla
->  subdir-y += ti
->  subdir-y += toshiba
->  subdir-y += xilinx
-> +subdir-y += aspeed
-> diff --git a/arch/arm64/boot/dts/aspeed/aspeed-g7.dtsi b/arch/arm64/boot/dts/aspeed/aspeed-g7.dtsi
-> new file mode 100644
-> index 000000000000..858ab95251e4
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/aspeed/aspeed-g7.dtsi
-> @@ -0,0 +1,217 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +#include <dt-bindings/clock/aspeed,ast2700-clk.h>
-> +#include <dt-bindings/reset/aspeed,ast2700-reset.h>
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +#include <dt-bindings/interrupt-controller/aspeed-scu-ic.h>
-> +
-> +/ {
-> +	model = "Aspeed BMC";
+> Signed-off-by: Konrad Dybcio <konradybcio@kernel.org>
+> ---
 
-Model of what? No, drop.
+FWIW:
 
-> +	compatible = "aspeed,ast2700";
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Please run scripts/checkpatch.pl and fix reported warnings. Then please
-run `scripts/checkpatch.pl --strict` and (probably) fix more warnings.
-Some warnings can be ignored, especially from --strict run, but the code
-here looks like it needs a fix. Feel free to get in touch if the warning
-is not clear.
-
-
-> +	#address-cells = <2>;
-> +	#size-cells = <2>;
-> +	interrupt-parent = <&gic>;
-> +
-> +	aliases {
-> +		serial12 = &uart12;
-
-Nope. Such aliases are board specific.
-
-> +	};
-> +
-> +	cpus {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		cpu@0 {
-> +			compatible = "arm,cortex-a35";
-> +			enable-method = "psci";
-> +			device_type = "cpu";
-> +			reg = <0>;
-> +			d-cache-size = <0x8000>;
-> +			d-cache-line-size = <64>;
-> +			d-cache-sets = <128>;
-> +			i-cache-size = <0x8000>;
-> +			i-cache-line-size = <64>;
-> +			i-cache-sets = <256>;
-> +			next-level-cache = <&l2>;
-> +		};
-> +
-> +		cpu@1 {
-> +			compatible = "arm,cortex-a35";
-> +			enable-method = "psci";
-> +			device_type = "cpu";
-> +			reg = <1>;
-> +			d-cache-size = <0x8000>;
-> +			d-cache-line-size = <64>;
-> +			d-cache-sets = <128>;
-> +			i-cache-size = <0x8000>;
-> +			i-cache-line-size = <64>;
-> +			i-cache-sets = <256>;
-> +			next-level-cache = <&l2>;
-> +		};
-> +
-> +		cpu@2 {
-> +			compatible = "arm,cortex-a35";
-> +			enable-method = "psci";
-> +			device_type = "cpu";
-> +			reg = <2>;
-> +			d-cache-size = <0x8000>;
-> +			d-cache-line-size = <64>;
-> +			d-cache-sets = <128>;
-> +			i-cache-size = <0x8000>;
-> +			i-cache-line-size = <64>;
-> +			i-cache-sets = <256>;
-> +			next-level-cache = <&l2>;
-> +		};
-> +
-> +		cpu@3 {
-> +			compatible = "arm,cortex-a35";
-> +			enable-method = "psci";
-> +			device_type = "cpu";
-> +			reg = <3>;
-> +			d-cache-size = <0x8000>;
-> +			d-cache-line-size = <64>;
-> +			d-cache-sets = <128>;
-> +			i-cache-size = <0x8000>;
-> +			i-cache-line-size = <64>;
-> +			i-cache-sets = <256>;
-> +			next-level-cache = <&l2>;
-> +		};
-> +
-> +		l2: l2-cache0 {
-> +			compatible = "cache";
-> +			cache-size = <0x80000>;
-> +			cache-line-size = <64>;
-> +			cache-sets = <1024>;
-> +			cache-level = <2>;
-> +		};
-> +	};
-> +
-> +	pmu {
-> +		compatible = "arm,cortex-a35-pmu";
-> +		interrupt-parent = <&gic>;
-> +		interrupts = <GIC_PPI 7 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
-> +	};
-> +
-> +	psci {
-
-Order the nodes according to DTS coding style.
-
-Fix all your patches:
-1. To pass flawlessly checkpatch (you did not run it)
-2. To pass dt_binding_check and dtbs_check (you did not run these)
-3. To adhere to kernel coding style
-4. To adhere to DTS coding style
-
-> +		compatible = "arm,psci-1.0";
-> +		method = "smc";
-> +	};
-> +
-> +	gic: interrupt-controller@12200000 {
-
-Nope, this cannot be outside of SoC.
-
-> +		compatible = "arm,gic-v3";
-> +		interrupts = <GIC_PPI 9 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_HIGH)>;
-> +		#interrupt-cells = <3>;
-> +		interrupt-controller;
-> +		interrupt-parent = <&gic>;
-> +		#redistributor-regions = <1>;
-> +		reg =	<0 0x12200000 0 0x10000>,		//GICD
-> +			<0 0x12280000 0 0x80000>,		//GICR
-> +			<0 0x40440000 0 0x1000>;		//GICC
-
-Read DTS coding style and order this correctly.
-
-> +	};
-> +
-> +	timer {
-> +		compatible = "arm,armv8-timer";
-> +		interrupt-parent = <&gic>;
-> +		interrupts = <GIC_PPI 13 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-> +				<GIC_PPI 14 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-> +				<GIC_PPI 11 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>,
-> +				<GIC_PPI 10 (GIC_CPU_MASK_SIMPLE(2) | IRQ_TYPE_LEVEL_LOW)>;
-> +		arm,cpu-registers-not-fw-configured;
-> +		always-on;
-> +	};
-> +
-> +	soc0: soc@10000000 {
-> +		compatible = "simple-bus";
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +		ranges;
-> +
-> +		soc0_sram: sram@10000000 {
-> +			compatible = "mmio-sram";
-> +			reg = <0x0 0x10000000 0x0 0x20000>;	/* 128KiB SRAM on soc0 */
-> +			ranges = <0x0 0x0 0x0 0x10000000 0x0 0x20000>;
-> +			#address-cells = <2>;
-> +			#size-cells = <2>;
-> +			no-memory-wc;
-> +
-> +			exported@0 {
-> +				reg = <0 0x0 0 0x20000>;
-> +				export;
-> +			};
-> +		};
-> +
-> +		syscon0: syscon@12c02000 {
-> +			compatible = "aspeed,ast2700-scu0", "syscon", "simple-mfd";
-> +			reg = <0x0 0x12c02000 0x0 0x1000>;
-> +			ranges = <0x0 0x0 0 0x12c02000 0 0x1000>;
-> +			#address-cells = <2>;
-> +			#size-cells = <2>;
-> +			#clock-cells = <1>;
-> +			#reset-cells = <1>;
-> +
-> +			silicon-id@0 {
-> +				compatible = "aspeed,ast2700-silicon-id", "aspeed,silicon-id";
-> +				reg = <0 0x0 0 0x4>;
-> +			};
-> +
-> +			scu_ic0: interrupt-controller@1D0 {
-
-DTS coding style...
-
-> +				#interrupt-cells = <1>;
-> +				compatible = "aspeed,ast2700-scu-ic0";
-> +				reg = <0 0x1d0 0 0xc>;
-> +				interrupts = <GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>;
-> +				interrupt-controller;
-> +			};
-> +
-> +			scu_ic1: interrupt-controller@1E0 {
-> +				#interrupt-cells = <1>;
-> +				compatible = "aspeed,ast2700-scu-ic1";
-> +				reg = <0 0x1e0 0 0xc>;
-> +				interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
-> +				interrupt-controller;
-> +			};
-> +
-> +			soc0_rst: reset-controller@200 {
-> +				reg = <0 0x200 0 0x40>;
-> +			};
-> +
-> +			soc0_clk: clock-controller@240 {
-> +				reg = <0 0x240 0 0x1c0>;
-> +			};
-> +		};
-> +
-> +	};
-> +
-> +	soc1: soc@14000000 {
-
-Wait, what, to socs?
-
-> +		compatible = "simple-bus";
-> +		#address-cells = <2>;
-> +		#size-cells = <2>;
-> +		ranges;
-> +
-> +		syscon1: syscon@14c02000 {
-> +			compatible = "aspeed,ast2700-scu1", "syscon", "simple-mfd";
-> +			reg = <0x0 0x14c02000 0x0 0x1000>;
-> +			ranges = <0x0 0x0 0x0 0x14c02000 0x0 0x1000>;
-> +			#address-cells = <2>;
-> +			#size-cells = <2>;
-> +			#clock-cells = <1>;
-> +			#reset-cells = <1>;
-> +
-> +			soc1_rst: reset-controller@200 {
-> +				#reset-cells = <1>;
-> +			};
-> +
-> +			soc1_clk: clock-controller@240 {
-> +				reg = <0 0x240 0 0x1c0>;
-> +			};
-> +		};
-> +
-> +		uart12: serial@14c33b00 {
-> +			compatible = "ns16550a";
-> +			reg = <0x0 0x14c33b00 0x0 0x100>;
-> +			reg-shift = <2>;
-> +			reg-io-width = <4>;
-> +			clocks = <&syscon1 SCU1_CLK_GATE_UART12CLK>;
-> +			no-loopback-test;
-> +			pinctrl-names = "default";
-
-What is this?
-
-> +		};
-> +	};
-> +};
-> +
+Rob, will you take it directly?
 
 Best regards,
 Krzysztof
