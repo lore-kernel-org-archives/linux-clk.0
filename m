@@ -1,112 +1,88 @@
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CAFA748A
-	for <linux-clk@vger.kernel.org>; Fri, 26 Jul 2024 20:50:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51895149DEF;
+	Fri, 26 Jul 2024 22:21:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722027033; cv=none; b=rxKX1T56GE8ZTmEPIarW1xm0FcwJ8v3pfA/2g+NRfzD8FQd0BzR8NBpijCKA9oV+inWJdzo6VXZvm7GA8W2QBjpM3buepVHdVetoIPEAlfHDRyfmMHz1zsNCSmDF8qZLjhA9du+50pQ5WhkFld5xcxBmSMSc1JNtQ2/QjxB3naM=
+	t=1722032507; cv=none; b=W16yIDfPrD4kdUpjCA3mrQoOeXTC5Jr6rj0fnPGxgAWpu55oNQ4E1RyswEg+1M4AyVAUoKONx7dCX/ybQW+hbX5EMbuH5eFINSqKxc/7EdCh1GWtpslBqzeOCaHuQIAapczmiaTrk+XiM9n0JYYFtYtu7myU4G5bneCzgAKRGTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722027033; c=relaxed/simple;
-	bh=KogmYRFSz2W2+mhD6V6jG3/dYCuZTqrU9wdwTpVNdWI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ee2aXTzn2IX6zKTPzJ9sHXrA18VoHgG8bytliJobv+X16xeAF2kFTeRBA+je0VUgw/rgTpbYn2008y6V4H76jFMpVnXpC/pvjGoRmz3kcutVn6XPYKrtx7WR7AXdqSWD8QAz5WbkgS26nagfZOQ+rA3hEAL5U1kaI40XHvrj+0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Od3TB5DT; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1722032507; c=relaxed/simple;
+	bh=sdQCLSxH2SZWba0zwiskrjW/AKOsVQ4oOsTR42AxIpA=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=u9tVFDqrBqKaTY+JoJ7lfPGRAKDwkNXgDWkC8TnTliDRE0Fo+k/7Ji8m3gLtAzwS9DQ+lc4mYBS8NFpPO6L6mo83mqhqqHQUE1rXryg08kotW1kafRt13+StZeEB8n5d3AdUbSEh7Qqbwd/H7XVAOlpJD5WxISGll6MMP+g30TE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qYcPziJA; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Od3TB5DT"
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52f01993090so2493067e87.2
-        for <linux-clk@vger.kernel.org>; Fri, 26 Jul 2024 13:50:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722027030; x=1722631830; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sW23BR/or2MMuYF31lJOR7RMa4C6ZEhZGo6Oj9/Pb3Q=;
-        b=Od3TB5DT1KbNLDO4XyQzumnKCWM80b/szVLnruv8B/gqtD8Kza5DQe3OA2yHGHRzm4
-         nfKK0heMXTSckqurOqxkGxISsPtmPKZp7XkQjnYxURKXcmEGvOQOuG94cfAiMN8xhiLP
-         zqgCUN9+9wO8Zw279XHYJECa6ej/0MtWniQ2XbQp9utEPKdl8DsnPVX4b0h75VntJxst
-         LbwzhIMJmE0h8TP/bD4Ag8CfmPEWSWX7dhBi446lp2P/FaBd2aY7meHIZ5xNzNWnh+Bx
-         n4GRIXwreAWUrajAkE2DUQ1IAkAPtr/hZ9rVmN2qPy1xxrw7tAO2W7TeUDwnH+9irlEY
-         opKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722027030; x=1722631830;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sW23BR/or2MMuYF31lJOR7RMa4C6ZEhZGo6Oj9/Pb3Q=;
-        b=YWrrQB0N+D/AbGEYCTEXSWYzBdGh/ho++VChN1bZkSjJbz4NMj7dAkEjZqkdvBWoH1
-         ZvtfBbchA4j4Lsj3ovAQLjfhkf+EMwTq6o5XtZaINj0RJZO658Q1Fr4L4Di+OEzfmrkK
-         WiXTXNQBt4w7yl9H3wJawGKdiLW+Ht6JfiKqsjKFHm6teouRyoFVo1SDZHyBkaUzxdQS
-         SmmFBM52Bw0M0xFcZK9j/l16x8WmauCpZuVNUrcMXu36nD3sMRCpFgtQMIaac6pA2rF0
-         YpbN3PSJgyUbvbYLZDjeldCEyaGgiJsQds5XUDDGSana/5psOFzbgFvFdKSCQmPy4QCd
-         Bu1A==
-X-Forwarded-Encrypted: i=1; AJvYcCWCtkxhFhb8B2u2QEBLVXGhhpaZ0mRUNBQwciDdgj62n+oW/8eBYjuSEUtg6ZnZabXsPB1cKtvirWd5dUmD/vtmj2sLCI+47QI6
-X-Gm-Message-State: AOJu0YxT39UJB9deAeG6sSCmSGn/Z9mx849n9vYU9jFhaFNjA9Q774lz
-	I5XFGJ0oVfmYWnDI+8zTcbIJ3vpJBe/yWW1dtiRDvuNwE7esSZIJc4twyceAfOYl8PwKY+6vzJe
-	ZQXB+lN1TddAQDTPnEbCtXbKngF92fyL4d5K3UQ==
-X-Google-Smtp-Source: AGHT+IFX49EtxpZmo3lCBvR7LAjeTkZmE2Z3kScGsck8eI7LPC1PBQoOA3czp83TviYDk42LHWvS4Ey6OgvmOSAZBX8=
-X-Received: by 2002:a05:6512:32b6:b0:52e:9762:2ba4 with SMTP id
- 2adb3069b0e04-5309b274931mr464874e87.25.1722027030326; Fri, 26 Jul 2024
- 13:50:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qYcPziJA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C092FC32782;
+	Fri, 26 Jul 2024 22:21:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722032506;
+	bh=sdQCLSxH2SZWba0zwiskrjW/AKOsVQ4oOsTR42AxIpA=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=qYcPziJAIqn+i+6SiIwlNUSR6tpl2/6m9Czqsk9Rx592FeNev+M3hE87g2zPYasJg
+	 6KYrXi+ou6/IZ74k+yKDX45CZjIehQnBZZ6L1ZuPUdMZxEqOHEuzmowFR3ugIXmrIm
+	 +q+DuQESSSgjAnEpnGwArxI4pKLOaEq7i/GIbzUm/d1WgZFBIF8C0roOt6pb3JO/CT
+	 T+d6IFfTuPubF1yR/MuRZzwh2Z3HQ8IJeK1rUBRHcPZm1vaQvW+v3RKHxsUc9EhOg2
+	 sA/lnGkZI2q2XDpbcZfEYJx82CFa6cyttI/Jhv9Pz7VihrWyhC1Sv3wgyzBFWt1p8F
+	 8Btv1HeQQGnog==
+Message-ID: <00f9f4b8722d97b1c6fcec27d53bc06d.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240722160022.454226-1-valentin.caron@foss.st.com> <20240722160022.454226-4-valentin.caron@foss.st.com>
-In-Reply-To: <20240722160022.454226-4-valentin.caron@foss.st.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 26 Jul 2024 22:50:19 +0200
-Message-ID: <CACRpkdZTntS7K4aLqoXKbfdO2xumx9nLnA7CXysuYML=ptTCzQ@mail.gmail.com>
-Subject: Re: [PATCH v3 3/4] rtc: stm32: add Low Speed Clock Output (LSCO) support
-To: Valentin Caron <valentin.caron@foss.st.com>
-Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, linux-rtc@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	Amelie Delaunay <amelie.delaunay@foss.st.com>, linux-clk <linux-clk@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240718-prozac-specks-6b5fd8b83e3e@spud>
+References: <20240715110251.261844-1-heiko@sntech.de> <20240715110251.261844-2-heiko@sntech.de> <20240716-deceiving-saucy-851fb2303c1f@spud> <3178118.zE8UqtGg2D@diego> <20240718-prozac-specks-6b5fd8b83e3e@spud>
+Subject: Re: [PATCH v2 1/3] dt-bindings: clocks: add binding for voltage-controlled-oscillators
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: mturquette@baylibre.com, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
+To: Conor Dooley <conor@kernel.org>, Heiko =?utf-8?q?St=C3=BCbner?= <heiko@sntech.de>
+Date: Fri, 26 Jul 2024 15:21:44 -0700
+User-Agent: alot/0.10
 
-Hi Valentin,
+Quoting Conor Dooley (2024-07-18 08:59:50)
+>=20
+> FWIW, I wouldn't classify this as device-specific. "enable-gpios" and
+> "vdd-supply" are pretty generic and I think the latter is missing from
+> the vast majority of real* "fixed-clocks". I would expect that devices
+> where the datasheet would call
+>=20
+> * Real because there's plenty of "fixed-clocks" (both in and out of tree)
+> that are used to work around the lack of a clock-controller driver for an
+> SoC.
 
-On Mon, Jul 22, 2024 at 6:02=E2=80=AFPM Valentin Caron
-<valentin.caron@foss.st.com> wrote:
+I agree!
 
-> RTC is able to output on a pin the "LSE" internal clock.
->
-> STM32 RTC is now registered as a clock provider.
-> It provides rtc_lsco clock, that means RTC_LSCO is output on either
-> RTC_OUT1 or RTC_OUT2_RMP, depending on pinmux DT property.
-> The clock is marked as CLK_IGNORE_UNUSED and CLK_IS_CRITICAL because
-> RTC_LSCO can be early required by devices needed it to init.
->
-> Add LSCO in pinmux functions.
->
-> Add "stm32_rtc_clean_outs" to disable LSCO. As RTC is part of "backup"
-> power domain, it is not reset during shutdown or reboot. So force LSCO
-> disable at probe.
->
-> Co-developed-by: Amelie Delaunay <amelie.delaunay@foss.st.com>
-> Signed-off-by: Amelie Delaunay <amelie.delaunay@foss.st.com>
-> Signed-off-by: Valentin Caron <valentin.caron@foss.st.com>
-(...)
+>=20
+> > I think generic power-sequences
+> >   were the topic back then, though that might have changed over time?
+> > - There are places that describe "fixed-clock" as
+> >   "basic fixed-rate clock that cannot gate" [1]
+>=20
+> I think that that is something that could be changed, it's "just" a
+> comment in some code! Sounds like Stephen disagrees though :)
 
-> @@ -1928,6 +1928,7 @@ config RTC_DRV_STM32
->         select PINMUX
->         select PINCONF
->         select GENERIC_PINCONF
-> +       depends on COMMON_CLK
+It's more about making a clear break from the fixed-clock binding so
+that the extra properties are required.
 
-Just
-select COMMON_CLK
+>=20
+> > - Stephen also suggested a separate binding [2]
+>=20
+> I liked your "gated-oscillator" suggestion in another reply, but
+> "gated-fixed-clock" might be a better "thematic" fit since this is a
+> special case of fixed-clocks?
+>=20
 
-Why not, it will with 100% certainty be needed anyway by the system
-clock controller.
-
-Yours,
-Linus Walleij
+It looks to me like we've arrived at the hardest problem in computer
+science, i.e. naming. Any of these names is fine. I'd look to see what
+those parts on mouser are called and use that to drive the compatible
+name decision if you can't decide. The description section in the
+binding could be verbose and link to some parts/pdfs if that helps too.
+In the past I've seen EEs call these things clock buffers. I'm not a
+classically trained EE myself but it usually helps to use similar names
+from the schematic in DT because DT authors are sorta translating
+schematics to DT.
