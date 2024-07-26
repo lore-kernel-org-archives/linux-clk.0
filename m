@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 433A71EF01;
-	Fri, 26 Jul 2024 11:11:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A0241EF01;
+	Fri, 26 Jul 2024 11:13:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1721992298; cv=none; b=qUXJCdBTPB7ccMBLMrYhEteWNS9kcjL69Ph7Uqboa2w4ebSJq5ip9/ZemAxytm+XMxbmiIBH9Waj2xFzhc87Z/k+1ZU9VTcioLUceLqw6OLOTnz1A73RXGJ2QzwOk3o4IWeVsltinRkgbmyjGdyV+SfbW0aNj3Y7bOAWHbz2ouo=
+	t=1721992411; cv=none; b=VMkyrtlhhHjv3i6Al9jQhfDKAZE2jbnzCvZquoipCg4u3emSMDqAjzmYzDers3EfF7wBfjqtaiRf/Xi1oHm5l6CQcN/Pzxxv2wGH4SkjNuJnYOH0R/C7ojGDhXddU2wQa+noyHbA4SkQwVQf1drii+2uCR1Rq44CWhpNkEjpmOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1721992298; c=relaxed/simple;
-	bh=Sh7X1lINTazHWZKt0CMgzCpSwuDELIvWLdHJIjtQG3o=;
+	s=arc-20240116; t=1721992411; c=relaxed/simple;
+	bh=GNp9b/IbFjkf96tOw/CL5ZPG53qyTDcT5rRgtMXQgqE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=YKKvrFVEOqH0Kn3XrCGuMmec73bdORw3sgCQxESZWcENqty4caQt9x03LT6cz674QA09GQmyxr2tPS8bYujlBS25gWq5m7F4P+5L8E+zM8wnzxvvd5S2XUQqr4cfPWzNWubNhLQvFkfHLhBBTYkv9IOVDN9XEHXrP6wCiszQr9A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a8qVUKL2; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=aMgJ+2nIuRZeB1f770Tj279yYbYaBzZC3IRtdjE+wKI/DYW3GZpcWMkdpi3xVMLMyjKdQQvEkG2iQoJeqJYeYNZ2Mj/7/rVdARH2cbwC+KvD0hvoQAT8nBNVanpq9LwZ2jlILSKO05uKHzCY8YW2KZXzUTluPste/KU64kWw/F4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NXa26red; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a8qVUKL2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE5B5C32782;
-	Fri, 26 Jul 2024 11:11:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NXa26red"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C4C4C32782;
+	Fri, 26 Jul 2024 11:13:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1721992297;
-	bh=Sh7X1lINTazHWZKt0CMgzCpSwuDELIvWLdHJIjtQG3o=;
+	s=k20201202; t=1721992411;
+	bh=GNp9b/IbFjkf96tOw/CL5ZPG53qyTDcT5rRgtMXQgqE=;
 	h=Date:Subject:List-Id:To:References:From:In-Reply-To:From;
-	b=a8qVUKL2owWxSsrF+zPXD2OZdzXnehFR9grXYTgNVz6+AJ2ZdfqQN00rw7mfcE90L
-	 yx1HjKed4Tg3s5WomY10M45HcnwLDcpPGnrSZ18EL2CPgNGfRPWVk3lQzTnCtbla4X
-	 0kOp46mfasAdAHWomy+SBBbjyPOTyIq6J7u+F0tStXGQzZNhJ4oH3qykLxsmSFT6AT
-	 xFNbW8KOYkf5G+AcGNlnASLDbvow7dKHGy6DIEtkoP85OXC30fCG5d+gJm94t2PHUu
-	 2rZagHxRR9fAW/VEY1vzUoSi3ASP/vPqhvVIspJb6wymOYC3xzMnKCV9VFMcau8leD
-	 L0V4cyOMsGqcg==
-Message-ID: <e13c16db-e1a7-4ee0-867b-b184d421de7f@kernel.org>
-Date: Fri, 26 Jul 2024 13:11:28 +0200
+	b=NXa26redIdNrVjfG0/5i/+L+ZCff5HQ3EHvHaCB5Z3S6jtCyz3hMaSSohlnBqqvgi
+	 K9oviVnCRvWnsEZsYdsOAeWAf5/9DEC4y2hsl2PMvVHzX0tPhixxH7cR7a5J9PAsXj
+	 q7N8yMOaa5gD7NROpBjmBsJsjVLciRqQjZTfCPGaAs7EkK31lHZDLY2M3qeQYST3Ee
+	 Agmu0i+OQJcmejsZLGx1GjbZ3ROPwrsSYmpcJanWwgxy3yx5ZT6sycJN2gJmQg1d5C
+	 0Yci5i6M/s7QpLrd1gXollKKZK+ZosJGvMv5Rmb8ugscTGQKTsd47/P7NCqOgjDrlN
+	 cmEgIEt9mKWIg==
+Message-ID: <fb3489cf-b288-426e-ace0-abf1d6b0fe0c@kernel.org>
+Date: Fri, 26 Jul 2024 13:13:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,8 +35,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 02/10] dt-binding: clk: ast2700: Add binding for Aspeed
- AST27xx Clock
+Subject: Re: [PATCH v1 03/10] clk: ast2700: add clock controller
 To: Kevin Chen <kevin_chen@aspeedtech.com>, robh@kernel.org,
  krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
  andrew@codeconstruct.com.au, lee@kernel.org, catalin.marinas@arm.com,
@@ -49,7 +48,7 @@ To: Kevin Chen <kevin_chen@aspeedtech.com>, robh@kernel.org,
  linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
  linux-clk@vger.kernel.org
 References: <20240726110355.2181563-1-kevin_chen@aspeedtech.com>
- <20240726110355.2181563-3-kevin_chen@aspeedtech.com>
+ <20240726110355.2181563-4-kevin_chen@aspeedtech.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -95,92 +94,131 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240726110355.2181563-3-kevin_chen@aspeedtech.com>
+In-Reply-To: <20240726110355.2181563-4-kevin_chen@aspeedtech.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 26/07/2024 13:03, Kevin Chen wrote:
 > Signed-off-by: Kevin Chen <kevin_chen@aspeedtech.com>
 
-Missing commit msg.
-
-A nit, subject: drop second/last, redundant "bindings". The
-"dt-bindings" prefix is already stating that these are bindings.
-See also:
-https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
-
-Please use subject prefixes matching the subsystem. You can get them for
-example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
-your patch is touching. For bindings, the preferred subjects are
-explained here:
-https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
-
-
+So you did not write commit msgs to none of the commits?
 
 > ---
->  .../dt-bindings/clock/aspeed,ast2700-clk.h    | 180 ++++++++++++++++++
-
-This is supposed to be part of bindings adding the clock controller.
-
->  1 file changed, 180 insertions(+)
->  create mode 100644 include/dt-bindings/clock/aspeed,ast2700-clk.h
+>  drivers/clk/Makefile      |    1 +
+>  drivers/clk/clk-ast2700.c | 1166 +++++++++++++++++++++++++++++++++++++
+>  2 files changed, 1167 insertions(+)
+>  create mode 100644 drivers/clk/clk-ast2700.c
 > 
-> diff --git a/include/dt-bindings/clock/aspeed,ast2700-clk.h b/include/dt-bindings/clock/aspeed,ast2700-clk.h
-> new file mode 100644
-> index 000000000000..5ca85503736d
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/aspeed,ast2700-clk.h
-> @@ -0,0 +1,180 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
-> +/*
-> + * Device Tree binding constants for AST2700 clock controller.
-> + *
-> + * Copyright (c) 2023 Aspeed Technology Inc.
-> + */
+> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
+> index f793a16cad40..0d5992ea0fa4 100644
+> --- a/drivers/clk/Makefile
+> +++ b/drivers/clk/Makefile
+> @@ -38,6 +38,7 @@ obj-$(CONFIG_COMMON_CLK_FSL_SAI)	+= clk-fsl-sai.o
+>  obj-$(CONFIG_COMMON_CLK_GEMINI)		+= clk-gemini.o
+>  obj-$(CONFIG_COMMON_CLK_ASPEED)		+= clk-aspeed.o
+>  obj-$(CONFIG_MACH_ASPEED_G6)		+= clk-ast2600.o
+> +obj-$(CONFIG_MACH_ASPEED_G7)		+= clk-ast2700.o
+
+...
+
 > +
-> +#ifndef __DT_BINDINGS_CLOCK_AST2700_H
-> +#define __DT_BINDINGS_CLOCK_AST2700_H
+> +static const char *const pspclk_sel[] = {
+> +	"soc0-mpll",
+> +	"soc0-hpll",
+> +};
 > +
-> +/* SOC0 clk-gate */
-> +#define SCU0_CLK_GATE_MCLK	(0)
-> +#define SCU0_CLK_GATE_ECLK	(1)
+> +static const char *const soc0_uartclk_sel[] = {
+> +	"soc0-clk24Mhz",
+> +	"soc0-clk192Mhz",
+> +};
+> +
+> +static const char *const emmcclk_sel[] = {
+> +	"soc0-mpll_div4",
+> +	"soc0-hpll_div4",
+> +};
+> +
+> +static int ast2700_soc0_clk_init(struct device_node *soc0_node)
+> +{
+> +	struct clk_hw_onecell_data *clk_data;
+> +	void __iomem *clk_base;
+> +	struct ast2700_reset *reset;
+> +	struct clk_hw **clks;
+> +	int div;
+> +	u32 val;
+> +	int ret;
+> +
+> +	clk_data = kzalloc(struct_size(clk_data, hws, SOC0_NUM_CLKS), GFP_KERNEL);
+> +	if (!clk_data)
+> +		return -ENOMEM;
+> +
+> +	clk_data->num = SOC0_NUM_CLKS;
+> +	clks = clk_data->hws;
+> +
+> +	clk_base = of_iomap(soc0_node, 0);
+> +	if (WARN_ON(IS_ERR(clk_base)))
 
-Drop all (). Not needed, not useful.
+Drop WARN_ON
 
-> +#define SCU0_CLK_GATE_GCLK	(2)
-> +#define SCU0_CLK_GATE_VCLK	(3)
-> +#define SCU0_CLK_GATE_BCLK	(4)
-> +#define SCU0_CLK_GATE_D1CLK	(5)
-> +#define SCU0_CLK_GATE_REFCLK	(6)
-> +#define SCU0_CLK_GATE_USB0CLK	(7)
-> +#define SCU0_CLK_GATE_RSV8	(8)
-> +#define SCU0_CLK_GATE_USB1CLK	(9)
-> +#define SCU0_CLK_GATE_D2CLK	(10)
-> +#define SCU0_CLK_GATE_RSV11	(11)
-> +#define SCU0_CLK_GATE_RSV12	(12)
-> +#define SCU0_CLK_GATE_YCLK	(13)
-> +#define SCU0_CLK_GATE_USB2CLK	(14)
-> +#define SCU0_CLK_GATE_UART4CLK	(15)
-> +#define SCU0_CLK_GATE_SLICLK	(16)
-> +#define SCU0_CLK_GATE_DACCLK	(17)
-> +#define SCU0_CLK_GATE_DP	(18)
-> +#define SCU0_CLK_GATE_RSV19	(19)
-> +#define SCU0_CLK_GATE_CRT1CLK	(20)
-> +#define SCU0_CLK_GATE_CRT2CLK	(21)
-> +#define SCU0_CLK_GATE_VLCLK	(22)
-> +#define SCU0_CLK_GATE_ECCCLK	(23)
-> +#define SCU0_CLK_GATE_RSACLK	(24)
-> +#define SCU0_CLK_GATE_RVAS0CLK	(25)
-> +#define SCU0_CLK_GATE_UFSCLK	(26)
-> +#define SCU0_CLK_GATE_EMMCCLK	(27)
-> +#define SCU0_CLK_GATE_RVAS1CLK	(28)
-> +/* reserved 29 ~ 31*/
+> +		return PTR_ERR(clk_base);
+> +
+> +	reset = kzalloc(sizeof(*reset), GFP_KERNEL);
+> +	if (!reset)
+> +		return -ENOMEM;
+> +
+> +	reset->base = clk_base;
+> +
+> +	reset->rcdev.owner = THIS_MODULE;
+> +	reset->rcdev.nr_resets = SOC0_RESET_NUMS;
+> +	reset->rcdev.ops = &ast2700_reset_ops;
+> +	reset->rcdev.of_node = soc0_node;
+> +
+> +	ret = reset_controller_register(&reset->rcdev);
+> +	if (ret) {
+> +		pr_err("soc0 failed to register reset controller\n");
+> +		return ret;
+> +	}
+> +
+> +	//refclk
 
-IDs cannot be reserved. It is a binding, not a hardware number.
+Weird comment. Please read Coding Style.
 
-> +#define SOC0_CLK_GATE_NUM	(SCU0_CLK_GATE_RVAS1CLK + 1)
 
-No drop. Others as well.
+> +	clks[SCU0_CLKIN] =
+> +		clk_hw_register_fixed_rate(NULL, "soc0-clkin", NULL, 0, SCU_CLK_25MHZ);
+> +
+> +	clks[SCU0_CLK_24M] =
+> +		clk_hw_register_fixed_rate(NULL, "soc0-clk24Mhz", NULL, 0, SCU_CLK_24MHZ);
+> +
+> +	clks[SCU0_CLK_192M] =
+> +		clk_hw_register_fixed_rate(NULL, "soc0-clk192Mhz", NULL, 0, SCU_CLK_192MHZ);
+> +
+> +	//hpll
+> +	val = readl(clk_base + SCU0_HWSTRAP1);
+> +	if ((val & GENMASK(3, 2)) != 0) {
+> +		switch ((val & GENMASK(3, 2)) >> 2) {
+> +		case 1:
+> +			clks[SCU0_CLK_HPLL] =
+> +				clk_hw_register_fixed_rate(NULL, "soc0-hpll", NULL, 0, 1900000000);
+> +			break;
+> +		case 2:
+> +			clks[SCU0_CLK_HPLL] =
+> +				clk_hw_register_fixed_rate(NULL, "soc0-hpll", NULL, 0, 1800000000);
+> +			break;
+> +		case 3:
+> +			clks[SCU0_CLK_HPLL] =
+> +				clk_hw_register_fixed_rate(NULL, "soc0-hpll", NULL, 0, 1700000000);
+> +			break;
+> +		}
+> +	} else {
+> +		val = readl(clk_base + SCU0_HPLL_PARAM);
+> +		clks[SCU0_CLK_HPLL] = ast2700_soc0_hw_pll("soc0-hpll", "soc0-clkin", val);
+> +	}
+> +	clks[SCU0_CLK_HPLL_DIV2] = clk_hw_register_fixed_factor(NULL, "soc0-hpll_div2", "soc0-hpll", 0, 1, 2);
+> +	clks[SCU0_CLK_HPLL_DIV4] = clk_hw_register_fixed_factor(NULL, "soc0-hpll_div4", "soc0-hpll", 0, 1, 4);
+> +
+> +	//dpll
+
+
 
 Best regards,
 Krzysztof
