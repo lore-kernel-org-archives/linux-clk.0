@@ -1,125 +1,123 @@
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65D9E4A05
-	for <linux-clk@vger.kernel.org>; Sat, 27 Jul 2024 10:52:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72B4E4A05;
+	Sat, 27 Jul 2024 10:53:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722077549; cv=none; b=Q0zga62Iev8Cc32NMwiXRO229lOrGKdaiGlC28e6RTPVLMipHOAVg1/X4H0KzLECmLIGrLgi/20nr9U0qpvohvwDSIKxRxl/clijHWV6BAb4Sxh4e9mUKYKcIO9nvD6j8hP1eu1Mw0IhAMUBSliCgkXjIQL9DIvEONKLMLj8H7g=
+	t=1722077595; cv=none; b=gXcL4bD/xemuJ6/QwlfOo1VKHuNSaOz/pG9uVmNeT/L/F/wD43oJ0nKZg/5T/orFXkwLcBkd7EmHgb7qRKPajyxaN3Aa0jPTxK8/3e+YjkCwP0WEtALvnwKSIn5nzzt8P+Zq4gWY3KYChbgD1xtOISAGVl5mXlDWW71wFJ9xtKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722077549; c=relaxed/simple;
-	bh=Dq/S3mGmdRihp+JQyrTu5C6qBncgApK9D6D/aPhzwkM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LkTl6npP8DyMWeELqLQDjHlkX7x/S/7fKP+oY/7msDh4ErBJVqq7DFGipZcaaDSCc+JQj4DbIxPuoDbe5D8ePn8u1VpNO4RIWz9YivH3wg5RQIdCztgQjU1wavCrbFNVQk07eh7Mo5XGmpI89qV4C6cH3DbsnpBi3HbaFy2S/LQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=khJd4ew+; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1722077595; c=relaxed/simple;
+	bh=mt9teUkSSadCUW95ZR3FdzgKORi5H9YAVkcz1CbjRYs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CvqUYe2zO0pxQg8un8abBf04EvxkVgupLFXwDfJnLgCth0Tn8KRlXkLo0PCMcu210fosGAcHW8n0wJsnagjSwVUbcr6Oj+M0mXzx8OtrngPrf2Byigoy3vUhReASZhU+WyOpTMTz1qP4VYmhfcQKF+6iB/ocJe5NcDtip5s7vQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=blrabuzL; arc=none smtp.client-ip=209.85.221.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="khJd4ew+"
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-52ed741fe46so2202589e87.0
-        for <linux-clk@vger.kernel.org>; Sat, 27 Jul 2024 03:52:28 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="blrabuzL"
+Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-4f6bc491759so587341e0c.0;
+        Sat, 27 Jul 2024 03:53:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722077546; x=1722682346; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=M39AnRc/yLkaurruReHwFcUb7PkkGNUB51pOqOiOq28=;
-        b=khJd4ew+Ba8EP6Qj69oPFBo3aWzx/NDEtIu8ZtjExdmwgv+LkbQaBsXo6S/1jD6F5I
-         Absy27nB3L+VRLrCkOVPm7jn3x0veN/0f/fOM4YAhJkmd1saqotFk6L8mkS+1ND5QA7I
-         RBVv96Th0fnI9VLyWc2cccRx5DdrhJhza8s9vWH7/AqZKkTtYh07IPqN1n3dx1aht+8k
-         8X4qAalMadQrBNiwqBZm1BrLlzraN+y+94yoiPZuDITresXTouwhcEt+rPMvCWedF9/q
-         WJBqkPIvHg2+eRzT9GBswUIcNsMaoXZ5vLhsur6jbod8PgRCuowRRRqa5Ewozc7zcjf/
-         vJOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722077546; x=1722682346;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1722077593; x=1722682393; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=M39AnRc/yLkaurruReHwFcUb7PkkGNUB51pOqOiOq28=;
-        b=DPXmKoQ2YMpS6ZQP8RdB0mrpFBemHiBMSFKE3B1Sl6BeAA59Hc1u/UEd3oSyBXcKuE
-         pMk2pk3bACPh7oBTR3SpVeWmmMrzsj0wgW1pOoLodGLLRI9svw6m4pgCZSls7YN6wfe2
-         Iuh1EY2ejjvRrIuawwwo9FP08U1i5MMsoAr/lySW76c+ZwA86AxcSLvV/apLcOC01CmZ
-         4wB1AlIJDYQrKzmlQZYRdGbKOggzJmfo46yZlbcN4algOestEdXn2WV4URAtjsnzEpli
-         puWpcl4Th/FUW8GwfNcxvdawSPks/b+Z68PwQYdf1qjIT6wjAzzEaPJlYBMDBUFxs+Z5
-         cykw==
-X-Forwarded-Encrypted: i=1; AJvYcCWeztVRfE4/jvADVbyKW6TS+ZxZMpA1fTPLfQxvBjgkMtIEwABGp4JO63aQUpnm7FDdbXwF4RwfAD+wFbSlBVMkQSkN+2Oy4xbU
-X-Gm-Message-State: AOJu0YxksNr0WWRNxHJmtppSyMeJAG1z3Wj4HGIApCIumFw2V5zih0QV
-	A1FRQRspW98h2PJYwz4XJT6Pl6lWgQ9CA83ZT8yzWuxijNj9UH45jQMJHbLNOKk=
-X-Google-Smtp-Source: AGHT+IHEK+Ar+39CmHBEjPmZWaPhpcW/F/KwytZDZLq5IAKrn/S9+eIP36e2PYbbl90Ui4zs/Oh4GQ==
-X-Received: by 2002:ac2:4c87:0:b0:52f:cea6:69db with SMTP id 2adb3069b0e04-5309b2ce8d1mr1305559e87.51.1722077546351;
-        Sat, 27 Jul 2024 03:52:26 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52fd5bcfec0sm733378e87.64.2024.07.27.03.52.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 27 Jul 2024 03:52:25 -0700 (PDT)
-Date: Sat, 27 Jul 2024 13:52:24 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Ajit Pandey <quic_ajipan@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, 
-	Taniya Das <quic_tdas@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 4/4] clk: qcom: gcc-sc8180x: Fix the sdcc2 and sdcc4
- clocks freq table
-Message-ID: <ezpxuw2eduh6i4lum2mb2627l7beoi6k4bchngustt6pyhuzmh@hpzfw3jiulud>
-References: <20240725-gcc-sc8180x-fixes-v1-0-576a55fe4780@quicinc.com>
- <20240725-gcc-sc8180x-fixes-v1-4-576a55fe4780@quicinc.com>
+        bh=a8SGxKnwYxSq0GTxPBtTdMk5xYXpNjKezkYGzXPmgmY=;
+        b=blrabuzLTnQ4w9HMqf8617c4k4RP0wk82H62NUEaH/toaQkUCSvfsFFxlKevuHpqa4
+         hfNXTTVHlMBLrsbXCcG0ELgQVdkNknkKTPUbNZUIzvDUbow/NeyCesV1DJz2FICN5URV
+         ia9q1oo5bIW8PivTAovrjdDbvuR2SVn6G+NDL5TVrX6v8Lgf/nfZDU8uJsyO6QacOGGT
+         EBQ7JkiQ94cDEy/wNipxGm0He4q9HMTJ5yCnLTCblKl92KHhdmxwI8rNOdBG2LE19HqH
+         YCwvjuW06AXSoMHJRSmnzwz046NIwLqmsUmP51Db7QnaTHxJQZrhNCoKE1cgnbw+f7Xt
+         aBig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722077593; x=1722682393;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=a8SGxKnwYxSq0GTxPBtTdMk5xYXpNjKezkYGzXPmgmY=;
+        b=hHZvohWQd+MgNF8FS3/POswoKrc4rnUcz0Cb9pSaXYu9pdHH5JChqxsoIjh9zV5BKg
+         RWnqE/Rfvc0fsjRNkW8iFs+Dt1PiGtwi7/5NZuqLqkyChaNogFse8GiZo/dZq9Vxdk1E
+         CnZW2UCwO+mjFz4+P3QMe0cOjHCbXGtNx4iufiCfGKOtky9phg+fPzl1mNBnb6FGlgKR
+         F9CfAM5OrN7X8E0L07ZSi+3Nc1mrHbl1hY8cpnI50swPjxsw7+Tf8k1RWq8BilVAaneu
+         5ew6o/IV6IXZMaVKVVwD/8+FICZdjKs1RHUeBKnYVe0djBcv/NefkKTGi5Q0vG7RelKS
+         a19Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX30Czf0nmQl66HwWiH7x2SfCTXaVgNAJbLyvSMe2vtQ3S9s036H9xhSLPENYXAJ5PBfOdjix3GJgZgeRMczL3I4NIUaNyTrdolrjMSe+2+eZqAMxOsCSd7sP4cIsBFBUcbETBDiJL8DJxDX+a3QTGB57WTr8aj1KRf5KK42nInaqg8qR5Du+1u5Lo=
+X-Gm-Message-State: AOJu0YzJZlrd7Vl6rSToFAM9TtFbQNICz4bPinDtq/HZRsEhBjR45diW
+	tVlTc7VuOUeK23uyVIUhBFfdG41u81/6MumxqYsbDTdJd10sOtUEEdYjM6aHupAZIV/QZWtjp5m
+	Og27n89dtx0F202neGr6vY/NlteH3iEpT
+X-Google-Smtp-Source: AGHT+IErhDC4BKijKK96ddadHllvLGFsWKkj71jtWDSYNqFPoYl0y27F2ygW06ecDoILmX/nuTMLG3XXaM5P2zz5QlU=
+X-Received: by 2002:a05:6122:4693:b0:4f5:2276:1366 with SMTP id
+ 71dfb90a1353d-4f6e68b1738mr1495431e0c.3.1722077593228; Sat, 27 Jul 2024
+ 03:53:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240725-gcc-sc8180x-fixes-v1-4-576a55fe4780@quicinc.com>
+References: <20240715103555.507767-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20240715103555.507767-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdV+pk5RgLZV5BdjJ2TR0GkjTni2-ZcL1zA0yrJv3-vtYQ@mail.gmail.com>
+In-Reply-To: <CAMuHMdV+pk5RgLZV5BdjJ2TR0GkjTni2-ZcL1zA0yrJv3-vtYQ@mail.gmail.com>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Sat, 27 Jul 2024 11:51:19 +0100
+Message-ID: <CA+V-a8v8ZsdnD1GgUds_zYUy-_+KNKubB9tUQhfnXwe7s=uV7g@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] clk: renesas: rzg2l-cpg: Use devres API to
+ register clocks
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 25, 2024 at 05:03:14PM GMT, Satya Priya Kakitapalli wrote:
-> Update the frequency tables of gcc_sdcc2_apps_clk and gcc_sdcc4_apps_clk
-> as per the latest frequency plan.
-> 
-> Fixes: 4433594bbe5d ("clk: qcom: gcc: Add global clock controller driver for SC8180x")
-> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+Hi Geert,
 
-Fixes should come first in the series. Also consider following stable
-kernel process. If possible, describe the reason for the changes.
+Thank you for the review.
 
+On Fri, Jul 26, 2024 at 4:09=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
+k.org> wrote:
+>
+> Hi Prabhakar,
+>
+> On Mon, Jul 15, 2024 at 12:37=E2=80=AFPM Prabhakar <prabhakar.csengg@gmai=
+l.com> wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > We are using devres APIs for divider, mux and pll5 clocks so for
+> > consistency use the devres APIs for module, fixed factor and PLL clocks=
+.
+> >
+> > While at it switched to clk_hw_register() instead of clk_register()
+> > as this has been marked as deprecated interface.
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> > v1->v2
+> > - Propagate error code from rzg2l_cpg_pll_clk_register() if
+> >   devm_clk_hw_register() fails
+> > - Used devm_clk_hw_register_fixed_factor() for fixed factor clock
+> > - Set error pointer in rzg2l_cpg_register_mod_clk() if
+> >   devm_clk_hw_register() failed
+>
+> Thanks for the update!
+>
+> > --- a/drivers/clk/renesas/rzg2l-cpg.c
+> > +++ b/drivers/clk/renesas/rzg2l-cpg.c
+> > @@ -1116,6 +1121,8 @@ rzg2l_cpg_register_core_clk(const struct cpg_core=
+_clk *core,
+> >                 clk =3D of_clk_get_by_name(priv->dev->of_node, core->na=
+me);
+> >                 break;
+> >         case CLK_TYPE_FF:
+> > +               struct clk_hw *clk_hw;
+>
+> I will move this up while applying, to match the style of the rest of
+> the file.
+>
+Good point, thanks for taking care of it.
 
-> ---
->  drivers/clk/qcom/gcc-sc8180x.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/gcc-sc8180x.c b/drivers/clk/qcom/gcc-sc8180x.c
-> index f9f3e1254ce1..e85e75792ac3 100644
-> --- a/drivers/clk/qcom/gcc-sc8180x.c
-> +++ b/drivers/clk/qcom/gcc-sc8180x.c
-> @@ -974,7 +974,7 @@ static const struct freq_tbl ftbl_gcc_sdcc2_apps_clk_src[] = {
->  	F(25000000, P_GPLL0_OUT_MAIN, 12, 1, 2),
->  	F(50000000, P_GPLL0_OUT_MAIN, 12, 0, 0),
->  	F(100000000, P_GPLL0_OUT_MAIN, 6, 0, 0),
-> -	F(200000000, P_GPLL0_OUT_MAIN, 3, 0, 0),
-> +	F(202000000, P_GPLL9_OUT_MAIN, 4, 0, 0),
->  	{ }
->  };
->  
-> @@ -997,9 +997,8 @@ static const struct freq_tbl ftbl_gcc_sdcc4_apps_clk_src[] = {
->  	F(400000, P_BI_TCXO, 12, 1, 4),
->  	F(9600000, P_BI_TCXO, 2, 0, 0),
->  	F(19200000, P_BI_TCXO, 1, 0, 0),
-> -	F(37500000, P_GPLL0_OUT_MAIN, 16, 0, 0),
->  	F(50000000, P_GPLL0_OUT_MAIN, 12, 0, 0),
-> -	F(75000000, P_GPLL0_OUT_MAIN, 8, 0, 0),
-> +	F(100000000, P_GPLL0_OUT_MAIN, 6, 0, 0),
->  	{ }
->  };
->  
-> 
-> -- 
-> 2.25.1
-> 
-
--- 
-With best wishes
-Dmitry
+Cheers,
+Prabhakar
