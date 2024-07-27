@@ -1,138 +1,94 @@
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E757917997;
-	Sat, 27 Jul 2024 05:22:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722057736; cv=pass; b=LkMZ94qXsinZZqogOhlW6yjq3p7miPA3Y58BzFoDjqqxb4y1FjjpTCHZOn/Fo6vZ1bcYw5HUvh5kV9uQ/SUjpM/kU+vtLWUB0W9wHi5YsNaky0W1N9HlsyoaRQPltiBf5CxRMiaONp3Ily7RCt3HTop/gQ593PgYU3qrm5NaHv8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722057736; c=relaxed/simple;
-	bh=Mih095U9iXueDDnfQMixcmVN6Xd/74AO9SVU2wiAifk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=oAywkc4s43j+4Nit7Uyqq2d/Q6j0RquGwKwibnjJq2o70Q5PWe1fPY1r4PGKQppCXY0b5MKhnJoFPVEO7fVqyi7+hjnUuF+rgQ/jlcmhicgT4dRZgOdkhnfu6RBW89eAM8gI6RlHVqzQzzFqxoEdUG5CcP7+GF0lV320wKxMY7g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=mE6x7Aem; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 480BD54720
+	for <linux-clk@vger.kernel.org>; Sat, 27 Jul 2024 10:50:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722077448; cv=none; b=AlwK1QWO2NTaBq+BUjcEpVSBMVTyBSoDjalfgkgkwO3blbfZjbgHAgyQjUR1K0vCYVn2EpI2HThPg2qgKV1PMSk2w4AtxOOpuLXP4agm4pC5zNoQqiA7CoAq39+2g12BWvvwzVheU8HmSohT89yAqSmJDFJmWo/oOS8CCIPMQAg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722077448; c=relaxed/simple;
+	bh=bgwrnEG4+KKkcqavt5c73pSKb8m7wjKG0GzrJJfQqdM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kpa0tLrMnF8mIiUlO3ou40eKfZJYuYJFTmXUYpaiRpyXq4c4qKfSZK5EdNcY+LHcVK+R2AgAhu+pC2AS5giP0wAZ9f/lVgS9p5qvsjyEoA0JT19/aKWOJq8MSy0a+zOiVJJTLbtueWCj+5yAdy3TAK9UM6A2ulWnUd2EQ++Q0VQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sMtsG19v; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="mE6x7Aem"
-ARC-Seal: i=1; a=rsa-sha256; t=1722057708; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=aXi1zLnnjn1YLCOIyHDHWq+wPNACX16kzdArfXr6fGs71QPrbvINIpgRoIGoYuGcf5ElOvk27nyPb02iiL6VAjfCOHSO9jNyi1RHhGdIpPJxJl3sCLVoJcSieNm0CUJuexXknk1TwwjEyWN58LoP1EhBkwcjnupiXunky2+3usM=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1722057708; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=Mih095U9iXueDDnfQMixcmVN6Xd/74AO9SVU2wiAifk=; 
-	b=Q3WtiC2NUZR9yuI4zJTd9srWjqBAsHMh46WTLkSn9nn7xbBy0PBPyYYVJOkRC/6Iqb1LNcgDDwTQhrr5lG/VhraboN/98G2emClS9hujnkNH0tz52WdkllzY/MNwWZoevFxXmqHbhk28A55kcvv4ZBOuaqEhXTiJcgXizB+RkQo=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=icenowy.me;
-	spf=pass  smtp.mailfrom=uwu@icenowy.me;
-	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1722057708;
-	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=Mih095U9iXueDDnfQMixcmVN6Xd/74AO9SVU2wiAifk=;
-	b=mE6x7AemEjphe0KxvGJGqSkAsC2aNPV6Dw8UVJc9uiwKXtzO3VDNzHKGrXhYp56K
-	KWDZ9uAbTn/pkxD5rjVuXR/s6kW4uAIlDk/K4CJKBpBkn1ql4YlMiFEluXdhXEioLNF
-	RCZOk29odxLzT6AGNplXtSMCTnHt07PELEEGcTOVyvclz3NfIoM7E82u9zEFEZ7qm/I
-	lQnVsLo3op+anS1sQoDTSZT1FAmK9LzqScMQbW6xkUOpkftdU5ho3edjlsCD47KjWRg
-	tVJTlUr3WZXUjsH41AmOywlT/tyhCNlpCkWVAB/LMKNtkrRSQwYi9ij6dWHIGJmawev
-	N/u+GM0q+w==
-Received: by mx.zohomail.com with SMTPS id 1722057705832303.64384928637764;
-	Fri, 26 Jul 2024 22:21:45 -0700 (PDT)
-Message-ID: <2375ff5fb664d8de9627e76788bd40b5d8eabf35.camel@icenowy.me>
-Subject: Re: [PATCH v2 1/7] dt-bindings: clock: Document T-Head TH1520
- AP_SUBSYS controller
-From: Icenowy Zheng <uwu@icenowy.me>
-To: Drew Fustini <drew@pdp7.com>, Emil Renner Berthing
-	 <emil.renner.berthing@canonical.com>
-Cc: Stephen Boyd <sboyd@kernel.org>, Albert Ou <aou@eecs.berkeley.edu>, 
- Conor Dooley <conor+dt@kernel.org>, Drew Fustini
- <dfustini@tenstorrent.com>, Fu Wei <wefu@redhat.com>, Guo Ren
- <guoren@kernel.org>, Jisheng Zhang <jszhang@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Michael Turquette
- <mturquette@baylibre.com>, Palmer Dabbelt <palmer@dabbelt.com>, Paul
- Walmsley <paul.walmsley@sifive.com>, Rob Herring <robh@kernel.org>, Thomas
- Bonnefille <thomas.bonnefille@bootlin.com>,  Yangtao Li
- <frank.li@vivo.com>, linux-riscv@lists.infradead.org,
- linux-clk@vger.kernel.org,  devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>
-Date: Sat, 27 Jul 2024 13:21:39 +0800
-In-Reply-To: <ZqPQ8X51S6PrzQxI@x1>
-References: <20240623-th1520-clk-v2-0-ad8d6432d9fb@tenstorrent.com>
-	 <20240623-th1520-clk-v2-1-ad8d6432d9fb@tenstorrent.com>
-	 <57ef2eef45f2de15e6607da266b37b2a.sboyd@kernel.org>
-	 <CAJM55Z8iF8yV5JK5v6ZtQqS5AaWwCZ7uwhSYb7hdxh0juDFdqg@mail.gmail.com>
-	 <ZqPQ8X51S6PrzQxI@x1>
-Organization: Anthon Open-Source Community
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sMtsG19v"
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2f03df8c8cdso20078431fa.1
+        for <linux-clk@vger.kernel.org>; Sat, 27 Jul 2024 03:50:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722077445; x=1722682245; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fd+7g5fHC4ORBdyiR8TQfKxaZDxIN1H5zo/2q04zI6o=;
+        b=sMtsG19vvsRqoTFD6ZFVm0VsUEJX+zkGcU2IpusZdKUJYRYysNjxX4k6pOf2dF73od
+         yEmhtOx615FKc0JdriBMCnnx3cz0d7lh4ugtjxod/zE1FriLwjZHZ2QgZzDqkfhtLNKj
+         efc03woU4/YWlC9auADVptiIhD8jEeXP8JlpTy3RZc8F+SLtRwuBXL/pDOfgrL43aEYz
+         oesVnLrw8jK0AyPDDAGKTbtFuuGYk2yenbWaRUSwJYBUsDa8pGf04Vev0K3K8J8g+KVC
+         Pwt9NTkrp/vovCUTOImw3eYm1pceZQQNTOYwlfu3LABgWW0lSMNFQNhuQYdOqmKidhxM
+         zFBA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722077445; x=1722682245;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Fd+7g5fHC4ORBdyiR8TQfKxaZDxIN1H5zo/2q04zI6o=;
+        b=KaQNW2DvMGrqeoUskVu0m03vhM7i41f3o5ulhVmIwdxqrQHVri1Y4E1fD/LRfsygRK
+         KHXKWfCDqNMz604yNG+w/gOXXRoOIMxiuXVSpQok6jkNY/yNxsZ6WSVq4qlL7GUngInw
+         aiQxaswwisY58fBVp8DD1QKUVxUsWHHzHRoDPg0+cGiTQ4b0XrARf+z/kI8C7JoW9skg
+         oO9L69d3OnVbslzgygdFT/BnTMDsYzZkHgfxj3KkJKVjzEb/pvOYCaGAmy4P+emoecCe
+         Gm6zEk7VaZdM20XL3+tuW5X1xVVcckyTeVielBYkLeMSzSxVyAAqTriOal5aMjSkAlxS
+         sGvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVNuBn9YLNV6kzalOyIWrB7R6KtkCooue6VhkF9ATIDGRAIl14lsodvayCsuN43E8LiwZQz6wr7+H85sar7U1xcpUM4Wrh6aKDI
+X-Gm-Message-State: AOJu0Yy+QPXR8laevBjjRksXa7m7OhMhCrndICrroXIsuN1rrWteJwnS
+	yHF7mvJ/nhZFQXHWIIyaRZPXrrWiIdI2CL2GnoTIKLxrlnDbAOXiVJnwj0G6J0w=
+X-Google-Smtp-Source: AGHT+IGbFxS0CZBWTC+NU2o9/gkF52WeV0FeXTg6mfbsZPlhXM51iD5ux4nWAfhR7wpwSmMvyI1BpQ==
+X-Received: by 2002:a2e:9784:0:b0:2ef:21a6:7c82 with SMTP id 38308e7fff4ca-2f12f0f45d0mr5019411fa.20.1722077445278;
+        Sat, 27 Jul 2024 03:50:45 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f03d04d7aesm6689321fa.78.2024.07.27.03.50.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 27 Jul 2024 03:50:44 -0700 (PDT)
+Date: Sat, 27 Jul 2024 13:50:43 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Ajit Pandey <quic_ajipan@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, 
+	Taniya Das <quic_tdas@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 3/4] clk: qcom: gcc-sc8180x: Add GPLL9 support
+Message-ID: <d7rqh2agblkiuectnkpac64rcz2qg6dv4kzfaoenb4boq47ku6@kk34x43mrdpy>
+References: <20240725-gcc-sc8180x-fixes-v1-0-576a55fe4780@quicinc.com>
+ <20240725-gcc-sc8180x-fixes-v1-3-576a55fe4780@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240725-gcc-sc8180x-fixes-v1-3-576a55fe4780@quicinc.com>
 
-=E5=9C=A8 2024-07-26=E6=98=9F=E6=9C=9F=E4=BA=94=E7=9A=84 09:38 -0700=EF=BC=
-=8CDrew Fustini=E5=86=99=E9=81=93=EF=BC=9A
-> On Fri, Jul 26, 2024 at 03:45:36AM -0500, Emil Renner Berthing wrote:
-> > Stephen Boyd wrote:
-> > > Quoting Drew Fustini (2024-06-23 19:12:31)
-> > > > Document bindings for the T-Head TH1520 AP sub-system clock
-> > > > controller.
-> > > >=20
-> > > > Link:
-> > > > https://openbeagle.org/beaglev-ahead/beaglev-ahead/-/blob/main/docs=
-/TH1520%20System%20User%20Manual.pdf
-> > > > Co-developed-by: Yangtao Li <frank.li@vivo.com>
-> > > > Signed-off-by: Yangtao Li <frank.li@vivo.com>
-> > > > Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-> > > > Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
-> > > > ---
-> > >=20
-> > > Applied to clk-next
-> >=20
-> > Thanks, but this driver seems a bit incomplete. With this applied
-> > the Lichee Pi
-> > 4A no longer boots without the clk_ignore_unused kernel parameter.
-> >=20
-> > /Emil
->=20
-> Is this the case when you apply the dts patches from this series?
->=20
-> The dts patches won't go in until 6.12 so I don't think the presence
-> of
-> the clk-th1520-ap.c itself in 6.11 would break existing systems.
->=20
-> That said, I have been using clk_ignore_unused. I had been thinking
-> that
-> made sense because the full set of clock controller drivers like
-> AON_SUBSYS (always on), AUDIO_SUBSYS, DSP_SUBSYS, etc, are not
-> present
-> yet in mainline. However, the T-Head vendor kernel does have drivers
-> for
-> all those clock controllers and I was suprised to see that the vendor
-> kernel fails to boot when I just tested removing clk_ignore_unused.
->=20
-> As for clk-th1520-ap.c in mainline, I'll investigate further which
-> clk
-> disables seem to causing the boot failure when using the dts from
-> this
-> series. I suspect I may need to add nodes that will cause the
-> necessary
-> clks to be enabled by their respective drivers.
+On Thu, Jul 25, 2024 at 05:03:13PM GMT, Satya Priya Kakitapalli wrote:
+> Add the missing GPLL9 pll and fix the gcc_parents_7 data to use
+> the correct pll hw.
+> 
+> Fixes: 4433594bbe5d ("clk: qcom: gcc: Add global clock controller driver for SC8180x")
+> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+> ---
+>  drivers/clk/qcom/gcc-sc8180x.c | 20 +++++++++++++++++++-
+>  1 file changed, 19 insertions(+), 1 deletion(-)
+> 
 
-If disabling the clock just leads to system hang, setting
-CLK_IS_CRITICAL should be useful (and needed) here.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
->=20
-> Thanks,
-> Drew
->=20
-> _______________________________________________
-> linux-riscv mailing list
-> linux-riscv@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
+-- 
+With best wishes
+Dmitry
