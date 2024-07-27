@@ -1,194 +1,138 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED7A9149E1D;
-	Fri, 26 Jul 2024 22:39:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722033554; cv=none; b=MK4ROTsjc57WLsN/lCqXv/JGs/GCCHiTc4G1LkH8CVf1zB1tqLTq2l0X5WbU/lquIowOgVcpFWX9Dju2MIh+AjteowYIBLWCXSvdQUpo4LGUdEGvvM5v9NgNBG7ILFaLDas7Rg5H+Bh54P/URPbh2GMuXBxFxLYScqtkFsuIeV4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722033554; c=relaxed/simple;
-	bh=tc4bb2Nm0/M0kPveLY1Vp6o9t8P48zNwwlZP+5YVO9I=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=vGrSUIYE7YHTskas1W+1r4zPM4/BNOfqn+wmcfEFqh/0L0lQyCb8zQk/osUuUGFvKD0gvd7Yd8Uy510rN7oFMuVK5jFOU7pjRRiKRJPfr9jcN/fpk8ADoOV/XVJAM3QehOylek59SgUBpMIKzy4UYftbIyqNCO2iPV76BGuailY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nJVVBG93; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E757917997;
+	Sat, 27 Jul 2024 05:22:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1722057736; cv=pass; b=LkMZ94qXsinZZqogOhlW6yjq3p7miPA3Y58BzFoDjqqxb4y1FjjpTCHZOn/Fo6vZ1bcYw5HUvh5kV9uQ/SUjpM/kU+vtLWUB0W9wHi5YsNaky0W1N9HlsyoaRQPltiBf5CxRMiaONp3Ily7RCt3HTop/gQ593PgYU3qrm5NaHv8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1722057736; c=relaxed/simple;
+	bh=Mih095U9iXueDDnfQMixcmVN6Xd/74AO9SVU2wiAifk=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=oAywkc4s43j+4Nit7Uyqq2d/Q6j0RquGwKwibnjJq2o70Q5PWe1fPY1r4PGKQppCXY0b5MKhnJoFPVEO7fVqyi7+hjnUuF+rgQ/jlcmhicgT4dRZgOdkhnfu6RBW89eAM8gI6RlHVqzQzzFqxoEdUG5CcP7+GF0lV320wKxMY7g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=mE6x7Aem; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nJVVBG93"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F94CC32782;
-	Fri, 26 Jul 2024 22:39:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722033553;
-	bh=tc4bb2Nm0/M0kPveLY1Vp6o9t8P48zNwwlZP+5YVO9I=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=nJVVBG93nzOpL9Vm5/nkgPt/6E4jjb4gSShBSTSLr3V8/TcHJsWTEEW0LEPKSgT9R
-	 j7Zz7goZex1DSDFkMH4zzqnCLEaUotykV2qMw43hEeEw2nXdYUOI2qreUFJvsiGmFQ
-	 TKrqqqs9P5v9HWgDNMwGKfnTu/H3REWkuI+o/7gdbcRCqUn4RD4hjO8Icu0Pe/FntI
-	 lLncLa4uwkPAp30waRdAlvYUxi8rBRf9i23ngLWaUjqaEomtQB5pvkH2slWf/MkCZh
-	 cygqMt4k1itqCmcb3DecGpLUIZV25uFRV7qyGXI00/MERsHlA6LtPt8IzNp27bB836
-	 SPwMBNtmDADzA==
-Message-ID: <84b55412bc61cdcbbc4e051c88827c00.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="mE6x7Aem"
+ARC-Seal: i=1; a=rsa-sha256; t=1722057708; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=aXi1zLnnjn1YLCOIyHDHWq+wPNACX16kzdArfXr6fGs71QPrbvINIpgRoIGoYuGcf5ElOvk27nyPb02iiL6VAjfCOHSO9jNyi1RHhGdIpPJxJl3sCLVoJcSieNm0CUJuexXknk1TwwjEyWN58LoP1EhBkwcjnupiXunky2+3usM=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1722057708; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=Mih095U9iXueDDnfQMixcmVN6Xd/74AO9SVU2wiAifk=; 
+	b=Q3WtiC2NUZR9yuI4zJTd9srWjqBAsHMh46WTLkSn9nn7xbBy0PBPyYYVJOkRC/6Iqb1LNcgDDwTQhrr5lG/VhraboN/98G2emClS9hujnkNH0tz52WdkllzY/MNwWZoevFxXmqHbhk28A55kcvv4ZBOuaqEhXTiJcgXizB+RkQo=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=icenowy.me;
+	spf=pass  smtp.mailfrom=uwu@icenowy.me;
+	dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1722057708;
+	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
+	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
+	bh=Mih095U9iXueDDnfQMixcmVN6Xd/74AO9SVU2wiAifk=;
+	b=mE6x7AemEjphe0KxvGJGqSkAsC2aNPV6Dw8UVJc9uiwKXtzO3VDNzHKGrXhYp56K
+	KWDZ9uAbTn/pkxD5rjVuXR/s6kW4uAIlDk/K4CJKBpBkn1ql4YlMiFEluXdhXEioLNF
+	RCZOk29odxLzT6AGNplXtSMCTnHt07PELEEGcTOVyvclz3NfIoM7E82u9zEFEZ7qm/I
+	lQnVsLo3op+anS1sQoDTSZT1FAmK9LzqScMQbW6xkUOpkftdU5ho3edjlsCD47KjWRg
+	tVJTlUr3WZXUjsH41AmOywlT/tyhCNlpCkWVAB/LMKNtkrRSQwYi9ij6dWHIGJmawev
+	N/u+GM0q+w==
+Received: by mx.zohomail.com with SMTPS id 1722057705832303.64384928637764;
+	Fri, 26 Jul 2024 22:21:45 -0700 (PDT)
+Message-ID: <2375ff5fb664d8de9627e76788bd40b5d8eabf35.camel@icenowy.me>
+Subject: Re: [PATCH v2 1/7] dt-bindings: clock: Document T-Head TH1520
+ AP_SUBSYS controller
+From: Icenowy Zheng <uwu@icenowy.me>
+To: Drew Fustini <drew@pdp7.com>, Emil Renner Berthing
+	 <emil.renner.berthing@canonical.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, Albert Ou <aou@eecs.berkeley.edu>, 
+ Conor Dooley <conor+dt@kernel.org>, Drew Fustini
+ <dfustini@tenstorrent.com>, Fu Wei <wefu@redhat.com>, Guo Ren
+ <guoren@kernel.org>, Jisheng Zhang <jszhang@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Michael Turquette
+ <mturquette@baylibre.com>, Palmer Dabbelt <palmer@dabbelt.com>, Paul
+ Walmsley <paul.walmsley@sifive.com>, Rob Herring <robh@kernel.org>, Thomas
+ Bonnefille <thomas.bonnefille@bootlin.com>,  Yangtao Li
+ <frank.li@vivo.com>, linux-riscv@lists.infradead.org,
+ linux-clk@vger.kernel.org,  devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>
+Date: Sat, 27 Jul 2024 13:21:39 +0800
+In-Reply-To: <ZqPQ8X51S6PrzQxI@x1>
+References: <20240623-th1520-clk-v2-0-ad8d6432d9fb@tenstorrent.com>
+	 <20240623-th1520-clk-v2-1-ad8d6432d9fb@tenstorrent.com>
+	 <57ef2eef45f2de15e6607da266b37b2a.sboyd@kernel.org>
+	 <CAJM55Z8iF8yV5JK5v6ZtQqS5AaWwCZ7uwhSYb7hdxh0juDFdqg@mail.gmail.com>
+	 <ZqPQ8X51S6PrzQxI@x1>
+Organization: Anthon Open-Source Community
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240715110251.261844-3-heiko@sntech.de>
-References: <20240715110251.261844-1-heiko@sntech.de> <20240715110251.261844-3-heiko@sntech.de>
-Subject: Re: [PATCH v2 2/3] clk: add driver for voltage controlled oscillators
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-To: Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com
-Date: Fri, 26 Jul 2024 15:39:11 -0700
-User-Agent: alot/0.10
+X-ZohoMailClient: External
 
-Quoting Heiko Stuebner (2024-07-15 04:02:50)
-> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> index 4abe16c8ccdfe..ca7b7b7ddfd8d 100644
-> --- a/drivers/clk/Makefile
-> +++ b/drivers/clk/Makefile
-> @@ -79,6 +79,7 @@ obj-$(CONFIG_COMMON_CLK_SI521XX)      +=3D clk-si521xx.o
->  obj-$(CONFIG_COMMON_CLK_VC3)           +=3D clk-versaclock3.o
->  obj-$(CONFIG_COMMON_CLK_VC5)           +=3D clk-versaclock5.o
->  obj-$(CONFIG_COMMON_CLK_VC7)           +=3D clk-versaclock7.o
-> +obj-$(CONFIG_COMMON_CLK_VCO)           +=3D clk-vco.o
+=E5=9C=A8 2024-07-26=E6=98=9F=E6=9C=9F=E4=BA=94=E7=9A=84 09:38 -0700=EF=BC=
+=8CDrew Fustini=E5=86=99=E9=81=93=EF=BC=9A
+> On Fri, Jul 26, 2024 at 03:45:36AM -0500, Emil Renner Berthing wrote:
+> > Stephen Boyd wrote:
+> > > Quoting Drew Fustini (2024-06-23 19:12:31)
+> > > > Document bindings for the T-Head TH1520 AP sub-system clock
+> > > > controller.
+> > > >=20
+> > > > Link:
+> > > > https://openbeagle.org/beaglev-ahead/beaglev-ahead/-/blob/main/docs=
+/TH1520%20System%20User%20Manual.pdf
+> > > > Co-developed-by: Yangtao Li <frank.li@vivo.com>
+> > > > Signed-off-by: Yangtao Li <frank.li@vivo.com>
+> > > > Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> > > > Signed-off-by: Drew Fustini <dfustini@tenstorrent.com>
+> > > > ---
+> > >=20
+> > > Applied to clk-next
+> >=20
+> > Thanks, but this driver seems a bit incomplete. With this applied
+> > the Lichee Pi
+> > 4A no longer boots without the clk_ignore_unused kernel parameter.
+> >=20
+> > /Emil
+>=20
+> Is this the case when you apply the dts patches from this series?
+>=20
+> The dts patches won't go in until 6.12 so I don't think the presence
+> of
+> the clk-th1520-ap.c itself in 6.11 would break existing systems.
+>=20
+> That said, I have been using clk_ignore_unused. I had been thinking
+> that
+> made sense because the full set of clock controller drivers like
+> AON_SUBSYS (always on), AUDIO_SUBSYS, DSP_SUBSYS, etc, are not
+> present
+> yet in mainline. However, the T-Head vendor kernel does have drivers
+> for
+> all those clock controllers and I was suprised to see that the vendor
+> kernel fails to boot when I just tested removing clk_ignore_unused.
+>=20
+> As for clk-th1520-ap.c in mainline, I'll investigate further which
+> clk
+> disables seem to causing the boot failure when using the dts from
+> this
+> series. I suspect I may need to add nodes that will cause the
+> necessary
+> clks to be enabled by their respective drivers.
 
-Wrong section. It's basically a common clk type.
+If disabling the clock just leads to system hang, setting
+CLK_IS_CRITICAL should be useful (and needed) here.
 
->  obj-$(CONFIG_COMMON_CLK_WM831X)                +=3D clk-wm831x.o
->  obj-$(CONFIG_COMMON_CLK_XGENE)         +=3D clk-xgene.o
-> =20
-> diff --git a/drivers/clk/clk-vco.c b/drivers/clk/clk-vco.c
-> new file mode 100644
-> index 0000000000000..f7fe2bc627f36
-> --- /dev/null
-> +++ b/drivers/clk/clk-vco.c
-> @@ -0,0 +1,133 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Copyright (C) 2024 Heiko Stuebner <heiko@sntech.de>
-> + *
-> + * Generic voltage controlled oscillator
-> + */
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/err.h>
-> +#include <linux/gpio/consumer.h>
-> +#include <linux/module.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regulator/consumer.h>
-> +#include <linux/slab.h>
-> +
-> +struct clk_vco {
-> +       struct device *dev;
-> +       struct clk_hw hw;
-> +       u32 rate;
-> +       struct regulator *supply;
-> +       struct gpio_desc *enable_gpio;
-> +};
-> +
-> +#define to_clk_vco(_hw) container_of(_hw, struct clk_vco, hw)
-> +
-> +static int clk_vco_prepare(struct clk_hw *hw)
-> +{
-> +       return regulator_enable(to_clk_vco(hw)->supply);
-> +}
-> +
-> +static void clk_vco_unprepare(struct clk_hw *hw)
-> +{
-> +       regulator_disable(to_clk_vco(hw)->supply);
-> +}
-> +
-> +static int clk_vco_enable(struct clk_hw *hw)
-> +{
-> +       gpiod_set_value(to_clk_vco(hw)->enable_gpio, 1);
-> +       return 0;
-> +}
-> +
-> +static void clk_vco_disable(struct clk_hw *hw)
-> +{
-> +       gpiod_set_value(to_clk_vco(hw)->enable_gpio, 0);
-> +}
+>=20
+> Thanks,
+> Drew
+>=20
+> _______________________________________________
+> linux-riscv mailing list
+> linux-riscv@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-riscv
 
-It looks similar to clk-gpio.c code, but not as complete because it
-assumes gpios can't sleep. Please look into reusing that code somehow,
-possibly exporting 'clk_gpio_gate_ops' and struct clk_gpio for use in
-this new driver. It would be good to fold the sleepable gpio bit as well
-somehow, maybe with a new function to get a device's gpiod along with
-returning a const pointer to the clk_ops that can be copied and amended
-with the regulator part.
-
-> +
-> +static unsigned long clk_vco_recalc_rate(struct clk_hw *hw,
-> +                                              unsigned long parent_rate)
-> +{
-> +       return to_clk_vco(hw)->rate;
-> +}
-> +
-> +const struct clk_ops clk_vco_ops =3D {
-> +       .prepare =3D clk_vco_prepare,
-> +       .unprepare =3D clk_vco_unprepare,
-> +       .enable =3D clk_vco_enable,
-> +       .disable =3D clk_vco_disable,
-> +       .recalc_rate =3D clk_vco_recalc_rate,
-> +};
-> +
-> +static int clk_vco_probe(struct platform_device *pdev)
-> +{
-> +       struct device *dev =3D &pdev->dev;
-> +       struct clk_vco *clkgen;
-> +       const char *clk_name;
-> +       int ret;
-> +
-> +       clkgen =3D devm_kzalloc(dev, sizeof(*clkgen), GFP_KERNEL);
-> +       if (!clkgen)
-> +               return -ENOMEM;
-> +
-> +       clkgen->dev =3D dev;
-
-Is this used outside of probe? Why stash it?
-
-> +
-> +       if (device_property_read_u32(dev, "clock-frequency", &clkgen->rat=
-e))
-> +               return dev_err_probe(dev, -EIO, "failed to get clock-freq=
-uency");
-> +
-> +       ret =3D device_property_read_string(dev, "clock-output-names", &c=
-lk_name);
-> +       if (ret)
-> +               clk_name =3D fwnode_get_name(dev->fwnode);
-> +
-> +       clkgen->supply =3D devm_regulator_get_optional(dev, "vdd");
-> +       if (IS_ERR(clkgen->supply)) {
-> +               if (PTR_ERR(clkgen->supply) !=3D -ENODEV)
-> +                       return dev_err_probe(dev, PTR_ERR(clkgen->supply),
-> +                                            "failed to get regulator\n");
-> +               clkgen->supply =3D NULL;
-> +       }
-> +
-> +       clkgen->enable_gpio =3D devm_gpiod_get_optional(dev, "enable",
-> +                                                     GPIOD_OUT_LOW);
-> +       if (IS_ERR(clkgen->enable_gpio))
-> +               return dev_err_probe(dev, PTR_ERR(clkgen->enable_gpio),
-> +                                    "failed to get gpio\n");
-> +
-> +       ret =3D gpiod_direction_output(clkgen->enable_gpio, 0);
-> +       if (ret < 0)
-> +               return dev_err_probe(dev, ret, "failed to set gpio output=
-");
-
-Missing newline.
-
-> +
-> +       clkgen->hw.init =3D CLK_HW_INIT_NO_PARENT(clk_name, &clk_vco_ops,=
- 0);
-> +
-> +       /* register the clock */
-> +       ret =3D devm_clk_hw_register(dev, &clkgen->hw);
-> +       if (ret)
-> +               return dev_err_probe(dev, ret,
-> +                                    "failed to register clock\n");
-> +
