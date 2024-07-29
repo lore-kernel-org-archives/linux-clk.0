@@ -1,266 +1,183 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CED1187562;
-	Mon, 29 Jul 2024 18:52:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98A5A186E4F;
+	Mon, 29 Jul 2024 19:37:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722279176; cv=none; b=spObUzhKzMelKrbyrjXAJrVstR1wgQH750HIinJNFkclASY/lotdozwvRz1eue50ne1ybLb+SriuKO4mX0DDUICJy0yoBmI1/aZWikGqZt63ShWWYQ2oA24KEBFmpLAcjj+CxwHDokTY//jaXWqGfM8daTFzYx6FfXZ1unbPYXk=
+	t=1722281876; cv=none; b=SZaln/1as3WFFGlRUwGJC+jL+gtxPoKco1r0C/dJd/16IE163Y1dAg9oJyvBqPr9BOC4csKduaa2vx9MOHLXqKcbnwtL3zgApaLmh6yiTBtLqO0hpCePxwnPOyC791H+eyAoRPRokN1a0R43szy8YL9hmxD11FlWLU441O2P1xE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722279176; c=relaxed/simple;
-	bh=ULdt+e7tNZHKt++4GA0CJi8RYTeU//y8odV8DOrNY8g=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=FUL0mGwOMMRrHMKeuAJrrd41YK8UIJsSbsHq5JF0U/TmgzS8F/xOXiP6JOnzw1EZIeJZ2iNTGrbHipF8ENwFz9IZJfQA78NXN/JfDTuc2iOzAoZr56EvxOqB7XRHcar49bTfnRS8J0E6Lj6ZWN2cHgCUR2gAN6OWzyc/e/Yvjas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T2mSqK91; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1722281876; c=relaxed/simple;
+	bh=lbQL5JO9A9Zffie3YIm36F9Acyj955px1UEdozg9wjc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EsOKHu2dHwXwQ6y6I15toLR7vySnH0AT/Xcwu0wLt/Oznf9bre8IhE7zZ9y5e6GSbi4S64PnbIvAB3CmT45vDWzJDXX1SentZkS0WNMaLPQDvffS2Bz/GKQE9M+mbfOmpZHbU4WTtasYHxli21LoQCVXR8RzKQQXmaF4ADLxIcc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UoEtHz6h; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T2mSqK91"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4260C4AF09;
-	Mon, 29 Jul 2024 18:52:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722279176;
-	bh=ULdt+e7tNZHKt++4GA0CJi8RYTeU//y8odV8DOrNY8g=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=T2mSqK916S4+IIvaq0Bg++TVPXpmiBSPzHJ9odpUkxJZNwGc1KApo3fE9SeWlYcWG
-	 0qfoc4MJ/ReLuHHbwu5Sh2tjxY055NMpgkrKE1SG92ukVOCnIGN2FZrzJD2OuJVpah
-	 GutGTloFGUhmLLolqCI8B3aoiG+OiYm4kr+9XemLvKxlFvQOodDCW7QuQM0r8JbNov
-	 Ay7IbNYR+/pN1IHr7r6fUQvxS9BysCrWteduABitpyF2KrbPyZGj1UAyAALUoW0RLY
-	 LO8eJLus0Y8zeoKPAtqFKFSNn2wvu4W2hcx2g3pi3rQn9odNot8ot+3+BkS95RmTDy
-	 CFK/wWwwDzMag==
-Date: Mon, 29 Jul 2024 12:52:54 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UoEtHz6h"
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70d2b921c48so2726622b3a.1;
+        Mon, 29 Jul 2024 12:37:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722281874; x=1722886674; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WuL+X0cuNqgatZoPaLJRqOKFz6ZRnHI8J9rGMVL8Gbw=;
+        b=UoEtHz6hXJ5yXbohkBaMhS9dJCyHBVZ9o07U48XY/2JwNoK5qa7rbYtu/dKQz0GvXI
+         LBeJkIH6ZqQKG1EBkZMQlfxFJOSwFyv6gQrDHp0IJhbBtSULxgoU4Nw11J5fAD2/zRlo
+         5qki7p743DMfUq6MDg0nvqG+RB6N7hpQYCvhxCRblONFTLOTTuiXP08Ooy2U2tqeagni
+         lhw2ExZQxqlzSH13vwek4xCZYVX/MQHvAexXK1pG/Kzxnv1NMpBEAeyydUQQd9Wm/JpH
+         /+tDQCBBIgjSQJSPmfKivRfyckmIsf37m6XuOu0IYEbzHJjpNsfRpDvZwHdH5fDCTQzl
+         T/0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722281874; x=1722886674;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WuL+X0cuNqgatZoPaLJRqOKFz6ZRnHI8J9rGMVL8Gbw=;
+        b=fmaYtJepmDp1uUcHOP9ho4LfQ+tC++nfy2xjZd8lei4VBoxBaaPuYlppmW/01p5nWV
+         FdO9LNQeQe9m/iL6qzQKa7xxZD3orMhvroJppYdXsllTsk+CM1CYrq6+UNQ04N3TvykT
+         K3e69V798eyS1Gw8geCSW+lu0QO+1r7ExHVtOj6/sMk6ZahERTSEOjxonf9Fo2uNcKqd
+         JbCjGvy2oGh2BMxBxMZZZtcglr4pKYhRyPvcdrl+FcJYUayLEHHCkR5iXdt78yFlnYrv
+         25nATpYYd165aX3+G95t1TVt5mg8pM3E5uG5bTY8+O8H4U3ty+nCDQKN8aw4sb49tr+6
+         A/Tg==
+X-Forwarded-Encrypted: i=1; AJvYcCW4lCsSza+0QxauznOoFAU1xSTyke2c1vF6TOXTVoj6niw0NylyRORnBVdLXOHQ0ZVyDbjxLifgJ+aohTnr@vger.kernel.org, AJvYcCX4ti0YoXSavV76rNTlOLvo1AWyOEM24W8vxH5Ana61I2zWVm4A/oVQT66+6wx/OMUkVZqE6P88cjrY@vger.kernel.org, AJvYcCXtOEdT6LGP/0LEfSEJ8eLvxyRFPQra5HQvbshT8eu/iIj7uZFsANAzPuT6p4cH+AofapctT0ZpRmPa@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1vCPcKIQ0HvSBfSJ5WZZizKnwPRQ4HZedXIglpll+fdy+9Dz3
+	/9CUbBLSVLjcqsMjmHb5Z1zxEegh/sL17EJxwVyOPz4seeTddB3H
+X-Google-Smtp-Source: AGHT+IHM31GPVlJI3xYYzrz/YcFa0e7LtoyNUZirTosFge3OL28eCwLFmqDJtlOhGMcicQbeKtuUVg==
+X-Received: by 2002:a05:6a20:3952:b0:1c4:9886:b511 with SMTP id adf61e73a8af0-1c4a117921cmr7845881637.2.1722281873546;
+        Mon, 29 Jul 2024 12:37:53 -0700 (PDT)
+Received: from localhost.localdomain ([2409:40f4:39:bb36:901a:3e6d:4815:b10c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead8116a4sm7146706b3a.130.2024.07.29.12.37.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jul 2024 12:37:53 -0700 (PDT)
+From: Animesh Agarwal <animeshagarwal28@gmail.com>
+To: 
+Cc: Animesh Agarwal <animeshagarwal28@gmail.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: clock: nxp,lpc3220-clk: Convert bindings to DT schema
+Date: Tue, 30 Jul 2024 01:07:25 +0530
+Message-ID: <20240729193731.142069-1-animeshagarwal28@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Varshini Rajendran <varshini.rajendran@microchip.com>
-Cc: Jason@zx2c4.com, linux@armlinux.org.uk, conor+dt@kernel.org, 
- sre@kernel.org, richard.genoud@bootlin.com, sboyd@kernel.org, 
- linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, krzk+dt@kernel.org, 
- andrei.simion@microchip.com, linux-arm-kernel@lists.infradead.org, 
- linux-serial@vger.kernel.org, linux-spi@vger.kernel.org, schung@nuvoton.com, 
- jirislaby@kernel.org, devicetree@vger.kernel.org, dharma.b@microchip.com, 
- angelogioacchino.delregno@collabora.com, lee@kernel.org, 
- mturquette@baylibre.com, matthias.bgg@gmail.com, tglx@linutronix.de, 
- rdunlap@infradead.org, radu_nicolae.pirea@upb.ro, 
- gregkh@linuxfoundation.org, nicolas.ferre@microchip.com, 
- ychuang3@nuvoton.com, claudiu.beznea@tuxon.dev, linux-pm@vger.kernel.org, 
- alexandre.belloni@bootlin.com, arnd@arndb.de, mihai.sain@microchip.com, 
- linux-mediatek@lists.infradead.org, p.zabel@pengutronix.de
-In-Reply-To: <20240729065603.1986074-1-varshini.rajendran@microchip.com>
-References: <20240729065603.1986074-1-varshini.rajendran@microchip.com>
-Message-Id: <172227904971.1346450.12443915645617449093.robh@kernel.org>
-Subject: Re: [PATCH v6 00/27] Add support for sam9x7 SoC family
+Content-Transfer-Encoding: 8bit
 
+Convert the NXP LPC32xx Clock Controller bindings to yaml format.
 
-On Mon, 29 Jul 2024 12:26:03 +0530, Varshini Rajendran wrote:
-> This patch series adds support for the new SoC family - sam9x7.
->  - The device tree, configs and drivers are added
->  - Clock driver for sam9x7 is added
->  - Support for basic peripherals is added
->  - Target board SAM9X75 Curiosity is added
-> 
->  Changes in v6:
->  --------------
-> 
->  - Addressed all the review comments in the patches
->  - Picked up all Acked-by and Reviewed-by tags
->  - Reverted the IRQ patch to that of version 3 of the same series
->  - All the specific changes are captured in the corresponding patches
-> 
->  Changes in v5:
->  --------------
-> 
->  - Addressed all the review comments in the patches
->  - Picked up all Acked-by and Reviewed-by tags
->  - Dropped applied patches from the series
->  - Addressed the ABI breakage reported in the IRQ patch
->  - All the specific changes are captured in the corresponding patches
-> 
->  Changes in v4:
->  --------------
-> 
->  - Addressed all the review comments in the patches
->  - Picked up all Acked-by and Reviewed-by tags
->  - Dropped applied patches from the series
->  - Added pwm node and related dt binding documentation
->  - Added support for exporting some clocks to DT
->  - Dropped USB related patches and changes. See NOTE.
->  - All the specific changes are captured in the corresponding patches
-> 
->  NOTE: Owing to the discussion here
->  https://lore.kernel.org/linux-devicetree/CAL_JsqJ9PrX6fj-EbffeJce09MXs=B7t+KS_kOinxaRx38=WxA@mail.gmail.com/
->  the USB related changes are dropped from this series in order to enable
->  us to work on the mentioned issues before adding new compatibles as
->  said. The issues/warnings will be addressed in subsequent patches.
->  After which the USB related support for sam9x7 SoCs will be added. Hope
->  this works out fine.
-> 
->  Changes in v3:
->  --------------
-> 
->  - Fixed the DT documentation errors pointed out in v2.
->  - Dropped Acked-by tag in tcb DT doc patch as it had to be adapted
->    according to sam9x7 correctly.
->  - Picked by the previously missed tags.
->  - Dropped this patch "dt-bindings: usb: generic-ehci: Document clock-names
->    property" as the warning was not found while validating DT-schema for
->    at91-sam9x75_curiosity.dtb.
->  - Dropped redundant words in the commit message.
->  - Fixed the CHECK_DTBS warnings validated against
->    at91-sam9x75_curiosity.dtb.
->  - Renamed dt nodes according to naming convention.
->  - Dropped unwanted status property in dts.
->  - Removed nodes that are not in use from the board dts.
->  - Removed spi DT doc patch from the series as it was already applied
->    and a fix patch was applied subsequently. Added a patch to remove the
->    compatible to adapt sam9x7.
->  - Added sam9x7 compatibles in usb dt documentation.
-> 
-> 
->  Changes in v2:
->  --------------
-> 
->  - Added sam9x7 specific compatibles in DT with fallbacks
->  - Documented all the newly added DT compatible strings
->  - Added device tree for the target board sam9x75 curiosity and
->    documented the same in the DT bindings documentation
->  - Removed the dt nodes that are not supported at the moment
->  - Removed the configs added by previous version that are not supported
->    at the moment
->  - Fixed all the corrections in the commit message
->  - Changed all the instances of copyright year to 2023
->  - Added sam9x7 flag in PIT64B configuration
->  - Moved macro definitions to header file
->  - Added another divider in mck characteristics in the pmc driver
->  - Fixed the memory leak in the pmc driver
->  - Dropped patches that are no longer needed
->  - Picked up Acked-by and Reviewed-by tags
-> 
-> 
-> Hari Prasath (1):
->   irqchip/atmel-aic5: Add support for sam9x7 aic
-> 
-> Varshini Rajendran (26):
->   dt-bindings: atmel-sysreg: add sam9x7
->   dt-bindings: mfd: syscon: add microchip's sam9x7 sfr
->   dt-bindings: atmel-ssc: add microchip,sam9x7-ssc
->   dt-bindings: serial: atmel,at91-usart: add compatible for sam9x7.
->   dt-bindings: microchip: atmel,at91rm9200-tcb: add sam9x7 compatible
->   ARM: at91: pm: add support for sam9x7 SoC family
->   ARM: at91: pm: add sam9x7 SoC init config
->   ARM: at91: add support in SoC driver for new sam9x7
->   dt-bindings: clocks: atmel,at91sam9x5-sckc: add sam9x7
->   dt-bindings: clocks: atmel,at91rm9200-pmc: add sam9x7 clock controller
->   clk: at91: clk-sam9x60-pll: re-factor to support individual core freq
->     outputs
->   clk: at91: sam9x7: add support for HW PLL freq dividers
->   clk: at91: sama7g5: move mux table macros to header file
->   dt-bindings: clock: at91: Allow PLLs to be exported and referenced in
->     DT
->   clk: at91: sam9x7: add sam9x7 pmc driver
->   dt-bindings: interrupt-controller: Add support for sam9x7 aic
->   power: reset: at91-poweroff: lookup for proper pmc dt node for sam9x7
->   power: reset: at91-reset: add reset support for sam9x7 SoC
->   power: reset: at91-reset: add sdhwc support for sam9x7 SoC
->   dt-bindings: reset: atmel,at91sam9260-reset: add sam9x7
->   dt-bindings: power: reset: atmel,sama5d2-shdwc: add sam9x7
->   ARM: at91: Kconfig: add config flag for SAM9X7 SoC
->   ARM: configs: at91: enable config flags for sam9x7 SoC family
->   ARM: dts: at91: sam9x7: add device tree for SoC
->   dt-bindings: arm: add sam9x75 curiosity board
->   ARM: dts: microchip: sam9x75_curiosity: add sam9x75 curiosity board
-> 
->  .../devicetree/bindings/arm/atmel-at91.yaml   |    6 +
->  .../devicetree/bindings/arm/atmel-sysregs.txt |    6 +-
->  .../bindings/clock/atmel,at91rm9200-pmc.yaml  |    2 +
->  .../bindings/clock/atmel,at91sam9x5-sckc.yaml |    4 +-
->  .../interrupt-controller/atmel,aic.yaml       |    1 +
->  .../devicetree/bindings/mfd/syscon.yaml       |  188 +--
->  .../devicetree/bindings/misc/atmel-ssc.txt    |    1 +
->  .../power/reset/atmel,sama5d2-shdwc.yaml      |    3 +
->  .../reset/atmel,at91sam9260-reset.yaml        |    4 +
->  .../bindings/serial/atmel,at91-usart.yaml     |    9 +-
->  .../soc/microchip/atmel,at91rm9200-tcb.yaml   |   20 +-
->  arch/arm/boot/dts/microchip/Makefile          |    3 +
->  .../dts/microchip/at91-sam9x75_curiosity.dts  |  312 +++++
->  arch/arm/boot/dts/microchip/sam9x7.dtsi       | 1226 +++++++++++++++++
->  arch/arm/configs/at91_dt_defconfig            |    1 +
->  arch/arm/mach-at91/Kconfig                    |   22 +-
->  arch/arm/mach-at91/Makefile                   |    1 +
->  arch/arm/mach-at91/generic.h                  |    2 +
->  arch/arm/mach-at91/pm.c                       |   29 +
->  arch/arm/mach-at91/sam9x7.c                   |   33 +
->  drivers/clk/at91/Makefile                     |    1 +
->  drivers/clk/at91/clk-sam9x60-pll.c            |   42 +-
->  drivers/clk/at91/pmc.h                        |   18 +
->  drivers/clk/at91/sam9x60.c                    |    7 +
->  drivers/clk/at91/sam9x7.c                     |  946 +++++++++++++
->  drivers/clk/at91/sama7g5.c                    |   42 +-
->  drivers/irqchip/irq-atmel-aic5.c              |   10 +
->  drivers/power/reset/Kconfig                   |    4 +-
->  drivers/power/reset/at91-sama5d2_shdwc.c      |    1 +
->  drivers/soc/atmel/soc.c                       |   23 +
->  drivers/soc/atmel/soc.h                       |    9 +
->  include/dt-bindings/clock/at91.h              |    4 +
->  32 files changed, 2840 insertions(+), 140 deletions(-)
->  create mode 100644 arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dts
->  create mode 100644 arch/arm/boot/dts/microchip/sam9x7.dtsi
->  create mode 100644 arch/arm/mach-at91/sam9x7.c
->  create mode 100644 drivers/clk/at91/sam9x7.c
-> 
-> --
-> 2.25.1
-> 
-> 
-> 
+Cc: Daniel Baluta <daniel.baluta@nxp.com>
+Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
+---
+ .../bindings/clock/nxp,lpc3220-clk.txt        | 30 -----------
+ .../bindings/clock/nxp,lpc3220-clk.yaml       | 51 +++++++++++++++++++
+ 2 files changed, 51 insertions(+), 30 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.yaml
 
-
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-New warnings running 'make CHECK_DTBS=y microchip/at91-sam9x75_curiosity.dtb' for 20240729065603.1986074-1-varshini.rajendran@microchip.com:
-
-arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /ahb/mmc@80000000: failed to match any schema with compatible: ['microchip,sam9x7-sdhci', 'microchip,sam9x60-sdhci']
-arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /ahb/mmc@80000000: failed to match any schema with compatible: ['microchip,sam9x7-sdhci', 'microchip,sam9x60-sdhci']
-arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /ahb/mmc@90000000: failed to match any schema with compatible: ['microchip,sam9x7-sdhci', 'microchip,sam9x60-sdhci']
-arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /ahb/mmc@90000000: failed to match any schema with compatible: ['microchip,sam9x7-sdhci', 'microchip,sam9x60-sdhci']
-arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/dma-controller@f0008000: failed to match any schema with compatible: ['microchip,sam9x7-dma', 'atmel,sama5d4-dma']
-arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/dma-controller@f0008000: failed to match any schema with compatible: ['microchip,sam9x7-dma', 'atmel,sama5d4-dma']
-arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/ssc@f0010000: failed to match any schema with compatible: ['microchip,sam9x7-ssc', 'atmel,at91sam9g45-ssc']
-arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/ssc@f0010000: failed to match any schema with compatible: ['microchip,sam9x7-ssc', 'atmel,at91sam9g45-ssc']
-arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/timer@f0028000: failed to match any schema with compatible: ['microchip,sam9x7-pit64b', 'microchip,sam9x60-pit64b']
-arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/timer@f0028000: failed to match any schema with compatible: ['microchip,sam9x7-pit64b', 'microchip,sam9x60-pit64b']
-arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/timer@f0040000: failed to match any schema with compatible: ['microchip,sam9x7-pit64b', 'microchip,sam9x60-pit64b']
-arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/timer@f0040000: failed to match any schema with compatible: ['microchip,sam9x7-pit64b', 'microchip,sam9x60-pit64b']
-arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/matrix@ffffde00: failed to match any schema with compatible: ['microchip,sam9x7-matrix', 'atmel,at91sam9x5-matrix', 'syscon']
-arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/matrix@ffffde00: failed to match any schema with compatible: ['microchip,sam9x7-matrix', 'atmel,at91sam9x5-matrix', 'syscon']
-arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/ecc-engine@ffffe000: failed to match any schema with compatible: ['microchip,sam9x7-pmecc', 'atmel,at91sam9g45-pmecc']
-arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/ecc-engine@ffffe000: failed to match any schema with compatible: ['microchip,sam9x7-pmecc', 'atmel,at91sam9g45-pmecc']
-arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/mpddrc@ffffe800: failed to match any schema with compatible: ['microchip,sam9x7-ddramc', 'atmel,sama5d3-ddramc']
-arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/mpddrc@ffffe800: failed to match any schema with compatible: ['microchip,sam9x7-ddramc', 'atmel,sama5d3-ddramc']
-arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/smc@ffffea00: failed to match any schema with compatible: ['microchip,sam9x7-smc', 'atmel,at91sam9260-smc', 'syscon']
-arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/smc@ffffea00: failed to match any schema with compatible: ['microchip,sam9x7-smc', 'atmel,at91sam9260-smc', 'syscon']
-arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/pinctrl@fffff400: failed to match any schema with compatible: ['microchip,sam9x7-pinctrl', 'microchip,sam9x60-pinctrl', 'simple-mfd']
-arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/pinctrl@fffff400: failed to match any schema with compatible: ['microchip,sam9x7-pinctrl', 'microchip,sam9x60-pinctrl', 'simple-mfd']
-arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/syscon@fffffe60: failed to match any schema with compatible: ['microchip,sam9x7-gpbr', 'atmel,at91sam9260-gpbr', 'syscon']
-arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/syscon@fffffe60: failed to match any schema with compatible: ['microchip,sam9x7-gpbr', 'atmel,at91sam9260-gpbr', 'syscon']
-
-
-
-
+diff --git a/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt b/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt
+deleted file mode 100644
+index 20cbca3f41d8..000000000000
+--- a/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt
++++ /dev/null
+@@ -1,30 +0,0 @@
+-NXP LPC32xx Clock Controller
+-
+-Required properties:
+-- compatible: should be "nxp,lpc3220-clk"
+-- reg:  should contain clock controller registers location and length
+-- #clock-cells: must be 1, the cell holds id of a clock provided by the
+-  clock controller
+-- clocks: phandles of external oscillators, the list must contain one
+-  32768 Hz oscillator and may have one optional high frequency oscillator
+-- clock-names: list of external oscillator clock names, must contain
+-  "xtal_32k" and may have optional "xtal"
+-
+-Examples:
+-
+-	/* System Control Block */
+-	scb {
+-		compatible = "simple-bus";
+-		ranges = <0x0 0x040004000 0x00001000>;
+-		#address-cells = <1>;
+-		#size-cells = <1>;
+-
+-		clk: clock-controller@0 {
+-			compatible = "nxp,lpc3220-clk";
+-			reg = <0x00 0x114>;
+-			#clock-cells = <1>;
+-
+-			clocks = <&xtal_32k>, <&xtal>;
+-			clock-names = "xtal_32k", "xtal";
+-		};
+-	};
+diff --git a/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.yaml b/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.yaml
+new file mode 100644
+index 000000000000..2faa845bab21
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.yaml
+@@ -0,0 +1,51 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/nxp,lpc3220-clk.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: NXP LPC32xx Clock Controller
++
++maintainers:
++  - Animesh Agarwal <animeshagarwal28@gmail.com>
++
++properties:
++  compatible:
++    const: nxp,lpc3220-clk
++
++  reg:
++    maxItems: 1
++
++  '#clock-cells':
++    const: 1
++
++  clocks:
++    description: Phandles of external oscillators, the list must contain one
++      32768 Hz oscillator and may have one optional high frequency oscillator.
++    maxItems: 2
++
++  clock-names:
++    oneOf:
++      - items:
++          - const: xtal_32k
++          - const: xtal
++      - const: xtal_32k
++
++required:
++  - compatible
++  - reg
++  - '#clock-cells'
++  - clocks
++  - clock-names
++
++additionalProperties: false
++
++examples:
++  - |
++    clock-controller@0 {
++        compatible = "nxp,lpc3220-clk";
++        reg = <0x00 0x114>;
++        #clock-cells = <1>;
++        clocks = <&xtal_32k>, <&xtal>;
++        clock-names = "xtal_32k", "xtal";
++    };
+-- 
+2.45.2
 
