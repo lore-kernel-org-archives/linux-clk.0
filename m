@@ -1,317 +1,172 @@
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CFF718A924
-	for <linux-clk@vger.kernel.org>; Mon, 29 Jul 2024 19:52:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69D66189F27;
+	Mon, 29 Jul 2024 20:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722282746; cv=none; b=WdVwZpMxIOAkPxKvFEFED3qR5tIAGJS0F86TqF3NGhAOzdcQkFoWsMjPhU1yQodslWV/0kSMo+59sCEIY+lP/JDl6AUBwbPMKRasFFTMkP12I8zwVgIa4/7Iof0kehMYlThTxCphBLo/uYBy8J2L65LsqRVQhlt0as8m0S3fUdA=
+	t=1722284911; cv=none; b=H9NdH0r39izQIDTgrhJUkR2R/9xYjuFineGZ56/7vSI+mrWlXGpuhrfqAk09r9awJrm3dLzWLBxU3Qwsq9kLCsreqVMGFTM5hqofQwKqRqiYbpOcGAX7QagjxOFe9fhYDBVYHsQKBThh+i9IXxsMQDFesf17MpKUx44yuEK6NwI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722282746; c=relaxed/simple;
-	bh=lGFZGgA/O9A/S5qTh5NR5ly34Ld4DtkmOO5/k+pKHKs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=mvG8WTUaqjcf75wMaf6HAGo+cdkK2T2W+OcxQHcl1VsU0D0EAzR2sQ+gFQnnYDl9UYuEhFfmBBHNCOcENh/3ma1oiv5CNHc0jk4wMUHvzFWBJ/tXX208GGiyuoRyTbHVN5ewxbQzar+vtMwXdmvHyA6ffGz3fNSnjh6SgsB/HjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RnOqvt/c; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1722284911; c=relaxed/simple;
+	bh=S7hvrf+9Paq/uhlTpuFZrrrwvEqHdkAAKsQXj61NzuI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kQ3rLi7PdjFElRxWEr2STJDR7u5xPAzbRTCRkUTn39SIORmtsYUAIo/nKmAHs7fqKI5d7NyGIa5J3s99idiTp95p1wrEkkzqLUTil6JQaawp7ejl7guXs7PYF7Y+YFoFKyVuX9SeMUbIlJ5/WjJ1Z6UhLW0Mvzgcm54BWfVIVzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RuByZOAN; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RnOqvt/c"
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52f01993090so6049433e87.2
-        for <linux-clk@vger.kernel.org>; Mon, 29 Jul 2024 12:52:24 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RuByZOAN"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42122ac2f38so13376365e9.1;
+        Mon, 29 Jul 2024 13:28:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722282743; x=1722887543; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=NzkDp7NapSOrLl8ec7U9pJiscxvgpUDR6AyuyeyD8V8=;
-        b=RnOqvt/c0e99g1wVhG8Heva0kcftKlRzHhhm++bjtQnuAltn3TSp72xr3PWMV2w13T
-         1nBMHAsJrJf4ThLFL0WwZIHVEr31HMqtDsUbRawj3/FylXarigvrLngUGyQkEYIoCHIS
-         /0ASiK1iD7EQYYDioZqMQet/9O+E2oR0PJU8ZDqd7Jg7P3evzwzG0kIQnzKj6B3o/QD7
-         hiZQ4GlTRR1hOQ1T1vNUF1dN3lKqWoXMtoapJiHIlJJDGeMH4RNs7xUH8ggz1jQ/RdFg
-         edcDGhNOgqboSOnazGYzyGGKrRag7yihi9y0IqLrZGTjqjn5DRNHCalhwO+UiKAh5dWH
-         lMxw==
+        d=gmail.com; s=20230601; t=1722284908; x=1722889708; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=W285L47FymCa5B1MY1AIE9W3CgMuwpH/hLzuxYQVFR8=;
+        b=RuByZOANP1ltJxsB6dJB26JDg+OHC6xNPuUIdW0ugZy7ALu8tUALXYPgStG+5wqp9P
+         dimfxlA0KPO3f9Gx2UfqT730DRSMJA3/wRBE/DdOugxQf4eqXdJLcKysT5Vb5gKUcuc0
+         lt9DsJ06dnqMtwEuBWBPC7/Mr9QMZRZwGipSZv/M03M8U1eK9xvEgVAf9eAvk/4Gpc3s
+         +uYAsmoLmP9cxa/SAQDFWfbc82lF5Ruf6ct0eb2LybG3GNy54bfL5oSATau8TXp5F9bN
+         bVdI1u/yfeKdkTZOXiWFX9BrOCqaaQW2VW04f+WHfM6KSPwZGZ1iGGRQ9p/XVsT/0Ari
+         cddA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722282743; x=1722887543;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NzkDp7NapSOrLl8ec7U9pJiscxvgpUDR6AyuyeyD8V8=;
-        b=ddFLAk8/rerqpnczYrx6+7Q6JRJjDoLWWmQwtpMtKxL7xMed7bvfFQUz1Wser5fTAM
-         CRr+PSxmW/R3vw6CIqzfJfgvIgx5pjWWhTnJPsqVzpMwL7m7bjfmci2LV7UEf5kdOJc2
-         Idy3QcIqdhRSJO6xCxPt2i24GF+01c4mH14LL5cDxuvKv87hNlAbkZmDdyLd7JAbd1wV
-         qyBcr2IgdR0GNpPKDOAX8AMlBFJr1tsBv5lTL0P/aEHUWbzGKzi4s3+Qk5MYZVVuByk9
-         icn9zXE5ZfGRrp5IC9DfyAx/rFpab/wq5HZdr8csQgupEgx5p0Hz3T5WqAKu6ujFDIJ4
-         R0dQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWZUMZDBHj4kN9Wgt/mA2VlVd84mr7l0ZzcsqKcCycc8PynW1vTmsBFByfv22l/9HyQP9lrrIft3WkTX5fD4saqbCPZZR0E0a7j
-X-Gm-Message-State: AOJu0Ywv1SIFLqV2eraxjZgiu7VRA0yOWsA2AahP4mDQpXotfqLsHSnk
-	OZfh4wx3zkU8ajS7VK6bhN0pz1EPTAoo3tDBKKk2ju+V3cwiE1XsVLsL5e5s25s=
-X-Google-Smtp-Source: AGHT+IEoUa5Kq4BiEJEbD/pnaPgcbfWAsGmbgkhlgJhiVuF+n53mG9ru8cRtBtnLWxCCpIfBP96BCA==
-X-Received: by 2002:ac2:4f07:0:b0:52e:a60e:3a08 with SMTP id 2adb3069b0e04-5309b25aa12mr7561340e87.11.1722282742634;
-        Mon, 29 Jul 2024 12:52:22 -0700 (PDT)
-Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52fd5bd1088sm1615590e87.106.2024.07.29.12.52.21
+        d=1e100.net; s=20230601; t=1722284908; x=1722889708;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=W285L47FymCa5B1MY1AIE9W3CgMuwpH/hLzuxYQVFR8=;
+        b=rKRPhbvk1dCDVIPMlqIwo3T8VbdM8A34/M2t81BWNJJoimjzjy3AzEyX3BXgs+XjF6
+         JBeKDk/ffx4MkCEMz8i7CRIFG80ozXDvHrUpIvPTdK/Z4hUItzGLQpPrLfHa0pdRS73F
+         fNjt8CPhpvZymmSlpcRtVJNtcNSJF+pbymxnb/ZCqIfUFCxJhf+p61w6zj1oXSkLkfgm
+         rS6o34oYFceE0V6Of+30odad1lcbfPVCLCXrN9PtPwVcHKqQeQpHdRGekqrVSVI6XCnE
+         Kk73BhJS1juptoWvyRPOEXunlAw7ith1LrXSgjssOLtAjg2OhuHWVb+rzXIpq2zntllW
+         I7TA==
+X-Forwarded-Encrypted: i=1; AJvYcCWvkJEcGqh9iTg/ULzEmfech2K9gzLaXAz52lrNCCMVG2PLy9U/T5gvxzVHdUneXlSGg7406DJMogNEFsT9Hptjypi4eo/N8btcEiKzhZeFAWWlI4bqjsCi9RumqwEvhJqfQtAiZJfoqk6Y4UZnlu2xf0l8LvsijfbdrjcIOLs9D95bVQ==
+X-Gm-Message-State: AOJu0YxgmiKfGwB4C9WnM7B/SKfPAqrzEfq0y26qbe9uH63pq7yHqEN9
+	9DcGkN6ie5nPXBIFEmHpEJ4+982z82bkyeqGorQ1LhbWrd8xfQW6
+X-Google-Smtp-Source: AGHT+IG7DX+8vGSp1IdYAI7LCaAtmO5EJO4lzP9zDgbDSE/2BA6sGAhtL1/ioaanHmeuCpLuC3OP5A==
+X-Received: by 2002:a05:600c:35d4:b0:428:b48:8eed with SMTP id 5b1f17b1804b1-42811e52248mr58321195e9.7.1722284907299;
+        Mon, 29 Jul 2024 13:28:27 -0700 (PDT)
+Received: from prasmi.home ([2a00:23c8:2500:a01:91c0:6bc7:8f80:c05e])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4280f484cdesm125478115e9.44.2024.07.29.13.28.26
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 12:52:21 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Mon, 29 Jul 2024 22:52:18 +0300
-Subject: [PATCH v2 5/5] arm64: dts: qcom: add generic compat string to RPM
- glink channels
+        Mon, 29 Jul 2024 13:28:26 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v5 0/3] Add CPG support for RZ/V2H(P) SoC
+Date: Mon, 29 Jul 2024 21:26:42 +0100
+Message-Id: <20240729202645.263525-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240729-fix-smd-rpm-v2-5-0776408a94c5@linaro.org>
-References: <20240729-fix-smd-rpm-v2-0-0776408a94c5@linaro.org>
-In-Reply-To: <20240729-fix-smd-rpm-v2-0-0776408a94c5@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Andy Gross <agross@kernel.org>, 
- Stephan Gerhold <stephan@gerhold.net>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=8405;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=lGFZGgA/O9A/S5qTh5NR5ly34Ld4DtkmOO5/k+pKHKs=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmp/Lxkkf1Hee0/3zaCdHJ6DntkURb4bZWzrS7n
- pJMqskhXzmJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZqfy8QAKCRCLPIo+Aiko
- 1UZ+CAClqTh6Y/FVSqyLyzKrVNGkoLtqAbBJkvsHJsoWgv9SgemgVqpfTXKk4lz9RojYo9XEZH7
- WFRiwQiU6VbsPlonYLUSCL6haENBgHtA1hcw65PlowiXM8Ysd+fldhDy2izWDz6ctABM2jOK95Q
- HBFNfeuHUcRPbincq6FErpQPZ9VAyFzMffLoYeJqwk7xwAeP/X/uPsuRDhnz24aF6oIOz5f5FPn
- YPZHOL76TZ+zkv4ag5u77AJERC7YUWjP5OypOXlcqri7qfj/CuckVMtqz0tWq/plyj7FcrdFVku
- N8EJvJoPmrAeTCGsYwALJm7NdgYRflH6gmn91d23ZNCCSJPi
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
+Content-Transfer-Encoding: 8bit
 
-Add the generic qcom,smd-rpm / qcom,glink-smd-rpm compatible to RPM
-nodes to follow the schema.
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- arch/arm64/boot/dts/qcom/ipq6018.dtsi | 2 +-
- arch/arm64/boot/dts/qcom/ipq9574.dtsi | 2 +-
- arch/arm64/boot/dts/qcom/msm8916.dtsi | 2 +-
- arch/arm64/boot/dts/qcom/msm8939.dtsi | 2 +-
- arch/arm64/boot/dts/qcom/msm8953.dtsi | 2 +-
- arch/arm64/boot/dts/qcom/msm8976.dtsi | 2 +-
- arch/arm64/boot/dts/qcom/msm8994.dtsi | 2 +-
- arch/arm64/boot/dts/qcom/msm8996.dtsi | 2 +-
- arch/arm64/boot/dts/qcom/msm8998.dtsi | 2 +-
- arch/arm64/boot/dts/qcom/qcm2290.dtsi | 2 +-
- arch/arm64/boot/dts/qcom/qcs404.dtsi  | 2 +-
- arch/arm64/boot/dts/qcom/sdm630.dtsi  | 2 +-
- arch/arm64/boot/dts/qcom/sm6115.dtsi  | 2 +-
- arch/arm64/boot/dts/qcom/sm6125.dtsi  | 2 +-
- arch/arm64/boot/dts/qcom/sm6375.dtsi  | 2 +-
- 15 files changed, 15 insertions(+), 15 deletions(-)
+Hi All,
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq6018.dtsi b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
-index e1e45da7f787..8edd535a188f 100644
---- a/arch/arm64/boot/dts/qcom/ipq6018.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq6018.dtsi
-@@ -168,7 +168,7 @@ glink-edge {
- 			mboxes = <&apcs_glb 0>;
- 
- 			rpm_requests: rpm-requests {
--				compatible = "qcom,rpm-ipq6018";
-+				compatible = "qcom,rpm-ipq6018", "qcom,glink-smd-rpm";
- 				qcom,glink-channels = "rpm_requests";
- 
- 				regulators {
-diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-index 48dfafea46a7..08a82a5cf667 100644
---- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-@@ -181,7 +181,7 @@ glink-edge {
- 			mboxes = <&apcs_glb 0>;
- 
- 			rpm_requests: rpm-requests {
--				compatible = "qcom,rpm-ipq9574";
-+				compatible = "qcom,rpm-ipq9574", "qcom,glink-smd-rpm";
- 				qcom,glink-channels = "rpm_requests";
- 			};
- 		};
-diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-index 7383bcc603ab..0ee44706b70b 100644
---- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-@@ -312,7 +312,7 @@ smd-edge {
- 			qcom,smd-edge = <15>;
- 
- 			rpm_requests: rpm-requests {
--				compatible = "qcom,rpm-msm8916";
-+				compatible = "qcom,rpm-msm8916", "qcom,smd-rpm";
- 				qcom,smd-channels = "rpm_requests";
- 
- 				rpmcc: clock-controller {
-diff --git a/arch/arm64/boot/dts/qcom/msm8939.dtsi b/arch/arm64/boot/dts/qcom/msm8939.dtsi
-index 46d9480cd464..28634789a8a9 100644
---- a/arch/arm64/boot/dts/qcom/msm8939.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8939.dtsi
-@@ -252,7 +252,7 @@ smd-edge {
- 			qcom,smd-edge = <15>;
- 
- 			rpm_requests: rpm-requests {
--				compatible = "qcom,rpm-msm8936";
-+				compatible = "qcom,rpm-msm8936", "qcom,smd-rpm";
- 				qcom,smd-channels = "rpm_requests";
- 
- 				rpmcc: clock-controller {
-diff --git a/arch/arm64/boot/dts/qcom/msm8953.dtsi b/arch/arm64/boot/dts/qcom/msm8953.dtsi
-index a4bfb624fb8a..d20fd3d7c46e 100644
---- a/arch/arm64/boot/dts/qcom/msm8953.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8953.dtsi
-@@ -199,7 +199,7 @@ smd-edge {
- 			qcom,smd-edge = <15>;
- 
- 			rpm_requests: rpm-requests {
--				compatible = "qcom,rpm-msm8953";
-+				compatible = "qcom,rpm-msm8953", "qcom,smd-rpm";
- 				qcom,smd-channels = "rpm_requests";
- 
- 				rpmcc: clock-controller {
-diff --git a/arch/arm64/boot/dts/qcom/msm8976.dtsi b/arch/arm64/boot/dts/qcom/msm8976.dtsi
-index d62dcb76fa48..c76cab9174be 100644
---- a/arch/arm64/boot/dts/qcom/msm8976.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8976.dtsi
-@@ -247,7 +247,7 @@ smd-edge {
- 			qcom,smd-edge = <15>;
- 
- 			rpm_requests: rpm-requests {
--				compatible = "qcom,rpm-msm8976";
-+				compatible = "qcom,rpm-msm8976", "qcom,smd-rpm";
- 				qcom,smd-channels = "rpm_requests";
- 
- 				rpmcc: clock-controller {
-diff --git a/arch/arm64/boot/dts/qcom/msm8994.dtsi b/arch/arm64/boot/dts/qcom/msm8994.dtsi
-index 917fa246857d..fc2a7f13f690 100644
---- a/arch/arm64/boot/dts/qcom/msm8994.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8994.dtsi
-@@ -188,7 +188,7 @@ smd-edge {
- 			qcom,remote-pid = <6>;
- 
- 			rpm_requests: rpm-requests {
--				compatible = "qcom,rpm-msm8994";
-+				compatible = "qcom,rpm-msm8994", "qcom,smd-rpm";
- 				qcom,smd-channels = "rpm_requests";
- 
- 				rpmcc: clock-controller {
-diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-index 0fd2b1b944a5..e5966724f37c 100644
---- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-@@ -472,7 +472,7 @@ glink-edge {
- 			mboxes = <&apcs_glb 0>;
- 
- 			rpm_requests: rpm-requests {
--				compatible = "qcom,rpm-msm8996";
-+				compatible = "qcom,rpm-msm8996", "qcom,glink-smd-rpm";
- 				qcom,glink-channels = "rpm_requests";
- 
- 				rpmcc: clock-controller {
-diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-index 7f44807b1b97..2bcfa480509d 100644
---- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-@@ -352,7 +352,7 @@ glink-edge {
- 			mboxes = <&apcs_glb 0>;
- 
- 			rpm_requests: rpm-requests {
--				compatible = "qcom,rpm-msm8998";
-+				compatible = "qcom,rpm-msm8998", "qcom,glink-smd-rpm";
- 				qcom,glink-channels = "rpm_requests";
- 
- 				rpmcc: clock-controller {
-diff --git a/arch/arm64/boot/dts/qcom/qcm2290.dtsi b/arch/arm64/boot/dts/qcom/qcm2290.dtsi
-index 8f3be4c75db3..79bc42ffb6a1 100644
---- a/arch/arm64/boot/dts/qcom/qcm2290.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcm2290.dtsi
-@@ -215,7 +215,7 @@ glink-edge {
- 			mboxes = <&apcs_glb 0>;
- 
- 			rpm_requests: rpm-requests {
--				compatible = "qcom,rpm-qcm2290";
-+				compatible = "qcom,rpm-qcm2290", "qcom,glink-smd-rpm";
- 				qcom,glink-channels = "rpm_requests";
- 
- 				rpmcc: clock-controller {
-diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-index c291bbed6073..cddc16bac0ce 100644
---- a/arch/arm64/boot/dts/qcom/qcs404.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-@@ -177,7 +177,7 @@ glink-edge {
- 			mboxes = <&apcs_glb 0>;
- 
- 			rpm_requests: rpm-requests {
--				compatible = "qcom,rpm-qcs404";
-+				compatible = "qcom,rpm-qcs404", "qcom,glink-smd-rpm";
- 				qcom,glink-channels = "rpm_requests";
- 
- 				rpmcc: clock-controller {
-diff --git a/arch/arm64/boot/dts/qcom/sdm630.dtsi b/arch/arm64/boot/dts/qcom/sdm630.dtsi
-index c7e3764a8cf3..c8da5cb8d04e 100644
---- a/arch/arm64/boot/dts/qcom/sdm630.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm630.dtsi
-@@ -372,7 +372,7 @@ glink-edge {
- 			mboxes = <&apcs_glb 0>;
- 
- 			rpm_requests: rpm-requests {
--				compatible = "qcom,rpm-sdm660";
-+				compatible = "qcom,rpm-sdm660", "qcom,glink-smd-rpm";
- 				qcom,glink-channels = "rpm_requests";
- 
- 				rpmcc: clock-controller {
-diff --git a/arch/arm64/boot/dts/qcom/sm6115.dtsi b/arch/arm64/boot/dts/qcom/sm6115.dtsi
-index e374733f3b85..41216cc319d6 100644
---- a/arch/arm64/boot/dts/qcom/sm6115.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm6115.dtsi
-@@ -376,7 +376,7 @@ glink-edge {
- 			mboxes = <&apcs_glb 0>;
- 
- 			rpm_requests: rpm-requests {
--				compatible = "qcom,rpm-sm6115";
-+				compatible = "qcom,rpm-sm6115", "qcom,glink-smd-rpm";
- 				qcom,glink-channels = "rpm_requests";
- 
- 				rpmcc: clock-controller {
-diff --git a/arch/arm64/boot/dts/qcom/sm6125.dtsi b/arch/arm64/boot/dts/qcom/sm6125.dtsi
-index 777c380c2fa0..133610d14fc4 100644
---- a/arch/arm64/boot/dts/qcom/sm6125.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm6125.dtsi
-@@ -192,7 +192,7 @@ glink-edge {
- 			mboxes = <&apcs_glb 0>;
- 
- 			rpm_requests: rpm-requests {
--				compatible = "qcom,rpm-sm6125";
-+				compatible = "qcom,rpm-sm6125", "qcom,glink-smd-rpm";
- 				qcom,glink-channels = "rpm_requests";
- 
- 				rpmcc: clock-controller {
-diff --git a/arch/arm64/boot/dts/qcom/sm6375.dtsi b/arch/arm64/boot/dts/qcom/sm6375.dtsi
-index ddea681b536d..4d519dd6e7ef 100644
---- a/arch/arm64/boot/dts/qcom/sm6375.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm6375.dtsi
-@@ -653,7 +653,7 @@ IPCC_MPROC_SIGNAL_GLINK_QMP
- 			mboxes = <&ipcc IPCC_CLIENT_AOP IPCC_MPROC_SIGNAL_GLINK_QMP>;
- 
- 			rpm_requests: rpm-requests {
--				compatible = "qcom,rpm-sm6375";
-+				compatible = "qcom,rpm-sm6375", "qcom,glink-smd-rpm";
- 				qcom,glink-channels = "rpm_requests";
- 
- 				rpmcc: clock-controller {
+This patch series aims to add the CPG support for the Renesas
+RZ/V2H(P) SoC.
+
+v4->v5
+- Included RB tag form Geert for patchs 1/3 and 3/3
+- Packed resets array
+- Updated rzv2h_cpg_reset_xlate() to get index
+- Dropped description for info member from struct rzv2h_cpg_priv
+
+v3 -> v4
+- Included RB tag form Krzysztof for patch 1/3
+- Changed reset and clock values to hex
+- Renamed __DT_BINDINGS_CLOCK_R9A09G057_CPG_H__ to
+  __DT_BINDINGS_CLOCK_RENESAS_R9A09G057_CPG_H__
+- Dropped masking of parent clks with 0xffff
+- Dropped storing mod clk id and now calculating it
+  based on index and bit.
+- Made parent to u16 in struct rzv2h_mod_clk
+- Made a copy of resets array in struct rzv2h_cpg_priv
+- Added a comment for core clocks in patch 3/3
+- Made r9a09g057_mod_clks as __initconst
+- Made r9a09g057_resets as __initconst
+- Made r9a09g057_cpg_info as __initconst
+
+v2 -> v3
+- Dropped '|' for CPG description
+- Dropped description for '#power-domain-cells' property
+- Added 3 clock inputs for CPG
+- Dropped label in example node
+- Used 4 spaces for example node
+- Renamed r9a09g057-cpg.h -> renesas,r9a09g057-cpg.h
+- Merged adding renesas,r9a09g057-cpg.h in DT binding patch
+- Updated commit message for patch 1/3
+- Dropped num_hw_resets from struct rzv2h_cpg_priv
+- Dropped range_check for module clocks
+- Made mon_index to s8 instead of u8 in struct rzv2h_mod_clk
+- Added support for critical module clocks with DEF_MOD_CRITICAL
+- Added check for mon_index in rzv2h_mod_clock_endisable and
+  rzv2h_mod_clock_is_enabled()
+- Added CLK_PLLDTY
+- Added core clocks sys_0_pclk and iotop_0_shclk
+- Dropped r9a09g057_crit_mod_clks
+
+v1 -> v2
+- Updated commit message
+- Updated description for binding as suggested by Geert
+- Updated descriptions for clocks and resets property
+- Renamed extal->qextal
+- Updated '#power-domain-cells' value
+- Dropped the module clocks and just added the core clocks
+- Introduced family specific config option
+- Now using register indexes for CLKON/CLKMON/RST/RSTMON
+- Introduced PLL_CONF macro
+- Dropped function pointer to get PLL_CLK1/2 offsets
+- Added range check for core clks
+- Dropped NULLified clocks check
+- Dropped pll_clk1/clk2_offset
+- Made r9a09g057_mod_clks/r9a09g057_resets as static const
+
+v1: https://patchwork.kernel.org/project/linux-renesas-soc/cover/20240524082800.333991-1-prabhakar.mahadev-lad.rj@bp.renesas.com/
+
+Cheers,
+Prabhakar
+
+Lad Prabhakar (3):
+  dt-bindings: clock: renesas: Document RZ/V2H(P) SoC CPG
+  clk: renesas: Add family-specific clock driver for RZ/V2H(P)
+  clk: renesas: Add RZ/V2H(P) CPG driver
+
+ .../bindings/clock/renesas,rzv2h-cpg.yaml     |  80 ++
+ drivers/clk/renesas/Kconfig                   |   9 +
+ drivers/clk/renesas/Makefile                  |   2 +
+ drivers/clk/renesas/r9a09g057-cpg.c           |  80 ++
+ drivers/clk/renesas/rzv2h-cpg.c               | 689 ++++++++++++++++++
+ drivers/clk/renesas/rzv2h-cpg.h               | 151 ++++
+ .../dt-bindings/clock/renesas,r9a09g057-cpg.h |  21 +
+ 7 files changed, 1032 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/renesas,rzv2h-cpg.yaml
+ create mode 100644 drivers/clk/renesas/r9a09g057-cpg.c
+ create mode 100644 drivers/clk/renesas/rzv2h-cpg.c
+ create mode 100644 drivers/clk/renesas/rzv2h-cpg.h
+ create mode 100644 include/dt-bindings/clock/renesas,r9a09g057-cpg.h
 
 -- 
-2.39.2
+2.34.1
 
