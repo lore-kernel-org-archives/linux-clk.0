@@ -1,183 +1,173 @@
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98A5A186E4F;
-	Mon, 29 Jul 2024 19:37:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C76631891B9
+	for <linux-clk@vger.kernel.org>; Mon, 29 Jul 2024 19:52:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722281876; cv=none; b=SZaln/1as3WFFGlRUwGJC+jL+gtxPoKco1r0C/dJd/16IE163Y1dAg9oJyvBqPr9BOC4csKduaa2vx9MOHLXqKcbnwtL3zgApaLmh6yiTBtLqO0hpCePxwnPOyC791H+eyAoRPRokN1a0R43szy8YL9hmxD11FlWLU441O2P1xE=
+	t=1722282742; cv=none; b=ROVQm7Q6z5kfRhO7j1a8/YzC2WQ5yZPcjuBzpwDG/KZo4QeSIe7qtyme8P9Ms5mkQgrv4+gJn3uzE9/3i3WqljOAOsZ8Rroc7lUg+iEklo4SIqHPOYzkisexfVf0KQsD6Q8nZ5HkoiwNco6nTsTfjDZHHtk8F7SCykzkkc5kauo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722281876; c=relaxed/simple;
-	bh=lbQL5JO9A9Zffie3YIm36F9Acyj955px1UEdozg9wjc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EsOKHu2dHwXwQ6y6I15toLR7vySnH0AT/Xcwu0wLt/Oznf9bre8IhE7zZ9y5e6GSbi4S64PnbIvAB3CmT45vDWzJDXX1SentZkS0WNMaLPQDvffS2Bz/GKQE9M+mbfOmpZHbU4WTtasYHxli21LoQCVXR8RzKQQXmaF4ADLxIcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UoEtHz6h; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1722282742; c=relaxed/simple;
+	bh=eAWrLr7syK4v9OEqvlyX0jICgB4CRiMGpoCpwqQgJpI=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=DnIHwI0Oe7cCJ9qYmS9AXRZN1gE4g9fbbsnG8+/I0XKriJzsgRL8D4BA9avFA+ZXiDnXNp7L+0GSzbXXnPxEHEEYIs7zq5xqCHcHMm21us/I+9RR1C94ElI6ZbWbQ4T5UBokLD9PtbWKLeiW+srxOgrdB5iVidsIy52Oooxrohk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DYDNzClN; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UoEtHz6h"
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-70d2b921c48so2726622b3a.1;
-        Mon, 29 Jul 2024 12:37:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DYDNzClN"
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-52ed741fe46so4159992e87.0
+        for <linux-clk@vger.kernel.org>; Mon, 29 Jul 2024 12:52:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722281874; x=1722886674; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=WuL+X0cuNqgatZoPaLJRqOKFz6ZRnHI8J9rGMVL8Gbw=;
-        b=UoEtHz6hXJ5yXbohkBaMhS9dJCyHBVZ9o07U48XY/2JwNoK5qa7rbYtu/dKQz0GvXI
-         LBeJkIH6ZqQKG1EBkZMQlfxFJOSwFyv6gQrDHp0IJhbBtSULxgoU4Nw11J5fAD2/zRlo
-         5qki7p743DMfUq6MDg0nvqG+RB6N7hpQYCvhxCRblONFTLOTTuiXP08Ooy2U2tqeagni
-         lhw2ExZQxqlzSH13vwek4xCZYVX/MQHvAexXK1pG/Kzxnv1NMpBEAeyydUQQd9Wm/JpH
-         /+tDQCBBIgjSQJSPmfKivRfyckmIsf37m6XuOu0IYEbzHJjpNsfRpDvZwHdH5fDCTQzl
-         T/0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722281874; x=1722886674;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1722282739; x=1722887539; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=WuL+X0cuNqgatZoPaLJRqOKFz6ZRnHI8J9rGMVL8Gbw=;
-        b=fmaYtJepmDp1uUcHOP9ho4LfQ+tC++nfy2xjZd8lei4VBoxBaaPuYlppmW/01p5nWV
-         FdO9LNQeQe9m/iL6qzQKa7xxZD3orMhvroJppYdXsllTsk+CM1CYrq6+UNQ04N3TvykT
-         K3e69V798eyS1Gw8geCSW+lu0QO+1r7ExHVtOj6/sMk6ZahERTSEOjxonf9Fo2uNcKqd
-         JbCjGvy2oGh2BMxBxMZZZtcglr4pKYhRyPvcdrl+FcJYUayLEHHCkR5iXdt78yFlnYrv
-         25nATpYYd165aX3+G95t1TVt5mg8pM3E5uG5bTY8+O8H4U3ty+nCDQKN8aw4sb49tr+6
-         A/Tg==
-X-Forwarded-Encrypted: i=1; AJvYcCW4lCsSza+0QxauznOoFAU1xSTyke2c1vF6TOXTVoj6niw0NylyRORnBVdLXOHQ0ZVyDbjxLifgJ+aohTnr@vger.kernel.org, AJvYcCX4ti0YoXSavV76rNTlOLvo1AWyOEM24W8vxH5Ana61I2zWVm4A/oVQT66+6wx/OMUkVZqE6P88cjrY@vger.kernel.org, AJvYcCXtOEdT6LGP/0LEfSEJ8eLvxyRFPQra5HQvbshT8eu/iIj7uZFsANAzPuT6p4cH+AofapctT0ZpRmPa@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx1vCPcKIQ0HvSBfSJ5WZZizKnwPRQ4HZedXIglpll+fdy+9Dz3
-	/9CUbBLSVLjcqsMjmHb5Z1zxEegh/sL17EJxwVyOPz4seeTddB3H
-X-Google-Smtp-Source: AGHT+IHM31GPVlJI3xYYzrz/YcFa0e7LtoyNUZirTosFge3OL28eCwLFmqDJtlOhGMcicQbeKtuUVg==
-X-Received: by 2002:a05:6a20:3952:b0:1c4:9886:b511 with SMTP id adf61e73a8af0-1c4a117921cmr7845881637.2.1722281873546;
-        Mon, 29 Jul 2024 12:37:53 -0700 (PDT)
-Received: from localhost.localdomain ([2409:40f4:39:bb36:901a:3e6d:4815:b10c])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-70ead8116a4sm7146706b3a.130.2024.07.29.12.37.50
+        bh=Nvigx8ftGFF7H3oC6jrwYCq182+kCMKq67geJyZJwro=;
+        b=DYDNzClN3HjqbPrO9e2tHHpL8Vua6aB0g5eAW6bFL+y0NslgYm1GZs+Z2h33uSrtcP
+         dqqQWBd4t3bHqrpU92YQjuSb111rT5KvHN1Ku2Amuafa20ab28NQdxPUmoZzVCyjV31E
+         eIQ6bx8khWnhMNK4O/Im4JMA+nqyhkJlrBTh9iy/ar8QN78VTmSjgyiUVK8R1EJ6IOif
+         z0BsvwiIb6pjlQFuLJMNEMZo2WUJ8FiST8An5/nNIk4siJOOC/zouJ/swmZB/HzzLrRY
+         bter5rw4aDWzfeh7HrkZ74uk+8SX/fFVHYNCGqE6L84MC/sCoc3hs79cRH1jLeNaN2sQ
+         9DPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722282739; x=1722887539;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Nvigx8ftGFF7H3oC6jrwYCq182+kCMKq67geJyZJwro=;
+        b=U1GsHxsIICp7iFcAmtJ0aV/4UKx+jeWCfD/Ln52GcJwCaW+A6NfdxdQ3dgZYLZt/wr
+         58i6IwNlb2oyQkggXkyqcOx2pWFxCqCYTyE9CQI7RQ9ytIJwL9GhBIOOPm1m/mezs5Kc
+         aJ4URXhE09ob7RCb8EXuGXIuxFdavGx705JVEQNcww2KyOzi0qrQBmWmYknQyuJvhchL
+         UKTpJRAyf9M6d001oYzJTo8og90pA26KzFAGGqbnPoS0WwWSRbg97dDq2B+TkpwXhYOe
+         KXhVnd78fLkAypcX0v44D3GOQQomNeaQ0FeVs9Fx+UPW0XmviHFIjoSK7ALH2f4L4oWB
+         PkgA==
+X-Forwarded-Encrypted: i=1; AJvYcCUSWy7dtij5jf6oYAP0ISul4w0ZmA9wr5yg8m7xtdYlNS0t0FuzrhawxXPjEq5D2Qe0hfLA9Hnv5xUZmXh43VzJewKil4KwR6JG
+X-Gm-Message-State: AOJu0YwwraZ0/QgG2BpIa83ZTKW5kQ0o5KSqiDIhsObag7HwkjhCy1rU
+	ym5rKiaNVzLfabZ5RAS26KrCH/p7LE29Yf2g5ranrKpNZSOCJMi5ssnVxMT1qpU=
+X-Google-Smtp-Source: AGHT+IGZlWDv3cUJamS7yAPDFJ6RuaWt80rzcBym584uDDeV+HSA4wGbfxK7k/Vq0NoejHp/4NZMYA==
+X-Received: by 2002:a05:6512:39c2:b0:52e:9f6b:64 with SMTP id 2adb3069b0e04-5309b280988mr6581712e87.34.1722282738946;
+        Mon, 29 Jul 2024 12:52:18 -0700 (PDT)
+Received: from umbar.lan ([192.130.178.91])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52fd5bd1088sm1615590e87.106.2024.07.29.12.52.18
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 12:37:53 -0700 (PDT)
-From: Animesh Agarwal <animeshagarwal28@gmail.com>
-To: 
-Cc: Animesh Agarwal <animeshagarwal28@gmail.com>,
-	Daniel Baluta <daniel.baluta@nxp.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: clock: nxp,lpc3220-clk: Convert bindings to DT schema
-Date: Tue, 30 Jul 2024 01:07:25 +0530
-Message-ID: <20240729193731.142069-1-animeshagarwal28@gmail.com>
-X-Mailer: git-send-email 2.45.2
+        Mon, 29 Jul 2024 12:52:18 -0700 (PDT)
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Mon, 29 Jul 2024 22:52:14 +0300
+Subject: [PATCH v2 1/5] Revert "soc: qcom: smd-rpm: Match rpmsg channel
+ instead of compatible"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240729-fix-smd-rpm-v2-1-0776408a94c5@linaro.org>
+References: <20240729-fix-smd-rpm-v2-0-0776408a94c5@linaro.org>
+In-Reply-To: <20240729-fix-smd-rpm-v2-0-0776408a94c5@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Andy Gross <agross@kernel.org>, 
+ Stephan Gerhold <stephan@gerhold.net>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+ linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org, 
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, stable@vger.kernel.org
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2654;
+ i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
+ bh=eAWrLr7syK4v9OEqvlyX0jICgB4CRiMGpoCpwqQgJpI=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmp/LwCTuCYU/6YSCjas4tG0SVviSh/CHbKxAIY
+ fuevwTc63KJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZqfy8AAKCRCLPIo+Aiko
+ 1al3B/sHtT2AVBPTL48APedB46dbqPApKIDMgtlWXbXRRqxinGGdDTVgPF+JEQXY43+bzpO5X9H
+ kP603xOrJ0y9Iq+d5Xnz0sRHcKENQMXbiNV2jmpFwuoe/4SORdHShTmrwIpIC/65GegFokHc3Y9
+ nP9aCSfF1WbV2JSzSRR7QKWoWbHk7o6a51sClz/cBepB3iOKObdLvbPLC5DOqgyjNFTHeN2orME
+ 7lnDmaH7pnIV+5CQ/V7Q2rIHU+0pb9t9RlWC7uzdS05a+5x8UXmSAbHMugoo6OV7KqNRx3WfHGd
+ FabAM4MlzKiRgXvJ4uG7ZXdhfEeONdh6eQ2G5BskecsAX0rw
+X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
+ fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-Convert the NXP LPC32xx Clock Controller bindings to yaml format.
+The rpm_requests device nodes have the compatible node. As such the
+rpmsg core uses OF modalias instead of a native rpmsg modalias. Thus if
+smd-rpm is built as a module, it doesn't get autoloaded for the device.
 
-Cc: Daniel Baluta <daniel.baluta@nxp.com>
-Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
+Revert the commit bcabe1e09135 ("soc: qcom: smd-rpm: Match rpmsg channel
+instead of compatible")
+
+Fixes: bcabe1e09135 ("soc: qcom: smd-rpm: Match rpmsg channel instead of compatible")
+Cc: stable@vger.kernel.org
+Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- .../bindings/clock/nxp,lpc3220-clk.txt        | 30 -----------
- .../bindings/clock/nxp,lpc3220-clk.yaml       | 51 +++++++++++++++++++
- 2 files changed, 51 insertions(+), 30 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt
- create mode 100644 Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.yaml
+ drivers/soc/qcom/smd-rpm.c | 35 ++++++++++++++++++++++++++---------
+ 1 file changed, 26 insertions(+), 9 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt b/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt
-deleted file mode 100644
-index 20cbca3f41d8..000000000000
---- a/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt
-+++ /dev/null
-@@ -1,30 +0,0 @@
--NXP LPC32xx Clock Controller
+diff --git a/drivers/soc/qcom/smd-rpm.c b/drivers/soc/qcom/smd-rpm.c
+index b7056aed4c7d..9d64283d2125 100644
+--- a/drivers/soc/qcom/smd-rpm.c
++++ b/drivers/soc/qcom/smd-rpm.c
+@@ -196,9 +196,6 @@ static int qcom_smd_rpm_probe(struct rpmsg_device *rpdev)
+ {
+ 	struct qcom_smd_rpm *rpm;
+ 
+-	if (!rpdev->dev.of_node)
+-		return -EINVAL;
 -
--Required properties:
--- compatible: should be "nxp,lpc3220-clk"
--- reg:  should contain clock controller registers location and length
--- #clock-cells: must be 1, the cell holds id of a clock provided by the
--  clock controller
--- clocks: phandles of external oscillators, the list must contain one
--  32768 Hz oscillator and may have one optional high frequency oscillator
--- clock-names: list of external oscillator clock names, must contain
--  "xtal_32k" and may have optional "xtal"
--
--Examples:
--
--	/* System Control Block */
--	scb {
--		compatible = "simple-bus";
--		ranges = <0x0 0x040004000 0x00001000>;
--		#address-cells = <1>;
--		#size-cells = <1>;
--
--		clk: clock-controller@0 {
--			compatible = "nxp,lpc3220-clk";
--			reg = <0x00 0x114>;
--			#clock-cells = <1>;
--
--			clocks = <&xtal_32k>, <&xtal>;
--			clock-names = "xtal_32k", "xtal";
--		};
--	};
-diff --git a/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.yaml b/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.yaml
-new file mode 100644
-index 000000000000..2faa845bab21
---- /dev/null
-+++ b/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.yaml
-@@ -0,0 +1,51 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/clock/nxp,lpc3220-clk.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: NXP LPC32xx Clock Controller
-+
-+maintainers:
-+  - Animesh Agarwal <animeshagarwal28@gmail.com>
-+
-+properties:
-+  compatible:
-+    const: nxp,lpc3220-clk
-+
-+  reg:
-+    maxItems: 1
-+
-+  '#clock-cells':
-+    const: 1
-+
-+  clocks:
-+    description: Phandles of external oscillators, the list must contain one
-+      32768 Hz oscillator and may have one optional high frequency oscillator.
-+    maxItems: 2
-+
-+  clock-names:
-+    oneOf:
-+      - items:
-+          - const: xtal_32k
-+          - const: xtal
-+      - const: xtal_32k
-+
-+required:
-+  - compatible
-+  - reg
-+  - '#clock-cells'
-+  - clocks
-+  - clock-names
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    clock-controller@0 {
-+        compatible = "nxp,lpc3220-clk";
-+        reg = <0x00 0x114>;
-+        #clock-cells = <1>;
-+        clocks = <&xtal_32k>, <&xtal>;
-+        clock-names = "xtal_32k", "xtal";
-+    };
+ 	rpm = devm_kzalloc(&rpdev->dev, sizeof(*rpm), GFP_KERNEL);
+ 	if (!rpm)
+ 		return -ENOMEM;
+@@ -218,18 +215,38 @@ static void qcom_smd_rpm_remove(struct rpmsg_device *rpdev)
+ 	of_platform_depopulate(&rpdev->dev);
+ }
+ 
+-static const struct rpmsg_device_id qcom_smd_rpm_id_table[] = {
+-	{ .name = "rpm_requests", },
+-	{ /* sentinel */ }
++static const struct of_device_id qcom_smd_rpm_of_match[] = {
++	{ .compatible = "qcom,rpm-apq8084" },
++	{ .compatible = "qcom,rpm-ipq6018" },
++	{ .compatible = "qcom,rpm-ipq9574" },
++	{ .compatible = "qcom,rpm-msm8226" },
++	{ .compatible = "qcom,rpm-msm8909" },
++	{ .compatible = "qcom,rpm-msm8916" },
++	{ .compatible = "qcom,rpm-msm8936" },
++	{ .compatible = "qcom,rpm-msm8953" },
++	{ .compatible = "qcom,rpm-msm8974" },
++	{ .compatible = "qcom,rpm-msm8976" },
++	{ .compatible = "qcom,rpm-msm8994" },
++	{ .compatible = "qcom,rpm-msm8996" },
++	{ .compatible = "qcom,rpm-msm8998" },
++	{ .compatible = "qcom,rpm-sdm660" },
++	{ .compatible = "qcom,rpm-sm6115" },
++	{ .compatible = "qcom,rpm-sm6125" },
++	{ .compatible = "qcom,rpm-sm6375" },
++	{ .compatible = "qcom,rpm-qcm2290" },
++	{ .compatible = "qcom,rpm-qcs404" },
++	{}
+ };
+-MODULE_DEVICE_TABLE(rpmsg, qcom_smd_rpm_id_table);
++MODULE_DEVICE_TABLE(of, qcom_smd_rpm_of_match);
+ 
+ static struct rpmsg_driver qcom_smd_rpm_driver = {
+ 	.probe = qcom_smd_rpm_probe,
+ 	.remove = qcom_smd_rpm_remove,
+ 	.callback = qcom_smd_rpm_callback,
+-	.id_table = qcom_smd_rpm_id_table,
+-	.drv.name = "qcom_smd_rpm",
++	.drv  = {
++		.name  = "qcom_smd_rpm",
++		.of_match_table = qcom_smd_rpm_of_match,
++	},
+ };
+ 
+ static int __init qcom_smd_rpm_init(void)
+
 -- 
-2.45.2
+2.39.2
 
