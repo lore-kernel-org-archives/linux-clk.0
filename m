@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFB1D18A948;
-	Mon, 29 Jul 2024 23:11:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 633EB288BD;
+	Mon, 29 Jul 2024 23:20:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722294698; cv=none; b=sTVjHUtUjmX2rQBTrO0ySKFWwLDsAk8fEu+86WGBMvtQ3qR4RLLxveEbDN1tnBLFCsJ2KsEOLdQDVlBEMG+9KpLd22DTH4BvNznYpK6Ti9Mo+uizTj7tb4BD0jnTVcgDR1FrYJYbo8puKBsqtpzmlCp+NmT+dmyibWs9IpeVzk4=
+	t=1722295202; cv=none; b=rHkiBlYuKHKWCSNbBsGSST80xGlJh3Ob8LCN9IW8dgQgDfFEGqsYx/TrpERlwip2pkZC0hl+atZRE3dARhuLVecTPqUcDzR8pHxfRrRbtyqPs6MCIVmTsyV+96AotAuF5g+Zzh74kfpcXvMBISaTy5vXPfy6ikbyB68NhgD1x80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722294698; c=relaxed/simple;
-	bh=zRWYUsOVWmCW1ARRgFXXssRkqPSAfDAPe8/80wD4ars=;
+	s=arc-20240116; t=1722295202; c=relaxed/simple;
+	bh=uX7VwlDqNgfUpg2s2F8JxYe1gxHFDl4plbquYzcgJng=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=JrAJDBy0qQf3mZ4GE5WOx/0eFlRoClhf1rpvtJz7c+pxPWFmNUQilGniApfOSL+yjqpYlxTmyzu4d0PMl5LZnA+eQjeiDgT31tnwVQ17jqsucFBnsZB/NpSIfspuFa88ID83LQvfdlFmA2h42TGtVah68zJXBwg+HQqz5BnUxbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FZsjA2Z9; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=X0WC6ptibfeBBlhwMyE7EOAZyb2EDF+uAYSoappzfiVqbelVhKxvue15cTVTNe5TPQHi3dhXjsjUBaMklRRG8HDyUoZmi9MYPYy+LkJyYwax3BcD2LB8bVatn2t4zYAaDpWNCBBINb3PZqMfT+WGIlGaJXPzCsmqitzyBqBMmSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MhhBmRoC; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FZsjA2Z9"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B6D5C32786;
-	Mon, 29 Jul 2024 23:11:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MhhBmRoC"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC335C32786;
+	Mon, 29 Jul 2024 23:20:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722294697;
-	bh=zRWYUsOVWmCW1ARRgFXXssRkqPSAfDAPe8/80wD4ars=;
+	s=k20201202; t=1722295202;
+	bh=uX7VwlDqNgfUpg2s2F8JxYe1gxHFDl4plbquYzcgJng=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=FZsjA2Z9icRNAfDBcYD+obscw/zmL9iQkCsVmgzoFdUzkNzMhqpiA594H2Kr/zcpe
-	 jSkJMnG6O17tWP8VmOhpIYjKBxeZ731Wvu9KAWl6yjI84gYTF/A6cFc5N9bSVx1iyG
-	 EJAyohZSWzi227B8Dc2USOkWzqfMZ458az4ThNe0f2BYcj1Uk118NEmHW2l6hXvlua
-	 3BWicbIwwzKOtA8q32lJGrp9EgAxnzRroSK0BFooJ5f1lhOcXjD3x7CiZ2OxNAyE3T
-	 sOGR/rfzVBleTDRE4dvrdagVZS43Kn6GBkiXhJOLigGe+V7vlUV/vHr8n0e3K1gGHY
-	 ZApXXKdQlH9mg==
-Message-ID: <076d5370a9b163f46170a6f581088246.sboyd@kernel.org>
+	b=MhhBmRoC++Q7b4J+bnmsrh8seHolzYY5DFI2Ak7THB8OE8y/hntHwccz2ycYGRZjW
+	 uX0tPnIeX7NYAOf5TLpxZ0XKZda0XP6V9j2rKJvY5Cs55uYJOhtzlUPiN8o3BfUUVN
+	 QZ5tWeZzo2RnrzyTp0aOVFpwHHPPJN8QYs8qKwrWOi+AwKEq0v0IpfxkIzfNGVsa8N
+	 gTaWqTjXNXAdVTysxwhm8/FYZ11nbJCYvo4MD91o5sXDWAqgpivTCKpIFsbuxRFs5b
+	 XNERy5sxYNLKlm2Pnfry/RkTFEEVn9Iih4Pwo+lMNVpfvl1a3uLQ75cSFudRn68epG
+	 0Yx2O/lt2TYiw==
+Message-ID: <befaae6341af835dab1349eb351b0bca.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,22 +35,23 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240718082528.220750-1-angelogioacchino.delregno@collabora.com>
-References: <20240718082528.220750-1-angelogioacchino.delregno@collabora.com>
-Subject: Re: [PATCH] clk: mediatek: reset: Remove unused mtk_register_reset_controller()
+In-Reply-To: <20240720152447.311442-1-david.hunter.linux@gmail.com>
+References: <20240720152447.311442-1-david.hunter.linux@gmail.com>
+Subject: Re: [PATCH] da8xx-cfgchip.c: replace of_node_put with __free improves cleanup
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com, mturquette@baylibre.com, p.zabel@pengutronix.de, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org, kernel@collabora.com
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Date: Mon, 29 Jul 2024 16:11:35 -0700
+Cc: David Hunter <david.hunter.linux@gmail.com>, julia.lawall@inria.fr, skhan@linuxfoundation.org, javier.carrasco.cruz@gmail.com
+To: David Hunter <david.hunter.linux@gmail.com>, david@lechnology.com, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, mturquette@baylibre.com
+Date: Mon, 29 Jul 2024 16:19:59 -0700
 User-Agent: alot/0.10
 
-Quoting AngeloGioacchino Del Regno (2024-07-18 01:25:28)
-> Now that all clock controllers have been migrated to the new
-> mtk_register_reset_controller_with_dev() function, the one taking
-> struct device node is now unused: remove it.
+Quoting David Hunter (2024-07-20 08:24:47)
+> The use of the __free function allows the cleanup to be based on scope
+> instead of on another function called later. This makes the cleanup
+> automatic and less susceptible to errors later.
 >=20
-> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
-abora.com>
+> This code was compiled without errors or warnings.
+>=20
+> Signed-off-by: David Hunter <david.hunter.linux@gmail.com>
 > ---
 
 Applied to clk-next
