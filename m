@@ -1,241 +1,101 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1825144D01;
-	Mon, 29 Jul 2024 11:26:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5721D145FE1
+	for <linux-clk@vger.kernel.org>; Mon, 29 Jul 2024 12:31:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722252391; cv=none; b=pYQvpdGZ69V6ZMCAukoVc151dtLuKgPbMXk5Z2O8UElj97O4BfSxIXHTB1NdC4KN4zq5QBW7Boojy9t9eN2kDLrWDoasGuMqpTQnZABHODSnA79DUBkBZ1YnTOtwNYtRDMAXESDGiEbmceDRveWzLj0RNvmBHT07pS3rDusq9G4=
+	t=1722256277; cv=none; b=M8T4spkYOJ6SQ5RYbS6NNKyhoeFJN68TSXRLUHG1VYWnNcJz7oJLssXNLeYmUgxgga/3u0ZYcLvlWiGDDE04J6GkQEUg66gDco6T9NELoAZgYBkqwcYaMGkSrTx8Jm4PAvwI4T9yMTlT2QOJj+jby4zoNY1J5MyJ4Bjeucu3EB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722252391; c=relaxed/simple;
-	bh=yLGF8JW3xZw1VqZs1kqaPEUzwEBb9q0j0bkuTrhBDds=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=YuYKO3Jtdtw2BEOFexjh8h0Hj9MSrNMew6tAltNeJM2v04fz3N8oId+v+9BYy3CNVDOBECS/irG1snbNlxQyCRtUnYnO6tv7lxM6dOVl977OBAzFGY+oDzV4c/dtVzysvj6rtI1Ta3/gVYCQnJ9Bvlk+9svR9Wi5EM4Ft1ogo9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Pd/0eOOW; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1722256277; c=relaxed/simple;
+	bh=1MJdqvR4l66CFymtTigURAQi+Ak55GLMbQ2E/5ReGDM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=RhztffOpt7U4rgDtQ6iSBk31AQDKkpNqMayo3eEtMz8pKidcJjRiUxajowAL6Na5oTFzGhSi86NoqFCKnjetsrjEv0XZDNPrReI4USPira6i+ucwhj5SR3odDGbqKFPee7WGq6LaKbdfd7lSHDzVXSjdRjLNzQ6SKtkTWCNr7zE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RA1Vd/YF; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Pd/0eOOW"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46TALS9v024192;
-	Mon, 29 Jul 2024 11:25:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	H/hd/iUSykh9ROSYpv2MNvVhqWXLxfQrqoQ+P7j9L60=; b=Pd/0eOOWewLoXQEx
-	PVRZA38BqR/pQxksa6z3SjILfA/+dbRU7vUpFYZAPyzrngZ1Vffcv8KG9H0Ixaym
-	goCji9rPNOqymwfLx84dXYPJo6ASCM5aSLb9ZptBWJtmdPGIbDE/aLeAvk22lZXZ
-	cLyhbf2MkVB8wib6hRpsVdKtZqqO8c0EugoR5siav+Rn7D8C+KSueeRYGrL3CO3O
-	CwKsqKTXlEHSmJRRaT8hgZd/RffzTaq7XGo1UxFBDJDdlSOmZF1RpNrLhU3a2n/0
-	L+P/ZN1xt+kxvt1Lr31Y/m4JeetPby0NYCIKi7iNVIzbFUJRb1FrgnXJe3ZDjI/W
-	xXF0jw==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40ms4341s3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 29 Jul 2024 11:25:59 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46TBPwfH024916
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 29 Jul 2024 11:25:58 GMT
-Received: from [10.217.216.47] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 29 Jul
- 2024 04:25:52 -0700
-Message-ID: <9a7972b1-ffd7-481e-9962-bb55abef70f9@quicinc.com>
-Date: Mon, 29 Jul 2024 16:55:49 +0530
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RA1Vd/YF"
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a7a94478a4eso701301966b.1
+        for <linux-clk@vger.kernel.org>; Mon, 29 Jul 2024 05:31:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722256274; x=1722861074; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aXEWCd7FqpXeUoPV5fLPpv01DhdKsxKfAinrkombeok=;
+        b=RA1Vd/YFLsDhjZBh4ET3F2CyuWwWNz+nVsbtGY9VzzsPOqGIxYFBE4yg9ekUGV10OS
+         DHALFcbESjfOHJTwAfyn3qiM3HSLbe1/Hyzzel3YmaZY403Zdee9aVruysamQx3DMC1l
+         ta0cgLR3minX/JIB7JyKhcgIu0rfWcrW5wvMW8bkdyHMqI4GOTf5N5Eo5z0acMLAP6W8
+         4p9DhWrCNfRrcVt/5O/4UtSGBxUEz/p1xnm9kUZOF6Df26uuLGEulyodywkpU40QH5Y6
+         e1l/9cr5WgJkiDgG8IRGq0tl6Khxzn5yLT5pPh5i5w3N+qyYlx56LTqEHD4YcxWotjdK
+         uZ/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722256274; x=1722861074;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aXEWCd7FqpXeUoPV5fLPpv01DhdKsxKfAinrkombeok=;
+        b=tm4HDsHCMcGX3ssF6Z+hwx9sC8t6M/kIOln5OxF7OyxjCM3p0VkqWk9p9eYwAxqEnw
+         50F0bGhFGLRQc8qRhxwJD+zAgsbDKQzX3qaHAbXrsuD842HSgNzzh1V/qO5JAdzKs7JY
+         4D+ycasokZA57Uf9i8026nZRJT/gTvQgoPtzTb1MjErxG0Xnf6cyrJJXKGB2fBbCdiLD
+         5dfHysCrXLwHjVmVPzZn549l6BiIrssXVfw4jDfAe5N0uyNwpdba/Rm5eA1dx4XlGBaU
+         bWRfKtKCW6tU5dvoZfl2NPL1dx3qq7cinQiA3LvtFNQ7sAYyLgLgUbS3OI8Ol1y5rQym
+         Cmfw==
+X-Forwarded-Encrypted: i=1; AJvYcCVtPYh6FPvwHL2sImP90bO1STiM1DcNdszEwvCYK6FIGubbuc66EpgzU9l8/6zNGCholLpBlCkECs/OxMZGfE4Nf61O5uXXvDDd
+X-Gm-Message-State: AOJu0YwHIAccJDHddnUSed/OLY5nFjZnUc3CH/FZWJwv2LKfjPNV5LsU
+	OF3T6jPAqmDw/RQ4xRK6XiMRdGj+vzaFJvEmPt0ev/9SlZKEhkadRVbN+QwqzBs=
+X-Google-Smtp-Source: AGHT+IEcCCNjVqMjw+SlV2NGC1JBsZBQwl83wS/81hnJwhDhzkYKop8654LkJwHocVtqfIz4Gw4IXg==
+X-Received: by 2002:a17:907:1c19:b0:a6f:e03a:99d with SMTP id a640c23a62f3a-a7d3f514a03mr869934766b.0.1722256273697;
+        Mon, 29 Jul 2024 05:31:13 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab22ff1sm501973966b.35.2024.07.29.05.31.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 29 Jul 2024 05:31:13 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+ alim.akhtar@samsung.com, s.nawrocki@samsung.com, cw00.choi@samsung.com, 
+ mturquette@baylibre.com, sboyd@kernel.org, 
+ Peter Griffin <peter.griffin@linaro.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, tudor.ambarus@linaro.org, 
+ andre.draszik@linaro.org, kernel-team@android.com, willmcvicker@google.com, 
+ devicetree@vger.kernel.org, linux-clk@vger.kernel.org
+In-Reply-To: <20240628223506.1237523-3-peter.griffin@linaro.org>
+References: <20240628223506.1237523-1-peter.griffin@linaro.org>
+ <20240628223506.1237523-3-peter.griffin@linaro.org>
+Subject: Re: (subset) [PATCH v2 1/3] arm64: dts: exynos: gs101: add
+ syscon-poweroff and syscon-reboot nodes
+Message-Id: <172225627208.280610.7893124858038384866.b4-ty@linaro.org>
+Date: Mon, 29 Jul 2024 14:31:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] dt-bindings: clock: qcom: Remove required-opps from
- required list on SM8650
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Stephen
- Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        "Vladimir
- Zapolskiy" <vladimir.zapolskiy@linaro.org>,
-        Bryan O'Donoghue
-	<bryan.odonoghue@linaro.org>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Satya Priya Kakitapalli
-	<quic_skakitap@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        "Ajit
- Pandey" <quic_ajipan@quicinc.com>,
-        kernel test robot <lkp@intel.com>
-References: <20240720052818.26441-1-quic_jkona@quicinc.com>
- <497c9438-5bb3-42d9-9df9-661235a556d2@kernel.org>
- <14f57121-46f1-4dbe-92fd-e840705b771b@quicinc.com>
- <3bc186e8-40fc-4c92-affa-0e0b6cf25153@kernel.org>
-Content-Language: en-US
-From: Jagadeesh Kona <quic_jkona@quicinc.com>
-In-Reply-To: <3bc186e8-40fc-4c92-affa-0e0b6cf25153@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: F99SInU2x5_7fDg7PApGHkQQ71_J4bCJ
-X-Proofpoint-ORIG-GUID: F99SInU2x5_7fDg7PApGHkQQ71_J4bCJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-29_10,2024-07-26_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- impostorscore=0 spamscore=0 bulkscore=0 lowpriorityscore=0 adultscore=0
- mlxlogscore=999 suspectscore=0 phishscore=0 priorityscore=1501
- clxscore=1015 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407290077
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.1
 
 
-
-On 7/26/2024 8:28 PM, Krzysztof Kozlowski wrote:
-> On 26/07/2024 16:30, Jagadeesh Kona wrote:
->>
->>
->> On 7/24/2024 1:38 PM, Krzysztof Kozlowski wrote:
->>> On 20/07/2024 07:28, Jagadeesh Kona wrote:
->>>> On SM8650, the minimum voltage corner supported on MMCX from cmd-db is
->>>> sufficient for clock controllers to operate and there is no need to specify
->>>> the required-opps. Hence remove the required-opps property from the list of
->>>> required properties for SM8650 camcc and videocc bindings.
->>>>
->>>> This fixes:
->>>> arch/arm64/boot/dts/qcom/sm8650-mtp.dtb: clock-controller@aaf0000:
->>>> 'required-opps' is a required property
->>>>
->>>> arch/arm64/boot/dts/qcom/sm8650-mtp.dtb: clock-controller@ade0000:
->>>> 'required-opps' is a required property
->>>>
->>>> Fixes: a6a61b9701d1 ("dt-bindings: clock: qcom: Add SM8650 video clock controller")
->>>> Fixes: 1ae3f0578e0e ("dt-bindings: clock: qcom: Add SM8650 camera clock controller")
->>>> Reported-by: kernel test robot <lkp@intel.com>
->>>> Closes: https://lore.kernel.org/oe-kbuild-all/202407070147.C9c3oTqS-lkp@intel.com/
->>>> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
->>>> ---
->>>> Changes in V2:
->>>>    - Made required: conditional and dropped required-opps from it only for SM8650 platform
->>>>    - Dropped Krzysztof Acked-by tag due to above changes
->>>>    - Link to V1: https://lore.kernel.org/all/20240708130836.19273-1-quic_jkona@quicinc.com/#r
->>>>
->>>> .../bindings/clock/qcom,sm8450-camcc.yaml     | 26 +++++++++++++------
->>>>    .../bindings/clock/qcom,sm8450-videocc.yaml   | 25 +++++++++++++-----
->>>>    2 files changed, 36 insertions(+), 15 deletions(-)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
->>>> index f58edfc10f4c..8698c801ed11 100644
->>>> --- a/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
->>>> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-camcc.yaml
->>>> @@ -21,9 +21,6 @@ description: |
->>>>        include/dt-bindings/clock/qcom,sm8650-camcc.h
->>>>        include/dt-bindings/clock/qcom,x1e80100-camcc.h
->>>>    
->>>> -allOf:
->>>> -  - $ref: qcom,gcc.yaml#
->>>> -
->>>>    properties:
->>>>      compatible:
->>>>        enum:
->>>> @@ -53,11 +50,24 @@ properties:
->>>>      reg:
->>>>        maxItems: 1
->>>>    
->>>> -required:
->>>
->>> You cannot remove required block.
->>>
->>>> -  - compatible
->>>> -  - clocks
->>>> -  - power-domains
->>>> -  - required-opps
->>>> +allOf:
->>>> +  - $ref: qcom,gcc.yaml#
->>>> +  - if:
->>>> +      properties:
->>>> +        compatible:
->>>> +          contains:
->>>> +            const: qcom,sm8650-camcc
->>>> +    then:
->>>> +      required:
->>>> +        - compatible
->>>> +        - clocks
->>>> +        - power-domains
->>>> +    else:
->>>> +      required:
->>>> +        - compatible
->>>> +        - clocks
->>>> +        - power-domains
->>>> +        - required-opps
->>>>    
->>>>    unevaluatedProperties: false
->>>>    
->>>> diff --git a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
->>>> index b2792b4bb554..2e5a061f33d6 100644
->>>> --- a/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
->>>> +++ b/Documentation/devicetree/bindings/clock/qcom,sm8450-videocc.yaml
->>>> @@ -40,15 +40,26 @@ properties:
->>>>        description:
->>>>          A phandle to an OPP node describing required MMCX performance point.
->>>>    
->>>> -required:
->>>
->>> No, you cannot remove required block.
->>>
->>> To clarify: there is almost no single binding using your style. Even if
->>> there is one, then 99 others are using it differently. Do not implement
->>> things entirely different than everyone else. This is the same for C
->>> code you send upstream. No difference here...
->>>
->>
->> Thanks Krzysztof for the explanation.
->>
->> Hi Dmitry,
->>
->> As we discussed during SM8650 camcc and videocc changes, the MMCX rail's
->> minimum voltage level from cmd-db is adequate for these clock
->> controllers to operate on SM8650. So, we removed the 'required-opps'
->> property from their DT nodes.
+On Fri, 28 Jun 2024 23:35:04 +0100, Peter Griffin wrote:
+> Reboot of gs101 SoC can be handled by setting the
+> bit(SWRESET_SYSTEM[1]) of SYSTEM_CONFIGURATION register(PMU + 0x3a00).
 > 
-> Not sure with whom you discuss. With Dmitry or me. Anyway, I said
-> nothing about required-opps, but the "required:" block.
+> Poweroff of gs101 SoC can be handled by setting bit(DATA[8]) of
+> PAD_CTRL_PWR_HOLD register (PMU + 0x3e9c).
 > 
->>
->> Although 'required-opps' will remain in the properties list, it’s not
->> mandatory to be present in 'required:' list, as it is dependent on
->> cmd-db minimum level. So, can I please go ahead and update these
->> bindings to remove 'required-opps' from the 'required:' list, as done in
->> v1 of this series.
->>
->> It seems unconventional to make 'required:' conditional based on the
->> platform type.
->>
+> Tested using "reboot" and "poweroff -p" commands.
 > 
-> Obviously. But nothing stops you - and there are plenty of examples - of
-> requiring one particular property based on the variant.
-> 
+> [...]
 
-Thanks Krzysztof for the info.
+Applied, thanks!
 
-I will update the change to remove only 'required-opps' from the 
-required list and add it back wherever required based on the variant.
+[1/3] arm64: dts: exynos: gs101: add syscon-poweroff and syscon-reboot nodes
+      https://git.kernel.org/krzk/linux/c/2d0c7ae784b487343b4813db9cb133ca51c674c3
 
-Thanks,
-Jagadeesh
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-> Best regards,
-> Krzysztof
-> 
