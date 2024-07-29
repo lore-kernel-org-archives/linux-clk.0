@@ -1,149 +1,145 @@
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C060728399;
-	Mon, 29 Jul 2024 10:42:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0653145344;
+	Mon, 29 Jul 2024 10:57:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722249753; cv=none; b=KqjC8vLBNTF5Tn7EigstmqaaxPuCcm/p5rbz7I6zB0eOZE1KZe2YZThd9ZcUkSAyFohGtDIrKmxzbh8i6uJRQJS+j+Q05WN/e/gL39ccKpF3Z/2wQ0bW6HSO0h76bpbHzm544yZNgWzyygEY3Kv86GJJr5BVHAuSldXuIBb5shw=
+	t=1722250675; cv=none; b=LS/pyuDwq57tNVTFY36n881utBVj327HH+MrZJxNnWmcLnkDmKgrMl52oyAkiHx9IRbRR1NyPEHHLxHWU1M8VSt7mvmpGHExi2RYkjSriZ4HjtV/xDKhVKhLo1DGwa1yUCrRW3iZgN5M2kpCOKrG2usi+hFEaEzO5cpboDwOlRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722249753; c=relaxed/simple;
-	bh=ub1Yg50JFq2NvU0SP9zoVeXxU57j9kAS131Hh5GxOdA=;
+	s=arc-20240116; t=1722250675; c=relaxed/simple;
+	bh=IoXGirG8rFJ+cAL8Qx1QIfbZ4c4yEdOZzq6rXHwas8s=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=P6igi8m7/lZO/alKgDFsoOX/ps8kZEH51FE6xeymhTxemme5Lp7ygO71rkzdG3Hm9TV65I/xt4qxUoV21pQEpmXq3AmyCZOIg9Lpnikpph88TCHI9wiOtmK3T9Ezh6f7N1l6lNoIKm9RhNIZQZZGTB0qmpOaXL/tD0uLqn+QLnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cniBhTpR; arc=none smtp.client-ip=205.220.168.131
+	 In-Reply-To:Content-Type; b=ojzaJGblRYTg8VmwOX9lWuJzuX+C68mRfaGZzRQec9FqGCeI0+KEW54oK5zQD5A35Qf8pDY1xUUHx/Oq9+9fJYO2Z8jrgKsUGfDXORFT7pZhhOhufVdtgGilRFk5of73KqvczhfLZRSBHFNc3f3AxVCwL5hN5nLQOXUAjK+JkXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ltZDLshd; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cniBhTpR"
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46TAL2Jm003937;
-	Mon, 29 Jul 2024 10:42:27 GMT
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ltZDLshd"
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46TAHO2R016748;
+	Mon, 29 Jul 2024 10:57:50 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	S4+tVbYQJ9/WcrhaBo8VTgIcQFifwH8ByYr5edpAI2U=; b=cniBhTpRcUIxatUA
-	HEt3GTsz09yXcEIFTuc/TbnphujtPKEeDbWr4atc9ZZy2gSH60aD+wFs89n1/xBE
-	Pj+FNYW6shnf/gtxD2z7Gky8qgdhMD/+k+G/077Iy9DQjoAy3CeW3uF4Ws03Y06Z
-	g0qyxV5APAPOKlvVA3u+jUTQLuewGmeLhM5mvGJhtOIb4n5VTTlJdxfQ19eG6p/U
-	1ChgSlKIC0cxz/F4xLgYLlCaGeAgMTueX7OmWILv3Pqwv6OfWnHpUkYvZ2LCd566
-	dzx+sMVwTPF4wB8UeKjTE1Q3OzTin9pvLXG6mJ9L7TQB5nOV+AbROHusfzDYFtXE
-	wbF8DQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40mt2kktyk-1
+	6aHtL8jzTdNbYvDxviLStizGdNixvfs7vF4J/jZ5Hqg=; b=ltZDLshdK9PFy7ZU
+	lLt+/QOUcRdDBJ/CMyC6E6YFayLggO2jx2cLVR0TqrnM4Lm96g+j54gq+5wsf8Fg
+	zL6YRbVQFAfIEOSPtJYwgtHEHGtmKvpSVPlDrF8H9O95bACBFKrN5lFl62PYk8Ec
+	IsmHK+8DEKSevvA6QsD/9ub8o0d1CyGtDJc1jGmPvrlJdYfD+LjOhjmkqcjY3SRA
+	O0/8tvaYSKSrSTAfjrpEx4ar3LCnTp92z28I2eF2tnXnypm5mOpMtOlZr5KYTNEe
+	7iMX96Nv99TMEVL2bdcC5Yw9RA3cCbaZ4B09NB4okFqpMvMz/x55hKvWVL8ydYhT
+	vUTg7g==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40ms433yfj-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 29 Jul 2024 10:42:26 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46TAgPXx023504
+	Mon, 29 Jul 2024 10:57:49 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46TAvnJr010564
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 29 Jul 2024 10:42:25 GMT
-Received: from [10.239.132.204] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+	Mon, 29 Jul 2024 10:57:49 GMT
+Received: from [10.218.19.46] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 29 Jul
- 2024 03:42:21 -0700
-Message-ID: <080b47dc-c8e0-4962-a358-aa4c39e5e868@quicinc.com>
-Date: Mon, 29 Jul 2024 18:42:19 +0800
+ 2024 03:57:45 -0700
+Message-ID: <454fc2ec-6679-2d51-2a6a-580838d6ba59@quicinc.com>
+Date: Mon, 29 Jul 2024 16:27:42 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 7/8] arm64: dts: qcom: Add support for multimedia clock
- controllers
-To: Konrad Dybcio <konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski
-	<krzk@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH] clk: qcom: camcc-sc8280xp: Remove always-on GDSC
+ hard-coding
+Content-Language: en-US
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
         Bjorn Andersson
 	<andersson@kernel.org>,
         Michael Turquette <mturquette@baylibre.com>,
-        "Stephen
- Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bartosz Golaszewski
-	<bartosz.golaszewski@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_imrashai@quicinc.com>, <quic_jkona@quicinc.com>,
-        Tingwei
-	<quic_tingweiz@quicinc.com>,
-        "Aiqun(Maria) Yu" <quic_aiquny@quicinc.com>
-References: <20240715-sa8775p-mm-v3-v1-0-badaf35ed670@quicinc.com>
- <20240715-sa8775p-mm-v3-v1-7-badaf35ed670@quicinc.com>
- <d40d540c-a3b9-449d-8f34-cb2972ddc2ef@kernel.org>
- <12be3f5a-5bc6-40cc-a7af-7f098a7be04e@linaro.org>
-From: Tengfei Fan <quic_tengfan@quicinc.com>
-In-Reply-To: <12be3f5a-5bc6-40cc-a7af-7f098a7be04e@linaro.org>
+        Stephen
+ Boyd <sboyd@kernel.org>
+CC: <dmitry.baryshkov@linaro.org>, <stable@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240715-linux-next-24-07-13-sc8280xp-camcc-fixes-v1-1-fadb5d9445c1@linaro.org>
+ <f0d4b7a3-2b61-3d42-a430-34b30eeaa644@quicinc.com>
+ <86068581-0ce7-47b5-b1c6-fda4f7d1037f@linaro.org>
+ <02679111-1a35-b931-fecd-01c952553652@quicinc.com>
+ <ce14800d-7411-47c5-ad46-6baa6fb678f4@linaro.org>
+ <dd588276-8f1c-4389-7b3a-88f483b7072e@quicinc.com>
+ <610efa39-e476-45ae-bd2b-3a0b8ea485dc@linaro.org>
+ <6055cb14-de80-97bc-be23-7af8ffc89fcc@quicinc.com>
+ <a0ac4c3b-3c46-4c89-9947-d91ba06309f4@linaro.org>
+ <fe44268d-76bb-bdbd-e54e-39a38e4e5a49@quicinc.com>
+ <8d31cbfb-f223-4539-b61a-a30a12dfd99c@linaro.org>
+From: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
+In-Reply-To: <8d31cbfb-f223-4539-b61a-a30a12dfd99c@linaro.org>
 Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
 X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
+ nalasex01c.na.qualcomm.com (10.47.97.35)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: HM2PyIKl8NHnPBET8wbla8QAKSNMogQ7
-X-Proofpoint-GUID: HM2PyIKl8NHnPBET8wbla8QAKSNMogQ7
+X-Proofpoint-GUID: g_4i_sY0F16XC2BjudF5JpvQL3Slxx_m
+X-Proofpoint-ORIG-GUID: g_4i_sY0F16XC2BjudF5JpvQL3Slxx_m
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-07-29_09,2024-07-26_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=999
- malwarescore=0 spamscore=0 adultscore=0 mlxscore=0 lowpriorityscore=0
- suspectscore=0 priorityscore=1501 impostorscore=0 bulkscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407290072
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ impostorscore=0 spamscore=0 bulkscore=0 lowpriorityscore=0 adultscore=0
+ mlxlogscore=944 suspectscore=0 phishscore=0 priorityscore=1501
+ clxscore=1011 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407290074
 
 
-
-On 7/16/2024 8:09 PM, Konrad Dybcio wrote:
-> On 16.07.2024 9:45 AM, Krzysztof Kozlowski wrote:
->> On 15/07/2024 10:23, Taniya Das wrote:
->>> Add support for video, camera, display0 and display1 clock
->>> controllers on SA8775P platform.
->>>
->>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
->>> ---
->>>   arch/arm64/boot/dts/qcom/sa8775p.dtsi | 56 +++++++++++++++++++++++++++++++++++
->>>   1 file changed, 56 insertions(+)
->>>
->>> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
->>> index 23f1b2e5e624..8fd68a8aa916 100644
->>> --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
->>> +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
->>> @@ -2911,6 +2911,47 @@ llcc: system-cache-controller@9200000 {
->>>   			interrupts = <GIC_SPI 580 IRQ_TYPE_LEVEL_HIGH>;
->>>   		};
->>>   
->>> +		videocc: clock-controller@abf0000 {
->>> +			compatible = "qcom,sa8775p-videocc";
->>> +			reg = <0x0 0x0abf0000 0x0 0x10000>;
->>> +			clocks = <&gcc GCC_VIDEO_AHB_CLK>,
->>> +				 <&rpmhcc RPMH_CXO_CLK>,
->>> +				 <&rpmhcc RPMH_CXO_CLK_A>,
->>> +				 <&sleep_clk>;
->>> +			power-domains = <&rpmhpd SA8775P_MMCX>;
+On 7/27/2024 2:01 AM, Bryan O'Donoghue wrote:
+> On 26/07/2024 08:01, Satya Priya Kakitapalli (Temp) wrote:
 >>
->> Not sure if these are correct. I had impression the clocks are going
->> away from sa8775p?
-> 
-> Right, the patches look mostly good, but are still going to be on hold
-> until the 8775 situation is cleared out.. We recently had the gigantic
-> patchset [1] that shifted things around, and seemingly there was rather
-> little closure on that, so we're waiting for the dust to settle and
-> people to agree on things..
-> 
-> Konrad
-> 
-> [1] https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
+>> On 7/23/2024 2:59 PM, Bryan O'Donoghue wrote:
+>>> On 22/07/2024 09:57, Satya Priya Kakitapalli (Temp) wrote:
+>>>>> I have no idea. Why does it matter ?
+>>>>>
+>>>>
+>>>> This clock expected to be kept always ON, as per design, or else 
+>>>> the GDSC transition form ON to OFF (vice versa) wont work.
+>>>
+>>> Yes, parking to XO per this patch works for me. So I guess its 
+>>> already on and is left in that state by the park.
+>>>
+>>>> Want to know the clock status after bootup, to understand if the 
+>>>> clock got turned off during the late init. May I know exactly what 
+>>>> you have tested? Did you test the camera usecases as well?
+>>>
+>>> Of course.
+>>>
+>>> The camera works on x13s with this patch. That's what I mean by tested.
+>>>
+>>
+>> It might be working in your case, but it is not the HW design 
+>> recommended way to do. The same should not be propagated to other 
+>> target's camcc drivers, as I already observed it is not working on 
+>> SM8150.
+>
+> I don't think the argument here really stands up.
+>
+> We've established that the GDSC clock and PDs will remain on when the 
+> clock gets parked right ?
+>
+> Am I missing something obvious here ?
+>
 
-After considering the feedback provided on the subject, We have decided
-to keep current SA8775p compatible and ABI compatibility in drivers.
-Therefore, this patch is still needed, please continue to review this
-patch.
-Thank you for your input.
+Yes, just parking the RCG at XO, does not ensure the branch clock, i.e, 
+the 'cam_cc_gdsc_clk' as always ON. When I compiled the camcc-sm8150 
+driver statically, I see that the clock is getting disabled in late_init 
+if it is modelled.
 
--- 
-Thx and BRs,
-Tengfei Fan
+
+Can you confirm if the camcc-sc8280xp driver is compiled statically or 
+as a module at your end?
+
+
+> ---
+> bod
+>
