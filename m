@@ -1,60 +1,72 @@
-Received: from mx08-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+Received: from fallback1.i.mail.ru (fallback1.i.mail.ru [79.137.243.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2DE812C522;
-	Mon, 29 Jul 2024 07:30:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F9C582869;
+	Mon, 29 Jul 2024 07:35:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.137.243.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722238205; cv=none; b=HU1mDO/x6theU9ptbmP9LW4/fPn71smscX/8RmrkHpjoAiTcceGBMvap21qgViFESmP6Bju74LMadiq/CdFljxdbszd92YBIU8TJhHQNB61uZyh40WISNeTG21oj+BZ62SsUmHX5HEVWtcoWVdFyadJBNwbSenC3h+CJuu+attQ=
+	t=1722238526; cv=none; b=VIbtapXdmJNFAldOByWp20WcRIWa7Cg86orUECzzLm7hdtJOI15b5oFlP6XyXbVwlJgkKF/1dj62ewlzP1anvoeGD3qeE21hPdCwHTty+v4VEbGtx4DoG4C9vggXc8Ohpd9jYmPP3vMmEWUPQTLLzR+of2lT+srYf4U54brddj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722238205; c=relaxed/simple;
-	bh=YudSCHZ0V0eT0MMmsGzvIfH1abP3rNGEXEmxWw4lJeQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=oedkVbhDHLXDRhDE3xjoPo/RQ5+6TbegUsuZ0qMnI5qsrBwJBZ93fD/11A6euf79LzmyfNCYtpJ/ZcGChrwOkzy1hS5CGXXZy63rXsGN5i6OWQdwlvpKrGvo44A3Iyqx3Gjl2nd7xDFrkj5xhAuKvXCaDTv3ByQJuoyDaBCx0Ug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=0cSzNKG1; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+	s=arc-20240116; t=1722238526; c=relaxed/simple;
+	bh=7cok65e8s4uLaRXW6FoGXBQpDXILERn+aTgVzJaleb8=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=hSrZSi2QYCNCcR6ufnOR9ll+FOKVok2cy9XYgwHfRIoFtwmdbXvLLx5QHvvMY5+uHtXxdWD9Z7KfprZU4BP58mGPg7ECb3VCU5hudLnJUpvae4ZRpeEiLY5B4KSrCeFeYTXpE/72QMLxccjTMl6+LMKXSnlr6sObVB3u0HWu7qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=adomerle.xyz; spf=pass smtp.mailfrom=adomerle.xyz; dkim=pass (1024-bit key) header.d=adomerle.xyz header.i=@adomerle.xyz header.b=US6xXn5P; dkim=pass (1024-bit key) header.d=adomerle.xyz header.i=@adomerle.xyz header.b=NPTNGDV5; arc=none smtp.client-ip=79.137.243.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=adomerle.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=adomerle.xyz
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="0cSzNKG1"
-Received: from pps.filterd (m0369457.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46SKW1XQ019054;
-	Mon, 29 Jul 2024 08:53:52 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=selector1; bh=Dg0E8JSDSPWfXnNnTf/7dL
-	WMSkni9o3yFL7NSZMm0Ak=; b=0cSzNKG1GpxJ3r+Pt9FSbf78U/jP6dvmYxaqIh
-	1DUATFWG8eKhks9LBXTavZs/3/9P5363NDiMLSbgI1Z82v7YKKi/hBAGxmj1GHrv
-	BpmPQq2YK7It8vfvU4Y+gDtqHIdRvHZG8hXqBtvBghiP+hkI9YlUAPRXYvhhIk/A
-	6s8EFPCgrN3VZFyMOQ0WjZ3KZBVXFQuAM5Mfl17HVu2xG9iAhw5c95uiu35wafq+
-	KobjlHnhYfem6lXSGcPpwxpASc3V1WysHASTxGrMjsAtwBwRN2brYNteJBaFpDtn
-	m6nE+1aAQVycUWDIOup0NWTza2ExV0u3LBVhpw/vr0X1gZVg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 40nbuhkfb1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 29 Jul 2024 08:53:51 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 7A02C40044;
-	Mon, 29 Jul 2024 08:53:45 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 5E691214545;
-	Mon, 29 Jul 2024 08:53:11 +0200 (CEST)
-Received: from localhost (10.252.16.53) by SHFDAG1NODE1.st.com (10.75.129.69)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 29 Jul
- 2024 08:53:10 +0200
-From: Etienne Carriere <etienne.carriere@foss.st.com>
-To: <linux-kernel@vger.kernel.org>
-CC: Sudeep Holla <sudeep.holla@arm.com>,
-        Cristian Marussi
-	<cristian.marussi@arm.com>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, <arm-scmi@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
-        Etienne
- Carriere <etienne.carriere@foss.st.com>
-Subject: [PATCH] firmware: arm_scmi: get only min/max clock rates
-Date: Mon, 29 Jul 2024 08:53:06 +0200
-Message-ID: <20240729065306.1210733-1-etienne.carriere@foss.st.com>
-X-Mailer: git-send-email 2.25.1
+	dkim=pass (1024-bit key) header.d=adomerle.xyz header.i=@adomerle.xyz header.b="US6xXn5P";
+	dkim=pass (1024-bit key) header.d=adomerle.xyz header.i=@adomerle.xyz header.b="NPTNGDV5"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=adomerle.xyz; s=mailru;
+	h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:From:Subject:Content-Type:Content-Transfer-Encoding:To:Cc; bh=L9uvubG4e7GuXy/HEqPlxlpTn/mAzNZtQZkDQ9dVw+U=;
+	t=1722238524;x=1722328524; 
+	b=US6xXn5PVCOj0pz+hrhQ8H5AsMxCD56jGMxkr6XAbfLk6vXwCIgh6kC36aGnrNlkNRPCV+yECMG52YKOlD2RC709i62NLMEl3u5MwaGAw9g85Je8ppphEPRi2xyMo+O3GABdr4apqcjaE23jfvM6jf3yfTIO2m5b3UfU/PLnbsk=;
+Received: from [10.12.4.37] (port=42138 helo=smtp61.i.mail.ru)
+	by fallback1.i.mail.ru with esmtp (envelope-from <me@adomerle.xyz>)
+	id 1sYKuZ-00EznE-BE; Mon, 29 Jul 2024 10:35:15 +0300
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=adomerle.xyz; s=mailru; h=Content-Transfer-Encoding:MIME-Version:References
+	:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:From:Sender:Reply-To:To:Cc:
+	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+	List-Archive:X-Cloud-Ids:Disposition-Notification-To;
+	bh=L9uvubG4e7GuXy/HEqPlxlpTn/mAzNZtQZkDQ9dVw+U=; t=1722238515; x=1722328515; 
+	b=NPTNGDV5Vp6I7vyS/1jURwjfcj1k3F8DT8ZkgEYzS0KkdrKD14wei9LwSWucw2AHDt52w96V5z5
+	HAc5KauW48lfdQy3QVYRh0+AVkPeM8EHsObneHxyNDF98teu7+Wvp6ENA2/EZ9hRx01/oJDGD1Kmd
+	gzmQKLl4/c2gV+bAGX0=;
+Received: by exim-smtp-868bf69f6c-zg7fr with esmtpa (envelope-from <me@adomerle.xyz>)
+	id 1sYKuF-00000000275-38KR; Mon, 29 Jul 2024 10:34:56 +0300
+From: Arseniy Velikanov <me@adomerle.xyz>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com,
+	sean.wang@kernel.org,
+	linus.walleij@linaro.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	frank.li@vivo.com,
+	jiasheng@iscas.ac.cn,
+	mars.cheng@mediatek.com,
+	owen.chen@mediatek.com,
+	macpaul.lin@mediatek.com,
+	zh.chen@mediatek.com,
+	argus.lin@mediatek.com
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	Arseniy Velikanov <me@adomerle.xyz>
+Subject: [PATCH 1/5] dt-bindings: clock: mt6765: Add missing PMIC clock
+Date: Mon, 29 Jul 2024 11:34:24 +0400
+Message-ID: <20240729073428.28983-2-me@adomerle.xyz>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240729073428.28983-1-me@adomerle.xyz>
+References: <20240729073428.28983-1-me@adomerle.xyz>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -62,276 +74,172 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SHFCAS1NODE2.st.com (10.75.129.73) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-29_05,2024-07-26_01,2024-05-17_01
+X-Mailru-Src: smtp
+X-7564579A: B8F34718100C35BD
+X-77F55803: 4F1203BC0FB41BD9000B6812E77BE1C6F0D221D1B7CB84E2160E2B5FE815AD3B182A05F538085040EF34FD0AB11A37C53DE06ABAFEAF67050A0C1D41407711BE303324A9B5BFDD3258986F725C2A4283
+X-7FA49CB5: FF5795518A3D127A4AD6D5ED66289B5278DA827A17800CE793089AEA09EF102BEA1F7E6F0F101C67BD4B6F7A4D31EC0BCC500DACC3FED6E28638F802B75D45FF8AA50765F790063745B6F93C788775E78638F802B75D45FF36EB9D2243A4F8B5A6FCA7DBDB1FC311F39EFFDF887939037866D6147AF826D8EAFA047CD450D65583832EE758E1DF54FD86F243095BA4A5CC7F00164DA146DAFE8445B8C89999728AA50765F7900637028599BB38096F4F389733CBF5DBD5E9C8A9BA7A39EFB766F5D81C698A659EA7CC7F00164DA146DA9985D098DBDEAEC8D2A98E5A6551E3E5117882F4460429728AD0CFFFB425014E868A13BD56FB6657D81D268191BDAD3DC09775C1D3CA48CF055A3127ECEB1CB3BA3038C0950A5D36C8A9BA7A39EFB766D91E3A1F190DE8FDBA3038C0950A5D36D5E8D9A59859A8B61FFDF4B5E34157C176E601842F6C81A1F004C906525384303E02D724532EE2C3F43C7A68FF6260569E8FC8737B5C2249EC8D19AE6D49635B68655334FD4449CB9ECD01F8117BC8BEAAAE862A0553A39223F8577A6DFFEA7C5E1C53F199C2BB95B5C8C57E37DE458BEDA766A37F9254B7
+X-C1DE0DAB: 0D63561A33F958A5F5DB60828C4BA8AE5002B1117B3ED6961D04A7459567D2FFBFF4097FFC9E796F823CB91A9FED034534781492E4B8EEAD9CFA8CFAC159CE19C79554A2A72441328621D336A7BC284946AD531847A6065A535571D14F44ED41
+X-C8649E89: 1C3962B70DF3F0ADE00A9FD3E00BEEDF77DD89D51EBB7742D3581295AF09D3DF87807E0823442EA2ED31085941D9CD0AF7F820E7B07EA4CFC35B71914E27C0DF66C6FC9A8988FE5A15CC854EA8CCEF6E2AD8E098005480FBB0F06D2F9487D0FC67C7AAC6E25A2086F0B81A1E795561CBFEDD108130C0427CA96BF36F8852DE3522BA058254B804A102C26D483E81D6BE44BE0F8B58F75087CBB04030989F1EE011FE023E09B2D9C0
+X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5ycPtXkTV4k65bRjmOUUP8cvGozZ33TWg5HZplvhhXbhDGzqmQDTd6OAevLeAnq3Ra9uf7zvY2zzsIhlcp/Y7m53TZgf2aB4JOg4gkr2biojX2k8aL79D6Uopk33/Q/B+g==
+X-Mailru-Sender: 5DE64BD8B4008F63F32F89B2E510BB548372E88CF31825DAB951B70A5BD4BD8EADFCC5A6732EA59FF1FEA02A07AA46D63B9265ADAFE7D7E06F53C80213D1719CA6FC796F43705345A9EF9D9C6A90DD94D3D6663D5D4272A7B4A721A3011E896F
+X-Mras: Ok
+X-7564579A: 646B95376F6C166E
+X-77F55803: 6242723A09DB00B431B8944160407DD089A7AE0D179B51619F9534A46E763EF368F3CF0E9FE49B69BA651B92B2A570CD43AB70617FBFEEA7B40AA28FE4929FBFE23D54027332D046
+X-7FA49CB5: 0D63561A33F958A51EC06C8DC4B0EDD370EFA612254C0AEBA143497BDFABF0948941B15DA834481FA18204E546F3947C7893FB2F108C49E4F6B57BC7E64490618DEB871D839B7333395957E7521B51C2DFABB839C843B9C08941B15DA834481F8AA50765F790063780B3000F7A6F2D7A389733CBF5DBD5E9B5C8C57E37DE458BD96E472CDF7238E0725E5C173C3A84C3DD19ECFA348986C535872C767BF85DA2F004C90652538430E4A6367B16DE6309
+X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5ycPtXkTV4k65bRjmOUUP8cvGozZ33TWg5HZplvhhXbhDGzqmQDTd6OAevLeAnq3Ra9uf7zvY2zzsIhlcp/Y7m53TZgf2aB4JOg4gkr2biojX2k8aL79D6Uemu3hPbpjWQ==
+X-Mailru-MI: 8000000000000800
+X-Mras: Ok
 
-Remove limitation of 16 clock rates max for discrete clock rates
-description.
+Add PWRAP clock binding and shift the following ones
 
-Driver clk-scmi.c in only interested in the min and max clock rates.
-Get these by querying the first and last discrete rates with SCMI
-clock protocol message ID CLK_DESCRIBE_RATES since the SMCI clock
-protocol specification states that rates enumerated by this
-command are to be enumerated in "numeric ascending order" [1].
-
-Link: https://developer.arm.com/documentation/den0056 [1]
-Signed-off-by: Etienne Carriere <etienne.carriere@foss.st.com>
+Fixes: eb7beb65ac30 ("clk: mediatek: add mt6765 clock IDs")
+Signed-off-by: Arseniy Velikanov <me@adomerle.xyz>
 ---
- drivers/clk/clk-scmi.c            |   4 +-
- drivers/firmware/arm_scmi/clock.c | 184 +++++++++++-------------------
- include/linux/scmi_protocol.h     |   4 +-
- 3 files changed, 68 insertions(+), 124 deletions(-)
+ include/dt-bindings/clock/mt6765-clk.h | 131 +++++++++++++------------
+ 1 file changed, 66 insertions(+), 65 deletions(-)
 
-diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c
-index d86a02563f6c..abe59da06324 100644
---- a/drivers/clk/clk-scmi.c
-+++ b/drivers/clk/clk-scmi.c
-@@ -234,8 +234,8 @@ static int scmi_clk_ops_init(struct device *dev, struct scmi_clk *sclk,
- 		if (num_rates <= 0)
- 			return -EINVAL;
+diff --git a/include/dt-bindings/clock/mt6765-clk.h b/include/dt-bindings/clock/mt6765-clk.h
+index eb97e568518e..5d3a603a0d36 100644
+--- a/include/dt-bindings/clock/mt6765-clk.h
++++ b/include/dt-bindings/clock/mt6765-clk.h
+@@ -161,71 +161,72 @@
+ #define CLK_TOP_NR_CLK			126
  
--		min_rate = sclk->info->list.rates[0];
--		max_rate = sclk->info->list.rates[num_rates - 1];
-+		min_rate = sclk->info->list.min_rate;
-+		max_rate = sclk->info->list.max_rate;
- 	} else {
- 		min_rate = sclk->info->range.min_rate;
- 		max_rate = sclk->info->range.max_rate;
-diff --git a/drivers/firmware/arm_scmi/clock.c b/drivers/firmware/arm_scmi/clock.c
-index 134019297d08..88fd240052c0 100644
---- a/drivers/firmware/arm_scmi/clock.c
-+++ b/drivers/firmware/arm_scmi/clock.c
-@@ -404,140 +404,84 @@ static int scmi_clock_attributes_get(const struct scmi_protocol_handle *ph,
- 	return ret;
- }
+ /* INFRACFG */
+-#define CLK_IFR_ICUSB			0
+-#define CLK_IFR_GCE			1
+-#define CLK_IFR_THERM			2
+-#define CLK_IFR_I2C_AP			3
+-#define CLK_IFR_I2C_CCU			4
+-#define CLK_IFR_I2C_SSPM		5
+-#define CLK_IFR_I2C_RSV			6
+-#define CLK_IFR_PWM_HCLK		7
+-#define CLK_IFR_PWM1			8
+-#define CLK_IFR_PWM2			9
+-#define CLK_IFR_PWM3			10
+-#define CLK_IFR_PWM4			11
+-#define CLK_IFR_PWM5			12
+-#define CLK_IFR_PWM			13
+-#define CLK_IFR_UART0			14
+-#define CLK_IFR_UART1			15
+-#define CLK_IFR_GCE_26M			16
+-#define CLK_IFR_CQ_DMA_FPC		17
+-#define CLK_IFR_BTIF			18
+-#define CLK_IFR_SPI0			19
+-#define CLK_IFR_MSDC0			20
+-#define CLK_IFR_MSDC1			21
+-#define CLK_IFR_TRNG			22
+-#define CLK_IFR_AUXADC			23
+-#define CLK_IFR_CCIF1_AP		24
+-#define CLK_IFR_CCIF1_MD		25
+-#define CLK_IFR_AUXADC_MD		26
+-#define CLK_IFR_AP_DMA			27
+-#define CLK_IFR_DEVICE_APC		28
+-#define CLK_IFR_CCIF_AP			29
+-#define CLK_IFR_AUDIO			30
+-#define CLK_IFR_CCIF_MD			31
+-#define CLK_IFR_RG_PWM_FBCLK6		32
+-#define CLK_IFR_DISP_PWM		33
+-#define CLK_IFR_CLDMA_BCLK		34
+-#define CLK_IFR_AUDIO_26M_BCLK		35
+-#define CLK_IFR_SPI1			36
+-#define CLK_IFR_I2C4			37
+-#define CLK_IFR_SPI2			38
+-#define CLK_IFR_SPI3			39
+-#define CLK_IFR_I2C5			40
+-#define CLK_IFR_I2C5_ARBITER		41
+-#define CLK_IFR_I2C5_IMM		42
+-#define CLK_IFR_I2C1_ARBITER		43
+-#define CLK_IFR_I2C1_IMM		44
+-#define CLK_IFR_I2C2_ARBITER		45
+-#define CLK_IFR_I2C2_IMM		46
+-#define CLK_IFR_SPI4			47
+-#define CLK_IFR_SPI5			48
+-#define CLK_IFR_CQ_DMA			49
+-#define CLK_IFR_FAES_FDE		50
+-#define CLK_IFR_MSDC0_SELF		51
+-#define CLK_IFR_MSDC1_SELF		52
+-#define CLK_IFR_I2C6			53
+-#define CLK_IFR_AP_MSDC0		54
+-#define CLK_IFR_MD_MSDC0		55
+-#define CLK_IFR_MSDC0_SRC		56
+-#define CLK_IFR_MSDC1_SRC		57
+-#define CLK_IFR_AES_TOP0_BCLK		58
+-#define CLK_IFR_MCU_PM_BCLK		59
+-#define CLK_IFR_CCIF2_AP		60
+-#define CLK_IFR_CCIF2_MD		61
+-#define CLK_IFR_CCIF3_AP		62
+-#define CLK_IFR_CCIF3_MD		63
+-#define CLK_IFR_NR_CLK			64
++#define CLK_IFR_PMIC_AP			0
++#define CLK_IFR_ICUSB			1
++#define CLK_IFR_GCE			2
++#define CLK_IFR_THERM			3
++#define CLK_IFR_I2C_AP			4
++#define CLK_IFR_I2C_CCU			5
++#define CLK_IFR_I2C_SSPM		6
++#define CLK_IFR_I2C_RSV			7
++#define CLK_IFR_PWM_HCLK		8
++#define CLK_IFR_PWM1			9
++#define CLK_IFR_PWM2			10
++#define CLK_IFR_PWM3			11
++#define CLK_IFR_PWM4			12
++#define CLK_IFR_PWM5			13
++#define CLK_IFR_PWM			14
++#define CLK_IFR_UART0			15
++#define CLK_IFR_UART1			16
++#define CLK_IFR_GCE_26M			17
++#define CLK_IFR_CQ_DMA_FPC		18
++#define CLK_IFR_BTIF			19
++#define CLK_IFR_SPI0			20
++#define CLK_IFR_MSDC0			21
++#define CLK_IFR_MSDC1			22
++#define CLK_IFR_TRNG			23
++#define CLK_IFR_AUXADC			24
++#define CLK_IFR_CCIF1_AP		25
++#define CLK_IFR_CCIF1_MD		26
++#define CLK_IFR_AUXADC_MD		27
++#define CLK_IFR_AP_DMA			28
++#define CLK_IFR_DEVICE_APC		29
++#define CLK_IFR_CCIF_AP			30
++#define CLK_IFR_AUDIO			31
++#define CLK_IFR_CCIF_MD			32
++#define CLK_IFR_RG_PWM_FBCLK6		33
++#define CLK_IFR_DISP_PWM		34
++#define CLK_IFR_CLDMA_BCLK		35
++#define CLK_IFR_AUDIO_26M_BCLK		36
++#define CLK_IFR_SPI1			37
++#define CLK_IFR_I2C4			38
++#define CLK_IFR_SPI2			39
++#define CLK_IFR_SPI3			40
++#define CLK_IFR_I2C5			41
++#define CLK_IFR_I2C5_ARBITER		42
++#define CLK_IFR_I2C5_IMM		43
++#define CLK_IFR_I2C1_ARBITER		44
++#define CLK_IFR_I2C1_IMM		45
++#define CLK_IFR_I2C2_ARBITER		46
++#define CLK_IFR_I2C2_IMM		47
++#define CLK_IFR_SPI4			48
++#define CLK_IFR_SPI5			49
++#define CLK_IFR_CQ_DMA			50
++#define CLK_IFR_FAES_FDE		51
++#define CLK_IFR_MSDC0_SELF		52
++#define CLK_IFR_MSDC1_SELF		53
++#define CLK_IFR_I2C6			54
++#define CLK_IFR_AP_MSDC0		55
++#define CLK_IFR_MD_MSDC0		56
++#define CLK_IFR_MSDC0_SRC		57
++#define CLK_IFR_MSDC1_SRC		58
++#define CLK_IFR_AES_TOP0_BCLK		59
++#define CLK_IFR_MCU_PM_BCLK		60
++#define CLK_IFR_CCIF2_AP		61
++#define CLK_IFR_CCIF2_MD		62
++#define CLK_IFR_CCIF3_AP		63
++#define CLK_IFR_CCIF3_MD		64
++#define CLK_IFR_NR_CLK			65
  
--static int rate_cmp_func(const void *_r1, const void *_r2)
-+static int
-+scmi_clock_describe_rates_get(const struct scmi_protocol_handle *ph, u32 clk_id,
-+			      struct scmi_clock_info *clk)
- {
--	const u64 *r1 = _r1, *r2 = _r2;
--
--	if (*r1 < *r2)
--		return -1;
--	else if (*r1 == *r2)
--		return 0;
--	else
--		return 1;
--}
-+	struct scmi_msg_clock_describe_rates *msg;
-+	const struct scmi_msg_resp_clock_describe_rates *resp;
-+	unsigned int num_returned, num_remaining;
-+	struct scmi_xfer *t;
-+	int ret;
- 
--static void iter_clk_describe_prepare_message(void *message,
--					      const unsigned int desc_index,
--					      const void *priv)
--{
--	struct scmi_msg_clock_describe_rates *msg = message;
--	const struct scmi_clk_ipriv *p = priv;
-+	/* Get either the range triplet or the min rate & rates count */
-+	ret = ph->xops->xfer_get_init(ph, CLOCK_DESCRIBE_RATES, sizeof(*msg), 0,
-+				      &t);
-+	if (ret)
-+		return ret;
- 
--	msg->id = cpu_to_le32(p->clk_id);
--	/* Set the number of rates to be skipped/already read */
--	msg->rate_index = cpu_to_le32(desc_index);
--}
-+	msg = t->tx.buf;
-+	msg->id = cpu_to_le32(clk_id);
-+	msg->rate_index = 0;
- 
--static int
--iter_clk_describe_update_state(struct scmi_iterator_state *st,
--			       const void *response, void *priv)
--{
--	u32 flags;
--	struct scmi_clk_ipriv *p = priv;
--	const struct scmi_msg_resp_clock_describe_rates *r = response;
--
--	flags = le32_to_cpu(r->num_rates_flags);
--	st->num_remaining = NUM_REMAINING(flags);
--	st->num_returned = NUM_RETURNED(flags);
--	p->clk->rate_discrete = RATE_DISCRETE(flags);
--
--	/* Warn about out of spec replies ... */
--	if (!p->clk->rate_discrete &&
--	    (st->num_returned != 3 || st->num_remaining != 0)) {
--		dev_warn(p->dev,
--			 "Out-of-spec CLOCK_DESCRIBE_RATES reply for %s - returned:%d remaining:%d rx_len:%zd\n",
--			 p->clk->name, st->num_returned, st->num_remaining,
--			 st->rx_len);
--
--		/*
--		 * A known quirk: a triplet is returned but num_returned != 3
--		 * Check for a safe payload size and fix.
--		 */
--		if (st->num_returned != 3 && st->num_remaining == 0 &&
--		    st->rx_len == sizeof(*r) + sizeof(__le32) * 2 * 3) {
--			st->num_returned = 3;
--			st->num_remaining = 0;
--		} else {
--			dev_err(p->dev,
--				"Cannot fix out-of-spec reply !\n");
--			return -EPROTO;
--		}
--	}
-+	resp = t->rx.buf;
- 
--	return 0;
--}
-+	ret = ph->xops->do_xfer(ph, t);
-+	if (ret)
-+		goto out;
- 
--static int
--iter_clk_describe_process_response(const struct scmi_protocol_handle *ph,
--				   const void *response,
--				   struct scmi_iterator_state *st, void *priv)
--{
--	int ret = 0;
--	struct scmi_clk_ipriv *p = priv;
--	const struct scmi_msg_resp_clock_describe_rates *r = response;
--
--	if (!p->clk->rate_discrete) {
--		switch (st->desc_index + st->loop_idx) {
--		case 0:
--			p->clk->range.min_rate = RATE_TO_U64(r->rate[0]);
--			break;
--		case 1:
--			p->clk->range.max_rate = RATE_TO_U64(r->rate[1]);
--			break;
--		case 2:
--			p->clk->range.step_size = RATE_TO_U64(r->rate[2]);
--			break;
--		default:
--			ret = -EINVAL;
--			break;
--		}
--	} else {
--		u64 *rate = &p->clk->list.rates[st->desc_index + st->loop_idx];
-+	clk->rate_discrete = RATE_DISCRETE(resp->num_rates_flags);
-+	num_returned = NUM_RETURNED(resp->num_rates_flags);
-+	num_remaining = NUM_REMAINING(resp->num_rates_flags);
- 
--		*rate = RATE_TO_U64(r->rate[st->loop_idx]);
--		p->clk->list.num_rates++;
--	}
-+	if (clk->rate_discrete) {
-+		clk->list.num_rates = num_returned + num_remaining;
-+		clk->list.min_rate = RATE_TO_U64(resp->rate[0]);
- 
--	return ret;
--}
-+		if (num_remaining) {
-+			msg->rate_index = clk->list.num_rates - 1;
- 
--static int
--scmi_clock_describe_rates_get(const struct scmi_protocol_handle *ph, u32 clk_id,
--			      struct scmi_clock_info *clk)
--{
--	int ret;
--	void *iter;
--	struct scmi_iterator_ops ops = {
--		.prepare_message = iter_clk_describe_prepare_message,
--		.update_state = iter_clk_describe_update_state,
--		.process_response = iter_clk_describe_process_response,
--	};
--	struct scmi_clk_ipriv cpriv = {
--		.clk_id = clk_id,
--		.clk = clk,
--		.dev = ph->dev,
--	};
-+			ret = ph->xops->do_xfer(ph, t);
-+			if (ret)
-+				goto out;
- 
--	iter = ph->hops->iter_response_init(ph, &ops, SCMI_MAX_NUM_RATES,
--					    CLOCK_DESCRIBE_RATES,
--					    sizeof(struct scmi_msg_clock_describe_rates),
--					    &cpriv);
--	if (IS_ERR(iter))
--		return PTR_ERR(iter);
-+			clk->list.max_rate = RATE_TO_U64(resp->rate[0]);
-+		} else {
-+			u64 max = RATE_TO_U64(resp->rate[num_returned - 1]);
- 
--	ret = ph->hops->iter_response_run(iter);
--	if (ret)
--		return ret;
-+			clk->list.max_rate = max;
-+		}
-+	} else {
-+		/* Warn about out of spec replies ... */
-+		if (num_returned != 3 || num_remaining != 0) {
-+			dev_warn(ph->dev,
-+				 "Out-of-spec CLOCK_DESCRIBE_RATES reply for %s - returned:%d remaining:%d rx_len:%zd\n",
-+				 clk->name, num_returned, num_remaining,
-+				 t->rx.len);
-+
-+			/*
-+			 * A known quirk: a triplet is returned but
-+			 * num_returned != 3, check for a safe payload
-+			 * size to use returned info.
-+			 */
-+			if (num_remaining != 0 ||
-+			    t->rx.len != sizeof(*resp) +
-+					 sizeof(__le32) * 2 * 3) {
-+				dev_err(ph->dev,
-+					"Cannot fix out-of-spec reply !\n");
-+				ret = -EPROTO;
-+				goto out;
-+			}
-+		}
- 
--	if (!clk->rate_discrete) {
--		dev_dbg(ph->dev, "Min %llu Max %llu Step %llu Hz\n",
--			clk->range.min_rate, clk->range.max_rate,
--			clk->range.step_size);
--	} else if (clk->list.num_rates) {
--		sort(clk->list.rates, clk->list.num_rates,
--		     sizeof(clk->list.rates[0]), rate_cmp_func, NULL);
-+		clk->range.min_rate = RATE_TO_U64(resp->rate[0]);
-+		clk->range.max_rate = RATE_TO_U64(resp->rate[1]);
-+		clk->range.step_size = RATE_TO_U64(resp->rate[2]);
- 	}
- 
-+out:
-+	ph->xops->xfer_put(ph, t);
-+
- 	return ret;
- }
- 
-diff --git a/include/linux/scmi_protocol.h b/include/linux/scmi_protocol.h
-index 3a9bb5b9a9e8..fe4b464419a0 100644
---- a/include/linux/scmi_protocol.h
-+++ b/include/linux/scmi_protocol.h
-@@ -15,7 +15,6 @@
- 
- #define SCMI_MAX_STR_SIZE		64
- #define SCMI_SHORT_NAME_MAX_SIZE	16
--#define SCMI_MAX_NUM_RATES		16
- 
- /**
-  * struct scmi_revision_info - version information structure
-@@ -54,7 +53,8 @@ struct scmi_clock_info {
- 	union {
- 		struct {
- 			int num_rates;
--			u64 rates[SCMI_MAX_NUM_RATES];
-+			u64 min_rate;
-+			u64 max_rate;
- 		} list;
- 		struct {
- 			u64 min_rate;
+ /* AUDIO */
+ #define CLK_AUDIO_AFE			0
 -- 
-2.25.1
+2.45.2
 
