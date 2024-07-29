@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 633EB288BD;
-	Mon, 29 Jul 2024 23:20:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37838145FE5;
+	Mon, 29 Jul 2024 23:23:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722295202; cv=none; b=rHkiBlYuKHKWCSNbBsGSST80xGlJh3Ob8LCN9IW8dgQgDfFEGqsYx/TrpERlwip2pkZC0hl+atZRE3dARhuLVecTPqUcDzR8pHxfRrRbtyqPs6MCIVmTsyV+96AotAuF5g+Zzh74kfpcXvMBISaTy5vXPfy6ikbyB68NhgD1x80=
+	t=1722295383; cv=none; b=VFY3Y5viqE69B3udNC4so1+xX6nVprjh9s88hUE8r/ggH2amdYgI0glMCYCBAz1WPcVeSszFIkcNNz2gYp7/80/ahnBzlQtplD3R7uwbUMTYqmJj+e359LLYW323U3qFkTRQ/Jcsh2UQq1WoHTFwJ7G9H1NxpWkiEqJlWhDLfao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722295202; c=relaxed/simple;
-	bh=uX7VwlDqNgfUpg2s2F8JxYe1gxHFDl4plbquYzcgJng=;
+	s=arc-20240116; t=1722295383; c=relaxed/simple;
+	bh=xHexflFziBqP6cLpKuiGNaoJLuxa+BVhHINNAm5b+0k=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=X0WC6ptibfeBBlhwMyE7EOAZyb2EDF+uAYSoappzfiVqbelVhKxvue15cTVTNe5TPQHi3dhXjsjUBaMklRRG8HDyUoZmi9MYPYy+LkJyYwax3BcD2LB8bVatn2t4zYAaDpWNCBBINb3PZqMfT+WGIlGaJXPzCsmqitzyBqBMmSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MhhBmRoC; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=huZsemNjMqR7TTNNphfvMtX2nIj0eptA+PD3QQizWdLuEzG1DpmbDLtQvU8f2VZb6GUOW7yycXNr19kIo0amznVa/hQeiGAKeHyEI5d204seh1SPp78wcofj/I+mDvZW4b87enQFbyVRk84AG2O5i0UrU4SC97nV0cXdvAm0dmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MF3BOcBM; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MhhBmRoC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC335C32786;
-	Mon, 29 Jul 2024 23:20:01 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MF3BOcBM"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA886C32786;
+	Mon, 29 Jul 2024 23:23:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722295202;
-	bh=uX7VwlDqNgfUpg2s2F8JxYe1gxHFDl4plbquYzcgJng=;
+	s=k20201202; t=1722295382;
+	bh=xHexflFziBqP6cLpKuiGNaoJLuxa+BVhHINNAm5b+0k=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=MhhBmRoC++Q7b4J+bnmsrh8seHolzYY5DFI2Ak7THB8OE8y/hntHwccz2ycYGRZjW
-	 uX0tPnIeX7NYAOf5TLpxZ0XKZda0XP6V9j2rKJvY5Cs55uYJOhtzlUPiN8o3BfUUVN
-	 QZ5tWeZzo2RnrzyTp0aOVFpwHHPPJN8QYs8qKwrWOi+AwKEq0v0IpfxkIzfNGVsa8N
-	 gTaWqTjXNXAdVTysxwhm8/FYZ11nbJCYvo4MD91o5sXDWAqgpivTCKpIFsbuxRFs5b
-	 XNERy5sxYNLKlm2Pnfry/RkTFEEVn9Iih4Pwo+lMNVpfvl1a3uLQ75cSFudRn68epG
-	 0Yx2O/lt2TYiw==
-Message-ID: <befaae6341af835dab1349eb351b0bca.sboyd@kernel.org>
+	b=MF3BOcBM5OUwCa8C2Q72qzgAUBsD4yvq75nA8WbSFKcYkHpr9Rl8EpCFf7tjkIEQZ
+	 eHxSB9LsCIkP9ZF/JXPw9f1AaGywDGEQVe0SDW0hjxEXcRv0wBk/0I3Fhcg+ZURBiI
+	 QAMecrEn6LiMIWO2JKAROvt/9rnNaD2VCC2x+0NMTWckVVhlY8hT+n65CSeqMj8TzZ
+	 FAfAbRBQuE9yhCVYfQT2vEO20DGZ2gffpDF4cZrVIR+/MsxJEbqFt1MkfKPQF1YCJS
+	 XoQvgFSr6yZH5rae4nzyu5GQHba/l3XKmTfZXgWTSvW6HL5ZozhCu5G9OElcZ2FSVy
+	 C8Ic1GlotKorQ==
+Message-ID: <817eef56fa3dcd4238198c7a964adfef.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,23 +35,48 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240720152447.311442-1-david.hunter.linux@gmail.com>
-References: <20240720152447.311442-1-david.hunter.linux@gmail.com>
-Subject: Re: [PATCH] da8xx-cfgchip.c: replace of_node_put with __free improves cleanup
+In-Reply-To: <20240710201844.710365-2-thorsten.blum@toblux.com>
+References: <20240710201844.710365-2-thorsten.blum@toblux.com>
+Subject: Re: [PATCH] clk: hisilicon: Remove unnecessary local variable
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: David Hunter <david.hunter.linux@gmail.com>, julia.lawall@inria.fr, skhan@linuxfoundation.org, javier.carrasco.cruz@gmail.com
-To: David Hunter <david.hunter.linux@gmail.com>, david@lechnology.com, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, mturquette@baylibre.com
-Date: Mon, 29 Jul 2024 16:19:59 -0700
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Thorsten Blum <thorsten.blum@toblux.com>
+To: Thorsten Blum <thorsten.blum@toblux.com>, abel.vesa@linaro.org, angelogioacchino.delregno@collabora.com, christophe.jaillet@wanadoo.fr, dinguyen@kernel.org, erick.archer@gmx.com, mturquette@baylibre.com, robh@kernel.org
+Date: Mon, 29 Jul 2024 16:23:00 -0700
 User-Agent: alot/0.10
 
-Quoting David Hunter (2024-07-20 08:24:47)
-> The use of the __free function allows the cleanup to be based on scope
-> instead of on another function called later. This makes the cleanup
-> automatic and less susceptible to errors later.
->=20
-> This code was compiled without errors or warnings.
->=20
-> Signed-off-by: David Hunter <david.hunter.linux@gmail.com>
-> ---
+Quoting Thorsten Blum (2024-07-10 13:18:45)
+> diff --git a/drivers/clk/hisilicon/clk-hi3559a.c b/drivers/clk/hisilicon/=
+clk-hi3559a.c
+> index c79a94f6d9d2..30d5a6ba8fa5 100644
+> --- a/drivers/clk/hisilicon/clk-hi3559a.c
+> +++ b/drivers/clk/hisilicon/clk-hi3559a.c
+> @@ -407,7 +407,7 @@ static unsigned long clk_pll_recalc_rate(struct clk_h=
+w *hw,
+>                 unsigned long parent_rate)
+>  {
+>         struct hi3559av100_clk_pll *clk =3D to_pll_clk(hw);
+> -       u64 frac_val, fbdiv_val, refdiv_val;
+> +       u64 frac_val, fbdiv_val;
+>         u32 postdiv1_val, postdiv2_val;
+>         u32 val;
 
-Applied to clk-next
+I see 'val' is u32 here.
+
+>         u64 tmp, rate;
+> @@ -435,13 +435,12 @@ static unsigned long clk_pll_recalc_rate(struct clk=
+_hw *hw,
+>         val =3D readl_relaxed(clk->ctrl_reg2);
+>         val =3D val >> clk->refdiv_shift;
+>         val &=3D ((1 << clk->refdiv_width) - 1);
+> -       refdiv_val =3D val;
+> =20
+>         /* rate =3D 24000000 * (fbdiv + frac / (1<<24) ) / refdiv  */
+>         rate =3D 0;
+>         tmp =3D 24000000 * fbdiv_val + (24000000 * frac_val) / (1 << 24);
+>         rate +=3D tmp;
+> -       do_div(rate, refdiv_val);
+> +       do_div(rate, val);
+
+So this can be div_u64() now?
+
+>         do_div(rate, postdiv1_val * postdiv2_val);
