@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 329433D9E;
-	Mon, 29 Jul 2024 23:01:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFB1D18A948;
+	Mon, 29 Jul 2024 23:11:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722294098; cv=none; b=o6VC5+rBP8O/+x58aQGTcWirvmKy1ThwklEGT5DpWdQPcj+rXCpRPkiDodh3WAYtCg7LijeN2IAYLrd6YuMqr8vRRWljQ0YiMInNuPOvmgrv2JX8zO8QKo1kYUIUul2sGL76Doe+jXYaiJb8Ck1/Xpk++tbUC2/ojTG3xlirEVI=
+	t=1722294698; cv=none; b=sTVjHUtUjmX2rQBTrO0ySKFWwLDsAk8fEu+86WGBMvtQ3qR4RLLxveEbDN1tnBLFCsJ2KsEOLdQDVlBEMG+9KpLd22DTH4BvNznYpK6Ti9Mo+uizTj7tb4BD0jnTVcgDR1FrYJYbo8puKBsqtpzmlCp+NmT+dmyibWs9IpeVzk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722294098; c=relaxed/simple;
-	bh=yzCurV82av03unBcoGcG74J4yRdeDooIgc+oa3Rp/6E=;
+	s=arc-20240116; t=1722294698; c=relaxed/simple;
+	bh=zRWYUsOVWmCW1ARRgFXXssRkqPSAfDAPe8/80wD4ars=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=uM0cLa0p4LHR8RUvtVjk2dOpaaIhbOV9W1AmgGckh80UqKz4x/X6kf+WXGC1NyrQw5ZgVQ+NEorjmX3Hdfr95lmDE486O9z+No1KK3Q965HMIod1MumLZ6o21iLl+HYOYBUi8fb9TMmmmfJ1whv1afIqPx+aMiwi5ettQqEbSoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GQe0VNE5; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=JrAJDBy0qQf3mZ4GE5WOx/0eFlRoClhf1rpvtJz7c+pxPWFmNUQilGniApfOSL+yjqpYlxTmyzu4d0PMl5LZnA+eQjeiDgT31tnwVQ17jqsucFBnsZB/NpSIfspuFa88ID83LQvfdlFmA2h42TGtVah68zJXBwg+HQqz5BnUxbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FZsjA2Z9; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GQe0VNE5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F9D5C32786;
-	Mon, 29 Jul 2024 23:01:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FZsjA2Z9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B6D5C32786;
+	Mon, 29 Jul 2024 23:11:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722294097;
-	bh=yzCurV82av03unBcoGcG74J4yRdeDooIgc+oa3Rp/6E=;
+	s=k20201202; t=1722294697;
+	bh=zRWYUsOVWmCW1ARRgFXXssRkqPSAfDAPe8/80wD4ars=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=GQe0VNE5g9ObKIB9IOMY41A6xtRZj967Ka7jdBOBClsfNIetnnHsndBKrgnqNvWKD
-	 CgcfPxKm8VJ5WZMopnKqYQQNKL0Lky+yqRDTWekQkHU7ln47ANz/GxuWtBdLab4ugZ
-	 w1EE/pNvN80QOdXeAgnV5Kk7M54s6ScmkgQfB/Y/iHX5aJ8oazglvkixXiGvN7Li3i
-	 cRcD3/SCArnkpl9A5qMIXUJI7e6WFAzSueH3WJ+YZlvrHsI82vGIxxzo8USqmtZI5C
-	 IuX3L4AnN58jh3X/bPJ6LlUcsDECdQQrFnpsWudlDvA6UXyrHub83VoMWnEryJOPRe
-	 yqYmhFkB85Lpg==
-Message-ID: <54decfcc0a311d4447122bb5f49bd491.sboyd@kernel.org>
+	b=FZsjA2Z9icRNAfDBcYD+obscw/zmL9iQkCsVmgzoFdUzkNzMhqpiA594H2Kr/zcpe
+	 jSkJMnG6O17tWP8VmOhpIYjKBxeZ731Wvu9KAWl6yjI84gYTF/A6cFc5N9bSVx1iyG
+	 EJAyohZSWzi227B8Dc2USOkWzqfMZ458az4ThNe0f2BYcj1Uk118NEmHW2l6hXvlua
+	 3BWicbIwwzKOtA8q32lJGrp9EgAxnzRroSK0BFooJ5f1lhOcXjD3x7CiZ2OxNAyE3T
+	 sOGR/rfzVBleTDRE4dvrdagVZS43Kn6GBkiXhJOLigGe+V7vlUV/vHr8n0e3K1gGHY
+	 ZApXXKdQlH9mg==
+Message-ID: <076d5370a9b163f46170a6f581088246.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,22 +35,22 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240717115919.975474-1-fshao@chromium.org>
-References: <20240717115919.975474-1-fshao@chromium.org>
-Subject: Re: [PATCH] clk: mediatek: reset: Return regmap's error code
+In-Reply-To: <20240718082528.220750-1-angelogioacchino.delregno@collabora.com>
+References: <20240718082528.220750-1-angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH] clk: mediatek: reset: Remove unused mtk_register_reset_controller()
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Fei Shao <fshao@chromium.org>, Matthias Brugger <matthias.bgg@gmail.com>, Michael Turquette <mturquette@baylibre.com>, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Fei Shao <fshao@chromium.org>
-Date: Mon, 29 Jul 2024 16:01:35 -0700
+Cc: matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com, mturquette@baylibre.com, p.zabel@pengutronix.de, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org, kernel@collabora.com
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Date: Mon, 29 Jul 2024 16:11:35 -0700
 User-Agent: alot/0.10
 
-Quoting Fei Shao (2024-07-17 04:58:52)
-> device_node_to_regmap() can return different errors, and it's better
-> practice to pass them to callers.
+Quoting AngeloGioacchino Del Regno (2024-07-18 01:25:28)
+> Now that all clock controllers have been migrated to the new
+> mtk_register_reset_controller_with_dev() function, the one taking
+> struct device node is now unused: remove it.
 >=20
-> Clean up the hardcoded -EINVAL and use PTR_ERR(regmap) instead.
->=20
-> Signed-off-by: Fei Shao <fshao@chromium.org>
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
+abora.com>
 > ---
 
 Applied to clk-next
