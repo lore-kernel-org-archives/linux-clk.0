@@ -1,101 +1,75 @@
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5721D145FE1
-	for <linux-clk@vger.kernel.org>; Mon, 29 Jul 2024 12:31:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9C8233CC4;
+	Mon, 29 Jul 2024 12:32:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722256277; cv=none; b=M8T4spkYOJ6SQ5RYbS6NNKyhoeFJN68TSXRLUHG1VYWnNcJz7oJLssXNLeYmUgxgga/3u0ZYcLvlWiGDDE04J6GkQEUg66gDco6T9NELoAZgYBkqwcYaMGkSrTx8Jm4PAvwI4T9yMTlT2QOJj+jby4zoNY1J5MyJ4Bjeucu3EB4=
+	t=1722256383; cv=none; b=acXU7D5thwXRvU9Dcnrn7otw9JgDZTmmiU0fK+kXEwLjMfTnzXYPMu4OEsG/98p7YHx7uFn19Y8Y6/Gqz9lpKVFpMx6oAd3hHAcIamuh0rhWelg0sPJjK42AXRDlymMxWUhduI2RoKsas3bk/8g7+itxiMxXITdHsF0GQ2Z8LJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722256277; c=relaxed/simple;
-	bh=1MJdqvR4l66CFymtTigURAQi+Ak55GLMbQ2E/5ReGDM=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=RhztffOpt7U4rgDtQ6iSBk31AQDKkpNqMayo3eEtMz8pKidcJjRiUxajowAL6Na5oTFzGhSi86NoqFCKnjetsrjEv0XZDNPrReI4USPira6i+ucwhj5SR3odDGbqKFPee7WGq6LaKbdfd7lSHDzVXSjdRjLNzQ6SKtkTWCNr7zE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RA1Vd/YF; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1722256383; c=relaxed/simple;
+	bh=486EBKZCXcRa78kDX5kskMncYP2Rrz0gd4BMaLyz2yk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Xg4sMpEQG52sqOJ5WjKsJaAZGIGu89YRiFiKLw80dCCya/1gcWMFSQfQmkMs3Q7k2AuHLGaT+qg8w5OM9eGttx37ZEPtJAhh2066TZE5cxCn0aVSKFJ+kAT03bPPTmLMojpFBkD9dMMKsDYi+0CmFDmp11cZrv+7vWRkjmUdVhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JC4xxslR; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RA1Vd/YF"
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a7a94478a4eso701301966b.1
-        for <linux-clk@vger.kernel.org>; Mon, 29 Jul 2024 05:31:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722256274; x=1722861074; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aXEWCd7FqpXeUoPV5fLPpv01DhdKsxKfAinrkombeok=;
-        b=RA1Vd/YFLsDhjZBh4ET3F2CyuWwWNz+nVsbtGY9VzzsPOqGIxYFBE4yg9ekUGV10OS
-         DHALFcbESjfOHJTwAfyn3qiM3HSLbe1/Hyzzel3YmaZY403Zdee9aVruysamQx3DMC1l
-         ta0cgLR3minX/JIB7JyKhcgIu0rfWcrW5wvMW8bkdyHMqI4GOTf5N5Eo5z0acMLAP6W8
-         4p9DhWrCNfRrcVt/5O/4UtSGBxUEz/p1xnm9kUZOF6Df26uuLGEulyodywkpU40QH5Y6
-         e1l/9cr5WgJkiDgG8IRGq0tl6Khxzn5yLT5pPh5i5w3N+qyYlx56LTqEHD4YcxWotjdK
-         uZ/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722256274; x=1722861074;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aXEWCd7FqpXeUoPV5fLPpv01DhdKsxKfAinrkombeok=;
-        b=tm4HDsHCMcGX3ssF6Z+hwx9sC8t6M/kIOln5OxF7OyxjCM3p0VkqWk9p9eYwAxqEnw
-         50F0bGhFGLRQc8qRhxwJD+zAgsbDKQzX3qaHAbXrsuD842HSgNzzh1V/qO5JAdzKs7JY
-         4D+ycasokZA57Uf9i8026nZRJT/gTvQgoPtzTb1MjErxG0Xnf6cyrJJXKGB2fBbCdiLD
-         5dfHysCrXLwHjVmVPzZn549l6BiIrssXVfw4jDfAe5N0uyNwpdba/Rm5eA1dx4XlGBaU
-         bWRfKtKCW6tU5dvoZfl2NPL1dx3qq7cinQiA3LvtFNQ7sAYyLgLgUbS3OI8Ol1y5rQym
-         Cmfw==
-X-Forwarded-Encrypted: i=1; AJvYcCVtPYh6FPvwHL2sImP90bO1STiM1DcNdszEwvCYK6FIGubbuc66EpgzU9l8/6zNGCholLpBlCkECs/OxMZGfE4Nf61O5uXXvDDd
-X-Gm-Message-State: AOJu0YwHIAccJDHddnUSed/OLY5nFjZnUc3CH/FZWJwv2LKfjPNV5LsU
-	OF3T6jPAqmDw/RQ4xRK6XiMRdGj+vzaFJvEmPt0ev/9SlZKEhkadRVbN+QwqzBs=
-X-Google-Smtp-Source: AGHT+IEcCCNjVqMjw+SlV2NGC1JBsZBQwl83wS/81hnJwhDhzkYKop8654LkJwHocVtqfIz4Gw4IXg==
-X-Received: by 2002:a17:907:1c19:b0:a6f:e03a:99d with SMTP id a640c23a62f3a-a7d3f514a03mr869934766b.0.1722256273697;
-        Mon, 29 Jul 2024 05:31:13 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7acab22ff1sm501973966b.35.2024.07.29.05.31.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 29 Jul 2024 05:31:13 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
- alim.akhtar@samsung.com, s.nawrocki@samsung.com, cw00.choi@samsung.com, 
- mturquette@baylibre.com, sboyd@kernel.org, 
- Peter Griffin <peter.griffin@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, tudor.ambarus@linaro.org, 
- andre.draszik@linaro.org, kernel-team@android.com, willmcvicker@google.com, 
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-In-Reply-To: <20240628223506.1237523-3-peter.griffin@linaro.org>
-References: <20240628223506.1237523-1-peter.griffin@linaro.org>
- <20240628223506.1237523-3-peter.griffin@linaro.org>
-Subject: Re: (subset) [PATCH v2 1/3] arm64: dts: exynos: gs101: add
- syscon-poweroff and syscon-reboot nodes
-Message-Id: <172225627208.280610.7893124858038384866.b4-ty@linaro.org>
-Date: Mon, 29 Jul 2024 14:31:12 +0200
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JC4xxslR"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 001C840005;
+	Mon, 29 Jul 2024 12:32:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1722256372;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cNEaXAf9TE/pb+tSX4cZMggMhG1O+aODHSBLYm6YUnQ=;
+	b=JC4xxslRNDLVUuq6ou0LJnKQnufX22/9r8b2xSMKyuvLCVC9ryVumnQb3z89D3ZEjX+f38
+	RrRpaMOEm3e+ymAyornk1zrxr9XDpoyO08EGDGpT1WLL2szv4ALVDZyxtt2U8rpMb2UtgW
+	IdgRRnfcQ7yYnyHvP1RSMDqoTIN4osSXl9gMjSxl4FTWKnZ2GS1BZOkEa0NuM1KAuJ9JOd
+	ZDIZS8VVOW8T2HzRsArA1wAhn9dAewkRgoBkWShxARQdZVbHHwaCmbkaPWAy301Td9vwtY
+	uKB08SlmtGvFDVLamr/bj3MBDYfa74Ufcy/7G/JlqlXG5bcvoDeZ5xjzGYko/Q==
+Date: Mon, 29 Jul 2024 14:32:50 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Peng Fan
+ <peng.fan@nxp.com>
+Subject: Re: [PATCH v2 1/2] of: property: add of_property_for_each_u64
+Message-ID: <20240729143250.624060b0@booty>
+In-Reply-To: <20240729-clk-u64-v2-1-ffa62ee437e6@nxp.com>
+References: <20240729-clk-u64-v2-0-ffa62ee437e6@nxp.com>
+	<20240729-clk-u64-v2-1-ffa62ee437e6@nxp.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.1
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
+Hello Peng Fan,
 
-On Fri, 28 Jun 2024 23:35:04 +0100, Peter Griffin wrote:
-> Reboot of gs101 SoC can be handled by setting the
-> bit(SWRESET_SYSTEM[1]) of SYSTEM_CONFIGURATION register(PMU + 0x3a00).
+On Mon, 29 Jul 2024 10:30:52 +0800
+"Peng Fan (OSS)" <peng.fan@oss.nxp.com> wrote:
+
+> From: Peng Fan <peng.fan@nxp.com>
 > 
-> Poweroff of gs101 SoC can be handled by setting bit(DATA[8]) of
-> PAD_CTRL_PWR_HOLD register (PMU + 0x3e9c).
+> Preparing for assigned-clock-rates-u64 support, add function
+> of_property_for_each_u64 to iterate each u64 value
 > 
-> Tested using "reboot" and "poweroff -p" commands.
-> 
-> [...]
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
 
-Applied, thanks!
+Reviewed-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 
-[1/3] arm64: dts: exynos: gs101: add syscon-poweroff and syscon-reboot nodes
-      https://git.kernel.org/krzk/linux/c/2d0c7ae784b487343b4813db9cb133ca51c674c3
-
-Best regards,
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
