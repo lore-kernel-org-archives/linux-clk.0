@@ -1,31 +1,31 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87DA712FF63;
-	Mon, 29 Jul 2024 03:58:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50D1013212E;
+	Mon, 29 Jul 2024 03:58:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722225530; cv=none; b=Mlsk6bYVPFKOqwmtuLDpDr1bG7uC6IvNGvAuI5MIe4iAq0xZrICv9AMd5fU2B+p/YtvUNvFn0Api/9jZ9VXPMj1GzgAfeJzgHIaX3qmMMAjsQbdmt9tXy9Q1VBBwEJO9/njmWJQXgZ//xjr8HT+TP9SIIfMJFFu4Xv7b44Vy/Wo=
+	t=1722225531; cv=none; b=pkQK7OYG3g8jdJDg7nyAMAFOKKpLTaiB60n89/cF9GUsgBd/DaJBxCqA2IniODuaEMhWQ6VIkbV7POWWLMN6rZyNsy79w5ny8Y44PdxkcKXXLERLtsXb/Y9H6HLLjigIM/t0qrT3ZUoF01u+p4zhbcNg29WlCY/dibryiO4yKZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722225530; c=relaxed/simple;
-	bh=CvMN9y8YG2fZgADKkezN6YvGt50nndynPXU+DTrYzgc=;
+	s=arc-20240116; t=1722225531; c=relaxed/simple;
+	bh=APVt9llq5myGDFCtafVZJaXHoIIcdZz+kIdn3LaHTnY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rTvJnG9NZI9QqahCA3FpU/R1a+DgGtqVmR967o3EhfeLZyiDxBZZKqEvCLIXljmJOn4i2iwqJWw/QsHOe2xqYMNi4P5EFul1HZWFODB6n5GmspkXTVRAcZ3Jy9E9xA4SWhrCMvWxd4uaB9XRVtwkKZbnkd60OYuhlCOUwWFf6wQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e4Ew1T7Z; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=ATLbZ7GvudRaSHpNBHwAMkxkfWTy5rY2m7ueR/PfStnfuvdLK9mFeYA4pgK/dSxipq064Wfiet2AHoURIy3+rPr1uxefSWj3Pu4KIC7s94OY8bcESmRWUbLC1KIx/UVTnr7xIY4kgvkj7+a8Wm8f7Q7wh/3CuJKwqWyap4h47Kc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LJjsrnBX; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e4Ew1T7Z"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7C461C4AF07;
-	Mon, 29 Jul 2024 03:58:49 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LJjsrnBX"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5539FC4AF09;
+	Mon, 29 Jul 2024 03:58:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722225530;
-	bh=CvMN9y8YG2fZgADKkezN6YvGt50nndynPXU+DTrYzgc=;
+	s=k20201202; t=1722225531;
+	bh=APVt9llq5myGDFCtafVZJaXHoIIcdZz+kIdn3LaHTnY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=e4Ew1T7Zd8yG6ZEM3xSjVHXMsHkR3tFJ7T7/CKK+KVBlDBkVYpbjRsLZ5rX66/Mtc
-	 FfniOkPPyEu/5wT0G+Jz5FRTRJjAzNCCGYKK8C78VA7ulg3MIbGGJyjaMIpkXGjEdx
-	 dbt6L8A/GSpuz6vuc19sVgDIXC0uSxEVMxkzP3NbUPf/DNI64dNADDGfXVtWCuciHB
-	 UZ1w/KnnQ8bbuvAQucpwILTvD8+7ovqXKJ2LNbSNRZJ0UrW63zspuetFwMEZ596aWw
-	 dwswByv/0tmKhbiCGORJ1j6O8HuL0Rdpv3o/SCxtMFWWRKkXNOb/lyvGMATNzPj8Hs
-	 tRktYYFrTW+9w==
+	b=LJjsrnBXTBuYxr9GVG64C5gAz6IicTYKdCiePGQZiVYzGd5cEh18K/O6frLEq4WNy
+	 ZpVJbA/4K2FA1PIyKVuLV10SPXXAEMgR4vYeep6Zyt4RL/BN81RNsIHtZpGN53w5/G
+	 XbB0v5a091Qo7sNmkNXeXNFLxqN6KgKtuWapT2wE37ce8JopLThCSRJ1iCkTdte8+I
+	 xWjfYA8dDWwWJza8M2uNOt0fQonHbrELs4V15rdEcAYAOAS9r0SKu10xmCZOlRGp6l
+	 K1ppYe+iRxc+KkjD4XPK0Wh2mPAr+bLpZCL2+ho5hnC0HUUsEE4Oq2w5fijh+lN4wT
+	 JP/jt1Pr5PXjg==
 From: Bjorn Andersson <andersson@kernel.org>
 To: mturquette@baylibre.com,
 	sboyd@kernel.org,
@@ -34,12 +34,12 @@ Cc: linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	stable@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: gcc-sm8250: Do not turn off PCIe GDSCs during gdsc_disable()
-Date: Sun, 28 Jul 2024 22:58:16 -0500
-Message-ID: <172222551320.175430.17374920333342835829.b4-ty@kernel.org>
+Subject: Re: [PATCH] clk: qcom: gcc-sm8450: Do not turn off PCIe GDSCs during gdsc_disable()
+Date: Sun, 28 Jul 2024 22:58:17 -0500
+Message-ID: <172222551323.175430.9264124704995863171.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240719134238.312191-1-manivannan.sadhasivam@linaro.org>
-References: <20240719134238.312191-1-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20240722105733.13040-1-manivannan.sadhasivam@linaro.org>
+References: <20240722105733.13040-1-manivannan.sadhasivam@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,7 +50,7 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Fri, 19 Jul 2024 19:12:38 +0530, Manivannan Sadhasivam wrote:
+On Mon, 22 Jul 2024 16:27:33 +0530, Manivannan Sadhasivam wrote:
 > With PWRSTS_OFF_ON, PCIe GDSCs are turned off during gdsc_disable(). This
 > can happen during scenarios such as system suspend and breaks the resume
 > of PCIe controllers from suspend.
@@ -64,8 +64,8 @@ On Fri, 19 Jul 2024 19:12:38 +0530, Manivannan Sadhasivam wrote:
 
 Applied, thanks!
 
-[1/1] clk: qcom: gcc-sm8250: Do not turn off PCIe GDSCs during gdsc_disable()
-      commit: ade508b545c969c72cd68479f275a5dd640fd8b9
+[1/1] clk: qcom: gcc-sm8450: Do not turn off PCIe GDSCs during gdsc_disable()
+      commit: 889e1332310656961855c0dcedbb4dbe78e39d22
 
 Best regards,
 -- 
