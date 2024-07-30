@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF2351BA883;
-	Tue, 30 Jul 2024 15:57:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB711BA885;
+	Tue, 30 Jul 2024 15:58:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722355073; cv=none; b=Ljo3cLXCzyZtJENALLlejPgv/kIgQ9yDOhxeYahllsAYbF0j6Wf01OEVXVpUhrjveh2nzyN0paedkKa9ufNmKipSkRLpQjEq9F5xUknCDiNSDfEgiCf6rZ/Ds1VQyRXK5ZaD32TeILINzCrhCuyNlr2tvGtapnRiBumwPB16/x8=
+	t=1722355113; cv=none; b=BYPKWQplucAWIK20lH0N+nNJ547gHCm8qptr6C0wE1i9TFZ/jEaZvUi4Vyak5D02fDl3it3pb0el55IFdkZALc3A1ValYo8oV5pXotgZIKrRETjw1Z7WGYRYbTdA7uT3VMN54iQ59toK390quOYEbJgxKNqDmdUzDg74UTwi3rs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722355073; c=relaxed/simple;
-	bh=SQELyUfZGLCrV0rCnnFI6nALeOacjdEpR7+pAQn4+nE=;
+	s=arc-20240116; t=1722355113; c=relaxed/simple;
+	bh=bKaa+XXOeGGCc6a9XP0WkpZ8zTbkQLyNOTqWXHPC3uE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uFostc1Q4GvLMjI5gJbl4zldmFDAOEr3LLrWEi48P2GWHAt6N6HM60L1PPsS83PYPjTPMefS5TDncJcXVqDAiGiZz7IpG5bgTdeBrFfjLoWi+m+BzRHJv4QZ3MQ5bRBJ2RTalb0XUfLf336O9LfMI4U7kIZM6ssK0SEtB8j0Ozc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f9/wurqa; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=kyri4HB8kmIgbLLkUr1/Gitb34NWIO7lqAxLzAgTK+CxD2Ba6KDV1hCTt/sPMNAKM8UC/pvDpghVNdZjC7eEWchq+p5vrUjvb3fS++35dQl1eHdTdfp72u2fzz7pcKfCm6QrQTUGmGpf68r9iK3t4a40Zg0O+upN+wGQF77MMDw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EGInaVWp; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f9/wurqa"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0781EC4AF0C;
-	Tue, 30 Jul 2024 15:57:49 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EGInaVWp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD43CC4AF0A;
+	Tue, 30 Jul 2024 15:58:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722355073;
-	bh=SQELyUfZGLCrV0rCnnFI6nALeOacjdEpR7+pAQn4+nE=;
+	s=k20201202; t=1722355113;
+	bh=bKaa+XXOeGGCc6a9XP0WkpZ8zTbkQLyNOTqWXHPC3uE=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=f9/wurqa0yfYVsJuBkbK6J7tObzE+3vXMlykd4KnNdPkhEBpk905nhG8RxR8gyYn1
-	 O+tWxQvzVTSIF1Zd7PNUnYMIu62rZEvyhAlbcXvqMY0wHup+Gn8Ah/pnZAlkOv80ch
-	 ju4dj1iJqUEN+ATmo8Aart438cz7ritrj6EEqthhuRVWATKTkpJJndTC/4CZERhtuL
-	 mhnSfJA01ozuqE69UxjINvGprwgiOT43aqy9NbFe1A2gOk2ctgpgGJ4GkLtKqo7pHy
-	 OcGnwg/9o+/l7NZwcU6xGgnyDXeJ53VoRywkpnbD3lPpk60fqjojlelUFXbDhEjuKj
-	 cVvh2qz+pCHxQ==
-Message-ID: <159a9d77-5038-4691-8246-e10d3b49e26a@kernel.org>
-Date: Tue, 30 Jul 2024 17:57:47 +0200
+	b=EGInaVWpbt0wiDvSMXCG5Dq1rLp7OjXeEZE3cVOAiV9sCH5JkEDhWv/Eq2g8MX4NZ
+	 Ja7ZxN/rPAgllTaGhJeriQR2+pwGVxcZ1L4QpsnfpaK043duPYeePRQ4tDk2oa86Ex
+	 NVNAvX4k3AC+X3NJq0KuOHyESEPiCP7zM6S4x2jETq5MQ8lBeN3UC5Ty3GR4Ll6U/7
+	 K6lw1wc1rl7WO5Tkeps3lWVzG8ZhiYF+SNVDa2CP41MH48UHQEVyG5ycH/SD8U1d7c
+	 tC5MLI77oXjIcsX5CI2zROreX1ITdjHRpWQufHsDUx8tzrn6BqeBqd11ZFA6v3Lw9f
+	 AEvx79Ym5NA0w==
+Message-ID: <4183344f-21d5-4dda-a5e8-e347301f332a@kernel.org>
+Date: Tue, 30 Jul 2024 17:58:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: clock: nxp,lpc3220-clk: Convert bindings to
- DT schema
+Subject: Re: [PATCH] dt-bindings: clock: nxp,lpc3220-usb-clk: Convert bindings
+ to dtschema
 To: Animesh Agarwal <animeshagarwal28@gmail.com>
 Cc: Daniel Baluta <daniel.baluta@nxp.com>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
@@ -44,7 +44,7 @@ Cc: Daniel Baluta <daniel.baluta@nxp.com>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
  <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240729193731.142069-1-animeshagarwal28@gmail.com>
+References: <20240730141338.46234-1-animeshagarwal28@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -90,53 +90,17 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240729193731.142069-1-animeshagarwal28@gmail.com>
+In-Reply-To: <20240730141338.46234-1-animeshagarwal28@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 29/07/2024 21:37, Animesh Agarwal wrote:
-> Convert the NXP LPC32xx Clock Controller bindings to yaml format.
+On 30/07/2024 16:13, Animesh Agarwal wrote:
+> Convert the NXP LPC32xx USB Clock Controller bindings to yaml format.
 > 
 > Cc: Daniel Baluta <daniel.baluta@nxp.com>
 > Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
 
-> +
-> +properties:
-> +  compatible:
-> +    const: nxp,lpc3220-clk
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  '#clock-cells':
-> +    const: 1
-> +
-> +  clocks:
-> +    description: Phandles of external oscillators, the list must contain one
-> +      32768 Hz oscillator and may have one optional high frequency oscillator.
-> +    maxItems: 2
-
-That's not correct and does not match clock-names. List the items with
-description instead of above "phandles ...." and add minItems.
-
-
-> +
-> +  clock-names:
-> +    oneOf:
-
-Drop. It's:
-
-minItems: 1
-items:
- - const: ...
- - const:
-
-> +      - items:
-> +          - const: xtal_32k
-> +          - const: xtal
-> +      - const: xtal_32k
-> +
-
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 Best regards,
 Krzysztof
