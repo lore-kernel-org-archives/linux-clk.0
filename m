@@ -1,69 +1,71 @@
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AB4E19AD81
-	for <linux-clk@vger.kernel.org>; Tue, 30 Jul 2024 11:16:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F3CF193080;
+	Tue, 30 Jul 2024 14:14:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722338196; cv=none; b=m7VwVNvIgP585cPAFAPwYVPe46AWdRbiEUDtyzCIyozbBw9v2zsXP/kBi+AQpHo0APelm6oqq4zKxbhsN2zmIeTe9F72t0rYu/2m5CxZ5m1AO9lXj/EfQJjaFCOjIhtpCD9Gkids0sXc6cGUKKUOwU9k/rviQPySVD4qEKSTlxI=
+	t=1722348856; cv=none; b=WvJmSFsGbtBeLxhWBMGb6QJjK2oDynAo7Gv+MrgGqA+BWHSmp1U4k3lx1+PcAAWkVnZ+WZhb/tWjy1sCEIJFnEFJ0HbjL7gnkkjF7P2OEwIvjH3Qyb0tbG6eH7I456qZVNr+3binP4y6nWjif94M98UqAAgxtOgcWBr3nPurlJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722338196; c=relaxed/simple;
-	bh=8he+Ksryn+4vpvLC3YYqn2vprYlQyUXP6g5w6RA02Cs=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type:
-	 References; b=DAoe1jvXjNc510T47NzbMKLoghDtMnrVI07UFytrxOT6fY/GPCKaRxQAmVz+u0VT/IdituDfB4xmYZuCctf7vk70GpziEtsffTKuHLKnb22zhGpYfPUqiPYS5b6EEMAw75vJMkOc1/YVf7KxmzaTaXoe1xSfRpc2NdhhnTgC0fc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=n10FyR1E; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1722348856; c=relaxed/simple;
+	bh=2B9faLX+S8lBby/cfiK8W+KbIKMy4XeN7GFqrp09SGs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B0iAEXdJz4aDxgPgIMi71xan94hBIgfIvkbuIP7gJQVSYXNs86HlWSD+Rxb5w0s2J1dCH2Cg3jLtQ3xgvQg2NDGWDg40z4NUqQmH/aZt3La7QRLMXofjW4nCOw+k6IUlQYcLdJpDKzTWv9B2/uM/S/HbTzEocCGzF/SSfpC6iCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GNmGpiH7; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="n10FyR1E"
-Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20240730111630epoutp02dd8a2e87996f200b5229218bc2411fb2~m_XV-lq2u1695116951epoutp02W
-	for <linux-clk@vger.kernel.org>; Tue, 30 Jul 2024 11:16:30 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20240730111630epoutp02dd8a2e87996f200b5229218bc2411fb2~m_XV-lq2u1695116951epoutp02W
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1722338190;
-	bh=QgFIgTrBA9L3Aa5IzF3Q3Y0M/oUe/A3YcQIIjOneEAY=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=n10FyR1Esdmq49Aup+8mQFmyUbtlqQr3PwtQfEjkXZrsyK6i3pJwp4fZ6inzCFB7y
-	 wRX4te9Sw2qkDUFtFHA0W4Qo1gkzCLImnYB3E4uY8bwMzXBps/3crTLro4nEW038QI
-	 DNqP/+lmdtKUZ+ya5QAAD2wVm7dPb1yxtRwaARHQ=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20240730111629epcas1p18d40ddfb4695043aa47609bd99684b6e~m_XVPsA6B1947519475epcas1p1P;
-	Tue, 30 Jul 2024 11:16:29 +0000 (GMT)
-Received: from epsmgec1p1.samsung.com (unknown [182.195.38.237]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4WYCND5t49z4x9Py; Tue, 30 Jul
-	2024 11:16:28 +0000 (GMT)
-Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
-	epsmgec1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	AC.CC.08992.C8BC8A66; Tue, 30 Jul 2024 20:16:28 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas1p3.samsung.com (KnoxPortal) with ESMTPA id
-	20240730111628epcas1p30976a7c1192749ff7997be5685d52c49~m_XTxw3nh1638816388epcas1p3q;
-	Tue, 30 Jul 2024 11:16:28 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240730111628epsmtrp1a547b07603e29b6368be5641d0f717b9~m_XTxA3QX2131621316epsmtrp1K;
-	Tue, 30 Jul 2024 11:16:28 +0000 (GMT)
-X-AuditID: b6c32a33-70bff70000002320-c6-66a8cb8c055a
-Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	F9.11.19367.B8BC8A66; Tue, 30 Jul 2024 20:16:28 +0900 (KST)
-Received: from localhost.localdomain (unknown [10.113.111.204]) by
-	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20240730111627epsmtip1d4a624ab0fd9ab9199750bc955dc40cc~m_XTb5Cky0676606766epsmtip1s;
-	Tue, 30 Jul 2024 11:16:27 +0000 (GMT)
-From: Kwanghoon Son <k.son@samsung.com>
-To: krzk@kernel.org, s.nawrocki@samsung.com, cw00.choi@samsung.com,
-	alim.akhtar@samsung.com, mturquette@baylibre.com, sboyd@kernel.org,
-	robh@kernel.org, conor+dt@kernel.org, tomasz.figa@gmail.com
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Kwanghoon
-	Son <k.son@samsung.com>
-Subject: [PATCH v2 0/3] dpum clock support for Exynos Auto v9 SoC
-Date: Tue, 30 Jul 2024 20:15:32 +0900
-Message-Id: <20240730111535.135301-1-k.son@samsung.com>
-X-Mailer: git-send-email 2.39.2
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GNmGpiH7"
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-1fc52394c92so37916135ad.1;
+        Tue, 30 Jul 2024 07:14:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722348854; x=1722953654; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SJ1W777DTxzVK3kLsp7gjF2RIvle9V5zMG9vfW7qFnU=;
+        b=GNmGpiH7khf5BRgPK4prvE5FvM6rTLCsCV3ZK2mCvspOFI4dm+HY8j4bSgyjRPT6OQ
+         Eb3yN+Iv98NG16wnZWTK8v9XzJ34ni47PCrhJq2M6B//8CrhaY6bAAFlzeVd5QoOfgKS
+         3QXMMq4hoOi0o6styiQIrKZiNJphMxxqCnXV9qeeEieSw9ZZ4pJHLLNcran11CwxosiR
+         XqCh6SO1yVcO+QdE8dqvcSvDuJEt4++vdsGnr2nadPRaT3+h7s1cJmwm9kJftt8Ru4sY
+         GkpnxMmqY6RGAmYo54qew+NtVzDsZopsreDPZNhaPlMgiSKnzqwg8DQD43+Fm4TgqrGG
+         wwQw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722348854; x=1722953654;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SJ1W777DTxzVK3kLsp7gjF2RIvle9V5zMG9vfW7qFnU=;
+        b=MuCLEFZVcqWreZsg681v6EjX71k8pAueEtyyvwAr53Zc79nvZo4hgKp55rbz2Tm+Ex
+         Si8S7s24wdixLfCjO1o69Nucc4Ol19P66Av71NRuQ45MTLxSNUye88bP75JLn2wPz220
+         LznVSMue72UC9wHpSL2RKyRDNGh8ILPkJr11D9n0zqzpDM3Lvl6ole/uEU6TO6IyFHlP
+         v4aoKJoKvqXoo/TQzQA0Q6ck3RWAG/zv6YjemKz9qUKSqj6q45qbgLaaCOckOYb80dE3
+         uXgQmut0P2mVBszRTA/8a2cHS+dQmCN7PEPukMYpHDV0JpgrZJhuaN4jPGuOZIY1G08R
+         NHVA==
+X-Forwarded-Encrypted: i=1; AJvYcCWkye/jFvPS445naimDNPNKQREPQtTKPT/ggtKMdqCMU8t69nxhk9TySw96A1F0lPh7IX9kteiwhL7CcJDXH7UH4ZhfF5Pq748MTQrz4EH8eEd7J0hUwHz6nHUvG47ZtGnG5IA5Q3qbMtBNJNl9TfFO4wNlJdB0jmKDlSvh0xH5f6EJ/w==
+X-Gm-Message-State: AOJu0YzrVzR0ao5UDDTAyG/PZXwL1zYhTlXMi6mwysZBIfFyZNrKawk/
+	Cnj/sWrEhWmmfNLMbeViJPfi1jnqCxDe1QPuM+kLlXTpbOwlfCE/
+X-Google-Smtp-Source: AGHT+IFO7/zddJrxhL05A/FDyPSP/TsGQ24jQ/BI1iOoCpZYq54PTgQgTkxVf5nzfrf4I5W1708yHQ==
+X-Received: by 2002:a17:902:d2c2:b0:1fd:74ac:e6b6 with SMTP id d9443c01a7336-1ff0482adc3mr135215625ad.24.1722348854263;
+        Tue, 30 Jul 2024 07:14:14 -0700 (PDT)
+Received: from localhost.localdomain ([115.240.194.54])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7f9f43csm102176275ad.257.2024.07.30.07.14.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jul 2024 07:14:13 -0700 (PDT)
+From: Animesh Agarwal <animeshagarwal28@gmail.com>
+To: 
+Cc: Animesh Agarwal <animeshagarwal28@gmail.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dt-bindings: clock: nxp,lpc3220-usb-clk: Convert bindings to dtschema
+Date: Tue, 30 Jul 2024 19:43:34 +0530
+Message-ID: <20240730141338.46234-1-animeshagarwal28@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -71,69 +73,87 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprJJsWRmVeSWpSXmKPExsWy7bCmnm7P6RVpBjfXqFk8mLeNzWLN3nNM
-	Fte/PGe1mH/kHKtF75qrTBbnz29gt9j0+Bqrxceee6wWM87vY7K4eMrV4v+eHewWh9+0s1r8
-	u7aRxWLVrj+MDnwe72+0snvsnHWX3WPTqk42j81L6j36tqxi9Pi8SS6ALSrbJiM1MSW1SCE1
-	Lzk/JTMv3VbJOzjeOd7UzMBQ19DSwlxJIS8xN9VWycUnQNctMwfoWCWFssScUqBQQGJxsZK+
-	nU1RfmlJqkJGfnGJrVJqQUpOgWmBXnFibnFpXrpeXmqJlaGBgZEpUGFCdsaypa3MBZPZKq5u
-	/MzYwNjM2sXIySEhYCKx+dtWdhBbSGAHo8StiWZdjFxA9idGib0r/jLCOYv2nmWD6Zixfg8b
-	RGIno8SCN0fZIZwvjBKfD4O0cHKwCahLLGlbC5YQETjOKHFmSTfYLGaBlYwSD1Y9YQGpEhZw
-	lPjbfQNsLouAqsTU/W1gl/AKmEvs6H3H3MXIAbRPXmLxAwmIsKDEyZkQrcxA4eats5lBZkoI
-	tHJIvOmcxQJxn4vE6zPfmCBsYYlXx7ewQ9hSEi/726DsbImjH/dC/VMicX3WImhoGEvsXzqZ
-	CWQvs4CmxPpd+hC7+CTefe1hhTiHV6KjTQjmslud5RCNohJnnn6EGugh8eHxZhZIkMZKvD+y
-	inUCo9wsJA/MQvLALIRdCxiZVzGKpRYU56anJhsWGMIjMjk/dxMjOI1qGe9gvDz/n94hRiYO
-	xkOMEhzMSiK88VeWpgnxpiRWVqUW5ccXleakFh9iNAWG6ERmKdHkfGAizyuJNzSxNDAxMzI2
-	sTA0M1QS5z1zpSxVSCA9sSQ1OzW1ILUIpo+Jg1OqgYkjd2m3T0FamtXUS94MAWt/3Pk5s8yw
-	YevzcqaisFkfFurdyc4M1u6r7AxlXuqpcsjzoZ2klON3Q9sjb/cG7/D46sjvcmHPszJt+03G
-	okI/TC746Ojc3f4jnOGTz+Tj2cb/bvOwfHjtm/EmSyHwOG/S/vvZi9KCzO6n7t8u8yF6yqmw
-	vP4/ip1nlkitWue/+L/ZZpWt30IkNRpm3//RlH23kV3L7sT6mczfNrzfY3ngzfmlEeFXQz16
-	EuJd92iprfIX3Kjd/Lzr3LZNdafC5zuWufy/WNofskzBokZG/s6O+1vsJErOnl82Y8OrqjdS
-	PxznFd14Vxw700U407dDvEJ0/qEz0/SdWKr5rnz1FFBiKc5INNRiLipOBADFduokLAQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrILMWRmVeSWpSXmKPExsWy7bCSnG7P6RVpBpueMFk8mLeNzWLN3nNM
-	Fte/PGe1mH/kHKtF75qrTBbnz29gt9j0+Bqrxceee6wWM87vY7K4eMrV4v+eHewWh9+0s1r8
-	u7aRxWLVrj+MDnwe72+0snvsnHWX3WPTqk42j81L6j36tqxi9Pi8SS6ALYrLJiU1J7MstUjf
-	LoErY9nSVuaCyWwVVzd+ZmxgbGbtYuTkkBAwkZixfg9bFyMXh5DAdkaJc9e3QyVEJTouNzJ2
-	MXIA2cIShw8XQ9R8YpS4NeMXWA2bgLrEkra17CAJEYHLjBL/F0xiBHGYBdYySjyd8oQdpEpY
-	wFHib/cNNhCbRUBVYur+NrA4r4C5xI7ed8wQG+QlFj+QgAgLSpyc+YQFxGYGCjdvnc08gZFv
-	FpLULCSpBYxMqxhFUwuKc9NzkwsM9YoTc4tL89L1kvNzNzGCQ10raAfjsvV/9Q4xMnEwHmKU
-	4GBWEuGNv7I0TYg3JbGyKrUoP76oNCe1+BCjNAeLkjivck5nipBAemJJanZqakFqEUyWiYNT
-	qoFJ7t063veuropr5z01u/K0tKxqu9Gclz3dyw4WnQtNUr7yc6rEozXZch+m9DToOcwvl56U
-	2bPq4GRRNumYVJEH+pvCp/6czzb71gEd3oaslcxvSmfIFDce+j3fosND+MY97Vl3Prfekqz6
-	XVWtmpa0NW/RL1OpRSu6TRz2afacK97p37v/T79RC9/SD5OZD/XMlnbkcDeN/layOkdYk0c8
-	rufpVG5Bz7yG6yfLbRbe/V6neMIneqPp7vUTPNK7+f1dLcJ2zFvpMSfh5c+1kUFbfk13885/
-	7BxyecHKFq4b0XZsf3Tef9o3nc/e+tumiJO1zz94M7ze2ufx5czJn/uaMza76IY++nPEI0G7
-	RHCfEktxRqKhFnNRcSIACSuhiOQCAAA=
-X-CMS-MailID: 20240730111628epcas1p30976a7c1192749ff7997be5685d52c49
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240730111628epcas1p30976a7c1192749ff7997be5685d52c49
-References: <CGME20240730111628epcas1p30976a7c1192749ff7997be5685d52c49@epcas1p3.samsung.com>
 
-DPUM (Display Processing Unit Main) is main dpu for Exynosautov9.
-    
-This patches enable clock for dpum, sysmmu(iommu).
+Convert the NXP LPC32xx USB Clock Controller bindings to yaml format.
 
-Signed-off-by: Kwanghoon Son <k.son@samsung.com>
+Cc: Daniel Baluta <daniel.baluta@nxp.com>
+Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
 ---
-Changes in v2:
-- Squash patch 1,2 to make headers with schema.
+ .../bindings/clock/nxp,lpc3220-usb-clk.txt    | 22 ------------
+ .../bindings/clock/nxp,lpc3220-usb-clk.yaml   | 35 +++++++++++++++++++
+ 2 files changed, 35 insertions(+), 22 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/nxp,lpc3220-usb-clk.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/nxp,lpc3220-usb-clk.yaml
 
-Kwanghoon Son (3):
-  dt-bindings: clock: exynosautov9: add dpum clock
-  arm64: dts: exynosautov9: add dpum clock DT nodes
-  clk: samsung: exynosautov9: add dpum clock support
-
- .../clock/samsung,exynosautov9-clock.yaml     | 19 +++++
- arch/arm64/boot/dts/exynos/exynosautov9.dtsi  | 11 +++
- drivers/clk/samsung/clk-exynosautov9.c        | 83 +++++++++++++++++++
- .../dt-bindings/clock/samsung,exynosautov9.h  | 11 +++
- 4 files changed, 124 insertions(+)
-
-
-base-commit: 94ede2a3e9135764736221c080ac7c0ad993dc2d
+diff --git a/Documentation/devicetree/bindings/clock/nxp,lpc3220-usb-clk.txt b/Documentation/devicetree/bindings/clock/nxp,lpc3220-usb-clk.txt
+deleted file mode 100644
+index 0aa249409b51..000000000000
+--- a/Documentation/devicetree/bindings/clock/nxp,lpc3220-usb-clk.txt
++++ /dev/null
+@@ -1,22 +0,0 @@
+-NXP LPC32xx USB Clock Controller
+-
+-Required properties:
+-- compatible: should be "nxp,lpc3220-usb-clk"
+-- reg:  should contain clock controller registers location and length
+-- #clock-cells: must be 1, the cell holds id of a clock provided by the
+-  USB clock controller
+-
+-Examples:
+-
+-	usb {
+-		#address-cells = <1>;
+-		#size-cells = <1>;
+-		compatible = "simple-bus";
+-		ranges = <0x0 0x31020000 0x00001000>;
+-
+-		usbclk: clock-controller@f00 {
+-			compatible = "nxp,lpc3220-usb-clk";
+-			reg = <0xf00 0x100>;
+-			#clock-cells = <1>;
+-		};
+-	};
+diff --git a/Documentation/devicetree/bindings/clock/nxp,lpc3220-usb-clk.yaml b/Documentation/devicetree/bindings/clock/nxp,lpc3220-usb-clk.yaml
+new file mode 100644
+index 000000000000..10361d2292fb
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/nxp,lpc3220-usb-clk.yaml
+@@ -0,0 +1,35 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/nxp,lpc3220-usb-clk.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: NXP LPC32xx USB Clock Controller
++
++maintainers:
++  - Animesh Agarwal <animeshagarwal28@gmail.com>
++
++properties:
++  compatible:
++    const: nxp,lpc3220-usb-clk
++
++  reg:
++    maxItems: 1
++
++  '#clock-cells':
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - '#clock-cells'
++
++additionalProperties: false
++
++examples:
++  - |
++    clock-controller@f00 {
++        compatible = "nxp,lpc3220-usb-clk";
++        reg = <0xf00 0x100>;
++        #clock-cells = <1>;
++    };
 -- 
-2.39.2
+2.45.2
 
