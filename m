@@ -1,107 +1,74 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DB711BA885;
-	Tue, 30 Jul 2024 15:58:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56126187FEC;
+	Tue, 30 Jul 2024 16:04:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722355113; cv=none; b=BYPKWQplucAWIK20lH0N+nNJ547gHCm8qptr6C0wE1i9TFZ/jEaZvUi4Vyak5D02fDl3it3pb0el55IFdkZALc3A1ValYo8oV5pXotgZIKrRETjw1Z7WGYRYbTdA7uT3VMN54iQ59toK390quOYEbJgxKNqDmdUzDg74UTwi3rs=
+	t=1722355466; cv=none; b=grV4S2XdiHGHOCYDJuJQrWU//LjIVN9lZfvKX8XdIHQru+BSrsieANY/pOqwMqfZZ8dcgkKyzzKHGF3i9VZ55a+jZTra1cU/9PAF354XE+BdWjbUMpJMHPFJ7JSRH5pslYZ8DQvPEzs6HHHH7z7CNP/WQk8dW3uNO6JoYrXOkbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722355113; c=relaxed/simple;
-	bh=bKaa+XXOeGGCc6a9XP0WkpZ8zTbkQLyNOTqWXHPC3uE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kyri4HB8kmIgbLLkUr1/Gitb34NWIO7lqAxLzAgTK+CxD2Ba6KDV1hCTt/sPMNAKM8UC/pvDpghVNdZjC7eEWchq+p5vrUjvb3fS++35dQl1eHdTdfp72u2fzz7pcKfCm6QrQTUGmGpf68r9iK3t4a40Zg0O+upN+wGQF77MMDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EGInaVWp; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1722355466; c=relaxed/simple;
+	bh=MtiVUMtFVd2OGmF/TSl1VmAVdy/N7C8CI+ZANhR0ETw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t+5w++mKiHpTglYjxXZBjRs7Scv76T27v01K8CNfzMmnhuZYzSaciQfPl38J7MdPpRuiggbmKiZzvMSvO0DNOpfSDhIDZEoyNNYfWDSunMQBoqx1tzJXH66n71kkCNdhR1eK+/rIjlYZRs3hAFmmbauaEcIe94KUqLNZUzhhQbk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pY9O13SA; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EGInaVWp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD43CC4AF0A;
-	Tue, 30 Jul 2024 15:58:29 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pY9O13SA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6A01C4AF0A;
+	Tue, 30 Jul 2024 16:04:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722355113;
-	bh=bKaa+XXOeGGCc6a9XP0WkpZ8zTbkQLyNOTqWXHPC3uE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=EGInaVWpbt0wiDvSMXCG5Dq1rLp7OjXeEZE3cVOAiV9sCH5JkEDhWv/Eq2g8MX4NZ
-	 Ja7ZxN/rPAgllTaGhJeriQR2+pwGVxcZ1L4QpsnfpaK043duPYeePRQ4tDk2oa86Ex
-	 NVNAvX4k3AC+X3NJq0KuOHyESEPiCP7zM6S4x2jETq5MQ8lBeN3UC5Ty3GR4Ll6U/7
-	 K6lw1wc1rl7WO5Tkeps3lWVzG8ZhiYF+SNVDa2CP41MH48UHQEVyG5ycH/SD8U1d7c
-	 tC5MLI77oXjIcsX5CI2zROreX1ITdjHRpWQufHsDUx8tzrn6BqeBqd11ZFA6v3Lw9f
-	 AEvx79Ym5NA0w==
-Message-ID: <4183344f-21d5-4dda-a5e8-e347301f332a@kernel.org>
-Date: Tue, 30 Jul 2024 17:58:27 +0200
+	s=k20201202; t=1722355466;
+	bh=MtiVUMtFVd2OGmF/TSl1VmAVdy/N7C8CI+ZANhR0ETw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pY9O13SAZQSHX+6vB3M6dCsKam1tBmg1WOnmngE8Qk4xX1DqCAGVU77V9acpyOC0q
+	 VzgjZk52jDvBOo+DTMIocAPe5wMR60n0uLvmRxqMXmpsiNNKyiit9OS5Fhn/lpiorV
+	 EVgxCBfQX5QnjQa07/2x4OHvscOKDaoSUMtmqbUx3aVjHg4e2AXlQUiPn+Qz4ITreA
+	 hnOpOcUZ3FYHIwmikTY/V1K8diMeGKaN6YLao2SSvBc4kc//g4JKhCroYv/zm+bGiM
+	 i2NOY9LXz56McQ3wWrt7Tpf02Vn3lkZamTYui/a/d3oXeW4W9Z1WPMAjYarPFvzlXj
+	 yswRnX6w3zDTg==
+Date: Tue, 30 Jul 2024 10:04:24 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Oliver Rhodes <oliver.rhodes.aj@renesas.com>
+Cc: Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-clk@vger.kernel.org,
+	Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Magnus Damm <magnus.damm@gmail.com>
+Subject: Re: [PATCH V2 3/6] dt-bindings: clock: renesas: Document RZ/G2M v3.0
+ (r8a774a3) clock
+Message-ID: <172235546381.1347447.3727697749151141038.robh@kernel.org>
+References: <20240725100534.5374-1-oliver.rhodes.aj@renesas.com>
+ <20240725100534.5374-4-oliver.rhodes.aj@renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: clock: nxp,lpc3220-usb-clk: Convert bindings
- to dtschema
-To: Animesh Agarwal <animeshagarwal28@gmail.com>
-Cc: Daniel Baluta <daniel.baluta@nxp.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240730141338.46234-1-animeshagarwal28@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240730141338.46234-1-animeshagarwal28@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240725100534.5374-4-oliver.rhodes.aj@renesas.com>
 
-On 30/07/2024 16:13, Animesh Agarwal wrote:
-> Convert the NXP LPC32xx USB Clock Controller bindings to yaml format.
+
+On Thu, 25 Jul 2024 11:05:31 +0100, Oliver Rhodes wrote:
+> Add binding documentation for Renesas RZ/G2M v3.0 (a.k.a r8a774a3) Clock
+> Pulse Generator driver. The r8a774a3 cpg is similar to the r8a774a1 cpg
+> however, it lacks some modules such as the FCPCI.
 > 
-> Cc: Daniel Baluta <daniel.baluta@nxp.com>
-> Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
+> Signed-off-by: Oliver Rhodes <oliver.rhodes.aj@renesas.com>
+> ---
+> v2->v2 resend:
+> * Updated the patch description.
+> v1 resend->v2:
+> * Updated the commit description detailing the difference between the
+>   r8a774a3 cpg and the r8a774a1 cpg.
+> v1->v1 resend:
+> * No change.
+> ---
+>  Documentation/devicetree/bindings/clock/renesas,cpg-mssr.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-
-Best regards,
-Krzysztof
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
