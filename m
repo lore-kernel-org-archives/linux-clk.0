@@ -1,146 +1,151 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36BFB169AE6;
-	Tue, 30 Jul 2024 05:49:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13100158DA7
+	for <linux-clk@vger.kernel.org>; Tue, 30 Jul 2024 05:49:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722318551; cv=none; b=s0cfqP1Q/geHIGdIyLbIrUSUTYPs7vo9GF8mtG9ue3MmWsgCSWDKd5/eWZ94Dp0hyK0pRkfOLXFqU8hwK2Btlbc+TE00h/hAIEku27BhCA8Jo1nYIoMFA6Doefm6fiKjWOPdOD42PK7PixnVWboHeSn2X4xi/wYAW6vmFSmR67M=
+	t=1722318583; cv=none; b=EfhbNuAaFrnxMeJ8SMC7N4cwuvcOKk4UsF6ejVXlpysHym+AdBA936Dvu7GMD1DFvN/Cs0McZXG/ExVT6DAllIbYWT+HJ0SDSqWEIb5pOI6hxJYURqTjpNQIXYW2mPIjtixuTOdPX4dctc6mdDAWR8heVWqOJ37aXhMoQFjIGGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722318551; c=relaxed/simple;
-	bh=VgiJR7kEM+cnGMiBj+lSW8qPAhtGTOoj5UWbY5zfUyI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rxYzq5P1Rum18xxXJMO487qwUN+6GdKdd7aCjQs2/IoIxXLz4qPJ7k/wrYJZJoJC2dHDeCAyrzJg4L+SE4Y6DPdiN1ZWGtZ+hB/oaeWn8OEZ2cdHuldJkLwOy2vClbDhNytE/XHF+jpJHPMDnhUs9mpoARMm0o4i9lCmNWIm0hI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jzCFVLGh; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1722318583; c=relaxed/simple;
+	bh=YIKIAyWdRJabHnvT6F2z6sdR9iUV5RNtOySV5Cp8rwI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:In-Reply-To:
+	 Content-Type:References; b=gpEfsg7C9XANjwy1t5RVQp8gK2+H1dWvOerU3PSOpaaueo9/mCp9Kx1ZRegawWl+wJ9AXyH6SYgEqQ3M5Qg+ITObnblKy75bQJmbeU3xH2UemPYBKDp70idFfxYrAdntkEyZ02zMfMVQWY0dWNQ+dGITJuUusJB/bWVd8aIwB8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=TFDheW/j; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jzCFVLGh"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46TNaRqQ022117;
-	Tue, 30 Jul 2024 05:49:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	9ifLbZTRgpqGEv2r30ppykhhVp36eH3TXwx0BaaMj7o=; b=jzCFVLGhPliU7z+D
-	SyCVGfM9DuGjYbScMmtugN8NlCSgFPM7yHHk5WNpZr1SVwKCAtasqjLXv/7uL6Al
-	9L9ZKNS6GLDA0oZ93TM7C8rU+Is2YrN8m31hWEXRQW86f3oTl2/2NpynADBU+aHF
-	ySHlJR8NaCEhRFlZ36z4pIYQt28dycgHepBL6+fKaCRT6EBoetJ295Fr6EcgesFC
-	+06adfzaA9DKc4J10wEHi2hbVCwprI4i3n7xegN6Sg56ZesY+xxl9ck7PF190R+c
-	/VMg4tJu/T8o+zwp2ukTE0G9/zL1xlj2jNe+NnijAD5V0fSDz/DMuF3xps1012uR
-	eIEP0A==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40mp8mxjjf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Jul 2024 05:49:05 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46U5n4AI024209
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Jul 2024 05:49:04 GMT
-Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 29 Jul 2024 22:48:58 -0700
-From: Varadarajan Narayanan <quic_varada@quicinc.com>
-To: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <gregkh@linuxfoundation.org>, <konrad.dybcio@linaro.org>,
-        <djakov@kernel.org>, <quic_wcheng@quicinc.com>,
-        <quic_kathirav@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-pm@vger.kernel.org>
-CC: Varadarajan Narayanan <quic_varada@quicinc.com>
-Subject: [PATCH v6 5/5] arm64: dts: qcom: ipq5332: Add icc provider ability to gcc
-Date: Tue, 30 Jul 2024 11:18:17 +0530
-Message-ID: <20240730054817.1915652-6-quic_varada@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240730054817.1915652-1-quic_varada@quicinc.com>
-References: <20240730054817.1915652-1-quic_varada@quicinc.com>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="TFDheW/j"
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240730054937epoutp03e2d3ce99b1ef6dbf92cc244e0c7575fd~m558Pecyc2256522565epoutp03T
+	for <linux-clk@vger.kernel.org>; Tue, 30 Jul 2024 05:49:37 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240730054937epoutp03e2d3ce99b1ef6dbf92cc244e0c7575fd~m558Pecyc2256522565epoutp03T
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1722318577;
+	bh=X61DCeVAKjkbWX+SIU4s/W8PLXps4OElapjhV+O3WpA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=TFDheW/jjIT/rmdZTlKs96FesDilhL1NukpjlCPCLlxdG2l2XOrmmkSKeKFgx7+mP
+	 j8O62GRkQdTRgCvXvv29uCvfk0kFtanZsmzK2hCeo+gXgG/nziQy4htp/vM8kHudY3
+	 oVFFnkkrd/6/Goq3iAVOtvk1Y0ztbkpvbGLg86MQ=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20240730054937epcas1p12f514eec09632df48784b190c60d0d9a~m557qMGGX1342813428epcas1p1G;
+	Tue, 30 Jul 2024 05:49:37 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.38.233]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4WY4736TYpz4x9Px; Tue, 30 Jul
+	2024 05:49:35 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+	epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+	47.07.10258.FEE78A66; Tue, 30 Jul 2024 14:49:35 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240730054935epcas1p2c7ba1a09ce98d8ae32df973572331e9d~m5550Gfwq3254232542epcas1p2F;
+	Tue, 30 Jul 2024 05:49:35 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240730054935epsmtrp18c31a7d9129be679c5de3729b49b8d5a~m555zFr-z2708427084epsmtrp1C;
+	Tue, 30 Jul 2024 05:49:35 +0000 (GMT)
+X-AuditID: b6c32a38-995ff70000002812-f9-66a87eef51f1
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	CD.FE.08964.FEE78A66; Tue, 30 Jul 2024 14:49:35 +0900 (KST)
+Received: from mediavision (unknown [10.113.111.204]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240730054934epsmtip14ec151f9048ae17235316d58b40ae5d3~m555i-2W50226702267epsmtip18;
+	Tue, 30 Jul 2024 05:49:34 +0000 (GMT)
+Date: Tue, 30 Jul 2024 14:49:34 +0900
+From: Kwanghoon Son <k.son@samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: s.nawrocki@samsung.com, cw00.choi@samsung.com, alim.akhtar@samsung.com,
+	mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	conor+dt@kernel.org, tomasz.figa@gmail.com,
+	linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/4] dt-bindings: clk: exynosautov9: add dpum clock
+ definitions
+Message-ID: <Zqh-7jHUoFPVS_Cp@mediavision>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: HFUttdHwRQjPoYf0Kf1JR5C6O2vw1nhf
-X-Proofpoint-ORIG-GUID: HFUttdHwRQjPoYf0Kf1JR5C6O2vw1nhf
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-30_05,2024-07-26_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- impostorscore=0 spamscore=0 adultscore=0 lowpriorityscore=0 suspectscore=0
- bulkscore=0 malwarescore=0 mlxscore=0 clxscore=1015 phishscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407300042
+In-Reply-To: <32d3c894-64ba-40ac-aef4-988c3f90c2a1@kernel.org>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrAJsWRmVeSWpSXmKPExsWy7bCmru77uhVpBodn61s8mLeNzWLN3nNM
+	Fte/PGe1mH/kHKvF+fMb2C02Pb7GavGx5x6rxYzz+5gsLp5ytfi/Zwe7xeE37awW/65tZLFY
+	tesPowOvx/sbreweO2fdZffYtKqTzWPzknqPvi2rGD0+b5ILYIvKtslITUxJLVJIzUvOT8nM
+	S7dV8g6Od443NTMw1DW0tDBXUshLzE21VXLxCdB1y8wBulNJoSwxpxQoFJBYXKykb2dTlF9a
+	kqqQkV9cYquUWpCSU2BaoFecmFtcmpeul5daYmVoYGBkClSYkJ1x8dksloIPbBXTj8Y2MD5g
+	7WLk5JAQMJE4vOIUSxcjF4eQwA5Gib/n/rNDOJ8YJTaeuMkMUiUk8I1R4t/dRJiOrd+eskEU
+	7WWUWLb+DROE84pR4nrfW7AOFgFViS1zVjOB2GwC6hJL2tayg9giApoS1/9+ZwVpYBbYxSQx
+	ceJssCJhgVCJyzc7wGxeAS2JRwemM0LYghInZz5hAbE5BewklvRMZARplhBYyiGx4U4PO8RN
+	LhLfHu9hhrCFJV4d3wIVl5J42d8GZWdLHP24lw3CLpG4PmsRNASMJfYvnQy2mFkgU+JJyz9G
+	CJtP4t3XHqAaDqAaXomONiEIU17iVmc5RKeoxJmnH6Emekj0XlkLDYi3jBKbJ3xmn8AoOwvJ
+	C7OQbICwdSQW7P7ENgtoLLOAtMTyfxwQpqbE+l36CxhZVzGKpRYU56anFhsWmMAjNTk/dxMj
+	OKlqWexgnPv2g94hRiYOxkOMEhzMSiK88VeWpgnxpiRWVqUW5ccXleakFh9iNAVGyERmKdHk
+	fGBazyuJNzSxNDAxMzI2sTA0M1QS5z1zpSxVSCA9sSQ1OzW1ILUIpo+Jg1OqgSnkHrNB/a61
+	DBU2PZzPhE9f6+tP1guzaj9Su7CmVP1zKc/MuzP2Ri4zcyr9k8Ej2rGs+ZtgoZQ8t8g7lhdc
+	h0+unfe1PG3ql9RXTrrTNx7eOOuE1ZJTTX0fbLctlnbpcWzeyrCRPWHWwpftGZcd9e+fkE2d
+	tX5/7jpljmoO/iMyfkZugau/NBscmxHgc1lnwr/jL3Ij+OfH+U8oPTLv0n42j+U/1MVknhsv
+	Ul/7pSqxbXKjJNPRAIMi5UO3n6wTX5/et2sLBwPvDIe/j99uyDhgG3AoZdN/Ue+/ub91XvJa
+	vbB78DUxKFTD9udty5nCvCe07y4zmrpcQdx4+0dm5Q/HNlp7PQ6c3vpLdzan134lluKMREMt
+	5qLiRADxSN8aMwQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrMLMWRmVeSWpSXmKPExsWy7bCSnO77uhVpBrc/cVg8mLeNzWLN3nNM
+	Fte/PGe1mH/kHKvF+fMb2C02Pb7GavGx5x6rxYzz+5gsLp5ytfi/Zwe7xeE37awW/65tZLFY
+	tesPowOvx/sbreweO2fdZffYtKqTzWPzknqPvi2rGD0+b5ILYIvisklJzcksSy3St0vgymh6
+	vJ+1YC1LRffxt+wNjNuYuxg5OSQETCS2fnvK1sXIxSEksJtR4vviZiaIhKhEx+VGxi5GDiBb
+	WOLw4WKImheMEruW/WcBqWERUJXYMmc1WD2bgLrEkra17CC2iICmxPW/31lBGpgFdjFJTJw4
+	G6xIWCBU4vLNDjCbV0BL4tGB6YwQU98ySrS9n8UMkRCUODnzCdgGZqCiG/9eMoFcwSwgLbH8
+	HwdImFPATmJJz0TGCYwCs5B0zELSMQuhYwEj8ypGydSC4tz03GLDAsO81HK94sTc4tK8dL3k
+	/NxNjOB40dLcwbh91Qe9Q4xMHIyHGCU4mJVEeOOvLE0T4k1JrKxKLcqPLyrNSS0+xCjNwaIk
+	ziv+ojdFSCA9sSQ1OzW1ILUIJsvEwSnVwLTY48hj1jNcLQnbyredO6qx8+CpkJ/zZ5QKbdsp
+	tDvOge9Dt2mm6ZxZ0gu5OOU3782xq5ldHbKiwTJU//Ihk6WcU/pzvrvu1fiy/9qbhVbnu9Ze
+	bL1/ne9Act5am69nY64Uv5I4LhPs4tWrUnogQkQ/+fKR74p/bHYvi1M/OHlF7aa19s3R7+ff
+	1jZYKf38QGbievOtHM8u8IS12Lp+5F65T7U3/nlr3ye/lRx9hj8d60Ue5pzRCRViUEh4Puva
+	at+zNs31kwsfAwNl/y7GncXHJn2UuiZp8/rUDaN5C9Q9PWY+yOVN/lBdmmXrVpUqMfOblvf+
+	429zc3kWLbK7so9L6l/mBndnxwvL2b/PUFNiKc5INNRiLipOBAAvFDIkBgMAAA==
+X-CMS-MailID: 20240730054935epcas1p2c7ba1a09ce98d8ae32df973572331e9d
+X-Msg-Generator: CA
+Content-Type: multipart/mixed;
+	boundary="----FA1Tv02vcQgKPUvMWmRcKT-.sDXi7p4P_8Ht8JYkzd1l4y70=_1508f0_"
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240729043102epcas1p3f5f6421b6899673256c7548db3333d6e
+References: <20240729043039.134435-1-k.son@samsung.com>
+	<CGME20240729043102epcas1p3f5f6421b6899673256c7548db3333d6e@epcas1p3.samsung.com>
+	<20240729043039.134435-2-k.son@samsung.com>
+	<32d3c894-64ba-40ac-aef4-988c3f90c2a1@kernel.org>
 
-IPQ SoCs dont involve RPM in managing NoC related clocks and
-there is no NoC scaling. Linux itself handles these clocks.
-However, these should not be exposed as just clocks and align
-with other Qualcomm SoCs that handle these clocks from a
-interconnect provider.
+------FA1Tv02vcQgKPUvMWmRcKT-.sDXi7p4P_8Ht8JYkzd1l4y70=_1508f0_
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
 
-Hence include icc provider capability to the gcc node so that
-peripherals can use the interconnect facility to enable these
-clocks. Change USB to use the icc-clk framework for the iface
-clock.
+On Mon, Jul 29, 2024 at 08:03:49AM +0200, Krzysztof Kozlowski wrote:
+> On 29/07/2024 06:30, Kwanghoon Son wrote:
+> > Add dpum clk definitions.
+> > 
+> > Signed-off-by: Kwanghoon Son <k.son@samsung.com>
+> > ---
+> >  include/dt-bindings/clock/samsung,exynosautov9.h | 11 +++++++++++
+> >  1 file changed, 11 insertions(+)
+> > 
+> 
+> Why using different subject prefixes for binding patches?
+> 
+> Anyway, headers go with the schema/bindings file.
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
----
-v3: Fix #include file order
----
- arch/arm64/boot/dts/qcom/ipq5332.dtsi | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+Thanks for feedback. I'll squash patch 1,2 in v2.
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq5332.dtsi b/arch/arm64/boot/dts/qcom/ipq5332.dtsi
-index 573656587c0d..7e8f9d578382 100644
---- a/arch/arm64/boot/dts/qcom/ipq5332.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq5332.dtsi
-@@ -7,6 +7,7 @@
- 
- #include <dt-bindings/clock/qcom,apss-ipq.h>
- #include <dt-bindings/clock/qcom,ipq5332-gcc.h>
-+#include <dt-bindings/interconnect/qcom,ipq5332.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
- 
- / {
-@@ -208,6 +209,7 @@ gcc: clock-controller@1800000 {
- 			reg = <0x01800000 0x80000>;
- 			#clock-cells = <1>;
- 			#reset-cells = <1>;
-+			#interconnect-cells = <1>;
- 			clocks = <&xo_board>,
- 				 <&sleep_clk>,
- 				 <0>,
-@@ -327,11 +329,9 @@ usb: usb@8af8800 {
- 					  "dm_hs_phy_irq";
- 
- 			clocks = <&gcc GCC_USB0_MASTER_CLK>,
--				 <&gcc GCC_SNOC_USB_CLK>,
- 				 <&gcc GCC_USB0_SLEEP_CLK>,
- 				 <&gcc GCC_USB0_MOCK_UTMI_CLK>;
- 			clock-names = "core",
--				      "iface",
- 				      "sleep",
- 				      "mock_utmi";
- 
-@@ -342,6 +342,9 @@ usb: usb@8af8800 {
- 			#address-cells = <1>;
- 			#size-cells = <1>;
- 			ranges;
-+			interconnects = <&gcc MASTER_SNOC_USB &gcc SLAVE_SNOC_USB>,
-+					<&gcc MASTER_SNOC_USB &gcc SLAVE_SNOC_USB>;
-+			interconnect-names = "usb-ddr", "apps-usb";
- 
- 			status = "disabled";
- 
--- 
-2.34.1
+Kwang.
 
+> 
+> Best regards,
+> Krzysztof
+> 
+
+------FA1Tv02vcQgKPUvMWmRcKT-.sDXi7p4P_8Ht8JYkzd1l4y70=_1508f0_
+Content-Type: text/plain; charset="utf-8"
+
+
+------FA1Tv02vcQgKPUvMWmRcKT-.sDXi7p4P_8Ht8JYkzd1l4y70=_1508f0_--
