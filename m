@@ -1,150 +1,125 @@
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED717339AB;
-	Tue, 30 Jul 2024 04:28:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDE6F8C0B;
+	Tue, 30 Jul 2024 05:48:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722313732; cv=none; b=Jl5Kf5dgKVmJcJEoLQJNigtzOr1PiixF9xvj/+7+Xoi6yu9glbDWAFcjLOfoh1WRROCwqpGuhS++OqjHe1nw4IxC4KKSlAEj96FBfX+zRcKs0Cn5rkWpUq2Q2Joa9UDv23+BvYIMu5cdpsnLALq2jvfNmmQa1ORwhyrcGykqpwA=
+	t=1722318523; cv=none; b=lua+NRUBg0tYhWmX9FE/V6MjxuPXDA1qGyK+zx1tuSxKmi4JRTknuDqwgnoeGR86H7w0214Sk1zy7WgMSp0TuuYmqIzhoznkFFwU0gGBukKrgPrSbhd3j1GtjYQPemZoYMH1qc4ptPz+YLc5nt6a4W9auF085W7h8UlYapqGmZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722313732; c=relaxed/simple;
-	bh=ECDJw41kftKekRgPyFzH6GhtVmcagqZ9r2akdj30Wuw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=uU9yA4TzyZCYM3RMMP8cLaBO8PiW/wl+w+XrSS5WHi9TNJ5ksruXfAJ9SSxFRzu7KrLTyAhoqjcyMlu3PR8ukeOg0wH/yURa4Ax9EoOaBwjeLyfk7xMbeq8GEhCyo6R4Q8j0ru9nZlA8YXp2wtB3fvM6qlCwNo6Cu72hFnTxk30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=EK75cH4U; arc=none smtp.client-ip=205.220.180.131
+	s=arc-20240116; t=1722318523; c=relaxed/simple;
+	bh=brHnm/9A7Z7JSV0j+IuxNueSmVSJxVotZmag9ZVxQuc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=DJ3zo3xY091cFVC9JvU90PBv6djG3twy2WaLx6/KUNgVxFsvp0uBEUi6OwQbWjUhyRS5cogpd/W6NyTJvogapH2cXkSzQL4LRoqqsxdg4nR2wROvytbRJTs7D4rO91yWv/Gjve1athTINwLu6njI/1/L3IPo+MqiMdmwIryftEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fPRqSEi8; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="EK75cH4U"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46TIiUqJ007857;
-	Tue, 30 Jul 2024 04:28:23 GMT
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fPRqSEi8"
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46TN6qus007410;
+	Tue, 30 Jul 2024 05:48:36 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	hOGJ1/3ZiTqZhOAkMmzEjDSTSpshuCZFzsSd4IbyfsU=; b=EK75cH4UHVY0m4UP
-	GuWplahCyaslwsh9GoGnFK9tM4A2jAqhoX9VNyxeQHkt3FrA0k+TOVjzvlKnWUsF
-	kaRamXpQ1ZLXvBbLqZuf0A5ghe21opeIYZh0tZnw11QPK4V6eeGrLwewINpGzQMN
-	WdYD8KFkiwO4TaSkfg4v8kCVvKUdfYPQZv8mwzOesIfzd2fhsH3eRGh6F/i67crh
-	FTJPGfmFvE+6DYyn2wEht06zjN7c1MAy6Gwfl+SClHA4m8iL0RKjIQTTKxb2uS6b
-	wELWKUXeb1sKp+B1KxIwFsMGNhdWvviL1qo+YDtgl0M3otMimslny//7XmYl5zHc
-	U0eRgw==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40ms96p6ve-1
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=2GOa1/VtiTA+MKq3C0LlFF
+	4qEEVP+YdLklKtCnR4ZB8=; b=fPRqSEi8vnV4Ylk04/bxU2gMt+yeuJmxl0ibBO
+	tYKj/tXUR2SAs0Mzek+tGoMCnDzm83pQEc6DlzSBYPXsS3uk4Pg5OXCU6sbC29iR
+	7mBv3HRbQWu2mOfg9SfhtPeAnj5MeqUbGOXeFn7B6DiWCJSPxstqeMIWjqSgAb8p
+	N75QKPesLiWrX9ZXOmhKabH0AywFFbIg4/0JgWAiFRABnBrNGqJtWBbrpKcFoMv2
+	PrmruTU2rr5y6IWYBvj0zZP65xO45TYq4Ol+XilE5k+EQTq9aqlVxu/rZAhSIe/J
+	//xe/BZiZZuGkmY0mI+7DRP3vcRhUIMPndxVR9S5DNVe65RA==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40mr7gpb3k-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Jul 2024 04:28:23 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46U4SMK4009657
+	Tue, 30 Jul 2024 05:48:36 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46U5mYc7030515
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 30 Jul 2024 04:28:22 GMT
-Received: from [10.217.216.47] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 29 Jul
- 2024 21:28:16 -0700
-Message-ID: <d64be833-0e37-49d2-be45-951ec731a364@quicinc.com>
-Date: Tue, 30 Jul 2024 09:58:13 +0530
+	Tue, 30 Jul 2024 05:48:34 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 29 Jul 2024 22:48:29 -0700
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <gregkh@linuxfoundation.org>, <konrad.dybcio@linaro.org>,
+        <djakov@kernel.org>, <quic_wcheng@quicinc.com>,
+        <quic_kathirav@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-usb@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>
+CC: Varadarajan Narayanan <quic_varada@quicinc.com>
+Subject: [PATCH v6 0/5] Add interconnect driver for IPQ5332 SoC
+Date: Tue, 30 Jul 2024 11:18:12 +0530
+Message-ID: <20240730054817.1915652-1-quic_varada@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] dt-bindings: clock: qcom: Remove required-opps from
- required list on SM8650
-To: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Stephen
- Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        "Bryan
- O'Donoghue" <bryan.odonoghue@linaro.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Satya Priya Kakitapalli
-	<quic_skakitap@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        "Ajit
- Pandey" <quic_ajipan@quicinc.com>,
-        kernel test robot <lkp@intel.com>
-References: <20240720052818.26441-1-quic_jkona@quicinc.com>
- <d760dfb1-b86b-4d1b-a927-575416e780fd@linaro.org>
-Content-Language: en-US
-From: Jagadeesh Kona <quic_jkona@quicinc.com>
-In-Reply-To: <d760dfb1-b86b-4d1b-a927-575416e780fd@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
+ nasanex01b.na.qualcomm.com (10.46.141.250)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: PH3hirN91UNy-5wEpXj-xkeTxUWzCeNG
-X-Proofpoint-GUID: PH3hirN91UNy-5wEpXj-xkeTxUWzCeNG
+X-Proofpoint-ORIG-GUID: eH9Tq3Usju5clXq-ExNpUKOiqm8FcNkZ
+X-Proofpoint-GUID: eH9Tq3Usju5clXq-ExNpUKOiqm8FcNkZ
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-30_04,2024-07-26_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 mlxlogscore=680 bulkscore=0 malwarescore=0 phishscore=0
- priorityscore=1501 clxscore=1015 lowpriorityscore=0 spamscore=0
- adultscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407300031
+ definitions=2024-07-30_05,2024-07-26_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 bulkscore=0
+ impostorscore=0 adultscore=0 mlxscore=0 lowpriorityscore=0 malwarescore=0
+ spamscore=0 clxscore=1015 priorityscore=1501 mlxlogscore=834 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2407300042
+
+Enable icc-clk based interconnect driver for IPQ5332. This is
+similar to IPQ9574's icc-clk based driver.
+
+dt_bindings_check and dtbs_check passed.
+
+Ensured that icc_sync_state is called and relevant clocks are
+disabled.
+
+v6: Update commit log for the 2nd patch and add Reviewed-By tag
+
+v5: Fix dt-bindings entry in 'dt-bindings: usb: qcom,dwc3: Update ipq5332 clock details'
+
+v4: Add Reviewed-By for the first patch
+    Move the gpll4_main change to next patch as suggested in review
+
+v3: Not taking Reviewed-By: Krzysztof, due to minor change in file
+
+    Add 'clk: qcom: ipq5332: Register gcc_qdss_tsctr_clk_src' to fix
+    gpll4_main's CLK_IGNORE_UNUSED issue.
+
+v2: Removed dependency as it is merged
+    dt-bindings update to accommodate USB clock names change
+    Use icc-clk for USB also
+
+v1:
+Dependency:
+[1] https://lore.kernel.org/linux-arm-msm/20240430064214.2030013-1-quic_varada@quicinc.com/
 
 
+Varadarajan Narayanan (5):
+  dt-bindings: interconnect: Add Qualcomm IPQ5332 support
+  dt-bindings: usb: qcom,dwc3: Update ipq5332 clock details
+  clk: qcom: ipq5332: Register gcc_qdss_tsctr_clk_src
+  clk: qcom: ipq5332: Use icc-clk for enabling NoC related clocks
+  arm64: dts: qcom: ipq5332: Add icc provider ability to gcc
 
-On 7/29/2024 12:57 PM, Vladimir Zapolskiy wrote:
-> Hi Jagadeesh,
-> 
-> On 7/20/24 08:28, Jagadeesh Kona wrote:
->> On SM8650, the minimum voltage corner supported on MMCX from cmd-db is
->> sufficient for clock controllers to operate and there is no need to 
->> specify
->> the required-opps. Hence remove the required-opps property from the 
->> list of
->> required properties for SM8650 camcc and videocc bindings.
->>
->> This fixes:
->> arch/arm64/boot/dts/qcom/sm8650-mtp.dtb: clock-controller@aaf0000:
->> 'required-opps' is a required property
->>
->> arch/arm64/boot/dts/qcom/sm8650-mtp.dtb: clock-controller@ade0000:
->> 'required-opps' is a required property
->>
->> Fixes: a6a61b9701d1 ("dt-bindings: clock: qcom: Add SM8650 video clock 
->> controller")
->> Fixes: 1ae3f0578e0e ("dt-bindings: clock: qcom: Add SM8650 camera 
->> clock controller")
->> Reported-by: kernel test robot <lkp@intel.com>
-> 
-> Well, I believe I reported about this problem way before the change has 
-> been merged
-> and the problem reported by the robot, however it was not taken into 
-> account in time:
-> 
-> https://lore.kernel.org/all/0f13ab6b-dff1-4b26-9707-704ae2e2b535@linaro.org/
-> 
+ .../bindings/clock/qcom,ipq5332-gcc.yaml      |  2 +
+ .../devicetree/bindings/usb/qcom,dwc3.yaml    |  2 +-
+ arch/arm64/boot/dts/qcom/ipq5332.dtsi         |  7 ++-
+ drivers/clk/qcom/gcc-ipq5332.c                | 36 ++++++++++-----
+ .../dt-bindings/interconnect/qcom,ipq5332.h   | 46 +++++++++++++++++++
+ 5 files changed, 79 insertions(+), 14 deletions(-)
+ create mode 100644 include/dt-bindings/interconnect/qcom,ipq5332.h
 
-Sorry for not addressing this issue in time, I am working on fixing this 
-issue now. I posted V3 including your Reported-by tag.
+-- 
+2.34.1
 
-V3: 
-https://lore.kernel.org/all/20240730034552.31271-1-quic_jkona@quicinc.com/
-
-Thanks,
-Jagadeesh
-
->> Closes: 
->> https://lore.kernel.org/oe-kbuild-all/202407070147.C9c3oTqS-lkp@intel.com/
->> Signed-off-by: Jagadeesh Kona <quic_jkona@quicinc.com>
-> 
-> -- 
-> Best wishes,
-> Vladimir
-> 
