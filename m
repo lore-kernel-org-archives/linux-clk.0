@@ -1,79 +1,75 @@
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59A6E18951A;
-	Tue, 30 Jul 2024 16:06:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7648149C41;
+	Tue, 30 Jul 2024 19:45:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722355580; cv=none; b=Wa9ABG/SzwmxH98npjRCjo7eOrQtPPXNna1S+YhaplYodVF7wepWw4dguXBW2ojQKqletsT4rwZTTh9Tneu2Lkw+IByy/cHuGrPacxsV+ptUTCKvzoTtMkm/B484YuuT0aeSeByCUGr+uIa6oF/kaC5TkeoRCuhfQf/0FeVuqnw=
+	t=1722368728; cv=none; b=ZklC8vaDkQP/x4EHDEk30rKM3VthYtd2bZRPNMww0l6KDxMA6xsPeRIhrt9hG/q7ZoYFsiRkONN9d2LLtG7+metkFxQcPJvFNwvQlrLVdJSTFIdqTXhe0B/5WRb1F5Lwu2Xtw3cyBZo97U/FE+KjBa/rSfOVcdcgRe7PxOED7ZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722355580; c=relaxed/simple;
-	bh=Sbb0X0ZQ9wCjmWJvyc91Z9FyRyM6zMDTso6l6mTO/J4=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
-	 References:In-Reply-To; b=F34M0yOpjcdoF0vDxcuNJSPmFmu8TEcLcAoErIDGwOhI/PUbk65qCcYNiMf37h1QJz9dMiYlWXs6gK4UhN+DIDFTS2+/hLF0rW591eHDQXaN1dNn/LPJ3FN271gqiYgy5MUB/ycpa6LvCUIlTjgTEYZAit40472saU1A3XzfOGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=gnaypIPH; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1722368728; c=relaxed/simple;
+	bh=Cn8UGTm+5clbj1815kjTPqeoSHJJ041j85Ym5yyD1oQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FBB1fsYZOlJHzo1pxWPC6Twk4g/RWSqQccxb4EN2TFFp6p2DIB8XMc/ep7OXneXaIdVlgQZTLnjhi/BMYZbX393oZgv+N80XWqFdN6ovRjhncd0xSvgPJKMfmP5aqbcrpDMM7U3e2HgZtZssnsyNBNsfBGv1iQGBdDysrOC9wNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aKM4hSs9; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="gnaypIPH"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 0CCD120005;
-	Tue, 30 Jul 2024 16:06:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1722355571;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Sbb0X0ZQ9wCjmWJvyc91Z9FyRyM6zMDTso6l6mTO/J4=;
-	b=gnaypIPHeJXLbymRx/Bj8sCv3NWRW1DNo8rH13DfltCTwlbL4nIfp12QeF83lYd4zZB8b2
-	AGY7epVGBdZ/ODAU1mU2gyEhk6IX34yC0VofhkfoxU2MPSf/kJG9cgTdINzeB/MUQXiUk7
-	3E2ucbznKiKeGnX1gd07+PfsLXZy31Tu1jh03vCaIjzxxeU8tdg2wtrpD1lX6UKnhSd+Tj
-	OUbx1m4YLiW/CwZn3PBIuB/AKEJGcCF+A5whXiBDVXgXSEOxxTxpor4stx0wC8x1dQJJ7Y
-	YV/a9n2Q5mAzy+D2oP0g58RoOTVQs4Yid564I42VrAn8TY+WUhZ7TXUNYYfldA==
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aKM4hSs9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34374C32782;
+	Tue, 30 Jul 2024 19:45:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722368727;
+	bh=Cn8UGTm+5clbj1815kjTPqeoSHJJ041j85Ym5yyD1oQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aKM4hSs94pSbl8XDmbASUr+D13FvPq2tlNPTxpf1huOglb+fLDrpNZigvyNl2YhSM
+	 /PTHADLsxd+sKipAXOlAppKGc4qbA44CDlEY86inE4tB2L/neWdCci6xc3Swsk2CMX
+	 DnpHd5KRcM5Gh4n+G6GbvKbJPiAsq3unNoCQS2/ryvqhK7czQdp9nCw7YXcCx2B77z
+	 NDZODbO2Qo8rsBRMW4LfooAeWKSOoJhV9wIVSvYBa3yGRoXMni5DHdYhbqpLpXkmM8
+	 f3EN5y7N1Y506GilLvp5UOVLMvcZ+S7YZQcIR7HAP2NZ2hxp06u5MwCiZCTI2jINWy
+	 0Cdw4phunBnuA==
+Date: Tue, 30 Jul 2024 13:45:26 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Stephan Gerhold <stephan@gerhold.net>,
+	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Konrad Dybcio <konradybcio@kernel.org>, devicetree@vger.kernel.org,
+	Andy Gross <agross@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>
+Subject: Re: [PATCH v2 2/5] dt-bindings: soc: qcom: smd-rpm: add generic
+ compatibles
+Message-ID: <172236872511.2035012.2163751854672645367.robh@kernel.org>
+References: <20240729-fix-smd-rpm-v2-0-0776408a94c5@linaro.org>
+ <20240729-fix-smd-rpm-v2-2-0776408a94c5@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Tue, 30 Jul 2024 18:06:10 +0200
-Message-Id: <D3303E0OHP9L.2J35O9HU9HJ1J@bootlin.com>
-Cc: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, "Vladimir Kondratiev"
- <vladimir.kondratiev@mobileye.com>, =?utf-8?q?Gr=C3=A9gory_Clement?=
- <gregory.clement@bootlin.com>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
- <tawfik.bayouk@mobileye.com>, "Krzysztof Kozlowski"
- <krzysztof.kozlowski@linaro.org>
-To: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, "Michael
- Turquette" <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>,
- "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
- <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Subject: Re: [PATCH RESEND v3 0/4] Add Mobileye EyeQ clock support
-X-Mailer: aerc 0.18.1-0-gaa8319bc591f
-References: <20240730-mbly-clk-v3-0-4f90fad2f203@bootlin.com>
-In-Reply-To: <20240730-mbly-clk-v3-0-4f90fad2f203@bootlin.com>
-X-GND-Sasl: theo.lebrun@bootlin.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240729-fix-smd-rpm-v2-2-0776408a94c5@linaro.org>
 
-Hello all,
 
-On Tue Jul 30, 2024 at 6:04 PM CEST, Th=C3=A9o Lebrun wrote:
-> This is a new iteration on the clock part of the Mobileye
-> system-controller series. It used to be sent as a single series [0],
-> but has been split in the previous revisions (see [1], [2], [3], [4])
-> to faciliate merging.
+On Mon, 29 Jul 2024 22:52:15 +0300, Dmitry Baryshkov wrote:
+> Add two generic compatibles to all smd-rpm devices, they follow the same
+> RPMSG protocol and are either accessed through the smd-edge or through
+> the glink-edge.
+> 
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
+>  .../devicetree/bindings/clock/qcom,rpmcc.yaml      |  2 +-
+>  .../bindings/remoteproc/qcom,glink-rpm-edge.yaml   |  2 +-
+>  .../bindings/remoteproc/qcom,rpm-proc.yaml         |  4 +-
+>  .../devicetree/bindings/soc/qcom/qcom,smd-rpm.yaml | 74 ++++++++++------------
+>  .../devicetree/bindings/soc/qcom/qcom,smd.yaml     |  2 +-
+>  5 files changed, 38 insertions(+), 46 deletions(-)
+> 
 
-This is a friendly RESEND of the Mobileye system-controller series, now
-that v6.11-rc1 is out. It applies just fine, and has been tested on
-real hardware.
-
-Thanks,
-
---
-Th=C3=A9o Lebrun, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
