@@ -1,119 +1,170 @@
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 087E0160860
-	for <linux-clk@vger.kernel.org>; Wed, 31 Jul 2024 06:15:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70B2F167DB7
+	for <linux-clk@vger.kernel.org>; Wed, 31 Jul 2024 06:28:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722406504; cv=none; b=NpTnEnTD/SaEZYtOeNihPiUuKfhg5khMXYa6K0kv4AuGCA1l84z65/fLj14QVmDjxp82XWW+fhKBj+ptIfBJm0jd4QcBPC3myymHOgXkG1wPId3ORwNOrzbvzkeAHYrYURYEWFi85W9Ijrf4UvhvH7ufUMW8vj6HgMs+0lZcP2Y=
+	t=1722407285; cv=none; b=n0Czyb+B22OLJqRRwVbEjnjdmO8qpu/JA6PJH+j8PZWK5fjXuVmE5eZNOf1N/lIhAIciEq06i5ioC/aXIyVXYdEgmHAYmOZAOrsmTxhcSaDzF6Eel57AxFDo8XgfmQ4XrdSZGbMmeQ254Ga+Sy0juSetAhOqySTltxUi6/xkN3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722406504; c=relaxed/simple;
-	bh=3qhd4SE6YoyKmVa0gQyG4Is1h6oEVGw8BykU91343Uw=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AlQI8PuxC6Y6RMCiENvOVRbboVrimSMdZNltE3qkwZNQcN2/ANVSusYaj/+BoafW2ZnMS8vOgyUjA2u/7CVA2E3uCeU58+ZS9BcpVi2+LpAI10LMR9LufSCmS+LO+/y16F8gRo5xzB29wqFltiPN0RbXy2NMH5M59lzdgG5Drvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com; spf=none smtp.mailfrom=pdp7.com; dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b=nlIc327F; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pdp7.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=pdp7.com
+	s=arc-20240116; t=1722407285; c=relaxed/simple;
+	bh=CMg7I6DvlqMi2AQ7EUlZFri45IZwp3TqOgCM7xiM0WY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CWPwDeJGU7BwkvlUt60fz+9lRCrYKLbBbMR9fLf9TG7Y+SfRcem8wu85JhrKGSiDr6iqFx+GbIj4B+cUIik8gF/aoC2pbVHlQcEKvMRQ4n9K92W9qRVi7JfyoTLFJydH0sZKmkQK0ZVVOrRw50wO3obM6qzZXAAERA8rUl01dvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rfg+qATg; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pdp7-com.20230601.gappssmtp.com header.i=@pdp7-com.20230601.gappssmtp.com header.b="nlIc327F"
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-1fd9e70b592so35933875ad.3
-        for <linux-clk@vger.kernel.org>; Tue, 30 Jul 2024 23:15:01 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rfg+qATg"
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2ef7fef3ccfso64832581fa.3
+        for <linux-clk@vger.kernel.org>; Tue, 30 Jul 2024 23:28:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=pdp7-com.20230601.gappssmtp.com; s=20230601; t=1722406501; x=1723011301; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mC3tXuwifMCr47H/ReF2rBsHBnKM2KWjJi3hvYggrH8=;
-        b=nlIc327F9hPlv+ofO2AdpPmDRyN526KjxIhTA2mFsoGuFlQ6ALR727I4VSefxLgRqj
-         TZUbR8ekRzG7xFpJWuXPyH+5wKmvsalVznjipfenGBtuD1ZG/iph4MU20ThaQXwbakaM
-         Q5Hx9MfQuZ7swxnN3QVZlISeYm20sA9Wr1Akoe9B1a6j6xK4CN+waqAgvJ6hkw4nZ3O9
-         +psZkTHRp5EihIcLsulS0Da11DAaa8kEgSOs5g2KYsx/9XSLiwbybXoOwuSUV0dzmiHv
-         DKSWxk5dA8IkU3FHcjiv3qu/ip1JDaORce7s9sdZz2dKJ6lZ67gVtW+XU9TL5OrtwNf9
-         nMUg==
+        d=linaro.org; s=google; t=1722407281; x=1723012081; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=ifU//GKpv9Nnphj04Ad5GwmFt7Nbvxezo4+8o/BbKIs=;
+        b=rfg+qATgiLwaRBLT5G0MbesdV36VJ01Ej4aec5phh6Qlaa94iw2s4mKZcS3urdkTyf
+         rz3lIno5W++bhUXpBRnkwd1Kdw2PuIHI8MC/0PjiwZ0rgkaKp45UftalUFRJ77fBMQ43
+         7v/j1/0W9X9rjQu9FYsGkWYRg3doEcYCRjg1f680zhU9QW+Gc/o0SHaHy3ncuZ1Cl62e
+         EypFLSDUxi9iT/1Pm+POhYCcuWQlCplskE1BIWTkTWh8Buv65pHfYm7wfZWse1cobQFd
+         UvsjLCXqG8mrjdtEY7nUE4ESHT9/Q6uh6O8/eRR2IM4fJWkCwzIDnd3TPftYIYQksX0o
+         /OYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722406501; x=1723011301;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1722407281; x=1723012081;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=mC3tXuwifMCr47H/ReF2rBsHBnKM2KWjJi3hvYggrH8=;
-        b=pjTQIC9soR/5OIe2bpCXT9JaIkvHRX2QCqkxunHNB6U+ulURAAvUFtO5t/NiDaH/ZI
-         ClwX3eZU/dkX2NtvuLvQNyy3iRTpfvQI9qqrvEOXnt3yzggqDKeEO5uCW3VO/Adf1KpF
-         FkRgFg5nM8HT81+DpubPPPTysm/G0PDQQUOF0pU1o6nmRxjI6hp+unkJVz6rkOG4OqEy
-         jBWv3I5PBGY0GoFtQm84AEELHBewyOOpANKQ/RbVkjlHDLfiEBswBH2V0b6/l0/LtzL/
-         bAnSdvEgKufR6msqnE3ZOzrqHaZlHihDZLNFUvPaEpMwQND4T1aGgz+HmlanNxm/NEPb
-         qqGg==
-X-Forwarded-Encrypted: i=1; AJvYcCUiTCJIU4V63TV7cQFjlPFb9q5+ogtaKxbq4iyYw7PJIxrgcOY+2YBq8z4UGMdt5j3pgSAV5Iz9J7d1voUICxmt9M0V9G8VtzCh
-X-Gm-Message-State: AOJu0YwyWIBdqDxYulusJve+1UV50GXumXO8CTmK9Cm4836lmjZri812
-	o+z88jBZeAXRHDZT1985AVxvNJR2kJ0tMGRSIJNtwFPBLDandKBJEk8gGHG2gwc=
-X-Google-Smtp-Source: AGHT+IHAm8yRTbqgNkd3W/umYT9moh5/2wBAdYnIzsqz4npYm9ETZcWZ1wL+JK+URtWlkoJNxI+00w==
-X-Received: by 2002:a17:902:ce0d:b0:1fd:a360:446f with SMTP id d9443c01a7336-1ff048afb6dmr108366915ad.65.1722406501309;
-        Tue, 30 Jul 2024 23:15:01 -0700 (PDT)
-Received: from x1.hsd1.or.comcast.net ([2601:1c2:1802:170:4520:8165:b9e7:a203])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7c7fff8sm112384435ad.53.2024.07.30.23.15.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 30 Jul 2024 23:15:00 -0700 (PDT)
-From: Drew Fustini <drew@pdp7.com>
-To: Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Icenowy Zheng <uwu@icenowy.me>,
-	Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-riscv@lists.infradead.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Drew Fustini <drew@pdp7.com>
-Subject: [PATCH] clk: thead: fix dependency on clk_ignore_unused
-Date: Tue, 30 Jul 2024 23:14:40 -0700
-Message-Id: <20240731061439.3807172-1-drew@pdp7.com>
-X-Mailer: git-send-email 2.34.1
+        bh=ifU//GKpv9Nnphj04Ad5GwmFt7Nbvxezo4+8o/BbKIs=;
+        b=MbSTNW+GNb/wTQEh1uIMN1QoiB48o0m9W6daDBLOnb/fZhdpGKWw+NMQmNu/CIx8mz
+         Z9/zIPGOzE7JkzV7PHZFv80pWO1sfoPgzaa+XOZLQ61Uh6mNHl2DblsFXcxRtPrGf9Yg
+         3d/v2POHxz4s9MBf/Y7/cQ/IDU9btaggJ0MKnk15femoU+pmiqYdGs9SkNvqTHDG1CwJ
+         7Nu94eMhAmuCcldfESi/bAd7XkIJMTVnd73idZvNr//9S27/VPO26voxp1nQDVDKY9jg
+         m1FCLV1oEwEfY1nZwdVRcmcwRwKTiduwtqISI8kYWq3wB52LAlbtZwVLwzqxzm9M6uzP
+         HNVw==
+X-Forwarded-Encrypted: i=1; AJvYcCU4jt2VtjUYogBnEUI0jwHbNywlxBTzr6PwOaYtmcqlMdNAycEMl9tvJ4L9tZpoMXgPAisZxV1z2FbRq2IgNFONayRhQ02BhlZe
+X-Gm-Message-State: AOJu0YwH7mzDLBQq4b55tUC0fNv+MXoVC1zgg9uA19yqilTFOmxHHvWD
+	vFSO/6JWvICIR+WgzD36RlRkVzjjGqLvs2mxMhTIhYRFo6RWa+m89DTwykgubJaIXyttc+RA1jN
+	T
+X-Google-Smtp-Source: AGHT+IED4aBWNuF7hsIorQM5WwUA2MAhar7AmK7w0xaIEzPvw8n78Yy6COvnKx7sbjmHrOpGmcZZiw==
+X-Received: by 2002:a2e:8e71:0:b0:2ef:2543:457c with SMTP id 38308e7fff4ca-2f12ee18335mr80727611fa.24.1722407281451;
+        Tue, 30 Jul 2024 23:28:01 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282b8ad7f4sm8533475e9.11.2024.07.30.23.27.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Jul 2024 23:28:00 -0700 (PDT)
+Message-ID: <c3671b29-d860-4374-80fe-c284da4ac300@linaro.org>
+Date: Wed, 31 Jul 2024 08:27:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1597; i=drew@pdp7.com; h=from:subject; bh=3qhd4SE6YoyKmVa0gQyG4Is1h6oEVGw8BykU91343Uw=; b=owGbwMvMwCF2+43O4ZsaG3kYT6slMaStvOZ/XWZz2cX5vivMZj5qWLAguf/bGbbNAdUbj0otr lFsVJN/31HKwiDGwSArpsiy6UPehSVeoV8XzH+xDWYOKxPIEAYuTgGYiNprhn/K3J2smRu/PufJ OrJz25NFps82VTE6uLhX/Evbd53357dKRoaLzjcCUovLf6TmbpuoMcP+pAvTlonTri6+GDuZL7R e7DIPAA==
-X-Developer-Key: i=drew@pdp7.com; a=openpgp; fpr=1B6F948213EA489734F3997035D5CD577C1E6010
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3] dt-bindings: clock: qcom: Remove required-opps from
+ required list on SM8650
+To: Jagadeesh Kona <quic_jkona@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Taniya Das <quic_tdas@quicinc.com>,
+ Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+ Imran Shaik <quic_imrashai@quicinc.com>,
+ Ajit Pandey <quic_ajipan@quicinc.com>, kernel test robot <lkp@intel.com>
+References: <20240730034552.31271-1-quic_jkona@quicinc.com>
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Language: en-US
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzTRLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnp5c3p0b2Yua296bG93c2tpQGxpbmFyby5vcmc+wsGUBBMBCgA+FiEE
+ m9B+DgxR+NWWd7dUG5NDfTtBYpsFAmI+BxMCGwMFCRRfreEFCwkIBwIGFQoJCAsCBBYCAwEC
+ HgECF4AACgkQG5NDfTtBYptgbhAAjAGunRoOTduBeC7V6GGOQMYIT5n3OuDSzG1oZyM4kyvO
+ XeodvvYv49/ng473E8ZFhXfrre+c1olbr1A8pnz9vKVQs9JGVa6wwr/6ddH7/yvcaCQnHRPK
+ mnXyP2BViBlyDWQ71UC3N12YCoHE2cVmfrn4JeyK/gHCvcW3hUW4i5rMd5M5WZAeiJj3rvYh
+ v8WMKDJOtZFXxwaYGbvFJNDdvdTHc2x2fGaWwmXMJn2xs1ZyFAeHQvrp49mS6PBQZzcx0XL5
+ cU9ZjhzOZDn6Apv45/C/lUJvPc3lo/pr5cmlOvPq1AsP6/xRXsEFX/SdvdxJ8w9KtGaxdJuf
+ rpzLQ8Ht+H0lY2On1duYhmro8WglOypHy+TusYrDEry2qDNlc/bApQKtd9uqyDZ+rx8bGxyY
+ qBP6bvsQx5YACI4p8R0J43tSqWwJTP/R5oPRQW2O1Ye1DEcdeyzZfifrQz58aoZrVQq+innR
+ aDwu8qDB5UgmMQ7cjDSeAQABdghq7pqrA4P8lkA7qTG+aw8Z21OoAyZdUNm8NWJoQy8m4nUP
+ gmeeQPRc0vjp5JkYPgTqwf08cluqO6vQuYL2YmwVBIbO7cE7LNGkPDA3RYMu+zPY9UUi/ln5
+ dcKuEStFZ5eqVyqVoZ9eu3RTCGIXAHe1NcfcMT9HT0DPp3+ieTxFx6RjY3kYTGLOwU0EVUNc
+ NAEQAM2StBhJERQvgPcbCzjokShn0cRA4q2SvCOvOXD+0KapXMRFE+/PZeDyfv4dEKuCqeh0
+ hihSHlaxTzg3TcqUu54w2xYskG8Fq5tg3gm4kh1Gvh1LijIXX99ABA8eHxOGmLPRIBkXHqJY
+ oHtCvPc6sYKNM9xbp6I4yF56xVLmHGJ61KaWKf5KKWYgA9kfHufbja7qR0c6H79LIsiYqf92
+ H1HNq1WlQpu/fh4/XAAaV1axHFt/dY/2kU05tLMj8GjeQDz1fHas7augL4argt4e+jum3Nwt
+ yupodQBxncKAUbzwKcDrPqUFmfRbJ7ARw8491xQHZDsP82JRj4cOJX32sBg8nO2N5OsFJOcd
+ 5IE9v6qfllkZDAh1Rb1h6DFYq9dcdPAHl4zOj9EHq99/CpyccOh7SrtWDNFFknCmLpowhct9
+ 5ZnlavBrDbOV0W47gO33WkXMFI4il4y1+Bv89979rVYn8aBohEgET41SpyQz7fMkcaZU+ok/
+ +HYjC/qfDxT7tjKXqBQEscVODaFicsUkjheOD4BfWEcVUqa+XdUEciwG/SgNyxBZepj41oVq
+ FPSVE+Ni2tNrW/e16b8mgXNngHSnbsr6pAIXZH3qFW+4TKPMGZ2rZ6zITrMip+12jgw4mGjy
+ 5y06JZvA02rZT2k9aa7i9dUUFggaanI09jNGbRA/ABEBAAHCwXwEGAEKACYCGwwWIQSb0H4O
+ DFH41ZZ3t1Qbk0N9O0FimwUCYDzvagUJFF+UtgAKCRAbk0N9O0Fim9JzD/0auoGtUu4mgnna
+ oEEpQEOjgT7l9TVuO3Qa/SeH+E0m55y5Fjpp6ZToc481za3xAcxK/BtIX5Wn1mQ6+szfrJQ6
+ 59y2io437BeuWIRjQniSxHz1kgtFECiV30yHRgOoQlzUea7FgsnuWdstgfWi6LxstswEzxLZ
+ Sj1EqpXYZE4uLjh6dW292sO+j4LEqPYr53hyV4I2LPmptPE9Rb9yCTAbSUlzgjiyyjuXhcwM
+ qf3lzsm02y7Ooq+ERVKiJzlvLd9tSe4jRx6Z6LMXhB21fa5DGs/tHAcUF35hSJrvMJzPT/+u
+ /oVmYDFZkbLlqs2XpWaVCo2jv8+iHxZZ9FL7F6AHFzqEFdqGnJQqmEApiRqH6b4jRBOgJ+cY
+ qc+rJggwMQcJL9F+oDm3wX47nr6jIsEB5ZftdybIzpMZ5V9v45lUwmdnMrSzZVgC4jRGXzsU
+ EViBQt2CopXtHtYfPAO5nAkIvKSNp3jmGxZw4aTc5xoAZBLo0OV+Ezo71pg3AYvq0a3/oGRG
+ KQ06ztUMRrj8eVtpImjsWCd0bDWRaaR4vqhCHvAG9iWXZu4qh3ipie2Y0oSJygcZT7H3UZxq
+ fyYKiqEmRuqsvv6dcbblD8ZLkz1EVZL6djImH5zc5x8qpVxlA0A0i23v5QvN00m6G9NFF0Le
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20240730034552.31271-1-quic_jkona@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Add the CLK_IGNORE_UNUSED flag to the vp-axi clock (CLK_VP_AXI) to avoid
-depending on clk_ignore_unused in the cmdline. Without this fix, the
-emmc-sdio clock (CLK_EMMC_SDIO) fails to work after vp-axi is disabled.
+On 30/07/2024 05:45, Jagadeesh Kona wrote:
+> -
+>  properties:
+>    compatible:
+>      enum:
+> @@ -57,7 +54,24 @@ required:
+>    - compatible
+>    - clocks
+>    - power-domains
+> -  - required-opps
+> +
+> +allOf:
+> +  - $ref: qcom,gcc.yaml#
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            enum:
+> +              - qcom,sc8280xp-camcc
+> +              - qcom,sm8450-camcc
+> +              - qcom,sm8550-camcc
+> +              - qcom,x1e80100-camcc
+> +    then:
+> +      required:
+> +        - required-opps
+> +    else:
+> +      properties:
+> +        required-opps: false
 
-Signed-off-by: Drew Fustini <drew@pdp7.com>
----
-base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b 
 
-This is based on v6.11-rc1. I've been reviewing the TH1520 System User
-Manual [1] and I am uncertain why "vp-axi" affects "emmc-sdio":
+Why would required-opps be invalid for SM8650? What if we want some
+higher opp for some reason? The point of v1 and v2 was oonly to require
+required-opps on certain variants, not to disallow it in other cases.
 
- - EMMC_SDIO_REF_CLK_EN is bit 30 in PERI_CLK_CFG (offset 0x204)
- - VPSYS_AXI_ACLK_EN is bit 15 in VPSYS_CLK_CFG (offsset 0x1e0)
-
-I don't see any linkage between them in the public documentation.
-However, the addition of the CLK_IGNORE_UNUSED flag to "vp-axi" does fix
-the boot failure when clk_ignore_unused is not used.
-
-I've pushed a branch that has the dts branches on top of this patch [2].
-
-[1] https://openbeagle.org/beaglev-ahead/beaglev-ahead/-/blob/main/docs/TH1520%20System%20User%20Manual.pdf
-[2] https://github.com/pdp7/linux/tree/th1520-fix-clk_ignore_unused
-
- drivers/clk/thead/clk-th1520-ap.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/thead/clk-th1520-ap.c b/drivers/clk/thead/clk-th1520-ap.c
-index cbc176b27c09..17e32ae08720 100644
---- a/drivers/clk/thead/clk-th1520-ap.c
-+++ b/drivers/clk/thead/clk-th1520-ap.c
-@@ -738,7 +738,7 @@ static struct ccu_div vp_axi_clk = {
- 		.hw.init	= CLK_HW_INIT_PARENTS_HW("vp-axi",
- 					      video_pll_clk_parent,
- 					      &ccu_div_ops,
--					      0),
-+					      CLK_IGNORE_UNUSED),
- 	},
- };
- 
--- 
-2.34.1
+Best regards,
+Krzysztof
 
