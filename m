@@ -1,107 +1,103 @@
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 389403BBE3
-	for <linux-clk@vger.kernel.org>; Wed, 31 Jul 2024 18:25:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1FD061FEB;
+	Wed, 31 Jul 2024 19:13:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722450351; cv=none; b=AY6dvIJLaNiGOW4zvIMrZSMQqtS2GgiyQvrnqs6h1bmb2gJmaRD+AKRwzxsskuWkMdeTyLbB6tuigNoXD/Mxk6vEMqV2nIEFFJ8IbZ4M5wSkw+4yVDeVXgC3pODaL2Hzyw3eCViA2OKK/nJf80Wf8MeXhaWjH2ASEgArnvvahTA=
+	t=1722453220; cv=none; b=nVGB/Yebw0qgptk9i3WOkPniQKCQOvNG2mZ2TZA5/Dj2sV1zDAmjdCfS46PGPWUcJICCMHtjbxANWFKY8DwiS58Du/PAQU9gxlH2yfdakPao5rPA//xaTGe5i0rIIw7EY3ECyPReV87KdRgdweZQ8Xu5ArNzb/fkqcEtLe/Xl+c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722450351; c=relaxed/simple;
-	bh=SbypRaxK4y7FOUc04r7g6F2EtP4Xxirop8YZAKga7xs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Gv6lDmTrsexZ7cDrshHt0pe4hB0BPnRiLRCKrNE8nVLIo9H4j8lqQLyVkeaXl8S3PuS28jroGXyQL8E/yCHQQhXx1L9Vkrj2gh2CQIZkEsoEDpdb7rFSxIlnxTO5XDUYSnpD3Zzq60U1QWcKzAehEAAXW4UNeF5VQRAR8jRl4s8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zaxsW9mp; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1722453220; c=relaxed/simple;
+	bh=/vCbSfFh+Teb1SyCZnsnZm+zGpfoIjaZBtt5r0JSCrU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cmdsS2Uzmd6HKA4mkXU+CpkBSVgYejREsPbOX59nVPVYBpSOrTS65cfA99IMdKg1YR+8C5dTrA3XizfnaNjhdnDle1voXiwRbdsr3OZpKBGfFZCHtDZLJ3PObVVu0whAkl6pCRBb1OOG6znIn2LG8PjhlP27e3gKwS1VoJYqgDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iIZEaUE7; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zaxsW9mp"
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-65cd720cee2so44256217b3.1
-        for <linux-clk@vger.kernel.org>; Wed, 31 Jul 2024 11:25:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722450349; x=1723055149; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gdzxLzu2RkJLVHNIZ4Z2FLUcNDJnzadZxmlA7ncYpvs=;
-        b=zaxsW9mpK2SKBOsbgkBkWzaWWfsYmcOyKJaN+SS2EiSv/sNmFCIfI76m0/qE0AFb+y
-         jEAdWikJrUORrMdYl7eGld3cNgIQA2XU/JPAMcf4hLg7fMxVdGuBby0qIsE6NZD6gN87
-         bbNeJcLGhoHdBxAp5vdN9iWSGv/yd1wcBK7VTXhprGT4tT+njSOX1FuuFfitQSd8g5/m
-         uQSCDkoh3Ja8UpvUGDMU8og9La9kLGY3lN6Vra1L6Du3R11uzetJfhxPS0DcSGAwfStE
-         gzWCGzzDZvFtN3AhLMlw5SSQlS+C9t/+7qtZF7suE72AvEqONgTe08/NRyP1ud7QwHxu
-         qiHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722450349; x=1723055149;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gdzxLzu2RkJLVHNIZ4Z2FLUcNDJnzadZxmlA7ncYpvs=;
-        b=EaCCZAwael4eJvrE/S4LCM8NshAXevuNyB61+2M9OqzQ7RfwxE0g3iKF2doJCVsA5W
-         6kNjNyL51tNQKXx//WJU8If6bozMlgqaSBTvCQh/w8+vnyBsyFmMjoK9+eX73Edvzazw
-         ABZB2N3qLxwi/fcjeXdTF8pCQX3K6wzTNaetyCgBf1b+t2vVSlHXBYWvXDy2EU5nxCIU
-         SIDCzFua5QRwM7CFQw+xWi2BtT5WMCWMQIFjmZwPiRbmT7VSmLZ9MRld5XlNYFqPo6Lk
-         TE0dol2+DaA50QnRAUMHVw1Wx+5YSDISbvCu+XhjAPTHh9I63yAciwGOymEArsof7kn5
-         QtoA==
-X-Forwarded-Encrypted: i=1; AJvYcCV/iQ4azf8GHrOYdNdp2yyncgpLvrlF0DTB02gC4qGtyC4zs/07La6sp0mgfxzCKlYSJXOPvCDLfnjwqn/CKUxiF91eWhPfkctI
-X-Gm-Message-State: AOJu0YwjhKG5Nu3r0gK+U/jnNjJMy3S6h6uQdvUESCVFswtQBjYosF9H
-	45HcgeFs15FVLBDEQzAP0W+v21JH8GUwcGdhGTuLeN0fCJ+3qDQ+gf9+bw0OvJ8HyGLePd8eosq
-	KPzRYdCrllQ2CgB1zzdbinVQ3kbNX/0OiuZ1SoQ==
-X-Google-Smtp-Source: AGHT+IF0KfSlWB047Omd2PMOsZLUTxv2++sjbYGOlV9vhnSEfTHz8IYHfgmHBSw8qekBtE8MJoZfDGTkjDqE6mB+3vU=
-X-Received: by 2002:a05:690c:d87:b0:64b:ead:3e3f with SMTP id
- 00721157ae682-67a07b757bemr205779687b3.22.1722450349254; Wed, 31 Jul 2024
- 11:25:49 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iIZEaUE7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4E252C4AF09;
+	Wed, 31 Jul 2024 19:13:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1722453219;
+	bh=/vCbSfFh+Teb1SyCZnsnZm+zGpfoIjaZBtt5r0JSCrU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=iIZEaUE7CYfFDuICSbjuei0BwDlx9VRivB/9NykOaBEkhcRYStKmUMbDQqdSzH2O9
+	 a6VM4ZwmJnLXbZHc7Q052iIAB7G7pXP85MpcQRLXWeYDKoypf/Obi2EuWbRX4OUkeS
+	 4YFnYSTYUGxqNEaJ6Yf0A0qxmO7FLQs1v5S5bOO7Puixuq3qvIeGByAZm1MGsCyLy6
+	 rc79PB8USLcrWgCAN34og4v4JEtW4b4/6N//eZF2Oxf51MyFdMC+OF9xZ1aAT/YEQx
+	 xNIiAtyzbZh4Qa9aS2xI/j+U0+T+3DGe10iYPNiTUNPYIa9RfN76mAesn+rFyW4+dx
+	 K1UsAr4sGNXdQ==
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] clk: Use of_property_present()
+Date: Wed, 31 Jul 2024 13:12:42 -0600
+Message-ID: <20240731191312.1710417-4-robh@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240723163311.28654-1-semen.protsenko@linaro.org>
- <172243565547.42492.1072397968108986657.b4-ty@linaro.org> <ee392e1e-bdb7-4cbd-8b43-00ec0efd5026@kernel.org>
-In-Reply-To: <ee392e1e-bdb7-4cbd-8b43-00ec0efd5026@kernel.org>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Wed, 31 Jul 2024 13:25:38 -0500
-Message-ID: <CAPLW+4mxtTj5VGi4LYwU-8F9hsSgDe+yxAsON=rXUhxGWHCCXg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: clock: exynos850: Add TMU clock
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
-	Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, 
-	Mateusz Majewski <m.majewski2@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-samsung-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 31, 2024 at 9:22=E2=80=AFAM Krzysztof Kozlowski <krzk@kernel.or=
-g> wrote:
->
-> On 31/07/2024 16:20, Krzysztof Kozlowski wrote:
-> >
-> > On Tue, 23 Jul 2024 11:33:10 -0500, Sam Protsenko wrote:
-> >> Add a constant for TMU PCLK clock. It acts simultaneously as an
-> >> interface clock (to access TMU registers) and an operating clock which
-> >> makes TMU IP-core functional.
-> >>
-> >>
-> >
-> > Applied, thanks!
-> >
-> > [1/2] dt-bindings: clock: exynos850: Add TMU clock
-> >       https://git.kernel.org/krzk/linux/c/01ce1bf22adc0d09d906319787091=
-ce784cb9914
-> > [2/2] clk: samsung: exynos850: Add TMU clock
-> >       https://git.kernel.org/krzk/linux/c/79b918aa997acd5066c7962502b1d=
-aaae76b6911
->
-> Hashes got mixed, but the commits are properly applied:
-> https://git.kernel.org/pub/scm/linux/kernel/git/krzk/linux.git/log/?h=3Dn=
-ext/clk
->
+Use of_property_present() to test for property presence rather than
+of_(find|get)_property(). This is part of a larger effort to remove
+callers of of_find_property() and similar functions.
+of_(find|get)_property() leak the DT struct property and data pointers
+which is a problem for dynamically allocated nodes which may be freed.
 
-Thanks for handling this!
+Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+---
+ drivers/clk/clk.c                 | 2 +-
+ drivers/clk/renesas/clk-mstp.c    | 2 +-
+ drivers/clk/versatile/clk-sp810.c | 2 +-
+ 3 files changed, 3 insertions(+), 3 deletions(-)
 
-> Best regards,
-> Krzysztof
->
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 285ed1ad8a37..7264cf6165ce 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -5232,7 +5232,7 @@ static int of_parse_clkspec(const struct device_node *np, int index,
+ 		 * clocks.
+ 		 */
+ 		np = np->parent;
+-		if (np && !of_get_property(np, "clock-ranges", NULL))
++		if (np && !of_property_present(np, "clock-ranges"))
+ 			break;
+ 		index = 0;
+ 	}
+diff --git a/drivers/clk/renesas/clk-mstp.c b/drivers/clk/renesas/clk-mstp.c
+index 5304c977562f..5bc473c2adb3 100644
+--- a/drivers/clk/renesas/clk-mstp.c
++++ b/drivers/clk/renesas/clk-mstp.c
+@@ -207,7 +207,7 @@ static void __init cpg_mstp_clocks_init(struct device_node *np)
+ 	for (i = 0; i < MSTP_MAX_CLOCKS; ++i)
+ 		clks[i] = ERR_PTR(-ENOENT);
+ 
+-	if (of_find_property(np, "clock-indices", &i))
++	if (of_property_present(np, "clock-indices"))
+ 		idxname = "clock-indices";
+ 	else
+ 		idxname = "renesas,clock-indices";
+diff --git a/drivers/clk/versatile/clk-sp810.c b/drivers/clk/versatile/clk-sp810.c
+index 45adac1b4630..033d4f78edc8 100644
+--- a/drivers/clk/versatile/clk-sp810.c
++++ b/drivers/clk/versatile/clk-sp810.c
+@@ -110,7 +110,7 @@ static void __init clk_sp810_of_setup(struct device_node *node)
+ 	init.parent_names = parent_names;
+ 	init.num_parents = num;
+ 
+-	deprecated = !of_find_property(node, "assigned-clock-parents", NULL);
++	deprecated = !of_property_present(node, "assigned-clock-parents");
+ 
+ 	for (i = 0; i < ARRAY_SIZE(sp810->timerclken); i++) {
+ 		snprintf(name, sizeof(name), "sp810_%d_%d", instance, i);
+-- 
+2.43.0
+
