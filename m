@@ -1,76 +1,71 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B722516DEA7;
-	Wed, 31 Jul 2024 06:31:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D687A6E614;
+	Wed, 31 Jul 2024 06:52:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722407484; cv=none; b=kyqbpig7hr9CFbQjZ1pvH6LF49BmppeGhyxlIhUScKfjBHqcVoUzp3oikyEd4ff0d7V3xBVF5A/RN5gB2fDG0NUUG16GXlmyeeWwNZHuDPbK+lI8SWIret16OE4KiWfpzVJEmbPZRYSQZX4albGXTjum/Uj12EOKBsYPsWroSWc=
+	t=1722408724; cv=none; b=Is25clFygqu+u50MTS0umAYXUqEPS5SwUKo+I0ZMAsC0dKLAs6OWyTNvv6rUIuzH3zP8MtVWNRFG+d1wOaS2h2KysLxJJhOUtNItw9w7rbUiWwRToH0iuowX4gAI/2kXLYmYXjhQeznNvq7KG7Z/fkp/nFmb1bT9adMBw9IKg2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722407484; c=relaxed/simple;
-	bh=DZcw5goAzWnGAWG0As3uOmdBJ48IufZnDTLVzYnWPxY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BTr+0tTYgbnlh9j9z1FilrwD3oggksNbj0XOgAPc6onFR/33WO3tYiiO1zyGpofDA9pbQ9gGggM/xlu4k6SIrQWSy6Q6W2tYbXln+I5YgBaNM5jAV7KtrXDFbpBx9IzCs0eBu+OjowjAXV3WJcsWY1BeIupafEqzhSCDeKe9g38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gqmmlbZ9; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1722408724; c=relaxed/simple;
+	bh=QGQ7UcDgLseVwst6/lVeoLfgo6ne99fQU3rFqT+jJzc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gSgIteeCAvm/7fVw77evdmTXt8dDtZPpCGvKYzvG6hpbDYaQQ2AINUy+1VpUGZ1vz8bjyy4+jilGh6YaJ53itIdr82rQfZZ1KCFU9E9sw9Uu/jjzEdjunn8Xo5vGEUlajmKjrO6/bVsVJAvPY7sdWuvCng0Dd2aQBnUmnPR7e/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HVzvCBur; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gqmmlbZ9"
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46V4O4Nb024004;
-	Wed, 31 Jul 2024 06:30:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	4JmNUZPN16E9WqZhL2XIRbjO/MB26eCqrMH5LsOvyHc=; b=gqmmlbZ9okG8XCmM
-	5L57/0MmITAfMUiYT6L4fchQpAWxNk6iofQSU48z4cn7U2S6wKqWVYE7caKA7uNF
-	yZWaho57HVQ8osYgBqHbgN0KrCVUO87NQNDiJtEI3p469KhOiQ90QKhBXmu+a9sl
-	cO2AA+O0NfPNs+isgTs158E90wVhN5I2vGsWNMYL8BR6e1NyOHiuDwzGN6HyvGcZ
-	vwtaDNKtBS4eaJz8KDMeO4STx4TU7k8yV94r0VSkfCjmLKW676BD//MwGUoEmGhi
-	D3wxp5/wsKFvi/TvkqVbQimOfq16TKtMy+BqRCAY1q1cvKdkkskHEIyAHy4FjYNz
-	iZXiCg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40pw453cpa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 31 Jul 2024 06:30:57 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA05.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46V6Uu94027575
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 31 Jul 2024 06:30:56 GMT
-Received: from hu-skakitap-hyd.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 30 Jul 2024 23:30:50 -0700
-From: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Abhishek Sahu <absahu@codeaurora.org>,
-        "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: Stephen Boyd <sboyd@codeaurora.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>,
-        "Imran
- Shaik" <quic_imrashai@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>, <stable@vger.kernel.org>,
-        "Krzysztof
- Kozlowski" <krzysztof.kozlowski@linaro.org>,
-        Bryan O'Donoghue
-	<bryan.odonoghue@linaro.org>,
-        Satya Priya Kakitapalli
-	<quic_skakitap@quicinc.com>
-Subject: [PATCH V3 8/8] arm64: dts: qcom: Add camera clock controller for sm8150
-Date: Wed, 31 Jul 2024 11:59:16 +0530
-Message-ID: <20240731062916.2680823-9-quic_skakitap@quicinc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240731062916.2680823-1-quic_skakitap@quicinc.com>
-References: <20240731062916.2680823-1-quic_skakitap@quicinc.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HVzvCBur"
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-1fed72d23a7so38427915ad.1;
+        Tue, 30 Jul 2024 23:52:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722408722; x=1723013522; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=UL4pzV5kNcQzdAISGWSssRa96/8ZELbs9Z5LYhAlirQ=;
+        b=HVzvCBurD0TMBtytxo8mkIJENWbhQKKKdv8xzV+mZiQdj3qT8v8IKWdu6aF0GpTBZx
+         fg7+hb+9jiHjCSCjx9teHOsSRNSrvi+UsQnTU4CkO7BqO/aQb9yyh2I4AnRyXK+st/hk
+         t9v4ELYIl+xNjDL8tS8OnCFulGK4LYS2Wd35Rh7r30JnJkWjNPSqhIHyHnhe5K4bOtmL
+         4GXkU3zARoOUqNDbgD3qYEnQEy4AI45jT0S2Dv/UyO5XteYu3ZKaD/sT9ByWuyUrE9j1
+         wjcTNPw5/N93Mw3W1yXDz7qY9y2TeX3TmTSkxapmcNdBD4OM5QMdVdQc+xNPARI6x9zC
+         uIYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722408722; x=1723013522;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UL4pzV5kNcQzdAISGWSssRa96/8ZELbs9Z5LYhAlirQ=;
+        b=YvdSRr8tjPD/3UqaVnBFun/B33RblYuHsVRcZgJS1XVM3oNM73rc/wbSBIGqJENQPw
+         tGvv6vGju9o97EVHgswWPlevAsmavEGf/SHVtBQfYREkfWRE0KAytnA8DNIJcqzDufXF
+         JZYE/rvbO/i1qpUKctMEZXSR55tNwnyQz6P7ZX6Rh+tBu6iupUzQ58jE1TzXxT78qpVZ
+         sXYFLc4Dhtmmyyyt3JegS8hePYb65lL6hGLVtscIxIv160ms8uVKCWrLqnZoIhYaD3mU
+         XipDy3IsBx2A2IhkaRLaE+y9stDAhvxTatSo1tw6fz2GddqcKnu9l9BEuuK9a0bJTIg8
+         kgsg==
+X-Forwarded-Encrypted: i=1; AJvYcCUmM5/LdMfM9KdXW31p36/dnWuA3RllVA1cqCBHee9WVdcYU3irvBx/q6OBmcuYyGTB21do8Vv1rlV5GR7Q0p4YgApi+kO00E2sKBwk2rRIdymqBUNKK+1v5Lklch82giPsCeq0jz8MY1EiJk+IcHgUskPwKTDUfPp5cBce6A721VV1sw==
+X-Gm-Message-State: AOJu0Yx0mym03ShIbIgHoWjJS7UtffuVPytroKNJ1wSMVEV8IitU04uH
+	eub9LlJ2WfHOeo88REGH+hb7g/WqjHpKmYzLF9cYGHNQ1Bbsz4ie
+X-Google-Smtp-Source: AGHT+IHq5APEBHZUKRRPP88QWREisQJS1K0mGr46QU+4f0kE0BSoDDxkFSH7nRK0wak612oG6IxWrg==
+X-Received: by 2002:a17:902:c40e:b0:1fd:6677:69b4 with SMTP id d9443c01a7336-1ff0489f48fmr138938025ad.49.1722408721968;
+        Tue, 30 Jul 2024 23:52:01 -0700 (PDT)
+Received: from localhost.localdomain ([115.240.194.54])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-1fed7c8c826sm112752865ad.58.2024.07.30.23.51.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 30 Jul 2024 23:52:01 -0700 (PDT)
+From: Animesh Agarwal <animeshagarwal28@gmail.com>
+To: 
+Cc: Animesh Agarwal <animeshagarwal28@gmail.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] dt-bindings: clock: nxp,lpc3220-clk: Convert bindings to DT schema
+Date: Wed, 31 Jul 2024 12:21:33 +0530
+Message-ID: <20240731065137.156935-1-animeshagarwal28@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -78,77 +73,115 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: l6w24MUP0EEd-9hC4v97XXiULHmcRGzZ
-X-Proofpoint-ORIG-GUID: l6w24MUP0EEd-9hC4v97XXiULHmcRGzZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-31_03,2024-07-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 priorityscore=1501
- suspectscore=0 adultscore=0 clxscore=1015 impostorscore=0 malwarescore=0
- lowpriorityscore=0 mlxlogscore=999 phishscore=0 bulkscore=0 spamscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2407310047
 
-Add device node for camera clock controller on Qualcomm
-SM8150 platform.
+Convert the NXP LPC32xx Clock Controller bindings to yaml format.
 
-Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+Cc: Daniel Baluta <daniel.baluta@nxp.com>
+Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
 ---
- arch/arm64/boot/dts/qcom/sa8155p.dtsi |  4 ++++
- arch/arm64/boot/dts/qcom/sm8150.dtsi  | 13 +++++++++++++
- 2 files changed, 17 insertions(+)
+Changes in v2:
+  - Listed the items with description in the clock property.
+  - Corrected clock-names property.
+---
+ .../bindings/clock/nxp,lpc3220-clk.txt        | 30 -----------
+ .../bindings/clock/nxp,lpc3220-clk.yaml       | 51 +++++++++++++++++++
+ 2 files changed, 51 insertions(+), 30 deletions(-)
+ delete mode 100644 Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt
+ create mode 100644 Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.yaml
 
-diff --git a/arch/arm64/boot/dts/qcom/sa8155p.dtsi b/arch/arm64/boot/dts/qcom/sa8155p.dtsi
-index 9e70effc72e1..d678ed822378 100644
---- a/arch/arm64/boot/dts/qcom/sa8155p.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8155p.dtsi
-@@ -9,6 +9,10 @@
- 
- #include "sm8150.dtsi"
- 
-+&camcc {
-+	power-domains = <&rpmhpd SA8155P_CX>;
-+};
+diff --git a/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt b/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt
+deleted file mode 100644
+index 20cbca3f41d8..000000000000
+--- a/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.txt
++++ /dev/null
+@@ -1,30 +0,0 @@
+-NXP LPC32xx Clock Controller
+-
+-Required properties:
+-- compatible: should be "nxp,lpc3220-clk"
+-- reg:  should contain clock controller registers location and length
+-- #clock-cells: must be 1, the cell holds id of a clock provided by the
+-  clock controller
+-- clocks: phandles of external oscillators, the list must contain one
+-  32768 Hz oscillator and may have one optional high frequency oscillator
+-- clock-names: list of external oscillator clock names, must contain
+-  "xtal_32k" and may have optional "xtal"
+-
+-Examples:
+-
+-	/* System Control Block */
+-	scb {
+-		compatible = "simple-bus";
+-		ranges = <0x0 0x040004000 0x00001000>;
+-		#address-cells = <1>;
+-		#size-cells = <1>;
+-
+-		clk: clock-controller@0 {
+-			compatible = "nxp,lpc3220-clk";
+-			reg = <0x00 0x114>;
+-			#clock-cells = <1>;
+-
+-			clocks = <&xtal_32k>, <&xtal>;
+-			clock-names = "xtal_32k", "xtal";
+-		};
+-	};
+diff --git a/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.yaml b/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.yaml
+new file mode 100644
+index 000000000000..16f79616d18a
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/nxp,lpc3220-clk.yaml
+@@ -0,0 +1,51 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/nxp,lpc3220-clk.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
- &dispcc {
- 	power-domains = <&rpmhpd SA8155P_CX>;
- };
-diff --git a/arch/arm64/boot/dts/qcom/sm8150.dtsi b/arch/arm64/boot/dts/qcom/sm8150.dtsi
-index 3e236adb9397..27f87835bc55 100644
---- a/arch/arm64/boot/dts/qcom/sm8150.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8150.dtsi
-@@ -17,6 +17,7 @@
- #include <dt-bindings/clock/qcom,videocc-sm8150.h>
- #include <dt-bindings/interconnect/qcom,osm-l3.h>
- #include <dt-bindings/interconnect/qcom,sm8150.h>
-+#include <dt-bindings/clock/qcom,sm8150-camcc.h>
- #include <dt-bindings/thermal/thermal.h>
- 
- / {
-@@ -3759,6 +3760,18 @@ camnoc_virt: interconnect@ac00000 {
- 			qcom,bcm-voters = <&apps_bcm_voter>;
- 		};
- 
-+		camcc: clock-controller@ad00000 {
-+			compatible = "qcom,sm8150-camcc";
-+			reg = <0 0x0ad00000 0 0x10000>;
-+			clocks = <&rpmhcc RPMH_CXO_CLK>,
-+				 <&gcc GCC_CAMERA_AHB_CLK>;
-+			power-domains = <&rpmhpd SM8150_MMCX>;
-+			required-opps = <&rpmhpd_opp_low_svs>;
-+			#clock-cells = <1>;
-+			#reset-cells = <1>;
-+			#power-domain-cells = <1>;
-+		};
++title: NXP LPC32xx Clock Controller
 +
- 		mdss: display-subsystem@ae00000 {
- 			compatible = "qcom,sm8150-mdss";
- 			reg = <0 0x0ae00000 0 0x1000>;
++maintainers:
++  - Animesh Agarwal <animeshagarwal28@gmail.com>
++
++properties:
++  compatible:
++    const: nxp,lpc3220-clk
++
++  reg:
++    maxItems: 1
++
++  '#clock-cells':
++    const: 1
++
++  clocks:
++    minItems: 1
++    items:
++      - description: External 32768 Hz oscillator.
++      - description: Optional high frequency oscillator.
++
++  clock-names:
++    minItems: 1
++    items:
++      - const: xtal_32k
++      - const: xtal
++
++required:
++  - compatible
++  - reg
++  - '#clock-cells'
++  - clocks
++  - clock-names
++
++additionalProperties: false
++
++examples:
++  - |
++    clock-controller@0 {
++        compatible = "nxp,lpc3220-clk";
++        reg = <0x00 0x114>;
++        #clock-cells = <1>;
++        clocks = <&xtal_32k>, <&xtal>;
++        clock-names = "xtal_32k", "xtal";
++    };
 -- 
-2.25.1
+2.45.2
 
