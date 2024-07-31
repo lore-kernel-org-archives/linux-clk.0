@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 640D7101EE;
-	Wed, 31 Jul 2024 22:00:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8E3915FCE7;
+	Wed, 31 Jul 2024 22:01:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722463242; cv=none; b=W02PY1EnUXFN5uIHr00XYlnSOhzBZm9kWcxVl6KBEyyjxBvU6udJmwgtswrzQ5HFwSPIRpwB6vp6v2BrbHgAlyBxsDScy/C0nudC8/2ZDo74RDlbltbv7gYYEsXNiJvKldKq+cwd7Q3BkFvRcu3rOAH4s9UuBOQ1wLy+XXYzw3c=
+	t=1722463307; cv=none; b=XhU7FMcJ+zKkdFh3MUZtKqYC3XLeStRO3mD3a+Xe6cv44w3vcSdYK92lgKpzbC0c5ZH09bDlrAWXBa7NJJwuhRqoy1DnL94ImKeuYyeTCtcqPdQfx4rAeaWDmfpIvg8BdZoH64icHj5/vUJeKZrGjMGgtvwH1fidmxRBLsBoTNU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722463242; c=relaxed/simple;
-	bh=kK/oYxmAHm7lt4Cdw16UQcrQh9T8jQ9kD+EgdVvsA60=;
+	s=arc-20240116; t=1722463307; c=relaxed/simple;
+	bh=afxucK9AQbcFCb1YX26mOx1e9csVC/4lhni7ThTmIfs=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=lWYSHGlnIL2qd7AsbJxiy/27hKiBNsGZBWR87IooaRboi72iGKEEVG/Jd3UmDMITDCR2WgGXEPQp+epmbpF5SQg5KuerOMpe0G0ucAhiBqpbMqQxP3M8/Z9nfbCycn1n6FANGsOmMyrczuocUcXSyjjCvgyKlf47Xa+krd/9LhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nKr494SC; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=oSmv/hJVFX9pUd0UNOSeQfCgjmp3HhZJm66NBQwbIaaVXaXHvy22w69KNXBt4GliqevMCccev5isY8YV2/1lcMLiswyOg067xGdBLAe5AWf9IGM8n6iRdxXHKExC7Ek4pPJqXYEjSUszOTVNiK59muzZ4P7aeGyEV8eeYL09IRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GMVenu1t; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nKr494SC"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C43E2C116B1;
-	Wed, 31 Jul 2024 22:00:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GMVenu1t"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4C88BC116B1;
+	Wed, 31 Jul 2024 22:01:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722463241;
-	bh=kK/oYxmAHm7lt4Cdw16UQcrQh9T8jQ9kD+EgdVvsA60=;
+	s=k20201202; t=1722463307;
+	bh=afxucK9AQbcFCb1YX26mOx1e9csVC/4lhni7ThTmIfs=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=nKr494SChSgCWpsIa7qfBEfxX603POX0p3hUD3saXCSkJZ89zz57uxuFC6p/tHv+1
-	 5gdpOxT6c5VhoxxDoydz55NGA8Cbsw0ZWV5pxAN3HAjiZ+4Au7uPgX/xYHV6z6A3h9
-	 PowD5j/kAAXHm+0lXFNAt+u3bEs/T4QtVcf9I259SQo4ONef2BZDp+AIT3lAz4gK82
-	 iYqkRXaRnCRlXrR1MCmMmlUveo7BQu52tyxoTVpk8EKwbl2AB5Dhb/NKrYLaRgBOnx
-	 fCmbwedERdfelkrKq3PRmQD5NmKWepGYzADRh4IXNzKw8fNjRlnPJzR9XS78bjiAbn
-	 QS6Iz7Z0GlAcg==
-Message-ID: <443fe6008cae894617ac77d83ec6699c.sboyd@kernel.org>
+	b=GMVenu1t6JyLp6PSMm4mBW4MhRqaJOu2kz5VtR52+LzzPHnuwwoVhCQrmTv8JStgm
+	 gvI8eX1r3PTaverND3GbuDz1QgnhUpE8UvjlkSWh38UTmbbdSyo1+zy6swsDEnTahc
+	 VqC0msHh14X7b/Yt/1ePLShrOyzxI9tHqSzPOIUaUAHG9m8fGK/l6G8pCNWh8aotLK
+	 vwbRZhQpUJRg4thPlPteNCc+CPFWGYkpwz92qe8VOXtoFF67Fyxh4ZPKgaigLscRO4
+	 7mZ+F4+Sog0gRzGVH8Syz8ULLOMKCzopBEMNdbKjvL45BiJAhr9Aj0Ap4T3ygG9chf
+	 1344w2iTw8CIg==
+Message-ID: <c0028487ce1098167f46fd3b89a0a637.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,21 +35,20 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240729-fix-smd-rpm-v2-2-0776408a94c5@linaro.org>
-References: <20240729-fix-smd-rpm-v2-0-0776408a94c5@linaro.org> <20240729-fix-smd-rpm-v2-2-0776408a94c5@linaro.org>
-Subject: Re: [PATCH v2 2/5] dt-bindings: soc: qcom: smd-rpm: add generic compatibles
+In-Reply-To: <20240730141338.46234-1-animeshagarwal28@gmail.com>
+References: <20240730141338.46234-1-animeshagarwal28@gmail.com>
+Subject: Re: [PATCH] dt-bindings: clock: nxp,lpc3220-usb-clk: Convert bindings to dtschema
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Konrad Dybcio <konradybcio@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Stephan Gerhold <stephan@gerhold.net>
-Date: Wed, 31 Jul 2024 15:00:39 -0700
+Cc: Animesh Agarwal <animeshagarwal28@gmail.com>, Daniel Baluta <daniel.baluta@nxp.com>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Animesh Agarwal <animeshagarwal28@gmail.com>
+Date: Wed, 31 Jul 2024 15:01:45 -0700
 User-Agent: alot/0.10
 
-Quoting Dmitry Baryshkov (2024-07-29 12:52:15)
-> Add two generic compatibles to all smd-rpm devices, they follow the same
-> RPMSG protocol and are either accessed through the smd-edge or through
-> the glink-edge.
+Quoting Animesh Agarwal (2024-07-30 07:13:34)
+> Convert the NXP LPC32xx USB Clock Controller bindings to yaml format.
 >=20
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> Cc: Daniel Baluta <daniel.baluta@nxp.com>
+> Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
 > ---
 
-Acked-by: Stephen Boyd <sboyd@kernel.org>
+Applied to clk-next
