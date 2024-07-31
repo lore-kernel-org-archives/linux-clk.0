@@ -1,109 +1,113 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0E6A1A4B42;
-	Wed, 31 Jul 2024 07:34:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A06AC1A8BF6;
+	Wed, 31 Jul 2024 08:44:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722411244; cv=none; b=JbdYhwF9KAwEutaheAzFEjOV9se7rbHqZKA45h4QXqDVp6L7ig+IzZrD4S/M2qgAveLkWfPOQdiX2b52FPCkw47+pDCd8T4+L6EH/ns/zrXE9qj333xUgBW3ViTbvORDuayKjTFQmz6uPJ/RgvcetwGK3VaK0hTfIIUyWDgyP+Q=
+	t=1722415490; cv=none; b=YZnItgJIpj/w7wNnHdAuEP3r4S/xNFOTriKlfPUCL8/yozhOFIRM9npLqjHyKOp4zsh6YNIyaTDnS7UgupJ9g5bXyMpCjbPdjfV5qsqENXyrKvu3fY1Ta+/2pV7Hv4MHGjDz+M0+Y4uATELUHyaVCtDwQl7v6YfkAXOWXBHh8NE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722411244; c=relaxed/simple;
-	bh=ZubQOC8jES2PjC861fw/JdUP30HPe+1Bhhx1k1VlM4M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h0HJOMBEOHFCzWppZA4BX20xEzbNJ4Ep0j7tkgcPUAhnYVmwSk1uurWUHMQY2Dc51ALn+PtGEjPvDhvXUWjDhr+uKcGZWQ8qsG+fW+qVaqL3BFn0pQvHM6uj4nFUHcnfPzaLAD1znESpVolJYU12R+mZEFqMbPrLi23EqL36ZMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YsPlRe9R; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1722415490; c=relaxed/simple;
+	bh=1HUvOzGn/5/wnNY0VeoxnmUHfzCa0HeyclKPmXiNkU8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=eZFNqKRZVxS3XXscXfOgFNpwlKhpbNxOyXvsUwhHRi525F6vbOesSDxtYwou86Z9b/2B7nm2z9y8sCdK+gZ9/twdXN3Uo27+g/h13muO1I8pgI77TNkhh88QPRPHupI7tgjPU9FqvJJoGw05tcj5GOuwjevuFEedIqqJ3WJT1q0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OldTkb8L; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YsPlRe9R"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47D59C116B1;
-	Wed, 31 Jul 2024 07:34:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722411244;
-	bh=ZubQOC8jES2PjC861fw/JdUP30HPe+1Bhhx1k1VlM4M=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YsPlRe9R8Lhs4pjUsy85mNRVhRfh8O2KHFtbBRoND27QgsHtgQgnwDj+bmDK526G2
-	 3BzExqz/ShKSrEDOxH04ikjEiRZN7zfstvRqy2To+GMVluL7XN/DaVMnB+1xUVlosm
-	 tWcJ+4J2OMtFZ6ws+QohYSHjNG99WJUoCbbq7e/YZ45WMZ+yo4cafxDCP0f+Djmtgh
-	 XroQDUu8KjUvkvcztnDPt6mji8pcMxQJbZbdYUhFZ3/1AYMTqtXSjzuq4FscxekETd
-	 2pDgRTI2ZBYOT1nOCANcex45nsNdzQOckPp+QFWERUGELjMCbIox6t6ZYzfrpv3HWy
-	 XGEn1LEDCCChA==
-Message-ID: <a975d8df-7802-40f9-9d61-5ac2cb60b01b@kernel.org>
-Date: Wed, 31 Jul 2024 09:33:59 +0200
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OldTkb8L"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46V4KmR8017422;
+	Wed, 31 Jul 2024 08:44:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	tzjcsNVmdmaVZf0vOv+8BHQKa8BBZ7bcsZkbwlFsE4k=; b=OldTkb8L/4anYwDb
+	lIN3UJg6ZhZiho0bkCJFTmO188gAgJRQXA84CKMad/r5rz4lA+L2sKGRbs9rgqUJ
+	bm1HcSUF35l9bA06VginkHNrASfnDCR/ZhAc3Js+t0o2sh5N+er8jK1XVwpHUWBj
+	P/QAPtc0LBedMvg3tlCGRYUBa9nFjUvCjTcakrjmv7ZKNk4sJ3DEbZMXkIejKkVn
+	aybjUe+OJThYLT5bsSSVcUj4AkFk6/u0mNXgJ2cnPJXi2LRxrZAQ0AcAFd5DRXK8
+	UhjRIQlx4ZWlsM+lMKrSljYeA0ru59OtAAVdg5WKXMzQnMMr/l6d1WZHXmbkMxpA
+	PNSu2g==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40mryu2mce-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 31 Jul 2024 08:44:43 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46V8igc9014941
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 31 Jul 2024 08:44:42 GMT
+Received: from [10.218.19.46] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 31 Jul
+ 2024 01:44:37 -0700
+Message-ID: <ea7fcbe4-1822-eca4-7492-55f1f2895605@quicinc.com>
+Date: Wed, 31 Jul 2024 14:14:34 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dt-bindings: clock: nxp,lpc3220-clk: Convert bindings
- to DT schema
-To: Animesh Agarwal <animeshagarwal28@gmail.com>
-Cc: Daniel Baluta <daniel.baluta@nxp.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240731065137.156935-1-animeshagarwal28@gmail.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.0
+Subject: Re: [PATCH 1/4] clk: qcom: gcc-sc8180x: Register QUPv3 RCGs for DFS
+ on sc8180x
 Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240731065137.156935-1-animeshagarwal28@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik
+	<quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        "Jagadeesh
+ Kona" <quic_jkona@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+References: <20240725-gcc-sc8180x-fixes-v1-0-576a55fe4780@quicinc.com>
+ <20240725-gcc-sc8180x-fixes-v1-1-576a55fe4780@quicinc.com>
+ <g4etw2efnugdsv73ejbbqfxmumy5m3oqzkpeqexzpgzlxsms5r@u62f5jcskqfd>
+From: "Satya Priya Kakitapalli (Temp)" <quic_skakitap@quicinc.com>
+In-Reply-To: <g4etw2efnugdsv73ejbbqfxmumy5m3oqzkpeqexzpgzlxsms5r@u62f5jcskqfd>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: dFtDdG6RPGAwE8MznNszhoK27aaGZB98
+X-Proofpoint-GUID: dFtDdG6RPGAwE8MznNszhoK27aaGZB98
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-07-31_05,2024-07-30_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ phishscore=0 suspectscore=0 bulkscore=0 adultscore=0 spamscore=0
+ impostorscore=0 priorityscore=1501 malwarescore=0 mlxlogscore=887
+ mlxscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2407310064
 
-On 31/07/2024 08:51, Animesh Agarwal wrote:
-> Convert the NXP LPC32xx Clock Controller bindings to yaml format.
-> 
-> Cc: Daniel Baluta <daniel.baluta@nxp.com>
-> Signed-off-by: Animesh Agarwal <animeshagarwal28@gmail.com>
-> ---
+
+On 7/27/2024 4:24 PM, Dmitry Baryshkov wrote:
+> On Thu, Jul 25, 2024 at 05:03:11PM GMT, Satya Priya Kakitapalli wrote:
+>> QUPv3 clocks support DFS, thus register the RCGs which require
+>> support for DFS.
+>  From the commit message it is not clear if the patch fixes the issue
+> (and thus should have Fixes and possibly cc:stable) or an improvement.
 
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Actually its a fix, I'll add Fixes tag in next post.
 
-Best regards,
-Krzysztof
 
+>> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+>> ---
+>>   drivers/clk/qcom/gcc-sc8180x.c | 350 ++++++++++++++++++++++++-----------------
+>>   1 file changed, 210 insertions(+), 140 deletions(-)
+>>
+>
