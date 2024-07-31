@@ -1,124 +1,101 @@
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 925FD1AD3EB
-	for <linux-clk@vger.kernel.org>; Wed, 31 Jul 2024 13:31:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E135B1AE875
+	for <linux-clk@vger.kernel.org>; Wed, 31 Jul 2024 14:20:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722432717; cv=none; b=ORcVpzGS569Q+RFN05W4K6b7bD3S/DYPAOn0S9VR231sR2ADb/hMhUH3o3ILNVDVjlOV7Z+XFbgjm2fbeDpw4eUSxmmt2d6lH1xH50sjs5Y2eCESMV1Xz4sHXsV31JnzSHaFedw4Xpetu1t9Umg7Wyz8L8F/WtUuRQnJye7iBik=
+	t=1722435660; cv=none; b=mw/SX3oPMl3A7Zn3QtRIaWnXaMcGCLtXtDYrpjnnl/iDuWtmAGf9iYvxQSLFX0qZihT3IBqU5Yx/GYLvoFYjOlF8cduCnnihniJhuReLNWD9ON3nolGPY8SrgX20roLoln+n0USXPpXCydBMtl7Z7iLIZRbJ1Cd6sdhrPc83QCU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722432717; c=relaxed/simple;
-	bh=P2Zc2kRlUTzQWuiLdA1pFWHC6xvaH6zfnCz8JHSEIs8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HK8TxO+zTVLu8eG4xsCiVwabmpSokGxMX5G1y2+pit8Lg8S44RFYxVPbWO/sLjwqlOimQnidsoFdTd7u3wohuJMveFqH95fKEDuWirV01vZu+5XVC0y+cyjYh0kjnXHiIUBoGKEzO6O2SG0Cekiakk4LddlBePzmoQ++Wuenj1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wZEP2s1J; arc=none smtp.client-ip=209.85.167.49
+	s=arc-20240116; t=1722435660; c=relaxed/simple;
+	bh=ytvkCSgLKlKnXnV2Hzh3Ns/9Jy05DqiloCwaHB1hxzI=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=tJUzNLxOudvqcGYyQWYRng0CgR1yE/I7Bo80zvOlGqF5hTVWJhSaCjztWRt7NNsm6Ljl/dFmNzq+t0GdAN3jfHilBN8cZHdUSWndXlYqsmrZ111WDFt8McDIOjt0y5YtRa48YUuAbG0ZaUTmqEAL0m4W4/Y03V5IbUqbtR68O7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Mc8UuMdW; arc=none smtp.client-ip=209.85.221.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wZEP2s1J"
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52f04c29588so10209297e87.3
-        for <linux-clk@vger.kernel.org>; Wed, 31 Jul 2024 06:31:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Mc8UuMdW"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3684eb5be64so3175252f8f.3
+        for <linux-clk@vger.kernel.org>; Wed, 31 Jul 2024 07:20:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722432713; x=1723037513; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Mu/jrHV9aX6kTVP3aSVpeXFR1odPgGfcDv5EihSzkVY=;
-        b=wZEP2s1JDOHjfRaoa3j1T/vvA/AMIAw9Byv8YAx8c9708Qk8BjIjIdnL+1nYleLwDo
-         hXNGL4VoorUaCgD/5kQNDjf7S9GMUuvrPQMeQvI8USqBlmgR8y5ywkPmGfouP8tBOYRS
-         T0T8o9yGlLP3YuFjWXDvpzYzETN6wOHBUO1F3Y1DU22JdVGNm7Uh070c0Ksa2Huhj9zA
-         eXvALTbveik9vBeQPxJbXEtkHRWzlN/whkwGWp09rxRHLFVpx7f7F5Alou2+Gra2/r+A
-         ihZZOgzffHWxXRboxaFcqPsp8Ajn2Pk+iClxkAV2V7hhfal5SoraVk+4gpXX4JlnkP+s
-         D6wQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722432713; x=1723037513;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1722435657; x=1723040457; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Mu/jrHV9aX6kTVP3aSVpeXFR1odPgGfcDv5EihSzkVY=;
-        b=mwObGPhIfR2/718Z6evwT/uqx1ttR2sQMFULd3V3X4UDj7jJwfediWFmeXexsK6PP7
-         p88Omew1WblmOCxX4Qort0nymqLscx73+ESK7/lBCIAKwWHgCD+b7baQ/oQ/xU1Io3BQ
-         WgzagG4ddUCt4InMVpuoUZN1zih38hQnQ6nt35JgFcAdFCzNujV+yAfIZ+A8aF6r+DZA
-         czCalVZco5MgKQV0ZvYTVeui5Hd6eDyKRVeu4BTE9NgnPu2pcylNyUOZO+ui+bp6JdzX
-         MnAZfCvZurmEgp1oRQDWbK8MBkE/JDSRLPmbNTDrx4jzf5uTX7E03uxKuWO2b8sLg1uz
-         UhXA==
-X-Forwarded-Encrypted: i=1; AJvYcCVd0FYU57Ewu78ejuRP/WKF5vSZqbdbhnt4pWTU9eJ1zAOsAR7qfOZEIEVuBYexg1q9VdQqRM/9O5Zy9XTZlSe3qS/kNlz6JWjv
-X-Gm-Message-State: AOJu0Yyw57MHqlS+zBifh/TEvXJCnfd3r0kBifRIVpddL5fOP7ptb2cT
-	A7L0sqZn1mwUIO7Zq/PqdNZuVGIgUuLC2HNICVuD4CagNdlM5P3dmD0dWDALH6c=
-X-Google-Smtp-Source: AGHT+IF9yysuesy1AWwQPiU83pnAbyqHjqnagriUsXCkmX5PJrirOfJMTi1oEuRwoiTJE5k2d+aUKA==
-X-Received: by 2002:a19:5e16:0:b0:52e:7f6b:5786 with SMTP id 2adb3069b0e04-5309b2d9ee6mr7399994e87.61.1722432712551;
-        Wed, 31 Jul 2024 06:31:52 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52fd5c2ce6esm2242763e87.267.2024.07.31.06.31.51
+        bh=gSqOaofEO5POC+mJL3PUsgfCrvCN5J6u6ZevBKAvHRU=;
+        b=Mc8UuMdWXpeCBj8ossOCq4MFPvTwTLnDaOpM+OFH16yUN/iPVDln12fg1w+E/8ittV
+         f34384WqFIgYZqUq6a1csuMGq5Djz8AZP0l9GgPZQVE818v6qVg3fT+uraKXbr/l6lH0
+         tnOyoC946e37iCNa25sFqsXAIhjyuHWiPk6UHTGTHk8ehAjXXcj45Vg+si4fLYNIZ9s9
+         2b1lcQ6zBjk3Zfyf9WpSRD/H8HFkK/ftaACUmB3d0xmQSgTgUh3CcwS+UD57hWBkKvwM
+         2sP+G/qQw6s1K/CQP4/oeYFAcBTOeQTvOqXzmf9/Uua/82DeGbe6zKYjdmFRwSK3xge5
+         eW4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722435657; x=1723040457;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gSqOaofEO5POC+mJL3PUsgfCrvCN5J6u6ZevBKAvHRU=;
+        b=ooHyOy/7Yd+89QJZR2pHBhn09gFV1XmhABicbHV8bsymfDDhER1KDGdbKm8XaUlHct
+         Ujp2A8U0WkV7eUJvYc+60/ElNtLiVgU3AChzm+zQ04epmaV44OTYjrwCg0A92wWKT3RP
+         bntoU9QlYFpIwDhU69RYjNkT5pmFuPRNH924a3yKzsC3XESVgLnzxXdJ8sWR7ffJnEtf
+         RXTJgDmhFHt6yQifnsi3p1kESNlswUZ1jw9KMkH9Z2NJjLttr3wSAH/Rg5DJP8ubU//h
+         c4wxtg9IvI3rCB7e3Ur0XaFYwoURY664Mwesb6zTSxdnP2SksxcVjD/LJXr4Q7czvKyp
+         F3Fw==
+X-Forwarded-Encrypted: i=1; AJvYcCWmoGckgxAyNiBwaJbkoqYrDidng41fHo18N78UPMG7sJfzJPZdYByGT+TKQ2F03GII9M+tMeLAvStdbmbmpSE/rWEY2L5rzazT
+X-Gm-Message-State: AOJu0YwwmAp+/EXKDDSlaENOtb3LG2g/Cdo05BcRPeWvGM2e44cGdvFi
+	Q0Pi5HFOf6vCE8AeE0PxEotCebpVyQCHIj3NJd2oqCp1l5lQa0OBTGAyjwhzmMAKiOguaqFCdyc
+	j
+X-Google-Smtp-Source: AGHT+IF8cZAUIzwi2BdvTEoaAp7Ev+Xb+P31buCoG7nk0jYrnENn135x7PpsFSsL2dKIwhDwVzjNAw==
+X-Received: by 2002:adf:e30d:0:b0:368:87ca:3d85 with SMTP id ffacd0b85a97d-36b5cf00512mr8502223f8f.29.1722435657126;
+        Wed, 31 Jul 2024 07:20:57 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36b367c02b1sm17292561f8f.9.2024.07.31.07.20.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Jul 2024 06:31:52 -0700 (PDT)
-Date: Wed, 31 Jul 2024 16:31:50 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Abhishek Sahu <absahu@codeaurora.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org, Ajit Pandey <quic_ajipan@quicinc.com>, 
-	Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, 
-	Jagadeesh Kona <quic_jkona@quicinc.com>, stable@vger.kernel.org, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Subject: Re: [PATCH V3 8/8] arm64: dts: qcom: Add camera clock controller for
- sm8150
-Message-ID: <dlrkizo76pr57f5ijdxb65u3mz2arfs376cpalpv6j6aphmk24@4f6mrbxujyke>
-References: <20240731062916.2680823-1-quic_skakitap@quicinc.com>
- <20240731062916.2680823-9-quic_skakitap@quicinc.com>
+        Wed, 31 Jul 2024 07:20:56 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sam Protsenko <semen.protsenko@linaro.org>
+Cc: Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, 
+ Mateusz Majewski <m.majewski2@samsung.com>, 
+ Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, linux-samsung-soc@vger.kernel.org, 
+ linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+In-Reply-To: <20240723163311.28654-1-semen.protsenko@linaro.org>
+References: <20240723163311.28654-1-semen.protsenko@linaro.org>
+Subject: Re: [PATCH 1/2] dt-bindings: clock: exynos850: Add TMU clock
+Message-Id: <172243565547.42492.1072397968108986657.b4-ty@linaro.org>
+Date: Wed, 31 Jul 2024 16:20:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240731062916.2680823-9-quic_skakitap@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.1
 
-On Wed, Jul 31, 2024 at 11:59:16AM GMT, Satya Priya Kakitapalli wrote:
-> Add device node for camera clock controller on Qualcomm
-> SM8150 platform.
+
+On Tue, 23 Jul 2024 11:33:10 -0500, Sam Protsenko wrote:
+> Add a constant for TMU PCLK clock. It acts simultaneously as an
+> interface clock (to access TMU registers) and an operating clock which
+> makes TMU IP-core functional.
 > 
-> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-> ---
->  arch/arm64/boot/dts/qcom/sa8155p.dtsi |  4 ++++
->  arch/arm64/boot/dts/qcom/sm8150.dtsi  | 13 +++++++++++++
->  2 files changed, 17 insertions(+)
-
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
-Minor nit below.
-
-> @@ -3759,6 +3760,18 @@ camnoc_virt: interconnect@ac00000 {
->  			qcom,bcm-voters = <&apps_bcm_voter>;
->  		};
->  
-> +		camcc: clock-controller@ad00000 {
-> +			compatible = "qcom,sm8150-camcc";
-> +			reg = <0 0x0ad00000 0 0x10000>;
-> +			clocks = <&rpmhcc RPMH_CXO_CLK>,
-> +				 <&gcc GCC_CAMERA_AHB_CLK>;
-> +			power-domains = <&rpmhpd SM8150_MMCX>;
-> +			required-opps = <&rpmhpd_opp_low_svs>;
-
-Is the required-opps necessary?
-
-> +			#clock-cells = <1>;
-> +			#reset-cells = <1>;
-> +			#power-domain-cells = <1>;
-> +		};
-> +
->  		mdss: display-subsystem@ae00000 {
->  			compatible = "qcom,sm8150-mdss";
->  			reg = <0 0x0ae00000 0 0x1000>;
-> -- 
-> 2.25.1
 > 
 
+Applied, thanks!
+
+[1/2] dt-bindings: clock: exynos850: Add TMU clock
+      https://git.kernel.org/krzk/linux/c/01ce1bf22adc0d09d906319787091ce784cb9914
+[2/2] clk: samsung: exynos850: Add TMU clock
+      https://git.kernel.org/krzk/linux/c/79b918aa997acd5066c7962502b1daaae76b6911
+
+Best regards,
 -- 
-With best wishes
-Dmitry
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
