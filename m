@@ -1,147 +1,94 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FB401AB520;
-	Wed, 31 Jul 2024 10:02:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 278692209F
+	for <linux-clk@vger.kernel.org>; Wed, 31 Jul 2024 13:07:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722420128; cv=none; b=TWTEEfCJdcq1NjC0bXB+rHBWNP9jTBwgq3q1OkkWtjW8MxS46A9bzwyl+nTBegMAhBgm3Zb05xxbqQsmw5T5vmLbUq8FVFFtmDLidhaiiw5+TUscrIiGEZvpM0FmZJREvOIJa9nULvBe0I53Oz0aiKXBTIp4Tv2kW168gWKYR7Y=
+	t=1722431254; cv=none; b=UCsfgiYf5Wa5TU9Y8lZrWMr+NHEEmhO60L+tvAuUC2bMDxRu4cpJIMpPq5yU2iBfQmjvltGgak6jkL+RDCRGE7+G1wJwDEdFa8Q9thi0oz800NapmnNJLiiETuRi06e7xzp8vCJDAGAA46PODNdpNlFuESy4v0pmPTBCZOGN/Sw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722420128; c=relaxed/simple;
-	bh=fNL6J3gruPoAz9RrtXEOWbhT4gbwezlFWCSBfnTPmws=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ZZVAOhyVYy1CdXaGlag4N1Jmxw0yL1IA+4KiHvv/n2FMJWei38hcy0rhH1uZEWYCq3Qs3nPK2Xpn89n3iUM46RIYp3A4BbFbhuOU68C2hHrO//zVfSPowgMpa/rS+VyVohyl1YJsI9HvarCXHcsChtuKWxivE16SBEDnLdcu4Y0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PrO+fFf8; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1722431254; c=relaxed/simple;
+	bh=IDvKEAauQ3f3+B7eefwbOL3BPtdB6ke35T+ErE2pzzk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jIP42Vr2xDy6RFvUc8LQMXP0QJAJpcT3APLrDUcgKzYNJ6I/z/QwUkFc+S78bsOOo2IwvSGOvkjTpF6C1GHS++RJn6abIJXmkHehY/QFQaddUQDnhPm8hp7QkZkyc7l0vuVWGuOT45rPEPXBBQlQmfzirXBcRYB1a/CViHGLj8c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RQFsD9Zt; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PrO+fFf8"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46V5swoF019227;
-	Wed, 31 Jul 2024 10:02:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	eUo+XsBh2F7oq/ik4Tf3xjN3GW8On+vNp4e6MUkKoZY=; b=PrO+fFf8cT991lIm
-	jzmZbUGW7gWYmvpNucOS6pj+MmbzFlLt2I5qPVBiJ8I0T2Eu5kVBDxfcejJnGcmM
-	Vkfrx+7+hS5Uw/1jomRAX7Xx2QXfFi2dYAM5ReP/iwoq7D4Ig5tn7ae/IStNoaAB
-	iwsOOXoc/1xFHQZjHzsm8JODqSpjUow3Wpnd6ObGxDX4xkHd/3PQOs1dqnMM3cNM
-	xoFSAzk7NocLDQzfI749blWYjrsVXvVBCjG5OJFucNPluEInH/foDFIOIot5taZA
-	vZFJvz4BFeTqSwCGAkkw+XPWZTiB5Kj81RXZl3qWNU5AT4p3O1JCVZcaMmz8ZoX5
-	qmZ9cQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40msneamkb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 31 Jul 2024 10:01:59 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46VA1woQ020568
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 31 Jul 2024 10:01:58 GMT
-Received: from [10.217.216.47] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 31 Jul
- 2024 03:01:53 -0700
-Message-ID: <8ca233d6-78be-49f6-92f9-a04bc98adff0@quicinc.com>
-Date: Wed, 31 Jul 2024 15:31:50 +0530
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RQFsD9Zt"
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52f04c29588so10161974e87.3
+        for <linux-clk@vger.kernel.org>; Wed, 31 Jul 2024 06:07:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722431250; x=1723036050; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/FoiQbEYmhBENH3LXyd3ATBiDIVMApuyh6s4DrTOE6Q=;
+        b=RQFsD9Zt1YvBrlmC14yzZ/QbltZbO0diqdOVPreqk6el0P+rrY2L9bctyFnpp2+Bf+
+         U43AA5u+7jNIOFrXNy+aodjWR4nUV8U8zE29N/IweUOYg4xNcDhho2lhXljJdEgBWP67
+         14wHITVrBCM91Vs0M4a7M7ov43iBg+XtG8GMkyT90Iz9j8f7ew+J85qkmMU4b1dAUNm6
+         RtksoVie4tfXMdpLJzJrS/mwKqAgDgkYhWecFpc8MIhBOjnwskb1KBHHJ4iHGlWxBGuG
+         8YjgzoX63qROVEDm5wB49fWO58D1M2lvQN+rw1HIFBbKJWju32y1qlX+t/2ocXGLXgDC
+         MtSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722431250; x=1723036050;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/FoiQbEYmhBENH3LXyd3ATBiDIVMApuyh6s4DrTOE6Q=;
+        b=LW1pZamBpGvDRTae1ZM+JW9GTBwswf9SY7NTYd6lsumv+6VbIAdYgoXJLq1gFMlT6T
+         bMSS02OmUZPfaJ5KmtgIfTDeRcss8R07Y05U9Xb0dk8gZkPwLElK+RjmTY6lQUe7Ha66
+         YOt+WISSz9a4McE6jjqkeDKxZINFOuvmmvmqwY9191uVBN1lYqFxZBTpFIaUsQKijrxg
+         3HSGEII8QDDqbQCFTBhzAPFS2BSKPY9H2aDnyVPesALkS7WUV/XnA9bPx7/DB4JrpxJR
+         d06TJSNgx637OYHggQUrhe2zU8eZRWTLPxxeLxo2eFqNUwRUn/yx9KHa1ZjBPEF7mJn1
+         Zxvg==
+X-Forwarded-Encrypted: i=1; AJvYcCUBTRmjKxVofW+M1xGGTGj9ApLqRKt7xyrvjmEdrR/YCOQUeTngbV+mxUvELJaqWZU+VIkQ7+zV0t3rbbRzlbEri1yotgqR0Syh
+X-Gm-Message-State: AOJu0YxOrLQ66qAQj8ZcR9dsPKo4uevcO1oFI0wIa3918fr3vcPKYfub
+	PcfJYgd33yhVaa2bWiRWmZUlqvgQjtzn2xr83Kc9qNFy9c5l/k6oB5HI8G3z5bw=
+X-Google-Smtp-Source: AGHT+IHFGuIslHNtb6tITJa8SbCZaWaHCKmfmiJMpdSGO3yjlULlpXbI2CAqFvwKxhAIv4SP8SdgkA==
+X-Received: by 2002:a05:6512:2032:b0:52d:b150:b9b3 with SMTP id 2adb3069b0e04-5309b2809c5mr8147947e87.32.1722431250588;
+        Wed, 31 Jul 2024 06:07:30 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-530aa08dab1sm649447e87.13.2024.07.31.06.07.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 31 Jul 2024 06:07:30 -0700 (PDT)
+Date: Wed, 31 Jul 2024 16:07:28 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bjorn Andersson <quic_bjorande@quicinc.com>
+Subject: Re: [PATCH v2 2/7] clk: qcom: gcc-sc8180x: Add missing USB MP resets
+Message-ID: <z4lbpgfjmkslylflolm6nxqye5gsgbzn5yn2lqvqlngyc6y5bt@s6uovsadcxe5>
+References: <20240730-sc8180x-usb-mp-v2-0-a7dc4265b553@quicinc.com>
+ <20240730-sc8180x-usb-mp-v2-2-a7dc4265b553@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V3] dt-bindings: clock: qcom: Remove required-opps from
- required list on SM8650
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Stephen
- Boyd" <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-        Bryan O'Donoghue
-	<bryan.odonoghue@linaro.org>,
-        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Taniya Das
-	<quic_tdas@quicinc.com>,
-        Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
-        Imran Shaik <quic_imrashai@quicinc.com>,
-        Ajit Pandey
-	<quic_ajipan@quicinc.com>,
-        kernel test robot <lkp@intel.com>
-References: <20240730034552.31271-1-quic_jkona@quicinc.com>
- <c3671b29-d860-4374-80fe-c284da4ac300@linaro.org>
-Content-Language: en-US
-From: Jagadeesh Kona <quic_jkona@quicinc.com>
-In-Reply-To: <c3671b29-d860-4374-80fe-c284da4ac300@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Xlrpwzo7auuP2ZAh-kJGsxoIrPaySlDs
-X-Proofpoint-ORIG-GUID: Xlrpwzo7auuP2ZAh-kJGsxoIrPaySlDs
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-31_07,2024-07-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
- lowpriorityscore=0 mlxlogscore=999 priorityscore=1501 clxscore=1011
- spamscore=0 mlxscore=0 bulkscore=0 suspectscore=0 impostorscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407310073
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240730-sc8180x-usb-mp-v2-2-a7dc4265b553@quicinc.com>
 
-
-
-On 7/31/2024 11:57 AM, Krzysztof Kozlowski wrote:
-> On 30/07/2024 05:45, Jagadeesh Kona wrote:
->> -
->>   properties:
->>     compatible:
->>       enum:
->> @@ -57,7 +54,24 @@ required:
->>     - compatible
->>     - clocks
->>     - power-domains
->> -  - required-opps
->> +
->> +allOf:
->> +  - $ref: qcom,gcc.yaml#
->> +  - if:
->> +      properties:
->> +        compatible:
->> +          contains:
->> +            enum:
->> +              - qcom,sc8280xp-camcc
->> +              - qcom,sm8450-camcc
->> +              - qcom,sm8550-camcc
->> +              - qcom,x1e80100-camcc
->> +    then:
->> +      required:
->> +        - required-opps
->> +    else:
->> +      properties:
->> +        required-opps: false
+On Tue, Jul 30, 2024 at 08:24:39PM GMT, Bjorn Andersson wrote:
+> From: Bjorn Andersson <quic_bjorande@quicinc.com>
 > 
+> The USB multiport controller needs a few additional resets, add these to
+> the driver.
 > 
-> Why would required-opps be invalid for SM8650? What if we want some
-> higher opp for some reason? The point of v1 and v2 was oonly to require
-> required-opps on certain variants, not to disallow it in other cases.
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+> Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
+> ---
+>  drivers/clk/qcom/gcc-sc8180x.c | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
 
-Thanks Krzysztof for your review.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-Yes, agree, will drop the else part in next series.
-
-Thanks,
-Jagadeesh
-
-> Best regards,
-> Krzysztof
-> 
+-- 
+With best wishes
+Dmitry
