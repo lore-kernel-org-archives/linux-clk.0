@@ -1,155 +1,129 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E69FF14B097;
-	Wed, 31 Jul 2024 22:23:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C719116D4CE
+	for <linux-clk@vger.kernel.org>; Wed, 31 Jul 2024 23:10:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722464640; cv=none; b=RmGKBkkj9cGKwNOpk0QdLTFWzg2uJ56pT3+hsE1s2Gs+TRlgXQCIfYwOG7JI1STrs6KWOxQ8O4sbx+MJymYy5a4sNxSxFn35fQ2isMUB3zCjab4iFOJLOixvzMgslDTeRrK6iMpvNi7EwsJaJLbYp1SH4HgXeqIY/g1G9SnHR68=
+	t=1722467421; cv=none; b=o6147gNBMdE3RUoraD2hGSRCxd6Ly3CRgoqhHC1X4Y06FEKrlnKqWdpNovBfXY1q2gdQpYp5BU0X/od1CDVZP8X0SAh29GqJ9mL2IjQIHcaXVmqpRw7bPJzyufchP9hIdrH/8G09x08tP3Ce8UCN4QPo641AkYJYk3ah2faBnP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722464640; c=relaxed/simple;
-	bh=QsT31Zg0FepZe7IrujgLwIvh6PObB4FX6lPGNIPazLE=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=E44KyQ+ZiPVQ4alA2wcBJrtgeGD/ew8ApzF2doGqy0cORd1K3SYJZFSPD+NePmIWrBAKW2kYsqVdvbbZgD8TTnQYswh/1h4UfS/P6qRqms13DS1oKGSbvTDrhuVo9he2s8chPGT4TuKYstTtJzhxVSwSYgkbKY3rQHZpidxXAv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IT98GRI5; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1722467421; c=relaxed/simple;
+	bh=CAk9ysRCcF3vskHHnHSmnixeypTkrfG/o972KRWzdMc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hVpmHLXK/DFuIJ4/awHu5gEG55MAGDluzoAZOdHDRzxLNdPF69pbV5Sm4dUvz3D6OdSh5RPqgBRlrLuqnUHJlmjF+lvFjVghWurXFHNrHfQa9y8VKXMI2g1FctT4HiIsER+MfIW0fU05W+UbSomYUnc4NnUMqxwBKj3F5adv8aU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=H7tgGZK3; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IT98GRI5"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A75CC116B1;
-	Wed, 31 Jul 2024 22:23:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722464639;
-	bh=QsT31Zg0FepZe7IrujgLwIvh6PObB4FX6lPGNIPazLE=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=IT98GRI5DTAD2bVKJCrGZBoyuLtacyei+1w/E3Pg+poMCdhSWavI4gTkaW8Rgi9aL
-	 QA/a4RVFEklRBcrPHQeiXuWTWCZY8lTCgQLIIvOMVcvhHGOD1dDUAN+pl5aYkZ+yEj
-	 +qtJCcYqud8+dEpyo4CvtPw2/vRPk2PI0iIE1on+OtGYWwg6C/0/jZephUzpF40rel
-	 v8fbzYhdbCrmJhaJMJHQEgKN1FszJxBp5HFESKHXsvC1P1iYb0rrhrHJL46u2fL7ds
-	 IM1VCxOfBzbvtyxK5uAhoKrmm6cJotHHyPSgSDE5Mp48isy4gO9b+uKP/79NFJp6jC
-	 0Hjx/b6SAMlOw==
-Message-ID: <08ed1ae35b69e11e69ce178af41c77b0.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="H7tgGZK3"
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2ef243cc250so11990091fa.0
+        for <linux-clk@vger.kernel.org>; Wed, 31 Jul 2024 16:10:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722467418; x=1723072218; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CypGwDRORaDBdaeBYRtf5G7bF1/i+g0iKz6yREaWD1c=;
+        b=H7tgGZK3QoEi5mHHly4ZS8BVPWpLaYN7yuqmQRkl04hI2CLLu4pqnpxql+6AihoHUZ
+         QF6PGATGHQC7A98LqMcYARHKLaNlOEcm16W9EW0PpKnNCY0vxXZ6+gwkQxTKAGOefRdL
+         znk0tcp2grzc/uYCsyt7GiEomS1TNbUddXc6uTm8QdKZu3gEZb/7juHVHU0jmZpSNALk
+         ebTQ2NDGfOJaMY4WgqbM2vrrIg/+LwvSzONethklQi4c/4heWi95dApqqnWhumHsQUNf
+         qAuCZC5ZWxQT5i7O5i4bSc5tSt6OJaP4y1byDEMRQrcYGQQjjFjETJUGYvWehHLTOk+0
+         xjKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722467418; x=1723072218;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CypGwDRORaDBdaeBYRtf5G7bF1/i+g0iKz6yREaWD1c=;
+        b=dSC7Txn5OgPj4GlIdHymx2h2gGs7R+yjt1vasUof9vbyuvmve/vTrpnySSwwQXmC8B
+         vrkHdKJGQ+R2IieEhPJVjAFhjVtdNyEJxXSYuSwTpUit//1+XEFHstdsqZuBJ0H2SjEH
+         u6J6UJuvKSlAXYfPZCyM2ZeHbtA4IEuZKGElSDeo8HbADy5Jtc38IbzRAcLbUORtByEv
+         yjAOIKRlcVVAhUHJMZ4jxTUP4I3rOMRpoGWdXL8kxjeraWV6JvK31vD3FgRc6+DkcwyQ
+         XmE0/gDUl3WrFFPUMzon57mkWPkgqdqbO0C0PwkMLZ/sA6sQStDRsMcs8Eebe+ADgY3q
+         A6bg==
+X-Forwarded-Encrypted: i=1; AJvYcCUMLFq/rDmySAk1Zv7QCwHOS4Q6ZmMgdPQLALVWJ1RvQy+lF9HN/mmd3B4go3LNk68N086CgGVzLB+qBGFwZoxTXx6iiv+E2FA7
+X-Gm-Message-State: AOJu0Yzg8k7iyZtZfvaiiz10OCSfLE54VOc5elHM2zJJ1WQ/PpN0a9S/
+	mcadOMy7SxFft4CyE8WlqpgRCg5GRT5NP+32c/wr2uQKvIO4EfABSJjYIWDpvqM=
+X-Google-Smtp-Source: AGHT+IFtzNOWKxUx8nFCdmmu5o7DSqCQwuqvKIC9LKKbz4i7GsH5EMsq1GELa1yZk6QUxNV2IHOjww==
+X-Received: by 2002:a05:6512:39cb:b0:52f:c22f:32a4 with SMTP id 2adb3069b0e04-530b61f7818mr140798e87.6.1722467417776;
+        Wed, 31 Jul 2024 16:10:17 -0700 (PDT)
+Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52fd5bd12cdsm2388761e87.92.2024.07.31.16.10.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 31 Jul 2024 16:10:17 -0700 (PDT)
+Message-ID: <0232aa10-5f40-433b-804a-2fff30e8b143@linaro.org>
+Date: Thu, 1 Aug 2024 02:10:10 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240730-clk-u64-v3-2-4d2b19edaa6e@nxp.com>
-References: <20240730-clk-u64-v3-0-4d2b19edaa6e@nxp.com> <20240730-clk-u64-v3-2-4d2b19edaa6e@nxp.com>
-Subject: Re: [PATCH v3 2/2] clk: clk-conf: support assigned-clock-rates-u64
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, Peng Fan <peng.fan@nxp.com>
-To: Luca Ceresoli <luca.ceresoli@bootlin.com>, Michael Turquette <mturquette@baylibre.com>, Peng Fan (OSS) <peng.fan@oss.nxp.com>, Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>
-Date: Wed, 31 Jul 2024 15:23:57 -0700
-User-Agent: alot/0.10
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 01/10] dt-bindings: clock: qcom,gcc-sm8450: Add SM8475 GCC
+ bindings
+Content-Language: en-US
+To: Danila Tikhonov <danila@jiaxyga.com>, andersson@kernel.org,
+ mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, p.zabel@pengutronix.de,
+ vkoul@kernel.org, quic_jkona@quicinc.com, dmitry.baryshkov@linaro.org,
+ konradybcio@kernel.org, quic_tdas@quicinc.com
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux@mainlining.org
+References: <20240731175919.20333-1-danila@jiaxyga.com>
+ <20240731175919.20333-2-danila@jiaxyga.com>
+From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+In-Reply-To: <20240731175919.20333-2-danila@jiaxyga.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Quoting Peng Fan (OSS) (2024-07-30 01:57:55)
-> From: Peng Fan <peng.fan@nxp.com>
->=20
-> i.MX95 System Management Control Firmware(SCMI) manages the clock
-> function, it exposes PLL VCO which could support up to 5GHz rate that
-> exceeds UINT32_MAX. So add assigned-clock-rates-u64 support
-> to set rate that exceeds UINT32_MAX.
->=20
-> Signed-off-by: Peng Fan <peng.fan@nxp.com>
-> ---
->  drivers/clk/clk-conf.c | 42 +++++++++++++++++++++++++++++++++++++-----
->  1 file changed, 37 insertions(+), 5 deletions(-)
->=20
-> diff --git a/drivers/clk/clk-conf.c b/drivers/clk/clk-conf.c
-> index 058420562020..684e0c0738b3 100644
-> --- a/drivers/clk/clk-conf.c
-> +++ b/drivers/clk/clk-conf.c
-> @@ -81,11 +81,44 @@ static int __set_clk_parents(struct device_node *node=
-, bool clk_supplier)
->  static int __set_clk_rates(struct device_node *node, bool clk_supplier)
->  {
->         struct of_phandle_args clkspec;
-> -       int rc, index =3D 0;
-> +       int rc, count, index;
->         struct clk *clk;
-> -       u32 rate;
-> +       u32 *rates __free(kfree);
-> +       bool rate_64 =3D false;
-> +
-> +       count =3D of_property_count_u64_elems(node, "assigned-clock-rates=
--u64");
-> +       if (count <=3D 0) {
-> +               count =3D of_property_count_u32_elems(node, "assigned-clo=
-ck-rates");
-> +               if (count <=3D 0)
-> +                       return 0;
-> +
-> +               rates =3D kcalloc(count, sizeof(u32), GFP_KERNEL);
-> +               if (!rates)
-> +                       return -ENOMEM;
-> +               rc =3D of_property_read_variable_u32_array(node,
-> +                                                        "assigned-clock-=
-rates",
-> +                                                        rates,
-> +                                                        1, count);
-> +       } else {
-> +               rates =3D kcalloc(count, sizeof(u64), GFP_KERNEL);
-> +               if (!rates)
-> +                       return -ENOMEM;
-> +               rc =3D of_property_read_variable_u64_array(node,
-> +                                                        "assigned-clock-=
-rates-u64",
-> +                                                        (u64 *)rates,
-> +                                                        1, count);
-> +               rate_64 =3D true;
-> +       }
+Hello Danila.
 
-Can this be less indented somehow?
+On 7/31/24 20:59, Danila Tikhonov wrote:
+> Add SM8475 GCC bindings, which are simply a symlink to the SM8450
+> bindings. Update the documentation with the new compatible.
+> 
+> Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
 
-	u64 *rates_64 __free(kfree) =3D NULL;
-	u32 *rates __free(kfree) =3D NULL;
-	int count_64, count;
 
-	count =3D of_property_count_u32_elems(node, "assigned-clock-rates");
-	count_64 =3D of_property_count_u64_elems(node, "assigned-clock-rates-u64");
-	if (count_64 > 0) {
-		count =3D count_64;
-		rates_64 =3D kcalloc(count, sizeof(*rates_64), GFP_KERNEL);
-		if (!rates_64)
-			return -ENOMEM;
+> diff --git a/include/dt-bindings/clock/qcom,gcc-sm8450.h b/include/dt-bindings/clock/qcom,gcc-sm8450.h
+> index 9679410843a0..5f1f9ab71a22 100644
+> --- a/include/dt-bindings/clock/qcom,gcc-sm8450.h
+> +++ b/include/dt-bindings/clock/qcom,gcc-sm8450.h
+> @@ -194,6 +194,8 @@
+>   #define GCC_VIDEO_AXI0_CLK					182
+>   #define GCC_VIDEO_AXI1_CLK					183
+>   #define GCC_VIDEO_XO_CLK					184
+> +#define GCC_GPLL2						185
+> +#define GCC_GPLL3						186
 
-		rc =3D of_property_read_u64_array(node,
-						"assigned-clock-rates-u64",
-						rates_64, count);
-	} else if (count > 0) {
-		rates =3D kcalloc(count, sizeof(*rates), GFP_KERNEL));
-		if (!rates)
-			return -ENOMEM;
+To avoid any probable confusion related to the list of clocks on SM8450
+platform let's add a new header file.
 
-		rc =3D of_property_read_u32_array(node, "assigned-clock-rates",
-						rates, count);
-	} else {
-		return 0;
-	}
-=09
-	if (rc)
-		return rc;
+>   /* GCC resets */
+>   #define GCC_CAMERA_BCR						0
+> diff --git a/include/dt-bindings/clock/qcom,sm8475-gcc.h b/include/dt-bindings/clock/qcom,sm8475-gcc.h
+> new file mode 120000
+> index 000000000000..daafdd881892
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/qcom,sm8475-gcc.h
+> @@ -0,0 +1 @@
+> +qcom,gcc-sm8450.h
+> \ No newline at end of file
 
-	for (index =3D 0; index < count; index++) {
-		unsigned long rate;
+Instead of adding a symbolic link to the already existing header file please
+create a header file, which includes the old one:
 
-		if (rates_64)
-			rate =3D rates_64[index];
-		else
-			rate =3D rates[index];
+#include "qcom,gcc-sm8450.h"
 
-> +
-> +
-> +       for (index =3D 0; index < count; index++) {
-> +               unsigned long rate;
-> +
-> +               if (rate_64)
-> +                       rate =3D ((u64 *)rates)[index];
+#define GCC_GPLL2						185
+#define GCC_GPLL3						186
 
-Please no casts.
+In drivers/clk/qcom/gcc-sm8450.c file along with new functional changes
+include the new header file instead of the old one.
 
-> +               else
-> +                       rate =3D rates[index];
->
+--
+Best wishes,
+Vladimir
