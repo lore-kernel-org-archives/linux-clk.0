@@ -1,151 +1,156 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4BEB1667F6;
-	Wed, 31 Jul 2024 06:30:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDCBA1667CD
+	for <linux-clk@vger.kernel.org>; Wed, 31 Jul 2024 06:31:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722407460; cv=none; b=D4693E6mKzYEmKU3aw+W747CyE+H9rV9XCSQkNPc7nNl5wgA1UC46FzK4CNKOE1019wv/ZfKqcN9+HlqrdbI1fY2x0J8LeFfr7xRNj7XmBLdy+xkXUa+M7GIXtntc/lQZC11g8k4kCs5/CT963abar+0kng7CxvCEHJQ9GlhqW4=
+	t=1722407464; cv=none; b=rDWMYsvKm08bgZwb0+Fmxhu4UEDfZE4Uy8YhWPa0wBFoP5yiymcS96AFER/RntoqGEJ8UwaTog9zRZ5C9V7suqIDObQj/vNVX3GanTmXltRCXjc43OMK0iVT89SBrmjX07vuCoYJk2djm1nVJxpDMSTp2ozkedhmVQqVoRyFtEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722407460; c=relaxed/simple;
-	bh=rGCKqV6xaKzj9eqR3GpkN1p3hHlNKFkux7oirvK+5Uc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UUzf9/fywTScoNK51+O00H3VMo6GRPl2puxtWeOnfQTThtSsDkgvNLLyoiaPG/PY1uoRVbIpfIrk7ql+7tWwd/G//thH6lreKYl0bjanGnDD/rpUWtW3tjQ5utoyjfRw0c9gSMfBUpcLiBFE3gSeSwpKO0aTF35Ly2KShhnAXW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cAITT1lH; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1722407464; c=relaxed/simple;
+	bh=pa3CQ9bxYVXwHYkNX9hjJpLm6eHiBjrBFs33d2EzD0M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OSzYFkSdMxGyezrWfGQ8u2/cfTTTpQDO5l44W5lWdpz4X1dRnMi5edzztKUojRKLljGmA8pDd9cgAVDAa8L7cagsJhPur4jMLM/235+6YXZ4GUOdmPK2KY1YjETziP9jRtirPHvLbl5BPGuwwWaoWscE7M/EQgGjfoNNIzCrtos=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=VPxQ2gkH; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cAITT1lH"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 46UIO5a3030531;
-	Wed, 31 Jul 2024 06:30:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	UmDmHBQPBEPm//algwTTXuo82feZdRW0u1n/kqYYOMM=; b=cAITT1lHKWC337zZ
-	FFr3gYfk14Z97ZjOI3zvDXZ305T6ekXe/AK8kehhldKR4Li5RFZV85INeCIV9Cb5
-	ipG4B3gQZyEpcL9yVqLh6ywjS2tZliKoy8xQjch7VXggxSf43xVzNsF/meOEMKj3
-	O7srNf5AGNCrmeIWfLz0TXaYUqdR9Mp6axtZy8/AmZ0IaosynoOX4+heEqH93qaA
-	OYfeksAmoHxBEKfx8V4dhQC26UPfgdbVmyB2YGaAlwFubEYcUSQn3O4rNKrb8fnI
-	5BV7PbY1CKh9/gdVvOVirJ62BARVifIloFW8xyxLWkKYUnDLO1USPsjIYV8ADUJC
-	AEJcqw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40msne9y02-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 31 Jul 2024 06:30:31 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 46V6UUw7018873
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 31 Jul 2024 06:30:30 GMT
-Received: from hu-skakitap-hyd.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 30 Jul 2024 23:30:24 -0700
-From: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Abhishek Sahu <absahu@codeaurora.org>,
-        "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: Stephen Boyd <sboyd@codeaurora.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>,
-        "Imran
- Shaik" <quic_imrashai@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>, <stable@vger.kernel.org>,
-        "Krzysztof
- Kozlowski" <krzysztof.kozlowski@linaro.org>,
-        Bryan O'Donoghue
-	<bryan.odonoghue@linaro.org>,
-        Satya Priya Kakitapalli
-	<quic_skakitap@quicinc.com>
-Subject: [PATCH V3 4/8] clk: qcom: clk-alpha-pll: Update set_rate for Zonda PLL
-Date: Wed, 31 Jul 2024 11:59:12 +0530
-Message-ID: <20240731062916.2680823-5-quic_skakitap@quicinc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20240731062916.2680823-1-quic_skakitap@quicinc.com>
-References: <20240731062916.2680823-1-quic_skakitap@quicinc.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="VPxQ2gkH"
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-42122ac2f38so3149575e9.1
+        for <linux-clk@vger.kernel.org>; Tue, 30 Jul 2024 23:31:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1722407461; x=1723012261; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=uOZXqthV2P+FgW0nVV1tWia67XT+IyQh+CwEpq/Dl+E=;
+        b=VPxQ2gkHvFv9IyfUMgaol0/WjaNVYkZneYNFzoMSFCOjkVIXPdVgIk4GeqT68aLqIN
+         gmyCS4FmawmZw4W2oZCoE8UkI5hxpdGSks5hBBGU0jSkdBW8BG94L57ibIycg7KTLcUE
+         7fJCeagFDH1uwKz1A7D8i3geV0dqMGxnNDTj2NR3g5MFIcHAxUvecGa4bzsfn26+teBg
+         4riPrrpXeOfCZg7mg+YEYjj0kKZN1rb7Y/EmIQoMje0QtLiqA42HmynuCacbQoORRTvB
+         5IM+/EojGoHkxFFVt3K5qD4gQeq34cd/XnL/JU8ADOaYaEX7RDCQ9y5e37iPnUDFYV4I
+         qaCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722407461; x=1723012261;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uOZXqthV2P+FgW0nVV1tWia67XT+IyQh+CwEpq/Dl+E=;
+        b=jFfw+qrYFNk8yBnQUGbl5UMbg60S8m/lN93b3n5brxcz9i1WwRno5esPb24dCJnohe
+         JSottYxmgR2vMvEgVmG1IdmHnzQeCD2Tl7d3FShHlCAixTKQIbsWNIvsS0tbfaSYOOv8
+         1sK00nrZF6UfZMvTWeIP3p/gKEt0MvHzcvgezDs1HJBT44McJNv13VYWnJVFRQzJ6psh
+         2P9Aoid06pFqBIRWKLNLYKoIPGcEVub2uCXFahHZc23KD+oPtfXY2FAYPcN1CCsc8wOr
+         wTCbOsdA2UEBtMLXXrYPvt4sP1Ab9XVCnGU7CCiWemrmv4f5wPHvoUPIfoY7r9QLjP4R
+         Co9w==
+X-Forwarded-Encrypted: i=1; AJvYcCWPFdq2dBgcsZsvdsDZg07LDtsAR4Tj3HWckDZ3TqkZIv9N234WMOyhs7Mo1eNdnN2/UDgdFuo83osG1msawvmJwtuvnYgSqTkD
+X-Gm-Message-State: AOJu0Yz+N4RnPCntMuai7OZXWM8pZ2hnes0jQVEEd6SoiMVk4Cj8udU6
+	TMAXb7DI1lQ45fISrWeOTPEpX9TowSHmRWxMLnN5wSCXfyZlGi330pvNd2qozT8=
+X-Google-Smtp-Source: AGHT+IFmJdfvLb6VhAFLslGTLaw+H2btyom1nAYAcnl0gPZyCCjPKB8aY6hajHaIZRwfyFdCbLFmhw==
+X-Received: by 2002:a05:600c:1f92:b0:427:abfd:4432 with SMTP id 5b1f17b1804b1-4282444061cmr27919755e9.12.1722407461004;
+        Tue, 30 Jul 2024 23:31:01 -0700 (PDT)
+Received: from [192.168.1.20] ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282babaa2esm8637485e9.25.2024.07.30.23.30.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 30 Jul 2024 23:31:00 -0700 (PDT)
+Message-ID: <d139339c-32cf-4804-87f8-8fd4588cc925@linaro.org>
+Date: Wed, 31 Jul 2024 08:30:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 5PYNw_MloLGOli0vmw9XjDGMhvjr5jh9
-X-Proofpoint-ORIG-GUID: 5PYNw_MloLGOli0vmw9XjDGMhvjr5jh9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-07-31_03,2024-07-30_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
- lowpriorityscore=0 mlxlogscore=999 priorityscore=1501 clxscore=1015
- spamscore=0 mlxscore=0 bulkscore=0 suspectscore=0 impostorscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2407310047
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3] dt-bindings: clock: qcom: Remove required-opps from
+ required list on SM8650
+To: Jagadeesh Kona <quic_jkona@quicinc.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>
+Cc: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Taniya Das <quic_tdas@quicinc.com>,
+ Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+ Imran Shaik <quic_imrashai@quicinc.com>,
+ Ajit Pandey <quic_ajipan@quicinc.com>, kernel test robot <lkp@intel.com>
+References: <20240730034552.31271-1-quic_jkona@quicinc.com>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+ 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
+ D2GYIS41Kv4Isx2dEFh+/Q==
+In-Reply-To: <20240730034552.31271-1-quic_jkona@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The Zonda PLL has a 16 bit signed alpha and in the cases where the alpha
-value is greater than 0.5, the L value needs to be adjusted accordingly.
-Thus update the logic to handle the signed alpha val.
+On 30/07/2024 05:45, Jagadeesh Kona wrote:
+> On SM8650, the minimum voltage corner supported on MMCX from cmd-db is
+> sufficient for clock controllers to operate and there is no need to specify
+> the required-opps. Hence remove the required-opps property from the list of
+> required properties for SM8650 camcc and videocc bindings.
+> 
+> This fixes:
+> arch/arm64/boot/dts/qcom/sm8650-mtp.dtb: clock-controller@aaf0000:
+> 'required-opps' is a required property
+> 
+> arch/arm64/boot/dts/qcom/sm8650-mtp.dtb: clock-controller@ade0000:
+> 'required-opps' is a required property
+> 
+> Fixes: a6a61b9701d1 ("dt-bindings: clock: qcom: Add SM8650 video clock controller")
+> Fixes: 1ae3f0578e0e ("dt-bindings: clock: qcom: Add SM8650 camera clock controller")
 
-Fixes: f21b6bfecc27 ("clk: qcom: clk-alpha-pll: add support for zonda pll")
-Cc: stable@vger.kernel.org
-Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
----
- drivers/clk/qcom/clk-alpha-pll.c | 16 ++++++++++++++++
- 1 file changed, 16 insertions(+)
+Also, these should be two separate commits. Each fix for one issue is
+one logical change.
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index 2ebeb277cb4d..ad9a84d521fc 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -41,6 +41,7 @@
- #define PLL_USER_CTL(p)		((p)->offset + (p)->regs[PLL_OFF_USER_CTL])
- # define PLL_POST_DIV_SHIFT	8
- # define PLL_POST_DIV_MASK(p)	GENMASK((p)->width - 1, 0)
-+# define PLL_ALPHA_MSB		BIT(15)
- # define PLL_ALPHA_EN		BIT(24)
- # define PLL_ALPHA_MODE		BIT(25)
- # define PLL_VCO_SHIFT		20
-@@ -2117,6 +2118,18 @@ static void clk_zonda_pll_disable(struct clk_hw *hw)
- 	regmap_write(regmap, PLL_OPMODE(pll), 0x0);
- }
- 
-+static void zonda_pll_adjust_l_val(unsigned long rate, unsigned long prate, u32 *l)
-+{
-+	u64 remainder, quotient;
-+
-+	quotient = rate;
-+	remainder = do_div(quotient, prate);
-+	*l = quotient;
-+
-+	if ((remainder * 2) / prate)
-+		*l = *l + 1;
-+}
-+
- static int clk_zonda_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 				  unsigned long prate)
- {
-@@ -2133,6 +2146,9 @@ static int clk_zonda_pll_set_rate(struct clk_hw *hw, unsigned long rate,
- 	if (ret < 0)
- 		return ret;
- 
-+	if (a & PLL_ALPHA_MSB)
-+		zonda_pll_adjust_l_val(rate, prate, &l);
-+
- 	regmap_write(pll->clkr.regmap, PLL_ALPHA_VAL(pll), a);
- 	regmap_write(pll->clkr.regmap, PLL_L_VAL(pll), l);
- 
--- 
-2.25.1
+>  
+
+Best regards,
+Krzysztof
 
