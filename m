@@ -1,69 +1,74 @@
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 278692209F
-	for <linux-clk@vger.kernel.org>; Wed, 31 Jul 2024 13:07:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B0C1AD9D9
+	for <linux-clk@vger.kernel.org>; Wed, 31 Jul 2024 13:12:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722431254; cv=none; b=UCsfgiYf5Wa5TU9Y8lZrWMr+NHEEmhO60L+tvAuUC2bMDxRu4cpJIMpPq5yU2iBfQmjvltGgak6jkL+RDCRGE7+G1wJwDEdFa8Q9thi0oz800NapmnNJLiiETuRi06e7xzp8vCJDAGAA46PODNdpNlFuESy4v0pmPTBCZOGN/Sw=
+	t=1722431566; cv=none; b=aTD/wY+gGSU7Gss/6NzPDqx7VHnK3ZyCSMytzQH03WciqS6VG/H6NrAWTeLq42FrTfSxJrwAI4jzDlkj6zMo/FHYoP3htt/sZ2zxTg75sbWfAUHYpwqPTIlcn9rC36Il+i5P5GnU4Dxm8iH2omRSzX305tlfTeDZhkUTykmjdKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722431254; c=relaxed/simple;
-	bh=IDvKEAauQ3f3+B7eefwbOL3BPtdB6ke35T+ErE2pzzk=;
+	s=arc-20240116; t=1722431566; c=relaxed/simple;
+	bh=qFPHgeIMW1gfQ9EjXLEKz2PkwY5EiqpBjeWefyfIctU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jIP42Vr2xDy6RFvUc8LQMXP0QJAJpcT3APLrDUcgKzYNJ6I/z/QwUkFc+S78bsOOo2IwvSGOvkjTpF6C1GHS++RJn6abIJXmkHehY/QFQaddUQDnhPm8hp7QkZkyc7l0vuVWGuOT45rPEPXBBQlQmfzirXBcRYB1a/CViHGLj8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RQFsD9Zt; arc=none smtp.client-ip=209.85.167.49
+	 Content-Type:Content-Disposition:In-Reply-To; b=sCQElaWSHoDV5IPBYZ/iBQeg/9epuP75hnkFI4lkKMS7JAZaq+p8SWOfg6H0t+8tuh9089KZAyyHTvqX8aignaSjqfsY2gUIK993CYor08j+seVvkBOcNp6f2K2iQHeUdtYj1FZ1b7/gxja2qNU0QK2Oc0uWlb2nVsDP0A4TXs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Yt8sB5js; arc=none smtp.client-ip=209.85.167.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RQFsD9Zt"
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-52f04c29588so10161974e87.3
-        for <linux-clk@vger.kernel.org>; Wed, 31 Jul 2024 06:07:32 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Yt8sB5js"
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-52f04b4abdcso9075778e87.2
+        for <linux-clk@vger.kernel.org>; Wed, 31 Jul 2024 06:12:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722431250; x=1723036050; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1722431563; x=1723036363; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/FoiQbEYmhBENH3LXyd3ATBiDIVMApuyh6s4DrTOE6Q=;
-        b=RQFsD9Zt1YvBrlmC14yzZ/QbltZbO0diqdOVPreqk6el0P+rrY2L9bctyFnpp2+Bf+
-         U43AA5u+7jNIOFrXNy+aodjWR4nUV8U8zE29N/IweUOYg4xNcDhho2lhXljJdEgBWP67
-         14wHITVrBCM91Vs0M4a7M7ov43iBg+XtG8GMkyT90Iz9j8f7ew+J85qkmMU4b1dAUNm6
-         RtksoVie4tfXMdpLJzJrS/mwKqAgDgkYhWecFpc8MIhBOjnwskb1KBHHJ4iHGlWxBGuG
-         8YjgzoX63qROVEDm5wB49fWO58D1M2lvQN+rw1HIFBbKJWju32y1qlX+t/2ocXGLXgDC
-         MtSA==
+        bh=Z3wPO5io9Fiq+8Cz2nYy2B8gHrLGSiZUTaKFQ+l1bhA=;
+        b=Yt8sB5jsCdMQ2zGpQUEa9ZffF+2/jwj1xKezLZ6RpaKRZOIUtlX1PFuArG9tuhn2il
+         4SAzu5lW0sq7JiaoHLR2+RJOtuFdlYeQRLU7IAX9tGtnGcBw2BVzTx41m7mAk2QQlMLE
+         mRhzWfnTZgs31vrR85WtMUM2N1r9rNYkLxLYcNkRnJdSx0MUOZvdf5SOSZaHU786SmQS
+         68lWYB9G5thMLzBgK+k/QR2J0wniKX86umPt+GvpHmzRbKbKvB7AESCe/2jrPn957YA/
+         PNJAe/5INb1fLtJ8Fle5dJOEoSFr8SA95AQjalijWlT43RpX+XfXpqyBZcm7g3ACtEYF
+         /Rfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722431250; x=1723036050;
+        d=1e100.net; s=20230601; t=1722431563; x=1723036363;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/FoiQbEYmhBENH3LXyd3ATBiDIVMApuyh6s4DrTOE6Q=;
-        b=LW1pZamBpGvDRTae1ZM+JW9GTBwswf9SY7NTYd6lsumv+6VbIAdYgoXJLq1gFMlT6T
-         bMSS02OmUZPfaJ5KmtgIfTDeRcss8R07Y05U9Xb0dk8gZkPwLElK+RjmTY6lQUe7Ha66
-         YOt+WISSz9a4McE6jjqkeDKxZINFOuvmmvmqwY9191uVBN1lYqFxZBTpFIaUsQKijrxg
-         3HSGEII8QDDqbQCFTBhzAPFS2BSKPY9H2aDnyVPesALkS7WUV/XnA9bPx7/DB4JrpxJR
-         d06TJSNgx637OYHggQUrhe2zU8eZRWTLPxxeLxo2eFqNUwRUn/yx9KHa1ZjBPEF7mJn1
-         Zxvg==
-X-Forwarded-Encrypted: i=1; AJvYcCUBTRmjKxVofW+M1xGGTGj9ApLqRKt7xyrvjmEdrR/YCOQUeTngbV+mxUvELJaqWZU+VIkQ7+zV0t3rbbRzlbEri1yotgqR0Syh
-X-Gm-Message-State: AOJu0YxOrLQ66qAQj8ZcR9dsPKo4uevcO1oFI0wIa3918fr3vcPKYfub
-	PcfJYgd33yhVaa2bWiRWmZUlqvgQjtzn2xr83Kc9qNFy9c5l/k6oB5HI8G3z5bw=
-X-Google-Smtp-Source: AGHT+IHFGuIslHNtb6tITJa8SbCZaWaHCKmfmiJMpdSGO3yjlULlpXbI2CAqFvwKxhAIv4SP8SdgkA==
-X-Received: by 2002:a05:6512:2032:b0:52d:b150:b9b3 with SMTP id 2adb3069b0e04-5309b2809c5mr8147947e87.32.1722431250588;
-        Wed, 31 Jul 2024 06:07:30 -0700 (PDT)
+        bh=Z3wPO5io9Fiq+8Cz2nYy2B8gHrLGSiZUTaKFQ+l1bhA=;
+        b=HbO4BZHfM8sokmMCS25J/2mM3Lsg+YHA8T6VPahIRoVtWLW8uKLCNxqGFmcSfVus8L
+         HFM40xXHkjC7tcq5H3UJmhiUo/HMzeF9fPo3IgO3DxAtMa5/SKdWMxU2Zggm0Ty4Zt0F
+         t7LZBzOC7Lo1IGNjtEGQoYBYFmYP4mJ1QzK5JTPamzagpvG999CgcQF8w3BiEYc69YYG
+         LKCBLrqSRP2Q/X3ITRvwA/HmVAP+I1XFFQc5TkVOwW5UGVOQzDFVLJqDVYbZvrMA05IW
+         VYpMDcuY0w/+7cxX4pu85XrqGwfNJXkILKvGuK7HWzZ9jY7epcsu4BRyAqt8m3qC8D1j
+         wY3g==
+X-Forwarded-Encrypted: i=1; AJvYcCVkFNIh/OWi5yPz0npBRD98gZ4ic7EQb8L5flFpJuH9PSw8fnH5Voj9jx4pZi0uanBVl+l8avxx/pXv2tZv+kBHewxuG4xTxPIG
+X-Gm-Message-State: AOJu0YxzpSPhzdbF1PIbgi+UOIAM4EPXtck3E1HH1PrjKhVcblm+LlvI
+	eqKypMavLulmmVJU07MQRebqsebO0HFDCKES89E0GusH8kX/pY6eTRwj6jta2bI=
+X-Google-Smtp-Source: AGHT+IF8UOb4KQI/0UVDYgflYuJp0DmJs4aWutYRmDvRhXlkI1Lu/RNu43VC91/zjHYdf/h1W/xzPQ==
+X-Received: by 2002:ac2:5968:0:b0:52f:d090:6dae with SMTP id 2adb3069b0e04-5309b2ce519mr9332247e87.52.1722431562460;
+        Wed, 31 Jul 2024 06:12:42 -0700 (PDT)
 Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-530aa08dab1sm649447e87.13.2024.07.31.06.07.29
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52fd5c0839bsm2223322e87.168.2024.07.31.06.12.40
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 31 Jul 2024 06:07:30 -0700 (PDT)
-Date: Wed, 31 Jul 2024 16:07:28 +0300
+        Wed, 31 Jul 2024 06:12:41 -0700 (PDT)
+Date: Wed, 31 Jul 2024 16:12:39 +0300
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Konrad Dybcio <konrad.dybcio@linaro.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bjorn Andersson <quic_bjorande@quicinc.com>
-Subject: Re: [PATCH v2 2/7] clk: qcom: gcc-sc8180x: Add missing USB MP resets
-Message-ID: <z4lbpgfjmkslylflolm6nxqye5gsgbzn5yn2lqvqlngyc6y5bt@s6uovsadcxe5>
-References: <20240730-sc8180x-usb-mp-v2-0-a7dc4265b553@quicinc.com>
- <20240730-sc8180x-usb-mp-v2-2-a7dc4265b553@quicinc.com>
+To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konrad.dybcio@linaro.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Abhishek Sahu <absahu@codeaurora.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@codeaurora.org>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, Ajit Pandey <quic_ajipan@quicinc.com>, 
+	Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, 
+	Jagadeesh Kona <quic_jkona@quicinc.com>, stable@vger.kernel.org, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: Re: [PATCH V3 2/8] clk: qcom: clk-alpha-pll: Fix the trion pll
+ postdiv set rate API
+Message-ID: <uc5imfadtdq4krsht6t4fbzdyglbzhlivdbw5rxgvwjft3qthl@uibz2cbw3x3o>
+References: <20240731062916.2680823-1-quic_skakitap@quicinc.com>
+ <20240731062916.2680823-3-quic_skakitap@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -72,22 +77,23 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240730-sc8180x-usb-mp-v2-2-a7dc4265b553@quicinc.com>
+In-Reply-To: <20240731062916.2680823-3-quic_skakitap@quicinc.com>
 
-On Tue, Jul 30, 2024 at 08:24:39PM GMT, Bjorn Andersson wrote:
-> From: Bjorn Andersson <quic_bjorande@quicinc.com>
+On Wed, Jul 31, 2024 at 11:59:10AM GMT, Satya Priya Kakitapalli wrote:
+> Correct the pll postdiv shift used in clk_trion_pll_postdiv_set_rate
+> API. The shift value is not same for different types of plls and
+> should be taken from the pll's .post_div_shift member.
 > 
-> The USB multiport controller needs a few additional resets, add these to
-> the driver.
-> 
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> Signed-off-by: Bjorn Andersson <quic_bjorande@quicinc.com>
+> Fixes: 548a909597d5 ("clk: qcom: clk-alpha-pll: Add support for Trion PLLs")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
 > ---
->  drivers/clk/qcom/gcc-sc8180x.c | 4 ++++
->  1 file changed, 4 insertions(+)
+>  drivers/clk/qcom/clk-alpha-pll.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
 
 Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
 
 -- 
 With best wishes
