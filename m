@@ -1,80 +1,112 @@
-Received: from michel.telenet-ops.be (michel.telenet-ops.be [195.130.137.88])
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 129D018E04C
-	for <linux-clk@vger.kernel.org>; Thu,  1 Aug 2024 13:39:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.137.88
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03FD81EB4B1;
+	Thu,  1 Aug 2024 15:31:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722519575; cv=none; b=HNlcWPyy3HdBhtf6sim7hV1OYfm4nnlrfU4r+xC0VrH2j1zh78TO9mJHKEJVvIv+kUG4HnSfrfCuSV99J317dugipfhsLrfh4RHhal8RslCVykQEw/RfnD0arX7KKAnrfxYK2/+x5VRJ/4VqzSunzVoPFKbQ2JhMV4VszkrVTe4=
+	t=1722526297; cv=none; b=t7E9OmYcuhVojRhgBPBep7rYinZFmjNPty14em5N3pDY12keLnBgABS+rqpaOnlDb1tEl4k8sWModcIBZyLbH8QaPZ5AhRxRSnvp7gNdK355SMlkVBmKYInzbI3otzqMczPCazdMmAzSKOXplN4D6I1kg4PC2iRn0oEiVmeaPeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722519575; c=relaxed/simple;
-	bh=hD9NGKKlejKeSt1pJ9c5vgFtPNhg4g13vqr2KB/HHLQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lbfZ9/picF+Q5EWOPx6GDQBiBPx+Vq1rdMIllWFiNDCU7ycx+7rSFxnPVaTPamJaFq11jNAhG3v5Iq78ciamPWvDSibptTn2U3qNrdj4fOeETMBCoOXYXiksPWaa4bmEBqnpRPB9VbogB9pyl9mFCdqAxdJAZKVEyLZ+gvliVmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.137.88
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:fff7:d11a:41d8:a195])
-	by michel.telenet-ops.be with bizsmtp
-	id udfQ2C00B5XJrhx06dfQiN; Thu, 01 Aug 2024 15:39:24 +0200
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1sZW1D-004S6P-WB;
-	Thu, 01 Aug 2024 15:39:24 +0200
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1sZW1c-00HO5x-4L;
-	Thu, 01 Aug 2024 15:39:24 +0200
-From: Geert Uytterhoeven <geert+renesas@glider.be>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	Cong Dang <cong.dang.xn@renesas.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>
-Subject: [PATCH v2] clk: renesas: r8a779h0: Add CANFD clock
-Date: Thu,  1 Aug 2024 15:39:19 +0200
-Message-Id: <9bf71bfda338ee5411751174b03b9e870cc818e3.1722519424.git.geert+renesas@glider.be>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1722526297; c=relaxed/simple;
+	bh=7xL0Avo8izUJdfsqJNLy79ZuDA++AqkF76A0ghNPpCI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ciaVRfzvw5uWkEn1dMK6igBblU9EMFryewpoaPEo9+bOtmQr3290kPT2V8Yu4Kt7TMvjfnBFhB5BzEwHzNEm0ZTZ/152D3XEgXomMfr4T8w1eeP1UKjfxw4MS/lQ8oCLPg2gNFLVJs8wQ/jp921SWJbK0lXxsDi5+rig/RQ1Cs4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-67b709024bfso64441257b3.3;
+        Thu, 01 Aug 2024 08:31:35 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722526294; x=1723131094;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oEvAEJsDUsgTpw4IFZkSM7blNWl56QIoDqvTQ+o7eJ4=;
+        b=PhUQnHz8QMDZ3hw6aPXD6yLZpk/YQRGcKapL8hsW8mv2arkJ0eUTQKE53jY2dfLjBF
+         xkGP/SPz/etil1sNgPRDL31/aKlYJGbQsSkkidghLH1Wfp4NfIA1R3gdhYcU3zGEA26O
+         P8HvKN7UBfENQFZXkh24oDszl229dv3OZXRDuybMRvSIhj2Ht5R/FhWWSQwgxdQL9Z4y
+         ZNTJFubt3XpsTTn8LIXDyoUvmyaypdhBVzYx2oSUMVio0shR/dfFMOn1Z60TSbuW79/+
+         LrfrBUTnR3lIXriZbkRB4V1GtogNAMfp2pUFnOPZ5unEa9SxcQFeACFJ9IVBevdWvD3O
+         RSWw==
+X-Forwarded-Encrypted: i=1; AJvYcCUTX+vf6tsmSe5Zxc0YAaIGxJKbx1/D7OXsd608FsMnuzJNXBIJJqCFj8WVrNGv+4eHYEfX9fR2YEKPIOiKPfvNJUsIGYmyyupr/BLdzA8H2lU59ZRTH37l1MycsXUHH4I30bTCRaCYXb5M0YpQjOjpzjM2PuwOL/wHtn0TP4/SF+gEQtrr3b0APtqks2Zd9cc6SbFZj7uIYRjTCyLx2kxaJqxsLohk
+X-Gm-Message-State: AOJu0YxOA2mPquhKNL3JTnSstX1NVl9RUBmFAGtbabAJL/wQVvs3O/d8
+	3kUcfvDdAAHXpvk6VoPOX9isaO9oZRF4kwOrSYl1hIeb//KGEGdhNZSmgLFO
+X-Google-Smtp-Source: AGHT+IHPtk4KvEDMrUGA4GO9IUYqJnOwGdYLl8tx435MJ6tvQhgzjQqdAe5mgpkNJZ0IpKcDSBnpLA==
+X-Received: by 2002:a81:a551:0:b0:646:5f95:9c7d with SMTP id 00721157ae682-689637fcac2mr3572897b3.36.1722526293894;
+        Thu, 01 Aug 2024 08:31:33 -0700 (PDT)
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com. [209.85.219.180])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6756bc9ec42sm33797317b3.115.2024.08.01.08.31.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 01 Aug 2024 08:31:33 -0700 (PDT)
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e0b167da277so5342593276.3;
+        Thu, 01 Aug 2024 08:31:33 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXwRJSNM5yjDjauZkwBkW0CzGFf0d/NJcAPutXHBsP7ViLrqLnubrEB8/XsFBRhVqR2JS8NFDzapCBahSe6S8tf6WD5P1izbpuSdx5MEYwElce6NAzEkpkpVcAzkXwByJOCEMOk84ie6KQMBJkNDaZdlyNyMD4nfcsDaX2JfvCRWdhYv1ELcq4Gy8/WJoiP9GLizBUu0XPiWLxxdPEaYfCQEeeFDA6s
+X-Received: by 2002:a05:6902:90e:b0:e0b:55d8:cde6 with SMTP id
+ 3f1490d57ef6-e0bde2b2450mr600736276.6.1722526293300; Thu, 01 Aug 2024
+ 08:31:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240729202645.263525-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240729202645.263525-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240729202645.263525-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 1 Aug 2024 17:31:21 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVmSwFMhxpBVsDvyzkmtmsu6EZ30SbMYdmBvQ28tBiAtg@mail.gmail.com>
+Message-ID: <CAMuHMdVmSwFMhxpBVsDvyzkmtmsu6EZ30SbMYdmBvQ28tBiAtg@mail.gmail.com>
+Subject: Re: [PATCH v5 1/3] dt-bindings: clock: renesas: Document RZ/V2H(P)
+ SoC CPG
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Magnus Damm <magnus.damm@gmail.com>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Cong Dang <cong.dang.xn@renesas.com>
+On Mon, Jul 29, 2024 at 10:28=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.=
+com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Document the device tree bindings for the Renesas RZ/V2H(P) SoC
+> Clock Pulse Generator (CPG).
+>
+> CPG block handles the below operations:
+> - Generation and control of clock signals for the IP modules
+> - Generation and control of resets
+> - Control over booting
+> - Low power consumption and power supply domains
+>
+> Also define constants for the core clocks of the RZ/V2H(P) SoC. Note the
+> core clocks are a subset of the ones which are listed as part of section
+> 4.4.2 of HW manual Rev.1.01 which cannot be controlled by CLKON register.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+> v4->v5
+> - Included RB tag from Geert
 
-Add the CANFD module clock on the Renesas R-Car V4M (R8A779H0) SoC.
+Thanks, will queue in renesas-clk for v6.12.
 
-Signed-off-by: Cong Dang <cong.dang.xn@renesas.com>
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
----
-To be queued in renesas-clk-for-v6.12.
+Gr{oetje,eeting}s,
 
-v2:
-  - Drop RFC state now it works.
+                        Geert
 
-Changes compared to the BSP:
-  - Change clock name from can-fd to canfd0,
-  - Change parent clock from CANFD to SASYNCPERD2.
----
- drivers/clk/renesas/r8a779h0-cpg-mssr.c | 1 +
- 1 file changed, 1 insertion(+)
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-diff --git a/drivers/clk/renesas/r8a779h0-cpg-mssr.c b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
-index ef707dce840090ee..e20c048bfa9be142 100644
---- a/drivers/clk/renesas/r8a779h0-cpg-mssr.c
-+++ b/drivers/clk/renesas/r8a779h0-cpg-mssr.c
-@@ -176,6 +176,7 @@ static const struct mssr_mod_clk r8a779h0_mod_clks[] __initconst = {
- 	DEF_MOD("avb0:rgmii0",	211,	R8A779H0_CLK_S0D8_HSC),
- 	DEF_MOD("avb1:rgmii1",	212,	R8A779H0_CLK_S0D8_HSC),
- 	DEF_MOD("avb2:rgmii2",	213,	R8A779H0_CLK_S0D8_HSC),
-+	DEF_MOD("canfd0",	328,	R8A779H0_CLK_SASYNCPERD2),
- 	DEF_MOD("csi40",	331,	R8A779H0_CLK_CSI),
- 	DEF_MOD("csi41",	400,	R8A779H0_CLK_CSI),
- 	DEF_MOD("hscif0",	514,	R8A779H0_CLK_SASYNCPERD1),
--- 
-2.34.1
-
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
