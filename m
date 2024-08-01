@@ -1,52 +1,50 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A10813D511;
-	Thu,  1 Aug 2024 03:19:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9178814265C;
+	Thu,  1 Aug 2024 03:19:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722482394; cv=none; b=ST8K8wd4Wrx9pfxN64jV3ifE1HFxYSkx0rg3RE0GUQzl18utvKH+8ImR1IV9uwLKBZoaZzF7CnZomlXBUHe4iHp0nzOorCV7N6ORSxWRgykFGkRzUouR6N+s4f8XEum94fJzFjm5ZyrouDxyMGVEp78OpBtKxgcVhhMFChF0AxM=
+	t=1722482397; cv=none; b=HGLzftAnBpgEh9FO7FEP0VEWhYQCT0pPGnvLwfRwJ55beja3PCNICsvP/43eRt7rZmlZn/E8P7a8KK14eWs0g54IL2H38t3gNbTfBHYvR6L4LsFpt03m8Zq1tWQwq11eyRTjhWHpqL+k9d5iMoUhsZ63p1LZu4PsrSihgGuSRIQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722482394; c=relaxed/simple;
-	bh=hq4fbO0nCQySaHAPhslUho5zCLTVTAPlslWr291HDKk=;
+	s=arc-20240116; t=1722482397; c=relaxed/simple;
+	bh=jBGCi2K0Zk3P/o0nSkNiteWFwg/e1ZpKXXHW5soEX7I=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=W17c+QwoxoJmMzQAvJJzW4jTneixAqhLcxMAGPfjRYZvVFj2h8XEK1sR0pEkyUN2iy7xYd8NQCjSAgLfVD7LsjSavr604MhMobgvB7dj2N7cAzm+BKvsfFqSsrUWox6C1xVOVp9M9qHJ8mddU34WlxYAMvEvYfmF9g/j3zsfjC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SHqVWmKS; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=GuHcH47LDAz2g7rMoZreiILQOMI/feKYUxNz6Cq5nV5JQT7XA2b3xjHOx23b28/c9hMGKkMybWevFGLVlgtT2+P1XYWncJHyQk99xg0hpnJXFsRFl+hZT37KUC+DvqZKHuhRDDFI/fK+UUprmpCVZskfiK/3zwOlhRpzQrRGqes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RHNmvvkP; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SHqVWmKS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E18F5C4AF0C;
-	Thu,  1 Aug 2024 03:19:52 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RHNmvvkP"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FBB5C4AF09;
+	Thu,  1 Aug 2024 03:19:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722482394;
-	bh=hq4fbO0nCQySaHAPhslUho5zCLTVTAPlslWr291HDKk=;
+	s=k20201202; t=1722482397;
+	bh=jBGCi2K0Zk3P/o0nSkNiteWFwg/e1ZpKXXHW5soEX7I=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=SHqVWmKSl9pE1TV+5t/34D4SnsqzdPUhVXoG0ScO8o0tVa1dVRjk1d/gjxXugY3+T
-	 vRKXmCYUTo2roTXVjOieKNvOSxBdx42UYhVQ+AGnqs5SEhitsIwkg8ufh1tNCkLsu9
-	 8OMPKTY1WikNJmfMTQ+sIBm7UJWD8tIeiGvCGAyG8AazMP3ummgYoytr97YKZxzoNL
-	 hstTmA5aIL/ZexhDYActmyaO8FGRuDOxf+A6+Yi7SbETEUcGKDWKlj7wLZSOpCHalq
-	 J8ym84hpfeLibXinSm9J8s8S/2g4FzLqtQ/5S/4wWehQb+602QsdWIIhbO9LxIUw3Q
-	 zTUmoxDzzX/zQ==
+	b=RHNmvvkP5Ior2TiCEPKNaIEnQXuysvqGBi8IFM71CaEqoXuPbYHFUrd3Fsj5DXUm6
+	 d2F4CpYocsA1Mp3Rqy7tYy80ek2pTrIvyRamU6B2AQ+yCfDIWhvk/CIZF9fgcj7Fss
+	 prmOOx4NTaRFLRzHzXSQBuhXv/6XlS3l5Vj3U+lb1AJmsZyI4w05jgAFGI0QkxAxwG
+	 Vm+ZQX512F6evl4g0rQpC9tGVTV+0V2r4ab9maM83cQvkkVfTOMtLpA7I9PKLly/Yu
+	 /74y5wzj0dX4S3RROL3HBOFtYP86Ooyfd2ADYV+yINFbP1lYG7K2QE6IExZ9UqnnLp
+	 C3fdLwIehmAlQ==
 From: Bjorn Andersson <andersson@kernel.org>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
 	Konrad Dybcio <konradybcio@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Cc: linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Bjorn Andersson <quic_bjorande@quicinc.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Subject: Re: (subset) [PATCH v2 0/7] arm64: dts: qcom: sc8180x: Enable the USB multiport controller
-Date: Wed, 31 Jul 2024 22:19:38 -0500
-Message-ID: <172248238596.319692.11676986885229900887.b4-ty@kernel.org>
+	devicetree@vger.kernel.org
+Subject: Re: (subset) [PATCH v2 0/7] clk: qcom: merge SM8550 and SM8650 display clock controller drivers
+Date: Wed, 31 Jul 2024 22:19:41 -0500
+Message-ID: <172248238602.319692.716272921962900816.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240730-sc8180x-usb-mp-v2-0-a7dc4265b553@quicinc.com>
-References: <20240730-sc8180x-usb-mp-v2-0-a7dc4265b553@quicinc.com>
+In-Reply-To: <20240717-dispcc-sm8550-fixes-v2-0-5c4a3128c40b@linaro.org>
+References: <20240717-dispcc-sm8550-fixes-v2-0-5c4a3128c40b@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -57,24 +55,31 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Tue, 30 Jul 2024 20:24:37 -0700, Bjorn Andersson wrote:
-> The USB multiport controller found in SC8180X is used to driver the
-> camera in the Lenovo Flex 5G, and a couple of additional USB ports on
-> the Primus AUX board.
+On Wed, 17 Jul 2024 13:04:27 +0300, Dmitry Baryshkov wrote:
+> The SM8550 and SM8650 platforms have nearly the same dispcc block and
+> very similar drivers. Seeing fixes being applied to one of them, but not
+> another one, merge two drivers into a single codepiece.
 > 
+> Depends:
+> - https://lore.kernel.org/linux-arm-msm/20240716-topic-sm8650-upstream-fix-dispcc-v3-0-5bfd56c899da@linaro.org
+>   (patches 1/3 and 3/3 only)
+> 
+> [...]
 
 Applied, thanks!
 
-[3/7] arm64: dts: qcom: sc8180x-pmics: Add second PMC8180 GPIO
-      commit: c8d8e936bc820eaad0ca725ac0456f4839e50ad3
-[4/7] arm64: dts: qcom: sc8180x: Align USB nodes with binding
-      commit: 82a40c7b06566bf0ff4fb7fbf29ab7b267c78f03
-[5/7] arm64: dts: qcom: sc8180x: Add USB MP controller and phys
-      commit: 96aab8ff59a9fca54dd0e13660684b4a8e73e1a3
-[6/7] arm64: dts: qcom: sc8180x-primus: Enable the two MP USB ports
-      commit: e12953d3b126dbff40a8531b99c377d653f0e27d
-[7/7] arm64: dts: qcom: sc8180x-lenovo-flex-5g: Enable USB multiport controller
-      commit: c1ece392ed906cc598a7b96234961721060aae05
+[1/7] clk: qcom: dispcc-sm8550: fix several supposed typos
+      commit: 7b6a4b907297b28727933493b9e0c95494504634
+[2/7] clk: qcom: dispcc-sm8550: use rcg2_ops for mdss_dptx1_aux_clk_src
+      commit: cb4c00698f2f27d99a69adcce659370ca286cf2a
+[3/7] clk: qcom: dispcc-sm8550: make struct clk_init_data const
+      commit: eb64ccacd0cd9343926424f63fec76e73eb815a7
+[4/7] clk: qcom: dispcc-sm8650: Update the GDSC flags
+      commit: 7de10ddbdb9d03651cff5fbdc8cf01837c698526
+[5/7] clk: qcom: dispcc-sm8550: use rcg2_shared_ops for ESC RCGs
+      commit: c8bee3ff6c9220092b646ff929f9c832c1adab6d
+[6/7] clk: qcom: fold dispcc-sm8650 info dispcc-sm8550
+      commit: 802b83205519e4253b873bef5c095b147cd69dad
 
 Best regards,
 -- 
