@@ -1,50 +1,53 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9178814265C;
-	Thu,  1 Aug 2024 03:19:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB745149012;
+	Thu,  1 Aug 2024 03:20:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722482397; cv=none; b=HGLzftAnBpgEh9FO7FEP0VEWhYQCT0pPGnvLwfRwJ55beja3PCNICsvP/43eRt7rZmlZn/E8P7a8KK14eWs0g54IL2H38t3gNbTfBHYvR6L4LsFpt03m8Zq1tWQwq11eyRTjhWHpqL+k9d5iMoUhsZ63p1LZu4PsrSihgGuSRIQ=
+	t=1722482403; cv=none; b=EZjyQReZH95sEjb7KcSFwvDgfiLMCjf8OYCsV2eJheR7MZ7gk+fHsG8WYj4Nk7bnCAHXYicLizf0UqJLW9tKTtacbwZ6wV/DlHOIHEKWgYX/IDShDGbcMoqWATm41di83qfq8IadHasoNRrXVyPaHk4JvHyJ8xzEWkxtMkPLX/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722482397; c=relaxed/simple;
-	bh=jBGCi2K0Zk3P/o0nSkNiteWFwg/e1ZpKXXHW5soEX7I=;
+	s=arc-20240116; t=1722482403; c=relaxed/simple;
+	bh=BvIdfDclaFLw7RpmEnVouQK1tmMNfr0+G9FNeexH9b0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GuHcH47LDAz2g7rMoZreiILQOMI/feKYUxNz6Cq5nV5JQT7XA2b3xjHOx23b28/c9hMGKkMybWevFGLVlgtT2+P1XYWncJHyQk99xg0hpnJXFsRFl+hZT37KUC+DvqZKHuhRDDFI/fK+UUprmpCVZskfiK/3zwOlhRpzQrRGqes=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RHNmvvkP; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=eJ0qNiIKTm8PlBA1vrqVqiIt5RA6g4mr7D4BJbiJF4OayNGRkGKLquxq3ie5TtV7V9bg1c5LKePSakQScof+2u8vOfYeOapfdoTJ58ce4romu4txTF8470roT6hcInvp8nYClyUDXLZ9KSowUvJYXk6zzUQjhUuvCvamAAReEds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hLaPU8qx; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RHNmvvkP"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FBB5C4AF09;
-	Thu,  1 Aug 2024 03:19:55 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hLaPU8qx"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FF0CC4AF0F;
+	Thu,  1 Aug 2024 03:20:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722482397;
-	bh=jBGCi2K0Zk3P/o0nSkNiteWFwg/e1ZpKXXHW5soEX7I=;
+	s=k20201202; t=1722482402;
+	bh=BvIdfDclaFLw7RpmEnVouQK1tmMNfr0+G9FNeexH9b0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=RHNmvvkP5Ior2TiCEPKNaIEnQXuysvqGBi8IFM71CaEqoXuPbYHFUrd3Fsj5DXUm6
-	 d2F4CpYocsA1Mp3Rqy7tYy80ek2pTrIvyRamU6B2AQ+yCfDIWhvk/CIZF9fgcj7Fss
-	 prmOOx4NTaRFLRzHzXSQBuhXv/6XlS3l5Vj3U+lb1AJmsZyI4w05jgAFGI0QkxAxwG
-	 Vm+ZQX512F6evl4g0rQpC9tGVTV+0V2r4ab9maM83cQvkkVfTOMtLpA7I9PKLly/Yu
-	 /74y5wzj0dX4S3RROL3HBOFtYP86Ooyfd2ADYV+yINFbP1lYG7K2QE6IExZ9UqnnLp
-	 C3fdLwIehmAlQ==
+	b=hLaPU8qxHA3u+fzhT1R0k2gU2WZyt8+l7tTrivnC7aKHacBi/sT0132YIzncQoTAR
+	 QZ3d11/n2WGaBq/Nf4kqOckVOUe97gOu85haofWwQ4MtqzbM2SUGKGgC9z7y6+eG0s
+	 URdkX+86/PKiMhDiyUYBob9ol88UncUzHiE8zub2QMvR0P2TPCzJjFy4Of4WRWWIdc
+	 d6y3NHKb1hrj+ciA78+aK2JUZH7qXcwvhwRKoRGEUTPkJ5SQl2j7UkrZxTj2DPXXxH
+	 iWfkCEPuI2/BPRKzuGlm6bu6D9cjYSTxgAt0QnXVrChgx5HCNdWMVnKtasslAqXEuV
+	 vPX3Hj26ZqIsA==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Rob Herring <robh@kernel.org>,
+To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
+	Konrad Dybcio <konradybcio@kernel.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>,
 	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: (subset) [PATCH v2 0/7] clk: qcom: merge SM8550 and SM8650 display clock controller drivers
-Date: Wed, 31 Jul 2024 22:19:41 -0500
-Message-ID: <172248238602.319692.716272921962900816.b4-ty@kernel.org>
+	linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org,
+	linux-pm@vger.kernel.org,
+	iommu@lists.linux.dev,
+	linux-gpio@vger.kernel.org,
+	linux-remoteproc@vger.kernel.org
+Subject: Re: (subset) [PATCH 0/3] Update Konrad Dybcio's email addresses
+Date: Wed, 31 Jul 2024 22:19:45 -0500
+Message-ID: <172248238591.319692.676661290519182446.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240717-dispcc-sm8550-fixes-v2-0-5c4a3128c40b@linaro.org>
-References: <20240717-dispcc-sm8550-fixes-v2-0-5c4a3128c40b@linaro.org>
+In-Reply-To: <20240726-topic-konrad_email-v1-0-f94665da2919@kernel.org>
+References: <20240726-topic-konrad_email-v1-0-f94665da2919@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -55,31 +58,17 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Wed, 17 Jul 2024 13:04:27 +0300, Dmitry Baryshkov wrote:
-> The SM8550 and SM8650 platforms have nearly the same dispcc block and
-> very similar drivers. Seeing fixes being applied to one of them, but not
-> another one, merge two drivers into a single codepiece.
+On Fri, 26 Jul 2024 13:18:22 +0200, Konrad Dybcio wrote:
+> Patch 3 should probably go straight to Rob's dt-bindings tree
 > 
-> Depends:
-> - https://lore.kernel.org/linux-arm-msm/20240716-topic-sm8650-upstream-fix-dispcc-v3-0-5bfd56c899da@linaro.org
->   (patches 1/3 and 3/3 only)
 > 
-> [...]
 
 Applied, thanks!
 
-[1/7] clk: qcom: dispcc-sm8550: fix several supposed typos
-      commit: 7b6a4b907297b28727933493b9e0c95494504634
-[2/7] clk: qcom: dispcc-sm8550: use rcg2_ops for mdss_dptx1_aux_clk_src
-      commit: cb4c00698f2f27d99a69adcce659370ca286cf2a
-[3/7] clk: qcom: dispcc-sm8550: make struct clk_init_data const
-      commit: eb64ccacd0cd9343926424f63fec76e73eb815a7
-[4/7] clk: qcom: dispcc-sm8650: Update the GDSC flags
-      commit: 7de10ddbdb9d03651cff5fbdc8cf01837c698526
-[5/7] clk: qcom: dispcc-sm8550: use rcg2_shared_ops for ESC RCGs
-      commit: c8bee3ff6c9220092b646ff929f9c832c1adab6d
-[6/7] clk: qcom: fold dispcc-sm8650 info dispcc-sm8550
-      commit: 802b83205519e4253b873bef5c095b147cd69dad
+[1/3] mailmap: Add an entry for Konrad Dybcio
+      commit: 72c93f3e0dcdc05fceafcb32e79352a45716d181
+[2/3] MAINTAINERS: Update Konrad Dybcio's email address
+      commit: fce6a1eefb2a1db706fa17ca21e3e7107811d2e8
 
 Best regards,
 -- 
