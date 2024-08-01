@@ -1,159 +1,121 @@
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D94A1EB4B1
-	for <linux-clk@vger.kernel.org>; Thu,  1 Aug 2024 17:18:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7F2A1B3F0A
+	for <linux-clk@vger.kernel.org>; Thu,  1 Aug 2024 17:28:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722532692; cv=none; b=Je4vGG1oXr9aewBkfRQIOQROp2s5UIm8YXrarkU/7jMAXF26K1CRlCYXVPxWuyqwNthGYEAlw2yGKzh3h3sjXoOftNlawK8vUgberxnb2rtjFyIq6PbAIjBxG0OdkNv/E7ZiQY18s/W6IgOm38SbkcSWFoj5UvTmL33wQ2bf4z0=
+	t=1722533328; cv=none; b=pKsvBlAOrlbT9LfvrLQmOuZfILyYsjKVJD0kYG0WDvezQpjS2Njec27w+TEiHwaK/03T1hjdlpoDKrgNJg97kzafBgecWaJgPYO3DF+vQmk7zGQaKJLG8yMcF3VaS3L+Z0P7kWmA3KMimR25aPO3hXSLwCj14Zu4izKfvrNCqHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722532692; c=relaxed/simple;
-	bh=D1l8fJ9IOVEp5bp3M5j/xHgBRyhU68qfJLkpQlB4M2A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jipWHzAHmRVeRdjhvKmTHMfQnADb16G3WaQ2wdaDNDDhXTYBuS2BdqxQo2BRRphxIk+1dVC+/R9RAiZRJaQq0PQMSAD//PKjhHO4vOOlXZVX4uLhi4dLaml8N1H4uJIYDJBqI0DbrqINyrJZhKpfQWbCYHIwTUZGFMoutBLcJwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=16oJAglR; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1722533328; c=relaxed/simple;
+	bh=xYp1qctPQ3XCpMinrXG+jW9arJfjc0jjCGgwQ6JAppA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PToweJz6jO0xvTdLRnmj4BsnCbQT1ppfmV0kBrKQYHX50HHeWJlkXq88pVJDvdDLeUEQZcqoL4gH3Kno7VsT0wo8SKS/Unm0mVF/mWa5rt2K2f3aicx8E1s+csHeG3GXPS/qBDdLXOSsIpfZELaCrwTOoByg4PXi9T9F4kpmAoI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=oh8vdwfk; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="16oJAglR"
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a7aa212c1c9so924440466b.2
-        for <linux-clk@vger.kernel.org>; Thu, 01 Aug 2024 10:18:08 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="oh8vdwfk"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42816ca782dso46698945e9.2
+        for <linux-clk@vger.kernel.org>; Thu, 01 Aug 2024 10:28:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722532687; x=1723137487; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ACC4xtbalx3W9rURwHmsxKvcHM8GOzus11mFMGYdOPw=;
-        b=16oJAglRUMxTramndWgm1VuhFlhrwiJPYickoLuvEHWel5FFnTznLAmKOhNTuTGgvt
-         HEbbPsSiH5Pr76uXah8i4PDG42M3DvOVSbTZPbm+cuIA0AGwh2PjoIWh69tOhlWKKmvg
-         ltG/oxuwQrKirFhoByAttJ6CsGK481TqfS+ZDu+FFjBAyOjItmIwohcCVPnl/IDVWA6D
-         wm2BhT4tPaGD6Vg7f8vm6P/QZ9TCzo75cfBUVEFHOUrT+lB98sh/fYjFB7GkGP9ddTbo
-         JdyWkuCLNe5ZJ1ncT73mvxa6WrHr/sUVKnYpK6t3iK7DMCgEKnCh3ZjA6Gnzph3Q3a+j
-         QeIg==
+        d=tuxon.dev; s=google; t=1722533324; x=1723138124; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XnwjnjetY7dv9eCyx710zpOpIL7zDgItoHiS/DQyjbw=;
+        b=oh8vdwfk+W1mR2x14bS68ATlOQLJ6HZMU1zdufP5d7Rg6lIs+9UDYcgIvT9WdT7nNC
+         OQp+OSJqTASdPbruP/YWNgNMJNjfJQLTQkOShdz3Z0n4St/2AKtNCdxJiW8ZYo6/DI/O
+         efgyLeMxmgpZ5eT/Ob0s6nK6qRnl6MwEhqbEZ2X74KpwkSpy/Klks5vPzmmmCSDsnw1o
+         zO44yDnWXi7SIW4Cs4s3mlthO+DKzuR9ixrs1cd3cIWFTvNyYiKlRJdLbdcOjx/SaYog
+         8WCwhDtQTxsKzz6bWK59vjPHdEfNS60L0waatMGlOsVE2FYRgZkJm3uSeA6VHPwPNpAS
+         Gigw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722532687; x=1723137487;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ACC4xtbalx3W9rURwHmsxKvcHM8GOzus11mFMGYdOPw=;
-        b=RH2JsUeKK2VLrRZDPQ6sRSFS8tQqk9SX8ypsm8l8BztgO8DQP7ltVdsrJgyVxuburr
-         YaedMtZuixBSmjMNh6zCWGum0y66I9C0LCmy5yowQyOOC1zT5QwzF+M26aErmtbpWXKp
-         P2BojamwB8DIAspTcpfjQaQlA4HZk+KLJodrlcWusKBf17Rl1rg0VvnlsjHd0PXz0a8U
-         dUSc2vIw6VU6iuB6GzihLpDn42ew5TjnYeqP3iAtpMWo6v6XOrSGS/xiebHcxyqgwJcY
-         FsASFSH4CNtnvDhyma2LLcgKTkdls+tNSouHA779uUg11bFY9+5l/TtKyCZRu6Wx0toF
-         Go8g==
-X-Forwarded-Encrypted: i=1; AJvYcCWH3orJQeRo4wooy0i2+a0BHuQH5eBZO14TwMqXkAowrV3Pes9sppBGJ3M3zKhCnJ2cffs95IDKNBM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEwkOR8KBg2tl1/ujJD3Tl05eG2mUykUBSRojgDup0mHuFRIxc
-	D+TL7PJt0yxgfDLl/jCZDczvYjmi56aHN0ub32l2KXr9MFLM2O6abHzsxU0zKP4=
-X-Google-Smtp-Source: AGHT+IHPKrrCLi1scWRo4nF31r+dCA7OhuJHW3QejJLrMZGNWRmU29yH/LPM81ati1AALihdZLT14Q==
-X-Received: by 2002:a17:907:9620:b0:a7d:a25b:31be with SMTP id a640c23a62f3a-a7dc4ffb31dmr83501966b.39.1722532687070;
-        Thu, 01 Aug 2024 10:18:07 -0700 (PDT)
-Received: from localhost ([193.196.194.3])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9c0c526sm3429666b.69.2024.08.01.10.18.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 10:18:06 -0700 (PDT)
-Date: Thu, 1 Aug 2024 19:18:04 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Thorsten Blum <thorsten.blum@toblux.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, erick.archer@gmx.com, 
-	gustavoars@kernel.org, christophe.jaillet@wanadoo.fr, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] clk: hisilicon: Remove unnecessary local variable
-Message-ID: <bod2xxpj6xdutfiqq6zykcaxt3xyqor5qxiyi23g7oek3ndgpm@njl5h5ax5y2a>
-References: <20240801103616.20430-1-thorsten.blum@toblux.com>
+        d=1e100.net; s=20230601; t=1722533324; x=1723138124;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XnwjnjetY7dv9eCyx710zpOpIL7zDgItoHiS/DQyjbw=;
+        b=q3Mn2KoUiv4tIHErXjga5oG8rrclDQKcWs0Q+iShLp6z/Et85HqkbhxTsRDBYciaFe
+         3jkjQEz5FPaydoNE1ZdvCrVpIWcPBy7sDN4vBK5UhO4K1g64Z56MhBzqldt5UzQDiGSx
+         sO7gMuw3Gq2Jt7ORe2maHXWuKUZY1XVxh/qUiDIc4nHS3ML+TSj11gqb1rs/IyNUKQQ8
+         18RPS7OM6xV2vEHjhffylZB6DLDfI4dGPR7ZKM86EGA1Cg4LjYQDaNom6mtPZPS6YuXq
+         GQm96CGOMSYmCfh5FHgcMnosNN6WnMRFbYkYy4VBuAvI9TVUpHxx2SBia+sUNisWSgTK
+         1JZA==
+X-Forwarded-Encrypted: i=1; AJvYcCWi9L4P5rBK1ibXAwHpAWnH00ZQpJn7oPCBAfLtYZRfNaullHH8iwoiUKH+7hxIjKQToKjL/IPPR83muQsrpFtVOI1caE3dwf4U
+X-Gm-Message-State: AOJu0YwkfH8JUV+D5mkjykhtA9C6/dSykwk+5lqRaJNyG3EOA/oWqPti
+	oYPxLiJAEmv3wLWleKPqkS6931uNOi1EEUMhswwZMOvRnMGqdwVgMuIg43KPFD0=
+X-Google-Smtp-Source: AGHT+IHS4knhHpTTc3R8fFT40aZdqgWtj3Bjf8KF8/wk14Wl+xIhW2xqBDu0DirWFImXVhfOp8H0SQ==
+X-Received: by 2002:a05:600c:3b17:b0:426:58cb:8ca3 with SMTP id 5b1f17b1804b1-428e6b07c64mr5187045e9.21.1722533323640;
+        Thu, 01 Aug 2024 10:28:43 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.44])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282bb6405csm65736205e9.34.2024.08.01.10.28.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 01 Aug 2024 10:28:43 -0700 (PDT)
+Message-ID: <80d56236-2499-4c89-8044-6a271e47515d@tuxon.dev>
+Date: Thu, 1 Aug 2024 20:28:41 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="mmlcqgozszpb6sg6"
-Content-Disposition: inline
-In-Reply-To: <20240801103616.20430-1-thorsten.blum@toblux.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 8/8] arm64: dts: renesas: r9a08g045: Update
+ #power-domain-cells = <1>
+Content-Language: en-US
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: mturquette@baylibre.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, magnus.damm@gmail.com, ulf.hansson@linaro.org,
+ linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pm@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240422105355.1622177-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240422105355.1622177-9-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdWhRRdfoqg_o6bU7jjt5_Di0=z7MJ4fMh=MJ0m8=u4tgg@mail.gmail.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <CAMuHMdWhRRdfoqg_o6bU7jjt5_Di0=z7MJ4fMh=MJ0m8=u4tgg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+Hi, Geert,
 
---mmlcqgozszpb6sg6
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 01.08.2024 19:13, Geert Uytterhoeven wrote:
+> Hi Claudiu,
+> 
+> On Mon, Apr 22, 2024 at 12:54 PM Claudiu <claudiu.beznea@tuxon.dev> wrote:
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> Update CPG #power-domain-cells = <1> and move all the IPs to be part of the
+>> IP specific power domain as the driver has been modified to support
+>> multiple power domains.
+>>
+>> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+> Now the watchdog fixes are in v6.11-rc1, I will queue this in
+> renesas-devel for v6.12.
 
-Hello,
+Only the RZ/G3S support has been merged.
 
-On Thu, Aug 01, 2024 at 12:36:16PM +0200, Thorsten Blum wrote:
-> The local u64 variable refdiv_val has the same value as the local u32
-> variable val and can be removed. Remove it and use val directly as the
-> divisor to also remove the following Coccinelle/coccicheck warning
-> reported by do_div.cocci:
->=20
->   WARNING: do_div() does a 64-by-32 division, please consider using div64=
-_u64 instead
->=20
-> Use the preferred div_u64() function instead of the do_div() macro.
->=20
-> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
-> ---
-> Changes in v2:
-> - Use div_u64() instead of do_div() as suggested by Stephen Boyd
-> - Link to v1: https://lore.kernel.org/linux-kernel/20240710201844.710365-=
-2-thorsten.blum@toblux.com/
-> ---
->  drivers/clk/hisilicon/clk-hi3559a.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
->=20
-> diff --git a/drivers/clk/hisilicon/clk-hi3559a.c b/drivers/clk/hisilicon/=
-clk-hi3559a.c
-> index c79a94f6d9d2..8646e9d352ed 100644
-> --- a/drivers/clk/hisilicon/clk-hi3559a.c
-> +++ b/drivers/clk/hisilicon/clk-hi3559a.c
-> @@ -407,7 +407,7 @@ static unsigned long clk_pll_recalc_rate(struct clk_h=
-w *hw,
->  		unsigned long parent_rate)
->  {
->  	struct hi3559av100_clk_pll *clk =3D to_pll_clk(hw);
-> -	u64 frac_val, fbdiv_val, refdiv_val;
-> +	u64 frac_val, fbdiv_val;
->  	u32 postdiv1_val, postdiv2_val;
->  	u32 val;
->  	u64 tmp, rate;
-> @@ -435,14 +435,13 @@ static unsigned long clk_pll_recalc_rate(struct clk=
-_hw *hw,
->  	val =3D readl_relaxed(clk->ctrl_reg2);
->  	val =3D val >> clk->refdiv_shift;
->  	val &=3D ((1 << clk->refdiv_width) - 1);
-> -	refdiv_val =3D val;
-> =20
->  	/* rate =3D 24000000 * (fbdiv + frac / (1<<24) ) / refdiv  */
->  	rate =3D 0;
->  	tmp =3D 24000000 * fbdiv_val + (24000000 * frac_val) / (1 << 24);
->  	rate +=3D tmp;
-> -	do_div(rate, refdiv_val);
-> -	do_div(rate, postdiv1_val * postdiv2_val);
-> +	rate =3D div_u64(rate, val);
-> +	rate =3D div_u64(rate, postdiv1_val * postdiv2_val);
+The watchdog fixes that allows us to use this patch were submitted as RFC
+but got no input from Ulf, yet.
 
-Without looking at the bigger context: Can postdiv1_val * postdiv2_val
-overflow? (If this is a problem, fixing it justifies another patch, so
-this concern shouldn't stop this patch from being accepted.)
+Thank you,
+Claudiu Beznea
 
-Otherwise looks fine,
-Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@baylibre.com>
+[1]
+https://lore.kernel.org/all/20240619120920.2703605-1-claudiu.beznea.uj@bp.renesas.com/
 
-Best regards
-Uwe
-
---mmlcqgozszpb6sg6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmarw0kACgkQj4D7WH0S
-/k7hggf+IaA83JkApvu4vpkYBHZyRNIf+Yv+Wy3lQ94z/Gs0F9BZADcw65BC3iuF
-Y3PZ460+MPnCYB6RSb1/H9RxnH1BjZctC1KEhUcaXIWKMuHwLXjJDZpbMnHHgoG2
-qUg8oKf3K7cMyePbhehMAhpvtXzZcvZOjKwVj7Lvrf+uu3mqggzvqq3mrssEvtsE
-nbWnk8mYFfPa+UPz6kErGt3Rkboi9sDXzdojr5ZN1USPtsu87jbcH0yq56+B5f9G
-REGHKDnn6c+H1xQ7mQtL4nQwyePYAZyol1EHkO6VnKW0f1CNrl7gAYmTkFhsGpcq
-KpsbmnAtyXyEShNwEf8QB9Fm0qwKAw==
-=OnPO
------END PGP SIGNATURE-----
-
---mmlcqgozszpb6sg6--
+> 
+> Gr{oetje,eeting}s,
+> 
+>                         Geert
+> 
+> 
+> --
+> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> 
+> In personal conversations with technical people, I call myself a hacker. But
+> when I'm talking to journalists I just say "programmer" or something like that.
+>                                 -- Linus Torvalds
