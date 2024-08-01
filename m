@@ -1,136 +1,139 @@
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F7AD16DC1A
-	for <linux-clk@vger.kernel.org>; Thu,  1 Aug 2024 08:27:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BED08170A37
+	for <linux-clk@vger.kernel.org>; Thu,  1 Aug 2024 10:21:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722500853; cv=none; b=SQ/gK0IIqlvEU28zczjm2Bdcj0ZdqYc8ofPdUqj2sa2y0qjes+ST/rf/3JjTfCM6Fh/EBXJ6p+jyTKdxAsbQ/D0FtR0ZEI2zjN91IX5PgH80G7PbUbrcR+12a8+/H59jxgkHEsNpNsqMBjwBuLhfeRBt/D1KueZcbj9gQDXf4a4=
+	t=1722507681; cv=none; b=B0WEBZoNKvEoIkNrF9Q+QOhQJnRkr8/9bJFdEixpkgVGp6wjawhyoNIAJGZwHPTn67EgPAM8A+4GHoR2gHjQ0LuojgSLhqGPIGSZYY8uaKAqvzT82kR6BHcJRNbw/KjgxIdeITRuoVBByDn9w7NCc0p6FYscHo2lWLu70eup9A4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722500853; c=relaxed/simple;
-	bh=jvsobS85OVCahF1SQTwtsolA3mYyFo9+mVdQPSBBk8I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lrIOdlulHnY48E/OX4A/5tJ3oA/xHfF+NHyU765hjj0LS5dF1YdnftnRKZXO74rbVSoMyQjW568sSeZkr2FMzqDUzI5zB2Lh4KRBmQbZzdB/GJNDL1+94RsexeQgouUdZjHGv4QoByksxtEzIzQWWVEs4UwTUOPBS9ssXuzrH8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=q0zaNRWD; arc=none smtp.client-ip=209.85.167.45
+	s=arc-20240116; t=1722507681; c=relaxed/simple;
+	bh=1w2sEv3mO93UTbBWty5+SXCjCXTrLfrjbRNFOcTaVdc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=oNvKCtgxHqXBPW4D17QKGl1ck6xTXwjPUARxaZvhB7Rnh+jk2PzqpduqPub3D97+/7p3WzIP1pvgmC5Crn6fDvhUDwHrP/QLse8N/w4YsBCU8yQPewcbbyOCQgz3TifrSD/uw+2+a4NpWFekZV2RCokw3lOLj+oUxetoT2+WGqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dZIebzGN; arc=none smtp.client-ip=209.85.208.175
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q0zaNRWD"
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-52efd855adbso9635790e87.2
-        for <linux-clk@vger.kernel.org>; Thu, 01 Aug 2024 01:27:31 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dZIebzGN"
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ef2c56d9dcso85461471fa.2
+        for <linux-clk@vger.kernel.org>; Thu, 01 Aug 2024 03:21:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722500850; x=1723105650; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OD9G/3mCVlkVRRCgF4YN9knfhI9XiLKaZwoXUSFER6s=;
-        b=q0zaNRWDIFzhheLn+2EVfa5HNVN1/5kX9eVmIs9wl2I0pNPoE1RPBkTBZVyqkec3q0
-         nX141WpEfRCeeswMYL7MMYS+iIZ+TaFkkEhWKC0pX/mZI8zNKHtV72xsJOz/YhNfnO+6
-         /BHpzLul7dr0nqd+LSK1K/jhH5UruJc+njhwwet2F1OXXyegm+9lZzhKAzjddwczBnKG
-         kD4I0emKBqRwLf0YaQUNCotxkIH5q+U9kwknL2VCwblBHxwZ3FAT6/peaUVM7WOKxgH1
-         2VzAOR5LwDitsCkPAkAm0H93tiMoQwDI+GWZDnSlLLemrrC27FEMUCDaX4T+uRTXdkOX
-         PQlw==
+        d=linaro.org; s=google; t=1722507678; x=1723112478; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=jlj+yWmKtN5l/Z+12/zWK6DoBGtel4lk94/62hlvDME=;
+        b=dZIebzGNoYARdWjWC6egLyoMj9sVldV/xD4o5rxhdivvO1w3zyXZKPcuz+XfqmBiaM
+         veTUPdNMocF69bAHQsaImCLLia8cCq1joCOs3Rel5I9wd6jeb+zeYBi7dY46H/tKP0Qv
+         KK3iM4P9UP/EJ3Z57GDVGK7L5ddxdy0c2rjSNwfsRB62aQwOQW9CRh8qsvlWr7LGePw5
+         9GKQygSluyUaSOLgONmF30jBR/s+S2o7baC/mQiNuZKKWp6F85MzkQdJzknHPA9cfo2T
+         tJunOVBS50YH8altgInHkUwR7LdYNGpRm7s6wfSDaHIMoJvaad3O6Z5TjgqU1+VboJZj
+         u64Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722500850; x=1723105650;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OD9G/3mCVlkVRRCgF4YN9knfhI9XiLKaZwoXUSFER6s=;
-        b=D+7YoePDw0KHqPfVkWXO6nRoVrUKd4xOFvlo6fzDNnmaY+kdvGcgs/CNhQdUP95BhE
-         6UYkNpnEjFV4ejb0yQc3trRO5om2KcmHS9EsMwkn51dfp6Uo70KMRdzO44ulz1iJW5AW
-         zyE3wzfnC3XX1t1JUZsEhST2hhoFvliXt7zm5B8I9u2MSHyMRKrS3XRiO5GxIEUyx889
-         CfxFtv/M/Cl0Tu0h/vsb0ZX04rSQhiwx0e6m0aRX+FMCFjnrK3MFtkHElL1wS0/FvMoN
-         VFNgkU1Pnmff6uDwdWnCRrEOeyIpryJJaj+9A1r3qoRop84m0ZiedSWnBWahNjs2KKXR
-         0Icg==
-X-Forwarded-Encrypted: i=1; AJvYcCVNxoefg+kbfIB8UnEBF7TdpUa/G7siCIZdnSlFyBlQiBp70ao6qSyBCObznij34HMm3nck4z7UflyaiIprDbWlXGbPw6R2Mx3q
-X-Gm-Message-State: AOJu0YxjeG7O/l8ckjAHSn5iP0CBdPvCFLF+fc+nIO9QrJO34TH4eyZj
-	2V5+STUpBZb4KMyveaTQDApJnveuFXNG8t+968fXuluPlNREgTvfNFKRfpq8eew=
-X-Google-Smtp-Source: AGHT+IFMDpzmXM0CWf5tfKiNvDCH2OumQvacpGxa6JDE2TzEZY8ZGmaMFzWYonjhfvNnmFKelVat9g==
-X-Received: by 2002:a05:6512:1296:b0:52e:f2e8:1646 with SMTP id 2adb3069b0e04-530b6214eb8mr1091075e87.58.1722500849604;
-        Thu, 01 Aug 2024 01:27:29 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (dzdbxzyyyyyyyyyyybrhy-3.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::b8c])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-52fd5c2bfaasm2520775e87.256.2024.08.01.01.27.28
+        d=1e100.net; s=20230601; t=1722507678; x=1723112478;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jlj+yWmKtN5l/Z+12/zWK6DoBGtel4lk94/62hlvDME=;
+        b=raoGIuNlBUPxZZ5QdoU8VW2S0wQXnjepkr51/puAPm+xYHtvf/WOYdBCMyaQnK13Fh
+         3N9f26Bo2hgGMZHdyJ6/6U2eX6FyB6Qa2N4TRsiZLqVzfIEqx/kHYgYnKaWzN5FUSOCP
+         kvLm0Cpum0rLYktrfrSCI/Wx88cyvqPJN74tCJPYl/TpOmbvlz5guPrRVjNEM7Fr2ecY
+         Y6k/xfBku8jErAdEu0r1K+dlz4TYN/3ruPhwo55FodQEMhVdJ8tJg6L7OTEC5sojZ64V
+         k2ChttllePjGkg9TL/o3tNhghDmt0dPNRICwj5cg1CiHYjGrbj73oRLEXq7XSbvrsKyp
+         PUCA==
+X-Forwarded-Encrypted: i=1; AJvYcCWGOaPgFH2XB5+Rc6jDUX1y3gDCBSDuE4pzim4zVRCg4N+mZIE/1kozql6DpzMch/mLOYysWKluSJ/jK4STGvFjQU112gebmsNZ
+X-Gm-Message-State: AOJu0YxeWKgEO6ZtwzKyGQnbSqGcFF3sWTNeydmKbjZwWBsB4f73iZzk
+	vyvNF09czVaCuMOvbSrk84LEdA9CIKbEOpyy7u8CL2TDGKaHvl9Qy/U1TwwG5y0=
+X-Google-Smtp-Source: AGHT+IGFSPm7v8ZK5AOlXNOPGo8Mx26FbnJnvQuJFQFkkN6gAYG3IGJNkhFuUYXqMVaXR2wtP4rzuQ==
+X-Received: by 2002:a2e:b056:0:b0:2ef:24e0:6338 with SMTP id 38308e7fff4ca-2f153109f54mr14499711fa.27.1722507677510;
+        Thu, 01 Aug 2024 03:21:17 -0700 (PDT)
+Received: from [127.0.1.1] ([82.79.124.209])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282bba283fsm51389035e9.46.2024.08.01.03.21.15
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 01:27:29 -0700 (PDT)
-Date: Thu, 1 Aug 2024 11:27:27 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Danila Tikhonov <danila@jiaxyga.com>
-Cc: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, p.zabel@pengutronix.de, 
-	vkoul@kernel.org, vladimir.zapolskiy@linaro.org, quic_jkona@quicinc.com, 
-	konradybcio@kernel.org, quic_tdas@quicinc.com, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux@mainlining.org
-Subject: Re: [PATCH 08/10] clk: qcom: videocc-sm8450: Add SM8475 support
-Message-ID: <zs6fwvt4fcd25wnvepcj3reh6or5xcljcuusj6xmyppsgaimxi@py54xfhrwr3v>
-References: <20240731175919.20333-1-danila@jiaxyga.com>
- <20240731175919.20333-9-danila@jiaxyga.com>
+        Thu, 01 Aug 2024 03:21:16 -0700 (PDT)
+From: Abel Vesa <abel.vesa@linaro.org>
+Date: Thu, 01 Aug 2024 13:21:07 +0300
+Subject: [PATCH] clk: qcom: gcc-x1e80100: Fix USB 0 and 1 PHY GDSC pwrsts
+ flags
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240731175919.20333-9-danila@jiaxyga.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20240801-x1e80100-clk-gcc-fix-usb-phy-gdscs-pwrsts-v1-1-8df016768a0f@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAJJhq2YC/x2NQQqDQAxFryJZN5ARsdKrlC40ZsbQYodJbRXx7
+ oauHg8e/+9gUlQMbtUORb5q+p5dwqUCnvo5CeroDjXVDXUUcA3iIEJ+PTExY9QVFxswTxum0dg
+ w/4p9DNvYkwzXLrRNBN/LRbz9f90fx3ECLuJDV3sAAAA=
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ Rajendra Nayak <quic_rjendra@quicinc.com>, 
+ Konrad Dybcio <konrad.dybcio@linaro.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>, 
+ Sibi Sankar <quic_sibis@quicinc.com>, linux-arm-msm@vger.kernel.org, 
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Abel Vesa <abel.vesa@linaro.org>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1426; i=abel.vesa@linaro.org;
+ h=from:subject:message-id; bh=1w2sEv3mO93UTbBWty5+SXCjCXTrLfrjbRNFOcTaVdc=;
+ b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBmq2GXS8lloMlaNdH4nPkAQziRD5N6S7RTl+NAl
+ Qh023qqZdeJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZqthlwAKCRAbX0TJAJUV
+ VvKYEACuIJccxhmTQYyrXJuggacL9Pc3hsUPWgFl/McffyRUEli88+FRoOTyAQ4p7nImxiHaPqj
+ IIjgtTJ/oDpmycXIRnXKCvDIJz9qWfqB6zs6p8mnl+6SxfZCAEdUidJ5o0LF6lTICUuRidYMjd1
+ p8hEKpEix5V27aC3af307FLqiF9k+3Gg+G/Khb2TqTz8E+bzw9HtoT4VDUWXBcI3hkqKjAB5NDa
+ nhkwu9xPBmTeRr2uB0rWQQPJBTesui/Cqzmd+ykH6B/LD1CiwK6WhrO/yMXqpcePySDAIHAxJIx
+ rUgPpZ39vjbShTCzu7FUj8B2CQbVKef8cXWyFuFgczbT0H8Q0j5jbVwHItx5ctjF8WfWkZrGoal
+ 7pjtdq1tHVzj8nX+XLBHw9xvNG7PwjQf1IJC4E1FuRNv/hyHux454JUjIy1f/A8DRyfb0ajSt6t
+ WQmkpWu3lLEIOEzgsVdinvuRNpDJr5/rP82kGJgnDk7TvNnGfsPm1JmUJG3dSnnNqtFOi/VUwPg
+ q597+6ARd13mkKWSLnQRYNA+PMkMaUsiqOmm1RRagNwz3hLX7f5wCdz9GvIL3FaUailavnvNund
+ ezOKGDTWE96IHLOVCy4fmkBP89sZUwkdYs8eXuuCAPO2280IYJQrUCcpto0Ft8DDQ0mz1qQIMGO
+ I89XaIbkW+11pyA==
+X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
+ fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
 
-On Wed, Jul 31, 2024 at 08:59:17PM GMT, Danila Tikhonov wrote:
-> Add support to the SM8475 video clock controller by extending the
-> SM8450 video clock controller, which is almost identical but has some
-> minor differences.
-> 
-> Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
-> ---
->  drivers/clk/qcom/Kconfig          |  2 +-
->  drivers/clk/qcom/videocc-sm8450.c | 31 ++++++++++++++++++++++++++++---
->  2 files changed, 29 insertions(+), 4 deletions(-)
-> 
-> @@ -420,6 +421,30 @@ static int video_cc_sm8450_probe(struct platform_device *pdev)
->  		return PTR_ERR(regmap);
->  	}
->  
-> +	if (of_device_is_compatible(pdev->dev.of_node, "qcom,sm8475-videocc")) {
-> +		/* Update VideoCC PLL0 Config */
-> +		video_cc_pll0_config.l = 0x1e;
-> +		video_cc_pll0_config.config_ctl_hi1_val = 0x82aa299c;
-> +		video_cc_pll0_config.test_ctl_val = 0x00000000;
-> +		video_cc_pll0_config.test_ctl_hi_val = 0x00000003;
-> +		video_cc_pll0_config.test_ctl_hi1_val = 0x00009000;
-> +		video_cc_pll0_config.test_ctl_hi2_val = 0x00000034;
-> +		video_cc_pll0_config.user_ctl_hi_val = 0x00000005;
+Allowing these GDSCs to collapse makes the QMP combo PHYs lose their
+configuration on machine suspend. Currently, the QMP combo PHY driver
+doesn't reinitialise the HW on resume. Under such conditions, the USB
+SuperSpeed support is broken. To avoid this, mark the pwrsts flags with
+RET_ON. This is in line with USB 2 PHY GDSC config.
 
-Maybe it would be better to define new PLL configs rather than to patch
-the existing ones?
+Fixes: 161b7c401f4b ("clk: qcom: Add Global Clock controller (GCC) driver for X1E80100")
+Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+---
+ drivers/clk/qcom/gcc-x1e80100.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-> +
-> +		video_cc_pll0.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID_OLE];
-> +
-> +		/* Update VideoCC PLL1 Config */
-> +		video_cc_pll1_config.l = 0x2b;
-> +		video_cc_pll1_config.config_ctl_hi1_val = 0x82aa299c;
-> +		video_cc_pll1_config.test_ctl_val = 0x00000000;
-> +		video_cc_pll1_config.test_ctl_hi_val = 0x00000003;
-> +		video_cc_pll1_config.test_ctl_hi1_val = 0x00009000;
-> +		video_cc_pll1_config.test_ctl_hi2_val = 0x00000034;
-> +		video_cc_pll1_config.user_ctl_hi_val = 0x00000005;
-> +
-> +		video_cc_pll1.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_LUCID_OLE];
-> +	}
-> +
->  	clk_lucid_evo_pll_configure(&video_cc_pll0, regmap, &video_cc_pll0_config);
->  	clk_lucid_evo_pll_configure(&video_cc_pll1, regmap, &video_cc_pll1_config);
->  
-> @@ -445,5 +470,5 @@ static struct platform_driver video_cc_sm8450_driver = {
->  
->  module_platform_driver(video_cc_sm8450_driver);
->  
-> -MODULE_DESCRIPTION("QTI VIDEOCC SM8450 Driver");
-> +MODULE_DESCRIPTION("QTI VIDEOCC SM8450 / SM8475 Driver");
->  MODULE_LICENSE("GPL");
-> -- 
-> 2.45.2
-> 
+diff --git a/drivers/clk/qcom/gcc-x1e80100.c b/drivers/clk/qcom/gcc-x1e80100.c
+index 6ffb3ddcae08..80e90e31be33 100644
+--- a/drivers/clk/qcom/gcc-x1e80100.c
++++ b/drivers/clk/qcom/gcc-x1e80100.c
+@@ -6203,7 +6203,7 @@ static struct gdsc gcc_usb_0_phy_gdsc = {
+ 	.pd = {
+ 		.name = "gcc_usb_0_phy_gdsc",
+ 	},
+-	.pwrsts = PWRSTS_OFF_ON,
++	.pwrsts = PWRSTS_RET_ON,
+ 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+ };
+ 
+@@ -6215,7 +6215,7 @@ static struct gdsc gcc_usb_1_phy_gdsc = {
+ 	.pd = {
+ 		.name = "gcc_usb_1_phy_gdsc",
+ 	},
+-	.pwrsts = PWRSTS_OFF_ON,
++	.pwrsts = PWRSTS_RET_ON,
+ 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
+ };
+ 
 
+---
+base-commit: e92057c615fec749fefcca4ab28ee5c425e3691b
+change-id: 20240801-x1e80100-clk-gcc-fix-usb-phy-gdscs-pwrsts-6fa0eb78164f
+
+Best regards,
 -- 
-With best wishes
-Dmitry
+Abel Vesa <abel.vesa@linaro.org>
+
