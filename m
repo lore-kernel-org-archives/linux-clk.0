@@ -1,53 +1,58 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB745149012;
-	Thu,  1 Aug 2024 03:20:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E82E14B06E;
+	Thu,  1 Aug 2024 03:20:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722482403; cv=none; b=EZjyQReZH95sEjb7KcSFwvDgfiLMCjf8OYCsV2eJheR7MZ7gk+fHsG8WYj4Nk7bnCAHXYicLizf0UqJLW9tKTtacbwZ6wV/DlHOIHEKWgYX/IDShDGbcMoqWATm41di83qfq8IadHasoNRrXVyPaHk4JvHyJ8xzEWkxtMkPLX/Q=
+	t=1722482407; cv=none; b=lxVydyFv0fmDQntpno5l3bN8EG68Ea3bXcTFN8gA7JQll3pVBXTUau5FcxriubhArNFz8bfe60fq3HUQwNhxsmoOPKBlDNWfizbMwTY8hvPMWq/B3skdoPtOMzAkdSAsGqM9Q33NIMLp4OLIqS605QbpMDGP+xSL5K63wLgTsyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722482403; c=relaxed/simple;
-	bh=BvIdfDclaFLw7RpmEnVouQK1tmMNfr0+G9FNeexH9b0=;
+	s=arc-20240116; t=1722482407; c=relaxed/simple;
+	bh=NPDnxqoGeG1tj/Br1Mz6ALdJhdHfEc7EQxfanZLFBQw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eJ0qNiIKTm8PlBA1vrqVqiIt5RA6g4mr7D4BJbiJF4OayNGRkGKLquxq3ie5TtV7V9bg1c5LKePSakQScof+2u8vOfYeOapfdoTJ58ce4romu4txTF8470roT6hcInvp8nYClyUDXLZ9KSowUvJYXk6zzUQjhUuvCvamAAReEds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hLaPU8qx; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=IEltEMpNU8QZ4xVPe2kaSjmKAp0CjCe14lK9TFRrgaaX55Bl0RCFACgWIgXfBBw2XbHp2Cbm6pJ9eZsAh+9qpKTCg+kZLC36xZYcRF4LFxuOKY5xA3/b7TYUJLjAvTl7gXVfHfH4L2wYEUwybXWiV7+Xw0HzzPNLCxmfRVR5BGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cqONjEU4; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hLaPU8qx"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FF0CC4AF0F;
-	Thu,  1 Aug 2024 03:20:01 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cqONjEU4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CBF07C4AF0E;
+	Thu,  1 Aug 2024 03:20:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722482402;
-	bh=BvIdfDclaFLw7RpmEnVouQK1tmMNfr0+G9FNeexH9b0=;
+	s=k20201202; t=1722482407;
+	bh=NPDnxqoGeG1tj/Br1Mz6ALdJhdHfEc7EQxfanZLFBQw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hLaPU8qxHA3u+fzhT1R0k2gU2WZyt8+l7tTrivnC7aKHacBi/sT0132YIzncQoTAR
-	 QZ3d11/n2WGaBq/Nf4kqOckVOUe97gOu85haofWwQ4MtqzbM2SUGKGgC9z7y6+eG0s
-	 URdkX+86/PKiMhDiyUYBob9ol88UncUzHiE8zub2QMvR0P2TPCzJjFy4Of4WRWWIdc
-	 d6y3NHKb1hrj+ciA78+aK2JUZH7qXcwvhwRKoRGEUTPkJ5SQl2j7UkrZxTj2DPXXxH
-	 iWfkCEPuI2/BPRKzuGlm6bu6D9cjYSTxgAt0QnXVrChgx5HCNdWMVnKtasslAqXEuV
-	 vPX3Hj26ZqIsA==
+	b=cqONjEU4Sj94/hQV3IMGI1TqCxY4ELmBHpaXZPMCZVutz0ETD4F5HTfJ5Qbj8PbIW
+	 y5cUcgBAmAdLRadXqezImPpXNKEvIm+jQxbmxJX09gAHqM+9/39oRLDBKaaLQn14eg
+	 htttqYD0xIIwNUTTDVW271rWhwrUZPEgF8ydHX8+IUicjiNXU+ebA4uUC9/0dzVkKz
+	 mqW1Cl837ybAYVOn1WBFZFbU9bCLcgkROLbYdzoKFFv8IIFt9yE8Uvu5G9BpiaNRTX
+	 UM0ZO3QFix3FCOR+oT+E82Ly+ljkyMtG6yFWzKCxmD1aR+rmACUXmQkKFN8N8dQhbG
+	 TCRmYgnAIxjoQ==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Abhishek Sahu <absahu@codeaurora.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
-	linux-kernel@vger.kernel.org,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+Cc: Stephen Boyd <sboyd@codeaurora.org>,
 	linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org,
-	linux-pm@vger.kernel.org,
-	iommu@lists.linux.dev,
-	linux-gpio@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org
-Subject: Re: (subset) [PATCH 0/3] Update Konrad Dybcio's email addresses
-Date: Wed, 31 Jul 2024 22:19:45 -0500
-Message-ID: <172248238591.319692.676661290519182446.b4-ty@kernel.org>
+	Ajit Pandey <quic_ajipan@quicinc.com>,
+	Imran Shaik <quic_imrashai@quicinc.com>,
+	Taniya Das <quic_tdas@quicinc.com>,
+	Jagadeesh Kona <quic_jkona@quicinc.com>,
+	stable@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: Re: (subset) [PATCH V3 0/8] Add camera clock controller support for SM8150
+Date: Wed, 31 Jul 2024 22:19:48 -0500
+Message-ID: <172248238599.319692.12998742883120092670.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240726-topic-konrad_email-v1-0-f94665da2919@kernel.org>
-References: <20240726-topic-konrad_email-v1-0-f94665da2919@kernel.org>
+In-Reply-To: <20240731062916.2680823-1-quic_skakitap@quicinc.com>
+References: <20240731062916.2680823-1-quic_skakitap@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -58,17 +63,20 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Fri, 26 Jul 2024 13:18:22 +0200, Konrad Dybcio wrote:
-> Patch 3 should probably go straight to Rob's dt-bindings tree
+On Wed, 31 Jul 2024 11:59:08 +0530, Satya Priya Kakitapalli wrote:
+> Add camcc support and Regera PLL ops. Also, fix the pll post div mask.
 > 
+> Changes in V3:
+>  - Split the fixes into separate patches, remove RETAIN_FF flag for
+>    gdscs and document the BIT(15) of pll alpha value.
+>  - Link to v2: https://lore.kernel.org/all/20240702-camcc-support-sm8150-v2-1-4baf54ec7333@quicinc.com
 > 
+> [...]
 
 Applied, thanks!
 
-[1/3] mailmap: Add an entry for Konrad Dybcio
-      commit: 72c93f3e0dcdc05fceafcb32e79352a45716d181
-[2/3] MAINTAINERS: Update Konrad Dybcio's email address
-      commit: fce6a1eefb2a1db706fa17ca21e3e7107811d2e8
+[8/8] arm64: dts: qcom: Add camera clock controller for sm8150
+      commit: f75537a42afbbe3f652c73493741448586df7719
 
 Best regards,
 -- 
