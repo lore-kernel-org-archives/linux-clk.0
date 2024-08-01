@@ -1,60 +1,52 @@
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA6D170A32;
-	Thu,  1 Aug 2024 10:57:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE2D115252D;
+	Thu,  1 Aug 2024 11:01:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722509841; cv=none; b=ic/Qdn3POZLhiWSnvN67jkqqzlyXTYgCBeGS/BoMbU7euz8IjDsls6X6mEW85rLgcxum5BMQEV3yoZdJ1tk1KhHivzptlMJt3EKe3x7odUxLYuZJzCrZuWv/FDMDfoj2a3ZOLgoHm09y3OVpA75uXOShDQhbT0NQ9BxJ1pQIdVI=
+	t=1722510083; cv=none; b=ur0KXkAQYlXXOS9YBSGniHVZpyR2eV6njicxCChWkiRuL2ao7Hctu0QCtXL5UxhWRhGkVURrDAQoqZDBTDWUX+wovHEQ2PGWcwI33zKbWmjro2NJeyr6aEj6NfJOyIWW2ZVeFBfzM4tCWjmZrIITfCgXuHXqvU2tPx8Mp2N2fTc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722509841; c=relaxed/simple;
+	s=arc-20240116; t=1722510083; c=relaxed/simple;
 	bh=qI/XiZI7oO51SnGLGW1CkCUAnP0KmZgBpmTdZKVqdNE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=jc9AslSMfnoSVNDGwt4Rwc1dYeYmtfW/LMYSWk2IbOE8p2f71CvKW3Hh8YetMjkaUXPI2+8PRYMkrAEgboAR7H9qSwCM7KnYcR2wuf2S/sv5mdKaE1njqaQQcNkiDZudTctVyh1FXBPBPCHqMyLQ/5rGvIKH0Y1V9rHre+nOFRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=qti.qualcomm.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Cr8rzDqG; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=qti.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ERRt07zGziTUOcbiyWE5hHSjQ8LOATys6+omtoWra6ytlApTc/X6a37ezbZjG0nsY0I3zJntziX6Vk1ymmND0TVHiwciVikQ87kKmAHHy71bOZ5ZJZBCiNmc9zWx1umJ3+5JbbrWvnYWZg6s4IlZ/VslvO83563i0P17CPNJgUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=M2VQjQzU; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Cr8rzDqG"
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4714sL2B030011;
-	Thu, 1 Aug 2024 10:57:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=qcppdkim1; bh=EESac9ZfwqVSp9rYMshfEx42E1KXTo5awxS
-	x82x1F6g=; b=Cr8rzDqG91CcZ91DBpsnPHc8tbYDS5Jk66xweiz/Bauv/BbxbuT
-	1CcfXzc2d1oyXtqzWtdkf5Lbg6y3JJ0NIj0Y2B2dx21s+ITsS6dOJwHJCsaNIBGO
-	YeXrWtSXIRNI6u+fR3t2PAoGNh6IAryOTUz1BuTmvjLNpGtgMuZiki+EiufJxvx4
-	aAjrs7yj57uV/VF027EUheZBD4ehcTF2TvjLJroY0LVDTuTq4mWEayNbyqCD8NGm
-	I3d0dpyPAAk+BOtjyvcCMj720r4Mu8U4HPnCdl97tnLcxnJaYAVxgdHjwn/LjsP+
-	T/CLVfp49RJLqH4YHbAlmVgHuleKcCOWfbg==
-Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40pq528uvw-1
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="M2VQjQzU"
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4718Opav026847;
+	Thu, 1 Aug 2024 11:01:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=EESac9ZfwqVSp9rYMshfEx
+	42E1KXTo5awxSx82x1F6g=; b=M2VQjQzUTv7WkW2B46PCb8fw7DKUzmCmAJNtST
+	ztpznaNfy9jlIPFD3Y/H1uJhXh5tY5mjn5WgD918VF5nmA/0x2LUDgpspB6su3sj
+	JSvrxwtto9OyBklXisU/bEXETeLI+SAVjVCNxGP5ciLxtGwUTReOZiR5OM5qo+ci
+	+v5cFHBdlxv865sNt9eXjUj8+F11qFVvItAx9QrIrlk7zN9FaGOO5BkgsszjbBY0
+	X/OxPtUh5VOHqWs2H9hzNH+2YmTyowCut8OTEuJqj3uhbfeOR2EWlThuWBsmIBMf
+	IEIMte3mboXQQqGjXoXLaFEVxDh+DrBTzO8rQm630naHWrtw==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40msneeh0m-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 01 Aug 2024 10:57:15 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTP id 471AvBIO032594;
-	Thu, 1 Aug 2024 10:57:11 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 40msymje82-1
+	Thu, 01 Aug 2024 11:01:14 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 471B1EYW008197
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 01 Aug 2024 10:57:11 +0000
-Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 471AvBBG032588;
-	Thu, 1 Aug 2024 10:57:11 GMT
-Received: from hu-devc-blr-u22-c.qualcomm.com (hu-amansing-blr.qualcomm.com [10.131.38.23])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTPS id 471AvBUa032586
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 01 Aug 2024 10:57:11 +0000
-Received: by hu-devc-blr-u22-c.qualcomm.com (Postfix, from userid 466264)
-	id 48C46503; Thu,  1 Aug 2024 16:27:10 +0530 (+0530)
-From: Amandeep Singh <amansing@qti.qualcomm.com>
-To: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc: quic_devipriy@quicinc.com
+	Thu, 1 Aug 2024 11:01:14 GMT
+Received: from hu-amansing-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 1 Aug 2024 04:01:11 -0700
+From: Amandeep Singh <quic_amansing@quicinc.com>
+To: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: <quic_devipriy@quicinc.com>
 Subject: [PATCH] clk: qcom: ipq9574: Update the alpha PLL type for GPLLs
-Date: Thu,  1 Aug 2024 16:27:10 +0530
-Message-Id: <20240801105710.498569-1-amansing@qti.qualcomm.com>
+Date: Thu, 1 Aug 2024 16:30:40 +0530
+Message-ID: <20240801110040.505860-1-quic_amansing@quicinc.com>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -63,20 +55,21 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: BL1EmhztOfM-jmZsU1w45cWZB2xSpcHV
-X-Proofpoint-ORIG-GUID: BL1EmhztOfM-jmZsU1w45cWZB2xSpcHV
+X-Proofpoint-GUID: k5sWvqIYxbsXBVSq186kmFfjdSadxXt5
+X-Proofpoint-ORIG-GUID: k5sWvqIYxbsXBVSq186kmFfjdSadxXt5
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-08-01_08,2024-07-31_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxlogscore=889
- adultscore=0 priorityscore=1501 spamscore=0 bulkscore=0 mlxscore=0
- lowpriorityscore=0 clxscore=1011 malwarescore=0 suspectscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408010069
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
+ lowpriorityscore=0 mlxlogscore=921 priorityscore=1501 clxscore=1011
+ spamscore=0 mlxscore=0 bulkscore=0 suspectscore=0 impostorscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408010070
 
 From: devi priya <quic_devipriy@quicinc.com>
 
