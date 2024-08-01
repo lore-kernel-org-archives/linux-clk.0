@@ -1,139 +1,124 @@
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BED08170A37
-	for <linux-clk@vger.kernel.org>; Thu,  1 Aug 2024 10:21:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 658D6184529
+	for <linux-clk@vger.kernel.org>; Thu,  1 Aug 2024 10:36:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722507681; cv=none; b=B0WEBZoNKvEoIkNrF9Q+QOhQJnRkr8/9bJFdEixpkgVGp6wjawhyoNIAJGZwHPTn67EgPAM8A+4GHoR2gHjQ0LuojgSLhqGPIGSZYY8uaKAqvzT82kR6BHcJRNbw/KjgxIdeITRuoVBByDn9w7NCc0p6FYscHo2lWLu70eup9A4=
+	t=1722508585; cv=none; b=KasK8e3l5nHWHxYxtsUnTA+rbWBTRtFXELhi804soCuJah0R/SCVo/2u9nZyQhELHOte7hHqDVpiOA58krYNsupaTccqz3gqCax9YJPsqBzWcRO/z6E0SgoSE89vJ6v3z+Gd2l4VHt8l3raRWAjWKXtcUcVxX1lav7Q4Mi6bTqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722507681; c=relaxed/simple;
-	bh=1w2sEv3mO93UTbBWty5+SXCjCXTrLfrjbRNFOcTaVdc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=oNvKCtgxHqXBPW4D17QKGl1ck6xTXwjPUARxaZvhB7Rnh+jk2PzqpduqPub3D97+/7p3WzIP1pvgmC5Crn6fDvhUDwHrP/QLse8N/w4YsBCU8yQPewcbbyOCQgz3TifrSD/uw+2+a4NpWFekZV2RCokw3lOLj+oUxetoT2+WGqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dZIebzGN; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1722508585; c=relaxed/simple;
+	bh=NRM+kgKwBU8r6cYAcjDNYZlfqQ6UT1sfjavDTYorIco=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=XuZL7kwoRMylT0FE988ZWflPi28IiancpThELTF129SkIcpIJgofboBTWOWe5nzMLpw85tFxEdWOsEq/0hnYqE/tPfyzKnk1E3m+Sl3FChveSGlpXZ0bWQqAFW0kh+eArLe/zPERFNz6N0ThZdudwIPogm088U/VErMUPEKYjpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com; spf=none smtp.mailfrom=toblux.com; dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b=IaYq7Y7E; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toblux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toblux.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dZIebzGN"
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2ef2c56d9dcso85461471fa.2
-        for <linux-clk@vger.kernel.org>; Thu, 01 Aug 2024 03:21:19 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=toblux-com.20230601.gappssmtp.com header.i=@toblux-com.20230601.gappssmtp.com header.b="IaYq7Y7E"
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-428243f928cso22964375e9.3
+        for <linux-clk@vger.kernel.org>; Thu, 01 Aug 2024 03:36:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722507678; x=1723112478; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jlj+yWmKtN5l/Z+12/zWK6DoBGtel4lk94/62hlvDME=;
-        b=dZIebzGNoYARdWjWC6egLyoMj9sVldV/xD4o5rxhdivvO1w3zyXZKPcuz+XfqmBiaM
-         veTUPdNMocF69bAHQsaImCLLia8cCq1joCOs3Rel5I9wd6jeb+zeYBi7dY46H/tKP0Qv
-         KK3iM4P9UP/EJ3Z57GDVGK7L5ddxdy0c2rjSNwfsRB62aQwOQW9CRh8qsvlWr7LGePw5
-         9GKQygSluyUaSOLgONmF30jBR/s+S2o7baC/mQiNuZKKWp6F85MzkQdJzknHPA9cfo2T
-         tJunOVBS50YH8altgInHkUwR7LdYNGpRm7s6wfSDaHIMoJvaad3O6Z5TjgqU1+VboJZj
-         u64Q==
+        d=toblux-com.20230601.gappssmtp.com; s=20230601; t=1722508582; x=1723113382; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uX4IaEMr1VdJXApOdGT5XxSsfW+jBZ4plMQMTeRKMD4=;
+        b=IaYq7Y7E6DUA1DZJER7ZsByYWfw6r1mJBqmxk8qYOdMNlSgvB1oYMapztO3B9Ynzvq
+         cD7V9NFScfo5XjQFv+Z9G6feSzITneY9+G3ydCo88hm0vRR7WoymjjLL0enAtoOW68Jy
+         WNnj68DCDBOkWEsHW8WRwwZLARydSldXzGImivX5aSV+BbPdAk/FkFENZxjVPBS7300r
+         03TW5zy99trEqUxVEzOCQHTJRveI/u4ChJvsqlrAd2K7jiOOIMPEOjRf6SgBf11nT2Ue
+         cElRsspYTeXXl4viTMpPVHjD3HR7LIiA/R+dSzNp894PS5KMe06AFQuMlgNKW4akkwgj
+         eTKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722507678; x=1723112478;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1722508582; x=1723113382;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=jlj+yWmKtN5l/Z+12/zWK6DoBGtel4lk94/62hlvDME=;
-        b=raoGIuNlBUPxZZ5QdoU8VW2S0wQXnjepkr51/puAPm+xYHtvf/WOYdBCMyaQnK13Fh
-         3N9f26Bo2hgGMZHdyJ6/6U2eX6FyB6Qa2N4TRsiZLqVzfIEqx/kHYgYnKaWzN5FUSOCP
-         kvLm0Cpum0rLYktrfrSCI/Wx88cyvqPJN74tCJPYl/TpOmbvlz5guPrRVjNEM7Fr2ecY
-         Y6k/xfBku8jErAdEu0r1K+dlz4TYN/3ruPhwo55FodQEMhVdJ8tJg6L7OTEC5sojZ64V
-         k2ChttllePjGkg9TL/o3tNhghDmt0dPNRICwj5cg1CiHYjGrbj73oRLEXq7XSbvrsKyp
-         PUCA==
-X-Forwarded-Encrypted: i=1; AJvYcCWGOaPgFH2XB5+Rc6jDUX1y3gDCBSDuE4pzim4zVRCg4N+mZIE/1kozql6DpzMch/mLOYysWKluSJ/jK4STGvFjQU112gebmsNZ
-X-Gm-Message-State: AOJu0YxeWKgEO6ZtwzKyGQnbSqGcFF3sWTNeydmKbjZwWBsB4f73iZzk
-	vyvNF09czVaCuMOvbSrk84LEdA9CIKbEOpyy7u8CL2TDGKaHvl9Qy/U1TwwG5y0=
-X-Google-Smtp-Source: AGHT+IGFSPm7v8ZK5AOlXNOPGo8Mx26FbnJnvQuJFQFkkN6gAYG3IGJNkhFuUYXqMVaXR2wtP4rzuQ==
-X-Received: by 2002:a2e:b056:0:b0:2ef:24e0:6338 with SMTP id 38308e7fff4ca-2f153109f54mr14499711fa.27.1722507677510;
-        Thu, 01 Aug 2024 03:21:17 -0700 (PDT)
-Received: from [127.0.1.1] ([82.79.124.209])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282bba283fsm51389035e9.46.2024.08.01.03.21.15
+        bh=uX4IaEMr1VdJXApOdGT5XxSsfW+jBZ4plMQMTeRKMD4=;
+        b=UyPV+t3QUr0kVwa/BggoUp23ftlaLmxWoTgLCIWFRtjKoztROkxlh14nO0AuCrc66V
+         5ds5KcbnHY85aZLl2g4LhEYklt7/Z5iy3RtR49qR+RUcbz5gSV0WuaCq2mPINyUwjWLT
+         SDeXlrlSt+3oOuQtM5cifcjyC0ihdBplcQ6Q34UDwWUjv0Gu5rkKGIuqamnKqmo1NpHc
+         Bgu3ubh95VRtdSFjvQCJ8AlEETpzaZwNQDsyuyLh1qLcr4NIbxie2q+3Qxfq5GJR4SSr
+         YU9wv7ASPJqx9g9+6OItQsIqatzQFvNv6DODRGFOtkfKBXmagFPdA0AlWGB1vKTsWgaP
+         PV0w==
+X-Gm-Message-State: AOJu0YxFibNP4BwJ7/m4jb1lt75ho+/GlC48dr5WANpbTykhp9Da+vhU
+	OXF5+ZXHspqr8O4gXOwAEkIaWUyRwsHQQA7Ftvk+/Ks86elgm4nyAzOXKYpvd1U=
+X-Google-Smtp-Source: AGHT+IHXZzVY2RHPJ7hV/J3clIiaRw2lCC2mSGOOlG4ghfqUb/oWihGNec6dU4R+28d8BMZ9icAykw==
+X-Received: by 2002:a05:600c:314c:b0:427:9dad:e6ac with SMTP id 5b1f17b1804b1-428b032b25bmr15786785e9.34.1722508581377;
+        Thu, 01 Aug 2024 03:36:21 -0700 (PDT)
+Received: from fedora.fritz.box (aftr-82-135-80-26.dynamic.mnet-online.de. [82.135.80.26])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282bb64952sm52975625e9.37.2024.08.01.03.36.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 01 Aug 2024 03:21:16 -0700 (PDT)
-From: Abel Vesa <abel.vesa@linaro.org>
-Date: Thu, 01 Aug 2024 13:21:07 +0300
-Subject: [PATCH] clk: qcom: gcc-x1e80100: Fix USB 0 and 1 PHY GDSC pwrsts
- flags
+        Thu, 01 Aug 2024 03:36:20 -0700 (PDT)
+From: Thorsten Blum <thorsten.blum@toblux.com>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	erick.archer@gmx.com,
+	gustavoars@kernel.org,
+	u.kleine-koenig@pengutronix.de,
+	christophe.jaillet@wanadoo.fr
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Thorsten Blum <thorsten.blum@toblux.com>
+Subject: [PATCH v2] clk: hisilicon: Remove unnecessary local variable
+Date: Thu,  1 Aug 2024 12:36:16 +0200
+Message-ID: <20240801103616.20430-1-thorsten.blum@toblux.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240801-x1e80100-clk-gcc-fix-usb-phy-gdscs-pwrsts-v1-1-8df016768a0f@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAJJhq2YC/x2NQQqDQAxFryJZN5ARsdKrlC40ZsbQYodJbRXx7
- oauHg8e/+9gUlQMbtUORb5q+p5dwqUCnvo5CeroDjXVDXUUcA3iIEJ+PTExY9QVFxswTxum0dg
- w/4p9DNvYkwzXLrRNBN/LRbz9f90fx3ECLuJDV3sAAAA=
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Rajendra Nayak <quic_rjendra@quicinc.com>, 
- Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: Johan Hovold <johan+linaro@kernel.org>, 
- Sibi Sankar <quic_sibis@quicinc.com>, linux-arm-msm@vger.kernel.org, 
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Abel Vesa <abel.vesa@linaro.org>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1426; i=abel.vesa@linaro.org;
- h=from:subject:message-id; bh=1w2sEv3mO93UTbBWty5+SXCjCXTrLfrjbRNFOcTaVdc=;
- b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBmq2GXS8lloMlaNdH4nPkAQziRD5N6S7RTl+NAl
- Qh023qqZdeJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZqthlwAKCRAbX0TJAJUV
- VvKYEACuIJccxhmTQYyrXJuggacL9Pc3hsUPWgFl/McffyRUEli88+FRoOTyAQ4p7nImxiHaPqj
- IIjgtTJ/oDpmycXIRnXKCvDIJz9qWfqB6zs6p8mnl+6SxfZCAEdUidJ5o0LF6lTICUuRidYMjd1
- p8hEKpEix5V27aC3af307FLqiF9k+3Gg+G/Khb2TqTz8E+bzw9HtoT4VDUWXBcI3hkqKjAB5NDa
- nhkwu9xPBmTeRr2uB0rWQQPJBTesui/Cqzmd+ykH6B/LD1CiwK6WhrO/yMXqpcePySDAIHAxJIx
- rUgPpZ39vjbShTCzu7FUj8B2CQbVKef8cXWyFuFgczbT0H8Q0j5jbVwHItx5ctjF8WfWkZrGoal
- 7pjtdq1tHVzj8nX+XLBHw9xvNG7PwjQf1IJC4E1FuRNv/hyHux454JUjIy1f/A8DRyfb0ajSt6t
- WQmkpWu3lLEIOEzgsVdinvuRNpDJr5/rP82kGJgnDk7TvNnGfsPm1JmUJG3dSnnNqtFOi/VUwPg
- q597+6ARd13mkKWSLnQRYNA+PMkMaUsiqOmm1RRagNwz3hLX7f5wCdz9GvIL3FaUailavnvNund
- ezOKGDTWE96IHLOVCy4fmkBP89sZUwkdYs8eXuuCAPO2280IYJQrUCcpto0Ft8DDQ0mz1qQIMGO
- I89XaIbkW+11pyA==
-X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
- fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
+Content-Transfer-Encoding: 8bit
 
-Allowing these GDSCs to collapse makes the QMP combo PHYs lose their
-configuration on machine suspend. Currently, the QMP combo PHY driver
-doesn't reinitialise the HW on resume. Under such conditions, the USB
-SuperSpeed support is broken. To avoid this, mark the pwrsts flags with
-RET_ON. This is in line with USB 2 PHY GDSC config.
+The local u64 variable refdiv_val has the same value as the local u32
+variable val and can be removed. Remove it and use val directly as the
+divisor to also remove the following Coccinelle/coccicheck warning
+reported by do_div.cocci:
 
-Fixes: 161b7c401f4b ("clk: qcom: Add Global Clock controller (GCC) driver for X1E80100")
-Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+  WARNING: do_div() does a 64-by-32 division, please consider using div64_u64 instead
+
+Use the preferred div_u64() function instead of the do_div() macro.
+
+Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
 ---
- drivers/clk/qcom/gcc-x1e80100.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/qcom/gcc-x1e80100.c b/drivers/clk/qcom/gcc-x1e80100.c
-index 6ffb3ddcae08..80e90e31be33 100644
---- a/drivers/clk/qcom/gcc-x1e80100.c
-+++ b/drivers/clk/qcom/gcc-x1e80100.c
-@@ -6203,7 +6203,7 @@ static struct gdsc gcc_usb_0_phy_gdsc = {
- 	.pd = {
- 		.name = "gcc_usb_0_phy_gdsc",
- 	},
--	.pwrsts = PWRSTS_OFF_ON,
-+	.pwrsts = PWRSTS_RET_ON,
- 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
- };
- 
-@@ -6215,7 +6215,7 @@ static struct gdsc gcc_usb_1_phy_gdsc = {
- 	.pd = {
- 		.name = "gcc_usb_1_phy_gdsc",
- 	},
--	.pwrsts = PWRSTS_OFF_ON,
-+	.pwrsts = PWRSTS_RET_ON,
- 	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE,
- };
- 
-
+Changes in v2:
+- Use div_u64() instead of do_div() as suggested by Stephen Boyd
+- Link to v1: https://lore.kernel.org/linux-kernel/20240710201844.710365-2-thorsten.blum@toblux.com/
 ---
-base-commit: e92057c615fec749fefcca4ab28ee5c425e3691b
-change-id: 20240801-x1e80100-clk-gcc-fix-usb-phy-gdscs-pwrsts-6fa0eb78164f
+ drivers/clk/hisilicon/clk-hi3559a.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-Best regards,
+diff --git a/drivers/clk/hisilicon/clk-hi3559a.c b/drivers/clk/hisilicon/clk-hi3559a.c
+index c79a94f6d9d2..8646e9d352ed 100644
+--- a/drivers/clk/hisilicon/clk-hi3559a.c
++++ b/drivers/clk/hisilicon/clk-hi3559a.c
+@@ -407,7 +407,7 @@ static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
+ 		unsigned long parent_rate)
+ {
+ 	struct hi3559av100_clk_pll *clk = to_pll_clk(hw);
+-	u64 frac_val, fbdiv_val, refdiv_val;
++	u64 frac_val, fbdiv_val;
+ 	u32 postdiv1_val, postdiv2_val;
+ 	u32 val;
+ 	u64 tmp, rate;
+@@ -435,14 +435,13 @@ static unsigned long clk_pll_recalc_rate(struct clk_hw *hw,
+ 	val = readl_relaxed(clk->ctrl_reg2);
+ 	val = val >> clk->refdiv_shift;
+ 	val &= ((1 << clk->refdiv_width) - 1);
+-	refdiv_val = val;
+ 
+ 	/* rate = 24000000 * (fbdiv + frac / (1<<24) ) / refdiv  */
+ 	rate = 0;
+ 	tmp = 24000000 * fbdiv_val + (24000000 * frac_val) / (1 << 24);
+ 	rate += tmp;
+-	do_div(rate, refdiv_val);
+-	do_div(rate, postdiv1_val * postdiv2_val);
++	rate = div_u64(rate, val);
++	rate = div_u64(rate, postdiv1_val * postdiv2_val);
+ 
+ 	return rate;
+ }
 -- 
-Abel Vesa <abel.vesa@linaro.org>
+2.45.2
 
