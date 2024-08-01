@@ -1,107 +1,159 @@
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BC523A1DA;
-	Thu,  1 Aug 2024 16:29:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D94A1EB4B1
+	for <linux-clk@vger.kernel.org>; Thu,  1 Aug 2024 17:18:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722529774; cv=none; b=Yb/3nbkqLlgVKCzDhlX5XuPk2NUG5F5vAQii+qAH3OaXIsHBcG1t9W0yxPgmDK43MSfVKAcC9n/psuMYODC4AyJm2Pp7zWOALjGdFAz4UiMaibQeWi+27K7sa3XbCbT+PNSrAmMJ552hR7mCOeR3oDKszc+cMZO4gKRdGhVRjW0=
+	t=1722532692; cv=none; b=Je4vGG1oXr9aewBkfRQIOQROp2s5UIm8YXrarkU/7jMAXF26K1CRlCYXVPxWuyqwNthGYEAlw2yGKzh3h3sjXoOftNlawK8vUgberxnb2rtjFyIq6PbAIjBxG0OdkNv/E7ZiQY18s/W6IgOm38SbkcSWFoj5UvTmL33wQ2bf4z0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722529774; c=relaxed/simple;
-	bh=QsvCNio+3zzxchq5fzKn3o83VQzC4bk3D+jsQv4Z/4w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rdkYI+yg51ORQPfie+h4rs+2PGB3qcpMO64r+Dxmt/grJ033zeAlOGPt+2L+/A5pmnBYNzhJDDG5K2sJ4hFVrIqPZAGHzbYyJyGg1SAx+W/9H9JmNxvkzjmi40bpAHeRJsSxV1Kh0TBVTbYOZWxtH24z+KFZN0w2xt26MLAkV1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e0b286b922eso5228284276.1;
-        Thu, 01 Aug 2024 09:29:32 -0700 (PDT)
+	s=arc-20240116; t=1722532692; c=relaxed/simple;
+	bh=D1l8fJ9IOVEp5bp3M5j/xHgBRyhU68qfJLkpQlB4M2A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jipWHzAHmRVeRdjhvKmTHMfQnADb16G3WaQ2wdaDNDDhXTYBuS2BdqxQo2BRRphxIk+1dVC+/R9RAiZRJaQq0PQMSAD//PKjhHO4vOOlXZVX4uLhi4dLaml8N1H4uJIYDJBqI0DbrqINyrJZhKpfQWbCYHIwTUZGFMoutBLcJwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=16oJAglR; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="16oJAglR"
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a7aa212c1c9so924440466b.2
+        for <linux-clk@vger.kernel.org>; Thu, 01 Aug 2024 10:18:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1722532687; x=1723137487; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ACC4xtbalx3W9rURwHmsxKvcHM8GOzus11mFMGYdOPw=;
+        b=16oJAglRUMxTramndWgm1VuhFlhrwiJPYickoLuvEHWel5FFnTznLAmKOhNTuTGgvt
+         HEbbPsSiH5Pr76uXah8i4PDG42M3DvOVSbTZPbm+cuIA0AGwh2PjoIWh69tOhlWKKmvg
+         ltG/oxuwQrKirFhoByAttJ6CsGK481TqfS+ZDu+FFjBAyOjItmIwohcCVPnl/IDVWA6D
+         wm2BhT4tPaGD6Vg7f8vm6P/QZ9TCzo75cfBUVEFHOUrT+lB98sh/fYjFB7GkGP9ddTbo
+         JdyWkuCLNe5ZJ1ncT73mvxa6WrHr/sUVKnYpK6t3iK7DMCgEKnCh3ZjA6Gnzph3Q3a+j
+         QeIg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722529770; x=1723134570;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Y8+kc5F3GMejqWVlpNJDpHQgkOH2t0JJ464cT8v7PXs=;
-        b=PJ2GCsINKBJER2I3Pa2e2kP9qwVeHr5P/xwq2G1IjIKN+WMxoNzPKLtx3Py0e+cRma
-         0wsbYhhR4auV8q+fqehg6ubDqfHXfkY7uXmmWDUxHMnhPnRI8FpCPSMwtePzBtE+FEhe
-         OtX6Fi4Tt4u5NX/W4ahlY13RJpw7SYAKZoKPkrLPwJal22U67s8apRoS/eD8Y2HzbuIS
-         waujHmox2aVvdXNqEbkj+5udmNK4q9yVyUavNZTc28zZo/Hu16SRnAyVlHla8XKWhKJu
-         EpXEORK8dCa8jcdWs3eZHCbdTPbzPHq4p0Dm0d6i89+zurOh2rliXF2zHGos48mzv0pQ
-         IH4A==
-X-Forwarded-Encrypted: i=1; AJvYcCVn5PRKZYauBmo37CtEfehoUspKtXHSQoAFqWzuNf1YFipxUMV3G6qUvfWhBiYWJgFozbqQoJGM1X2CjrCsU7ihd6KOI4FTX01jqesNFmhCK0gUqr0X7lSEApEHUhvscZQBR73Yk1uWQHVBiy4+zUYZ1xhuw5N+d+PI33mHO/0T3e+HRAfIRqN47odHkZ3TVucgMRg6TGt7vE2jmAujf0XvwgG+r16DfDkKW5UdS8b0c+oGj8U+IeMvypbNyxXgfC7d
-X-Gm-Message-State: AOJu0YzrrOSZRgplx/ee5SMYurH2kf1PBeBm8bCHLG57f+xOXHOJTU5X
-	fScLjAcBgOMeXsGK+NkWyS6wOqo2OxnKTa8SrA2EXZz6uP3PXqjnZa/x0Pti
-X-Google-Smtp-Source: AGHT+IF3UR4ctJqF4dv1x5CADGAyHth2iWUQp0VMFhr+jpA7GGfWdUhdF8HSTvzfymvymsO0ACuNTQ==
-X-Received: by 2002:a25:183:0:b0:e08:5791:4864 with SMTP id 3f1490d57ef6-e0bde465acfmr843983276.51.1722529769878;
-        Thu, 01 Aug 2024 09:29:29 -0700 (PDT)
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com. [209.85.128.182])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e0be0e45cafsm8071276.36.2024.08.01.09.29.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 Aug 2024 09:29:29 -0700 (PDT)
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-65f9708c50dso63085747b3.2;
-        Thu, 01 Aug 2024 09:29:29 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUfPj7FCPOdJVi8VgeeHmStiZQgTXcdwl8IP8ajoeKF5TracoY2xSleOR6e1paCxws/eq5D+ZTMmJE/omWST8lGSDw1rkvKpwbXKvK0tSP4lVsi+I5hKMRdSUeKBlL9HW/S+k1PzUgdrxZ1SKbLinu4wyMGjCP7jfA0X36bb91UpZKXArTcC4GY0NaEMiF02u6tt3l5G0wzQSYSrXWfeIeKUJHvlljf5qvOtvDvh2SHLt5Bv25bG632Ez8FqrQ00iCQ
-X-Received: by 2002:a81:8a02:0:b0:627:88fc:61c5 with SMTP id
- 00721157ae682-689608712bemr5781657b3.14.1722529769028; Thu, 01 Aug 2024
- 09:29:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1722532687; x=1723137487;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ACC4xtbalx3W9rURwHmsxKvcHM8GOzus11mFMGYdOPw=;
+        b=RH2JsUeKK2VLrRZDPQ6sRSFS8tQqk9SX8ypsm8l8BztgO8DQP7ltVdsrJgyVxuburr
+         YaedMtZuixBSmjMNh6zCWGum0y66I9C0LCmy5yowQyOOC1zT5QwzF+M26aErmtbpWXKp
+         P2BojamwB8DIAspTcpfjQaQlA4HZk+KLJodrlcWusKBf17Rl1rg0VvnlsjHd0PXz0a8U
+         dUSc2vIw6VU6iuB6GzihLpDn42ew5TjnYeqP3iAtpMWo6v6XOrSGS/xiebHcxyqgwJcY
+         FsASFSH4CNtnvDhyma2LLcgKTkdls+tNSouHA779uUg11bFY9+5l/TtKyCZRu6Wx0toF
+         Go8g==
+X-Forwarded-Encrypted: i=1; AJvYcCWH3orJQeRo4wooy0i2+a0BHuQH5eBZO14TwMqXkAowrV3Pes9sppBGJ3M3zKhCnJ2cffs95IDKNBM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEwkOR8KBg2tl1/ujJD3Tl05eG2mUykUBSRojgDup0mHuFRIxc
+	D+TL7PJt0yxgfDLl/jCZDczvYjmi56aHN0ub32l2KXr9MFLM2O6abHzsxU0zKP4=
+X-Google-Smtp-Source: AGHT+IHPKrrCLi1scWRo4nF31r+dCA7OhuJHW3QejJLrMZGNWRmU29yH/LPM81ati1AALihdZLT14Q==
+X-Received: by 2002:a17:907:9620:b0:a7d:a25b:31be with SMTP id a640c23a62f3a-a7dc4ffb31dmr83501966b.39.1722532687070;
+        Thu, 01 Aug 2024 10:18:07 -0700 (PDT)
+Received: from localhost ([193.196.194.3])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9c0c526sm3429666b.69.2024.08.01.10.18.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 01 Aug 2024 10:18:06 -0700 (PDT)
+Date: Thu, 1 Aug 2024 19:18:04 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Thorsten Blum <thorsten.blum@toblux.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, erick.archer@gmx.com, 
+	gustavoars@kernel.org, christophe.jaillet@wanadoo.fr, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] clk: hisilicon: Remove unnecessary local variable
+Message-ID: <bod2xxpj6xdutfiqq6zykcaxt3xyqor5qxiyi23g7oek3ndgpm@njl5h5ax5y2a>
+References: <20240801103616.20430-1-thorsten.blum@toblux.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240711123405.2966302-1-claudiu.beznea.uj@bp.renesas.com> <20240711123405.2966302-4-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20240711123405.2966302-4-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 1 Aug 2024 18:29:15 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXjTw1NFaZhNiskiA+BQV68B61H=iwZbeV1qpVdKCjTjw@mail.gmail.com>
-Message-ID: <CAMuHMdXjTw1NFaZhNiskiA+BQV68B61H=iwZbeV1qpVdKCjTjw@mail.gmail.com>
-Subject: Re: [PATCH 3/3] arm64: dts: renesas: r9a08g045: Add DMAC node
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: vkoul@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	magnus.damm@gmail.com, mturquette@baylibre.com, sboyd@kernel.org, 
-	biju.das.jz@bp.renesas.com, dmaengine@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="mmlcqgozszpb6sg6"
+Content-Disposition: inline
+In-Reply-To: <20240801103616.20430-1-thorsten.blum@toblux.com>
+
+
+--mmlcqgozszpb6sg6
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-Hi Claudiu,
+Hello,
 
-On Thu, Jul 11, 2024 at 2:34=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
-wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> Add DMAC node.
->
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On Thu, Aug 01, 2024 at 12:36:16PM +0200, Thorsten Blum wrote:
+> The local u64 variable refdiv_val has the same value as the local u32
+> variable val and can be removed. Remove it and use val directly as the
+> divisor to also remove the following Coccinelle/coccicheck warning
+> reported by do_div.cocci:
+>=20
+>   WARNING: do_div() does a 64-by-32 division, please consider using div64=
+_u64 instead
+>=20
+> Use the preferred div_u64() function instead of the do_div() macro.
+>=20
+> Signed-off-by: Thorsten Blum <thorsten.blum@toblux.com>
+> ---
+> Changes in v2:
+> - Use div_u64() instead of do_div() as suggested by Stephen Boyd
+> - Link to v1: https://lore.kernel.org/linux-kernel/20240710201844.710365-=
+2-thorsten.blum@toblux.com/
+> ---
+>  drivers/clk/hisilicon/clk-hi3559a.c | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/clk/hisilicon/clk-hi3559a.c b/drivers/clk/hisilicon/=
+clk-hi3559a.c
+> index c79a94f6d9d2..8646e9d352ed 100644
+> --- a/drivers/clk/hisilicon/clk-hi3559a.c
+> +++ b/drivers/clk/hisilicon/clk-hi3559a.c
+> @@ -407,7 +407,7 @@ static unsigned long clk_pll_recalc_rate(struct clk_h=
+w *hw,
+>  		unsigned long parent_rate)
+>  {
+>  	struct hi3559av100_clk_pll *clk =3D to_pll_clk(hw);
+> -	u64 frac_val, fbdiv_val, refdiv_val;
+> +	u64 frac_val, fbdiv_val;
+>  	u32 postdiv1_val, postdiv2_val;
+>  	u32 val;
+>  	u64 tmp, rate;
+> @@ -435,14 +435,13 @@ static unsigned long clk_pll_recalc_rate(struct clk=
+_hw *hw,
+>  	val =3D readl_relaxed(clk->ctrl_reg2);
+>  	val =3D val >> clk->refdiv_shift;
+>  	val &=3D ((1 << clk->refdiv_width) - 1);
+> -	refdiv_val =3D val;
+> =20
+>  	/* rate =3D 24000000 * (fbdiv + frac / (1<<24) ) / refdiv  */
+>  	rate =3D 0;
+>  	tmp =3D 24000000 * fbdiv_val + (24000000 * frac_val) / (1 << 24);
+>  	rate +=3D tmp;
+> -	do_div(rate, refdiv_val);
+> -	do_div(rate, postdiv1_val * postdiv2_val);
+> +	rate =3D div_u64(rate, val);
+> +	rate =3D div_u64(rate, postdiv1_val * postdiv2_val);
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v6.12.
+Without looking at the bigger context: Can postdiv1_val * postdiv2_val
+overflow? (If this is a problem, fixing it justifies another patch, so
+this concern shouldn't stop this patch from being accepted.)
 
-> --- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-> +++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
-> @@ -363,6 +363,44 @@ irqc: interrupt-controller@11050000 {
->                         resets =3D <&cpg R9A08G045_IA55_RESETN>;
->                 };
->
-> +               dmac: dma-controller@11820000 {
+Otherwise looks fine,
+Acked-by: Uwe Kleine-K=F6nig <u.kleine-koenig@baylibre.com>
 
-> +                       power-domains =3D <&cpg>;
+Best regards
+Uwe
 
-Updating to " <&cpg R9A08G045_PD_DMAC>" while applying.
+--mmlcqgozszpb6sg6
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Gr{oetje,eeting}s,
+-----BEGIN PGP SIGNATURE-----
 
-                        Geert
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmarw0kACgkQj4D7WH0S
+/k7hggf+IaA83JkApvu4vpkYBHZyRNIf+Yv+Wy3lQ94z/Gs0F9BZADcw65BC3iuF
+Y3PZ460+MPnCYB6RSb1/H9RxnH1BjZctC1KEhUcaXIWKMuHwLXjJDZpbMnHHgoG2
+qUg8oKf3K7cMyePbhehMAhpvtXzZcvZOjKwVj7Lvrf+uu3mqggzvqq3mrssEvtsE
+nbWnk8mYFfPa+UPz6kErGt3Rkboi9sDXzdojr5ZN1USPtsu87jbcH0yq56+B5f9G
+REGHKDnn6c+H1xQ7mQtL4nQwyePYAZyol1EHkO6VnKW0f1CNrl7gAYmTkFhsGpcq
+KpsbmnAtyXyEShNwEf8QB9Fm0qwKAw==
+=OnPO
+-----END PGP SIGNATURE-----
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+--mmlcqgozszpb6sg6--
