@@ -1,59 +1,60 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7F2A1B3F0A
-	for <linux-clk@vger.kernel.org>; Thu,  1 Aug 2024 17:28:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88E4C1B4C5D
+	for <linux-clk@vger.kernel.org>; Thu,  1 Aug 2024 17:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722533328; cv=none; b=pKsvBlAOrlbT9LfvrLQmOuZfILyYsjKVJD0kYG0WDvezQpjS2Njec27w+TEiHwaK/03T1hjdlpoDKrgNJg97kzafBgecWaJgPYO3DF+vQmk7zGQaKJLG8yMcF3VaS3L+Z0P7kWmA3KMimR25aPO3hXSLwCj14Zu4izKfvrNCqHc=
+	t=1722533428; cv=none; b=WS11G0b+RiPl+ihcK+cqXZWztbs6s0UhPxi8eCJ33a4Xgw8/j8jT4lA1ycqCTp+4b4jKZiJCwe0g/CWo5Sy5uacdQE9If/3uMuxeKDcmkPNppm4+iWlM6jIHYBqDiufhx60YOAOB1dx2ENkN89S7zeAAwlzVfLWvXOcIFIRIyMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722533328; c=relaxed/simple;
-	bh=xYp1qctPQ3XCpMinrXG+jW9arJfjc0jjCGgwQ6JAppA=;
+	s=arc-20240116; t=1722533428; c=relaxed/simple;
+	bh=/fUgmK9Gu4vJ7gtf9Uwd95qIKPDXf8jzzp6n2YLhY1g=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PToweJz6jO0xvTdLRnmj4BsnCbQT1ppfmV0kBrKQYHX50HHeWJlkXq88pVJDvdDLeUEQZcqoL4gH3Kno7VsT0wo8SKS/Unm0mVF/mWa5rt2K2f3aicx8E1s+csHeG3GXPS/qBDdLXOSsIpfZELaCrwTOoByg4PXi9T9F4kpmAoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=oh8vdwfk; arc=none smtp.client-ip=209.85.128.46
+	 In-Reply-To:Content-Type; b=AfJFiS05AqWQp3MuqwyAll3ARXq5udv7u6SEVceeedWDZtUSoGbc/GXa4VoCFhMS1/kEgGw7Tfa7BE+UwRuBwm2gTR48ftBxt6vxzamr1XU32KnbrIuxxCBY14x5D9b3w4cry5/DSMdYJpErAsq2r/3vi1aK3whveNGUtg4ZKlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=UH8cbPIT; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="oh8vdwfk"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42816ca782dso46698945e9.2
-        for <linux-clk@vger.kernel.org>; Thu, 01 Aug 2024 10:28:45 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="UH8cbPIT"
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4280ca0791bso45490055e9.1
+        for <linux-clk@vger.kernel.org>; Thu, 01 Aug 2024 10:30:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1722533324; x=1723138124; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1722533424; x=1723138224; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=XnwjnjetY7dv9eCyx710zpOpIL7zDgItoHiS/DQyjbw=;
-        b=oh8vdwfk+W1mR2x14bS68ATlOQLJ6HZMU1zdufP5d7Rg6lIs+9UDYcgIvT9WdT7nNC
-         OQp+OSJqTASdPbruP/YWNgNMJNjfJQLTQkOShdz3Z0n4St/2AKtNCdxJiW8ZYo6/DI/O
-         efgyLeMxmgpZ5eT/Ob0s6nK6qRnl6MwEhqbEZ2X74KpwkSpy/Klks5vPzmmmCSDsnw1o
-         zO44yDnWXi7SIW4Cs4s3mlthO+DKzuR9ixrs1cd3cIWFTvNyYiKlRJdLbdcOjx/SaYog
-         8WCwhDtQTxsKzz6bWK59vjPHdEfNS60L0waatMGlOsVE2FYRgZkJm3uSeA6VHPwPNpAS
-         Gigw==
+        bh=c1S/NlVwEFkZswb6EjZlJWrnVb2z/0QNSVhH+7F6wi4=;
+        b=UH8cbPITQAJcH+25OYzB3QPkJVO5LcU8lJxWpD42Nd+THfyBF8l3l0wrg8YFg2qpHz
+         eMB5bjocbDdQLJEqJ6nTRufuNsebaShpPXqdM7xtC8s434V+C1BbjierqO4N9imBANoT
+         Ja3TNvua5bape0ZbRv8yk9HLRpmTOpXioMRHQzT8iqsQ07lV3k39j90r/FRFEK+KjQsr
+         gespgsj6YLqA9os4JXzSXXMKSnrw1I+3AQiegThIqNryJ5FeXCzoxLbzhOMmJAWZROXL
+         qau7l+f8rLdwFfhdu4VON+AtoSuS8z2KrIZH1qRfGkx1H862UVh8uNFjZR7ZxraEdPjV
+         FGvw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722533324; x=1723138124;
+        d=1e100.net; s=20230601; t=1722533424; x=1723138224;
         h=content-transfer-encoding:in-reply-to:from:references:cc:to
          :content-language:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XnwjnjetY7dv9eCyx710zpOpIL7zDgItoHiS/DQyjbw=;
-        b=q3Mn2KoUiv4tIHErXjga5oG8rrclDQKcWs0Q+iShLp6z/Et85HqkbhxTsRDBYciaFe
-         3jkjQEz5FPaydoNE1ZdvCrVpIWcPBy7sDN4vBK5UhO4K1g64Z56MhBzqldt5UzQDiGSx
-         sO7gMuw3Gq2Jt7ORe2maHXWuKUZY1XVxh/qUiDIc4nHS3ML+TSj11gqb1rs/IyNUKQQ8
-         18RPS7OM6xV2vEHjhffylZB6DLDfI4dGPR7ZKM86EGA1Cg4LjYQDaNom6mtPZPS6YuXq
-         GQm96CGOMSYmCfh5FHgcMnosNN6WnMRFbYkYy4VBuAvI9TVUpHxx2SBia+sUNisWSgTK
-         1JZA==
-X-Forwarded-Encrypted: i=1; AJvYcCWi9L4P5rBK1ibXAwHpAWnH00ZQpJn7oPCBAfLtYZRfNaullHH8iwoiUKH+7hxIjKQToKjL/IPPR83muQsrpFtVOI1caE3dwf4U
-X-Gm-Message-State: AOJu0YwkfH8JUV+D5mkjykhtA9C6/dSykwk+5lqRaJNyG3EOA/oWqPti
-	oYPxLiJAEmv3wLWleKPqkS6931uNOi1EEUMhswwZMOvRnMGqdwVgMuIg43KPFD0=
-X-Google-Smtp-Source: AGHT+IHS4knhHpTTc3R8fFT40aZdqgWtj3Bjf8KF8/wk14Wl+xIhW2xqBDu0DirWFImXVhfOp8H0SQ==
-X-Received: by 2002:a05:600c:3b17:b0:426:58cb:8ca3 with SMTP id 5b1f17b1804b1-428e6b07c64mr5187045e9.21.1722533323640;
-        Thu, 01 Aug 2024 10:28:43 -0700 (PDT)
+        bh=c1S/NlVwEFkZswb6EjZlJWrnVb2z/0QNSVhH+7F6wi4=;
+        b=S3TddxrG2RYkUC1Uuf5lSFcxQMQCV4b0csWSPyq17ck82qYBp/Ul72eDX1AkfASl5x
+         MCFekTllC0ppUv0CLnp5D/OEFKVvdMSIkvuccpbaDJ/9+Ru68ONzDYlvHtyddq/5/gG9
+         BB7lcrk0XFPcwOLIwt3p3OfvI7/rcJCGmlafRhIhV2HM0kGTAp2BrAEp9eo8TFWFM0uK
+         rrPduT0zHLaor1wxJNpi7TdJ+GQK3eArdfnqHDI3JRWeBNnHJBnLmMcmQcDqDt//t//3
+         uiDlM9HVtzKVUokcob6a/8uzF4VESguHHSnJfXnfkW6tpQeCOjdLE2xlTMe5Ij6N2Uxf
+         9bLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV1zTJR/zbXm1TWy30/YNSHulQh414NxVIQ+OKYCX8BVSddS9nekVqxmOGYbbXIwkq0qB11gdp7OGyj16hVYv2gzbRMrbG9D/tR
+X-Gm-Message-State: AOJu0YwqISyt3t3KYFgt22UotHymmAtkbF8J3bV7XMGESXlyTCDVyD7t
+	ddhSrApQ8XiBtwKXw6y5pDgI65vKGmoWElQffHAURZa0bTQ+se1F2pQU9hPdq2uJuVlkACO9n4y
+	q
+X-Google-Smtp-Source: AGHT+IG94ZE4tjZfrkwC8a7+TJTJGffEWVrCsNnStDS6gDpPa28xGx43QNeVDk0gNocTArRCz6CJ5g==
+X-Received: by 2002:a05:600c:524f:b0:428:17b6:bcf1 with SMTP id 5b1f17b1804b1-428e6b0a2bcmr4750555e9.22.1722533423582;
+        Thu, 01 Aug 2024 10:30:23 -0700 (PDT)
 Received: from [192.168.50.4] ([82.78.167.44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282bb6405csm65736205e9.34.2024.08.01.10.28.42
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4282bb6405csm65736205e9.34.2024.08.01.10.30.21
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 01 Aug 2024 10:28:43 -0700 (PDT)
-Message-ID: <80d56236-2499-4c89-8044-6a271e47515d@tuxon.dev>
-Date: Thu, 1 Aug 2024 20:28:41 +0300
+        Thu, 01 Aug 2024 10:30:23 -0700 (PDT)
+Message-ID: <1145bd6f-fee4-4c3a-bd71-543127f89fc8@tuxon.dev>
+Date: Thu, 1 Aug 2024 20:30:21 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -61,61 +62,58 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 8/8] arm64: dts: renesas: r9a08g045: Update
- #power-domain-cells = <1>
+Subject: Re: [PATCH 3/3] arm64: dts: renesas: r9a08g045: Add DMAC node
 Content-Language: en-US
 To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: mturquette@baylibre.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, magnus.damm@gmail.com, ulf.hansson@linaro.org,
- linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+Cc: vkoul@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, magnus.damm@gmail.com, mturquette@baylibre.com,
+ sboyd@kernel.org, biju.das.jz@bp.renesas.com, dmaengine@vger.kernel.org,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-pm@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240422105355.1622177-1-claudiu.beznea.uj@bp.renesas.com>
- <20240422105355.1622177-9-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdWhRRdfoqg_o6bU7jjt5_Di0=z7MJ4fMh=MJ0m8=u4tgg@mail.gmail.com>
+ linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240711123405.2966302-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240711123405.2966302-4-claudiu.beznea.uj@bp.renesas.com>
+ <CAMuHMdXjTw1NFaZhNiskiA+BQV68B61H=iwZbeV1qpVdKCjTjw@mail.gmail.com>
 From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <CAMuHMdWhRRdfoqg_o6bU7jjt5_Di0=z7MJ4fMh=MJ0m8=u4tgg@mail.gmail.com>
+In-Reply-To: <CAMuHMdXjTw1NFaZhNiskiA+BQV68B61H=iwZbeV1qpVdKCjTjw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
 Hi, Geert,
 
-On 01.08.2024 19:13, Geert Uytterhoeven wrote:
+On 01.08.2024 19:29, Geert Uytterhoeven wrote:
 > Hi Claudiu,
 > 
-> On Mon, Apr 22, 2024 at 12:54 PM Claudiu <claudiu.beznea@tuxon.dev> wrote:
+> On Thu, Jul 11, 2024 at 2:34 PM Claudiu <claudiu.beznea@tuxon.dev> wrote:
 >> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 >>
->> Update CPG #power-domain-cells = <1> and move all the IPs to be part of the
->> IP specific power domain as the driver has been modified to support
->> multiple power domains.
+>> Add DMAC node.
 >>
->> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 >> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > 
-> Now the watchdog fixes are in v6.11-rc1, I will queue this in
-> renesas-devel for v6.12.
+> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> i.e. will queue in renesas-devel for v6.12.
+> 
+>> --- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
+>> +++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
+>> @@ -363,6 +363,44 @@ irqc: interrupt-controller@11050000 {
+>>                         resets = <&cpg R9A08G045_IA55_RESETN>;
+>>                 };
+>>
+>> +               dmac: dma-controller@11820000 {
+> 
+>> +                       power-domains = <&cpg>;
+> 
+> Updating to " <&cpg R9A08G045_PD_DMAC>" while applying.
 
-Only the RZ/G3S support has been merged.
-
-The watchdog fixes that allows us to use this patch were submitted as RFC
-but got no input from Ulf, yet.
+FTR: please don't as the watchdog fixes are still under discussion. Only
+RZ/G3S watchdog support was merged.
 
 Thank you,
 Claudiu Beznea
-
-[1]
-https://lore.kernel.org/all/20240619120920.2703605-1-claudiu.beznea.uj@bp.renesas.com/
 
 > 
 > Gr{oetje,eeting}s,
 > 
 >                         Geert
 > 
-> 
-> --
-> Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-> 
-> In personal conversations with technical people, I call myself a hacker. But
-> when I'm talking to journalists I just say "programmer" or something like that.
->                                 -- Linus Torvalds
