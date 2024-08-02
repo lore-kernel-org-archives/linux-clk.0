@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2776F1C2305;
-	Fri,  2 Aug 2024 09:14:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 790958F47;
+	Fri,  2 Aug 2024 09:15:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722590044; cv=none; b=JFCRwwz47ZcQCi4d7ZhQEMGqyyefemBagR6B9cKRdT95yPIzzG1xAcs+4DtZlyU8lCstl2rVY8LISBf9YW/C5GdQ43f+Lotj4AEwoMrTun1YetXKtMICJpJTBXqoolymua2fpWkUKxZMkEktJcumK9LkYfJZ/FfUJvtSaotGHbw=
+	t=1722590155; cv=none; b=ZkPZWpiJNDLObdHGaObOdKJTUseTzjdhx0HsijSUs0c+SttVhS24q1AZgG9b1bQdqQapySZ7v/496lsoka9XzIQn05zW1LTJTpPrg4DAWIeJDaPWEE0Zqq5l17Rj2MnzTmfUR+im57myMidEUjP8aDBXK6wqE4FXfHDOXbZ2VsI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722590044; c=relaxed/simple;
-	bh=JdSEwhv2iJvNvHMqbO+om0ZEnZ7rNzgZ4clklHeSsKQ=;
+	s=arc-20240116; t=1722590155; c=relaxed/simple;
+	bh=Frw/aKnT7fHBmc7Oh65zgDJ6VRU3OcJ9C3yXXcLORnY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Y6YaWDMUJgkV3w1fGQelX8scJMuHcSbPfU0daUkD+oK63jRM0Xw7ieBu1GGoN6XyqXYG6nviDr8g3QVjLtZO/mrEZ9Mt65e756ETyxdYontpqVUXx8Z3Llopoo2QcGuM8F4E3hb7RlKa8IgqpD+OJ008+AkAf56Q4XG9haQullQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KAamYZGk; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=HL309/B6Dox0dhU3084s5qOPkTZSyJFbJIJbJQf6eOYBPjso3SL2x6ZrJsi+0U2cgBjv2T7DP1/bsRDv+IHsxVcs9td1kuRfVllXV4iJtv79gveTCmlpGdRUx97klLHNvchB20yClXdRURdEUoXjuFAK5ew+VEMwGiwo8kAIzQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UtKTriS9; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KAamYZGk"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8AAEFC32782;
-	Fri,  2 Aug 2024 09:13:54 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UtKTriS9"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4BB3C32782;
+	Fri,  2 Aug 2024 09:15:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722590043;
-	bh=JdSEwhv2iJvNvHMqbO+om0ZEnZ7rNzgZ4clklHeSsKQ=;
+	s=k20201202; t=1722590155;
+	bh=Frw/aKnT7fHBmc7Oh65zgDJ6VRU3OcJ9C3yXXcLORnY=;
 	h=Date:Subject:List-Id:To:References:From:In-Reply-To:From;
-	b=KAamYZGkZbbxYCkmloakyXQidpirOdnHhwp2M+lhuW0omtc0XCDNnCh1+/NB/EE1F
-	 jgiQ+nffDa/LzswBjVgxnxqHcCioeXVKHtbcs+BX8sdnCfRYa9Ey7ZKum1hrTU2n+Q
-	 NCTPYnssA9cwQ7kyX1Gh0q9I+h4rDxtHFtMkTdwyceWlfJxkORrOvvti5s1tSRy9hB
-	 bOGdWdrNhx4WA9DsSrsP521z7/cnSEwCqw9oT6LGBbBwrOF4D8OjpGYYiF9VZlhb/b
-	 LWd+JAlF/JUUh765uSl30p3cPjmv/1H9XIyEk5hBh2ZjOQEATxgKncxEPFYeuh8ko5
-	 HwtoyhkyNp2RQ==
-Message-ID: <1b420e2e-6983-49fb-946c-a4bbf7fa54eb@kernel.org>
-Date: Fri, 2 Aug 2024 11:13:52 +0200
+	b=UtKTriS9ejPE2TBDuw8wFEO1RgR/o0PVtjCN/p6yFfJXizz+3Jrq87N20UV5TOIc8
+	 IBofkW0TDnFcTS3ZFG/jcmzqPG9Ue34M34wcQI+JU1pXorouEY5WSg2QfCF+pmX0bv
+	 +9ca364EelxXF99lJOxmNBM0PsNY3vAvTzukJuCSNBgpeR5NL+PKgK48eTK2pGWs3t
+	 pOu2id4uGVngPm3epmfZJSJh5Ypx5CHU2lNxP16XzUfQikVbKysGYmY8JAM8mUfQO3
+	 rTFzsXvxoAhWBwO1lNnoGW0JyEO8GTPpUKCt4YKheO5Z3zUZxdDAmUUMm+BTzU8ROF
+	 ra2VYwDfMjFIQ==
+Message-ID: <77541300-5204-4d3f-b958-57cb1a67ac95@kernel.org>
+Date: Fri, 2 Aug 2024 11:15:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,8 +35,8 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/9] dt-bindings: mfd: aspeed,ast2x00-scu: Add ASPEED
- AST2700-SCUX schema
+Subject: Re: [PATCH v2 2/9] dt-bindings: reset: ast2700: Add ASPEED AST27xx
+ Reset schema
 To: Kevin Chen <kevin_chen@aspeedtech.com>, robh@kernel.org,
  krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
  andrew@codeconstruct.com.au, lee@kernel.org, catalin.marinas@arm.com,
@@ -49,7 +49,7 @@ To: Kevin Chen <kevin_chen@aspeedtech.com>, robh@kernel.org,
  linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
  linux-clk@vger.kernel.org
 References: <20240802090544.2741206-1-kevin_chen@aspeedtech.com>
- <20240802090544.2741206-3-kevin_chen@aspeedtech.com>
+ <20240802090544.2741206-4-kevin_chen@aspeedtech.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -95,67 +95,39 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240802090544.2741206-3-kevin_chen@aspeedtech.com>
+In-Reply-To: <20240802090544.2741206-4-kevin_chen@aspeedtech.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 02/08/2024 11:05, Kevin Chen wrote:
-> Add compatible for two SCU of SCU0 and SCU1 in AST2700.
+> Add Reset schema for AST2700.
 > 
 > Signed-off-by: Kevin Chen <kevin_chen@aspeedtech.com>
-> ---
 
-A nit, subject: drop second/last, redundant "schema". The "dt-bindings"
-prefix is already stating that these are bindings in the schema.
+So you just ignored all the comments?
+
+No, respond to each of them so we will all know that you understood them.
+
+You already got this comment:
+A nit, subject: drop second/last, redundant "bindings". The
+"dt-bindings" prefix is already stating that these are bindings.
 See also:
 https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
 
+and not much improved. Drop "schema".
 
->  .../bindings/mfd/aspeed,ast2x00-scu.yaml      | 70 +++++++++++++------
->  1 file changed, 50 insertions(+), 20 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml b/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
-> index 86ee69c0f45b..3426b1c84132 100644
-> --- a/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
-> +++ b/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
-> @@ -13,33 +13,62 @@ description:
->  maintainers:
->    - Joel Stanley <joel@jms.id.au>
->    - Andrew Jeffery <andrew@aj.id.au>
-> +  - Kevin Chen <kevin_chen@aspeedtech.com>
->  
-> -properties:
-> -  compatible:
-> -    items:
-> -      - enum:
-> -          - aspeed,ast2400-scu
-> -          - aspeed,ast2500-scu
-> -          - aspeed,ast2600-scu
-> -      - const: syscon
-> -      - const: simple-mfd
-> +scu@ast2xx00-scu:
-> +  properties:
-> +    compatible:
-> +      items:
-> +        - enum:
-> +            - aspeed,ast2400-scu
-> +            - aspeed,ast2500-scu
-> +            - aspeed,ast2600-scu
-> +        - const: syscon
-> +        - const: simple-mfd
+Anyway, rest was ignored:
 
-No, no, no, this code is neither correct nor makes any sense.
+<form letter>
+This is a friendly reminder during the review process.
 
->  
-> -  reg:
-> -    maxItems: 1
-> +    reg:
-> +      maxItems: 1
->  
-> -  ranges: true
-> +    ranges: true
+It seems my or other reviewer's previous comments were not fully
+addressed. Maybe the feedback got lost between the quotes, maybe you
+just forgot to apply it. Please go back to the previous discussion and
+either implement all requested changes or keep discussing them.
 
-What?
+Thank you.
+</form letter>
 
 
 Best regards,
