@@ -1,95 +1,84 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C592A47A74;
-	Fri,  2 Aug 2024 10:29:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC791134AB;
+	Fri,  2 Aug 2024 14:17:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722594556; cv=none; b=ug9ECq50ENk6ahdocrbLSApX3zrTT8YtR0bp4z8X3sMZr3zes5MXSKtu6f1r1krMxZ78l0R9MpUpTyiv+2ieOn6j+kkEkEMDH7H8ax94pg2m4xO4JNF7S8Bu+0Vv7DAzgGxeyfLSglPAKrtdO0sp0BOnxnYPE5KzM0A7l0rpr9E=
+	t=1722608235; cv=none; b=HCGGlcBOmE7v+mXV9aW2aVPk8QZZIuKs9PjPuuqV9+pGpXw68vJiTKq1kU0SdFstfZQ+rxPh4fzfdSDRPKT/Eo1rGx8DjhL/PKs7SQQDjERAqDBnXfcjqStNJ3DwOx7whLfuyuJN8t8AOeo8x9gH6gQJLwGwg5KTPjz1ldE3azI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722594556; c=relaxed/simple;
-	bh=CJCaoWSDIP5SJphz4ctyOagGF1RYe8/tBShRSLTdA+0=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=aga6ViD60lyMKg4Q9mgpJ9tdHl/UHDTP3KFy4m4vNk7u7uGI8VjIJT2P6mrn5Jy8FeL20Y1NTATNbghrS6bFYdUVi6dqi9NSNg9nhMqM/Zu2BpllrRKBciYFwrrbxsdVACTrIjNMtZ9C7iEiv/we5jSuoMo2ukW9CVj2zRVe9gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TAKDI/Zd; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1722608235; c=relaxed/simple;
+	bh=F27qf+/aidpVlH+J0uQc/en8+v4v4owFpY+E4ck8mds=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E/LhQLu9r+GjPblBtW7LB0PpvWXDvb2W428/oBGXNoDeEfRwYAxzApMgD0Q5/VyphkrDSwQa90hSY3//2raQ/cVkDBbikQhKBOjvyBXRd1HU4BpAady6hYNtCWYYLEhfVN/VMo9zNkXgA4JLFTI3l6MB1SkT0mP8skeb90f34O8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=3qGZM3aW; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TAKDI/Zd"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E96FC32782;
-	Fri,  2 Aug 2024 10:29:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722594556;
-	bh=CJCaoWSDIP5SJphz4ctyOagGF1RYe8/tBShRSLTdA+0=;
-	h=Date:From:To:List-Id:Cc:In-Reply-To:References:Subject:From;
-	b=TAKDI/ZdMZBJxxYq7r51GY2g44cAnqXZXvN1Hs1s7Nwby5EA7bYJUgznB95Rlb/xq
-	 8b2/4pSbmtaCRkb9KaXsPGcZ5Rk8fxybxAwiW3+8uGiVUcqqvpZgALQk7w4gthY+DF
-	 7HBgVUZDCmzuujMyjF+dCBzBFaCC8vs8U97mWYbHLNXoiV1r4TiJECnzbBg93r0heT
-	 zZ5MPq+2TlV5rb9RV9xTWxOjptyqF0uVivg/LQP6Ab8GaH8d+U1tH4G4GloAGKvyrZ
-	 Z2fXb96R3AlAcYb2psUgPzqd0/BbTi0m1EdAGw0yWSDmqQcxCo1CGPxS/Oz56j5jyE
-	 PYW1C9Zl754jw==
-Date: Fri, 02 Aug 2024 04:29:15 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="3qGZM3aW"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1722608232;
+	bh=F27qf+/aidpVlH+J0uQc/en8+v4v4owFpY+E4ck8mds=;
+	h=From:To:Cc:Subject:Date:From;
+	b=3qGZM3aWPZ5N58fnbh9lgA5I5ZHgSVCVbrZpBqpPhRdsYdwW+GsAg1oGIbHwX+Pdb
+	 GEDR7B3sA93tddxkNjbSm8/hwR52texpQsu+r+Bq606G65ivzSDZzSJm50Q1DTheNd
+	 emcRIUm4LfQuldkGHhoR6MerEvOS8kXFteM0PdHF9vLsQHkQFIEdzxFZE+o1oyGzFP
+	 F4EalWayh6nrpAiBI51ztXdTyahr+VTmzK5OVt7opKUFKVgGCpR93+IS2b/1/O5Qzi
+	 foe2J9lbiJYeRRqOaFWcOp5JrqqtL99afGTcf0yQf2TJ7mRFS4SuweJniAEE45OcPa
+	 R/8TE3wopPdkQ==
+Received: from trenzalore.hitronhub.home (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: detlev)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 637D23782214;
+	Fri,  2 Aug 2024 14:17:10 +0000 (UTC)
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: linux-kernel@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Elaine Zhang <zhangqing@rock-chips.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	Detlev Casanova <detlev.casanova@collabora.com>
+Subject: [PATCH 0/3] Add CRU support for rk3576 SoC
+Date: Fri,  2 Aug 2024 10:12:47 -0400
+Message-ID: <20240802141816.288337-1-detlev.casanova@collabora.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Kevin Chen <kevin_chen@aspeedtech.com>
-Cc: krzk+dt@kernel.org, linux-arm-kernel@lists.infradead.org, 
- andrew@codeconstruct.com.au, devicetree@vger.kernel.org, sboyd@kernel.org, 
- olof@lixom.net, lee@kernel.org, u-kumar1@ti.com, conor+dt@kernel.org, 
- quic_bjorande@quicinc.com, dmitry.baryshkov@linaro.org, 
- p.zabel@pengutronix.de, linux-aspeed@lists.ozlabs.org, 
- m.szyprowski@samsung.com, nfraprado@collabora.com, arnd@arndb.de, 
- mturquette@baylibre.com, soc@kernel.org, will@kernel.org, 
- geert+renesas@glider.be, catalin.marinas@arm.com, neil.armstrong@linaro.org, 
- linux-clk@vger.kernel.org, shawnguo@kernel.org, joel@jms.id.au, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240802090544.2741206-3-kevin_chen@aspeedtech.com>
-References: <20240802090544.2741206-1-kevin_chen@aspeedtech.com>
- <20240802090544.2741206-3-kevin_chen@aspeedtech.com>
-Message-Id: <172259455507.2558656.18344933444213909682.robh@kernel.org>
-Subject: Re: [PATCH v2 1/9] dt-bindings: mfd: aspeed,ast2x00-scu: Add
- ASPEED AST2700-SCUX schema
+Content-Transfer-Encoding: 8bit
 
+Add support for clocks and resets on the rk3576.
+Patches from downstream have been squashed and rebased.
 
-On Fri, 02 Aug 2024 17:05:36 +0800, Kevin Chen wrote:
-> Add compatible for two SCU of SCU0 and SCU1 in AST2700.
-> 
-> Signed-off-by: Kevin Chen <kevin_chen@aspeedtech.com>
-> ---
->  .../bindings/mfd/aspeed,ast2x00-scu.yaml      | 70 +++++++++++++------
->  1 file changed, 50 insertions(+), 20 deletions(-)
-> 
+Detlev Casanova (1):
+  dt-bindings: clock: add rk3576 cru bindings
 
-My bot found errors running 'make dt_binding_check' on your patch:
+Elaine Zhang (2):
+  clk: rockchip: Add dt-binding header for rk3576
+  clk: rockchip: Add clock controller for the RK3576
 
-yamllint warnings/errors:
+ .../bindings/clock/rockchip,rk3576-cru.yaml   |   73 +
+ drivers/clk/rockchip/Kconfig                  |    7 +
+ drivers/clk/rockchip/Makefile                 |    1 +
+ drivers/clk/rockchip/clk-rk3576.c             | 1818 +++++++++++++++++
+ drivers/clk/rockchip/clk.h                    |   52 +
+ .../dt-bindings/clock/rockchip,rk3576-cru.h   | 1149 +++++++++++
+ 6 files changed, 3100 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3576-cru.yaml
+ create mode 100644 drivers/clk/rockchip/clk-rk3576.c
+ create mode 100644 include/dt-bindings/clock/rockchip,rk3576-cru.h
 
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml: 'scu@ast2xx00-scu' is not one of ['$id', '$schema', 'title', 'description', 'examples', 'required', 'allOf', 'anyOf', 'oneOf', 'definitions', '$defs', 'additionalProperties', 'dependencies', 'dependentRequired', 'dependentSchemas', 'patternProperties', 'properties', 'not', 'if', 'then', 'else', 'unevaluatedProperties', 'deprecated', 'maintainers', 'select', '$ref']
-	from schema $id: http://devicetree.org/meta-schemas/base.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml: 'scu@ast2xx00-scux' is not one of ['$id', '$schema', 'title', 'description', 'examples', 'required', 'allOf', 'anyOf', 'oneOf', 'definitions', '$defs', 'additionalProperties', 'dependencies', 'dependentRequired', 'dependentSchemas', 'patternProperties', 'properties', 'not', 'if', 'then', 'else', 'unevaluatedProperties', 'deprecated', 'maintainers', 'select', '$ref']
-	from schema $id: http://devicetree.org/meta-schemas/base.yaml#
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml: scu@ast2xx00-scu: Missing additionalProperties/unevaluatedProperties constraint
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml: scu@ast2xx00-scux: Missing additionalProperties/unevaluatedProperties constraint
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240802090544.2741206-3-kevin_chen@aspeedtech.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+-- 
+2.46.0
 
