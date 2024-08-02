@@ -1,161 +1,100 @@
 Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54538131E2D;
-	Fri,  2 Aug 2024 21:10:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8A1353389;
+	Fri,  2 Aug 2024 21:39:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722633007; cv=none; b=CXsFYX2vnSuEz74M2Z3FyMWZc1kxpuTyap28W+egfi6InMimAg1a+vSoUGx+nkx8KJmiy45ZKY/IAitVE4+Z9Ann8IBQSMME/M8oRa1YQKIj2g6vgh0h+9cUEilkooQCCiNxusx+lt+IyW6nxWVP3+ObTZnftEFCQXhsJp6bVR0=
+	t=1722634793; cv=none; b=gLpIZgrc2jQATguR6DC/XystgXuEslJnGVyJvoMq3ufHlsPctDmVHv1NgTFyuI/tIBDaJNOSq97rAGsoeSr82FKplBm6QPDo9NLNN60qiv4ekX3s+oThpPcvqMkLrNzjSsNf5WXuxWhI5Ev+ndSqTG3NG9UCvM8fsZYYCTfmx8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722633007; c=relaxed/simple;
-	bh=9dKMte5AFbMCPQcb5CrWmFpJYPJ6uvTEhFLt0GaO98w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=t3hu/Ra1wbjX0VlP0yAVwStJVD6oF18Pw73wVzLaFboeov5aat+qBCGagqewBtuyInlj6rypjanOkt08yspsFQAkbizGIsCHo6besIqftbVctLxmkVOWZKL/Ocl9fMl6pD5P4cJxuv+n/Q4e6yFjSojq3V7QEW0UKAJwn1p+B+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=MdBNH8K2; arc=none smtp.client-ip=46.235.227.194
+	s=arc-20240116; t=1722634793; c=relaxed/simple;
+	bh=3ZPQZra9eBgn9X+DOhPsgFW4rgc5sg704GwOCwXXYRk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Y+jzTF61aBRo7IblLTIA19eaE+R+gCB6nMz7VGeKZwNg5ej420ZSVnSOz1k+tmnEHf11o4Oza3cTFcz7BySIA1PkQtcM15/YdHXRAvJlQtO1EXjaDWV+DI3a7JUEANnRcD5ksyDUKt9PccQxYBcMmWTsUgGrfLKZDa4GGccCcfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=5AGDxnId; arc=none smtp.client-ip=46.235.227.194
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="MdBNH8K2"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="5AGDxnId"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1722633003;
-	bh=9dKMte5AFbMCPQcb5CrWmFpJYPJ6uvTEhFLt0GaO98w=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=MdBNH8K2NbSu7puBPIhq9BT+s8UodLsfqUuytnQE9ngLkHKqWrndo8AqdgDEALFJ1
-	 F21lcjmTHZDtFFj8aK9vG6578iFD3r4Q/3sWIekd7/KIU8N72B/EdVr8DGP+3Qb0FY
-	 d32IhXbsBWzWsrO8WM1pCPIpia5CkIbb1zaKZ+1crv1KPgmGIJ+wYeszRNrbKfvIYt
-	 XArxZtNaijg4BGgPklQKOXa3JPycs32d9xTjH4wdHSg54rg6TnlKJAqugsEFnsNq/L
-	 +Nql8GU376VHotpO8BGbvC8acb8gACRzncNRUxHWGV3xdJzz898D2VRMGBvWYD2sUF
-	 Kv5YAgQuJCusw==
-Received: from trenzalore.localnet (cola.collaboradmins.com [195.201.22.229])
+	s=mail; t=1722634790;
+	bh=3ZPQZra9eBgn9X+DOhPsgFW4rgc5sg704GwOCwXXYRk=;
+	h=From:To:Cc:Subject:Date:From;
+	b=5AGDxnIdVhv9ZeigLksbEeUZysb+kQpZcf2GgCB9wQybwtRYRzwgnczeQ7a5EXn+z
+	 89RJMgjFnlEwTACUQ0HFrm3XRNxKhWgxfY7OauJoy57a6qS3IfqjAn029VGumpFjHY
+	 tN0ehYZLthxJ+RLmBkwkDAl0PINARx30RCHkO70Vw9/jVbSLI8uN8Z/Zu0m3IaxVml
+	 AFKWPhSX/Q+UWOQ0zLJ7p/vyMVC8b0Q0DoT/XGiRtQxbVbh8I5U55/pclFBKo5i0kE
+	 DN010XYZjNodBlikCT/JRlKl2rgDrVh3ECEdZRpQ+p/B7pVaIxm/sJs8kdWCqBVaTB
+	 h34PBmSBVicuQ==
+Received: from trenzalore.hitronhub.home (cola.collaboradmins.com [195.201.22.229])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: detlev)
-	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 909C53782218;
-	Fri,  2 Aug 2024 21:10:01 +0000 (UTC)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id ED5913782215;
+	Fri,  2 Aug 2024 21:39:47 +0000 (UTC)
 From: Detlev Casanova <detlev.casanova@collabora.com>
-To: linux-kernel@vger.kernel.org,
- Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: linux-kernel@vger.kernel.org
 Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Elaine Zhang <zhangqing@rock-chips.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, Sugar Zhang <sugar.zhang@rock-chips.com>,
- kernel@collabora.com
-Subject: Re: [PATCH 2/3] clk: rockchip: Add dt-binding header for rk3576
-Date: Fri, 02 Aug 2024 17:11:09 -0400
-Message-ID: <3308850.44csPzL39Z@trenzalore>
-In-Reply-To: <4084310.iTQEcLzFEP@diego>
-References:
- <20240802141816.288337-1-detlev.casanova@collabora.com>
- <20240802141816.288337-3-detlev.casanova@collabora.com>
- <4084310.iTQEcLzFEP@diego>
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Elaine Zhang <zhangqing@rock-chips.com>,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	kernel@collabora.com,
+	Detlev Casanova <detlev.casanova@collabora.com>
+Subject: [PATCH v2 0/3] Add CRU support for rk3576 SoC
+Date: Fri,  2 Aug 2024 17:35:38 -0400
+Message-ID: <20240802214053.433493-1-detlev.casanova@collabora.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Heiko,
+Add support for clocks and resets on the rk3576.
+Patches from downstream have been squashed and rebased.
 
-On Friday, 2 August 2024 10:34:07 EDT Heiko St=C3=BCbner wrote:
-> Hi Detlev,
->=20
-> Am Freitag, 2. August 2024, 16:12:49 CEST schrieb Detlev Casanova:
-> > From: Elaine Zhang <zhangqing@rock-chips.com>
-> >=20
-> > Add the dt-bindings header for the rk3576, that gets shared between
-> > the clock controller and the clock references in the dts.
-> >=20
-> > Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-> > Signed-off-by: Sugar Zhang <sugar.zhang@rock-chips.com>
-> > Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
-> > ---
-> >=20
-> >  .../dt-bindings/clock/rockchip,rk3576-cru.h   | 1149 +++++++++++++++++
-> >  1 file changed, 1149 insertions(+)
-> >  create mode 100644 include/dt-bindings/clock/rockchip,rk3576-cru.h
-> >=20
-> > diff --git a/include/dt-bindings/clock/rockchip,rk3576-cru.h
-> > b/include/dt-bindings/clock/rockchip,rk3576-cru.h new file mode 100644
-> > index 0000000000000..19d25f082dc57
-> > --- /dev/null
-> > +++ b/include/dt-bindings/clock/rockchip,rk3576-cru.h
-> > @@ -0,0 +1,1149 @@
-> >=20
-> > +#define CLK_NR_CLKS			(ACLK_KLAD + 1)
->=20
-> this needs to go please. Take a look at how Sebastian got rid of needed
-> that max-constant for rk3588.
+The resets have been renumbered without gaps and their actual register/bit
+information is set in rst-rk3576.c as it has been done for rk3588.
 
-Oh indeed, that looks better, I'll port it to using the same functions as i=
-n=20
-rk3588.
+Changes since v1:
+- Remove reset defines that are probably out of the main core
+- Separate resets and clocks bindings
+- Renumber the resets without gaps
 
-I'll also separate clocks and resets as done in rk3588 and improve the list=
-ing=20
-of those resets as in rst-rk3588.c
-
-> [...]
->=20
-> > +#define SRST_H_VEPU1			1267
-> > +#define SRST_A_VEPU1			1268
-> > +#define SRST_VEPU1_CORE			1269
-> > +
-> > +/********Name=3DPHPPHYSOFTRST_CON00,Offset=3D0x8A00********/
-> > +#define SRST_P_PHPPHY_CRU		131073
-> > +#define SRST_P_APB2ASB_SLV_CHIP_TOP	131075
-> > +#define SRST_P_PCIE2_COMBOPHY0		131077
-> > +#define SRST_P_PCIE2_COMBOPHY0_GRF	131078
-> > +#define SRST_P_PCIE2_COMBOPHY1		131079
-> > +#define SRST_P_PCIE2_COMBOPHY1_GRF	131080
->=20
-> this seems to lump together different components and with that creates
-> these gaps. I.e. I really don't think the phpphy in these registers is pa=
-rt
-> of the core CRU.
->=20
-> That huge memory length of 0x5c000 in your dt-binding is also a good
-> indicator that this needs to have more separation and not span multiple
-> devices.
-
-It is not really clear if those are different devices, but they can possibl=
-y be=20
-seen as different instances of the same device. I'll just remove those extr=
-a=20
-resets for now and add them with the correct device when support is=20
-implemented.
-
-> > +/********Name=3DPHPPHYSOFTRST_CON01,Offset=3D0x8A04********/
-> > +#define SRST_PCIE0_PIPE_PHY		131093
-> > +#define SRST_PCIE1_PIPE_PHY		131096
-> > +
-> > +/********Name=3DSECURENSSOFTRST_CON00,Offset=3D0x10A00********/
-> > +#define SRST_H_CRYPTO_NS		262147
-> > +#define SRST_H_TRNG_NS			262148
-> > +#define SRST_P_OTPC_NS			262152
-> > +#define SRST_OTPC_NS			262153
-> > +
-> > +/********Name=3DPMU1SOFTRST_CON00,Offset=3D0x20A00********/
-> > +#define SRST_P_HDPTX_GRF		524288
->=20
-> same here, that is also most likely not part of the CRU but a different
-> block. Other socs already implement separate clock controllers for
-> different parts, so please take a look there.
-
-Let's add those resets when the device they are linked to is actually=20
-supported then.
-
-> Thanks
-> Heiko
-
-Regards,
 Detlev.
 
+Detlev Casanova (1):
+  dt-bindings: clock: add rk3576 cru bindings
 
+Elaine Zhang (2):
+  clk: rockchip: Add dt-binding header for rk3576
+  clk: rockchip: Add clock controller for the RK3576
 
+ .../bindings/clock/rockchip,rk3576-cru.yaml   |   73 +
+ drivers/clk/rockchip/Kconfig                  |    7 +
+ drivers/clk/rockchip/Makefile                 |    1 +
+ drivers/clk/rockchip/clk-rk3576.c             | 1819 +++++++++++++++++
+ drivers/clk/rockchip/clk.h                    |   53 +
+ drivers/clk/rockchip/rst-rk3576.c             |  555 +++++
+ .../dt-bindings/clock/rockchip,rk3576-cru.h   |  589 ++++++
+ .../dt-bindings/reset/rockchip,rk3576-cru.h   |  484 +++++
+ 8 files changed, 3581 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3576-cru.yaml
+ create mode 100644 drivers/clk/rockchip/clk-rk3576.c
+ create mode 100644 drivers/clk/rockchip/rst-rk3576.c
+ create mode 100644 include/dt-bindings/clock/rockchip,rk3576-cru.h
+ create mode 100644 include/dt-bindings/reset/rockchip,rk3576-cru.h
+
+-- 
+2.46.0
 
