@@ -1,361 +1,161 @@
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from madrid.collaboradmins.com (madrid.collaboradmins.com [46.235.227.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1368E24B28
-	for <linux-clk@vger.kernel.org>; Fri,  2 Aug 2024 19:33:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54538131E2D;
+	Fri,  2 Aug 2024 21:10:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.227.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722627209; cv=none; b=Qdvda6COgIfKX0cLWHNeNOoc+ZmWslrrzjGTqgfv6r+UWEHeEAGW9kl/dd03Yqq747/brHuwiRadEz2kX6Jy4k1MzQlBKBYAHm6ABpJtVazrvk87xhC+0bYnAWWkBInN/diTAVIsE+V5POM5mL8YUU28W+mEiJVR32TCeiihj1g=
+	t=1722633007; cv=none; b=CXsFYX2vnSuEz74M2Z3FyMWZc1kxpuTyap28W+egfi6InMimAg1a+vSoUGx+nkx8KJmiy45ZKY/IAitVE4+Z9Ann8IBQSMME/M8oRa1YQKIj2g6vgh0h+9cUEilkooQCCiNxusx+lt+IyW6nxWVP3+ObTZnftEFCQXhsJp6bVR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722627209; c=relaxed/simple;
-	bh=VUsatHSawFjnuspkUbLMc/RTFaNLpBFO2tTutF86nSU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DvWzs6P7DKLkHonjI8k+iObZBbdAI0J4aN4TAgKJwJAfpxCZxSvMo+rlw8X5NzqubRX/txykNC+yUbOAemRgmBxBOiwwTEziO0vbpfSU1fck3yt0eVZQJHkmxaC1AU1OF43wZhJEuGNre6edKhizjggOG3VV6cIqH4oPc44Zuyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pzEX/Gty; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1722633007; c=relaxed/simple;
+	bh=9dKMte5AFbMCPQcb5CrWmFpJYPJ6uvTEhFLt0GaO98w=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=t3hu/Ra1wbjX0VlP0yAVwStJVD6oF18Pw73wVzLaFboeov5aat+qBCGagqewBtuyInlj6rypjanOkt08yspsFQAkbizGIsCHo6besIqftbVctLxmkVOWZKL/Ocl9fMl6pD5P4cJxuv+n/Q4e6yFjSojq3V7QEW0UKAJwn1p+B+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=MdBNH8K2; arc=none smtp.client-ip=46.235.227.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pzEX/Gty"
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-651da7c1531so71079937b3.0
-        for <linux-clk@vger.kernel.org>; Fri, 02 Aug 2024 12:33:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722627207; x=1723232007; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=z7dniS23SKfmEnH3heDmXF7wW6IpRVsH2fGKvJHi/jA=;
-        b=pzEX/GtyYGzQEG2TgQGlSE41S77gukBY2YHurforIOvuWELVpjXGFht2vpUBym9+Gu
-         8jYJoy8nCgM9NUpRxNW8wDVuf3wqC6npZSJ8j7uyqDHNrtIgoz6aD+LhPyCo09pMs1Fx
-         KbJDYZ4OZKABNAlYmM5rrrG/UcvrQC16eAOuqWtZHOXOKCTi4Imgzl5rTDgJWlvMWMTA
-         3NGP2PjfPhVC/0O1z6g6Zi7n9tbVp/m0bop2IQQbKHyoe+xmb/6INV8twmzeZKRdoB0h
-         zddoqFawWt/7R3tTDkAHgb/sqJnrf3aXnc6d5fYcwwI9aefbYLP5EbQDV2HcSlO6Yk6z
-         PzKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722627207; x=1723232007;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=z7dniS23SKfmEnH3heDmXF7wW6IpRVsH2fGKvJHi/jA=;
-        b=Xw9iZTYWEFnqQVziPebIR03K4Lg3raAbK1RQtMAufPK8FfiPV/7IbxA7e/xNoiaOUu
-         dVE0SYYYamsaHYMRdFm+c2/NShpmlLNJExt8erWNja3DnilKEj01UUzeze0ZVPiHqLWn
-         cEY3BMpfHcshh/w91Ihi6poEM3CKBjRXklG99fhoatvbailWafbwOS/sNYDhqQHSMFmB
-         IplbTo0lZzM9RQKnkECYe02qaYsBMDoCSWy+Q2meYUlzqCKCcUGjMyWmsbclUkWVd+Xg
-         xxe4R21/NVg2cOyiMSkLhK2oDwM8FqrVkLY/4h5a30GnbLn+01goIlqP9IBi9lTQsDKV
-         GwVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVg7Hto9htuNS1phyEV5dI3Lbqd7uepKhe9zsfPJgEOx27jU9yZgafLaJLwPFiYnGMZx9z8+NgIFfc8EybP+ElvF/1t2v3svmM9
-X-Gm-Message-State: AOJu0YzYVH3WYnWOA+IkkKCQdloM+aDK55xd8lw72CsmSdd225n9P7Nz
-	kmSZjj4UACyBk2W61nawIaHVLTWxThFZN6tOt0Rf4ZPK83nPa1LUXE3L/UlkAE6YzToz72kS5oL
-	rGK7kCa4nR535V1EIOgbxcWjeOjZxDW8fzmfc0g==
-X-Google-Smtp-Source: AGHT+IE7Y6hR9yVIaN5gVaLqlOtLA/L3XUpeQc4CZMQwUS0uVIYXCqjp7w5lpJsvNAXArj0xjLkLoSmwmxdJqEza8zk=
-X-Received: by 2002:a81:9c07:0:b0:650:82e0:63b1 with SMTP id
- 00721157ae682-689641a6125mr52704377b3.41.1722627206905; Fri, 02 Aug 2024
- 12:33:26 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="MdBNH8K2"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1722633003;
+	bh=9dKMte5AFbMCPQcb5CrWmFpJYPJ6uvTEhFLt0GaO98w=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=MdBNH8K2NbSu7puBPIhq9BT+s8UodLsfqUuytnQE9ngLkHKqWrndo8AqdgDEALFJ1
+	 F21lcjmTHZDtFFj8aK9vG6578iFD3r4Q/3sWIekd7/KIU8N72B/EdVr8DGP+3Qb0FY
+	 d32IhXbsBWzWsrO8WM1pCPIpia5CkIbb1zaKZ+1crv1KPgmGIJ+wYeszRNrbKfvIYt
+	 XArxZtNaijg4BGgPklQKOXa3JPycs32d9xTjH4wdHSg54rg6TnlKJAqugsEFnsNq/L
+	 +Nql8GU376VHotpO8BGbvC8acb8gACRzncNRUxHWGV3xdJzz898D2VRMGBvWYD2sUF
+	 Kv5YAgQuJCusw==
+Received: from trenzalore.localnet (cola.collaboradmins.com [195.201.22.229])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: detlev)
+	by madrid.collaboradmins.com (Postfix) with ESMTPSA id 909C53782218;
+	Fri,  2 Aug 2024 21:10:01 +0000 (UTC)
+From: Detlev Casanova <detlev.casanova@collabora.com>
+To: linux-kernel@vger.kernel.org,
+ Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Elaine Zhang <zhangqing@rock-chips.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, Sugar Zhang <sugar.zhang@rock-chips.com>,
+ kernel@collabora.com
+Subject: Re: [PATCH 2/3] clk: rockchip: Add dt-binding header for rk3576
+Date: Fri, 02 Aug 2024 17:11:09 -0400
+Message-ID: <3308850.44csPzL39Z@trenzalore>
+In-Reply-To: <4084310.iTQEcLzFEP@diego>
+References:
+ <20240802141816.288337-1-detlev.casanova@collabora.com>
+ <20240802141816.288337-3-detlev.casanova@collabora.com>
+ <4084310.iTQEcLzFEP@diego>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240802090544.2741206-1-kevin_chen@aspeedtech.com> <20240802090544.2741206-6-kevin_chen@aspeedtech.com>
-In-Reply-To: <20240802090544.2741206-6-kevin_chen@aspeedtech.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Fri, 2 Aug 2024 22:33:15 +0300
-Message-ID: <CAA8EJprhpv2i9Y=8FAW+fDi_TMJYLw8KO+GtbA4oPHuK+Kgq_A@mail.gmail.com>
-Subject: Re: [PATCH v2 4/9] clk: ast2700: add clock controller
-To: Kevin Chen <kevin_chen@aspeedtech.com>
-Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au, 
-	andrew@codeconstruct.com.au, lee@kernel.org, catalin.marinas@arm.com, 
-	will@kernel.org, arnd@arndb.de, olof@lixom.net, soc@kernel.org, 
-	mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de, 
-	quic_bjorande@quicinc.com, geert+renesas@glider.be, shawnguo@kernel.org, 
-	neil.armstrong@linaro.org, m.szyprowski@samsung.com, nfraprado@collabora.com, 
-	u-kumar1@ti.com, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Fri, 2 Aug 2024 at 12:05, Kevin Chen <kevin_chen@aspeedtech.com> wrote:
->
-> Add support for ast2700 clock controller.
->
-> Signed-off-by: Kevin Chen <kevin_chen@aspeedtech.com>
-> ---
->  drivers/clk/Makefile      |    1 +
->  drivers/clk/clk-ast2700.c | 1173 +++++++++++++++++++++++++++++++++++++
->  2 files changed, 1174 insertions(+)
->  create mode 100644 drivers/clk/clk-ast2700.c
->
-> diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-> index f793a16cad40..0d5992ea0fa4 100644
-> --- a/drivers/clk/Makefile
-> +++ b/drivers/clk/Makefile
-> @@ -38,6 +38,7 @@ obj-$(CONFIG_COMMON_CLK_FSL_SAI)      += clk-fsl-sai.o
->  obj-$(CONFIG_COMMON_CLK_GEMINI)                += clk-gemini.o
->  obj-$(CONFIG_COMMON_CLK_ASPEED)                += clk-aspeed.o
->  obj-$(CONFIG_MACH_ASPEED_G6)           += clk-ast2600.o
-> +obj-$(CONFIG_MACH_ASPEED_G7)           += clk-ast2700.o
->  obj-$(CONFIG_ARCH_HIGHBANK)            += clk-highbank.o
->  obj-$(CONFIG_CLK_HSDK)                 += clk-hsdk-pll.o
->  obj-$(CONFIG_COMMON_CLK_K210)          += clk-k210.o
-> diff --git a/drivers/clk/clk-ast2700.c b/drivers/clk/clk-ast2700.c
-> new file mode 100644
-> index 000000000000..eec8e0cb83d9
-> --- /dev/null
-> +++ b/drivers/clk/clk-ast2700.c
-> @@ -0,0 +1,1173 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +// Copyright ASPEED Technology
-> +
-> +#include <linux/clk-provider.h>
-> +#include <linux/of_address.h>
-> +#include <linux/of_device.h>
-> +#include <linux/reset-controller.h>
-> +
-> +#include <dt-bindings/clock/aspeed,ast2700-clk.h>
-> +#include <dt-bindings/reset/aspeed,ast2700-reset.h>
-> +
-> +#define SCU_CLK_24MHZ 24000000
+Hi Heiko,
 
-Are Aspeed's 24 MHz somehow different from 24 MHz on other platforms?
-Please use <linux/units.h> and refrain from defining just random
-values. If it has some special meaning (like XO clock or some other
-fixed funcion), please use logical names.
+On Friday, 2 August 2024 10:34:07 EDT Heiko St=C3=BCbner wrote:
+> Hi Detlev,
+>=20
+> Am Freitag, 2. August 2024, 16:12:49 CEST schrieb Detlev Casanova:
+> > From: Elaine Zhang <zhangqing@rock-chips.com>
+> >=20
+> > Add the dt-bindings header for the rk3576, that gets shared between
+> > the clock controller and the clock references in the dts.
+> >=20
+> > Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> > Signed-off-by: Sugar Zhang <sugar.zhang@rock-chips.com>
+> > Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+> > ---
+> >=20
+> >  .../dt-bindings/clock/rockchip,rk3576-cru.h   | 1149 +++++++++++++++++
+> >  1 file changed, 1149 insertions(+)
+> >  create mode 100644 include/dt-bindings/clock/rockchip,rk3576-cru.h
+> >=20
+> > diff --git a/include/dt-bindings/clock/rockchip,rk3576-cru.h
+> > b/include/dt-bindings/clock/rockchip,rk3576-cru.h new file mode 100644
+> > index 0000000000000..19d25f082dc57
+> > --- /dev/null
+> > +++ b/include/dt-bindings/clock/rockchip,rk3576-cru.h
+> > @@ -0,0 +1,1149 @@
+> >=20
+> > +#define CLK_NR_CLKS			(ACLK_KLAD + 1)
+>=20
+> this needs to go please. Take a look at how Sebastian got rid of needed
+> that max-constant for rk3588.
 
-> +#define SCU_CLK_25MHZ 25000000
-> +#define SCU_CLK_192MHZ 192000000
-> +/* SOC0 USB2 PHY CLK*/
-> +#define SCU_CLK_12MHZ 12000000
+Oh indeed, that looks better, I'll port it to using the same functions as i=
+n=20
+rk3588.
 
-So, this can be #define ASPEED_SOC0_USB2_PHY_RATE (12 * HZ_PER_MHZ)
+I'll also separate clocks and resets as done in rk3588 and improve the list=
+ing=20
+of those resets as in rst-rk3588.c
 
-> +/* SOC0 */
-> +#define SCU0_HWSTRAP1 0x010
-> +#define SCU0_CLK_STOP 0x240
-> +#define SCU0_CLK_SEL1 0x280
-> +#define SCU0_CLK_SEL2 0x284
-> +#define GET_USB_REFCLK_DIV(x) ((GENMASK(23, 20) & (x)) >> 20)
-> +#define UART_DIV13_EN BIT(30)
-> +#define SCU0_HPLL_PARAM 0x300
-> +#define SCU0_DPLL_PARAM 0x308
-> +#define SCU0_MPLL_PARAM 0x310
-> +#define SCU0_D1CLK_PARAM 0x320
-> +#define SCU0_D2CLK_PARAM 0x330
-> +#define SCU0_CRT1CLK_PARAM 0x340
-> +#define SCU0_CRT2CLK_PARAM 0x350
-> +#define SCU0_MPHYCLK_PARAM 0x360
-> +
-> +/* SOC1 */
-> +#define SCU1_CLK_STOP 0x240
-> +#define SCU1_CLK_STOP2 0x260
-> +#define SCU1_CLK_SEL1 0x280
-> +#define SCU1_CLK_SEL2 0x284
-> +#define UXCLK_MASK GENMASK(1, 0)
-> +#define HUXCLK_MASK GENMASK(4, 3)
-> +#define SCU1_HPLL_PARAM 0x300
-> +#define SCU1_APLL_PARAM 0x310
-> +#define SCU1_DPLL_PARAM 0x320
-> +#define SCU1_UXCLK_CTRL 0x330
-> +#define SCU1_HUXCLK_CTRL 0x334
-> +#define SCU1_MAC12_CLK_DLY 0x390
-> +#define SCU1_MAC12_CLK_DLY_100M 0x394
-> +#define SCU1_MAC12_CLK_DLY_10M 0x398
-> +
-> +/*
-> + * MAC Clock Delay settings
-> + */
-> +#define MAC_CLK_RMII1_50M_RCLK_O_CTRL          BIT(30)
-> +#define   MAC_CLK_RMII1_50M_RCLK_O_DIS         0
-> +#define   MAC_CLK_RMII1_50M_RCLK_O_EN          1
-> +#define MAC_CLK_RMII0_50M_RCLK_O_CTRL          BIT(29)
-> +#define   MAC_CLK_RMII0_5M_RCLK_O_DIS          0
-> +#define   MAC_CLK_RMII0_5M_RCLK_O_EN           1
-> +#define MAC_CLK_RMII_TXD_FALLING_2             BIT(27)
-> +#define MAC_CLK_RMII_TXD_FALLING_1             BIT(26)
-> +#define MAC_CLK_RXCLK_INV_2                    BIT(25)
-> +#define MAC_CLK_RXCLK_INV_1                    BIT(24)
-> +#define MAC_CLK_1G_INPUT_DELAY_2               GENMASK(23, 18)
-> +#define MAC_CLK_1G_INPUT_DELAY_1               GENMASK(17, 12)
-> +#define MAC_CLK_1G_OUTPUT_DELAY_2              GENMASK(11, 6)
-> +#define MAC_CLK_1G_OUTPUT_DELAY_1              GENMASK(5, 0)
-> +
-> +#define MAC_CLK_100M_10M_RESERVED              GENMASK(31, 26)
-> +#define MAC_CLK_100M_10M_RXCLK_INV_2           BIT(25)
-> +#define MAC_CLK_100M_10M_RXCLK_INV_1           BIT(24)
-> +#define MAC_CLK_100M_10M_INPUT_DELAY_2         GENMASK(23, 18)
-> +#define MAC_CLK_100M_10M_INPUT_DELAY_1         GENMASK(17, 12)
-> +#define MAC_CLK_100M_10M_OUTPUT_DELAY_2                GENMASK(11, 6)
-> +#define MAC_CLK_100M_10M_OUTPUT_DELAY_1                GENMASK(5, 0)
-> +
-> +#define AST2700_DEF_MAC12_DELAY_1G     0x00CF4D75
+> [...]
+>=20
+> > +#define SRST_H_VEPU1			1267
+> > +#define SRST_A_VEPU1			1268
+> > +#define SRST_VEPU1_CORE			1269
+> > +
+> > +/********Name=3DPHPPHYSOFTRST_CON00,Offset=3D0x8A00********/
+> > +#define SRST_P_PHPPHY_CRU		131073
+> > +#define SRST_P_APB2ASB_SLV_CHIP_TOP	131075
+> > +#define SRST_P_PCIE2_COMBOPHY0		131077
+> > +#define SRST_P_PCIE2_COMBOPHY0_GRF	131078
+> > +#define SRST_P_PCIE2_COMBOPHY1		131079
+> > +#define SRST_P_PCIE2_COMBOPHY1_GRF	131080
+>=20
+> this seems to lump together different components and with that creates
+> these gaps. I.e. I really don't think the phpphy in these registers is pa=
+rt
+> of the core CRU.
+>=20
+> That huge memory length of 0x5c000 in your dt-binding is also a good
+> indicator that this needs to have more separation and not span multiple
+> devices.
 
-lowcase hex, please.
+It is not really clear if those are different devices, but they can possibl=
+y be=20
+seen as different instances of the same device. I'll just remove those extr=
+a=20
+resets for now and add them with the correct device when support is=20
+implemented.
 
-> +#define AST2700_DEF_MAC12_DELAY_100M   0x00410410
-> +#define AST2700_DEF_MAC12_DELAY_10M    0x00410410
-> +
-> +struct mac_delay_config {
-> +       u32 tx_delay_1000;
-> +       u32 rx_delay_1000;
-> +       u32 tx_delay_100;
-> +       u32 rx_delay_100;
-> +       u32 tx_delay_10;
-> +       u32 rx_delay_10;
-> +};
-> +
-> +/* Globally visible clocks */
-> +static DEFINE_SPINLOCK(ast2700_clk_lock);
-> +
-> +/* Division of RGMII Clock */
-> +static const struct clk_div_table ast2700_rgmii_div_table[] = {
-> +       { 0x0, 4 },
-> +       { 0x1, 4 },
-> +       { 0x2, 6 },
-> +       { 0x3, 8 },
-> +       { 0x4, 10 },
-> +       { 0x5, 12 },
-> +       { 0x6, 14 },
-> +       { 0x7, 16 },
-> +       { 0 }
-> +};
-> +
-> +/* Division of RMII Clock */
-> +static const struct clk_div_table ast2700_rmii_div_table[] = {
-> +       { 0x0, 8 },
-> +       { 0x1, 8 },
-> +       { 0x2, 12 },
-> +       { 0x3, 16 },
-> +       { 0x4, 20 },
-> +       { 0x5, 24 },
-> +       { 0x6, 28 },
-> +       { 0x7, 32 },
-> +       { 0 }
-> +};
-> +
-> +/* Division of HCLK/SDIO/MAC/apll_divn CLK */
-> +static const struct clk_div_table ast2700_clk_div_table[] = {
-> +       { 0x0, 2 },
-> +       { 0x1, 2 },
-> +       { 0x2, 3 },
-> +       { 0x3, 4 },
-> +       { 0x4, 5 },
-> +       { 0x5, 6 },
-> +       { 0x6, 7 },
-> +       { 0x7, 8 },
-> +       { 0 }
-> +};
-> +
-> +/* Division of PCLK/EMMC CLK */
-> +static const struct clk_div_table ast2700_clk_div_table2[] = {
-> +       { 0x0, 2 },
-> +       { 0x1, 4 },
-> +       { 0x2, 6 },
-> +       { 0x3, 8 },
-> +       { 0x4, 10 },
-> +       { 0x5, 12 },
-> +       { 0x6, 14 },
-> +       { 0x7, 16 },
-> +       { 0 }
-> +};
-> +
-> +/* HPLL/DPLL: 2000Mhz(default) */
-> +static struct clk_hw *ast2700_soc0_hw_pll(const char *name, const char *parent_name, u32 val)
+> > +/********Name=3DPHPPHYSOFTRST_CON01,Offset=3D0x8A04********/
+> > +#define SRST_PCIE0_PIPE_PHY		131093
+> > +#define SRST_PCIE1_PIPE_PHY		131096
+> > +
+> > +/********Name=3DSECURENSSOFTRST_CON00,Offset=3D0x10A00********/
+> > +#define SRST_H_CRYPTO_NS		262147
+> > +#define SRST_H_TRNG_NS			262148
+> > +#define SRST_P_OTPC_NS			262152
+> > +#define SRST_OTPC_NS			262153
+> > +
+> > +/********Name=3DPMU1SOFTRST_CON00,Offset=3D0x20A00********/
+> > +#define SRST_P_HDPTX_GRF		524288
+>=20
+> same here, that is also most likely not part of the CRU but a different
+> block. Other socs already implement separate clock controllers for
+> different parts, so please take a look there.
 
-Please migrate from using parent_names to either using parent_hw or
-using fwname to specify the parent clock.
+Let's add those resets when the device they are linked to is actually=20
+supported then.
 
-> +{
-> +       unsigned int mult, div;
-> +
-> +       if (val & BIT(24)) {
-> +               /* Pass through mode */
-> +               mult = 1;
-> +               div = 1;
-> +       } else {
-> +               /* F = CLKIN(25MHz) * [(M+1) / 2(N+1)] / (P+1) */
-> +               u32 m = val & 0x1fff;
-> +               u32 n = (val >> 13) & 0x3f;
-> +               u32 p = (val >> 19) & 0xf;
-> +
-> +               mult = (m + 1) / (2 * (n + 1));
-> +               div = (p + 1);
-> +       }
-> +
-> +       return clk_hw_register_fixed_factor(NULL, name, parent_name, 0, mult, div);
-> +};
-> +
-> +/* MPLL 1600Mhz(default) */
-> +static struct clk_hw *ast2700_calc_mpll(const char *name, const char *parent_name, u32 val)
-> +{
-> +       unsigned int mult, div;
-> +
-> +       if (val & BIT(24)) {
-> +               /* Pass through mode */
-> +               div = 1;
-> +               mult = div;
-> +       } else {
-> +               /* F = CLKIN(25MHz) * [CLKF/(CLKR+1)] /(CLKOD+1) */
-> +               u32 m = val & 0x1fff;
-> +               u32 n = (val >> 13) & 0x3f;
-> +               u32 p = (val >> 19) & 0xf;
-> +
-> +               mult = m / (n + 1);
-> +               div = (p + 1);
-> +       }
-> +       return clk_hw_register_fixed_factor(NULL, name, parent_name, 0, mult, div);
-> +};
-> +
-> +static struct clk_hw *ast2700_calc_uclk(const char *name, u32 val)
-> +{
-> +       unsigned int mult, div;
-> +
-> +       /* UARTCLK = UXCLK * R / (N * 2) */
-> +       u32 r = val & 0xff;
-> +       u32 n = (val >> 8) & 0x3ff;
-> +
-> +       mult = r;
-> +       div = n * 2;
-> +
-> +       return clk_hw_register_fixed_factor(NULL, name, "uxclk", 0, mult, div);
-> +};
-> +
-> +static struct clk_hw *ast2700_calc_huclk(const char *name, u32 val)
-> +{
-> +       unsigned int mult, div;
-> +
-> +       /* UARTCLK = UXCLK * R / (N * 2) */
-> +       u32 r = val & 0xff;
-> +       u32 n = (val >> 8) & 0x3ff;
-> +
-> +       mult = r;
-> +       div = n * 2;
-> +
-> +       return clk_hw_register_fixed_factor(NULL, name, "huxclk", 0, mult, div);
-> +};
-> +
-> +static struct clk_hw *ast2700_calc_soc1_pll(const char *name, const char *parent_name, u32 val)
+> Thanks
+> Heiko
 
-How is this different from ast2700_soc0_hw_pll() ?
-
-> +{
-> +       unsigned int mult, div;
-> +
-> +       if (val & BIT(24)) {
-> +               /* Pass through mode */
-> +               div = 1;
-> +               mult = div;
-> +       } else {
-> +               /* F = 25Mhz * [(M + 1) / (n + 1)] / (p + 1) */
-> +               u32 m = val & 0x1fff;
-> +               u32 n = (val >> 13) & 0x3f;
-> +               u32 p = (val >> 19) & 0xf;
-> +
-> +               mult = (m + 1) / (n + 1);
-> +               div = (p + 1);
-> +       }
-> +       return clk_hw_register_fixed_factor(NULL, name, parent_name, 0, mult, div);
-> +};
-> +
+Regards,
+Detlev.
 
 
--- 
-With best wishes
-Dmitry
+
+
