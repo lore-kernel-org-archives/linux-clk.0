@@ -1,124 +1,95 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4684F8F47;
-	Fri,  2 Aug 2024 09:18:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C592A47A74;
+	Fri,  2 Aug 2024 10:29:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722590337; cv=none; b=iBwdFwgnXi1cQ8T16JDX5kR29IYQMZIQ3w8e3OxHFVf8C6GRQFFYixnDFl4vZ/yMVZronTqJtPHU69vZFST/P+MJM0Peln2ZPcnXR2KlJeL9Bn8sq2XxqBdw82Sj+pu8fW+Cecx7eRD053X8OuPBQgKt2pz3T5VyjvY9Eaj27Iw=
+	t=1722594556; cv=none; b=ug9ECq50ENk6ahdocrbLSApX3zrTT8YtR0bp4z8X3sMZr3zes5MXSKtu6f1r1krMxZ78l0R9MpUpTyiv+2ieOn6j+kkEkEMDH7H8ax94pg2m4xO4JNF7S8Bu+0Vv7DAzgGxeyfLSglPAKrtdO0sp0BOnxnYPE5KzM0A7l0rpr9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722590337; c=relaxed/simple;
-	bh=dbphdIVJqwevCp53CHXALfkGLRq+V/D3wbfxlX/nOyc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=QHX6/d3EY/L5VRmS7N1DNHUvc27cVJc9AQH1pOCJ7J7QXX/JNtmZJdcV4h9SfFTnwx7GIlDqk7tTxuYpLGxhtbnGhMFk/GNeNgf22MrW5UvciDOeEzP6zVoaz6bNdoHCDq9uV2cqdfI4PNKP2aUz0aqcMO2vpzVEPg2vpGVKSmk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OMvNUwfE; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1722594556; c=relaxed/simple;
+	bh=CJCaoWSDIP5SJphz4ctyOagGF1RYe8/tBShRSLTdA+0=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=aga6ViD60lyMKg4Q9mgpJ9tdHl/UHDTP3KFy4m4vNk7u7uGI8VjIJT2P6mrn5Jy8FeL20Y1NTATNbghrS6bFYdUVi6dqi9NSNg9nhMqM/Zu2BpllrRKBciYFwrrbxsdVACTrIjNMtZ9C7iEiv/we5jSuoMo2ukW9CVj2zRVe9gc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TAKDI/Zd; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OMvNUwfE"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EDDB5C32782;
-	Fri,  2 Aug 2024 09:18:48 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TAKDI/Zd"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E96FC32782;
+	Fri,  2 Aug 2024 10:29:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722590337;
-	bh=dbphdIVJqwevCp53CHXALfkGLRq+V/D3wbfxlX/nOyc=;
-	h=Date:Subject:List-Id:To:References:From:In-Reply-To:From;
-	b=OMvNUwfE7uhLPAlBZMbpXpIg517Auxjx/N8Eg84WkQTZkHLgWWLF1j+yjDrgojyIs
-	 Jbh/CZEhwn/wozFgTap4PPRELgudYYSf0GfyUp01JfVUFvRiFyR41Y8t02kSd/4xJ0
-	 bc39EkYpWEmUH97rDnL6YBqXSafpOcWyfJReCMcI+XE/EazrC/i3vH1XUr844TKTjx
-	 GR4FqzK0TRg5EfVwEtCCDnA342/7XCaYwrnzEeADE4cp0KEHLZ6QSv3lA/gEL44gfz
-	 HVCADKE8y3Z8VAHlI9Ix1GD+2/ch6N7lScFKTv3ZqRnekbwgLNwCWfhohqPLcidtsh
-	 aKFMAgKF/WIlQ==
-Message-ID: <ba9cc5ea-4138-4e9c-b848-c7a3a070bd73@kernel.org>
-Date: Fri, 2 Aug 2024 11:18:47 +0200
+	s=k20201202; t=1722594556;
+	bh=CJCaoWSDIP5SJphz4ctyOagGF1RYe8/tBShRSLTdA+0=;
+	h=Date:From:To:List-Id:Cc:In-Reply-To:References:Subject:From;
+	b=TAKDI/ZdMZBJxxYq7r51GY2g44cAnqXZXvN1Hs1s7Nwby5EA7bYJUgznB95Rlb/xq
+	 8b2/4pSbmtaCRkb9KaXsPGcZ5Rk8fxybxAwiW3+8uGiVUcqqvpZgALQk7w4gthY+DF
+	 7HBgVUZDCmzuujMyjF+dCBzBFaCC8vs8U97mWYbHLNXoiV1r4TiJECnzbBg93r0heT
+	 zZ5MPq+2TlV5rb9RV9xTWxOjptyqF0uVivg/LQP6Ab8GaH8d+U1tH4G4GloAGKvyrZ
+	 Z2fXb96R3AlAcYb2psUgPzqd0/BbTi0m1EdAGw0yWSDmqQcxCo1CGPxS/Oz56j5jyE
+	 PYW1C9Zl754jw==
+Date: Fri, 02 Aug 2024 04:29:15 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/9] Introduce ASPEED AST27XX BMC SoC
-To: Kevin Chen <kevin_chen@aspeedtech.com>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
- andrew@codeconstruct.com.au, lee@kernel.org, catalin.marinas@arm.com,
- will@kernel.org, arnd@arndb.de, olof@lixom.net, soc@kernel.org,
- mturquette@baylibre.com, sboyd@kernel.org, p.zabel@pengutronix.de,
- quic_bjorande@quicinc.com, geert+renesas@glider.be,
- dmitry.baryshkov@linaro.org, shawnguo@kernel.org, neil.armstrong@linaro.org,
- m.szyprowski@samsung.com, nfraprado@collabora.com, u-kumar1@ti.com,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- linux-clk@vger.kernel.org
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Kevin Chen <kevin_chen@aspeedtech.com>
+Cc: krzk+dt@kernel.org, linux-arm-kernel@lists.infradead.org, 
+ andrew@codeconstruct.com.au, devicetree@vger.kernel.org, sboyd@kernel.org, 
+ olof@lixom.net, lee@kernel.org, u-kumar1@ti.com, conor+dt@kernel.org, 
+ quic_bjorande@quicinc.com, dmitry.baryshkov@linaro.org, 
+ p.zabel@pengutronix.de, linux-aspeed@lists.ozlabs.org, 
+ m.szyprowski@samsung.com, nfraprado@collabora.com, arnd@arndb.de, 
+ mturquette@baylibre.com, soc@kernel.org, will@kernel.org, 
+ geert+renesas@glider.be, catalin.marinas@arm.com, neil.armstrong@linaro.org, 
+ linux-clk@vger.kernel.org, shawnguo@kernel.org, joel@jms.id.au, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240802090544.2741206-3-kevin_chen@aspeedtech.com>
 References: <20240802090544.2741206-1-kevin_chen@aspeedtech.com>
- <20240802090544.2741206-2-kevin_chen@aspeedtech.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20240802090544.2741206-2-kevin_chen@aspeedtech.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+ <20240802090544.2741206-3-kevin_chen@aspeedtech.com>
+Message-Id: <172259455507.2558656.18344933444213909682.robh@kernel.org>
+Subject: Re: [PATCH v2 1/9] dt-bindings: mfd: aspeed,ast2x00-scu: Add
+ ASPEED AST2700-SCUX schema
 
-On 02/08/2024 11:05, Kevin Chen wrote:
-> This patchset adds initial support for the ASPEED.
-> AST27XX Board Management controller (BMC) SoC family.
+
+On Fri, 02 Aug 2024 17:05:36 +0800, Kevin Chen wrote:
+> Add compatible for two SCU of SCU0 and SCU1 in AST2700.
 > 
-> AST2700 is ASPEED's 8th-generation server management processor.
-> Featuring a quad-core ARM Cortex A35 64-bit processor and two
-> independent ARM Cortex M4 processors
+> Signed-off-by: Kevin Chen <kevin_chen@aspeedtech.com>
+> ---
+>  .../bindings/mfd/aspeed,ast2x00-scu.yaml      | 70 +++++++++++++------
+>  1 file changed, 50 insertions(+), 20 deletions(-)
 > 
-> This patchset adds minimal architecture and drivers such as:
-> Clocksource, Clock and Reset
-> 
-> This patchset was tested on the ASPEED AST2700 evaluation board.
 
-Where is the changelog? You ignored several comments, did not bother to
-respond them, did not implement them.
+My bot found errors running 'make dt_binding_check' on your patch:
 
-No changelog means you sent exactly the same? This is not how it works.
-Please read submitting patches, respond to all comments or implement
-them, provide *DETAILED* changelog in the cover letter or individual
-patches (---).
+yamllint warnings/errors:
 
-Best regards,
-Krzysztof
+dtschema/dtc warnings/errors:
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml: 'scu@ast2xx00-scu' is not one of ['$id', '$schema', 'title', 'description', 'examples', 'required', 'allOf', 'anyOf', 'oneOf', 'definitions', '$defs', 'additionalProperties', 'dependencies', 'dependentRequired', 'dependentSchemas', 'patternProperties', 'properties', 'not', 'if', 'then', 'else', 'unevaluatedProperties', 'deprecated', 'maintainers', 'select', '$ref']
+	from schema $id: http://devicetree.org/meta-schemas/base.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml: 'scu@ast2xx00-scux' is not one of ['$id', '$schema', 'title', 'description', 'examples', 'required', 'allOf', 'anyOf', 'oneOf', 'definitions', '$defs', 'additionalProperties', 'dependencies', 'dependentRequired', 'dependentSchemas', 'patternProperties', 'properties', 'not', 'if', 'then', 'else', 'unevaluatedProperties', 'deprecated', 'maintainers', 'select', '$ref']
+	from schema $id: http://devicetree.org/meta-schemas/base.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml: scu@ast2xx00-scu: Missing additionalProperties/unevaluatedProperties constraint
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml: scu@ast2xx00-scux: Missing additionalProperties/unevaluatedProperties constraint
+
+doc reference errors (make refcheckdocs):
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240802090544.2741206-3-kevin_chen@aspeedtech.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
 
