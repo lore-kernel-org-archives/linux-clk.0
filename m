@@ -1,60 +1,61 @@
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E80B2C6B6
-	for <linux-clk@vger.kernel.org>; Sun,  4 Aug 2024 05:40:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEC8639AFD
+	for <linux-clk@vger.kernel.org>; Sun,  4 Aug 2024 05:40:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722750035; cv=none; b=cLNNevN1Ywhl2cb2oTqcuRjgPauBDtfqTZmiOkIvm65SJkQk90KtVMcdoO94zDLh09y51vrOF6ADWMuo3A36fshW8i52LZRffdmDUJZszkZQ/0bjbgAHxIMoIS78FosM1l2h0kowTf4f2hLnqDXi91pmS+N0pRB0GaFeRP4enE0=
+	t=1722750036; cv=none; b=oR7vlH05hQYol8cqlhXeKFETyFr/gZzlWD7lh5lEVcOw+HkOmTWg0nHP4qMkC9qG70Vk+eeSD7dABh0sqjsUQ5zNBgsSTfNS0eL7bByJ9OVi6xAFvCIITTCAwthuMTBcKbruW/JNCImbvqE1DazOacy8boTASG1pvMgYS3A7r7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722750035; c=relaxed/simple;
-	bh=ZI9fPJt840zyCD0T/bdD2HXJKwtHsbp4pPiV3WmPfv4=;
+	s=arc-20240116; t=1722750036; c=relaxed/simple;
+	bh=+6qOXA/nRYvF+LJ3fyjiDmQq3/m44DEzHQz0B5kY010=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=tqdhdCLfgRjlMVWHW12BQ5VrvuWJEwlzJ0MVO7/nMbbjdzbVhujTrA4e0oop8tV4GpTGz41B8nHRR+CvvH9QXICo3SPYqKaBQy7+602sVsx87crIegaHq5iGGTXorBcwlLPi2SDEILZwLd++vFEIXX3JXp03NClfR3kFJvic/sk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GY4q7uPB; arc=none smtp.client-ip=209.85.167.41
+	 In-Reply-To:To:Cc; b=lQpYcb+8qzqH+mJvN9vKvAHWjye6HmucDpAvNuf38+SZGX+bGKRGgSN7Q842pOh8FkN71SmM6Fg4Hh52o6FNMcCNrzd2B+ikrBL3+QcwfGM0b343CoBNFgWOB0/R+iHqKM8FUNwEziHQltNSid32kBA7PNa4QPtXCsAjY5R51QE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WIjCvwAU; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GY4q7uPB"
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-52efc60a6e6so14701986e87.1
-        for <linux-clk@vger.kernel.org>; Sat, 03 Aug 2024 22:40:33 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WIjCvwAU"
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a7ad02501c3so289206466b.2
+        for <linux-clk@vger.kernel.org>; Sat, 03 Aug 2024 22:40:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722750031; x=1723354831; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1722750033; x=1723354833; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=I8Wu94fGKiTMPD1PzKnesNCvm5Ij4LDiKxVI9I0uyRk=;
-        b=GY4q7uPBdDWYTU7rn8t5qP1GB/6SGbKY69kZXh4mQKhaUT+gOphxgECKRIvNX01Jmv
-         GwQzD4gW5SU+OgM9cB5wfeXqe74vnUkkpyVKfQgQ9jqGJmv27JDXcZ/xXZ2bJuUBgxAR
-         DD8lTxjNkETzHEv8IzZU5DklFe3lE1jWkBnbUOS9Efid7b8V+tHGT6P7J4xRQ+EamiOy
-         K+BFzHm9xNz3bW91iO9mKfblfxuxGUBEx7E0nRo9pW41o3ofJtDK5zheD/ZkbSsk253c
-         0uHvbYRBnD7skEwqJggPr43k7NyyssvWgzygOiwzAnZOS/xMJBGWRBztnOXoMcyRuhZg
-         pV6w==
+        bh=jZj9/52rwWNE6aCx1N5+a52yjuW6g5rJuFXIxcVgEH4=;
+        b=WIjCvwAUXg4T8sEHbmYQJY3U0g+td/WfLbRVrkllLQfgHB9/UpA8fZp+lbJoyZDQEA
+         350lK2myd+trsWAK0DXrtRVuwpwSdiFdgY4HDFnxIChW/hwx3BXKjo1bziAztgM8wabL
+         EAZpJgpUgZ+S5Y/99v69jxAK/J/Q6ltQ/cw/Nfq1S9b9EJ1qf7Wl6rGEj1mwikAYRM16
+         1UVwf0iw0JdAMn1dXzQwpjNPIAE23PrdYkzLtjqdCDnOij/W8ntTaiLz3+FksIx64vsG
+         1LRcq5b3RKz1CmPc4d5J925r7ozbVpMsWP9TXYq6Z57g9eKqveke0/kipbJw5mCijF1V
+         /oMg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722750031; x=1723354831;
+        d=1e100.net; s=20230601; t=1722750033; x=1723354833;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=I8Wu94fGKiTMPD1PzKnesNCvm5Ij4LDiKxVI9I0uyRk=;
-        b=ClgyAqccHoIsoyyVJubcOXP0JcMeZ4J7c4lAWYTKdpve+qVYUwbXWuMyU23e1EOIjv
-         81rIYMerp0LoB/J4O4ZlKSq+qnisEt0BTKNQFgnIATgi/56IzF8VGERBxL58bA+ASA9F
-         ZJX67ijAA3iyyxJPwzB51dv7C6xatANV7D90jhQh2B4FV0zrLDab+dpPj3YelDdwO3kZ
-         2kFuYTz6NvCjSIfJob6RxKRwN5bTWZes/mqckMCsQhOom85gQxmfs947QKOCDu2d4GxO
-         Jk5SrbtSreEBK5+2jrLW9f1pooco9z5hHj056GelP5T5yokXR5IMOMKuhfM8Jc/puYg2
-         ur0A==
-X-Forwarded-Encrypted: i=1; AJvYcCVkVoCgp4Y9C4pyxRxKjw0cG6dbgI4p1KX8K3ASbZiH9rhj9Ipix4O4D1Oe/D2ZLj4laFmlV/9UEmfQJbjlhcqBfHy9lTaeOPa3
-X-Gm-Message-State: AOJu0YxZSi7onuURw6azdGRAwZllVrhRSc4IVtE4Pclz25bECUWE0w4y
-	UrSNeICf3Y8AqLVo9hs5VFTaHZ6L0OM2eY+Kqm9A5On7EWKHrew0MlpL5IT7+yQ=
-X-Google-Smtp-Source: AGHT+IFfmnlD6mrDT3KruFvoon8BUGprvXegwalTaKHvGV+9P6kPPphMtaSDcjG1NUuShKFfX0CTEw==
-X-Received: by 2002:a05:6512:1590:b0:52c:e28f:4da6 with SMTP id 2adb3069b0e04-530bb3b1517mr4682167e87.51.1722750031400;
-        Sat, 03 Aug 2024 22:40:31 -0700 (PDT)
+        bh=jZj9/52rwWNE6aCx1N5+a52yjuW6g5rJuFXIxcVgEH4=;
+        b=kFKI8FbmYMQxmMekgJkv2a49w67WkNH4Lhr/RIZYWYEOD3vpUzjeG2LBNw8zBYEWmm
+         i+20T6Df84XR/akuA2jSzNLFW9/X2x47YxXrEzDsoAl0qaHJBZ3ibx+wlbJ8IXmN+d1S
+         Uz5xAbvfid5h0jFh4Fb6Tm40K+34RyaVBwSIuf2TGaEQRBAkMiG+tW9Ry48D/lUNjg1w
+         7fxGwxcxD1TzuZKb509W17mW8QX473V6c9MqriXIRMzH79naf+TkUtdsgxqLgrtWjuHD
+         OEI5oq7yrPsv+TPoDAdZL38I0bjXJAGBe5LM4luxq/5rq/CL0ZtITNj0SoXjsbvHV0GU
+         bOCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXLfUAHTLGY7zT9/QxTQfUgyW0OiJ2cZQVny5jFa9PQKYDBPgWKo1kd2JWyOt5nDsS4lP35I2OKK5LgJducQNfrSy9HuDfYNZEC
+X-Gm-Message-State: AOJu0Yy9VJ2W3IMbyGFzf6hlQVvAQ8hok70f+A6wlE1Ta3UUbz0OrApW
+	+8sHf45aI5QezUPkArd1SqYM0ejo0ou6HkwQdU04t1HzUgcbqsN5cCzjUPUthXU=
+X-Google-Smtp-Source: AGHT+IHbci0hVaQgSOMpebGYXLXoRbSJAPdeMpWLhfgxvxEZR+HSx4w/E5jZTEcJ0B5zpBDG5TQSnw==
+X-Received: by 2002:a17:907:968b:b0:a7d:c9c6:a692 with SMTP id a640c23a62f3a-a7dc9c6a8a1mr583045066b.51.1722750033049;
+        Sat, 03 Aug 2024 22:40:33 -0700 (PDT)
 Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9bc3bd7sm292248466b.34.2024.08.03.22.40.29
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9bc3bd7sm292248466b.34.2024.08.03.22.40.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 03 Aug 2024 22:40:31 -0700 (PDT)
+        Sat, 03 Aug 2024 22:40:32 -0700 (PDT)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Sun, 04 Aug 2024 08:40:12 +0300
-Subject: [PATCH 08/11] interconnect: qcom: sm8250: Enable sync_state
+Date: Sun, 04 Aug 2024 08:40:13 +0300
+Subject: [PATCH 09/11] arm64: dts: qcom: sm8350: add MDSS registers
+ interconnect
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -63,7 +64,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240804-sm8350-fixes-v1-8-1149dd8399fe@linaro.org>
+Message-Id: <20240804-sm8350-fixes-v1-9-1149dd8399fe@linaro.org>
 References: <20240804-sm8350-fixes-v1-0-1149dd8399fe@linaro.org>
 In-Reply-To: <20240804-sm8350-fixes-v1-0-1149dd8399fe@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -83,41 +84,47 @@ Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
  Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=856;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1178;
  i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=ZI9fPJt840zyCD0T/bdD2HXJKwtHsbp4pPiV3WmPfv4=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmrxQ/jMwL35sKEU5D9Tjp6mYCnOmmqoQLsUae1
- 0DawQf91CuJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZq8UPwAKCRCLPIo+Aiko
- 1Wd1CACoGYeZT9QIFHk06IumJN0/f3vOzPfA9od+eKNLVIGC6yd7rm9bCEyQzomcgGvPKr0Hxzz
- ppcABqc8lJWSoKS3xOJDQ8kD5vZCwVV4MGJ3acpjzTsYn0F2T6GXEp3Sj7DGftexTbNh3Z/JhBx
- RYS5hdWYsl6yIgSeVKkIo2KoCxvbv3NtX6o/AylXee2y6ZgOXlE90ASOPKaRg+siUF2I7SFsWvR
- ALaRIt8XmnvWLl2KLVShljReh+EiVuvwBXguCSYi3RqH9dFpHFgdW50ru6PZyu6FO35ucww3HlT
- CKHK8YPjkcXBS9TJ6g3zS4L3BiEv95HTup5R9lfaU4olHiCn
+ bh=+6qOXA/nRYvF+LJ3fyjiDmQq3/m44DEzHQz0B5kY010=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmrxQ/EZqpfORfNpqmB+gfbID37iTSi1xyvFhc8
+ yGcwAyMPX6JATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZq8UPwAKCRCLPIo+Aiko
+ 1fEVB/4poQ3kFh5IcUQVcpD9WN/E8hoOPvW5xikRPjmU3YFD3FWnNBXl0NKC2mQ7WS3PnupHux4
+ FvdTXUXKBbSus3+FQxXGfy1KvXfiw8Rfq+bBZ1fSt//qdVQNygZHM/LAU4xRdOcd0+0YshgpLif
+ r0DdSq9HK0mJds3+Utjv76o8LBIV0Vzu5vPJe/TAp8BdLUk/GneFDKIGgPfPx4Lvj2JAd/N/Jfm
+ uj2wWVPXuNxiDTBUBJGcAVBivZkGTIFe0kMQBzzL3kS0L6oPgcGjU2goCBY29+xl6qt+IoIIgnv
+ qFb7CLYVIuCQMxxpLvagpIAeRD5Gpp/pQ9wrZrumALkiMHSh
 X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-Enable the generic icc sync_state callback to ensure interconnect votes
-are actually taken into account, instead of being forced to the maximum
-value.
+Aside from the MDSS<->MEM interconnect, display devices have separate
+interconnect for register access. Add this interconnect to the display
+node.
 
-Fixes: b95b668eaaa2 ("interconnect: qcom: icc-rpmh: Add BCMs to commit list in pre_aggregate")
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- drivers/interconnect/qcom/sm8350.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/qcom/sm8350.dtsi | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/interconnect/qcom/sm8350.c b/drivers/interconnect/qcom/sm8350.c
-index 108934fc8ebf..4236a43dc256 100644
---- a/drivers/interconnect/qcom/sm8350.c
-+++ b/drivers/interconnect/qcom/sm8350.c
-@@ -1811,6 +1811,7 @@ static struct platform_driver qnoc_driver = {
- 	.driver = {
- 		.name = "qnoc-sm8350",
- 		.of_match_table = qnoc_of_match,
-+		.sync_state = icc_sync_state,
- 	},
- };
- module_platform_driver(qnoc_driver);
+diff --git a/arch/arm64/boot/dts/qcom/sm8350.dtsi b/arch/arm64/boot/dts/qcom/sm8350.dtsi
+index 38ee0850c335..27f36e6366df 100644
+--- a/arch/arm64/boot/dts/qcom/sm8350.dtsi
++++ b/arch/arm64/boot/dts/qcom/sm8350.dtsi
+@@ -2490,8 +2490,12 @@ mdss: display-subsystem@ae00000 {
+ 			reg-names = "mdss";
+ 
+ 			interconnects = <&mmss_noc MASTER_MDP0 0 &mc_virt SLAVE_EBI1 0>,
+-					<&mmss_noc MASTER_MDP1 0 &mc_virt SLAVE_EBI1 0>;
+-			interconnect-names = "mdp0-mem", "mdp1-mem";
++					<&mmss_noc MASTER_MDP1 0 &mc_virt SLAVE_EBI1 0>,
++					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
++					 &config_noc SLAVE_DISPLAY_CFG QCOM_ICC_TAG_ACTIVE_ONLY>;
++			interconnect-names = "mdp0-mem",
++					     "mdp1-mem",
++					     "cpu-cfg";
+ 
+ 			power-domains = <&dispcc MDSS_GDSC>;
+ 			resets = <&dispcc DISP_CC_MDSS_CORE_BCR>;
 
 -- 
 2.39.2
