@@ -1,61 +1,60 @@
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEC8639AFD
-	for <linux-clk@vger.kernel.org>; Sun,  4 Aug 2024 05:40:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 779893D3B8
+	for <linux-clk@vger.kernel.org>; Sun,  4 Aug 2024 05:40:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722750036; cv=none; b=oR7vlH05hQYol8cqlhXeKFETyFr/gZzlWD7lh5lEVcOw+HkOmTWg0nHP4qMkC9qG70Vk+eeSD7dABh0sqjsUQ5zNBgsSTfNS0eL7bByJ9OVi6xAFvCIITTCAwthuMTBcKbruW/JNCImbvqE1DazOacy8boTASG1pvMgYS3A7r7Y=
+	t=1722750038; cv=none; b=Cgt0+FnWWXrtUTw+34ogUX4xIdTimVuNgMleALgtXOW04HGi0Wg0LA5WPJcS8ku40p9I+seB44ZjndjYQtvfOmAXRopxSBxHB5RHcDiTI2SI/X+UPktMKdaCwfD+lTD6TGV8HHjJH7he7sgLI8pOPY39QftWZ/sNHgFlANUUUtE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722750036; c=relaxed/simple;
-	bh=+6qOXA/nRYvF+LJ3fyjiDmQq3/m44DEzHQz0B5kY010=;
+	s=arc-20240116; t=1722750038; c=relaxed/simple;
+	bh=jVYTvN/M5oXQ0cuOojPrVIEl/Z9fBYssaRlhkXEzBxU=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lQpYcb+8qzqH+mJvN9vKvAHWjye6HmucDpAvNuf38+SZGX+bGKRGgSN7Q842pOh8FkN71SmM6Fg4Hh52o6FNMcCNrzd2B+ikrBL3+QcwfGM0b343CoBNFgWOB0/R+iHqKM8FUNwEziHQltNSid32kBA7PNa4QPtXCsAjY5R51QE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WIjCvwAU; arc=none smtp.client-ip=209.85.218.54
+	 In-Reply-To:To:Cc; b=gD/Hntnw9hfjE27wdrP1++tXwaoGUXwwpQwoSpA1RD8ECB6PAn/t1KjiwiUBLfDelq8T4NEn2BmeSuvRwYN4GG7INHl83x+UOS0J2fHi82LKq8aY2+yCOTloztU+6fhFL4T5AkRmc9VE8gqQiQU0/BShQuxNPDJt0IlRWSLsUOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=V5bbXfbp; arc=none smtp.client-ip=209.85.167.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WIjCvwAU"
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a7ad02501c3so289206466b.2
-        for <linux-clk@vger.kernel.org>; Sat, 03 Aug 2024 22:40:34 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="V5bbXfbp"
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-52f01afa11cso14115489e87.0
+        for <linux-clk@vger.kernel.org>; Sat, 03 Aug 2024 22:40:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1722750033; x=1723354833; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1722750035; x=1723354835; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=jZj9/52rwWNE6aCx1N5+a52yjuW6g5rJuFXIxcVgEH4=;
-        b=WIjCvwAUXg4T8sEHbmYQJY3U0g+td/WfLbRVrkllLQfgHB9/UpA8fZp+lbJoyZDQEA
-         350lK2myd+trsWAK0DXrtRVuwpwSdiFdgY4HDFnxIChW/hwx3BXKjo1bziAztgM8wabL
-         EAZpJgpUgZ+S5Y/99v69jxAK/J/Q6ltQ/cw/Nfq1S9b9EJ1qf7Wl6rGEj1mwikAYRM16
-         1UVwf0iw0JdAMn1dXzQwpjNPIAE23PrdYkzLtjqdCDnOij/W8ntTaiLz3+FksIx64vsG
-         1LRcq5b3RKz1CmPc4d5J925r7ozbVpMsWP9TXYq6Z57g9eKqveke0/kipbJw5mCijF1V
-         /oMg==
+        bh=rGZoVd2rDgNeiiA+eJxTSi+RLq7K+EuCeMoKQavvKp8=;
+        b=V5bbXfbpkO5lLAl9VtWGBuGemgtN5/PwNwLKQquGOtJGlvSQQZTiq/oCz4947N8Poj
+         I2jVwuQJOv2qJzh7dBlLQKF7f3+ZJEUjELdungX5J44jkxBzUoNeHunCAPklRYiwZu+D
+         cpUlik0poCQaRVdXnJoWg5AURpaZ2JsmPc0oiqrkams5mKdcDO40OqdNX0FyIRLZJA+C
+         epkOU0fco9e5yoPO4Tk/aEbaKo8tY08GMBBKF5hdiKPZ9bMPmGu1PwB3LsO+gfpaKJHw
+         3VS+88UUQl1EGPafVzokIr/pkhMLvDVtH4ZylkCzdIsNKPyCMDn68Illv04xUpfKZvS0
+         //ng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722750033; x=1723354833;
+        d=1e100.net; s=20230601; t=1722750035; x=1723354835;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=jZj9/52rwWNE6aCx1N5+a52yjuW6g5rJuFXIxcVgEH4=;
-        b=kFKI8FbmYMQxmMekgJkv2a49w67WkNH4Lhr/RIZYWYEOD3vpUzjeG2LBNw8zBYEWmm
-         i+20T6Df84XR/akuA2jSzNLFW9/X2x47YxXrEzDsoAl0qaHJBZ3ibx+wlbJ8IXmN+d1S
-         Uz5xAbvfid5h0jFh4Fb6Tm40K+34RyaVBwSIuf2TGaEQRBAkMiG+tW9Ry48D/lUNjg1w
-         7fxGwxcxD1TzuZKb509W17mW8QX473V6c9MqriXIRMzH79naf+TkUtdsgxqLgrtWjuHD
-         OEI5oq7yrPsv+TPoDAdZL38I0bjXJAGBe5LM4luxq/5rq/CL0ZtITNj0SoXjsbvHV0GU
-         bOCQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXLfUAHTLGY7zT9/QxTQfUgyW0OiJ2cZQVny5jFa9PQKYDBPgWKo1kd2JWyOt5nDsS4lP35I2OKK5LgJducQNfrSy9HuDfYNZEC
-X-Gm-Message-State: AOJu0Yy9VJ2W3IMbyGFzf6hlQVvAQ8hok70f+A6wlE1Ta3UUbz0OrApW
-	+8sHf45aI5QezUPkArd1SqYM0ejo0ou6HkwQdU04t1HzUgcbqsN5cCzjUPUthXU=
-X-Google-Smtp-Source: AGHT+IHbci0hVaQgSOMpebGYXLXoRbSJAPdeMpWLhfgxvxEZR+HSx4w/E5jZTEcJ0B5zpBDG5TQSnw==
-X-Received: by 2002:a17:907:968b:b0:a7d:c9c6:a692 with SMTP id a640c23a62f3a-a7dc9c6a8a1mr583045066b.51.1722750033049;
-        Sat, 03 Aug 2024 22:40:33 -0700 (PDT)
+        bh=rGZoVd2rDgNeiiA+eJxTSi+RLq7K+EuCeMoKQavvKp8=;
+        b=j0qZyWfZoiRu9WaqCDDvhDWiKmUpxg6OPe2+y+azKWPHAl+UslILuUkTCM1N5+8KCO
+         St/GIGkJsWq8wycDDK3Xpo3f1TWf2aBox+uFtG4VIGcT38TwYgnFBMNZVBqnj1PNcA0U
+         M1afMYo8gmzMlHllJ706+lHtZLsoxWvfVPFdZhhIri8u8dzwKPMAVRiUCu2VcijNmb/O
+         T/Ez+A+xa0IsAUcspY+0xeuCT1LKPK2vNQFNeCCaeVQiVNFWYX2yw7sgo+KavQtImnIY
+         /cqHBXCf9a8dBjFKtazlJnqTHgJzGe7g3agVEjwKnAS+0bSXe+Znh89+DmFHkCpVTI+u
+         +4xw==
+X-Forwarded-Encrypted: i=1; AJvYcCXFxG5AmGpEORtv0Z2OYUftqaLhN2nl98LnB5jCg4/KxEDsbuExIGrEViGNY0zL2QY6AeMEb7hA/buVtYqYw45mCMzeS6utyYrA
+X-Gm-Message-State: AOJu0YyzCDpD3CdtFK59PQAUO2Xb165lokuif/Y56E5dR2fiIBx0hz7M
+	2L0kdSkcF0bp3Njlsg0rhAkMsE7jG0ktdrm16sKH8LAUJvXjHvQ8JEUlAsz1Ink=
+X-Google-Smtp-Source: AGHT+IEPlAu7+t1OD9xkZBZB+NNWj0yEEWFX5JqjgVG0e9+KB+gZngiGtuqgNS6nmYBsvDyIL2hvxA==
+X-Received: by 2002:a05:6512:12d2:b0:52c:82fa:ef7b with SMTP id 2adb3069b0e04-530bb3a351cmr4927864e87.44.1722750034659;
+        Sat, 03 Aug 2024 22:40:34 -0700 (PDT)
 Received: from umbar.lan ([192.130.178.91])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9bc3bd7sm292248466b.34.2024.08.03.22.40.31
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9bc3bd7sm292248466b.34.2024.08.03.22.40.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 03 Aug 2024 22:40:32 -0700 (PDT)
+        Sat, 03 Aug 2024 22:40:34 -0700 (PDT)
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Sun, 04 Aug 2024 08:40:13 +0300
-Subject: [PATCH 09/11] arm64: dts: qcom: sm8350: add MDSS registers
- interconnect
+Date: Sun, 04 Aug 2024 08:40:14 +0300
+Subject: [PATCH 10/11] arm64: dts: qcom: sm8350: add refgen regulator
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -64,7 +63,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240804-sm8350-fixes-v1-9-1149dd8399fe@linaro.org>
+Message-Id: <20240804-sm8350-fixes-v1-10-1149dd8399fe@linaro.org>
 References: <20240804-sm8350-fixes-v1-0-1149dd8399fe@linaro.org>
 In-Reply-To: <20240804-sm8350-fixes-v1-0-1149dd8399fe@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -84,47 +83,60 @@ Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
  Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1178;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1354;
  i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=+6qOXA/nRYvF+LJ3fyjiDmQq3/m44DEzHQz0B5kY010=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBmrxQ/EZqpfORfNpqmB+gfbID37iTSi1xyvFhc8
- yGcwAyMPX6JATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZq8UPwAKCRCLPIo+Aiko
- 1fEVB/4poQ3kFh5IcUQVcpD9WN/E8hoOPvW5xikRPjmU3YFD3FWnNBXl0NKC2mQ7WS3PnupHux4
- FvdTXUXKBbSus3+FQxXGfy1KvXfiw8Rfq+bBZ1fSt//qdVQNygZHM/LAU4xRdOcd0+0YshgpLif
- r0DdSq9HK0mJds3+Utjv76o8LBIV0Vzu5vPJe/TAp8BdLUk/GneFDKIGgPfPx4Lvj2JAd/N/Jfm
- uj2wWVPXuNxiDTBUBJGcAVBivZkGTIFe0kMQBzzL3kS0L6oPgcGjU2goCBY29+xl6qt+IoIIgnv
- qFb7CLYVIuCQMxxpLvagpIAeRD5Gpp/pQ9wrZrumALkiMHSh
+ bh=jVYTvN/M5oXQ0cuOojPrVIEl/Z9fBYssaRlhkXEzBxU=;
+ b=owGbwMvMwMXYbdNlx6SpcZXxtFoSQ9p6EfvbJs11IWt2KySeq1a453nXk+N4QleS7+4FFfmh7
+ 112W23pZDRmYWDkYpAVU2TxKWiZGrMpOezDjqn1MINYmUCmMHBxCsBElrex/xVnkppt/SZk00ar
+ XNlFkenx77pbV31njlzh7OjUJ13Q3GwY/XSPo82lVULHrvZ8NNqZZXh065xDLesqVII2VKSdfu5
+ arcjOJneoNEL89RtDbb93903q20stEmVC56iv+z2dj+uNkeC+pNtXjKQEVJ1kNJnPrGRb3W5yWf
+ Zr/64NMvznzzsmW13fOy0oYLPYJnXLbU8vrz/fuzus9mnQo/81uaYXfPXCum6/4Kj2rl0akxile
+ +xCyJ35Armi1uZaiWuYnGXK3Z8vmv9jynIj7w61x9PYvLelyTwOUm46fsu7QM21R1ejaGNWTbj2
+ tybFiW83CnZLLDnNoR7vs6dfiGON4BpN1qgvW++tfMsMAA==
 X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-Aside from the MDSS<->MEM interconnect, display devices have separate
-interconnect for register access. Add this interconnect to the display
-node.
+On SM8350 platform the DSI internally is using the refgen regulator. Add
+corresponding device node and link it as a supply to the DSI node.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/sm8350.dtsi | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/qcom/sm8350.dtsi | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
 diff --git a/arch/arm64/boot/dts/qcom/sm8350.dtsi b/arch/arm64/boot/dts/qcom/sm8350.dtsi
-index 38ee0850c335..27f36e6366df 100644
+index 27f36e6366df..37a2aba0d4ca 100644
 --- a/arch/arm64/boot/dts/qcom/sm8350.dtsi
 +++ b/arch/arm64/boot/dts/qcom/sm8350.dtsi
-@@ -2490,8 +2490,12 @@ mdss: display-subsystem@ae00000 {
- 			reg-names = "mdss";
+@@ -2251,6 +2251,12 @@ usb_2_hsphy: phy@88e4000 {
+ 			resets = <&gcc GCC_QUSB2PHY_SEC_BCR>;
+ 		};
  
- 			interconnects = <&mmss_noc MASTER_MDP0 0 &mc_virt SLAVE_EBI1 0>,
--					<&mmss_noc MASTER_MDP1 0 &mc_virt SLAVE_EBI1 0>;
--			interconnect-names = "mdp0-mem", "mdp1-mem";
-+					<&mmss_noc MASTER_MDP1 0 &mc_virt SLAVE_EBI1 0>,
-+					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
-+					 &config_noc SLAVE_DISPLAY_CFG QCOM_ICC_TAG_ACTIVE_ONLY>;
-+			interconnect-names = "mdp0-mem",
-+					     "mdp1-mem",
-+					     "cpu-cfg";
++		refgen: regulator@88e7000 {
++			compatible = "qcom,sm8350-refgen-regulator",
++				     "qcom,sm8250-refgen-regulator";
++			reg = <0x0 0x088e7000 0x0 0x84>;
++		};
++
+ 		usb_1_qmpphy: phy@88e8000 {
+ 			compatible = "qcom,sm8350-qmp-usb3-dp-phy";
+ 			reg = <0 0x088e8000 0 0x3000>;
+@@ -2710,6 +2716,7 @@ mdss_dsi0: dsi@ae94000 {
  
- 			power-domains = <&dispcc MDSS_GDSC>;
- 			resets = <&dispcc DISP_CC_MDSS_CORE_BCR>;
+ 				operating-points-v2 = <&dsi0_opp_table>;
+ 				power-domains = <&rpmhpd RPMHPD_MMCX>;
++				refgen-supply = <&refgen>;
+ 
+ 				phys = <&mdss_dsi0_phy>;
+ 
+@@ -2808,6 +2815,7 @@ mdss_dsi1: dsi@ae96000 {
+ 
+ 				operating-points-v2 = <&dsi1_opp_table>;
+ 				power-domains = <&rpmhpd RPMHPD_MMCX>;
++				refgen-supply = <&refgen>;
+ 
+ 				phys = <&mdss_dsi1_phy>;
+ 
 
 -- 
 2.39.2
