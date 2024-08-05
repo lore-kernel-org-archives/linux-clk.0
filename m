@@ -1,119 +1,120 @@
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7844F137C37;
-	Mon,  5 Aug 2024 09:58:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22A0414D433
+	for <linux-clk@vger.kernel.org>; Mon,  5 Aug 2024 10:33:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722851936; cv=none; b=S/omW57fmSSTwr8ejYNTd42GW24O8x2iy/rp/1ExEBQdnKxoTUqObjNTN0ft12oH5ekLDbZUBipfNtGWprQAqjTaXa+Ql+gWbSnvhzRfxE5GEzqhqhXGzwf0fY3oiz6MPGscLoCUriXshMa+ewqg+Zvsu9/kU85oUAn42HneJio=
+	t=1722853994; cv=none; b=q5gGWTZ13IcLICcwrwIxjuZfxqM08GWkmFOFZ1v9HZFOdswj5MqUfc9TvMQCS5g0FxCxk8iOWUyfVLvTkbO+2YcoGyQlmMqeAaFgnmjVSpo61LdvZUmEKXwyce2rKNeQ8VlMcbr3fVLHt5ifCyAesR2InFdocY3ek8x97utUmPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722851936; c=relaxed/simple;
-	bh=ckwt517yKxxVzlM8CcWV0s5Rgb+0zNWVAjvo9LJZJVQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UkGwbYfX8G2bizhxCl57Q1HoTuxepSPePN9c/b5xHRaIPrZJ00AQ4RSrdyZmUZ0AE3P9roRCaIrg5+aTHgpYrKdfuVDC55S+HQu6jNeutxjao2zUS+AOXQ7WkeOj5IoB/4PSWyu2l4pWTxnKduaaNtGvHJaur1CrbaWQ1LvZDbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IB+O7lsV; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1722853994; c=relaxed/simple;
+	bh=aCg8Y7NDdsxbBmImd9uRerZmF7tRLZUEY04gUZ817ow=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fnTiKcAR3uRPOQii4xOTCwO5WR9KYxet9CoVFiOTWW/MD8dcuAveBRkMKcQzmrvAMDprByhmMnn3/dYelw+ajgAKEiWctaPEgckVdiQFOwAzwg/oiRLGTekG361cCuBhcvaYUrKD+13j9zxBE+Hl2lCcfa1PydJsPyXXsayB6hc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LzscwnAe; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IB+O7lsV"
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-367963ea053so6926353f8f.2;
-        Mon, 05 Aug 2024 02:58:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LzscwnAe"
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-dfef5980a69so9367558276.3
+        for <linux-clk@vger.kernel.org>; Mon, 05 Aug 2024 03:33:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722851933; x=1723456733; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=BHoHEECpE5o9sWQnAe+eHRzHftTekmhO0P14uXbKEUM=;
-        b=IB+O7lsVw71zTusD0VpJULzMuJf4+kLEeZXBpaVc0NwwXoqiMXuXV0rd3dqwcahFzl
-         LkZqnEnmiqXR+jK0rpKCcoaBay2nuVCSgPuHOww0vWa0st4537ZxQYwX2Q7DUqXGVsAb
-         t9T8ItfqU+SlFN2d2OjCpri2mlnK6DFnLDsv4W7padMOgJNg5ii6CraZ7oeIjd+CXxfd
-         RuG/UmrgYV3RAYG0hQqvDULV+LgOQk1YCi+2fkOQ7dMjpQdJFAYPIZOzsOfwp2Vnvg1W
-         AydRUgklnm96/Xx9RtkDCy5Dt0jSTXXs894SoeNjxRUUSCNkI7LNoY1LgWFOGiOK2NPb
-         uOFg==
+        d=linaro.org; s=google; t=1722853991; x=1723458791; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=aCg8Y7NDdsxbBmImd9uRerZmF7tRLZUEY04gUZ817ow=;
+        b=LzscwnAeCjD4FYkC5yo3LvvbRDw+wo9vP077qbgTn6BJHnl/wGemPeZbcXWul3tdgb
+         Zi+cwUTLpe3StbSpVbBOa5cYXi+xqy8+eSFZZS7LOSIJo/jbBNyA/P8wMeU262S5uZc+
+         25uxquCylRTBEmhn+PSL9HIcGbiYTtXTq7tFSLaHBQe0g9GFR1O3mLDv90aKyWG9d8xX
+         ycV0fr1+CU8ArmionVbWTxjPKAMigIasC9eIov63Imjn0+dC1pAqA4mhcRfHpQhCRunu
+         CePEvUpOBQSXyWKCjtCzjl4lGJ5SrSuTKhrtmAZUvJPLssGA8EhPQJ/nV2aeIbJ4unVt
+         Xrcg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722851933; x=1723456733;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1722853991; x=1723458791;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=BHoHEECpE5o9sWQnAe+eHRzHftTekmhO0P14uXbKEUM=;
-        b=Ar+hKusBfMAC9leEiPv4/1seBNZVeI58VX1oFq1BFAjphpH1Fv+vJIT9NM3UN+u4Ot
-         KKuguQCRAphg2suC/MPATi8zlxIoX3ySJpKr4eZVpCPbOnGh67NLyTKpy/MUjGinNwyB
-         BFnB68Bj6wJsVZTWsMzY/xO2PfOQB1pOYVBkxJZZpEm9Q9AxuOcsfB27uxhydE9gv/fI
-         6k7NRLNgfSPEbgrQDbYh/ml+6VPWOlLg9hzsGVrjCtvdLUHPwzPZOkhx7RDamuzbEGta
-         eHjHGuUntVbJr2ohGqfArz+Mth1T60jSFdUMRFwDoHNc6l4TvCx61aaJSApX/P8Yw0gT
-         biFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXan8O/USIwXB6BVtd3+O/ZULx73GbHg+NScvlg9fx5cvSy+pbOpn7+J989c9lxYujyj/HQyIePoQSysChwd86552do7DbMiLyqVOkBNzoOu+UOWLH8xNYvoTWq7mzAKoyZ1LKWm2Da
-X-Gm-Message-State: AOJu0Yzkev2/yK3vB+SoZpa9yMAtDDCWYPF2g/HBKAvelVnpQKlIOxVM
-	zSKRlh31LGoWiv1BUHCYx4A0hiVPg0WnJzyURtqs/jzf2HRMCIc/
-X-Google-Smtp-Source: AGHT+IEzCM/xqDdmhrxhMEdZ7e0NV1MT+lwhzAh4Tu7K0402wLTOp+q7LKhWEz23m7PCLqn41822pA==
-X-Received: by 2002:a05:6000:18c1:b0:368:3b5c:7a5d with SMTP id ffacd0b85a97d-36bbc0ff29bmr8419575f8f.20.1722851932377;
-        Mon, 05 Aug 2024 02:58:52 -0700 (PDT)
-Received: from prasmi.home ([2a00:23c8:2500:a01:2595:4364:d152:dff3])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36bbd01945fsm9254927f8f.41.2024.08.05.02.58.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 02:58:51 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH] clk: renesas: rzv2h-cpg: Fix undefined reference to r9a09g057_cpg_info
-Date: Mon,  5 Aug 2024 10:58:42 +0100
-Message-Id: <20240805095842.277792-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.34.1
+        bh=aCg8Y7NDdsxbBmImd9uRerZmF7tRLZUEY04gUZ817ow=;
+        b=N+E3IQJd7UKIKG4sVB4BDVx4m01HNBZSkvHFlI3cWNDLZOyRyjjvsiKwmoi7DawZDp
+         S4YEFCVTdrG3tXxa/IMXIJneH0dX89pw5+RVfyxutbaBWHb0OgeFCN4BsF2Px6nEvSPx
+         yxKh2hezdaa3QEH9XZuUv2TauMJdCIZKptUZbmuW8xoM3pklWDmQes1Cq8tmNRfVpM0y
+         OgwwMKFrFPIFNzt4fWCZ4bYYNccYbloWvNGvT7fgKXq67x2mecVc6Dyid04nZ+i1S917
+         MvZFjzCqrcxSD/NEKTBAS+/n9CwF8H0qktyt1qV7e5jkLhj5j6lwlSfT7OU23t+LZOY/
+         LhqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUFdnMz36VE7RyNtDNGvtK6DIZmc9ACv035enE3VG0MeDwJ2R8iQBvMD9VSjYf7qXOe7UWr+kiY84Y128dEBm3Nwt088bKWEhUj
+X-Gm-Message-State: AOJu0YxitkmGEvDKXVbvngyHmjJ6Li+gTdCxYZEbFacKpFCtm/YHVeV4
+	+KJ5ybiGV+6ivjAeZvPoz0IMY9Plz4tnURqzT3hG7SP+XydXrs2mka9sstOxBlmcteUlMJkA3YR
+	xewgZAlE5HrMnQceUlF18zOTyw50vsnT+F7goxw==
+X-Google-Smtp-Source: AGHT+IGGEv61lZA9mh+6DUS9SFPSvDLpedgHfe82sAKsqEu8+0Y0OH2Uh3V5PtPQFVyIyuu+NY/A4IbZiEUJ+kCoNoQ=
+X-Received: by 2002:a05:6902:1441:b0:e0b:4e20:b592 with SMTP id
+ 3f1490d57ef6-e0bde21a393mr13367382276.6.1722853991091; Mon, 05 Aug 2024
+ 03:33:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240710061102.1323550-1-quic_varada@quicinc.com>
+ <20240710061102.1323550-6-quic_varada@quicinc.com> <d454e01f-3d6b-4a02-87cf-3d289bc6957c@linaro.org>
+ <ZpeLYG6vegJYZ5Rs@hu-varada-blr.qualcomm.com> <ZqCD3xtkLHbw9BHN@hu-varada-blr.qualcomm.com>
+ <iy3l3ybmvllqxtyqq7fifiokxaaedrs22davveel4ikjoqivdm@dinswoc52qpz>
+In-Reply-To: <iy3l3ybmvllqxtyqq7fifiokxaaedrs22davveel4ikjoqivdm@dinswoc52qpz>
+From: Ulf Hansson <ulf.hansson@linaro.org>
+Date: Mon, 5 Aug 2024 12:32:34 +0200
+Message-ID: <CAPDyKFoSK4_gRtOY2_pZhT7AytZ4qpZpRTzg5cOrqJj7A22b6A@mail.gmail.com>
+Subject: Re: [PATCH v6 5/9] pmdomain: qcom: rpmpd: Add IPQ9574 power domains
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Varadarajan Narayanan <quic_varada@quicinc.com>, Konrad Dybcio <konrad.dybcio@linaro.org>, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org, 
+	mturquette@baylibre.com, sboyd@kernel.org, ilia.lin@kernel.org, 
+	rafael@kernel.org, viresh.kumar@linaro.org, quic_sibis@quicinc.com, 
+	quic_rjendra@quicinc.com, danila@jiaxyga.com, neil.armstrong@linaro.org, 
+	otto.pflueger@abscue.de, abel.vesa@linaro.org, luca@z3ntu.xyz, 
+	geert+renesas@glider.be, stephan.gerhold@kernkonzept.com, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, Praveenkumar I <quic_ipkumar@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Wed, 24 Jul 2024 at 19:26, Dmitry Baryshkov
+<dmitry.baryshkov@linaro.org> wrote:
+>
+> On Wed, Jul 24, 2024 at 10:02:31AM GMT, Varadarajan Narayanan wrote:
+> > On Wed, Jul 17, 2024 at 02:44:08PM +0530, Varadarajan Narayanan wrote:
+> > > On Tue, Jul 16, 2024 at 02:15:12PM +0200, Konrad Dybcio wrote:
+> > > > On 10.07.2024 8:10 AM, Varadarajan Narayanan wrote:
+> > > > > From: Praveenkumar I <quic_ipkumar@quicinc.com>
+> > > > >
+> > > > > Add the APC power domain definitions used in IPQ9574.
+> > > > >
+> > > > > Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> > > > > Signed-off-by: Praveenkumar I <quic_ipkumar@quicinc.com>
+> > > > > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> > > > > ---
+> > > >
+> > > > Could you please confirm [1]?
+> > > >
+> > > > Konrad
+> > > >
+> > > > [1] https://lore.kernel.org/linux-arm-msm/57dadb35-5dde-4127-87aa-962613730336@linaro.org/
+> > >
+> > > The author is off for a few days. Will get back to you once he is in.
+> >
+> > Have responded to that query. Please see https://lore.kernel.org/linux-arm-msm/ZqCCpf1FwLWulSgr@hu-varada-blr.qualcomm.com/
+>
+> If it responds to voltage values, please model it as a regulator rather
+> than a power domain.
 
-Address randconfig build issue where the linker reports an undefined
-reference to `r9a09g057_cpg_info`. The error occurs when
-CONFIG_CLK_R9A09G057 is not defined, leading to the inclusion of the
-device match entry without the corresponding data. By adding a
-preprocessor condition to the device match table, the entry for
-r9a09g057 is included only when CONFIG_CLK_R9A09G057 is defined, thus
-resolving the linker error.
+Just wanted to give my brief opinion around this too.
 
-Error message:
-   /usr/bin/ld: warning: .tmp_vmlinux1 has a LOAD segment with RWX permissions
->> /usr/bin/ld: drivers/clk/renesas/rzv2h-cpg.o:(.rodata+0xc0): undefined reference to `r9a09g057_cpg_info'
-   clang-14: error: linker command failed with exit code 1 (use -v to see invocation)
+I agree that it seems to make sense to model it as a regulator, but
+that doesn't necessarily mean that we shouldn't model it as a
+power-domain too.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202408040932.SqrqyXGU-lkp@intel.com/
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- drivers/clk/renesas/rzv2h-cpg.c | 2 ++
- 1 file changed, 2 insertions(+)
+If it is a power-domain it should be modelled like that - and then the
+power-domain provider should be assigned as the consumer of that
+regulator.
 
-diff --git a/drivers/clk/renesas/rzv2h-cpg.c b/drivers/clk/renesas/rzv2h-cpg.c
-index a12720b4b498..504ee263919e 100644
---- a/drivers/clk/renesas/rzv2h-cpg.c
-+++ b/drivers/clk/renesas/rzv2h-cpg.c
-@@ -829,10 +829,12 @@ static int __init rzv2h_cpg_probe(struct platform_device *pdev)
- }
- 
- static const struct of_device_id rzv2h_cpg_match[] = {
-+#ifdef CONFIG_CLK_R9A09G057
- 	{
- 		.compatible = "renesas,r9a09g057-cpg",
- 		.data = &r9a09g057_cpg_info,
- 	},
-+#endif
- 	{ /* sentinel */ }
- };
- 
--- 
-2.34.1
-
+Kind regards
+Uffe
