@@ -1,240 +1,202 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42A5F16BE00;
-	Mon,  5 Aug 2024 19:39:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E690D14B07C
+	for <linux-clk@vger.kernel.org>; Mon,  5 Aug 2024 21:37:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722886776; cv=none; b=nS7OKPN6GTyhbhf/UDimi00e9uQr37HJ+clJ2EIkP6w9tbj3K3OW/XwDMbwlQjn3/OcsHDbwA+OrokO3u4FazjjuazLhGgloFfn846iPpQUcEXJUPPM3HZR5mzpV/R2RD98UoDj2NrSxHIgWle13LiES80I62sRXzmW8HCEIK1w=
+	t=1722893840; cv=none; b=MHMXMUz7R+6j49Q2fzVm13x/xD2t7BVXXyE48JB9Yf8WjxPrcRwC0cdI2NWPT3BaNp3ixniT2t5Rt1SQ0TmI4rTqXx+F6zx9TAUY7EwWn7dGyA3kf5rFYstRKpz++iuU7GXalNcgwrgtQwZshzZ0V6c1kMQsHcRGaDCgbtGUHS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722886776; c=relaxed/simple;
-	bh=bL3xCyrz500fzYdHPUZyidY1lXBESp3ZIzFOaqzS8PU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ZqNKXXDxlJRt+nLgXJe66rV/QjX6PPx2euA4v995ZV4zJoyCklLVmV2iOMz7iFb/k+lbZ7coGhSBapoWzEpqN4onelqIbYudvWtvLoYT9baZMzsovFDZd7T8rmCY1pgr7xI1M1WPga7l+OFrAtkteMqq+CvBLWH3vu7nj4AaVcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DHLswmqP; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1722893840; c=relaxed/simple;
+	bh=Ed6Rl/7C5d57Fi1GZz8JB4mKEI66eDK+qFFUbTBXrMI=;
+	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hYGrBtlJNxS1Eh8C+hp6apTKmVmp2hJyIEaneyPQFiKllZrVUXuKnsFN/NdocCQsjd0hvWeri8qhVQ9HU0QzUayCX/GrmPi65fQ1dsp0OXCa7RAbdv3xlypV42jQZ7qvuEbzPAb8DIeL0KCVyst4tB9KAFYvuAD4Ect+JlMyGMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=QF3MugR0; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DHLswmqP"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4280ca0791bso70260445e9.1;
-        Mon, 05 Aug 2024 12:39:33 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QF3MugR0"
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7a1d0dc869bso701167685a.2
+        for <linux-clk@vger.kernel.org>; Mon, 05 Aug 2024 14:37:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1722886772; x=1723491572; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dUDFCyXN0hdW/vZfKC+oBs58Sqw0osqSAWwOLvcCYoM=;
-        b=DHLswmqPpnc5oUppLiey5ksoE58JTvzAdUbUVeuDonEgiD2l7C+LKw0NS8iTzN241c
-         /QtH3Kj20XZbuf9jEw9xLDvt9AenunPgQgzTXi5CxztEZS2lBRViRkfCsoYmEdWBXCTn
-         Eg8AHXdBdd8QjAJGtPQ2ocba8ro33mdZqLJsMkRgBacmiw8UcA4dTOB+ViJjm2CIrTUU
-         tWB9rT4koDtlvgHtfTJUJbZ0E2OjLIiTOVXpihAR6kNipzkw6PX3eDEbQghswrnktCuy
-         dbhNgC5IEK2/WDW2xHmDxNiugnZ0DPR8dWk6vIEbgzS443ejMjKdrRA/8n1y0F+LUJyE
-         t3Tg==
+        d=chromium.org; s=google; t=1722893838; x=1723498638; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5TTQWoLTs/whgWYI5NXDcDj0/sry6PBheRizhrnqOcg=;
+        b=QF3MugR0M8fz9u7kKwdbEuEBewZqWhDHkhp94ciTeBgtsL8qoQL/WYHfQ2qkl10tDZ
+         pEyltFPRUQngwNMYCtgzKzfgUZwbf4hlPYdGXT4b0pp71gUy/gqstWsitBzAQA5PEEsH
+         PH9lRntCgYTZYcd187sBhX9syCpoGFNAn6sf8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722886772; x=1723491572;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=dUDFCyXN0hdW/vZfKC+oBs58Sqw0osqSAWwOLvcCYoM=;
-        b=bH5jdxcqIZrvedwlierKOtckplsI+rsYxduraviHlNQAQLy5P8VauK/qEjijhPTVM5
-         Q6JsbDMlj0UlXHYVNUg2oJdm8zGyWMYd/LIXltk6F21SxhDdU7CYnbAGZWeTEBRVkFUk
-         oG+LiMGIj/6A/gLFdC4Tcf/2cj4RHcIN5teLEjx8fzCtyFRkC4p+sdQdmsNfClL8y3LA
-         rz5CtH7LGn8uvzhfZWqm9oxIbkSAHeKU1q5cIbb+7rbkUb8L7q6/K1LgJaLu9W3Ik05x
-         ZLm/AbyN5G4LhDkWEOzjrGiMI+Mdzaa7bRRuYP8Rh79bluTRmeWeFRN+yxedyoyEo57O
-         hUnA==
-X-Forwarded-Encrypted: i=1; AJvYcCV5fi6N9oghnfJv7TGJVOghGLUNsRdz1aLl+C3toKbuDJB8pshvlnGVS8VV4VviJAUMOgWKBwBdixTIgkyQaAVq0Xmykrlezdz5ghKuv/YHNjackC9FuH+oryUsDhuuPjMIA5VpPY32
-X-Gm-Message-State: AOJu0Yxl0GFJFz63yt7TqrcRkZqcAEAtzGXAdkaRtjKmEF/09FJqyRCD
-	Qys3iRMeQWRqzHXAgcVRg0PbbNAp2SxysDEjRma50iF0ilqI3fIj
-X-Google-Smtp-Source: AGHT+IGmVwSrOedzPQsfv7gDVbvA7wPnoFPu1GTE8sD2NdBoYtfvE5Byo/cE7qKSzM4EhJou5e6tzg==
-X-Received: by 2002:a05:600c:a0b:b0:427:d8f2:5dee with SMTP id 5b1f17b1804b1-428e6b00661mr93487185e9.15.1722886772207;
-        Mon, 05 Aug 2024 12:39:32 -0700 (PDT)
-Received: from prasmi.home ([2a00:23c8:2500:a01:25b8:5324:d26c:319c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-428e6e4f5b6sm151496395e9.25.2024.08.05.12.39.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 05 Aug 2024 12:39:31 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH 2/2] clk: renesas: r9a09g057-cpg: Add clock and reset entries for GTM/RIIC/SDHI/WDT
-Date: Mon,  5 Aug 2024 20:38:46 +0100
-Message-Id: <20240805193846.52416-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240805193846.52416-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20240805193846.52416-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+        d=1e100.net; s=20230601; t=1722893838; x=1723498638;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5TTQWoLTs/whgWYI5NXDcDj0/sry6PBheRizhrnqOcg=;
+        b=whMmaXxY9GdPOjiFMPyj/FJlh/hXrHqE11lfs0u18NyoAlYTITkQZIU50BbBTEzc61
+         ro3Y9Hr4oF9PplKIntYkt10Yx8WhevBQlhQJdWAnSDXn4ORWeisRXJPDRDkn9L+87hnZ
+         gm99zp0os+NzcqpmgFdaJwfZSZrYmRhSm0VoAgVaUFfyOdkVrtYNxlhIZSjsHVEEhjfZ
+         mpE6OycFl+WZtmL4XACLNgik4DjHg01MCIXSXxH5JLRpoIvxrU6kFfTYdR0uHmfcPaYo
+         rkU2e/AEvAYbZhfImBi6reyKGzZjvlnTdYyTB3/5Byf2CCCrFdNHE3AGdYa+xdT8WWtJ
+         jY8g==
+X-Forwarded-Encrypted: i=1; AJvYcCWnSrbdReBdlAvJPnxfDtPvPtO1bgyYFnmsBUU/jPzHwiNuzeO2kE+HkMksI9v5+DCY9Q5kQZzKf/AeQxKe2tvJxTRJYpOpp0A2
+X-Gm-Message-State: AOJu0Ywe7SuWejhsQvs46xZUaqnFx5zhcLHugoBtAIUkilBcGIJ5p5QU
+	Y0Om5OhyLg1q7YVJqX/iBZi0G1JmD8rT2WEH5epWR6L2gdNRI1HSwGAPKKUr9UIWTopo9kwRzUt
+	Nl/OC/Npg9Zu8ayeU2F4Wry5eWoL4aft1iV05
+X-Google-Smtp-Source: AGHT+IFS5Tg6/1f5zul0WlstKMG5hOJqpcrTEHbrOjqqZr3yr5nFPOGk40LTscDmB79uY8ZoZrzsbej+EEA5xeCCQ/c=
+X-Received: by 2002:a05:620a:240d:b0:7a2:d64:1bbf with SMTP id
+ af79cd13be357-7a34eec99d9mr1971902185a.1.1722893837737; Mon, 05 Aug 2024
+ 14:37:17 -0700 (PDT)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Mon, 5 Aug 2024 14:37:16 -0700
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMi1Hd2_a7TjA7J9ShrAbNOd_CoZ3D87twmO5t+nZxC9sX18tA@mail.gmail.com>
+References: <20240502224703.103150-1-swboyd@chromium.org> <CAE-0n50VDgsg-4QnynvLOzykr3KP5JsnHqeFPA=uRT3EfgL19g@mail.gmail.com>
+ <CAMi1Hd1KQBE4kKUdAn8E5FV+BiKzuv+8FoyWQrrTHPDoYTuhgA@mail.gmail.com>
+ <CAE-0n53X1Gv9nnyDfeivYd7n5W6D1WFkO0tCvYc9drb0+4hQbw@mail.gmail.com> <CAMi1Hd2_a7TjA7J9ShrAbNOd_CoZ3D87twmO5t+nZxC9sX18tA@mail.gmail.com>
+From: Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.10
+Date: Mon, 5 Aug 2024 14:37:16 -0700
+Message-ID: <CAE-0n52JgfCBWiFQyQWPji8cq_rCsviBpW-m72YitgNfdaEhQg@mail.gmail.com>
+Subject: Re: [PATCH] clk: qcom: Park shared RCGs upon registration
+To: Amit Pundir <amit.pundir@linaro.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	patches@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
+	Laura Nao <laura.nao@collabora.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Douglas Anderson <dianders@chromium.org>, Taniya Das <quic_tdas@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Quoting Amit Pundir (2024-08-05 03:43:14)
+> On Sat, 3 Aug 2024 at 06:29, Stephen Boyd <swboyd@chromium.org> wrote:
+> >
+> > Also please send back the dmesg so we can see what clks are configured
+> > for at boot time. If they're using TCXO source at boot then they're not
+> > going to be broken. In which case those clks can keep using the old clk
+> > ops and we can focus on the ones that aren't sourcing from TCXO.
+>
+> Thank your for this debug patch. I thought I narrowed down the
+> breakage to the clks in drivers/clk/qcom/gcc-sm8550.c, until I ran
+> into the following kernel panic in ucsi_glink driver in later test
+> runs.
 
-Add clock and reset entries for GTM, RIIC, SDHI and WDT IP blocks.
+Thanks for the info. These are the clks that aren't sourcing from XO
+at registration time:
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
- drivers/clk/renesas/r9a09g057-cpg.c | 84 +++++++++++++++++++++++++++++
- drivers/clk/renesas/rzv2h-cpg.h     |  7 +++
- 2 files changed, 91 insertions(+)
+  gcc_qupv3_wrap1_s7_clk_src with cfg 0x102601 -> parent is gpll0_out_even
+  gcc_ufs_phy_axi_clk_src with cfg 0x103 -> parent is gpll0_out_main
+  gcc_ufs_phy_ice_core_clk_src with cfg 0x503 -> parent is gpll4_out_main
+  gcc_ufs_phy_unipro_core_clk_src with cfg 0x103 -> parent is gpll0_out_main
+  gcc_usb30_prim_master_clk_src with cfg 0x105 -> parent is gpll0_out_main
 
-diff --git a/drivers/clk/renesas/r9a09g057-cpg.c b/drivers/clk/renesas/r9a09g057-cpg.c
-index 9722b810e027..3ee32db5c0af 100644
---- a/drivers/clk/renesas/r9a09g057-cpg.c
-+++ b/drivers/clk/renesas/r9a09g057-cpg.c
-@@ -25,16 +25,31 @@ enum clk_ids {
- 
- 	/* PLL Clocks */
- 	CLK_PLLCM33,
-+	CLK_PLLCLN,
- 	CLK_PLLDTY,
- 	CLK_PLLCA55,
- 
- 	/* Internal Core Clocks */
- 	CLK_PLLCM33_DIV16,
-+	CLK_PLLCLN_DIV2,
-+	CLK_PLLCLN_DIV8,
-+	CLK_PLLCLN_DIV16,
-+	CLK_PLLDTY_ACPU,
-+	CLK_PLLDTY_ACPU_DIV4,
- 
- 	/* Module Clocks */
- 	MOD_CLK_BASE,
- };
- 
-+static const struct clk_div_table dtable_2_64[] = {
-+	{0, 2},
-+	{1, 4},
-+	{2, 8},
-+	{3, 16},
-+	{4, 64},
-+	{0, 0},
-+};
-+
- static const struct cpg_core_clk r9a09g057_core_clks[] __initconst = {
- 	/* External Clock Inputs */
- 	DEF_INPUT("audio_extal", CLK_AUDIO_EXTAL),
-@@ -43,23 +58,92 @@ static const struct cpg_core_clk r9a09g057_core_clks[] __initconst = {
- 
- 	/* PLL Clocks */
- 	DEF_FIXED(".pllcm33", CLK_PLLCM33, CLK_QEXTAL, 200, 3),
-+	DEF_FIXED(".pllcln", CLK_PLLCLN, CLK_QEXTAL, 200, 3),
- 	DEF_FIXED(".plldty", CLK_PLLDTY, CLK_QEXTAL, 200, 3),
- 	DEF_PLL(".pllca55", CLK_PLLCA55, CLK_QEXTAL, PLL_CONF(0x64)),
- 
- 	/* Internal Core Clocks */
- 	DEF_FIXED(".pllcm33_div16", CLK_PLLCM33_DIV16, CLK_PLLCM33, 1, 16),
- 
-+	DEF_FIXED(".pllcln_div2", CLK_PLLCLN_DIV2, CLK_PLLCLN, 1, 2),
-+	DEF_FIXED(".pllcln_div8", CLK_PLLCLN_DIV8, CLK_PLLCLN, 1, 8),
-+	DEF_FIXED(".pllcln_div16", CLK_PLLCLN_DIV16, CLK_PLLCLN, 1, 16),
-+
-+	DEF_DDIV(".plldty_acpu", CLK_PLLDTY_ACPU, CLK_PLLDTY, CDDIV0_DIVCTL2, dtable_2_64),
-+	DEF_FIXED(".plldty_acpu_div4", CLK_PLLDTY_ACPU_DIV4, CLK_PLLDTY_ACPU, 1, 4),
-+
- 	/* Core Clocks */
- 	DEF_FIXED("sys_0_pclk", R9A09G057_SYS_0_PCLK, CLK_QEXTAL, 1, 1),
- 	DEF_FIXED("iotop_0_shclk", R9A09G057_IOTOP_0_SHCLK, CLK_PLLCM33_DIV16, 1, 1),
- };
- 
- static const struct rzv2h_mod_clk r9a09g057_mod_clks[] __initconst = {
-+	DEF_MOD("gtm_0_pclk",			CLK_PLLCM33_DIV16, 4, 3, 2, 3),
-+	DEF_MOD("gtm_1_pclk",			CLK_PLLCM33_DIV16, 4, 4, 2, 4),
-+	DEF_MOD("gtm_2_pclk",			CLK_PLLCLN_DIV16, 4, 5, 2, 5),
-+	DEF_MOD("gtm_3_pclk",			CLK_PLLCLN_DIV16, 4, 6, 2, 6),
-+	DEF_MOD("gtm_4_pclk",			CLK_PLLCLN_DIV16, 4, 7, 2, 7),
-+	DEF_MOD("gtm_5_pclk",			CLK_PLLCLN_DIV16, 4, 8, 2, 8),
-+	DEF_MOD("gtm_6_pclk",			CLK_PLLCLN_DIV16, 4, 9, 2, 9),
-+	DEF_MOD("gtm_7_pclk",			CLK_PLLCLN_DIV16, 4, 10, 2, 10),
-+	DEF_MOD("wdt_0_clkp",			CLK_PLLCM33_DIV16, 4, 11, 2, 11),
-+	DEF_MOD("wdt_0_clk_loco",		CLK_QEXTAL, 4, 12, 2, 12),
-+	DEF_MOD("wdt_1_clkp",			CLK_PLLCLN_DIV16, 4, 13, 2, 13),
-+	DEF_MOD("wdt_1_clk_loco",		CLK_QEXTAL, 4, 14, 2, 14),
-+	DEF_MOD("wdt_2_clkp",			CLK_PLLCLN_DIV16, 4, 15, 2, 15),
-+	DEF_MOD("wdt_2_clk_loco",		CLK_QEXTAL, 5, 0, 2, 16),
-+	DEF_MOD("wdt_3_clkp",			CLK_PLLCLN_DIV16, 5, 1, 2, 17),
-+	DEF_MOD("wdt_3_clk_loco",		CLK_QEXTAL, 5, 2, 2, 18),
- 	DEF_MOD("scif_0_clk_pck",		CLK_PLLCM33_DIV16, 8, 15, 4, 15),
-+	DEF_MOD("riic_8_ckm",			CLK_PLLCM33_DIV16, 9, 3, 4, 19),
-+	DEF_MOD("riic_0_ckm",			CLK_PLLCLN_DIV16, 9, 4, 4, 20),
-+	DEF_MOD("riic_1_ckm",			CLK_PLLCLN_DIV16, 9, 5, 4, 21),
-+	DEF_MOD("riic_2_ckm",			CLK_PLLCLN_DIV16, 9, 6, 4, 22),
-+	DEF_MOD("riic_3_ckm",			CLK_PLLCLN_DIV16, 9, 7, 4, 23),
-+	DEF_MOD("riic_4_ckm",			CLK_PLLCLN_DIV16, 9, 8, 4, 24),
-+	DEF_MOD("riic_5_ckm",			CLK_PLLCLN_DIV16, 9, 9, 4, 25),
-+	DEF_MOD("riic_6_ckm",			CLK_PLLCLN_DIV16, 9, 10, 4, 26),
-+	DEF_MOD("riic_7_ckm",			CLK_PLLCLN_DIV16, 9, 11, 4, 27),
-+	DEF_MOD("sdhi_0_imclk",			CLK_PLLCLN_DIV8, 10, 3, 5, 3),
-+	DEF_MOD("sdhi_0_imclk2",		CLK_PLLCLN_DIV8, 10, 4, 5, 4),
-+	DEF_MOD("sdhi_0_clk_hs",		CLK_PLLCLN_DIV2, 10, 5, 5, 5),
-+	DEF_MOD("sdhi_0_aclk",			CLK_PLLDTY_ACPU_DIV4, 10, 6, 5, 6),
-+	DEF_MOD("sdhi_1_imclk",			CLK_PLLCLN_DIV8, 10, 7, 5, 7),
-+	DEF_MOD("sdhi_1_imclk2",		CLK_PLLCLN_DIV8, 10, 8, 5, 8),
-+	DEF_MOD("sdhi_1_clk_hs",		CLK_PLLCLN_DIV2, 10, 9, 5, 9),
-+	DEF_MOD("sdhi_1_aclk",			CLK_PLLDTY_ACPU_DIV4, 10, 10, 5, 10),
-+	DEF_MOD("sdhi_2_imclk",			CLK_PLLCLN_DIV8, 10, 11, 5, 11),
-+	DEF_MOD("sdhi_2_imclk2",		CLK_PLLCLN_DIV8, 10, 12, 5, 12),
-+	DEF_MOD("sdhi_2_clk_hs",		CLK_PLLCLN_DIV2, 10, 13, 5, 13),
-+	DEF_MOD("sdhi_2_aclk",			CLK_PLLDTY_ACPU_DIV4, 10, 14, 5, 14),
- };
- 
- static const struct rzv2h_reset r9a09g057_resets[] __initconst = {
-+	DEF_RST(6, 13, 2, 30),		/* GTM_0_PRESETZ */
-+	DEF_RST(6, 14, 2, 31),		/* GTM_1_PRESETZ */
-+	DEF_RST(6, 15, 3, 0),		/* GTM_2_PRESETZ */
-+	DEF_RST(7, 0, 3, 1),		/* GTM_3_PRESETZ */
-+	DEF_RST(7, 1, 3, 2),		/* GTM_4_PRESETZ */
-+	DEF_RST(7, 2, 3, 3),		/* GTM_5_PRESETZ */
-+	DEF_RST(7, 3, 3, 4),		/* GTM_6_PRESETZ */
-+	DEF_RST(7, 4, 3, 5),		/* GTM_7_PRESETZ */
-+	DEF_RST(7, 5, 3, 6),		/* WDT_0_RESET */
-+	DEF_RST(7, 6, 3, 7),		/* WDT_1_RESET */
-+	DEF_RST(7, 7, 3, 8),		/* WDT_2_RESET */
-+	DEF_RST(7, 8, 3, 9),		/* WDT_3_RESET */
- 	DEF_RST(9, 5, 4, 6),		/* SCIF_0_RST_SYSTEM_N */
-+	DEF_RST(9, 8, 4, 9),		/* RIIC_0_MRST */
-+	DEF_RST(9, 9, 4, 10),		/* RIIC_1_MRST */
-+	DEF_RST(9, 10, 4, 11),		/* RIIC_2_MRST */
-+	DEF_RST(9, 11, 4, 12),		/* RIIC_3_MRST */
-+	DEF_RST(9, 12, 4, 13),		/* RIIC_4_MRST */
-+	DEF_RST(9, 13, 4, 14),		/* RIIC_5_MRST */
-+	DEF_RST(9, 14, 4, 15),		/* RIIC_6_MRST */
-+	DEF_RST(9, 15, 4, 16),		/* RIIC_7_MRST */
-+	DEF_RST(10, 0, 4, 17),		/* RIIC_8_MRST */
-+	DEF_RST(10, 7, 4, 24),		/* SDHI_0_IXRST */
-+	DEF_RST(10, 8, 4, 25),		/* SDHI_1_IXRST */
-+	DEF_RST(10, 9, 4, 26),		/* SDHI_2_IXRST */
- };
- 
- const struct rzv2h_cpg_info r9a09g057_cpg_info __initconst = {
-diff --git a/drivers/clk/renesas/rzv2h-cpg.h b/drivers/clk/renesas/rzv2h-cpg.h
-index 936af15b648a..9bca3a1f08a9 100644
---- a/drivers/clk/renesas/rzv2h-cpg.h
-+++ b/drivers/clk/renesas/rzv2h-cpg.h
-@@ -8,6 +8,13 @@
- #ifndef __RENESAS_RZV2H_CPG_H__
- #define __RENESAS_RZV2H_CPG_H__
- 
-+#define CPG_CDDIV0		(0x400)
-+
-+#define DDIV_PACK(offset, bitpos, mon) \
-+		(((offset) << 9) | ((bitpos) << 5) | (mon))
-+
-+#define CDDIV0_DIVCTL2	DDIV_PACK(CPG_CDDIV0, 8, 2)
-+
- /**
-  * Definitions of CPG Core Clocks
-  *
--- 
-2.34.1
+The original patch is going to inform the clk framework that the parent
+of these clks aren't XO but something like gpll0_out_even, whatever the
+hardware is configured for. That may cause these PLLs to be turned off
+earlier than before if, for example, gcc_ufs_phy_axi_clk_src is turned
+off by a consumer and gcc_usb30_prim_master_clk_src is left enabled at
+boot. That's why we force park clks at registration time, so that they
+can't have their parent clk get turned off by some other clk consumer
+enabling and then disabling a clk that's also parented to the same
+parent.
 
+This same problem exists for RCGs that aren't shared too, but it's
+particularly bad for shared RCGs because the parent PLLs aren't turned
+on automatically by the hardware when things like the GDSC do their
+housekeeping. At least when software is in control we can enable the
+parent PLL and unstick the RCG that was previously cut off.
+
+Can you narrow down the list above to the clk that matters? I guess if
+USB isn't working then gcc_usb30_prim_master_clk_src is the one that
+should be changed and nothing else. Although, I noticed that in the
+first dmesg log you sent the serial console had garbage, and that's
+likely because the rate changed while the clk was registered. I don't
+know why the gcc_qupv3_wrap1_s7_clk_src is marked with the shared clk
+ops. That's confusing to me as I don't expect that to need to be parked
+for any reasons. Maybe qcom folks can comment there but I'd expect plain
+rcg2_ops to be used for those clks. Anyway, if you can narrow down to
+which clk needs to be left untouched it would be helpful.
+
+>
+> [    7.882923][    T1] init: Loading module /lib/modules/ucsi_glink.ko
+> with args ''
+> [    7.892929][   T92] Unable to handle kernel NULL pointer
+> dereference at virtual address 0000000000000010
+> [    7.894935][    T1] init: Loaded kernel module /lib/modules/ucsi_glink.ko
+> [    7.902670][   T92] user pgtable: 4k pages, 39-bit VAs, pgdp=0000000886218000
+> [    7.902674][   T92] Internal error: Oops: 0000000096000006 [#1] PREEMPT SMP
+> [    7.993995][   T64] qcom_pmic_glink pmic-glink: Failed to create
+> device link (0x180) with a600000.usb
+> [    8.078673][   T92] CPU: 7 UID: 0 PID: 92 Comm: kworker/7:2
+> Tainted: G S          E      6.11.0-rc2-mainline-00001-g4153d980358d
+> #6
+> [    8.078676][   T92] Tainted: [S]=CPU_OUT_OF_SPEC, [E]=UNSIGNED_MODULE
+> [    8.078677][   T92] Hardware name: Qualcomm Technologies, Inc.
+> SM8550 HDK (DT)
+> [    8.078679][   T92] Workqueue: events pmic_glink_ucsi_register [ucsi_glink]
+> [    8.078682][   T92] pstate: 63400005 (nZCv daif +PAN -UAO +TCO +DIT
+> -SSBS BTYPE=--)
+> [    8.078684][   T92] pc : pmic_glink_send+0x10/0x2c [pmic_glink]
+> [    8.078685][   T92] lr : pmic_glink_ucsi_read+0x84/0x14c [ucsi_glink]
+> [    8.078704][   T92] Call trace:
+> [    8.078705][   T92]  pmic_glink_send+0x10/0x2c [pmic_glink]
+> [    8.078706][   T92]  pmic_glink_ucsi_read+0x84/0x14c [ucsi_glink]
+> [    8.078707][   T92]  pmic_glink_ucsi_read_version+0x20/0x30 [ucsi_glink]
+> [    8.078708][   T92]  ucsi_register+0x28/0x70
+> [    8.078717][   T92]  pmic_glink_ucsi_register+0x18/0x28 [ucsi_glink]
+> [    8.078718][   T92]  process_one_work+0x184/0x2e8
+> [    8.078723][   T92]  worker_thread+0x2f0/0x404
+> [    8.078725][   T92]  kthread+0x114/0x118
+> [    8.078728][   T92]  ret_from_fork+0x10/0x20
+> [    8.078732][   T92] ---[ end trace 0000000000000000 ]---
+> [    8.078734][   T92] Kernel panic - not syncing: Oops: Fatal exception
+> [    8.078735][   T92] SMP: stopping secondary CPUs
+> [    8.279136][   T92] Kernel Offset: 0x14d9480000 from 0xffffffc080000000
+> [    8.279141][   T92] PHYS_OFFSET: 0x80000000
+> [    8.279143][   T92] CPU features: 0x18,004e0003,80113128,564676af
+> [    8.279148][   T92] Memory Limit: none
+
+That looks like 'client' is NULL in pmic_glink_send(). The VA of 0x10 is
+the offset of 'pg' in struct pmic_glink_client. I don't know much about
+that driver but I'd guess that ucsi_glink has some race condition
+assigning the client pointer?
+
+Oh actually, I see the problem. devm_pmic_glink_register_client()
+returns a struct pmic_glink_client pointer that's assigned to
+'ucsi->client'. And pmic_glink_ucsi_read() uses 'ucsi->client' to call
+pmic_glink_send(). That pointer is NULL because the workqueue that runs
+pmic_glink_ucsi_register() must run before
+devm_pmic_glink_register_client() returns and assigns the client pointer
+to 'ucsi->client'. This is simply a race.
+
+ CPU0                                        CPU1
+ ----                                        ----
+ ucsi->client = NULL;
+ devm_pmic_glink_register_client()
+  client->pdr_notify(client->priv, pg->client_state)
+   pmic_glink_ucsi_pdr_notify()
+    schedule_work(&ucsi->register_work)
+    <schedule away>
+                                             pmic_glink_ucsi_register()
+                                              ucsi_register()
+                                               pmic_glink_ucsi_read_version()
+                                                pmic_glink_ucsi_read()
+                                                 pmic_glink_ucsi_read()
+                                                  pmic_glink_send(ucsi->client)
+                                                  <client is NULL BAD>
+ ucsi->client = client // Too late!
+
+>
+> I couldn't reproduce this kernel panic on vanilla v6.11-rc2 in 50+
+> test runs after that. So I'm assuming that this debug patch may have
+> triggered it.
+> Attaching the crashing and working dmesg logs with the debug patch applied.
+>
+
+Sounds like you just need to reboot a bunch! Or add an msleep() in
+devm_pmic_glink_register_client() after the notify call to open the race
+window and let the workqueue run.
