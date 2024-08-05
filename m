@@ -1,76 +1,104 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 300EF17B410;
-	Mon,  5 Aug 2024 17:58:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70F4C16B739;
+	Mon,  5 Aug 2024 19:39:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722880725; cv=none; b=uIhaICrQWnKdLZ1NxNBtM7f/lMGtcjWsOqjeW0NpvTzGjHZmTX0coyXK10d9BhH11aYRiAjGWcZWNOd+vxwVwgTKCrX1fECHTIsdolp79ErCTRliBq/w2ixvgYxJ8EqrTroFScZnSPAshBB+kR2QQYX+7/QMJ77AW8WX8iFHQZI=
+	t=1722886774; cv=none; b=gOuL7KaTClMy6DZ26WAn8ZZc+QhehRjBQzHemrQ1yZ6yDFCvINRl27bO2uUb4JZNU7gsdRS4xSnyKcvk8hffD2fX95ZyofhnTYkfvYpELsc0JBF4w/YM8zI7DPtzluwi41c8tb9az8h+a96e+4KMTSs/+oLC6TQUd56tEiqVvf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722880725; c=relaxed/simple;
-	bh=wNM5xS4jJV5PztpbZlRCZTDlDKXDNt8Werqs5lhFUu0=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=vAxpxQgM7yL9aAdDf1IeC3xlcB5QCMCyfmXaHqo7oSEPu3EOovWxNTdzBCXz0I50jOW6ZNbpClUjBMJnx2L/2c40aTApkl4gkQuc2dUCJOMexCSfFO+EIRfQdHSkFsle/3Ng9tzWlZQaumGRWKQAKGcZGrr/Qa3/IUcWPJqXA68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YLuqP5jp; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1722886774; c=relaxed/simple;
+	bh=OxuyHbgKtn6cZOLBlKqkMf8yRw48usAvfLC8uNpU9Ws=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=svJq0EpeVVsJOhdYR6KooBIKwXSC46+YIjQ/P+XfxVjcYYtYhWV9fWKLnTd4S0XVy2R5AlHAf8xFY4T6D06xfJM/KUL21/VgbKLKtAm8cwXcNlPHqQLbZno6BhPZoEHvqOp8IDy98e/eGwe5RySo3QKO236HNe4D1oKVG5hui04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L1We9UPR; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YLuqP5jp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F5EBC32782;
-	Mon,  5 Aug 2024 17:58:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722880724;
-	bh=wNM5xS4jJV5PztpbZlRCZTDlDKXDNt8Werqs5lhFUu0=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=YLuqP5jpZelCN3Laz43uy9YuydC9DuVusXYO/bh2l1f8dLcU9TTwitBw8NNtPpsyI
-	 yjSWCug7SREIxVeUnAZ7D7ch3wNZnSvJT5uFeAwtGegXdS56QyRkDVxmZq27cuuB52
-	 rKibpC8QH05O1HrjloNdAWSsZDt9od6HpiV1ta7iCvKoci7uBGleFqmiwXvUe88rsK
-	 +OnShhuSM6mkfwI1RUzuahvDkPihXX/hiyPwvvHUXw27KZmkB7FCPE8QW2Eemz+hfv
-	 NNLHw7+heLrnaOqoewkxBKS+cQ9a4adXmoxRLEz3w+H8N8+qHMOZiwQNJx1kmRV1M1
-	 bJeXwZLz9zgmA==
-Message-ID: <de8f23c2558644d3698176b6dd9f7e91.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L1We9UPR"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-428243f928cso51268315e9.3;
+        Mon, 05 Aug 2024 12:39:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722886771; x=1723491571; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dGEyfP0mV/DHEVkY4LGNl2J5dpEukWhK6gzaXB0a4PA=;
+        b=L1We9UPRd3Gs8mU4oM73otT2CRL4KTrsHfRuQRHZHsYysSv8eF3dZtcXe6iNVvMa+9
+         pT3M0FNIuiETbuw/BXVeJKrxmxEQh936aPvqstVTBzWvjYbgLI7FQKEyRwcaN92Mkj6S
+         QbLNlBGlWd3ieO5rcASIsh6TSVjs4GHDumKpuKTLvoE/vfJ82YGjSgRDk3860TuJfApe
+         eGkaGcYRPqG5y/9IttSIJQGV5OLxrU/OBq6T549rWWvdiDGtRvRsivOaWpwPu2WlctB1
+         d7WyzaawxLwRlau0Ay9VBFPqvaOAra1wlg24jSTlcdaEVUb7XUYSP0V75K2KpfA88bLK
+         2K3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722886771; x=1723491571;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dGEyfP0mV/DHEVkY4LGNl2J5dpEukWhK6gzaXB0a4PA=;
+        b=HGj2uaLxZqJy/bUlxTMV+XTpBOcUO6PwyX4qcQcxjPC+A7QtrVyc3DT1e2wB/9mD1q
+         iPnLbZ3UzpWMcu1sR9hJW5wtC6gFJSDy1ynX1XLxAXW6+uJ7Qtoj16ecIFNqdkrz+m+k
+         D2+JwfpE4vU23h3zKQVkA8B9cSbMBUiVHYHt/AZblVtczfsdpjikmpWXrYG56IntXFVd
+         KbbLOEPQCCOb+DQF6yAIjFbDAUnDEEqv+YTGHeYoITkT2IpZ3GAlwywy3ztEdwkG2KPp
+         7nQQ2Ub6/2XJQnOtovHceMVpwKWp/10xd1gnCcJyiVrgORz6G/m3wryPJ8pJfwCiriNF
+         TNuA==
+X-Forwarded-Encrypted: i=1; AJvYcCXX3AM4TaPehR4Ty/GyIrw2QvIDAgZwB0GjU4HJ/FHOGEQ/DAMdBbu0l+Oxs2T5TeswxTo0YLMvrcbcbdkGrdVHT2FAIuKNgVtMEsNaTm8b07xrQIoqC9vtKP/c9Z9Tfg2CpP+tNbVK
+X-Gm-Message-State: AOJu0Yyz3IDO5W+kULobt59oo5ENsPX+33a+oUJObNnxAonBu4rdOyow
+	q4tuR0Bi92H8jbp99tQ/z/kIZoQZsusSiHvk4XgG/vwwEXk3jQDi
+X-Google-Smtp-Source: AGHT+IELmjxvOLpZpyjp46/lip7mAwMXg9akl0FqzFsJbWjnkaKfABQ4ySxCm4fWC9qv/tPvchwLfw==
+X-Received: by 2002:a05:600c:1987:b0:426:641f:25e2 with SMTP id 5b1f17b1804b1-428e6b7e80bmr78356715e9.25.1722886770257;
+        Mon, 05 Aug 2024 12:39:30 -0700 (PDT)
+Received: from prasmi.home ([2a00:23c8:2500:a01:25b8:5324:d26c:319c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-428e6e4f5b6sm151496395e9.25.2024.08.05.12.39.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 05 Aug 2024 12:39:29 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH 0/2] clk: renesas: rzv2h-cpg: Add divider clock support
+Date: Mon,  5 Aug 2024 20:38:44 +0100
+Message-Id: <20240805193846.52416-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <3cca4d67-e420-442d-bb38-4eb0649dcdf4@quicinc.com>
-References: <20240801110040.505860-1-quic_amansing@quicinc.com> <ff92343652a998b97981e63ea5dc301f.sboyd@kernel.org> <3cca4d67-e420-442d-bb38-4eb0649dcdf4@quicinc.com>
-Subject: Re: [PATCH] clk: qcom: ipq9574: Update the alpha PLL type for GPLLs
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: quic_devipriy@quicinc.com
-To: Amandeep Singh <quic_amansing@quicinc.com>, andersson@kernel.org, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, mturquette@baylibre.com
-Date: Mon, 05 Aug 2024 10:58:42 -0700
-User-Agent: alot/0.10
+Content-Transfer-Encoding: 8bit
 
-Quoting Amandeep Singh (2024-08-05 02:11:16)
-> On 8/3/2024 6:35 AM, Stephen Boyd wrote:
-> > Quoting Amandeep Singh (2024-08-01 04:00:40)
-> >> From: devi priya <quic_devipriy@quicinc.com>
-> >>
-> >> Update PLL offsets to DEFAULT_EVO to configure MDIO to 800MHz.
-> >=20
-> > Is this fixing a problem? I can't figure out how urgent this patch is
-> > from the one sentence commit text.
->=20
-> The incorrect clock frequency leads to an incorrect MDIO clock. This,
-> in turn, affects the MDIO hardware configurations as the divider is=20
-> calculated from the MDIO clock frequency. If the clock frequency is
-> not as expected, the MDIO register fails due to the generation of an=20
-> incorrect MDIO frequency.
->=20
-> This issue is critical as it results in incorrect MDIO configurations=20
-> and ultimately leads to the MDIO function not working. This results in
-> a complete feature failure affecting all Ethernet PHYs. Specifically,
-> Ethernet will not work on IPQ9574 due to this issue.
->=20
-> Currently, the clock frequency is set to CLK_ALPHA_PLL_TYPE_DEFAULT.=20
-> However, this setting does not yield the expected clock frequency. To=20
-> rectify this, we need to change this to CLK_ALPHA_PLL_TYPE_DEFAULT_EVO.
->=20
-> This modification ensures that the clock frequency aligns with our=20
-> expectations, thereby resolving the MDIO register failure and ensuring=20
-> the proper functioning of the Ethernet on IPQ9574.
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Wow! Please include these details in the commit text.
+Hi All,
+
+This patch series aims to add divider clock support and add clock and
+reset entries for below IP blocks for RZ/V2H(P) SoC,
+- GTM
+- WDT
+- RIIC
+- SDHI
+
+Cheers,
+Prabhakar
+
+Lad Prabhakar (2):
+  clk: renesas: rzv2h-cpg: Add support for dynamic switching divider
+    clocks
+  clk: renesas: r9a09g057-cpg: Add clock and reset entries for
+    GTM/RIIC/SDHI/WDT
+
+ drivers/clk/renesas/r9a09g057-cpg.c |  84 ++++++++++++++
+ drivers/clk/renesas/rzv2h-cpg.c     | 163 ++++++++++++++++++++++++++++
+ drivers/clk/renesas/rzv2h-cpg.h     |  14 +++
+ 3 files changed, 261 insertions(+)
+
+-- 
+2.34.1
+
