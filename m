@@ -1,202 +1,164 @@
-Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E690D14B07C
-	for <linux-clk@vger.kernel.org>; Mon,  5 Aug 2024 21:37:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AAA01BA87B;
+	Tue,  6 Aug 2024 06:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722893840; cv=none; b=MHMXMUz7R+6j49Q2fzVm13x/xD2t7BVXXyE48JB9Yf8WjxPrcRwC0cdI2NWPT3BaNp3ixniT2t5Rt1SQ0TmI4rTqXx+F6zx9TAUY7EwWn7dGyA3kf5rFYstRKpz++iuU7GXalNcgwrgtQwZshzZ0V6c1kMQsHcRGaDCgbtGUHS4=
+	t=1722924691; cv=none; b=i6wAAbT3WNkbl4jcUK3/mSvdlRadcEPWroJEZ57+9IFqvRHsTyI/vYC4yYaEAL9f3brnwwSNSNCZxacvc6McbNwfydz0LFxiEJ5qMJXin30wKl2wY/nQDtsqg3mUONctAGNEQty5yQk1C3SKkZ78vVgfUoft949WES2pbuAzTUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722893840; c=relaxed/simple;
-	bh=Ed6Rl/7C5d57Fi1GZz8JB4mKEI66eDK+qFFUbTBXrMI=;
-	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hYGrBtlJNxS1Eh8C+hp6apTKmVmp2hJyIEaneyPQFiKllZrVUXuKnsFN/NdocCQsjd0hvWeri8qhVQ9HU0QzUayCX/GrmPi65fQ1dsp0OXCa7RAbdv3xlypV42jQZ7qvuEbzPAb8DIeL0KCVyst4tB9KAFYvuAD4Ect+JlMyGMg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=QF3MugR0; arc=none smtp.client-ip=209.85.222.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1722924691; c=relaxed/simple;
+	bh=ggbTg3w5DaB27aS9nuUMEUMa4XGHsO9n/U7ORxnpZxw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=l6p4rVqwnpgN4HfqE4s+KbtlBBzxz6+eF20VGfKQQQeoM2W8YOYdPUwebU0ldVQ+8mv0AhUWlPXvLifp3v0gVEDSRPEWYUZ4vNolmAWWF+aLaiFBBU4rqOW2PK1dzJJNF1FimEi9XY5OBfhTV21v70prqhp5hCXDJUhCDk8XEm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Lt7evMMd; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QF3MugR0"
-Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7a1d0dc869bso701167685a.2
-        for <linux-clk@vger.kernel.org>; Mon, 05 Aug 2024 14:37:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1722893838; x=1723498638; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5TTQWoLTs/whgWYI5NXDcDj0/sry6PBheRizhrnqOcg=;
-        b=QF3MugR0M8fz9u7kKwdbEuEBewZqWhDHkhp94ciTeBgtsL8qoQL/WYHfQ2qkl10tDZ
-         pEyltFPRUQngwNMYCtgzKzfgUZwbf4hlPYdGXT4b0pp71gUy/gqstWsitBzAQA5PEEsH
-         PH9lRntCgYTZYcd187sBhX9syCpoGFNAn6sf8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1722893838; x=1723498638;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5TTQWoLTs/whgWYI5NXDcDj0/sry6PBheRizhrnqOcg=;
-        b=whMmaXxY9GdPOjiFMPyj/FJlh/hXrHqE11lfs0u18NyoAlYTITkQZIU50BbBTEzc61
-         ro3Y9Hr4oF9PplKIntYkt10Yx8WhevBQlhQJdWAnSDXn4ORWeisRXJPDRDkn9L+87hnZ
-         gm99zp0os+NzcqpmgFdaJwfZSZrYmRhSm0VoAgVaUFfyOdkVrtYNxlhIZSjsHVEEhjfZ
-         mpE6OycFl+WZtmL4XACLNgik4DjHg01MCIXSXxH5JLRpoIvxrU6kFfTYdR0uHmfcPaYo
-         rkU2e/AEvAYbZhfImBi6reyKGzZjvlnTdYyTB3/5Byf2CCCrFdNHE3AGdYa+xdT8WWtJ
-         jY8g==
-X-Forwarded-Encrypted: i=1; AJvYcCWnSrbdReBdlAvJPnxfDtPvPtO1bgyYFnmsBUU/jPzHwiNuzeO2kE+HkMksI9v5+DCY9Q5kQZzKf/AeQxKe2tvJxTRJYpOpp0A2
-X-Gm-Message-State: AOJu0Ywe7SuWejhsQvs46xZUaqnFx5zhcLHugoBtAIUkilBcGIJ5p5QU
-	Y0Om5OhyLg1q7YVJqX/iBZi0G1JmD8rT2WEH5epWR6L2gdNRI1HSwGAPKKUr9UIWTopo9kwRzUt
-	Nl/OC/Npg9Zu8ayeU2F4Wry5eWoL4aft1iV05
-X-Google-Smtp-Source: AGHT+IFS5Tg6/1f5zul0WlstKMG5hOJqpcrTEHbrOjqqZr3yr5nFPOGk40LTscDmB79uY8ZoZrzsbej+EEA5xeCCQ/c=
-X-Received: by 2002:a05:620a:240d:b0:7a2:d64:1bbf with SMTP id
- af79cd13be357-7a34eec99d9mr1971902185a.1.1722893837737; Mon, 05 Aug 2024
- 14:37:17 -0700 (PDT)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Mon, 5 Aug 2024 14:37:16 -0700
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Lt7evMMd"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4762IcYp011347;
+	Tue, 6 Aug 2024 06:11:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=ZzaHtt/GOQjsAeZkbz9lRv
+	0LUUYBHAWMfnCyEbHdH6A=; b=Lt7evMMdJs4iE6GZxsCwbYCAzojzHXA4DgArTe
+	oZ77M/48pUdDlHAK5o5LpGEmTu5NfGKpRkvR7soWmHZY1x1N6ahoD6FhC3Yl+Foy
+	w63WATnZimycak/QB0yRKuh22Rs2tOPCIo5dO2M2RCupm4diOwRatH59beiSvsb6
+	1njuXPfWu60xdhuRlpp+5ru+iBx64oocFSNvQ2MAm8P+fVfieGeYROQR/xY7J2Jl
+	X68dkzdcEJ2dFLU/32Fz3ReUHF4gWx32hfQcoQlSY7rAl+42Yj6I9JnxlGxBT1g9
+	nsEl9al6kpNoOAz8IYx7GtfVaJM+DXv2vv4KrdJDL9gQ/brQ==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40sbj6pa7d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 06 Aug 2024 06:11:24 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4766BNX4000692
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 6 Aug 2024 06:11:23 GMT
+Received: from hu-amansing-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 5 Aug 2024 23:11:20 -0700
+From: Amandeep Singh <quic_amansing@quicinc.com>
+To: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: <quic_devipriy@quicinc.com>
+Subject: [PATCH] clk: qcom: ipq9574: Update the alpha PLL type for GPLLs
+Date: Tue, 6 Aug 2024 11:41:05 +0530
+Message-ID: <20240806061105.2849944-1-quic_amansing@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAMi1Hd2_a7TjA7J9ShrAbNOd_CoZ3D87twmO5t+nZxC9sX18tA@mail.gmail.com>
-References: <20240502224703.103150-1-swboyd@chromium.org> <CAE-0n50VDgsg-4QnynvLOzykr3KP5JsnHqeFPA=uRT3EfgL19g@mail.gmail.com>
- <CAMi1Hd1KQBE4kKUdAn8E5FV+BiKzuv+8FoyWQrrTHPDoYTuhgA@mail.gmail.com>
- <CAE-0n53X1Gv9nnyDfeivYd7n5W6D1WFkO0tCvYc9drb0+4hQbw@mail.gmail.com> <CAMi1Hd2_a7TjA7J9ShrAbNOd_CoZ3D87twmO5t+nZxC9sX18tA@mail.gmail.com>
-From: Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.10
-Date: Mon, 5 Aug 2024 14:37:16 -0700
-Message-ID: <CAE-0n52JgfCBWiFQyQWPji8cq_rCsviBpW-m72YitgNfdaEhQg@mail.gmail.com>
-Subject: Re: [PATCH] clk: qcom: Park shared RCGs upon registration
-To: Amit Pundir <amit.pundir@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	patches@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
-	Laura Nao <laura.nao@collabora.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Douglas Anderson <dianders@chromium.org>, Taniya Das <quic_tdas@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: jB5JX98LQZa1NHRqJZtykkPs-vdid3AE
+X-Proofpoint-GUID: jB5JX98LQZa1NHRqJZtykkPs-vdid3AE
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-06_04,2024-08-02_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 suspectscore=0
+ priorityscore=1501 adultscore=0 mlxscore=0 lowpriorityscore=0 bulkscore=0
+ phishscore=0 mlxlogscore=999 clxscore=1015 malwarescore=0 impostorscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408060043
 
-Quoting Amit Pundir (2024-08-05 03:43:14)
-> On Sat, 3 Aug 2024 at 06:29, Stephen Boyd <swboyd@chromium.org> wrote:
-> >
-> > Also please send back the dmesg so we can see what clks are configured
-> > for at boot time. If they're using TCXO source at boot then they're not
-> > going to be broken. In which case those clks can keep using the old clk
-> > ops and we can focus on the ones that aren't sourcing from TCXO.
->
-> Thank your for this debug patch. I thought I narrowed down the
-> breakage to the clks in drivers/clk/qcom/gcc-sm8550.c, until I ran
-> into the following kernel panic in ucsi_glink driver in later test
-> runs.
+From: devi priya <quic_devipriy@quicinc.com>
 
-Thanks for the info. These are the clks that aren't sourcing from XO
-at registration time:
+Update PLL offsets to DEFAULT_EVO to configure MDIO to 800MHz.
 
-  gcc_qupv3_wrap1_s7_clk_src with cfg 0x102601 -> parent is gpll0_out_even
-  gcc_ufs_phy_axi_clk_src with cfg 0x103 -> parent is gpll0_out_main
-  gcc_ufs_phy_ice_core_clk_src with cfg 0x503 -> parent is gpll4_out_main
-  gcc_ufs_phy_unipro_core_clk_src with cfg 0x103 -> parent is gpll0_out_main
-  gcc_usb30_prim_master_clk_src with cfg 0x105 -> parent is gpll0_out_main
+The incorrect clock frequency leads to an incorrect MDIO clock. This,
+in turn, affects the MDIO hardware configurations as the divider is
+calculated from the MDIO clock frequency. If the clock frequency is
+not as expected, the MDIO register fails due to the generation of an
+incorrect MDIO frequency.
 
-The original patch is going to inform the clk framework that the parent
-of these clks aren't XO but something like gpll0_out_even, whatever the
-hardware is configured for. That may cause these PLLs to be turned off
-earlier than before if, for example, gcc_ufs_phy_axi_clk_src is turned
-off by a consumer and gcc_usb30_prim_master_clk_src is left enabled at
-boot. That's why we force park clks at registration time, so that they
-can't have their parent clk get turned off by some other clk consumer
-enabling and then disabling a clk that's also parented to the same
-parent.
+This issue is critical as it results in incorrect MDIO configurations
+and ultimately leads to the MDIO function not working. This results in
+a complete feature failure affecting all Ethernet PHYs. Specifically,
+Ethernet will not work on IPQ9574 due to this issue.
 
-This same problem exists for RCGs that aren't shared too, but it's
-particularly bad for shared RCGs because the parent PLLs aren't turned
-on automatically by the hardware when things like the GDSC do their
-housekeeping. At least when software is in control we can enable the
-parent PLL and unstick the RCG that was previously cut off.
+Currently, the clock frequency is set to CLK_ALPHA_PLL_TYPE_DEFAULT.
+However, this setting does not yield the expected clock frequency.
+To rectify this, we need to change this to CLK_ALPHA_PLL_TYPE_DEFAULT_EVO.
 
-Can you narrow down the list above to the clk that matters? I guess if
-USB isn't working then gcc_usb30_prim_master_clk_src is the one that
-should be changed and nothing else. Although, I noticed that in the
-first dmesg log you sent the serial console had garbage, and that's
-likely because the rate changed while the clk was registered. I don't
-know why the gcc_qupv3_wrap1_s7_clk_src is marked with the shared clk
-ops. That's confusing to me as I don't expect that to need to be parked
-for any reasons. Maybe qcom folks can comment there but I'd expect plain
-rcg2_ops to be used for those clks. Anyway, if you can narrow down to
-which clk needs to be left untouched it would be helpful.
+This modification ensures that the clock frequency aligns with our
+expectations, thereby resolving the MDIO register failure and ensuring
+the proper functioning of the Ethernet on IPQ9574.
 
->
-> [    7.882923][    T1] init: Loading module /lib/modules/ucsi_glink.ko
-> with args ''
-> [    7.892929][   T92] Unable to handle kernel NULL pointer
-> dereference at virtual address 0000000000000010
-> [    7.894935][    T1] init: Loaded kernel module /lib/modules/ucsi_glink.ko
-> [    7.902670][   T92] user pgtable: 4k pages, 39-bit VAs, pgdp=0000000886218000
-> [    7.902674][   T92] Internal error: Oops: 0000000096000006 [#1] PREEMPT SMP
-> [    7.993995][   T64] qcom_pmic_glink pmic-glink: Failed to create
-> device link (0x180) with a600000.usb
-> [    8.078673][   T92] CPU: 7 UID: 0 PID: 92 Comm: kworker/7:2
-> Tainted: G S          E      6.11.0-rc2-mainline-00001-g4153d980358d
-> #6
-> [    8.078676][   T92] Tainted: [S]=CPU_OUT_OF_SPEC, [E]=UNSIGNED_MODULE
-> [    8.078677][   T92] Hardware name: Qualcomm Technologies, Inc.
-> SM8550 HDK (DT)
-> [    8.078679][   T92] Workqueue: events pmic_glink_ucsi_register [ucsi_glink]
-> [    8.078682][   T92] pstate: 63400005 (nZCv daif +PAN -UAO +TCO +DIT
-> -SSBS BTYPE=--)
-> [    8.078684][   T92] pc : pmic_glink_send+0x10/0x2c [pmic_glink]
-> [    8.078685][   T92] lr : pmic_glink_ucsi_read+0x84/0x14c [ucsi_glink]
-> [    8.078704][   T92] Call trace:
-> [    8.078705][   T92]  pmic_glink_send+0x10/0x2c [pmic_glink]
-> [    8.078706][   T92]  pmic_glink_ucsi_read+0x84/0x14c [ucsi_glink]
-> [    8.078707][   T92]  pmic_glink_ucsi_read_version+0x20/0x30 [ucsi_glink]
-> [    8.078708][   T92]  ucsi_register+0x28/0x70
-> [    8.078717][   T92]  pmic_glink_ucsi_register+0x18/0x28 [ucsi_glink]
-> [    8.078718][   T92]  process_one_work+0x184/0x2e8
-> [    8.078723][   T92]  worker_thread+0x2f0/0x404
-> [    8.078725][   T92]  kthread+0x114/0x118
-> [    8.078728][   T92]  ret_from_fork+0x10/0x20
-> [    8.078732][   T92] ---[ end trace 0000000000000000 ]---
-> [    8.078734][   T92] Kernel panic - not syncing: Oops: Fatal exception
-> [    8.078735][   T92] SMP: stopping secondary CPUs
-> [    8.279136][   T92] Kernel Offset: 0x14d9480000 from 0xffffffc080000000
-> [    8.279141][   T92] PHYS_OFFSET: 0x80000000
-> [    8.279143][   T92] CPU features: 0x18,004e0003,80113128,564676af
-> [    8.279148][   T92] Memory Limit: none
+Fixes: d75b82cff488 ("clk: qcom: Add Global Clock Controller driver for IPQ9574")
+Signed-off-by: devi priya <quic_devipriy@quicinc.com>
+Signed-off-by: Amandeep Singh <quic_amansing@quicinc.com>
+---
+ drivers/clk/qcom/gcc-ipq9574.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-That looks like 'client' is NULL in pmic_glink_send(). The VA of 0x10 is
-the offset of 'pg' in struct pmic_glink_client. I don't know much about
-that driver but I'd guess that ucsi_glink has some race condition
-assigning the client pointer?
+diff --git a/drivers/clk/qcom/gcc-ipq9574.c b/drivers/clk/qcom/gcc-ipq9574.c
+index 80fc94d705a0..645109f75b46 100644
+--- a/drivers/clk/qcom/gcc-ipq9574.c
++++ b/drivers/clk/qcom/gcc-ipq9574.c
+@@ -68,7 +68,7 @@ static const struct clk_parent_data gcc_sleep_clk_data[] = {
+ 
+ static struct clk_alpha_pll gpll0_main = {
+ 	.offset = 0x20000,
+-	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
++	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO],
+ 	.clkr = {
+ 		.enable_reg = 0x0b000,
+ 		.enable_mask = BIT(0),
+@@ -96,7 +96,7 @@ static struct clk_fixed_factor gpll0_out_main_div2 = {
+ 
+ static struct clk_alpha_pll_postdiv gpll0 = {
+ 	.offset = 0x20000,
+-	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
++	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO],
+ 	.width = 4,
+ 	.clkr.hw.init = &(const struct clk_init_data) {
+ 		.name = "gpll0",
+@@ -110,7 +110,7 @@ static struct clk_alpha_pll_postdiv gpll0 = {
+ 
+ static struct clk_alpha_pll gpll4_main = {
+ 	.offset = 0x22000,
+-	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
++	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO],
+ 	.clkr = {
+ 		.enable_reg = 0x0b000,
+ 		.enable_mask = BIT(2),
+@@ -125,7 +125,7 @@ static struct clk_alpha_pll gpll4_main = {
+ 
+ static struct clk_alpha_pll_postdiv gpll4 = {
+ 	.offset = 0x22000,
+-	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
++	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO],
+ 	.width = 4,
+ 	.clkr.hw.init = &(const struct clk_init_data) {
+ 		.name = "gpll4",
+@@ -139,7 +139,7 @@ static struct clk_alpha_pll_postdiv gpll4 = {
+ 
+ static struct clk_alpha_pll gpll2_main = {
+ 	.offset = 0x21000,
+-	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
++	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO],
+ 	.clkr = {
+ 		.enable_reg = 0x0b000,
+ 		.enable_mask = BIT(1),
+@@ -154,7 +154,7 @@ static struct clk_alpha_pll gpll2_main = {
+ 
+ static struct clk_alpha_pll_postdiv gpll2 = {
+ 	.offset = 0x21000,
+-	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
++	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO],
+ 	.width = 4,
+ 	.clkr.hw.init = &(const struct clk_init_data) {
+ 		.name = "gpll2",
+-- 
+2.34.1
 
-Oh actually, I see the problem. devm_pmic_glink_register_client()
-returns a struct pmic_glink_client pointer that's assigned to
-'ucsi->client'. And pmic_glink_ucsi_read() uses 'ucsi->client' to call
-pmic_glink_send(). That pointer is NULL because the workqueue that runs
-pmic_glink_ucsi_register() must run before
-devm_pmic_glink_register_client() returns and assigns the client pointer
-to 'ucsi->client'. This is simply a race.
-
- CPU0                                        CPU1
- ----                                        ----
- ucsi->client = NULL;
- devm_pmic_glink_register_client()
-  client->pdr_notify(client->priv, pg->client_state)
-   pmic_glink_ucsi_pdr_notify()
-    schedule_work(&ucsi->register_work)
-    <schedule away>
-                                             pmic_glink_ucsi_register()
-                                              ucsi_register()
-                                               pmic_glink_ucsi_read_version()
-                                                pmic_glink_ucsi_read()
-                                                 pmic_glink_ucsi_read()
-                                                  pmic_glink_send(ucsi->client)
-                                                  <client is NULL BAD>
- ucsi->client = client // Too late!
-
->
-> I couldn't reproduce this kernel panic on vanilla v6.11-rc2 in 50+
-> test runs after that. So I'm assuming that this debug patch may have
-> triggered it.
-> Attaching the crashing and working dmesg logs with the debug patch applied.
->
-
-Sounds like you just need to reboot a bunch! Or add an msleep() in
-devm_pmic_glink_register_client() after the notify call to open the race
-window and let the workqueue run.
