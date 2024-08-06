@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1ED21D54F5;
-	Tue,  6 Aug 2024 13:13:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F7B71D175E;
+	Tue,  6 Aug 2024 13:14:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722950020; cv=none; b=ZtDSm8b7IHvnn7UnrsDQM6tI6/oluSyp/JHJEAMDK5OtQzXoS/xFETtEfAa9MDCSUonSU9ZdKMFoDEBksHIL2zbrbe9loDCIoPGS3eVGwKl8tBGTObWGtrfoaXw+aflxC7SMrrbRNBY0h98FlJqGv39usQJckLX0WmAA5kKg3aU=
+	t=1722950085; cv=none; b=AZ8qWoW7mZmSExU8rvjClJw9ZPirqUVk1M6kkCdwNv6w4sy6XvhXcO60wqhHsKJMCPVVd80VbTGeYKGidPEdtt2tPzolRJt/g9xH4YOTrT/S7VUL9YIjiYuNhiNpXTYpjs7KbQDf9dbafiessrLtOunn17v/ZeV1iKGDThIfkfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722950020; c=relaxed/simple;
-	bh=8lhShelUKHDloCGPL9SSjLVR+sled6alu0kI64HG5j4=;
+	s=arc-20240116; t=1722950085; c=relaxed/simple;
+	bh=2rlJ7K/TJMn5UcyvjCwi6A03r0fDQPfDCt7la8eS7+Q=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=su+OAE4e6kuYSQ4nZQ7hBTJ26olaQw4YkTbeIGyELL+AyKN6PfKCtXQrF6MbZ4WjhcsZ40e5D4I3/pjy2VX3MG4nqffS+Okl8kKmDPPHJ/DYbrYcpFCOy8EDmEhRcEJhlt7EXph7YPonZI5F9D6BxXP7dOH69mu9u+KEGAE/vFU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HkJG1DhJ; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=O1HGIKaYcexGE7hl19GHwuITsTfikAeEaiQBY1qCgm+5KTzUW6fiXgV5HduBlBBDBj+kPNLlTws7lmEkGS11Wri7niou5EzJzUrjC2qU44voyzaXwibClgkdj5XLHTb+P8fJBiXaYa0ll6SQXH97inPV7y9l+3i5K69SP+t3BC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M7KnUh6v; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HkJG1DhJ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EAECC4AF09;
-	Tue,  6 Aug 2024 13:13:36 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M7KnUh6v"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 334A0C32786;
+	Tue,  6 Aug 2024 13:14:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722950020;
-	bh=8lhShelUKHDloCGPL9SSjLVR+sled6alu0kI64HG5j4=;
+	s=k20201202; t=1722950084;
+	bh=2rlJ7K/TJMn5UcyvjCwi6A03r0fDQPfDCt7la8eS7+Q=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HkJG1DhJCR0c6U/orjOk+rnykoBk3408dmECuRDDZpt1uqHyWgA+A+kg2/sEoUzjw
-	 RitNecxCGmNi0oEi7z/QnTpUXw1JCwtUPFj+HabFMh1/JuWrWQLzhq9Cg6NwfDp/dK
-	 ZtvFVjdK5JFRz2HazIC0y/yQ9k8p/X8wH6FL7hh7lSTvpJyiG6Xizq7ywUm17Xs+3M
-	 Wi/irJyR/yV/NaTEgm/jlB2QdOcAvHTlMyH0NSRHz1mx/w8QX/aNbbNaO6QPBkeifn
-	 DniLy+zpyTQFLf9ZcjYcdzVd4BWDPfrsOdNX+m0GJCs594Ee3ptX1SRuTz3GOBop1/
-	 /BmdfJJpS1cqg==
-Message-ID: <a1aa292d-6d61-4cb9-8343-6f38258c176f@kernel.org>
-Date: Tue, 6 Aug 2024 15:13:34 +0200
+	b=M7KnUh6v1Or3ZR+I3Geqe5lTtDRhP7rB6T+9Vr9BS5N0lYPkT62xf7tGflsNaNJpf
+	 B9/x5yd+lxr07QSccQU3S0ki9qJ/5G/QVx7lheUh0i3xvuWYMqxGuyjTBU7GaXTYXN
+	 0+zmnBgEKq2pnpRdPAFzJoWIk3qrJbBTtfaEtLRPjHe0SgXTzS0S3Ky+d/yUypb8Ja
+	 k9+7L3FglLgH0t6pjBwoiYsTLVjHlATwA4WaIPKCrqYMuAIre5ZUTGsGC92Fu8/bn4
+	 jW9AGqRU5WjaDo4GDQ+FW/QeUsyfHYq9xr34XXBMhJLPZqvmuAAfQm3tL1R8c2h8UB
+	 Nh88eytrVtA7w==
+Message-ID: <c82b6e70-8f2f-4b37-9186-7c49aea019bd@kernel.org>
+Date: Tue, 6 Aug 2024 15:14:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,7 +35,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] arm64: dts: amlogic: add some device nodes for C3
+Subject: Re: [PATCH 3/3] arm64: dts: amlogic: add C3 AW419 board
 To: xianwei.zhao@amlogic.com, Neil Armstrong <neil.armstrong@linaro.org>,
  Jerome Brunet <jbrunet@baylibre.com>,
  Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
@@ -49,7 +49,7 @@ Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
  devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org
 References: <20240806-c3_add_node-v1-0-c0de41341632@amlogic.com>
- <20240806-c3_add_node-v1-2-c0de41341632@amlogic.com>
+ <20240806-c3_add_node-v1-3-c0de41341632@amlogic.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -95,43 +95,54 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240806-c3_add_node-v1-2-c0de41341632@amlogic.com>
+In-Reply-To: <20240806-c3_add_node-v1-3-c0de41341632@amlogic.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 06/08/2024 12:27, Xianwei Zhao via B4 Relay wrote:
 > From: Xianwei Zhao <xianwei.zhao@amlogic.com>
 > 
-> Add some device nodes for SoC C3, including periphs clock controller
-> node, PLL clock controller node, SPICC node, regulator node, NAND
-> controller node, sdcard node, Ethernet MAC and PHY node.
+> Add Amlogic C3 C308L AW419 board.
 > 
 > Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
 > ---
->  .../boot/dts/amlogic/amlogic-c3-c302x-aw409.dts    | 249 +++++++++++
->  arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi        | 487 ++++++++++++++++++++-
->  2 files changed, 735 insertions(+), 1 deletion(-)
+>  arch/arm64/boot/dts/amlogic/Makefile               |   1 +
+>  .../boot/dts/amlogic/amlogic-c3-c308l-aw419.dts    | 278 +++++++++++++++++++++
+>  2 files changed, 279 insertions(+)
 > 
-
-
-...
-
-
+> diff --git a/arch/arm64/boot/dts/amlogic/Makefile b/arch/arm64/boot/dts/amlogic/Makefile
+> index 29417f04f886..2fbda8419c65 100644
+> --- a/arch/arm64/boot/dts/amlogic/Makefile
+> +++ b/arch/arm64/boot/dts/amlogic/Makefile
+> @@ -2,6 +2,7 @@
+>  dtb-$(CONFIG_ARCH_MESON) += amlogic-a4-a113l2-ba400.dtb
+>  dtb-$(CONFIG_ARCH_MESON) += amlogic-a5-a113x2-av400.dtb
+>  dtb-$(CONFIG_ARCH_MESON) += amlogic-c3-c302x-aw409.dtb
+> +dtb-$(CONFIG_ARCH_MESON) += amlogic-c3-c308l-aw419.dtb
+>  dtb-$(CONFIG_ARCH_MESON) += amlogic-t7-a311d2-an400.dtb
+>  dtb-$(CONFIG_ARCH_MESON) += amlogic-t7-a311d2-khadas-vim4.dtb
+>  dtb-$(CONFIG_ARCH_MESON) += meson-a1-ad401.dtb
+> diff --git a/arch/arm64/boot/dts/amlogic/amlogic-c3-c308l-aw419.dts b/arch/arm64/boot/dts/amlogic/amlogic-c3-c308l-aw419.dts
+> new file mode 100644
+> index 000000000000..d28fd2a1acf0
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/amlogic/amlogic-c3-c308l-aw419.dts
+> @@ -0,0 +1,278 @@
+> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> +/*
+> + * Copyright (c) 2024 Amlogic, Inc. All rights reserved.
+> + */
 > +
-> +			sd: mmc@8a000 {
-> +				compatible = "amlogic,meson-axg-mmc";
-> +				reg = <0x0 0x8a000 0x0 0x800>;
-> +				interrupts = <GIC_SPI 177 IRQ_TYPE_EDGE_RISING>;
-> +				power-domains = <&pwrc PWRC_C3_SDCARD_ID>;
-> +				clocks = <&clkc_periphs CLKID_SYS_SD_EMMC_B>,
-> +					<&clkc_periphs CLKID_SD_EMMC_B>,
-> +					<&clkc_pll CLKID_FCLK_DIV2>;
-> +				clock-names = "core", "clkin0", "clkin1";
-> +				no-mmc;
-> +				no-sdio;
+> +/dts-v1/;
+> +
+> +#include "amlogic-c3.dtsi"
+> +
+> +/ {
+> +	model = "Amlogic C308l aw419 Development Board";
+> +	compatible = "amlogic,aw419", "amlogic,c3";
 
-Hm? Why are these blocks incomplete that they do not handle SDIO? Aren't
-you putting board properties into SoC?
+Where are the bindings? Why do you add bindings without boards? Or
+boards without bindings?
 
 Best regards,
 Krzysztof
