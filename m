@@ -1,382 +1,115 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 420071BE24C;
-	Tue,  6 Aug 2024 10:27:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1AE81C460B;
+	Tue,  6 Aug 2024 12:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722940037; cv=none; b=gpWkx+waReOL+413lRG2E62alZmoQPBVKf/mleGFI4wbyoSVdl9PiYo/QurH7bQSjcyWlgVjjTyKanHcj8VfVljvf8l1C8bZH0TyWcXBKJIqmoDmaaFJm46sW72zOR7z/8wXZF/eDSuxnbLwxShtsNtsG48KLgqBOC0XRUJ1AgM=
+	t=1722946291; cv=none; b=cmplIZAYx5bR+j7xcF08Qd7Vs1BalVBbAcLIttN95uxECZU4+LipETdJewfMomGy8gwyj1fo9WgtAF+AX4St7Rwf9cKKXMo+bNAC/sBcqCkrYzS9SwSnWwip3QYopH+CGgvDPnNcwQqyML4Gh6sEnaB9PupN+o58O7bDDcIKBFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722940037; c=relaxed/simple;
-	bh=lagugMs0C+A4uWQtyG8Q7ynHrCUInmXYs52ILDY+VC0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=l9Eq9aYiZM0UdPM209Uz1tMYmk5d5LLcIDKcY2ZRuG8YfckZnqirvtGT+OkwE28sC5vFXuseTJ2siLwAEV1zedo9iFSLL7FZe7nN+hoWCxvQ8C6oMhUzuBH8WPtmhaKXEzhDGYhlWN7nZttFsI6cfZODh7U0gG3rznGnkmrGJD0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iHiXzkHE; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1722946291; c=relaxed/simple;
+	bh=suWPD/95x9rT+UH16nQBm/cnb20gIfoOsvWyscg0qQI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=e2pN5bLtncA3wP74t3PZ+L2JyMASpwi/UmOyM5bkwquVbqwWk0YmYltI99vq2bgZuKdGg3xBucCgSBx+aV0xf6qQ918YkRZM+Hp31nGZRj1iGpwuY7SAqd9ecRauyUNN2c4FPPnYubgqNCJq3XM2/UcUOH0WGEBXbfxTQmZbGtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DUjp9Gxs; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iHiXzkHE"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C692FC4AF13;
-	Tue,  6 Aug 2024 10:27:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1722940036;
-	bh=lagugMs0C+A4uWQtyG8Q7ynHrCUInmXYs52ILDY+VC0=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=iHiXzkHE5p/o1ifDpM0Fn+aT/tcTA4ZsUzUQ41voQpesaGsBbFK7eyMmzlKGc/nno
-	 whcSHdRzBaFmJxa/yv4mt6kvmjGiiJmemaY6C2vXnjU9KNuPuf02IXqTo/hnpXZVrJ
-	 sJzlptvdDMSG1LDPqmzxFEfvskqpN1KDfZcNZkOi28Clr0XJXGYD1Noog4BrJKW0F9
-	 x5+xF5V7497fhT/L6wLFdLW+tYHWoXkCv06yheSC9HPt/rEgCgJjfldi1yv4JZ8ATa
-	 G0qQb5aYHVOSfdMH7GKczkkdifaQfVGtRdlhzTHDYY2gp75xph8sjy6Q2wDbg53/P9
-	 eHVE0wewgrsgQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0BB7C52D6F;
-	Tue,  6 Aug 2024 10:27:16 +0000 (UTC)
-From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
-Date: Tue, 06 Aug 2024 18:27:16 +0800
-Subject: [PATCH 3/3] arm64: dts: amlogic: add C3 AW419 board
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DUjp9Gxs"
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a7aa212c1c9so78349566b.2;
+        Tue, 06 Aug 2024 05:11:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1722946288; x=1723551088; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=f8Rxi9oZBmORLJ1iHbLg15yYhmyteSjrYkO+zSel3Mc=;
+        b=DUjp9GxsBnHoRJsylcD2nTPZMCXm7XN0OkzFXH/ngokQdV/zGw46bz9biUecaZEBoz
+         gmrkA55gdB7Z0SsNazjW0ysM1hegtYr1ix1vpr2bcBuVOOm/l0TbeYSSDBLoSKjzCg9F
+         r4uUe2AunJE1dC4bprXh2tvOiT6K9i5NUeDMKRqF7zzhx3zVDTaA3fm3OpRc/WXrB1XQ
+         slxY4FsGrHlp6pq3C1QzdYH6u/KUxUv8ze1NPhq6Ru12PEiXF8Emlp6fxwAs9PWPQjih
+         3Z9/BT1J5IlvXlklcWr6bvJ6jiQWiqX9xpkeZ076KzpLMjccgmzX5IjZ7DbJB1P5H1uU
+         WezQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1722946288; x=1723551088;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=f8Rxi9oZBmORLJ1iHbLg15yYhmyteSjrYkO+zSel3Mc=;
+        b=onWqcW10amZuaH14XKoXsqXnckwQcXVgbf7zQWDDgB0QbYvU8S0Z7ezxsgn1IbWIfO
+         K/Kef/Gnz22/TJxxq/SWh8GE/jfRbB6aZQNXy+MNBGdm0U4xQBKhYcZ1ac/CoIyrijXS
+         9K8YPzl0fGgGb1+yPtxXvcFKAeCqkZ+JRRsBqn4AY9DDkjo6lRVIW/sToLYl2PKGzDaf
+         q+knqsrMX8XyVX4eUEAP6btE6UxL//UcSbj8kc/zW7sdwDdNbIn0WkuHAhwXowpb2y+p
+         YlIQX0RlG3unumd07kTc4axu7vF7UugOpJsz3RpqqVtA4QSqvlbN08yYiJz2HGkErwnX
+         LjbA==
+X-Forwarded-Encrypted: i=1; AJvYcCVZg7do9mFERpY2a2vOIs1rsgQpUdSabek+wNvMfIJg8zuLJbJuCpl+4PKhClGcerhTiiQ4DLbgAwSZIyh9hVJYpKZlCzlkXqckHTfrlEFVw1Llw3S9NYgWyOMnkTBIBigk65HPZR+np2iQM1gAHz2mhoqGJB+G/06Hbvi//ur2oqatKbON7gl6AxBpqdP+qkqXKnRbC7c7/bi34Ewq1aUxUvdp9eIL
+X-Gm-Message-State: AOJu0Yw1E1HjdLyPI3CoTY4UK9K+5/FLoDGpIn4sKXzu1HG6GVO2bS4c
+	zp4sHHtGuDnHhygxVBjk92S2yPccrVug1rKnPxlnAwrYiXleCnE7ZN6Kpbqt
+X-Google-Smtp-Source: AGHT+IHsg/cOTLkQX9qlRiH8hTY18OxisAJ4r8hZ0x1M/XZ83NkiV0ssfMBZdJoVPxj54USV7sSddQ==
+X-Received: by 2002:a17:907:2d29:b0:a7a:b385:37c8 with SMTP id a640c23a62f3a-a7dc4dbaae9mr1106144766b.5.1722946287917;
+        Tue, 06 Aug 2024 05:11:27 -0700 (PDT)
+Received: from localhost.localdomain ([2a02:ab88:3711:c80:e7a7:e025:f1a5:ef78])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a7dc9ecb546sm542080366b.224.2024.08.06.05.11.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 06 Aug 2024 05:11:27 -0700 (PDT)
+From: David Virag <virag.david003@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	David Virag <virag.david003@gmail.com>
+Cc: stable@vger.kernel.org,
+	linux-samsung-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [PATCH v2 0/7] Add USB clocks to Exynos7885
+Date: Tue,  6 Aug 2024 14:11:43 +0200
+Message-ID: <20240806121157.479212-1-virag.david003@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240806-c3_add_node-v1-3-c0de41341632@amlogic.com>
-References: <20240806-c3_add_node-v1-0-c0de41341632@amlogic.com>
-In-Reply-To: <20240806-c3_add_node-v1-0-c0de41341632@amlogic.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Jerome Brunet <jbrunet@baylibre.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Chuan Liu <chuan.liu@amlogic.com>, 
- Kevin Hilman <khilman@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, 
- Xianwei Zhao <xianwei.zhao@amlogic.com>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1722940034; l=7409;
- i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
- bh=opg5PPHDeLOgtuNT0JGt5kB+eNQwIkO7qZsZHJHFfvw=;
- b=oUXu5nF8A0gwBF3IuIQbnH878QEkeSE7YmAEahZP5ktUwQMzuXBxjWNoVWrcdr9uOIJkpUKpG
- +c1I4f3Do7yDBcpUscBONScymrrQyE+v8ThIBh1zFtycG5NN50HejqF
-X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
- pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
-X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
- auth_id=107
-X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
-Reply-To: xianwei.zhao@amlogic.com
+Content-Transfer-Encoding: 8bit
 
-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+This set of patches adds the clocks necessary for USB on the Exynos7885
+SoC.
 
-Add Amlogic C3 C308L AW419 board.
+While at it, also fix some issues with the existing driver/bindings.
 
-Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
----
- arch/arm64/boot/dts/amlogic/Makefile               |   1 +
- .../boot/dts/amlogic/amlogic-c3-c308l-aw419.dts    | 278 +++++++++++++++++++++
- 2 files changed, 279 insertions(+)
+This set was split from a previous set containing clk, phy, and usb
+patches [1].
 
-diff --git a/arch/arm64/boot/dts/amlogic/Makefile b/arch/arm64/boot/dts/amlogic/Makefile
-index 29417f04f886..2fbda8419c65 100644
---- a/arch/arm64/boot/dts/amlogic/Makefile
-+++ b/arch/arm64/boot/dts/amlogic/Makefile
-@@ -2,6 +2,7 @@
- dtb-$(CONFIG_ARCH_MESON) += amlogic-a4-a113l2-ba400.dtb
- dtb-$(CONFIG_ARCH_MESON) += amlogic-a5-a113x2-av400.dtb
- dtb-$(CONFIG_ARCH_MESON) += amlogic-c3-c302x-aw409.dtb
-+dtb-$(CONFIG_ARCH_MESON) += amlogic-c3-c308l-aw419.dtb
- dtb-$(CONFIG_ARCH_MESON) += amlogic-t7-a311d2-an400.dtb
- dtb-$(CONFIG_ARCH_MESON) += amlogic-t7-a311d2-khadas-vim4.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-a1-ad401.dtb
-diff --git a/arch/arm64/boot/dts/amlogic/amlogic-c3-c308l-aw419.dts b/arch/arm64/boot/dts/amlogic/amlogic-c3-c308l-aw419.dts
-new file mode 100644
-index 000000000000..d28fd2a1acf0
---- /dev/null
-+++ b/arch/arm64/boot/dts/amlogic/amlogic-c3-c308l-aw419.dts
-@@ -0,0 +1,278 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (c) 2024 Amlogic, Inc. All rights reserved.
-+ */
-+
-+/dts-v1/;
-+
-+#include "amlogic-c3.dtsi"
-+
-+/ {
-+	model = "Amlogic C308l aw419 Development Board";
-+	compatible = "amlogic,aw419", "amlogic,c3";
-+	interrupt-parent = <&gic>;
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	aliases {
-+		serial0 = &uart_b;
-+		spi0 = &spifc;
-+	};
-+
-+	memory@0 {
-+		device_type = "memory";
-+		reg = <0x0 0x0 0x0 0x80000000>;
-+	};
-+
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		/* 9 MiB reserved for ARM Trusted Firmware */
-+		secmon_reserved: secmon@7f00000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x0 0x07f00000 0x0 0x900000>;
-+			no-map;
-+		};
-+	};
-+
-+	main_12v: regulator-main-12v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "12V";
-+		regulator-min-microvolt = <12000000>;
-+		regulator-max-microvolt = <12000000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	vcc_5v: regulator-vcc-5v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VCC5V";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		vin-supply = <&main_12v>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	vddq: regulator-vddq {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VDDQ";
-+		regulator-min-microvolt = <1200000>;
-+		regulator-max-microvolt = <1200000>;
-+		vin-supply = <&main_12v>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	vddao_3v3: regulator-vddao-3v3 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VDDAO3V3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		vin-supply = <&main_12v>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	vddao_1v8: regulator-vddao-1v8 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VDDAO1V8";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		vin-supply = <&vddao_3v3>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	ddr4_2v5: regulator-ddr4-2v5 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "DDR4_2V5";
-+		regulator-min-microvolt = <2500000>;
-+		regulator-max-microvolt = <2500000>;
-+		vin-supply = <&vddao_3v3>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	vcc_3v3: regulator-vcc-3v3 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VCC3V3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		vin-supply = <&vddao_3v3>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	vcc_1v8: regulator-vcc-1v8 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VCC1V8";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		vin-supply = <&vcc_3v3>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	vdd_1v8: regulator-vdd-1v8 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VDD1V8_BOOT";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		vin-supply = <&vcc_3v3>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	vddio_b: regulator-vddio-3v3-b {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VDDIO_B";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		vin-supply = <&vcc_3v3>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	sdcard: regulator-sdcard {
-+		compatible = "regulator-fixed";
-+		regulator-name = "SDCARD_POWER";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		vin-supply = <&vddao_3v3>;
-+		gpio = <&gpio GPIOA_4 GPIO_ACTIVE_LOW>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+};
-+
-+&uart_b {
-+	status = "okay";
-+};
-+
-+&nand {
-+	status = "okay";
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	pinctrl-0 = <&nand_pins>;
-+	pinctrl-names = "default";
-+
-+	nand@0 {
-+		reg = <0>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		nand-on-flash-bbt;
-+
-+		partition@0 {
-+			label = "boot";
-+			reg = <0x0 0x00200000>;
-+		};
-+		partition@200000 {
-+			label = "env";
-+			reg = <0x00200000 0x00400000>;
-+		};
-+		partition@600000 {
-+			label = "system";
-+			reg = <0x00600000 0x00a00000>;
-+		};
-+		partition@1000000 {
-+			label = "rootfs";
-+			reg = <0x01000000 0x03000000>;
-+		};
-+		partition@4000000 {
-+			label = "media";
-+			reg = <0x04000000 0x8000000>;
-+		};
-+	};
-+};
-+
-+&ethmac {
-+	status = "okay";
-+	phy-handle = <&internal_ephy>;
-+	phy-mode = "rmii";
-+};
-+
-+&spifc {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	pinctrl-0 = <&spifc_pins>;
-+	pinctrl-names = "default";
-+
-+	nand@0 {
-+		compatible = "spi-nand";
-+		reg = <0>;
-+		spi-max-frequency = <83000000>;
-+		spi-tx-bus-width = <4>;
-+		spi-rx-bus-width = <4>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		status = "disabled";
-+
-+		partitions {
-+			compatible = "fixed-partitions";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			partition@0 {
-+				label = "boot";
-+				reg = <0 0x200000>;
-+			};
-+
-+			partition@200000 {
-+				label = "env";
-+				reg = <0x200000 0x400000>;
-+			};
-+
-+			partition@600000 {
-+				label = "system";
-+				reg = <0x600000 0xa00000>;
-+			};
-+
-+			partition@1000000 {
-+				label = "rootfs";
-+				reg = <0x1000000 0x3000000>;
-+			};
-+
-+			partition@4000000 {
-+				label = "data";
-+				reg = <0x4000000 0x8000000>;
-+			};
-+		};
-+	};
-+};
-+
-+&sd {
-+	status = "okay";
-+	pinctrl-0 = <&sdcard_pins>;
-+	pinctrl-1 = <&sdcard_clk_gate_pins>;
-+	pinctrl-names = "default","clk-gate";
-+
-+	bus-width = <4>;
-+	cap-sd-highspeed;
-+	max-frequency = <50000000>;
-+	disable-wp;
-+
-+	cd-gpios = <&gpio GPIOC_6 GPIO_ACTIVE_LOW>;
-+	vmmc-supply = <&sdcard>;
-+	vqmmc-supply = <&sdcard>;
-+};
-+
-+&sdio {
-+	pinctrl-0 = <&sdio_m_pins>;
-+	pinctrl-1 = <&sdio_m_clk_gate_pins>;
-+	pinctrl-names = "default", "clk-gate";
-+	bus-width = <4>;
-+	cap-sd-highspeed;
-+	non-removable;
-+	max-frequency = <200000000>;
-+	disable-wp;
-+	cap-sdio-irq;
-+	keep-power-in-suspend;
-+
-+	vmmc-supply = <&sdcard>;
-+	vqmmc-supply = <&sdcard>;
-+};
+Changes in v2:
+- Split from full patchset.
+- Added Cc-stable tags and fixes tag to update CLKS_NR_FSYS patch
+- Blank line fixes
+
+Cc: stable@vger.kernel.org
+
+[1] https://lore.kernel.org/linux-samsung-soc/20240804215458.404085-1-virag.david003@gmail.com/
+
+David Virag (7):
+  dt-bindings: clock: exynos7885: Fix duplicated binding
+  dt-bindings: clock: exynos7885: Add CMU_TOP PLL MUX indices
+  dt-bindings: clock: exynos7885: Add indices for USB clocks
+  clk: samsung: exynos7885: Update CLKS_NR_FSYS after bindings fix
+  clk: samsung: exynos7885: Add missing MUX clocks from PLLs in CMU_TOP
+  clk: samsung: clk-pll: Add support for pll_1418x
+  clk: samsung: exynos7885: Add USB related clocks to CMU_FSYS
+
+ drivers/clk/samsung/clk-exynos7885.c   | 93 ++++++++++++++++++++------
+ drivers/clk/samsung/clk-pll.c          | 20 ++++--
+ drivers/clk/samsung/clk-pll.h          |  1 +
+ include/dt-bindings/clock/exynos7885.h | 32 ++++++---
+ 4 files changed, 111 insertions(+), 35 deletions(-)
 
 -- 
-2.37.1
-
+2.46.0
 
