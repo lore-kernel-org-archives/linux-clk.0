@@ -1,164 +1,98 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mail-m12814.netease.com (mail-m12814.netease.com [103.209.128.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AAA01BA87B;
-	Tue,  6 Aug 2024 06:11:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98AFD166F36;
+	Tue,  6 Aug 2024 07:56:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.209.128.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1722924691; cv=none; b=i6wAAbT3WNkbl4jcUK3/mSvdlRadcEPWroJEZ57+9IFqvRHsTyI/vYC4yYaEAL9f3brnwwSNSNCZxacvc6McbNwfydz0LFxiEJ5qMJXin30wKl2wY/nQDtsqg3mUONctAGNEQty5yQk1C3SKkZ78vVgfUoft949WES2pbuAzTUY=
+	t=1722931021; cv=none; b=tClVIbgISpH7gXQ+Kzj5GYsmPYnGja+cR+ZEux/SxBizye5/sbMjrNhIWcQvU47CCs0jL8mZP5e42ITMGdGqwrGKoE4idbjTwY10Pw9757c4moG//snoUwKsnI39s6hDOvX/l0rqz1eX0qpfGJTxG+4UDHJ4/bTErqVfTY5jVQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1722924691; c=relaxed/simple;
-	bh=ggbTg3w5DaB27aS9nuUMEUMa4XGHsO9n/U7ORxnpZxw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=l6p4rVqwnpgN4HfqE4s+KbtlBBzxz6+eF20VGfKQQQeoM2W8YOYdPUwebU0ldVQ+8mv0AhUWlPXvLifp3v0gVEDSRPEWYUZ4vNolmAWWF+aLaiFBBU4rqOW2PK1dzJJNF1FimEi9XY5OBfhTV21v70prqhp5hCXDJUhCDk8XEm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Lt7evMMd; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1722931021; c=relaxed/simple;
+	bh=Za7uQ/FdF5TBjfIlUc0XpHWe/Cvyos8PCSjtEIPcZ4M=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=BVjWIS6vxiCH9bAbyiareaX76oPmrZpHpHObSj5eluZXlNL+vfR0OuQMlSfnGXjsbxzE3hl4yWuYtlmwyVaVDQiXFY35MMBFNpfpF37VwNujlN4k6LsYcptPYNSyllSpg0ly4cu+W8JWWiGidoF24+FQGndcj020vhDOX/BMvyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com; spf=pass smtp.mailfrom=rock-chips.com; dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b=hB7cv8FQ; arc=none smtp.client-ip=103.209.128.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rock-chips.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rock-chips.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Lt7evMMd"
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 4762IcYp011347;
-	Tue, 6 Aug 2024 06:11:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=ZzaHtt/GOQjsAeZkbz9lRv
-	0LUUYBHAWMfnCyEbHdH6A=; b=Lt7evMMdJs4iE6GZxsCwbYCAzojzHXA4DgArTe
-	oZ77M/48pUdDlHAK5o5LpGEmTu5NfGKpRkvR7soWmHZY1x1N6ahoD6FhC3Yl+Foy
-	w63WATnZimycak/QB0yRKuh22Rs2tOPCIo5dO2M2RCupm4diOwRatH59beiSvsb6
-	1njuXPfWu60xdhuRlpp+5ru+iBx64oocFSNvQ2MAm8P+fVfieGeYROQR/xY7J2Jl
-	X68dkzdcEJ2dFLU/32Fz3ReUHF4gWx32hfQcoQlSY7rAl+42Yj6I9JnxlGxBT1g9
-	nsEl9al6kpNoOAz8IYx7GtfVaJM+DXv2vv4KrdJDL9gQ/brQ==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40sbj6pa7d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 06 Aug 2024 06:11:24 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 4766BNX4000692
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 6 Aug 2024 06:11:23 GMT
-Received: from hu-amansing-blr.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 5 Aug 2024 23:11:20 -0700
-From: Amandeep Singh <quic_amansing@quicinc.com>
-To: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-CC: <quic_devipriy@quicinc.com>
-Subject: [PATCH] clk: qcom: ipq9574: Update the alpha PLL type for GPLLs
-Date: Tue, 6 Aug 2024 11:41:05 +0530
-Message-ID: <20240806061105.2849944-1-quic_amansing@quicinc.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (1024-bit key) header.d=rock-chips.com header.i=@rock-chips.com header.b="hB7cv8FQ"
+DKIM-Signature: a=rsa-sha256;
+	b=hB7cv8FQEu9PuezqGIIrz1ErY4ueQCOC7o50WMlAQ4F/2H8dWKdjDacxJpRvIvhlDi90AXg528vCOpFmjWDYQHv4i931JD1urwpTbDZi+tjMnE+2KgHks11H60ED9q4hCFboMRxflkRpBqQWcCMFAZb5fvgsDZowZfa9iRY3v78=; s=default; c=relaxed/relaxed; d=rock-chips.com; v=1;
+	bh=qUN0fucssUTYDJMPGdCMYXuJJdSvyMs7YM5gSkBeMgM=;
+	h=date:mime-version:subject:message-id:from;
+Received: from localhost.localdomain (unknown [58.22.7.114])
+	by smtp.qiye.163.com (Hmail) with ESMTPA id 55BD9A07E0;
+	Tue,  6 Aug 2024 15:38:40 +0800 (CST)
+From: Elaine Zhang <zhangqing@rock-chips.com>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	kever.yang@rock-chips.com,
+	zhangqing@rock-chips.com,
+	heiko@sntech.de
+Cc: linux-clk@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	huangtao@rock-chips.com,
+	sugar.zhang@rock-chips.com
+Subject: [PATCH v1] clk: gate: export clk_gate_endisable
+Date: Tue,  6 Aug 2024 15:38:32 +0800
+Message-Id: <20240806073832.13568-1-zhangqing@rock-chips.com>
+X-Mailer: git-send-email 2.17.1
+X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
+	tZV1koWUFDSUNOT01LS0k3V1ktWUFJV1kPCRoVCBIfWUFZGh5KQ1ZISBgeHUtDQhhJHktWFRQJFh
+	oXVRMBExYaEhckFA4PWVdZGBILWUFZTkNVSUlVTFVKSk9ZV1kWGg8SFR0UWUFZT0tIVUpLSUhCSE
+	NVSktLVUpCS0tZBg++
+X-HM-Tid: 0a9126a03b4c03a8kunm55bd9a07e0
+X-HM-MType: 1
+X-HM-Sender-Digest: e1kMHhlZQR0aFwgeV1kSHx4VD1lBWUc6MzY6Iyo4PDI3HxJJNxYSHUke
+	DhlPCiNVSlVKTElJQklCQklKSEtOVTMWGhIXVQETGhUcChIVHDsJFBgQVhgTEgsIVRgUFkVZV1kS
+	C1lBWU5DVUlJVUxVSkpPWVdZCAFZQUlOSkk3Bg++
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: jB5JX98LQZa1NHRqJZtykkPs-vdid3AE
-X-Proofpoint-GUID: jB5JX98LQZa1NHRqJZtykkPs-vdid3AE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-06_04,2024-08-02_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 suspectscore=0
- priorityscore=1501 adultscore=0 mlxscore=0 lowpriorityscore=0 bulkscore=0
- phishscore=0 mlxlogscore=999 clxscore=1015 malwarescore=0 impostorscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2408060043
 
-From: devi priya <quic_devipriy@quicinc.com>
+make clk_gate_endisable not static, export API for other use.
 
-Update PLL offsets to DEFAULT_EVO to configure MDIO to 800MHz.
-
-The incorrect clock frequency leads to an incorrect MDIO clock. This,
-in turn, affects the MDIO hardware configurations as the divider is
-calculated from the MDIO clock frequency. If the clock frequency is
-not as expected, the MDIO register fails due to the generation of an
-incorrect MDIO frequency.
-
-This issue is critical as it results in incorrect MDIO configurations
-and ultimately leads to the MDIO function not working. This results in
-a complete feature failure affecting all Ethernet PHYs. Specifically,
-Ethernet will not work on IPQ9574 due to this issue.
-
-Currently, the clock frequency is set to CLK_ALPHA_PLL_TYPE_DEFAULT.
-However, this setting does not yield the expected clock frequency.
-To rectify this, we need to change this to CLK_ALPHA_PLL_TYPE_DEFAULT_EVO.
-
-This modification ensures that the clock frequency aligns with our
-expectations, thereby resolving the MDIO register failure and ensuring
-the proper functioning of the Ethernet on IPQ9574.
-
-Fixes: d75b82cff488 ("clk: qcom: Add Global Clock Controller driver for IPQ9574")
-Signed-off-by: devi priya <quic_devipriy@quicinc.com>
-Signed-off-by: Amandeep Singh <quic_amansing@quicinc.com>
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
 ---
- drivers/clk/qcom/gcc-ipq9574.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+ drivers/clk/clk-gate.c       | 3 ++-
+ include/linux/clk-provider.h | 1 +
+ 2 files changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/qcom/gcc-ipq9574.c b/drivers/clk/qcom/gcc-ipq9574.c
-index 80fc94d705a0..645109f75b46 100644
---- a/drivers/clk/qcom/gcc-ipq9574.c
-+++ b/drivers/clk/qcom/gcc-ipq9574.c
-@@ -68,7 +68,7 @@ static const struct clk_parent_data gcc_sleep_clk_data[] = {
+diff --git a/drivers/clk/clk-gate.c b/drivers/clk/clk-gate.c
+index 68e585a02fd9..531bb84a5b3e 100644
+--- a/drivers/clk/clk-gate.c
++++ b/drivers/clk/clk-gate.c
+@@ -53,7 +53,7 @@ static inline void clk_gate_writel(struct clk_gate *gate, u32 val)
+  *
+  * So, result is always: enable xor set2dis.
+  */
+-static void clk_gate_endisable(struct clk_hw *hw, int enable)
++void clk_gate_endisable(struct clk_hw *hw, int enable)
+ {
+ 	struct clk_gate *gate = to_clk_gate(hw);
+ 	int set = gate->flags & CLK_GATE_SET_TO_DISABLE ? 1 : 0;
+@@ -87,6 +87,7 @@ static void clk_gate_endisable(struct clk_hw *hw, int enable)
+ 	else
+ 		__release(gate->lock);
+ }
++EXPORT_SYMBOL_GPL(clk_gate_endisable);
  
- static struct clk_alpha_pll gpll0_main = {
- 	.offset = 0x20000,
--	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO],
- 	.clkr = {
- 		.enable_reg = 0x0b000,
- 		.enable_mask = BIT(0),
-@@ -96,7 +96,7 @@ static struct clk_fixed_factor gpll0_out_main_div2 = {
+ static int clk_gate_enable(struct clk_hw *hw)
+ {
+diff --git a/include/linux/clk-provider.h b/include/linux/clk-provider.h
+index 4a537260f655..db7132e9c057 100644
+--- a/include/linux/clk-provider.h
++++ b/include/linux/clk-provider.h
+@@ -630,6 +630,7 @@ struct clk *clk_register_gate(struct device *dev, const char *name,
+ void clk_unregister_gate(struct clk *clk);
+ void clk_hw_unregister_gate(struct clk_hw *hw);
+ int clk_gate_is_enabled(struct clk_hw *hw);
++void clk_gate_endisable(struct clk_hw *hw, int enable);
  
- static struct clk_alpha_pll_postdiv gpll0 = {
- 	.offset = 0x20000,
--	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO],
- 	.width = 4,
- 	.clkr.hw.init = &(const struct clk_init_data) {
- 		.name = "gpll0",
-@@ -110,7 +110,7 @@ static struct clk_alpha_pll_postdiv gpll0 = {
- 
- static struct clk_alpha_pll gpll4_main = {
- 	.offset = 0x22000,
--	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO],
- 	.clkr = {
- 		.enable_reg = 0x0b000,
- 		.enable_mask = BIT(2),
-@@ -125,7 +125,7 @@ static struct clk_alpha_pll gpll4_main = {
- 
- static struct clk_alpha_pll_postdiv gpll4 = {
- 	.offset = 0x22000,
--	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO],
- 	.width = 4,
- 	.clkr.hw.init = &(const struct clk_init_data) {
- 		.name = "gpll4",
-@@ -139,7 +139,7 @@ static struct clk_alpha_pll_postdiv gpll4 = {
- 
- static struct clk_alpha_pll gpll2_main = {
- 	.offset = 0x21000,
--	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO],
- 	.clkr = {
- 		.enable_reg = 0x0b000,
- 		.enable_mask = BIT(1),
-@@ -154,7 +154,7 @@ static struct clk_alpha_pll gpll2_main = {
- 
- static struct clk_alpha_pll_postdiv gpll2 = {
- 	.offset = 0x21000,
--	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
-+	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO],
- 	.width = 4,
- 	.clkr.hw.init = &(const struct clk_init_data) {
- 		.name = "gpll2",
+ struct clk_div_table {
+ 	unsigned int	val;
 -- 
-2.34.1
+2.17.1
 
