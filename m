@@ -1,89 +1,126 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 355031C7B7C;
-	Wed,  7 Aug 2024 07:57:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EA592868D;
+	Wed,  7 Aug 2024 08:07:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723017439; cv=none; b=ifkCMoES2QABhzGPPVvXAC9ERgesk45qC/ztiQ51W17kz4GAyKP04vIELCwBzUYPDTPFni9GX/SEfMUhcE9n+3rc1qpl/9mw5/JV2QxroKe7q22ByWCGwmgiz60jqOjvCCs5LEAuAf7p1vwcOFPIUkONkGcMwM+M2fiCn7rARUE=
+	t=1723018035; cv=none; b=iMRAtjj9YcvvW/g84dR7rLO1m+x4FJJ4G2vzY6xLAVcl3H3hQc2YkMfn6kM5naMJ9C/5K0dx4cup5e4KKJXNyx8A5IcuCz2YLS3yx0uBIVZebxV5mZfuz7o75h60mgV5nnSnlwljDl6kyCj4pssybFi2sIsqEknD9vOSkmF7dbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723017439; c=relaxed/simple;
-	bh=s08IpeR5OJliwFxXvYuOnvxCOlF6Vzqg/pmxO7QBo+c=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=fweAG37v/qHUTpr1bowjbrz83X9yqKkMshCu2Qc/F3EH7mKe1/JG7e+Y38IEX4qHxFOC3RIGQ62x24HmjQ1W/N6pdIQq/6QEuLlUp+kKdPqWXs46KuhHB+g6uc+2DjMQr+BSjmvmFd0iHCNrzOKhivM5UGp2RDJJuru0hfJaj5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZkqZPmQM; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1723018035; c=relaxed/simple;
+	bh=dZuP4Cu5S3yhnTRNnkDlwHTqpIwMpWS8SnOJt3kSxpY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t8eHewINqSYFAIyQpteLgBRLQLFEnT0KMCfXbxnQE/6LO62aei2T3QuihwePbWwjpDwPl5R50I+yPpu8DftJeALzd/eWeCs3QAp/6cS7Z02b0EXnmytQzwuqEtf8QKIBMcV8y5pZCHu8FPmXrmLcrutyF4T180CuXjeOO6nYra0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=itGBJFb4; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZkqZPmQM"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 38AEFC4AF10;
-	Wed,  7 Aug 2024 07:57:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="itGBJFb4"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39E9EC32782;
+	Wed,  7 Aug 2024 08:07:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723017439;
-	bh=s08IpeR5OJliwFxXvYuOnvxCOlF6Vzqg/pmxO7QBo+c=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ZkqZPmQMHNYrrcOgKiaBDlMdww75Py2+QzisIWH+oKPgxnP1zzlBSCvZX7fMXDwxq
-	 GLkcCV92AsnN9pk51mNosUc1j0W/3SxSri4erDpXKpmdmYS2UskYyFK6ImL7t0U0Rm
-	 9cm4nUVQBhzMQvKwfvI1uCd0ZXL0Xie+Bwt8J1EzJjY5MnV4lltBrOHuWIVCdN3VJ9
-	 B0jHOUX3AMcQAcVNLSwPYtG9T6JLBd1wsQXBBbDNh/PlqEa9VJltGrD3L3MVZydH5d
-	 tEQ7J+7mYLjmOHidIJmgi39UobbACTGyVd76p4ej7CP7l9J5xuQXoXqpehHFwNfe4p
-	 1lrz1XsNukX8Q==
-From: Arnd Bergmann <arnd@kernel.org>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] clk: renesas: fix r9a09g057_cpg_info link error
-Date: Wed,  7 Aug 2024 09:56:58 +0200
-Message-Id: <20240807075714.2156445-1-arnd@kernel.org>
-X-Mailer: git-send-email 2.39.2
+	s=k20201202; t=1723018034;
+	bh=dZuP4Cu5S3yhnTRNnkDlwHTqpIwMpWS8SnOJt3kSxpY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=itGBJFb47Q1wt/1ovpR5mue3PdJXTfS9mCXOmFI7oVFyxwxkYYNQAMOygjYeC4uCZ
+	 3iT7iLhitIg6PPKw3W9A+xoFVVoomae6Nsp0/UbDjXTBAbMf/uY7MXwFNw398c2PGX
+	 4xEQTZQVI6mNWqcBhZuEcxEvSZ0tqYjmYG0BQkU7H2ayavNBsQZzqMJIWM4pii4rrF
+	 oi4hm644f7HVUCN7UDewHy6mWyJlt9rwautkc/w9j/fHJuOrHPqB3rGWCtF1J3u5mf
+	 0VM5P9SgPCxdw6oOC1jPo4YY8bcGvnm0eoXKKPK4nt+2PWMgXM0SUm1urMaqY5wgEv
+	 ubW07EeJ8MG3g==
+Message-ID: <4ca79a32-55ab-4d38-96de-ff2fc8074f53@kernel.org>
+Date: Wed, 7 Aug 2024 10:07:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: clock: fix C3 PLL input parameter
+To: Jerome Brunet <jbrunet@baylibre.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Xianwei Zhao <xianwei.zhao@amlogic.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Chuan Liu <chuan.liu@amlogic.com>,
+ Kevin Hilman <khilman@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+ linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20240806-c3_add_node-v1-0-c0de41341632@amlogic.com>
+ <20240806-c3_add_node-v1-1-c0de41341632@amlogic.com>
+ <b63fe216-ee29-489e-a175-e1525ac12722@kernel.org>
+ <86b01ecb-6ca8-496e-b3a8-0b21bb951a60@amlogic.com>
+ <2da06dac-7a1a-461c-956d-13b74320723e@linaro.org>
+ <1jikwczrys.fsf@starbuckisacylon.baylibre.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <1jikwczrys.fsf@starbuckisacylon.baylibre.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Arnd Bergmann <arnd@arndb.de>
+On 07/08/2024 09:56, Jerome Brunet wrote:
+>>>> and that's not an ABI break because?
+>>> This is "fixed" clock.
+>>> I will modify "fix" to "fixed",in next version.
+> 
+> No keep the original name. No reason to change it and make more of a mess.
+> 
+>>
+>> With "fixed" it is still ABI break, right?
+> 
+> It is an ABI break but on a new and immature platform.
+> Noboby could really use that platform at this stage, so nothing is going
+> to break on anyone really.
 
-The rzv2g-cpg.c driver unconditionally links into the r9a09g057
-one, but that may be disabled:
+Sure, this could be also used in commit msg saving us from this entire
+discussion.
 
-aarch64-linux-ld: drivers/clk/renesas/rzv2h-cpg.o:(.rodata+0x440): undefined reference to `r9a09g057_cpg_info'
-
-Use the same approach here as with the rzg2l variant, using an #ifdef
-around tha data.
-
-I think both drivers would be better off doing the abstraction the other
-way round, with the platform_driver structure defined in the most specific
-file and the common bits as a library that exports common functions.
-Changing it that way would require a larger rework of course.
-
-Fixes: 42b54d52ecb7 ("clk: renesas: Add RZ/V2H(P) CPG driver")
-Signed-off-by: Arnd Bergmann <arnd@arndb.de>
----
- drivers/clk/renesas/rzv2h-cpg.c | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/clk/renesas/rzv2h-cpg.c b/drivers/clk/renesas/rzv2h-cpg.c
-index bc0c3bbdb997..34221046dc46 100644
---- a/drivers/clk/renesas/rzv2h-cpg.c
-+++ b/drivers/clk/renesas/rzv2h-cpg.c
-@@ -664,10 +664,12 @@ static int __init rzv2h_cpg_probe(struct platform_device *pdev)
- }
- 
- static const struct of_device_id rzv2h_cpg_match[] = {
-+#ifdef CONFIG_CLK_R9A09G057
- 	{
- 		.compatible = "renesas,r9a09g057-cpg",
- 		.data = &r9a09g057_cpg_info,
- 	},
-+#endif
- 	{ /* sentinel */ }
- };
- 
--- 
-2.39.2
+Best regards,
+Krzysztof
 
