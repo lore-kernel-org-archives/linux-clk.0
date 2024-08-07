@@ -1,60 +1,33 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED2F41953A9
-	for <linux-clk@vger.kernel.org>; Wed,  7 Aug 2024 05:44:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC6A16BFA3;
+	Wed,  7 Aug 2024 05:49:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723009493; cv=none; b=G3intloeDpEuuZoqW9jr/T+MZwvq8C0kK/reXvd58WBGxWz3AFYNQjrmrmevPbj4AS2nOttJSHgbNipwdcBoNhJZzo86KXdBtt5HQe5AJJlCr0AxSWymu9fdCmW+dN1R6zbhXQKpZ3U1nLpG+qbznUj8y8RxMniV9UMe46hSej0=
+	t=1723009774; cv=none; b=m2AclW8Icqvw+qODt4C90jn7sqLcTyw5/so+AFOGkjbRxytR9nednn/MI8SevbxRCw0oLWRG89ISwFlum3NhCSCaRJVN6yhY7r9MipzrI/A3neu5E+ORO3aCCYkvK4nGVpbUE9adIFvNXXjgC6y4nS2QchiuEnGv+gTTXzPh+Xw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723009493; c=relaxed/simple;
-	bh=JE/r6oRaW9pWCNR+Vxh7Jmv7Eddt6ZRPoHulVg+7nwg=;
+	s=arc-20240116; t=1723009774; c=relaxed/simple;
+	bh=NfrOBcjO/1edtJr1f92xqBL5hzAd7ZcuUUv/ggnDR9k=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bvpJWrcQMYzdDAYqUC0RDNrFyvESUsiCVPxvCU9JIXRA80nHDEPtU4twUJ6IIVwLmX6/BjY/kiCzCF4oQkyXq24ThUSvnTI9SOrwk2aveC6FH2he1q4qiLrLC9hh9pAUw7vPjXSQ2fcohOjXvBpZm5UvIZ8LyUmjX7JzkcCFtjo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kqJKIweK; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	 In-Reply-To:Content-Type; b=J8ihSW43EZVb19NelqRicd6Yr4pO7cdgT8e25ixtzuZlxfEFXPWdi4MMkGgIBupfGsUlSeLcBRLgCpixBzOEeprytzKSpPo/GRFlL8SAC2Tq2aVuKLSwmj0qkfmqaFQ/pJX6g5HH8M+98neVLjIqH2YXLoElINrgRX9nFuSHS04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m1TKo++0; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kqJKIweK"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-369f68f63b1so739195f8f.2
-        for <linux-clk@vger.kernel.org>; Tue, 06 Aug 2024 22:44:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723009490; x=1723614290; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=G0OWf6ez8Gxgf5JPBmv/oBu1hvtNwPXnbUW+1HDzI78=;
-        b=kqJKIweKmt4hkelJubP0mCtDJqX+FY1dzAIfRDO1XxCdPQpc7J+GyR2ko8XsQNazfo
-         GadUeFLPItLCwRQVaM0W8W3Tk0pVZnCygHSGGMVXd7OkS2yHQCn3yeXdIwUYgn4QopVt
-         BfSnTKlT75+YNLly+W4aGz3V0jSlePAmxBAhv2iFSlZDCBiEObJufwPzgLae+jR6W8NQ
-         CHg2zm7aL35Wsgy6T2fYCG8tNjsPln3e5jpxsgiHkI4PkbyCzomhVpYLZrtAK6pzuCfn
-         hdPZEg5FJMcWZF5LIkLh8g3m4n6SPrKRfTpOweC5Bp4Xq3oLRImb9KhpJzFw5qP/qOUZ
-         Vdyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723009490; x=1723614290;
-        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
-         :from:references:cc:to:subject:user-agent:mime-version:date
-         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=G0OWf6ez8Gxgf5JPBmv/oBu1hvtNwPXnbUW+1HDzI78=;
-        b=QhAOpDGZRKCgY36x4BB4l4/qL3MYMST2EQYR47bkvDdTkbEmseeRq41A/bw0pzVPVU
-         3f53t5uZmNimBPQR7ctynrCIHck29rKNrvQO1T8MtA4yW2gxHcRaM+OLSnnr+i2XZ0G/
-         vsA6RnMV5k3z9KVkvTojK5sPNtjnmOuTMJiQyP+5VyWVmznxMMpNPj0A7qcR8imRMHDR
-         wzgkOeMMDxoKNTaaleWsI6bm8PZ46pt+NcUshPh0wkvrELhQNmLHglJa3lQ+QEmWUsAW
-         AJwGpwEshWyKpw5f0eGke6oR8HyQ0iEVQ1gb8lOFwvTtuqnOm/LpVSboWlAUq58iNybw
-         gu2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU1O/ShTzcK8++SMxu5dmNTQQ/pH7UOCv4VIfffEiqW5ipFMyduTVsAABvq/wvoCTwok1N4mt92S7S3+HOQO5atkwWxVQrD4eQf
-X-Gm-Message-State: AOJu0YzXOnHkCS6yyH+47Sp4kNVRFxxOsrC8k+Ynp30IK88patvaJah9
-	cX+CBV7bnpePzBjbZxzQ8pDNCtqJ1quuekQkDAe0CDjmcmc6VxT1P6QjAhd5F/M=
-X-Google-Smtp-Source: AGHT+IHc5vuzTBW4h6d1QGoBakXdzthyZ6QBCEOqs6EeG+t7ZawahJ0UefaucaaNo9LxA4PEzcg4DA==
-X-Received: by 2002:a5d:64a1:0:b0:367:43ce:9c91 with SMTP id ffacd0b85a97d-36bbc0f9fb6mr13352499f8f.27.1723009490152;
-        Tue, 06 Aug 2024 22:44:50 -0700 (PDT)
-Received: from [192.168.1.20] ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-36bbd06d7dasm14685983f8f.97.2024.08.06.22.44.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 06 Aug 2024 22:44:49 -0700 (PDT)
-Message-ID: <6ff63eb7-81f4-4d3e-b96f-890432ec184a@linaro.org>
-Date: Wed, 7 Aug 2024 07:44:47 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m1TKo++0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E926C32782;
+	Wed,  7 Aug 2024 05:49:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723009774;
+	bh=NfrOBcjO/1edtJr1f92xqBL5hzAd7ZcuUUv/ggnDR9k=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=m1TKo++0oG4AuvFgbcX7Zd8lsvYZaSD5VQREoYuRyBL9UOmMw8NaTjxEXZ8E6Mxp/
+	 M23nhWPGk+9QsPjZWRZWVq0pSveUuu8MCFTHwEZr41luoWO28Zgawm7f1UyJDUjT3Z
+	 VeG1qrEi3eHrQlCSaQmkEAZ175EHtvzSdbTeO1PWy7p/S2wZ4vabV/KLy2ZZyer6Ze
+	 Gd1eAZN4zSd7REZJDZTZQqSbgwX1ZdDHMrPdKBYBDXCSELrxovpExoA2Jzwxmacgz5
+	 JjbfP45q3uuwOOibgDaewyPgAYamRzyr3+Bksk53uK0FC46DxVJpbS/SxnWOrgeqqQ
+	 cm5/vnS8qjzoA==
+Message-ID: <03b8a48c-e97e-4d7b-8378-66cc55ed56f7@kernel.org>
+Date: Wed, 7 Aug 2024 07:49:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -62,27 +35,25 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] arm64: dts: amlogic: add C3 AW419 board
-To: Xianwei Zhao <xianwei.zhao@amlogic.com>,
- Krzysztof Kozlowski <krzk@kernel.org>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Jerome Brunet <jbrunet@baylibre.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+Subject: Re: [PATCH v2 2/3] clk: rockchip: Add dt-binding header for rk3576
+To: Detlev Casanova <detlev.casanova@collabora.com>,
+ linux-kernel@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Chuan Liu <chuan.liu@amlogic.com>,
- Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20240806-c3_add_node-v1-0-c0de41341632@amlogic.com>
- <20240806-c3_add_node-v1-3-c0de41341632@amlogic.com>
- <c82b6e70-8f2f-4b37-9186-7c49aea019bd@kernel.org>
- <59f37c77-d57b-4568-ad9e-6d50791ae5f7@amlogic.com>
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+ <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Elaine Zhang <zhangqing@rock-chips.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, kernel@collabora.com,
+ Sugar Zhang <sugar.zhang@rock-chips.com>
+References: <20240802214053.433493-1-detlev.casanova@collabora.com>
+ <20240802214053.433493-3-detlev.casanova@collabora.com>
+ <1600ee06-ac19-436f-8229-1bb44b29c683@kernel.org>
+ <2949191.e9J7NaK4W3@trenzalore>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
+Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
  JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
@@ -92,58 +63,115 @@ Autocrypt: addr=krzysztof.kozlowski@linaro.org; keydata=
  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
- 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
- D2GYIS41Kv4Isx2dEFh+/Q==
-In-Reply-To: <59f37c77-d57b-4568-ad9e-6d50791ae5f7@amlogic.com>
+ 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 fv0=
+In-Reply-To: <2949191.e9J7NaK4W3@trenzalore>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 07/08/2024 04:37, Xianwei Zhao wrote:
->>> +#include "amlogic-c3.dtsi"
+On 06/08/2024 17:23, Detlev Casanova wrote:
+> On Sunday, 4 August 2024 05:53:57 EDT Krzysztof Kozlowski wrote:
+>> On 02/08/2024 23:35, Detlev Casanova wrote:
+>>> From: Elaine Zhang <zhangqing@rock-chips.com>
+>>>
+>>> Add the dt-bindings header for the rk3576, that gets shared between
+>>> the clock controller and the clock references in the dts.
+>>>
+>>> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+>>> Signed-off-by: Sugar Zhang <sugar.zhang@rock-chips.com>
+>>> [rebased, separate clocks and resets]
+>>> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+>>
+>> Please use subject prefixes matching the subsystem. You can get them for
+>> example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
+>> your patch is touching. For bindings, the preferred subjects are
+>> explained here:
+>> https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patche
+>> s.html#i-for-patch-submitters
+>>> ---
+>>>
+>>>  .../dt-bindings/clock/rockchip,rk3576-cru.h   | 589 ++++++++++++++++++
+>>>  .../dt-bindings/reset/rockchip,rk3576-cru.h   | 484 ++++++++++++++
+>>>  2 files changed, 1073 insertions(+)
+>>>  create mode 100644 include/dt-bindings/clock/rockchip,rk3576-cru.h
+>>>  create mode 100644 include/dt-bindings/reset/rockchip,rk3576-cru.h
+>>
+>> These are bindings. Must be squashed with previous patch.
+> 
+> Ok, so you'd rather have a commit for reset definitions (dt-bindings: reset: 
+> Add rk3576 reset definitions) and another one for clock definitions + 
+> Documentation (dt-bindings: clock: Add rk3576 clock definitions and 
+> documentation) ?
+> 
+>>> diff --git a/include/dt-bindings/clock/rockchip,rk3576-cru.h
+>>> b/include/dt-bindings/clock/rockchip,rk3576-cru.h new file mode 100644
+>>> index 0000000000000..14b54543d1a11
+>>> --- /dev/null
+>>> +++ b/include/dt-bindings/clock/rockchip,rk3576-cru.h
+>>> @@ -0,0 +1,589 @@
+>>> +/* SPDX-License-Identifier: (GPL-2.0+ OR MIT) */
+>>
+>> Weird license. Why not using recommended one?
+> 
+> Oh right, I suppose "GPL-2.0 OR MIT" is better ? At least that is what I see 
+> for rk3588. include/dt-bindings/clock/rockchip,rv1126-cru.h uses "GPL-2.0+ OR 
+> MIT" though.
+> 
+>>> +/*
+>>> + * Copyright (c) 2023 Rockchip Electronics Co. Ltd.
+>>> + * Author: Elaine Zhang <zhangqing@rock-chips.com>
+>>> + */
 >>> +
->>> +/ {
->>> +     model = "Amlogic C308l aw419 Development Board";
->>> +     compatible = "amlogic,aw419", "amlogic,c3";
+>>> +#ifndef _DT_BINDINGS_CLK_ROCKCHIP_RK3576_H
+>>> +#define _DT_BINDINGS_CLK_ROCKCHIP_RK3576_H
+>>> +
+>>> +/* cru-clocks indices */
+>>> +
+>>> +/* cru plls */
+>>> +#define PLL_BPLL			1
+>>> +#define PLL_LPLL			3
+>>> +#define PLL_VPLL			4
+>>> +#define PLL_AUPLL			5
+>>> +#define PLL_CPLL			6
+>>> +#define PLL_GPLL			7
+>>> +#define PLL_PPLL			9
 >>
->> Where are the bindings? Why do you add bindings without boards? Or
->> boards without bindings?
->>
-> The bindings of board aw419 was submitted with board aw409.
-> The commit number is cb3f4e8cacfa7b32ed8b9dff1282c0d4aaf42e88.
+>> Nope, indices start from 1 and are incremented continuously.
+> 
+> Why start at 1 ? RK3588 starts at 0 for clocks and resets
 
-Why are you adding bindings separate from DTS?
+Or 0, even better, sure.
 
 Best regards,
 Krzysztof
