@@ -1,84 +1,69 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89C147829C;
-	Wed,  7 Aug 2024 17:24:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D138144D39;
+	Wed,  7 Aug 2024 20:52:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723051471; cv=none; b=VAj7Crjf92ncozpfpnEmIJ9V2wFOtrjjsxMWhe9JV/senTpdayr/CpDyszeBBuDFuo8wqtqHVo+cnYodHRJsP3BvvbWiBD4OmOlX00ZK7D4K5YArthWK3jZiZ/SP1zBavoRAqq4YC9qY5LJZl99EmNklNMYBhlUQ0tsFiISkt1w=
+	t=1723063947; cv=none; b=qmZn4RwqtzdweJs6/dhYw8nzs+qzdSgUNC9MK7GfgKrdeuOENR02vdvOeYNTGQmJ0jHddyF97fbwCiYNSG218BLiZamxd6zOdYvDiAQREtNAzbA+zQmW9iuROixfipr7jNh4JJ5Rt3L8HC47USbwDC1j4Tt01t91nFEeJN9am3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723051471; c=relaxed/simple;
-	bh=hbD18wpdDV3KchTLv7sj/3wb4UnZsJ7riubip8+IJwk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cGZtSmy9hgM+exLFm93yMJOQny1FHuHpfXbeOMqt5c8pyTj1UgMEEkDlGxg+oOqrSOZYIuEJ0qkMnIhWBVCSvajyxH/OkUpS/WWrvyAcIgvtPD/Fm2KovKcHYgiOwmMPoYD0aOyYQdRKECEW2Hh4m0f3t3ZQMd5X0EKLPlEEEkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nw4pgZTe; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1723063947; c=relaxed/simple;
+	bh=oj70GTHHWvPsRBx5GczXvZFla0MTvPyt6ASgDnA5YR4=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=Uff0Vz8pxxMH4FsN8c5MKBBGd/1DGRyD+ge/2YmCf8H6M9fU1xugCY34nQANRcJ39rrJTwh+d+HVCPbKhyJJDTywftY8hA5O9/MQnc22JU5TKvpSR9ln3S538pr4XznkJnnd6TvjPdHj2vHbudhGirdHLPAurgLrLM1Ss4dlJ0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dSqNjpDl; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nw4pgZTe"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88FDAC32781;
-	Wed,  7 Aug 2024 17:24:27 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dSqNjpDl"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A930C32781;
+	Wed,  7 Aug 2024 20:52:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723051470;
-	bh=hbD18wpdDV3KchTLv7sj/3wb4UnZsJ7riubip8+IJwk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=nw4pgZTefnO7avtCPMVQstyX97iC462m7FD5w1dXh1fkQ/9mPKlLNNubZx+ZfUJQm
-	 qOo5lAf28VGGdcDSymjMKCjtZ6neqLnoUc7K5WqomruIBbvguNyDJFerncqQMljwoJ
-	 WjFthV3FTjv7bpxyp6maMFk2m05chP1pj7KfdLA4bcjzbdSyDbpS/oB4KuGuzhwLaI
-	 I7AdlivDTr9CYDb3T3kyak8ECjTX17QqCJLAsFsqJ3485alabUTCAuDPnUCMUrMnZA
-	 atW0HBtQnXcf6YP5McBSV13XHPqQeYv5og5UXvj4mjujnGK/6HbUBOnsw40FEeE/2J
-	 yixW1fYez22+g==
-Date: Wed, 7 Aug 2024 18:24:25 +0100
-From: Conor Dooley <conor@kernel.org>
-To: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Chun-Jie Chen <chun-jie.chen@mediatek.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH 0/3] dt-bindings: Convert and move Mediatek clock syscons
-Message-ID: <20240807-affair-dad-33a8762606c6@spud>
-References: <20240807-dt-mediatek-clk-v1-0-e8d568abfd48@kernel.org>
+	s=k20201202; t=1723063944;
+	bh=oj70GTHHWvPsRBx5GczXvZFla0MTvPyt6ASgDnA5YR4=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=dSqNjpDlDZBAyB5EyI+LYsy7nnQHn/jUtw+F7FvPM7rvlnD3UXSqGabVUw5efHwVH
+	 k5vH0uEo8Y2W8dkme7QQfWmt0paR8bSNMcHB8tOD/H3X9HJsJeauh8hX3cJq3BptqX
+	 pFESMPq7witMNuohNEbAfOreIk+LxPd+cQJvJk1yIYhpYNje1tSs2JxueA3vhikZfU
+	 JvnLr2m9W4CK7P6N8PUcc6g6FY74fnJF8jYqI/ZG8JnOW6bCXcD0cHbgT0PAGU0O4Z
+	 DT6Z0lUu7o6rae9S7SAwj4PZTLlyS8Cvde6DxzwFWVm6zHtY24YP5HZd73lHrwxZ/V
+	 h/AGuKTz41S2g==
+Message-ID: <a0c8bb91f1645d1769e4cd2945bf36f8.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="REeeJpUvoCaayRRY"
-Content-Disposition: inline
-In-Reply-To: <20240807-dt-mediatek-clk-v1-0-e8d568abfd48@kernel.org>
-
-
---REeeJpUvoCaayRRY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240807075714.2156445-1-arnd@kernel.org>
+References: <20240807075714.2156445-1-arnd@kernel.org>
+Subject: Re: [PATCH] clk: renesas: fix r9a09g057_cpg_info link error
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Michael Turquette <mturquette@baylibre.com>, linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+To: Arnd Bergmann <arnd@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>, Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Date: Wed, 07 Aug 2024 13:52:22 -0700
+User-Agent: alot/0.10
 
-On Wed, Aug 07, 2024 at 10:58:52AM -0600, Rob Herring (Arm) wrote:
-> This series converts all the Mediatek syscon bindings which are clock=20
-> controllers to DT schema format moving them to 'clock' directory. The=20
-> existing schemas in arm/mediatek/ which are clock and reset controllers=
-=20
-> are also moved to 'clock' directory.
+Quoting Arnd Bergmann (2024-08-07 00:56:58)
+> From: Arnd Bergmann <arnd@arndb.de>
 >=20
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> The rzv2g-cpg.c driver unconditionally links into the r9a09g057
+> one, but that may be disabled:
+>=20
+> aarch64-linux-ld: drivers/clk/renesas/rzv2h-cpg.o:(.rodata+0x440): undefi=
+ned reference to `r9a09g057_cpg_info'
+>=20
+> Use the same approach here as with the rzg2l variant, using an #ifdef
+> around tha data.
+>=20
+> I think both drivers would be better off doing the abstraction the other
+> way round, with the platform_driver structure defined in the most specific
+> file and the common bits as a library that exports common functions.
+> Changing it that way would require a larger rework of course.
+>=20
+> Fixes: 42b54d52ecb7 ("clk: renesas: Add RZ/V2H(P) CPG driver")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
 
-Acked-by: Conor Dooley <conor.dooley@microchip.com>
-
---REeeJpUvoCaayRRY
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZrOtyQAKCRB4tDGHoIJi
-0gT7AP9dwMq7I7wZCotZ1n+Gjx12a1KtqSo4cnqfp4j75rBYDQEA/xBDTFpSj9qX
-KmtHZQWDrYgsoR4KuFTOZ+ZG29l9awc=
-=Jukv
------END PGP SIGNATURE-----
-
---REeeJpUvoCaayRRY--
+This is https://lore.kernel.org/r/20240805095842.277792-1-prabhakar.mahadev=
+-lad.rj@bp.renesas.com
