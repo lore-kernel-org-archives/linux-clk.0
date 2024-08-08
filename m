@@ -1,62 +1,61 @@
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEEA718FC84
-	for <linux-clk@vger.kernel.org>; Thu,  8 Aug 2024 14:11:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2609418FC95
+	for <linux-clk@vger.kernel.org>; Thu,  8 Aug 2024 14:11:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723126291; cv=none; b=XD2ZGxpxqN5CDjl8fytdIoAVLrmtv48iJ46su1mRiTapxxMzGn1RyGweKsEJ8a2roRFsS4tmqihUgsqZNlHTbnABGNYXU23ajDFHhso6tk01279SrN5E+sxixQMgtts44Pt9l0seLJwaF1ZAW0hbxHQftUhHOICa7/F1044s79M=
+	t=1723126291; cv=none; b=cS1pV4ubiUnFSODShlK6bUdG5O/4NeIGTJ5SjFQYt7fHG+7a0y7SrzXFY04k3p4qXovhArVPWoUShsEMIHH02M8kkYj1u5B9Ed52gmrrna8wlRFdXc+kglrDd1XZzlUSYp+nbxpu2Pratbq4/ASB2zE6mzMA6h2zJVRvfFsIa5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1723126291; c=relaxed/simple;
-	bh=3MuovDtIRZorURIU9tYKQJVq47VGHfGnfR9ISQ9xJW8=;
+	bh=nXzI2w3ThoiSRcRj8fOXuTW+n6yOdH+9/0PqUvo2i28=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=H+7aPKdDULfpygeyTk6oHZUMCPd4z7MlvBQ76WtzcPxWhDXXp6+VA8SESrhavH1iWcX6SEFPKWmgf6vXabrzqi0T75ekDSjtrcUKmVdgOf4+6KFAuXS65ahS1sA10dw/H2P4l0up96yUNqUXYJiHnZolLiD5x9tWlEap+4FZgM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=i4UbOf7X; arc=none smtp.client-ip=209.85.208.41
+	 In-Reply-To:To:Cc; b=O4In5W8jLIAMbxWLGZ5m+sHIV/YMFExvRhjeDCFmh6h+v/1TlpurEzDD59o//TBG+W5PlyNr6DgB+AT7DUqMMJOHlOJnQsBN3GykkYXhTmVSSOHhBeSewu33QAZyn83lOa+KT6qU48eK2klTIGUrvHwvgfvT6eZt+NyMw0u1U4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=q+WL0U4t; arc=none smtp.client-ip=209.85.208.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="i4UbOf7X"
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5a10835487fso1355162a12.1
-        for <linux-clk@vger.kernel.org>; Thu, 08 Aug 2024 07:11:27 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="q+WL0U4t"
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5a309d1a788so1021460a12.3
+        for <linux-clk@vger.kernel.org>; Thu, 08 Aug 2024 07:11:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723126285; x=1723731085; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1723126286; x=1723731086; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=EZspTtdY5QAEUSn7UgNMVbYIWDm0rZtsqchGrqjMzsE=;
-        b=i4UbOf7XFrads6UM1zUFEbfG/SGLvSy9Xq2zomKpC15uYENR302QQh7u20VEeMYv92
-         OrDZMlWA8iVQkAW23EYVKGDIdwpmbPAGQctM4SYbWlSBXtxUkoKC2BLIwaY7hIE178tY
-         W1E7pubEFsV//D+XNBJJu+dU19hq9MPQAbVrJ9W6s5X68eRE05te9abrECkz9b0dJDPL
-         7tyZodblcFlO3zyllrXGbO8M2xMuX4mcEY5hZk9vL7MIx/6G/rsId6p8shKbKwmUIb+C
-         s1cuJQI/JrBEgCn6JAwAA36NbmdMepDeQRG3PoXegcaEszWpWwWOY6wSuYzs5FQ4rp8z
-         LrRQ==
+        bh=g4eCyKnwzwhvgvotyhGHB+vsH3GCQ4YaY3HQS5YaZiA=;
+        b=q+WL0U4t6EwBL8eNlK2/FmWUZC3P8s5m8MYyNFffPuvqw81ona0TYd66H9P69RIJjy
+         cScCavcVbUVUjXGu/6XWoE/WW0zsgcJiWe20ucTkilRKArEdmghn+S+AjeQV1GctjZjl
+         ISCsatkLjJfPCwakcJAHAs6Ke1jN7Of2TWIJuM4srKKZLNmmVZBqWsvmMAMO+24q2qu9
+         dBoQn1O1ir1EgDgVDjmemQJxIDkzzeN+4BHo6UMqm2VP5TXgPfMkpot3TnAcPfU8b1lX
+         8b1W2g/AQWV82kytzqN7vgIEdbavkFrBa+jrbt66rv1kklaDN4ZHojtCFfZFJfJmbbCI
+         RtGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723126285; x=1723731085;
+        d=1e100.net; s=20230601; t=1723126286; x=1723731086;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EZspTtdY5QAEUSn7UgNMVbYIWDm0rZtsqchGrqjMzsE=;
-        b=jRnTsYQ2gbwB6tNZrQha83zKqB/d7SAEeyQyRVsrziS4zgMuUahit9YshJotVloTmN
-         rHLejK2oYNv7amBBNwEb2mJvlI/Jhd9SPVPuJe59qequfSWsBAzJOyn9gK8NCvTsLGFw
-         8Rzqz/hCJYjTnJL08W6c/EudwsYhHDVhA+DUC5h9Dd8WRmlL3JFM+OOv9Q5WhiTHOTqQ
-         T/kIK1Vxg2aDIH7cNsr9KEtFqPgrMVhnMwC7BFus603gPhMpjqx8L1poblt3eEy24GQM
-         l7k9yJYy/aMBi6lzNP5aoF7wFBO4rJGKbhu/5V1Wfdx5c1ZzfPK+6qJbgAcP04ZpgWzJ
-         4odg==
-X-Forwarded-Encrypted: i=1; AJvYcCW1yTAxPB/8ZmqNfk2mIU9pexOUGd4ehEEg5ncCV+vgrBJSnIRMjY0MRmlxz3IBhvqSFp3/ClifYOhJ/HEdI7+io4h7mlSQeN9i
-X-Gm-Message-State: AOJu0YxME9AnkTnFpKQpqHPWIFDU78j53cCaFxcBZD71wnUmGXEyU4k+
-	EWf5uUQVLXD3VQjH4OKsnomrSxQtTKI/c8uKz/zVxJ6ojqbwG0mzmCyE32REN/AoFu6TK3/DWAY
-	+Y41qKQ==
-X-Google-Smtp-Source: AGHT+IHNM0523YZN7FUzZaznT4lLi+UUQ6lIisgSbrEP+7eTyr4/ucborIocaVgNqxpxXRdnhPG6mQ==
-X-Received: by 2002:a05:6402:51d0:b0:5a2:3453:aaf2 with SMTP id 4fb4d7f45d1cf-5bbb21a433dmr1559817a12.10.1723126285323;
-        Thu, 08 Aug 2024 07:11:25 -0700 (PDT)
+        bh=g4eCyKnwzwhvgvotyhGHB+vsH3GCQ4YaY3HQS5YaZiA=;
+        b=TK5IFqe2CIR7gd7a5wi/1Op5RVdMPNEzVfVd/fxUWxhf4+VaCnCfGS6NNam7nqhFdH
+         1tEGEj2ffMYoVfcO8m/SdjDbhVCmVlYYREfUbo9d4bfSUzNiNxl3M+nWe4yRP35bDc7Q
+         +W9HxlGNVVROkPnaHU27euMFUHk6bo0zmXWwKWYq8RcL586oAnGL6hFBy1oxI1ZldNJk
+         b3J6gXFA21ZO5HHH+eFj7fnl/QpPevhbdqFqHiMDRVSk9H5+K8OdaBzZAcAVnawZ+Mf+
+         BzXbl+1Z42xpj/XmVjnTe87EgN8XGTB7KCkN8IpJtcu/Pph09BMDrozNK+oITduqNa/z
+         C+4w==
+X-Forwarded-Encrypted: i=1; AJvYcCXY2/Zz8bG61VEX0uEcUx+XMxyV5tLqoWD6Cj6TA+GDPoNOUq99DmZHCh7J4fDGrcpThS65KfPDFdb66VT6NlMDFTRODqSA+nTF
+X-Gm-Message-State: AOJu0YxT2Ooz6GcQciLnr/Izj5C4KHMaNcf3NwTXP0EjVn6jPsbHjxlp
+	OR4KmYvlHH602WiCsKixmlmGF5aIrQZEPxa1GUORtluPxs7hXre1R9PbgCPO/IqE2vu90fKajVy
+	7J/HQkQ==
+X-Google-Smtp-Source: AGHT+IHLyR3mIPR0bVi3zK5Pu+MOQMUFddYaWH9c8BVGPZ8CiQyaIW7/W5phTXQL3+7VzYauXFuUYA==
+X-Received: by 2002:a05:6402:1e93:b0:5a3:3cfd:26f7 with SMTP id 4fb4d7f45d1cf-5bbb2409945mr1779672a12.32.1723126286215;
+        Thu, 08 Aug 2024 07:11:26 -0700 (PDT)
 Received: from puffmais.c.googlers.com (64.227.90.34.bc.googleusercontent.com. [34.90.227.64])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bbb2c29f79sm671761a12.33.2024.08.08.07.11.24
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bbb2c29f79sm671761a12.33.2024.08.08.07.11.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
         Thu, 08 Aug 2024 07:11:25 -0700 (PDT)
 From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Date: Thu, 08 Aug 2024 15:11:32 +0100
-Subject: [PATCH v5 18/20] clk: imx: imx8ulp: drop call to
- imx_register_uart_clocks()
+Date: Thu, 08 Aug 2024 15:11:34 +0100
+Subject: [PATCH v5 20/20] clk: imx: drop imx_register_uart_clocks()
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -65,7 +64,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20240808-gs101-non-essential-clocks-2-v5-18-11cffef0634e@linaro.org>
+Message-Id: <20240808-gs101-non-essential-clocks-2-v5-20-11cffef0634e@linaro.org>
 References: <20240808-gs101-non-essential-clocks-2-v5-0-11cffef0634e@linaro.org>
 In-Reply-To: <20240808-gs101-non-essential-clocks-2-v5-0-11cffef0634e@linaro.org>
 To: Michael Turquette <mturquette@baylibre.com>, 
@@ -86,28 +85,118 @@ Cc: Will McVicker <willmcvicker@google.com>, kernel-team@android.com,
  =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
 X-Mailer: b4 0.13.0
 
-The clk core now does something similar for us as part of
-of_clk_add_provider() and of_clk_add_hw_provider() and this i.MX
-specific call isn't necessary anymore.
+There are no users of this anymore in the tree and the clk core
+implements something similar now, we can remove
+imx_register_uart_clocks().
+
+Do so.
 
 Signed-off-by: André Draszik <andre.draszik@linaro.org>
 ---
- drivers/clk/imx/clk-imx8ulp.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/clk/imx/clk.c | 72 ---------------------------------------------------
+ drivers/clk/imx/clk.h |  7 -----
+ 2 files changed, 79 deletions(-)
 
-diff --git a/drivers/clk/imx/clk-imx8ulp.c b/drivers/clk/imx/clk-imx8ulp.c
-index 535b6364ca7e..5531e51a1e80 100644
---- a/drivers/clk/imx/clk-imx8ulp.c
-+++ b/drivers/clk/imx/clk-imx8ulp.c
-@@ -385,8 +385,6 @@ static int imx8ulp_clk_pcc3_init(struct platform_device *pdev)
- 	if (ret)
- 		return ret;
- 
--	imx_register_uart_clocks();
--
- 	/* register the pcc3 reset controller */
- 	return imx8ulp_pcc_reset_init(pdev, base, pcc3_resets, ARRAY_SIZE(pcc3_resets));
+diff --git a/drivers/clk/imx/clk.c b/drivers/clk/imx/clk.c
+index df83bd939492..5f998e56a4ed 100644
+--- a/drivers/clk/imx/clk.c
++++ b/drivers/clk/imx/clk.c
+@@ -154,77 +154,5 @@ void imx_cscmr1_fixup(u32 *val)
+ 	return;
  }
+ 
+-#ifndef MODULE
+-
+-static bool imx_keep_uart_clocks;
+-static int imx_enabled_uart_clocks;
+-static struct clk **imx_uart_clocks;
+-
+-static int __init imx_keep_uart_clocks_param(char *str)
+-{
+-	imx_keep_uart_clocks = 1;
+-
+-	return 0;
+-}
+-__setup_param("earlycon", imx_keep_uart_earlycon,
+-	      imx_keep_uart_clocks_param, 0);
+-__setup_param("earlyprintk", imx_keep_uart_earlyprintk,
+-	      imx_keep_uart_clocks_param, 0);
+-
+-void imx_register_uart_clocks(void)
+-{
+-	unsigned int num __maybe_unused;
+-
+-	imx_enabled_uart_clocks = 0;
+-
+-/* i.MX boards use device trees now.  For build tests without CONFIG_OF, do nothing */
+-#ifdef CONFIG_OF
+-	if (imx_keep_uart_clocks) {
+-		int i;
+-
+-		num = of_clk_get_parent_count(of_stdout);
+-		if (!num)
+-			return;
+-
+-		if (!of_stdout)
+-			return;
+-
+-		imx_uart_clocks = kcalloc(num, sizeof(struct clk *), GFP_KERNEL);
+-		if (!imx_uart_clocks)
+-			return;
+-
+-		for (i = 0; i < num; i++) {
+-			imx_uart_clocks[imx_enabled_uart_clocks] = of_clk_get(of_stdout, i);
+-
+-			/* Stop if there are no more of_stdout references */
+-			if (IS_ERR(imx_uart_clocks[imx_enabled_uart_clocks]))
+-				return;
+-
+-			/* Only enable the clock if it's not NULL */
+-			if (imx_uart_clocks[imx_enabled_uart_clocks])
+-				clk_prepare_enable(imx_uart_clocks[imx_enabled_uart_clocks++]);
+-		}
+-	}
+-#endif
+-}
+-
+-static int __init imx_clk_disable_uart(void)
+-{
+-	if (imx_keep_uart_clocks && imx_enabled_uart_clocks) {
+-		int i;
+-
+-		for (i = 0; i < imx_enabled_uart_clocks; i++) {
+-			clk_disable_unprepare(imx_uart_clocks[i]);
+-			clk_put(imx_uart_clocks[i]);
+-		}
+-	}
+-
+-	kfree(imx_uart_clocks);
+-
+-	return 0;
+-}
+-late_initcall_sync(imx_clk_disable_uart);
+-#endif
+-
+ MODULE_DESCRIPTION("Common clock support for NXP i.MX SoC family");
+ MODULE_LICENSE("GPL v2");
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index aa5202f284f3..314730f848f7 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -11,13 +11,6 @@ extern bool mcore_booted;
+ 
+ void imx_check_clocks(struct clk *clks[], unsigned int count);
+ void imx_check_clk_hws(struct clk_hw *clks[], unsigned int count);
+-#ifndef MODULE
+-void imx_register_uart_clocks(void);
+-#else
+-static inline void imx_register_uart_clocks(void)
+-{
+-}
+-#endif
+ void imx_mmdc_mask_handshake(void __iomem *ccm_base, unsigned int chn);
+ void imx_unregister_hw_clocks(struct clk_hw *hws[], unsigned int count);
+ 
 
 -- 
 2.46.0.rc2.264.g509ed76dc8-goog
