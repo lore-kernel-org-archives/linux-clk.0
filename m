@@ -1,111 +1,123 @@
-Received: from sonic311-22.consmr.mail.sg3.yahoo.com (sonic311-22.consmr.mail.sg3.yahoo.com [106.10.244.39])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58A9E12C7FB
-	for <linux-clk@vger.kernel.org>; Thu,  8 Aug 2024 06:46:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=106.10.244.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E570C7464;
+	Thu,  8 Aug 2024 07:05:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723099607; cv=none; b=hAGkdaBrmxfEF/+pylbM02o96sVuwk/zBj8xBPkfjgsJmKrrxAN/XJzL6U2D9IHJjRMOmCNapbjJlPi4PvUwmH3HM8x/MMcvwZ/hhao11TDFwFF4iPS711UReP1UwFmHmshqPV501o7tM7V9heUA3JbdV6rYV4Uf7zkJXreULMM=
+	t=1723100752; cv=none; b=XBxwdYAEaqAhEKa6iPIRukYbXGqADX6dkxPsNF/qf0de2XlhVgMVBXNdCop7AQEPfksXBCPX1bYelAWSeLm8mnN6jTrxf33dkAA3dpVY6pZPmTV8pxx2ZW9kg65WTijnI4wVEVBT4TXgLBgxwiEfKbrbnvbT91jMphMQMZqO4p0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723099607; c=relaxed/simple;
-	bh=nFyODy9OicDiOkfnpYUJWbFCcOEef8Vr45lsPx9Sphg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=EIoP3GAFiq4sgfhpyky9KaysXDvbrxD+DUJUHjLGujOX/aRk2wU5eiA64ynDeHtYyyef+13dqvPref/VVTWjYAzaMWHES9LMBG3BYsM90fj2KtQ7aichl2WicdbCy1hfgfmjXP0VzepUJItSCAGeAKpbkMi1FGAmfp8Ep0hVnuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com; spf=pass smtp.mailfrom=yahoo.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=VFMtbf/7; arc=none smtp.client-ip=106.10.244.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=yahoo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yahoo.com
+	s=arc-20240116; t=1723100752; c=relaxed/simple;
+	bh=EzFiZKxPsEQuaNjgeAbYCXjKPTN375hUD2GmtOEBwQQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=lCij4oZ28ZLCC5HIVWpb0CPPdP6+pYlHlEkcVmSqFxQelFkpkwz/u540nq+yRSIPELvcc6LgkEyHkMagdKc5aXIU9w/IhRpxMh9iToJonxqexKbR3nGr57GjAFdcEqlj0Tzxu5i9vNwRZjK8xB7cRBsz9Geew4vJAe2Vxcojgls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QiVmDixD; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="VFMtbf/7"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1723099603; bh=nFyODy9OicDiOkfnpYUJWbFCcOEef8Vr45lsPx9Sphg=; h=Subject:From:To:Cc:Date:In-Reply-To:References:From:Subject:Reply-To; b=VFMtbf/7d8pmxjlstuEMP88phM85sov62g4rkOHgoBzOGiZ4zzV1WVRNK6kvjBfDDOSGiTOXH7cSqVtdghE+C74R3QX8rzCC1pdndm/97Y+5uradSRu2bLptW8u1RQ1Uwg0p1qOTnPdGMWBbRHk8JdelJBXnbqIMrUUSBNL7v9py6wbZLOmAjtO9vvydH8kl8whysqvATNG6w1wUMM6puKxmgrS1PHwNrK2jZ39jNt2CNHqUUVvr/RX6WSaS929gvlZcGfWyoij997W4pcMpa+Je5GnikH9pXms9ubvTwC8PhyA/K709ultT/yk5sTIoDZ0BftbI8IjKdEv16CJYyw==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1723099603; bh=ti0hfzIJEMa/KzoKWHM9qTLzOZ2LX3g0tDC6c1F3ViF=; h=X-Sonic-MF:Subject:From:To:Date:From:Subject; b=o5HSsx+6aOcOTfG/wPqkG9qwjHDZfbVohWyCGJovzGOgO1UYRLtRJPquHM29YEguZbfvQoAlaGuVavK4mi5cufmOxChrlsSMoUYG1M2fLswZ4VbuCTY9YoFEu/OCKD5tiKXWp+J9g0hld9S6G/VutOrGa8nugNhtpHA5xlLpgwTjaUrjmQhotEFVOVk/wGjTlIrhvRbHjx+4XM8ccmDXy7bawAiXK5Oh+5frALRWopOlA0G56Tw0F8cB4/DAjMBW1NYBgh4fTrvddjkEIQZ2KXPac3uhOMM2yo0ltzig6VKpqNNHaQgwnCgobR8yjZUIawoY7IX+APgoIQtqb/foeA==
-X-YMail-OSG: J2t94YcVM1kZc21kIsisdiHmdbjcEUmVEDL_sWygRWmmxjWs5ahrGv8A2H_BLGc
- Od887yX5fFT2Pd7W4be4PcmZeWjrBg9QAzhgJnGXgE8vkAUr620UWu_xU5hEFsW3kG20HbMkbiT0
- yDWtKbSKx0jKTaF38otS4PS3kD4uaQZMquydu.w0V8GSmlB2G_eNTaUVFgIztqPhgrZ9X5ZknTLA
- JYmbXhHIMzRBjGrnlwQpW3WqGcC52f.n9CbvNgYnaeKLsgcGvwtMI6nDmmCQPXkjxuuVMqx0TmP.
- XpOiga9xv05YzHVjkGLh.fB5WMbaREaFEBWfA3l4cZ6CUQUVk0tow6ra4GtS6gBxEo_yVF2ke.55
- p8FoihpYSR3_Xc8meKiW.962ZGsNtK7jG2Ady4_thLFgd4wEEbmcalKtgRyJUVVEjLu1Bqt0e7Hd
- T4YdPuy4hWAPl5pYiVxrBK9.cn..0U8ffc6ruitasl7gBxsTpyiH2WX_seEFB2zTJNxSyC92gkpy
- zCPLbOccLLJZcQosU6Gm4FhwD5g43LJ3xY.FNGtgureUifn4mCIiDEgo3PNjj9e7mBFP5NG6Tngj
- _q1QFbks5Fkwws2.rz25tnoXyh6pYAAvPj989LzxGCkkC10LbmrDoFq3J04z3HN.kKkNht7RRvjf
- bxpbU3w.qxUOjIWcaBaWrk.3u1s8SzwT4qPEOpOuMd3SAowu0WEV1dld35v0lCIhy_XYktcVsDo3
- aiO20JDMKcIkvX53qnqgSA1DDatIu.Jo9GWviHkLjuqsRAEhzeoif.Pkjo_RGY5JSOMLNpjdRjHc
- BKZogzaXb16GAEql7.YfmwCyCUr8Bnh5AiFl4eDkckI94gGH.Q2pvjjiA830FchnzrwlugdbrHH4
- e_aaeKG2zG4PtpivSUpU99Pq3L77ZVY.R3IX6fHNCgF1clcTLun5owEAhNUcT1p5r41uwIGHd942
- F1Mn1w8Xpl5Z7K9oGfTq_72IufvK87yRWIkOHKEqOSA.ZOYEmj07rAK20pV6aVUrimXOnHVgi5vm
- Q6hx29anzjabc2uOLOggRDnWfxivG91XgskBVQBnmukFR5YF.vP2ryJQwZJhXUqRQBBGXRMRFKdN
- GEagUQnazRdsSnrK81H8Q6JHSo8qFeINF1n5S0EVpMj_oPN4KRBuWtapniAe.OdWuSeqfJNeo1X.
- dwhKMd4kUXOC9CjyS7kqNPvVfQ7ElANRj8sLpQiWRHhCAdgOe6wGbARpclz9DlC8BR6B0vdj3_9a
- pIFAE6Y1gev6Dkr_bl9sCbJHn4.CnnRIOnFa5u4CYZGsN0jIMaZCh1u97A8_HkosifYb0LvGNZZz
- iAh3AiHAM.ChDnbiIkVx5tA1HN4CC8zg4Wbqe_tyL11A3Q0pm5IvEIVrnzzbghARq.tvzNQ8c2YB
- 2tybuWpMWY3vClJ50J.Y02hafFCbsS6cokMJDEUTGvCn6z2UPcYQwGwdYu1MbJugnfFkkbj8rMIr
- yQ7tPdiGBwmYJQEmT30eTS.5nwVEcuQhSfSzRx9fqCO_Sad_.iwzWO.FLBwYhlz3do_qt4BTZ2EQ
- JnqzsTy.Nz0GjTHFRgwoeKom.HGTaUDyF8cEJ77lq9nYlOUXIUZJTKtK_2tBFHEN.LnJsb1vGOyf
- 31uNSCZZx97nP7dul13WXFAISRY1VsJ0NaRulcNDLb4jMD._YIk7wqVU5DuNuyQBuIQpej86nHFk
- xEW_413IZMdH_KBHlG2Q9bjqA8obTW4.evQzIqKstBLnbg9V5mFuVZIYdRFAEa.v31Q9X9PSv35C
- BngHkr5jidkvjqMV0Brjq0TJJmthuwOmEFnhE2yXaBCn5fJ6XLR4EiN3T0jNFFoKSPjJpnK9Maem
- NO1BZW.mSLkSVSiustaMPML7suRXXnTcbYTT4BfTI0.8Hxy09EdsjPiVlhT4keDzW_UTSi0dwmMh
- p1kJIDbGlP9XufkH1hXSYY5vQGW.auH0AgtnwRmwF6N6MPUf9LJ.9sXgalYJjOz7mjLPOFJVumJv
- CrIL5MxREOSUbLETZpQ.TrOzz6xyJGOLwj4gOD235RMVWHwM2foDIceeWTAqI2llG.4f8puXhcB3
- kt8U3lIu55USb7hQyeytVHaTTkcBr9AWu4cnz75nRPEoIqFucJrhfWSFwhFYz3RnBFGQ7rBqJW2V
- 7eUjMK2aN1NuhDIfqceyEYYwzVcHBHgykhyJDnQShWN1uI8BUmTVtwxNtcN5oasecvo.YZjemXrT
- z2eyPsBgJ2UpAjSHTJvIHkB77XSJhUIxrk9tlezILdumEo.YlB0haDhGCg40ZbmTYiex6ZTgEwG8
- -
-X-Sonic-MF: <kwangson@yahoo.com>
-X-Sonic-ID: 770b26d2-00b8-470e-8f18-6d930f6e4f3a
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic311.consmr.mail.sg3.yahoo.com with HTTP; Thu, 8 Aug 2024 06:46:43 +0000
-Received: by hermes--production-sg3-fc85cddf6-2xn87 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 0de0f388ebe636e1f855371397096932;
-          Thu, 08 Aug 2024 06:26:22 +0000 (UTC)
-Message-ID: <83d53dacdfaa4ccb3b1034702b1f6075e67743b4.camel@yahoo.com>
-Subject: Re: [PATCH v2 0/3] dpum clock support for Exynos Auto v9 SoC
-From: Kwanghoon Son <kwangson@yahoo.com>
-To: Kwanghoon Son <k.son@samsung.com>, krzk@kernel.org,
- s.nawrocki@samsung.com,  cw00.choi@samsung.com, alim.akhtar@samsung.com,
- mturquette@baylibre.com,  sboyd@kernel.org, robh@kernel.org,
- conor+dt@kernel.org, tomasz.figa@gmail.com
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Date: Thu, 08 Aug 2024 15:26:19 +0900
-In-Reply-To: <20240730111535.135301-1-k.son@samsung.com>
-References: <CGME20240730111628epcas1p30976a7c1192749ff7997be5685d52c49@epcas1p3.samsung.com>
-	 <20240730111535.135301-1-k.son@samsung.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QiVmDixD"
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 477JU4Ef015806;
+	Thu, 8 Aug 2024 07:05:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=Bdfq9xJH01fnZJ8StpOQr+
+	JBpQkW/Z8nW3PQkAdZnGA=; b=QiVmDixDAK3Vtkz/+gUxDGAmgX7QCvjgCHQxbW
+	1xyt8uP7wXdlwLELfxBZk7qgzuK2y4oOzRwin/9pjJvx8Om0AkNGNEu0cZ2ndJ4Z
+	cC47WsBmXBQuNrNBypAw3i9drGtQcL9xHyb8Tw/e32d/jCAUfNf4VtBE2EcYFTM/
+	cgSTKZr0lSwCh012R0c6q70+GNZnwE5FMu5RPdqJ2vj7F/YgUKCMbq8BVckMhgS9
+	iWwwIpSfmspZ5TkNxdIpsZWXQcehN1FToApJ8bUjdsompRGBwZqMoNvSaODM+dn4
+	LXnvzhObC6GHou64PAm2/5gWOOf6D1AyR88yWHDJYi6UjVQQ==
+Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40sc4ycvcj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 08 Aug 2024 07:05:15 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA04.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 47875Dwh026314
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 8 Aug 2024 07:05:13 GMT
+Received: from hu-imrashai-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 8 Aug 2024 00:05:09 -0700
+From: Imran Shaik <quic_imrashai@quicinc.com>
+Date: Thu, 8 Aug 2024 12:35:02 +0530
+Subject: [PATCH] clk: qcom: clk-rpmh: Fix overflow in BCM vote
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mailer: WebService/1.1.22612 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240808-clk-rpmh-bcm-vote-fix-v1-1-109bd1d76189@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAB1utGYC/x2MywqAIBAAfyX23IKZB+tXokNuWy090ZAg/Pek4
+ wzMvBDYCwdoixc8RwlyHhmqsgBahmNmlDEzaKWNssoibSv6a1/Q0Y7xvBkneZBqY1hXNTXOQW4
+ vz1n/365P6QP4cHkSZwAAAA==
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, David Dai
+	<daidavid1@codeaurora.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>,
+        "Imran
+ Shaik" <quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Satya Priya Kakitapalli
+	<quic_skakitap@quicinc.com>,
+        Mike Tipton <quic_mdtipton@quicinc.com>, <stable@vger.kernel.org>
+X-Mailer: b4 0.14.1
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: Zjc-zyJ8TjWMw63AUym1j8hqzkValrC9
+X-Proofpoint-GUID: Zjc-zyJ8TjWMw63AUym1j8hqzkValrC9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-08_07,2024-08-07_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 bulkscore=0
+ spamscore=0 clxscore=1011 lowpriorityscore=0 impostorscore=0
+ suspectscore=0 mlxscore=0 malwarescore=0 mlxlogscore=882 phishscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408080049
 
-On Tue, 2024-07-30 at 20:15 +0900, Kwanghoon Son wrote:
-> DPUM (Display Processing Unit Main) is main dpu for Exynosautov9.
+From: Mike Tipton <quic_mdtipton@quicinc.com>
 
-A gentle ping..
+Valid frequencies may result in BCM votes that exceed the max HW value.
+Set vote ceiling to BCM_TCS_CMD_VOTE_MASK to ensure the votes aren't
+truncated, which can result in lower frequencies than desired.
 
-> =C2=A0=C2=A0=C2=A0=20
-> This patches enable clock for dpum, sysmmu(iommu).
->=20
-> Signed-off-by: Kwanghoon Son <k.son@samsung.com>
-> ---
-> Changes in v2:
-> - Squash patch 1,2 to make headers with schema.
->=20
-> Kwanghoon Son (3):
-> =C2=A0 dt-bindings: clock: exynosautov9: add dpum clock
-> =C2=A0 arm64: dts: exynosautov9: add dpum clock DT nodes
-> =C2=A0 clk: samsung: exynosautov9: add dpum clock support
->=20
-> =C2=A0.../clock/samsung,exynosautov9-clock.yaml=C2=A0=C2=A0=C2=A0=C2=A0 |=
- 19 +++++
-> =C2=A0arch/arm64/boot/dts/exynos/exynosautov9.dtsi=C2=A0 | 11 +++
-> =C2=A0drivers/clk/samsung/clk-exynosautov9.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 | 83
-> +++++++++++++++++++
-> =C2=A0.../dt-bindings/clock/samsung,exynosautov9.h=C2=A0 | 11 +++
-> =C2=A04 files changed, 124 insertions(+)
->=20
->=20
-> base-commit: 94ede2a3e9135764736221c080ac7c0ad993dc2d
+Fixes: 04053f4d23a4 ("clk: qcom: clk-rpmh: Add IPA clock support")
+Cc: stable@vger.kernel.org
+Signed-off-by: Mike Tipton <quic_mdtipton@quicinc.com>
+Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
+---
+ drivers/clk/qcom/clk-rpmh.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+index bb82abeed88f..233ccd365a37 100644
+--- a/drivers/clk/qcom/clk-rpmh.c
++++ b/drivers/clk/qcom/clk-rpmh.c
+@@ -263,6 +263,9 @@ static int clk_rpmh_bcm_send_cmd(struct clk_rpmh *c, bool enable)
+ 		cmd_state = 0;
+ 	}
+ 
++	if (cmd_state > BCM_TCS_CMD_VOTE_MASK)
++		cmd_state = BCM_TCS_CMD_VOTE_MASK;
++
+ 	if (c->last_sent_aggr_state != cmd_state) {
+ 		cmd.addr = c->res_addr;
+ 		cmd.data = BCM_TCS_CMD(1, enable, 0, cmd_state);
+
+---
+base-commit: 222a3380f92b8791d4eeedf7cd750513ff428adf
+change-id: 20240808-clk-rpmh-bcm-vote-fix-c344e213c9bb
+
+Best regards,
+-- 
+Imran Shaik <quic_imrashai@quicinc.com>
 
