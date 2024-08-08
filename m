@@ -1,57 +1,57 @@
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E34C11487C3
-	for <linux-clk@vger.kernel.org>; Thu,  8 Aug 2024 09:48:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A689189F2F
+	for <linux-clk@vger.kernel.org>; Thu,  8 Aug 2024 09:48:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723110517; cv=none; b=jZCQFJgKhqp6V2lUP3xqcwuduPQa6BMNKGierhibc8zEwjuDFtPLD4pmJfPOoep0UnIL3xv9nneM2TB81uFR8Q2e7oT+awFK26fPUmAMN7r0PttY1ErbZRdKBnJ+YfgEssM7+VupKRAVTwgVhpCaYvS0UlVo5DJE2CfkZmWIBCw=
+	t=1723110519; cv=none; b=oSFbpELAL9kK/Hq9RRPZhL4jgLXvLjBZI4KKh+JRcPE5JEF0StuWU+khaBT9tru0b/w242R1qIikDlbXFXt+XKF2SYZzWXyG952BJfTwWRbWPpX0YYQq0B5px+0t+tV5SZeK9DvITFlBf76gr59RY8yjtj9hSvNMFO7nfddXbHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723110517; c=relaxed/simple;
-	bh=Oz/4FlxMMsehe7Ce7PmjbmGoqd8fGJ0XyCfS5Cq97YA=;
+	s=arc-20240116; t=1723110519; c=relaxed/simple;
+	bh=t4Oi6qrhhn59SzTgCUimyxAUyoyLx7ZjHE7Smpgi1Wc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=K3/3gQW7sr6yeEXz6ytQWSZFmdlm25FPlEKV+WqpP1LVDMOoL2l+BeSyJ7CLwJ+qE8PePPXuaoWJHqjHP0Af74HqLvBjjyEiGiE2dFW+bfd6uzti7KVVhaoub5pjliyACvOIO76OZS10DX4cbxz8clH7/gteC5N7oZiVr039iD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=skKLWAmh; arc=none smtp.client-ip=209.85.218.47
+	 MIME-Version:Content-Type; b=fF86tL28XQX6A4iU+r/374Dw+ZgqMngOCA4mKsvGeDHVl4R27Zc3DWK5FMANqxJuy5V49UO/mcTFs4SBXKXKS85H4S9+Exr+vYDg1HXknAG371RFohO9RZH9pvw4WRvRHOxyzfX9Mu2S1RtsCnlciAqn318lVnaCs2Evd9aRaI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FRxeQddw; arc=none smtp.client-ip=209.85.218.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="skKLWAmh"
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a7ac469e4c4so122133866b.0
-        for <linux-clk@vger.kernel.org>; Thu, 08 Aug 2024 02:48:35 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FRxeQddw"
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a7abe5aa9d5so100648966b.1
+        for <linux-clk@vger.kernel.org>; Thu, 08 Aug 2024 02:48:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723110514; x=1723715314; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1723110516; x=1723715316; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fD4Fbo0bLU0vBdFevb+9sQ5UqHYLrq4vOipE19dCblo=;
-        b=skKLWAmhLk5POTtwZQ7hRsw9SNTCYJ2yZ5NpfEhxgTcw1mWeT7OK72VwIhGYbGSk7V
-         KU18HBq8WppB5iKxZD0ZCnRWu2sqR38NJbf5L9LthiDZzHaNBWcRgB8PVvQ6bvPPMA7/
-         iJjJxAmbmwtqpa/ur0f8mXZ6rELcQE3b1AdbzUy8Klqvur3+AqaVPzPS+JD5UgGWfxfL
-         cAxm1unZJOJgMsi5DDuYR9dujC2TklzY1C9pAWm+2aHo73ZDkGINBfUzFmbnUr4ouQ3F
-         2bBszitgZXcgaS9WG0Brt1GR75Rw8v4eDkEe66wiqwqP5J/In2BaC6gbcJSMvjuKPRCL
-         HN0g==
+        bh=XTXsOp2Q2opTktrwF5DF7pgCqzg6HCRDQctoBjhR6tk=;
+        b=FRxeQddwVbqWOW+u4SFetDSrpWXuf3dnjFmETwobPf+DaVuMkNQDFIrQpHxN0myNJU
+         rGJwvn/DIkeUaexE8kJBzyTB0w1wX44NtPZFbQMln/ZSfu484EkeclOBkr8COgJZ1r3D
+         /hAX+2klHbdHApL4qlbfcmd+jX5Cu+Liq0haecav2JPdxCJSPwQIRnAX30mFIHx37Gir
+         Ju0jh81NnB21dI51cioCCzD55eq1bsOb2VJGAdO1l+L/VsJ7190E+mfnc3NW7eZKlQXq
+         TPha6zoVJZy5muczJ/ZopcT7Il2xYSmUZH75USyyTGVVi1minM6lXjI106CmwwrKCGaY
+         5Nrw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723110514; x=1723715314;
+        d=1e100.net; s=20230601; t=1723110516; x=1723715316;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fD4Fbo0bLU0vBdFevb+9sQ5UqHYLrq4vOipE19dCblo=;
-        b=EFQ4GyeCLhQYH1xOaJRgN4AcyH09hgRguHyGSjYwItEdvU5wc82Ap719ZE65/wvoX1
-         Z5HBiYEkYaowWv59QJd/78vLLdkc8p01mE65QYK0ZdUoMzDKPOnaW+3GGTHQlOcQp3gd
-         QC/xPbor8Pnz3icpcAQejPqK547vzlY12lgsQVc9UdK5z+Bw/7UM3KmhfnRrxdjVpOqt
-         F2Nl6S79Px+otna9R7VnR0AsNBN2zJu247s3DbGRGKmbPpB7RQT1cOsW0AO4Ccy9iGg+
-         5/V981cklHk2Sgu3Yt/PhCW9bCL56hzUTm4X+r9qRBhHVzLs+k3R9kWCQzo2VS07Mnwj
-         YG9w==
-X-Forwarded-Encrypted: i=1; AJvYcCXwUqZVR00II4YcIlesQ310FKQ7BYBY+qTpAcD1NH4sd5gsPFVxEZtfV41D/Zzgnqllvov0CQrkg/apP5/FLvQvpbExDQer+lVV
-X-Gm-Message-State: AOJu0YypTlh/W2YOU716roIUJR2QM85XURaL2z6yNVErnHT5cLmOWCM0
-	E6l3ByLveZl2qz7N5s/pN6fTWIgkogbXMwdWgxEj8ekj62ACWv6PK/O8+v+gyM0=
-X-Google-Smtp-Source: AGHT+IFJgY0IwRIPW1jKkuP1Rul52UIi5cW5qomgars0dlYdYtx6uT0furoQPy4Yo+tQkmj7tqJo2Q==
-X-Received: by 2002:a17:907:3da3:b0:a73:9037:fdf5 with SMTP id a640c23a62f3a-a8091ed1fecmr91422366b.6.1723110514125;
-        Thu, 08 Aug 2024 02:48:34 -0700 (PDT)
+        bh=XTXsOp2Q2opTktrwF5DF7pgCqzg6HCRDQctoBjhR6tk=;
+        b=mehtpVa/AS+bgWqGCYg+NkhQ1+lxBm1F8nY3B10IRwRIlVFLZRjMrmWI2rSzvKFDyP
+         zEV1H3QC+SbcQbqcWCjY2vCBcjKfpO1kifUP1yTee9OiyWusqd/mjQJS79rAx47th94F
+         AyB7ZY+AswH8J/uxG+YU/eSKhB/8HIjK2I9i5AAIt/hk/n1jUemsmReuGE5QtIf6mslZ
+         Z3Mc0zeDdmFZj5fm5zkMXxYaXnKKNlZhzjeOvyvlYc6kbhy76b+Uzr3f4O2ar/UGAz8c
+         v1TjREXi6sGpKScmy2L7fGJrVNS1cNRMBIgC3x0s79iZbeyI8AW+AElXX8Q2eeTXghXu
+         JrtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUDQtQbtipRpUYUp3wP4hZagy8gDSt33g1jjguPg3SkkGpmcmKUBVy6Jy+fjnWeSwHGqEZmJ362iQIbASlS2mb43K6SoAi7tuBa
+X-Gm-Message-State: AOJu0YyHWVxHaagE6zPNt9O+GD00iXBUvqq2GhzBn9eKt6vcZO1ZTDMv
+	uFolBUksjXjjIlTrMEC9+QVYQWyEPOaTihamXzvgl8BLQM260A1HIYkk9LqDCX8=
+X-Google-Smtp-Source: AGHT+IF3xoL+kb9I8cnpq9kAoMaPYR5z6cI5EjyOnhfkzCaXFnxM87pPrTSXdTQKrmq9f9JMKookJw==
+X-Received: by 2002:a17:907:f788:b0:a7d:a29e:5c33 with SMTP id a640c23a62f3a-a8090d7d46cmr92028466b.28.1723110515904;
+        Thu, 08 Aug 2024 02:48:35 -0700 (PDT)
 Received: from krzk-bin.. ([178.197.219.137])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9e849a0sm719911966b.186.2024.08.08.02.48.32
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a7dc9e849a0sm719911966b.186.2024.08.08.02.48.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Aug 2024 02:48:33 -0700 (PDT)
+        Thu, 08 Aug 2024 02:48:35 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: Krzysztof Kozlowski <krzk@kernel.org>,
 	Sylwester Nawrocki <s.nawrocki@samsung.com>,
@@ -63,18 +63,17 @@ To: Krzysztof Kozlowski <krzk@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
 	David Virag <virag.david003@gmail.com>
 Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	stable@vger.kernel.org,
 	linux-samsung-soc@vger.kernel.org,
 	linux-clk@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	devicetree@vger.kernel.org
-Subject: Re: (subset) [PATCH v2 1/7] dt-bindings: clock: exynos7885: Fix duplicated binding
-Date: Thu,  8 Aug 2024 11:48:25 +0200
-Message-ID: <172311048730.12963.13971450848126539088.b4-ty@linaro.org>
+Subject: Re: (subset) [PATCH v2 2/7] dt-bindings: clock: exynos7885: Add CMU_TOP PLL MUX indices
+Date: Thu,  8 Aug 2024 11:48:26 +0200
+Message-ID: <172311048731.12963.10299933550707027039.b4-ty@linaro.org>
 X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240806121157.479212-2-virag.david003@gmail.com>
-References: <20240806121157.479212-1-virag.david003@gmail.com> <20240806121157.479212-2-virag.david003@gmail.com>
+In-Reply-To: <20240806121157.479212-3-virag.david003@gmail.com>
+References: <20240806121157.479212-1-virag.david003@gmail.com> <20240806121157.479212-3-virag.david003@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -85,24 +84,15 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Tue, 06 Aug 2024 14:11:44 +0200, David Virag wrote:
-> The numbering in Exynos7885's FSYS CMU bindings has 4 duplicated by
-> accident, with the rest of the bindings continuing with 5.
+On Tue, 06 Aug 2024 14:11:45 +0200, David Virag wrote:
+> Add indices for missing MUX clocks from PLLs in CMU_TOP.
 > 
-> Fix this by moving CLK_MOUT_FSYS_USB30DRD_USER to the end as 11.
 > 
-> Since CLK_MOUT_FSYS_USB30DRD_USER is not used in any device tree as of
-> now, and there are no other clocks affected (maybe apart from
-> CLK_MOUT_FSYS_MMC_SDIO_USER which the number was shared with, also not
-> used in a device tree), this is the least impactful way to solve this
-> problem.
-> 
-> [...]
 
 Applied, thanks!
 
-[1/7] dt-bindings: clock: exynos7885: Fix duplicated binding
-      https://git.kernel.org/krzk/linux/c/abf3a3ea9acb5c886c8729191a670744ecd42024
+[2/7] dt-bindings: clock: exynos7885: Add CMU_TOP PLL MUX indices
+      https://git.kernel.org/krzk/linux/c/59baa83e30f82b74b4c7dc07c20eac9899b6c0c6
 
 Best regards,
 -- 
