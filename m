@@ -1,49 +1,61 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EA9D18E768;
-	Thu,  8 Aug 2024 14:04:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5804518C32F
+	for <linux-clk@vger.kernel.org>; Thu,  8 Aug 2024 14:11:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723125879; cv=none; b=qBGp6ThF8Rn317LrwQMxu7LiI5wpam4+kNLO8JcoK43No7nOWDETzIaAEkhCOj9ucrj7eKltQcJiAHnjIecu3TdK6/xLbHtYc8JdzUqvstKS6sYEZxMfl7UJ6rewM+gqlIlyYiUVZAz/cE3BuYCtzX9K3j6hMRWyA9Q9pB64qqc=
+	t=1723126280; cv=none; b=nbj9d6mP50Irpf9UNdjCtpQ+Mc89WhboJT6aPTXQNdIE3xJGhcVpvLOqYvULp7f2ZFg+lvbcptAfMpdnzFUgeE07T5RRI2UaFzSGGkutGA2XqgKmdz22RiyTKcYqB7S0AJIMiz1dxj1nYdnacdcvrcaL2Fa2x9FbRf1Xm8+6K8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723125879; c=relaxed/simple;
-	bh=6oUq/Dzs0hO7kZwOks3HUIxjCjlf6sj6hTn2ghPIYtI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=NMa0v0sOPQVbUAb9wrQvyugC5fKzPc+v5mOY2WafRL30kHMUYBd+519oCD/UckO5XHe4aw2QQgh8vCwgtGAqFB1BSrJgx5OIh8m8I+2uGFaD7YL1h0ubQqatAch6brlnSh2bYB/bppP+ntqDumUIOfJqxqxcSlK71DsJuj+ViIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=lkT/FPDx; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1723126280; c=relaxed/simple;
+	bh=95AlyDaddNiZMDEmIhO07GExNxqtyCYVTGs9vpQrW4o=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=K3F9UD2lipasGSI0/BA2E/kFA4bl9eamZUbGeqWBOfSYYbEEUNWuwK/LCSYw+H/ove6qOWCH1FfGf5ZNyhcIZ/ym0Puydfh8uAcoq8aPTSZk58na22uzXhWkFU4B9hk7uk5cxZCI833z+2SV/zej4G/wwLMDG9FvwajDHnSMqU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jXEuY1x5; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="lkT/FPDx"
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47882eRh015930;
-	Thu, 8 Aug 2024 14:04:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	J/lMlXA8r/d43ifs0PdwoQ8yyRuKy5017gxJ94fZy4o=; b=lkT/FPDx1Kp9Asus
-	wsnpR9bBvYMFznM1mzQyqWO91rWazAHi7ZsSeDQbVpnGv+g+SWPjKx8ff7llauEw
-	SFEIXfMKkhLh+nENPqybtlwaWd/ZT7qS72f30FJcjqF93jQS+9iJZ319QHZkAP4E
-	I3/6hsVfi3KrMnAn7K839Q5HlUwTDIax/lnSqbYLn8k2dL/uXddBPfuBdHUT6T3S
-	oTOlOWWleu0uhzr+cGC9zhJTcK4JaS5U9J07jhmWFbITJt81WOUQ7zXvhRmF+zBA
-	P8h2IgajlE2QxhcUPDmOcfvnVfBAjpXRrzF4tLY6jtyRbO1+JlHlg+BbB0Bw+Lnt
-	6LnOJw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40vdupjj09-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 08 Aug 2024 14:04:19 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.17.1.19/8.17.1.19) with ESMTPS id 478E4Iic021443
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 8 Aug 2024 14:04:18 GMT
-Received: from nsssdc-sh01-lnx.ap.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 8 Aug 2024 07:04:13 -0700
-From: Luo Jie <quic_luoj@quicinc.com>
-Date: Thu, 8 Aug 2024 22:03:15 +0800
-Subject: [PATCH 4/4] arm64: dts: qcom: Add common PLL node for IPQ9574 SoC
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jXEuY1x5"
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5af51684d52so1208974a12.1
+        for <linux-clk@vger.kernel.org>; Thu, 08 Aug 2024 07:11:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723126277; x=1723731077; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wieDPHjSPi1ZLsan7+O0Z+D8NjoHSP8ahDa0aetrxpk=;
+        b=jXEuY1x5jqvkjYo/pjvy57/hMeQsF5QoEm2BXzXtMpl+Vhw9JyAN28KqPe8AaaO1jY
+         FXCnF6O1k3psGedbj2U/ynlcMpJjInFoIL051vPDbIFnjxfuCjlTMn68BvwGId3bjT98
+         MORRsSBrlS516z0wK0a4yCodInvIzEYSbIYZEmbZCX2NBFzR37ZIGvfNUL3AfBi72YWL
+         ecxfpDD9JZrxd9MN96c5YY1YqozVtkkqdPlRVYsoVhIhDkbfgF/SiUpnDYeEKtl8UiXI
+         5CFD1yGxEoZxXQ2KGSrfCk881CxXwJV9zrUJFP1uDrOqL2YEhPg8/mgVhY3J20PX1rsx
+         KMFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723126277; x=1723731077;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wieDPHjSPi1ZLsan7+O0Z+D8NjoHSP8ahDa0aetrxpk=;
+        b=ij5vrkkUQf7BJfLezbpua91k21LY70iWmIr3PnqXD+a8kDyw7ut+LSmgBznnROtLqU
+         PlGvsA7XYBjs/eS+DZzTtZn42lh4ytFAsZ1YDIrDLqr0lM2NGWHsGZJNRYENr+NTZGtD
+         ybsJskxMZKVTxHvpVv5l9QDtuO1Wynxkzee9qklWQhO/vlwTwf2QfhzU4OFCJm+ZE3al
+         LQVwJ6fs5KIyS6mTG/z8Z1mHbKKgxUc+8f8PICVKWpOrFzE9f1y3joY2Jd2Hyx3+yvkv
+         rUbCLFD2u/OUK1Ti48ygWjsVUIb1k3Zzx5ai1PoPqhhQWxZkfELwfYpoSxySp5FmOvN9
+         cM2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWZqxbjvAGUW++K9CYv46imIX/n60llLN2RulqaX2N7yeKeHdhbZPL/vZcSbCHX5WYJ840Kyws9KNy6DfaWtmZ9NGO9elTzLNDE
+X-Gm-Message-State: AOJu0Yxn7+4hnQ0+aasGh3Q3MuUSzM6qSyg+uzLiw+Y18J7tCCSiBjwq
+	+WiHQUj1m8+dQrK222Lqeyfkpvgy8AP2oKTaxBKHF5kTXmMXl4LoTXXspqPE6YMPxTkeK8Q5O0/
+	F4CGRgw==
+X-Google-Smtp-Source: AGHT+IHdqxblFw4szqgN7ofHM/QU50Nzna/i6RgnPnDiQEz7rQf3FzXP5OyidprWJ44HWP8e2NZg+Q==
+X-Received: by 2002:a05:6402:11c8:b0:5a0:f8a2:9cf4 with SMTP id 4fb4d7f45d1cf-5bbb2234eacmr1617101a12.25.1723126276628;
+        Thu, 08 Aug 2024 07:11:16 -0700 (PDT)
+Received: from puffmais.c.googlers.com (64.227.90.34.bc.googleusercontent.com. [34.90.227.64])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5bbb2c29f79sm671761a12.33.2024.08.08.07.11.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 08 Aug 2024 07:11:16 -0700 (PDT)
+From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Subject: [PATCH v5 00/20] clk: help OF platforms with their stdout
+ (earlycon) clocks during early boot
+Date: Thu, 08 Aug 2024 15:11:14 +0100
+Message-Id: <20240808-gs101-non-essential-clocks-2-v5-0-11cffef0634e@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -51,132 +63,156 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20240808-qcom_ipq_cmnpll-v1-4-b0631dcbf785@quicinc.com>
-References: <20240808-qcom_ipq_cmnpll-v1-0-b0631dcbf785@quicinc.com>
-In-Reply-To: <20240808-qcom_ipq_cmnpll-v1-0-b0631dcbf785@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon
-	<will@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <quic_kkumarcs@quicinc.com>,
-        <quic_suruchia@quicinc.com>, <quic_pavir@quicinc.com>,
-        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>,
-        Luo Jie
-	<quic_luoj@quicinc.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1723125835; l=2716;
- i=quic_luoj@quicinc.com; s=20240808; h=from:subject:message-id;
- bh=6oUq/Dzs0hO7kZwOks3HUIxjCjlf6sj6hTn2ghPIYtI=;
- b=lAJMcgS6Z6cKh/npSDbrdnekoDcIdADOLJXTKGiJGyh1/eMoqGuvc0e9z40rz+p5E3NZktyEH
- hln2N4J1e4nCDLuSMjzD6/OIoe9fxWmCSI+pP/BnjQHBR1KQuz5ExFy
-X-Developer-Key: i=quic_luoj@quicinc.com; a=ed25519;
- pk=P81jeEL23FcOkZtXZXeDDiPwIwgAHVZFASJV12w3U6w=
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 2asR_xadCZBUOqdhFpQvLYRZ1oYI21Yv
-X-Proofpoint-GUID: 2asR_xadCZBUOqdhFpQvLYRZ1oYI21Yv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-08_14,2024-08-07_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 adultscore=0
- priorityscore=1501 suspectscore=0 phishscore=0 impostorscore=0 mlxscore=0
- clxscore=1015 mlxlogscore=945 spamscore=0 bulkscore=0 lowpriorityscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2408080099
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAALStGYC/4XOsU7DMBCA4VepPHPRne2koRPvgRhc+5JYDTY6R
+ xFQ5d1xykCZOv7Lp/+qCkvkok6HqxJeY4k51WifDspPLo0MMdRWGrVFaxDGQkiQcgIuhdMS3Qx
+ +zv5SQEPnjO5xcHTmXlXiQ3iInzf+9a32IPkdlknY/aFkEJ9NT7qho+1a0kDgUhBugrjyHS8vc
+ 0xOcpNl3M0pliXL1+14Nbv86xzpwdxqAKEN/twHtBjI38P73WrvNf1As1UzhI4ZA9uO/2nbtv0
+ AZwaD7VsBAAA=
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Peter Griffin <peter.griffin@linaro.org>, 
+ Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Sam Protsenko <semen.protsenko@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>, Abel Vesa <abelvesa@kernel.org>, 
+ Peng Fan <peng.fan@nxp.com>, Shawn Guo <shawnguo@kernel.org>, 
+ Sascha Hauer <s.hauer@pengutronix.de>, 
+ Pengutronix Kernel Team <kernel@pengutronix.de>, 
+ Fabio Estevam <festevam@gmail.com>
+Cc: Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+ linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+ imx@lists.linux.dev, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+X-Mailer: b4 0.13.0
 
-The common PLL clock controller allows selection of an input
-clock rate from a defined set of input clock rates. It in-turn
-supplies fixed rate output clocks to the hardware blocks that
-provide ethernet functions, such as PPE (Packet Process Engine)
-and connected switch or PHY.
+Hi,
 
-Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+On at least two plaforms, i.MX and the Exynos-derivative gs101,
+earlycon depends on the bootloader setup stdout clocks being retained.
+In some cases stdout UART clocks (or their parents) can get disabled
+during loading of other drivers (e.g. i2c or UART driver init) causing
+earlycon to stop to work sometime into the boot, halting the whole
+system, see e.g. [3].
+
+Code exists in the i.MX clock drivers to deal with that by temporarily
+bumping the reference count of the relevant stdout clocks during early
+boot.
+
+While gs101 doesn't have such code, some UART clocks had been marked
+'critical' for a different reason originally, and by accident
+worked-around the same problem. v4 of this series proposed addition of
+similar code to gs101 to be able to drop the 'critical' flag from its
+clocks, but Stephen suggested to move all this into the clk core
+instead.
+
+This series now does that:
+* instead of duplicating such code to gs101, teaches the clk core to
+  deal with stdout clocks during early boot, similar to the existing
+  support in i.MX
+  This is hooked into of_clk_add_hw_provider() and
+  of_clk_add_provider()
+* updates gs101 to remove the 'critical' flag from affected clocks, as
+  not necessary. This is essentially the last remaining patch [1] with
+  all review comments addressed, from the series [2] that was sent
+  earlier this year, see lore links below.
+* updates i.MX to remove the now-unnecessary platform specific code in
+  its clock drivers. I believe this also plugs a memory and extra clock
+  reference leak at least on imx7ulp, see below.
+
+Note 1: For the avoidance of doubt, any of the above is relevant only
+        if earlycon and OF are enabled, behaviour is based on the
+        'earlycon' kernel command line parameter.
+        As this is meant to also replace i.MX specific code, the
+        'earlyprintk' is also supported (since it was supported on
+        i.MX)
+
+Note 2: On i.MX, at least clk-imx7ulp.c calls
+        imx_register_uart_clocks() twice (once for each compatible),
+        but imx_register_uart_clocks() can not handle that and will
+        leak memory and clock references in that case.
+        The new clk core code handles multiple invocations without such
+        issues.
+
+Note 3: I am not in a position to test any of the i.MX changes and
+        would appreciate feedback. In particular with these changes
+        stdout clocks are enabled when of_clk_add_hw_provider() or
+        of_clk_add_provider() return, but:
+        * some i.MX platforms did some reparenting or frequency changes
+          in the old approach before enabling stdout clocks. I believe
+          they're all unrelated to stdout, though
+        * some i.MX platforms enabled stdout clocks before the call to
+          of_clk_add_hw_provider() or of_clk_add_provider(). Again, I
+          don't think that difference is going to be relevant.
+
+Signed-off-by: André Draszik <andre.draszik@linaro.org>
+
+[1] https://lore.kernel.org/all/20240130093812.1746512-6-andre.draszik@linaro.org/
+[2] https://lore.kernel.org/all/20240130093812.1746512-1-andre.draszik@linaro.org/
+[3] https://lore.kernel.org/all/d45de3b2bb6b48653842cf1f74e58889ed6783ae.camel@linaro.org/
+
+Changes in v5:
+- move stdout uart clock handling from gs101 into clk core (Stephen)
+- update i.MX to drop now-unnecessary code
+- update series' subject due to changed scope
+- Link to v4: https://lore.kernel.org/r/20240712-gs101-non-essential-clocks-2-v4-0-310aee0de46e@linaro.org
+
+Changes in v4:
+- new patch "clk: samsung: gs101: allow earlycon to work unconditionally"
+- update commit message for patch 2
+- Link to v3: https://lore.kernel.org/r/20240710-gs101-non-essential-clocks-2-v3-0-5dcb8d040d1c@linaro.org
+
 ---
- arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi |  6 +++++-
- arch/arm64/boot/dts/qcom/ipq9574.dtsi            | 22 +++++++++++++++++++++-
- 2 files changed, 26 insertions(+), 2 deletions(-)
+André Draszik (20):
+      clk: bump stdout clock usage for earlycon
+      clk: samsung: gs101: don't mark non-essential (UART) clocks critical
+      clk: imx: imx25: drop call to imx_register_uart_clocks()
+      clk: imx: imx27: drop call to imx_register_uart_clocks()
+      clk: imx: imx35: drop call to imx_register_uart_clocks()
+      clk: imx: imx5: drop call to imx_register_uart_clocks()
+      clk: imx: imx6q: drop call to imx_register_uart_clocks()
+      clk: imx: imx6sl: drop call to imx_register_uart_clocks()
+      clk: imx: imx6sll: drop call to imx_register_uart_clocks()
+      clk: imx: imx6sx: drop call to imx_register_uart_clocks()
+      clk: imx: imx6ul: drop call to imx_register_uart_clocks()
+      clk: imx: imx7d: drop call to imx_register_uart_clocks()
+      clk: imx: imx7ulp: drop calls to imx_register_uart_clocks()
+      clk: imx: imx8mm: drop call to imx_register_uart_clocks()
+      clk: imx: imx8mn: drop call to imx_register_uart_clocks()
+      clk: imx: imx8mp: drop call to imx_register_uart_clocks()
+      clk: imx: imx8mq: drop call to imx_register_uart_clocks()
+      clk: imx: imx8ulp: drop call to imx_register_uart_clocks()
+      clk: imx: imx93: drop call to imx_register_uart_clocks()
+      clk: imx: drop imx_register_uart_clocks()
 
-diff --git a/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi b/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
-index 91e104b0f865..26bc2de7f99a 100644
---- a/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
-@@ -3,7 +3,7 @@
-  * IPQ9574 RDP board common device tree source
-  *
-  * Copyright (c) 2020-2021 The Linux Foundation. All rights reserved.
-- * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
-+ * Copyright (c) 2023-2024, Qualcomm Innovation Center, Inc. All rights reserved.
-  */
- 
- /dts-v1/;
-@@ -167,3 +167,7 @@ &usb3 {
- &xo_board_clk {
- 	clock-frequency = <24000000>;
- };
-+
-+&cmn_pll_ref_clk {
-+	clock-frequency = <48000000>;
-+};
-diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-index 48dfafea46a7..ad7789dc686e 100644
---- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-+++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
-@@ -3,7 +3,7 @@
-  * IPQ9574 SoC device tree source
-  *
-  * Copyright (c) 2020-2021 The Linux Foundation. All rights reserved.
-- * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
-+ * Copyright (c) 2023-2024, Qualcomm Innovation Center, Inc. All rights reserved.
-  */
- 
- #include <dt-bindings/clock/qcom,apss-ipq.h>
-@@ -28,6 +28,11 @@ xo_board_clk: xo-board-clk {
- 			compatible = "fixed-clock";
- 			#clock-cells = <0>;
- 		};
-+
-+		cmn_pll_ref_clk: cmn-pll-ref-clk {
-+			compatible = "fixed-clock";
-+			#clock-cells = <0>;
-+	       };
- 	};
- 
- 	cpus {
-@@ -226,6 +231,21 @@ rpm_msg_ram: sram@60000 {
- 			reg = <0x00060000 0x6000>;
- 		};
- 
-+		clock-controller@9b000 {
-+			compatible = "qcom,ipq9574-cmn-pll";
-+			reg = <0x0009b000 0x800>;
-+			clocks = <&cmn_pll_ref_clk>,
-+				 <&gcc GCC_CMN_12GPLL_AHB_CLK>,
-+				 <&gcc GCC_CMN_12GPLL_SYS_CLK>;
-+			clock-names = "ref", "ahb", "sys";
-+			clock-output-names = "ppe-353mhz",
-+					     "eth0-50mhz",
-+					     "eth1-50mhz",
-+					     "eth2-50mhz",
-+					     "eth-25mhz";
-+			#clock-cells = <1>;
-+		};
-+
- 		rng: rng@e3000 {
- 			compatible = "qcom,prng-ee";
- 			reg = <0x000e3000 0x1000>;
+ drivers/clk/clk.c               | 129 ++++++++++++++++++++++++++++++++++++++++
+ drivers/clk/imx/clk-imx25.c     |   2 -
+ drivers/clk/imx/clk-imx27.c     |   2 -
+ drivers/clk/imx/clk-imx35.c     |   2 -
+ drivers/clk/imx/clk-imx5.c      |   6 --
+ drivers/clk/imx/clk-imx6q.c     |   2 -
+ drivers/clk/imx/clk-imx6sl.c    |   2 -
+ drivers/clk/imx/clk-imx6sll.c   |   2 -
+ drivers/clk/imx/clk-imx6sx.c    |   2 -
+ drivers/clk/imx/clk-imx6ul.c    |   2 -
+ drivers/clk/imx/clk-imx7d.c     |   2 -
+ drivers/clk/imx/clk-imx7ulp.c   |   4 --
+ drivers/clk/imx/clk-imx8mm.c    |   2 -
+ drivers/clk/imx/clk-imx8mn.c    |   2 -
+ drivers/clk/imx/clk-imx8mp.c    |   2 -
+ drivers/clk/imx/clk-imx8mq.c    |   2 -
+ drivers/clk/imx/clk-imx8ulp.c   |   2 -
+ drivers/clk/imx/clk-imx93.c     |   2 -
+ drivers/clk/imx/clk.c           |  72 ----------------------
+ drivers/clk/imx/clk.h           |   7 ---
+ drivers/clk/samsung/clk-gs101.c |   7 +--
+ 21 files changed, 132 insertions(+), 123 deletions(-)
+---
+base-commit: 1e391b34f6aa043c7afa40a2103163a0ef06d179
+change-id: 20240430-gs101-non-essential-clocks-2-6a3280fa1be8
 
+Best regards,
 -- 
-2.34.1
+André Draszik <andre.draszik@linaro.org>
 
