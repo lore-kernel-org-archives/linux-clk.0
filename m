@@ -1,103 +1,77 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12C16190489;
-	Thu,  8 Aug 2024 17:17:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 827B384A2F;
+	Thu,  8 Aug 2024 19:43:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723137452; cv=none; b=TpP0OZlUA6nOMBtPwcxJ8quyP6KWxPCnlq/kJsrW09M03FuTlNY2S/c4XUkZjzJCpyGi6MLuus9MVESmQUNNP2U7daplENcs+t31sz0YZx3CCLXyFNFqL6PcrWWsCXYmDLLOzVVDzxQCwnZVWdQxDtZMLuCOfKmJk48PqpSmi2k=
+	t=1723146183; cv=none; b=dTc5NeNkcSoVF+2TZXEeW13znAeECWdlgv0cdUB25brJA7nJlOXQgp5NTKRAF8PygxxVV74kiN+gPzQhn7fqhq13kzI44IMnZ7inJG8eJ0fTAFEtRlVKIrSsDP6NsXAD81yQ18Zl4zl1XWpp+p+sPuEFabJW50jDRgkDFO0zP/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723137452; c=relaxed/simple;
-	bh=+A2ABjowY1uwCXufdD4VYUuq2E3xVfwjhSzZriEGmTk=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=KPszIQYxUuv5jTlMKwyFKtOrNUe4b0SSJT0bxVmmCMIR0Fu5ufiC1l3ZQkWDXDKAH9+HwjM5VAjZ7aU26wb662UcP7or6PaQMuUypD/pAGo3NOcfNXRWZkC0cHtdJzsj1CBA/n9nIz1E9IyGXNSDKUIWTEFYEG4duI7icS+ce9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iLECvuLD; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1723146183; c=relaxed/simple;
+	bh=9kBylOwsE2XpqPwZpP7UXxRgnK2QCC3mH5zU/bOhA/8=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=rVIXVGAOs/eY3zNy1D4YOgmC91qnOxfoBfozE81gBUfxL3o/dVHXSx6rt9CjPMUvdlU3CQOHEwFptRwEiQSVfaXJ/CAuGyuEpI7YL0UJ/rlQgRYNrLuFq1fBKxKVGgWhfj+v3IrMg168ppNmDKTZoCL5UB38CO+c6xSE/CtHgLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pZPVQA27; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iLECvuLD"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 724B8C32782;
-	Thu,  8 Aug 2024 17:17:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pZPVQA27"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E84DDC32782;
+	Thu,  8 Aug 2024 19:43:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723137450;
-	bh=+A2ABjowY1uwCXufdD4VYUuq2E3xVfwjhSzZriEGmTk=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=iLECvuLD2ett8jb54Hpj+bA3hMmCpX512SPRuoJwNpMU0EwfjdgHxc8I9LkcYJnMa
-	 /16hh6Dq5TkhW4DColyYB/N3DUhQu1WfY9kHyLyzGuclkyg3b2VX77D0KEUB/Nf6ZT
-	 xf/8+S71gI9NiaKop7J4Z1FGtB0qINt6tss+bbs6GmUVpMHuU4IyS+EQMG7T84yGoi
-	 6Py0QyweroVTrYqQFYfk6EzHwSnFrfE61//DL+PjvxykO9pUfHL4bgdJ5cK1Z5V+Xs
-	 xzOU03y5M9HM3z9qWR+D5VAdUD9jyA297KR+Gh0yE576P4l07ynZVwoGtEkXvD3+lr
-	 US8cOqlhms30w==
-Date: Thu, 08 Aug 2024 11:17:29 -0600
+	s=k20201202; t=1723146183;
+	bh=9kBylOwsE2XpqPwZpP7UXxRgnK2QCC3mH5zU/bOhA/8=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=pZPVQA27VDNEzHvMGARIHNp8+XE0tf7oYIqC4lgEYl0MZwQtOuvmA66RFi9+0+Z2m
+	 Dxg9PyukCu/cWm1BjI+XUsS+70iRmwQKp8jMdBZbtBEEoIiIx8Ydsn169kRdag4D4R
+	 eKo7Gvc4ao4zE2Q5jVlILriuqI2n7w+0lz9TB1QOi6SregXTrzkdBWj0NJxPIoybcP
+	 ZQYbCUwc2/Ewzbadnj38bu3spDZTwRlUAktQ4oreQ96R+iSrU8vFjPxRaMsIKU4dlV
+	 HJljFaJ8WPMkV3C/DxWBx2o4PaV7KFx2hx1QxsUxgIGczyS1pkZC60/+A2c5K2gOGp
+	 bRQbRJmStJ8QA==
+Message-ID: <a7607f45e26c79f13b846fd0d8284bcf.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Detlev Casanova <detlev.casanova@collabora.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, linux-rockchip@lists.infradead.org, 
- Elaine Zhang <zhangqing@rock-chips.com>, linux-kernel@vger.kernel.org, 
- kernel@collabora.com, linux-clk@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, 
- Michael Turquette <mturquette@baylibre.com>, devicetree@vger.kernel.org, 
- Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
- Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <20240808162258.79271-3-detlev.casanova@collabora.com>
-References: <20240808162258.79271-1-detlev.casanova@collabora.com>
- <20240808162258.79271-3-detlev.casanova@collabora.com>
-Message-Id: <172313744929.1529145.2568982422354325643.robh@kernel.org>
-Subject: Re: [PATCH v3 2/3] dt-bindings: clock: Add rk3576 clock
- definitions and documentation
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240808-clk-rpmh-bcm-vote-fix-v1-1-109bd1d76189@quicinc.com>
+References: <20240808-clk-rpmh-bcm-vote-fix-v1-1-109bd1d76189@quicinc.com>
+Subject: Re: [PATCH] clk: qcom: clk-rpmh: Fix overflow in BCM vote
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Ajit Pandey <quic_ajipan@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>, Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, Mike Tipton <quic_mdtipton@quicinc.com>, stable@vger.kernel.org
+To: Bjorn Andersson <andersson@kernel.org>, David Dai <daidavid1@codeaurora.org>, Imran Shaik <quic_imrashai@quicinc.com>, Michael Turquette <mturquette@baylibre.com>
+Date: Thu, 08 Aug 2024 12:43:00 -0700
+User-Agent: alot/0.10
 
-
-On Thu, 08 Aug 2024 12:20:57 -0400, Detlev Casanova wrote:
-> Add clock ID defines for rk3576.
-> 
-> Compared to the downstream bindings written by Elaine, this uses
-> continous gapless clock IDs starting at 1. Thus all numbers are
-> different between downstream and upstream, but names are kept
-> exactly the same.
-> 
-> Also add documentation for the rk3576 CRU core.
-> 
-> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+Quoting Imran Shaik (2024-08-08 00:05:02)
+> From: Mike Tipton <quic_mdtipton@quicinc.com>
+>=20
+> Valid frequencies may result in BCM votes that exceed the max HW value.
+> Set vote ceiling to BCM_TCS_CMD_VOTE_MASK to ensure the votes aren't
+> truncated, which can result in lower frequencies than desired.
+>=20
+> Fixes: 04053f4d23a4 ("clk: qcom: clk-rpmh: Add IPA clock support")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Mike Tipton <quic_mdtipton@quicinc.com>
+> Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
 > ---
->  .../bindings/clock/rockchip,rk3576-cru.yaml   |  83 +++
->  .../dt-bindings/clock/rockchip,rk3576-cru.h   | 592 ++++++++++++++++++
->  2 files changed, 675 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3576-cru.yaml
->  create mode 100644 include/dt-bindings/clock/rockchip,rk3576-cru.h
-> 
+>  drivers/clk/qcom/clk-rpmh.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>=20
+> diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+> index bb82abeed88f..233ccd365a37 100644
+> --- a/drivers/clk/qcom/clk-rpmh.c
+> +++ b/drivers/clk/qcom/clk-rpmh.c
+> @@ -263,6 +263,9 @@ static int clk_rpmh_bcm_send_cmd(struct clk_rpmh *c, =
+bool enable)
+>                 cmd_state =3D 0;
+>         }
+> =20
+> +       if (cmd_state > BCM_TCS_CMD_VOTE_MASK)
+> +               cmd_state =3D BCM_TCS_CMD_VOTE_MASK;
+> +
 
-My bot found errors running 'make dt_binding_check' on your patch:
+This is
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-Error: Documentation/devicetree/bindings/clock/rockchip,rk3576-cru.example.dts:24.19-20 syntax error
-FATAL ERROR: Unable to parse input tree
-make[2]: *** [scripts/Makefile.lib:427: Documentation/devicetree/bindings/clock/rockchip,rk3576-cru.example.dtb] Error 1
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1430: dt_binding_check] Error 2
-make: *** [Makefile:240: __sub-make] Error 2
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20240808162258.79271-3-detlev.casanova@collabora.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
-
+	cmd_state =3D min(cmd_state, BCM_TCS_CMD_VOTE_MASK);
