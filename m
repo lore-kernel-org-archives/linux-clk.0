@@ -1,96 +1,116 @@
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB1831487EB
-	for <linux-clk@vger.kernel.org>; Thu,  8 Aug 2024 10:15:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1AB6146A7B;
+	Thu,  8 Aug 2024 10:16:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723112122; cv=none; b=rPCS07bh09CH7CmSGQPdE9MTtZHcJ27gkWjJ1XvWtRyj+lUO9aJyKtO2Zm6r8flqorgLFqumGvIHKjW9cJ0kYePMffZKgfPWgbNzZ2reADAuDV0bVcGqvs+QvUpjZE+4VTZtB4jaX/uajHw3oAB+Hqs/yi5poT9echhnK9MRI5Q=
+	t=1723112194; cv=none; b=u/kunp2Bspa8ksYwJfjCyTIlyWjb6yqEyj/9GFQmfOO5dguAA7nAwY+pzDpqBYL5Twvbg7DbHptt2Uk2mMIiiNxsSeFC2JQn2YBvta2EnN8IVOHuntKfIokyIKWQ6mTf8dlrNj2kkZb9Z4w9MLbDKgiJHqV9wOn9pW884HzFZdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723112122; c=relaxed/simple;
-	bh=h9yni8FP8oD8omveTs3RhzoPgoL+8M3n2GqB/6DS6rY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=k2rylUMo1uG2lacMghproPXdXKkidlQ3m6G+OBfW427+7ZArF+TXrH97UtIZEA3PSNH65FxglrAL21wsBwQ4CVOwra07OVOdSOCb29qUxI19i90aoSLB4IIpi7/WB3e36fmuQV8EOxRMuVb2B/gsvNB2HtOeF3VJX1tpW+yKhJQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=F1VcoxOd; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1723112194; c=relaxed/simple;
+	bh=hTCk4wpPzNUni6maFCT90aDu+9oeYO7rJkKxJ0gCKaY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Fk7tkW1sk3FY8LgkP1goa0VTLs/9bOm6ftY/wwF6/2TQuqYt2whKBcjYkJ7NIAM8ah+CxW8QVhmR6EtjFUUDw8RVrq3/OkZyxgJLOphy53yji3AAze2w9hcv+niFV6gufruIZ7ejpVOommSR+YhO5S6JowPW0919ZKHGYaIZ/H0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fp6HRaaz; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="F1VcoxOd"
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-428e0d18666so5380775e9.3
-        for <linux-clk@vger.kernel.org>; Thu, 08 Aug 2024 03:15:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1723112118; x=1723716918; darn=vger.kernel.org;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=uHKU+qWDGf01eQdWksVZpo4JSdzafD6OrXnwsvy06EY=;
-        b=F1VcoxOdaFycAyc9yFVYr/rrjAcDH2KrWkmDgqjQojsxdoZMElbLrsOBR4dZQqc1xb
-         E73qnw/yvKBj1GF2Eb+gIr/s2+X2WGbyK2M07owdrZ/sZwK04LoqQwb672b9X6HyGh+c
-         XlljnWcgwcHdG3ShxxR43U+jgQsQqXal7KQS05JkItYPwO5s8g3JmrCEpFYlmkoBkqSh
-         MlwcHn1nBSwu11INjD4QJ26bgMfZVW8h7PviiBy/GVBy13Owocz/lH2tPF9stEZbHRI8
-         y7LkHBVKBcCqZCxydYdbk4IAV67rPEyBFEGpBYCUVXorUzGxmvBQmuncUMEhTRIUbZim
-         8KuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723112118; x=1723716918;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=uHKU+qWDGf01eQdWksVZpo4JSdzafD6OrXnwsvy06EY=;
-        b=tEvXLIaDhydwePL+JClDry5i1l1V37E1QDt0WBCnQEZlExuwNhJaQVIkhPhZ2dJgbF
-         Tj8563pOOO6ypw7ygxclxfcGXtbnIgRxCSVxaf7NsYOt0XE85tmk6zPWZo4Cd1BkKwWa
-         XCAm54aBeZ8H9GZqZ+62tKyN+Aj3taawgypl4azuBJWQ+8Z/4o0C2f3bbVIdxq5x9jKp
-         hSdiZ57kHBX3z3xn1/6RW0ChWIpGsMmhURKP6VzI4UiR4Ql+vlgnhDrhWS0LMB82I9GX
-         qK7SKka/10cPiSbzbSSBM+ltpJ3u/1dgX+FmqptBXT+pGu8J1vE1tCnFQ/X9LrNxdWea
-         blPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUta7x47f8V1H8T3+eOhP01dRwkY1nC8j0IeelZsvg8iBQmkouORhsJNlyTIF/ig6O6Zg28hTF7+lbruy7s/otsfGn8fCP7qlEC
-X-Gm-Message-State: AOJu0YwtkbZArYFT0Y29a0pEgrsApPWUqqV74R6EJNtnmyazBeIhvSmu
-	zmXj6xXDHmpbVX3pNV8hRl1vLTw8vgQyv3lIiFWSQWqNEokxJhafHMI4reAiRg0=
-X-Google-Smtp-Source: AGHT+IH20/85w4Ip7Pzi8RePzbDVoqHc01uOa2goRjWmjwxMDR86wk62jwXwrKpXG/AxjdYpn/0xog==
-X-Received: by 2002:a05:600c:1d05:b0:426:6e9a:7a1c with SMTP id 5b1f17b1804b1-4290af0fc7fmr9739075e9.25.1723112118023;
-        Thu, 08 Aug 2024 03:15:18 -0700 (PDT)
-Received: from localhost ([2a01:e0a:3c5:5fb1:ae7:4e79:8821:15db])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290c74a96bsm15015415e9.24.2024.08.08.03.15.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 08 Aug 2024 03:15:17 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: Jan Dakinevich <jan.dakinevich@salutedevices.com>,  Philipp Zabel
- <p.zabel@pengutronix.de>,  Neil Armstrong <neil.armstrong@linaro.org>,
-  linux-kernel@vger.kernel.org,  linux-amlogic@lists.infradead.org,
-  linux-clk@vger.kernel.org
-Subject: Re: [PATCH 1/8] reset: amlogic: convert driver to regmap
-In-Reply-To: <11e8dd92e07674133d8a291cc016c314.sboyd@kernel.org> (Stephen
-	Boyd's message of "Thu, 18 Jul 2024 12:29:13 -0700")
-References: <20240710162526.2341399-1-jbrunet@baylibre.com>
-	<20240710162526.2341399-2-jbrunet@baylibre.com>
-	<b12ac6b2-cb46-4410-9846-86ed4c3aea1f@salutedevices.com>
-	<1jv813makr.fsf@starbuckisacylon.baylibre.com>
-	<f5bc9590-f37e-491e-9978-c1eab8914c30@salutedevices.com>
-	<11e8dd92e07674133d8a291cc016c314.sboyd@kernel.org>
-Date: Thu, 08 Aug 2024 12:15:16 +0200
-Message-ID: <1jle17xqvf.fsf@starbuckisacylon.baylibre.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fp6HRaaz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F1B6C4AF10;
+	Thu,  8 Aug 2024 10:16:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723112194;
+	bh=hTCk4wpPzNUni6maFCT90aDu+9oeYO7rJkKxJ0gCKaY=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=fp6HRaazTuZz4DwS2+M+WZXJp/6qPoCJM5AygmmHTNVJ2Gnb+JTNPRNz4DhFH5V9B
+	 ZRNj2wER0OMXRYYSTTUPb9ZmbslYitcAyNCX3EF2CLcokTDcMABHyGl3FHmTIC9P/A
+	 ys3iSIZrO4dGEwznuV9ZDRudghuXbiT13x5qsh3tVWk22jL22YhbjYbCUb+BfGTmpy
+	 BOFjl33m2hIDxdP/qCcurhBFdmRt1ZaXJ1btXzfovJMGyDY8kq005PdH5kdUdDFFbb
+	 aUvHODvDxlL23++F3gxF+2wMal6s7aBvAYoBUdglcrviRGTz0CZezfrfESqs7p0FdC
+	 Ye/jJ2f2gueYQ==
+Message-ID: <f12dd5c4-3b0f-4997-8368-1eef919d0cb0@kernel.org>
+Date: Thu, 8 Aug 2024 12:16:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] dt-bindings: reset Add AST2700 reset bindings
+To: Ryan Chen <ryan_chen@aspeedtech.com>, Lee Jones <lee@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+ Andrew Jeffery <andrew@codeconstruct.com.au>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <20240808075937.2756733-1-ryan_chen@aspeedtech.com>
+ <20240808075937.2756733-3-ryan_chen@aspeedtech.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240808075937.2756733-3-ryan_chen@aspeedtech.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu 18 Jul 2024 at 12:29, Stephen Boyd <sboyd@kernel.org> wrote:
+On 08/08/2024 09:59, Ryan Chen wrote:
+> Add dt bindings for AST2700 reset driver.
+> 
+> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
 
->> 
->> Full analysis is following:
->> - using regmap_update_bits() instead of writel() is incorrect because
->> this changes the behavior of the driver
->> - regmap_update_bits() should not be used here because default value of
->> regs isn't taken into account and (_apparently_, the doc is terse) these
->> regs could be updated by hw itself.
->
-> Maybe use regmap_write_bits() instead.
 
-Actually regmap_write_bits() performs an update behind the scene.
-You'd still get the undefined read value making a mess AFAICT.
+No, that's not how it works. Aspeed already sent it and recieved
+feedback. Do not send duplicated patches, without history/changelog. You
+keep avoiding discussion, do not reply and then send something again
+without changes.
 
-I'll stick to the usual regmap_write().
+Respond to feedback you got and implement it.
 
--- 
-Jerome
+NAK
+
+Best regards,
+Krzysztof
+
