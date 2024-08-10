@@ -1,144 +1,180 @@
-Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6552416DC17;
-	Sat, 10 Aug 2024 12:39:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723293600; cv=pass; b=mFsVYWWWCVliZl/yi+XBmkPPxW2MN1UiMHqxqx8oRqCYis6KuplHmd89tmAZcj+DnZGDgtNGju6bvKrsmW0wj7PxUeE4ymQA5sPIy0OxF3an8yAm52Imz2+9t7Ix9134adoLMTMPFIlwk0TX8L8ST3Lla0eX0ZC0UqMz4vQMlRA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723293600; c=relaxed/simple;
-	bh=x8CC5Hli2VvYPqemvO/qI3GDNvN29YYbcLL0ZYScO44=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=XNRBTnsQXdv9VvMEw75Bigja7aQqHmmnAPyT/ktNoppqWJvTymLO9YSG8WLQw/+OgjnWiXwDyKnyJ9aR05liDCk9zgtNufMxFBBcYDmPbSDbAlhfERMBlvSNUrLHjxF2XbTIFPmzHvdzVXCsWEcN0XuoaNoXcDTfbzrilmpqS/s=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=dnrTkd9S; arc=pass smtp.client-ip=136.143.188.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4225413D889;
+	Sat, 10 Aug 2024 23:54:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723334054; cv=none; b=GNVee2FO8ds+7zmBkYVojRo9ydBWXBB+94M85QN4zshGlk7lzpWuHi3J4cM9/TKFaZTB4pznUY0DU+p9X0wThmt86w95uzahJ9C8CQiM01PUozAF4NhfOjw39hfumM2WNXuwUcteRPCRxBkSOeGX5/R3vq/jUIsUfoLWlFLCZm0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723334054; c=relaxed/simple;
+	bh=cdUzVchCaRhLUnErCbZsZUKbLBcgxHpYnYNip9ALhpI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fUBxSeAtlfgLLlEOLrUvhxFnhZh0HnwvJB2iMeF1oBDaA43Rc8v1hSHZxFjKhB3mc98IVKbVfH2FBBQE+oHotHsfooGm8XkxZe8sohgb7U593t6CpSuIhleibtgazXa6g9xKQAS/dr1pTTfaH1nSoKC20ZBZ62oMdN6EgRhllYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IiTDnyS1; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="dnrTkd9S"
-ARC-Seal: i=1; a=rsa-sha256; t=1723293583; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=QyH4Jwd6Yg/lZk16RtIbLj59ifl+n7IAOWwawevdrzZkyGl1vf/HWs8oVam+J1/Y0O9e5YBfwYWfvvAsltY382lXRV1NeSnrAtEkXrxfxvWwt18aV3Mud78OTpOAcijmaiCbUuOrRI/Oe/nhTRmVVJGjQj/gH3Zstv0u/vwhVuc=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1723293583; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=x8CC5Hli2VvYPqemvO/qI3GDNvN29YYbcLL0ZYScO44=; 
-	b=QlNoixQi4+N3pIHjUYAGhfZjBJsdQPo6yr08em3TTlsZGUDf6S0X7Ap91R3mcMV0/9Zs2/rBKMpKiBg+ctmqM/99FWzCsGhRv2TAsx791VA32X2UqTIFKzLO62E4IgT6Mje6Av2o4zR90sYPS3nw7WvY7tHqRHo7ZvVsBxEeths=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=icenowy.me;
-	spf=pass  smtp.mailfrom=uwu@icenowy.me;
-	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1723293583;
-	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=x8CC5Hli2VvYPqemvO/qI3GDNvN29YYbcLL0ZYScO44=;
-	b=dnrTkd9SWhYGrJ+/Tk3ZPwexyIF2n15RKjCfxksh12KUze0cwI75TaqgT/t7W/td
-	dvZ8NsNXuqDXbGA9rbMbUANzHfYttZl1YMtwK8TVRNPMGp5M8cbMMRQEHwHemP80poD
-	ioKw+dOSz8vJVFaHEVfskxE34ya9ZK8JFHMjpjggv9klLmLCb9v4kFC61JLAeSF4Fr8
-	fI8qQCNhCKRnmWYvVkGrRq2SlDEQ/rfPnEEk2wG0p4C9xpVu0Gf9XSc3nA57sfHXiJG
-	znOxFqKoVNOcx1efLcfJX8OgeB4dhR4xSbuwuy8tae7KUHJd32r2rh9FKKz1279d/rJ
-	J439K7+2HA==
-Received: by mx.zohomail.com with SMTPS id 1723293581631329.92947824948465;
-	Sat, 10 Aug 2024 05:39:41 -0700 (PDT)
-Message-ID: <77dc97aa009ae6eb54c616ac03cd85817836f0cf.camel@icenowy.me>
-Subject: Re: [PATCH 4/6] drm/imagination: Add compatible string entry for
- Series6XT
-From: Icenowy Zheng <uwu@icenowy.me>
-To: Frank Binns <Frank.Binns@imgtec.com>, "matthias.bgg@gmail.com"
- <matthias.bgg@gmail.com>, "tzimmermann@suse.de" <tzimmermann@suse.de>, Matt
- Coster <Matt.Coster@imgtec.com>, "sboyd@kernel.org" <sboyd@kernel.org>,
- "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>,  "maarten.lankhorst@linux.intel.com"
- <maarten.lankhorst@linux.intel.com>, "wenst@chromium.org"
- <wenst@chromium.org>,  "mripard@kernel.org" <mripard@kernel.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>, 
- "angelogioacchino.delregno@collabora.com"
- <angelogioacchino.delregno@collabora.com>
-Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, 
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "airlied@gmail.com" <airlied@gmail.com>, 
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- "daniel@ffwll.ch" <daniel@ffwll.ch>,  "linux-clk@vger.kernel.org"
- <linux-clk@vger.kernel.org>
-Date: Sat, 10 Aug 2024 20:39:31 +0800
-In-Reply-To: <efdacd820d13368816973f57c4a817e039ec4a2d.camel@imgtec.com>
-References: <20240530083513.4135052-1-wenst@chromium.org>
-	 <20240530083513.4135052-5-wenst@chromium.org>
-	 <efdacd820d13368816973f57c4a817e039ec4a2d.camel@imgtec.com>
-Organization: Anthon Open-Source Community
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IiTDnyS1"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723334053; x=1754870053;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=cdUzVchCaRhLUnErCbZsZUKbLBcgxHpYnYNip9ALhpI=;
+  b=IiTDnyS15D/jSc4DtBXJW46r58u2dNGL3wtT6pNMh1z1B4iVUPSciQXw
+   qZxeyQ2VHtmkqAJB0ZWkQHyGy26KM1Wc0IDIrt5TfOSgKQhXPkMqfvAKv
+   8EznXvYkWmjqVflkg/k5f0k4ZtOKb474oKU+alEBZcYAaamlqUSMwlKG4
+   WfKCGsT/TQAqs4kWbpQhw/cAp8/im0mrwJSrZyYV7f35MxaPWng/CL+ww
+   K8g+MYTLRJl4HsfH7xQOgf3Y47+DlzXVEXm/uPc8QdzCg1FSAbBHunBGg
+   jKONhOPn+WmO5esubqFqlpTMtC8JbKsdFOZUoeYpvkbgAQ8m+cyFveoVZ
+   Q==;
+X-CSE-ConnectionGUID: 927cxkWtRAOHvyja/Go48A==
+X-CSE-MsgGUID: lQ51+Kf5RQG7viCB2nmnDw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11160"; a="25341576"
+X-IronPort-AV: E=Sophos;i="6.09,280,1716274800"; 
+   d="scan'208";a="25341576"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Aug 2024 16:54:13 -0700
+X-CSE-ConnectionGUID: bKTUh9daSDKjYaYFacB/9A==
+X-CSE-MsgGUID: H/ZbzCnHRWWnZV8q+ukxLA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.09,280,1716274800"; 
+   d="scan'208";a="62566867"
+Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
+  by fmviesa004.fm.intel.com with ESMTP; 10 Aug 2024 16:54:09 -0700
+Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1scvuQ-000AOl-2S;
+	Sat, 10 Aug 2024 23:54:06 +0000
+Date: Sun, 11 Aug 2024 07:53:45 +0800
+From: kernel test robot <lkp@intel.com>
+To: Luo Jie <quic_luoj@quicinc.com>, Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	quic_kkumarcs@quicinc.com, quic_suruchia@quicinc.com,
+	quic_pavir@quicinc.com, quic_linchen@quicinc.com,
+	quic_leiwei@quicinc.com, Luo Jie <quic_luoj@quicinc.com>
+Subject: Re: [PATCH 2/4] clk: qcom: Add common PLL clock controller driver
+ for IPQ SoC
+Message-ID: <202408110756.rSXn1ZRu-lkp@intel.com>
+References: <20240808-qcom_ipq_cmnpll-v1-2-b0631dcbf785@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ZohoMailClient: External
-X-ZohoMail-Owner: <77dc97aa009ae6eb54c616ac03cd85817836f0cf.camel@icenowy.me>+zmo_0_
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240808-qcom_ipq_cmnpll-v1-2-b0631dcbf785@quicinc.com>
 
-=E5=9C=A8 2024-05-31=E6=98=9F=E6=9C=9F=E4=BA=94=E7=9A=84 11:18 +0000=EF=BC=
-=8CFrank Binns=E5=86=99=E9=81=93=EF=BC=9A
-> On Thu, 2024-05-30 at 16:35 +0800, Chen-Yu Tsai wrote:
-> > The MediaTek MT8173 comes with a PowerVR Rogue GX6250, which is
-> > part
-> > of the Series6XT, another variation of the Rogue family of GPUs.
-> >=20
-> > Signed-off-by: Chen-Yu Tsai <wenst@chromium.org>
-> > ---
-> > =C2=A0drivers/gpu/drm/imagination/pvr_drv.c | 1 +
-> > =C2=A01 file changed, 1 insertion(+)
-> >=20
-> > diff --git a/drivers/gpu/drm/imagination/pvr_drv.c
-> > b/drivers/gpu/drm/imagination/pvr_drv.c
-> > index 5c3b2d58d766..3d1a933c8303 100644
-> > --- a/drivers/gpu/drm/imagination/pvr_drv.c
-> > +++ b/drivers/gpu/drm/imagination/pvr_drv.c
-> > @@ -1475,6 +1475,7 @@ pvr_remove(struct platform_device *plat_dev)
-> > =C2=A0
-> > =C2=A0static const struct of_device_id dt_match[] =3D {
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0{ .compatible =3D "img,=
-img-axe", .data =3D NULL },
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0{ .compatible =3D "img,power=
-vr-6xt", .data =3D NULL },
->=20
-> I assume that by adding this to the list of supported devices we're
-> essentially
-> freezing the existing uapi. This concerns me, as we've not yet
-> started running
-> Vulkan conformance on any Series6XT GPUs and there's a chance we may
-> need to
-> make some tweaks.
+Hi Luo,
 
-Is there anything in the Series 6 XT GPUs that will affect conformance
-test and need new ABI to drive? Well I think the GX6250 GPU has TLA
-despite AXE (and BXE) has none, but what TLA does seems to be for
-transfer jobs, which we already support by using fragment pipeline?
+kernel test robot noticed the following build errors:
 
-In addition, if we add bits to the ABI, we can recognize the new ABI by
-raising the version number returned by the DRM driver.
+[auto build test ERROR on 222a3380f92b8791d4eeedf7cd750513ff428adf]
 
-And, if my understand is right, I think we're keeping the command
-stream the same among different GPUs, so if the FWIF is changed, it's
-quite possible that every GPU, not only S6XT but also AXE will be
-affected too.
+url:    https://github.com/intel-lab-lkp/linux/commits/Luo-Jie/dt-bindings-clock-qcom-Add-common-PLL-clock-controller-for-IPQ-SoC/20240808-221059
+base:   222a3380f92b8791d4eeedf7cd750513ff428adf
+patch link:    https://lore.kernel.org/r/20240808-qcom_ipq_cmnpll-v1-2-b0631dcbf785%40quicinc.com
+patch subject: [PATCH 2/4] clk: qcom: Add common PLL clock controller driver for IPQ SoC
+config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20240811/202408110756.rSXn1ZRu-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240811/202408110756.rSXn1ZRu-lkp@intel.com/reproduce)
 
->=20
-> I'm not really sure what the accepted approach is to hardware
-> enablement /
-> experimental support. I'm not sure if it's sufficient to hide support
-> behind a
-> Kconfig option and/or module parameter or whether we just have to
-> hold this
-> patch back for the time being.
->=20
-> Thanks
-> Frank
->=20
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0{}
-> > =C2=A0};
-> > =C2=A0MODULE_DEVICE_TABLE(of, dt_match);
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408110756.rSXn1ZRu-lkp@intel.com/
 
+All errors (new ones prefixed by >>):
+
+   drivers/clk/qcom/clk-ipq-cmn-pll.c: In function 'ipq_cmn_pll_config':
+>> drivers/clk/qcom/clk-ipq-cmn-pll.c:96:24: error: implicit declaration of function 'FIELD_PREP' [-Wimplicit-function-declaration]
+      96 |                 val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 3);
+         |                        ^~~~~~~~~~
+
+
+vim +/FIELD_PREP +96 drivers/clk/qcom/clk-ipq-cmn-pll.c
+
+    77	
+    78	static int ipq_cmn_pll_config(struct device *dev, unsigned long parent_rate)
+    79	{
+    80		void __iomem *base;
+    81		u32 val;
+    82	
+    83		base = devm_of_iomap(dev, dev->of_node, 0, NULL);
+    84		if (IS_ERR(base))
+    85			return PTR_ERR(base);
+    86	
+    87		val = readl(base + CMN_PLL_REFCLK_CONFIG);
+    88		val &= ~(CMN_PLL_REFCLK_EXTERNAL | CMN_PLL_REFCLK_INDEX);
+    89	
+    90		/*
+    91		 * Configure the reference input clock selection as per the given rate.
+    92		 * The output clock rates are always of fixed value.
+    93		 */
+    94		switch (parent_rate) {
+    95		case 25000000:
+  > 96			val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 3);
+    97			break;
+    98		case 31250000:
+    99			val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 4);
+   100			break;
+   101		case 40000000:
+   102			val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 6);
+   103			break;
+   104		case 48000000:
+   105			val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 7);
+   106			break;
+   107		case 50000000:
+   108			val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 8);
+   109			break;
+   110		case 96000000:
+   111			val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 7);
+   112			val &= ~CMN_PLL_REFCLK_DIV;
+   113			val |= FIELD_PREP(CMN_PLL_REFCLK_DIV, 2);
+   114			break;
+   115		default:
+   116			return -EINVAL;
+   117		}
+   118	
+   119		writel(val, base + CMN_PLL_REFCLK_CONFIG);
+   120	
+   121		/* Update the source clock rate selection. Only 96 MHZ uses 0. */
+   122		val = readl(base + CMN_PLL_REFCLK_SRC_SELECTION);
+   123		val &= ~CMN_PLL_REFCLK_SRC_DIV;
+   124		if (parent_rate != 96000000)
+   125			val |= FIELD_PREP(CMN_PLL_REFCLK_SRC_DIV, 1);
+   126	
+   127		writel(val, base + CMN_PLL_REFCLK_SRC_SELECTION);
+   128	
+   129		/*
+   130		 * Reset the common PLL block by asserting/de-asserting for 100 ms
+   131		 * each, to ensure the updated configurations take effect.
+   132		 */
+   133		val = readl(base + CMN_PLL_POWER_ON_AND_RESET);
+   134		val &= ~CMN_ANA_EN_SW_RSTN;
+   135		writel(val, base);
+   136		msleep(100);
+   137	
+   138		val |= CMN_ANA_EN_SW_RSTN;
+   139		writel(val, base + CMN_PLL_POWER_ON_AND_RESET);
+   140		msleep(100);
+   141	
+   142		return 0;
+   143	}
+   144	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
