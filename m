@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EB8F182D8;
-	Sat, 10 Aug 2024 11:31:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB6A413E02A;
+	Sat, 10 Aug 2024 12:29:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723289465; cv=none; b=usgC4O2kd09qmyEz8U+NbUqQ5OyXZLVizgMLC5lLWWPlMFzVrfQcF46yKBhtx0VndMTGBfqoogWqEGwevukqZN1sLdROzor0PKwRgaUCuRfcjxw7bnCmRy6xm+4fR4tmrzHg7WoL1zjYX8HTH+jxs9WJ5aLNJsL3spDt1lbEux4=
+	t=1723292963; cv=none; b=i9nSlPAhF3MQiOuTS9mtj13xPUpSqqvff68qZnMknhWtPyuOCo8VxpF0JTrpzZLr/CU4XWorIOWA2eJ2/3P7WF/sdSv5jc88+VR5D0ruJGQLxPWg5f74vjt2fmiZhiktpFeopOgPVERJ6G/d5RSHFAK3RTF4uCZNkUIx1rzy1c0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723289465; c=relaxed/simple;
-	bh=f6LrB43xDwIL087E5fBIoihXTlSVlukDFEPBOUoDZdc=;
+	s=arc-20240116; t=1723292963; c=relaxed/simple;
+	bh=s09tt5kUfqGeZK7vMpooPY2p4dcDe4zacRBUn0/9Gko=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CbC1O+CyvigO39z9nUUZvdBtnVVs/L5UIvl4FRx9x9FpLFmIoN7QPdbmwMVxIllZTa34xoWh3hE7KCdUB3vXPqi14z1Nwv+O0VfpJyks3TYvU0a51tXpf+4xYf9KZcfY+MlHh+YGEQ6e8WY8JF+MHl796EoIDzJBN6HY1GHuCfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fqcrKsQm; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=O+Gp5CQyJdM6LUAvGxSRdpnDuq44yGSdp7SCQRyQZiIAorPRT7/rCKT8oKVSVGePDFrmYVvdvC2Atn2r0KOQkJ665D7J47++b/uBFa6MgPdMnBO9cxH4YGCDdjJJogLO8oMdFdBul2YXzboQMvBV1iuBiXBviT1CS0Hvp0GqvV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rOrPCoie; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fqcrKsQm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 95CBEC32781;
-	Sat, 10 Aug 2024 11:30:59 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rOrPCoie"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AEA98C32781;
+	Sat, 10 Aug 2024 12:29:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723289464;
-	bh=f6LrB43xDwIL087E5fBIoihXTlSVlukDFEPBOUoDZdc=;
+	s=k20201202; t=1723292962;
+	bh=s09tt5kUfqGeZK7vMpooPY2p4dcDe4zacRBUn0/9Gko=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fqcrKsQmS+hcWo0ioL2pykQKXliHX7N7QTX6Wi0msKSderT9BU7TbKgwqk1Ih0uGx
-	 A47Jw2zEmXSPfgMt74YAyVZHinC2s7aZOzfYJCSWl/ZcI+DHOtEbDsl/yxTJSDYAxp
-	 rpJTBX5p9pwK1B1NHpUsKlJ2ndQvIuT4bXxR3qK1nytcs0ViJ2DsQOszPI8wobD6Yf
-	 zIwKxIP356CN33TURFJBVcJTDMbBfOwdztWY0VU5wwY2mn9Y6tiy2A7+WXGQvtj2qt
-	 /B8bMwxQsm2XuBadBI5mEG9a4HG4llpYapkRiWtCWW/gwsRyt6Mqt55ugLUnS2LZiG
-	 5JJsNZ1FyFYSA==
-Message-ID: <53f25764-41d6-491f-9397-988d3e672189@kernel.org>
-Date: Sat, 10 Aug 2024 13:30:57 +0200
+	b=rOrPCoieA1i8HZJPTWyhPYfcgtBtkSZFjajrXO00z7YCk7nGEBnXD7R+49lmkbltS
+	 IYG80R6eJUlh7DB+xcikOpSieXKpniLCexiP80ASYzyDoN7v50QmG6PSjxiQNZ/obY
+	 lhbNvu+9scw/F1JnrHj9n0glZk33mELHy3QTH7OjP0I2WgZrqiedDpuyNolCzwI5fP
+	 qKMPOr07oFE6LVJybKqwgMX8Ic/unduS5JiH68xIJ8unRkPc3dKQFSsuVATS8+Gvdp
+	 L5xNhsfx5rg81LKzcipvO7eiY4xfrEhTGWHYUG5qLoc62Zqrhtdy62fvfgcSmAK7Uv
+	 QPd5aA9rrautQ==
+Message-ID: <5bfe6251-796c-4036-8db6-783147b4ebd9@kernel.org>
+Date: Sat, 10 Aug 2024 14:29:15 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,23 +35,20 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] dt-bindings: clock: qcom: Add common PLL clock
- controller for IPQ SoC
-To: Jie Luo <quic_luoj@quicinc.com>, Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+Subject: Re: [PATCH v4 1/3] dt-bindings: reset: Add rk3576 reset definitions
+To: Detlev Casanova <detlev.casanova@collabora.com>,
+ linux-kernel@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, quic_kkumarcs@quicinc.com,
- quic_suruchia@quicinc.com, quic_pavir@quicinc.com, quic_linchen@quicinc.com,
- quic_leiwei@quicinc.com
-References: <20240808-qcom_ipq_cmnpll-v1-0-b0631dcbf785@quicinc.com>
- <20240808-qcom_ipq_cmnpll-v1-1-b0631dcbf785@quicinc.com>
- <81524fee-c32c-405b-b63b-d048dde6ae33@kernel.org>
- <a0fe7735-76fd-4a53-9446-5371e341ba17@quicinc.com>
+ <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Philipp Zabel <p.zabel@pengutronix.de>,
+ Elaine Zhang <zhangqing@rock-chips.com>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-rockchip@lists.infradead.org, kernel@collabora.com,
+ Sugar Zhang <sugar.zhang@rock-chips.com>
+References: <20240809125553.3889-1-detlev.casanova@collabora.com>
+ <20240809125553.3889-2-detlev.casanova@collabora.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -97,54 +94,30 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <a0fe7735-76fd-4a53-9446-5371e341ba17@quicinc.com>
+In-Reply-To: <20240809125553.3889-2-detlev.casanova@collabora.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 09/08/2024 15:01, Jie Luo wrote:
->>> +  clock-names:
->>> +    items:
->>> +      - const: ref
->>> +      - const: ahb
->>> +      - const: sys
->>> +
->>> +  clock-output-names:
->>> +    items:
->>> +      - const: ppe-353mhz
->>> +      - const: eth0-50mhz
->>> +      - const: eth1-50mhz
->>> +      - const: eth2-50mhz
->>> +      - const: eth-25mhz
->>
->> Drop entire property. If the names are fixed, what's the point of having
->> it in DTS? There is no.
+On 09/08/2024 14:54, Detlev Casanova wrote:
+> Add reset ID defines for rk3576.
 > 
-> We had added the output names here for the reasons below. Can you please
-> let us know your suggestion whether keeping these here is fine?
+> Compared to the downstream bindings this uses continous gapless
+> reset IDs starting at 1 instead of register offsets as IDs, as
+> introduced in the RK3588 bindings.
+> Thus all numbers are different between upstream and downstream,
+> but names are kept exactly the same.
 > 
-> 1.) These output clocks are used as input reference clocks to other
-> consumer blocks. For example, an on-board Ethernet PHY device may be
-> wired to receive a specific clock from the above output clocks as
-> reference clock input, and hence the PHY's DTS node would need to
-> reference a particular index in this output clock array.
-> 
-> Without these output clocks being made available in this DTS, the PHY
-> driver in above case would not know the clock specifier to access the
-> handle for the desired input clock.
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> Signed-off-by: Sugar Zhang <sugar.zhang@rock-chips.com>
+> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+> ---
+>  .../dt-bindings/reset/rockchip,rk3576-cru.h   | 564 ++++++++++++++++++
 
-That's not true. clock-output-names do not have anything to do with
-clock specifier.
+I think I was clear:
 
-> 
-> 2.) One of the suggestions from the internal code review with Linaro was
-> to name the output clocks specifically based on rate and destination
-> (Ex: 'ppe-353mhz' for fixed rate 353 MHZ output clock connected to
-> Packet Process Engine block), so that the dt-bindings describe the
-> input/output clocks clearly.
+"These are bindings. Must be squashed with previous patch."
 
-Again, that's unrelated. None of above points address my concern. It's
-like you talk about some entirely different topic. Again:
-clock-output-names have nothing to do with what you want to achieve here.
+Other comments were also not implemented?
 
 Best regards,
 Krzysztof
