@@ -1,180 +1,102 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4225413D889;
-	Sat, 10 Aug 2024 23:54:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA16743AA8
+	for <linux-clk@vger.kernel.org>; Sun, 11 Aug 2024 12:33:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723334054; cv=none; b=GNVee2FO8ds+7zmBkYVojRo9ydBWXBB+94M85QN4zshGlk7lzpWuHi3J4cM9/TKFaZTB4pznUY0DU+p9X0wThmt86w95uzahJ9C8CQiM01PUozAF4NhfOjw39hfumM2WNXuwUcteRPCRxBkSOeGX5/R3vq/jUIsUfoLWlFLCZm0=
+	t=1723379596; cv=none; b=m/Q0IJ8k5rFyQJGlK4Vq6xeUs7kDdjLyJW+c/4utmE3RzKfFsMafewJD9LWEDchNjWwh8edj1zOdGnnBZXZF8jR54wz0yaNxvkNGi+C74Hf+LICNozjvRzBtbdtICj68882ba17182M5G22URwDlb6wrK3h0oLa5lH0BjZcuU3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723334054; c=relaxed/simple;
-	bh=cdUzVchCaRhLUnErCbZsZUKbLBcgxHpYnYNip9ALhpI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fUBxSeAtlfgLLlEOLrUvhxFnhZh0HnwvJB2iMeF1oBDaA43Rc8v1hSHZxFjKhB3mc98IVKbVfH2FBBQE+oHotHsfooGm8XkxZe8sohgb7U593t6CpSuIhleibtgazXa6g9xKQAS/dr1pTTfaH1nSoKC20ZBZ62oMdN6EgRhllYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=IiTDnyS1; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1723379596; c=relaxed/simple;
+	bh=S3fNwvE0TVeaUhR1lSr26rsVw/rdv1BrEWmcfyjA0Ow=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=OvYo62uES4aYsa2q93ds82k5KmQu9MmK8zK4RCnVdsavx8aFfrU1qAdBYQ0IiKRD3xg2woC6AfOdwoM5dL4K6dqNNRuDeKaLwWMahL+A2dNf5oKx0sHKNYP1xdlzf+7/8Uw5UJSMczs5DWErwohdhsKj/ssYo/1R5dJNMO4EULw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KiMrsrru; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="IiTDnyS1"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723334053; x=1754870053;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=cdUzVchCaRhLUnErCbZsZUKbLBcgxHpYnYNip9ALhpI=;
-  b=IiTDnyS15D/jSc4DtBXJW46r58u2dNGL3wtT6pNMh1z1B4iVUPSciQXw
-   qZxeyQ2VHtmkqAJB0ZWkQHyGy26KM1Wc0IDIrt5TfOSgKQhXPkMqfvAKv
-   8EznXvYkWmjqVflkg/k5f0k4ZtOKb474oKU+alEBZcYAaamlqUSMwlKG4
-   WfKCGsT/TQAqs4kWbpQhw/cAp8/im0mrwJSrZyYV7f35MxaPWng/CL+ww
-   K8g+MYTLRJl4HsfH7xQOgf3Y47+DlzXVEXm/uPc8QdzCg1FSAbBHunBGg
-   jKONhOPn+WmO5esubqFqlpTMtC8JbKsdFOZUoeYpvkbgAQ8m+cyFveoVZ
-   Q==;
-X-CSE-ConnectionGUID: 927cxkWtRAOHvyja/Go48A==
-X-CSE-MsgGUID: lQ51+Kf5RQG7viCB2nmnDw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11160"; a="25341576"
-X-IronPort-AV: E=Sophos;i="6.09,280,1716274800"; 
-   d="scan'208";a="25341576"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Aug 2024 16:54:13 -0700
-X-CSE-ConnectionGUID: bKTUh9daSDKjYaYFacB/9A==
-X-CSE-MsgGUID: H/ZbzCnHRWWnZV8q+ukxLA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,280,1716274800"; 
-   d="scan'208";a="62566867"
-Received: from unknown (HELO b6bf6c95bbab) ([10.239.97.151])
-  by fmviesa004.fm.intel.com with ESMTP; 10 Aug 2024 16:54:09 -0700
-Received: from kbuild by b6bf6c95bbab with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1scvuQ-000AOl-2S;
-	Sat, 10 Aug 2024 23:54:06 +0000
-Date: Sun, 11 Aug 2024 07:53:45 +0800
-From: kernel test robot <lkp@intel.com>
-To: Luo Jie <quic_luoj@quicinc.com>, Bjorn Andersson <andersson@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	quic_kkumarcs@quicinc.com, quic_suruchia@quicinc.com,
-	quic_pavir@quicinc.com, quic_linchen@quicinc.com,
-	quic_leiwei@quicinc.com, Luo Jie <quic_luoj@quicinc.com>
-Subject: Re: [PATCH 2/4] clk: qcom: Add common PLL clock controller driver
- for IPQ SoC
-Message-ID: <202408110756.rSXn1ZRu-lkp@intel.com>
-References: <20240808-qcom_ipq_cmnpll-v1-2-b0631dcbf785@quicinc.com>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KiMrsrru"
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-428e0d184b4so23437035e9.2
+        for <linux-clk@vger.kernel.org>; Sun, 11 Aug 2024 05:33:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723379593; x=1723984393; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=14Rnu0VCR5IShg3PF5pHMVjCLb7CLFzjALDVNPy1uEU=;
+        b=KiMrsrruOVNfBeLLMKblNBIQ/HLqOgyh6NGxrMvDNCec2momCex1xCFA9VkhEAih5R
+         YV5ZN6+Yu3ZHtBjZIc52VZEUl1p7boqMbYiy/HLzh2JQvYVe746fJ6G99IEz/QIEtfOE
+         p7ljRsDIrETbmL5juVVLk5kYaqq8WGKqWEuHsrio5/9HbfkudmZlF/2s3NXIwKbGHSz+
+         09FlNhi1n/7VkzKxXaXk0SPdiZ0lY2kiC3qHnhH5TX8pm4yBkke7b8QoQIbP2u/lVZOe
+         w6QZPV/BFcXIPIuB4xBTh8Otrwv1cXkdiEA4x8ZV6xEe0i0eGPPFe+tTT19+3KSFJnKW
+         PB/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723379593; x=1723984393;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=14Rnu0VCR5IShg3PF5pHMVjCLb7CLFzjALDVNPy1uEU=;
+        b=hG/3gCZJBlts9jSNv8my7mPckNi+RgUTN26Xa5gXyEx06MRduCKGkKMHCA0lc2sfpg
+         NLh8W7OLfJ3phqM8hE6C6vzztEpU5oMKx0KZP3hXEgCGIErI5tG1fuiOSg5Jcy9XCAG0
+         YJI4Qh/7lwwtSBP1Br2cN2IDXwQtmYPkdaWbjBo+HKsEqZVsqulUJX3JrODF+EKBgIfX
+         vrSPiL1bxXofrjHQbObg2bwjIeODPVR3VKupX6Bi/e/+eP3OHnCGnywJ8okG1VjhqrW7
+         AXYctGR4or6m5wdGpjvZ4tEcSJhm0IjN2BGKUYiG1ocYx2WFt2dS4uejH2QpxnuzWSIR
+         iFIg==
+X-Forwarded-Encrypted: i=1; AJvYcCVhKOHBVpaSA8Wenz2BO4JXWg77uraAiyyVGUOb3x4VPJ2XVbSjgoHifMlPCN7jOjTyYPT0fVrpiDHERLLOz1Qx+B5ara53j7/k
+X-Gm-Message-State: AOJu0YxRr+usnxZaID7Px4Y9x7x+3QBjYpomEgCTqTxHV2fZvGmET7Mc
+	gYbFBHN0SloOiXuISa0/ej44fIGk1loEtDXUyx/cri0NxqF81UvBQE9DJd3BCsc=
+X-Google-Smtp-Source: AGHT+IEhKZ8qU4PuyOfDJWIZVr3aDV7eO1eH0G9Q1CiZCiy5l4fnT5o4i79tJXzhmOSskN+IDF26EA==
+X-Received: by 2002:a05:600c:19cd:b0:426:6688:2421 with SMTP id 5b1f17b1804b1-429c3a227d0mr44200595e9.11.1723379593001;
+        Sun, 11 Aug 2024 05:33:13 -0700 (PDT)
+Received: from [127.0.1.1] ([178.197.219.137])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4290c79f345sm148055605e9.39.2024.08.11.05.33.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 11 Aug 2024 05:33:12 -0700 (PDT)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Chanho Park <chanho61.park@samsung.com>, 
+ Tomasz Figa <tomasz.figa@gmail.com>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Kwanghoon Son <k.son@samsung.com>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240809-clk_dpum-v3-1-359decc30fe2@samsung.com>
+References: <20240809-clk_dpum-v3-0-359decc30fe2@samsung.com>
+ <CGME20240809115500epcas1p32a698c821765e1a0d5fa998e6e08f1cd@epcas1p3.samsung.com>
+ <20240809-clk_dpum-v3-1-359decc30fe2@samsung.com>
+Subject: Re: (subset) [PATCH v3 1/3] dt-bindings: clock: exynosautov9: add
+ dpum clock
+Message-Id: <172337959149.7186.17092334492330898748.b4-ty@linaro.org>
+Date: Sun, 11 Aug 2024 14:33:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240808-qcom_ipq_cmnpll-v1-2-b0631dcbf785@quicinc.com>
-
-Hi Luo,
-
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on 222a3380f92b8791d4eeedf7cd750513ff428adf]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Luo-Jie/dt-bindings-clock-qcom-Add-common-PLL-clock-controller-for-IPQ-SoC/20240808-221059
-base:   222a3380f92b8791d4eeedf7cd750513ff428adf
-patch link:    https://lore.kernel.org/r/20240808-qcom_ipq_cmnpll-v1-2-b0631dcbf785%40quicinc.com
-patch subject: [PATCH 2/4] clk: qcom: Add common PLL clock controller driver for IPQ SoC
-config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20240811/202408110756.rSXn1ZRu-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240811/202408110756.rSXn1ZRu-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408110756.rSXn1ZRu-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/clk/qcom/clk-ipq-cmn-pll.c: In function 'ipq_cmn_pll_config':
->> drivers/clk/qcom/clk-ipq-cmn-pll.c:96:24: error: implicit declaration of function 'FIELD_PREP' [-Wimplicit-function-declaration]
-      96 |                 val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 3);
-         |                        ^~~~~~~~~~
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.1
 
 
-vim +/FIELD_PREP +96 drivers/clk/qcom/clk-ipq-cmn-pll.c
+On Fri, 09 Aug 2024 20:54:12 +0900, Kwanghoon Son wrote:
+> Add dpum clock definitions and compatibles.
+> 
+> Also used clock name 'bus' instead of full clock name
+> dout_clkcmu_dpum_bus like other board cmu schema (GS101).
+> 
+> 
 
-    77	
-    78	static int ipq_cmn_pll_config(struct device *dev, unsigned long parent_rate)
-    79	{
-    80		void __iomem *base;
-    81		u32 val;
-    82	
-    83		base = devm_of_iomap(dev, dev->of_node, 0, NULL);
-    84		if (IS_ERR(base))
-    85			return PTR_ERR(base);
-    86	
-    87		val = readl(base + CMN_PLL_REFCLK_CONFIG);
-    88		val &= ~(CMN_PLL_REFCLK_EXTERNAL | CMN_PLL_REFCLK_INDEX);
-    89	
-    90		/*
-    91		 * Configure the reference input clock selection as per the given rate.
-    92		 * The output clock rates are always of fixed value.
-    93		 */
-    94		switch (parent_rate) {
-    95		case 25000000:
-  > 96			val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 3);
-    97			break;
-    98		case 31250000:
-    99			val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 4);
-   100			break;
-   101		case 40000000:
-   102			val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 6);
-   103			break;
-   104		case 48000000:
-   105			val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 7);
-   106			break;
-   107		case 50000000:
-   108			val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 8);
-   109			break;
-   110		case 96000000:
-   111			val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 7);
-   112			val &= ~CMN_PLL_REFCLK_DIV;
-   113			val |= FIELD_PREP(CMN_PLL_REFCLK_DIV, 2);
-   114			break;
-   115		default:
-   116			return -EINVAL;
-   117		}
-   118	
-   119		writel(val, base + CMN_PLL_REFCLK_CONFIG);
-   120	
-   121		/* Update the source clock rate selection. Only 96 MHZ uses 0. */
-   122		val = readl(base + CMN_PLL_REFCLK_SRC_SELECTION);
-   123		val &= ~CMN_PLL_REFCLK_SRC_DIV;
-   124		if (parent_rate != 96000000)
-   125			val |= FIELD_PREP(CMN_PLL_REFCLK_SRC_DIV, 1);
-   126	
-   127		writel(val, base + CMN_PLL_REFCLK_SRC_SELECTION);
-   128	
-   129		/*
-   130		 * Reset the common PLL block by asserting/de-asserting for 100 ms
-   131		 * each, to ensure the updated configurations take effect.
-   132		 */
-   133		val = readl(base + CMN_PLL_POWER_ON_AND_RESET);
-   134		val &= ~CMN_ANA_EN_SW_RSTN;
-   135		writel(val, base);
-   136		msleep(100);
-   137	
-   138		val |= CMN_ANA_EN_SW_RSTN;
-   139		writel(val, base + CMN_PLL_POWER_ON_AND_RESET);
-   140		msleep(100);
-   141	
-   142		return 0;
-   143	}
-   144	
+Applied, thanks!
 
+[1/3] dt-bindings: clock: exynosautov9: add dpum clock
+      https://git.kernel.org/krzk/linux/c/ccb41c445a3e9506ef43fe33867a356048e41477
+
+Best regards,
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
