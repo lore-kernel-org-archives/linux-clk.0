@@ -1,113 +1,421 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADF7A17C7D9;
-	Mon, 12 Aug 2024 13:50:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48DC6450F2;
+	Mon, 12 Aug 2024 15:16:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723470660; cv=none; b=AOFGHiu8o5OatVeDkhFAMHBChlh/pCeV1j574H3XuzxsbdbTdy/vtx6fqdn+QkeJmBmhtoIjPvBQOY8FsYkmauMze/uEnMoSOV+oiiYRoDVTVSCBs6kJuwWMd9DL/pzh44WfD4R2E4YAXcphzvjschPrWMLkpqouUz6XRe+/uyw=
+	t=1723475775; cv=none; b=rVE3qAkKnF42NwjoSSEKUt17FoRXaT35AqrB8wyYSaLKLWYbc2WKmNDOfPI/6DkLgIzWDFA8BeLUbwkMUs467VLEIEJ5ku3kmW/4Bkvww/xr5IXBvatgbDimZMol0aAXAyphU6ZaaI9gbKoTn3FZe1h7ifsAJFNiyaKcOc+yezM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723470660; c=relaxed/simple;
-	bh=kh/IALq1XQ9m8Te5Ux773w+t6WkY/AsYD0340tkJOZA=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=buydWAbAgBbZn3MvQZs7psqtZy/0svOwNPqNQlrhnewdD/Xg+ohCYvYTic4LGAw3haIRVhnYixVQkW8xHTyTzWn7tROjVcXIoOdTNDOL3DhKw8xEUCpOxIkcNUQFMubqeM9pXgvF+4G6EhTEDrR3m2dvAKgs7aASz8MEgKc3CqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Yj2AloPi; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+	s=arc-20240116; t=1723475775; c=relaxed/simple;
+	bh=BtvWqiM7SzvAw0Emf4u4FDyWez3s59F5VLJ5IkrEXEc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=XlZotG62sCkhl0w3xAdqBMrDM8ihsx1vHeIqtDJmQQTKDoV5q9mBD/af7cCAo3Ke9n43CX6zoeEoGmz1RZYKf0Q9JTqvy8YyCWJdqt9ajA3zDlkGVAYeiwESVd643r8MLlz1oIxzG3FjGBDpcDkORvmqaL312SWmrGz3DEjLZdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g9qIxnwc; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Yj2AloPi"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47CDSTSo021389;
-	Mon, 12 Aug 2024 13:50:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:date:from:message-id:subject:to; s=qcppdkim1; bh=930aszK0KEsA
-	OOoD/7zM9uY0zZlSEktX16qHqr6eTVM=; b=Yj2AloPi0a1mj0AZyg8rL3m/iH/a
-	wtPvK0CoLzAgyO5Zg8gseJgqeXqsnf4KHKHMI36AlIEqGgTonztFPiRUYxTqvhf2
-	NchuP3rsM16U1Vquyvpt4kHTCW6QCXHE4aX6dWrzt5ninmt1H34z7szb2yTKW4HY
-	+CbHv8fXrRG1aegSiBmq8+VycGyp5YIRyZL/LB3ksS5Jwn31/ayvxgWAr3BcC+0Q
-	44nov4uH71+XEuCHn5rY8f/V1yd9pO/DAn9Kw8orGWLz+3HECTqiyxyqUgSR5kUz
-	gy0H3gyJJuDgtD+oY4tHhrZWf1dRxa7TmrI6BawwzUd0uF8jaUXL2aCjXA==
-Received: from apblrppmta02.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40x1g7vcpf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 12 Aug 2024 13:50:54 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 47CDopkl031196;
-	Mon, 12 Aug 2024 13:50:51 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 40xkmgnukx-1;
-	Mon, 12 Aug 2024 13:50:51 +0000
-Received: from APBLRPPMTA02.qualcomm.com (APBLRPPMTA02.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 47CDopmU031190;
-	Mon, 12 Aug 2024 13:50:51 GMT
-Received: from hu-maiyas-hyd.qualcomm.com (hu-vnagar-hyd.qualcomm.com [10.213.105.104])
-	by APBLRPPMTA02.qualcomm.com (PPS) with ESMTP id 47CDooES031187;
-	Mon, 12 Aug 2024 13:50:51 +0000
-Received: by hu-maiyas-hyd.qualcomm.com (Postfix, from userid 4112864)
-	id F3B915012F0; Mon, 12 Aug 2024 19:20:49 +0530 (+0530)
-From: Vedang Nagar <quic_vnagar@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org, quic_dikshita@quicinc.com,
-        quic_vgarodia@quicinc.com, Vedang Nagar <quic_vnagar@quicinc.com>
-Subject: [PATCH] clk: qcom: videocc-sm8550: Use HW_CTRL_TRIGGER flag for video GDSC's
-Date: Mon, 12 Aug 2024 19:17:52 +0530
-Message-Id: <20240812134752.28031-1-quic_vnagar@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: TywnR619o4-CE0C-BDSKjxqSob3aM0ez
-X-Proofpoint-ORIG-GUID: TywnR619o4-CE0C-BDSKjxqSob3aM0ez
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-12_04,2024-08-12_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 clxscore=1011
- suspectscore=0 bulkscore=0 malwarescore=0 impostorscore=0 phishscore=0
- priorityscore=1501 mlxlogscore=999 mlxscore=0 lowpriorityscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408120103
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g9qIxnwc"
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a7a8553db90so538040666b.2;
+        Mon, 12 Aug 2024 08:16:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1723475771; x=1724080571; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XAb1+Zu/NWkbyLJ5jLNMxxkvJ/aPU9MFIMXTO7SfrPk=;
+        b=g9qIxnwcr8KOplS71uihK4n1KgAZrPQUal7ipkTO0FQFOUYyObIp/RSQxf5UpzlgSf
+         DA9mWoDMAELgSmR36e3kgxrmSi0B7KKprdzLbtjejxFurKddYT+lVOQtzWN67m7CauXu
+         HkfI8CC9kq0N36b4+KsXq8gl6IidqqZSViNZ5168KN2UE0ZW/1OEi5fUPPKXUadd4diV
+         pfgoyjedHRbrmKVKLvTBiTJJdJMDuogF+o4hxzjPCMyUE/ZSCRlUhVPT3jLJJgYA8iI3
+         eHj1feSaGGtVQEfSlyQfMlyfJyGPyo5D9Fm56YqwBtyxO8mhN7YbaGWEQrARITwDkNGf
+         pG8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723475771; x=1724080571;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XAb1+Zu/NWkbyLJ5jLNMxxkvJ/aPU9MFIMXTO7SfrPk=;
+        b=V5FHb0n1ObWmb4N+n3WM6MbSjSqqKSKD2ZYU7p8AJmGbTjnYVXiVafX0Kg+ogyomvx
+         APh4w3BGjKLA23FsqxjLaEXffCtbLglxjZ9oI8Sp21TySJjCCrJVLbsgLejTwL6/u/Ii
+         +nzGwZZfnSr9F5iAaSEYHybI5qXy62zcZiiTqFSoRXHdQ+VQtuzpI1N4cyTikoX7mqaE
+         /sPeluvbY8+YS5Om/yJ57P5VI6+nh2txhvtVuSIQBYltzCW5TULKFS0STSBS4pY7SBe3
+         kDeQZqtD3NgCSQW/TLWBi87Ys5RVNJfy3EiXL110UCUzZfqyo/BZjKSJFed+XAMVjCzg
+         j54A==
+X-Forwarded-Encrypted: i=1; AJvYcCVhv31D1JO+QlvytoRuiWF5L+2aG0UqbzoXnhGu1gxN24OkkF/EXHepOtZxFB0QoO8hmkjazdt3e5CDVQTf2rI6Wu8Mmu8oJpMxvleCe2UIHN9SLromc1Z70ptycbuBqPV0rAz+BSjwcBgVd+uFzm7bFA9F7jyjb4K1yTKCzl+RXbTysmHcjA==
+X-Gm-Message-State: AOJu0YyjE+UcvxocuI3YF/0tEW98i3wQajJEZLnxCFMl+KEmTAmgc/NL
+	yXfHbNA/tfybWQ4eWvxNekiPo06upLj95isn+AHPnrXT8Tr0i1R3
+X-Google-Smtp-Source: AGHT+IFDH46Q9I0CzR0qYReHmQlH666BZOMvRVpudVGjQFuLf2kjMfdk13QHF1B9Cgs6nQABqcXbww==
+X-Received: by 2002:a17:906:794d:b0:a72:5598:f03d with SMTP id a640c23a62f3a-a80ed2d4733mr41323166b.59.1723475771404;
+        Mon, 12 Aug 2024 08:16:11 -0700 (PDT)
+Received: from debian.localdomain ([178.127.68.169])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a80bb23c250sm237340966b.189.2024.08.12.08.16.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 12 Aug 2024 08:16:11 -0700 (PDT)
+From: Dzmitry Sankouski <dsankouski@gmail.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: dsankouski@gmail.com,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	linux-arm-msm@vger.kernel.org (open list:QUALCOMM CLOCK DRIVERS),
+	linux-clk@vger.kernel.org (open list:COMMON CLK FRAMEWORK),
+	linux-kernel@vger.kernel.org (open list)
+Subject: Re: [PATCH v3 02/23] gcc-sdm845: Add rates to the GP clocks
+Date: Mon, 12 Aug 2024 18:16:06 +0300
+Message-Id: <20240812151606.1996198-1-dsankouski@gmail.com>
+X-Mailer: git-send-email 2.39.2
+In-Reply-To: <n7gvt4e6kt33lpnfivv4t2waro2t4qi4evkrfot3j2en7ubffb@gpzwolihwemr>
+References: <n7gvt4e6kt33lpnfivv4t2waro2t4qi4evkrfot3j2en7ubffb@gpzwolihwemr>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-The video driver will be using the newly introduced
-dev_pm_genpd_set_hwmode() API to switch the video GDSC
-to HW/SW control modes at runtime.
-Hence use HW_CTRL_TRIGGER flag instead of HW_CTRL for
-video GDSC's.
+This is Proof-of-concept for general purpose clock ops. It's purpose is to
+eliminate the need of freq_tbl for general purpose clock, by runtime
+m/n/hid_div(pre-divisor) calculation. The calculation done as follows:
+- upon determine rate request, we calculate m/n/hid_div as follows:
+  - find parent(from our client's assigned-clock-parent) rate
+  - find requested rate - parent rate highest common factor
+  - find scaled rates by dividing rates on highest common factor
+  - assign requested scaled rate to m
+  - factorize scaled parent rate, put even multipliers to hid_div,
+    odd to n (to maintain approximately same hid_div and n width)
+- validate calculated values with *_width:
+  - if doesn't fit, shift right accordingly
+- return determined rate
 
-Signed-off-by: Vedang Nagar <quic_vnagar@quicinc.com>
+In this POC, pwm-clk driver requests assigned-clock-parent with the call of
+assigned-clock-parent function, so GP clocks don't need to configure parent.
+__clk_rcg2_configure is therefore divided to __clk_rcg2_configure_parent
+and __clk_rcg2_configure_mnd to reuse code.
+
+SDM845 has "General Purpose" clocks that can be muxed to
+SoC pins to clock various external devices.
+Those clocks may be used as e.g. PWM sources for external peripherals.
+
+GPCLK can in theory have arbitrary value depending on the use case, so
+the concept of frequency tables, used in rcg2 clock driver, is not
+efficient, because it allows only defined frequencies.
+
+Introduce clk_rcg2_gp_ops, which automatically calculate clock
+mnd values for arbitrary clock rate.
+
+Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
 ---
- drivers/clk/qcom/videocc-sm8550.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/clk/qcom/videocc-sm8550.c b/drivers/clk/qcom/videocc-sm8550.c
-index 97d150b132a6..7c25a50cfa97 100644
---- a/drivers/clk/qcom/videocc-sm8550.c
-+++ b/drivers/clk/qcom/videocc-sm8550.c
-@@ -449,7 +449,7 @@ static struct gdsc video_cc_mvs0_gdsc = {
- 	},
- 	.pwrsts = PWRSTS_OFF_ON,
- 	.parent = &video_cc_mvs0c_gdsc.pd,
--	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE | HW_CTRL,
-+	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE | HW_CTRL_TRIGGER,
+ drivers/clk/qcom/clk-rcg.h    |   1 +
+ drivers/clk/qcom/clk-rcg2.c   | 162 ++++++++++++++++++++++++++++++++--
+ drivers/clk/qcom/gcc-sdm845.c |  12 ++-
+ drivers/pwm/pwm-clk.c         |   5 ++
+ 4 files changed, 167 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
+index d7414361e432..5bd86bce0c4d 100644
+--- a/drivers/clk/qcom/clk-rcg.h
++++ b/drivers/clk/qcom/clk-rcg.h
+@@ -189,6 +189,7 @@ struct clk_rcg2_gfx3d {
+ 	container_of(to_clk_rcg2(_hw), struct clk_rcg2_gfx3d, rcg)
+ 
+ extern const struct clk_ops clk_rcg2_ops;
++extern const struct clk_ops clk_rcg2_gp_ops;
+ extern const struct clk_ops clk_rcg2_floor_ops;
+ extern const struct clk_ops clk_rcg2_fm_ops;
+ extern const struct clk_ops clk_rcg2_mux_closest_ops;
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index 30b19bd39d08..44b257481556 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -32,6 +32,7 @@
+ 
+ #define CFG_REG			0x4
+ #define CFG_SRC_DIV_SHIFT	0
++#define CFG_SRC_DIV_LENGTH	8
+ #define CFG_SRC_SEL_SHIFT	8
+ #define CFG_SRC_SEL_MASK	(0x7 << CFG_SRC_SEL_SHIFT)
+ #define CFG_MODE_SHIFT		12
+@@ -393,16 +394,103 @@ static int clk_rcg2_fm_determine_rate(struct clk_hw *hw,
+ 	return _freq_tbl_fm_determine_rate(hw, rcg->freq_multi_tbl, req);
+ }
+ 
+-static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f,
+-				u32 *_cfg)
++static inline u64 find_hcf(u64 a, u64 b)
++{
++	while (a != 0 && b != 0) {
++		if (a > b)
++			a %= b;
++		else
++			b %= a;
++	}
++	return a + b;
++}
++
++static int clk_calc_mnd(u64 parent_rate, u64 rate, struct freq_tbl *f)
++{
++	u64 hcf;
++	u64 hid_div = 1, n = 1;
++	int i = 2, count = 0;
++
++	hcf = find_hcf(parent_rate, rate);
++	u64 scaled_rate = rate / hcf;
++	u64 scaled_parent_rate = parent_rate / hcf;
++
++	while (scaled_parent_rate > 1) {
++		while (scaled_parent_rate % i == 0) {
++			scaled_parent_rate /= i;
++			if (count % 2 == 0)
++				hid_div *= i;
++			else
++				n *= i;
++		}
++		i++;
++		count++;
++	}
++
++	f->m = scaled_rate;
++	f->n = n;
++	f->pre_div = hid_div;
++
++	return 0;
++}
++
++static int clk_rcg2_determine_gp_rate(struct clk_hw *hw,
++				   struct clk_rate_request *req)
++{
++	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
++	struct freq_tbl *f;
++	int src = clk_rcg2_get_parent(hw);
++	int mnd_max = BIT(rcg->mnd_width) - 1;
++	int hid_max = BIT(rcg->hid_width) - 1;
++	u64 parent_rate;
++	int ret;
++
++	parent_rate = rcg->freq_tbl[src].freq;
++	f = kcalloc(MAX_PERF_LEVEL + 1, sizeof(f), GFP_KERNEL);
++
++	if (!f)
++		return 0;
++
++	ret = clk_calc_mnd(parent_rate, req->rate, f);
++	if (ret)
++		return 0;
++
++
++	while (f->n - f->m >= mnd_max) {
++		f->m = f->m >> 1;
++		f->n = f->n >> 1;
++	}
++	while (f->pre_div >= hid_max) {
++		f->pre_div = f->pre_div >> 1;
++		f->m = f->m >> 1;
++	}
++
++	req->rate = calc_rate(parent_rate, f->m, f->n, f->n, f->pre_div);
++
++	return 0;
++}
++
++static int __clk_rcg2_configure_parent(struct clk_rcg2 *rcg, int src, u32 *_cfg)
+ {
+-	u32 cfg, mask, d_val, not2d_val, n_minus_m;
+ 	struct clk_hw *hw = &rcg->clkr.hw;
+-	int ret, index = qcom_find_src_index(hw, rcg->parent_map, f->src);
++	u32 mask = CFG_SRC_SEL_MASK;
++	int index = qcom_find_src_index(hw, rcg->parent_map, src);
+ 
+ 	if (index < 0)
+ 		return index;
+ 
++	*_cfg &= ~mask;
++	*_cfg |= rcg->parent_map[index].cfg << CFG_SRC_SEL_SHIFT;
++
++	return 0;
++}
++
++static int __clk_rcg2_configure_mnd(struct clk_rcg2 *rcg, const struct freq_tbl *f,
++				u32 *_cfg)
++{
++	u32 cfg, mask, d_val, not2d_val, n_minus_m;
++	int ret;
++
+ 	if (rcg->mnd_width && f->n) {
+ 		mask = BIT(rcg->mnd_width) - 1;
+ 		ret = regmap_update_bits(rcg->clkr.regmap,
+@@ -431,9 +519,8 @@ static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f,
+ 	}
+ 
+ 	mask = BIT(rcg->hid_width) - 1;
+-	mask |= CFG_SRC_SEL_MASK | CFG_MODE_MASK | CFG_HW_CLK_CTRL_MASK;
++	mask |= CFG_MODE_MASK | CFG_HW_CLK_CTRL_MASK;
+ 	cfg = f->pre_div << CFG_SRC_DIV_SHIFT;
+-	cfg |= rcg->parent_map[index].cfg << CFG_SRC_SEL_SHIFT;
+ 	if (rcg->mnd_width && f->n && (f->m != f->n))
+ 		cfg |= CFG_MODE_DUAL_EDGE;
+ 	if (rcg->hw_clk_ctrl)
+@@ -445,6 +532,22 @@ static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f,
+ 	return 0;
+ }
+ 
++static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f,
++				u32 *_cfg)
++{
++	int ret;
++
++	ret = __clk_rcg2_configure_parent(rcg, f->src, _cfg);
++	if (ret)
++		return ret;
++
++	ret = __clk_rcg2_configure_mnd(rcg, f, _cfg);
++	if (ret)
++		return ret;
++
++	return 0;
++}
++
+ static int clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
+ {
+ 	u32 cfg;
+@@ -465,6 +568,26 @@ static int clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
+ 	return update_config(rcg);
+ }
+ 
++static int clk_rcg2_configure_gp(struct clk_rcg2 *rcg, const struct freq_tbl *f)
++{
++	u32 cfg;
++	int ret;
++
++	ret = regmap_read(rcg->clkr.regmap, RCG_CFG_OFFSET(rcg), &cfg);
++	if (ret)
++		return ret;
++
++	ret = __clk_rcg2_configure_mnd(rcg, f, &cfg);
++	if (ret)
++		return ret;
++
++	ret = regmap_write(rcg->clkr.regmap, RCG_CFG_OFFSET(rcg), cfg);
++	if (ret)
++		return ret;
++
++	return update_config(rcg);
++}
++
+ static int __clk_rcg2_set_rate(struct clk_hw *hw, unsigned long rate,
+ 			       enum freq_policy policy)
+ {
+@@ -518,6 +641,22 @@ static int clk_rcg2_set_rate(struct clk_hw *hw, unsigned long rate,
+ 	return __clk_rcg2_set_rate(hw, rate, CEIL);
+ }
+ 
++static int clk_rcg2_set_gp_rate(struct clk_hw *hw, unsigned long rate,
++			    unsigned long parent_rate)
++{
++	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
++	struct freq_tbl *f;
++
++	f = kcalloc(MAX_PERF_LEVEL + 1, sizeof(*f), GFP_KERNEL);
++
++	if (!f)
++		return -ENOMEM;
++
++	clk_calc_mnd(parent_rate, rate, f);
++
++	return clk_rcg2_configure_gp(rcg, f);
++}
++
+ static int clk_rcg2_set_floor_rate(struct clk_hw *hw, unsigned long rate,
+ 				   unsigned long parent_rate)
+ {
+@@ -645,6 +784,17 @@ const struct clk_ops clk_rcg2_ops = {
+ };
+ EXPORT_SYMBOL_GPL(clk_rcg2_ops);
+ 
++const struct clk_ops clk_rcg2_gp_ops = {
++	.is_enabled = clk_rcg2_is_enabled,
++	.get_parent = clk_rcg2_get_parent,
++	.set_parent = clk_rcg2_set_parent,
++	.determine_rate = clk_rcg2_determine_gp_rate,
++	.set_rate = clk_rcg2_set_gp_rate,
++	.get_duty_cycle = clk_rcg2_get_duty_cycle,
++	.set_duty_cycle = clk_rcg2_set_duty_cycle,
++};
++EXPORT_SYMBOL_GPL(clk_rcg2_gp_ops);
++
+ const struct clk_ops clk_rcg2_floor_ops = {
+ 	.is_enabled = clk_rcg2_is_enabled,
+ 	.get_parent = clk_rcg2_get_parent,
+diff --git a/drivers/clk/qcom/gcc-sdm845.c b/drivers/clk/qcom/gcc-sdm845.c
+index dc3aa7014c3e..4567f405683b 100644
+--- a/drivers/clk/qcom/gcc-sdm845.c
++++ b/drivers/clk/qcom/gcc-sdm845.c
+@@ -285,10 +285,8 @@ static struct clk_rcg2 gcc_sdm670_cpuss_rbcpr_clk_src = {
+ 
+ static const struct freq_tbl ftbl_gcc_gp1_clk_src[] = {
+ 	F(19200000, P_BI_TCXO, 1, 0, 0),
+-	F(25000000, P_GPLL0_OUT_EVEN, 12, 0, 0),
+-	F(50000000, P_GPLL0_OUT_EVEN, 6, 0, 0),
+-	F(100000000, P_GPLL0_OUT_MAIN, 6, 0, 0),
+-	F(200000000, P_GPLL0_OUT_MAIN, 3, 0, 0),
++	F(300000000, P_GPLL0_OUT_EVEN, 1, 0, 0),
++	F(600000000, P_GPLL0_OUT_MAIN, 1, 0, 0),
+ 	{ }
  };
  
- static struct gdsc video_cc_mvs1c_gdsc = {
-@@ -474,7 +474,7 @@ static struct gdsc video_cc_mvs1_gdsc = {
+@@ -302,7 +300,7 @@ static struct clk_rcg2 gcc_gp1_clk_src = {
+ 		.name = "gcc_gp1_clk_src",
+ 		.parent_data = gcc_parent_data_1,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_1),
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_gp_ops,
  	},
- 	.pwrsts = PWRSTS_OFF_ON,
- 	.parent = &video_cc_mvs1c_gdsc.pd,
--	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE | HW_CTRL,
-+	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE | HW_CTRL_TRIGGER,
  };
  
- static struct clk_regmap *video_cc_sm8550_clocks[] = {
+@@ -316,7 +314,7 @@ static struct clk_rcg2 gcc_gp2_clk_src = {
+ 		.name = "gcc_gp2_clk_src",
+ 		.parent_data = gcc_parent_data_1,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_1),
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_gp_ops,
+ 	},
+ };
+ 
+@@ -330,7 +328,7 @@ static struct clk_rcg2 gcc_gp3_clk_src = {
+ 		.name = "gcc_gp3_clk_src",
+ 		.parent_data = gcc_parent_data_1,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_1),
+-		.ops = &clk_rcg2_ops,
++		.ops = &clk_rcg2_gp_ops,
+ 	},
+ };
+ 
+diff --git a/drivers/pwm/pwm-clk.c b/drivers/pwm/pwm-clk.c
+index c19a482d7e28..1bfc7870e3aa 100644
+--- a/drivers/pwm/pwm-clk.c
++++ b/drivers/pwm/pwm-clk.c
+@@ -25,6 +25,7 @@
+ #include <linux/of.h>
+ #include <linux/platform_device.h>
+ #include <linux/clk.h>
++#include <linux/clk/clk-conf.h>
+ #include <linux/pwm.h>
+ 
+ struct pwm_clk_chip {
+@@ -87,6 +88,10 @@ static int pwm_clk_probe(struct platform_device *pdev)
+ 	struct pwm_clk_chip *pcchip;
+ 	int ret;
+ 
++	ret = of_clk_set_defaults(pdev->dev.of_node, false);
++	if (ret < 0)
++		return -EINVAL;
++
+ 	chip = devm_pwmchip_alloc(&pdev->dev, 1, sizeof(*pcchip));
+ 	if (IS_ERR(chip))
+ 		return PTR_ERR(chip);
 -- 
-2.17.1
+2.39.2
 
