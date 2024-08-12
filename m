@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 035BB14D432;
-	Mon, 12 Aug 2024 06:31:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B83B82599;
+	Mon, 12 Aug 2024 06:34:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723444296; cv=none; b=F9L7zAlpPnz4E8XGyfg8H1EfbrXhaoMG5JevuYN1pRh6jnZ6ENpHwav0sDpn/RkN09Xe0GSUYCxW++CxjbUVdI3m0FdxsHpDmtoHvtyOvsvl1p1p2uZ3okDXTKgccHwqRcX8v5MSCXingKfos5zVGS5/cDKNsCeALFZ2vg9y/kY=
+	t=1723444467; cv=none; b=XUulSstoSniIsQU0xSCoA89G2wOnTcPAF4rKqwAIAgGdD2QWsl1/bqnYgYJv5VRxQCx6hk+FLT6ZotlUtAl8RQk0WQA25bZcdxBRZawOhFqyYOPu3epEpjxu712J3wD5KdXgQfOVVWsOY+bI/3pqV/nmvkYqdYYPgEGzSirGdSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723444296; c=relaxed/simple;
-	bh=60DY5iuLdcY6j3C24czN24ek6VofQAK/gr4oVohJ0bc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MH+Ql4zMf3h2fvQzwX1tYCpkyzLN5zcfW59XawuB3fGf2dVgXUss2TYPGrfVwxgKN8HN1Khq2fDym3TP/2XBXjv+wHqdJzBRKihSxOZ9mmJjmRWkIjx/PtesA0FG/aPXDiQI7RCqGSeKHJlCBmsKBXQlVJcfTmu9d8olooIHkC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CLPYIMoq; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1723444467; c=relaxed/simple;
+	bh=h5YunoJ1CgTgC/s+clCigfHNxM4JDy7MRIOS0sYh4LA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Ge38L6VwoatR6Yu1gZANKG0YBXsE+78KFZT5KwE6OZPL7oJIuEOUB2Sn9A+YaDUGI5ltEEGd1ic4EyBs2Yr4TsS9fxJ6rmRpxStKZaWitpVK/0hIGiv7rHIDFX5S5NiQCr0suVcq9YFaLEpmKmhMzIQN/czWFotcxGzJQTNAsgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l6MRHaem; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CLPYIMoq"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DE6FC32782;
-	Mon, 12 Aug 2024 06:31:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l6MRHaem"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46730C32782;
+	Mon, 12 Aug 2024 06:34:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723444295;
-	bh=60DY5iuLdcY6j3C24czN24ek6VofQAK/gr4oVohJ0bc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CLPYIMoqxc1NGyyezYOT7hZ7diUUyv9L4D4BNDgcXR/y5SwCRvxiZiDLoHWqC/yQl
-	 YhVqBH+v5tUPfxe8FIoTuAygdPU4yp5md3QTkVG6xtezirmVwxVohXnF8VhgNmwMzB
-	 Cx5AP+vlXYFWD6NuCSN3lbvT1+/rT/ygwM6UrQ70aFORTnHdZE/qwblBHp3CunVW+4
-	 TV+nFwFwUO38zR40Z4B7cE18BQFZUrl13xdZeiB/DNozpaxRH0NBpTeyNzU5c0IO98
-	 MmeaTnxsckiAGHLMe+JvCMA3m5brsDvnzW0B4hKLIdF24Q8/6W3e1AfgnsCf3LgEGs
-	 cSIm9dKYGeLPg==
-Message-ID: <c6ff2c78-df8a-446d-a87a-6e5349e43195@kernel.org>
-Date: Mon, 12 Aug 2024 08:31:28 +0200
+	s=k20201202; t=1723444467;
+	bh=h5YunoJ1CgTgC/s+clCigfHNxM4JDy7MRIOS0sYh4LA=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=l6MRHaemp+DF10nfRA7BH7O7L94UWkgsyqklBo5M5mKjOHMV47PlTNmQ4a3/BwiSU
+	 vYcs2SLD2xZKGhiSFGP+RcL10jT8D7pLLeW6XuTzF5ZrLVtQKG58rTLfVKjvI00jiK
+	 FENM7K2RKC0KaYSf4tS5FMg5K4ZTvIuBOBYDPD8/H4SMgohh/extPsrz4YbDYg7XEV
+	 4imzo+cPbyOg7foAgS+cOA6C6ETLl8EHc9UXmVbqU+FggMS+7FRqHVp2kzkflFdYEJ
+	 GYcxZtFlgko3TwtLEEbuX/Z7qSMbJ+dosZSrGQYa/hEm8wi6ILWPDxuQi10XX8xVks
+	 JxBVu5Omx1WcA==
+Message-ID: <a70e619e-daae-4a1d-a854-14356482892e@kernel.org>
+Date: Mon, 12 Aug 2024 08:34:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,23 +35,26 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/4] dt-bindings: clock: add ExynosAuto v920 SoC CMU
- bindings
-To: Alim Akhtar <alim.akhtar@samsung.com>,
- 'Sunyeal Hong' <sunyeal.hong@samsung.com>,
- 'Sylwester Nawrocki' <s.nawrocki@samsung.com>,
- 'Chanwoo Choi' <cw00.choi@samsung.com>,
- 'Michael Turquette' <mturquette@baylibre.com>,
- 'Stephen Boyd' <sboyd@kernel.org>, 'Rob Herring' <robh@kernel.org>,
- 'Conor Dooley' <conor+dt@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20240730071221.2590284-1-sunyeal.hong@samsung.com>
- <CGME20240730071227epcas2p278017961013950cd75c4266eda45c236@epcas2p2.samsung.com>
- <20240730071221.2590284-2-sunyeal.hong@samsung.com>
- <db84ee7d-dfd8-4e15-9745-01b1a76566ad@kernel.org>
- <000a01daec0f$33ca4710$9b5ed530$@samsung.com>
+Subject: Re: [PATCH 1/4] dt-bindings: mfd: aspeed: support for AST2700
+To: Ryan Chen <ryan_chen@aspeedtech.com>, Lee Jones <lee@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+ Andrew Jeffery <andrew@codeconstruct.com.au>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+References: <20240808075937.2756733-1-ryan_chen@aspeedtech.com>
+ <20240808075937.2756733-2-ryan_chen@aspeedtech.com>
+ <2f27285e-6aa5-4e42-b361-224d8d164113@kernel.org>
+ <OS8PR06MB75416FAD2A1A16E7BE2D255DF2BA2@OS8PR06MB7541.apcprd06.prod.outlook.com>
+ <10809e91-31be-4110-86c1-1e1ccb05b664@kernel.org>
+ <OS8PR06MB7541F4F740FDB17F50EBCACBF2BA2@OS8PR06MB7541.apcprd06.prod.outlook.com>
+ <OS8PR06MB754103B3285153723708931EF2852@OS8PR06MB7541.apcprd06.prod.outlook.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -97,34 +100,126 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <000a01daec0f$33ca4710$9b5ed530$@samsung.com>
+In-Reply-To: <OS8PR06MB754103B3285153723708931EF2852@OS8PR06MB7541.apcprd06.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 11/08/2024 18:54, Alim Akhtar wrote:
-> Hi Krzysztof
+On 12/08/2024 08:26, Ryan Chen wrote:
+>> Subject: RE: [PATCH 1/4] dt-bindings: mfd: aspeed: support for AST2700
+>>
+>>> Subject: Re: [PATCH 1/4] dt-bindings: mfd: aspeed: support for AST2700
+>>>
+>>> On 09/08/2024 07:55, Ryan Chen wrote:
+>>>>> Subject: Re: [PATCH 1/4] dt-bindings: mfd: aspeed: support for
+>>>>> AST2700
+>>>>>
+>>>>> On 08/08/2024 09:59, Ryan Chen wrote:
+>>>>>> Add compatible support for AST2700 clk, reset, pinctrl, silicon-id
+>>>>>> and example for AST2700 scu.
+>>>>>>
+>>>>>> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
+>>>>>> ---
+>>>>>>  .../bindings/mfd/aspeed,ast2x00-scu.yaml      | 31
+>>>>> +++++++++++++++++--
+>>>>>>  1 file changed, 29 insertions(+), 2 deletions(-)
+>>>>>>
+>>>>>> diff --git
+>>>>>> a/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
+>>>>>> b/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
+>>>>>> index 86ee69c0f45b..c0965f08ae8c 100644
+>>>>>> ---
+>>>>>> a/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yaml
+>>>>>> +++
+>> b/Documentation/devicetree/bindings/mfd/aspeed,ast2x00-scu.yam
+>>>>>> +++ l
+>>>>>> @@ -21,6 +21,8 @@ properties:
+>>>>>>            - aspeed,ast2400-scu
+>>>>>>            - aspeed,ast2500-scu
+>>>>>>            - aspeed,ast2600-scu
+>>>>>> +          - aspeed,ast2700-scu0
+>>>>>> +          - aspeed,ast2700-scu1
+>>>>>
+>>>>> What are the differences between these two?
+>>>>
+>>>> The next [PATCH 4/4] is scu driver that include ast2700-scu0 and
+>>>> ast2700-scu1 CLK_OF_DECLARE_DRIVER(ast2700_soc0,
+>>>> "aspeed,ast2700-scu0", ast2700_soc0_clk_init);
+>>>> CLK_OF_DECLARE_DRIVER(ast2700_soc1, "aspeed,ast2700-scu1",
+>>>> ast2700_soc1_clk_init);
+>>>
+>>> What are hardware differences? Entirely different devices?
+>>
+>> AST2700 have two soc die connected each other.
+>> Each soc die have it own scu, so the naming is ast2700-scu0 for soc0, another
+>> is ast2700-scu1 for soc1.
+>>
+>>>
+>>>> So I add these two.
+>>>>
+>>>>>
+>>>>>>        - const: syscon
+>>>>>>        - const: simple-mfd
+>>>>>>
+>>>>>> @@ -30,10 +32,12 @@ properties:
+>>>>>>    ranges: true
+>>>>>>
+>>>>>>    '#address-cells':
+>>>>>> -    const: 1
+>>>>>> +    minimum: 1
+>>>>>> +    maximum: 2
+>>>>>>
+>>>>>>    '#size-cells':
+>>>>>> -    const: 1
+>>>>>> +    minimum: 1
+>>>>>> +    maximum: 2
+>>>>>>
+>>>>>>    '#clock-cells':
+>>>>>>      const: 1
+>>>>>> @@ -56,6 +60,8 @@ patternProperties:
+>>>>>>              - aspeed,ast2400-pinctrl
+>>>>>>              - aspeed,ast2500-pinctrl
+>>>>>>              - aspeed,ast2600-pinctrl
+>>>>>> +            - aspeed,ast2700-soc0-pinctrl
+>>>>>> +            - aspeed,ast2700-soc1-pinctrl
+>>>>>>
+>>>>>>      required:
+>>>>>>        - compatible
+>>>>>> @@ -76,6 +82,7 @@ patternProperties:
+>>>>>>                - aspeed,ast2400-silicon-id
+>>>>>>                - aspeed,ast2500-silicon-id
+>>>>>>                - aspeed,ast2600-silicon-id
+>>>>>> +              - aspeed,ast2700-silicon-id
+>>>>>>            - const: aspeed,silicon-id
+>>>>>>
+>>>>>>        reg:
+>>>>>> @@ -115,4 +122,24 @@ examples:
+>>>>>>              reg = <0x7c 0x4>, <0x150 0x8>;
+>>>>>>          };
+>>>>>>      };
+>>>>>> +  - |
+>>>>>> +    soc0 {
+>>>>>> +        #address-cells = <2>;
+>>>>>> +        #size-cells = <2>;
+>>>>>
+>>>>> That's the same example as previous, right? The drop, no need.
+>>>>
+>>>> AST2700 is 64bits address mode platform, that the reason.
+>>>> So I add example for 64bits platform descript in dtsi I have to add
+>>>> soc0 to be address-cells and size-cells to be <2> Then I can define
+>>>> the register to be 64bits address and size.
+>>>
+>>> That's trivial. Drop.
+>> Do you mean, I don’t need add example for ast2700-scu0?
+>>
+>> Or delete #address-cells = <2>;  #size-cells = <2>; If I remove it will make
+>> dt_binding_check fail.
+>>>
+> Hello Krzysztof
 > 
->> -----Original Message-----
->> From: Krzysztof Kozlowski <krzk@kernel.org>
->> Sent: Wednesday, July 31, 2024 2:57 PM
->> To: Sunyeal Hong <sunyeal.hong@samsung.com>; Sylwester Nawrocki
-> [snip]
->>> +properties:
->>> +  compatible:
->>> +    enum:
->>> +      - samsung,exynosautov920-cmu-top
->>> +      - samsung,exynosautov920-cmu-peric0
->>
->> Maybe I misinterpreted previous discussion, but I had impression that
->> binding was incomplete and you wanted to add more devices?
->>
-> There are other CMU controller blocks likes any other Exynos SoC. 
-> Are you suggesting to add all of them? 
-> In the above case cmu_top provides clocks to cmu_peric0. 
-> And I think the subject patch Intension is to add binding for this clock tree. 
+> Use dt_binding_check, it need #address-cells = <2>;  #size-cells = <2> for 64 bit address description.
+> Or I don't need example?
 
-I want the bindings to be complete, because previous review indicated
-there are more devices.
+Drop example. It's basically the same as existing one.
 
 Best regards,
 Krzysztof
