@@ -1,228 +1,251 @@
-Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62B9E16D9B3
-	for <linux-clk@vger.kernel.org>; Mon, 12 Aug 2024 09:40:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4634316D4F9;
+	Mon, 12 Aug 2024 09:54:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723455627; cv=none; b=T96lo6Gwn4PcFBS9ad1UzPXqXGEL0Xhd2sVYKOd2uTN9Sbf2LOjXcK23savgquR67j5Arbrj8JIqka1m7L8rQFZDoeHR/5XBXeV81scDjuD/qVT7fQqC+0NZSDvxAZydxuBBqeRt2Q5bW0a/KOAlN8YLcaJm8L3zaV3AkYTqQYE=
+	t=1723456463; cv=none; b=eRpKH39vCoyizkc/Q8wNaSrxs+XILKGmgr5s982jD9IybLOuDpMtzQV/UQMSoZtpqce4LiQvQ2kJ9+SZixD2PtLJFkq8kFTDoOpO5aL008/GQOW5CdPYY/sVtWKFr34DgbXqDM0FOlpOnrE4T3N+GPeLWhVc+VL95GmYYoCjw5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723455627; c=relaxed/simple;
-	bh=UxtazfqpXDeqlFz/0CJQTYOiDqi7EIoHLyXZ2TczuF8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IbjhFlHM2q513FwcdnNR8Rqr8FIZRCEbkug6bA4kJ+banZk0qGjZDQVW8FKCblBwWP7Jq4iU8PRs9WJF+XlvLZSWJzckwN3I2/Xap6OjW341iGjCsZqUPTrM1rMUwCr/vjw0D8sfEypOWsNdVLXUAixxnnFIVKU4zX5XIzG8RDo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OYTGu7Fq; arc=none smtp.client-ip=209.85.221.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1723456463; c=relaxed/simple;
+	bh=1kgV5S1iTB3W5VsEF8PlfWJAbG1Ezlyg3ZeSFqYOgRY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=N7TlmMPMtqKN9CEBjX5aB3hci4bETq1ldzbgrQ5gBiCcSK+vtdB4vCFOx4St/VIZNereoVG+cy3/u4B47W2dHlfcuOiIl4DTsgaYyDwI8bbtxeQlKEjHpLxCzSL1lH+klUfV2zZOcJg1b+NJsftHCqUdf1G4SeHGfD2wt6kOORE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YI35t8ck; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OYTGu7Fq"
-Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-4f6be9d13cdso1331245e0c.3
-        for <linux-clk@vger.kernel.org>; Mon, 12 Aug 2024 02:40:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723455624; x=1724060424; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=DVjhFE1LXg8vxrprP/WgbdJUQCPXYg8soperG0HDucw=;
-        b=OYTGu7Fq9oPRmEd9wWGgU8NmFa/U0/Dg98EUx06ZA6CzcbWwAwbKncnwpToozpmp5u
-         3SznHygJeeMczPi1dCbyKIoP1rxO3Xsn/Grt3rxoY3Lbnnx5NiKI0D8OnyE9RHvpxED1
-         LMkkaTRfnU5Znm0jKQ4uF17O1jD0DOM3fiuD5AHImI9cXi1+FU8/9GOOZuyQEAXZzuG5
-         iJwDkq2NYlXslUV7VWXi7ZQCjClPprh4XgSAMdaOOJpBo9GMr7owJiDfbvRhrTTZFI5H
-         IzVL2DQJA8lAvfsZ7THnKuoh68TE7AOYGW+ijB0B5pqbq7OZf3rCagjq9nW4q3o/TGzK
-         Jr/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723455624; x=1724060424;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DVjhFE1LXg8vxrprP/WgbdJUQCPXYg8soperG0HDucw=;
-        b=XMf7ypSe66fP3M/593bAIo+BrKDmq3M2U9JlkrF1nypQA3LFHwm6enImsIswwBUMdB
-         +tfonoKhEp+toNP78WaHgJCYA2JQ5j2wrW6f2EKfgdwGTKTBEcf1y7tWFC2z5jyb/F0I
-         GbIqT++pQpD5WvX0lSgEy6KMPnoTgcJtsBN01guCl9AUg9QkFf1Zvo3pf8zkrsDoIhTQ
-         pO+30oGZehmGOFWsKWtKTvYdZWm4jdLjBRVPxLczOXmcUTMNfh0t0RRn3FZQ9IgQme7n
-         yJiAkPs0MEdMjzvgKCw3EdOv4sIsbEFvJCpwDRdmJcKBsG0CpaL+wEMuy6qcL6y9Hjun
-         3aEg==
-X-Forwarded-Encrypted: i=1; AJvYcCXU/uS4SUOBzecDZCqCMsH93adzqDut8rH7EkOzAfiqWc+BgmqroWCXyjVZUsDUv8nidoGZ5UUf/BLXSw+BFYtbEJRerBZSIWFG
-X-Gm-Message-State: AOJu0Yy8+Dc+piYRDxMszQtH48AOc2gWK62tVO3LWK4SfxIFTjwaRG6R
-	oDLv3VbVBtJfx6JUpEqhxo9WSjTmghHvKgdcVD6r1hiGvWesn2TfSxeEyC1AHPbE/VlO7BIk9PC
-	zsqMzoXiw8/g1gf50fZfuj9tCkNf0sN/o8G+jNQ==
-X-Google-Smtp-Source: AGHT+IGwywSQL2NMVexUKa3WkjoHdNjxA9OJ7LzmouqDA0MzAclMGZ8r1ys42xoldkQbCVAM2hu9PwS2QEWQ4mbjqw0=
-X-Received: by 2002:a05:6122:4598:b0:4f6:ca2:ad0 with SMTP id
- 71dfb90a1353d-4f912bd958cmr5563996e0c.1.1723455624114; Mon, 12 Aug 2024
- 02:40:24 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YI35t8ck"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AECA9C32782;
+	Mon, 12 Aug 2024 09:54:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723456462;
+	bh=1kgV5S1iTB3W5VsEF8PlfWJAbG1Ezlyg3ZeSFqYOgRY=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=YI35t8ckiVSzO+5NkWT4XXw2n3xzcR5yFgSwU/IwsuSf/TiEdRCqqtev/PSJif/5f
+	 0A9MKl2+pmP/p15eqzL078Wcq6o+YJolhR99h10Cl3bGdpBdszZA+4NqO68KgaEKbL
+	 bcD7pT8K4PrRI3hTnYzHjcMfDaAvQsq+7h6T1PBaoRdV24rWo/Q/4LNVoiqIBNKEgD
+	 VsnPqqM/VwJNN0i12jx6mSH3QU1hsR6LhQSxraOqv27xnX3Nvxks5XuAmJ7Aoci868
+	 Gi5HRIEbmszpwmnVDZUT3cQEREFZystM7nsAVO5WrkfvajvbHOT9Z6qxT7fXKf6PEc
+	 ZH/a+Ho49LwzA==
+Message-ID: <e3733148-142c-40a1-b250-4502e8726f0c@kernel.org>
+Date: Mon, 12 Aug 2024 11:54:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240502224703.103150-1-swboyd@chromium.org> <CAE-0n50VDgsg-4QnynvLOzykr3KP5JsnHqeFPA=uRT3EfgL19g@mail.gmail.com>
- <CAMi1Hd1KQBE4kKUdAn8E5FV+BiKzuv+8FoyWQrrTHPDoYTuhgA@mail.gmail.com>
- <CAE-0n53X1Gv9nnyDfeivYd7n5W6D1WFkO0tCvYc9drb0+4hQbw@mail.gmail.com>
- <CAMi1Hd2_a7TjA7J9ShrAbNOd_CoZ3D87twmO5t+nZxC9sX18tA@mail.gmail.com> <CAE-0n52JgfCBWiFQyQWPji8cq_rCsviBpW-m72YitgNfdaEhQg@mail.gmail.com>
-In-Reply-To: <CAE-0n52JgfCBWiFQyQWPji8cq_rCsviBpW-m72YitgNfdaEhQg@mail.gmail.com>
-From: Amit Pundir <amit.pundir@linaro.org>
-Date: Mon, 12 Aug 2024 15:09:47 +0530
-Message-ID: <CAMi1Hd2drhMGTsvnX1aqwpDTOkK_+n2OKMYY1Y9ONHyYiFLTSQ@mail.gmail.com>
-Subject: Re: [PATCH] clk: qcom: Park shared RCGs upon registration
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	patches@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
-	Laura Nao <laura.nao@collabora.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Douglas Anderson <dianders@chromium.org>, Taniya Das <quic_tdas@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/4] dt-bindings: clock: Add AST2700 clock bindings
+To: Ryan Chen <ryan_chen@aspeedtech.com>,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+ Andrew Jeffery <andrew@codeconstruct.com.au>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-aspeed@lists.ozlabs.org" <linux-aspeed@lists.ozlabs.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+References: <20240808075937.2756733-1-ryan_chen@aspeedtech.com>
+ <20240808075937.2756733-4-ryan_chen@aspeedtech.com>
+ <14ef9485-54ba-402b-9b90-5f10c1523d4e@wanadoo.fr>
+ <OS8PR06MB75413728F0FCEE022B4B4F5BF2BA2@OS8PR06MB7541.apcprd06.prod.outlook.com>
+ <eec21668-3674-40c6-b443-90c7c02262e3@kernel.org>
+ <OS8PR06MB7541CA018C86E262F826B9E5F2BA2@OS8PR06MB7541.apcprd06.prod.outlook.com>
+ <OS8PR06MB7541B0D9A43B989DC1738F68F2852@OS8PR06MB7541.apcprd06.prod.outlook.com>
+ <5081c41b-dfbd-49ad-a993-b983d4c339f0@kernel.org>
+ <OS8PR06MB7541196D3058904998820CFFF2852@OS8PR06MB7541.apcprd06.prod.outlook.com>
+ <9465f8c0-5270-46df-af4b-e9ee78db63d1@kernel.org>
+ <OS8PR06MB7541CC40B6B8877B2656182CF2852@OS8PR06MB7541.apcprd06.prod.outlook.com>
+ <OS8PR06MB75415EC7A912DBD4D21A0035F2852@OS8PR06MB7541.apcprd06.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <OS8PR06MB75415EC7A912DBD4D21A0035F2852@OS8PR06MB7541.apcprd06.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue, 6 Aug 2024 at 03:07, Stephen Boyd <swboyd@chromium.org> wrote:
->
-> Quoting Amit Pundir (2024-08-05 03:43:14)
-> > On Sat, 3 Aug 2024 at 06:29, Stephen Boyd <swboyd@chromium.org> wrote:
-> > >
-> > > Also please send back the dmesg so we can see what clks are configured
-> > > for at boot time. If they're using TCXO source at boot then they're not
-> > > going to be broken. In which case those clks can keep using the old clk
-> > > ops and we can focus on the ones that aren't sourcing from TCXO.
-> >
-> > Thank your for this debug patch. I thought I narrowed down the
-> > breakage to the clks in drivers/clk/qcom/gcc-sm8550.c, until I ran
-> > into the following kernel panic in ucsi_glink driver in later test
-> > runs.
->
-> Thanks for the info. These are the clks that aren't sourcing from XO
-> at registration time:
->
->   gcc_qupv3_wrap1_s7_clk_src with cfg 0x102601 -> parent is gpll0_out_even
->   gcc_ufs_phy_axi_clk_src with cfg 0x103 -> parent is gpll0_out_main
->   gcc_ufs_phy_ice_core_clk_src with cfg 0x503 -> parent is gpll4_out_main
->   gcc_ufs_phy_unipro_core_clk_src with cfg 0x103 -> parent is gpll0_out_main
->   gcc_usb30_prim_master_clk_src with cfg 0x105 -> parent is gpll0_out_main
->
-> The original patch is going to inform the clk framework that the parent
-> of these clks aren't XO but something like gpll0_out_even, whatever the
-> hardware is configured for. That may cause these PLLs to be turned off
-> earlier than before if, for example, gcc_ufs_phy_axi_clk_src is turned
-> off by a consumer and gcc_usb30_prim_master_clk_src is left enabled at
-> boot. That's why we force park clks at registration time, so that they
-> can't have their parent clk get turned off by some other clk consumer
-> enabling and then disabling a clk that's also parented to the same
-> parent.
->
-> This same problem exists for RCGs that aren't shared too, but it's
-> particularly bad for shared RCGs because the parent PLLs aren't turned
-> on automatically by the hardware when things like the GDSC do their
-> housekeeping. At least when software is in control we can enable the
-> parent PLL and unstick the RCG that was previously cut off.
+On 12/08/2024 11:39, Ryan Chen wrote:
+>> Subject: RE: [PATCH 3/4] dt-bindings: clock: Add AST2700 clock bindings
+>>
+>>> Subject: Re: [PATCH 3/4] dt-bindings: clock: Add AST2700 clock
+>>> bindings
+>>>
+>>> On 12/08/2024 10:22, Ryan Chen wrote:
+>>>>> Subject: Re: [PATCH 3/4] dt-bindings: clock: Add AST2700 clock
+>>>>> bindings
+>>>>>
+>>>>> On 12/08/2024 09:26, Ryan Chen wrote:
+>>>>>>> Subject: RE: [PATCH 3/4] dt-bindings: clock: Add AST2700 clock
+>>>>>>> bindings
+>>>>>>>
+>>>>>>>> Subject: Re: [PATCH 3/4] dt-bindings: clock: Add AST2700 clock
+>>>>>>>> bindings
+>>>>>>>>
+>>>>>>>> On 09/08/2024 07:47, Ryan Chen wrote:
+>>>>>>>>>> Subject: Re: [PATCH 3/4] dt-bindings: clock: Add AST2700 clock
+>>>>>>>>>> bindings
+>>>>>>>>>>
+>>>>>>>>>> Le 08/08/2024 à 09:59, Ryan Chen a écrit :
+>>>>>>>>>>> Add dt bindings for AST2700 clock controller
+>>>>>>>>>>>
+>>>>>>>>>>> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
+>>>>>>>>>>> ---
+>>>>>>>>>>>   .../dt-bindings/clock/aspeed,ast2700-clk.h    | 175
+>>>>>>>>>> ++++++++++++++++++
+>>>>>>>>>>>   1 file changed, 175 insertions(+)
+>>>>>>>>>>>   create mode 100644
+>>>>>>>>>>> include/dt-bindings/clock/aspeed,ast2700-clk.h
+>>>>>>>>>>>
+>>>>>>>>>>> diff --git a/include/dt-bindings/clock/aspeed,ast2700-clk.h
+>>>>>>>>>>> b/include/dt-bindings/clock/aspeed,ast2700-clk.h
+>>>>>>>>>>> new file mode 100644
+>>>>>>>>>>> index 000000000000..facf72352c3e
+>>>>>>>>>>> --- /dev/null
+>>>>>>>>>>> +++ b/include/dt-bindings/clock/aspeed,ast2700-clk.h
+>>>>>>>>>>> @@ -0,0 +1,175 @@
+>>>>>>>>>>> +/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>>>>>>>>>> +*/
+>>>>>>>>>>> +/*
+>>>>>>>>>>> + * Device Tree binding constants for AST2700 clock controller.
+>>>>>>>>>>> + *
+>>>>>>>>>>> + * Copyright (c) 2024 Aspeed Technology Inc.
+>>>>>>>>>>> + */
+>>>>>>>>>>> +
+>>>>>>>>>>> +#ifndef __DT_BINDINGS_CLOCK_AST2700_H #define
+>>>>>>>>>>> +__DT_BINDINGS_CLOCK_AST2700_H
+>>>>>>>>>>> +
+>>>>>>>>>>> +/* SOC0 clk-gate */
+>>>>>>>>>>> +#define SCU0_CLK_GATE_MCLK (0) #define
+>>> SCU0_CLK_GATE_ECLK (1)
+>>>>>>>>>>> +#define SCU0_CLK_GATE_2DCLK        (2)
+>>>>>>>>>>> +#define SCU0_CLK_GATE_VCLK (3) #define
+>> SCU0_CLK_GATE_BCLK
+>>> (4)
+>>>>>>>>>>> +#define SCU0_CLK_GATE_VGA0CLK      (5)
+>>>>>>>>>>> +#define SCU0_CLK_GATE_REFCLK       (6)
+>>>>>>>>>>> +#define SCU0_CLK_GATE_PORTBUSB2CLK (7) #define
+>>>>>>>> SCU0_CLK_GATE_RSV8
+>>>>>>>>>>> +(8)
+>>>>>>>>>>> +#define SCU0_CLK_GATE_UHCICLK      (9)
+>>>>>>>>>>> +#define SCU0_CLK_GATE_VGA1CLK      (10)
+>>>>>>>>>>> +#define SCU0_CLK_GATE_DDRPHYCLK    (11)
+>>>>>>>>>>> +#define SCU0_CLK_GATE_E2M0CLK      (12)
+>>>>>>>>>>> +#define SCU0_CLK_GATE_HACCLK       (13)
+>>>>>>>>>>> +#define SCU0_CLK_GATE_PORTAUSB2CLK (14)
+>>>>>>>>>>> +#define SCU0_CLK_GATE_UART4CLK     (15)
+>>>>>>>>>>> +#define SCU0_CLK_GATE_SLICLK       (16)
+>>>>>>>>>>> +#define SCU0_CLK_GATE_DACCLK       (17)
+>>>>>>>>>>> +#define SCU0_CLK_GATE_DP   (18)
+>>>>>>>>>>> +#define SCU0_CLK_GATE_E2M1CLK      (19)
+>>>>>>>>>>> +#define SCU0_CLK_GATE_CRT0CLK      (20)
+>>>>>>>>>>> +#define SCU0_CLK_GATE_CRT1CLK      (21)
+>>>>>>>>>>> +#define SCU0_CLK_GATE_VLCLK        (22)
+>>>>>>>>>>> +#define SCU0_CLK_GATE_ECDSACLK     (23)
+>>>>>>>>>>> +#define SCU0_CLK_GATE_RSACLK       (24)
+>>>>>>>>>>> +#define SCU0_CLK_GATE_RVAS0CLK     (25)
+>>>>>>>>>>> +#define SCU0_CLK_GATE_UFSCLK       (26)
+>>>>>>>>>>> +#define SCU0_CLK_GATE_EMMCCLK      (27)
+>>>>>>>>>>> +#define SCU0_CLK_GATE_RVAS1CLK     (28)
+>>>>>>>>>>> +/* reserved 29 ~ 31*/
+>>>>>>>>
+>>>>>>>> No, you cannot reserve IDs. They are always continous.
+>>>>>>> I think for mis-understood.
+>>>>>>> I will remove the comment.
+>>>>>>> And keep it is continuous. Thanks.
+>>>>>>>>
+>>>>>>>>>>> +#define SCU0_CLK_GATE_NUM  (SCU0_CLK_GATE_RVAS1CLK +
+>>> 1)
+>>>>>>>>
+>>>>>>>> No, not a binding.
+>>>>>>>
+>>>>>> I will modify by following.
+>>>>>>
+>>>>>> #define SCU0_CLK_GATE_RVAS1CLK  (28)
+>>>>>> #define SCU0_CLK_GATE_NUM       (SCU0_CLK_GATE_RVAS1CLK +
+>> 1)
+>>>>>
+>>>>> Nothing changed. Still not a binding. Why do you send the same and
+>>>>> expect different result? Drop.
+>>>>>
+>>>>> Address feedback sent to you from previous versions of the patchset.
+>>>>> There was never a reply.
+>>>> Sorry, mis-understood.
+>>>> Since you think "#define SCU0_CLK_GATE_NUM" not a binding.
+>>>> Do you mean I should #define SCU0_CLK_GATE_NUM in clk driver, not in
+>>> binding header, am I right?
+>>>
+>>> What did I write in the first Aspeed 2700 patch? So you are not going
+>>> to respond there? Are you going to implement entire feedback received
+>>> in the first version of the patchset?
+>>
+>> Apologize again, I do the internal discussion, it should not send "Introduce
+>> ASPEED AST27XX BMC SoC" series patch. it should be separate series patch.
+>> It should be bite by bite, example clk driver patches, platform patches,
+>> interrupt patches.
+>> So I am not going to response there, prefer here.
+>>
+>> So I still not understood your point "not a binding" is ~
+>>
+>>
+> I review your point on 
+> https://patchwork.kernel.org/project/linux-clk/patch/20240726110355.2181563-3-kevin_chen@aspeedtech.com/
+> 
+> Do you mean I should not be gate naming here, all should be clk. 
+> Example +#define SCU0_CLK_GATE_RVAS1CLK -> +#define SCU0_CLK_RVAS1 am I right?
 
-Thank you Stephen for the detailed explanation. Really appreciate this
-knowledge dump.
+Drop the define for number of clocks from the header, because it is not
+a binding. You can put it in the driver or not, I don't care and do not
+provide guidance on this because I don't know if it makes sense at all.
+What I know is that number of clocks is not related to binding. It is
+not needed in the binding, either.
 
->
-> Can you narrow down the list above to the clk that matters? I guess if
-> USB isn't working then gcc_usb30_prim_master_clk_src is the one that
-> should be changed and nothing else. Although, I noticed that in the
-> first dmesg log you sent the serial console had garbage, and that's
-> likely because the rate changed while the clk was registered. I don't
-> know why the gcc_qupv3_wrap1_s7_clk_src is marked with the shared clk
-> ops. That's confusing to me as I don't expect that to need to be parked
-> for any reasons. Maybe qcom folks can comment there but I'd expect plain
-> rcg2_ops to be used for those clks. Anyway, if you can narrow down to
-> which clk needs to be left untouched it would be helpful.
+Best regards,
+Krzysztof
 
-gcc_qupv3_wrap1_s7_clk_src and gcc_usb30_prim_master_clk_src need to
-be left untouched to fix the Audio codec and USB-C host mode breakages
-respectively. It seem to have fixed the serial console garbage dump
-issue as well.
-
-UFS on SM8550-HDK has it's own issues when booting AOSP from it, so I
-couldn't test/verify if the reported gcc_ufs_phy_*_clk_src clk changes
-make any difference. But I'll bookmark this change for future
-reference if I run into any relevant UFS probe deferrals once we fix
-the existing/on-going issues.
-
->
-> >
-> > [    7.882923][    T1] init: Loading module /lib/modules/ucsi_glink.ko
-> > with args ''
-> > [    7.892929][   T92] Unable to handle kernel NULL pointer
-> > dereference at virtual address 0000000000000010
-> > [    7.894935][    T1] init: Loaded kernel module /lib/modules/ucsi_glink.ko
-> > [    7.902670][   T92] user pgtable: 4k pages, 39-bit VAs, pgdp=0000000886218000
-> > [    7.902674][   T92] Internal error: Oops: 0000000096000006 [#1] PREEMPT SMP
-> > [    7.993995][   T64] qcom_pmic_glink pmic-glink: Failed to create
-> > device link (0x180) with a600000.usb
-> > [    8.078673][   T92] CPU: 7 UID: 0 PID: 92 Comm: kworker/7:2
-> > Tainted: G S          E      6.11.0-rc2-mainline-00001-g4153d980358d
-> > #6
-> > [    8.078676][   T92] Tainted: [S]=CPU_OUT_OF_SPEC, [E]=UNSIGNED_MODULE
-> > [    8.078677][   T92] Hardware name: Qualcomm Technologies, Inc.
-> > SM8550 HDK (DT)
-> > [    8.078679][   T92] Workqueue: events pmic_glink_ucsi_register [ucsi_glink]
-> > [    8.078682][   T92] pstate: 63400005 (nZCv daif +PAN -UAO +TCO +DIT
-> > -SSBS BTYPE=--)
-> > [    8.078684][   T92] pc : pmic_glink_send+0x10/0x2c [pmic_glink]
-> > [    8.078685][   T92] lr : pmic_glink_ucsi_read+0x84/0x14c [ucsi_glink]
-> > [    8.078704][   T92] Call trace:
-> > [    8.078705][   T92]  pmic_glink_send+0x10/0x2c [pmic_glink]
-> > [    8.078706][   T92]  pmic_glink_ucsi_read+0x84/0x14c [ucsi_glink]
-> > [    8.078707][   T92]  pmic_glink_ucsi_read_version+0x20/0x30 [ucsi_glink]
-> > [    8.078708][   T92]  ucsi_register+0x28/0x70
-> > [    8.078717][   T92]  pmic_glink_ucsi_register+0x18/0x28 [ucsi_glink]
-> > [    8.078718][   T92]  process_one_work+0x184/0x2e8
-> > [    8.078723][   T92]  worker_thread+0x2f0/0x404
-> > [    8.078725][   T92]  kthread+0x114/0x118
-> > [    8.078728][   T92]  ret_from_fork+0x10/0x20
-> > [    8.078732][   T92] ---[ end trace 0000000000000000 ]---
-> > [    8.078734][   T92] Kernel panic - not syncing: Oops: Fatal exception
-> > [    8.078735][   T92] SMP: stopping secondary CPUs
-> > [    8.279136][   T92] Kernel Offset: 0x14d9480000 from 0xffffffc080000000
-> > [    8.279141][   T92] PHYS_OFFSET: 0x80000000
-> > [    8.279143][   T92] CPU features: 0x18,004e0003,80113128,564676af
-> > [    8.279148][   T92] Memory Limit: none
->
-> That looks like 'client' is NULL in pmic_glink_send(). The VA of 0x10 is
-> the offset of 'pg' in struct pmic_glink_client. I don't know much about
-> that driver but I'd guess that ucsi_glink has some race condition
-> assigning the client pointer?
->
-> Oh actually, I see the problem. devm_pmic_glink_register_client()
-> returns a struct pmic_glink_client pointer that's assigned to
-> 'ucsi->client'. And pmic_glink_ucsi_read() uses 'ucsi->client' to call
-> pmic_glink_send(). That pointer is NULL because the workqueue that runs
-> pmic_glink_ucsi_register() must run before
-> devm_pmic_glink_register_client() returns and assigns the client pointer
-> to 'ucsi->client'. This is simply a race.
->
->  CPU0                                        CPU1
->  ----                                        ----
->  ucsi->client = NULL;
->  devm_pmic_glink_register_client()
->   client->pdr_notify(client->priv, pg->client_state)
->    pmic_glink_ucsi_pdr_notify()
->     schedule_work(&ucsi->register_work)
->     <schedule away>
->                                              pmic_glink_ucsi_register()
->                                               ucsi_register()
->                                                pmic_glink_ucsi_read_version()
->                                                 pmic_glink_ucsi_read()
->                                                  pmic_glink_ucsi_read()
->                                                   pmic_glink_send(ucsi->client)
->                                                   <client is NULL BAD>
->  ucsi->client = client // Too late!
->
-> >
-> > I couldn't reproduce this kernel panic on vanilla v6.11-rc2 in 50+
-> > test runs after that. So I'm assuming that this debug patch may have
-> > triggered it.
-> > Attaching the crashing and working dmesg logs with the debug patch applied.
-> >
->
-> Sounds like you just need to reboot a bunch! Or add an msleep() in
-> devm_pmic_glink_register_client() after the notify call to open the race
-> window and let the workqueue run.
-
-Thank you for diagnosing this race in ucsi_glink. I needed to run an
-overnight reboot test to reproduce this crash, and could reproduce it
-on ~380th reboot. I'll check if it has already been reported or fixed
-on linux-next.
-
-Regards,
-Amit Pundir
