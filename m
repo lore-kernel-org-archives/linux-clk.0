@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C09F1188CC0;
-	Mon, 12 Aug 2024 18:10:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F84219149E;
+	Mon, 12 Aug 2024 20:49:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723486257; cv=none; b=SrdoIJIvIGrjpd7ZkH1wFadqXh7GMQSsn7fee7qNoThIGfAz632cyT12CYjUcM6nfUYEFLngqk/r4i/HgGZzi0uvm70XtzNoecx+4be5A/UdxUI+/jrKbEsUfQArAhskxS0Lz74iM9KhC3j8W7h2b6KLHr4cubuig9tRo6zXQ38=
+	t=1723495746; cv=none; b=E1HVkPB68JdmhjCRVMw6U11EKkl6h8di68NkY3ntJYnYN6y8U9lkk/rfgR0WUcRs52mp/NqFoz2JILlIlnMZhE5yDnPXYnkOjoJR+XATs08+fjt6OZI5nejldTAyE/olm7unrBditZQ9MtQvFZ5TgusorlFVaZDAdsjAPDZxxa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723486257; c=relaxed/simple;
-	bh=zXDpBzwnAWQ9ftmM2XfNlBBaM9d2VKtVYQlnQhipN6E=;
+	s=arc-20240116; t=1723495746; c=relaxed/simple;
+	bh=WQ8usZ1RlfOYVFOCxfGa2d4cHIAOC6KI4xcce7W4NzE=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=k8SRGwhR1DM+JxMjETAX0qq8EIaBcCv1Va6YEUrDHaJrfkm/Mp4esDkSQv667gEhYd3oVzUv2ORiq/RSVS+9CTB53U4WayEY8QNSKBUKXTVtdTNeKQtqeMiuNToWAfDfrBciBzTowAScBp7jkVS+IvmO+xrfrfJSFHAVXxzceZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CgoY75bk; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=UBg9tui+HAmsjuTkYGkwZW86U1DvqBjuTp/qIZmdJvzE7ysPq0OFrANGG4GbXVsysDXKrzEv9HVYG1o7rUxWxukSteF6VwG1GxqizPpmyPHhEeXg4fRwrp+nOFzZTyKqYuLVooze+qrrCdzu7KlCDlID0PDavTVoJef9fIs4W3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KyOcnWJB; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CgoY75bk"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 228C8C32782;
-	Mon, 12 Aug 2024 18:10:57 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KyOcnWJB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 393C1C4AF0D;
+	Mon, 12 Aug 2024 20:49:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723486257;
-	bh=zXDpBzwnAWQ9ftmM2XfNlBBaM9d2VKtVYQlnQhipN6E=;
+	s=k20201202; t=1723495745;
+	bh=WQ8usZ1RlfOYVFOCxfGa2d4cHIAOC6KI4xcce7W4NzE=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=CgoY75bkFcdbTXTdnHY5lq8cNeRRp0XY8CEYIaMLfjiToXmkjRhVPci0XjbXaANUL
-	 qQNzeC9etqlDsXc3mFa1lXsZ3d1p4cVdnYoyoIlvKBpaCYh9p7szOOj6Z7PaTvxKjB
-	 suIbReAm1kt4EAivtjyOmQp0TYETnnzL/Qo6XawzjWc7DnbaTfSCb4iayH4dVLJb1t
-	 SBoo+7dtDqTBh98rPgWR69bM4ENj87TzYipLqk+vEq21v4sAd3HLXo+Wc90RMOZUhc
-	 XOxno2rOlb/kLpdKQ6RFYWNkK/2XO9zcvj85GlynMKwFV1muUCuEmqnpE3SA6O6ags
-	 li+zZmcqW97Ug==
-Message-ID: <1234a0176de236abb603f96ab9a1d6a1.sboyd@kernel.org>
+	b=KyOcnWJBCgaVHvDkK3BaWnxUfRhGPpSLq0zb+KQfru8ZxaE9JzBvf8NC+ujsnEZlN
+	 veAPZRaIAQ3WYO2tu+qQHgUn3zYIgvf0/j0h6EirItVppuXugUV8yWPJVWMLTMeQFJ
+	 x3dRwX2FxsddRCEIxRgzJr2KofduqW4lDLskPcMfj3w1LBHt3twAv4Djm9BzNuuysQ
+	 mLU/LKU3P058xOsG95kPeSa68IpkcD1pLwCr1Jet0ar/+CSzxaxBCTPw5NNGvN9TJ/
+	 ZrDupOUjaypDnFCJD/iWGD5CqTTafHLX/EA1p52Q18/hNmNZjPsg3RWW2fRs6GeamK
+	 y1dz7GhePXRug==
+Message-ID: <02d5ecf54338564b8ea4b59fe39af395.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,56 +35,20 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <PH7PR12MB72845D56BF4361441AA9CB9A8A852@PH7PR12MB7284.namprd12.prod.outlook.com>
-References: <20240722121910.14647-1-naman.trivedimanojbhai@amd.com> <ac67f76d4b4b5f4bf108c1457f1263c7.sboyd@kernel.org> <PH7PR12MB72845D56BF4361441AA9CB9A8A852@PH7PR12MB7284.namprd12.prod.outlook.com>
-Subject: RE: [PATCH V2] drivers: clk: zynqmp: remove clock name dependency
+In-Reply-To: <20240807-dt-mediatek-clk-v1-1-e8d568abfd48@kernel.org>
+References: <20240807-dt-mediatek-clk-v1-0-e8d568abfd48@kernel.org> <20240807-dt-mediatek-clk-v1-1-e8d568abfd48@kernel.org>
+Subject: Re: [PATCH 1/3] dt-bindings: clock: mediatek,apmixedsys: Fix "mediatek,mt6779-apmixed" compatible
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org <linux-kernel@vger.kernel.org>
-To: "Simek, Michal" <michal.simek@amd.com>, "Thangaraj, Senthil Nathan" <SenthilNathan.Thangaraj@amd.com>, "Trivedi Manojbhai, Naman" <Naman.TrivediManojbhai@amd.com>, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, mturquette@baylibre.com
-Date: Mon, 12 Aug 2024 11:10:55 -0700
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Bartosz Golaszewski <brgl@bgdev.pl>, Chun-Jie Chen <chun-jie.chen@mediatek.com>, Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring (Arm) <robh@kernel.org>
+Date: Mon, 12 Aug 2024 13:49:03 -0700
 User-Agent: alot/0.10
 
-Quoting Trivedi Manojbhai, Naman (2024-08-12 05:57:13)
-> >> diff --git a/drivers/clk/zynqmp/clkc.c b/drivers/clk/zynqmp/clkc.c
-> >> index a91d98e238c2..b791a459280e 100644
-> >> --- a/drivers/clk/zynqmp/clkc.c
-> >> +++ b/drivers/clk/zynqmp/clkc.c
-> >> @@ -543,7 +554,7 @@ static int zynqmp_clock_get_parents(u32 clk_id,
-> >struct clock_parent *parents,
-> >>   * Return: 0 on success else error+reason
-> >>   */
-> >>  static int zynqmp_get_parent_list(struct device_node *np, u32 clk_id,
-> >> -                                 const char **parent_list, u32 *num_p=
-arents)
-> >> +                                 struct clk_parent_data *parent_list,
-> >> + u32 *num_parents)
-> >>  {
-> >>         int i =3D 0, ret;
-> >>         u32 total_parents =3D clock[clk_id].num_parents; @@ -555,18
-> >> +566,30 @@ static int zynqmp_get_parent_list(struct device_node *np,
-> >> u32 clk_id,
-> >>
-> >>         for (i =3D 0; i < total_parents; i++) {
-> >>                 if (!parents[i].flag) {
-> >> -                       parent_list[i] =3D parents[i].name;
-> >> +                       ret =3D of_property_match_string(np, "clock-na=
-mes",
-> >> +
-> >> + parents[i].name);
-> >
-> >You shouldn't need to match 'clock-names'. The order of that property is=
- fixed
-> >in the binding, which means you can simply use the index that the name i=
-s at
-> >in the binding in 'struct parent_data'.
+Quoting Rob Herring (Arm) (2024-08-07 09:58:53)
+> "mediatek,mt6779-apmixed" is the compatible string in use already, not
+> "mediatek,mt6779-apmixedsys".
 >=20
-> This driver is common across multiple device families, and each device ha=
-s different set of clock names in device tree/binding.  This implementation=
- seemed to be generic for all devices.=20
-> To use index directly, I have to add if..else for matching compatible str=
-ings and more if..else inside each of them for matching clock names to find=
- index. Please let me know if this is preferred approach.
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
 
-It is preferred to not use clock-names and use the index directly. This
-avoids a bunch of string comparisons and makes for smaller and faster
-code.
+Applied to clk-next
