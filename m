@@ -1,199 +1,633 @@
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 735986F06B
-	for <linux-clk@vger.kernel.org>; Mon, 12 Aug 2024 04:39:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E3F1380;
+	Mon, 12 Aug 2024 05:13:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723437599; cv=none; b=LVI5oadeqXR5Y/pf9of0FtWL5aOpzDCFc9/Da1yDiw4XchqQYXY+JaHayvOsPIFfLD6FU4d2VQg75LfnlEp0s5rgS7vu29DMf33y+6UL2crNU/bP0qK+cGavDz2MAlZkdXj6ot/K+dxrestnDqT3NpLsOg8FLhCFZRdnIJ0APPQ=
+	t=1723439617; cv=none; b=Q40ljz6EI7mOx0ZkmabAK098O1g6z8KJUA68EC2UdPse1FPKOVpEp8AK6V+2LAtNgTzbQkcZquehqqkzyTdFOJ0dPmcRrvHg56TvoY3e8l3DIKM32lxCf5Xv/9UyUOs2gpo6eC7Y+bIPVNYaLl0IKQOzBCR9K25SwmoOoGBoV+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723437599; c=relaxed/simple;
-	bh=OcUBdBhOPJXpF1ZhDWGg+EuTx0n6CXN14Gm4pjBxdqk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=lQRuESwKK5gie2p7fZ3Acc4LIS+/iN4WWlFPZw+T7CBzPMeIkQW9tVV+PMQ4jnR0T1FhZc2F01jZfJL4TQypgJ29eAkohFT4mxk8TfkbtLWvOAfpSEkim+AFsSjenzAy+ASCXLdSEZ9ti9W46osRj7twZN/iM5bgYRfRz57SbZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=H2zEc4QZ; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1723439617; c=relaxed/simple;
+	bh=xQPgeGRBeiU5Ao8KXmafMsgCXzcbicJgtVMV8Oxx+YU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
+	 In-Reply-To:To:CC; b=CBEp7GbFq2oPegykAn0dstGC6zNOgoT7FaP/yGA9dwg/OFs2s348KlevEnSdU1A/tVSg1BOpJJpOe4XcRGneN6WEEbjTbU5HGu+yVmLDX/IGSRHHJIEWJKzY1G40Hpb4HKvhhIy9nQjnwUHGMVkzB0rDrrC7f7StcGqQ9L7V2rM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eJyn39KX; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="H2zEc4QZ"
-Received: from epcas1p4.samsung.com (unknown [182.195.41.48])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20240812043955epoutp031c6e2811eeebc1918351552e012d9869~q4VyecdUm2935529355epoutp03b
-	for <linux-clk@vger.kernel.org>; Mon, 12 Aug 2024 04:39:55 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20240812043955epoutp031c6e2811eeebc1918351552e012d9869~q4VyecdUm2935529355epoutp03b
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1723437595;
-	bh=ej7ujlPKRdvgCSrnmr/Prz0FplA5pHp++OQEMqJ3mzA=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=H2zEc4QZTDEyrzMgWrbv3FHzbddeuJjbznebKhz950d9kKOYaTWVrlnaxOIHLkyLg
-	 HBXhU6yacI1rJ3/X+oG1LA07xsSQb7fe7PUvIwdxFn6XGTGuiBdb3FMyh0QN2GABzY
-	 zpnp7tcBMLIqWoj6R3TT9zSYJ2U4ELei0MNGG+Es=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas1p1.samsung.com (KnoxPortal) with ESMTP id
-	20240812043954epcas1p1844c1cfe6fe7b1538fad2ddb921b21cc~q4Vx_AGl72424824248epcas1p1P;
-	Mon, 12 Aug 2024 04:39:54 +0000 (GMT)
-Received: from epsmgec1p1.samsung.com (unknown [182.195.36.144]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4Wj1yd6gdVz4x9QJ; Mon, 12 Aug
-	2024 04:39:53 +0000 (GMT)
-Received: from epcas1p4.samsung.com ( [182.195.41.48]) by
-	epsmgec1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	61.C4.08992.91299B66; Mon, 12 Aug 2024 13:39:53 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas1p4.samsung.com (KnoxPortal) with ESMTPA id
-	20240812043953epcas1p44d4eb166f073de2f610bade4d9b96db9~q4VwmObvh1423814238epcas1p4Z;
-	Mon, 12 Aug 2024 04:39:53 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20240812043953epsmtrp12116e3ba70db40e37f622995e82baf58~q4VwlR2v-2452324523epsmtrp1h;
-	Mon, 12 Aug 2024 04:39:53 +0000 (GMT)
-X-AuditID: b6c32a33-96dfa70000002320-fd-66b99219bab0
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	9F.A8.07567.91299B66; Mon, 12 Aug 2024 13:39:53 +0900 (KST)
-Received: from [10.113.111.204] (unknown [10.113.111.204]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20240812043952epsmtip29ae53b3f2d98404a36d27fe69041ba31~q4VwRbZBn0281202812epsmtip2e;
-	Mon, 12 Aug 2024 04:39:52 +0000 (GMT)
-Message-ID: <58dfae564a4a624e464c7803a309f1f07b5ae83d.camel@samsung.com>
-Subject: Re: [PATCH v5 4/4] clk: samsung: add top clock support for
- ExynosAuto v920 SoC
-From: Kwanghoon Son <k.son@samsung.com>
-To: Sunyeal Hong <sunyeal.hong@samsung.com>, Krzysztof Kozlowski
-	<krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi
-	<cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Michael
-	Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob
-	Herring <robh@kernel.org>,  Conor Dooley <conor+dt@kernel.org>
-Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Date: Mon, 12 Aug 2024 13:39:47 +0900
-In-Reply-To: <20240730071221.2590284-5-sunyeal.hong@samsung.com>
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eJyn39KX"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47C2ZWD9024744;
+	Mon, 12 Aug 2024 05:13:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	8o78UkphjVAnyzqwav87TeNwA0f72W3Gc9q2izy4apg=; b=eJyn39KX1h8RiTFp
+	/frYHvad55414DXfQusJSVXKCt+sAHbpihbEmLxWOA2Wmwqeh9i889XvfKms+3D6
+	0sLjyXNFeuZ+dHqFi0W9v0ljXHfrtXixDWI3HuMZxkTe1SlLeBIx0ww43afEt/x3
+	AgFG4oZv6GAwj3WzC0MxxkQhqX7bHrdhpB6Dr0rxR5g0H1SBmKUr14ZRlzOfx3/Q
+	YXv17GuYaPw0RBr4dU049yBB26jQ2e9HnR7Xis0nuppWfBgE5RXHL+xi2P4EJ5mE
+	QW63gk8JWZs/C+kY/wlnsFhzv/V/KET+b9OCa1V4wjjYZXP92r9Q+IJGgd/D3u2y
+	oS7kdw==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40x18dawne-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 12 Aug 2024 05:13:29 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47C5DSQG009059
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 12 Aug 2024 05:13:28 GMT
+Received: from hu-skakitap-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Sun, 11 Aug 2024 22:13:23 -0700
+From: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+Date: Mon, 12 Aug 2024 10:43:01 +0530
+Subject: [PATCH v2 1/5] clk: qcom: gcc-sc8180x: Register QUPv3 RCGs for DFS
+ on sc8180x
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprHJsWRmVeSWpSXmKPExsWy7bCmga7kpJ1pBlPfmlo8mLeNzWLN3nNM
-	Fte/PGe1mH/kHKvF+fMb2C02Pb7GavGx5x6rxeVdc9gsZpzfx2Rx8ZSrxf89O9gtDr9pZ7X4
-	d20ji0XTsvVMDnwe72+0sntsWtXJ5rF5Sb1H35ZVjB6fN8kFsEZl22SkJqakFimk5iXnp2Tm
-	pdsqeQfHO8ebmhkY6hpaWpgrKeQl5qbaKrn4BOi6ZeYA3amkUJaYUwoUCkgsLlbSt7Mpyi8t
-	SVXIyC8usVVKLUjJKTAt0CtOzC0uzUvXy0stsTI0MDAyBSpMyM74M3chW8EfoYrpM1+wNDCe
-	5u9i5OCQEDCR6LoU08XIySEksINRon0LUxcjF5D9iVFi/pbNUM43RonLR68wgVSBNHx48IkF
-	omMvo8S3G/4QRe8ZJU6f/wZWxCvgIXHmxlcmkA3CApES7WfLQcJsAuoSS9rWsoPUiwg8Y5I4
-	9egTK4jDLLCUUWLSlWtsIFUsAqoSOy6sYQaxOQUcJLbv/8YIYjMLaEssW/gaLC4qIC/R8PAE
-	M8QyQYmTM5+wgAySEFjLIfFy60lWiFNdJCZemM4IYQtLvDq+hR3ClpJ42d8GZWdLHP24lw3C
-	LpG4PmsRVK+xxP6lk8E+YBbQlFi/Sx/iBj6Jd197WCFBxyvR0SYEYcpL3Oosh2gUlTjz9CMb
-	RNhD4svqYEjwnGSUaPp0jWkCo/wsJM/MQvLALIRdCxiZVzGKpRYU56anJhsWGMKjNDk/dxMj
-	OKFqGe9gvDz/n94hRiYOxkOMEhzMSiK8zeGb0oR4UxIrq1KL8uOLSnNSiw8xmgKDdCKzlGhy
-	PjCl55XEG5pYGpiYGRmbWBiaGSqJ8565UpYqJJCeWJKanZpakFoE08fEwSnVwMSnJ/Zvg1US
-	r1uuSaae24wYjvsfrOb23X1tHntw/arUtyVX+3hXPuxbsqB7+eb6q2fZuA/fiXj48gnHSt+6
-	JVekeFn2/fNUvs2d8TVlVeefvBS2yn9vrRYaBlqrvb29a+F+vbnqDyZozH3EtrVzjYXrIX/e
-	VI+FXYU585ga1d40e9Q3L5A3X7Cm9MDtl0lrLs4yea6WdHqt9run/dtePr0h1TxDfMt2i41G
-	h5xXBy7N9lE8tH/F5cMPT90NP1IqlPSCeXLI0tumBrJLUk7/8nigc13vgQzz8sPZD3sups+/
-	IJKwkftUYnDXk32PkhUnv5/xPvZRjlLR4RJvN/fLKqvvOzx2f1k7v4Dvj7Grf+hUJZbijERD
-	Leai4kQAdR1AnDEEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrPLMWRmVeSWpSXmKPExsWy7bCSvK7kpJ1pBg3POC0ezNvGZrFm7zkm
-	i+tfnrNazD9yjtXi/PkN7BabHl9jtfjYc4/V4vKuOWwWM87vY7K4eMrV4v+eHewWh9+0s1r8
-	u7aRxaJp2XomBz6P9zda2T02repk89i8pN6jb8sqRo/Pm+QCWKO4bFJSczLLUov07RK4Ml7t
-	mMBSsEOoYtr8tWwNjN38XYycHBICJhIfHnxi6WLk4hAS2M0o0f7hMSNEQlSi43IjkM0BZAtL
-	HD5cDBIWEnjLKPHiShqIzSvgIXHmxlcmkBJhgUiJ9rPlIGE2AXWJJW1r2UFGigi8YJL4/2QZ
-	K0iCWWAZo8Ti+ywgNouAqsSOC2uYQWxOAQeJ7fu/MULccJpR4l3zQRaIBk2J1u2/2SFsbYll
-	C1+DNYgKyEs0PDzBDHGEoMTJmU9YJjAKzkLSMgtJyywkZQsYmVcxSqYWFOem5yYbFhjmpZbr
-	FSfmFpfmpesl5+duYgTHkZbGDsZ78//pHWJk4mA8xCjBwawkwtscvilNiDclsbIqtSg/vqg0
-	J7X4EKM0B4uSOK/hjNkpQgLpiSWp2ampBalFMFkmDk6pBiZ3s6qwaftWbfzMGLW9qtji9irr
-	87znRHpvMmWJssjO5T+0j1U3yoizPLHs1Zzi1aF3OpLE1Lhu83qG+aYusk8yvWVmzOVWUv2x
-	qIXbY3vWfbXvDB7XfENdfFa9NhT52PtlWkBaRVOh+keDL4acnc7++p9ZbzI5xMyczL2ogFH2
-	w//ZPqKHJ9887OoZweT9zDH77hrVSbI9P9RfnNjil32pUnx2eFJuyrmktS6xVf96O4vEJnyf
-	dOGCua77m0WXNPueG659Hv/D4bV72uPlkuW1h1v7A14bnEzqClXQv37gv8Kn9nc5Gt/PPhPM
-	z9pa9i6v4v0ehzU5QebJL6crpO6O2fwwpvlwcIvqTNevSizFGYmGWsxFxYkALHPv9xIDAAA=
-X-CMS-MailID: 20240812043953epcas1p44d4eb166f073de2f610bade4d9b96db9
-X-Msg-Generator: CA
 Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240730071228epcas2p1923fbb513190816d7bd9afaf0a4f5066
-References: <20240730071221.2590284-1-sunyeal.hong@samsung.com>
-	<CGME20240730071228epcas2p1923fbb513190816d7bd9afaf0a4f5066@epcas2p1.samsung.com>
-	<20240730071221.2590284-5-sunyeal.hong@samsung.com>
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240812-gcc-sc8180x-fixes-v2-1-8b3eaa5fb856@quicinc.com>
+References: <20240812-gcc-sc8180x-fixes-v2-0-8b3eaa5fb856@quicinc.com>
+In-Reply-To: <20240812-gcc-sc8180x-fixes-v2-0-8b3eaa5fb856@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>
+CC: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Ajit Pandey
+	<quic_ajipan@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        "Taniya
+ Das" <quic_tdas@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        "Satya Priya
+ Kakitapalli" <quic_skakitap@quicinc.com>,
+        <stable@vger.kernel.org>
+X-Mailer: b4 0.14.1
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: ssmqitDQe_kDuI7c_YDgHFQBDLEuNPzR
+X-Proofpoint-ORIG-GUID: ssmqitDQe_kDuI7c_YDgHFQBDLEuNPzR
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-11_25,2024-08-07_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ bulkscore=0 phishscore=0 clxscore=1015 adultscore=0 spamscore=0
+ priorityscore=1501 mlxscore=0 malwarescore=0 suspectscore=0
+ mlxlogscore=999 impostorscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2407110000 definitions=main-2408120037
 
-On Tue, 2024-07-30 at 16:12 +0900, Sunyeal Hong wrote:
-> This adds support for CMU_TOP which generates clocks for all the
-> function blocks such as CORE, HSI0/1/2, PERIC0/1 and so on. For
-> CMU_TOP, PLL_SHARED0,1,2,3,4 and 5 will be the sources of this block
-> and they will generate bus clocks.
->=20
-> Signed-off-by: Sunyeal Hong <sunyeal.hong=40samsung.com>
-> ---
->  drivers/clk/samsung/Makefile             =7C    1 +
->  drivers/clk/samsung/clk-exynosautov920.c =7C 1173 ++++++++++++++++++++++
->  2 files changed, 1174 insertions(+)
->  create mode 100644 drivers/clk/samsung/clk-exynosautov920.c
->=20
+QUPv3 clocks support DFS on sc8180x platform but currently the code
+changes for it are missing from the driver, this results in not
+populating all the DFS supported frequencies and returns incorrect
+frequency when the clients request for them. Hence add the DFS
+registration for QUPv3 RCGs.
 
-=5Bsnip=5D
+Fixes: 4433594bbe5d ("clk: qcom: gcc: Add global clock controller driver for SC8180x")
+Cc: stable@vger.kernel.org
+Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+---
+ drivers/clk/qcom/gcc-sc8180x.c | 350 ++++++++++++++++++++++++-----------------
+ 1 file changed, 210 insertions(+), 140 deletions(-)
 
-> +static const struct samsung_cmu_info peric0_cmu_info __initconst =3D =7B
-> +	.mux_clks		=3D peric0_mux_clks,
-> +	.nr_mux_clks		=3D ARRAY_SIZE(peric0_mux_clks),
-> +	.div_clks		=3D peric0_div_clks,
-> +	.nr_div_clks		=3D ARRAY_SIZE(peric0_div_clks),
-> +	.nr_clk_ids		=3D CLKS_NR_PERIC0,
-> +	.clk_regs		=3D peric0_clk_regs,
-> +	.nr_clk_regs		=3D ARRAY_SIZE(peric0_clk_regs),
-> +	.clk_name		=3D =22dout_clkcmu_peric0_noc=22,
+diff --git a/drivers/clk/qcom/gcc-sc8180x.c b/drivers/clk/qcom/gcc-sc8180x.c
+index ad135bfa4c76..97bea5bc94c5 100644
+--- a/drivers/clk/qcom/gcc-sc8180x.c
++++ b/drivers/clk/qcom/gcc-sc8180x.c
+@@ -609,19 +609,29 @@ static const struct freq_tbl ftbl_gcc_qupv3_wrap0_s0_clk_src[] = {
+ 	{ }
+ };
+ 
++static struct clk_init_data gcc_qupv3_wrap0_s0_clk_src_init = {
++	.name = "gcc_qupv3_wrap0_s0_clk_src",
++	.parent_data = gcc_parents_0,
++	.num_parents = ARRAY_SIZE(gcc_parents_0),
++	.flags = CLK_SET_RATE_PARENT,
++	.ops = &clk_rcg2_ops,
++};
++
+ static struct clk_rcg2 gcc_qupv3_wrap0_s0_clk_src = {
+ 	.cmd_rcgr = 0x17148,
+ 	.mnd_width = 16,
+ 	.hid_width = 5,
+ 	.parent_map = gcc_parent_map_0,
+ 	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
+-	.clkr.hw.init = &(struct clk_init_data){
+-		.name = "gcc_qupv3_wrap0_s0_clk_src",
+-		.parent_data = gcc_parents_0,
+-		.num_parents = ARRAY_SIZE(gcc_parents_0),
+-		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
+-	},
++	.clkr.hw.init = &gcc_qupv3_wrap0_s0_clk_src_init,
++};
++
++static struct clk_init_data gcc_qupv3_wrap0_s1_clk_src_init = {
++	.name = "gcc_qupv3_wrap0_s1_clk_src",
++	.parent_data = gcc_parents_0,
++	.num_parents = ARRAY_SIZE(gcc_parents_0),
++	.flags = CLK_SET_RATE_PARENT,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap0_s1_clk_src = {
+@@ -630,13 +640,15 @@ static struct clk_rcg2 gcc_qupv3_wrap0_s1_clk_src = {
+ 	.hid_width = 5,
+ 	.parent_map = gcc_parent_map_0,
+ 	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
+-	.clkr.hw.init = &(struct clk_init_data){
+-		.name = "gcc_qupv3_wrap0_s1_clk_src",
+-		.parent_data = gcc_parents_0,
+-		.num_parents = ARRAY_SIZE(gcc_parents_0),
+-		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
+-	},
++	.clkr.hw.init = &gcc_qupv3_wrap0_s1_clk_src_init,
++};
++
++static struct clk_init_data gcc_qupv3_wrap0_s2_clk_src_init = {
++	.name = "gcc_qupv3_wrap0_s2_clk_src",
++	.parent_data = gcc_parents_0,
++	.num_parents = ARRAY_SIZE(gcc_parents_0),
++	.flags = CLK_SET_RATE_PARENT,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap0_s2_clk_src = {
+@@ -645,13 +657,15 @@ static struct clk_rcg2 gcc_qupv3_wrap0_s2_clk_src = {
+ 	.hid_width = 5,
+ 	.parent_map = gcc_parent_map_0,
+ 	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
+-	.clkr.hw.init = &(struct clk_init_data){
+-		.name = "gcc_qupv3_wrap0_s2_clk_src",
+-		.parent_data = gcc_parents_0,
+-		.num_parents = ARRAY_SIZE(gcc_parents_0),
+-		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
+-	},
++	.clkr.hw.init = &gcc_qupv3_wrap0_s2_clk_src_init,
++};
++
++static struct clk_init_data gcc_qupv3_wrap0_s3_clk_src_init = {
++	.name = "gcc_qupv3_wrap0_s3_clk_src",
++	.parent_data = gcc_parents_0,
++	.num_parents = ARRAY_SIZE(gcc_parents_0),
++	.flags = CLK_SET_RATE_PARENT,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap0_s3_clk_src = {
+@@ -660,13 +674,15 @@ static struct clk_rcg2 gcc_qupv3_wrap0_s3_clk_src = {
+ 	.hid_width = 5,
+ 	.parent_map = gcc_parent_map_0,
+ 	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
+-	.clkr.hw.init = &(struct clk_init_data){
+-		.name = "gcc_qupv3_wrap0_s3_clk_src",
+-		.parent_data = gcc_parents_0,
+-		.num_parents = ARRAY_SIZE(gcc_parents_0),
+-		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
+-	},
++	.clkr.hw.init = &gcc_qupv3_wrap0_s3_clk_src_init,
++};
++
++static struct clk_init_data gcc_qupv3_wrap0_s4_clk_src_init = {
++	.name = "gcc_qupv3_wrap0_s4_clk_src",
++	.parent_data = gcc_parents_0,
++	.num_parents = ARRAY_SIZE(gcc_parents_0),
++	.flags = CLK_SET_RATE_PARENT,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap0_s4_clk_src = {
+@@ -675,13 +691,15 @@ static struct clk_rcg2 gcc_qupv3_wrap0_s4_clk_src = {
+ 	.hid_width = 5,
+ 	.parent_map = gcc_parent_map_0,
+ 	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
+-	.clkr.hw.init = &(struct clk_init_data){
+-		.name = "gcc_qupv3_wrap0_s4_clk_src",
+-		.parent_data = gcc_parents_0,
+-		.num_parents = ARRAY_SIZE(gcc_parents_0),
+-		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
+-	},
++	.clkr.hw.init = &gcc_qupv3_wrap0_s4_clk_src_init,
++};
++
++static struct clk_init_data gcc_qupv3_wrap0_s5_clk_src_init = {
++	.name = "gcc_qupv3_wrap0_s5_clk_src",
++	.parent_data = gcc_parents_0,
++	.num_parents = ARRAY_SIZE(gcc_parents_0),
++	.flags = CLK_SET_RATE_PARENT,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap0_s5_clk_src = {
+@@ -690,13 +708,15 @@ static struct clk_rcg2 gcc_qupv3_wrap0_s5_clk_src = {
+ 	.hid_width = 5,
+ 	.parent_map = gcc_parent_map_0,
+ 	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
+-	.clkr.hw.init = &(struct clk_init_data){
+-		.name = "gcc_qupv3_wrap0_s5_clk_src",
+-		.parent_data = gcc_parents_0,
+-		.num_parents = ARRAY_SIZE(gcc_parents_0),
+-		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
+-	},
++	.clkr.hw.init = &gcc_qupv3_wrap0_s5_clk_src_init,
++};
++
++static struct clk_init_data gcc_qupv3_wrap0_s6_clk_src_init = {
++	.name = "gcc_qupv3_wrap0_s6_clk_src",
++	.parent_data = gcc_parents_0,
++	.num_parents = ARRAY_SIZE(gcc_parents_0),
++	.flags = CLK_SET_RATE_PARENT,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap0_s6_clk_src = {
+@@ -705,13 +725,15 @@ static struct clk_rcg2 gcc_qupv3_wrap0_s6_clk_src = {
+ 	.hid_width = 5,
+ 	.parent_map = gcc_parent_map_0,
+ 	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
+-	.clkr.hw.init = &(struct clk_init_data){
+-		.name = "gcc_qupv3_wrap0_s6_clk_src",
+-		.parent_data = gcc_parents_0,
+-		.num_parents = ARRAY_SIZE(gcc_parents_0),
+-		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
+-	},
++	.clkr.hw.init = &gcc_qupv3_wrap0_s6_clk_src_init,
++};
++
++static struct clk_init_data gcc_qupv3_wrap0_s7_clk_src_init = {
++	.name = "gcc_qupv3_wrap0_s7_clk_src",
++	.parent_data = gcc_parents_0,
++	.num_parents = ARRAY_SIZE(gcc_parents_0),
++	.flags = CLK_SET_RATE_PARENT,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap0_s7_clk_src = {
+@@ -720,13 +742,15 @@ static struct clk_rcg2 gcc_qupv3_wrap0_s7_clk_src = {
+ 	.hid_width = 5,
+ 	.parent_map = gcc_parent_map_0,
+ 	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
+-	.clkr.hw.init = &(struct clk_init_data){
+-		.name = "gcc_qupv3_wrap0_s7_clk_src",
+-		.parent_data = gcc_parents_0,
+-		.num_parents = ARRAY_SIZE(gcc_parents_0),
+-		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
+-	},
++	.clkr.hw.init = &gcc_qupv3_wrap0_s7_clk_src_init,
++};
++
++static struct clk_init_data gcc_qupv3_wrap1_s0_clk_src_init = {
++	.name = "gcc_qupv3_wrap1_s0_clk_src",
++	.parent_data = gcc_parents_0,
++	.num_parents = ARRAY_SIZE(gcc_parents_0),
++	.flags = CLK_SET_RATE_PARENT,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap1_s0_clk_src = {
+@@ -735,13 +759,15 @@ static struct clk_rcg2 gcc_qupv3_wrap1_s0_clk_src = {
+ 	.hid_width = 5,
+ 	.parent_map = gcc_parent_map_0,
+ 	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
+-	.clkr.hw.init = &(struct clk_init_data){
+-		.name = "gcc_qupv3_wrap1_s0_clk_src",
+-		.parent_data = gcc_parents_0,
+-		.num_parents = ARRAY_SIZE(gcc_parents_0),
+-		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
+-	},
++	.clkr.hw.init = &gcc_qupv3_wrap1_s0_clk_src_init,
++};
++
++static struct clk_init_data gcc_qupv3_wrap1_s1_clk_src_init = {
++	.name = "gcc_qupv3_wrap1_s1_clk_src",
++	.parent_data = gcc_parents_0,
++	.num_parents = ARRAY_SIZE(gcc_parents_0),
++	.flags = CLK_SET_RATE_PARENT,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap1_s1_clk_src = {
+@@ -750,13 +776,15 @@ static struct clk_rcg2 gcc_qupv3_wrap1_s1_clk_src = {
+ 	.hid_width = 5,
+ 	.parent_map = gcc_parent_map_0,
+ 	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
+-	.clkr.hw.init = &(struct clk_init_data){
+-		.name = "gcc_qupv3_wrap1_s1_clk_src",
+-		.parent_data = gcc_parents_0,
+-		.num_parents = ARRAY_SIZE(gcc_parents_0),
+-		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
+-	},
++	.clkr.hw.init = &gcc_qupv3_wrap1_s1_clk_src_init,
++};
++
++static struct clk_init_data gcc_qupv3_wrap1_s2_clk_src_init = {
++	.name = "gcc_qupv3_wrap1_s2_clk_src",
++	.parent_data = gcc_parents_0,
++	.num_parents = ARRAY_SIZE(gcc_parents_0),
++	.flags = CLK_SET_RATE_PARENT,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap1_s2_clk_src = {
+@@ -765,13 +793,15 @@ static struct clk_rcg2 gcc_qupv3_wrap1_s2_clk_src = {
+ 	.hid_width = 5,
+ 	.parent_map = gcc_parent_map_0,
+ 	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
+-	.clkr.hw.init = &(struct clk_init_data){
+-		.name = "gcc_qupv3_wrap1_s2_clk_src",
+-		.parent_data = gcc_parents_0,
+-		.num_parents = ARRAY_SIZE(gcc_parents_0),
+-		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
+-	},
++	.clkr.hw.init = &gcc_qupv3_wrap1_s2_clk_src_init,
++};
++
++static struct clk_init_data gcc_qupv3_wrap1_s3_clk_src_init = {
++	.name = "gcc_qupv3_wrap1_s3_clk_src",
++	.parent_data = gcc_parents_0,
++	.num_parents = ARRAY_SIZE(gcc_parents_0),
++	.flags = CLK_SET_RATE_PARENT,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap1_s3_clk_src = {
+@@ -780,13 +810,15 @@ static struct clk_rcg2 gcc_qupv3_wrap1_s3_clk_src = {
+ 	.hid_width = 5,
+ 	.parent_map = gcc_parent_map_0,
+ 	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
+-	.clkr.hw.init = &(struct clk_init_data){
+-		.name = "gcc_qupv3_wrap1_s3_clk_src",
+-		.parent_data = gcc_parents_0,
+-		.num_parents = ARRAY_SIZE(gcc_parents_0),
+-		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
+-	},
++	.clkr.hw.init = &gcc_qupv3_wrap1_s3_clk_src_init,
++};
++
++static struct clk_init_data gcc_qupv3_wrap1_s4_clk_src_init = {
++	.name = "gcc_qupv3_wrap1_s4_clk_src",
++	.parent_data = gcc_parents_0,
++	.num_parents = ARRAY_SIZE(gcc_parents_0),
++	.flags = CLK_SET_RATE_PARENT,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap1_s4_clk_src = {
+@@ -795,13 +827,15 @@ static struct clk_rcg2 gcc_qupv3_wrap1_s4_clk_src = {
+ 	.hid_width = 5,
+ 	.parent_map = gcc_parent_map_0,
+ 	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
+-	.clkr.hw.init = &(struct clk_init_data){
+-		.name = "gcc_qupv3_wrap1_s4_clk_src",
+-		.parent_data = gcc_parents_0,
+-		.num_parents = ARRAY_SIZE(gcc_parents_0),
+-		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
+-	},
++	.clkr.hw.init = &gcc_qupv3_wrap1_s4_clk_src_init,
++};
++
++static struct clk_init_data gcc_qupv3_wrap1_s5_clk_src_init = {
++	.name = "gcc_qupv3_wrap1_s5_clk_src",
++	.parent_data = gcc_parents_0,
++	.num_parents = ARRAY_SIZE(gcc_parents_0),
++	.flags = CLK_SET_RATE_PARENT,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap1_s5_clk_src = {
+@@ -810,13 +844,15 @@ static struct clk_rcg2 gcc_qupv3_wrap1_s5_clk_src = {
+ 	.hid_width = 5,
+ 	.parent_map = gcc_parent_map_0,
+ 	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
+-	.clkr.hw.init = &(struct clk_init_data){
+-		.name = "gcc_qupv3_wrap1_s5_clk_src",
+-		.parent_data = gcc_parents_0,
+-		.num_parents = ARRAY_SIZE(gcc_parents_0),
+-		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
+-	},
++	.clkr.hw.init = &gcc_qupv3_wrap1_s5_clk_src_init,
++};
++
++static struct clk_init_data gcc_qupv3_wrap2_s0_clk_src_init = {
++	.name = "gcc_qupv3_wrap2_s0_clk_src",
++	.parent_data = gcc_parents_0,
++	.num_parents = ARRAY_SIZE(gcc_parents_0),
++	.flags = CLK_SET_RATE_PARENT,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap2_s0_clk_src = {
+@@ -825,13 +861,15 @@ static struct clk_rcg2 gcc_qupv3_wrap2_s0_clk_src = {
+ 	.hid_width = 5,
+ 	.parent_map = gcc_parent_map_0,
+ 	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
+-	.clkr.hw.init = &(struct clk_init_data){
+-		.name = "gcc_qupv3_wrap2_s0_clk_src",
+-		.parent_data = gcc_parents_0,
+-		.num_parents = ARRAY_SIZE(gcc_parents_0),
+-		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
+-	},
++	.clkr.hw.init = &gcc_qupv3_wrap2_s0_clk_src_init,
++};
++
++static struct clk_init_data gcc_qupv3_wrap2_s1_clk_src_init = {
++	.name = "gcc_qupv3_wrap2_s1_clk_src",
++	.parent_data = gcc_parents_0,
++	.num_parents = ARRAY_SIZE(gcc_parents_0),
++	.flags = CLK_SET_RATE_PARENT,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap2_s1_clk_src = {
+@@ -840,28 +878,33 @@ static struct clk_rcg2 gcc_qupv3_wrap2_s1_clk_src = {
+ 	.hid_width = 5,
+ 	.parent_map = gcc_parent_map_0,
+ 	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
+-	.clkr.hw.init = &(struct clk_init_data){
+-		.name = "gcc_qupv3_wrap2_s1_clk_src",
+-		.parent_data = gcc_parents_0,
+-		.num_parents = ARRAY_SIZE(gcc_parents_0),
+-		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
+-	},
++	.clkr.hw.init = &gcc_qupv3_wrap2_s1_clk_src_init,
+ };
+ 
++static struct clk_init_data gcc_qupv3_wrap2_s2_clk_src_init = {
++	.name = "gcc_qupv3_wrap2_s2_clk_src",
++	.parent_data = gcc_parents_0,
++	.num_parents = ARRAY_SIZE(gcc_parents_0),
++	.flags = CLK_SET_RATE_PARENT,
++	.ops = &clk_rcg2_ops,
++};
++
++
+ static struct clk_rcg2 gcc_qupv3_wrap2_s2_clk_src = {
+ 	.cmd_rcgr = 0x1e3a8,
+ 	.mnd_width = 16,
+ 	.hid_width = 5,
+ 	.parent_map = gcc_parent_map_0,
+ 	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
+-	.clkr.hw.init = &(struct clk_init_data){
+-		.name = "gcc_qupv3_wrap2_s2_clk_src",
+-		.parent_data = gcc_parents_0,
+-		.num_parents = ARRAY_SIZE(gcc_parents_0),
+-		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
+-	},
++	.clkr.hw.init = &gcc_qupv3_wrap2_s2_clk_src_init,
++};
++
++static struct clk_init_data gcc_qupv3_wrap2_s3_clk_src_init = {
++	.name = "gcc_qupv3_wrap2_s3_clk_src",
++	.parent_data = gcc_parents_0,
++	.num_parents = ARRAY_SIZE(gcc_parents_0),
++	.flags = CLK_SET_RATE_PARENT,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap2_s3_clk_src = {
+@@ -870,13 +913,15 @@ static struct clk_rcg2 gcc_qupv3_wrap2_s3_clk_src = {
+ 	.hid_width = 5,
+ 	.parent_map = gcc_parent_map_0,
+ 	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
+-	.clkr.hw.init = &(struct clk_init_data){
+-		.name = "gcc_qupv3_wrap2_s3_clk_src",
+-		.parent_data = gcc_parents_0,
+-		.num_parents = ARRAY_SIZE(gcc_parents_0),
+-		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
+-	},
++	.clkr.hw.init = &gcc_qupv3_wrap2_s3_clk_src_init,
++};
++
++static struct clk_init_data gcc_qupv3_wrap2_s4_clk_src_init = {
++	.name = "gcc_qupv3_wrap2_s4_clk_src",
++	.parent_data = gcc_parents_0,
++	.num_parents = ARRAY_SIZE(gcc_parents_0),
++	.flags = CLK_SET_RATE_PARENT,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap2_s4_clk_src = {
+@@ -885,13 +930,15 @@ static struct clk_rcg2 gcc_qupv3_wrap2_s4_clk_src = {
+ 	.hid_width = 5,
+ 	.parent_map = gcc_parent_map_0,
+ 	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
+-	.clkr.hw.init = &(struct clk_init_data){
+-		.name = "gcc_qupv3_wrap2_s4_clk_src",
+-		.parent_data = gcc_parents_0,
+-		.num_parents = ARRAY_SIZE(gcc_parents_0),
+-		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
+-	},
++	.clkr.hw.init = &gcc_qupv3_wrap2_s4_clk_src_init,
++};
++
++static struct clk_init_data gcc_qupv3_wrap2_s5_clk_src_init = {
++	.name = "gcc_qupv3_wrap2_s5_clk_src",
++	.parent_data = gcc_parents_0,
++	.num_parents = ARRAY_SIZE(gcc_parents_0),
++	.flags = CLK_SET_RATE_PARENT,
++	.ops = &clk_rcg2_ops,
+ };
+ 
+ static struct clk_rcg2 gcc_qupv3_wrap2_s5_clk_src = {
+@@ -900,13 +947,7 @@ static struct clk_rcg2 gcc_qupv3_wrap2_s5_clk_src = {
+ 	.hid_width = 5,
+ 	.parent_map = gcc_parent_map_0,
+ 	.freq_tbl = ftbl_gcc_qupv3_wrap0_s0_clk_src,
+-	.clkr.hw.init = &(struct clk_init_data){
+-		.name = "gcc_qupv3_wrap2_s5_clk_src",
+-		.parent_data = gcc_parents_0,
+-		.num_parents = ARRAY_SIZE(gcc_parents_0),
+-		.flags = CLK_SET_RATE_PARENT,
+-		.ops = &clk_rcg2_ops,
+-	},
++	.clkr.hw.init = &gcc_qupv3_wrap2_s5_clk_src_init,
+ };
+ 
+ static const struct freq_tbl ftbl_gcc_sdcc2_apps_clk_src[] = {
+@@ -4561,6 +4602,29 @@ static const struct qcom_reset_map gcc_sc8180x_resets[] = {
+ 	[GCC_VIDEO_AXI1_CLK_BCR] = { .reg = 0xb028, .bit = 2, .udelay = 150 },
+ };
+ 
++static const struct clk_rcg_dfs_data gcc_dfs_clocks[] = {
++	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s0_clk_src),
++	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s1_clk_src),
++	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s2_clk_src),
++	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s3_clk_src),
++	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s4_clk_src),
++	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s5_clk_src),
++	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s6_clk_src),
++	DEFINE_RCG_DFS(gcc_qupv3_wrap0_s7_clk_src),
++	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s0_clk_src),
++	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s1_clk_src),
++	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s2_clk_src),
++	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s3_clk_src),
++	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s4_clk_src),
++	DEFINE_RCG_DFS(gcc_qupv3_wrap1_s5_clk_src),
++	DEFINE_RCG_DFS(gcc_qupv3_wrap2_s0_clk_src),
++	DEFINE_RCG_DFS(gcc_qupv3_wrap2_s1_clk_src),
++	DEFINE_RCG_DFS(gcc_qupv3_wrap2_s2_clk_src),
++	DEFINE_RCG_DFS(gcc_qupv3_wrap2_s3_clk_src),
++	DEFINE_RCG_DFS(gcc_qupv3_wrap2_s4_clk_src),
++	DEFINE_RCG_DFS(gcc_qupv3_wrap2_s5_clk_src),
++};
++
+ static struct gdsc *gcc_sc8180x_gdscs[] = {
+ 	[EMAC_GDSC] = &emac_gdsc,
+ 	[PCIE_0_GDSC] = &pcie_0_gdsc,
+@@ -4602,6 +4666,7 @@ MODULE_DEVICE_TABLE(of, gcc_sc8180x_match_table);
+ static int gcc_sc8180x_probe(struct platform_device *pdev)
+ {
+ 	struct regmap *regmap;
++	int ret;
+ 
+ 	regmap = qcom_cc_map(pdev, &gcc_sc8180x_desc);
+ 	if (IS_ERR(regmap))
+@@ -4623,6 +4688,11 @@ static int gcc_sc8180x_probe(struct platform_device *pdev)
+ 	regmap_update_bits(regmap, 0x4d110, 0x3, 0x3);
+ 	regmap_update_bits(regmap, 0x71028, 0x3, 0x3);
+ 
++	ret = qcom_cc_register_rcg_dfs(regmap, gcc_dfs_clocks,
++					ARRAY_SIZE(gcc_dfs_clocks));
++	if (ret)
++		return ret;
++
+ 	return qcom_cc_really_probe(&pdev->dev, &gcc_sc8180x_desc, regmap);
+ }
+ 
 
-Maybe silly question, (I'm really new to this cmu).
-Isn't it should be =22noc=22?
-
-I thought this name is from dt binding.
-(drivers/clk/samsung/clk-exynos-arm64.c)
-
-
-		parent_clk =3D clk_get(dev, cmu->clk_name);
-		data =3D dev_get_drvdata(dev);
-
-That's why GS101, and my recent v9 patch name like =22bus=22.
-
-Best regards,
-kwang.
-
-> +=7D;
-> +
-> +static int __init exynosautov920_cmu_probe(struct platform_device *pdev)
-> +=7B
-> +	const struct samsung_cmu_info *info;
-> +	struct device *dev =3D &pdev->dev;
-> +
-> +	info =3D of_device_get_match_data(dev);
-> +	exynos_arm64_register_cmu(dev, dev->of_node, info);
-> +
-> +	return 0;
-> +=7D
-> +
-> +static const struct of_device_id exynosautov920_cmu_of_match=5B=5D =3D =
-=7B
-> +	=7B
-> +		.compatible =3D =22samsung,exynosautov920-cmu-peric0=22,
-> +		.data =3D &peric0_cmu_info,
-> +	=7D,
-> +=7D;
-> +
-> +static struct platform_driver exynosautov920_cmu_driver __refdata =3D =
-=7B
-> +	.driver =3D =7B
-> +		.name =3D =22exynosautov920-cmu=22,
-> +		.of_match_table =3D exynosautov920_cmu_of_match,
-> +		.suppress_bind_attrs =3D true,
-> +	=7D,
-> +	.probe =3D exynosautov920_cmu_probe,
-> +=7D;
-> +
-> +static int __init exynosautov920_cmu_init(void)
-> +=7B
-> +	return platform_driver_register(&exynosautov920_cmu_driver);
-> +=7D
-> +core_initcall(exynosautov920_cmu_init);
+-- 
+2.25.1
 
