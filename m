@@ -1,95 +1,113 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42FF613A244;
-	Tue, 13 Aug 2024 08:37:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B33E915B7;
+	Tue, 13 Aug 2024 08:59:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723538277; cv=none; b=UotYX9DooCNSurL2HyjRerMX4RICQonFhwuiGbrz5UeezR99SlqUn0kPUkkO4F5eTfrx4aQw01Xms6Wl4jtFc9kwc9xc9zSUtc5xnOeWY+poVp8+nOhcgsJi9B+bo0q0jef9g9jlXciK2gVFBFqwe7v6FS5DFcwfR0ECaETSbYM=
+	t=1723539590; cv=none; b=j1fYz8Qk+iKnbsOSZUNOklolmBT9NHC+FjLRfVHfAZWFyFTPt9fUr0tt20UFTxViinyMmDIMcmOAPYW87oqooWYPAo4mP5iF0SRI3lwSbK+A3P/AXaO8dnmldh+K4lkkNrawBiLcvociqgPq5hjnoQycobO25CxEp9WZOt0O3qY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723538277; c=relaxed/simple;
-	bh=0zit28vkJLoveJCnlYRWpnW1iA4PdjPohhk+xYzQHsw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=elslGyqYsogEhzdVNWI4gnCm65YGWgEn/Yux4KN7PxtlcnJpFrEB/qL/d6mbgbi6R38XEQq0tgK7t//zg8nhJP0Gl2T0AQaSEFvFCQB9f/plI85nGiFLmbJN2ldeJgilLV9o+5JW+2cUzojjCBLHUrlTt34M307LFIfvOuGYhiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AVt12rVZ; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+	s=arc-20240116; t=1723539590; c=relaxed/simple;
+	bh=JdP+ROVMh/KRzmmlnV0TwLHRyhPOyOX63BSvHWTPQaI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=N7cVOE7GJC0PHEYW5505QTaBxKNSNOZo9Z5Pa/8LinqBkgSGy4IS0UwCVR1XU1Sd1aM7Gbu0q0CYUeoBHKnGnhyLBBXrxEFPFOvDoZfJps0TJfSD8jGtBvg7T7cqzu1GDOr4c01n1bG82UnyZiDULvAEh/Jcy+v1Z7yBmlFYeRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=f5nA37Ur; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AVt12rVZ"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723538276; x=1755074276;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=0zit28vkJLoveJCnlYRWpnW1iA4PdjPohhk+xYzQHsw=;
-  b=AVt12rVZS7chSJiBlSnVIQn8D4bN7gN+fEqm0ftX0orELyYs2lk1ATrE
-   NCX3TsXsYeSsIKn6ShZ2Cqu0sGYYaKTJpgEEP7eYXnlOA4ZSh0EASUHIl
-   09ANYmBpUqo8+NOSu221szukoZtWtG4COLG8FJ/myHmn65AJaLzkD+oUc
-   BojYXbEj5s9yszRIPvQPh6bNR4O0X2+/wM6/kXlxnACsTcdqxflND61SU
-   9KKFSS4bFQU9eUbt5TpE1NwgF/wOFNrG2uA7BVaIkLtVqMq+825Vp8yyw
-   fc9vj0k1nXOMn0AtJB/JnX1wqSbCKaT5O46pmed7rs5MH8zAQHJNw6Q07
-   g==;
-X-CSE-ConnectionGUID: BnLDNvT6QFiLc+KoJiNhxQ==
-X-CSE-MsgGUID: irZw0gC/S2+jfN81oGUc5w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11162"; a="21544192"
-X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
-   d="scan'208";a="21544192"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 01:37:55 -0700
-X-CSE-ConnectionGUID: NFUyk0GPR9WJTDrF79fqSg==
-X-CSE-MsgGUID: qta44cKjSb2kZSSuYxwWPQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.09,285,1716274800"; 
-   d="scan'208";a="62986362"
-Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Aug 2024 01:37:52 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sdn2L-0000000Ef5r-0xTf;
-	Tue, 13 Aug 2024 11:37:49 +0300
-Date: Tue, 13 Aug 2024 11:37:48 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Sam Protsenko <semen.protsenko@linaro.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-samsung-soc@vger.kernel.org
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
-Subject: Re: [PATCH v1 0/4] clk: Switch to use kmemdup_array()
-Message-ID: <ZrsbXMVy1Dsi4UZe@smile.fi.intel.com>
-References: <20240606161028.2986587-1-andriy.shevchenko@linux.intel.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="f5nA37Ur"
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47D3wSbI001097;
+	Tue, 13 Aug 2024 08:59:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=Ld6Y5Moq8AyX9mmvL9mUQl
+	4XzuJgmry59u66zwjmbok=; b=f5nA37Urjq3nXNEV4dsVK0SfCJgmQkgmDfJofo
+	NGsLSWyLWt7cFF0wRA+qRTlQDTV9iO9lSL1N8MEb3KQEJUZHRzzzXVmzSLHQJcY+
+	dwhkULAM5/9XtNlIM0HM+9kjKbpBBaeSPA3qFf+VJ7FZOYUWEqNSoc3YGrtRBXM3
+	yQrp306yE8zQRm3EX+Q8y5lF0C5HvRcnGEO5yENyNfrlnyZ1kF2QKuJ7VL64ligo
+	WPfjOzyuybLH+W1p3VblA+0sxdfClynif+s209o2G7XhzRUsRtmn+2iZ71+ZzhF4
+	fJeDbg/+IUns8ZO+yS55yGYkRndv0ebW6UCOfnOVzje6qPLw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40x3et6rjx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 13 Aug 2024 08:59:43 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47D8xgTw011173
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 13 Aug 2024 08:59:42 GMT
+Received: from hu-skakitap-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 13 Aug 2024 01:59:38 -0700
+From: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>,
+        "Imran
+ Shaik" <quic_imrashai@quicinc.com>,
+        Taniya Das <quic_tdas@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Satya Priya Kakitapalli
+	<quic_skakitap@quicinc.com>,
+        kernel test robot <lkp@intel.com>
+Subject: [PATCH] clk: qcom: Fix SM_CAMCC_8150 dependencies
+Date: Tue, 13 Aug 2024 14:28:46 +0530
+Message-ID: <20240813085846.941855-1-quic_skakitap@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240606161028.2986587-1-andriy.shevchenko@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: YuLh0-TfGia6Dtd3lgzZNLDC6jWVKgF2
+X-Proofpoint-ORIG-GUID: YuLh0-TfGia6Dtd3lgzZNLDC6jWVKgF2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-13_01,2024-08-13_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
+ suspectscore=0 impostorscore=0 phishscore=0 clxscore=1015 mlxlogscore=684
+ lowpriorityscore=0 priorityscore=1501 spamscore=0 adultscore=0 mlxscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408130063
 
-On Thu, Jun 06, 2024 at 07:09:30PM +0300, Andy Shevchenko wrote:
-> Replace open coded kmemdup_array(), which does an additional
-> overflow check.
+SM_CAMCC_8150 depends on SM_GCC_8150, which inturn depends on ARM64.
+Hence add the dependency to avoid below kernel-bot warning.
 
-...
+WARNING: unmet direct dependencies detected for SM_GCC_8150
+Depends on [n]: COMMON_CLK [=y] && COMMON_CLK_QCOM [=y] && (ARM64 || COMPILE_TEST [=n])
+Selected by [y]:
+- SM_CAMCC_8150 [=y] && COMMON_CLK [=y] && COMMON_CLK_QCOM [=y]
 
->   clk: mmp: Switch to use kmemdup_array()
+Fixes: ea73b7aceff6 ("clk: qcom: Add camera clock controller driver for SM8150")
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202408020234.jg9wrvhd-lkp@intel.com/
+Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+---
+ drivers/clk/qcom/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
->   clk: visconti: Switch to use kmemdup_array()
-
-Any news for these two?
-
+diff --git a/drivers/clk/qcom/Kconfig b/drivers/clk/qcom/Kconfig
+index cf6ad908327f..416002d97062 100644
+--- a/drivers/clk/qcom/Kconfig
++++ b/drivers/clk/qcom/Kconfig
+@@ -828,6 +828,7 @@ config SM_CAMCC_7150
+ 
+ config SM_CAMCC_8150
+ 	tristate "SM8150 Camera Clock Controller"
++	depends on ARM64 || COMPILE_TEST
+ 	select SM_GCC_8150
+ 	help
+ 	  Support for the camera clock controller on Qualcomm Technologies, Inc
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.25.1
 
