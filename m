@@ -1,149 +1,73 @@
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from ns.iliad.fr (ns.iliad.fr [212.27.33.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2E0E1B580C
-	for <linux-clk@vger.kernel.org>; Wed, 14 Aug 2024 16:00:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBB2E1C2331;
+	Wed, 14 Aug 2024 16:20:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.27.33.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723651261; cv=none; b=mjoqmXzUrX2qxE9jGOZoDgEVMLpSE6vgez5oEb0OoSOf+RIM355CCrPXmdM9R0dWdI5AeqQTAJNxwEQkkFjbBA0YZ0Je3BO6kt7e7H14TCHzM9OnHvm8rca85Po9wWOJ04DGup4Z3ggH5SsL6eGEki8J5PaTbtt77uNPlasIl5I=
+	t=1723652430; cv=none; b=V/6nhLK0G27Rb+ubjhpakneK4ULMC3JBbj7pUElfLLxTeVNm6NW5Hlo6wibAgS+14FxbsLncade8mD4T53fO7fWBtiL0++MMvlU4fSQAtvjHbP8miYkB59nAPAaDabK4X1kBQ+zxWU1vrl9wwyS2aDmUeexiF5x/30/NbNv9PxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723651261; c=relaxed/simple;
-	bh=oLlx8kbXtgT1+h98Q08HClm2cRfuDS4Jxg7GijXyT84=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Vp4MMNi+WByOBj62kueGxprijQH96fPXQ3ImUqz8k4LdWlkam044LIgpcz+1xkpeOVONxKWANEfts7HLzm2KId3loPcUb5Hl3Bjfnm8bg845jZX+QYokjpal/3TGGtczMY+BD52k7/tJSYDKfBjVMmGuGrD5n2i3Us2Y63v+qIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=WcngHzte; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="WcngHzte"
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a7abe5aa9d5so5822366b.1
-        for <linux-clk@vger.kernel.org>; Wed, 14 Aug 2024 09:00:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1723651258; x=1724256058; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q6hg5lhUPiTHteMjAtZ4DGZhyCZPAhbUKp0ZDVO35ys=;
-        b=WcngHzte7z2+0R8yahuC+jagCozgcKZBz8zLuPzWiXPuLIWoK6gVjbWjADmeL578G/
-         2402+EBakHEp2IEmwNwB4iyZYK50ImqQzKwFANBOBgBTLdRD8gRq1pj7gsGQ+aTqptFy
-         7YbRfsxuiBYRyCf/oDVqgjX7VCmtq6vdXstyU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723651258; x=1724256058;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Q6hg5lhUPiTHteMjAtZ4DGZhyCZPAhbUKp0ZDVO35ys=;
-        b=ZfpljX6DskRHrpkS5vg+huu7UegdnD4t2r0KEp+XmVB9SgcYBq5omX/WbnrHEL+Gb7
-         ddgbsm1nXARvPdjsl4+xku4Bx6uxakNk7NES/+ez9YJzO4SLO5ugBl7+5osH+D4qHwN2
-         anyyMnkBbk4StVqygsjiSQmmDSqBFtXbQj3C9pN49NCRm4lrJ+sSkdKE6E+C0/DG4JRM
-         hin1THWZuzFjBFMlepYTifYUZhvr6bBTZr6rc5bVhhIUTIy0lxCyu4gh+D+pWN+CqqqY
-         Kd0ciXsrniy1hUygPWn38S6khY7/xu2rhQpoANkhSkqL6DEPk1DQYOfewSNyy1GzR+jx
-         ot8w==
-X-Forwarded-Encrypted: i=1; AJvYcCVPKDYrJJ7ocQVlYzcNAHumxKmrtX4SfP7k0LgpMCQon5WJag+wjXNcTEBTgaFB6YSAZXcJCpWVBQ7H1yMsJJXgtffbJIcyzPEq
-X-Gm-Message-State: AOJu0YzL0AFUHCnzEXSTsgWCtlCznIR1njhkx+Ltv8uSoIbwaz2aZpI9
-	8c2XnzU0HcuhY6kWWdtzS5ynTGVmFfUIojKE/wOFIIJ4RYOuJlu7Tt+IiPRX8xrPBstJcjjX/HY
-	Qnc375ED7pRWR1b43Ti+eO6zehbhV8w1eQOhV3w==
-X-Google-Smtp-Source: AGHT+IENFPXzmHmrz8jSJ8HsNlXGesQUoIAVxwoQN1tYtA8UozxZmzLthTqj7kIZyclRgdiVGC4awwo51S3E9XX+6KU=
-X-Received: by 2002:a17:907:e616:b0:a7a:8378:625c with SMTP id
- a640c23a62f3a-a8366d45bebmr216496766b.36.1723651258158; Wed, 14 Aug 2024
- 09:00:58 -0700 (PDT)
+	s=arc-20240116; t=1723652430; c=relaxed/simple;
+	bh=XdnHB/yMfykm28C8Ni1jU5++lUlkJSx/OLYx5QYcAB4=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=teyQyFm2QEPzqVFzZ6TJSEt7QGIxnNItHb2zJO4RCUhoKjlviPBx98Dtry6icH0Jvvcv4E4hY+RqRuBBjrnwH71d03sTGtjWU6dI55N5rLHk7ow2Q+AppaEajcPfpZXfpbWL1s81BB2oJ+MFyGPHbTq5EqHbQU0cTu1Bq61C3zs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freebox.fr; spf=pass smtp.mailfrom=srs.iliad.fr; arc=none smtp.client-ip=212.27.33.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freebox.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=srs.iliad.fr
+Received: from ns.iliad.fr (localhost [127.0.0.1])
+	by ns.iliad.fr (Postfix) with ESMTP id D911020998;
+	Wed, 14 Aug 2024 18:20:24 +0200 (CEST)
+Received: from [127.0.1.1] (freebox.vlq16.iliad.fr [213.36.7.13])
+	by ns.iliad.fr (Postfix) with ESMTP id C597620906;
+	Wed, 14 Aug 2024 18:20:24 +0200 (CEST)
+From: Marc Gonzalez <mgonzalez@freebox.fr>
+Subject: [PATCH 0/3] Add LPASS SMMU to msm8998 DTSI
+Date: Wed, 14 Aug 2024 18:20:21 +0200
+Message-Id: <20240814-lpass-v1-0-a5bb8f9dfa8b@freebox.fr>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20220605165703.1565234-1-michael@amarulasolutions.com>
- <20220605165703.1565234-3-michael@amarulasolutions.com> <5f34b6d6-c2dd-44f9-c1bc-fe1deb336334@gmail.com>
-In-Reply-To: <5f34b6d6-c2dd-44f9-c1bc-fe1deb336334@gmail.com>
-From: Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
-Date: Wed, 14 Aug 2024 18:00:47 +0200
-Message-ID: <CAOf5uwm3p5AJXL9w7hQtqz05hDpQ_-CQArm0z6kAehj7OxK1Mw@mail.gmail.com>
-Subject: Re: [RFC PATCH 2/3] clk: bd718x7: Enable the possibility to mark the
- clock as critical
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
-	Dario Binacchi <dario.binacchi@amarulasolutions.com>, linux-amarula@amarulasolutions.com, 
-	Marek Vasut <marex@denx.de>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEXZvGYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDC0MT3ZyCxOJiXTMLs5TERDNDA7M0CyWg2oKi1LTMCrA50bG1tQAzh/H
+ XVwAAAA==
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Arnaud Vrac <avrac@freebox.fr>, Pierre-Hugues Husson <phhusson@freebox.fr>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>, 
+ Marc Gonzalez <mgonzalez@freebox.fr>
+X-Mailer: b4 0.13.0
 
-Hi Stephen
+A few definitions and glue code to support the DT node
+describing the LPASS SMMU in qcom msm8998 SoC.
 
-On Mon, Jun 6, 2022 at 7:26=E2=80=AFAM Matti Vaittinen <mazziesaccount@gmai=
-l.com> wrote:
->
-> Hi Michael,
->
-> On 6/5/22 19:57, Michael Trimarchi wrote:
-> > If the clock is used to generate the osc_32k, we need to mark
-> > as critical. clock-critical has no binding description at the moment
-> > but it's defined in linux kernel
-> >
-> > bd71847: pmic@4b {
-> > ...
-> >       rohm,reset-snvs-powered;
-> >
-> >       #clock-cells =3D <0>;
-> >       clock-critical =3D <1>;
-> >       clocks =3D <&osc_32k 0>;
-> >       clock-output-names =3D "clk-32k-out";
-> > ...
-> > }
-> >
-> > Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
-> > ---
-> >   drivers/clk/clk-bd718x7.c | 4 ++++
->
-> //snip
->
-> > @@ -100,6 +101,9 @@ static int bd71837_clk_probe(struct platform_device=
- *pdev)
-> >
-> >       parent_clk =3D of_clk_get_parent_name(parent->of_node, 0);
-> >
-> > +     of_clk_detect_critical(dev->of_node, 0, &flags);
->
-> Purely judging the kerneldoc for of_clk_detect_critical - you may have
-> hard time getting this accepted.
->
-> I think you're working on a very valid problem though. Maybe you could
-> see if you could align your effort with Marek?
->
-> https://lore.kernel.org/all/20220517235919.200375-1-marex@denx.de/T/#m52d=
-6d0831bf43d5f293e35cb27f3021f278d0564
->
+Thanks to Angelo.
 
-Old thread but same problem. Is there any way to make this acceptable?
-any suggestion?
+---
+AngeloGioacchino Del Regno (3):
+      dt-bindings: clock: gcc-msm8998: Add Q6 and LPASS clocks definitions
+      clk: qcom: gcc-msm8998: Add Q6 BIMC and LPASS core, ADSP SMMU clocks
+      arm64: dts: qcom: msm8998: Add disabled support for LPASS iommu for Q6
 
-Michael
+ arch/arm64/boot/dts/qcom/msm8998.dtsi        | 27 ++++++++++++
+ drivers/clk/qcom/gcc-msm8998.c               | 62 ++++++++++++++++++++++++++++
+ include/dt-bindings/clock/qcom,gcc-msm8998.h |  5 +++
+ 3 files changed, 94 insertions(+)
+---
+base-commit: 08d0fcf9db52b0ba09b07d5a0684c421d56be530
+change-id: 20240814-lpass-686daa6106f8
 
-> Best Regards
->         -- Matti
->
-> --
-> Matti Vaittinen
-> Linux kernel developer at ROHM Semiconductors
-> Oulu Finland
->
-> ~~ When things go utterly wrong vim users can always type :help! ~~
->
-> Discuss - Estimate - Plan - Report and finally accomplish this:
-> void do_work(int time) __attribute__ ((const));
+Best regards,
+-- 
+Marc Gonzalez <mgonzalez@freebox.fr>
 
-
-
---=20
-Michael Nazzareno Trimarchi
-Co-Founder & Chief Executive Officer
-M. +39 347 913 2170
-michael@amarulasolutions.com
-__________________________________
-
-Amarula Solutions BV
-Joop Geesinkweg 125, 1114 AB, Amsterdam, NL
-T. +31 (0)85 111 9172
-info@amarulasolutions.com
-www.amarulasolutions.com
