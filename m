@@ -1,129 +1,58 @@
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC7A2E416
-	for <linux-clk@vger.kernel.org>; Tue, 13 Aug 2024 20:01:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E225219E;
+	Wed, 14 Aug 2024 00:01:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723579313; cv=none; b=mRVGYo5+dikeTu0YCRWrvxuf9QcgL0cZoP5fWxXmzbJuZDCy7kBISfpRaWshLDowAdd0h3LuZLfp7LPW3XoWv7WsV2sz1lLihXFOLNoOCnchJu6bOGi++Y9ugtkwcwI97n3kqwLI187odbKEw8/r/Q2S3UoL6LLHibT5On4cBv0=
+	t=1723593713; cv=none; b=EC6n1+KVzc1n85M90kf1RT82pEIvGZ3eD2YUCb9qkHRCnAqxcMnf8/0teKjsLmFLPyBZa2PZAi/5UzddIp0NW2lksB6OUOF2NqeEuuBpk7cCgw2Ioq63HUc2Nm9rtTrirGW61lYkuAqSdYHxRhdJa12SovNvUzlq1tCIHfkbXn0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723579313; c=relaxed/simple;
-	bh=S4mnivLfaC6CBnZ9vA9MBqgg+x+E3rHUM2iJioJ/fN8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rML0ZeMzyHXJIML/3hWQwSHj9AV88ZrbVBIotaBYqZUGJ66L96AhqhL4y3ydCgZayVt7A3x1gT8kJqbtn+xKUlcRkwjBAsHlXfLvopATpJE1wjg14RBxeOYnfcm0pq4OYQpO/tVVi64vVB/VanE8kvthd+t2vZ/y6eJRN98Tvpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hEbU9YwA; arc=none smtp.client-ip=209.85.167.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1723593713; c=relaxed/simple;
+	bh=O+tDBnWVqdcf72Sp7gBl+Zs0H0ScKcO7cHY7UGsqRb4=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=ryHhOGOoWIetK7IB7RleijZE4aKV/uJOnEKHeJrArdzmuwkWjYQ+W9fP5uozL53qEqZAgm+cWZ9LTGuOBErKSfvf9VfJp/URiK1iVxX+fmysoxXjVn/oVMSbGMk5jQnevcUDkRUlYiL/zpA91UtOiWP8GyyuMJaFAVeHpihSJC0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fMT8PLDN; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hEbU9YwA"
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-52efcbfacb9so589848e87.2
-        for <linux-clk@vger.kernel.org>; Tue, 13 Aug 2024 13:01:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1723579309; x=1724184109; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=05yxfIPzb+vpmSjZ9OYifCLd7i3CDlpKM0BKHiz5UCQ=;
-        b=hEbU9YwAuUKEftUXuV5Hih/D4iujHrKgJD7aCOnvUZVpV+M1VNa1uI/kLLCb+8eqcs
-         RGfSExHXxDzFpu+wrLtZqJpDN5TAyF5nTJ73wRAeX8ioBL3b2c1DeozK2pbdtHs9oV/Y
-         HcO7zUp+POE/9/xJQznPmMSVoQ1XTsSQDzF+71B2lFUu+/b2tjdVRUBSiwpz8IA8QWxo
-         nckSm2rpk3DMxCsW9hrzZWghB2RYdVlfvdb+ZAEF8sPPkX8XlyI+ktMxtsfGejxaObNq
-         z+yjn5u5JfOjYgLxD9d9xEOLr54mUJpTFwKLmDkVqcrOcSiHDgiewsBJr3xh2PVfh9M5
-         tgFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723579309; x=1724184109;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=05yxfIPzb+vpmSjZ9OYifCLd7i3CDlpKM0BKHiz5UCQ=;
-        b=eSXvpae5EHaO4kU8aGc6MrJcvbbYWAPc55cF5uo5xEpJo+zsW0vPWqFIkOjLnoiKhk
-         cnyX7jbK1mQdfIZdQ/2F3fkLKL54cZd7sNtEEQu8lGtfHeezKyJd90UT3OA6ZQ8kdzjd
-         vq5QdX99P1oXJjsGVvwInFSJTBp+EBohe02A/SNDeMamy39cW2ri2n6VJ17zwMAStiQO
-         2410+LwmUzAcT0iy6Or/u0fMDezGN0YbgCuIiOCrZmt1NgtncH1rsxlfUkNpfOyrUmMk
-         rWz5nK5fr2LVzN6T/7ql1cpDujHJP/ZgneD+P36NgnETFm8vs1KnsvGit2eHpfeXTp55
-         dXvA==
-X-Forwarded-Encrypted: i=1; AJvYcCW/8tdyhpHaxLKe+sw7y7V6/4OF1z49afAIwhNhuyDfLO/Z+o3Pf/YSDdRrmPt4ap5Jgwkz8MlD/0nnuT12s3IPLVvd0fw4gu67
-X-Gm-Message-State: AOJu0YyG8FMFH1xvMv8ow6qxp0ZhhtH2nw1yxFGVrgtU5BZMoxqjd44L
-	I7VGrNjjSiN6pPG4lu7I3qh9uVwVf0Oz83BOWmIscE1af6ZX+hXmENDjohHhIpA=
-X-Google-Smtp-Source: AGHT+IEy2HUeh4eHrPS74gTyv0LL8fkr5nwO3fJw8lDbNGJBQEugQTA2bj4xmGTeJyDShLmEXgiiAw==
-X-Received: by 2002:a05:6512:3c84:b0:52c:ce28:82bf with SMTP id 2adb3069b0e04-532edbb2d5amr162410e87.5.1723579308586;
-        Tue, 13 Aug 2024 13:01:48 -0700 (PDT)
-Received: from [192.168.1.4] (88-112-131-206.elisa-laajakaista.fi. [88.112.131.206])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53200f4220asm1053557e87.261.2024.08.13.13.01.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 13 Aug 2024 13:01:48 -0700 (PDT)
-Message-ID: <4d314b61-7483-4ceb-ac72-10dbd7e4522a@linaro.org>
-Date: Tue, 13 Aug 2024 23:01:47 +0300
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fMT8PLDN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 767A0C32782;
+	Wed, 14 Aug 2024 00:01:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1723593712;
+	bh=O+tDBnWVqdcf72Sp7gBl+Zs0H0ScKcO7cHY7UGsqRb4=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=fMT8PLDNvelDL+HOD1J1ZYfRGoqt/Q0iK5aJd7x1P+B5EC1E0NLInZLBX3KaqFqyC
+	 r5coCZOcQJoRZVopkzNQsBlYBayN/L78TDPzA8OLLJTBDVCgx1KZkMHEfRTWDzB3si
+	 p1Rwp9OTfazqu73Df99nbhdmHDOBgc2kjIZ7OpIgV7CD7Fp+lY+Lr9tqK3q/ICJpYT
+	 NIl6mLPJ+rn0Hj1sc2tOmD83V0jgkhUfUGRYobSo0fE5ggy+ffDfLcNegEBgypHnYE
+	 HE0HiyNTZVUdxE/Ug6anRB8lTH04PAI0PRmFoPv97XIopx2idgrTyTb4Oqckmh+IJL
+	 RenYj8Jt8LzaQ==
+Message-ID: <2478bc8a787d07cd3e412b6ee4400669.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: clk-alpha-pll: Replace divide operator with
- comparison
-Content-Language: en-US
-To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Ajit Pandey <quic_ajipan@quicinc.com>,
- Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
- Jagadeesh Kona <quic_jkona@quicinc.com>, kernel test robot <lkp@intel.com>,
- Dan Carpenter <dan.carpenter@linaro.org>
-References: <20240813094035.974317-1-quic_skakitap@quicinc.com>
-From: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-In-Reply-To: <20240813094035.974317-1-quic_skakitap@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <ZrsbXMVy1Dsi4UZe@smile.fi.intel.com>
+References: <20240606161028.2986587-1-andriy.shevchenko@linux.intel.com> <ZrsbXMVy1Dsi4UZe@smile.fi.intel.com>
+Subject: Re: [PATCH v1 0/4] clk: Switch to use kmemdup_array()
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Heiko Stuebner <heiko@sntech.de>, Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Sam Protsenko <semen.protsenko@linaro.org>, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-samsung-soc@vger.kernel.org
+Date: Tue, 13 Aug 2024 17:01:50 -0700
+User-Agent: alot/0.10
 
-On 8/13/24 12:40, Satya Priya Kakitapalli wrote:
-> In zonda_pll_adjust_l_val() replace the divide operator with comparison
-> operator since comparisons are faster than divisions.
-> 
-> Fixes: f4973130d255 ("clk: qcom: clk-alpha-pll: Update set_rate for Zonda PLL")
+Quoting Andy Shevchenko (2024-08-13 01:37:48)
+> On Thu, Jun 06, 2024 at 07:09:30PM +0300, Andy Shevchenko wrote:
+> > Replace open coded kmemdup_array(), which does an additional
+> > overflow check.
+>=20
+> ...
+>=20
+> >   clk: mmp: Switch to use kmemdup_array()
+>=20
+> >   clk: visconti: Switch to use kmemdup_array()
 
-Apparently the change is not a fix, therefore I believe the Fixes tag
-shall be removed.
-
-> Reported-by: kernel test robot <lkp@intel.com>
-> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Closes: https://lore.kernel.org/r/202408110724.8pqbpDiD-lkp@intel.com/
-> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-> ---
->   drivers/clk/qcom/clk-alpha-pll.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-> index 2f620ccb41cb..fd8a82bb3690 100644
-> --- a/drivers/clk/qcom/clk-alpha-pll.c
-> +++ b/drivers/clk/qcom/clk-alpha-pll.c
-> @@ -2126,7 +2126,7 @@ static void zonda_pll_adjust_l_val(unsigned long rate, unsigned long prate, u32
->   	remainder = do_div(quotient, prate);
->   	*l = quotient;
-
-Since it's not a fix, but a simplification, you may wish to remove
-an unnecessary 'quotient' local variable:
-
-remainder = do_div(rate, prate);
-
->   
-> -	if ((remainder * 2) / prate)
-> +	if ((remainder * 2) >= prate)
->   		*l = *l + 1;
-
-*l = rate + (u32)(remainder * 2 >= prate);
-
-I hope the assignment above is quite clear...
-
->   }
->   
-
-With the review comments above implemented, feel free to add to v2
-
-Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-
---
-Best wishes,
-Vladimir
+I have them all as "changes requested" so please resend.
