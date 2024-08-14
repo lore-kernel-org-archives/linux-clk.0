@@ -1,66 +1,61 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED0A51AD9FB;
-	Wed, 14 Aug 2024 10:20:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73FB01109;
+	Wed, 14 Aug 2024 12:55:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723630847; cv=none; b=tXmY5M6INTL3VFnFWgkiFzFL/IOvW7pf0Iac8cE8Ft7qQ7RTHHSUNzKboxhJX4l2xUN5zre0YfbWuqdy6un4psU0E14oVJmCI1Efy/0yUnjdKFo9IZn3GVItOcCwJSIpJtCix8SZaFdMLVfukU4e+mTavS0Z7+8vvJTvihGjDTg=
+	t=1723640119; cv=none; b=nVmqGj7EouoFgr0kxdbzr0XkcjDKG4kh6PyKuwjE0fRqSnelGOC52/N58V0Q0KG07DeuwSbpOm/QFcaoM1ADZi7BXDmXYaIKyidyBfVDwUNtgau6590CcJmcUltuzFsHlpvVGwq6R3CZo6Oxxc6Qv9RF01aPScphADgePZvi9cs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723630847; c=relaxed/simple;
-	bh=PCipO6aO89n17fEmsijtEDXMLHYcvzFyvE8dyg23yXA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=F5A0EdPdmqPwTbFASn2E/eSfhdmMBG5NQu7D7CMbE+44lfXBW1W/OabqHwtd5UsK4lhuXH1tlL/pRww/T0O9R/Ah5fG9ElmMEUNuNWSMRLhDeLzNl3xZex2skg5emAj4Dcfvl9s+CSIQ+74To5t5ryv6EJJ5nbX2d6gVQt9fsLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SYAxHTLF; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1723640119; c=relaxed/simple;
+	bh=TGZhmNsTNOal1mIuFUkoGhPRYuosQ7ALdkGXMacsZEM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gxYkv7JSHJ4htwiGIIB6W/XySAAf/NXDwu8A6w5Vk2+qqBGDfRKYdPN3GyBq8z0a7BJu8oZJIGsFXZQv2K24hgdgqRqLD94P1ZB/whIvIG7aOrhdZS8nfdZuM6rIukPmVNcHy/HltCUL7B8rkX10ezIt/SbpDu3rLPrhU/vs5JM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Sgwzgyaj; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SYAxHTLF"
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47DNFjNR027666;
-	Wed, 14 Aug 2024 10:20:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=eKK5V0RLxyU0dvvI/xvmLQ
-	qda/gVganrDWsGYytc0CI=; b=SYAxHTLFzYFcc4Qxk6yxAREDts6opRAqrxKx+l
-	xSKTZkbnwi0DNcpnv7VHXbvL9VAcMCb/b7Bc5NwDu8dSWMue4LADjIc10cWWYbx7
-	3apVcnn2GcvM2y1xynwGtjJIZDHc89XJpu4TbxMQYQFrkxWefRJDYrD/zBeyg5DA
-	a4hdXogw+E0IKa6b0fUtkhZ0OYXi4fvGPLud9soif1VdaHU9et5y1WoK1J9ByzC+
-	Fk4SxdCe9Y4+Ck8B7wlFIHjwQeNwtkWJ6bvPHjuLh4JsQQmZuY+9k7FshxWDCubz
-	9fsb9oub/MaL/iFI6T4D9faw0Amp88W/WCz4F3lcXL3C6yDQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 40x3etaq9k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 14 Aug 2024 10:20:39 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47EAKbQO012768
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 14 Aug 2024 10:20:37 GMT
-Received: from hu-skakitap-hyd.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 14 Aug 2024 03:20:33 -0700
-From: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>,
-        "Imran
- Shaik" <quic_imrashai@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Satya Priya Kakitapalli
-	<quic_skakitap@quicinc.com>,
-        kernel test robot <lkp@intel.com>,
-        Dan Carpenter
-	<dan.carpenter@linaro.org>,
-        Vladimir Zapolskiy
-	<vladimir.zapolskiy@linaro.org>
-Subject: [PATCH V2] clk: qcom: clk-alpha-pll: Simplify the zonda_pll_adjust_l_val()
-Date: Wed, 14 Aug 2024 15:50:05 +0530
-Message-ID: <20240814102005.33493-1-quic_skakitap@quicinc.com>
-X-Mailer: git-send-email 2.25.1
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Sgwzgyaj"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1723640118; x=1755176118;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=TGZhmNsTNOal1mIuFUkoGhPRYuosQ7ALdkGXMacsZEM=;
+  b=SgwzgyajdXewkGKbX0yrzOHXyNX/rRs249P7cSiMt2dg1xfnYZd3S1NE
+   NK8qMTeM/1s8O7bk76Q0dMPrUvyqhDD2VwMuYMJ2yDEn3LQcaPPhC/s9l
+   p/UDLfF1ru+Tcp4StNtjYy6Rqya49WOmKUiDJqMzEhKqIPM+pT2jZn0Pt
+   XgGRsJSncLF16oI8A7IR9+2Z4V17ecB4pc9C8lAhnL0HrChaOobvwxuLZ
+   EVlAVVXUJYs7UfJKmdRcleJbfWqqG5QJgs28LZU99IJqz0ovRnu53kiSo
+   QjuyBRU9xrkQqfPUWgO+XY2qJmVhS8RlDQHcElWJy1dcJPg8kRCoflbsB
+   g==;
+X-CSE-ConnectionGUID: 9LaICLpqSDGeKmsC/HFJRQ==
+X-CSE-MsgGUID: qmqNX8YbQ1muTHoeLihM4A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11164"; a="22010665"
+X-IronPort-AV: E=Sophos;i="6.10,145,1719903600"; 
+   d="scan'208";a="22010665"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Aug 2024 05:55:17 -0700
+X-CSE-ConnectionGUID: DpkJ4m2sSL+SXOY/cmbdeg==
+X-CSE-MsgGUID: CeIAzp3CQDCljOiQ80Z/nA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,145,1719903600"; 
+   d="scan'208";a="89804223"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa001.fm.intel.com with ESMTP; 14 Aug 2024 05:55:14 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id C871D2CC; Wed, 14 Aug 2024 15:55:13 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Nobuhiro Iwamatsu <nobuhiro1.iwamatsu@toshiba.co.jp>
+Subject: [PATCH v2 0/2] clk: Switch to use kmemdup_array()
+Date: Wed, 14 Aug 2024 15:54:06 +0300
+Message-ID: <20240814125513.2637955-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -68,61 +63,22 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: q7uaszz1a1vs4v7urqS4Cx1RFmKTGskL
-X-Proofpoint-ORIG-GUID: q7uaszz1a1vs4v7urqS4Cx1RFmKTGskL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-14_07,2024-08-13_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 bulkscore=0
- suspectscore=0 impostorscore=0 phishscore=0 clxscore=1011 mlxlogscore=999
- lowpriorityscore=0 priorityscore=1501 spamscore=0 adultscore=0 mlxscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2408140072
 
-In zonda_pll_adjust_l_val() replace the divide operator with comparison
-operator since comparisons are faster than divisions. Also, simplify the
-logic and remove the unnecessary 'quotient' local variable.
+Replace open coded kmemdup_array(), which does an additional
+overflow check.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/r/202408110724.8pqbpDiD-lkp@intel.com/
-Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
----
-Changes in V2:
- - Simplify the logic and remove unnecessary quotient variable.
- - Remove Fixes tag as this is just a simplification.
+v2:
+- dropped upstreamed changes
+- fixed a typo in the commit messages
 
- drivers/clk/qcom/clk-alpha-pll.c | 9 +++------
- 1 file changed, 3 insertions(+), 6 deletions(-)
+Andy Shevchenko (2):
+  clk: mmp: Switch to use kmemdup_array()
+  clk: visconti: Switch to use kmemdup_array()
 
-diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-index 2f620ccb41cb..4ce3347beb39 100644
---- a/drivers/clk/qcom/clk-alpha-pll.c
-+++ b/drivers/clk/qcom/clk-alpha-pll.c
-@@ -2120,14 +2120,11 @@ static void clk_zonda_pll_disable(struct clk_hw *hw)
- 
- static void zonda_pll_adjust_l_val(unsigned long rate, unsigned long prate, u32 *l)
- {
--	u64 remainder, quotient;
-+	u64 remainder;
- 
--	quotient = rate;
--	remainder = do_div(quotient, prate);
--	*l = quotient;
-+	remainder = do_div(rate, prate);
- 
--	if ((remainder * 2) / prate)
--		*l = *l + 1;
-+	*l = rate + (u32)(remainder * 2 >= prate);
- }
- 
- static int clk_zonda_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+ drivers/clk/mmp/clk-mix.c  | 10 ++++------
+ drivers/clk/visconti/pll.c |  6 +++---
+ 2 files changed, 7 insertions(+), 9 deletions(-)
+
 -- 
-2.25.1
+2.43.0.rc1.1336.g36b5255a03ac
 
