@@ -1,29 +1,29 @@
 Received: from ns.iliad.fr (ns.iliad.fr [212.27.33.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBBCF1C3F22;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBB791C2336;
 	Wed, 14 Aug 2024 16:20:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.27.33.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723652431; cv=none; b=c2ALF65sSyRfS3mcjRIG4lbWXEEhksL3jc/gvvYtoBMOJesRLjTqVVEK9kLKNVhdc75R5c08kvNJhBntNRuBePq0kTPo1UfhRkLz4mZ/W8bAYZxeyzntL5Tjq5LDEa9mh8E6mNObEnO3CO7DG7lsQM87NzNX9jRU05xfogR0ibA=
+	t=1723652431; cv=none; b=tAj+9NZg1vEdvrz3j3qwwYoCsLrLlOgEv6Kzp/+O+6tNAsvPrScnu/HNlVbx56TS2zPbcuw+1Wa8Z/5cuX6U8rM52x/PIVX5HLKZfrX5/f4czWk8nTGcDkp7fAtuVepggx4Bi/Mb72QRFX8DEP2c13jHU2RkcTJ0GFF4UkxeaGw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1723652431; c=relaxed/simple;
-	bh=QmZQnfYTrkssDENkZeV/XZG6MA+NpkYRKIZCy7vT1iU=;
+	bh=4OXxcKmhH5VlFNsmTD9at0MDXLegn9KiGktRA4VA2SM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=D1mWGb7Lqy5H/Qo3+q4Gtg9aCKTJreFPa5osrzxlAWwf26gzdhzX6LJQ7xJlF4Cb7WbVb3F5UdCbxvbsRwxpG2C3gQuacMgmlU44j8gvUjXArJibU9DcCTYnQxD5N03xwC0y4Q20tVQCgZgKZgK1IF/GszlNHkDfJa7FJIe287k=
+	 In-Reply-To:To:Cc; b=FOJI1iWg/TGIR0LIBDP7tiaLrH2hLStj577bpIR4Sp6CyxFh5Iz2yOwjADckuvHvuDFkMhL1vj/7Pw4UGv56sCRpoMup2iHK/GEEh7jjlpkoCJwnA0KO7oygS5Hh+LYlujEdtzMBX4B/WDqMTxy39TJRkG9w9RnJ6kRD9sMe3Hk=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freebox.fr; spf=pass smtp.mailfrom=srs.iliad.fr; arc=none smtp.client-ip=212.27.33.1
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freebox.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=srs.iliad.fr
 Received: from ns.iliad.fr (localhost [127.0.0.1])
-	by ns.iliad.fr (Postfix) with ESMTP id 06F6D20906;
-	Wed, 14 Aug 2024 18:20:25 +0200 (CEST)
+	by ns.iliad.fr (Postfix) with ESMTP id E1357209A7;
+	Wed, 14 Aug 2024 18:20:24 +0200 (CEST)
 Received: from [127.0.1.1] (freebox.vlq16.iliad.fr [213.36.7.13])
-	by ns.iliad.fr (Postfix) with ESMTP id DBDB02099D;
+	by ns.iliad.fr (Postfix) with ESMTP id CEC9B20989;
 	Wed, 14 Aug 2024 18:20:24 +0200 (CEST)
 From: Marc Gonzalez <mgonzalez@freebox.fr>
-Date: Wed, 14 Aug 2024 18:20:24 +0200
-Subject: [PATCH 3/3] arm64: dts: qcom: msm8998: Add disabled support for
- LPASS iommu for Q6
+Date: Wed, 14 Aug 2024 18:20:22 +0200
+Subject: [PATCH 1/3] dt-bindings: clock: gcc-msm8998: Add Q6 and LPASS
+ clocks definitions
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -32,7 +32,7 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240814-lpass-v1-3-a5bb8f9dfa8b@freebox.fr>
+Message-Id: <20240814-lpass-v1-1-a5bb8f9dfa8b@freebox.fr>
 References: <20240814-lpass-v1-0-a5bb8f9dfa8b@freebox.fr>
 In-Reply-To: <20240814-lpass-v1-0-a5bb8f9dfa8b@freebox.fr>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -51,57 +51,39 @@ X-Mailer: b4 0.13.0
 
 From: AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
 
-Add support for the LPASS (Q6) SMMU and keep it disabled as this is
-used only when the audio DSP is present and used, which is not
-mandatory to have.
+Add definitions for the Q6 BIMC, LPASS core and adsp smmu clocks,
+required to enable audio functionality on MSM8998.
 
-It is expected for board-specific device-trees to enable this node
-if supported.
+Add the GDSC definitions for the LPASS_ADSP_GDSC and LPASS_CORE_GDSC
+as a final step to enable the required clock tree for the lpass iommu
+and for the audio dsp itself.
 
 Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
 Signed-off-by: Marc Gonzalez <mgonzalez@freebox.fr>
 ---
- arch/arm64/boot/dts/qcom/msm8998.dtsi | 27 +++++++++++++++++++++++++++
- 1 file changed, 27 insertions(+)
+ include/dt-bindings/clock/qcom,gcc-msm8998.h | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-index 111930c73ab8f..1537e42fa03ca 100644
---- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-@@ -1615,6 +1615,33 @@ gpucc: clock-controller@5065000 {
- 				      "gpll0";
- 		};
+diff --git a/include/dt-bindings/clock/qcom,gcc-msm8998.h b/include/dt-bindings/clock/qcom,gcc-msm8998.h
+index b5456a64d4213..5b0dde0809007 100644
+--- a/include/dt-bindings/clock/qcom,gcc-msm8998.h
++++ b/include/dt-bindings/clock/qcom,gcc-msm8998.h
+@@ -193,10 +193,15 @@
+ #define GCC_MMSS_GPLL0_DIV_CLK					184
+ #define GCC_GPU_GPLL0_DIV_CLK					185
+ #define GCC_GPU_GPLL0_CLK					186
++#define HLOS1_VOTE_LPASS_CORE_SMMU_CLK				187
++#define HLOS1_VOTE_LPASS_ADSP_SMMU_CLK				188
++#define GCC_MSS_Q6_BIMC_AXI_CLK					189
  
-+		lpass_q6_smmu: iommu@5100000 {
-+			compatible = "qcom,msm8998-smmu-v2", "qcom,smmu-v2";
-+			reg = <0x05100000 0x40000>;
-+			clocks = <&gcc HLOS1_VOTE_LPASS_ADSP_SMMU_CLK>;
-+			clock-names = "iface";
-+
-+			#global-interrupts = <0>;
-+			#iommu-cells = <1>;
-+			interrupts =
-+				<GIC_SPI 226 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 393 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 394 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 395 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 396 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 397 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 398 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 399 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 400 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 401 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 402 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 403 IRQ_TYPE_LEVEL_HIGH>,
-+				<GIC_SPI 137 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			power-domains = <&gcc LPASS_ADSP_GDSC>;
-+			status = "disabled";
-+		};
-+
- 		remoteproc_slpi: remoteproc@5800000 {
- 			compatible = "qcom,msm8998-slpi-pas";
- 			reg = <0x05800000 0x4040>;
+ #define PCIE_0_GDSC						0
+ #define UFS_GDSC						1
+ #define USB_30_GDSC						2
++#define LPASS_ADSP_GDSC						3
++#define LPASS_CORE_GDSC						4
+ 
+ #define GCC_BLSP1_QUP1_BCR					0
+ #define GCC_BLSP1_QUP2_BCR					1
 
 -- 
 2.34.1
