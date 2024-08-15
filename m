@@ -1,53 +1,67 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EF091547C4;
-	Thu, 15 Aug 2024 21:56:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93B5915E88;
+	Thu, 15 Aug 2024 22:44:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723758995; cv=none; b=hqhLvx5I6CNv4+EnITpJKeerKomSWM2r8662LE8Evr+15irVDo67b5fuHK7fltaPQP7HH69qf+fcD1i8k1f0fuQgzjetcca/9QPb9SJmcpO52N7kcVv+hxCa66RAq3pywY76XV/bSSAfi1+6Hk1kM9a78Th02WkUjlibsG9NI2k=
+	t=1723761878; cv=none; b=WewMX0I7Qc1xR6nZn397Wttw2wtF5+3pGy5fB1qgoIMoVG9dSwv7gmfSthqGj+AIwxe9O0WVsV8gP5q8tZUuh6Gng7riTruzNI3bQxA5U6ufkDh5lqquIUATUQ9wwSGPl7Q7eaNX9RBflzxJvyW03Ri5HX5JSMIuIacOc1suzAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723758995; c=relaxed/simple;
-	bh=Mf8SuVPcQMJxDRlhTh8nDftjjh3X6X2ZNGppNHT09T0=;
+	s=arc-20240116; t=1723761878; c=relaxed/simple;
+	bh=VQVwGklaI3ZSA24hRUS3BioayMkSZq8f6rSuQ+wiwm4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tdZnGzwE365HrPG/N3jNqq49foresd0XHLZlcjN+CDpKhWvteUH3Znxf82j4YvoizYphLGiv6i61ncI2hG9WxgFsjVSD6adTJwJzOPqYLfHmZ5IXpKuYmMo7mjirarkk24P+cxUIb1rJoptPSXE7Rl38DMyfO0zlLSOp0NYCZJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vQEGlZvn; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=A74Jc5XDfAkYx8Mg17KX0lM5gFTzhxLLm344x9oBmg0toNN0aDLDdmQ3EqTklJDynbW+OiMTSbJX8Ea5Ad2Re7GTJ08XoHsMzGgiUWOsK49BORn1lNkUBaCMA86HVZhl6W4UcQDSI7JYVrLynAgXnx3GqeOANoGcQnLdco2wVeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bAiS1evz; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vQEGlZvn"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1805C4AF15;
-	Thu, 15 Aug 2024 21:56:33 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bAiS1evz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E9291C32786;
+	Thu, 15 Aug 2024 22:44:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723758994;
-	bh=Mf8SuVPcQMJxDRlhTh8nDftjjh3X6X2ZNGppNHT09T0=;
+	s=k20201202; t=1723761878;
+	bh=VQVwGklaI3ZSA24hRUS3BioayMkSZq8f6rSuQ+wiwm4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=vQEGlZvnnwW8erXPizbf0xFfhzni9Q37kcH9HAcMT4oE32EYPCtABnC1LstVOWiF1
-	 7bzIE3YtME1HyL5D8Vp3s6b3wJv/ge/K0ii4wmfguhABvtCcuv/o2m6Q24SOv/4Ts4
-	 F63II0U0HI+IFn0m+LDMgLgUTSBA+soegrpPErVGcm2Dp+mqUh4IsjJiRReVOfzLVi
-	 yJ4uj1CZoedtlp+XOlUmfw21fQVYbX2oMx9CmX5aRS9+hJdQ0OAnV127mpZCMfy+uU
-	 rILFyG9mSogoGwneu3eqIGSc3wXKM91EZENDoEnRkw77ItoVlK68Rn70ZtFl0izzHi
-	 q2aq19rswyGYQ==
+	b=bAiS1evzyrbktfGk54uagHfLPIPhysQriDybBBU6lw5kJ9ScGMo9+MiJStry8jcDp
+	 NmW9NOkV0IF5umkkuqO5lKi8BVCXD7t93P2jR2Wfad41I0tqBhuARa9lLgVQIXcM7z
+	 Kts8mo5+nX6CDoiMoIJ0NSzZFnKk/lY5/bEkIE2lQHiTsd5gkSpcAsQIBUOwibm4j2
+	 F34SOcTUzFoRqp91S8zDRFg+Se2uj6RkIi9U/8QFLegpfyn6TcQW6WtgvcUwCr6eM6
+	 fA6hvZSooj8Y4rFBcAcVlxa1jN/ZH8IEVYynDf7f0toNZRlMkYjqzR7dvhhWxdeiw4
+	 QBampIF7y8Eug==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Konrad Dybcio <konradybcio@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
+	Jonathan Marek <jonathan@marek.ca>,
+	Robert Foss <rfoss@kernel.org>,
+	Vinod Koul <vkoul@kernel.org>,
+	Rob Clark <robdclark@gmail.com>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Georgi Djakov <djakov@kernel.org>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Marc Gonzalez <mgonzalez@freebox.fr>
+	Mike Tipton <quic_mdtipton@quicinc.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 Cc: linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Arnaud Vrac <avrac@freebox.fr>,
-	Pierre-Hugues Husson <phhusson@freebox.fr>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
-Subject: Re: [PATCH 0/3] Add LPASS SMMU to msm8998 DTSI
-Date: Thu, 15 Aug 2024 16:56:28 -0500
-Message-ID: <172375898304.1019907.18015161106871629352.b4-ty@kernel.org>
+	dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org,
+	linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	stable@vger.kernel.org
+Subject: Re: (subset) [PATCH 00/11] arm64: qcom: set of fixes for SM8350 platform
+Date: Thu, 15 Aug 2024 17:44:32 -0500
+Message-ID: <172376187142.1033860.796127870290361446.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240814-lpass-v1-0-a5bb8f9dfa8b@freebox.fr>
-References: <20240814-lpass-v1-0-a5bb8f9dfa8b@freebox.fr>
+In-Reply-To: <20240804-sm8350-fixes-v1-0-1149dd8399fe@linaro.org>
+References: <20240804-sm8350-fixes-v1-0-1149dd8399fe@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -58,21 +72,17 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Wed, 14 Aug 2024 18:20:21 +0200, Marc Gonzalez wrote:
-> A few definitions and glue code to support the DT node
-> describing the LPASS SMMU in qcom msm8998 SoC.
+On Sun, 04 Aug 2024 08:40:04 +0300, Dmitry Baryshkov wrote:
+> A set of fixes that target stability of the SM8350 platform.
 > 
-> Thanks to Angelo.
 > 
 
 Applied, thanks!
 
-[1/3] dt-bindings: clock: gcc-msm8998: Add Q6 and LPASS clocks definitions
-      commit: 015dff12dfdeb8d94115ec829bc2e4b711075935
-[2/3] clk: qcom: gcc-msm8998: Add Q6 BIMC and LPASS core, ADSP SMMU clocks
-      commit: 7554d532e03b4f3a9e294077d38fb2403f2b5f7d
-[3/3] arm64: dts: qcom: msm8998: Add disabled support for LPASS iommu for Q6
-      commit: 1a9544b832256817a387f952eb0badcb6416df7f
+[09/11] arm64: dts: qcom: sm8350: add MDSS registers interconnect
+        commit: 5e1cf9f1f397a3d24dc6b06eda069be954504a16
+[10/11] arm64: dts: qcom: sm8350: add refgen regulator
+        commit: 08822cf3de00f1b9edb01b995d926595e48a54eb
 
 Best regards,
 -- 
