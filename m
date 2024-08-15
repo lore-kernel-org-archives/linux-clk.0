@@ -1,55 +1,52 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6474F156871;
-	Thu, 15 Aug 2024 20:41:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 641CE15B14B;
+	Thu, 15 Aug 2024 20:41:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723754469; cv=none; b=lnDZFo2F6VsMHKuPY1gV92V3IitC5xeRnFHqCoRNcod6m8+DdkEjq6XKAsrsoIgTWh7o2JhY5sk41JabT9NetS7KXLJRefut/RSudAp4TNo0MM41ukxenFFmDkqgqJduE/dkbEuYNjwKN+ff0Gj0oMUH6YQGA+1tJ1L+GVoLmZg=
+	t=1723754477; cv=none; b=uKdmNEFE29PTZDY7E/3DYRAU7a7FjSyx7CNU/RVAc4uGY+wEsjcjjb46sPnBORMlkOyJyLp/lASoJt1FuREIJR70dkCh6yboX9d/uJsN5/NK6YwirYoT2aSQSj2fjLzSLAWw1KvUjn5hXJ2DAbsh/HgztcYG6JhEEjDLuid4bqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723754469; c=relaxed/simple;
-	bh=RY07me97Hp+XVsJNPJ663Spiww09CKfyJsL5b8mH5Ss=;
+	s=arc-20240116; t=1723754477; c=relaxed/simple;
+	bh=PvoSBLcsFkiZ61vIQf0gteyF3WBUp8LYafg6D6HKjYg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DNcQLtDqpK+nZq+R2Em3evwo/l2zuLdXhAWpftUW/NgXTPs6hJXIxdBfU1THdUOmked95Ws011iKWjCgtNT3WajnXq/AJvkKIBJ3LmytNSF+OGucoOvMlXWOGWRkDGktofTxfmkOyhUqd7Sz26nNY5DoAi3850pxZ2ZM0q/YuLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mtf7ilcc; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=jgstr4nNjlqcPSYD84ASr8UbPkIBjOFAHe0VGmBraSYq/9N4LEtNnGLOMqU3ceTRlCgFZReu675bRDwKWK42/idYajbVVd/9QzPRhToVpwXTWZpACFFxkDAw6jrniyjNxrWh9LEjYZ2D2ExZL+iqyS1M+ZGqxXeaakiEDD+RRfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TOCxcpBA; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mtf7ilcc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90EFEC4AF0E;
-	Thu, 15 Aug 2024 20:41:07 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TOCxcpBA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F72FC4AF09;
+	Thu, 15 Aug 2024 20:41:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723754468;
-	bh=RY07me97Hp+XVsJNPJ663Spiww09CKfyJsL5b8mH5Ss=;
+	s=k20201202; t=1723754476;
+	bh=PvoSBLcsFkiZ61vIQf0gteyF3WBUp8LYafg6D6HKjYg=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Mtf7ilccyPcDBkGrY+Q4vofYyx2Yh6PL7k8Jdj5iJ0/Gof/YI0Fhhh9DUyZa8SUhx
-	 BgV+DLh5LRE9emD7O1X3HxDAkmp+qaZeZsvi7+v2uBMFjFTU0u0WVuBqqzw19BFfLY
-	 EyaWomAHzVKPaa9jfDG0J6HrbYDRs6/4t+wm90iNs/firh4KIlE7pMejrCgITxY27o
-	 7vgMM7R3y3m4IuroKLhaxPXG+Hfrzk+YVheKLF5dg1KMQSFwjh50JC4hDOjrZl+3C/
-	 N7tt4rZlkk3Rw+Mc5oa6PDnxLNT0iKRSUXyA0hwmBS3RhvlITZRcfOoil2Mnej2DU8
-	 N1xYL+3zuKomA==
+	b=TOCxcpBA6F7P8NyCeBZ+7D963bvMKnr2+hODJ/NXv9pFPQc4q9omzrN5Krur/vYEu
+	 7k2p+WZmk3frheU3lPFy5vhrbAaMve7fxHNS4xL6DVcPUiZOk1o+Is06214Gkiaizt
+	 xGkJiBE3AnpHpeqa4CKBwskExy8lwZwbZgO6gApMhkglpEBBUhPjXLPpLQVL75DIs6
+	 kTRCyTqHMYbgUt4EYeuwLeOT1LxfkNlxhbM7a8Ki9l+cw4x/Pxe0va2/XzIWEZZP3z
+	 bhcG1gGyOL54kFPGYqwAYKGd/qeepsVRJ1VUZA/CkFkNBKa7gN3H3apljklsSBPMaP
+	 yaVpE/ezB/kbg==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Konrad Dybcio <konradybcio@kernel.org>,
+To: ~postmarketos/upstreaming@lists.sr.ht,
+	phone-devel@vger.kernel.org,
+	Jassi Brar <jassisinghbrar@gmail.com>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Andy Gross <agross@kernel.org>,
-	Stephan Gerhold <stephan@gerhold.net>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Mathieu Poirier <mathieu.poirier@linaro.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Luca Weiss <luca@lucaweiss.eu>
 Cc: linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	linux-clk@vger.kernel.org,
-	linux-remoteproc@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: (subset) [PATCH v2 0/5] soc: qcom: fix rpm_requests module probing
-Date: Thu, 15 Aug 2024 15:40:25 -0500
-Message-ID: <172375444814.1011236.18008353969050229050.b4-ty@kernel.org>
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org
+Subject: Re: (subset) [PATCH 0/7] Add CPU frequency scaling support for MSM8226
+Date: Thu, 15 Aug 2024 15:40:31 -0500
+Message-ID: <172375444799.1011236.3821270590230686544.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240729-fix-smd-rpm-v2-0-0776408a94c5@linaro.org>
-References: <20240729-fix-smd-rpm-v2-0-0776408a94c5@linaro.org>
+In-Reply-To: <20240619-msm8226-cpufreq-v1-0-85143f5291d1@lucaweiss.eu>
+References: <20240619-msm8226-cpufreq-v1-0-85143f5291d1@lucaweiss.eu>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -60,25 +57,24 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Mon, 29 Jul 2024 22:52:13 +0300, Dmitry Baryshkov wrote:
-> The GLINK RPMSG channels get modalias based on the compatible string
-> rather than the channel type, however the smd-rpm module uses rpmsg ID
-> instead. Thus if the smd-rpm is built as a module, it doesn't get
-> automatically loaded. Add generic compatible to such devices and fix
-> module's ID table.
+On Wed, 19 Jun 2024 23:02:44 +0200, Luca Weiss wrote:
+> Apart from a bunch of bindings updates, add support for the a7pll found
+> on the SoC and wire up everything in the dtsi. And finally switch over
+> to using apcs via mbox interface to stop using the apcs via syscon.
 > 
-> Module loading worked before the commit bcabe1e09135 ("soc: qcom:
-> smd-rpm: Match rpmsg channel instead of compatible"), because the driver
-> listed all compatible strings, but the mentioned commit changed ID
-> table. Revert the offending commit and add generic compatible strings
-> instead.
+> Only a limited list of CPU frequencies are supported for now, higher
+> ones require speedbin support which I plan to work on after this lands.
 > 
 > [...]
 
 Applied, thanks!
 
-[5/5] arm64: dts: qcom: add generic compat string to RPM glink channels
-      commit: 0b7d94e9d15d90aa55468b3c7681558ad66c7279
+[5/7] ARM: dts: qcom: msm8226: Add CPU frequency scaling support
+      commit: 02f2ddaa1a78cbebd4255f78260781b404225170
+[6/7] ARM: dts: qcom: msm8226: Hook up CPU cooling
+      commit: 807dfab845209062e4d268157cfbf0ba46652df7
+[7/7] ARM: dts: qcom: msm8226: Convert APCS usages to mbox interface
+      commit: c47dd4a87160fd604577aca41ca8b3391b5c5d3e
 
 Best regards,
 -- 
