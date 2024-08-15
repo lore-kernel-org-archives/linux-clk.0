@@ -1,74 +1,160 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA042566;
-	Thu, 15 Aug 2024 01:54:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE6BE10F1;
+	Thu, 15 Aug 2024 01:56:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723686861; cv=none; b=VMdxI1FaCYN1G3hXfvUI/MWHR+xjeQJoyCgHjawhsPjRG7XuFA7eGVGAAK5DQqeyTJGzP19DdEchdj9Q7yalzSeT2qFEglM6HYSDBXw+ZlDURYgo168bw4IpPnreIpfmp2Y03NBXT8BWlb1EQdLnFE0QWb5uDsjpWn5mZ0vDH7c=
+	t=1723687016; cv=none; b=oiF8EuvKfwc41rt3rkcYJI5X4aHPN5xO82IiH0Y7YEAwduweLJwNCi33Hxkh2beYDVEUCoEiQ++XhPkoILKg7Ju5GUd+L1zNXgerN2zl9e0vJW2Nefsj4QhrD7fWfa7WBSA0VfBgLb667GFMSL3CVVwuqmRVTxc40TzgEe1aCS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723686861; c=relaxed/simple;
-	bh=d3sfWeHxva1JfLaQJzj6iXdO0zdjlM4Noz+FAhMcASs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eTvbx7aaOK+6ycmS91fBGBpwmy93gJDnre3v+4a/eFGNfzh/1CSiD3QXUUWZ8LdwunRZLgSO4O+4k2VMNUepY9SSYdjsGLN3WVa4oYFBqBNNvSewEgmXC1YZYLiXLq1wH8Wn3J1S2PSTqSynL7rW2WelQP1TfsTTQtpgkjkr8X8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y7xiJc69; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1723687016; c=relaxed/simple;
+	bh=wq0BhkTXlWhJ/zXDo1Y0clJj4Yey5DnbbBfpI40HUZs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=S8zkKew37kiunkWm5RLq0qEfNhkMjouJi3mDXeSlKtoRx5qgJwlO0vhI8B3RhqL1Fz96BeyG0sbNbTQlp1njrupb4qG3rh1sGDKVKT1c1OJIeui4W9xQoKts61rEz2HfMMsT8L6h9AZc5gmXgHwnGCJB2/J5GhLHdotGwXPzENQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=CUPXQ1DY; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y7xiJc69"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 556D2C116B1;
-	Thu, 15 Aug 2024 01:54:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723686861;
-	bh=d3sfWeHxva1JfLaQJzj6iXdO0zdjlM4Noz+FAhMcASs=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=Y7xiJc69pPg//0RljRGwFYP8X81e64inreUMz39L86yVktJHUJbOeLMM/2ehlgi8z
-	 RF5K7uJIuIrqfQfl1dqQOpiVu/qPQQHjqlL/uOrkuMX3fus8IwO91qxMFWoGUFabI4
-	 SSLmTeOaZ3NKpD/zKbrYnAayIvMPfyfu35MapAhS92W+Y5gnRHR7svAA/IrMMjA6pF
-	 2Qx0a2EE76eCm0ded6rMMZa/Kwf/QV3X0sXcgxCk9Tzr+Fr/NaiIw951dJSO9vOy1q
-	 hOqntWDHNggZZ1MaCnskAyNZ7BnXyrbK+0NWIY+AjLT1x1sRTRPBnc7xAw6HvbjQQ6
-	 i4XSuiTO+LPXw==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Abel Vesa <abel.vesa@linaro.org>
-Cc: Johan Hovold <johan+linaro@kernel.org>,
-	Sibi Sankar <quic_sibis@quicinc.com>,
-	linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: gcc-x1e80100: Fix USB 0 and 1 PHY GDSC pwrsts flags
-Date: Wed, 14 Aug 2024 18:58:37 -0700
-Message-ID: <172368711404.4025076.14228696784117021827.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240801-x1e80100-clk-gcc-fix-usb-phy-gdscs-pwrsts-v1-1-8df016768a0f@linaro.org>
-References: <20240801-x1e80100-clk-gcc-fix-usb-phy-gdscs-pwrsts-v1-1-8df016768a0f@linaro.org>
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="CUPXQ1DY"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1723687010;
+	bh=qUBxOvHAWeFArtr5V1bUsgelSpNmH8WO4eePZ7NEdgg=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=CUPXQ1DY7i14T913/rFWMRr8ldtWkqlgAKTCiENCACysKOnQui5Lv7/mRAnlCyvyd
+	 TNywBWXGfI75ssY41bExvkJ1uGlCWKGA5QGeauuEs5eo9lTovUz1RVUoVilZiQltsx
+	 pqk/Quk57zxRD9SIvkhgWEXAVfh9Ji0aIi4riBqKHdZTPs49JspMZOYzjOM64mcBnl
+	 UJYpl8BUN180M9cqgSQsc9eKvsJZfZUSxFJZAyyoL8om22BuzCmTSalDoRklM9HIbB
+	 B5zolpK6dfPec8a5Oa19rwgs/aU+LyO9yHduy/42ZejKX61Apm6whxgbYc8BplJtv2
+	 YR721Y3BfJ1Pg==
+Received: from [192.168.68.112] (ppp118-210-65-51.adl-adc-lon-bras32.tpg.internode.on.net [118.210.65.51])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 43EFE64C85;
+	Thu, 15 Aug 2024 09:56:49 +0800 (AWST)
+Message-ID: <d5c3e9583ee775fd06dfcc10741e89db17273efe.camel@codeconstruct.com.au>
+Subject: Re: [PATCH 1/4] dt-bindings: mfd: aspeed: support for AST2700
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Ryan Chen <ryan_chen@aspeedtech.com>, Rob Herring <robh@kernel.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, Michael Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Philipp Zabel
+ <p.zabel@pengutronix.de>,  "devicetree@vger.kernel.org"
+ <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
+ <linux-aspeed@lists.ozlabs.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "linux-clk@vger.kernel.org"
+ <linux-clk@vger.kernel.org>
+Date: Thu, 15 Aug 2024 11:26:48 +0930
+In-Reply-To: <OS8PR06MB754121818B9431941C18E09DF2802@OS8PR06MB7541.apcprd06.prod.outlook.com>
+References: <20240808075937.2756733-1-ryan_chen@aspeedtech.com>
+	 <20240808075937.2756733-2-ryan_chen@aspeedtech.com>
+	 <2f27285e-6aa5-4e42-b361-224d8d164113@kernel.org>
+	 <OS8PR06MB75416FAD2A1A16E7BE2D255DF2BA2@OS8PR06MB7541.apcprd06.prod.outlook.com>
+	 <10809e91-31be-4110-86c1-1e1ccb05b664@kernel.org>
+	 <OS8PR06MB7541F4F740FDB17F50EBCACBF2BA2@OS8PR06MB7541.apcprd06.prod.outlook.com>
+	 <20240813191454.GA1570645-robh@kernel.org>
+	 <OS8PR06MB7541BB03AEE90B090AB990B3F2872@OS8PR06MB7541.apcprd06.prod.outlook.com>
+	 <7e1dc98e0f69a095a8f7725b742df3c8d8436a67.camel@codeconstruct.com.au>
+	 <OS8PR06MB754121818B9431941C18E09DF2802@OS8PR06MB7541.apcprd06.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
 
+On Thu, 2024-08-15 at 01:43 +0000, Ryan Chen wrote:
+> > Subject: Re: [PATCH 1/4] dt-bindings: mfd: aspeed: support for
+> > AST2700
+> >=20
+> > On Wed, 2024-08-14 at 06:35 +0000, Ryan Chen wrote:
+> > > > Subject: Re: [PATCH 1/4] dt-bindings: mfd: aspeed: support for
+> > > > AST2700
+> > > >=20
+> > > > On Fri, Aug 09, 2024 at 06:10:22AM +0000, Ryan Chen wrote:
+> > > > > > Subject: Re: [PATCH 1/4] dt-bindings: mfd: aspeed: support
+> > > > > > for
+> > > > > > AST2700
+> > > > > >=20
+> > > > > > On 09/08/2024 07:55, Ryan Chen wrote:
+> > > > > > > > Subject: Re: [PATCH 1/4] dt-bindings: mfd: aspeed:
+> > > > > > > > support
+> > > > > > > > for
+> > > > > > > > AST2700
+> > > > > > > >=20
+> > > > > > > > On 08/08/2024 09:59, Ryan Chen wrote:
+> > > > > > > > > Add compatible support for AST2700 clk, reset,
+> > > > > > > > > pinctrl,
+> > > > > > > > > silicon-id and example for AST2700 scu.
+> > > > > > > > >=20
+> > > > > > > > > Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
+> > > > > > > > > ---
+> > > > > > > > > =C2=A0.../bindings/mfd/aspeed,ast2x00-scu.yaml      | 31
+> > > > > > > > +++++++++++++++++--
+> > > > > > > > > =C2=A01 file changed, 29 insertions(+), 2 deletions(-)
+> > > > > > > > >=20
+> > > > > > > > > diff --git
+> > > > > > > > > a/Documentation/devicetree/bindings/mfd/aspeed,ast2x0
+> > > > > > > > > 0-
+> > > > > > > > > scu.yaml
+> > > > > > > > > b/Documentation/devicetree/bindings/mfd/aspeed,ast2x0
+> > > > > > > > > 0-
+> > > > > > > > > scu.yaml
+> > > > > > > > > index 86ee69c0f45b..c0965f08ae8c 100644
+> > > > > > > > > ---
+> > > > > > > > > a/Documentation/devicetree/bindings/mfd/aspeed,ast2x0
+> > > > > > > > > 0-
+> > > > > > > > > scu.yaml
+> > > > > > > > > +++
+> > > > > > > > > b/Documentation/devicetree/bindings/mfd/aspeed,ast2x0
+> > > > > > > > > 0-
+> > > > > > > > > scu.y
+> > > > > > > > > +++ aml
+> > > > > > > > > @@ -21,6 +21,8 @@ properties:
+> > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0- aspeed,ast2400-scu
+> > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0- aspeed,ast2500-scu
+> > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0- aspeed,ast2600-scu
+> > > > > > > > > +          - aspeed,ast2700-scu0
+> > > > > > > > > +          - aspeed,ast2700-scu1
+> > > > > > > >=20
+> > > > > > > > What are the differences between these two?
+> > > > > > >=20
+> > > > > > > The next [PATCH 4/4] is scu driver that include ast2700-
+> > > > > > > scu0
+> > > > > > > and
+> > > > > > > ast2700-scu1 CLK_OF_DECLARE_DRIVER(ast2700_soc0,
+> > > > > > > "aspeed,ast2700-scu0", ast2700_soc0_clk_init);
+> > > > > > > CLK_OF_DECLARE_DRIVER(ast2700_soc1, "aspeed,ast2700-
+> > > > > > > scu1",
+> > > > > > > ast2700_soc1_clk_init);
+> > > > > >=20
+> > > > > > What are hardware differences? Entirely different devices?
+> > > > >=20
+> > > > > AST2700 have two soc die connected each other.
+> > > > > Each soc die have it own scu, so the naming is ast2700-scu0
+> > > > > for
+> > > > > soc0,
+> > > > another is ast2700-scu1 for soc1.
+> > > >=20
+> > > > Didn't I see in another patch one die is cpu and one is io? Use
+> > > > those in the compatible rather than 0 and 1 if so.
+> > > >=20
+> > > Sorry, I want to align with our datasheet description.
+> > > It will but scu0 and scu1 register setting.
+> >=20
+> > Can we document that relationship in the binding? Rob's suggestion
+> > seems
+> > more descriptive.
+> Hello,
+> 	Do you want me document it in yaml file or just in commit
+> message?
 
-On Thu, 01 Aug 2024 13:21:07 +0300, Abel Vesa wrote:
-> Allowing these GDSCs to collapse makes the QMP combo PHYs lose their
-> configuration on machine suspend. Currently, the QMP combo PHY driver
-> doesn't reinitialise the HW on resume. Under such conditions, the USB
-> SuperSpeed support is broken. To avoid this, mark the pwrsts flags with
-> RET_ON. This is in line with USB 2 PHY GDSC config.
-> 
-> 
-> [...]
+In the binding document please!
 
-Applied, thanks!
+Andrew
 
-[1/1] clk: qcom: gcc-x1e80100: Fix USB 0 and 1 PHY GDSC pwrsts flags
-      commit: f4c16a7cdbd2edecdb854f2ce0ef07c6263c5379
-
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
