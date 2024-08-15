@@ -1,49 +1,49 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 719FF1509AF;
-	Thu, 15 Aug 2024 20:41:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1835C16F847;
+	Thu, 15 Aug 2024 20:41:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723754495; cv=none; b=kL4vsYoMXtxLoUWNAveltOhI0+W1NinsB4R8NcisDVvZSQKsfjT8YrCGxm8HcW8lkX1ol+ydTbmUgY9mze1Z9SpnVydi1qUOWzimI0K7+3+Vdt8RE9yOJn/xxxn9AID+up1KAN+EVbDNpbSpOa0k4wf8SRHTVkx4JPjxQTc0ZCs=
+	t=1723754499; cv=none; b=Ix/FtS6rtJWacKFpdqBO5mmqXd8Cts7pvBFPzj2rlEtP76+6cqDgqH+WkfBEdx37lQNyNQEDlDoQktNXWuJs7CvjmJ6zb6wkqp3WYKRITsLykndWVs+mPmpxBKQfDiWadtuJVWB77hVPDn7V42dIe771JQeGtw2a0F/QrmpDMFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723754495; c=relaxed/simple;
-	bh=Ph7uztK2I8wTRwqkfcq3PaLlgq4H9YIwOSe02lnlKxE=;
+	s=arc-20240116; t=1723754499; c=relaxed/simple;
+	bh=KgQPOW7buxxvI4Ojf1vT8IHNswoBbOTrHD6M46wrIPw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KIadmXPyqpLocCNAeRcEsHN0N6pPu7dM6AKgf5D5SyIbi2O9rR2w6xnqqZjVWfXVZzzC54F1YwK2Zfuw9rASDPUNVxbx5tWEcVKEvl0MiePFJgi8coKqcrNij7v+Dxxa4ey5wj10Rh6mpHSdzfbHMH7TeqPoo1cAiVAq3QZDFNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mkxuetE4; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=PpoBmqX8FsCxL7YpFwHe+UJNlI7+UJ/dmknZAtElI8E6JEHgidffA3ooR9+akbp8azcmrKkmGn+kSqkdSqDcIIae1tZTwXFgS+Yo5us4uA1kZhKbyRi9rk/WLJcwwMTN249ThfKoWCLXzVHVKSi1h+80AehUQzjOwabni3bG+gk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lRgTSeiY; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mkxuetE4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E1621C4AF0B;
-	Thu, 15 Aug 2024 20:41:33 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lRgTSeiY"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05885C32786;
+	Thu, 15 Aug 2024 20:41:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723754494;
-	bh=Ph7uztK2I8wTRwqkfcq3PaLlgq4H9YIwOSe02lnlKxE=;
+	s=k20201202; t=1723754499;
+	bh=KgQPOW7buxxvI4Ojf1vT8IHNswoBbOTrHD6M46wrIPw=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=mkxuetE4lei1pqkDE+KIx0rJkG9hXkuAZGe5g97ggrcusTzDbfqqIgS0OQ/d5STwe
-	 0KfQmVa0WPDb91QsD0b/gn/IFY5nvat2gS28/UhkVIgHP4yAfCJFp+RHZbgHHEuU1p
-	 ADnFXU367mMj4WkLJS03iuk8UDxrfQ0NahOhj0mUb7clxL6RD/QRYVxZrPjmb3RxRO
-	 HBCPMrvLu+e3ueGqzWh1k+fjhFAy44uPSDMRFJxZccklFtNXPilt0x7zi/Ci07LEPr
-	 wq3NSwv0TryhQTtITOmxCtrgs96eTlEc3Z4VmcU+eDBVcc1e0rKr3FPV+YBObRJMAA
-	 7ink3X2KF08hQ==
+	b=lRgTSeiYxy2BeusW52OfwrCKOvk0+libQkTfq65HnTQS9td8oBc8nTk9WRZoTrphn
+	 ejGQCJPMINqjVnq7omhvQiwNEEI8T1KksWdRimKDmHpxtI+/5WkyNFlM4n93Dq0Kx4
+	 SOuz44zk4USNPrF2dGv6eQBs8DiaOT8T3495AeTe4ZjVqW2Y7lEVklgUtXwUDd6iB0
+	 La1raRxYnkvQA16fLTASBCkWBSGJHHGWop3kjsJNjVHuApVm/T2W0nWdhR3hcYzvEK
+	 Gw3wZfMA1svdYEoW5sdaNsbukm2sGWbqFTZG74kXAJ/7diBGjuKdbqyeLmq1xUxxnd
+	 lptmSjyxlC3Dw==
 From: Bjorn Andersson <andersson@kernel.org>
-To: devicetree@vger.kernel.org,
-	Rayyan Ansari <rayyan.ansari@linaro.org>
-Cc: Conor Dooley <conor.dooley@microchip.com>,
-	Michael Turquette <mturquette@baylibre.com>,
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] dt-bindings: clock: qcom,qcs404-turingcc: convert to dtschema
-Date: Thu, 15 Aug 2024 15:40:46 -0500
-Message-ID: <172375444812.1011236.15390985762561922644.b4-ty@kernel.org>
+Subject: Re: (subset) [PATCH v2 0/3] arm64: dts: qcom: x1e80100: Add soundwire controller resets
+Date: Thu, 15 Aug 2024 15:40:49 -0500
+Message-ID: <172375444800.1011236.6892556236101392834.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240716085622.12182-2-rayyan.ansari@linaro.org>
-References: <20240716085622.12182-2-rayyan.ansari@linaro.org>
+In-Reply-To: <20240624-x1e-swr-reset-v2-0-8bc677fcfa64@linaro.org>
+References: <20240624-x1e-swr-reset-v2-0-8bc677fcfa64@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -54,16 +54,16 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Tue, 16 Jul 2024 09:56:20 +0100, Rayyan Ansari wrote:
-> Convert the bindings for the Turing Clock Controller on QCS404 from
-> the old text format to yaml.
+On Mon, 24 Jun 2024 14:32:35 +0100, Srinivas Kandagatla wrote:
+> Soundwire resets are missing in the existing dts, add resets for all the 4
+> instances of Soundwire controllers (WSA, WSA2, RX, TX).
 > 
 > 
 
 Applied, thanks!
 
-[1/1] dt-bindings: clock: qcom,qcs404-turingcc: convert to dtschema
-      commit: d0c2eccf64fd5b1a995c048cb6ad6fc53727fb17
+[3/3] arm64: dts: qcom: x1e80100: add soundwire controller resets
+      commit: 8c7dbbed27723c4324c81e78fe239ce134aa8f58
 
 Best regards,
 -- 
