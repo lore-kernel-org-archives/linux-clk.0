@@ -1,52 +1,55 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 641CE15B14B;
-	Thu, 15 Aug 2024 20:41:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5A0414E2D8;
+	Thu, 15 Aug 2024 20:41:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723754477; cv=none; b=uKdmNEFE29PTZDY7E/3DYRAU7a7FjSyx7CNU/RVAc4uGY+wEsjcjjb46sPnBORMlkOyJyLp/lASoJt1FuREIJR70dkCh6yboX9d/uJsN5/NK6YwirYoT2aSQSj2fjLzSLAWw1KvUjn5hXJ2DAbsh/HgztcYG6JhEEjDLuid4bqc=
+	t=1723754479; cv=none; b=ij812BjUAHaFo/oDi9FtcGcXS1RcfF7qCD22UK2NSJaIoffVGRBPLWJtAcMh2KsHs/G3WoeffYcLxYmNglxwhNXoSxCjyLI6Vna+Yun6C0ha5UdeNLnv7ksTzT7VdeB1pc9olBBzuVNthiniARBeP50fQPbpwn6dWvCZ8Pmn5K4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723754477; c=relaxed/simple;
-	bh=PvoSBLcsFkiZ61vIQf0gteyF3WBUp8LYafg6D6HKjYg=;
+	s=arc-20240116; t=1723754479; c=relaxed/simple;
+	bh=wcFLYvU5K4hLAYQGtjndlpUrjhP3wgf4ZXBKPB7BOHs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jgstr4nNjlqcPSYD84ASr8UbPkIBjOFAHe0VGmBraSYq/9N4LEtNnGLOMqU3ceTRlCgFZReu675bRDwKWK42/idYajbVVd/9QzPRhToVpwXTWZpACFFxkDAw6jrniyjNxrWh9LEjYZ2D2ExZL+iqyS1M+ZGqxXeaakiEDD+RRfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TOCxcpBA; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=knOaGJcgkZlyy1tBJAWX3EgU2DjGwEZKQhyECLq4mYFaCQzgdr9bBBF5KfBi7tJPaUyMv20Tn/MJjqZ8VKHGNIEm1T8rNJzUvyziYYnvxUx6Ba/FsQJvA7bSvqiGBeDYWwn55pxvHW1HirAUV6D3tgTLDMJITUqxvu6SZuxChII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ceJfi+GG; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TOCxcpBA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F72FC4AF09;
-	Thu, 15 Aug 2024 20:41:15 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ceJfi+GG"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52217C4AF0E;
+	Thu, 15 Aug 2024 20:41:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723754476;
-	bh=PvoSBLcsFkiZ61vIQf0gteyF3WBUp8LYafg6D6HKjYg=;
+	s=k20201202; t=1723754479;
+	bh=wcFLYvU5K4hLAYQGtjndlpUrjhP3wgf4ZXBKPB7BOHs=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=TOCxcpBA6F7P8NyCeBZ+7D963bvMKnr2+hODJ/NXv9pFPQc4q9omzrN5Krur/vYEu
-	 7k2p+WZmk3frheU3lPFy5vhrbAaMve7fxHNS4xL6DVcPUiZOk1o+Is06214Gkiaizt
-	 xGkJiBE3AnpHpeqa4CKBwskExy8lwZwbZgO6gApMhkglpEBBUhPjXLPpLQVL75DIs6
-	 kTRCyTqHMYbgUt4EYeuwLeOT1LxfkNlxhbM7a8Ki9l+cw4x/Pxe0va2/XzIWEZZP3z
-	 bhcG1gGyOL54kFPGYqwAYKGd/qeepsVRJ1VUZA/CkFkNBKa7gN3H3apljklsSBPMaP
-	 yaVpE/ezB/kbg==
+	b=ceJfi+GGIT550jwuU/TgjEwEqsYSVTHsD6rIF3bSklhKSE9w52ytjZKPKj7Vqg6Wu
+	 ac9N+/9U+IhJ+CkCcV4+OgFfu/Lv8hnz8uXbcb2ZKhpOW59a0pRqsq5jdhCBNbY9GO
+	 n1HNCLPe6P28KeCr61XJrBBmER6r0Q0eb6BCTxq2zMZf+adi3LTYg/uePaM4NZ8bHZ
+	 cLqb/N8zwakiC5/FsvTHKKthyufpbn4iZVUcdlVpkErofPgsFucYwDLYrjOEO7YCit
+	 RKqWn0YdQDdlYoUO09lVW2C/1bTAjFqRLnyrNEW3bTVHroj3B3oZ8WGe/27W7zyTh/
+	 E+Rqjb6SDRMCA==
 From: Bjorn Andersson <andersson@kernel.org>
-To: ~postmarketos/upstreaming@lists.sr.ht,
-	phone-devel@vger.kernel.org,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
+To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Vinod Koul <vkoul@kernel.org>,
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
 	Konrad Dybcio <konradybcio@kernel.org>,
-	Luca Weiss <luca@lucaweiss.eu>
+	Ajit Pandey <quic_ajipan@quicinc.com>
 Cc: linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
 	devicetree@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: (subset) [PATCH 0/7] Add CPU frequency scaling support for MSM8226
-Date: Thu, 15 Aug 2024 15:40:31 -0500
-Message-ID: <172375444799.1011236.3821270590230686544.b4-ty@kernel.org>
+	linux-kernel@vger.kernel.org,
+	Taniya Das <quic_tdas@quicinc.com>,
+	Jagadeesh Kona <quic_jkona@quicinc.com>,
+	Imran Shaik <quic_imrashai@quicinc.com>,
+	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+Subject: Re: (subset) [PATCH V4 0/8] clk: qcom: Add support for DISPCC, CAMCC and GPUCC on SM4450
+Date: Thu, 15 Aug 2024 15:40:33 -0500
+Message-ID: <172375444795.1011236.2878325032012172766.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240619-msm8226-cpufreq-v1-0-85143f5291d1@lucaweiss.eu>
-References: <20240619-msm8226-cpufreq-v1-0-85143f5291d1@lucaweiss.eu>
+In-Reply-To: <20240611133752.2192401-1-quic_ajipan@quicinc.com>
+References: <20240611133752.2192401-1-quic_ajipan@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -57,24 +60,29 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Wed, 19 Jun 2024 23:02:44 +0200, Luca Weiss wrote:
-> Apart from a bunch of bindings updates, add support for the a7pll found
-> on the SoC and wire up everything in the dtsi. And finally switch over
-> to using apcs via mbox interface to stop using the apcs via syscon.
+On Tue, 11 Jun 2024 19:07:44 +0530, Ajit Pandey wrote:
+> This patch series add dt-bindings, driver and device tree support for DISPCC, CAMCC
+> and GPUCC on QCOM SM4450 platform and also includes a fix related to LUCID EVO PLL
+> config issue in clk-alpha-pll driver which is required for correct scaling of few
+> supported frequencies in graphics clock controllers on SM4450.
 > 
-> Only a limited list of CPU frequencies are supported for now, higher
-> ones require speedbin support which I plan to work on after this lands.
+> Changes in V4:
+> - [PATCH 8/8]: Sorted nodes with address and minor updates for review comments on v2.
+> - [PATCH 7/8]: Added Reviewed-by: Konrad Dybcio received in v2.
+> - Link to V3: https://lore.kernel.org/all/20240528114254.3147988-1-quic_ajipan@quicinc.com/
 > 
 > [...]
 
 Applied, thanks!
 
-[5/7] ARM: dts: qcom: msm8226: Add CPU frequency scaling support
-      commit: 02f2ddaa1a78cbebd4255f78260781b404225170
-[6/7] ARM: dts: qcom: msm8226: Hook up CPU cooling
-      commit: 807dfab845209062e4d268157cfbf0ba46652df7
-[7/7] ARM: dts: qcom: msm8226: Convert APCS usages to mbox interface
-      commit: c47dd4a87160fd604577aca41ca8b3391b5c5d3e
+[1/8] clk: qcom: clk-alpha-pll: Fix CAL_L_VAL override for LUCID EVO PLL
+      commit: fff617979f97c773aaa9432c31cf62444b3bdbd4
+[3/8] clk: qcom: Add DISPCC driver support for SM4450
+      commit: 76f05f1ec7664cc7ef7f26364aaa09044a34f8ac
+[5/8] clk: qcom: Add CAMCC driver support for SM4450
+      commit: ef404007677931b19896429151056d9926c6d5c5
+[7/8] clk: qcom: Add GPUCC driver support for SM4450
+      commit: d63c77c5269652c32ad12eea98948a00cb6002ac
 
 Best regards,
 -- 
