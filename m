@@ -1,160 +1,157 @@
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE6BE10F1;
-	Thu, 15 Aug 2024 01:56:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C335038DC8;
+	Thu, 15 Aug 2024 06:07:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723687016; cv=none; b=oiF8EuvKfwc41rt3rkcYJI5X4aHPN5xO82IiH0Y7YEAwduweLJwNCi33Hxkh2beYDVEUCoEiQ++XhPkoILKg7Ju5GUd+L1zNXgerN2zl9e0vJW2Nefsj4QhrD7fWfa7WBSA0VfBgLb667GFMSL3CVVwuqmRVTxc40TzgEe1aCS4=
+	t=1723702053; cv=none; b=li1bssKb3+JcpY+g/kgB/h2Y0eiLkHhOGtqrp4W6kFasrKPqWbnd5ZRboP2Nreq1P0vDOp6sxQheQK+SjAZf7Ig2t+ocFswrlXEgX1UNJivnVSjCsOqw7sVaKluwYhnR45/2wfFVUlEmoibMshRYoMOaLx2kE0crzp2MzPAs7ws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723687016; c=relaxed/simple;
-	bh=wq0BhkTXlWhJ/zXDo1Y0clJj4Yey5DnbbBfpI40HUZs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=S8zkKew37kiunkWm5RLq0qEfNhkMjouJi3mDXeSlKtoRx5qgJwlO0vhI8B3RhqL1Fz96BeyG0sbNbTQlp1njrupb4qG3rh1sGDKVKT1c1OJIeui4W9xQoKts61rEz2HfMMsT8L6h9AZc5gmXgHwnGCJB2/J5GhLHdotGwXPzENQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=CUPXQ1DY; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+	s=arc-20240116; t=1723702053; c=relaxed/simple;
+	bh=PFJbY9QxyJb7XD4KnUPRq++45YKSxQjoOOINOoNW/1s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QQ3JoEDSdqSpxv5lK+GStpKhZG5MLXoQW4opXXOFDji9hkH0ztIpfTaNMGSeT+jPEijIMIpTTcDQj1Wq+PuWolWo1qkMh2a0BRCzFMbPTG2Qz/wIeFtbQlhvVvR0FI/MYYs7UHIgRiuIFV9dJBw6J43Ion7ybZIum46PFZNd2LM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jw8F5GOk; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="CUPXQ1DY"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jw8F5GOk"
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2f189a2a841so5518021fa.3;
+        Wed, 14 Aug 2024 23:07:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1723687010;
-	bh=qUBxOvHAWeFArtr5V1bUsgelSpNmH8WO4eePZ7NEdgg=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=CUPXQ1DY7i14T913/rFWMRr8ldtWkqlgAKTCiENCACysKOnQui5Lv7/mRAnlCyvyd
-	 TNywBWXGfI75ssY41bExvkJ1uGlCWKGA5QGeauuEs5eo9lTovUz1RVUoVilZiQltsx
-	 pqk/Quk57zxRD9SIvkhgWEXAVfh9Ji0aIi4riBqKHdZTPs49JspMZOYzjOM64mcBnl
-	 UJYpl8BUN180M9cqgSQsc9eKvsJZfZUSxFJZAyyoL8om22BuzCmTSalDoRklM9HIbB
-	 B5zolpK6dfPec8a5Oa19rwgs/aU+LyO9yHduy/42ZejKX61Apm6whxgbYc8BplJtv2
-	 YR721Y3BfJ1Pg==
-Received: from [192.168.68.112] (ppp118-210-65-51.adl-adc-lon-bras32.tpg.internode.on.net [118.210.65.51])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 43EFE64C85;
-	Thu, 15 Aug 2024 09:56:49 +0800 (AWST)
-Message-ID: <d5c3e9583ee775fd06dfcc10741e89db17273efe.camel@codeconstruct.com.au>
-Subject: Re: [PATCH 1/4] dt-bindings: mfd: aspeed: support for AST2700
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Ryan Chen <ryan_chen@aspeedtech.com>, Rob Herring <robh@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, Michael Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Philipp Zabel
- <p.zabel@pengutronix.de>,  "devicetree@vger.kernel.org"
- <devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
- <linux-aspeed@lists.ozlabs.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "linux-clk@vger.kernel.org"
- <linux-clk@vger.kernel.org>
-Date: Thu, 15 Aug 2024 11:26:48 +0930
-In-Reply-To: <OS8PR06MB754121818B9431941C18E09DF2802@OS8PR06MB7541.apcprd06.prod.outlook.com>
-References: <20240808075937.2756733-1-ryan_chen@aspeedtech.com>
-	 <20240808075937.2756733-2-ryan_chen@aspeedtech.com>
-	 <2f27285e-6aa5-4e42-b361-224d8d164113@kernel.org>
-	 <OS8PR06MB75416FAD2A1A16E7BE2D255DF2BA2@OS8PR06MB7541.apcprd06.prod.outlook.com>
-	 <10809e91-31be-4110-86c1-1e1ccb05b664@kernel.org>
-	 <OS8PR06MB7541F4F740FDB17F50EBCACBF2BA2@OS8PR06MB7541.apcprd06.prod.outlook.com>
-	 <20240813191454.GA1570645-robh@kernel.org>
-	 <OS8PR06MB7541BB03AEE90B090AB990B3F2872@OS8PR06MB7541.apcprd06.prod.outlook.com>
-	 <7e1dc98e0f69a095a8f7725b742df3c8d8436a67.camel@codeconstruct.com.au>
-	 <OS8PR06MB754121818B9431941C18E09DF2802@OS8PR06MB7541.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+        d=gmail.com; s=20230601; t=1723702049; x=1724306849; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UN5Jya+bU5edlI+PXQKJHx7XpQB+ZJik6Qvqm1dVNgw=;
+        b=Jw8F5GOkfgWjeW6DQmy2OZe7sVH+mK4iQeQKXuO8QLk4mU2OS+f7rFLhCXFSlcDfui
+         o08uQQbBRPRHOgMDIsmSTGYiYibMuYm6AZSn10D8mB/uU2J03nDDOWOPTfsZNuIqy1PD
+         HaVa1YoJdU0WuLabdKD5Bjx3lOCo/ESFEaU+7KAxH+nPMVyrPJO3tDe9MdkIag8ckGtY
+         tVSSh4N8kWOsX2dgpO5YFIhTbF/hQ/Cfg6QtKYtqIUW2LwSMFe5ZM9pW9XQ65lYmar9c
+         rtHJyk1rbIpdmIcIOIe43mQUCrFyI4xgpDtbD9UV8OBPQ7DP/z60CdFJ8uAMsJfXXDjA
+         /QKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723702049; x=1724306849;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UN5Jya+bU5edlI+PXQKJHx7XpQB+ZJik6Qvqm1dVNgw=;
+        b=eik6cXyLmyYRvr6j0bi7lnIIvjAwM9/kSMsLvo0sAyQytDTfMWivEEoRJ3WHBVsFzo
+         JrJAPRs+7z1hDR2Up7Ua5qLVCkZcbCnakabAeRhqy42WfLV3RiRU7jCOzhWsK2fw2sat
+         Vim/9hQrLDhyHAiSux57VSdP1L/oTspb4ExKVGSD/K2szCQtl+eiilggtNXAxEudo/Le
+         r1tN5rq5uX2rR7Cp0E1MrHhGSJNQ0nAfNW36c4x02TOtWNJXRE5x7hMtpATfK4PeW8FQ
+         9jCZMw027wIbrXKV9ENBkgUQhV/3bFLtXMA4Mb5GMb/f834QoRScSntMPpaRbcPiNSeC
+         KtCw==
+X-Forwarded-Encrypted: i=1; AJvYcCUEJ/rtwt+uRRRTboRyZtbK8X87+CVT7iEA5+0/zBg0DgV8IfOqTgChc8kBqwGv6lSoZQy1L7995gzAZnnOfK8JXBqDdw87S8h+fxTOXRhSXoqB7N/xCinSfotSKknfJn23uYf37G43
+X-Gm-Message-State: AOJu0YxE/GhqrjVa+10YocHYfXy0CLqZi0dEZtVW6zo6arg8kSm/Nm54
+	/AW22d21seZBLOBHA2Sue8nYE1fqHdVQEUg5uMRHB7j6cHSJ6k/f
+X-Google-Smtp-Source: AGHT+IG6OfSRhlLQ72gK8wu3bsFy8k8fYy6wk5RgBRZ4o44OVQdUrPFDC6xwajVvEPZa7Dehfmzd5w==
+X-Received: by 2002:a2e:3003:0:b0:2ef:2685:177d with SMTP id 38308e7fff4ca-2f3aa1f1bb2mr31167161fa.20.1723702048207;
+        Wed, 14 Aug 2024 23:07:28 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd? ([2a10:a5c0:800d:dd00:8cfe:d6e7:6701:9dfd])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f3b748dd43sm999051fa.49.2024.08.14.23.07.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 14 Aug 2024 23:07:27 -0700 (PDT)
+Message-ID: <22f3c925-309f-4ebe-a481-2553cfa71c0c@gmail.com>
+Date: Thu, 15 Aug 2024 09:07:25 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 2/3] clk: bd718x7: Enable the possibility to mark the
+ clock as critical
+To: Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>,
+ "open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>,
+ Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+ linux-amarula@amarulasolutions.com, Marek Vasut <marex@denx.de>
+References: <20220605165703.1565234-1-michael@amarulasolutions.com>
+ <20220605165703.1565234-3-michael@amarulasolutions.com>
+ <5f34b6d6-c2dd-44f9-c1bc-fe1deb336334@gmail.com>
+ <CAOf5uwm3p5AJXL9w7hQtqz05hDpQ_-CQArm0z6kAehj7OxK1Mw@mail.gmail.com>
+Content-Language: en-US, en-GB
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <CAOf5uwm3p5AJXL9w7hQtqz05hDpQ_-CQArm0z6kAehj7OxK1Mw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, 2024-08-15 at 01:43 +0000, Ryan Chen wrote:
-> > Subject: Re: [PATCH 1/4] dt-bindings: mfd: aspeed: support for
-> > AST2700
-> >=20
-> > On Wed, 2024-08-14 at 06:35 +0000, Ryan Chen wrote:
-> > > > Subject: Re: [PATCH 1/4] dt-bindings: mfd: aspeed: support for
-> > > > AST2700
-> > > >=20
-> > > > On Fri, Aug 09, 2024 at 06:10:22AM +0000, Ryan Chen wrote:
-> > > > > > Subject: Re: [PATCH 1/4] dt-bindings: mfd: aspeed: support
-> > > > > > for
-> > > > > > AST2700
-> > > > > >=20
-> > > > > > On 09/08/2024 07:55, Ryan Chen wrote:
-> > > > > > > > Subject: Re: [PATCH 1/4] dt-bindings: mfd: aspeed:
-> > > > > > > > support
-> > > > > > > > for
-> > > > > > > > AST2700
-> > > > > > > >=20
-> > > > > > > > On 08/08/2024 09:59, Ryan Chen wrote:
-> > > > > > > > > Add compatible support for AST2700 clk, reset,
-> > > > > > > > > pinctrl,
-> > > > > > > > > silicon-id and example for AST2700 scu.
-> > > > > > > > >=20
-> > > > > > > > > Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
-> > > > > > > > > ---
-> > > > > > > > > =C2=A0.../bindings/mfd/aspeed,ast2x00-scu.yaml      | 31
-> > > > > > > > +++++++++++++++++--
-> > > > > > > > > =C2=A01 file changed, 29 insertions(+), 2 deletions(-)
-> > > > > > > > >=20
-> > > > > > > > > diff --git
-> > > > > > > > > a/Documentation/devicetree/bindings/mfd/aspeed,ast2x0
-> > > > > > > > > 0-
-> > > > > > > > > scu.yaml
-> > > > > > > > > b/Documentation/devicetree/bindings/mfd/aspeed,ast2x0
-> > > > > > > > > 0-
-> > > > > > > > > scu.yaml
-> > > > > > > > > index 86ee69c0f45b..c0965f08ae8c 100644
-> > > > > > > > > ---
-> > > > > > > > > a/Documentation/devicetree/bindings/mfd/aspeed,ast2x0
-> > > > > > > > > 0-
-> > > > > > > > > scu.yaml
-> > > > > > > > > +++
-> > > > > > > > > b/Documentation/devicetree/bindings/mfd/aspeed,ast2x0
-> > > > > > > > > 0-
-> > > > > > > > > scu.y
-> > > > > > > > > +++ aml
-> > > > > > > > > @@ -21,6 +21,8 @@ properties:
-> > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0- aspeed,ast2400-scu
-> > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0- aspeed,ast2500-scu
-> > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0- aspeed,ast2600-scu
-> > > > > > > > > +          - aspeed,ast2700-scu0
-> > > > > > > > > +          - aspeed,ast2700-scu1
-> > > > > > > >=20
-> > > > > > > > What are the differences between these two?
-> > > > > > >=20
-> > > > > > > The next [PATCH 4/4] is scu driver that include ast2700-
-> > > > > > > scu0
-> > > > > > > and
-> > > > > > > ast2700-scu1 CLK_OF_DECLARE_DRIVER(ast2700_soc0,
-> > > > > > > "aspeed,ast2700-scu0", ast2700_soc0_clk_init);
-> > > > > > > CLK_OF_DECLARE_DRIVER(ast2700_soc1, "aspeed,ast2700-
-> > > > > > > scu1",
-> > > > > > > ast2700_soc1_clk_init);
-> > > > > >=20
-> > > > > > What are hardware differences? Entirely different devices?
-> > > > >=20
-> > > > > AST2700 have two soc die connected each other.
-> > > > > Each soc die have it own scu, so the naming is ast2700-scu0
-> > > > > for
-> > > > > soc0,
-> > > > another is ast2700-scu1 for soc1.
-> > > >=20
-> > > > Didn't I see in another patch one die is cpu and one is io? Use
-> > > > those in the compatible rather than 0 and 1 if so.
-> > > >=20
-> > > Sorry, I want to align with our datasheet description.
-> > > It will but scu0 and scu1 register setting.
-> >=20
-> > Can we document that relationship in the binding? Rob's suggestion
-> > seems
-> > more descriptive.
-> Hello,
-> 	Do you want me document it in yaml file or just in commit
-> message?
+On 8/14/24 19:00, Michael Nazzareno Trimarchi wrote:
+> Hi Stephen
+> 
+> On Mon, Jun 6, 2022 at 7:26 AM Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+>>
+>> Hi Michael,
+>>
+>> On 6/5/22 19:57, Michael Trimarchi wrote:
+>>> If the clock is used to generate the osc_32k, we need to mark
+>>> as critical. clock-critical has no binding description at the moment
+>>> but it's defined in linux kernel
+>>>
+>>> bd71847: pmic@4b {
+>>> ...
+>>>        rohm,reset-snvs-powered;
+>>>
+>>>        #clock-cells = <0>;
+>>>        clock-critical = <1>;
+>>>        clocks = <&osc_32k 0>;
+>>>        clock-output-names = "clk-32k-out";
+>>> ...
+>>> }
+>>>
+>>> Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
+>>> ---
+>>>    drivers/clk/clk-bd718x7.c | 4 ++++
+>>
+>> //snip
+>>
+>>> @@ -100,6 +101,9 @@ static int bd71837_clk_probe(struct platform_device *pdev)
+>>>
+>>>        parent_clk = of_clk_get_parent_name(parent->of_node, 0);
+>>>
+>>> +     of_clk_detect_critical(dev->of_node, 0, &flags);
+>>
+>> Purely judging the kerneldoc for of_clk_detect_critical - you may have
+>> hard time getting this accepted.
+>>
+>> I think you're working on a very valid problem though. Maybe you could
+>> see if you could align your effort with Marek?
+>>
+>> https://lore.kernel.org/all/20220517235919.200375-1-marex@denx.de/T/#m52d6d0831bf43d5f293e35cb27f3021f278d0564
+>>
+> 
+> Old thread but same problem. Is there any way to make this acceptable?
+> any suggestion?
 
-In the binding document please!
+Hi Michael. I'm not sure what is the correct way but I think there are a 
+few tricks people have used to fix (or paper over) the problem. One was 
+suggested by Sebastian:
 
-Andrew
+https://lore.kernel.org/all/20220913152140.iikckob5h3ecagfi@mercury.elektranox.org/
+
+No one shouted for implementing this fix though.
+
+It also seems to me that there is a way to 'make things work' by 
+modelling the clock dependencies in the DT in certain way, AND having 
+correct drivers enabled. This understanding came just by reading mails 
+Marek sent in this discussion:
+
+https://lore.kernel.org/all/20220924174603.458956-1-marex@denx.de/
+
+I've not tested any of this myself - but I hope you can use these as 
+pointers to a solution that works for you...
+
+Yours,
+	-- Matti
+
+-- 
+Matti Vaittinen
+Linux kernel developer at ROHM Semiconductors
+Oulu Finland
+
+~~ When things go utterly wrong vim users can always type :help! ~~
 
