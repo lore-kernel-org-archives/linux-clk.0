@@ -1,70 +1,100 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1835C16F847;
-	Thu, 15 Aug 2024 20:41:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0669C4DA13;
+	Thu, 15 Aug 2024 21:30:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723754499; cv=none; b=Ix/FtS6rtJWacKFpdqBO5mmqXd8Cts7pvBFPzj2rlEtP76+6cqDgqH+WkfBEdx37lQNyNQEDlDoQktNXWuJs7CvjmJ6zb6wkqp3WYKRITsLykndWVs+mPmpxBKQfDiWadtuJVWB77hVPDn7V42dIe771JQeGtw2a0F/QrmpDMFg=
+	t=1723757419; cv=none; b=IgTy0+WYj2OmCe181e1P7DIUptcz5KZY43kfL9r6FuF0SmOSoQLQe+qIU4A7Dyjl/24c9AMohvt+pDiDkHp3u6kVlTp3WVh6x3ihVyLwID8/kztEH4Yl/IlUJFDj+Pb+VQSzOkl+ha+iYEcRSNBsgWzZWUeIYtJ+DJV1FQeSUAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723754499; c=relaxed/simple;
-	bh=KgQPOW7buxxvI4Ojf1vT8IHNswoBbOTrHD6M46wrIPw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PpoBmqX8FsCxL7YpFwHe+UJNlI7+UJ/dmknZAtElI8E6JEHgidffA3ooR9+akbp8azcmrKkmGn+kSqkdSqDcIIae1tZTwXFgS+Yo5us4uA1kZhKbyRi9rk/WLJcwwMTN249ThfKoWCLXzVHVKSi1h+80AehUQzjOwabni3bG+gk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lRgTSeiY; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1723757419; c=relaxed/simple;
+	bh=y8W8HNJ08a0TqNYCTQhP1KK/N2jnJJur8+koadftfBA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JOx7r+mp/YuKyhmrNn0VIyoj0L/XTxRzRUlN3cuGGf3JNI2QSXHpn3ZU1kTRnzisqFzwC0Oxy7Mte3ud7tbRC3ifGO87UuVu3mqN+R1Hd0cDj4fdLjOJ4RJ++eohMIKcuFVitDRYT7ZH0BtfGv39GrvN9+2iLm8oJ4w6SDHSsYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eIszizQp; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lRgTSeiY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05885C32786;
-	Thu, 15 Aug 2024 20:41:37 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eIszizQp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B05CC32786;
+	Thu, 15 Aug 2024 21:30:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723754499;
-	bh=KgQPOW7buxxvI4Ojf1vT8IHNswoBbOTrHD6M46wrIPw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=lRgTSeiYxy2BeusW52OfwrCKOvk0+libQkTfq65HnTQS9td8oBc8nTk9WRZoTrphn
-	 ejGQCJPMINqjVnq7omhvQiwNEEI8T1KksWdRimKDmHpxtI+/5WkyNFlM4n93Dq0Kx4
-	 SOuz44zk4USNPrF2dGv6eQBs8DiaOT8T3495AeTe4ZjVqW2Y7lEVklgUtXwUDd6iB0
-	 La1raRxYnkvQA16fLTASBCkWBSGJHHGWop3kjsJNjVHuApVm/T2W0nWdhR3hcYzvEK
-	 Gw3wZfMA1svdYEoW5sdaNsbukm2sGWbqFTZG74kXAJ/7diBGjuKdbqyeLmq1xUxxnd
-	 lptmSjyxlC3Dw==
+	s=k20201202; t=1723757418;
+	bh=y8W8HNJ08a0TqNYCTQhP1KK/N2jnJJur8+koadftfBA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eIszizQp3QF/JwXlpFbEXBZYQkpfyfVVhD+9ypDjnowUhMTIvuqbCdrIbSo9RDE7Z
+	 mohmZ/RRh2cEGVQp7VUar32BWJ6jJ7+r0HnxJwUnlMvrx6osU1iSN/PSn9ItZmu9q0
+	 XQEyeEScA44UuytOUXtWRhQZ9LUVaNCT0weLj2OZE2W3g/7C2phqZEghRRJIxZHNEV
+	 X+KjuAaAoBRLmcgDLpLRuJny1PlbuacpDCW9VuyKWYRdGf3NX7XmKK2WUCX0zvAYM1
+	 bgLhMbCJ+pPE3Di+H0H7+2iIZlQDMf6QIpI1cnhCq29J+ypmlESN1QisOVT71JOX5s
+	 PC6e8if+kedqQ==
+Date: Thu, 15 Aug 2024 16:30:15 -0500
 From: Bjorn Andersson <andersson@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: (subset) [PATCH v2 0/3] arm64: dts: qcom: x1e80100: Add soundwire controller resets
-Date: Thu, 15 Aug 2024 15:40:49 -0500
-Message-ID: <172375444800.1011236.6892556236101392834.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240624-x1e-swr-reset-v2-0-8bc677fcfa64@linaro.org>
-References: <20240624-x1e-swr-reset-v2-0-8bc677fcfa64@linaro.org>
+To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Ajit Pandey <quic_ajipan@quicinc.com>, 
+	Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, 
+	Jagadeesh Kona <quic_jkona@quicinc.com>, kernel test robot <lkp@intel.com>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+Subject: Re: [PATCH V2] clk: qcom: clk-alpha-pll: Simplify the
+ zonda_pll_adjust_l_val()
+Message-ID: <om5c5wmziw5wywzwp3qirruaaxjughcneupkyzl4hi3jzfuhhg@f5cfsjwabday>
+References: <20240814102005.33493-1-quic_skakitap@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240814102005.33493-1-quic_skakitap@quicinc.com>
 
-
-On Mon, 24 Jun 2024 14:32:35 +0100, Srinivas Kandagatla wrote:
-> Soundwire resets are missing in the existing dts, add resets for all the 4
-> instances of Soundwire controllers (WSA, WSA2, RX, TX).
+On Wed, Aug 14, 2024 at 03:50:05PM GMT, Satya Priya Kakitapalli wrote:
+> In zonda_pll_adjust_l_val() replace the divide operator with comparison
+> operator since comparisons are faster than divisions. Also, simplify the
+> logic and remove the unnecessary 'quotient' local variable.
 > 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Closes: https://lore.kernel.org/r/202408110724.8pqbpDiD-lkp@intel.com/
+> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+> Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+> ---
+> Changes in V2:
+>  - Simplify the logic and remove unnecessary quotient variable.
+>  - Remove Fixes tag as this is just a simplification.
 > 
+>  drivers/clk/qcom/clk-alpha-pll.c | 9 +++------
+>  1 file changed, 3 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+> index 2f620ccb41cb..4ce3347beb39 100644
+> --- a/drivers/clk/qcom/clk-alpha-pll.c
+> +++ b/drivers/clk/qcom/clk-alpha-pll.c
+> @@ -2120,14 +2120,11 @@ static void clk_zonda_pll_disable(struct clk_hw *hw)
+>  
+>  static void zonda_pll_adjust_l_val(unsigned long rate, unsigned long prate, u32 *l)
+>  {
+> -	u64 remainder, quotient;
+> +	u64 remainder;
+>  
+> -	quotient = rate;
+> -	remainder = do_div(quotient, prate);
+> -	*l = quotient;
+> +	remainder = do_div(rate, prate);
 
-Applied, thanks!
+This does not compile on arm32 target.
 
-[3/3] arm64: dts: qcom: x1e80100: add soundwire controller resets
-      commit: 8c7dbbed27723c4324c81e78fe239ce134aa8f58
+Regards,
+Bjorn
 
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+>  
+> -	if ((remainder * 2) / prate)
+> -		*l = *l + 1;
+> +	*l = rate + (u32)(remainder * 2 >= prate);
+>  }
+>  
+>  static int clk_zonda_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+> -- 
+> 2.25.1
+> 
