@@ -1,55 +1,49 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88B1C15F3ED;
-	Thu, 15 Aug 2024 20:41:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F070416B3AC;
+	Thu, 15 Aug 2024 20:41:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723754484; cv=none; b=bFWU6MblViLtRiFiCVfPPf/kivnPDre3GfUftp0/3ne+CjKSNDgDhyxn5I+KIPRwEWidnDXbowo2en3XeuZeNMD/mgd6TmlYHjAAQTyGyBfrIcmAlGzi9rge/sS9Sunau+1ST2+thmYH3qBZYJ5+XVWU/P/6xwLNyT1MJK7CB2M=
+	t=1723754490; cv=none; b=bAVAh1uxxWJKN+OFUCDhymyuLe/8uV2Wrjx9NCbtkggfgr12ZSGc7uTvS6sNYdYuJ75Hv/WmcSWn1S8Lp97PoRRt/PsLB9RYNATnDgC794q1lCwuPeAB5i77w2KsXneIWz7Qo6fI0MSoPDmZ79guZbfDCWtOQTir7uTQRbjd1Y0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723754484; c=relaxed/simple;
-	bh=wUcFxvIMn4NJgrabO74aConfzyULLpCm8Vw4C0XKOtQ=;
+	s=arc-20240116; t=1723754490; c=relaxed/simple;
+	bh=lD2ggEroBKMUI+iJngI/hHQMD0oMC2XzD9ih1gbjx98=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OIYbl/+IS539sMSJqOPV6KWHso3Sogb8Yq3rrjuLoyE/rfRZai1mkZIvz9XvOH7LpXyQ9/ciHtVks8hfJKnw5ehDHlB3bNUb49g2p/rywRGjirLB+cWAR8dyEz/Byx+RsCicOPOOqVndtx9ls044MMt6Paoz4ekiw627YO8Rh1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EXaj2xQs; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=dJgdsXoxa5pBlticY//10gVuVDOcJrMqQS8JBl8LA1+rR2VugZQ9UIU8Hw/N4EOqdUUTvnCMN6Eigk2lac9IiD9Zo4esrwBXGXuxu6I40dmENupPJ/cRS1VCdYdvfwgsIN5o63YRl2Nr2Egm7tVaZVn/lAfLegQCmXuhUh6S8nI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=txE2Lfz1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EXaj2xQs"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BB12C4AF14;
-	Thu, 15 Aug 2024 20:41:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="txE2Lfz1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 922BCC4AF0F;
+	Thu, 15 Aug 2024 20:41:28 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723754484;
-	bh=wUcFxvIMn4NJgrabO74aConfzyULLpCm8Vw4C0XKOtQ=;
+	s=k20201202; t=1723754489;
+	bh=lD2ggEroBKMUI+iJngI/hHQMD0oMC2XzD9ih1gbjx98=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=EXaj2xQsLB0SLTaMynmLyvnMQ8+DDWq0VQJwyl/kk+lGsuVa+j/RO1JKSnKouLCMD
-	 K3wlwJiwEphhDh/RB695j9RJXy9AgbWJBCeKJAieQqkDR1KeRczPEkDY4fj4hbVf9X
-	 wTTpZgsiysdeRpvickmYly2KA2jvhrnEptJSqHbzcEGn5rK8Vkpf4XNgnUP/n/1WSk
-	 UJhZsVznoZPA/jabDIkwwEG+cZybg2PSL2r5S6GHZPF7PGqWt7ftUKGhRs1KTDme++
-	 351xJ5Dtiu8Pn4+q9a8EePDFFUW58KtDL1SHDtsS0byPfXSF9vjL+51RhYbTbEXpUn
-	 NdPMsUTf1ND0g==
+	b=txE2Lfz1VgK255gkeEX3CT8Bh7RsiiA5n6hRasSb5nkcP6yWKiIiVxFatUHZL1mS5
+	 eZWqZ+kMhkJwv/tldZaa31OMwdzX8aFTNB4UQJbc6nGs1lGWcIuXDmzfIECmC8fEaz
+	 /JGpNanI60W96evOmE3yPiwrl3J9qdAxJgS/1inbOZ+A9U+l7rvBKctI0aKC73iDti
+	 kVesaW6xQZpvskxRDfvQvT0m59MZxEBKx4OCZFvg81keuCiy37AZJjSAk9d/DKuycS
+	 mI7xMEglprx9AnywFsrAPDM2hVxIED3Ho4npIRHeCwQJ0gpsrrzJntYrFFAQwJxCHN
+	 4DUZXEgAo4Jeg==
 From: Bjorn Andersson <andersson@kernel.org>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jagadeesh Kona <quic_jkona@quicinc.com>
-Cc: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	linux-arm-msm@vger.kernel.org,
+	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Taniya Das <quic_tdas@quicinc.com>,
-	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+	Ajit Pandey <quic_ajipan@quicinc.com>,
 	Imran Shaik <quic_imrashai@quicinc.com>,
-	Ajit Pandey <quic_ajipan@quicinc.com>
-Subject: Re: [PATCH V4 0/2] Drop required-opps from required list on SM8650 videocc, camcc
-Date: Thu, 15 Aug 2024 15:40:37 -0500
-Message-ID: <172375444821.1011236.13851740123076656109.b4-ty@kernel.org>
+	Taniya Das <quic_tdas@quicinc.com>,
+	Jagadeesh Kona <quic_jkona@quicinc.com>,
+	kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH] clk: qcom: Fix SM_CAMCC_8150 dependencies
+Date: Thu, 15 Aug 2024 15:40:42 -0500
+Message-ID: <172375444834.1011236.2917691065241306486.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240801064448.29626-1-quic_jkona@quicinc.com>
-References: <20240801064448.29626-1-quic_jkona@quicinc.com>
+In-Reply-To: <20240813085846.941855-1-quic_skakitap@quicinc.com>
+References: <20240813085846.941855-1-quic_skakitap@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -60,32 +54,21 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Thu, 01 Aug 2024 12:14:46 +0530, Jagadeesh Kona wrote:
-> On SM8650, the minimum voltage corner supported on MMCX from cmd-db is
-> sufficient for clock controllers to operate and there is no need to specify
-> the required-opps. Hence remove the required-opps property from the list of
-> required properties for SM8650 camcc and videocc bindings.
+On Tue, 13 Aug 2024 14:28:46 +0530, Satya Priya Kakitapalli wrote:
+> SM_CAMCC_8150 depends on SM_GCC_8150, which inturn depends on ARM64.
+> Hence add the dependency to avoid below kernel-bot warning.
 > 
-> Changes in V4:
->  - Dropped change to disallow required-opps on variants that don't need it
->  - Split the change into separate commits for videocc and camcc
->  - Link to V3: https://lore.kernel.org/all/20240730034552.31271-1-quic_jkona@quicinc.com/
-> Changes in V3:
->  - Made only required-opps property conditional and added it based on the variant
->  - Link to V2: https://lore.kernel.org/all/20240720052818.26441-1-quic_jkona@quicinc.com/
-> Changes in V2:
->  - Made required: conditional and dropped required-opps from it only for SM8650 platform
->  - Dropped Krzysztof Acked-by tag due to above changes
->  - Link to V1: https://lore.kernel.org/all/20240708130836.19273-1-quic_jkona@quicinc.com/
+> WARNING: unmet direct dependencies detected for SM_GCC_8150
+> Depends on [n]: COMMON_CLK [=y] && COMMON_CLK_QCOM [=y] && (ARM64 || COMPILE_TEST [=n])
+> Selected by [y]:
+> - SM_CAMCC_8150 [=y] && COMMON_CLK [=y] && COMMON_CLK_QCOM [=y]
 > 
 > [...]
 
 Applied, thanks!
 
-[1/2] dt-bindings: clock: qcom: Drop required-opps in required on sm8650 videocc
-      commit: 6720e8dbcb1b6b3b43e38998b522088814ae1268
-[2/2] dt-bindings: clock: qcom: Drop required-opps in required on SM8650 camcc
-      commit: db30c1160ca5f115476cd8c8008f67572acb2c08
+[1/1] clk: qcom: Fix SM_CAMCC_8150 dependencies
+      commit: 82ceaf6bcd7c7d01049c13f2461cc7830af41d53
 
 Best regards,
 -- 
