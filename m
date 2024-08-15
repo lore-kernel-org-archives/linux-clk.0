@@ -1,37 +1,82 @@
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+Received: from HK2PR02CU002.outbound.protection.outlook.com (mail-eastasiaazrln10220003.outbound.protection.outlook.com [52.103.192.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E1F17BEC1;
-	Thu, 15 Aug 2024 09:46:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723715189; cv=none; b=Kv/mF5HHoMp5UWS1Fv8k4YfwKzyQW78BVTogV5r72RFLnf7TyZxx5GNtZvT6RvU1XcVOCYvfMNmjjyRjgCpqE/Ig0h/7HKCs3CGlPa2A52gUmy/KeCu8yWja6FH5EEJ/0vLV+LKwj6WhCXsPguWF5LU37t+/LMAYxpHrmhfLrhE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723715189; c=relaxed/simple;
-	bh=TekCVkLFHhtXMRf4UsilP3Rc8B1Nvh9A1LfPnR5dLFQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sYvDOt9TfnyAC3kXfyeoEHuql1TWYPlRIugqhBcCcJfn6WiB1K/oxYKnty6+K5AS5spCwjmwu7r4Zc8+w9QpzZMZSegPOL1KXdC/Ee5pxa0tjkRFqkqjh9pS+8DiFo91sem/5KzYrykKq7r3YiWKrvZUzGe0mbjf0HKtWSzZR60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Wl0WF31qZz1j6MV;
-	Thu, 15 Aug 2024 17:41:29 +0800 (CST)
-Received: from kwepemg500010.china.huawei.com (unknown [7.202.181.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 74438140202;
-	Thu, 15 Aug 2024 17:46:22 +0800 (CST)
-Received: from huawei.com (10.67.174.76) by kwepemg500010.china.huawei.com
- (7.202.181.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 15 Aug
- 2024 17:46:21 +0800
-From: Yuntao Liu <liuyuntao12@huawei.com>
-To: <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <kernel@esmil.dk>, <hal.feng@starfivetech.com>, <mturquette@baylibre.com>,
-	<sboyd@kernel.org>, <conor.dooley@microchip.com>, <palmer@rivosinc.com>,
-	<xingyu.wu@starfivetech.com>, <liuyuntao12@huawei.com>
-Subject: [PATCH] clk: starfive: Use pm_runtime_resume_and_get to fix pm_runtime_get_sync() usage
-Date: Thu, 15 Aug 2024 09:38:53 +0000
-Message-ID: <20240815093853.757487-1-liuyuntao12@huawei.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C259E19DF9C;
+	Thu, 15 Aug 2024 15:03:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.192.3
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1723734190; cv=fail; b=bo8z6W7gRuhCeDLNPo51ODcRWZVSUMSKRcC8MoaMGeYM5EY3u1KzCbq7Rn3AX5pZZz23eJj+ftN8q8pg0D6OH3ccbGIKBEFFjMUCkGfuo4Awjf476Rt/O9AkkF4NYiH6qeT8HPS1G5Xoga3Ot7hBKE4PcG+aCdKD65YIPr4uD2s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1723734190; c=relaxed/simple;
+	bh=qFqGHgEyyN8yUWr0qjApPEVs20oo7ZhAYqawZjFsLxk=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qQfj6LT1YSMMvVIWSeBM6UNJhUz6hMy//9+wlqH9g8pyHSQG9mnOtnUNehQKa7VH2GAJPlcTbJ62vZd21X100/tEPnW3+QkLOih8aV6OaONK+aU74YkiDF0s60/pV5kJItDFGzvD/bwy9yGMLewPORx0tNv/g3Q4EZfYpjkkfjg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=none smtp.mailfrom=taln60.nuvoton.co.il; dkim=pass (1024-bit key) header.d=nuvoton.onmicrosoft.com header.i=@nuvoton.onmicrosoft.com header.b=F3GTik2R; arc=fail smtp.client-ip=52.103.192.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=taln60.nuvoton.co.il
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=nuvoton.onmicrosoft.com header.i=@nuvoton.onmicrosoft.com header.b="F3GTik2R"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ZDukfJqHYzgizyw3CgHpV+INeVo2lKtjgzKj9YdTbB8DeShkrvJZwB62R/sElBNCezJMvMnCMPIuloXhCWq0f/JvZuJ6FHPpC1RqnFmt04649PbkvAGmKLTQ6FFLK/lC+oCA/Kew1QuId/eKDCD3ljCzfVYoD3BuGJaxocBm72U+hPIwEVbgpUbIqaxjI3oWGE8wpKVKqHiVprEr0PK3vMpKrdTIXRkzNNRXRvdZwZ8pKaG+f2O4+4baYzlmtP/qblQSVhcfh03tIlYEUb1cgo/04Q3/h3JSLj5UH2PPjJlac7tQUhY27out1ZuugREhNeFnTKn/PEAd24Z1vUOXxQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Bsp6Fu2EwmNWI4JUeaL8+uK9d/eheOZNExD2CIqLPZk=;
+ b=xpMno/XlMlpoPqhFq+CsqUtVGqaF/5OaF3eAtcwv61Ivmls+h19EN1rFHThG8wkt2374QRu8VJtkme89POdZlY7zx+Bo04Jh7Us0/ojbwM/a1mPJD9PDGcseSmJsgbXdXVcp30YNcw4ymHohrnxTDzBGFT6/Zbjf5C3vy0JOhYkY0BqUYMeQY9kmabqdr3/16PC4t+8/fHl9RhX1grk15MNuKBDpG38MoryGG0MvLbljRfK43trc/lqZJnZeADE/XCbk2NqsfXhQ0qVkG7S8Cs3F0vFgVgZYzzg642VVU0G+bSSmy1pAKTdppknc0b9MA/VX1qpJZBaB02ngoLnG4w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none (sender ip is
+ 211.75.126.7) smtp.rcpttodomain=baylibre.com
+ smtp.mailfrom=taln60.nuvoton.co.il; dmarc=fail (p=none sp=quarantine pct=100)
+ action=none header.from=gmail.com; dkim=none (message not signed); arc=none
+ (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=nuvoton.onmicrosoft.com; s=selector2-nuvoton-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Bsp6Fu2EwmNWI4JUeaL8+uK9d/eheOZNExD2CIqLPZk=;
+ b=F3GTik2Rmi3fqq9fZzjPC1ro6qD4j6u1i+TD6e72G4XeTxrXPpX1RErsDwJ1vAMCBHuby4vSI7Ice5M2KdSJEO2/CdaW35K5gJUcw5LLTcy0ATebii35DtaRxqlynO8T+MKHk4tHVHK1voUflMP5y9QBAfYffVK/eoMNcVn5ToU=
+Received: from SG2PR02CA0063.apcprd02.prod.outlook.com (2603:1096:4:54::27) by
+ JH0PR03MB7445.apcprd03.prod.outlook.com (2603:1096:990:19::14) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.7875.18; Thu, 15 Aug 2024 15:03:02 +0000
+Received: from HK2PEPF00006FB3.apcprd02.prod.outlook.com
+ (2603:1096:4:54:cafe::ce) by SG2PR02CA0063.outlook.office365.com
+ (2603:1096:4:54::27) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.19 via Frontend
+ Transport; Thu, 15 Aug 2024 15:03:01 +0000
+X-MS-Exchange-Authentication-Results: spf=none (sender IP is 211.75.126.7)
+ smtp.mailfrom=taln60.nuvoton.co.il; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=none header.from=gmail.com;
+Received-SPF: None (protection.outlook.com: taln60.nuvoton.co.il does not
+ designate permitted sender hosts)
+Received: from NTHCCAS01.nuvoton.com (211.75.126.7) by
+ HK2PEPF00006FB3.mail.protection.outlook.com (10.167.8.9) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.7849.8 via Frontend Transport; Thu, 15 Aug 2024 15:03:00 +0000
+Received: from NTHCCAS01.nuvoton.com (10.1.8.28) by NTHCCAS01.nuvoton.com
+ (10.1.8.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Thu, 15 Aug
+ 2024 23:02:58 +0800
+Received: from taln58.nuvoton.co.il (10.191.1.178) by NTHCCAS01.nuvoton.com
+ (10.1.8.28) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Thu, 15 Aug 2024 23:02:58 +0800
+Received: from taln60.nuvoton.co.il (taln60 [10.191.1.180])
+	by taln58.nuvoton.co.il (Postfix) with ESMTP id 3EAB95F5FC;
+	Thu, 15 Aug 2024 18:02:57 +0300 (IDT)
+Received: by taln60.nuvoton.co.il (Postfix, from userid 10070)
+	id 2FE8FDC0B61; Thu, 15 Aug 2024 18:02:57 +0300 (IDT)
+From: Tomer Maimon <tmaimon77@gmail.com>
+To: <mturquette@baylibre.com>, <sboyd@kernel.org>, <p.zabel@pengutronix.de>,
+	<robh+dt@kernel.org>, <krzysztof.kozlowski+dt@linaro.org>,
+	<tali.perry1@gmail.com>, <joel@jms.id.au>, <venture@google.com>,
+	<yuenn@google.com>, <benjaminfair@google.com>
+CC: <openbmc@lists.ozlabs.org>, <linux-clk@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>, Tomer Maimon
+	<tmaimon77@gmail.com>, Rob Herring <robh@kernel.org>
+Subject: [PATCH RESEND v27 1/3] dt-bindings: reset: npcm: add clock properties
+Date: Thu, 15 Aug 2024 18:02:53 +0300
+Message-ID: <20240815150255.3996258-2-tmaimon77@gmail.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20240815150255.3996258-1-tmaimon77@gmail.com>
+References: <20240815150255.3996258-1-tmaimon77@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -40,32 +85,107 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemg500010.china.huawei.com (7.202.181.71)
+X-NotSetDelaration: True
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: HK2PEPF00006FB3:EE_|JH0PR03MB7445:EE_
+X-MS-Office365-Filtering-Correlation-Id: e098c9f2-d4e3-45e3-b7ac-08dcbd3b5b14
+X-MS-Exchange-SenderADCheck: 2
+X-MS-Exchange-AntiSpam-Relay: 1
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|48200799018|61400799027|7093399012|35950700016|82310400026|7416014|376014|921020|35450700002;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?WcQxgzJohxY11y/LbvLZKZtJExDFeC4ajWPbZN3T80ZZpsnVJiqlVQnY7VAA?=
+ =?us-ascii?Q?bFFUOIkx0v/Z8ZsKRRCLpkx/ygkc0iozHEtHLINi3QTlBW3NX/3irIbtteWA?=
+ =?us-ascii?Q?WJPZVH4/t9Cb75109/jn/IXduqzuWMR+Vh4WfLBF1wHrox8pkFl2zAHnw/jt?=
+ =?us-ascii?Q?2ZiBUWRR/XHVN+y9uILyliAjzv9Nbwruqv1V3fnvsIUnbC/HIAL57FIYCVbB?=
+ =?us-ascii?Q?oo9nk8G5Xh+4G7XGorPx4bRlJONNUtQaxb2IZtQTpmbrqHc7JGUalKTMkajv?=
+ =?us-ascii?Q?H+7U8siWN3cSgwzAiMil6yxHhrz3xUliD59uMTtK8qFE0/SU6zDUGW9cIK8H?=
+ =?us-ascii?Q?YTA8o781GDor5bbWZVn0unZb22U48vT4jZsFhc0kgyBNyBcr7iksiQZUTB6r?=
+ =?us-ascii?Q?WfXYUrs7Td5kL0HtLHNmVTDwKTj/OV/xWakPiliHvKShhRnlrYOe8Fh8WKJE?=
+ =?us-ascii?Q?asTtXPIHpQpeSsUklb8kQ5w8/JqS3mIXzxAm1NBQgYsYOtF9Nq9tIiywtQSe?=
+ =?us-ascii?Q?uEf03ekqwHGOdNOzZ1MubKSXQNRw6vZXQ2vSglLLS9cpmr/htjgjUOOJqvkp?=
+ =?us-ascii?Q?V2cg1EjCRfWLx8EPUFP+m99N5kmKhCi6rjW6iDQSZCAFG4JzOwNU5vKz371E?=
+ =?us-ascii?Q?LKAt/3t1NheQ9vhX3lNFADo7U6FaNFX0IupdQzkqBcWk5q2V7OFa9HNQPoNF?=
+ =?us-ascii?Q?+vWRsrEQv2cRAcfrQSbAA0R+uamlOafjjx82uvgik1jGRF6Z5bfNmb76YN/s?=
+ =?us-ascii?Q?+lvKCyzQEIe49NGofY6PyAbsX97OXiiNLWfSC81cMnJiT+vZVrxuoxwV5fxq?=
+ =?us-ascii?Q?irSfc8R1RmIF8mYHLZM8hX2VGQxswqswYHJMi4ReT7i3vaWlaeYonXm6Mhup?=
+ =?us-ascii?Q?TLerK/7f50LX1T1lJz3w5xX0VPEtxuw3upEvzPxoOnOKEFc7QZckU+Qr4sk0?=
+ =?us-ascii?Q?ArkAiNpq+4eBtVVO49rLsG08m+uORMog+OyWmXqwQSkSyQVGG002+MweoXSw?=
+ =?us-ascii?Q?JffRCVAMNHVMA7F/10B96e0xgT3gMOjgvpN6ptMLnusPSkIKR4Lgm+KuoVxK?=
+ =?us-ascii?Q?9jfCP/xIfoSb9Se20kMuY9cwvsTYIW47uJGITxu8+Ux820QB5zJg25Wvs6lB?=
+ =?us-ascii?Q?4IObpcBuEF1isW3u/DG9eeYFym1yyC5olR6rsc6/hisLppi7vR9i2oLxukG6?=
+ =?us-ascii?Q?if0ZlyBuFBeVxiaI0imwrsRf4+RLGpcC3ofxfVjhOV8qdUR9WZ22LLxMSpHU?=
+ =?us-ascii?Q?r/4pIRx8BXy/+NhIc6LJ7kN2O8LE9ePsK4jD7LO1bF1KouI05sT432xOpzp9?=
+ =?us-ascii?Q?Iy2qlKxox+A7F0X93i5Kdsw0k58S2sOOYWRP4+tRB/Znp90Up34i1mv9Esae?=
+ =?us-ascii?Q?T2hIVZnEtLGHWzjZrQy+9ArNd24uIrGMj14n/RMxPvdG89G+mfa+YaBLXzPA?=
+ =?us-ascii?Q?RN9pKzqXGR1+Myt2Q1aGhVNYp1wYNGbAbRUgfT8EE6V5OkDBAndkXhOS3Aqa?=
+ =?us-ascii?Q?zCSSaFFdviPgBKA=3D?=
+X-Forefront-Antispam-Report:
+	CIP:211.75.126.7;CTRY:TW;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:NTHCCAS01.nuvoton.com;PTR:211-75-126-7.hinet-ip.hinet.net;CAT:NONE;SFS:(13230040)(48200799018)(61400799027)(7093399012)(35950700016)(82310400026)(7416014)(376014)(921020)(35450700002);DIR:OUT;SFP:1022;
+X-OriginatorOrg: nuvoton.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Aug 2024 15:03:00.8103
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e098c9f2-d4e3-45e3-b7ac-08dcbd3b5b14
+X-MS-Exchange-CrossTenant-Id: a3f24931-d403-4b4a-94f1-7d83ac638e07
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=a3f24931-d403-4b4a-94f1-7d83ac638e07;Ip=[211.75.126.7];Helo=[NTHCCAS01.nuvoton.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	HK2PEPF00006FB3.apcprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR03MB7445
 
-We need to call pm_runtime_put_noidle() when pm_runtime_get_sync()
-fails, so use pm_runtime_resume_and_get() instead. this function
-will handle this.
+This commit adds a 25MHz reference clock and clock-cell properties to
+the NPCM reset document. The addition is necessitated by the integration
+of the NPCM8xx clock auxiliary bus device into the NPCM reset driver.
 
-Fixes: dae5448a327ed ("clk: starfive: Add StarFive JH7110 Video-Output clock driver")
-Signed-off-by: Yuntao Liu <liuyuntao12@huawei.com>
+The inclusion of the NPCM8xx clock properties in the reset document is
+crucial as the reset block also serves as a clock provider for the
+NPCM8xx clock. This enhancement is intended to facilitate the use of the
+NPCM8xx clock driver.
+
+Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- drivers/clk/starfive/clk-starfive-jh7110-vout.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../bindings/reset/nuvoton,npcm750-reset.yaml  | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
-diff --git a/drivers/clk/starfive/clk-starfive-jh7110-vout.c b/drivers/clk/starfive/clk-starfive-jh7110-vout.c
-index 53f7af234cc2..aabd0484ac23 100644
---- a/drivers/clk/starfive/clk-starfive-jh7110-vout.c
-+++ b/drivers/clk/starfive/clk-starfive-jh7110-vout.c
-@@ -145,7 +145,7 @@ static int jh7110_voutcrg_probe(struct platform_device *pdev)
+diff --git a/Documentation/devicetree/bindings/reset/nuvoton,npcm750-reset.yaml b/Documentation/devicetree/bindings/reset/nuvoton,npcm750-reset.yaml
+index d82e65e37cc0..72523f1bbc18 100644
+--- a/Documentation/devicetree/bindings/reset/nuvoton,npcm750-reset.yaml
++++ b/Documentation/devicetree/bindings/reset/nuvoton,npcm750-reset.yaml
+@@ -21,6 +21,13 @@ properties:
+   '#reset-cells':
+     const: 2
  
- 	/* enable power domain and clocks */
- 	pm_runtime_enable(priv->dev);
--	ret = pm_runtime_get_sync(priv->dev);
-+	ret = pm_runtime_resume_and_get(priv->dev);
- 	if (ret < 0)
- 		return dev_err_probe(priv->dev, ret, "failed to turn on power\n");
++  '#clock-cells':
++    const: 1
++
++  clocks:
++    items:
++      - description: specify external 25MHz reference clock.
++
+   nuvoton,sysgcr:
+     $ref: /schemas/types.yaml#/definitions/phandle
+     description: a phandle to access GCR registers.
+@@ -39,6 +46,17 @@ required:
+   - '#reset-cells'
+   - nuvoton,sysgcr
  
++if:
++  properties:
++    compatible:
++      contains:
++        enum:
++          - nuvoton,npcm845-reset
++then:
++  required:
++    - '#clock-cells'
++    - clocks
++
+ additionalProperties: false
+ 
+ examples:
 -- 
 2.34.1
 
