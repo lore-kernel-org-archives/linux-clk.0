@@ -1,100 +1,79 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0669C4DA13;
-	Thu, 15 Aug 2024 21:30:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EF091547C4;
+	Thu, 15 Aug 2024 21:56:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723757419; cv=none; b=IgTy0+WYj2OmCe181e1P7DIUptcz5KZY43kfL9r6FuF0SmOSoQLQe+qIU4A7Dyjl/24c9AMohvt+pDiDkHp3u6kVlTp3WVh6x3ihVyLwID8/kztEH4Yl/IlUJFDj+Pb+VQSzOkl+ha+iYEcRSNBsgWzZWUeIYtJ+DJV1FQeSUAA=
+	t=1723758995; cv=none; b=hqhLvx5I6CNv4+EnITpJKeerKomSWM2r8662LE8Evr+15irVDo67b5fuHK7fltaPQP7HH69qf+fcD1i8k1f0fuQgzjetcca/9QPb9SJmcpO52N7kcVv+hxCa66RAq3pywY76XV/bSSAfi1+6Hk1kM9a78Th02WkUjlibsG9NI2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723757419; c=relaxed/simple;
-	bh=y8W8HNJ08a0TqNYCTQhP1KK/N2jnJJur8+koadftfBA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JOx7r+mp/YuKyhmrNn0VIyoj0L/XTxRzRUlN3cuGGf3JNI2QSXHpn3ZU1kTRnzisqFzwC0Oxy7Mte3ud7tbRC3ifGO87UuVu3mqN+R1Hd0cDj4fdLjOJ4RJ++eohMIKcuFVitDRYT7ZH0BtfGv39GrvN9+2iLm8oJ4w6SDHSsYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eIszizQp; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1723758995; c=relaxed/simple;
+	bh=Mf8SuVPcQMJxDRlhTh8nDftjjh3X6X2ZNGppNHT09T0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=tdZnGzwE365HrPG/N3jNqq49foresd0XHLZlcjN+CDpKhWvteUH3Znxf82j4YvoizYphLGiv6i61ncI2hG9WxgFsjVSD6adTJwJzOPqYLfHmZ5IXpKuYmMo7mjirarkk24P+cxUIb1rJoptPSXE7Rl38DMyfO0zlLSOp0NYCZJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vQEGlZvn; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eIszizQp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7B05CC32786;
-	Thu, 15 Aug 2024 21:30:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vQEGlZvn"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1805C4AF15;
+	Thu, 15 Aug 2024 21:56:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723757418;
-	bh=y8W8HNJ08a0TqNYCTQhP1KK/N2jnJJur8+koadftfBA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eIszizQp3QF/JwXlpFbEXBZYQkpfyfVVhD+9ypDjnowUhMTIvuqbCdrIbSo9RDE7Z
-	 mohmZ/RRh2cEGVQp7VUar32BWJ6jJ7+r0HnxJwUnlMvrx6osU1iSN/PSn9ItZmu9q0
-	 XQEyeEScA44UuytOUXtWRhQZ9LUVaNCT0weLj2OZE2W3g/7C2phqZEghRRJIxZHNEV
-	 X+KjuAaAoBRLmcgDLpLRuJny1PlbuacpDCW9VuyKWYRdGf3NX7XmKK2WUCX0zvAYM1
-	 bgLhMbCJ+pPE3Di+H0H7+2iIZlQDMf6QIpI1cnhCq29J+ypmlESN1QisOVT71JOX5s
-	 PC6e8if+kedqQ==
-Date: Thu, 15 Aug 2024 16:30:15 -0500
+	s=k20201202; t=1723758994;
+	bh=Mf8SuVPcQMJxDRlhTh8nDftjjh3X6X2ZNGppNHT09T0=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=vQEGlZvnnwW8erXPizbf0xFfhzni9Q37kcH9HAcMT4oE32EYPCtABnC1LstVOWiF1
+	 7bzIE3YtME1HyL5D8Vp3s6b3wJv/ge/K0ii4wmfguhABvtCcuv/o2m6Q24SOv/4Ts4
+	 F63II0U0HI+IFn0m+LDMgLgUTSBA+soegrpPErVGcm2Dp+mqUh4IsjJiRReVOfzLVi
+	 yJ4uj1CZoedtlp+XOlUmfw21fQVYbX2oMx9CmX5aRS9+hJdQ0OAnV127mpZCMfy+uU
+	 rILFyG9mSogoGwneu3eqIGSc3wXKM91EZENDoEnRkw77ItoVlK68Rn70ZtFl0izzHi
+	 q2aq19rswyGYQ==
 From: Bjorn Andersson <andersson@kernel.org>
-To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Ajit Pandey <quic_ajipan@quicinc.com>, 
-	Imran Shaik <quic_imrashai@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, 
-	Jagadeesh Kona <quic_jkona@quicinc.com>, kernel test robot <lkp@intel.com>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-Subject: Re: [PATCH V2] clk: qcom: clk-alpha-pll: Simplify the
- zonda_pll_adjust_l_val()
-Message-ID: <om5c5wmziw5wywzwp3qirruaaxjughcneupkyzl4hi3jzfuhhg@f5cfsjwabday>
-References: <20240814102005.33493-1-quic_skakitap@quicinc.com>
+To: Konrad Dybcio <konradybcio@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Marc Gonzalez <mgonzalez@freebox.fr>
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Arnaud Vrac <avrac@freebox.fr>,
+	Pierre-Hugues Husson <phhusson@freebox.fr>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@somainline.org>
+Subject: Re: [PATCH 0/3] Add LPASS SMMU to msm8998 DTSI
+Date: Thu, 15 Aug 2024 16:56:28 -0500
+Message-ID: <172375898304.1019907.18015161106871629352.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240814-lpass-v1-0-a5bb8f9dfa8b@freebox.fr>
+References: <20240814-lpass-v1-0-a5bb8f9dfa8b@freebox.fr>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240814102005.33493-1-quic_skakitap@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, Aug 14, 2024 at 03:50:05PM GMT, Satya Priya Kakitapalli wrote:
-> In zonda_pll_adjust_l_val() replace the divide operator with comparison
-> operator since comparisons are faster than divisions. Also, simplify the
-> logic and remove the unnecessary 'quotient' local variable.
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> Closes: https://lore.kernel.org/r/202408110724.8pqbpDiD-lkp@intel.com/
-> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-> Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-> ---
-> Changes in V2:
->  - Simplify the logic and remove unnecessary quotient variable.
->  - Remove Fixes tag as this is just a simplification.
-> 
->  drivers/clk/qcom/clk-alpha-pll.c | 9 +++------
->  1 file changed, 3 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
-> index 2f620ccb41cb..4ce3347beb39 100644
-> --- a/drivers/clk/qcom/clk-alpha-pll.c
-> +++ b/drivers/clk/qcom/clk-alpha-pll.c
-> @@ -2120,14 +2120,11 @@ static void clk_zonda_pll_disable(struct clk_hw *hw)
->  
->  static void zonda_pll_adjust_l_val(unsigned long rate, unsigned long prate, u32 *l)
->  {
-> -	u64 remainder, quotient;
-> +	u64 remainder;
->  
-> -	quotient = rate;
-> -	remainder = do_div(quotient, prate);
-> -	*l = quotient;
-> +	remainder = do_div(rate, prate);
 
-This does not compile on arm32 target.
-
-Regards,
-Bjorn
-
->  
-> -	if ((remainder * 2) / prate)
-> -		*l = *l + 1;
-> +	*l = rate + (u32)(remainder * 2 >= prate);
->  }
->  
->  static int clk_zonda_pll_set_rate(struct clk_hw *hw, unsigned long rate,
-> -- 
-> 2.25.1
+On Wed, 14 Aug 2024 18:20:21 +0200, Marc Gonzalez wrote:
+> A few definitions and glue code to support the DT node
+> describing the LPASS SMMU in qcom msm8998 SoC.
 > 
+> Thanks to Angelo.
+> 
+
+Applied, thanks!
+
+[1/3] dt-bindings: clock: gcc-msm8998: Add Q6 and LPASS clocks definitions
+      commit: 015dff12dfdeb8d94115ec829bc2e4b711075935
+[2/3] clk: qcom: gcc-msm8998: Add Q6 BIMC and LPASS core, ADSP SMMU clocks
+      commit: 7554d532e03b4f3a9e294077d38fb2403f2b5f7d
+[3/3] arm64: dts: qcom: msm8998: Add disabled support for LPASS iommu for Q6
+      commit: 1a9544b832256817a387f952eb0badcb6416df7f
+
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
