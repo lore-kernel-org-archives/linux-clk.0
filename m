@@ -1,49 +1,67 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3408149DFC;
-	Thu, 15 Aug 2024 20:40:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4976155757;
+	Thu, 15 Aug 2024 20:41:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723754457; cv=none; b=QEgu2MsmRxVAOtE8DIXB2N3HtICj+eJZkCsGRHY32mnNwetU+Z/qd2q0GGskxPCVlHGZkWsqKxLuTlerCdSlJi0ttZ/gthz7jLBhS+mi4/vp6x7ok/SpPjTNRBcsh/mImBtNDVT8avtd/4TaW/MSZN0n6YVhydwlEBkaHB1byic=
+	t=1723754467; cv=none; b=tnFvemv930pLwZAsFNaDlzAvCkyHO9baHC/YnqcBYWb+C/YphFPPo487Ed/JmItX2sWPj+/tqUOFc4DqxCCCuX+vLZmlEzETozbZYLx0p0BlRI+HUwdh+rxD49yyOBYtByxtZiGqHpsVfpqNtc1LwGx3j17UayQEJDXppZTHtNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723754457; c=relaxed/simple;
-	bh=d3sfWeHxva1JfLaQJzj6iXdO0zdjlM4Noz+FAhMcASs=;
+	s=arc-20240116; t=1723754467; c=relaxed/simple;
+	bh=4KDaCGbSNqiZk9DvkwczOryM/7JAKZJoBwRV7J2iOQA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=f0OwaMulOeplcLf6TTdLfp5RJvDvzziKU19TfcTozy0S9fSnI9aIxksykBiADKUwuSrvl6Mv1F9/vOt5QmK7ROdM+U2rVKHZxN7lh9cJ03MOlvgEI+JIuJPubC+JwxKPDhvTqW7Pq8XrLa8yyBllN862mBTGAfw/4xIzmPtL0TA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KaT7rdeK; arc=none smtp.client-ip=10.30.226.201
+	 MIME-Version:Content-Type; b=Oucv1yqp+5geZHklIO/7zjS5Yej1lspGa78BjtCABZwrGKwKFg604mNh62ngcgQDO2WXNI0R2QbSP/TjJE8+fZTqCBBsNXyFVEkfyrKu7KO8eFiExBSDWWzr4zXEAfFNYsDa+B69UPg9PC9aHO8ugbPs7N6Lx13lxXKa95TtJZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RyV/ygaH; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KaT7rdeK"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1F3FCC4AF0B;
-	Thu, 15 Aug 2024 20:40:56 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RyV/ygaH"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0E154C4AF16;
+	Thu, 15 Aug 2024 20:41:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723754457;
-	bh=d3sfWeHxva1JfLaQJzj6iXdO0zdjlM4Noz+FAhMcASs=;
+	s=k20201202; t=1723754467;
+	bh=4KDaCGbSNqiZk9DvkwczOryM/7JAKZJoBwRV7J2iOQA=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=KaT7rdeKNU9E6hil0Er8AfjXXsE3x7pr6RCfK49eUY0QZEVaDkfhC3RDGba2llv8h
-	 hCeONfKvRTwOB4NdH6lo8ANZUBeYHBz9OmcXCkuae+aJgjC41arLOGHk7sUQFBSMir
-	 t875nA+2f/YRVXyJtfmmcFY3If3LKsm6hoNwkeNzcAzpdvIw5H5iwpUSlqX6Axp9FP
-	 HxXd37dhQTEKS7dC6aBpMbCsAlxS3D5H2z7lViRDTCQjliI9bO9iE1qPZ1qL16bU1I
-	 6YafNVv7XeDh/j+1OFBJHnQkGcZ5yEIyaQpxYFD/uJOKnrKSRywqope3R+O9atCfbu
-	 0PhIbO4dq0+MQ==
+	b=RyV/ygaHxqLeDKcNLkST1W9hvqTOSm9jmWb3eevfspe1avEkHl0izyJ/ICLHIVGDr
+	 FXcCSpbOUgj6QYs00c9z2hzGjnrKDlIaNGApf8FoqWmeGX69wyjuwRFDA7SHmWAp5i
+	 PB2bmFUxh8LWTRR+aYlMDcib/q6klTC9QumA0GS9r1AHZakRoVGEbGyyArjtg9wEiR
+	 1i0ViY52R1Ms2F55YvTBoRU4J8fcRbJ4Qh9Rms1BdJL+saZ+vQ7hIz67b2eg3PEKT5
+	 givQyozG7FOX+qn8LZ/kn0sCCgDhmGal23HuhaZLEIpUvzumV7ptgJqEfb3jbgDgHM
+	 xjD86fiQAawGA==
 From: Bjorn Andersson <andersson@kernel.org>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
+	Jonathan Marek <jonathan@marek.ca>,
+	Robert Foss <rfoss@kernel.org>,
+	Vinod Koul <vkoul@kernel.org>,
+	Rob Clark <robdclark@gmail.com>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Sean Paul <sean@poorly.run>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Georgi Djakov <djakov@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Mike Tipton <quic_mdtipton@quicinc.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
 	Konrad Dybcio <konradybcio@kernel.org>,
-	Abel Vesa <abel.vesa@linaro.org>
-Cc: Johan Hovold <johan+linaro@kernel.org>,
-	Sibi Sankar <quic_sibis@quicinc.com>,
-	linux-arm-msm@vger.kernel.org,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org,
 	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] clk: qcom: gcc-x1e80100: Fix USB 0 and 1 PHY GDSC pwrsts flags
-Date: Thu, 15 Aug 2024 15:40:17 -0500
-Message-ID: <172375444790.1011236.4126358525646189263.b4-ty@kernel.org>
+	linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org,
+	linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	stable@vger.kernel.org
+Subject: Re: (subset) [PATCH 00/11] arm64: qcom: set of fixes for SM8350 platform
+Date: Thu, 15 Aug 2024 15:40:24 -0500
+Message-ID: <172375444824.1011236.1594911619896752687.b4-ty@kernel.org>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240801-x1e80100-clk-gcc-fix-usb-phy-gdscs-pwrsts-v1-1-8df016768a0f@linaro.org>
-References: <20240801-x1e80100-clk-gcc-fix-usb-phy-gdscs-pwrsts-v1-1-8df016768a0f@linaro.org>
+In-Reply-To: <20240804-sm8350-fixes-v1-0-1149dd8399fe@linaro.org>
+References: <20240804-sm8350-fixes-v1-0-1149dd8399fe@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -54,20 +72,15 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
 
-On Thu, 01 Aug 2024 13:21:07 +0300, Abel Vesa wrote:
-> Allowing these GDSCs to collapse makes the QMP combo PHYs lose their
-> configuration on machine suspend. Currently, the QMP combo PHY driver
-> doesn't reinitialise the HW on resume. Under such conditions, the USB
-> SuperSpeed support is broken. To avoid this, mark the pwrsts flags with
-> RET_ON. This is in line with USB 2 PHY GDSC config.
+On Sun, 04 Aug 2024 08:40:04 +0300, Dmitry Baryshkov wrote:
+> A set of fixes that target stability of the SM8350 platform.
 > 
 > 
-> [...]
 
 Applied, thanks!
 
-[1/1] clk: qcom: gcc-x1e80100: Fix USB 0 and 1 PHY GDSC pwrsts flags
-      commit: f4c16a7cdbd2edecdb854f2ce0ef07c6263c5379
+[11/11] arm64: defconfig: build CONFIG_REGULATOR_QCOM_REFGEN as module
+        commit: 115c14ee54aae1d61d2405f9b31f67c1e8947f4e
 
 Best regards,
 -- 
