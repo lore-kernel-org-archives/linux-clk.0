@@ -1,63 +1,61 @@
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A71B07F460;
-	Fri, 16 Aug 2024 05:19:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE28464D;
+	Fri, 16 Aug 2024 06:33:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723785553; cv=none; b=ChEyqsGtydSD9wuIViQSwUTrMA6bW3+cjGr+B9Xg0QEbxd/9MArZift9WcOtupiG9DVyYkfnM2259dlwV3d6tznBNnnoB/Z6Ocj5+zTxphL9iaWuk13mCzSMtS97tWSIjdcsxzOBemDV56SS/QN7BC5tWAt9rpGaKlSZ2n6IuxM=
+	t=1723790009; cv=none; b=CPDmzOrRobrsxgqAAs3+dnbpH/VaQ8PH+j1mZ8j765GqcmLTVdxcCTznfu2t1NeBLvWA//uNk19XmQT1Y7lcgjDI2+zLgNFsOTLM6EiiC6DsL8umW6L0F/ILdG7u1MZA7L2qdC6UJJnuqZXiu5xFSupSzSMvhpcDF133W9x8u0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723785553; c=relaxed/simple;
-	bh=3S0ycsPmv/9VQNbBrJKlYMi77FQkTlM8k48sw0l0IkI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ZXU3b1yyVvA3Fnis0jHDfTBXK6Y0LlQ4mRi6NNRHS9vdbxjcKx6smHBboDu6W9rG1BJduLqcbaW8JMd+zehLHnykjf0mOQOBtpebTXwKnMY3eylO7C5t17HnQMquXxXVxQymB8o6MgkpvUy4cQKgL6wOOY2DgJaPxdU78ldcr74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fJ7KtDIk; arc=none smtp.client-ip=205.220.180.131
+	s=arc-20240116; t=1723790009; c=relaxed/simple;
+	bh=InQ7KO4PcxameFWzTEVRVp6UxYDiKATaWj88aDibv/U=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=q7q5O0kGga3mbtl9bcmFmeAmK8CmSAdU2s/fu/BFffEt70Tp66slQKyEHS94c1spUdyhvrdmCftuU0IL/q45kQtuSJR8PguVtM7+WKGWYZ2/zWUjBvJ+Rz1fUYbR/1nzg16TlBzb3uIGwAa2QvTdOsglE0ngZvEnCTljOHnqaL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SQK6dyLc; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fJ7KtDIk"
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47FKbxGQ017861;
-	Fri, 16 Aug 2024 05:19:07 GMT
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SQK6dyLc"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47G6P363028854;
+	Fri, 16 Aug 2024 06:33:20 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	SZprBQ3ZbaZNdCgXSwUoma0g1S3f3R/4jG9Zzjh1lnQ=; b=fJ7KtDIk97J8fE05
-	xxezMhtNZR7dPYHbyCaZuSmtM113I8zct5OxLma8d0PccIx8uEru/swnZlv+HiL5
-	9jYn94ZQgkxlJySW78bkA/2wNu5gVUWlNNDsIDA+kSM7C8xrpVWrdBDhjyFnAQ+P
-	OlqlVbiBIetmB1S/f77Gp7Nd3x9+zp4NfWkKVe7maifa4NfwYuV8JQiaU1aiLvdc
-	fx4URHJjpRUAUN7dCAFUzycyj3s1+Lh+7YCXDfnnUTWPH0G4Hvq+YWt9XhR+BTtb
-	UzG7SRJGQM11k5bTtH/w9h9xfutosr2GcIUbYyt8QAYy7WOBI+wTGEQltZUxZqGT
-	K0cS7Q==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 411rvr8t7b-1
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=rep/IfrloD1cfaSNPsBzjP
+	tySR9esiZjE+0Rk5/xjL4=; b=SQK6dyLcDGa+m5e+3D0mq8Lc3BBguwhhXP3FIr
+	DA40zkKrueCmnMhCT/enE9hDPC2QFZyVae3VPTQFF/YG97xyHxaqhvHxE2IQXsUb
+	6AOwR1sDkzIQn/AjFQ1jp88L1TNA6Y15psVp9pFkARlmB8gh6rwGFx20mv+CaFiW
+	Fi8+aTz1Y+VwxOJBKsUup0HceQQIeTQoUhxN1z3W/NbP9jXCr5bCPXm1q3jmZz8d
+	Z9VSzVNLR21AMaoaya/dhNj+g6cOVuKCPoYCVzC1vouU6mMk3oCmy8zXIMYGdOyo
+	UhBF9O20CFQ22HUe/FU2OQeHVVkoSVqmKOAL7gdtYvaqMzfA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4116h5ue8e-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 16 Aug 2024 05:19:07 +0000 (GMT)
+	Fri, 16 Aug 2024 06:33:19 +0000 (GMT)
 Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47G5J52h025737
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47G6XIjl010376
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 16 Aug 2024 05:19:05 GMT
-Received: from [10.217.216.152] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 15 Aug
- 2024 22:18:59 -0700
-Message-ID: <47ac5ac0-f1d5-4506-aceb-22a02045fe75@quicinc.com>
-Date: Fri, 16 Aug 2024 10:48:55 +0530
+	Fri, 16 Aug 2024 06:33:18 GMT
+Received: from hu-tdas-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 15 Aug 2024 23:33:14 -0700
+From: Taniya Das <quic_tdas@quicinc.com>
+Subject: [PATCH v4 0/8] Add support for SA8775P Multimedia clock
+ controllers
+Date: Fri, 16 Aug 2024 12:01:42 +0530
+Message-ID: <20240816-sa8775p-mm-v3-v1-0-77d53c3c0cef@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 7/8] arm64: dts: qcom: Add support for multimedia clock
- controllers
-To: Tengfei Fan <quic_tengfan@quicinc.com>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        "Bjorn
- Andersson" <andersson@kernel.org>,
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAE7yvmYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDc0NT3eJEC3Nz0wLd3FzdMmNdI/NE80Qj01QLIKkE1FNQlJqWWQE2L1o
+ pwDHE2QMkWmaiFFtbCwBNW/nEbAAAAA==
+To: Bjorn Andersson <andersson@kernel.org>,
         Michael Turquette
 	<mturquette@baylibre.com>,
         Stephen Boyd <sboyd@kernel.org>, Rob Herring
@@ -65,95 +63,88 @@ To: Tengfei Fan <quic_tengfan@quicinc.com>,
         Krzysztof Kozlowski <krzk+dt@kernel.org>,
         Conor Dooley
 	<conor+dt@kernel.org>,
-        Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        "Bartosz
+ Golaszewski" <bartosz.golaszewski@linaro.org>,
+        <quic_imrashai@quicinc.com>, <quic_jkona@quicinc.com>
 CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
         <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <quic_imrashai@quicinc.com>, <quic_jkona@quicinc.com>,
-        Tingwei
-	<quic_tingweiz@quicinc.com>,
-        "Aiqun(Maria) Yu" <quic_aiquny@quicinc.com>
-References: <20240715-sa8775p-mm-v3-v1-0-badaf35ed670@quicinc.com>
- <20240715-sa8775p-mm-v3-v1-7-badaf35ed670@quicinc.com>
- <d40d540c-a3b9-449d-8f34-cb2972ddc2ef@kernel.org>
- <12be3f5a-5bc6-40cc-a7af-7f098a7be04e@linaro.org>
- <080b47dc-c8e0-4962-a358-aa4c39e5e868@quicinc.com>
-Content-Language: en-US
-From: Taniya Das <quic_tdas@quicinc.com>
-In-Reply-To: <080b47dc-c8e0-4962-a358-aa4c39e5e868@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
+        Taniya Das
+	<quic_tdas@quicinc.com>
+X-Mailer: b4 0.14-dev-f7c49
 X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
  nalasex01a.na.qualcomm.com (10.47.209.196)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: a6cawQ4YL-pY-FFC-gVQqydxiRHdLeRy
-X-Proofpoint-ORIG-GUID: a6cawQ4YL-pY-FFC-gVQqydxiRHdLeRy
+X-Proofpoint-GUID: Hj1LCESIXsCzyJ63izi9TbIPbx7uogD6
+X-Proofpoint-ORIG-GUID: Hj1LCESIXsCzyJ63izi9TbIPbx7uogD6
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-08-15_18,2024-08-15_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
- suspectscore=0 adultscore=0 malwarescore=0 spamscore=0 phishscore=0
- mlxlogscore=999 priorityscore=1501 clxscore=1015 impostorscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408160036
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ suspectscore=0 impostorscore=0 clxscore=1015 malwarescore=0 phishscore=0
+ mlxscore=0 lowpriorityscore=0 mlxlogscore=999 bulkscore=0 spamscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408160045
 
+Add support for videocc, camcc, dispcc0 and dispcc1 on Qualcomm SA8775P
+platform.
 
+[v4]
+  Changes in [v4] compared to [v3]
+  Videocc: Update the mvs0/mvs1 gdsc to use HW_CTRL_TRIGGER [Konrad and Qualcomm
+  internal discussions]
+  Camcc:   Add new clock to the clock tree.
+  Change the patch order for 'Update sleep_clk frequency to 32000 on SA8775P' [Krzysztof]
 
-On 7/29/2024 4:12 PM, Tengfei Fan wrote:
-> 
-> 
-> On 7/16/2024 8:09 PM, Konrad Dybcio wrote:
->> On 16.07.2024 9:45 AM, Krzysztof Kozlowski wrote:
->>> On 15/07/2024 10:23, Taniya Das wrote:
->>>> Add support for video, camera, display0 and display1 clock
->>>> controllers on SA8775P platform.
->>>>
->>>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
->>>> ---
->>>>   arch/arm64/boot/dts/qcom/sa8775p.dtsi | 56 
->>>> +++++++++++++++++++++++++++++++++++
->>>>   1 file changed, 56 insertions(+)
->>>>
->>>> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi 
->>>> b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
->>>> index 23f1b2e5e624..8fd68a8aa916 100644
->>>> --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
->>>> +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
->>>> @@ -2911,6 +2911,47 @@ llcc: system-cache-controller@9200000 {
->>>>               interrupts = <GIC_SPI 580 IRQ_TYPE_LEVEL_HIGH>;
->>>>           };
->>>> +        videocc: clock-controller@abf0000 {
->>>> +            compatible = "qcom,sa8775p-videocc";
->>>> +            reg = <0x0 0x0abf0000 0x0 0x10000>;
->>>> +            clocks = <&gcc GCC_VIDEO_AHB_CLK>,
->>>> +                 <&rpmhcc RPMH_CXO_CLK>,
->>>> +                 <&rpmhcc RPMH_CXO_CLK_A>,
->>>> +                 <&sleep_clk>;
->>>> +            power-domains = <&rpmhpd SA8775P_MMCX>;
->>>
->>> Not sure if these are correct. I had impression the clocks are going
->>> away from sa8775p?
->>
->> Right, the patches look mostly good, but are still going to be on hold
->> until the 8775 situation is cleared out.. We recently had the gigantic
->> patchset [1] that shifted things around, and seemingly there was rather
->> little closure on that, so we're waiting for the dust to settle and
->> people to agree on things..
->>
->> Konrad
->>
->> [1] 
->> https://lore.kernel.org/linux-arm-msm/20240703025850.2172008-1-quic_tengfan@quicinc.com/
-> 
-> After considering the feedback provided on the subject, We have decided
-> to keep current SA8775p compatible and ABI compatibility in drivers.
-> Therefore, this patch is still needed, please continue to review this
-> patch.
-> Thank you for your input.
-> 
+Changes in [v3] compared to [v2]:
+  Update the qcom_cc_really_probe() to use &pdev->dev, for the CAMCC, DISPCC & VIDEOCC drivers.
 
-Thank you Tengfei, I will post the patches again.
+[v2]
+https://lore.kernel.org/all/20240612-sa8775p-mm-clock-controllers-v1-0-db295a846ee7@quicinc.com/
+Changes in [v2] compared to [v1]:
+  [PATCH 1/8]: Updated bindings to reference qcom,gcc.yaml
+  [PATCH 3/8]: Updated bindings to reference qcom,gcc.yaml
+  [PATCH 5/8]: Updated bindings to reference qcom,gcc.yaml
+  [PATCH 7/8]: Split updating sleep_clk frequency to separate patch
+  [PATCH 8/8]: Newly added to update sleep_clk frequency to 32000
+  These multimedia clock controller and device tree patches are split from the below [v1] series.
 
+[v1]
+https://lore.kernel.org/all/20240531090249.10293-1-quic_tdas@quicinc.com/
+
+Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+---
+Taniya Das (8):
+      dt-bindings: clock: qcom: Add SA8775P video clock controller
+      clk: qcom: Add support for Video clock controller on SA8775P
+      dt-bindings: clock: qcom: Add SA8775P camera clock controller
+      clk: qcom: Add support for Camera Clock Controller on SA8775P
+      dt-bindings: clock: qcom: Add SA8775P display clock controllers
+      clk: qcom: Add support for Display clock Controllers on SA8775P
+      arm64: dts: qcom: Update sleep_clk frequency to 32000 on SA8775P
+      arm64: dts: qcom: Add support for multimedia clock controllers
+
+ .../bindings/clock/qcom,sa8775p-camcc.yaml         |   62 +
+ .../bindings/clock/qcom,sa8775p-dispcc.yaml        |   79 +
+ .../bindings/clock/qcom,sa8775p-videocc.yaml       |   62 +
+ arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi         |    2 +-
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi              |   57 +
+ drivers/clk/qcom/Kconfig                           |   31 +
+ drivers/clk/qcom/Makefile                          |    3 +
+ drivers/clk/qcom/camcc-sa8775p.c                   | 1868 ++++++++++++++++++++
+ drivers/clk/qcom/dispcc0-sa8775p.c                 | 1481 ++++++++++++++++
+ drivers/clk/qcom/dispcc1-sa8775p.c                 | 1481 ++++++++++++++++
+ drivers/clk/qcom/videocc-sa8775p.c                 |  576 ++++++
+ include/dt-bindings/clock/qcom,sa8775p-camcc.h     |  108 ++
+ include/dt-bindings/clock/qcom,sa8775p-dispcc.h    |   87 +
+ include/dt-bindings/clock/qcom,sa8775p-videocc.h   |   47 +
+ 14 files changed, 5943 insertions(+), 1 deletion(-)
+---
+base-commit: 3fe121b622825ff8cc995a1e6b026181c48188db
+change-id: 20240715-sa8775p-mm-v3-27a7a25e87a2
+
+Best regards,
 -- 
-Thanks & Regards,
-Taniya Das.
+Taniya Das <quic_tdas@quicinc.com>
+
