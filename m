@@ -1,55 +1,71 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1486C13DDC7;
-	Fri, 16 Aug 2024 21:48:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00F9113D882;
+	Fri, 16 Aug 2024 22:07:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723844904; cv=none; b=KYe4BIoa9tj5C2mXVzX2fIxXL9L3VK4sP/TAtg2oAekC9pru3r4Os3dH5EwlG7pwNPaINWDoblE+1hPxWXuowbPV4MImnzvxySUDwArsro04W5+c82sTzDZGOHNv7SrCJbrM+wbc8mGkhONgzIpQOKVEQ5mYHzSY46L+3BcEEYg=
+	t=1723846048; cv=none; b=eRxHKxAnS7jqRNt+0LPk8xL5q3kQtibdAA0Z1b3RrJQdNSFxBz13qFDqBbAkA0Z+elWTbWjmldbdnaZTdWh7G5PQacKnoiSdtfiBf/3SWKFXHtP09p6tiyiWogknVY03R6EaD1hV513FBcmvtbev/e3V5iH2c9BUC72OuXM1NZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723844904; c=relaxed/simple;
-	bh=rL46LviV35ffgtQIRMZzkC9729C3qrIS+NxdvXSXBZw=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=Y9YPf2k7xs8sry1xkuE9NUWHvHmt3Y8kZPneU1QnO7cX3dvOZ46KVEeGWp4057SZljWIfvyW6lB0zpvto5YcrYZT5e8OfRHfZHR3L6KwwxG1mlz1lds2NAldgbXGeRpEyGba4LHFI7w4djCZlQQlPmVe+llPxy+9Za/cif6rvPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cEzU0ThS; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1723846048; c=relaxed/simple;
+	bh=f8fjLnGTGBqPPgooN2EIpaoA54+U7+toJakdpH5RR7Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rSJx623sz0cWZBjtVEVpJHKXQKhGu/aCkqlThveDY+mNNao4KKGEM3Qq+NGLlsrmMOh/TQ2HEyER2Esp8jVGTKyNthudjzrMmZcyiBwx43jiOPTuxyiiaDkY+iK10J1FJZQBXcnaY2xEX/wRF07MO9c+UR8O6TY1wXHPYnGcdmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YdaM6iTR; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cEzU0ThS"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DDD8C4AF0B;
-	Fri, 16 Aug 2024 21:48:23 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YdaM6iTR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58FEFC32782;
+	Fri, 16 Aug 2024 22:07:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723844903;
-	bh=rL46LviV35ffgtQIRMZzkC9729C3qrIS+NxdvXSXBZw=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=cEzU0ThSRKssJPdpdV5PmLqAr3StTwcoO6tZw4563Dh/S5N9cXaUNTq/E7dzE0Wp/
-	 5CoICPWFtU/F7xofJQuSM4yjIfJqb1357Iw1BxPqRT/ny7LkJSFB9fGvO/aa6oGP6Z
-	 LSYwJeg6K6I6wtm1BipzJZ3KhiM0VcCOkjMUHgYm6GU390jbZk2TpWgpQ2Ezv2zCqn
-	 EkAt+OVI8u4wgklf+xgvD87ZVVW0EH2w1TIkJwkSTyiCk/QGPY9Jbj1dgfuAeXGEsy
-	 +PchzFlpr79X0uzSzST8mqpBFYqNdXddHCs+/D6ph4TQnGjHSRuhys8aM7bCE8g+3k
-	 LowvQKKD54gLQ==
-Message-ID: <496d7baf4c0e7e83c54f57edf789eafc.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1723846047;
+	bh=f8fjLnGTGBqPPgooN2EIpaoA54+U7+toJakdpH5RR7Q=;
+	h=From:To:Cc:Subject:Date:From;
+	b=YdaM6iTRM0UWx26aKOuRzrdBMNQpx8V4ooM8suMQNn1Q8/HnduFLqyZWLYHCYWS6z
+	 rBQ5tAPpxeh2eZWWLyjcS6xORvvUMoDY2E/Nf6fCKK9DrX3e8XYTcMwfuq3tWUADBm
+	 mev7W74I1zmiQPKfYpvGQO6tnMc8625OIRhxA4v9z+CdRm9+7bGl3lL9jxKxFBd4YH
+	 xuHRAze3n4xdxvlUJJbduN+jHDERh0TsbxnKDGm14XtyfHLLATc1D6zZAvqT/M9+eT
+	 hNX33nYLZ5QKXAPpkujfPQrZHVJzccxxxyWla2bZFe97IK7xlzFXu/gCYinKnVEqTT
+	 A2dj4L2Cs5k3Q==
+From: Stephen Boyd <sboyd@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [GIT PULL] clk fixes for v6.11-rc3
+Date: Fri, 16 Aug 2024 15:07:25 -0700
+Message-ID: <20240816220726.3580212-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.46.0.184.g6999bdac58-goog
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240813120015.3242787-1-quic_c_gdjako@quicinc.com>
-References: <20240813120015.3242787-1-quic_c_gdjako@quicinc.com>
-Subject: Re: [PATCH] clk: qcom: gdsc: Add a flag to skip setting power collapse bits
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: mturquette@baylibre.com, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-To: Georgi Djakov <quic_c_gdjako@quicinc.com>, andersson@kernel.org, quic_mdtipton@quicinc.com, quic_viveka@quicinc.com
-Date: Fri, 16 Aug 2024 14:48:21 -0700
-User-Agent: alot/0.10
+Content-Transfer-Encoding: 8bit
 
-Quoting Georgi Djakov (2024-08-13 05:00:15)
-> The sdm845 platforms have a hardware issue that requires keeping
-> some of the MMNOC GDSCs in SW collapse mode (which is the power-on
-> default). But if some driver tries to use these GDSCs and the mode
-> is updated because of runtime pm calls, we may get a board hang.
-> Introduce a flag to skip any updates to the power collapse settings
-> for the impacted GDSCs to avoid unexpected board hangs.
+The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
 
-Can you add a Fixes tag? And does this need to go to stable kernels?
+  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git tags/clk-fixes-for-linus
+
+for you to fetch changes up to 39a3396558fb97e6e7d4c1eb04c2166da31904a9:
+
+  clk: thead: fix dependency on clk_ignore_unused (2024-07-31 14:51:47 -0700)
+
+----------------------------------------------------------------
+One fix for the new T-Head TH1520 clk driver that marks a bus clk
+critical so that it isn't turned off during late init which breaks
+emmc-sdio.
+
+----------------------------------------------------------------
+Drew Fustini (1):
+      clk: thead: fix dependency on clk_ignore_unused
+
+ drivers/clk/thead/clk-th1520-ap.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+-- 
+https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
+https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
