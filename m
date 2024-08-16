@@ -1,165 +1,179 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBCE576056;
-	Fri, 16 Aug 2024 08:34:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AE8817C98F
+	for <linux-clk@vger.kernel.org>; Fri, 16 Aug 2024 10:20:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723797277; cv=none; b=LKNRf6TJtgRQWqdSxvSNNywHtxQ61N2zR8ECgXN+vkEoVkPuNAjA4yGcbGG2wmD6WQVEQEkIFaB2GAFGLRkGCTNqZObWhXCqXf2bCgGZprZgyeawP/cf9KDELIBFmLPnFig13pIcy3lgxyLzeeIUM83zIRp0P9ie9QHZRtwJ01U=
+	t=1723803602; cv=none; b=btyHY6FqM890noz6uEP6EhTjwue+argbFd2HZfCJ8fMmcqyY2+YnJhvDodXZcNBuZwU/V0W0Asy4yJd7DuEgoZRbXsipYhI0lRzOZVLZriGTWy5hBgSgkXrXifLFDrKzuritpqSeOX39DVPjMl2lokNCYZdnQEpSv/ZLwk0jM9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723797277; c=relaxed/simple;
-	bh=slg7Mz/uR9NxJ6yJYvaCR2+orUklYXSMPH1ldn2azCw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=bNt4AbeZPXsCeb90ODOioXgs6IkuoPjZGN8uuk4qkR3Mo6fqffWoMzj8BrHvVZziUcffNkg5wmlKYn1dDqMQrT0wcZGVDlNSfeLjuo4HdhD2iNgFt9UgrZehn0PDWF5HCYMzKdfhcqv9mq2WLv5UJ4w6F+iBhYi2CqUBEL5QPZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=CuMNfx1M; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1723803602; c=relaxed/simple;
+	bh=MQFYcJgF3GCPNTGvdTNgyXl9CUcUIcxvfrPusyvNb6U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OdpvvWTNJwYvvZYI6RY4z2jIiF+7gYTGudi27x6YIHAMoDdb0jEk14f9pRVhgZLY+iOxjfsQp1HKCMsBa3u5DQPyeyr0GiLc62E+0vJ8Hu+3HcA3JxJz/nfJKGuqfrvJylHmMgst8M5W97yMu/o/nGd7942gUMT4Pej9lTkmGgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TG5Ua8gj; arc=none smtp.client-ip=209.85.217.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="CuMNfx1M"
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47G5mOTs025079;
-	Fri, 16 Aug 2024 08:34:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	WPCZ+v2h/YHhcM9sdW0Y/KTcld6Z1Q95K8izoqgcbK0=; b=CuMNfx1MiZlw9Wod
-	Kn0Us0TMPkCqc2NgEFsphMm+VI+rhc77Z3IIZqpz3CaSDNe32/4A6/rkxwnPq4L2
-	Lj/B5x8xueqtNwJoh8TlOSUCjVR+maRNogOD3YEKcT5aXJSLui0sNTOrD/BvwW4M
-	dI1Ut0d+RdK8yOgCNeL/htYut7p2BIAo5zxYY2JuLrcUCWyZi/a2N0ElRJOMo9QX
-	jT8rXBZTDjqAyDCqwB+dVsV35itMRM17erL6wWsC6AAgpXFqKR4IMyG6zLykjOSv
-	aMahtl0qO/ZnxQ9YaEujgBBwaQwLiZtSSDDkOJDEtTPyXYK+iy1hA1ZlEy7k79X8
-	RUxQeQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 410kywpt1t-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 16 Aug 2024 08:34:31 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47G8YVoU018495
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 16 Aug 2024 08:34:31 GMT
-Received: from [10.217.216.152] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 16 Aug
- 2024 01:34:26 -0700
-Message-ID: <7fda5617-485a-4218-9cd5-bdb9deee0b56@quicinc.com>
-Date: Fri, 16 Aug 2024 14:04:26 +0530
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TG5Ua8gj"
+Received: by mail-vs1-f54.google.com with SMTP id ada2fe7eead31-49299323d71so691171137.1
+        for <linux-clk@vger.kernel.org>; Fri, 16 Aug 2024 03:20:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1723803599; x=1724408399; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=tKl6sG125oIcosA1A44lD12PStzJaGU1SQK7ba2gVx0=;
+        b=TG5Ua8gj9Ru7+rM51I0Rm/Rz1D9GUxeos6xPqH06NTC1bdW75yy1I/BFfyulNlRMRq
+         0DZjNmaaUzDbJNinXirfN64Lk/7w51gA3IA82GteetWHlzjg4mbw6w0au/lIT476smo9
+         BUZA0y5L39K6ucwI7fSb6IZzIVhaq496b94ngKkKFnw/IMHz50BmXCwcV8mHdYtLc2Y2
+         uZ0n87SZz3HkSUveEzPq4DvZHTia1ylNfo0AlQFnzzfKEu0TfoxQsFUvBR1v4T0xrFWi
+         qO6G3+T+KNiPl7ILUU7LXSDTNR/48vFwuk/2BCW6I1wOgBWb+s0MVV1y5vSkTGYKTuqv
+         mORw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723803599; x=1724408399;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tKl6sG125oIcosA1A44lD12PStzJaGU1SQK7ba2gVx0=;
+        b=eweB8cDXwTKBFMswiVHhOKLFC88iiUOvH47TUNpC1FAhosYaUxoMbv9BtgbcqHeivW
+         BcKRHv8n77JnRfLcU+8TSCCtaqT6zcUYqPR+H3NWMK5GRAss54kESfOEjZbXjVn4U7jl
+         wzd8mrRoXso/crC5ji1dGmrgstRVUU5t6N5rLMwT4rpmP6semswRpEDqVxQUXBJK3CXT
+         1YCkuodjYQGcBwDLhb8JvhhqGClaxTEVqZAQRQ4ozRq8cjfBNYptZl2xvSKdZVW/rDnp
+         MT4NW8TU3DjwzROvjREXQp8p9XnGhIduCfKqnu2sEX1yL+rVhaCATeeKvSyRQr9ItoAT
+         0OGg==
+X-Forwarded-Encrypted: i=1; AJvYcCVlH4STQEWNRnrBGRPArF1LLI1XkCW2r+Jrwu7lKFT22lrp1xAtt6rLusX3uFG9JtKqWb4RYxnibwdFQ2e77c0l3EeiMQg2YkpE
+X-Gm-Message-State: AOJu0YzBcq6th9pFtzMsxYjsovXNLqy5gWiDhUoslfG20BRDTtMsVzUG
+	NhtzDoZ4YMkSGo1bZ+KB/q/sOzO3B5JnCmuvjPKhKXpgotQfNTKXEjhZHRslw1GcFXpo9buU6fv
+	HTy6IWPHrxLC4YTkO1IV4Is+AJOWK6eXdVXm7zQ==
+X-Google-Smtp-Source: AGHT+IFR1QBwy+VtprC05B+2GUxI//V9NWd4R/09+N+8JCX0Dgl5n0lV/1KsHDVBP3cRjPolh6r9Lf8PZd31g/60Gjc=
+X-Received: by 2002:a05:6102:3e94:b0:492:a5a9:a74 with SMTP id
+ ada2fe7eead31-497799b55b9mr3615334137.22.1723803598879; Fri, 16 Aug 2024
+ 03:19:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/4] arm64: dts: qcom: qcm6490-idp: Update protected
- clocks list
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <quic_jkona@quicinc.com>,
-        <quic_imrashai@quicinc.com>, <devicetree@vger.kernel.org>
-References: <20240531102252.26061-1-quic_tdas@quicinc.com>
- <20240531102252.26061-4-quic_tdas@quicinc.com>
- <4dvqegoz45ct5rqknf6vgi6rvh4osaecfyp7fcrs26lcsq4npu@dwoyubuqlbss>
- <3710a210-265c-493d-9d2f-27ebf486d00e@quicinc.com>
- <qiwy4uyxdrzp2omabh5nacdi37plomua22xsduvpatvb2pcp26@il6ncp7iluj6>
-Content-Language: en-US
-From: Taniya Das <quic_tdas@quicinc.com>
-In-Reply-To: <qiwy4uyxdrzp2omabh5nacdi37plomua22xsduvpatvb2pcp26@il6ncp7iluj6>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: B3_sqfB9ipmjy1fWWtqPFODhIaXLd1wb
-X-Proofpoint-GUID: B3_sqfB9ipmjy1fWWtqPFODhIaXLd1wb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-15_18,2024-08-15_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 suspectscore=0
- impostorscore=0 mlxscore=0 phishscore=0 malwarescore=0 clxscore=1015
- mlxlogscore=999 priorityscore=1501 bulkscore=0 lowpriorityscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408160061
+References: <20240502224703.103150-1-swboyd@chromium.org> <CAE-0n50VDgsg-4QnynvLOzykr3KP5JsnHqeFPA=uRT3EfgL19g@mail.gmail.com>
+ <CAMi1Hd1KQBE4kKUdAn8E5FV+BiKzuv+8FoyWQrrTHPDoYTuhgA@mail.gmail.com>
+ <CAE-0n53X1Gv9nnyDfeivYd7n5W6D1WFkO0tCvYc9drb0+4hQbw@mail.gmail.com>
+ <CAMi1Hd2_a7TjA7J9ShrAbNOd_CoZ3D87twmO5t+nZxC9sX18tA@mail.gmail.com>
+ <CAE-0n52JgfCBWiFQyQWPji8cq_rCsviBpW-m72YitgNfdaEhQg@mail.gmail.com>
+ <CAMi1Hd2drhMGTsvnX1aqwpDTOkK_+n2OKMYY1Y9ONHyYiFLTSQ@mail.gmail.com> <CAE-0n53pjPjSw0m93biWOXRkV=V5u-HVqBx8=MLgQ=Z2ydfEKA@mail.gmail.com>
+In-Reply-To: <CAE-0n53pjPjSw0m93biWOXRkV=V5u-HVqBx8=MLgQ=Z2ydfEKA@mail.gmail.com>
+From: Amit Pundir <amit.pundir@linaro.org>
+Date: Fri, 16 Aug 2024 15:49:22 +0530
+Message-ID: <CAMi1Hd2ue5D1gb5eekQqCXi1DdPtMbzQV9BxEDjLgvw+G7hHwA@mail.gmail.com>
+Subject: Re: [PATCH] clk: qcom: Park shared RCGs upon registration
+To: Stephen Boyd <swboyd@chromium.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
+	patches@lists.linux.dev, linux-arm-msm@vger.kernel.org, 
+	Laura Nao <laura.nao@collabora.com>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	Douglas Anderson <dianders@chromium.org>, Taniya Das <quic_tdas@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+
+On Tue, 13 Aug 2024 at 04:26, Stephen Boyd <swboyd@chromium.org> wrote:
+>
+> Quoting Amit Pundir (2024-08-12 02:39:47)
+> > gcc_qupv3_wrap1_s7_clk_src and gcc_usb30_prim_master_clk_src need to
+> > be left untouched to fix the Audio codec and USB-C host mode breakages
+> > respectively. It seem to have fixed the serial console garbage dump
+> > issue as well.
+>
+> Alright. Can you try with this patch for the gcc_qupv3* clks on top? And
+> keep gcc_usb30_prim_master_clk_src on the new clk_ops? I think we need
+> two patches. One for the usb clk and one for these QUP clks that don't
+> need to be parked.
+>
+
+Moving gcc_qupv3* clks to clk_rcg2_ops and keeping
+gcc_usb30_prim_master_clk_sr to the clk_rcg2_shared_no_init_park_ops
+works too. No audio or usb-c host regression in limited (~50) test
+runs.
+
+> > Thank you for diagnosing this race in ucsi_glink. I needed to run an
+> > overnight reboot test to reproduce this crash, and could reproduce it
+> > on ~380th reboot. I'll check if it has already been reported or fixed
+> > on linux-next.
+>
+> Amazing! Can you add the msleep() so that it is highly likely?
+>
+
+You are right on the target with this one as well. I hit the following
+kernel panic on each of the 10 reboots that I tried with the msleep()
+in devm_pmic_glink_register_client().
+
+[   17.824050][  T164] Unable to handle kernel NULL pointer
+dereference at virtual address 0000000000000010
+[   17.824068][  T164] Mem abort info:
+[   17.824074][  T164]   ESR = 0x0000000096000006
+[   17.824084][  T164]   EC = 0x25: DABT (current EL), IL = 32 bits
+[   17.824096][  T164]   SET = 0, FnV = 0
+[   17.824105][  T164]   EA = 0, S1PTW = 0
+[   17.824113][  T164]   FSC = 0x06: level 2 translation fault
+[   17.824124][  T164] Data abort info:
+[   17.824130][  T164]   ISV = 0, ISS = 0x00000006, ISS2 = 0x00000000
+[   17.824140][  T164]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+[   17.824151][  T164]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+[   17.824165][  T164] user pgtable: 4k pages, 39-bit VAs, pgdp=00000008820ac000
+[   17.824180][  T164] [0000000000000010] pgd=080000088208e003,
+p4d=080000088208e003, pud=080000088208e003, pmd=0000000000000000
+[   17.824221][  T164] Internal error: Oops: 0000000096000006 [#1] PREEMPT SMP
+[   17.825877][  T164] CPU: 0 UID: 0 PID: 164 Comm: kworker/0:10
+Tainted: G S          E
+6.11.0-rc3-mainline-00013-g1690e68dbe30-dirty #37
+[   17.825906][  T164] Tainted: [S]=CPU_OUT_OF_SPEC, [E]=UNSIGNED_MODULE
+[   17.825914][  T164] Hardware name: Qualcomm Technologies, Inc.
+SM8550 HDK (DT)
+[   17.825926][  T164] Workqueue: events
+pmic_glink_altmode_enable_worker [pmic_glink_altmode]
+[   17.825958][  T164] pstate: 43400005 (nZcv daif +PAN -UAO +TCO +DIT
+-SSBS BTYPE=--)
+[   17.825978][  T164] pc : pmic_glink_send+0x10/0x2c [pmic_glink]
+[   17.826002][  T164] lr : pmic_glink_altmode_request+0x74/0x108
+[pmic_glink_altmode]
+[   17.826328][  T164] Call trace:
+[   17.826335][  T164]  pmic_glink_send+0x10/0x2c [pmic_glink]
+[   17.826358][  T164]  pmic_glink_altmode_request+0x74/0x108
+[pmic_glink_altmode]
+[   17.826379][  T164]  pmic_glink_altmode_enable_worker+0x28/0x68
+[pmic_glink_altmode]
+[   17.826401][  T164]  process_one_work+0x184/0x2e8
+[   17.826432][  T164]  worker_thread+0x2f0/0x404
+[   17.826456][  T164]  kthread+0x114/0x118
+[   17.826477][  T164]  ret_from_fork+0x10/0x20
+[   17.826509][  T164] Code: d503233f f800865e a9bf7bfd 910003fd (f9400800)
+[   17.826520][  T164] ---[ end trace 0000000000000000 ]---
+[   17.826532][  T164] Kernel panic - not syncing: Oops: Fatal exception
+[   17.826541][  T164] SMP: stopping secondary CPUs
+[   19.164392][  T164] SMP: failed to stop secondary CPUs 0-1
+[   19.364551][  T164] Kernel Offset: 0xf96480000 from 0xffffffc080000000
+[   19.364562][  T164] PHYS_OFFSET: 0x80000000
+[   19.364570][  T164] CPU features: 0x18,004e0003,80113128,564676af
+[   19.364583][  T164] Memory Limit: none
+
+Again, I have not yet checked if it has already been reported upstream
+or fixed in the linux-next. I'll hopefully do that next week.
+
+Regards,
+Amit Pundir
 
 
 
-On 6/10/2024 11:51 PM, Dmitry Baryshkov wrote:
-> On Mon, Jun 10, 2024 at 03:57:34PM +0530, Taniya Das wrote:
->>
->>
->> On 5/31/2024 5:34 PM, Dmitry Baryshkov wrote:
->>> On Fri, May 31, 2024 at 03:52:51PM +0530, Taniya Das wrote:
->>>> Certain clocks are not accessible on QCM6490-IDP board,
->>>> thus mark them as protected. Update the lpassaudio node to
->>>> support the new compatible as the lpassaudio needs to support
->>>> the reset functionality on the QCM6490 board and the rest of
->>>> the Audio functionality would be provided from the LPASS
->>>> firmware.
->>>>
->>>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
->>>> ---
->>>>    arch/arm64/boot/dts/qcom/qcm6490-idp.dts | 28 +++++++++++++++++++++++-
->>>>    1 file changed, 27 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
->>>> index a0668f767e4b..4eece564331a 100644
->>>> --- a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
->>>> +++ b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
->>>> @@ -1,6 +1,6 @@
->>>>    // SPDX-License-Identifier: BSD-3-Clause
->>>>    /*
->>>> - * Copyright (c) 2023 Qualcomm Innovation Center, Inc. All rights reserved.
->>>> + * Copyright (c) 2023-2024 Qualcomm Innovation Center, Inc. All rights reserved.
->>>>     */
->>>>    /dts-v1/;
->>>> @@ -688,3 +688,29 @@
->>>>    &wifi {
->>>>    	memory-region = <&wlan_fw_mem>;
->>>>    };
->>>> +
->>>> +&gcc {
->>>> +	protected-clocks = <GCC_AGGRE_NOC_PCIE_1_AXI_CLK> ,<GCC_PCIE_1_AUX_CLK>,
->>>> +			<GCC_PCIE_1_AUX_CLK_SRC>, <GCC_PCIE_1_CFG_AHB_CLK>,
->>>> +			<GCC_PCIE_1_MSTR_AXI_CLK>, <GCC_PCIE_1_PHY_RCHNG_CLK_SRC>,
->>>> +			<GCC_PCIE_1_PIPE_CLK>, <GCC_PCIE_1_PIPE_CLK_SRC>,
->>>> +			<GCC_PCIE_1_SLV_AXI_CLK>, <GCC_PCIE_1_SLV_Q2A_AXI_CLK>,
->>>> +			<GCC_QSPI_CNOC_PERIPH_AHB_CLK>, <GCC_QSPI_CORE_CLK>,
->>>> +			<GCC_QSPI_CORE_CLK_SRC>,<GCC_USB30_SEC_MASTER_CLK>,
->>>> +			<GCC_USB30_SEC_MASTER_CLK_SRC>, <GCC_USB30_SEC_MOCK_UTMI_CLK>,
->>>> +			<GCC_USB30_SEC_MOCK_UTMI_CLK_SRC>,
->>>> +			<GCC_USB30_SEC_MOCK_UTMI_POSTDIV_CLK_SRC>, <GCC_USB30_SEC_SLEEP_CLK>,
->>>> +			<GCC_USB3_SEC_PHY_AUX_CLK>, <GCC_USB3_SEC_PHY_AUX_CLK_SRC>,
->>>> +			<GCC_USB3_SEC_PHY_COM_AUX_CLK>, <GCC_USB3_SEC_PHY_PIPE_CLK>,
->>>> +			<GCC_USB3_SEC_PHY_PIPE_CLK_SRC>, <GCC_CFG_NOC_LPASS_CLK>,
->>>> +			<GCC_MSS_GPLL0_MAIN_DIV_CLK_SRC>, <GCC_MSS_CFG_AHB_CLK>,
->>>> +			<GCC_MSS_OFFLINE_AXI_CLK>, <GCC_MSS_SNOC_AXI_CLK>,
->>>> +			<GCC_MSS_Q6_MEMNOC_AXI_CLK>, <GCC_MSS_Q6SS_BOOT_CLK_SRC>,
->>>> +			<GCC_SEC_CTRL_CLK_SRC>, <GCC_WPSS_AHB_CLK>,
->>>> +			<GCC_WPSS_AHB_BDG_MST_CLK>, <GCC_WPSS_RSCP_CLK>;
->>>
->>> Is there any reason why this list is significantly larger than a list
->>> for RB3g2 or FP5?
->>>
->>
->> Unfortunately these are all protected on the IDP board and any access would
->> cause a NoC error and then board will fail to boot up.
-> 
-> Why? I mean, why does it contain the clocks that are allowed to be
-> touched on RB3g2 and FP5?
-> 
-
-There are some use case level and board functionality changes between 
-RB3g2/FP5 vs IDP. Thus these clocks are protected and cannot be accessed.
-
--- 
-Thanks & Regards,
-Taniya Das.
+> ----8<----
+> diff --git a/drivers/soc/qcom/pmic_glink.c b/drivers/soc/qcom/pmic_glink.c
+> index 9ebc0ba35947..12169b0d2adb 100644
+> --- a/drivers/soc/qcom/pmic_glink.c
+> +++ b/drivers/soc/qcom/pmic_glink.c
+> @@ -97,6 +97,8 @@ struct pmic_glink_client
+> *devm_pmic_glink_register_client(struct device *dev,
+>
+>         devres_add(dev, client);
+>
+> +       msleep(10000);
+> +
+>         return client;
+>  }
+>  EXPORT_SYMBOL_GPL(devm_pmic_glink_register_client);
