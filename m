@@ -1,186 +1,192 @@
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+Received: from fhigh1-smtp.messagingengine.com (fhigh1-smtp.messagingengine.com [103.168.172.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F076145341;
-	Sat, 17 Aug 2024 12:28:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83D558C1F;
+	Sat, 17 Aug 2024 23:05:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723897723; cv=none; b=Co6ggU2ADsRZI8zVYUXHGej3vaIQphtt27knuBDvund3oC15AN7XIgArhKSrK1w/h5DFeWXtnTNRG2GGOQLx7W8iizoTIkbDJKJiC6nWX6ilcTZYr5M2POXb8fJ/QFGKnCzBZibTz2bilVi2BT93NCcBcyhN/wbXY3gxRAUGl/o=
+	t=1723935931; cv=none; b=WryAYrdgQbVUdl/N1Iss1GlmQ045FrHCHi+Wzyt6ieXreZIuiMsXp2qxZKBed9p2aiUltGKFHmPVV22jcIWds0zgqUMdFDPKUfrSbkLTZx0aSfVTpW/SApS1eTO308CuKkYp39jIfZ+Ja1V6HmCSY+dcso9a68j2AeHCVmC1pO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723897723; c=relaxed/simple;
-	bh=FIjVq1ScLLmQqE7XzW4+B1p/wF6C75tENXoxNp9BRUc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=vFbMCJP8pS25t9h8DwDtha31kuG4grZj4n9QZumAOZu4lf73dN46fAfNhLDNPJ7sv22qPkL6ut1K8Zk7zxqvQROHSCSiXu7jwsy20wQ4yIp7hXLZBbiDQlHPpy6Jt0OXUfmj2y7kqmTmjDaab+fOQZi4MQvTksxZcoKvvfD5bdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CS6yR8bD; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1723935931; c=relaxed/simple;
+	bh=Ir44G7CzEpXnfyUc8W/RJURbna7YZIFnv2R4okhG0Pg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aG1onkpbpzNPxPVLtwE/ujzNJBMwJiS+1LcSak/dGjDPgKeP97hXvaxhLLg/owt8neK41OfbO74oZo/2B1W7hC7j1ntkPd4Wfc1IxplmloLsRjs1w3BarcxpKVeMHluFyHWrmiF2C4xxSP8sxgcIZiPk4oNOQh+ALQOTbr7fRgI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com; spf=pass smtp.mailfrom=testtoast.com; dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b=jc7aaZeX; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=lBHetoY4; arc=none smtp.client-ip=103.168.172.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=testtoast.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=testtoast.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CS6yR8bD"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1723897720; x=1755433720;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=FIjVq1ScLLmQqE7XzW4+B1p/wF6C75tENXoxNp9BRUc=;
-  b=CS6yR8bDT7An8dn5WNugE7H/tBw0oigZJAoXAZHapGEAq77h54lOQUQB
-   Mnpl04skYhfgVcLihZedIIXCxJWFVMmnF4MSC4xObfsA2eRkXZlbEGi97
-   KbvEed0rujioSvC9ySlf3mNJCo935LhK4tRDvAjEKyDsEQflLRZIULJ31
-   OqJYOEPDZdddrhtn003CAQQvOrbc3b0vKXl7hFwXyw+kG5WfArcCPEgCT
-   spQpyLW1UtegT/ePE7HJrf4zo+EdjeneY8ayTsX00MgPk0QHwAUtmTyFi
-   RDqc0SNmNn/24Tf2rnttd8ccxifw2ARvFtlpTh6+8hzJEyxbvsL5/s7DD
-   g==;
-X-CSE-ConnectionGUID: 92wBywnMSk2A2h6gCVNbRA==
-X-CSE-MsgGUID: Gz9ONTPwSCaTCAYZARqsHg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11167"; a="13069497"
-X-IronPort-AV: E=Sophos;i="6.10,154,1719903600"; 
-   d="scan'208";a="13069497"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 17 Aug 2024 05:28:40 -0700
-X-CSE-ConnectionGUID: 205WendRR0W6DBDj73iV3A==
-X-CSE-MsgGUID: qGF2dQe3S1ehuyU05UqviQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,154,1719903600"; 
-   d="scan'208";a="59770643"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 17 Aug 2024 05:28:36 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sfIXp-0007Ri-2D;
-	Sat, 17 Aug 2024 12:28:33 +0000
-Date: Sat, 17 Aug 2024 20:27:48 +0800
-From: kernel test robot <lkp@intel.com>
-To: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
-	Bjorn Andersson <andersson@kernel.org>,
+	dkim=pass (2048-bit key) header.d=testtoast.com header.i=@testtoast.com header.b="jc7aaZeX";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="lBHetoY4"
+Received: from phl-compute-03.internal (phl-compute-03.nyi.internal [10.202.2.43])
+	by mailfhigh.nyi.internal (Postfix) with ESMTP id 9CDC1114E500;
+	Sat, 17 Aug 2024 19:05:28 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Sat, 17 Aug 2024 19:05:28 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=testtoast.com;
+	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
+	:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to; s=fm3; t=1723935928; x=1724022328; bh=oLvmWIUZnr
+	Ck+TO/saefQw9KwW75RD24ZO3ER9V57+k=; b=jc7aaZeXV7gy0MX7cc8oUSPOub
+	vWDZmxsuQMkrqI6EUJs3j2kt81uD/kW7kyPWqTyCXBAB1CG0leTiFrqqmW9jYN6k
+	hu4YLwWzY8lr8PecsZGOE34dL1ceYYOdVHoaCdnx2LN5B1PmQ41HjE23qPkeFszA
+	scC+BAEICs+XMVTrDV0jg/Ge4NKM3LyBxn9c57zAOxLL597myZLMY23YT6BTC+/+
+	lxAx0aSj5AjdSS4ejM740e3nRAQ380ycdbCv/0963WjNQHzsCbLN7+i6lPIFj1BJ
+	cBO4OZ8JmwHd79jmVXqbfIyMlVjMhAiZJ4MvP242VdbEmfMW1kQbY1q1Ny1w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1723935928; x=1724022328; bh=oLvmWIUZnrCk+TO/saefQw9KwW75
+	RD24ZO3ER9V57+k=; b=lBHetoY480X/L+bHy4qU44xKTJY4zdNlAsG5iEPZybCy
+	09f1NtocLI7RBgZuJ7ECs5tG8A8uuH49feH4zXeOF7m7w5u23R6QGHfAAC6FY/3z
+	ZgTkIuC/E8TVi4FpItmMaB2XgQt5xFXcdsNgi809t+Do51sOar0mMaZ18f6VimTi
+	rhHWs/rr1ur7E8aZxmjezEEOn8WS6vQT0jde2LkpBrGRITFAyO4FZyIbxuGPorAo
+	7RcBRfkRCro69YG1AMd+ucVLrefQk0r7lJtXb/jG3ZRzhcNV07nrcI8l+kZKmy7E
+	NHId1HLuOQlDzAHuZFeTSo2/G8YukuaFOcMaBXa5lg==
+X-ME-Sender: <xms:tizBZjvd9FJjPzTltafFRtDCNh1GtIKVbLc5bXW1aoQCJD0-db3Xlw>
+    <xme:tizBZkdQX7WLKmWDqIeNz5NXYCq9wbEwDUlotRopxOPY7CbeZ9a4bqQK6L5zGbFih
+    1_bI5htWH1Z9xopeg>
+X-ME-Received: <xmr:tizBZmxQiWb11132eCfRJlMunboBWbWDRXT94mK12lymdOZcEFt5aIfAPyHKkmdXgBtv8FKuGS5m8qgOmveV1sjxwMb_pVWCU7q9fK0uuTSgOfy5>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrudduuddgudejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhephffvvefufffkofgggfestdekredtredttdenucfh
+    rhhomheptfihrghnucghrghlkhhlihhnuceorhihrghnsehtvghsthhtohgrshhtrdgtoh
+    hmqeenucggtffrrghtthgvrhhnpeduvdeuudeugedtueffteevveegheehvdfhfeduudev
+    kefggfeftdehgeethffhffenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmh
+    grihhlfhhrohhmpehrhigrnhesthgvshhtthhorghsthdrtghomhdpnhgspghrtghpthht
+    ohepvddvpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmrhhiphgrrhgusehkvg
+    hrnhgvlhdrohhrghdprhgtphhtthhopeifvghnshestghsihgvrdhorhhgpdhrtghpthht
+    ohepmhgrrghrthgvnhdrlhgrnhhkhhhorhhstheslhhinhhugidrihhnthgvlhdrtghomh
+    dprhgtphhtthhopehtiihimhhmvghrmhgrnhhnsehsuhhsvgdruggvpdhrtghpthhtohep
+    rghirhhlihgvugesghhmrghilhdrtghomhdprhgtphhtthhopegurghnihgvlhesfhhffi
+    hllhdrtghhpdhrtghpthhtohepjhgvrhhnvghjrdhskhhrrggsvggtsehgmhgrihhlrdgt
+    ohhmpdhrtghpthhtohepshgrmhhuvghlsehshhholhhlrghnugdrohhrghdprhgtphhtth
+    hopehrohgshheskhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:tizBZiOyKxdThrD1kmWixcOn-q1ccQxJDt6XrTyDSf0O3-92c37TVQ>
+    <xmx:tizBZj8PLu7fgWRxuxO7h8rP0Cp9cUgU4yY8JZs-ylrhdQuPWDLa-Q>
+    <xmx:tizBZiW0Sfzcww1RiayeaiOVnxHGv2q7fjDTmrn-aFGp1AtwSgmryA>
+    <xmx:tizBZkeD9D3ivua7vaGp8tXUoCaZwJASwarfu8GQk2Ry-af_B_HgUQ>
+    <xmx:uCzBZvswQNi9WOVhGLmU3mQd9zFvw8jZ8f_KEDHrnEt9d2pE5_JSCVF3>
+Feedback-ID: idc0145fc:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 17 Aug 2024 19:05:19 -0400 (EDT)
+From: Ryan Walklin <ryan@testtoast.com>
+To: Maxime Ripard <mripard@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Daniel Vetter <daniel@ffwll.ch>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
 	Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Ajit Pandey <quic_ajipan@quicinc.com>,
-	Imran Shaik <quic_imrashai@quicinc.com>,
-	Taniya Das <quic_tdas@quicinc.com>,
-	Jagadeesh Kona <quic_jkona@quicinc.com>,
-	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
-	kernel test robot <lkp@intel.com>,
-	Dan Carpenter <error27@gmail.com>,
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
-Subject: Re: [PATCH V2] clk: qcom: clk-alpha-pll: Simplify the
- zonda_pll_adjust_l_val()
-Message-ID: <202408172049.Mc8dSq0c-lkp@intel.com>
-References: <20240814102005.33493-1-quic_skakitap@quicinc.com>
+Cc: Andre Przywara <andre.przywara@arm.com>,
+	Chris Morgan <macroalpha82@gmail.com>,
+	John Watts <contact@jookia.org>,
+	dri-devel@lists.freedesktop.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Ryan Walklin <ryan@testtoast.com>
+Subject: [PATCH v3 00/26] drm: sun4i: add Display Engine 3.3 (DE33) support
+Date: Sun, 18 Aug 2024 10:45:47 +1200
+Message-ID: <20240817230503.158889-1-ryan@testtoast.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240814102005.33493-1-quic_skakitap@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Satya,
+Hi,
 
-kernel test robot noticed the following build warnings:
+V3 of this patch series adding support for the Allwinner DE33 display engine variant. V3 is rebased on top of layer init and modesetting changes merged for 6.11. No functional changes from V2, fixes and review from previous V1 and V2 added, and correction to DT bindings.
 
-[auto build test WARNING on next-20240814]
-[cannot apply to clk/clk-next v6.11-rc3 v6.11-rc2 v6.11-rc1 linus/master v6.11-rc3]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Original blurb below:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Satya-Priya-Kakitapalli/clk-qcom-clk-alpha-pll-Simplify-the-zonda_pll_adjust_l_val/20240815-001519
-base:   next-20240814
-patch link:    https://lore.kernel.org/r/20240814102005.33493-1-quic_skakitap%40quicinc.com
-patch subject: [PATCH V2] clk: qcom: clk-alpha-pll: Simplify the zonda_pll_adjust_l_val()
-config: hexagon-allyesconfig (https://download.01.org/0day-ci/archive/20240817/202408172049.Mc8dSq0c-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 26670e7fa4f032a019d23d56c6a02926e854e8af)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20240817/202408172049.Mc8dSq0c-lkp@intel.com/reproduce)
+There is existing mainline support for the DE2 and DE3 AllWinner display pipeline IP blocks, used in the A64 and H6 among others, however the H700 (as well as the H616/H618 and the T507 automotive SoC) have a newer version of the Display Engine (v3.3/DE33) which adds additional high-resolution support as well as YUV colour formats and AFBC compression support.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408172049.Mc8dSq0c-lkp@intel.com/
+This patch set adds DE33 support, following up from the previous RFC [1], with significant rework to break down the previous relatively complex set into more logical steps, detailed below.
 
-All warnings (new ones prefixed by >>):
+1. Refactor the existing DE2/DE3 code in readiness to support YUV colour formats in the DE3 engine (patches 1-4).
+2. Add YUV420 colour format support in the DE3 driver (patches 5-12).
+3. Replace the is_de3 mixer flag with an enum to support multiple DE versions (patch 13).
+4. Refactor the mixer, vi_scaler and some register code to merge common init code and more easily support multiple DE versions (patches 14-17).
+5. Add Arm Frame Buffer Compression (AFBC) compressed buffer support to the DE3 driver. This is currently only supported for VI layers (for HW-decoded video output) but is well integrated into these changes and a subsequent patchset to enable the Video Engine is planned. (patch 18).
+6. Add DT bindings for the DE33 engine. (patch 19-21).
+7. Extend the DE2/3 driver for the DE33, comprising clock, mixer, vi_scaler, fmt and csc module support (patches 22-26).
 
-   In file included from drivers/clk/qcom/clk-alpha-pll.c:10:
-   In file included from include/linux/regmap.h:20:
-   In file included from include/linux/iopoll.h:14:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     548 |         val = __raw_readb(PCI_IOBASE + addr);
-         |                           ~~~~~~~~~~ ^
-   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
-      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
-         |                                                   ^
-   In file included from drivers/clk/qcom/clk-alpha-pll.c:10:
-   In file included from include/linux/regmap.h:20:
-   In file included from include/linux/iopoll.h:14:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
-         |                                                   ^
-   In file included from drivers/clk/qcom/clk-alpha-pll.c:10:
-   In file included from include/linux/regmap.h:20:
-   In file included from include/linux/iopoll.h:14:
-   In file included from include/linux/io.h:14:
-   In file included from arch/hexagon/include/asm/io.h:328:
-   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     585 |         __raw_writeb(value, PCI_IOBASE + addr);
-         |                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
->> drivers/clk/qcom/clk-alpha-pll.c:2125:14: warning: comparison of distinct pointer types ('typeof ((rate)) *' (aka 'unsigned long *') and 'uint64_t *' (aka 'unsigned long long *')) [-Wcompare-distinct-pointer-types]
-    2125 |         remainder = do_div(rate, prate);
-         |                     ^~~~~~~~~~~~~~~~~~~
-   include/asm-generic/div64.h:222:28: note: expanded from macro 'do_div'
-     222 |         (void)(((typeof((n)) *)0) == ((uint64_t *)0));  \
-         |                ~~~~~~~~~~~~~~~~~~ ^  ~~~~~~~~~~~~~~~
-   drivers/clk/qcom/clk-alpha-pll.c:2125:14: error: incompatible pointer types passing 'unsigned long *' to parameter of type 'uint64_t *' (aka 'unsigned long long *') [-Werror,-Wincompatible-pointer-types]
-    2125 |         remainder = do_div(rate, prate);
-         |                     ^~~~~~~~~~~~~~~~~~~
-   include/asm-generic/div64.h:238:22: note: expanded from macro 'do_div'
-     238 |                 __rem = __div64_32(&(n), __base);       \
-         |                                    ^~~~
-   include/asm-generic/div64.h:213:38: note: passing argument to parameter 'dividend' here
-     213 | extern uint32_t __div64_32(uint64_t *dividend, uint32_t divisor);
-         |                                      ^
->> drivers/clk/qcom/clk-alpha-pll.c:2125:14: warning: shift count >= width of type [-Wshift-count-overflow]
-    2125 |         remainder = do_div(rate, prate);
-         |                     ^~~~~~~~~~~~~~~~~~~
-   include/asm-generic/div64.h:234:25: note: expanded from macro 'do_div'
-     234 |         } else if (likely(((n) >> 32) == 0)) {          \
-         |                                ^  ~~
-   include/linux/compiler.h:76:40: note: expanded from macro 'likely'
-      76 | # define likely(x)      __builtin_expect(!!(x), 1)
-         |                                             ^
-   8 warnings and 1 error generated.
+Further patchsets are planned to support HDMI and the LCD timing controller present in these SoCs.
 
+Regards,
 
-vim +2125 drivers/clk/qcom/clk-alpha-pll.c
+Ryan
 
-  2120	
-  2121	static void zonda_pll_adjust_l_val(unsigned long rate, unsigned long prate, u32 *l)
-  2122	{
-  2123		u64 remainder;
-  2124	
-> 2125		remainder = do_div(rate, prate);
-  2126	
-  2127		*l = rate + (u32)(remainder * 2 >= prate);
-  2128	}
-  2129	
+Jernej Skrabec (23):
+  drm: sun4i: de2/de3: Change CSC argument
+  drm: sun4i: de2/de3: Merge CSC functions into one
+  drm: sun4i: de2/de3: call csc setup also for UI layer
+  drm: sun4i: de2: Initialize layer fields earlier
+  drm: sun4i: de3: Add YUV formatter module
+  drm: sun4i: de3: add format enumeration function to engine
+  drm: sun4i: de3: add formatter flag to mixer config
+  drm: sun4i: de3: add YUV support to the DE3 mixer
+  drm: sun4i: de3: pass engine reference to ccsc setup function
+  drm: sun4i: de3: add YUV support to the color space correction module
+  drm: sun4i: de3: add YUV support to the TCON
+  drm: sun4i: support YUV formats in VI scaler
+  drm: sun4i: de2/de3: add mixer version enum
+  drm: sun4i: de2/de3: refactor mixer initialisation
+  drm: sun4i: vi_scaler refactor vi_scaler enablement
+  drm: sun4i: de2/de3: add generic blender register reference function
+  drm: sun4i: de2/de3: use generic register reference function for layer
+    configuration
+  drm: sun4i: de3: Implement AFBC support
+  clk: sunxi-ng: ccu: add Display Engine 3.3 (DE33) support
+  drm: sun4i: de33: mixer: add Display Engine 3.3 (DE33) support
+  drm: sun4i: de33: vi_scaler: add Display Engine 3.3 (DE33) support
+  drm: sun4i: de33: fmt: add Display Engine 3.3 (DE33) support
+  drm: sun4i: de33: csc: add Display Engine 3.3 (DE33) support
+
+Ryan Walklin (3):
+  dt-bindings: allwinner: add H616 DE33 bus binding
+  dt-bindings: allwinner: add H616 DE33 clock binding
+  dt-bindings: allwinner: add H616 DE33 mixer binding
+
+ .../bus/allwinner,sun50i-a64-de2.yaml         |   4 +-
+ .../clock/allwinner,sun8i-a83t-de2-clk.yaml   |   1 +
+ .../allwinner,sun8i-a83t-de2-mixer.yaml       |   1 +
+ drivers/clk/sunxi-ng/ccu-sun8i-de2.c          |  25 ++
+ drivers/gpu/drm/sun4i/Makefile                |   3 +-
+ drivers/gpu/drm/sun4i/sun4i_tcon.c            |  26 +-
+ drivers/gpu/drm/sun4i/sun50i_afbc.c           | 250 +++++++++++++
+ drivers/gpu/drm/sun4i/sun50i_afbc.h           |  87 +++++
+ drivers/gpu/drm/sun4i/sun50i_fmt.c            |  99 +++++
+ drivers/gpu/drm/sun4i/sun50i_fmt.h            |  33 ++
+ drivers/gpu/drm/sun4i/sun8i_csc.c             | 341 +++++++++++++++---
+ drivers/gpu/drm/sun4i/sun8i_csc.h             |  20 +-
+ drivers/gpu/drm/sun4i/sun8i_mixer.c           | 229 +++++++++---
+ drivers/gpu/drm/sun4i/sun8i_mixer.h           |  31 +-
+ drivers/gpu/drm/sun4i/sun8i_ui_layer.c        |  41 ++-
+ drivers/gpu/drm/sun4i/sun8i_ui_scaler.c       |   2 +-
+ drivers/gpu/drm/sun4i/sun8i_vi_layer.c        | 134 +++++--
+ drivers/gpu/drm/sun4i/sun8i_vi_scaler.c       | 115 ++++--
+ drivers/gpu/drm/sun4i/sun8i_vi_scaler.h       |   2 +-
+ drivers/gpu/drm/sun4i/sunxi_engine.h          |  34 ++
+ 20 files changed, 1271 insertions(+), 207 deletions(-)
+ create mode 100644 drivers/gpu/drm/sun4i/sun50i_afbc.c
+ create mode 100644 drivers/gpu/drm/sun4i/sun50i_afbc.h
+ create mode 100644 drivers/gpu/drm/sun4i/sun50i_fmt.c
+ create mode 100644 drivers/gpu/drm/sun4i/sun50i_fmt.h
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.46.0
+
