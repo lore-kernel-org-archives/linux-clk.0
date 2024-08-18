@@ -1,57 +1,57 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42C9015AAC6
-	for <linux-clk@vger.kernel.org>; Sun, 18 Aug 2024 17:30:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC1CD15ADA4
+	for <linux-clk@vger.kernel.org>; Sun, 18 Aug 2024 17:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724002225; cv=none; b=h4LoP/6Y6NuOQchS1Dbkr30RJMCMDj0SKLbCCvISs5tTo5J9LTddfj5ECM1/CRQsPBxZb7THUOt0XTw7GzdKx1ruQXpD9sy8XUokTqSdahKUxBcLi1aTC8icMhqk1H6pjUfmYIMQ1WNn7e8Y29MmPRtlSfeuq9T8bPTMZp30sR4=
+	t=1724002227; cv=none; b=WlNpzxyt6HH8ZzBoOSpOlIBhTh5DBPFWphJWsjaZqFw7nty47TLvbxiNwJOu/672PuBnrdBdpxi+XAh7Ajh8Ktec4TzN/vZBezN4ESonP+PzrLnEQJfec/ubPnM2Dxo+x8bL0JK/+QjrXXI+/MSwBPXeibTOqzITNyLNmjwLCz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724002225; c=relaxed/simple;
-	bh=+mrMQgdLRKHFnn02riPVi7GgEEOSr/gQ9Z3x/iTOm1U=;
+	s=arc-20240116; t=1724002227; c=relaxed/simple;
+	bh=U6S5tfFiL27fmhyJLQdFRdd1Wz5/I61DAlDxqq5TzA4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dFiFJK9IWoxP5+z/1y8bUdKdGpzOEA6wuSkt2iGzs+576OrBkDR7xiaTvC0tRmp+RakTHzH2nvFzOIzp5C/AyW/ZGpCnOUawZmAsggGQw+g/3sNxEbL6ZP5aXoU5pFgWdkWmLw99r12e8p5qXF2IOHI1LxP4WfQa1j7e1y4n2i0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dq0sMKCF; arc=none smtp.client-ip=209.85.221.54
+	 MIME-Version; b=cNC8Njmwuj/noSmSTGJKvzQiq/CC/E0WPR5+IHuSV/VUEnTMBIG8V05rT6gXbSMQKOe5Mj01vqfOPw/jUEfuvc/0QlEYX71l6fY9qii4OfMSMQN1Ch6BPacC9vQNOCm74DCQtC4iQMDvZIyzWShTDRHqGRJvvSN+LVlHywUiw+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sfNMScWj; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dq0sMKCF"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-37196786139so1588567f8f.2
-        for <linux-clk@vger.kernel.org>; Sun, 18 Aug 2024 10:30:23 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sfNMScWj"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4281faefea9so27193185e9.2
+        for <linux-clk@vger.kernel.org>; Sun, 18 Aug 2024 10:30:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724002222; x=1724607022; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1724002224; x=1724607024; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yDxabNXUGD2spiGWzUWebdJZipOuLFpvCr9ct8rDDA8=;
-        b=dq0sMKCFRNqGniiP6l2gkRsmPVFWQ4wHwCk9XI/5qGMb/wISBTW9iC0PTciVSLMPOl
-         c1DZWzTs1Sk4s5bL4xu1BFHB3G3oAiBi5gfsyhJpxe4r3ZWQNYbYnFc0fm5//1/NRMaY
-         3P5xiLD43F6xA1hFdPr7ENtgb8RyAxuKc6V8lhAwVpy10M5w5TPaNe3+/oqFPsM/fvPM
-         u/fTMUcBpHTyCf81x9thwLmfxBFDtTBMeYB+g5IxlTXix5Ee+10i5d3qKI3mr+ri6XFb
-         sUVq/w8S2LF+Softw/VNLEEJOwsUl/WjnQ/ZT08ecDih72M93a4ezT/JGldG5teMREhh
-         rDpg==
+        bh=4LJzGmSDXl8HNs+ZJgf58xM3uvdTJPYEdQtiLGgE/Vo=;
+        b=sfNMScWjJlwkS+KjEYdsS1rrn9ZXLEhZYBnLaQGthZyQh8x6cZHa4Z4LYg9yDbLGb5
+         xfZh3KzTc+c3bAthC23QnkUEd1ALJ9dyoQNNjVNc8+fyCX8kNPEqIjrrA/D538/rAA7v
+         7ggFPJeVwGL3Aa6WHDaYFB2VNZdsRFPBJJhtcAPaFZRcGJI8O1wUAUKSFjzj558yIx0x
+         /RwV6dCTQRXKrULKQ0AqFPwhithQkyA3q8503N0LMoynNGrx8sTv8c8ls6dTntE1LfdA
+         AkkHRLYGpzIapNtmYI2mvYi6mRWYGxaRCCzuReE1BOLi3YotVEg9qwpiI/L4QoDheKh+
+         k43g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724002222; x=1724607022;
+        d=1e100.net; s=20230601; t=1724002224; x=1724607024;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yDxabNXUGD2spiGWzUWebdJZipOuLFpvCr9ct8rDDA8=;
-        b=lXwU1lYY2EAjJpDiS0rT3nHwGNuYjnqHFBgayo5YH7dKGhsihmt/wlsaMwRAdWQ7+q
-         qnE9fZaKPOGpKSe9ZaFx/zkwEE5kICNV/VQ60QsgsriYM5OmdP5cOY6Sj7jOzwvJ6hJv
-         fAjQ0YUMdIxvOWoy2U4NQD8/KdfGK+vL11fnNdhkedM0oRlsT5bNwrJAZn6VQ89l7noj
-         GuSl3cc4fnY7pLK7qCY08xlVsvC+3HRpFVVTO9MZewt2OwJAxMuQZecMRyQ58OCbZEdY
-         P8IsNRmOXR2SY/6biT0pWitxpOS/7w9ePSottgFkBp28ItBcEPinO0Dh/7XeMxmuQJiT
-         wZeg==
-X-Forwarded-Encrypted: i=1; AJvYcCUYBSDNt/P2lyxSBiWv5YIEzDYnYWqiQhxCX6E8nto147SvaN+VFdJnHq2p7V9PTjcC+1C5rNab4AS6k641Q6WesaRr++iVW7kQ
-X-Gm-Message-State: AOJu0YyfJJgD+KXAzK0UQPR9Q9ZUVz3oIj3x2ENVJmPnQ6X7p5sY7Fv2
-	7ACxl72PBSs09ZNdS466+t783L8hKJO15gqWZaCs+UtOaJFm5m2h2JGSsUcFXuM=
-X-Google-Smtp-Source: AGHT+IHTe5/9uPQMEtI6+zcncZ4iytZUcY1Qxy0hgPT1aarVYzDAmJ3Q55hH1n/3z5bWggegxUIW8w==
-X-Received: by 2002:adf:f2c5:0:b0:371:7cd1:86e5 with SMTP id ffacd0b85a97d-37194314fa2mr4713443f8f.8.1724002222433;
-        Sun, 18 Aug 2024 10:30:22 -0700 (PDT)
+        bh=4LJzGmSDXl8HNs+ZJgf58xM3uvdTJPYEdQtiLGgE/Vo=;
+        b=Fwp/S/qt5CY65+QkkZTXyxCKnUM/yC/6OzQfl07u0i3VpEFptzRAp4rhVd/KyeknEA
+         L8GB9AjPUQshV/SUGIkr/OjxXbVuskFJzW2x4XZehumjtCZ5FGU47MIAN+qmlk3Wwvk9
+         lwX3W+4MzEi7O+Lxd0HU043NGmOzRsyjXbA3IFFKPgJEIeJCyYUNfyAdzGx0cSmplVTP
+         ova6RUnzjwomUvYYhtCgZ8A5Ztf+7PvuyecjPt7TwhZJb031yZUnTpJg6lHGo9n2gx58
+         ZDMBJYs+UvO0lR397i2Hddmz781gwylIbe7h6zCCo7iGIqqFEorTdbMyFFP3jlGvti1G
+         XaHw==
+X-Forwarded-Encrypted: i=1; AJvYcCWmvLh2tz+zDo1nEZF4Vuok+BFpT4y6+mit4RGLDm3pGGmB7kLSgTHaJ/LVLfJeQQjN3hZgvxUoF9I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzQVTr5NEzby62xWPYsWFqPHev2Z5rjQgncy9EQrh6D+12I52A
+	erZyxxVl6oIp+4AZLIJ786mQZgyymiBa670Ci/npTM1Qr0iEHuxL4D2sDYxSVxc=
+X-Google-Smtp-Source: AGHT+IGekL2+ttve0hynRqEEzbgRWcWynLHa1J/EMMNb3eGD6VlpT3jMglNMhKBlzMDg3B561e5RkQ==
+X-Received: by 2002:a05:600c:5254:b0:429:d43e:dbb9 with SMTP id 5b1f17b1804b1-429ed7cc4d4mr55016825e9.23.1724002224225;
+        Sun, 18 Aug 2024 10:30:24 -0700 (PDT)
 Received: from krzk-bin.. ([178.197.215.209])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded7d5a9sm134999915e9.43.2024.08.18.10.30.20
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ded7d5a9sm134999915e9.43.2024.08.18.10.30.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 18 Aug 2024 10:30:21 -0700 (PDT)
+        Sun, 18 Aug 2024 10:30:23 -0700 (PDT)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: Serge Semin <fancer.lancer@gmail.com>,
 	Michael Turquette <mturquette@baylibre.com>,
@@ -78,9 +78,9 @@ To: Serge Semin <fancer.lancer@gmail.com>,
 	linux-rockchip@lists.infradead.org,
 	linux-stm32@st-md-mailman.stormreply.com
 Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 3/5] dt-bindings: clock: renesas,cpg-clocks: add top-level constraints
-Date: Sun, 18 Aug 2024 19:30:12 +0200
-Message-ID: <20240818173014.122073-3-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 4/5] dt-bindings: clock: rockchip,rk3588-cru: drop unneeded assigned-clocks
+Date: Sun, 18 Aug 2024 19:30:13 +0200
+Message-ID: <20240818173014.122073-4-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20240818173014.122073-1-krzysztof.kozlowski@linaro.org>
 References: <20240818173014.122073-1-krzysztof.kozlowski@linaro.org>
@@ -92,39 +92,29 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Properties with variable number of items per each device are expected to
-have widest constraints in top-level "properties:" block and further
-customized (narrowed) in "if:then:".  Add missing top-level constraints
-for clocks and clock-output-names.
+assigned-clocks property is redundant, because core dtschema allows them
+if clocks are provided.
 
 Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 ---
- .../devicetree/bindings/clock/renesas,cpg-clocks.yaml     | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+ .../devicetree/bindings/clock/rockchip,rk3588-cru.yaml        | 4 ----
+ 1 file changed, 4 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/clock/renesas,cpg-clocks.yaml b/Documentation/devicetree/bindings/clock/renesas,cpg-clocks.yaml
-index 9185d101737e..a0e09b7002f0 100644
---- a/Documentation/devicetree/bindings/clock/renesas,cpg-clocks.yaml
-+++ b/Documentation/devicetree/bindings/clock/renesas,cpg-clocks.yaml
-@@ -32,12 +32,16 @@ properties:
-   reg:
-     maxItems: 1
+diff --git a/Documentation/devicetree/bindings/clock/rockchip,rk3588-cru.yaml b/Documentation/devicetree/bindings/clock/rockchip,rk3588-cru.yaml
+index 74cd3f3f229a..4ff175c4992b 100644
+--- a/Documentation/devicetree/bindings/clock/rockchip,rk3588-cru.yaml
++++ b/Documentation/devicetree/bindings/clock/rockchip,rk3588-cru.yaml
+@@ -42,10 +42,6 @@ properties:
+       - const: xin24m
+       - const: xin32k
  
--  clocks: true
-+  clocks:
-+    minItems: 1
-+    maxItems: 3
- 
-   '#clock-cells':
-     const: 1
- 
--  clock-output-names: true
-+  clock-output-names:
-+    minItems: 3
-+    maxItems: 17
- 
-   renesas,mode:
-     description: Board-specific settings of the MD_CK* bits on R-Mobile A1
+-  assigned-clocks: true
+-
+-  assigned-clock-rates: true
+-
+   rockchip,grf:
+     $ref: /schemas/types.yaml#/definitions/phandle
+     description: >
 -- 
 2.43.0
 
