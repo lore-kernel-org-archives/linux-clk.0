@@ -1,63 +1,63 @@
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8533E79CC;
-	Sun, 18 Aug 2024 13:47:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08A22199B8;
+	Sun, 18 Aug 2024 13:47:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723988839; cv=none; b=oE2DNu5Q6nDeGhYp3/rPYneJSI9/QZJxs1ZJeG0JbsTSKUGYLmYUz8nYlGBlh0pnhKOcwWgE5YTz5t/OrRzxF5MJhlvzeoVmTYrkVAnOr2XU9e86jMBM2pG0dYVNJ54+9MFj8sKZC0lLZ7P8gdw40hA80oswgMS9xpF/1RiC334=
+	t=1723988877; cv=none; b=V9neAvQtcbKVCl4h0MUqN6cbHf0RlFwYKm0GBf0Z2L8QGq9t+ADeadV7+rU2ccQJsmXSyK6M0fqI9wVjDxdbnKGJh/SPlBAZrmxGBhiK95MCiZ98mTbBuooaPI34K50Hln5ql83oULs5elrno3UhXTSd1PSieYnWILCQPByyVYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723988839; c=relaxed/simple;
-	bh=jgt3v6Wp5x1kqvAC6kVKpKb1Tq0WHo9OEiRTHTbkMr0=;
+	s=arc-20240116; t=1723988877; c=relaxed/simple;
+	bh=DOrE88eK7FNtec8CjcuF9Kbf1J+Xv+uNq/yKCjxMpHc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o1h2mJQ4aeztGpHX08kVnbvWy81xv0Z7nrPS1wVnlr3oSws29c1Qco5FbdH9DwqIzG7TcBTE+Ri1adwS03oyPHtZOKrb9ScIU5O+PVb0SSm6RYyNzEP9YyrJ/hpC0lxo3d8OzV6ehntlx74ziRJm/ilVIohmZDpLuDdD8kB8I68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.175
+	 To:Cc:Content-Type; b=kPBD88hixDbs1cG8svKSLGLmpBKXHq+m7lyNR0yjTBCJqPvKUSdIqknIdb1SjEDsnvGH/Me/QnBVq8Kcix46lUmusARaieU9S6LRasLYOal2Ohn0LZc8XEuvC4Xh9IiAKmonyDwUXBU07cBeOHlKccaXZgK9Yc77/HjIm/RVo7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2f3ce5bc7d2so9368891fa.0;
-        Sun, 18 Aug 2024 06:47:17 -0700 (PDT)
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-530d0882370so3609042e87.3;
+        Sun, 18 Aug 2024 06:47:55 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1723988831; x=1724593631;
+        d=1e100.net; s=20230601; t=1723988871; x=1724593671;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :reply-to:in-reply-to:references:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=+uvtxgs6kWiB9/v6Xs7WCMNnd37h4d8Ese9LrJ+mZCI=;
-        b=ED3W4fh26flfDXUh5ivdDlNso2vWPwNBe33xEihgscg2OUhU2y0G3+wQ5cgVmvK7Fr
-         P/DrqSTZnfZ8wfzTuSYHocZ8Wm7gLZaficii+eRGxtVUjbt5yIeORk92RIGZmO3kwgIk
-         TM5MYPRehj7BrolxLg7biGxsjeeOL0q4W9qB+A+Ve1Iyl6+GJ1cIcfbbfaocTHSUBsj/
-         6GGciUzov7HPqN0rKDeOAgjZdXVS+pCJd23iB1qGnPZj9DI7vskKKXJ0oyRFBQGJmX8+
-         OzLmiJ3FLScJPGrZV2DPpoFYDdFlKYLszmCK0gzAdYoxHziI1tRyWR4ScKZprAyDmMzf
-         RSoA==
-X-Forwarded-Encrypted: i=1; AJvYcCWDedQZlKe4XJ0AOlddeCzRk6tVEmI1C0EZBIzZHxBN0uC34+CcEV1KPuaLzKtTnqYegLZyL16dsBBaXHVcfa5ioIy3JJrw5S042tzF+CwUavh0o3FJIXibu8pq7+K6F9JFtPqGiQ==
-X-Gm-Message-State: AOJu0YxUaBL6hTFqvd+sHif4HT1wOzdlHnrqvifAtHt2XJSc4Yg1A+W/
-	rBCOPdvLgR6eo7Uwj6JLNUe19hr/ZabYx1Gala0grxBGZ5nflI6XeAdE3T/xxYA=
-X-Google-Smtp-Source: AGHT+IEYg89WcUCm+pmTTTQ7XDwSOyS+fTQ7KqLJBqB5kNsw1QqYqoMwRJXS9iAqK1JV6Cf9EgB4eg==
-X-Received: by 2002:a2e:b887:0:b0:2ef:22a5:9472 with SMTP id 38308e7fff4ca-2f3be5de27cmr61512581fa.38.1723988830844;
-        Sun, 18 Aug 2024 06:47:10 -0700 (PDT)
+        bh=DOrE88eK7FNtec8CjcuF9Kbf1J+Xv+uNq/yKCjxMpHc=;
+        b=KcyYjaEtjlqRezbgeVbquoamy7B573gSo50mnXEPsrSmzUF/kOUNk0uVjS5P7dVmoN
+         r/8+rcXKAMSWdWIr0k/BBiW1wGgb4qdYMPoqLkGUvKBXUnhsga24QwtZMrIGFJT4PzE3
+         ikRcJuxuTjtEvjj9ps05EQKbUJM0MFNf8Fxe23kF6JsUz1+4XouWUHe/PAAPMfKQhUL2
+         9XxA+KJ/i7m2/GaxkSHGoixBEsmN6LV9juC81KptKAZCN9P0iW1tbNo6/HOmYPWtimJr
+         zHFe0MggX4c83slLNdBpHgH4TUOgLOj3D1/gDCwNghmGfr3Bg7dsuhoXuJF9f60AQdDt
+         Gg2w==
+X-Forwarded-Encrypted: i=1; AJvYcCVLHNoJGVSA4ig9XHO1iJRwIHATkj89TDGvCDkyG7gExsK+ZzdTrdmQImYr7uEvlexwFOkj8dtVsmS9sPxCs7Jm7MUe2jexMR6zoCYfXrXOoHLi8sUW86QOdqxF6nNN+Xls9zLq7w==
+X-Gm-Message-State: AOJu0YxU0wCjypNXZfkwxGXI55hNxVSVNvQwBuyPS1BzM7d0/XporS6V
+	YGRJD/J4F2PbcW6M+CGcD9obRzHgu0nW7vmnQw5qr4AD3PDUa17FFew3iE287T0=
+X-Google-Smtp-Source: AGHT+IEXvuLolgVnW2+xVu3NIcRSNb2qAyITv7PGRVr4/J81LMj9gMYPGYAAnpWo7lOfhXXuq4Tlag==
+X-Received: by 2002:a05:6512:33d5:b0:530:e228:276f with SMTP id 2adb3069b0e04-5331c6ba93dmr5965242e87.36.1723988870449;
+        Sun, 18 Aug 2024 06:47:50 -0700 (PDT)
 Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f3b771eef7sm12182251fa.111.2024.08.18.06.47.10
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5330d3ff68asm1213069e87.133.2024.08.18.06.47.50
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 18 Aug 2024 06:47:10 -0700 (PDT)
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2f3ce5bc7d2so9368421fa.0;
-        Sun, 18 Aug 2024 06:47:10 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUAVqF+o8tXVMMXFZGR2O+wphSbbf1CfTVoGKxOnPN6Vli2Oz3MVQjiwoysBZ9MS1LtXldudlyjA2z9pMEp0k5LMQ0+EcllM0i5f62OFVy2lFRc2R+hAZ10lr/2oawCaFB+CaIcDw==
-X-Received: by 2002:a2e:9a83:0:b0:2ef:1c0a:9b94 with SMTP id
- 38308e7fff4ca-2f3be5864d9mr51081381fa.16.1723988830128; Sun, 18 Aug 2024
- 06:47:10 -0700 (PDT)
+        Sun, 18 Aug 2024 06:47:50 -0700 (PDT)
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2f025b94e07so39128411fa.0;
+        Sun, 18 Aug 2024 06:47:50 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVvcZf0rlQ7GIdH0ZCu14QhRDuoqTh1afsWTYYUe+bfAzVoIwkwPG4dtHpxUKbCMBaVK9X+r0BURk6Ngo8UepxbK/AgZ1Tn5Mq6IC+OozocRTFdZW9hfPh7lvYv5EQOoJIuSCs8aw==
+X-Received: by 2002:a2e:b8ca:0:b0:2ef:2dc7:a8f7 with SMTP id
+ 38308e7fff4ca-2f3be57e7acmr67887371fa.7.1723988869939; Sun, 18 Aug 2024
+ 06:47:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240817230503.158889-1-ryan@testtoast.com> <20240817230503.158889-20-ryan@testtoast.com>
-In-Reply-To: <20240817230503.158889-20-ryan@testtoast.com>
+References: <20240817230503.158889-1-ryan@testtoast.com> <20240817230503.158889-22-ryan@testtoast.com>
+In-Reply-To: <20240817230503.158889-22-ryan@testtoast.com>
 Reply-To: wens@csie.org
 From: Chen-Yu Tsai <wens@csie.org>
-Date: Sun, 18 Aug 2024 21:46:56 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65_UGEJaqoUs8j9-wfsKKez_UPXTHnL3sj0ZA6NYt2vTQ@mail.gmail.com>
-Message-ID: <CAGb2v65_UGEJaqoUs8j9-wfsKKez_UPXTHnL3sj0ZA6NYt2vTQ@mail.gmail.com>
-Subject: Re: [PATCH v3 19/26] dt-bindings: allwinner: add H616 DE33 bus binding
+Date: Sun, 18 Aug 2024 21:47:38 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65gppDuoUDNhWbZj5vVj7jNiPkiZLPisXK_PKQnPAr=_w@mail.gmail.com>
+Message-ID: <CAGb2v65gppDuoUDNhWbZj5vVj7jNiPkiZLPisXK_PKQnPAr=_w@mail.gmail.com>
+Subject: Re: [PATCH v3 21/26] dt-bindings: allwinner: add H616 DE33 mixer binding
 To: Ryan Walklin <ryan@testtoast.com>
 Cc: Maxime Ripard <mripard@kernel.org>, 
 	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
@@ -79,41 +79,13 @@ rote:
 > The Allwinner H616 and variants have a new display engine revision
 > (DE33).
 >
-> Add a display engine bus binding for the DE33.
+> The mixer configuration registers are significantly different to the DE3
+> and DE2 revisions, being split into separate top and display blocks,
+> therefore a fallback for the mixer compatible is not provided.
+>
+> Add a display engine mixer binding for the DE33.
 >
 > Signed-off-by: Ryan Walklin <ryan@testtoast.com>
 > Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
 Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-
->
-> --
-> Changelog v1..v2:
-> - Correct DE2 bus enum to reflect fallback devices accurately.
->
-> Changelog v2..v3:
-> - Separate content into three patches for three separate subsystems
-> ---
->  .../devicetree/bindings/bus/allwinner,sun50i-a64-de2.yaml     | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/Documentation/devicetree/bindings/bus/allwinner,sun50i-a64-d=
-e2.yaml b/Documentation/devicetree/bindings/bus/allwinner,sun50i-a64-de2.ya=
-ml
-> index 9845a187bdf65..ea7ee89158c61 100644
-> --- a/Documentation/devicetree/bindings/bus/allwinner,sun50i-a64-de2.yaml
-> +++ b/Documentation/devicetree/bindings/bus/allwinner,sun50i-a64-de2.yaml
-> @@ -24,7 +24,9 @@ properties:
->      oneOf:
->        - const: allwinner,sun50i-a64-de2
->        - items:
-> -          - const: allwinner,sun50i-h6-de3
-> +          - enum:
-> +              - allwinner,sun50i-h6-de3
-> +              - allwinner,sun50i-h616-de33
->            - const: allwinner,sun50i-a64-de2
->
->    reg:
-> --
-> 2.46.0
->
