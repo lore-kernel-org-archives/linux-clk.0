@@ -1,227 +1,119 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01147947A;
-	Sun, 18 Aug 2024 13:44:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8533E79CC;
+	Sun, 18 Aug 2024 13:47:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1723988664; cv=none; b=uIPAn6bblgKDbVDMx6FAmeO7mVkH6eLbJww/qlHC9YeBwz+dK3To+D5HKbAMBhbs/cLdU5lJY0aDj3Mg1GpedyUCtRy2mCgZxIp2brwvD9/NNnu460CuLFucXMHfbaIQLFEg6C8cGa4d5Mmc1NyCtAOeFScTsqBbZECFfsqcMpk=
+	t=1723988839; cv=none; b=oE2DNu5Q6nDeGhYp3/rPYneJSI9/QZJxs1ZJeG0JbsTSKUGYLmYUz8nYlGBlh0pnhKOcwWgE5YTz5t/OrRzxF5MJhlvzeoVmTYrkVAnOr2XU9e86jMBM2pG0dYVNJ54+9MFj8sKZC0lLZ7P8gdw40hA80oswgMS9xpF/1RiC334=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1723988664; c=relaxed/simple;
-	bh=/5/W03eo1g8tWi0dolJMkucBe4vEpLEA2eeIEG7MMA8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EcAjGs7h7XpEwNLacd4BZ5qyj5swsmFCbJ1VOSbBqySFCbIMVbYMoQKYkEg/VsKm7Q+2j7VfIWu0LuDkwUEA/7PRs5LujW6oTKHHzFOHGSOBtKbSsrOY2eYG7a5AVWjXpWLbHPuqaCKOddbeXMtNH6MIDZyfCR2rSNla4+R/cRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jMYu/4hc; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jMYu/4hc"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBFECC32786;
-	Sun, 18 Aug 2024 13:44:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1723988663;
-	bh=/5/W03eo1g8tWi0dolJMkucBe4vEpLEA2eeIEG7MMA8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jMYu/4hcouPIAY/LMexriy0jkFmkwXtusNvVDCpc6howzGm78699OjDbbpzyzyQwl
-	 bZYGWvaOeO7+V635i2qEd2kylJ27PiKuDPbrtwEj951vpCjmuascN801P9KKLJlSny
-	 SWG6/x+QC2XXzpvFAsz1CucHQuDjZxnPwqhDevVVwzrQlXP0wirmCBegjxrG9R1R/J
-	 6ONhr8/dFd2tVfKgdon3yjxSH0zCAhhH6TbvKSabxNTQkQhtfATBqCUQRQCX+NWdxu
-	 g/AU1gIN3oFXeMZ6u8lRZL3/8OsUBOsJL1NhgLXWVrtU3bHMR+MPyDBW8vwIskb3pb
-	 asr4XyXOpxYDg==
-Date: Sun, 18 Aug 2024 14:44:19 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Xingyu Wu <xingyu.wu@starfivetech.com>
-Cc: Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Hal Feng <hal.feng@starfivetech.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Subject: Re: [PATCH v6] clk: starfive: jh7110-sys: Fix lower rate of CPUfreq
- by setting PLL0 rate to 1.5GHz
-Message-ID: <20240818-flip-excusably-c89021683d20@spud>
-References: <20240603020607.25122-1-xingyu.wu@starfivetech.com>
- <CAJM55Z-_sOvRnaa8BuGcupsUksaK=tuTbTmF=AtzmzkCo7y5jA@mail.gmail.com>
- <NTZPR01MB09563DBA6F76281EB06914859FB92@NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn>
+	s=arc-20240116; t=1723988839; c=relaxed/simple;
+	bh=jgt3v6Wp5x1kqvAC6kVKpKb1Tq0WHo9OEiRTHTbkMr0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=o1h2mJQ4aeztGpHX08kVnbvWy81xv0Z7nrPS1wVnlr3oSws29c1Qco5FbdH9DwqIzG7TcBTE+Ri1adwS03oyPHtZOKrb9ScIU5O+PVb0SSm6RYyNzEP9YyrJ/hpC0lxo3d8OzV6ehntlx74ziRJm/ilVIohmZDpLuDdD8kB8I68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2f3ce5bc7d2so9368891fa.0;
+        Sun, 18 Aug 2024 06:47:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1723988831; x=1724593631;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+uvtxgs6kWiB9/v6Xs7WCMNnd37h4d8Ese9LrJ+mZCI=;
+        b=ED3W4fh26flfDXUh5ivdDlNso2vWPwNBe33xEihgscg2OUhU2y0G3+wQ5cgVmvK7Fr
+         P/DrqSTZnfZ8wfzTuSYHocZ8Wm7gLZaficii+eRGxtVUjbt5yIeORk92RIGZmO3kwgIk
+         TM5MYPRehj7BrolxLg7biGxsjeeOL0q4W9qB+A+Ve1Iyl6+GJ1cIcfbbfaocTHSUBsj/
+         6GGciUzov7HPqN0rKDeOAgjZdXVS+pCJd23iB1qGnPZj9DI7vskKKXJ0oyRFBQGJmX8+
+         OzLmiJ3FLScJPGrZV2DPpoFYDdFlKYLszmCK0gzAdYoxHziI1tRyWR4ScKZprAyDmMzf
+         RSoA==
+X-Forwarded-Encrypted: i=1; AJvYcCWDedQZlKe4XJ0AOlddeCzRk6tVEmI1C0EZBIzZHxBN0uC34+CcEV1KPuaLzKtTnqYegLZyL16dsBBaXHVcfa5ioIy3JJrw5S042tzF+CwUavh0o3FJIXibu8pq7+K6F9JFtPqGiQ==
+X-Gm-Message-State: AOJu0YxUaBL6hTFqvd+sHif4HT1wOzdlHnrqvifAtHt2XJSc4Yg1A+W/
+	rBCOPdvLgR6eo7Uwj6JLNUe19hr/ZabYx1Gala0grxBGZ5nflI6XeAdE3T/xxYA=
+X-Google-Smtp-Source: AGHT+IEYg89WcUCm+pmTTTQ7XDwSOyS+fTQ7KqLJBqB5kNsw1QqYqoMwRJXS9iAqK1JV6Cf9EgB4eg==
+X-Received: by 2002:a2e:b887:0:b0:2ef:22a5:9472 with SMTP id 38308e7fff4ca-2f3be5de27cmr61512581fa.38.1723988830844;
+        Sun, 18 Aug 2024 06:47:10 -0700 (PDT)
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com. [209.85.208.169])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2f3b771eef7sm12182251fa.111.2024.08.18.06.47.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 18 Aug 2024 06:47:10 -0700 (PDT)
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2f3ce5bc7d2so9368421fa.0;
+        Sun, 18 Aug 2024 06:47:10 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUAVqF+o8tXVMMXFZGR2O+wphSbbf1CfTVoGKxOnPN6Vli2Oz3MVQjiwoysBZ9MS1LtXldudlyjA2z9pMEp0k5LMQ0+EcllM0i5f62OFVy2lFRc2R+hAZ10lr/2oawCaFB+CaIcDw==
+X-Received: by 2002:a2e:9a83:0:b0:2ef:1c0a:9b94 with SMTP id
+ 38308e7fff4ca-2f3be5864d9mr51081381fa.16.1723988830128; Sun, 18 Aug 2024
+ 06:47:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="/bpG2YUXXyZEgE2i"
-Content-Disposition: inline
-In-Reply-To: <NTZPR01MB09563DBA6F76281EB06914859FB92@NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn>
-
-
---/bpG2YUXXyZEgE2i
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20240817230503.158889-1-ryan@testtoast.com> <20240817230503.158889-20-ryan@testtoast.com>
+In-Reply-To: <20240817230503.158889-20-ryan@testtoast.com>
+Reply-To: wens@csie.org
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Sun, 18 Aug 2024 21:46:56 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65_UGEJaqoUs8j9-wfsKKez_UPXTHnL3sj0ZA6NYt2vTQ@mail.gmail.com>
+Message-ID: <CAGb2v65_UGEJaqoUs8j9-wfsKKez_UPXTHnL3sj0ZA6NYt2vTQ@mail.gmail.com>
+Subject: Re: [PATCH v3 19/26] dt-bindings: allwinner: add H616 DE33 bus binding
+To: Ryan Walklin <ryan@testtoast.com>
+Cc: Maxime Ripard <mripard@kernel.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Andre Przywara <andre.przywara@arm.com>, Chris Morgan <macroalpha82@gmail.com>, 
+	John Watts <contact@jookia.org>, dri-devel@lists.freedesktop.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, 
+	devicetree@vger.kernel.org, linux-clk@vger.kernel.org, 
+	Conor Dooley <conor.dooley@microchip.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Aug 08, 2024 at 03:44:49AM +0000, Xingyu Wu wrote:
-> On 06/08/2024 17:58, Emil Renner Berthing wrote:
-> >=20
-> > Xingyu Wu wrote:
-> > > CPUfreq supports 4 cpu frequency loads on 375/500/750/1500MHz. But now
-> > > PLL0 rate is 1GHz and the cpu frequency loads become
-> > > 250/333/500/1000MHz in fact. The PLL0 rate should be default set to
-> > > 1.5GHz and set the divider of cpu_core clock to 2 in safe.
-> > >
-> > > To keeo the cpu frequency stable when setting PLL0, the parent clock
-> > > of the cpu_root clock needs to be switched from PLL0 to another parent
-> > > clock and add notifier function to do this for PLL0 clock. In the
-> > > function, the cpu_root clock should be operated by saving its current
-> > > parent and setting a new safe parent (osc clock) before setting the
-> > > PLL0 clock rate. After setting PLL0 rate, it should be switched back
-> > > to the original parent clock.
-> > >
-> > > To keep the DTS same in Linux and U-Boot and the PLL0 rate is 1GHz in
-> > > U-Boot, the PLL0 rate should be set to 1.5GHz in the driver instead of
-> > > DTS.
-> > >
-> > > Fixes: e2c510d6d630 ("riscv: dts: starfive: Add cpu scaling for JH7110
-> > > SoC")
-> > > Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
-> > > ---
-> > >
-> > > Hi Stephen and Emil,
-> > >
-> > > This patch is to fix the lower rate of CPUfreq by adding the notifier
-> > > for PLL0 clock and changing the PLL0 rate to 1.5GHz.
-> > >
-> > > To keep the DTS same in Linux and U-Boot as Conor wants[1] and the
-> > > PLL0 rate is 1GHz in U-Boot, the PLL0 rate should be set to 1.5GHz in
-> > > the driver instead of DTS.
-> > >
-> > > [1]:
-> > > https://lore.kernel.org/all/20240515-reorder-even-8b9eebd91b45@spud/
-> > >
-> > > Thanks,
-> > > Xingyu Wu
-> > >
-> > > ---
-> > >  .../clk/starfive/clk-starfive-jh7110-sys.c    | 54 +++++++++++++++++=
-+-
-> > >  drivers/clk/starfive/clk-starfive-jh71x0.h    |  2 +
-> > >  2 files changed, 54 insertions(+), 2 deletions(-)
-> > >
-> > > diff --git a/drivers/clk/starfive/clk-starfive-jh7110-sys.c
-> > > b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
-> > > index 8f5e5abfa178..7469981fb405 100644
-> > > --- a/drivers/clk/starfive/clk-starfive-jh7110-sys.c
-> > > +++ b/drivers/clk/starfive/clk-starfive-jh7110-sys.c
-> > > @@ -385,6 +385,32 @@ int jh7110_reset_controller_register(struct
-> > > jh71x0_clk_priv *priv,  }
-> > > EXPORT_SYMBOL_GPL(jh7110_reset_controller_register);
-> > >
-> > > +/*
-> > > + * This clock notifier is called when the rate of PLL0 clock is to b=
-e changed.
-> > > + * The cpu_root clock should save the curent parent clock and swicth
-> > > +its parent
-> > > + * clock to osc before PLL0 rate will be changed. Then swicth its
-> > > +parent clock
-> > > + * back after the PLL0 rate is completed.
-> > > + */
-> > > +static int jh7110_pll0_clk_notifier_cb(struct notifier_block *nb,
-> > > +				       unsigned long action, void *data) {
-> > > +	struct jh71x0_clk_priv *priv =3D container_of(nb, struct jh71x0_clk=
-_priv,
-> > pll_clk_nb);
-> > > +	struct clk *cpu_root =3D priv->reg[JH7110_SYSCLK_CPU_ROOT].hw.clk;
-> > > +	int ret =3D 0;
-> > > +
-> > > +	if (action =3D=3D PRE_RATE_CHANGE) {
-> > > +		struct clk *osc =3D clk_get(priv->dev, "osc");
-> > > +
-> > > +		priv->original_clk =3D clk_get_parent(cpu_root);
-> > > +		ret =3D clk_set_parent(cpu_root, osc);
-> > > +		clk_put(osc);
-> > > +	} else if (action =3D=3D POST_RATE_CHANGE) {
-> > > +		ret =3D clk_set_parent(cpu_root, priv->original_clk);
-> > > +	}
-> > > +
-> > > +	return notifier_from_errno(ret);
-> > > +}
-> > > +
-> > >  static int __init jh7110_syscrg_probe(struct platform_device *pdev)
-> > > {
-> > >  	struct jh71x0_clk_priv *priv;
-> > > @@ -413,7 +439,11 @@ static int __init jh7110_syscrg_probe(struct
-> > platform_device *pdev)
-> > >  		if (IS_ERR(priv->pll[0]))
-> > >  			return PTR_ERR(priv->pll[0]);
-> > >  	} else {
-> > > -		clk_put(pllclk);
-> > > +		priv->pll_clk_nb.notifier_call =3D jh7110_pll0_clk_notifier_cb;
-> > > +		ret =3D clk_notifier_register(pllclk, &priv->pll_clk_nb);
-> > > +		if (ret)
-> > > +			return ret;
-> > > +
-> > >  		priv->pll[0] =3D NULL;
-> > >  	}
-> > >
-> > > @@ -501,7 +531,27 @@ static int __init jh7110_syscrg_probe(struct
-> > platform_device *pdev)
-> > >  	if (ret)
-> > >  		return ret;
-> > >
-> > > -	return jh7110_reset_controller_register(priv, "rst-sys", 0);
-> > > +	ret =3D jh7110_reset_controller_register(priv, "rst-sys", 0);
-> > > +	if (ret)
-> > > +		return ret;
-> > > +
-> > > +	/* Set the divider cpu_core to 2 and set the PLL0 rate to 1.5G. */
-> > > +	pllclk =3D clk_get(priv->dev, "pll0_out");
-> > > +	if (!IS_ERR(pllclk)) {
-> > > +		struct clk *cpu_core =3D priv-
-> > >reg[JH7110_SYSCLK_CPU_CORE].hw.clk;
-> > > +
-> > > +		ret =3D clk_set_rate(cpu_core, clk_get_rate(cpu_core) / 2);
-> > > +		if (ret)
-> > > +			return ret;
-> > > +
-> > > +		ret =3D clk_set_rate(pllclk, 1500000000);
-> > > +		if (ret)
-> > > +			return ret;
-> > > +
-> > > +		clk_put(pllclk);
-> > > +	}
-> > > +
-> > > +	return 0;
-> >=20
-> > I'm still not a fan of hardcoding cpu frequencies in the driver. You've=
- added the
-> > notifiers exactly so that we can use the standard device tree settings =
-for this.
-> >=20
-> > In other words I much prefer v5 of this patchset.
-> >=20
-> > /Emil
-> >=20
->=20
-> Thanks, Emil.
->=20
-> Hi Conor, what do you think about this issue?
+On Sun, Aug 18, 2024 at 7:08=E2=80=AFAM Ryan Walklin <ryan@testtoast.com> w=
+rote:
+>
+> The Allwinner H616 and variants have a new display engine revision
+> (DE33).
+>
+> Add a display engine bus binding for the DE33.
+>
+> Signed-off-by: Ryan Walklin <ryan@testtoast.com>
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
-Apologies for the delay replying, I didn't realise there was a question
-here directed at me. My only real thought on the patchset is that what
-is done should not cause problems when the same devicetree is used for
-both U-Boot and for the kernel. As long as that's satisfied, I don't
-mind how you choose to implement it.
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
 
-Thanks,
-Conor.
-
---/bpG2YUXXyZEgE2i
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZsH6sAAKCRB4tDGHoIJi
-0npvAQC4WDtyVbKcEfhBfUHLStOHYmzIkbPMB5JUnMrBqE33lwD8C6p4mP6XXQ6h
-zT/6hO/+V90M10dzetOibhlI0W8NaQ8=
-=a3KW
------END PGP SIGNATURE-----
-
---/bpG2YUXXyZEgE2i--
+>
+> --
+> Changelog v1..v2:
+> - Correct DE2 bus enum to reflect fallback devices accurately.
+>
+> Changelog v2..v3:
+> - Separate content into three patches for three separate subsystems
+> ---
+>  .../devicetree/bindings/bus/allwinner,sun50i-a64-de2.yaml     | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> diff --git a/Documentation/devicetree/bindings/bus/allwinner,sun50i-a64-d=
+e2.yaml b/Documentation/devicetree/bindings/bus/allwinner,sun50i-a64-de2.ya=
+ml
+> index 9845a187bdf65..ea7ee89158c61 100644
+> --- a/Documentation/devicetree/bindings/bus/allwinner,sun50i-a64-de2.yaml
+> +++ b/Documentation/devicetree/bindings/bus/allwinner,sun50i-a64-de2.yaml
+> @@ -24,7 +24,9 @@ properties:
+>      oneOf:
+>        - const: allwinner,sun50i-a64-de2
+>        - items:
+> -          - const: allwinner,sun50i-h6-de3
+> +          - enum:
+> +              - allwinner,sun50i-h6-de3
+> +              - allwinner,sun50i-h616-de33
+>            - const: allwinner,sun50i-a64-de2
+>
+>    reg:
+> --
+> 2.46.0
+>
