@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4A3D14D29D;
-	Mon, 19 Aug 2024 06:22:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9692711CA0;
+	Mon, 19 Aug 2024 06:23:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724048547; cv=none; b=n6W+hS5PhomAdRbMjRfBHdXOSkI8qjHND1b2qM16rRTXCMtmJWdVT83eRbLPPODJ+rd2TU+W2SD8fTrH0m0RHZ6Yt0lIibZavGel3kVRitDK9hGBIDMnK50OXpZSVGTg1w2K4z9nxk+uhdGV36X1PgHFLO/c8qpMVddwKxCCG4E=
+	t=1724048590; cv=none; b=Db5MboNXCckJ7LTnIIm+RIQzQ8OyL+1++o1vUacwuhgpwA4k/eJvL+sn1gK1yox39lKBNI77VCvRLuMF2RDt1wDJf+1gofc2TUAu6Uwl6MoasWM7KcIBdwZdNrAyzRXp+C/vH40EQPV6SQBtwCMY48VJJcXKIYB+nc00GrohwYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724048547; c=relaxed/simple;
-	bh=EIbCQQocBdXcoRQFTBtr2H5aZ+0dOv0sdrVE7kaNGQg=;
+	s=arc-20240116; t=1724048590; c=relaxed/simple;
+	bh=bC7T0p+tHuY2kO+MKQcdN5kNbzdUQRWUyWZzf5XlOVw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fJitVzhJm1p4bicPQyPkDmCxQloyQEbT1JCp2bybQacQfQVFzpe7U/tAQ0m+jL0QztIhvg89vQJouOW5uUMbumNeeRJEzbr4TkZRJb79z5Pyu6SMwTQB66888cK/Jh/DnkAlJ2rsF3VOAyayGztlo1eraUhSWfWrOyNReCiwdwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zc0CKQhL; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=UvOo6lJOENLx0KmSFBPTiVBr/dLMpVzpHlUwkQbu31O2KGw8y9L1I/UinDNDc2sxQu+hIcAEQlb7EVhYjmyiYt/64TCD6MridHbStQU522axZn3uP387C9G1BVseeLjXRbc4UleXLmRZHkQsDxmo48xHJTy1PHjT3FiNVlwKHpg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nacOwQ2e; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zc0CKQhL"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF367C4AF09;
-	Mon, 19 Aug 2024 06:22:21 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nacOwQ2e"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4082C32782;
+	Mon, 19 Aug 2024 06:23:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724048547;
-	bh=EIbCQQocBdXcoRQFTBtr2H5aZ+0dOv0sdrVE7kaNGQg=;
+	s=k20201202; t=1724048590;
+	bh=bC7T0p+tHuY2kO+MKQcdN5kNbzdUQRWUyWZzf5XlOVw=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Zc0CKQhLlT/nFdCu19CAjmuERQFLot38AVvPuhqwvuypPaXwrV1EDsz2sJV8nWTUL
-	 yrSVSFAqvBQPlRKtPvqf5qDlU5PgfMe7Atzrn0yWCV+6REHEj0jUWJIMAkFM+fIjx6
-	 0MF4soOoNzAIf7dqJ1qPvUqLj+JYBI0V9F8kl8A9d2sDx4QhBebFBkZv/ccxkawR+j
-	 JyhCgZmZal24zFjzRrgJJEZb0WvobasEdN2xCGWa+AlMtgSEHvN5fz5/DR0KJnKXnA
-	 6+ifzlTWz5Dp+R6I+PCKcDozt0f/4+9+rib3ur4fDQN3UNkwDHA9bSGA8twdepgdA9
-	 hcvpRTqB1PlAQ==
-Message-ID: <c9144724-9bdd-42a0-9d9f-dcae5779e863@kernel.org>
-Date: Mon, 19 Aug 2024 08:22:18 +0200
+	b=nacOwQ2eT8pFcRuwvbqx9akyRegBd75fMhn0jof4YbjXGT+CeZ7t8N91hTZXjSBpk
+	 OsnTkgMriDbwqBBjwi+TSHrDrUDVs2ZohOij7nY+u5CsCgtT1ieuCTSbH6JJVhDWBa
+	 IxI8pxunczaRXQ4GSYuVm3ev/se0HZ2iYqXbpHd9bzWPpO3qA9GSHBo90sGl4W+7te
+	 s9Fti8xfiCaEhE6HbeAHiufbyvXLtymKvH2ss+pvW2s+c7RodxMz8RreYjK3v5kBmM
+	 bkz3IMC92zMy/c1widfTMYcOyl3Ksa1L6M2moWqo9AR1owp3/iQR0e8TBXjBa6dOhK
+	 rujgSCTOt4zdg==
+Message-ID: <3f85ad2e-4472-40e0-baf9-420e443107aa@kernel.org>
+Date: Mon, 19 Aug 2024 08:23:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,8 +47,8 @@ Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
  linux@mainlining.org
 References: <20240818204348.197788-1-danila@jiaxyga.com>
  <20240818204348.197788-8-danila@jiaxyga.com>
-Content-Language: en-US
 From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -100,9 +100,8 @@ On 18/08/2024 22:43, Danila Tikhonov wrote:
 > Add new entry to the SM8450 dt-bindings for the SM8475 clocks.
 > 
 > Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
-> ---
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Why required-opps are not a required property? Did you read entire binding?
 
 Best regards,
 Krzysztof
