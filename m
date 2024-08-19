@@ -1,97 +1,106 @@
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9A611D54DB;
-	Mon, 19 Aug 2024 19:05:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD2821DAC42;
+	Mon, 19 Aug 2024 19:56:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724094346; cv=none; b=uCFEYYUmS9tnIqH5qzyXLPryxqVuPVrnwLLambVb2IGBT1E5ftlK48l2u+Ox+G5pLtjF4lRyu0LwzzSBA+dmiJJaLwSt3JB9ZsNP42A3vz/DJdExf2VVQbahV74VzdDPniWeYeVLVMCWSt2YaM6O/QBTCeLbJdkT9BY0gJSQza4=
+	t=1724097403; cv=none; b=KIpkQ6C5pyZnEfubceognfFdn62O6hJM2UdFl2qK1vjvRZtBQ0oC1+uMHMbNx17gkaKoixwzog0ja1y0IBqStP9XtSDEa4c5sY1IIywoEJbFygl9h/IUYS+W0thQ7sEBwo/o8sR2VZs3aifvKccndn9Lw+12eYMwrwcaH+bNlo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724094346; c=relaxed/simple;
-	bh=k2A0/BCns1Cq5J08fexRX14OJbjeeomB62tUYjHSxuQ=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=Eyb/0mH/OA6QrUmJwYbulxA+DfsM5IObpqUV7m7udAYNuWbLOhoRASvamCLT6+a0tbB+GVUgcIMmIrKpmgZwXlh4a0x9C3XEYovtaflxsmzWTgaKaOGuLEERFd8fhBXcyJUS9w+ik/KDFmW5Lsc6jejqvzgDCugbwlVJZ5guIHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d0gnNYNb; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1724097403; c=relaxed/simple;
+	bh=tPvpMLuFSAnOXuRFxzSXoYbAnnW8myMFN1l5mA7qOGA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FAMiyQ+0H7nQXtmdyQypXJlwFmSyNW+iRcjo+qgF25Kd/CYFoAzYj+z1Pz0s7vcXhfX3YnEVmzgIXlbqLA7++1fhHh5vE/KbqnRNeKEpCgM8Zez5vXFU1UkxvA5PoAo3vBHa60pAWb8/cXySNTkHq5To2rsX8rEX03MY7BZt4Ko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cd0Um/A1; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d0gnNYNb"
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2d394313aceso3553538a91.3;
-        Mon, 19 Aug 2024 12:05:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724094344; x=1724699144; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=BSA8WlviUSbpbuW965c0ZiyQiaz2MAchqTQ/6QUBORM=;
-        b=d0gnNYNb+3VmX73Bz42ybtvvcVGKqlZ1HbN7Dz8dPfYsAeDvWPQz8CoGDkWrvJ+Mgc
-         /Lp8e6+7ai4rkP19hFeR0pCweoIolYlPUzVBZBCjqUp2+yy8W0FeFWsNh23ZVjkYhzGx
-         E4NTvuIWK0UVemEjo14QmdVWuK+qn/wCbbvwvq0bf4I6ebhwR2gaXKL9Xujjudir8RIG
-         bwidYLjm2Ivbmtsj/Ia1DI9Gu3YjW94CHwBqboVhNQsc30YIarrfspwg6rAQ6aCQKVxa
-         asiXp3H5toI5DOOymGszQUkcwCqiJIlONMJMXD1FV9hh2BKO7nXUXJZ7pNPg0wjwwOz0
-         PIrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724094344; x=1724699144;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BSA8WlviUSbpbuW965c0ZiyQiaz2MAchqTQ/6QUBORM=;
-        b=kdvPyKT9a2NziDpczCX8JrkasVEgNSEZKkHzLAYLjdJrEZyEB5mUksNvbbksyQlgwv
-         MakmMuvZm4jW6OIT+lINsiHrTwCEpr9JutRAIfHpe4Tf9DEdtr11jRrJqmaMRW8+dyrM
-         TCerMzJtvDDEmmrTrsRYluziwDOxSlveSW7z6CRlpahquPr2DWzK4dmWCRLyFJIre9nP
-         q3FswUg4PzvytNdm1RRaADrFYeSpfSXuvJQTbabE0uhPwBij6cyzlnvDaPZPYhO67p+W
-         drT0d6ov8mj63qdJvqthTTxngnjgU14+JyN7P2k/IlUOl6gJdHvXpsyk/JBWVrNMLeuo
-         KIqA==
-X-Forwarded-Encrypted: i=1; AJvYcCXbAyQJeB3OAjhqDYWHXssGIxVOeJ/4azxq7rtB8A18h+QK9pD3bxAt6YEp78esTSLNqKMFWFMOd3/ssuc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yweu2d14VcJF6t896j15DaMucqFm+VUQm63h/RPYbksM1lnjlEM
-	+82VsBVvPWP8YAdOhEAFRvRRyeEB+GOP6QizX6LLJUCRd67R+mI1faWGUrN7D1ZXWgZq3nt/fls
-	baKh+iPsrfcBSjlhVfRy3UJIAaaQ=
-X-Google-Smtp-Source: AGHT+IGa7rr0kwnXmfTYxd8zSa33kt45UXDVPxk1ZqIsHO3MbpEWRryA35+GhGrtpPQMyIndwBWIp20kyw0pU5lyPz8=
-X-Received: by 2002:a17:90b:705:b0:2ca:7636:2214 with SMTP id
- 98e67ed59e1d1-2d3dfc2a217mr12905753a91.4.1724094343237; Mon, 19 Aug 2024
- 12:05:43 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cd0Um/A1"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF04AC32782;
+	Mon, 19 Aug 2024 19:56:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724097403;
+	bh=tPvpMLuFSAnOXuRFxzSXoYbAnnW8myMFN1l5mA7qOGA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Cd0Um/A1HsQExf5JaaOM+jT0Sc+ix861H5ANMh7BoAMVUP6BR+9afuxpmE2bJhN22
+	 M7wsDOESLVR3rHfB9SHUFj1nbIbuAPtGdqoVQVB78kC/6M90nZ+P5zdedbANMzE9uF
+	 LcNTmsHKkNAN6e3sL7sFq1Oo7Dw4KlttZxNN3nbu/GCmrCQBVi2g+18G33cdH8vJvs
+	 KI4QIqa3qZBVAhr/5FBgJ+s1HVKQiNucgvcsMR5ptZUAdVjrUGimt4HVw/8ifaR0eI
+	 79ZgBnfzhC6e09lGnyGXuWONc6CB0v5MESWmiV6LBIkEB3mXXpHa4FValPfcrpY2X6
+	 wgPVpnA+BOBZw==
+Date: Mon, 19 Aug 2024 21:56:37 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: "wsa+renesas@sang-engineering.com" <wsa+renesas@sang-engineering.com>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, claudiu beznea <claudiu.beznea@tuxon.dev>, 
+	Chris Brandt <Chris.Brandt@renesas.com>, "robh@kernel.org" <robh@kernel.org>, 
+	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
+	"magnus.damm@gmail.com" <magnus.damm@gmail.com>, "mturquette@baylibre.com" <mturquette@baylibre.com>, 
+	"sboyd@kernel.org" <sboyd@kernel.org>, "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>, 
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>, 
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: Re: [PATCH v2 07/12] i2c: riic: Define individual arrays to describe
+ the register offsets
+Message-ID: <dl7vqbmypa6cxzlfutlpnn6tfuxr3elj7wdzway3eyhho5mdxy@ylw2azxpdbdw>
+References: <20240625121358.590547-8-claudiu.beznea.uj@bp.renesas.com>
+ <TY3PR01MB11346EF9A001F68162148B70F86D02@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <6289f329-118f-4970-a525-75c3a48bd28b@tuxon.dev>
+ <TY3PR01MB1134603F92C72D9B6C6C3733C86D02@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <2f162986-33c5-4d80-958c-4f857adaad20@tuxon.dev>
+ <TY3PR01MB11346CA73575CF61B2024F3B386D02@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <79c26030-4b92-4ef3-b8ce-d011f492161b@tuxon.dev>
+ <CAMuHMdXJ8eKLzMqCPR2ewS9gr_m5OQPneETPMC-rOOmW+--f5A@mail.gmail.com>
+ <7c542f46-c644-4f22-bbc4-408b7dad8273@tuxon.dev>
+ <CAMuHMdUmiQjsKt93jM62V5YR_NdtUDXhcxFs+F+BCu3NTNsx8Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Haoyu Li <lihaoyu499@gmail.com>
-Date: Mon, 19 Aug 2024 12:05:30 -0700
-Message-ID: <CAPbMC74ShG6R8JEoiv29082GqN5jbkHrLcsw6fXfjWu=oAqmAg@mail.gmail.com>
-Subject: [drivers/clk] Question about `en7523_register_clocks` func: misuse of __counted_by
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAMuHMdUmiQjsKt93jM62V5YR_NdtUDXhcxFs+F+BCu3NTNsx8Q@mail.gmail.com>
 
-Dear Linux Developers for COMMON CLK FRAMEWORK,
+Hi Geert,
 
-We are curious about the use of `struct clk_hw_onecell_data *clk_data`
-in function `en7523_register_clocks`.
-The definition of `struct clk_hw_onecell_data` is at
-https://elixir.bootlin.com/linux/v6.10.6/source/include/linux/clk-provider.h#L1405.
-```
-struct clk_hw_onecell_data {
-        unsigned int num;
-        struct clk_hw *hws[] __counted_by(num);
-};
-```
+I've been reading all the review history of this series and now
+I'm walking through all the review history again do see if
+everything has been 
 
-Our question is: The `hws` member of `struct clk_hw_onecell_data` is annotated
-with "__counted_by", which means the size of the array is indicated by
-`num`. Only if we set `num` before accessing `hws[n]`, the flexible
-member `hws` can be properly bounds-checked at run-time when enabling
-CONFIG_UBSAN_BOUNDS and CONFIG_FORTIFY_SOURCE. Or there will be a
-warning from each array access that is prior to the initialization
-because the number of elements is zero.
+> > >>>> On the manual I've downloaded from Renesas web site the FMPE bit of RIICnFER is not available on
+> > >>>> RZ/A1H.
+> > >>>
+> > >>> I just found RZ/A2M manual, it supports FMP and register layout looks similar to RZ/G2L.
+> > >>
+> > >> I introduced struct riic_of_data::fast_mode_plus because of RZ/A1H.
+> > >
+> > > Do you need to check for that?
+> > >
+> > > The ICFER_FMPE bit won't be set unless the user specifies the FM+
+> > > clock-frequency.  Setting clock-frequency beyond Fast Mode on RZ/A1H
+> > > would be very wrong.
+> >
+> > I need it to avoid this scenario ^. In patch 09/12 there is this code:
+> >
+> > +       if ((!info->fast_mode_plus && t->bus_freq_hz > I2C_MAX_FAST_MODE_FREQ) ||
+> > +           (info->fast_mode_plus && t->bus_freq_hz > I2C_MAX_FAST_MODE_PLUS_FREQ)) {
+> > +               dev_err(dev, "unsupported bus speed (%dHz). %d max\n", t->bus_freq_hz,
+> > +                       info->fast_mode_plus ? I2C_MAX_FAST_MODE_PLUS_FREQ :
+> > +                       I2C_MAX_FAST_MODE_FREQ);
+> >                 return -EINVAL;
+> >
+> > to avoid giving the user the possibility to set FM+ freq on platforms not
+> > supporting it.
+> >
+> > Please let me know if I'm missing something (or wrongly understood your
+> > statement).
+> 
+> Wolfram/Andi: what is your view on this?
 
-In function `en7523_register_clocks` at
-https://elixir.bootlin.com/linux/v6.10.6/source/drivers/clk/clk-en7523.c#L428,
-we think relocating `clk_data->num = EN7523_NUM_CLOCKS` before
-accessing `clk_data->hws[EN7523_CLK_PCIE]` is needed.
+I don't have anything against it... what exactly are you
+proposing here?
 
-Here is a fix example of a similar situation :
-https://lore.kernel.org/stable/20240613113225.898955993@linuxfoundation.org/.
+If you want you can directly reply to the v4 6/11 patch.
 
-Please kindly correct us if we missed any key information. Looking
-forward to your response!
-
-Best,
-Haoyu Li
+Thanks Geert for checking on this series.
+Andi
