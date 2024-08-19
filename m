@@ -1,61 +1,61 @@
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB4C9130A47
-	for <linux-clk@vger.kernel.org>; Mon, 19 Aug 2024 15:55:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE46813C670
+	for <linux-clk@vger.kernel.org>; Mon, 19 Aug 2024 15:57:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724082942; cv=none; b=ff9ZaO7ClfeQeKzsYFrAld/mMpiGlwMRycjyuKg4e8CalV9GD6KheyiCFk90Wjidj8bjQtPRIgrHel8hgOU7KYOrhT46Kr03OgkoH4Zf2hvtuPc2PL9mIX6As4aOgg64Xfgd0ZqYBrnvSzXU8oqgIO04FyJlOBU9dZyg+JQwCSw=
+	t=1724083072; cv=none; b=FQiOC/ab/i2fZECoc07+Sy56yPXxIpbe57HNpx/yomdfv/v7iWiGZeHjNr91CppLbAPLd2lJS32M/jptWMKSKZLaxU3eOkwdIhRRARe7QPyvSK+jn/RQrZ0JVnn9vJGxboWqLkIs6nAjiAGhvVpOrMPku+JiGI8wchYKKFLjnzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724082942; c=relaxed/simple;
-	bh=0ZPZcSBz0GA9QaquCLoHbf0kkp4RlgHigycxyhrDtvY=;
+	s=arc-20240116; t=1724083072; c=relaxed/simple;
+	bh=mp5LMuBSzTVnZiVMfzCI4ELMyqOZCnZ146c3JWPIvCw=;
 	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=a1GAzsOphNFWz4Oc/GriGzUw0bryQw/siqg3LbRlhXAHPuipdWN7pVTHAp/YmvyUsIigcLcITZkcbCV59o2O/cUwUHTFe/YmD1J8NogfAkD/CfgbxTEU+B5QfKXSe1MXYYef0/3cQ4Sn7ymQWV9je356Ipj18NwxtYHHpEe+9h0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MSg4jziL; arc=none smtp.client-ip=209.85.221.52
+	 In-Reply-To:Content-Type; b=Jd9FM0OZn6IELyyGzycwaiW9O1LggBB3qPXCn8kICb6K0JrWArNmfvDLHy/YXNBtTGuO4M/Ab1x0YZceckIg2TCoFGDhN3bWSdhUW7mUhYmNhJo1XvcJtGaRmPMTv57QLz5U8T/DrS3UT0/9OHl6/w63pbmOtqoiOrAau9eNXGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZBkOHFIR; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MSg4jziL"
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-371a6fcd863so1511907f8f.1
-        for <linux-clk@vger.kernel.org>; Mon, 19 Aug 2024 08:55:40 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZBkOHFIR"
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-428085a3ad1so39424725e9.1
+        for <linux-clk@vger.kernel.org>; Mon, 19 Aug 2024 08:57:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724082939; x=1724687739; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1724083069; x=1724687869; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=Qs5fWzggfiB2jX0FmUYwMsZ2TSBuyP8FCNq135EUvH4=;
-        b=MSg4jziLCvXOSnPZanNzd6Z8HKUtx4BKoyuV5feb7JAQYX3pDXSFmQ28s3leqm1CgE
-         mNQHQzklmKpsU85VOUH1kvvjxyl96nNrx7GX+lt1JL6aJe5hAzl7FajCeAOtI0NK3xhS
-         ksQw9Li1uMACCEGESMpWz/roxXxjDhft5IjIP+vCfNILiqmB2azArux8ERuE1v5WOixn
-         d9lRPuwyQopV/jropfELrLoqLdNCL1Eh58uD2IWeJfXymBcYW3k+1mfJNVUvwOfyNh4C
-         uRaXDQFrs1SIS9SX1mc6xXSvjw9T5rLVTs4fPrXfHzf7x+jobsQCPGWe/ESKvrpFVOPr
-         kJXQ==
+        bh=gYLXx6IK436ZXUWm98Vv0I9P30RpVgjMhTotCo81moA=;
+        b=ZBkOHFIR5Xzbgf9fCp/QaGj0sHjkKR4qY/6ufb893OlQ48kOhLieW5H5X0qGlMLDXb
+         afTPUy87JF51DdZYvYhjgCw2fkhR1T60dY1NX2yEVe5V5ZON6aWpk3y3/Xi5c03glIj7
+         anFgJrjZQu1yuTJk/10Tqd35WsU+SxVc/dAQ25CQosdzzYQm1/LRwVJ2JHynwLMCPnhu
+         ArK0UpaWbzyMFTewMkVocdcF8V9huL2+nXY8nJj45ZkQWP+E4SdBlmPi+kDC6kBOgiP+
+         3tw5Y6IqEgvKRuRDl+P2K53HHkCLOIoE1mPmZt63p8c0WwI1M76YaZLjMrAIN7gd+vS9
+         yl5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724082939; x=1724687739;
+        d=1e100.net; s=20230601; t=1724083069; x=1724687869;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=Qs5fWzggfiB2jX0FmUYwMsZ2TSBuyP8FCNq135EUvH4=;
-        b=n4D5kTakNwMvBx5FskonaamGr9UNMNF28ekgdyEPxvi6JJd5DL1hafer8my7SygCC4
-         o5usmRswZm+zXPv2wZnlkfy8+ce0Fyfbw9j8t/jV5uYhYq1wrezU1PMlbsdnAtroZ4IV
-         jMAZl4Mx+ZljVVtWYzq2w4ehQ5wN39MsJtmYLzbrzusbTO/B1SjDQ6/w60XXrSM6pugm
-         9oTq42H9DkXQdi4MCTRFmtQFU1x8VgeoMqr7yISPcp7WgPPgXMkXjgBtnSs9Kl8GR+jU
-         UZDH4nx9MVyDOMdK4JoHcyrl44Zso1X9OXVsw+Q6uKaJ9wGJU3JrWFv+aX5q0rInm9BO
-         nfeA==
-X-Forwarded-Encrypted: i=1; AJvYcCViGltokeZcMIPeA5NYwE7H8LVM1S9+v7czYY1v2qHsIV6ieYkJ7Jyu6AwfODJkpeHegYxSnmHOTYo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyu8NjsEqGWW6XH+diXTu4IzTCZAn/PJSVCKcNsPUGHVJA18VU5
-	MXunoSJ9cCD0I/mTmIK6RF2xvRM4gqXHXO5HcBEBleGJT2GfwpyAr1jEV8gTpmQ=
-X-Google-Smtp-Source: AGHT+IFJxTbaOFBT1xGu5oUq8Y1BTlG6M875inLI3Fd91V0wqoE+DkDHRodBrHYLtdnMm6jXgZ4Y4w==
-X-Received: by 2002:a05:6000:1289:b0:371:8845:a3af with SMTP id ffacd0b85a97d-371946a3f3dmr6254795f8f.39.1724082938471;
-        Mon, 19 Aug 2024 08:55:38 -0700 (PDT)
+        bh=gYLXx6IK436ZXUWm98Vv0I9P30RpVgjMhTotCo81moA=;
+        b=klIP97ogttO35m2Q7adDbSFL9oAy7J5nn4hcP3VduYJImI7m06mi+Xos3+0ZGuypoo
+         4Djpdo7lGnKIYlrZx9IR8enAOoaZOEC5z/NtaptKQXdImEIxT+s+VgebDyIZ0P98homl
+         Iop3Ml/FRXkqM0nZ1fmizUc/pLP7mNbHpBRGPmB79XNIlxMzj8bUo09V5GUOWjkUOKfp
+         5odG4hMC51tVAyyGKnOKARNL9hMVFn6KYKnpZbDaQ7kIlTqJvAYL17lrurGi1wp3C9ig
+         vFSquvZnM7E4XgHcMATRy5eqka0WZnCy7EtvpbNHpfSawB6nysMuKEZ2UQfEigqEuTCQ
+         2AFw==
+X-Forwarded-Encrypted: i=1; AJvYcCXEIxo6rUOJmZJoQdydTxodh0/f9FQhHOX2gb71oxPlXMpQVaBtEnYqfXeyA4LCIDKRgn6ItmtrXUTHpX4YqHUCgCrDtACLkkfK
+X-Gm-Message-State: AOJu0YyPppIAzvLXe4lGpkTu+D2zylgDPuXiZKulV7ZB6GfvXa1k8Rzw
+	bqqWhhpL3m7FfCQhdqU5bhmMjcrnIEjWhRwOCqTBw7XDHzJVvMZUoP+RV5m5hSg=
+X-Google-Smtp-Source: AGHT+IEWZ9kdWV6uTHZAXTq9g0kGd7Rheid4jblAqZmzIcGKVPLZkk5lJdCcW5NMGYbQoypK0W3cIQ==
+X-Received: by 2002:a05:600c:46c9:b0:427:985b:178b with SMTP id 5b1f17b1804b1-429ed79e585mr67849275e9.16.1724083068540;
+        Mon, 19 Aug 2024 08:57:48 -0700 (PDT)
 Received: from ?IPV6:2a01:e0a:982:cbb0:f54e:4b0a:5175:5727? ([2a01:e0a:982:cbb0:f54e:4b0a:5175:5727])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37189849697sm10840891f8f.37.2024.08.19.08.55.37
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-371898aabe9sm10897543f8f.92.2024.08.19.08.57.47
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Aug 2024 08:55:38 -0700 (PDT)
-Message-ID: <7c598260-513a-4aad-962f-34e5de6731dd@linaro.org>
-Date: Mon, 19 Aug 2024 17:55:37 +0200
+        Mon, 19 Aug 2024 08:57:48 -0700 (PDT)
+Message-ID: <614de1b0-fcaf-457c-9183-1f3cd7f91b38@linaro.org>
+Date: Mon, 19 Aug 2024 17:57:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -65,13 +65,13 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 From: Neil Armstrong <neil.armstrong@linaro.org>
 Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v3 1/9] reset: amlogic: convert driver to regmap
+Subject: Re: [PATCH v3 4/9] reset: amlogic: add driver parameters
 To: Jerome Brunet <jbrunet@baylibre.com>,
  Philipp Zabel <p.zabel@pengutronix.de>, Stephen Boyd <sboyd@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
  linux-clk@vger.kernel.org
 References: <20240808102742.4095904-1-jbrunet@baylibre.com>
- <20240808102742.4095904-2-jbrunet@baylibre.com>
+ <20240808102742.4095904-5-jbrunet@baylibre.com>
 Content-Language: en-US, fr
 Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
@@ -98,160 +98,83 @@ Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
  QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
 Organization: Linaro
-In-Reply-To: <20240808102742.4095904-2-jbrunet@baylibre.com>
+In-Reply-To: <20240808102742.4095904-5-jbrunet@baylibre.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 08/08/2024 12:27, Jerome Brunet wrote:
 > To allow using the same driver for the main reset controller and the
-> auxiliary ones embedded in the clock controllers, convert the
-> the Amlogic reset driver to regmap.
+> auxiliary ones embedded in the clock controllers, allow to customise
+> the reset offset, same as the level offset. Also add an option to make
+> the level reset active low or high.
 > 
 > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 > ---
->   drivers/reset/reset-meson.c | 79 ++++++++++++++++++++-----------------
->   1 file changed, 43 insertions(+), 36 deletions(-)
+>   drivers/reset/reset-meson.c | 12 +++++++++++-
+>   1 file changed, 11 insertions(+), 1 deletion(-)
 > 
 > diff --git a/drivers/reset/reset-meson.c b/drivers/reset/reset-meson.c
-> index f78be97898bc..b47431a21b86 100644
+> index 460ad2f8360f..8addd100e601 100644
 > --- a/drivers/reset/reset-meson.c
 > +++ b/drivers/reset/reset-meson.c
-> @@ -11,36 +11,43 @@
->   #include <linux/of.h>
->   #include <linux/module.h>
->   #include <linux/platform_device.h>
-> +#include <linux/regmap.h>
->   #include <linux/reset-controller.h>
->   #include <linux/slab.h>
->   #include <linux/types.h>
+> @@ -18,7 +18,9 @@
 >   
-> -#define BITS_PER_REG	32
-> -
 >   struct meson_reset_param {
->   	int reg_count;
->   	int level_offset;
+>   	unsigned int reg_count;
+> +	unsigned int reset_offset;
+>   	unsigned int level_offset;
+> +	bool level_low_reset;
 >   };
 >   
 >   struct meson_reset {
-> -	void __iomem *reg_base;
->   	const struct meson_reset_param *param;
->   	struct reset_controller_dev rcdev;
-> -	spinlock_t lock;
-> +	struct regmap *map;
->   };
+> @@ -46,6 +48,7 @@ static int meson_reset_reset(struct reset_controller_dev *rcdev,
+>   	unsigned int offset, bit;
 >   
-> +static void meson_reset_offset_and_bit(struct meson_reset *data,
-> +				       unsigned long id,
-> +				       unsigned int *offset,
-> +				       unsigned int *bit)
-> +{
-> +	unsigned int stride = regmap_get_reg_stride(data->map);
-> +
-> +	*offset = (id / (stride * BITS_PER_BYTE)) * stride;
-> +	*bit = id % (stride * BITS_PER_BYTE);
-> +}
-> +
->   static int meson_reset_reset(struct reset_controller_dev *rcdev,
-> -			      unsigned long id)
-> +			     unsigned long id)
->   {
->   	struct meson_reset *data =
->   		container_of(rcdev, struct meson_reset, rcdev);
-> -	unsigned int bank = id / BITS_PER_REG;
-> -	unsigned int offset = id % BITS_PER_REG;
-> -	void __iomem *reg_addr = data->reg_base + (bank << 2);
-> +	unsigned int offset, bit;
+>   	meson_reset_offset_and_bit(data, id, &offset, &bit);
+> +	offset += data->param->reset_offset;
 >   
-> -	writel(BIT(offset), reg_addr);
-> +	meson_reset_offset_and_bit(data, id, &offset, &bit);
->   
-> -	return 0;
-> +	return regmap_write(data->map, offset, BIT(bit));
+>   	return regmap_write(data->map, offset, BIT(bit));
 >   }
+> @@ -59,9 +62,10 @@ static int meson_reset_level(struct reset_controller_dev *rcdev,
 >   
->   static int meson_reset_level(struct reset_controller_dev *rcdev,
-> @@ -48,25 +55,13 @@ static int meson_reset_level(struct reset_controller_dev *rcdev,
->   {
->   	struct meson_reset *data =
->   		container_of(rcdev, struct meson_reset, rcdev);
-> -	unsigned int bank = id / BITS_PER_REG;
-> -	unsigned int offset = id % BITS_PER_REG;
-> -	void __iomem *reg_addr;
-> -	unsigned long flags;
-> -	u32 reg;
-> +	unsigned int offset, bit;
+>   	meson_reset_offset_and_bit(data, id, &offset, &bit);
+>   	offset += data->param->level_offset;
+> +	assert ^= data->param->level_low_reset;
 >   
-> -	reg_addr = data->reg_base + data->param->level_offset + (bank << 2);
-> +	meson_reset_offset_and_bit(data, id, &offset, &bit);
-> +	offset += data->param->level_offset;
->   
-> -	spin_lock_irqsave(&data->lock, flags);
-> -
-> -	reg = readl(reg_addr);
-> -	if (assert)
-> -		writel(reg & ~BIT(offset), reg_addr);
-> -	else
-> -		writel(reg | BIT(offset), reg_addr);
-> -
-> -	spin_unlock_irqrestore(&data->lock, flags);
-> -
-> -	return 0;
-> +	return regmap_update_bits(data->map, offset,
-> +				  BIT(bit), assert ? 0 : BIT(bit));
+>   	return regmap_update_bits(data->map, offset,
+> -				  BIT(bit), assert ? 0 : BIT(bit));
+> +				  BIT(bit), assert ? BIT(bit) : 0);
 >   }
 >   
 >   static int meson_reset_assert(struct reset_controller_dev *rcdev,
-> @@ -113,30 +108,42 @@ static const struct of_device_id meson_reset_dt_ids[] = {
+> @@ -84,17 +88,23 @@ static const struct reset_control_ops meson_reset_ops = {
+>   
+>   static const struct meson_reset_param meson8b_param = {
+>   	.reg_count	= 8,
+> +	.reset_offset	= 0x0,
+>   	.level_offset	= 0x7c,
+> +	.level_low_reset = true,
 >   };
->   MODULE_DEVICE_TABLE(of, meson_reset_dt_ids);
 >   
-> +static const struct regmap_config regmap_config = {
-> +	.reg_bits   = 32,
-> +	.val_bits   = 32,
-> +	.reg_stride = 4,
-> +};
-> +
->   static int meson_reset_probe(struct platform_device *pdev)
->   {
-> +	struct device *dev = &pdev->dev;
->   	struct meson_reset *data;
-> +	void __iomem *base;
+>   static const struct meson_reset_param meson_a1_param = {
+>   	.reg_count	= 3,
+> +	.reset_offset	= 0x0,
+>   	.level_offset	= 0x40,
+> +	.level_low_reset = true,
+>   };
 >   
-> -	data = devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
-> +	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
->   	if (!data)
->   		return -ENOMEM;
->   
-> -	data->reg_base = devm_platform_ioremap_resource(pdev, 0);
-> -	if (IS_ERR(data->reg_base))
-> -		return PTR_ERR(data->reg_base);
-> +	base = devm_platform_ioremap_resource(pdev, 0);
-> +	if (IS_ERR(base))
-> +		return PTR_ERR(base);
->   
-> -	data->param = of_device_get_match_data(&pdev->dev);
-> +	data->param = of_device_get_match_data(dev);
->   	if (!data->param)
->   		return -ENODEV;
->   
-> -	spin_lock_init(&data->lock);
-> +	data->map = devm_regmap_init_mmio(dev, base, &regmap_config);
-> +	if (IS_ERR(data->map))
-> +		return dev_err_probe(dev, PTR_ERR(data->map),
-> +				     "can't init regmap mmio region\n");
->   
->   	data->rcdev.owner = THIS_MODULE;
-> -	data->rcdev.nr_resets = data->param->reg_count * BITS_PER_REG;
-> +	data->rcdev.nr_resets = data->param->reg_count * BITS_PER_BYTE
-> +		* regmap_config.reg_stride;
->   	data->rcdev.ops = &meson_reset_ops;
-> -	data->rcdev.of_node = pdev->dev.of_node;
-> +	data->rcdev.of_node = dev->of_node;
->   
-> -	return devm_reset_controller_register(&pdev->dev, &data->rcdev);
-> +	return devm_reset_controller_register(dev, &data->rcdev);
->   }
->   
->   static struct platform_driver meson_reset_driver = {
+>   static const struct meson_reset_param meson_s4_param = {
+>   	.reg_count	= 6,
+> +	.reset_offset	= 0x0,
+>   	.level_offset	= 0x40,
+> +	.level_low_reset = true,
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Just a comment, I would rather leave the "default" users of this driver with the default value
+and use level_high_reset = true for the clock ones
+
+Neil
+
+>   };
+>   
+>   static const struct of_device_id meson_reset_dt_ids[] = {
+
