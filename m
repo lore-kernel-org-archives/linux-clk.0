@@ -1,166 +1,123 @@
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC261166F21;
-	Mon, 19 Aug 2024 14:07:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724076456; cv=pass; b=alc6YR1Xy91SOVF4Zo6Ht3HRz6TmsuhNvrYP6OgvcmMpZXgE+G95VSGV6gDxLmbE/XB3WIW1sigQJHSsRmxm+ideEL88lu0ycdh0V17I7I0FsQlw0KfrSkbPierNPqtfTqE+IABrGasj3EnI/d58KFdFPN3gKwlFu0l6WhsvsiA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724076456; c=relaxed/simple;
-	bh=gmUPssrIfJo7m2PHNU2wOtBCulFEX6sMYjGfbbajZJY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KhZzrNpzcUZzBadBZbOow1nYNwjZ/8uSJ8EOzCBN115QbHhAsqoxORcDiDZxmGujnAhMRyUbiyX3IQaEroQr3+U+vgeo/owoKlZ+aJEmTehTFQtbpi5jC+SlDw8ZSVpSB9FsK8LdApMoWuVYd9h/Upg0BO9OH4f9FbPIHHQpRyw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=XoECn+5a; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F407E1EB3E;
+	Mon, 19 Aug 2024 14:33:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724078018; cv=none; b=sqk544vC4zQLy15FT//TJPg5lYDZSfL7kMru3M1+UR/zACg3cmX5RS4f4WQnsIYaxCerGIIUDlmgam0247pD6bFh/Jla/qxNR26mGExzqP80HyopCjc0ePtlwHBYW5+cDx9wzF1hjQekqpuR93jkamtWc81TsnriGyvypriUVaQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724078018; c=relaxed/simple;
+	bh=H+ZIKiMh674Bjzw07BrdT0R3OoZs01VKiKWa0fM7Bbw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W9MV0YLz9HhQ8bg/lrpxylJOgGv32VgLH/4co/qUsyK7Q5z8LSsIkUcPXfoISOZW1gHpSSEu4r6PZanyP0g2p0uP7pVB8sWrA+zgeqEagCW8IlX0wuF1IcqL/BXYQU+chVOBevCarnfYB3j/eKT63rZkw9Fl6ayql6g2dBiKjik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=t6lMb7s/; arc=none smtp.client-ip=217.92.40.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="XoECn+5a"
-ARC-Seal: i=1; a=rsa-sha256; t=1724076419; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=KFcBHaTHpEoAOvPDekVVbOVDYrcbpTePmOuzBmIUQMVGE99DllJ134ePJ4eaFXeSpQ7FfmvGBHVj2TiwxkUdoPN2xwkewqIZxdQTJ5WNBSxBlTwD1x9iNNyENagASrY+kX1zphmOQw1CxLq4c54ihi+EzFqh+x4JYcMTeGvhzCU=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1724076419; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=ZkV3lCqrhCL/CEHyK/B3/ruXUMXYJqM7j2j33wHPH7Y=; 
-	b=OB8YJp7mDp1naTGor1Y9XuwAWslUbAoC5jSC0YopnC9fY+aasCJwfneU6++FOBwYxd/SMffAdL2A7K0OmAhbiTDu9GmzQjFC8yK8Eg6vLkIUzH45fPiLKk1YSGk6qTY1C4uqXyz+9CQy/0qgVwJ906zITTUG/brnUctHylGy6tM=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
-	dmarc=pass header.from=<detlev.casanova@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724076419;
-	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=ZkV3lCqrhCL/CEHyK/B3/ruXUMXYJqM7j2j33wHPH7Y=;
-	b=XoECn+5ajwSz41GDT1zGVJA0lMOdtpxgBxr36oMfTdnkREm/BbUkzdYHXd4DvIy1
-	trOao3WT3jh8czfmuvkE+vpgSZKhJ+rRx5SVave+P5Jn+iaEb7pHsTfN7q9kLFLE5wn
-	jYd7koXzjlU5EP8ZN8IpSehrNtugsFCERWO1X3wk=
-Received: by mx.zohomail.com with SMTPS id 1724076416454854.9649861700929;
-	Mon, 19 Aug 2024 07:06:56 -0700 (PDT)
-From: Detlev Casanova <detlev.casanova@collabora.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Heiko Stuebner <heiko@sntech.de>, Philipp Zabel <p.zabel@pengutronix.de>,
- Elaine Zhang <zhangqing@rock-chips.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, kernel@collabora.com,
- Sugar Zhang <sugar.zhang@rock-chips.com>
-Subject: Re: [PATCH v5 1/2] dt-bindings: clock, reset: Add support for rk3576
-Date: Mon, 19 Aug 2024 10:08:31 -0400
-Message-ID: <5018731.31r3eYUQgx@trenzalore>
-In-Reply-To: <20240815-tassel-whacking-a460ee2ebd41@spud>
-References:
- <20240814222159.2598-1-detlev.casanova@collabora.com>
- <20240814222159.2598-2-detlev.casanova@collabora.com>
- <20240815-tassel-whacking-a460ee2ebd41@spud>
+	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="t6lMb7s/"
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 72A0B1487C4C;
+	Mon, 19 Aug 2024 16:33:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
+	t=1724078007; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=iQVOt1llIIcq5WnSoYkc52Dl6PKByIIU7aUlvEKpzvE=;
+	b=t6lMb7s/zGX10EiHF2Li7uk4xcylapG8vYpyB59LnJ5kmHXoX5BBuvRepIWzFtaWGaOWjZ
+	Cbs86csBU7GRG5eyhgULso93l4KSubNUbFAWRTLXGEh2TIT6CvrRMCZUyWRkH8/T5VBITe
+	mcQslqX/urGyCTYhBTvsz7ux5t1pnmFf65fD7d79U7HFDP1px8QvCjBlZnC7/nmYlMYhoi
+	RYF83LTHnv1PChD4hag71zMFOQ/izaYQrcRL8C3/hEyS+fzS4BSs8R37apskpWnvKh5LXO
+	SZXOgc9KrJ9/AKJwRYfVWsXK7TO4NF9t9g3Df+BIZ840b4abKddSn1fH+bf90g==
+Date: Mon, 19 Aug 2024 16:33:19 +0200
+From: Alexander Dahl <ada@thorsis.com>
+To: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	linux-arm-kernel@lists.infradead.org
+Cc: Boris Brezillon <bbrezillon@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>
+Subject: Re: get, prepare, enable a clock not in DT?
+Message-ID: <20240819-education-prong-3da4b83d42ed@thorsis.com>
+Mail-Followup-To: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	linux-arm-kernel@lists.infradead.org,
+	Boris Brezillon <bbrezillon@kernel.org>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>
+References: <20240816-ludicrous-lagging-65e750c57ab4@thorsis.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240816-ludicrous-lagging-65e750c57ab4@thorsis.com>
+User-Agent: Mutt/2.2.12 (2023-09-09)
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Conor,
+Hello everyone,
 
-On Thursday, 15 August 2024 11:07:46 EDT Conor Dooley wrote:
-> On Wed, Aug 14, 2024 at 06:19:22PM -0400, Detlev Casanova wrote:
-> > Add clock and reset ID defines for rk3576.
-> > 
-> > Compared to the downstream bindings written by Elaine, this uses
-> > continous gapless IDs starting at 0. Thus all numbers are
-> > different between downstream and upstream, but names are kept
-> > exactly the same.
-> > 
-> > Also add documentation for the rk3576 CRU core.
-> > 
-> > Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
-> > Signed-off-by: Sugar Zhang <sugar.zhang@rock-chips.com>
-> > Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
-> > ---
-> > 
-> >  .../bindings/clock/rockchip,rk3576-cru.yaml   |  64 ++
-> >  .../dt-bindings/clock/rockchip,rk3576-cru.h   | 592 ++++++++++++++++++
-> >  .../dt-bindings/reset/rockchip,rk3576-cru.h   | 564 +++++++++++++++++
-> >  3 files changed, 1220 insertions(+)
-> >  create mode 100644
-> >  Documentation/devicetree/bindings/clock/rockchip,rk3576-cru.yaml create
-> >  mode 100644 include/dt-bindings/clock/rockchip,rk3576-cru.h create mode
-> >  100644 include/dt-bindings/reset/rockchip,rk3576-cru.h> 
-> > diff --git
-> > a/Documentation/devicetree/bindings/clock/rockchip,rk3576-cru.yaml
-> > b/Documentation/devicetree/bindings/clock/rockchip,rk3576-cru.yaml new
-> > file mode 100644
-> > index 0000000000000..d69985e6fa0ce
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/clock/rockchip,rk3576-cru.yaml
-> > @@ -0,0 +1,64 @@
-> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/clock/rockchip,rk3576-cru.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Rockchip rk3576 Family Clock and Reset Control Module
-> > +
-> > +maintainers:
-> > +  - Elaine Zhang <zhangqing@rock-chips.com>
-> > +  - Heiko Stuebner <heiko@sntech.de>
-> > +  - Detlev Casanova <detlev.casanova@collabora.com>
-> > +
-> > +description:
-> > +  The RK3576 clock controller generates the clock and also implements a
-> > reset +  controller for SoC peripherals. For example it provides
-> > SCLK_UART2 and +  PCLK_UART2, as well as SRST_P_UART2 and SRST_S_UART2
-> > for the second UART +  module.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: rockchip,rk3576-cru
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  "#clock-cells":
-> > +    const: 1
-> > +
-> > +  "#reset-cells":
-> > +    const: 1
-> > +
-> > +  clocks:
-> > +    maxItems: 2
-> > +
-> > +  clock-names:
-> > +    items:
-> > +      - const: xin24m
-> > +      - const: xin32k
-> > +
-> > +  rockchip,grf:
-> > +    $ref: /schemas/types.yaml#/definitions/phandle
-> > +    description: >
-> > +      phandle to the syscon managing the "general register files". It is
-> > used +      for GRF muxes, if missing any muxes present in the GRF will
-> > not be +      available.
+Am Fri, Aug 16, 2024 at 04:34:48PM +0200 schrieb Alexander Dahl:
+> Hello everyone,
 > 
-> Two questions on this property:
-> - you only support one soc, why is this optional?
+> while further investigating timeout issues with the at91 otpc
+> controller on sam9x60 [1] I came to the conclusion the main RC
+> oscillator on that SoC must be enabled for that driver to work.
+> (Verified that by poking single bits in registers through devmem
+> already.)
+> 
+> Fortunately the necessary clk is already registered from the SoC code
+> in drivers/clk/at91/sam9x60.c [2] and I can see the clock in sysfs clk
+> summary:
+> 
+>     root@DistroKit:~ head -n4 /sys/kernel/debug/clk/clk_summary 
+>                                      enable  prepare  protect                                duty  hardware                            connection
+>        clock                          count    count    count        rate   accuracy phase  cycle    enable   consumer                         id
+>     ---------------------------------------------------------------------------------------------------------------------------------------------
+>      main_rc_osc                         0       0        0        12000000    50000000   0     50000      Y   deviceless                      no_connection_id         
+> 
+> That clock has no parent and is not found anywhere in devicetree, nor
+> is it handled by the two clock-producers on that platform, so
+> from within mchp_otpc_probe() I just tried this:
+> 
+>     otpc->clk = devm_clk_get_enabled(&pdev->dev, "main_rc_osc");
+> 
+> However that returns with -ENOENT, so I assume I can not reference the
+> clock just by name?  Same result with this:
+> 
+>     otpc->clk = devm_clk_get_enabled(NULL, "main_rc_osc");
+> 
+> How do I get a pointer to that clk then to enable it?  Docs [3] where
+> not as useful as I hoped for, neither was clk.h header docs. :-/
 
-It is optional because only used for some specific clocks. The SoC can still be 
-used without this, but some devices might not work (Not tested but USB PHYs 
-might not be working without the GRF)
-This is also set as optional in similar rockchip CRU bindings (rk3588).
+Tried this today:
 
-> - why can't you look it up by compatible?
+    otpc->clk = __clk_lookup("main_rc_osc");
 
-These bindings are specific to one compatible only. It is very similar to 
-rk3588 but it looks like all rockchip CRU driver has its own yaml file, so I 
-followed that trend instead of merging with the rk3588 CRU bindings.
+However calling that from platform driver code smells suspicious and I
+get a linker error when building anyways.
 
-Regards,
-Detlev.
+Found no other possibility to get a grip on that clock from driver
+code.  Do we need to hook that main_rc_osc into dt somehow so it can be
+enabled from driver code?
 
+Adding Boris, Alexandre, and Nicolas to Cc, because they were involved
+in the at91 clk drivers in the past.  O:-)
 
+Greets
+Alex
 
+> From what I understood from header docs reading 'device for clock
+> "consumer"' I must pass the device from which I call that clk_get() as
+> first parameter, so this would be the otpc device then, right?  What's
+> that second parameter clock consumer id then?  Are these terms
+> explained somewhere?
+> 
+> Greets
+> Alex
+> 
+> [1] <20240813-payable-ecology-8a9e739704bb@thorsis.com>
+> [2] https://elixir.bootlin.com/linux/v6.10.4/source/drivers/clk/at91/sam9x60.c#L217
+> [3] https://kernel.org/doc/html/latest/driver-api/clk.html
+> 
+> 
