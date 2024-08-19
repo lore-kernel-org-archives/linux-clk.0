@@ -1,61 +1,61 @@
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20D7F4F5FB
-	for <linux-clk@vger.kernel.org>; Mon, 19 Aug 2024 16:31:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34830188CA8
+	for <linux-clk@vger.kernel.org>; Mon, 19 Aug 2024 16:34:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724085086; cv=none; b=NjKLC4CLd3jhsuqdpiDoa08LaTj1IIu6r5+Tr/8+9R50eQQEqrIQCVHpPBQ8a6oNxjT6mR4F6CfgZa9nu1VS6Xmq015pLhPgawicsrLKqaqPIIgS+WPoZA6F3IPoFPHEOaH/qD7hVzMghpkxCooPMflBdC/ICbvhPCj0/mjAU44=
+	t=1724085244; cv=none; b=K8mSPrsM/pbgfGpAd+F7hcEdXOnNQnCttWJY6T6w67qw9Ph8uOyHaupCWIDMnUhpMdjS49ZrknWpfuNCvRuyMlCHFdC1MOsH6VjZ0mOb6dQPU4z38ue38KwU/9AMSPpSLaSFdSsZYs/jYtxhQDS5RQSCHC9i94Fh9Z4sRH6BSf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724085086; c=relaxed/simple;
-	bh=GfAX+P6Y37VsUQ+ZmZZXbdPLECUQrpLacQI5cjvMcbA=;
+	s=arc-20240116; t=1724085244; c=relaxed/simple;
+	bh=aRrncrVktZjgA5oAEA2W+AaS3jkX3Gt+CxUE32ZHYiw=;
 	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=g43TuhgaFSxyJqgFXtperBgU8C0GGZslvSBsQ9ZRQLLzL2HB7CO5YQHrmP7nfFooZG4TMWr266L1ewBTIZGC1J2T6kXtiuZoS5hQlAHZU/tbEaUTt7BqIXtyUUaVH5dZJFqLCyI02r8cByjea+4Wprv+ZVfKppEO4H0K4dIGL8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rBe76Htv; arc=none smtp.client-ip=209.85.221.53
+	 In-Reply-To:Content-Type; b=s1xg1zrn4YG95Z1Tz5gFjMPNb0WBkKwRaiNWLRw9zngpLzvH6HFkGxQV+qW0kkdv1Pktmzd9P0DyAc+moHl8kNku9aZIMRv1Qqi9QavZIqzqFdwuRIttiEpThqJQX9hbQSxX9E/xuX9p4M1sgSl0h/G8ZbLDvN7ZfOLYTSNvCo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kHOXfcAq; arc=none smtp.client-ip=209.85.128.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rBe76Htv"
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-367990aaef3so2815772f8f.0
-        for <linux-clk@vger.kernel.org>; Mon, 19 Aug 2024 09:31:24 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kHOXfcAq"
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-428243f928cso36257445e9.3
+        for <linux-clk@vger.kernel.org>; Mon, 19 Aug 2024 09:34:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724085083; x=1724689883; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1724085240; x=1724690040; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=g1vzoPvkrxUYmA4vkG1jLM7RsiBC+ves8hqeyXsMQo4=;
-        b=rBe76HtvhQojGtVKlRf7sfgxqf0v3Jh9wEfI+HyG6Ho3tKGMdanLOvHBryBPBethCQ
-         KnYLW0FWKxnpxLoUOqnEr87cthk/Xel1Y8Jfa5aaJ/XE+T76GMK21PukUGa7Jyg6oK0O
-         mHxdlex3RcedgQ/BlHbme0jsmYv9mta4YbZ6Raos0ZZ3WgAJCu+vfrTESEMRDDapNLQA
-         KqtaCLSNkMRkps1tbXj7mDl0s/c9qme55C5+uOkhfW2n3L0GU1TgupXxz4ZOsjS5BleI
-         tNeyob4B0n1KY9kRmi1rp199u1ne+13947ZM5ryrQDcilzDvDXvLxl+b+kh8OR9hWjdb
-         gz2Q==
+        bh=6TbNiYeotx4JMHFWDRCviKRIbCDiCXMgbxMfsVo33a4=;
+        b=kHOXfcAqOSOUz3RqT4lDf8I9tNtfjbltKWxx4uPLke+ohtLWVSI9SwJjvgzI7QqpbA
+         KA+YEFpTmcha8bhQdJukzu3suIT5AZ3A+30dkhh7+cG8jtfG1yndPKhp2iWo197+9xIB
+         mvWdt57lYf9ybrbXW/v8si93Xoxw+RrfQCJkprvca0o8lpXTzyDAed0cdqusYEXSUdAl
+         DJ0hb6DV4NBTS3V//XbvOJ1a5UxCkrR2eSHCfEZUzlVKgWYxLAaz9LRJouqTI27Cpxhi
+         jJc42V7gmexQz635BqgTP4vTaLd86kConiV16wbY4CI7KpGMgpmXWdXWKkWNt25BeMym
+         Tt2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724085083; x=1724689883;
+        d=1e100.net; s=20230601; t=1724085240; x=1724690040;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=g1vzoPvkrxUYmA4vkG1jLM7RsiBC+ves8hqeyXsMQo4=;
-        b=aH9EEMkj4ZBDNVD9bFvmcLD5OHbCicRl/CjAGYZesadqF0Zwc3iWXb9Sk0cHPbtucd
-         maSnANouhLszgBE6C/evv+BL1rDQRCyZo1SjJOOuqa8rQLwHGphKJS3lT/R3dqVU5odj
-         EP+HxoaTqxKcmTou8VpmVEZ/Oyi4mguwJnO6u/In5Io5ano4WuW3eFsLg1bI8xHRnHgb
-         aDox1qw3UMTB6yeFv2GTmt+DY4OJUJEivZu7pZJCZDgK2oKhaTEzEIDLBDeFUx9jndXZ
-         MU+0aPBMrSb1W/UduN9wVVd/ix7wWbkJThwih/J9xXfTL9ZXIYBmlwxmd1pfq+NEP+/U
-         cxHw==
-X-Forwarded-Encrypted: i=1; AJvYcCUZvCGpnnoIkKM1EJoh9dIw3imUEzwGoPncqKVNWUsNsBMlhPepRS92Y2WjiRhr2xBlWluDlfCKcLJ9VGBcDLOF92tOpjO6wHaQ
-X-Gm-Message-State: AOJu0Yzl8qd7PvkhQBE/pX/f1uQAFDaRZ1jrpnXts4U+L2aZdnIiY+cy
-	GiJjKWaV3LhBtVVelZx86EyNQsMlGAC8JuKrpKoTNkdeNMTprMKD4FcMOgdATL0=
-X-Google-Smtp-Source: AGHT+IEF3YD7UktYIbb2X2tK1RtPMDnoN1l5z4W+kscLDEtPDSFERgrFEcwC+UYnpXBLNPRmVEowLg==
-X-Received: by 2002:a05:6000:1112:b0:368:714e:5a5e with SMTP id ffacd0b85a97d-3719431764cmr7859133f8f.2.1724085083063;
-        Mon, 19 Aug 2024 09:31:23 -0700 (PDT)
+        bh=6TbNiYeotx4JMHFWDRCviKRIbCDiCXMgbxMfsVo33a4=;
+        b=wrxvqYbpSm23GSJY4L+quiw5Hr+JO5ioLq8JX5mrqe4AGqM+cVJ56othsSrUkn/Ana
+         82pVrIcKgL9XawOnruyFVHS6SP87aApSK3nBEPkK9r0ITX0TSaNrr3nTDKTek006zzj1
+         4As3z1+5mnZhAPgKcP+T2XZUEBooDeX+gywZrbl6JjflDrcV6W0Q+njVUfGIuMGDJF8W
+         JBgn0tNSBlaceczBXeCHx+gzzdnx0TEFW8fGPewu7LszByV7mje+ML4kZvjQXWLT0QFj
+         xEoWDZ88TGjZHaayZvfzN++SiXhEwCCObA6cGaPMKSMKAh24fhdGSuUc5F/IqdiiH6iV
+         0Wrw==
+X-Forwarded-Encrypted: i=1; AJvYcCWdnJ7kneBl0mcaXcWOJNKcqVWotC/rmjKagTCX/dOJcheZJUsu036Y8Gf6r9WhSyF0fe+XTrpXU0I8t/Rd9iN673MSdZKb/zcl
+X-Gm-Message-State: AOJu0YzmZKYpEu6Fwodjjpm/327e14t7A9kfuNUaClnZF4OHMWJpkW5X
+	w0BITSeVXwsuv4BcKZWFle5aVq/nXLtEIdQDtETSETbBW9TPa+uO4GTziPhLSjw=
+X-Google-Smtp-Source: AGHT+IGk3FqUsFgwKkMf1cqD0dnuYbpapf7NoI602tzg5cCA8u0y3gpvfviwf9cqCyTSuX8KgpbNew==
+X-Received: by 2002:a05:600c:a45:b0:426:6edb:7e14 with SMTP id 5b1f17b1804b1-429ed7d34fdmr71034285e9.35.1724085239944;
+        Mon, 19 Aug 2024 09:33:59 -0700 (PDT)
 Received: from ?IPV6:2a01:e0a:982:cbb0:f54e:4b0a:5175:5727? ([2a01:e0a:982:cbb0:f54e:4b0a:5175:5727])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-371898ab469sm10965515f8f.100.2024.08.19.09.31.22
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-371898aa393sm10885172f8f.90.2024.08.19.09.33.59
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Aug 2024 09:31:22 -0700 (PDT)
-Message-ID: <ef485c77-e68b-48b9-9560-159d933bbbc0@linaro.org>
-Date: Mon, 19 Aug 2024 18:31:22 +0200
+        Mon, 19 Aug 2024 09:33:59 -0700 (PDT)
+Message-ID: <812c6ddc-1929-46c4-bac7-4bd0f5ccc213@linaro.org>
+Date: Mon, 19 Aug 2024 18:33:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -65,14 +65,14 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 From: Neil Armstrong <neil.armstrong@linaro.org>
 Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v3 7/9] reset: amlogic: move drivers to a dedicated
- directory
+Subject: Re: [PATCH v3 8/9] reset: amlogic: split the device core and platform
+ probe
 To: Jerome Brunet <jbrunet@baylibre.com>,
  Philipp Zabel <p.zabel@pengutronix.de>, Stephen Boyd <sboyd@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
  linux-clk@vger.kernel.org
 References: <20240808102742.4095904-1-jbrunet@baylibre.com>
- <20240808102742.4095904-8-jbrunet@baylibre.com>
+ <20240808102742.4095904-9-jbrunet@baylibre.com>
 Content-Language: en-US, fr
 Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
@@ -99,119 +99,332 @@ Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
  QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
 Organization: Linaro
-In-Reply-To: <20240808102742.4095904-8-jbrunet@baylibre.com>
+In-Reply-To: <20240808102742.4095904-9-jbrunet@baylibre.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 08/08/2024 12:27, Jerome Brunet wrote:
-> The meson reset driver will be split in two part, one implemeting the ops,
-> the other providing the platform driver support. This will be done to
-> facilitate the addition of the auxiliary bus support.
+> To prepare the addition of the auxiliary device support, split
+> out the device core function from the probe of the platform device.
 > 
-> To avoid making a mess in drivers/reset/ while doing so, move the amlogic
-> reset drivers to a dedicated directory.
+> The device core function will be common to both the platform and auxiliary
+> driver.
 > 
 > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 > ---
->   drivers/reset/Kconfig                             | 15 +--------------
->   drivers/reset/Makefile                            |  3 +--
->   drivers/reset/amlogic/Kconfig                     | 13 +++++++++++++
->   drivers/reset/amlogic/Makefile                    |  2 ++
->   .../reset/{ => amlogic}/reset-meson-audio-arb.c   |  0
->   drivers/reset/{ => amlogic}/reset-meson.c         |  0
->   6 files changed, 17 insertions(+), 16 deletions(-)
->   create mode 100644 drivers/reset/amlogic/Kconfig
->   create mode 100644 drivers/reset/amlogic/Makefile
->   rename drivers/reset/{ => amlogic}/reset-meson-audio-arb.c (100%)
->   rename drivers/reset/{ => amlogic}/reset-meson.c (100%)
-> 
-> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-> index 67bce340a87e..0c092ae1b411 100644
-> --- a/drivers/reset/Kconfig
-> +++ b/drivers/reset/Kconfig
-> @@ -140,20 +140,6 @@ config RESET_MCHP_SPARX5
->   	help
->   	  This driver supports switch core reset for the Microchip Sparx5 SoC.
->   
-> -config RESET_MESON
-> -	tristate "Meson Reset Driver"
-> -	depends on ARCH_MESON || COMPILE_TEST
-> -	default ARCH_MESON
-> -	help
-> -	  This enables the reset driver for Amlogic Meson SoCs.
-> -
-> -config RESET_MESON_AUDIO_ARB
-> -	tristate "Meson Audio Memory Arbiter Reset Driver"
-> -	depends on ARCH_MESON || COMPILE_TEST
-> -	help
-> -	  This enables the reset driver for Audio Memory Arbiter of
-> -	  Amlogic's A113 based SoCs
-> -
->   config RESET_NPCM
->   	bool "NPCM BMC Reset Driver" if COMPILE_TEST
->   	default ARCH_NPCM
-> @@ -343,6 +329,7 @@ config RESET_ZYNQMP
->   	help
->   	  This enables the reset controller driver for Xilinx ZynqMP SoCs.
->   
-> +source "drivers/reset/amlogic/Kconfig"
->   source "drivers/reset/starfive/Kconfig"
->   source "drivers/reset/sti/Kconfig"
->   source "drivers/reset/hisilicon/Kconfig"
-> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-> index 27b0bbdfcc04..bf089176c9f4 100644
-> --- a/drivers/reset/Makefile
-> +++ b/drivers/reset/Makefile
-> @@ -1,5 +1,6 @@
->   # SPDX-License-Identifier: GPL-2.0
->   obj-y += core.o
-> +obj-y += amlogic/
->   obj-y += hisilicon/
->   obj-y += starfive/
->   obj-y += sti/
-> @@ -20,8 +21,6 @@ obj-$(CONFIG_RESET_K210) += reset-k210.o
->   obj-$(CONFIG_RESET_LANTIQ) += reset-lantiq.o
->   obj-$(CONFIG_RESET_LPC18XX) += reset-lpc18xx.o
->   obj-$(CONFIG_RESET_MCHP_SPARX5) += reset-microchip-sparx5.o
-> -obj-$(CONFIG_RESET_MESON) += reset-meson.o
-> -obj-$(CONFIG_RESET_MESON_AUDIO_ARB) += reset-meson-audio-arb.o
->   obj-$(CONFIG_RESET_NPCM) += reset-npcm.o
->   obj-$(CONFIG_RESET_NUVOTON_MA35D1) += reset-ma35d1.o
->   obj-$(CONFIG_RESET_PISTACHIO) += reset-pistachio.o
-> diff --git a/drivers/reset/amlogic/Kconfig b/drivers/reset/amlogic/Kconfig
-> new file mode 100644
-> index 000000000000..7ed9cf50f038
-> --- /dev/null
-> +++ b/drivers/reset/amlogic/Kconfig
-> @@ -0,0 +1,13 @@
-> +config RESET_MESON
-> +	tristate "Meson Reset Driver"
-> +	depends on ARCH_MESON || COMPILE_TEST
-> +	default ARCH_MESON
-> +	help
-> +	  This enables the reset driver for Amlogic Meson SoCs.
-> +
-> +config RESET_MESON_AUDIO_ARB
-> +	tristate "Meson Audio Memory Arbiter Reset Driver"
-> +	depends on ARCH_MESON || COMPILE_TEST
-> +	help
-> +	  This enables the reset driver for Audio Memory Arbiter of
-> +	  Amlogic's A113 based SoCs
-> diff --git a/drivers/reset/amlogic/Makefile b/drivers/reset/amlogic/Makefile
-> new file mode 100644
-> index 000000000000..55509fc78513
-> --- /dev/null
-> +++ b/drivers/reset/amlogic/Makefile
-> @@ -0,0 +1,2 @@
-> +obj-$(CONFIG_RESET_MESON) += reset-meson.o
-> +obj-$(CONFIG_RESET_MESON_AUDIO_ARB) += reset-meson-audio-arb.o
-> diff --git a/drivers/reset/reset-meson-audio-arb.c b/drivers/reset/amlogic/reset-meson-audio-arb.c
-> similarity index 100%
-> rename from drivers/reset/reset-meson-audio-arb.c
-> rename to drivers/reset/amlogic/reset-meson-audio-arb.c
-> diff --git a/drivers/reset/reset-meson.c b/drivers/reset/amlogic/reset-meson.c
-> similarity index 100%
-> rename from drivers/reset/reset-meson.c
-> rename to drivers/reset/amlogic/reset-meson.c
+>   drivers/reset/amlogic/Kconfig                 |  10 +-
+>   drivers/reset/amlogic/Makefile                |   3 +-
+>   .../{reset-meson.c => reset-meson-core.c}     | 101 +++---------------
+>   drivers/reset/amlogic/reset-meson-pltf.c      |  92 ++++++++++++++++
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+Are we still in 1983 ? please use reset-meson-platform and drop pltf completely
+
+>   drivers/reset/amlogic/reset-meson.h           |  24 +++++
+>   5 files changed, 143 insertions(+), 87 deletions(-)
+>   rename drivers/reset/amlogic/{reset-meson.c => reset-meson-core.c} (51%)
+>   create mode 100644 drivers/reset/amlogic/reset-meson-pltf.c
+>   create mode 100644 drivers/reset/amlogic/reset-meson.h
+> 
+> diff --git a/drivers/reset/amlogic/Kconfig b/drivers/reset/amlogic/Kconfig
+> index 7ed9cf50f038..04c7be0f3165 100644
+> --- a/drivers/reset/amlogic/Kconfig
+> +++ b/drivers/reset/amlogic/Kconfig
+> @@ -1,9 +1,15 @@
+> +config RESET_MESON_CORE
+> +	tristate
+> +	select REGMAP
+> +
+>   config RESET_MESON
+> -	tristate "Meson Reset Driver"
+> +	tristate "Meson Reset Platform Driver"
+>   	depends on ARCH_MESON || COMPILE_TEST
+>   	default ARCH_MESON
+> +	select REGMAP_MMIO
+> +	select RESET_MESON_CORE
+>   	help
+> -	  This enables the reset driver for Amlogic Meson SoCs.
+> +	  This enables the reset platform driver for Amlogic SoCs.
+>   
+>   config RESET_MESON_AUDIO_ARB
+>   	tristate "Meson Audio Memory Arbiter Reset Driver"
+> diff --git a/drivers/reset/amlogic/Makefile b/drivers/reset/amlogic/Makefile
+> index 55509fc78513..0f8f9121b566 100644
+> --- a/drivers/reset/amlogic/Makefile
+> +++ b/drivers/reset/amlogic/Makefile
+> @@ -1,2 +1,3 @@
+> -obj-$(CONFIG_RESET_MESON) += reset-meson.o
+> +obj-$(CONFIG_RESET_MESON) += reset-meson-pltf.o
+> +obj-$(CONFIG_RESET_MESON_CORE) += reset-meson-core.o
+>   obj-$(CONFIG_RESET_MESON_AUDIO_ARB) += reset-meson-audio-arb.o
+> diff --git a/drivers/reset/amlogic/reset-meson.c b/drivers/reset/amlogic/reset-meson-core.c
+> similarity index 51%
+> rename from drivers/reset/amlogic/reset-meson.c
+> rename to drivers/reset/amlogic/reset-meson-core.c
+> index b16d9c32adb1..ea4fc562f7e6 100644
+> --- a/drivers/reset/amlogic/reset-meson.c
+> +++ b/drivers/reset/amlogic/reset-meson-core.c
+> @@ -1,27 +1,17 @@
+>   // SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
+>   /*
+> - * Amlogic Meson Reset Controller driver
+> + * Amlogic Meson Reset core functions
+>    *
+> - * Copyright (c) 2016 BayLibre, SAS.
+> - * Author: Neil Armstrong <narmstrong@baylibre.com>
+
+Hmmm no, I'm still an author
+
+> + * Copyright (c) 2024 BayLibre, SAS.
+
+And Baylibre's Copyright is still from 2016, so use 2016-2024 in this case
+
+> + * Author: Jerome Brunet <jbrunet@baylibre.com>
+>    */
+> -#include <linux/err.h>
+> -#include <linux/init.h>
+> -#include <linux/io.h>
+> -#include <linux/of.h>
+> +
+> +#include <linux/device.h>
+>   #include <linux/module.h>
+> -#include <linux/platform_device.h>
+>   #include <linux/regmap.h>
+>   #include <linux/reset-controller.h>
+> -#include <linux/slab.h>
+> -#include <linux/types.h>
+> -
+> -struct meson_reset_param {
+> -	unsigned int reset_num;
+> -	unsigned int reset_offset;
+> -	unsigned int level_offset;
+> -	bool level_low_reset;
+> -};
+> +
+> +#include "reset-meson.h"
+>   
+>   struct meson_reset {
+>   	const struct meson_reset_param *param;
+> @@ -102,84 +92,27 @@ static const struct reset_control_ops meson_reset_ops = {
+>   	.status		= meson_reset_status,
+>   };
+>   
+> -static const struct meson_reset_param meson8b_param = {
+> -	.reset_num	= 256,
+> -	.reset_offset	= 0x0,
+> -	.level_offset	= 0x7c,
+> -	.level_low_reset = true,
+> -};
+> -
+> -static const struct meson_reset_param meson_a1_param = {
+> -	.reset_num	= 96,
+> -	.reset_offset	= 0x0,
+> -	.level_offset	= 0x40,
+> -	.level_low_reset = true,
+> -};
+> -
+> -static const struct meson_reset_param meson_s4_param = {
+> -	.reset_num	= 192,
+> -	.reset_offset	= 0x0,
+> -	.level_offset	= 0x40,
+> -	.level_low_reset = true,
+> -};
+> -
+> -static const struct of_device_id meson_reset_dt_ids[] = {
+> -	 { .compatible = "amlogic,meson8b-reset",    .data = &meson8b_param},
+> -	 { .compatible = "amlogic,meson-gxbb-reset", .data = &meson8b_param},
+> -	 { .compatible = "amlogic,meson-axg-reset",  .data = &meson8b_param},
+> -	 { .compatible = "amlogic,meson-a1-reset",   .data = &meson_a1_param},
+> -	 { .compatible = "amlogic,meson-s4-reset",   .data = &meson_s4_param},
+> -	 { .compatible = "amlogic,c3-reset",   .data = &meson_s4_param},
+> -	 { /* sentinel */ },
+> -};
+> -MODULE_DEVICE_TABLE(of, meson_reset_dt_ids);
+> -
+> -static const struct regmap_config regmap_config = {
+> -	.reg_bits   = 32,
+> -	.val_bits   = 32,
+> -	.reg_stride = 4,
+> -};
+> -
+> -static int meson_reset_probe(struct platform_device *pdev)
+> +int meson_reset_probe(struct device *dev, struct regmap *map,
+> +		      const struct meson_reset_param *param)
+>   {
+> -	struct device *dev = &pdev->dev;
+>   	struct meson_reset *data;
+> -	void __iomem *base;
+>   
+>   	data = devm_kzalloc(dev, sizeof(*data), GFP_KERNEL);
+>   	if (!data)
+>   		return -ENOMEM;
+>   
+> -	base = devm_platform_ioremap_resource(pdev, 0);
+> -	if (IS_ERR(base))
+> -		return PTR_ERR(base);
+> -
+> -	data->param = device_get_match_data(dev);
+> -	if (!data->param)
+> -		return -ENODEV;
+> -
+> -	data->map = devm_regmap_init_mmio(dev, base, &regmap_config);
+> -	if (IS_ERR(data->map))
+> -		return dev_err_probe(dev, PTR_ERR(data->map),
+> -				     "can't init regmap mmio region\n");
+> -
+> -	data->rcdev.owner = THIS_MODULE;
+> -	data->rcdev.nr_resets = data->param->reset_num;
+> +	data->param = param;
+> +	data->map = map;
+> +	data->rcdev.owner = dev->driver->owner;
+> +	data->rcdev.nr_resets = param->reset_num;
+>   	data->rcdev.ops = &meson_reset_ops;
+>   	data->rcdev.of_node = dev->of_node;
+>   
+>   	return devm_reset_controller_register(dev, &data->rcdev);
+>   }
+> +EXPORT_SYMBOL_NS_GPL(meson_reset_probe, MESON_RESET);
+>   
+> -static struct platform_driver meson_reset_driver = {
+> -	.probe	= meson_reset_probe,
+> -	.driver = {
+> -		.name		= "meson_reset",
+> -		.of_match_table	= meson_reset_dt_ids,
+> -	},
+> -};
+> -module_platform_driver(meson_reset_driver);
+> -
+> -MODULE_DESCRIPTION("Amlogic Meson Reset Controller driver");
+> +MODULE_DESCRIPTION("Amlogic Meson Reset Core function");
+>   MODULE_AUTHOR("Neil Armstrong <narmstrong@baylibre.com>");
+> -MODULE_LICENSE("Dual BSD/GPL");
+> +MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
+> +MODULE_IMPORT_NS(MESON_RESET);
+> diff --git a/drivers/reset/amlogic/reset-meson-pltf.c b/drivers/reset/amlogic/reset-meson-pltf.c
+> new file mode 100644
+> index 000000000000..97e933b4aa34
+> --- /dev/null
+> +++ b/drivers/reset/amlogic/reset-meson-pltf.c
+> @@ -0,0 +1,92 @@
+> +// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
+> +/*
+> + * Amlogic Meson Reset platform driver
+> + *
+> + * Copyright (c) 2016 BayLibre, SAS.
+> + * Author: Neil Armstrong <narmstrong@baylibre.com>
+> + */
+> +#include <linux/err.h>
+> +#include <linux/io.h>
+> +#include <linux/of.h>
+> +#include <linux/module.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +#include <linux/reset-controller.h>
+> +
+> +#include "reset-meson.h"
+> +
+> +static const struct meson_reset_param meson8b_param = {
+> +	.reset_num	= 256,
+> +	.reset_offset	= 0x0,
+> +	.level_offset	= 0x7c,
+> +	.level_low_reset = true,
+> +};
+> +
+> +static const struct meson_reset_param meson_a1_param = {
+> +	.reset_num	= 96,
+> +	.reset_offset	= 0x0,
+> +	.level_offset	= 0x40,
+> +	.level_low_reset = true,
+> +};
+> +
+> +static const struct meson_reset_param meson_s4_param = {
+> +	.reset_num	= 192,
+> +	.reset_offset	= 0x0,
+> +	.level_offset	= 0x40,
+> +	.level_low_reset = true,
+> +};
+> +
+> +static const struct of_device_id meson_reset_dt_ids[] = {
+> +	 { .compatible = "amlogic,meson8b-reset",    .data = &meson8b_param},
+> +	 { .compatible = "amlogic,meson-gxbb-reset", .data = &meson8b_param},
+> +	 { .compatible = "amlogic,meson-axg-reset",  .data = &meson8b_param},
+> +	 { .compatible = "amlogic,meson-a1-reset",   .data = &meson_a1_param},
+> +	 { .compatible = "amlogic,meson-s4-reset",   .data = &meson_s4_param},
+> +	 { .compatible = "amlogic,c3-reset",   .data = &meson_s4_param},
+> +	 { /* sentinel */ },
+> +};
+> +MODULE_DEVICE_TABLE(of, meson_reset_dt_ids);
+> +
+> +static const struct regmap_config regmap_config = {
+> +	.reg_bits   = 32,
+> +	.val_bits   = 32,
+> +	.reg_stride = 4,
+> +};
+> +
+> +static int meson_reset_pltf_probe(struct platform_device *pdev)
+> +{
+> +	const struct meson_reset_param *param;
+> +	struct device *dev = &pdev->dev;
+> +	struct regmap *map;
+> +	void __iomem *base;
+> +
+> +	base = devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(base))
+> +		return PTR_ERR(base);
+> +
+> +	param = device_get_match_data(dev);
+> +	if (!param)
+> +		return -ENODEV;
+> +
+> +	map = devm_regmap_init_mmio(dev, base, &regmap_config);
+> +	if (IS_ERR(map))
+> +		return dev_err_probe(dev, PTR_ERR(map),
+> +				     "can't init regmap mmio region\n");
+> +
+> +	return meson_reset_probe(dev, map, param);
+> +}
+> +
+> +static struct platform_driver meson_reset_pltf_driver = {
+> +	.probe	= meson_reset_pltf_probe,
+> +	.driver = {
+> +		.name		= "meson_reset",
+> +		.of_match_table	= meson_reset_dt_ids,
+> +	},
+> +};
+> +module_platform_driver(meson_reset_pltf_driver);
+> +
+> +MODULE_DESCRIPTION("Amlogic Meson Reset Platform Controller driver");
+> +MODULE_AUTHOR("Neil Armstrong <narmstrong@baylibre.com>");
+> +MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
+> +MODULE_LICENSE("Dual BSD/GPL");
+> +MODULE_IMPORT_NS(MESON_RESET);
+> diff --git a/drivers/reset/amlogic/reset-meson.h b/drivers/reset/amlogic/reset-meson.h
+> new file mode 100644
+> index 000000000000..c2e8a5cf2e46
+> --- /dev/null
+> +++ b/drivers/reset/amlogic/reset-meson.h
+> @@ -0,0 +1,24 @@
+> +/* SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause */
+> +/*
+> + * Copyright (c) 2024 BayLibre, SAS.
+> + * Author: Jerome Brunet <jbrunet@baylibre.com>
+> + */
+> +
+> +#ifndef __MESON_RESET_CORE_H
+> +#define __MESON_RESET_CORE_H
+> +
+> +#include <linux/module.h>
+> +#include <linux/regmap.h>
+> +#include <linux/reset-controller.h>
+> +
+> +struct meson_reset_param {
+> +	unsigned int reset_num;
+> +	unsigned int reset_offset;
+> +	unsigned int level_offset;
+> +	bool level_low_reset;
+> +};
+> +
+> +int meson_reset_probe(struct device *dev, struct regmap *map,
+> +		      const struct meson_reset_param *param);
+> +
+> +#endif /* __MESON_RESET_CORE_H */
+
