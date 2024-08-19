@@ -1,61 +1,61 @@
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2DD9173357
-	for <linux-clk@vger.kernel.org>; Mon, 19 Aug 2024 16:29:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44E3E16D4EE
+	for <linux-clk@vger.kernel.org>; Mon, 19 Aug 2024 16:30:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724084976; cv=none; b=g4ZBlDFp43m3Z39g8XPp+0rugK+RfHSUQoMR8aCZrwsMladSRkhsVdxRZQ14ZSfTQWC1JHuzf1SjkM+IZOCdeS2NTnqjOeIaMa2nhdqhz1EXJup7JCvfI3Q+fL5POunxcTcJWkCawreMuIkeeeAa7XVu4Fc3/e4IFgs0AD0PfDA=
+	t=1724085007; cv=none; b=Pl6IGeJpbOIiw9tp4Xdg6kRWwL/hXy97Uu+sXlr1d9iZhlZoxjzcBrRIkDmC4bLC66Br780ZIhuyIV9JUjXxXqbsX8P8Z/ny5KQwNp8ZcTA5WldRDz/JI5LmAdfWWQH1icbCrtcvK4L22pTAuX3XOF+6qmsJaLcZrOUOte78E9U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724084976; c=relaxed/simple;
-	bh=I1ygwhScveC8GlVdj4Oic9IJ8ABJRIoD88MRwbkSanE=;
+	s=arc-20240116; t=1724085007; c=relaxed/simple;
+	bh=5uQK76DggjvF22mp3e17AZuc5pTrreNqIaDtoupLJW0=;
 	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Ka+36ojtdIVZipjWNW0E1j9HFECSQKaF1yBM6wAFthTX4GSz+JApKQPX4dpBFlslFfN/ZD9XAiXbSJ16eDTJEebE4pzbhRLgyt67bKE4afNBhZB0ELAv735i1FL1vM/UVUwa1DOJbmgPy3IQVbOhE+uJKxcAbkTsyZUS+9umt+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eNDC0I9c; arc=none smtp.client-ip=209.85.128.53
+	 In-Reply-To:Content-Type; b=KCSoBn1w2hhtZ46fERrgEzqREKEiQ7GJXOAGCiL9v0hZEwVStwBymT+G8E8XJVs3K8ev/dUWxW9bHbgGDEKOsz91gnOHS+6lEOKDhGns1VSqvW7M0jqzp1fjuFMJBnFDpAVWHl+0AUIQNMkxP6MDSvY28WY3Ci/km3Cg8Ebt/KI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pNmyTAYC; arc=none smtp.client-ip=209.85.128.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eNDC0I9c"
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-42819654737so35250625e9.1
-        for <linux-clk@vger.kernel.org>; Mon, 19 Aug 2024 09:29:33 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pNmyTAYC"
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4281c164408so35612805e9.1
+        for <linux-clk@vger.kernel.org>; Mon, 19 Aug 2024 09:30:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724084972; x=1724689772; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1724085003; x=1724689803; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=vyTK/Nqg+TcWV88Hzbb8pamwVc3/Bic39dkGuh1HO74=;
-        b=eNDC0I9cQRe8YR6TzOi255RkkYYCvJrQF/2WIqvusC3KvqOTOhmWq5rRe2+PA/ynCb
-         gvVzjkQIRzi2fl+e+Q07D75TL0O7rM6WxN3aRKKyt21PjnJ2u7gNUHtQ0IUqHwxZv3hc
-         6TRfyE+9XiZHoCDKXhAQvZBvVwxbpzGkr8N0vbpAjJe+Agy0+4CcWjbAKrPVhZB8GlyR
-         cX4kRr7uavI/vhkhH+ekM96XOFPeOfEx1ELDg1UXCelsBELnOM4he8k167RpNn/yf/m3
-         tCIbAKybivcJoXgcPdfZYYJsG3zmOKTE1us22nO1tgdI3ZigmCo7e3APMzZ0jgpEtQKu
-         IA8g==
+        bh=7r7S7wRPFk2pSvVl7ZU19q0fOw2MNDRQgJBqWmwGHPQ=;
+        b=pNmyTAYCKFu3Ra9LyFwW+9LL6H8v9UvrwsRwtIyrWP1ZN6HG0wsgfb6ED3QoMZHC7p
+         QmQuSB31pZVbtWCGAoWzRIGigisVzRoOhcoZpc4GoPtCZEDTD/5WlrNJUjLFyRU8rD0c
+         bZzHqYGKlpdlUq8exsqP7TBn8j+kv05kjiY9QsyiHPx4b88vSrUyE4lsGW493RhMOMtB
+         ZyGlPLvol4HCIndFTxTwSyRcn6vift/JdSXxsP3M7HlpMqr2gJPmy/dciD/hnDW19Vvu
+         KFGKHQefcGVMPNVsaXX45iHTE9xeiK/9XIINlk5Kp072EvA+Ei2qV03y/TnpvAZMpDT7
+         HKlA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724084972; x=1724689772;
+        d=1e100.net; s=20230601; t=1724085003; x=1724689803;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=vyTK/Nqg+TcWV88Hzbb8pamwVc3/Bic39dkGuh1HO74=;
-        b=rlnlkSLG0rtM4LJZ8C+mctYKDUoQwpQdEGhnyDcuQGoPq2FgP5cjUHZldK966TLSat
-         f4yO1CBdEYxY4v8lX1vLhPdkYowFy2P2cQwW/usyfjHk/dvEs9L5V4hjB/+8Zqp4sLm6
-         EdDlEIwOwuqlP1XMo5g8DgAKuuZfcKM84FesF7REmfVfRQmEDuu5UIbbb8cEyNWIsEhk
-         Gu8UXmn79eW10jHqzPMs3B+erkoX14lRB67F3qhHrLm5+Km72KoUS8bS+LqIjTvXD8ij
-         O/d+EkaNLdAkyShbTpOw9KedA84Vh0rqLe1hEXt49KMTpYRi0SwqsxMXlDgcbfyeLT+P
-         J14w==
-X-Forwarded-Encrypted: i=1; AJvYcCXHdwjPXOo1SggUBSlEhwT9PhKb1QC5DveB/o0QW2wLPdOVKzYHfuP0FvfEhaCquihdBLi6S9GoRBVPPkPMmWSUyEeA3Fw+1lad
-X-Gm-Message-State: AOJu0YwInZSxYdGdgvNYlADKUktrd+eIHLqA5hZJLQZbXGn3dDa7/f9u
-	3I23NI/huniCzZ98wlx5v1O0gEAJ5EHK4bIrOyc63fFeaTcp6ylE419RZxUkGZg=
-X-Google-Smtp-Source: AGHT+IFmUt462S1VhERmlQIQq8oIZQDZkUEeKWv+5iLxGFcru4qpZHKVXvR9dRFVXR4lSve7N0W4QA==
-X-Received: by 2002:a05:600c:3587:b0:426:51dc:f6cd with SMTP id 5b1f17b1804b1-429ed7b8883mr89103815e9.18.1724084971510;
-        Mon, 19 Aug 2024 09:29:31 -0700 (PDT)
+        bh=7r7S7wRPFk2pSvVl7ZU19q0fOw2MNDRQgJBqWmwGHPQ=;
+        b=RJJKuLDcWNMxtHpfZIBUL9t0y2Tj23VFHyjnvKUKx5T2dgljAw3vFIWOqgIOItpw1E
+         rBsOPEc1QhGNud6/TQT1xaR2L/i7qZu8Co//1JYyorwsixsbUuwzMlvDN7PF2gc+nPQ3
+         8LRqKcw8nSntbXU3xAj/nFV17s3JctsPsN3FgsnC7dRjRFAynKxHzA1Ox0dHxuTtmodQ
+         SgPpOyERQq95CpsXy+OpJHOYrJvIjUZuSjFsSNO/plSF3V+KOcPSMNsyDFFyTW5tZy1q
+         Vjjt+vQZT6dEWmFf5hBP3XrSmtZs1z1AXmmnk0Ax9P596qEi2TKKks7oniHgUY/oQzBb
+         x3oA==
+X-Forwarded-Encrypted: i=1; AJvYcCW4oh1IIDlq2siT2rbXSm9VgUOTvVK9z00+j6HWEK3cL6DjBWDKqXQG7DteR0VBtSDjg3yCbWb4830CkAom5c3n5j588MXC+ik9
+X-Gm-Message-State: AOJu0Ywng37YSMqUXS4hmsF8B+BUE3ProsWylkzXf04qotLrDVtnfLaB
+	N9bspuNGGDyiyiyzE7EXXIKUJvRbdrR0I+JzBlikWu+qD4LTvvHIHdoURkOHGig=
+X-Google-Smtp-Source: AGHT+IGMIVaSKllyXTJLYfxv8zWfWh7ofv0A8g8baFri8DEHir/qt24CJILAEMd+CXWxYTxmuGPIOw==
+X-Received: by 2002:a05:600c:548e:b0:425:69b7:3361 with SMTP id 5b1f17b1804b1-429ed7ae653mr89860125e9.18.1724085003029;
+        Mon, 19 Aug 2024 09:30:03 -0700 (PDT)
 Received: from ?IPV6:2a01:e0a:982:cbb0:f54e:4b0a:5175:5727? ([2a01:e0a:982:cbb0:f54e:4b0a:5175:5727])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429d781047asm172550245e9.0.2024.08.19.09.29.30
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-429ed79d9a7sm114992515e9.39.2024.08.19.09.30.02
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Aug 2024 09:29:31 -0700 (PDT)
-Message-ID: <b828b63d-e1a8-4c9b-9001-da686dffeb64@linaro.org>
-Date: Mon, 19 Aug 2024 18:29:30 +0200
+        Mon, 19 Aug 2024 09:30:02 -0700 (PDT)
+Message-ID: <a6ca8b79-8b64-4427-a625-abd61ffa7b21@linaro.org>
+Date: Mon, 19 Aug 2024 18:30:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -65,13 +65,14 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 From: Neil Armstrong <neil.armstrong@linaro.org>
 Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v3 3/9] reset: amlogic: make parameters unsigned
+Subject: Re: [PATCH v3 5/9] reset: amlogic: use reset number instead of
+ register count
 To: Jerome Brunet <jbrunet@baylibre.com>,
  Philipp Zabel <p.zabel@pengutronix.de>, Stephen Boyd <sboyd@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
  linux-clk@vger.kernel.org
 References: <20240808102742.4095904-1-jbrunet@baylibre.com>
- <20240808102742.4095904-4-jbrunet@baylibre.com>
+ <20240808102742.4095904-6-jbrunet@baylibre.com>
 Content-Language: en-US, fr
 Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
@@ -98,34 +99,68 @@ Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
  QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
 Organization: Linaro
-In-Reply-To: <20240808102742.4095904-4-jbrunet@baylibre.com>
+In-Reply-To: <20240808102742.4095904-6-jbrunet@baylibre.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 08/08/2024 12:27, Jerome Brunet wrote:
-> register count and offset cannot be negative. Use unsigned integer
-> for this.
+> The reset driver from audio clock controller may register less
+> reset than a register can hold. To avoid making any change while
+> switching to auxiliary support, use the number of reset instead of the
+> register count to define the bounds of the reset controller.
 > 
-> Suggested-by: Stephen Boyd <sboyd@kernel.org>
 > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 > ---
->   drivers/reset/reset-meson.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+>   drivers/reset/reset-meson.c | 11 +++++------
+>   1 file changed, 5 insertions(+), 6 deletions(-)
 > 
 > diff --git a/drivers/reset/reset-meson.c b/drivers/reset/reset-meson.c
-> index 820905779acd..460ad2f8360f 100644
+> index 8addd100e601..5b6f934c0265 100644
 > --- a/drivers/reset/reset-meson.c
 > +++ b/drivers/reset/reset-meson.c
-> @@ -17,8 +17,8 @@
+> @@ -17,7 +17,7 @@
 >   #include <linux/types.h>
 >   
 >   struct meson_reset_param {
-> -	int reg_count;
-> -	int level_offset;
-> +	unsigned int reg_count;
-> +	unsigned int level_offset;
+> -	unsigned int reg_count;
+> +	unsigned int reset_num;
+>   	unsigned int reset_offset;
+>   	unsigned int level_offset;
+>   	bool level_low_reset;
+> @@ -87,21 +87,21 @@ static const struct reset_control_ops meson_reset_ops = {
 >   };
 >   
->   struct meson_reset {
+>   static const struct meson_reset_param meson8b_param = {
+> -	.reg_count	= 8,
+> +	.reset_num	= 256,
+>   	.reset_offset	= 0x0,
+>   	.level_offset	= 0x7c,
+>   	.level_low_reset = true,
+>   };
+>   
+>   static const struct meson_reset_param meson_a1_param = {
+> -	.reg_count	= 3,
+> +	.reset_num	= 96,
+>   	.reset_offset	= 0x0,
+>   	.level_offset	= 0x40,
+>   	.level_low_reset = true,
+>   };
+>   
+>   static const struct meson_reset_param meson_s4_param = {
+> -	.reg_count	= 6,
+> +	.reset_num	= 192,
+>   	.reset_offset	= 0x0,
+>   	.level_offset	= 0x40,
+>   	.level_low_reset = true,
+> @@ -148,8 +148,7 @@ static int meson_reset_probe(struct platform_device *pdev)
+>   				     "can't init regmap mmio region\n");
+>   
+>   	data->rcdev.owner = THIS_MODULE;
+> -	data->rcdev.nr_resets = data->param->reg_count * BITS_PER_BYTE
+> -		* regmap_config.reg_stride;
+> +	data->rcdev.nr_resets = data->param->reset_num;
+>   	data->rcdev.ops = &meson_reset_ops;
+>   	data->rcdev.of_node = dev->of_node;
+>   
 
 Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
