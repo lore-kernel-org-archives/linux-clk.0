@@ -1,242 +1,538 @@
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2121.outbound.protection.outlook.com [40.107.215.121])
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93F3D13B7B3;
-	Mon, 19 Aug 2024 03:05:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.121
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724036754; cv=fail; b=bQu9bYnbKUv447cHnYIUjQTtMJDghSTEzasDFSJpC7Y4aDbA6abJHyT9JSxPHZlW4HW58uGDphd5JYqwhGUY6I9b41rEnQy/l7xyiO4pnJpsLkfPUXd7XEGMgeiPoC/3/ApYKzWfQFcyS/DgQmvbSYX0wSIXZkJHZtrotBqeMco=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724036754; c=relaxed/simple;
-	bh=UvDb+MAUuHrjkYXQQxcZZG20FJ+czVEj+rKjyBubn3g=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=VNW6D+jXmUUzU6/cY3x+P30I0JWPHimxyXuvGPQMBMa0UzmCbu9Mpcgk0auow9VL4CFyBJeIyYCJZWFo2m/ywXel3I7YK9Dl0fdPVkNKXrzmrtMu8jkj7WSVVTfrCE9y5IGPJy22Mbr4AUsrg/+UqNCDZsRGMsPnr5pvgwWnLzo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b=OhPDdphL; arc=fail smtp.client-ip=40.107.215.121
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF68149C57
+	for <linux-clk@vger.kernel.org>; Mon, 19 Aug 2024 05:24:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724045068; cv=none; b=ntwaxUnfCYL7LFaa+BQvBfjYcS8mPCCroPYGC+s4opheqn33H/+ok2TpB8rMrYZWJu7OuLMY26cBwfmutI3n0KnzhqtdMhEu4kYPm//25nOIms3o33JxYjoOcy3cRWdssOjgMSqxBLlK6H0zPAk8b08nRiGbMpeyP+JKtVSf7pM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724045068; c=relaxed/simple;
+	bh=BCy2GC9V1kfX/CQm6QmemZgWpIvHHRsN0JNBHv/81rw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=ImE4GuV5EkKX2geVicJHetijGbIT+Wei9uNvRt+DYTEqf7hjraFczR24P/ay2gZZBqqpGKmchyMMlglryx5WHIN+iE32M7hNYUbOSspM1CRAsAE3mayD2YMlCRMm0uwZdpMw+i1Hx8PfxNim0LS8kBdO03qDs6ayEXXY8HCnhTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=XdpxKhd1; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b="OhPDdphL"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=uXPKTZ009v2+pYJ6aAO4ryqJt/A/Dwa3K46J1Wkfs3varY+3zM/nWuAcKfk5EZsKLKKTwG9zfpFpHENQBajM4ONzEZAqaxdL6dziaTPaNzfTtDEfY2/72xWfr1oPrGudmJ63apAdFj3qiwHeI2TH8436nKHTn3PyFljAaUwLsAeGiJ/j0hnorjQ0KvQgNE5bD9PqfiVj80APO3sBry73F1XYHfVKtwoZKmmB1ZfzXAKbm7502C6HfVybKMS6k52e2bhTqYYj5RSf2gmMyDaQT2Tm2GA8C6t7PlvN8XcJtkQF/uUtXxacQwJmWsAgaAXx4AD8I3mF/Q7U4hX79llanA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UvDb+MAUuHrjkYXQQxcZZG20FJ+czVEj+rKjyBubn3g=;
- b=A1V4EVc5FzD03u0daPGin9Tc3B8yjp8bdu/PvXDFfT4zpDzh8ROs9Zkp7/Tt/PaJN5Ip1MOh+LtIxj0zNbi8+7Tvh2MSv0EtOpWrzA1BB5/yos/umtzzD4IMXKf4B8ral+koqg1e6G1rsZvc3Y/M3jUsBTGgx/l4dFmkJlawCOSpQGVrXwrTV5TUlYDtArK9FgaVAIkRLNbAWTyrk8HyKWuEAlLSbD2prMwqiYGHnnJ8lDShK6Wc6qzXFhgRllnJKrs2jAUtDBcKzqFQZVbAUfy9/dt2AqxHtAhzZheKQ4gw/4Ct7LoJPb+rFT8RcGisdrLookLwLmdYW0HNRAcKjw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
- header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aspeedtech.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UvDb+MAUuHrjkYXQQxcZZG20FJ+czVEj+rKjyBubn3g=;
- b=OhPDdphLbO3Ja1E6Ncy90Mu3+TIjG2JEsE3wfr4MdSAD3Do1/z5XFpfgLb7AOgCQDsy71hdAZ8BDSO4GV8x5AqhZu/Lx8M6NCsjFWkhrP7WGMk+E9Z0lMsjh0rJ5XH5MilYlPc9g/rI8RCrJwvcJE4cKP9WmRigoHRcXAWu2/qcJtcx2t5XyGh0mqRJ2adw9pdBvQbvXdO0ASJEN17CBi8phk8c3KSqVNhm1DCB5UYAr40VCsvVbRGzpA6Qc+uIXGiImOhYhXM+a7qWvo8k+nvNiQdaMJKObC356YqsRHVEVYQOcYPKQ0ZZuamGVZUNYM/RSN8oBAKEYuSNpZ2uJmQ==
-Received: from OS8PR06MB7541.apcprd06.prod.outlook.com (2603:1096:604:2b1::11)
- by SEYPR06MB7027.apcprd06.prod.outlook.com (2603:1096:101:1e3::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7875.21; Mon, 19 Aug
- 2024 03:05:45 +0000
-Received: from OS8PR06MB7541.apcprd06.prod.outlook.com
- ([fe80::9f51:f68d:b2db:da11]) by OS8PR06MB7541.apcprd06.prod.outlook.com
- ([fe80::9f51:f68d:b2db:da11%5]) with mapi id 15.20.7875.019; Mon, 19 Aug 2024
- 03:05:45 +0000
-From: Ryan Chen <ryan_chen@aspeedtech.com>
-To: Ryan Chen <ryan_chen@aspeedtech.com>, Andrew Jeffery
-	<andrew@codeconstruct.com.au>, Rob Herring <robh@kernel.org>
-CC: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, "linux-aspeed@lists.ozlabs.org"
-	<linux-aspeed@lists.ozlabs.org>, Stephen Boyd <sboyd@kernel.org>, Michael
- Turquette <mturquette@baylibre.com>, Lee Jones <lee@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Krzysztof
- Kozlowski <krzk@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>
-Subject: RE: [PATCH 1/4] dt-bindings: mfd: aspeed: support for AST2700
-Thread-Topic: [PATCH 1/4] dt-bindings: mfd: aspeed: support for AST2700
-Thread-Index:
- AQHa6Wjwpmm6AqTUmky9VcIbkjW1JLIdJMiAgAFHtRCAAAQ8gIAAARxAgAclgACAAL3qcIABK1kAgAAVdECABl63wA==
-Date: Mon, 19 Aug 2024 03:05:45 +0000
-Message-ID:
- <OS8PR06MB7541C54CA074410C50BA419AF28C2@OS8PR06MB7541.apcprd06.prod.outlook.com>
-References: <20240808075937.2756733-1-ryan_chen@aspeedtech.com>
-	 <20240808075937.2756733-2-ryan_chen@aspeedtech.com>
-	 <2f27285e-6aa5-4e42-b361-224d8d164113@kernel.org>
-	 <OS8PR06MB75416FAD2A1A16E7BE2D255DF2BA2@OS8PR06MB7541.apcprd06.prod.outlook.com>
-	 <10809e91-31be-4110-86c1-1e1ccb05b664@kernel.org>
-	 <OS8PR06MB7541F4F740FDB17F50EBCACBF2BA2@OS8PR06MB7541.apcprd06.prod.outlook.com>
-	 <20240813191454.GA1570645-robh@kernel.org>
-	 <OS8PR06MB7541BB03AEE90B090AB990B3F2872@OS8PR06MB7541.apcprd06.prod.outlook.com>
- <7e1dc98e0f69a095a8f7725b742df3c8d8436a67.camel@codeconstruct.com.au>
- <OS8PR06MB754121818B9431941C18E09DF2802@OS8PR06MB7541.apcprd06.prod.outlook.com>
-In-Reply-To:
- <OS8PR06MB754121818B9431941C18E09DF2802@OS8PR06MB7541.apcprd06.prod.outlook.com>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=aspeedtech.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: OS8PR06MB7541:EE_|SEYPR06MB7027:EE_
-x-ms-office365-filtering-correlation-id: f33e505a-a2a1-4c11-2727-08dcbffbd180
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|376014|7416014|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?d0NqSmRJUEFwTFRwUm1qYWhpNlByU213bE1CMzN6K1FKTFZzSjZHMVhySnli?=
- =?utf-8?B?bUJzNDkyYmhpcHplZDFWOHNZQUVVY25HcWxXaFhrOHJWaEE2OXNSL0U1eU5Q?=
- =?utf-8?B?Um56N3RIM3VDTHYwUHNURlc5NFppeGNFWUllQXIrTnRtSEdNRUxmYWluaVBU?=
- =?utf-8?B?dXlsVERldXlaUVRBZG5lTUxBZmNXRTlNaGExR1E3VnJlWDVVem41cUtZYmZa?=
- =?utf-8?B?bTl5RDVUczdQWjNteFdDVVFRVEROY1U4WmpFaXpNM1IwTVlUT1pWbENFYURJ?=
- =?utf-8?B?SllmYlo3a1Y1R3BRK2NOZWNGQlJ2VnVRTFFmL1p0cUtlU2l6TCtWUnNMY3RI?=
- =?utf-8?B?MWNEam9ZVVV5Wno1TGlxVHo4aWhDbjNLSU5CNkdhbjhycEQveU1TNkJQZWNG?=
- =?utf-8?B?aEYxcnJnaTV6YzZVU0RCNDZ5VVlvZlZuQ2xIeGZsalJudWY0cFlXUHdnMU13?=
- =?utf-8?B?NmxqUHBzRkJlRzRqS2dncnF2T1hvbHQvOEF0V3p4YVBLYmVjNXRFYzFmb0Yw?=
- =?utf-8?B?b0VIZS9BOWZGKzVIUmpkMFE4Rk5IMWUxaytWT1FMWTZnelovUk5SQzRPRmJj?=
- =?utf-8?B?dXo2T1pVNWJMbng1MGNlNWdEU2pFSDZDYm9xNWkrM0ZuNnR5RVZRYzlXTjFC?=
- =?utf-8?B?cGFPVFQ5U2JqMjNWS3MrbHRaMVdyTTZVSVI0a01lTGhPelZiaEY0WVg3dkxZ?=
- =?utf-8?B?Mmw2clNuZ1c2Qk52dDVHR0I3SUx0RnFyUXVJajFBR3dTUkdnVDZUZnZpS2F4?=
- =?utf-8?B?dU1HTXM0UWNVclIySmdLeVhLNlFVRDg4MzExQ01Yamdnei9ZaTlkcllrYnR5?=
- =?utf-8?B?YS9US1ZLMXJzQkNER3E0alNmYllpSFlvM0JweHRMVXA4Y2VIN0NBZ3h3NjF2?=
- =?utf-8?B?WUwwbnlZTlhxdzQ5RmowTzlTbnpOS2JwWTF4endUdkpFL1JGbTVRSTZOYklX?=
- =?utf-8?B?MHhrZWVtVG9FdWpwVFRFMUtveEk0UDVJNFlFT2JYY3pWcUkvVm5lLzU4WGlq?=
- =?utf-8?B?MFIvamZmU1JHa0RKZ0NoWkpZZWdlaFVLTXdFSHR3anVXZkhlQ0l2ZVh4dEhl?=
- =?utf-8?B?TEkrK3NqWExyLytRYVQzb0ZWUzY5QW9ISU5ReHFXQkhySzZ2STFUUlpBSjlu?=
- =?utf-8?B?TXJuRFl2dDA0R3hWMHpUM0Zrc3crZXFTSy93VmV1em5BTWUwRUVabGVKNTBK?=
- =?utf-8?B?Uzl2MEtMZEpNMEs4K29jRDBkV2pheHNpWWgrbDd6Vm5UWWIvWUhwNm4yNjA0?=
- =?utf-8?B?ZzVxL2s2M3I0ajZEZlR3dHNlMnBMRmttYi83NlFWYm4xU3IxSjErdy9DT0tQ?=
- =?utf-8?B?QzNGUHZyNXgveGZhSHE5TldvMzlQOS9MYTZhRzNNdU9wMjMzRVBSU0YzTDB5?=
- =?utf-8?B?WjhOUWxiRk5nSElPVGdKRXZDYnBJOFBMTDFTYm9ZMVBpSFJ2bHNZSGIzdDdo?=
- =?utf-8?B?VGtJcHBraVFWV3RsL2VQSHREWDc2T3ZWTThwN0ZVT3pxRER6RmFRcXJsTGFy?=
- =?utf-8?B?cnAxb2xaKzFwSlR5N05xSDNKQ1ZpdzdMTGk4bS9TeTlqaHdKcXpSdWdJNk9G?=
- =?utf-8?B?NzFpRXA3RFZuSWk4dnNZN2tCNVYyYll4ZG5PSXVHcU5QQng5c1QzellCUTND?=
- =?utf-8?B?enhTK1Y1ZGF1OE02M3pXQ3Nvb2poRHJjMUdCdlFWekN3b0hDaVBRY0VMeVgx?=
- =?utf-8?B?M0QxQ0E4NEU1UHNBdmdyblEvaHNCakFFYm5ONlZEVUFNbTlzRUoxNEsvWjlw?=
- =?utf-8?B?aHhHQi92THIwbGtKdXZTU2lvdlZYTTVHNWZ5cWVVbXZtY0tVS3llRU4xYlBY?=
- =?utf-8?B?b1FxU0lWUzRuYXllSC9PaEp4cm0vc1cycmorcmdJSkdnWk1QUW5xaTFUQzNR?=
- =?utf-8?B?YlJwcjhWYnpZVjZpRTdxVHoyNmlqdHhBZG1EN2Q4N3JmRWc9PQ==?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:zh-tw;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS8PR06MB7541.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?d3B6a244SUhDTGVNOVBaL1JKNzJFUE9IWlRZMzRVdWd3dEI1VlVQbXBsYytm?=
- =?utf-8?B?YnNCR1F2SlBuMERCUVZuMDZUcTFJak4rdFdlWVc4TkZyZ3pzWDM0Q2J3b3VE?=
- =?utf-8?B?VkUwU25NWWdmQ2dkTjNrRHorcDlHV2RHaDkxSVFBZGQ3UWRNQ0tacnN5d1Qr?=
- =?utf-8?B?OHlwZEpwUFFYMkN4ZzRGQ0UyRFhsWnNPdVViTHFxVmRtV0p5VDNaQnh3cUtW?=
- =?utf-8?B?RXJXVEF5MkNoaDR5VGpKL3NQVW9QNWlVSGdqUU1DVjZYNENZdlRtVGtVUy9v?=
- =?utf-8?B?VUV5N2s0U3MwdElYb2Jrd1hjODg4TGM5WHJBbVlmWjEvVEdIeDl4dDhVZE1J?=
- =?utf-8?B?QzFveUdtbjRZZFNHU2l6R3hObVZrNWhsZ1lxY3lycUxqL01iZnluSlhuc01T?=
- =?utf-8?B?Skt1cU4vdHdleG1vdCsyMHYwanJTOTlnNGYvNEZ3ZGxYNVVrRkp5c3NJb3Ez?=
- =?utf-8?B?alpWMDNLR21yNUQ2T2x2R1RSckhTeklKb2JTSmo0bFpVeEwrQ1pGUWlOT1d6?=
- =?utf-8?B?bTJ3QzlPdVVFdElCVmQxK1dxZG5nZ0VDRHRsTXZpeVRUenpzMGk5T09TWElN?=
- =?utf-8?B?aEU1dUtzOTZsM1hDd1psZjNqdkdKd2VWWEozK0lnZmh5aUtTVVU0TEg1US9G?=
- =?utf-8?B?bnpGeXhnd1pPQ0pnTDZBYWtnT3Z0Zzd4L2xENU1jQ044WE5YQ0JaMWE4cnBk?=
- =?utf-8?B?SkkzeElNNkJoUTZyNVA3TDJqZm5Zd2FYTkxnTDhBYWdJZWNwZHJFeG9ueVNP?=
- =?utf-8?B?VDVGbWxSWUxhbVFEdWEyM2JOUVVoZkh3SDRKTk85aVVlVzZZa0NEeHBtUTE3?=
- =?utf-8?B?OUVKejZ1eGF2Z0d2ekplZUM1RFdvVFVaYjBIdmpaa2Y1bFVZa3QvZlgxTFFJ?=
- =?utf-8?B?QkFHU3Excm1pRnR2NlBjRzZSdU5XQmhmbU1FSGxVallFeEJmMFcrTmtkMi9I?=
- =?utf-8?B?VEFwelRZOFl5eW1xd0NCQ2tiYTFFMGxqRjYrK3ZXcHFvcWpkQUp3K2ErV1Rq?=
- =?utf-8?B?Vmg2aW1ZS0YvTEZVSFFYekkrVDBJY0JFUmgveUxTZkY5SSt4Yy9OL3hRMlBN?=
- =?utf-8?B?YXN3S0VSMnNuUjJQaHFKQUZBUXdEbkd6TFhqZnNjOVRlYUNRRzFidVpLR0FD?=
- =?utf-8?B?QmExUjdPYlBKelNRaUhSKzFCWE44aE92VEFUajB4T0IrS1Bzak83VVpqeXBt?=
- =?utf-8?B?aHYwT3IzSWpWOENJYTR1dVVNbVh2enhNU1VUMjRKR0R4ajM0QTA5d2Q2TDM2?=
- =?utf-8?B?c1FWVm5TZHBFLzl0WmtMSW04V3BMRWtmNzJFeXUzNlpDa09kUVk5cFNKVUty?=
- =?utf-8?B?M0s5ZlNqa3lndWFtckljNjVySWdDRERPOWRML2pJZmcxN0ExZ3FzRGRFaUdK?=
- =?utf-8?B?cFlGc2pJL0JEOGFEclY2cnpYMllFcGQ5NW95cEE1TkU4Rkt5TjhSN0E2OEdO?=
- =?utf-8?B?NHV4aGs5VkdrNGVPNkF6eUZYTEdMb1FKUXY0TUR3TGlTUktWd2kvTHV4cUdZ?=
- =?utf-8?B?Sk5hWGFSaDZVSVZCM1kzdytWNFp0ampYdVAzKzA5c1gzZFBsNUhmSmVOdVR1?=
- =?utf-8?B?c0J0QWswNUNVM1dEeGRRWTUrOVpIMEE4QThwMUhrdTVZeENMZmRPd0FvWjZi?=
- =?utf-8?B?aXAxVGg5a0ZrektYek84VnB3cmxXQjNadXpLYlIvbFN4dzdGNHpYbUJTT3ZO?=
- =?utf-8?B?WUtZcnRyWXQ1bC81elIxMWwvT0xiOFdTUGxvRDRodDRpcjdtWWRrWFBLRzVL?=
- =?utf-8?B?NFZoUDdob1ZuN1NaK21WUmZSaEwvK3dzSTVITGVsZGJ3Nm4zZmNYVTVhcjNS?=
- =?utf-8?B?RzNEQzUweFkvR0FpMmFSa2ZlSDRGeW43VmcxdUVUZGNJNmRHMnhaK1FuOTkx?=
- =?utf-8?B?cGNvc1NtTFEzMHV1bkZRTmpJRCsyZ3FTQ09KcmR1NHdrdHFpUTJNeXlrUHJV?=
- =?utf-8?B?Uk5aYmdzdFczbmNlTzBSak8xZXY0MTNiWFdQSHZTL0IyY0NhdjMzSlg1YmNq?=
- =?utf-8?B?K0RiR2lVb1p1aE5wWjNqZlNwNFBLa0JudXY3bW56dTZmZnY3dml4QU02NXg2?=
- =?utf-8?B?RHY0Ujh6eFQ4WUk5ZGxJMm1FMW5McTBHNGlLZHpLLzNrRFBwNE1yMDRTR0Nq?=
- =?utf-8?Q?C9uMNjYeyC2c7z4VUQXPZn8+u?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="XdpxKhd1"
+Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240819052423epoutp04b9b70ec1b2c8a21b564ceb3e3999a863~tCdnvGtsL1297212972epoutp04T
+	for <linux-clk@vger.kernel.org>; Mon, 19 Aug 2024 05:24:23 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240819052423epoutp04b9b70ec1b2c8a21b564ceb3e3999a863~tCdnvGtsL1297212972epoutp04T
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1724045064;
+	bh=m19Rrrxc7T1jJx8xjmWuee6smxbUtS6zr0Eh+HtDGgg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=XdpxKhd1+tRr1+H6oLJl34KPlB+dN+/TwAntLcclAkdpdnLnK4M4ScJoOMRV9AKax
+	 kuaV3UxNV4pbCvSnomwxExB4nmXNYaFjlnYUrkZScLvxsulJUV0ldG6txVYJmeAa8f
+	 F743y9XeHV5JRNbU4iePYzGxK4ukiIE5UDAIgVJ0=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas2p1.samsung.com (KnoxPortal) with ESMTP id
+	20240819052423epcas2p1e0a5f9722b36e5a4518890ad55f05c04~tCdnSiKCy2850728507epcas2p1X;
+	Mon, 19 Aug 2024 05:24:23 +0000 (GMT)
+Received: from epsmgec2p1-new.samsung.com (unknown [182.195.36.70]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4WnLck6WzMz4x9Q9; Mon, 19 Aug
+	2024 05:24:22 +0000 (GMT)
+Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
+	epsmgec2p1-new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	78.59.19039.607D2C66; Mon, 19 Aug 2024 14:24:22 +0900 (KST)
+Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTPA id
+	20240819052422epcas2p4db394defd5f298658f7841af3649ac6f~tCdmP6_Cm2693626936epcas2p4Y;
+	Mon, 19 Aug 2024 05:24:22 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
+	20240819052422epsmtrp29a4e7a5d43d196a3a450d6f5c6911146~tCdmO8zdP1492814928epsmtrp2L;
+	Mon, 19 Aug 2024 05:24:22 +0000 (GMT)
+X-AuditID: b6c32a4d-305ff70000004a5f-ae-66c2d7063c1b
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	E7.FC.08964.607D2C66; Mon, 19 Aug 2024 14:24:22 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.229.9.60]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20240819052422epsmtip1df6158966cf280e6d8851dac93e5bd02~tCdmAlgO91691916919epsmtip1W;
+	Mon, 19 Aug 2024 05:24:22 +0000 (GMT)
+From: Sunyeal Hong <sunyeal.hong@samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki
+	<s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar
+	<alim.akhtar@samsung.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Sunyeal Hong <sunyeal.hong@samsung.com>
+Subject: [PATCH v6 1/4] dt-bindings: clock: add ExynosAuto v920 SoC CMU
+ bindings
+Date: Mon, 19 Aug 2024 14:24:12 +0900
+Message-ID: <20240819052416.2258976-2-sunyeal.hong@samsung.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240819052416.2258976-1-sunyeal.hong@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: aspeedtech.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: OS8PR06MB7541.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f33e505a-a2a1-4c11-2727-08dcbffbd180
-X-MS-Exchange-CrossTenant-originalarrivaltime: 19 Aug 2024 03:05:45.1720
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 03yCCVsLAioriQesSEvqk27j5kdIP+4QiZristg6/MfjjJ/MeR0oPdiXDSZwV8TGLp/xDYj8noT02eG9eB+ErWwjvm65UItMYDGuPN4Y/xA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEYPR06MB7027
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrEJsWRmVeSWpSXmKPExsWy7bCmqS7b9UNpBk2r9SwezNvGZrFm7zkm
+	i+tfnrNazD9yjtXi/PkN7BabHl9jtfjYc4/V4vKuOWwWM87vY7K4eMrV4v+eHewWh9+0s1r8
+	u7aRxaJp2XomBz6P9zda2T02repk89i8pN6jb8sqRo/Pm+QCWKOybTJSE1NSixRS85LzUzLz
+	0m2VvIPjneNNzQwMdQ0tLcyVFPISc1NtlVx8AnTdMnOA7lRSKEvMKQUKBSQWFyvp29kU5ZeW
+	pCpk5BeX2CqlFqTkFJgX6BUn5haX5qXr5aWWWBkaGBiZAhUmZGfMuZZUcDmt4tTvI8wNjCsD
+	uhg5OSQETCSOrZvO2MXIxSEksIdRYtrKP+wQzidGiZ1LWpghnG+MEm/2d7DBtFzsW8cGkdjL
+	KLHhdxdU/0dGic9r3wK1cHCwCehK/PnnABIXEdjDJLHl/BImEIdZ4CyjxN05C9hBRgkLBElM
+	/v2RGcRmEVCVWPlsEROIzStgL9GyaDM7xDp5iYtrnoOt5hRwkDjz8hwLRI2gxMmZT8BsZqCa
+	5q2zwW6VEJjJIXG/9y0jRLOLROOvLywQtrDEq+NboIZKSXx+txfqn3yJydffMkE0NzBKXPvX
+	zQyRsJdYdOYnO8g7zAKaEut36YOYEgLKEkduQe3lk+g4/JcdIswr0dEmBNGoJvHpymWoITIS
+	x048g7I9JFb3/mGCBNZkRol5h94xTmBUmIXknVlI3pmFsHgBI/MqRqnUguLc9NRkowJD3bzU
+	cng0J+fnbmIEJ14t3x2Mr9f/1TvEyMTBeIhRgoNZSYS3++XBNCHelMTKqtSi/Pii0pzU4kOM
+	psAAn8gsJZqcD0z9eSXxhiaWBiZmZobmRqYG5krivPda56YICaQnlqRmp6YWpBbB9DFxcEo1
+	MM1X+OOYe/Mvx7Tag7z3FR++fFi/Ve/zBodVfqmXT9ev+Vr4/nHR7NRAZtfjOsdznX4rXRB+
+	xCEjHm5yjqNbxLj57VFbA6PPH9o6b2jX7+1f84PJ2Tls7rPSGy7n1ryTMMmoCNzjc+/1x4Lf
+	pofr205v9N8dbbzzykatNyaz54QvZYrbqjHzoNvimAS3N1km7cfS9U0/inifCP0sY29Wt1v8
+	UFr2cSm2Zz827C0pCKuun3lE3lrRsDbu+fa+X5+Sjh9dYHrfmKn+x/xVWTl3X20/9G6ryeS9
+	MdzWch4OB7w0n5uZ1t+Q5ZjW3RT2c+Fc77lrJ3ZsebVn3YptH9S2/3r+4IdjxdRGuVkGPydn
+	X/ZSYinOSDTUYi4qTgQAem38gEUEAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrOLMWRmVeSWpSXmKPExsWy7bCSnC7b9UNpBovXC1g8mLeNzWLN3nNM
+	Fte/PGe1mH/kHKvF+fMb2C02Pb7GavGx5x6rxeVdc9gsZpzfx2Rx8ZSrxf89O9gtDr9pZ7X4
+	d20ji0XTsvVMDnwe72+0sntsWtXJ5rF5Sb1H35ZVjB6fN8kFsEZx2aSk5mSWpRbp2yVwZcy5
+	llRwOa3i1O8jzA2MKwO6GDk5JARMJC72rWPrYuTiEBLYzShx6EYHG0RCRmJjw392CFtY4n7L
+	EVYQW0jgPaPEvN85XYwcHGwCuhJ//jmA9IoIHGKSmPj5KQuIwyxwmVHi2N3JzCANwgIBEms7
+	trKA2CwCqhIrny1iArF5BewlWhZthlogL3FxzXOwxZwCDhJnXp5jgVhmL3Hz2m9GiHpBiZMz
+	n4DFmYHqm7fOZp7AKDALSWoWktQCRqZVjJKpBcW56bnFhgWGeanlesWJucWleel6yfm5mxjB
+	caGluYNx+6oPeocYmTgYDzFKcDArifB2vzyYJsSbklhZlVqUH19UmpNafIhRmoNFSZxX/EVv
+	ipBAemJJanZqakFqEUyWiYNTqoEpfb2Yda6s7i6mkosZ/39Unfi5J9zQ62/RQ+HZUuK23Q0N
+	q3iEc9yPvK0wWWKgdH3dmYcBol7BxdtPRwp1LLCRfBXY7iT5Y83ueROFJ7gGHZ2/OM2793gV
+	e3k8S6qpVeXT2Ffr7Ceqca5f2GLUWuxWYltVeUqyXsFsGX8kH9+07IimM07RhYGfrueKND25
+	uvfVj7P76mwul7NbsRjdczHZ2KpzsPiN5V2ltv8LZ0ifWVPhxenXJLN75wWr5y5t2gf2pF9f
+	5DC5Law2WIblbJMO37Q5nus/qU/PUA+5bjmzP1HmaZ28Vy+nT3uizNWJD2de/H+2vuZtzwtJ
+	u8DX+yoN7/9WzOlN2cIYfHrTEyWW4oxEQy3mouJEAF3CeRj6AgAA
+X-CMS-MailID: 20240819052422epcas2p4db394defd5f298658f7841af3649ac6f
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240819052422epcas2p4db394defd5f298658f7841af3649ac6f
+References: <20240819052416.2258976-1-sunyeal.hong@samsung.com>
+	<CGME20240819052422epcas2p4db394defd5f298658f7841af3649ac6f@epcas2p4.samsung.com>
 
-PiA+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggMS80XSBkdC1iaW5kaW5nczogbWZkOiBhc3BlZWQ6IHN1
-cHBvcnQgZm9yIEFTVDI3MDANCj4gPg0KPiA+IE9uIFdlZCwgMjAyNC0wOC0xNCBhdCAwNjozNSAr
-MDAwMCwgUnlhbiBDaGVuIHdyb3RlOg0KPiA+ID4gPiBTdWJqZWN0OiBSZTogW1BBVENIIDEvNF0g
-ZHQtYmluZGluZ3M6IG1mZDogYXNwZWVkOiBzdXBwb3J0IGZvcg0KPiA+ID4gPiBBU1QyNzAwDQo+
-ID4gPiA+DQo+ID4gPiA+IE9uIEZyaSwgQXVnIDA5LCAyMDI0IGF0IDA2OjEwOjIyQU0gKzAwMDAs
-IFJ5YW4gQ2hlbiB3cm90ZToNCj4gPiA+ID4gPiA+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggMS80XSBk
-dC1iaW5kaW5nczogbWZkOiBhc3BlZWQ6IHN1cHBvcnQgZm9yDQo+ID4gPiA+ID4gPiBBU1QyNzAw
-DQo+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gT24gMDkvMDgvMjAyNCAwNzo1NSwgUnlhbiBDaGVu
-IHdyb3RlOg0KPiA+ID4gPiA+ID4gPiA+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggMS80XSBkdC1iaW5k
-aW5nczogbWZkOiBhc3BlZWQ6IHN1cHBvcnQNCj4gPiA+ID4gPiA+ID4gPiBmb3INCj4gPiA+ID4g
-PiA+ID4gPiBBU1QyNzAwDQo+ID4gPiA+ID4gPiA+ID4NCj4gPiA+ID4gPiA+ID4gPiBPbiAwOC8w
-OC8yMDI0IDA5OjU5LCBSeWFuIENoZW4gd3JvdGU6DQo+ID4gPiA+ID4gPiA+ID4gPiBBZGQgY29t
-cGF0aWJsZSBzdXBwb3J0IGZvciBBU1QyNzAwIGNsaywgcmVzZXQsIHBpbmN0cmwsDQo+ID4gPiA+
-ID4gPiA+ID4gPiBzaWxpY29uLWlkIGFuZCBleGFtcGxlIGZvciBBU1QyNzAwIHNjdS4NCj4gPiA+
-ID4gPiA+ID4gPiA+DQo+ID4gPiA+ID4gPiA+ID4gPiBTaWduZWQtb2ZmLWJ5OiBSeWFuIENoZW4g
-PHJ5YW5fY2hlbkBhc3BlZWR0ZWNoLmNvbT4NCj4gPiA+ID4gPiA+ID4gPiA+IC0tLQ0KPiA+ID4g
-PiA+ID4gPiA+ID4gwqAuLi4vYmluZGluZ3MvbWZkL2FzcGVlZCxhc3QyeDAwLXNjdS55YW1sICAg
-ICAgfCAzMQ0KPiA+ID4gPiA+ID4gPiA+ICsrKysrKysrKysrKysrKysrLS0NCj4gPiA+ID4gPiA+
-ID4gPiA+IMKgMSBmaWxlIGNoYW5nZWQsIDI5IGluc2VydGlvbnMoKyksIDIgZGVsZXRpb25zKC0p
-DQo+ID4gPiA+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gPiA+ID4gZGlmZiAtLWdpdA0KPiA+ID4g
-PiA+ID4gPiA+ID4gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWZkL2FzcGVl
-ZCxhc3QyeDAwLQ0KPiA+ID4gPiA+ID4gPiA+ID4gc2N1LnlhbWwNCj4gPiA+ID4gPiA+ID4gPiA+
-IGIvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21mZC9hc3BlZWQsYXN0MngwMC0N
-Cj4gPiA+ID4gPiA+ID4gPiA+IHNjdS55YW1sDQo+ID4gPiA+ID4gPiA+ID4gPiBpbmRleCA4NmVl
-NjljMGY0NWIuLmMwOTY1ZjA4YWU4YyAxMDA2NDQNCj4gPiA+ID4gPiA+ID4gPiA+IC0tLQ0KPiA+
-ID4gPiA+ID4gPiA+ID4gYS9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvbWZkL2Fz
-cGVlZCxhc3QyeDAwLQ0KPiA+ID4gPiA+ID4gPiA+ID4gc2N1LnlhbWwNCj4gPiA+ID4gPiA+ID4g
-PiA+ICsrKw0KPiA+ID4gPiA+ID4gPiA+ID4gYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmlu
-ZGluZ3MvbWZkL2FzcGVlZCxhc3QyeDAwLQ0KPiA+ID4gPiA+ID4gPiA+ID4gc2N1LnkNCj4gPiA+
-ID4gPiA+ID4gPiA+ICsrKyBhbWwNCj4gPiA+ID4gPiA+ID4gPiA+IEBAIC0yMSw2ICsyMSw4IEBA
-IHByb3BlcnRpZXM6DQo+ID4gPiA+ID4gPiA+ID4gPiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgLSBh
-c3BlZWQsYXN0MjQwMC1zY3UNCj4gPiA+ID4gPiA+ID4gPiA+IMKgwqDCoMKgwqDCoMKgwqDCoMKg
-wqAtIGFzcGVlZCxhc3QyNTAwLXNjdQ0KPiA+ID4gPiA+ID4gPiA+ID4gwqDCoMKgwqDCoMKgwqDC
-oMKgwqDCoC0gYXNwZWVkLGFzdDI2MDAtc2N1DQo+ID4gPiA+ID4gPiA+ID4gPiArICAgICAgICAg
-IC0gYXNwZWVkLGFzdDI3MDAtc2N1MA0KPiA+ID4gPiA+ID4gPiA+ID4gKyAgICAgICAgICAtIGFz
-cGVlZCxhc3QyNzAwLXNjdTENCj4gPiA+ID4gPiA+ID4gPg0KPiA+ID4gPiA+ID4gPiA+IFdoYXQg
-YXJlIHRoZSBkaWZmZXJlbmNlcyBiZXR3ZWVuIHRoZXNlIHR3bz8NCj4gPiA+ID4gPiA+ID4NCj4g
-PiA+ID4gPiA+ID4gVGhlIG5leHQgW1BBVENIIDQvNF0gaXMgc2N1IGRyaXZlciB0aGF0IGluY2x1
-ZGUgYXN0MjcwMC1zY3UwDQo+ID4gPiA+ID4gPiA+IGFuZA0KPiA+ID4gPiA+ID4gPiBhc3QyNzAw
-LXNjdTEgQ0xLX09GX0RFQ0xBUkVfRFJJVkVSKGFzdDI3MDBfc29jMCwNCj4gPiA+ID4gPiA+ID4g
-ImFzcGVlZCxhc3QyNzAwLXNjdTAiLCBhc3QyNzAwX3NvYzBfY2xrX2luaXQpOw0KPiA+ID4gPiA+
-ID4gPiBDTEtfT0ZfREVDTEFSRV9EUklWRVIoYXN0MjcwMF9zb2MxLCAiYXNwZWVkLGFzdDI3MDAt
-c2N1MSIsDQo+ID4gPiA+ID4gPiA+IGFzdDI3MDBfc29jMV9jbGtfaW5pdCk7DQo+ID4gPiA+ID4g
-Pg0KPiA+ID4gPiA+ID4gV2hhdCBhcmUgaGFyZHdhcmUgZGlmZmVyZW5jZXM/IEVudGlyZWx5IGRp
-ZmZlcmVudCBkZXZpY2VzPw0KPiA+ID4gPiA+DQo+ID4gPiA+ID4gQVNUMjcwMCBoYXZlIHR3byBz
-b2MgZGllIGNvbm5lY3RlZCBlYWNoIG90aGVyLg0KPiA+ID4gPiA+IEVhY2ggc29jIGRpZSBoYXZl
-IGl0IG93biBzY3UsIHNvIHRoZSBuYW1pbmcgaXMgYXN0MjcwMC1zY3UwIGZvcg0KPiA+ID4gPiA+
-IHNvYzAsDQo+ID4gPiA+IGFub3RoZXIgaXMgYXN0MjcwMC1zY3UxIGZvciBzb2MxLg0KPiA+ID4g
-Pg0KPiA+ID4gPiBEaWRuJ3QgSSBzZWUgaW4gYW5vdGhlciBwYXRjaCBvbmUgZGllIGlzIGNwdSBh
-bmQgb25lIGlzIGlvPyBVc2UNCj4gPiA+ID4gdGhvc2UgaW4gdGhlIGNvbXBhdGlibGUgcmF0aGVy
-IHRoYW4gMCBhbmQgMSBpZiBzby4NCj4gPiA+ID4NCj4gPiA+IFNvcnJ5LCBJIHdhbnQgdG8gYWxp
-Z24gd2l0aCBvdXIgZGF0YXNoZWV0IGRlc2NyaXB0aW9uLg0KPiA+ID4gSXQgd2lsbCBidXQgc2N1
-MCBhbmQgc2N1MSByZWdpc3RlciBzZXR0aW5nLg0KPiA+DQo+ID4gQ2FuIHdlIGRvY3VtZW50IHRo
-YXQgcmVsYXRpb25zaGlwIGluIHRoZSBiaW5kaW5nPyBSb2IncyBzdWdnZXN0aW9uDQo+ID4gc2Vl
-bXMgbW9yZSBkZXNjcmlwdGl2ZS4NCj4gSGVsbG8sDQo+IAlEbyB5b3Ugd2FudCBtZSBkb2N1bWVu
-dCBpdCBpbiB5YW1sIGZpbGUgb3IganVzdCBpbiBjb21taXQgbWVzc2FnZT8NCg0KSGVsbG8gUm9i
-LCBBbmRyZXcsDQoJSSB3aWxsIGFkZCBpbiB5YW1sIGZpbGUgaW4gZGVzY3JpcHRpb24uIExpa2Ug
-Zm9sbG93aW5nLg0KDQpkZXNjcmlwdGlvbjoNCiAgVGhlIEFzcGVlZCBTeXN0ZW0gQ29udHJvbCBV
-bml0IG1hbmFnZXMgdGhlIGdsb2JhbCBiZWhhdmlvdXIgb2YgdGhlIFNvQywNCiAgY29uZmlndXJp
-bmcgZWxlbWVudHMgc3VjaCBhcyBjbG9ja3MsIHBpbm11eCwgYW5kIHJlc2V0Lg0KKyAgSW4gQVNU
-MjcwMCwgaXQgaGFzIHR3byBzb2MgY29tYmluYXRpb24uIEVhY2ggc29jIGluY2x1ZGUgaXRzIG93
-biBzY3UgcmVnaXN0ZXIgY29udHJvbC4NCisgIGFzdDI3MDAtc2N1MCBmb3Igc29jMCwgYXN0Mjcw
-MC1zY3UxIGZvciBzb2MxLg0KDQpJcyB0aGF0IHdpbGwgYmUgYmV0dGVyIHdheSA/DQo=
+Add dt-schema for ExynosAuto v920 SoC clock controller.
+Add device tree clock binding definitions for below CMU blocks.
+
+- CMU_TOP
+- CMU_PERIC0
+
+Signed-off-by: Sunyeal Hong <sunyeal.hong@samsung.com>
+---
+ .../clock/samsung,exynosautov920-clock.yaml   | 197 ++++++++++++++++++
+ .../clock/samsung,exynosautov920.h            | 191 +++++++++++++++++
+ 2 files changed, 388 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/samsung,exynosautov920-clock.yaml
+ create mode 100644 include/dt-bindings/clock/samsung,exynosautov920.h
+
+diff --git a/Documentation/devicetree/bindings/clock/samsung,exynosautov920-clock.yaml b/Documentation/devicetree/bindings/clock/samsung,exynosautov920-clock.yaml
+new file mode 100644
+index 000000000000..7efb474e57e8
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/samsung,exynosautov920-clock.yaml
+@@ -0,0 +1,197 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/samsung,exynosautov920-clock.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Samsung ExynosAuto v920 SoC clock controller
++
++maintainers:
++  - Sunyeal Hong <sunyeal.hong@samsung.com>
++  - Chanwoo Choi <cw00.choi@samsung.com>
++  - Krzysztof Kozlowski <krzk@kernel.org>
++  - Sylwester Nawrocki <s.nawrocki@samsung.com>
++
++description: |
++  ExynosAuto v920 clock controller is comprised of several CMU units, generating
++  clocks for different domains. Those CMU units are modeled as separate device
++  tree nodes, and might depend on each other. Root clocks in that clock tree are
++  two external clocks:: OSCCLK/XTCXO (38.4 MHz) and RTCCLK/XrtcXTI (32768 Hz).
++  The external OSCCLK must be defined as fixed-rate clock in dts.
++
++  CMU_TOP is a top-level CMU, where all base clocks are prepared using PLLs and
++  dividers; all other clocks of function blocks (other CMUs) are usually
++  derived from CMU_TOP.
++
++  Each clock is assigned an identifier and client nodes can use this identifier
++  to specify the clock which they consume. All clocks available for usage
++  in clock consumer nodes are defined as preprocessor macros in
++  'include/dt-bindings/clock/samsung,exynosautov920.h' header.
++
++properties:
++  compatible:
++    enum:
++      - samsung,exynosautov920-cmu-top
++      - samsung,exynosautov920-cmu-peric0
++      - samsung,exynosautov920-cmu-peric1
++      - samsung,exynosautov920-cmu-misc
++      - samsung,exynosautov920-cmu-hsi0
++      - samsung,exynosautov920-cmu-hsi1
++
++  clocks:
++    minItems: 1
++    maxItems: 4
++
++  clock-names:
++    minItems: 1
++    maxItems: 4
++
++  "#clock-cells":
++    const: 1
++
++  reg:
++    maxItems: 1
++
++allOf:
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: samsung,exynosautov920-cmu-top
++
++    then:
++      properties:
++        clocks:
++          items:
++            - description: External reference clock (38.4 MHz)
++
++        clock-names:
++          items:
++            - const: oscclk
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: samsung,exynosautov920-cmu-peric0
++
++    then:
++      properties:
++        clocks:
++          items:
++            - description: External reference clock (38.4 MHz)
++            - description: CMU_PERIC0 NOC clock (from CMU_TOP)
++            - description: CMU_PERIC0 IP clock (from CMU_TOP)
++
++        clock-names:
++          items:
++            - const: oscclk
++            - const: noc
++            - const: ip
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: samsung,exynosautov920-cmu-peric1
++
++    then:
++      properties:
++        clocks:
++          items:
++            - description: External reference clock (38.4 MHz)
++            - description: CMU_PERIC1 NOC clock (from CMU_TOP)
++            - description: CMU_PERIC1 IP clock (from CMU_TOP)
++
++        clock-names:
++          items:
++            - const: oscclk
++            - const: noc
++            - const: ip
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: samsung,exynosautov920-cmu-misc
++
++    then:
++      properties:
++        clocks:
++          items:
++            - description: External reference clock (38.4 MHz)
++            - description: CMU_MISC NOC clock (from CMU_MISC)
++
++        clock-names:
++          items:
++            - const: oscclk
++            - const: noc
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: samsung,exynosautov920-cmu-hsi0
++
++    then:
++      properties:
++        clocks:
++          items:
++            - description: External reference clock (38.4 MHz)
++            - description: CMU_HSI0 NOC clock (from CMU_HSI0)
++
++        clock-names:
++          items:
++            - const: oscclk
++            - const: noc
++
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: samsung,exynosautov920-cmu-hsi1
++
++    then:
++      properties:
++        clocks:
++          items:
++            - description: External reference clock (38.4 MHz)
++            - description: CMU_HSI1 NOC clock (from CMU_HSI1)
++            - description: CMU_HSI1 USBDRD clock (from CMU_HSI1)
++            - description: CMU_HSI1 MMC_CARD clock (from CMU_HSI1)
++
++        clock-names:
++          items:
++            - const: oscclk
++            - const: noc
++            - const: usbdrd
++            - const: mmc_card
++
++required:
++  - compatible
++  - "#clock-cells"
++  - clocks
++  - clock-names
++  - reg
++
++additionalProperties: false
++
++examples:
++  # Clock controller node for CMU_PERIC0
++  - |
++    #include <dt-bindings/clock/samsung,exynosautov920.h>
++
++    cmu_peric0: clock-controller@10800000 {
++        compatible = "samsung,exynosautov920-cmu-peric0";
++        reg = <0x10800000 0x8000>;
++        #clock-cells = <1>;
++
++        clocks = <&xtcxo>,
++                 <&cmu_top DOUT_CLKCMU_PERIC0_NOC>,
++                 <&cmu_top DOUT_CLKCMU_PERIC0_IP>;
++        clock-names = "oscclk",
++                      "noc",
++                      "ip";
++    };
++
++...
+diff --git a/include/dt-bindings/clock/samsung,exynosautov920.h b/include/dt-bindings/clock/samsung,exynosautov920.h
+new file mode 100644
+index 000000000000..c720f344b6bf
+--- /dev/null
++++ b/include/dt-bindings/clock/samsung,exynosautov920.h
+@@ -0,0 +1,191 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (c) 2024 Samsung Electronics Co., Ltd.
++ * Author: Sunyeal Hong <sunyeal.hong@samsung.com>
++ *
++ * Device Tree binding constants for ExynosAuto v920 clock controller.
++ */
++
++#ifndef _DT_BINDINGS_CLOCK_EXYNOSAUTOV920_H
++#define _DT_BINDINGS_CLOCK_EXYNOSAUTOV920_H
++
++/* CMU_TOP */
++#define FOUT_SHARED0_PLL		1
++#define FOUT_SHARED1_PLL		2
++#define FOUT_SHARED2_PLL		3
++#define FOUT_SHARED3_PLL		4
++#define FOUT_SHARED4_PLL		5
++#define FOUT_SHARED5_PLL		6
++#define FOUT_MMC_PLL			7
++
++/* MUX in CMU_TOP */
++#define MOUT_SHARED0_PLL		8
++#define MOUT_SHARED1_PLL		9
++#define MOUT_SHARED2_PLL		10
++#define MOUT_SHARED3_PLL		11
++#define MOUT_SHARED4_PLL		12
++#define MOUT_SHARED5_PLL		13
++#define MOUT_MMC_PLL			14
++#define MOUT_CLKCMU_CMU_BOOST		15
++#define MOUT_CLKCMU_CMU_CMUREF		16
++#define MOUT_CLKCMU_ACC_NOC		17
++#define MOUT_CLKCMU_ACC_ORB		18
++#define MOUT_CLKCMU_APM_NOC		19
++#define MOUT_CLKCMU_AUD_CPU		20
++#define MOUT_CLKCMU_AUD_NOC		21
++#define MOUT_CLKCMU_CPUCL0_SWITCH	22
++#define MOUT_CLKCMU_CPUCL0_CLUSTER	23
++#define MOUT_CLKCMU_CPUCL0_DBG		24
++#define MOUT_CLKCMU_CPUCL1_SWITCH	25
++#define MOUT_CLKCMU_CPUCL1_CLUSTER	26
++#define MOUT_CLKCMU_CPUCL2_SWITCH	27
++#define MOUT_CLKCMU_CPUCL2_CLUSTER	28
++#define MOUT_CLKCMU_DNC_NOC		29
++#define MOUT_CLKCMU_DPTX_NOC		30
++#define MOUT_CLKCMU_DPTX_DPGTC		31
++#define MOUT_CLKCMU_DPTX_DPOSC		32
++#define MOUT_CLKCMU_DPUB_NOC		33
++#define MOUT_CLKCMU_DPUB_DSIM		34
++#define MOUT_CLKCMU_DPUF0_NOC		35
++#define MOUT_CLKCMU_DPUF1_NOC		36
++#define MOUT_CLKCMU_DPUF2_NOC		37
++#define MOUT_CLKCMU_DSP_NOC		38
++#define MOUT_CLKCMU_G3D_SWITCH		39
++#define MOUT_CLKCMU_G3D_NOCP		40
++#define MOUT_CLKCMU_GNPU_NOC		41
++#define MOUT_CLKCMU_HSI0_NOC		42
++#define MOUT_CLKCMU_HSI1_NOC		43
++#define MOUT_CLKCMU_HSI1_USBDRD		44
++#define MOUT_CLKCMU_HSI1_MMC_CARD	45
++#define MOUT_CLKCMU_HSI2_NOC		46
++#define MOUT_CLKCMU_HSI2_NOC_UFS	47
++#define MOUT_CLKCMU_HSI2_UFS_EMBD	48
++#define MOUT_CLKCMU_HSI2_ETHERNET	49
++#define MOUT_CLKCMU_ISP_NOC		50
++#define MOUT_CLKCMU_M2M_NOC		51
++#define MOUT_CLKCMU_M2M_JPEG		52
++#define MOUT_CLKCMU_MFC_MFC		53
++#define MOUT_CLKCMU_MFC_WFD		54
++#define MOUT_CLKCMU_MFD_NOC		55
++#define MOUT_CLKCMU_MIF_SWITCH		56
++#define MOUT_CLKCMU_MIF_NOCP		57
++#define MOUT_CLKCMU_MISC_NOC		58
++#define MOUT_CLKCMU_NOCL0_NOC		59
++#define MOUT_CLKCMU_NOCL1_NOC		60
++#define MOUT_CLKCMU_NOCL2_NOC		61
++#define MOUT_CLKCMU_PERIC0_NOC		62
++#define MOUT_CLKCMU_PERIC0_IP		63
++#define MOUT_CLKCMU_PERIC1_NOC		64
++#define MOUT_CLKCMU_PERIC1_IP		65
++#define MOUT_CLKCMU_SDMA_NOC		66
++#define MOUT_CLKCMU_SNW_NOC		67
++#define MOUT_CLKCMU_SSP_NOC		68
++#define MOUT_CLKCMU_TAA_NOC		69
++
++/* DIV in CMU_TOP */
++#define DOUT_SHARED0_DIV1		70
++#define DOUT_SHARED0_DIV2		71
++#define DOUT_SHARED0_DIV3		72
++#define DOUT_SHARED0_DIV4		73
++#define DOUT_SHARED1_DIV1		74
++#define DOUT_SHARED1_DIV2		75
++#define DOUT_SHARED1_DIV3		76
++#define DOUT_SHARED1_DIV4		77
++#define DOUT_SHARED2_DIV1		78
++#define DOUT_SHARED2_DIV2		79
++#define DOUT_SHARED2_DIV3		80
++#define DOUT_SHARED2_DIV4		81
++#define DOUT_SHARED3_DIV1		82
++#define DOUT_SHARED3_DIV2		83
++#define DOUT_SHARED3_DIV3		84
++#define DOUT_SHARED3_DIV4		85
++#define DOUT_SHARED4_DIV1		86
++#define DOUT_SHARED4_DIV2		87
++#define DOUT_SHARED4_DIV3		88
++#define DOUT_SHARED4_DIV4		89
++#define DOUT_SHARED5_DIV1		90
++#define DOUT_SHARED5_DIV2		91
++#define DOUT_SHARED5_DIV3		92
++#define DOUT_SHARED5_DIV4		93
++#define DOUT_CLKCMU_CMU_BOOST		94
++#define DOUT_CLKCMU_ACC_NOC		95
++#define DOUT_CLKCMU_ACC_ORB		96
++#define DOUT_CLKCMU_APM_NOC		97
++#define DOUT_CLKCMU_AUD_CPU		98
++#define DOUT_CLKCMU_AUD_NOC		99
++#define DOUT_CLKCMU_CPUCL0_SWITCH	100
++#define DOUT_CLKCMU_CPUCL0_CLUSTER	101
++#define DOUT_CLKCMU_CPUCL0_DBG		102
++#define DOUT_CLKCMU_CPUCL1_SWITCH	103
++#define DOUT_CLKCMU_CPUCL1_CLUSTER	104
++#define DOUT_CLKCMU_CPUCL2_SWITCH	105
++#define DOUT_CLKCMU_CPUCL2_CLUSTER	106
++#define DOUT_CLKCMU_DNC_NOC		107
++#define DOUT_CLKCMU_DPTX_NOC		108
++#define DOUT_CLKCMU_DPTX_DPGTC		109
++#define DOUT_CLKCMU_DPTX_DPOSC		110
++#define DOUT_CLKCMU_DPUB_NOC		111
++#define DOUT_CLKCMU_DPUB_DSIM		112
++#define DOUT_CLKCMU_DPUF0_NOC		113
++#define DOUT_CLKCMU_DPUF1_NOC		114
++#define DOUT_CLKCMU_DPUF2_NOC		115
++#define DOUT_CLKCMU_DSP_NOC		116
++#define DOUT_CLKCMU_G3D_SWITCH		117
++#define DOUT_CLKCMU_G3D_NOCP		118
++#define DOUT_CLKCMU_GNPU_NOC		119
++#define DOUT_CLKCMU_HSI0_NOC		120
++#define DOUT_CLKCMU_HSI1_NOC		121
++#define DOUT_CLKCMU_HSI1_USBDRD		122
++#define DOUT_CLKCMU_HSI1_MMC_CARD	123
++#define DOUT_CLKCMU_HSI2_NOC		124
++#define DOUT_CLKCMU_HSI2_NOC_UFS	125
++#define DOUT_CLKCMU_HSI2_UFS_EMBD	126
++#define DOUT_CLKCMU_HSI2_ETHERNET	127
++#define DOUT_CLKCMU_ISP_NOC		128
++#define DOUT_CLKCMU_M2M_NOC		129
++#define DOUT_CLKCMU_M2M_JPEG		130
++#define DOUT_CLKCMU_MFC_MFC		131
++#define DOUT_CLKCMU_MFC_WFD		132
++#define DOUT_CLKCMU_MFD_NOC		133
++#define DOUT_CLKCMU_MIF_NOCP		134
++#define DOUT_CLKCMU_MISC_NOC		135
++#define DOUT_CLKCMU_NOCL0_NOC		136
++#define DOUT_CLKCMU_NOCL1_NOC		137
++#define DOUT_CLKCMU_NOCL2_NOC		138
++#define DOUT_CLKCMU_PERIC0_NOC		139
++#define DOUT_CLKCMU_PERIC0_IP		140
++#define DOUT_CLKCMU_PERIC1_NOC		141
++#define DOUT_CLKCMU_PERIC1_IP		142
++#define DOUT_CLKCMU_SDMA_NOC		143
++#define DOUT_CLKCMU_SNW_NOC		144
++#define DOUT_CLKCMU_SSP_NOC		145
++#define DOUT_CLKCMU_TAA_NOC		146
++
++/* CMU_PERIC0 */
++#define CLK_MOUT_PERIC0_IP_USER		1
++#define CLK_MOUT_PERIC0_NOC_USER	2
++#define CLK_MOUT_PERIC0_USI00_USI	3
++#define CLK_MOUT_PERIC0_USI01_USI	4
++#define CLK_MOUT_PERIC0_USI02_USI	5
++#define CLK_MOUT_PERIC0_USI03_USI	6
++#define CLK_MOUT_PERIC0_USI04_USI	7
++#define CLK_MOUT_PERIC0_USI05_USI	8
++#define CLK_MOUT_PERIC0_USI06_USI	9
++#define CLK_MOUT_PERIC0_USI07_USI	10
++#define CLK_MOUT_PERIC0_USI08_USI	11
++#define CLK_MOUT_PERIC0_USI_I2C		12
++#define CLK_MOUT_PERIC0_I3C		13
++
++#define CLK_DOUT_PERIC0_USI00_USI	14
++#define CLK_DOUT_PERIC0_USI01_USI	15
++#define CLK_DOUT_PERIC0_USI02_USI	16
++#define CLK_DOUT_PERIC0_USI03_USI	17
++#define CLK_DOUT_PERIC0_USI04_USI	18
++#define CLK_DOUT_PERIC0_USI05_USI	19
++#define CLK_DOUT_PERIC0_USI06_USI	20
++#define CLK_DOUT_PERIC0_USI07_USI	21
++#define CLK_DOUT_PERIC0_USI08_USI	22
++#define CLK_DOUT_PERIC0_USI_I2C		23
++#define CLK_DOUT_PERIC0_I3C		24
++
++#endif /* _DT_BINDINGS_CLOCK_EXYNOSAUTOV920_H */
+-- 
+2.45.2
+
