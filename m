@@ -1,123 +1,114 @@
-Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F407E1EB3E;
-	Mon, 19 Aug 2024 14:33:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F19A1EB3D;
+	Mon, 19 Aug 2024 15:11:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724078018; cv=none; b=sqk544vC4zQLy15FT//TJPg5lYDZSfL7kMru3M1+UR/zACg3cmX5RS4f4WQnsIYaxCerGIIUDlmgam0247pD6bFh/Jla/qxNR26mGExzqP80HyopCjc0ePtlwHBYW5+cDx9wzF1hjQekqpuR93jkamtWc81TsnriGyvypriUVaQ=
+	t=1724080275; cv=none; b=puv7eELxTmg/NEN1UovKwdc7J4AvsR7zChls1q47EvSI3352ai5Zjf7h+snxUXOjVUvZ9xMh72Z5MkSNYbUQo1iNY1tPVSeyQjOnQ4IR6Pf1ipDqHPIYfSjx6QH+ueE17NyXF5mdGcgmnJtvR+aK/q7fibDJDhO4O0K9RAKlBf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724078018; c=relaxed/simple;
-	bh=H+ZIKiMh674Bjzw07BrdT0R3OoZs01VKiKWa0fM7Bbw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=W9MV0YLz9HhQ8bg/lrpxylJOgGv32VgLH/4co/qUsyK7Q5z8LSsIkUcPXfoISOZW1gHpSSEu4r6PZanyP0g2p0uP7pVB8sWrA+zgeqEagCW8IlX0wuF1IcqL/BXYQU+chVOBevCarnfYB3j/eKT63rZkw9Fl6ayql6g2dBiKjik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=t6lMb7s/; arc=none smtp.client-ip=217.92.40.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="t6lMb7s/"
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 72A0B1487C4C;
-	Mon, 19 Aug 2024 16:33:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
-	t=1724078007; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=iQVOt1llIIcq5WnSoYkc52Dl6PKByIIU7aUlvEKpzvE=;
-	b=t6lMb7s/zGX10EiHF2Li7uk4xcylapG8vYpyB59LnJ5kmHXoX5BBuvRepIWzFtaWGaOWjZ
-	Cbs86csBU7GRG5eyhgULso93l4KSubNUbFAWRTLXGEh2TIT6CvrRMCZUyWRkH8/T5VBITe
-	mcQslqX/urGyCTYhBTvsz7ux5t1pnmFf65fD7d79U7HFDP1px8QvCjBlZnC7/nmYlMYhoi
-	RYF83LTHnv1PChD4hag71zMFOQ/izaYQrcRL8C3/hEyS+fzS4BSs8R37apskpWnvKh5LXO
-	SZXOgc9KrJ9/AKJwRYfVWsXK7TO4NF9t9g3Df+BIZ840b4abKddSn1fH+bf90g==
-Date: Mon, 19 Aug 2024 16:33:19 +0200
-From: Alexander Dahl <ada@thorsis.com>
-To: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	linux-arm-kernel@lists.infradead.org
-Cc: Boris Brezillon <bbrezillon@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>
-Subject: Re: get, prepare, enable a clock not in DT?
-Message-ID: <20240819-education-prong-3da4b83d42ed@thorsis.com>
-Mail-Followup-To: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	linux-arm-kernel@lists.infradead.org,
-	Boris Brezillon <bbrezillon@kernel.org>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>
-References: <20240816-ludicrous-lagging-65e750c57ab4@thorsis.com>
+	s=arc-20240116; t=1724080275; c=relaxed/simple;
+	bh=PR1Sq6lpGhrEFUCUfB0JKPxjLZt7MDY9PZak/XC/M7g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sE+gcCfP3JSspZmxGaEcspakhuHK/QBUCaLLJLjlQLqRMteATwDWI6iA7UCUhxAxfNObHiQhe16yC9iMNVE6zf0aUHyCdDzG+oFp99gR7M1NwFSfN2R5QFywOVMOhnCkav23ov+jEartyZjocna+5BICXJBDz45DxozU9dMXqd8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-69483a97848so43327677b3.2;
+        Mon, 19 Aug 2024 08:11:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724080272; x=1724685072;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Vir4naB8iBTCySv1Pgnj+DAjepo3kMZB0UojIPP9S80=;
+        b=LVKkpPrIijLIA8xViC22cSyU/9aB3PFojHMXHpa1mlvKRYytvqVgOXuNPupBK23zov
+         5MjovoCzWlh9ow6bJEZ8rMZAKGGr/tViojc2cpd2SA0x6+8BnnBJyJ6hXBSmswVxvMGQ
+         uGeTX74d3UI7l3DIedW0gJsKMIp6aabBm9wMHPt9DM9sZpjxs0IDtz0oO5CHv/Fia5Rg
+         d2/EOLhV11zgfcHsKzBV0z3i30j+FCheO+yVmQIkB0sHyuKa+pSKziBVKN64FiZF+R7o
+         zuY2wuzfjNYM3eg3m3BeJS3Ae/HCK5tdNKEgetfscAlZyxAjgintbEdwxKlpA0brzU+b
+         aGqg==
+X-Forwarded-Encrypted: i=1; AJvYcCVLc9js4MRIUYY4QfkbUix4M0udU7TnaaSp5N9coe392qyR+Ds7XY17/pLK8exYlFDIAe3ek82Rr4aX8I59WG2MllMepSout9Y+DF9LE4o9D1H5qGWIY4TwmsFXPDPk1mpO+CE3DV0xbMac+KbiuRtb4mPKxDisBDFmNAIXeGrbahE2YnRUtIehwrE=
+X-Gm-Message-State: AOJu0YyyCKfViDEnkddHIHnyoeYd3U64RMNjoYlFUoaXp+yBtWF9Jqg2
+	lTFL7PkoN/6pPkF9xwhKuQtGRdHE31ueKsCsaVBucoZ0BUsHR3eBfckkpPey
+X-Google-Smtp-Source: AGHT+IFukWfq1M2LYcMHEhlxW5xMTES2T4TBONW/1mSnhQmlUxtn5R/SCrd5HQPXu3IkqB/vvP1oUg==
+X-Received: by 2002:a05:690c:108:b0:6ae:ff16:795a with SMTP id 00721157ae682-6b1b8ddfad9mr149542697b3.20.1724080271747;
+        Mon, 19 Aug 2024 08:11:11 -0700 (PDT)
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com. [209.85.128.175])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6b33af8c650sm10800397b3.35.2024.08.19.08.11.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 19 Aug 2024 08:11:10 -0700 (PDT)
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-69483a97848so43327137b3.2;
+        Mon, 19 Aug 2024 08:11:10 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVSdCUX1uIJRZLaY8CgFTVHsJ985x8SA/yurQQ6/IOLorqHQy9IduGHeQmeDsiMphOZFqFSHIO0pSM3K8380aTg4b2VbOUZl+biZ6saf6BcvsKOolQTOow3nguY+zrNUgOs+dlmowsQ/zWRVdC+nrv1p18mdh94XfQJaVXftayORzDOfmCwhVVluto=
+X-Received: by 2002:a05:690c:6784:b0:64b:3246:cc24 with SMTP id
+ 00721157ae682-6b1bb75e6d8mr131136757b3.29.1724080270079; Mon, 19 Aug 2024
+ 08:11:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240816-ludicrous-lagging-65e750c57ab4@thorsis.com>
-User-Agent: Mutt/2.2.12 (2023-09-09)
-X-Last-TLS-Session-Version: TLSv1.3
+References: <20240805095842.277792-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240805095842.277792-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 19 Aug 2024 17:10:57 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdX0JBtRfda5_X=2g3ehJQJqOf=JS-ZX57tZ0wzGjjsCOQ@mail.gmail.com>
+Message-ID: <CAMuHMdX0JBtRfda5_X=2g3ehJQJqOf=JS-ZX57tZ0wzGjjsCOQ@mail.gmail.com>
+Subject: Re: [PATCH] clk: renesas: rzv2h-cpg: Fix undefined reference to r9a09g057_cpg_info
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, kernel test robot <lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello everyone,
+Hi Prabhakar,
 
-Am Fri, Aug 16, 2024 at 04:34:48PM +0200 schrieb Alexander Dahl:
-> Hello everyone,
-> 
-> while further investigating timeout issues with the at91 otpc
-> controller on sam9x60 [1] I came to the conclusion the main RC
-> oscillator on that SoC must be enabled for that driver to work.
-> (Verified that by poking single bits in registers through devmem
-> already.)
-> 
-> Fortunately the necessary clk is already registered from the SoC code
-> in drivers/clk/at91/sam9x60.c [2] and I can see the clock in sysfs clk
-> summary:
-> 
->     root@DistroKit:~ head -n4 /sys/kernel/debug/clk/clk_summary 
->                                      enable  prepare  protect                                duty  hardware                            connection
->        clock                          count    count    count        rate   accuracy phase  cycle    enable   consumer                         id
->     ---------------------------------------------------------------------------------------------------------------------------------------------
->      main_rc_osc                         0       0        0        12000000    50000000   0     50000      Y   deviceless                      no_connection_id         
-> 
-> That clock has no parent and is not found anywhere in devicetree, nor
-> is it handled by the two clock-producers on that platform, so
-> from within mchp_otpc_probe() I just tried this:
-> 
->     otpc->clk = devm_clk_get_enabled(&pdev->dev, "main_rc_osc");
-> 
-> However that returns with -ENOENT, so I assume I can not reference the
-> clock just by name?  Same result with this:
-> 
->     otpc->clk = devm_clk_get_enabled(NULL, "main_rc_osc");
-> 
-> How do I get a pointer to that clk then to enable it?  Docs [3] where
-> not as useful as I hoped for, neither was clk.h header docs. :-/
+On Mon, Aug 5, 2024 at 11:58=E2=80=AFAM Prabhakar <prabhakar.csengg@gmail.c=
+om> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Address randconfig build issue where the linker reports an undefined
+> reference to `r9a09g057_cpg_info`. The error occurs when
+> CONFIG_CLK_R9A09G057 is not defined, leading to the inclusion of the
+> device match entry without the corresponding data. By adding a
+> preprocessor condition to the device match table, the entry for
+> r9a09g057 is included only when CONFIG_CLK_R9A09G057 is defined, thus
+> resolving the linker error.
+>
+> Error message:
+>    /usr/bin/ld: warning: .tmp_vmlinux1 has a LOAD segment with RWX permis=
+sions
+> >> /usr/bin/ld: drivers/clk/renesas/rzv2h-cpg.o:(.rodata+0xc0): undefined=
+ reference to `r9a09g057_cpg_info'
+>    clang-14: error: linker command failed with exit code 1 (use -v to see=
+ invocation)
+>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202408040932.SqrqyXGU-lkp@i=
+ntel.com/
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Tried this today:
+Fixes: 42b54d52ecb7a819 ("clk: renesas: Add RZ/V2H(P) CPG driver")
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-    otpc->clk = __clk_lookup("main_rc_osc");
+As the issue is only present in renesas-clk, I will fold the fix into the
+original commit.
 
-However calling that from platform driver code smells suspicious and I
-get a linker error when building anyways.
+Gr{oetje,eeting}s,
 
-Found no other possibility to get a grip on that clock from driver
-code.  Do we need to hook that main_rc_osc into dt somehow so it can be
-enabled from driver code?
+                        Geert
 
-Adding Boris, Alexandre, and Nicolas to Cc, because they were involved
-in the at91 clk drivers in the past.  O:-)
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-Greets
-Alex
-
-> From what I understood from header docs reading 'device for clock
-> "consumer"' I must pass the device from which I call that clk_get() as
-> first parameter, so this would be the otpc device then, right?  What's
-> that second parameter clock consumer id then?  Are these terms
-> explained somewhere?
-> 
-> Greets
-> Alex
-> 
-> [1] <20240813-payable-ecology-8a9e739704bb@thorsis.com>
-> [2] https://elixir.bootlin.com/linux/v6.10.4/source/drivers/clk/at91/sam9x60.c#L217
-> [3] https://kernel.org/doc/html/latest/driver-api/clk.html
-> 
-> 
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
