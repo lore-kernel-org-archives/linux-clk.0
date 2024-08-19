@@ -1,61 +1,61 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE46813C670
-	for <linux-clk@vger.kernel.org>; Mon, 19 Aug 2024 15:57:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F7061741F8
+	for <linux-clk@vger.kernel.org>; Mon, 19 Aug 2024 16:29:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724083072; cv=none; b=FQiOC/ab/i2fZECoc07+Sy56yPXxIpbe57HNpx/yomdfv/v7iWiGZeHjNr91CppLbAPLd2lJS32M/jptWMKSKZLaxU3eOkwdIhRRARe7QPyvSK+jn/RQrZ0JVnn9vJGxboWqLkIs6nAjiAGhvVpOrMPku+JiGI8wchYKKFLjnzY=
+	t=1724084967; cv=none; b=EPnv/zQXUEdzr7lZ4iJIu5+3CKV5j3TQuhcavbvnhsJOK8e800H2RoL1nsm3bqd0mDAfv1zLh/Qb7TcwqyNHS/kVl7NgYJhKyclQbS3K9zqWrRpGamdh8h4fU2VQwrCz071T/iJ5d24DnH7XTJ7xmV7Eq/MInNJNKq5T2mGMytQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724083072; c=relaxed/simple;
-	bh=mp5LMuBSzTVnZiVMfzCI4ELMyqOZCnZ146c3JWPIvCw=;
+	s=arc-20240116; t=1724084967; c=relaxed/simple;
+	bh=s52OHKtDl3AmAbau02STsx5Dnlsg+8r1eQiVrSVZJ04=;
 	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Jd9FM0OZn6IELyyGzycwaiW9O1LggBB3qPXCn8kICb6K0JrWArNmfvDLHy/YXNBtTGuO4M/Ab1x0YZceckIg2TCoFGDhN3bWSdhUW7mUhYmNhJo1XvcJtGaRmPMTv57QLz5U8T/DrS3UT0/9OHl6/w63pbmOtqoiOrAau9eNXGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZBkOHFIR; arc=none smtp.client-ip=209.85.128.43
+	 In-Reply-To:Content-Type; b=sW5iKcVGddh42nHvFG8i25Fsss2XtWEJkKsn+Erpjhn/80wd9bAo4WSIJA/l89xE1u0lel/5aAzKQYZy3zlY6V6INXAaSaVFntZ0EpXo+DMecIiPORXZzzyaWpUsOXt40X1smmcg1pwAyUHgqQqOIQ9QpKDrPXIMsxrB9s+y8TE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NGLBvgO5; arc=none smtp.client-ip=209.85.221.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZBkOHFIR"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-428085a3ad1so39424725e9.1
-        for <linux-clk@vger.kernel.org>; Mon, 19 Aug 2024 08:57:50 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NGLBvgO5"
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-371aa511609so1415629f8f.1
+        for <linux-clk@vger.kernel.org>; Mon, 19 Aug 2024 09:29:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724083069; x=1724687869; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1724084964; x=1724689764; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=gYLXx6IK436ZXUWm98Vv0I9P30RpVgjMhTotCo81moA=;
-        b=ZBkOHFIR5Xzbgf9fCp/QaGj0sHjkKR4qY/6ufb893OlQ48kOhLieW5H5X0qGlMLDXb
-         afTPUy87JF51DdZYvYhjgCw2fkhR1T60dY1NX2yEVe5V5ZON6aWpk3y3/Xi5c03glIj7
-         anFgJrjZQu1yuTJk/10Tqd35WsU+SxVc/dAQ25CQosdzzYQm1/LRwVJ2JHynwLMCPnhu
-         ArK0UpaWbzyMFTewMkVocdcF8V9huL2+nXY8nJj45ZkQWP+E4SdBlmPi+kDC6kBOgiP+
-         3tw5Y6IqEgvKRuRDl+P2K53HHkCLOIoE1mPmZt63p8c0WwI1M76YaZLjMrAIN7gd+vS9
-         yl5w==
+        bh=5US2fLlCk1Qa8yNz6skTiBfI5hTwUtCqnfiUSm9ZmH8=;
+        b=NGLBvgO5zNenjRHC3tdNLZutCuuywP4GaqtRIxWrnAge5tcui/sJxwiNjHkbwHF0L7
+         JjNFc2uftphYpEQ/OaDY73dovMNmyUoKhGBtWrHGgt7Xy8wO1W9r4Qw//mxZMn9l25NB
+         /0ljP/sAcTqzuDER0JI/aVbaEzDpt6/iZBJfTeI5KXWuP2eQHPy3atgg0PqVll+MVHzI
+         bf32mBLBJa3w2Kq2h4NdzqBIuTVf/tCMQzlEbyuTm0ZaGJAlrMsYMljz+TrM8zwANjI0
+         0Ly9EcWgbBu76XRYyqj7cwqO+GBD6/9XpsSj9xvPpWNZmkWBFH55GxM6kWAG2vvPsf+q
+         fUNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724083069; x=1724687869;
+        d=1e100.net; s=20230601; t=1724084964; x=1724689764;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=gYLXx6IK436ZXUWm98Vv0I9P30RpVgjMhTotCo81moA=;
-        b=klIP97ogttO35m2Q7adDbSFL9oAy7J5nn4hcP3VduYJImI7m06mi+Xos3+0ZGuypoo
-         4Djpdo7lGnKIYlrZx9IR8enAOoaZOEC5z/NtaptKQXdImEIxT+s+VgebDyIZ0P98homl
-         Iop3Ml/FRXkqM0nZ1fmizUc/pLP7mNbHpBRGPmB79XNIlxMzj8bUo09V5GUOWjkUOKfp
-         5odG4hMC51tVAyyGKnOKARNL9hMVFn6KYKnpZbDaQ7kIlTqJvAYL17lrurGi1wp3C9ig
-         vFSquvZnM7E4XgHcMATRy5eqka0WZnCy7EtvpbNHpfSawB6nysMuKEZ2UQfEigqEuTCQ
-         2AFw==
-X-Forwarded-Encrypted: i=1; AJvYcCXEIxo6rUOJmZJoQdydTxodh0/f9FQhHOX2gb71oxPlXMpQVaBtEnYqfXeyA4LCIDKRgn6ItmtrXUTHpX4YqHUCgCrDtACLkkfK
-X-Gm-Message-State: AOJu0YyPppIAzvLXe4lGpkTu+D2zylgDPuXiZKulV7ZB6GfvXa1k8Rzw
-	bqqWhhpL3m7FfCQhdqU5bhmMjcrnIEjWhRwOCqTBw7XDHzJVvMZUoP+RV5m5hSg=
-X-Google-Smtp-Source: AGHT+IEWZ9kdWV6uTHZAXTq9g0kGd7Rheid4jblAqZmzIcGKVPLZkk5lJdCcW5NMGYbQoypK0W3cIQ==
-X-Received: by 2002:a05:600c:46c9:b0:427:985b:178b with SMTP id 5b1f17b1804b1-429ed79e585mr67849275e9.16.1724083068540;
-        Mon, 19 Aug 2024 08:57:48 -0700 (PDT)
+        bh=5US2fLlCk1Qa8yNz6skTiBfI5hTwUtCqnfiUSm9ZmH8=;
+        b=Pl0UPCDhzGcQzNdvZ8vlyj0aZlr9j9s/zPw8Fj0gARXATc5isBpBD9uCU5ph78LAsw
+         Xbtr+o874+fr9Go3ryrz3LzTj6NKOr+uci+FoVXxI+hocRAjjFaZHDK+UnItoc+jsFSo
+         ENwiWiWmftiVmI/owE6tKDIIUzAUSFA+fnZxbru24PWo/2DyGWKsFbKtFI4g7G6O/lmY
+         6ABmB2OxsYYf4QYk+xOM1wWZWZsUoGYJI3c7E1ccUWJ+zBIOMEZYJdZbLBKZWiLR2G0t
+         6yDKU9ta3NC+0jPi9n/1aQ/lun+l+seo4ZtJyw9sui2dELm1G9zkYw4q0EyztN96ciNK
+         VVgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUuWt82iVU6zA2QR53ZnyojMVV4nfUfxA6L+hbJ7XeRjM7ihwleNIpHdz6eedPUs2pUqZMTGtF/UQbMeoL4ASsxTRJ6e/KTzPIm
+X-Gm-Message-State: AOJu0YywaNnpK2QmK1Btbgxym3hG5RsATRQ3h1OV6F0lqeObSAJkRhe3
+	kJ1w5rbrs9C0Ek/UaQq4FUbbpyL0yp1hXA9/QYFU603isIE/x7mBuKGb6HhaqW0=
+X-Google-Smtp-Source: AGHT+IHxfQlj6hZ6qabi9dNFuwSGuRU8pknTTNNcDBW8nTSoVe9O85P9qnLwExtrqcC3QNJEn9lkLA==
+X-Received: by 2002:a5d:4cc8:0:b0:371:82e7:6ec0 with SMTP id ffacd0b85a97d-371946d29b5mr7731949f8f.59.1724084963165;
+        Mon, 19 Aug 2024 09:29:23 -0700 (PDT)
 Received: from ?IPV6:2a01:e0a:982:cbb0:f54e:4b0a:5175:5727? ([2a01:e0a:982:cbb0:f54e:4b0a:5175:5727])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-371898aabe9sm10897543f8f.92.2024.08.19.08.57.47
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-371898bb588sm10912541f8f.115.2024.08.19.09.29.22
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Aug 2024 08:57:48 -0700 (PDT)
-Message-ID: <614de1b0-fcaf-457c-9183-1f3cd7f91b38@linaro.org>
-Date: Mon, 19 Aug 2024 17:57:40 +0200
+        Mon, 19 Aug 2024 09:29:22 -0700 (PDT)
+Message-ID: <8cae4536-52ff-4e54-ba15-6376dd9129ca@linaro.org>
+Date: Mon, 19 Aug 2024 18:29:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -65,13 +65,13 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 From: Neil Armstrong <neil.armstrong@linaro.org>
 Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH v3 4/9] reset: amlogic: add driver parameters
+Subject: Re: [PATCH v3 2/9] reset: amlogic: use generic data matching function
 To: Jerome Brunet <jbrunet@baylibre.com>,
  Philipp Zabel <p.zabel@pengutronix.de>, Stephen Boyd <sboyd@kernel.org>
 Cc: linux-kernel@vger.kernel.org, linux-amlogic@lists.infradead.org,
  linux-clk@vger.kernel.org
 References: <20240808102742.4095904-1-jbrunet@baylibre.com>
- <20240808102742.4095904-5-jbrunet@baylibre.com>
+ <20240808102742.4095904-3-jbrunet@baylibre.com>
 Content-Language: en-US, fr
 Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
@@ -98,83 +98,32 @@ Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
  QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
 Organization: Linaro
-In-Reply-To: <20240808102742.4095904-5-jbrunet@baylibre.com>
+In-Reply-To: <20240808102742.4095904-3-jbrunet@baylibre.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 08/08/2024 12:27, Jerome Brunet wrote:
-> To allow using the same driver for the main reset controller and the
-> auxiliary ones embedded in the clock controllers, allow to customise
-> the reset offset, same as the level offset. Also add an option to make
-> the level reset active low or high.
+> There is no need to use the DT specific function to get
+> matching data, use the generic one instead
 > 
+> Suggested-by: Stephen Boyd <sboyd@kernel.org>
 > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 > ---
->   drivers/reset/reset-meson.c | 12 +++++++++++-
->   1 file changed, 11 insertions(+), 1 deletion(-)
+>   drivers/reset/reset-meson.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 > 
 > diff --git a/drivers/reset/reset-meson.c b/drivers/reset/reset-meson.c
-> index 460ad2f8360f..8addd100e601 100644
+> index b47431a21b86..820905779acd 100644
 > --- a/drivers/reset/reset-meson.c
 > +++ b/drivers/reset/reset-meson.c
-> @@ -18,7 +18,9 @@
+> @@ -128,7 +128,7 @@ static int meson_reset_probe(struct platform_device *pdev)
+>   	if (IS_ERR(base))
+>   		return PTR_ERR(base);
 >   
->   struct meson_reset_param {
->   	unsigned int reg_count;
-> +	unsigned int reset_offset;
->   	unsigned int level_offset;
-> +	bool level_low_reset;
->   };
+> -	data->param = of_device_get_match_data(dev);
+> +	data->param = device_get_match_data(dev);
+>   	if (!data->param)
+>   		return -ENODEV;
 >   
->   struct meson_reset {
-> @@ -46,6 +48,7 @@ static int meson_reset_reset(struct reset_controller_dev *rcdev,
->   	unsigned int offset, bit;
->   
->   	meson_reset_offset_and_bit(data, id, &offset, &bit);
-> +	offset += data->param->reset_offset;
->   
->   	return regmap_write(data->map, offset, BIT(bit));
->   }
-> @@ -59,9 +62,10 @@ static int meson_reset_level(struct reset_controller_dev *rcdev,
->   
->   	meson_reset_offset_and_bit(data, id, &offset, &bit);
->   	offset += data->param->level_offset;
-> +	assert ^= data->param->level_low_reset;
->   
->   	return regmap_update_bits(data->map, offset,
-> -				  BIT(bit), assert ? 0 : BIT(bit));
-> +				  BIT(bit), assert ? BIT(bit) : 0);
->   }
->   
->   static int meson_reset_assert(struct reset_controller_dev *rcdev,
-> @@ -84,17 +88,23 @@ static const struct reset_control_ops meson_reset_ops = {
->   
->   static const struct meson_reset_param meson8b_param = {
->   	.reg_count	= 8,
-> +	.reset_offset	= 0x0,
->   	.level_offset	= 0x7c,
-> +	.level_low_reset = true,
->   };
->   
->   static const struct meson_reset_param meson_a1_param = {
->   	.reg_count	= 3,
-> +	.reset_offset	= 0x0,
->   	.level_offset	= 0x40,
-> +	.level_low_reset = true,
->   };
->   
->   static const struct meson_reset_param meson_s4_param = {
->   	.reg_count	= 6,
-> +	.reset_offset	= 0x0,
->   	.level_offset	= 0x40,
-> +	.level_low_reset = true,
 
-Just a comment, I would rather leave the "default" users of this driver with the default value
-and use level_high_reset = true for the clock ones
-
-Neil
-
->   };
->   
->   static const struct of_device_id meson_reset_dt_ids[] = {
-
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
