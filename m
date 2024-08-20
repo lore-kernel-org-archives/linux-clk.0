@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 264281E86E;
-	Tue, 20 Aug 2024 22:04:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C90F7165F1F;
+	Tue, 20 Aug 2024 22:07:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724191459; cv=none; b=omgO6AIsineZML2VuIro+vSuUHT3VGwvN0X/ROyaqLi+Ye9M/Cf3xjloCQVwt864twyZIQVR5ev4sDJHTRnT0QfjQaQL3bWtzImP3spS11TebPveBtJ8O8mPJTmuF0S6SgPFiQGdU5XHFMluudLA2079jOepnl1j4gr90bD6TPM=
+	t=1724191646; cv=none; b=tShGlWSt1SyPKMevjjWlztx7FhE6Wo2Q0GPzRtWYsYjQdQbdLBqSrpiThtdGFDBnX62+/Hhb4b/pN2bFpYzAwVXKjZMmkcpd2hfwRNOzmuEgGe8+4/ITgpVSNoDPIMx7gWhHosegGTbK8YH52t9x/PPSp6Z3i0YkToa3ZsUTbKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724191459; c=relaxed/simple;
-	bh=pCqg5t/R29AxiCJ1eeBn3fi2WEI6qz6AVbsf79SWoy4=;
+	s=arc-20240116; t=1724191646; c=relaxed/simple;
+	bh=gTCfUazAJbz+mImit/XNqwQ9XUVQJSY7H1UanfSeIhE=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=ndB+XzB0JYFriLDj6qTpnXmpK7FYcF6siSQcc6uOvUhx4ERXWlXtoNThoKsasQgd5gzO/GH4cX8zu96uxtTGko3TGveVMfO75+1bp80auFcUyIU9RqMwTNqb+CMH06VlgnK+H8ZF/xaFqa5aQEwtYuLfGjn9kOEUbFjaO0P49cw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ngP8cSVD; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=nNIhExxAWO2B7PiS2pb1IUfFh0zYA4beNEryy34wCqnVGuWmDz4uZsL+XrvpOG9nm5HDfMbV6lnh6Uy0RAJ6Jk3aKTiJiCe0KPyrBz/VmxaMrjoJZRYTpMcVz/QW2u/rgNJ489Q9uWrV7Y2XJwZnhTXHo+on7vdZWjXxL0TgmUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cqbs5rfp; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ngP8cSVD"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A4DDC4AF09;
-	Tue, 20 Aug 2024 22:04:17 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cqbs5rfp"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8495C4AF12;
+	Tue, 20 Aug 2024 22:07:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724191458;
-	bh=pCqg5t/R29AxiCJ1eeBn3fi2WEI6qz6AVbsf79SWoy4=;
+	s=k20201202; t=1724191645;
+	bh=gTCfUazAJbz+mImit/XNqwQ9XUVQJSY7H1UanfSeIhE=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=ngP8cSVDANpE0qmH3iDcpQ4sUtbL9qcv9wJHOXnvYnrqEG2rTG9gPLXmE4IAq+fLE
-	 TJeOTFntmATPo5kAMaX3XVXT6096x79jm8oClK+BMuxvoxNYW2mxf/+fwVcTiZuxXU
-	 A5R0fFP3DD8E+FOEYjOIf7tgOtgZkfqgfXCQLGzWDix8f3kxgAwd69R50WQOwejh5e
-	 zUSPWWmUycrw41EPy6OyfRYSLrL32vuKdPE1HIf6B2N5aHHTXFYjRHcqfEBIKzyuPu
-	 zKb4RNPoYD8dddh07Q8gGUiPPTnH/PvztN2m1zZSDqELYnHGACCma5xsiIOBI8M0pY
-	 +D/GezDkZ0MRQ==
-Message-ID: <de31594913e686aad9e8965a2730ddef.sboyd@kernel.org>
+	b=cqbs5rfpF9GosR2zhGsHx/iMlNYQWn+8YrNpk7H1zYS0SVkhY55nUAZDFAu95B+Cj
+	 ilxtwwqd2AGODFB7Kxcyxlk8tyyfDsYdOL+TiDR9ccJzx6hhYIKl1iuh+0AUtHTpSi
+	 W+9CYiyc+vbAeodh1/d8ZLliW4aOHOfiIUD17ItajQEGFx6zimblkHfz8DeNwSfE8o
+	 sALnZ2FT8xr8q/RaMFtBSuUHsEF1aGa6mu6vuV1apq3GB9el6gVOXK8FeWb+d3Ad7n
+	 m5cH87SmzqscvG7ufFKeq8UslO8ANLRcZWhWQLmAoTKynL5TvK8jF7JluEFT0TINgX
+	 lTEgnPdojQafQ==
+Message-ID: <1d4c39e109bcf288d5900670e024a315.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,18 +35,18 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <CAPbMC74ShG6R8JEoiv29082GqN5jbkHrLcsw6fXfjWu=oAqmAg@mail.gmail.com>
-References: <CAPbMC74ShG6R8JEoiv29082GqN5jbkHrLcsw6fXfjWu=oAqmAg@mail.gmail.com>
-Subject: Re: [drivers/clk] Question about `en7523_register_clocks` func: misuse of __counted_by
+In-Reply-To: <20240820025902.2355565-1-liyuesong@vivo.com>
+References: <20240820025902.2355565-1-liyuesong@vivo.com>
+Subject: Re: [PATCH v1] clk:clk-imx8-acm:fix wrong pointer check in clk_imx_acm_attach_pm_domains()
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-To: Haoyu Li <lihaoyu499@gmail.com>, Michael Turquette <mturquette@baylibre.com>
-Date: Tue, 20 Aug 2024 15:04:15 -0700
+Cc: peng.fan@nxp.com, kernel@pengutronix.de, festevam@gmail.com, shengjiu.wang@nxp.com, linux-clk@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, opensource.kernel@vivo.com, Yuesong Li <liyuesong@vivo.com>
+To: Yuesong Li <liyuesong@vivo.com>, abelvesa@kernel.org, mturquette@baylibre.com, s.hauer@pengutronix.de, shawnguo@kernel.org
+Date: Tue, 20 Aug 2024 15:07:22 -0700
 User-Agent: alot/0.10
 
-Quoting Haoyu Li (2024-08-19 12:05:30)
->=20
-> Please kindly correct us if we missed any key information. Looking
-> forward to your response!
+Quoting Yuesong Li (2024-08-19 19:59:02)
+> device_link_add() returns NULL pointer not PTR_ERR() when it fails,so
+> replace the IS_ERR() check with NULL pointer check.
 
-Patches welcome.
+Can you document that fact by adding a "Return:" line to the kernel-doc
+for device_link_add() in another patch?
