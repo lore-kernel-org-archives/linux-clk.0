@@ -1,177 +1,145 @@
-Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74F5D1C6B2
-	for <linux-clk@vger.kernel.org>; Tue, 20 Aug 2024 03:16:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8FEB1849;
+	Tue, 20 Aug 2024 05:01:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724123812; cv=none; b=jeQSmZltdXHxqhgLaDN2pPTCuCLbSUcMryxGXHM0tQkCDSn8fseeWL4/vO3dEkykiKvXGwai43QlxVdSNiPQEMtpQLmzE+8SRk07AUsy6XvTh3HfcVy9WwEyLy5eWrgEA2/28n600CYdtUgHEqGDjTZzwJvXmiAR3R0Xb4gR5V4=
+	t=1724130080; cv=none; b=FgzP9SxW9xci5AMw9wNUK/jgglOqCbtLlX3VTSYROkNhwyc757d5WXtQ26OuwV24ZrXFJKJc8pY5e0FmKihD5tXI4L/8mIjpn6q+l6uNuFDj1bf2uGpo5fXXyi8T0jlMscjrO6WdialoB/frdzD0r7Y8I/8uyJbBvH8icXgDHJk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724123812; c=relaxed/simple;
-	bh=7OS5U6hUroRgy2oQ+7zl1P3imxQtugoQ87EKZwryMJQ=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
-	 Content-Type:References; b=jny92EP87N3zASyAa9BAL5gGQQRiBWWmzBlDIwZQzBJtJ9T0lHA1cTjZKT1zfH2fz8+9nbvpn0LCK5DVlP1YbGzB3dLi3hOY657ihtCUqfgPWyNSEUKyd9bat5tXvO63l/ChAoTQSr0nLHnu/d+CgStKc1D9pnOmJzUMpiW5jc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=mQE1fc+W; arc=none smtp.client-ip=203.254.224.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+	s=arc-20240116; t=1724130080; c=relaxed/simple;
+	bh=3b4BfMjIO8uWL8IQibWt252CzzZN3b6XUyQzSJAkdVs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=pZHXOFlTP0KRTELRXPnCo0dpTg1yBVjetVJmAi1lumMco/8f9uUuGdZh1QosZSdbqgXqlwII76RMWOK447kfLdJF/6ONH2aDo+tPP/jg4ohw8tLCPJXZOgbAw24Gs9uEDgBgyi5nOMl3cJ6PXtgbtTRui5k0i2Q6ld4xCaygNig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=c9El3ODK; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="mQE1fc+W"
-Received: from epcas5p4.samsung.com (unknown [182.195.41.42])
-	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20240820031647epoutp01461345d992b1c9ea47387bd1e8a68386~tUXfPKwEC0954909549epoutp01X
-	for <linux-clk@vger.kernel.org>; Tue, 20 Aug 2024 03:16:47 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20240820031647epoutp01461345d992b1c9ea47387bd1e8a68386~tUXfPKwEC0954909549epoutp01X
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1724123807;
-	bh=4L3WgD3UaaixdH74TH6NcTMHweQB4Wz7DCYygO4wg3E=;
-	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
-	b=mQE1fc+WIIMI6yMAxe7AeKBIcnj/9uVKMLiQV6pt3JzhsuwmVyuwWFCW/ymJWD+DH
-	 Yle8MLA/WQM+Q1VfaFblBQyuGlJqj/k8R1vZRD+zyBpwN4A4492KWtJ04XL0gA+FEE
-	 C94lf0w9NrNJoS+pqSCB9beHygQyf5eCzdkONdag=
-Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
-	20240820031646epcas5p23da09078ad3ab137795789e29de5c881~tUXetoElL0938909389epcas5p2I;
-	Tue, 20 Aug 2024 03:16:46 +0000 (GMT)
-Received: from epsmges5p1new.samsung.com (unknown [182.195.38.175]) by
-	epsnrtp2.localdomain (Postfix) with ESMTP id 4Wnvl10tQvz4x9Q3; Tue, 20 Aug
-	2024 03:16:45 +0000 (GMT)
-Received: from epcas5p3.samsung.com ( [182.195.41.41]) by
-	epsmges5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	ED.09.09640.C9A04C66; Tue, 20 Aug 2024 12:16:44 +0900 (KST)
-Received: from epsmtrp2.samsung.com (unknown [182.195.40.14]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
-	20240820031644epcas5p28483b55967b4fb740717562413dfd717~tUXcuTORG0938809388epcas5p2C;
-	Tue, 20 Aug 2024 03:16:44 +0000 (GMT)
-Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
-	epsmtrp2.samsung.com (KnoxPortal) with ESMTP id
-	20240820031644epsmtrp29518d7e78973d4e573e3b44c1f3e81e9~tUXctTMfR1384113841epsmtrp28;
-	Tue, 20 Aug 2024 03:16:44 +0000 (GMT)
-X-AuditID: b6c32a49-a57ff700000025a8-fb-66c40a9c0b74
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	C5.14.19367.C9A04C66; Tue, 20 Aug 2024 12:16:44 +0900 (KST)
-Received: from INBRO002756 (unknown [107.122.12.5]) by epsmtip2.samsung.com
-	(KnoxPortal) with ESMTPA id
-	20240820031642epsmtip237268865e08a0ca495abb30bcd4ddb6a~tUXactUZO2417724177epsmtip2F;
-	Tue, 20 Aug 2024 03:16:42 +0000 (GMT)
-From: "Alim Akhtar" <alim.akhtar@samsung.com>
-To: "'Sunyeal Hong'" <sunyeal.hong@samsung.com>, "'Krzysztof Kozlowski'"
-	<krzk@kernel.org>, "'Sylwester Nawrocki'" <s.nawrocki@samsung.com>,
-	"'Chanwoo Choi'" <cw00.choi@samsung.com>, "'Michael Turquette'"
-	<mturquette@baylibre.com>, "'Stephen Boyd'" <sboyd@kernel.org>, "'Rob
- Herring'" <robh@kernel.org>, "'Conor Dooley'" <conor+dt@kernel.org>
-Cc: <linux-samsung-soc@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-In-Reply-To: <20240819052416.2258976-2-sunyeal.hong@samsung.com>
-Subject: RE: [PATCH v6 1/4] dt-bindings: clock: add ExynosAuto v920 SoC CMU
- bindings
-Date: Tue, 20 Aug 2024 08:46:40 +0530
-Message-ID: <02ab01daf2af$62450520$26cf0f60$@samsung.com>
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="c9El3ODK"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1724130073;
+	bh=2PRTSiGh3uU5dFAtSZg315/iLYxDuImsd1EksememsM=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=c9El3ODKyA45Aur4k1l2dalKgBeCtGjSxD2WV53DdZ0MH51RBcNB9FwoxC2VSwTOB
+	 EdS2Kc2HDdYEiFyBJRl6YgldpvunVXwR1B1RQD6h5u6SZZqpy90FAHeSH0vNpWyyf2
+	 VM8OvxPoA6pWxggSdSmy5jqNwJjCVlQWWGdRn1RpHmc3RlznGtR3RBXQe3v902s8lC
+	 NT2vP0ZH16HO5AezX5+XG6obKaA1tL4WH692/HB+mjwhghL8UO2L8Hqnu+uespzm2F
+	 Ns8wNSUqmMTKiDVFAUPImY/tl6/3/n/8xiLwVdOjuzeoOUUSCL0z37Fwt3DBbtRmmX
+	 IFglDWohAKyFA==
+Received: from [192.168.68.112] (ppp118-210-185-99.adl-adc-lon-bras34.tpg.internode.on.net [118.210.185.99])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 27BAF64B84;
+	Tue, 20 Aug 2024 13:01:10 +0800 (AWST)
+Message-ID: <94efc2d4ff280a112b869124fc9d7e35ac031596.camel@codeconstruct.com.au>
+Subject: Re: [PATCH 1/4] dt-bindings: mfd: aspeed: support for AST2700
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Ryan Chen <ryan_chen@aspeedtech.com>, Rob Herring <robh@kernel.org>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, "linux-aspeed@lists.ozlabs.org"
+ <linux-aspeed@lists.ozlabs.org>, Stephen Boyd <sboyd@kernel.org>, Michael
+ Turquette <mturquette@baylibre.com>, Lee Jones <lee@kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Krzysztof
+ Kozlowski <krzk@kernel.org>,  Philipp Zabel <p.zabel@pengutronix.de>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, "linux-clk@vger.kernel.org"
+ <linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>
+Date: Tue, 20 Aug 2024 14:31:07 +0930
+In-Reply-To: <OS8PR06MB754148E915F6E6014F490583F28D2@OS8PR06MB7541.apcprd06.prod.outlook.com>
+References: <20240808075937.2756733-1-ryan_chen@aspeedtech.com>
+	 <20240808075937.2756733-2-ryan_chen@aspeedtech.com>
+	 <2f27285e-6aa5-4e42-b361-224d8d164113@kernel.org>
+	 <OS8PR06MB75416FAD2A1A16E7BE2D255DF2BA2@OS8PR06MB7541.apcprd06.prod.outlook.com>
+	 <10809e91-31be-4110-86c1-1e1ccb05b664@kernel.org>
+	 <OS8PR06MB7541F4F740FDB17F50EBCACBF2BA2@OS8PR06MB7541.apcprd06.prod.outlook.com>
+	 <20240813191454.GA1570645-robh@kernel.org>
+	 <OS8PR06MB7541BB03AEE90B090AB990B3F2872@OS8PR06MB7541.apcprd06.prod.outlook.com>
+	 <7e1dc98e0f69a095a8f7725b742df3c8d8436a67.camel@codeconstruct.com.au>
+	 <OS8PR06MB754121818B9431941C18E09DF2802@OS8PR06MB7541.apcprd06.prod.outlook.com>
+	 <OS8PR06MB7541C54CA074410C50BA419AF28C2@OS8PR06MB7541.apcprd06.prod.outlook.com>
+	 <64d13efd3119429ed876ad7ea499cff62e100fb9.camel@codeconstruct.com.au>
+	 <OS8PR06MB754148E915F6E6014F490583F28D2@OS8PR06MB7541.apcprd06.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQLQL30DU0UysUOS1ES52gTWByyh0gIaeEiEAf2S/v2wJD72QA==
-Content-Language: en-us
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrGJsWRmVeSWpSXmKPExsWy7bCmpu4criNpBrvf2Fis2XuOyeL6l+es
-	FvOPnGO1OH9+A7vFpsfXWC0+9txjtbi8aw6bxYzz+5gsLp5ytfi/Zwe7xeE37awW/65tZLFo
-	WraeyYHX4/2NVnaPTas62Tw2L6n36NuyitHj8ya5ANaobJuM1MSU1CKF1Lzk/JTMvHRbJe/g
-	eOd4UzMDQ11DSwtzJYW8xNxUWyUXnwBdt8wcoBOVFMoSc0qBQgGJxcVK+nY2RfmlJakKGfnF
-	JbZKqQUpOQUmBXrFibnFpXnpenmpJVaGBgZGpkCFCdkZH1qOsxQs4KtYtugfYwPjG+4uRk4O
-	CQETib07djF3MXJxCAnsZpT49XA2K4TziVFi4+EHbHDO+cZHbDAtbx7vYgGxhQR2MkosuxUE
-	UfSCUWLKsw9gRWwCuhI7FreB2SIC95gkPu41ByliFljHKLF55hF2kASngIPEne3nmboYOTiE
-	BcIkJnzTAwmzCKhKzJr3FayEV8BS4urZS8wQtqDEyZlPwBYzC8hLbH87hxniIAWJn0+XsULs
-	cpLY9baBFaJGXOLlUZBVXEA1ezgklu7bC/WBi8Trt62MELawxKvjW9ghbCmJz+9garIljl+c
-	BWVXSHS3foSqsZfY+egmC8jNzAKaEut36UPs4pPo/f0E7BUJAV6JjjYhiGpVieZ3V1kgbGmJ
-	id3drBC2h8Tq3j9MExgVZyH5bBaSz2Yh+WAWwrIFjCyrGCVTC4pz01OLTQsM81LL4fGdnJ+7
-	iRGcgLU8dzDeffBB7xAjEwfjIUYJDmYlEd7ulwfThHhTEiurUovy44tKc1KLDzGaAoN7IrOU
-	aHI+MAfklcQbmlgamJiZmZlYGpsZKonzvm6dmyIkkJ5YkpqdmlqQWgTTx8TBKdXAZDktUPCU
-	6vFytpn2vPUvPt1ILNqwL6z8ar9ERvUx2a7klTvlRN4oX7eyTjvycOWL+62mH+30fiuZf4z1
-	u3BvtbOteMH67WuDU6K0T1i9EBGV9NcoXvy498vtP1WsF+6cm7dJbsZ+LYGv9+7nb1m0Mpsr
-	NffkMj6J12vjPD1NDBr2rhPNWP/nurzJ1BIv9Q/ySrX75iVxFs893h/5ocrkuR5TiXzPV97p
-	olJ+P/OmWE62NdjNyJCSHbaQV0x/U4zIY6vn6Q7vvyV0NsqKxE0ODb6lW25Ve1+RN0yr84BI
-	eLKPV6v16epf8uvXX53B82/C3vsKD22mJwvxzH+huct70fbjm/ae/VqfWvRq2QYtJZbijERD
-	Leai4kQArij6JkkEAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprDIsWRmVeSWpSXmKPExsWy7bCSvO4criNpBi/75SzW7D3HZHH9y3NW
-	i/lHzrFanD+/gd1i0+NrrBYfe+6xWlzeNYfNYsb5fUwWF0+5Wvzfs4Pd4vCbdlaLf9c2slg0
-	LVvP5MDr8f5GK7vHplWdbB6bl9R79G1ZxejxeZNcAGsUl01Kak5mWWqRvl0CV8aHluMsBQv4
-	KpYt+sfYwPiGu4uRk0NCwETizeNdLF2MXBxCAtsZJab8OcUIkZCWuL5xAjuELSyx8t9zMFtI
-	4BmjxL+fiiA2m4CuxI7FbWwgtojAEyaJrYejQQYxC2xilDi3+yYbxNSjjBLLpn9mBqniFHCQ
-	uLP9PBOILSwQIjHt0R4wm0VAVWLWvK9gG3gFLCWunr3EDGELSpyc+YQFxGYW0JZ4evMplC0v
-	sf3tHGaI6xQkfj5dxgpxhZPErrcNrBA14hIvjx5hn8AoPAvJqFlIRs1CMmoWkpYFjCyrGEVT
-	C4pz03OTCwz1ihNzi0vz0vWS83M3MYIjUCtoB+Oy9X/1DjEycTAeYpTgYFYS4e1+eTBNiDcl
-	sbIqtSg/vqg0J7X4EKM0B4uSOK9yTmeKkEB6YklqdmpqQWoRTJaJg1OqgYmzokLRqHjayq8P
-	BV40ln6reWrwWnqO7S9lw6dLNwkyrvl9iLGubHIpt8eHhZM3ejqbMJxq139+6tw6l/k1W/IX
-	PIsUjL2168LKBt3stBPHY+VqjAIdnNjVF9YZpfYLC6X32s6/Ku5vYmQ1+dtvZs1/xfemm+R/
-	vGnOoHPhy8btjeoL/GNEZx6fa56XK9r80XJeY0TpjAezegTPziu00VvXHLpcQyxmv37NoWUO
-	hx6EiOZ6OujF/8wvbljZuOFCRKO25JLC+5aGT2fNsbSxud52V5Lpa/oLWV+FLKYlkZIH315T
-	DFfsvtO5pLa/rNPLU5jT9rXsfT/e/C3Cr/abZ6elXc7UYq15LjstNmiaEktxRqKhFnNRcSIA
-	EpgMOi8DAAA=
-X-CMS-MailID: 20240820031644epcas5p28483b55967b4fb740717562413dfd717
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20240819052422epcas2p4db394defd5f298658f7841af3649ac6f
-References: <20240819052416.2258976-1-sunyeal.hong@samsung.com>
-	<CGME20240819052422epcas2p4db394defd5f298658f7841af3649ac6f@epcas2p4.samsung.com>
-	<20240819052416.2258976-2-sunyeal.hong@samsung.com>
 
-Hi Sunyeal,
+On Tue, 2024-08-20 at 01:52 +0000, Ryan Chen wrote:
+> > Subject: Re: [PATCH 1/4] dt-bindings: mfd: aspeed: support for
+> > AST2700
+> >=20
+> > On Mon, 2024-08-19 at 03:05 +0000, Ryan Chen wrote:
+> > > > > Subject: Re: [PATCH 1/4] dt-bindings: mfd: aspeed: support
+> > > > > for
+> > > > > AST2700
+> > > > >=20
+> > > > > On Wed, 2024-08-14 at 06:35 +0000, Ryan Chen wrote:
+> > > > > > >=20
+> > > > > > > Didn't I see in another patch one die is cpu and one is
+> > > > > > > io?
+> > > > > > > Use
+> > > > > > > those in the compatible rather than 0 and 1 if so.
+> > > > > > >=20
+> > > > > > Sorry, I want to align with our datasheet description.
+> > > > > > It will but scu0 and scu1 register setting.
+> > > > >=20
+> > > > > Can we document that relationship in the binding? Rob's
+> > > > > suggestion
+> > > > > seems more descriptive.
+> > > > Hello,
+> > > > 	Do you want me document it in yaml file or just in
+> > > > commit
+> > > > message?
+> > >=20
+> > > Hello Rob, Andrew,
+> > > 	I will add in yaml file in description. Like following.
+> > >=20
+> > > description:
+> > > =C2=A0=C2=A0The Aspeed System Control Unit manages the global behavio=
+ur of
+> > > the
+> > > SoC,
+> > > =C2=A0=C2=A0configuring elements such as clocks, pinmux, and reset.
+> > > +  In AST2700, it has two soc combination. Each soc include its
+> > > own
+> > > scu register control.
+> > > +  ast2700-scu0 for soc0, ast2700-scu1 for soc1.
+> > >=20
+> > > Is that will be better way ?
+> >=20
+> > What Rob is suggesting is to add the compatibles "aspeed,ast2700-
+> > scu-
+> > cpu" and "aspeed,ast2700-scu-io", and then in the description say
+> > something like:
+> >=20
+> > =C2=A0=C2=A0=C2=A0The AST2700 integrates both a CPU and an IO die, each=
+ with their
+> > own
+> > =C2=A0=C2=A0=C2=A0SCU. The "aspeed,ast2700-scu-cpu" and "aspeed,ast2700=
+-scu-io"
+> > =C2=A0=C2=A0=C2=A0compatibles correspond to SCU0 and SCU1 respectively.
+> >=20
+> Hello Andrew,
+> 	Sorry, for correspond for ast2700 datasheet, the description
+> is scu0/scu1.
+> 	System Control Unit #0 (SCU0)/ System Control Unit #1 (SCU1)
+> why not we
+> 	Keep align with datasheet statement?
 
-> -----Original Message-----
-> From: Sunyeal Hong <sunyeal.hong@samsung.com>
-> Sent: Monday, August 19, 2024 10:54 AM
-> To: Krzysztof Kozlowski <krzk@kernel.org>; Sylwester Nawrocki
-> <s.nawrocki@samsung.com>; Chanwoo Choi <cw00.choi@samsung.com>;
-> Alim Akhtar <alim.akhtar@samsung.com>; Michael Turquette
-> <mturquette@baylibre.com>; Stephen Boyd <sboyd@kernel.org>; Rob
-> Herring <robh@kernel.org>; Conor Dooley <conor+dt@kernel.org>
-> Cc: linux-samsung-soc@vger.kernel.org; linux-clk@vger.kernel.org;
-> devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-
-> kernel@vger.kernel.org; Sunyeal Hong <sunyeal.hong@samsung.com>
-> Subject: [PATCH v6 1/4] dt-bindings: clock: add ExynosAuto v920 SoC CMU
-> bindings
-> 
-> Add dt-schema for ExynosAuto v920 SoC clock controller.
-> Add device tree clock binding definitions for below CMU blocks.
-> 
-> - CMU_TOP
-> - CMU_PERIC0
-> 
-Do update the commit message to match with the changes in this patch
-Thanks
+Well, IMO we have an opportunity do better in the compatibles. I expect
+we should take advantage of it. As some support for Rob's suggestion,
+the datasheet chapter for SCU1 calls it "SCUIO" in the first sentence
+of the description. Further, there are only two SCUs, and I don't think
+the mapping of "cpu" to 0 and "io" to 1 is too difficult to keep track
+of, certainly not if it's written in the binding documentation (as long
+as these names are accurate!). The argument works both ways but I don't
+think it's contentious that using the indexes is _less_ descriptive.
 
-> Signed-off-by: Sunyeal Hong <sunyeal.hong@samsung.com>
-> ---
->  .../clock/samsung,exynosautov920-clock.yaml   | 197 ++++++++++++++++++
->  .../clock/samsung,exynosautov920.h            | 191 +++++++++++++++++
->  2 files changed, 388 insertions(+)
->  create mode 100644
-> Documentation/devicetree/bindings/clock/samsung,exynosautov920-
-> clock.yaml
->  create mode 100644 include/dt-bindings/clock/samsung,exynosautov920.h
-> 
-[snip]
+That said, this is just my semi-informed opinion. It's up to you to
+decide what names you're going to push for. Rob's suggestion seems
+reasonable to me though.
 
-> diff --git
-> 
-> +      - samsung,exynosautov920-cmu-top
-> +      - samsung,exynosautov920-cmu-peric0
-> +      - samsung,exynosautov920-cmu-peric1
-> +      - samsung,exynosautov920-cmu-misc
-> +      - samsung,exynosautov920-cmu-hsi0
-> +      - samsung,exynosautov920-cmu-hsi1
-> +
-[snip]
-
-> +#endif /* _DT_BINDINGS_CLOCK_EXYNOSAUTOV920_H */
-> --
-> 2.45.2
-
-
+Andrew
