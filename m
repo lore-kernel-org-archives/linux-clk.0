@@ -1,101 +1,142 @@
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A62C918A6BC;
-	Tue, 20 Aug 2024 11:07:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18D5B18E74B
+	for <linux-clk@vger.kernel.org>; Tue, 20 Aug 2024 11:55:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724152076; cv=none; b=exU3ujDQl70hQ1f/LQvHfsaapvGK1OOYcGn/b+WmG7d66kx+KAQegph05vGGy0NBGVdlju7jSNwRqur/3xNMvIUNrmiksQoYaR4k/4OtO8vwt3f7wIYptN5cBB3e1yeIEKatLXi+t+KOglgMqEl3uDSMZ2HlfBnCdkGxo2dB3dk=
+	t=1724154906; cv=none; b=AgjDLnGlgMWVTE+khu4FqglguoUNe01YGlfHwr1PefG7oKAFvfAYELCzup+m94FnRVYZaLTa7hdc1QehBDCiiwcI884wX3XyJpmlBio6z9+hEagXD2HPIJGex/EWSD6N0GlKquOWx2f9AYj8cnqK6ghnDRp/2XaDNZrU3LtLoEw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724152076; c=relaxed/simple;
-	bh=tSlNbFiHVoyLktTOeBOCH3IHmgQ/H08nKa5cqmfjHR4=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cleuRTYF1xg2oWvrTN17mePqcLgLbWAJzQekXX0Z4UABq0LfSb5+5CGZSAJ7hb89ZtuJSJ8FuknHIJE9l1y32yx4JZxW7YoCdETi9YYWEYJteyENvDCLP17pgKTFx3icNcO79XKNOstTaJzVzc+hcBq8SMWb/MUst6qPSaxWtcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZfFIkFw3; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1724154906; c=relaxed/simple;
+	bh=aLF1QS2bweCC1rgUwCudbiwq9Dncg3ueoYZJMejgBWQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=NyQKuizQ5+2IE9GDS/+OA9Cd2aDQNnzkc7gMMClfz2YPLs8MkhY8dQX9oVaJ/fB1wp8OspnRZg2/NzTdLnWMGF2UZ1jN2lzmCtrn7uVK7XLdA+CVnwNTUZ0HmVomEOUgXrflcjPoDs4QT6YQwGZARyJfC88yyZcW4tKLoBFlxS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=QOfFrLuZ; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZfFIkFw3"
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4280ca0791bso43965605e9.1;
-        Tue, 20 Aug 2024 04:07:54 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="QOfFrLuZ"
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-530e2287825so5643337e87.1
+        for <linux-clk@vger.kernel.org>; Tue, 20 Aug 2024 04:55:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724152073; x=1724756873; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=N6tttD5i3mX/vVV2V+WZ9jYSThIeGsCvt0KATob2R5o=;
-        b=ZfFIkFw3ehdt67SeJZ8weG8QaIDzpIyEo23SGYm/mch3aVaQPq7bSDjjVyP0EkEFow
-         xoYAuVahk3z2pvtKy0izGZ2kmdY88Ufw2uumJH+EAFwIWfXFYnMkhHpsdrfDBYtNz9UT
-         5980GUOm4wa7kKOohGFo7hQaQyO0hOIbDKlWVeOu3UJA0NnMtqU/8jM3oAIZMplyzy53
-         JmLEXM1PUyg0/kv3ceDFrEKuRk3gq6Ajt9YE7qwWKc4zpvJQVLY1XfYnsvA989ox9awB
-         VQqTBFXgW6TnLc2tBquWqhIQt4jW4Vl/sqrSD/sboNnlV0uTkkIP3X+BT/p9tP/EGoIh
-         nIgg==
+        d=tuxon.dev; s=google; t=1724154902; x=1724759702; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=dCf/kUCM4tXS0nTsH53L6T8+OzmPfbxe5arQDk7ZTKU=;
+        b=QOfFrLuZLBRm7eWc09xEqsvGU2+q2bWwKr/KjGh/YUa9WwhfoFHmwXBeNPz5Ra3aCn
+         AOcX8OnYaGB7ERiNLUXrcDggQVfyjVGAkBhVTSuhRv5NSYPnpo1r36EphZrHwFFbDgcB
+         Y9HVUUWd8+q8rZ+9PywcabLWjkVh7g1xOS7y8gU/B5PDPWylTKkGa/ExUIYTqEhXSjpt
+         frhPuiC35ayDBqUr7TEIaH1b/s7KI8CbuXYfTl2XpWVL7m6GCRGAJfQ9ZB0AJY0vbm1K
+         MIOJS1PhCgRc4tM4RCely3HnCum58iXQnO6rwPTFhbAQOqaRBLaAtM1roSqQ5iZpfvOG
+         xHsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724152073; x=1724756873;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N6tttD5i3mX/vVV2V+WZ9jYSThIeGsCvt0KATob2R5o=;
-        b=rSaY7O1PD9Ybim/U6y90AzGkBA6fH11Awoz1tptIZRBjppI+CtLuz90Er6H5hPYRl5
-         aDJhDQUDoHgf9J7FVQZIQBOol15dge55Um5wR2HpLqUmLli46idIv/cc8QmP1sO8e2+6
-         sOqbRysAkAVcCxdmwNlf1Gq3QVHk4npYgNTXPehqiq1gH+J/huAA6Td+kDYT+61HBrXV
-         iGsKOcgRU/Ru9sSq9aqa8ipLSDWwkohqAYcSHgWwqU+oskrvomkadyKVTSKe13506WEz
-         9iw4w2Si0+nMtyQbR1gqxpM+J0sMl6zrh3bZnBds+ot1yp/ieoE4bnVVTwwhrprcjY9e
-         0b8w==
-X-Forwarded-Encrypted: i=1; AJvYcCXZIk4ijtFtBD6n8C7Im0ARIB3Fm4xYZkywZ9f90VSDE2YvFUY0V21K8lgMHbRNHIciMrLnWsw+x8wIdRTchJkm0Lhx5v7bJVULG5qkPFWGcehzDOtKwKZ1raZg6Y3od7wJ2xgKjiImnspsldUU/XnWbuiKY4LeNqvc+VQ6QyDavyRYug==
-X-Gm-Message-State: AOJu0YwPRl4nTcqyPMP3/Gq5R/ysm/nOQeJTgdAR9US+RK2aUG/+CIzt
-	fJdq+54vS4eXc4H18yWI5yt4vZ36hUTjWL/jOO1ZtJ7wUiYyMAbm
-X-Google-Smtp-Source: AGHT+IG6Us/1PmM2Zg5hGVloN45QypghzSk6mi6hblPNl8RyZ3u/26GzIKWTN2QyqExQ6Zx+mqKe+g==
-X-Received: by 2002:a05:600c:45d3:b0:426:67dd:e9e9 with SMTP id 5b1f17b1804b1-429ed7a5ec1mr87674615e9.3.1724152072440;
-        Tue, 20 Aug 2024 04:07:52 -0700 (PDT)
-Received: from krzk-bin ([178.197.215.209])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3718985a6c4sm12816968f8f.52.2024.08.20.04.07.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2024 04:07:51 -0700 (PDT)
-From: Krzysztof Kozlowski <k.kozlowski.k@gmail.com>
-X-Google-Original-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Tue, 20 Aug 2024 13:07:48 +0200
-To: Xianwei Zhao <xianwei.zhao@amlogic.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, 
-	Jerome Brunet <jbrunet@baylibre.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Chuan Liu <chuan.liu@amlogic.com>, Kevin Hilman <khilman@baylibre.com>, 
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>, linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 1/3] dt-bindings: clock: fix C3 PLL input parameter
-Message-ID: <ypvsbxdlnao6i7i427ucjzosaurxccmc6xsyd4vmmn4wdzaclt@2wilfxi5z4sn>
-References: <20240820-c3_add_node-v2-0-8fd3f06b7bce@amlogic.com>
- <20240820-c3_add_node-v2-1-8fd3f06b7bce@amlogic.com>
+        d=1e100.net; s=20230601; t=1724154902; x=1724759702;
+        h=content-transfer-encoding:in-reply-to:from:references:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=dCf/kUCM4tXS0nTsH53L6T8+OzmPfbxe5arQDk7ZTKU=;
+        b=BGnoN8VSstrYkfryO6vxk70FR88chcxG+r/qT2yp2cMbwKlwEKWY7Vp6xH/3bC1MLA
+         eY+JyZxdB4FGhan0Cez2BFyHFTWxv1lSmNjMNl0S8TacJeqAp5Cn6yxfPlBZIXYrnQTQ
+         zh3WekYRYlv2H2DQp93vQUT42lmEVmH41Uso2RimkmoPa2r56r5j1vnARcbsqm1pd9Bq
+         XqcqsJNplzbqH8yx2rPiwovG2KozoxjPRIS4ejjdp93ZdgLDvSOBN5Q1ca/jC3uXO8A6
+         zm7Zz4QdVzCxzTAZH9Uw1QTZqEaBfec6s04oK0EAUswuQTXGCVkZLFv/BtiOER6j1UQd
+         cE2g==
+X-Gm-Message-State: AOJu0YyCxOI7hCUFegznxUS0Tu5Cnk2LS7+kNJKimoPzByuLUTW/JdAk
+	tGGK+g2yJFBTbqVTXEYrwkVdsVfKW3iySiQIp6gmbFyATwTswRaTDmVONideUCvsdGgXqfpEkTX
+	w
+X-Google-Smtp-Source: AGHT+IFmkyyi7oEfSVRFQNguF9vZTRyURXZWy3bWUM0PTamahtdy6X2DNoHO5mK2sJMAFvWiBqn67A==
+X-Received: by 2002:a05:6512:2243:b0:52e:7542:f471 with SMTP id 2adb3069b0e04-5331c6ae178mr10118665e87.29.1724154901477;
+        Tue, 20 Aug 2024 04:55:01 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.177])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a83839471f7sm749478066b.162.2024.08.20.04.55.00
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 20 Aug 2024 04:55:01 -0700 (PDT)
+Message-ID: <384919bc-7d45-445a-bc85-630c599d43ef@tuxon.dev>
+Date: Tue, 20 Aug 2024 14:54:59 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20240820-c3_add_node-v2-1-8fd3f06b7bce@amlogic.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: get, prepare, enable a clock not in DT?
+Content-Language: en-US
+To: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20240816-ludicrous-lagging-65e750c57ab4@thorsis.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <20240816-ludicrous-lagging-65e750c57ab4@thorsis.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 20, 2024 at 05:41:56PM +0800, Xianwei Zhao wrote:
-> Add C3 PLL controller input clock parameters "fix".
+Hi, Alexander,
+
+On 16.08.2024 17:34, Alexander Dahl wrote:
+> Hello everyone,
 > 
-> The clock named "fix" was initially implemented in PLL clock controller driver.
-> However, some registers required secure zone access, so we moved it to
-> the secure zone (BL31) and accessed it through SCMI. Since the PLL clock
-> driver needs to use this clock, the "fix" clock is used as an input source.
-> We updated the driver but forgot to modify the binding accordingly,
-> so we are adding it here.
+> while further investigating timeout issues with the at91 otpc
+> controller on sam9x60 [1] I came to the conclusion the main RC
+> oscillator on that SoC must be enabled for that driver to work.
+
+Not sure how that works (unless undocumented) as figure Figure 28-1. Clock
+Generator Block Diagram from [1] states that main_rc_osc feeds only the mainck.
+
+Also, Table 9-1. Peripheral Identifiers from [1] say that there is no clock
+control for OTCP on the PMC side.
+
+[1]
+https://ww1.microchip.com/downloads/aemDocuments/documents/MPU32/ProductDocuments/DataSheets/SAM9X60-Data-Sheet-DS60001579.pdf
+
+> (Verified that by poking single bits in registers through devmem
+> already.)
 > 
-> It is an ABI break but on a new and immature platform.
-> Noboby could really use that platform at this stage, so nothing is going
-> to break on anyone really.
+> Fortunately the necessary clk is already registered from the SoC code
+> in drivers/clk/at91/sam9x60.c [2] and I can see the clock in sysfs clk
+> summary:
 > 
-> Fixes: 0e6be855a96d ("dt-bindings: clock: add Amlogic C3 PLL clock controller")
-> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+>     root@DistroKit:~ head -n4 /sys/kernel/debug/clk/clk_summary 
+>                                      enable  prepare  protect                                duty  hardware                            connection
+>        clock                          count    count    count        rate   accuracy phase  cycle    enable   consumer                         id
+>     ---------------------------------------------------------------------------------------------------------------------------------------------
+>      main_rc_osc                         0       0        0        12000000    50000000   0     50000      Y   deviceless                      no_connection_id         
+> 
+> That clock has no parent and is not found anywhere in devicetree, nor
+> is it handled by the two clock-producers on that platform, so
+> from within mchp_otpc_probe() I just tried this:
+> 
+>     otpc->clk = devm_clk_get_enabled(&pdev->dev, "main_rc_osc");
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> 
+> However that returns with -ENOENT, so I assume I can not reference the
+> clock just by name?  Same result with this:
+> 
+>     otpc->clk = devm_clk_get_enabled(NULL, "main_rc_osc");
+> 
+> How do I get a pointer to that clk then to enable it?  Docs [3] where
 
-Best regards,
-Krzysztof
+To expose it though DT you may want to save its hw object to one array
+entry in sam9x60_pmc, sam9x60_pmc->chws[] fits best for this atm.
 
+Otherwise, you can try to register the main_rc_osc with CLK_IS_CRITICAL for
+simple trials.
+
+Thank you,
+Claudiu Beznea
+
+> not as useful as I hoped for, neither was clk.h header docs. :-/
+> 
+> From what I understood from header docs reading 'device for clock
+> "consumer"' I must pass the device from which I call that clk_get() as
+> first parameter, so this would be the otpc device then, right?  What's
+> that second parameter clock consumer id then?  Are these terms
+> explained somewhere?
+> 
+> Greets
+> Alex
+> 
+> [1] <20240813-payable-ecology-8a9e739704bb@thorsis.com>
+> [2] https://elixir.bootlin.com/linux/v6.10.4/source/drivers/clk/at91/sam9x60.c#L217
+> [3] https://kernel.org/doc/html/latest/driver-api/clk.html
+> 
