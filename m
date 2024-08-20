@@ -1,93 +1,213 @@
-Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 112951922D4;
-	Tue, 20 Aug 2024 13:27:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A18918FDD0;
+	Tue, 20 Aug 2024 14:03:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724160465; cv=none; b=ikCMHAoS3xH5S7hzTPSLRREzPjQZFyyKZwEOd40ol8a1K2nTG1zA4WiCkC4rv9Os/PEa1OOCUMrL09zn0+bofVhmwFXSQlOkPgbfknZDffhas7mUIPhZ5uVX1DQpLFX3fXbp5zHRpHkEVNkIvey+TXLyOLuEShEtpN2s6BBxOLI=
+	t=1724162616; cv=none; b=RpV9HI29a59u7Ac2OJP8z+3IfC+vua+8CqWvf4n27WBk6yYz/xrt8lYSTX7wZlJzFSCNzStbdu6OaEsWFRZCMiuhLAay/lmuC7QTqMfFRRlwBfXhiP4xEWGtXhOVXquRr0wUpbdjB4qJDpTUbwRF5q3FE433TDsSqCPDjWW/LVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724160465; c=relaxed/simple;
-	bh=hz3RzcXSp8C+lSShIolLGyjnUumMNWDXWqmvHVrL+pU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YUOWQ6HOJEtlBt5rpWY+0brz2gdhOmAWK/2NJaLJg4DzT0IPXib7ETRSHbMqYQue+eC6rbagfAByxxJqoE9EXWyNAyG8ctmUffNNNrs8yyl7sSN36AIuEQEzkKWs3UFSeLfMokD+b1E9aOVXnqJe8FgA6/yo4noPPujgwy4mxAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=PRIIenkp; arc=none smtp.client-ip=217.92.40.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
+	s=arc-20240116; t=1724162616; c=relaxed/simple;
+	bh=LZQvuhQ/UXkTqYZZ41BcYN6OxgJ7mqBZwv/v3P9hSO8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
+	 In-Reply-To:To:CC; b=IBJsQapkEbgKwuYHICXBdIgruUZp3ZHvYtl9QMEsGLckFfLC+eGhaaJZXVUkvABSGWK8Bde8PZtWsNg5z3CA4IzlGAVf5kd4ZAWlDNOOxQtOpPkUA+LaSTTzekLDBPWgomn7Gr1ufAjZJM2NytsjmmBKwqysnGN2yI8ZeKgXT6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=He9URwZL; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="PRIIenkp"
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id DFFCA1487C87;
-	Tue, 20 Aug 2024 15:27:36 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
-	t=1724160458; h=from:subject:date:message-id:to:cc:mime-version:
-	 content-transfer-encoding; bh=PCgOO1pDrOpwZlB5bNP2nFUn2U1YS3vBwTENcvdvGqc=;
-	b=PRIIenkpiA/BzaDGYlkixkxD6Y4j7zmqlahg0ShcVd7leunmMSzKK9j2tPBOWW4TKzWF4B
-	cnoDVlpL5FVGwVONrXTlrqJPzbZTxTatUobnUZRGLt4cNEEozvuRV9Nw3ds4jZm7y/R7pb
-	noE2GbWRZhH7a9eWQJyNaM4Y/+feO9KTP+DPPtMu8+2oSKD21hkNmX9E0zkGj1L3x8Tvm+
-	95HUTPbmUfA8bgOBInK+vq3ox+JPhBw1aRTdrbwuqWGEHiGejy4gMeOKtiSisnY4zzEp0E
-	WPgIMjKA4TsR/1Ihe04fxXOZpzY3Tlt5INun0RCHqrDQweGf7/b2f0ZvsS1Ofg==
-From: Alexander Dahl <ada@thorsis.com>
-To: linux-clk@vger.kernel.org
-Cc: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
-	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] ARM: dts: microchip: sam9x60: Fix rtc/rtt clock parent
-Date: Tue, 20 Aug 2024 15:27:30 +0200
-Message-Id: <20240820132730.357347-1-ada@thorsis.com>
-X-Mailer: git-send-email 2.39.2
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="He9URwZL"
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47K6e3eA032186;
+	Tue, 20 Aug 2024 14:03:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	mb7qXV2yDfE8qIy3zBysGmGX3aKr4XWWhTIljgl7dyM=; b=He9URwZL1TKHS0wZ
+	pWNBBtRMUlo98okt5XEo3wS/NM/bJ05YckafTZxT7VdHF0Zk5MaCD0GziyI5zPZ2
+	fqHqktCjwyFM9klYHMgX1PGAazBTl1auH2hrlZ2K+xbO2zMaNIrb85Eo6aUlePcO
+	uhY8pqA4wUItZIebOjPZhfF5QG0pnRxik9XFyxU5OPu8QutVgUc5IxicB6xytDjh
+	Q31IO1xUTB7B4ScnbbQfsZdO0NOww0Vq18jmiABpMMNG0ijL54KsW0+jkdnvHc1B
+	sjaD8Nonx+/95KsT4fTjXNVw7eZ/85zEPgy01YUBQHgb0+Z7o05bgSILUxmwtZAN
+	m4qbZw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 412hjdg49a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 20 Aug 2024 14:03:22 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47KE3L4k006221
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 20 Aug 2024 14:03:21 GMT
+Received: from nsssdc-sh01-lnx.ap.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 20 Aug 2024 07:03:16 -0700
+From: Luo Jie <quic_luoj@quicinc.com>
+Date: Tue, 20 Aug 2024 22:02:42 +0800
+Subject: [PATCH v2 1/4] dt-bindings: clock: qcom: Add CMN PLL clock
+ controller for IPQ SoC
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240820-qcom_ipq_cmnpll-v2-1-b000dd335280@quicinc.com>
+References: <20240820-qcom_ipq_cmnpll-v2-0-b000dd335280@quicinc.com>
+In-Reply-To: <20240820-qcom_ipq_cmnpll-v2-0-b000dd335280@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon
+	<will@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <quic_kkumarcs@quicinc.com>,
+        <quic_suruchia@quicinc.com>, <quic_pavir@quicinc.com>,
+        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>,
+        <bartosz.golaszewski@linaro.org>, <srinivas.kandagatla@linaro.org>,
+        Luo Jie
+	<quic_luoj@quicinc.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1724162591; l=3592;
+ i=quic_luoj@quicinc.com; s=20240808; h=from:subject:message-id;
+ bh=LZQvuhQ/UXkTqYZZ41BcYN6OxgJ7mqBZwv/v3P9hSO8=;
+ b=RCaqtMUpqZbot43gO3ilmyblvGAlkXAUDREqjKW6CQHLog27POoewY0s7qJZiCeXX+O7daTl2
+ ePQ2hrWcsn6BeuR4UOzy4WXyPDizZ/BfmKBpkc29/J0RCtz5szmYy01
+X-Developer-Key: i=quic_luoj@quicinc.com; a=ed25519;
+ pk=P81jeEL23FcOkZtXZXeDDiPwIwgAHVZFASJV12w3U6w=
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 8OmEvbgGup_lI34R8RYsh7s2phYwWaY-
+X-Proofpoint-ORIG-GUID: 8OmEvbgGup_lI34R8RYsh7s2phYwWaY-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-20_09,2024-08-19_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 suspectscore=0
+ spamscore=0 bulkscore=0 mlxlogscore=999 lowpriorityscore=0 malwarescore=0
+ adultscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2407110000 definitions=main-2408200104
 
-The RTC and RTT peripherals use the "timing domain slow clock (TD_SLCK),
-sourced from the 32.768 kHz crystal oscillator.
+The CMN PLL controller provides clocks to networking hardware blocks
+on Qualcomm IPQ9574 SoC. It receives input clock from the on-chip Wi-Fi,
+and produces output clocks at fixed rates. These output rates are
+predetermined, and are unrelated to the input clock rate. The output
+clocks are supplied to the Ethernet hardware such as PPE (packet
+process engine) and the externally connected switch or PHY device.
 
-(The Monitoring domain slow clock (MD_SLCK) is sourced from an internal
-RC oscillator which is most probably not precise enough for real time
-clock purposes.)
-
-Fixes: 1e5f532c2737 ("ARM: dts: at91: sam9x60: add device tree for soc and board")
-Fixes: 5f6b33f46346 ("ARM: dts: sam9x60: add rtt")
-Signed-off-by: Alexander Dahl <ada@thorsis.com>
+Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
 ---
- arch/arm/boot/dts/microchip/sam9x60.dtsi | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ .../bindings/clock/qcom,ipq9574-cmn-pll.yaml       | 70 ++++++++++++++++++++++
+ include/dt-bindings/clock/qcom,ipq-cmn-pll.h       | 15 +++++
+ 2 files changed, 85 insertions(+)
 
-diff --git a/arch/arm/boot/dts/microchip/sam9x60.dtsi b/arch/arm/boot/dts/microchip/sam9x60.dtsi
-index 291540e5d81e..d077afd5024d 100644
---- a/arch/arm/boot/dts/microchip/sam9x60.dtsi
-+++ b/arch/arm/boot/dts/microchip/sam9x60.dtsi
-@@ -1312,7 +1312,7 @@ rtt: rtc@fffffe20 {
- 				compatible = "microchip,sam9x60-rtt", "atmel,at91sam9260-rtt";
- 				reg = <0xfffffe20 0x20>;
- 				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
--				clocks = <&clk32k 0>;
-+				clocks = <&clk32k 1>;
- 			};
- 
- 			pit: timer@fffffe40 {
-@@ -1338,7 +1338,7 @@ rtc: rtc@fffffea8 {
- 				compatible = "microchip,sam9x60-rtc", "atmel,at91sam9x5-rtc";
- 				reg = <0xfffffea8 0x100>;
- 				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
--				clocks = <&clk32k 0>;
-+				clocks = <&clk32k 1>;
- 			};
- 
- 			watchdog: watchdog@ffffff80 {
+diff --git a/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml b/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml
+new file mode 100644
+index 000000000000..7ad04b58a698
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml
+@@ -0,0 +1,70 @@
++# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/qcom,ipq9574-cmn-pll.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Qualcomm CMN PLL Clock Controller on IPQ SoC
++
++maintainers:
++  - Bjorn Andersson <andersson@kernel.org>
++  - Luo Jie <quic_luoj@quicinc.com>
++
++description:
++  The CMN PLL clock controller expects a reference input clock.
++  This reference clock is from the on-board Wi-Fi. The CMN PLL
++  supplies a number of fixed rate output clocks to the Ethernet
++  devices including PPE (packet process engine) and the connected
++  switch or PHY device.
++
++properties:
++  compatible:
++    enum:
++      - qcom,ipq9574-cmn-pll
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    items:
++      - description: The reference clock. The supported clock rates include
++          25000000, 31250000, 40000000, 48000000, 50000000 and 96000000 HZ.
++      - description: The AHB clock
++      - description: The SYS clock
++    description:
++      The reference clock is the source clock of CMN PLL, which is from the
++      Wi-Fi. The AHB and SYS clocks must be enabled to access CMN PLL
++      clock registers.
++
++  clock-names:
++    items:
++      - const: ref
++      - const: ahb
++      - const: sys
++
++  "#clock-cells":
++    const: 1
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++  - "#clock-cells"
++
++additionalProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/qcom,ipq9574-gcc.h>
++
++    clock-controller@9b000 {
++        compatible = "qcom,ipq9574-cmn-pll";
++        reg = <0x0009b000 0x800>;
++        clocks = <&cmn_pll_ref_clk>,
++                 <&gcc GCC_CMN_12GPLL_AHB_CLK>,
++                 <&gcc GCC_CMN_12GPLL_SYS_CLK>;
++        clock-names = "ref", "ahb", "sys";
++        #clock-cells = <1>;
++    };
++...
+diff --git a/include/dt-bindings/clock/qcom,ipq-cmn-pll.h b/include/dt-bindings/clock/qcom,ipq-cmn-pll.h
+new file mode 100644
+index 000000000000..64b228659389
+--- /dev/null
++++ b/include/dt-bindings/clock/qcom,ipq-cmn-pll.h
+@@ -0,0 +1,15 @@
++/* SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) */
++/*
++ * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
++ */
++
++#ifndef _DT_BINDINGS_CLK_QCOM_IPQ_CMN_PLL_H
++#define _DT_BINDINGS_CLK_QCOM_IPQ_CMN_PLL_H
++
++/* The output clocks from CMN PLL of IPQ9574. */
++#define PPE_353MHZ_CLK			0
++#define ETH0_50MHZ_CLK			1
++#define ETH1_50MHZ_CLK			2
++#define ETH2_50MHZ_CLK			3
++#define ETH_25MHZ_CLK			4
++#endif
 
-base-commit: 47ac09b91befbb6a235ab620c32af719f8208399
 -- 
-2.39.2
+2.34.1
 
