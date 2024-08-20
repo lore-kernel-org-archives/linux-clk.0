@@ -1,183 +1,106 @@
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-vk1-f169.google.com (mail-vk1-f169.google.com [209.85.221.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7474B28F7;
-	Tue, 20 Aug 2024 00:46:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 376721798F;
+	Tue, 20 Aug 2024 01:35:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724114807; cv=none; b=SDVwxzjJgDGXTO0FNmtYS2kSBWIMZtX/AL/lJ9mVJVj1ZGAOP4pu5SqMriQHHc5FItBhTctaz82LM1pmtjs/eh+WIn9AnY+Lpv9dnBX6BC6jVuAHiLih5wxuENU9m5RRBaVGtstWG8FSLk1NaGD1TqJIGjGfr3+EDUfNgSbobB4=
+	t=1724117758; cv=none; b=tg0Bnf+Y+u1aPkz+TMAITlxaMfLGlmPJFgzHzwgWrJilpmnVpVif8DfTBcHat+Zn3B9aISxlEQNNKl6YdyYa4Fvih9aimxGFNxG5+d3rkE0wYZSPyrbtwPsuuzZ2isPRHq0uy3FYnwfSzcTD6fL1xarejx8EPATnhkDYwiuxaxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724114807; c=relaxed/simple;
-	bh=ydMPJXWc+4mN/5YqZSgXd1nsM2YsWEVgelc+2JMc2jU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=o0d3JdX4UOSQTpvagtBkpNOLwnQpe3A2kZ9shBwpjk99JzLfTMefyLny0gmVOZhL6k7kxTTd5c2Ujr8bUoPLnx70V1M/bBfnIoHsX938pyXNvjhlxF5BBCQYhYHZsCei7sIdF2OxWVGF4No+lhklvvt3rkxqozOgS0zdO6jFSFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=mN3V//KB; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+	s=arc-20240116; t=1724117758; c=relaxed/simple;
+	bh=mP1wkokjp7KWNuylsKg4LO7JWOKLBCHCcOWz75aBBjQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mvPH2vzz7KGIsFFHZXyg8bi2xUbvWu0y1+NOfwh4d7E62AQFFYDkl1CbahlbdcQ7Vh7UAKxJUKQds59v+m1h0zcFRYG7+ZA+6Dki171QJUlP4qCr3ZxobSvDh3b7D0dUi2vb9ltuqXPCkVOV7kwGoI+rk+g32dDk+IuKrd2bzbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JUZ0JzLR; arc=none smtp.client-ip=209.85.221.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="mN3V//KB"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JUZ0JzLR"
+Received: by mail-vk1-f169.google.com with SMTP id 71dfb90a1353d-4f6d01961a7so1656924e0c.2;
+        Mon, 19 Aug 2024 18:35:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1724114795;
-	bh=VztiBRbygHwYDHzQLX/sFAU+p1PMMXCRuAONMaebNSM=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=mN3V//KBwJs/nv5+Hjs8ob0frnNNWB/TfsJWVXHZRZwentWdco/b7jhrK/Bn2RmGr
-	 Z5ybwCTdeiTgd7tZ2UM44tr9EbnxQo80V4fV04rHpjmv1ynBTi/XTePCGVt8kGFK3y
-	 rbXp7UEWU1qwrFTDq4qnSRzsOZVTUdaJ/5x7FHVpVgSmIDC4VzmzJ2OLXwhND9vAjO
-	 +V/zqc7vNVC0L5dt5PC6JDcmZoSxwfiHZMUSa1QuSDZhkaHeg8r3+XN2vlD53E+Nwm
-	 M2xzTrrnhgmZ1+EV+gUpGgHwicdtjL/j4/n2+R4noJRfaHhw3Perc++M9Zb9DDkctd
-	 bjjw0EQN0h64A==
-Received: from [192.168.68.112] (ppp118-210-94-119.adl-adc-lon-bras32.tpg.internode.on.net [118.210.94.119])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 574D364B84;
-	Tue, 20 Aug 2024 08:46:32 +0800 (AWST)
-Message-ID: <64d13efd3119429ed876ad7ea499cff62e100fb9.camel@codeconstruct.com.au>
-Subject: Re: [PATCH 1/4] dt-bindings: mfd: aspeed: support for AST2700
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Ryan Chen <ryan_chen@aspeedtech.com>, Rob Herring <robh@kernel.org>
-Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, "linux-aspeed@lists.ozlabs.org"
- <linux-aspeed@lists.ozlabs.org>, Stephen Boyd <sboyd@kernel.org>, Michael
- Turquette <mturquette@baylibre.com>, Lee Jones <lee@kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Krzysztof
- Kozlowski <krzk@kernel.org>,  Philipp Zabel <p.zabel@pengutronix.de>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, "linux-clk@vger.kernel.org"
- <linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>
-Date: Tue, 20 Aug 2024 10:16:30 +0930
-In-Reply-To: <OS8PR06MB7541C54CA074410C50BA419AF28C2@OS8PR06MB7541.apcprd06.prod.outlook.com>
-References: <20240808075937.2756733-1-ryan_chen@aspeedtech.com>
-	 <20240808075937.2756733-2-ryan_chen@aspeedtech.com>
-	 <2f27285e-6aa5-4e42-b361-224d8d164113@kernel.org>
-	 <OS8PR06MB75416FAD2A1A16E7BE2D255DF2BA2@OS8PR06MB7541.apcprd06.prod.outlook.com>
-	 <10809e91-31be-4110-86c1-1e1ccb05b664@kernel.org>
-	 <OS8PR06MB7541F4F740FDB17F50EBCACBF2BA2@OS8PR06MB7541.apcprd06.prod.outlook.com>
-	 <20240813191454.GA1570645-robh@kernel.org>
-	 <OS8PR06MB7541BB03AEE90B090AB990B3F2872@OS8PR06MB7541.apcprd06.prod.outlook.com>
-	 <7e1dc98e0f69a095a8f7725b742df3c8d8436a67.camel@codeconstruct.com.au>
-	 <OS8PR06MB754121818B9431941C18E09DF2802@OS8PR06MB7541.apcprd06.prod.outlook.com>
-	 <OS8PR06MB7541C54CA074410C50BA419AF28C2@OS8PR06MB7541.apcprd06.prod.outlook.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+        d=gmail.com; s=20230601; t=1724117756; x=1724722556; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ciCKW+i06FL3On+8kMH5LTnmetjImaXa8fzWeLWngps=;
+        b=JUZ0JzLRQnvAppz2WCkX2DwkEveHyvoVloO1U4iDAAxaqtG6zyKJ3LUWCf+DvRreai
+         lG/zo7lTaGroh4OP+O311D/OYHkxgH4kmZXZTiK3mV8k2R8YlJkYdEKKAT7qjmsFKe5Z
+         XuPIFf+I0bH3t5XMv8hC8zuOP40p0oq34J1bUxEKcddPvTUDLv8XikaiWZxKZkt1Bdq8
+         8CmYhZxYCikHlWknI0IRj//nppOoDJgXnjnwGEnpYFV8Y5xm8idsiFm67seLHGlxY30+
+         dHbrPR4H7DubeCh+c11FktcW9QeA7KHTy0X8uMv6HxyijJBRyedvmaCYxdIPBkNrHZuT
+         9wbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724117756; x=1724722556;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ciCKW+i06FL3On+8kMH5LTnmetjImaXa8fzWeLWngps=;
+        b=kB3KGfwSzb5GSmN5NpnJ+mml+S71yC4SkGAwAJCUsz4jX0ujXxLHKTqCZqa2RXLr/3
+         ksWY/ZC0BuiJ2O9kHRqO9WWjIiREs/rMFwXqoF/crx/mbHvR2hdImtvFdHNk49u0DlIu
+         LCBdJiRtrUOwF7hBdjKBi1ImnNn3xIhD+O8VwV3+nyAj+OBdxci0BEktFOZXoJkEShJd
+         TOymMFve7n5odrqxim8ubvun2IIxfDktsPiPb7q8S9TPdyix+4St5XuRWSi8MLcavQy0
+         7myHZuyLWITtqPvYZLkUtZnC7/3oE3vuoQHKo/i/in5Axu79qHTmu3aWs0DY06DXVFtN
+         FVgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXXaXsk19wp3lRXnmrVJfWkir5qMd1/2JGkEGtcfkzdx7DIW0LmzkI8uKdzU2XwD8+gcnkAjyFP1eqLcEM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyG5YDsfQF38jQgsYx+kKlNJmfvNyNDv0qAnyXgik1cae6xHNNk
+	eNeHSo2UtA3kw0JobwwziP4RSu6KfaBT8bbpvpp+INbBgMe7eFIM
+X-Google-Smtp-Source: AGHT+IElgIAJT3TY9gaVu/dBNeWNg/egEIjK9d2FUKvG/PWa36yYJQ9zJsCy68tXRXZD/3Kd+p3pTg==
+X-Received: by 2002:a05:6122:2013:b0:4ef:5744:46a with SMTP id 71dfb90a1353d-4fcd89fd752mr1190544e0c.1.1724117756031;
+        Mon, 19 Aug 2024 18:35:56 -0700 (PDT)
+Received: from localhost (57-135-107-183.static4.bluestreamfiber.net. [57.135.107.183])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-4fc5b8e2d61sm1219564e0c.15.2024.08.19.18.35.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 19 Aug 2024 18:35:55 -0700 (PDT)
+From: David Hunter <david.hunter.linux@gmail.com>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	javier.carrasco.cruz@gmail.com,
+	shuah@kernel.org,
+	david.hunter.linux@gmail.com
+Subject: [PATCH 1/1] Driver: clk-qoriq.c: replace of_node_put with _free improves cleanup
+Date: Mon, 19 Aug 2024 21:35:49 -0400
+Message-ID: <20240820013550.4906-1-david.hunter.linux@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Mon, 2024-08-19 at 03:05 +0000, Ryan Chen wrote:
-> > > Subject: Re: [PATCH 1/4] dt-bindings: mfd: aspeed: support for
-> > > AST2700
-> > >=20
-> > > On Wed, 2024-08-14 at 06:35 +0000, Ryan Chen wrote:
-> > > > > Subject: Re: [PATCH 1/4] dt-bindings: mfd: aspeed: support
-> > > > > for
-> > > > > AST2700
-> > > > >=20
-> > > > > On Fri, Aug 09, 2024 at 06:10:22AM +0000, Ryan Chen wrote:
-> > > > > > > Subject: Re: [PATCH 1/4] dt-bindings: mfd: aspeed:
-> > > > > > > support for
-> > > > > > > AST2700
-> > > > > > >=20
-> > > > > > > On 09/08/2024 07:55, Ryan Chen wrote:
-> > > > > > > > > Subject: Re: [PATCH 1/4] dt-bindings: mfd: aspeed:
-> > > > > > > > > support
-> > > > > > > > > for
-> > > > > > > > > AST2700
-> > > > > > > > >=20
-> > > > > > > > > On 08/08/2024 09:59, Ryan Chen wrote:
-> > > > > > > > > > Add compatible support for AST2700 clk, reset,
-> > > > > > > > > > pinctrl,
-> > > > > > > > > > silicon-id and example for AST2700 scu.
-> > > > > > > > > >=20
-> > > > > > > > > > Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
-> > > > > > > > > > ---
-> > > > > > > > > > =C2=A0.../bindings/mfd/aspeed,ast2x00-scu.yaml      | 3=
-1
-> > > > > > > > > +++++++++++++++++--
-> > > > > > > > > > =C2=A01 file changed, 29 insertions(+), 2 deletions(-)
-> > > > > > > > > >=20
-> > > > > > > > > > diff --git
-> > > > > > > > > > a/Documentation/devicetree/bindings/mfd/aspeed,ast2
-> > > > > > > > > > x00-
-> > > > > > > > > > scu.yaml
-> > > > > > > > > > b/Documentation/devicetree/bindings/mfd/aspeed,ast2
-> > > > > > > > > > x00-
-> > > > > > > > > > scu.yaml
-> > > > > > > > > > index 86ee69c0f45b..c0965f08ae8c 100644
-> > > > > > > > > > ---
-> > > > > > > > > > a/Documentation/devicetree/bindings/mfd/aspeed,ast2
-> > > > > > > > > > x00-
-> > > > > > > > > > scu.yaml
-> > > > > > > > > > +++
-> > > > > > > > > > b/Documentation/devicetree/bindings/mfd/aspeed,ast2
-> > > > > > > > > > x00-
-> > > > > > > > > > scu.y
-> > > > > > > > > > +++ aml
-> > > > > > > > > > @@ -21,6 +21,8 @@ properties:
-> > > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0- aspeed,ast2400-scu
-> > > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0- aspeed,ast2500-scu
-> > > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0- aspeed,ast2600-scu
-> > > > > > > > > > +          - aspeed,ast2700-scu0
-> > > > > > > > > > +          - aspeed,ast2700-scu1
-> > > > > > > > >=20
-> > > > > > > > > What are the differences between these two?
-> > > > > > > >=20
-> > > > > > > > The next [PATCH 4/4] is scu driver that include
-> > > > > > > > ast2700-scu0
-> > > > > > > > and
-> > > > > > > > ast2700-scu1 CLK_OF_DECLARE_DRIVER(ast2700_soc0,
-> > > > > > > > "aspeed,ast2700-scu0", ast2700_soc0_clk_init);
-> > > > > > > > CLK_OF_DECLARE_DRIVER(ast2700_soc1, "aspeed,ast2700-
-> > > > > > > > scu1",
-> > > > > > > > ast2700_soc1_clk_init);
-> > > > > > >=20
-> > > > > > > What are hardware differences? Entirely different
-> > > > > > > devices?
-> > > > > >=20
-> > > > > > AST2700 have two soc die connected each other.
-> > > > > > Each soc die have it own scu, so the naming is ast2700-scu0
-> > > > > > for
-> > > > > > soc0,
-> > > > > another is ast2700-scu1 for soc1.
-> > > > >=20
-> > > > > Didn't I see in another patch one die is cpu and one is io?
-> > > > > Use
-> > > > > those in the compatible rather than 0 and 1 if so.
-> > > > >=20
-> > > > Sorry, I want to align with our datasheet description.
-> > > > It will but scu0 and scu1 register setting.
-> > >=20
-> > > Can we document that relationship in the binding? Rob's
-> > > suggestion
-> > > seems more descriptive.
-> > Hello,
-> > 	Do you want me document it in yaml file or just in commit
-> > message?
->=20
-> Hello Rob, Andrew,
-> 	I will add in yaml file in description. Like following.
->=20
-> description:
-> =C2=A0=C2=A0The Aspeed System Control Unit manages the global behaviour o=
-f the
-> SoC,
-> =C2=A0=C2=A0configuring elements such as clocks, pinmux, and reset.
-> +  In AST2700, it has two soc combination. Each soc include its own
-> scu register control.
-> +  ast2700-scu0 for soc0, ast2700-scu1 for soc1.
->=20
-> Is that will be better way ?
+Use the _free function to have automatic clean up instead of calling
+another function, of_node_put. This prevents leaking reference counts.
 
-What Rob is suggesting is to add the compatibles "aspeed,ast2700-scu-
-cpu" and "aspeed,ast2700-scu-io", and then in the description say
-something like:
+The following commit has information on _free(device_node):
 
-   The AST2700 integrates both a CPU and an IO die, each with their own
-   SCU. The "aspeed,ast2700-scu-cpu" and "aspeed,ast2700-scu-io"
-   compatibles correspond to SCU0 and SCU1 respectively.
+9448e55d032d99af8e23487f51a542d51b2f1a48
 
-Andrew
+The code was able to compile without errors or warnings. 
+
+Signed-off-by: David Hunter <david.hunter.linux@gmail.com>
+---
+ drivers/clk/clk-qoriq.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
+
+diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
+index 4dcde305944c..941a0372db4b 100644
+--- a/drivers/clk/clk-qoriq.c
++++ b/drivers/clk/clk-qoriq.c
+@@ -1065,11 +1065,8 @@ static void __init _clockgen_init(struct device_node *np, bool legacy);
+ static void __init legacy_init_clockgen(struct device_node *np)
+ {
+ 	if (!clockgen.node) {
+-		struct device_node *parent_np;
+-
+-		parent_np = of_get_parent(np);
++		struct device_node __free(device_node) *parent_np = of_get_parent(np);
+ 		_clockgen_init(parent_np, true);
+-		of_node_put(parent_np);
+ 	}
+ }
+ 
+-- 
+2.43.0
+
