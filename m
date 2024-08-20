@@ -1,57 +1,64 @@
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9210CBA4D;
-	Tue, 20 Aug 2024 05:56:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90F3054652;
+	Tue, 20 Aug 2024 05:57:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724133418; cv=none; b=CBAn2kf5LyIRsvnwn20p/iRIx3sTi/e8FeT3GeN3BuIT8ofEOtWSC0kJ0ydchtCiS95sW4iiSuHkwZeeANd8yTbXakk9OmlShHA5jW4y4fP2fXAcl5SbHo29fma2Hea9wv531ziVTX2JZMeclq/RsgRad5BEw5r7NGitiPiuO8g=
+	t=1724133461; cv=none; b=Xcq3d7dhjUvktsloj0r8K2tp5hQ6hPOWYQbqI7iELfGfOH/72rD4542vl3EWaUMPE+q59hIdGFzeblQe161AQBnX4gLFwxjOHMKIh53rTpHC5TCF2G2v+yYLEJEd1IIKIuZhuMtIntfYhwaHUEuJDMrI2SCEKs3KOuiluzCEF2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724133418; c=relaxed/simple;
-	bh=x7WMubkugWPJDlD65TSWIO6DAWVdkp8rd0dvUrJPmsI=;
+	s=arc-20240116; t=1724133461; c=relaxed/simple;
+	bh=u3PgkPYkxe+M2fDj4vH8agpU4hCJnkDsiBPcu2ez/oU=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A5CVMsEEJw7p2vya6DetruTFXPrnKsYHQKfE1tET33Es37fqPtoESrr2cXbko5PNWKbkz864/egC5zCjiWT6mZl1d4bqv0uuM8h0x74fMmrROjUq0bHfkJF46+5xmxGfQ9ogvdd/0zRmzLGXcoHYY1NKin07BnbvcYOOnFOU7Yo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PJMfJ+QG; arc=none smtp.client-ip=205.220.180.131
+	 MIME-Version:Content-Type; b=dCz5DxjJwiiKnNegCOfTiW3QHSC4Lh9HOJqrRM1GYeNW36gNHED1TJxJXq/GfuXoIfl+j29GmoHDOsPAdI27o1hNIp9wzx6Qnbx7lIflZJvFlbYs+4BOvxN25xnkqTh+vll+mZ8pQA0FjrLOqyB1Aub1DNOL0Khhvcw4Q30LyA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=l+6qiMXP; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PJMfJ+QG"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47K2BqHZ011325;
-	Tue, 20 Aug 2024 05:56:54 GMT
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="l+6qiMXP"
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47K0267a015828;
+	Tue, 20 Aug 2024 05:57:35 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	QYg8jSwgHt3f78D7JUd/I6eELNws4SNGln3wKoAzVPw=; b=PJMfJ+QGaH0Im16q
-	mEN94BpOsbIfWJ/6g1miYobP7o31K3NBJnpmhSNPYBseCnQWEcEbBXK9n1mXUpp2
-	xYfAGU/1A2i36VPKYqxSSdRJ1GlATHXUDo/mWMvK+mWFkuGdX/rYtd7fRKlD05T5
-	x0BzET/XpTYU2HFyEPb3eb69ssqp4RXyJjSLD5VxZv/edPUEhm1ANQHOekz6Vj8E
-	JfhL3DeLLabO8aOQTESXaISRDBf1ovr89kYnLA2q6Ys7AhVEXXxHrvGXdz1O+EL3
-	w81UvHI2ar1TL1I5FFCj+qwxmhAoNL/mTpov/61TcoEjRZ8aWVuMxLDU7LIChZvJ
-	pRbxgw==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 414j570ek2-1
+	tF0Cag0dwkBCTl8uDHh4UQ0Mtyhc5zCkQF/9aJe8qQU=; b=l+6qiMXPPkol8zU5
+	9tAmDgxQcw+zhIFXPHyfmKKuu+NERxyZNu+nIWraqqm/9nqJrA/IZK/WFlPNWaSf
+	pKQTnRYfMN5GJhpbClRaCB7aMG06AqhZIOQOtsujbtBd3+Mm8jqC4b6GCBDnSbTe
+	878Nt+kSC2vqzTwgWaEn+PFo5xNo9cgB0a4nFEWdYhw0wAxUrp4PkmWNDz+nkI2N
+	Qf4kRZ8a9FrZCP+AZknsg7ly//qC83kCE7tdbLO8yApVXih4EHraL82EwQbiFkx0
+	K7Jhed4fSNm6FfnkTNtBHf+6eh6pADpUWhpNpP+S4ItCn1YtT2354zRNSLTlxHZD
+	ykQ/1A==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 412m876jcm-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 20 Aug 2024 05:56:53 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47K5uq7O022870
+	Tue, 20 Aug 2024 05:57:35 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47K5vY2S026969
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 20 Aug 2024 05:56:52 GMT
-Received: from hu-gokulsri-blr.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+	Tue, 20 Aug 2024 05:57:34 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 19 Aug 2024 22:56:49 -0700
-From: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
-To: <andersson@kernel.org>, <sboyd@kernel.org>, <konradybcio@kernel.org>,
-        <krzk+dt@kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>
-CC: <quic_varada@quicinc.com>, <quic_srichara@quicinc.com>
-Subject: [PATCH V7 5/5] firmware: qcom_scm: ipq5332: add support to pass metadata size
-Date: Tue, 20 Aug 2024 11:26:18 +0530
-Message-ID: <20240820055618.267554-6-quic_gokulsri@quicinc.com>
+ 15.2.1544.9; Mon, 19 Aug 2024 22:57:29 -0700
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <mturquette@baylibre.com>,
+        <sboyd@kernel.org>, <ilia.lin@kernel.org>, <rafael@kernel.org>,
+        <viresh.kumar@linaro.org>, <ulf.hansson@linaro.org>,
+        <linux-pm@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>
+CC: Varadarajan Narayanan <quic_varada@quicinc.com>,
+        Konrad Dybcio
+	<konrad.dybcio@linaro.org>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: [PATCH v7 2/7] cpufreq: qcom-nvmem: Add support for IPQ9574
+Date: Tue, 20 Aug 2024 11:27:00 +0530
+Message-ID: <20240820055705.3922754-3-quic_varada@quicinc.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240820055618.267554-1-quic_gokulsri@quicinc.com>
-References: <20240820055618.267554-1-quic_gokulsri@quicinc.com>
+In-Reply-To: <20240820055705.3922754-1-quic_varada@quicinc.com>
+References: <20240820055705.3922754-1-quic_varada@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -60,78 +67,64 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: LMnm2i11P1pWdyr6Ed0Rsq57VNJyHeMF
-X-Proofpoint-GUID: LMnm2i11P1pWdyr6Ed0Rsq57VNJyHeMF
+X-Proofpoint-GUID: 1ycrRI0fcd9Ei-iaCXiB5zWTckCntCzw
+X-Proofpoint-ORIG-GUID: 1ycrRI0fcd9Ei-iaCXiB5zWTckCntCzw
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
  definitions=2024-08-19_16,2024-08-19_03,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
- priorityscore=1501 clxscore=1015 bulkscore=0 phishscore=0 impostorscore=0
- adultscore=0 suspectscore=0 mlxscore=0 spamscore=0 lowpriorityscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
+ mlxlogscore=999 priorityscore=1501 adultscore=0 lowpriorityscore=0
+ clxscore=1015 bulkscore=0 suspectscore=0 spamscore=0 impostorscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
  engine=8.19.0-2407110000 definitions=main-2408200044
 
-From: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
+IPQ9574 uses CPR4 power domain to manage core supplies. Use
+device-specific match data for this platform that includes
+genpd_names configuration.
 
-IPQ5332 security software running under trustzone
-requires metadata size. With V2 cmd, pass metadata
-size as well.
-
-Signed-off-by: Manikanta Mylavarapu <quic_mmanikan@quicinc.com>
-Signed-off-by: Gokul Sriram Palanisamy <quic_gokulsri@quicinc.com>
+Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
+Acked-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
 ---
-Changes in v7:
-	- No changes.
-	- Rebased on top of linux-next.
+v5: add Reviewed-by: Konrad
 
-Changes in v6:
-	- Rebased on linux-next
+v5: Change commit message and add Acked-by
 
-Changes in v5:
-	- Rebased on linux-next
+v4: Update commit log to include stack trace
+    Introduce qcom_cpufreq_match_data for IPQ9574
+---
+ drivers/cpufreq/qcom-cpufreq-nvmem.c | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-Changes in v4:
-	- Rebased on linux-next
-
- drivers/firmware/qcom/qcom_scm.c | 8 ++++++++
- drivers/firmware/qcom/qcom_scm.h | 1 +
- 2 files changed, 9 insertions(+)
-
-diff --git a/drivers/firmware/qcom/qcom_scm.c b/drivers/firmware/qcom/qcom_scm.c
-index e60bef68401c..aa559fd01932 100644
---- a/drivers/firmware/qcom/qcom_scm.c
-+++ b/drivers/firmware/qcom/qcom_scm.c
-@@ -607,6 +607,14 @@ int qcom_scm_pas_init_image(u32 peripheral, const void *metadata, size_t size,
+diff --git a/drivers/cpufreq/qcom-cpufreq-nvmem.c b/drivers/cpufreq/qcom-cpufreq-nvmem.c
+index 939702dfa73f..95558586c2e6 100644
+--- a/drivers/cpufreq/qcom-cpufreq-nvmem.c
++++ b/drivers/cpufreq/qcom-cpufreq-nvmem.c
+@@ -428,6 +428,11 @@ static const struct qcom_cpufreq_match_data match_data_ipq8074 = {
+ 	.get_version = qcom_cpufreq_ipq8074_name_version,
+ };
  
- 	desc.args[1] = mdata_phys;
- 
-+	if (__qcom_scm_is_call_available(__scm->dev, QCOM_SCM_SVC_PIL,
-+					 QCOM_SCM_PAS_INIT_IMAGE_V2)) {
-+		desc.cmd = QCOM_SCM_PAS_INIT_IMAGE_V2;
-+		desc.arginfo =
-+			QCOM_SCM_ARGS(3, QCOM_SCM_VAL, QCOM_SCM_RW, QCOM_SCM_VAL);
-+		desc.args[2] = size;
-+	}
++static const struct qcom_cpufreq_match_data match_data_ipq9574 = {
++	.get_version = qcom_cpufreq_kryo_name_version,
++	.genpd_names = generic_genpd_names,
++};
 +
- 	ret = qcom_scm_call(__scm->dev, &desc, &res);
- 	qcom_scm_bw_disable();
- 
-diff --git a/drivers/firmware/qcom/qcom_scm.h b/drivers/firmware/qcom/qcom_scm.h
-index 685b8f59e7a6..008b59cbad36 100644
---- a/drivers/firmware/qcom/qcom_scm.h
-+++ b/drivers/firmware/qcom/qcom_scm.h
-@@ -96,6 +96,7 @@ struct qcom_tzmem_pool *qcom_scm_get_tzmem_pool(void);
- 
- #define QCOM_SCM_SVC_PIL		0x02
- #define QCOM_SCM_PIL_PAS_INIT_IMAGE	0x01
-+#define QCOM_SCM_PAS_INIT_IMAGE_V2	0x1a
- #define QCOM_SCM_PIL_PAS_MEM_SETUP	0x02
- #define QCOM_SCM_PIL_PAS_AUTH_AND_RESET	0x05
- #define QCOM_SCM_PIL_PAS_SHUTDOWN	0x06
+ static void qcom_cpufreq_suspend_virt_devs(struct qcom_cpufreq_drv *drv, unsigned int cpu)
+ {
+ 	const char * const *name = drv->data->genpd_names;
+@@ -621,7 +626,7 @@ static const struct of_device_id qcom_cpufreq_match_list[] __initconst = {
+ 	{ .compatible = "qcom,ipq8064", .data = &match_data_ipq8064 },
+ 	{ .compatible = "qcom,ipq8074", .data = &match_data_ipq8074 },
+ 	{ .compatible = "qcom,apq8064", .data = &match_data_krait },
+-	{ .compatible = "qcom,ipq9574", .data = &match_data_kryo },
++	{ .compatible = "qcom,ipq9574", .data = &match_data_ipq9574 },
+ 	{ .compatible = "qcom,msm8974", .data = &match_data_krait },
+ 	{ .compatible = "qcom,msm8960", .data = &match_data_krait },
+ 	{},
 -- 
 2.34.1
 
