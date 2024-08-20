@@ -1,169 +1,183 @@
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 002F11E2128
-	for <linux-clk@vger.kernel.org>; Mon, 19 Aug 2024 23:36:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7474B28F7;
+	Tue, 20 Aug 2024 00:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724110595; cv=none; b=ccQd0ST0M5DCLriaz8OoFUgb09/vutFffUnW9TCUwZ3GBTVFF7efT4maIrwer5urSddHtHzWqAXjGtWjEPlUxOXCFhMSpL8hU4x+zA9vKSKcFXRWBtfhL/QvH1a+2qYIVCNi92Mgnskji8t58EewjAi/pywVZMxVCc1DlcTLYZk=
+	t=1724114807; cv=none; b=SDVwxzjJgDGXTO0FNmtYS2kSBWIMZtX/AL/lJ9mVJVj1ZGAOP4pu5SqMriQHHc5FItBhTctaz82LM1pmtjs/eh+WIn9AnY+Lpv9dnBX6BC6jVuAHiLih5wxuENU9m5RRBaVGtstWG8FSLk1NaGD1TqJIGjGfr3+EDUfNgSbobB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724110595; c=relaxed/simple;
-	bh=11LWC1dHsw1h3mwOO/q+bhPVSG1jtOalR/V6EhebHss=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Ugwkafv70zRa1oYmpaFfH+GkuWh/FtH6TsmY6lt8pQmYyfWVFFXEIqMtzYGDv8BGcFlhQQOSzyAKbO5DyNrdFtilMTxBVakUrc/hgrfvOal2jQzn9Ck5zGcGtH+GYNseBUYgeVWICHntBp7PoQa4gie9SPcwXgGa315IGcSszp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Pb+qshuP; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1724114807; c=relaxed/simple;
+	bh=ydMPJXWc+4mN/5YqZSgXd1nsM2YsWEVgelc+2JMc2jU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=o0d3JdX4UOSQTpvagtBkpNOLwnQpe3A2kZ9shBwpjk99JzLfTMefyLny0gmVOZhL6k7kxTTd5c2Ujr8bUoPLnx70V1M/bBfnIoHsX938pyXNvjhlxF5BBCQYhYHZsCei7sIdF2OxWVGF4No+lhklvvt3rkxqozOgS0zdO6jFSFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=mN3V//KB; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Pb+qshuP"
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-201ee6b084bso40326225ad.2
-        for <linux-clk@vger.kernel.org>; Mon, 19 Aug 2024 16:36:33 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="mN3V//KB"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1724110593; x=1724715393; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=c9Cd04T134NyakvqbnePNRvSvtAZOKVt3h8rY/EORRs=;
-        b=Pb+qshuPZtui6ns+HBWeSRvEjQaKKuY/hLWAgFkQXZ9idS3NvZCn0EPlQN76VMS3du
-         aizhQmcUAP7Vh87fA0JURODMrwuRX+OUT1ufgjrLI0RHqpBhI5Vmdfh9+KbV6r6Ldpn8
-         IlkO7pwsaqwJTRQjcEBonm3BGp+Vslo42C3Lo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724110593; x=1724715393;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=c9Cd04T134NyakvqbnePNRvSvtAZOKVt3h8rY/EORRs=;
-        b=na64vuEJ+O2Z3hXMQgUxitMbMtT96Al203qOyAJxrYr30hwwusn4UEasYm1JfntvHM
-         Twz33eweX+uCXuWxopbFLWwYJNIdiBinAuOcoQ3sXnt+lInevie796l3DxuAsaIVukO0
-         XV/AZC01pYb6IU7ManN+GUwjNyZsg/pp/j6Bchtde3D7ZK9w/uIMi8DqEDm/MTsdj6VT
-         XoJQxaat/ykBRYgK31ajpjvBniGwVl/TJQmnEmbrbLfjIA9dumjMwqfSAozQboD6o0xX
-         jDiRyzeh9QnjOYE/m3in8D38HOxDShouAJtjW1kdhuehynXcFy8aWQuxAp6XQ4rg/zkU
-         3Tjw==
-X-Forwarded-Encrypted: i=1; AJvYcCUFz4zjTpBMlCgP9gIGIz/zWk799KPNKjtDnn6XOPrYEJQuCYsLKm+yYyMDzNtvbI6DPX02WQaSfsY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6CX6u2aAnvefwbNWKG/9dshWvv7bR9Pe7beSmaRsGUv5F1hZz
-	QdxL3YXbAA3EAf1AJRvuf1KtCpKGHhVTU8STdrwjQq0GLVqYKA9riOAJ79oECg==
-X-Google-Smtp-Source: AGHT+IHMdQuQYTmr1VZjFq64pkXwFedtdel2DhVJEBi38KoF3VM1xbdsltPsvQqi4APbbL4RALu4+w==
-X-Received: by 2002:a17:903:2307:b0:1fd:a5a2:5838 with SMTP id d9443c01a7336-20203e5518fmr187693085ad.6.1724110592977;
-        Mon, 19 Aug 2024 16:36:32 -0700 (PDT)
-Received: from localhost (210.73.125.34.bc.googleusercontent.com. [34.125.73.210])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-201f0302e84sm67507995ad.32.2024.08.19.16.36.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 19 Aug 2024 16:36:32 -0700 (PDT)
-From: Stephen Boyd <swboyd@chromium.org>
-To: Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	patches@lists.linux.dev,
-	linux-clk@vger.kernel.org,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Taniya Das <quic_tdas@quicinc.com>,
-	Amit Pundir <amit.pundir@linaro.org>
-Subject: [PATCH 2/2] clk: qcom: gcc-sm8550: Don't park the USB RCG at registration time
-Date: Mon, 19 Aug 2024 16:36:27 -0700
-Message-ID: <20240819233628.2074654-3-swboyd@chromium.org>
-X-Mailer: git-send-email 2.46.0.184.g6999bdac58-goog
-In-Reply-To: <20240819233628.2074654-1-swboyd@chromium.org>
-References: <20240819233628.2074654-1-swboyd@chromium.org>
+	d=codeconstruct.com.au; s=2022a; t=1724114795;
+	bh=VztiBRbygHwYDHzQLX/sFAU+p1PMMXCRuAONMaebNSM=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=mN3V//KBwJs/nv5+Hjs8ob0frnNNWB/TfsJWVXHZRZwentWdco/b7jhrK/Bn2RmGr
+	 Z5ybwCTdeiTgd7tZ2UM44tr9EbnxQo80V4fV04rHpjmv1ynBTi/XTePCGVt8kGFK3y
+	 rbXp7UEWU1qwrFTDq4qnSRzsOZVTUdaJ/5x7FHVpVgSmIDC4VzmzJ2OLXwhND9vAjO
+	 +V/zqc7vNVC0L5dt5PC6JDcmZoSxwfiHZMUSa1QuSDZhkaHeg8r3+XN2vlD53E+Nwm
+	 M2xzTrrnhgmZ1+EV+gUpGgHwicdtjL/j4/n2+R4noJRfaHhw3Perc++M9Zb9DDkctd
+	 bjjw0EQN0h64A==
+Received: from [192.168.68.112] (ppp118-210-94-119.adl-adc-lon-bras32.tpg.internode.on.net [118.210.94.119])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 574D364B84;
+	Tue, 20 Aug 2024 08:46:32 +0800 (AWST)
+Message-ID: <64d13efd3119429ed876ad7ea499cff62e100fb9.camel@codeconstruct.com.au>
+Subject: Re: [PATCH 1/4] dt-bindings: mfd: aspeed: support for AST2700
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Ryan Chen <ryan_chen@aspeedtech.com>, Rob Herring <robh@kernel.org>
+Cc: "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, "linux-aspeed@lists.ozlabs.org"
+ <linux-aspeed@lists.ozlabs.org>, Stephen Boyd <sboyd@kernel.org>, Michael
+ Turquette <mturquette@baylibre.com>, Lee Jones <lee@kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Krzysztof
+ Kozlowski <krzk@kernel.org>,  Philipp Zabel <p.zabel@pengutronix.de>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, "linux-clk@vger.kernel.org"
+ <linux-clk@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>
+Date: Tue, 20 Aug 2024 10:16:30 +0930
+In-Reply-To: <OS8PR06MB7541C54CA074410C50BA419AF28C2@OS8PR06MB7541.apcprd06.prod.outlook.com>
+References: <20240808075937.2756733-1-ryan_chen@aspeedtech.com>
+	 <20240808075937.2756733-2-ryan_chen@aspeedtech.com>
+	 <2f27285e-6aa5-4e42-b361-224d8d164113@kernel.org>
+	 <OS8PR06MB75416FAD2A1A16E7BE2D255DF2BA2@OS8PR06MB7541.apcprd06.prod.outlook.com>
+	 <10809e91-31be-4110-86c1-1e1ccb05b664@kernel.org>
+	 <OS8PR06MB7541F4F740FDB17F50EBCACBF2BA2@OS8PR06MB7541.apcprd06.prod.outlook.com>
+	 <20240813191454.GA1570645-robh@kernel.org>
+	 <OS8PR06MB7541BB03AEE90B090AB990B3F2872@OS8PR06MB7541.apcprd06.prod.outlook.com>
+	 <7e1dc98e0f69a095a8f7725b742df3c8d8436a67.camel@codeconstruct.com.au>
+	 <OS8PR06MB754121818B9431941C18E09DF2802@OS8PR06MB7541.apcprd06.prod.outlook.com>
+	 <OS8PR06MB7541C54CA074410C50BA419AF28C2@OS8PR06MB7541.apcprd06.prod.outlook.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Amit Pundir reports that audio and USB-C host mode stops working if the
-gcc_usb30_prim_master_clk_src clk is registered and
-clk_rcg2_shared_init() parks it on XO. Skip parking this clk at
-registration time to fix those issues.
+On Mon, 2024-08-19 at 03:05 +0000, Ryan Chen wrote:
+> > > Subject: Re: [PATCH 1/4] dt-bindings: mfd: aspeed: support for
+> > > AST2700
+> > >=20
+> > > On Wed, 2024-08-14 at 06:35 +0000, Ryan Chen wrote:
+> > > > > Subject: Re: [PATCH 1/4] dt-bindings: mfd: aspeed: support
+> > > > > for
+> > > > > AST2700
+> > > > >=20
+> > > > > On Fri, Aug 09, 2024 at 06:10:22AM +0000, Ryan Chen wrote:
+> > > > > > > Subject: Re: [PATCH 1/4] dt-bindings: mfd: aspeed:
+> > > > > > > support for
+> > > > > > > AST2700
+> > > > > > >=20
+> > > > > > > On 09/08/2024 07:55, Ryan Chen wrote:
+> > > > > > > > > Subject: Re: [PATCH 1/4] dt-bindings: mfd: aspeed:
+> > > > > > > > > support
+> > > > > > > > > for
+> > > > > > > > > AST2700
+> > > > > > > > >=20
+> > > > > > > > > On 08/08/2024 09:59, Ryan Chen wrote:
+> > > > > > > > > > Add compatible support for AST2700 clk, reset,
+> > > > > > > > > > pinctrl,
+> > > > > > > > > > silicon-id and example for AST2700 scu.
+> > > > > > > > > >=20
+> > > > > > > > > > Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
+> > > > > > > > > > ---
+> > > > > > > > > > =C2=A0.../bindings/mfd/aspeed,ast2x00-scu.yaml      | 3=
+1
+> > > > > > > > > +++++++++++++++++--
+> > > > > > > > > > =C2=A01 file changed, 29 insertions(+), 2 deletions(-)
+> > > > > > > > > >=20
+> > > > > > > > > > diff --git
+> > > > > > > > > > a/Documentation/devicetree/bindings/mfd/aspeed,ast2
+> > > > > > > > > > x00-
+> > > > > > > > > > scu.yaml
+> > > > > > > > > > b/Documentation/devicetree/bindings/mfd/aspeed,ast2
+> > > > > > > > > > x00-
+> > > > > > > > > > scu.yaml
+> > > > > > > > > > index 86ee69c0f45b..c0965f08ae8c 100644
+> > > > > > > > > > ---
+> > > > > > > > > > a/Documentation/devicetree/bindings/mfd/aspeed,ast2
+> > > > > > > > > > x00-
+> > > > > > > > > > scu.yaml
+> > > > > > > > > > +++
+> > > > > > > > > > b/Documentation/devicetree/bindings/mfd/aspeed,ast2
+> > > > > > > > > > x00-
+> > > > > > > > > > scu.y
+> > > > > > > > > > +++ aml
+> > > > > > > > > > @@ -21,6 +21,8 @@ properties:
+> > > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0- aspeed,ast2400-scu
+> > > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0- aspeed,ast2500-scu
+> > > > > > > > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0- aspeed,ast2600-scu
+> > > > > > > > > > +          - aspeed,ast2700-scu0
+> > > > > > > > > > +          - aspeed,ast2700-scu1
+> > > > > > > > >=20
+> > > > > > > > > What are the differences between these two?
+> > > > > > > >=20
+> > > > > > > > The next [PATCH 4/4] is scu driver that include
+> > > > > > > > ast2700-scu0
+> > > > > > > > and
+> > > > > > > > ast2700-scu1 CLK_OF_DECLARE_DRIVER(ast2700_soc0,
+> > > > > > > > "aspeed,ast2700-scu0", ast2700_soc0_clk_init);
+> > > > > > > > CLK_OF_DECLARE_DRIVER(ast2700_soc1, "aspeed,ast2700-
+> > > > > > > > scu1",
+> > > > > > > > ast2700_soc1_clk_init);
+> > > > > > >=20
+> > > > > > > What are hardware differences? Entirely different
+> > > > > > > devices?
+> > > > > >=20
+> > > > > > AST2700 have two soc die connected each other.
+> > > > > > Each soc die have it own scu, so the naming is ast2700-scu0
+> > > > > > for
+> > > > > > soc0,
+> > > > > another is ast2700-scu1 for soc1.
+> > > > >=20
+> > > > > Didn't I see in another patch one die is cpu and one is io?
+> > > > > Use
+> > > > > those in the compatible rather than 0 and 1 if so.
+> > > > >=20
+> > > > Sorry, I want to align with our datasheet description.
+> > > > It will but scu0 and scu1 register setting.
+> > >=20
+> > > Can we document that relationship in the binding? Rob's
+> > > suggestion
+> > > seems more descriptive.
+> > Hello,
+> > 	Do you want me document it in yaml file or just in commit
+> > message?
+>=20
+> Hello Rob, Andrew,
+> 	I will add in yaml file in description. Like following.
+>=20
+> description:
+> =C2=A0=C2=A0The Aspeed System Control Unit manages the global behaviour o=
+f the
+> SoC,
+> =C2=A0=C2=A0configuring elements such as clocks, pinmux, and reset.
+> +  In AST2700, it has two soc combination. Each soc include its own
+> scu register control.
+> +  ast2700-scu0 for soc0, ast2700-scu1 for soc1.
+>=20
+> Is that will be better way ?
 
-Partially revert commit 01a0a6cc8cfd ("clk: qcom: Park shared RCGs upon
-registration") by skipping the parking bit for this clk, but keep the
-part where we cache the config register. That's still necessary to
-figure out the true parent of the clk at registration time.
+What Rob is suggesting is to add the compatibles "aspeed,ast2700-scu-
+cpu" and "aspeed,ast2700-scu-io", and then in the description say
+something like:
 
-Fixes: 01a0a6cc8cfd ("clk: qcom: Park shared RCGs upon registration")
-Fixes: 929c75d57566 ("clk: qcom: gcc-sm8550: Mark RCGs shared where applicable")
-Cc: Konrad Dybcio <konradybcio@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>
-Cc: Taniya Das <quic_tdas@quicinc.com>
-Reported-by: Amit Pundir <amit.pundir@linaro.org>
-Closes: https://lore.kernel.org/CAMi1Hd1KQBE4kKUdAn8E5FV+BiKzuv+8FoyWQrrTHPDoYTuhgA@mail.gmail.com
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
----
- drivers/clk/qcom/clk-rcg.h    |  1 +
- drivers/clk/qcom/clk-rcg2.c   | 30 ++++++++++++++++++++++++++++++
- drivers/clk/qcom/gcc-sm8550.c |  2 +-
- 3 files changed, 32 insertions(+), 1 deletion(-)
+   The AST2700 integrates both a CPU and an IO die, each with their own
+   SCU. The "aspeed,ast2700-scu-cpu" and "aspeed,ast2700-scu-io"
+   compatibles correspond to SCU0 and SCU1 respectively.
 
-diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
-index d7414361e432..8e0f3372dc7a 100644
---- a/drivers/clk/qcom/clk-rcg.h
-+++ b/drivers/clk/qcom/clk-rcg.h
-@@ -198,6 +198,7 @@ extern const struct clk_ops clk_byte2_ops;
- extern const struct clk_ops clk_pixel_ops;
- extern const struct clk_ops clk_gfx3d_ops;
- extern const struct clk_ops clk_rcg2_shared_ops;
-+extern const struct clk_ops clk_rcg2_shared_no_init_park_ops;
- extern const struct clk_ops clk_dp_ops;
- 
- struct clk_rcg_dfs_data {
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index 30b19bd39d08..bf26c5448f00 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -1348,6 +1348,36 @@ const struct clk_ops clk_rcg2_shared_ops = {
- };
- EXPORT_SYMBOL_GPL(clk_rcg2_shared_ops);
- 
-+static int clk_rcg2_shared_no_init_park(struct clk_hw *hw)
-+{
-+	struct clk_rcg2 *rcg = to_clk_rcg2(hw);
-+
-+	/*
-+	 * Read the config register so that the parent is properly mapped at
-+	 * registration time.
-+	 */
-+	regmap_read(rcg->clkr.regmap, rcg->cmd_rcgr + CFG_REG, &rcg->parked_cfg);
-+
-+	return 0;
-+}
-+
-+/*
-+ * Like clk_rcg2_shared_ops but skip the init so that the clk frequency is left
-+ * unchanged at registration time.
-+ */
-+const struct clk_ops clk_rcg2_shared_no_init_park_ops = {
-+	.init = clk_rcg2_shared_no_init_park,
-+	.enable = clk_rcg2_shared_enable,
-+	.disable = clk_rcg2_shared_disable,
-+	.get_parent = clk_rcg2_shared_get_parent,
-+	.set_parent = clk_rcg2_shared_set_parent,
-+	.recalc_rate = clk_rcg2_shared_recalc_rate,
-+	.determine_rate = clk_rcg2_determine_rate,
-+	.set_rate = clk_rcg2_shared_set_rate,
-+	.set_rate_and_parent = clk_rcg2_shared_set_rate_and_parent,
-+};
-+EXPORT_SYMBOL_GPL(clk_rcg2_shared_no_init_park_ops);
-+
- /* Common APIs to be used for DFS based RCGR */
- static void clk_rcg2_dfs_populate_freq(struct clk_hw *hw, unsigned int l,
- 				       struct freq_tbl *f)
-diff --git a/drivers/clk/qcom/gcc-sm8550.c b/drivers/clk/qcom/gcc-sm8550.c
-index 0244a05866b8..5abaeddd6afc 100644
---- a/drivers/clk/qcom/gcc-sm8550.c
-+++ b/drivers/clk/qcom/gcc-sm8550.c
-@@ -1159,7 +1159,7 @@ static struct clk_rcg2 gcc_usb30_prim_master_clk_src = {
- 		.parent_data = gcc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_shared_ops,
-+		.ops = &clk_rcg2_shared_no_init_park_ops,
- 	},
- };
- 
--- 
-https://chromeos.dev
-
+Andrew
