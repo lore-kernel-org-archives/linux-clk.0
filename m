@@ -1,217 +1,67 @@
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CEAC14B94F
-	for <linux-clk@vger.kernel.org>; Tue, 20 Aug 2024 18:31:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89AD418E377;
+	Tue, 20 Aug 2024 22:03:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724178698; cv=none; b=JS2JYNYTHdekp9SHM7LRcwRvZYSIzEy+hM5Sqtw99qOI7FjTpFXHVANSeY+HbCI7B5Mwiue9VJ+5V13h0AfF9IAY+22e1EHdUCrVFxQAY7m+ysDRMxhF8amBxPuqHFtFpySFoxYnRQUWpU7bVrrs5IweaHG4+dlzCVzWWcI9evI=
+	t=1724191407; cv=none; b=m0UDjWh6TR9PKQeJWQVKawBqWfiQ/EyAEdz0l60usbShNQZGeF4S3RrK8c5Nsi2af0tzH3WigniWmEPbKC9g1K+bU9a7YdpCmD0MERFza+RsGRcAKDRgNx8U+fk1VK3jQfKzArOdIuatbRO2HY2TcVF6EPVaLFYa6OEwGfjwn5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724178698; c=relaxed/simple;
-	bh=XSYdjKiKvyThLATmIh9N2JQAPLRS7wiEijXbWwiDs/M=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jWe7xMByqjF4y8WLSA1Zp3tIqmkJmWju5fh7KCa/1ZXP4WtBQ/0G1yBK0DDteA5oRRssOJXurCzrQO15vuvHFNX93CQiWiKNaqmxRrO1UWVn1LNI+qKBsXwy+AHCIg/tMSocsILnnGpy31ngojR33XiHcrhK4BwsZE7GOZAb3eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=XG/5LE3T; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	s=arc-20240116; t=1724191407; c=relaxed/simple;
+	bh=SCc9AW6PdECIJzs72kTpSb/cE3Crc/zDrxIic/y3TU0=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=iK8lGITsN3hE7TrXhZN5ejkDpszpL7yw+xudKRUV6AJp4dFPJHaFBgfdb/M4f7NFj+e6o/Z2wYzb1HZw6s92zCbDAL2NmU7Dzth6BhC/R5iHBbXOWoyhike/S/HU00fvKOOGuy/lIODTHhbx5CzGxbBBhEKkTVix8sz3hEVR+Wo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CZCYWS03; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="XG/5LE3T"
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a7aada2358fso1073190966b.0
-        for <linux-clk@vger.kernel.org>; Tue, 20 Aug 2024 11:31:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1724178693; x=1724783493; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:date:from:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=C07kwkQPZHrXmRCk/7LVIjuwNmyBogh+obKLGkkmYFE=;
-        b=XG/5LE3T3o+gzqyCCzm34nba+qmCfXalrQDA360AoPJk3mlkvXoCh6/QfeZvip7m88
-         mjk3ucHDwb1pAgb+EPb5v+NwSsgFfp+LTToHWPRvGmwFGhvSKgH6uKsBqTSHIcq7ayfe
-         igGCVo7l+Anll1eM0oRtiUphZEDoR+Sfvkjr7iCAN4UCUx7MlAUSS1Ogur2VJ3W9YkXg
-         rtoaO1gBhVsVxBa3dMTKrMgQ7EwAJDPFJPhjFa5I97vK/G9xcmb35+CrJ9aJ/gqkTBWF
-         O6g9ox9cp3GKkztqS2IAN3YAPU5DLU1qODsl1PoGrL1fZ+bCdUMj0TPUOTv3TRdDIgx9
-         CLKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724178693; x=1724783493;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=C07kwkQPZHrXmRCk/7LVIjuwNmyBogh+obKLGkkmYFE=;
-        b=ZdEivgGKkghcaY5xjXyYafzoTzGpOj65fc5XIwMLDUOkanCgHRylWZ990PDNVUsZmM
-         OCwHToSqKOMra7GY0wmw9n43N57DcUM8Ehw3umiSGpNlEH4sgCTlXlYENiudSLGETHm8
-         wiygZqexN+z/XziaruJbfVmlCvBjWS6FqJ+xGFtUYKagwL+FZ1Dtv5oA9k7ck/HHIOe2
-         xsKSZ482peV2QmVhkAWY28V9j2Fw1YkENzxJ2MKe04Mesy6j3KeEz5cGhTGNQz12Suik
-         fJsPhLcRoj9cFGDGSoCE+KLcJBmyhHxVBQfG8qnPZBfn52BqTazBPnXAuc59mFMcRHh3
-         5G4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXaWM10XHyrjQPUjY6dNWLIwH9TbAfH+BpVqYFVLCyiwV3NND5z+fTo+vW0CBM+a736/sJQ55OxsZk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVCxP9iYwaQWNNBj42Kcgb99gXvHAtMHbxecn0URpm4NpY4btJ
-	FVSvhlOC58xg++14O/b+b+qPazJ4miff6co1ghn+G4D8Aa4ar4uFsi50/7exl+0=
-X-Google-Smtp-Source: AGHT+IGOs6VYvfV4LBlh3n6XPG9LIKhdxKViotPxcCB+fUrUkrU6+w914efXSB1ZJv8NT+vGMTojLg==
-X-Received: by 2002:a17:907:1b13:b0:a86:6a9a:d719 with SMTP id a640c23a62f3a-a866a9adcddmr29207866b.29.1724178693023;
-        Tue, 20 Aug 2024 11:31:33 -0700 (PDT)
-Received: from localhost ([87.13.33.30])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a838396940fsm796113566b.189.2024.08.20.11.31.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 20 Aug 2024 11:31:32 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Tue, 20 Aug 2024 20:31:38 +0200
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Stefan Wahren <wahrenst@gmx.net>
-Subject: Re: [PATCH 10/11] net: macb: Add support for RP1's MACB variant
-Message-ID: <ZsThCh45-WX_TDmP@apocalypse>
-Mail-Followup-To: Andrew Lunn <andrew@lunn.ch>,
-	Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Stefan Wahren <wahrenst@gmx.net>
-References: <cover.1724159867.git.andrea.porta@suse.com>
- <775000dfb3a35bc691010072942253cb022750e1.1724159867.git.andrea.porta@suse.com>
- <c33fe03d-2097-4d26-b3db-8a3d6c793cd1@lunn.ch>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CZCYWS03"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E719AC4AF0B;
+	Tue, 20 Aug 2024 22:03:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724191407;
+	bh=SCc9AW6PdECIJzs72kTpSb/cE3Crc/zDrxIic/y3TU0=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=CZCYWS03ve2QKnkOx5niM9W4gj5fly1uKIZxXJ4CoHs1h6dAe9sRUkTqXeO4DkZMo
+	 V+hPlW7IsY3yLnRH7uETmJkVPfQoctFj+0eYqxCWgzSuRC3J3XY5h3anHq7IiHGAnL
+	 De6drCZWJbkYoyiGYnwMqRqf251m4OD3ms7RuC4pU1Cf+Po+18S+BQzLSWahBxv21j
+	 KFCXsOJ/RaFBwMvfwJNV9Y5+pRI8wVhrrANnBBEF2cTFJYBNksdEinP7EYlHKlL9Yh
+	 3ex1OHA1OhPTsOaECjXpX8Buosd2QFM5ORKoe+HBCi1JtQZiurI5xaSrgZGaA7/CfF
+	 tI9DD1IcmNmdg==
+Message-ID: <9b1107439ffd3fe3cf4945a500a881c8.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c33fe03d-2097-4d26-b3db-8a3d6c793cd1@lunn.ch>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240820013550.4906-1-david.hunter.linux@gmail.com>
+References: <20240820013550.4906-1-david.hunter.linux@gmail.com>
+Subject: Re: [PATCH 1/1] Driver: clk-qoriq.c: replace of_node_put with _free improves cleanup
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, javier.carrasco.cruz@gmail.com, shuah@kernel.org, david.hunter.linux@gmail.com
+To: David Hunter <david.hunter.linux@gmail.com>, mturquette@baylibre.com
+Date: Tue, 20 Aug 2024 15:03:24 -0700
+User-Agent: alot/0.10
 
-Hi Andrew,
+Quoting David Hunter (2024-08-19 18:35:49)
+> Use the _free function to have automatic clean up instead of calling
 
-On 17:13 Tue 20 Aug     , Andrew Lunn wrote:
-> > +static unsigned int txdelay = 35;
-> > +module_param(txdelay, uint, 0644);
-> 
-> Networking does not like module parameters.
-> 
-> This is also unused in this patch! So i suggest you just delete it.
-> 
-> > +
-> >  /* This structure is only used for MACB on SiFive FU540 devices */
-> >  struct sifive_fu540_macb_mgmt {
-> >  	void __iomem *reg;
-> > @@ -334,7 +337,7 @@ static int macb_mdio_wait_for_idle(struct macb *bp)
-> >  	u32 val;
-> >  
-> >  	return readx_poll_timeout(MACB_READ_NSR, bp, val, val & MACB_BIT(IDLE),
-> > -				  1, MACB_MDIO_TIMEOUT);
-> > +				  100, MACB_MDIO_TIMEOUT);
-> >  }
->   
-> Please take this patch out of the series, and break it up. This is one
-> patch, with a good explanation why you need 1->100.
-> 
-> >  static int macb_mdio_read_c22(struct mii_bus *bus, int mii_id, int regnum)
-> > @@ -493,6 +496,19 @@ static int macb_mdio_write_c45(struct mii_bus *bus, int mii_id,
-> >  	return status;
-> >  }
-> >  
-> > +static int macb_mdio_reset(struct mii_bus *bus)
-> > +{
-> > +	struct macb *bp = bus->priv;
-> > +
-> > +	if (bp->phy_reset_gpio) {
-> > +		gpiod_set_value_cansleep(bp->phy_reset_gpio, 1);
-> > +		msleep(bp->phy_reset_ms);
-> > +		gpiod_set_value_cansleep(bp->phy_reset_gpio, 0);
-> > +	}
-> > +
-> > +	return 0;
-> > +}
-> > +
-> >  static void macb_init_buffers(struct macb *bp)
-> >  {
-> >  	struct macb_queue *queue;
-> > @@ -969,6 +985,7 @@ static int macb_mii_init(struct macb *bp)
-> >  	bp->mii_bus->write = &macb_mdio_write_c22;
-> >  	bp->mii_bus->read_c45 = &macb_mdio_read_c45;
-> >  	bp->mii_bus->write_c45 = &macb_mdio_write_c45;
-> > +	bp->mii_bus->reset = &macb_mdio_reset;
-> 
-> This is one patch.
-> 
-> >  	snprintf(bp->mii_bus->id, MII_BUS_ID_SIZE, "%s-%x",
-> >  		 bp->pdev->name, bp->pdev->id);
-> >  	bp->mii_bus->priv = bp;
-> > @@ -1640,6 +1657,11 @@ static int macb_rx(struct macb_queue *queue, struct napi_struct *napi,
-> >  
-> >  		macb_init_rx_ring(queue);
-> >  		queue_writel(queue, RBQP, queue->rx_ring_dma);
-> > +#ifdef CONFIG_ARCH_DMA_ADDR_T_64BIT
-> > +		if (bp->hw_dma_cap & HW_DMA_CAP_64B)
-> > +			macb_writel(bp, RBQPH,
-> > +				    upper_32_bits(queue->rx_ring_dma));
-> > +#endif
-> 
-> How does this affect a disto kernel? Do you actually need the #ifdef?
-> What does bp->hw_dma_cap contain when CONFIG_ARCH_DMA_ADDR_T_64BIT is
-> not defined?
-> 
-> Again, this should be a patch of its own, with a good commit message.
-> 
-> Interrupt coalescing should be a patch of its own, etc.
-> 
->     Andrew
->
+How about:
 
-Thanks for the feedback, I agree on all the observations. Please do note
-however that, as mentioned in the cover letter, this patch is not intended
-to be included upstream and is provided just as a quick way for anyone
-interested in testing the RP1 functionality using the Ethernet MAC. 
-As such, this patch has not been polished nor splitted into manageable bits.
-Ii'm taknge note of your comments however and will come back to them in a
-future patch that deals specifically with macb.
+	Use __free() to have automatic cleanup instead of calling
+	of_node_put() manually.
 
-Many thanks,
-Andrea
- 
-> ---
-> pw-bot: cr
+> another function, of_node_put. This prevents leaking reference counts.
+
+Are there any leaking reference counts? I'd just omit that sentence
+unless there is one.
+
+>=20
+> The following commit has information on _free(device_node):
+>=20
+> 9448e55d032d99af8e23487f51a542d51b2f1a48
+>=20
+> The code was able to compile without errors or warnings.=20
+
+The rest of this can go below the triple dash ---
