@@ -1,177 +1,93 @@
 Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92DE218A6BC;
-	Tue, 20 Aug 2024 12:20:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 112951922D4;
+	Tue, 20 Aug 2024 13:27:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724156428; cv=none; b=hyr/CpMFgGe/NBflvLWcKFpcKbcjb7B2txk6EBFphZVq1fppO5rqMFZJucFDw2P7GP1LL4w3tKucPr+S+YMjgKhWweLuPQiATXBJITC7msAoIAyDRVQfT2J03J3kCTPTqb5R2cxhlu+7Wl6ceWOXShqref4xmbpKTb8QeIEyYV8=
+	t=1724160465; cv=none; b=ikCMHAoS3xH5S7hzTPSLRREzPjQZFyyKZwEOd40ol8a1K2nTG1zA4WiCkC4rv9Os/PEa1OOCUMrL09zn0+bofVhmwFXSQlOkPgbfknZDffhas7mUIPhZ5uVX1DQpLFX3fXbp5zHRpHkEVNkIvey+TXLyOLuEShEtpN2s6BBxOLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724156428; c=relaxed/simple;
-	bh=cmH8LeB3XQV3FWrWLmPQQortO5BwjzrvyvSS30/UKLA=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PTFqbDF3uNBCkbnuUcCDz/Zr1vHZ7pRh5HflJx+cDVYx4BnPFvpvo0snLXZtUi3SbK+Ff5NUXpSlSKwqlKKP2CCTMpwqLThwpXhufMTgm1dgrRs/Bgz5FvZBNo+nFoJY0WD/RxPabF40VD7ijJs00skgQAUYflmIkTzFrk7eIK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=SCXL+pYI; arc=none smtp.client-ip=217.92.40.78
+	s=arc-20240116; t=1724160465; c=relaxed/simple;
+	bh=hz3RzcXSp8C+lSShIolLGyjnUumMNWDXWqmvHVrL+pU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YUOWQ6HOJEtlBt5rpWY+0brz2gdhOmAWK/2NJaLJg4DzT0IPXib7ETRSHbMqYQue+eC6rbagfAByxxJqoE9EXWyNAyG8ctmUffNNNrs8yyl7sSN36AIuEQEzkKWs3UFSeLfMokD+b1E9aOVXnqJe8FgA6/yo4noPPujgwy4mxAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=PRIIenkp; arc=none smtp.client-ip=217.92.40.78
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="SCXL+pYI"
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0F37D148330C;
-	Tue, 20 Aug 2024 14:20:23 +0200 (CEST)
+	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="PRIIenkp"
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id DFFCA1487C87;
+	Tue, 20 Aug 2024 15:27:36 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
-	t=1724156423;
-	h=from:subject:date:message-id:to:mime-version:content-type:in-reply-to:
-	 references; bh=6lsGEQXfU/2msmfbLV6xAW1tGi05xaQSNBIo8l41vSc=;
-	b=SCXL+pYIULWut8pttHq+yiF+DLNqkn1yYpHLDFgHaR84kXLDpS1/mA7yqwBYvjvLYN+690
-	1FwXAFpjUH0uoAhp/a4dgXbzfYZ7oSmBP4Tr1UxWOLORh7j4lJqo8iVo6N0q/Es53Jd7K0
-	17PDCSmVENaypIHr7i+WopIv0ACs4uFB/6Ao/gIDKCwBFrTpB2lULFjoB/MWcsP6LcI8WQ
-	iu5D8F0K+09jG92e0BbMMp5zUj6+vq+uDNyjXLrrNb7d+Dd+3j7cjc+/sqa9GRXs6DDHP8
-	OnmbCmMZ7Zg9tnL1YSzSKAwyVuQ/d+Q156nbMc1MO5FvZbN0P56WOeO0e70Drw==
-Date: Tue, 20 Aug 2024 14:20:21 +0200
+	t=1724160458; h=from:subject:date:message-id:to:cc:mime-version:
+	 content-transfer-encoding; bh=PCgOO1pDrOpwZlB5bNP2nFUn2U1YS3vBwTENcvdvGqc=;
+	b=PRIIenkpiA/BzaDGYlkixkxD6Y4j7zmqlahg0ShcVd7leunmMSzKK9j2tPBOWW4TKzWF4B
+	cnoDVlpL5FVGwVONrXTlrqJPzbZTxTatUobnUZRGLt4cNEEozvuRV9Nw3ds4jZm7y/R7pb
+	noE2GbWRZhH7a9eWQJyNaM4Y/+feO9KTP+DPPtMu8+2oSKD21hkNmX9E0zkGj1L3x8Tvm+
+	95HUTPbmUfA8bgOBInK+vq3ox+JPhBw1aRTdrbwuqWGEHiGejy4gMeOKtiSisnY4zzEp0E
+	WPgIMjKA4TsR/1Ihe04fxXOZpzY3Tlt5INun0RCHqrDQweGf7/b2f0ZvsS1Ofg==
 From: Alexander Dahl <ada@thorsis.com>
-To: claudiu beznea <claudiu.beznea@tuxon.dev>, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: get, prepare, enable a clock not in DT?
-Message-ID: <20240820-stinging-altitude-d1186a067824@thorsis.com>
-Mail-Followup-To: claudiu beznea <claudiu.beznea@tuxon.dev>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-References: <20240816-ludicrous-lagging-65e750c57ab4@thorsis.com>
- <384919bc-7d45-445a-bc85-630c599d43ef@tuxon.dev>
- <20240820-grandpa-down-fec4231f971c@thorsis.com>
+To: linux-clk@vger.kernel.org
+Cc: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
+	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] ARM: dts: microchip: sam9x60: Fix rtc/rtt clock parent
+Date: Tue, 20 Aug 2024 15:27:30 +0200
+Message-Id: <20240820132730.357347-1-ada@thorsis.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240820-grandpa-down-fec4231f971c@thorsis.com>
-User-Agent: Mutt/2.2.12 (2023-09-09)
+Content-Transfer-Encoding: 8bit
 X-Last-TLS-Session-Version: TLSv1.3
 
-Hello,
+The RTC and RTT peripherals use the "timing domain slow clock (TD_SLCK),
+sourced from the 32.768 kHz crystal oscillator.
 
-Am Tue, Aug 20, 2024 at 02:17:58PM +0200 schrieb Alexander Dahl:
-> Hello Claudiu,
-> 
-> Am Tue, Aug 20, 2024 at 02:54:59PM +0300 schrieb claudiu beznea:
-> > Hi, Alexander,
-> > 
-> > On 16.08.2024 17:34, Alexander Dahl wrote:
-> > > Hello everyone,
-> > > 
-> > > while further investigating timeout issues with the at91 otpc
-> > > controller on sam9x60 [1] I came to the conclusion the main RC
-> > > oscillator on that SoC must be enabled for that driver to work.
-> > 
-> > Not sure how that works (unless undocumented) as figure Figure 28-1. Clock
-> > Generator Block Diagram from [1] states that main_rc_osc feeds only the mainck.
-> 
-> It can feed the main clock and you're right from Clock Generator POV.
-> However it is not completely undocumented.  Section "23.4 Product
-> Dependencies" of the SAM9X60 datasheet (DS60001579G) says:
-> 
->     "The OTPC is clocked through the Power Management Controller (PMC).
->     The user must power on the main RC oscillator and enable the
->     peripheral clock of the OTPC prior to reading or writing the OTP
->     memory."
-> 
-> Apparently this also applies to reading, at least according to my
-> tests on sam9x60-curiosity.
-> 
-> btw, the last public release of the atmel-software-package, source for
-> the sam-ba applets, also enables that clock, although the reasoning
-> was for writing. [1]
+(The Monitoring domain slow clock (MD_SLCK) is sourced from an internal
+RC oscillator which is most probably not precise enough for real time
+clock purposes.)
 
-Sorry, forgot that reference, FWIW:
+Fixes: 1e5f532c2737 ("ARM: dts: at91: sam9x60: add device tree for soc and board")
+Fixes: 5f6b33f46346 ("ARM: dts: sam9x60: add rtt")
+Signed-off-by: Alexander Dahl <ada@thorsis.com>
+---
+ arch/arm/boot/dts/microchip/sam9x60.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-[1] https://github.com/atmelcorp/atmel-software-package/blob/master/drivers/nvm/otp/otpc.c#L99
+diff --git a/arch/arm/boot/dts/microchip/sam9x60.dtsi b/arch/arm/boot/dts/microchip/sam9x60.dtsi
+index 291540e5d81e..d077afd5024d 100644
+--- a/arch/arm/boot/dts/microchip/sam9x60.dtsi
++++ b/arch/arm/boot/dts/microchip/sam9x60.dtsi
+@@ -1312,7 +1312,7 @@ rtt: rtc@fffffe20 {
+ 				compatible = "microchip,sam9x60-rtt", "atmel,at91sam9260-rtt";
+ 				reg = <0xfffffe20 0x20>;
+ 				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
+-				clocks = <&clk32k 0>;
++				clocks = <&clk32k 1>;
+ 			};
+ 
+ 			pit: timer@fffffe40 {
+@@ -1338,7 +1338,7 @@ rtc: rtc@fffffea8 {
+ 				compatible = "microchip,sam9x60-rtc", "atmel,at91sam9x5-rtc";
+ 				reg = <0xfffffea8 0x100>;
+ 				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
+-				clocks = <&clk32k 0>;
++				clocks = <&clk32k 1>;
+ 			};
+ 
+ 			watchdog: watchdog@ffffff80 {
 
-Greets
-Alex
+base-commit: 47ac09b91befbb6a235ab620c32af719f8208399
+-- 
+2.39.2
 
-> 
-> > Also, Table 9-1. Peripheral Identifiers from [1] say that there is no clock
-> > control for OTCP on the PMC side.
-> > 
-> > [1]
-> > https://ww1.microchip.com/downloads/aemDocuments/documents/MPU32/ProductDocuments/DataSheets/SAM9X60-Data-Sheet-DS60001579.pdf
-> 
-> You're right from the datasheet POV.  Not sure if the datasheet is
-> right here?  It's not complete in some register contents anyway, maybe
-> some things are kept confidential, and OTPC is part of that?
-> 
-> Maybe someone can confirm my findings on sam9x60-curiosity, e.g.
-> after I sent a patch series with what I consider fixes for this topic?
-> 
-> > > (Verified that by poking single bits in registers through devmem
-> > > already.)
-> > > 
-> > > Fortunately the necessary clk is already registered from the SoC code
-> > > in drivers/clk/at91/sam9x60.c [2] and I can see the clock in sysfs clk
-> > > summary:
-> > > 
-> > >     root@DistroKit:~ head -n4 /sys/kernel/debug/clk/clk_summary 
-> > >                                      enable  prepare  protect                                duty  hardware                            connection
-> > >        clock                          count    count    count        rate   accuracy phase  cycle    enable   consumer                         id
-> > >     ---------------------------------------------------------------------------------------------------------------------------------------------
-> > >      main_rc_osc                         0       0        0        12000000    50000000   0     50000      Y   deviceless                      no_connection_id         
-> > > 
-> > > That clock has no parent and is not found anywhere in devicetree, nor
-> > > is it handled by the two clock-producers on that platform, so
-> > > from within mchp_otpc_probe() I just tried this:
-> > > 
-> > >     otpc->clk = devm_clk_get_enabled(&pdev->dev, "main_rc_osc");
-> > 
-> > > 
-> > > However that returns with -ENOENT, so I assume I can not reference the
-> > > clock just by name?  Same result with this:
-> > > 
-> > >     otpc->clk = devm_clk_get_enabled(NULL, "main_rc_osc");
-> > > 
-> > > How do I get a pointer to that clk then to enable it?  Docs [3] where
-> > 
-> > To expose it though DT you may want to save its hw object to one array
-> > entry in sam9x60_pmc, sam9x60_pmc->chws[] fits best for this atm.
-> 
-> Great to see I came to the same conclusion.  I have a proof-of-concept
-> working meanwhile, will send a patch series later this week I guess.
-> 
-> Thanks for your support.
-> 
-> > Otherwise, you can try to register the main_rc_osc with CLK_IS_CRITICAL for
-> > simple trials.
-> 
-> Don't think that is necessary anymore. :-)
-> 
-> By chance: I don't have a sama7g5 based board at hand for testing.
-> The datasheet says the same as for sam9x60.
-> Does the nvmem_microchip_otpc driver actually work without timeout on
-> sama7g5?
-> 
-> Greets
-> Alex
-> 
-> > 
-> > Thank you,
-> > Claudiu Beznea
-> > 
-> > > not as useful as I hoped for, neither was clk.h header docs. :-/
-> > > 
-> > > From what I understood from header docs reading 'device for clock
-> > > "consumer"' I must pass the device from which I call that clk_get() as
-> > > first parameter, so this would be the otpc device then, right?  What's
-> > > that second parameter clock consumer id then?  Are these terms
-> > > explained somewhere?
-> > > 
-> > > Greets
-> > > Alex
-> > > 
-> > > [1] <20240813-payable-ecology-8a9e739704bb@thorsis.com>
-> > > [2] https://elixir.bootlin.com/linux/v6.10.4/source/drivers/clk/at91/sam9x60.c#L217
-> > > [3] https://kernel.org/doc/html/latest/driver-api/clk.html
-> > > 
-> > 
-> 
