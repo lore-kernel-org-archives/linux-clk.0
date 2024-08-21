@@ -1,117 +1,113 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 011DC17F7;
-	Wed, 21 Aug 2024 00:16:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA43D1E877;
+	Wed, 21 Aug 2024 01:07:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724199381; cv=none; b=f2xfdj4Bg7SM9tPnbp37vApn7FkNxEr2DNQUPDmPNwBO7cqzkqEtTwf+nUdzrLvVtKAl8McdDe4rWsleqZPB7NOr6/moH5addWJ0HAvOm18KNwIEuks3gsTS4Dqbul19WEHtNCFxiwkRpaC6Mr1gg1SAnJbpg4gyfQ8LRMelhR0=
+	t=1724202471; cv=none; b=aW1sBO9rZB6ArdSfi+Uig3afu7i6XwU8PCdzqk+UbSxofhs3yZjpDLd/uvc+sNCmsHRbE3IGTn5XxXfDCAz/nRl1xf8RIkjdSCAoReiQj1muv26rizJezCvhPlosaRdJSQpypzYt7jnwbhFzG0Y5++0Z/PSyKapXdGCFHBvxJas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724199381; c=relaxed/simple;
-	bh=//umJAjmzAHbb4srtnO6p7v3lXCw1BpKooPGruKj3YA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YyIRIbwqzI/yXN6NhJxL5k/K0yWWKNNfl1WFH7tuNBaLaa5t3q9z4tuz9hoI6sVKnWQvR6Tgd/Q0rl/R8a7p6FZZFv9uHstPLh/I1eSevg2BdtJkRSMqjklvPdsd0Rb9O0/Kv0Ve5VERxMA4QemL+ZCUtjok2ztOdQ3fWjuMPC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X8KQlM1S; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1724202471; c=relaxed/simple;
+	bh=/aAQKmtIClmmsnvJpR/RajCxH09ImjeBYpd6QjR/Pxo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Mrny3hr9DP/YoHaZlhwqV1/csLg4yCYbIlvDs5J4TuwHfA4p6sLx0jXvanBcM/4wwcJ3xOCBX6H9wJ2Y3Vg+h8XsJr0M+nZCelznH/lTxvr+j0TuO+pVh21dca746JjCO5BBzp+JCiyFKoElZ3RDO0F0ykxKnXLkzxwcYtHVGCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BWpw0YGv; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X8KQlM1S"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D40DC4AF0B;
-	Wed, 21 Aug 2024 00:16:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724199380;
-	bh=//umJAjmzAHbb4srtnO6p7v3lXCw1BpKooPGruKj3YA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X8KQlM1SytAKYaLYGKjUz1REIaj2OSxhUitYLdZDhbSPUm+zX/n9d16vFT2QAuH+t
-	 gRVIKK+04YVkR6EPmSuh0C6nOhanaGhRH0wIWK4naUn2w1uZl8uwHWI3y2mssctyjl
-	 0frL43b32OAch2HL/8vT8AD+BpumetAHSJPiJ/WMT4RR9Qc2idkWKBT82xQcfgaPIm
-	 q/VC4vMsptGQhU0h7I2LgO61rK80P5F0B0tguEZC8SIfByjBsVZmPGPfkG3ZAn+S0S
-	 Y9hgUuLVMsBU/bK7a4OHKAWCAgtfwoB+yNoxm4PHjV43MFU/C3auVSDpM4VgrsFPnR
-	 su1kG3ad1mLCw==
-Date: Tue, 20 Aug 2024 19:16:18 -0500
-From: Rob Herring <robh@kernel.org>
-To: Andrea della Porta <andrea.porta@suse.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Stefan Wahren <wahrenst@gmx.net>
-Subject: Re: [PATCH 04/11] of: address: Preserve the flags portion on 1:1
- dma-ranges mapping
-Message-ID: <20240821001618.GA2309328-robh@kernel.org>
-References: <cover.1724159867.git.andrea.porta@suse.com>
- <5ca13a5b01c6c737f07416be53eb05b32811da21.1724159867.git.andrea.porta@suse.com>
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BWpw0YGv"
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e03caab48a2so249418276.1;
+        Tue, 20 Aug 2024 18:07:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724202469; x=1724807269; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=irghqnwc4yxxwagA+K5ZtONQ7cFbQgDaqnqdG2BbQv8=;
+        b=BWpw0YGvejHC8Ci7ijsC9BqhBRWDOEc9Uh0cIzQNoFFHi+ctvJAN2Hbhyq2ZNEzflQ
+         MqEwXDqDbPz89Prwhh/ZNUyDDdEEZSfeo6Q6MxIzK0LtYgyC6vhPXUAJ2LMkSKryVpSM
+         RlsiiTLbQNjnY1EOVCJj/KhDKLXNCYaZN59XBay8FKg4EkmdTM9U/kISUWe5FrQPAYax
+         QJM2IaX6W/KKDjAR5ImTLD7nfAdCoV+MjHz8PsGtmBmNkYpemiRznLOoYZkCjxeYFn4V
+         UBiYBoEfbI/owZEcufy9SQJtORnIfGwFXnllANBUYctSFiJhwUSRDzlcJUYv94IHmNp1
+         BP6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724202469; x=1724807269;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=irghqnwc4yxxwagA+K5ZtONQ7cFbQgDaqnqdG2BbQv8=;
+        b=tnXvuVIjLSWR7LLw10DCEM3dImkvuWFiRFAZhExOGvhkgKBgUujY3kdA6TECQLQrPS
+         OyGINpmqjQTkHBOtrsq4TD4HizIkeUZ4rl8W2mYpzH3Y45n2wCLBkKFQBHr3vIC+VnI4
+         OPK/Ftmz0NJ3s67PLlbPNThmYNRZsxfML8jUlww0mO4GQ6R4x9cMlEPZitFARahd8XTN
+         ilcyO/2sBtHVcVcj38PujZCRuL28O/7U3tCkzl1M3mZZF2EPrh7i9Y9gikSwn3eEudz3
+         J8/6+iALo+JuYbgiWmRpLoD+PfAVOLulW0UsIuQ+tHsV3yz0+gID4cvphc3z1Fx48Mgd
+         Yg8w==
+X-Forwarded-Encrypted: i=1; AJvYcCVquKr75jT2TOMT6Ey1ohX22isqQZ7abQvorsyNW5zchhUwmEzRjHEMMGGbwFHHznS5W4Z7Thnn0Szaz6Nt@vger.kernel.org, AJvYcCWz0BeCR2YPe+9pAdLr0md9ETP2cEr7ef89hWXH8ZYIWcmlUxLDZzEOX/TBdYDvQVyfYwtGkTyUtLA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNDQlcV607DO0Kq2xfo2GrpHF07v72I5pQTFfTqjUUuqPmJqP7
+	Rzo/HY3+FEv+IB0VQw1MlfxlV9f7LgNoHLajdUPWbnLmjqVN/lJ93CnwaA==
+X-Google-Smtp-Source: AGHT+IEpgNXZOJ9wVmxgSO0yNq30uNT+1Dsbqmn1pJmIFFT/umuqzEcsvYJug3ffNdB5sPFHYb/Dcw==
+X-Received: by 2002:a05:6902:140b:b0:e0b:2f9a:55b with SMTP id 3f1490d57ef6-e1666f8d2cfmr600662276.11.1724202468680;
+        Tue, 20 Aug 2024 18:07:48 -0700 (PDT)
+Received: from localhost ([2600:1700:6165:1c10:ba94:c53f:f611:602e])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e1171e3f549sm2726921276.23.2024.08.20.18.07.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 20 Aug 2024 18:07:48 -0700 (PDT)
+From: David Hunter <david.hunter.linux@gmail.com>
+To: sboyd@kernel.org
+Cc: david.hunter.linux@gmail.com,
+	javier.carrasco.cruz@gmail.com,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	mturquette@baylibre.com,
+	shuah@kernel.org
+Subject: [PATCH 1/1 V2] Driver: clk-qoriq.c: replace of_node_put with _free improves cleanup
+Date: Tue, 20 Aug 2024 21:07:39 -0400
+Message-ID: <20240821010739.15293-1-david.hunter.linux@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <9b1107439ffd3fe3cf4945a500a881c8.sboyd@kernel.org>
+References: <9b1107439ffd3fe3cf4945a500a881c8.sboyd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5ca13a5b01c6c737f07416be53eb05b32811da21.1724159867.git.andrea.porta@suse.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Aug 20, 2024 at 04:36:06PM +0200, Andrea della Porta wrote:
-> A missing or empty dma-ranges in a DT node implies a 1:1 mapping for dma
-> translations. In this specific case, rhe current behaviour is to zero out
+Use _free() to have automatic cleanup instead of calling of_node_put()
+manually.
 
-typo
+Compiled without errors or warnings.
 
-> the entire specifier so that the translation could be carried on as an
-> offset from zero.  This includes address specifier that has flags (e.g.
-> PCI ranges).
-> Once the flags portion has been zeroed, the translation chain is broken
-> since the mapping functions will check the upcoming address specifier
+Signed-off-by: David Hunter <david.hunter.linux@gmail.com>
+---
+The following commit has information on _free(device_node):
+9448e55d032d99af8e23487f51a542d51b2f1a48  
 
-What does "upcoming address" mean?
+V1 --> V2
+	- Improved message body 
+	- Use change log to give more information about _free()
+---
+ drivers/clk/clk-qoriq.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-> against mismatching flags, always failing the 1:1 mapping and its entire
-> purpose of always succeeding.
-> Set to zero only the address portion while passing the flags through.
+diff --git a/drivers/clk/clk-qoriq.c b/drivers/clk/clk-qoriq.c
+index 4dcde305944c..941a0372db4b 100644
+--- a/drivers/clk/clk-qoriq.c
++++ b/drivers/clk/clk-qoriq.c
+@@ -1065,11 +1065,8 @@ static void __init _clockgen_init(struct device_node *np, bool legacy);
+ static void __init legacy_init_clockgen(struct device_node *np)
+ {
+ 	if (!clockgen.node) {
+-		struct device_node *parent_np;
+-
+-		parent_np = of_get_parent(np);
++		struct device_node __free(device_node) *parent_np = of_get_parent(np);
+ 		_clockgen_init(parent_np, true);
+-		of_node_put(parent_np);
+ 	}
+ }
+ 
+-- 
+2.43.0
 
-Can you point me to what the failing DT looks like. I'm puzzled how 
-things would have worked for anyone.
-
-
-> 
-> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> ---
->  drivers/of/address.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/of/address.c b/drivers/of/address.c
-> index d669ce25b5f9..5a6d55a67aa8 100644
-> --- a/drivers/of/address.c
-> +++ b/drivers/of/address.c
-> @@ -443,7 +443,8 @@ static int of_translate_one(struct device_node *parent, struct of_bus *bus,
->  	}
->  	if (ranges == NULL || rlen == 0) {
->  		offset = of_read_number(addr, na);
-> -		memset(addr, 0, pna * 4);
-> +		/* copy the address while preserving the flags */
-> +		memset(addr + pbus->flag_cells, 0, (pna - pbus->flag_cells) * 4);
->  		pr_debug("empty ranges; 1:1 translation\n");
->  		goto finish;
->  	}
-> -- 
-> 2.35.3
-> 
