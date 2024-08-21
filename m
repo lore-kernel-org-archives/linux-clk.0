@@ -1,144 +1,155 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61D0E1537C1;
-	Wed, 21 Aug 2024 15:55:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D161A13AA2F;
+	Wed, 21 Aug 2024 16:09:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724255734; cv=none; b=WJzBbl0zLcyFYVsAxTDKdOhUazN2pgFamY/PZzgnG5yB9lgFOf17+61FT0vbgdWGMFtvTWiwO4QYmt2oolR2oR/hZ7sfHkHiTKiFME5kG+pdyBMmZJkmol6s76VDto9flQP4ApzMNbit8YnXGCYFSaFOT66/hZkf/RttcazJQpU=
+	t=1724256547; cv=none; b=QvZ+c7ovHkKyfUnjrIr1Rny7goQHp0LtSA4VZFUnYrtHn2C5NEcgvwhoBsCshqAlg+7tJOZUzLYU3hAmCW5PgeM6s1+xceGhA+1V/K33nD6HTpTvMXoQ83G8zNUia13BLWLTDsE1WBZstTN7eH9ABY0OSEVlF9DFGEQNKh9CJXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724255734; c=relaxed/simple;
-	bh=oO+0Tv2uU9zbU6edOpbgsXoLNpUE9+d8dxygISVgGuA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q7WI9cSXK3KnuQTU3cOmPAoos1/FtWTTX93ajk/tn6vf49Tid4xeEZsGDWczoddg8+l9gfrFzcGay7Zw6YPjGpglLdpcHRr7GVF8FFv4eFS4p1AyKRz81AXZBhnA8yylw6kh+vkyZHA4ZIKbqYqqsKtB4iZ135RJAoZtSVDIhWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IWEuEzW2; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1724256547; c=relaxed/simple;
+	bh=DoNWiefNwlabTvrMKvLcoTr9m81BJcqm9zmd/I1QTjQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=RExOeUT9pwfB+jBMNy0DuwlodS9rH9fqdnHIbabelFEFO3ro56PRcTIgpFOOUuWSC0LBhdATrybNKm+kvYX+hBnSTyG9VJGb+TqSgGXO3DQvWNnfR3x9RTR3WEMhHRyB1QnhHXAVyec9dDvnd8/Q9hMmhX/BAowg7kqCiOuFdCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=T8DWJv+e; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IWEuEzW2"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D346C32781;
-	Wed, 21 Aug 2024 15:55:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724255733;
-	bh=oO+0Tv2uU9zbU6edOpbgsXoLNpUE9+d8dxygISVgGuA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IWEuEzW2eAOAzTIBdvnMKwDqxONi5bvAss+1DyQAZgggcO9o17lUl0wRyfbgeBAm7
-	 qjeqktvAqgbnvq2/RbeWaHqPs92nlJHf8Y7dZH9FJOognOMFEmsDWGl5Bjqx0tw4LH
-	 Sr2tvh1enoQxBtEg9pob6hyWyoX7538CrU33rEVev+x5ebtevlffQY0nlHiydMCx37
-	 mYiyE6Q9QUC80lO/It8vpxu5ShyRyZ50X6+D1hew4wUDDt5/HLAi2en3uV4UIfQS+B
-	 /d/EoAKCYH5sfHBk28GaMBvhhYA6oPslp6IVhx/1fJxSzV9OYCsqZltmNmVET92dQz
-	 pvXC3Cq49g01Q==
-Date: Wed, 21 Aug 2024 16:55:29 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Alexander Dahl <ada@thorsis.com>
-Cc: Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Christian Melki <christian.melki@t2data.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
-	"moderated list:ARM/Microchip (AT91) SoC support" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
-Subject: Re: [PATCH v1 09/12] clk: at91: sam9x60: Allow enabling main_rc_osc
- through DT
-Message-ID: <20240821-gnat-pushcart-882aa3a3f252@spud>
-References: <20240821105943.230281-1-ada@thorsis.com>
- <20240821105943.230281-10-ada@thorsis.com>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="T8DWJv+e"
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47LEQuNU018964;
+	Wed, 21 Aug 2024 16:08:54 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	070i+fXfB+k/jMoONG0/PCDJnuCkejFp1EIr7Bg8A78=; b=T8DWJv+e5NlgPupx
+	FhbrcB1sElckLLHYD6WO8F+CikbfYAmMVTyrH1tCVeoR9Sc2v0z9SlL6gPLy7ENX
+	IrCB9QSue9SMA9zKE+nW0RNM2u/m7VQzoqRKXg6D3nsASpUWSdDZWcvYr2x3x+ta
+	el6hh+4mnB+wM6K/0RxrNGBHz+VYXg0LYyem4Y6xG6sIWEhtMEpTWLNlVLVbztdm
+	jA5B5JdgeGvrA1vIvjFAunj5ZXuhggv4+p5QQYOA4cT2o9y8NAU4tVwKznOoxnev
+	4s5g6SRd5WDGCvSWOJAuMrPFx6cvFDE9P1mu9kvV6T2N1iZWfFeaTFZhdgFQkHGE
+	fulsRQ==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 415bkw9udf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 21 Aug 2024 16:08:54 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47LG8rCx006912
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 21 Aug 2024 16:08:53 GMT
+Received: from [10.253.73.208] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 21 Aug
+ 2024 09:08:48 -0700
+Message-ID: <51198961-2e09-4d0e-8bf3-907c81597724@quicinc.com>
+Date: Thu, 22 Aug 2024 00:08:46 +0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="CijNXcpqoUP9GEdm"
-Content-Disposition: inline
-In-Reply-To: <20240821105943.230281-10-ada@thorsis.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/4] dt-bindings: clock: qcom: Add CMN PLL clock
+ controller for IPQ SoC
+To: Krzysztof Kozlowski <krzk@kernel.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon
+	<will@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <quic_kkumarcs@quicinc.com>,
+        <quic_suruchia@quicinc.com>, <quic_pavir@quicinc.com>,
+        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>,
+        <bartosz.golaszewski@linaro.org>, <srinivas.kandagatla@linaro.org>
+References: <20240820-qcom_ipq_cmnpll-v2-0-b000dd335280@quicinc.com>
+ <20240820-qcom_ipq_cmnpll-v2-1-b000dd335280@quicinc.com>
+ <krbpzjccn6xvnpfsa7eeeowmtjuuw4yp72qqqbeq2icxrqvdo4@x6pawrcctyd3>
+Content-Language: en-US
+From: Jie Luo <quic_luoj@quicinc.com>
+In-Reply-To: <krbpzjccn6xvnpfsa7eeeowmtjuuw4yp72qqqbeq2icxrqvdo4@x6pawrcctyd3>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 2iMXRdIuxfm8eaKS-xL521JlwKOQsPqB
+X-Proofpoint-GUID: 2iMXRdIuxfm8eaKS-xL521JlwKOQsPqB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-21_11,2024-08-19_03,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
+ mlxscore=0 mlxlogscore=999 bulkscore=0 malwarescore=0 priorityscore=1501
+ adultscore=0 phishscore=0 impostorscore=0 lowpriorityscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408210118
 
 
---CijNXcpqoUP9GEdm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Aug 21, 2024 at 12:59:40PM +0200, Alexander Dahl wrote:
-> SAM9X60 Datasheet (DS60001579G) Section "23.4 Product Dependencies"
-> says:
->=20
->     "The OTPC is clocked through the Power Management Controller (PMC).
->     The user must power on the main RC oscillator and enable the
->     peripheral clock of the OTPC prior to reading or writing the OTP
->     memory."
->=20
-> The code for enabling/disabling that clock is already present, it was
-> just not possible to hook into DT anymore, after at91 clk devicetree
-> binding rework back in 2018 for kernel v4.19.
->=20
-> Signed-off-by: Alexander Dahl <ada@thorsis.com>
-> ---
->  drivers/clk/at91/sam9x60.c       | 3 ++-
->  include/dt-bindings/clock/at91.h | 1 +
+On 8/21/2024 4:33 PM, Krzysztof Kozlowski wrote:
+> On Tue, Aug 20, 2024 at 10:02:42PM +0800, Luo Jie wrote:
+>> The CMN PLL controller provides clocks to networking hardware blocks
+>> on Qualcomm IPQ9574 SoC. It receives input clock from the on-chip Wi-Fi,
+>> and produces output clocks at fixed rates. These output rates are
+>> predetermined, and are unrelated to the input clock rate. The output
+>> clocks are supplied to the Ethernet hardware such as PPE (packet
+>> process engine) and the externally connected switch or PHY device.
+>>
+>> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
+>> ---
+>>   .../bindings/clock/qcom,ipq9574-cmn-pll.yaml       | 70 ++++++++++++++++++++++
+>>   include/dt-bindings/clock/qcom,ipq-cmn-pll.h       | 15 +++++
+>>   2 files changed, 85 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml b/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml
+>> new file mode 100644
+>> index 000000000000..7ad04b58a698
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml
+>> @@ -0,0 +1,70 @@
+>> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/clock/qcom,ipq9574-cmn-pll.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Qualcomm CMN PLL Clock Controller on IPQ SoC
+>> +
+>> +maintainers:
+>> +  - Bjorn Andersson <andersson@kernel.org>
+>> +  - Luo Jie <quic_luoj@quicinc.com>
+>> +
+>> +description:
+>> +  The CMN PLL clock controller expects a reference input clock.
+> 
+> You did not explain what is CMN. Is this some sort of acronym?
 
-Generally we don't want binding changes in the same patch as a driver
-change. If your fix was determined to be faulty down the line and
-reverted, the binding change would remain valid, for example. Can you
-split it into two patches please, for the next version please?
+CMN is short form for 'common'. Since it is referred to as 'CMN'
+PLL in the hardware programming guides, we wanted the driver name
+to include it as well. The description can be updated as below to
+clarify the name and purpose of this hardware block. Hope this is
+fine.
 
->  2 files changed, 3 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/at91/sam9x60.c b/drivers/clk/at91/sam9x60.c
-> index e309cbf3cb9a..4d5ee20b8fc4 100644
-> --- a/drivers/clk/at91/sam9x60.c
-> +++ b/drivers/clk/at91/sam9x60.c
-> @@ -207,7 +207,7 @@ static void __init sam9x60_pmc_setup(struct device_no=
-de *np)
->  	if (IS_ERR(regmap))
->  		return;
-> =20
-> -	sam9x60_pmc =3D pmc_data_allocate(PMC_PLLACK + 1,
-> +	sam9x60_pmc =3D pmc_data_allocate(PMC_MAIN_RC + 1,
->  					nck(sam9x60_systemck),
->  					nck(sam9x60_periphck),
->  					nck(sam9x60_gck), 8);
-> @@ -218,6 +218,7 @@ static void __init sam9x60_pmc_setup(struct device_no=
-de *np)
->  					   50000000);
->  	if (IS_ERR(hw))
->  		goto err_free;
-> +	sam9x60_pmc->chws[PMC_MAIN_RC] =3D hw;
-> =20
->  	hw =3D at91_clk_register_main_osc(regmap, "main_osc", mainxtal_name, NU=
-LL, 0);
->  	if (IS_ERR(hw))
-> diff --git a/include/dt-bindings/clock/at91.h b/include/dt-bindings/clock=
-/at91.h
-> index 3e3972a814c1..f957625cb3ac 100644
-> --- a/include/dt-bindings/clock/at91.h
-> +++ b/include/dt-bindings/clock/at91.h
-> @@ -25,6 +25,7 @@
->  #define PMC_PLLBCK		8
->  #define PMC_AUDIOPLLCK		9
->  #define PMC_AUDIOPINCK		10
-> +#define PMC_MAIN_RC		11
-> =20
->  /* SAMA7G5 */
->  #define PMC_CPUPLL		(PMC_MAIN + 1)
-> --=20
-> 2.39.2
->=20
+"The CMN PLL clock controller expects a reference input clock
+from the on-board Wi-Fi, and supplies a number of fixed rate
+output clocks to the Ethernet devices including PPE (packet
+process engine) and the connected switch or PHY device. The
+CMN (or 'common') PLL's only function is to enable clocks to
+Ethernet hardware used with the IPQ SoC and does not include
+any other function."
 
---CijNXcpqoUP9GEdm
-Content-Type: application/pgp-signature; name="signature.asc"
+> 
+> Best regards,
+> Krzysztof
+> 
+> 
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZsYN8AAKCRB4tDGHoIJi
-0oRoAQDqtnDTQk6fJ7GbAum6paH3b3FjF1bhS3Aw7qSeJrWA5AD/W3STyVNEqGq6
-acYI6UGYoGZTPnCaJg5CdZ2hifHbjQI=
-=esFu
------END PGP SIGNATURE-----
-
---CijNXcpqoUP9GEdm--
