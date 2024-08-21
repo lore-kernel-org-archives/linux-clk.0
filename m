@@ -1,126 +1,124 @@
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14F7F1A2873;
-	Wed, 21 Aug 2024 08:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF11F1CBEAD;
+	Wed, 21 Aug 2024 09:23:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724230164; cv=none; b=keCMcmw2LyPzVp/7DncRP4/u3Xe8pqT4uq8J+kMg5ruSYsTejp4gUnf56YQ1BwCmjz87iiVpuFnEzAx6O7gwANAFeGybBnsT+Nxnnstrodt2OpQg185/5/oCyL/mI6kpkuJmZy24xiivwyrfuo1eDx111eFxl+IWmdPpgkkfvAo=
+	t=1724232214; cv=none; b=dWpgxjWZindRdIhOPcFq8CVnKbxAee62j6qRWUQ2PkMYRQ9u1EwmavQMBs0SC2HnTB/1oKT/N5PIYxd7NJkjvDlOMDrf8CLoJAgYZJ4liq5nu8NZ0Mmy/0HuhcxHs6hyhWQUoKX+ub2cTy3LsEczwdQpTRK9ihlEDtnCDm1zMgA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724230164; c=relaxed/simple;
-	bh=LKr4rdH+xZbTu2yhcIA2OdvnxhvnxFtzzUi6nJEJfbI=;
+	s=arc-20240116; t=1724232214; c=relaxed/simple;
+	bh=t/CSQvrauuMm+CtOl+ntlCgIHDDtGtHS2ZDMZbNdyCw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=giy0f+OPjoarakTyzL+zV7UhQE89TCFi5li25Pnah+fdgvLuaOF/MaAOzyPVFOK5VAWkEhvCFspCOFOe7N8o+inDK5j8Adad+X+s1yePUYsAZJfohzkKGuOEOgNoFM5cPGYvogIOaH8ALthBxmAs6z/TjJs42vcHPSizL+XmUUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-371a13c7c80so293893f8f.0;
-        Wed, 21 Aug 2024 01:49:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724230161; x=1724834961;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ukrxdYKGocvbe6s+bvnlsPSVVnh0A9nJ4+Mt3mqrxjs=;
-        b=ar36/ReeTmZV99doht/ytOHnjdGT3R83BUsbReYcun0zI55XBVZdLA8LkyUXgDo1wx
-         kka6gEbbhegNhymlN1HDe/+ZYKwA6WfPoXinO3zbgKsjCujmifOg6Ww84N8AYMIl6dQF
-         IX1rS+p6S82jV+DOWz9DUuzX/pJLw0hvyE6r0PJ9lMxO84xj08e3NC28iUSZAOqJywiX
-         ONC1Ew+JArDMYrKTYZRhIV5orZh7DVQR6ZLzKPnToQwwIcyHfai4LyykKbkfPgxeEct1
-         hM0EiJFalXzIdKBlYufqrT7aKO6njcQtF2q1MvKNemKFeHvvkeBLAKFE0OJMwjaEBL4c
-         z8gw==
-X-Forwarded-Encrypted: i=1; AJvYcCU/+Sy1swCAOEUOmAum9ZNq6MhXQu/MfSObqSDLfZhg0kAI2Vu5gQtefbKpRhJMtBTWKOAnthmLLBom4Q==@vger.kernel.org, AJvYcCUVmLV5rEwjHUcEiBtfECM2uNsWjTHZgNeHpRvytqkxk6QQyag56nmLVNTcqWP4kG+rOvKdk5pDrX8+8Q==@vger.kernel.org, AJvYcCVYWcpmZ0PEvf0gLk5mh8we2/Q+j9j7H/34VsZIlRde4qudW5pwjnCrs6FJraNzRG3yAgRt87keACPqq8Nl@vger.kernel.org, AJvYcCW+wQ+3YcNtVI5geyoxHCe1f/HFwRIKzekZ3juO2irUI269KJ6ZHNEWBSL0TQudgj+B8Xpk/3FtM/zN@vger.kernel.org, AJvYcCX+TwTS+6tg4CxyJc7M0pXE+jQtzAuYpdHJJIU1F4S3XY6djRp/Ay1/q8xsKi2Dkegn6AousA4EeiNV@vger.kernel.org, AJvYcCX+WZ7YWCexmhtFS7K8FQk/dHJqcOFuobdMqD4bQwz+nSZgSENRzKT1Nl2Wb46t2Ujk/E4sU3tm@vger.kernel.org, AJvYcCXwDZc4l+Rbq57ZxO9Qp6e9y7iJNzJb9egLkorLJOj8JLr/soGnJw3RUqgTamxEJN++nT0wm0LYRLdz@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXae/TVXmKlhyFTO338UR7SNWdfMIEZcFRup9q3xoRAQZNyHln
-	kD0zhJqlx5BX1XQugWvPXESL0wkoVWqIz0f4v3Vf4gZkDpu11Y8Z
-X-Google-Smtp-Source: AGHT+IEzY+cggmVnYXPr8wlDLGWO82CX9mX5uhMUzAWJkxF4X7S6w6FHg8Ktq2bdplOPGiLT2xi4Qw==
-X-Received: by 2002:adf:f70a:0:b0:36b:ea3c:5c00 with SMTP id ffacd0b85a97d-372fdd9a510mr842526f8f.9.1724230161018;
-        Wed, 21 Aug 2024 01:49:21 -0700 (PDT)
-Received: from krzk-bin ([178.197.215.209])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-42abef81a5esm17549115e9.28.2024.08.21.01.49.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 21 Aug 2024 01:49:20 -0700 (PDT)
-Date: Wed, 21 Aug 2024 10:49:17 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Andrea della Porta <andrea.porta@suse.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic <dragan.cvetic@amd.com>, 
-	Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Nicolas Ferre <nicolas.ferre@microchip.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Saravana Kannan <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-pci@vger.kernel.org, linux-arch@vger.kernel.org, 
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>, Stefan Wahren <wahrenst@gmx.net>
-Subject: Re: [PATCH 10/11] net: macb: Add support for RP1's MACB variant
-Message-ID: <cfysm2r6sswmvrch34pk5dx4wum3rohcxdla7i5qoh6vizgklb@pk5i7nzlnp67>
-References: <cover.1724159867.git.andrea.porta@suse.com>
- <775000dfb3a35bc691010072942253cb022750e1.1724159867.git.andrea.porta@suse.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ml92B5lK6gDLOXFl2bzoipYEmJtB8STHLWk6l/vlBMpgO/MOFCrSvysmOI6RADnZdVkz2ybM3dRKJ8LHeWgmNo14q7J8j7cHkx6yEVLAnHArLX0Qc1hR1ZWjSLZWZ1xZBETjd4UisrqperLy+2hek6a22Z/kzDnA4K+IsAeMrHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FIq/czgs; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FIq/czgs"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724232212; x=1755768212;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=t/CSQvrauuMm+CtOl+ntlCgIHDDtGtHS2ZDMZbNdyCw=;
+  b=FIq/czgsZW0BAKYkCNwGas3HzgNxtkBD26c/TXqAp2CBvTf9lhrkHfeT
+   uBfigJjOMgLjoCriCoUxac3smtjLnT3FYN4oK4Jt/HhEg6U4D+zfQK32T
+   Ekxj+51f9YJL9OIsuzQ98ReQOEksgwfaLbcanrUqK8idfOnpYNGKBa3nS
+   R1t8L9dzY8FyDOXzeUmBHNclllwBJlIB+gHe5xnrhOHboeamJe+rTGUCa
+   Oq4O1Ja2QlBj9lRwaR/WRs6vDW0O+XNWIklbZOmQtdnHndRDcKy8CDwM6
+   zs/NLnL1F/ki5vguA43HbXdixFiaAD+8NvK4q0yHWP+MeFldDNc70iA3U
+   g==;
+X-CSE-ConnectionGUID: Ex2hzCZ5QYG8zzERjAjZeQ==
+X-CSE-MsgGUID: U7AWMTtUSCKngkaRPvSGpQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11170"; a="40037663"
+X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
+   d="scan'208";a="40037663"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 02:23:31 -0700
+X-CSE-ConnectionGUID: siL8DPxaQxKhLChs3QZt+g==
+X-CSE-MsgGUID: RbN4J6lASDiEeCMso/RH+g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,164,1719903600"; 
+   d="scan'208";a="61570021"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 21 Aug 2024 02:23:25 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sghYm-000B9u-35;
+	Wed, 21 Aug 2024 09:23:20 +0000
+Date: Wed, 21 Aug 2024 17:22:30 +0800
+From: kernel test robot <lkp@intel.com>
+To: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <helgaas@kernel.org>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Cc: Paul Gazzillo <paul@pgazz.com>,
+	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
+	oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org
+Subject: Re: [PATCH 07/11] pinctrl: rp1: Implement RaspberryPi RP1 gpio
+ support
+Message-ID: <202408211702.1WVqlgTb-lkp@intel.com>
+References: <eb39a5f3cefff2a1240a18a255dac090af16f223.1724159867.git.andrea.porta@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <775000dfb3a35bc691010072942253cb022750e1.1724159867.git.andrea.porta@suse.com>
+In-Reply-To: <eb39a5f3cefff2a1240a18a255dac090af16f223.1724159867.git.andrea.porta@suse.com>
 
-On Tue, Aug 20, 2024 at 04:36:12PM +0200, Andrea della Porta wrote:
-> RaspberryPi RP1 contains Cadence's MACB core. Implement the
-> changes to be able to operate the customization in the RP1.
-> 
-> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+Hi Andrea,
 
+kernel test robot noticed the following build warnings:
 
-> @@ -5100,6 +5214,11 @@ static int macb_probe(struct platform_device *pdev)
->  			}
->  		}
->  	}
-> +
-> +	device_property_read_u8(&pdev->dev, "cdns,aw2w-max-pipe", &bp->aw2w_max_pipe);
-> +	device_property_read_u8(&pdev->dev, "cdns,ar2r-max-pipe", &bp->ar2r_max_pipe);
+[auto build test WARNING on clk/clk-next]
+[also build test WARNING on robh/for-next char-misc/char-misc-testing char-misc/char-misc-next char-misc/char-misc-linus linus/master v6.11-rc4 next-20240821]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Where are the bindings?
+url:    https://github.com/intel-lab-lkp/linux/commits/Andrea-della-Porta/dt-bindings-clock-Add-RaspberryPi-RP1-clock-bindings/20240821-023901
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+patch link:    https://lore.kernel.org/r/eb39a5f3cefff2a1240a18a255dac090af16f223.1724159867.git.andrea.porta%40suse.com
+patch subject: [PATCH 07/11] pinctrl: rp1: Implement RaspberryPi RP1 gpio support
+config: nios2-kismet-CONFIG_GPIOLIB_IRQCHIP-CONFIG_PINCTRL_RP1-0-0 (https://download.01.org/0day-ci/archive/20240821/202408211702.1WVqlgTb-lkp@intel.com/config)
+reproduce: (https://download.01.org/0day-ci/archive/20240821/202408211702.1WVqlgTb-lkp@intel.com/reproduce)
 
-> +	bp->use_aw2b_fill = device_property_read_bool(&pdev->dev, "cdns,use-aw2b-fill");
-> +
->  	spin_lock_init(&bp->lock);
->  
->  	/* setup capabilities */
-> @@ -5155,6 +5274,21 @@ static int macb_probe(struct platform_device *pdev)
->  	else
->  		bp->phy_interface = interface;
->  
-> +	/* optional PHY reset-related properties */
-> +	bp->phy_reset_gpio = devm_gpiod_get_optional(&pdev->dev, "phy-reset",
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408211702.1WVqlgTb-lkp@intel.com/
 
-Where is the binding?
+kismet warnings: (new ones prefixed by >>)
+>> kismet: WARNING: unmet direct dependencies detected for GPIOLIB_IRQCHIP when selected by PINCTRL_RP1
+   WARNING: unmet direct dependencies detected for GPIOLIB_IRQCHIP
+     Depends on [n]: GPIOLIB [=n]
+     Selected by [y]:
+     - PINCTRL_RP1 [=y] && PINCTRL [=y]
 
-> +						     GPIOD_OUT_LOW);
-> +	if (IS_ERR(bp->phy_reset_gpio)) {
-> +		dev_err(&pdev->dev, "Failed to obtain phy-reset gpio\n");
-> +		err = PTR_ERR(bp->phy_reset_gpio);
-> +		goto err_out_free_netdev;
-> +	}
-> +
-> +	bp->phy_reset_ms = 10;
-> +	of_property_read_u32(np, "phy-reset-duration", &bp->phy_reset_ms);
-
-Where is the binding?
-
-> +	/* A sane reset duration should not be longer than 1s */
-> +	if (bp->phy_reset_ms > 1000)
-> +		bp->phy_reset_ms = 1000;
-> +
->  	/* IP specific init */
->  	err = init(pdev);
-
-Best regards,
-Krzysztof
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
