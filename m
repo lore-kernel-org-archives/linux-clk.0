@@ -1,130 +1,218 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+Received: from mailout4.samsung.com (mailout4.samsung.com [203.254.224.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90E9F171066;
-	Wed, 21 Aug 2024 20:52:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5BB8183CA5
+	for <linux-clk@vger.kernel.org>; Wed, 21 Aug 2024 23:26:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724273527; cv=none; b=gK42gFN48DFEdUzxp+oshKEyLWJf/GgckZre5hwqxDLxeNvuYHm7rM6ClpcmxIULJpyG/X/9cay1CZw4owb/3Flzr0ReDt0Q1tQcS4Pgz/l0ARdupk7w/GOPIRkYnys5SU2Mj9LXF4iOSDOCMUk+kowVXPrsRr+ebueD1/XFVh4=
+	t=1724282822; cv=none; b=mR7Dz/D0MDloJv3SHqizYWHm07yuIof+Bk3SbHP6+bJzBJm0sMM5r7PW3w9xl+v7BK6Z7569bqZW5SFEXr0mNVTtghF2hW76XI50h6CL+iQYbY7r13F69OepjPLGhqH8r6psyQuWLoICL93PcDd27ZEjoc+JEEMoNPf3A0VojIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724273527; c=relaxed/simple;
-	bh=6e2c5JLkwBMMGTKbRXK3+M8VerZRofzI60m1UqV9C/Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=myfVzBOXYYRIYX7l1jqY3wv2EMbK3H0kBVQm1A7FLRX+qnbGsXnGsGuNHjnXeGSA76jFHIX1zcqpC4htjHxhrVzQYy2QgECImvcYkRsnV62Yz3t8vAlbAipOgoEOdWB7daTDHZDbKlwMX8Ev7A6Bf/1fZfokI/uRX6Wgo6y+RVY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gExxcCdC; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1724282822; c=relaxed/simple;
+	bh=AkyWJ9I6Hd2zktck1kauTocadzukvCDLU9FEN2IAB8E=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:MIME-Version:
+	 Content-Type:References; b=t4lYqMTIfzwFytwUJ+nxUCWPE+6P4X5uZWlrk2jsE5S8V4pXJ9j+QFk00PNSPFFeAJFvRe1zQ2zHxGBkyY0kAytId01j1i1WZ1ErulNHAQpKAbX0LFSAEp12ZOYCz5iewSuAY2+wcrNgetBY3ZdGW2GnEvOvMg2LUzBWHIUJmBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=kQeCA95M; arc=none smtp.client-ip=203.254.224.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gExxcCdC"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724273526; x=1755809526;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=6e2c5JLkwBMMGTKbRXK3+M8VerZRofzI60m1UqV9C/Q=;
-  b=gExxcCdCKp1FWRSRbgcilmA9IKdukfn2FHCOoZHyZn9T9x893xF7q/BE
-   El4Q+wdSxUVBN9TPt5s5QSOx4QVwLf7FYL08kzeG+5sQaHgM/pyiRhgeG
-   XWz5UlESd6Xfik05YwaZtX4mhjDax73TA0zzGCGDP2yinyjb3mbftx7JQ
-   vZfLo5hMeLAXcKWxA79/safI8PLbK5mm0BtYfaae3AOgrYmzichDFLpxm
-   LuzMXQtnGPHzPRN02avbRpEHHDfuHnwv86Y3pJKH+o7+9ELZMykcOYqXG
-   tZyvpAmRHMT5+PGmL50cGpApBkEnakRXHR9k2Jxz+C3+hEAa3ivllQXpa
-   Q==;
-X-CSE-ConnectionGUID: /kvwVei4SL+h/aXHr05pUw==
-X-CSE-MsgGUID: /Gt4Xgy5QNy+rRbp98KUnw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11171"; a="22793062"
-X-IronPort-AV: E=Sophos;i="6.10,165,1719903600"; 
-   d="scan'208";a="22793062"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 21 Aug 2024 13:52:05 -0700
-X-CSE-ConnectionGUID: do6MGcCmRxGW2lZUIvdzow==
-X-CSE-MsgGUID: RItIqPNqQ7+QPHo7Qo5A6A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.10,165,1719903600"; 
-   d="scan'208";a="61235486"
-Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 21 Aug 2024 13:51:59 -0700
-Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sgsJA-000Bwt-1j;
-	Wed, 21 Aug 2024 20:51:56 +0000
-Date: Thu, 22 Aug 2024 04:51:03 +0800
-From: kernel test robot <lkp@intel.com>
-To: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <helgaas@kernel.org>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org
-Subject: Re: [PATCH 07/11] pinctrl: rp1: Implement RaspberryPi RP1 gpio
- support
-Message-ID: <202408220406.czlwSpkP-lkp@intel.com>
-References: <eb39a5f3cefff2a1240a18a255dac090af16f223.1724159867.git.andrea.porta@suse.com>
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="kQeCA95M"
+Received: from epcas2p1.samsung.com (unknown [182.195.41.53])
+	by mailout4.samsung.com (KnoxPortal) with ESMTP id 20240821232657epoutp04f1279d15ee54c604c40d8bb9c8d75275~t4hZbH4Z-1778817788epoutp047
+	for <linux-clk@vger.kernel.org>; Wed, 21 Aug 2024 23:26:57 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20240821232657epoutp04f1279d15ee54c604c40d8bb9c8d75275~t4hZbH4Z-1778817788epoutp047
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1724282818;
+	bh=bAiZEbXYaEhIP7FM2a6MyvX2CrU3Y1JE6JPzxHX7HAU=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=kQeCA95MMiYRFfeKGnLp3xB3B4S/BJyzWlKWUeqVNIvHt2A2W2SDkpqn7Jgmmcw9y
+	 3IRurznpQPsULt6I4SK22RINMeFEvq2jG67fSOSU43j06Z7QK93OZljjyD5fFVOQrP
+	 hsN6aA7p7MwXWSIMvc4rYwDPNFUg020YyzHMahk4=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTP id
+	20240821232657epcas2p2950879b32cd29898d3f0de520c1a46ed~t4hY3zcKJ1271312713epcas2p2a;
+	Wed, 21 Aug 2024 23:26:57 +0000 (GMT)
+Received: from epsmges2p3.samsung.com (unknown [182.195.36.91]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4Wq2Xw65bBz4x9Q0; Wed, 21 Aug
+	2024 23:26:56 +0000 (GMT)
+Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
+	epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
+	36.9B.10012.0C776C66; Thu, 22 Aug 2024 08:26:56 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTPA id
+	20240821232656epcas2p2fa72bd9565570c26616aaa640d75eef3~t4hXz4YCY1271312713epcas2p2P;
+	Wed, 21 Aug 2024 23:26:56 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20240821232656epsmtrp148026be62d9184da0a166cb9eb9a10fc~t4hXy2Dke2876228762epsmtrp1X;
+	Wed, 21 Aug 2024 23:26:56 +0000 (GMT)
+X-AuditID: b6c32a47-4dfd9a800000271c-0d-66c677c0490f
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	40.89.19367.0C776C66; Thu, 22 Aug 2024 08:26:56 +0900 (KST)
+Received: from localhost.localdomain (unknown [10.229.9.60]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20240821232655epsmtip2d25e9c0de5ff2d4c0d36d17bb5ebeb33~t4hXjwPck2250822508epsmtip2R;
+	Wed, 21 Aug 2024 23:26:55 +0000 (GMT)
+From: Sunyeal Hong <sunyeal.hong@samsung.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, Sylwester Nawrocki
+	<s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar
+	<alim.akhtar@samsung.com>, Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley
+	<conor+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Sunyeal Hong <sunyeal.hong@samsung.com>
+Subject: [PATCH v9 2/4] arm64: dts: exynos: add initial CMU clock nodes in
+ ExynosAuto v920
+Date: Thu, 22 Aug 2024 08:26:50 +0900
+Message-ID: <20240821232652.1077701-3-sunyeal.hong@samsung.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20240821232652.1077701-1-sunyeal.hong@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <eb39a5f3cefff2a1240a18a255dac090af16f223.1724159867.git.andrea.porta@suse.com>
+Content-Transfer-Encoding: 8bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrLJsWRmVeSWpSXmKPExsWy7bCmue6B8mNpBtNW6Fg8mLeNzWLN3nNM
+	Fte/PGe1mH/kHKvF+fMb2C02Pb7GavGx5x6rxeVdc9gsZpzfx2Rx8ZSrxf89O9gtDr9pZ7X4
+	d20ji0XTsvVMDnwe72+0sntsWtXJ5rF5Sb1H35ZVjB6fN8kFsEZl22SkJqakFimk5iXnp2Tm
+	pdsqeQfHO8ebmhkY6hpaWpgrKeQl5qbaKrn4BOi6ZeYA3amkUJaYUwoUCkgsLlbSt7Mpyi8t
+	SVXIyC8usVVKLUjJKTAv0CtOzC0uzUvXy0stsTI0MDAyBSpMyM7YuuYPW0GLeEXThk3sDYxL
+	hboYOTkkBEwkDs4/zNbFyMUhJLCDUWLvpG4o5xOjxMSG38xwzsbpL9m7GDnAWrpnmEDEdzJK
+	/Lh5kQnC+cgose/AEiaQIjYBXYk//xxA4iICe5gktpxfAlbELHCWUeLunAXsIMuFBWIkWn+u
+	ZANpYBFQlTi4yxskzCtgL/Hu0it2iPvkJS6uec4GYnMKOEhMnX6MHaJGUOLkzCcsIDYzUE3z
+	1tlgl0oIzOSQmNV1kQ2i2UVi1/npUIOEJV4d3wJlS0m87G+DsvMlJl9/ywTR3MAoce1fNzNE
+	wl5i0ZmfYC8zC2hKrN+lD/G9ssSRW1B7+SQ6Dv+FBgqvREcbNEjVJD5duQw1REbi2IlnULaH
+	xO23rYyQsJrMKDFlzmqmCYwKs5C8MwvJO7MQFi9gZF7FKJZaUJybnlpsVGAMj+Hk/NxNjOB0
+	q+W+g3HG2w96hxiZOBgPMUpwMCuJ8CbdO5omxJuSWFmVWpQfX1Sak1p8iNEUGNYTmaVEk/OB
+	CT+vJN7QxNLAxMzM0NzI1MBcSZz3XuvcFCGB9MSS1OzU1ILUIpg+Jg5OqQYmyYZLTIKXNkr7
+	dUz8p7+moTN3x7299WV8oidXzmO04tt/9P7hg/KfvjF2T1m50jHpseDEGI25kZunBXE1vDzB
+	uOsPv7nauf7Ev98Cs48wVqifYlhVslGGX7zB4255O2v6+XvvuWrOxJ8pnROdpV/ceuLJ5x+R
+	N5LdL33ueCJ40GvppBz5pwGVzN2ztdKkFDTvnuBKlm/ouK9Upfc6oMV3iuQM1/M8abt87Q4v
+	tDKbM+m0wKrztm7Gy/+tCNQKZnRnnD9B3m7V8zOrNth/ctM/ptLg116rZ/v8gU/DQp3iWyKK
+	+jMDSo1veWg88C4If5GcNVsn4tS8N++4mttfFgYcSj6b2hebwurpXV+fWKrEUpyRaKjFXFSc
+	CAC90BeyQAQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrMLMWRmVeSWpSXmKPExsWy7bCSvO6B8mNpBif3c1o8mLeNzWLN3nNM
+	Fte/PGe1mH/kHKvF+fMb2C02Pb7GavGx5x6rxeVdc9gsZpzfx2Rx8ZSrxf89O9gtDr9pZ7X4
+	d20ji0XTsvVMDnwe72+0sntsWtXJ5rF5Sb1H35ZVjB6fN8kFsEZx2aSk5mSWpRbp2yVwZWxd
+	84etoEW8omnDJvYGxqVCXYwcHBICJhLdM0y6GLk4hAS2M0rMfXWNuYuREyguI7Gx4T87hC0s
+	cb/lCCtE0XtGiTsXljGCNLMJ6Er8+ecAEhcROMQkMfHzUxYQh1ngMqPEsbuTwSYJC0RJfNra
+	xwLSwCKgKnFwlzdImFfAXuLdpVdQC+QlLq55zgZicwo4SEydfgwsLgRUs3d5OwtEvaDEyZlP
+	wGxmoPrmrbOZJzAKzEKSmoUktYCRaRWjaGpBcW56bnKBoV5xYm5xaV66XnJ+7iZGcDxoBe1g
+	XLb+r94hRiYOxkOMEhzMSiK8SfeOpgnxpiRWVqUW5ccXleakFh9ilOZgURLnVc7pTBESSE8s
+	Sc1OTS1ILYLJMnFwSjUwOW2u5EmL3vz3jETE1W2Xd7XPP+Qc+T/86Y/KBaVpuSv9E4TCDtTX
+	pXdXdH7b63/h9KOaMOWt6aIJkz9bpzyfvDLrZuNpbo0kkV67/g37Plhf8cx6+C3QQ8I95syj
+	ks1TwrMYuN+vvvLwzcOtwWqrPJgX2EVdWbVV99x141kP7+w8tZk35PP8z3c1X9rcmyIQImdZ
+	/O7M3pu/ZbY1u7E3Cp1R+eB54UbqrE/RWfdm52yv+/+iSl+84tmRxMvxL7vXLbiQoMxtLrz8
+	y4XLMvP/fljjaGmq0BpWN/+2RtC6i+EKTAuWhVyOC80XXRyesLSaKdgub93S+y6OPm8vpzNv
+	vSx48R7fp7AXV942/BfYE6bEUpyRaKjFXFScCADda73r9gIAAA==
+X-CMS-MailID: 20240821232656epcas2p2fa72bd9565570c26616aaa640d75eef3
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20240821232656epcas2p2fa72bd9565570c26616aaa640d75eef3
+References: <20240821232652.1077701-1-sunyeal.hong@samsung.com>
+	<CGME20240821232656epcas2p2fa72bd9565570c26616aaa640d75eef3@epcas2p2.samsung.com>
 
-Hi Andrea,
+Add cmu_top, cmu_peric0 clock nodes and
+switch USI clocks instead of dummy fixed-rate-clock.
 
-kernel test robot noticed the following build warnings:
+Signed-off-by: Sunyeal Hong <sunyeal.hong@samsung.com>
+---
+ .../arm64/boot/dts/exynos/exynosautov920.dtsi | 40 +++++++++++++------
+ 1 file changed, 27 insertions(+), 13 deletions(-)
 
-[auto build test WARNING on clk/clk-next]
-[also build test WARNING on robh/for-next char-misc/char-misc-testing char-misc/char-misc-next char-misc/char-misc-linus linus/master v6.11-rc4 next-20240821]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Andrea-della-Porta/dt-bindings-clock-Add-RaspberryPi-RP1-clock-bindings/20240821-023901
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-patch link:    https://lore.kernel.org/r/eb39a5f3cefff2a1240a18a255dac090af16f223.1724159867.git.andrea.porta%40suse.com
-patch subject: [PATCH 07/11] pinctrl: rp1: Implement RaspberryPi RP1 gpio support
-config: powerpc64-randconfig-r123-20240821 (https://download.01.org/0day-ci/archive/20240822/202408220406.czlwSpkP-lkp@intel.com/config)
-compiler: clang version 14.0.6 (https://github.com/llvm/llvm-project f28c006a5895fc0e329fe15fead81e37457cb1d1)
-reproduce: (https://download.01.org/0day-ci/archive/20240822/202408220406.czlwSpkP-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202408220406.czlwSpkP-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
->> drivers/pinctrl/pinctrl-rp1.c:191:30: sparse: sparse: symbol 'rp1_iobanks' was not declared. Should it be static?
-
-vim +/rp1_iobanks +191 drivers/pinctrl/pinctrl-rp1.c
-
-   190	
- > 191	const struct rp1_iobank_desc rp1_iobanks[RP1_NUM_BANKS] = {
-   192		/*         gpio   inte    ints     rio    pads */
-   193		{  0, 28, 0x0000, 0x011c, 0x0124, 0x0000, 0x0004 },
-   194		{ 28,  6, 0x4000, 0x411c, 0x4124, 0x4000, 0x4004 },
-   195		{ 34, 20, 0x8000, 0x811c, 0x8124, 0x8000, 0x8004 },
-   196	};
-   197	
-
+diff --git a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+index c1c8566d74f5..91882b37fdb3 100644
+--- a/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynosautov920.dtsi
+@@ -6,6 +6,7 @@
+  *
+  */
+ 
++#include <dt-bindings/clock/samsung,exynosautov920.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+ #include <dt-bindings/soc/samsung,exynos-usi.h>
+ 
+@@ -38,17 +39,6 @@ xtcxo: clock {
+ 		clock-output-names = "oscclk";
+ 	};
+ 
+-	/*
+-	 * FIXME: Keep the stub clock for serial driver, until proper clock
+-	 * driver is implemented.
+-	 */
+-	clock_usi: clock-usi {
+-		compatible = "fixed-clock";
+-		#clock-cells = <0>;
+-		clock-frequency = <200000000>;
+-		clock-output-names = "usi";
+-	};
+-
+ 	cpus: cpus {
+ 		#address-cells = <2>;
+ 		#size-cells = <0>;
+@@ -192,6 +182,19 @@ gic: interrupt-controller@10400000 {
+ 			interrupts = <GIC_PPI 9 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
+ 
++		cmu_peric0: clock-controller@10800000 {
++			compatible = "samsung,exynosautov920-cmu-peric0";
++			reg = <0x10800000 0x8000>;
++			#clock-cells = <1>;
++
++			clocks = <&xtcxo>,
++				 <&cmu_top DOUT_CLKCMU_PERIC0_NOC>,
++				 <&cmu_top DOUT_CLKCMU_PERIC0_IP>;
++			clock-names = "oscclk",
++				      "noc",
++				      "ip";
++		};
++
+ 		syscon_peric0: syscon@10820000 {
+ 			compatible = "samsung,exynosautov920-peric0-sysreg",
+ 				     "syscon";
+@@ -213,7 +216,8 @@ usi_0: usi@108800c0 {
+ 			#address-cells = <1>;
+ 			#size-cells = <1>;
+ 			ranges;
+-			clocks = <&clock_usi>, <&clock_usi>;
++			clocks = <&cmu_peric0 CLK_MOUT_PERIC0_NOC_USER>,
++				 <&cmu_peric0 CLK_DOUT_PERIC0_USI00_USI>;
+ 			clock-names = "pclk", "ipclk";
+ 			status = "disabled";
+ 
+@@ -224,7 +228,8 @@ serial_0: serial@10880000 {
+ 				interrupts = <GIC_SPI 764 IRQ_TYPE_LEVEL_HIGH>;
+ 				pinctrl-names = "default";
+ 				pinctrl-0 = <&uart0_bus>;
+-				clocks = <&clock_usi>, <&clock_usi>;
++				clocks = <&cmu_peric0 CLK_MOUT_PERIC0_NOC_USER>,
++					 <&cmu_peric0 CLK_DOUT_PERIC0_USI00_USI>;
+ 				clock-names = "uart", "clk_uart_baud0";
+ 				samsung,uart-fifosize = <256>;
+ 				status = "disabled";
+@@ -254,6 +259,15 @@ pinctrl_peric1: pinctrl@10c30000 {
+ 			interrupts = <GIC_SPI 781 IRQ_TYPE_LEVEL_HIGH>;
+ 		};
+ 
++		cmu_top: clock-controller@11000000 {
++			compatible = "samsung,exynosautov920-cmu-top";
++			reg = <0x11000000 0x8000>;
++			#clock-cells = <1>;
++
++			clocks = <&xtcxo>;
++			clock-names = "oscclk";
++		};
++
+ 		pinctrl_alive: pinctrl@11850000 {
+ 			compatible = "samsung,exynosautov920-pinctrl";
+ 			reg = <0x11850000 0x10000>;
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.45.2
+
