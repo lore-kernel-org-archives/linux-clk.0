@@ -1,52 +1,117 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C90F7165F1F;
-	Tue, 20 Aug 2024 22:07:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 011DC17F7;
+	Wed, 21 Aug 2024 00:16:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724191646; cv=none; b=tShGlWSt1SyPKMevjjWlztx7FhE6Wo2Q0GPzRtWYsYjQdQbdLBqSrpiThtdGFDBnX62+/Hhb4b/pN2bFpYzAwVXKjZMmkcpd2hfwRNOzmuEgGe8+4/ITgpVSNoDPIMx7gWhHosegGTbK8YH52t9x/PPSp6Z3i0YkToa3ZsUTbKg=
+	t=1724199381; cv=none; b=f2xfdj4Bg7SM9tPnbp37vApn7FkNxEr2DNQUPDmPNwBO7cqzkqEtTwf+nUdzrLvVtKAl8McdDe4rWsleqZPB7NOr6/moH5addWJ0HAvOm18KNwIEuks3gsTS4Dqbul19WEHtNCFxiwkRpaC6Mr1gg1SAnJbpg4gyfQ8LRMelhR0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724191646; c=relaxed/simple;
-	bh=gTCfUazAJbz+mImit/XNqwQ9XUVQJSY7H1UanfSeIhE=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=nNIhExxAWO2B7PiS2pb1IUfFh0zYA4beNEryy34wCqnVGuWmDz4uZsL+XrvpOG9nm5HDfMbV6lnh6Uy0RAJ6Jk3aKTiJiCe0KPyrBz/VmxaMrjoJZRYTpMcVz/QW2u/rgNJ489Q9uWrV7Y2XJwZnhTXHo+on7vdZWjXxL0TgmUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cqbs5rfp; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1724199381; c=relaxed/simple;
+	bh=//umJAjmzAHbb4srtnO6p7v3lXCw1BpKooPGruKj3YA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YyIRIbwqzI/yXN6NhJxL5k/K0yWWKNNfl1WFH7tuNBaLaa5t3q9z4tuz9hoI6sVKnWQvR6Tgd/Q0rl/R8a7p6FZZFv9uHstPLh/I1eSevg2BdtJkRSMqjklvPdsd0Rb9O0/Kv0Ve5VERxMA4QemL+ZCUtjok2ztOdQ3fWjuMPC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X8KQlM1S; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cqbs5rfp"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C8495C4AF12;
-	Tue, 20 Aug 2024 22:07:24 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X8KQlM1S"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D40DC4AF0B;
+	Wed, 21 Aug 2024 00:16:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724191645;
-	bh=gTCfUazAJbz+mImit/XNqwQ9XUVQJSY7H1UanfSeIhE=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=cqbs5rfpF9GosR2zhGsHx/iMlNYQWn+8YrNpk7H1zYS0SVkhY55nUAZDFAu95B+Cj
-	 ilxtwwqd2AGODFB7Kxcyxlk8tyyfDsYdOL+TiDR9ccJzx6hhYIKl1iuh+0AUtHTpSi
-	 W+9CYiyc+vbAeodh1/d8ZLliW4aOHOfiIUD17ItajQEGFx6zimblkHfz8DeNwSfE8o
-	 sALnZ2FT8xr8q/RaMFtBSuUHsEF1aGa6mu6vuV1apq3GB9el6gVOXK8FeWb+d3Ad7n
-	 m5cH87SmzqscvG7ufFKeq8UslO8ANLRcZWhWQLmAoTKynL5TvK8jF7JluEFT0TINgX
-	 lTEgnPdojQafQ==
-Message-ID: <1d4c39e109bcf288d5900670e024a315.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1724199380;
+	bh=//umJAjmzAHbb4srtnO6p7v3lXCw1BpKooPGruKj3YA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=X8KQlM1SytAKYaLYGKjUz1REIaj2OSxhUitYLdZDhbSPUm+zX/n9d16vFT2QAuH+t
+	 gRVIKK+04YVkR6EPmSuh0C6nOhanaGhRH0wIWK4naUn2w1uZl8uwHWI3y2mssctyjl
+	 0frL43b32OAch2HL/8vT8AD+BpumetAHSJPiJ/WMT4RR9Qc2idkWKBT82xQcfgaPIm
+	 q/VC4vMsptGQhU0h7I2LgO61rK80P5F0B0tguEZC8SIfByjBsVZmPGPfkG3ZAn+S0S
+	 Y9hgUuLVMsBU/bK7a4OHKAWCAgtfwoB+yNoxm4PHjV43MFU/C3auVSDpM4VgrsFPnR
+	 su1kG3ad1mLCw==
+Date: Tue, 20 Aug 2024 19:16:18 -0500
+From: Rob Herring <robh@kernel.org>
+To: Andrea della Porta <andrea.porta@suse.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Stefan Wahren <wahrenst@gmx.net>
+Subject: Re: [PATCH 04/11] of: address: Preserve the flags portion on 1:1
+ dma-ranges mapping
+Message-ID: <20240821001618.GA2309328-robh@kernel.org>
+References: <cover.1724159867.git.andrea.porta@suse.com>
+ <5ca13a5b01c6c737f07416be53eb05b32811da21.1724159867.git.andrea.porta@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240820025902.2355565-1-liyuesong@vivo.com>
-References: <20240820025902.2355565-1-liyuesong@vivo.com>
-Subject: Re: [PATCH v1] clk:clk-imx8-acm:fix wrong pointer check in clk_imx_acm_attach_pm_domains()
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: peng.fan@nxp.com, kernel@pengutronix.de, festevam@gmail.com, shengjiu.wang@nxp.com, linux-clk@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, opensource.kernel@vivo.com, Yuesong Li <liyuesong@vivo.com>
-To: Yuesong Li <liyuesong@vivo.com>, abelvesa@kernel.org, mturquette@baylibre.com, s.hauer@pengutronix.de, shawnguo@kernel.org
-Date: Tue, 20 Aug 2024 15:07:22 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5ca13a5b01c6c737f07416be53eb05b32811da21.1724159867.git.andrea.porta@suse.com>
 
-Quoting Yuesong Li (2024-08-19 19:59:02)
-> device_link_add() returns NULL pointer not PTR_ERR() when it fails,so
-> replace the IS_ERR() check with NULL pointer check.
+On Tue, Aug 20, 2024 at 04:36:06PM +0200, Andrea della Porta wrote:
+> A missing or empty dma-ranges in a DT node implies a 1:1 mapping for dma
+> translations. In this specific case, rhe current behaviour is to zero out
 
-Can you document that fact by adding a "Return:" line to the kernel-doc
-for device_link_add() in another patch?
+typo
+
+> the entire specifier so that the translation could be carried on as an
+> offset from zero.  This includes address specifier that has flags (e.g.
+> PCI ranges).
+> Once the flags portion has been zeroed, the translation chain is broken
+> since the mapping functions will check the upcoming address specifier
+
+What does "upcoming address" mean?
+
+> against mismatching flags, always failing the 1:1 mapping and its entire
+> purpose of always succeeding.
+> Set to zero only the address portion while passing the flags through.
+
+Can you point me to what the failing DT looks like. I'm puzzled how 
+things would have worked for anyone.
+
+
+> 
+> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> ---
+>  drivers/of/address.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/of/address.c b/drivers/of/address.c
+> index d669ce25b5f9..5a6d55a67aa8 100644
+> --- a/drivers/of/address.c
+> +++ b/drivers/of/address.c
+> @@ -443,7 +443,8 @@ static int of_translate_one(struct device_node *parent, struct of_bus *bus,
+>  	}
+>  	if (ranges == NULL || rlen == 0) {
+>  		offset = of_read_number(addr, na);
+> -		memset(addr, 0, pna * 4);
+> +		/* copy the address while preserving the flags */
+> +		memset(addr + pbus->flag_cells, 0, (pna - pbus->flag_cells) * 4);
+>  		pr_debug("empty ranges; 1:1 translation\n");
+>  		goto finish;
+>  	}
+> -- 
+> 2.35.3
+> 
