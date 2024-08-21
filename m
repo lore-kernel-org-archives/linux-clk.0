@@ -1,142 +1,101 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACFD014A4EA;
-	Wed, 21 Aug 2024 15:24:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 476081494B8
+	for <linux-clk@vger.kernel.org>; Wed, 21 Aug 2024 15:35:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724253883; cv=none; b=CLOukCxOROp0r+CkMiyGqBAQIhMiGa8Q+ZUgCqOgRdOkMjAfT4qTtGQDaDLL2laxbKcQs2qfXDFSdT4Z9InjWJwoxzvZVa0s5bElxZum6tcbOmSQRuFbKOoIeykOL3IAP90szW/R2RKUY39/IGrtO9pK/249+BHoNNqqmMgZCQc=
+	t=1724254522; cv=none; b=D4zzGChX4ugbeLWPVMM9YsRkR2vc9B+spEpjQrjaU5GcLhHFqwtZXSvxiAda0wcHj4EvLJCoVyXSojVSh0JoKII1mJ7ZNFqF8uS5heVjINgnFWA8UZKZHFTSnRYnzhMNwEJfN0DW3UzBBdwJKKuLg3rB9I4vyr68ENxaS3CgySE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724253883; c=relaxed/simple;
-	bh=1ZjtB2qfgq/kDPmIlWye3dfIwc8C55gZjyVxcfwSetA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=A103vzlgwJlPw7BDmsJpRrrOpgTe8UdNr7sNemR23iJflgsLzjSt4Ho9kSX8alzayWBvSx9ptasOHmR9PwtgI4TfAKgSkFxqOmhyyfpM1aSSjNHjZXeXIAl+CNT3huGkfuW1FO69yXrNvr9005zye4XHhvOs0hbjnOKgHYQlw0g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TtZjkQ1J; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1724254522; c=relaxed/simple;
+	bh=q0aRixnhWUWpxjM3Ck4bjrpb4pe7AI96MxRCxkxtVwA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PLoHee6cGeZZdJTeVXuz8w0jU8fTehl/lOVHXrXwLxfvWLyWBP4XcBb0swf/NucJJLQLYkfjM8gKrF+RS8+jrYiyGqJxDssQuN6SRuq8yaFzFSvjNFC0D/0x3D1TZ/7+3yE8/gt2ROPFKot2lg2194ZC16Ou9p11YEYv8lqqIwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PXXsHuD8; arc=none smtp.client-ip=209.85.161.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TtZjkQ1J"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F6A2C32786;
-	Wed, 21 Aug 2024 15:24:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724253883;
-	bh=1ZjtB2qfgq/kDPmIlWye3dfIwc8C55gZjyVxcfwSetA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=TtZjkQ1JoqTb6Y/uUb/+73JdcHZH9WrH/IHzsTJfRG26ORrRRXSHBUa3Ueb/e9SOb
-	 k+YJ0KHOXTGtYG5oazohYwVwQQK3KDEf/71BUc7OXOdTJlVctngwIuzs1C7lde3MAJ
-	 pOkDSlsc+fkPkwpLUeIcPRhz8rIzG5YpUUSjE4eFZTv5Ru4EgJPTmgquBbi2iVyxUh
-	 C9U5Ua+xUG0hSc+Wj/prm44j9A3uSlbySmXCbjYORNrb9ll2z/NTmnAWCB0ivJqWDj
-	 SwHlMZ5c2nYJuioTX1efrHNcneRaN9R8CdTYDaqgpWaDSBzN320A/M3P/+osCa1kUz
-	 7lcpXCYz5QVmQ==
-Date: Wed, 21 Aug 2024 10:24:41 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Andrea della Porta <andrea.porta@suse.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Stefan Wahren <wahrenst@gmx.net>
-Subject: Re: [PATCH 03/11] PCI: of_property: Sanitize 32 bit PCI address
- parsed from DT
-Message-ID: <20240821152441.GA222583@bhelgaas>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PXXsHuD8"
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-5d5e1c86b83so4354881eaf.3
+        for <linux-clk@vger.kernel.org>; Wed, 21 Aug 2024 08:35:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724254520; x=1724859320; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=B92SIehQD/sLMBWjePhjq8cDV+wlqZQrnnvx6Bm71co=;
+        b=PXXsHuD8muxBu9u7zISm/280RncJXoB7bBQbyDhwKHMlVmEuc/BCXqyh2l/i57uE/H
+         fpA0qchv5IyhMZIan0fgEzcAZcB/cWP5FeWguolLSMb2v+S0C8all8ZwXhn7nMJ+24a8
+         +q+KEW9xVxw8iw/rgxJWBU4jhIzCq6IqGfySZtxopgBw3lGHYb5Whvsab6tZFiBB9cd7
+         t6IGpxGZy6VFgsRrvIvl4y71yJKjoKpvTyNgLZSwi/fkoylfhwmdYtyL2pk9QyjUKARH
+         KrAbnMOYPY3YERhnibbFt+PRYgrdnD0rNyeyNIMvMKj4UkARHddu0WkZa4KrzRybg3K8
+         zcrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724254520; x=1724859320;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=B92SIehQD/sLMBWjePhjq8cDV+wlqZQrnnvx6Bm71co=;
+        b=DzabPvgDgEpdbirkofPF9K+LVg9owat6vcL/zQ9xT8+H5epDADebfwcxE7uvYrhJFn
+         MEEaaog1rAX/9JwEQ0+IrxUrJ6fl94F4kwWjBpR7SZ5e7kAAbC/4CsngN//fAzGpBeHV
+         lUcWf9h49OoqkwnY62TdKGdWh9rl6FP5HMnLaPncdT9875SmPYkW9fikx3UpvVbJQGlG
+         2PBMsXhyv1lAUw5pvPtVr3AZ4bzpyL9PKk2p03rvVfmkYa4VOeiuKyp3C8NO5UQQw61x
+         EM+KahlhcSc72FczjxOJe77/SwJK+ZPUrvZt0jtZq0kDuCPmfI+SnVzY0rKX24AKGfKX
+         eqoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWi0Y3Ydm5peFsXi109ALWzM9Tf1Ui9xaNxLmgKtl5JMBeQZKSp6vCQXFTsB68AGnR2HnppENSVs78=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnJn22bE9dK56wtjuTWvsYPZ8Vw0WQbn0HfAgWX9nfGXslR8sT
+	LH/BBnyP9zCjLLy8YO0pDwAFdaGYWQmAZGp7teg/+siDfehnmYYdqcqK0xsupXoFuYRqtiqrDaw
+	quNzU8/VAVIyzACBCF9OD5pF5z2xHXv5yKQa1nw==
+X-Google-Smtp-Source: AGHT+IHtjLVFoilgrnbbIQMVwq05/DqJA4CW2+AENaI/70z5AgIJxpdFSd6TduzT2Mi5cnCvDMGVL39BMCO82c2hHq8=
+X-Received: by 2002:a05:6358:310b:b0:1b5:a060:678b with SMTP id
+ e5c5f4694b2df-1b5a265b26amr290392655d.3.1724254520067; Wed, 21 Aug 2024
+ 08:35:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8b4fa91380fc4754ea80f47330c613e4f6b6592c.1724159867.git.andrea.porta@suse.com>
+References: <20240819233628.2074654-1-swboyd@chromium.org>
+In-Reply-To: <20240819233628.2074654-1-swboyd@chromium.org>
+From: Amit Pundir <amit.pundir@linaro.org>
+Date: Wed, 21 Aug 2024 21:04:43 +0530
+Message-ID: <CAMi1Hd3=1S0Jktej0vv0ZJna1Z=Kb6WHEzpbxuHFHdCaEUKWrQ@mail.gmail.com>
+Subject: Re: [PATCH 0/2] clk: qcom: gcc-sm8550: Fix shared clk parking breakage
+To: Stephen Boyd <swboyd@chromium.org>
+Cc: Konrad Dybcio <konrad.dybcio@linaro.org>, Bjorn Andersson <andersson@kernel.org>, 
+	Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, patches@lists.linux.dev, 
+	linux-clk@vger.kernel.org, Taniya Das <quic_tdas@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Aug 20, 2024 at 04:36:05PM +0200, Andrea della Porta wrote:
-> The of_pci_set_address() function parse devicetree PCI range specifier
+On Tue, 20 Aug 2024 at 05:06, Stephen Boyd <swboyd@chromium.org> wrote:
+>
+> Amit Pundir reported[1] that a recent commit 01a0a6cc8cfd ("clk: qcom:
+> Park shared RCGs upon registration") broke USB and audio on sm8550-hdk.
+> These two patches fix the issue by skipping the parking bit of the
+> shared RCGs for devices that can't run so slow.
+>
+> [1] https://lore.kernel.org/CAMi1Hd1KQBE4kKUdAn8E5FV+BiKzuv+8FoyWQrrTHPDoYTuhgA@mail.gmail.com/
+>
 
-s/parse/parses/ ? 
+Thank you for the patches Stephen. This series fixes the serial
+console garbage, audio, and USB-C host mode regression I see on
+SM8550-HDK running AOSP.
 
-> assuming the address is 'sanitized' at the origin, i.e. without checking
-> whether the incoming address is 32 or 64 bit has specified in the flags.
-> In this way an address with no OF_PCI_ADDR_SPACE_MEM64 set in the flagss
+Tested-by: Amit Pundir <amit.pundir@linaro.org>
 
-s/flagss/flags/
 
-> could leak through and the upper 32 bits of the address will be set too,
-> and this violates the PCI specs stating that ion 32 bit address the upper
-
-s/ion/in/
-
-> bit should be zero.
-
-I don't understand this code, so I'm probably missing something.  It
-looks like the interesting path here is:
-
-  of_pci_prop_ranges
-    res = &pdev->resource[...];
-    for (j = 0; j < num; j++) {
-      val64 = res[j].start;
-      of_pci_set_address(..., val64, 0, flags, false);
- +      if (OF_PCI_ADDR_SPACE_MEM64)
- +        prop[1] = upper_32_bits(val64);
- +      else
- +        prop[1] = 0;
-
-OF_PCI_ADDR_SPACE_MEM64 tells us about the size of the PCI bus
-address, but the address (val64) is a CPU physical address, not a PCI
-bus address, so I don't understand why of_pci_set_address() should use
-OF_PCI_ADDR_SPACE_MEM64 to clear part of the CPU address.
-
-Add blank lines between paragraphs.
-
-> This could cause mapping translation mismatch on PCI devices (e.g. RP1)
-> that are expected to be addressed with a 64 bit address while advertising
-> a 32 bit address in the PCI config region.
-> Add a check in of_pci_set_address() to set upper 32 bits to zero in case
-> the address has no 64 bit flag set.
-
-Is this an indication of a DT error?  Have you seen this cause a
-problem?  If so, what does it look like to a user?  I.e., how could a
-user find this patch if they saw a problem?
-
-> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> ---
->  drivers/pci/of_property.c | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pci/of_property.c b/drivers/pci/of_property.c
-> index 5a0b98e69795..77865facdb4a 100644
-> --- a/drivers/pci/of_property.c
-> +++ b/drivers/pci/of_property.c
-> @@ -60,7 +60,10 @@ static void of_pci_set_address(struct pci_dev *pdev, u32 *prop, u64 addr,
->  	prop[0] |= flags | reg_num;
->  	if (!reloc) {
->  		prop[0] |= OF_PCI_ADDR_FIELD_NONRELOC;
-> -		prop[1] = upper_32_bits(addr);
-> +		if (FIELD_GET(OF_PCI_ADDR_FIELD_SS, flags) == OF_PCI_ADDR_SPACE_MEM64)
-> +			prop[1] = upper_32_bits(addr);
-> +		else
-> +			prop[1] = 0;
->  		prop[2] = lower_32_bits(addr);
->  	}
->  }
-> -- 
-> 2.35.3
-> 
+> Stephen Boyd (2):
+>   clk: qcom: gcc-sm8550: Don't use parking clk_ops for QUPs
+>   clk: qcom: gcc-sm8550: Don't park the USB RCG at registration time
+>
+>  drivers/clk/qcom/clk-rcg.h    |  1 +
+>  drivers/clk/qcom/clk-rcg2.c   | 30 +++++++++++++++++++
+>  drivers/clk/qcom/gcc-sm8550.c | 54 +++++++++++++++++------------------
+>  3 files changed, 58 insertions(+), 27 deletions(-)
+>
+>
+> base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
+> --
+> https://chromeos.dev
+>
