@@ -1,131 +1,144 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21B0414F9DC
-	for <linux-clk@vger.kernel.org>; Wed, 21 Aug 2024 15:44:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61D0E1537C1;
+	Wed, 21 Aug 2024 15:55:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724255049; cv=none; b=Tne5a93nC2cjCAj1xu2JvRYyh7y2o4vxJsOMvy7gkjQXgMgWiMZGVDkd36odaZpJEA9UYko2I3W/6esAqgQtWJiYBr+8CGHsmiVRJVeksIAzU0Ttm0YytPtuWT/nOhDWJGalN5w2A4dXhWn1jIsBRuuZvcXV77Toty9Wlhy/eQ8=
+	t=1724255734; cv=none; b=WJzBbl0zLcyFYVsAxTDKdOhUazN2pgFamY/PZzgnG5yB9lgFOf17+61FT0vbgdWGMFtvTWiwO4QYmt2oolR2oR/hZ7sfHkHiTKiFME5kG+pdyBMmZJkmol6s76VDto9flQP4ApzMNbit8YnXGCYFSaFOT66/hZkf/RttcazJQpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724255049; c=relaxed/simple;
-	bh=WVDc094V5VgmBhTZ4yJ53gMdHqdV+z83OelE/ZBW6i0=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=GlKtzKhvpc99IRax1wSItxB1JY4Sn8yV4pi4+dGPJKJNDkm8x1Dm0+D8Uk/JEh0hBod5C5owrRJgT6SKPvAUXdUJ+3cAzi6hrA/ORb2bOaFx+rhMT3vQqFLgVdMjOIZlXnrVHhJJgjd4oPOtxseffBPORKEnCSyGvhj+eITIyR4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GwuaCKKq; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1724255734; c=relaxed/simple;
+	bh=oO+0Tv2uU9zbU6edOpbgsXoLNpUE9+d8dxygISVgGuA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q7WI9cSXK3KnuQTU3cOmPAoos1/FtWTTX93ajk/tn6vf49Tid4xeEZsGDWczoddg8+l9gfrFzcGay7Zw6YPjGpglLdpcHRr7GVF8FFv4eFS4p1AyKRz81AXZBhnA8yylw6kh+vkyZHA4ZIKbqYqqsKtB4iZ135RJAoZtSVDIhWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IWEuEzW2; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GwuaCKKq"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-429da8b5feaso75053035e9.2
-        for <linux-clk@vger.kernel.org>; Wed, 21 Aug 2024 08:44:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724255045; x=1724859845; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+LGqD1Rl0TDjEjqitQZboKy5wEBm7w43+UzWNh+se/Q=;
-        b=GwuaCKKqhtMAi5LK5E1Pg5t5VDDs1NlPEDWFAyQ1O9tIpJksQAf7TagOu0/Xqqb0Mz
-         fdV/GYoGCETkVWw26JPxFOZtnAj3TJ/99lZRtbFohIKQATjbZUIpnqTPbLlQxtngX80V
-         U3MmBd3z7ucbDyn3a+k+7X5qix1KKmSgUBQdDZss0cuav/FeLhQzNQbPl60D9r+b+1kV
-         107CqawGFWyRkFVBkblPoB+cH1IemksyoEKFabr4Xf7XbRQffc5OvWZYvU1gHU1qvDnY
-         TaMoGuXom4eLv6d3vntRzGM851jU71rmJ1oEado3XVTAKpY5ALllRU1mKAlh0qQpDtnj
-         3HdA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724255045; x=1724859845;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=+LGqD1Rl0TDjEjqitQZboKy5wEBm7w43+UzWNh+se/Q=;
-        b=hYD5MOtP5p52PjA33PKDYFoQD79LoMkXyQ8AuMkPDlV3B7ZXrvSKNGnXIimOWklWrW
-         VSvfaDXNqS3XkJtbscabs5UOrkvWUj6dDO8rdlCpPxy5bJum7Fe1dcjAsIHzfyLbuaym
-         WGtBf0YKa08jtU4F8TJzZN5iMdOnwYJ1FlCEiPjMZAISpMjZhXJ28jMahb4Owtk3aJiN
-         wXzpt9USmAlNIYPBViE0WYsoUIHa7njRpDVHiKGpA3K+1Ly7Xz2JQvwQgRPFsYOr/gye
-         tspMSIuGHaUF8b68S5u7H2rVFaey1TLU8hSg9J1yQXTqiYJaVcoKO0JsASA9x3rY7nhk
-         DwVw==
-X-Forwarded-Encrypted: i=1; AJvYcCUTWrcIaH+1Nup40jcWPpZ416oQ0ShnuIh/XOL0TENHpTau2Vh9WoO+SpKfE8M3VVz7ZugMZncabXg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxleIbZe2qJhXADcDDUaoQN63zfY/s+JInNVwCW55oO+xYUBqMx
-	pcJ8zjRLaqCtn1k5Wc8xq9sgfp5lB6J+CDf6rzXkj+Im46LWO66v3yv24UWoDgs=
-X-Google-Smtp-Source: AGHT+IF8q678X99SovUy4vRlqxU0N0rv7K01kOPh7R6EhqrUSplZZE2HWWkRDXdvhNXiWeXe9Z28Yw==
-X-Received: by 2002:a05:600c:4689:b0:428:e820:37b6 with SMTP id 5b1f17b1804b1-42abd255065mr24867395e9.31.1724255044880;
-        Wed, 21 Aug 2024 08:44:04 -0700 (PDT)
-Received: from ?IPV6:2001:861:d40:6fb0:ac85:2805:6b0e:5197? ([2001:861:d40:6fb0:ac85:2805:6b0e:5197])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42abef97f7asm29182985e9.22.2024.08.21.08.44.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 21 Aug 2024 08:44:04 -0700 (PDT)
-Message-ID: <d03d5425-bd7c-4c20-a54e-5708ffd059e0@linaro.org>
-Date: Wed, 21 Aug 2024 17:44:00 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IWEuEzW2"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D346C32781;
+	Wed, 21 Aug 2024 15:55:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724255733;
+	bh=oO+0Tv2uU9zbU6edOpbgsXoLNpUE9+d8dxygISVgGuA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=IWEuEzW2eAOAzTIBdvnMKwDqxONi5bvAss+1DyQAZgggcO9o17lUl0wRyfbgeBAm7
+	 qjeqktvAqgbnvq2/RbeWaHqPs92nlJHf8Y7dZH9FJOognOMFEmsDWGl5Bjqx0tw4LH
+	 Sr2tvh1enoQxBtEg9pob6hyWyoX7538CrU33rEVev+x5ebtevlffQY0nlHiydMCx37
+	 mYiyE6Q9QUC80lO/It8vpxu5ShyRyZ50X6+D1hew4wUDDt5/HLAi2en3uV4UIfQS+B
+	 /d/EoAKCYH5sfHBk28GaMBvhhYA6oPslp6IVhx/1fJxSzV9OYCsqZltmNmVET92dQz
+	 pvXC3Cq49g01Q==
+Date: Wed, 21 Aug 2024 16:55:29 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Alexander Dahl <ada@thorsis.com>
+Cc: Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	Christian Melki <christian.melki@t2data.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	"open list:COMMON CLK FRAMEWORK" <linux-clk@vger.kernel.org>,
+	"moderated list:ARM/Microchip (AT91) SoC support" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>
+Subject: Re: [PATCH v1 09/12] clk: at91: sam9x60: Allow enabling main_rc_osc
+ through DT
+Message-ID: <20240821-gnat-pushcart-882aa3a3f252@spud>
+References: <20240821105943.230281-1-ada@thorsis.com>
+ <20240821105943.230281-10-ada@thorsis.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 0/2] clk: qcom: gcc-sm8550: Fix shared clk parking
- breakage
-To: Stephen Boyd <swboyd@chromium.org>,
- Konrad Dybcio <konrad.dybcio@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- patches@lists.linux.dev, linux-clk@vger.kernel.org,
- Amit Pundir <amit.pundir@linaro.org>, Taniya Das <quic_tdas@quicinc.com>
-References: <20240819233628.2074654-1-swboyd@chromium.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20240819233628.2074654-1-swboyd@chromium.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="CijNXcpqoUP9GEdm"
+Content-Disposition: inline
+In-Reply-To: <20240821105943.230281-10-ada@thorsis.com>
 
-Hi,
 
-On 20/08/2024 01:36, Stephen Boyd wrote:
-> Amit Pundir reported[1] that a recent commit 01a0a6cc8cfd ("clk: qcom:
-> Park shared RCGs upon registration") broke USB and audio on sm8550-hdk.
-> These two patches fix the issue by skipping the parking bit of the
-> shared RCGs for devices that can't run so slow.
-> 
-> [1] https://lore.kernel.org/CAMi1Hd1KQBE4kKUdAn8E5FV+BiKzuv+8FoyWQrrTHPDoYTuhgA@mail.gmail.com/
-> 
-> Stephen Boyd (2):
->    clk: qcom: gcc-sm8550: Don't use parking clk_ops for QUPs
->    clk: qcom: gcc-sm8550: Don't park the USB RCG at registration time
-> 
->   drivers/clk/qcom/clk-rcg.h    |  1 +
->   drivers/clk/qcom/clk-rcg2.c   | 30 +++++++++++++++++++
->   drivers/clk/qcom/gcc-sm8550.c | 54 +++++++++++++++++------------------
->   3 files changed, 58 insertions(+), 27 deletions(-)
-> 
-> 
-> base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
+--CijNXcpqoUP9GEdm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I'm pretty sure sm8450 & sm8650 (and probably other SoCs) could be also affected, could you check ?
+On Wed, Aug 21, 2024 at 12:59:40PM +0200, Alexander Dahl wrote:
+> SAM9X60 Datasheet (DS60001579G) Section "23.4 Product Dependencies"
+> says:
+>=20
+>     "The OTPC is clocked through the Power Management Controller (PMC).
+>     The user must power on the main RC oscillator and enable the
+>     peripheral clock of the OTPC prior to reading or writing the OTP
+>     memory."
+>=20
+> The code for enabling/disabling that clock is already present, it was
+> just not possible to hook into DT anymore, after at91 clk devicetree
+> binding rework back in 2018 for kernel v4.19.
+>=20
+> Signed-off-by: Alexander Dahl <ada@thorsis.com>
+> ---
+>  drivers/clk/at91/sam9x60.c       | 3 ++-
+>  include/dt-bindings/clock/at91.h | 1 +
 
-Neil
+Generally we don't want binding changes in the same patch as a driver
+change. If your fix was determined to be faulty down the line and
+reverted, the binding change would remain valid, for example. Can you
+split it into two patches please, for the next version please?
+
+>  2 files changed, 3 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/clk/at91/sam9x60.c b/drivers/clk/at91/sam9x60.c
+> index e309cbf3cb9a..4d5ee20b8fc4 100644
+> --- a/drivers/clk/at91/sam9x60.c
+> +++ b/drivers/clk/at91/sam9x60.c
+> @@ -207,7 +207,7 @@ static void __init sam9x60_pmc_setup(struct device_no=
+de *np)
+>  	if (IS_ERR(regmap))
+>  		return;
+> =20
+> -	sam9x60_pmc =3D pmc_data_allocate(PMC_PLLACK + 1,
+> +	sam9x60_pmc =3D pmc_data_allocate(PMC_MAIN_RC + 1,
+>  					nck(sam9x60_systemck),
+>  					nck(sam9x60_periphck),
+>  					nck(sam9x60_gck), 8);
+> @@ -218,6 +218,7 @@ static void __init sam9x60_pmc_setup(struct device_no=
+de *np)
+>  					   50000000);
+>  	if (IS_ERR(hw))
+>  		goto err_free;
+> +	sam9x60_pmc->chws[PMC_MAIN_RC] =3D hw;
+> =20
+>  	hw =3D at91_clk_register_main_osc(regmap, "main_osc", mainxtal_name, NU=
+LL, 0);
+>  	if (IS_ERR(hw))
+> diff --git a/include/dt-bindings/clock/at91.h b/include/dt-bindings/clock=
+/at91.h
+> index 3e3972a814c1..f957625cb3ac 100644
+> --- a/include/dt-bindings/clock/at91.h
+> +++ b/include/dt-bindings/clock/at91.h
+> @@ -25,6 +25,7 @@
+>  #define PMC_PLLBCK		8
+>  #define PMC_AUDIOPLLCK		9
+>  #define PMC_AUDIOPINCK		10
+> +#define PMC_MAIN_RC		11
+> =20
+>  /* SAMA7G5 */
+>  #define PMC_CPUPLL		(PMC_MAIN + 1)
+> --=20
+> 2.39.2
+>=20
+
+--CijNXcpqoUP9GEdm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZsYN8AAKCRB4tDGHoIJi
+0oRoAQDqtnDTQk6fJ7GbAum6paH3b3FjF1bhS3Aw7qSeJrWA5AD/W3STyVNEqGq6
+acYI6UGYoGZTPnCaJg5CdZ2hifHbjQI=
+=esFu
+-----END PGP SIGNATURE-----
+
+--CijNXcpqoUP9GEdm--
