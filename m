@@ -1,284 +1,151 @@
-Received: from mail-ej1-f65.google.com (mail-ej1-f65.google.com [209.85.218.65])
+Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F0FC17A584
-	for <linux-clk@vger.kernel.org>; Thu, 22 Aug 2024 09:05:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC09917A588
+	for <linux-clk@vger.kernel.org>; Thu, 22 Aug 2024 09:14:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724317540; cv=none; b=V6JuKzQ1TlYujHQEE8PHEOulGVCfJbGJ1K3DFH5jUT5rSBU/E0XF28euN65YDNhRNwxoSghDjZGVErduc9Zcbfkx3crcZOhdsi4Ofsx46J5HuElgYMgfpAPoS4rH7oUaLbLgiKyfthHpzAljHRBQKLyRI0IoKhVzX05YrJxU7Ts=
+	t=1724318055; cv=none; b=hJqT0Bhaz1ho0OIAZeA/1UmG0hpwhJVPdyqhAWUzlUBIgj9JonZPnZAag6S0+VYr8yy8OPq32dU25Dm1hEclsZ1WBqDjV3VzIjwuyPNWERr+OOwXpqnAxdq/t9CZrz/J2+0n8OcKE/XGwD5D5Wcx64OHEB2pi5iqqXShk0yUouo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724317540; c=relaxed/simple;
-	bh=iW8L90qW73Zksm1242gGF6/N3NxsJTz9FHLGPMnz1xc=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e/32WuXZlh1cmPYBlcXPHLR8v5m3moIPkKbmbWT9mFJqm76Y1y9meMwFmSj1qimi/Czt0c9/pS0B/tKpNKFe/NExFi5lTO/2ZZia94dIlWzsAry7TqS0tnzhMtvt4vdlIQPRG3HIxofneC4Vc0sK1EwuwQMIcz4RtBmBwlM0N8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=frr5c5aB; arc=none smtp.client-ip=209.85.218.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="frr5c5aB"
-Received: by mail-ej1-f65.google.com with SMTP id a640c23a62f3a-a7d26c2297eso75444166b.2
-        for <linux-clk@vger.kernel.org>; Thu, 22 Aug 2024 02:05:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1724317536; x=1724922336; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:date:from:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8oblCwReJRzdkWpeyjSuzACUpr6vesaxftcVWxVJUhw=;
-        b=frr5c5aBI9sy2ew0/b43XWpraPs7EBe1sYCXKpWKrWEaAdjEQMwVvA3dzAqkb4Hdgy
-         n9ueclanmhqM8EyQSXLYpYtQofTUQDi5FLqeIAZNqrXM2uAvCv5bZ6Lv8vnRzG/+oKEU
-         B0bWbkYDHI/Tja9vXHUhBdcRtQHVRKfGXLoA5Y2EPW96S5z21xp+VXGAR654CYIG9aQ1
-         9LLXvB/yQ1plLTTlrYitaEdEVytHl7FVqKZC15ml9hEIyaU/iHn2zYeJpYn0lpRoPfiO
-         tOWjSFbG0iz6dn4qWpc7n/XLgMpULGkO3TXHPWbHu4SZ1ISVhwz5niSzPeuUbXSZTn+G
-         Is2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724317536; x=1724922336;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8oblCwReJRzdkWpeyjSuzACUpr6vesaxftcVWxVJUhw=;
-        b=oZSSjhjZXHQaUb3AIxHa2tyfbP44H3KWpQC8qJmbzBLGLrZ/XrYZUoK+NfYt6/W/Bm
-         BtN29bivZOf3DV82dWvJeL4YJIYfZEH8T93jHU98aT/NtVTKBrrz0SyCj3zeBXhTcTlj
-         U4LeBPC/7GC1zV+1jdB3qp/HJAMHwTBo7Vav/3IPEJqaaGfw5PaCn8gKj0WoyaGGrIam
-         dtNdXaSjDu5JNdFyv/EFYe9wiQO7cam5A3C3mqsSbaWesVk7AvGw26CVPA+G5KwtEFXd
-         rIDkayjm+bUOL6SkEjl8ybG8bHNrQsJzH9XZ0Sr4nBPDODptFVF4c5oRWuIysKZJw5W1
-         YD8g==
-X-Forwarded-Encrypted: i=1; AJvYcCVSETS//ALk2MkpyVV/9LQUVTJQJL7aZ6mEW/CFB91aRIGYO5b0qhcPNTeDrTk0FZM1SaH3gw3lal8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2/BT5Iw4wasmE8H+Tbb8BcF/O0VTzmVMEo1uZbPXLC1iB/m0c
-	o6eMat4DwP0c28p4hWANIWZpCfLx/DG+9H1E+dxCgMJ/NrYGIBp8buqSBIZoDRQ=
-X-Google-Smtp-Source: AGHT+IEDA43nqM23aA/1yK3IamBiUXMJrrIWIEhSqX0acpw/Zxi+tAITW+WPbPymdPgb8Cc2UqJi4g==
-X-Received: by 2002:a17:907:e65b:b0:a77:c6c4:2bb7 with SMTP id a640c23a62f3a-a866f0fd40cmr439215466b.1.1724317535872;
-        Thu, 22 Aug 2024 02:05:35 -0700 (PDT)
-Received: from localhost ([87.13.33.30])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f47d17bsm89109166b.148.2024.08.22.02.05.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 02:05:35 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Thu, 22 Aug 2024 11:05:41 +0200
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Stefan Wahren <wahrenst@gmx.net>
-Subject: Re: [PATCH 00/11] Add support for RaspberryPi RP1 PCI device using a
- DT overlay
-Message-ID: <Zsb_ZeczWd-gQ5po@apocalypse>
-Mail-Followup-To: Krzysztof Kozlowski <krzk@kernel.org>,
-	Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Stefan Wahren <wahrenst@gmx.net>
-References: <cover.1724159867.git.andrea.porta@suse.com>
- <14990d25-40a2-46c0-bf94-25800f379a30@kernel.org>
+	s=arc-20240116; t=1724318055; c=relaxed/simple;
+	bh=ZEn582CeTz1VVi0VgC29FzZH4xdaCnRULOwrh5+x7t4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=D+Cj7jsiCVSbjs5QD9ohmaSNq8trIF7uBhe9K0/qkV8QMPOJin6QQAvGMYcTAxsDVDyAAXRMjJ8zzZgbKCMunfKdlrppDBuVNGWa8SIj0YvT/AIWvDZhDBHzctW8vsWCnN3/FcC2mdRXE3/vJ27Asxc6dH+P5nrQf01eJQWhlzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
+Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:410c:b78a:c35b:cd3e])
+	by baptiste.telenet-ops.be with bizsmtp
+	id 2xEA2D00X22R5AR01xEAHc; Thu, 22 Aug 2024 11:14:10 +0200
+Received: from rox.of.borg ([192.168.97.57])
+	by ramsan.of.borg with esmtp (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1sh3tQ-000VYO-8J;
+	Thu, 22 Aug 2024 11:14:10 +0200
+Received: from geert by rox.of.borg with local (Exim 4.95)
+	(envelope-from <geert@linux-m68k.org>)
+	id 1sh3tS-002LKm-Fy;
+	Thu, 22 Aug 2024 11:14:10 +0200
+From: Geert Uytterhoeven <geert+renesas@glider.be>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [GIT PULL] clk: renesas: Updates for v6.12
+Date: Thu, 22 Aug 2024 11:14:09 +0200
+Message-Id: <cover.1724317714.git.geert+renesas@glider.be>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <14990d25-40a2-46c0-bf94-25800f379a30@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-Hi Krzysztof,
+	Hi Mike, Stephen,
 
-On 15:42 Wed 21 Aug     , Krzysztof Kozlowski wrote:
-> On 20/08/2024 16:36, Andrea della Porta wrote:
-> > RP1 is an MFD chipset that acts as a south-bridge PCIe endpoint sporting
-> > a pletora of subdevices (i.e.  Ethernet, USB host controller, I2C, PWM, 
-> > etc.) whose registers are all reachable starting from an offset from the
-> > BAR address.  The main point here is that while the RP1 as an endpoint
-> > itself is discoverable via usual PCI enumeraiton, the devices it contains
-> > are not discoverable and must be declared e.g. via the devicetree.
-> > 
-> > This patchset is an attempt to provide a minimum infrastructure to allow
-> > the RP1 chipset to be discovered and perpherals it contains to be added
-> > from a devictree overlay loaded during RP1 PCI endpoint enumeration.
-> > Followup patches should add support for the several peripherals contained
-> > in RP1.
-> > 
-> > This work is based upon dowstream drivers code and the proposal from RH
-> > et al. (see [1] and [2]). A similar approach is also pursued in [3].
-> 
-> Looking briefly at findings it seems this was not really tested by
-> automation and you expect reviewers to find issues which are pointed out
-> by tools. That's not nice approach. Reviewer's time is limited, while
-> tools do it for free. And the tools are free - you can use them without
-> any effort.
+The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
 
-Sorry if I gave you that impression, but this is not obviously the case.
-I've spent quite a bit of time in trying to deliver a patchset that ease
-your and others work, at least to the best I can. In fact, I've used many
-of the checking facilities you mentioned before sending it, solving all
-of the reported issues, except the ones for which there are strong reasons
-to leave untouched, as explained below.
+  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
 
-> 
-> It does not look like you tested the DTS against bindings. Please run
-> `make dtbs_check W=1` (see
-> Documentation/devicetree/bindings/writing-schema.rst or
-> https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
-> for instructions).
+are available in the Git repository at:
 
-#> make W=1 dt_binding_check DT_SCHEMA_FILES=raspberrypi,rp1-gpio.yaml
-   CHKDT   Documentation/devicetree/bindings
-   LINT    Documentation/devicetree/bindings
-   DTEX    Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.example.dts
-   DTC_CHK Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.example.dtb
+  git://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-drivers.git tags/renesas-clk-for-v6.12-tag1
 
-#> make W=1 dt_binding_check DT_SCHEMA_FILES=raspberrypi,rp1-clocks.yaml
-   CHKDT   Documentation/devicetree/bindings
-   LINT    Documentation/devicetree/bindings
-   DTEX    Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.example.dts
-   DTC_CHK Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.example.dtb
+for you to fetch changes up to 120c2833b72f4bdbd67ea2cf70b9d96d1c235717:
 
-I see no issues here, in case you've found something different, I kindly ask you to post
-the results.
+  clk: renesas: r8a779h0: Add CANFD clock (2024-08-20 09:48:24 +0200)
 
-#> make W=1 CHECK_DTBS=y broadcom/rp1.dtbo
-   DTC     arch/arm64/boot/dts/broadcom/rp1.dtbo
-   arch/arm64/boot/dts/broadcom/rp1.dtso:37.24-42.7: Warning (simple_bus_reg): /fragment@0/__overlay__/rp1@0/clk_xosc: missing or empty reg/ranges property
-   arch/arm64/boot/dts/broadcom/rp1.dtso:44.26-49.7: Warning (simple_bus_reg): /fragment@0/__overlay__/rp1@0/macb_pclk: missing or empty reg/ranges property
-   arch/arm64/boot/dts/broadcom/rp1.dtso:51.26-56.7: Warning (simple_bus_reg): /fragment@0/__overlay__/rp1@0/macb_hclk: missing or empty reg/ranges property
-   arch/arm64/boot/dts/broadcom/rp1.dtso:14.15-173.5: Warning (avoid_unnecessary_addr_size): /fragment@0/__overlay__: unnecessary #address-cells/#size-cells without "ranges", "dma-ranges" or child "reg" property 
+----------------------------------------------------------------
+clk: renesas: Updates for v6.12
 
-I believe that These warnings are unavoidable, and stem from the fact that this
-is quite a peculiar setup (PCI endpoint which dynamically loads platform driver
-addressable via BAR).
-The missing reg/ranges in the threee clocks are due to the simple-bus of the
-containing node to which I believe they should belong: I did a test to place
-those clocks in the same dtso under root or /clocks node but AFAIK it doesn't
-seems to work. I could move them in a separate dtso to be loaded before the main
-one but this is IMHO even more cumbersome than having a couple of warnings in
-CHECK_DTBS.
-Of course, if you have any suggestion on how to improve it I would be glad to
-discuss.
-About the last warning about the address/size-cells, if I drop those two lines
-in the _overlay_ node it generates even more warning, so again it's a "don't fix"
-one.
+  - Add PCIe, PWM, and CAN-FD clocks on R-Car V4M,
+  - Add LCD controller clocks and resets on RZ/G2UL,
+  - Add DMA clocks and resets on RZ/G3S,
+  - Add fractional multiplication PLL support on R-Car Gen4,
+  - Document support for the Renesas RZ/G2M v3.0 (r8a774a3) SoC,
+  - Add support for the RZ/V2H(P) (R9A09G057) SoC,
+  - Miscellaneous fixes and improvements.
 
-> 
-> Please run standard kernel tools for static analysis, like coccinelle,
-> smatch and sparse, and fix reported warnings. Also please check for
-> warnings when building with W=1. Most of these commands (checks or W=1
-> build) can build specific targets, like some directory, to narrow the
-> scope to only your code. The code here looks like it needs a fix. Feel
-> free to get in touch if the warning is not clear.
+Thanks for pulling!
 
-I didn't run those static analyzers since I've preferred a more "manual" aproach
-by carfeully checking the code, but I agree that something can escape even the
-more carefully executed code inspection so I will add them to my arsenal from
-now on. Thanks for the heads up.
+----------------------------------------------------------------
+Biju Das (1):
+      clk: renesas: r9a07g043: Add LCDC clock and reset entries
 
-> 
-> Please run scripts/checkpatch.pl and fix reported warnings. Then please
-> run `scripts/checkpatch.pl --strict` and (probably) fix more warnings.
-> Some warnings can be ignored, especially from --strict run, but the code
-> here looks like it needs a fix. Feel free to get in touch if the warning
-> is not clear.
->
+Claudiu Beznea (1):
+      clk: renesas: r9a08g045: Add DMA clocks and resets
 
-Again, most of checkpatch's complaints have been addressed, the remaining
-ones I deemed as not worth fixing, for example:
+Cong Dang (2):
+      clk: renesas: r8a779h0: Add PWM clock
+      clk: renesas: r8a779h0: Add CANFD clock
 
-#> scripts/checkpatch.pl --strict --codespell tmp/*.patch
+Geert Uytterhoeven (19):
+      clk: renesas: r8a779a0: cpg_pll_configs should be __initconst
+      clk: renesas: r8a779f0: cpg_pll_configs should be __initconst
+      clk: renesas: r8a779g0: cpg_pll_configs should be __initconst
+      clk: renesas: r8a779h0: Initial clock descriptions should be __initconst
+      clk: renesas: rcar-gen4: Removed unused SSMODE_* definitions
+      clk: renesas: rcar-gen4: Clarify custom PLL clock support
+      clk: renesas: rcar-gen4: Use FIELD_GET()
+      clk: renesas: rcar-gen4: Use defines for common CPG registers
+      clk: renesas: rcar-gen4: Add support for fractional multiplication
+      clk: renesas: rcar-gen4: Add support for variable fractional PLLs
+      clk: renesas: rcar-gen4: Add support for fixed variable PLLs
+      clk: renesas: rcar-gen4: Add support for fractional 9.24 PLLs
+      clk: renesas: r8a779a0: Use defines for PLL control registers
+      clk: renesas: r8a779f0: Model PLL1/2/3/6 as fractional PLLs
+      clk: renesas: r8a779g0: Model PLL1/3/4/6 as fractional PLLs
+      clk: renesas: r8a779h0: Model PLL1/2/3/4/6 as fractional PLLs
+      clk: renesas: rcar-gen4: Remove unused variable PLL2 clock type
+      clk: renesas: rcar-gen4: Remove unused fixed PLL clock types
+      clk: renesas: rcar-gen4: Remove unused default PLL2/3/4/6 configs
 
-WARNING: please write a help paragraph that fully describes the config symbol
-#42: FILE: drivers/clk/Kconfig:91:
-+config COMMON_CLK_RP1
-+       tristate "Raspberry Pi RP1-based clock support"
-+       depends on PCI || COMPILE_TEST
-+       depends on COMMON_CLK
-+       help
-+         Enable common clock framework support for Raspberry Pi RP1.
-+         This mutli-function device has 3 main PLLs and several clock
-+         generators to drive the internal sub-peripherals.
-+
+Lad Prabhakar (5):
+      clk: renesas: rzg2l-cpg: Use devres API to register clocks
+      clk: renesas: rzg2l-cpg: Refactor to use priv for clks and base in clock register functions
+      dt-bindings: clock: renesas: Document RZ/V2H(P) SoC CPG
+      clk: renesas: Add family-specific clock driver for RZ/V2H(P)
+      clk: renesas: Add RZ/V2H(P) CPG driver
 
-I don't understand this warning, the paragraph is there and is more or less similar
-to many in the same file that are already upstream. Checkpatch bug?
+Oliver Rhodes (1):
+      dt-bindings: clock: renesas,cpg-mssr: Document RZ/G2M v3.0 (r8a774a3) clock
 
+Yoshihiro Shimoda (1):
+      clk: renesas: r8a779h0: Add PCIe clock
 
-CHECK: Alignment should match open parenthesis
-#1541: FILE: drivers/clk/clk-rp1.c:1470:
-+       if (WARN_ON_ONCE(clock_data->num_std_parents > AUX_SEL &&
-+           strcmp("-", clock_data->parents[AUX_SEL])))
+ .../bindings/clock/renesas,cpg-mssr.yaml           |   1 +
+ .../bindings/clock/renesas,rzv2h-cpg.yaml          |  80 +++
+ drivers/clk/renesas/Kconfig                        |   9 +
+ drivers/clk/renesas/Makefile                       |   2 +
+ drivers/clk/renesas/r8a779a0-cpg-mssr.c            |  37 +-
+ drivers/clk/renesas/r8a779f0-cpg-mssr.c            |  30 +-
+ drivers/clk/renesas/r8a779g0-cpg-mssr.c            |  38 +-
+ drivers/clk/renesas/r8a779h0-cpg-mssr.c            |  41 +-
+ drivers/clk/renesas/r9a07g043-cpg.c                |  12 +
+ drivers/clk/renesas/r9a08g045-cpg.c                |   3 +
+ drivers/clk/renesas/r9a09g057-cpg.c                |  80 +++
+ drivers/clk/renesas/rcar-gen4-cpg.c                | 210 ++++---
+ drivers/clk/renesas/rcar-gen4-cpg.h                |  36 +-
+ drivers/clk/renesas/rzg2l-cpg.c                    |  71 ++-
+ drivers/clk/renesas/rzv2h-cpg.c                    | 690 +++++++++++++++++++++
+ drivers/clk/renesas/rzv2h-cpg.h                    | 151 +++++
+ include/dt-bindings/clock/renesas,r9a09g057-cpg.h  |  21 +
+ 17 files changed, 1325 insertions(+), 187 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/clock/renesas,rzv2h-cpg.yaml
+ create mode 100644 drivers/clk/renesas/r9a09g057-cpg.c
+ create mode 100644 drivers/clk/renesas/rzv2h-cpg.c
+ create mode 100644 drivers/clk/renesas/rzv2h-cpg.h
+ create mode 100644 include/dt-bindings/clock/renesas,r9a09g057-cpg.h
 
-This would have worsen the code readability.
+Gr{oetje,eeting}s,
 
+						Geert
 
-WARNING: ENOTSUPP is not a SUSV4 error code, prefer EOPNOTSUPP
-#673: FILE: drivers/pinctrl/pinctrl-rp1.c:600:
-+                               return -ENOTSUPP;
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-This I must investigate: I've already tried to fix it before sending the patchset
-but for some reason it wouldn't work, so I planned to fix it in the upcoming 
-releases.
-
-
-WARNING: externs should be avoided in .c files
-#331: FILE: drivers/misc/rp1/rp1-pci.c:58:
-+extern char __dtbo_rp1_pci_begin[];
-
-True, but in this case we don't have a symbol that should be exported to other
-translation units, it just needs to be referenced inside the driver and
-consumed locally. Hence it would be better to place the extern in .c file.
-
-
-Apologies for a couple of other warnings that I could have seen in the first
-place, but honestly they don't seems to be a big deal (one typo and on over
-100 chars comment, that will be fixed in next patch version). 
- 
-> 
-> Best regards,
-> Krzysztof
->
-
-Many thanks,
-Andrea 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+							    -- Linus Torvalds
