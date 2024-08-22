@@ -1,791 +1,236 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from EUR03-VI1-obe.outbound.protection.outlook.com (mail-vi1eur03on2069.outbound.protection.outlook.com [40.107.103.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63063D53C;
-	Thu, 22 Aug 2024 00:24:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724286276; cv=none; b=ntwsVCWm+g28h35TOKUkRQFj5WXBo69eKJgmbhAtNurzXOS8Lz+pwLJh/Trpd7jk3BCDPjM5/oN4OhMcO0bOMcrlgsGmPCQOT+Pe2Qis1PdQ/7rLDh09FAumIpwOPvWMDIXHfguMeZ6KJ9WUmwhawxb2NQZZRHcUZhIHqQOYGxM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724286276; c=relaxed/simple;
-	bh=G78oCu1oc8+Jy6f6JroyLd5bXTCa6AtZ4SGFSMEYqNE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=oIlbNxATwF00vqhPTGZTwvWtHVFtJd0lgkySOtJKmUSJ/csdz9nt3VSiim2D8gz7ECWW/bLLtgJOPLpVFnpsi4XCwvf4uv+StSMpWjGheqQqzDQgEXrURVueDyezzezrYx8zhzlgrEVSs5B13+zKTwN+zwOSnb7swNdB2rSKBbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E0VOMoEH; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF3C71D12E6;
+	Thu, 22 Aug 2024 06:05:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.103.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724306719; cv=fail; b=oiCwYTcaTogtbi6GOw/5jdNMmNh9oGySmGTz0ktWLdA1xyO39yC1W3mkUlMp8X7+WsbJO1iaeLmA5HZzydiuAJhl/wqFI2sssiFcB1AkEPIujg229gfTG4CYrk/M/C3fhnPjBAP0wpSZK1vPrN5gUYJ0RECErlkxOmxe2UwuJzA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724306719; c=relaxed/simple;
+	bh=9hhsr3Z2+5AEOlsIZIXma9PAX5sSuNlh9ZqXXu+lwDE=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=WZZha1OS4BdaEeYAI5YxBHjbYJjgTsGLLF0VQ/m+Q4zWHe6NegY8qneDJl5TOr7wj7Xl/Ah+mVTDnTHZD0st1E5iUgYV08Xi0fs25ZJ0z6wPtItEuPNS42moJPhKMDtRSiJJHTo3y2dDJfpCez8aTcaspw1DWivxdexjXS30EDo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=hYSak7Iu; arc=fail smtp.client-ip=40.107.103.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E0VOMoEH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0ABFC4AF15;
-	Thu, 22 Aug 2024 00:24:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724286276;
-	bh=G78oCu1oc8+Jy6f6JroyLd5bXTCa6AtZ4SGFSMEYqNE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=E0VOMoEHD3YKzKXdkQ7oPtudBj1oXEMO47AT+ZDPW2VGyzAT/T6GMbnHzqfA4FagK
-	 Qjwo4ZaIwb96tFoCK2+oFh7zx3j+/BIQ3D2+v0zyU9mh5q2mqWIEQeENkm/E8vM4KW
-	 Q1/9c02TetGP4VXXpOdbE82gsdzf6vNEh1zfLUOoV6rpK3XTlJR9MIyMoCE/ukQNOG
-	 bQa+k+vJZ6I9NZQ7MsedL6nZ2Gg6ox1fGILncjo6Qsg1G8vHgUUPbe3Cp+BhsHOGah
-	 DMBPfRabPHirtbFqbenwMLP1BvLKh0JS3WWLo7Ys6ehCPxpInQyGuNJmDBZ+iBqk/o
-	 06GTzrrX2ammA==
-From: Stephen Boyd <sboyd@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	patches@lists.linux.dev,
-	kunit-dev@googlegroups.com,
-	Peng Fan <peng.fan@nxp.com>
-Subject: [PATCH 3/3] clk: test: Add KUnit tests for clock-assigned-rates{-u64} DT properties
-Date: Wed, 21 Aug 2024 17:24:30 -0700
-Message-ID: <20240822002433.1163814-4-sboyd@kernel.org>
-X-Mailer: git-send-email 2.46.0.295.g3b9ea8a38a-goog
-In-Reply-To: <20240822002433.1163814-1-sboyd@kernel.org>
-References: <20240822002433.1163814-1-sboyd@kernel.org>
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="hYSak7Iu"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vfSsgCeikVe/oYG7q6liNv3RvJPNllCx9m2cMS04h+5TBebb5M+Zc8/5y+jOD+l1vMaNAOQHIeHF6FfCVINs3CAqi3nd8uE6i1LLCo2tPVcNc0WB8OnYCEQN6M4OCokPzSNCofLeofka6n20rCyhZIbPpqgtYLraRJLeYdGs9/vPjMrfi/bR5tvqSOJtjxCRSOHeFEjkmNBU7YGI6pYOCC4OmRmZ29IJ0k1Ds4se0jrJewz3cnFY1l7jks+tOMB/a+gbTz5iPnlBxSGGhLgQoQJgtoctVELqpha537q5vXnskDiWco6Su4fdRKyGAEyFmYyq3Vqj3C2oLOCnJXBlmw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=LfU0qYDtX1+KoiD6W3O016h25wLMul71RVQD6aLXcFo=;
+ b=OaUkPlQiEnkbK3cisNqW616AAIPgrHX/r8ZYdLy9RvkhrJ7Y08YPGClyhGyjPYHyZ4QR4hkaQZmxfLmfDxasUC6aR7jVh9FfaL05U2xSLmRwtQ3/SAsfbxvxyO5QDANLi9ZbdPb88xyGOekHJ0AhFGWBUEN2lkRj28DsFtYPQj/ishMqVZBAd8/tLvcXxSw7UKfNshPbGljYzXRwJsXBobX+QtEx6KAAAKElu858buBUnJa5PMg/Un5W/DAhd7MytEUHqHozDajmSpMZbMwEPopn2/4qYZdQrpOUhGnospOBNBe/+/QaWQYzI0CFYZsVuux1INoc+bSz2nWFGROnGQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=LfU0qYDtX1+KoiD6W3O016h25wLMul71RVQD6aLXcFo=;
+ b=hYSak7IuR1VIaaYWqxMlQVnIKQoIwX4SjFihm/Bhac6jV/GmMbsuHk0x4aix5cDpip2SOo69hjhBgNAlwq433kk1MUusU7XIk4cY3478nzJ31m7R6eba+WuzxygrRXlI6Rt/MqnTcRYlSMyzDdM16THo3i/YUYv3kqBEvWmUUStSsBnUxHgf2+ivNNSvylWxpnkjTDOa0ZFAuG2P1NplhNJnER+V6BF13cMpufAjZoXowrBR9lNF57zUfJEuMfWAHwHL8oIJdvPywUtcjQZxpqamnjBVUP+344tYCTqCJKWLP3OAWtW6FKzMwTa48a4cflRE320P+8Zs0ceUv7b5AA==
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com (2603:10a6:102:1da::15)
+ by VI0PR04MB10591.eurprd04.prod.outlook.com (2603:10a6:800:25b::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.19; Thu, 22 Aug
+ 2024 06:05:14 +0000
+Received: from PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630]) by PAXPR04MB8459.eurprd04.prod.outlook.com
+ ([fe80::165a:30a2:5835:9630%6]) with mapi id 15.20.7897.014; Thu, 22 Aug 2024
+ 06:05:14 +0000
+From: Peng Fan <peng.fan@nxp.com>
+To: "Peng Fan (OSS)" <peng.fan@oss.nxp.com>, "sudeep.holla@arm.com"
+	<sudeep.holla@arm.com>, "cristian.marussi@arm.com"
+	<cristian.marussi@arm.com>, "mturquette@baylibre.com"
+	<mturquette@baylibre.com>, "sboyd@kernel.org" <sboyd@kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
+CC: "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "arm-scmi@vger.kernel.org"
+	<arm-scmi@vger.kernel.org>, "d-gole@ti.com" <d-gole@ti.com>
+Subject: RE: [PATCH V3] clk: scmi: add is_prepared hook
+Thread-Topic: [PATCH V3] clk: scmi: add is_prepared hook
+Thread-Index: AQHa6A+OsVR2XlT/3kKcL3t9SECDi7Iy4mAw
+Date: Thu, 22 Aug 2024 06:05:14 +0000
+Message-ID:
+ <PAXPR04MB8459C0CD8A4A74F20DDCB0E0888F2@PAXPR04MB8459.eurprd04.prod.outlook.com>
+References: <20240806145601.1184337-1-peng.fan@oss.nxp.com>
+In-Reply-To: <20240806145601.1184337-1-peng.fan@oss.nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PAXPR04MB8459:EE_|VI0PR04MB10591:EE_
+x-ms-office365-filtering-correlation-id: f4e81784-f233-44fa-dee9-08dcc2706395
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?4jUDFxaJ6d78E5PtQdX6dP5zld9+TsU9xOQrVM1J7tmZg+Ft1b02fNr8Z2e5?=
+ =?us-ascii?Q?Ri4nap1LDfuT51cJLEYnHnAsEP1eoS3bOss71vGRWesUUFOB/8LreexQrRKo?=
+ =?us-ascii?Q?GXCQTnWht20rNv8gEkX6i7TmjlKn32Z/QPEcUpuFTvkRiP2vxghdCImc4btk?=
+ =?us-ascii?Q?Ei1YOlSfMXMv6eH7sH7bdMABQAeS+197GaPhL6XDY7NgSJV0j/aYQDmwlAb1?=
+ =?us-ascii?Q?IAOnVCllXl9v8dPeXfZb7nT3NDV8ZsA1X3LyppT/Lk3sGCUcndSDpKi4w8PR?=
+ =?us-ascii?Q?IixMKAuiYwoxZ//NON7wTo6nYY8NLo4ySoUo2Cy59qsm+JmoYTGe2TMBl/Iz?=
+ =?us-ascii?Q?6oAY5APXq5lJCskE0VEfldJFOAhVbmJFTcMsPZ/FdTp6ne2Y8lZuvUPejcEb?=
+ =?us-ascii?Q?OCRJwSzHCoKDTMeYkPe85rRgzKKvzPeO1mUVaG1MsERM/82wY/mCKd9FHVbe?=
+ =?us-ascii?Q?eNT7wAIDAP4o8oj/Ku2/lcVa9Dwz7N9gfsc1fi2R0RCXXP1nn90LUGPU+kgS?=
+ =?us-ascii?Q?vtADpZwVQrf6H0cNxe+qIyYH0IspyouG5Xo8bjU2d8xLVXW45+e9lbvcwFOs?=
+ =?us-ascii?Q?uILys7yrh8Psf2AX/vJv9OlkVQ89WT6mWeOSWBdHPUeDxcVzSy9hKL2lWxi2?=
+ =?us-ascii?Q?/fn6mN3g5Vy/7gSR5gjfVavgGDBDqo3+2B2F5RddF1LN+Woe9sFP5BHi5wDn?=
+ =?us-ascii?Q?M071KXci2nOLKIVtenaXOSICXEVYCoAl9+3WdshEAhoXG9xBcK/iseUAt19a?=
+ =?us-ascii?Q?f95Nqf5o3Ep98MFNGhvFa8thLJCyJT6aAahrQ83QoB5kxGtZCbAT13jeg7YO?=
+ =?us-ascii?Q?3whJEr/cVI45JV3H07nUWwu9ZfIys/tGiZhEzwjVGwYRMvU4M+cXUiih9fQw?=
+ =?us-ascii?Q?xxGoihoPzBXl+J30+iTHQY1ogkL301b/iTUTC6Ng+rnUU+JofEx0lM8/EM53?=
+ =?us-ascii?Q?OXWReIqc8YcIzHYqpr0IBONrwZ+9PT/xjegpxLeG3N1u7oYW+JVS1cbidcMD?=
+ =?us-ascii?Q?QWJHVhR7cwDSU76f2/HfZgiqaUZ5lcC1Y3vp+h6w5N8aDflNEq0mDn54nJkC?=
+ =?us-ascii?Q?x7Kv0l9ttSC+F7HqIVoX3v61tTAtc0glsma8ny6t8DOSR7P+kViC9n4vo44l?=
+ =?us-ascii?Q?zSbRNY04LhdH+gWyNK72YpLMvCFT5gGJpnLpxwwz5tx9fKjU0D8ZSw5UxLEc?=
+ =?us-ascii?Q?gg9ICVlMTx7D0qDwBKvwzb4i5X+gOK3rvlLmEcqx81nlBo3BAmtewxdgDvBl?=
+ =?us-ascii?Q?oUfmm+Us0v9tRrTPBwZIvjFMGtGJNk54XJy+d6zBRZRpyQABtzyEcTIWhHMV?=
+ =?us-ascii?Q?jpV9HQmo128uCmvmZoL4Gpe7ZwXxKmwzoPPpR/CzUqFKJkhWVaFBGx5pftp2?=
+ =?us-ascii?Q?t1Qbpdk=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8459.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?DWtYUOFuDNqi9L4/Na5Kp5+arARlJhlpCc4toDqk7jYloqTEr6ih5J8RKvRg?=
+ =?us-ascii?Q?yC5rdE4wU7NirBVUTqBCOdyK6MYDmAMGe/8IuAIBOaln/wNgmdx6CZCkE2Zx?=
+ =?us-ascii?Q?8JHpV3j8m31Lmvgcg5r2K4cfdLGWuS7WZmD1nzcvXsJRamiFRFv84P1XnGB/?=
+ =?us-ascii?Q?p2NHEShsmTy5czdVaOcxAd3aN81t8hUF3hkbD4HlVgoWFb9YctV3TPAPtXWe?=
+ =?us-ascii?Q?jWN5MWe2cL8S1ng0v4ID9/iyz4Ah8EP+YriFHHIm9Sus2ssIGeN2dfJ3yFYp?=
+ =?us-ascii?Q?dI+3/Kh3lBF4mrGQXqmzNuouEQptzrHzS5gkLcROjwT1ZkOmfO088bHRVUqu?=
+ =?us-ascii?Q?hGOiHmvmzdlK1fKuqom9WXGkCBrJ5+3RR42SdGRJkiAcfmQ5VLBV8BxyyyrB?=
+ =?us-ascii?Q?gx7GETyiOxbvqZZ3pz6RYOx7m3t2bLa6CQdT/tIp0pKivK/5+WtiCW3ZxBaf?=
+ =?us-ascii?Q?K1Em8BmOZG1iPYLDJPG1LGg1NtVYj8uRWWzA2PptL/8rg0drCSNPnEv3P5xe?=
+ =?us-ascii?Q?fB51bPb1aLsNeTpWQisCchhVyLIsv91dkfoUPvnTO3H8dFZMiC7611EPNNgc?=
+ =?us-ascii?Q?MBPfdFr0J5am7OJIQfp7PV60W4NNO2fm2Fy3VAaH7I/uOf+Ishwbo2Uus2bk?=
+ =?us-ascii?Q?MoDyEzgYmUpCeE6apB8MC4078otTBebo+wagH3vYejhWPc9j0l8eHfgMvmND?=
+ =?us-ascii?Q?uwzpBCxvBjkNWfaeKNoN0pI6i2dr4GUaOkjQlX95lZuglgtV3YzouxZzhbN+?=
+ =?us-ascii?Q?dY1RZON/Wjlu8Gsx8w/5C8R77WhUmh1cQtLUjep3DGk7h/LCmKOf7NFSmhRP?=
+ =?us-ascii?Q?dpoTB8YNdxiNttmBxxRt3UsIx+vT/Ixx+4dYeXzdNyYwesTswynz02OyKbyT?=
+ =?us-ascii?Q?1oACOeO+KUX8/y5q/bY6F2bdKQiuGxDOSPmvscntCOTwBLZXE7jcu9I2capG?=
+ =?us-ascii?Q?Nwhicn68BHxgDhUKCvaPgCZHolX0XL6B9pnTITHmmO+CRwAG8CPiSKmewz+d?=
+ =?us-ascii?Q?5bo7H8SvONT9j3mQFvU7vQarYUfPwDKiyUSyxVNXJtFgNEQmoNsYd7hrY+Xi?=
+ =?us-ascii?Q?io/wx1Rb5RiP72Z0aNOnrUusGwcHK+L3cdU3T6L582bmEN9eHWNSUTmdY4+a?=
+ =?us-ascii?Q?+pHr79Zwe3ruTTOF2JXODJnC4ZH6kDfl44P6vlnv6fYz6nZh2orXR0EaYR33?=
+ =?us-ascii?Q?Me6jfyn4IM7qOtaAPiYgTS3TQdmwlgQiRRPzdO/XiwuLdemu/Vi/fDRFS9LB?=
+ =?us-ascii?Q?4khygPKotMUjnDuT4o/jSwOimz+JYWMKb6/X8m+O1qRljCs8B8dFNZ6DKPj5?=
+ =?us-ascii?Q?0CxHpsHYVds1wIiFByLOROaUfViXUdXxQemVe1g7+WpbXW5EEeWhfveI3d+X?=
+ =?us-ascii?Q?xC/QQj2Dj1Ha7YgZcjfLFmPYzVpQg2FDN3axDsRXpk4qihVpB1j81cUTOVKc?=
+ =?us-ascii?Q?HcGx31H+V8ko1O43QpuniMLDTtwnRy6V2f4wSMc3FLhlr8Gs/u+Yt+Y/pVOR?=
+ =?us-ascii?Q?VSOsMhyW3cxc8dgCXE6tgkK281LZqLarHw0l3j24vcyicX972UdmUbckKBAX?=
+ =?us-ascii?Q?kbX7ZC0a7QcWds0C5iI=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8459.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f4e81784-f233-44fa-dee9-08dcc2706395
+X-MS-Exchange-CrossTenant-originalarrivaltime: 22 Aug 2024 06:05:14.2212
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: ojgqb1X1NkJv9kPZ8wC9nvAcTUuC2Ti/zBHCi9IrIHWVnXW02DHsDsEMmOKja25ldZUTYGfH//Dx7vHudjTXig==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10591
 
-Add unit tests for the two types of assigned rate properties. Test
-different combinations of assigned clocks and make sure that rates
-aren't assigned when the DT properties are malformed or are zero.
+Hi Stephen, Sudeep
 
-Cc: Peng Fan <peng.fan@nxp.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
----
- drivers/clk/Makefile                          |  14 +
- drivers/clk/clk_test.c                        | 321 ++++++++++++++++++
- drivers/clk/kunit_clk_assigned_rates.h        |   8 +
- .../kunit_clk_assigned_rates_multiple.dtso    |  16 +
- ..._clk_assigned_rates_multiple_consumer.dtso |  20 ++
- .../clk/kunit_clk_assigned_rates_null.dtso    |  14 +
- ...unit_clk_assigned_rates_null_consumer.dtso |  18 +
- drivers/clk/kunit_clk_assigned_rates_one.dtso |  14 +
- ...kunit_clk_assigned_rates_one_consumer.dtso |  18 +
- ...kunit_clk_assigned_rates_u64_multiple.dtso |  16 +
- ..._assigned_rates_u64_multiple_consumer.dtso |  20 ++
- .../clk/kunit_clk_assigned_rates_u64_one.dtso |  14 +
- ...t_clk_assigned_rates_u64_one_consumer.dtso |  18 +
- .../clk/kunit_clk_assigned_rates_without.dtso |  13 +
- ...t_clk_assigned_rates_without_consumer.dtso |  17 +
- .../clk/kunit_clk_assigned_rates_zero.dtso    |  12 +
- ...unit_clk_assigned_rates_zero_consumer.dtso |  16 +
- 17 files changed, 569 insertions(+)
- create mode 100644 drivers/clk/kunit_clk_assigned_rates.h
- create mode 100644 drivers/clk/kunit_clk_assigned_rates_multiple.dtso
- create mode 100644 drivers/clk/kunit_clk_assigned_rates_multiple_consumer.dtso
- create mode 100644 drivers/clk/kunit_clk_assigned_rates_null.dtso
- create mode 100644 drivers/clk/kunit_clk_assigned_rates_null_consumer.dtso
- create mode 100644 drivers/clk/kunit_clk_assigned_rates_one.dtso
- create mode 100644 drivers/clk/kunit_clk_assigned_rates_one_consumer.dtso
- create mode 100644 drivers/clk/kunit_clk_assigned_rates_u64_multiple.dtso
- create mode 100644 drivers/clk/kunit_clk_assigned_rates_u64_multiple_consumer.dtso
- create mode 100644 drivers/clk/kunit_clk_assigned_rates_u64_one.dtso
- create mode 100644 drivers/clk/kunit_clk_assigned_rates_u64_one_consumer.dtso
- create mode 100644 drivers/clk/kunit_clk_assigned_rates_without.dtso
- create mode 100644 drivers/clk/kunit_clk_assigned_rates_without_consumer.dtso
- create mode 100644 drivers/clk/kunit_clk_assigned_rates_zero.dtso
- create mode 100644 drivers/clk/kunit_clk_assigned_rates_zero_consumer.dtso
+> Subject: [PATCH V3] clk: scmi: add is_prepared hook
 
-diff --git a/drivers/clk/Makefile b/drivers/clk/Makefile
-index 9b783c3e5d2f..00bc19331b76 100644
---- a/drivers/clk/Makefile
-+++ b/drivers/clk/Makefile
-@@ -4,6 +4,20 @@ obj-$(CONFIG_HAVE_CLK)		+= clk-devres.o clk-bulk.o clkdev.o
- obj-$(CONFIG_COMMON_CLK)	+= clk.o
- obj-$(CONFIG_CLK_KUNIT_TEST)	+= clk-test.o
- clk-test-y			:= clk_test.o \
-+				   kunit_clk_assigned_rates_u64_one.dtbo.o \
-+				   kunit_clk_assigned_rates_u64_one_consumer.dtbo.o \
-+				   kunit_clk_assigned_rates_u64_multiple.dtbo.o \
-+				   kunit_clk_assigned_rates_u64_multiple_consumer.dtbo.o \
-+				   kunit_clk_assigned_rates_multiple.dtbo.o \
-+				   kunit_clk_assigned_rates_multiple_consumer.dtbo.o \
-+				   kunit_clk_assigned_rates_null.dtbo.o \
-+				   kunit_clk_assigned_rates_null_consumer.dtbo.o \
-+				   kunit_clk_assigned_rates_one.dtbo.o \
-+				   kunit_clk_assigned_rates_one_consumer.dtbo.o \
-+				   kunit_clk_assigned_rates_without.dtbo.o \
-+				   kunit_clk_assigned_rates_without_consumer.dtbo.o \
-+				   kunit_clk_assigned_rates_zero.dtbo.o \
-+				   kunit_clk_assigned_rates_zero_consumer.dtbo.o \
- 				   kunit_clk_parent_data_test.dtbo.o
- obj-$(CONFIG_COMMON_CLK)	+= clk-divider.o
- obj-$(CONFIG_COMMON_CLK)	+= clk-fixed-factor.o
-diff --git a/drivers/clk/clk_test.c b/drivers/clk/clk_test.c
-index 41fc8eba3418..cb53a8df55fc 100644
---- a/drivers/clk/clk_test.c
-+++ b/drivers/clk/clk_test.c
-@@ -4,6 +4,7 @@
-  */
- #include <linux/clk.h>
- #include <linux/clk-provider.h>
-+#include <linux/clk/clk-conf.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
- 
-@@ -15,6 +16,7 @@
- #include <kunit/platform_device.h>
- #include <kunit/test.h>
- 
-+#include "kunit_clk_assigned_rates.h"
- #include "clk_parent_data_test.h"
- 
- static const struct clk_ops empty_clk_ops = { };
-@@ -3108,7 +3110,326 @@ static struct kunit_suite clk_register_clk_parent_data_device_suite = {
- 	.test_cases = clk_register_clk_parent_data_device_test_cases,
- };
- 
-+struct clk_assigned_rates_context {
-+	struct clk_dummy_context clk0;
-+	struct clk_dummy_context clk1;
-+};
-+
-+/*
-+ * struct clk_assigned_rates_test_param - Test parameters for clk_assigned_rates test
-+ * @desc: Test description
-+ * @overlay_begin: Pointer to start of DT overlay to apply for test
-+ * @overlay_end: Pointer to end of DT overlay to apply for test
-+ * @rate0: Initial rate of first clk
-+ * @rate1: Initial rate of second clk
-+ * @consumer_test: true if a consumer is being tested
-+ */
-+struct clk_assigned_rates_test_param {
-+	const char *desc;
-+	u8 *overlay_begin;
-+	u8 *overlay_end;
-+	unsigned long rate0;
-+	unsigned long rate1;
-+	bool consumer_test;
-+};
-+
-+#define TEST_PARAM_OVERLAY(overlay_name)				\
-+	.overlay_begin = of_overlay_begin(overlay_name),		\
-+	.overlay_end = of_overlay_end(overlay_name)
-+
-+static void
-+clk_assigned_rates_register_clk(struct kunit *test,
-+				struct clk_dummy_context *ctx,
-+				struct device_node *np, const char *name,
-+				unsigned long rate)
-+{
-+	struct clk_init_data init = { };
-+
-+	init.name = name;
-+	init.ops = &clk_dummy_rate_ops;
-+	ctx->hw.init = &init;
-+	ctx->rate = rate;
-+
-+	KUNIT_ASSERT_EQ(test, 0, of_clk_hw_register_kunit(test, np, &ctx->hw));
-+	KUNIT_ASSERT_EQ(test, ctx->rate, rate);
-+}
-+
-+/*
-+ * Does most of the work of the test:
-+ *
-+ * 1. Apply the overlay to test
-+ * 2. Register the clk or clks to test
-+ * 3. Register the clk provider
-+ * 4. Apply clk defaults to the consumer device if this is a consumer test
-+ *
-+ * The tests will set different test_param values to test different scenarios
-+ * and validate that in their test functions.
-+ */
-+static int clk_assigned_rates_test_init(struct kunit *test)
-+{
-+	struct device_node *np, *consumer;
-+	struct clk_hw_onecell_data *data;
-+	struct clk_assigned_rates_context *ctx;
-+	u32 clk_cells;
-+	const struct clk_assigned_rates_test_param *test_param;
-+
-+	test_param = test->param_value;
-+
-+	KUNIT_ASSERT_EQ(test, 0, __of_overlay_apply_kunit(test,
-+							  test_param->overlay_begin,
-+							  test_param->overlay_end));
-+
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test,
-+		ctx = kunit_kzalloc(test, sizeof(*ctx), GFP_KERNEL));
-+	test->priv = ctx;
-+
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test,
-+		np = of_find_compatible_node(NULL, NULL, "test,clk-assigned-rates"));
-+	of_node_put_kunit(test, np);
-+
-+	KUNIT_ASSERT_EQ(test, 0, of_property_read_u32(np, "#clock-cells", &clk_cells));
-+	/* Only support #clock-cells = <0> or <1> */
-+	KUNIT_ASSERT_LT(test, clk_cells, 2);
-+
-+	clk_assigned_rates_register_clk(test, &ctx->clk0, np,
-+					"test_assigned_rate0", test_param->rate0);
-+	if (clk_cells == 0) {
-+		KUNIT_ASSERT_EQ(test, 0,
-+				of_clk_add_hw_provider_kunit(test, np, of_clk_hw_simple_get,
-+							     &ctx->clk0.hw));
-+	} else if (clk_cells == 1) {
-+		clk_assigned_rates_register_clk(test, &ctx->clk1, np,
-+						"test_assigned_rate1", test_param->rate1);
-+
-+		KUNIT_ASSERT_NOT_ERR_OR_NULL(test,
-+			data = kunit_kzalloc(test, struct_size(data, hws, 2), GFP_KERNEL));
-+		data->num = 2;
-+		data->hws[0] = &ctx->clk0.hw;
-+		data->hws[1] = &ctx->clk1.hw;
-+
-+		KUNIT_ASSERT_EQ(test, 0,
-+				of_clk_add_hw_provider_kunit(test, np, of_clk_hw_onecell_get, data));
-+	}
-+
-+	/* Consumers are optional */
-+	if (test_param->consumer_test) {
-+		KUNIT_ASSERT_NOT_ERR_OR_NULL(test,
-+			consumer = of_find_compatible_node(NULL, NULL, "test,clk-consumer"));
-+		of_node_put_kunit(test, consumer);
-+
-+		KUNIT_ASSERT_EQ(test, 0, of_clk_set_defaults(consumer, false));
-+	}
-+
-+	return 0;
-+}
-+
-+static void clk_assigned_rates_assigns_one(struct kunit *test)
-+{
-+	struct clk_assigned_rates_context *ctx = test->priv;
-+
-+	KUNIT_EXPECT_EQ(test, ctx->clk0.rate, ASSIGNED_RATES_0_RATE);
-+}
-+
-+static void clk_assigned_rates_assigns_multiple(struct kunit *test)
-+{
-+	struct clk_assigned_rates_context *ctx = test->priv;
-+
-+	KUNIT_EXPECT_EQ(test, ctx->clk0.rate, ASSIGNED_RATES_0_RATE);
-+	KUNIT_EXPECT_EQ(test, ctx->clk1.rate, ASSIGNED_RATES_1_RATE);
-+}
-+
-+static void clk_assigned_rates_skips(struct kunit *test)
-+{
-+	struct clk_assigned_rates_context *ctx = test->priv;
-+	const struct clk_assigned_rates_test_param *test_param = test->param_value;
-+
-+	KUNIT_EXPECT_NE(test, ctx->clk0.rate, ASSIGNED_RATES_0_RATE);
-+	KUNIT_EXPECT_EQ(test, ctx->clk0.rate, test_param->rate0);
-+}
-+
-+OF_OVERLAY_DECLARE(kunit_clk_assigned_rates_one);
-+OF_OVERLAY_DECLARE(kunit_clk_assigned_rates_one_consumer);
-+OF_OVERLAY_DECLARE(kunit_clk_assigned_rates_u64_one);
-+OF_OVERLAY_DECLARE(kunit_clk_assigned_rates_u64_one_consumer);
-+
-+/* Test cases that assign one rate */
-+static const struct clk_assigned_rates_test_param clk_assigned_rates_assigns_one_test_params[] = {
-+	{
-+		/*
-+		 * Test that a single cell assigned-clock-rates property
-+		 * assigns the rate when the property is in the provider.
-+		 */
-+		.desc = "provider assigns",
-+		TEST_PARAM_OVERLAY(kunit_clk_assigned_rates_one),
-+	},
-+	{
-+		/*
-+		 * Test that a single cell assigned-clock-rates property
-+		 * assigns the rate when the property is in the consumer.
-+		 */
-+		.desc = "consumer assigns",
-+		TEST_PARAM_OVERLAY(kunit_clk_assigned_rates_one_consumer),
-+		.consumer_test = true,
-+	},
-+	{
-+		/*
-+		 * Test that a single cell assigned-clock-rates-u64 property
-+		 * assigns the rate when the property is in the provider.
-+		 */
-+		.desc = "provider assigns u64",
-+		TEST_PARAM_OVERLAY(kunit_clk_assigned_rates_u64_one),
-+	},
-+	{
-+		/*
-+		 * Test that a single cell assigned-clock-rates-u64 property
-+		 * assigns the rate when the property is in the consumer.
-+		 */
-+		.desc = "consumer assigns u64",
-+		TEST_PARAM_OVERLAY(kunit_clk_assigned_rates_u64_one_consumer),
-+		.consumer_test = true,
-+	},
-+};
-+KUNIT_ARRAY_PARAM_DESC(clk_assigned_rates_assigns_one,
-+		       clk_assigned_rates_assigns_one_test_params, desc)
-+
-+OF_OVERLAY_DECLARE(kunit_clk_assigned_rates_multiple);
-+OF_OVERLAY_DECLARE(kunit_clk_assigned_rates_multiple_consumer);
-+OF_OVERLAY_DECLARE(kunit_clk_assigned_rates_u64_multiple);
-+OF_OVERLAY_DECLARE(kunit_clk_assigned_rates_u64_multiple_consumer);
-+
-+/* Test cases that assign multiple rates */
-+static const struct clk_assigned_rates_test_param clk_assigned_rates_assigns_multiple_test_params[] = {
-+	{
-+		/*
-+		 * Test that a multiple cell assigned-clock-rates property
-+		 * assigns the rates when the property is in the provider.
-+		 */
-+		.desc = "provider assigns",
-+		TEST_PARAM_OVERLAY(kunit_clk_assigned_rates_multiple),
-+	},
-+	{
-+		/*
-+		 * Test that a multiple cell assigned-clock-rates property
-+		 * assigns the rates when the property is in the consumer.
-+		 */
-+		.desc = "consumer assigns",
-+		TEST_PARAM_OVERLAY(kunit_clk_assigned_rates_multiple_consumer),
-+		.consumer_test = true,
-+	},
-+	{
-+		/*
-+		 * Test that a single cell assigned-clock-rates-u64 property
-+		 * assigns the rate when the property is in the provider.
-+		 */
-+		.desc = "provider assigns u64",
-+		TEST_PARAM_OVERLAY(kunit_clk_assigned_rates_u64_multiple),
-+	},
-+	{
-+		/*
-+		 * Test that a multiple cell assigned-clock-rates-u64 property
-+		 * assigns the rates when the property is in the consumer.
-+		 */
-+		.desc = "consumer assigns u64",
-+		TEST_PARAM_OVERLAY(kunit_clk_assigned_rates_u64_multiple_consumer),
-+		.consumer_test = true,
-+	},
-+};
-+KUNIT_ARRAY_PARAM_DESC(clk_assigned_rates_assigns_multiple,
-+		       clk_assigned_rates_assigns_multiple_test_params,
-+		       desc)
-+
-+OF_OVERLAY_DECLARE(kunit_clk_assigned_rates_without);
-+OF_OVERLAY_DECLARE(kunit_clk_assigned_rates_without_consumer);
-+OF_OVERLAY_DECLARE(kunit_clk_assigned_rates_zero);
-+OF_OVERLAY_DECLARE(kunit_clk_assigned_rates_zero_consumer);
-+OF_OVERLAY_DECLARE(kunit_clk_assigned_rates_null);
-+OF_OVERLAY_DECLARE(kunit_clk_assigned_rates_null_consumer);
-+
-+/* Test cases that skip changing the rate due to malformed DT */
-+static const struct clk_assigned_rates_test_param clk_assigned_rates_skips_test_params[] = {
-+	{
-+		/*
-+		 * Test that an assigned-clock-rates property without an assigned-clocks
-+		 * property fails when the property is in the provider.
-+		 */
-+		.desc = "provider missing assigned-clocks",
-+		TEST_PARAM_OVERLAY(kunit_clk_assigned_rates_without),
-+		.rate0 = 3000,
-+	},
-+	{
-+		/*
-+		 * Test that an assigned-clock-rates property without an assigned-clocks
-+		 * property fails when the property is in the consumer.
-+		 */
-+		.desc = "consumer missing assigned-clocks",
-+		TEST_PARAM_OVERLAY(kunit_clk_assigned_rates_without_consumer),
-+		.rate0 = 3000,
-+		.consumer_test = true,
-+	},
-+	{
-+		/*
-+		 * Test that an assigned-clock-rates property of zero doesn't
-+		 * set a rate when the property is in the provider.
-+		 */
-+		.desc = "provider assigned-clock-rates of zero",
-+		TEST_PARAM_OVERLAY(kunit_clk_assigned_rates_zero),
-+		.rate0 = 3000,
-+	},
-+	{
-+		/*
-+		 * Test that an assigned-clock-rates property of zero doesn't
-+		 * set a rate when the property is in the consumer.
-+		 */
-+		.desc = "consumer assigned-clock-rates of zero",
-+		TEST_PARAM_OVERLAY(kunit_clk_assigned_rates_zero_consumer),
-+		.rate0 = 3000,
-+		.consumer_test = true,
-+	},
-+	{
-+		/*
-+		 * Test that an assigned-clocks property with a null phandle
-+		 * doesn't set a rate when the property is in the provider.
-+		 */
-+		.desc = "provider assigned-clocks null phandle",
-+		TEST_PARAM_OVERLAY(kunit_clk_assigned_rates_null),
-+		.rate0 = 3000,
-+	},
-+	{
-+		/*
-+		 * Test that an assigned-clocks property with a null phandle
-+		 * doesn't set a rate when the property is in the consumer.
-+		 */
-+		.desc = "provider assigned-clocks null phandle",
-+		TEST_PARAM_OVERLAY(kunit_clk_assigned_rates_null_consumer),
-+		.rate0 = 3000,
-+		.consumer_test = true,
-+	},
-+};
-+KUNIT_ARRAY_PARAM_DESC(clk_assigned_rates_skips,
-+		       clk_assigned_rates_skips_test_params,
-+		       desc)
-+
-+static struct kunit_case clk_assigned_rates_test_cases[] = {
-+	KUNIT_CASE_PARAM(clk_assigned_rates_assigns_one,
-+			 clk_assigned_rates_assigns_one_gen_params),
-+	KUNIT_CASE_PARAM(clk_assigned_rates_assigns_multiple,
-+			 clk_assigned_rates_assigns_multiple_gen_params),
-+	KUNIT_CASE_PARAM(clk_assigned_rates_skips,
-+			 clk_assigned_rates_skips_gen_params),
-+	{}
-+};
-+
-+/*
-+ * Test suite for assigned-clock-rates{-u64} DT property.
-+ */
-+static struct kunit_suite clk_assigned_rates_suite = {
-+	.name = "clk_assigned_rates",
-+	.test_cases = clk_assigned_rates_test_cases,
-+	.init = clk_assigned_rates_test_init,
-+};
-+
- kunit_test_suites(
-+	&clk_assigned_rates_suite,
- 	&clk_leaf_mux_set_rate_parent_test_suite,
- 	&clk_test_suite,
- 	&clk_multiple_parents_mux_test_suite,
-diff --git a/drivers/clk/kunit_clk_assigned_rates.h b/drivers/clk/kunit_clk_assigned_rates.h
-new file mode 100644
-index 000000000000..df2d84dcaa93
---- /dev/null
-+++ b/drivers/clk/kunit_clk_assigned_rates.h
-@@ -0,0 +1,8 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef _KUNIT_CLK_ASSIGNED_RATES_H
-+#define _KUNIT_CLK_ASSIGNED_RATES_H
-+
-+#define ASSIGNED_RATES_0_RATE		1600000
-+#define ASSIGNED_RATES_1_RATE		9700000
-+
-+#endif
-diff --git a/drivers/clk/kunit_clk_assigned_rates_multiple.dtso b/drivers/clk/kunit_clk_assigned_rates_multiple.dtso
-new file mode 100644
-index 000000000000..e600736e70f5
---- /dev/null
-+++ b/drivers/clk/kunit_clk_assigned_rates_multiple.dtso
-@@ -0,0 +1,16 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/dts-v1/;
-+/plugin/;
-+
-+#include "kunit_clk_assigned_rates.h"
-+
-+&{/} {
-+	clk: kunit-clock {
-+		compatible = "test,clk-assigned-rates";
-+		#clock-cells = <1>;
-+		assigned-clocks = <&clk 0>,
-+				  <&clk 1>;
-+		assigned-clock-rates = <ASSIGNED_RATES_0_RATE>,
-+				       <ASSIGNED_RATES_1_RATE>;
-+	};
-+};
-diff --git a/drivers/clk/kunit_clk_assigned_rates_multiple_consumer.dtso b/drivers/clk/kunit_clk_assigned_rates_multiple_consumer.dtso
-new file mode 100644
-index 000000000000..260aba458daf
---- /dev/null
-+++ b/drivers/clk/kunit_clk_assigned_rates_multiple_consumer.dtso
-@@ -0,0 +1,20 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/dts-v1/;
-+/plugin/;
-+
-+#include "kunit_clk_assigned_rates.h"
-+
-+&{/} {
-+	clk: kunit-clock {
-+		compatible = "test,clk-assigned-rates";
-+		#clock-cells = <1>;
-+	};
-+
-+	kunit-clock-consumer {
-+		compatible = "test,clk-consumer";
-+		assigned-clocks = <&clk 0>,
-+				  <&clk 1>;
-+		assigned-clock-rates = <ASSIGNED_RATES_0_RATE>,
-+				       <ASSIGNED_RATES_1_RATE>;
-+	};
-+};
-diff --git a/drivers/clk/kunit_clk_assigned_rates_null.dtso b/drivers/clk/kunit_clk_assigned_rates_null.dtso
-new file mode 100644
-index 000000000000..0b27b38a9130
---- /dev/null
-+++ b/drivers/clk/kunit_clk_assigned_rates_null.dtso
-@@ -0,0 +1,14 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/dts-v1/;
-+/plugin/;
-+
-+#include "kunit_clk_assigned_rates.h"
-+
-+&{/} {
-+	clk: kunit-clock {
-+		compatible = "test,clk-assigned-rates";
-+		#clock-cells = <0>;
-+		assigned-clocks = <0>;
-+		assigned-clock-rates = <ASSIGNED_RATES_0_RATE>;
-+	};
-+};
-diff --git a/drivers/clk/kunit_clk_assigned_rates_null_consumer.dtso b/drivers/clk/kunit_clk_assigned_rates_null_consumer.dtso
-new file mode 100644
-index 000000000000..99fb332ae83d
---- /dev/null
-+++ b/drivers/clk/kunit_clk_assigned_rates_null_consumer.dtso
-@@ -0,0 +1,18 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/dts-v1/;
-+/plugin/;
-+
-+#include "kunit_clk_assigned_rates.h"
-+
-+&{/} {
-+	clk: kunit-clock {
-+		compatible = "test,clk-assigned-rates";
-+		#clock-cells = <0>;
-+	};
-+
-+	kunit-clock-consumer {
-+		compatible = "test,clk-consumer";
-+		assigned-clocks = <0>;
-+		assigned-clock-rates = <ASSIGNED_RATES_0_RATE>;
-+	};
-+};
-diff --git a/drivers/clk/kunit_clk_assigned_rates_one.dtso b/drivers/clk/kunit_clk_assigned_rates_one.dtso
-new file mode 100644
-index 000000000000..dd95ec9b1cf9
---- /dev/null
-+++ b/drivers/clk/kunit_clk_assigned_rates_one.dtso
-@@ -0,0 +1,14 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/dts-v1/;
-+/plugin/;
-+
-+#include "kunit_clk_assigned_rates.h"
-+
-+&{/} {
-+	clk: kunit-clock {
-+		compatible = "test,clk-assigned-rates";
-+		#clock-cells = <0>;
-+		assigned-clocks = <&clk>;
-+		assigned-clock-rates = <ASSIGNED_RATES_0_RATE>;
-+	};
-+};
-diff --git a/drivers/clk/kunit_clk_assigned_rates_one_consumer.dtso b/drivers/clk/kunit_clk_assigned_rates_one_consumer.dtso
-new file mode 100644
-index 000000000000..a41dca806318
---- /dev/null
-+++ b/drivers/clk/kunit_clk_assigned_rates_one_consumer.dtso
-@@ -0,0 +1,18 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/dts-v1/;
-+/plugin/;
-+
-+#include "kunit_clk_assigned_rates.h"
-+
-+&{/} {
-+	clk: kunit-clock {
-+		compatible = "test,clk-assigned-rates";
-+		#clock-cells = <0>;
-+	};
-+
-+	kunit-clock-consumer {
-+		compatible = "test,clk-consumer";
-+		assigned-clocks = <&clk>;
-+		assigned-clock-rates = <ASSIGNED_RATES_0_RATE>;
-+	};
-+};
-diff --git a/drivers/clk/kunit_clk_assigned_rates_u64_multiple.dtso b/drivers/clk/kunit_clk_assigned_rates_u64_multiple.dtso
-new file mode 100644
-index 000000000000..389b4e2eb7f7
---- /dev/null
-+++ b/drivers/clk/kunit_clk_assigned_rates_u64_multiple.dtso
-@@ -0,0 +1,16 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/dts-v1/;
-+/plugin/;
-+
-+#include "kunit_clk_assigned_rates.h"
-+
-+&{/} {
-+	clk: kunit-clock {
-+		compatible = "test,clk-assigned-rates";
-+		#clock-cells = <1>;
-+		assigned-clocks = <&clk 0>,
-+				  <&clk 1>;
-+		assigned-clock-rates-u64 = /bits/ 64 <ASSIGNED_RATES_0_RATE>,
-+					   /bits/ 64 <ASSIGNED_RATES_1_RATE>;
-+	};
-+};
-diff --git a/drivers/clk/kunit_clk_assigned_rates_u64_multiple_consumer.dtso b/drivers/clk/kunit_clk_assigned_rates_u64_multiple_consumer.dtso
-new file mode 100644
-index 000000000000..3e117fd59b7d
---- /dev/null
-+++ b/drivers/clk/kunit_clk_assigned_rates_u64_multiple_consumer.dtso
-@@ -0,0 +1,20 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/dts-v1/;
-+/plugin/;
-+
-+#include "kunit_clk_assigned_rates.h"
-+
-+&{/} {
-+	clk: kunit-clock {
-+		compatible = "test,clk-assigned-rates";
-+		#clock-cells = <1>;
-+	};
-+
-+	kunit-clock-consumer {
-+		compatible = "test,clk-consumer";
-+		assigned-clocks = <&clk 0>,
-+				  <&clk 1>;
-+		assigned-clock-rates-u64 = /bits/ 64 <ASSIGNED_RATES_0_RATE>,
-+					   /bits/ 64 <ASSIGNED_RATES_1_RATE>;
-+	};
-+};
-diff --git a/drivers/clk/kunit_clk_assigned_rates_u64_one.dtso b/drivers/clk/kunit_clk_assigned_rates_u64_one.dtso
-new file mode 100644
-index 000000000000..87041264e8f5
---- /dev/null
-+++ b/drivers/clk/kunit_clk_assigned_rates_u64_one.dtso
-@@ -0,0 +1,14 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/dts-v1/;
-+/plugin/;
-+
-+#include "kunit_clk_assigned_rates.h"
-+
-+&{/} {
-+	clk: kunit-clock {
-+		compatible = "test,clk-assigned-rates";
-+		#clock-cells = <0>;
-+		assigned-clocks = <&clk>;
-+		assigned-clock-rates-u64 = /bits/ 64 <ASSIGNED_RATES_0_RATE>;
-+	};
-+};
-diff --git a/drivers/clk/kunit_clk_assigned_rates_u64_one_consumer.dtso b/drivers/clk/kunit_clk_assigned_rates_u64_one_consumer.dtso
-new file mode 100644
-index 000000000000..3259c003aec0
---- /dev/null
-+++ b/drivers/clk/kunit_clk_assigned_rates_u64_one_consumer.dtso
-@@ -0,0 +1,18 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/dts-v1/;
-+/plugin/;
-+
-+#include "kunit_clk_assigned_rates.h"
-+
-+&{/} {
-+	clk: kunit-clock {
-+		compatible = "test,clk-assigned-rates";
-+		#clock-cells = <0>;
-+	};
-+
-+	kunit-clock-consumer {
-+		compatible = "test,clk-consumer";
-+		assigned-clocks = <&clk>;
-+		assigned-clock-rates-u64 = /bits/ 64 <ASSIGNED_RATES_0_RATE>;
-+	};
-+};
-diff --git a/drivers/clk/kunit_clk_assigned_rates_without.dtso b/drivers/clk/kunit_clk_assigned_rates_without.dtso
-new file mode 100644
-index 000000000000..22d333495cf2
---- /dev/null
-+++ b/drivers/clk/kunit_clk_assigned_rates_without.dtso
-@@ -0,0 +1,13 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/dts-v1/;
-+/plugin/;
-+
-+#include "kunit_clk_assigned_rates.h"
-+
-+&{/} {
-+	clk: kunit-clock {
-+		compatible = "test,clk-assigned-rates";
-+		#clock-cells = <0>;
-+		assigned-clock-rates = <ASSIGNED_RATES_0_RATE>;
-+	};
-+};
-diff --git a/drivers/clk/kunit_clk_assigned_rates_without_consumer.dtso b/drivers/clk/kunit_clk_assigned_rates_without_consumer.dtso
-new file mode 100644
-index 000000000000..75ac09140f83
---- /dev/null
-+++ b/drivers/clk/kunit_clk_assigned_rates_without_consumer.dtso
-@@ -0,0 +1,17 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/dts-v1/;
-+/plugin/;
-+
-+#include "kunit_clk_assigned_rates.h"
-+
-+&{/} {
-+	clk: kunit-clock {
-+		compatible = "test,clk-assigned-rates";
-+		#clock-cells = <0>;
-+	};
-+
-+	kunit-clock-consumer {
-+		compatible = "test,clk-consumer";
-+		assigned-clock-rates = <ASSIGNED_RATES_0_RATE>;
-+	};
-+};
-diff --git a/drivers/clk/kunit_clk_assigned_rates_zero.dtso b/drivers/clk/kunit_clk_assigned_rates_zero.dtso
-new file mode 100644
-index 000000000000..08e042c2eafe
---- /dev/null
-+++ b/drivers/clk/kunit_clk_assigned_rates_zero.dtso
-@@ -0,0 +1,12 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/dts-v1/;
-+/plugin/;
-+
-+&{/} {
-+	clk: kunit-clock {
-+		compatible = "test,clk-assigned-rates";
-+		#clock-cells = <0>;
-+		assigned-clocks = <&clk>;
-+		assigned-clock-rates = <0>;
-+	};
-+};
-diff --git a/drivers/clk/kunit_clk_assigned_rates_zero_consumer.dtso b/drivers/clk/kunit_clk_assigned_rates_zero_consumer.dtso
-new file mode 100644
-index 000000000000..1d964672e855
---- /dev/null
-+++ b/drivers/clk/kunit_clk_assigned_rates_zero_consumer.dtso
-@@ -0,0 +1,16 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/dts-v1/;
-+/plugin/;
-+
-+&{/} {
-+	clk: kunit-clock {
-+		compatible = "test,clk-assigned-rates";
-+		#clock-cells = <0>;
-+	};
-+
-+	kunit-clock-consumer {
-+		compatible = "test,clk-consumer";
-+		assigned-clocks = <&clk>;
-+		assigned-clock-rates = <0>;
-+	};
-+};
--- 
-https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
-https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
+Not sure this patch belongs to clk tree or scmi tree. But please give a loo=
+k
+when you have time.
+
+Thanks,
+Peng.
+
+>=20
+> From: Peng Fan <peng.fan@nxp.com>
+>=20
+> Some clocks maybe default enabled by hardware. For clocks that don't
+> have users, that will be left in hardware default state, because prepare
+> count and enable count is zero,if there is no is_prepared hook to get
+> the hardware state. So add is_prepared hook to detect the hardware
+> state. Then when disabling the unused clocks, they can be simply
+> turned OFF to save power during kernel boot.
+>=20
+> Reviewed-by: Dhruva Gole <d-gole@ti.com>
+> Signed-off-by: Peng Fan <peng.fan@nxp.com>
+> ---
+>=20
+> V3:
+>  Update the commit log. See discussion:
+>=20
+> https://lore.kernel.org/all/20240802061234.njlviydzmjbsyteb@lcpd91
+> 1/
+> V2:
+>  Provider helper __scmi_clk_is_enabled for atomic and non-atomic
+> usage  Move is_prepared hook out of
+> SCMI_CLK_STATE_CTRL_SUPPORTED
+> https://lore.kernel.org/all/20240802061234.njlviydzmjbsyteb@lcpd91
+> 1/
+>=20
+>  drivers/clk/clk-scmi.c | 16 ++++++++++++++--
+>  1 file changed, 14 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/clk/clk-scmi.c b/drivers/clk/clk-scmi.c index
+> d86a02563f6c..15510c2ff21c 100644
+> --- a/drivers/clk/clk-scmi.c
+> +++ b/drivers/clk/clk-scmi.c
+> @@ -156,13 +156,13 @@ static void scmi_clk_atomic_disable(struct
+> clk_hw *hw)
+>  	scmi_proto_clk_ops->disable(clk->ph, clk->id, ATOMIC);  }
+>=20
+> -static int scmi_clk_atomic_is_enabled(struct clk_hw *hw)
+> +static int __scmi_clk_is_enabled(struct clk_hw *hw, bool atomic)
+>  {
+>  	int ret;
+>  	bool enabled =3D false;
+>  	struct scmi_clk *clk =3D to_scmi_clk(hw);
+>=20
+> -	ret =3D scmi_proto_clk_ops->state_get(clk->ph, clk->id, &enabled,
+> ATOMIC);
+> +	ret =3D scmi_proto_clk_ops->state_get(clk->ph, clk->id, &enabled,
+> +atomic);
+>  	if (ret)
+>  		dev_warn(clk->dev,
+>  			 "Failed to get state for clock ID %d\n", clk-
+> >id); @@ -170,6 +170,16 @@ static int
+> scmi_clk_atomic_is_enabled(struct clk_hw *hw)
+>  	return !!enabled;
+>  }
+>=20
+> +static int scmi_clk_atomic_is_enabled(struct clk_hw *hw) {
+> +	return __scmi_clk_is_enabled(hw, ATOMIC); }
+> +
+> +static int scmi_clk_is_enabled(struct clk_hw *hw) {
+> +	return __scmi_clk_is_enabled(hw, NOT_ATOMIC); }
+> +
+>  static int scmi_clk_get_duty_cycle(struct clk_hw *hw, struct clk_duty
+> *duty)  {
+>  	int ret;
+> @@ -285,6 +295,8 @@ scmi_clk_ops_alloc(struct device *dev,
+> unsigned long feats_key)
+>=20
+>  	if (feats_key & BIT(SCMI_CLK_ATOMIC_SUPPORTED))
+>  		ops->is_enabled =3D scmi_clk_atomic_is_enabled;
+> +	else
+> +		ops->is_prepared =3D scmi_clk_is_enabled;
+>=20
+>  	/* Rate ops */
+>  	ops->recalc_rate =3D scmi_clk_recalc_rate;
+> --
+> 2.37.1
 
