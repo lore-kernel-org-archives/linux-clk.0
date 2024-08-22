@@ -1,57 +1,57 @@
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF5D31D0489
-	for <linux-clk@vger.kernel.org>; Thu, 22 Aug 2024 15:28:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED0D01D04B7
+	for <linux-clk@vger.kernel.org>; Thu, 22 Aug 2024 15:28:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724340524; cv=none; b=AQI/AabJ+7siljzFxRwSgYwnJdfiE1rXjD2f/Rka3KBSs1HxfPbNekZ1rBUxHIZikFc2B8nd6VZ+1OL81ibU+37YVpsdBtOCkzkgPFb1xNBvlp464BaM1+zxe/CEmPZa6mB8tEkdk/FdO2QRbLh9kEt8F7kM7MiTgFqFzIaSdv8=
+	t=1724340526; cv=none; b=cmwRYPoHmbxokbjQWsyDgcWfBWfV2bzACijmNriTly6rrKtw1CmYwr580oPfidjB9HvPbcdImGmrckNjN+FPUDzX1K99iK3aLl6ZyQAuefooXa+s2gXSsUWMzWIP1nrM9777/2+rtLoeWbZ7Pb876ShjQxf0rBJMKfFRc9r2uKg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724340524; c=relaxed/simple;
-	bh=qfMyBWF/BL7cu1fLu2yMExkkMJ+Iv5WKiP7iKrRAAGk=;
+	s=arc-20240116; t=1724340526; c=relaxed/simple;
+	bh=Fdk5QGcF0Of61Ef45y7VdXpM+rCxir0BEowLZBYRpu0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=OsJ7BTFqeRaX2EkJBbaF/VDWzr5Yu6+PY2ZvOhkq+iVdFBkq1PZYrTsrFBV7UoM9QUctcWV4SZm699lRn48ux5zOYCFtxmT4N14MmHcK92sPPqi9iHlKlQ/m7NUxlEVLImGJ3rPAZPOAlxq6B1ooRBvUmxJER96+bnSzhL6sHfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=lSC0pPIt; arc=none smtp.client-ip=209.85.218.51
+	 MIME-Version; b=VB5r3ClvXZxds6AZ4QmiuLXRfh1h10ojzTT1JYBuQCBGs2tjSabUODnDxPIjwTR6r9zevidPQJiGOe3U8cRZYdXQbekjpyxogQHtZ55IbPZ/QVXiNeOTF3gbwmANDWYvfhcVaj+va7zSpMJX3x54evKU98o7iGA+WreZnwHf/wE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=EjQNyK6u; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="lSC0pPIt"
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a8684c31c60so121164166b.3
-        for <linux-clk@vger.kernel.org>; Thu, 22 Aug 2024 08:28:42 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="EjQNyK6u"
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a7aa086b077so113556266b.0
+        for <linux-clk@vger.kernel.org>; Thu, 22 Aug 2024 08:28:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1724340521; x=1724945321; darn=vger.kernel.org;
+        d=tuxon.dev; s=google; t=1724340523; x=1724945323; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XSWof3eimbYWdm3Zde2Iz4BDEJwC1Ylc5fdAQ7iNZKY=;
-        b=lSC0pPItQ1mmbd/o/QKaAbzFexzBwZt/gpoSig4MEDA4mHOPelhwzMiF/rZuoZInu/
-         VBmHIcOAZuBPYPociUCPZ6/i7ddtKNX9wDIlf60CRd0/o2UD5NIFX8FeBseGM/bFzcq2
-         JZhSDAJNyfZP6dq9l39kgZg+aF08Vps8GNna4ZLCpuX21L3Nkzuq5/EGNLoKMjFs0kPp
-         JdXpg5t4kTjozpqV3botNWvrNDrSihivB48ih82yxvFYvD00NQ/DCIxaifF5s61+OFVB
-         VRKjzGxHaUxqJS5eazktQEb/1jl4E9KpvgEahhoq/0eUjAAFhLgyr4LzKkVWByARNMq7
-         /NSg==
+        bh=AWNzbrWT4cjZwlbw/B+Ku5dXdfTILO3SL/AQs9G2I5o=;
+        b=EjQNyK6uwTm57ffpzmcg2r9a+thZq4TEOL6Cf3vcKF/Ent6/ZvZvJkbkvnHWh61d1N
+         K3NbO/SiWFsTG9+8pz5Jx/H+BKw7ft4qq1kJBUmnoXql7waQYC8zUX1FkHFPk22KttV8
+         OzUpEw2SdwTJBEgQUm/shuAFN2onvEwRQNwtSr2aVwDJOdSnGyKeBf5K/MJwzswxN+LH
+         0BrAaOj3sLKZ2tCEKZEwIiIZOqdpRQbJQeJ9MQ36xaCKTJShpemhUz7lsa4WJCA9521U
+         esrrbHLwdXTxpkfO7dmG9skkMyAQxC2Je2atdaqNiprxy5IG+TIjfTyHNCjhwgqcqvoH
+         dxTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724340521; x=1724945321;
+        d=1e100.net; s=20230601; t=1724340523; x=1724945323;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=XSWof3eimbYWdm3Zde2Iz4BDEJwC1Ylc5fdAQ7iNZKY=;
-        b=KNKL3cc+O1UTZWD4SncmSRCAHpepS1akRabCSgirER8vaz92x+95+POv9/dibx38jO
-         ev6ovgw7VNLp4T+LtYTFGVuMCcyJ1PtnnSmzOhXcWlOQLmSyO/3ueWscowGrYjistCvu
-         CEjCLhKstZAqNHttAt1pxMGRV53r5OU8ri5iU7lkXCdjdnsP9yoNeoZuOEPuDF5lhw8U
-         /4vcp4UpoH0IOYLKiiZPs79DV6d0OXz57kn+VHGAHZN0jg+l00evqFPJHiw2ID0n3hr4
-         wp3VpT0zzyOnM368I4hb/F0GjgF/Z8xhYjLSqYvvI3OscxYtjNyOUfwp8BlSQPOT59uv
-         +alQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWd4M35P+nXd4U+Z9sOUyalGLFkqTlOzpBy2rqYD5acKvel4qdJ1+2ZFJjKmjjLJXCks9UBt59aUEQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyK7yShD/+XwOpexva92kjI+AtOEM5TucwnYNt7a9ki1ATvGFv4
-	VKz3wDpEWUFz/JGW/Hax67qlvip91tVYixzNIoWs6j9Ge0IFfSnZve0eA9Edoas=
-X-Google-Smtp-Source: AGHT+IEBQZ1FZ/LXCGsRTtDo2mrL6RRIsqfYVgMxLk7cvYuAGygDFmxNvFc2QDySBzsJWYCvzMOvmg==
-X-Received: by 2002:a17:907:7214:b0:a86:82e2:8c64 with SMTP id a640c23a62f3a-a8691b5c943mr185347366b.35.1724340521191;
-        Thu, 22 Aug 2024 08:28:41 -0700 (PDT)
+        bh=AWNzbrWT4cjZwlbw/B+Ku5dXdfTILO3SL/AQs9G2I5o=;
+        b=UGNLt1zq5FRUNbUhuN+kqCLfrOITtkcvLrkYVQ3H43TXiowipY/LS0vrxZCw6s97pD
+         y1+op9w4URGDh7NBneHbvDxsq0yjZy67Ws2DIyZWaLwWSCX3K8/Jo3ujc0UDggTK2vWZ
+         6Wb8m+JjZmQgvBA/YEtxkfeZ5YSz3t5Bw15vifVycVkN9e0nIIAvV0zGGa1k+Y6sZxHw
+         48BiESRoKX9BM9SYugKPp+fRAxPOIcSzoGG9DInPYAMmkqfsMkve9WfAmvnl9KFlY5rb
+         onFc7Jk6lrF5pWXDoIYv8pk8j2JpctZNMVBeFMCzfiMcpkhYLQhs8aX57Rv+cVQryRbA
+         nMXw==
+X-Forwarded-Encrypted: i=1; AJvYcCWrlFYHfLaeO0+tGvMxirNz1ztBlTvvbOfblQ1uNbwCwKplK33aHAva8rqNkhPsRpRT6oSm9ZISzrU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwalEeaUrya76tSwwDK62VAWoG/Rg8rb8btuDUAp7zXpmEQUchz
+	4mkKvBQ7JcSAxZM7F2OEQt9rHUlFdKPbeoTsNecGD6gWZzYz5aiROZUjp0YWQNc=
+X-Google-Smtp-Source: AGHT+IHil/3QLm3fW6hjS77rGDv48oy9/7q2NQAgMRaJIdEszcJA4lXA3RSoaEhwajY77aZMJWnb/Q==
+X-Received: by 2002:a17:906:7313:b0:a86:700f:93c1 with SMTP id a640c23a62f3a-a86700fb357mr451883866b.60.1724340523183;
+        Thu, 22 Aug 2024 08:28:43 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f484dc5sm134189166b.171.2024.08.22.08.28.39
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f484dc5sm134189166b.171.2024.08.22.08.28.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 08:28:40 -0700 (PDT)
+        Thu, 22 Aug 2024 08:28:42 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: vkoul@kernel.org,
@@ -78,9 +78,9 @@ Cc: linux-phy@lists.infradead.org,
 	linux-pm@vger.kernel.org,
 	claudiu.beznea@tuxon.dev,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 12/16] phy: renesas: rcar-gen3-usb2: Add support for the RZ/G3S SoC
-Date: Thu, 22 Aug 2024 18:27:57 +0300
-Message-Id: <20240822152801.602318-13-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 13/16] arm64: dts: renesas: Add #reset-cells to system controller node
+Date: Thu, 22 Aug 2024 18:27:58 +0300
+Message-Id: <20240822152801.602318-14-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
 References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
@@ -94,43 +94,26 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Add support for the Renesas RZ/G3S SoC. The support is similar with the
-rest of RZ/G2 devices with the except that the RZ/G3S needs bus
-initialization due to hardware limitation.
+System controller on RZ/G3S can act as a reset controller. Add #reset-cells
+for it.
 
 Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 ---
- drivers/phy/renesas/phy-rcar-gen3-usb2.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+ arch/arm64/boot/dts/renesas/r9a08g045.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-index cf4299cea579..58e123305152 100644
---- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-+++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
-@@ -583,6 +583,12 @@ static const struct rcar_gen3_phy_drv_data rz_g2l_phy_usb2_data = {
- 	.no_adp_ctrl = true,
- };
+diff --git a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
+index 0d5c47a65e46..cd7cefdb2bab 100644
+--- a/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
++++ b/arch/arm64/boot/dts/renesas/r9a08g045.dtsi
+@@ -91,6 +91,7 @@ sysc: system-controller@11020000 {
+ 				     <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
+ 			interrupt-names = "lpm_int", "ca55stbydone_int",
+ 					  "cm33stbyr_int", "ca55_deny";
++			#reset-cells = <1>;
+ 			status = "disabled";
+ 		};
  
-+static const struct rcar_gen3_phy_drv_data rz_g3s_phy_usb2_data = {
-+	.phy_usb2_ops = &rcar_gen3_phy_usb2_ops,
-+	.no_adp_ctrl = true,
-+	.init_bus = true,
-+};
-+
- static const struct of_device_id rcar_gen3_phy_usb2_match_table[] = {
- 	{
- 		.compatible = "renesas,usb2-phy-r8a77470",
-@@ -604,6 +610,10 @@ static const struct of_device_id rcar_gen3_phy_usb2_match_table[] = {
- 		.compatible = "renesas,rzg2l-usb2-phy",
- 		.data = &rz_g2l_phy_usb2_data,
- 	},
-+	{
-+		.compatible = "renesas,usb2-phy-r9a08g045",
-+		.data = &rz_g3s_phy_usb2_data,
-+	},
- 	{
- 		.compatible = "renesas,rcar-gen3-usb2-phy",
- 		.data = &rcar_gen3_phy_usb2_data,
 -- 
 2.39.2
 
