@@ -1,229 +1,169 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C5D21CC165;
-	Thu, 22 Aug 2024 14:46:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 215D01C9DD3
+	for <linux-clk@vger.kernel.org>; Thu, 22 Aug 2024 15:28:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724337977; cv=none; b=YoLGr5MXW7GqwsponRQj72s9ZFq+u/TeN/Fadqhd71ysol7KNXLUS1ieEaveU/dd1PP8QNBeter4Qa9GpGClqOajwdhrlqvYB7lwlRlFlcjneVPTqz1QIV5S3zGaGTCiCk5luvufc/2YSUe8syqszXpjdoChyXj4Lw6kFrBBB+g=
+	t=1724340500; cv=none; b=BytHAjuvQ9sGHfnhMwfl7RN8swPYA0ON+atbjhSQUHwvV9KosvSKsbpB7PUOohSu56jkSToRUS1jJv/HiQnzPjWwG9a58Q9WM1T8vZ+CEC7RnJTzLVD2mS4IYbiV+yBKlgCNDw8GopCAOyhKeTSS6EAhbvSAoEL5kOrt/DuNfKk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724337977; c=relaxed/simple;
-	bh=5v3tCV9kMZOqOSCUGiBY/lU7WWrnzRK+cImVi7EnQ2g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=liOE4arVZsu6cySv5L6dU5pCZaaxB+Kqbtz9uKSgr7RV/uvnFzPHGaCW71HQtTdCpyra4zamr7m6F+1MH/Ue5jjp4T9nrBRjnK/p4KD2aJuD4Fvclcfp9e8AR9AQpKZBAH3f6QGv6a3IjGhDhkkIHQVcII6UFErMbbWx/63krlo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MNFLc+oB; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1724340500; c=relaxed/simple;
+	bh=LBFFDsm/zfrS0rd8SU927JaSUE2tzSc1L6UBcRcd76I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lM1C5m9xNnXj8rLzSW46W6XIAm9p+zIv37OoAIz0Nkr2NynJZiXUwugTBabGXbhJ9+aFgvjxp5gOroWpsVEwRaZy5S8gfqsCPpxluKNdUFIdrE+i97feejuITSiPBA1xRbUERe2RkXSlYM0UD8gsvPRVXfGiMVMlUkPEcZ4LcXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=OdoExPkz; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MNFLc+oB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 037FAC32782;
-	Thu, 22 Aug 2024 14:46:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724337976;
-	bh=5v3tCV9kMZOqOSCUGiBY/lU7WWrnzRK+cImVi7EnQ2g=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=MNFLc+oBwZiyAhoYsiKONffoxs2QdCPy30fTTuweAnZ8dprMTHoUoBmLrBBidba2R
-	 wooagB8un4vGmgm3KJHOW3WlTydxZ/U/k2tjiQOTBl3wiuDmF8Cw9yH0tF+2PjUESw
-	 L2xnDiQjpXFlcZ9nRc2n0vyXxdbTAg5a9U63LkEkun85eZz2P933i7QvOjlr9yuY9g
-	 rdGG+I2gIDze3tAY2/Gsztj82ylykPrRTRWzsLsBDLbWKAaFWV0OcBU9oGD0Df69t2
-	 7Rt197l5qz85/AfgNh53SPg+mu/EgnL+3u7mMCiUpRq+5oTa003Vk600tUHL1pEk21
-	 E0Bo8KEtzQgAg==
-Message-ID: <98ec373b-7c7d-4775-b166-9be1e1b3eda1@kernel.org>
-Date: Thu, 22 Aug 2024 16:46:07 +0200
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="OdoExPkz"
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5334879ba28so1234591e87.3
+        for <linux-clk@vger.kernel.org>; Thu, 22 Aug 2024 08:28:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1724340496; x=1724945296; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oG0PQto83btnEL28K6haZsLSn7p7+BWVYeK6+IqQicQ=;
+        b=OdoExPkzWUcU34Q/UVxriUD2ai3wD+qWxIX8I2iEkUM04fWwxnHQBaMxhJrMTGpV88
+         cl4GNXLI50ETCaIMBgh9qvsYYtEeBgwqID3MFf8G9xlx8+yYmSOE94ewnKhfZIkiWSyQ
+         +q6AwJNbg8pw5MewjBiaxZi/F1SASSr1C5mhUEvpyDGi828JaMqG5B5cGO8AyXh5T04J
+         bYOYASXIIyVDT81OztW6FSgWcrdArywa36PWmDX8OoCmu5x5Ysl151h7stIIdOuf+67r
+         HQFqqFwO4FjCzjMfT+BEwz4EteMmtm434rB46liZwhCUS7Pnt7BdsTMB64Ag3euhKLfP
+         P6ZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724340496; x=1724945296;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oG0PQto83btnEL28K6haZsLSn7p7+BWVYeK6+IqQicQ=;
+        b=F5PYg9B+PPWnbwXEI3ahcBRhb1U0esCSt86tyvcvqGwTpAvAL9OFQ3jNkdKKOBkhTE
+         yVMcntXXdYeRTf/ZMNomlgMG21tlwWpwrlgAmdgp4/QCC04t67bYDEQJvv+t8Aug7HY+
+         uNfVrysP6RcXMoctjykMYHvFk8jDNb1kWwDChMGrXJCFVmfS41IQGeZwtSwhIzvz+2wZ
+         d9jUgq/SDWgjqiOwMmRnatBui374xc1cTbaFlR57qLLHaqESBbXIY713sh+epfi975Tc
+         UfrxGBAxZorgcs3s/QwKlHY9SMdXwpsZcSFRUf0pUKlW05EBGyRAUPTa3cfuqkMEeqEA
+         sKHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXZYdF1zDY2MxLKbIgYcbfVz3KyATg92+USYZeVGOGPfyhOLWKfU+peCgkJt89KR4C+Mh5wfBqGo6I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz35ZZun9VYjm0TLQcb/goZzY0Kwk7EjgHH1ZDHaaef2YKnKfFC
+	tur01wrqzqrdp1ZroAwROalXbeEe+mlrV663MhzDRn+7sZjhIPbBhDa33a6Pa6c=
+X-Google-Smtp-Source: AGHT+IHF2HEzRj6RLICHJMj0My+kwTWQOaRUjHy9OJ1aWJK8tooH9yYqAZuBr0m26WtCehY9rsGeRw==
+X-Received: by 2002:ac2:4c46:0:b0:52e:9b92:4990 with SMTP id 2adb3069b0e04-53348562455mr4098402e87.32.1724340495855;
+        Thu, 22 Aug 2024 08:28:15 -0700 (PDT)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.177])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f484dc5sm134189166b.171.2024.08.22.08.28.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2024 08:28:15 -0700 (PDT)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: vkoul@kernel.org,
+	kishon@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	p.zabel@pengutronix.de,
+	geert+renesas@glider.be,
+	magnus.damm@gmail.com,
+	gregkh@linuxfoundation.org,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	yoshihiro.shimoda.uh@renesas.com,
+	biju.das.jz@bp.renesas.com,
+	ulf.hansson@linaro.org
+Cc: linux-phy@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	claudiu.beznea@tuxon.dev,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 00/16] Add initial USB support for the Renesas RZ/G3S SoC
+Date: Thu, 22 Aug 2024 18:27:45 +0300
+Message-Id: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/11] misc: rp1: RaspberryPi RP1 misc driver
-To: Andrea della Porta <andrea.porta@suse.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
- Linus Walleij <linus.walleij@linaro.org>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic
- <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Saravana Kannan <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- netdev@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-arch@vger.kernel.org, Lee Jones <lee@kernel.org>,
- Andrew Lunn <andrew@lunn.ch>, Stefan Wahren <wahrenst@gmx.net>
-References: <cover.1724159867.git.andrea.porta@suse.com>
- <5954e4dccc0e158cf434d2c281ad57120538409b.1724159867.git.andrea.porta@suse.com>
- <lrv7cpbt2n7eidog5ydhrbyo5se5l2j23n7ljxvojclnhykqs2@nfeu4wpi2d76>
- <400486cd-e23c-4501-98c0-aa999aa45f75@kernel.org>
- <ZsdMLgf2U-CRpnH4@apocalypse>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <ZsdMLgf2U-CRpnH4@apocalypse>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 22/08/2024 16:33, Andrea della Porta wrote:
-> Hi Krzysztof,
-> 
-> On 16:20 Wed 21 Aug     , Krzysztof Kozlowski wrote:
->> On 21/08/2024 10:38, Krzysztof Kozlowski wrote:
->>> On Tue, Aug 20, 2024 at 04:36:10PM +0200, Andrea della Porta wrote:
->>
->> ...
->>
->>>>  drivers/misc/Kconfig                  |   1 +
->>>>  drivers/misc/Makefile                 |   1 +
->>>>  drivers/misc/rp1/Kconfig              |  20 ++
->>>>  drivers/misc/rp1/Makefile             |   3 +
->>>>  drivers/misc/rp1/rp1-pci.c            | 333 ++++++++++++++++++++++++++
->>>>  drivers/misc/rp1/rp1-pci.dtso         |   8 +
->>>>  drivers/pci/quirks.c                  |   1 +
->>>>  include/linux/pci_ids.h               |   3 +
->>>>  10 files changed, 524 insertions(+)
->>>>  create mode 100644 arch/arm64/boot/dts/broadcom/rp1.dtso
->>>>  create mode 100644 drivers/misc/rp1/Kconfig
->>>>  create mode 100644 drivers/misc/rp1/Makefile
->>>>  create mode 100644 drivers/misc/rp1/rp1-pci.c
->>>>  create mode 100644 drivers/misc/rp1/rp1-pci.dtso
->>>>
->>>> diff --git a/MAINTAINERS b/MAINTAINERS
->>>> index 67f460c36ea1..1359538b76e8 100644
->>>> --- a/MAINTAINERS
->>>> +++ b/MAINTAINERS
->>>> @@ -19119,9 +19119,11 @@ F:	include/uapi/linux/media/raspberrypi/
->>>>  RASPBERRY PI RP1 PCI DRIVER
->>>>  M:	Andrea della Porta <andrea.porta@suse.com>
->>>>  S:	Maintained
->>>> +F:	arch/arm64/boot/dts/broadcom/rp1.dtso
->>>>  F:	Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml
->>>>  F:	Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml
->>>>  F:	drivers/clk/clk-rp1.c
->>>> +F:	drivers/misc/rp1/
->>>>  F:	drivers/pinctrl/pinctrl-rp1.c
->>>>  F:	include/dt-bindings/clock/rp1.h
->>>>  F:	include/dt-bindings/misc/rp1.h
->>>> diff --git a/arch/arm64/boot/dts/broadcom/rp1.dtso b/arch/arm64/boot/dts/broadcom/rp1.dtso
->>>> new file mode 100644
->>>> index 000000000000..d80178a278ee
->>>> --- /dev/null
->>>> +++ b/arch/arm64/boot/dts/broadcom/rp1.dtso
->>>> @@ -0,0 +1,152 @@
->>>> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
->>>> +
->>>> +#include <dt-bindings/gpio/gpio.h>
->>>> +#include <dt-bindings/interrupt-controller/irq.h>
->>>> +#include <dt-bindings/clock/rp1.h>
->>>> +#include <dt-bindings/misc/rp1.h>
->>>> +
->>>> +/dts-v1/;
->>>> +/plugin/;
->>>> +
->>>> +/ {
->>>> +	fragment@0 {
->>>> +		target-path="";
->>>> +		__overlay__ {
->>>> +			#address-cells = <3>;
->>>> +			#size-cells = <2>;
->>>> +
->>>> +			rp1: rp1@0 {
->>>> +				compatible = "simple-bus";
->>>> +				#address-cells = <2>;
->>>> +				#size-cells = <2>;
->>>> +				interrupt-controller;
->>>> +				interrupt-parent = <&rp1>;
->>>> +				#interrupt-cells = <2>;
->>>> +
->>>> +				// ranges and dma-ranges must be provided by the includer
->>>> +				ranges = <0xc0 0x40000000
->>>> +					  0x01/*0x02000000*/ 0x00 0x00000000
->>>> +					  0x00 0x00400000>;
->>>
->>> Are you 100% sure you do not have here dtc W=1 warnings?
->>
->> One more thing, I do not see this overlay applied to any target, which
->> means it cannot be tested. You miss entry in Makefile.
->>
-> 
-> The dtso is intended to be built from driver/misc/rp1/Makefile as it will
-> be included in the driver obj:
-> 
-> --- /dev/null
-> +++ b/drivers/misc/rp1/Makefile
-> @@ -0,0 +1,3 @@
-> +# SPDX-License-Identifier: GPL-2.0-only
-> +rp1-pci-objs                   := rp1-pci.o rp1-pci.dtbo.o
-> +obj-$(CONFIG_MISC_RP1)         += rp1-pci.o
-> 
-> and not as part of the dtb system, hence it's m issing in
-> arch/arm64/boot/dts/broadcom/Makefile.
-> 
-> On the other hand:
-> 
-> #> make W=1 CHECK_DTBS=y broadcom/rp1.dtbo
->   DTC     arch/arm64/boot/dts/broadcom/rp1.dtbo
-> arch/arm64/boot/dts/broadcom/rp1.dtso:37.24-42.7: Warning (simple_bus_reg): /fragment@0/__overlay__/rp1@0/clk_xosc: missing or empty reg/ranges property
-> arch/arm64/boot/dts/broadcom/rp1.dtso:44.26-49.7: Warning (simple_bus_reg): /fragment@0/__overlay__/rp1@0/macb_pclk: missing or empty reg/ranges property
-> arch/arm64/boot/dts/broadcom/rp1.dtso:51.26-56.7: Warning (simple_bus_reg): /fragment@0/__overlay__/rp1@0/macb_hclk: missing or empty reg/ranges property
-> arch/arm64/boot/dts/broadcom/rp1.dtso:14.15-173.5: Warning (avoid_unnecessary_addr_size): /fragment@0/__overlay__: unnecessary #address-cells/#size-cells without "ranges", "dma-ranges" or child "reg" property
-> 
-> seems to do the checks, unless I'm missing something.
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Yeah, there is still no target which applies the overlay, so no one can
-tell whether it applies cleanly or not. You can only test single
-overlay, but it is expected to test each overlay being applied to chosen
-DTB.
+Hi,
 
-Best regards,
-Krzysztof
+Series adds initial USB support for the Renesas RZ/G3S SoC.
+
+Series is split as follows:
+
+- patch 01/16		- add clock reset and power domain support for USB
+- patch 02-04/16	- add reset control support for a USB signal
+			  that need to be controlled before/after
+			  the power to USB area is turned on/off.
+			  
+			  Philipp, Ulf, Geert, all,
+			  
+			  I detailed my approach for this in patch
+			  04/16, please have a look and let me know
+			  your input.
+			  
+			  Thank you!
+
+- patch 05/16		- moves SoC identification to SYSC driver
+- patch 06-08/16	- updates USB PHY control driver for USB
+			  support
+- patch 09/16		- update documentation for USBHS
+- patch 10-12/16	- updates the USB PHY driver for USB support
+- patch 13-15/16	- updates the device tree with USB support
+- patch 16/16		- enables the reset control driver
+
+Thank you,
+Claudiu Beznea
+
+Claudiu Beznea (16):
+  clk: renesas: r9a08g045: Add clocks, resets and power domains for USB
+  dt-bindings: soc: renesas: renesas,rzg2l-sysc: Add #reset-cells for
+    RZ/G3S
+  dt-bindings: reset: renesas,r9a08g045-sysc: Add reset IDs for RZ/G3S
+    SYSC reset
+  soc: renesas: Add SYSC driver for Renesas RZ/G3S
+  soc: renesas: sysc: Move RZ/G3S SoC detection on SYSC driver
+  dt-bindings: reset: renesas,rzg2l-usbphy-ctrl: Document RZ/G3S SoC
+  reset: rzg2l-usbphy-ctrl: Get reset control array
+  reset: rzg2l-usbphy-ctrl: Add support for RZ/G3S
+  dt-bindings: usb: renesas,usbhs: Document RZ/G3S SoC
+  phy: renesas: rcar-gen3-usb2: Add support to initialize the bus
+  dt-bindings: phy: renesas,usb2-phy: Document RZ/G3S phy bindings
+  phy: renesas: rcar-gen3-usb2: Add support for the RZ/G3S SoC
+  arm64: dts: renesas: Add #reset-cells to system controller node
+  arm64: dts: renesas: r9a08g045: Add USB support
+  arm64: dts: renesas: rzg3s-smarc: Enable USB support
+  arm64: defconfig: Enable RZ/G3S SYSC reset driver
+
+ .../bindings/phy/renesas,usb2-phy.yaml        |   4 +-
+ .../reset/renesas,rzg2l-usbphy-ctrl.yaml      |  35 +++-
+ .../soc/renesas/renesas,rzg2l-sysc.yaml       |  16 ++
+ .../bindings/usb/renesas,usbhs.yaml           |   2 +
+ arch/arm64/boot/dts/renesas/r9a08g045.dtsi    | 120 +++++++++++++
+ arch/arm64/boot/dts/renesas/rzg3s-smarc.dtsi  |  61 +++++++
+ arch/arm64/configs/defconfig                  |   1 +
+ drivers/clk/renesas/r9a08g045-cpg.c           |  17 ++
+ drivers/phy/renesas/phy-rcar-gen3-usb2.c      |  60 ++++++-
+ drivers/reset/Kconfig                         |   7 +
+ drivers/reset/Makefile                        |   1 +
+ drivers/reset/reset-rzg2l-usbphy-ctrl.c       |   3 +-
+ drivers/reset/reset-rzg3s-sysc.c              | 140 ++++++++++++++++
+ drivers/soc/renesas/Makefile                  |   1 +
+ drivers/soc/renesas/renesas-soc.c             |  12 --
+ drivers/soc/renesas/rzg3s-sysc.c              | 158 ++++++++++++++++++
+ .../reset/renesas,r9a08g045-sysc.h            |  10 ++
+ include/linux/soc/renesas/rzg3s-sysc-reset.h  |  24 +++
+ 18 files changed, 648 insertions(+), 24 deletions(-)
+ create mode 100644 drivers/reset/reset-rzg3s-sysc.c
+ create mode 100644 drivers/soc/renesas/rzg3s-sysc.c
+ create mode 100644 include/dt-bindings/reset/renesas,r9a08g045-sysc.h
+ create mode 100644 include/linux/soc/renesas/rzg3s-sysc-reset.h
+
+-- 
+2.39.2
 
