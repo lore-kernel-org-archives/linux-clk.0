@@ -1,154 +1,112 @@
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 581B616F0DE;
-	Wed, 21 Aug 2024 23:52:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0763F6FB9;
+	Thu, 22 Aug 2024 00:24:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724284331; cv=none; b=aSpbNINeDysLQ2fZlPZtxgWey6ndsR1VCVZD18mfUQXBxLoI7Lovzrnu4JJHua1i/r2+bFStgI+EXVyhat4ev5swObHlHzk4drAOEq6tGD1YxF5BdV+o50wutN6BuxaldvwcdttCcPYvH8djURkzyQ2l/sCJVkKCr8LH4mVDQn0=
+	t=1724286275; cv=none; b=JhhVsRLlOl+drKpSZZzrTkbhpmMJHsAe9zIVA95O52ZX5BZ5rwKyYgDwJMzcNYApvxB6Fa0XcWGeCvHERyPjo4swnq/hzV08/pkslJlgo93Aw2+ENIcUhiR9cmHqt5J1olJm71rDGQXZszl1WcN/KRko7kdZkGKIEyHcEC2DUuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724284331; c=relaxed/simple;
-	bh=/Z/HwBcsCtywniW/ZzCfaEcLcBT+4xgCHYU82J8sQv8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LQOD+8bbX7VA3Zw7d4aJr/z2K2NRLTS26USXMvfAL/VM1zub/2absl40yciVkv+9Ls8ra1OSPfCJ03ARp1Euy4faz4XslfN4RhBy6EqcqPeTm9qze6SPzTBybhRv6j0HKhryiwXlgTiVWqigpDLL4ErT6v3k2PNB62oQR9gHK4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=VbtvZFJi; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1724286275; c=relaxed/simple;
+	bh=8ZtfgYLUKOcsfIJw9GLcrjUrcszWoLOa8hE3abm8uEE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tQS8v0TVkarflJeCNXYv9hUmWRrg9hi48OyXO2Y2GY3cUd8/Av+Cu6KaFv+2qLVrA3U0hIIlUT/SOfQ0hItrRDKaGwCD+upgTDjm4+iqtX2Yf+KiObHeFEZxqJPZyIkoHr3MrqC7uBwZp5VlCXnnVZyY6JO0prFQM2ve9ivirrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RtwlE1mz; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="VbtvZFJi"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 0E59640002;
-	Wed, 21 Aug 2024 23:52:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1724284326;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0HU6Ta0HRhn2z2jojEOSX+U5lajLvD863lfH93hnjsU=;
-	b=VbtvZFJi3StZk7TiRQXTxa1wm4MmfPKHL0/WmMfUgnd49Fp7FopIMAlK2UXxlv/eUEAZx6
-	G6gk53COFJWmQNJRJAHgZ61Fus17tem6M23NMRwLJQt8i+ALVUNqgBlU6F7EYaYZMsHP8E
-	zjdJTCvcqovkCYhr9Q3LDATQrlOIPETV9/3txL9CQ5+Ugg5Anus1/MAOx/yFieYDBvYGea
-	SH9tSE0HZ7ZpETMcv/q0yOoBqxmveYFxZRKKGOdFjDNOY35AD9MtfW6nNvgrdj3OrglYQU
-	32cvapPFuyT+WMBAv/cEm8FAe23ezIoWg9g0SiViWtszE01NzAjvrQE63GfeHw==
-Date: Thu, 22 Aug 2024 01:52:05 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Alexander Dahl <ada@thorsis.com>
-Cc: linux-clk@vger.kernel.org, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
-	Sandeep Sheriker Mallikarjun <sandeepsheriker.mallikarjun@microchip.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] ARM: dts: microchip: sam9x60: Fix rtc/rtt clocks
-Message-ID: <20240821235205b302068b@mail.local>
-References: <20240820132730.357347-1-ada@thorsis.com>
- <20240821055136.6858-1-ada@thorsis.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RtwlE1mz"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 271C1C32781;
+	Thu, 22 Aug 2024 00:24:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724286274;
+	bh=8ZtfgYLUKOcsfIJw9GLcrjUrcszWoLOa8hE3abm8uEE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=RtwlE1mzYPZ+lF43mWERnPpsGlNpwJ4aTHXUbJIR6PkOAOHkxtSvk/YgNXFvIIv4C
+	 cLuCzNOp6SkrFxjGxjCbe8cypHzsRDGHm7BxHlFKFSx3HGWcFtMnrg7e7YTap1xNT5
+	 J2lsMHTL2r+bpWiVzlrdkbcVcJY/GsA1zoJJ7Hk7yk6osIip5vEdSHVJ18yXBNXby/
+	 QHQpVSiA904US7xkyp82nCMkgQGTOqTMS3hnh8dP5QEanoydk0/IAOdeKEB02ZVtZB
+	 cDU5RD0GlTpAZqLlN6+L4VOuQ7GLdfStps8MIXhSONdmjWwktWVDlMQJrBbjcZ7HQw
+	 +Tbm4xw6jZdzA==
+From: Stephen Boyd <sboyd@kernel.org>
+To: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	patches@lists.linux.dev,
+	kunit-dev@googlegroups.com,
+	Brendan Higgins <brendan.higgins@linux.dev>,
+	David Gow <davidgow@google.com>,
+	Rae Moar <rmoar@google.com>,
+	Peng Fan <peng.fan@nxp.com>
+Subject: [PATCH 0/3] clk: test: Test clock-assigned-rates{-u64}
+Date: Wed, 21 Aug 2024 17:24:27 -0700
+Message-ID: <20240822002433.1163814-1-sboyd@kernel.org>
+X-Mailer: git-send-email 2.46.0.295.g3b9ea8a38a-goog
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240821055136.6858-1-ada@thorsis.com>
-X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On 21/08/2024 07:51:36+0200, Alexander Dahl wrote:
-> The RTC and RTT peripherals use the "timing domain slow clock (TD_SLCK),
-> sourced from the 32.768 kHz crystal oscillator.
-> 
-> (The previously used Monitoring domain slow clock (MD_SLCK) is sourced
-> from an internal RC oscillator which is most probably not precise enough
-> for real time clock purposes.)
-> 
-> Fixes: 1e5f532c2737 ("ARM: dts: at91: sam9x60: add device tree for soc and board")
-> Fixes: 5f6b33f46346 ("ARM: dts: sam9x60: add rtt")
-> Signed-off-by: Alexander Dahl <ada@thorsis.com>
-> ---
-> 
-> Notes:
->     Picked the wrong patch in the first try.  This v2 one has a slightly
->     adapted commit message and more context below.
->     
->     This obviously requires a 32.768 kHz crystal oscillator to be present,
->     but the sam9x60.dtsi does contain that, and the clock-controllers
->     reference that, so I assume it's always present.
+Add some kunit tests for the clock-assigned-rates and
+clock-assigned-rates-64 DT properties. I think it may be possible to
+crush this down into more carefully chosen DT overlay applications of
+properties but this works for now.
 
-The crystal is optional so this is going to break the boards that don't
-have one. I don't really mind but this should probably be part of the
-commit message.
+This is based on a merge of the clk-assigned-rates and clk-kunit
+branches in clk.git
 
-This makes me realise that we always assumed the RC oscillator was
-running at 32768 while the sam9x60 datasheet refers to it has a 32kHz
-oscillator. However the RTC only has a 32768 divider...
+Cc: Brendan Higgins <brendan.higgins@linux.dev>
+Cc: David Gow <davidgow@google.com>
+Cc: Rae Moar <rmoar@google.com>
+Cc: Peng Fan <peng.fan@nxp.com>
 
->     
->     /sys/kernel/debug/clk/clk_summary content excerpt before:
->     
->          slow_rc_osc                         1       1        0        32768       93750000   0     50000      Y   deviceless                      no_connection_id
->             md_slck                          4       4        0        32768       0          0     50000      Y      fffffea8.rtc                    no_connection_id
->                                                                                                                       fffffe20.rtc                    no_connection_id
->                                                                                                                       fffffe10.poweroff               no_connection_id
->                                                                                                                       fffffe00.reset-controller       no_connection_id
->                                                                                                                       timer@f8008000                  slow_clk
->                                                                                                                       deviceless                      no_connection_id
->     …
->          slow_xtal                           0       0        0        32768       0          0     50000      Y   deviceless                      no_connection_id
->             slow_osc                         0       0        0        32768       0          0     50000      Y      deviceless                      no_connection_id
->                td_slck                       0       0        0        32768       0          0     50000      Y         deviceless                      no_connection_id
->     
->     And after:
->     
->          slow_rc_osc                         1       1        0        32768       93750000   0     50000      Y   deviceless                      no_connection_id
->             md_slck                          2       2        0        32768       0          0     50000      Y      fffffe10.poweroff               no_connection_id
->                                                                                                                       fffffe00.reset-controller       no_connection_id
->                                                                                                                       timer@f8008000                  slow_clk
->                                                                                                                       deviceless                      no_connection_id
->     …
->          slow_xtal                           1       1        0        32768       0          0     50000      Y   deviceless                      no_connection_id
->             slow_osc                         1       1        0        32768       0          0     50000      Y      deviceless                      no_connection_id
->                td_slck                       2       2        0        32768       0          0     50000      Y         fffffea8.rtc                    no_connection_id
->                                                                                                                          fffffe20.rtc                    no_connection_id
->                                                                                                                          deviceless                      no_connection_id
-> 
->  arch/arm/boot/dts/microchip/sam9x60.dtsi | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm/boot/dts/microchip/sam9x60.dtsi b/arch/arm/boot/dts/microchip/sam9x60.dtsi
-> index 291540e5d81e..d077afd5024d 100644
-> --- a/arch/arm/boot/dts/microchip/sam9x60.dtsi
-> +++ b/arch/arm/boot/dts/microchip/sam9x60.dtsi
-> @@ -1312,7 +1312,7 @@ rtt: rtc@fffffe20 {
->  				compatible = "microchip,sam9x60-rtt", "atmel,at91sam9260-rtt";
->  				reg = <0xfffffe20 0x20>;
->  				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
-> -				clocks = <&clk32k 0>;
-> +				clocks = <&clk32k 1>;
->  			};
->  
->  			pit: timer@fffffe40 {
-> @@ -1338,7 +1338,7 @@ rtc: rtc@fffffea8 {
->  				compatible = "microchip,sam9x60-rtc", "atmel,at91sam9x5-rtc";
->  				reg = <0xfffffea8 0x100>;
->  				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
-> -				clocks = <&clk32k 0>;
-> +				clocks = <&clk32k 1>;
->  			};
->  
->  			watchdog: watchdog@ffffff80 {
-> 
-> base-commit: 47ac09b91befbb6a235ab620c32af719f8208399
-> -- 
-> 2.39.2
-> 
+Stephen Boyd (3):
+  clk: test: Add test managed of_clk_add_hw_provider()
+  of: kunit: Extract some overlay boiler plate into macros
+  clk: test: Add KUnit tests for clock-assigned-rates{-u64} DT
+    properties
 
+ drivers/clk/Makefile                          |  14 +
+ drivers/clk/clk_kunit_helpers.c               |  30 ++
+ drivers/clk/clk_test.c                        | 321 ++++++++++++++++++
+ drivers/clk/kunit_clk_assigned_rates.h        |   8 +
+ .../kunit_clk_assigned_rates_multiple.dtso    |  16 +
+ ..._clk_assigned_rates_multiple_consumer.dtso |  20 ++
+ .../clk/kunit_clk_assigned_rates_null.dtso    |  14 +
+ ...unit_clk_assigned_rates_null_consumer.dtso |  18 +
+ drivers/clk/kunit_clk_assigned_rates_one.dtso |  14 +
+ ...kunit_clk_assigned_rates_one_consumer.dtso |  18 +
+ ...kunit_clk_assigned_rates_u64_multiple.dtso |  16 +
+ ..._assigned_rates_u64_multiple_consumer.dtso |  20 ++
+ .../clk/kunit_clk_assigned_rates_u64_one.dtso |  14 +
+ ...t_clk_assigned_rates_u64_one_consumer.dtso |  18 +
+ .../clk/kunit_clk_assigned_rates_without.dtso |  13 +
+ ...t_clk_assigned_rates_without_consumer.dtso |  17 +
+ .../clk/kunit_clk_assigned_rates_zero.dtso    |  12 +
+ ...unit_clk_assigned_rates_zero_consumer.dtso |  16 +
+ include/kunit/clk.h                           |   4 +
+ include/kunit/of.h                            |  14 +-
+ 20 files changed, 613 insertions(+), 4 deletions(-)
+ create mode 100644 drivers/clk/kunit_clk_assigned_rates.h
+ create mode 100644 drivers/clk/kunit_clk_assigned_rates_multiple.dtso
+ create mode 100644 drivers/clk/kunit_clk_assigned_rates_multiple_consumer.dtso
+ create mode 100644 drivers/clk/kunit_clk_assigned_rates_null.dtso
+ create mode 100644 drivers/clk/kunit_clk_assigned_rates_null_consumer.dtso
+ create mode 100644 drivers/clk/kunit_clk_assigned_rates_one.dtso
+ create mode 100644 drivers/clk/kunit_clk_assigned_rates_one_consumer.dtso
+ create mode 100644 drivers/clk/kunit_clk_assigned_rates_u64_multiple.dtso
+ create mode 100644 drivers/clk/kunit_clk_assigned_rates_u64_multiple_consumer.dtso
+ create mode 100644 drivers/clk/kunit_clk_assigned_rates_u64_one.dtso
+ create mode 100644 drivers/clk/kunit_clk_assigned_rates_u64_one_consumer.dtso
+ create mode 100644 drivers/clk/kunit_clk_assigned_rates_without.dtso
+ create mode 100644 drivers/clk/kunit_clk_assigned_rates_without_consumer.dtso
+ create mode 100644 drivers/clk/kunit_clk_assigned_rates_zero.dtso
+ create mode 100644 drivers/clk/kunit_clk_assigned_rates_zero_consumer.dtso
+
+
+base-commit: 76eb1b6085c2dbae07d584536fe6b1e06245da6a
 -- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git/
+https://git.kernel.org/pub/scm/linux/kernel/git/sboyd/spmi.git
+
