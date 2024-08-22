@@ -1,204 +1,284 @@
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f65.google.com (mail-ej1-f65.google.com [209.85.218.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E4CA176FCF;
-	Thu, 22 Aug 2024 08:17:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F0FC17A584
+	for <linux-clk@vger.kernel.org>; Thu, 22 Aug 2024 09:05:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724314677; cv=none; b=eda6JiSMKrwToW0e9ndszRf858SPKA1l3NZY7HuPLDljwNA2vcKUPPUpnYrR1ygWMaxL/Ta5Cl65gLymsVsuKLl05DWNFRmHbCtAhMusW4YGd6EkmV5BPZbc7PdN5PsfjePed1QC4TNYhE1PEqUeH+m/1pH7mxy0UqfNkPCi6WU=
+	t=1724317540; cv=none; b=V6JuKzQ1TlYujHQEE8PHEOulGVCfJbGJ1K3DFH5jUT5rSBU/E0XF28euN65YDNhRNwxoSghDjZGVErduc9Zcbfkx3crcZOhdsi4Ofsx46J5HuElgYMgfpAPoS4rH7oUaLbLgiKyfthHpzAljHRBQKLyRI0IoKhVzX05YrJxU7Ts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724314677; c=relaxed/simple;
-	bh=NqmSxpe1MO8XoWRvN/3Czc4Ol3rCVDg3jAFBUwMgN9I=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HnJyZ+WNpHeFhQHDEb7t1fVlfCp5BfGSSVGT1/pm9OIqDYjl6SfqN16FUlKuROBTOPSJ243U0XBxfN+0blctgO8JAef+1k/H7obcOf9Q5OK3HHvQEYzPDNy31P5X5Db0nIj/xmMfm8VlFOsV+Kmb2ItoaN/UGxTVOUD8ZqqxWk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=f7iTGhq8; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1724317540; c=relaxed/simple;
+	bh=iW8L90qW73Zksm1242gGF6/N3NxsJTz9FHLGPMnz1xc=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=e/32WuXZlh1cmPYBlcXPHLR8v5m3moIPkKbmbWT9mFJqm76Y1y9meMwFmSj1qimi/Czt0c9/pS0B/tKpNKFe/NExFi5lTO/2ZZia94dIlWzsAry7TqS0tnzhMtvt4vdlIQPRG3HIxofneC4Vc0sK1EwuwQMIcz4RtBmBwlM0N8k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=frr5c5aB; arc=none smtp.client-ip=209.85.218.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="f7iTGhq8"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id DF8E2240005;
-	Thu, 22 Aug 2024 08:17:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1724314667;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vLmAUqCpjFppoDxgApNLZBtCJUtY++ru5GMpCrgHDqg=;
-	b=f7iTGhq8vedFE11n/0rRwDedvjSFEEL5BKqO+trhi80xJEsMmwxnrtuXmc+78r4/4Qw7Ba
-	7zeez/x9GLji220CPXCTuOK1JdQMdCvNUSD1IHuo+dywpoQJ8QoCufvfAAlbSEanHDEmMW
-	nKFjfq7+6WpRbZb4YsnveruK+5jLT3itRdOupIwc6lC+WTso5j0eoL9Lm+a4URW+2/Udkk
-	oJR9eE4RD69a8Vf9dZFAsgJEpo/rOLVWWEQrZNj+HM7srDcQovOi3MAWROLsHSvnC1U3mt
-	rbS9yJOJp+Y2lMJyzzF0cPQ4FwziqqGoz3Qt84KtKVPn6xWAZKeB9+c09ImlEA==
-Date: Thu, 22 Aug 2024 10:17:46 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: linux-clk@vger.kernel.org, Rob Herring <robh@kernel.org>,
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="frr5c5aB"
+Received: by mail-ej1-f65.google.com with SMTP id a640c23a62f3a-a7d26c2297eso75444166b.2
+        for <linux-clk@vger.kernel.org>; Thu, 22 Aug 2024 02:05:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1724317536; x=1724922336; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:date:from:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=8oblCwReJRzdkWpeyjSuzACUpr6vesaxftcVWxVJUhw=;
+        b=frr5c5aBI9sy2ew0/b43XWpraPs7EBe1sYCXKpWKrWEaAdjEQMwVvA3dzAqkb4Hdgy
+         n9ueclanmhqM8EyQSXLYpYtQofTUQDi5FLqeIAZNqrXM2uAvCv5bZ6Lv8vnRzG/+oKEU
+         B0bWbkYDHI/Tja9vXHUhBdcRtQHVRKfGXLoA5Y2EPW96S5z21xp+VXGAR654CYIG9aQ1
+         9LLXvB/yQ1plLTTlrYitaEdEVytHl7FVqKZC15ml9hEIyaU/iHn2zYeJpYn0lpRoPfiO
+         tOWjSFbG0iz6dn4qWpc7n/XLgMpULGkO3TXHPWbHu4SZ1ISVhwz5niSzPeuUbXSZTn+G
+         Is2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724317536; x=1724922336;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8oblCwReJRzdkWpeyjSuzACUpr6vesaxftcVWxVJUhw=;
+        b=oZSSjhjZXHQaUb3AIxHa2tyfbP44H3KWpQC8qJmbzBLGLrZ/XrYZUoK+NfYt6/W/Bm
+         BtN29bivZOf3DV82dWvJeL4YJIYfZEH8T93jHU98aT/NtVTKBrrz0SyCj3zeBXhTcTlj
+         U4LeBPC/7GC1zV+1jdB3qp/HJAMHwTBo7Vav/3IPEJqaaGfw5PaCn8gKj0WoyaGGrIam
+         dtNdXaSjDu5JNdFyv/EFYe9wiQO7cam5A3C3mqsSbaWesVk7AvGw26CVPA+G5KwtEFXd
+         rIDkayjm+bUOL6SkEjl8ybG8bHNrQsJzH9XZ0Sr4nBPDODptFVF4c5oRWuIysKZJw5W1
+         YD8g==
+X-Forwarded-Encrypted: i=1; AJvYcCVSETS//ALk2MkpyVV/9LQUVTJQJL7aZ6mEW/CFB91aRIGYO5b0qhcPNTeDrTk0FZM1SaH3gw3lal8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2/BT5Iw4wasmE8H+Tbb8BcF/O0VTzmVMEo1uZbPXLC1iB/m0c
+	o6eMat4DwP0c28p4hWANIWZpCfLx/DG+9H1E+dxCgMJ/NrYGIBp8buqSBIZoDRQ=
+X-Google-Smtp-Source: AGHT+IEDA43nqM23aA/1yK3IamBiUXMJrrIWIEhSqX0acpw/Zxi+tAITW+WPbPymdPgb8Cc2UqJi4g==
+X-Received: by 2002:a17:907:e65b:b0:a77:c6c4:2bb7 with SMTP id a640c23a62f3a-a866f0fd40cmr439215466b.1.1724317535872;
+        Thu, 22 Aug 2024 02:05:35 -0700 (PDT)
+Received: from localhost ([87.13.33.30])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f47d17bsm89109166b.148.2024.08.22.02.05.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2024 02:05:35 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Thu, 22 Aug 2024 11:05:41 +0200
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
-	Sandeep Sheriker Mallikarjun <sandeepsheriker.mallikarjun@microchip.com>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Tudor Ambarus <tudor.ambarus@linaro.org>,
-	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] ARM: dts: microchip: sam9x60: Fix rtc/rtt clocks
-Message-ID: <20240822081746db0ce2bb@mail.local>
-References: <20240820132730.357347-1-ada@thorsis.com>
- <20240821055136.6858-1-ada@thorsis.com>
- <20240821235205b302068b@mail.local>
- <20240822-dragging-grapple-f26e4361e009@thorsis.com>
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Stefan Wahren <wahrenst@gmx.net>
+Subject: Re: [PATCH 00/11] Add support for RaspberryPi RP1 PCI device using a
+ DT overlay
+Message-ID: <Zsb_ZeczWd-gQ5po@apocalypse>
+Mail-Followup-To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Stefan Wahren <wahrenst@gmx.net>
+References: <cover.1724159867.git.andrea.porta@suse.com>
+ <14990d25-40a2-46c0-bf94-25800f379a30@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20240822-dragging-grapple-f26e4361e009@thorsis.com>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+In-Reply-To: <14990d25-40a2-46c0-bf94-25800f379a30@kernel.org>
 
-On 22/08/2024 08:53:59+0200, Alexander Dahl wrote:
-> Hello Alexandre,
-> 
-> Am Thu, Aug 22, 2024 at 01:52:05AM +0200 schrieb Alexandre Belloni:
-> > On 21/08/2024 07:51:36+0200, Alexander Dahl wrote:
-> > > The RTC and RTT peripherals use the "timing domain slow clock (TD_SLCK),
-> > > sourced from the 32.768 kHz crystal oscillator.
-> > > 
-> > > (The previously used Monitoring domain slow clock (MD_SLCK) is sourced
-> > > from an internal RC oscillator which is most probably not precise enough
-> > > for real time clock purposes.)
-> > > 
-> > > Fixes: 1e5f532c2737 ("ARM: dts: at91: sam9x60: add device tree for soc and board")
-> > > Fixes: 5f6b33f46346 ("ARM: dts: sam9x60: add rtt")
-> > > Signed-off-by: Alexander Dahl <ada@thorsis.com>
-> > > ---
-> > > 
-> > > Notes:
-> > >     Picked the wrong patch in the first try.  This v2 one has a slightly
-> > >     adapted commit message and more context below.
-> > >     
-> > >     This obviously requires a 32.768 kHz crystal oscillator to be present,
-> > >     but the sam9x60.dtsi does contain that, and the clock-controllers
-> > >     reference that, so I assume it's always present.
+Hi Krzysztof,
+
+On 15:42 Wed 21 Aug     , Krzysztof Kozlowski wrote:
+> On 20/08/2024 16:36, Andrea della Porta wrote:
+> > RP1 is an MFD chipset that acts as a south-bridge PCIe endpoint sporting
+> > a pletora of subdevices (i.e.  Ethernet, USB host controller, I2C, PWM, 
+> > etc.) whose registers are all reachable starting from an offset from the
+> > BAR address.  The main point here is that while the RP1 as an endpoint
+> > itself is discoverable via usual PCI enumeraiton, the devices it contains
+> > are not discoverable and must be declared e.g. via the devicetree.
 > > 
-> > The crystal is optional so this is going to break the boards that don't
-> > have one. I don't really mind but this should probably be part of the
-> > commit message.
-> 
-> Okay right, according to the datasheet (Figure 27.1 SCKC Block
-> Diagram) you don't need that crystal, you can clear TD_OSCSEL and
-> td_slck runs from the internal rc then.  However, td_slck is always
-> present, it either sources from the internal slow rc oscillator or the
-> crystal oscillator.  And the datasheet says in section 29.1 (PMC):
-> 
->     "The Slow Clock Controller (SCKC) selects the source of TD_SLCK
->     (drives the real-time part (RTT/RTC)).  The source of MD_SLCK
->     (drives the rest of the system controller: wake-up logic,
->     watchdog, PMC, etc.) is always the slow RC oscillator."
-> 
-> md_slck and td_slck are both registered by the at91 sckc driver, and
-> the td_slck gets two parents in of_sam9x60_sckc_setup() when
-> registered by at91_clk_register_sam9x5_slow().  The parent can be
-> switched by clk_sam9x5_slow_set_parent() from sam9x5_slow_ops then,
-> correctly setting the OSCSEL bit.
-> 
-> The whole idea of the patch is giving the rtc/rtt td_slck as a parent
-> as documented in the datasheet.  I don't see how this should be
-> affected by the parents of td_slck?  Am I missing something?
-> 
-
-You are right, I got confused because you were referring t the 32768 Hz
-crystal in your commit message and though you aimed at selected the
-parent of td_slck (and also, I didn't really work on the sam9x60).
-
-
-> > This makes me realise that we always assumed the RC oscillator was
-> > running at 32768 while the sam9x60 datasheet refers to it has a 32kHz
-> > oscillator. However the RTC only has a 32768 divider...
-> 
-> When sourced from the internal rc oscillator, this would mean the
-> output would be incorrect, right?  How could one prove this?
-
-
-I guess you could have a look at how the RTC is drifting when selecting
-the RC osc as the parent but it will anyway be way less precise than the
-crystal so i'm not sure how you could get a conclusive result.
-
-> 
-> Greets
-> Alex
-> 
+> > This patchset is an attempt to provide a minimum infrastructure to allow
+> > the RP1 chipset to be discovered and perpherals it contains to be added
+> > from a devictree overlay loaded during RP1 PCI endpoint enumeration.
+> > Followup patches should add support for the several peripherals contained
+> > in RP1.
 > > 
-> > >     
-> > >     /sys/kernel/debug/clk/clk_summary content excerpt before:
-> > >     
-> > >          slow_rc_osc                         1       1        0        32768       93750000   0     50000      Y   deviceless                      no_connection_id
-> > >             md_slck                          4       4        0        32768       0          0     50000      Y      fffffea8.rtc                    no_connection_id
-> > >                                                                                                                       fffffe20.rtc                    no_connection_id
-> > >                                                                                                                       fffffe10.poweroff               no_connection_id
-> > >                                                                                                                       fffffe00.reset-controller       no_connection_id
-> > >                                                                                                                       timer@f8008000                  slow_clk
-> > >                                                                                                                       deviceless                      no_connection_id
-> > >     …
-> > >          slow_xtal                           0       0        0        32768       0          0     50000      Y   deviceless                      no_connection_id
-> > >             slow_osc                         0       0        0        32768       0          0     50000      Y      deviceless                      no_connection_id
-> > >                td_slck                       0       0        0        32768       0          0     50000      Y         deviceless                      no_connection_id
-> > >     
-> > >     And after:
-> > >     
-> > >          slow_rc_osc                         1       1        0        32768       93750000   0     50000      Y   deviceless                      no_connection_id
-> > >             md_slck                          2       2        0        32768       0          0     50000      Y      fffffe10.poweroff               no_connection_id
-> > >                                                                                                                       fffffe00.reset-controller       no_connection_id
-> > >                                                                                                                       timer@f8008000                  slow_clk
-> > >                                                                                                                       deviceless                      no_connection_id
-> > >     …
-> > >          slow_xtal                           1       1        0        32768       0          0     50000      Y   deviceless                      no_connection_id
-> > >             slow_osc                         1       1        0        32768       0          0     50000      Y      deviceless                      no_connection_id
-> > >                td_slck                       2       2        0        32768       0          0     50000      Y         fffffea8.rtc                    no_connection_id
-> > >                                                                                                                          fffffe20.rtc                    no_connection_id
-> > >                                                                                                                          deviceless                      no_connection_id
-> > > 
-> > >  arch/arm/boot/dts/microchip/sam9x60.dtsi | 4 ++--
-> > >  1 file changed, 2 insertions(+), 2 deletions(-)
-> > > 
-> > > diff --git a/arch/arm/boot/dts/microchip/sam9x60.dtsi b/arch/arm/boot/dts/microchip/sam9x60.dtsi
-> > > index 291540e5d81e..d077afd5024d 100644
-> > > --- a/arch/arm/boot/dts/microchip/sam9x60.dtsi
-> > > +++ b/arch/arm/boot/dts/microchip/sam9x60.dtsi
-> > > @@ -1312,7 +1312,7 @@ rtt: rtc@fffffe20 {
-> > >  				compatible = "microchip,sam9x60-rtt", "atmel,at91sam9260-rtt";
-> > >  				reg = <0xfffffe20 0x20>;
-> > >  				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
-> > > -				clocks = <&clk32k 0>;
-> > > +				clocks = <&clk32k 1>;
-> > >  			};
-> > >  
-> > >  			pit: timer@fffffe40 {
-> > > @@ -1338,7 +1338,7 @@ rtc: rtc@fffffea8 {
-> > >  				compatible = "microchip,sam9x60-rtc", "atmel,at91sam9x5-rtc";
-> > >  				reg = <0xfffffea8 0x100>;
-> > >  				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
-> > > -				clocks = <&clk32k 0>;
-> > > +				clocks = <&clk32k 1>;
-> > >  			};
-> > >  
-> > >  			watchdog: watchdog@ffffff80 {
-> > > 
-> > > base-commit: 47ac09b91befbb6a235ab620c32af719f8208399
-> > > -- 
-> > > 2.39.2
-> > > 
-> > 
-> > -- 
-> > Alexandre Belloni, co-owner and COO, Bootlin
-> > Embedded Linux and Kernel engineering
-> > https://bootlin.com
+> > This work is based upon dowstream drivers code and the proposal from RH
+> > et al. (see [1] and [2]). A similar approach is also pursued in [3].
+> 
+> Looking briefly at findings it seems this was not really tested by
+> automation and you expect reviewers to find issues which are pointed out
+> by tools. That's not nice approach. Reviewer's time is limited, while
+> tools do it for free. And the tools are free - you can use them without
+> any effort.
 
--- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Sorry if I gave you that impression, but this is not obviously the case.
+I've spent quite a bit of time in trying to deliver a patchset that ease
+your and others work, at least to the best I can. In fact, I've used many
+of the checking facilities you mentioned before sending it, solving all
+of the reported issues, except the ones for which there are strong reasons
+to leave untouched, as explained below.
+
+> 
+> It does not look like you tested the DTS against bindings. Please run
+> `make dtbs_check W=1` (see
+> Documentation/devicetree/bindings/writing-schema.rst or
+> https://www.linaro.org/blog/tips-and-tricks-for-validating-devicetree-sources-with-the-devicetree-schema/
+> for instructions).
+
+#> make W=1 dt_binding_check DT_SCHEMA_FILES=raspberrypi,rp1-gpio.yaml
+   CHKDT   Documentation/devicetree/bindings
+   LINT    Documentation/devicetree/bindings
+   DTEX    Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.example.dts
+   DTC_CHK Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.example.dtb
+
+#> make W=1 dt_binding_check DT_SCHEMA_FILES=raspberrypi,rp1-clocks.yaml
+   CHKDT   Documentation/devicetree/bindings
+   LINT    Documentation/devicetree/bindings
+   DTEX    Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.example.dts
+   DTC_CHK Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.example.dtb
+
+I see no issues here, in case you've found something different, I kindly ask you to post
+the results.
+
+#> make W=1 CHECK_DTBS=y broadcom/rp1.dtbo
+   DTC     arch/arm64/boot/dts/broadcom/rp1.dtbo
+   arch/arm64/boot/dts/broadcom/rp1.dtso:37.24-42.7: Warning (simple_bus_reg): /fragment@0/__overlay__/rp1@0/clk_xosc: missing or empty reg/ranges property
+   arch/arm64/boot/dts/broadcom/rp1.dtso:44.26-49.7: Warning (simple_bus_reg): /fragment@0/__overlay__/rp1@0/macb_pclk: missing or empty reg/ranges property
+   arch/arm64/boot/dts/broadcom/rp1.dtso:51.26-56.7: Warning (simple_bus_reg): /fragment@0/__overlay__/rp1@0/macb_hclk: missing or empty reg/ranges property
+   arch/arm64/boot/dts/broadcom/rp1.dtso:14.15-173.5: Warning (avoid_unnecessary_addr_size): /fragment@0/__overlay__: unnecessary #address-cells/#size-cells without "ranges", "dma-ranges" or child "reg" property 
+
+I believe that These warnings are unavoidable, and stem from the fact that this
+is quite a peculiar setup (PCI endpoint which dynamically loads platform driver
+addressable via BAR).
+The missing reg/ranges in the threee clocks are due to the simple-bus of the
+containing node to which I believe they should belong: I did a test to place
+those clocks in the same dtso under root or /clocks node but AFAIK it doesn't
+seems to work. I could move them in a separate dtso to be loaded before the main
+one but this is IMHO even more cumbersome than having a couple of warnings in
+CHECK_DTBS.
+Of course, if you have any suggestion on how to improve it I would be glad to
+discuss.
+About the last warning about the address/size-cells, if I drop those two lines
+in the _overlay_ node it generates even more warning, so again it's a "don't fix"
+one.
+
+> 
+> Please run standard kernel tools for static analysis, like coccinelle,
+> smatch and sparse, and fix reported warnings. Also please check for
+> warnings when building with W=1. Most of these commands (checks or W=1
+> build) can build specific targets, like some directory, to narrow the
+> scope to only your code. The code here looks like it needs a fix. Feel
+> free to get in touch if the warning is not clear.
+
+I didn't run those static analyzers since I've preferred a more "manual" aproach
+by carfeully checking the code, but I agree that something can escape even the
+more carefully executed code inspection so I will add them to my arsenal from
+now on. Thanks for the heads up.
+
+> 
+> Please run scripts/checkpatch.pl and fix reported warnings. Then please
+> run `scripts/checkpatch.pl --strict` and (probably) fix more warnings.
+> Some warnings can be ignored, especially from --strict run, but the code
+> here looks like it needs a fix. Feel free to get in touch if the warning
+> is not clear.
+>
+
+Again, most of checkpatch's complaints have been addressed, the remaining
+ones I deemed as not worth fixing, for example:
+
+#> scripts/checkpatch.pl --strict --codespell tmp/*.patch
+
+WARNING: please write a help paragraph that fully describes the config symbol
+#42: FILE: drivers/clk/Kconfig:91:
++config COMMON_CLK_RP1
++       tristate "Raspberry Pi RP1-based clock support"
++       depends on PCI || COMPILE_TEST
++       depends on COMMON_CLK
++       help
++         Enable common clock framework support for Raspberry Pi RP1.
++         This mutli-function device has 3 main PLLs and several clock
++         generators to drive the internal sub-peripherals.
++
+
+I don't understand this warning, the paragraph is there and is more or less similar
+to many in the same file that are already upstream. Checkpatch bug?
+
+
+CHECK: Alignment should match open parenthesis
+#1541: FILE: drivers/clk/clk-rp1.c:1470:
++       if (WARN_ON_ONCE(clock_data->num_std_parents > AUX_SEL &&
++           strcmp("-", clock_data->parents[AUX_SEL])))
+
+This would have worsen the code readability.
+
+
+WARNING: ENOTSUPP is not a SUSV4 error code, prefer EOPNOTSUPP
+#673: FILE: drivers/pinctrl/pinctrl-rp1.c:600:
++                               return -ENOTSUPP;
+
+This I must investigate: I've already tried to fix it before sending the patchset
+but for some reason it wouldn't work, so I planned to fix it in the upcoming 
+releases.
+
+
+WARNING: externs should be avoided in .c files
+#331: FILE: drivers/misc/rp1/rp1-pci.c:58:
++extern char __dtbo_rp1_pci_begin[];
+
+True, but in this case we don't have a symbol that should be exported to other
+translation units, it just needs to be referenced inside the driver and
+consumed locally. Hence it would be better to place the extern in .c file.
+
+
+Apologies for a couple of other warnings that I could have seen in the first
+place, but honestly they don't seems to be a big deal (one typo and on over
+100 chars comment, that will be fixed in next patch version). 
+ 
+> 
+> Best regards,
+> Krzysztof
+>
+
+Many thanks,
+Andrea 
