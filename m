@@ -1,208 +1,230 @@
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5AE217BB14
-	for <linux-clk@vger.kernel.org>; Thu, 22 Aug 2024 10:04:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1A8F181337;
+	Thu, 22 Aug 2024 10:25:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724321073; cv=none; b=LIeDjQ1Lo888XO2H2oZiKhjQyw286Z+FDrQoX1xXrYqgYZBeuvAlEHc2YavUwJPEsx9mFslioumxAmgf8zpex82Vts7+OEPFuTS00Rw0FTNtA/PksYZIDQCeEw3vGlcAKM9aDJNMwv/OhgSbY/2s0LTyXIHFitr6kCODcBJBvb4=
+	t=1724322335; cv=none; b=HTkQefMv2rVq2L/7VhEmhuHUPRjZ0EJirvMtybJKD0Qchm6AgMwYaHxn9Q8Phoy0Mu2W/DfP8X2i8YuUAc1CQw8kzgfE3otfYMz6vwy0dz84OqxQUqeZlxOEs52z4FjMPNQiJyw5Pq4buAGd7Crah7Y3z1Q5gOg35ncsSyFy/MU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724321073; c=relaxed/simple;
-	bh=xxyoPJfX24KJoyxO6jEzwtrU2Hoh+t/Pzgync5R29bw=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rjPuRP1ciy2YBHOm4WIkJV7fweey1Mr0tN49VwjVp626dTioVfI7k3PEnhjF4IJoW63x+0cQKW1oeJqbo8Neljwvt52ZcQfPY/yN9YgJCBuWxXruJyjMt7bF+I+p+jQd7LL5bH+BMod9vWVCFVK6jNc+mTHWxHPeOzGWXGuGfeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=cjd0qZgh; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	s=arc-20240116; t=1724322335; c=relaxed/simple;
+	bh=YyOacIUzthdJ6SxDaXhBWGJda/3/Nu71Dr6OwU36xx0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ag1E3f+B2vUdTysCH1cFUfp1aoJ4rrm9WvPfwBPFUZAK0Yd4Yje6TgZOv7evunnDl+6r/UJ7YJUYm+GBT5AxLQG9bPSyJLWRijDjH8UPRRSAGFUWXCjZIH6CXo1J+/f/Ni8iWwRec0m27ZKqicx8PxVmCbOGz/Yx2flFcmLo/jw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=kfHRhhdc; arc=none smtp.client-ip=217.92.40.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="cjd0qZgh"
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a8692bbec79so65382866b.3
-        for <linux-clk@vger.kernel.org>; Thu, 22 Aug 2024 03:04:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1724321069; x=1724925869; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:date:from:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=MpyK4IsQzJrI6qeJJhvprKefQNt+Ld7JQCqPLKfE9e0=;
-        b=cjd0qZghW7v0ktHKohaYYLp+lK+DySxFbu34qndmjCyWRs2wDG5qBO45dz0EwS0R0i
-         0ENCdE8+ChXf1PSynPrqXNYD4VPJpJaCOkc2cj/b468r//RB1wegrQdTUDpZURtZ7dOT
-         2vZ7wo0Gavo+Va1aEUOy2l13V5qayiFiohQQWgsRqnJiFZH2aB4MA3DrjNGgIYHL4zox
-         kn1PzOXREbrp3z7h2Sf1yy9VRyzBzIzyUl1BUGiDvB/X+I+QxNGjc2TBRn8ogA5e5aGI
-         BZPueo2fQcKSCGYnoI6NQ3hulR42mQJ/a7RsYYTkrJhoEvc7V0f7ZgsZmQ+EWCN4JqIQ
-         kRWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724321069; x=1724925869;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=MpyK4IsQzJrI6qeJJhvprKefQNt+Ld7JQCqPLKfE9e0=;
-        b=b/6TWmx87MCX2pA5eNR5B4e+29Aa6SGgDlXf8l2OFN+KmXikBK6k/PCqzSOkqEQBLL
-         ENvhe4iSKmy4kb7tt/IpHASm4C1cQJjq5fO/B0l8T2uhi3AZuY2QAK3e5nVGhKW1s78n
-         XFI8pqJ/Lab5fdnCOxILAnAFRWHZx4rasUzTWaSKyIcz2eU10c8Q40aHK/y2eiOt7M4i
-         sQYj0rUHGR88+Ldc8iN3008mfz+s5lpVaAzOubVSrMmGK7jMYBoihOMah8N6Y5P3QAoY
-         ElG5gOXlXt1Hwb90Rpa/Ro7zo9kLFIMJ3xGFPDh7ROcOCX3emVUaOzlNVT+QZ4FZJfOO
-         D2CA==
-X-Forwarded-Encrypted: i=1; AJvYcCXB2Ig1UvKNYbT2DXYfsragMCVTnUfplwHHwW0uEO67Z11ddMNchlVhpyizXqdmavNV8PCol5OyepE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yymf45BRczTHqqNcFjTKURipgautR5exBizWCi+G3w3emBPkq9w
-	XTWOMu1lBLmayuB5Vd2tcVLr/R+YwF6hloU2qTR8ZVWx4mDkJk16wSuOjXqb9oY=
-X-Google-Smtp-Source: AGHT+IHlxXQHOoIG5Xms+dbKMTaH/vArkSFDYv8NHwvurq0I3OqBwEKhWmO0dZKyqjO8q42AqL7AQQ==
-X-Received: by 2002:a17:907:f14d:b0:a7a:9760:9aec with SMTP id a640c23a62f3a-a866f8c3418mr450021966b.43.1724321068912;
-        Thu, 22 Aug 2024 03:04:28 -0700 (PDT)
-Received: from localhost ([87.13.33.30])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f48a9b6sm96500966b.179.2024.08.22.03.04.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 03:04:28 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Thu, 22 Aug 2024 12:04:34 +0200
-To: Simon Horman <horms@kernel.org>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="kfHRhhdc"
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B86C61486736;
+	Thu, 22 Aug 2024 12:25:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
+	t=1724322330; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=ybFfR40X1VQxaGlShBcj9xX9wciu3DwxZfXPx9BPwoo=;
+	b=kfHRhhdcK0RwpiX81dnE/IfFwvOCdD3XUQKXxbY4lUbgSGmSu88pg5/yCE6FMAeJL3KLuB
+	EboDznx6ZSzPN/lPNaLUbCk2Akn0lauDphdpVePNj2jTLJu8YqwsXAMjHoPJh8kytu+pAi
+	8y4kkZfHFIx9kkXxqnQ6yFNA1XlHwUMn8UeM+0qGwrry6+znFw/TIlRwIF8M+Uk8JZTIwP
+	ki/rACHHRVqRSYHpT7zX4fnR+Bg33JL210q5P5lmsftCDJQv+T0Dx/V6Vqfev5rqMxsZmw
+	PA4sCSnrlmJX6MGfgEgXTWddcUsQx4Dis3P/J56tmNsg0Vat4k34TUqZZ32w0Q==
+Date: Thu, 22 Aug 2024 12:25:26 +0200
+From: Alexander Dahl <ada@thorsis.com>
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: linux-clk@vger.kernel.org, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
 	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Stefan Wahren <wahrenst@gmx.net>
-Subject: Re: [PATCH 06/11] clk: rp1: Add support for clocks provided by RP1
-Message-ID: <ZscNMk3hBWs5yKTH@apocalypse>
-Mail-Followup-To: Simon Horman <horms@kernel.org>,
-	Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
+	Sandeep Sheriker Mallikarjun <sandeepsheriker.mallikarjun@microchip.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] ARM: dts: microchip: sam9x60: Fix rtc/rtt clocks
+Message-ID: <20240822-mute-ruby-fc8c86240f3c@thorsis.com>
+Mail-Followup-To: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	linux-clk@vger.kernel.org, Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
 	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Stefan Wahren <wahrenst@gmx.net>
-References: <cover.1724159867.git.andrea.porta@suse.com>
- <a378cc652b7e92b4022141dd2f20711e1771eb72.1724159867.git.andrea.porta@suse.com>
- <20240821131757.GB6387@kernel.org>
+	Codrin Ciubotariu <codrin.ciubotariu@microchip.com>,
+	Sandeep Sheriker Mallikarjun <sandeepsheriker.mallikarjun@microchip.com>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Tudor Ambarus <tudor.ambarus@linaro.org>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+References: <20240820132730.357347-1-ada@thorsis.com>
+ <20240821055136.6858-1-ada@thorsis.com>
+ <20240821235205b302068b@mail.local>
+ <20240822-dragging-grapple-f26e4361e009@thorsis.com>
+ <20240822081746db0ce2bb@mail.local>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20240821131757.GB6387@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20240822081746db0ce2bb@mail.local>
+User-Agent: Mutt/2.2.12 (2023-09-09)
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hi Simon,
+Hello Alexandre,
 
-On 14:17 Wed 21 Aug     , Simon Horman wrote:
-> On Tue, Aug 20, 2024 at 04:36:08PM +0200, Andrea della Porta wrote:
-> > RaspberryPi RP1 is an MFD providing, among other peripherals, several
-> > clock generators and PLLs that drives the sub-peripherals.
-> > Add the driver to support the clock providers.
+Am Thu, Aug 22, 2024 at 10:17:46AM +0200 schrieb Alexandre Belloni:
+> On 22/08/2024 08:53:59+0200, Alexander Dahl wrote:
+> > Hello Alexandre,
 > > 
-> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> > Am Thu, Aug 22, 2024 at 01:52:05AM +0200 schrieb Alexandre Belloni:
+> > > On 21/08/2024 07:51:36+0200, Alexander Dahl wrote:
+> > > > The RTC and RTT peripherals use the "timing domain slow clock (TD_SLCK),
+> > > > sourced from the 32.768 kHz crystal oscillator.
+> > > > 
+> > > > (The previously used Monitoring domain slow clock (MD_SLCK) is sourced
+> > > > from an internal RC oscillator which is most probably not precise enough
+> > > > for real time clock purposes.)
+> > > > 
+> > > > Fixes: 1e5f532c2737 ("ARM: dts: at91: sam9x60: add device tree for soc and board")
+> > > > Fixes: 5f6b33f46346 ("ARM: dts: sam9x60: add rtt")
+> > > > Signed-off-by: Alexander Dahl <ada@thorsis.com>
+> > > > ---
+> > > > 
+> > > > Notes:
+> > > >     Picked the wrong patch in the first try.  This v2 one has a slightly
+> > > >     adapted commit message and more context below.
+> > > >     
+> > > >     This obviously requires a 32.768 kHz crystal oscillator to be present,
+> > > >     but the sam9x60.dtsi does contain that, and the clock-controllers
+> > > >     reference that, so I assume it's always present.
+> > > 
+> > > The crystal is optional so this is going to break the boards that don't
+> > > have one. I don't really mind but this should probably be part of the
+> > > commit message.
+> > 
+> > Okay right, according to the datasheet (Figure 27.1 SCKC Block
+> > Diagram) you don't need that crystal, you can clear TD_OSCSEL and
+> > td_slck runs from the internal rc then.  However, td_slck is always
+> > present, it either sources from the internal slow rc oscillator or the
+> > crystal oscillator.  And the datasheet says in section 29.1 (PMC):
+> > 
+> >     "The Slow Clock Controller (SCKC) selects the source of TD_SLCK
+> >     (drives the real-time part (RTT/RTC)).  The source of MD_SLCK
+> >     (drives the rest of the system controller: wake-up logic,
+> >     watchdog, PMC, etc.) is always the slow RC oscillator."
+> > 
+> > md_slck and td_slck are both registered by the at91 sckc driver, and
+> > the td_slck gets two parents in of_sam9x60_sckc_setup() when
+> > registered by at91_clk_register_sam9x5_slow().  The parent can be
+> > switched by clk_sam9x5_slow_set_parent() from sam9x5_slow_ops then,
+> > correctly setting the OSCSEL bit.
+> > 
+> > The whole idea of the patch is giving the rtc/rtt td_slck as a parent
+> > as documented in the datasheet.  I don't see how this should be
+> > affected by the parents of td_slck?  Am I missing something?
+> > 
 > 
-> ...
-> 
-> > diff --git a/drivers/clk/clk-rp1.c b/drivers/clk/clk-rp1.c
-> > new file mode 100644
-> > index 000000000000..d18e711c0623
-> > --- /dev/null
-> > +++ b/drivers/clk/clk-rp1.c
-> > @@ -0,0 +1,1655 @@
-> > +// SPDX-License-Identifier: GPL
-> 
-> checkpatch says:
-> 
-> WARNING: 'SPDX-License-Identifier: GPL' is not supported in LICENSES/...
->
+> You are right, I got confused because you were referring t the 32768 Hz
+> crystal in your commit message and though you aimed at selected the
+> parent of td_slck (and also, I didn't really work on the sam9x60).
 
-Alas, the system on which I executed checkpatch was missing git python module,
-so spdxcheck.py wasn't working properly, sorry about that. Fixed in the next
-release.
+Thanks for confirming.
 
-> ...
-> 
-> > +static int rp1_clock_set_parent(struct clk_hw *hw, u8 index)
-> > +{
-> > +	struct rp1_clock *clock = container_of(hw, struct rp1_clock, hw);
-> > +	struct rp1_clockman *clockman = clock->clockman;
-> > +	const struct rp1_clock_data *data = clock->data;
-> > +	u32 ctrl, sel;
-> > +
-> > +	spin_lock(&clockman->regs_lock);
-> > +	ctrl = clockman_read(clockman, data->ctrl_reg);
-> > +
-> > +	if (index >= data->num_std_parents) {
-> > +		/* This is an aux source request */
-> > +		if (index >= data->num_std_parents + data->num_aux_parents)
-> 
-> It looks like &clockman->regs_lock needs to be unlocked here.
-> 
-> Flagged by Smatch, Sparse. and Coccinelle.
+Should I reword the commit message then to make it easier to
+understand?
 
-Ack.
+> > > This makes me realise that we always assumed the RC oscillator was
+> > > running at 32768 while the sam9x60 datasheet refers to it has a 32kHz
+> > > oscillator. However the RTC only has a 32768 divider...
+> > 
+> > When sourced from the internal rc oscillator, this would mean the
+> > output would be incorrect, right?  How could one prove this?
+> 
+> 
+> I guess you could have a look at how the RTC is drifting when selecting
+> the RC osc as the parent but it will anyway be way less precise than the
+> crystal so i'm not sure how you could get a conclusive result.
 
-Many thanks,
-Andrea
+I would have to look deeper into rtc for that.
+Maybe in a calm minute. ;-)
+
+Greets
+Alex
 
 > 
-> > +			return -EINVAL;
-> > +
-> > +		/* Select parent from aux list */
-> > +		ctrl = set_register_field(ctrl, index - data->num_std_parents,
-> > +					  CLK_CTRL_AUXSRC_MASK,
-> > +					  CLK_CTRL_AUXSRC_SHIFT);
-> > +		/* Set src to aux list */
-> > +		ctrl = set_register_field(ctrl, AUX_SEL, data->clk_src_mask,
-> > +					  CLK_CTRL_SRC_SHIFT);
-> > +	} else {
-> > +		ctrl = set_register_field(ctrl, index, data->clk_src_mask,
-> > +					  CLK_CTRL_SRC_SHIFT);
-> > +	}
-> > +
-> > +	clockman_write(clockman, data->ctrl_reg, ctrl);
-> > +	spin_unlock(&clockman->regs_lock);
-> > +
-> > +	sel = rp1_clock_get_parent(hw);
-> > +	WARN(sel != index, "(%s): Parent index req %u returned back %u\n",
-> > +	     data->name, index, sel);
-> > +
-> > +	return 0;
-> > +}
+> > 
+> > Greets
+> > Alex
+> > 
+> > > 
+> > > >     
+> > > >     /sys/kernel/debug/clk/clk_summary content excerpt before:
+> > > >     
+> > > >          slow_rc_osc                         1       1        0        32768       93750000   0     50000      Y   deviceless                      no_connection_id
+> > > >             md_slck                          4       4        0        32768       0          0     50000      Y      fffffea8.rtc                    no_connection_id
+> > > >                                                                                                                       fffffe20.rtc                    no_connection_id
+> > > >                                                                                                                       fffffe10.poweroff               no_connection_id
+> > > >                                                                                                                       fffffe00.reset-controller       no_connection_id
+> > > >                                                                                                                       timer@f8008000                  slow_clk
+> > > >                                                                                                                       deviceless                      no_connection_id
+> > > >     …
+> > > >          slow_xtal                           0       0        0        32768       0          0     50000      Y   deviceless                      no_connection_id
+> > > >             slow_osc                         0       0        0        32768       0          0     50000      Y      deviceless                      no_connection_id
+> > > >                td_slck                       0       0        0        32768       0          0     50000      Y         deviceless                      no_connection_id
+> > > >     
+> > > >     And after:
+> > > >     
+> > > >          slow_rc_osc                         1       1        0        32768       93750000   0     50000      Y   deviceless                      no_connection_id
+> > > >             md_slck                          2       2        0        32768       0          0     50000      Y      fffffe10.poweroff               no_connection_id
+> > > >                                                                                                                       fffffe00.reset-controller       no_connection_id
+> > > >                                                                                                                       timer@f8008000                  slow_clk
+> > > >                                                                                                                       deviceless                      no_connection_id
+> > > >     …
+> > > >          slow_xtal                           1       1        0        32768       0          0     50000      Y   deviceless                      no_connection_id
+> > > >             slow_osc                         1       1        0        32768       0          0     50000      Y      deviceless                      no_connection_id
+> > > >                td_slck                       2       2        0        32768       0          0     50000      Y         fffffea8.rtc                    no_connection_id
+> > > >                                                                                                                          fffffe20.rtc                    no_connection_id
+> > > >                                                                                                                          deviceless                      no_connection_id
+> > > > 
+> > > >  arch/arm/boot/dts/microchip/sam9x60.dtsi | 4 ++--
+> > > >  1 file changed, 2 insertions(+), 2 deletions(-)
+> > > > 
+> > > > diff --git a/arch/arm/boot/dts/microchip/sam9x60.dtsi b/arch/arm/boot/dts/microchip/sam9x60.dtsi
+> > > > index 291540e5d81e..d077afd5024d 100644
+> > > > --- a/arch/arm/boot/dts/microchip/sam9x60.dtsi
+> > > > +++ b/arch/arm/boot/dts/microchip/sam9x60.dtsi
+> > > > @@ -1312,7 +1312,7 @@ rtt: rtc@fffffe20 {
+> > > >  				compatible = "microchip,sam9x60-rtt", "atmel,at91sam9260-rtt";
+> > > >  				reg = <0xfffffe20 0x20>;
+> > > >  				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
+> > > > -				clocks = <&clk32k 0>;
+> > > > +				clocks = <&clk32k 1>;
+> > > >  			};
+> > > >  
+> > > >  			pit: timer@fffffe40 {
+> > > > @@ -1338,7 +1338,7 @@ rtc: rtc@fffffea8 {
+> > > >  				compatible = "microchip,sam9x60-rtc", "atmel,at91sam9x5-rtc";
+> > > >  				reg = <0xfffffea8 0x100>;
+> > > >  				interrupts = <1 IRQ_TYPE_LEVEL_HIGH 7>;
+> > > > -				clocks = <&clk32k 0>;
+> > > > +				clocks = <&clk32k 1>;
+> > > >  			};
+> > > >  
+> > > >  			watchdog: watchdog@ffffff80 {
+> > > > 
+> > > > base-commit: 47ac09b91befbb6a235ab620c32af719f8208399
+> > > > -- 
+> > > > 2.39.2
+> > > > 
+> > > 
+> > > -- 
+> > > Alexandre Belloni, co-owner and COO, Bootlin
+> > > Embedded Linux and Kernel engineering
+> > > https://bootlin.com
 > 
-> ...
+> -- 
+> Alexandre Belloni, co-owner and COO, Bootlin
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
+> 
