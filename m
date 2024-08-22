@@ -1,89 +1,59 @@
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 888D01D1F44
-	for <linux-clk@vger.kernel.org>; Thu, 22 Aug 2024 15:28:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E18201CB33A;
+	Thu, 22 Aug 2024 15:58:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724340533; cv=none; b=cNzyi0s1F1WdtoJsIHgAjNTCYXRNONdeqghfNKhQV0VF2DNA3I9tPk7Z5mum5Ae/h/PbEeX1cZQNpBmvPhIUXA0hfVC8iR7uhgGUPIDrrn/qZCmcYCsnAz6CYwjpJLkMVJvp7f17PcA/IGG1zqd1svEd4Ut6RVav536pX5qMayo=
+	t=1724342324; cv=none; b=MK78Rfpi6RLPe8Bk32/w05MvUdVUzpxFZl6Am/o1yidyq4iZyYXPL6JEfUDwCkv9SM/6zZDHqvzoNhfXAjbGW8GZ6Ehou1YXCxa6vJn7vDiafEVQI4W4+lQolalyF7L/tzaaNWmtYXgGS7KwjGTnfYkQh1WQstqnhRuzwEHeW8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724340533; c=relaxed/simple;
-	bh=EuKZSKvEQCXDCZNoMj0d43yKeS+Y83/X3kJnCx6rqMY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Zw44P873qSBtS76C2dx92pfxXSR2NOH8MElfKoLJDFlnY+5wvK5jLI+T43YZldrDC3r7Be9Smdj3JfMXFgSE6KPGfG2PqTO7uxZ9+1osk3Qj+RL7m1qxng/m6/Mvdny3mCtzGy9sTr7uUJcozGyxirzBkvBHSr5fgnqEUt+ROOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=eNET13nc; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1724342324; c=relaxed/simple;
+	bh=WQeqMR1nA+QhuWis7uFOdmZRQYMQ6lH4jsf9Q8orpA0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pZ4jFAWw/My3e78sl63qjDvP0IWFK+pQhvutn7siGNH4UEzjy4aF7nilANfUF564SXNfxvRSWlBL0aaZOPQ7P++r8YD/s/IMybFNFkdnv/27okezHyL5HtUyAHCvH1BFB+PxIcgi5RgCXO06pOXx0E8ROY++N7gvnYTDoRBmMNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CN8hZQW2; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="eNET13nc"
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-371b098e699so683251f8f.2
-        for <linux-clk@vger.kernel.org>; Thu, 22 Aug 2024 08:28:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1724340530; x=1724945330; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YzzVJZseYqmAj3uluQhRMecpWI1dTsj4zEH1FZKD0d4=;
-        b=eNET13ncH98OLgbcdG0m6G74QdeBkl8ixJZo/ljhZqeBccGQmKVF2xjxOfTCK9JqF6
-         jskjXJaLSX7pARiTsCNZstW3xjf2GH+X03ldyAeJjGcAc5nUkmOy/mBnGw1utLurYAkS
-         du7Rt4CBkpic6xozXZ6BCihFhHIHyfzVGS2u3PZghi9I7RI9OUHy8hAxENHmVmwZFFNC
-         wpCTHMj97ffi4DP6tpXp34qtdAke1+gnCtc88qDa+74iGJCcSqaXI32t/7PDWlkTJIaG
-         Qt2Px8RBAoaWVk72CUoWckj5vp6z5z0m1AE37fhec+fuSEdOy8R8oTCIfy31Tb/bF1Kw
-         3uFw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724340530; x=1724945330;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YzzVJZseYqmAj3uluQhRMecpWI1dTsj4zEH1FZKD0d4=;
-        b=kGH+vf3M1tPOXjP19EX+ev7yJRQcnHvGWGfuyb29fav/wmTE5Na7snpgcbTFfOLELi
-         TM7aJPePgib2I+94twvf2gAWxmxLTvdaNAbF6vumA6qzLFWox+fDG3d8VQDaklZSNAI2
-         qBSk71jRYqaapFA4UjvqsU9kMDFxHYE4H9eWckHmnwVTQbNAFyAxjxUGtBZd+AzHGnfN
-         HyehmwVjE4F1YVaDkNWuqmDF7v3WsxutiYZurr/WAXh3Ye+jsQ8mouWxt3OXyB3Vn9a0
-         oaDszKeYsEvviDoeOuDZLOWaeCAD9QNw6QjPGzCdCD9NE1kRjnut6M4qUZ6UkOvNLczL
-         QJ3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWp2QnR5TBKNYcZPF7tqnv4OCTT0xQ/+3rtosQKRcIoJdilGGYeqHFAGG2vaN//IRs5DRZWLUXXv2U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdNdqS46vPmDIyrBm/MMwVHRTWAzGZnGdyrkw8Rd0coGUUPWpw
-	fQzSky67bsPQKVA1gYUsNWlKuUISKRUJsMHiWZMggTub0uHxge1Ofua79PGHEKI=
-X-Google-Smtp-Source: AGHT+IHCUCn+biQIAnOUlxWOCjXAVeKX8ey9d7uY1NWlOsuugSxvOZNpC2pcgsn0KfGk8KOYuf8lZQ==
-X-Received: by 2002:adf:a416:0:b0:36b:3395:5363 with SMTP id ffacd0b85a97d-37308c1826emr1937317f8f.16.1724340529907;
-        Thu, 22 Aug 2024 08:28:49 -0700 (PDT)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.177])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f484dc5sm134189166b.171.2024.08.22.08.28.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 22 Aug 2024 08:28:49 -0700 (PDT)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: vkoul@kernel.org,
-	kishon@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	p.zabel@pengutronix.de,
-	geert+renesas@glider.be,
-	magnus.damm@gmail.com,
-	gregkh@linuxfoundation.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	yoshihiro.shimoda.uh@renesas.com,
-	biju.das.jz@bp.renesas.com,
-	ulf.hansson@linaro.org
-Cc: linux-phy@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CN8hZQW2"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724342323; x=1755878323;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=WQeqMR1nA+QhuWis7uFOdmZRQYMQ6lH4jsf9Q8orpA0=;
+  b=CN8hZQW26jCBkg9YP2xP5augKNQHo1NOzM8kjQW86SkR670IvQTz1Aqa
+   KZzHW0sisvu1l8jN3xLNrsgNfeOI3zDNMV7cKWobISnz+T7j6fhosfizb
+   A+I8bSHMxJKk7QOYbqbFqJZDm4zeiPnAoa5z4eBDwr1q4X3H9lHGRkWhQ
+   QXDUg57ulVooJoMB+3+rZRZN6bROTYFyV/S6kt6iLXcFVVecZqJPm7okp
+   yg9+Pr2XDqgRQihDnNiwKCDCtFJklchpxJm4++ibDRTTphKNvgm3H3mRl
+   CPyE0z0GQaedTewqd/KToqc7FrkVz1wBarItK0BPwv8pd8pXqyV2+uTut
+   g==;
+X-CSE-ConnectionGUID: CW0QPoIbQuSR1TaGdpV6sw==
+X-CSE-MsgGUID: i0zutfBWTW2lPdIBod382g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11172"; a="26638212"
+X-IronPort-AV: E=Sophos;i="6.10,167,1719903600"; 
+   d="scan'208";a="26638212"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Aug 2024 08:58:41 -0700
+X-CSE-ConnectionGUID: xyVyt5TwSCeE/hd87EWaVw==
+X-CSE-MsgGUID: vjYRAmVoRwCGkL69TAWPWg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,167,1719903600"; 
+   d="scan'208";a="84667717"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa002.fm.intel.com with ESMTP; 22 Aug 2024 08:58:40 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 85DED2B3; Thu, 22 Aug 2024 18:58:28 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
 	linux-clk@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	claudiu.beznea@tuxon.dev,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH 16/16] arm64: defconfig: Enable RZ/G3S SYSC reset driver
-Date: Thu, 22 Aug 2024 18:28:01 +0300
-Message-Id: <20240822152801.602318-17-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
+	linux-kernel@vger.kernel.org
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>
+Subject: [PATCH v1 1/1] clk: devres: Simplify devres handling functions
+Date: Thu, 22 Aug 2024 18:58:22 +0300
+Message-ID: <20240822155822.1771677-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -92,28 +62,260 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Use devm_add_action_or_reset() instead of devres_alloc() and
+devres_add(), which works the same. This will simplify the
+code. There is no functional changes.
 
-Enable RZ/G3S SYSC reset driver. This exports the control to 2 signals
-(one for USB, one for PCI).
-
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 ---
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/clk/clk-devres.c | 130 ++++++++++++++++-----------------------
+ 1 file changed, 54 insertions(+), 76 deletions(-)
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 7d32fca64996..4720367a41ea 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1510,6 +1510,7 @@ CONFIG_RESET_IMX7=y
- CONFIG_RESET_QCOM_AOSS=y
- CONFIG_RESET_QCOM_PDC=m
- CONFIG_RESET_RZG2L_USBPHY_CTRL=y
-+CONFIG_RESET_RZG3S_SYSC=y
- CONFIG_RESET_TI_SCI=y
- CONFIG_PHY_XGENE=y
- CONFIG_PHY_CAN_TRANSCEIVER=m
+diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
+index 90e6078fb6e1..f03d60706a85 100644
+--- a/drivers/clk/clk-devres.c
++++ b/drivers/clk/clk-devres.c
+@@ -1,15 +1,17 @@
+ // SPDX-License-Identifier: GPL-2.0
+ #include <linux/clk.h>
+ #include <linux/device.h>
++#include <linux/err.h>
+ #include <linux/export.h>
+ #include <linux/gfp.h>
++#include <linux/types.h>
+ 
+ struct devm_clk_state {
+ 	struct clk *clk;
+ 	void (*exit)(struct clk *clk);
+ };
+ 
+-static void devm_clk_release(struct device *dev, void *res)
++static void devm_clk_release(void *res)
+ {
+ 	struct devm_clk_state *state = res;
+ 
+@@ -28,15 +30,13 @@ static struct clk *__devm_clk_get(struct device *dev, const char *id,
+ 	struct clk *clk;
+ 	int ret;
+ 
+-	state = devres_alloc(devm_clk_release, sizeof(*state), GFP_KERNEL);
++	state = devm_kmalloc(dev, sizeof(*state), GFP_KERNEL);
+ 	if (!state)
+ 		return ERR_PTR(-ENOMEM);
+ 
+ 	clk = get(dev, id);
+-	if (IS_ERR(clk)) {
+-		ret = PTR_ERR(clk);
+-		goto err_clk_get;
+-	}
++	if (IS_ERR(clk))
++		return clk;
+ 
+ 	if (init) {
+ 		ret = init(clk);
+@@ -47,16 +47,14 @@ static struct clk *__devm_clk_get(struct device *dev, const char *id,
+ 	state->clk = clk;
+ 	state->exit = exit;
+ 
+-	devres_add(dev, state);
++	ret = devm_add_action_or_reset(dev, devm_clk_release, state);
++	if (ret)
++		goto err_clk_init;
+ 
+ 	return clk;
+ 
+ err_clk_init:
+-
+ 	clk_put(clk);
+-err_clk_get:
+-
+-	devres_free(state);
+ 	return ERR_PTR(ret);
+ }
+ 
+@@ -104,7 +102,7 @@ struct clk_bulk_devres {
+ 	int num_clks;
+ };
+ 
+-static void devm_clk_bulk_release(struct device *dev, void *res)
++static void devm_clk_bulk_release(void *res)
+ {
+ 	struct clk_bulk_devres *devres = res;
+ 
+@@ -117,8 +115,7 @@ static int __devm_clk_bulk_get(struct device *dev, int num_clks,
+ 	struct clk_bulk_devres *devres;
+ 	int ret;
+ 
+-	devres = devres_alloc(devm_clk_bulk_release,
+-			      sizeof(*devres), GFP_KERNEL);
++	devres = devm_kmalloc(dev, sizeof(*devres), GFP_KERNEL);
+ 	if (!devres)
+ 		return -ENOMEM;
+ 
+@@ -126,15 +123,13 @@ static int __devm_clk_bulk_get(struct device *dev, int num_clks,
+ 		ret = clk_bulk_get_optional(dev, num_clks, clks);
+ 	else
+ 		ret = clk_bulk_get(dev, num_clks, clks);
+-	if (!ret) {
+-		devres->clks = clks;
+-		devres->num_clks = num_clks;
+-		devres_add(dev, devres);
+-	} else {
+-		devres_free(devres);
+-	}
++	if (ret)
++		return ret;
+ 
+-	return ret;
++	devres->clks = clks;
++	devres->num_clks = num_clks;
++
++	return devm_add_action_or_reset(dev, devm_clk_bulk_release, devres);
+ }
+ 
+ int __must_check devm_clk_bulk_get(struct device *dev, int num_clks,
+@@ -151,7 +146,7 @@ int __must_check devm_clk_bulk_get_optional(struct device *dev, int num_clks,
+ }
+ EXPORT_SYMBOL_GPL(devm_clk_bulk_get_optional);
+ 
+-static void devm_clk_bulk_release_all(struct device *dev, void *res)
++static void devm_clk_bulk_release_all(void *res)
+ {
+ 	struct clk_bulk_devres *devres = res;
+ 
+@@ -164,25 +159,24 @@ int __must_check devm_clk_bulk_get_all(struct device *dev,
+ 	struct clk_bulk_devres *devres;
+ 	int ret;
+ 
+-	devres = devres_alloc(devm_clk_bulk_release_all,
+-			      sizeof(*devres), GFP_KERNEL);
++	devres = devm_kmalloc(dev, sizeof(*devres), GFP_KERNEL);
+ 	if (!devres)
+ 		return -ENOMEM;
+ 
+-	ret = clk_bulk_get_all(dev, &devres->clks);
+-	if (ret > 0) {
+-		*clks = devres->clks;
+-		devres->num_clks = ret;
+-		devres_add(dev, devres);
+-	} else {
+-		devres_free(devres);
+-	}
++	devres->num_clks = clk_bulk_get_all(dev, &devres->clks);
++	if (devres->num_clks <= 0)
++		return devres->num_clks;
+ 
+-	return ret;
++	ret = devm_add_action_or_reset(dev, devm_clk_bulk_release_all, devres);
++	if (ret)
++		return ret;
++
++	*clks = devres->clks;
++	return 0;
+ }
+ EXPORT_SYMBOL_GPL(devm_clk_bulk_get_all);
+ 
+-static void devm_clk_bulk_release_all_enable(struct device *dev, void *res)
++static void devm_clk_bulk_release_all_enable(void *res)
+ {
+ 	struct clk_bulk_devres *devres = res;
+ 
+@@ -196,49 +190,33 @@ int __must_check devm_clk_bulk_get_all_enable(struct device *dev,
+ 	struct clk_bulk_devres *devres;
+ 	int ret;
+ 
+-	devres = devres_alloc(devm_clk_bulk_release_all_enable,
+-			      sizeof(*devres), GFP_KERNEL);
++	devres = devm_kmalloc(dev, sizeof(*devres), GFP_KERNEL);
+ 	if (!devres)
+ 		return -ENOMEM;
+ 
+-	ret = clk_bulk_get_all(dev, &devres->clks);
+-	if (ret > 0) {
+-		*clks = devres->clks;
+-		devres->num_clks = ret;
+-	} else {
+-		devres_free(devres);
++	devres->num_clks = clk_bulk_get_all(dev, &devres->clks);
++	if (devres->num_clks <= 0)
++		return devres->num_clks;
++
++	ret = clk_bulk_prepare_enable(devres->num_clks, devres->clks);
++	if (ret) {
++		clk_bulk_put_all(devres->num_clks, devres->clks);
+ 		return ret;
+ 	}
+ 
+-	ret = clk_bulk_prepare_enable(devres->num_clks, *clks);
+-	if (!ret) {
+-		devres_add(dev, devres);
+-	} else {
+-		clk_bulk_put_all(devres->num_clks, devres->clks);
+-		devres_free(devres);
+-	}
++	ret = devm_add_action_or_reset(dev, devm_clk_bulk_release_all_enable, devres);
++	if (ret)
++		return ret;
++
++	*clks = devres->clks;
++	return 0;
+ 
+-	return ret;
+ }
+ EXPORT_SYMBOL_GPL(devm_clk_bulk_get_all_enable);
+ 
+-static int devm_clk_match(struct device *dev, void *res, void *data)
+-{
+-	struct clk **c = res;
+-	if (!c || !*c) {
+-		WARN_ON(!c || !*c);
+-		return 0;
+-	}
+-	return *c == data;
+-}
+-
+ void devm_clk_put(struct device *dev, struct clk *clk)
+ {
+-	int ret;
+-
+-	ret = devres_release(dev, devm_clk_release, devm_clk_match, clk);
+-
+-	WARN_ON(ret);
++	devm_release_action(dev, devm_clk_release, clk);
+ }
+ EXPORT_SYMBOL(devm_clk_put);
+ 
+@@ -246,20 +224,20 @@ struct clk *devm_get_clk_from_child(struct device *dev,
+ 				    struct device_node *np, const char *con_id)
+ {
+ 	struct devm_clk_state *state;
+-	struct clk *clk;
++	int ret;
+ 
+-	state = devres_alloc(devm_clk_release, sizeof(*state), GFP_KERNEL);
++	state = devm_kmalloc(dev, sizeof(*state), GFP_KERNEL);
+ 	if (!state)
+ 		return ERR_PTR(-ENOMEM);
+ 
+-	clk = of_clk_get_by_name(np, con_id);
+-	if (!IS_ERR(clk)) {
+-		state->clk = clk;
+-		devres_add(dev, state);
+-	} else {
+-		devres_free(state);
+-	}
++	state->clk = of_clk_get_by_name(np, con_id);
++	if (IS_ERR(state->clk))
++		return state->clk;
+ 
+-	return clk;
++	ret = devm_add_action_or_reset(dev, devm_clk_release, state);
++	if (ret)
++		return ERR_PTR(ret);
++
++	return state->clk;
+ }
+ EXPORT_SYMBOL(devm_get_clk_from_child);
 -- 
-2.39.2
+2.43.0.rc1.1336.g36b5255a03ac
 
