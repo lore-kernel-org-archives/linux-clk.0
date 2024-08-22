@@ -1,169 +1,240 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3BCF1CB336;
-	Thu, 22 Aug 2024 13:53:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 491901CBE90
+	for <linux-clk@vger.kernel.org>; Thu, 22 Aug 2024 14:33:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724334797; cv=none; b=PLnQ62Kz4cLXSxSDbOoD6DFL5OGm2GuohLzO/jL2y6PdGSFkxbUo24EfYsU3h6lBwkMMS5aHT4GBL5PhDxTNPX/OdHe+AseYOL1Sl2JZihvgxSySvQcaL/aOSstpryEuabHDRR+XcMlicEu1oAg5Mok82NQte6IHTBQkB2elVZU=
+	t=1724337197; cv=none; b=OfQj37gkEdr3qDAweAIgSMoLS7kD09OrI1eJ6gz7ywweiV2WI30uVfo4hk5QJuPGykN+1wQJF8C7VAOT5YbQYdE8ouKbn6OyonVpJkJwNeO6bOsNWXhLpqohEsUN21PbhohevU0M/MCpQCIZcIhPF1xqMzu/8elw/WBWBsCIF5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724334797; c=relaxed/simple;
-	bh=b+4zkE+oHIiJn3+Zf87WDYtnXdB8KgyWtfesZC6Zh7Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=T/yIuiUigKyeyk+4RH+dHgZH1p+iOu8gcp20AOAC7kFUlO/bQpQz+JZ5nz9PgZa9QXCW4G9//xoxYfTz1E+l0cOAbyG6G/+N/GOVLR2zZhNcd8VMWHvbcgK4gpc7Ehvv4f2hp9Ztte+ikJuz2Zq2HEQiG0AZLk8jqbD0uifa96E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GkyQov+W; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1724337197; c=relaxed/simple;
+	bh=lJiyZmPpFea0ifOYh7ueNldJecB7Zjvj1rYiFraP0eY=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mJTTgP7Otlxh2en3MrnR/bjfZsuEEZxvT9adtuwFoIPOyH5ob4BgWqs//eyHCx3J9JVE+Lx74O+ksPLAQRoHpktt02ZBhMeRv0GqTAG7zBor+bL0Yy3XTe9AJ69tiJJB0BW7GrtCw86q6kCclLck5YT+51nOJYdoVFqpHGi5ucQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KlMgK1+Z; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GkyQov+W"
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47MA6PAj006591;
-	Thu, 22 Aug 2024 13:53:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	MBthUzIbc6aeQsygWdUFG+pmnVUpFeCt8aopJtX3ZBk=; b=GkyQov+W0cDGgzuk
-	FAjG5k7f1tll+mHu7OBNyu2oAoT7n1itdfWFKP52CNz1SUn7UQpzO04ETr/Tt3A2
-	eIHydPeciTZwFqCFNH+6EX8WLZsBu6S9Y7o6udSI36EHVJs8n8YuJjRz418Pa+0B
-	9wfKByrs7tFSZVE7sgHCYf3EJ0DO6OxisePULKH5RCLMw/dvCRoeWNJACrFO6g9P
-	cEXrTAuxqxITgWN4Bi5BpzYZBHChTHl7I0obHLhiROiNnCtPa543Zk5URXLsGSw7
-	C03Cvwd63QEk31xcAchGbZk9KtDXV0c6vl8nj7yClzeSg/Pz3Sppy2WjW7M7bLBl
-	gYS/QQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 415bkwcq83-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 22 Aug 2024 13:53:05 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47MDr42V025804
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 22 Aug 2024 13:53:04 GMT
-Received: from [10.253.73.208] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 22 Aug
- 2024 06:52:52 -0700
-Message-ID: <285be0e5-0060-403c-a927-d69e31b163cd@quicinc.com>
-Date: Thu, 22 Aug 2024 21:52:47 +0800
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KlMgK1+Z"
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-533488ffaddso1248488e87.1
+        for <linux-clk@vger.kernel.org>; Thu, 22 Aug 2024 07:33:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1724337193; x=1724941993; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:date:from:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=u+CLCXO1loNtRQ1zQxG3QmaE354XOPvXqx3+a/56H5k=;
+        b=KlMgK1+ZJX2PwEjc15lymt9JjPEEkJLEpJ5Jbh0XYP1aCy4sKK8iu0d7fNB2hfHG5q
+         BSEFRBHH3N/KqFGaCjF4x6sHeB3XZpGEP1x630+kuFZwpqR8UPj6fwx5/xWe5pqIs8Ki
+         aR0do2b0QAngexNeJpL3b+PAKvzqvx2XqJtR+gnElIOdIt2bE+8Bbp7BVp6WdhuXK1vp
+         H5Gg+4MpJthkwgwAPRO/bnshHgeTggRao+NqNasZaQd8xq0RGVI1thyC11M4NUfGQnO9
+         aP9rSQfv72u7mmOMDuAlCcarbqqPnX0nnTA5lhAvmBu1GqCpdIGG5f2EI/8o2HS2rw7l
+         7SLQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724337193; x=1724941993;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=u+CLCXO1loNtRQ1zQxG3QmaE354XOPvXqx3+a/56H5k=;
+        b=BxoyW6FKtuo7Bw0w73QBJROmPlD/PZYjWW/sKuaTmCGqSycEfDeMLZBFknWAxsYB23
+         wo0OguXdosj1qjPlbx6jp9jhsPbNYaNR5cqCAl15w4vIjWGJXFqQXcjmpn87+ltmxjVh
+         14VC3GWBvc1VPUzafZ1vmYtykoB4NEr6wsQHqJ2wGcDqbHSaY8Y9tnF3UMjybBbP686z
+         7dZ9rbwQAd9ytsQ6H0Gy5SlWMq0HGiFrlMbcVgNnDcM1cLGoiOnnUW/5qLhrKzJTpqfl
+         B/MGasPZv2ZLENoPqplPfQ/tgMH9Y0I8vgNAlEwe4LYjFU1ixnfzN8oDaOaOcO1tM2TM
+         TCrA==
+X-Forwarded-Encrypted: i=1; AJvYcCW/1fjPc53NAU+6j+1f5y82C8j8vLnenZ2iBGHqsO43eEkFubBtPUw84IV3Jr1ECczwPgQH6JHYQec=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUlWPmxCT8JxEoJL5lBZQr9vDtEd5ZAAPdyjvnIKcI2EO40UJS
+	k2ofVD3lYlB3W62D7nRAGureGpz7bqrehIkbuhaumL8ok+u9hFtLwEYZJuGJVCE=
+X-Google-Smtp-Source: AGHT+IHoBb72Bk0r3OFdWAjawuoYWFCtIMjCbazUFrv8zVo0YW75cua2rVkEy/AiDyfokhDrVrMdgw==
+X-Received: by 2002:a05:6512:159d:b0:52c:9906:fa33 with SMTP id 2adb3069b0e04-53348592143mr3936405e87.43.1724337192756;
+        Thu, 22 Aug 2024 07:33:12 -0700 (PDT)
+Received: from localhost ([87.13.33.30])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f222af5sm128629666b.41.2024.08.22.07.33.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 22 Aug 2024 07:33:12 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Thu, 22 Aug 2024 16:33:18 +0200
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Stefan Wahren <wahrenst@gmx.net>
+Subject: Re: [PATCH 08/11] misc: rp1: RaspberryPi RP1 misc driver
+Message-ID: <ZsdMLgf2U-CRpnH4@apocalypse>
+Mail-Followup-To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Stefan Wahren <wahrenst@gmx.net>
+References: <cover.1724159867.git.andrea.porta@suse.com>
+ <5954e4dccc0e158cf434d2c281ad57120538409b.1724159867.git.andrea.porta@suse.com>
+ <lrv7cpbt2n7eidog5ydhrbyo5se5l2j23n7ljxvojclnhykqs2@nfeu4wpi2d76>
+ <400486cd-e23c-4501-98c0-aa999aa45f75@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/4] dt-bindings: clock: qcom: Add CMN PLL clock
- controller for IPQ SoC
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon
-	<will@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <quic_kkumarcs@quicinc.com>,
-        <quic_suruchia@quicinc.com>, <quic_pavir@quicinc.com>,
-        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>,
-        <bartosz.golaszewski@linaro.org>, <srinivas.kandagatla@linaro.org>
-References: <20240820-qcom_ipq_cmnpll-v2-0-b000dd335280@quicinc.com>
- <20240820-qcom_ipq_cmnpll-v2-1-b000dd335280@quicinc.com>
- <krbpzjccn6xvnpfsa7eeeowmtjuuw4yp72qqqbeq2icxrqvdo4@x6pawrcctyd3>
- <51198961-2e09-4d0e-8bf3-907c81597724@quicinc.com>
- <be2eae05-6deb-49fb-94ce-cb5e3a5bd1ba@kernel.org>
-Content-Language: en-US
-From: Jie Luo <quic_luoj@quicinc.com>
-In-Reply-To: <be2eae05-6deb-49fb-94ce-cb5e3a5bd1ba@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: eYOahMDNrDzgVcazXItIgIP6muxkEHSy
-X-Proofpoint-GUID: eYOahMDNrDzgVcazXItIgIP6muxkEHSy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-22_07,2024-08-22_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 spamscore=0
- mlxscore=0 mlxlogscore=999 bulkscore=0 malwarescore=0 priorityscore=1501
- adultscore=0 phishscore=0 impostorscore=0 lowpriorityscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2408220102
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <400486cd-e23c-4501-98c0-aa999aa45f75@kernel.org>
 
+Hi Krzysztof,
 
-
-On 8/22/2024 2:29 PM, Krzysztof Kozlowski wrote:
-> On 21/08/2024 18:08, Jie Luo wrote:
->>
->>
->> On 8/21/2024 4:33 PM, Krzysztof Kozlowski wrote:
->>> On Tue, Aug 20, 2024 at 10:02:42PM +0800, Luo Jie wrote:
->>>> The CMN PLL controller provides clocks to networking hardware blocks
->>>> on Qualcomm IPQ9574 SoC. It receives input clock from the on-chip Wi-Fi,
->>>> and produces output clocks at fixed rates. These output rates are
->>>> predetermined, and are unrelated to the input clock rate. The output
->>>> clocks are supplied to the Ethernet hardware such as PPE (packet
->>>> process engine) and the externally connected switch or PHY device.
->>>>
->>>> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
->>>> ---
->>>>    .../bindings/clock/qcom,ipq9574-cmn-pll.yaml       | 70 ++++++++++++++++++++++
->>>>    include/dt-bindings/clock/qcom,ipq-cmn-pll.h       | 15 +++++
->>>>    2 files changed, 85 insertions(+)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml b/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml
->>>> new file mode 100644
->>>> index 000000000000..7ad04b58a698
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/clock/qcom,ipq9574-cmn-pll.yaml
->>>> @@ -0,0 +1,70 @@
->>>> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
->>>> +%YAML 1.2
->>>> +---
->>>> +$id: http://devicetree.org/schemas/clock/qcom,ipq9574-cmn-pll.yaml#
->>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>>> +
->>>> +title: Qualcomm CMN PLL Clock Controller on IPQ SoC
->>>> +
->>>> +maintainers:
->>>> +  - Bjorn Andersson <andersson@kernel.org>
->>>> +  - Luo Jie <quic_luoj@quicinc.com>
->>>> +
->>>> +description:
->>>> +  The CMN PLL clock controller expects a reference input clock.
->>>
->>> You did not explain what is CMN. Is this some sort of acronym?
->>
->> CMN is short form for 'common'. Since it is referred to as 'CMN'
->> PLL in the hardware programming guides, we wanted the driver name
->> to include it as well. The description can be updated as below to
->> clarify the name and purpose of this hardware block. Hope this is
->> fine.
->>
->> "The CMN PLL clock controller expects a reference input clock
->> from the on-board Wi-Fi, and supplies a number of fixed rate
->> output clocks to the Ethernet devices including PPE (packet
->> process engine) and the connected switch or PHY device. The
->> CMN (or 'common') PLL's only function is to enable clocks to
->> Ethernet hardware used with the IPQ SoC and does not include
->> any other function."
+On 16:20 Wed 21 Aug     , Krzysztof Kozlowski wrote:
+> On 21/08/2024 10:38, Krzysztof Kozlowski wrote:
+> > On Tue, Aug 20, 2024 at 04:36:10PM +0200, Andrea della Porta wrote:
 > 
-> So the block is called "CMN" in hardware programming guide, without any
-> explanation of the acronym?
-
-Yes, I double checked again with our hardware team and the
-documentation. CMN is just a short form of "common" with no additional
-information in the guide.
-
-Thanks for review.
-
+> ...
 > 
+> >>  drivers/misc/Kconfig                  |   1 +
+> >>  drivers/misc/Makefile                 |   1 +
+> >>  drivers/misc/rp1/Kconfig              |  20 ++
+> >>  drivers/misc/rp1/Makefile             |   3 +
+> >>  drivers/misc/rp1/rp1-pci.c            | 333 ++++++++++++++++++++++++++
+> >>  drivers/misc/rp1/rp1-pci.dtso         |   8 +
+> >>  drivers/pci/quirks.c                  |   1 +
+> >>  include/linux/pci_ids.h               |   3 +
+> >>  10 files changed, 524 insertions(+)
+> >>  create mode 100644 arch/arm64/boot/dts/broadcom/rp1.dtso
+> >>  create mode 100644 drivers/misc/rp1/Kconfig
+> >>  create mode 100644 drivers/misc/rp1/Makefile
+> >>  create mode 100644 drivers/misc/rp1/rp1-pci.c
+> >>  create mode 100644 drivers/misc/rp1/rp1-pci.dtso
+> >>
+> >> diff --git a/MAINTAINERS b/MAINTAINERS
+> >> index 67f460c36ea1..1359538b76e8 100644
+> >> --- a/MAINTAINERS
+> >> +++ b/MAINTAINERS
+> >> @@ -19119,9 +19119,11 @@ F:	include/uapi/linux/media/raspberrypi/
+> >>  RASPBERRY PI RP1 PCI DRIVER
+> >>  M:	Andrea della Porta <andrea.porta@suse.com>
+> >>  S:	Maintained
+> >> +F:	arch/arm64/boot/dts/broadcom/rp1.dtso
+> >>  F:	Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml
+> >>  F:	Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml
+> >>  F:	drivers/clk/clk-rp1.c
+> >> +F:	drivers/misc/rp1/
+> >>  F:	drivers/pinctrl/pinctrl-rp1.c
+> >>  F:	include/dt-bindings/clock/rp1.h
+> >>  F:	include/dt-bindings/misc/rp1.h
+> >> diff --git a/arch/arm64/boot/dts/broadcom/rp1.dtso b/arch/arm64/boot/dts/broadcom/rp1.dtso
+> >> new file mode 100644
+> >> index 000000000000..d80178a278ee
+> >> --- /dev/null
+> >> +++ b/arch/arm64/boot/dts/broadcom/rp1.dtso
+> >> @@ -0,0 +1,152 @@
+> >> +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> >> +
+> >> +#include <dt-bindings/gpio/gpio.h>
+> >> +#include <dt-bindings/interrupt-controller/irq.h>
+> >> +#include <dt-bindings/clock/rp1.h>
+> >> +#include <dt-bindings/misc/rp1.h>
+> >> +
+> >> +/dts-v1/;
+> >> +/plugin/;
+> >> +
+> >> +/ {
+> >> +	fragment@0 {
+> >> +		target-path="";
+> >> +		__overlay__ {
+> >> +			#address-cells = <3>;
+> >> +			#size-cells = <2>;
+> >> +
+> >> +			rp1: rp1@0 {
+> >> +				compatible = "simple-bus";
+> >> +				#address-cells = <2>;
+> >> +				#size-cells = <2>;
+> >> +				interrupt-controller;
+> >> +				interrupt-parent = <&rp1>;
+> >> +				#interrupt-cells = <2>;
+> >> +
+> >> +				// ranges and dma-ranges must be provided by the includer
+> >> +				ranges = <0xc0 0x40000000
+> >> +					  0x01/*0x02000000*/ 0x00 0x00000000
+> >> +					  0x00 0x00400000>;
+> > 
+> > Are you 100% sure you do not have here dtc W=1 warnings?
+> 
+> One more thing, I do not see this overlay applied to any target, which
+> means it cannot be tested. You miss entry in Makefile.
+>
+
+The dtso is intended to be built from driver/misc/rp1/Makefile as it will
+be included in the driver obj:
+
+--- /dev/null
++++ b/drivers/misc/rp1/Makefile
+@@ -0,0 +1,3 @@
++# SPDX-License-Identifier: GPL-2.0-only
++rp1-pci-objs                   := rp1-pci.o rp1-pci.dtbo.o
++obj-$(CONFIG_MISC_RP1)         += rp1-pci.o
+
+and not as part of the dtb system, hence it's m issing in
+arch/arm64/boot/dts/broadcom/Makefile.
+
+On the other hand:
+
+#> make W=1 CHECK_DTBS=y broadcom/rp1.dtbo
+  DTC     arch/arm64/boot/dts/broadcom/rp1.dtbo
+arch/arm64/boot/dts/broadcom/rp1.dtso:37.24-42.7: Warning (simple_bus_reg): /fragment@0/__overlay__/rp1@0/clk_xosc: missing or empty reg/ranges property
+arch/arm64/boot/dts/broadcom/rp1.dtso:44.26-49.7: Warning (simple_bus_reg): /fragment@0/__overlay__/rp1@0/macb_pclk: missing or empty reg/ranges property
+arch/arm64/boot/dts/broadcom/rp1.dtso:51.26-56.7: Warning (simple_bus_reg): /fragment@0/__overlay__/rp1@0/macb_hclk: missing or empty reg/ranges property
+arch/arm64/boot/dts/broadcom/rp1.dtso:14.15-173.5: Warning (avoid_unnecessary_addr_size): /fragment@0/__overlay__: unnecessary #address-cells/#size-cells without "ranges", "dma-ranges" or child "reg" property
+
+seems to do the checks, unless I'm missing something.
+
+Thanks,
+Andrea
+
 > Best regards,
 > Krzysztof
 > 
-
