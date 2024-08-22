@@ -1,40 +1,41 @@
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09E6617588;
-	Thu, 22 Aug 2024 19:50:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C5C91D0498;
+	Thu, 22 Aug 2024 19:51:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724356256; cv=pass; b=d0gpkdf2bHsmFSvUTPu/Vb5ptZIqW0pdFRw9zumijCGtpm7G5UusRQiLXyQNZlcWSy1gii+7Jh8ArMcWzXcrwRgH9r1ThjjcPpaFLrm/as7bWe5uTz8ec+HhlK5cQKFekpyLAKaYCg3NyOlUv77KfGHe2GZTl8gsNAiOn4pgGBg=
+	t=1724356264; cv=pass; b=ql8KWsb5ZlHN4+8f/+tIQ7/iqpT/68tQDEkcVziOGMKn3lSEe2B1PC7jQWz1pdPIQkrSxnZWol85vmVqPRGdKm7BsFC6OLNwwmxBjFpSN3tsneD5jRjJPMHQNjPCcfMi7RT1VwXIsNEsH8o8TfwZl7P10Y9UCeYVaGY5iSnKXuU=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724356256; c=relaxed/simple;
-	bh=z71gBKiCb5HNwrr7nqwryFAYX1D1UkbjJF9w3qhEPsU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FiRFPHRf5KlbuEaUVM6FeJRx5DerRa+NyNwmh6L+cHLyT8n89EYFXMeWungJo7aC8E1T6oq72l3VZj72/PtERJKEPHP6w/b27rdaAP4JsBjKAfEV+UOG1kgntzoKgR2J7mRwGC+WOfNMkxT/2FzKkQgGzdu+h2FnII6jnjPLlSo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=eTpeRTTz; arc=pass smtp.client-ip=136.143.188.112
+	s=arc-20240116; t=1724356264; c=relaxed/simple;
+	bh=B33qPXmDAhp73Zj6zm+LZ2G9dUgp7OsD1hIowgEL+1E=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=iX4bRHQRNEuaTRzHHzC/ILOA3cieV5OFGs5/h/Qe4tcEjUsp42vR1N/L8RFwnggr85CdnqDMJ660D9vXDbWYmuibnmZFcJV0+wW8Vu+PcszxUsGYoxUcHQ9fodVs9aX7fwi2aQNX2rfqRLDNtcoZAaQ1zHDN0YzEa/9+NmxoVGk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=CwB841z/; arc=pass smtp.client-ip=136.143.188.12
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="eTpeRTTz"
-ARC-Seal: i=1; a=rsa-sha256; t=1724356228; cv=none; 
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="CwB841z/"
+ARC-Seal: i=1; a=rsa-sha256; t=1724356242; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=E41yLdpZ+X5SnFdkNfrcl7f8jySEoAsAfCRDiNbZbVbNyMrNT+volmD1StncEwRskKETGn0QuPb3bqwJXgJJdqRszmxdLELOneG7QFH0fJzOjn5vdrxiyCznIO9mG9q6AD6wOaI0L5LWiXb6GG0fCvlnRm7M5EV/Rk8IqGRNzm8=
+	b=Smzzu57kwtKi3+i+iipKpGHDxPrw7B2rkSbgYLIZfMT2r3RegOb2fTQsVZMdqBgicLbZOzv0jtBy1L3NjYj6Vf+QBvV6DPriVr0uzsMtYPkINYj+kxy2AkyrHoRb+YOOlIilDCEiF0MSBlAejW6VUDUOTYVJ4lThiwOamK87aXI=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1724356228; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=Mb1fbrEw+bwWMVwy9MvhckXYVriHPI7yDfsI9liML/w=; 
-	b=YYwqR67K/sinkUlIMzVPVUTrV4RmsaRu72ZxTb1CP6TLn3WqgTfTxaTFTbO5txV1QXjRJNdaMrmfmzT82Wmd6BVxFc5Cpgu1sI/clb4Dk0MZcv/T3zJln9s8CEfuuU9UKmMZEreFtrSAnho+9NwElqPSmz22UVVFd7TCT4TLCgA=
+	t=1724356242; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=1nAinSTq7n3Km4Nm+1m1jCkVbcD+GZU2DovoVzRzBTM=; 
+	b=C5QYwUs0iwARPln3VKNqIbdziFxEiKtMXA5MyCnGzTP18qiZdRZOUdSuNyyNb3MAtVOucVFGPgfF45HzAZ2vUR3PrU42RJErSpU9ocRG0FW29AI+TBv3XqmywcvLSTkaiXghu/tR48EoWyLRSBfQadf2myOghN51ZEjrGNw78jc=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=collabora.com;
 	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
 	dmarc=pass header.from=<detlev.casanova@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724356228;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724356242;
 	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=Mb1fbrEw+bwWMVwy9MvhckXYVriHPI7yDfsI9liML/w=;
-	b=eTpeRTTzrVfAcr60NE2GH5TAMPg1PgTFrlQopLiyTkawNcwZXLnx+f4dUd9D8pxW
-	pLrkguv3hoqistyXH3aAbgryboFtMhebeHVYpIafivX4/NqkKf3d89Ec/4qYc48ry85
-	kBlT/P5BvbsCqw9hy3MmWbRKTnAFklvlRL8AKvgA=
-Received: by mx.zohomail.com with SMTPS id 1724356227134647.7294909083045;
-	Thu, 22 Aug 2024 12:50:27 -0700 (PDT)
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=1nAinSTq7n3Km4Nm+1m1jCkVbcD+GZU2DovoVzRzBTM=;
+	b=CwB841z/RtRKBaoVD1A9dANIRTv7FWlDvSFMVX4o/0nttPFSm83EIn5UkZYT0oW1
+	Hua/BAlKvxB2UD7m/EmEJy6fbHxZneInLlEnhaMFBp59vgrPGIKurjcm/yww00EltgV
+	rgSru74wOegCrkeJ2n6D9HzyLpD7Emn//ELqUoF0=
+Received: by mx.zohomail.com with SMTPS id 1724356240193829.9990063974029;
+	Thu, 22 Aug 2024 12:50:40 -0700 (PDT)
 From: Detlev Casanova <detlev.casanova@collabora.com>
 To: linux-kernel@vger.kernel.org
 Cc: Michael Turquette <mturquette@baylibre.com>,
@@ -51,10 +52,12 @@ Cc: Michael Turquette <mturquette@baylibre.com>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-rockchip@lists.infradead.org,
 	kernel@collabora.com
-Subject: [PATCH v6 0/3] Add CRU support for rk3576 SoC
-Date: Thu, 22 Aug 2024 15:49:31 -0400
-Message-ID: <20240822194956.918527-1-detlev.casanova@collabora.com>
+Subject: [PATCH v6 2/3] clk: rockchip: Add new pll type pll_rk3588_ddr
+Date: Thu, 22 Aug 2024 15:49:33 -0400
+Message-ID: <20240822194956.918527-3-detlev.casanova@collabora.com>
 X-Mailer: git-send-email 2.46.0
+In-Reply-To: <20240822194956.918527-1-detlev.casanova@collabora.com>
+References: <20240822194956.918527-1-detlev.casanova@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -64,63 +67,56 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-ZohoMailClient: External
 
-Add support for clocks and resets on the rk3576.
-Patches from downstream have been squashed and rebased.
+From: Elaine Zhang <zhangqing@rock-chips.com>
 
-The resets have been renumbered without gaps and their actual register/bit
-information is set in rst-rk3576.c as it has been done for rk3588.
+That PLL type is similar to the other rk3588 pll types but the actual
+rate is twice the configured rate.
+Therefore, the returned calculated rate must be multiplied by two.
 
-Also add the pll_rk3588_ddr pll type that is used by the ppll clock.
+Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+(cherry picked from commit c99648df60d3763723de9e443b862da44e8872fe)
+Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
+---
+ drivers/clk/rockchip/clk-pll.c | 6 +++++-
+ drivers/clk/rockchip/clk.h     | 1 +
+ 2 files changed, 6 insertions(+), 1 deletion(-)
 
-Changes since v5:
-- Use mandatory syscon lookup instead of optional grf phandle
-- Add pll_rk3588_ddr type to always have correct rate values
-
-Changes since v4:
-- Fix commit message with idx starting at 0
-- Stash all bindings commits
-- Cleanup example and add me as maintainer
-
-Changes since v3:
-- Add missing include in bindings
-
-Changes since v2:
-- Renumber IDs from 0
-- Commit clock header with clock bindings
-- Add missing resets on sub-cores
-- Add redundant fields in bindings
-
-Changes since v1:
-- Remove reset defines that are probably out of the main core
-- Separate resets and clocks bindings
-- Renumber the resets without gaps
-
-Detlev.
-
-
-Detlev Casanova (1):
-  dt-bindings: clock, reset: Add support for rk3576
-
-Elaine Zhang (2):
-  clk: rockchip: Add new pll type pll_rk3588_ddr
-  clk: rockchip: Add clock controller for the RK3576
-
- .../bindings/clock/rockchip,rk3576-cru.yaml   |   56 +
- drivers/clk/rockchip/Kconfig                  |    7 +
- drivers/clk/rockchip/Makefile                 |    1 +
- drivers/clk/rockchip/clk-pll.c                |    6 +-
- drivers/clk/rockchip/clk-rk3576.c             | 1829 +++++++++++++++++
- drivers/clk/rockchip/clk.h                    |   54 +
- drivers/clk/rockchip/rst-rk3576.c             |  652 ++++++
- .../dt-bindings/clock/rockchip,rk3576-cru.h   |  592 ++++++
- .../dt-bindings/reset/rockchip,rk3576-cru.h   |  564 +++++
- 9 files changed, 3760 insertions(+), 1 deletion(-)
- create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3576-cru.yaml
- create mode 100644 drivers/clk/rockchip/clk-rk3576.c
- create mode 100644 drivers/clk/rockchip/rst-rk3576.c
- create mode 100644 include/dt-bindings/clock/rockchip,rk3576-cru.h
- create mode 100644 include/dt-bindings/reset/rockchip,rk3576-cru.h
-
+diff --git a/drivers/clk/rockchip/clk-pll.c b/drivers/clk/rockchip/clk-pll.c
+index 606ce5458f54..fe76756e592e 100644
+--- a/drivers/clk/rockchip/clk-pll.c
++++ b/drivers/clk/rockchip/clk-pll.c
+@@ -914,7 +914,10 @@ static unsigned long rockchip_rk3588_pll_recalc_rate(struct clk_hw *hw, unsigned
+ 	}
+ 	rate64 = rate64 >> cur.s;
+ 
+-	return (unsigned long)rate64;
++	if (pll->type == pll_rk3588_ddr)
++		return (unsigned long)rate64 * 2;
++	else
++		return (unsigned long)rate64;
+ }
+ 
+ static int rockchip_rk3588_pll_set_params(struct rockchip_clk_pll *pll,
+@@ -1167,6 +1170,7 @@ struct clk *rockchip_clk_register_pll(struct rockchip_clk_provider *ctx,
+ 		break;
+ 	case pll_rk3588:
+ 	case pll_rk3588_core:
++	case pll_rk3588_ddr:
+ 		if (!pll->rate_table)
+ 			init.ops = &rockchip_rk3588_pll_clk_norate_ops;
+ 		else
+diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+index fd3b476dedda..40fc0e4703c1 100644
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@ -287,6 +287,7 @@ enum rockchip_pll_type {
+ 	pll_rk3399,
+ 	pll_rk3588,
+ 	pll_rk3588_core,
++	pll_rk3588_ddr,
+ };
+ 
+ #define RK3036_PLL_RATE(_rate, _refdiv, _fbdiv, _postdiv1,	\
 -- 
 2.46.0
 
