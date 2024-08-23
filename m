@@ -1,175 +1,261 @@
-Received: from CHN02-BJS-obe.outbound.protection.partner.outlook.cn (mail-bjschn02on2126.outbound.protection.partner.outlook.cn [139.219.17.126])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14E24149C60;
-	Fri, 23 Aug 2024 08:49:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.17.126
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724402976; cv=fail; b=rZMUgpkA1Kp50MZtMRcpMqSlffOnPV5GBSzl3ymu2sLeW1BihPNCznT9YoofA5//h7V4M+KIFwNkMIFZGZIr8rqXPbD563IAnkbTqVBDkS7CrUUGlbRthGaAsUyuh6IlVlKLu+ZmOcXkwxxSbZwVE0UWoZLq9uw1ezLicw5Xl0E=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724402976; c=relaxed/simple;
-	bh=rtdC2ngfAF7cfxSPmZPCy5qLwCNeWic5//cfPwlViuY=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=IFyWNxixZK7lLhc+bzp9fVIuQ7T2tGDIipLl8fRHugUrZ3Gmb/9x1iZVMtjNEzyONs4C6eI7ro/9czh+/VlEci9BJWZqg+a+lvRlewTOKjceUERaJzQ6PBwzo2lP+GymjRsX36ILtRYe3c90fd40kSvh4gunHnNc0/y+1J1J6yQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.17.126
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=ckLONx85N1h5Y/MlHOAXv6zv4oo7pOTshfaq/UrVcm/cCo0dvLobkSREllqYKjUXrnGTViw5WpL2oxrm6Mgqz6QlVXGqyZ4u54mfnvH3Zbd02DeFh6vEi0y6axeRsZIQE5gkQzgYi0zgKMVOvdEAh6fglnnwlc4wyFccj+xe68ieX9oe53dzGLtuiZneanQiCYml+ajjBIoOGA9QOZNUOeDi3gb2qHCZ3OieP8zsMl8LsO6+4gcwxuTaRRD9VN//QWzFQ7+oYjZ1uRn/T4Itu5I+VRP3IRBBHiJ4uERaZcazkgCYi+P105AX3DHnkmzE5y3XxZ29X7PVqv3FOX9fSw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rtdC2ngfAF7cfxSPmZPCy5qLwCNeWic5//cfPwlViuY=;
- b=jUuoYotE7J8OtF+s6/vukneIhNgPBGD/+cSC+UROSktSGFSyVUZEA2EYwl6RcqtkjTgoGK2pbkzZEeXAvf9VuMpMftyXPm3ZmsXioKdIOYYlC6TCWBoOuf5IyIkLVBWx4/Wkg0dpRNwsSD4x2ey6J7yAevt1JgPC05nNX9C0hi/64VbcNM15ADzV2pV7Z/oJjElwMxqPIUKVHVO6zKmBYnHQsZiZjgD1b65qfZHI4CN5Mh93M82FWZWAEr8kn48bXmX/u5v9Vi05b8yriDz1PFmFclJICrqM3uupAneSm47CKviQxtt8kIgHi1MEM4tIfo1IZdEovtrYKF8qNIX43w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=starfivetech.com; dmarc=pass action=none
- header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
-Received: from NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c510:8::10) by NTZPR01MB1068.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c510:9::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.18; Fri, 23 Aug
- 2024 08:34:55 +0000
-Received: from NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn
- ([fe80::40dc:d70a:7a0b:3f92]) by
- NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn ([fe80::40dc:d70a:7a0b:3f92%4])
- with mapi id 15.20.7875.019; Fri, 23 Aug 2024 08:34:55 +0000
-From: Xingyu Wu <xingyu.wu@starfivetech.com>
-To: Hal Feng <hal.feng@starfivetech.com>, Conor Dooley <conor@kernel.org>
-CC: Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>, Michael Turquette
-	<mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Subject: RE: [PATCH v6] clk: starfive: jh7110-sys: Fix lower rate of CPUfreq
- by setting PLL0 rate to 1.5GHz
-Thread-Topic: [PATCH v6] clk: starfive: jh7110-sys: Fix lower rate of CPUfreq
- by setting PLL0 rate to 1.5GHz
-Thread-Index: AQHatVqcyH9jOZxH00+fSahpYZMQzrIaY5yAgAK6mFCAEGCJgIAHM0cAgABKTvA=
-Date: Fri, 23 Aug 2024 08:34:55 +0000
-Message-ID:
- <NTZPR01MB0956ABB5D9B0D087E085EF8B9F882@NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn>
-References: <20240603020607.25122-1-xingyu.wu@starfivetech.com>
- <CAJM55Z-_sOvRnaa8BuGcupsUksaK=tuTbTmF=AtzmzkCo7y5jA@mail.gmail.com>
- <NTZPR01MB09563DBA6F76281EB06914859FB92@NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn>
- <20240818-flip-excusably-c89021683d20@spud>
- <ZQ2PR01MB13073EF3BD7A64F2C098AA8FE6882@ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn>
-In-Reply-To:
- <ZQ2PR01MB13073EF3BD7A64F2C098AA8FE6882@ZQ2PR01MB1307.CHNPR01.prod.partner.outlook.cn>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=starfivetech.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: NTZPR01MB0956:EE_|NTZPR01MB1068:EE_
-x-ms-office365-filtering-correlation-id: 975d23d1-2e18-4745-2d27-08dcc34e76f9
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- MW8g97MJC33ObhozgmiQLOtOwL6ijvozh0ML7dqsnhKeGN4bMaupqMhp3RYkprKrC0+COfCRN8THgOrTKLrtKUlH1yFa9ZeCkd5jlK6wF7DE2qIgGofjxVr4RsXASnkh+48ecvSJdSAFLqRg2LD526ZJJ0iq2idx+znIsegqckOTgXRJQc+LntuUMZUbXBPFPA1J8wYB8JzIZqU2NPhcThcFMCT5ORRB3Mt/9CxY1htfwlwiUujHk5RNqpUXOAmLRVHaX3no6hXPJlWpA8pLNM/q1naGFn6Bq8vL70exNYKthGuSS8+0zfS14+zMqr1vYX1sT12SfadTfIKL+WRWoSKLppfBvllg4L773UNh82N53TSQB4qmkgRe5qPkZGXyyJz0ASgMi05DKj26yGplegJsP4KA0gmti9+eweYdX9jA9R5o7HonkyT8XUUElGS3Ml2CQfIXIJa99SMqyv//6wmycV8jy1rF/809fv80Kg9hLhVqJ5WInUKYkyOVqaCcPuxANHyd4GrxYLKetrnuF+a6/uVPRPdJXPetBEhMPFBTzX2Er0soO3GbY5EqXcteuqtfFuaS1q3DDqt1tpzdmoUr5FV0htIwwXXwHq9vUfdA8h8cU7kHRSmpb0VdooQh
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?dwUBZaZqB744q0YjmwQ0vCaMIPLWEbH77EO6OD5tylNC6zIKCyWRqq7sg/mE?=
- =?us-ascii?Q?xKk80J/p6Ogyau2vsnGVYIlXDRSOgN2dbXoCWTK2NO/LCv+BDB1eEACzgJtO?=
- =?us-ascii?Q?jtCHZYS4nQJMhp4LF1SNA033yPyyrcC27YvTmGqYsFshZAN3Z5lKIfGjgJH6?=
- =?us-ascii?Q?ay4n8U+7LAt/7BSWWrJlQr6Cf56dSQebxV4EkCyMRHbSZCPwtH5k/a21uEEX?=
- =?us-ascii?Q?gNNxPjD2naWxMfekIW2AkxaqRr+qQDb3g2sQlHQnjmfta4GDOBInmvBJz9I/?=
- =?us-ascii?Q?c4BC9/ezWitQWOPzTz0LumyIFsN/3Iw52el9PgfHHTPmSJxCS9Uj8hgBu1fV?=
- =?us-ascii?Q?1UeuWnIz87SKe6GbR8fUPeKy8ydvR8LlGUnt8EAZcwtSQ/Bn9hQhTrOrKezL?=
- =?us-ascii?Q?n7Ap89cVAoBfBCiU4R3zlJSV0GmMmJ5agXGC8Zrccmn3Tpa4dD0z8D9u3M2Y?=
- =?us-ascii?Q?eK7zSfhoi7ZJ3FBlEPYzbUMqI1627M7c9QIGgXVld2w3UHdHLTiECaTY33b3?=
- =?us-ascii?Q?n8enr4ZUM+14vQSdTrHGT/qDwG8EuTEYWlCoIhAchj7wzNJOnm6CZoUHyVgJ?=
- =?us-ascii?Q?6Kp9LZEwtntU9EruyiUFk5KYG4PmDJnpCQXE6dkDz5qC7hT5hULAQczpzFf7?=
- =?us-ascii?Q?JFhIVxeHukeeyhGPdt5hqY5j0ILhVynEhTbPnT9+tdPWKXP629UvcRLhMXCI?=
- =?us-ascii?Q?6gaLS6Awo8nXcgyr0a3OETN70GtH9dPtCMLfg0P2j0h+J7y2jnPfvS7Sls76?=
- =?us-ascii?Q?vwto3oAsQgAzrQGO5/vq7osKfqGn8kTYOPETbZ5HUsK2hgFhm8Okt7pnBjru?=
- =?us-ascii?Q?qKfRTopnoQ6QWnXO3oI3Y70E33TZC1ZrozLdPEISJTmUBaly0s7gtmqVWwb6?=
- =?us-ascii?Q?6hxWW5uvmhAFrHaDqnqJXC9pilozPQ3HhrcSJnGOIFeUNhq4+QvK0odmTf0a?=
- =?us-ascii?Q?k8SCzHPbdST5onKq7QYb2VG6nckuv6tCslkrbr8apyJMcTQ4/WY3hbsrYYdH?=
- =?us-ascii?Q?W72aieI8HvOiApuy1uSH6XWA4gWiKA2rmhQjAJA8DbTG9fXxSuMXd8IjLevF?=
- =?us-ascii?Q?DkIUe8Y0NZPDq2AEG2b7dpzqzIjYCW7qYt5x30px5ULDYmQXDGz1FFy6gwWK?=
- =?us-ascii?Q?uqjW9ELhM8GMquaghBr8zHCfxv4II7asMR/O/nM9e7kU0gWr7IAiPDH6JnWg?=
- =?us-ascii?Q?SDnNducmc4p7Oh1zTmld9h664VLn6okPhjTD0bUSadnoFxoTXX6xfSWgBW2z?=
- =?us-ascii?Q?h1TMyBIaz9H41KldAg9fSyiebD/YzKOmJaRMdUsj2lngC7aZw+A43Lqf+xXf?=
- =?us-ascii?Q?fhYGHPEnHPsVxTItTalGDeZ/7B4cL91iZSGXM6Q/S8A7ZGDEd6rLoi6qiBHr?=
- =?us-ascii?Q?pDlON1jID4Mwo+uf0cYWp80Lnl2iibK4PMlfqoMG1kOOgygdIlDTn4ADvwhj?=
- =?us-ascii?Q?Ng8+3rDI6kQQOY+oC6hI55Gv4/3WrlvYSRKRes7XfZVWx7M9X9R5SU3qhRn6?=
- =?us-ascii?Q?w5JvHqJhtu8gx55VahTPVhMFeXECh3NNNl2jPKGIXjhRSzts87F/uZp97Mod?=
- =?us-ascii?Q?zAO+nxMzFZoCP4XrP1rgAFbwff8hjtMaoCfK/bKE?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D973414D719
+	for <linux-clk@vger.kernel.org>; Fri, 23 Aug 2024 08:57:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724403458; cv=none; b=r1m/1UxQrqpG5Ih31SkLMyEQj9zM92trgi7cPwBxSvvmeVLpoNIUhXeCm7WoIcW0U0TZ34YhoeO64BhonB4n2GvCMkUn7d7JM1Mhl9TcaVQ4fB3KqyVMJor//QqIG9tDwHRZPax2ZTC5VIrF9NaVL9boS0DFrPU9VDTDdmw/elA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724403458; c=relaxed/simple;
+	bh=8lnr6Y8CYYR/tsZAaXobHIHOJeKtPwwM0WSm4dTdVDA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZQHdBgEqJ7BVOeobTPIbgiE95R3pnnX1cWwTyhCU0J3xrDy5D2f/ThdZEF3vMHFb4Qf3fWPjPI6oqipgSEuDKDIeXfa4TL1LeTy+0shV3z/WGrHEoyjqXv5MvE+TbX8uFGh8BwPnJ8PE6f64LVuqYQaTg10i4qkKYUdYjZh4rQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=VhVBZE5L; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="VhVBZE5L"
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5bebd3b7c22so4498007a12.0
+        for <linux-clk@vger.kernel.org>; Fri, 23 Aug 2024 01:57:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1724403454; x=1725008254; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/VK+R1YErGMIO7vYDEQLL4B3Ghiw/eVr2mZ+qQpA7ME=;
+        b=VhVBZE5L/aEEE2/7LjYy06WdCtsSgxaG+d6aA7NeA94fGwTS5kX1ydoD8o2qTuYP/B
+         IvT5TJ87fAAQybiZKAeGQvZpM/3q4Ca9eXDLUzzDxqxp0M/IKV0POPl4ZTyhVNjyNLxp
+         tu7hN056Gk/pr+OwRiZrugubbh89cjJ5rf5U7+c3MjsJRP+pS5VRHhQIb+XizvykEjHo
+         LlL+H2lI+kd3hE1Izzz/M7ju5MpUbKzvGK6Yoq1p0q9qs0faP6t3zmyqjCIZTrzs8FdF
+         XCin7p/7dHOa0BH9cTIrsjetG1CKTvEg19UyWqtp+wW4hu8G+FdwMkYBn9LH6N+AvelU
+         4IOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724403454; x=1725008254;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=/VK+R1YErGMIO7vYDEQLL4B3Ghiw/eVr2mZ+qQpA7ME=;
+        b=OcBBxweGAzWBBiFBPoFgG6r9tzLsNJYASEJgeiov6ez7rQ1WMWYNykS2+Q2d/8qr9J
+         vJPTXmQR8Dy8M4dl1+38a+wA7Em7Z1+ivSeBwZLKC1/8TKd5GsxD/IzAsPREaFPxdJSF
+         iv5/wdCJKWa0bFcrn2YtMx/7/3zncwWt9I5gU/uEleBWmugCtj0fwpkNhNhzJ2gEiRjy
+         7XIo5Q06pXigkJ1WMPrafTqzjqQpM1ZPr67DfZx5eMEHZ9GRHjAXAd708p60eauA0K7A
+         B/8ihLMd1A7GH8Tx6a+7bUWhXi0Fcd1WUFly+FVWkxmdIw6v/nt1WaDvk3gDdMtgSWYS
+         V7Kg==
+X-Forwarded-Encrypted: i=1; AJvYcCUotSlAAShVxwylWsfncIEmAZAHG+FuFatvAjr6bYwrXqH+2DsuwqB/qaJJF8pq/cXDCVc1dCcebMo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywk5g3Fz2HprUo2h4RlcoCD7+A4ykwJ7G3DD4bdMWT0V/AwnoNu
+	VZcGCJqj3I6GRfX0TE+gsw88v2QilxlvFbLb40Un7sRA5/SyU7KOOx7yoghSlZo=
+X-Google-Smtp-Source: AGHT+IEuOD6mMoOYP1+ZXn8J654fsnrlqdSXKZuQL602YsnGpaYCCO0kwwL9QjY/ps2l0W7ExxRiUw==
+X-Received: by 2002:a17:906:c144:b0:a86:91a5:4d09 with SMTP id a640c23a62f3a-a86a309ae59mr140738466b.26.1724403454000;
+        Fri, 23 Aug 2024 01:57:34 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.177])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f299e28sm230756866b.56.2024.08.23.01.57.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 23 Aug 2024 01:57:33 -0700 (PDT)
+Message-ID: <8faa6b6d-a013-4a71-a8b7-af02ac92d94b@tuxon.dev>
+Date: Fri, 23 Aug 2024 11:57:30 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: starfivetech.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn
-X-MS-Exchange-CrossTenant-Network-Message-Id: 975d23d1-2e18-4745-2d27-08dcc34e76f9
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Aug 2024 08:34:55.0491
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: IcbxLD8ORtSPhNuBcI08ESYxBvFoSMThor+F4mPD9ttAejzyBFsfPnpOX78rT1ilpotcLk4lqsn/0iy/0CwTxMwdgm/W6FNrk3Pg4t4LOfs=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: NTZPR01MB1068
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 10/16] phy: renesas: rcar-gen3-usb2: Add support to
+ initialize the bus
+Content-Language: en-US
+To: Biju Das <biju.das.jz@bp.renesas.com>, "vkoul@kernel.org"
+ <vkoul@kernel.org>, "kishon@kernel.org" <kishon@kernel.org>,
+ "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+ <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ "geert+renesas@glider.be" <geert+renesas@glider.be>,
+ "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
+ "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "sboyd@kernel.org" <sboyd@kernel.org>,
+ Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+ "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>
+Cc: "linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240822152801.602318-11-claudiu.beznea.uj@bp.renesas.com>
+ <TY3PR01MB113468A6CA4ADBCA577670AD486882@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <TY3PR01MB113468A6CA4ADBCA577670AD486882@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 23.08.24 11:42, Hal Feng wrote:
-> > > >
-> > > > I'm still not a fan of hardcoding cpu frequencies in the driver.
-> > > > You've added the notifiers exactly so that we can use the standard
-> > > > device
-> > tree settings for this.
-> > > >
-> > > > In other words I much prefer v5 of this patchset.
-> > > >
-> > > > /Emil
-> > > >
-> > >
-> > > Thanks, Emil.
-> > >
-> > > Hi Conor, what do you think about this issue?
-> >
-> > Apologies for the delay replying, I didn't realise there was a
-> > question here directed at me. My only real thought on the patchset is
-> > that what is done should not cause problems when the same devicetree
-> > is used for both U-Boot and for the kernel. As long as that's
-> > satisfied, I don't mind how you choose to implement it.
->=20
-> Actually VF2 U-Boot can run at 1.5GHz. It will work if the PMIC sets the =
-CPU
-> power supply voltage to 1.04V. The reason why we run VF2 U-Boot at 1.0GHz=
- is
-> that the default voltage supplied by the PMIC is 0.9V which only supports=
- JH7110
-> cores running at 1.0GHz.
->=20
-> So v5 of this patchset won't cause problems if the VF2 U-Boot makes some
-> changes to support running at 1.5GHz. And I will make these changes when =
-I
-> implement OF_UPSTREAM for VF2 U-Boot.
->=20
-> BTW, if v5 is applied, the patch 2 of v5 should be rebased on the new mai=
-nline
-> since jh7110-common.dtsi has been created.
->=20
+Hi, Biju,
 
-Good news. Thanks Hal.
+On 23.08.2024 10:35, Biju Das wrote:
+> Hi Claudiu,
+> 
+>> -----Original Message-----
+>> From: Claudiu <claudiu.beznea@tuxon.dev>
+>> Sent: Thursday, August 22, 2024 4:28 PM
+>> Subject: [PATCH 10/16] phy: renesas: rcar-gen3-usb2: Add support to initialize the bus
+>>
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> The Renesas RZ/G3S need to initialize the USB BUS before transferring data due to hardware limitation.
+>> As the register that need to be touched for this is in the address space of the USB PHY, and the UBS
+>> PHY need to be initialized before any other USB drivers handling data transfer, add support to
+>> initialize the USB BUS.
+>>
+>> As the USB PHY is probed before any other USB drivers that enables clocks and de-assert the reset
+>> signals and the BUS initialization is done in the probe phase, we need to add code to de-assert reset
+>> signal and runtime resume the device (which enables its clocks) before accessing the registers.
+>>
+>> As the reset signals are not required by the USB PHY driver for the other USB PHY hardware variants,
+>> the reset signals and runtime PM was handled only in the function that initialize the USB BUS.
+>>
+>> The PHY initialization was done right after runtime PM enable to have all in place when the PHYs are
+>> registered.
+> 
+> There is no user for this patch. The first user is RZ/G3S and you should merge this patch with
+> next one.
 
-Hi Conor,=20
+I think this is a matter of taste... This is how I usually format the
+patches (for scenarios like this) and got no request for squashing.
 
-According to Hal, U-Boot can also run 1.5G so that the dts from kernel can =
-be used on the U-Boot and could not cause any problems. So the way of Patch=
- v5[1] works which Emil agreed.
-[1]: https://lore.kernel.org/all/20240507065319.274976-1-xingyu.wu@starfive=
-tech.com/
+Anyway, I can do it your way, too.
 
-If you agree, I will submit a new patchset soon and modify it for the new j=
-h7110-common.dtsi.
+Thank you,
+Claudiu Beznea
 
-Best regards,
-Xingyu Wu
+> 
+> Cheers,
+> Biju
+> 
+>>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>> ---
+>>  drivers/phy/renesas/phy-rcar-gen3-usb2.c | 50 ++++++++++++++++++++++--
+>>  1 file changed, 47 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/phy/renesas/phy-rcar-gen3-usb2.c b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+>> index 7594f64eb737..cf4299cea579 100644
+>> --- a/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+>> +++ b/drivers/phy/renesas/phy-rcar-gen3-usb2.c
+>> @@ -19,12 +19,14 @@
+>>  #include <linux/platform_device.h>
+>>  #include <linux/pm_runtime.h>
+>>  #include <linux/regulator/consumer.h>
+>> +#include <linux/reset.h>
+>>  #include <linux/string.h>
+>>  #include <linux/usb/of.h>
+>>  #include <linux/workqueue.h>
+>>
+>>  /******* USB2.0 Host registers (original offset is +0x200) *******/
+>>  #define USB2_INT_ENABLE		0x000
+>> +#define USB2_AHB_BUS_CTR	0x008
+>>  #define USB2_USBCTR		0x00c
+>>  #define USB2_SPD_RSM_TIMSET	0x10c
+>>  #define USB2_OC_TIMSET		0x110
+>> @@ -40,6 +42,10 @@
+>>  #define USB2_INT_ENABLE_USBH_INTB_EN	BIT(2)	/* For EHCI */
+>>  #define USB2_INT_ENABLE_USBH_INTA_EN	BIT(1)	/* For OHCI */
+>>
+>> +/* AHB_BUS_CTR */
+>> +#define USB2_AHB_BUS_CTR_MBL_MASK	GENMASK(1, 0)
+>> +#define USB2_AHB_BUS_CTR_MBL_INCR4	2
+>> +
+>>  /* USBCTR */
+>>  #define USB2_USBCTR_DIRPD	BIT(2)
+>>  #define USB2_USBCTR_PLL_RST	BIT(1)
+>> @@ -111,6 +117,7 @@ struct rcar_gen3_chan {
+>>  	struct extcon_dev *extcon;
+>>  	struct rcar_gen3_phy rphys[NUM_OF_PHYS];
+>>  	struct regulator *vbus;
+>> +	struct reset_control *rstc;
+>>  	struct work_struct work;
+>>  	struct mutex lock;	/* protects rphys[...].powered */
+>>  	enum usb_dr_mode dr_mode;
+>> @@ -125,6 +132,7 @@ struct rcar_gen3_chan {  struct rcar_gen3_phy_drv_data {
+>>  	const struct phy_ops *phy_usb2_ops;
+>>  	bool no_adp_ctrl;
+>> +	bool init_bus;
+>>  };
+>>
+>>  /*
+>> @@ -650,6 +658,35 @@ static enum usb_dr_mode rcar_gen3_get_dr_mode(struct device_node *np)
+>>  	return candidate;
+>>  }
+>>
+>> +static int rcar_gen3_phy_usb2_init_bus(struct rcar_gen3_chan *channel)
+>> +{
+>> +	struct device *dev = channel->dev;
+>> +	int ret;
+>> +	u32 val;
+>> +
+>> +	channel->rstc = devm_reset_control_array_get_shared(dev);
+>> +	if (IS_ERR(channel->rstc))
+>> +		return PTR_ERR(channel->rstc);
+>> +
+>> +	ret = pm_runtime_resume_and_get(dev);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>> +	ret = reset_control_deassert(channel->rstc);
+>> +	if (ret)
+>> +		goto rpm_put;
+>> +
+>> +	val = readl(channel->base + USB2_AHB_BUS_CTR);
+>> +	val &= ~USB2_AHB_BUS_CTR_MBL_MASK;
+>> +	val |= USB2_AHB_BUS_CTR_MBL_INCR4;
+>> +	writel(val, channel->base + USB2_AHB_BUS_CTR);
+>> +
+>> +rpm_put:
+>> +	pm_runtime_put(dev);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>>  static int rcar_gen3_phy_usb2_probe(struct platform_device *pdev)  {
+>>  	const struct rcar_gen3_phy_drv_data *phy_data; @@ -703,6 +740,15 @@ static int
+>> rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
+>>  		goto error;
+>>  	}
+>>
+>> +	platform_set_drvdata(pdev, channel);
+>> +	channel->dev = dev;
+>> +
+>> +	if (phy_data->init_bus) {
+>> +		ret = rcar_gen3_phy_usb2_init_bus(channel);
+>> +		if (ret)
+>> +			goto error;
+>> +	}
+>> +
+>>  	channel->soc_no_adp_ctrl = phy_data->no_adp_ctrl;
+>>  	if (phy_data->no_adp_ctrl)
+>>  		channel->obint_enable_bits = USB2_OBINT_IDCHG_EN; @@ -733,9 +779,6 @@ static int
+>> rcar_gen3_phy_usb2_probe(struct platform_device *pdev)
+>>  		channel->vbus = NULL;
+>>  	}
+>>
+>> -	platform_set_drvdata(pdev, channel);
+>> -	channel->dev = dev;
+>> -
+>>  	provider = devm_of_phy_provider_register(dev, rcar_gen3_phy_usb2_xlate);
+>>  	if (IS_ERR(provider)) {
+>>  		dev_err(dev, "Failed to register PHY provider\n"); @@ -762,6 +805,7 @@ static void
+>> rcar_gen3_phy_usb2_remove(struct platform_device *pdev)
+>>  	if (channel->is_otg_channel)
+>>  		device_remove_file(&pdev->dev, &dev_attr_role);
+>>
+>> +	reset_control_assert(channel->rstc);
+>>  	pm_runtime_disable(&pdev->dev);
+>>  };
+>>
+>> --
+>> 2.39.2
+> 
