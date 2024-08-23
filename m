@@ -1,164 +1,160 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EFE618858B;
-	Fri, 23 Aug 2024 16:33:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 507B618C908
+	for <linux-clk@vger.kernel.org>; Fri, 23 Aug 2024 17:15:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724430820; cv=none; b=YIgrauT1TOHY7O7+k2xamUzKHI+Hftx6rdjHa1tmPa/CItppWkEq9dPVX33v2jmSMoFdKv28jQgsE5ayesTta7eWi/Ec4Cv2QLlVV5BnRur7NZ7/olcPMwRaM05ztSddSjozl10BrdfcrFqzqD8JxnkHOn7SCUwX180+y93y048=
+	t=1724433358; cv=none; b=iVU3FgQs/Sq03yKGL1CygoX0f4VHixaXWHtREaxYtCw74a6xdfHHryBh4vCdoTZHMbrRmLDxNYtE0nYzZ1jd3B9vaGyk0u1euuFokdsD5oPnri3mOQZmhVFAAuFwk3Wg62z/JH6PXRgQJjUw1/LsW2mK8RlOx1t/MBvBwxTQU6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724430820; c=relaxed/simple;
-	bh=WSH4rUm+bcwJjBbvm5rtjbFA5J4F0JTq05nNX35iUV0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SpWpqLQvARg+JRRWo+sKBPKLvKW+tV8YI4aqputQVfD7PZA08x7dVxMPiqUQYAX+ijxzRTPppuxHPkrNREp4WyDU9tSlYWKWzTfiZQNtQizM+Pk2He7/GooGcnDVaunON9MOzPiSLWmDzcRF7r32W2YzlUNv3YxIbVabgSsIOQw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sYTG5Reg; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1724433358; c=relaxed/simple;
+	bh=VPZAtg08Wy5/FG+Kj/wTZuQQZpFnItvR2PIwTa5Vc/I=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YxdDQO4RTVBBVxwNodgUXlQSKJcaRtWtdtzN8Vq3OEaboI6hlE6/CsUIhu4o40CraSSmFmMnCxGGGy+VjOyECcVFy0CFfVHY51ReOyPk1r1aGAytvBau8KB+5ObCY5e7gGxSTn2FsH6V50TnPBkPOIaLN2kOTEeN/mktBmlZycs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fXIE0q43; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sYTG5Reg"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 277BAC32786;
-	Fri, 23 Aug 2024 16:33:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724430819;
-	bh=WSH4rUm+bcwJjBbvm5rtjbFA5J4F0JTq05nNX35iUV0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sYTG5RegZzLko0cKmECk+1jIcHjw7gFO2WvdCtHif+pORMKYzT8tC9WzFlKs1FlaN
-	 UwhG0vqVsJm7sGX8DKRpyucDaJxJibDXg55bauuigXDLMK3ML6xMWKgZRjbhXttZcv
-	 xmUQ4ebQSXFJsM1QD/dhLALw0CQY+sSFNE+0KCNN/za2Zpr3+KK4gZ9sD6jbeIWrj5
-	 TmWJRNi6/SofZ76q6Scy3B1nI9WQFhAIgw07UM6eYQNuHu4I+IdeRL56g3D7IAEnmD
-	 kytHd15OE9JXfOsZhgrjEfbHAL5rngqSfm9p10rLt6lvyybNcC2EF4gC4XlwGh2X3o
-	 ZMGkHbIvJXo+A==
-Date: Fri, 23 Aug 2024 17:33:33 +0100
-From: Conor Dooley <conor@kernel.org>
-To: claudiu beznea <claudiu.beznea@tuxon.dev>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, p.zabel@pengutronix.de,
-	geert+renesas@glider.be, magnus.damm@gmail.com,
-	gregkh@linuxfoundation.org, mturquette@baylibre.com,
-	sboyd@kernel.org, yoshihiro.shimoda.uh@renesas.com,
-	biju.das.jz@bp.renesas.com, ulf.hansson@linaro.org,
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH 02/16] dt-bindings: soc: renesas: renesas,rzg2l-sysc: Add
- #reset-cells for RZ/G3S
-Message-ID: <20240823-dilute-juggle-7e2d43b8b630@spud>
-References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
- <20240822152801.602318-3-claudiu.beznea.uj@bp.renesas.com>
- <20240822-vanilla-enigmatic-f0b05ecca4b6@spud>
- <0d8b1322-cf15-4ed9-b958-06516bbb64c7@tuxon.dev>
- <20240823-plywood-unfixed-d8d8a2d93f14@spud>
- <5eae2ddb-2a7b-4c1d-a7f7-41fb39058de1@tuxon.dev>
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fXIE0q43"
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5bb85e90ad5so2156664a12.3
+        for <linux-clk@vger.kernel.org>; Fri, 23 Aug 2024 10:15:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1724433355; x=1725038155; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:date:from:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Q5kboO0j45Is859BAgD4iFoFAta2hgxS6Xgur8E+680=;
+        b=fXIE0q43JG/afuGoJEo+1ZFmAZyWLPTmqGuQgqMJ/4lFrRm0qZuHBzQqU5pb+FghpW
+         h9I+J8sE1cbOerZ1XocD/Dsjwv0sbkDb32VVtnF1twJKGQ21qxpF9uoorvT2sCcHwf+f
+         E68DXoobn8xvzK4zt9C+WC6FwLmWrhsoMdKaO9jWeCLyYa4VSPEBQifovEROjvrizcCJ
+         zdYaEmq2IsAmQ6sS1DHygrF7Deu/CD1RCjMmo5B0fHQbG3J5ndKE/SQDnbvlvUfpdMbU
+         1mEq6JtTvaicqO++blC68QVaO4O2PyziwJPlE3P24TJ8Dfy6CkEplcuE68KAAQANAHAi
+         nrMA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724433355; x=1725038155;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Q5kboO0j45Is859BAgD4iFoFAta2hgxS6Xgur8E+680=;
+        b=aX5xz/U4ubQolDJN602ibj7Qpb8Y/oyw1J6FcRp22Z6ktamFJvZWSstZ2vT6MrSLkM
+         Dx/RpsGZ4U2zEwi0aAq38zFQWP6p4J0Nj8VhkzxpAfY57frKB0gpAv0heXb+30YtBa7A
+         NH+qdwyThvBfABrbcJnIKJsxkiDK/AiGOO5E7z3+uA1pYnD56cY2davWsgWTO5/b5iJ4
+         /AHpmcVuK4MKAVoGBmDTI2eKeEIqXeN/uBjuwdHZ2Y2g64EkXc/jiTfqSlwciuRGFD6P
+         PPW1wUPkkt/Epodea7T3JcIZgZBlikLaqzslz27RdmEXeKf9zqdKo+N/nBm2SmghIGMK
+         ge9A==
+X-Forwarded-Encrypted: i=1; AJvYcCUpR2VeIx9KzbE9axeHMtuS50L3tEbz9tM83MD2D+LpI8yNjznAMsVUuB/jCSS2JAmN4z9KOg2N5wA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyoIgKYr/mldDilmgr/phnNwagexIlD+LtSVq6WFKxArYfkDgEy
+	+2w+QYDEB+syf4pIn14GIC+xhSsCQ01RNytkHqd26eJkZvO5Cj/hMldA+kAsg8U=
+X-Google-Smtp-Source: AGHT+IGi+ju94qIZV+5dh+FC4edd1LJS/Rb5jnDSsIsgwxHk/+itiIP1aidxM/8be626D3wcbLPt/A==
+X-Received: by 2002:a17:907:2d0a:b0:a86:7199:af37 with SMTP id a640c23a62f3a-a86a54f142dmr198119466b.58.1724433354052;
+        Fri, 23 Aug 2024 10:15:54 -0700 (PDT)
+Received: from localhost ([87.13.33.30])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f4862e8sm287339466b.173.2024.08.23.10.15.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Aug 2024 10:15:53 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Fri, 23 Aug 2024 19:16:00 +0200
+To: Simon Horman <horms@kernel.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Stefan Wahren <wahrenst@gmx.net>
+Subject: Re: [PATCH 07/11] pinctrl: rp1: Implement RaspberryPi RP1 gpio
+ support
+Message-ID: <ZsjD0C8oYmUi5I7n@apocalypse>
+Mail-Followup-To: Simon Horman <horms@kernel.org>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Stefan Wahren <wahrenst@gmx.net>
+References: <cover.1724159867.git.andrea.porta@suse.com>
+ <eb39a5f3cefff2a1240a18a255dac090af16f223.1724159867.git.andrea.porta@suse.com>
+ <20240821132754.GC6387@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="n5mdGyWbSuHiQTuz"
-Content-Disposition: inline
-In-Reply-To: <5eae2ddb-2a7b-4c1d-a7f7-41fb39058de1@tuxon.dev>
-
-
---n5mdGyWbSuHiQTuz
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240821132754.GC6387@kernel.org>
 
-On Fri, Aug 23, 2024 at 07:26:42PM +0300, claudiu beznea wrote:
-> On 23.08.2024 19:18, Conor Dooley wrote:
-> > On Fri, Aug 23, 2024 at 10:54:06AM +0300, claudiu beznea wrote:
-> >> Hi, Conor,
-> >>
-> >> On 22.08.2024 19:42, Conor Dooley wrote:
-> >>> On Thu, Aug 22, 2024 at 06:27:47PM +0300, Claudiu wrote:
-> >>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >>>>
-> >>>> The RZ/G3S System controller has registers to control signals that n=
-eed
-> >>>> to be de-asserted/asserted before/after different SoC areas are power
-> >>>> on/off. This signals are implemented as reset signals. For this docu=
-ment
-> >>>> the #reset-cells property.
-> >>>>
-> >>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >>>> ---
-> >>>>  .../bindings/soc/renesas/renesas,rzg2l-sysc.yaml | 16 +++++++++++++=
-+++
-> >>>>  1 file changed, 16 insertions(+)
-> >>>>
-> >>>> diff --git a/Documentation/devicetree/bindings/soc/renesas/renesas,r=
-zg2l-sysc.yaml b/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2=
-l-sysc.yaml
-> >>>> index 4386b2c3fa4d..6b0bb34485d9 100644
-> >>>> --- a/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sy=
-sc.yaml
-> >>>> +++ b/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sy=
-sc.yaml
-> >>>> @@ -42,12 +42,28 @@ properties:
-> >>>>        - const: cm33stbyr_int
-> >>>>        - const: ca55_deny
-> >>>> =20
-> >>>> +  "#reset-cells":
-> >>>> +    const: 1
-> >>>> +
-> >>>>  required:
-> >>>>    - compatible
-> >>>>    - reg
-> >>>> =20
-> >>>>  additionalProperties: false
-> >>>> =20
-> >>>> +allOf:
-> >>>> +  - if:
-> >>>> +      properties:
-> >>>> +        compatible:
-> >>>> +          contains:
-> >>>> +            const: renesas,r9a08g045-sysc
-> >>>> +    then:
-> >>>> +      required:
-> >>>> +        - "#reset-cells"
-> >>>
-> >>> Given this is new required property on an existing platform, I'd expe=
-ct
-> >>> some mention of why it used to be okay to not have this but is now
-> >>> required. Did firmware or a bootloader stage take things out of reset?
-> >>
-> >> On previous SoCs the SYS controller has no support for controlling the
-> >> signals going to different peripherals (USB, PCIE in case of RZ/G3S).
-> >> I'll add a note about this on next version.
-> >=20
-> > My initial thought here wasn't about previous SoCs though, it was
-> > because you didn't add the compatible in this series for /this/ SoC.
->=20
-> RZ/G3S compatible is already present in this file:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/D=
-ocumentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml#n26
+On 14:27 Wed 21 Aug     , Simon Horman wrote:
+> On Tue, Aug 20, 2024 at 04:36:09PM +0200, Andrea della Porta wrote:
+> > The RP1 is an MFD supporting a gpio controller and /pinmux/pinctrl.
+> > Add minimum support for the gpio only portion. The driver is in
+> > pinctrl folder since upcoming patches will add the pinmux/pinctrl
+> > support where the gpio part can be seen as an addition.
+> > 
+> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> 
+> ...
+> 
+> > diff --git a/drivers/pinctrl/pinctrl-rp1.c b/drivers/pinctrl/pinctrl-rp1.c
+> 
+> ...
+> 
+> > +const struct rp1_iobank_desc rp1_iobanks[RP1_NUM_BANKS] = {
+> > +	/*         gpio   inte    ints     rio    pads */
+> > +	{  0, 28, 0x0000, 0x011c, 0x0124, 0x0000, 0x0004 },
+> > +	{ 28,  6, 0x4000, 0x411c, 0x4124, 0x4000, 0x4004 },
+> > +	{ 34, 20, 0x8000, 0x811c, 0x8124, 0x8000, 0x8004 },
+> > +};
+> 
+> rp1_iobanks seems to only be used in this file.
+> If so, it should be static.
 
-I know, first thing I did when I read the original patch was open the
-file ;)
-I don't care about the old SoCs, cos you're not applying the property to
-them, so what's changed between SoCs isn't really relevant. It's a mention
-of why, on this SoC, it is safe to add new required properties that I want.
+Fixed, thanks.
 
-AFAIU the answer is that no consumer of the resets existed before, so
-there's not some special state there, and I am guessing that the new
-sysc driver you're adding isn't going to fail to probe if there are no
-resets, it just won't register a reset controller? Which is fine, cos all
-devicetrees that have the new peripherals will have #reset-cells etc.
-
-> > What's worth noting isn't about the prior SoCs, it is about what makes
-> > it okay for this one.
-
---n5mdGyWbSuHiQTuz
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZsi53AAKCRB4tDGHoIJi
-0oJNAP92c9ehJZq5fmnv1qleJEN3MobM8LhjI5S5pogRzACmrgD8C8AbjitXRcYG
-U53c5w0n+oi1+4Eu53GCqNNU/LSCmgc=
-=GFYM
------END PGP SIGNATURE-----
-
---n5mdGyWbSuHiQTuz--
+> 
+> Flagged by Sparse.
+> 
+> ...
