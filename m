@@ -1,192 +1,476 @@
-Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2109.outbound.protection.outlook.com [40.107.255.109])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f65.google.com (mail-ej1-f65.google.com [209.85.218.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F8CD13B5A1;
-	Fri, 23 Aug 2024 09:22:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.109
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724404944; cv=fail; b=i60UviuUDUg4Mv04kBVH+RiF2Gl5MAESepQMcDndN34uNbtDzq0MpofULyBKkyFXU4TiB9SiQGuvnqecfctRAkRQwPpvQxq2JQgsYGSbhsU+I1HNiXpNY4+AJusb72orAGHWfz/eCjT101EpBrDws3PbiPI6G5Zkgt2NhjEfIwk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724404944; c=relaxed/simple;
-	bh=DZtWqdfPeaO6lNLSpudUz5C9iDOx9b16nvJXk4h6uzM=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=NzUKPO04/WLUf0lb9s8EuNrMAWxpyH1JyTnXVyhmIqgEAzJEiW5IhVy7Wwzxgb4YEQ2YYPjMihG4V4EnkdFAtj895EnLbtplnWifnUnrimtKIWtz63+8Vvc3/JJiXIPL+Y8xOZWUvyHIuhA0gtcnFk2wI9TMyszW7yXEl4rixtM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=bEiE+HmS; arc=fail smtp.client-ip=40.107.255.109
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D38E213B5A9
+	for <linux-clk@vger.kernel.org>; Fri, 23 Aug 2024 09:44:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.65
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724406249; cv=none; b=bI7+vtQAb8GKa6vHE8RF3QJ0Q9s95gMlDtxlqIgHx0qMAvOY7qPYQrLG5SHA7y7vs2PLe2aBTl+6akkf2191EGetn7iTqkOAe9qGZTeG97S3HbKuMjku9d8McocuHWaTTXXGGkpc7SC6l8l5MpdRjCaSgkn93TbFuQRiIhy0clk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724406249; c=relaxed/simple;
+	bh=4c3KzHN6LLXdrATpuUYPGih+JOiJGyl2SN7wEWhJAek=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oe87WE3h0qdvsQOGEMqujR07eeiNshK7f1cTRWhN0EcEvDOELBZaQerqhlX/+6sN/AbmP3NIeJLHQ3iqu03WOjU3XwD9sw2skvvUe9MhwcmxUY5qeLqh7XHUyK9b0DPMUxyUJvLjlUDId/iaSYIW93O/qtwV6FncnWsXDNVpM9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=L+SW52Ca; arc=none smtp.client-ip=209.85.218.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="bEiE+HmS"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aKHJd7j1V7aLD2hweTXR20XbOAXqOayTQKKAGCNMi4nRaB6N3jPnCqXJEan4Z5l3J41mRqRp9bE4mEwe5IiS9ZuUQRSOeZFCEfmKVqYj6n0DOQow4O1y+9/BU7y4yAZO9RpYQCz5hmKhIMUxUfnoT16e5B/baTPGjBM02bFe3auipRR+im4lDGF1uSSEeNt5KqXHq89eTi6fAsIEGPnTCTH4OodBwVopasPoFec/k9eBi4mJOVI1h/wQ1Yw2G/CWCq+WRj3WaSoIkFrjO6jbEn+Qbjy1S54LO4A7DOy5cXWklRlN9jRlOmow2u/oyzEeXAuqQR/I6Y8wTPSFQ05xyA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=X8G7cwOHBamVSS8NJ92L7ynGd8FhR+T28sHH1Maobis=;
- b=SR0bxX8lr5mqEF0RaCCChEG/XekKOUBhiWrVyqtqFrBsfGbfZA/9moJqZISiil0YpXxHQMgaJonyRJK+PhATU/eb7cnw6ygUWBmOwjHnEod+p7QXwxBc48zT7f2g65IJWl36UfRSePQZAgNqNurNEN9QWWHCzyjV9kdf/Wl3+gWqX+ptfhKFiyL6F3pl+mteK8viPuObMeJwSLAM+1HhKfVFKIqoq0IWP4gyF6DaV9qjjWd4G8tg0qwBeGy7PLJ/WoVsh5Knn5a+40JcCi9wZ3JH7qFsfsoGMpZ8/+RIuGf6aDE9vniqsAb7LTWBzn1A2XVJhl685ghw1VKJBr7iBg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=X8G7cwOHBamVSS8NJ92L7ynGd8FhR+T28sHH1Maobis=;
- b=bEiE+HmSjXP976GyTmDjk3ZpdiXeXyFjeEV50BoeNGwnxeD7GLFtoTCZDMlIwyK804ZgESQsP7asyfTjssrLyqiOx8Y9D/KdaQYaUXeBAHxHNSvNUhg20lv2RJyJhr5AdREoAf9DaqIpjEpvsDgC+jJKCkXM6MiQlHOHApJx43lJQerclJIAcS+tyQ8+7MnCKYBKhlmGbJ6Z9vTQlW/iunAcER+wAAhiavD7Djso2N6LyYzND1lLitxmQo3I4ZerBzkeglRbGdjUvsn1NVoFUfjnbOU+gzA1CxtLdhKWTB/WYmmU5q498y2co/UCq+W9rDsNTRT2+k1kKZAdpZT/sQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from TYZPR03MB6896.apcprd03.prod.outlook.com (2603:1096:400:289::14)
- by SEZPR03MB8313.apcprd03.prod.outlook.com (2603:1096:101:19c::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.19; Fri, 23 Aug
- 2024 09:22:18 +0000
-Received: from TYZPR03MB6896.apcprd03.prod.outlook.com
- ([fe80::ac4e:718:3b03:3123]) by TYZPR03MB6896.apcprd03.prod.outlook.com
- ([fe80::ac4e:718:3b03:3123%4]) with mapi id 15.20.7875.019; Fri, 23 Aug 2024
- 09:22:17 +0000
-Message-ID: <b7fe2b5d-1faa-4cd0-8185-1321ada315a8@amlogic.com>
-Date: Fri, 23 Aug 2024 17:22:11 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] dt-bindings: clock: fix C3 PLL input parameter
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
- Jerome Brunet <jbrunet@baylibre.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Chuan Liu <chuan.liu@amlogic.com>,
- Kevin Hilman <khilman@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20240823-c3_add_node-v3-0-3648376037f4@amlogic.com>
- <20240823-c3_add_node-v3-1-3648376037f4@amlogic.com>
- <5hghvuv2hy4l2ofve4ghb3nhvg76pwpilulznzja25hurxxwcp@2idkyyomv5w5>
-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
-In-Reply-To: <5hghvuv2hy4l2ofve4ghb3nhvg76pwpilulznzja25hurxxwcp@2idkyyomv5w5>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SI1PR02CA0049.apcprd02.prod.outlook.com
- (2603:1096:4:1f5::18) To TYZPR03MB6896.apcprd03.prod.outlook.com
- (2603:1096:400:289::14)
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="L+SW52Ca"
+Received: by mail-ej1-f65.google.com with SMTP id a640c23a62f3a-a8684c31c60so226203566b.3
+        for <linux-clk@vger.kernel.org>; Fri, 23 Aug 2024 02:44:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1724406245; x=1725011045; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:date:from:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SVcGuVd4AVvQ2weJkkLnD/mq26okah869g1A0uYNj+w=;
+        b=L+SW52Caw8jsFw/mYuYuCXVuq5J7DyvOJin0UsXCie3SX3jc0p0tY15+u7VXnZ00Uk
+         5gmy8iMFkxwInOTy8TLOe8xvuNSfo8pWW2x/w1lyGv5hqesjh+2iG44RJynWidVRQdRS
+         4itBRlyzUnn5xXpZts8byX1HAu5/ilXD7UU0gA9mzMPiGPX7qRbMt5I48CDpiU3LnUvI
+         agH50Oy0Tt5HkEoV2+TIuDDK0lTDCzapbhuG5vhB0My2l2U6/yy/WlBK2e2AwxvSSOBH
+         ISpQceRKdkKFhPLkovVZHEUa8qHsZ8r9LWyajZVljStgRyitubOQn1rSqR+z376WiT1e
+         Btuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724406245; x=1725011045;
+        h=in-reply-to:content-disposition:mime-version:references
+         :mail-followup-to:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=SVcGuVd4AVvQ2weJkkLnD/mq26okah869g1A0uYNj+w=;
+        b=EOIDsHqp8m46p1FVATxRFLlbCuQGPJUo/8jiiVh1aW90yWXDWWEsq8tOccI1Il2XOk
+         0tZp4Y1Ugo2vA2V7AOetcnvmwBm2KkS9I30A0FZvUtPTx12f2lwpUxhjrY/qcDjE7X6a
+         JTmF3dkIDIEqkIJ0UMGcwnq0kQWT8bsE+J/DShRu4nijJJvVhDoucIcLT6N+bJqQcIBC
+         kOzgUQv33QafexHwx/j/A3pptbWGiXnfcQi4vZrNzj8NpnQsuyyM7cyYilaWNzioKf6+
+         hBdctuzywTdlVauQBpxSxhl2R+8OZ9IoR40pyEO7rzDbV8WX5U4gDzSBgOAVbgRULa9F
+         38PA==
+X-Forwarded-Encrypted: i=1; AJvYcCWFTHPqZuahjwvBs9SDA/SKnQRffRKqChLv0/H99n/Nzo1MHurTaTRATjb6Ip/6MvFgE2OjPDw+A0M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTJac/e1xg79shl0oKiMog5dwLZhPTaf0fWqquGAQrX1q6kf+q
+	JXh1ri2jXSt9jQXtbk+4TT6WpNSx778P/eMW9BW5aAYw6QeVGvkDsFGsFJWdtRc=
+X-Google-Smtp-Source: AGHT+IERZNLBRRQ1MUmcPAQSt7FJvwF5+ZuhPpD8J9OYue8gs+58cviAxhD1hN2NixzJ8eJtBxyDpw==
+X-Received: by 2002:a17:907:d2c9:b0:a86:7a59:55e9 with SMTP id a640c23a62f3a-a86a54a8e7emr117724766b.55.1724406244825;
+        Fri, 23 Aug 2024 02:44:04 -0700 (PDT)
+Received: from localhost ([87.13.33.30])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f220561sm234654266b.37.2024.08.23.02.44.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 23 Aug 2024 02:44:04 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Fri, 23 Aug 2024 11:44:11 +0200
+To: Stefan Wahren <wahrenst@gmx.net>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH 08/11] misc: rp1: RaspberryPi RP1 misc driver
+Message-ID: <ZshZ6yAmyFoiF5qu@apocalypse>
+Mail-Followup-To: Stefan Wahren <wahrenst@gmx.net>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>
+References: <cover.1724159867.git.andrea.porta@suse.com>
+ <5954e4dccc0e158cf434d2c281ad57120538409b.1724159867.git.andrea.porta@suse.com>
+ <98c570cb-c2ca-4816-9ca4-94033f7fb3fb@gmx.net>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYZPR03MB6896:EE_|SEZPR03MB8313:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7951d5ed-6e8e-49d5-5dc7-08dcc3551515
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?VGo3MGVJTTZZaFdHV3BLRURJS2tqRmxUWU1BcE5RbEhVOFhFTXluTU53Q1c4?=
- =?utf-8?B?UGtmWkhiZ1ZKZzhuYWZDOGdoVEZzU2MxeDhmek9jUFVuTTJ2ZHR1N0VDUW1r?=
- =?utf-8?B?eFNWcEh5bHhOaExabk42dEsvTG1QU2xSb0t6bEE2MUFUN0NHV25sUFRPZjE2?=
- =?utf-8?B?TVdyS0xydDdOdnByYjlqeUF6Q2tWZVkvbXA5alFHdERCSFFMOW9kdlgwbk9x?=
- =?utf-8?B?eE00d3ZpUXlncjE0OGRoZnN4UTBVdFpoSGRSaTdGLzhBbjVNK0NQT1QyaWlL?=
- =?utf-8?B?d2RsRVN1N2l6cFRqVHI0Z09yOTRxNFc4Y1EwbmlubHBpSmlVMTZwelB5QUpU?=
- =?utf-8?B?T05leU93N0ZJR2lrV2FJK09Sb2Z3T0tQcUNTVXA3Tjl6MmRxdVlHZVFTblpU?=
- =?utf-8?B?WERtRzBnNG9TS1ZFVEorb1BwaU9Zd016ZktWSWk4bGczMUdMMGJFMHRTa09T?=
- =?utf-8?B?MkU2SytwSkdZbEVMalJpVmhjeDM2MnoxTlJLVFRNRGpvVmVOV0VOVmw2cTRH?=
- =?utf-8?B?a1ZXSDRGYmE0Ym5jR1MrWWQ5KzNJYUtUZDJZMG1FdUVudFBQU09qdjhHT0Rm?=
- =?utf-8?B?TFlJNk5uU1RJNDJvTGMzc1V5a1ZwQkVnQXJZOEtCdjljelRCL09EN2hLV3dU?=
- =?utf-8?B?RHdPcWhWaDQ4YXBCbHdUdU5wb0J3RVNCdkFvYWlqQWg1TXp3NnpOajlHZ1ow?=
- =?utf-8?B?aGw2M2pmNHlDRkV0dTJqdEVZSThtUm8rVVQxaWxzekplMVU0cG5nVUFUcWpw?=
- =?utf-8?B?TWVpMGlUZHRZZ2VFQmh4VEZwdXNwWEV5OWh6WTFXTVVIQm9EQmV4RlB0amNJ?=
- =?utf-8?B?K3VrRVI2ZTVOdFBEcUVBcGRjdm1nZjRGZUp2dy9KdGhka2Q2VHJPL2dnS3Bu?=
- =?utf-8?B?bExMbDI2TmFzQ2RPbytkaHdBa0JXaTA4VnFreWxVYUV1M0FIbitQeWE4NHdV?=
- =?utf-8?B?RC95cDZOUlpKY3A1dCtvTWxlSnZ5OG5DWGM2bzF4MHFMcWlVOHZsZWdMU1J3?=
- =?utf-8?B?RXp1Z2ZvUk9EODArNVozRkNFQmZEd2ZUbi9GVVYyM1BhY2dvdjVGWVh5aGFj?=
- =?utf-8?B?MDIrMUF4d0pmZ3V0bE1WUisydDlYblVhSFF3TGUzejU5ZEMxZDNPMDY5czVP?=
- =?utf-8?B?S0wwd1djTWp0TTk5cVFXZTBHa3o4STJDdUtRK2cxbFpjOWR0R1FzdHcycFJM?=
- =?utf-8?B?K0xoL2RxQjRYaXdkMWRObzV6UEEzNFNQblhUaktJc1N6VUNJdmZFNzhsQjVC?=
- =?utf-8?B?WTNNRkNwZG5uNVVaOFAzWHhBdHo3VHZzL201ZVo0UHRpUHljbmg0ckRnYTFo?=
- =?utf-8?B?QnFuNmdFelY3WHdqaEpGR2NuK1VqUE1QSGF4cHlNT0hzYnJnSmFJOVdnU3Jy?=
- =?utf-8?B?ME9hOTM0aUF0UkU4UC9NaXdPVGx1a2s3WjdTcWdjZkc5dm5QNkZrTXFGeU0y?=
- =?utf-8?B?YkFENlJuM2pZRnZnZVB3YzU3bkZRRmNLbjEzR2VVYlNhK01UZjZSK3NnVGg1?=
- =?utf-8?B?MzdnYTZvSStwN01Da0JTNU5yYVZiaWRYN3EvYUZWMHRGTm5WVmFhU0dWY1BF?=
- =?utf-8?B?UThNcTNXWTJubnZnajhyYWZPL3FsTjZFNFVHNVZMZ2NxdUR5ZHBHNElKM0c2?=
- =?utf-8?B?Uy9aUnpyU2tiZ1JNdEJwYW40MG9GdE1WaXltNmpMYkdBVkZQSFlKb2VOSEhp?=
- =?utf-8?B?d1QyWUhQWG5xc1FycGg3ckZkWEhzdFBnY3BoaFBkNDNjK2Zkc3c1WmlVenQ2?=
- =?utf-8?Q?Lg4u0oJRxQ7J6owXb0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR03MB6896.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZDdQcE1CSGlSZ3VtbXJHZ0QvUklzNDBTbFN1MElwVGd0REsxUXhJY015VTJZ?=
- =?utf-8?B?T3NtaW0zcEc5OEZRRzVBOWlYd2dsM0VxaVozWGRubzhPSlhBd3owd0Z0TktR?=
- =?utf-8?B?T3BJQ2R4bEhqc0NHWnFUZGNUK1gvWWhKK1owTlBSSFc4ZmdPUHdSU3NyY1lo?=
- =?utf-8?B?OE0yZXB0OXdEQyt0Q0ZYOXZ5UWdMY2x6NStmb1dDVFZNMXZQamZKOGVXd280?=
- =?utf-8?B?ZEJUdHp2YnJzU3JQTG9pYkFRU3JrVFVWMnVHMGZOMDJVdExvckZlL2xpOWFi?=
- =?utf-8?B?SUJLQzBGNlpBejNkQzVub202L25kUUN6OHJnRnhHTFRkd1QvMUJuTWN0YnRU?=
- =?utf-8?B?cSs3bnVnRGw3U3R2RFNjU3dlTUZ0UGZDTGRJYmZWYmZrSU5PbDBZUHR1Y1hs?=
- =?utf-8?B?cENWR1FYUUhPeENnVFRIZnNNN2NIdnRMWXQyMzhlU3lRRHpZc3BuTjRiSHor?=
- =?utf-8?B?d1BCV2VtSHNPQnh1aWtQMjlpQ3JqZVI0NFVNTkRoMlRIb1JuclZOVHY2QnB0?=
- =?utf-8?B?cE5jTE5vYjNZU0hxcTdKTXhiUmNGdGlJRytkUnU2VlU3dmtYdzdTM3NNTFZl?=
- =?utf-8?B?VTdxUDlPd2dNbG5Xd1VJYkV6T2E3aERNVFN4cGM1ZndhL05kb3FNTUVlVUVM?=
- =?utf-8?B?ZzZ1NEVnQ1R4dkppREt6aHR5Z2dqb1BReDJmb21Pa09uSXR0bUhkMFdqamRQ?=
- =?utf-8?B?ZW9oZUdCdElhYlB3RlZOUjk5R2Q3dzFqMTkrOUhQWkoxUC9NRk0reWtCMjJq?=
- =?utf-8?B?TUV3dFNkSDdyNzgxc2FPNTJlTnpHZlI2L3ZwOTVlbDJRVkhtdHNYOXNGM0Zq?=
- =?utf-8?B?M1ZlTHZ1K3p0dU9LVnZwWTlqYkc0SzhZMEtweXA2SDVXYnREYXpBQ3RKbjNk?=
- =?utf-8?B?L05FYVgyRkZzeWYwdDc3UStNVE1vQ0EySVp2dEZQS2lJbG54SXFTMENHczRo?=
- =?utf-8?B?RU9FVjlVMVVFdlM3Mk14cW9RTTBXdys3MTRHa2M3alpqYkU4cTRHa0VqQWV2?=
- =?utf-8?B?VmV0YStKYXpTMVE5OFRCeG9pdE9ybUFaSlp6NHJ3UjZicm9rMzF3bmJXMTJl?=
- =?utf-8?B?WWZpSUhTYWlyVCtNcDhjeDFxR1hyeXd0Q21ad1U2eDc0YTVNRjIvMHpYNHdr?=
- =?utf-8?B?TE02QlBhK2xHNGlERlF3ZzlGT0Rvbm0xU0hKdVNXRDlVSnpMS01uSENadm80?=
- =?utf-8?B?UFIwTnE2bk1EVjd1WXVNSXRoSmF6eEpwOWhTc2pjd0ZIQXpBQW9WMVJxL1Zm?=
- =?utf-8?B?K3RUYzdRSGFuYVlTUmF4MzhyUUZFTUVSNlRuTjJwZEErTk15eVg4c2piZFdX?=
- =?utf-8?B?dW9wZWhwN1Y0b2pWSmxhUVk3by9wMFNubHNxQk5uTFpldjcrM3hlMUMwbHZr?=
- =?utf-8?B?Y29DL1RmRUhSYXBWNG9TNEpBamlFcFVtU08xMFJtcDlXeUVLL3NOcTZtZWdS?=
- =?utf-8?B?LzlNNUlYNzVLNnRKNnV5MDdnRGthL2JZRlZnY0wzcGZPc3hMNUViTDJtWFVK?=
- =?utf-8?B?cUVQS0xYVCs0R0Y1Y3lIdVp2Y09qMHlUbExOOWVtM1dWZXFkSGhydWNIOWNz?=
- =?utf-8?B?bGpTUjg4VXhIbVMrSlJBMjVBYkpoeElHM0RYeGJVeDNwN2NGdERpTWNrRkpl?=
- =?utf-8?B?VmRyQm5FVDVpSGs2WHBZNnpXYWpiTm9sWWR5bXdJV29tU2I5UHVrNXhONGlD?=
- =?utf-8?B?SmdOb2ZDYUFGQ3ZDWUFxaWlLaFZhYmFkNTFIUTZkRnFBUlpGVGVHSFltRU9V?=
- =?utf-8?B?L2o3R0hRSlVNTkVoUVNWS0RKU1dqQksxem5neFh5WWM2anVpdWsvS0U3UnZN?=
- =?utf-8?B?aDdwNDBKVkV5bUFtbHpkd1NNUyt6UC9YMnZMWGM2TmRMQmVIMnRvY25Ccm5y?=
- =?utf-8?B?eW9QeVZWVTZDdXBGaEc1YTR5UVlaS3ZPUVNmWGJmZjNDK2E4VVF4L1RDb1JC?=
- =?utf-8?B?U1Q2Uno0Tjgvbk5Hd0hXM3lRYnMycm0xZXQxVklMRlpkRnFpWklHMGxDc1VM?=
- =?utf-8?B?ZDdMeWpjREtDSTFORjd2Mm5seEJYL21VRzNibmR5ck9ERE5TUUhCdWk4cnY5?=
- =?utf-8?B?TE9tdEg2YjhpajZvNWR5YUV3VWRDMEFtS3ViU0x2YTkraTVoaVd1RnZCVlpJ?=
- =?utf-8?B?bTBYSkxlL2E4MmtiLzB6S1IwYXhxK09DN1FDVVU1bTU4ZzRDQlhQYzBXNnNW?=
- =?utf-8?B?QVE9PQ==?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7951d5ed-6e8e-49d5-5dc7-08dcc3551515
-X-MS-Exchange-CrossTenant-AuthSource: TYZPR03MB6896.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Aug 2024 09:22:17.5215
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: gvvPpuAyna14NVd4PRfa9Kcd3yoA7F53ix38CTfdF093FF0llMN01d7ndmtnz1yTOeijyvSbQXO3hhegDyTK5Oe2NJcjjehGeFgJDxMSKsM=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR03MB8313
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <98c570cb-c2ca-4816-9ca4-94033f7fb3fb@gmx.net>
 
-Hi Krzysztof,
-     Thanks for your reply.
+Hi Stefan,
 
-On 2024/8/23 14:41, Krzysztof Kozlowski wrote:
-> [ EXTERNAL EMAIL ]
+On 18:20 Wed 21 Aug     , Stefan Wahren wrote:
+> Hi Andrea,
 > 
-> On Fri, Aug 23, 2024 at 10:29:17AM +0800, Xianwei Zhao wrote:
->> Add C3 PLL controller input clock parameters "fix".
->>
->> The clock named "fix" was initially implemented in PLL clock controller driver.
->> However, some registers required secure zone access, so we moved it to
->> the secure zone (BL31) and accessed it through SCMI. Since the PLL clock
->> driver needs to use this clock, the "fix" clock is used as an input source.
->> We updated the driver but forgot to modify the binding accordingly,
-> 
-> Please wrap commit message according to Linux coding style / submission
-> process (neither too early nor over the limit):
-> https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
-> 
+> Am 20.08.24 um 16:36 schrieb Andrea della Porta:
+> > The RaspberryPi RP1 is ia PCI multi function device containing
+> > peripherals ranging from Ethernet to USB controller, I2C, SPI
+> > and others.
+> sorry, i cannot provide you a code review, but just some comments. multi
+> function device suggests "mfd" subsystem or at least "soc" . I won't
+> recommend misc driver here.
 
-Will do.
+It's true that RP1 can be called an MFD but the reason for not placing
+it in mfd subsystem are twofold:
 
-> Best regards,
-> Krzysztof
-> 
+- these discussions are quite clear about this matter: please see [1]
+  and [2]
+- the current driver use no mfd API at all
+
+This RP1 driver is not currently addressing any aspect of ARM core in the
+SoC so I would say it should not stay in drivers/soc / either, as also
+condifirmed by [2] again and [3] (note that Microchip LAN966x is a very
+close fit to what we have here on RP1).
+
+> > Implement a bare minimum driver to operate the RP1, leveraging
+> > actual OF based driver implementations for the on-borad peripherals
+> > by loading a devicetree overlay during driver probe.
+> Can you please explain why this should be a DT overlay? The RP1 is
+> assembled on the Raspberry Pi 5 PCB. DT overlays are typically for loose
+> connections like displays or HATs. I think a DTSI just for the RP1 would
+> fit better and is easier to read.
+
+The dtsi solution you proposed is the one adopted downstream. It has its
+benefits of course, but there's more.
+With the overlay approach we can achieve more generic and agnostic approach
+to managing this chipset, being that it is a PCI endpoint and could be
+possibly be reused in other hw implementations. I believe a similar
+reasoning could be applied to Bootlin's Microchip LAN966x patchset as
+well, and they also choose to approach the dtb overlay.
+Plus, a solution that can (althoguh proabbly in teh long run) cope
+with both DT or ACPI based system has been kindly requested, plase see [4]
+for details.
+IMHO the approach proposed from RH et al. of using dtbo for this 'special'
+kind of drivers makes a lot of sense (see [5]).
+
+> > The peripherals are accessed by mapping MMIO registers starting
+> > from PCI BAR1 region.
+> > As a minimum driver, the peripherals will not be added to the
+> > dtbo here, but in following patches.
+> > 
+> > Link: https://datasheets.raspberrypi.com/rp1/rp1-peripherals.pdf
+> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> > ---
+> >   MAINTAINERS                           |   2 +
+> >   arch/arm64/boot/dts/broadcom/rp1.dtso | 152 ++++++++++++
+> >   drivers/misc/Kconfig                  |   1 +
+> >   drivers/misc/Makefile                 |   1 +
+> >   drivers/misc/rp1/Kconfig              |  20 ++
+> >   drivers/misc/rp1/Makefile             |   3 +
+> >   drivers/misc/rp1/rp1-pci.c            | 333 ++++++++++++++++++++++++++
+> >   drivers/misc/rp1/rp1-pci.dtso         |   8 +
+> >   drivers/pci/quirks.c                  |   1 +
+> >   include/linux/pci_ids.h               |   3 +
+> >   10 files changed, 524 insertions(+)
+> >   create mode 100644 arch/arm64/boot/dts/broadcom/rp1.dtso
+> >   create mode 100644 drivers/misc/rp1/Kconfig
+> >   create mode 100644 drivers/misc/rp1/Makefile
+> >   create mode 100644 drivers/misc/rp1/rp1-pci.c
+> >   create mode 100644 drivers/misc/rp1/rp1-pci.dtso
+> > 
+> ...
+> > +
+> > +				rp1_clocks: clocks@c040018000 {
+> > +					compatible = "raspberrypi,rp1-clocks";
+> > +					#clock-cells = <1>;
+> > +					reg = <0xc0 0x40018000 0x0 0x10038>;
+> > +					clocks = <&clk_xosc>;
+> > +					clock-names = "xosc";
+> > +
+> > +					assigned-clocks = <&rp1_clocks RP1_PLL_SYS_CORE>,
+> > +							  <&rp1_clocks RP1_PLL_AUDIO_CORE>,
+> > +							  // RP1_PLL_VIDEO_CORE and dividers are now managed by VEC,DPI drivers
+> > +							  <&rp1_clocks RP1_PLL_SYS>,
+> > +							  <&rp1_clocks RP1_PLL_SYS_SEC>,
+> > +							  <&rp1_clocks RP1_PLL_SYS_PRI_PH>,
+> > +							  <&rp1_clocks RP1_CLK_ETH_TSU>;
+> > +
+> > +					assigned-clock-rates = <1000000000>, // RP1_PLL_SYS_CORE
+> > +							       <1536000000>, // RP1_PLL_AUDIO_CORE
+> > +							       <200000000>,  // RP1_PLL_SYS
+> > +							       <125000000>,  // RP1_PLL_SYS_SEC
+> > +							       <100000000>,  // RP1_PLL_SYS_PRI_PH
+> > +							       <50000000>;   // RP1_CLK_ETH_TSU
+> > +				};
+> > +
+> > +				rp1_gpio: pinctrl@c0400d0000 {
+> > +					reg = <0xc0 0x400d0000  0x0 0xc000>,
+> > +					      <0xc0 0x400e0000  0x0 0xc000>,
+> > +					      <0xc0 0x400f0000  0x0 0xc000>;
+> > +					compatible = "raspberrypi,rp1-gpio";
+> > +					gpio-controller;
+> > +					#gpio-cells = <2>;
+> > +					interrupt-controller;
+> > +					#interrupt-cells = <2>;
+> > +					interrupts = <RP1_INT_IO_BANK0 IRQ_TYPE_LEVEL_HIGH>,
+> > +						     <RP1_INT_IO_BANK1 IRQ_TYPE_LEVEL_HIGH>,
+> > +						     <RP1_INT_IO_BANK2 IRQ_TYPE_LEVEL_HIGH>;
+> > +					gpio-line-names =
+> > +						"ID_SDA", // GPIO0
+> > +						"ID_SCL", // GPIO1
+> > +						"GPIO2", // GPIO2
+> > +						"GPIO3", // GPIO3
+> > +						"GPIO4", // GPIO4
+> > +						"GPIO5", // GPIO5
+> > +						"GPIO6", // GPIO6
+> > +						"GPIO7", // GPIO7
+> > +						"GPIO8", // GPIO8
+> > +						"GPIO9", // GPIO9
+> > +						"GPIO10", // GPIO10
+> > +						"GPIO11", // GPIO11
+> > +						"GPIO12", // GPIO12
+> > +						"GPIO13", // GPIO13
+> > +						"GPIO14", // GPIO14
+> > +						"GPIO15", // GPIO15
+> > +						"GPIO16", // GPIO16
+> > +						"GPIO17", // GPIO17
+> > +						"GPIO18", // GPIO18
+> > +						"GPIO19", // GPIO19
+> > +						"GPIO20", // GPIO20
+> > +						"GPIO21", // GPIO21
+> > +						"GPIO22", // GPIO22
+> > +						"GPIO23", // GPIO23
+> > +						"GPIO24", // GPIO24
+> > +						"GPIO25", // GPIO25
+> > +						"GPIO26", // GPIO26
+> > +						"GPIO27", // GPIO27
+> > +						"PCIE_RP1_WAKE", // GPIO28
+> > +						"FAN_TACH", // GPIO29
+> > +						"HOST_SDA", // GPIO30
+> > +						"HOST_SCL", // GPIO31
+> > +						"ETH_RST_N", // GPIO32
+> > +						"", // GPIO33
+> > +						"CD0_IO0_MICCLK", // GPIO34
+> > +						"CD0_IO0_MICDAT0", // GPIO35
+> > +						"RP1_PCIE_CLKREQ_N", // GPIO36
+> > +						"", // GPIO37
+> > +						"CD0_SDA", // GPIO38
+> > +						"CD0_SCL", // GPIO39
+> > +						"CD1_SDA", // GPIO40
+> > +						"CD1_SCL", // GPIO41
+> > +						"USB_VBUS_EN", // GPIO42
+> > +						"USB_OC_N", // GPIO43
+> > +						"RP1_STAT_LED", // GPIO44
+> > +						"FAN_PWM", // GPIO45
+> > +						"CD1_IO0_MICCLK", // GPIO46
+> > +						"2712_WAKE", // GPIO47
+> > +						"CD1_IO1_MICDAT1", // GPIO48
+> > +						"EN_MAX_USB_CUR", // GPIO49
+> > +						"", // GPIO50
+> > +						"", // GPIO51
+> > +						"", // GPIO52
+> > +						""; // GPIO53
+> GPIO line names are board specific, so this should go to the Raspberry
+> Pi 5 file.
+
+Could we instead just name them with generic GPIO'N' where N is the number
+of the gpio? Much like many of that pins already are... in this way we
+don't add a dependency in the board dts to the rp1_gpio node, which is not
+even there when the main dts is parsed at boot, since the dtbo will be
+added only on PCI enumeration of the RP1 device.
+Or even better: since we don't explicitly use the gpio names to address
+them (e.g. phy-reset-gpios in rp1_eth node is addressing the ETH_RST_N
+gpio by number), can we just get rid of the gpio-line-names property?
+Also Bootlin's Microchip gpio node seems to avoid naming them...
+
+> > +				};
+> > +			};
+> > +		};
+> > +	};
+> > +};
+> > diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
+> > index 41c3d2821a78..02405209e6c4 100644
+> > --- a/drivers/misc/Kconfig
+> > +++ b/drivers/misc/Kconfig
+> > @@ -618,4 +618,5 @@ source "drivers/misc/uacce/Kconfig"
+> >   source "drivers/misc/pvpanic/Kconfig"
+> >   source "drivers/misc/mchp_pci1xxxx/Kconfig"
+> >   source "drivers/misc/keba/Kconfig"
+> > +source "drivers/misc/rp1/Kconfig"
+> >   endmenu
+> > diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
+> > index c2f990862d2b..84bfa866fbee 100644
+> > --- a/drivers/misc/Makefile
+> > +++ b/drivers/misc/Makefile
+> > @@ -71,3 +71,4 @@ obj-$(CONFIG_TPS6594_PFSM)	+= tps6594-pfsm.o
+> >   obj-$(CONFIG_NSM)		+= nsm.o
+> >   obj-$(CONFIG_MARVELL_CN10K_DPI)	+= mrvl_cn10k_dpi.o
+> >   obj-y				+= keba/
+> > +obj-$(CONFIG_MISC_RP1)		+= rp1/
+> > diff --git a/drivers/misc/rp1/Kconfig b/drivers/misc/rp1/Kconfig
+> > new file mode 100644
+> > index 000000000000..050417ee09ae
+> > --- /dev/null
+> > +++ b/drivers/misc/rp1/Kconfig
+> > @@ -0,0 +1,20 @@
+> > +# SPDX-License-Identifier: GPL-2.0-only
+> > +#
+> > +# RaspberryPi RP1 misc device
+> > +#
+> > +
+> > +config MISC_RP1
+> > +        tristate "RaspberryPi RP1 PCIe support"
+> > +        depends on PCI && PCI_QUIRKS
+> > +        select OF
+> > +        select OF_OVERLAY
+> > +        select IRQ_DOMAIN
+> > +        select PCI_DYNAMIC_OF_NODES
+> > +        help
+> > +          Support for the RP1 peripheral chip found on Raspberry Pi 5 board.
+> > +          This device supports several sub-devices including e.g. Ethernet controller,
+> > +          USB controller, I2C, SPI and UART.
+> > +          The driver is responsible for enabling the DT node once the PCIe endpoint
+> > +          has been configured, and handling interrupts.
+> > +          This driver uses an overlay to load other drivers to support for RP1
+> > +          internal sub-devices.
+> > diff --git a/drivers/misc/rp1/Makefile b/drivers/misc/rp1/Makefile
+> > new file mode 100644
+> > index 000000000000..e83854b4ed2c
+> > --- /dev/null
+> > +++ b/drivers/misc/rp1/Makefile
+> > @@ -0,0 +1,3 @@
+> > +# SPDX-License-Identifier: GPL-2.0-only
+> > +rp1-pci-objs			:= rp1-pci.o rp1-pci.dtbo.o
+> > +obj-$(CONFIG_MISC_RP1)		+= rp1-pci.o
+> > diff --git a/drivers/misc/rp1/rp1-pci.c b/drivers/misc/rp1/rp1-pci.c
+> > new file mode 100644
+> > index 000000000000..a6093ba7e19a
+> > --- /dev/null
+> > +++ b/drivers/misc/rp1/rp1-pci.c
+> > @@ -0,0 +1,333 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * Copyright (c) 2018-22 Raspberry Pi Ltd.
+> > + * All rights reserved.
+> > + */
+> > +
+> > +#include <linux/clk.h>
+> > +#include <linux/clkdev.h>
+> > +#include <linux/clk-provider.h>
+> > +#include <linux/err.h>
+> > +#include <linux/interrupt.h>
+> > +#include <linux/irq.h>
+> > +#include <linux/irqchip/chained_irq.h>
+> > +#include <linux/irqdomain.h>
+> > +#include <linux/module.h>
+> > +#include <linux/msi.h>
+> > +#include <linux/of_platform.h>
+> > +#include <linux/pci.h>
+> > +#include <linux/platform_device.h>
+> > +#include <linux/reset.h>
+> > +
+> > +#include <dt-bindings/misc/rp1.h>
+> > +
+> > +#define RP1_B0_CHIP_ID		0x10001927
+> > +#define RP1_C0_CHIP_ID		0x20001927
+> > +
+> > +#define RP1_PLATFORM_ASIC	BIT(1)
+> > +#define RP1_PLATFORM_FPGA	BIT(0)
+> > +
+> > +#define RP1_DRIVER_NAME		"rp1"
+> > +
+> > +#define RP1_ACTUAL_IRQS		RP1_INT_END
+> > +#define RP1_IRQS		RP1_ACTUAL_IRQS
+> > +#define RP1_HW_IRQ_MASK		GENMASK(5, 0)
+> > +
+> > +#define RP1_SYSCLK_RATE		200000000
+> > +#define RP1_SYSCLK_FPGA_RATE	60000000
+> > +
+> > +enum {
+> > +	SYSINFO_CHIP_ID_OFFSET	= 0,
+> > +	SYSINFO_PLATFORM_OFFSET	= 4,
+> > +};
+> > +
+> > +#define REG_SET			0x800
+> > +#define REG_CLR			0xc00
+> > +
+> > +/* MSIX CFG registers start at 0x8 */
+> > +#define MSIX_CFG(x) (0x8 + (4 * (x)))
+> > +
+> > +#define MSIX_CFG_IACK_EN        BIT(3)
+> > +#define MSIX_CFG_IACK           BIT(2)
+> > +#define MSIX_CFG_TEST           BIT(1)
+> > +#define MSIX_CFG_ENABLE         BIT(0)
+> > +
+> > +#define INTSTATL		0x108
+> > +#define INTSTATH		0x10c
+> > +
+> > +extern char __dtbo_rp1_pci_begin[];
+> > +extern char __dtbo_rp1_pci_end[];
+> > +
+> > +struct rp1_dev {
+> > +	struct pci_dev *pdev;
+> > +	struct device *dev;
+> > +	struct clk *sys_clk;
+> > +	struct irq_domain *domain;
+> > +	struct irq_data *pcie_irqds[64];
+> > +	void __iomem *bar1;
+> > +	int ovcs_id;
+> > +	bool level_triggered_irq[RP1_ACTUAL_IRQS];
+> > +};
+> > +
+> > +
+> ...
+> > +
+> > +static const struct pci_device_id dev_id_table[] = {
+> > +	{ PCI_DEVICE(PCI_VENDOR_ID_RPI, PCI_DEVICE_ID_RP1_C0), },
+> > +	{ 0, }
+> > +};
+> > +
+> > +static struct pci_driver rp1_driver = {
+> > +	.name		= RP1_DRIVER_NAME,
+> > +	.id_table	= dev_id_table,
+> > +	.probe		= rp1_probe,
+> > +	.remove		= rp1_remove,
+> > +};
+> > +
+> > +module_pci_driver(rp1_driver);
+> > +
+> > +MODULE_AUTHOR("Phil Elwell <phil@raspberrypi.com>");
+> Module author & Copyright doesn't seem to match with this patch author.
+> Please clarify/fix
+
+My intention here is that, even if the code has been heavily modified by me,
+the core original code is still there so I just wanted to tribute it to the
+original author. 
+I'll synchronize this with RaspberryPi guys and coem up with a unified solution.
+Just in case: would multiple MODULE_AUTHOR entries (one with my name and one
+with original authors name) be accepetd?
+
+Many thanks,
+Andrea
+
+References:
+
+- [1]: https://lore.kernel.org/all/20240612140208.GC1504919@google.com/
+- [2]: https://lore.kernel.org/all/83f7fa09-d0e6-4f36-a27d-cee08979be2a@app.fastmail.com/
+- [3]: https://lore.kernel.org/all/2024081356-mutable-everyday-6f9d@gregkh/
+- [4]: https://lore.kernel.org/all/ba8cdf39-3ba3-4abc-98f5-d394d6867f95@gmx.net/
+- [5]: https://lpc.events/event/17/contributions/1421/attachments/1337/2680/LPC2023%20Non-discoverable%20devices%20in%20PCI.pdf
