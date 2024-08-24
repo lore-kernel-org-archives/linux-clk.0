@@ -1,98 +1,84 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39A311C8FCD;
-	Fri, 23 Aug 2024 23:13:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35425DF71;
+	Sat, 24 Aug 2024 05:17:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724454792; cv=none; b=NhK8EeQ5izxyDBbCT5BgDNrSI6Q81WOCnctl2n5e4VCP2AFgpxgtD84ZM2uweAbQDopy8r2k+lLBZJO66EL9zcwlVtf80y6Y3ie7lTXycvBg0MMXkKIN+2Czmlx2TADEc13FvTjzx1IGnV2g+s/Bv6qc+Z/5BAzsg7Ykijtdmp8=
+	t=1724476651; cv=none; b=fCCOk7EEXxga7AlY0Psb6zmvTbKWVY68+V1fle3uRykNB+sSSdqJnW3llZxZCtwsYCPRw1/348dXr2BxnwfzbOX/zUqyNkypNXK9GmTYQ8T706Ys+yk+6Ja8GeX2v7Ej9YNzis+i3L7y3GxocNSAjS7AUcCSrNwYXtnpVOphUCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724454792; c=relaxed/simple;
-	bh=cZb5bENC2/V22FAm8H6EPE8XYq7AE9WeNFGzS39Z234=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=cfdfYsFZlnAb39mSdSdAUXYDIsmuERplwWoufprywXhvLd4PX7Q10GPCjK8EQnMskDciuMN+OHeAKuCWDMaBt7XIwUEZFOAkELKEfVSy0T1QJB3AWuJjj2FNrS9WYWLrWNHqID7eQ9QQU52XB/9+hhhF1V1qaiqpNqooj55bEeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YG6Xbge+; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1724476651; c=relaxed/simple;
+	bh=EKYIrWqwELDuWb3+1xndQubTjiUIzzsdrYkz/a+9peg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UbHVeSqJuATJ+UIOQm7VBr90zlKp0ToZYwtPoCdcFB1UC3Eght2p63T8Hpb65kHRAQ3Sk8p46CGMSJGscgseC7SKa3ol28nD8v/XRunIllJkeQzmrMCUhjcJFyuq+FZ5Nseazz8RtaHvzl9ddlThkckerDwI3ooQQMXYtdcXqJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=pZqnuwYs; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YG6Xbge+"
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47NBU0K1007716;
-	Fri, 23 Aug 2024 23:13:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	98ojfFnRqT6OFd+DsmKj4oWIC/lf/udM01Zdlqh5I+s=; b=YG6Xbge+NssyG6iK
-	wvN8ZM9+VVl9mkoaN+1V7dBg9BP4JJ1rjGf8O6val93XqsGyHgRwQ3y6Zd+FcllP
-	9ROMBKdL33ebT2wvVXqjdDwZzPRYLOr+8ZrnB1elk/cfj0flXBkp1zzjLPKqfudj
-	FUA5EiDVnlUcAel9KCApWmbASfOHcC0ss5qAgMdi9wLoPYTtQ+zGBrn6PB8ivcdZ
-	ku0wBcF/XStMlaXW/sNmUWLVvUeObokNDiTOitMAt/ZtE4OTSdTaAX88ETKeD1U9
-	STiA6GUTQgaqOlX/6YjVYXy4txlVP4rMuJFHMmvhJYx+QWapQ9jUpcmFDDknbH+2
-	W8aPxQ==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 414pe5vpct-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 Aug 2024 23:13:06 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47NND54L008923
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 23 Aug 2024 23:13:05 GMT
-Received: from [10.251.44.135] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 23 Aug
- 2024 16:13:03 -0700
-Message-ID: <1893aa81-89f0-459e-b5b5-9973014ed1e6@quicinc.com>
-Date: Sat, 24 Aug 2024 02:13:00 +0300
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="pZqnuwYs"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F32AC32781;
+	Sat, 24 Aug 2024 05:17:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1724476650;
+	bh=EKYIrWqwELDuWb3+1xndQubTjiUIzzsdrYkz/a+9peg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pZqnuwYsOzkoT3F9shGWLvGPerTWUfF0y4EdZ8YS9ToqCEk6X5+bleX9MUuRgeyH4
+	 5Wd2IjUbdRYlpBJetz7loeGfYFQm0Z33Iqt2DBks4qGptCbzJtrFjDq1+uIzDbEjRs
+	 o4Czi84+1cftdJ6971GCbffFbs0pIQqLAAkXwiGk=
+Date: Sat, 24 Aug 2024 09:53:18 +0800
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Andrea della Porta <andrea.porta@suse.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Stefan Wahren <wahrenst@gmx.net>
+Subject: Re: [PATCH 08/11] misc: rp1: RaspberryPi RP1 misc driver
+Message-ID: <2024082420-secluding-rearrange-fcfd@gregkh>
+References: <cover.1724159867.git.andrea.porta@suse.com>
+ <5954e4dccc0e158cf434d2c281ad57120538409b.1724159867.git.andrea.porta@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: gdsc: Add a flag to skip setting power
- collapse bits
-To: Stephen Boyd <sboyd@kernel.org>, <andersson@kernel.org>,
-        <quic_mdtipton@quicinc.com>, <quic_viveka@quicinc.com>
-CC: <mturquette@baylibre.com>, <linux-arm-msm@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240813120015.3242787-1-quic_c_gdjako@quicinc.com>
- <496d7baf4c0e7e83c54f57edf789eafc.sboyd@kernel.org>
-Content-Language: en-US
-From: Georgi Djakov <quic_c_gdjako@quicinc.com>
-In-Reply-To: <496d7baf4c0e7e83c54f57edf789eafc.sboyd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: jTbEoyWWRZbzrpcJAgb-ATPzJXdRbxl2
-X-Proofpoint-GUID: jTbEoyWWRZbzrpcJAgb-ATPzJXdRbxl2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-23_16,2024-08-23_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- mlxscore=0 lowpriorityscore=0 adultscore=0 priorityscore=1501
- impostorscore=0 clxscore=1011 spamscore=0 mlxlogscore=503 phishscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408230170
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5954e4dccc0e158cf434d2c281ad57120538409b.1724159867.git.andrea.porta@suse.com>
 
-On 8/17/2024 12:48 AM, Stephen Boyd wrote:
-> Quoting Georgi Djakov (2024-08-13 05:00:15)
->> The sdm845 platforms have a hardware issue that requires keeping
->> some of the MMNOC GDSCs in SW collapse mode (which is the power-on
->> default). But if some driver tries to use these GDSCs and the mode
->> is updated because of runtime pm calls, we may get a board hang.
->> Introduce a flag to skip any updates to the power collapse settings
->> for the impacted GDSCs to avoid unexpected board hangs.
-> 
-> Can you add a Fixes tag? And does this need to go to stable kernels?
+On Tue, Aug 20, 2024 at 04:36:10PM +0200, Andrea della Porta wrote:
+> --- a/include/linux/pci_ids.h
+> +++ b/include/linux/pci_ids.h
+> @@ -2610,6 +2610,9 @@
+>  #define PCI_VENDOR_ID_TEKRAM		0x1de1
+>  #define PCI_DEVICE_ID_TEKRAM_DC290	0xdc29
+>  
+> +#define PCI_VENDOR_ID_RPI		0x1de4
+> +#define PCI_DEVICE_ID_RP1_C0		0x0001
 
-These GDSCs got a user in v6.11-rc1 and there is currently a workaround
-in place to avoid the hang, but this patch is the proper way to handle
-it. Getting it into either fixes or next is both fine. There is no need
-to backport it, as these GDSCs are not used on older kernels.
+Minor thing, but please read the top of this file.  As you aren't using
+these values anywhere outside of this one driver, there's no need to add
+these values to pci_ids.h.  Just keep them local to the .c file itself.
 
-Thanks,
-Georgi
+thanks,
+
+greg k-h
