@@ -1,54 +1,87 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com [209.85.208.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B70041C72;
-	Sat, 24 Aug 2024 06:38:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D74761714B7
+	for <linux-clk@vger.kernel.org>; Sat, 24 Aug 2024 14:53:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724481524; cv=none; b=pxntj8s9nnc7x6WnXnztSrGc/T7/YMnJ+bn9PAs5a+X2NlkpJ7Yp1leJet0pGFU6sGvQncuH1YcnbMiVnIJyzm10TqyM4QfyUhD3VE6kvE4GefG+yMH4UEERKqv4ilAaBYVqpH+Ag30Ceje0fDFiJJiJ9nccobsr8BUS0NTNd70=
+	t=1724511227; cv=none; b=D5UDbF8DypYcOi7dJw5JMDyuASL+Tsiu49IrohP0DhcwslrDXxV2qgco5o4529fXlqTciv8pouSzK2hQBPuMcdVTdzY7rZNQg0/AqMe6aPFySn7titExvd/KhXPKA9Ma4h4goH/FnSw1/3o5RAae4X5buMod/kD5nqZU2a4YFfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724481524; c=relaxed/simple;
-	bh=p/mUgmk29+S4IL4JzOT+wL8fP5jthd1aavpwMxCC9JI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jLm2xB5uiohZu7vw3GftFrlx2Hz3EieD5S8Y5xGZrBiGPAF10AXR83feNrbVq252SFxEylCJpc8wj2JHIkfOO+1J67qrbLyfvHXYeo3ilUjh0oo15SqO8ot+aRYezGNEILYrKoHN8bPWM/2VBITItkH6/rqs5VrZ+2yKarcGUAk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 881ACC32781;
-	Sat, 24 Aug 2024 06:38:35 +0000 (UTC)
-Date: Sat, 24 Aug 2024 08:38:32 +0200
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Duje =?utf-8?Q?Mihanovi=C4=87?= <duje.mihanovic@skole.hr>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	Rob Herring <robh+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Tony Lindgren <tony@atomide.com>, Haojian Zhuang <haojian.zhuang@linaro.org>, 
-	Lubomir Rintel <lkundrak@v3.sk>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, phone-devel@vger.kernel.org, 
-	~postmarketos/upstreaming@lists.sr.ht, Karel Balej <balejk@matfyz.cz>, 
-	David Wronek <david@mainlining.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v12 09/12] dt-bindings: marvell: Document PXA1908 SoC
-Message-ID: <6jrycltcebgylznwvj4ocq7ewbdkglrxak73sbqn2yf3rdox73@ztgpvlc4cnck>
-References: <20240823-pxa1908-lkml-v12-0-cc3ada51beb0@skole.hr>
- <20240823-pxa1908-lkml-v12-9-cc3ada51beb0@skole.hr>
+	s=arc-20240116; t=1724511227; c=relaxed/simple;
+	bh=/JsEau8brkLXr7oKpwfXPD6AUQJCnf27nPEb3S56Hr4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ojn+eKtAw2g21DQoZLwhSY9QjwEILk6OjVBZ/7AVOHKGJfh0BlfIMb7JLExHrIYVk3zfsC/Nzt5VHd4EpmK3Vzd/efWUeUo5PEUHt48zlHo97Qnl0MGKtdVW1jbzdBn4UKBlSkufMHnt5twXhnm5NplQBqmgZBjgZO1WydpySSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=j0IH/FDH; arc=none smtp.client-ip=209.85.208.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="j0IH/FDH"
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2f4f24263acso34841651fa.0
+        for <linux-clk@vger.kernel.org>; Sat, 24 Aug 2024 07:53:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1724511224; x=1725116024; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=l62ZXkDjkO/9RbV9AkhIHQNaZIShFDlH2pL9xxXwU6s=;
+        b=j0IH/FDHVskWTIgSuDT0wwu4ffEWdAsV6A8d2pcVQx+4RH4F8ejX6H53KJWjlphpRn
+         Kw6gBGHMejB80y/ndBa8zOufEBwiTQEcviQb7GIGc1XajiJBwwvLgsxnMvti96yd8CQn
+         MhzGz6x0B5hWptL99g052BYAU+LxaWNs+FZhNyWG+RpiB553KYMbdO3Qga337SeRIHoE
+         Ra6WEhffWQ08iHWgd/MRkYxWcwRE1Wd6o3CN8D3KwrEUFPR3GBqLu31fGS3tnaQTH7Fj
+         XzYdov/ZoG6fQxnVuVCz4rE3JOZKJcRWO3fnNpN5gCA6+jcVzAc0X0rCqlvpQ/TrmLL0
+         iC1w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724511224; x=1725116024;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=l62ZXkDjkO/9RbV9AkhIHQNaZIShFDlH2pL9xxXwU6s=;
+        b=nP+TtyJ8RiRXoT3J1HvraPaZ6kfNh6Qft6lqwNaj3gBaGGa1Vs/PXQ2H4gKuRkbYNP
+         TyoALPr99pSedPAvJh8rptxve381ikgbq9EHakI624mR9gYgh9lVvIgHmYRhdi35Q2qr
+         72jqW9Oy9+HUp9qKlI49rm9FCtuN2T+YFj83kab+BqBS57iIeAt6TYt3cp596ZZzaZYr
+         su32NNiPbVMdsf6nFiYZaFSDJWzDVLwX6n1YELR9aAjzL0Jxqr3+aOzlNu0T7ED7hRki
+         IpSugieAQJnWB548RaD0mXdsiKPquRwXFV+EWTu7ISSBHnkS6ELkP2zL4aU5gb8Ah1Q+
+         UJHg==
+X-Gm-Message-State: AOJu0Yy59bm5jH2yecaCKnA/3kP7kEk2XcuT4QrB64ddfVL+toUzvuUg
+	IJkO0D8Fh7BSwN6v83hiAPOmNUVe/NVpg5xYuD4iaeOlyvKfCIhJ/vCb1g9rMj4=
+X-Google-Smtp-Source: AGHT+IHWbWqgdC2nPGTjCpSG2/Yy/IeWdZQTtHHgJtiQJ7X0BY6UfL5m2t7msptFp4JJayuged9ZpQ==
+X-Received: by 2002:a2e:702:0:b0:2ef:2d3a:e700 with SMTP id 38308e7fff4ca-2f4f5754e91mr38772991fa.18.1724511223545;
+        Sat, 24 Aug 2024 07:53:43 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.177])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f433671sm409703366b.128.2024.08.24.07.53.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 24 Aug 2024 07:53:43 -0700 (PDT)
+Message-ID: <5665dd6b-59af-4106-888c-67b374b9f7ca@tuxon.dev>
+Date: Sat, 24 Aug 2024 17:53:41 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240823-pxa1908-lkml-v12-9-cc3ada51beb0@skole.hr>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: at91: sama7g5: Allocate only the needed amount of
+ memory for PLLs
+Content-Language: en-US
+To: mturquette@baylibre.com, sboyd@kernel.org, nicolas.ferre@microchip.com,
+ alexandre.belloni@bootlin.com
+Cc: linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20240714141315.19480-1-claudiu.beznea@tuxon.dev>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <20240714141315.19480-1-claudiu.beznea@tuxon.dev>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 23, 2024 at 10:54:44PM +0200, Duje Mihanovi=C4=87 wrote:
-> Add dt binding for the Marvell PXA1908 SoC.
 
-=2E.. and Samsung foo bar board/phone/laptop/something.
 
-Some description of the hardware is also welcomed in the bindings...
+On 14.07.2024 17:13, Claudiu Beznea wrote:
+> The maximum number of PLL components on SAMA7G5 is 3 (one fractional
+> part and 2 dividers). Allocate the needed amount of memory for
+> sama7g5_plls 2d array. Previous code used to allocate 7 array entries for
+> each PLL. While at it, replace 3 with PLL_COMPID_MAX in the loop which
+> parses the sama7g5_plls 2d array.
+> 
+> Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
 
-Best regards,
-Krzysztof
-
+Applied to clk-microchip, thanks!
