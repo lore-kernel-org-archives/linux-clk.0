@@ -1,40 +1,58 @@
-Received: from mout.web.de (mout.web.de [212.227.15.4])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EFCC19408C;
-	Mon, 26 Aug 2024 16:12:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C802191F78;
+	Mon, 26 Aug 2024 16:36:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724688765; cv=none; b=NiO2z5nW7sRJSnfPLvr/vAGKIZxAAhrD2gB6gumCZK66l11LQV/9Pc+PfN7H0EpVundMm8XpWLtJBYtoSmA8aamkQRCu7D6UUDFKehKHBcmRdLnK0guQWuWLbXqSBuigDgh6mtfJwLIJ5mhxSHJa9kRcCo3VjFs32uX27G2X3ks=
+	t=1724690205; cv=none; b=XYUQiV2vqh6hw37CIKqAhklHnDMkOIr+LP9mB4ezTD6WMsUHgk92NJ7MVIRca51oDS2aI2nlk22/mxtRE6TTaywqxViNmGhZbsHeMIZ+F06iuq7+YrOF0UhlhmqCTNsPfKrmZoDGN3oAzTKMxJc88fjTJdUOBkjlLL4YJ/+p5RM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724688765; c=relaxed/simple;
-	bh=euGYz/59XjjsadXbAdxTA9x3OJSStUkjHo9YAXClpV8=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=qVFDx+wJw7vkwgWB11MqJWY0azSqiuKXmHH7lfmbcWMP7Shn0bdFimHce1tE7XVISvtANxI9LvnBdNEJqfsS8065UO9yGQf10ycNbdCCEg0Lvu5Cl2Wz7kBhiZPn3qWocwpMPwpRos4SFi75hhgrWsEmpDXqMROFVFpgSQx4Fbg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=goMS5+xM; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1724690205; c=relaxed/simple;
+	bh=s2S9rPIqhbOq6bi/DMd1X1vpVCczh+GaYXKcvD0HWAo=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=RnPhkgE98wwWowMqXVMRNxDYSyKzxg05HgYKH5BNZCSD+pN4rlTiVfIY3PMVCRQHXeFES4IZ3TVuSxyeZz1bAMjeDJ13Vz8J80unnx+E+857IUeZQjokSLFgvcWry7tpe+4cvkGwZ2JFcNkgl+d9CVc6e6q5n7OHGvPu0ZCqakc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=comEaW6d; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="goMS5+xM"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1724688748; x=1725293548; i=markus.elfring@web.de;
-	bh=euGYz/59XjjsadXbAdxTA9x3OJSStUkjHo9YAXClpV8=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=goMS5+xMu7DTP1cTuzgthZ5/ctu5b3c1qN1eUmD4sOf9tyLfA3vi4a2HbuRjcBKd
-	 8CMcLD9KMWbmjXpb2BUWu+YlmtGPLuERE19/F3fGBNFm0OUS/Mzs0Grvn3AJaumCI
-	 hFz9rXJZKnZNY2C1ZIv71bpTofgE4+7wiDQa6FaR812deWDjCMpZn+ZBn+bUCr0Hs
-	 io9dfdDT4O+cosECAqn6rCvLsnwVFS/eochHB09l3FCmjS/40GjRrRfTRGom4CBqL
-	 YblEMqVCU3pCwT2kIXn7NUHuepf0s3/buHrahTRNd7Qhh5XtQCBWMKgTjN2g08cz0
-	 hVs/8C/KIPqSqfK5og==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1M3m59-1sjRXj2Vlr-000Fht; Mon, 26
- Aug 2024 18:12:28 +0200
-Message-ID: <db60a8f9-20cc-4137-a7d5-ea557b585e54@web.de>
-Date: Mon, 26 Aug 2024 18:12:26 +0200
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="comEaW6d"
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5befecad20eso715207a12.2;
+        Mon, 26 Aug 2024 09:36:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724690202; x=1725295002; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-language:cc:to:subject:from
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=s8jfPnZyc0O8niMh513DMmM26/MRMyoDXUuhx6J0cuE=;
+        b=comEaW6dagpVhXjVF4VasFnnAGJXnA2j9LnS2cqBLhQDGz2RafnML9jvch9lBwlUkI
+         mqqj8x1rJRB4zhU2/iIbBqk9wSzXaFVXed8dY4rqoyAezKtUNfieZJeTddnLmx4wMeB0
+         i29nJJq1QzTEb/yOJCJoO9YjlRVOjvbGSxrExzB3JBgAtGG+eW99wlDoCMoudEaH6t1t
+         JCJ3LHIlO2omIRwoq2SOQQ51Qglkdquj6jS7uUN2Sdz6fFvnjIRky7lNFfejNoi6M+p/
+         fALAhjVRT6tgFMEEb8/mKBoUNew8OMShbbseOYpkG9V4AAQxDPrR90OpSzGeHSoVoGBR
+         Nlgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724690202; x=1725295002;
+        h=content-transfer-encoding:content-language:cc:to:subject:from
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=s8jfPnZyc0O8niMh513DMmM26/MRMyoDXUuhx6J0cuE=;
+        b=UrAkP5Uz8Yechxtm8FhTsiS3Kj58eJyr2nx7mc1kHcwkPZ2aaBv/9+LCzzVjNCEYTT
+         8f0c+LIsLdUFGwBvcACgXSx62uaNVQL+AWVIXF7FvTVFACfrWVU2yjSBi0P5louCaIXG
+         hCDVWBlgtHR8qjQu/Ma93KhisdM8v0VRGS0QNb/PK1l4ziwlw3K0G7vamr+5GFhsfpqM
+         cCG3rn2z3KJti3qfiMHYZh1ZwzRyoDIsbUHMgLQTO9K/FVn+2SQ0BQdkFVSKVTzjafYQ
+         V0ead2UHLQTB6HnDFgpTeby0sewDIHkzXm/JOcRGDsnO11jpWIiJ07MGFMBdYZvmLkDK
+         VQbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW9husflc2H1OZ5fLQ/kHiP1az4Vf0yFCFAE7cMKVSrW6aEDCE/iWcD9qMrHgvDg3fcFXehaS3PyQ2j@vger.kernel.org, AJvYcCWiio11UJteobPlAKVzjwfMsFwH5XI8mtM0yOqWS+T4o++2P0pW2iM5edM922/tjtsJ+6JDEH19pjBlKm5G@vger.kernel.org, AJvYcCX8+VG3dj2Do9WGTRUoxaftQGNgUyIUUlhb3nDVxz51u56nA4UDW3Zmbbhkv64TUZZ2GBYIjVPJY1cN@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMipuaseZr5cFZM7swVa83WkTpM1bQyV4fPIn1YschtU0ESrFl
+	ReVEzNSzHPtqRUKo8Cw7oVm+3fhUBsQDK+ny3Jg2SwRqo8Hfu4b6
+X-Google-Smtp-Source: AGHT+IEyVJmDWU0qXTpMNJK9aJPg/tpDtVwnAkXmB9dgmBEieQ4hk3J9h9FQdOCZo5n/3rriGsMFww==
+X-Received: by 2002:a05:6402:2549:b0:5af:85fc:1a98 with SMTP id 4fb4d7f45d1cf-5c08910db40mr4200614a12.0.1724690201809;
+        Mon, 26 Aug 2024 09:36:41 -0700 (PDT)
+Received: from ?IPV6:2a02:a449:4071:1:32d0:42ff:fe10:6983? ([2a02:a449:4071:1:32d0:42ff:fe10:6983])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c04a3e9540sm5819415a12.41.2024.08.26.09.36.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Aug 2024 09:36:41 -0700 (PDT)
+Message-ID: <416cdaf2-fef2-471d-a03a-837775d6e7dc@gmail.com>
+Date: Mon, 26 Aug 2024 18:36:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -42,44 +60,51 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: David Lechner <dlechner@baylibre.com>, linux-clk@vger.kernel.org,
- linux-omap@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
- Tero Kristo <kristo@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Peter Ujfalusi <peter.ujfalusi@ti.com>
-References: <20240826-clk-fix-leak-v1-1-f55418a13aa6@baylibre.com>
-Subject: Re: [PATCH] clk: ti: dra7-atl: fix leak of of_nodes
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240826-clk-fix-leak-v1-1-f55418a13aa6@baylibre.com>
+From: Johan Jonker <jbx6244@gmail.com>
+Subject: [PATCH v1 0/9] clk: rockchip: Drop CLK_NR_CLKS CLKPMU_NR_CLKS usage
+To: heiko@sntech.de
+Cc: robh@kernel.org, conor+dt@kernel.org, krzk+dt@kernel.org,
+ mturquette@baylibre.com, sboyd@kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Content-Language: en-US
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:hT/s+2HzVMMAUlV5CH2iXOKvUrj+8lJtismT4vNLkTnnbPFwVmp
- CFaxxCQLF9VEeb6t6vf4dKrsfCDKN97cBQFHKp1Z1pB/e4ZAoPRF2ypyS4+FPbF4bfdoYKi
- l2RlCa8XJhX2LD7HTHdB+2ZJmqXCrv2jcbjuqxzDK5McN5wd0c8kI4kFFjlW+C2uTwjiCnu
- HedjZOqi93z0/9wzUzI3A==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:pLT8CqzIHAs=;TszXg/ABs/aaMjHt5Klpt1SBQpL
- enu+ZHV9TvbQvTbEux/kfqERUtBgpXhNaAG6JxUr3t8ezlKm9nZUXlW5Q8P4uG82Q4/NkKFG3
- RiE2Nw5NwAbRNx01z8dQaXBIl5aAJP7JXh0/RHB0lorJxI32zRRuTegeZWnfw2X4WjhH8WljS
- RLLf2n2OOSjCxd5MR1IX+tvNmFD3UoICpFlfqhQzv0AvlPzGr6wxmEtmiGfc0QOelJOAN09pG
- hCbsPZgREU9ExWnwxv1QJU3WikGIqDf0LNfTsHj9lv+OEM4mUC134hKRy5yW3eOodwjUEra8T
- NU2rpJ/OKvoOBv4tcp5EHtmURlX3g07dViGbd2vmZQwaOptCP2KcnMXBH3ZWd+Hb3pxUVGOum
- i9V1BjyRLIgc+z3+QunMtkcEJjlfQV29qVqLMflV2n0Ifbzmxq2Pi344UVPbCpBY7X5kVO/Vy
- I3CI8YxtdF0CDsHA1FWVIdzlG2AKl3K8Ikeba5lAy25igXbRms+qoooOZa0qFH5mIczTj5224
- G7qjrp2c/GsqtVVPpqPMX+9yXMAWkOl3v7SLAuqmZFTjvKsbEuyKzVu5df+1ecSrp3Z/t2hjN
- NBQJwdcEcfjdXAn6cQhFC8coxAhWsbP4VSF93IGu5JXIB/PwaBar2wGkx2rdi5DaAfvsJvpc6
- KkW+j5dwqZUGsQbNDTU8zs1sevmsq/M+czEFZAcntUy0hUdcHEmFRYo2uNgSj0QF7PrMCrHr8
- 7XeOdJeM2eb+5JLAFdAzMMahBSNFbcrOt6AnnhyQhRsBvtp4YwL90MxwVbDC495Xzbu6v3qan
- 7XFFjpyVIToVzWbD4Sz/emiw==
+Content-Transfer-Encoding: 7bit
 
-> This fix leaking the of_node references in of_dra7_atl_clk_probe().
-=E2=80=A6
+In order to get rid of CLK_NR_CLKS and CLKPMU_NR_CLKS
+and be able to drop it from the bindings, use
+rockchip_clk_find_max_clk_id helper to find the
+highest clock id.
 
-Can other change description be more desirable?
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.11-rc5#n94
+Johan Jonker (9):
+  clk: rockchip: px30: Drop CLK_NR_CLKS CLKPMU_NR_CLKS usage
+  clk: rockchip: rk3036: Drop CLK_NR_CLKS usage
+  clk: rockchip: rk3228: Drop CLK_NR_CLKS usage
+  clk: rockchip: rk3288: Drop CLK_NR_CLKS usage
+  clk: rockchip: rk3308: Drop CLK_NR_CLKS usage
+  clk: rockchip: rk3328: Drop CLK_NR_CLKS usage
+  clk: rockchip: rk3368: Drop CLK_NR_CLKS usage
+  clk: rockchip: rk3399: Drop CLK_NR_CLKS CLKPMU_NR_CLKS usage
+  dt-bindings: clock: rockchip: remove CLK_NR_CLKS and CLKPMU_NR_CLKS
 
-Regards,
-Markus
+ drivers/clk/rockchip/clk-px30.c        | 10 ++++++++--
+ drivers/clk/rockchip/clk-rk3036.c      |  5 ++++-
+ drivers/clk/rockchip/clk-rk3228.c      |  5 ++++-
+ drivers/clk/rockchip/clk-rk3288.c      |  5 ++++-
+ drivers/clk/rockchip/clk-rk3308.c      |  5 ++++-
+ drivers/clk/rockchip/clk-rk3328.c      |  5 ++++-
+ drivers/clk/rockchip/clk-rk3368.c      |  5 ++++-
+ drivers/clk/rockchip/clk-rk3399.c      | 10 ++++++++--
+ include/dt-bindings/clock/px30-cru.h   |  4 ----
+ include/dt-bindings/clock/rk3036-cru.h |  2 --
+ include/dt-bindings/clock/rk3228-cru.h |  2 --
+ include/dt-bindings/clock/rk3288-cru.h |  2 --
+ include/dt-bindings/clock/rk3308-cru.h |  2 --
+ include/dt-bindings/clock/rk3328-cru.h |  2 --
+ include/dt-bindings/clock/rk3368-cru.h |  2 --
+ include/dt-bindings/clock/rk3399-cru.h |  4 ----
+ 16 files changed, 40 insertions(+), 30 deletions(-)
+
+--
+2.39.2
+
