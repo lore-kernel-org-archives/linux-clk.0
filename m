@@ -1,164 +1,105 @@
-Received: from mail-4316.protonmail.ch (mail-4316.protonmail.ch [185.70.43.16])
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC3F818CBF6;
-	Mon, 26 Aug 2024 12:38:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6352C172798;
+	Mon, 26 Aug 2024 12:54:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724675931; cv=none; b=BKKgnOhLYfauGw01fHHNMWby1WoYJCmGxvn7+zQz3YTupocdXAHZvZt9zTvQ42oW/hlrkMKDnuIFdRE4+y/0rDb8lHCYkXCZu4QED6yvq3aT+RHx3TBqt3y7btSRewUfLD0b3UDa/iuUH+fb3z8ioypXlE7mNFmdWp3xyN2pBsw=
+	t=1724676881; cv=none; b=YIMpNnV1eoHHu7B6vJKAQrBJJ81hKmh9ebS3sOLRZ9C/FuoNYAxgoFKlybez9gRwMJVMNEdzJAhCUkClTYOOurPnMBuXzvI/b5F6O0ANHpKessnqywcW4mxkPe/+avAR3erS6+20WyV8SG73WbPk943Mtui45f2krh5i99pbthI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724675931; c=relaxed/simple;
-	bh=fexhxZ/Wj12N9dTkQwKjwCev2VJVFEceVWSjgTO2IC0=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dXYSL7f6MHqWlIk88cgmMNhC/N7VTmL1wTV0Re8j2hlq+ppgp7a+6eeWBptAtYNvMWosXNtAOx/Hu4vf8CeTtzFR/vOau4MTUcriG+C9p3C3VZjtjUgqfIEQaXSfSrz89jzDOGQoAY5KjXEqghdETHTwuDAdV5mrMOuWKbKArK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=P5fbGaqa; arc=none smtp.client-ip=185.70.43.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+	s=arc-20240116; t=1724676881; c=relaxed/simple;
+	bh=v88WBWfZpCdGdGKjwhtcFxY3n1G9uCQbsZZkbJ7RUPw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kL3pPtgJGD5Jg4hu7wnZVTizqmlym6kIHNWHbTqPvD6ouZxwgUs03JFrEDB5cqLRUXgBaiR9O8Sqp1WiZIQYm1XTpj6nDWPO3szF5IMkU5x3CUPnvbftyoCE6u0ei6TnTaghe3gTjXcT5y7ne1RU6fLgWDtrp/CzxhjA6pCKTxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Dvis41ie; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="P5fbGaqa"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1724675927; x=1724935127;
-	bh=BMjURepHiOaapx7nusjSR8eg3pgiVBp6E6m/pDd+PKM=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=P5fbGaqa1rOJypmPNzY8uDiHz2kM0cJzvVzPvgAgFPKzPlir7ee1r2uYbmTwXSJHA
-	 NjT9ziDrrRvn0EesvUUpqzR9eLbhQ2APCYHbbQHP36muo0dYd5qm3mYeqoorDfOmMU
-	 5X0BrcElyW9LNe+RCYAd+3pmRA3ET+o9BekDEJ2Qqo3j+fEz44u+vCjRgB2YiYB2XJ
-	 FBRvgiMlHdjwhSUPsOnCMK9k7T5ltBKbC6UyVXxJ4Kxd+qwRzLn7P82NxuYlNmVLqn
-	 e/q97GwdytGozcc+nJThIfEmk9XqkXdsimeb6JrdL0sFkdefmPwOqP8bDyqLHuc0K6
-	 PLb9LOrYqTlWg==
-Date: Mon, 26 Aug 2024 12:38:43 +0000
-To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Michal Simek <michal.simek@amd.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-From: Harry Austen <hpausten@protonmail.com>
-Cc: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>, Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Harry Austen <hpausten@protonmail.com>
-Subject: [PATCH v3 9/9] clk: clocking-wizard: move dynamic reconfig setup behind flag
-Message-ID: <20240826123602.1872-10-hpausten@protonmail.com>
-In-Reply-To: <20240826123602.1872-1-hpausten@protonmail.com>
-References: <20240826123602.1872-1-hpausten@protonmail.com>
-Feedback-ID: 53116287:user:proton
-X-Pm-Message-ID: 4fbfffd3599013b558dc9f5e4809d01e0aac1b0b
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Dvis41ie"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=CRtm2k1gp7t1K52GzLSjl2RYWVeceIa4paPrEJiXqdM=; b=Dvis41ieXGf3GZmZ8nlqU2mofv
+	iqJgs/BcD5SiPsKrAUZm4LXcg9kuZI9klJoXzzSdrYrvtRV5DPwOSjH7LL2MGVZ3nARZri8snLsq6
+	QPBwElAWuI/7JDeN8AX3tKKfPrY2vSeqCyFlAQA34yTSVhW+dFHpNA8ZJYypuiVCt8WA=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1siZEu-005i0i-Ff; Mon, 26 Aug 2024 14:54:32 +0200
+Date: Mon, 26 Aug 2024 14:54:32 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Imran Shaik <quic_imrashai@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Ajit Pandey <quic_ajipan@quicinc.com>,
+	Taniya Das <quic_tdas@quicinc.com>,
+	Jagadeesh Kona <quic_jkona@quicinc.com>,
+	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] clk: qcom: Add support for Global Clock
+ Controller on QCS8300
+Message-ID: <049ee7d3-9379-4c8f-88ed-7aec03ad3367@lunn.ch>
+References: <20240822-qcs8300-gcc-v2-0-b310dfa70ad8@quicinc.com>
+ <20240822-qcs8300-gcc-v2-2-b310dfa70ad8@quicinc.com>
+ <bf5b7607-a8fc-49e3-8cf7-8ef4b30ba542@lunn.ch>
+ <01c5178e-58fe-4c45-a82e-d0b6b6789645@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <01c5178e-58fe-4c45-a82e-d0b6b6789645@quicinc.com>
 
-Xilinx clocking wizard IP core's dynamic reconfiguration support is
-optionally enabled at build time. Use the new boolean devicetree
-property to indicate whether the hardware supports this feature or not.
+On Mon, Aug 26, 2024 at 04:25:39PM +0530, Imran Shaik wrote:
+> 
+> 
+> On 8/23/2024 1:29 AM, Andrew Lunn wrote:
+> > > +static int gcc_qcs8300_probe(struct platform_device *pdev)
+> > > +{
+> > > +	struct regmap *regmap;
+> > > +	int ret;
+> > > +
+> > > +	regmap = qcom_cc_map(pdev, &gcc_qcs8300_desc);
+> > > +	if (IS_ERR(regmap))
+> > > +		return PTR_ERR(regmap);
+> > > +
+> > > +	ret = qcom_cc_register_rcg_dfs(regmap, gcc_dfs_clocks,
+> > > +				       ARRAY_SIZE(gcc_dfs_clocks));
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	/* Keep some clocks always enabled */
+> > 
+> > Sorry, but you need to explain why. Why cannot the camera driver
+> > enable these clocks when it loads? Why cannot the display driver
+> > enable these clocks when it loads.
+> > 
+> 
+> These clocks are recommended to be kept always ON as per the HW design and
+> also exposing clock structures and marking them critical in the kernel would
+> lead to redundant code. Based on previous discussions with clock
+> maintainers, it is recommended to keep such clocks enabled at probe and not
+> model them. This approach is consistently followed for all other targets as
+> well.
 
-Signed-off-by: Harry Austen <hpausten@protonmail.com>
----
- drivers/clk/xilinx/clk-xlnx-clock-wizard.c | 73 +++++++++++-----------
- 1 file changed, 38 insertions(+), 35 deletions(-)
+I don't see why it would add redundant code. It is a few lines of code
+in the driver, which every driver using clocks has. If you really
+don't want the clock turned off because it is unused, you can use
+CLK_IGNORE_UNUSED, along with a comment explaining why.
 
-diff --git a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c b/drivers/clk/xilin=
-x/clk-xlnx-clock-wizard.c
-index 35dad2fda254b..b30d8106ac279 100644
---- a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
-+++ b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
-@@ -1192,20 +1192,6 @@ static int clk_wzrd_probe(struct platform_device *pd=
-ev)
- =09if (IS_ERR(clk_wzrd->base))
- =09=09return PTR_ERR(clk_wzrd->base);
-=20
--=09ret =3D of_property_read_u32(np, "xlnx,speed-grade", &clk_wzrd->speed_g=
-rade);
--=09if (!ret) {
--=09=09if (clk_wzrd->speed_grade < 1 || clk_wzrd->speed_grade > 3) {
--=09=09=09dev_warn(&pdev->dev, "invalid speed grade '%d'\n",
--=09=09=09=09 clk_wzrd->speed_grade);
--=09=09=09clk_wzrd->speed_grade =3D 0;
--=09=09}
--=09}
--
--=09clk_wzrd->clk_in1 =3D devm_clk_get(&pdev->dev, "clk_in1");
--=09if (IS_ERR(clk_wzrd->clk_in1))
--=09=09return dev_err_probe(&pdev->dev, PTR_ERR(clk_wzrd->clk_in1),
--=09=09=09=09     "clk_in1 not found\n");
--
- =09clk_wzrd->axi_clk =3D devm_clk_get_enabled(&pdev->dev, "s_axi_aclk");
- =09if (IS_ERR(clk_wzrd->axi_clk))
- =09=09return dev_err_probe(&pdev->dev, PTR_ERR(clk_wzrd->axi_clk),
-@@ -1220,31 +1206,48 @@ static int clk_wzrd_probe(struct platform_device *p=
-dev)
- =09if (ret)
- =09=09return dev_err_probe(&pdev->dev, ret, "failed to setup monitor\n");
-=20
--=09ret =3D clk_wzrd_register_output_clocks(&pdev->dev, nr_outputs);
--=09if (ret)
--=09=09return ret;
--
--=09clk_wzrd->clk_data.num =3D nr_outputs;
--=09ret =3D devm_of_clk_add_hw_provider(&pdev->dev, of_clk_hw_onecell_get, =
-&clk_wzrd->clk_data);
--=09if (ret) {
--=09=09dev_err(&pdev->dev, "unable to register clock provider\n");
--=09=09return ret;
--=09}
-+=09if (of_property_read_bool(np, "xlnx,dynamic-reconfig")) {
-+=09=09ret =3D of_property_read_u32(np, "xlnx,speed-grade", &clk_wzrd->spee=
-d_grade);
-+=09=09if (!ret) {
-+=09=09=09if (clk_wzrd->speed_grade < 1 || clk_wzrd->speed_grade > 3) {
-+=09=09=09=09dev_warn(&pdev->dev, "invalid speed grade '%d'\n",
-+=09=09=09=09=09 clk_wzrd->speed_grade);
-+=09=09=09=09clk_wzrd->speed_grade =3D 0;
-+=09=09=09}
-+=09=09}
-=20
--=09if (clk_wzrd->speed_grade) {
--=09=09clk_wzrd->nb.notifier_call =3D clk_wzrd_clk_notifier;
-+=09=09clk_wzrd->clk_in1 =3D devm_clk_get(&pdev->dev, "clk_in1");
-+=09=09if (IS_ERR(clk_wzrd->clk_in1))
-+=09=09=09return dev_err_probe(&pdev->dev, PTR_ERR(clk_wzrd->clk_in1),
-+=09=09=09=09=09     "clk_in1 not found\n");
-=20
--=09=09ret =3D devm_clk_notifier_register(&pdev->dev, clk_wzrd->clk_in1,
--=09=09=09=09=09=09 &clk_wzrd->nb);
-+=09=09ret =3D clk_wzrd_register_output_clocks(&pdev->dev, nr_outputs);
- =09=09if (ret)
--=09=09=09dev_warn(&pdev->dev,
--=09=09=09=09 "unable to register clock notifier\n");
-+=09=09=09return ret;
-+
-+=09=09clk_wzrd->clk_data.num =3D nr_outputs;
-+=09=09ret =3D devm_of_clk_add_hw_provider(&pdev->dev, of_clk_hw_onecell_ge=
-t,
-+=09=09=09=09=09=09  &clk_wzrd->clk_data);
-+=09=09if (ret) {
-+=09=09=09dev_err(&pdev->dev, "unable to register clock provider\n");
-+=09=09=09return ret;
-+=09=09}
-=20
--=09=09ret =3D devm_clk_notifier_register(&pdev->dev, clk_wzrd->axi_clk,
--=09=09=09=09=09=09 &clk_wzrd->nb);
--=09=09if (ret)
--=09=09=09dev_warn(&pdev->dev,
--=09=09=09=09 "unable to register clock notifier\n");
-+=09=09if (clk_wzrd->speed_grade) {
-+=09=09=09clk_wzrd->nb.notifier_call =3D clk_wzrd_clk_notifier;
-+
-+=09=09=09ret =3D devm_clk_notifier_register(&pdev->dev, clk_wzrd->clk_in1,
-+=09=09=09=09=09=09=09 &clk_wzrd->nb);
-+=09=09=09if (ret)
-+=09=09=09=09dev_warn(&pdev->dev,
-+=09=09=09=09=09 "unable to register clock notifier\n");
-+
-+=09=09=09ret =3D devm_clk_notifier_register(&pdev->dev, clk_wzrd->axi_clk,
-+=09=09=09=09=09=09=09 &clk_wzrd->nb);
-+=09=09=09if (ret)
-+=09=09=09=09dev_warn(&pdev->dev,
-+=09=09=09=09=09 "unable to register clock notifier\n");
-+=09=09}
- =09}
-=20
- =09return 0;
---=20
-2.46.0
+What i was actually guessing is that you don't actually have open
+drivers for these hardware blocks, just a blob running in user
+space. As such, it cannot turn the clocks on. If that is the case, i
+would much prefer you are honest about this, and document it.
 
-
+	Andrew
