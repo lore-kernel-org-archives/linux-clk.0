@@ -1,83 +1,81 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC03918454D;
-	Mon, 26 Aug 2024 13:44:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9DAE372;
+	Mon, 26 Aug 2024 14:00:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724679850; cv=none; b=VUE+eRpV1x8xIil4RQ6M0W1x0LHjyG76/yjwlMISMaRLLXxjIdDeITYW2KVycSiODKR5+GeFhayhaz28mLNoawNiPyf/OL1hNj0S5lDzprF4XuliHFscjl496qKlXuxyh0pp9fnCjm+J2AsRm1oFau4zCtNGOlZ5w9Nd6L8QU08=
+	t=1724680847; cv=none; b=gjhYNaeBPR8GpYp/4Zrwyq2VYhQPRbvgV2kkFwQ+kMZaJocDdcsn+SdtW78MY+nOdU/TG9KLojEovUywelTwgE1lCMNwc5KLNgI/z6d7sdhkR1rkGi8kpG8s6OFC3MZw+/YI5vpo3zMRFumBrO2bOyvEFDsF6jdU54P0Ok2U1Ao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724679850; c=relaxed/simple;
-	bh=iSh+FCPm8ozAsHn79mwz+0IjRqc5lg6/6WhfNiSSqbw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GlwR1aCLiXnB3L/o5Z6Sd/9MQ23xRO+CCrH7tyEAFX9zCYAvD2u2pcYcvPXL+YHPwD0WJn/sEDfTLtY/OtsnGANEnp7XJIIGnf+JuRYheh9RkijnZl4KDvzsrtNuzqIBLZLDJ3DVmUDcDIO8pR4B+0n4sOoGM05OZmiDBpC1e/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JFk8WCMV; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1724680847; c=relaxed/simple;
+	bh=N6QZc8YM8klksq0nE1lKt6yDYzsUUOHjIINFLCMZQUM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TIEtdvYbuh088afgR95p8UkBeTC6/lhkYl00ugURodQ4VLV7zfoWAi5YYoveZpSz0Z4zv08yZdm1uhk/+hEqzQMAXBJOzJm+B6puAfHTi21gTNaw7cJQBpytdyof0+H7bWaWJPcizBepOrQmSUXs3w6oK3bORU2Vo18miizXNgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a/xs8b/C; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JFk8WCMV"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C7DDC52FC2;
-	Mon, 26 Aug 2024 13:44:05 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a/xs8b/C"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ED2E0C52FC3;
+	Mon, 26 Aug 2024 14:00:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724679849;
-	bh=iSh+FCPm8ozAsHn79mwz+0IjRqc5lg6/6WhfNiSSqbw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=JFk8WCMVWijA3Eie5EdyLmE3IkYEvHZrlDdIQUWjE1RCD96nkdJSNruqZZPG97YBZ
-	 ELhU9cxN2tLeniRrlriq56kxkvoePYE4KWhqGFqScG9lIOX4NAwfJ+L+JwRCUmv2w9
-	 nE3tloughjwoRo4eVzM+ls/7mZxnMCEKVgqJkDlRg8CZgtm919zl06wWUpQRsUg2s1
-	 MF1Gs5vZB3EskGH0VAG1PdOSTNC02v6yqy62ef40LE8LwLufQ4SS3AW4g21SPVMdvE
-	 efJrO1V48ROywlJob7YtYa2qCfe5yyWXRjDDu+fg5DUb6oQOmGXt1/Jb85viy7u8hY
-	 n9OW9wD6eR/3Q==
-Message-ID: <df107382-5c9b-4568-b9e3-5a893070fad7@kernel.org>
-Date: Mon, 26 Aug 2024 15:44:02 +0200
+	s=k20201202; t=1724680846;
+	bh=N6QZc8YM8klksq0nE1lKt6yDYzsUUOHjIINFLCMZQUM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=a/xs8b/C1L9CHIrb9yc9EtcYI9Qixbr/BvDfyXHjXTL8woZUoYFLY+1J0vU267ATI
+	 BH1AKAPNDDgC/lqiI/dC20ap9LZTKo9eWGQLiKLDBzZbNECqv0Jo2SykjK8KHp95se
+	 J6AcxKncn/4aQo2+dOo5PqKlhgHyjfbv+RLWWABzQKRD2vAmHGY0uom0Fbw9rsvOXp
+	 aoo/FbIHBSvMrker4TZ/btb64fn3Jju67Y14TR9uwrRZGmt7P72ubDB6M4qKhYqvP4
+	 xCgi1RmrklIMnGp/G50pmlbJuUwckoPtIWoZsmRaGEw5ppxnWEFl0vCionzWvixwf+
+	 Sr0fnsf4GRoZA==
+Date: Mon, 26 Aug 2024 09:00:44 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Detlev Casanova <detlev.casanova@collabora.com>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	Sugar Zhang <sugar.zhang@rock-chips.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Elaine Zhang <zhangqing@rock-chips.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, kernel@collabora.com,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH v6 1/3] dt-bindings: clock, reset: Add support for rk3576
+Message-ID: <172468084271.72163.10961446550304422485.robh@kernel.org>
+References: <20240822194956.918527-1-detlev.casanova@collabora.com>
+ <20240822194956.918527-2-detlev.casanova@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: gcc-x1e80100: Don't use parking clk_ops for
- QUPs
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rajendra Nayak <quic_rjendra@quicinc.com>,
- Sibi Sankar <quic_sibis@quicinc.com>, Abel Vesa <abel.vesa@linaro.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
-References: <20240823-x1e80100-clk-fix-v1-1-0b1b4f5a96e8@linaro.org>
-Content-Language: en-US
-From: Konrad Dybcio <konradybcio@kernel.org>
-In-Reply-To: <20240823-x1e80100-clk-fix-v1-1-0b1b4f5a96e8@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240822194956.918527-2-detlev.casanova@collabora.com>
 
-On 23.08.2024 2:58 PM, Bryan O'Donoghue wrote:
-> Per Stephen Boyd's explanation in the link below, QUP RCG clocks do not
-> need to be parked when switching frequency. A side-effect in parking to a
-> lower frequency can be a momentary invalid clock driven on an in-use serial
-> peripheral.
+
+On Thu, 22 Aug 2024 15:49:32 -0400, Detlev Casanova wrote:
+> Add clock and reset ID defines for rk3576.
 > 
-> This can cause "junk" to spewed out of a UART as a low-impact example. On
-> the x1e80100-crd this serial port junk can be observed on linux-next.
+> Compared to the downstream bindings written by Elaine, this uses
+> continous gapless IDs starting at 0. Thus all numbers are
+> different between downstream and upstream, but names are kept
+> exactly the same.
 > 
-> Apply a similar fix to the x1e80100 Global Clock controller to remediate.
+> Also add documentation for the rk3576 CRU core.
 > 
-> Link: https://lore.kernel.org/all/20240819233628.2074654-3-swboyd@chromium.org/
-> Fixes: 161b7c401f4b ("clk: qcom: Add Global Clock controller (GCC) driver for X1E80100")
-> Fixes: 929c75d57566 ("clk: qcom: gcc-sm8550: Mark RCGs shared where applicable")
-> Suggested-by: Neil Armstrong <neil.armstrong@linaro.org>
-> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> Signed-off-by: Elaine Zhang <zhangqing@rock-chips.com>
+> Signed-off-by: Sugar Zhang <sugar.zhang@rock-chips.com>
+> Signed-off-by: Detlev Casanova <detlev.casanova@collabora.com>
 > ---
-> I ran into some junk on the x1e80100 serial port and asked around to see if
-> someone had already found and fixed.
+>  .../bindings/clock/rockchip,rk3576-cru.yaml   |  56 ++
+>  .../dt-bindings/clock/rockchip,rk3576-cru.h   | 592 ++++++++++++++++++
+>  .../dt-bindings/reset/rockchip,rk3576-cru.h   | 564 +++++++++++++++++
+>  3 files changed, 1212 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/rockchip,rk3576-cru.yaml
+>  create mode 100644 include/dt-bindings/clock/rockchip,rk3576-cru.h
+>  create mode 100644 include/dt-bindings/reset/rockchip,rk3576-cru.h
 > 
-> Neil pointed me at Stephen's fix for sm8550 which I found is also required
-> to fix the same thing x1e80100.
-> ---
 
-Reviewed-by: Konrad Dybcio <konradybcio@kernel.org>
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-Mind also fixing up 8650 that seems to have this issue?
-
-Konrad
