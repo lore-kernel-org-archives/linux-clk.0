@@ -1,131 +1,150 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1432B148850;
-	Mon, 26 Aug 2024 10:56:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40DD513BACC;
+	Mon, 26 Aug 2024 11:05:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724669773; cv=none; b=S0flcdb8SE1zvTrcOPGQ/wcNkcs44/OP/XuqzGUIUmaVdZVqjiKb+Prw2l9dRdPlzpIgxG1HPi0LiXDDSSWeg2OZ4N9QBv7IE6ORk0Uh459Me/qw+GsvJJhI+0v6aGGV4ZS6qJH4N4Lv8G6YYLuhD8EX712ezbo4KEDNyxKr92s=
+	t=1724670334; cv=none; b=ShR0IDaX88/yXfWuiHcSiuoastefyLQ2laYw9VhAtPiX9Q9ZpvBkt7WNtUho569kCNC6030R3sLwKqK9r0TyC39ZgWg9VeYRG571WsGZ0s28aMmmUxJdhPSNvpdWLlpvz51g+JbeTmwAJSffmKC03quC6IcoIIkIeceIQypz/XA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724669773; c=relaxed/simple;
-	bh=h0okMoCbXS5G9Kqj2IS1qU9Pgw/i9nHgkscgkpkZ0F4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=G5nOTwFHDeOpIV/APAlDnW3okIHrFLWc397jOCFAuOtdpeOYkXVaj9c4guje4FToosi+rWTMbLAcfpIP3L4Jau3oOO/K2zmqSnWIjvQ1cqzQYfsBnj/XogslGBfoKYniThlmyzTJxjtgfNsIf/khgvkuFcJDrqoL+EczoPKDpYI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kJgLQf/k; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1724670334; c=relaxed/simple;
+	bh=ECQmLS+SgDNwcj4Yiwlvzx6SSOi6T0sHprbGL5cdEow=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=QC7r0kDRFfkPqAz/sFt3gsY+2CxHOmBZRWiELLCBmSUkx+/qiX21tW7iHs/4Ke0Mi7FW08uxgDgPSh0lBju9M684tKhqbxQ9ManY2RalqrHJWWjzxozPclCG7mokKlP5Hzf3niURc119R3PaXV+UghRbRu1jZJXTq7Ko95A9axE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=DmD4TLSV reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kJgLQf/k"
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47Q8MPkX027697;
-	Mon, 26 Aug 2024 10:56:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	cExeb/xRDZzvLYRCG7hFO8bedIkSs2tygzFZBcSjb1E=; b=kJgLQf/kyzMOp7u6
-	NomQ9RlGRhr1CQwIGA8C4XfqcBF07hx/G4q+5NKRe3B1baR72RNnkfKNqN2pXV5x
-	uP0qlPc2VqLM7TpgjoxQxy3DbfKKR1yka8RvPIwKfWIOdSKPEQ2YlLi8jUQ7euAu
-	/WiwJtSyEsQ3z8wOSVjH+siy3UnMizFw1adKQOEpvSXQq2lYZAJ58FJq4owWwGqj
-	HvvBDEAkpncjg8tNDzpxuoa4y52kgXNjO1Pa3oRd4XmBKFRE2te271uA0G8Qq12n
-	JOw+v0fWc13+Tx39YVYtujuqJCh1sjhIPDDTY/mJRIaUkxkduB6mtt/AJpboGVCH
-	3m+3xA==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 417980ude9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 26 Aug 2024 10:56:00 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47QAu05I008536
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 26 Aug 2024 10:56:00 GMT
-Received: from [10.216.20.198] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 26 Aug
- 2024 03:55:54 -0700
-Message-ID: <01c5178e-58fe-4c45-a82e-d0b6b6789645@quicinc.com>
-Date: Mon, 26 Aug 2024 16:25:39 +0530
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="DmD4TLSV"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=UEQbFR5jnzBFmUCc+bu400VG97t9CgX6FL5i7R24T1I=; b=D
+	mD4TLSVJUBp8yyXdDK0tvrUpHLdIQDmGPVj9OEk2y+8TcSsa65yADoTzC9sSqcl+
+	1oP8ONKBosIrUk4k8GiNFXd2c1AJqnlGCwmuhFbiI5iSGQPvUr1EIJQ8bIiLlZHh
+	EJZtZcyDPBKp87eO6uT044SW9VOUhQykD9YW+jQ/T0=
+Received: from andyshrk$163.com ( [58.22.7.114] ) by
+ ajax-webmail-wmsvr-40-115 (Coremail) ; Mon, 26 Aug 2024 19:04:16 +0800
+ (CST)
+Date: Mon, 26 Aug 2024 19:04:16 +0800 (CST)
+From: "Andy Yan" <andyshrk@163.com>
+To: "Detlev Casanova" <detlev.casanova@collabora.com>
+Cc: linux-kernel@vger.kernel.org, "Michael Turquette" <mturquette@baylibre.com>, 
+	"Stephen Boyd" <sboyd@kernel.org>, "Rob Herring" <robh@kernel.org>, 
+	"Krzysztof Kozlowski" <krzk+dt@kernel.org>, 
+	"Conor Dooley" <conor+dt@kernel.org>, 
+	"Heiko Stuebner" <heiko@sntech.de>, 
+	"Philipp Zabel" <p.zabel@pengutronix.de>, 
+	"Elaine Zhang" <zhangqing@rock-chips.com>, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, kernel@collabora.com, 
+	"Sugar Zhang" <sugar.zhang@rock-chips.com>
+Subject: Re:[PATCH v6 1/3] dt-bindings: clock, reset: Add support for rk3576
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
+ Copyright (c) 2002-2024 www.mailtech.cn 163com
+In-Reply-To: <20240822194956.918527-2-detlev.casanova@collabora.com>
+References: <20240822194956.918527-1-detlev.casanova@collabora.com>
+ <20240822194956.918527-2-detlev.casanova@collabora.com>
+X-NTES-SC: AL_Qu2ZBvqcv0ou4CmeYOlS/zNs0JFhP77u7b1sr+0wWMAqvCTo1h85dEdOElnfy96BLkypWViQfDvaEv0osJCt
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] clk: qcom: Add support for Global Clock Controller
- on QCS8300
-To: Andrew Lunn <andrew@lunn.ch>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Richard Cochran <richardcochran@gmail.com>,
-        "Ajit
- Pandey" <quic_ajipan@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Satya Priya Kakitapalli
-	<quic_skakitap@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <netdev@vger.kernel.org>
-References: <20240822-qcs8300-gcc-v2-0-b310dfa70ad8@quicinc.com>
- <20240822-qcs8300-gcc-v2-2-b310dfa70ad8@quicinc.com>
- <bf5b7607-a8fc-49e3-8cf7-8ef4b30ba542@lunn.ch>
-Content-Language: en-US
-From: Imran Shaik <quic_imrashai@quicinc.com>
-In-Reply-To: <bf5b7607-a8fc-49e3-8cf7-8ef4b30ba542@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: dNdOVxGqU4QtIeyHhXJdRACzKHnDQ08X
-X-Proofpoint-ORIG-GUID: dNdOVxGqU4QtIeyHhXJdRACzKHnDQ08X
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-26_08,2024-08-23_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 impostorscore=0
- adultscore=0 mlxlogscore=999 spamscore=0 lowpriorityscore=0 clxscore=1015
- malwarescore=0 phishscore=0 priorityscore=1501 mlxscore=0 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2408260085
+Message-ID: <7be4da2d.a8a2.1918e5ba74b.Coremail.andyshrk@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:_____wD3XzgxYcxmoHQ+AA--.35887W
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbB0hVHXmWXz9PfoQAHsJ
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-
-
-On 8/23/2024 1:29 AM, Andrew Lunn wrote:
->> +static int gcc_qcs8300_probe(struct platform_device *pdev)
->> +{
->> +	struct regmap *regmap;
->> +	int ret;
->> +
->> +	regmap = qcom_cc_map(pdev, &gcc_qcs8300_desc);
->> +	if (IS_ERR(regmap))
->> +		return PTR_ERR(regmap);
->> +
->> +	ret = qcom_cc_register_rcg_dfs(regmap, gcc_dfs_clocks,
->> +				       ARRAY_SIZE(gcc_dfs_clocks));
->> +	if (ret)
->> +		return ret;
->> +
->> +	/* Keep some clocks always enabled */
-> 
-> Sorry, but you need to explain why. Why cannot the camera driver
-> enable these clocks when it loads? Why cannot the display driver
-> enable these clocks when it loads.
-> 
-
-These clocks are recommended to be kept always ON as per the HW design 
-and also exposing clock structures and marking them critical in the 
-kernel would lead to redundant code. Based on previous discussions with 
-clock maintainers, it is recommended to keep such clocks enabled at 
-probe and not model them. This approach is consistently followed for all 
-other targets as well.
-
-Thanks,
-Imran
-
-> 	Andrew
+CgpIaSBEZWx0ZXbvvIwKICAgICBUaGFua3MgZm9yIHlvdXIgd29ya+OAggoKCkF0IDIwMjQtMDgt
+MjMgMDM6NDk6MzIsICJEZXRsZXYgQ2FzYW5vdmEiIDxkZXRsZXYuY2FzYW5vdmFAY29sbGFib3Jh
+LmNvbT4gd3JvdGU6Cj5BZGQgY2xvY2sgYW5kIHJlc2V0IElEIGRlZmluZXMgZm9yIHJrMzU3Ni4K
+Pgo+Q29tcGFyZWQgdG8gdGhlIGRvd25zdHJlYW0gYmluZGluZ3Mgd3JpdHRlbiBieSBFbGFpbmUs
+IHRoaXMgdXNlcwo+Y29udGlub3VzIGdhcGxlc3MgSURzIHN0YXJ0aW5nIGF0IDAuIFRodXMgYWxs
+IG51bWJlcnMgYXJlCj5kaWZmZXJlbnQgYmV0d2VlbiBkb3duc3RyZWFtIGFuZCB1cHN0cmVhbSwg
+YnV0IG5hbWVzIGFyZSBrZXB0Cj5leGFjdGx5IHRoZSBzYW1lLgo+Cj5BbHNvIGFkZCBkb2N1bWVu
+dGF0aW9uIGZvciB0aGUgcmszNTc2IENSVSBjb3JlLgo+Cj5TaWduZWQtb2ZmLWJ5OiBFbGFpbmUg
+WmhhbmcgPHpoYW5ncWluZ0Byb2NrLWNoaXBzLmNvbT4KPlNpZ25lZC1vZmYtYnk6IFN1Z2FyIFpo
+YW5nIDxzdWdhci56aGFuZ0Byb2NrLWNoaXBzLmNvbT4KPlNpZ25lZC1vZmYtYnk6IERldGxldiBD
+YXNhbm92YSA8ZGV0bGV2LmNhc2Fub3ZhQGNvbGxhYm9yYS5jb20+Cj4tLS0KPiAuLi4vYmluZGlu
+Z3MvY2xvY2svcm9ja2NoaXAscmszNTc2LWNydS55YW1sICAgfCAgNTYgKysKPiAuLi4vZHQtYmlu
+ZGluZ3MvY2xvY2svcm9ja2NoaXAscmszNTc2LWNydS5oICAgfCA1OTIgKysrKysrKysrKysrKysr
+KysrCj4gLi4uL2R0LWJpbmRpbmdzL3Jlc2V0L3JvY2tjaGlwLHJrMzU3Ni1jcnUuaCAgIHwgNTY0
+ICsrKysrKysrKysrKysrKysrCj4gMyBmaWxlcyBjaGFuZ2VkLCAxMjEyIGluc2VydGlvbnMoKykK
+PiBjcmVhdGUgbW9kZSAxMDA2NDQgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Ns
+b2NrL3JvY2tjaGlwLHJrMzU3Ni1jcnUueWFtbAo+IGNyZWF0ZSBtb2RlIDEwMDY0NCBpbmNsdWRl
+L2R0LWJpbmRpbmdzL2Nsb2NrL3JvY2tjaGlwLHJrMzU3Ni1jcnUuaAo+IGNyZWF0ZSBtb2RlIDEw
+MDY0NCBpbmNsdWRlL2R0LWJpbmRpbmdzL3Jlc2V0L3JvY2tjaGlwLHJrMzU3Ni1jcnUuaAo+Cj5k
+aWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nsb2NrL3JvY2tj
+aGlwLHJrMzU3Ni1jcnUueWFtbCBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9j
+bG9jay9yb2NrY2hpcCxyazM1NzYtY3J1LnlhbWwKPm5ldyBmaWxlIG1vZGUgMTAwNjQ0Cj5pbmRl
+eCAwMDAwMDAwMDAwMDAuLjljOWIzNjA0OWM3MQo+LS0tIC9kZXYvbnVsbAo+KysrIGIvRG9jdW1l
+bnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2Nsb2NrL3JvY2tjaGlwLHJrMzU3Ni1jcnUueWFt
+bAo+QEAgLTAsMCArMSw1NiBAQAo+KyMgU1BEWC1MaWNlbnNlLUlkZW50aWZpZXI6IEdQTC0yLjAt
+b25seSBPUiBCU0QtMi1DbGF1c2UKPislWUFNTCAxLjIKPistLS0KPiskaWQ6IGh0dHA6Ly9kZXZp
+Y2V0cmVlLm9yZy9zY2hlbWFzL2Nsb2NrL3JvY2tjaGlwLHJrMzU3Ni1jcnUueWFtbCMKPiskc2No
+ZW1hOiBodHRwOi8vZGV2aWNldHJlZS5vcmcvbWV0YS1zY2hlbWFzL2NvcmUueWFtbCMKPisKPit0
+aXRsZTogUm9ja2NoaXAgcmszNTc2IEZhbWlseSBDbG9jayBhbmQgUmVzZXQgQ29udHJvbCBNb2R1
+bGUKPisKPittYWludGFpbmVyczoKPisgIC0gRWxhaW5lIFpoYW5nIDx6aGFuZ3FpbmdAcm9jay1j
+aGlwcy5jb20+Cj4rICAtIEhlaWtvIFN0dWVibmVyIDxoZWlrb0BzbnRlY2guZGU+Cj4rICAtIERl
+dGxldiBDYXNhbm92YSA8ZGV0bGV2LmNhc2Fub3ZhQGNvbGxhYm9yYS5jb20+Cj4rCj4rZGVzY3Jp
+cHRpb246Cj4rICBUaGUgUkszNTc2IGNsb2NrIGNvbnRyb2xsZXIgZ2VuZXJhdGVzIHRoZSBjbG9j
+ayBhbmQgYWxzbyBpbXBsZW1lbnRzIGEgcmVzZXQKPisgIGNvbnRyb2xsZXIgZm9yIFNvQyBwZXJp
+cGhlcmFscy4gRm9yIGV4YW1wbGUgaXQgcHJvdmlkZXMgU0NMS19VQVJUMiBhbmQKPisgIFBDTEtf
+VUFSVDIsIGFzIHdlbGwgYXMgU1JTVF9QX1VBUlQyIGFuZCBTUlNUX1NfVUFSVDIgZm9yIHRoZSBz
+ZWNvbmQgVUFSVAo+KyAgbW9kdWxlLgo+Kwo+K3Byb3BlcnRpZXM6Cj4rICBjb21wYXRpYmxlOgo+
+KyAgICBjb25zdDogcm9ja2NoaXAscmszNTc2LWNydQo+Kwo+KyAgcmVnOgo+KyAgICBtYXhJdGVt
+czogMQo+Kwo+KyAgIiNjbG9jay1jZWxscyI6Cj4rICAgIGNvbnN0OiAxCj4rCj4rICAiI3Jlc2V0
+LWNlbGxzIjoKPisgICAgY29uc3Q6IDEKPisKPisgIGNsb2NrczoKPisgICAgbWF4SXRlbXM6IDIK
+PisKPisgIGNsb2NrLW5hbWVzOgo+KyAgICBpdGVtczoKPisgICAgICAtIGNvbnN0OiB4aW4yNG0K
+PisgICAgICAtIGNvbnN0OiB4aW4zMmsKPisKPityZXF1aXJlZDoKPisgIC0gY29tcGF0aWJsZQo+
+KyAgLSByZWcKPisgIC0gIiNjbG9jay1jZWxscyIKPisgIC0gIiNyZXNldC1jZWxscyIKPisKPith
+ZGRpdGlvbmFsUHJvcGVydGllczogZmFsc2UKPisKPitleGFtcGxlczoKPisgIC0gfAo+KyAgICBj
+bG9jay1jb250cm9sbGVyQDI3MjAwMDAwIHsKPisgICAgICBjb21wYXRpYmxlID0gInJvY2tjaGlw
+LHJrMzU3Ni1jcnUiOwo+KyAgICAgIHJlZyA9IDwweGZkN2MwMDAwIDB4NWMwMDA+Owo+KyAgICAg
+ICNjbG9jay1jZWxscyA9IDwxPjsKPisgICAgICAjcmVzZXQtY2VsbHMgPSA8MT47Cj4rICAgIH07
+Cj5kaWZmIC0tZ2l0IGEvaW5jbHVkZS9kdC1iaW5kaW5ncy9jbG9jay9yb2NrY2hpcCxyazM1NzYt
+Y3J1LmggYi9pbmNsdWRlL2R0LWJpbmRpbmdzL2Nsb2NrL3JvY2tjaGlwLHJrMzU3Ni1jcnUuaAo+
+bmV3IGZpbGUgbW9kZSAxMDA2NDQKPmluZGV4IDAwMDAwMDAwMDAwMC4uZWUzNzE4NDUyYjc3Cj4t
+LS0gL2Rldi9udWxsCj4rKysgYi9pbmNsdWRlL2R0LWJpbmRpbmdzL2Nsb2NrL3JvY2tjaGlwLHJr
+MzU3Ni1jcnUuaAo+QEAgLTAsMCArMSw1OTIgQEAKPisvKiBTUERYLUxpY2Vuc2UtSWRlbnRpZmll
+cjogKEdQTC0yLjAgT1IgTUlUKSAqLwo+Ky8qCj4rKiBDb3B5cmlnaHQgKGMpIDIwMjMgUm9ja2No
+aXAgRWxlY3Ryb25pY3MgQ28uIEx0ZC4KPisqIENvcHlyaWdodCAoYykgMjAyNCBDb2xsYWJvcmEg
+THRkLgo+KyoKPisqIEF1dGhvcjogRWxhaW5lIFpoYW5nIDx6aGFuZ3FpbmdAcm9jay1jaGlwcy5j
+b20+Cj4rKiBBdXRob3I6IERldGxldiBDYXNhbm92YSA8ZGV0bGV2LmNhc2Fub3ZhQGNvbGxhYm9y
+YS5jb20+Cj4rKi8KPisKPisjaWZuZGVmIF9EVF9CSU5ESU5HU19DTEtfUk9DS0NISVBfUkszNTc2
+X0gKPisjZGVmaW5lIF9EVF9CSU5ESU5HU19DTEtfUk9DS0NISVBfUkszNTc2X0gKPisKPisvKiBj
+cnUtY2xvY2tzIGluZGljZXMgKi8KPisKPisvKiBjcnUgcGxscyAqLwo+KyNkZWZpbmUgUExMX0JQ
+TEwJCQkwCj4rI2RlZmluZSBQTExfTFBMTAkJCTEKPisjZGVmaW5lIFBMTF9WUExMCQkJMgo+KyNk
+ZWZpbmUgUExMX0FVUExMCQkJMwo+KyNkZWZpbmUgUExMX0NQTEwJCQk0Cj4rI2RlZmluZSBQTExf
+R1BMTAkJCTUKPisjZGVmaW5lIFBMTF9QUExMCQkJNgo+KyNkZWZpbmUgQVJNQ0xLX0wJCQk3Cj4r
+I2RlZmluZSBBUk1DTEtfQgkJCTgKPisKPisvKiBjcnUgY2xvY2tzICovCj4rI2RlZmluZSBDTEtf
+Q1BMTF9ESVYyMAkJCTkKPisjZGVmaW5lIENMS19DUExMX0RJVjEwCQkJMTAKPisjZGVmaW5lIENM
+S19HUExMX0RJVjgJCQkxMQo+KyNkZWZpbmUgQ0xLX0dQTExfRElWNgkJCTEyCgouLi4uLi4uLi4K
+Cj4rI2RlZmluZSBTUlNUX09UR1BIWV8xCQkJNDQ5Cj4rI2RlZmluZSBTUlNUX0hEUFRYX0lOSVQJ
+CQk0NTAKPisjZGVmaW5lIFNSU1RfSERQVFhfQ01OCQkJNDUxCj4rI2RlZmluZSBTUlNUX0hEUFRY
+X0xBTkUJCQk0NTIKPisjZGVmaW5lIFNSU1RfSERNSVRYSFBECQkJNDUzCgpDb21wYXJlZCB0byBS
+SzM1ODgsIHRoaXMgc2hvdWxkIGJlICAgU1JTVF9IRE1JVFhIRFAgIC4gIEkgdGhpbmsgdGhpcyBp
+cyBhIHR5cG8gaW4gVFJN44CCCgo+Kwo+KyNkZWZpbmUgU1JTVF9NUEhZX0lOSVQJCQk0NTQKPisj
+ZGVmaW5lIFNSU1RfUF9NUEhZX0dSRgkJCTQ1NQo+KyNkZWZpbmUgU1JTVF9QX1ZDQ0lPN19JT0MJ
+CTQ1Ngo+Kwo+KyNkZWZpbmUgU1JTVF9IX1BNVTFfQklVCQkJNDU3Cj4rI2RlZmluZSBTUlNUX1Bf
+UE1VMV9OSVUJCQk0NTgKPisjZGVmaW5lIFNSU1RfSF9QTVVfQ00wX0JJVQkJNDU5Cj4rI2RlZmlu
+ZSBTUlNUX1BNVV9DTTBfQ09SRQkJNDYwCj4rI2RlZmluZSBTUlNUX1BNVV9DTTBfSlRBRwkJNDYx
+Cj4rCj4rI2RlZmluZSBTUlNUX1BfQ1JVX1BNVTEJCQk0NjIKPisjZGVmaW5lIFNSU1RfUF9QTVUx
+X0dSRgkJCTQ2Mwo+KyNkZWZpbmUgU1JTVF9QX1BNVTFfSU9DCQkJNDY0Cj4rI2RlZmluZSBTUlNU
+X1BfUE1VMVdEVAkJCTQ2NQo+KyNkZWZpbmUgU1JTVF9UX1BNVTFXRFQJCQk0NjYKPisjZGVmaW5l
+IFNSU1RfUF9QTVVUSU1FUgkJCTQ2Nwo+KyNkZWZpbmUgU1JTVF9QTVVUSU1FUjAJCQk0NjgKPisj
+ZGVmaW5lIFNSU1RfUE1VVElNRVIxCQkJNDY5Cj4rI2RlZmluZSBTUlNUX1BfUE1VMVBXTQkJCTQ3
+MAo+KyNkZWZpbmUgU1JTVF9QTVUxUFdNCQkJNDcxCj4rCj4rI2RlZmluZSBTUlNUX1BfSTJDMAkJ
+CTQ3Mgo+KyNkZWZpbmUgU1JTVF9JMkMwCQkJNDczCj4rI2RlZmluZSBTUlNUX1NfVUFSVDEJCQk0
+NzQKPisjZGVmaW5lIFNSU1RfUF9VQVJUMQkJCTQ3NQo+KyNkZWZpbmUgU1JTVF9QRE0wCQkJNDc2
+Cj4rI2RlZmluZSBTUlNUX0hfUERNMAkJCTQ3Nwo+Kwo+KyNkZWZpbmUgU1JTVF9NX1BETTAJCQk0
+NzgKPisjZGVmaW5lIFNSU1RfSF9WQUQJCQk0NzkKPisKPisjZGVmaW5lIFNSU1RfUF9QTVUwR1JG
+CQkJNDgwCj4rI2RlZmluZSBTUlNUX1BfUE1VMElPQwkJCTQ4MQo+KyNkZWZpbmUgU1JTVF9QX0dQ
+SU8wCQkJNDgyCj4rI2RlZmluZSBTUlNUX0RCX0dQSU8wCQkJNDgzCj4rCj4rI2VuZGlmCj4tLSAK
+PjIuNDYuMAo+Cj4KPl9fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19fX19f
+X19fCj5MaW51eC1yb2NrY2hpcCBtYWlsaW5nIGxpc3QKPkxpbnV4LXJvY2tjaGlwQGxpc3RzLmlu
+ZnJhZGVhZC5vcmcKPmh0dHA6Ly9saXN0cy5pbmZyYWRlYWQub3JnL21haWxtYW4vbGlzdGluZm8v
+bGludXgtcm9ja2NoaXAK
