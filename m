@@ -1,79 +1,87 @@
-Received: from forward501a.mail.yandex.net (forward501a.mail.yandex.net [178.154.239.81])
+Received: from out203-205-221-233.mail.qq.com (out203-205-221-233.mail.qq.com [203.205.221.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 153D36AFAE;
-	Mon, 26 Aug 2024 08:33:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20E5B55898;
+	Mon, 26 Aug 2024 08:36:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724661203; cv=none; b=q5lCu/lK2oSqtoyXidXNHWLXciyAMCmvUkc0kt4wOT5bM3y1/RTuL/NcwLrDpe796WQlPPprefiRxbMcH0CGYvKke11OdHmrJTaAnCsLB/CsgAXY3YAJolFolzOQ0AZgXMlUuvEIGCm9Szz54McqIn6PGLoTh+amH/+zflJO99s=
+	t=1724661370; cv=none; b=NRY2wZlmupOsWaNxzgKrF5k5sQ/f4M3UgVWfyEyUDoNA3WjGcG6FvXpI605qNAShucLDf0tsKvcDJB2NNBhgsS/Vz+ZWW0dYSPuNbUFB0o+RZN5qAt8A6/pBwBx08UUzTomjByf+Fdlf/hrCd0NOyiTC+9f5U5t+esWt12RPNo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724661203; c=relaxed/simple;
-	bh=zc2h4Lnh0BPNkOA449ju3jNVU/AE4b/J9omnQqnq6uM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=njwr7W+MbHWuxMTuBVAJEACgMQBOzpa8pI8rrbhtDme/sKm1RkfS8mGKiIs8cMeCivmjcVVfIZzOpuyy8/MJZ80erfGjHlBhKW/2XhUAZ870NVxDRIFwSEs/mlA9C8fQOKIjc/F4ArFuCbkOQvPndyNEBDsFSk7K+uNrO9guKIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me; spf=pass smtp.mailfrom=maquefel.me; dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b=HXFaF3yS; arc=none smtp.client-ip=178.154.239.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maquefel.me
+	s=arc-20240116; t=1724661370; c=relaxed/simple;
+	bh=6yDI3/U08ZMOmLmWDHpOWMP0N4gIZcSVtDSd9UUJ6i0=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=chJbtvdcWlAm7o/HUT8NoAFBePIoqJXmrE896Qrzo3HSNEMimIXi/DybO5+LvVabrJcakNQi45h8xdgSR/PJtsXCC9UNvBSeM0lSR6Me7aYNCcxdQvguPR5mO3q/ccnRpSWTSU0q3pBnS6sTUftDPdpoi6DCy5R+rLT6Xie3DS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=o9EByFmH; arc=none smtp.client-ip=203.205.221.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b="HXFaF3yS"
-Received: from mail-nwsmtp-smtp-production-main-24.iva.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-24.iva.yp-c.yandex.net [IPv6:2a02:6b8:c0c:799d:0:640:253f:0])
-	by forward501a.mail.yandex.net (Yandex) with ESMTPS id 98EB461617;
-	Mon, 26 Aug 2024 11:33:08 +0300 (MSK)
-Received: by mail-nwsmtp-smtp-production-main-24.iva.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id 6XOGuELZwiE0-xhDhcxdP;
-	Mon, 26 Aug 2024 11:33:07 +0300
-X-Yandex-Fwd: 1
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail;
-	t=1724661187; bh=zc2h4Lnh0BPNkOA449ju3jNVU/AE4b/J9omnQqnq6uM=;
-	h=References:Date:In-Reply-To:Cc:To:From:Subject:Message-ID;
-	b=HXFaF3ySQHsLGpy+nYMHM4KYw3UreK/xgUOLaof49dtU2V+Ow0R7dVe+0veB47EF+
-	 TZLUfacdfe6cI1+Yn/K8s0qbKkQ+23GSTLn0wpXTK4bSmyk3a92w5opb8xLit1G/jM
-	 hY7gS77vHzgTi08vegog5m/J/wnslPDjG9KcA24c=
-Authentication-Results: mail-nwsmtp-smtp-production-main-24.iva.yp-c.yandex.net; dkim=pass header.i=@maquefel.me
-Message-ID: <df5d5a90953ab8e746dbcaaa065279745784ffa8.camel@maquefel.me>
-Subject: Re: [PATCH v11 03/38] clk: ep93xx: add DT support for Cirrus EP93xx
-From: Nikita Shubin <nikita.shubin@maquefel.me>
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- mturquette@baylibre.com, devnull+nikita.shubin.maquefel.me@kernel.org, 
- Alexander Sverdlin <alexander.sverdlin@gmail.com>, Arnd Bergmann
- <arnd@arndb.de>
-Date: Mon, 26 Aug 2024 11:33:07 +0300
-In-Reply-To: <7e91180bf4cb632b5ba23df10f8e9b998144acb6.camel@maquefel.me>
-References: <7e91180bf4cb632b5ba23df10f8e9b998144acb6.camel@maquefel.me>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.48.4 
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="o9EByFmH"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1724661366; bh=TjB1mJGOet0/euYUc4+9dZJCDXiIYJxAIHE7thKe2Xg=;
+	h=From:To:Cc:Subject:Date;
+	b=o9EByFmHvxibaCecqgVL2mKjSz6TMB8/V4sULitzlYG9AtgBWIX0r8vw+W1dHolu8
+	 gCXFgLXQj/XrR0+89DAotqu7q7ZbmjTf1QJ82D2+IYuF8oAAktLwA/UF/BKH8/wh3t
+	 I/kSbkjrPNGcmji/qgVpnUQ4dL8nTA2N8wOuMxEY=
+Received: from localhost.localdomain ([112.64.14.141])
+	by newxmesmtplogicsvrszc19-0.qq.com (NewEsmtp) with SMTP
+	id 76A1E6F3; Mon, 26 Aug 2024 16:29:42 +0800
+X-QQ-mid: xmsmtpt1724660982twivsddyp
+Message-ID: <tencent_713186AE6290AC7B8037FD247F5BF04C0308@qq.com>
+X-QQ-XMAILINFO: OK7NBzdNss/RjFx9qnTP6wLjsMMMhlfJyMu1aOp7jdULQYCQAB/jXasbYhRaZn
+	 F4qK0gr/EVa87F6sA5udRfyqQADMucnPUjLbEPuyBz8nDykkjZWL/HKD81hEo6yuyzgubtxKx02x
+	 um1xL57uTLB86VHz2IKNSIeY2q0UThr51Avq7nIFmxsYa+rJcNgA39FyTWdxLuN61EM64TosbtoA
+	 TXMMwVp72jRlB1i5qzvrZ7hLBEuRdhDulmjUPdExbk+wdeA1qGoEze05sYeTtd0evm6ZEW07v5Qk
+	 Frivg02Pz6Qnz/hUtGs3W6kDb6IAXCnBGLtgoqGbXJVbmC9r3esLWUadLDmF/xQ4CYcfcoe+3/6i
+	 RLNFIerV7vtpZpd7p0mqYPRP+1rY00Go/XSrJSfvyOYcJnoh6S0f/E1iO6j1y+hZQ1FKzVqbIupL
+	 g48P1rM6pksRYHklbI3DeMaj551zqgfVri8Xl9n0cYytv8i1+uSLtfYkNohYikUWMbZZ4DxvJYq0
+	 z1pjKuzJa4zk5fCepKHWLx6Z2+tDsRADqOavbEOPJ1LqKkjxuXa2NZYatA/QOnxL0jrhgV9+TVO2
+	 cSby56RYoAKE9gn27zNoR8PG8dKLJXEpjYWD1j9MsfAp2yqTdedVWGjAGXzb0vOQtFj1uHBy55uL
+	 AA92myph3+aYT0Iu1c8SYPcvh3LrfSSkhWoWegX/1ttJ25AFgQba+XcOQ7n0sBg0UAMyP4w8jDaF
+	 /ZnAOM4OwvSZOJw2VwLDOMUU6ihA6tpycFN0YMN4029ybWPeh+wZgGXApKkl0clb6Y4dpuo+/Wkb
+	 OKWb4C9wNNVb5stuuxgngNHJVpp7PJIqg2ZDqK3ZUqTX8KggP1ZDHfRLrPddhOngzpX/qcXbZR4V
+	 dglYtGDRvQG21+vK2rjvgbpGeqsszlqxdOnWaT38ISI2ybOgLaFKIHOZz03VMFtGZe7Uud7X2RpW
+	 bIWyu0pMJm7lp4fSZRY8A7vj/hFB7MrAiPt94wMadeJdtkF7AMRCQ2eF/2WBm5l8ysozGS2DfjCJ
+	 ySmIO5Z21atEWk89O3
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
+From: jiping huang <huangjiping95@qq.com>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	jiping huang <huangjiping95@qq.com>
+Subject: [PATCH] clk: Delete redundant logic.
+Date: Mon, 26 Aug 2024 16:29:39 +0800
+X-OQ-MSGID: <20240826082939.2377-1-huangjiping95@qq.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Hi Stephen,=20
+In fact, the local variable "best_parent_rate" saved at the function
+entrance is not used later on.
 
-A gentle reminder on this particular patch, hope you'll have time for
-it soon.
+Signed-off-by: jiping huang <huangjiping95@qq.com>
 
-On Fri, 2024-08-02 at 10:07 +0300, Nikita Shubin wrote:
-> Hi Stephen!
->=20
-> Just in case you missed this one in last series update:
->=20
-> Changelog for this patch:
-> - added devm_ep93xx_clk_hw_register_fixed_rate_parent_data() for
-> =C2=A0 devm_ version of clk_hw_register_fixed_rate_parent_data()
-> -
-> s/devm_clk_hw_register_fixed_rate()/devm_ep93xx_clk_hw_register_fixed
-> _r
-> ate_parent_data()/
-> - replaced all devm_clk_hw_register_fixed_factor() to
-> =C2=A0 devm_clk_hw_register_fixed_factor_parent_hw() or
-> =C2=A0 devm_clk_hw_register_fixed_factor_index()
-> -
-> s/devm_clk_hw_register_gate()/devm_clk_hw_register_gate_parent_data()
->=20
-> Stephen - it think that's you was aiming for - to get rid of all
-> functions that are using const char* parent_name directly instead of
-> clk_hw or clk_parent_data.
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 8cca52be993f..d076939c42ab 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -2295,11 +2295,6 @@ static struct clk_core *clk_calc_new_rates(struct clk_core *core,
+ 	if (IS_ERR_OR_NULL(core))
+ 		return NULL;
+ 
+-	/* save parent rate, if it exists */
+-	parent = old_parent = core->parent;
+-	if (parent)
+-		best_parent_rate = parent->rate;
+-
+ 	clk_core_get_boundaries(core, &min_rate, &max_rate);
+ 
+ 	/* find the closest rate and parent clk/rate */
+-- 
+2.34.1
+
 
