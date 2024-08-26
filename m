@@ -1,93 +1,133 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F145414A617;
-	Mon, 26 Aug 2024 13:11:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CD5253362;
+	Mon, 26 Aug 2024 13:34:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724677869; cv=none; b=tfqz6PIKVtRNNMNUIOWgGHTdrXoPkZfLLKEoszZqYMNpaCQk6SiWpwzKGJhSvUCuVQlVt27P87LgeJT98DmmluqS7IWQ+ck/mea9gAyn1pBDwVH/Pzf/pbivbnItM+IwRhh/EnaNpHrXkZxUMSa+N6OjUFbGXre8ikcLg8Hz6Qo=
+	t=1724679270; cv=none; b=gGLUN9pTa84J+LsQNSzkaBypn34kpINMlfMGmMVtVCTdk5XncN4oCw2JF0Thv4axvYIPyYAu4tdW3Jz2X0WFciNOiz2iShCXxOTlsNT7gAyC4lxPkuWVN03ZxjtYBaSQKhm4y/n6apfSeUyMW8TwiiW/kMdqvp+kfgNGJn5EwAk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724677869; c=relaxed/simple;
-	bh=0ppJbQ1K1Yzftc2Bz5hjnDOj8PGFXrJ4oVr1tSmFbdU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c4fwR3gMHTu3mHdgu0mqlBXGVQe92UyRC1I6iG9aImdGDuhit5s3R798G5BYGi7RrgMfkZnU9/DRqAhPLB4iREGplGvOzUeDmUPrmYIsefA9fKGsJrVxP8uVWQvmrPdkeQDYl6YuEUTwzmyJEge8XZocpxxzcDWwJJtW9Sa3KGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KBNA5jyA; arc=none smtp.client-ip=10.30.226.201
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KBNA5jyA"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2099FC5829B;
-	Mon, 26 Aug 2024 13:11:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1724677868;
-	bh=0ppJbQ1K1Yzftc2Bz5hjnDOj8PGFXrJ4oVr1tSmFbdU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KBNA5jyAmqsMXesEJ/Jh3EpPV+JzcdC0kcca7j2q62fd1uzq94IftMuLFOk+oC0B2
-	 W5+Sma+TJhKIwPof6m0DL3zc8x9LFW8j4QhdvNWsvZVidANj92hVN03Y5fpsfz5J9a
-	 ksE6zvb1rfAtnXeEcnM3oeBdCEsANtmLOGbh0UEw=
-Date: Mon, 26 Aug 2024 15:11:05 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Harry Austen <hpausten@protonmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michal Simek <michal.simek@amd.com>,
-	Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
-	Dave Ertman <david.m.ertman@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 7/9] uio: add Xilinx user clock monitor support
-Message-ID: <2024082655-cubicle-flashily-6ab3@gregkh>
-References: <20240826123602.1872-1-hpausten@protonmail.com>
- <20240826123602.1872-8-hpausten@protonmail.com>
+	s=arc-20240116; t=1724679270; c=relaxed/simple;
+	bh=9k9/5gI/iC9n1d3p2dgCLcApTdyK3eFpFtG0njcovcQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OumtFQMHIbssVIK6ef9KPuoH9/Hp2mcSF6VFPazrvvnAkmXfRKcdxQ9QgO1T+ucnHbydYF0k0OD3IdDzSIBLCWgv+PB1bKdQFFT3gYbIMokyYhsTXavAoi54Qjx3jh4b8UpRwa1VXwe6Pif9WMKgnR3ubL+pbVJn04D4tN2RJUc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e02b79c6f21so4547899276.2;
+        Mon, 26 Aug 2024 06:34:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724679266; x=1725284066;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BZbdblcDNT8GZP9ChcDYCER0K22dBrCIi3spdBLOpfM=;
+        b=bQRck9UfJacjBulz2ELd2CwVp0mvGhHBLq4J9646onelq6n/nN5VthIzoSV+tTtCT5
+         +CYyzn7hP5++FlUbWXcvPZc2OcStoWDRjh9G1BvHGeuGGFMotb/Zx2wJPf03GPi8L0wY
+         F3++Tb77dvEIULpDdm8B9t6FRjR0be6aZqYroUvbn9gF4zZHzBhSt4aHzps8MrgnvpcV
+         lzPmW2EpyMOVB1MFtJVoj04/TqxmbhHBQr5hQCo5HA1tu4FSnm+XnW+Uc7OkzTgZwqWG
+         GbZ/ruvJL4YtSunQZjL7vgjIx2cLf3SUAOnH79blbJDkr0oFqo78HS7K4fIAmUSDKmGN
+         Kx6A==
+X-Forwarded-Encrypted: i=1; AJvYcCVRvQoTwbDUzX44KwVQcxXN3ei9+DOHXHS+R4OImk2FX+kLuOReQXNnJSljG1Vpp0f/KqE6luOuQwSHIomN@vger.kernel.org, AJvYcCW7XvfTeOY9CfCYrlzTnvlqFnVOdauEgivwp8d/fphxMKDXeYC8mtIFp0G8MLB3Wu50KkhMiYlDywHw90KxdewIJy8=@vger.kernel.org, AJvYcCXkqRKDPXIvlGV5dezV+sy0FXg7cz5vDDS/3WYKq7M2pPKRwinG6USCJ7fWVdD5Y/okpWDcDnYI9ZY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGGzTflKt0NoPCWHUmO2Y4kJ50mgIDfuzDsB5uLVwYaUAnIwz/
+	OXvVRYgKj3ieElZKN8EvjAxI5/hoQNW1E37hwhWnK+HSy7IjLHrdABTbFKtJ
+X-Google-Smtp-Source: AGHT+IH2vZbD95QinbvyqmENyH2Fb5tiX3/TdznklyiAIluD/VEXP1i6yWVGeiOx3IM3yGSvoqXiog==
+X-Received: by 2002:a25:a549:0:b0:e16:700c:4b63 with SMTP id 3f1490d57ef6-e17a88be277mr9681677276.3.1724679266379;
+        Mon, 26 Aug 2024 06:34:26 -0700 (PDT)
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com. [209.85.128.170])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e178e5696dcsm2046882276.46.2024.08.26.06.34.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Aug 2024 06:34:26 -0700 (PDT)
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6bd3407a12aso40132537b3.3;
+        Mon, 26 Aug 2024 06:34:25 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUQXYobNAaI7t+2Uuh1nqx1MjTmBlgm3uESN2zdirtyzBcDFsKeH1zfHlKvv4+jSiVJNhNTCusZy8ukP11M1TQnu3I=@vger.kernel.org, AJvYcCUjHEd9JBlkXUygOi0/Bk6frsmNhdSj779xkfiWTvlD+ovL0dQsjvSbbALwA8KgOyUbfsRRfQNnjfFl07w2@vger.kernel.org, AJvYcCW6kXgPG/3Zu/1rGLi83LESd8NIawy8nrDD3tyINlap6F6CaWgUYEc4qHoNLarwrFY7H9OOmlNr12k=@vger.kernel.org
+X-Received: by 2002:a05:690c:2c81:b0:6ae:dab5:a3b5 with SMTP id
+ 00721157ae682-6c624fb4900mr88162487b3.13.1724679265567; Mon, 26 Aug 2024
+ 06:34:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240826123602.1872-8-hpausten@protonmail.com>
+References: <20240822111631.544886-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240822111631.544886-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240822111631.544886-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 26 Aug 2024 15:34:13 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVHuej==aKo+6CTeo00cJLb59wDGu3Rq-ECRq7=cU2wdQ@mail.gmail.com>
+Message-ID: <CAMuHMdVHuej==aKo+6CTeo00cJLb59wDGu3Rq-ECRq7=cU2wdQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] clk: renesas: rzv2h-cpg: Add support for dynamic
+ switching divider clocks
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 26, 2024 at 12:38:36PM +0000, Harry Austen wrote:
-> Xilinx clocking wizard IP core supports monitoring of up to four
-> optional user clock inputs, with a corresponding interrupt for
-> notification in change of clock state (stop, underrun, overrun or
-> glitch). Give userspace access to this monitor logic through use of the
-> UIO framework.
-> 
-> Implemented as an auxiliary_driver to avoid introducing UIO dependency
-> to the main clock driver.
-> 
-> Signed-off-by: Harry Austen <hpausten@protonmail.com>
+Hi Prabhakar,
+
+On Thu, Aug 22, 2024 at 1:16=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
+om> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Add support for dynamic switching divider clocks.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > ---
->  drivers/uio/Kconfig            |  8 ++++
->  drivers/uio/Makefile           |  1 +
->  drivers/uio/uio_xlnx_clk_mon.c | 71 ++++++++++++++++++++++++++++++++++
->  3 files changed, 80 insertions(+)
->  create mode 100644 drivers/uio/uio_xlnx_clk_mon.c
-> 
-> diff --git a/drivers/uio/Kconfig b/drivers/uio/Kconfig
-> index b060dcd7c6350..ca8a53de26a67 100644
-> --- a/drivers/uio/Kconfig
-> +++ b/drivers/uio/Kconfig
-> @@ -164,4 +164,12 @@ config UIO_DFL
->  	    opae-sdk/tools/libopaeuio/
->  
->  	  If you compile this as a module, it will be called uio_dfl.
-> +
-> +config UIO_XLNX_CLK_MON
-> +	tristate "Xilinx user clock monitor support"
-> +	depends on COMMON_CLK_XLNX_CLKWZRD
-> +	help
-> +	  Userspace I/O interface to the user clock monitor logic within the
-> +	  Xilinx Clocking Wizard IP core.
+> v1->v2
+> - Dropped DDIV_DIVCTL_WIDTH
+> - width is now extracted from conf
+> - Updated DDIV_GET_* macros
+> - Now doing rmw as some of the DIVCTLx require it
 
-Why do you want a UIO api for a clock device?  What userspace code is
-going to access the hardware this way?  Why not use the normal
-kernel/user apis instead?
+Thanks for the update!
 
-thanks,
+> --- a/drivers/clk/renesas/rzv2h-cpg.c
+> +++ b/drivers/clk/renesas/rzv2h-cpg.c
+> @@ -45,14 +45,23 @@
+>  #define PDIV(val)              FIELD_GET(GENMASK(5, 0), (val))
+>  #define SDIV(val)              FIELD_GET(GENMASK(2, 0), (val))
+>
+> +#define DDIV_DIVCTL_WEN(shift)         (1 << ((shift) + 16))
 
-greg k-h
+BIT((shift) + 16)
+
+> +#define DDIV_GET_WIDTH(val)            FIELD_GET(GENMASK(3, 0), (val))
+> +#define DDIV_GET_SHIFT(val)            FIELD_GET(GENMASK(7, 4), (val))
+> +#define DDIV_GET_REG_OFFSET(val)       FIELD_GET(GENMASK(18, 8), (val))
+> +#define DDIV_GET_MON(val)              FIELD_GET(GENMASK(23, 19), (val))
+
+These are not register fields, so you might as well just use C bitfields
+accesses instead:
+
+    struct ddiv {
+            unsigned int width:4;
+            unsigned int shift:4;
+            unsigned int offset:11;
+            unsigned int monbit:5;
+    };
+
+    if ((shift + core->ddiv.width > 16)
+            return ERR_PTR(-EINVAL);
+
+(you can put cpg_core_clk.conf and cpg_core_clk.ddiv in a union to save spa=
+ce)
+
+The rest LGTM.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
