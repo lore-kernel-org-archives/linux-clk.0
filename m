@@ -1,43 +1,43 @@
-Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
+Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56811185931;
-	Mon, 26 Aug 2024 12:38:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8D56188586;
+	Mon, 26 Aug 2024 12:38:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724675918; cv=none; b=KR29KSGhwTVAaSXmGywiUVGb9OrJqN5VhLFArwcYo117uWyXuRcN/rpWAGdJVHqwhoz5gpjAKFerGLab4Sh6RRHTpfv0rAB0kKmNWjKiltWVJC818Ln3TKw5F3/M6DqXIufRM9dWX9BK46p5L84G/palPfAs2JFd3lHZjxMGy7s=
+	t=1724675921; cv=none; b=XN0StyF5GtFNrOpMFh5LyXzKa1ng0LqqSsa2J2/sLy0dRQnndaezBNdZmWK5bL/zuPyUKSvYSb4y2KPpKv35rZPL7VbcO4qz8pzInwmpeIWg1s7MOJwNnyXdu90DLyVuAQShxZT4ozvsuxsjjXncynqGkSJxowrMCjJkqfdyqdQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724675918; c=relaxed/simple;
-	bh=FBOWkOJ8Fv8/HjudbpS8HPnjZSATpEa1kECwdzoWEUs=;
+	s=arc-20240116; t=1724675921; c=relaxed/simple;
+	bh=41srDK0MuDn8Elb7xD1mGmMH+Sw4nupfzQfp74UxsXY=;
 	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AqYLL2BK86wOB/J0k+JcowZ0esKaDYFALrBrcwY7ZebrzXjQmDARQ4stv4N1nWd60lQ1xcK0t3mTTUCfcjlEEoJgcENkmpIriS3b8gO2SqMWtNF1HFkvY5Ozyq3cV3t6VFWs2hjNCHvuS3V57ITbgfFsh3H2Hp9fa6knZH9Q5/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=HjEsGjgf; arc=none smtp.client-ip=185.70.40.133
+	 MIME-Version:Content-Type; b=YVgTbATG6Q67s28YPT7k6EWR9YeTzfZkrT7Orvfk5I3z4A0PpXQl0K7AQWByy4UWNPKsXOqY9JEn3DRqd0ekhrMQlFb9Pq6OIR/HbamvHot4DKmNb4KeVIFmd4OBSL2tFU81yEGI8UfqQSOFteXigEkHcObDt2F9mw3MNKJf4EM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=kJSvPvHA; arc=none smtp.client-ip=185.70.40.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="HjEsGjgf"
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="kJSvPvHA"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1724675908; x=1724935108;
-	bh=0DFY+wLkYuEWyBy/mhSUmuzkOWFdO8lFfTnXo28Nt74=;
+	s=protonmail3; t=1724675917; x=1724935117;
+	bh=h/LZjiViK1KTa6JiCSBo81f43s9SkDGG36Wi8VELnlc=;
 	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
 	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
 	 Message-ID:BIMI-Selector;
-	b=HjEsGjgf7W37hkP1e5QLGoI0+JYT5Uf7dmKXwDzgBTfU4bV4ON5OjRMfm3IacW5BT
-	 SoYLHbxQt07XGk5rtFdPNAJO3MgtmWF2l2COlFX/pJX4PMMdQr90EiuoCQL9ARxPnE
-	 olqXL5ptOWeAmhTkLMYd1TfqIO7APF74Mo8kvkEQsR9VTyf63nsb74ztgPuf3CZBs/
-	 VrRMzUBDslq83Av8BpZV1nMv8njthYTsBGMgNBPAd10l4dQAwSdpdlyyVazJz/3LcU
-	 aR+6uXulhQ5VE8YTViSrrqL18C05H5PaRrqQBLfa15Jp3a2fzd9DS4FcLJKNkFOMY+
-	 7bdqNqg8ON01A==
-Date: Mon, 26 Aug 2024 12:38:24 +0000
+	b=kJSvPvHAN9W9tTPypmczzn8CP/pUIs8eoDXoR11bunadPSf/yYUWVjH5qs9ZqurMs
+	 eN8LoF5DiCDyvMGpjV23e7OSripcqbsZgUZj8h0pXLq0pfH6Y66BJml4joPJ+BVaiz
+	 oqtQDJ91WcAW8YsutLwhMcyaI3c3SBD7h+VCPoTD3ea67eqtTd/Uj4xgqtbj7jKxzw
+	 g2K5m+K54Fguhc7hNmvvukyZAZRWrYRA3uqVkp1usOsHUmT/IEIjkgTyGqKl0SsAQH
+	 lkS+0JrXP0eU4mkNFyRwejf+2j3I3XSjih+15OYbLBJcE6fVQ7JK8d8PCRhtL8yj7P
+	 7EAvwOzLto5vg==
+Date: Mon, 26 Aug 2024 12:38:32 +0000
 To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Michal Simek <michal.simek@amd.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 From: Harry Austen <hpausten@protonmail.com>
 Cc: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>, Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Harry Austen <hpausten@protonmail.com>
-Subject: [PATCH v3 4/9] clk: clocking-wizard: move clock registration to separate function
-Message-ID: <20240826123602.1872-5-hpausten@protonmail.com>
+Subject: [PATCH v3 6/9] clk: clocking-wizard: add user clock monitor support
+Message-ID: <20240826123602.1872-7-hpausten@protonmail.com>
 In-Reply-To: <20240826123602.1872-1-hpausten@protonmail.com>
 References: <20240826123602.1872-1-hpausten@protonmail.com>
 Feedback-ID: 53116287:user:proton
-X-Pm-Message-ID: 45e8454da06f098c8983fadc75a227a513988076
+X-Pm-Message-ID: c6c0b939de3551c63045bbf6a94385231923af91
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -47,297 +47,162 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-Provide clear separation of dynamic reconfiguration logic, by moving its
-setup procedure to its own dedicated function.
+Xilinx clocking wizard IP core supports monitoring of up to four
+optional user clock inputs, with a corresponding interrupt for
+notification in change of clock state (stop, underrun, overrun or
+glitch). Give access to this monitor logic through use of an auxiliary
+device.
+
+Use presence of the user monitor interrupt description in devicetree to
+indicate whether or not the auxiliary device should be registered. Also,
+this functionality is only supported from v6.0 onwards, so add
+indication of support to the device match data, in order to be tied to
+the utilised compatible string.
 
 Signed-off-by: Harry Austen <hpausten@protonmail.com>
 ---
- drivers/clk/xilinx/clk-xlnx-clock-wizard.c | 143 +++++++++++----------
- 1 file changed, 75 insertions(+), 68 deletions(-)
+ drivers/clk/xilinx/Kconfig                 |  1 +
+ drivers/clk/xilinx/clk-xlnx-clock-wizard.c | 60 ++++++++++++++++++++--
+ 2 files changed, 56 insertions(+), 5 deletions(-)
 
+diff --git a/drivers/clk/xilinx/Kconfig b/drivers/clk/xilinx/Kconfig
+index 051756953558b..87f507bd9b6f3 100644
+--- a/drivers/clk/xilinx/Kconfig
++++ b/drivers/clk/xilinx/Kconfig
+@@ -21,6 +21,7 @@ config COMMON_CLK_XLNX_CLKWZRD
+ =09tristate "Xilinx Clocking Wizard"
+ =09depends on OF
+ =09depends on HAS_IOMEM
++=09select AUXILIARY_BUS
+ =09help
+ =09  Support for the Xilinx Clocking Wizard IP core clock generator.
+ =09  Adds support for clocking wizard and compatible.
 diff --git a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c b/drivers/clk/xilin=
 x/clk-xlnx-clock-wizard.c
-index f332e0eee56c8..1a65a7d153c35 100644
+index 1a65a7d153c35..35dad2fda254b 100644
 --- a/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
 +++ b/drivers/clk/xilinx/clk-xlnx-clock-wizard.c
-@@ -962,72 +962,30 @@ static const struct versal_clk_data versal_data =3D {
- =09.is_versal=09=3D true,
+@@ -8,6 +8,7 @@
+  *
+  */
+=20
++#include <linux/auxiliary_bus.h>
+ #include <linux/bitfield.h>
+ #include <linux/platform_device.h>
+ #include <linux/clk.h>
+@@ -129,6 +130,7 @@ enum clk_wzrd_int_clks {
+  * @clks_internal:=09Internal clocks
+  * @speed_grade:=09Speed grade of the device
+  * @suspended:=09=09Flag indicating power state of the device
++ * @adev:=09=09User clock monitor auxiliary device
+  * @clk_data:=09=09Output clock data
+  */
+ struct clk_wzrd {
+@@ -139,6 +141,7 @@ struct clk_wzrd {
+ =09struct clk_hw *clks_internal[wzrd_clk_int_max];
+ =09unsigned int speed_grade;
+ =09bool suspended;
++=09struct auxiliary_device adev;
+ =09struct clk_hw_onecell_data clk_data;
  };
 =20
--static int clk_wzrd_probe(struct platform_device *pdev)
-+static int clk_wzrd_register_output_clocks(struct device *dev, int nr_outp=
-uts)
- {
- =09const char *clkout_name, *clk_name, *clk_mul_name;
-+=09struct clk_wzrd *clk_wzrd =3D dev_get_drvdata(dev);
- =09u32 regl, regh, edge, regld, reghd, edged, div;
--=09struct device_node *np =3D pdev->dev.of_node;
- =09const struct versal_clk_data *data;
--=09struct clk_wzrd *clk_wzrd;
- =09unsigned long flags =3D 0;
-+=09bool is_versal =3D false;
- =09void __iomem *ctrl_reg;
- =09u32 reg, reg_f, mult;
--=09bool is_versal =3D false;
--=09unsigned long rate;
--=09int nr_outputs;
--=09int i, ret;
--
--=09ret =3D of_property_read_u32(np, "xlnx,nr-outputs", &nr_outputs);
--=09if (ret || nr_outputs > WZRD_NUM_OUTPUTS)
--=09=09return -EINVAL;
--
--=09clk_wzrd =3D devm_kzalloc(&pdev->dev, struct_size(clk_wzrd, clk_data.hw=
-s, nr_outputs),
--=09=09=09=09GFP_KERNEL);
--=09if (!clk_wzrd)
--=09=09return -ENOMEM;
--=09platform_set_drvdata(pdev, clk_wzrd);
--
--=09clk_wzrd->base =3D devm_platform_ioremap_resource(pdev, 0);
--=09if (IS_ERR(clk_wzrd->base))
--=09=09return PTR_ERR(clk_wzrd->base);
--
--=09ret =3D of_property_read_u32(np, "xlnx,speed-grade", &clk_wzrd->speed_g=
-rade);
--=09if (!ret) {
--=09=09if (clk_wzrd->speed_grade < 1 || clk_wzrd->speed_grade > 3) {
--=09=09=09dev_warn(&pdev->dev, "invalid speed grade '%d'\n",
--=09=09=09=09 clk_wzrd->speed_grade);
--=09=09=09clk_wzrd->speed_grade =3D 0;
--=09=09}
--=09}
--
--=09clk_wzrd->clk_in1 =3D devm_clk_get(&pdev->dev, "clk_in1");
--=09if (IS_ERR(clk_wzrd->clk_in1))
--=09=09return dev_err_probe(&pdev->dev, PTR_ERR(clk_wzrd->clk_in1),
--=09=09=09=09     "clk_in1 not found\n");
-+=09int i;
+@@ -171,8 +174,9 @@ struct clk_wzrd_divider {
+ =09spinlock_t *lock;  /* divider lock */
+ };
 =20
--=09clk_wzrd->axi_clk =3D devm_clk_get_enabled(&pdev->dev, "s_axi_aclk");
--=09if (IS_ERR(clk_wzrd->axi_clk))
--=09=09return dev_err_probe(&pdev->dev, PTR_ERR(clk_wzrd->axi_clk),
--=09=09=09=09     "s_axi_aclk not found\n");
--=09rate =3D clk_get_rate(clk_wzrd->axi_clk);
--=09if (rate > WZRD_ACLK_MAX_FREQ) {
--=09=09dev_err(&pdev->dev, "s_axi_aclk frequency (%lu) too high\n",
--=09=09=09rate);
--=09=09return -EINVAL;
--=09}
--
--=09data =3D device_get_match_data(&pdev->dev);
-+=09data =3D device_get_match_data(dev);
- =09if (data)
- =09=09is_versal =3D data->is_versal;
+-struct versal_clk_data {
++struct clk_wzrd_data {
+ =09bool is_versal;
++=09bool supports_monitor;
+ };
 =20
--=09clkout_name =3D devm_kasprintf(&pdev->dev, GFP_KERNEL, "%s_out0", dev_n=
-ame(&pdev->dev));
-+=09clkout_name =3D devm_kasprintf(dev, GFP_KERNEL, "%s_out0", dev_name(dev=
-));
- =09if (!clkout_name)
- =09=09return -ENOMEM;
+ #define to_clk_wzrd(_nb) container_of(_nb, struct clk_wzrd, nb)
+@@ -958,16 +962,58 @@ static int __maybe_unused clk_wzrd_resume(struct devi=
+ce *dev)
+ static SIMPLE_DEV_PM_OPS(clk_wzrd_dev_pm_ops, clk_wzrd_suspend,
+ =09=09=09 clk_wzrd_resume);
 =20
- =09if (is_versal) {
- =09=09if (nr_outputs =3D=3D 1) {
- =09=09=09clk_wzrd->clk_data.hws[0] =3D clk_wzrd_ver_register_divider
--=09=09=09=09(&pdev->dev, clkout_name,
-+=09=09=09=09(dev, clkout_name,
- =09=09=09=09__clk_get_name(clk_wzrd->clk_in1), 0,
- =09=09=09=09clk_wzrd->base, WZRD_CLK_CFG_REG(is_versal, 3),
- =09=09=09=09WZRD_CLKOUT_DIVIDE_SHIFT,
-@@ -1035,7 +993,7 @@ static int clk_wzrd_probe(struct platform_device *pdev=
-)
- =09=09=09=09CLK_DIVIDER_ONE_BASED | CLK_DIVIDER_ALLOW_ZERO,
- =09=09=09=09DIV_ALL, &clkwzrd_lock);
+-static const struct versal_clk_data versal_data =3D {
+-=09.is_versal=09=3D true,
++static const struct clk_wzrd_data version_6_0_data =3D {
++=09.is_versal=09=09=3D false,
++=09.supports_monitor=09=3D true,
+ };
 =20
--=09=09=09goto out;
-+=09=09=09return 0;
- =09=09}
- =09=09/* register multiplier */
- =09=09edge =3D !!(readl(clk_wzrd->base + WZRD_CLK_CFG_REG(is_versal, 0)) &
-@@ -1060,7 +1018,7 @@ static int clk_wzrd_probe(struct platform_device *pde=
-v)
- =09} else {
- =09=09if (nr_outputs =3D=3D 1) {
- =09=09=09clk_wzrd->clk_data.hws[0] =3D clk_wzrd_register_divider
--=09=09=09=09(&pdev->dev, clkout_name,
-+=09=09=09=09(dev, clkout_name,
- =09=09=09=09__clk_get_name(clk_wzrd->clk_in1), 0,
- =09=09=09=09clk_wzrd->base, WZRD_CLK_CFG_REG(is_versal, 3),
- =09=09=09=09WZRD_CLKOUT_DIVIDE_SHIFT,
-@@ -1068,7 +1026,7 @@ static int clk_wzrd_probe(struct platform_device *pde=
-v)
- =09=09=09=09CLK_DIVIDER_ONE_BASED | CLK_DIVIDER_ALLOW_ZERO,
- =09=09=09=09DIV_ALL, &clkwzrd_lock);
-=20
--=09=09=09goto out;
-+=09=09=09return 0;
- =09=09}
- =09=09reg =3D readl(clk_wzrd->base + WZRD_CLK_CFG_REG(is_versal, 0));
- =09=09reg_f =3D reg & WZRD_CLKFBOUT_FRAC_MASK;
-@@ -1079,19 +1037,19 @@ static int clk_wzrd_probe(struct platform_device *p=
-dev)
- =09=09mult =3D (reg * 1000) + reg_f;
- =09=09div =3D 1000;
- =09}
--=09clk_name =3D devm_kasprintf(&pdev->dev, GFP_KERNEL, "%s_mul", dev_name(=
-&pdev->dev));
-+=09clk_name =3D devm_kasprintf(dev, GFP_KERNEL, "%s_mul", dev_name(dev));
- =09if (!clk_name)
- =09=09return -ENOMEM;
- =09clk_wzrd->clks_internal[wzrd_clk_mul] =3D devm_clk_hw_register_fixed_fa=
-ctor
--=09=09=09(&pdev->dev, clk_name,
-+=09=09=09(dev, clk_name,
- =09=09=09 __clk_get_name(clk_wzrd->clk_in1),
- =09=09=090, mult, div);
- =09if (IS_ERR(clk_wzrd->clks_internal[wzrd_clk_mul])) {
--=09=09dev_err(&pdev->dev, "unable to register fixed-factor clock\n");
-+=09=09dev_err(dev, "unable to register fixed-factor clock\n");
- =09=09return PTR_ERR(clk_wzrd->clks_internal[wzrd_clk_mul]);
- =09}
-=20
--=09clk_name =3D devm_kasprintf(&pdev->dev, GFP_KERNEL, "%s_mul_div", dev_n=
-ame(&pdev->dev));
-+=09clk_name =3D devm_kasprintf(dev, GFP_KERNEL, "%s_mul_div", dev_name(dev=
-));
- =09if (!clk_name)
- =09=09return -ENOMEM;
-=20
-@@ -1108,31 +1066,29 @@ static int clk_wzrd_probe(struct platform_device *p=
-dev)
-=20
- =09=09clk_mul_name =3D clk_hw_get_name(clk_wzrd->clks_internal[wzrd_clk_mu=
-l]);
- =09=09clk_wzrd->clks_internal[wzrd_clk_mul_div] =3D
--=09=09=09devm_clk_hw_register_fixed_factor(&pdev->dev, clk_name,
--=09=09=09=09=09=09=09  clk_mul_name, 0, 1, div);
-+=09=09=09devm_clk_hw_register_fixed_factor(dev, clk_name, clk_mul_name, 0,=
- 1, div);
- =09} else {
- =09=09ctrl_reg =3D clk_wzrd->base + WZRD_CLK_CFG_REG(is_versal, 0);
- =09=09clk_wzrd->clks_internal[wzrd_clk_mul_div] =3D devm_clk_hw_register_d=
-ivider
--=09=09=09(&pdev->dev, clk_name,
-+=09=09=09(dev, clk_name,
- =09=09=09 clk_hw_get_name(clk_wzrd->clks_internal[wzrd_clk_mul]),
- =09=09=09flags, ctrl_reg, 0, 8, CLK_DIVIDER_ONE_BASED |
- =09=09=09CLK_DIVIDER_ALLOW_ZERO, &clkwzrd_lock);
- =09}
- =09if (IS_ERR(clk_wzrd->clks_internal[wzrd_clk_mul_div])) {
--=09=09dev_err(&pdev->dev, "unable to register divider clock\n");
-+=09=09dev_err(dev, "unable to register divider clock\n");
- =09=09return PTR_ERR(clk_wzrd->clks_internal[wzrd_clk_mul_div]);
- =09}
-=20
- =09/* register div per output */
- =09for (i =3D nr_outputs - 1; i >=3D 0 ; i--) {
--=09=09clkout_name =3D devm_kasprintf(&pdev->dev, GFP_KERNEL,
--=09=09=09=09=09     "%s_out%d", dev_name(&pdev->dev), i);
-+=09=09clkout_name =3D devm_kasprintf(dev, GFP_KERNEL, "%s_out%d", dev_name=
-(dev), i);
- =09=09if (!clkout_name)
- =09=09=09return -ENOMEM;
-=20
- =09=09if (is_versal) {
- =09=09=09clk_wzrd->clk_data.hws[i] =3D clk_wzrd_ver_register_divider
--=09=09=09=09=09=09(&pdev->dev,
-+=09=09=09=09=09=09(dev,
- =09=09=09=09=09=09 clkout_name, clk_name, 0,
- =09=09=09=09=09=09 clk_wzrd->base,
- =09=09=09=09=09=09 (WZRD_CLK_CFG_REG(is_versal, 3) + i * 8),
-@@ -1144,7 +1100,7 @@ static int clk_wzrd_probe(struct platform_device *pde=
-v)
- =09=09} else {
- =09=09=09if (!i)
- =09=09=09=09clk_wzrd->clk_data.hws[i] =3D clk_wzrd_register_divf
--=09=09=09=09=09(&pdev->dev, clkout_name, clk_name, flags, clk_wzrd->base,
-+=09=09=09=09=09(dev, clkout_name, clk_name, flags, clk_wzrd->base,
- =09=09=09=09=09(WZRD_CLK_CFG_REG(is_versal, 2) + i * 12),
- =09=09=09=09=09WZRD_CLKOUT_DIVIDE_SHIFT,
- =09=09=09=09=09WZRD_CLKOUT_DIVIDE_WIDTH,
-@@ -1152,7 +1108,7 @@ static int clk_wzrd_probe(struct platform_device *pde=
-v)
- =09=09=09=09=09DIV_O, &clkwzrd_lock);
- =09=09=09else
- =09=09=09=09clk_wzrd->clk_data.hws[i] =3D clk_wzrd_register_divider
--=09=09=09=09=09(&pdev->dev, clkout_name, clk_name, 0, clk_wzrd->base,
-+=09=09=09=09=09(dev, clkout_name, clk_name, 0, clk_wzrd->base,
- =09=09=09=09=09(WZRD_CLK_CFG_REG(is_versal, 2) + i * 12),
- =09=09=09=09=09WZRD_CLKOUT_DIVIDE_SHIFT,
- =09=09=09=09=09WZRD_CLKOUT_DIVIDE_WIDTH,
-@@ -1160,13 +1116,64 @@ static int clk_wzrd_probe(struct platform_device *p=
-dev)
- =09=09=09=09=09DIV_O, &clkwzrd_lock);
- =09=09}
- =09=09if (IS_ERR(clk_wzrd->clk_data.hws[i])) {
--=09=09=09dev_err(&pdev->dev,
--=09=09=09=09"unable to register divider clock\n");
-+=09=09=09dev_err(dev, "unable to register divider clock\n");
- =09=09=09return PTR_ERR(clk_wzrd->clk_data.hws[i]);
- =09=09}
- =09}
-=20
--out:
-+=09return 0;
++static const struct clk_wzrd_data versal_data =3D {
++=09.is_versal=09=09=3D true,
++=09.supports_monitor=09=3D true,
++};
++
++static void clk_wzrd_unregister_adev(void *_adev)
++{
++=09struct auxiliary_device *adev =3D _adev;
++
++=09auxiliary_device_delete(adev);
++=09auxiliary_device_uninit(adev);
 +}
 +
-+static int clk_wzrd_probe(struct platform_device *pdev)
++static int clk_wzrd_setup_monitor(struct platform_device *pdev)
 +{
-+=09struct device_node *np =3D pdev->dev.of_node;
-+=09struct clk_wzrd *clk_wzrd;
-+=09unsigned long rate;
-+=09int nr_outputs;
++=09struct device *dev =3D &pdev->dev;
++=09const struct clk_wzrd_data *data =3D device_get_match_data(dev);
++=09struct clk_wzrd *clk_wzrd =3D dev_get_drvdata(dev);
++=09struct auxiliary_device *adev =3D &clk_wzrd->adev;
 +=09int ret;
 +
-+=09ret =3D of_property_read_u32(np, "xlnx,nr-outputs", &nr_outputs);
-+=09if (ret || nr_outputs > WZRD_NUM_OUTPUTS)
-+=09=09return -EINVAL;
++=09if (!data || !data->supports_monitor)
++=09=09return 0;
 +
-+=09clk_wzrd =3D devm_kzalloc(&pdev->dev, struct_size(clk_wzrd, clk_data.hw=
-s, nr_outputs),
-+=09=09=09=09GFP_KERNEL);
-+=09if (!clk_wzrd)
-+=09=09return -ENOMEM;
-+=09platform_set_drvdata(pdev, clk_wzrd);
++=09adev->name =3D "clk-mon";
++=09adev->dev.parent =3D dev;
++=09adev->dev.platform_data =3D (__force void *)clk_wzrd->base;
 +
-+=09clk_wzrd->base =3D devm_platform_ioremap_resource(pdev, 0);
-+=09if (IS_ERR(clk_wzrd->base))
-+=09=09return PTR_ERR(clk_wzrd->base);
-+
-+=09ret =3D of_property_read_u32(np, "xlnx,speed-grade", &clk_wzrd->speed_g=
-rade);
-+=09if (!ret) {
-+=09=09if (clk_wzrd->speed_grade < 1 || clk_wzrd->speed_grade > 3) {
-+=09=09=09dev_warn(&pdev->dev, "invalid speed grade '%d'\n",
-+=09=09=09=09 clk_wzrd->speed_grade);
-+=09=09=09clk_wzrd->speed_grade =3D 0;
-+=09=09}
-+=09}
-+
-+=09clk_wzrd->clk_in1 =3D devm_clk_get(&pdev->dev, "clk_in1");
-+=09if (IS_ERR(clk_wzrd->clk_in1))
-+=09=09return dev_err_probe(&pdev->dev, PTR_ERR(clk_wzrd->clk_in1),
-+=09=09=09=09     "clk_in1 not found\n");
-+
-+=09clk_wzrd->axi_clk =3D devm_clk_get_enabled(&pdev->dev, "s_axi_aclk");
-+=09if (IS_ERR(clk_wzrd->axi_clk))
-+=09=09return dev_err_probe(&pdev->dev, PTR_ERR(clk_wzrd->axi_clk),
-+=09=09=09=09     "s_axi_aclk not found\n");
-+=09rate =3D clk_get_rate(clk_wzrd->axi_clk);
-+=09if (rate > WZRD_ACLK_MAX_FREQ) {
-+=09=09dev_err(&pdev->dev, "s_axi_aclk frequency (%lu) too high\n", rate);
-+=09=09return -EINVAL;
-+=09}
-+
-+=09ret =3D clk_wzrd_register_output_clocks(&pdev->dev, nr_outputs);
++=09ret =3D auxiliary_device_init(adev);
 +=09if (ret)
 +=09=09return ret;
 +
- =09clk_wzrd->clk_data.num =3D nr_outputs;
- =09ret =3D devm_of_clk_add_hw_provider(&pdev->dev, of_clk_hw_onecell_get, =
-&clk_wzrd->clk_data);
- =09if (ret) {
++=09ret =3D auxiliary_device_add(adev);
++=09if (ret) {
++=09=09auxiliary_device_uninit(adev);
++=09=09return ret;
++=09}
++
++=09return devm_add_action_or_reset(dev, clk_wzrd_unregister_adev, adev);
++}
++
+ static int clk_wzrd_register_output_clocks(struct device *dev, int nr_outp=
+uts)
+ {
+ =09const char *clkout_name, *clk_name, *clk_mul_name;
+ =09struct clk_wzrd *clk_wzrd =3D dev_get_drvdata(dev);
+ =09u32 regl, regh, edge, regld, reghd, edged, div;
+-=09const struct versal_clk_data *data;
++=09const struct clk_wzrd_data *data;
+ =09unsigned long flags =3D 0;
+ =09bool is_versal =3D false;
+ =09void __iomem *ctrl_reg;
+@@ -1170,6 +1216,10 @@ static int clk_wzrd_probe(struct platform_device *pd=
+ev)
+ =09=09return -EINVAL;
+ =09}
+=20
++=09ret =3D clk_wzrd_setup_monitor(pdev);
++=09if (ret)
++=09=09return dev_err_probe(&pdev->dev, ret, "failed to setup monitor\n");
++
+ =09ret =3D clk_wzrd_register_output_clocks(&pdev->dev, nr_outputs);
+ =09if (ret)
+ =09=09return ret;
+@@ -1204,7 +1254,7 @@ static const struct of_device_id clk_wzrd_ids[] =3D {
+ =09{ .compatible =3D "xlnx,versal-clk-wizard", .data =3D &versal_data },
+ =09{ .compatible =3D "xlnx,clocking-wizard"   },
+ =09{ .compatible =3D "xlnx,clocking-wizard-v5.2"   },
+-=09{ .compatible =3D "xlnx,clocking-wizard-v6.0"  },
++=09{ .compatible =3D "xlnx,clocking-wizard-v6.0", .data =3D &version_6_0_d=
+ata },
+ =09{ },
+ };
+ MODULE_DEVICE_TABLE(of, clk_wzrd_ids);
 --=20
 2.46.0
 
