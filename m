@@ -1,42 +1,74 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A803194A5B;
-	Mon, 26 Aug 2024 15:08:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED663194085
+	for <linux-clk@vger.kernel.org>; Mon, 26 Aug 2024 15:25:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724684938; cv=none; b=RnXd/VMtSSc223PFYIETlp8twLf0IyY7xYRoBl4enU9JnjAy7QBFedBALpqqOesg/AXyaAdlV606yt5c1bO1Mq4ExScSjuxT56gJbuKl+WBqNp9frzSO62DW8rMQ+poHMtSZEaKy3iCnTXxTHrQFNt3DUQkV4ZaLHuA4+HsE7ws=
+	t=1724685944; cv=none; b=nhWAAYo9PBDJu/ojddcpxWq/gr48EWVwHk2VxXoqf+wUH1d2AR9n0bSF4R7lSt8R03MT2ZyzuwT8sAFHH3p2d7mxP1QCkZ81nEgLxoKyxQsKzn+Y+8SIOLr6js1gJnkrse4RjiztX1DWo9Xbq545IVkh97uA6QzCsuElPdBqJuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724684938; c=relaxed/simple;
-	bh=5blJDuMEX3E4geAq1lFwpcNVREtjQI6qqEGDWBsSQ08=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WBSvTbU0hdaHZdBSLTYN7OhSy4TxXq53bHWjMxHRcBkAVgf4mcHQ9vIRA23T6GM/SyhHu3ZITS9N+t0mUN5t+Pmu7Z6VdUX6Fm2LUkZzv7lZc6zV42zGkMJ8kwpPOsoi9VMAfSEyUBVUCiDJ10hcOomgiHt7SgKJqLQBuPdInC8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=baO+0YTe; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1724685944; c=relaxed/simple;
+	bh=/DMKkyAX33V/uuPtD4o6lStnmjdqMZbSaNtMNVCkcFg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=M09Z18CKGMIHuijcq3paEQbEEz+l0ZJhRX6la12h5WJjloQoCj/MWmTerhlPRLTJFHROXWKvXNdm545+zn2BZ2f/duS5N8qrP2X93vzlb8PnRUfwyEYz9qI6CXNPHezfRHk/tMTYtHkqRQ8M+DrK8AW9DXOOKtwPrszgmzkgpI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=YIk6fmpm; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="baO+0YTe"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27C19C4FF64;
-	Mon, 26 Aug 2024 15:08:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724684937;
-	bh=5blJDuMEX3E4geAq1lFwpcNVREtjQI6qqEGDWBsSQ08=;
-	h=From:To:Cc:Subject:Date:From;
-	b=baO+0YTeRUvghxCvZL+FIFHwtWzQt9Se0F2uKUKkMUn990Ny+icb606IHNELPasTm
-	 2xZOOl4/P0ztJKizt18imdIYVoPpKZ9M1jS4jPVD7hoG7BxAJSVVLnaFcyyVIEFWGt
-	 Ihr+ve+y01hTx0uBuiWXwJ7kHwKSyWKJJVWCirTQZ0SNZMEeiRPlAqoRO1lnSF6L34
-	 gJLGyy0CQan+WiC/LRD1Nbl9Czq1AFRsbKVtjITvsk5Rz91JjX9UN7mLVj+nZKCU2z
-	 nxV+lAtIA3x9Ae6ojDTz9ONFTub8GmWJCio0wuT3otRqZbhY/DWNpbPum77BgAXLbf
-	 zZwmAiiThgKEg==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	devi priya <quic_devipriy@quicinc.com>
-Subject: [GIT PULL] Qualcomm clock fixes for v6.11
-Date: Mon, 26 Aug 2024 10:08:55 -0500
-Message-ID: <20240826150856.1647492-1-andersson@kernel.org>
-X-Mailer: git-send-email 2.45.2
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="YIk6fmpm"
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5343eeb4973so3671853e87.2
+        for <linux-clk@vger.kernel.org>; Mon, 26 Aug 2024 08:25:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1724685940; x=1725290740; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WVZxPwWU6fTdIbk77ZAZBmOWFDE8RmLRjC5RiWd9L5I=;
+        b=YIk6fmpm/iQe/kDeAf+huYnLY8U7zrRTJX5PXKokopJUU3BJ5Ga/DYDx2pSOpVteKf
+         0angm6/wfHQZilQ8pogOcKw/1Co/qT3TLT/RvNX4GVPd2pBCEb5c16FlqV7aw86G8rhG
+         vs9Ep3wKjsyqVrD4/2wTH9GJ0FhxhGP5CLjdp2EZidykc5WFi2qsO2DI2PuJEDIEA0sV
+         uvhmXTYcTRkgH55DgJQx3P7C+owpRC5qawP7zfabiVQEhFQB9GORu+WgvSHXd5xtH0Cd
+         IKJsCwylTc8UMq0ReR3Dg17tNVAhWZvJvvhylgnsfUumNdELCvN1X3AZtMSwuuzeHuM1
+         hLBg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724685940; x=1725290740;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WVZxPwWU6fTdIbk77ZAZBmOWFDE8RmLRjC5RiWd9L5I=;
+        b=npNzluaD/e6x+O+fV3sqsrCJvedM9CG+JMfS8Ow/Nq3YdOvwHWBKjRi2GAZHHR9RN6
+         I+bev3jOd7DAxlU6hwKjKncbQEl/yl0d8bmOdgXfbBrqfp/eqS2DNn/a8VtPLHpGXg60
+         17kOcKn/+VPoNwAtO65JHNEokYl5Jmf+PPFoHZ5YWKadHoobQPWLqOenGJ+llBLwwDT8
+         zngF5gZYtPjCoqXWbZwD0ypywjsklj3o+jpZytg3P2tte1dVervmgHkZ/7b94wkPBoHt
+         wST/DZMjx8CZlxJac/GXhSrghAU3wUlXuX8ISSBnngjuOtmBn5aCE1hjcZLU0XGr+uNs
+         Z5xA==
+X-Forwarded-Encrypted: i=1; AJvYcCWYwIp/BRzdt2bLzITXquwc2VOHgqvdedUnfk3Qd9lqq6UWbDPHu5ReBBQjBchHxk9IhrIPY/KJzQ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy2loZo8y++R5gfu3rggRKWgyvF05zY2U+2gppjwdXdQ9mclwjL
+	m0UrBH6pXZQgyNZavdPTMdLMVskxp2BiktJx4Du2IMDbRTM8zb+rG2ueBdOY9q4=
+X-Google-Smtp-Source: AGHT+IGqJgMZFTxRO1awmSGF6GW+2CPuDRMo7JmoLYQGXIKpOJ+edUP1SwWEqW7Tv6u077l7Xl+BJg==
+X-Received: by 2002:a05:6512:b22:b0:52c:ddef:4eb7 with SMTP id 2adb3069b0e04-53438846f4cmr8424456e87.20.1724685939527;
+        Mon, 26 Aug 2024 08:25:39 -0700 (PDT)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.144])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a868f437d5fsm683005866b.99.2024.08.26.08.25.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 26 Aug 2024 08:25:39 -0700 (PDT)
+From: Claudiu <claudiu.beznea@tuxon.dev>
+X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
+To: geert+renesas@glider.be,
+	mturquette@baylibre.com,
+	sboyd@kernel.org,
+	wim@linux-watchdog.org,
+	linux@roeck-us.net,
+	ulf.hansson@linaro.org
+Cc: linux-renesas-soc@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-watchdog@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	claudiu.beznea@tuxon.dev,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH 0/3] watchdog: rzg2l_wdt: Enable properly the watchdog clocks and power domain
+Date: Mon, 26 Aug 2024 18:25:26 +0300
+Message-Id: <20240826152529.2080248-1-claudiu.beznea.uj@bp.renesas.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -45,42 +77,67 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
+From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
+Hi,
 
-  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
+Watchdog device available on RZ/G3S SoC is part of a software-controlled
+power domain. The watchdog driver implements struct
+watchdog_ops::restart() handler which is called in atomic context via
+this call chain:
 
-are available in the Git repository at:
+kernel_restart() ->
+  machine_restart() ->
+    do_kernel_restart() ->
+      atomic_notifier_call_chain() ->
+        watchdog_restart_notifier()
+          rzg2l_wdt_restart()
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git tags/qcom-clk-fixes-for-6.11
+When the rzg2l_wdt_restart() is called it may happen that the watchdog
+clocks to be disabled and the associated power domain to be off.
+Accessing watchdog registers in this state leads to aborts and system
+blocks.
 
-for you to fetch changes up to 6357efe3abead68048729adf11a9363881657939:
+To solve this issue the watchdog power domain was marked as IRQ safe
+as well as watchdog device (as proposed by Ulf Hansson). Along with
+it the clk_prepare_enable() calls from the watchdog restart() handler
+were removed and all is based now on pm_runtime_resume_and_get()
+as explained in patch 03/03.
 
-  clk: qcom: ipq9574: Update the alpha PLL type for GPLLs (2024-08-14 21:56:45 -0500)
+Series contains also power domain driver changes to be able to
+register the watchdog PM domain as an IRQ safe one.
 
-----------------------------------------------------------------
-Qualcomm clock fixes for v6.11
+Initial RFC series for solving this issue was posted at [1].
 
-This corrects several issues with the Alpha PLL clock driver.
+It is safe to merge watchdog and PM domain driver changes though
+different trees.
 
-It updates IPQ9574 GCC driver to correctly use the EVO PLL registers for
-GPLL clocks. X1E USB GDSC flags are corrected to leave these in
-retention as the controllers are suspended.
+Thank you,
+Claudiu Beznea
 
-----------------------------------------------------------------
-Abel Vesa (1):
-      clk: qcom: gcc-x1e80100: Fix USB 0 and 1 PHY GDSC pwrsts flags
+[1] https://lore.kernel.org/all/20240619120920.2703605-1-claudiu.beznea.uj@bp.renesas.com/
 
-Satya Priya Kakitapalli (4):
-      clk: qcom: clk-alpha-pll: Fix the pll post div mask
-      clk: qcom: clk-alpha-pll: Fix the trion pll postdiv set rate API
-      clk: qcom: clk-alpha-pll: Fix zonda set_rate failure when PLL is disabled
-      clk: qcom: clk-alpha-pll: Update set_rate for Zonda PLL
+Changes since RFC:
+- dropped patches 01/03, 02/03 from RFC
+- adjusted power domain driver to be able to register the
+  watchdog PM domain as an IRQ safe one
+- drop clock prepare approach from watchdog driver presented in RFC
+  and rely only on pm_runtime_resume_and_get()
+- mark the watchdog device as IRQ safe
 
-devi priya (1):
-      clk: qcom: ipq9574: Update the alpha PLL type for GPLLs
+Claudiu Beznea (3):
+  clk: renesas: rzg2l-cpg: Use GENPD_FLAG_* flags instead of local ones
+  clk: renesas: rzg2l-cpg: Mark watchdog and always-on domains as IRQ
+    safe
+  watchdog: rzg2l_wdt: Power on the watchdog domain in the restart
+    handler
 
- drivers/clk/qcom/clk-alpha-pll.c | 25 ++++++++++++++++++++++---
- drivers/clk/qcom/gcc-ipq9574.c   | 12 ++++++------
- drivers/clk/qcom/gcc-x1e80100.c  |  4 ++--
- 3 files changed, 30 insertions(+), 11 deletions(-)
+ drivers/clk/renesas/r9a08g045-cpg.c | 43 ++++++++++++-----------------
+ drivers/clk/renesas/rzg2l-cpg.c     | 13 +++++----
+ drivers/clk/renesas/rzg2l-cpg.h     | 10 ++-----
+ drivers/watchdog/rzg2l_wdt.c        | 21 ++++++++++++--
+ 4 files changed, 47 insertions(+), 40 deletions(-)
+
+-- 
+2.39.2
+
