@@ -1,84 +1,93 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86B707E1;
-	Mon, 26 Aug 2024 13:00:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F145414A617;
+	Mon, 26 Aug 2024 13:11:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724677245; cv=none; b=s7mJYKhCmOkjxKPTYznNa2GIFSqRJq6fEupXtsH8Hi/38X3hpdUqEs42AQydxiUxpnR9w6QBqNxDonLpxS7jrygxcx1cD6+Qn9zE0JMM++/JeZiDuMUPwI0EP6naOjvwGQjbuYLgJ+DIpzkAv/AFjpGZXggJRBAtxW5vpE1eEBo=
+	t=1724677869; cv=none; b=tfqz6PIKVtRNNMNUIOWgGHTdrXoPkZfLLKEoszZqYMNpaCQk6SiWpwzKGJhSvUCuVQlVt27P87LgeJT98DmmluqS7IWQ+ck/mea9gAyn1pBDwVH/Pzf/pbivbnItM+IwRhh/EnaNpHrXkZxUMSa+N6OjUFbGXre8ikcLg8Hz6Qo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724677245; c=relaxed/simple;
-	bh=JhpyAnaD7dWNN1bTpxCG0QZu8qf2suEDnGrq4j97Agw=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=Ets+S6vph4JAhzsXXISTCLWpmY+xK9MPMoMTgcOQkEVCnvRaaadNC6uhdAhN33LoB7y8+CrvAoJ0M9QwnWcP+jjgCCOiIKBCNjU/HFhcHuVoyPQ3fpYV+hcA9uULYYMQQSZYpk23GTvt+Txrf/VVd9/eu4kweB2wbeVx3a3GNW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=SmZu+7uw; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1724677869; c=relaxed/simple;
+	bh=0ppJbQ1K1Yzftc2Bz5hjnDOj8PGFXrJ4oVr1tSmFbdU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c4fwR3gMHTu3mHdgu0mqlBXGVQe92UyRC1I6iG9aImdGDuhit5s3R798G5BYGi7RrgMfkZnU9/DRqAhPLB4iREGplGvOzUeDmUPrmYIsefA9fKGsJrVxP8uVWQvmrPdkeQDYl6YuEUTwzmyJEge8XZocpxxzcDWwJJtW9Sa3KGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KBNA5jyA; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="SmZu+7uw"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1724677231; x=1725282031; i=markus.elfring@web.de;
-	bh=L88uf0gBYffESaPDmIR258SiEhKps5DkIATA3tWCltI=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=SmZu+7uwQdRG/RqsJn2TqEHt6rc4BorLyaEsMBySlIuQkiNC0xaVE3+V5eN6j+89
-	 jQQZsIKuvwCfpAOjaZYXCQCYS9/H9oYGRwbN127PN2n/8pDM6dwxheeJ19+ZDlrir
-	 YT58JUZAa/psvkORUeN5JOJb//5Lguo7HIzmHWV4ROtA/hbCFAIjWSnxccEvZtkY4
-	 TdMbBF9VqOviPnYaH2N0fvmkojGb8//ohFmu3Vh1G4uhwmji+cjkOReZmU1aEV/gA
-	 TQN7z1lYnCGyD6DpnXjnxFseM/9Q0O1clS4rub6mrDlU977e1gt6cX022VBTQ5C9C
-	 OQnm09HGe/WwTEiOiA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MLAVa-1sRS9d0vcg-00I3aZ; Mon, 26
- Aug 2024 15:00:31 +0200
-Message-ID: <b96565ac-2052-44d0-aa9b-0f2d10b424b7@web.de>
-Date: Mon, 26 Aug 2024 15:00:28 +0200
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KBNA5jyA"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2099FC5829B;
+	Mon, 26 Aug 2024 13:11:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1724677868;
+	bh=0ppJbQ1K1Yzftc2Bz5hjnDOj8PGFXrJ4oVr1tSmFbdU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KBNA5jyAmqsMXesEJ/Jh3EpPV+JzcdC0kcca7j2q62fd1uzq94IftMuLFOk+oC0B2
+	 W5+Sma+TJhKIwPof6m0DL3zc8x9LFW8j4QhdvNWsvZVidANj92hVN03Y5fpsfz5J9a
+	 ksE6zvb1rfAtnXeEcnM3oeBdCEsANtmLOGbh0UEw=
+Date: Mon, 26 Aug 2024 15:11:05 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Harry Austen <hpausten@protonmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michal Simek <michal.simek@amd.com>,
+	Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>,
+	Dave Ertman <david.m.ertman@intel.com>,
+	Ira Weiny <ira.weiny@intel.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 7/9] uio: add Xilinx user clock monitor support
+Message-ID: <2024082655-cubicle-flashily-6ab3@gregkh>
+References: <20240826123602.1872-1-hpausten@protonmail.com>
+ <20240826123602.1872-8-hpausten@protonmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Yan Zhen <yanzhen@vivo.com>, linux-clk@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, opensoure.kernel@vivo.com,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20240826061717.2016126-1-yanzhen@vivo.com>
-Subject: Re: [PATCH v2] clk: qcom: Fix error checking for
- devm_clk_hw_get_clk()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20240826061717.2016126-1-yanzhen@vivo.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:XwA4bHaeQfDr74DylbycT+tuFODVMxeUynR/jcYDiu3f6FrevyK
- pIxu1tSVpFq4PXOaUTVmne87EXf4NLQUOMrZArglwEgNwu43+cKoXxWXXqXoQbewYu5u+Q9
- uz9HDcJlsMrXgcUPfBDS4fpF4bRQIEsQqCo2+zCstsPBBpzDlZ71Hd+aHy4889z3ZqnS0vP
- bAhkLMiAnpPJGhhJBXQmA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:IDQt7LfK2gE=;7ihaKBDEgFsES1p/8cHXpATxkkX
- V80ztt41giRpRr1E5N6Mv1DgrHQoA1f05nI+wFqt983nLbh/iDInpdVKgrTT5EWU1XziW9igp
- SFgXg0e9le72OuCfQcqejpLTYESUhLVQkYQWE2Rgmhe9y+hy9T7yg2ihiGwtUqjo6gTN0QNJe
- fWhxMvd9Kft4AWDTwrJoPP7vx8fBmDtGoO3vqhihQ/4zoV2TfCZnPXYx4ux9De4UoaWRDBfYs
- Q+zbL8ijjBFLvh1tULFso0Z3mddqs3RMOPbLCZOGFj5CD0iDu6ttWcUjUDJcHbXAg538gzjss
- cBIPH55py8ramdyMon5kqve4n/PzKA742nYlGxka73lKLf/yNVPeGdCdmHUXz1zMuOZfb+sgb
- 11vnzHRR5Tk2l7q/TOdV40ReRWTZZoOTDMQKOup8skGc8a11pHnMomxE+izRxQaB8SbpyBT8I
- 0rSRF38Gbcql9aJQuCwNMmhVHq8QJHEUZZiwQkVpQakB2xYecUGI++j5p1cSlhW9cyP02xaLg
- UD5CVc/8JFDey1CZFQvaApd3z97wO+pamg5QBDDBHcExpFgabnp5fytWAAjqHOMUJeOIlb5aD
- mJOrVfkteM+Bq5+vXyrKVE8yGmbkHTjM2p1NvwulaFBIUIzw2cc5xAO7WpMBUy2q/vK9q6fpE
- Hv/Uvkqi66KQs4eltMd+mswir8zrlZ70Kz5LN1gFiG+OHolJHI4AvCGqS9YANn+26f2bH2zsk
- LsSLc+xdHvwnTMF2MbDvwtVfU5N1pHFlovHik7MX96xBCHZYmuZISRoSk8shVMhc0X2P/GyvC
- hmEEsj9gCcsNTfLRLYZJ/NxQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240826123602.1872-8-hpausten@protonmail.com>
 
-> The devm_clk_hw_get_clk() function returns error pointers.
-> It never returns NULL.  Update the check accordingly.
+On Mon, Aug 26, 2024 at 12:38:36PM +0000, Harry Austen wrote:
+> Xilinx clocking wizard IP core supports monitoring of up to four
+> optional user clock inputs, with a corresponding interrupt for
+> notification in change of clock state (stop, underrun, overrun or
+> glitch). Give userspace access to this monitor logic through use of the
+> UIO framework.
+> 
+> Implemented as an auxiliary_driver to avoid introducing UIO dependency
+> to the main clock driver.
+> 
+> Signed-off-by: Harry Austen <hpausten@protonmail.com>
+> ---
+>  drivers/uio/Kconfig            |  8 ++++
+>  drivers/uio/Makefile           |  1 +
+>  drivers/uio/uio_xlnx_clk_mon.c | 71 ++++++++++++++++++++++++++++++++++
+>  3 files changed, 80 insertions(+)
+>  create mode 100644 drivers/uio/uio_xlnx_clk_mon.c
+> 
+> diff --git a/drivers/uio/Kconfig b/drivers/uio/Kconfig
+> index b060dcd7c6350..ca8a53de26a67 100644
+> --- a/drivers/uio/Kconfig
+> +++ b/drivers/uio/Kconfig
+> @@ -164,4 +164,12 @@ config UIO_DFL
+>  	    opae-sdk/tools/libopaeuio/
+>  
+>  	  If you compile this as a module, it will be called uio_dfl.
+> +
+> +config UIO_XLNX_CLK_MON
+> +	tristate "Xilinx user clock monitor support"
+> +	depends on COMMON_CLK_XLNX_CLKWZRD
+> +	help
+> +	  Userspace I/O interface to the user clock monitor logic within the
+> +	  Xilinx Clocking Wizard IP core.
 
-Would you like to add any tags (like =E2=80=9CFixes=E2=80=9D and =E2=80=9C=
-Cc=E2=80=9D)?
+Why do you want a UIO api for a clock device?  What userspace code is
+going to access the hardware this way?  Why not use the normal
+kernel/user apis instead?
 
-Regards,
-Markus
+thanks,
+
+greg k-h
