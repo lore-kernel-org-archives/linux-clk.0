@@ -1,114 +1,83 @@
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A65C618454D;
-	Mon, 26 Aug 2024 13:37:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC03918454D;
+	Mon, 26 Aug 2024 13:44:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724679433; cv=none; b=ofZPvkQdgxjyNPfZIYwfdW8NVXdlg0u11wyvws3/oIYOsidJdRSEDEP+s4zIRbvxgJ9J9wC7ePuOBIHfkBYunyAmP6sbw6VE+GptddkUkkqqCGj+K9w7OLzqJAjltGiC9FPLoaO7vBlMRe70x8jiQNt7dAZeJsA3uiYO86dMXcU=
+	t=1724679850; cv=none; b=VUE+eRpV1x8xIil4RQ6M0W1x0LHjyG76/yjwlMISMaRLLXxjIdDeITYW2KVycSiODKR5+GeFhayhaz28mLNoawNiPyf/OL1hNj0S5lDzprF4XuliHFscjl496qKlXuxyh0pp9fnCjm+J2AsRm1oFau4zCtNGOlZ5w9Nd6L8QU08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724679433; c=relaxed/simple;
-	bh=9whOsCzv3m3ZPW2QREqTez5XUl4MYMB9UFimcB9rE8k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OVS/v7x9SAncfraZgBeLG6CiAi+xhlgopGYb9WhiXrN35UGKDPBUcbm45j2iUTc0GijXuD4QFJQ3ePJ8UkeKulTBR7KhElQQp6eX0PNKyAsRigS6yjizzBDqv6Ak07+orHkWLwQGV+ZccGMUmEnaVY/Lh9BXxvxIb2PsnPMMv6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-68518bc1407so46260997b3.2;
-        Mon, 26 Aug 2024 06:37:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724679430; x=1725284230;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=V42L34Dbl6HXHTKKW+P9zR6eV2yIE2JosLjaAq7Os8c=;
-        b=FXhyxVY64sd8pUkM9rdUZ2k6XH1y8sDHNOE085AdBUU46W/lZU3Z7OKIY9lIHvXb5a
-         LdylWxYKb+ajomyTiJ89HEyx2fSQFc8GmojaBY6XjOhAPIGfeJEPyK6JNUVXsEWLKMLF
-         aFYwOuuTIJaQhO8+eAcDCeKKOO3vhl8KHco2AWu3chI2PocDa3huW22KBmmGkBrZn788
-         2zPwEvo3lpODj6MJ1FDvM+vLMoK8yemf3evvdDQmIW+CaQHIeBsgHpolmYvXuVbJVhcw
-         VOWTb+UGlq76C93anJvNKiUE6D4eUdgThlpGlfK1JWKz1b98nlOro+CfRG6WWRCj03xv
-         kjUA==
-X-Forwarded-Encrypted: i=1; AJvYcCVV1vM2ARmLmzTTTerYTH09a6zxjss2JGk+FXf+RiZsHc+s9Vv/dy0jjfpUBGqYqjBsvcphoZv75C7bbg6k@vger.kernel.org, AJvYcCXGw6wQouS0nJWXlojxbjMcBimXejtiUHBkQ/rg+ygzLiwvZzHp9AtOvqijgukgKydLLT/ePMqUTx4=@vger.kernel.org, AJvYcCXOoie4RQZwuySl8NN/eJ8CJJKGEu5D3xfBNnWGxlZS1ts2D/2PPSnkPrb6+ue27XX2PcOfY9bEjA+C1fOLP2CxkZA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIF2nIuhQNKUJenu3jVTClXcuuHtEr/2xoC9EWQkXGkoDhQqPV
-	wRi2r0+/BsWrhds0E3o2E5pYThWisLwmctiOjEZkHLDsH5zCSfenUVGGRfk0
-X-Google-Smtp-Source: AGHT+IErlJJmue/qiUPcfJvl2uWqKyDvC7mgjBbu+U0OaYvtcOkLLJLKxq+Dkrk4LwheJclACNOXxQ==
-X-Received: by 2002:a05:690c:298:b0:6b2:6cd4:7f95 with SMTP id 00721157ae682-6c629beb6a8mr108286257b3.38.1724679430031;
-        Mon, 26 Aug 2024 06:37:10 -0700 (PDT)
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com. [209.85.128.177])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6c39a752d06sm15257067b3.36.2024.08.26.06.37.09
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Aug 2024 06:37:09 -0700 (PDT)
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6b5c37a3138so38734397b3.1;
-        Mon, 26 Aug 2024 06:37:09 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUXb/2/IrFhVq3N+NS5ySEzs3feUTcdOr+A55NabF7GfxH/rqSOiK9VMluL21r9EAMPLIssEtEdBEZp9SyP@vger.kernel.org, AJvYcCVrCGI/RO+v9JUi9ByVbS0QostzMRZEddJnEaY6HD1WZt5ljrTe5eg/Ub+mlZGFiUBJHB78NaH7+EI=@vger.kernel.org, AJvYcCXK0WY1ssQS5udeoSsDEpd0bmWuhR04bahR7Ajr6uOZCgj2u4DpP9KV7vq8qv2wgJY60TjSoIf+5sdyTx11YtZ1bw4=@vger.kernel.org
-X-Received: by 2002:a05:690c:3248:b0:683:37a8:cd77 with SMTP id
- 00721157ae682-6c629250047mr86776737b3.29.1724679429605; Mon, 26 Aug 2024
- 06:37:09 -0700 (PDT)
+	s=arc-20240116; t=1724679850; c=relaxed/simple;
+	bh=iSh+FCPm8ozAsHn79mwz+0IjRqc5lg6/6WhfNiSSqbw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GlwR1aCLiXnB3L/o5Z6Sd/9MQ23xRO+CCrH7tyEAFX9zCYAvD2u2pcYcvPXL+YHPwD0WJn/sEDfTLtY/OtsnGANEnp7XJIIGnf+JuRYheh9RkijnZl4KDvzsrtNuzqIBLZLDJ3DVmUDcDIO8pR4B+0n4sOoGM05OZmiDBpC1e/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JFk8WCMV; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JFk8WCMV"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C7DDC52FC2;
+	Mon, 26 Aug 2024 13:44:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724679849;
+	bh=iSh+FCPm8ozAsHn79mwz+0IjRqc5lg6/6WhfNiSSqbw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JFk8WCMVWijA3Eie5EdyLmE3IkYEvHZrlDdIQUWjE1RCD96nkdJSNruqZZPG97YBZ
+	 ELhU9cxN2tLeniRrlriq56kxkvoePYE4KWhqGFqScG9lIOX4NAwfJ+L+JwRCUmv2w9
+	 nE3tloughjwoRo4eVzM+ls/7mZxnMCEKVgqJkDlRg8CZgtm919zl06wWUpQRsUg2s1
+	 MF1Gs5vZB3EskGH0VAG1PdOSTNC02v6yqy62ef40LE8LwLufQ4SS3AW4g21SPVMdvE
+	 efJrO1V48ROywlJob7YtYa2qCfe5yyWXRjDDu+fg5DUb6oQOmGXt1/Jb85viy7u8hY
+	 n9OW9wD6eR/3Q==
+Message-ID: <df107382-5c9b-4568-b9e3-5a893070fad7@kernel.org>
+Date: Mon, 26 Aug 2024 15:44:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240822111631.544886-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240822111631.544886-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20240822111631.544886-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 26 Aug 2024 15:36:56 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWcHn2ae6qennqtPq2eLtKLkeKUNoSoAXbOTh=gDgJ9tg@mail.gmail.com>
-Message-ID: <CAMuHMdWcHn2ae6qennqtPq2eLtKLkeKUNoSoAXbOTh=gDgJ9tg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] clk: renesas: r9a09g057-cpg: Add clock and reset
- entries for GTM/RIIC/SDHI/WDT
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: qcom: gcc-x1e80100: Don't use parking clk_ops for
+ QUPs
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rajendra Nayak <quic_rjendra@quicinc.com>,
+ Sibi Sankar <quic_sibis@quicinc.com>, Abel Vesa <abel.vesa@linaro.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
+References: <20240823-x1e80100-clk-fix-v1-1-0b1b4f5a96e8@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konradybcio@kernel.org>
+In-Reply-To: <20240823-x1e80100-clk-fix-v1-1-0b1b4f5a96e8@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Prabhakar,
-
-On Thu, Aug 22, 2024 at 1:16=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
-om> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->
-> Add clock and reset entries for GTM, RIIC, SDHI and WDT IP blocks.
->
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On 23.08.2024 2:58 PM, Bryan O'Donoghue wrote:
+> Per Stephen Boyd's explanation in the link below, QUP RCG clocks do not
+> need to be parked when switching frequency. A side-effect in parking to a
+> lower frequency can be a momentary invalid clock driven on an in-use serial
+> peripheral.
+> 
+> This can cause "junk" to spewed out of a UART as a low-impact example. On
+> the x1e80100-crd this serial port junk can be observed on linux-next.
+> 
+> Apply a similar fix to the x1e80100 Global Clock controller to remediate.
+> 
+> Link: https://lore.kernel.org/all/20240819233628.2074654-3-swboyd@chromium.org/
+> Fixes: 161b7c401f4b ("clk: qcom: Add Global Clock controller (GCC) driver for X1E80100")
+> Fixes: 929c75d57566 ("clk: qcom: gcc-sm8550: Mark RCGs shared where applicable")
+> Suggested-by: Neil Armstrong <neil.armstrong@linaro.org>
+> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 > ---
-> v1->v2
-> - Updated DDIV_PACK macro to accommodate width
+> I ran into some junk on the x1e80100 serial port and asked around to see if
+> someone had already found and fixed.
+> 
+> Neil pointed me at Stephen's fix for sm8550 which I found is also required
+> to fix the same thing x1e80100.
+> ---
 
-Thanks for the update!
+Reviewed-by: Konrad Dybcio <konradybcio@kernel.org>
 
-> --- a/drivers/clk/renesas/rzv2h-cpg.h
-> +++ b/drivers/clk/renesas/rzv2h-cpg.h
-> @@ -8,6 +8,13 @@
->  #ifndef __RENESAS_RZV2H_CPG_H__
->  #define __RENESAS_RZV2H_CPG_H__
->
-> +#define CPG_CDDIV0             (0x400)
-> +
-> +#define DDIV_PACK(offset, bitpos, mon, size) \
-> +               (((mon) << 19) | ((offset) << 8) | ((bitpos) << 4) | (siz=
-e))
+Mind also fixing up 8650 that seems to have this issue?
 
-I think the DDIV_PACK() macro (using C bitfields?) belongs in the
-previous patch.
-
-The rest LGTM.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Konrad
