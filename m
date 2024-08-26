@@ -1,61 +1,42 @@
-Received: from out203-205-221-242.mail.qq.com (out203-205-221-242.mail.qq.com [203.205.221.242])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27AF41E892;
-	Mon, 26 Aug 2024 14:51:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.242
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A803194A5B;
+	Mon, 26 Aug 2024 15:08:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724683910; cv=none; b=FeAs/6W8uXoE3Grt2+SKY+9w/08wpDgNEv+dwtZrzuq0SYUQ3bFkGIypuoZQkQHHbmuPJKbjQjFVv/TRngt+hUxTT5tGlDtiTBGYRSB0GJ3mD7L5yrxGVfnBgohxeBVJ2eKNirdWb4jEumZQ2fcBFIL0D630ql0kEktk78V0rKg=
+	t=1724684938; cv=none; b=RnXd/VMtSSc223PFYIETlp8twLf0IyY7xYRoBl4enU9JnjAy7QBFedBALpqqOesg/AXyaAdlV606yt5c1bO1Mq4ExScSjuxT56gJbuKl+WBqNp9frzSO62DW8rMQ+poHMtSZEaKy3iCnTXxTHrQFNt3DUQkV4ZaLHuA4+HsE7ws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724683910; c=relaxed/simple;
-	bh=Szxjzk6JoGyP0xDO7tnLaAD13P/f0YbuG1OSR82F47Q=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=ueQ7s+6zbMZPMNZyGkVrdgHWzG7Kh9X9ujhL3Juv3Gro6qdtb1ouAQVJ9pLaxldyW52dDQsEuAGpNz0EH4BB9IfgBZPeIIogRV6PyE3VhZ3gNSSbuhuzfyShqpJFr3zMYOEyQBoQtqSqnv5gLUudvAG1Hb1s6U1HB2hS93poG0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=uyu9IQNB; arc=none smtp.client-ip=203.205.221.242
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+	s=arc-20240116; t=1724684938; c=relaxed/simple;
+	bh=5blJDuMEX3E4geAq1lFwpcNVREtjQI6qqEGDWBsSQ08=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WBSvTbU0hdaHZdBSLTYN7OhSy4TxXq53bHWjMxHRcBkAVgf4mcHQ9vIRA23T6GM/SyhHu3ZITS9N+t0mUN5t+Pmu7Z6VdUX6Fm2LUkZzv7lZc6zV42zGkMJ8kwpPOsoi9VMAfSEyUBVUCiDJ10hcOomgiHt7SgKJqLQBuPdInC8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=baO+0YTe; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="uyu9IQNB"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1724683905; bh=eL/IgrmPlGruqcD+c6SF8+WrCSgxfBCidykwEQW8X6c=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=uyu9IQNBNVhSRiIXyA7ysXOPJMpKeeSl11U4DGJ3lmsJHWehSnpfSFkTyr8J/5f98
-	 xJ9eNpheD3zvi97t42PixtU6XT2xYDpdTdkJaIKsZQxiX8cThdnffbUKEBby6VZ7sO
-	 KyAYJeyEhyU+VSOcN8zfLFze+qnyYRfoOjvW4Xx0=
-Received: from localhost.localdomain ([112.64.14.141])
-	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
-	id B59A7830; Mon, 26 Aug 2024 22:45:25 +0800
-X-QQ-mid: xmsmtpt1724683525t6kl0279u
-Message-ID: <tencent_728616623FAC3980B7FD8B7FC2F049031208@qq.com>
-X-QQ-XMAILINFO: OATpkVjS499u8nK+fa9X50ZpOpn1Dl6u4LBoF2AlB3eBM9zAg247CnnrcAsnYN
-	 cIZersQZI9EbcEZzV//kBYyhGo6uSQpMKe1D/S8osHMZMkcEJ7IckZQEQyaAwMMaMPLF9dTxVq6d
-	 r+VrsGHYkdJX5vUDJJzICLWMVwx4ycQzvsJS7UYn5dKEUH+JhYsOFoMauHLXiN8TvZMTc8GO1DlO
-	 Y2iCeFxjZbkMHBuLIB2XdKwsZc47QrNrUO52HVLW/y6DF/xhaxZIirSXnFJRR3gftrM5CV1dmGhO
-	 +u7Y6lZH9+M3a54lyW7D86lc02oGOk+cVBc3stYUdSjbjr8S6Z9Ucm3SuPH6A6X7k6EXrWRuy25m
-	 xl7zFSeBgMpoDmaydQ9REjLGZVohtTujRMIrZdCl7jofCGjEazkj5q2dz5MNNMAVT6EgLOg+OkSy
-	 pdhE1BXcoq8Z7aIUMHhW7NyGTdXgkktR924mY3+eobe/8NmHWPn0GYrdfC2wQUVu+b8sPn+2rbpl
-	 t50AbzT8Fxb9XxotUTQHEn5MzrAOmHZUuPEAjjlhAKEe4YTlfQXQbxBUQVKE5c1SyNJMpCzL4pia
-	 gFS4RmYoaiHj6f631auzwU9LWVfYv/ZDP+rMlywO2B3JsACXTWIbHw2VgjJvyNmeTsgXs5kJdT8n
-	 mvJhYdXO0nJmWOly9Fxc9NpGM0ugOE7LB63WH7/XhhnV68vVUpeg8O3bQgV9tCa3sFXhS9iWGhGu
-	 JggZ2cDxxKLC3cNUhs5tS+0d45nYDpXq2H8W4EG88yzftXxMxuHXKyiU+q+jtKmOo/HXM71ucLPO
-	 ixa4InuXGvlI04vxqj7o+giNFwtEu96BmFCz++YFeYimZdCJVm2wdcpcd3o9sZXwvNXqlBrL6jsZ
-	 uqslTnQ0W4P/xvApo4NoBHHi8+o8KZjbbnV8DRWSdpyf702OGqN5yMN54qKpRe+OpJne+xXfPHUP
-	 wLOv7W6c1ArcVbvuZIPyYJrAQx3hVbZRcrGG24L1OLbj/1/yCQkj1uKbRALgemk+tpxaMwQq1UOC
-	 t/kxfUtA==
-X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
-From: jiping huang <huangjiping95@qq.com>
-To: vladimir.zapolskiy@linaro.org
-Cc: huangjiping95@qq.com,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Subject: Re: [PATCH] clk: Delete redundant logic.
-Date: Mon, 26 Aug 2024 22:45:25 +0800
-X-OQ-MSGID: <20240826144525.2411-1-huangjiping95@qq.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <6cb9d478-ce85-4b07-82be-a5f517654a78@linaro.org>
-References: <6cb9d478-ce85-4b07-82be-a5f517654a78@linaro.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="baO+0YTe"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 27C19C4FF64;
+	Mon, 26 Aug 2024 15:08:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724684937;
+	bh=5blJDuMEX3E4geAq1lFwpcNVREtjQI6qqEGDWBsSQ08=;
+	h=From:To:Cc:Subject:Date:From;
+	b=baO+0YTeRUvghxCvZL+FIFHwtWzQt9Se0F2uKUKkMUn990Ny+icb606IHNELPasTm
+	 2xZOOl4/P0ztJKizt18imdIYVoPpKZ9M1jS4jPVD7hoG7BxAJSVVLnaFcyyVIEFWGt
+	 Ihr+ve+y01hTx0uBuiWXwJ7kHwKSyWKJJVWCirTQZ0SNZMEeiRPlAqoRO1lnSF6L34
+	 gJLGyy0CQan+WiC/LRD1Nbl9Czq1AFRsbKVtjITvsk5Rz91JjX9UN7mLVj+nZKCU2z
+	 nxV+lAtIA3x9Ae6ojDTz9ONFTub8GmWJCio0wuT3otRqZbhY/DWNpbPum77BgAXLbf
+	 zZwmAiiThgKEg==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org
+Cc: linux-arm-msm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	devi priya <quic_devipriy@quicinc.com>
+Subject: [GIT PULL] Qualcomm clock fixes for v6.11
+Date: Mon, 26 Aug 2024 10:08:55 -0500
+Message-ID: <20240826150856.1647492-1-andersson@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -64,13 +45,42 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-  I'm very sorry, my submitted description may not have expressed it clearly. 
-  Actually, it is, the local variable 'best_crent_rate' is only used in line 2355 \
-for the judgment 'best_crent_rate!=parent ->rate'. However, if the \
-"if (clk_core_can_round (core))" branch condition in line 2306 is true, \
-the value of the local variable "best_crent_rate" will be updated by \
-"best_crent_rate=req.best_crent_rate;" in line 2319, otherwise it will \
-be directly returned in the "else if" branch in line 2325 and the "else" branch \
-in line 2329. 
-  In summary, it is unnecessary to store the "parent ->rate" value in "best_crent_rate" in line 2301.
 
+The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
+
+  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
+
+are available in the Git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/qcom/linux.git tags/qcom-clk-fixes-for-6.11
+
+for you to fetch changes up to 6357efe3abead68048729adf11a9363881657939:
+
+  clk: qcom: ipq9574: Update the alpha PLL type for GPLLs (2024-08-14 21:56:45 -0500)
+
+----------------------------------------------------------------
+Qualcomm clock fixes for v6.11
+
+This corrects several issues with the Alpha PLL clock driver.
+
+It updates IPQ9574 GCC driver to correctly use the EVO PLL registers for
+GPLL clocks. X1E USB GDSC flags are corrected to leave these in
+retention as the controllers are suspended.
+
+----------------------------------------------------------------
+Abel Vesa (1):
+      clk: qcom: gcc-x1e80100: Fix USB 0 and 1 PHY GDSC pwrsts flags
+
+Satya Priya Kakitapalli (4):
+      clk: qcom: clk-alpha-pll: Fix the pll post div mask
+      clk: qcom: clk-alpha-pll: Fix the trion pll postdiv set rate API
+      clk: qcom: clk-alpha-pll: Fix zonda set_rate failure when PLL is disabled
+      clk: qcom: clk-alpha-pll: Update set_rate for Zonda PLL
+
+devi priya (1):
+      clk: qcom: ipq9574: Update the alpha PLL type for GPLLs
+
+ drivers/clk/qcom/clk-alpha-pll.c | 25 ++++++++++++++++++++++---
+ drivers/clk/qcom/gcc-ipq9574.c   | 12 ++++++------
+ drivers/clk/qcom/gcc-x1e80100.c  |  4 ++--
+ 3 files changed, 30 insertions(+), 11 deletions(-)
