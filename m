@@ -1,61 +1,59 @@
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97463146588
-	for <linux-clk@vger.kernel.org>; Mon, 26 Aug 2024 09:55:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56C8C82499
+	for <linux-clk@vger.kernel.org>; Mon, 26 Aug 2024 10:15:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724666130; cv=none; b=W5YcDSEJ5S0oxUc1TG1pfThH7bHOXto9rYtHPyjzNrjCu5m3S4tQz9zukZSvp0Zs8RgWYUs9wFgSq1fDwptYf2chgWRMOM6yjAxuWgs0tOiR7UshEvEDyaBnVjQ/Tey8Fn1rtzDRZ9ZXBRdZsqGZqPxRbWnMSdlZrNVYPm+lN1I=
+	t=1724667352; cv=none; b=hSdA0ksgZE/0JBppbuao0JN9Vq2Hq5WO9w+xGdcT1XqcuMgBxm91Ps6+F/JG94L4u0qJGQMS8mYu5x1wAAMStJRT1vDLHYDtqDr0NHEPfYI1ys1FviWa45BYukJ3lIhS3KfO+9Mv91mLhxrveVjr2EIAMJi64KzP+7xwYv1zpvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724666130; c=relaxed/simple;
-	bh=5j3I46k6ptwrT5KLfjuvRJi02PLBHAdj9fxSvDP75Io=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=M90mSa7sIolZaqSFXB/dIXphz1aHIB6YF5X4lt3ylmFyiSZ0BzqK/l3Yb0dy9stdTztbIk2JD5s4tGspIg7D3FJfbi6Rpgq275zrtixsNj/jZ/5kS+QlfqHni/kZ0eJsPeOgI51+ZC5ou+Y9Tg2Fro7x0NxC0z8dklr8T/OSpKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PZlBbLZx; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1724667352; c=relaxed/simple;
+	bh=dqF9qz6t/GVpGmum6vuUYfrUMXNhwX8AG3M4+n1M7ZI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ogbZaHCVbu/mMY5lBmNEPyIzyMQGu8nartWu7UwFRgNB8JlJAwfIufnQEL2KoAWFev/vKRVqJs0YMqmaUmul7lk4E7aaDGwIZyZagqO0Sqfii+3et3OPaZste5ieVGAkgn+DFkicTrOSJ50eXzyfS7UP6a79gj8Y4Ts4JDxvWbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=OEI+JDxC; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PZlBbLZx"
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3718b5e9c4fso2107092f8f.0
-        for <linux-clk@vger.kernel.org>; Mon, 26 Aug 2024 02:55:27 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="OEI+JDxC"
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2f4f2868783so35571741fa.2
+        for <linux-clk@vger.kernel.org>; Mon, 26 Aug 2024 03:15:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724666126; x=1725270926; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VK7ceKk9+QuKgFb+l7lbOmbbJTuc/8ZMI5BdFql0QbQ=;
-        b=PZlBbLZxOX3gpM73VWcHaM6ZQ0dCrvBmshz9RzkGx1oxPQbtj7Tss75dyAa0gaImxc
-         7fafDjKPTVF9LYCncGZdxcXVYC/+pdWvjfOHyxShQCdcc+qPf7r3iWTqyh7AR7719A4v
-         cCARfs2EfSRdIMl7D7xYNy0/50ovtWLbl5W5HjSOcuGsjKxskVGyHWgb2D3kaQOkER5b
-         FaM2yNOs8XoF1iKJvDAEq2DJVw/R7Ur9sQtjH7hz/6mKIyIomnHQSDKTXJ92nFq8nZcC
-         EnAVidgpBbU2HqV+fCuQYsWDFdDDOVm0lFpT5P2pGwE7sb36pn4pt0oXJHOX82yVQS60
-         SICA==
+        d=tuxon.dev; s=google; t=1724667347; x=1725272147; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nXSb7P5yQsC6ZA7aZwkzK/D+oEX3tz1a/6VEPbOOF1M=;
+        b=OEI+JDxC340hJbyzaELF9aZjkFT4nnaE1jma3SYSKf8FaDgA8sj2hzwybWxynxWA5X
+         MgON+hpgEbKzURuwi8d3MBJ0Kt82nbfI8ZlyoqEmQozz3gmDJAuM64rbD2K3aR77C3AV
+         eROpf5Q0KDSSNQMz4xScqqIHp9FFyA4M/Up6zMLY9HVH0RuZUzVuRa0hsik+ixO52Tyb
+         jetbHtnX/vAHZjZMenomQw3dxEYAAjaz9+PnG4E7GEpg+ZincehP7SFzQyccplWrKTjc
+         1bLx8Tu+9B23afbvzr66tCsDhNQ02DqmhgGeviPjyhL+fxBZ16refNaKBCLPFxI8Ftsz
+         O9Rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724666126; x=1725270926;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=VK7ceKk9+QuKgFb+l7lbOmbbJTuc/8ZMI5BdFql0QbQ=;
-        b=Bhn0x6vmadPLOggQqKNfAv3NsZYWq9h2EK02tOLrNeIdOJNIv/FTaTWgVt8domkAxQ
-         fPaZ13XXlSDqm3awmqjkmjFm57RZeWRQt6MrZ5vMCpaRJ0Y9DMtP9FDK/73MdSb6H4+m
-         5TdLC3ZYvO4/JR6VRHAPHtXQEVX88VBZdQLg7BdHz6BnMDkveN7ug35+PW4Qtixceae+
-         nzA4O/TOOLgGhd65rIvBzV7saD7mBGl85ZOvi6+1zT7lH5GNydnWsJGDEdSSHkIhBmWq
-         H9RtRiTodK5g9EsfBzDkvY6EUeOZzuqpuwfe0C4LrCA/Hwy1eBwt1wnEzcBHogXLQ6AD
-         /Icg==
-X-Forwarded-Encrypted: i=1; AJvYcCVHnQasp+sstcC8XNxCGiXxEN1jl9gc8+p8Xe55ipQtLbQ/ass7WvS97GqQ8++XyFYpEgL7DEldS6w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzaP8UuPPTSogQkscPLkVhTTYz9XurgvZ60EvaJ+PWhAhPfJkv
-	tM8mbO+Siav56UVVHCYwpSilvIyzqC//N7orErN6JjxuxbL6lm4bMBxaWpkV7x8=
-X-Google-Smtp-Source: AGHT+IFreUR3/E7uHdXTquMSkJpFO/dW71VumcJUcTwCvc9tqzIioKTR8C4yLeHdVUzlxat4VoCD7g==
-X-Received: by 2002:adf:a209:0:b0:367:8f29:f7b6 with SMTP id ffacd0b85a97d-37311919579mr5512128f8f.51.1724666125502;
-        Mon, 26 Aug 2024 02:55:25 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:982:cbb0:7355:c4a4:da66:6d71? ([2a01:e0a:982:cbb0:7355:c4a4:da66:6d71])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ac51860e8sm147572485e9.48.2024.08.26.02.55.24
+        d=1e100.net; s=20230601; t=1724667347; x=1725272147;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nXSb7P5yQsC6ZA7aZwkzK/D+oEX3tz1a/6VEPbOOF1M=;
+        b=Ho7aBh/B1Yc7k6eeMyC1HRyrPwu1JG7gSssE3d6m74cBVLzxm4fdSIb0aaD8s5wgwG
+         JwLjMfaU/Zd8TtxrfOeNKJF+BXV3XlK/grR96RPrg4XqUxVPtuNWqel4O2R721HxUkmV
+         iGzSilCsaKBhrQFZqZSP0fiEOb0fOecqZeZyWthiGh0us69bLd2Oa0HSZxd+qXjHqf5L
+         kAeV+pD2r+e+JK5LsRUwg0yH9JVC6Q8l4iT9co7z1N0KuXb0kMJe3hrRu+wvP//gs1/E
+         Ek7r+lW3+vdY6+lEjox3aW4PFGnAvHb9x0Bfvnb7qjbdgTYWoUiJsNektXgbQQA+TNh0
+         FYsw==
+X-Forwarded-Encrypted: i=1; AJvYcCV2MZ3eK7AL+viKm3Ei1zop1a3cxZ5XwksptBQhAk2krVQMYe9WvKE11XuPUepH2g1mswycbF25oPE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzW8PKw2AkS49S6WkH+sYMmgNhMbF4JvRk+/xCNlV+q6eAH+zSK
+	M9yaZHr/5lXi3WucGU7Q1tY2OeJy9d0GHre9bcuQ51DrC2yzVZJPPWaONUeDGKU=
+X-Google-Smtp-Source: AGHT+IGnOO+pYmBeCnoRQo4bouYucQfop3nBZsepSSurhHBVuFJ58XyC2lvaGwZIfEzC6OWNRHTbyQ==
+X-Received: by 2002:a05:651c:198b:b0:2f0:1a19:f3f1 with SMTP id 38308e7fff4ca-2f4f48f0feamr66567071fa.7.1724667346682;
+        Mon, 26 Aug 2024 03:15:46 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.144])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c04a3e8f88sm5421649a12.42.2024.08.26.03.15.44
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 26 Aug 2024 02:55:25 -0700 (PDT)
-Message-ID: <c6fa1da6-c244-4fe8-9ef1-dd2c9b76f2f9@linaro.org>
-Date: Mon, 26 Aug 2024 11:55:24 +0200
+        Mon, 26 Aug 2024 03:15:46 -0700 (PDT)
+Message-ID: <7b16791b-0d7b-49a1-82aa-c4db99ff2bfd@tuxon.dev>
+Date: Mon, 26 Aug 2024 13:15:43 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -63,79 +61,134 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH 0/2] clk: qcom: gcc-sm8550: Fix shared clk parking
- breakage
-To: Stephen Boyd <swboyd@chromium.org>, Bjorn Andersson
- <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- patches@lists.linux.dev, linux-clk@vger.kernel.org,
- Amit Pundir <amit.pundir@linaro.org>, Taniya Das <quic_tdas@quicinc.com>
-References: <20240819233628.2074654-1-swboyd@chromium.org>
- <d03d5425-bd7c-4c20-a54e-5708ffd059e0@linaro.org>
- <CAE-0n52=kQzEx76D5AmZfui_X0jqejQ+ENz+VQunY_ovph65Hw@mail.gmail.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <CAE-0n52=kQzEx76D5AmZfui_X0jqejQ+ENz+VQunY_ovph65Hw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH 02/16] dt-bindings: soc: renesas: renesas,rzg2l-sysc: Add
+ #reset-cells for RZ/G3S
+Content-Language: en-US
+To: Conor Dooley <conor@kernel.org>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, p.zabel@pengutronix.de, geert+renesas@glider.be,
+ magnus.damm@gmail.com, gregkh@linuxfoundation.org, mturquette@baylibre.com,
+ sboyd@kernel.org, yoshihiro.shimoda.uh@renesas.com,
+ biju.das.jz@bp.renesas.com, ulf.hansson@linaro.org,
+ linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+ linux-usb@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-clk@vger.kernel.org, linux-pm@vger.kernel.org,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240822152801.602318-3-claudiu.beznea.uj@bp.renesas.com>
+ <20240822-vanilla-enigmatic-f0b05ecca4b6@spud>
+ <0d8b1322-cf15-4ed9-b958-06516bbb64c7@tuxon.dev>
+ <20240823-plywood-unfixed-d8d8a2d93f14@spud>
+ <5eae2ddb-2a7b-4c1d-a7f7-41fb39058de1@tuxon.dev>
+ <20240823-dilute-juggle-7e2d43b8b630@spud>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <20240823-dilute-juggle-7e2d43b8b630@spud>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 23/08/2024 22:33, Stephen Boyd wrote:
-> Quoting neil.armstrong@linaro.org (2024-08-21 08:44:00)
->> Hi,
+
+
+On 23.08.2024 19:33, Conor Dooley wrote:
+> On Fri, Aug 23, 2024 at 07:26:42PM +0300, claudiu beznea wrote:
+>> On 23.08.2024 19:18, Conor Dooley wrote:
+>>> On Fri, Aug 23, 2024 at 10:54:06AM +0300, claudiu beznea wrote:
+>>>> Hi, Conor,
+>>>>
+>>>> On 22.08.2024 19:42, Conor Dooley wrote:
+>>>>> On Thu, Aug 22, 2024 at 06:27:47PM +0300, Claudiu wrote:
+>>>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>>>>
+>>>>>> The RZ/G3S System controller has registers to control signals that need
+>>>>>> to be de-asserted/asserted before/after different SoC areas are power
+>>>>>> on/off. This signals are implemented as reset signals. For this document
+>>>>>> the #reset-cells property.
+>>>>>>
+>>>>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>>>> ---
+>>>>>>  .../bindings/soc/renesas/renesas,rzg2l-sysc.yaml | 16 ++++++++++++++++
+>>>>>>  1 file changed, 16 insertions(+)
+>>>>>>
+>>>>>> diff --git a/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml b/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml
+>>>>>> index 4386b2c3fa4d..6b0bb34485d9 100644
+>>>>>> --- a/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml
+>>>>>> +++ b/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml
+>>>>>> @@ -42,12 +42,28 @@ properties:
+>>>>>>        - const: cm33stbyr_int
+>>>>>>        - const: ca55_deny
+>>>>>>  
+>>>>>> +  "#reset-cells":
+>>>>>> +    const: 1
+>>>>>> +
+>>>>>>  required:
+>>>>>>    - compatible
+>>>>>>    - reg
+>>>>>>  
+>>>>>>  additionalProperties: false
+>>>>>>  
+>>>>>> +allOf:
+>>>>>> +  - if:
+>>>>>> +      properties:
+>>>>>> +        compatible:
+>>>>>> +          contains:
+>>>>>> +            const: renesas,r9a08g045-sysc
+>>>>>> +    then:
+>>>>>> +      required:
+>>>>>> +        - "#reset-cells"
+>>>>>
+>>>>> Given this is new required property on an existing platform, I'd expect
+>>>>> some mention of why it used to be okay to not have this but is now
+>>>>> required. Did firmware or a bootloader stage take things out of reset?
+>>>>
+>>>> On previous SoCs the SYS controller has no support for controlling the
+>>>> signals going to different peripherals (USB, PCIE in case of RZ/G3S).
+>>>> I'll add a note about this on next version.
+>>>
+>>> My initial thought here wasn't about previous SoCs though, it was
+>>> because you didn't add the compatible in this series for /this/ SoC.
 >>
->> On 20/08/2024 01:36, Stephen Boyd wrote:
->>> Amit Pundir reported[1] that a recent commit 01a0a6cc8cfd ("clk: qcom:
->>> Park shared RCGs upon registration") broke USB and audio on sm8550-hdk.
->>> These two patches fix the issue by skipping the parking bit of the
->>> shared RCGs for devices that can't run so slow.
->>>
->>> [1] https://lore.kernel.org/CAMi1Hd1KQBE4kKUdAn8E5FV+BiKzuv+8FoyWQrrTHPDoYTuhgA@mail.gmail.com/
->>>
->>> Stephen Boyd (2):
->>>     clk: qcom: gcc-sm8550: Don't use parking clk_ops for QUPs
->>>     clk: qcom: gcc-sm8550: Don't park the USB RCG at registration time
->>>
->>>    drivers/clk/qcom/clk-rcg.h    |  1 +
->>>    drivers/clk/qcom/clk-rcg2.c   | 30 +++++++++++++++++++
->>>    drivers/clk/qcom/gcc-sm8550.c | 54 +++++++++++++++++------------------
->>>    3 files changed, 58 insertions(+), 27 deletions(-)
->>>
->>>
->>> base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
->>
->> I'm pretty sure sm8450 & sm8650 (and probably other SoCs) could be also affected, could you check ?
+>> RZ/G3S compatible is already present in this file:
+>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/soc/renesas/renesas,rzg2l-sysc.yaml#n26
 > 
-> Does someone have the hardware to test? It looks like sm8450 isn't using
-> the shared ops, but sm8650 is, likely incorrectly.
+> I know, first thing I did when I read the original patch was open the
+> file ;)
+> I don't care about the old SoCs, cos you're not applying the property to
+> them, so what's changed between SoCs isn't really relevant. It's a mention
+> of why, on this SoC, it is safe to add new required properties that I want.
 
-I can't reproduce the uart issue on 8650, I'll try moving some dependencies (CLK, ICC, ..) as modules.
 
-Bryan reproduced it on X1, and he posted a patch.
+> 
+> AFAIU the answer is that no consumer of the resets existed before, so
 
-Neil
+That's true.
+
+> there's not some special state there, and I am guessing that the new
+> sysc driver you're adding isn't going to fail to probe if there are no
+> resets, 
+
+That's true.
+
+it just won't register a reset controller?
+
+It will register it but,
+
+the new sysc driver is going to probe only for this SoC (RZ/G3S). On RZ/G3S
+we have 2 resets. These well be registered unconditionally, currently, only
+for RZ/G3S. If there will be no DT users for it then it should be no
+problem, AFAICT.
+
+SYSC variants have common features b/w different SoC variants (one of them
+being chip identification). The feature implemented though reset controller
+in this series is not common but particular to RZ/G3S.
+
+When the SYSC will be extended for other SoCs the reset driver registration
+would have to be adapted to not be registered. At the moment, as the SYC is
+compatible only with RZ/G3S and the reset driver is registered on auxiliary
+bus though SYSC there is no restriction, reset is registered all the time,
+but SYSC is only compatible with RZ/G3S.
+
+> Which is fine, cos all
+> devicetrees that have the new peripherals will have #reset-cells etc.
+> 
+>>> What's worth noting isn't about the prior SoCs, it is about what makes
+>>> it okay for this one.
