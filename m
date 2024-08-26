@@ -1,107 +1,85 @@
-Received: from mail-oa1-f41.google.com (mail-oa1-f41.google.com [209.85.160.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mout.web.de (mout.web.de [212.227.15.4])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 744A71917DF
-	for <linux-clk@vger.kernel.org>; Mon, 26 Aug 2024 15:36:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EFCC19408C;
+	Mon, 26 Aug 2024 16:12:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724686582; cv=none; b=fsldqqsie0GKxVF2aaX6TlO+17dXScDIPVGuE1hkNSnpbjFmuw8aU4BqLxFUkBDPmanHZJFOa/RstYXpy8Wrf+gytl5rjzx03PziGFIznVrMRCrymG4GC9BBRa7zcmjC0YWF2/K6xzwjVWmGIfBlsL7Auta+fzqhXmNB0UeqIbg=
+	t=1724688765; cv=none; b=NiO2z5nW7sRJSnfPLvr/vAGKIZxAAhrD2gB6gumCZK66l11LQV/9Pc+PfN7H0EpVundMm8XpWLtJBYtoSmA8aamkQRCu7D6UUDFKehKHBcmRdLnK0guQWuWLbXqSBuigDgh6mtfJwLIJ5mhxSHJa9kRcCo3VjFs32uX27G2X3ks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724686582; c=relaxed/simple;
-	bh=H/wPKvUXk3R2KA9yNeUxfOeqIe9r87SxPUQbHN9UFq8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=btTq4HxzXkDkbOITJj4oVZb2t5Uay/L2Tpbk2jjqgqAyk4PzPSdEJqi+WQDz2itO01Qx6BTsqTDfOs3fyteFZ/WZgYa1KGGpufGWlfauhunjxPixU8DXLrkb5jcgM4dXGbwvGMobUdp0pUFUyvSlx7I/VIVGyHqrYL0HRaz9DpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=R2z2VeFX; arc=none smtp.client-ip=209.85.160.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+	s=arc-20240116; t=1724688765; c=relaxed/simple;
+	bh=euGYz/59XjjsadXbAdxTA9x3OJSStUkjHo9YAXClpV8=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=qVFDx+wJw7vkwgWB11MqJWY0azSqiuKXmHH7lfmbcWMP7Shn0bdFimHce1tE7XVISvtANxI9LvnBdNEJqfsS8065UO9yGQf10ycNbdCCEg0Lvu5Cl2Wz7kBhiZPn3qWocwpMPwpRos4SFi75hhgrWsEmpDXqMROFVFpgSQx4Fbg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=goMS5+xM; arc=none smtp.client-ip=212.227.15.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="R2z2VeFX"
-Received: by mail-oa1-f41.google.com with SMTP id 586e51a60fabf-2701c010388so2687138fac.0
-        for <linux-clk@vger.kernel.org>; Mon, 26 Aug 2024 08:36:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1724686578; x=1725291378; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8paq11lau0AGq3N4ibielyErO1Qy9yYsKM6UQc5T7m0=;
-        b=R2z2VeFXHpH1ukQ1HaPFyQS5uG7kGP8VFNfd8nA2BH9ze5lsoYaQCet8//OUeJa2aL
-         6tciTOxK+48Rpgu5HVsAMkldfYwx4BU5h8EWFkb+XHLHj5AtEcRI5CWlIzQR7NwisH5c
-         AYsoshMw3vz7AvP4yL2BirKVDuBwYwB1yTNHywX3Af9p59PfdyEKAQm+IuuxHMgUQde/
-         88IXsk+z8dpQ/vbDsk38pRzUhrn0Gqtcy+/agGmmmDGMiz1rgjHNFSlSWI+qOPlCrWNa
-         XtT2LMva26mPZYNDDrMO4zBd+/vGumR3ivLWn+u0tJhrR+gw4JGFxa8o8q/4wnXn/e7y
-         Miyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724686578; x=1725291378;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8paq11lau0AGq3N4ibielyErO1Qy9yYsKM6UQc5T7m0=;
-        b=wET+13EUJplVBwJ/XUeBp7ijLjhLpyMghz4mkyqVH2OzSuuEIiEmka5a0/4anLIboe
-         dsVCbb9/elq24iYEuTUin7eFXmKw0X5QV2ud9qgX0M+g0hnowfDfOJtZLd0sTaZz4lpO
-         D7RImRPKCuSwx8CZaCh4hJB/Eq0+yhYjP0ul6XxfZBuAF7zRDypis4pcrhGZmmo1H7kZ
-         0JOOptnk8tooYftkn6g/Msb0VhfHp/cXV5L5NMtE8RpT1k/QyhtrYi9Ozd24ZyL6oPNk
-         XpKVf4ZvA5KJCVoUhzOERkgVFa+mDlMZgDWCsNv20miYek2XIvrEYef5FXQLtA50I8dT
-         2Lpg==
-X-Forwarded-Encrypted: i=1; AJvYcCVLajL73YKbwYM/+G//23fjY+0ee2a4yuXIM0u1xljyMD3Fi4+hty2GoYwqcmSSHJIZfPEjfgz4f/g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqP0If91IJsIYPGBvzfRwWPq+QshYHaTBZ+tVg6wK6TGmv7nbR
-	SjwBYtBQTiQR8IjYtrml0cHg68p8FzLEmYAXV0K67WviQ1F9p2H9g+lXnjKrGKs=
-X-Google-Smtp-Source: AGHT+IELakByaVIpYO50hKRKe3IJ2sU7ak5lAEs6hF++oVE7ipTq0I7RvmMG1/ES4KMrEw4rGLjx1A==
-X-Received: by 2002:a05:6871:547:b0:261:908:5899 with SMTP id 586e51a60fabf-27759d110a1mr36958fac.10.1724686578558;
-        Mon, 26 Aug 2024 08:36:18 -0700 (PDT)
-Received: from [127.0.1.1] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-273ce9969besm2514690fac.7.2024.08.26.08.36.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 26 Aug 2024 08:36:18 -0700 (PDT)
-From: David Lechner <dlechner@baylibre.com>
-Date: Mon, 26 Aug 2024 10:35:29 -0500
-Subject: [PATCH] clk: ti: dra7-atl: fix leak of of_nodes
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="goMS5+xM"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1724688748; x=1725293548; i=markus.elfring@web.de;
+	bh=euGYz/59XjjsadXbAdxTA9x3OJSStUkjHo9YAXClpV8=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=goMS5+xMu7DTP1cTuzgthZ5/ctu5b3c1qN1eUmD4sOf9tyLfA3vi4a2HbuRjcBKd
+	 8CMcLD9KMWbmjXpb2BUWu+YlmtGPLuERE19/F3fGBNFm0OUS/Mzs0Grvn3AJaumCI
+	 hFz9rXJZKnZNY2C1ZIv71bpTofgE4+7wiDQa6FaR812deWDjCMpZn+ZBn+bUCr0Hs
+	 io9dfdDT4O+cosECAqn6rCvLsnwVFS/eochHB09l3FCmjS/40GjRrRfTRGom4CBqL
+	 YblEMqVCU3pCwT2kIXn7NUHuepf0s3/buHrahTRNd7Qhh5XtQCBWMKgTjN2g08cz0
+	 hVs/8C/KIPqSqfK5og==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1M3m59-1sjRXj2Vlr-000Fht; Mon, 26
+ Aug 2024 18:12:28 +0200
+Message-ID: <db60a8f9-20cc-4137-a7d5-ea557b585e54@web.de>
+Date: Mon, 26 Aug 2024 18:12:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20240826-clk-fix-leak-v1-1-f55418a13aa6@baylibre.com>
-X-B4-Tracking: v=1; b=H4sIAMCgzGYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxMDCyMz3eScbN20zArdnNTEbN0kUxPzZAtzYyPDRCMloJaColSgHNi46Nj
- aWgBllqWIXgAAAA==
-To: Tero Kristo <kristo@kernel.org>, Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
- Peter Ujfalusi <peter.ujfalusi@ti.com>, linux-omap@vger.kernel.org, 
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- David Lechner <dlechner@baylibre.com>
-X-Mailer: b4 0.14.1
+User-Agent: Mozilla Thunderbird
+To: David Lechner <dlechner@baylibre.com>, linux-clk@vger.kernel.org,
+ linux-omap@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+ Tero Kristo <kristo@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>,
+ Peter Ujfalusi <peter.ujfalusi@ti.com>
+References: <20240826-clk-fix-leak-v1-1-f55418a13aa6@baylibre.com>
+Subject: Re: [PATCH] clk: ti: dra7-atl: fix leak of of_nodes
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20240826-clk-fix-leak-v1-1-f55418a13aa6@baylibre.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:hT/s+2HzVMMAUlV5CH2iXOKvUrj+8lJtismT4vNLkTnnbPFwVmp
+ CFaxxCQLF9VEeb6t6vf4dKrsfCDKN97cBQFHKp1Z1pB/e4ZAoPRF2ypyS4+FPbF4bfdoYKi
+ l2RlCa8XJhX2LD7HTHdB+2ZJmqXCrv2jcbjuqxzDK5McN5wd0c8kI4kFFjlW+C2uTwjiCnu
+ HedjZOqi93z0/9wzUzI3A==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:pLT8CqzIHAs=;TszXg/ABs/aaMjHt5Klpt1SBQpL
+ enu+ZHV9TvbQvTbEux/kfqERUtBgpXhNaAG6JxUr3t8ezlKm9nZUXlW5Q8P4uG82Q4/NkKFG3
+ RiE2Nw5NwAbRNx01z8dQaXBIl5aAJP7JXh0/RHB0lorJxI32zRRuTegeZWnfw2X4WjhH8WljS
+ RLLf2n2OOSjCxd5MR1IX+tvNmFD3UoICpFlfqhQzv0AvlPzGr6wxmEtmiGfc0QOelJOAN09pG
+ hCbsPZgREU9ExWnwxv1QJU3WikGIqDf0LNfTsHj9lv+OEM4mUC134hKRy5yW3eOodwjUEra8T
+ NU2rpJ/OKvoOBv4tcp5EHtmURlX3g07dViGbd2vmZQwaOptCP2KcnMXBH3ZWd+Hb3pxUVGOum
+ i9V1BjyRLIgc+z3+QunMtkcEJjlfQV29qVqLMflV2n0Ifbzmxq2Pi344UVPbCpBY7X5kVO/Vy
+ I3CI8YxtdF0CDsHA1FWVIdzlG2AKl3K8Ikeba5lAy25igXbRms+qoooOZa0qFH5mIczTj5224
+ G7qjrp2c/GsqtVVPpqPMX+9yXMAWkOl3v7SLAuqmZFTjvKsbEuyKzVu5df+1ecSrp3Z/t2hjN
+ NBQJwdcEcfjdXAn6cQhFC8coxAhWsbP4VSF93IGu5JXIB/PwaBar2wGkx2rdi5DaAfvsJvpc6
+ KkW+j5dwqZUGsQbNDTU8zs1sevmsq/M+czEFZAcntUy0hUdcHEmFRYo2uNgSj0QF7PrMCrHr8
+ 7XeOdJeM2eb+5JLAFdAzMMahBSNFbcrOt6AnnhyQhRsBvtp4YwL90MxwVbDC495Xzbu6v3qan
+ 7XFFjpyVIToVzWbD4Sz/emiw==
 
-This fix leaking the of_node references in of_dra7_atl_clk_probe().
+> This fix leaking the of_node references in of_dra7_atl_clk_probe().
+=E2=80=A6
 
-The docs for of_parse_phandle_with_args() say that the caller must call
-of_node_put() on the returned node. This adds the missing of_node_put()
-to fix the leak.
+Can other change description be more desirable?
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
+cumentation/process/submitting-patches.rst?h=3Dv6.11-rc5#n94
 
-Fixes: 9ac33b0ce81f ("CLK: TI: Driver for DRA7 ATL (Audio Tracking Logic)")
-Signed-off-by: David Lechner <dlechner@baylibre.com>
----
- drivers/clk/ti/clk-dra7-atl.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/clk/ti/clk-dra7-atl.c b/drivers/clk/ti/clk-dra7-atl.c
-index d964e3affd42..0eab7f3e2eab 100644
---- a/drivers/clk/ti/clk-dra7-atl.c
-+++ b/drivers/clk/ti/clk-dra7-atl.c
-@@ -240,6 +240,7 @@ static int of_dra7_atl_clk_probe(struct platform_device *pdev)
- 		}
- 
- 		clk = of_clk_get_from_provider(&clkspec);
-+		of_node_put(clkspec.np);
- 		if (IS_ERR(clk)) {
- 			pr_err("%s: failed to get atl clock %d from provider\n",
- 			       __func__, i);
-
----
-base-commit: 1ca4237ad9ce29b0c66fe87862f1da54ac56a1e8
-change-id: 20240826-clk-fix-leak-b547c87321a2
-
-Best regards,
--- 
-David Lechner <dlechner@baylibre.com>
-
+Regards,
+Markus
