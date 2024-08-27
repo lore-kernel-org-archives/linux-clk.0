@@ -1,69 +1,108 @@
-Received: from xmbghk7.mail.qq.com (xmbghk7.mail.qq.com [43.163.128.49])
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CB4845024;
-	Tue, 27 Aug 2024 18:47:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.163.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B3B6148FE5;
+	Tue, 27 Aug 2024 19:09:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724784470; cv=none; b=oQqGmpQjxuTOviC56NUavYSb15HTgWzqoISrtC2eiKLtY102LqlUSZ8Qwoqb9pB2edI3xFobvwDw4Pckv13T0ebnWKPS/qLtpiclb9vdFuHDHJ0HQEwqfrzeZ8XYkqmRGa42Y050v7UMo5nhN0LikBeSSHuHDXRDl20CvJL+Kls=
+	t=1724785744; cv=none; b=KKkT4CQbv4YQqO3/BqfI53mcoxcRIipVL2Tt498toxl9W0JB/lfzuAaJTm/GPoqgdRE0PqOpF8nAeseCImwOlOlzG3iFeLh5eLdHtv+o6WjLxgzsLZScCQAqMgNFHCMFnLvj7dEXWxPJFzKpSYz9ki/fCDGzPW3PqbfRDPD5OLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724784470; c=relaxed/simple;
-	bh=+EQAWGKZb9tJYOUhC/fba9LpQGC2ycTCPN1jTGoApqE=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=p+vXtIbGlTZqMfCAuCRHIvKLHXK/uKsGdAXImBbJq+UQ3q/pXaQ7K9gsWPvSaV2Ry4gOLPFlpQlz/t3SlSvx0oYNM7ukj9Vnw0wBDYJ7HJ4Lnud6oqZMergXgQhgQYkXy4go1fmRIsXB+oShR6rt9EQEbS7xsWgrJ5Mhe+TgsU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=UWrV2L9m; arc=none smtp.client-ip=43.163.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+	s=arc-20240116; t=1724785744; c=relaxed/simple;
+	bh=bCs2F10/la/a5He5Vc0x9d/7rblweUo1XUfMID1kayY=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ss0rUvgqOFTuGWVPaOB8dh2SPP2dwiFMD8xO/NppzHE6zm49PjUFWasfJCo2+fcAL1YkGOwvC6bBJ8PKsFV4GB+6TP4KvteVgjBbVZSvs6AmTazxLgv5G3n3ics2M73rYkRrjNiASiT8VvYKWQhBKYOc+Cvnj94XTrKjTLAwt1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=JNAVeq4x; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="UWrV2L9m"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1724784461; bh=9qCiBelyJVmqGBzhx8oNNy2uJiAGrAcqpi39XT+NXck=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=UWrV2L9m5acZSFVpO0JOecCDl8p2n/ofC7yTBVjzaUlJWXGk3FwnoVen7MM5LXLPF
-	 /CIZzj4CM/DwiWyFCQv4yzgpBiAJdHnTyyUSz4UZs+KeF7vwh8pg49r7EdjTxrc7Uh
-	 dXqXw2KazDgT4hkP150M+DPyvE4H+OE6GLWqpXLQ=
-Received: from localhost.localdomain ([112.64.14.141])
-	by newxmesmtplogicsvrszc19-0.qq.com (NewEsmtp) with SMTP
-	id BDF298B9; Wed, 28 Aug 2024 02:47:31 +0800
-X-QQ-mid: xmsmtpt1724784451tg1311myo
-Message-ID: <tencent_830C97C456591F00B1FB19FF22E155062609@qq.com>
-X-QQ-XMAILINFO: OVFdYp27KdlJBylI9iu1DdeyH57Pbvc8AjfpfX5f2vppZGo4unQ2ho9MgztPUH
-	 vuFmbQqduLRUuKmdK26OCD7zTJNPHHrNcoH6qmSrvFI+H53AKZoP3zLt6H45DIXTPnqxePeIozPc
-	 pbHf7gVw6cbBpYi4rszRYianr6cR9RivT/mq+ul53OxWMNgDEmHTieTu2ybwR7IZztCKoXQ0Vu9I
-	 EVg2piscNtp5jmfr2JNXIbxalfZA2KA8UUpGPblSaJV6Cw8j61dvurCiHrokueR85P/L4ECEIRj2
-	 ggoP+nuVONSausl9ELWNzDYjEoHRrOMtUVsYYS6GKTzZFAut7XJcKZ8VMkIN91+MlGQmW2vGvgmb
-	 KgMbj9Y5XTehXuXdjuSRNK9cnlj3Uo718lzADWTq2fMuJX0TQyBac2A2NMNOXoPeGJsZRrPIInT+
-	 w1+Pod5oub+rBuCATNKFXAHvHv50DatHRdS6bpl/3vHuGxG/yWQKW7gAaum3oMRHtF0pyqvazo0D
-	 7yI7bOREJQOKpGcOO4B6YRZTi0RVYNQXrtSiEQcHtfsg/rw7Rsi8bhXFzL/WjYq7UU+V3SLyWuGN
-	 HrvfhNkMd2c1JJ/edyydzyDbb8HgKBBd1tVuZzlXhsau7pAop1h4tCh7MyqFEoRHkWBxtnKWyXt8
-	 LJTyLSFWVja13A8HvnlEjUDuxqOD7AJGOuCrrZhLX5+2n5xZRFFLN/H52yYXqryeZo8r/3/ZHJQ+
-	 WukkpcYCdfQY63cZcT/m6OzkrHsW5nDajZE0j74IxCwOkIxSbY7Bz7H6vbknYCjcMM95Aw+gBujb
-	 9J1/F41RWsksd9uVVQhh7FIUOjnx38pn3hMUW6bZeL+Y7iPTGpaJPY1Xm74qoTVtqaBmJ59f6B1K
-	 5F33hQ26Fgq8wKgeXd4+zEHPM6kviaJ685SK10BxskFnvMcA+x2Fs4MKkRuvBQGLN59tELJoviiR
-	 kkI4J1+wQX6QmCITAuJN4q7q2/4yHtZnk4WAJ9EEkU9czWjEUXB12mcv6CLe4FM2vAPGioVy7vj7
-	 LqqxYsVQ==
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-From: jiping huang <huangjiping95@qq.com>
-To: sboyd@kernel.org
-Cc: huangjiping95@qq.com,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	mturquette@baylibre.com
-Subject: Re: [PATCH] clk: Delete init for local variable "best_crent_rate".  
-Date: Wed, 28 Aug 2024 02:47:30 +0800
-X-OQ-MSGID: <20240827184730.65178-1-huangjiping95@qq.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <0f670049f3110f2be74f28f09e277b4e.sboyd@kernel.org>
-References: <0f670049f3110f2be74f28f09e277b4e.sboyd@kernel.org>
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="JNAVeq4x"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1724785736; x=1725044936;
+	bh=wtZFtUpYfRJVM6uEwMbiUQOlfn1kJh47pty0BpMfqd0=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=JNAVeq4xtOJHWgpQzQbeoRRhyDGCVarlj3hD3LDlJXruDSSrzXQSI2dTgcGBudDxc
+	 VzQZtpli5nEX0Gv+eFgGj214HDr7z0pcZ0kuCs1AqC8rhvxSvCtOgUjR2svtimzKP2
+	 BGQgiCUgWAnzgz1t/O5+bs2lsPzhYk+HAh4n6cjuruafbRgQHt24/zqXB+6lDOSMJq
+	 //W+J/Hi7hZ7QLPzF/CDVOINhlcA5h4r1dslNTbq2ecyCzv4/EF06JOl/a/j2uJUXd
+	 1BcwFWgzy0VW1Eua7/x9WE7TTbXqMqmsXXNIkeWknYEJR8u26hxapCa+xDFMSVeYFI
+	 TtuKTcX2rRPoA==
+Date: Tue, 27 Aug 2024 19:08:52 +0000
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+From: Harry Austen <hpausten@protonmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Michal Simek <michal.simek@amd.com>, Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>, Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v3 7/9] uio: add Xilinx user clock monitor support
+Message-ID: <D3QXIGN92QZ7.S2LY531JZ1L9@protonmail.com>
+In-Reply-To: <2024082655-cubicle-flashily-6ab3@gregkh>
+References: <20240826123602.1872-1-hpausten@protonmail.com> <20240826123602.1872-8-hpausten@protonmail.com> <2024082655-cubicle-flashily-6ab3@gregkh>
+Feedback-ID: 53116287:user:proton
+X-Pm-Message-ID: ec1732088562b68387aa388135c69c468b2c569f
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-  Oh God, another low-level mistake. Thank you for your help. I will correct my description later.
-						Thanks!
+On Mon Aug 26, 2024 at 2:11 PM BST, Greg Kroah-Hartman wrote:
+> On Mon, Aug 26, 2024 at 12:38:36PM +0000, Harry Austen wrote:
+> > Xilinx clocking wizard IP core supports monitoring of up to four
+> > optional user clock inputs, with a corresponding interrupt for
+> > notification in change of clock state (stop, underrun, overrun or
+> > glitch). Give userspace access to this monitor logic through use of the
+> > UIO framework.
+> >
+> > Implemented as an auxiliary_driver to avoid introducing UIO dependency
+> > to the main clock driver.
+> >
+> > Signed-off-by: Harry Austen <hpausten@protonmail.com>
+> > ---
+> >  drivers/uio/Kconfig            |  8 ++++
+> >  drivers/uio/Makefile           |  1 +
+> >  drivers/uio/uio_xlnx_clk_mon.c | 71 ++++++++++++++++++++++++++++++++++
+> >  3 files changed, 80 insertions(+)
+> >  create mode 100644 drivers/uio/uio_xlnx_clk_mon.c
+> >
+> > diff --git a/drivers/uio/Kconfig b/drivers/uio/Kconfig
+> > index b060dcd7c6350..ca8a53de26a67 100644
+> > --- a/drivers/uio/Kconfig
+> > +++ b/drivers/uio/Kconfig
+> > @@ -164,4 +164,12 @@ config UIO_DFL
+> >  =09    opae-sdk/tools/libopaeuio/
+> >
+> >  =09  If you compile this as a module, it will be called uio_dfl.
+> > +
+> > +config UIO_XLNX_CLK_MON
+> > +=09tristate "Xilinx user clock monitor support"
+> > +=09depends on COMMON_CLK_XLNX_CLKWZRD
+> > +=09help
+> > +=09  Userspace I/O interface to the user clock monitor logic within th=
+e
+> > +=09  Xilinx Clocking Wizard IP core.
+>
+> Why do you want a UIO api for a clock device?  What userspace code is
+> going to access the hardware this way?  Why not use the normal
+> kernel/user apis instead?
 
+I was just trying to provide userspace access to these _unexpected_ clock
+status event indications (clock stopped, underrun, overrun or glitched) and=
+ UIO
+seemed like an easy way to do it and leave interrupt enablement and monitor=
+ing
+up to userspace. I'm not aware of any existing clock event notification
+framework. Are you suggesting that such a generic event notification mechan=
+ism
+should be added to the clk subsystem? e.g. additional clk_ops callbacks etc=
+.?
+
+>
+> thanks,
+>
+> greg k-h
+
+Thanks for the review,
+Harry
 
