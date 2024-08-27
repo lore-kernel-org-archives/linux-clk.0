@@ -1,172 +1,163 @@
-Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2059.outbound.protection.outlook.com [40.107.117.59])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8C0DC8C7;
-	Tue, 27 Aug 2024 02:53:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.59
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724727208; cv=fail; b=evXMuTerQU4KjkY6dtZH3BRid130TUSh7acLnCj2s31cyUtji8mZuDU0Oxi/hDQW32CjQe+8P+Pz4fH1UcH2+a/UZUPhb7MOQ4B9ii+js7WSxNWWD4Eg5lqcj+i4lY6lXVE4aTOAfNmX0P5qN/dGMKizunPpJI5DX7tAT7rg+YM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724727208; c=relaxed/simple;
-	bh=YjifYliBA+k+1OzM2i6nQSX5liTU7uN4kVTi9NNf58k=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=s43Ivfl0dQDelZW8TKp3kHAHbZ0COTMnp6j90a8wIeTbqBkiRrwbhnSZmdP8JLxJkTeIa7iDazRrqeTQk15bgcasU9NNAPMSLJD1/ZH0vvqEbjUPONIcZ9J23ITxn6w4WK7MqrLl1p+5+/0JaO+E4bZ1viCEy8TSR2aFlyXOfqI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=Cl8SYn75; arc=fail smtp.client-ip=40.107.117.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F5DF4C92;
+	Tue, 27 Aug 2024 05:04:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724735051; cv=none; b=s6h4CJrbuExsIRWaIy430yO0giaka1do3IHTl2G89lpV1eOvYmoZ62icXBFQHEM+rpzC8bF6CVfo44ig4XkaK7I7aZ0Dp+5O2Ju88sOeave7h5UkOie4OuzR1I+iWGXqbMNmtJWLp/5vIhOs0EEDNPlSwXsSG0mmXHWIxTDIfuI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724735051; c=relaxed/simple;
+	bh=GO0zNOW/uhkO9YPbWUQ7p2nEfAJZKu25c78aYjvnEXc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=f5g93hrUFViIJ9Y6RZFXQp1Cmq1CR9AZ7VUbsMu3JEFVjHOBEL87kgn40m7l3kW2cJQ0PubYpivBtz39iioUTyCh3Jj+Fb8lrCDCOb91p7VTYvyGZDeuB06vjPLSvH6ziLnBhOovLGHeDHBNZ4SZjY/CAMuT09bmdmK8JPxyeTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FPg11gFe; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="Cl8SYn75"
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hYsIPB3wTvFmutkzFScmnrl3EGSOZB0oeX2IYQ2DGaj4iaCRrK6t8zM8sYrNVVNjr3CONTXwgub901BIaPPmHb4Li/uigOWMbtIoxpZaNqIhpCzWfLuG7yu7YLn8kIbhHtdREug1+qYtwQShmstz8FijRhmmruO34OHkwXWzEIvqpZ/Im171SIX/KEonmTxi3nGPd5e/H3GZQ7NiN7Sdz5RV0V8Hiq6rXaN6ckxy6+65cJpTKg8nPkDI5bqGrh+cDh5YvYflb22Xy3zQyB0owrc4AJHRFtTRIMDY9NzVVotE27vya52AXmqF5vSY+s+HiXlp8oXhmc2ftAZw9ddDUQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OXjNNlOrxivxZXJ9+HCj+ECo5BRpsI/aH5KZAvimvMQ=;
- b=IV1JfTnp4TI6HDR6xn4KxTNVbOsInf5yA2lRXRuqbNWH1Wv17UOeL3wXEvPZ4dyy70rTPQDlnQTdas2EVcVxGZOd6o5q2VhIvkPoCvk79501UzsA5J/Ois5J8YQ9zMDUCJQkJyAiUkHvXATzfhj7yIGbcUB5COWDaODQLC3WcPmsBRk+KUQDKUCdMizLD8eKfEFG5lkON7IRbodX+9ZcCdCb0lR6hso3WYwQpfd5Iwf/MaQyz1JHPdmlvKGm0tc8iCZkYLr9QNOc9waiba6eSJPFCNRn4k2vEYkqTC7LxJBXjsQsp5OX7YfxDBaktcIlJKjjkaN2wT9M2M15yTot5w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OXjNNlOrxivxZXJ9+HCj+ECo5BRpsI/aH5KZAvimvMQ=;
- b=Cl8SYn75XOhgW1J8K7T9FUK+Y46TwkK7HYSce3bk0sjTyK8Du1ASXbXMHe+t0tFGhaBU9bnYjOd7lcjmA0f7UF/H7ZHWyAZfjRcLfRGcZn+B1b+Sj/CCSjjq2I0KUibPg6GcUXULhdAeW+pdBRa6o9+XLKvT1BAeGVvmzOKzCb5tqX/4/nRvrAykcn1Bkdwv+F0bcQguqI/GR40qnPmsxnFoCm2GJ+b5IbBd76ztpz/6POHo8ZTJ6Z/DmQUDPqntkgopWN8FDIDTMClkFsMtcDjAR7khPbXnC+xhmh6JYDFDBY4ge6IUIMCLyCabWdt5KF9Ahn8umtE6GiqGfQbnkg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from KL1PR0601MB4113.apcprd06.prod.outlook.com (2603:1096:820:31::7)
- by JH0PR06MB6582.apcprd06.prod.outlook.com (2603:1096:990:38::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.24; Tue, 27 Aug
- 2024 02:53:21 +0000
-Received: from KL1PR0601MB4113.apcprd06.prod.outlook.com
- ([fe80::7e85:dad0:3f7:78a1]) by KL1PR0601MB4113.apcprd06.prod.outlook.com
- ([fe80::7e85:dad0:3f7:78a1%4]) with mapi id 15.20.7897.021; Tue, 27 Aug 2024
- 02:53:21 +0000
-From: Yan Zhen <yanzhen@vivo.com>
-To: andersson@kernel.org,
-	mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: linux-arm-msm@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	opensource.kernel@vivo.com,
-	Yan Zhen <yanzhen@vivo.com>
-Subject: [PATCH v3] clk: qcom: Fix error checking for devm_clk_hw_get_clk()
-Date: Tue, 27 Aug 2024 10:52:52 +0800
-Message-Id: <20240827025252.3512746-1-yanzhen@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TYCP286CA0145.JPNP286.PROD.OUTLOOK.COM
- (2603:1096:400:31b::9) To KL1PR0601MB4113.apcprd06.prod.outlook.com
- (2603:1096:820:31::7)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FPg11gFe"
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2020ac89cabso45033085ad.1;
+        Mon, 26 Aug 2024 22:04:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724735049; x=1725339849; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=pS15vPEb/TE1/EitqKs+W/XYfjN7muJ2TfqmqJCODDk=;
+        b=FPg11gFej/wmvaQYP+Mnnxn7wXxtw8yGC1ue6iVTDVg3AFpKkwi5RzFpuQxeuN+GEw
+         VXp0/uiGWZDueVH0F+Ed9lHlMp5ZaznnGZreoeK5puuq99PM/Egg/P7IenqPHCe8Hk6s
+         Fx8NTswrBu5j9XE/W51rNaYej2xjtPtVzNoE65GxEkbjNxhBxou52PKViVDQwb1Pi5fx
+         x5GjpFfUD7eR3mLqDn3PRknKwjr3YMwIjbscoqx4ycobSSvfv4y0Z/LtcgtxrYX2vFhM
+         P7+l6JC84O2VkV6cXOHT4ljKOc9wQ6seo0/X8/gRoJwoijsIa/XrWh8OD57kgfGzq8cP
+         5J9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724735049; x=1725339849;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pS15vPEb/TE1/EitqKs+W/XYfjN7muJ2TfqmqJCODDk=;
+        b=uaAP3k8eiTwOsUwa65lj66XM8Jh2SkZ6QRuglpzxTafA7Uz5Y/vjEQSv6VD360lOwB
+         Ftv7fzJ1eeJFqRvkDyJHALcw4/bSjGCh1Mph5eYg/SihzEMhmnyrQnZ2fAXBaj48/e7d
+         ZbGrB272ChEfwlVFgi8x8903dQFrbiTdPcF2ycgVnYzXKiFhm6DTRK3kK3PqCmZP5krA
+         X3xLLUQw0ARl+CBPwHxD78EXcod9v9I5SsV6lcd2VNIckZWLxVcbs+MBp5yqFKt3CtaA
+         n1ahAhrzaO/RBmyq6wty4QGCHJbcIoS0Nrp6ZtlOEaYlFAaVi46jUv+1Ms3rbR5ZnQHh
+         hYvw==
+X-Forwarded-Encrypted: i=1; AJvYcCU6LD0KOS2/Xs8pgUzQ2+JKiHMPvnD3TcF1+H/TIsM8ADmMnE/6O+C+ngE4dpbhT5oKqsHYLxEvsuM=@vger.kernel.org, AJvYcCVdVO/K5fzTTr0yF6DJ3bi7A1zERlGGblYQa72cJU77UbnTz+Tifzc1+Z1EgD7Iccpr16monMIj8VGdhWlB@vger.kernel.org, AJvYcCW42uNGLJ6Xq2vnKWvEQ0bOO3SHQq5gP5lHIEFC3sQs30Ky83+OuhkPKn+m2+pHvDFw1x7SuN+W8iE=@vger.kernel.org, AJvYcCXyPdeTqHSedKEqqgU8wzBVda85P907D4zofBXJesqeIh81O+w5nQxx1EQkgEBWoT1Y9rDPrzBPwxdl5avKz18=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMuRag1hlhqF+80gU1gH2CMzZCvNxaM2SGzUQ+PpnQlBBKUw1w
+	ZE92C7bBtVZB1n4Ek28QtCiXp25MG60ejiTP9xQ5+0esZ87nEdLT
+X-Google-Smtp-Source: AGHT+IHYMlAJ7cseyBWWV3t9xPn+jhmKSnw0GVJdJSMZSjCeZH9bI3KDUJ3ytLkyMDvyWzQWl2op4Q==
+X-Received: by 2002:a17:902:ec83:b0:202:883:bef with SMTP id d9443c01a7336-2039e4ab20bmr100966045ad.30.1724735049361;
+        Mon, 26 Aug 2024 22:04:09 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-203855dbf57sm75480025ad.147.2024.08.26.22.04.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 26 Aug 2024 22:04:08 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <ee11fea3-3e77-4870-837a-ef6147ac2bf0@roeck-us.net>
+Date: Mon, 26 Aug 2024 22:04:06 -0700
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR0601MB4113:EE_|JH0PR06MB6582:EE_
-X-MS-Office365-Filtering-Correlation-Id: 7acd42fc-dcfd-469c-a3d7-08dcc643697e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|52116014|376014|366016|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?czC7RedaBi/pteel10q4Pz8ZsrJQkhV5HpCHPYVxB9zSJtoHUwQgnBoghTVZ?=
- =?us-ascii?Q?LBIerbzYzuBMtZvkZchNKshLmwG/qm6/AZaU4zQDWWV/Z4UifSyJJefraigE?=
- =?us-ascii?Q?Y+qG+7H42Ap0zfY40vW5oxxxUIuT3bzq0FQV1cM6q5vYd6b7w7IuHSg7YmUG?=
- =?us-ascii?Q?v4QtrJHGAdJohav4oe3KDgdaOPp6yUlrgznA2vKICx9ZXao/FpQzN2siz2mi?=
- =?us-ascii?Q?J8trq8DIvCrRs/o8EPPUUugM+IyvV1K7v/wC6Ftv2xC9H8b0MpHrdC805MvB?=
- =?us-ascii?Q?TH3RJG+x9uNcFRvZKd7zJ39xXLHk6IpgoR4wP6kkdnK/gXsED5uzQdqV+qa3?=
- =?us-ascii?Q?sYCFht3l1SvssBXhy7ezu2080bRdz1mjB0dHp7lxuLICPYkCdSdM4pUpQdSG?=
- =?us-ascii?Q?m5tI7oGtlR9sOjSpwau5zBgNmwANBzjqqI3GJt5GcKVz6F642l/E99sAJlw/?=
- =?us-ascii?Q?Zzl2NGQgXj1r+dDWw9WUdkCsBdZ+eeSFh452SjhmJiDP4ukenh3ry5i9bpHM?=
- =?us-ascii?Q?CUjIwivynCs/s7G+GqWHMwDo0LzYsYaV9bizysNZGtBSl3u7VJ3PzdUKGKNL?=
- =?us-ascii?Q?8GGBz08qTV4ASrTbqGbTGwLYkdOGfiR2cVPpWFl7yKdMz5NJ/bQglc5NJQZ9?=
- =?us-ascii?Q?3gcB3XmliCzM2Fa6epw6nQKxxoWXLYXGVYy6O77TiAGkzskOwrZrEWvXr5lZ?=
- =?us-ascii?Q?xoqYelxhY+uBtdI2UcuUWd8FElro2vufLWk0ndrfX+I0MTbyppZbgtanjisW?=
- =?us-ascii?Q?XeD5G6Se7Dwrkkyqs8PucW8CL06mGpS/ADWiDfHmtBLWOvedJq872PFcjS+x?=
- =?us-ascii?Q?H6YcMQbnXFwn3ZVh/erISPn6jtK8Ahpz9QmsImUgNHjjLcPLon+bRquUQHUu?=
- =?us-ascii?Q?t0VHpmmJlCilV1jYRgPJKNsB+n1elGvmsra4JUr+umMC+MQM8MO0P3RRLYJd?=
- =?us-ascii?Q?LE4yDZMFWcw0WfSrd3PdwboNZc+pJC1Li69rbef79KX9LJam7Dtufd5se69I?=
- =?us-ascii?Q?R6xcW/yqdqyqjmqxC0TLlAKufq9LjMFBTIrrfdMnmFlG1ProC7fcOEqWt9sF?=
- =?us-ascii?Q?Pd4Ivmrv00KAR2vmYj6tgHVZpcAnA2LvLU7XszHfw5g5LIYfwwJJsVSYySsK?=
- =?us-ascii?Q?UWhsqHu/y9I2hKZ2OHlE6Y01w0DCO01QYTAVSg6YwQbE+c04Mv4vGVJe09O6?=
- =?us-ascii?Q?bwNIekMXsCvIwGKLf8h577WsoK3LFVg4h/769irZwxJw+tGrq4RZz8HbFzJV?=
- =?us-ascii?Q?NKYxveu1NiY5f6VpJWY7e4CtR+eKoYdgr79IYaTB7Ww2pD8ipyY8jMUfWE8c?=
- =?us-ascii?Q?sYSwGyxLH66U2EfajQLKVchBL8rFVp8u1MgM0UKpfBAZXNAIwINkao80+BQ2?=
- =?us-ascii?Q?wUCYzpduAn+u5yzy9PU8v0GpVwPIxk9nUf1VzVVrG1zwyy5+8w=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR0601MB4113.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(52116014)(376014)(366016)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?BIQlh5DUic3SucBau0qcq2wqGTOyC+jPLp7s5qliZ7nZFrpMWF1yWW4zMvzr?=
- =?us-ascii?Q?38y0Y5K3GiCuEB3Equp78GAcnFCmwJDSiJ78IzUujzed7b2lGwmpdFxhhwM7?=
- =?us-ascii?Q?dsf8rJDC6TjETT0LfJXGZTwqIXVKWoQcnu4p7Pc58DZ2EKch7VJrDhPIpBgn?=
- =?us-ascii?Q?z+HO/YwSOc5aKxI4jeGTMpHvpZpAP4oc3pwq7lR7mUkruFqGAXkuPkJC+FbW?=
- =?us-ascii?Q?aGRzuruWJzP15/+vT5exflZH7lJg/3iId8QNJ4Mr3HzusQlshZkQ6thyuCGp?=
- =?us-ascii?Q?1H4GS5ZhIKjjW2H5qcExmDkOcyhwjiPD2QZpG+FPx5HYLFlSga/yFPtrErr+?=
- =?us-ascii?Q?TjK6PL7yCyOdmT2DWBbWYBbUYkl7MUoLzUidszc9TOW+K46ujQj7BghylY3W?=
- =?us-ascii?Q?V61oEaLgdhYGCiHfLm253Ihr0aQOGcj+lJGnstRH6xghSXxrSRnLGOsdvLYm?=
- =?us-ascii?Q?YmZ+i5i7deyU7rFvFYoDff6RyIt1yOkBMypPTjX6yykDCiWycqR5Rst6x+8R?=
- =?us-ascii?Q?7zv+R8rbKRxL77oL6+tdADx80Z6AoIROxXGRSXcBa18+gpmxZ7N3btAGHzdJ?=
- =?us-ascii?Q?WdExz+enNew73tauOvfFV1zizoUl7UmyuP62+yEHZkevYex7LWywjDnNxDF5?=
- =?us-ascii?Q?KKPTKqZwdjFFCuJpJOY69/Xj2xZEWpiDqnCkP7Uvcfcup3Ou1+M+Z+DPCFcL?=
- =?us-ascii?Q?fF4Hiy3clk8pMoG6jzpRFH5BWWGytzrq/+FQ99YJICqpxCH1oZUNOjJx61d3?=
- =?us-ascii?Q?9x51UuvybixJ0Zfby8FIbiyeq7IJETM74uotd+Sfq40mUpcHAaI7lLmnCD7h?=
- =?us-ascii?Q?df2uk9Wh6Dg/WY3e/T7JC9WM5cch0JRkH2krC4hItSSljJ/1G3oSpTT846cs?=
- =?us-ascii?Q?Vu/+Q/B+2oaQyxzNY5mneJpg7wxiUbWo4VEPWiDlj3tcBF9w1T6SaQPyDU9I?=
- =?us-ascii?Q?ht3W2YsWKGQD8/F/T1ksK4yIGpG8S8w+x/TFNsH5ns1bwp8wBoCCNTPLg+KH?=
- =?us-ascii?Q?bjFpWchbvSlaz70l/u3MhfG4GcDpT1CfW8uhP8UnAqVCMT89eHhKTT8L7ZAX?=
- =?us-ascii?Q?j0PyYkciDVztcdcQmLHpDDjQrRMGW3lDKyYpIhti3h4E7j32h1qzIiRzMotL?=
- =?us-ascii?Q?kYnVb6HPcQeUkXGhYdtDIEbq8CO7wR0iRU8pJHahAxuYPTzRDcpwWsXfl0R+?=
- =?us-ascii?Q?iTHw7loB5Jw7BRGKAOEz5KtLEVKsV+gwC6kJnZLFNKwv6TK1ayBmVQqWJuBG?=
- =?us-ascii?Q?Cs0xp4RiGWN2c0JWK9R8IFgdpNMVxU6l+Jqd6Uz3NstOR1M6fSgcrqkGHJT5?=
- =?us-ascii?Q?FKX3cTbCV60Bi47fI+T7tlc0G9PdWQJgC0S9xZPSdOT7edgyc4BRVC4oFpRL?=
- =?us-ascii?Q?q1EF3VwgxRyjFsLDN5JplEjpib9gB1MvfvvmHXuou89jhAYqDauviOmeXAsx?=
- =?us-ascii?Q?di2MKQhuo1CJgl5/6G/sv5LlzP9XSAnt62cTyw7wGYj8kirYyJpf6LSBNpSN?=
- =?us-ascii?Q?O6eZGAOLwWx6fgJJu4koXVWmbAWZAEnVhB1KcGh/dRqQk8CXIHKdEV3D1gPz?=
- =?us-ascii?Q?9eMMmjplKdSQMaHucwjuzYW4E/9CRIoLQaNb0h5E?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 7acd42fc-dcfd-469c-a3d7-08dcc643697e
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR0601MB4113.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 27 Aug 2024 02:53:21.7529
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: GHZ1uydHaAMXZKM5c1awhB5QqHcw98sWpMnAzesIDInjOL6m1l9MmEtCZ4le8YR4MKcSWFAOD2QRsyPmUz1KHA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: JH0PR06MB6582
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] watchdog: rzg2l_wdt: Power on the watchdog domain in
+ the restart handler
+To: Claudiu <claudiu.beznea@tuxon.dev>, geert+renesas@glider.be,
+ mturquette@baylibre.com, sboyd@kernel.org, wim@linux-watchdog.org,
+ ulf.hansson@linaro.org
+Cc: linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
+ linux-pm@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240826152529.2080248-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240826152529.2080248-4-claudiu.beznea.uj@bp.renesas.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20240826152529.2080248-4-claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The devm_clk_hw_get_clk() function returns error pointers.
-It never returns NULL.  Update the check accordingly.
+On 8/26/24 08:25, Claudiu wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> 
+> On RZ/G3S the watchdog can be part of a software-controlled PM domain. In
+> this case, the watchdog device need to be powered on in
+> struct watchdog_ops::restart API. This can be done though
+> pm_runtime_resume_and_get() API if the watchdog PM domain and watchdog
+> device are marked as IRQ safe. We mark the watchdog PM domain as IRQ safe
+> with GENPD_FLAG_IRQ_SAFE when the watchdog PM domain is registered and the
+> watchdog device though pm_runtime_irq_safe().
+> 
+> Before commit e4cf89596c1f ("watchdog: rzg2l_wdt: Fix 'BUG: Invalid wait
+> context'") pm_runtime_get_sync() was used in watchdog restart handler
+> (which is similar to pm_runtime_resume_and_get() except the later one
+> handles the runtime resume errors).
+> 
+> Commit e4cf89596c1f ("watchdog: rzg2l_wdt: Fix 'BUG: Invalid wait
+> context'") dropped the pm_runtime_get_sync() and replaced it with
+> clk_prepare_enable() to avoid invalid wait context due to genpd_lock()
+> in genpd_runtime_resume() being called from atomic context. But
+> clk_prepare_enable() doesn't fit for this either (as reported by
+> Ulf Hansson) as clk_prepare() can also sleep (it just not throw invalid
+> wait context warning as it is not written for this).
+> 
+> Because the watchdog device is marked now as IRQ safe (though this patch)
+> the irq_safe_dev_in_sleep_domain() call from genpd_runtime_resume() returns
+> 1 for devices not registering an IRQ safe PM domain for watchdog (as the
+> watchdog device is IRQ safe, PM domain is not and watchdog PM domain is
+> always-on), this being the case of RZ/G2 devices that uses this driver,
+> we can now drop also the clk_prepare_enable() calls in restart handler and
+> rely on pm_runtime_resume_and_get().
+> 
+> Thus, drop clk_prepare_enable() and use pm_runtime_resume_and_get() in
+> watchdog restart handler.
+> 
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Fixes: 8737ec830ee3 ("clk: qcom: common: Add interconnect clocks support")'
-Signed-off-by: Yan Zhen <yanzhen@vivo.com>
----
-
-Changes in v3:
-- Providing a "fixes" tag blaming the commit.
-
- drivers/clk/qcom/common.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
-index 33cc1f73c69d..5a9e653916ea 100644
---- a/drivers/clk/qcom/common.c
-+++ b/drivers/clk/qcom/common.c
-@@ -273,8 +273,8 @@ static int qcom_cc_icc_register(struct device *dev,
- 		icd[i].slave_id = desc->icc_hws[i].slave_id;
- 		hws = &desc->clks[desc->icc_hws[i].clk_id]->hw;
- 		icd[i].clk = devm_clk_hw_get_clk(dev, hws, "icc");
--		if (!icd[i].clk)
--			return dev_err_probe(dev, -ENOENT,
-+		if (IS_ERR(icd[i].clk))
-+			return dev_err_probe(dev, PTR_ERR(icd[i].clk),
- 					     "(%d) clock entry is null\n", i);
- 		icd[i].name = clk_hw_get_name(hws);
- 	}
--- 
-2.34.1
+Acked-by: Guenter Roeck <linux@roeck-us.net>
 
