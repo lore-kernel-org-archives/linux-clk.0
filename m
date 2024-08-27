@@ -1,151 +1,215 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFAFE1BF812;
-	Tue, 27 Aug 2024 12:31:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E188D1BD029
+	for <linux-clk@vger.kernel.org>; Tue, 27 Aug 2024 12:32:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724761904; cv=none; b=MaAx87LBx4bIOO7Nf026fm85ELGnpifhmxNvTdWEh1m2i4vWPwBUCDMN3I0RbS2qIP3EfK6wfUEKHaVZAeBYC0KVB5CcynZrMMq3Wb1NDSOGOml1wTWIEicbeaDU2bgIDlCCi1zZfeUOzFz3Ip1F8Jcoo15EoK0jzGvg4k+tD5U=
+	t=1724761978; cv=none; b=Vp3pciGkuZeiv1KvrxkM66faYQCIkCBdLUqiIgPRRKBDbUwcbNgsnqRbo22ROsgR8nmtmC2VlC3Mgnr6B4nVM4UxUpa3eXVjEy+3Sg+cU6mgbnwtDn7JNQG0rlet0jIu9bLusbIyt+GShK8HcYmiOw6rQlgaCi/4tRTNbHV7QFc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724761904; c=relaxed/simple;
-	bh=qmMzGnC28ZCDh31+2GefMmB0QMXAHDZVokWKSX+jKyU=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=amyFdVdDVROEhtwJtqlTOlBEnGDFhHdmbBjlnApfyFQj701o/R8ijFGnQT3EDUR0qJ9Wy5TE0GF2bLQBEQ9h40N1pcnhne9HD/vKSvYWqeRrrFreoi2YYDyf08teUpsBb5+uawZBNyrYe23wgbGUUYoOnzt70OkA4XK4YtVo8ns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gNMjNWho; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1724761978; c=relaxed/simple;
+	bh=LiQo0dIQMk7M3bHa0opvBkYq4ByVUwoYrG6oVZ/Bk8c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E3Pni6sF+61rmFzu6uFNkAM6iWpjWHIMHOsFytneX5TG796TxJbSgWgcCHg7xavwt3EJFJU9cqgsZQLR+NJfrhelRNNcKdr04VC6uBkKxHVQ6KK1pGP4rvp259ppbT39RJljC8vIkBPanJatoj4cCcQpWe28zKvKu6UkrrNh4p0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=IcQnMc08; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gNMjNWho"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FCAAC6104D;
-	Tue, 27 Aug 2024 12:31:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724761903;
-	bh=qmMzGnC28ZCDh31+2GefMmB0QMXAHDZVokWKSX+jKyU=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=gNMjNWhoZffSOv1un8ggYbJD221iCDLPRhGXySnV4I9D0LpvMrLudiopVGiQHN41h
-	 sIBQFWvONGMXeFUFsvTLZ4Ug1Jk986Qn8V/R0P6HPX4mCfVarAnDYwW0/qkFeI52C5
-	 01CzjlyjSbdqLE57f0Z7YxxcQUqPP+SMMfHtgYmXU+gqDJ+wswLxRVol2yYOpC351t
-	 qK2N/HKBi6FJkb2HVNv6vR1SOwo3hokVVhnBRqlcjvuQSR4QX+OeVvg7kT6TdWJvpy
-	 1+b9n3YM4Im9LXRIM2j4UWAmCnOVb797kw4jDDohWQHpwNRuMGm0w7oCdc+o7+8r3l
-	 FWDFBNRa0Xctw==
-Date: Tue, 27 Aug 2024 07:31:41 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="IcQnMc08"
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5bef295a2b4so249794a12.0
+        for <linux-clk@vger.kernel.org>; Tue, 27 Aug 2024 05:32:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1724761973; x=1725366773; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=y+8zmpgoxrDLbCqZtH6gEBqxTqDF5Ns65h0U7300PsM=;
+        b=IcQnMc08NA3XNXX2i1hA2fZN/ycQMaXttC83gkKvAH8jl7+IntgUnWXapNyr0eXSVK
+         8WYE9bOxTtKcNmevPz5VZ/BCkyrKD1KFVsqoCHUZvyvJx2lb47D3mmPIJUi6EKafLlTJ
+         N+aY97sZk9eBvfHpkLLxMUuSxGraBtIB+mV20stiXY2Jj7iMrl0vV/v7njcgEWz6qTkO
+         sSPoC6Emds7gMuyKkoPUb74oEAx8GfIId48v+ophxkSvZIp5HO+E8heOhC7YV738JC/m
+         VVOxyX39DudwvkoGJMO/ACdUnhYBDdXR8cD1Wd297T4VI6gg81ONmQ55onyFeud0C9/d
+         XJ7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724761973; x=1725366773;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=y+8zmpgoxrDLbCqZtH6gEBqxTqDF5Ns65h0U7300PsM=;
+        b=T/Sd7TKs2pKifv8KDQLT5QUzG6GfQmFYTjqejSmtTzXbYOIjC++eFkuGq7DBI9+jRx
+         M243g8QoeAJOg5LRQ7JT1PrWixG1iqnJFgym5WDPArYWMCLT2DOrJ3u1N1ahnmX5uObc
+         +Lmkr4fVJRf6AgEoox8iBITO4axYRnLTmrpsPkfz0Smevm+jeZf53gX2ioszeuA5KQpn
+         3zi0DOGYe5MdZxZXJ1HwXqLD9jv3BCSGG/+9ii4GJKhCoGvdcHfzbq8a9ghiwOUvSjLd
+         AcuYiB0K+QEDght2vD+0u9sf4tWRi6aN31NhT34Uu6w22NAKntsZLxPhxZck7RUn/WAh
+         hzBg==
+X-Forwarded-Encrypted: i=1; AJvYcCV0WYsuOwsQ88BuBHxEj+9aEKeTfk8N4rwdVfJ0JMRGKB02Eh4k6Eq99URveoMFWv+CuqrvTHQZs+A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YycMLH3M7KiSwOVyyg0xJ29VUuzaDSAmXKEY1getEh8wyTjqr/9
+	Ya+6B8hZ6v/gU0u9LlH6gXRW6JYcNJFQJz6VubjND6T/NuxTGoggmgb/gVm4kOk=
+X-Google-Smtp-Source: AGHT+IF0YQF/+Km2Nk6dAVkx3nFNSFyP0k8EfYjfWpB5kX5bCXbFaKsLnQfAOxMeQ48X0I85aPkxKg==
+X-Received: by 2002:a05:6402:2683:b0:5c0:c6a7:1c58 with SMTP id 4fb4d7f45d1cf-5c0c6a71cafmr729455a12.15.1724761972930;
+        Tue, 27 Aug 2024 05:32:52 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.144])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c0bb481fb8sm961543a12.87.2024.08.27.05.32.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 27 Aug 2024 05:32:52 -0700 (PDT)
+Message-ID: <4823173e-b024-482f-83a3-560c7abd888c@tuxon.dev>
+Date: Tue, 27 Aug 2024 15:32:50 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Qiang Yu <quic_qianyu@quicinc.com>
-Cc: devicetree@vger.kernel.org, mturquette@baylibre.com, vkoul@kernel.org, 
- dmitry.baryshkov@linaro.org, sboyd@kernel.org, neil.armstrong@linaro.org, 
- linux-clk@vger.kernel.org, conor+dt@kernel.org, 
- linux-arm-msm@vger.kernel.org, andersson@kernel.org, kw@linux.com, 
- manivannan.sadhasivam@linaro.org, lpieralisi@kernel.org, 
- konradybcio@kernel.org, abel.vesa@linaro.org, quic_devipriy@quicinc.com, 
- linux-pci@vger.kernel.org, quic_msarkar@quicinc.com, 
- linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
- kishon@kernel.org, krzk+dt@kernel.org
-In-Reply-To: <20240827063631.3932971-1-quic_qianyu@quicinc.com>
-References: <20240827063631.3932971-1-quic_qianyu@quicinc.com>
-Message-Id: <172476183902.3553327.3757950028426438486.robh@kernel.org>
-Subject: Re: [PATCH 0/8] Add support for PCIe3 on x1e80100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] watchdog: rzg2l_wdt: Power on the watchdog domain in
+ the restart handler
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+ "geert+renesas@glider.be" <geert+renesas@glider.be>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "sboyd@kernel.org" <sboyd@kernel.org>,
+ "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
+ "linux@roeck-us.net" <linux@roeck-us.net>,
+ "ulf.hansson@linaro.org" <ulf.hansson@linaro.org>
+Cc: "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+ "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240826152529.2080248-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240826152529.2080248-4-claudiu.beznea.uj@bp.renesas.com>
+ <TY3PR01MB11346A223DA7462799B9D103786942@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+Content-Language: en-US
+In-Reply-To: <TY3PR01MB11346A223DA7462799B9D103786942@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+Hi, Biju,
 
-On Mon, 26 Aug 2024 23:36:23 -0700, Qiang Yu wrote:
-> This series add support for PCIe3 on x1e80100.
+On 27.08.2024 15:15, Biju Das wrote:
+> Hi Claudiu,
 > 
-> PCIe3 needs additional set of clocks, regulators and new set of PCIe QMP
-> PHY configuration compare other PCIe instances on x1e80100. Hence add
-> required resource configuration and usage for PCIe3.
+> Thanks for the feedback.
 > 
-> Qiang Yu (8):
->   phy: qcom-qmp: pcs-pcie: Add v6.30 register offsets
->   phy: qcom-qmp: pcs: Add v6.30 register offsets
->   phy: qcom: qmp: Add phy register and clk setting for x1e80100 PCIe3
->   arm64: dts: qcom: x1e80100: Add support for PCIe3 on x1e80100
->   dt-bindings: phy: qcom,sc8280xp-qmp-pcie-phy: Document the X1E80100
->     QMP PCIe PHY Gen4 x8
->   clk: qcom: gcc-x1e80100: Fix halt_check for pipediv2 clocks
->   arm64: dts: qcom: x1e80100-qcp: Add power supply and sideband signal
->     for pcie3
->   PCI: qcom: Add support to PCIe slot power supplies
+>> -----Original Message-----
+>> From: Claudiu <claudiu.beznea@tuxon.dev>
+>> Sent: Monday, August 26, 2024 4:25 PM
+>> Subject: [PATCH 3/3] watchdog: rzg2l_wdt: Power on the watchdog domain in the restart handler
+>>
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> On RZ/G3S the watchdog can be part of a software-controlled PM domain. In this case, the watchdog
+>> device need to be powered on in struct watchdog_ops::restart API. This can be done though
+>> pm_runtime_resume_and_get() API if the watchdog PM domain and watchdog device are marked as IRQ safe.
+>> We mark the watchdog PM domain as IRQ safe with GENPD_FLAG_IRQ_SAFE when the watchdog PM domain is
+>> registered and the watchdog device though pm_runtime_irq_safe().
+>>
+>> Before commit e4cf89596c1f ("watchdog: rzg2l_wdt: Fix 'BUG: Invalid wait
+>> context'") pm_runtime_get_sync() was used in watchdog restart handler (which is similar to
+>> pm_runtime_resume_and_get() except the later one handles the runtime resume errors).
+>>
+>> Commit e4cf89596c1f ("watchdog: rzg2l_wdt: Fix 'BUG: Invalid wait
+>> context'") dropped the pm_runtime_get_sync() and replaced it with
+>> clk_prepare_enable() to avoid invalid wait context due to genpd_lock() in genpd_runtime_resume() being
+>> called from atomic context. But
+>> clk_prepare_enable() doesn't fit for this either (as reported by Ulf Hansson) as clk_prepare() can
+>> also sleep (it just not throw invalid wait context warning as it is not written for this).
+>>
+>> Because the watchdog device is marked now as IRQ safe (though this patch) the
+>> irq_safe_dev_in_sleep_domain() call from genpd_runtime_resume() returns
+>> 1 for devices not registering an IRQ safe PM domain for watchdog (as the watchdog device is IRQ safe,
+>> PM domain is not and watchdog PM domain is always-on), this being the case of RZ/G2 devices that uses
 > 
->  .../phy/qcom,sc8280xp-qmp-pcie-phy.yaml       |  18 +-
->  arch/arm64/boot/dts/qcom/x1e80100-qcp.dts     | 116 +++++++++
->  arch/arm64/boot/dts/qcom/x1e80100.dtsi        | 205 +++++++++++++++-
->  drivers/clk/qcom/gcc-x1e80100.c               |  10 +-
->  drivers/pci/controller/dwc/pcie-qcom.c        |  52 +++-
->  drivers/phy/qualcomm/phy-qcom-qmp-pcie.c      | 222 +++++++++++++++++-
->  .../qualcomm/phy-qcom-qmp-pcs-pcie-v6_30.h    |  25 ++
->  drivers/phy/qualcomm/phy-qcom-qmp-pcs-v6_30.h |  19 ++
->  8 files changed, 657 insertions(+), 10 deletions(-)
->  create mode 100644 drivers/phy/qualcomm/phy-qcom-qmp-pcs-pcie-v6_30.h
->  create mode 100644 drivers/phy/qualcomm/phy-qcom-qmp-pcs-v6_30.h
-> 
-> --
-> 2.34.1
+> RZ/G2L alike devices or be specific RZ/{G2L,G2LC,G2UL,V2L} as it is not applicable for
+> RZ/G2{H,M,N,E}devices.
+
+OK, but I said "RZ/G2 devices that uses this driver". Here are included
+RZ/{G2L,G2LC,G2UL,V2L} AFAICT.
+
 > 
 > 
+>> this driver, we can now drop also the clk_prepare_enable() calls in restart handler and rely on
+>> pm_runtime_resume_and_get().
+>>
+>> Thus, drop clk_prepare_enable() and use pm_runtime_resume_and_get() in watchdog restart handler.
 > 
+> Can this patch be fix for Commit e4cf89596c1f ("watchdog: rzg2l_wdt: Fix 'BUG: Invalid wait
+>> context'") on RZ/{G2L,G2LC,G2UL,V2L} SoC??
 
+Not sure... I thought about it, too. I chose to have it like this thinking
+that:
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
+1/ that may not apply cleanly as it depends on other cleanups done on this
+   driver, e.g. commit d8997ed79ed7 ("watchdog: rzg2l_wdt: Rely on the
+   reset driver for doing proper reset") so it may be worthless for
+   backport machinery
+2/ There is actually no seen bug reported by lockdep (as the clk_prepare()
+   doesn't handle it)
 
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
+Don't know, I can reply here and add it. Applying this patch with b4 will
+take care of it. But not sure about it.
 
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
+Thank you,
+Claudiu Beznea
 
-  pip3 install dtschema --upgrade
-
-
-New warnings running 'make CHECK_DTBS=y qcom/x1e80100-qcp.dtb' for 20240827063631.3932971-1-quic_qianyu@quicinc.com:
-
-arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: pci@1bd0000: reg: [[0, 29163520, 0, 12288], [0, 2013265920, 0, 3869], [0, 2013269824, 0, 168], [0, 2013270016, 0, 4096], [0, 2014314496, 0, 1048576]] is too short
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-x1e80100.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: pci@1bd0000: reg-names: ['parf', 'dbi', 'elbi', 'atu', 'config'] is too short
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-x1e80100.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: pci@1bd0000: clocks: [[53, 348], [53, 84], [53, 86], [53, 87], [53, 94], [53, 95], [53, 22], [53, 33]] is too long
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-x1e80100.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: pci@1bd0000: clock-names:0: 'aux' was expected
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-x1e80100.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: pci@1bd0000: clock-names:1: 'cfg' was expected
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-x1e80100.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: pci@1bd0000: clock-names:2: 'bus_master' was expected
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-x1e80100.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: pci@1bd0000: clock-names:3: 'bus_slave' was expected
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-x1e80100.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: pci@1bd0000: clock-names:4: 'slave_q2a' was expected
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-x1e80100.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: pci@1bd0000: clock-names:5: 'noc_aggr' was expected
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-x1e80100.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: pci@1bd0000: clock-names:6: 'cnoc_sf_axi' was expected
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-x1e80100.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: pci@1bd0000: clock-names: ['pipe_clk_src', 'aux', 'cfg', 'bus_master', 'bus_slave', 'slave_q2a', 'noc_aggr', 'cnoc_sf_axi'] is too long
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-x1e80100.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: pci@1bd0000: Unevaluated properties are not allowed ('operating-points-v2', 'opp-table' were unexpected)
-	from schema $id: http://devicetree.org/schemas/pci/qcom,pcie-x1e80100.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: phy@1be0000: clock-names:4: 'pipe' was expected
-	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-pcie-phy.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: phy@1be0000: clock-names:5: 'pipediv2' was expected
-	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-pcie-phy.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: phy@1be0000: clock-names:6: 'phy_aux' was expected
-	from schema $id: http://devicetree.org/schemas/phy/qcom,sc8280xp-qmp-pcie-phy.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: pmic@3: gpio@8800: 'pm_sde7_aux_3p3', 'pm_sde7_main_3p3' do not match any of the regexes: '-hog(-[0-9]+)?$', '-state$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/mfd/qcom,spmi-pmic.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: gpio@8800: 'pm_sde7_aux_3p3', 'pm_sde7_main_3p3' do not match any of the regexes: '-hog(-[0-9]+)?$', '-state$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/pinctrl/qcom,pmic-gpio.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: pmic@8: gpio@8800: 'pcie_x8_12v_on' does not match any of the regexes: '-hog(-[0-9]+)?$', '-state$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/mfd/qcom,spmi-pmic.yaml#
-arch/arm64/boot/dts/qcom/x1e80100-qcp.dtb: gpio@8800: 'pcie_x8_12v_on' does not match any of the regexes: '-hog(-[0-9]+)?$', '-state$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/pinctrl/qcom,pmic-gpio.yaml#
-
-
-
-
-
+> 
+> Cheers,
+> Biju
+> 
+>>
+>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>> ---
+>>  drivers/watchdog/rzg2l_wdt.c | 21 +++++++++++++++++++--
+>>  1 file changed, 19 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/watchdog/rzg2l_wdt.c b/drivers/watchdog/rzg2l_wdt.c index
+>> 2a35f890a288..e9e0408c96f7 100644
+>> --- a/drivers/watchdog/rzg2l_wdt.c
+>> +++ b/drivers/watchdog/rzg2l_wdt.c
+>> @@ -12,6 +12,7 @@
+>>  #include <linux/module.h>
+>>  #include <linux/of.h>
+>>  #include <linux/platform_device.h>
+>> +#include <linux/pm_domain.h>
+>>  #include <linux/pm_runtime.h>
+>>  #include <linux/reset.h>
+>>  #include <linux/units.h>
+>> @@ -166,8 +167,23 @@ static int rzg2l_wdt_restart(struct watchdog_device *wdev,
+>>  	struct rzg2l_wdt_priv *priv = watchdog_get_drvdata(wdev);
+>>  	int ret;
+>>
+>> -	clk_prepare_enable(priv->pclk);
+>> -	clk_prepare_enable(priv->osc_clk);
+>> +	/*
+>> +	 * In case of RZ/G3S the watchdog device may be part of an IRQ safe power
+>> +	 * domain that is currently powered off. In this case we need to power
+>> +	 * it on before accessing registers. Along with this the clocks will be
+>> +	 * enabled. We don't undo the pm_runtime_resume_and_get() as the device
+>> +	 * need to be on for the reboot to happen.
+>> +	 *
+>> +	 * For the rest of RZ/G2 devices (and for RZ/G3S with old device trees
+>> +	 * where PM domains are registered like on RZ/G2 devices) it is safe
+>> +	 * to call pm_runtime_resume_and_get() as the
+>> +	 * irq_safe_dev_in_sleep_domain() call in genpd_runtime_resume()
+>> +	 * returns non zero value and the genpd_lock() is avoided, thus, there
+>> +	 * will be no invalid wait context reported by lockdep.
+>> +	 */
+>> +	ret = pm_runtime_resume_and_get(wdev->parent);
+>> +	if (ret)
+>> +		return ret;
+>>
+>>  	if (priv->devtype == WDT_RZG2L) {
+>>  		ret = reset_control_deassert(priv->rstc);
+>> @@ -275,6 +291,7 @@ static int rzg2l_wdt_probe(struct platform_device *pdev)
+>>
+>>  	priv->devtype = (uintptr_t)of_device_get_match_data(dev);
+>>
+>> +	pm_runtime_irq_safe(&pdev->dev);
+>>  	pm_runtime_enable(&pdev->dev);
+>>
+>>  	priv->wdev.info = &rzg2l_wdt_ident;
+>> --
+>> 2.39.2
+>>
+> 
