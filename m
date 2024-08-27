@@ -1,92 +1,86 @@
-Received: from out203-205-221-190.mail.qq.com (out203-205-221-190.mail.qq.com [203.205.221.190])
+Received: from mout.web.de (mout.web.de [212.227.15.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6846E146D6A;
-	Tue, 27 Aug 2024 19:15:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B0742EAE6;
+	Tue, 27 Aug 2024 20:08:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724786139; cv=none; b=gttYdd3tWPoCYnRCW0dqEOO/T0wk+kfFhUuiNrLOejPKHjh4yTe6EsFaEbIHZ92ZJP8LdSUlrLrMAXyBWQVEWMPgorm1ChZCtGml/Yz2r3DAqLZZyHpXdhOuYKmQlMzwZPuW4ES8NRLOEbnOMBOwevqf5JBJMpvIDIY7DyTpVFc=
+	t=1724789316; cv=none; b=Jtl/7YOaCCO+k0AYk0r4SFaM/FzVcXvUXh+tatDX80X4q7fgYMnmA+O7UXPHfXYkHBpVBWQ8Kot4HaOCkl//iLIcYmzm318Ld6H+5PT0IyY2hmRSLGWgYfNbGi/uGHd+JGd6ety9IQOhsdtirtE1d0Fbek3Bj1i4zBvA+DRlOsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724786139; c=relaxed/simple;
-	bh=jabYyamu7DASq95qkpSX31tv3SineQAeHuDW7SGS8qk=;
-	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=GprAdjEwTYdVwj77PRUe6sd52j66YUpAzq2DoA4txi/A3C6VxK96z7qTr6EPyzXKPeZZqQAffIx1dC2uRB+Yo40K4ZnEAUw+gsOR10bBiRwFX4rxi2dj/ffKKGnXdRcppToH5aDAd4U9os8LPo34OjkctGMu+xAk/fuQoLE0R+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=UJepcORI; arc=none smtp.client-ip=203.205.221.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+	s=arc-20240116; t=1724789316; c=relaxed/simple;
+	bh=RVrdDN9Tyh7WCtixWnieltPq0wOo2Fo5P+6+skiGUuY=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=M2wM/NwufxV5a46znmtkBLes3xWkuKfDCsFcz0bLB5BfkqoQrv2295/SvpinVJBDD4WZ5ZJMMESPZX21t1Zj4FOYGjC9v/y3GAXZ550xTilOhBiFRnp/NV29BSAvD6w1KVjQpW8GR4K9OAgdx/UWl7MEzGc/IlXXi82Zgx7YsHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=FO43gIRl; arc=none smtp.client-ip=212.227.15.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="UJepcORI"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1724785835; bh=hU7ofY00NIzY7HQ0Ss9KlIal31nOOy8WuXlW+57Dwcg=;
-	h=From:To:Cc:Subject:Date;
-	b=UJepcORIUyWuD57wuiZKi+R6KQ2byY/JKJ4UnNW2XiODiyYx0zl08Hxcr+9ejlTz8
-	 MUrv+lTZxMDB7koDHAz6GgC7Dli25e/DwI/GVh21pHjoscDsG6rOdhxKuQnqTBOEt9
-	 RCncODbvcgYbnl15EgbYDIcefiz9g9G9lg0icaZg=
-Received: from localhost.localdomain ([112.64.14.141])
-	by newxmesmtplogicsvrszb9-1.qq.com (NewEsmtp) with SMTP
-	id 29934AC8; Wed, 28 Aug 2024 03:10:25 +0800
-X-QQ-mid: xmsmtpt1724785825txqyvfh1i
-Message-ID: <tencent_B732022EF733FCEDC36B0E601B62889DB00A@qq.com>
-X-QQ-XMAILINFO: M1rD3f8svNznCM+daMDhg00chSC1QSmQAsB5g36rh0PhHo49Kw+xS8E1b+Npss
-	 dFt31s5i63Br5ivP96Cn4y/UevKztoUD/2xvhDqSaFcFMg4IRu3SYs/lky9UEwNaaJEHm1bX+4DB
-	 5OC3Lbxr9+VNmnvUSM1ijOnVr3Bguuipt5sA3Stqwp/EhWJhqjhGFrv7fr9eFS56O+TgScasmH5f
-	 9vUn+IlFiVqsQonVruvr77f9DOgZ4yPn/ir8n/OhuMvSX6/wXy9d6DyWnS36K7uxqirSNRk2fsSu
-	 aJvybHaFJHfl2cBi5gZUGIx35hRTGe0b2srGZdQjE0TNYCSDW1bm/DoxxJ2jnE8RBl+Bu09vbg7a
-	 Dg/rGl4TlRXu6GRVlXYeOtkvuRyR2ZpOgfE+jJvQKP/fxP28C5K3pqwJ8hdQBSTKjAPHb/49dGOi
-	 Bz6G8/EGxGWKPjDHKX/1KuiuaExZ7N9XTWs3IetjhkQ7VsKmkcXKaMK2uGBHx5K32epi7PDf4Q74
-	 V3I2/6n2pC038WI9GHsCGfGDwgy4uRbkHuplLIyqPZJDYd342ih19G0viiGMAcjpBhyvMnHvNb+M
-	 7LgCvYyoY0oHPpY8IjqCzE+YTtcQNNG+YuFSlzGoTVa6r+4OuFemM8vYZGKf5c19BqKibQdIvMJd
-	 n5qykqUX6gXvBy8F3alV5yrkZD0tjJED7InVuBJtQFSxtfc41hIXF4KbNiQrb8mVPY/B8wOxjE4l
-	 RCCIcTaxthtdK8EA0I0l9uNvwJ2QkZcPX7SMkxY07uHUd0rIJmyE9BOsbQhd7XZq1Pt4jIcBbmii
-	 8lMOgFAEJqU+PvXpViEImj1TEpveCH8wgF0WfRkLUk2zBGdrrnD6azlC2LqMHuYj/Fk1+fmxPdj3
-	 d2Z7STRsQuh+6NeTlVPa/U+3IAU7YGvlC05xTubEbmQ+FM0C3rkJf+R5EE3Ny3CQrGadunt4HqvO
-	 UYEp++GdytTcBA8qG9Tmq2Y5vWjzje/U5/d6mV9RZefcAQTGVHPHUlvdK//K7qoyqdg6oYwlXCR8
-	 FLSZTorH9nlzlH/+0o
-X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
-From: jiping huang <huangjiping95@qq.com>
-To: mturquette@baylibre.com,
-	sboyd@kernel.org
-Cc: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	jiping huang <huangjiping95@qq.com>
-Subject: [PATCH] clk: Delete unused initial value for local variable "best_parent_rate".
-Date: Wed, 28 Aug 2024 03:10:22 +0800
-X-OQ-MSGID: <20240827191022.65346-1-huangjiping95@qq.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="FO43gIRl"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1724789290; x=1725394090; i=markus.elfring@web.de;
+	bh=m2bnqP0azyyJIJfrx8N/GoNEEILIi2RttBG+GZKNrvA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=FO43gIRlPK3viR+8FvRc2gxKidFfV9fj2huiFmdyu8SrMIxuVozNOa6OS+P21uDR
+	 HFuzqPp9msOqau+xGPBXOzKEYAFLE/Qu+qyj5N4AnApmAB7TVmo85QpP4PTX0+9A0
+	 1NNPPogz86sq6tuG7tfWbbSIorlh3J7rndzQC5vIGGNWRLCVLs6wtqMQ7vOxxH86o
+	 llzn7fxpV7oOCIf79mfHtBgFDPN9GadpgaIiTZvkkxw52MPsjzHG5iU5fV+3CJDdc
+	 hwrJO796ChzwaLhIV65I3Khg9iEDOYNtE7nRPtDyLAwW5ZYgwcW3nxD7Hb2bP2vZ0
+	 vzM7DNuQOXd6hblaGw==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MUCz1-1sZzwX2lVr-00ITpR; Tue, 27
+ Aug 2024 22:08:10 +0200
+Message-ID: <abd2fd90-7ff3-48df-ad6d-64796000059f@web.de>
+Date: Tue, 27 Aug 2024 22:08:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, opensource.kernel@vivo.com,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Yan Zhen <yanzhen@vivo.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <9ce5d7b09b5358c9190d8a999d79de23.sboyd@kernel.org>
+Subject: Re: [PATCH v3] clk: qcom: Fix error checking for
+ devm_clk_hw_get_clk()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <9ce5d7b09b5358c9190d8a999d79de23.sboyd@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:8CDQWoGneOrPi3wjoxxsmEAuim5JjvaBBWaVQPM3uSU/olYBLAQ
+ FgbUkF1nYaQ1t9z8GN99vli1fdt8ov54tKml6Khdd1T4BADIA5oaB4bHNUUS1T2mHAy2X4x
+ XcP2kq5T52vwdks+SFGcZUKslaKCqMEpOF8jcZNJW3iKuUpJgs8BuZj6XgS8flPazjeE3NS
+ pYlhqjLsQ263LNF6sEFyw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:jfeVxQjqUVQ=;OiCjB/Nyl5VxCTn38djVbFJJsgT
+ 4Bz8lpg8axuLGbC574zd2BUVeKNeSkypi5fsN8ql3gTmWg25N8l4P2WvuihVzAP06JFvYbAtJ
+ U14gEpVWhZhUop9YqL4kTJo/a/Q3IQPgWxV7mwkTEZdFq2mHJInaBVS3Ji9jwQnqMpYhgDuMh
+ D6lm47QDe03D95wUUoFQKd4wsGrjAXbsRz65Qv5wPgY6wP6/FJpaDam7T27LDLy1eN8xtt//W
+ vlieOLtZyA1EYu6QU2tpenqFqly+Ak/xoIgPCLZjJIr1hJxa8I9AIp/OhYrT7bhIqK3vxKE5s
+ k4XCbA1YrT7/7KgIzVTkZLPmkbkxEzy8Hg2oeX5vAUdBluhHcUMSyXDRayF7y2p5xLafWM3Jd
+ yUSkCK2Mu+HRPjD0PSQc9l5ZfBdwhkM8b/lcjHitCoC+5q7Lx0io70c6KCp0AuVpiyK2LV4Zs
+ pXkjixmHNAl6O380VnEtJx4AkiAhey9uvL/N82bDweFftH3glHFWY9GtglsFDIISyp/AFyqbA
+ +K6fGavQ1KdFd+nKuK8moTTx++IxXaQD4/Tt1xnqhecg3vYk5VVZlFsc6wL/siEMlRocNXtqR
+ JT+XY59lHyELuaSgNQdTd6yRwjZCnBy4KhOik6LYeRYg+AuTnqddCtk6Vjz/LqRpBDMlPEjG4
+ eyc3C/yl6Yj5+U8ed9VGEtWpVlBDz+FXSn8l4RRUKRgPOQJSsaWuVPDwxhY7F8b1uemg2b2Nu
+ 1Uz3nma80Cwwl/gTsffWkv+rDRutYtxpSgX3WzYDkwurQO0wnwjMPTywJBTLq08zBpca20Eag
+ K044vcUM69YLBU5gJYCB3DEQ==
 
-  At function "clk_calc_new_rates" entrance, assigned "parent->rate" to
-"best_parent_rate" as its initial value, but this initial value is unused
-in subsequent logic. Analysis is as follows.
-  The local variable 'best_parent_rate' is only used in line 2355 for
-the judgment 'best_parent_rate!=parent->rate'. However, if the
-"if (clk_core_can_round (core))" branch condition in line 2306 is true,
-the value of the local variable "best_parent_rate" will be updated by
-"best_parent_rate=req.best_parent_rate;" in line 2319, otherwise it will
-be directly returned in the "else if" branch in line 2325 and the "else"
-branch in line 2329.
-  Thank you for your precious time!
+> > The devm_clk_hw_get_clk() function returns error pointers.
+> > It never returns NULL.  Update the check accordingly.
+>
+> It can return NULL if the 'hw' pointer passed in is NULL.
 
-Signed-off-by: jiping huang <huangjiping95@qq.com>
+How does this view fit to a published function implementation?
+https://elixir.bootlin.com/linux/v6.11-rc5/source/drivers/clk/clk.c#L4703
 
-diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
-index 8cca52be993f..b6ff88f63bc4 100644
---- a/drivers/clk/clk.c
-+++ b/drivers/clk/clk.c
-@@ -2297,8 +2297,6 @@ static struct clk_core *clk_calc_new_rates(struct clk_core *core,
- 
- 	/* save parent rate, if it exists */
- 	parent = old_parent = core->parent;
--	if (parent)
--		best_parent_rate = parent->rate;
- 
- 	clk_core_get_boundaries(core, &min_rate, &max_rate);
- 
--- 
-2.34.1
-
+Regards,
+Markus
