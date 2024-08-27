@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35FC91D1757;
-	Tue, 27 Aug 2024 18:16:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59941374C3;
+	Tue, 27 Aug 2024 18:18:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724782568; cv=none; b=ts2rLfhXMSP2O9mljCplObJ4C/Nb34fBO7uDdV4wYFZ6sK9LifnIxwNFXK0S8lWidPQMCXxZ+9PQczK6LnXuXCLZ5i22zgLSuOHZSxPE1fulcboivLpDVHAxy8BaLFnZJ7K9fzEvmM8K5GLZ+MT8zwYtcmVVmTp99uDFvlscS/g=
+	t=1724782693; cv=none; b=VVWe2oxdFYAHBd+qXd3D/dRW0UlKUYqiwEafKYtvfsPm1vg299wtj8kbXaY/CHorn0OVX/1njlQ/4ev2T59LTPHBrdzmsM0zozKk5Xjpd806uOGRNSpMXcrpNvxvwVl6UHGdw01njZu9UFBVCQLvBqLr06P0YHXdNEzOH7TGzaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724782568; c=relaxed/simple;
-	bh=fpvBC8whWsAt8fYSueKeJdWimft2Awk2sIf75Zati24=;
+	s=arc-20240116; t=1724782693; c=relaxed/simple;
+	bh=IXz9gAaOWQc86hDdF+gkfvUoCEpLdsuH2wBKB+k1v/4=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=OJZpykh9Q1GjflhZQdEGwcy8hZiZBP1V7rwOpxsLWm3X8KOB6ohMsXSSs1+KHxG0aN7ZrcORKjw4ZGXL7NROJHTbiw4WK218AEmuZfBL4mAsiiy5Cz0gn/R355eouZKmHgV9PXibnsXLsmXvez6BFtcLBhulXsfLiX6YVkWTj3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dEH7PFIv; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=NWB3rmguFVkb1W/fck36xV9ifCU9WzmYEK82k/pSOuoh1liZFTrv24OnYbrjYsrc4GQXKpg/5Wix3gM07h5ReDO9nlvjmYjxPrx7IAnZEcNqb/aGKRQ6W0A5I+I+ZuMmsV66KJbkKF84Hp0T6T8Xe67eFj8cW7+u2bqJVsM22ik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TwwiMCFO; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dEH7PFIv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB368C567C2;
-	Tue, 27 Aug 2024 18:16:07 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TwwiMCFO"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA5B7C4AF0C;
+	Tue, 27 Aug 2024 18:18:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724782568;
-	bh=fpvBC8whWsAt8fYSueKeJdWimft2Awk2sIf75Zati24=;
+	s=k20201202; t=1724782692;
+	bh=IXz9gAaOWQc86hDdF+gkfvUoCEpLdsuH2wBKB+k1v/4=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=dEH7PFIvhxQH891GGCYZgHuUTRfOJdC4X/e6m9BK99ikqagauhRwQHqSEgVrrR99c
-	 yn6fyAYI7vOU1+OvWx12bsuvR+I+QTmoykp9jgRwcSyus+80wHJPini/08c35y65Dt
-	 +qFHCoD4wpXXXijpV4QXmRf7jLkb1H8+lnNv9vnxkvjl25o9Ewh22eQ9BrK8wC9Ck0
-	 qfNhwuS3zyP2s67557znNhr1ZfXB6F6oPHCC1JjR6ObBnK8irJOzMTVSFzAu7dyWFv
-	 cvUtw+nxKNLypyK0FAFlUsL/KRAOcXxaNn1OX/u4wUM2j1iTIb+u1KP7PB6QFkqDMN
-	 bag/kPKMe+fAA==
-Message-ID: <65cfdea2ac3373af27b8f65bb962dc04.sboyd@kernel.org>
+	b=TwwiMCFO4fEbx//cyIUMV7L8/LxvNbRZ66l3nENqLqbbNUe2Q9J8iMKuAnPqnNuFt
+	 m/khH2d4ZSnwG71bOYwbSnsOQpYy37VoREpMgwowc2ht/PlD7yUe9MMDMArd8Y2Qx+
+	 mhITSP1HkhZProh5Fzd5zLzfuACkJfgUQkZJkwBJ/cRK4tsqGp05Nv8kHmlSgYZvCy
+	 sdDhJ17z/f+sBgdcsIRBLGcHZr14nGQ5V00znlrbtwXkQ9SO7OVpV/epj0kX1bOcMT
+	 5bHHsBQEk/IZYt/7pItnrQhkN5a3EmzNvMaIW1jYPUPsbFTuE8OrUE6ZQUHS4XHPql
+	 aLCW5ALF15pTw==
+Message-ID: <9ce5d7b09b5358c9190d8a999d79de23.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,46 +35,17 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <2156bd2a8bde7f07491ab9ed9cf1ee15.sboyd@kernel.org>
-References: <20240823-x1e80100-clk-fix-v1-1-0b1b4f5a96e8@linaro.org> <2156bd2a8bde7f07491ab9ed9cf1ee15.sboyd@kernel.org>
-Subject: Re: [PATCH] clk: qcom: gcc-x1e80100: Don't use parking clk_ops for QUPs
+In-Reply-To: <20240827025252.3512746-1-yanzhen@vivo.com>
+References: <20240827025252.3512746-1-yanzhen@vivo.com>
+Subject: Re: [PATCH v3] clk: qcom: Fix error checking for devm_clk_hw_get_clk()
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-To: Abel Vesa <abel.vesa@linaro.org>, Bjorn Andersson <andersson@kernel.org>, Bryan O'Donoghue <bryan.odonoghue@linaro.org>, Konrad Dybcio <konradybcio@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rajendra Nayak <quic_rjendra@quicinc.com>, Sibi Sankar <quic_sibis@quicinc.com>
-Date: Tue, 27 Aug 2024 11:16:05 -0700
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, opensource.kernel@vivo.com, Yan Zhen <yanzhen@vivo.com>
+To: Yan Zhen <yanzhen@vivo.com>, andersson@kernel.org, mturquette@baylibre.com
+Date: Tue, 27 Aug 2024 11:18:10 -0700
 User-Agent: alot/0.10
 
-Quoting Stephen Boyd (2024-08-27 11:02:48)
-> Quoting Bryan O'Donoghue (2024-08-23 05:58:56)
-> > Per Stephen Boyd's explanation in the link below, QUP RCG clocks do not
-> > need to be parked when switching frequency. A side-effect in parking to=
- a
-> > lower frequency can be a momentary invalid clock driven on an in-use se=
-rial
-> > peripheral.
-> >=20
-> > This can cause "junk" to spewed out of a UART as a low-impact example. =
-On
-> > the x1e80100-crd this serial port junk can be observed on linux-next.
-> >=20
-> > Apply a similar fix to the x1e80100 Global Clock controller to remediat=
-e.
-> >=20
-> > Link: https://lore.kernel.org/all/20240819233628.2074654-3-swboyd@chrom=
-ium.org/
-> > Fixes: 161b7c401f4b ("clk: qcom: Add Global Clock controller (GCC) driv=
-er for X1E80100")
-> > Fixes: 929c75d57566 ("clk: qcom: gcc-sm8550: Mark RCGs shared where app=
-licable")
-> > Suggested-by: Neil Armstrong <neil.armstrong@linaro.org>
-> > Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> > ---
->=20
-> Applied to clk-fixes
->=20
+Quoting Yan Zhen (2024-08-26 19:52:52)
+> The devm_clk_hw_get_clk() function returns error pointers.
+> It never returns NULL.  Update the check accordingly.
 
-Unapplied :( See this email[1] for more info. I'm thinking that this can
-be applied to clk-next instead, by qcom maintainers.
-
-[1] https://lore.kernel.org/all/CAE-0n52rYVs81jtnFHyfc+K4wECvyCKmnHu2w9JhPN=
-qvMYEeOA@mail.gmail.com
+It can return NULL if the 'hw' pointer passed in is NULL.
