@@ -1,349 +1,110 @@
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D619E1D460D
-	for <linux-clk@vger.kernel.org>; Tue, 27 Aug 2024 23:12:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E4E1D45E3;
+	Tue, 27 Aug 2024 23:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724800366; cv=none; b=F5idGJsf/oBuamnZLQxnYO8a5NYvdOT7hf0nJHODavMl4O6wirt+B1rRotOOC0gmxOK1ToYxuQXbEOr/jF7lrMaPTWGl3F3aJDb9CSSqwH4ljLdT9rtigJ4S4PPQaKDMDGpikfFMpbYCGr+hduFkS7vHnuolYv40RG+loaGXATw=
+	t=1724802055; cv=none; b=VsPOOaxnoCH4zyzFpNAEJGRDVjDFIKHF0vrnl8vbuHeVXaD0HdJcAspnpOo3zGFg9q60gsUWjeBwImMCX9crZUXML13/7CtgTsmxsQXkBOemdBLPRtTS03hxE75e+9GcqMEYrU+NXf2AnLlozPgZ5vjQoH9BFuPuGUsDjZVb+RQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724800366; c=relaxed/simple;
-	bh=pydQzqttrobXPxYrV9xD01A2kGsR6s/mRdxcFVeZq1I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ONnT8bGVAb8FjSEvNlSG/NMYFBIStAlZw3sR0ytBMHpe657du9aXXRG7a96+sLpZnIlS9OFBNxB3uR/KJb2WVNpDjfLg29dNTpw2ZpY33FzkArlHsSSrcpdcaJC0cnLfQSDTwrHAaBo6vMdscNNe+lUpG9TbfnZ9L+fOX4d0Heg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=b4WLKu1H; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1724802055; c=relaxed/simple;
+	bh=uqrM2V2XUJLc4pgu/Aww4+b2GdKnuDt3PVEz7Sr5IpM=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=JF2iU1V3DqGzkRpt9o4Cokduom/RAc+kvmV32qsh5Hm4PTHi9EYgdJokhTyf1LzgfW/JlXtN41apYddbKOpBXRvCBZ2xwTy+a+LyQI5D0HQJQmoxFOwa1ksZBJIwK9KP0o+jjL6spG2uE5BD7yfgJYoa0O8NUciNm7LCR5wPXv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QzXIMASK; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="b4WLKu1H"
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2d3e44b4613so4460406a91.3
-        for <linux-clk@vger.kernel.org>; Tue, 27 Aug 2024 16:12:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1724800364; x=1725405164; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Xt7PVUozcOkVti6ZjAPf01OtJ5FVQQk6eXc9L78hY64=;
-        b=b4WLKu1HL4wMzjaaRwyho/7F5KsIN6AGC6g6emq/1MC8CsYvSETeG3WQiPgvS3L9js
-         Bb+6gnK42DSo0bOGM1BYuX/M2wzJnt2HEwh/5SILzh4nWEBNzOuXC8tLIMUC0QealJM6
-         vJP1lc8tolWZV/YLccNFfOyMpmMSD+5N9JIXY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724800364; x=1725405164;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Xt7PVUozcOkVti6ZjAPf01OtJ5FVQQk6eXc9L78hY64=;
-        b=DaU6kp1tYCakoS484eov2RkFPwaGbk67e3I7cP9UlMvWvqCWzP5YeNPm1It8U2gE6C
-         fXXdwBrQA4WPwJsICZwrcGhtabzJ1Ho5h0cH9CB/QawJOQptQWQ+ZtjgS3+pClXiVerU
-         2e2FejDJmZ34dUs4qN1oOx40lC6100LA4fVHtxU2w86VtKW9i3j9wzR4Y9w6KDlOux8w
-         4keqm5ADZ+rsr9KyuVv8H4LhICtzwxkKv0jXdn/CypYiEHh3A+WqmuoDwplm+YTfaAsG
-         3L+XcRuL78CL+kgL6i8H4izBDx+I3G+QuxkMvj0jpZ2jtidTPBC5Aa4+uR3mLl7D6M6v
-         vREQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX0VVac3qFoNQJpTe5UBvl9vTxXoWhKWdNGUpor1BhGw1BjVzw0De9wvRa+md9Vz0LcbOztEvlVQ20=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxx2a9rbrWINfUiyeVvCL3RTlNn9J23uRjebfpfjw2x2Sgvzrmo
-	a7bqR5zigKC69ENXK4ipZLIupMd6bfbG/gKUUtxPD8OLlI9ehIfWJ1JFzcoC+g==
-X-Google-Smtp-Source: AGHT+IEAI3xuv6/Qc0Gz02PFmfkKy+Fs/Aoolbg8k5nMPrctpU+khEs9Ayty8BQqGwyTqGxBdT+KlQ==
-X-Received: by 2002:a17:90b:4f83:b0:2c9:80fd:a111 with SMTP id 98e67ed59e1d1-2d646bf2bd3mr14758133a91.18.1724800363982;
-        Tue, 27 Aug 2024 16:12:43 -0700 (PDT)
-Received: from localhost (210.73.125.34.bc.googleusercontent.com. [34.125.73.210])
-        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-2d83f695e06sm240164a91.1.2024.08.27.16.12.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 27 Aug 2024 16:12:43 -0700 (PDT)
-From: Stephen Boyd <swboyd@chromium.org>
-To: Konrad Dybcio <konradybcio@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	patches@lists.linux.dev,
-	linux-clk@vger.kernel.org,
-	Taniya Das <quic_tdas@quicinc.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Amit Pundir <amit.pundir@linaro.org>
-Subject: [PATCH v2 2/2] clk: qcom: gcc-sm8550: Don't use shared clk_ops for QUPs
-Date: Tue, 27 Aug 2024 16:12:35 -0700
-Message-ID: <20240827231237.1014813-3-swboyd@chromium.org>
-X-Mailer: git-send-email 2.46.0.295.g3b9ea8a38a-goog
-In-Reply-To: <20240827231237.1014813-1-swboyd@chromium.org>
-References: <20240827231237.1014813-1-swboyd@chromium.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QzXIMASK"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF597C4AF48;
+	Tue, 27 Aug 2024 23:40:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724802055;
+	bh=uqrM2V2XUJLc4pgu/Aww4+b2GdKnuDt3PVEz7Sr5IpM=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=QzXIMASKT66GFa9TA9/DogHT9n4Q14c3Ln/9BGRg7+NKCqUBKgYfY0HH38bzgOvB4
+	 etBHV3qp1B1wG0woKbGU8+dgboQCtVdt87nv1YrKxN7+/YpbEsteJ/xQ2U3ZlfwBlS
+	 O51ZidQ+codqrCbPFpYkgIMPRsLe7je+m2LQvlRKY39xl0XC5+UZ1zrbOqBAI+C8G8
+	 97R6jSsV5IwI6p9uGCCpz/XBLDdEDf5iOX0Q88R/59lImai+6WMV+Ju3bOgbjt0dAv
+	 QpJ8uc7sTiAz8ShgLL9dxc6iFtj5GvRScQoGB9U5LiFJaX4mhef+iZjNxjLy0FeHsp
+	 gtoxy/DukxxJA==
+Message-ID: <ced9ed863c4b648a65c80447a8482cb2.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <D3QXIGN92QZ7.S2LY531JZ1L9@protonmail.com>
+References: <20240826123602.1872-1-hpausten@protonmail.com> <20240826123602.1872-8-hpausten@protonmail.com> <2024082655-cubicle-flashily-6ab3@gregkh> <D3QXIGN92QZ7.S2LY531JZ1L9@protonmail.com>
+Subject: Re: [PATCH v3 7/9] uio: add Xilinx user clock monitor support
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Michal Simek <michal.simek@amd.com>, Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>, Dave Ertman <david.m.ertman@intel.com>, Ira Weiny <ira.weiny@intel.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Harry Austen <hpausten@protonmail.com>
+Date: Tue, 27 Aug 2024 16:40:52 -0700
+User-Agent: alot/0.10
 
-The QUPs aren't shared in a way that requires parking the RCG at an
-always on parent in case some other entity turns on the clk. The
-hardware is capable of setting a new frequency itself with the DFS mode,
-so parking is unnecessary. Furthermore, there aren't any GDSCs for these
-devices, so there isn't a possibility of the GDSC turning on the clks
-for housekeeping purposes.
+Quoting Harry Austen (2024-08-27 12:08:52)
+> On Mon Aug 26, 2024 at 2:11 PM BST, Greg Kroah-Hartman wrote:
+> > On Mon, Aug 26, 2024 at 12:38:36PM +0000, Harry Austen wrote:
+> > > Xilinx clocking wizard IP core supports monitoring of up to four
+> > > optional user clock inputs, with a corresponding interrupt for
+> > > notification in change of clock state (stop, underrun, overrun or
+> > > glitch). Give userspace access to this monitor logic through use of t=
+he
+> > > UIO framework.
+> > >
+> > > Implemented as an auxiliary_driver to avoid introducing UIO dependency
+> > > to the main clock driver.
+> > >
+> > > Signed-off-by: Harry Austen <hpausten@protonmail.com>
+> > > ---
+> > >  drivers/uio/Kconfig            |  8 ++++
+> > >  drivers/uio/Makefile           |  1 +
+> > >  drivers/uio/uio_xlnx_clk_mon.c | 71 ++++++++++++++++++++++++++++++++=
+++
+> > >  3 files changed, 80 insertions(+)
+> > >  create mode 100644 drivers/uio/uio_xlnx_clk_mon.c
+> > >
+> > > diff --git a/drivers/uio/Kconfig b/drivers/uio/Kconfig
+> > > index b060dcd7c6350..ca8a53de26a67 100644
+> > > --- a/drivers/uio/Kconfig
+> > > +++ b/drivers/uio/Kconfig
+> > > @@ -164,4 +164,12 @@ config UIO_DFL
+> > >         opae-sdk/tools/libopaeuio/
+> > >
+> > >       If you compile this as a module, it will be called uio_dfl.
+> > > +
+> > > +config UIO_XLNX_CLK_MON
+> > > +   tristate "Xilinx user clock monitor support"
+> > > +   depends on COMMON_CLK_XLNX_CLKWZRD
+> > > +   help
+> > > +     Userspace I/O interface to the user clock monitor logic within =
+the
+> > > +     Xilinx Clocking Wizard IP core.
+> >
+> > Why do you want a UIO api for a clock device?  What userspace code is
+> > going to access the hardware this way?  Why not use the normal
+> > kernel/user apis instead?
+>=20
+> I was just trying to provide userspace access to these _unexpected_ clock
+> status event indications (clock stopped, underrun, overrun or glitched) a=
+nd UIO
 
-This wasn't a problem to mark these clks shared until we started parking
-shared RCGs at clk registration time in commit 01a0a6cc8cfd ("clk: qcom:
-Park shared RCGs upon registration"). Parking at init is actually
-harmful to the UART when earlycon is used. If the device is pumping out
-data while the frequency changes you'll see garbage on the serial
-console until the driver can probe and actually set a proper frequency.
+Maybe unexpected events can be indicated through the EDAC subsystem,
+except that is usually about memory or cache errors, not device driver
+issues.
 
-Revert the QUP part of commit 929c75d57566 ("clk: qcom: gcc-sm8550: Mark
-RCGs shared where applicable") so that the QUPs don't get parked during
-clk registration and break UART operations.
+> seemed like an easy way to do it and leave interrupt enablement and monit=
+oring
+> up to userspace. I'm not aware of any existing clock event notification
+> framework. Are you suggesting that such a generic event notification mech=
+anism
+> should be added to the clk subsystem? e.g. additional clk_ops callbacks e=
+tc.?
+>=20
 
-Fixes: 01a0a6cc8cfd ("clk: qcom: Park shared RCGs upon registration")
-Fixes: 929c75d57566 ("clk: qcom: gcc-sm8550: Mark RCGs shared where applicable")
-Cc: Konrad Dybcio <konradybcio@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>
-Cc: Taniya Das <quic_tdas@quicinc.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>
-Reported-by: Amit Pundir <amit.pundir@linaro.org>
-Closes: https://lore.kernel.org/CAMi1Hd1KQBE4kKUdAn8E5FV+BiKzuv+8FoyWQrrTHPDoYTuhgA@mail.gmail.com
-Tested-by: Amit Pundir <amit.pundir@linaro.org>
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
----
- drivers/clk/qcom/gcc-sm8550.c | 52 +++++++++++++++++------------------
- 1 file changed, 26 insertions(+), 26 deletions(-)
-
-diff --git a/drivers/clk/qcom/gcc-sm8550.c b/drivers/clk/qcom/gcc-sm8550.c
-index 7944ddb4b47d..0244a05866b8 100644
---- a/drivers/clk/qcom/gcc-sm8550.c
-+++ b/drivers/clk/qcom/gcc-sm8550.c
-@@ -536,7 +536,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s0_clk_src = {
- 		.parent_data = gcc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_shared_ops,
-+		.ops = &clk_rcg2_ops,
- 	},
- };
- 
-@@ -551,7 +551,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s1_clk_src = {
- 		.parent_data = gcc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_shared_ops,
-+		.ops = &clk_rcg2_ops,
- 	},
- };
- 
-@@ -566,7 +566,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s2_clk_src = {
- 		.parent_data = gcc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_shared_ops,
-+		.ops = &clk_rcg2_ops,
- 	},
- };
- 
-@@ -581,7 +581,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s3_clk_src = {
- 		.parent_data = gcc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_shared_ops,
-+		.ops = &clk_rcg2_ops,
- 	},
- };
- 
-@@ -596,7 +596,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s4_clk_src = {
- 		.parent_data = gcc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_shared_ops,
-+		.ops = &clk_rcg2_ops,
- 	},
- };
- 
-@@ -611,7 +611,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s5_clk_src = {
- 		.parent_data = gcc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_shared_ops,
-+		.ops = &clk_rcg2_ops,
- 	},
- };
- 
-@@ -626,7 +626,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s6_clk_src = {
- 		.parent_data = gcc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_shared_ops,
-+		.ops = &clk_rcg2_ops,
- 	},
- };
- 
-@@ -641,7 +641,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s7_clk_src = {
- 		.parent_data = gcc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_shared_ops,
-+		.ops = &clk_rcg2_ops,
- 	},
- };
- 
-@@ -656,7 +656,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s8_clk_src = {
- 		.parent_data = gcc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_shared_ops,
-+		.ops = &clk_rcg2_ops,
- 	},
- };
- 
-@@ -671,7 +671,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s9_clk_src = {
- 		.parent_data = gcc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_shared_ops,
-+		.ops = &clk_rcg2_ops,
- 	},
- };
- 
-@@ -700,7 +700,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s0_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap1_s0_clk_src = {
-@@ -717,7 +717,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s1_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap1_s1_clk_src = {
-@@ -750,7 +750,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s2_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap1_s2_clk_src = {
-@@ -767,7 +767,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s3_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap1_s3_clk_src = {
-@@ -784,7 +784,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s4_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap1_s4_clk_src = {
-@@ -801,7 +801,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s5_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap1_s5_clk_src = {
-@@ -818,7 +818,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s6_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap1_s6_clk_src = {
-@@ -835,7 +835,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s7_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap1_s7_clk_src = {
-@@ -852,7 +852,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s0_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap2_s0_clk_src = {
-@@ -869,7 +869,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s1_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap2_s1_clk_src = {
-@@ -886,7 +886,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s2_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap2_s2_clk_src = {
-@@ -903,7 +903,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s3_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap2_s3_clk_src = {
-@@ -920,7 +920,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s4_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap2_s4_clk_src = {
-@@ -937,7 +937,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s5_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap2_s5_clk_src = {
-@@ -975,7 +975,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s6_clk_src_init = {
- 	.parent_data = gcc_parent_data_8,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_8),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap2_s6_clk_src = {
-@@ -992,7 +992,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s7_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap2_s7_clk_src = {
--- 
-https://chromeos.dev
-
+I've been thinking of adding devcoredump support to clk drivers when
+they hit an error condition. The idea is it would be a coredump for the
+device register state when the clk driver detects an error. Maybe you
+can use devcoredump for this?
