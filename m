@@ -1,86 +1,102 @@
-Received: from mout.web.de (mout.web.de [212.227.15.3])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B0742EAE6;
-	Tue, 27 Aug 2024 20:08:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.3
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B4551D4177
+	for <linux-clk@vger.kernel.org>; Tue, 27 Aug 2024 23:12:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724789316; cv=none; b=Jtl/7YOaCCO+k0AYk0r4SFaM/FzVcXvUXh+tatDX80X4q7fgYMnmA+O7UXPHfXYkHBpVBWQ8Kot4HaOCkl//iLIcYmzm318Ld6H+5PT0IyY2hmRSLGWgYfNbGi/uGHd+JGd6ety9IQOhsdtirtE1d0Fbek3Bj1i4zBvA+DRlOsc=
+	t=1724800364; cv=none; b=WDoWqUJP7jKQOP5P+XYrDo/1HFEy68AlYZ8347oXYwi500sM7oLOtfAKjr+vrzmxVo7HSGyIEcPSMqFoPkk/Lh6S2qmy7olu/fwxZmIyp5P4wXc3R5BbGKUMWZQtp768eHWUYLLreNwnCaXMJhQA5ZZmQh2FQbCJ2rxoL8qruZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724789316; c=relaxed/simple;
-	bh=RVrdDN9Tyh7WCtixWnieltPq0wOo2Fo5P+6+skiGUuY=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=M2wM/NwufxV5a46znmtkBLes3xWkuKfDCsFcz0bLB5BfkqoQrv2295/SvpinVJBDD4WZ5ZJMMESPZX21t1Zj4FOYGjC9v/y3GAXZ550xTilOhBiFRnp/NV29BSAvD6w1KVjQpW8GR4K9OAgdx/UWl7MEzGc/IlXXi82Zgx7YsHs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=FO43gIRl; arc=none smtp.client-ip=212.227.15.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+	s=arc-20240116; t=1724800364; c=relaxed/simple;
+	bh=GD0A4TPEYjATzBkKcTtoqywA1zBBEQMw9GL0OoeNNZE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=GgJUu0eqpIjKaC15QNP05YVfyBfjW0JWHqnPBaMWbOO+Z4QrCBSFqyiBI0A1RoSHyvOSsFjPPXozCLScA417qNAiZVGHoYX3BBfsFk4uawJYn6fgSPbSeWzlp5hYdb7IVKo1rVCUcf+hg5V+CZ28vAo+t3kvslJ5lTPJlDmyMHk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=dktET4mf; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="FO43gIRl"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1724789290; x=1725394090; i=markus.elfring@web.de;
-	bh=m2bnqP0azyyJIJfrx8N/GoNEEILIi2RttBG+GZKNrvA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=FO43gIRlPK3viR+8FvRc2gxKidFfV9fj2huiFmdyu8SrMIxuVozNOa6OS+P21uDR
-	 HFuzqPp9msOqau+xGPBXOzKEYAFLE/Qu+qyj5N4AnApmAB7TVmo85QpP4PTX0+9A0
-	 1NNPPogz86sq6tuG7tfWbbSIorlh3J7rndzQC5vIGGNWRLCVLs6wtqMQ7vOxxH86o
-	 llzn7fxpV7oOCIf79mfHtBgFDPN9GadpgaIiTZvkkxw52MPsjzHG5iU5fV+3CJDdc
-	 hwrJO796ChzwaLhIV65I3Khg9iEDOYNtE7nRPtDyLAwW5ZYgwcW3nxD7Hb2bP2vZ0
-	 vzM7DNuQOXd6hblaGw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.90.95]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1MUCz1-1sZzwX2lVr-00ITpR; Tue, 27
- Aug 2024 22:08:10 +0200
-Message-ID: <abd2fd90-7ff3-48df-ad6d-64796000059f@web.de>
-Date: Tue, 27 Aug 2024 22:08:09 +0200
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dktET4mf"
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-7141e20e31cso5084698b3a.3
+        for <linux-clk@vger.kernel.org>; Tue, 27 Aug 2024 16:12:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1724800361; x=1725405161; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Pv/ufdYKY+CmjhMEr75QBezIaND5j1qCC0DSQMSozsk=;
+        b=dktET4mfslvA1SJW4v2i9VkKPcQlLYahTgW+U3AWuHMNGvDXOJGlwPXS4ew418R0SV
+         mkuNzi8zTWnevq+ZJ0XXpRIT58WtyzOIByoOLnqgHTOW0ucYGOAfS/5X4zhFSEbLFNi8
+         pf50/b0YOdWHPl62OAKMhTx6TwuO60cg2msVw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724800361; x=1725405161;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Pv/ufdYKY+CmjhMEr75QBezIaND5j1qCC0DSQMSozsk=;
+        b=ix/pywBhj5Yu8Zp08s2Sy/UbbOVPKds4ffoEkOcYck43TefxIQp/7RB8Y/21WYkNsb
+         Fxoy4xaxz0DwSYOTYnKY/qxYc9rLPry8UXwkrveHLueHz2zQTjkI//cVL6Iogbr4qNsf
+         iaw+Fx/MUY3ulTprrAZebYY/p3xbq+Gbd410DD9zBBsFxznqrCQN41cYxDx4Hia4OQZA
+         HtVKOnrPxKqGQdbCDgIuHS4cEu7Uy7F+cxNycRElv5esa4yWvZKZdZ5wl0j5EWsGb7/7
+         4XrX5vXW3JI4gjg8EF/Zgppw+dXqwVko0nY+Wak6AIl8quWlw18pciq3PWGzuxqqqdPl
+         JIHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW03lG5tYjro9A51yGFvPgXvH/XE6feqtoKuRvC87WrMu1TbBYNUdB7XLMpUzBSPLIvPfTRLEy2Zp0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzV/akfWs6YQwjjD+pYtjqX01+eWLxCSfXvkhePx2P1A4uCmF/k
+	rRbvYAhpj4QVf4URFC00F9iCm/bQeRWgevNXTN/veLxDbKlVarxlG7veGXuNoA==
+X-Google-Smtp-Source: AGHT+IH+n08Sk8Vd2lCCcbwAL0bOTX/nA5NdiPgGvH28H6kVXqenmkkshHPtYDCVpMQVH6rWErsfbg==
+X-Received: by 2002:a05:6a20:6f01:b0:1c4:231e:8ee5 with SMTP id adf61e73a8af0-1ccd2899c54mr110535637.29.1724800360717;
+        Tue, 27 Aug 2024 16:12:40 -0700 (PDT)
+Received: from localhost (210.73.125.34.bc.googleusercontent.com. [34.125.73.210])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-7143424a525sm9016824b3a.49.2024.08.27.16.12.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 27 Aug 2024 16:12:40 -0700 (PDT)
+From: Stephen Boyd <swboyd@chromium.org>
+To: Konrad Dybcio <konradybcio@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org,
+	patches@lists.linux.dev,
+	linux-clk@vger.kernel.org,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Amit Pundir <amit.pundir@linaro.org>
+Subject: [PATCH v2 0/2] clk: qcom: gcc-sm8550: Fix shared clk parking breakage
+Date: Tue, 27 Aug 2024 16:12:33 -0700
+Message-ID: <20240827231237.1014813-1-swboyd@chromium.org>
+X-Mailer: git-send-email 2.46.0.295.g3b9ea8a38a-goog
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, opensource.kernel@vivo.com,
- Bjorn Andersson <andersson@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Yan Zhen <yanzhen@vivo.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <9ce5d7b09b5358c9190d8a999d79de23.sboyd@kernel.org>
-Subject: Re: [PATCH v3] clk: qcom: Fix error checking for
- devm_clk_hw_get_clk()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <9ce5d7b09b5358c9190d8a999d79de23.sboyd@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:8CDQWoGneOrPi3wjoxxsmEAuim5JjvaBBWaVQPM3uSU/olYBLAQ
- FgbUkF1nYaQ1t9z8GN99vli1fdt8ov54tKml6Khdd1T4BADIA5oaB4bHNUUS1T2mHAy2X4x
- XcP2kq5T52vwdks+SFGcZUKslaKCqMEpOF8jcZNJW3iKuUpJgs8BuZj6XgS8flPazjeE3NS
- pYlhqjLsQ263LNF6sEFyw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:jfeVxQjqUVQ=;OiCjB/Nyl5VxCTn38djVbFJJsgT
- 4Bz8lpg8axuLGbC574zd2BUVeKNeSkypi5fsN8ql3gTmWg25N8l4P2WvuihVzAP06JFvYbAtJ
- U14gEpVWhZhUop9YqL4kTJo/a/Q3IQPgWxV7mwkTEZdFq2mHJInaBVS3Ji9jwQnqMpYhgDuMh
- D6lm47QDe03D95wUUoFQKd4wsGrjAXbsRz65Qv5wPgY6wP6/FJpaDam7T27LDLy1eN8xtt//W
- vlieOLtZyA1EYu6QU2tpenqFqly+Ak/xoIgPCLZjJIr1hJxa8I9AIp/OhYrT7bhIqK3vxKE5s
- k4XCbA1YrT7/7KgIzVTkZLPmkbkxEzy8Hg2oeX5vAUdBluhHcUMSyXDRayF7y2p5xLafWM3Jd
- yUSkCK2Mu+HRPjD0PSQc9l5ZfBdwhkM8b/lcjHitCoC+5q7Lx0io70c6KCp0AuVpiyK2LV4Zs
- pXkjixmHNAl6O380VnEtJx4AkiAhey9uvL/N82bDweFftH3glHFWY9GtglsFDIISyp/AFyqbA
- +K6fGavQ1KdFd+nKuK8moTTx++IxXaQD4/Tt1xnqhecg3vYk5VVZlFsc6wL/siEMlRocNXtqR
- JT+XY59lHyELuaSgNQdTd6yRwjZCnBy4KhOik6LYeRYg+AuTnqddCtk6Vjz/LqRpBDMlPEjG4
- eyc3C/yl6Yj5+U8ed9VGEtWpVlBDz+FXSn8l4RRUKRgPOQJSsaWuVPDwxhY7F8b1uemg2b2Nu
- 1Uz3nma80Cwwl/gTsffWkv+rDRutYtxpSgX3WzYDkwurQO0wnwjMPTywJBTLq08zBpca20Eag
- K044vcUM69YLBU5gJYCB3DEQ==
+Content-Transfer-Encoding: 8bit
 
-> > The devm_clk_hw_get_clk() function returns error pointers.
-> > It never returns NULL.  Update the check accordingly.
->
-> It can return NULL if the 'hw' pointer passed in is NULL.
+Amit Pundir reported[1] that a recent commit 01a0a6cc8cfd ("clk: qcom:
+Park shared RCGs upon registration") broke USB and audio on sm8550-hdk.
+These two patches fix the issue by skipping the parking bit of the
+shared RCGs for all clks except for the ones that were causing trouble,
+i.e. the display RCGs on sc7180.
 
-How does this view fit to a published function implementation?
-https://elixir.bootlin.com/linux/v6.11-rc5/source/drivers/clk/clk.c#L4703
+The first patch is all that's required, while the second patch can be
+applied anytime to simplify the QUP clks that don't need to be parked.
 
-Regards,
-Markus
+Changes from v1: https://lore.kernel.org/r/20240819233628.2074654-1-swboyd@chromium.org
+ * Revert most of the bad patch, except for the sc7180 display clks that still
+   want to park at init
+ * Re-order series
+
+[1] https://lore.kernel.org/CAMi1Hd1KQBE4kKUdAn8E5FV+BiKzuv+8FoyWQrrTHPDoYTuhgA@mail.gmail.com/
+
+Stephen Boyd (2):
+  clk: qcom: dispcc-sc7180: Only park display clks at init
+  clk: qcom: gcc-sm8550: Don't use shared clk_ops for QUPs
+
+ drivers/clk/qcom/clk-rcg.h       |  1 +
+ drivers/clk/qcom/clk-rcg2.c      | 36 ++++++++++++++++++++--
+ drivers/clk/qcom/dispcc-sc7180.c |  8 ++---
+ drivers/clk/qcom/gcc-sm8550.c    | 52 ++++++++++++++++----------------
+ 4 files changed, 64 insertions(+), 33 deletions(-)
+
+
+base-commit: 8400291e289ee6b2bf9779ff1c83a291501f017b
+-- 
+https://chromeos.dev
+
