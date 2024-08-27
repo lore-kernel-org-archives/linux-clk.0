@@ -1,125 +1,112 @@
-Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEEAF1BDA91;
-	Tue, 27 Aug 2024 13:06:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D3991BD026
+	for <linux-clk@vger.kernel.org>; Tue, 27 Aug 2024 13:13:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724763967; cv=none; b=TGSjzQRONO9bSQ08coovo1rechoBnlh4uqMnDDQa0O54c9ocxDQ5L55FTbJFpX/WjCBWWRgh01durBuSebjLmMP1AftFbTWttUQ3lY977GbMq5hiCvBenV4nE9FFth6Fv2aM+BDKH3gBdjpSp0JODX6NffM2EWNg6Gz+dpaSRFA=
+	t=1724764420; cv=none; b=lUg/1MgWYj4UovM+IlSxdkbhcwFHQs6wcfuT1RC+oTIHYHNtswybvZBt5lXnIFTdm444cokdWPj5Q67KBzToW3j8YnMJLxzJERIgOp02FpvLvTjVw2yUHNNMj83XV9OjlZwqsed2eQuE8jJe4mI8lAoG/a+R67thqzhtRnDF7Xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724763967; c=relaxed/simple;
-	bh=xggNVPk/5EQl9/TFKZGcuTwMgHxKYBXOTozMTu32GHY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z79bNlgPGJL9GS92igMWk3iW0Fs26dNO/k4Cf5uuG6NmvOtbb+EnkUALcwEg4Ade8KTBcqVhSUV56aEEpMNzilmJhkfqVjPQe6UPTXgIu5e7/W/rExDXjnDVEyy4wLCLhlhDwV6ydOnqa5nT88FEx1y1SxyJG/LdU/O049b3wV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YncLkuMx; arc=none smtp.client-ip=209.85.160.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1724764420; c=relaxed/simple;
+	bh=AsE2cQXjHRE2DxI/XQtaPRzwG7nRcAMfnjdoARd5SkQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HQOqqTePGWCPvX5RxygQHgNyqt7Pt6NVC+HNXCGVvZ9Z4O6Ilf04dfJVPqBG02puGgvlf2mbsu/Lw8Jj7NbmBfUdFZ/Sw/GlD9TW8qz/b8Rk7SC9CFiZZhcMoACQvUDlI+6U1BfZZ8Wo46LcfIo6b6Dt9w8BO440voStwePnCcM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NhcDaTK9; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YncLkuMx"
-Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-454b3d89a18so29983981cf.2;
-        Tue, 27 Aug 2024 06:06:05 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NhcDaTK9"
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-37198a6da58so3848128f8f.0
+        for <linux-clk@vger.kernel.org>; Tue, 27 Aug 2024 06:13:36 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724763965; x=1725368765; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ChKGvVEm12EBDIPmTGyjqqgoLWW0v9Em7fItsGhb3mI=;
-        b=YncLkuMxZNO3EduCNOhd73411qOfW8mT7ehrGtjLMwWGeypeqwxwGagAh858FM6mw9
-         UgjmMmiNgft9gwbr4xxv9mS1y3y5To5TqGNMggkcxgwGV+IuyKjRVZ5hv+biFi0yGUiS
-         CyTUNhHD50JgL4ZJfvyjqE/PBhNlQggLCY9Jr/ZqGV38nig1XlGwehz6sydqmwF9FlXP
-         ncP9Ttfcqficxqjy4HlCegLRqNIcdsK/I6eXWUOZewM9ltx/bAme+HdqX9wTovsYn2Ly
-         5zzFddJ/IPaJLsz6k8Oz/r0QSwpTrD/d1kaxzMtG4EZf/XzfBtQMh78tAYwtzkXH2Ndb
-         eFnw==
+        d=linaro.org; s=google; t=1724764415; x=1725369215; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xeuE13/7vbNdFThwAEiu12EGxIgMIw579eVWJrBDrS8=;
+        b=NhcDaTK9kqeCeWTX4L2H5uE32TyGWfuUl4YHLxUgJDCET/ryPigAPXMzIgiih5781b
+         d4DepFnGppbsVoOuVugz1AA+XRPexwPX2hxSFViu3dalS/PbUcBJeeoDvhZSxq/uty+e
+         CXjLrENvTPFLpquR6W4KcKyvrD9P4/lemb6mgylb1RSEX9CZQSFcvNWu9GJo/Avh+TJg
+         zrXOpRSxTNN2x2NSoOr1sSJocVkLHN31gPEqWjBOEvhxV5U3jraWT9FycTzFbIytIhpS
+         AJNapEQlJLGz+Cn2nAhSp6X6WJ21wgcM4MaFaNMM1rZTrUpFP8u4csAiq5QbB0xoVm8s
+         QMOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724763965; x=1725368765;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ChKGvVEm12EBDIPmTGyjqqgoLWW0v9Em7fItsGhb3mI=;
-        b=E4jGZ5XVhFotz5LkpSbGDYukrDnX3RF4aVB5p+gaa0r8FzQ8toDxtG8t7+RktoC4Ym
-         MNRdMJ+q5BG1jfFbp9WnekOAeSQkNjll+EdUJ1zLKocgF7S8r3yBEcIEQDAQ0TB2hv+x
-         qcgquZlffpGZF+eSFxICgb0kjboTY4qgEyu6lk/s00EKq5tnoBtQZMxaplOkwhE5kpX7
-         +38LtgWPqMolq442zdy/RRxFZixUyocyXyhNnEdPmRJrCI38ZDQqIJ8QVfmj+Z10QF8E
-         bJgsDZGKIVu74UH7WQr2Gbg18+/YiqREx3KFEygW7rTFy9n6wdP9pXkghtMlvSmCydIg
-         gJQA==
-X-Forwarded-Encrypted: i=1; AJvYcCV1bkcxts7RdUJHXwO0AefJtewpQZ0lZ7xfJ00k8A0oFTH3z+5Y5SnLwFBiT9mN5aShpFcwK/rbUVD5pn+K4eQgf9o=@vger.kernel.org, AJvYcCWdbr10A6MF9dGmSVtzp18MZ2fvX6QpwtQWdiFTIKP9Wuxp8UChPsHgYgyyFPosBJeXFPa7rA1qpBPdNuZ4@vger.kernel.org, AJvYcCX37NUw7I44IJVtt62WO5ZSI1loGXePQNQR0bVSzafRNzKseeqxZhK04tZiGDo8sFNBV9MTvrjxuHM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNcu9HaeOkWRCqocxwrzMqYtgZDVU02ovru+oElXWCu6J7xYQi
-	8GlEqDFc+1cM62U7nshoikFEoL1CoBKHF7N1yiD3c+Uf0IUh3SP9MvXSEtUHBEK/iZzErBz5znZ
-	h82HjlWb78iaaGZOcadzYBql+naw=
-X-Google-Smtp-Source: AGHT+IFUtiFklzSQip3X9Y1CtXfvOcvLYFAK4BNbLVp0Z2SsgbyjL5DRa6PGhvsubIvSkQEvb/f8eDSB/VkYIFaDtaU=
-X-Received: by 2002:a05:622a:598e:b0:441:1617:9841 with SMTP id
- d75a77b69052e-455096f4bbamr149984311cf.33.1724763964729; Tue, 27 Aug 2024
- 06:06:04 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724764415; x=1725369215;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xeuE13/7vbNdFThwAEiu12EGxIgMIw579eVWJrBDrS8=;
+        b=NMJbQIWGmPyka6DikrQJU6XKhOQiNFBPdi+PEnFwULDFngbSGb55ujDynIh+EFO5cn
+         8GHHQZFEv6b17BMXaMKZRq2wbinuI0Dbcuii/O4rfZ+/+mlEI+LTYBtrz0C8g1qtwcIu
+         Gb0N3/n4M4Qv6lVYC8c1bJEQX7lFboN0CNXTJvJ6CRvYPbVulegZpXkrurZBANQYAcTs
+         2nXIISPardmbf5GJmdBiP94sGQLhjBYNLqONV7sZUhe8yk/s2mAVHO4sL/xO/WLwNRxH
+         LH+Z6VrwswJzPcTtO7gfHW6xI5eqhkHCJ9jg5o/zy9mxG/rU/KwoCJUw3+jbEoUID6pn
+         07yQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX2ECgLt8cVG4elU+rp6LJiYZD/uWtySqfxPM6ksldo76KzCDwTxfERINIcVScLfzBMnumHFrLRSRs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwY6nOX26Dm55KmYIagS7VxsT3LFH4vAkbP1RpolsQA1QychUZR
+	JvbuuVlKUMPonDb3VVqXxgcZJ4f2JUgovKzOgIrGmGmyI9FPigXZ7wHwYKwm644=
+X-Google-Smtp-Source: AGHT+IHdsyhSLBjiurVvaE79aFCz+ddRrXoXvKxH/wwYSLEfj/5MHZEUqYeob8Osk05sYIoi0UFnqA==
+X-Received: by 2002:a5d:67cc:0:b0:371:8283:94c1 with SMTP id ffacd0b85a97d-373117be78bmr10635617f8f.0.1724764415477;
+        Tue, 27 Aug 2024 06:13:35 -0700 (PDT)
+Received: from [192.168.0.25] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e549df50sm109365166b.53.2024.08.27.06.13.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 27 Aug 2024 06:13:34 -0700 (PDT)
+Message-ID: <9a1ca52b-6eae-4897-891e-6fad3d981c6e@linaro.org>
+Date: Tue, 27 Aug 2024 14:13:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240822111631.544886-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20240822111631.544886-3-prabhakar.mahadev-lad.rj@bp.renesas.com> <CAMuHMdWcHn2ae6qennqtPq2eLtKLkeKUNoSoAXbOTh=gDgJ9tg@mail.gmail.com>
-In-Reply-To: <CAMuHMdWcHn2ae6qennqtPq2eLtKLkeKUNoSoAXbOTh=gDgJ9tg@mail.gmail.com>
-From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Date: Tue, 27 Aug 2024 14:05:38 +0100
-Message-ID: <CA+V-a8siwvOxB-RF1BtQ9kj2=aJAVP+-Nx9YkSNj+o67zTc=JA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] clk: renesas: r9a09g057-cpg: Add clock and reset
- entries for GTM/RIIC/SDHI/WDT
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: qcom: gcc-x1e80100: Don't use parking clk_ops for
+ QUPs
+To: Konrad Dybcio <konradybcio@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rajendra Nayak <quic_rjendra@quicinc.com>,
+ Sibi Sankar <quic_sibis@quicinc.com>, Abel Vesa <abel.vesa@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Neil Armstrong <neil.armstrong@linaro.org>
+References: <20240823-x1e80100-clk-fix-v1-1-0b1b4f5a96e8@linaro.org>
+ <df107382-5c9b-4568-b9e3-5a893070fad7@kernel.org>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <df107382-5c9b-4568-b9e3-5a893070fad7@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi Geert,
+On 26/08/2024 14:44, Konrad Dybcio wrote:
+> On 23.08.2024 2:58 PM, Bryan O'Donoghue wrote:
+>> Per Stephen Boyd's explanation in the link below, QUP RCG clocks do not
+>> need to be parked when switching frequency. A side-effect in parking to a
+>> lower frequency can be a momentary invalid clock driven on an in-use serial
+>> peripheral.
+>>
+>> This can cause "junk" to spewed out of a UART as a low-impact example. On
+>> the x1e80100-crd this serial port junk can be observed on linux-next.
+>>
+>> Apply a similar fix to the x1e80100 Global Clock controller to remediate.
+>>
+>> Link: https://lore.kernel.org/all/20240819233628.2074654-3-swboyd@chromium.org/
+>> Fixes: 161b7c401f4b ("clk: qcom: Add Global Clock controller (GCC) driver for X1E80100")
+>> Fixes: 929c75d57566 ("clk: qcom: gcc-sm8550: Mark RCGs shared where applicable")
+>> Suggested-by: Neil Armstrong <neil.armstrong@linaro.org>
+>> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+>> ---
+>> I ran into some junk on the x1e80100 serial port and asked around to see if
+>> someone had already found and fixed.
+>>
+>> Neil pointed me at Stephen's fix for sm8550 which I found is also required
+>> to fix the same thing x1e80100.
+>> ---
+> 
+> Reviewed-by: Konrad Dybcio <konradybcio@kernel.org>
+> 
+> Mind also fixing up 8650 that seems to have this issue?
+> 
+> Konrad
 
-Thank you for the review.
-
-On Mon, Aug 26, 2024 at 2:37=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
->
-> Hi Prabhakar,
->
-> On Thu, Aug 22, 2024 at 1:16=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail=
-.com> wrote:
-> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> >
-> > Add clock and reset entries for GTM, RIIC, SDHI and WDT IP blocks.
-> >
-> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > ---
-> > v1->v2
-> > - Updated DDIV_PACK macro to accommodate width
->
-> Thanks for the update!
->
-> > --- a/drivers/clk/renesas/rzv2h-cpg.h
-> > +++ b/drivers/clk/renesas/rzv2h-cpg.h
-> > @@ -8,6 +8,13 @@
-> >  #ifndef __RENESAS_RZV2H_CPG_H__
-> >  #define __RENESAS_RZV2H_CPG_H__
-> >
-> > +#define CPG_CDDIV0             (0x400)
-> > +
-> > +#define DDIV_PACK(offset, bitpos, mon, size) \
-> > +               (((mon) << 19) | ((offset) << 8) | ((bitpos) << 4) | (s=
-ize))
->
-> I think the DDIV_PACK() macro (using C bitfields?) belongs in the
-> previous patch.
->
-Agreed, I'll move the updated macro (below) to patch 1/2
-
-#define DDIV_PACK(_offset, _shift, _width, _monbit) \
-    ((struct ddiv){ \
-        .offset =3D _offset, \
-        .shift =3D _shift, \
-        .width =3D _width, \
-        .monbit =3D _monbit \
-    })
-
-
-Cheers,
-Prabhakar
+np
