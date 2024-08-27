@@ -1,178 +1,97 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61336190486;
-	Mon, 26 Aug 2024 21:29:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8282DC2C6;
+	Tue, 27 Aug 2024 01:42:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724707768; cv=none; b=tWhxci6HMjmSM4far1JRyw92hsemsJSBy0Wl2PArSPQmYJjTSfEwNQDrTmynTdTiE9aW9Gp7WpSfOoCQo0D1hSdNbJUb0bwRf8OiYpN2zUm4z8fAcUckDkl/US73uO8lM97jeRvZMk9rCAHsDEdyUsXkQefWcH63ir2P6wRWf1Q=
+	t=1724722931; cv=none; b=AgSGjfQDUEKuo+1b/UqIBLMMJ1qaF6faYSXQBfCo9qGK3lVAR+d05iwcVSd1HWjkFhOjYgedekRWdII16ZT1mbO8oHFNVvJ5YNohzEWJ4GolhblVI6O/HeDt9RaDYsL/9rw80Lab0yL/HyaZWtxNYT1xtn/kEiyJX6Hk9sekkfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724707768; c=relaxed/simple;
-	bh=sMwLBnAHnDHFUDsE4hXSjXonZ7neyud02000hEpZHok=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=BaR/vfbROoMsg6YOsiCaHVMvezC0l2TRjK+M1clDCRNPMSV9HawW1CbvslfOXvwkz6zHm31DG5YNE/8xo6RFoVEo5PPjQRSUxKQdk22/MpxfXldxYZXfIzVClVO4f/IQnnnqwHr5I0BV/h3Tp3YGlFemY+7uVOCQPIkiDvMh8lo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a1tKe8/D; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1724722931; c=relaxed/simple;
+	bh=5yCtVb+V90ga90qd/RI0+W60qP03p0k3ZcfCKx6c1FQ=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SatY3YO1RzhggaZwrSW3C4A1hrtE92TvDmXTC0Fw08ApK5OJCP+UKUn1WZEAF4k93T0sIbCHvn2XEsldg3w2OSB5IWbihOs4FN6x+A5v7UmGuLV0CofQdMIYnEhwczljXoXtUYOirh55eqRmlZzMP4z7dVwItg5G8KjvW9bvDlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YsbtnWRj; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a1tKe8/D"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAF65C4AF49;
-	Mon, 26 Aug 2024 21:29:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724707768;
-	bh=sMwLBnAHnDHFUDsE4hXSjXonZ7neyud02000hEpZHok=;
-	h=References:In-Reply-To:From:Date:Subject:To:From;
-	b=a1tKe8/DxaBMfpLEoDhX8ydmNs555hd/IiUFN8RLbC8UWtnXfNvRRYFPNHMZ+ADPH
-	 xaaSzxvoihOy0Op4wGICHYtjypYxKUOzMmAsS5qU+JewYiNEFi+h2e9sBQL1kJI6rW
-	 K3fTX4AFTxe0KnwDeyA1mTIP10gDICfeLMM2vXmIGwh+i0w5t1w0qHqClYpPNzyOuP
-	 mqhvxHe7biStMsQ2aIQlJijth2LEEzPlAcbYsFPfrCkUmpzbCTkXPwmSxdRGRZW6R2
-	 ymKsP7CSSyA9AmpRJC0XgZimcsc0+JIImAQK29+6Mp6LDG9UvpEhgjZVIrHeLfz6Hc
-	 H6w/rRD9sbYLg==
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-533488ffb03so5877513e87.3;
-        Mon, 26 Aug 2024 14:29:27 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU5OmGdWabKWVuDWuauol5Ku9duY+dtx3vhovM+OPYuBWqSrYjZgzoIuMhNUrSWaEbBoJjDk2z0@vger.kernel.org, AJvYcCUTDLbwm0DaLXt3MXQeNEdIXvAQ+Wc5Rnsaya7CNWX0S17wUss7a5GVTBFaXSGqInqdRNYulpky+TUV@vger.kernel.org, AJvYcCV800IMRf+9dEkTqHAlVp9qiIY85sAjskmMlfXvYq9GNGGNsmhDG0R4h7gE4KFZmu4wx61RDg82QGcS@vger.kernel.org, AJvYcCVnt+2gxGZcUvL+COi4TqbxG5FhnNYYRaJRJGD/8OJLPNpm3iknZdKbiwk8YfUle+UPvpqp4xJWg+FonA==@vger.kernel.org, AJvYcCVoQIav99ZqsMrvKKI1fzl7MpYoDvy4ZHxtSXwvHboxJDugUWfSCg53G/A1uAd9/qoe4ipSk4TnHVXVToZd@vger.kernel.org, AJvYcCVx8pi1kaXbcTqb5+jrBPuxIEhQSGOSUfGqUls9ikl1cdgBnG+SIKaPIqaZqFuO1YaUMXgemh6Yu4rb@vger.kernel.org, AJvYcCXSy3hy2qG2SepqPAJb2+7Xm1xQJxrFwmdB4SqUfw8UyOEHZWvrroGCBP4mxT8qw+1MA906IUmPUmFO0w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIGexJLUNp1rvAaYLvsd9feTEc9tUzMISghJ6IOUiSYk9UqPxZ
-	UNm2cTr1L/TpotAXvUp7z3p71T89qGwKNR2nP1NhxM7QiDhX7VFpr4lF73oPX5rtb6n4dLzNpqI
-	0fN8Kxt9D0G1gJ6Uqi+MTrOlMww==
-X-Google-Smtp-Source: AGHT+IGNnJi7/hLtGpaYAre1V5DA1twozkqnstJ7ZOwhKpz0uEZ+/dJohODRseefr7XL8AgQAB7tEIruxKs/grv3GSM=
-X-Received: by 2002:a05:6512:124d:b0:530:ae4f:337a with SMTP id
- 2adb3069b0e04-5343882e123mr7836615e87.3.1724707766156; Mon, 26 Aug 2024
- 14:29:26 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YsbtnWRj"
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47QJH5PP012285;
+	Tue, 27 Aug 2024 01:42:05 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=TCUSX7agBNvgz49pHZiPd91J
+	woz/djPSQyzQjMkP8Ok=; b=YsbtnWRjTkxSY2ByLINhyED2WCSF++X5J5vK2NZu
+	SWP1V0lkvSgR7lHpkfZTpMbegyMQkOzVVpx6+gwl3T3TwnMhQ656qGkYV4c6j2Qv
+	rXANWIpuAU/NpBi+cpS9FdVwoCbNXQKXTQwcR+WmoKpvCv6wmzHXdgIhv7NL20kO
+	20vnORCLZCwG/mnlk82O1EoYbInJ1qHo/wgsa1GHqX9EBWobDWXLR5LtEV0BPJ4p
+	u3qnMct54WgOqMhfaZL8D7tFdHFXYdreprN8vC3HnZ/HkQv1ver+EUzzKWpwpYry
+	glEVL6TGMqK6iFrLDZuRpuFGW2909aOFXNWNtCH1ROHWKg==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 417993nabt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 27 Aug 2024 01:42:04 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47R1g4Th005397
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 27 Aug 2024 01:42:04 GMT
+Received: from hu-mdtipton-lv.qualcomm.com (10.49.16.6) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 26 Aug 2024 18:42:03 -0700
+Date: Mon, 26 Aug 2024 18:42:02 -0700
+From: Mike Tipton <quic_mdtipton@quicinc.com>
+To: Georgi Djakov <quic_c_gdjako@quicinc.com>
+CC: <andersson@kernel.org>, <quic_viveka@quicinc.com>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] clk: qcom: gdsc: Add a flag to skip setting power
+ collapse bits
+Message-ID: <20240827014202.GA6354@hu-mdtipton-lv.qualcomm.com>
+References: <20240813120015.3242787-1-quic_c_gdjako@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1724159867.git.andrea.porta@suse.com> <5ca13a5b01c6c737f07416be53eb05b32811da21.1724159867.git.andrea.porta@suse.com>
- <20240821001618.GA2309328-robh@kernel.org> <ZsWi86I1KG91fteb@apocalypse>
-In-Reply-To: <ZsWi86I1KG91fteb@apocalypse>
-From: Rob Herring <robh@kernel.org>
-Date: Mon, 26 Aug 2024 16:29:12 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqKN0ZNMtq+_dhurwLR+FL2MBOmWujp7uy+5HzXxUb_qDQ@mail.gmail.com>
-Message-ID: <CAL_JsqKN0ZNMtq+_dhurwLR+FL2MBOmWujp7uy+5HzXxUb_qDQ@mail.gmail.com>
-Subject: Re: [PATCH 04/11] of: address: Preserve the flags portion on 1:1
- dma-ranges mapping
-To: Rob Herring <robh@kernel.org>, Andrea della Porta <andrea.porta@suse.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
-	Linus Walleij <linus.walleij@linaro.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, Derek Kiernan <derek.kiernan@amd.com>, 
-	Dragan Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nicolas Ferre <nicolas.ferre@microchip.com>, 
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Saravana Kannan <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org, linux-pci@vger.kernel.org, 
-	linux-arch@vger.kernel.org, Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>, 
-	Stefan Wahren <wahrenst@gmx.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20240813120015.3242787-1-quic_c_gdjako@quicinc.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: tLmPm-H1tvt8nHBAGwkktn3lBgVGqqZ-
+X-Proofpoint-ORIG-GUID: tLmPm-H1tvt8nHBAGwkktn3lBgVGqqZ-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-26_18,2024-08-26_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ priorityscore=1501 bulkscore=0 adultscore=0 mlxscore=0 clxscore=1011
+ phishscore=0 mlxlogscore=731 spamscore=0 impostorscore=0
+ lowpriorityscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2407110000 definitions=main-2408270010
 
-On Wed, Aug 21, 2024 at 3:19=E2=80=AFAM Andrea della Porta
-<andrea.porta@suse.com> wrote:
->
-> Hi Rob,
->
-> On 19:16 Tue 20 Aug     , Rob Herring wrote:
-> > On Tue, Aug 20, 2024 at 04:36:06PM +0200, Andrea della Porta wrote:
-> > > A missing or empty dma-ranges in a DT node implies a 1:1 mapping for =
-dma
-> > > translations. In this specific case, rhe current behaviour is to zero=
- out
-> >
-> > typo
->
-> Fixed, thanks!
->
-> >
-> > > the entire specifier so that the translation could be carried on as a=
-n
-> > > offset from zero.  This includes address specifier that has flags (e.=
-g.
-> > > PCI ranges).
-> > > Once the flags portion has been zeroed, the translation chain is brok=
-en
-> > > since the mapping functions will check the upcoming address specifier
-> >
-> > What does "upcoming address" mean?
->
-> Sorry for the confusion, this means "address specifier (with valid flags)=
- fed
-> to the translating functions and for which we are looking for a translati=
-on".
-> While this address has some valid flags set, it will fail the translation=
- step
-> since the ranges it is matched against have flags zeroed out by the 1:1 m=
-apping
-> condition.
->
-> >
-> > > against mismatching flags, always failing the 1:1 mapping and its ent=
-ire
-> > > purpose of always succeeding.
-> > > Set to zero only the address portion while passing the flags through.
-> >
-> > Can you point me to what the failing DT looks like. I'm puzzled how
-> > things would have worked for anyone.
-> >
->
-> The following is a simplified and lightly edited) version of the resultin=
-g DT
-> from RPi5:
->
->  pci@0,0 {
->         #address-cells =3D <0x03>;
->         #size-cells =3D <0x02>;
->         ......
->         device_type =3D "pci";
->         compatible =3D "pci14e4,2712\0pciclass,060400\0pciclass,0604";
->         ranges =3D <0x82000000 0x00 0x00   0x82000000 0x00 0x00   0x00 0x=
-600000>;
->         reg =3D <0x00 0x00 0x00   0x00 0x00>;
->
->         ......
->
->         rp1@0 {
+On Tue, Aug 13, 2024 at 05:00:15AM -0700, Georgi Djakov wrote:
+> The sdm845 platforms have a hardware issue that requires keeping
+> some of the MMNOC GDSCs in SW collapse mode (which is the power-on
+> default). But if some driver tries to use these GDSCs and the mode
+> is updated because of runtime pm calls, we may get a board hang.
+> Introduce a flag to skip any updates to the power collapse settings
+> for the impacted GDSCs to avoid unexpected board hangs.
+> 
+> Cc: Mike Tipton <quic_mdtipton@quicinc.com>
+> Cc: Vivek Aknurwar <quic_viveka@quicinc.com>
+> Signed-off-by: Georgi Djakov <quic_c_gdjako@quicinc.com>
+> ---
+>  drivers/clk/qcom/gcc-sdm845.c | 6 +++---
+>  drivers/clk/qcom/gdsc.c       | 3 +++
+>  drivers/clk/qcom/gdsc.h       | 1 +
+>  3 files changed, 7 insertions(+), 3 deletions(-)
+> 
 
-What does 0 represent here? There's no 0 address in 'ranges' below.
-Since you said the parent is a PCI-PCI bridge, then the unit-address
-would have to be the PCI devfn and you are missing 'reg' (or omitted
-it).
-
->                 #address-cells =3D <0x02>;
->                 #size-cells =3D <0x02>;
->                 compatible =3D "simple-bus";
-
-The parent is a PCI-PCI bridge. Child nodes have to be PCI devices and
-"simple-bus" is not a PCI device.
-
-The assumption so far with all of this is that you have some specific
-PCI device (and therefore a driver). The simple-buses under it are
-defined per BAR. Not really certain if that makes sense in all cases,
-but since the address assignment is dynamic, it may have to. I'm also
-not completely convinced we should reuse 'simple-bus' here or define
-something specific like 'pci-bar-bus' or something.
-
->                 ranges =3D <0xc0 0x40000000   0x01 0x00 0x00   0x00 0x400=
-000>;
->                 dma-ranges =3D <0x10 0x00   0x43000000 0x10 0x00   0x10 0=
-x00>;
->                 ......
->         };
->  };
->
-> The pci@0,0 bridge node is automatically created by virtue of
-> CONFIG_PCI_DYNAMIC_OF_NODES, and has no dma-ranges, hence it implies 1:1 =
-dma
-> mappings (flags for this mapping are set to zero).  The rp1@0 node has
-> dma-ranges with flags set (0x43000000). Since 0x43000000 !=3D 0x00 any tr=
-anslation
-> will fail.
-
-It's possible that we should fill in 'dma-ranges' when making these
-nodes rather than supporting missing dma-ranges here.
-
-Rob
+Reviewed-by: Mike Tipton <quic_mdtipton@quicinc.com>
