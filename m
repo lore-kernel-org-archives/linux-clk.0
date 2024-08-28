@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 764911553A2;
-	Wed, 28 Aug 2024 18:39:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98E141AB504;
+	Wed, 28 Aug 2024 18:39:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724870342; cv=none; b=hPv2WtP/c1D/mG46I6f186h3BSsyT6diG9wfeXrmTaVic0sv5xvONyPmxws1lvYWUWrB4rvHanZo2glDibmBOvhhchFjgcSzIrBsEPD2URLldL/JOjZenC7V+V3pCTnc17zeIhmdeoO66XouyWVb7xKOfKSgCJkfYU0nbskmarI=
+	t=1724870393; cv=none; b=fO0is+xsUdIXw41o2ZRMW409az4ohiQy7Vl9Aq87hatd1xWBhckf/hmvzH5V6//yQa2YAoOgJa0F1hxqoBSYWl9ZBJV6XJ2LViHNa9JjcsJc+thPsKYDmyLWpur4XFcY8L7o3+8/LvPSLp0hSfvjq0CRchmKTPyrHhjud0uiKac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724870342; c=relaxed/simple;
-	bh=x7SdE42KbvXOA6sb0fTZsjwo8QK2NhUXyigglHvanCI=;
+	s=arc-20240116; t=1724870393; c=relaxed/simple;
+	bh=VcF43/65O253P7pePfq9VRow6d1vLNqhgwdz/Z0gN8Q=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=UFG4s/jDogcg/hPH+aRW6QrnwdNMTCra9d/5og/YUYzFz9OKZPjb/P9v9amQz1EfiAyr2STpyvluINTKrW7DTY/gx4CribepCxxpijrLDaVjNwfVPEtWAQGVF4DkzBCwikFQ+lNCksc5xEEjzrSIC9lxZbUsabftAteYwwMuoow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FrW3jhbH; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=T59jK4m2/XZdEUOlJGUhdXBcbdMo9D7XIt+Hn9cNQWgB16fW0p9Oq1LUlk0reUwTZmbPKdMTzYlhKzRsGTAYeVHib1P5HJmufWurDqlW3f0omx6EgTOnvDA542IF1DQrWlWP+CQvPXVlUy0zg+a5s013+venaRuuHYyw8BZC5Mc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OBGSyrCI; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FrW3jhbH"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E101FC4CEC0;
-	Wed, 28 Aug 2024 18:39:01 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OBGSyrCI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBC52C4CEC0;
+	Wed, 28 Aug 2024 18:39:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724870342;
-	bh=x7SdE42KbvXOA6sb0fTZsjwo8QK2NhUXyigglHvanCI=;
+	s=k20201202; t=1724870393;
+	bh=VcF43/65O253P7pePfq9VRow6d1vLNqhgwdz/Z0gN8Q=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=FrW3jhbHUQCUAUiRzCgAzlxjlUBj+MVKlL0O0jPkC45vsQeqC9l0SiJcua4GS+War
-	 SYGxKqrkzUGaNDGYeS8FZL6Xt8EIMOKevkcU/plyP6H6ygJOYMgYx2HO5UGoq5rdLF
-	 FRQeKHcUDmSaYWK690IMPiMXT3b9cnAqbIa/XywXaTQL/tGjYzI3U0Qqwm+E5SS3iy
-	 kNZtdTE5WQ2w0xlGmohrhcXSgwvHVJfOcgIylTFOC2eW+qGSibpMdEigvDwR8+upNz
-	 hc0zzCgKqp2dTn9XNwSqNvcxcKLH8G98Sy9gV+k1d+Ygmb7Erh0RoroZ/23MzM+mm9
-	 E4qntQhj0QQDg==
-Message-ID: <b3f983207d74a3fcf40d9615260912c5.sboyd@kernel.org>
+	b=OBGSyrCIIeanuK+HVZupbQrRIZW+lIoYz8dkzHmGeSK8eoSwZXl0/4zBRG3WVHQ7Z
+	 ryluoNPRP1IqzJm2wxIK1HJl+POhsVNyNLf1nz8+vPTZxWuHYHxQBXWSde8eysDPzU
+	 /KGfnE1DCzC5tXujqm9AH0FTGfyrLntE8uOu/pslQzXqGKrl5kFr1xdU6nIDaaxA0g
+	 /8GUfys0Qr9P+n526xV5teOGw1y8nPmkad2MxKrnNKtnQHSg+GUgsjH/m5qGH659pJ
+	 RAJGAvq2Ij5h+z+wym3IkQp2D+VFSWUccjRrKpm0wL8xrVROi1xym1IBnjTus4VIBd
+	 YkToSp6y6ku/g==
+Message-ID: <def27b96be1c2a8b84f83a55e310bf95.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,63 +35,28 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <Zs8iGy8zLG2zs34J@smile.fi.intel.com>
-References: <20240822161452.1780149-1-andriy.shevchenko@linux.intel.com> <20240822161452.1780149-2-andriy.shevchenko@linux.intel.com> <3e782ac88cc28fb5fa7ed71e7573e60f.sboyd@kernel.org> <Zs8iGy8zLG2zs34J@smile.fi.intel.com>
-Subject: Re: [PATCH v1 1/2] clk: x86: lpss-atom: Use predefined constants from units.h
+In-Reply-To: <Zs8hRPA9Lya29d6d@smile.fi.intel.com>
+References: <20240822155822.1771677-1-andriy.shevchenko@linux.intel.com> <9e16ddb1c1a697464ce1f5438ab9ca31.sboyd@kernel.org> <Zs8hRPA9Lya29d6d@smile.fi.intel.com>
+Subject: Re: [PATCH v1 1/1] clk: devres: Simplify devres handling functions
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Michael Turquette <mturquette@baylibre.com>, Uwe =?utf-8?q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
 To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Date: Wed, 28 Aug 2024 11:38:59 -0700
+Date: Wed, 28 Aug 2024 11:39:51 -0700
 User-Agent: alot/0.10
 
-Quoting Andy Shevchenko (2024-08-28 06:11:55)
-> On Tue, Aug 27, 2024 at 05:21:00PM -0700, Stephen Boyd wrote:
-> > Quoting Andy Shevchenko (2024-08-22 09:14:07)
+Quoting Andy Shevchenko (2024-08-28 06:08:20)
+> On Tue, Aug 27, 2024 at 05:19:04PM -0700, Stephen Boyd wrote:
+> > Quoting Andy Shevchenko (2024-08-22 08:58:22)
 >=20
 > ...
 >=20
-> > >  static int lpss_atom_clk_probe(struct platform_device *pdev)
-> > >  {
-> > >         struct lpss_clk_data *drvdata;
-> > >         struct clk *clk;
-> > > +       u32 rate;
+> > > -       state =3D devres_alloc(devm_clk_release, sizeof(*state), GFP_=
+KERNEL);
+> > > +       state =3D devm_kmalloc(dev, sizeof(*state), GFP_KERNEL);
 > >=20
-> > Do we need a local variable?
+> > When is this allocation freed if the get() fails? When the calling
+> > device driver detaches?
 >=20
-> Hmm... The idea was to allow retrieving this via device properties, that'=
-s why
-> a separate variable, but that patch wasn't included here.
->=20
-> Nevertheless, despite above the separate variable makes code a bit better=
- to
-> read as we can see what is this value about.
->=20
-> > >         drvdata =3D devm_kzalloc(&pdev->dev, sizeof(*drvdata), GFP_KE=
-RNEL);
-> > >         if (!drvdata)
-> > >                 return -ENOMEM;
-> > > =20
-> > > +       /* Default frequency is 100MHz */
-> > > +       rate =3D 100 * HZ_PER_MHZ;
-> > > +
-> > >         /* LPSS free running clock */
-> > >         drvdata->name =3D "lpss_clk";
-> > > -       clk =3D clk_register_fixed_rate(&pdev->dev, drvdata->name, NU=
-LL,
-> > > -                                     0, 100000000);
-> > > +       clk =3D clk_register_fixed_rate(&pdev->dev, drvdata->name, NU=
-LL, 0, rate);
-> >=20
-> > This should be a one line patch.
->=20
-> I don't get this. You mean the entire thingy?
+> At device unbinding. Is it a problem?
 
-Yes.
-
->=20
-> It's possible, but as I mentioned above there is a rationale for making i=
-t with
-> a temporary variable.
-
-The rationale looks like future code will want a local variable. When
-that happens the local variable would make sense.
+It is a change, and the commit text said no functional change :(
