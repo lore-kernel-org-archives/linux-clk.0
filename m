@@ -1,76 +1,70 @@
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAB5515AD9C
-	for <linux-clk@vger.kernel.org>; Wed, 28 Aug 2024 08:31:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6A7F15A87F
+	for <linux-clk@vger.kernel.org>; Wed, 28 Aug 2024 08:45:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724833894; cv=none; b=meWR7G1UzhDx3utrVGn1gV2Db5ePsXL8MuhYtHBatIQ/xVcl6Vd+ZIn6WVqhn6mrUtspKU7jzG8fJBmqiu8VhOrrR+fe+u3uuYzG7ryEJZtwXv7mMtYPncH6//GABXwMfDudGEcELt4GmZVX+zoueg5+4evFK53D3mwC5z4PwEU=
+	t=1724834754; cv=none; b=gM9GRPL67kkOmUOQuvpGZTykapNczIliTe1mEFwFFHs228sRhuGuuiPppSReMLngNBrsvseY/RAOn1XzuEdFBCDd2EI4qfj7OiSoCRCfLzlYIyCAjHliuQYFws2t6miOiaWgIxApo2EZjF4/kjlsEncrNEwbouj4hSQL9GVSQCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724833894; c=relaxed/simple;
-	bh=gjsYJdp7ScKwKcIE4Uu+ggF9Axf9/49wqI34k9cojGU=;
+	s=arc-20240116; t=1724834754; c=relaxed/simple;
+	bh=yu4Wy0wOcgEQcfzt1v6vuNg/URcukRaqet6Jqj3F69g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZUxCruB6bL4265D4JHOITZT+5dKllv6aEpbxH6vWj3SKf0+NwczN0dqmKHc0Rtn4eL31h7aNsOJnjR4UUsqXV1VmuSlDIhWZuoNoWpfUDYgC1+r8xK6qg8NAuJUEfvHDbdPoYMEedZk1F69o29QWx0UVd+mIJ7ieO9F58wwDarg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Od8zZ/85; arc=none smtp.client-ip=209.85.218.49
+	 Content-Type:Content-Disposition:In-Reply-To; b=J+sZUEVf36M9LADyIhQzzXmZoJ04FwmHj7DVeximuCnjkKyEC3U61aQkyNqf67S4Y6lUBwLemYkrOX8EtOp090QEp3H9LfQgdN/CIhJphZEFtua/fy/R8tWPM1MJ7gDAULc9VQsXHvrKGL/I+IrK8WMZMPV11dv4eposSWkfA4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=siNh6tgY; arc=none smtp.client-ip=209.85.167.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Od8zZ/85"
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a7a81bd549eso503739366b.3
-        for <linux-clk@vger.kernel.org>; Wed, 28 Aug 2024 01:31:30 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="siNh6tgY"
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53349ee42a9so7693318e87.3
+        for <linux-clk@vger.kernel.org>; Wed, 28 Aug 2024 01:45:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724833889; x=1725438689; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1724834751; x=1725439551; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3c7NVkKcmxAMyio8/L9pzMWp9IJ9Pqc+LaOhJRGv9yg=;
-        b=Od8zZ/856Oi5TpVaYDkGZl1v7MlQe3rFlqAlgbHVyhBtC3AVHUpmdIL9uoWs7Zo9NN
-         C0nuKtBEDyzTsyNvFE5g21D9KdDAEC68W2xKO10WIOMAKx3at6fJxLgXF+x3S3wKkKgv
-         GDCZD15PsJvI1pt1tZRT9Fd+4P1icFD8w86cos+6iUnsCSnfbpB38eqhFN3szRrZ7GvJ
-         IZLyrpllE0i+06QLhXWIH4g1uC9FAHOHBmU6eMil/w9F5wOqQKGHJ1ZBp5OJLCTiPP57
-         c4XzMTtVG9zbZgZOxv2AjWc4aEupisZfBveJasUjec8PlYgrO9cj16QqxhXTDy57mvDf
-         O8pg==
+        bh=vdBIi5m8EWzWp93xlsbcf9ZPOqz4SwEvCdHpMtK8yDU=;
+        b=siNh6tgYFdG5L3dy1prcX5AvluHDhQibkzL3uRB7JgU19vPcP/Uym7CaNt0hwxfoQo
+         BfemX837yo4Y+Gd3Yg/ENT65IiAVmERbvmGo4y22IRKRRMDZtJCthC8ilaNq8Kd+OoaA
+         R5X/vFR6l1RO+Txljh0D68N3q6ji8u4Q4Ax5QaVG57MdFkozKYjPb+dwh2SnEDtEmKeU
+         f2r/Y0LQloVmmmzt6LCIdCJ9QRxQb/RKzQ5jeJy0n53XN9oZYrgv3yYvsit6eMBibIqh
+         mLPRBwRryM0bNyIARcyTtBu9K30ptIm0g88eHwpPJgt17Tn06ESGpTQvK1+hz67Lersz
+         +wZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724833889; x=1725438689;
+        d=1e100.net; s=20230601; t=1724834751; x=1725439551;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3c7NVkKcmxAMyio8/L9pzMWp9IJ9Pqc+LaOhJRGv9yg=;
-        b=PddHbGVZ7dw70NsD3RWyySG2yBUvR88wvjXPXjF/5/59slrg29x89vsSwSciUyWnE7
-         ZKevld0hSpKMX7uJq7GZ+1QQe65qAljVsHwGEJjUQWGACJD8aToSnPipYFNJInh6P40Z
-         vhMuMeAZXj3G61AsR5j4S0tzGqyNO0W4Ui52hMpoH7pahJUWuhQMXobeQ2t7kdX2HpVZ
-         PqU2oVw8c3IBlcdTix4l2HSklmf6pmIags6SuhOdIDC5c4gs2oYO0+j3zCNChxomzgqK
-         FgGixkKRn/aLfYvf6njHvwBSoCTSQLIOP5o0F3DPx81Z3YylIUF5UGAEnbav14Qb8It/
-         ozKg==
-X-Forwarded-Encrypted: i=1; AJvYcCWIOAbLxd7S2CF+iBh7jWmDSCb9XJ0hFJHrUMjlrO5bRzW1ub5LGmLsbt3/fdLSl+DNRc/mfLVqPLA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCbXPF6b64oIaINFIYFoppDHTDskANCt3G09EOaEFMdEeKstle
-	KD0rK9y5HJcvhm0N6wa5bS7SasXW/geOeDUZnwugbmFcW4esNodFbB5rke9qPy8=
-X-Google-Smtp-Source: AGHT+IGObeLl3j0bnFYb8shzD2k1t7YBRB0S+K2t7vP1NBHH1oO3NjvEy1RtpFlfZhpgj6jiJ48fgA==
-X-Received: by 2002:a17:907:c0f:b0:a86:c111:cc35 with SMTP id a640c23a62f3a-a86c111cfb5mr901917966b.50.1724833888846;
-        Wed, 28 Aug 2024 01:31:28 -0700 (PDT)
+        bh=vdBIi5m8EWzWp93xlsbcf9ZPOqz4SwEvCdHpMtK8yDU=;
+        b=sI0T+T8x3YIhLlagWmkVLe57cq3xguDs6hbDbGa9a9XbBFeS9KUewgqp8sf7WcCyy0
+         U2ynMKtI80TEIOXlbA5I/44TFUrnCg4uCcU1Od7kV2mfdTyoGehSp8A9bOCbzdWIMCAV
+         72ZR4dIFAWssZnMNiEeaHFy5FIP8RQlqRn+pGNsQqKfv+YLlOYTAeNR7bE330J6pLEcq
+         ov6vaLurODCiiwyXo1kyi0N22N93SVjq+fR3/lKNPJtvsUiX5dzVdksjxH8fdIqs165/
+         q72Og035ko4YouiR3BuigUuVL9Hn0q6AD6Eu1SojT5S/899sqVXVBMlxLjd20+YUpKjK
+         onvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUwxX29n8hzS/f8ATPKumGoMwp61wAA6NMMHxagTj37HbmatYNnkOvCrQv/MNA9m51w4WFhzk0M2rY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZpz1bOjw/a8q9fSw81350oB9lMNggyTPz5zRJi7yYZnTKWhOx
+	x8fIjblA79UTqE93mB6u12RzfVKB8vfCm+VzX1ATEVi/eiRqiU24eqisCeBumG4=
+X-Google-Smtp-Source: AGHT+IHWxfcTIgRBRkO/+YAr6ZW+2Y5xXvy9KTaUM5ZOJKXQFVXhMO86M5E4uZUCWTKcKt1OVXzUNg==
+X-Received: by 2002:a05:6512:224b:b0:533:88d:48ca with SMTP id 2adb3069b0e04-534750c2934mr986691e87.55.1724834750626;
+        Wed, 28 Aug 2024 01:45:50 -0700 (PDT)
 Received: from linaro.org ([82.79.186.176])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e549d10fsm212595766b.54.2024.08.28.01.31.27
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e5878562sm211665066b.156.2024.08.28.01.45.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 01:31:28 -0700 (PDT)
-Date: Wed, 28 Aug 2024 11:31:26 +0300
+        Wed, 28 Aug 2024 01:45:50 -0700 (PDT)
+Date: Wed, 28 Aug 2024 11:45:48 +0300
 From: Abel Vesa <abel.vesa@linaro.org>
-To: Diogo Manuel Pais Silva <diogo.pais@ttcontrol.com>
-Cc: Peng Fan <peng.fan@nxp.com>,
-	"abelvesa@kernel.org" <abelvesa@kernel.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"shawnguo@kernel.org" <shawnguo@kernel.org>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>,
-	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"sboyd@kernel.org" <sboyd@kernel.org>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"festevam@gmail.com" <festevam@gmail.com>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>,
-	"EMC: linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] clk: imx8qxp: Defer instead of failing probe
-Message-ID: <Zs7gXhohOyQ/abOf@linaro.org>
-References: <DU0PR01MB93828B0E6808E33C608BC0E29DD32@DU0PR01MB9382.eurprd01.prod.exchangelabs.com>
- <AM6PR04MB5941651E3920794104B3D24F88D32@AM6PR04MB5941.eurprd04.prod.outlook.com>
- <DU0PR01MB9382F1AC496F22A20C074BDE9DDC2@DU0PR01MB9382.eurprd01.prod.exchangelabs.com>
+To: Wei Fang <wei.fang@nxp.com>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+	conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+	festevam@gmail.com, abelvesa@kernel.org, peng.fan@nxp.com,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 RESEND 1/4] dt-bindings: clock: add i.MX95 NETCMIX
+ block control
+Message-ID: <Zs7jvCHO+ifC3VaT@linaro.org>
+References: <20240729012756.3686758-1-wei.fang@nxp.com>
+ <20240729012756.3686758-2-wei.fang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -79,39 +73,36 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <DU0PR01MB9382F1AC496F22A20C074BDE9DDC2@DU0PR01MB9382.eurprd01.prod.exchangelabs.com>
+In-Reply-To: <20240729012756.3686758-2-wei.fang@nxp.com>
 
-On 24-07-02 08:10:44, Diogo Manuel Pais Silva wrote:
-> When of_clk_parent_fill is ran without all the parent clocks having been probed then the probe function will return -EINVAL, making it so that the probe isn't attempted again. As fw_devlink is on by default this does not usually happen, but if fw_devlink is disabled then it is very possible that the parent clock will be probed after the lpcg first attempt.
+On 24-07-29 09:27:53, Wei Fang wrote:
+> Add 'nxp,imx95-netcmix-blk-ctrl' compatible string for i.MX95 platform.
 > 
-> Signed-off-by: Diogo Silva <diogo.pais@ttcontrol.com>
+> Signed-off-by: Wei Fang <wei.fang@nxp.com>
+> Acked-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>  Documentation/devicetree/bindings/clock/nxp,imx95-blk-ctl.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/nxp,imx95-blk-ctl.yaml b/Documentation/devicetree/bindings/clock/nxp,imx95-blk-ctl.yaml
+> index 2dffc02dcd8b..b0072bae12d9 100644
+> --- a/Documentation/devicetree/bindings/clock/nxp,imx95-blk-ctl.yaml
+> +++ b/Documentation/devicetree/bindings/clock/nxp,imx95-blk-ctl.yaml
+> @@ -17,6 +17,7 @@ properties:
+>            - nxp,imx95-display-csr
+>            - nxp,imx95-camera-csr
+>            - nxp,imx95-vpu-csr
+> +          - nxp,imx95-netcmix-blk-ctrl
 
-This patch doesn't apply cleanly.
+Move this above vpu-csr, please.
+
+Also, for some reason, this patchset doesn't apply cleanly.
 
 Please respin.
 
-Thanks!
-
-> ---
-> v2: change from dev_warn to dev_err_probe
-> ---
->  drivers/clk/imx/clk-imx8qxp-lpcg.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/imx/clk-imx8qxp-lpcg.c b/drivers/clk/imx/clk-imx8qxp-lpcg.c
-> index d0ccaa040225..7bd9b745edbe 100644
-> --- a/drivers/clk/imx/clk-imx8qxp-lpcg.c
-> +++ b/drivers/clk/imx/clk-imx8qxp-lpcg.c
-> @@ -225,8 +225,8 @@ static int imx_lpcg_parse_clks_from_dt(struct platform_device *pdev,
+>        - const: syscon
 >  
->  	ret = of_clk_parent_fill(np, parent_names, count);
->  	if (ret != count) {
-> -		dev_err(&pdev->dev, "failed to get clock parent names\n");
-> -		return count;
-> +		return dev_err_probe(&pdev->dev, -EPROBE_DEFER,
-> +				"failed to get all clock parent names\n");
->  	}
->  
->  	ret = of_property_read_string_array(np, "clock-output-names",
+>    reg:
 > -- 
 > 2.34.1
+> 
