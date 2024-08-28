@@ -1,114 +1,144 @@
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7681715B98E;
-	Wed, 28 Aug 2024 10:14:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F2B9158DCD;
+	Wed, 28 Aug 2024 10:15:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724840046; cv=none; b=l7eI0Ajy1Rlr8nSvZQZastIyrG4Co/Xv3qlvnmz5TXW1RUsIObXZIedfGfR9Rwv+qOLyWfSWIBeChh+ZEFkdp4Ytwhc/nJ0RyWf7FFM5EE4iMJffSeUQa89SVomxq6L3J/jwhPPU1KZd/rRUnPoUm0yxsmQDEgOyvg4KVewq49Q=
+	t=1724840120; cv=none; b=qc/ltWgfrlc7D33fkbG41tWDfYx5ZxWtW91FQK9VaB9fhFso6+3hYLW/GqCIgKfUGMD7j6IfxI4CLJ7OnOg7d8bfQeT5C+jl51BkXaJo1Zdrpsq/3RE20PjylM73m6MS+JbZmzuZuQA054J+LkayeLqVp6oV51SGtrRwZV0p8zE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724840046; c=relaxed/simple;
-	bh=H/spxYuv25xMJd7avzns1jDAaEpUBgBfR27818iNls0=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WPFQOSgxIm1MCSZynA/tTNlAMTUfQJkHMAO/QIrSStt990XJ+7HUN7lCWkep+BCog/plI8n2RzOmCVPTpFUsXI77SDULsHk+BBJroE5n7ZBY7MUDIU2qqyXh0nLGeFDBWT+Ne3d9uU7vvw4wvf1S2znRDvul//cK9bbJq84SPWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JrshnpEN; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1724840120; c=relaxed/simple;
+	bh=hGf2gkLd69NQ7KFBnipSAkYCVhNpqHakg4YOOi15HAE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=rQ4S83MIg8WGR8YxllrxbUhe2rfJqemSPzYHkeZETZASwTZS/1fnncR9T97WfQQ1W97nYnfIdxwC6ikCAouSGIB8RvHbeaXy1SzM6c1D2+IfDrfFoo9o30Q4aHhWC+JVwBi/b3dSbg5jda8/k/HTvVynXIzIFopAmlEWGh0NmmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=Ng3MEAGJ; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JrshnpEN"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 3C92840006;
-	Wed, 28 Aug 2024 10:14:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1724840041;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CB6BO/KLb4RXq0NQixkj5jR5dZS0zY9MFbOR0+McABQ=;
-	b=JrshnpENn0+8kCxDPw+vOidiPhzUcXXxucnC4nGtiyuMRWQidOL3DVsxiasc3vXZAwp7B4
-	ew2l+EBphQqvvPq1Dunr2Ct/olGkJG2cjbyKTzCvHAeXMlUZPOOG97soXRXRPsLJ0Akx0X
-	eCKbfO9xYw6SOFggoIG70At4MjJ5CRAXOZpqWKL6dNEvd6Pm8fIbCuMxhhf3RcgYTS3w2K
-	E6zmQcXPVI4E8tXnNmB7eqFE+77qXR+MYOSQn4wUN0szD+lFZ9R0mWxRG8dOjbE9T5Y9ec
-	Jaln9w4t/Z2bHbqgkbc9U1A5YUN1GORqMR8PY3cNOHOR391NqdjmaUMqbu7w/Q==
-Date: Wed, 28 Aug 2024 12:14:00 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: claudiu beznea <claudiu.beznea@tuxon.dev>, nicolas.ferre@microchip.com,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	mturquette@baylibre.com, sboyd@kernel.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH 3/3] ARM: dts: microchip: Use SCKC_{TD, MD}_SLCK IDs for
- clk32k clocks
-Message-ID: <2024082810140092b1c3d7@mail.local>
-References: <20240826173116.3628337-1-claudiu.beznea@tuxon.dev>
- <20240826173116.3628337-4-claudiu.beznea@tuxon.dev>
- <8ae724e3-f467-4df4-b8cc-f03489bd0f35@tuxon.dev>
- <20240828-chivalry-brunch-7e21bd12b7fa@thorsis.com>
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="Ng3MEAGJ"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:References:
+	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=H2K0zAoArSYqxte5X2D4PhODsFIDA8efuofXW5WP5do=; b=Ng3MEAGJ2czRhxq3mImVOHknWx
+	TEbw0Nm6FsoEYe7ymgW0ivBDzvWutrqN32bLfl6BKPBVNDvnwo35StNPtfpifr4ziIx1GQLOqpjGv
+	omypbq5QJk+T/Npzv5sd6zHn45pL2Y/d/LuHx8ogdUi3lpZoZrIN0Pn/jsoSUe8oe5GI0vy+95DkD
+	inFffYhQIrTtO9uLNbqNbakQ2mDFPgNfDV6MxOx8j7Fl/Pt8RzW6fwz3ySL+PNk1KgflXSRNUXe3i
+	mkA7Y2pE+ahLJaxsK8lrVDVGbnJYGsJO0xqeiuOEL1FYb2ujXU5RNU2HRs8GbD5IDwCctGL4n9SRo
+	B57WXp2w==;
+Received: from i5e8616cd.versanet.de ([94.134.22.205] helo=phil.lan)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sjFhs-0004M3-94; Wed, 28 Aug 2024 12:15:16 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-clk@vger.kernel.org,
+	heiko@sntech.de,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org
+Subject: [PATCH v3 1/5] dt-bindings: clocks: add binding for gated-fixed-clocks
+Date: Wed, 28 Aug 2024 12:14:59 +0200
+Message-ID: <20240828101503.1478491-2-heiko@sntech.de>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20240828101503.1478491-1-heiko@sntech.de>
+References: <20240828101503.1478491-1-heiko@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240828-chivalry-brunch-7e21bd12b7fa@thorsis.com>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+Content-Transfer-Encoding: 8bit
 
-On 28/08/2024 09:07:05+0200, Alexander Dahl wrote:
-> Hello Claudiu,
-> 
-> Am Mon, Aug 26, 2024 at 08:42:10PM +0300 schrieb claudiu beznea:
-> > 
-> > 
-> > On 26.08.2024 20:31, Claudiu Beznea wrote:
-> > > Use the newly introduced macros instead of raw number. With this device
-> > > tree code is a bit easier to understand.
-> > > 
-> > > Signed-off-by: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-> > > ---
-> > >  arch/arm/boot/dts/microchip/sam9x60.dtsi | 18 +++++++++---------
-> > >  arch/arm/boot/dts/microchip/sama7g5.dtsi | 16 ++++++++--------
-> > >  2 files changed, 17 insertions(+), 17 deletions(-)
-> > > 
-> > > diff --git a/arch/arm/boot/dts/microchip/sam9x60.dtsi b/arch/arm/boot/dts/microchip/sam9x60.dtsi
-> > > index 04a6d716ecaf..eeda277e684f 100644
-> > > --- a/arch/arm/boot/dts/microchip/sam9x60.dtsi
-> > > +++ b/arch/arm/boot/dts/microchip/sam9x60.dtsi
-> > > @@ -560,7 +560,7 @@ tcb0: timer@f8008000 {
-> > >  				#size-cells = <0>;
-> > >  				reg = <0xf8008000 0x100>;
-> > >  				interrupts = <17 IRQ_TYPE_LEVEL_HIGH 0>;
-> > > -				clocks = <&pmc PMC_TYPE_PERIPHERAL 17>, <&clk32k 0>;
-> > > +				clocks = <&pmc PMC_TYPE_PERIPHERAL 17>, <&clk32k SCKC_MD_SLCK>;
-> > 
-> > Actually, looking again at it, I don't know if it worth as we use numbers
-> > directly also for other PMC clock IDs.
-> 
-> I think in this case it is worth it.  The macros you added are more
-> like the already existing PMC_MCK et al. macros for PMC_TYPE_CORE and
-> do essentially the same thing in driver code working as somewhat
-> arbitrary array index, without relation to SoC internals.
-> 
-> The PMC clock IDs on the other hand are for PMC_TYPE_PERIPHERAL and
-> are that long list in the Peripheral Identifiers table and correspond
-> to the SoC internal IDs, which are not used in the same way.
-> 
-> So from my point of view, the patch series is valuable and should be
-> further worked on.
-> 
+In contrast to fixed clocks that are described as ungateable, boards
+sometimes use additional oscillators for things like PCIe reference
+clocks, that need actual supplies to get enabled and enable-gpios to be
+toggled for them to work.
 
-I agree with this.
+This adds a binding for such oscillators that are not configurable
+themself, but need to handle supplies for them to work.
 
-> Greets
-> Alex
-> 
-> > Sorry for the noise,
-> > Claudiu Beznea
-> > 
-> > 
-> > 
+In schematics they often can be seen as
 
+         ----------------
+Enable - | 100MHz,3.3V, | - VDD
+         |    3225      |
+   GND - |              | - OUT
+         ----------------
+
+or similar. The enable pin might be separate but can also just be tied
+to the vdd supply, hence it is optional in the binding.
+
+Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+---
+ .../bindings/clock/gated-fixed-clock.yaml     | 49 +++++++++++++++++++
+ 1 file changed, 49 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/gated-fixed-clock.yaml
+
+diff --git a/Documentation/devicetree/bindings/clock/gated-fixed-clock.yaml b/Documentation/devicetree/bindings/clock/gated-fixed-clock.yaml
+new file mode 100644
+index 000000000000..76d264770d35
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/gated-fixed-clock.yaml
+@@ -0,0 +1,49 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/gated-fixed-clock.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Gated Fixed clock
++
++maintainers:
++  - Heiko Stuebner <heiko@sntech.de>
++
++properties:
++  compatible:
++    const: gated-fixed-clock
++
++  "#clock-cells":
++    const: 0
++
++  clock-frequency: true
++
++  clock-output-names:
++    maxItems: 1
++
++  enable-gpios:
++    description:
++      Contains a single GPIO specifier for the GPIO that enables and disables
++      the oscillator.
++    maxItems: 1
++
++  vdd-supply:
++    description: handle of the regulator that provides the supply voltage
++
++required:
++  - compatible
++  - "#clock-cells"
++  - clock-frequency
++  - vdd-supply
++
++additionalProperties: false
++
++examples:
++  - |
++    voltage-oscillator {
++      compatible = "gated-fixed-clock";
++      #clock-cells = <0>;
++      clock-frequency = <1000000000>;
++      vdd-supply = <&reg_vdd>;
++    };
++...
 -- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.43.0
+
