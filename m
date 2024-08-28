@@ -1,321 +1,117 @@
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1977815B0F8;
-	Wed, 28 Aug 2024 08:13:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAB5515AD9C
+	for <linux-clk@vger.kernel.org>; Wed, 28 Aug 2024 08:31:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724832830; cv=none; b=XVlnLEcSPMzssXgOXM17401Y2mQPWqAa5sqWAbUddHAmPaZjvI/Y4/GOwn/KckroRpAdgvdqSWa2ptkpK40gqIEAlL9XMjOo8HcB4ZJ82/0B5QYprS+FrmqjO288YkvFacaZuaiMJzhycM14JJpgIydnaEcta11kaMEB+Lb11f4=
+	t=1724833894; cv=none; b=meWR7G1UzhDx3utrVGn1gV2Db5ePsXL8MuhYtHBatIQ/xVcl6Vd+ZIn6WVqhn6mrUtspKU7jzG8fJBmqiu8VhOrrR+fe+u3uuYzG7ryEJZtwXv7mMtYPncH6//GABXwMfDudGEcELt4GmZVX+zoueg5+4evFK53D3mwC5z4PwEU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724832830; c=relaxed/simple;
-	bh=2sxTen+hqWD9md4i6/YSDCChiC3x9Q7bIP07H37D5HE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W7nyk8rmvK6InrvgCM7rj+TIbFw25dP9+zYZAxqL/wdNXxi7U3FgNDVCEGvJI+9TK7ZuvJ/CTPNRA/lBZGcPN1Spuv8084fFgmYVh1zGLKKFF0ZcF8q/lXIU5W8PwpC8iTZU/QxizuZnr8sl7M4SCaRFj1E5CSQmu8bH8ZCIOZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d6kgi0Rt; arc=none smtp.client-ip=209.85.210.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1724833894; c=relaxed/simple;
+	bh=gjsYJdp7ScKwKcIE4Uu+ggF9Axf9/49wqI34k9cojGU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZUxCruB6bL4265D4JHOITZT+5dKllv6aEpbxH6vWj3SKf0+NwczN0dqmKHc0Rtn4eL31h7aNsOJnjR4UUsqXV1VmuSlDIhWZuoNoWpfUDYgC1+r8xK6qg8NAuJUEfvHDbdPoYMEedZk1F69o29QWx0UVd+mIJ7ieO9F58wwDarg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Od8zZ/85; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d6kgi0Rt"
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-7142a30e3bdso273325b3a.0;
-        Wed, 28 Aug 2024 01:13:48 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Od8zZ/85"
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a7a81bd549eso503739366b.3
+        for <linux-clk@vger.kernel.org>; Wed, 28 Aug 2024 01:31:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724832828; x=1725437628; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XEeuJ6OEQj6tArNvQ3MuOMDLK/qII+FALymrAkia2Aw=;
-        b=d6kgi0RtVQ7Ag14fEX0XUvm5V/QRsxoykxAB2DGucMjHBr2QRxqsQzzdlpWrA9KF21
-         VnEAISCI1xYRwUplhRN2VizH8PhXxLHgAv8dWsP1vjopYz9sb1QdpimyqGAhSGi9MjxK
-         wDyCwyaxk/AEYQPwPyNJxBfXGhaKDY1/Et9Xuk6IQWxvvc2po8rE37/oXQ86ohuMaPZ+
-         i1V7CrxIL6KuHnHjpY8O5M6aH/QaS/hpomvYI/o3QSGsi41r9PV9SJ4sv5JFfkIyFQP5
-         5RJfQhAPEQ04HxAIkrvZmOiPtjo6ZtQJlwByeZTaTgXfBzi72XlbwVEWT3vd8l/rHe0c
-         BEtA==
+        d=linaro.org; s=google; t=1724833889; x=1725438689; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3c7NVkKcmxAMyio8/L9pzMWp9IJ9Pqc+LaOhJRGv9yg=;
+        b=Od8zZ/856Oi5TpVaYDkGZl1v7MlQe3rFlqAlgbHVyhBtC3AVHUpmdIL9uoWs7Zo9NN
+         C0nuKtBEDyzTsyNvFE5g21D9KdDAEC68W2xKO10WIOMAKx3at6fJxLgXF+x3S3wKkKgv
+         GDCZD15PsJvI1pt1tZRT9Fd+4P1icFD8w86cos+6iUnsCSnfbpB38eqhFN3szRrZ7GvJ
+         IZLyrpllE0i+06QLhXWIH4g1uC9FAHOHBmU6eMil/w9F5wOqQKGHJ1ZBp5OJLCTiPP57
+         c4XzMTtVG9zbZgZOxv2AjWc4aEupisZfBveJasUjec8PlYgrO9cj16QqxhXTDy57mvDf
+         O8pg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724832828; x=1725437628;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XEeuJ6OEQj6tArNvQ3MuOMDLK/qII+FALymrAkia2Aw=;
-        b=VRZH+OBwraGnx5Oo2mlqK5eZNTwQs/zg11TwIuixo5XgxmENrXxBEufaXMX0ZpCU+c
-         CCJJV0QLqTTR3Y3X2PGPO47InWfhAkfQRfVFxHMCibwTiLLRls0lI+mUYFYJBSmSmg9D
-         6GzH4xvMNTAYQgl03SigJsO8Dw21qZRw0FlOVZYpDwvyUK5WN20leTPBfEivqs3zeFBX
-         ikhKeH0i0nxDzwmxC1yYaDYZf9BsreT2hzCmlUECvv5rgeQBrP7EmRjSr/d3mTKLUxrv
-         qx6pW4E+8fNDEK5r1gerGGjsH+x8zKrWILQNay5HpLvNWYFhcETPBW9BwlQ5kM01Kxa/
-         ZlhA==
-X-Forwarded-Encrypted: i=1; AJvYcCXYo87MOiL6WL1fQ+DOk+Jk62X00Zgl/ExYKe0AhBX7m4RHbStIa2xv98JpN3D0qLWYjgsKkJGu9z07X6U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2V1Rqu6Q5muJJ0deQAp9Mz43ZO/iAQ1azPIHoWUGG2GKVVVSG
-	I3WJalvK/xaK6DnJqNBV67+eC4Q0WcbiriezF9wlFbcCbkw7jfDTFnBKBhz1
-X-Google-Smtp-Source: AGHT+IFzeLbkxJqoDcVup/+Yq5NuZ87lSZ1xmGqjPADirUwgzOQ2oAhBgnGc7o6r9zLTS4dgJIKtAg==
-X-Received: by 2002:a05:6a21:7783:b0:1c3:3d23:c325 with SMTP id adf61e73a8af0-1ccd1b54bdbmr1797433637.24.1724832827990;
-        Wed, 28 Aug 2024 01:13:47 -0700 (PDT)
-Received: from [0.0.0.0] (ec2-54-193-105-225.us-west-1.compute.amazonaws.com. [54.193.105.225])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7143422ecf9sm9641427b3a.20.2024.08.28.01.13.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Aug 2024 01:13:47 -0700 (PDT)
-Message-ID: <1a689627-851b-4929-aaf8-3dcddb57af6b@gmail.com>
-Date: Wed, 28 Aug 2024 01:14:04 -0700
+        d=1e100.net; s=20230601; t=1724833889; x=1725438689;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3c7NVkKcmxAMyio8/L9pzMWp9IJ9Pqc+LaOhJRGv9yg=;
+        b=PddHbGVZ7dw70NsD3RWyySG2yBUvR88wvjXPXjF/5/59slrg29x89vsSwSciUyWnE7
+         ZKevld0hSpKMX7uJq7GZ+1QQe65qAljVsHwGEJjUQWGACJD8aToSnPipYFNJInh6P40Z
+         vhMuMeAZXj3G61AsR5j4S0tzGqyNO0W4Ui52hMpoH7pahJUWuhQMXobeQ2t7kdX2HpVZ
+         PqU2oVw8c3IBlcdTix4l2HSklmf6pmIags6SuhOdIDC5c4gs2oYO0+j3zCNChxomzgqK
+         FgGixkKRn/aLfYvf6njHvwBSoCTSQLIOP5o0F3DPx81Z3YylIUF5UGAEnbav14Qb8It/
+         ozKg==
+X-Forwarded-Encrypted: i=1; AJvYcCWIOAbLxd7S2CF+iBh7jWmDSCb9XJ0hFJHrUMjlrO5bRzW1ub5LGmLsbt3/fdLSl+DNRc/mfLVqPLA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCbXPF6b64oIaINFIYFoppDHTDskANCt3G09EOaEFMdEeKstle
+	KD0rK9y5HJcvhm0N6wa5bS7SasXW/geOeDUZnwugbmFcW4esNodFbB5rke9qPy8=
+X-Google-Smtp-Source: AGHT+IGObeLl3j0bnFYb8shzD2k1t7YBRB0S+K2t7vP1NBHH1oO3NjvEy1RtpFlfZhpgj6jiJ48fgA==
+X-Received: by 2002:a17:907:c0f:b0:a86:c111:cc35 with SMTP id a640c23a62f3a-a86c111cfb5mr901917966b.50.1724833888846;
+        Wed, 28 Aug 2024 01:31:28 -0700 (PDT)
+Received: from linaro.org ([82.79.186.176])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e549d10fsm212595766b.54.2024.08.28.01.31.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2024 01:31:28 -0700 (PDT)
+Date: Wed, 28 Aug 2024 11:31:26 +0300
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Diogo Manuel Pais Silva <diogo.pais@ttcontrol.com>
+Cc: Peng Fan <peng.fan@nxp.com>,
+	"abelvesa@kernel.org" <abelvesa@kernel.org>,
+	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+	"shawnguo@kernel.org" <shawnguo@kernel.org>,
+	"kernel@pengutronix.de" <kernel@pengutronix.de>,
+	"s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"sboyd@kernel.org" <sboyd@kernel.org>,
+	"mturquette@baylibre.com" <mturquette@baylibre.com>,
+	"festevam@gmail.com" <festevam@gmail.com>,
+	"imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"EMC: linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] clk: imx8qxp: Defer instead of failing probe
+Message-ID: <Zs7gXhohOyQ/abOf@linaro.org>
+References: <DU0PR01MB93828B0E6808E33C608BC0E29DD32@DU0PR01MB9382.eurprd01.prod.exchangelabs.com>
+ <AM6PR04MB5941651E3920794104B3D24F88D32@AM6PR04MB5941.eurprd04.prod.outlook.com>
+ <DU0PR01MB9382F1AC496F22A20C074BDE9DDC2@DU0PR01MB9382.eurprd01.prod.exchangelabs.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] clk: sifive: prci: Add release_reset hooks for
- gemgxlpll/cltxpll
-To: Conor Dooley <conor.dooley@microchip.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, Pragnesh.patel@sifive.com,
- aou@eecs.berkeley.edu, erik.danie@sifive.com, hes@sifive.com,
- mturquette@baylibre.com, palmer@dabbelt.com, paul.walmsley@sifive.com,
- sboyd@kernel.org, schwab@linux-m68k.org, zong.li@sifive.com
-References: <cover.1724827635.git.ganboing@gmail.com>
- <e47b943c0f685cd028ebd477e97e1706f184a7b6.1724827635.git.ganboing@gmail.com>
- <20240828-duplex-skillful-752582090412@wendy>
-Content-Language: en-US
-From: Bo Gan <ganboing@gmail.com>
-In-Reply-To: <20240828-duplex-skillful-752582090412@wendy>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <DU0PR01MB9382F1AC496F22A20C074BDE9DDC2@DU0PR01MB9382.eurprd01.prod.exchangelabs.com>
 
-Hi Conor,
-
-Thanks for replying so quickly. See inline.
-
-On 8/28/24 00:58, Conor Dooley wrote:
-> On Tue, Aug 27, 2024 at 11:55:20PM -0700, Bo Gan wrote:
->> This patch adds the release_reset hook interface to __prci_wrpll_data.
->> During clock enablement, the function (if present) will be called after PLL
->> registers are configured. It aligns the logic to the driver in u-boot. When
->> there's a previous bootloader stage, such as u-boot, it usually enables the
->> gemgxlpll clock when trying to PXE/network boot. The kernel boots fine, but
->> we should not depend on it being our previous stage, and the logic within:
->>
->>   a. We (linux) can get directly invoked by firmware (OpenSBI).
->>   b. U-boot doesn't necessarily have to initialize ethernet and enable the
->>      clock (when not enabled in CONFIG).
->>
->> When the kernel is the first to initialize gemgxlpll, it must also release
->> the corresponding reset. Otherwise the chip will just hang during macb
->> initialization, and even external JTAG debugger will lose control over the
->> risc-v debug module. (Observed with my Sifive Unmatched Rev.B board)
->>
->> The patch took the dt-bindings and logics directly from u-boot with some
->> additional modifications:
->>   - Use __prci_writel after __prci_readl to have barrier semantic. U-boot
->>     has the strong version of readl/writel, but linux has the relaxed ones.
->>   - Use pd->reset.rcdev.ops to access the reset regs.
->>   - Split reset bindings for FU540/FU740 and use them directly, instead of
->>     looking it up through reset-names.
+On 24-07-02 08:10:44, Diogo Manuel Pais Silva wrote:
+> When of_clk_parent_fill is ran without all the parent clocks having been probed then the probe function will return -EINVAL, making it so that the probe isn't attempted again. As fw_devlink is on by default this does not usually happen, but if fw_devlink is disabled then it is very possible that the parent clock will be probed after the lpcg first attempt.
 > 
-> The macb driver already supports using a reset at boot time (see zynq and
-> mpfs) if hooked up in the devicetree, why doesn't that work for you in
-> this situation?
-> 
-> Thanks,
-> Conor.
-> 
+> Signed-off-by: Diogo Silva <diogo.pais@ttcontrol.com>
 
-That a good idea. I never tried it. It's probably a cleaner solution, and I'll
-try it some later time. I used the same logic in u-boot partially because the
-way how sifive people coded this up. Specifically, PROCMONCFG is set between
-the releases of 2 resets. I assume there's some dependency between those regs.
-If reset is triggered from the macb driver side, there's really no proper way
-to set PROCMONCFG. Also from the FU740 manual, I can't find any mentioning
-about PROCMONCFG. If it's not needed, surely it's better to just let macb do
-the resetting. Perhaps I should wait for Sifive folks to fill in the gap.
+This patch doesn't apply cleanly.
+
+Please respin.
 
 Thanks!
-Bo
 
-<Removed Yash Shah and Pragnesh Patel. Looks like they left Sifive>
-
->>
->> Signed-off-by: Bo Gan <ganboing@gmail.com>
->> ---
->>   drivers/clk/sifive/fu540-prci.h  | 16 ++++++++++++++++
->>   drivers/clk/sifive/fu740-prci.h  | 31 +++++++++++++++++++++++++++++++
->>   drivers/clk/sifive/sifive-prci.c | 23 +++++++++++++++++++++++
->>   drivers/clk/sifive/sifive-prci.h |  8 ++++++++
->>   4 files changed, 78 insertions(+)
->>
->> diff --git a/drivers/clk/sifive/fu540-prci.h b/drivers/clk/sifive/fu540-prci.h
->> index e0173324f3c5..9d2ca18f47a4 100644
->> --- a/drivers/clk/sifive/fu540-prci.h
->> +++ b/drivers/clk/sifive/fu540-prci.h
->> @@ -23,9 +23,24 @@
->>   #include <linux/module.h>
->>   
->>   #include <dt-bindings/clock/sifive-fu540-prci.h>
->> +#include <dt-bindings/reset/sifive-fu540-prci.h>
->>   
->>   #include "sifive-prci.h"
->>   
->> +/**
->> + * sifive_fu540_prci_ethernet_release_reset() - Release ethernet reset
->> + * @pd: struct __prci_data * for the PRCI containing the Ethernet CLK mux reg
->> + *
->> + */
->> +static void sifive_fu540_prci_ethernet_release_reset(struct __prci_data *pd)
->> +{
->> +	/* Release GEMGXL reset */
->> +	pd->reset.rcdev.ops->deassert(&pd->reset.rcdev, FU540_PRCI_RST_GEMGXL_N);
->> +
->> +	/* Procmon => core clock */
->> +	sifive_prci_set_procmoncfg(pd, PRCI_PROCMONCFG_CORE_CLOCK_MASK);
->> +}
->> +
->>   /* PRCI integration data for each WRPLL instance */
->>   
->>   static struct __prci_wrpll_data sifive_fu540_prci_corepll_data = {
->> @@ -43,6 +58,7 @@ static struct __prci_wrpll_data sifive_fu540_prci_ddrpll_data = {
->>   static struct __prci_wrpll_data sifive_fu540_prci_gemgxlpll_data = {
->>   	.cfg0_offs = PRCI_GEMGXLPLLCFG0_OFFSET,
->>   	.cfg1_offs = PRCI_GEMGXLPLLCFG1_OFFSET,
->> +	.release_reset = sifive_fu540_prci_ethernet_release_reset,
->>   };
->>   
->>   /* Linux clock framework integration */
->> diff --git a/drivers/clk/sifive/fu740-prci.h b/drivers/clk/sifive/fu740-prci.h
->> index f31cd30fc395..dd0f54277a99 100644
->> --- a/drivers/clk/sifive/fu740-prci.h
->> +++ b/drivers/clk/sifive/fu740-prci.h
->> @@ -10,9 +10,38 @@
->>   #include <linux/module.h>
->>   
->>   #include <dt-bindings/clock/sifive-fu740-prci.h>
->> +#include <dt-bindings/reset/sifive-fu740-prci.h>
->>   
->>   #include "sifive-prci.h"
->>   
->> +/**
->> + * sifive_fu740_prci_ethernet_release_reset() - Release ethernet reset
->> + * @pd: struct __prci_data * for the PRCI containing the Ethernet CLK mux reg
->> + *
->> + */
->> +static void sifive_fu740_prci_ethernet_release_reset(struct __prci_data *pd)
->> +{
->> +	/* Release GEMGXL reset */
->> +	pd->reset.rcdev.ops->deassert(&pd->reset.rcdev, FU740_PRCI_RST_GEMGXL_N);
->> +
->> +	/* Procmon => core clock */
->> +	sifive_prci_set_procmoncfg(pd, PRCI_PROCMONCFG_CORE_CLOCK_MASK);
->> +
->> +	/* Release Chiplink reset */
->> +	pd->reset.rcdev.ops->deassert(&pd->reset.rcdev, FU740_PRCI_RST_CLTX_N);
->> +}
->> +
->> +/**
->> + * sifive_fu740_prci_cltx_release_reset() - Release cltx reset
->> + * @pd: struct __prci_data * for the PRCI containing the Ethernet CLK mux reg
->> + *
->> + */
->> +static void sifive_fu740_prci_cltx_release_reset(struct __prci_data *pd)
->> +{
->> +	/* Release CLTX reset */
->> +	pd->reset.rcdev.ops->deassert(&pd->reset.rcdev, FU740_PRCI_RST_CLTX_N);
->> +}
->> +
->>   /* PRCI integration data for each WRPLL instance */
->>   
->>   static struct __prci_wrpll_data sifive_fu740_prci_corepll_data = {
->> @@ -30,6 +59,7 @@ static struct __prci_wrpll_data sifive_fu740_prci_ddrpll_data = {
->>   static struct __prci_wrpll_data sifive_fu740_prci_gemgxlpll_data = {
->>   	.cfg0_offs = PRCI_GEMGXLPLLCFG0_OFFSET,
->>   	.cfg1_offs = PRCI_GEMGXLPLLCFG1_OFFSET,
->> +	.release_reset = sifive_fu740_prci_ethernet_release_reset,
->>   };
->>   
->>   static struct __prci_wrpll_data sifive_fu740_prci_dvfscorepll_data = {
->> @@ -49,6 +79,7 @@ static struct __prci_wrpll_data sifive_fu740_prci_hfpclkpll_data = {
->>   static struct __prci_wrpll_data sifive_fu740_prci_cltxpll_data = {
->>   	.cfg0_offs = PRCI_CLTXPLLCFG0_OFFSET,
->>   	.cfg1_offs = PRCI_CLTXPLLCFG1_OFFSET,
->> +	.release_reset = sifive_fu740_prci_cltx_release_reset,
->>   };
->>   
->>   /* Linux clock framework integration */
->> diff --git a/drivers/clk/sifive/sifive-prci.c b/drivers/clk/sifive/sifive-prci.c
->> index caba0400f8a2..ae8055a84466 100644
->> --- a/drivers/clk/sifive/sifive-prci.c
->> +++ b/drivers/clk/sifive/sifive-prci.c
->> @@ -249,6 +249,9 @@ int sifive_prci_clock_enable(struct clk_hw *hw)
->>   	if (pwd->disable_bypass)
->>   		pwd->disable_bypass(pd);
->>   
->> +	if (pwd->release_reset)
->> +		pwd->release_reset(pd);
->> +
->>   	return 0;
->>   }
->>   
->> @@ -448,6 +451,26 @@ void sifive_prci_hfpclkpllsel_use_hfpclkpll(struct __prci_data *pd)
->>   	r = __prci_readl(pd, PRCI_HFPCLKPLLSEL_OFFSET);	/* barrier */
->>   }
->>   
->> +/*
->> + * PROCMONCFG
->> + */
->> +
->> +/**
->> + * sifive_prci_set_procmoncfg() - set PROCMONCFG
->> + * @pd: struct __prci_data * PRCI context
->> + * @val: u32 value to write to PROCMONCFG register
->> + *
->> + * Set the PROCMONCFG register to @val
->> + *
->> + * Context: Any context.  Caller must prevent concurrent changes to the
->> + *          PROCMONCFG_OFFSET register.
->> + */
->> +void sifive_prci_set_procmoncfg(struct __prci_data *pd, u32 val)
->> +{
->> +	__prci_writel(val, PRCI_PROCMONCFG_OFFSET, pd);
->> +	__prci_readl(pd, PRCI_PROCMONCFG_OFFSET);	/* barrier */
->> +}
->> +
->>   /* PCIE AUX clock APIs for enable, disable. */
->>   int sifive_prci_pcie_aux_clock_is_enabled(struct clk_hw *hw)
->>   {
->> diff --git a/drivers/clk/sifive/sifive-prci.h b/drivers/clk/sifive/sifive-prci.h
->> index 91658a88af4e..825a0aef9fd5 100644
->> --- a/drivers/clk/sifive/sifive-prci.h
->> +++ b/drivers/clk/sifive/sifive-prci.h
->> @@ -210,6 +210,9 @@
->>   
->>   /* PROCMONCFG */
->>   #define PRCI_PROCMONCFG_OFFSET			0xf0
->> +#define PRCI_PROCMONCFG_CORE_CLOCK_SHIFT	24
->> +#define PRCI_PROCMONCFG_CORE_CLOCK_MASK					\
->> +		(0x1 << PRCI_PROCMONCFG_CORE_CLOCK_SHIFT)
->>   
->>   /*
->>    * Private structures
->> @@ -235,6 +238,7 @@ struct __prci_data {
->>    * @disable_bypass: fn ptr to code to not bypass the WRPLL (or NULL)
->>    * @cfg0_offs: WRPLL CFG0 register offset (in bytes) from the PRCI base address
->>    * @cfg1_offs: WRPLL CFG1 register offset (in bytes) from the PRCI base address
->> + * @release_reset: fn ptr to code to release clock reset
->>    *
->>    * @enable_bypass and @disable_bypass are used for WRPLL instances
->>    * that contain a separate external glitchless clock mux downstream
->> @@ -246,6 +250,7 @@ struct __prci_wrpll_data {
->>   	void (*disable_bypass)(struct __prci_data *pd);
->>   	u8 cfg0_offs;
->>   	u8 cfg1_offs;
->> +	void (*release_reset)(struct __prci_data *pd);
->>   };
->>   
->>   /**
->> @@ -290,6 +295,9 @@ void sifive_prci_corepllsel_use_corepll(struct __prci_data *pd);
->>   void sifive_prci_hfpclkpllsel_use_hfclk(struct __prci_data *pd);
->>   void sifive_prci_hfpclkpllsel_use_hfpclkpll(struct __prci_data *pd);
->>   
->> +/* PROCMONCFG */
->> +void sifive_prci_set_procmoncfg(struct __prci_data *pd, u32 val);
->> +
->>   /* Linux clock framework integration */
->>   long sifive_prci_wrpll_round_rate(struct clk_hw *hw, unsigned long rate,
->>   				  unsigned long *parent_rate);
->> -- 
->> 2.34.1
->>
+> ---
+> v2: change from dev_warn to dev_err_probe
+> ---
+>  drivers/clk/imx/clk-imx8qxp-lpcg.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/clk/imx/clk-imx8qxp-lpcg.c b/drivers/clk/imx/clk-imx8qxp-lpcg.c
+> index d0ccaa040225..7bd9b745edbe 100644
+> --- a/drivers/clk/imx/clk-imx8qxp-lpcg.c
+> +++ b/drivers/clk/imx/clk-imx8qxp-lpcg.c
+> @@ -225,8 +225,8 @@ static int imx_lpcg_parse_clks_from_dt(struct platform_device *pdev,
+>  
+>  	ret = of_clk_parent_fill(np, parent_names, count);
+>  	if (ret != count) {
+> -		dev_err(&pdev->dev, "failed to get clock parent names\n");
+> -		return count;
+> +		return dev_err_probe(&pdev->dev, -EPROBE_DEFER,
+> +				"failed to get all clock parent names\n");
+>  	}
+>  
+>  	ret = of_property_read_string_array(np, "clock-output-names",
+> -- 
+> 2.34.1
