@@ -1,151 +1,100 @@
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADBF2156F39
-	for <linux-clk@vger.kernel.org>; Wed, 28 Aug 2024 21:01:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 375A51A7074;
+	Wed, 28 Aug 2024 21:23:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724878914; cv=none; b=O534ke1BerxtPZfbpd3vPYSB24rZ0eUNRbp7pvjb8I/8uguwji3GZbmex1LyilUzdI2PXGXhNiKOjv59suu/t3J659QOdSJo6AATuQn1eMZ4tX0mWxTd936mixsfJhePoMGI8LAwEXsNN1hWkrqU5l3iX8IoQLvJj/mJbaiDXvw=
+	t=1724880217; cv=none; b=mq3y+M62x8fU3cHaczz936rTOzLuuE0jFLalPkOM03wUKicalUfeipFA6Byvbtr5cov72dyCQ4SrS3jjyD8i/B1l30Lc33W7aP4oxyyZRP0k7dkS32F5tDJKhNdS+7/VndOjrXFk2vwTmcIJM0Pb+FVLWSvxoaWi4u9hQKXZWTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724878914; c=relaxed/simple;
-	bh=dlIRFRRqOUfbBTTzHCw3bIRHgjbd1gyMfANoQGpbubA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U34uR3RifSYv+67q92CXTP0kVJVVvwPsVIIaFQRwjM9OUKRYxsYk1BWBdUr5UnsQkpi5OIAz/zYWIcs+yjQ4ihImQeJnwwO1GrltQqMiavN2Ux8/LmKrBylR0s1h18crF31MomAoeXbY56vayZFMCY3dhLud5GHnrSDrJu7PgSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=SBp4eS4t; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1724880217; c=relaxed/simple;
+	bh=08lMpUQJLl04+6uWNHhq9cLzIO4t/tS+ruExJGnS/j0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fPhcibxOSGBrs0QiTK/d4kM5ixUBpg45BcwvwkcCB5L7wxU2RtbBfZFX6+56pM75KqE3l0S3Iriv2nQviP3k6+uL8+lOM/2noOPweM3ffYYta4yT4VwtqsAwSxgEBmA6QiVAQzpGgLIunORQMfktb807bxWo1TiJrICiaGnmWiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ITVES9gb; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="SBp4eS4t"
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-53346132348so8602182e87.2
-        for <linux-clk@vger.kernel.org>; Wed, 28 Aug 2024 14:01:51 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ITVES9gb"
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2050b059357so2956775ad.2;
+        Wed, 28 Aug 2024 14:23:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724878910; x=1725483710; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9OrGNAAWQoFpJEHjcXRj5aD9CPBwOs7tFWfZHpIv76g=;
-        b=SBp4eS4tsGwMuVTZFDCCmivDqNijPni3pfsAhRtP02LB+kGcfeK7g6EKa3LVc+TVcL
-         cf5Xs9TBJ8XD0FJvjt0/SLRK7kFQNd0vVW0gInMmu2BX8dtYJJyQSHIUWNL1b+P+mpcn
-         iete7iFnM9aJ5p+gMvuIkuK6IV7kC2IIlMkJddZDozSbfi2D6ky2SDWtbicdJhcEkgTm
-         pNG8EGdIJtMtV0FDvbYX3Tq+0Et6n8L0AFFMqImpA5jEB3kM0vSk/U6F26JgzWMejPWT
-         JzOPuDXTfE3IkrkY1v7yU3wudM0Ce8uRxd6FyxGtw6kThBACi4ZLV4ktuFqa8Tkrzo5O
-         KTtA==
+        d=gmail.com; s=20230601; t=1724880215; x=1725485015; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=hBMN1zMtydd9sGAxGScKs94sb1e1rvCLubo3KJTROMc=;
+        b=ITVES9gbnCqBb4ohK4QCOTQczDn35ChWEW26ikoLd2tDIkW5IhFiX66w/D8Vw7dWm6
+         vxzQ9mWzw1lkfaqWRf1VVFGGHfIpXXwYUCaIOsWjyLjGZlhDw/FLqPtE+B0rUsCI43lQ
+         WRmPRPf7in4vuYeEk41GHFIXrf6+fo+JV5czGURESWgqMs3SU9GnT5ZGCUkAuVYKFACE
+         ng2/FC0lH5/PUONRc5Lt3YUSd33rFadc5elXB98OWaMHM7JEH3anWNeOcfUyrqqFpRlA
+         7HlNLzLB75jixz8e5uSwyiOMGF94F29c/zyKCz0nMkN8ecQjTXj8pAlUTE/fUAYQHv3v
+         b5QQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724878910; x=1725483710;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9OrGNAAWQoFpJEHjcXRj5aD9CPBwOs7tFWfZHpIv76g=;
-        b=k8z6LTjAYMeC9A6RTQ/M1mIeHaQ6d68s5+9CcXAAYkwFUXR64axvfPVd50bA9bRRdx
-         +YRDetTIAexDwB373mnfshrwRvrGrfa+7TATcoxgz0e8zyENIlJ1XSy1j6BuuVMlT5rL
-         jMmwQvEDdMInVB1HHJbfuz7G970saGc5lVzSNyKJiAOjv5IZRBKcgNQVcfCPtFOpahxz
-         kGXqZpab/jpR7G5w40wSblmPfJ7t2l2CsX/f9Hfa83VlWzebt9Op4t7YG/9WQWI874IN
-         eSWPtRoqoXiIma8cz3itr+ZQscpsd/gAvZS1G2pJ+GqtJep1KM69CH7YsCuS8LS2opGT
-         ZbUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVtAajEZEkWNl/45enVChGj+hUND6XQ/qA5hWaX4LfpwCss4CiKLv6sXCu57S7vnst8j6jIeFiPXZ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHHNPWP2DQClVigUbUOvO1qk8kPK7tbfJpU0tyglHoHGHzql1k
-	dK4bPUu7oxpoloUoPuXKO8CoStgOwPQNhmM/kUrlAGr8fPDuNRraJgDxtI//KKc=
-X-Google-Smtp-Source: AGHT+IGiHuoKMiiPcr4b2w40l5MMLxSg/HrhC7ywebXGvK5HJJmHbS3Pb68beruYP+cc7V41QUN+Cg==
-X-Received: by 2002:a05:6512:ba1:b0:530:c1fb:51a1 with SMTP id 2adb3069b0e04-5353e56764fmr263510e87.17.1724878909295;
-        Wed, 28 Aug 2024 14:01:49 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5334ea366desm2283755e87.82.2024.08.28.14.01.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 14:01:48 -0700 (PDT)
-Date: Thu, 29 Aug 2024 00:01:47 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
-	ilia.lin@kernel.org, rafael@kernel.org, viresh.kumar@linaro.org, 
-	ulf.hansson@linaro.org, linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org, 
-	Praveenkumar I <quic_ipkumar@quicinc.com>
-Subject: Re: [PATCH v7 6/7] soc: qcom: cpr3: Add IPQ9574 definitions
-Message-ID: <fmzjfzksja24pev7bkjdr2kelp7djq3jlwib2dauzop7em7tkl@gurroyrzeqqm>
-References: <20240820055705.3922754-1-quic_varada@quicinc.com>
- <20240820055705.3922754-7-quic_varada@quicinc.com>
+        d=1e100.net; s=20230601; t=1724880215; x=1725485015;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hBMN1zMtydd9sGAxGScKs94sb1e1rvCLubo3KJTROMc=;
+        b=Fms0j2M2R1zvfS2WOVEDnVNSQtKWirjDMT0awrp8iVkiZe1qIAv4EBUVBuorZEXShH
+         trF1Wre+NYtQUnWyS7T3v+skKpp8GgENtvfX6iR1r1Bpl8FihPpj8bWAIvS7Hi4BbHEq
+         MJze88kbywuXybnxU64z+NP1tkIgSj/9qFjoiMAD/KgWWWKbufjzx0gOJhqxVn3PjOhk
+         6G6rZGYWpRu1TG/WVLn+l6ME0YUgTFizZaCQgokQ+8g0K4IuQUK+4ifzhlSTrVwn6lBT
+         viNk9Aqo++PUV+3Mi9jXeOr9vu0R65XAfckmTMqZuQTpCelFiFM1RByvWyNruabwfGbv
+         UT8A==
+X-Forwarded-Encrypted: i=1; AJvYcCU31yetSmqNcSw3sAmm0LB+dr8HJIZSLXP/GX0nAvAf46HuykfBDinvBKK5CcmSAnyqv7mBo8D3aiE=@vger.kernel.org, AJvYcCVxngPKkMBOv8VONdY1CTIQO1F14ZIvDGavR6qIxc4hx6KLFa9e7KQxDAPMNgI7uSZ79Usvhwq97nyly6e2@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJ+jjhsluRkUSKYnPNtxqQx9JJxJOS7Ghdzp2ffr1zSaHsTYEt
+	lBlYkAf0x1QKd6UmmGLi+15G2CMkHCE4jNLSzBIhQwiULaYEuSUFVdXa55lL
+X-Google-Smtp-Source: AGHT+IG9mVtuPXADPC6vXLDVbCynSJY9RUJDpsD4JhdJx3+qK4sKXBXzWx99/cBHuzI4p69hZk/flA==
+X-Received: by 2002:a17:902:cf0a:b0:203:a0ea:5f93 with SMTP id d9443c01a7336-2050b4f09ffmr10718905ad.0.1724880215343;
+        Wed, 28 Aug 2024 14:23:35 -0700 (PDT)
+Received: from [0.0.0.0] (ec2-54-193-105-225.us-west-1.compute.amazonaws.com. [54.193.105.225])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2038557e7desm103108745ad.75.2024.08.28.14.23.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 28 Aug 2024 14:23:34 -0700 (PDT)
+Message-ID: <1b245182-09db-44a1-bdee-3ec0658bef47@gmail.com>
+Date: Wed, 28 Aug 2024 14:23:37 -0700
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240820055705.3922754-7-quic_varada@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] clk: analogbits: Fix incorrect calculation of vco rate
+ delta
+To: Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: samuel.holland@sifive.com, emil.renner.berthing@canonical.com,
+ mturquette@baylibre.com, paul.walmsley@sifive.com
+References: <20240827061954.351773-1-ganboing@gmail.com>
+ <ad33e8561ca236c5f897003fb40bdc09.sboyd@kernel.org>
+Content-Language: en-US
+From: Bo Gan <ganboing@gmail.com>
+In-Reply-To: <ad33e8561ca236c5f897003fb40bdc09.sboyd@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Aug 20, 2024 at 11:27:04AM GMT, Varadarajan Narayanan wrote:
-> From: Praveenkumar I <quic_ipkumar@quicinc.com>
+On 8/28/24 11:52, Stephen Boyd wrote:
+> Quoting Bo Gan (2024-08-26 23:19:54)
+>> In function `wrpll_configure_for_rate`, we try to determine the best PLL
+>> configuration for a target rate. However, in the loop where we try values
+>> of R, we should compare the derived `vco` with `target_vco_rate`. However,
+>> we were in fact comparing it with `target_rate`, which is actually after
+>> Q shift. This is incorrect, and sometimes can result in suboptimal clock
+>> rates. This patch fixes it.
+>>
+>> Signed-off-by: Bo Gan <ganboing@gmail.com>
+>> ---
 > 
-> * Add thread, scaling factor, CPR descriptor defines to enable
->   CPR on IPQ9574.
+> Please add a Fixes tag.
 > 
-> * Skip 'acc' usage since IPQ9574 does not have acc
-> 
-> Signed-off-by: Praveenkumar I <quic_ipkumar@quicinc.com>
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> ---
-> v7: Add rangeuV vaues
->     Fix IRQ handler 'argument'
-> 
-> v6: Rebase on top of Konrad's v15
-> 	- https://lore.kernel.org/lkml/20240708-topic-cpr3h-v15-0-5bc8b8936489@linaro.org/T/
-> 
-> v5: Move the 'acc_desc' usage check to first patch
-> 
-> v4: s/silver//, s/cprh/cpr4/
->     Skip 'acc' related code as IPQ9574 does not have acc
-> 
-> v3: Fix patch author
->     Included below information in cover letter
-> v2: Fix Signed-off-by order
-> Depends:
-> 	[1] https://lore.kernel.org/lkml/20230217-topic-cpr3h-v14-0-9fd23241493d@linaro.org/T/
-> 	[2] https://github.com/quic-varada/cpr/commits/konrad/
-> ---
->  drivers/pmdomain/qcom/cpr3.c | 142 ++++++++++++++++++++++++++++++++++-
->  1 file changed, 140 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pmdomain/qcom/cpr3.c b/drivers/pmdomain/qcom/cpr3.c
-> index d594bc79be1c..51c8b5766ccd 100644
-> --- a/drivers/pmdomain/qcom/cpr3.c
-> +++ b/drivers/pmdomain/qcom/cpr3.c
-> @@ -2461,7 +2597,7 @@ static int cpr_thread_init(struct cpr_drv *drv, int tid)
->  						NULL, cpr_irq_handler,
->  						IRQF_ONESHOT |
->  						IRQF_TRIGGER_RISING,
-> -						"cpr", drv);
-> +						"cpr", thread);
+> Also, your patch has tons of diff context. Why?
 
-Unrelated change => separate patch.
+Hi Stephen,
 
-LGTM otherwise.
+Thanks for the reply. I'll add the Fixes tag in v2. I explicitly enlarged the
+diff to show more surrounding contexts for better readability. Any other issue
+I should fix?
 
->  		if (ret)
->  			goto fail;
->  	}
-> @@ -2544,7 +2680,8 @@ static int cpr_probe(struct platform_device *pdev)
->  	desc = data->cpr_desc;
->  
->  	/* CPRh disallows MEM-ACC access from the HLOS */
-> -	if (!(data->acc_desc || desc->cpr_type == CTRL_TYPE_CPRH))
-> +	if (!(data->acc_desc || desc->cpr_type == CTRL_TYPE_CPRH ||
-> +	      of_device_is_compatible(dev->of_node, "qcom,ipq9574-cpr4")))
->  		return dev_err_probe(dev, -EINVAL, "Invalid ACC data\n");
->  
->  	drv = devm_kzalloc(dev, sizeof(*drv), GFP_KERNEL);
-> @@ -2694,6 +2831,7 @@ static void cpr_remove(struct platform_device *pdev)
->  }
->  
->  static const struct of_device_id cpr3_match_table[] = {
-> +	{ .compatible = "qcom,ipq9574-cpr4", .data = &ipq9574_cpr_acc_desc },
->  	{ .compatible = "qcom,msm8998-cprh", .data = &msm8998_cpr_acc_desc },
->  	{ .compatible = "qcom,sdm630-cprh", .data = &sdm630_cpr_acc_desc },
->  	{ }
-> -- 
-> 2.34.1
-> 
-
--- 
-With best wishes
-Dmitry
+Bo
