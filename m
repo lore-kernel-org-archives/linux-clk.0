@@ -1,62 +1,63 @@
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28B3D178399;
-	Wed, 28 Aug 2024 13:08:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D05DD176FDB;
+	Wed, 28 Aug 2024 13:11:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724850506; cv=none; b=JqUWFmXKzXFvCFo/YGmgU3Gu1uxpY/tbwMxlr8HhPuqpaHKS0gXlEv0tfGRdHkphLnmKiIKObhbzSQnQcl5DzPLwYkZ1JsulcC1/dsmxVq2EDNYVRdbrAjcAGZrf7OdVG5MvMyfkPF+aizzpT/6xBR1MAChvip4kfWrm/5bZ/DQ=
+	t=1724850721; cv=none; b=JV9lRlAho7EVMVNoAFI8UZP+fRcH8HLK4KnQmnb8qwYl/aph1jKRfplWZk3zC/O4M8H4RXYcHja5GslUBBZhyT0BJM+FkmFopACMN7x+wtIZjiSLVAK4eAO8Xhf1E1gk2qyi/c/V9BUonq0lM49PPAkHKDcamhC+4V32xrsNS1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724850506; c=relaxed/simple;
-	bh=AaZvISxeByNLSJ2mWzj6u/5KcGJrceMC6IDkphTSzKA=;
+	s=arc-20240116; t=1724850721; c=relaxed/simple;
+	bh=qpQyyUV/wrK7/kBpOT8YdWqj1dwu3WxVcSyZDytjA+g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NJQfMFQBkxbHUm5H60c66RAywYpyzF56gyVf/+hGKprPgot2DdqjoCgLH5Zt39n5egsyTM5vxpLdsYnh++OiG+3DxRxI2VBLWUXL2R0JO490LC6/z/PGEQq9Qmcc8SKqLdEVJtsx8J18cShYJwtszP+mao6q30sX/WTsgTXQNKI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gVfdxwB9; arc=none smtp.client-ip=198.175.65.10
+	 Content-Type:Content-Disposition:In-Reply-To; b=TRDvjOkYZ2z8y5aVlSMZqZmgCTdVNuXIzTmLFtqbwOf3o2jaX5uSEBoRpEZnD2yP+T2mYy3lVGcmK2s5NfbwijineSrcBhNLieOKx6dUiouDRCyE2Bd2Fxz9E+/eiAgKji/G7LoF6PDL+xcdCVkM67v+LsJ22nNoES+COl+NCuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=V5NiAfZk; arc=none smtp.client-ip=198.175.65.13
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gVfdxwB9"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="V5NiAfZk"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1724850505; x=1756386505;
+  t=1724850720; x=1756386720;
   h=date:from:to:cc:subject:message-id:references:
    mime-version:in-reply-to;
-  bh=AaZvISxeByNLSJ2mWzj6u/5KcGJrceMC6IDkphTSzKA=;
-  b=gVfdxwB9Tj+arsopFD16ARtKDtjlvTvvCJF2AT7my5WIh8mkw1aHYeLj
-   cf170T/ARnNIFA1lnV2z3xb+/mEUtsoehJv9UPvbJp0yUlkMsMJVHgPUZ
-   K9XmNar4SztGd4T+4AEnI38/C+9UkKVTeic4SoOnE583MBUJQNkHmmqz4
-   U1c6OsA15qDrk9zD4BxXNKZ78+yw14jdyHN4FV6tt84Sd+kdDay2rI9bX
-   KdFwl7gUz63/pfgcYivOvxOkjqYLH17QdkF23KF8Lqpf9Lg7DnEpr9U1C
-   zuUwQuI7ub3Tr8/X6Vbiy3DQP0M13k/3dhcoo+LcUHo3atOKk75rf1lFS
-   w==;
-X-CSE-ConnectionGUID: 4mskj7TzQW+kLhEZPTM60g==
-X-CSE-MsgGUID: uFTidn+jRWqT1NnIiWplqQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11178"; a="40852377"
+  bh=qpQyyUV/wrK7/kBpOT8YdWqj1dwu3WxVcSyZDytjA+g=;
+  b=V5NiAfZk15848wVH59z5tQ8Bc7XvuvruEgMmxfOEMc6J/LyvN5seLR83
+   rbCq4HlcJPhU6dfqZ1aNEiNlQkvj8nrc3BamvJqSo/qNNQ6lIXvd8RkFm
+   QoDa6uuLg7qtNadk+X02S0y0GiCrvecv9181co5aQa0sxlhRI8kOzGSQ0
+   98st61WZVKy1W2TmH2ULmFPJd7XSwpE4QvumL+NRtzZMXgmHjwsmAgYZ9
+   Wpq+GVX1tJTrWnUninOFvQvhqm3cbHsDWf26n0uLaa8KwHefOUCyF3Ztl
+   E4pUJZPEuqM2PQuC2mj+tC+eg27vK77q+GMs9r2aoveniyfA+PwN3IwB9
+   A==;
+X-CSE-ConnectionGUID: T1aOsao4T4uA/nRviRneKw==
+X-CSE-MsgGUID: QAwX4miASfGJhWV7Sfeffg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11178"; a="34534962"
 X-IronPort-AV: E=Sophos;i="6.10,182,1719903600"; 
-   d="scan'208";a="40852377"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 06:08:25 -0700
-X-CSE-ConnectionGUID: xcw9Y7zdRFiqp7Okt45Oug==
-X-CSE-MsgGUID: DVgp4aoET4eXEggHMniwRA==
+   d="scan'208";a="34534962"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 06:11:59 -0700
+X-CSE-ConnectionGUID: rP4eJrySTrmgVJF0xyqwbg==
+X-CSE-MsgGUID: kMLWcatySlGt4luWiVmmEw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.10,182,1719903600"; 
-   d="scan'208";a="86413265"
+   d="scan'208";a="62873601"
 Received: from smile.fi.intel.com ([10.237.72.54])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 06:08:23 -0700
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 06:11:58 -0700
 Received: from andy by smile.fi.intel.com with local (Exim 4.98)
 	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sjIPM-00000002eQD-3R1i;
-	Wed, 28 Aug 2024 16:08:20 +0300
-Date: Wed, 28 Aug 2024 16:08:20 +0300
+	id 1sjISp-00000002eTv-3QT5;
+	Wed, 28 Aug 2024 16:11:55 +0300
+Date: Wed, 28 Aug 2024 16:11:55 +0300
 From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 To: Stephen Boyd <sboyd@kernel.org>
 Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@pengutronix.de>
-Subject: Re: [PATCH v1 1/1] clk: devres: Simplify devres handling functions
-Message-ID: <Zs8hRPA9Lya29d6d@smile.fi.intel.com>
-References: <20240822155822.1771677-1-andriy.shevchenko@linux.intel.com>
- <9e16ddb1c1a697464ce1f5438ab9ca31.sboyd@kernel.org>
+	Michael Turquette <mturquette@baylibre.com>
+Subject: Re: [PATCH v1 1/2] clk: x86: lpss-atom: Use predefined constants
+ from units.h
+Message-ID: <Zs8iGy8zLG2zs34J@smile.fi.intel.com>
+References: <20240822161452.1780149-1-andriy.shevchenko@linux.intel.com>
+ <20240822161452.1780149-2-andriy.shevchenko@linux.intel.com>
+ <3e782ac88cc28fb5fa7ed71e7573e60f.sboyd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -65,46 +66,50 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <9e16ddb1c1a697464ce1f5438ab9ca31.sboyd@kernel.org>
+In-Reply-To: <3e782ac88cc28fb5fa7ed71e7573e60f.sboyd@kernel.org>
 Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, Aug 27, 2024 at 05:19:04PM -0700, Stephen Boyd wrote:
-> Quoting Andy Shevchenko (2024-08-22 08:58:22)
+On Tue, Aug 27, 2024 at 05:21:00PM -0700, Stephen Boyd wrote:
+> Quoting Andy Shevchenko (2024-08-22 09:14:07)
 
 ...
 
-> > -       state = devres_alloc(devm_clk_release, sizeof(*state), GFP_KERNEL);
-> > +       state = devm_kmalloc(dev, sizeof(*state), GFP_KERNEL);
+> >  static int lpss_atom_clk_probe(struct platform_device *pdev)
+> >  {
+> >         struct lpss_clk_data *drvdata;
+> >         struct clk *clk;
+> > +       u32 rate;
 > 
-> When is this allocation freed if the get() fails? When the calling
-> device driver detaches?
+> Do we need a local variable?
 
-At device unbinding. Is it a problem?
+Hmm... The idea was to allow retrieving this via device properties, that's why
+a separate variable, but that patch wasn't included here.
 
-...
+Nevertheless, despite above the separate variable makes code a bit better to
+read as we can see what is this value about.
 
-> > +       ret = devm_add_action_or_reset(dev, devm_clk_release, state);
-> > +       if (ret)
-> > +               goto err_clk_init;
-> 
-> Shouldn't we return an error here? Otherwise we call clk_put() twice?
-
-Or use devm_add_action().
-Thanks for catching this!
-
-> >         return clk;
+> >         drvdata = devm_kzalloc(&pdev->dev, sizeof(*drvdata), GFP_KERNEL);
+> >         if (!drvdata)
+> >                 return -ENOMEM;
 > >  
-> >  err_clk_init:
-> >         clk_put(clk);
-> >         return ERR_PTR(ret);
-> >  }
+> > +       /* Default frequency is 100MHz */
+> > +       rate = 100 * HZ_PER_MHZ;
+> > +
+> >         /* LPSS free running clock */
+> >         drvdata->name = "lpss_clk";
+> > -       clk = clk_register_fixed_rate(&pdev->dev, drvdata->name, NULL,
+> > -                                     0, 100000000);
+> > +       clk = clk_register_fixed_rate(&pdev->dev, drvdata->name, NULL, 0, rate);
+> 
+> This should be a one line patch.
 
-...
+I don't get this. You mean the entire thingy?
 
-> I stopped reading, sorry! If you want to do this, please add a bunch of
-> KUnit tests.
+It's possible, but as I mentioned above there is a rationale for making it with
+a temporary variable.
 
-Sure. It's a good idea.
+> >         if (IS_ERR(clk))
+> >                 return PTR_ERR(clk);
 
 -- 
 With Best Regards,
