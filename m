@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F080C8CE;
-	Wed, 28 Aug 2024 00:19:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8583F17C7C;
+	Wed, 28 Aug 2024 00:21:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724804346; cv=none; b=fazKrCcfSDZeZFqLnhcqdLnZKxoi1n+8iE0qqF2TK2Gv/nom8LKX1aBOA4E5+dQexA4fHnocLCue4pG2tAilx7a4Fl/qhzwSRMFeAQiIjIu0/ADR40M1XjmupT4DADoP2hpB4K7x4NTZZOalqqS4Vw97fEfCgg4Df3X437r17TU=
+	t=1724804462; cv=none; b=dVBImi/uP4aJpcnhyuDWQJkFIn2vLDCWQ8aLbTGjoUBFeLD+28EdkYD5eLOmYWTxLGWLDawX5s7pCQeNJ+gD+LMwO0B/xyZIG//lUxWNd4wUdAI0OKcif/70jume/cvsRTm/kyxH+kXCckTXLUK4AIweWdvpJQHXRvSo6fAyh1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724804346; c=relaxed/simple;
-	bh=ySyC1GdbfZa4s5iTuJ+poeRdgMEqx1eenRFNVvlu1OM=;
+	s=arc-20240116; t=1724804462; c=relaxed/simple;
+	bh=+JyIfjGGfDW08CZFv38NnHyCIwmkiulk74kjYBuxnJ8=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=a76ibfzK0xSNHL7H+HgKmpnc4koKLdu/XlMRCerlQm02TpZBFwZvkpjogMr8MkcdXmEMwhLn8DF6B+4vhut1Wt0gpZU1pLuzxshJ3P+VK9nMRERCokagtv15Q2hCWQrf+ZeHNse35W0PzVpuhLmdQTncothrrFuWS9IDoMXymmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gzZu3v8a; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=FUbS9UO23va53/nw4QOesxxieausdniDMJEfJK72MnitfrdRwNpfE4KRwBPRZVcT6x7YSHlXvrXRek8ktIuyHsarmjxCvldN79cPsfUK9n7S8nJLt00Ek+VuSEaMQR/5FoTrAAyiBTizghMSqGcpG4Qw3I10l3S7A3h9K9B2rLw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VrO+nI86; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gzZu3v8a"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2480CC4AF12;
-	Wed, 28 Aug 2024 00:19:06 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VrO+nI86"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09599C4E695;
+	Wed, 28 Aug 2024 00:21:01 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724804346;
-	bh=ySyC1GdbfZa4s5iTuJ+poeRdgMEqx1eenRFNVvlu1OM=;
+	s=k20201202; t=1724804462;
+	bh=+JyIfjGGfDW08CZFv38NnHyCIwmkiulk74kjYBuxnJ8=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=gzZu3v8aCgoXrQFAo25JFycwmpwrkfPIk0v+Eh2nfSgEK1h1BEalC9D7ECAuS8gl3
-	 6j9Lci3+PcOi+hApFqEiY6hkNOAHL2XILuDRw2bFpK3UUuGBS8pcNc7Ar0w1hgpGea
-	 efUDgub7T3On5jH4DZ1supxGZB/VpvMplZzs9aOgYQVLm+V6VZVBdyEH5Yb43GRThV
-	 eew//PEp/sEz53uzSsReJALohOW3SZuDKQ6ZFxuaQCFORB0J33i9xs3FSyTpxohTi7
-	 uG7BGrOCC90/Ct/r5QLfIiNPTWkZ7d4C2afW2EuuTbbdb9qWb342c9Yy1at0O86UCF
-	 EHM8ieIrtEKoQ==
-Message-ID: <9e16ddb1c1a697464ce1f5438ab9ca31.sboyd@kernel.org>
+	b=VrO+nI86oF3O8hu6jd7ApoDjDaMDwom23SKOd/DArDxvTWRKCz2OHApWqwCJ1ap/T
+	 G4EkzM7XHPRqVjz7jjIGwxfiUhKvcaSQSiLC1flipsnkH5QX1r+aBCf2HlnB1CU6QS
+	 LAIIc/EHsz/BOg+QAjroBJajmF9avYkatTuV39pkRHfhaYOUM3oo6kf2YqC84RiX/I
+	 gEI41jpGdU3tprDrK2/awnOqLKR1aC8DMpaXt4SMoGYzjUND/ZLJ7z/XHt5QoXCPpg
+	 xAdAsdlcntLHHiMc+R7PREJjsYmi4gKqLf1nQSvjxX5CXDFc9zR1wooYKJOlqKcoph
+	 zT8J9kGITWOmw==
+Message-ID: <3e782ac88cc28fb5fa7ed71e7573e60f.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,69 +35,53 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240822155822.1771677-1-andriy.shevchenko@linux.intel.com>
-References: <20240822155822.1771677-1-andriy.shevchenko@linux.intel.com>
-Subject: Re: [PATCH v1 1/1] clk: devres: Simplify devres handling functions
+In-Reply-To: <20240822161452.1780149-2-andriy.shevchenko@linux.intel.com>
+References: <20240822161452.1780149-1-andriy.shevchenko@linux.intel.com> <20240822161452.1780149-2-andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v1 1/2] clk: x86: lpss-atom: Use predefined constants from units.h
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Uwe =?utf-8?q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc: Michael Turquette <mturquette@baylibre.com>
 To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Tue, 27 Aug 2024 17:19:04 -0700
+Date: Tue, 27 Aug 2024 17:21:00 -0700
 User-Agent: alot/0.10
 
-Quoting Andy Shevchenko (2024-08-22 08:58:22)
-> diff --git a/drivers/clk/clk-devres.c b/drivers/clk/clk-devres.c
-> index 90e6078fb6e1..f03d60706a85 100644
-> --- a/drivers/clk/clk-devres.c
-> +++ b/drivers/clk/clk-devres.c
-> @@ -28,15 +30,13 @@ static struct clk *__devm_clk_get(struct device *dev,=
- const char *id,
+Quoting Andy Shevchenko (2024-08-22 09:14:07)
+> diff --git a/drivers/clk/x86/clk-lpss-atom.c b/drivers/clk/x86/clk-lpss-a=
+tom.c
+> index aa9d0bb98f8b..c70088be72d1 100644
+> --- a/drivers/clk/x86/clk-lpss-atom.c
+> +++ b/drivers/clk/x86/clk-lpss-atom.c
+> @@ -12,20 +12,24 @@
+>  #include <linux/module.h>
+>  #include <linux/platform_data/x86/clk-lpss.h>
+>  #include <linux/platform_device.h>
+> +#include <linux/units.h>
+> =20
+>  static int lpss_atom_clk_probe(struct platform_device *pdev)
+>  {
+>         struct lpss_clk_data *drvdata;
 >         struct clk *clk;
->         int ret;
-> =20
-> -       state =3D devres_alloc(devm_clk_release, sizeof(*state), GFP_KERN=
-EL);
-> +       state =3D devm_kmalloc(dev, sizeof(*state), GFP_KERNEL);
+> +       u32 rate;
 
-When is this allocation freed if the get() fails? When the calling
-device driver detaches?
-
->         if (!state)
->                 return ERR_PTR(-ENOMEM);
-> =20
->         clk =3D get(dev, id);
-> -       if (IS_ERR(clk)) {
-> -               ret =3D PTR_ERR(clk);
-> -               goto err_clk_get;
-> -       }
-> +       if (IS_ERR(clk))
-> +               return clk;
-> =20
->         if (init) {
->                 ret =3D init(clk);
-> @@ -47,16 +47,14 @@ static struct clk *__devm_clk_get(struct device *dev,=
- const char *id,
->         state->clk =3D clk;
->         state->exit =3D exit;
-> =20
-> -       devres_add(dev, state);
-> +       ret =3D devm_add_action_or_reset(dev, devm_clk_release, state);
-> +       if (ret)
-> +               goto err_clk_init;
-
-Shouldn't we return an error here? Otherwise we call clk_put() twice?
+Do we need a local variable?
 
 > =20
->         return clk;
+>         drvdata =3D devm_kzalloc(&pdev->dev, sizeof(*drvdata), GFP_KERNEL=
+);
+>         if (!drvdata)
+>                 return -ENOMEM;
 > =20
->  err_clk_init:
-> -
->         clk_put(clk);
-> -err_clk_get:
-> -
-> -       devres_free(state);
->         return ERR_PTR(ret);
->  }
-> =20
+> +       /* Default frequency is 100MHz */
+> +       rate =3D 100 * HZ_PER_MHZ;
+> +
+>         /* LPSS free running clock */
+>         drvdata->name =3D "lpss_clk";
+> -       clk =3D clk_register_fixed_rate(&pdev->dev, drvdata->name, NULL,
+> -                                     0, 100000000);
+> +       clk =3D clk_register_fixed_rate(&pdev->dev, drvdata->name, NULL, =
+0, rate);
 
-I stopped reading, sorry! If you want to do this, please add a bunch of
-KUnit tests.
+This should be a one line patch.
+
+>         if (IS_ERR(clk))
+>                 return PTR_ERR(clk);
+>
