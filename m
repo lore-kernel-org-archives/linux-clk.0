@@ -1,190 +1,163 @@
-Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
+Received: from APC01-SG2-obe.outbound.protection.outlook.com (mail-sgaapc01on2058.outbound.protection.outlook.com [40.107.215.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D885328DB;
-	Wed, 28 Aug 2024 07:31:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724830272; cv=none; b=gwtFEuvqESXNG31yzUIsaW72QtpFaL2Lu2zMNuSrMxhfv8DWheXznqX1mJiPzeP66jgpT170bv1I0djTWr3xs8N+yC2Tg9qtBH9qbB7rg4zFunw1kVR/F4xvf5HbcTUnxQbKZpbqTe5+CSXn6RUhi/ds7qRZQ2KEEIkGwL/xloA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724830272; c=relaxed/simple;
-	bh=RVZ2WzypTVL8aXwnyta5z6xdCi/wY4px/T4jPpfoPVk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UbfaXliByqBa9HdhcjTe/TffXyoLaMl4f0umOzJ4VJKmYJkHgO/c10dFseRmZ3E+SFC3vnceA4LlN/mtL/oLZGXndb3eSStuUEoBFaRlMOlQO/wkhQe3Hpyr98Xq/oy8vXYhXI0olFTqjPifURomji/9yMX5+H7I9AjTK+Rv6NA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=YGqt5rhN; arc=none smtp.client-ip=217.92.40.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0286158DC3;
+	Wed, 28 Aug 2024 07:35:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.215.58
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724830533; cv=fail; b=HdR5VGgrCO75Ora/WS6Uib8cjlzvXNCxmfLUYlx7uTQduO9xnJEUVBTg8xJXHmbk2xg7fyPRzpE1oHqrqpubs0qHWsqDdEBk3BDTw8EYyRp4wyB3KxG2dQiNS1f2D51jIKNfr+uu9Q83YRgCw5KyFOedIZKYNVU5A3r2hJ4PhpY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724830533; c=relaxed/simple;
+	bh=LHb3XlHAyWqKYOdz13khk86aaMuhpE2x41dedWJGoF4=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=FQp2haMFnB0YOvbbED5cXWs6Cfz3R+OUuMT9y82qwokDZhcpTumiyRmpG5uppUWNj2s7b5LHlmENYtq+ZTNLPfje4IqeTL00eZYHqv4T4FndYJLHb2Lz1MvfFEM4q/yzGI1hLXnA+UHFTe3pK1vXkGqV3cfINk6I5XbeAG2Atno=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=Evoh5aPP; arc=fail smtp.client-ip=40.107.215.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="YGqt5rhN"
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 216621483485;
-	Wed, 28 Aug 2024 09:31:06 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
-	t=1724830268; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 in-reply-to:references; bh=mTvFLF+yscDR3yye+ivUrz/P11CO4Y8bZCNC+3JezZE=;
-	b=YGqt5rhNIJ39St7tOOHVoemuVYd5/rMXiYi8EdmgACC8TdsAHxUcUe1FN94tgvWynWAlAU
-	PKe2NISLCPNy4pX0Nb/3no98nY9aonaTpLg3XhI8zNFkkBtJCSvB+IglMxrr7vr9VPte7w
-	Q3vBgjl+KI+0zRRDHPccIsVzY0D6oEw9vZHC2Nf8C9XZSdsRTHC37Fbhkxe40WmSYABpP9
-	+EXSidqte4a6aeOp1N6796wKV5vxNGWjJPaT0Fys/Z52ZdR2nralwZTyssZljkgpYEUrzW
-	No6P/LQ+NMTXxMTKovJ1bY6sSUrhuDFvbbBiNTWUqswBfca8IU8AVDE4LS0a9g==
-Date: Wed, 28 Aug 2024 09:31:05 +0200
-From: Alexander Dahl <ada@thorsis.com>
-To: claudiu beznea <claudiu.beznea@tuxon.dev>
-Cc: Alexander Dahl <ada@thorsis.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Christian Melki <christian.melki@t2data.com>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: Re: [PATCH v1 00/12] Microchip OTPC driver on SAM9X60 exposing UIDxR
- as additional nvmem device
-Message-ID: <20240828-steadily-nearby-1fe97d4cbe97@thorsis.com>
-Mail-Followup-To: claudiu beznea <claudiu.beznea@tuxon.dev>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Christian Melki <christian.melki@t2data.com>,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20240821105943.230281-1-ada@thorsis.com>
- <717bd06f-3eba-4825-a53f-b2f9aa1c81c8@tuxon.dev>
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="Evoh5aPP"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=nDs7+cB2lWROOPlxLg7jVuEWFBhUx5hrJnZwDN5mdModZnSz1fbeBTWk0SaAMKy1oQ4HR4OZ1uJsHjY8Tj6rTqhP9qhgOvd4ay+nBQr2bMR7bNHc0ktEuXBN8jqADi70RUJ5iceDjE8VtKixogQtBEuhItb17XaythNUU2yRYn3mchx22yvxIt5u1v/ZnUrwjS8yV70npBkhKoqMerSLL6RUwBmPVqI0vMZC3brmWunW1aVsVn8SKDHY8JpvI3mvHv5nFvPhtupNCwVA5IiPpzuz7+DDfl+dU3eoonP4PsBJTXeqTDYwuDZoKPVu7sFxYr7opm9t0bBQZ6t9SXNynQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tk3syY9M69MI1gbG8uyqmMY7/mBAMEK8M3vb+AMvLmk=;
+ b=u4bk+MJC/YU/C/QqR7HQqBMaFcAajPwRJh0nQRwc52iGjwjtPXlD6dlnY3nPF1Cy0quqESYLwDM8EfIWGi7Rui6gLGowpMfY/WawmbJnWRjcvrNbq5KRbx1Q5wG356q/MD8z8Z0ljnT0dDsmC5uvo7PllfWtM6ZEA3qbUwb4Rl6NufMQTU7e+S+2aV1UtmhNl8URtGa2OScToIwSrmLa4zdtuxh27m9tIIajBkMftNMaOfh9Jhcm9/ADIfwB89c6CmprSKfRdEulhBEwvg8lD8+0srYJt3bAEK6Czx3bpzjbEIRE93bYL7+U1lB9hUgkKWIKyQv7RifpDPIa0TIVRw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tk3syY9M69MI1gbG8uyqmMY7/mBAMEK8M3vb+AMvLmk=;
+ b=Evoh5aPPGJaFo/NBpI6ftW7yX5vIRSHjPHZzJq2RqzeiXDprpjnkhJG1rCYmoZAfI9ZD8HO0JUUfXWOMkaGKf+f4SGKUJHTZvlVwnpEHpLZq6ROIjHI66RdT0FZaa/KzB8OhrnhFd7pu2psIjShFHOdiBh+cWVqo3DwtwP0oVA1n9dn93hj0DNgfrOGqOD+9MUQaRS+hsztUUxOcNn9c9Bz2SnJ3PjSQe00CFRBu0W0NgA8mNTOY380+5fxtJr0pTLdKBJ9nQiEV/eodLmu5AOXYSkyOCPY1k7jTY5qyb5/dqD/FUHaXZ5p9Pe5qD51xYSXdAFtY0GmBpd1UNq9RuA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from TYZPR06MB5709.apcprd06.prod.outlook.com (2603:1096:400:283::14)
+ by PUZPR06MB5982.apcprd06.prod.outlook.com (2603:1096:301:112::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.24; Wed, 28 Aug
+ 2024 07:35:27 +0000
+Received: from TYZPR06MB5709.apcprd06.prod.outlook.com
+ ([fe80::bc46:cc92:c2b6:cd1a]) by TYZPR06MB5709.apcprd06.prod.outlook.com
+ ([fe80::bc46:cc92:c2b6:cd1a%4]) with mapi id 15.20.7897.027; Wed, 28 Aug 2024
+ 07:35:27 +0000
+From: Yuesong Li <liyuesong@vivo.com>
+To: david@lechnology.com,
+	mturquette@baylibre.com,
+	sboyd@kernel.org
+Cc: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	opensource.kernel@vivo.com,
+	Yuesong Li <liyuesong@vivo.com>
+Subject: [PATCH v1] clk:davinci: make use of dev_err_cast_probe()
+Date: Wed, 28 Aug 2024 15:35:15 +0800
+Message-Id: <20240828073515.950677-1-liyuesong@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SGBP274CA0021.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b0::33)
+ To TYZPR06MB5709.apcprd06.prod.outlook.com (2603:1096:400:283::14)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <717bd06f-3eba-4825-a53f-b2f9aa1c81c8@tuxon.dev>
-User-Agent: Mutt/2.2.12 (2023-09-09)
-X-Last-TLS-Session-Version: TLSv1.3
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYZPR06MB5709:EE_|PUZPR06MB5982:EE_
+X-MS-Office365-Filtering-Correlation-Id: 32ca7eb5-8d59-4649-5a4e-08dcc733fc72
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|376014|52116014|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?SREKQzq9DNQMZnef7jgU0hSXBxfDj9q+OOmYqTvsyIOLym9dgUdKV/H1l6fg?=
+ =?us-ascii?Q?RYU2xv/QTIYTejNQ5Usd6J9PjgQqblyw+d1CpsntlgUpmeBx+8pYEcnz1DpA?=
+ =?us-ascii?Q?LfsQpgDPRt7bFDD2N/bw1FKDK6qQD4UDidWVRyLaHyV1t4J0HozqO+UUlEhk?=
+ =?us-ascii?Q?RmyHTIbfe1iN3MiRrNfPVELqiy8Vcrl1mfGTGWS+S/ou9HnO2XkjdQ6PBWHw?=
+ =?us-ascii?Q?ZaTD8pAy8VYceLLEsz8TYOk0pCu302jvzmwg1EGfTgeEuNxs8SLZKD5C4rjn?=
+ =?us-ascii?Q?NqehUwkEfKQN77omMAYsLyVICHSngDiU8XbXY3GVwtcDtORjs9z7K9IXNFvt?=
+ =?us-ascii?Q?AjAAAotPnNqmiXcZ9Ci5Hl6OPaN1GgdI33lBkBHyW0wE5Bd83339a014OPU0?=
+ =?us-ascii?Q?KKd3FH06qUoHHBekG6fKk92BwheeSKkfQjRIex9yEKFtsLyYID+C4KQlP1uX?=
+ =?us-ascii?Q?LDsGBOaJV349T6JkY9Z0CCwx+nME3g+JRlNwz2aOoB0DBGFn/M4TDBClTDSH?=
+ =?us-ascii?Q?ryKhENAyTQEg7ePryilwWf7giyr6yaIhTeGP3A8+HsVOJ2c7OTeFSpn+bFkc?=
+ =?us-ascii?Q?eVk01hgaCsd3ZagrN8RTKBWGv5WAQnFHCHX7IdqvKUzopY7IyOUeXcmYelto?=
+ =?us-ascii?Q?FaW6f0wXk0pGPqWu1e+lRmHCw62c9Ze8R00V3AghinabaXoewWshVlZbgiV8?=
+ =?us-ascii?Q?AuJDjxhucmr42gcbFkAb8zbuN9YCJGLCsNUFo3v3kC7JrJx6EpfPHSQ7g4Sw?=
+ =?us-ascii?Q?80Oph36p15ZwWVBDnUq+f2xJA4brXbokpgEYi4ne7sPQnP1rwIeEybv2WP/B?=
+ =?us-ascii?Q?owxOfVM2gq6F3yyoRZcInFznjZL7N7PWf3YuajPs92zSfrmHnyw/ZVXi5AV1?=
+ =?us-ascii?Q?foPlcjc1Rp25+gRAYg5Y+OH6k9E8NEy3twxqehPN1Od5tXgOo+xQ5YF+zKIu?=
+ =?us-ascii?Q?NBhd6sCYDtfJYx8RHnFHNnTfeeGW+G6skau4HwDBvwCOV/2WVXtVcCT6iIff?=
+ =?us-ascii?Q?/HOOYmEusL4K9amQbvXweZBnX6pBcoHWlMu/6IlwFrpiwCBaRiAeq/A9Rtrh?=
+ =?us-ascii?Q?Zexn0LTnzUzHujiQTXKnyWHSp6/ajCaoHoxPvJSMEdl4LgvEhKdBJROhk4JG?=
+ =?us-ascii?Q?HPHILkHVyr0PAHE3zHoTKpSjOyOVGueJCx7aVlrpFBy3pe8jw2PvWUuLullm?=
+ =?us-ascii?Q?YUlxNaXmN8q4rt3imBvJft+D8yeH+9jvWL+qghnoHcmGI1nn1Z8hVsZAOx/z?=
+ =?us-ascii?Q?VuUbJzb1Twym9oM9czAm8uwpThvQQiu9Q+8FV4jVIkA0YMYgJlLBIXUgCqGV?=
+ =?us-ascii?Q?SZqKzGmowGibfQgcSXlYn/Rpr7zlvskzLPLydRzjw7qXmJltD+Qe54/VZoRD?=
+ =?us-ascii?Q?IcPtFwwuqJdTkTnr9ppUFB5u0EWgew3rWUQisw69A+To4KBrpA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYZPR06MB5709.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(52116014)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?zrWNm12lqjiHw4L3iwEgXdYmt54s13GjQucH6jhqQXA7p94x+AKRFEXD57Zd?=
+ =?us-ascii?Q?tpIJ2psL5MksXJx83W5hvdGkV5CJ+znWfaPthyTMvG8aqPur1Irlrv1cewDh?=
+ =?us-ascii?Q?chszUaCHKvDKfptupadb2be1nwFUjcsx5CREPkX/7pUima3BjUszCDb2kZG/?=
+ =?us-ascii?Q?tRWvRlgiaBtrQZooaulSIgGCcnBg39Tl8Ps+yN7AtwN3aqSjc865q3RZBJCh?=
+ =?us-ascii?Q?7/azsb/XQ/iuA+NCyMejvyXx12LOTlld8OZC05+MNhArMDfDNOKtAwf93+BS?=
+ =?us-ascii?Q?iIftVvTpy/jfykKwufWgJR9JnrSlxSU4RaqxzmTiDsGboTjg1TAHsPE8Au0Z?=
+ =?us-ascii?Q?PJ50VxUOQRgLvlWUv29aeSTp8Wye4rw0BXaXZz3CcapLXyRMZ73JDHqsYgic?=
+ =?us-ascii?Q?frUOdgKWw2xKY6IQUr9ghb7gVcwzF5jCQL7QgdVPY5FcN7/rK7VtcI49Xzez?=
+ =?us-ascii?Q?h5kuk2pW1CIwekKJqM0ufjHFIdzj51OgOxa2MVlczCIFRxmbd5DKP8XkBhOg?=
+ =?us-ascii?Q?LfhRG7nDUo3qAYhGwkbmUazTPLlX0uwVw+ygSapkFedUJQKukKN8IxkKCdtP?=
+ =?us-ascii?Q?VPqTUwVa/wmhFRk9n241JpFNxmY6RBlFQMBrZeZdqK0JEksOOBmlkwvRdUNv?=
+ =?us-ascii?Q?8KqDPkaXEoJ1gTWvvjKGNYHL7qLBAeIEdO9ow3n4hGseEo1TCEhfCKGuFR/U?=
+ =?us-ascii?Q?OjFZwd1nOlSLSU0uKvSFI5KTqDouNMU+KM/VZIyaFjgrvZOmJ7n0pL+ZTTe9?=
+ =?us-ascii?Q?AWzrdJisyLivhBJ3ZayUm/VX3HYnVa993QCZTQq2FTkfJxzX5I4oheR2thG8?=
+ =?us-ascii?Q?sj0GsvZdB7VvSGmrzhY0sfvzQib5UI7CvrGbr6mrTOiArZECsq2IGa2fRlyF?=
+ =?us-ascii?Q?2Nk4iUxjfFxKhrfzwfDA1sZqHNRNLmkTWkmR0h+2h6/uaM1NSaQEvLuWpAoC?=
+ =?us-ascii?Q?BD7uGGZo5yB/+6YJ1zkt80w+swYO+Xm/YEwT0UKxTbDMQgzbKf7hLc50ZTUx?=
+ =?us-ascii?Q?XUpGWm0R9g57ajnJaOnYmkVInvmKDt/mDKPW6ZtUghlZWedU/HN8Mc4B+Cvl?=
+ =?us-ascii?Q?znkj7qG7uNZaLaei1irbYOwc/yOL/PCIcV3hcjdjN55TB/74unkY49tMYFF0?=
+ =?us-ascii?Q?OyJLXHNRtqCXvpH1M7gdx7U+R+Eyh6wThV5udZjOfy/MhZN3ItVl1ceqxcMD?=
+ =?us-ascii?Q?Q68Si2P2fMN2Oi3XO1NZ0JsbZQUWAJB0maO+9HP6KrCvXUfnAeckcSH51rOK?=
+ =?us-ascii?Q?J+lm5eOTHz+1FflBW7r1DHwQML4SVSPvkxw1aGddd4xSCBWi4VAujOf/cuqa?=
+ =?us-ascii?Q?ADO3pG4+ob4yqqfZGk9dWP9ArKbk06hn7/TsYRDielD4ZR5VSFRRidgNNb/8?=
+ =?us-ascii?Q?tlYbDCDdzBTQoPST6GBfLb9LsZy7CD5GgdKf5DUp+OTab3ugvLH0ZkKaT8Iz?=
+ =?us-ascii?Q?einOO7Ak1BTvqHI2b8SeFaKOkW0JD9JlNBJ4FAZ9IDG6UlwJicdkUc4gNamy?=
+ =?us-ascii?Q?m8lEQ3KJoAlsAxsI8PC8Q7YVnsCRFxfa6f5qjPmEU+obcaIOY2f9e68CBH5y?=
+ =?us-ascii?Q?nHLbxLsxJpK6oBcH3CWcNGoEYULI5hT1jrIFW0/t?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 32ca7eb5-8d59-4649-5a4e-08dcc733fc72
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR06MB5709.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 28 Aug 2024 07:35:27.4465
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6TYBR4k3ARrYeoaakti+6JdJZQHiZZsVSckBKd8SZUk/Rm+t9CJ3ErQ8RlZmDHwxjbiPpSKBbEtIjV8+9S4MZQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR06MB5982
 
-Hello Claudiu,
+Using dev_err_cast_probe() to simplify the code.
 
-thanks for having a closer look on the series.  The issues the bots
-complained about are already fixed in my working copy and will be part
-of v2.  Detailed discussion on particular patches itself over there,
-general remarks below.
+Signed-off-by: Yuesong Li <liyuesong@vivo.com>
+---
+ drivers/clk/davinci/da8xx-cfgchip.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Am Sat, Aug 24, 2024 at 07:17:43PM +0300 schrieb claudiu beznea:
-> Hi, Alexander,
-> 
-> On 21.08.2024 13:59, Alexander Dahl wrote:
-> > Hei hei,
-> > 
-> > on a custom sam9x60 based board we want to access a unique ID of the
-> > SoC.  Microchip sam-ba has a command 'readuniqueid' which returns the
-> > content of the OTPC Product UID x Register in that case.
-> > 
-> > (On different boards with a SAMA5D2 we use the Serial Number x Register
-> > exposed through the atmel soc driver.  Those registers are not present
-> > in the SAM9X60 series, but only for SAMA5D2/SAMA5D4 AFAIK.)
-> 
-> Not sure if you are talking about Chip ID, Chip ID extension registers.
-> These are available also on SAM9X60.
+diff --git a/drivers/clk/davinci/da8xx-cfgchip.c b/drivers/clk/davinci/da8xx-cfgchip.c
+index f6da66748573..a5109fe8b16e 100644
+--- a/drivers/clk/davinci/da8xx-cfgchip.c
++++ b/drivers/clk/davinci/da8xx-cfgchip.c
+@@ -513,8 +513,7 @@ da8xx_cfgchip_register_usb0_clk48(struct device *dev,
+ 
+ 	fck_clk = devm_clk_get(dev, "fck");
+ 	if (IS_ERR(fck_clk)) {
+-		dev_err_probe(dev, PTR_ERR(fck_clk), "Missing fck clock\n");
+-		return ERR_CAST(fck_clk);
++		return dev_err_cast_probe(dev, fck_clk, "Missing fck clock\n");
+ 	}
+ 
+ 	usb0 = devm_kzalloc(dev, sizeof(*usb0), GFP_KERNEL);
+-- 
+2.34.1
 
-No, this is not what I'm talking about.  The Chip ID and Chip ID
-extension registers are common over all SoCs of the same type.
-
-What I need is a unique ID, the same sam-ba returns with the
-"readuniqueid" applet.  The SAMA5D2 has this in SFR_SN0 and SFR_SN1,
-handled by drivers/soc/atmel/sfr.c driver.  The SFR block on sam9x60
-has no SNx registers, the unique ID comes from OTPC_UIDxR here.
-
-Best thing would be a simple nvmem device for the SAM9X60 providing
-just those 4 registers, in a similar way the sfr driver does for
-SAMA5D2.  This is the motivation for the series and what's eventually
-done in patch 12.  The other patches are just fixing the otpc driver
-for SAM9X60 so I can add that nvmem stuff.
-
-Greets
-Alex
-
-> > There is a driver for the OTPC of the SAMA7G5 and after comparing
-> > register layouts it seems that one is almost identical to the one used
-> > by SAM9X60.  Currently that driver has no support for the UIDx
-> > registers, but I suppose it would be the right place to implement it,
-> > because the registers are within the OTPC register address offsets.
-> > 
-> > The patch series starts with fixups for the current driver.  It then
-> > adds the necessary pieces to DT and driver to work on SAM9X60 in
-> > general.  Later support for enabling the main RC oscillator is added,
-> > which is required on SAM9X60 for the OTPC to work.  The last patch adds
-> > an additional nvmem device for the UIDx registers.
-> > 
-> > This v1 of the series was _not_ tested on SAMA7G5, because I don't have
-> > such a board for testing.  Actually I don't know if the main_rc_osc
-> > clock is required on SAMA7G5 too, and if yes how to handle that with
-> > regard to the different clock ids.  If someone could test on SAMA7G5
-> > and/or help me sorting out the core clock id things, that would be
-> > highly appreciated.
-> 
-> Please add Nicolas in the loop on the next revisions of this series as this
-> should also be tested on SAMA7G5. I don't have a SAMA7G5 with OTP memory
-> populated.
-> 
-> > 
-> > Also I assume some more devicetree and/or sysfs documentation is
-> > necessary.  If someone could point me what's exactly required, this
-> > would be very helpful for me.  You see I expect at least another version
-> > v2 of the series. ;-)
-> > 
-> > Maybe some files having that "sama7g5" should be renamed, because that
-> > DT binding is used for more SoCs now and deserves a more generic name?
-> 
-> Not needed, adding your compatible there is enough.
-> 
-> > Thinking of these for example:
-> > 
-> > - Documentation/devicetree/bindings/nvmem/microchip,sama7g5-otpc.yaml
-> > - include/dt-bindings/nvmem/microchip,sama7g5-otpc.h
-> > 
-> > Are there other SoCs than SAMA7G5 and SAM9X60 using the same OTPC?
-> > 
-> > Last question: Should the UID be added to the device entropy pool with
-> > add_device_randomness() as done in the SAMA5D2 sfr driver?
-> > 
-> > I sent an RFC patch on this topic earlier this year, you'll find the
-> > link below as a reference to the discussion.  The patch itself was
-> > trivial and not meant for applying as is anyways, so I decided to not
-> > write a full changelog from RFC to v1.
-> > 
-> > Last not least, special thanks to Christian Melki on IRC, who wrote and
-> > tested parts of this, and was very kind and helpful in discussing the
-> > topic several times in the past months.
-> > 
-> > Christian, if you feel there's credit missing, just point me where to
-> > add Co-developed-by and I'll happily do that for v2.
-> > 
-> > Greets
-> > Alex
-> > 
-> > (series based on v6.11-rc4)
-> > 
-> > Cc: linux-arm-kernel@lists.infradead.org
-> > Cc: devicetree@vger.kernel.org
-> > Cc: linux-kernel@vger.kernel.org
-> > Cc: linux-clk@vger.kernel.org
-> > Link: https://lore.kernel.org/all/20240412140802.1571935-2-ada@thorsis.com/
-> > 
-> > Alexander Dahl (12):
-> >   nvmem: microchip-otpc: Avoid writing a write-only register
-> >   nvmem: microchip-otpc: Fix swapped 'sleep' and 'timeout' parameters
-> >   dt-bindings: nvmem: microchip-otpc: Add compatible for SAM9X60
-> >   nvmem: microchip-otpc: Add SAM9X60 support
-> >   ARM: dts: microchip: sam9x60: Add OTPC node
-> >   ARM: dts: microchip: sam9x60_curiosity: Enable OTP Controller
-> >   nvmem: microchip-otpc: Add missing register definitions
-> >   nvmem: microchip-otpc: Add warnings for bad OTPC conditions on probe
-> >   clk: at91: sam9x60: Allow enabling main_rc_osc through DT
-> >   ARM: dts: microchip: sam9x60: Add clock properties to OTPC
-> >   nvmem: microchip-otpc: Enable main RC oscillator clock
-> >   nvmem: microchip-otpc: Expose UID registers as 2nd nvmem device
-> > 
-> >  .../nvmem/microchip,sama7g5-otpc.yaml         |  1 +
-> >  .../dts/microchip/at91-sam9x60_curiosity.dts  |  4 +
-> >  arch/arm/boot/dts/microchip/sam9x60.dtsi      | 10 +++
-> >  drivers/clk/at91/sam9x60.c                    |  3 +-
-> >  drivers/nvmem/microchip-otpc.c                | 86 ++++++++++++++++++-
-> >  include/dt-bindings/clock/at91.h              |  1 +
-> >  6 files changed, 100 insertions(+), 5 deletions(-)
-> > 
-> > 
-> > base-commit: 47ac09b91befbb6a235ab620c32af719f8208399
