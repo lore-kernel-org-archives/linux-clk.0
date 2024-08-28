@@ -1,116 +1,79 @@
-Received: from vern.gendns.com (vern.gendns.com [98.142.107.122])
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7360D16CD06;
-	Wed, 28 Aug 2024 14:29:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.142.107.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4E821A2564;
+	Wed, 28 Aug 2024 15:16:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724855346; cv=none; b=Rk+Us9MUgyYc7Y5ImeJ10GW5ru4soBbj83jPVT1deIZffzYbqqivV6gIpats7ja9RdD0aUfyK32WOKWLGvANLJVa1G7ngQZ4kr1QSFIs/x3grLeLbJm0nK5LNSeH9Ab+iJgwswQS+sggmorRMPoFsD5TkGhOT7d5MdKYJH8U4vI=
+	t=1724858222; cv=none; b=aBsXrDQePHZ0IzfVsVJNN9QjHQY7f21UrVc0UtfzSuCJjfXRT4H4Kk1e0HLqeiYjO/ZYmLCTcNWDz48nXK7JyKGvQmoho+buPC+iCaxz5OX3C1SBFyLlC5cHpbmLFDuPk6wa9RxlooCafpmQ9tq/9I71RaftuV/NiPFcYmZ58HM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724855346; c=relaxed/simple;
-	bh=jmo+ugdPNm7COTRu4WoMedmCV9DAyYLB2vTCoWCaMDc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rBAkqX+GR9Ng4i3SBTXLBvGg+9NfWqDzK7MGb7nsV5FQvvaqDlI+Z6JvifAjr4SaPrvOlof8E7jOqL3sy9PZDPz9Vud9uxEYlMQInWH9HeguCDWkIL3j0O1bPL696pzQFw00+LT13L7HPvUfW7WEy9Zs/aOKg5zfNGLkxlR52JI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com; spf=pass smtp.mailfrom=lechnology.com; dkim=pass (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b=IYtcKIq1; arc=none smtp.client-ip=98.142.107.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lechnology.com
+	s=arc-20240116; t=1724858222; c=relaxed/simple;
+	bh=m2LJPV/xv2gr2TpnpPHS6gazUaUtlhauhnAOhX1T3OY=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
+	 References:In-Reply-To; b=S3lXV+x4lcPwvxGAi/r58jx9558IxJ8hPofVjFQZ+kQeb6KUZABGUiqIDG4Y68L/QZaMnqpQB5KdJQi11nV07NgFZDY1gk6Tb6ocS/7Fj0my0jXm+5GuOPHJzxRHoTRLDl2a5Ir5kZSOpbsRgyWnhgsp7mbzAXUzqJ3i2o3OAtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=MQYRoGTP; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="IYtcKIq1"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=hDY5OY3XHo3jITLGKzN0/MaCZh01Pb1MSHsRVbEd1vo=; b=IYtcKIq1qsz5wYwj7QygNrNf/S
-	p9b+2kLSoMKcgLYeW8x1ngVBC9dOdPhA7giGJNmHy0JxdBv99baRtDGvQ0Y0kcNYfEvsjgX6JRzHO
-	Hok+TWbC8cIWucO8UZiowiJjVBJ+it8dkQFh4Duh8Xmh7phmL3uqHfOst8suJip6lcbBswZb253Kh
-	C+vUyDxIyYOrDtvXijDZsMpFQlohdILNDy5BwAYsBW1ep5EwbtL0nJcmfuE97lYe6RVIMvspu2Vcq
-	CgEYFuEj5dMq9I4dnGfYgsOu9pmjI2Xj1HZH2KHkFFFXKUO65Qq9RpdCiT+l68lr4OhtVzb2CD7Ih
-	Z/SgIFDA==;
-Received: from ip98-183-112-25.ok.ok.cox.net ([98.183.112.25]:50536 helo=[192.168.0.142])
-	by vern.gendns.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <david@lechnology.com>)
-	id 1sjJRW-0004iI-2S;
-	Wed, 28 Aug 2024 10:13:07 -0400
-Message-ID: <8fdbe5cc-c24f-4e56-a274-7c01aa7bcd21@lechnology.com>
-Date: Wed, 28 Aug 2024 09:13:06 -0500
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="MQYRoGTP"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2238EC0007;
+	Wed, 28 Aug 2024 15:16:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1724858211;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=m2LJPV/xv2gr2TpnpPHS6gazUaUtlhauhnAOhX1T3OY=;
+	b=MQYRoGTPQ4nxGHNWBrjt+t8MFmNFBl4WF98zHoNDVP24pfr1z02sQoK76WStOCvfxMIA1R
+	dp5HcxJOVkQM5Ik+IvZT4V8PemFEfp6DiM6kNkYje4oh+4+9ewoIudZv2B/ukxpPkKC3GF
+	0QLY0kGk0Dw30hpvUpYqSIOFP5FQ/akkg8MIfqni3kNIMC75K7Ugulbd5Hii2PQog6YkzO
+	UcaAu2GYPpQFxXzoOZKNdwxrIGXfliHpqdpQQRDiQ3vuPEzSb15pbWvPOPWZ65p5pOgH/E
+	fjt39tplPOqg4Ce2nRBE9/pjRzbinB7KBJzePCnuT6v+WthbHHqf72jsv3yJYg==
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] clk:davinci: make use of dev_err_cast_probe()
-To: Yuesong Li <liyuesong@vivo.com>, mturquette@baylibre.com, sboyd@kernel.org
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
- opensource.kernel@vivo.com
-References: <20240828073515.950677-1-liyuesong@vivo.com>
-Content-Language: en-US
-From: David Lechner <david@lechnology.com>
-Autocrypt: addr=david@lechnology.com; keydata=
- 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
-In-Reply-To: <20240828073515.950677-1-liyuesong@vivo.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - vern.gendns.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lechnology.com
-X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Date: Wed, 28 Aug 2024 17:16:50 +0200
+Message-Id: <D3RN7EPR2YWE.1VJ7Y8ZXCWF5R@bootlin.com>
+Cc: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, "Vladimir Kondratiev"
+ <vladimir.kondratiev@mobileye.com>, =?utf-8?q?Gr=C3=A9gory_Clement?=
+ <gregory.clement@bootlin.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
+ <tawfik.bayouk@mobileye.com>, "Krzysztof Kozlowski"
+ <krzysztof.kozlowski@linaro.org>
+To: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, "Michael
+ Turquette" <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>,
+ "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
+ <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: Re: [PATCH RESEND v3 0/4] Add Mobileye EyeQ clock support
+X-Mailer: aerc 0.18.2-0-ge037c095a049
+References: <20240730-mbly-clk-v3-0-4f90fad2f203@bootlin.com>
+In-Reply-To: <20240730-mbly-clk-v3-0-4f90fad2f203@bootlin.com>
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-On 8/28/24 2:35 AM, Yuesong Li wrote:
-> Using dev_err_cast_probe() to simplify the code.
-> 
-> Signed-off-by: Yuesong Li <liyuesong@vivo.com>
-> ---
+Hi Stephen,
 
-Reviewed-by: David Lechner <david@lechnology.com>
+On Tue Jul 30, 2024 at 6:04 PM CEST, Th=C3=A9o Lebrun wrote:
+> This is a new iteration on the clock part of the Mobileye
+> system-controller series. It used to be sent as a single series [0],
+> but has been split in the previous revisions (see [1], [2], [3], [4])
+> to faciliate merging.
+
+What's your state of mind on this series? I am happy at how it turned
+out and believe the whole system-controller for the platform is modeled
+properly now. It works as expected on real hardware. Pinctrl got in.
+
+Thanks,
+
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
