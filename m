@@ -1,55 +1,57 @@
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37739188CDC
-	for <linux-clk@vger.kernel.org>; Wed, 28 Aug 2024 14:06:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C98B1891AA
+	for <linux-clk@vger.kernel.org>; Wed, 28 Aug 2024 14:06:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724853978; cv=none; b=YbcPeiuiviJeKyr/R6PwYOjnzFO755XdYwuwHA7P2MKTr9hT5u5gF2fuR8rhUlwMjuWv9QdnrXZWTnw8Eh6NZzzshPQxXsmZ7Rs9ilR/rNOXJWMYFNqt28v5EdJzRB56QtyKMvSvefv5UqQ/S7275MS8MAMeD5eb9DiaRr465/4=
+	t=1724853978; cv=none; b=CMvp1Rt+2h/2fKPES8y7HE5R4RevoXAbDcH/s+vntx6gayfYkfTOUr4O8KyJZVsUIMV/4spi2sk8ORXlQ3s7n7qSmLH/mh7L42pgn/g/LAZOijY+W+xNoCASeCQTKbD5X+8/dZEvHJd8dEuPPZZSX8hz2Xq0sX7Qy7fz24ku1+I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1724853978; c=relaxed/simple;
-	bh=n/Pkll2/aYd2MGCXDtO54pgr7iCEGk5UA5Nv9TSmr2I=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TUH1U30Dn7bvmwZg09OEZmTsFGv9hzO3SMQ4w8z5eqji3U9m1BovtnPE1g944S9G7sH8FRnIDvSt4N2483h/QTTs712jlRWp6c/+arFy0LVwK01I1Lj2J3H50l5zH9WvWdJ68DDDNB7L+DaAi724WiHGpElK2+EmgfmCz6KBWk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=GPyZoq5s; arc=none smtp.client-ip=209.85.218.44
+	bh=8VHUL57R0OzzBSjjnOEhhX/D+itTi+aKH9NWr4oG+rw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=efpoBFUcBmXvuXlrcTjAFzWsXnMIajBUP5pzaZckxGB09FDqRUk1iQRYA8UkriCgCbWMQDfUNOb5AQlduQg4hkk8En3NlNmhziZEM9U5aTggh1LgH8McVnsHvRlEYJOfoiVVgSNa3F9L7D1MxHe3xXmjOjSmdNAxnfn2IEgMvtw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=gHahkeEy; arc=none smtp.client-ip=209.85.218.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="GPyZoq5s"
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a868b8bb0feso739311866b.0
-        for <linux-clk@vger.kernel.org>; Wed, 28 Aug 2024 07:06:15 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="gHahkeEy"
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a8679f534c3so725658866b.0
+        for <linux-clk@vger.kernel.org>; Wed, 28 Aug 2024 07:06:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1724853974; x=1725458774; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=/2opj3/jkFrjiKQvIyMUHejfhmR0t0gPFQPbv+1tYrc=;
-        b=GPyZoq5sWFqXf+qNlZvklYAFfm4//vO35Va2suBOq15mHVcFmPL8qrQpiV+ttsC2M2
-         DhEIp1KfE7emmbWc4QVhyXqsv+U4HLz1ZWH+kzu2j8OYYLi56/AktPPKdKW1aGI/U1ID
-         ENXCzWorn93WGly2Cz4/dZko9rzv+IWcF4KuSacG6xaoMq7tT09hF9Szch2jgfwRK/2g
-         lzcUUNhkaV4z0/CqcwA/Vq3QtWHk5VL79PdvDhtLhjhPOCajShbDTp9zP12ft2TJAQ18
-         +kn+V8+BAz2E8dJGt/JP7r5RPk2ZmKjz6w5yVCdM67w59b2FcYBA5XPX0pDwCV9vgutD
-         P+8A==
+        d=tuxon.dev; s=google; t=1724853975; x=1725458775; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xS9W/uziPW5QbMHaGQ7eUl8eCqs5pktusx+WC57dvT0=;
+        b=gHahkeEy2OWN6Z/bPMgGv/sOxndVpjZ82a6KrWKVfW50LSbc22KRFTge+yKb2iog2M
+         A9v0wzi1dfo3klLXHgeDhZTV66ev5W5zGs8jZvuf2wa9ppuLtMTpreZHHaduCB1lPItx
+         YJUaH29EUONf+k70hxEoNN8EzI2Bbmy+aix9sbxN41mveaHMMg5TxRLjf6BbNWalGFX5
+         Y/LLmYIPmIJUC9qxEc5vzcc6c8yYcBD1EmSYIitWYfWGgjazM9m5U6L03Rre8zO/DYd1
+         CDyIGTY/gLV2uOki3f06X4qTbwbFolyHqO660VqA7cfl9Q/ixv5qcevGj9/hd4g/tFn9
+         hNZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724853974; x=1725458774;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=/2opj3/jkFrjiKQvIyMUHejfhmR0t0gPFQPbv+1tYrc=;
-        b=ZhyM7t3nEuQAlDCj01Q6SzI9lTRK1jAiOhobP50jAeuuQ+v1ydtyYriQMYJY5ht2QH
-         QjlTEfVGPHq+exrZQ+lhLIq+9bIcFGxmdsmU3h1reDGTgzopqyV16bf0puEBUwZC0Ld4
-         ePn5/lyQkHi7t6QbYbs3B+FQ9fkDn7+Eu1r2nIJ2BbuiZj4jXYi6KmztzIm7Qa3Op1mC
-         WSOU1tfoiuWxRoVJL3kPzKWdkWQ5cLaUngWhVRyedCiRnpzj4+KNyVrNtb9FuWw38J4r
-         cDxbWpw6I0oBkazJh5Zhbus3Z8ku2a/+zrMW5CEKLVium2l5/LfPpQB4gCQZgWlD4CON
-         N1uw==
-X-Forwarded-Encrypted: i=1; AJvYcCUBXp+xJzvBYojR/BVtvY2D/hw2sYB3/ax5A8Q2+3WUI7+at/ihd79upXJq4Kfunn4A34nrFe7kTUI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzh27YIWBP3AEL6uHtpevmnEAPW0nh+QTU6zf/l/Tjz+H+PRmCP
-	UttzLl0/4ETT4M9KV259SIaGOSKZRuYeVn/6eTO7Z1+Ta0mQ4mUWgh3YVLIxgvo=
-X-Google-Smtp-Source: AGHT+IHX2ETE7Utzz1hpIpA9XUWQb8Cecp0VRFYEzjPCMYMPZgmKWyHJGF7yUlp5tC4+gxLSZmkcaw==
-X-Received: by 2002:a17:907:f1cd:b0:a86:743e:7a08 with SMTP id a640c23a62f3a-a870aa17258mr155752266b.31.1724853972746;
-        Wed, 28 Aug 2024 07:06:12 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1724853975; x=1725458775;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xS9W/uziPW5QbMHaGQ7eUl8eCqs5pktusx+WC57dvT0=;
+        b=Or0X28AkkWgRroc5L+1gsKwyl6ySRF3SCTcbcimHMcezifKzL/8yMSXLbBN3EkA2V5
+         DRtjolTlr6lv186/arWRWSGlUBqOdZ2+vJ3sMWh/gMXkDcbrMeVaKh0NR/KYU1t/dLV3
+         QCSKaghn5azz/BKYloQsh3I37V9m+W7LFGvPqT4i3Qr+383t1F3V4jTVEBqzgRVIlQ7y
+         rZE6R2VjCxMhfHCqwJbypcyaK8TSZxoWNV/urkLl/zPqv075ttvyubq/O7yM9J3FLsjt
+         +CEIqisf7WoDz2mp5vfIqwHqi9pXQkbVyoAgfzqN/QVbACL6FvTftxImOygpZOMxaWsK
+         aeSw==
+X-Forwarded-Encrypted: i=1; AJvYcCWSAgJ51ru6Y6IlEyjSQ+lOzGkDpLCBRP1r29N/5tdb1I5vvHivJ4ufyAIXzwyp2a7w0lsgD6N40qk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNS6XOdoK4naxJAZ4DTenAVSpfg0UZgJ77mlT98tGYdAFceQQB
+	IlShfG+N9v2Ljd53cMOsCNwsNLiBwiuIGdBBHvefHcU0SdPARz3rAG8mE8VmLsg=
+X-Google-Smtp-Source: AGHT+IHwGv5jLhngxX0DU4uSV0hVOXIo5vpPbFbXZ3sADm3GPhfkHLacWXr2lg8q+59SyW9xTx+kpg==
+X-Received: by 2002:a17:907:f7a8:b0:a86:8953:e1fe with SMTP id a640c23a62f3a-a86a54d2d4bmr1345488266b.47.1724853974401;
+        Wed, 28 Aug 2024 07:06:14 -0700 (PDT)
 Received: from claudiu-X670E-Pro-RS.. ([82.78.167.144])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e54b50dbsm251875666b.93.2024.08.28.07.06.11
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e54b50dbsm251875666b.93.2024.08.28.07.06.13
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 07:06:12 -0700 (PDT)
+        Wed, 28 Aug 2024 07:06:14 -0700 (PDT)
 From: Claudiu <claudiu.beznea@tuxon.dev>
 X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
 To: geert+renesas@glider.be,
@@ -65,10 +67,12 @@ Cc: linux-renesas-soc@vger.kernel.org,
 	linux-pm@vger.kernel.org,
 	claudiu.beznea@tuxon.dev,
 	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH v2 0/3] watchdog: rzg2l_wdt: Enable properly the watchdog clocks and power domain
-Date: Wed, 28 Aug 2024 17:05:59 +0300
-Message-Id: <20240828140602.1006438-1-claudiu.beznea.uj@bp.renesas.com>
+Subject: [PATCH v2 1/3] clk: renesas: rzg2l-cpg: Use GENPD_FLAG_* flags instead of local ones
+Date: Wed, 28 Aug 2024 17:06:00 +0300
+Message-Id: <20240828140602.1006438-2-claudiu.beznea.uj@bp.renesas.com>
 X-Mailer: git-send-email 2.39.2
+In-Reply-To: <20240828140602.1006438-1-claudiu.beznea.uj@bp.renesas.com>
+References: <20240828140602.1006438-1-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -79,70 +83,190 @@ Content-Transfer-Encoding: 8bit
 
 From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Hi,
+For watchdog PM domain it is necessary to provide GENPD_FLAG_IRQ_SAFE flag
+to be able to power on the watchdog PM domain from atomic context. For
+this, adjust the current infrastructure to be able to provide GENPD_FLAG_*
+for individual PM domains.
 
-Watchdog device available on RZ/G3S SoC is part of a software-controlled
-power domain. The watchdog driver implements struct
-watchdog_ops::restart() handler which is called in atomic context via
-this call chain:
-
-kernel_restart() ->
-  machine_restart() ->
-    do_kernel_restart() ->
-      atomic_notifier_call_chain() ->
-        watchdog_restart_notifier()
-          rzg2l_wdt_restart()
-
-When the rzg2l_wdt_restart() is called it may happen that the watchdog
-clocks to be disabled and the associated power domain to be off.
-Accessing watchdog registers in this state leads to aborts and system
-blocks.
-
-To solve this issue the watchdog power domain was marked as IRQ safe
-as well as watchdog device (as proposed by Ulf Hansson). Along with
-it the clk_prepare_enable() calls from the watchdog restart() handler
-were removed and all is based now on pm_runtime_resume_and_get()
-as explained in patch 03/03.
-
-Series contains also power domain driver changes to be able to
-register the watchdog PM domain as an IRQ safe one.
-
-Initial RFC series for solving this issue was posted at [1].
-
-It is safe to merge watchdog and PM domain driver changes though
-different trees.
-
-Thank you,
-Claudiu Beznea
-
-[1] https://lore.kernel.org/all/20240619120920.2703605-1-claudiu.beznea.uj@bp.renesas.com/
+Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+---
 
 Changes in v2:
-- adjusted patch title for patch 02/03
-- adjusted description for patch 03/03 along with comment
-  from code
+- none
 
 Changes since RFC:
-- dropped patches 01/03, 02/03 from RFC
-- adjusted power domain driver to be able to register the
-  watchdog PM domain as an IRQ safe one
-- drop clock prepare approach from watchdog driver presented in RFC
-  and rely only on pm_runtime_resume_and_get()
-- mark the watchdog device as IRQ safe
+- none; this patch is new
 
-Claudiu Beznea (3):
-  clk: renesas: rzg2l-cpg: Use GENPD_FLAG_* flags instead of local ones
-  clk: renesas: r9a08g045: Mark the watchdog and always-on PM domains as
-    IRQ safe
-  watchdog: rzg2l_wdt: Power on the watchdog domain in the restart
-    handler
-
- drivers/clk/renesas/r9a08g045-cpg.c | 43 ++++++++++++-----------------
+ drivers/clk/renesas/r9a08g045-cpg.c | 44 +++++++++++------------------
  drivers/clk/renesas/rzg2l-cpg.c     | 13 +++++----
  drivers/clk/renesas/rzg2l-cpg.h     | 10 ++-----
- drivers/watchdog/rzg2l_wdt.c        | 20 ++++++++++++--
- 4 files changed, 46 insertions(+), 40 deletions(-)
+ 3 files changed, 28 insertions(+), 39 deletions(-)
 
+diff --git a/drivers/clk/renesas/r9a08g045-cpg.c b/drivers/clk/renesas/r9a08g045-cpg.c
+index 213499fc8fb5..ec0672651fe0 100644
+--- a/drivers/clk/renesas/r9a08g045-cpg.c
++++ b/drivers/clk/renesas/r9a08g045-cpg.c
+@@ -9,6 +9,7 @@
+ #include <linux/device.h>
+ #include <linux/init.h>
+ #include <linux/kernel.h>
++#include <linux/pm_domain.h>
+ 
+ #include <dt-bindings/clock/r9a08g045-cpg.h>
+ 
+@@ -258,52 +259,41 @@ static const struct rzg2l_cpg_pm_domain_init_data r9a08g045_pm_domains[] = {
+ 	/* Keep always-on domain on the first position for proper domains registration. */
+ 	DEF_PD("always-on",	R9A08G045_PD_ALWAYS_ON,
+ 				DEF_REG_CONF(0, 0),
+-				RZG2L_PD_F_ALWAYS_ON),
++				GENPD_FLAG_ALWAYS_ON),
+ 	DEF_PD("gic",		R9A08G045_PD_GIC,
+ 				DEF_REG_CONF(CPG_BUS_ACPU_MSTOP, BIT(3)),
+-				RZG2L_PD_F_ALWAYS_ON),
++				GENPD_FLAG_ALWAYS_ON),
+ 	DEF_PD("ia55",		R9A08G045_PD_IA55,
+ 				DEF_REG_CONF(CPG_BUS_PERI_CPU_MSTOP, BIT(13)),
+-				RZG2L_PD_F_ALWAYS_ON),
++				GENPD_FLAG_ALWAYS_ON),
+ 	DEF_PD("dmac",		R9A08G045_PD_DMAC,
+ 				DEF_REG_CONF(CPG_BUS_REG1_MSTOP, GENMASK(3, 0)),
+-				RZG2L_PD_F_ALWAYS_ON),
++				GENPD_FLAG_ALWAYS_ON),
+ 	DEF_PD("wdt0",		R9A08G045_PD_WDT0,
+-				DEF_REG_CONF(CPG_BUS_REG0_MSTOP, BIT(0)),
+-				RZG2L_PD_F_NONE),
++				DEF_REG_CONF(CPG_BUS_REG0_MSTOP, BIT(0)), 0),
+ 	DEF_PD("sdhi0",		R9A08G045_PD_SDHI0,
+-				DEF_REG_CONF(CPG_BUS_PERI_COM_MSTOP, BIT(0)),
+-				RZG2L_PD_F_NONE),
++				DEF_REG_CONF(CPG_BUS_PERI_COM_MSTOP, BIT(0)), 0),
+ 	DEF_PD("sdhi1",		R9A08G045_PD_SDHI1,
+-				DEF_REG_CONF(CPG_BUS_PERI_COM_MSTOP, BIT(1)),
+-				RZG2L_PD_F_NONE),
++				DEF_REG_CONF(CPG_BUS_PERI_COM_MSTOP, BIT(1)), 0),
+ 	DEF_PD("sdhi2",		R9A08G045_PD_SDHI2,
+-				DEF_REG_CONF(CPG_BUS_PERI_COM_MSTOP, BIT(11)),
+-				RZG2L_PD_F_NONE),
++				DEF_REG_CONF(CPG_BUS_PERI_COM_MSTOP, BIT(11)), 0),
+ 	DEF_PD("eth0",		R9A08G045_PD_ETHER0,
+-				DEF_REG_CONF(CPG_BUS_PERI_COM_MSTOP, BIT(2)),
+-				RZG2L_PD_F_NONE),
++				DEF_REG_CONF(CPG_BUS_PERI_COM_MSTOP, BIT(2)), 0),
+ 	DEF_PD("eth1",		R9A08G045_PD_ETHER1,
+-				DEF_REG_CONF(CPG_BUS_PERI_COM_MSTOP, BIT(3)),
+-				RZG2L_PD_F_NONE),
++				DEF_REG_CONF(CPG_BUS_PERI_COM_MSTOP, BIT(3)), 0),
+ 	DEF_PD("i2c0",		R9A08G045_PD_I2C0,
+-				DEF_REG_CONF(CPG_BUS_MCPU2_MSTOP, BIT(10)),
+-				RZG2L_PD_F_NONE),
++				DEF_REG_CONF(CPG_BUS_MCPU2_MSTOP, BIT(10)), 0),
+ 	DEF_PD("i2c1",		R9A08G045_PD_I2C1,
+-				DEF_REG_CONF(CPG_BUS_MCPU2_MSTOP, BIT(11)),
+-				RZG2L_PD_F_NONE),
++				DEF_REG_CONF(CPG_BUS_MCPU2_MSTOP, BIT(11)), 0),
+ 	DEF_PD("i2c2",		R9A08G045_PD_I2C2,
+-				DEF_REG_CONF(CPG_BUS_MCPU2_MSTOP, BIT(12)),
+-				RZG2L_PD_F_NONE),
++				DEF_REG_CONF(CPG_BUS_MCPU2_MSTOP, BIT(12)), 0),
+ 	DEF_PD("i2c3",		R9A08G045_PD_I2C3,
+-				DEF_REG_CONF(CPG_BUS_MCPU2_MSTOP, BIT(13)),
+-				RZG2L_PD_F_NONE),
++				DEF_REG_CONF(CPG_BUS_MCPU2_MSTOP, BIT(13)), 0),
+ 	DEF_PD("scif0",		R9A08G045_PD_SCIF0,
+-				DEF_REG_CONF(CPG_BUS_MCPU2_MSTOP, BIT(1)),
+-				RZG2L_PD_F_NONE),
++				DEF_REG_CONF(CPG_BUS_MCPU2_MSTOP, BIT(1)), 0),
+ 	DEF_PD("vbat",		R9A08G045_PD_VBAT,
+ 				DEF_REG_CONF(CPG_BUS_MCPU3_MSTOP, BIT(8)),
+-				RZG2L_PD_F_ALWAYS_ON),
++				GENPD_FLAG_ALWAYS_ON),
+ };
+ 
+ const struct rzg2l_cpg_info r9a08g045_cpg_info = {
+diff --git a/drivers/clk/renesas/rzg2l-cpg.c b/drivers/clk/renesas/rzg2l-cpg.c
+index 88bf39e8c79c..b97996e93042 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.c
++++ b/drivers/clk/renesas/rzg2l-cpg.c
+@@ -1680,11 +1680,13 @@ static int rzg2l_cpg_power_off(struct generic_pm_domain *domain)
+ 	return 0;
+ }
+ 
+-static int __init rzg2l_cpg_pd_setup(struct rzg2l_cpg_pd *pd, bool always_on)
++static int __init rzg2l_cpg_pd_setup(struct rzg2l_cpg_pd *pd, u32 genpd_flags,
++				     bool always_on)
+ {
+ 	struct dev_power_governor *governor;
+ 
+-	pd->genpd.flags |= GENPD_FLAG_PM_CLK | GENPD_FLAG_ACTIVE_WAKEUP;
++	pd->genpd.flags |= GENPD_FLAG_PM_CLK | GENPD_FLAG_ACTIVE_WAKEUP |
++			   genpd_flags;
+ 	pd->genpd.attach_dev = rzg2l_cpg_attach_dev;
+ 	pd->genpd.detach_dev = rzg2l_cpg_detach_dev;
+ 	if (always_on) {
+@@ -1712,7 +1714,7 @@ static int __init rzg2l_cpg_add_clk_domain(struct rzg2l_cpg_priv *priv)
+ 
+ 	pd->genpd.name = np->name;
+ 	pd->priv = priv;
+-	ret = rzg2l_cpg_pd_setup(pd, true);
++	ret = rzg2l_cpg_pd_setup(pd, 0, true);
+ 	if (ret)
+ 		return ret;
+ 
+@@ -1777,7 +1779,8 @@ static int __init rzg2l_cpg_add_pm_domains(struct rzg2l_cpg_priv *priv)
+ 		return ret;
+ 
+ 	for (unsigned int i = 0; i < info->num_pm_domains; i++) {
+-		bool always_on = !!(info->pm_domains[i].flags & RZG2L_PD_F_ALWAYS_ON);
++		u32 genpd_flags = info->pm_domains[i].genpd_flags;
++		bool always_on = !!(genpd_flags & GENPD_FLAG_ALWAYS_ON);
+ 		struct rzg2l_cpg_pd *pd;
+ 
+ 		pd = devm_kzalloc(dev, sizeof(*pd), GFP_KERNEL);
+@@ -1789,7 +1792,7 @@ static int __init rzg2l_cpg_add_pm_domains(struct rzg2l_cpg_priv *priv)
+ 		pd->id = info->pm_domains[i].id;
+ 		pd->priv = priv;
+ 
+-		ret = rzg2l_cpg_pd_setup(pd, always_on);
++		ret = rzg2l_cpg_pd_setup(pd, genpd_flags, always_on);
+ 		if (ret)
+ 			return ret;
+ 
+diff --git a/drivers/clk/renesas/rzg2l-cpg.h b/drivers/clk/renesas/rzg2l-cpg.h
+index ecfe7e7ea8a1..881a89b5a710 100644
+--- a/drivers/clk/renesas/rzg2l-cpg.h
++++ b/drivers/clk/renesas/rzg2l-cpg.h
+@@ -270,14 +270,14 @@ struct rzg2l_cpg_pm_domain_conf {
+  * struct rzg2l_cpg_pm_domain_init_data - PM domain init data
+  * @name: PM domain name
+  * @conf: PM domain configuration
+- * @flags: RZG2L PM domain flags (see RZG2L_PD_F_*)
++ * @genpd_flags: genpd flags (see GENPD_FLAG_*)
+  * @id: PM domain ID (similar to the ones defined in
+  *      include/dt-bindings/clock/<soc-id>-cpg.h)
+  */
+ struct rzg2l_cpg_pm_domain_init_data {
+ 	const char * const name;
+ 	struct rzg2l_cpg_pm_domain_conf conf;
+-	u32 flags;
++	u32 genpd_flags;
+ 	u16 id;
+ };
+ 
+@@ -288,13 +288,9 @@ struct rzg2l_cpg_pm_domain_init_data {
+ 		.conf = { \
+ 			.mstop = (_mstop_conf), \
+ 		}, \
+-		.flags = (_flags), \
++		.genpd_flags = (_flags), \
+ 	}
+ 
+-/* Power domain flags. */
+-#define RZG2L_PD_F_ALWAYS_ON	BIT(0)
+-#define RZG2L_PD_F_NONE		(0)
+-
+ /**
+  * struct rzg2l_cpg_info - SoC-specific CPG Description
+  *
 -- 
 2.39.2
 
