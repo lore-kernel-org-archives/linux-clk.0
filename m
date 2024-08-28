@@ -1,79 +1,240 @@
-Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4E821A2564;
-	Wed, 28 Aug 2024 15:16:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43DB51850B5
+	for <linux-clk@vger.kernel.org>; Wed, 28 Aug 2024 15:24:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724858222; cv=none; b=aBsXrDQePHZ0IzfVsVJNN9QjHQY7f21UrVc0UtfzSuCJjfXRT4H4Kk1e0HLqeiYjO/ZYmLCTcNWDz48nXK7JyKGvQmoho+buPC+iCaxz5OX3C1SBFyLlC5cHpbmLFDuPk6wa9RxlooCafpmQ9tq/9I71RaftuV/NiPFcYmZ58HM=
+	t=1724858678; cv=none; b=qlTRNAD3Gnb9KIeyNhsYa7VNoILgi+kyULkbI1j6Ihvzcen7u3Hx9g0evWuAhYPQdTmTIjaUA2FJhFLWJG62h0g/TbjhL0WooPqyQs2S6IuqLWIm9SCnjOcvfhZv8eWcZDhj4A3ybRpMnU0fbRFfAIGdaDuD6EBtjH2Wj7x/MpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724858222; c=relaxed/simple;
-	bh=m2LJPV/xv2gr2TpnpPHS6gazUaUtlhauhnAOhX1T3OY=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
-	 References:In-Reply-To; b=S3lXV+x4lcPwvxGAi/r58jx9558IxJ8hPofVjFQZ+kQeb6KUZABGUiqIDG4Y68L/QZaMnqpQB5KdJQi11nV07NgFZDY1gk6Tb6ocS/7Fj0my0jXm+5GuOPHJzxRHoTRLDl2a5Ir5kZSOpbsRgyWnhgsp7mbzAXUzqJ3i2o3OAtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=MQYRoGTP; arc=none smtp.client-ip=217.70.183.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+	s=arc-20240116; t=1724858678; c=relaxed/simple;
+	bh=sECdKZWmQ58VFDoOPO3d4pP0VUHs2KL2y5lS6y1lA/o=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LJnPPF7XxY5xTOd9zfevQeoI0OklMJNBkG0sifF9WLm9b/kBeN/387BUG6dZiMm7HBK8JQB+Z6S/y/C3QXnfC/bMqRwMgqnTDG9THvoTd/d++yno9sB/A8DKpf9YMy2Ik8M9Szldp9q7HxrHLwmWnTA28Zvhjk8pl64OiCu2LFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=BRNmXv8y; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="MQYRoGTP"
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 2238EC0007;
-	Wed, 28 Aug 2024 15:16:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1724858211;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=m2LJPV/xv2gr2TpnpPHS6gazUaUtlhauhnAOhX1T3OY=;
-	b=MQYRoGTPQ4nxGHNWBrjt+t8MFmNFBl4WF98zHoNDVP24pfr1z02sQoK76WStOCvfxMIA1R
-	dp5HcxJOVkQM5Ik+IvZT4V8PemFEfp6DiM6kNkYje4oh+4+9ewoIudZv2B/ukxpPkKC3GF
-	0QLY0kGk0Dw30hpvUpYqSIOFP5FQ/akkg8MIfqni3kNIMC75K7Ugulbd5Hii2PQog6YkzO
-	UcaAu2GYPpQFxXzoOZKNdwxrIGXfliHpqdpQQRDiQ3vuPEzSb15pbWvPOPWZ65p5pOgH/E
-	fjt39tplPOqg4Ce2nRBE9/pjRzbinB7KBJzePCnuT6v+WthbHHqf72jsv3yJYg==
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="BRNmXv8y"
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a868b739cd9so824324666b.2
+        for <linux-clk@vger.kernel.org>; Wed, 28 Aug 2024 08:24:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1724858673; x=1725463473; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RccO/6aYSzsD64ZgEXVUnoiwa51kK0FzwBqBJe1629o=;
+        b=BRNmXv8yjiovcJXbjKFM8khnJr8M2n/lU+gyfFIF2F1cYXcaDIYgkKMneAp4GU3mCI
+         hfc+ugTygrpALphhIZsu7jejr3nKDTdXhLHf3xqgkSVZi8fG6nuyqeAKSBGF6iXF467Y
+         DFGrNpKyHlpMOWLmY+lLcsxDztm42qJtVQSDZ2fd/ppHeL+qrFdrq330slxPIGz6R5Ch
+         131dWnTV1L5GYI7aRMit8Z0z+qhvoKLhm7U6E4XuAS58pJ/KURoI7hOZn1kpor3eUZ3G
+         5CVVTwcyoWRONBdTwbzJuIZZCumB0qA9HkG0ONnMzlnQwtHaOUqhfc2NSs+z+8P4CSSj
+         knUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724858673; x=1725463473;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RccO/6aYSzsD64ZgEXVUnoiwa51kK0FzwBqBJe1629o=;
+        b=itZX88wXJzf0OiVSfq9zlsFklnCOA/AhwDuY5N/9zwcIn2yG6RwrvKX5m/dw2iWINo
+         BaxfSN3QtteezD+Iv3QBGj6XzhHTVVXuYy9mz31NxxwqeqvBTUBc4CHcZvlnHlARYleK
+         VJFqXdlhE/G1mUwHrzisDcRG07YG45bwdgPzNL8u7V4sqyiZpEhjGMBxiM0tPJaM9vk6
+         bc1oZwNuNzAKeJaWLs1bz2BYo/kouZoxnGqaWLQ5hB35s3YZxI6c4BOJaCLE3IDgtdQ8
+         PanteBKoaX9TVZV+9V3PgwtVaD2knu8fKK80LehU2+CoeVEm6unDKoLHuf4351Y6ttC5
+         y0HA==
+X-Forwarded-Encrypted: i=1; AJvYcCWPcZ2KtnrMQ6/9k25NuVNQwPApyBrnuGtf49VZuN5pjdRVEKjWvrGwekpCgCFk1/tAnyaLWOtGtI0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUG9t9OcB3TjtSyc3E4n+l+kV3VHJMa4kXaRgPe7SXixBFiJ9N
+	TYtsfkdCBYpUvHmXLgdvfvztyXEhUGDsGbyvfOLzYaSb97lWljCwkvG61Ij/bqU=
+X-Google-Smtp-Source: AGHT+IEGTIMf9HDmr3RD/PvAk+4C11JysnBRyFuK/mQqbOsClKq28ul4IglJqfFC2hAOgC6a2khVvQ==
+X-Received: by 2002:a17:906:6a29:b0:a7a:a7b8:adae with SMTP id a640c23a62f3a-a870a94fe14mr219949166b.4.1724858673188;
+        Wed, 28 Aug 2024 08:24:33 -0700 (PDT)
+Received: from localhost (host-80-182-198-72.retail.telecomitalia.it. [80.182.198.72])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e594a599sm255662266b.201.2024.08.28.08.24.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2024 08:24:32 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Wed, 28 Aug 2024 17:24:39 +0200
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Stefan Wahren <wahrenst@gmx.net>
+Subject: Re: [PATCH 07/11] pinctrl: rp1: Implement RaspberryPi RP1 gpio
+ support
+Message-ID: <Zs9BN_w4Ueq-VkJr@apocalypse>
+Mail-Followup-To: Linus Walleij <linus.walleij@linaro.org>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Stefan Wahren <wahrenst@gmx.net>
+References: <cover.1724159867.git.andrea.porta@suse.com>
+ <eb39a5f3cefff2a1240a18a255dac090af16f223.1724159867.git.andrea.porta@suse.com>
+ <CACRpkdbdXNeL6B43uV-2evCfr6iv8fUsSVtAND+2U0H5mSL2rw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Wed, 28 Aug 2024 17:16:50 +0200
-Message-Id: <D3RN7EPR2YWE.1VJ7Y8ZXCWF5R@bootlin.com>
-Cc: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, "Vladimir Kondratiev"
- <vladimir.kondratiev@mobileye.com>, =?utf-8?q?Gr=C3=A9gory_Clement?=
- <gregory.clement@bootlin.com>, "Thomas Petazzoni"
- <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
- <tawfik.bayouk@mobileye.com>, "Krzysztof Kozlowski"
- <krzysztof.kozlowski@linaro.org>
-To: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, "Michael
- Turquette" <mturquette@baylibre.com>, "Stephen Boyd" <sboyd@kernel.org>,
- "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski"
- <krzk+dt@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>
-From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
-Subject: Re: [PATCH RESEND v3 0/4] Add Mobileye EyeQ clock support
-X-Mailer: aerc 0.18.2-0-ge037c095a049
-References: <20240730-mbly-clk-v3-0-4f90fad2f203@bootlin.com>
-In-Reply-To: <20240730-mbly-clk-v3-0-4f90fad2f203@bootlin.com>
-X-GND-Sasl: theo.lebrun@bootlin.com
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACRpkdbdXNeL6B43uV-2evCfr6iv8fUsSVtAND+2U0H5mSL2rw@mail.gmail.com>
 
-Hi Stephen,
+Hi Linus,
 
-On Tue Jul 30, 2024 at 6:04 PM CEST, Th=C3=A9o Lebrun wrote:
-> This is a new iteration on the clock part of the Mobileye
-> system-controller series. It used to be sent as a single series [0],
-> but has been split in the previous revisions (see [1], [2], [3], [4])
-> to faciliate merging.
+On 10:59 Mon 26 Aug     , Linus Walleij wrote:
+> Hi Andrea,
+> 
+> thanks for your patch!
 
-What's your state of mind on this series? I am happy at how it turned
-out and believe the whole system-controller for the platform is modeled
-properly now. It works as expected on real hardware. Pinctrl got in.
+Thanks for your review!
 
-Thanks,
+> 
+> On Tue, Aug 20, 2024 at 4:36 PM Andrea della Porta
+> <andrea.porta@suse.com> wrote:
+> 
+> > The RP1 is an MFD supporting a gpio controller and /pinmux/pinctrl.
+> > Add minimum support for the gpio only portion. The driver is in
+> > pinctrl folder since upcoming patches will add the pinmux/pinctrl
+> > support where the gpio part can be seen as an addition.
+> >
+> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> (...)
+> 
+> > +#include <linux/bitmap.h>
+> > +#include <linux/bitops.h>
+> (...)
+> 
+> > +static void rp1_pad_update(struct rp1_pin_info *pin, u32 clr, u32 set)
+> > +{
+> > +       u32 padctrl = readl(pin->pad);
+> > +
+> > +       padctrl &= ~clr;
+> > +       padctrl |= set;
+> > +
+> > +       writel(padctrl, pin->pad);
+> > +}
+> 
+> Looks a bit like a reimplementation of regmap-mmio? If you want to do
+> this why not use regmap-mmio?
 
---
-Th=C3=A9o Lebrun, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Agreed. I can leverage regmail_field to get rid of the reimplemented code
+for the pin->pad register region. Do you think it could be worth using
+regmap-mmio also on pin->gpio, pin->inte, pin->ints and pin->rio even
+though they are not doing any special field manipulation as the pin->pad
+case? 
 
+> 
+> > +static void rp1_set_dir(struct rp1_pin_info *pin, bool is_input)
+> > +{
+> > +       int offset = is_input ? RP1_CLR_OFFSET : RP1_SET_OFFSET;
+> > +
+> > +       writel(1 << pin->offset, pin->rio + RP1_RIO_OE + offset);
+> 
+> If you include bitops.h what about:
+> 
+> writel(BIT(pin->offset), pin->rio + RP1_RIO_OE + offset);
+
+Ack.
+
+> 
+> > +static int rp1_get_value(struct rp1_pin_info *pin)
+> > +{
+> > +       return !!(readl(pin->rio + RP1_RIO_IN) & (1 << pin->offset));
+> > +}
+> 
+> Also here
+
+Ack.
+
+> 
+> > +
+> > +static void rp1_set_value(struct rp1_pin_info *pin, int value)
+> > +{
+> > +       /* Assume the pin is already an output */
+> > +       writel(1 << pin->offset,
+> > +              pin->rio + RP1_RIO_OUT + (value ? RP1_SET_OFFSET : RP1_CLR_OFFSET));
+> > +}
+> 
+> And here
+
+Ack.
+
+> 
+> > +static int rp1_gpio_set_config(struct gpio_chip *chip, unsigned int offset,
+> > +                              unsigned long config)
+> > +{
+> > +       struct rp1_pin_info *pin = rp1_get_pin(chip, offset);
+> > +       unsigned long configs[] = { config };
+> > +
+> > +       return rp1_pinconf_set(pin, offset, configs,
+> > +                              ARRAY_SIZE(configs));
+> > +}
+> 
+> Nice that you implement this!
+
+Thanks :)
+
+> 
+> > +static void rp1_gpio_irq_config(struct rp1_pin_info *pin, bool enable)
+> > +{
+> > +       writel(1 << pin->offset,
+> > +              pin->inte + (enable ? RP1_SET_OFFSET : RP1_CLR_OFFSET));
+> 
+> BIT()
+
+Ack.
+
+Many thanks,
+Andrea
+
+> 
+> Yours,
+> Linus Walleij
