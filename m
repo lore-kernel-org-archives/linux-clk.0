@@ -1,48 +1,33 @@
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E44CE1CF96;
-	Wed, 28 Aug 2024 07:26:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 434661CF96;
+	Wed, 28 Aug 2024 07:27:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724830013; cv=none; b=vBPgQoXSYpPlx6/glGxqVW15aHHlWE/9FEyEHUF0WDbAG0V0aS6r+PoIgToVk3EDthJjVMflUbaq2Tfv3OMNovY1bnALWW8g+lx2sFLSbwF1M2j5ly/Ne3h3LFZoJ475hCcLRqK9hW9rz6mot6aWXztI6bAOqlvoafUjXpyfszg=
+	t=1724830067; cv=none; b=hX4C0XayerWWzCcKu7o2halDN2WT3rZnG3p0vmsW1FxFlM3CEFqtHdqMxfPMu2EbLEPeW74psriHO8w8mpbvbGXN/AC4DowxDMrAasZNGZRSM30XVo3XM4HLsqiiBCtKJDAKo73T62vq6c65pQZC0sHavRN+IS0S0mfEHmo/81Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724830013; c=relaxed/simple;
-	bh=b86Cyv7arWZ0BaPvb8ISF9bILJ8ttG97X3JRCVu6I4s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=IMR7Sh/c6p3mDTBlfQqvepGE5IOOx7QixKLR9oI4Tsp7Muv8Nqq+cBLkMeG92pPZTQoudUuTY+zlwFT7pNCjXNIWJgKfbr9KRuqXFXpkOy02J38x/71kcfDg3LZAx52Z8cmJKc/Apu2AKuyzGpCsQVK+2umVUzzt/CHx7qBL3xE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Xsub3MDE; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1724830067; c=relaxed/simple;
+	bh=q3eh3/hA0IbMQ5lNw5cCRd6QGSHTrtf8zGve79ND3cU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=I0F/4djsZ0DHA38wG9iy1xAVpzZAf/zrDab0mOKvhcAgkt6CYDl2beAIiAguYU6tLNuARK5fQ7ENMNY23ky3z7wV76bHeMeYbWz/DxVIaOr5V/Uo2WogLwcc41o3w33zgHvkpoPNeRKsSO6B6VElquEiBJ3c5GDLNCODJYWDWHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cRvD+1Tf; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Xsub3MDE"
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47RLZuqL026999;
-	Wed, 28 Aug 2024 07:26:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	cl3kJatMgq3eamHSbjuBhCzO+Cgifq1qpc27jNaDPBk=; b=Xsub3MDEu9MDK3MN
-	FApj9vDfPluMdKsNW79Yc8yhK78yjFp15t5vmGtwXJBRcpc4xtvCLR1f+YLj7BUC
-	i2jLIByrrTOTWZv8YuSK1GLJh3XwyL/OijG5nscpgnY3qtSFikWfJdrbfK5T+g4A
-	mCukcS+WrsrSzAGR+Q5FXkNHiWqF7oAKuXlSUhQ/xR7QqwxMXFzTPFay1vWJd2yv
-	5xS5hOhyJ1Xh8Nf4a70WlFmRhDu3cF/k+Abhv36tVctCgx+ApUKX8AJX3Lgej39O
-	CwyXHvtY70Cb+ixMlNRxD1joKy3LG3b2dBgcaFpXeKkRaLMsxtcinnfV5ZeWk7Zd
-	HkYAaQ==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419puth1gk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 28 Aug 2024 07:26:47 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47S7QkCM004460
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 28 Aug 2024 07:26:47 GMT
-Received: from [10.218.5.19] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 28 Aug
- 2024 00:26:42 -0700
-Message-ID: <72e3dc83-2bde-467b-b52c-40af7c5d151c@quicinc.com>
-Date: Wed, 28 Aug 2024 12:56:37 +0530
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cRvD+1Tf"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92225C32782;
+	Wed, 28 Aug 2024 07:27:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724830066;
+	bh=q3eh3/hA0IbMQ5lNw5cCRd6QGSHTrtf8zGve79ND3cU=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=cRvD+1TfAMwJGIEAHzG3gtZQLRfI++sjFsSVVJeahCVF8t276+4UKRR6ha45q8+ba
+	 kiWd64gp7ZXe6JNTiqP28awy56rlrWbQYuRjVPQQCMtpeYw/Qd4VzL7rq3BPMFOrS3
+	 PLJb7JNY6/2vZGLoyZyURNuoysPFDo6reArfxiU+fqEeKpXpg1nklZ8eE5r6UPI4/L
+	 PlZiupe2kw5UubAMyfvcyhdr50vfsOrM4/vpo1PLX6gVPp3cABu1wAxSEXLk2j0+Rp
+	 61koZRzidLI0d4ajiQfAv6PS6vlTxMeEZMa9jMmNK8li02NchlD7EZsY1Jwmg2sf3L
+	 3m4ccaW5Gmypw==
+Message-ID: <465c04fe-4455-4eee-9d65-43f66434b784@kernel.org>
+Date: Wed, 28 Aug 2024 09:27:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -50,61 +35,82 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 6/8] clk: qcom: Add support for Display clock
- Controllers on SA8775P
-To: Taniya Das <quic_tdas@quicinc.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Stephen
- Boyd" <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Konrad Dybcio
-	<konrad.dybcio@linaro.org>,
-        Bartosz Golaszewski
-	<bartosz.golaszewski@linaro.org>,
-        <quic_imrashai@quicinc.com>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20240816-sa8775p-mm-v3-v1-0-77d53c3c0cef@quicinc.com>
- <20240816-sa8775p-mm-v3-v1-6-77d53c3c0cef@quicinc.com>
+Subject: Re: [PATCH v2 1/3] dt-bindings: reset Add AST2700 reset bindings
+To: Ryan Chen <ryan_chen@aspeedtech.com>, mturquette@baylibre.com,
+ sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ joel@jms.id.au, andrew@codeconstruct.com.au, p.zabel@pengutronix.de,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-aspeed@lists.ozlabs.org
+References: <20240828062740.1614744-1-ryan_chen@aspeedtech.com>
+ <20240828062740.1614744-2-ryan_chen@aspeedtech.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Jagadeesh Kona <quic_jkona@quicinc.com>
-In-Reply-To: <20240816-sa8775p-mm-v3-v1-6-77d53c3c0cef@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20240828062740.1614744-2-ryan_chen@aspeedtech.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Y63029wExIPKtz4VZRiLu_of-9y4F7bc
-X-Proofpoint-ORIG-GUID: Y63029wExIPKtz4VZRiLu_of-9y4F7bc
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-28_03,2024-08-27_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 phishscore=0 adultscore=0 priorityscore=1501
- impostorscore=0 malwarescore=0 suspectscore=0 spamscore=0 bulkscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408280052
 
-
-
-On 8/16/2024 12:01 PM, Taniya Das wrote:
-> Add support for display0 and display1 clock controllers on SA8775P
-> platform.
+On 28/08/2024 08:27, Ryan Chen wrote:
+> Add dt bindings for AST2700 reset driver.
 > 
-> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
 > ---
->   drivers/clk/qcom/Kconfig           |   10 +
->   drivers/clk/qcom/Makefile          |    1 +
->   drivers/clk/qcom/dispcc0-sa8775p.c | 1481 ++++++++++++++++++++++++++++++++++++
->   drivers/clk/qcom/dispcc1-sa8775p.c | 1481 ++++++++++++++++++++++++++++++++++++
->   4 files changed, 2973 insertions(+)
+>  .../dt-bindings/reset/aspeed,ast2700-reset.h  | 125 ++++++++++++++++++
+>  1 file changed, 125 insertions(+)
+>  create mode 100644 include/dt-bindings/reset/aspeed,ast2700-reset.h
 
-Reviewed-by: Jagadeesh Kona <quic_jkona@quicinc.com>
+NAK.
 
-Thanks,
-Jagadeesh
+You still did not respond to my previous comments and did not implement
+them.
+
+Month ago I told you this is not a separate patch.
+
+https://lore.kernel.org/all/e13c16db-e1a7-4ee0-867b-b184d421de7f@kernel.org/
+
+Best regards,
+Krzysztof
+
