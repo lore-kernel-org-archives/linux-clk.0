@@ -1,154 +1,162 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2654C15A858;
-	Wed, 28 Aug 2024 20:34:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 853EE1B0132
+	for <linux-clk@vger.kernel.org>; Wed, 28 Aug 2024 20:44:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724877260; cv=none; b=czxVUuBQYkgLrYKg7v/H7Nmv9IYrGZxZjyIk5Ry94fcJZnJTxTuhsA8cZMZN8vH9KrBZdy+xV0+NHFVf4JZUuXIrbk+M3VTEUyvTqTNPCC6OglypeHKs4KHaLyfEY6jDo0oTT9fGRGVYrleDq7UNCjXMfzSUMobPV8RtQWbROH4=
+	t=1724877868; cv=none; b=GVVA4jg4MN8cSVNCDFBm4nDH4yJIjK6v5mpcm4KWUX6eMjlWUwuXCO/JynA/aEfh8FSDDAtb8Bm1mKZcFqhyiHfyKjcpCKoGcRbQbI6RGMz1KEGC50dqoNN16nsZsSzPt/lZBvUn2TjD9RB1GUg7ADHRkKZklo8/Z2j14a3wtHo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724877260; c=relaxed/simple;
-	bh=xWuzS15Et4pIxbQMc3gaaFLmr10xRY0Ggkub1fGc23E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=gZrwdGPBFm0RA3QeIfb96bIeiGBOFp75oi4NbGKQeWVGSJVTEr4lVJLgHkVX5m9Wgv8dC3S3b1zjIZqbHItv8lfycp78ShkJUngDqxFMRwcR/LuFWX3VHz9isWHJ1vyWtmx6QKXVvNlxqMi8fIxN+GSVk/lD8iUj4CG8Ysd2LHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=UdL90oNI; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1724877868; c=relaxed/simple;
+	bh=2eoefR7cGl72xKUr4g6vFurnaajnZ4ZAp6xvGyEtOdI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B9567tGY8wN0z50SLG9N90RYktKz23+5JW2BseW6OaHleXonLAQw8Fi0fStqNnEJFYMqdi/iYeeEaV3WeKOVkeBz4lVTLLHiKrSBw8ObcDb69RCyF9V8wHghlzq2HNXPGVQIYc9xYUzFHLWK+7osPI/VLg/ELeSb5Q7r3B7nldA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eXKg5E3e; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="UdL90oNI"
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47SJMJPJ023938;
-	Wed, 28 Aug 2024 20:34:00 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	rhURoGek6+GJnpL5hk0AQJDITL/Iy/R/SKiX544AF6w=; b=UdL90oNIalcP3LcZ
-	mTgK9AqmluqXj8RyPNaQ3kw2VN08e1413c+rkA2lC3bfkDw97CPwy6vZKssW/JE8
-	P5qNaPtMOzW9Bf521VWvDSj6mhRzN2YYZA+YPyLw2SzfEiocoQm2q816u/6mJPs8
-	IkHGIh6Y8/aaopvsoIyBelcJ1ZvLOB1tB5782jR6ZiNkX7vaj6oHQT/1pc3dzIld
-	oeKw4u7iADu3BvOzg3R/OCVg4MJQXyHVKVP+M0mxQlPrzE21K3TR5Nlkg4CLv+Am
-	STYO3GCmtIiWFIFYJA9/gMNsIvaTAFKUkSOfYSQ3i4MN4qimmo2F50xlaNzD8rih
-	wfyrFg==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419puuk1ww-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 28 Aug 2024 20:34:00 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47SKXw2u010815
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 28 Aug 2024 20:33:58 GMT
-Received: from [10.71.111.76] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 28 Aug
- 2024 13:33:57 -0700
-Message-ID: <1c7fb593-9080-43fc-bcb4-3028acb2abbb@quicinc.com>
-Date: Wed, 28 Aug 2024 13:33:56 -0700
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eXKg5E3e"
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5334c4cc17fso10044349e87.2
+        for <linux-clk@vger.kernel.org>; Wed, 28 Aug 2024 13:44:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1724877864; x=1725482664; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=5ouvwUzqpqqEKUlkh1CpUkYbdJmGHqky9KCVychiJS0=;
+        b=eXKg5E3eyFlOKjKnEk/tDSfley5vvgL26rrv83yJze+Kz5dXKQrLK8l95nJ8sQe05l
+         i4Ae76a0yXsSxzI3kONEc1q/MYRzWOQQUZcnuFqUMe906vuy+oHkaf4hxH1yAMsVEcm5
+         zB6KJp0dVG4yQWS9I47Qc6hNR58cjuKvqk8wUCgGUwCAI2yZrURlihZgcMDlRIpZauXV
+         99oiVWn/vFAmiRlSogxBEIOxpxstuto/PrhicNQYrmISaR9GK8BGujPACaG4kxwm3G1I
+         QB7VlicpHotvHdfWh/Mx8JlYl8jznTtgyawaVxDhw3K3yPMoB4cigTbskktPV6GRlKs4
+         T2pA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724877864; x=1725482664;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5ouvwUzqpqqEKUlkh1CpUkYbdJmGHqky9KCVychiJS0=;
+        b=RyGQCF9axLGjExbUH4SoUu0CjNuiElxyBHad/AQsHWrPcjVVK2SQilOOuS0hemJvYa
+         dD+/ZRspZbE5ZB3r9i+/ihBrsPKEgFZz6U6o5jL51b/OnN1j71VYtO3VzjvBckHEtb07
+         O6SoT+E3jGvss/TVQE2SEl6gg55GJPPiAHFvy4GLug3aE6c/9zostlIjqkDsyhCPJU0H
+         3Ic8OdW9SsAtrWlIWx3rGgNAJMW/9VdQHQHc+o6suBQFdYdLcIifomZWjHFY1GOU9Ny1
+         oZH0OSHa2abqJUh4KuSIUxmuHFXc/jaeMFjIB45GK4Oap5GoE/HmHJGLO38VR388R2m4
+         9Nug==
+X-Forwarded-Encrypted: i=1; AJvYcCXiBjSlhSYkztxGIfO8bs8xsZV76DXV/hnNmWYxm/BxxGd8TOGq+W4ZvWBO7gI2bMVvSCKiqv/NdDY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzz0kwl4LtEOqQmr/BEe23jS0IM9dbAetS8i7M7VDlboSBwREXV
+	8RzLokdtdzJ7rOiDkPlAKrGHc5s645rw81VifqocDl8EFbKcPC3VHSE4q3s4A/U=
+X-Google-Smtp-Source: AGHT+IH4zRQRIv6Lh7T2/GNqa8t40UFcIfzpQONZac2DDCKlGfTbLoKbr9iAWINSbxj2G3srq82BTw==
+X-Received: by 2002:a05:6512:3c8d:b0:530:c212:4a5a with SMTP id 2adb3069b0e04-5353e549b8cmr356750e87.22.1724877862966;
+        Wed, 28 Aug 2024 13:44:22 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5334ea5d2dbsm2294656e87.195.2024.08.28.13.44.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 28 Aug 2024 13:44:22 -0700 (PDT)
+Date: Wed, 28 Aug 2024 23:44:20 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Jon Hunter <jonathanh@nvidia.com>
+Cc: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
+	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Ajit Pandey <quic_ajipan@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, 
+	Taniya Das <quic_tdas@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>, 
+	kernel test robot <lkp@intel.com>, Dan Carpenter <dan.carpenter@linaro.org>, 
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
+Subject: Re: [PATCH] clk: qcom: clk-alpha-pll: Replace divide operator with
+ comparison
+Message-ID: <kh4diauo5u63mldchmd66pbnqxwnbqfoqcpxsw6wwocbadygvz@3diccu2xt4kj>
+References: <20240813094035.974317-1-quic_skakitap@quicinc.com>
+ <4d314b61-7483-4ceb-ac72-10dbd7e4522a@linaro.org>
+ <7733a4ca-330b-4127-af12-33f376fbbc47@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 03/11] drm/msm/dsi: correct programming sequence for
- SM8350 / SM8450
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        "Stephen
- Boyd" <sboyd@kernel.org>, Jonathan Marek <jonathan@marek.ca>,
-        Robert Foss
-	<rfoss@kernel.org>, Vinod Koul <vkoul@kernel.org>,
-        Rob Clark
-	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Daniel
- Vetter" <daniel@ffwll.ch>,
-        Konrad Dybcio <konrad.dybcio@linaro.org>,
-        "Georgi
- Djakov" <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Mike
- Tipton" <quic_mdtipton@quicinc.com>,
-        Catalin Marinas
-	<catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-pm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
-References: <20240804-sm8350-fixes-v1-0-1149dd8399fe@linaro.org>
- <20240804-sm8350-fixes-v1-3-1149dd8399fe@linaro.org>
-Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <20240804-sm8350-fixes-v1-3-1149dd8399fe@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: _Ks5JYXY_IzZVNOhk_Bbov6sPIYt7Lpu
-X-Proofpoint-GUID: _Ks5JYXY_IzZVNOhk_Bbov6sPIYt7Lpu
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-28_08,2024-08-28_01,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 clxscore=1011 impostorscore=0 phishscore=0 adultscore=0
- bulkscore=0 suspectscore=0 lowpriorityscore=0 spamscore=0 mlxlogscore=999
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408280148
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7733a4ca-330b-4127-af12-33f376fbbc47@nvidia.com>
 
-
-
-On 8/3/2024 10:40 PM, Dmitry Baryshkov wrote:
-> According to the display-drivers, 5nm DSI PLL (v4.2, v4.3) have
-> different boundaries for pll_clock_inverters programming. Follow the
-> vendor code and use correct values.
+On Wed, Aug 28, 2024 at 02:47:05PM GMT, Jon Hunter wrote:
+> Hi Satya, Vladimir,
 > 
-> Fixes: 2f9ae4e395ed ("drm/msm/dsi: add support for DSI-PHY on SM8350 and SM8450")
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->   drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c | 12 +++++++++++-
->   1 file changed, 11 insertions(+), 1 deletion(-)
+> On 13/08/2024 21:01, Vladimir Zapolskiy wrote:
+> > On 8/13/24 12:40, Satya Priya Kakitapalli wrote:
+> > > In zonda_pll_adjust_l_val() replace the divide operator with comparison
+> > > operator since comparisons are faster than divisions.
+> > > 
+> > > Fixes: f4973130d255 ("clk: qcom: clk-alpha-pll: Update set_rate for
+> > > Zonda PLL")
+> > 
+> > Apparently the change is not a fix, therefore I believe the Fixes tag
+> > shall be removed.
 > 
-> diff --git a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
-> index 3b59137ca674..031446c87dae 100644
-> --- a/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
-> +++ b/drivers/gpu/drm/msm/dsi/phy/dsi_phy_7nm.c
-> @@ -135,7 +135,7 @@ static void dsi_pll_calc_dec_frac(struct dsi_pll_7nm *pll, struct dsi_pll_config
->   			config->pll_clock_inverters = 0x00;
->   		else
->   			config->pll_clock_inverters = 0x40;
-> -	} else {
-> +	} else if (pll->phy->cfg->quirks & DSI_PHY_7NM_QUIRK_V4_1) {
->   		if (pll_freq <= 1000000000ULL)
->   			config->pll_clock_inverters = 0xa0;
->   		else if (pll_freq <= 2500000000ULL)
-> @@ -144,6 +144,16 @@ static void dsi_pll_calc_dec_frac(struct dsi_pll_7nm *pll, struct dsi_pll_config
->   			config->pll_clock_inverters = 0x00;
->   		else
->   			config->pll_clock_inverters = 0x40;
-> +	} else {
-> +		/* 4.2, 4.3 */
-> +		if (pll_freq <= 1000000000ULL)
-> +			config->pll_clock_inverters = 0xa0;
-> +		else if (pll_freq <= 2500000000ULL)
-> +			config->pll_clock_inverters = 0x20;
-> +		else if (pll_freq <= 3500000000ULL)
-> +			config->pll_clock_inverters = 0x00;
-> +		else
-> +			config->pll_clock_inverters = 0x40;
->   	}
+> 
+> From the commit message it is not clear that this is a fix, but I
+> believe that it is. With the current -next I am seeing the following
+> build error (with GCC 7.3.1) on ARM ...
+> 
+> drivers/clk/qcom/clk-alpha-pll.o: In function `clk_zonda_pll_set_rate':
+> clk-alpha-pll.c:(.text+0x45dc): undefined reference to `__aeabi_uldivmod'
 
+This should be a part of the commit message
 
-Sorry for the delay, my request for the docs was first rejected for some 
-reason :)
+> > > Reported-by: kernel test robot <lkp@intel.com>
+> > > Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> > > Closes: https://lore.kernel.org/r/202408110724.8pqbpDiD-lkp@intel.com/
 
-Now I finally got access and this matches the docs
+this Closes tag must come after lkp's Reported-by. Please also add
+Closes with the link to Dan's report.
 
-Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> 
+> There is also the above smatch warning that was reported.
+
+And the Smatch warning too should be a part of the commit message.
+
+Last, but not least, as it is a fix, there should be a Fixes: tag and
+optionally a cc:stable.
+
+> 
+> > > Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+> > > ---
+> > >   drivers/clk/qcom/clk-alpha-pll.c | 2 +-
+> > >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > > 
+> > > diff --git a/drivers/clk/qcom/clk-alpha-pll.c
+> > > b/drivers/clk/qcom/clk-alpha-pll.c
+> > > index 2f620ccb41cb..fd8a82bb3690 100644
+> > > --- a/drivers/clk/qcom/clk-alpha-pll.c
+> > > +++ b/drivers/clk/qcom/clk-alpha-pll.c
+> > > @@ -2126,7 +2126,7 @@ static void zonda_pll_adjust_l_val(unsigned
+> > > long rate, unsigned long prate, u32
+> > >       remainder = do_div(quotient, prate);
+> > >       *l = quotient;
+> > 
+> > Since it's not a fix, but a simplification, you may wish to remove
+> > an unnecessary 'quotient' local variable:
+> > 
+> > remainder = do_div(rate, prate);
+> > 
+> > > -    if ((remainder * 2) / prate)
+> > > +    if ((remainder * 2) >= prate)
+> > >           *l = *l + 1;
+> > 
+> > *l = rate + (u32)(remainder * 2 >= prate);
+> 
+> 
+> The above change does fix this build error for me.
+> 
+> Satya, did you intend this to be a fix? Can we get this into -next?
+> 
+> Thanks
+> Jon
+> 
+> -- 
+> nvpublic
+
+-- 
+With best wishes
+Dmitry
