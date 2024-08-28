@@ -1,141 +1,220 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 125A71862B3;
-	Wed, 28 Aug 2024 13:37:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64592187FE5;
+	Wed, 28 Aug 2024 13:44:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724852256; cv=none; b=j9N7nhtwg321PYwN4YK/bZtCJEbtMJJd+j+c1C1U3EUhVbbgbfaLQbwXbyA8EBCICtEWXFQpXlwa0lhudo5DpGDAeEU4FO/9LhF3hL4X71gVBqQDEhp0urA99D+JKUOWrrNzLGcDozGuRX2v75pN6mqe5L/ZsZePRqdsRqM5XWo=
+	t=1724852675; cv=none; b=dcYnrbAlgLXp79G+F71MhOH8XyDNwJ2h3D4EHtGBqoy0tLpbOv4ni/CBcyxCgbilIF9mMFXaFlrHTVNl4rQluxbCcbKXMql/bv6NXUxOo8P6oDkX5zv08hPOPRn3tzR6D+qOHPLavanfzgGlYY5WM5tAKWvSqDRfBWOlaZav+jw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724852256; c=relaxed/simple;
-	bh=KohNPqr7ETWS1kn2mut3vxJ3dYAgefPzIWcOnMsMYbc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ka8LUicFYsjwYAWmGwsVFLlDsy0DHxMVo6VjmUk0Weu8X2lPF+5nVg0UvdMyA/R3Pmy788oc+7gc19hDZ1AIQNd4I2IexdZ2p8Dpxjfrd9OXwqTKfzZLsF29o8q2+UZq91B4R7T13Y8PFmL9s52TQPyG2QzOxSRCDBbqG5ij5To=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=INzfTGWQ; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1724852675; c=relaxed/simple;
+	bh=emDC30H51qu8L5OlUlGZUyMHWlLMlaMzNkPO2HeKdTs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=FTCIS4kZYW0r+A8HMHleFZg9+sSziLCaSXF+kPcA/2aq9bNa1m0VeQ73osqPQsWPXygWuBV1OOfzFGp8EM5V5SoQNVLDIEguf03G34tGc6FOBuXa69u8upsEyDBg7WQHblXq55mkyeeG7CtK+B/ruCLgawSWTNtG6OAjBvxpe04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XQX1xlWU; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="INzfTGWQ"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 678A7C567CD;
-	Wed, 28 Aug 2024 13:37:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724852255;
-	bh=KohNPqr7ETWS1kn2mut3vxJ3dYAgefPzIWcOnMsMYbc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=INzfTGWQgjSGxFUugGU75A1T0mwNFfF4fX90FT9O9cVaM393Ulvdi7uKyrdJFcvR2
-	 y5Ws07VOxJcysms6pYzTxxvUTFTGKd30OTX3pP60KprUDd/KMOW8rJCA/DgJiYfmOx
-	 6VE6QCTavp1L2aYIKnEkiHioIvSC6UXsY4wtvBggunCVe4BUfUhRu8s6IfEzdZGSBg
-	 TfXuzu/NLeYjM+SsZ4lpxsm/aTtFUlOQrvX295diXSCVvWzwB3Mk3JlHJ/WPv/5IoT
-	 sG8W1XDrqxuzPMtavBl0lLsnw91y8Kv19uBxzphElOfLEIPL4kwjbsl9otSMINvgpf
-	 OY8SUCl+tntzw==
-Date: Wed, 28 Aug 2024 08:37:33 -0500
-From: Rob Herring <robh@kernel.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v3 1/5] dt-bindings: clocks: add binding for
- gated-fixed-clocks
-Message-ID: <20240828133733.GA3650798-robh@kernel.org>
-References: <20240828101503.1478491-1-heiko@sntech.de>
- <20240828101503.1478491-2-heiko@sntech.de>
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XQX1xlWU"
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47SBGBuj005876;
+	Wed, 28 Aug 2024 13:44:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	WV6pOsN3fzAOdvPKz8rxnXPKkoNjSkNfRLTZAiQzD6s=; b=XQX1xlWUOZ/mwcR1
+	ybKElGSj+kEgAYLK1Zl5/YqTUla64WimlWfkOXJPlLaCxXcYWMLbsrev5sYrdT5d
+	m602n5l/UnJE5SSiOn8C/5I7uQnL+SIOp873lVB5DRrlAzEZ+TqD7NPe798Q/wHM
+	Ed1Rn6VEchqchJzAu3ZrCNM3t1vdsrpBbf7sigF/Jar5BjHIf5OZZJ+RyRS4QQDP
+	w+IqodQEJ/x3cFfxwkSY6Flwq+FtmGvPl26/g/7J49pgfW3l5ojZ0gK1Ss1sd3lM
+	SjOybkToPPJ9tTIn7R82a3DA8AGQx0/M2f/D6RdN4vlpvuWwEIMetE5U4onUDLXZ
+	LgrLsw==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419pv2huyb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 28 Aug 2024 13:44:20 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47SDiJjj016907
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 28 Aug 2024 13:44:19 GMT
+Received: from [10.253.39.71] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 28 Aug
+ 2024 06:44:13 -0700
+Message-ID: <844538cc-9f58-4e05-8356-096a98bd543a@quicinc.com>
+Date: Wed, 28 Aug 2024 21:44:11 +0800
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240828101503.1478491-2-heiko@sntech.de>
-
-On Wed, Aug 28, 2024 at 12:14:59PM +0200, Heiko Stuebner wrote:
-> In contrast to fixed clocks that are described as ungateable, boards
-> sometimes use additional oscillators for things like PCIe reference
-> clocks, that need actual supplies to get enabled and enable-gpios to be
-> toggled for them to work.
-> 
-> This adds a binding for such oscillators that are not configurable
-> themself, but need to handle supplies for them to work.
-> 
-> In schematics they often can be seen as
-> 
->          ----------------
-> Enable - | 100MHz,3.3V, | - VDD
->          |    3225      |
->    GND - |              | - OUT
->          ----------------
-> 
-> or similar. The enable pin might be separate but can also just be tied
-> to the vdd supply, hence it is optional in the binding.
-> 
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
->  .../bindings/clock/gated-fixed-clock.yaml     | 49 +++++++++++++++++++
->  1 file changed, 49 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/gated-fixed-clock.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/gated-fixed-clock.yaml b/Documentation/devicetree/bindings/clock/gated-fixed-clock.yaml
-> new file mode 100644
-> index 000000000000..76d264770d35
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/gated-fixed-clock.yaml
-> @@ -0,0 +1,49 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/gated-fixed-clock.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Gated Fixed clock
-> +
-> +maintainers:
-> +  - Heiko Stuebner <heiko@sntech.de>
-> +
-> +properties:
-> +  compatible:
-> +    const: gated-fixed-clock
-> +
-> +  "#clock-cells":
-> +    const: 0
-> +
-> +  clock-frequency: true
-> +
-> +  clock-output-names:
-> +    maxItems: 1
-> +
-> +  enable-gpios:
-> +    description:
-> +      Contains a single GPIO specifier for the GPIO that enables and disables
-> +      the oscillator.
-> +    maxItems: 1
-> +
-> +  vdd-supply:
-> +    description: handle of the regulator that provides the supply voltage
-> +
-> +required:
-> +  - compatible
-> +  - "#clock-cells"
-> +  - clock-frequency
-> +  - vdd-supply
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    voltage-oscillator {
-
-clock-1000000000
-
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 8/8] PCI: qcom: Add support to PCIe slot power supplies
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <manivannan.sadhasivam@linaro.org>, <vkoul@kernel.org>,
+        <kishon@kernel.org>, <robh@kernel.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <mturquette@baylibre.com>, <sboyd@kernel.org>, <abel.vesa@linaro.org>,
+        <quic_msarkar@quicinc.com>, <quic_devipriy@quicinc.com>,
+        <kw@linux.com>, <lpieralisi@kernel.org>, <neil.armstrong@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-phy@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pci@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>
+References: <20240827063631.3932971-1-quic_qianyu@quicinc.com>
+ <20240827063631.3932971-9-quic_qianyu@quicinc.com>
+ <CAA8EJpq5KergZ8czg4F=EYMLANoOeBsiSVoO-zAgfG0ezQrKCQ@mail.gmail.com>
+Content-Language: en-US
+From: Qiang Yu <quic_qianyu@quicinc.com>
+In-Reply-To: <CAA8EJpq5KergZ8czg4F=EYMLANoOeBsiSVoO-zAgfG0ezQrKCQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: ecUGWv2wRlPHoo51cogHb43pAmzADN8m
+X-Proofpoint-ORIG-GUID: ecUGWv2wRlPHoo51cogHb43pAmzADN8m
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-28_05,2024-08-27_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015
+ priorityscore=1501 malwarescore=0 adultscore=0 phishscore=0
+ impostorscore=0 bulkscore=0 spamscore=0 suspectscore=0 mlxscore=0
+ mlxlogscore=999 lowpriorityscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2407110000 definitions=main-2408280098
 
 
-> +      compatible = "gated-fixed-clock";
-> +      #clock-cells = <0>;
-> +      clock-frequency = <1000000000>;
-> +      vdd-supply = <&reg_vdd>;
-> +    };
-> +...
-> -- 
-> 2.43.0
-> 
+On 8/27/2024 7:44 PM, Dmitry Baryshkov wrote:
+> On Tue, 27 Aug 2024 at 09:36, Qiang Yu <quic_qianyu@quicinc.com> wrote:
+>> On platform x1e80100 QCP, PCIe3 is a standard x8 form factor. Hence, add
+>> support to use 3.3v, 3.3v aux and 12v regulators.
+> First of all, I don't see corresponding bindings change.
+>
+> Second, these supplies power up the slot, not the host controller
+> itself. As such these supplies do not belong to the host controller
+> entry. Please consider using the pwrseq framework instead.
+As Mani commented, he is exploring to use pwrctl driver to control this
+three power. Will update the patch after Mani share his conclusion. This
+patch may even not required.
+
+Thanks,
+Qiang
+>
+>> Signed-off-by: Qiang Yu <quic_qianyu@quicinc.com>
+>> ---
+>>   drivers/pci/controller/dwc/pcie-qcom.c | 52 +++++++++++++++++++++++++-
+>>   1 file changed, 50 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/pci/controller/dwc/pcie-qcom.c b/drivers/pci/controller/dwc/pcie-qcom.c
+>> index 6f953e32d990..59fb415dfeeb 100644
+>> --- a/drivers/pci/controller/dwc/pcie-qcom.c
+>> +++ b/drivers/pci/controller/dwc/pcie-qcom.c
+>> @@ -248,6 +248,8 @@ struct qcom_pcie_cfg {
+>>          bool no_l0s;
+>>   };
+>>
+>> +#define QCOM_PCIE_SLOT_MAX_SUPPLIES                    3
+>> +
+>>   struct qcom_pcie {
+>>          struct dw_pcie *pci;
+>>          void __iomem *parf;                     /* DT parf */
+>> @@ -260,6 +262,7 @@ struct qcom_pcie {
+>>          struct icc_path *icc_cpu;
+>>          const struct qcom_pcie_cfg *cfg;
+>>          struct dentry *debugfs;
+>> +       struct regulator_bulk_data slot_supplies[QCOM_PCIE_SLOT_MAX_SUPPLIES];
+>>          bool suspended;
+>>          bool use_pm_opp;
+>>   };
+>> @@ -1174,6 +1177,41 @@ static int qcom_pcie_link_up(struct dw_pcie *pci)
+>>          return !!(val & PCI_EXP_LNKSTA_DLLLA);
+>>   }
+>>
+>> +static int qcom_pcie_enable_slot_supplies(struct qcom_pcie *pcie)
+>> +{
+>> +       struct dw_pcie *pci = pcie->pci;
+>> +       int ret;
+>> +
+>> +       ret = regulator_bulk_enable(ARRAY_SIZE(pcie->slot_supplies),
+>> +                                   pcie->slot_supplies);
+>> +       if (ret < 0)
+>> +               dev_err(pci->dev, "Failed to enable slot regulators\n");
+>> +
+>> +       return ret;
+>> +}
+>> +
+>> +static void qcom_pcie_disable_slot_supplies(struct qcom_pcie *pcie)
+>> +{
+>> +       regulator_bulk_disable(ARRAY_SIZE(pcie->slot_supplies),
+>> +                              pcie->slot_supplies);
+>> +}
+>> +
+>> +static int qcom_pcie_get_slot_supplies(struct qcom_pcie *pcie)
+>> +{
+>> +       struct dw_pcie *pci = pcie->pci;
+>> +       int ret;
+>> +
+>> +       pcie->slot_supplies[0].supply = "vpcie12v";
+>> +       pcie->slot_supplies[1].supply = "vpcie3v3";
+>> +       pcie->slot_supplies[2].supply = "vpcie3v3aux";
+>> +       ret = devm_regulator_bulk_get(pci->dev, ARRAY_SIZE(pcie->slot_supplies),
+>> +                                     pcie->slot_supplies);
+>> +       if (ret < 0)
+>> +               dev_err(pci->dev, "Failed to get slot regulators\n");
+>> +
+>> +       return ret;
+>> +}
+>> +
+>>   static int qcom_pcie_host_init(struct dw_pcie_rp *pp)
+>>   {
+>>          struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
+>> @@ -1182,10 +1220,14 @@ static int qcom_pcie_host_init(struct dw_pcie_rp *pp)
+>>
+>>          qcom_ep_reset_assert(pcie);
+>>
+>> -       ret = pcie->cfg->ops->init(pcie);
+>> +       ret = qcom_pcie_enable_slot_supplies(pcie);
+>>          if (ret)
+>>                  return ret;
+>>
+>> +       ret = pcie->cfg->ops->init(pcie);
+>> +       if (ret)
+>> +               goto err_disable_slot;
+>> +
+>>          ret = phy_set_mode_ext(pcie->phy, PHY_MODE_PCIE, PHY_MODE_PCIE_RC);
+>>          if (ret)
+>>                  goto err_deinit;
+>> @@ -1216,7 +1258,8 @@ static int qcom_pcie_host_init(struct dw_pcie_rp *pp)
+>>          phy_power_off(pcie->phy);
+>>   err_deinit:
+>>          pcie->cfg->ops->deinit(pcie);
+>> -
+>> +err_disable_slot:
+>> +       qcom_pcie_disable_slot_supplies(pcie);
+>>          return ret;
+>>   }
+>>
+>> @@ -1228,6 +1271,7 @@ static void qcom_pcie_host_deinit(struct dw_pcie_rp *pp)
+>>          qcom_ep_reset_assert(pcie);
+>>          phy_power_off(pcie->phy);
+>>          pcie->cfg->ops->deinit(pcie);
+>> +       qcom_pcie_disable_slot_supplies(pcie);
+>>   }
+>>
+>>   static void qcom_pcie_host_post_init(struct dw_pcie_rp *pp)
+>> @@ -1602,6 +1646,10 @@ static int qcom_pcie_probe(struct platform_device *pdev)
+>>                          goto err_pm_runtime_put;
+>>          }
+>>
+>> +       ret = qcom_pcie_get_slot_supplies(pcie);
+>> +       if (ret)
+>> +               goto err_pm_runtime_put;
+>> +
+>>          ret = pcie->cfg->ops->get_resources(pcie);
+>>          if (ret)
+>>                  goto err_pm_runtime_put;
+>> --
+>> 2.34.1
+>>
+>
