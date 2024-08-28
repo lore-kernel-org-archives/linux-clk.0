@@ -1,349 +1,272 @@
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E86BC1A7074
-	for <linux-clk@vger.kernel.org>; Wed, 28 Aug 2024 17:17:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DAAC189520;
+	Wed, 28 Aug 2024 18:30:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724865452; cv=none; b=pHPUxEBm2dIp9BnOOi+zEYT+HVVXMdvt6A/NCNP3hZOz7zqyPiqfOxMWlzMxHeWMiAIP4VU5RlXCg/zLNZB6z1xiYRtHdMyLhp4Db1g/hLgA7hITKh95rqTTEJi9h9yT3yPZFFNH4pdW6XzgykCroQkiDt2GIgD7GL2NWKPffQg=
+	t=1724869854; cv=none; b=j2JvFtOrEmomkcgfhYTG/ClPfjCzf+S06YDSURtMdUqOVA4Yxn57QDuYLtTq5RWSYcIzAcW1oYtIdHv0FTjHOYy++iTCxZAFgjGpsUCZdcMPqR7wHvDXWSDwMu1SUgQPszWsNwrlbJd1rPMdP8PraTRk8pESRO6/5TH6Ho7U/RM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724865452; c=relaxed/simple;
-	bh=pydQzqttrobXPxYrV9xD01A2kGsR6s/mRdxcFVeZq1I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=a2cLiSzAGGo/gd0ANe8qMGHRCqfL3aoVkzbrO9xMHXqCfCZDx1f5/2p54dRClVw9fBzooTQxk9+iWhecUBoHDhdznRcG1zk/JCpl6ZTvKYb0DXNAqsxM+Nmp6cfNU/eJbZ/Fp4xn0cDgQ87PfBlQ8eAutNHoB9Qgb1YfVlz2YcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=dm8vEAXN; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1724869854; c=relaxed/simple;
+	bh=gm5wNgQPq8zaVU7WuCxl/FdzOHpdZQaZpErO5w9GDQM=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=lDDfuqh0F7HTyhV66QVFWU3vHCbPbeUV2d8sH+ZexI13tcyobNk6TtyMRrUIBLfE2yFIOTrYTKwI8DY/0RNgN4oFoIWI8n+d4MBSXJdgyYhBa1o8usX7Tn8w0EsJeUI4t377htpHJPVWKvEOz5JFSdHjxGOlB1ozfOzbXt/0Inw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MvG5hgj0; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dm8vEAXN"
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7cd835872ceso4815364a12.3
-        for <linux-clk@vger.kernel.org>; Wed, 28 Aug 2024 10:17:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1724865449; x=1725470249; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Xt7PVUozcOkVti6ZjAPf01OtJ5FVQQk6eXc9L78hY64=;
-        b=dm8vEAXN2VUqapiGIxev4L7v3+TZ+PLmXVXE4ijyzsB0DDJt8ZxHz8eTmo54quiBC8
-         QjpjqRi0254c6rZ7GUMiDDDmSLzYch0bsGcd5ES1kgeydHC/n2naCQFBfAecAhLSJkrH
-         bvDNDjc7bqTMSX8q/NBNRbhhqdjlTSjHtpJAA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724865449; x=1725470249;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Xt7PVUozcOkVti6ZjAPf01OtJ5FVQQk6eXc9L78hY64=;
-        b=ru3vWmmbRykexzOmFoKKFHFzvqPI8bbEwf76Ls/0rWUN1O9hYNW4uV50ApCNXQiI4C
-         9sya++jxZ+oQV5NuEJr9v/e0f9UXk4lz+FkonX+EYgzeeYafRKhMsGZEt3Qte783n+Bm
-         iE+eKKzg92I1cWfr8otm6TR6sjvOjUV/9F/i1qhVrzqA/OYwb4AOBlUgZWlwc5Ilxqhm
-         1wso/SqNW0tECpn+YGFXC9LM68ajUa3JnhSR4wOsG43IAwhi8Jz0GgaqhW0ckqTxMBv0
-         uGeo62kvwhv+V+P0VgNOwhruNkoYm1Yz9+1sLKB9phhPM1ylN9mNCpO4iRFZwC0qNwJ0
-         a1Lw==
-X-Forwarded-Encrypted: i=1; AJvYcCUq99sTAp/Hm/DRbmt9ERSxCM5TXArzqtE4o4oZkRo11OVhLnX+zY6TGLnSRrau8/aZmnyzqITSN40=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxGAcws8+nUvkIw2XL1qSXdGzcmSVwTyHJLZqOxeQoC5dCKbkV
-	EZcUrdVOiBz6L+7hvdgdwpuu+nE0MMRAbGW5OttIhz1UJfOVEX037UEvD4Md5g==
-X-Google-Smtp-Source: AGHT+IFmK0wAIdwTNTamcai71TikVtEMPyQiM5+sChoyv1CkTFFRiRaGkRIstBw7Wg/253b57pYKvQ==
-X-Received: by 2002:a17:90b:2393:b0:2d3:c5f4:4298 with SMTP id 98e67ed59e1d1-2d8440e71cfmr2999272a91.13.1724865449010;
-        Wed, 28 Aug 2024 10:17:29 -0700 (PDT)
-Received: from localhost (210.73.125.34.bc.googleusercontent.com. [34.125.73.210])
-        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-2d84449fc02sm2152712a91.0.2024.08.28.10.17.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 28 Aug 2024 10:17:28 -0700 (PDT)
-From: Stephen Boyd <swboyd@chromium.org>
-To: Konrad Dybcio <konradybcio@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	patches@lists.linux.dev,
-	linux-clk@vger.kernel.org,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Amit Pundir <amit.pundir@linaro.org>,
-	Taniya Das <quic_tdas@quicinc.com>
-Subject: [PATCH v3 2/2] clk: qcom: gcc-sm8550: Don't use shared clk_ops for QUPs
-Date: Wed, 28 Aug 2024 10:17:08 -0700
-Message-ID: <20240828171722.1251587-3-swboyd@chromium.org>
-X-Mailer: git-send-email 2.46.0.295.g3b9ea8a38a-goog
-In-Reply-To: <20240828171722.1251587-1-swboyd@chromium.org>
-References: <20240828171722.1251587-1-swboyd@chromium.org>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MvG5hgj0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5CFEC4CEC0;
+	Wed, 28 Aug 2024 18:30:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724869854;
+	bh=gm5wNgQPq8zaVU7WuCxl/FdzOHpdZQaZpErO5w9GDQM=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=MvG5hgj0NmlYgc1Sij1LzfvqO6t7R1LgrCmV86zeZytuUxASd4oabSkCHo2Egn8om
+	 QxH23Drc+3JEHYkKGGMhkydBAop5+DydNF37PdRcBkexev+IX0Fj7hxdpv0WuNAgaw
+	 krV40gE6FWVNh0bDpMPqUWOmtHfHRY/7U0lF7CZQhOlRSSTyI1kepawtXtXXslHV5T
+	 amINvbq/7aOOBah1N0RSYeoKBk8EWPArYZh7H2929jWbUJspuk+V+cIUJSMWR+W1yS
+	 2wPWce9I/FX8fhDXbi0z7QudtnqvSAQ0kxFCbvv4bmdrNi3E/rh5SzgHPn0r4Urzql
+	 0C7hUMRYpMZUA==
+Message-ID: <9b92b5f03632e8793253ba75fc00f6e3.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240828101503.1478491-5-heiko@sntech.de>
+References: <20240828101503.1478491-1-heiko@sntech.de> <20240828101503.1478491-5-heiko@sntech.de>
+Subject: Re: [PATCH v3 4/5] clk: clk-gpio: add driver for gated-fixed-clocks
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org, heiko@sntech.de, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
+To: Heiko Stuebner <heiko@sntech.de>, mturquette@baylibre.com
+Date: Wed, 28 Aug 2024 11:30:51 -0700
+User-Agent: alot/0.10
 
-The QUPs aren't shared in a way that requires parking the RCG at an
-always on parent in case some other entity turns on the clk. The
-hardware is capable of setting a new frequency itself with the DFS mode,
-so parking is unnecessary. Furthermore, there aren't any GDSCs for these
-devices, so there isn't a possibility of the GDSC turning on the clks
-for housekeeping purposes.
+Quoting Heiko Stuebner (2024-08-28 03:15:02)
+> diff --git a/drivers/clk/clk-gpio.c b/drivers/clk/clk-gpio.c
+> index cda362a2eca0..8bcdef340b4c 100644
+> --- a/drivers/clk/clk-gpio.c
+> +++ b/drivers/clk/clk-gpio.c
+> @@ -239,3 +240,184 @@ static struct platform_driver gpio_clk_driver =3D {
+>         },
+>  };
+>  builtin_platform_driver(gpio_clk_driver);
+> +
+> +/**
+> + * DOC: gated fixed clock, controlled with a gpio output and a regulator
+> + * Traits of this clock:
+> + * prepare - clk_prepare and clk_unprepare are function & control regula=
+tor
+> + *           optionally a gpio that can sleep
+> + * enable - clk_enable and clk_disable are functional & control gpio
+> + * rate - rate is fixed and set on clock generation
 
-This wasn't a problem to mark these clks shared until we started parking
-shared RCGs at clk registration time in commit 01a0a6cc8cfd ("clk: qcom:
-Park shared RCGs upon registration"). Parking at init is actually
-harmful to the UART when earlycon is used. If the device is pumping out
-data while the frequency changes you'll see garbage on the serial
-console until the driver can probe and actually set a proper frequency.
+Maybe 'clock registration'
 
-Revert the QUP part of commit 929c75d57566 ("clk: qcom: gcc-sm8550: Mark
-RCGs shared where applicable") so that the QUPs don't get parked during
-clk registration and break UART operations.
+> + * parent - fixed clock is a root clock and has no parent.
 
-Fixes: 01a0a6cc8cfd ("clk: qcom: Park shared RCGs upon registration")
-Fixes: 929c75d57566 ("clk: qcom: gcc-sm8550: Mark RCGs shared where applicable")
-Cc: Konrad Dybcio <konradybcio@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>
-Cc: Taniya Das <quic_tdas@quicinc.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>
-Reported-by: Amit Pundir <amit.pundir@linaro.org>
-Closes: https://lore.kernel.org/CAMi1Hd1KQBE4kKUdAn8E5FV+BiKzuv+8FoyWQrrTHPDoYTuhgA@mail.gmail.com
-Tested-by: Amit Pundir <amit.pundir@linaro.org>
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
----
- drivers/clk/qcom/gcc-sm8550.c | 52 +++++++++++++++++------------------
- 1 file changed, 26 insertions(+), 26 deletions(-)
+Not sure why this one gets the period while other lines above don't.
 
-diff --git a/drivers/clk/qcom/gcc-sm8550.c b/drivers/clk/qcom/gcc-sm8550.c
-index 7944ddb4b47d..0244a05866b8 100644
---- a/drivers/clk/qcom/gcc-sm8550.c
-+++ b/drivers/clk/qcom/gcc-sm8550.c
-@@ -536,7 +536,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s0_clk_src = {
- 		.parent_data = gcc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_shared_ops,
-+		.ops = &clk_rcg2_ops,
- 	},
- };
- 
-@@ -551,7 +551,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s1_clk_src = {
- 		.parent_data = gcc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_shared_ops,
-+		.ops = &clk_rcg2_ops,
- 	},
- };
- 
-@@ -566,7 +566,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s2_clk_src = {
- 		.parent_data = gcc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_shared_ops,
-+		.ops = &clk_rcg2_ops,
- 	},
- };
- 
-@@ -581,7 +581,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s3_clk_src = {
- 		.parent_data = gcc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_shared_ops,
-+		.ops = &clk_rcg2_ops,
- 	},
- };
- 
-@@ -596,7 +596,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s4_clk_src = {
- 		.parent_data = gcc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_shared_ops,
-+		.ops = &clk_rcg2_ops,
- 	},
- };
- 
-@@ -611,7 +611,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s5_clk_src = {
- 		.parent_data = gcc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_shared_ops,
-+		.ops = &clk_rcg2_ops,
- 	},
- };
- 
-@@ -626,7 +626,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s6_clk_src = {
- 		.parent_data = gcc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_shared_ops,
-+		.ops = &clk_rcg2_ops,
- 	},
- };
- 
-@@ -641,7 +641,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s7_clk_src = {
- 		.parent_data = gcc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_shared_ops,
-+		.ops = &clk_rcg2_ops,
- 	},
- };
- 
-@@ -656,7 +656,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s8_clk_src = {
- 		.parent_data = gcc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_shared_ops,
-+		.ops = &clk_rcg2_ops,
- 	},
- };
- 
-@@ -671,7 +671,7 @@ static struct clk_rcg2 gcc_qupv3_i2c_s9_clk_src = {
- 		.parent_data = gcc_parent_data_0,
- 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 		.flags = CLK_SET_RATE_PARENT,
--		.ops = &clk_rcg2_shared_ops,
-+		.ops = &clk_rcg2_ops,
- 	},
- };
- 
-@@ -700,7 +700,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s0_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap1_s0_clk_src = {
-@@ -717,7 +717,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s1_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap1_s1_clk_src = {
-@@ -750,7 +750,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s2_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap1_s2_clk_src = {
-@@ -767,7 +767,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s3_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap1_s3_clk_src = {
-@@ -784,7 +784,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s4_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap1_s4_clk_src = {
-@@ -801,7 +801,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s5_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap1_s5_clk_src = {
-@@ -818,7 +818,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s6_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap1_s6_clk_src = {
-@@ -835,7 +835,7 @@ static struct clk_init_data gcc_qupv3_wrap1_s7_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap1_s7_clk_src = {
-@@ -852,7 +852,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s0_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap2_s0_clk_src = {
-@@ -869,7 +869,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s1_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap2_s1_clk_src = {
-@@ -886,7 +886,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s2_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap2_s2_clk_src = {
-@@ -903,7 +903,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s3_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap2_s3_clk_src = {
-@@ -920,7 +920,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s4_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap2_s4_clk_src = {
-@@ -937,7 +937,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s5_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap2_s5_clk_src = {
-@@ -975,7 +975,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s6_clk_src_init = {
- 	.parent_data = gcc_parent_data_8,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_8),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap2_s6_clk_src = {
-@@ -992,7 +992,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s7_clk_src_init = {
- 	.parent_data = gcc_parent_data_0,
- 	.num_parents = ARRAY_SIZE(gcc_parent_data_0),
- 	.flags = CLK_SET_RATE_PARENT,
--	.ops = &clk_rcg2_shared_ops,
-+	.ops = &clk_rcg2_ops,
- };
- 
- static struct clk_rcg2 gcc_qupv3_wrap2_s7_clk_src = {
--- 
-https://chromeos.dev
+> + */
+> +
+> +/**
+> + * struct clk_gate_fixed - gated-fixed-clock
+> + *
+> + * clk_gpio:   instance of clk_gpio for gate-gpio
+> + * supply:     supply regulator
+> + * rate:       fixed rate
+> + */
+> +struct clk_gated_fixed {
+> +       struct clk_gpio clk_gpio;
+> +       struct regulator *supply;
+> +       u32 rate;
 
+unsigned long rate to match the CCF type please.
+
+> +};
+> +
+> +#define to_clk_gated_fixed(_clk_gpio) container_of(_clk_gpio, struct clk=
+_gated_fixed, clk_gpio)
+> +
+> +static unsigned long clk_gated_fixed_recalc_rate(struct clk_hw *hw,
+> +                                                unsigned long parent_rat=
+e)
+> +{
+> +       return to_clk_gated_fixed(to_clk_gpio(hw))->rate;
+> +}
+> +
+> +static int clk_gated_fixed_prepare(struct clk_hw *hw)
+> +{
+> +       struct clk_gated_fixed *clk =3D to_clk_gated_fixed(to_clk_gpio(hw=
+));
+> +
+> +       if (!clk->supply)
+> +               return 0;
+> +
+> +       return regulator_enable(clk->supply);
+> +}
+> +
+> +static void clk_gated_fixed_unprepare(struct clk_hw *hw)
+> +{
+> +       struct clk_gated_fixed *clk =3D to_clk_gated_fixed(to_clk_gpio(hw=
+));
+> +
+> +       if (!clk->supply)
+> +               return;
+> +
+> +       regulator_disable(clk->supply);
+> +}
+> +
+> +static int clk_gated_fixed_is_prepared(struct clk_hw *hw)
+> +{
+> +       struct clk_gated_fixed *clk =3D to_clk_gated_fixed(to_clk_gpio(hw=
+));
+> +
+> +       if (!clk->supply)
+> +               return true;
+> +
+> +       return regulator_is_enabled(clk->supply);
+> +}
+> +
+> +/*
+> + * Fixed gated clock with non-sleeping gpio.
+> + *
+> + * Prepare operation turns on the supply regulator
+> + * and the enable operation switches the enable-gpio.
+> + */
+> +const struct clk_ops clk_gated_fixed_ops =3D {
+
+static
+
+> +       .prepare =3D clk_gated_fixed_prepare,
+> +       .unprepare =3D clk_gated_fixed_unprepare,
+> +       .is_prepared =3D clk_gated_fixed_is_prepared,
+> +       .enable =3D clk_gpio_gate_enable,
+> +       .disable =3D clk_gpio_gate_disable,
+> +       .is_enabled =3D clk_gpio_gate_is_enabled,
+> +       .recalc_rate =3D clk_gated_fixed_recalc_rate,
+> +};
+> +
+> +static int clk_sleeping_gated_fixed_prepare(struct clk_hw *hw)
+> +{
+> +       int ret;
+> +
+> +       ret =3D clk_gated_fixed_prepare(hw);
+> +       if (ret)
+> +               return ret;
+> +
+> +       ret =3D clk_sleeping_gpio_gate_prepare(hw);
+> +       if (ret)
+> +               clk_gated_fixed_unprepare(hw);
+> +
+> +       return ret;
+> +}
+> +
+> +static void clk_sleeping_gated_fixed_unprepare(struct clk_hw *hw)
+> +{
+> +       clk_gated_fixed_unprepare(hw);
+> +       clk_sleeping_gpio_gate_unprepare(hw);
+> +}
+> +
+> +/*
+> + * Fixed gated clock with non-sleeping gpio.
+> + *
+> + * Enabling the supply regulator and switching the enable-gpio happens
+> + * both in the prepare step.
+> + * is_prepared only needs to check the gpio state, as toggling the
+> + * gpio is the last step when preparing.
+> + */
+> +const struct clk_ops clk_sleeping_gated_fixed_ops =3D {
+
+static
+
+> +       .prepare =3D clk_sleeping_gated_fixed_prepare,
+> +       .unprepare =3D clk_sleeping_gated_fixed_unprepare,
+> +       .is_prepared =3D clk_sleeping_gpio_gate_is_prepared,
+> +       .recalc_rate =3D clk_gated_fixed_recalc_rate,
+> +};
+> +
+> +static int clk_gated_fixed_probe(struct platform_device *pdev)
+> +{
+> +       struct device *dev =3D &pdev->dev;
+> +       struct clk_gated_fixed *clk;
+> +       const struct clk_ops *ops;
+> +       const char *clk_name;
+> +       int ret;
+> +
+> +       clk =3D devm_kzalloc(dev, sizeof(*clk), GFP_KERNEL);
+> +       if (!clk)
+> +               return -ENOMEM;
+> +
+> +       if (device_property_read_u32(dev, "clock-frequency", &clk->rate))
+
+Why not return the error code?
+
+> +               return dev_err_probe(dev, -EIO, "failed to get clock-freq=
+uency");
+
+Missing newline on printk.
+
+> +
+> +       ret =3D device_property_read_string(dev, "clock-output-names", &c=
+lk_name);
+> +       if (ret)
+> +               clk_name =3D fwnode_get_name(dev->fwnode);
+> +
+> +       clk->supply =3D devm_regulator_get_optional(dev, "vdd");
+> +       if (IS_ERR(clk->supply)) {
+> +               if (PTR_ERR(clk->supply) !=3D -ENODEV)
+> +                       return dev_err_probe(dev, PTR_ERR(clk->supply),
+> +                                            "failed to get regulator\n");
+> +               clk->supply =3D NULL;
+> +       }
+> +
+> +       clk->clk_gpio.gpiod =3D devm_gpiod_get_optional(dev, "enable",
+> +                                                     GPIOD_OUT_LOW);
+> +       if (IS_ERR(clk->clk_gpio.gpiod))
+> +               return dev_err_probe(dev, PTR_ERR(clk->clk_gpio.gpiod),
+> +                                    "failed to get gpio\n");
+> +
+> +       if (gpiod_cansleep(clk->clk_gpio.gpiod))
+> +               ops =3D &clk_sleeping_gated_fixed_ops;
+> +       else
+> +               ops =3D &clk_gated_fixed_ops;
+> +
+> +       clk->clk_gpio.hw.init =3D CLK_HW_INIT_NO_PARENT(clk_name, ops, 0);
+> +
+> +       /* register the clock */
+> +       ret =3D devm_clk_hw_register(dev, &clk->clk_gpio.hw);
+> +       if (ret)
+> +               return dev_err_probe(dev, ret,
+> +                                    "failed to register clock\n");
+> +
+> +       ret =3D devm_of_clk_add_hw_provider(dev, of_clk_hw_simple_get,
+> +                                         &clk->clk_gpio.hw);
+> +       if (ret)
+> +               return dev_err_probe(dev, ret,
+> +                                    "failed to register clock provider\n=
+");
+> +
+> +       return 0;
+> +}
+> +
+> +static const struct of_device_id gated_fixed_clk_match_table[] =3D {
+> +       { .compatible =3D "gated-fixed-clock" },
+
+Add a sentinel.
+
+> +};
+> +
+> +static struct platform_driver gated_fixed_clk_driver =3D {
+> +       .probe          =3D clk_gated_fixed_probe,
+> +       .driver         =3D {
+> +               .name   =3D "gated-fixed-clk",
+> +               .of_match_table =3D gated_fixed_clk_match_table,
+> +       },
+> +};
+> +builtin_platform_driver(gated_fixed_clk_driver);
+
+The comment above builtin_platform_driver says "Each driver may only use
+this macro once". Seems that we need to expand the macro.
