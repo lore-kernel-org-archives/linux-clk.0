@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 434661CF96;
-	Wed, 28 Aug 2024 07:27:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4BA41581EE;
+	Wed, 28 Aug 2024 07:28:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724830067; cv=none; b=hX4C0XayerWWzCcKu7o2halDN2WT3rZnG3p0vmsW1FxFlM3CEFqtHdqMxfPMu2EbLEPeW74psriHO8w8mpbvbGXN/AC4DowxDMrAasZNGZRSM30XVo3XM4HLsqiiBCtKJDAKo73T62vq6c65pQZC0sHavRN+IS0S0mfEHmo/81Y=
+	t=1724830090; cv=none; b=fS3efwuTvTM7JqZp8vKTtTbw/1oAGfjuxMRoz1pAtbVxqKRRJRTFL30NI+KpjsL93kp9qsITEYI4cAXJHyXosxmdLP0vmTjSoVYVziKghIrwsFkFeyt9PUSMTiFr0shf5c/XKD6wOCOLx0upIOBwv2UpkxP4HHg3OYuOpuy9QiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724830067; c=relaxed/simple;
-	bh=q3eh3/hA0IbMQ5lNw5cCRd6QGSHTrtf8zGve79ND3cU=;
+	s=arc-20240116; t=1724830090; c=relaxed/simple;
+	bh=a5RAmZCzrVdd1l4J56GdrSCEnAtCBdBpWFXq+lAHG64=;
 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=I0F/4djsZ0DHA38wG9iy1xAVpzZAf/zrDab0mOKvhcAgkt6CYDl2beAIiAguYU6tLNuARK5fQ7ENMNY23ky3z7wV76bHeMeYbWz/DxVIaOr5V/Uo2WogLwcc41o3w33zgHvkpoPNeRKsSO6B6VElquEiBJ3c5GDLNCODJYWDWHA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cRvD+1Tf; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=B9y3IuFsCF/QbLbCYeJF7RHnOJ7SMs92OgZdAeQfo2zcB3tFWOxcr2UnTwfJq+2RN6/HdL77dBfhL/KOJHwXbhEO0jfp6hDXKg0gjVErqark6BEX3e4X33h1ftRXr+94LTsXzuJQszxjt2r6twjfYuWruDpz3aAEnaYdaikUR2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K8vzKdfS; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cRvD+1Tf"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92225C32782;
-	Wed, 28 Aug 2024 07:27:41 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K8vzKdfS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A578CC4AF13;
+	Wed, 28 Aug 2024 07:28:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724830066;
-	bh=q3eh3/hA0IbMQ5lNw5cCRd6QGSHTrtf8zGve79ND3cU=;
+	s=k20201202; t=1724830090;
+	bh=a5RAmZCzrVdd1l4J56GdrSCEnAtCBdBpWFXq+lAHG64=;
 	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=cRvD+1TfAMwJGIEAHzG3gtZQLRfI++sjFsSVVJeahCVF8t276+4UKRR6ha45q8+ba
-	 kiWd64gp7ZXe6JNTiqP28awy56rlrWbQYuRjVPQQCMtpeYw/Qd4VzL7rq3BPMFOrS3
-	 PLJb7JNY6/2vZGLoyZyURNuoysPFDo6reArfxiU+fqEeKpXpg1nklZ8eE5r6UPI4/L
-	 PlZiupe2kw5UubAMyfvcyhdr50vfsOrM4/vpo1PLX6gVPp3cABu1wAxSEXLk2j0+Rp
-	 61koZRzidLI0d4ajiQfAv6PS6vlTxMeEZMa9jMmNK8li02NchlD7EZsY1Jwmg2sf3L
-	 3m4ccaW5Gmypw==
-Message-ID: <465c04fe-4455-4eee-9d65-43f66434b784@kernel.org>
-Date: Wed, 28 Aug 2024 09:27:39 +0200
+	b=K8vzKdfSyzSU/wrVBsSh8lZUSHiT+KcTQvuhU0FhcPlLDxpf5WYN1go5g+NtVthNL
+	 D/J6DhoX4q/Ro6aL3DXPIJ1quYTNzOPgn2zRlSxzSACJdHDUBecvPBByhPXD+Ezh9I
+	 j3xo4iJoNZRO/y3gGfzOSwAG6v8/moWB4poiOVdOqGF8JhX2uxxcqePZzLPrFvrFXw
+	 7LdBGpUdzGFfbFZ3nysv+1njHFtXH6hftl4MiQAWg4MuI3+27yGp/aA3P7lwAOfOPo
+	 7HwRDboV5sG4g2nIsaO2M0VaIkBGiIA0RnEKl8TDWoxyzeaKx2OTtq8uSwItDYgqD+
+	 LkQo2ubhxmI3g==
+Message-ID: <ce19bfd5-9ae6-4781-9b00-da123bd079d0@kernel.org>
+Date: Wed, 28 Aug 2024 09:28:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,7 +35,7 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] dt-bindings: reset Add AST2700 reset bindings
+Subject: Re: [PATCH v2 2/3] dt-bindings: clock: Add AST2700 clock bindings
 To: Ryan Chen <ryan_chen@aspeedtech.com>, mturquette@baylibre.com,
  sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
  joel@jms.id.au, andrew@codeconstruct.com.au, p.zabel@pengutronix.de,
@@ -43,7 +43,7 @@ To: Ryan Chen <ryan_chen@aspeedtech.com>, mturquette@baylibre.com,
  devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-aspeed@lists.ozlabs.org
 References: <20240828062740.1614744-1-ryan_chen@aspeedtech.com>
- <20240828062740.1614744-2-ryan_chen@aspeedtech.com>
+ <20240828062740.1614744-3-ryan_chen@aspeedtech.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -89,27 +89,17 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <20240828062740.1614744-2-ryan_chen@aspeedtech.com>
+In-Reply-To: <20240828062740.1614744-3-ryan_chen@aspeedtech.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
 On 28/08/2024 08:27, Ryan Chen wrote:
-> Add dt bindings for AST2700 reset driver.
+> Add dt bindings for AST2700 clock controller
 > 
 > Signed-off-by: Ryan Chen <ryan_chen@aspeedtech.com>
 > ---
->  .../dt-bindings/reset/aspeed,ast2700-reset.h  | 125 ++++++++++++++++++
->  1 file changed, 125 insertions(+)
->  create mode 100644 include/dt-bindings/reset/aspeed,ast2700-reset.h
 
-NAK.
-
-You still did not respond to my previous comments and did not implement
-them.
-
-Month ago I told you this is not a separate patch.
-
-https://lore.kernel.org/all/e13c16db-e1a7-4ee0-867b-b184d421de7f@kernel.org/
+Read previous comments. This is not a separate patch.
 
 Best regards,
 Krzysztof
