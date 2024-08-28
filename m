@@ -1,317 +1,106 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 258B61AED3C;
-	Wed, 28 Aug 2024 20:45:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5120A224D7;
+	Wed, 28 Aug 2024 20:53:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724877902; cv=none; b=J99pOZDPQGPBv0ebSARdbVF+gpjMGzxQ0fgCgK3Ow/Zd1eQWv+SdPlY1dBil51LgMyabN1znDhZuQSCbbZ2aZV+noNHHYidivVuvFeDeVaBCxtcP9rER9cnWPwA3iD753el76A4a1MUduAUEa8b4npzxWuNL1XbgZBc9xW2Z2aY=
+	t=1724878397; cv=none; b=WS9SH8bJ+uIqg0+s1fw9+mtERdTzedr7BEPATRTmuK5tlrdc7wIvz1AKmCxduUy/gPJ4rX6xFp8kZD9fzuvVO8k1jtQn+2gDSIungFZV2+y/yJV6bmu+wMnx0ZhCM/BWWnJ4S5+BD7Ty26wj8SnDlxFMb9s2CiYNjZ5X1mF3+zM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724877902; c=relaxed/simple;
-	bh=r9OLa9sCrMPtwOvE5eP/+AJtMKA8f2kxrWtEkh/K8HM=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=pLdnEGAgexjN4w817nFXaOgsfLB6pnqIqKu7BvGg4b6QfurZIwD3jF7sOgT1Zim+YFAjOborAtHvE8SfUqheerW+XmtbRB2d7A8E4KflPcL6zLaCmbl9UcW6O2deBeFJSEZHgpCTnR3o4ktj2Oe7P4xkdr+aj0qQv5BUeQ7/eGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j/r1rjdB; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1724878397; c=relaxed/simple;
+	bh=CCI33Y/2VwAbG4/HMIVzpBvjF4PhNjBcdf8LFRfer3o=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=t5ikEykyx2EsEcqaEygTq0X4ZUjiQtWPH9XcGhFLiF7UBK0kEsFV4F8BqiU112stcr9YSxnRT5ywQ527kt0eY/ND0cihmx3vZLOj7RWaqMxztVsLqaXJV2CKDV/FP2NpPRA6TKxLVLvoEkK5GaqF5H0yHdSlLtAQrQ8nAmMpAHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=bzF8eE9K; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j/r1rjdB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA45CC4CEC0;
-	Wed, 28 Aug 2024 20:45:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724877901;
-	bh=r9OLa9sCrMPtwOvE5eP/+AJtMKA8f2kxrWtEkh/K8HM=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=j/r1rjdBjIUQUeG86lJ+MGdf6VkjChDXj4mljfW6hsEHCyolrbg0Oz3qqCOGXJN5b
-	 iZFGQMwHdX9NcwSPyQniulKg5WxpUSMD0DSwrs5yiKKfYwk0mRJEdK+RPtl+YKGm8G
-	 egNRXMNmyMG+uBReyvcm/Aq871LrhvRrq53HyvgnLNYalylfHu2gg5PbJbO1XdDEq+
-	 uFsjW8QJv2N+9wUFpsD8X/QS/cpDzRiMSpOyA88az0TA3w3dljFFnbm39w2NY/4/MO
-	 dhTEtWNZGOF+dQhLfvHMceez98SgK6sVRS5rEnXzyo1laRTBh9lKMPj2E0bolTBOVT
-	 ZygV9OMf+uu/w==
-Message-ID: <020c15c9939c1c4cfac925942a582cee.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="bzF8eE9K"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=W3xTxHAVy8T5VJ7Gg1s6MiPfQ5UiQz/WzG7TYzz8skM=; b=bzF8eE9KcDKbWremHjI+p9vENo
+	kOIg26PodC1g7xxbORtbpeQWua22oLyy4EqQdMupKpPdm45NkbFR6TZqGa7THFKRpSypmVGGrnUMR
+	xNNR2qsiFU5ilXpcsC9Y0Mnnsl5xYmy00k8CQ5UDwL+hVdxNj/eiIloiwHdzA0SNjHGP6be0YfI9O
+	VYrzn0CIPvxCFPWrjI0/3uDbJncw7K0vgTvq7/iVMgIok/2ydV/8ykuc+/rLTeP75pfylc+q3QDWh
+	PAshHSQvyOuVHdr+5AV7YtdgVuYEPG7o3KbOE0Thle7C+ewbX6iZCHG9e6W5yEPr/5tzI2SqEtbES
+	OdWcY/XA==;
+Received: from i5e8616cd.versanet.de ([94.134.22.205] helo=phil.lan)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sjPf7-0007tF-O1; Wed, 28 Aug 2024 22:53:05 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: Johan Jonker <jbx6244@gmail.com>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	mturquette@baylibre.com,
+	linux-kernel@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	conor+dt@kernel.org,
+	robh@kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	krzk+dt@kernel.org,
+	sboyd@kernel.org
+Subject: Re: [PATCH v1 0/9] clk: rockchip: Drop CLK_NR_CLKS CLKPMU_NR_CLKS usage
+Date: Wed, 28 Aug 2024 22:53:03 +0200
+Message-ID: <172487836642.1577158.12196598647797813806.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <416cdaf2-fef2-471d-a03a-837775d6e7dc@gmail.com>
+References: <416cdaf2-fef2-471d-a03a-837775d6e7dc@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240715-ep93xx-v11-3-4e924efda795@maquefel.me>
-References: <20240715-ep93xx-v11-0-4e924efda795@maquefel.me> <20240715-ep93xx-v11-3-4e924efda795@maquefel.me>
-Subject: Re: [PATCH v11 03/38] clk: ep93xx: add DT support for Cirrus EP93xx
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
-To: Michael Turquette <mturquette@baylibre.com>, Nikita Shubin via B4 Relay <devnull+nikita.shubin.maquefel.me@kernel.org>, nikita.shubin@maquefel.me
-Date: Wed, 28 Aug 2024 13:44:59 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-Quoting Nikita Shubin via B4 Relay (2024-07-15 01:38:07)
-> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
-> index 3e9099504fad..234b0a8b7650 100644
-> --- a/drivers/clk/Kconfig
-> +++ b/drivers/clk/Kconfig
-> @@ -218,6 +218,14 @@ config COMMON_CLK_EN7523
->           This driver provides the fixed clocks and gates present on Airo=
-ha
->           ARM silicon.
-> =20
-> +config COMMON_CLK_EP93XX
-> +       bool "Clock driver for Cirrus Logic ep93xx SoC"
+On Mon, 26 Aug 2024 18:36:40 +0200, Johan Jonker wrote:
+> In order to get rid of CLK_NR_CLKS and CLKPMU_NR_CLKS
+> and be able to drop it from the bindings, use
+> rockchip_clk_find_max_clk_id helper to find the
+> highest clock id.
+> 
+> Johan Jonker (9):
+>   clk: rockchip: px30: Drop CLK_NR_CLKS CLKPMU_NR_CLKS usage
+>   clk: rockchip: rk3036: Drop CLK_NR_CLKS usage
+>   clk: rockchip: rk3228: Drop CLK_NR_CLKS usage
+>   clk: rockchip: rk3288: Drop CLK_NR_CLKS usage
+>   clk: rockchip: rk3308: Drop CLK_NR_CLKS usage
+>   clk: rockchip: rk3328: Drop CLK_NR_CLKS usage
+>   clk: rockchip: rk3368: Drop CLK_NR_CLKS usage
+>   clk: rockchip: rk3399: Drop CLK_NR_CLKS CLKPMU_NR_CLKS usage
+>   dt-bindings: clock: rockchip: remove CLK_NR_CLKS and CLKPMU_NR_CLKS
+> 
+> [...]
 
-tristate?
+Applied, thanks!
 
-> +       depends on ARCH_EP93XX || COMPILE_TEST
-> +       select MFD_SYSCON
+[1/9] clk: rockchip: px30: Drop CLK_NR_CLKS CLKPMU_NR_CLKS usage
+      commit: 2496910c84a4bd1aa2c10fe57cf4ae1cbcab17f4
+[2/9] clk: rockchip: rk3036: Drop CLK_NR_CLKS usage
+      commit: ec4f4261c315d9bc30bb1bb8c3bb17cbaebe7741
+[3/9] clk: rockchip: rk3228: Drop CLK_NR_CLKS usage
+      commit: 819b2e19a9f7dc9e84a00e2f6da2b2f15a01cee6
+[4/9] clk: rockchip: rk3288: Drop CLK_NR_CLKS usage
+      commit: 545b1313c5a24eed0e4d34554c715b46686251ff
+[5/9] clk: rockchip: rk3308: Drop CLK_NR_CLKS usage
+      commit: 31fe14956883bc09846ce239993e215330218a6f
+[6/9] clk: rockchip: rk3328: Drop CLK_NR_CLKS usage
+      commit: 0758fe99bc969294c2391de145b67c1223c7b104
+[7/9] clk: rockchip: rk3368: Drop CLK_NR_CLKS usage
+      commit: 41563197e7f2a0b449476bbbe931cb2806e84966
+[8/9] clk: rockchip: rk3399: Drop CLK_NR_CLKS CLKPMU_NR_CLKS usage
+      commit: 1a229868852ffe1d59f6bdad1e473d9d5f9e14bb
+[9/9] dt-bindings: clock: rockchip: remove CLK_NR_CLKS and CLKPMU_NR_CLKS
+      commit: fb234516c5a0728d7dbd718667c33c1523b55fe8
 
-Why is this selecting syscon?
-
-> +       select REGMAP
-
-Is this needed either?
-
-> +       help
-> +         This driver supports the SoC clocks on the Cirrus Logic ep93xx.
-> +
->  config COMMON_CLK_FSL_FLEXSPI
->         tristate "Clock driver for FlexSPI on Layerscape SoCs"
->         depends on ARCH_LAYERSCAPE || COMPILE_TEST
-> diff --git a/drivers/clk/clk-ep93xx.c b/drivers/clk/clk-ep93xx.c
-> new file mode 100644
-> index 000000000000..bb1cf59a3d47
-> --- /dev/null
-> +++ b/drivers/clk/clk-ep93xx.c
-> @@ -0,0 +1,846 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * Clock control for Cirrus EP93xx chips.
-> + * Copyright (C) 2021 Nikita Shubin <nikita.shubin@maquefel.me>
-> + *
-> + * Based on a rewrite of arch/arm/mach-ep93xx/clock.c:
-> + * Copyright (C) 2006 Lennert Buytenhek <buytenh@wantstofly.org>
-> + */
-> +#define pr_fmt(fmt) "ep93xx " KBUILD_MODNAME ": " fmt
-> +
-> +#include <linux/bits.h>
-> +#include <linux/cleanup.h>
-> +#include <linux/clk-provider.h>
-> +#include <linux/math.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/regmap.h>
-> +#include <linux/spinlock.h>
-> +
-> +#include <linux/soc/cirrus/ep93xx.h>
-> +#include <dt-bindings/clock/cirrus,ep9301-syscon.h>
-> +
-> +#include <asm/div64.h>
-[...]
-> +
-> +static const char adc_divisors[] =3D { 16, 4 };
-
-These are global symbols in terms of namespace because we're in the
-kernel. Please prefix with ep93xx_ to help tags.
-
-> +static const char sclk_divisors[] =3D { 2, 4 };
-> +static const char lrclk_divisors[] =3D { 32, 64, 128 };
-> +
-> +struct ep93xx_clk {
-> +       struct clk_hw hw;
-> +       u16 idx;
-> +       u16 reg;
-> +       u32 mask;
-> +       u8 bit_idx;
-> +       u8 shift;
-> +       u8 width;
-> +       u8 num_div;
-> +       const char *div;
-> +};
-> +
-> +struct ep93xx_clk_priv {
-> +       spinlock_t lock;
-> +       struct ep93xx_regmap_adev *aux_dev;
-> +       struct device *dev;
-> +       void __iomem *base;
-> +       struct regmap *map;
-> +       struct clk_hw *fixed[21];
-
-Please make a define for '21'.
-
-> +       struct ep93xx_clk reg[];
-> +};
-[...]
-> +
-> +static const struct clk_ops ep93xx_div_ops =3D {
-> +       .enable =3D ep93xx_clk_enable,
-> +       .disable =3D ep93xx_clk_disable,
-> +       .is_enabled =3D ep93xx_clk_is_enabled,
-> +       .recalc_rate =3D ep93xx_div_recalc_rate,
-> +       .round_rate =3D ep93xx_div_round_rate,
-> +       .set_rate =3D ep93xx_div_set_rate,
-> +};
-> +
-> +static int clk_hw_register_div(struct ep93xx_clk *clk,
-
-Please call this something like ep93xx_register_div(). It doesn't take a
-clk_hw pointer so the clk_hw prefix doesn't make sense. This same
-comment applies to other clk_hw prefixed functions in this file.
-
-> +                              const char *name,
-> +                              struct clk_parent_data *parent_data,
-
-const?
-
-> +                              unsigned int reg,
-> +                              u8 enable_bit,
-> +                              u8 shift,
-> +                              u8 width,
-> +                              const char *clk_divisors,
-> +                              u8 num_div)
-> +{
-> +       struct ep93xx_clk_priv *priv =3D ep93xx_priv_from(clk);
-> +       struct clk_init_data init =3D { };
-> +
-> +       init.name =3D name;
-> +       init.ops =3D &ep93xx_div_ops;
-> +       init.flags =3D 0;
-> +       init.parent_data =3D parent_data;
-> +       init.num_parents =3D 1;
-> +
-> +       clk->reg =3D reg;
-> +       clk->bit_idx =3D enable_bit;
-> +       clk->mask =3D GENMASK(shift + width - 1, shift);
-> +       clk->shift =3D shift;
-> +       clk->div =3D clk_divisors;
-> +       clk->num_div =3D num_div;
-> +       clk->hw.init =3D &init;
-> +
-> +       return devm_clk_hw_register(priv->dev, &clk->hw);
-> +}
-> +
-> +struct ep93xx_gate {
-> +       unsigned int idx;
-> +       unsigned int bit;
-> +       const char *name;
-> +};
-> +
-> +static const struct ep93xx_gate ep93xx_uarts[] =3D {
-> +       { EP93XX_CLK_UART1, EP93XX_SYSCON_DEVCFG_U1EN, "uart1" },
-> +       { EP93XX_CLK_UART2, EP93XX_SYSCON_DEVCFG_U2EN, "uart2" },
-> +       { EP93XX_CLK_UART3, EP93XX_SYSCON_DEVCFG_U3EN, "uart3" },
-> +};
-> +
-> +static int ep93xx_uart_clock_init(struct ep93xx_clk_priv *priv)
-> +{
-> +       struct clk_parent_data parent_data =3D { };
-> +       unsigned int i, idx, ret, clk_uart_div;
-> +       struct ep93xx_clk *clk;
-> +       u32 val;
-> +
-> +       regmap_read(priv->map, EP93XX_SYSCON_PWRCNT, &val);
-> +       if (val & EP93XX_SYSCON_PWRCNT_UARTBAUD)
-> +               clk_uart_div =3D 1;
-> +       else
-> +               clk_uart_div =3D 2;
-> +
-> +       priv->fixed[EP93XX_CLK_UART] =3D
-> +               clk_hw_register_fixed_factor(NULL, "uart", "xtali", 0, 1,=
- clk_uart_div);
-
-Pass a device instead of NULL. Don't use string names for parent ^
-
-> +       parent_data.hw =3D priv->fixed[EP93XX_CLK_UART];
-> +
-> +       /* parenting uart gate clocks to uart clock */
-> +       for (i =3D 0; i < ARRAY_SIZE(ep93xx_uarts); i++) {
-> +               idx =3D ep93xx_uarts[i].idx - EP93XX_CLK_UART1;
-> +               clk =3D &priv->reg[idx];
-> +               clk->idx =3D idx;
-> +               ret =3D ep93xx_clk_register_gate(clk,
-> +                                       ep93xx_uarts[i].name,
-> +                                       &parent_data, CLK_SET_RATE_PARENT,
-> +                                       EP93XX_SYSCON_DEVCFG,
-> +                                       ep93xx_uarts[i].bit);
-> +               if (ret)
-> +                       return dev_err_probe(priv->dev, ret,
-> +                                            "failed to register uart[%d]=
- clock\n", i);
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +static const struct ep93xx_gate ep93xx_dmas[] =3D {
-> +       { EP93XX_CLK_M2M0, EP93XX_SYSCON_PWRCNT_DMA_M2M0, "m2m0" },
-> +       { EP93XX_CLK_M2M1, EP93XX_SYSCON_PWRCNT_DMA_M2M1, "m2m1" },
-> +       { EP93XX_CLK_M2P0, EP93XX_SYSCON_PWRCNT_DMA_M2P0, "m2p0" },
-> +       { EP93XX_CLK_M2P1, EP93XX_SYSCON_PWRCNT_DMA_M2P1, "m2p1" },
-> +       { EP93XX_CLK_M2P2, EP93XX_SYSCON_PWRCNT_DMA_M2P2, "m2p2" },
-> +       { EP93XX_CLK_M2P3, EP93XX_SYSCON_PWRCNT_DMA_M2P3, "m2p3" },
-> +       { EP93XX_CLK_M2P4, EP93XX_SYSCON_PWRCNT_DMA_M2P4, "m2p4" },
-> +       { EP93XX_CLK_M2P5, EP93XX_SYSCON_PWRCNT_DMA_M2P5, "m2p5" },
-> +       { EP93XX_CLK_M2P6, EP93XX_SYSCON_PWRCNT_DMA_M2P6, "m2p6" },
-> +       { EP93XX_CLK_M2P7, EP93XX_SYSCON_PWRCNT_DMA_M2P7, "m2p7" },
-> +       { EP93XX_CLK_M2P8, EP93XX_SYSCON_PWRCNT_DMA_M2P8, "m2p8" },
-> +       { EP93XX_CLK_M2P9, EP93XX_SYSCON_PWRCNT_DMA_M2P9, "m2p9" },
-> +};
-> +
-> +static int ep93xx_dma_clock_init(struct ep93xx_clk_priv *priv)
-> +{
-> +       struct clk_parent_data parent_data =3D { };
-> +       unsigned int i, idx;
-> +
-> +       parent_data.hw =3D priv->fixed[EP93XX_CLK_HCLK];
-> +       for (i =3D 0; i < ARRAY_SIZE(ep93xx_dmas); i++) {
-> +               idx =3D ep93xx_dmas[i].idx;
-> +               priv->fixed[idx] =3D devm_clk_hw_register_gate_parent_dat=
-a(priv->dev,
-> +                                       ep93xx_dmas[i].name,
-> +                                       &parent_data, 0,
-> +                                       priv->base + EP93XX_SYSCON_PWRCNT,
-> +                                       ep93xx_dmas[i].bit,
-> +                                       0,
-> +                                       &priv->lock);
-> +               if (IS_ERR(priv->fixed[idx]))
-> +                       return PTR_ERR(priv->fixed[idx]);
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +static struct clk_hw *of_clk_ep93xx_get(struct of_phandle_args *clkspec,=
- void *data)
-> +{
-> +       struct ep93xx_clk_priv *priv =3D data;
-> +       unsigned int idx =3D clkspec->args[0];
-> +
-> +       if (idx < EP93XX_CLK_UART1)
-> +               return priv->fixed[idx];
-> +
-> +       if (idx <=3D EP93XX_CLK_I2S_LRCLK)
-> +               return &priv->reg[idx - EP93XX_CLK_UART1].hw;
-> +
-> +       return ERR_PTR(-EINVAL);
-> +}
-> +
-> +/*
-> + * PLL rate =3D 14.7456 MHz * (X1FBD + 1) * (X2FBD + 1) / (X2IPD + 1) / =
-2^PS
-> + */
-> +static unsigned long calc_pll_rate(u64 rate, u32 config_word)
-> +{
-> +       rate *=3D ((config_word >> 11) & GENMASK(4, 0)) + 1;      /* X1FB=
-D */
-> +       rate *=3D ((config_word >> 5) & GENMASK(5, 0)) + 1;       /* X2FB=
-D */
-> +       do_div(rate, (config_word & GENMASK(4, 0)) + 1);        /* X2IPD =
-*/
-> +       rate >>=3D (config_word >> 16) & GENMASK(1, 0);           /* PS */
-> +
-> +       return rate;
-> +}
-> +
-> +#define devm_ep93xx_clk_hw_register_fixed_rate_parent_data(dev, name, pa=
-rent_data, flags, fixed_rate)  \
-> +       __clk_hw_register_fixed_rate((dev), NULL, (name), NULL, NULL, \
-> +                                    (parent_data), (flags), (fixed_rate)=
-, 0, 0, true)
-
-Is this to workaround a missing devm_clk_hw_register_fixed_rate_parent_data=
-() macro?
+Best regards,
+-- 
+Heiko Stuebner <heiko@sntech.de>
