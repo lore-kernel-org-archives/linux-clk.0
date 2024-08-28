@@ -1,32 +1,32 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D68DA1A01CE;
-	Wed, 28 Aug 2024 20:18:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B82717C223;
+	Wed, 28 Aug 2024 20:19:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724876295; cv=none; b=Z2XEEGt+f+jtp8wDIgxTDxsFU8vQKfeE/2Mc4vCbUtRyrHwlBBN/kWvgLgydBs8DFHc4g+Z6R6f8VvYPVlB7dnIgqdKv4O9v+r4KcpIMb49VLp1xo54Nu4a5fdX+0PSyUyGAcxLDJO/FrOV2vzq6EiFqhLYDMyWY1bBvOsofUgw=
+	t=1724876366; cv=none; b=Zf+hJjECkTUkjirVGQEzl3vp+fCXbyGwrVnhzKC3agizUWtZGOYFXwgZNor4ntN9t15hJ8S036tMjKNp9rfvYnvgW2gVVCBzMbeRZZ//WVDU8UE/3Qpu6xtFKj8FHDE9VB9Y257kdO4TUr2eCJpsP22O9u38JBBWDSRxEGwNYV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724876295; c=relaxed/simple;
-	bh=vQ7MRrWmWKu5iDKIJXcG/RjxdCeCVpq+Ow0Xufz6W4o=;
+	s=arc-20240116; t=1724876366; c=relaxed/simple;
+	bh=69Oa7RV1aCusi8DLh4ncaLvDWzm/H61suYgUFM++cU8=;
 	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=uGRndcnLlKME2PhQnWD4kC2WOylrcm+lU6kl7HU+ok7/Ia6gtZ+7zYAoBSFgbeoM3g5piatBCbVuhk9IrdDXJ1zzDCUJ4RQCARJTKyq6zccDLdHF2C0Gmi3fuQHVIHwC1dfcYF+MDvkUSmGghjvCuCb9k6CHJEzD7jAUxC4B1Fo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZZST9Hly; arc=none smtp.client-ip=10.30.226.201
+	 Subject:From:Cc:To:Date; b=IG0IPXkNNbWvBxC3l/dE3FFX+C00zi6ebDcx+BrsVvi8iQYpCOlWpfToY1umdvrOwsoTPZfmHUk7dV2ARg6ynUGjLfrfpdozVmAatoUHSDsk5T/IQP4MuC1p8mRaqcA2/8gpWR/1IMCnqf5KlcJqTVZGkJGhRnd5ITX9ceWmlCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ATUlLtmc; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZZST9Hly"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40812C4CEC0;
-	Wed, 28 Aug 2024 20:18:14 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ATUlLtmc"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE0A9C4CEC0;
+	Wed, 28 Aug 2024 20:19:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724876294;
-	bh=vQ7MRrWmWKu5iDKIJXcG/RjxdCeCVpq+Ow0Xufz6W4o=;
+	s=k20201202; t=1724876366;
+	bh=69Oa7RV1aCusi8DLh4ncaLvDWzm/H61suYgUFM++cU8=;
 	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=ZZST9Hlypgu43ZVoiXCeZKLHjjokCxDuAl1ShTsxDlzWXLP605FbL74mlMmhqYkRZ
-	 CYtG94TdJX25x13omrWGXUDPNUaYkofYFxA2fxvVtyxeBXO6guFAGg7tzH5AQNCkfG
-	 3Sgywap1lv0u4dg5/Xt4B2Eia+CxHgfBwtLXCxW+MCJru6gvzVfV4cTCQD0WXt6kYm
-	 1rxUrncDvbS3tgoWmks12cNasI0GA+8rBi7RNUiKiiHU6B9csNzL3CzwHtqaKs0dBT
-	 +FAP5iZZG1nLZICdjSt2ODnSdq/QyhzfXnh+aBamDNoZIhxRNLce3Gd1ULwdkumW+9
-	 Y0GNhtt9p3xWA==
-Message-ID: <b2737143b0c4f4eceb5008e6629f1691.sboyd@kernel.org>
+	b=ATUlLtmcS4xqiFqWoCrTV5+uc5vX/idiy6O6MRa7ZeDIb4NlQXkRgHZfG56YLexPf
+	 zw5Wxp4GBy/+IqotsyLRNi8j1iUQXOfTMa5tnGvz74MkZa/wgmKxWMwn6UdhzRlPmU
+	 twvGJ71tal+wbIo/GsVYABARL7A2ent5NwpDyuVLxylZL349jO3wCWZD8A8aGcvR+r
+	 CvTQf2cNDCHGU61IcvsBW4EuBrXzCbnOwf9wlMQWwkgoQgO1rjaMIEp2Y2R7nOTDW5
+	 AItwEKMpTbIV8ytM38Mvn0SzZm9fVhLvATkPfuwkn0X5YZ23vp+neIHfX0yQhWs1d0
+	 dqRvjUkonwmTw==
+Message-ID: <ba3077ef4b155649812fd8be75f131e7.sboyd@kernel.org>
 Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
@@ -35,25 +35,26 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20240826-clk-fix-leak-v1-1-f55418a13aa6@baylibre.com>
-References: <20240826-clk-fix-leak-v1-1-f55418a13aa6@baylibre.com>
-Subject: Re: [PATCH] clk: ti: dra7-atl: fix leak of of_nodes
+In-Reply-To: <20240826080430.179788-2-xingyu.wu@starfivetech.com>
+References: <20240826080430.179788-1-xingyu.wu@starfivetech.com> <20240826080430.179788-2-xingyu.wu@starfivetech.com>
+Subject: Re: [PATCH v7 1/2] clk: starfive: jh7110-sys: Add notifier for PLL0 clock
 From: Stephen Boyd <sboyd@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>, Peter Ujfalusi <peter.ujfalusi@ti.com>, linux-omap@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, David Lechner <dlechner@baylibre.com>
-To: David Lechner <dlechner@baylibre.com>, Tero Kristo <kristo@kernel.org>
-Date: Wed, 28 Aug 2024 13:18:11 -0700
+Cc: Hal Feng <hal.feng@starfivetech.com>, Xingyu Wu <xingyu.wu@starfivetech.com>, linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+To: Conor Dooley <conor@kernel.org>, Emil Renner Berthing <emil.renner.berthing@canonical.com>, Michael Turquette <mturquette@baylibre.com>, Xingyu Wu <xingyu.wu@starfivetech.com>
+Date: Wed, 28 Aug 2024 13:19:23 -0700
 User-Agent: alot/0.10
 
-Quoting David Lechner (2024-08-26 08:35:29)
-> This fix leaking the of_node references in of_dra7_atl_clk_probe().
+Quoting Xingyu Wu (2024-08-26 01:04:29)
+> Add notifier function for PLL0 clock. In the function, the cpu_root clock
+> should be operated by saving its current parent and setting a new safe
+> parent (osc clock) before setting the PLL0 clock rate. After setting PLL0
+> rate, it should be switched back to the original parent clock.
 >=20
-> The docs for of_parse_phandle_with_args() say that the caller must call
-> of_node_put() on the returned node. This adds the missing of_node_put()
-> to fix the leak.
->=20
-> Fixes: 9ac33b0ce81f ("CLK: TI: Driver for DRA7 ATL (Audio Tracking Logic)=
-")
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
+> Fixes: e2c510d6d630 ("riscv: dts: starfive: Add cpu scaling for JH7110 So=
+C")
+> Reviewed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+> Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
 > ---
 
-Applied to clk-next
+What is the urgency of this patch? I can't tell from the commit text, so
+I'm assuming it can bake in clk-next for a few weeks.
