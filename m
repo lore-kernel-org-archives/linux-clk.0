@@ -1,181 +1,116 @@
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from vern.gendns.com (vern.gendns.com [98.142.107.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83DDB189513
-	for <linux-clk@vger.kernel.org>; Wed, 28 Aug 2024 14:06:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7360D16CD06;
+	Wed, 28 Aug 2024 14:29:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=98.142.107.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724853982; cv=none; b=KFgGGp1pyJHRCGsOJh0cxz7+a8QFDBsWBwQRjvVajtBj1NOFrDjWoBNHQ9RpVV6hnTtDxZ+qsiHbiMb3MzBVLn/6r8p3010x8C0Q5920sHKfcmYeeDpzh5NUuxZaXtcojASacrK66RoaAmiAooPE6nvIXxP7kVxVEeVGwBaNNSA=
+	t=1724855346; cv=none; b=Rk+Us9MUgyYc7Y5ImeJ10GW5ru4soBbj83jPVT1deIZffzYbqqivV6gIpats7ja9RdD0aUfyK32WOKWLGvANLJVa1G7ngQZ4kr1QSFIs/x3grLeLbJm0nK5LNSeH9Ab+iJgwswQS+sggmorRMPoFsD5TkGhOT7d5MdKYJH8U4vI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724853982; c=relaxed/simple;
-	bh=RZ7f8KSDfavIg2LMNLDwKSDIUWMWuB94Qd8u4dHZeAw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=cy6lRP4JgFNNVljK6hdnrzE1nnQMYIR0KccJdUD1/rSNsrOPACylbHIb/fDUlc94FmkEodk1cly7eyixDy6DcBx92XCnj8FNqY54PllJtSgBpfDU1E87aYuFOiVEfg+FpZk06rtXzC9vij0nnjWW+TLenEs7045Yz21mIog+k1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=kSnq8xHZ; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1724855346; c=relaxed/simple;
+	bh=jmo+ugdPNm7COTRu4WoMedmCV9DAyYLB2vTCoWCaMDc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rBAkqX+GR9Ng4i3SBTXLBvGg+9NfWqDzK7MGb7nsV5FQvvaqDlI+Z6JvifAjr4SaPrvOlof8E7jOqL3sy9PZDPz9Vud9uxEYlMQInWH9HeguCDWkIL3j0O1bPL696pzQFw00+LT13L7HPvUfW7WEy9Zs/aOKg5zfNGLkxlR52JI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com; spf=pass smtp.mailfrom=lechnology.com; dkim=pass (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b=IYtcKIq1; arc=none smtp.client-ip=98.142.107.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lechnology.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lechnology.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="kSnq8xHZ"
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a866cea40c4so775628766b.0
-        for <linux-clk@vger.kernel.org>; Wed, 28 Aug 2024 07:06:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1724853978; x=1725458778; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S9iF1jJIvtOjyxkFa1dGcE5P1zK7/0vC9veIHL8v450=;
-        b=kSnq8xHZmThYKL9vBgbC2urulWGAc5YWtqbKicaWc9kVI0opDrqxru4IsLhWzZiRW9
-         KTpfS/A0KoIa2tR+QG2uJxLyR4PCjK+H7zQvyukTmv7XsaPNqzKj85yYByapooyCXpGd
-         O8dUJJtEpig4t+qZF+pK4GqaCJXezTSw1so2r9MnItWKTuYJ8gvDPnNOypNKs69my8Zg
-         VXsPGIwpk3gNNsw1F2poKM5GLK2kyLU2om44Io95/olJdvmKr7iBAYtmPIrdU19YlAn9
-         TyWPzQGAKsT/yR5Tvgo51M91dzLw6KU8iLtUI7DsLvPXBTCjTbip6e20Lu2ys8cpc+X8
-         f9eA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724853978; x=1725458778;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=S9iF1jJIvtOjyxkFa1dGcE5P1zK7/0vC9veIHL8v450=;
-        b=mS8OezMmlD5Vz/didU6xpClsFe7KGAgxoFqpezwQGK8/Xuqdp5v3RjCArnC0mfAULQ
-         N13DCKowrKRe10dJA306Q5K7QzfQla/m1N2tDHomc4sfMEpM03LTf8EGwJE7aDRBpu0y
-         sWSVIbHRshIZrwJ6hMb5v/gAYhN1os2RilDToUJwkpRUqCuZxEyQIn7PCpnvfVyACQTp
-         q8sQaVamu/W/49/MzMmRZSrw447fNCg0oQpPDksBPoYnmyNsHMYNMJShnPI0/DdBeilh
-         iqpn762Sf7uWvd2wbTbsz36vYpcUVHVBcviB4Us4QLXEXN0zFL1D/lMPrL42HHmgcb7e
-         DG5A==
-X-Forwarded-Encrypted: i=1; AJvYcCWUNIvHxNCEQGbLwaOdNnQF4huxUtIhCkKLoJLRqWfJgjgJaQBKs3exuvd86mv3ABpdeZnmyJjbiDs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVEtvUXu+EO/Ze2PulmTQvicuIe4fK8vJLQMXYc13Upozk3MVU
-	4KiB/Y0g8gPlrcVz9p839GFcqpv+q1r0RyKq9FYtPvkWFp86kGsRhCIuSDb1DIE=
-X-Google-Smtp-Source: AGHT+IEsHCbcGPRfjvRa3ReFX+yeEg97TxBu8qrzEnpYz3gK7FeIv1FbQkePSMHvE/KzGYp7D32IZw==
-X-Received: by 2002:a17:907:ea1:b0:a86:789c:2d07 with SMTP id a640c23a62f3a-a86a516305emr1476874566b.4.1724853977604;
-        Wed, 28 Aug 2024 07:06:17 -0700 (PDT)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.144])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a86e54b50dbsm251875666b.93.2024.08.28.07.06.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 07:06:17 -0700 (PDT)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: geert+renesas@glider.be,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	wim@linux-watchdog.org,
-	linux@roeck-us.net,
-	ulf.hansson@linaro.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	claudiu.beznea@tuxon.dev,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH v2 3/3] watchdog: rzg2l_wdt: Power on the watchdog domain in the restart handler
-Date: Wed, 28 Aug 2024 17:06:02 +0300
-Message-Id: <20240828140602.1006438-4-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240828140602.1006438-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20240828140602.1006438-1-claudiu.beznea.uj@bp.renesas.com>
+	dkim=pass (2048-bit key) header.d=lechnology.com header.i=@lechnology.com header.b="IYtcKIq1"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=lechnology.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=hDY5OY3XHo3jITLGKzN0/MaCZh01Pb1MSHsRVbEd1vo=; b=IYtcKIq1qsz5wYwj7QygNrNf/S
+	p9b+2kLSoMKcgLYeW8x1ngVBC9dOdPhA7giGJNmHy0JxdBv99baRtDGvQ0Y0kcNYfEvsjgX6JRzHO
+	Hok+TWbC8cIWucO8UZiowiJjVBJ+it8dkQFh4Duh8Xmh7phmL3uqHfOst8suJip6lcbBswZb253Kh
+	C+vUyDxIyYOrDtvXijDZsMpFQlohdILNDy5BwAYsBW1ep5EwbtL0nJcmfuE97lYe6RVIMvspu2Vcq
+	CgEYFuEj5dMq9I4dnGfYgsOu9pmjI2Xj1HZH2KHkFFFXKUO65Qq9RpdCiT+l68lr4OhtVzb2CD7Ih
+	Z/SgIFDA==;
+Received: from ip98-183-112-25.ok.ok.cox.net ([98.183.112.25]:50536 helo=[192.168.0.142])
+	by vern.gendns.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <david@lechnology.com>)
+	id 1sjJRW-0004iI-2S;
+	Wed, 28 Aug 2024 10:13:07 -0400
+Message-ID: <8fdbe5cc-c24f-4e56-a274-7c01aa7bcd21@lechnology.com>
+Date: Wed, 28 Aug 2024 09:13:06 -0500
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] clk:davinci: make use of dev_err_cast_probe()
+To: Yuesong Li <liyuesong@vivo.com>, mturquette@baylibre.com, sboyd@kernel.org
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+ opensource.kernel@vivo.com
+References: <20240828073515.950677-1-liyuesong@vivo.com>
+Content-Language: en-US
+From: David Lechner <david@lechnology.com>
+Autocrypt: addr=david@lechnology.com; keydata=
+ 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
+In-Reply-To: <20240828073515.950677-1-liyuesong@vivo.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - vern.gendns.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lechnology.com
+X-Get-Message-Sender-Via: vern.gendns.com: authenticated_id: davidmain+lechnology.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: vern.gendns.com: davidmain@lechnology.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On 8/28/24 2:35 AM, Yuesong Li wrote:
+> Using dev_err_cast_probe() to simplify the code.
+> 
+> Signed-off-by: Yuesong Li <liyuesong@vivo.com>
+> ---
 
-On RZ/G3S the watchdog can be part of a software-controlled PM domain. In
-this case, the watchdog device need to be powered on in
-struct watchdog_ops::restart API. This can be done though
-pm_runtime_resume_and_get() API if the watchdog PM domain and watchdog
-device are marked as IRQ safe. We mark the watchdog PM domain as IRQ safe
-with GENPD_FLAG_IRQ_SAFE when the watchdog PM domain is registered and the
-watchdog device though pm_runtime_irq_safe().
-
-Before commit e4cf89596c1f ("watchdog: rzg2l_wdt: Fix 'BUG: Invalid wait
-context'") pm_runtime_get_sync() was used in watchdog restart handler
-(which is similar to pm_runtime_resume_and_get() except the later one
-handles the runtime resume errors).
-
-Commit e4cf89596c1f ("watchdog: rzg2l_wdt: Fix 'BUG: Invalid wait
-context'") dropped the pm_runtime_get_sync() and replaced it with
-clk_prepare_enable() to avoid invalid wait context due to genpd_lock()
-in genpd_runtime_resume() being called from atomic context. But
-clk_prepare_enable() doesn't fit for this either (as reported by
-Ulf Hansson) as clk_prepare() can also sleep (it just not throw invalid
-wait context warning as it is not written for this).
-
-Because the watchdog device is marked now as IRQ safe (though this patch)
-the irq_safe_dev_in_sleep_domain() call from genpd_runtime_resume() returns
-1 for devices not registering an IRQ safe PM domain for watchdog (as the
-watchdog device is IRQ safe, PM domain is not and watchdog PM domain is
-always-on), this being the case for RZ/G3S with old device trees and
-the rest of the SoCs that use this driver, we can now drop also the
-clk_prepare_enable() calls in restart handler and rely on
-pm_runtime_resume_and_get().
-
-Thus, drop clk_prepare_enable() and use pm_runtime_resume_and_get() in
-watchdog restart handler.
-
-Acked-by: Guenter Roeck <linux@roeck-us.net>
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
-
-Changes in v2:
-- adjusted patch description and comment from code
-- collected tags
-
-Changes since RFC:
-- use pm_runtime_resume_and_get() and pm_runtime_irq_safe()
-- drop clock prepare in probe
-
- drivers/watchdog/rzg2l_wdt.c | 20 ++++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/watchdog/rzg2l_wdt.c b/drivers/watchdog/rzg2l_wdt.c
-index 2a35f890a288..11bbe48160ec 100644
---- a/drivers/watchdog/rzg2l_wdt.c
-+++ b/drivers/watchdog/rzg2l_wdt.c
-@@ -12,6 +12,7 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_domain.h>
- #include <linux/pm_runtime.h>
- #include <linux/reset.h>
- #include <linux/units.h>
-@@ -166,8 +167,22 @@ static int rzg2l_wdt_restart(struct watchdog_device *wdev,
- 	struct rzg2l_wdt_priv *priv = watchdog_get_drvdata(wdev);
- 	int ret;
- 
--	clk_prepare_enable(priv->pclk);
--	clk_prepare_enable(priv->osc_clk);
-+	/*
-+	 * In case of RZ/G3S the watchdog device may be part of an IRQ safe power
-+	 * domain that is currently powered off. In this case we need to power
-+	 * it on before accessing registers. Along with this the clocks will be
-+	 * enabled. We don't undo the pm_runtime_resume_and_get() as the device
-+	 * need to be on for the reboot to happen.
-+	 *
-+	 * For the rest of SoCs not registering a watchdog IRQ safe power
-+	 * domain it is safe to call pm_runtime_resume_and_get() as the
-+	 * irq_safe_dev_in_sleep_domain() call in genpd_runtime_resume()
-+	 * returns non zero value and the genpd_lock() is avoided, thus, there
-+	 * will be no invalid wait context reported by lockdep.
-+	 */
-+	ret = pm_runtime_resume_and_get(wdev->parent);
-+	if (ret)
-+		return ret;
- 
- 	if (priv->devtype == WDT_RZG2L) {
- 		ret = reset_control_deassert(priv->rstc);
-@@ -275,6 +290,7 @@ static int rzg2l_wdt_probe(struct platform_device *pdev)
- 
- 	priv->devtype = (uintptr_t)of_device_get_match_data(dev);
- 
-+	pm_runtime_irq_safe(&pdev->dev);
- 	pm_runtime_enable(&pdev->dev);
- 
- 	priv->wdev.info = &rzg2l_wdt_ident;
--- 
-2.39.2
+Reviewed-by: David Lechner <david@lechnology.com>
 
