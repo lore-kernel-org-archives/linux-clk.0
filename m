@@ -1,84 +1,71 @@
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 691071A38C1
-	for <linux-clk@vger.kernel.org>; Wed, 28 Aug 2024 17:03:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B2F21A38E0;
+	Wed, 28 Aug 2024 17:13:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724864623; cv=none; b=ftPgRrk47RPAk1C937W+YTr5pTFbdWm4xFmN4LIuUVIg87gBEuOn3RPckzgGx+L1V6+uEVKFP6xRs7abBKhsNouXnUvYwVs5w/lJt5HUuvEyNqixb/b/oZ0/iaj1f+oNQizXi9gzOSX45M1oblFpUlyrfTlbQWSqXpvhmXXYyCw=
+	t=1724865209; cv=none; b=cFPHdHHruIF7jcYZz+tMYGJsLn8rKkaV2CyUNccAL9S72ud0S2Fyw3XvSD9IXSPhJCU60KG9atKEUAaBKb80uiYifJhXu98aEJJH3BSrTSghaSlnuZzEERAj00Va7NVxTPt3XoGrwI28noOKRDn16/811r5cLWWRPmTSr/Lsezs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724864623; c=relaxed/simple;
-	bh=QasJiYQ1cDw/pStQicO3S8JcebgaLLR56R+OjX3L02Q=;
-	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XTrRKY8quIm4sJMArdnTHIMlAyiUFTDLq9ffdQTR03UbEOKRvZitF5WPmLkx1sWi1wch84aFfR0EpRwBCGFrGiTcg/robHnbhR9+46k6PMm6iWfMUsNmPWtdf5fcJyB5DVwcocFP2Jvs11QmK1KtIexnccPf5ySch62qiACFn6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=n/3I1wkM; arc=none smtp.client-ip=209.85.222.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1724865209; c=relaxed/simple;
+	bh=cLO+Sn+ew3Mk96LWi6N6wDzzrKYqbu5dGoNPnfslJ50=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=D+jjnZ5S08p7Y7GGb76HHiuJDEKRxt9D7rFjQrE6UHmXVnK8NQQRVjVxXX3DjpZWZFRm2LTWHCeHn9w/V1DuBMMSGgdPmW47zrQymqyXUMmn9mAD+WGYs9gGAnFobgu1GEii/TDsfOaXhal6quQZmMehHuMW26KduwOwmpI+xIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=th8tRM3N; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="n/3I1wkM"
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7a7ff6c4fd0so23153285a.1
-        for <linux-clk@vger.kernel.org>; Wed, 28 Aug 2024 10:03:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1724864621; x=1725469421; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QasJiYQ1cDw/pStQicO3S8JcebgaLLR56R+OjX3L02Q=;
-        b=n/3I1wkMOKH+bGMxL+yQlzYfp6qROm3K4v+wypIb2F2NGydGx7NvkwnFFoECDVTYPm
-         vDoA97XRSHkf9PaWXySsakpKfQbooUxWJHeNLg/veERRbwVvR0Bs3REW/8wglLdHHV5d
-         b38bqXOLIpis1bpZC9cMiuA/maV5T3pWaE4Eo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724864621; x=1725469421;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QasJiYQ1cDw/pStQicO3S8JcebgaLLR56R+OjX3L02Q=;
-        b=mBIjMZceMZSkdck5gVoS7uGI9j5BeBSA9mma9uFj37+CaZItmLM1cji3Qh+PoeQE8k
-         iweSHoRvfvASo3OF2gr+tNyRGtccjeP3BSeUJFR4h2T15Rdk3s+c0QV4Ij4mEz8XG68P
-         QCpIzei6LfKNSo0gqSTubmWj6vICR5lzkNiBeS3mZn1GICZXbYk2M83QzaHcSol2zcpb
-         YStGH3vc7QdEZNGM7XTEOxen8qX83OViQDuzSc02viaJGac0rm3A2S8UsNPpSIbISh+E
-         H+pRG3SgnSLg6h4ckJ+cJQs2GvrOhoE60u069KmhRJ0fJpf4Iz7Y6o7WFQWa7jQaBl/W
-         sPRg==
-X-Forwarded-Encrypted: i=1; AJvYcCWY4ZABC+V0KVUyLC+MVqomRaX9+cVJDIpkazA0J5f4JztutUlp1MF9qtJ36fL97TT5PiXmCJU4TRA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzwl4yNrhZ/jOJ6L7busrZfoAWDIHf7pqSLnKkhC/ndGEVnrEN2
-	a65t0+2Q3tkoK36xHEEQsDFqYNvI86vUEsgIMU5S1wkkMRKkG3u3b57PfiHU1BkZUL4ZupejQ8J
-	ScEGbYPBiAUscbDUwhKHkWhgJfEeSxOVjQhBT
-X-Google-Smtp-Source: AGHT+IEVO9KZmNWSFybfc7A1nURst7111SB2+UOWqLJ8aG+gb/58BS72acni8VLoQAEGgDW7MBt6MwGtixuxjlVQbiw=
-X-Received: by 2002:a05:620a:2496:b0:7a4:f480:c315 with SMTP id
- af79cd13be357-7a804182b1fmr3651685a.3.1724864621186; Wed, 28 Aug 2024
- 10:03:41 -0700 (PDT)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Wed, 28 Aug 2024 13:03:40 -0400
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="th8tRM3N"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF775C4CEC0;
+	Wed, 28 Aug 2024 17:13:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724865208;
+	bh=cLO+Sn+ew3Mk96LWi6N6wDzzrKYqbu5dGoNPnfslJ50=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=th8tRM3NaCMksmgNuo0XVN+xB6BQqIURW5Bn7TJ3SzjXC1QMGKp6/RhHAeyYjJkiM
+	 q/BuOIFhseImol5tvd/JvfascR0cxAHkpMRt9IhNvDuzkbZvsjyfg57sgUZBj7rYZ3
+	 Ta0/peNPviP6HzMDs9LmQCDlGnQucGcYRTYyusXr+VEIycMmtTMOJgGH0Yeg9A5h2F
+	 bEBoXZ/gFGuYcaQFgslfWxFPzKjQVD4MdxWXU6uXUzSwbia+sSDjXjChcJ6AXWetV3
+	 MfZbVgV8m3yEGA1koxoK+6j2FrZWxyA+K/Ed/0dVboLkibhxRJzqb4U33D34WL7ZuZ
+	 eglehfEBdBw5Q==
+Message-ID: <00adff607d757702fa673942ed60c354.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <8597375d-6c15-4d20-96fd-2598805c09d5@linaro.org>
-References: <20240827231237.1014813-1-swboyd@chromium.org> <20240827231237.1014813-2-swboyd@chromium.org>
- <8597375d-6c15-4d20-96fd-2598805c09d5@linaro.org>
-From: Stephen Boyd <swboyd@chromium.org>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <1684855f-5901-459a-beb7-2569003b30ac@linaro.org>
+References: <20240827231237.1014813-1-swboyd@chromium.org> <20240827231237.1014813-3-swboyd@chromium.org> <1684855f-5901-459a-beb7-2569003b30ac@linaro.org>
+Subject: Re: [PATCH v2 2/2] clk: qcom: gcc-sm8550: Don't use shared clk_ops for QUPs
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, patches@lists.linux.dev, linux-clk@vger.kernel.org, Taniya Das <quic_tdas@quicinc.com>, Amit Pundir <amit.pundir@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, Neil Armstrong <neil.armstrong@linaro.org>, Stephen Boyd <swboyd@chromium.org>
+Date: Wed, 28 Aug 2024 10:13:26 -0700
 User-Agent: alot/0.10
-Date: Wed, 28 Aug 2024 13:03:40 -0400
-Message-ID: <CAE-0n50_+ci9H4M74FC1xVF5szE7kULFifEEnE+-DxaivGG-Bw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] clk: qcom: dispcc-sc7180: Only park display clks
- at init
-To: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	patches@lists.linux.dev, linux-clk@vger.kernel.org, 
-	Taniya Das <quic_tdas@quicinc.com>, Amit Pundir <amit.pundir@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
 
-Quoting Neil Armstrong (2024-08-28 05:22:25)
+Quoting Neil Armstrong (2024-08-28 05:22:37)
 > On 28/08/2024 01:12, Stephen Boyd wrote:
-> > Amit Pundir reports that audio and USB-C host mode stops working on
-> > sm8550 if the gcc_usb30_prim_master_clk_src clk is registered and
-> > clk_rcg2_shared_init() parks it on XO.
->
-> Why does it change the dispcc-sc7180 in this case ?
->
+> > diff --git a/drivers/clk/qcom/gcc-sm8550.c b/drivers/clk/qcom/gcc-sm855=
+0.c
+> > index 7944ddb4b47d..0244a05866b8 100644
+> > --- a/drivers/clk/qcom/gcc-sm8550.c
+> > +++ b/drivers/clk/qcom/gcc-sm8550.c
+> > @@ -992,7 +992,7 @@ static struct clk_init_data gcc_qupv3_wrap2_s7_clk_=
+src_init =3D {
+> >       .parent_data =3D gcc_parent_data_0,
+> >       .num_parents =3D ARRAY_SIZE(gcc_parent_data_0),
+> >       .flags =3D CLK_SET_RATE_PARENT,
+> > -     .ops =3D &clk_rcg2_shared_ops,
+> > +     .ops =3D &clk_rcg2_ops,
+> >   };
+> >  =20
+> >   static struct clk_rcg2 gcc_qupv3_wrap2_s7_clk_src =3D {
+>=20
+> I think you missed gcc_qupv3_wrap2_s7_clk_src
 
-The patch that broke it affected all RCGs. Let me add that detail and
-resend.
+Nope. The diff header shows it is in gcc_qupv3_wrap2_s7_clk_src_init
+which is assigned to the gcc_qupv3_wrap2_s7_clk_src clk's hw.init
+pointer.
+
+	.clkr.hw.init =3D &gcc_qupv3_wrap2_s7_clk_src_init,
