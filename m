@@ -1,96 +1,56 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E342E1A3BA1;
-	Wed, 28 Aug 2024 15:43:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45C3C1A3BD0;
+	Wed, 28 Aug 2024 17:00:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724859839; cv=none; b=G0HtoT1u4FYiu0dIdYR6jD25F8+Ql8FP0xWXfy6K/dfV1tH2tOU/OyAm+ZAeP5MyRyNMBBTyZygIuQmMF9nfjqrBbqSP4pLD9uRbOn+GlDEZuGh+Viika7sUVzSjfmRFFUufIld1hTZTdzV737n5rKE0QKB4+KLVZsnrg1dgoEs=
+	t=1724864419; cv=none; b=TNMVlt1vnk88yxAfxEP4A62GPXgKhgWH8zGCwTGwC8qPCsVuArnRSImn4yWsbQfSifSWuUZ8b8LI5EJYgDePPFbGOYZcE87d2u82Ot6qgFAbk9sgVXWVnMuGdEpj2w7JqTPOFFzOxwUGMh4BGcSdpFc4XoR2T7UyeXHHeYeuefI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724859839; c=relaxed/simple;
-	bh=O1np8QZosEnT6CoJAfAm5I8eCz/Wg1ludBX9Ys2fqNI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XomTwVTIiyquxE7ov76UGQP9Fd0YIYPkdzOJcYKLL9buqYykZOBawvaLdYxMQF08FD1wAPVDE4nBqETgp6MD4bDmtOrwh6I8zSuMqDBN27ng7BtuyixG9FU3LzaS1byTZW1oM+K5sX2Js8irRq9UoD/IHOwaGFxvcN/lshQIXos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BM9p5BaN; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1724864419; c=relaxed/simple;
+	bh=wvcCw/u2DHmQjZ+lBFZsEG5m3ALmQ5p1JIzRH0qd2OY=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=mkEsVGt9lyKuTznPYoNbpgAcWp7DemyWScCEhG9lLJsJ2C43RszUmHihzBYX4pYCa8PedInci4LJSdDlWHscNzY1ogJtyY/OdDd1IBXJNk4TgfkeTj3PXtGscLy4AGMP2Id2hIwzru3eso5Hm3fvQ5eoQWFqC7Q9+nBt8HjzZ+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YXJ/6JlS; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BM9p5BaN"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4481BC4CEC2;
-	Wed, 28 Aug 2024 15:43:56 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YXJ/6JlS"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3B98C4CEDA;
+	Wed, 28 Aug 2024 17:00:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724859838;
-	bh=O1np8QZosEnT6CoJAfAm5I8eCz/Wg1ludBX9Ys2fqNI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BM9p5BaNivmnBBNVQtIrY1QD/tt2D8vbyGNQJWbE/aNYyf9Ai19AItTi0zYbbsxpc
-	 cOz9D8KA9z8oOPxEo6f4coWNLLAyfQGK/EcKtB/koEVm/99JC3kAI4oGo/rnOVboez
-	 CXdZxx75UAnq/BlX3epzAAIpFD9nGyZ5HiAGVZWSCvPIe7eIOJUpIu6kmF1JnUs1Pu
-	 HoMDio+OjRoHc++NIpmoaItRP5ojrmAn9xFtkGTprrXOhgi16p7UP6ZPGMwoNqmk3B
-	 XGudqvaQXKjof0S0nKt/soF7IjlzE6SjYDUjz4IhNl8BKZbIFjovIVhQXH35CPToSk
-	 JJuCwgX6mYxfQ==
-Date: Wed, 28 Aug 2024 16:43:54 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v3 1/5] dt-bindings: clocks: add binding for
- gated-fixed-clocks
-Message-ID: <20240828-throwing-gigahertz-739c6e5cfe84@spud>
-References: <20240828101503.1478491-1-heiko@sntech.de>
- <20240828101503.1478491-2-heiko@sntech.de>
+	s=k20201202; t=1724864418;
+	bh=wvcCw/u2DHmQjZ+lBFZsEG5m3ALmQ5p1JIzRH0qd2OY=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=YXJ/6JlS49eKre5/7JLOUjrfR2hvDTzcLLYUdHxEG51KRx369KPbzsP27VUzIVKuy
+	 CUJf5q3YAe7O3XIDhuew9We81iY6C0xrfPGCz8ZDDu9qzBO3ZHopPQxVgzsZk5OpK4
+	 DPD5SU22ZUuXmXbREb85PpvPY/b0G1fv664vdzHu9NatA18kmK+YyblqSpod2PjNYu
+	 NnzirXjAtxU7e7bUoxYb5Uxe3jVDf2QKYnSgswYULp2UkiWZZb+5pciHzrz/goGi4E
+	 lyPvgQhF7OiIG/H9SrHl5NtWRdxRLP2Melm25mxupRtN+26v4szyx2l/M8lYQaLd7j
+	 uMxMk2BZvtBtw==
+Message-ID: <4a441f73cea283e694465d5a7c4bef6d.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Db0ifl1sg5TNrM6U"
-Content-Disposition: inline
-In-Reply-To: <20240828101503.1478491-2-heiko@sntech.de>
-
-
---Db0ifl1sg5TNrM6U
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240818173014.122073-1-krzysztof.kozlowski@linaro.org>
+References: <20240818173014.122073-1-krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH 1/5] dt-bindings: clock: baikal,bt1-ccu-div: add top-level constraints
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Alexandre Torgue <alexandre.torgue@foss.st.com>, Charles Keepax <ckeepax@opensource.cirrus.com>, Conor Dooley <conor+dt@kernel.org>, Elaine Zhang <zhangqing@rock-chips.com>, Gabriel Fernandez <gabriel.fernandez@foss.st.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Heiko Stuebner <heiko@sntech.de>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Magnus Damm <magnus.damm@gmail.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, Michael Turquette <mturquette@baylibre.com>, Richard Fitzgerald <rf@opensource.cirrus.com>, Rob Herring <robh@kernel.org>, Serge Semin <fancer.lancer@gmail.com>, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, linux-renesas-soc@vger.kernel.org, linux-rockchip@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com, patches@opensource.cirrus.com
+Date: Wed, 28 Aug 2024 10:00:16 -0700
+User-Agent: alot/0.10
 
-On Wed, Aug 28, 2024 at 12:14:59PM +0200, Heiko Stuebner wrote:
-> In contrast to fixed clocks that are described as ungateable, boards
-> sometimes use additional oscillators for things like PCIe reference
-> clocks, that need actual supplies to get enabled and enable-gpios to be
-> toggled for them to work.
+Quoting Krzysztof Kozlowski (2024-08-18 10:30:10)
+> Properties with variable number of items per each device are expected to
+> have widest constraints in top-level "properties:" block and further
+> customized (narrowed) in "if:then:".  Add missing top-level constraints
+> for clocks and clock-names.
 >=20
-> This adds a binding for such oscillators that are not configurable
-> themself, but need to handle supplies for them to work.
->=20
-> In schematics they often can be seen as
->=20
->          ----------------
-> Enable - | 100MHz,3.3V, | - VDD
->          |    3225      |
->    GND - |              | - OUT
->          ----------------
->=20
-> or similar. The enable pin might be separate but can also just be tied
-> to the vdd supply, hence it is optional in the binding.
->=20
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> ---
 
-With Rob's fix,
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-Think the current name is more clear about what this is, thanks.
-
---Db0ifl1sg5TNrM6U
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZs9FugAKCRB4tDGHoIJi
-0ioGAP9mr9TXvsHOB+f0UQl60vnvgov9rBd/RyNqG0bUJQ2Z9AEAl60Yci5bd+Ip
-VBFjGowWn1g+Jvui5emsFf6wjDDbxg4=
-=KmNA
------END PGP SIGNATURE-----
-
---Db0ifl1sg5TNrM6U--
+Applied to clk-next
