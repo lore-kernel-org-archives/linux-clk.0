@@ -1,162 +1,317 @@
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 853EE1B0132
-	for <linux-clk@vger.kernel.org>; Wed, 28 Aug 2024 20:44:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 258B61AED3C;
+	Wed, 28 Aug 2024 20:45:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724877868; cv=none; b=GVVA4jg4MN8cSVNCDFBm4nDH4yJIjK6v5mpcm4KWUX6eMjlWUwuXCO/JynA/aEfh8FSDDAtb8Bm1mKZcFqhyiHfyKjcpCKoGcRbQbI6RGMz1KEGC50dqoNN16nsZsSzPt/lZBvUn2TjD9RB1GUg7ADHRkKZklo8/Z2j14a3wtHo=
+	t=1724877902; cv=none; b=J99pOZDPQGPBv0ebSARdbVF+gpjMGzxQ0fgCgK3Ow/Zd1eQWv+SdPlY1dBil51LgMyabN1znDhZuQSCbbZ2aZV+noNHHYidivVuvFeDeVaBCxtcP9rER9cnWPwA3iD753el76A4a1MUduAUEa8b4npzxWuNL1XbgZBc9xW2Z2aY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724877868; c=relaxed/simple;
-	bh=2eoefR7cGl72xKUr4g6vFurnaajnZ4ZAp6xvGyEtOdI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B9567tGY8wN0z50SLG9N90RYktKz23+5JW2BseW6OaHleXonLAQw8Fi0fStqNnEJFYMqdi/iYeeEaV3WeKOVkeBz4lVTLLHiKrSBw8ObcDb69RCyF9V8wHghlzq2HNXPGVQIYc9xYUzFHLWK+7osPI/VLg/ELeSb5Q7r3B7nldA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eXKg5E3e; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1724877902; c=relaxed/simple;
+	bh=r9OLa9sCrMPtwOvE5eP/+AJtMKA8f2kxrWtEkh/K8HM=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=pLdnEGAgexjN4w817nFXaOgsfLB6pnqIqKu7BvGg4b6QfurZIwD3jF7sOgT1Zim+YFAjOborAtHvE8SfUqheerW+XmtbRB2d7A8E4KflPcL6zLaCmbl9UcW6O2deBeFJSEZHgpCTnR3o4ktj2Oe7P4xkdr+aj0qQv5BUeQ7/eGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j/r1rjdB; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eXKg5E3e"
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5334c4cc17fso10044349e87.2
-        for <linux-clk@vger.kernel.org>; Wed, 28 Aug 2024 13:44:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724877864; x=1725482664; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=5ouvwUzqpqqEKUlkh1CpUkYbdJmGHqky9KCVychiJS0=;
-        b=eXKg5E3eyFlOKjKnEk/tDSfley5vvgL26rrv83yJze+Kz5dXKQrLK8l95nJ8sQe05l
-         i4Ae76a0yXsSxzI3kONEc1q/MYRzWOQQUZcnuFqUMe906vuy+oHkaf4hxH1yAMsVEcm5
-         zB6KJp0dVG4yQWS9I47Qc6hNR58cjuKvqk8wUCgGUwCAI2yZrURlihZgcMDlRIpZauXV
-         99oiVWn/vFAmiRlSogxBEIOxpxstuto/PrhicNQYrmISaR9GK8BGujPACaG4kxwm3G1I
-         QB7VlicpHotvHdfWh/Mx8JlYl8jznTtgyawaVxDhw3K3yPMoB4cigTbskktPV6GRlKs4
-         T2pA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724877864; x=1725482664;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5ouvwUzqpqqEKUlkh1CpUkYbdJmGHqky9KCVychiJS0=;
-        b=RyGQCF9axLGjExbUH4SoUu0CjNuiElxyBHad/AQsHWrPcjVVK2SQilOOuS0hemJvYa
-         dD+/ZRspZbE5ZB3r9i+/ihBrsPKEgFZz6U6o5jL51b/OnN1j71VYtO3VzjvBckHEtb07
-         O6SoT+E3jGvss/TVQE2SEl6gg55GJPPiAHFvy4GLug3aE6c/9zostlIjqkDsyhCPJU0H
-         3Ic8OdW9SsAtrWlIWx3rGgNAJMW/9VdQHQHc+o6suBQFdYdLcIifomZWjHFY1GOU9Ny1
-         oZH0OSHa2abqJUh4KuSIUxmuHFXc/jaeMFjIB45GK4Oap5GoE/HmHJGLO38VR388R2m4
-         9Nug==
-X-Forwarded-Encrypted: i=1; AJvYcCXiBjSlhSYkztxGIfO8bs8xsZV76DXV/hnNmWYxm/BxxGd8TOGq+W4ZvWBO7gI2bMVvSCKiqv/NdDY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzz0kwl4LtEOqQmr/BEe23jS0IM9dbAetS8i7M7VDlboSBwREXV
-	8RzLokdtdzJ7rOiDkPlAKrGHc5s645rw81VifqocDl8EFbKcPC3VHSE4q3s4A/U=
-X-Google-Smtp-Source: AGHT+IH4zRQRIv6Lh7T2/GNqa8t40UFcIfzpQONZac2DDCKlGfTbLoKbr9iAWINSbxj2G3srq82BTw==
-X-Received: by 2002:a05:6512:3c8d:b0:530:c212:4a5a with SMTP id 2adb3069b0e04-5353e549b8cmr356750e87.22.1724877862966;
-        Wed, 28 Aug 2024 13:44:22 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5334ea5d2dbsm2294656e87.195.2024.08.28.13.44.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 28 Aug 2024 13:44:22 -0700 (PDT)
-Date: Wed, 28 Aug 2024 23:44:20 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>, 
-	Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Ajit Pandey <quic_ajipan@quicinc.com>, Imran Shaik <quic_imrashai@quicinc.com>, 
-	Taniya Das <quic_tdas@quicinc.com>, Jagadeesh Kona <quic_jkona@quicinc.com>, 
-	kernel test robot <lkp@intel.com>, Dan Carpenter <dan.carpenter@linaro.org>, 
-	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>
-Subject: Re: [PATCH] clk: qcom: clk-alpha-pll: Replace divide operator with
- comparison
-Message-ID: <kh4diauo5u63mldchmd66pbnqxwnbqfoqcpxsw6wwocbadygvz@3diccu2xt4kj>
-References: <20240813094035.974317-1-quic_skakitap@quicinc.com>
- <4d314b61-7483-4ceb-ac72-10dbd7e4522a@linaro.org>
- <7733a4ca-330b-4127-af12-33f376fbbc47@nvidia.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j/r1rjdB"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA45CC4CEC0;
+	Wed, 28 Aug 2024 20:45:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724877901;
+	bh=r9OLa9sCrMPtwOvE5eP/+AJtMKA8f2kxrWtEkh/K8HM=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=j/r1rjdBjIUQUeG86lJ+MGdf6VkjChDXj4mljfW6hsEHCyolrbg0Oz3qqCOGXJN5b
+	 iZFGQMwHdX9NcwSPyQniulKg5WxpUSMD0DSwrs5yiKKfYwk0mRJEdK+RPtl+YKGm8G
+	 egNRXMNmyMG+uBReyvcm/Aq871LrhvRrq53HyvgnLNYalylfHu2gg5PbJbO1XdDEq+
+	 uFsjW8QJv2N+9wUFpsD8X/QS/cpDzRiMSpOyA88az0TA3w3dljFFnbm39w2NY/4/MO
+	 dhTEtWNZGOF+dQhLfvHMceez98SgK6sVRS5rEnXzyo1laRTBh9lKMPj2E0bolTBOVT
+	 ZygV9OMf+uu/w==
+Message-ID: <020c15c9939c1c4cfac925942a582cee.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <7733a4ca-330b-4127-af12-33f376fbbc47@nvidia.com>
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240715-ep93xx-v11-3-4e924efda795@maquefel.me>
+References: <20240715-ep93xx-v11-0-4e924efda795@maquefel.me> <20240715-ep93xx-v11-3-4e924efda795@maquefel.me>
+Subject: Re: [PATCH v11 03/38] clk: ep93xx: add DT support for Cirrus EP93xx
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+To: Michael Turquette <mturquette@baylibre.com>, Nikita Shubin via B4 Relay <devnull+nikita.shubin.maquefel.me@kernel.org>, nikita.shubin@maquefel.me
+Date: Wed, 28 Aug 2024 13:44:59 -0700
+User-Agent: alot/0.10
 
-On Wed, Aug 28, 2024 at 02:47:05PM GMT, Jon Hunter wrote:
-> Hi Satya, Vladimir,
-> 
-> On 13/08/2024 21:01, Vladimir Zapolskiy wrote:
-> > On 8/13/24 12:40, Satya Priya Kakitapalli wrote:
-> > > In zonda_pll_adjust_l_val() replace the divide operator with comparison
-> > > operator since comparisons are faster than divisions.
-> > > 
-> > > Fixes: f4973130d255 ("clk: qcom: clk-alpha-pll: Update set_rate for
-> > > Zonda PLL")
-> > 
-> > Apparently the change is not a fix, therefore I believe the Fixes tag
-> > shall be removed.
-> 
-> 
-> From the commit message it is not clear that this is a fix, but I
-> believe that it is. With the current -next I am seeing the following
-> build error (with GCC 7.3.1) on ARM ...
-> 
-> drivers/clk/qcom/clk-alpha-pll.o: In function `clk_zonda_pll_set_rate':
-> clk-alpha-pll.c:(.text+0x45dc): undefined reference to `__aeabi_uldivmod'
+Quoting Nikita Shubin via B4 Relay (2024-07-15 01:38:07)
+> diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> index 3e9099504fad..234b0a8b7650 100644
+> --- a/drivers/clk/Kconfig
+> +++ b/drivers/clk/Kconfig
+> @@ -218,6 +218,14 @@ config COMMON_CLK_EN7523
+>           This driver provides the fixed clocks and gates present on Airo=
+ha
+>           ARM silicon.
+> =20
+> +config COMMON_CLK_EP93XX
+> +       bool "Clock driver for Cirrus Logic ep93xx SoC"
 
-This should be a part of the commit message
+tristate?
 
-> > > Reported-by: kernel test robot <lkp@intel.com>
-> > > Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> > > Closes: https://lore.kernel.org/r/202408110724.8pqbpDiD-lkp@intel.com/
+> +       depends on ARCH_EP93XX || COMPILE_TEST
+> +       select MFD_SYSCON
 
-this Closes tag must come after lkp's Reported-by. Please also add
-Closes with the link to Dan's report.
+Why is this selecting syscon?
 
-> 
-> There is also the above smatch warning that was reported.
+> +       select REGMAP
 
-And the Smatch warning too should be a part of the commit message.
+Is this needed either?
 
-Last, but not least, as it is a fix, there should be a Fixes: tag and
-optionally a cc:stable.
+> +       help
+> +         This driver supports the SoC clocks on the Cirrus Logic ep93xx.
+> +
+>  config COMMON_CLK_FSL_FLEXSPI
+>         tristate "Clock driver for FlexSPI on Layerscape SoCs"
+>         depends on ARCH_LAYERSCAPE || COMPILE_TEST
+> diff --git a/drivers/clk/clk-ep93xx.c b/drivers/clk/clk-ep93xx.c
+> new file mode 100644
+> index 000000000000..bb1cf59a3d47
+> --- /dev/null
+> +++ b/drivers/clk/clk-ep93xx.c
+> @@ -0,0 +1,846 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * Clock control for Cirrus EP93xx chips.
+> + * Copyright (C) 2021 Nikita Shubin <nikita.shubin@maquefel.me>
+> + *
+> + * Based on a rewrite of arch/arm/mach-ep93xx/clock.c:
+> + * Copyright (C) 2006 Lennert Buytenhek <buytenh@wantstofly.org>
+> + */
+> +#define pr_fmt(fmt) "ep93xx " KBUILD_MODNAME ": " fmt
+> +
+> +#include <linux/bits.h>
+> +#include <linux/cleanup.h>
+> +#include <linux/clk-provider.h>
+> +#include <linux/math.h>
+> +#include <linux/platform_device.h>
+> +#include <linux/regmap.h>
+> +#include <linux/spinlock.h>
+> +
+> +#include <linux/soc/cirrus/ep93xx.h>
+> +#include <dt-bindings/clock/cirrus,ep9301-syscon.h>
+> +
+> +#include <asm/div64.h>
+[...]
+> +
+> +static const char adc_divisors[] =3D { 16, 4 };
 
-> 
-> > > Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-> > > ---
-> > >   drivers/clk/qcom/clk-alpha-pll.c | 2 +-
-> > >   1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/drivers/clk/qcom/clk-alpha-pll.c
-> > > b/drivers/clk/qcom/clk-alpha-pll.c
-> > > index 2f620ccb41cb..fd8a82bb3690 100644
-> > > --- a/drivers/clk/qcom/clk-alpha-pll.c
-> > > +++ b/drivers/clk/qcom/clk-alpha-pll.c
-> > > @@ -2126,7 +2126,7 @@ static void zonda_pll_adjust_l_val(unsigned
-> > > long rate, unsigned long prate, u32
-> > >       remainder = do_div(quotient, prate);
-> > >       *l = quotient;
-> > 
-> > Since it's not a fix, but a simplification, you may wish to remove
-> > an unnecessary 'quotient' local variable:
-> > 
-> > remainder = do_div(rate, prate);
-> > 
-> > > -    if ((remainder * 2) / prate)
-> > > +    if ((remainder * 2) >= prate)
-> > >           *l = *l + 1;
-> > 
-> > *l = rate + (u32)(remainder * 2 >= prate);
-> 
-> 
-> The above change does fix this build error for me.
-> 
-> Satya, did you intend this to be a fix? Can we get this into -next?
-> 
-> Thanks
-> Jon
-> 
-> -- 
-> nvpublic
+These are global symbols in terms of namespace because we're in the
+kernel. Please prefix with ep93xx_ to help tags.
 
--- 
-With best wishes
-Dmitry
+> +static const char sclk_divisors[] =3D { 2, 4 };
+> +static const char lrclk_divisors[] =3D { 32, 64, 128 };
+> +
+> +struct ep93xx_clk {
+> +       struct clk_hw hw;
+> +       u16 idx;
+> +       u16 reg;
+> +       u32 mask;
+> +       u8 bit_idx;
+> +       u8 shift;
+> +       u8 width;
+> +       u8 num_div;
+> +       const char *div;
+> +};
+> +
+> +struct ep93xx_clk_priv {
+> +       spinlock_t lock;
+> +       struct ep93xx_regmap_adev *aux_dev;
+> +       struct device *dev;
+> +       void __iomem *base;
+> +       struct regmap *map;
+> +       struct clk_hw *fixed[21];
+
+Please make a define for '21'.
+
+> +       struct ep93xx_clk reg[];
+> +};
+[...]
+> +
+> +static const struct clk_ops ep93xx_div_ops =3D {
+> +       .enable =3D ep93xx_clk_enable,
+> +       .disable =3D ep93xx_clk_disable,
+> +       .is_enabled =3D ep93xx_clk_is_enabled,
+> +       .recalc_rate =3D ep93xx_div_recalc_rate,
+> +       .round_rate =3D ep93xx_div_round_rate,
+> +       .set_rate =3D ep93xx_div_set_rate,
+> +};
+> +
+> +static int clk_hw_register_div(struct ep93xx_clk *clk,
+
+Please call this something like ep93xx_register_div(). It doesn't take a
+clk_hw pointer so the clk_hw prefix doesn't make sense. This same
+comment applies to other clk_hw prefixed functions in this file.
+
+> +                              const char *name,
+> +                              struct clk_parent_data *parent_data,
+
+const?
+
+> +                              unsigned int reg,
+> +                              u8 enable_bit,
+> +                              u8 shift,
+> +                              u8 width,
+> +                              const char *clk_divisors,
+> +                              u8 num_div)
+> +{
+> +       struct ep93xx_clk_priv *priv =3D ep93xx_priv_from(clk);
+> +       struct clk_init_data init =3D { };
+> +
+> +       init.name =3D name;
+> +       init.ops =3D &ep93xx_div_ops;
+> +       init.flags =3D 0;
+> +       init.parent_data =3D parent_data;
+> +       init.num_parents =3D 1;
+> +
+> +       clk->reg =3D reg;
+> +       clk->bit_idx =3D enable_bit;
+> +       clk->mask =3D GENMASK(shift + width - 1, shift);
+> +       clk->shift =3D shift;
+> +       clk->div =3D clk_divisors;
+> +       clk->num_div =3D num_div;
+> +       clk->hw.init =3D &init;
+> +
+> +       return devm_clk_hw_register(priv->dev, &clk->hw);
+> +}
+> +
+> +struct ep93xx_gate {
+> +       unsigned int idx;
+> +       unsigned int bit;
+> +       const char *name;
+> +};
+> +
+> +static const struct ep93xx_gate ep93xx_uarts[] =3D {
+> +       { EP93XX_CLK_UART1, EP93XX_SYSCON_DEVCFG_U1EN, "uart1" },
+> +       { EP93XX_CLK_UART2, EP93XX_SYSCON_DEVCFG_U2EN, "uart2" },
+> +       { EP93XX_CLK_UART3, EP93XX_SYSCON_DEVCFG_U3EN, "uart3" },
+> +};
+> +
+> +static int ep93xx_uart_clock_init(struct ep93xx_clk_priv *priv)
+> +{
+> +       struct clk_parent_data parent_data =3D { };
+> +       unsigned int i, idx, ret, clk_uart_div;
+> +       struct ep93xx_clk *clk;
+> +       u32 val;
+> +
+> +       regmap_read(priv->map, EP93XX_SYSCON_PWRCNT, &val);
+> +       if (val & EP93XX_SYSCON_PWRCNT_UARTBAUD)
+> +               clk_uart_div =3D 1;
+> +       else
+> +               clk_uart_div =3D 2;
+> +
+> +       priv->fixed[EP93XX_CLK_UART] =3D
+> +               clk_hw_register_fixed_factor(NULL, "uart", "xtali", 0, 1,=
+ clk_uart_div);
+
+Pass a device instead of NULL. Don't use string names for parent ^
+
+> +       parent_data.hw =3D priv->fixed[EP93XX_CLK_UART];
+> +
+> +       /* parenting uart gate clocks to uart clock */
+> +       for (i =3D 0; i < ARRAY_SIZE(ep93xx_uarts); i++) {
+> +               idx =3D ep93xx_uarts[i].idx - EP93XX_CLK_UART1;
+> +               clk =3D &priv->reg[idx];
+> +               clk->idx =3D idx;
+> +               ret =3D ep93xx_clk_register_gate(clk,
+> +                                       ep93xx_uarts[i].name,
+> +                                       &parent_data, CLK_SET_RATE_PARENT,
+> +                                       EP93XX_SYSCON_DEVCFG,
+> +                                       ep93xx_uarts[i].bit);
+> +               if (ret)
+> +                       return dev_err_probe(priv->dev, ret,
+> +                                            "failed to register uart[%d]=
+ clock\n", i);
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static const struct ep93xx_gate ep93xx_dmas[] =3D {
+> +       { EP93XX_CLK_M2M0, EP93XX_SYSCON_PWRCNT_DMA_M2M0, "m2m0" },
+> +       { EP93XX_CLK_M2M1, EP93XX_SYSCON_PWRCNT_DMA_M2M1, "m2m1" },
+> +       { EP93XX_CLK_M2P0, EP93XX_SYSCON_PWRCNT_DMA_M2P0, "m2p0" },
+> +       { EP93XX_CLK_M2P1, EP93XX_SYSCON_PWRCNT_DMA_M2P1, "m2p1" },
+> +       { EP93XX_CLK_M2P2, EP93XX_SYSCON_PWRCNT_DMA_M2P2, "m2p2" },
+> +       { EP93XX_CLK_M2P3, EP93XX_SYSCON_PWRCNT_DMA_M2P3, "m2p3" },
+> +       { EP93XX_CLK_M2P4, EP93XX_SYSCON_PWRCNT_DMA_M2P4, "m2p4" },
+> +       { EP93XX_CLK_M2P5, EP93XX_SYSCON_PWRCNT_DMA_M2P5, "m2p5" },
+> +       { EP93XX_CLK_M2P6, EP93XX_SYSCON_PWRCNT_DMA_M2P6, "m2p6" },
+> +       { EP93XX_CLK_M2P7, EP93XX_SYSCON_PWRCNT_DMA_M2P7, "m2p7" },
+> +       { EP93XX_CLK_M2P8, EP93XX_SYSCON_PWRCNT_DMA_M2P8, "m2p8" },
+> +       { EP93XX_CLK_M2P9, EP93XX_SYSCON_PWRCNT_DMA_M2P9, "m2p9" },
+> +};
+> +
+> +static int ep93xx_dma_clock_init(struct ep93xx_clk_priv *priv)
+> +{
+> +       struct clk_parent_data parent_data =3D { };
+> +       unsigned int i, idx;
+> +
+> +       parent_data.hw =3D priv->fixed[EP93XX_CLK_HCLK];
+> +       for (i =3D 0; i < ARRAY_SIZE(ep93xx_dmas); i++) {
+> +               idx =3D ep93xx_dmas[i].idx;
+> +               priv->fixed[idx] =3D devm_clk_hw_register_gate_parent_dat=
+a(priv->dev,
+> +                                       ep93xx_dmas[i].name,
+> +                                       &parent_data, 0,
+> +                                       priv->base + EP93XX_SYSCON_PWRCNT,
+> +                                       ep93xx_dmas[i].bit,
+> +                                       0,
+> +                                       &priv->lock);
+> +               if (IS_ERR(priv->fixed[idx]))
+> +                       return PTR_ERR(priv->fixed[idx]);
+> +       }
+> +
+> +       return 0;
+> +}
+> +
+> +static struct clk_hw *of_clk_ep93xx_get(struct of_phandle_args *clkspec,=
+ void *data)
+> +{
+> +       struct ep93xx_clk_priv *priv =3D data;
+> +       unsigned int idx =3D clkspec->args[0];
+> +
+> +       if (idx < EP93XX_CLK_UART1)
+> +               return priv->fixed[idx];
+> +
+> +       if (idx <=3D EP93XX_CLK_I2S_LRCLK)
+> +               return &priv->reg[idx - EP93XX_CLK_UART1].hw;
+> +
+> +       return ERR_PTR(-EINVAL);
+> +}
+> +
+> +/*
+> + * PLL rate =3D 14.7456 MHz * (X1FBD + 1) * (X2FBD + 1) / (X2IPD + 1) / =
+2^PS
+> + */
+> +static unsigned long calc_pll_rate(u64 rate, u32 config_word)
+> +{
+> +       rate *=3D ((config_word >> 11) & GENMASK(4, 0)) + 1;      /* X1FB=
+D */
+> +       rate *=3D ((config_word >> 5) & GENMASK(5, 0)) + 1;       /* X2FB=
+D */
+> +       do_div(rate, (config_word & GENMASK(4, 0)) + 1);        /* X2IPD =
+*/
+> +       rate >>=3D (config_word >> 16) & GENMASK(1, 0);           /* PS */
+> +
+> +       return rate;
+> +}
+> +
+> +#define devm_ep93xx_clk_hw_register_fixed_rate_parent_data(dev, name, pa=
+rent_data, flags, fixed_rate)  \
+> +       __clk_hw_register_fixed_rate((dev), NULL, (name), NULL, NULL, \
+> +                                    (parent_data), (flags), (fixed_rate)=
+, 0, 0, true)
+
+Is this to workaround a missing devm_clk_hw_register_fixed_rate_parent_data=
+() macro?
