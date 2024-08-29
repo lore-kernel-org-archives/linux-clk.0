@@ -1,44 +1,45 @@
 Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8F3B1B0132;
-	Thu, 29 Aug 2024 16:43:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF7661B5806;
+	Thu, 29 Aug 2024 16:43:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724949824; cv=none; b=pyYJ/j4nEzAdndMrN4TE3B/CT0Mufv7HVzBSj9KVUwds3f/aA6H7nrjyllYtwFbz5nBeYgIDOWMAMuqx1vQjeNBIEGbGId2Dobe6ifVIHtscDjlSSd4JDlAULeWni/gG8vHZeld3TARWx9bsyxyl8sbWp/HsuTbar/d3cL/8SuY=
+	t=1724949826; cv=none; b=WHLcO6j84X/uH8HNtIREdha3gsOhcZTrQf0YV85pgD+ntCmi6cW5ICigaiTh6PSQgzGxbFkg5PzlRHCOUaG7ab5bw50bG16hIdjSioGyBwoc2UO2yZyRoONN7pVmNQ/Vbol8pQ+PH1Onp0LFOvPJtFc+3e6SHZ2uUX12q2oyZ/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724949824; c=relaxed/simple;
-	bh=NjJkt4vXF4NIDFPbFvPvLne8R7TXTIItEN5lI5RXWKU=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ldkf6Th9QOYtgHeocDtXnZVwULm5L8Ps4VakyMHzIgzoZrlC1uDhiXUCIY5EhmP7MoEHQrDeW0eBJbT5OLWFkxO9Uanwelilugv+7Uyr8qCtsTA6fTJoNoe+sw55/Cs9RnzKIDKmLkbwmfOgeVMiO4c9H2guaWeBPHxNhhM9BwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=LjUM8rdz; arc=none smtp.client-ip=68.232.154.123
+	s=arc-20240116; t=1724949826; c=relaxed/simple;
+	bh=xmyur0FkYgY5gh9dMIyysY3g10OJ0MeyuI9J1sVCvMk=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=jYoG7fJhE3QK7vzNxgaffvN9zB23tzzSIQWiMI+G1wz2oPpLVQv4jg5eGlGJHjRFyvYAm/NAQSBR5VQcgdk7waetvW0YlcQfq1U4h3Tj/2sKHZc4Z8Fcvo2JRVcnP5lMk6C5XRTkg7t81LhVUulL/d7xdnqufy68goBPcE97+U0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=EVYHfWik; arc=none smtp.client-ip=68.232.154.123
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="LjUM8rdz"
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="EVYHfWik"
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1724949822; x=1756485822;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=NjJkt4vXF4NIDFPbFvPvLne8R7TXTIItEN5lI5RXWKU=;
-  b=LjUM8rdz5iVs1avo6c4zSIH23yGUg5FYPZ87ocSpJz0V+9SeDWB/Fvaw
-   YT5qQUoKXQZNoVY6wxxLTgIVeXJuLUgdqMfK6qRTamRLUwr835o++anom
-   LHVGFeNabyzODwuTljbTQZUeOlbM3IZNWPl/Z0aOwqwHykGLpoY0NhCW/
-   t3XYeUA5sMIAVLdjTbIw66CgZt4Qgsg386vEkZgrkEONOLN+qJd4ltRIZ
-   +4BslBMMgg+i8dlS5eB0O4XlppXne1+eT4If92+wkQa052CgA8Iq6twxA
-   wmGuDHNWlDpiFTXb/pGPg7p9PJRPObr8EqrsWQx9M5gs0eRuR964Py7JS
+  t=1724949824; x=1756485824;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=xmyur0FkYgY5gh9dMIyysY3g10OJ0MeyuI9J1sVCvMk=;
+  b=EVYHfWikgLPEc/dv5nAU4G3rim/iHh64HyTzi66Z1oRy9lBGBsb/f5iA
+   AkZuWxxBx1NJSDWV5swXDCmr/EAEXebNZ9xU+WkHd6nGGrWc1ATVvISnw
+   2ivAtq/h4xokH0Oc85sHct/VMxJTTicjTR5a6X5GWK26wamSskMHRhuSK
+   bAAJR/rtkYQvjkNI2SvzGsMvC59wqnbkHr0yXrLXfdtkV5pn+db+5Qull
+   skCD/SgOhh3zs/9DHSSosFY4c7y9M9uPywiV/xzszJbML6Dlzhnv78tnS
+   Kctl8srA2R3UyupiZulEKN/w2gR9gM7J0VD/TNn9vgud9t0lzc7qHIb/1
    g==;
 X-CSE-ConnectionGUID: lTG1XX2gTL2f2PJAf78vQA==
-X-CSE-MsgGUID: YuSZDGyoSzW0P0bf1EDvXQ==
+X-CSE-MsgGUID: uRg0VkoQRKmHonahkydx9Q==
 X-IronPort-AV: E=Sophos;i="6.10,186,1719903600"; 
-   d="scan'208";a="30998141"
+   d="scan'208";a="30998143"
 X-Amp-Result: SKIPPED(no attachment in message)
 Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
   by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 29 Aug 2024 09:43:41 -0700
 Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
  chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 29 Aug 2024 09:42:51 -0700
+ 15.1.2507.35; Thu, 29 Aug 2024 09:42:52 -0700
 Received: from ryan-Precision-3630-Tower.microchip.com (10.10.85.11) by
  chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
  15.1.2507.35 via Frontend Transport; Thu, 29 Aug 2024 09:42:51 -0700
@@ -48,10 +49,12 @@ To: <mturquette@baylibre.com>, <sboyd@kernel.org>,
 	<claudiu.beznea@tuxon.dev>
 CC: <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
 	<linux-kernel@vger.kernel.org>, Ryan Wanner <Ryan.Wanner@microchip.com>
-Subject: [PATCH 0/3] clk: at91: add sama7d65 clock support
-Date: Thu, 29 Aug 2024 09:42:24 -0700
-Message-ID: <cover.1724948760.git.Ryan.Wanner@microchip.com>
+Subject: [PATCH 2/3] clk: at91: clk-master: increase maximum number of clocks
+Date: Thu, 29 Aug 2024 09:42:26 -0700
+Message-ID: <677567f08ae588bdd9f919c6501c23be075c0efb.1724948760.git.Ryan.Wanner@microchip.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1724948760.git.Ryan.Wanner@microchip.com>
+References: <cover.1724948760.git.Ryan.Wanner@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -63,28 +66,27 @@ Content-Type: text/plain
 
 From: Ryan Wanner <Ryan.Wanner@microchip.com>
 
-Hello,
+Increase maximum number of vaild master clocks. The PMC for the SAMA7D65
+requires 9 master clocks.
 
-This series adds clock support for the SAMA7D65 SoC. There are also
-changes to the master clock driver and PLL driver in order to account for
-the increased amount of clocks being supported in this new SoC.
+Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
+---
+ drivers/clk/at91/clk-master.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Trying to account for all the updates happening in this system, this
-patch set is based off of the most recent updates to at91-next branch.
-
-Ryan Wanner (3):
-  clk: at91: sama7d65: add sama7d65 pmc driver
-  clk: at91: clk-master: increase maximum number of clocks
-  clk: at91: clk-sam9x60-pll: increase maximum amount of plls
-
- drivers/clk/at91/Makefile          |    1 +
- drivers/clk/at91/clk-master.c      |    2 +-
- drivers/clk/at91/clk-sam9x60-pll.c |    2 +-
- drivers/clk/at91/pmc.c             |    1 +
- drivers/clk/at91/sama7d65.c        | 1372 ++++++++++++++++++++++++++++
- 5 files changed, 1376 insertions(+), 2 deletions(-)
- create mode 100644 drivers/clk/at91/sama7d65.c
-
+diff --git a/drivers/clk/at91/clk-master.c b/drivers/clk/at91/clk-master.c
+index 15c46489ba85..7a544e429d34 100644
+--- a/drivers/clk/at91/clk-master.c
++++ b/drivers/clk/at91/clk-master.c
+@@ -20,7 +20,7 @@
+ 
+ #define PMC_MCR_CSS_SHIFT	(16)
+ 
+-#define MASTER_MAX_ID		4
++#define MASTER_MAX_ID		9
+ 
+ #define to_clk_master(hw) container_of(hw, struct clk_master, hw)
+ 
 -- 
 2.43.0
 
