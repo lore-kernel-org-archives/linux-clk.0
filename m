@@ -1,74 +1,76 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69A63AC28;
-	Thu, 29 Aug 2024 19:24:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F701BAEDE;
+	Thu, 29 Aug 2024 19:44:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724959468; cv=none; b=StK3oa2PoGNGiKS153R54dRoFUINnCxftj3caynicK9dOua92ZDZMCc1jWWssW/Z0TIPvXbF/gHlia/jewzMGpH9tgN/rYWecOAZKjjRtmIbzbcWeiPxXYXjSgHLbrK9QClEBfsyjz1FgnsZv+cN7P1juJ3wyt5nsNq5ce+lfUg=
+	t=1724960696; cv=none; b=euV8/2qNpPKoiLE96NTEVWHKSUKLVnlXE/cuJrhJsQPz80f+urVq16E1q78flWsF64fn63r1BRg52qHXOrtri81svQUiMLILGFnqt0ifi9isvyqkAMGDR6UbnGLWUUO1meRK1KhEChHekmVW9+1RfljXRaB59Lk//mdd13B2QQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724959468; c=relaxed/simple;
-	bh=uTglyPOiv1StxvS2A3Sp8Hit9OuSpBd4jENxkIcloxE=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=XHn5m7Gxbjlj1pFyPu5Pg/kVd70GmIidRi0i+fZIsfH+LjnwTQrstUuFasDyn2NjP345+zfFIVGOUKf+weA7+ElocFv9jX7k9x5DhAhtqeqU8xyjXyRy5vYeuQA/ZNjSnGNJfkRMnPA1N4o5PpjKGOmQkw9D2etwhTJsF83VBQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G7Dlz9TB; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1724960696; c=relaxed/simple;
+	bh=k/g00ysHF7KkuUbMODChP4TngDt/vB6+q6ahC1ZjB14=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nz0VUU3Cz7nln7L+BCfvEEWF6Z5JXCo+KYsQVGLexV4myzArLhv+T0PlydCxWW+KR3Ga3K3FACaM9ifppHFxWBkwK/UMz98kwSI09XVdLs2DuVPBwgtAA79zuzWrgx2PK26crCLJwe33ypBRryeq65FbOzdttxhLaYpsZ3P899Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YRfiYAP7; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G7Dlz9TB"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35E57C4CEC1;
-	Thu, 29 Aug 2024 19:24:27 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YRfiYAP7"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A9E8C4CEC2;
+	Thu, 29 Aug 2024 19:44:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724959468;
-	bh=uTglyPOiv1StxvS2A3Sp8Hit9OuSpBd4jENxkIcloxE=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=G7Dlz9TB8nEzWinXJWcSgeTS87cAEgVVA9VJSWyfWJqSXfGGRGzcPb5Y0dST73ScL
-	 q0thvY1iM9n+z9w7WsZo0rQ/akN5SAJkaUSArWvpopb5ADG0abzaB3wjZ2AZB6pKQH
-	 R7AKK5r9CXuokOgotN7DfWX/0RQizI4znTa0AGhTxZaa/ULRdPG7pzbsD+tKizpZmJ
-	 5eG7P3zs/8lQHobaCwPxRyfwidrvnq3jKdJb2X3mjSiVoTsJDABu7GQM0C67uyXZwY
-	 k8cgzvJyLrg7NdrnOPHbNHI0P7CpA6wrtaXzfjS73+3MiQHBMP/UcQSPRyYlWUDFXI
-	 6nNe2GVKlCfqQ==
-Message-ID: <78b5aa6efc5b3ca4151f503367a9bd3a.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1724960695;
+	bh=k/g00ysHF7KkuUbMODChP4TngDt/vB6+q6ahC1ZjB14=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=YRfiYAP7VoPoNx/3AAkHbr5Qk8vXD3mE2Vj2EiM2UXXnPBZbGuwHvUr0GBJNv9/cb
+	 r2p9aAgV8pSy0lfu1XX6mGJgZfY2A7xPcgSWqguM40AxlzmuwjrP6GXndjzusSOhOf
+	 ZgNjxfL/lA25Q+UrG9cLm228FqQy0Uv8B/RHc1wJVmYNiJXaa6haJqDdRNnrxbuZqA
+	 Eh4Z3x7TSnr0hz2TAgl7wykB1fHftqmvckZ6d+hdIyIrxLtPKC8Wdca81SbXJ8Ueu9
+	 WoYbT/OT2L5McrRT5yoLpV07TjdjQZ6iilvNtvSLa6baA6zIyKSj8906zKeu59drC+
+	 8wpfssMv6gM8Q==
+Message-ID: <1a1e3d43-27b7-4927-ad4d-25580bd133e7@kernel.org>
+Date: Thu, 29 Aug 2024 21:44:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <NTZPR01MB0956E46297168E8E21D6F17F9F962@NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn>
-References: <20240826080430.179788-1-xingyu.wu@starfivetech.com> <20240826080430.179788-2-xingyu.wu@starfivetech.com> <ba3077ef4b155649812fd8be75f131e7.sboyd@kernel.org> <NTZPR01MB0956E46297168E8E21D6F17F9F962@NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn>
-Subject: RE: [PATCH v7 1/2] clk: starfive: jh7110-sys: Add notifier for PLL0 clock
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Hal Feng <hal.feng@starfivetech.com>, linux-kernel@vger.kernel.org <linux-kernel@vger.kernel.org>, linux-clk@vger.kernel.org <linux-clk@vger.kernel.org>
-To: Conor Dooley <conor@kernel.org>, Emil Renner Berthing <emil.renner.berthing@canonical.com>, Michael Turquette <mturquette@baylibre.com>, Xingyu Wu <xingyu.wu@starfivetech.com>
-Date: Thu, 29 Aug 2024 12:24:25 -0700
-User-Agent: alot/0.10
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/5] Revert "soc: qcom: smd-rpm: Match rpmsg channel
+ instead of compatible"
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Andy Gross <agross@kernel.org>,
+ Stephan Gerhold <stephan@gerhold.net>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ linux-clk@vger.kernel.org, linux-remoteproc@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20240729-fix-smd-rpm-v2-0-0776408a94c5@linaro.org>
+ <20240729-fix-smd-rpm-v2-1-0776408a94c5@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konradybcio@kernel.org>
+In-Reply-To: <20240729-fix-smd-rpm-v2-1-0776408a94c5@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Quoting Xingyu Wu (2024-08-28 22:42:43)
-> On 29/08/2024 04:19, Stephen Boyd wrote:
-> >=20
-> > Quoting Xingyu Wu (2024-08-26 01:04:29)
-> > > Add notifier function for PLL0 clock. In the function, the cpu_root
-> > > clock should be operated by saving its current parent and setting a
-> > > new safe parent (osc clock) before setting the PLL0 clock rate. After
-> > > setting PLL0 rate, it should be switched back to the original parent =
-clock.
-> > >
-> > > Fixes: e2c510d6d630 ("riscv: dts: starfive: Add cpu scaling for JH7110
-> > > SoC")
-> > > Reviewed-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-> > > Signed-off-by: Xingyu Wu <xingyu.wu@starfivetech.com>
-> > > ---
-> >=20
-> > What is the urgency of this patch? I can't tell from the commit text, s=
-o I'm
-> > assuming it can bake in clk-next for a few weeks.
->=20
-> Hi Stephen,
->=20
-> This is urgent. Without this patch, Cpufreq does not work and the CPU can=
-'t work in the best frequency of 1.5GHz. This patch can improve the perform=
-ance of the visionfive-2 board.
->=20
+On 29.07.2024 9:52 PM, Dmitry Baryshkov wrote:
+> The rpm_requests device nodes have the compatible node. As such the
+> rpmsg core uses OF modalias instead of a native rpmsg modalias. Thus if
+> smd-rpm is built as a module, it doesn't get autoloaded for the device.
+> 
+> Revert the commit bcabe1e09135 ("soc: qcom: smd-rpm: Match rpmsg channel
+> instead of compatible")
+> 
+> Fixes: bcabe1e09135 ("soc: qcom: smd-rpm: Match rpmsg channel instead of compatible")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> ---
 
-Ok. I'll apply it to clk-fixes then.
+Reviewed-by: Konrad Dybcio <konradybcio@kernel.org>
+
+Konrad
