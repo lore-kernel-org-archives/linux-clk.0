@@ -1,74 +1,104 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 923291AE866;
-	Thu, 29 Aug 2024 13:28:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F19018CC1A;
+	Thu, 29 Aug 2024 13:58:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724938083; cv=none; b=ZYHeBRPFZ8wks2kQSd7jIGLnB+AOaRz59Ls+IypGFOMR2isuFkiJ0aqMCANnGglLsDA95dt8MTHRZkVJTxja7xPsFHokXkcv6nfbpb/69GZhtffcAFkD08Q4Mmh3ECbaaHlBMLhN5QLKoSi86JUCgfLMynvQWcdWeUZDZJAmU4Q=
+	t=1724939913; cv=none; b=Rv/iXgBxzcDIDXHJZxHyOzfbaNEm4SAFQQtsU3Q9fnFENs1M6YwnvJYCsulavnUWjqZgATgQuMoCMYkn0PQrG4lmLDtiRK+k/TNlgDn3VvA31qkeRaL7fnNy5MaYAdHFzBWv0jGB1Zn/grhxL3oDhI2oYGGPQ5xQJd32M3GFSiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724938083; c=relaxed/simple;
-	bh=BCz8KQT3nNiku5vwtOuMR0szTCOE3r+CGyVRcDkjTcg=;
+	s=arc-20240116; t=1724939913; c=relaxed/simple;
+	bh=ZapR8G5uRpf7IydIeRIlNL2R+edJOZvbSd+R9K2a/dM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gZ3GXNNF99S5OYq28wBDJkP/lF64zo/HmrJw0lAGCP1osbAX50j/r22Bt2PL3Zaudg77AYPol/bTAKg9OKsA9PVkEa8EZEWoxd/LHA+SptDGmRPyMab+RFN7TJQM+/aEaMJJb2QsyxBYk70HJcBw06Pe/LTlwHj4rCqLMVyyr/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=LlrpPLFY; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=rfxLKKFDuhJwmRnX48Xmqs2W2CyBbbJPWOOrKoVIY8dVdrBm+QsdmAcZTD+9+oltPpjwFSycELZ5bsmaHPCK+3Qv+qWV/zc/jK1HYiBp+S7Tr5owW28NZGo4gC+9Gq6evF3IaLPcx63BLFoOFZ3PHJvmtoBd8xUvKYt81/IBUxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DaWi4+YN; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="LlrpPLFY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BFEFC4CEC1;
-	Thu, 29 Aug 2024 13:28:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1724938082;
-	bh=BCz8KQT3nNiku5vwtOuMR0szTCOE3r+CGyVRcDkjTcg=;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DaWi4+YN"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91276C4CEC1;
+	Thu, 29 Aug 2024 13:58:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724939911;
+	bh=ZapR8G5uRpf7IydIeRIlNL2R+edJOZvbSd+R9K2a/dM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LlrpPLFYXygagotx7+N3+XIHWOWL2VFPduet7kczz/2iJ9fThHKNWsTVHHAuNy7cV
-	 KsMx6E0k8j89Oski9nKCEFc50wozYAaGfbSdoDeDqyTK9X/z1Nf/DVTm8H1M69L7D5
-	 auX3BearRXImb8/wNcQhR7sBCjf3iBV37huQSWx0=
-Date: Thu, 29 Aug 2024 09:28:01 -0400
-From: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
-	conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, festevam@gmail.com, 
-	abelvesa@kernel.org, peng.fan@nxp.com, Wei Fang <wei.fang@nxp.com>, 
-	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [Patch v3 0/4] add NETCMIX block control support on i.MX95
-Message-ID: <20240829-ambrosial-smart-wombat-fb571e@lemur>
-References: <20240829011849.364987-1-wei.fang@nxp.com>
- <172491778768.2521946.17064463983702008243.b4-ty@linaro.org>
- <ZtAo+B0XOE558+93@linaro.org>
+	b=DaWi4+YN3qETrzeIdOj4+WS854MUgisfVEIlRP0Yxkg5Sg+PaqfYmyt648E56Q2It
+	 lMT5fJYhC7QVKhOAAAuc8GrKzQrgiZQH3yqAfVAmr02Cr983F6J9YVjAcxlNvtYHEz
+	 uV8OFDoW7PobQ2nj8R0UHbMnYEQ0KX2Qh1zvgFI6sr8+XVyegYIuYgICJhuP5Hz5bE
+	 t1AM87PhtREUpN5lL1incQCrs9oWQvTxK/jpEzOHjKLOccE+QaW7mlOqD6vJmeeA6R
+	 fFplD2aD3sgmHyBs9DG0SjbyltYlt+W+SCGM0QVIDDYpxHAd/r1Wglr0SKePhrfvtt
+	 h1zf6inKKRUYw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1sjffh-000000007Gd-0eAg;
+	Thu, 29 Aug 2024 15:58:45 +0200
+Date: Thu, 29 Aug 2024 15:58:45 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Stephen Boyd <swboyd@chromium.org>
+Cc: Konrad Dybcio <konradybcio@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, patches@lists.linux.dev,
+	linux-clk@vger.kernel.org,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Amit Pundir <amit.pundir@linaro.org>,
+	Taniya Das <quic_tdas@quicinc.com>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: Re: [PATCH v3 1/2] clk: qcom: dispcc-sc7180: Only park display clks
+ at init
+Message-ID: <ZtB-lZWdRIv3mLFr@hovoldconsulting.com>
+References: <20240828171722.1251587-1-swboyd@chromium.org>
+ <20240828171722.1251587-2-swboyd@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZtAo+B0XOE558+93@linaro.org>
+In-Reply-To: <20240828171722.1251587-2-swboyd@chromium.org>
 
-On Thu, Aug 29, 2024 at 10:53:28AM GMT, Abel Vesa wrote:
-> > [1/4] dt-bindings: clock: add i.MX95 NETCMIX block control
-> >       commit: 4b78b54762dbfc2f22f28655fa3cf6f5d50de197
-> > [2/4] dt-bindings: clock: add RMII clock selection
-> >       commit: b4f62001ccd3fa953769ccbd313c9a7a4f5f8f3d
-> > [3/4] clk: imx95: enable the clock of NETCMIX block control
-> >       commit: 42dc425fa8b5be982bcc2025d5bf30be8b26da86
-> > [4/4] arm64: dts: imx95: Add NETCMIX block control support
-> >       (no commit info)
+On Wed, Aug 28, 2024 at 10:17:07AM -0700, Stephen Boyd wrote:
+> Amit Pundir reports that audio and USB-C host mode stops working on
+> sm8550 after commit 01a0a6cc8cfd ("clk: qcom: Park shared RCGs upon
+> registration"). That's because the gcc_usb30_prim_master_clk_src clk is
+> registered and clk_rcg2_shared_init() parks it on XO. Running USB at a
+> slower speed than the link supports is effectively under-clocking the
+> USB link and probably confusing the downstream USB devices.
 > 
-> For some reason, b4 ty thinks it's OK to mention this 4th patch as
-> applied, while it is obviously not.
+> We didn't need to change all the shared RCGs to park on XO at
+> registration time in commit commit 01a0a6cc8cfd ("clk: qcom: Park shared
+> RCGs upon registration"). Instead, we only needed to park the few
+> display related clks on sc7180 to fix the issue.
 > 
-> I only applied the first 3 patches.
+> Fix sm8550 (and likely other qcom SoCs) by skipping the parking part of
+> clk_rcg2_shared_init(). Make that the default init clk_op for shared
+> RCGs, but keep the part where we cache the config register as that's
+> still necessary to figure out the true parent of the clk is. Introduce
+> another set of clk_ops 'clk_rcg2_shared_init_park' that does what
+> clk_rcg2_shared_init() was doing and use that for the display clks on
+> sc7180. This fixes the sm8550 problem and limits the "park upon
+> registration" logic to the display clks that need it.
+> 
+> Fixes: 01a0a6cc8cfd ("clk: qcom: Park shared RCGs upon registration")
+> Cc: Konrad Dybcio <konradybcio@kernel.org>
+> Cc: Bjorn Andersson <andersson@kernel.org>
+> Cc: Taniya Das <quic_tdas@quicinc.com>
+> Cc: Neil Armstrong <neil.armstrong@linaro.org>
+> Reported-by: Amit Pundir <amit.pundir@linaro.org>
+> Closes: https://lore.kernel.org/CAMi1Hd1KQBE4kKUdAn8E5FV+BiKzuv+8FoyWQrrTHPDoYTuhgA@mail.gmail.com
+> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
 
-Sorry for the confusion.
+I can confirm that this fixes the earlycon issue on x1e80100 that Bryan
+reported here:
 
-It's because you did "b4 am" on the entire series. We couldn't find the
-matching commit for 4/4, but this often happens because maintainers tweak the
-title or the patch contents, so we can't always assume that the patch wasn't
-applied just because we can't find the exact match.
+	https://lore.kernel.org/lkml/20240823-x1e80100-clk-fix-v1-1-0b1b4f5a96e8@linaro.org/
 
-If you know you're going to apply a subset, it's best to run "b4 am -P 1-3" so
-that b4 knows for a fact that you only intended to apply a subset.
+Perhaps you can drop the "dispcc-sc7180:" prefix from Subject when
+applying (or resending) since this fixes a regression on multiple
+Qualcomm SoCs. For example, use something like:
 
--K
+	clk: qcom: Only park sc7180 display clks at init
+
+Tested-by: Johan Hovold <johan+linaro@kernel.org>
+
+Johan
