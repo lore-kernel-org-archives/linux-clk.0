@@ -1,51 +1,48 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E13625757;
-	Thu, 29 Aug 2024 14:02:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BBAD18E750;
+	Thu, 29 Aug 2024 14:10:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724940141; cv=none; b=Jvl712CNm9JV6m3mi6kAnexE/VTwJ5RbrKyNpPfP31ZwPW6iCCARxGpZFnAgml3Sk5BUBlkz9gUR7n3ahF3StaPRjY4hV+PrtnN9/3u6PlxnDhRw7PlxePeijMyiuBl3wsxNEpGMUPWrd+qp7xu/30YBsUva5VHNYxtQhGCm3D0=
+	t=1724940610; cv=none; b=J5BsxnuArn3KOIICDVQJeshgkFxj6snTGsojLw3ZU8X+ijhzYMfniDo1DFI7HVcl0ErSIAB1V3BmAiOb1/3fCwQRTZFjjpq0lDkTJcNxkbRPYo4j+QtkovbubfZLzvtTOunwj9EgOoBgv5DyZDxRrSqt87dPS9GHrTarFozrA6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724940141; c=relaxed/simple;
-	bh=pLsaHMXqVn/Lh9ea7svwRrX4FnkxXt+eckTAqOzqPgk=;
+	s=arc-20240116; t=1724940610; c=relaxed/simple;
+	bh=qTwOLDyuIJZS5WYFmgDfv4KEXGvXw9UoAMyimnM+OxA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vv6+oDCUYl1s+Y+8yxYCjJp7KMFKlOI1kBxz/tA114GvIPe4QXqAvSCbFg1o9lfMkYgXtYwNvpH+VALia4XZIXhm85cPWNtaT3p/rOrqeNnNdGIw3uIB+1PdBOydu3E4x/WRd+bXi7EwpeRMii6wP7S9iY9MNMXajvNzcAZ6F3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fUbnmRkY; arc=none smtp.client-ip=10.30.226.201
+	 Content-Type:Content-Disposition:In-Reply-To; b=qPsOiYosZx3yzuuT/9UeLIkRgzI/rzdFFGKtoo8Hp3n0hsccirz3nsHMneH3aawuk5y5sMky0S9RFxV9Jhk4nFMPQQeeXdK1ENo7mCjSElcFLIVM6wMueBhEkcfAN9ovLpMsJs+CU78DamIWCVw2VRLyg35TLt12PbrBFC6oCoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=WI+Z8a48; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fUbnmRkY"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07FB3C4CEC3;
-	Thu, 29 Aug 2024 14:02:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724940141;
-	bh=pLsaHMXqVn/Lh9ea7svwRrX4FnkxXt+eckTAqOzqPgk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fUbnmRkYlyfWvqmYkIljq/GcXbxi1SrT1I1DX8iwaS+0xyPjZo6GYk4vOIgGyArI3
-	 NQVPYwPaWSSzKkSL6TZWO7vFQzwdIFfGVFNTwtbBu//rNZlT+d8l5Li8ygcQna5VaY
-	 slzZn8RiFw36gQ5PPMZiy4Qg36IXK0bm6aSPGPCbGiwoYh4tu28Tmsy3Mqu83tk5D/
-	 BzeKE20C1Nb/73qRtdUIgSEu2mNmqFhcUJdQNPH5ia+XXZahSn8F315dgN37xHdueE
-	 cf3o9iu9BREANWKFXcR2ur+boW++CQQzcH2eiGcQWjQK4l8qND51fXP2SmggEhAbIp
-	 IGk4AfB5vC27g==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1sjfjP-000000007KO-2IHQ;
-	Thu, 29 Aug 2024 16:02:35 +0200
-Date: Thu, 29 Aug 2024 16:02:35 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Stephen Boyd <swboyd@chromium.org>
-Cc: Konrad Dybcio <konradybcio@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, patches@lists.linux.dev,
-	linux-clk@vger.kernel.org,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Amit Pundir <amit.pundir@linaro.org>,
-	Taniya Das <quic_tdas@quicinc.com>
-Subject: Re: [PATCH v3 2/2] clk: qcom: gcc-sm8550: Don't use shared clk_ops
- for QUPs
-Message-ID: <ZtB_e3EgWUYtdGgV@hovoldconsulting.com>
-References: <20240828171722.1251587-1-swboyd@chromium.org>
- <20240828171722.1251587-3-swboyd@chromium.org>
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="WI+Z8a48"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C69EA40003;
+	Thu, 29 Aug 2024 14:10:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1724940605;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u9iP8bCRJqK47kKnLBPXwytzrpV7PSNInp4gC39oES4=;
+	b=WI+Z8a48GHLNMFT578dHsj4QyDLRExsKUPQ0TLHA88ybm6R1hCzAbfVmFQIgGU/6+QQbsX
+	3/sZAA+/5d99NWipDtt1/z5DVbTuY1wKqgpLOp/tOdqpqSdHIQjSyjp5aPwVFO+di9F7/3
+	XROqjXnbN61hjhIQGYPGlSvEqfTUOyXmVTmuYy3j177iPLiPq2dpSzxL7T7X5hm8uR4xgw
+	oq+us58dKDlVcEGHCXdlLWWbzKQKB6hHFBwxrrm02m5lTHTBOJ0LNJG9bobClegUNwYvPg
+	eJjXUZalKMzEaz8TJp/jEIILgeyIvZHRFjaBj4uiexGxa50xV0BGWWHtjLGD/Q==
+Date: Thu, 29 Aug 2024 16:10:03 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Dharma Balasubiramani <dharma.b@microchip.com>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: clock: Add SAMA7D65 PMC compatible string
+Message-ID: <20240829141003278e9ec2@mail.local>
+References: <20240829-sama7d65-next-v1-1-53d4e50b550d@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -54,46 +51,54 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240828171722.1251587-3-swboyd@chromium.org>
+In-Reply-To: <20240829-sama7d65-next-v1-1-53d4e50b550d@microchip.com>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-On Wed, Aug 28, 2024 at 10:17:08AM -0700, Stephen Boyd wrote:
-> The QUPs aren't shared in a way that requires parking the RCG at an
-> always on parent in case some other entity turns on the clk. The
-> hardware is capable of setting a new frequency itself with the DFS mode,
-> so parking is unnecessary. Furthermore, there aren't any GDSCs for these
-> devices, so there isn't a possibility of the GDSC turning on the clks
-> for housekeeping purposes.
+On 29/08/2024 15:08:45+0530, Dharma Balasubiramani wrote:
+> Add the `microchip,sama7d65-pmc` compatible string to the existing binding,
+> since the SAMA7D65 PMC shares the same properties and clock requirements
+> as the SAMA7G5.
+
+Shouldn't you rather use a fallback if you currently have no driver
+change?
+
 > 
-> This wasn't a problem to mark these clks shared until we started parking
-> shared RCGs at clk registration time in commit 01a0a6cc8cfd ("clk: qcom:
-> Park shared RCGs upon registration"). Parking at init is actually
-> harmful to the UART when earlycon is used. If the device is pumping out
-> data while the frequency changes you'll see garbage on the serial
-> console until the driver can probe and actually set a proper frequency.
+> Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
+> ---
+>  Documentation/devicetree/bindings/clock/atmel,at91rm9200-pmc.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> Revert the QUP part of commit 929c75d57566 ("clk: qcom: gcc-sm8550: Mark
-> RCGs shared where applicable") so that the QUPs don't get parked during
-> clk registration and break UART operations.
+> diff --git a/Documentation/devicetree/bindings/clock/atmel,at91rm9200-pmc.yaml b/Documentation/devicetree/bindings/clock/atmel,at91rm9200-pmc.yaml
+> index c9eb60776b4d..885d47dd5724 100644
+> --- a/Documentation/devicetree/bindings/clock/atmel,at91rm9200-pmc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/atmel,at91rm9200-pmc.yaml
+> @@ -43,6 +43,7 @@ properties:
+>                - atmel,sama5d4-pmc
+>                - microchip,sam9x60-pmc
+>                - microchip,sam9x7-pmc
+> +              - microchip,sama7d65-pmc
+>                - microchip,sama7g5-pmc
+>            - const: syscon
+>  
+> @@ -90,6 +91,7 @@ allOf:
+>              enum:
+>                - microchip,sam9x60-pmc
+>                - microchip,sam9x7-pmc
+> +              - microchip,sama7d65-pmc
+>                - microchip,sama7g5-pmc
+>      then:
+>        properties:
+> 
+> ---
+> base-commit: b18bbfc14a38b5234e09c2adcf713e38063a7e6e
+> change-id: 20240829-sama7d65-next-a91d089b56a3
+> 
+> Best regards,
+> -- 
+> Dharma Balasubiramani <dharma.b@microchip.com>
+> 
 
-So this one doesn't really fix anything after patch 1/2 in v3, so
-perhaps you can rephrase and drop "break UART operations" here.
- 
-> Fixes: 01a0a6cc8cfd ("clk: qcom: Park shared RCGs upon registration")
-
-And drop this.
-
-> Fixes: 929c75d57566 ("clk: qcom: gcc-sm8550: Mark RCGs shared where applicable")
-> Cc: Konrad Dybcio <konradybcio@kernel.org>
-> Cc: Bjorn Andersson <andersson@kernel.org>
-> Cc: Taniya Das <quic_tdas@quicinc.com>
-> Cc: Neil Armstrong <neil.armstrong@linaro.org>
-
-> Reported-by: Amit Pundir <amit.pundir@linaro.org>
-> Closes: https://lore.kernel.org/CAMi1Hd1KQBE4kKUdAn8E5FV+BiKzuv+8FoyWQrrTHPDoYTuhgA@mail.gmail.com
-
-And possibly these two as well.
-
-> Tested-by: Amit Pundir <amit.pundir@linaro.org>
-> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-
-Johan
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
