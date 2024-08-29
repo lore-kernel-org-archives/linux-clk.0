@@ -1,57 +1,57 @@
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95D8B198E65
-	for <linux-clk@vger.kernel.org>; Thu, 29 Aug 2024 10:21:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 800ED1A76D6
+	for <linux-clk@vger.kernel.org>; Thu, 29 Aug 2024 10:24:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724926886; cv=none; b=Khazl6ztq3lq4XLgY/idr1krC0iKcaFs08EvWOWuewdon8DbK/0oyYxf3WTjPp9GPS8AKDE63lFD5OkkUrqEdfWg5Frw3EQzsqTN6PazJMY8euSZY0FTDaRMmkeyrTzluQz8RYYBDQ8vZ/KGVRHZyEEEIxFBYzw7uNsBQc8rslg=
+	t=1724927087; cv=none; b=BEJWyqndEP9ptwK9LmhIHUZ1feN1Zy2kozVwwqdK5KwFoVyzr46/8kG5QJHXeKNkPxYjjTdz6L1ADcTXetH50PEeAPYldclQFA54GI6CHTFLjdw7uVIN8qYZtttHGMhot/nrxwe9egcKM90zm/UqNUm5ZWzHyn10GkfI0DvVtoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724926886; c=relaxed/simple;
-	bh=mTnyfs5iyXk2A8jVh4g9909p7wCslrKHActf8v2jCu8=;
+	s=arc-20240116; t=1724927087; c=relaxed/simple;
+	bh=85nAiCVJwW62QrE2b6r88lCjF1lPmNgCQtLklbdsK4k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BG4qdNw6o8kL/If3ZEySU0UkqMyCGB1RWUCtYJywqgjhuRlY38V5LBeZYoLHu70KMOBI7DPUeDFpBKquYUdEPCsZbn21S9qKMHwBEPOkAk0QpbvD3/Djg6xsToFpgpj3UAbUi/YGuDbx07jBDUVR6QsQuewaTdSGvH3qKC1WjLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=la+XfnQ3; arc=none smtp.client-ip=209.85.167.53
+	 Content-Type:Content-Disposition:In-Reply-To; b=mIAWBwI1qnI5QrlZS9zVJHqKrOyFNlfZdnCmabn51r8NkYGXOOOLx/J5ganvzxVqy63BUv6EcaHVBhDI5CLESMOGAitKLXcFsb3hanQVtQ1mvP8GVdLBiXEHgo9MFS84kJgaHiJ6vNM88F7v9sNdBRMkqR6N8GiWVTiggrJD1u8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Y8PaUcA5; arc=none smtp.client-ip=209.85.167.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="la+XfnQ3"
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5343d2af735so481479e87.1
-        for <linux-clk@vger.kernel.org>; Thu, 29 Aug 2024 03:21:24 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y8PaUcA5"
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5343e75c642so629297e87.2
+        for <linux-clk@vger.kernel.org>; Thu, 29 Aug 2024 03:24:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724926883; x=1725531683; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1724927083; x=1725531883; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=puTnCF9XRDK7owVjEuZhSKV7rRgleAu/KF+YmSYOfOo=;
-        b=la+XfnQ39aD2eISdLWJCeT0Xl5wH07yhFOCx7ghJ5hRtn26l/+hvZaZy6Ie4DzwiG6
-         QHWX3hp9/PgXrwL5Yf6YtHaiOss7v+U47cF2K8SHMBdpNJq3Xvp0vmFVMKthWsoZIiQG
-         qmOptEyHPFFJI8sAMA28d7p5Wclb8QSV87GSnWKkarEWCoLj1DF7hSzIJSGYWSdL2QSl
-         +LnQ0UBaGT+mimTQXthic42MPaI4tYxSr+pG0N4w3lKsjYWVZfOS8SQgA27MQt0E2i9K
-         dVxg0rTLMkYw4xK7B8nBYbx/shu5gHEDbvQEsSKiGSgLTdKhzTTOACDfhRWD8L3zjCl8
-         z66g==
+        bh=SZ/w73AaDcXnHgRTfa/18n3sPpKrgC+SUsJfs6EyD5I=;
+        b=Y8PaUcA5moJt9cLegY3MzGmNXt1jn6nP/fptdePOHLYDlWP6mMxUeIx5LnjFiLLdS8
+         D88yl3TiB9vksXbY+bWWnffkYyMTWdFrhdGSLCAt0jgrfcH6rFKi8xxX0ToDmWYh89xk
+         vEVuH8zsnBDO1I52+38E2Ku8T73NuiBea3fzs4OiFe4WCzL7eOpHshFx2rPnRNLfjXvW
+         Q6OdkOjERhVTzj21EyU/BuT0TKL77Ndpa6AVDjx1uq8l87yNiQDkPxmScIxb2EbQDT2N
+         QzrAWHEmZnLileDmOAHppoJGLUR3Qq25xsWQYrqUABeBARydWIzyugts+PuZczmzxQL6
+         /hAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724926883; x=1725531683;
+        d=1e100.net; s=20230601; t=1724927083; x=1725531883;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=puTnCF9XRDK7owVjEuZhSKV7rRgleAu/KF+YmSYOfOo=;
-        b=ua2afEbvjXrZ7+IMmSt4F32cdUAeZl03xJ6TeqE3ceZurnieZEWrb8dvCusfcbJbxw
-         Q/qOd/273ZjQXZflBY6MFd6Ee7Gi1Wv7OthbrczkcfirNszKFWKDkXBjpa8T42VrHuqh
-         AFRhc2C70J58PKjOtBZ4qh2Eh8DdN/UArIucaKJ7gmmSia5G4EyCzKvLIDm9kPIoxVb7
-         1gRAe7G9S6Rqj04FzKiCzyfErGsu/Sr3lXyr+Dm2xE4BP2PCdmLAI8oKpc5Po8VBO0ql
-         sEto8nf0Fcr3hdtsAKANARbdq5NUg6aLNEY0sMIK62Go5x2C4HDPJxMsRXvX7hzbpTiY
-         86WQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUj1ve3XbTuGLU2NAjvR7PrwvOwli1EbCii7+tUXF7G3YAoFK50+02gVSfr5zqRoETzEaeW403OKYc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpjVI50Pl1HXmeKXJHH61iXJwGOb2ExLbLXnnums434VGZJkxb
-	qvT6lm+3IvZrzHBgpY9XTjqRYjdgHOSuyvgJGvA+p8EyiskymCmq9B2aC5wCYAs=
-X-Google-Smtp-Source: AGHT+IFFNsu2a9NDRGs85OJjM17UuETV7H8yjux3hgCI70M+fCsa984v1mj68+Le6L8itmReRpHr3A==
-X-Received: by 2002:a05:6512:3d8e:b0:530:dab8:7dd9 with SMTP id 2adb3069b0e04-5353e53fbafmr1854704e87.12.1724926882119;
-        Thu, 29 Aug 2024 03:21:22 -0700 (PDT)
+        bh=SZ/w73AaDcXnHgRTfa/18n3sPpKrgC+SUsJfs6EyD5I=;
+        b=gU/XAw0RJGRKVeqy47Bs+1XrANjjYt8HdB8aesKd3UVILVzc4kmFSmcSOvTyAxK2C1
+         ucONa6wTvwz8xS9toFAqgrjJHkUxTgUcHw/f7QSX7xWXdnIrPHtCnnH7eCXYo1GJDePV
+         hWd38sy5n/fcmwyl7FdqvlHdU3M3xrOODRNMSRFgAZZWhnrphoNd4jp1+NelR0hLm5ph
+         3AVWd+YhXvmXbDtIHyN5gwLdvG8qHhh48Y52NJI4IYk6exYDtLMd9d9d5Hxqpn6iHs6g
+         pEPaCF5LmzzfGteVq1AW+5uon7GcGatwmFDcSEd6YQAjqvth/VOleoVzDje5hCHUMm02
+         VxHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUKxJN9wmGIORr//v7RBQxGbEly88HQHz9A9Yami57Z4WT4TDq99aFNhcQHfRedKBpOxzYwpKtAW8E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyV8VKki7U/4m0fK6huwrOhTQiQpWE6ksosvfhe0lThFt7oxfIP
+	WGIua6MS+LAnnuwJJvTNYwplncZEybLK/vUTMlb3+ikFBS7axaQ2mjlxMJVeIdE=
+X-Google-Smtp-Source: AGHT+IFvU8hzzwqySK6Z6GUIQ8oD4NTRyF61j/91mZyR2mOx6xG0K5M+rBICRiQtcdWNMlY5YDmVng==
+X-Received: by 2002:a05:6512:b0b:b0:533:3fc8:88b1 with SMTP id 2adb3069b0e04-5353e5bf859mr1504710e87.54.1724927082870;
+        Thu, 29 Aug 2024 03:24:42 -0700 (PDT)
 Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5354079be8esm117031e87.48.2024.08.29.03.21.21
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53540840f44sm117424e87.202.2024.08.29.03.24.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 03:21:21 -0700 (PDT)
-Date: Thu, 29 Aug 2024 13:21:20 +0300
+        Thu, 29 Aug 2024 03:24:42 -0700 (PDT)
+Date: Thu, 29 Aug 2024 13:24:40 +0300
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To: Varadarajan Narayanan <quic_varada@quicinc.com>
 Cc: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
@@ -60,13 +60,12 @@ Cc: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
 	geert+renesas@glider.be, neil.armstrong@linaro.org, arnd@arndb.de, 
 	nfraprado@collabora.com, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
 	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, netdev@vger.kernel.org, 
-	Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
-Subject: Re: [PATCH v5 7/8] arm64: dts: qcom: ipq5332: add support for the
- NSSCC
-Message-ID: <hvbrd7lyf4zjhwphxiephohuoy7olmqb5hxsa4qnidmuuae45p@swezjh3lfpzi>
+	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH v5 5/8] clk: qcom: ipq5332: Add couple of more
+ interconnects
+Message-ID: <kscjtfse3rkdg2sp2uzxiueadf5l66g253vrahfir364yk57lv@jbk4qfbricxx>
 References: <20240829082830.56959-1-quic_varada@quicinc.com>
- <20240829082830.56959-8-quic_varada@quicinc.com>
+ <20240829082830.56959-6-quic_varada@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -75,75 +74,21 @@ List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240829082830.56959-8-quic_varada@quicinc.com>
+In-Reply-To: <20240829082830.56959-6-quic_varada@quicinc.com>
 
-On Thu, Aug 29, 2024 at 01:58:29PM GMT, Varadarajan Narayanan wrote:
-> From: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+On Thu, Aug 29, 2024 at 01:58:27PM GMT, Varadarajan Narayanan wrote:
+> Update the GCC master/slave list to include couple of
+> more interfaces needed by the Network Subsystem Clock
+> Controller (NSSCC)
 > 
-> Describe the NSS clock controller node and it's relevant external
-> clocks.
-
-Who generates these clocks? 300 MHz crystal?
-
-> 
-> Signed-off-by: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
 > Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
 > ---
-> v5: Remove #power-domain-cells
->     Add #interconnect-cells
-> ---
->  arch/arm64/boot/dts/qcom/ipq5332.dtsi | 28 +++++++++++++++++++++++++++
->  1 file changed, 28 insertions(+)
+>  drivers/clk/qcom/gcc-ipq5332.c | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/ipq5332.dtsi b/arch/arm64/boot/dts/qcom/ipq5332.dtsi
-> index 71328b223531..1cc614de845c 100644
-> --- a/arch/arm64/boot/dts/qcom/ipq5332.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/ipq5332.dtsi
-> @@ -16,6 +16,18 @@ / {
->  	#size-cells = <2>;
->  
->  	clocks {
-> +		cmn_pll_nss_200m_clk: cmn-pll-nss-200m-clk {
-> +			compatible = "fixed-clock";
-> +			clock-frequency = <200000000>;
-> +			#clock-cells = <0>;
-> +		};
-> +
-> +		cmn_pll_nss_300m_clk: cmn-pll-nss-300m-clk {
-> +			compatible = "fixed-clock";
-> +			clock-frequency = <300000000>;
-> +			#clock-cells = <0>;
-> +		};
-> +
->  		sleep_clk: sleep-clk {
->  			compatible = "fixed-clock";
->  			#clock-cells = <0>;
-> @@ -479,6 +491,22 @@ frame@b128000 {
->  				status = "disabled";
->  			};
->  		};
-> +
-> +		nsscc: clock-controller@39b00000 {
-> +			compatible = "qcom,ipq5332-nsscc";
-> +			reg = <0x39b00000 0x80000>;
-> +			clocks = <&cmn_pll_nss_200m_clk>,
-> +				 <&cmn_pll_nss_300m_clk>,
-> +				 <&gcc GPLL0_OUT_AUX>,
-> +				 <0>,
-> +				 <0>,
-> +				 <0>,
-> +				 <0>,
-> +				 <&xo_board>;
-> +			#clock-cells = <1>;
-> +			#reset-cells = <1>;
-> +			#interconnect-cells = <1>;
-> +		};
->  	};
->  
->  	timer {
-> -- 
-> 2.34.1
-> 
+
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+
 
 -- 
 With best wishes
