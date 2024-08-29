@@ -1,108 +1,92 @@
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 133371B3F14
-	for <linux-clk@vger.kernel.org>; Thu, 29 Aug 2024 16:34:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 288A21B531B;
+	Thu, 29 Aug 2024 16:43:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724949249; cv=none; b=jv9sHMR9DxfI+2fq86IMU8s8m32eoOkuzt9juDydKlINWwB+0cAlSW1SeyRGu4/cqFOpxUmEBDmfieFquWZMyu70k8Qmdt7IzfDhbd/sLdO0w/xdHayXmjnj2JTvdqkluZZBR2w4GtupROUime6svX5/ku1sUcufFL2vQMijUKc=
+	t=1724949795; cv=none; b=bpumWXi/vKgeTWDY9Gv/AhN8a/qoV+aeFu72Z96YYBOiZ2CEZOUeaLvi71HPGzjRS1GAMy+s/k4IfGh68H/M4G0rkiUMkNt1MaRcxezD/z4uQOUQ+NMJCDeDaXcallx2l3Toezi2Qcs4TN/lhuvlHDt9kjsJrMLWUrAmfDy1xSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724949249; c=relaxed/simple;
-	bh=f9ggnbaNx6g7QkKhE0uWKvaLNCn+0nMqKl1EdSDlrko=;
-	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EsA5CIWIPS9UCiRKSaIuTsYhtTW0oDHt8om3O5o7N8M/38MSPpAs/ZIFmb6tyHfspumlegmN1vQfRM7IRgXKdEMc/vzy3gOYRMrS0fd/DS3QLAR9S98tnQF24kmj4TecB1oDJj/h0E6FcSEr7aF+rdXGLsTRbw06LecRR1nO1lE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=mraA67B5; arc=none smtp.client-ip=209.85.219.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+	s=arc-20240116; t=1724949795; c=relaxed/simple;
+	bh=SOPsnkhwPhbTqIhL+AfAja6IVOaQyvZoZM6IJCh1A80=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TW8jAgHD5DnXGl5scMKGB00EPU9pkLkf67YlIly9nX0skuQIHVReBFhC4CTxipYoQuIiTFi9gwQrE8x/j5NYUuTmzTrDTgYqAnaQhL/cgyXxdUbTnzU+xrM/tw4uTyApMw9DdMpeNpPc1KtVh6pwoaFVV12xfxL1O7VL0DITP4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=DmgY2XiA; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mraA67B5"
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e1205de17aaso911530276.2
-        for <linux-clk@vger.kernel.org>; Thu, 29 Aug 2024 09:34:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1724949247; x=1725554047; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pRtM4U4oM4flFzKh5LtNwM6RZHqWXvQpSJa0+3EzZV8=;
-        b=mraA67B5KEbmdGdQpC5K14X56XzO2OBQc66GU2oiZsJ9/bMnWegyeXrnw7Zv/JBBYd
-         Ex/444xCk3UDvP7GZaR8Re1s6Ks1Xk6HajfupiveOZYZ+V0A3YYT79/6s5dHI6G4c6H8
-         4MbV4lLbO5qo8vmK7/WlCmBEIqVv+c8GBnbfM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724949247; x=1725554047;
-        h=cc:to:subject:message-id:date:user-agent:from:references
-         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pRtM4U4oM4flFzKh5LtNwM6RZHqWXvQpSJa0+3EzZV8=;
-        b=O7bRcHrLlf5LVWzf9a2JuF+qL2vPPNh2+0y2VRsice4hiuOTURs1trJ6GW1WxWLAiu
-         5UzwEFKRulWBlcKCTgr1dlIvRJr+ZWHqmhtFBIvteZdljeBTroiVmJC8gjE8YOVjNaxn
-         H1jrezuhDhgDg4+vrg3VWPSoQtv46BxQ1qkLuyZVvImpPwBF+/O5ixdt/mwcBIwfpsvO
-         w8Al7n7hpGR8t4MWBEd6fNR0Hm8Npw8+cZHZQNsMGzX+NVyuIBZ3EcKGUyYt7//qYTvX
-         A+aJzPqUwBm3j2GUhyEpmZ99GHdl8AFkTJELgXBQuM2oNXGiESS1H9c/UZurjwNNnTuW
-         GDMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVEq4gO62LXayA7iq5O+gXQk7U/RGrMYTQYupiYKBsGTInYkRQ9JmGTrPbT16aKQCV14DWB76Bn5F4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxN1By0ELEi0o0FxTJ0+AclJZla0E1mlh93uepsIyGd6mK+Q5jc
-	mrXgyDEigc8JIhl7zpPpnuAnQYJ5N/PW4hwXY4HVzvstZMxaWPK9BUVg5kMiyML5p4ou3AEN3r1
-	Pq0VwrBOaHLlMh9ojVBRfAAKJkCCUdthxTJDx
-X-Google-Smtp-Source: AGHT+IFdgoh+wmsAD4IyiGquH5DZqMo6QnoVdZGml88Zv9QvUTnxFAeUkWxpW+y2lOckQ5m2pUWWUdo0OYOdQx3Ns8o=
-X-Received: by 2002:a05:6902:2b08:b0:e16:6c41:1601 with SMTP id
- 3f1490d57ef6-e1a5acab419mr3163028276.33.1724949246921; Thu, 29 Aug 2024
- 09:34:06 -0700 (PDT)
-Received: from 753933720722 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 29 Aug 2024 09:34:06 -0700
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="DmgY2XiA"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1724949794; x=1756485794;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=SOPsnkhwPhbTqIhL+AfAja6IVOaQyvZoZM6IJCh1A80=;
+  b=DmgY2XiAQhoXG1mtW1bjEGcLOfZLfsG9Nc476DDkqXPZqIieYXv2pSmT
+   MbbNe4L3adTtziJd5F/TJstUmsGhWJPIcLZhC131cqtmDiHHmz03RyOw9
+   ryn5wNo1FZaCj0gqgMi8E0B4z/I7zXMORSiud1fBdpdMgET5rzMGGeR3H
+   3MKAuRT1S0Yctme5ZXvHNnSMk1g4w3BZoIo7cdgv/8zBliYaW5+RdVR5o
+   MPMswkOOucfyXOGeLDTw+63DCnbSCM4GlrmZxMdcJ0cKhZw3t973mrjBF
+   4yDHXw36TMNkBF1rsu+TzpOeTYzufZvAAgfxcFbz0f3HZ3V4iWYswEFK/
+   w==;
+X-CSE-ConnectionGUID: isCbYj0aQvu8z3ziIW0jJQ==
+X-CSE-MsgGUID: CE2geJv7Sk+v0FgbadjtoQ==
+X-IronPort-AV: E=Sophos;i="6.10,186,1719903600"; 
+   d="scan'208";a="262007773"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 29 Aug 2024 09:43:13 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 29 Aug 2024 09:42:51 -0700
+Received: from ryan-Precision-3630-Tower.microchip.com (10.10.85.11) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Thu, 29 Aug 2024 09:42:51 -0700
+From: <Ryan.Wanner@microchip.com>
+To: <mturquette@baylibre.com>, <sboyd@kernel.org>,
+	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+	<claudiu.beznea@tuxon.dev>
+CC: <linux-clk@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, Ryan Wanner <Ryan.Wanner@microchip.com>
+Subject: [PATCH 3/3] clk: at91: clk-sam9x60-pll: increase maximum amount of plls
+Date: Thu, 29 Aug 2024 09:42:27 -0700
+Message-ID: <cd134c8d9e68c79b798e91f8cce427169b9e6184.1724948760.git.Ryan.Wanner@microchip.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <cover.1724948760.git.Ryan.Wanner@microchip.com>
+References: <cover.1724948760.git.Ryan.Wanner@microchip.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <c1e35d3d-fa00-4453-aaa3-9f23a07acb4f@linaro.org>
-References: <20240828171722.1251587-1-swboyd@chromium.org> <20240828171722.1251587-2-swboyd@chromium.org>
- <c1e35d3d-fa00-4453-aaa3-9f23a07acb4f@linaro.org>
-From: Stephen Boyd <swboyd@chromium.org>
-User-Agent: alot/0.10
-Date: Thu, 29 Aug 2024 09:34:05 -0700
-Message-ID: <CAE-0n51Ag1wpj0uUPVtMvgZJE2FF_FZkw+j=bRiAq3vYk=Y_Fw@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] clk: qcom: dispcc-sc7180: Only park display clks
- at init
-To: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Stephen Boyd <sboyd@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	patches@lists.linux.dev, linux-clk@vger.kernel.org, 
-	Amit Pundir <amit.pundir@linaro.org>, Taniya Das <quic_tdas@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Quoting Neil Armstrong (2024-08-29 08:32:48)
->
->
-> I've been testing this serie on SM8650, and with 01a0a6cc8cfd ("clk: qcom: Park shared RCGs upon registration")
-> it fixes an issue we have that triggers:
-> [   18.740736] ------------[ cut here ]------------
-> [   18.745837] ufs_phy_gdsc status stuck at 'off'
-> [   18.745929] WARNING: CPU: 1 PID: 197 at drivers/clk/qcom/gdsc.c:178 gdsc_toggle_logic+0x15c/0x164
-> ...
-> after waking up UFS from runtime suspend.
+From: Ryan Wanner <Ryan.Wanner@microchip.com>
 
-Oof that's not good.
+Increase maximum amount of PLLs to 9 to support SAMA7D65 SoC PLL
+requirements.
 
->
-> So I suspect we'll need to figure out which SM8650 GCC shared clocks would need
-> to use clk_rcg2_shared_init_park_ops ?
->
-> We also had random boot crash when initializing the display very late on multiple platforms,
-> and so far "clk: qcom: Park shared RCGs upon registration" fixed that, but I also suppose Ill
-> need to reflect the changes done to dispcc-sc7180.c to dispcc-sm8650.c and others.
+Signed-off-by: Ryan Wanner <Ryan.Wanner@microchip.com>
+---
+ drivers/clk/at91/clk-sam9x60-pll.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-It sounds like it's better to make the default always park at
-registration time and special case the one or two places where that
-isn't possible, i.e. USB because it has special rate requirements. So I
-should just go back to v1 then and pile on the QUP patches.
+diff --git a/drivers/clk/at91/clk-sam9x60-pll.c b/drivers/clk/at91/clk-sam9x60-pll.c
+index fda041102224..cefd9948e103 100644
+--- a/drivers/clk/at91/clk-sam9x60-pll.c
++++ b/drivers/clk/at91/clk-sam9x60-pll.c
+@@ -23,7 +23,7 @@
+ #define UPLL_DIV		2
+ #define PLL_MUL_MAX		(FIELD_GET(PMC_PLL_CTRL1_MUL_MSK, UINT_MAX) + 1)
+ 
+-#define PLL_MAX_ID		7
++#define PLL_MAX_ID		9
+ 
+ struct sam9x60_pll_core {
+ 	struct regmap *regmap;
+-- 
+2.43.0
 
-In the long run we probably need to put the clk rate and enable control
-into the pm_domains for the gdscs that require them and implement the
-"parking" and "unparking" there instead of in the clk_ops layer. That
-way we know that when the gdsc is turned on it will have a clk that
-works, and when it is turned off it is always parked. We can also use
-the gdsc on/off state at init time to increment the enable count on the
-shared PLLs by using clk_hw_get_clk() and clk consumer APIs. This will
-let us move the boot state into the kernel in a way that doesn't break
-when a child clk sharing a PLL is turned off.
