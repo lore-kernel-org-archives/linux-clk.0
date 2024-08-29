@@ -1,385 +1,108 @@
-Received: from mail-ej1-f68.google.com (mail-ej1-f68.google.com [209.85.218.68])
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36AB21B2EF9
-	for <linux-clk@vger.kernel.org>; Thu, 29 Aug 2024 16:26:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 133371B3F14
+	for <linux-clk@vger.kernel.org>; Thu, 29 Aug 2024 16:34:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724948796; cv=none; b=Wwi0fplzWPae/yDBwEu1tilKEoipY+AcbcUD6XLygUC1NcpCJlk1sbOTx+r7j13/XxPAOD+XPHC68BnR68ei5y3A03heWbFc5XZ5ssQqhYnXg5ye4VIGWl59ecuZ65605O426Bdw0DfEzrHurgjmwolI0ECVeBZgnLOEAb69gAg=
+	t=1724949249; cv=none; b=jv9sHMR9DxfI+2fq86IMU8s8m32eoOkuzt9juDydKlINWwB+0cAlSW1SeyRGu4/cqFOpxUmEBDmfieFquWZMyu70k8Qmdt7IzfDhbd/sLdO0w/xdHayXmjnj2JTvdqkluZZBR2w4GtupROUime6svX5/ku1sUcufFL2vQMijUKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724948796; c=relaxed/simple;
-	bh=wSMdYTDqsWlQtbEdlbCGxNPCwqGfc+W3ysTZG1vl+OQ=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uk6fsxcJrHqoO0j7scqT6SMNh62/T3CU4vjPCmDuogUnNfiavMRFfohVZHz8BWURaL2B7geHykGyCGgsEZW8qGvJ8NE9iU6/CteV1kToCk6DnwDaAiwZyD7ypZohDdGw6WY6scWW5PQuOvR+C5abwZTQrwKfVxKJaKv3kdOZjj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Uzt6An6g; arc=none smtp.client-ip=209.85.218.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+	s=arc-20240116; t=1724949249; c=relaxed/simple;
+	bh=f9ggnbaNx6g7QkKhE0uWKvaLNCn+0nMqKl1EdSDlrko=;
+	h=MIME-Version:In-Reply-To:References:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EsA5CIWIPS9UCiRKSaIuTsYhtTW0oDHt8om3O5o7N8M/38MSPpAs/ZIFmb6tyHfspumlegmN1vQfRM7IRgXKdEMc/vzy3gOYRMrS0fd/DS3QLAR9S98tnQF24kmj4TecB1oDJj/h0E6FcSEr7aF+rdXGLsTRbw06LecRR1nO1lE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=mraA67B5; arc=none smtp.client-ip=209.85.219.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Uzt6An6g"
-Received: by mail-ej1-f68.google.com with SMTP id a640c23a62f3a-a866cea40c4so103942166b.0
-        for <linux-clk@vger.kernel.org>; Thu, 29 Aug 2024 09:26:34 -0700 (PDT)
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="mraA67B5"
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e1205de17aaso911530276.2
+        for <linux-clk@vger.kernel.org>; Thu, 29 Aug 2024 09:34:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1724948792; x=1725553592; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=KAvkMSrr0+E1+zBJdqJA8C79vOak/KYTC8lNAgyE4gY=;
-        b=Uzt6An6gBIvN5jPZ7Ou5DG93I5TQ6WK/NbjscB4fbSKzW6qYhXxgiVVgogJ/x4oP7p
-         6VmahSFm6j9L9ejkaUuGWlTuSdjS2bI5zccDeWpLU0fvNVuKWWSYkP8dLTLcswiaJC4h
-         OJ4ywXg75Jkr9IFyb4ZiMrZ/DwJ//NVB/Ib1dtTOrzOKxY9wUpMGHNoZBO7FTssUrZkE
-         B4U7ywuU0anUNNdemgt0F75DZyqTHOSmfFIOwTbtf3pPafVVtqnQIlwlA05bvjVAL7w+
-         y3KIFZNi4+lbJkmdtzsymNb/ZJZ1Lzp9KgOX0ZR61md4o9hdIJOAdy1q9l6cKzmtXYMd
-         njog==
+        d=chromium.org; s=google; t=1724949247; x=1725554047; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pRtM4U4oM4flFzKh5LtNwM6RZHqWXvQpSJa0+3EzZV8=;
+        b=mraA67B5KEbmdGdQpC5K14X56XzO2OBQc66GU2oiZsJ9/bMnWegyeXrnw7Zv/JBBYd
+         Ex/444xCk3UDvP7GZaR8Re1s6Ks1Xk6HajfupiveOZYZ+V0A3YYT79/6s5dHI6G4c6H8
+         4MbV4lLbO5qo8vmK7/WlCmBEIqVv+c8GBnbfM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724948792; x=1725553592;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KAvkMSrr0+E1+zBJdqJA8C79vOak/KYTC8lNAgyE4gY=;
-        b=f81difZBCrPO8zTvrGXJJn4Bwou9NA/FrD9Tzyoqj1k5frQWBBhSX3BQUGQ1SIE6B4
-         hAcxBmlXAjkzCrUBdDE7CprE/N/VDbW5vtCt9jvnFBEeRnKrPIOA3iXal/DaI8sPS2ZJ
-         HI237EQj6IylZGdwmfqY1e2PWyUnX874MQhyUNamUQ9jCVubq1d+65xLB1CHVQYSKUhm
-         efz4XzrhPyvaA0fsOg2dKOE5duklcNRPWsUayfgBc2vBnw467qu2EsO7M6BEPFphuvdX
-         Vk+WcBeqYLXer4nmcF/XYpToGx4KvLxR9H2S8OKU2itM++YM+nS7U63Fn69kr8IGLYPh
-         i0pA==
-X-Forwarded-Encrypted: i=1; AJvYcCU6Untb0XAQVBKSsUzNceJ6JVJQaC2ID2wdi4tM0z/zRbTq26GIXXrnCT1nRDxtFZL5mExrtRhlbPc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5KkhG99ZYOHMTdX1JwSlx7hfzrbKlpmaoIyUFpjdqVELy0zZZ
-	NqBES17gJiz+3MBYBOKzq0LfkurtVEFoYx911SuAmowzVSKXztynPC+CDNB+wh8=
-X-Google-Smtp-Source: AGHT+IEyrUorcYaQDgmA8P7OeuK7+S76r1iJ4LhiWcyAFpkkq9s+nW06xAxw2EESujKhpFv3Xbz3ZA==
-X-Received: by 2002:a17:906:f5a6:b0:a86:9644:2a60 with SMTP id a640c23a62f3a-a897f78928amr287181666b.6.1724948791972;
-        Thu, 29 Aug 2024 09:26:31 -0700 (PDT)
-Received: from localhost (host-80-182-198-72.retail.telecomitalia.it. [80.182.198.72])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8989021f3bsm96587466b.85.2024.08.29.09.26.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 09:26:31 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Thu, 29 Aug 2024 18:26:38 +0200
-To: Rob Herring <robh@kernel.org>
-Cc: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 04/11] of: address: Preserve the flags portion on 1:1
- dma-ranges mapping
-Message-ID: <ZtChPt4cD8PzfEkF@apocalypse>
-References: <cover.1724159867.git.andrea.porta@suse.com>
- <5ca13a5b01c6c737f07416be53eb05b32811da21.1724159867.git.andrea.porta@suse.com>
- <20240821001618.GA2309328-robh@kernel.org>
- <ZsWi86I1KG91fteb@apocalypse>
- <CAL_JsqKN0ZNMtq+_dhurwLR+FL2MBOmWujp7uy+5HzXxUb_qDQ@mail.gmail.com>
- <ZtBJ0jIq-QrTVs1m@apocalypse>
- <CAL_Jsq+_-m3cjTRsFZ0RwVpot3Pdcr1GWt-qiiFC8kQvsmV7VQ@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1724949247; x=1725554047;
+        h=cc:to:subject:message-id:date:user-agent:from:references
+         :in-reply-to:mime-version:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pRtM4U4oM4flFzKh5LtNwM6RZHqWXvQpSJa0+3EzZV8=;
+        b=O7bRcHrLlf5LVWzf9a2JuF+qL2vPPNh2+0y2VRsice4hiuOTURs1trJ6GW1WxWLAiu
+         5UzwEFKRulWBlcKCTgr1dlIvRJr+ZWHqmhtFBIvteZdljeBTroiVmJC8gjE8YOVjNaxn
+         H1jrezuhDhgDg4+vrg3VWPSoQtv46BxQ1qkLuyZVvImpPwBF+/O5ixdt/mwcBIwfpsvO
+         w8Al7n7hpGR8t4MWBEd6fNR0Hm8Npw8+cZHZQNsMGzX+NVyuIBZ3EcKGUyYt7//qYTvX
+         A+aJzPqUwBm3j2GUhyEpmZ99GHdl8AFkTJELgXBQuM2oNXGiESS1H9c/UZurjwNNnTuW
+         GDMQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVEq4gO62LXayA7iq5O+gXQk7U/RGrMYTQYupiYKBsGTInYkRQ9JmGTrPbT16aKQCV14DWB76Bn5F4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxN1By0ELEi0o0FxTJ0+AclJZla0E1mlh93uepsIyGd6mK+Q5jc
+	mrXgyDEigc8JIhl7zpPpnuAnQYJ5N/PW4hwXY4HVzvstZMxaWPK9BUVg5kMiyML5p4ou3AEN3r1
+	Pq0VwrBOaHLlMh9ojVBRfAAKJkCCUdthxTJDx
+X-Google-Smtp-Source: AGHT+IFdgoh+wmsAD4IyiGquH5DZqMo6QnoVdZGml88Zv9QvUTnxFAeUkWxpW+y2lOckQ5m2pUWWUdo0OYOdQx3Ns8o=
+X-Received: by 2002:a05:6902:2b08:b0:e16:6c41:1601 with SMTP id
+ 3f1490d57ef6-e1a5acab419mr3163028276.33.1724949246921; Thu, 29 Aug 2024
+ 09:34:06 -0700 (PDT)
+Received: from 753933720722 named unknown by gmailapi.google.com with
+ HTTPREST; Thu, 29 Aug 2024 09:34:06 -0700
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAL_Jsq+_-m3cjTRsFZ0RwVpot3Pdcr1GWt-qiiFC8kQvsmV7VQ@mail.gmail.com>
+In-Reply-To: <c1e35d3d-fa00-4453-aaa3-9f23a07acb4f@linaro.org>
+References: <20240828171722.1251587-1-swboyd@chromium.org> <20240828171722.1251587-2-swboyd@chromium.org>
+ <c1e35d3d-fa00-4453-aaa3-9f23a07acb4f@linaro.org>
+From: Stephen Boyd <swboyd@chromium.org>
+User-Agent: alot/0.10
+Date: Thu, 29 Aug 2024 09:34:05 -0700
+Message-ID: <CAE-0n51Ag1wpj0uUPVtMvgZJE2FF_FZkw+j=bRiAq3vYk=Y_Fw@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] clk: qcom: dispcc-sc7180: Only park display clks
+ at init
+To: Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Neil Armstrong <neil.armstrong@linaro.org>, Stephen Boyd <sboyd@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	patches@lists.linux.dev, linux-clk@vger.kernel.org, 
+	Amit Pundir <amit.pundir@linaro.org>, Taniya Das <quic_tdas@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Rob,
+Quoting Neil Armstrong (2024-08-29 08:32:48)
+>
+>
+> I've been testing this serie on SM8650, and with 01a0a6cc8cfd ("clk: qcom: Park shared RCGs upon registration")
+> it fixes an issue we have that triggers:
+> [   18.740736] ------------[ cut here ]------------
+> [   18.745837] ufs_phy_gdsc status stuck at 'off'
+> [   18.745929] WARNING: CPU: 1 PID: 197 at drivers/clk/qcom/gdsc.c:178 gdsc_toggle_logic+0x15c/0x164
+> ...
+> after waking up UFS from runtime suspend.
 
-On 08:18 Thu 29 Aug     , Rob Herring wrote:
-> On Thu, Aug 29, 2024 at 5:13 AM Andrea della Porta
-> <andrea.porta@suse.com> wrote:
-> >
-> > Hi Rob,
-> 
-> BTW, I noticed your email replies set "reply-to" to everyone in To and
-> Cc. The result (with Gmail) is my reply lists everyone twice (in both
-> To and Cc). "reply-to" is just supposed to be the 1 address you want
-> replies sent to instead of the "from" address.
+Oof that's not good.
 
-IIUC you're probably referring to Mail-Reply-To, that address only one recipient
-at a time (i.e. you want to reply only to the author). Reply-To is a catch-all
-that will work as a fallback when you hit either reply or reply-all in your client.
-In fact, neither Reply-To nor Mail-Reply-To are included in my emails, the
-interesting one being Mail-Followup-To, that should override any of the above
-mentioned headers (including To: and Cc:) for the reply all function. How these
-headers are interpreted depends solely on the mail client, I'm afraid.
-Is it possible that your client is mistakenly merging both Mail-Followup-To 
-plus To and Cc lists?
-Anyway, I've disabled Mail-followup-To as it's added by mutt, can you please
-confirm that this mail now works for you? Hopefully it will not clobber the
-recipent list too much, since AFAIK that header was purposely invented to avoid
-such inconsistencies.
+>
+> So I suspect we'll need to figure out which SM8650 GCC shared clocks would need
+> to use clk_rcg2_shared_init_park_ops ?
+>
+> We also had random boot crash when initializing the display very late on multiple platforms,
+> and so far "clk: qcom: Park shared RCGs upon registration" fixed that, but I also suppose Ill
+> need to reflect the changes done to dispcc-sc7180.c to dispcc-sm8650.c and others.
 
-> 
-> > On 16:29 Mon 26 Aug     , Rob Herring wrote:
-> > > On Wed, Aug 21, 2024 at 3:19 AM Andrea della Porta
-> > > <andrea.porta@suse.com> wrote:
-> > > >
-> > > > Hi Rob,
-> > > >
-> > > > On 19:16 Tue 20 Aug     , Rob Herring wrote:
-> > > > > On Tue, Aug 20, 2024 at 04:36:06PM +0200, Andrea della Porta wrote:
-> > > > > > A missing or empty dma-ranges in a DT node implies a 1:1 mapping for dma
-> > > > > > translations. In this specific case, rhe current behaviour is to zero out
-> > > > >
-> > > > > typo
-> > > >
-> > > > Fixed, thanks!
-> > > >
-> > > > >
-> > > > > > the entire specifier so that the translation could be carried on as an
-> > > > > > offset from zero.  This includes address specifier that has flags (e.g.
-> > > > > > PCI ranges).
-> > > > > > Once the flags portion has been zeroed, the translation chain is broken
-> > > > > > since the mapping functions will check the upcoming address specifier
-> > > > >
-> > > > > What does "upcoming address" mean?
-> > > >
-> > > > Sorry for the confusion, this means "address specifier (with valid flags) fed
-> > > > to the translating functions and for which we are looking for a translation".
-> > > > While this address has some valid flags set, it will fail the translation step
-> > > > since the ranges it is matched against have flags zeroed out by the 1:1 mapping
-> > > > condition.
-> > > >
-> > > > >
-> > > > > > against mismatching flags, always failing the 1:1 mapping and its entire
-> > > > > > purpose of always succeeding.
-> > > > > > Set to zero only the address portion while passing the flags through.
-> > > > >
-> > > > > Can you point me to what the failing DT looks like. I'm puzzled how
-> > > > > things would have worked for anyone.
-> > > > >
-> > > >
-> > > > The following is a simplified and lightly edited) version of the resulting DT
-> > > > from RPi5:
-> > > >
-> > > >  pci@0,0 {
-> > > >         #address-cells = <0x03>;
-> > > >         #size-cells = <0x02>;
-> > > >         ......
-> > > >         device_type = "pci";
-> > > >         compatible = "pci14e4,2712\0pciclass,060400\0pciclass,0604";
-> > > >         ranges = <0x82000000 0x00 0x00   0x82000000 0x00 0x00   0x00 0x600000>;
-> > > >         reg = <0x00 0x00 0x00   0x00 0x00>;
-> > > >
-> > > >         ......
-> > > >
-> > > >         rp1@0 {
-> > >
-> > > What does 0 represent here? There's no 0 address in 'ranges' below.
-> > > Since you said the parent is a PCI-PCI bridge, then the unit-address
-> > > would have to be the PCI devfn and you are missing 'reg' (or omitted
-> > > it).
-> >
-> > There's no reg property because the registers for RP1 are addressed
-> > starting at 0x40108000 offset from BAR1. The devicetree specs says
-> > that a missing reg node should not have any unit address specified
-> > (and AFAIK there's no other special directives for simple-bus specified
-> > in dt-bindings).
-> > I've added @0 just to get rid of the following warning:
-> >
-> >  Warning (unit_address_vs_reg): /fragment@0/__overlay__/rp1: node has
-> >  a reg or ranges property, but no unit name
-> 
-> It's still wrong as dtc only checks the unit-address is correct in a
-> few cases with known bus types.
+It sounds like it's better to make the default always park at
+registration time and special case the one or two places where that
+isn't possible, i.e. USB because it has special rate requirements. So I
+should just go back to v1 then and pile on the QUP patches.
 
-Sorry, I don't follow you on this, I'm probably missing something. Could
-you please add some details?
-
-> 
-> > coming from make W=1 CHECK_DTBS=y broadcom/rp1.dtbo.
-> > This is the exact same approach used by Bootlin patchset from:
-> >
-> > https://lore.kernel.org/all/20240808154658.247873-2-herve.codina@bootlin.com/
-> 
-> It is not. First, that has a node for the PCI device (i.e. the
-> LAN966x). You do not. You only have a PCI-PCI bridge and that is
-> wrong.
-
-I'm a little confused now, but I think the confusion is generated by
-the label node names I've chosen that are, admittedly, a bit sloppy.
-I'll try to make some clarity, please see below.
-
-> 
-> BTW, you should Cc Herve and others that are working on this feature.
-> It is by no means fully sorted as you have found.
-
-Sure, just added, thanks for the heads up.
-
-> 
-> > replied here below for convenience:
-> >
-> > +       pci-ep-bus@0 {
-> > +               compatible = "simple-bus";
-> > +               #address-cells = <1>;
-> > +               #size-cells = <1>;
-> > +
-> > +               /*
-> > +                * map @0xe2000000 (32MB) to BAR0 (CPU)
-> > +                * map @0xe0000000 (16MB) to BAR1 (AMBA)
-> > +                */
-> > +               ranges = <0xe2000000 0x00 0x00 0x00 0x2000000
-> 
-> The 0 parent address here matches the unit-address, so all good in this case.
-
-Just to be sure, the parent address being the triple zeros in the ranges property,
-right?
-
-> 
-> > +                         0xe0000000 0x01 0x00 0x00 0x1000000>;
-> >
-> > Also, I think it's not possible to know the devfn in advance, since the
-> > DT part is pre-compiled as an overlay while the devfn number is coming from
-> > bus enumeration.
-> 
-> No. devfn is fixed unless you are plugging in a card in different
-> slots. The bus number is the part that is not known and assigned by
-> the OS, but you'll notice that is omitted.
-> 
-> In any case, the RP1 node should be generated, so its devfn is irrelevant.
-
-Which is a possibility, since the driver should possibly work also with RP1
-mounted on a PCI card, one day. But as you pointed out, since this is automatically
-generated, should not be a concern.
-
-> 
-> > Since the registers for sub-peripherals will start (as stated in ranges
-> > property) from 0xc040000000, I'd be inclined to use rp1@c040000000 as the
-> > node name and address unit. Is it feasible?
-> 
-> Yes, but that would be in nodes underneath ranges. Above, it is the
-> parent bus we are talking about.
-
-Right.
-
-> 
-> > > >                 #address-cells = <0x02>;
-> > > >                 #size-cells = <0x02>;
-> > > >                 compatible = "simple-bus";
-> > >
-> > > The parent is a PCI-PCI bridge. Child nodes have to be PCI devices and
-> > > "simple-bus" is not a PCI device.
-> >
-> > The simple-bus is needed to automatically traverse and create platform
-> > devices in of_platform_populate(). It's true that RP1 is a PCI device,
-> > but sub-peripherals of RP1 are platform devices so I guess this is
-> > unavoidable right now.
-> 
-> You are missing the point. A PCI-PCI bridge does not have a
-> simple-bus. However, I think it's just what you pasted here that's
-> wrong. From the looks of the RP1 driver and the overlay, it should be
-> correct.
-
-Trying to clarify: at first I thought of my rp1 node (in the dtso) as the pci
-endpoint device, but I now see that it should be intended as just the bus 
-attached to the real endpoint device (which is the dynamically generated dev@0,0).
-In this sense, rp1 is probably a really wrong name, let's say we use the same 
-name from Bootlin, i.e. pci-ep-bus. The DT tree would then be:
-
-pci@0,0         <- auto generated, this represent the pci bridge
-  dev@0,0       <- auto generated, this represent the pci ednpoint device, a.k.a. the RP1
-    pci-ep-bus  <- added from dtbo, this is the simple-bus to which peripherals are attached
-
-this view is much like Bootlin's approach, also my pci-ep-bus node now would look
-like this:
- ...
- pci-ep-bus@0 {
-	ranges = <0xc0 0x40000000
-                  0x01 0x00 0x00000000
-                  0x00 0x00400000>;
-	...
- };
-
-and also the correct unit address here is 0 again, since the parent address in
-ranges is 0x01 0x00 0x00000000 (0x01 is the flags and in this case represent
-BAR1, I assume that for the unit address I should use only the address part that
-is 0, right?).
-
-> 
-> It would also help if you dumped out what "lspci -tvnn" prints.
-> 
-
-Here it is:
-
-localhost:~ # lspci -tvnn
--[0002:00]---00.0-[01]----00.0  Raspberry Pi Ltd RP1 PCIe 2.0 South Bridge [1de4:0001]
-
-> > > The assumption so far with all of this is that you have some specific
-> > > PCI device (and therefore a driver). The simple-buses under it are
-> > > defined per BAR. Not really certain if that makes sense in all cases,
-> > > but since the address assignment is dynamic, it may have to. I'm also
-> > > not completely convinced we should reuse 'simple-bus' here or define
-> > > something specific like 'pci-bar-bus' or something.
-> >
-> > Good point. Labeling a new bus for this kind of 'appliance' could be
-> > beneficial to unify the dt overlay approach, and I guess it could be
-> > adopted by the aforementioned Bootlin's Microchip patchset too.
-> > However, since the difference with simple-bus would be basically non
-> > existent, I believe that this could be done in a future patch due to
-> > the fact that the dtbo is contained into the driver itself, so we do
-> > not suffer from the proliferation that happens when dtb are managed
-> > outside.
-> 
-> It's an ABI, so we really need to decide first.
-
-Okay. How should we proceed?
-
-> 
-> > > >                 ranges = <0xc0 0x40000000   0x01 0x00 0x00   0x00 0x400000>;
-> > > >                 dma-ranges = <0x10 0x00   0x43000000 0x10 0x00   0x10 0x00>;
-> > > >                 ......
-> > > >         };
-> > > >  };
-> > > >
-> > > > The pci@0,0 bridge node is automatically created by virtue of
-> > > > CONFIG_PCI_DYNAMIC_OF_NODES, and has no dma-ranges, hence it implies 1:1 dma
-> > > > mappings (flags for this mapping are set to zero).  The rp1@0 node has
-> > > > dma-ranges with flags set (0x43000000). Since 0x43000000 != 0x00 any translation
-> > > > will fail.
-> > >
-> > > It's possible that we should fill in 'dma-ranges' when making these
-> > > nodes rather than supporting missing dma-ranges here.
-> >
-> > I really think that filling dma-ranges for dynamically created pci
-> > nodes would be the correct approach.
-> > However, IMHO this does not imply that we could let inconsistent
-> > address (64 bit addr with 32 flag bit set) laying around the
-> > translation chain, and fixing that is currently working fine. I'd
-> > be then inclined to say the proposed change is outside the scope
-> > of the present patchset and to postpone it to a future patch.
-> 
-> Okay, but let's fix it with a test case. There's already a test case
-> for all this in the DT unittest which can be extended.
-
-I'm taking a look at the unittest framework right now.
-
-Many thanks,
-Andrea
-
-> 
-> Rob
+In the long run we probably need to put the clk rate and enable control
+into the pm_domains for the gdscs that require them and implement the
+"parking" and "unparking" there instead of in the clk_ops layer. That
+way we know that when the gdsc is turned on it will have a clk that
+works, and when it is turned off it is always parked. We can also use
+the gdsc on/off state at init time to increment the enable count on the
+shared PLLs by using clk_hw_get_clk() and clk consumer APIs. This will
+let us move the boot state into the kernel in a way that doesn't break
+when a child clk sharing a PLL is turned off.
