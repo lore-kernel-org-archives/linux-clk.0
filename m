@@ -1,171 +1,98 @@
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B39B6191484
-	for <linux-clk@vger.kernel.org>; Thu, 29 Aug 2024 12:01:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81C00187843;
+	Thu, 29 Aug 2024 12:02:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724932915; cv=none; b=YV7Una7mVmMi4+5IkP+eZY5q/X0MPR3tEFeBvCKFktlC0BpSxUUeWoPZdcyx9xNWR+/9GcyfIu9pIu7ku6kQ/in/BhIXPtpwV0EdTjgkATa0PS4VQVZNGjf3d2vn5c+hYHrNM5arlYOQoU6qkVXKLixWy3V4Qm1dFJboOhncuPo=
+	t=1724932960; cv=none; b=rWi6XFOpqoyf6YZqBTvWH05zVWqqC6ImieiYVMJyyXHmYDgJzD7cZjJgAKIuj1vEk7IRbUgJ0LYFJmqDPqQ6aGN/JjNcbA/jTLvogtg0/j6jSLvjSEjidTuoB5qUdlLLEheipyP399Fwc/BOg+Rku+HPS5lTkXrhY7/9SLCQ2h0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724932915; c=relaxed/simple;
-	bh=fOZO2d20iA45ijbTFXi/g1LkvqA+AHUmsj+CK1eEIxw=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qa6Se8b9l8YfLe3KTopcEPstw0PtpVHJHQ0bV+6mogSUfSHZuvsHhtkVWDR0kNpy/EF8GHmVZR4hu9UqqZ6+dw6+gV7tdvWxOTnJ5FUUPkouHR8vG19GoiXRMo0ir4hIBCGIi4o4XvK06EmWeY0JBki5W62E3ZaQv1ttot8wubI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=gToss/rZ; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="gToss/rZ"
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a86acbaddb4so63861766b.1
-        for <linux-clk@vger.kernel.org>; Thu, 29 Aug 2024 05:01:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1724932912; x=1725537712; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:date:from:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mXBtr/JbiSQG7W9JfMUYCtQfQyKUiftjthV/2nojugU=;
-        b=gToss/rZvgKVjfAPyacL/q76YmsCND4RSc+aZ2fGN9apgKW2KWpDoeRDWPAZnSBlqQ
-         mIxSU8x1ZPW//YSICJDua82zbgukZ9NzqnHfc69WdqzKHpZLKAYOnQCBbxwP/hRyGOyZ
-         m1+Pr4NezMRbmuARSjLinJrBWmlBPkR1u8hUIvJKA0RmcZ59bxkDMydo8nXjE7AcNQ9t
-         2FFoSazdfqV3ibXedxh3OzfH8Y4+9cvckn/uyvxXFZL7mqsyS3w6jj3V/XdRH/Eb/xG6
-         k4EPzxy2RvVDMFFyv98ukloFIGKNWasVr5iKaaZ4dE+LL8cSlp9OtJyDMuwLxLlPyGQA
-         qngA==
+	s=arc-20240116; t=1724932960; c=relaxed/simple;
+	bh=Y5nUbUjMalH6VotuXEHNM1tNzhTITzZqVBTn1I2AqWA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=l5ub4E0WYvUuZ5gjPxzCbpvSTJD3T8/QrpQ7bOq2+Kj879Qp5mpnlXGRBopNBnm4sZ9qJMvaMYMYueZwdOhHmNVH5KrWSlXvZPeLy5Iq/yeyT7ErVrTLyeeNmQTNAyxuPxzgwyGt336whjV/ejfl4w4XwACeVhWv1s0vNgLmmTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e1659e9a982so600371276.1;
+        Thu, 29 Aug 2024 05:02:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724932912; x=1725537712;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mXBtr/JbiSQG7W9JfMUYCtQfQyKUiftjthV/2nojugU=;
-        b=qscCce2+7VP0SdweTd8ZPkyUqR6UPnGgN5cFQNtdm6I0g4WPy5vA+A7EfJqTh8Lhar
-         rc4JfEUBha6C9u/7ETP9sOronZ/GxjsYyna48ufSTPuumXH9OjOby2dGFQvpaPIg1Zax
-         pGcAvCiS3zfBrAM1I00TPMTJ500KDUGf7CSqfzI8q6AoKu5N0TVraA/iKdUyHwo1r+6M
-         Sl0unYo/0FKS+hrPzxIwjYVWB12ul0WVDBajykBxjCdlptaaLhvDK6gohSrFuPGUo9+O
-         jfv9bfvC0Ahop9RdLCrCfsMJ+JAMHj/Fhs3nEFYvaJkRU5zUKxeOizRZ1D/Wah/KXxNF
-         qh0g==
-X-Forwarded-Encrypted: i=1; AJvYcCUGBFfUGxujn15NFYIEV67lBeESjrcxJ8Tx2Vt2saBt6vH31sEtuZ3OtK9EUrET8Egwye8+IAarViY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGHVNsku9k6hI5IohF+1w/K9YPaKSAh6pr09E5Dm1siIgytee6
-	6KQWJ38TcwVNG9yCG0vX2oR3hJlho8IwWTyufgE7NZgCQIbU+dK3J2bJwBtxC3I=
-X-Google-Smtp-Source: AGHT+IFsyk0IWnaZFMb265yPeWvESMoqgeE3DSP8XvW62AVSUHg1bVi4x43hO0c3ITnEgvBmjx2LDg==
-X-Received: by 2002:a17:907:9708:b0:a80:7ce0:8b2a with SMTP id a640c23a62f3a-a897f84d44cmr193846766b.19.1724932909698;
-        Thu, 29 Aug 2024 05:01:49 -0700 (PDT)
-Received: from localhost (host-80-182-198-72.retail.telecomitalia.it. [80.182.198.72])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8989021960sm71432166b.79.2024.08.29.05.01.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 05:01:49 -0700 (PDT)
-From: Andrea della Porta <andrea.porta@suse.com>
-X-Google-Original-From: Andrea della Porta <aporta@suse.de>
-Date: Thu, 29 Aug 2024 14:01:54 +0200
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Stefan Wahren <wahrenst@gmx.net>
-Subject: Re: [PATCH 00/11] Add support for RaspberryPi RP1 PCI device using a
- DT overlay
-Message-ID: <ZtBjMpMGtA4WfDij@apocalypse>
-Mail-Followup-To: Andrew Lunn <andrew@lunn.ch>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Saravana Kannan <saravanak@google.com>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-	Lee Jones <lee@kernel.org>, Stefan Wahren <wahrenst@gmx.net>
-References: <cover.1724159867.git.andrea.porta@suse.com>
- <14990d25-40a2-46c0-bf94-25800f379a30@kernel.org>
- <Zsb_ZeczWd-gQ5po@apocalypse>
- <45a41ed9-2e42-4fd5-a1d5-35de93ce0512@lunn.ch>
+        d=1e100.net; s=20230601; t=1724932957; x=1725537757;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aZ+og7VCPaCJULcp1XnCvlR0l40A7keoK5WWat5G8zA=;
+        b=KnFzUKXPrPECAbMbIfnY2jfsnSoiG4P1kL1MGpnwFlpXHdNjMJVizmCDR07dhAkDh4
+         87mSvu9AY4T0uFIMvmJEa+FylnIqIcHlyrl33WSt4SrFkYyDfmhHMM9wsJXg1bxOdIsc
+         YqM5NqwQwPJhz0qsDKUkvVidByr1lDkY9G9PSBxhsbE91UPrEMhKPHe8+13zmwS8xqNs
+         Ebp8ANAgpbxNJT6dWNdYmjvJ4DXCbn1o6ll0rfxoypMnEOJw5/6tclzC3vSLsG04SRiq
+         2gg2pRCVgxw6fBrhV28Hc/wF1TgGxzz4OWUm+OR97f3FJuLBQ/M69EiE1R0h473dzevd
+         mXfw==
+X-Forwarded-Encrypted: i=1; AJvYcCVglK1N6pdW8qjAg3FZGbI/LbWWqoKhj7rOOAbBIQYTWpU+RD/0A56kisFVZc+QYLUuJqSyf0yArKa5E8amLd8yNWA=@vger.kernel.org, AJvYcCXk0V09yyLeybzD7mQAYFmgNUn8r4RHsLWe4P8H5UgoKlBk750ODdr2a8Y82iU1pBWDYR5EsbctOxtVub8s@vger.kernel.org, AJvYcCXtNHPpH3LWpH9Ab6sFIlr8Dt1uXyBicsjXtg0iV4FQFC2GJzPACry4iXK8m6C+5HAsTFy+Drz3XyM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx15g8cfTHLqWa6h97RYnc/gozsI82amFbkxorX9sG2IG68kHkK
+	3QQPCFavNPIO+3WgIOoVgYjcJxgotrzO49n0wUSW34gIFmTeSVGEVdBZH2Ll
+X-Google-Smtp-Source: AGHT+IFQZCiqLOtw4LDB5hu5yS595YCFw8UEKI1c9TLL5FI/r82DRu4HUdid5aP1iqZwz6d6oH8W8Q==
+X-Received: by 2002:a05:6902:13cf:b0:e1a:3dc9:c422 with SMTP id 3f1490d57ef6-e1a5ab72e26mr2817989276.19.1724932957110;
+        Thu, 29 Aug 2024 05:02:37 -0700 (PDT)
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6d2d5db09desm2109267b3.123.2024.08.29.05.02.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 Aug 2024 05:02:36 -0700 (PDT)
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6b6b9867faaso5310707b3.2;
+        Thu, 29 Aug 2024 05:02:36 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWwu92tlMPfjeqMVaMRXQwAS4wtGi9ge6iBw4i9LibH4jxgxmICKi+8atzvoEReU0YbDs1McEkKSrIunB4k@vger.kernel.org, AJvYcCXM7l2VWRGOX+i6kExboOBW083JdxD58B87VHHLPqrRVXIRrYdFKPaAR27JBvk0wo+4A2ZxVFVJXCkBeZ5WihvLx2w=@vger.kernel.org, AJvYcCXbIa266WjO1opni/lxS8oVAu5fLFJCTLGfncLaSfp3XiaidYES4RH71l73xPKM+RQsxFcGRYz6nZE=@vger.kernel.org
+X-Received: by 2002:a05:690c:397:b0:6b1:598e:8cf6 with SMTP id
+ 00721157ae682-6d2769e44bemr25846117b3.22.1724932954739; Thu, 29 Aug 2024
+ 05:02:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <45a41ed9-2e42-4fd5-a1d5-35de93ce0512@lunn.ch>
+References: <20240828093822.162855-1-prabhakar.mahadev-lad.rj@bp.renesas.com> <20240828093822.162855-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20240828093822.162855-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 29 Aug 2024 14:02:22 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVChW0r5azwy=7Xp8o-ah1L3QC_ec_5mqnwQUL_xOrmBg@mail.gmail.com>
+Message-ID: <CAMuHMdVChW0r5azwy=7Xp8o-ah1L3QC_ec_5mqnwQUL_xOrmBg@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] clk: renesas: rzv2h-cpg: Add support for dynamic
+ switching divider clocks
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+On Wed, Aug 28, 2024 at 11:38=E2=80=AFAM Prabhakar <prabhakar.csengg@gmail.=
+com> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Add support for dynamic switching divider clocks.
+>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> ---
+> v2->v3
+> - Updated DDIV_DIVCTL_WEN() macro
+> - Introduced struct ddiv to pass divider config
+> - Updated DDIV_PACK() macro
 
-On 15:04 Thu 22 Aug     , Andrew Lunn wrote:
-> > WARNING: ENOTSUPP is not a SUSV4 error code, prefer EOPNOTSUPP
-> > #673: FILE: drivers/pinctrl/pinctrl-rp1.c:600:
-> > +                               return -ENOTSUPP;
-> > 
-> > This I must investigate: I've already tried to fix it before sending the patchset
-> > but for some reason it wouldn't work, so I planned to fix it in the upcoming 
-> > releases.
-> 
-> ENOTSUPP is an NFS error. It should not be used outside for NFS. You
-> want EOPNOTSUPP.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.12.
 
-Ack.
+Gr{oetje,eeting}s,
 
-> 
->  
-> > WARNING: externs should be avoided in .c files
-> > #331: FILE: drivers/misc/rp1/rp1-pci.c:58:
-> > +extern char __dtbo_rp1_pci_begin[];
-> > 
-> > True, but in this case we don't have a symbol that should be exported to other
-> > translation units, it just needs to be referenced inside the driver and
-> > consumed locally. Hence it would be better to place the extern in .c file.
->  
-> Did you try making it static.
+                        Geert
 
-The dtso is compiled into an obj and linked with the driver which is in
-a different transaltion unit. I'm not aware on other ways to include that
-symbol without declaring it extern (the exception being some hackery 
-trick that compile the dtso into a .c file to be included into the driver
-main source file). 
-Or probably I'm not seeing what you are proposing, could you please elaborate
-on that?
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-Many thanks,
-Andrea
-
-> 
-> 	Andrew
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
