@@ -1,95 +1,104 @@
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 800ED1A76D6
-	for <linux-clk@vger.kernel.org>; Thu, 29 Aug 2024 10:24:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F168D189B95;
+	Thu, 29 Aug 2024 10:55:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724927087; cv=none; b=BEJWyqndEP9ptwK9LmhIHUZ1feN1Zy2kozVwwqdK5KwFoVyzr46/8kG5QJHXeKNkPxYjjTdz6L1ADcTXetH50PEeAPYldclQFA54GI6CHTFLjdw7uVIN8qYZtttHGMhot/nrxwe9egcKM90zm/UqNUm5ZWzHyn10GkfI0DvVtoQ=
+	t=1724928906; cv=none; b=FSzmbrfydfzi0xKqcF2Eb8HkeLIuTCgU2l6GbzHKa202i/Oh5heEfch0AHmxpp03IwSdFho1Y+gLrrATcGLq29+tf0BKdygRzVSkg+LDfrLfDLPr5DxGEJRHxCC3Rx+7t3IS0+wo1OOPQ9GO0qeFbzDeSSkhcQMlk+gR0jjrmUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724927087; c=relaxed/simple;
-	bh=85nAiCVJwW62QrE2b6r88lCjF1lPmNgCQtLklbdsK4k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mIAWBwI1qnI5QrlZS9zVJHqKrOyFNlfZdnCmabn51r8NkYGXOOOLx/J5ganvzxVqy63BUv6EcaHVBhDI5CLESMOGAitKLXcFsb3hanQVtQ1mvP8GVdLBiXEHgo9MFS84kJgaHiJ6vNM88F7v9sNdBRMkqR6N8GiWVTiggrJD1u8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Y8PaUcA5; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1724928906; c=relaxed/simple;
+	bh=t5PoyfbtCc3q1wTlJMYyxUEyIDQt5ZPFVQ3ZdRZkAYg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=tEz8bbGIUCh992+xhQ5m6dH2CyrvzYMpOaXfUSAm21Dc05joOdoAaAAXBtBhAztf+1pLc/44+UaAauD+8M1y1jsKguD+1k+Of+bQTVZ9Z/fQHneMpDnqw6dimWOsy1SCScKU0agRmjedGs+QgTsSSFfuVgy4w6uecdn+D39J77U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=vKkbXT3v; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y8PaUcA5"
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5343e75c642so629297e87.2
-        for <linux-clk@vger.kernel.org>; Thu, 29 Aug 2024 03:24:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724927083; x=1725531883; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SZ/w73AaDcXnHgRTfa/18n3sPpKrgC+SUsJfs6EyD5I=;
-        b=Y8PaUcA5moJt9cLegY3MzGmNXt1jn6nP/fptdePOHLYDlWP6mMxUeIx5LnjFiLLdS8
-         D88yl3TiB9vksXbY+bWWnffkYyMTWdFrhdGSLCAt0jgrfcH6rFKi8xxX0ToDmWYh89xk
-         vEVuH8zsnBDO1I52+38E2Ku8T73NuiBea3fzs4OiFe4WCzL7eOpHshFx2rPnRNLfjXvW
-         Q6OdkOjERhVTzj21EyU/BuT0TKL77Ndpa6AVDjx1uq8l87yNiQDkPxmScIxb2EbQDT2N
-         QzrAWHEmZnLileDmOAHppoJGLUR3Qq25xsWQYrqUABeBARydWIzyugts+PuZczmzxQL6
-         /hAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724927083; x=1725531883;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SZ/w73AaDcXnHgRTfa/18n3sPpKrgC+SUsJfs6EyD5I=;
-        b=gU/XAw0RJGRKVeqy47Bs+1XrANjjYt8HdB8aesKd3UVILVzc4kmFSmcSOvTyAxK2C1
-         ucONa6wTvwz8xS9toFAqgrjJHkUxTgUcHw/f7QSX7xWXdnIrPHtCnnH7eCXYo1GJDePV
-         hWd38sy5n/fcmwyl7FdqvlHdU3M3xrOODRNMSRFgAZZWhnrphoNd4jp1+NelR0hLm5ph
-         3AVWd+YhXvmXbDtIHyN5gwLdvG8qHhh48Y52NJI4IYk6exYDtLMd9d9d5Hxqpn6iHs6g
-         pEPaCF5LmzzfGteVq1AW+5uon7GcGatwmFDcSEd6YQAjqvth/VOleoVzDje5hCHUMm02
-         VxHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUKxJN9wmGIORr//v7RBQxGbEly88HQHz9A9Yami57Z4WT4TDq99aFNhcQHfRedKBpOxzYwpKtAW8E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyV8VKki7U/4m0fK6huwrOhTQiQpWE6ksosvfhe0lThFt7oxfIP
-	WGIua6MS+LAnnuwJJvTNYwplncZEybLK/vUTMlb3+ikFBS7axaQ2mjlxMJVeIdE=
-X-Google-Smtp-Source: AGHT+IFvU8hzzwqySK6Z6GUIQ8oD4NTRyF61j/91mZyR2mOx6xG0K5M+rBICRiQtcdWNMlY5YDmVng==
-X-Received: by 2002:a05:6512:b0b:b0:533:3fc8:88b1 with SMTP id 2adb3069b0e04-5353e5bf859mr1504710e87.54.1724927082870;
-        Thu, 29 Aug 2024 03:24:42 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53540840f44sm117424e87.202.2024.08.29.03.24.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 03:24:42 -0700 (PDT)
-Date: Thu, 29 Aug 2024 13:24:40 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Varadarajan Narayanan <quic_varada@quicinc.com>
-Cc: andersson@kernel.org, mturquette@baylibre.com, sboyd@kernel.org, 
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org, 
-	catalin.marinas@arm.com, will@kernel.org, djakov@kernel.org, richardcochran@gmail.com, 
-	geert+renesas@glider.be, neil.armstrong@linaro.org, arnd@arndb.de, 
-	nfraprado@collabora.com, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-pm@vger.kernel.org, netdev@vger.kernel.org
-Subject: Re: [PATCH v5 5/8] clk: qcom: ipq5332: Add couple of more
- interconnects
-Message-ID: <kscjtfse3rkdg2sp2uzxiueadf5l66g253vrahfir364yk57lv@jbk4qfbricxx>
-References: <20240829082830.56959-1-quic_varada@quicinc.com>
- <20240829082830.56959-6-quic_varada@quicinc.com>
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="vKkbXT3v"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1724928904; x=1756464904;
+  h=from:date:subject:mime-version:content-transfer-encoding:
+   message-id:to:cc;
+  bh=t5PoyfbtCc3q1wTlJMYyxUEyIDQt5ZPFVQ3ZdRZkAYg=;
+  b=vKkbXT3v+FthiaT9NLId5uAFolvyewHLnEjtHaReSacZ+OKCnpVcKDj0
+   T1mNCgmR4fusdfnNdIi232sOHe7D/vGgEQUJEkreJeNcaIp4zEVAPXb7c
+   cpMlvBOUAJsNemW6cEgYsnKwFC/6T7wlDkZFZSCkH75GjQ6HGLPPu9WGi
+   6m6aRCaLU7GthlrAgGcCHRx+te/hRo44rWxvjS/W/5fd5cO7vJpqEVww3
+   6cwWpVXQbl90QJ/Fh3AlaD0JcNOS5wTFvdGlyD/ODR4qzShW2dzdkmHE8
+   ksTholwMhezu1bhQxWhFlU64UpwwvryTLqcolvt0jx303a3lHF8BE7ocF
+   Q==;
+X-CSE-ConnectionGUID: l+lO9GWMSNi3wu1+kd0hOg==
+X-CSE-MsgGUID: VclacZE3QyiP8UIdjR2kkw==
+X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
+   d="scan'208";a="198480025"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 29 Aug 2024 03:55:03 -0700
+Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 29 Aug 2024 03:54:44 -0700
+Received: from che-lt-i70843lx.microchip.com (10.10.85.11) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Thu, 29 Aug 2024 03:54:39 -0700
+From: Dharma Balasubiramani <dharma.b@microchip.com>
+Date: Thu, 29 Aug 2024 16:24:37 +0530
+Subject: [PATCH] dt-bindings: clocks: atmel,at91sam9x5-sckc: add sama7d65
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240829082830.56959-6-quic_varada@quicinc.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20240829-sama7d65-sck-v1-1-3e7b19e3cbf9@microchip.com>
+X-B4-Tracking: v=1; b=H4sIAGxT0GYC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxMDCyNL3eLE3ETzFDNT3eLkbN3ExCSLFENjYxMz0yQloJaCotS0zAqwcdG
+ xtbUAbsGTwV4AAAA=
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Nicolas Ferre
+	<nicolas.ferre@microchip.com>, Alexandre Belloni
+	<alexandre.belloni@bootlin.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>
+CC: <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	Dharma Balasubiramani <dharma.b@microchip.com>
+X-Mailer: b4 0.13.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1724928879; l=988;
+ i=dharma.b@microchip.com; s=20240209; h=from:subject:message-id;
+ bh=t5PoyfbtCc3q1wTlJMYyxUEyIDQt5ZPFVQ3ZdRZkAYg=;
+ b=76ova2mjUCfXV2DmLI+g/txlPa9qwJQ0G34fdNFqgkL9I2hI7qeGcqAtvblrXUQy+xV1Ggy+n
+ RNf7neRMIr5ACX7WSxW+0WeBghjYEodAxHaOIa0ZxXUptU+8W/kIKZe
+X-Developer-Key: i=dharma.b@microchip.com; a=ed25519;
+ pk=kCq31LcpLAe9HDfIz9ZJ1U7T+osjOi7OZSbe0gqtyQ4=
 
-On Thu, Aug 29, 2024 at 01:58:27PM GMT, Varadarajan Narayanan wrote:
-> Update the GCC master/slave list to include couple of
-> more interfaces needed by the Network Subsystem Clock
-> Controller (NSSCC)
-> 
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
-> ---
->  drivers/clk/qcom/gcc-ipq5332.c | 2 ++
->  1 file changed, 2 insertions(+)
-> 
+Add bindings for SAMA7D65's slow clock controller.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
+---
+ Documentation/devicetree/bindings/clock/atmel,at91sam9x5-sckc.yaml | 1 +
+ 1 file changed, 1 insertion(+)
 
+diff --git a/Documentation/devicetree/bindings/clock/atmel,at91sam9x5-sckc.yaml b/Documentation/devicetree/bindings/clock/atmel,at91sam9x5-sckc.yaml
+index c2283cd07f05..d4cf8ae2961e 100644
+--- a/Documentation/devicetree/bindings/clock/atmel,at91sam9x5-sckc.yaml
++++ b/Documentation/devicetree/bindings/clock/atmel,at91sam9x5-sckc.yaml
+@@ -20,6 +20,7 @@ properties:
+       - items:
+           - enum:
+               - microchip,sam9x7-sckc
++              - microchip,sama7d65-sckc
+               - microchip,sama7g5-sckc
+           - const: microchip,sam9x60-sckc
+ 
 
+---
+base-commit: b18bbfc14a38b5234e09c2adcf713e38063a7e6e
+change-id: 20240829-sama7d65-sck-aab8d133465b
+
+Best regards,
 -- 
-With best wishes
-Dmitry
+Dharma Balasubiramani <dharma.b@microchip.com>
+
