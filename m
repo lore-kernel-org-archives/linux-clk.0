@@ -1,167 +1,130 @@
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F9316A931;
-	Thu, 29 Aug 2024 14:33:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724942010; cv=pass; b=KvDSSAUb5YrxljoQmwF5jKDnjors8rQ5MZ65q9WdLE9Tq7k2OKTyhhSAvxw7yfQYADFT1hxp69kuBvdqoaYgnktKSjifn7ZaVGzgVH23uZs3DIMI3Q2LpTsKvZCUO0qZrNNRDw1+TSyrGwjPod9+L4lsSaiiRruAJVlsYcFVfxA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724942010; c=relaxed/simple;
-	bh=79g6wzVHWxuIS4vbKAR4WZIBjs/ix7ihVs4GmG2HFz0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cPgWMbakRtRdVCRgOQ5b70y+tT2a3s2TADymIQELtXYcBKCsfHO4OfsN9os5+5EFeJGY5KKme4VetvGe7L+Xkc+icZQDJyR7L4aRlxXEI5GdA39VsIjkMudBZS0j4eLHR8JZ+WkCW+MmC4aarPGy5XyktdZrVHyiD4+/bdouU5E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=kbmEBoKk; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B71D1B14E5;
+	Thu, 29 Aug 2024 14:42:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724942536; cv=none; b=Dq/zaXC/I9u4KliXyZrK/oKmkwToWdZ1TrjokhGwhpC6UFXB07jD0yDtHcMokuG3THBB4eXxyGRs8hqGAm4jVn5uv0IXSUFTrcUhmaOsTBqWs9E9YzJIf8AesLpR5u9jUwBMa+iWLhJfj55P+5Sybj8ZDSwrBH2VnBgX03ztMhs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724942536; c=relaxed/simple;
+	bh=sRYuU3YkOqesdGc/30AGkILwNmVUvPdw3djSMGL8CMs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=s0LcDD7+hSuWZvKl5Z2T14qn+RiCLI6trHAwxaT0hLsmf+QIlz8U/VGi4zufphc7BdCTi3tBQnHM5yM/4mDv1Ndxna7ELMS0pfz5maN6JZjeW8IHtjxqZ2pl7R3IVv8rA5ckFHMtQfYQnEnHbIh68Gyn7Gk70fnguNBQtWNDRY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=Gco9Pck2; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="kbmEBoKk"
-ARC-Seal: i=1; a=rsa-sha256; t=1724941982; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=U4R+g1V33H2IEPO8IV8CQYJuZE1R4hj+pYK1gV82v14y9txfyhdnkfl3SqRvZq0te59uKXZV7zIspCNGrtS01Un3QHMtUnAJOrxjoDHyEpzZoU/J4tjnNbO+KM0I6Jz00Jxhrlj/EItGiPnrA2JzAjQgzfwMWbmM3dhjGLr2EIc=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1724941982; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=jQ1p6/xWG9wPSPmBp6CqV03Yn+MZ5TccQldtwHM5cGQ=; 
-	b=XOIcr6p1KDF+uCwvgEs76GQ0HZNVWzNuJzfogOzw700Jqr1JoWawetj71k0SZKw8aJRmFwLQRzdZ2W4l7XnwtMRDjNIG+CAOsyE/TeDHChqtZCKwehrml+k9vQPBLUvmKjRKo7G7k5wcMpmaiTW5YpwOV2s10f1lvlm3a/N2o3U=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
-	dmarc=pass header.from=<detlev.casanova@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1724941982;
-	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=jQ1p6/xWG9wPSPmBp6CqV03Yn+MZ5TccQldtwHM5cGQ=;
-	b=kbmEBoKkt8cOIiPVZG0YMrcRUgQfy/DpKs1BQ/9n/RLWWHOs4ExoKyAbBJ2hgmHo
-	wGZ6Yoyqu6Y1CkR6VuBVe3caoO5JpJemd1lPC1qfv1AWcaxl370Frwixf0UlZ0kJ/yh
-	eAC3nWD5yaR594qYuIuq41Yi194bhR61nQQPEod4=
-Received: by mx.zohomail.com with SMTPS id 1724941980408747.3126115905559;
-	Thu, 29 Aug 2024 07:33:00 -0700 (PDT)
-From: Detlev Casanova <detlev.casanova@collabora.com>
-To: linux-kernel@vger.kernel.org, Heiko Stuebner <heiko@sntech.de>,
- devicetree@vger.kernel.org
-Cc: Rob Herring <robh@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>,
- Elaine Zhang <zhangqing@rock-chips.com>,
- Sugar Zhang <sugar.zhang@rock-chips.com>, linux-rockchip@lists.infradead.org,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>, kernel@collabora.com,
- linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [PATCH v7 1/3] dt-bindings: clock, reset: Add support for rk3576
-Date: Thu, 29 Aug 2024 10:34:50 -0400
-Message-ID: <5809907.DvuYhMxLoT@trenzalore>
-In-Reply-To: <172492351370.1695089.7443506809997782331.b4-ty@sntech.de>
-References:
- <20240828154243.57286-1-detlev.casanova@collabora.com>
- <0102019199a76766-f3a2b53f-d063-458b-b0d1-dfbc2ea1893c-000000@eu-west-1.amazonses.com>
- <172492351370.1695089.7443506809997782331.b4-ty@sntech.de>
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="Gco9Pck2"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1724942535; x=1756478535;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=sRYuU3YkOqesdGc/30AGkILwNmVUvPdw3djSMGL8CMs=;
+  b=Gco9Pck20J7iVr6byWlPiD7i3H6mAOu4pXjNpFI2dcLpXIeARAUeV1Rt
+   xQsFE8MO+lH0wLdBpCjtWwz51b7Vc3bnf307KRsKFGsCdw+8VfvjVAQK2
+   q15XLZr2vbcJekOYVsaXfXofxMeUIHecA+yDp1O5gC9RsZ/r05VBUo4l0
+   rwfQ2rKl77uNoEBVLVVVOcbE8ZV9MgGMQSHx1SIVLy7HkZMRTLZ7HT3a2
+   d241cq3NDzV8Bzh6LSuWVTRv0NV/yK7E8PhBv2lvfed3krVed7s4tdg8i
+   PwgbMD5gJfLrc80wkKced55NMjOgccnzcdmcdWoFngOlEZ/yyoUAPVj37
+   Q==;
+X-CSE-ConnectionGUID: LQAVLlwfT06Kc5IPejiGRQ==
+X-CSE-MsgGUID: WEyMVpPrTgWNZnZxmgygcA==
+X-IronPort-AV: E=Sophos;i="6.10,185,1719903600"; 
+   d="scan'208";a="31055475"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 29 Aug 2024 07:42:14 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 29 Aug 2024 07:41:42 -0700
+Received: from [10.180.117.88] (10.10.85.11) by chn-vm-ex04.mchp-main.com
+ (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
+ Transport; Thu, 29 Aug 2024 07:41:40 -0700
+Message-ID: <744af115-3cfe-4d3a-9bf7-e6ac0cd12378@microchip.com>
+Date: Thu, 29 Aug 2024 16:42:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
-X-ZohoMailClient: External
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: clock: Add SAMA7D65 PMC compatible string
+Content-Language: en-US, fr-FR
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>, Dharma Balasubiramani
+	<dharma.b@microchip.com>
+CC: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+	<sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Claudiu Beznea
+	<claudiu.beznea@tuxon.dev>, <linux-clk@vger.kernel.org>,
+	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20240829-sama7d65-next-v1-1-53d4e50b550d@microchip.com>
+ <20240829141003278e9ec2@mail.local>
+From: Nicolas Ferre <nicolas.ferre@microchip.com>
+Organization: microchip
+In-Reply-To: <20240829141003278e9ec2@mail.local>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thursday, 29 August 2024 05:36:47 EDT Heiko Stuebner wrote:
-> On Wed, 28 Aug 2024 15:42:50 +0000, Detlev Casanova wrote:
-> > Add clock and reset ID defines for rk3576.
-> >=20
-> > Compared to the downstream bindings written by Elaine, this uses
-> > continous gapless IDs starting at 0. Thus all numbers are
-> > different between downstream and upstream, but names are kept
-> > exactly the same.
-> >=20
-> > [...]
->=20
-> Applied, thanks!
->=20
-> [1/3] dt-bindings: clock, reset: Add support for rk3576
->       commit: 49c04453db81fc806906e26ef9fc53bdb635ff39
-> [2/3] clk: rockchip: Add new pll type pll_rk3588_ddr
->       commit: e781bffc296766b55dbd048890d558655031e8d1
-> [3/3] clk: rockchip: Add clock controller for the RK3576
->       commit: cc40f5baa91bb7b031f5622e11a4e443cb771527
+Alexandre,
 
-Awesome !
+On 29/08/2024 at 16:10, Alexandre Belloni wrote:
+> On 29/08/2024 15:08:45+0530, Dharma Balasubiramani wrote:
+>> Add the `microchip,sama7d65-pmc` compatible string to the existing binding,
+>> since the SAMA7D65 PMC shares the same properties and clock requirements
+>> as the SAMA7G5.
+> 
+> Shouldn't you rather use a fallback if you currently have no driver
+> change?
 
-> general remark, please take a look at your mail setup.
-> Amazon seems to break the generated message-ids.
->=20
-> Your cover-letter is
-> =20
-> 0102019199a75f9b-aab57db6-806a-474b-8295-e5be5a99d424-000000@eu-west-1.am=
-az
-> onses.com
->=20
-> while the patch (1-3) mails say
->   In-Reply-To: <20240828154243.57286-1-detlev.casanova@collabora.com>
->=20
-> So that amazon thing somehow broke the message-ids in your mails.
+The clock/pmc driver is (will be) different. Only the binding of the PMC 
+uses the same properties and clocks specification as our recent SoCs (so 
+can be added to the "enum").
 
-Yes, sorry, we are working on that. Recent switch in email setup and still=
-=20
-figuring out all the issues :/
-=20
-> I've also dropped the whole module part.
->=20
-> As always that Android GKI madness was cause for issues.
-> The driver claims to be buildable as module, but it looks like nobody
-> tried that:
->=20
-> First build-failure:
-> --------------------
->=20
-> ../drivers/clk/rockchip/clk-rk3576.c:1800:36: warning: =E2=80=98struct
-> platform_device=E2=80=99 declared inside parameter list will not be visib=
-le outside
-> of this definition or declaration 1800 | static int clk_rk3576_probe(stru=
-ct
-> platform_device *pdev)
->=20
->       |                                    ^~~~~~~~~~~~~~~
->=20
-> ../drivers/clk/rockchip/clk-rk3576.c: In function =E2=80=98clk_rk3576_pro=
-be=E2=80=99:
-> ../drivers/clk/rockchip/clk-rk3576.c:1802:38: error: invalid use of
-> undefined type =E2=80=98struct platform_device=E2=80=99 1802 |         st=
-ruct device_node
-> *np =3D pdev->dev.of_node;
->=20
->       |                                      ^~
->=20
-> ...
->=20
-> missing platform_device header
->=20
-> Second build-failure, after fixing the whole module madnes:
-> -----------------------------------------------------------
->=20
->   MODPOST Module.symvers
-> ERROR: modpost: missing MODULE_LICENSE() in
-> drivers/clk/rockchip/rst-rk3576.o ERROR: modpost: "rk3576_rst_init"
-> [drivers/clk/rockchip/clk-rk3576.ko] undefined! make[3]: ***
-> [../scripts/Makefile.modpost:145: Module.symvers] Fehler 1
->=20
->=20
->=20
-> So when applying the series, I simply removed the whole module-part and m=
-ade
-> the init look like rk3588 for now.
->=20
->=20
-> Somehow I always get the impression the whole "clock as a module" thing
-> is just there so Rockchip can ship something completely out of tree on
-> Android devices.
+Regards,
+   Nicolas
 
-Mmh, I'll more careful with that, but indeed, I did not try building the cl=
-ock=20
-driver as a module.
-
-> Best regards,
-
-
-
+>> Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
+>> ---
+>>   Documentation/devicetree/bindings/clock/atmel,at91rm9200-pmc.yaml | 2 ++
+>>   1 file changed, 2 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/clock/atmel,at91rm9200-pmc.yaml b/Documentation/devicetree/bindings/clock/atmel,at91rm9200-pmc.yaml
+>> index c9eb60776b4d..885d47dd5724 100644
+>> --- a/Documentation/devicetree/bindings/clock/atmel,at91rm9200-pmc.yaml
+>> +++ b/Documentation/devicetree/bindings/clock/atmel,at91rm9200-pmc.yaml
+>> @@ -43,6 +43,7 @@ properties:
+>>                 - atmel,sama5d4-pmc
+>>                 - microchip,sam9x60-pmc
+>>                 - microchip,sam9x7-pmc
+>> +              - microchip,sama7d65-pmc
+>>                 - microchip,sama7g5-pmc
+>>             - const: syscon
+>>
+>> @@ -90,6 +91,7 @@ allOf:
+>>               enum:
+>>                 - microchip,sam9x60-pmc
+>>                 - microchip,sam9x7-pmc
+>> +              - microchip,sama7d65-pmc
+>>                 - microchip,sama7g5-pmc
+>>       then:
+>>         properties:
+>>
+>> ---
+>> base-commit: b18bbfc14a38b5234e09c2adcf713e38063a7e6e
+>> change-id: 20240829-sama7d65-next-a91d089b56a3
+>>
+>> Best regards,
+>> --
+>> Dharma Balasubiramani <dharma.b@microchip.com>
+>>
+> 
+> --
+> Alexandre Belloni, co-owner and COO, Bootlin
+> Embedded Linux and Kernel engineering
+> https://bootlin.com
 
