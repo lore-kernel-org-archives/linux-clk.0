@@ -1,183 +1,290 @@
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+Received: from mail-lj1-f194.google.com (mail-lj1-f194.google.com [209.85.208.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 813B118CBE5
-	for <linux-clk@vger.kernel.org>; Thu, 29 Aug 2024 09:52:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52DB518E35A
+	for <linux-clk@vger.kernel.org>; Thu, 29 Aug 2024 10:13:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724925161; cv=none; b=k/DdrWbnX4KZpoeLIECbZCffljDN0z3dRzdetzD9PmMIJYAsqyy19ungc20LVeXHXPNk+/wIvbR4TEa27BtPYeyLsIvzpCA3LfWrpoU8fVCDldmMPAzUOaxAYncPbkijR7I5j0YvaY/IVTcbU5AiLCTkj1uaJgDSUYKsCdg9N+U=
+	t=1724926417; cv=none; b=WiJlVzK95WVJL9W3IHEvRDY7YL3b5vnIJfdQkXPL8cUZLH1Y3yHu91KERMNjVUVqcZt+psIaMoOICUStw4E9heUNrnQOXhYR+EzULlVDMtB8I8ixpvE8u9RMkayvcPEx96iDKU6xpAIwmqnePCxI/IxxtH7DkhdZx8YclyR0FSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724925161; c=relaxed/simple;
-	bh=Y+T6S7M+2dFa5ZRqve7yIgokdF7s8y1gsHXMRzjGSJM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=C+hJNOoKTiKGR8j4h732jQL5irjPOT9yCYmGEXawWvE2ZOYEvHzi8d3n4zP1vjMVZ7QPHdTIHJqDXHs5dvnb3r3sATzVHMNAvVlYl9EBLF/Jvr5ejxfSZ7Tq+D4jqwKCC07muqDPhsouzZ2F6dP3qQntBeKf48Xg4bpiOlgS3m0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BEfLJtvP; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1724926417; c=relaxed/simple;
+	bh=E51GhEQQOg1HwuEGkHFf6XEayoGU7GbLDFfQdiuKKcM=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m7rqZmIxTRDWbouaHgogxi43FKt9tP+4Bo4+6YqrHr4qTV82xb9k0VZvlDkGnXN8tFWdh7ZrWaUdMVBgkUO2l3qwhktXQ+f77ZfrixXzoKLY3WwlS1iZ71SMZmBU+p06XwG5WsAsvLtaR/hxLSTmxb0iO3aXFzWRNwIOslsgwe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=EFf9BlrQ; arc=none smtp.client-ip=209.85.208.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BEfLJtvP"
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-428e0d18666so4017595e9.3
-        for <linux-clk@vger.kernel.org>; Thu, 29 Aug 2024 02:52:39 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="EFf9BlrQ"
+Received: by mail-lj1-f194.google.com with SMTP id 38308e7fff4ca-2f4f8742138so5615831fa.0
+        for <linux-clk@vger.kernel.org>; Thu, 29 Aug 2024 03:13:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1724925158; x=1725529958; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KFBRjyGV0lPvd68K8DJSA4lIXPthFsZ2ifMKGzn/V34=;
-        b=BEfLJtvPX3qcT9iMpeU1jnXOFrCzVAYJnMWHqPBIGorqrSJh0eFecsunSth/P5lj2J
-         KHTagMIsbJIAlNZyWWp1cWtM09/RVAEkt46tGAeSkaOr7c4nFz8h+n6dW20vtrmfin1Y
-         0m9OXDtMNUOou9Tfr/oSk7ZGBY1wZ75m2rTPXbS6DEmFxTun1cNjv+cSPddOMfsgei72
-         hmjir3hqXTzlwl7ytNb4aRiK9lAbptT6B/yH2CRKrce5dNYwsEep8mkFMjsH9zvOCm1C
-         zy780f61eR7JBNnQCC/mc0rSyb+EjLbaozYyMCuay169TQOciIjeX6KMEISxsxkUrrtx
-         bUVw==
+        d=suse.com; s=google; t=1724926413; x=1725531213; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ly3H9TdfQqHUrvW8I+Z7YT7Eu7iCs1+6axXuLh+lXi0=;
+        b=EFf9BlrQc1AUZnb2Cbw3FEzBBokazssTC1Ex7yAljpIy3nR7KRJrXL3Su939n+yhNN
+         hMsVwIvLX50OAHopRCnCEYkT6pfKo2Hoo+w0mdNVPBPCKp6O/UGJOCjtQOc1Q3NaOtOr
+         8KInLhK0uoGK5DHT9ajX1W5lFPyL2BtVzak0+LnCE0f07wejtC0YtFQcW0jnf/xe7YXP
+         pHm1EowrsLN0zdIILGpQocez3TwnkJmHzN0rDHZcS97pOWaHfRT+h1qSLLy52ZLye8AY
+         ByQc5PE4YyxPoIZjHot81VqvXr5jSPATj7/wMSn6QGelH7bq5QMABSgR58EWpI1y3byU
+         fCdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724925158; x=1725529958;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1724926413; x=1725531213;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=KFBRjyGV0lPvd68K8DJSA4lIXPthFsZ2ifMKGzn/V34=;
-        b=rHx4UxvruF7JgfOn8P49ViNx8+6owIS+CBS8G4Xj5viSTzszsoS+ibhxJprWiLFroB
-         SR6iyvDmmwEVnLJQfHc4+IoxnyzlYA2zwY6dAxEWt6zMLcNufm/7xxny1FOOkVWsHQ1e
-         dPC2f5YbHhh3qHAR24s+mf5wejFmDXRG6sZzpjx/Xz4NwfOyuwPaMbnQAolJRba1BPYO
-         ZWgbvvAZ2eonMyPOszGpLzrc/8YzmBIN26pXcst9O7GXPCcwreZ8LBGcmI3sfRFC5gxP
-         vhTPqdaEtjbg/CYkt8FrdrsDGSxmAp25LUpHG2xiYcqfqkOTdUXDSpCUDboXBEk3/uqE
-         eq5g==
-X-Forwarded-Encrypted: i=1; AJvYcCXd1/6Iy8b5AYs5327ufw/bJw0fv0bAosH1Veu5HPHt87Hj6NEbbwRk2KTn+2eXmVry5DdgoaKTP5o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxz3AYHyV+di7xtbFWDl8pdsyhUhJlLM4bbMkFyPCNIXsczgG44
-	5NtXbZ0IfxGFXzZMlfOD6OyYqIj2qP5mhWqJHiDUoCU4HugGZYE0WWWYKwob0eQ=
-X-Google-Smtp-Source: AGHT+IGgxS3QiSRNzgbM8LQkFm7SVy6ofM/g7P+xwxLhA/gIrbtUOt6K5JY/F7ppwOwTxNbrPyKJXg==
-X-Received: by 2002:a05:600c:1387:b0:426:5269:1a50 with SMTP id 5b1f17b1804b1-42bb01b91f6mr17580115e9.11.1724925157682;
-        Thu, 29 Aug 2024 02:52:37 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6e27467sm11766665e9.38.2024.08.29.02.52.36
+        bh=Ly3H9TdfQqHUrvW8I+Z7YT7Eu7iCs1+6axXuLh+lXi0=;
+        b=dDMGmFg/8nBzzvPIJhs5SIQbrzZOU5mANVdPZT8iWrnAAHVDr+28GNIewxUbto35Eq
+         1Zx25ibbA0/F2nLhhUwxjcisoBuwAuRU30cp976E7jEYutbsi2pdFSnXAyoRvrFzNumw
+         bF83/VoUpH1715LPl8Q58Rz6d8lb84uj+5CygrGrFkuyw62HAmPbQmbr2kgCoQgHRUnt
+         XmmXDaLdWa7Jtux8AdCLGrhdxzsFGDal8kKAARr4XygnLnZsQpglZsx/shYNd/IC1nRx
+         9rcKhwm8erD8fkXTCAyw+rhw1uwGG9M24hhV8eVfRpKx++Vug64wMzwT/4CvJTuzYtlS
+         iMMA==
+X-Forwarded-Encrypted: i=1; AJvYcCW0oVngfzKtSg1bbMEV1+KqsfimwBnASbXM0a+YSlTpjBrwGP6gHwKmkQaSdWDRW0mRkSh7Rl3caII=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlZkgyXVEco/nspxVu9Eon0fZ4MPmtzDasIsHllj8U/B4ajupC
+	7ou53RGeF7Njx2aZ/D/A3l1dv99BocNAcjJbcN6anQFcXiTqmcWUat3jFPIgLTY=
+X-Google-Smtp-Source: AGHT+IHdj0Gax8cLl5ferCv8ike/PKOlbdGFRkbWcfI4fVRlQt52wlkGm5gMUFs+5U5W7ciTlZ/YtA==
+X-Received: by 2002:a05:651c:2207:b0:2f0:1f06:2b43 with SMTP id 38308e7fff4ca-2f6108a7771mr19344571fa.41.1724926412637;
+        Thu, 29 Aug 2024 03:13:32 -0700 (PDT)
+Received: from localhost (host-80-182-198-72.pool80182.interbusiness.it. [80.182.198.72])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c226c7c2d0sm524452a12.45.2024.08.29.03.13.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 02:52:37 -0700 (PDT)
-Date: Thu, 29 Aug 2024 12:52:34 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: oe-kbuild@lists.linux.dev, jiping huang <huangjiping95@qq.com>,
-	mturquette@baylibre.com, sboyd@kernel.org
-Cc: lkp@intel.com, oe-kbuild-all@lists.linux.dev, linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org, jiping huang <huangjiping95@qq.com>
-Subject: Re: [PATCH] clk: Delete redundant logic.
-Message-ID: <14dc830e-eff0-4c78-a6c7-ed41c11183e0@stanley.mountain>
+        Thu, 29 Aug 2024 03:13:32 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Thu, 29 Aug 2024 12:13:38 +0200
+To: Rob Herring <robh@kernel.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Stefan Wahren <wahrenst@gmx.net>
+Subject: Re: [PATCH 04/11] of: address: Preserve the flags portion on 1:1
+ dma-ranges mapping
+Message-ID: <ZtBJ0jIq-QrTVs1m@apocalypse>
+Mail-Followup-To: Rob Herring <robh@kernel.org>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Stefan Wahren <wahrenst@gmx.net>
+References: <cover.1724159867.git.andrea.porta@suse.com>
+ <5ca13a5b01c6c737f07416be53eb05b32811da21.1724159867.git.andrea.porta@suse.com>
+ <20240821001618.GA2309328-robh@kernel.org>
+ <ZsWi86I1KG91fteb@apocalypse>
+ <CAL_JsqKN0ZNMtq+_dhurwLR+FL2MBOmWujp7uy+5HzXxUb_qDQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <tencent_713186AE6290AC7B8037FD247F5BF04C0308@qq.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAL_JsqKN0ZNMtq+_dhurwLR+FL2MBOmWujp7uy+5HzXxUb_qDQ@mail.gmail.com>
 
-Hi jiping,
+Hi Rob,
 
-kernel test robot noticed the following build warnings:
+On 16:29 Mon 26 Aug     , Rob Herring wrote:
+> On Wed, Aug 21, 2024 at 3:19 AM Andrea della Porta
+> <andrea.porta@suse.com> wrote:
+> >
+> > Hi Rob,
+> >
+> > On 19:16 Tue 20 Aug     , Rob Herring wrote:
+> > > On Tue, Aug 20, 2024 at 04:36:06PM +0200, Andrea della Porta wrote:
+> > > > A missing or empty dma-ranges in a DT node implies a 1:1 mapping for dma
+> > > > translations. In this specific case, rhe current behaviour is to zero out
+> > >
+> > > typo
+> >
+> > Fixed, thanks!
+> >
+> > >
+> > > > the entire specifier so that the translation could be carried on as an
+> > > > offset from zero.  This includes address specifier that has flags (e.g.
+> > > > PCI ranges).
+> > > > Once the flags portion has been zeroed, the translation chain is broken
+> > > > since the mapping functions will check the upcoming address specifier
+> > >
+> > > What does "upcoming address" mean?
+> >
+> > Sorry for the confusion, this means "address specifier (with valid flags) fed
+> > to the translating functions and for which we are looking for a translation".
+> > While this address has some valid flags set, it will fail the translation step
+> > since the ranges it is matched against have flags zeroed out by the 1:1 mapping
+> > condition.
+> >
+> > >
+> > > > against mismatching flags, always failing the 1:1 mapping and its entire
+> > > > purpose of always succeeding.
+> > > > Set to zero only the address portion while passing the flags through.
+> > >
+> > > Can you point me to what the failing DT looks like. I'm puzzled how
+> > > things would have worked for anyone.
+> > >
+> >
+> > The following is a simplified and lightly edited) version of the resulting DT
+> > from RPi5:
+> >
+> >  pci@0,0 {
+> >         #address-cells = <0x03>;
+> >         #size-cells = <0x02>;
+> >         ......
+> >         device_type = "pci";
+> >         compatible = "pci14e4,2712\0pciclass,060400\0pciclass,0604";
+> >         ranges = <0x82000000 0x00 0x00   0x82000000 0x00 0x00   0x00 0x600000>;
+> >         reg = <0x00 0x00 0x00   0x00 0x00>;
+> >
+> >         ......
+> >
+> >         rp1@0 {
+> 
+> What does 0 represent here? There's no 0 address in 'ranges' below.
+> Since you said the parent is a PCI-PCI bridge, then the unit-address
+> would have to be the PCI devfn and you are missing 'reg' (or omitted
+> it).
 
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+There's no reg property because the registers for RP1 are addressed
+starting at 0x40108000 offset from BAR1. The devicetree specs says
+that a missing reg node should not have any unit address specified
+(and AFAIK there's no other special directives for simple-bus specified
+in dt-bindings). 
+I've added @0 just to get rid of the following warning:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/jiping-huang/clk-Delete-redundant-logic/20240826-170900
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
-patch link:    https://lore.kernel.org/r/tencent_713186AE6290AC7B8037FD247F5BF04C0308%40qq.com
-patch subject: [PATCH] clk: Delete redundant logic.
-config: x86_64-randconfig-161-20240827 (https://download.01.org/0day-ci/archive/20240829/202408291052.4ngp4ieh-lkp@intel.com/config)
-compiler: clang version 18.1.5 (https://github.com/llvm/llvm-project 617a15a9eac96088ae5e9134248d8236e34b91b1)
+ Warning (unit_address_vs_reg): /fragment@0/__overlay__/rp1: node has
+ a reg or ranges property, but no unit name 
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-| Closes: https://lore.kernel.org/r/202408291052.4ngp4ieh-lkp@intel.com/
+coming from make W=1 CHECK_DTBS=y broadcom/rp1.dtbo.
+This is the exact same approach used by Bootlin patchset from:
 
-New smatch warnings:
-drivers/clk/clk.c:2320 clk_calc_new_rates() error: uninitialized symbol 'parent'.
-drivers/clk/clk.c:2332 clk_calc_new_rates() error: uninitialized symbol 'old_parent'.
+https://lore.kernel.org/all/20240808154658.247873-2-herve.codina@bootlin.com/
 
-vim +/parent +2320 drivers/clk/clk.c
+replied here below for convenience:
 
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2282  static struct clk_core *clk_calc_new_rates(struct clk_core *core,
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2283  					   unsigned long rate)
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2284  {
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2285  	struct clk_core *top = core;
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2286  	struct clk_core *old_parent, *parent;
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2287  	unsigned long best_parent_rate = 0;
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2288  	unsigned long new_rate;
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2289  	unsigned long min_rate;
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2290  	unsigned long max_rate;
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2291  	int p_index = 0;
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2292  	long ret;
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2293  
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2294  	/* sanity */
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2295  	if (IS_ERR_OR_NULL(core))
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2296  		return NULL;
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2297  
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2298  	clk_core_get_boundaries(core, &min_rate, &max_rate);
-71472c0c06cf9a3 James Hogan     2013-07-29  2299  
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2300  	/* find the closest rate and parent clk/rate */
-0f6cc2b8e94da54 Jerome Brunet   2017-12-01  2301  	if (clk_core_can_round(core)) {
-0817b62cc037a56 Boris Brezillon 2015-07-07  2302  		struct clk_rate_request req;
-0817b62cc037a56 Boris Brezillon 2015-07-07  2303  
-718af795d3fd786 Maxime Ripard   2022-08-16  2304  		clk_core_init_rate_req(core, &req, rate);
-0f6cc2b8e94da54 Jerome Brunet   2017-12-01  2305  
-49e62e0d96baf72 Maxime Ripard   2022-10-26  2306  		trace_clk_rate_request_start(&req);
-49e62e0d96baf72 Maxime Ripard   2022-10-26  2307  
-0f6cc2b8e94da54 Jerome Brunet   2017-12-01  2308  		ret = clk_core_determine_round_nolock(core, &req);
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2309  		if (ret < 0)
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2310  			return NULL;
-035a61c314eb3da Tomeu Vizoso    2015-01-23  2311  
-49e62e0d96baf72 Maxime Ripard   2022-10-26  2312  		trace_clk_rate_request_done(&req);
-49e62e0d96baf72 Maxime Ripard   2022-10-26  2313  
-0817b62cc037a56 Boris Brezillon 2015-07-07  2314  		best_parent_rate = req.best_parent_rate;
-0817b62cc037a56 Boris Brezillon 2015-07-07  2315  		new_rate = req.rate;
-0817b62cc037a56 Boris Brezillon 2015-07-07  2316  		parent = req.best_parent_hw ? req.best_parent_hw->core : NULL;
-1c8e600440c7f50 Tomeu Vizoso    2015-01-23  2317  
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2318  		if (new_rate < min_rate || new_rate > max_rate)
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2319  			return NULL;
-4dff95dc9477a34 Stephen Boyd    2015-04-30 @2320  	} else if (!parent || !(core->flags & CLK_SET_RATE_PARENT)) {
-                                                                    ^^^^^^
-parent isn't initialized.
++	pci-ep-bus@0 {
++		compatible = "simple-bus";
++		#address-cells = <1>;
++		#size-cells = <1>;
++
++		/*
++		 * map @0xe2000000 (32MB) to BAR0 (CPU)
++		 * map @0xe0000000 (16MB) to BAR1 (AMBA)
++		 */
++		ranges = <0xe2000000 0x00 0x00 0x00 0x2000000
++		          0xe0000000 0x01 0x00 0x00 0x1000000>;
 
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2321  		/* pass-through clock without adjustable parent */
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2322  		core->new_rate = core->rate;
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2323  		return NULL;
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2324  	} else {
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2325  		/* pass-through clock with adjustable parent */
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2326  		top = clk_calc_new_rates(parent, rate);
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2327  		new_rate = parent->new_rate;
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2328  		goto out;
-1c8e600440c7f50 Tomeu Vizoso    2015-01-23  2329  	}
-035a61c314eb3da Tomeu Vizoso    2015-01-23  2330  
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2331  	/* some clocks must be gated to change parent */
-4dff95dc9477a34 Stephen Boyd    2015-04-30 @2332  	if (parent != old_parent &&
-                                                                      ^^^^^^^^^^
-old_parent is never set.
+Also, I think it's not possible to know the devfn in advance, since the
+DT part is pre-compiled as an overlay while the devfn number is coming from
+bus enumeration.
+Since the registers for sub-peripherals will start (as stated in ranges
+property) from 0xc040000000, I'd be inclined to use rp1@c040000000 as the
+node name and address unit. Is it feasible?
 
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2333  	    (core->flags & CLK_SET_PARENT_GATE) && core->prepare_count) {
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2334  		pr_debug("%s: %s not gated but wants to reparent\n",
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2335  			 __func__, core->name);
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2336  		return NULL;
-035a61c314eb3da Tomeu Vizoso    2015-01-23  2337  	}
-b2476490ef11134 Mike Turquette  2012-03-15  2338  
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2339  	/* try finding the new parent index */
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2340  	if (parent && core->num_parents > 1) {
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2341  		p_index = clk_fetch_parent_index(core, parent);
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2342  		if (p_index < 0) {
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2343  			pr_debug("%s: clk %s can not be parent of clk %s\n",
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2344  				 __func__, parent->name, core->name);
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2345  			return NULL;
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2346  		}
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2347  	}
-b2476490ef11134 Mike Turquette  2012-03-15  2348  
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2349  	if ((core->flags & CLK_SET_RATE_PARENT) && parent &&
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2350  	    best_parent_rate != parent->rate)
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2351  		top = clk_calc_new_rates(parent, best_parent_rate);
-035a61c314eb3da Tomeu Vizoso    2015-01-23  2352  
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2353  out:
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2354  	clk_calc_subtree(core, new_rate, parent, p_index);
-b2476490ef11134 Mike Turquette  2012-03-15  2355  
-4dff95dc9477a34 Stephen Boyd    2015-04-30  2356  	return top;
-b2476490ef11134 Mike Turquette  2012-03-15  2357  }
+> 
+> >                 #address-cells = <0x02>;
+> >                 #size-cells = <0x02>;
+> >                 compatible = "simple-bus";
+> 
+> The parent is a PCI-PCI bridge. Child nodes have to be PCI devices and
+> "simple-bus" is not a PCI device.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+The simple-bus is needed to automatically traverse and create platform
+devices in of_platform_populate(). It's true that RP1 is a PCI device,
+but sub-peripherals of RP1 are platform devices so I guess this is
+unavoidable right now.
 
+> 
+> The assumption so far with all of this is that you have some specific
+> PCI device (and therefore a driver). The simple-buses under it are
+> defined per BAR. Not really certain if that makes sense in all cases,
+> but since the address assignment is dynamic, it may have to. I'm also
+> not completely convinced we should reuse 'simple-bus' here or define
+> something specific like 'pci-bar-bus' or something.
+
+Good point. Labeling a new bus for this kind of 'appliance' could be
+beneficial to unify the dt overlay approach, and I guess it could be
+adopted by the aforementioned Bootlin's Microchip patchset too.
+However, since the difference with simple-bus would be basically non
+existent, I believe that this could be done in a future patch due to
+the fact that the dtbo is contained into the driver itself, so we do
+not suffer from the proliferation that happens when dtb are managed
+outside.
+
+> 
+> >                 ranges = <0xc0 0x40000000   0x01 0x00 0x00   0x00 0x400000>;
+> >                 dma-ranges = <0x10 0x00   0x43000000 0x10 0x00   0x10 0x00>;
+> >                 ......
+> >         };
+> >  };
+> >
+> > The pci@0,0 bridge node is automatically created by virtue of
+> > CONFIG_PCI_DYNAMIC_OF_NODES, and has no dma-ranges, hence it implies 1:1 dma
+> > mappings (flags for this mapping are set to zero).  The rp1@0 node has
+> > dma-ranges with flags set (0x43000000). Since 0x43000000 != 0x00 any translation
+> > will fail.
+> 
+> It's possible that we should fill in 'dma-ranges' when making these
+> nodes rather than supporting missing dma-ranges here.
+
+I really think that filling dma-ranges for dynamically created pci
+nodes would be the correct approach.
+However, IMHO this does not imply that we could let inconsistent
+address (64 bit addr with 32 flag bit set) laying around the 
+translation chain, and fixing that is currently working fine. I'd
+be then inclined to say the proposed change is outside the scope
+of the present patchset and to postpone it to a future patch.
+
+Many thanks,
+Andrea
+
+> 
+> Rob
