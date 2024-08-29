@@ -1,81 +1,158 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98C8D166F01;
-	Wed, 28 Aug 2024 22:39:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B82B33C9;
+	Thu, 29 Aug 2024 00:18:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724884741; cv=none; b=LTihxoVoMhxQmL44oCSzktF8tPtoLIo/uyvhHBR1XT/v/93+Fsfzq0r+JuK0mPk3s6MxWP1gt5h+n/HalXnIsf31zTHG0JiKU6PESycPyv2+95gw5rnMmPbPp8oQEZPR/RSEMl8+4NHO3PAr7RmTCth/JNE4UqRIU/dWohZfrTc=
+	t=1724890721; cv=none; b=L/16IwEwZXLiIHzvax1zgFhJkmY0u0deuFfLKQ/YDvyELx977gJvlfR/HerPaxfn+MecjX37ofhTHeYrOBONTvN0XVd8bQCjnrolyMKNdsrtitPuISNrXDMnlWExqp/H5UVxKpoHniZBWY4Oiau/XJrGTuu0csbY6C0GWerqR1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724884741; c=relaxed/simple;
-	bh=R+mh8dSyGJUVg39mQaXiKe3BNb686Lv6Lb4N7dr4d7U=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=VXgqOGQeTrum+8RmDI0LUZ+EmjmSLUSiTgktWz5PKqs/r/znf7z1DS4egtr8udy/SRVZQ6iT6K+sdpAgeYXBiP0/+kyV80camdLjObOMYPYBKi4nJN1hk+819exKuEOfTJdLV0tPIvlO+1Zx8a7dsIka5yRHNhIDcGDUqXc0i78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jG2tUbHh; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1724890721; c=relaxed/simple;
+	bh=JS57zOOV3O/UH7xonHh/DDsPR5hEbfRvwHiP+7Zq0s8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jv1Ub+txY1t21qSFTSDG99Xa2ezGRyagdMZ601cZA/3rymDFRpir6PPbBXUEaJj/v5BHki9rP5whqm7vDLoJpX+9bUJEYrP3p4YNs47HmW1azYLuwNGozIoaRpXYTBw5Pqodt0sh57UKRbfXWUcH13de5qPuOq4HecEGNgQUhtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A2ZRuufV; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jG2tUbHh"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E401C4CEC0;
-	Wed, 28 Aug 2024 22:39:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724884741;
-	bh=R+mh8dSyGJUVg39mQaXiKe3BNb686Lv6Lb4N7dr4d7U=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=jG2tUbHhOArCbx3Tggq5OHHhrCpbTBDgd+OfwqA3JPDkv157/3DfTILKf4MoOlvJO
-	 GzbQbfbTNMPLWTO/o2yBswmtmXpINVS/2ybN02OuHXeMnOmm9PD4Slv6fdNK6CprRh
-	 6BOtC4SoG66klwqnvhPPnrljxpWhQJZokbdQGLwHIk7fW8Pn/dUxJlk35JuJAhLuWm
-	 nAcx1zF2cz3DCIm7Vu4Rv79TkKOqLPTqNqWl+RbhdSqc+f9T2wvgnhFqnUN5LsdWKb
-	 z4TRT0ynTxu+C4pzOkrkTbJyoM2CyJQUkzLHr+2uPvSfmkcSGZQRZ2YmxahS0OkUT/
-	 4aG+GbKn4qS6g==
-Message-ID: <196f25e27571de337cc4b887c5e58ade.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A2ZRuufV"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1724890719; x=1756426719;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=JS57zOOV3O/UH7xonHh/DDsPR5hEbfRvwHiP+7Zq0s8=;
+  b=A2ZRuufVqiM9+r11HyBFaE/YLcgNSDAi3Royv7NcB8oG5WZgoCjNP1PP
+   hG5mSDcAobZmeMBInpl7kr7NJpLNh1bV7o7MUwPwIg6rnE+NZVnrL90m2
+   68bX85AN9XBGiFkBNxfUmZHbLpCcznTnIgOTYRvE5pCwC+eCrNfkEY2fJ
+   8P0leKSl18Rh168enT8zzBVO7u6Ee8s0MbKfYS3n0/c/RwXGG+qgYkAk5
+   BJfii5t+dGSccjXLFFXPNPy3f21m3MLc53oUfXqY1+DujxmRxyrfFiNH0
+   MJ5rdCIOMNMDtQQdaUvnw0Rrzf8g73ZNmX9WmySbWoGw0WXKAknSntN2Z
+   g==;
+X-CSE-ConnectionGUID: MWvm2O2gRFqJbKaVT9GDqQ==
+X-CSE-MsgGUID: W8sHxdBCS3W9m/0i1fj6GA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11178"; a="22973551"
+X-IronPort-AV: E=Sophos;i="6.10,184,1719903600"; 
+   d="scan'208";a="22973551"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 28 Aug 2024 17:18:38 -0700
+X-CSE-ConnectionGUID: LypQ0+ovQWepwXB35kZ4gQ==
+X-CSE-MsgGUID: /z3S3VrLRWaWDkgrA1eMPQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.10,184,1719903600"; 
+   d="scan'208";a="68227056"
+Received: from lkp-server01.sh.intel.com (HELO 9a732dc145d3) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 28 Aug 2024 17:18:35 -0700
+Received: from kbuild by 9a732dc145d3 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sjSrw-000LUA-15;
+	Thu, 29 Aug 2024 00:18:32 +0000
+Date: Thu, 29 Aug 2024 08:18:29 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ryan Chen <ryan_chen@aspeedtech.com>, mturquette@baylibre.com,
+	sboyd@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, joel@jms.id.au, andrew@codeconstruct.com.au,
+	p.zabel@pengutronix.de, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v2 3/3] clk: aspeed: add AST2700 clk driver
+Message-ID: <202408290836.KrEafUdK-lkp@intel.com>
+References: <20240828062740.1614744-4-ryan_chen@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1b245182-09db-44a1-bdee-3ec0658bef47@gmail.com>
-References: <20240827061954.351773-1-ganboing@gmail.com> <ad33e8561ca236c5f897003fb40bdc09.sboyd@kernel.org> <1b245182-09db-44a1-bdee-3ec0658bef47@gmail.com>
-Subject: Re: [PATCH] clk: analogbits: Fix incorrect calculation of vco rate delta
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: samuel.holland@sifive.com, emil.renner.berthing@canonical.com, mturquette@baylibre.com, paul.walmsley@sifive.com
-To: Bo Gan <ganboing@gmail.com>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Wed, 28 Aug 2024 15:38:59 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240828062740.1614744-4-ryan_chen@aspeedtech.com>
 
-Quoting Bo Gan (2024-08-28 14:23:37)
-> On 8/28/24 11:52, Stephen Boyd wrote:
-> > Quoting Bo Gan (2024-08-26 23:19:54)
-> >> In function `wrpll_configure_for_rate`, we try to determine the best P=
-LL
-> >> configuration for a target rate. However, in the loop where we try val=
-ues
-> >> of R, we should compare the derived `vco` with `target_vco_rate`. Howe=
-ver,
-> >> we were in fact comparing it with `target_rate`, which is actually aft=
-er
-> >> Q shift. This is incorrect, and sometimes can result in suboptimal clo=
-ck
-> >> rates. This patch fixes it.
-> >>
-> >> Signed-off-by: Bo Gan <ganboing@gmail.com>
-> >> ---
-> >=20
-> > Please add a Fixes tag.
-> >=20
-> > Also, your patch has tons of diff context. Why?
->=20
-> Hi Stephen,
->=20
-> Thanks for the reply. I'll add the Fixes tag in v2. I explicitly enlarged=
- the
-> diff to show more surrounding contexts for better readability.
+Hi Ryan,
 
-Ok.
+kernel test robot noticed the following build warnings:
 
-> Any other issue
-> I should fix?
->=20
+[auto build test WARNING on clk/clk-next]
+[also build test WARNING on linus/master v6.11-rc5 next-20240828]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Nope.
+url:    https://github.com/intel-lab-lkp/linux/commits/Ryan-Chen/dt-bindings-reset-Add-AST2700-reset-bindings/20240828-143005
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+patch link:    https://lore.kernel.org/r/20240828062740.1614744-4-ryan_chen%40aspeedtech.com
+patch subject: [PATCH v2 3/3] clk: aspeed: add AST2700 clk driver
+config: microblaze-randconfig-r111-20240829 (https://download.01.org/0day-ci/archive/20240829/202408290836.KrEafUdK-lkp@intel.com/config)
+compiler: microblaze-linux-gcc (GCC) 14.1.0
+reproduce: (https://download.01.org/0day-ci/archive/20240829/202408290836.KrEafUdK-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202408290836.KrEafUdK-lkp@intel.com/
+
+sparse warnings: (new ones prefixed by >>)
+   drivers/clk/clk-ast2700.c: note: in included file (through include/linux/mmzone.h, include/linux/gfp.h, include/linux/xarray.h, ...):
+   include/linux/page-flags.h:235:46: sparse: sparse: self-comparison always evaluates to false
+   include/linux/page-flags.h:235:46: sparse: sparse: self-comparison always evaluates to false
+>> drivers/clk/clk-ast2700.c:100:10: sparse: sparse: Initializer entry defined twice
+   drivers/clk/clk-ast2700.c:107:10: sparse:   also defined here
+
+vim +100 drivers/clk/clk-ast2700.c
+
+    66	
+    67	static const struct ast2700_reset_signal ast2700_reset0_signals[] = {
+    68		[SCU0_RESET_SDRAM] = { 1, SCU0_RESET_CTRL1, BIT(0) },
+    69		[SCU0_RESET_DDRPHY] = { 1, SCU0_RESET_CTRL1, BIT(1) },
+    70		[SCU0_RESET_RSA]     = { 1, SCU0_RESET_CTRL1, BIT(2) },
+    71		[SCU0_RESET_SHA3]	= { 1, SCU0_RESET_CTRL1, BIT(3) },
+    72		[SCU0_RESET_HACE]	= { 1, SCU0_RESET_CTRL1, BIT(4) },
+    73		[SCU0_RESET_SOC]	= { 1, SCU0_RESET_CTRL1, BIT(5) },
+    74		[SCU0_RESET_VIDEO]	= { 1, SCU0_RESET_CTRL1, BIT(6) },
+    75		[SCU0_RESET_2D]	= { 1, SCU0_RESET_CTRL1, BIT(7) },
+    76		[SCU0_RESET_PCIS]	= { 1, SCU0_RESET_CTRL1, BIT(8) },
+    77		[SCU0_RESET_RVAS0]		= { 1, SCU0_RESET_CTRL1, BIT(9) },
+    78		[SCU0_RESET_RVAS1]		= { 1, SCU0_RESET_CTRL1, BIT(10) },
+    79		[SCU0_RESET_SM3]		= { 1, SCU0_RESET_CTRL1, BIT(11) },
+    80		[SCU0_RESET_SM4]		= { 1, SCU0_RESET_CTRL1, BIT(12) },
+    81		[SCU0_RESET_CRT0]	= { 1, SCU0_RESET_CTRL1, BIT(13) },
+    82		[SCU0_RESET_ECC]	= { 1, SCU0_RESET_CTRL1, BIT(14) },
+    83		[SCU0_RESET_DP_PCI]	= { 1, SCU0_RESET_CTRL1, BIT(15) },
+    84		[SCU0_RESET_UFS]	= { 1, SCU0_RESET_CTRL1, BIT(16) },
+    85		[SCU0_RESET_EMMC]	= { 1, SCU0_RESET_CTRL1, BIT(17) },
+    86		[SCU0_RESET_PCIE1RST]	= { 1, SCU0_RESET_CTRL1, BIT(18) },
+    87		[SCU0_RESET_PCIE1RSTOE]	= { 1, SCU0_RESET_CTRL1, BIT(19) },
+    88		[SCU0_RESET_PCIE0RST]		= { 1, SCU0_RESET_CTRL1, BIT(20) },
+    89		[SCU0_RESET_PCIE0RSTOE]	= { 1, SCU0_RESET_CTRL1, BIT(21) },
+    90		[SCU0_RESET_JTAG]	= { 1, SCU0_RESET_CTRL1, BIT(22) },
+    91		[SCU0_RESET_MCTP0] = { 1, SCU0_RESET_CTRL1, BIT(23) },
+    92		[SCU0_RESET_MCTP1]		= { 1, SCU0_RESET_CTRL1, BIT(24) },
+    93		[SCU0_RESET_XDMA0]	= { 1, SCU0_RESET_CTRL1, BIT(25) },
+    94		[SCU0_RESET_XDMA1]	= { 1, SCU0_RESET_CTRL1, BIT(26) },
+    95		[SCU0_RESET_H2X1]	= { 1, SCU0_RESET_CTRL1, BIT(27) },
+    96		[SCU0_RESET_DP]	= { 1, SCU0_RESET_CTRL1, BIT(28) },
+    97		[SCU0_RESET_DP_MCU]	= { 1, SCU0_RESET_CTRL1, BIT(29) },
+    98		[SCU0_RESET_SSP]	= { 1, SCU0_RESET_CTRL1, BIT(30) },
+    99		[SCU0_RESET_H2X0]	= { 1, SCU0_RESET_CTRL1, BIT(31) },
+ > 100		[SCU0_RESET_PORTA_USB]	= { 1, SCU0_RESET_CTRL2, BIT(0) },
+   101		[SCU0_RESET_PORTA_PHY3]	= { 1, SCU0_RESET_CTRL2, BIT(1) },
+   102		[SCU0_RESET_PORTA_XHCI]	= { 1, SCU0_RESET_CTRL2, BIT(2) },
+   103		[SCU0_RESET_PORTB_VHUB1]	= { 1, SCU0_RESET_CTRL2, BIT(3) },
+   104		[SCU0_RESET_PORTB_PHY3]	= { 1, SCU0_RESET_CTRL2, BIT(4) },
+   105		[SCU0_RESET_PORTB_XHCI]	= { 1, SCU0_RESET_CTRL2, BIT(5) },
+   106		/*PORTA EHCI/VHUB share reset */
+   107		[SCU0_RESET_PORTA_USB]	= { 1, SCU0_RESET_CTRL2, BIT(6) },
+   108		/*PORTB EHCI/VHUB share reset */
+   109		[SCU0_RESET_PORTB_USB]	= { 1, SCU0_RESET_CTRL2, BIT(7) },
+   110		[SCU0_RESET_UHCI]	= { 1, SCU0_RESET_CTRL2, BIT(8) },
+   111		[SCU0_RESET_TSP]	= { 1, SCU0_RESET_CTRL2, BIT(9) },
+   112		[SCU0_RESET_E2M0]	= { 1, SCU0_RESET_CTRL2, BIT(10) },
+   113		[SCU0_RESET_E2M1]	= { 1, SCU0_RESET_CTRL2, BIT(11) },
+   114		[SCU0_RESET_VLINK]	= { 1, SCU0_RESET_CTRL2, BIT(12) },
+   115	};
+   116	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
