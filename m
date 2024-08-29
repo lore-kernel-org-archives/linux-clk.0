@@ -1,100 +1,152 @@
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D60818A925;
-	Thu, 29 Aug 2024 08:07:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F217418C025;
+	Thu, 29 Aug 2024 08:29:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724918848; cv=none; b=he/Jvk9KP63ZVyaKbfAWbeRjcnQUjUYKw0Nwx7B3dFbAIwczrIhmDXC9gWEBxnRQ0Bm+GthcfaOU4gl4F3/ZUstCmoLMGQUhkJapip56v5w4q9Yx4pz1i6LA+Rj0sk1EwdRfPetWXSoJUwevwDYFYQCHrvoKip8uu5Cxla6RlrY=
+	t=1724920159; cv=none; b=TJalwBBeTa8CPCO3VmDVx4FDEHDA25fZO9XAvMdPv3r7hSLQFx1U0TVa1mvXbXB0IQBB2/UeiroZ3WroVVqF1Tnv18HAvGyr+6cByelWkROAQK6shECXBTjk6uLZRRVqGbAVQ5jAONTJcAdwpemG1ZVS/GVIKcGnt4dn1vmOFPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724918848; c=relaxed/simple;
-	bh=6D9s2PHaOeXO0+gGj2oPHhq3N9H2yBwvLb6+qVDuqZY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qgte7xeX1qIhCMahZtV+rRxj1apty4pVw4B5xMQuGK3K8DBVmRh+u4ll3heStH1wAuCG12/S7PyoW77XCcG0OD0GvyageYtIDDgQ7QTfZcn4VIMZz2XT0+WRyJwpQ8DzYQwELZzfuFqx8FWpbr38pTB68TAUQW9YI2OBwYOFkOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZCWcbbvv; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	s=arc-20240116; t=1724920159; c=relaxed/simple;
+	bh=E22UVlKfybQ6Tmjaw6PPYSMUlg5345khqFSuT+Vhx8M=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kNYKYQJp+0YFi0PpbR6x3Cdc9K8SiQzPuuNeMZEgcmHQxoQ8Bs0mnDiAuz7OhX1VAfi8OacE9WjccJuwsQJJt0s+WkMY1Ei5TZ/JVI7KZZStmX/HIfsrLvq2hrlwR5sIUmyqhnRbVmDbR5Jj/T+sp/6fo2nDJaiLxnqAjweNDXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Nl+dGyMr; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZCWcbbvv"
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-68d30057ae9so3860617b3.1;
-        Thu, 29 Aug 2024 01:07:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724918846; x=1725523646; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=6D9s2PHaOeXO0+gGj2oPHhq3N9H2yBwvLb6+qVDuqZY=;
-        b=ZCWcbbvvV+bwptQZpd2WNo+rEIzdSCjE7XyZ2xwm1eexR61NzjJbqQDzwkP6Fd0Mt/
-         J/Ql5yRsW4fMQxu910jfoVn83Nz4xEYkuPkJL/NM7yvmwkphhAsacyEMuMYJMAUCkSsM
-         Us6q+VLr95uCGD8rqmoLOyfqmkYf2oKphEK5UMZEDGWTTT1v/TL2RZrcXJsK9l8qqYBU
-         O+WqIFYyAyh2NYG3eEl5TcCdhKhJOWEmen7hytJvJOauvjUZLY+WSeqNyWZzcsqGFoLc
-         Kihg3SwyEmifEn8pXll4eF6f8qR7F8mND+wwXS1B1zfRDqCFawPHfsgFAoS6YVb4CEpJ
-         ITag==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724918846; x=1725523646;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6D9s2PHaOeXO0+gGj2oPHhq3N9H2yBwvLb6+qVDuqZY=;
-        b=LCu8BLFH0f7hagbIN+q5FwjdOexb76gCdXUdsERsC7xiTOvg+79PYW7B9Zktr4Oqgm
-         iorfRJbkg7Gpn2dSg9L76BM0fxUnG5hlzIPdxzuzw70XjcUSynrpvwXxYsA7dM14aE5E
-         BAebmm4or31wHXJgrQgDMvnxk7nlN17yYuwK5D9cYmnLgQbUtziLssLyRevUXw4G52Se
-         42qbsGrRtJliIu2Msjt5cI6EWinPVJDcgmvqXEza7Jj/66870c4IZMfVZYuoeuA81gw5
-         BUjin4fnCGIJkQtQD1cR0DalIaFJv9kCKa6lA5a8ZyzJ0uNrrN6ShSGZaHlZ+HdjGoKN
-         TmPA==
-X-Forwarded-Encrypted: i=1; AJvYcCW3+oIcP4tOfAjj56KsF/9iy6g82pM59Lo8PaOJAkrytb9XaqB48B/icLwdwSRWGXOusCQp3ExElmgV@vger.kernel.org, AJvYcCWOUTsT4nhD7Ohe1wHk/qnUwoaklGhXs8+rfW0J4XY6N1hAw2HrM4TDjHnwpWnegdnVq3o4j6H1Pc6BKhJe@vger.kernel.org, AJvYcCXN3hIKEqQGXDjjSmHyRBJDsUQpo1QgXje1KoJXd0Erfu9M6dymM8+c2zZ/hZJuUl5UBu58ofYMbkD4@vger.kernel.org
-X-Gm-Message-State: AOJu0YzomkzBS8WEb2Dxp9460Zjk0Z48XtojbEiMDfbE7P6CGS6VNczU
-	TyEcuPolueOqqlWhHBm7oRBN5+mmouja+2rEKPjRVsTriOejEBiZdRgF8rvCJ+2FNTlcTZLKxUG
-	YOzhJF3KGJOL49yg9OlsAreTeFNQ=
-X-Google-Smtp-Source: AGHT+IGI+aiI64QeCszkUSpdOS1NlRrB8CzhcK6/Tl8ikOKP0qadNbGrBXByMOplW48ZmJTnXiN3tu7FN/K4wcAWEYs=
-X-Received: by 2002:a05:690c:6608:b0:6b3:a6ff:769b with SMTP id
- 00721157ae682-6d272708f30mr24127897b3.0.1724918845847; Thu, 29 Aug 2024
- 01:07:25 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Nl+dGyMr"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47T8QcaV000605;
+	Thu, 29 Aug 2024 08:29:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=7ry3tTO1NvxIQ0xDSdkI6D
+	BGk1wEMGklt9PYcx1cDHY=; b=Nl+dGyMrwrKC+czRz5w4HQUwS06UGUWeL7aIJJ
+	rZm3pqlVgrDs3DbdSLMoFT153pMx6jl12Kd+wsscicg2Z54O2f5XaS+8Dt4FLscR
+	r6J+QYNEClp79f8ETxOg25rr6JqiSociVJX+SUIhiWR2kTodE6f03MzRGGVnHCPW
+	IGElkGcv2GZXxEVo7m3sQImQQvw8fcaZczGG7tF2PwKzY7u3yYxyga8GEhgbfANy
+	/IA3QTb5KBlMFeHsC8RIJYykmbRJUUyM1QdM7iBV9Jus1wYTWwPub4NFlFtrB8w5
+	Ce0b5D9Y8O+q7YqidVRnl+FBmbFJbRq3RuQu8O8p3lbchr2w==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419puw4h9t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 29 Aug 2024 08:29:01 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47T8Sx8C007272
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 29 Aug 2024 08:28:59 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 29 Aug 2024 01:28:52 -0700
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <konradybcio@kernel.org>, <catalin.marinas@arm.com>, <will@kernel.org>,
+        <djakov@kernel.org>, <richardcochran@gmail.com>,
+        <geert+renesas@glider.be>, <dmitry.baryshkov@linaro.org>,
+        <neil.armstrong@linaro.org>, <arnd@arndb.de>,
+        <nfraprado@collabora.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-pm@vger.kernel.org>, <netdev@vger.kernel.org>
+CC: Varadarajan Narayanan <quic_varada@quicinc.com>,
+        Kathiravan Thirumoorthy
+	<quic_kathirav@quicinc.com>
+Subject: [PATCH v5 0/8] Add NSS clock controller support for Qualcomm IPQ5332
+Date: Thu, 29 Aug 2024 13:58:22 +0530
+Message-ID: <20240829082830.56959-1-quic_varada@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240815150255.3996258-1-tmaimon77@gmail.com> <2f21322a2412684c6aa7bb7d817e861c.sboyd@kernel.org>
-In-Reply-To: <2f21322a2412684c6aa7bb7d817e861c.sboyd@kernel.org>
-From: Tomer Maimon <tmaimon77@gmail.com>
-Date: Thu, 29 Aug 2024 11:07:14 +0300
-Message-ID: <CAP6Zq1hxwb3eWakPJecWXbt6_JqOmph-72bRn6pztxy1KiuF+Q@mail.gmail.com>
-Subject: Re: [PATCH RESEND v27 0/3] Introduce Nuvoton Arbel NPCM8XX BMC SoC
-To: Stephen Boyd <sboyd@kernel.org>
-Cc: benjaminfair@google.com, joel@jms.id.au, krzysztof.kozlowski+dt@linaro.org, 
-	mturquette@baylibre.com, p.zabel@pengutronix.de, robh+dt@kernel.org, 
-	tali.perry1@gmail.com, venture@google.com, yuenn@google.com, 
-	openbmc@lists.ozlabs.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: gByXCS-HlPuas1kMDGT_fDzgQ9_XjdC5
+X-Proofpoint-GUID: gByXCS-HlPuas1kMDGT_fDzgQ9_XjdC5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-29_02,2024-08-29_01,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
+ priorityscore=1501 malwarescore=0 bulkscore=0 mlxscore=0
+ lowpriorityscore=0 phishscore=0 mlxlogscore=999 suspectscore=0
+ adultscore=0 spamscore=0 impostorscore=0 classifier=spam adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408290062
 
-Hi Stephen,
+Add bindings, driver and devicetree node for networking sub system clock
+controller on IPQ5332. Some of the nssnoc clocks present in GCC driver is
+enabled by default and its RCG is configured by bootloaders, so enable
+those clocks in driver probe.
 
-Sure.
+Signed-off-by: Kathiravan Thirumoorthy <quic_kathirav@quicinc.com>
+---
+Changes in v5:
+- Rebased on next-20240821
+- Addressed review comments
+- Dropped 'const qualifier' patches
+- Dropped 'clk: qcom: ipq5332: enable few nssnoc clocks in driver probe'
+- Enabled icc-clk for NSSCC
+- Update ICC master/slave list
+- In dt-bindings of nsscc
+	Mark #power-domain-cells as false (as it is not applicable)
+	Add #interconnect-cells
+- Link to v4: https://lore.kernel.org/lkml/20240122-ipq5332-nsscc-v4-0-19fa30019770@quicinc.com/
 
-Thanks a lot,
+Changes in v4:
+- Rebased on next-20240122
+- Fixed the missing space on the nsscc node
+- Link to v3: https://lore.kernel.org/linux-arm-msm/20231211-ipq5332-nsscc-v3-0-ad13bef9b137@quicinc.com/
 
-Tomer
+Changes in v3:
+- Collected the tags
+- Dropped the dt-binding patch 3/9
+- Cleaned up the header file inclusion and updated the module
+  description in the driver
+- Used the decimal number instead of hex in the NSSCC node
+- Link to v2: https://lore.kernel.org/r/20231121-ipq5332-nsscc-v2-0-a7ff61beab72@quicinc.com
 
-On Wed, 28 Aug 2024 at 23:54, Stephen Boyd <sboyd@kernel.org> wrote:
->
-> Quoting Tomer Maimon (2024-08-15 08:02:52)
-> > This patchset adds clock support for the Nuvoton
-> > Arbel NPCM8XX Board Management controller (BMC) SoC family.
-> >
-> > The NPCM8xx clock controller is created using the auxiliary device framework
-> > and set up in the npcm reset driver since the NPCM8xx clock is using the
-> > same register region.
-> >
-> > This patchset cover letter is based from the initial support for NPCM8xx BMC to
-> > keep tracking the version history.
-> >
-> > This patchset was tested on the Arbel NPCM8XX evaluation board.
-> >
-> > No changes since version 26, only tested in kernel 6.11.rc1
->
-> Thanks for working on this! I'm waiting for Philipp to review/ack the
-> reset driver part. Until then I don't think I can apply this series to
-> the clk tree. I'll add a review tag to the clk driver patch in case that
-> helps.
+Changes in v2:
+- Change logs are in respective patches
+- Link to v1: https://lore.kernel.org/r/20231030-ipq5332-nsscc-v1-0-6162a2c65f0a@quicinc.com
+
+---
+Kathiravan Thirumoorthy (6):
+  dt-bindings: clock: ipq5332: add definition for GPLL0_OUT_AUX clock
+  clk: qcom: ipq5332: add gpll0_out_aux clock
+  dt-bindings: clock: add Qualcomm IPQ5332 NSSCC clock and reset
+    definitions
+  clk: qcom: add NSS clock Controller driver for Qualcomm IPQ5332
+  arm64: dts: qcom: ipq5332: add support for the NSSCC
+  arm64: defconfig: build NSS Clock Controller driver for Qualcomm
+    IPQ5332
+
+Varadarajan Narayanan (2):
+  dt-bindings: interconnect: Update master/slave id list
+  clk: qcom: ipq5332: Add couple of more interconnects
+
+ .../bindings/clock/qcom,ipq5332-nsscc.yaml    |   64 +
+ arch/arm64/boot/dts/qcom/ipq5332.dtsi         |   28 +
+ arch/arm64/configs/defconfig                  |    1 +
+ drivers/clk/qcom/Kconfig                      |    9 +
+ drivers/clk/qcom/Makefile                     |    1 +
+ drivers/clk/qcom/gcc-ipq5332.c                |   16 +
+ drivers/clk/qcom/nsscc-ipq5332.c              | 1049 +++++++++++++++++
+ include/dt-bindings/clock/qcom,ipq5332-gcc.h  |    1 +
+ .../dt-bindings/clock/qcom,ipq5332-nsscc.h    |   86 ++
+ .../dt-bindings/interconnect/qcom,ipq5332.h   |    4 +
+ 10 files changed, 1259 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,ipq5332-nsscc.yaml
+ create mode 100644 drivers/clk/qcom/nsscc-ipq5332.c
+ create mode 100644 include/dt-bindings/clock/qcom,ipq5332-nsscc.h
+
+-- 
+2.34.1
+
