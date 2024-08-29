@@ -1,92 +1,62 @@
-Received: from smtp.smtpout.orange.fr (smtp-30.smtpout.orange.fr [80.12.242.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 876231B5ECA;
-	Thu, 29 Aug 2024 17:08:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 761AD1B1D61;
+	Thu, 29 Aug 2024 17:42:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724951317; cv=none; b=SXx9nznRk2E7zmZ/XrBSCa9qZK0OotFWYLLd4iD+2mZggc/kn6fmC4seboyPVLJn3KseYp9G7pf7MwKLGPVfqfJQSwWVGvxbqGmw09XR+pJsoUq0J4VJrjVkKslBlSMlUjKovclhtyjSu1+cplmzPdGvF8/Jn5zfM7Kg1Td19f4=
+	t=1724953326; cv=none; b=CQWynha4Su3uVhPGjDNvH891Gmxj9N1BeLNBq7f+vdmZ4x4RFT64B1yDfoxuDwRtO4arX51EKfE21xpXPZ6FHkzvTBPWfbQbWWO96BaA7qBPv05dl41mka+2pRrEoQ5Giwco5WIY/bvll/MhnhbkYRdiU7Emb/NMEKtMUSE5feE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724951317; c=relaxed/simple;
-	bh=nCsfZR0DC6lf6gcln2KJvvNw1BZHYsRdAEITqq8RUd4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cJSVSuFXm1H2Lfwa0IL36dNxKqVuvZ/wAxXE9kA08t+ThNPL8KHHVW5BY2ti+McF1a7BS4LYSmzrTmR5SDAGpFek38K54NgByHJ6rw0cl+Ewbk0uR3SjrV79zrLee8LjfrRrox8hEcZBXRf06gkuSrhEkfrj4eBptQN9Y3D2CJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=GTRwDYmV; arc=none smtp.client-ip=80.12.242.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+	s=arc-20240116; t=1724953326; c=relaxed/simple;
+	bh=UeUH/xJyaeipGngeVsitl0ECOemo6bE9v1hOQ8mfero=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=kCtHX/zGnXAbgGhPBH48CzWM7Vw5Hi8JgnWWe/9RTlokU67Jc8QBQL5PGcoAJyPUOpQx+M0MU42c52LH7ZVNyzmy02cutjDIi89Uo2oIwfgnqqYxZCmM0yqp3uilPxRphHE5WDTyo82Gq+pnrwFlaiwzCxMAFJkXW9tFTuenGJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NBbvHJyo; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="GTRwDYmV"
-Received: from [192.168.1.37] ([90.11.132.44])
-	by smtp.orange.fr with ESMTPA
-	id jiUCsyvkeaZQfjiUCsKfCa; Thu, 29 Aug 2024 18:59:06 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1724950746;
-	bh=U0rARhUcsMEGaXLPrLb2Io5v6VQIJivXpcySQ5zqyt0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=GTRwDYmVWu7ZmIc/5J4OSl7GuXt7Xblb9X4HcsI+x0+SKyL48fTUgSpTx5YVyuMBE
-	 J2VR0vAwQh1ZDrZSg0ZMlba+knOddlqLh3MXtYlqJJd1itWWDhlRC11LSAESVZup8d
-	 Nm70Lb8SYQvYErTVKwOJScy3VEEjfZXN0q4ZzJUdrQvMFRRC6wFj3ltkL1cn6KpKLq
-	 GCMEEJxVu+MdwcjK5qTEBHsDKqoB70SkjXQ8xY/959AWEmtBMFG6AUwuILcC3T3Qye
-	 NKEW1xOzgHNPL7Z5dHeLuNd4SpkycbaH+5+hBDwq9lomeHalSUgK7vUiD9lgbZZ8pW
-	 m7QlII75+HiXQ==
-X-ME-Helo: [192.168.1.37]
-X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
-X-ME-Date: Thu, 29 Aug 2024 18:59:06 +0200
-X-ME-IP: 90.11.132.44
-Message-ID: <c2464c65-836d-4609-b40b-2e3df4012688@wanadoo.fr>
-Date: Thu, 29 Aug 2024 18:59:03 +0200
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NBbvHJyo"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBDCDC4CEC1;
+	Thu, 29 Aug 2024 17:42:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1724953326;
+	bh=UeUH/xJyaeipGngeVsitl0ECOemo6bE9v1hOQ8mfero=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=NBbvHJyon8IBavOSITC789XzlefNeT/QmznRGtLIHdYECHB7UaYf/VV4+Zd3yFo5q
+	 T4V6vFDLeJkZ8y3MIbiKp59udjNnu31ZCCFWLoxltY+kSutUItkYxADYq4YF6J/6yC
+	 5XhmWbK15nMnedQCymWo+9gCMnILSs5JqqDqTPCivTiRoiDT6vg2UnWxLB0gZJ8YxB
+	 ciid1/osx2hYDpAHtLzR9s8hx3/qXqzhbAau5sP+zPZK2QOoyClNgiz0rNZ6yt5qAX
+	 o+yfbG8NH6hQxRNcGSIbuA95TWigfx3R7TyQUX8ZPREXEUYLcM24f/mXcSFH3sz9IQ
+	 /S/ovCSo0pQDg==
+Message-ID: <79403fa37a491749b9fcbbffb17ddc8e.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] clk: qcom: Fix error checking for
- devm_clk_hw_get_clk()
-To: Yan Zhen <yanzhen@vivo.com>, andersson@kernel.org,
- mturquette@baylibre.com, sboyd@kernel.org
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
-References: <20240827025252.3512746-1-yanzhen@vivo.com>
-Content-Language: en-US, fr-FR
-From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-In-Reply-To: <20240827025252.3512746-1-yanzhen@vivo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <alrspfbadwth4v3f5q4nstjm5phd7ttqxyxx24lyye6lpqclws@v5dfuc2fsp54>
+References: <20240827025252.3512746-1-yanzhen@vivo.com> <9ce5d7b09b5358c9190d8a999d79de23.sboyd@kernel.org> <alrspfbadwth4v3f5q4nstjm5phd7ttqxyxx24lyye6lpqclws@v5dfuc2fsp54>
+Subject: Re: [PATCH v3] clk: qcom: Fix error checking for devm_clk_hw_get_clk()
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Yan Zhen <yanzhen@vivo.com>, andersson@kernel.org, mturquette@baylibre.com, linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, opensource.kernel@vivo.com
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Thu, 29 Aug 2024 10:42:03 -0700
+User-Agent: alot/0.10
 
-Le 27/08/2024 à 04:52, Yan Zhen a écrit :
-> The devm_clk_hw_get_clk() function returns error pointers.
-> It never returns NULL.  Update the check accordingly.
-> 
-> Fixes: 8737ec830ee3 ("clk: qcom: common: Add interconnect clocks support")'
-> Signed-off-by: Yan Zhen <yanzhen@vivo.com>
-> ---
-> 
-> Changes in v3:
-> - Providing a "fixes" tag blaming the commit.
-> 
->   drivers/clk/qcom/common.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/clk/qcom/common.c b/drivers/clk/qcom/common.c
-> index 33cc1f73c69d..5a9e653916ea 100644
-> --- a/drivers/clk/qcom/common.c
-> +++ b/drivers/clk/qcom/common.c
-> @@ -273,8 +273,8 @@ static int qcom_cc_icc_register(struct device *dev,
->   		icd[i].slave_id = desc->icc_hws[i].slave_id;
->   		hws = &desc->clks[desc->icc_hws[i].clk_id]->hw;
->   		icd[i].clk = devm_clk_hw_get_clk(dev, hws, "icc");
-> -		if (!icd[i].clk)
-> -			return dev_err_probe(dev, -ENOENT,
-> +		if (IS_ERR(icd[i].clk))
-> +			return dev_err_probe(dev, PTR_ERR(icd[i].clk),
->   					     "(%d) clock entry is null\n", i);
+Quoting Dmitry Baryshkov (2024-08-29 02:06:51)
+> On Tue, Aug 27, 2024 at 11:18:10AM GMT, Stephen Boyd wrote:
+> > Quoting Yan Zhen (2024-08-26 19:52:52)
+> > > The devm_clk_hw_get_clk() function returns error pointers.
+> > > It never returns NULL.  Update the check accordingly.
+> >=20
+> > It can return NULL if the 'hw' pointer passed in is NULL.
+>=20
+> No, it will crash:
+>=20
+>         WARN_ON_ONCE(dev !=3D hw->core->dev);
+>=20
+> Furthermore, clk_hw_get_clk() also doesn't have NULL checks and will
+> crash if NULL is passed as hw.
 
-Nitpick: Maybe the message could be updated as-well?
-
-CJ
-
->   		icd[i].name = clk_hw_get_name(hws);
->   	}
-
+Ah, thanks. I misread it as clk_hw_create_clk().
