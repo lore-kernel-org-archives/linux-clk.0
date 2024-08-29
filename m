@@ -1,146 +1,190 @@
-Received: from CHN02-BJS-obe.outbound.protection.partner.outlook.cn (mail-bjschn02on2097.outbound.protection.partner.outlook.cn [139.219.17.97])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BA4A194C86;
-	Thu, 29 Aug 2024 12:16:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.17.97
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724933778; cv=fail; b=fbHfTJ5iPjrI12YQIATU5WYIgfc+UTIi/xqQHhrJ6NljEqL3F7assSR5kR6ZcZhu1ZzaCQBqQqu2SiKNKPnksCN+WGxUKj20+Hd+NK8wEMiDw7KuEA4AxgYnL4MMp4kfuDP5vgDSBEiYBBeUoJsVmbW5TFabJhfPWHw490qUYqI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724933778; c=relaxed/simple;
-	bh=sj4URFo6PkVv5WK+rRseCwBE8nDj0TZcPznItL2YiDw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=T9E2PWQIcDJ5D5ys8FhdKU65Q3/isghz0os0Kglvt9WqtMh3qSxiR15J9FFda4ML/nOcBEjG3e9uC0VpOG+22Kb7ESWQXbj4tgy+xjoPNPo5eLoahkjOWBKShT+6O3DS0B5YUeiWgfYLfVlc+dEFSb5ePJ6HVE0QSdh1AMENxs4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.17.97
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
- b=g+7mlMD1UWAAaHpXr+HPfcpJFpiO7xR3FDXxpikImD2QXQaGeIg9zcjKnoNlGfj27JiCBa0HgttHCDvvdrCpfJglU7sVD4J2T6VI6CU1Z0mtRKcdRGZF5SGawyHQpTEnyQ3c6vyuKv1hVI0RRrSSw9MxnSFPwEeXmQlQ3dcFCKIE1wHC8Ynm2ZRmTPzaMMuUDSPGJ8IsiCkAWnpQho1pM5q6W2KCkMoKImJOBqHB0P6lC9YyHH+uYTBgmrApUhCkUb7pFo/4x0or201IeeEpKYq/o2X0KUNz/w2VBuiwWJd+En+vwol9m7qKsO6m9lq2xzTgc5hrMc23r7U7l8pEhQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector9901;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sj4URFo6PkVv5WK+rRseCwBE8nDj0TZcPznItL2YiDw=;
- b=P75kxnxgOPBbeKhlpX+Jp6panTdp4Irnd+dWIs7RgvOF9FepaBnIu/WFm39eajVYuThKyY7ui0UQg2OxNbq3KBW7Fh3Vnmp72/3EhVUKITAChTHSTejcqu2yXL8IOMoWoyMn8NeSip7ZvZFlpAklg7Z/sQ6TSpsLTqJXQAyy0dzv/OpAgx5Owrw3zCIBlGsngnhrgUMvjQdrfhwb6WPYWsBfcT3mDOKxAKvBcDLvKb9qPJr8woW55lBAlqd2wuGDpA86LEjKOWpY9eihHHEQmpM5Gh7T8MCpXiWyN6Un8mCKe1szacU3cM1IU3xikyqowjAGHUvClkfw+PMt/W7kNg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=starfivetech.com; dmarc=pass action=none
- header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
-Received: from NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c510:8::10) by NTZPR01MB1067.CHNPR01.prod.partner.outlook.cn
- (2406:e500:c510:9::7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7828.26; Thu, 29 Aug
- 2024 05:42:44 +0000
-Received: from NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn
- ([fe80::40dc:d70a:7a0b:3f92]) by
- NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn ([fe80::40dc:d70a:7a0b:3f92%5])
- with mapi id 15.20.7897.021; Thu, 29 Aug 2024 05:42:44 +0000
-From: Xingyu Wu <xingyu.wu@starfivetech.com>
-To: Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor@kernel.org>, Emil
- Renner Berthing <emil.renner.berthing@canonical.com>, Michael Turquette
-	<mturquette@baylibre.com>
-CC: Hal Feng <hal.feng@starfivetech.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>
-Subject: RE: [PATCH v7 1/2] clk: starfive: jh7110-sys: Add notifier for PLL0
- clock
-Thread-Topic: [PATCH v7 1/2] clk: starfive: jh7110-sys: Add notifier for PLL0
- clock
-Thread-Index: AQHa946ZxFTIDR+2oEuXc4Ii2u/z4rI9IAeAgAB3ZiA=
-Date: Thu, 29 Aug 2024 05:42:43 +0000
-Message-ID:
- <NTZPR01MB0956E46297168E8E21D6F17F9F962@NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn>
-References: <20240826080430.179788-1-xingyu.wu@starfivetech.com>
- <20240826080430.179788-2-xingyu.wu@starfivetech.com>
- <ba3077ef4b155649812fd8be75f131e7.sboyd@kernel.org>
-In-Reply-To: <ba3077ef4b155649812fd8be75f131e7.sboyd@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=starfivetech.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: NTZPR01MB0956:EE_|NTZPR01MB1067:EE_
-x-ms-office365-filtering-correlation-id: 4d9c8f19-7d4f-47a6-e5bf-08dcc7ed679c
-x-ms-exchange-senderadcheck: 1
-x-microsoft-antispam:
- BCL:0;ARA:13230040|41320700013|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- jvhcLJn6Qua9MWYN4HgH1zZftDExIvuZ4CXQc0pTAoOF+0dFih4cz/pQZp5UMyos/zx0lhvTDzRrqhKDYKQEe6bS2xcUg4pnsV9OyjqwvDJyX3Qjmoxh269iYmwinu08wtAbBe7Ja1dh2quwRmeE/G6yqMqZb5bNLYWS/Keg4b/FlteFotZsNQyUycCj8fDe7FAFkdACYqdeWaj/U2piinbEzaTU+U3T/JXn5uOfb5WhCQviYyDgHUbMd0XBKV8/zdcSZC0Mkp8GkWBRoDJIgJpiD8ilf/s3r8tdVtTOkUXQaX86XDSWmIruDwKp2/ZiMdN48Yius9LQuKR+bxI8JaDwjzB09rlHD8k4w7+bZ0akDPbUyRxVTlPCsyzrOKX5z2F8nJ/LepqXtfdm9htso8TEwbjT/N7Uvuu7qvm8xnbzuOFa+pTolfQVmmlOTCnc4XFBZ5pw41+oyJ3gR0xdgCCoz64pK9FkAEJmQ17UDNmS/g3K7dfew1xRAyJYH9/J07q+zVit/aIf4L4F7rZxEa3vHZ2J51Ixuxu3TUK0ZRVg8DMk6ra9w4+Dne/uGJ0IqYgygolTvdm+B64a/Xbq/Yx3fMHojnadSlyBJjgsV25cklbbxc9HMs7pmyhNFs47
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(41320700013)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?YUNpSTV5OTJUT2tRRXQvZkdHVGplL1NJeEszN21HY0wzMkVPRERxbkpTdXdz?=
- =?utf-8?B?OUM0RzQ0cG9QdHd3ck81RmJYSVg4RzFua0FZRmVSK3I1RE5YUUxMZjdtbXNK?=
- =?utf-8?B?dG1NcXpXZ1hRWHNoVHBYRDJCMHd6bzhBQnllTDQwVDBkWGU1UENTV3l0OFNK?=
- =?utf-8?B?Q3BXeCtNNmpZTzZOekZDb1hBUHpKZEZUUGk1c0s1NUZDSDBFTVpYZ1lGYytP?=
- =?utf-8?B?YStORkNCcWk3MjVSZWRrQkhMVXU5ZUxCSWtqUzIydlVVeXp3RmtlNXQ3UFBY?=
- =?utf-8?B?a0pGWlBPZ0U0NnVYaGhlc0ZlditQT1FPMVhQSFFkMmlENFVrU3p2RE1HYnZQ?=
- =?utf-8?B?R1NFYnZsQnltOUNUSUI2cGZpaGRIQXJ1SkU1Y0dFTXRYdS9lQnVXY1UxWjVB?=
- =?utf-8?B?WjVsaUpCdGwrbk5TZVh5TGE0THZlN3pGQlpDR1RGWm5NbHowMTRVcytSQkQ0?=
- =?utf-8?B?RzJWN0NaM2hvWGNGVGtBc0wyVFRoTnJyRXM2cmFXc29OdnhHYzVvamF0c29K?=
- =?utf-8?B?Q1RJR0RjMzc5OUVzcmlNRVNLVGRHNUxCOUVZNHV2UjgyelhqenpGTzZIeEZD?=
- =?utf-8?B?VXdFNFFkMTI1ekF6STNzcmNzdStNdmtzMXJyQ0MweDd4MVdjL3FnTkk2RzRU?=
- =?utf-8?B?SHpIdFdqQy95K3ZEU3ovV0t4TW1YR3RveWRlM01JSThOekdqMU5ES1plOGpP?=
- =?utf-8?B?QnBET2JJbmVoZzM3ZTdrUzk5RDFsWWV3cmdmRFpFbkhhdUFZandpbjdKUHZ3?=
- =?utf-8?B?V2pSTG9kVUhJM2JNSHArVEtIRnpwOFV2UUZCZUVFU1VId2QweXBuNG1rZENG?=
- =?utf-8?B?MUJLZkk5T1ZHWkxSRkpuMll3VTZpM2NHTmFweEphdnFNcWtpVUlpd2JtUFJu?=
- =?utf-8?B?eUQ2TmtjcjZoV0U4aXhSaWZWYkMwWmtuRjVseGFxRUhLY1J2OGZKQmY5UDdZ?=
- =?utf-8?B?SjVCS1Q4NDYvMGR3Z1h3em1OUkRMaUxsdGRSanRUaGdzNmordlErSWZMOEd6?=
- =?utf-8?B?VVVTcVpqZktDTitKSmVKd0lNTlZsbnNJUVI3WkpSL0R6RXlKUE9EMVVpb2dG?=
- =?utf-8?B?M3NQbDh4MEdRWWo3NVNZMW9kNno4SHVPbU4vUVpIYmU4ZTRaNnF6SmVYTm5k?=
- =?utf-8?B?RUNtRjZicE5JMjZwMC9jTk45QVJJMnl3OE4zc3cycSs5NFVRcUc2SWxmOENN?=
- =?utf-8?B?TGxKb2c5UjF5YTZ5QUZ3T3FSbno0U3kwbHJoWFlvdWtWWm1ZamU5SkRJemYz?=
- =?utf-8?B?WWRDaGduNTZFZWxzRVNzTjBNdUVhUUMyNnNCSEdDeVkxQ0syOE0wUldZeVZz?=
- =?utf-8?B?QnFRVGNST0lPc2V6dHkvb1lGWThvZ3NheDRIS3FBTWtoRllEcjNKNjFiTDhI?=
- =?utf-8?B?cy9KT25XNVZiOW9RZDBOeXUwRnY5TzAwL0xPR25VcitrbVRZMkU1VGlNcm85?=
- =?utf-8?B?d0wzSHN2VHpWc204RmJHT05MdFV6RkJtdG9xTHRKK0JIUGk1TzlheTZPL3VK?=
- =?utf-8?B?ZUtiNThONXhkM0NXUEUyRmpzN2Q0d2RwN1pIcGdBM3FHK0JlVVUzT0hiUUlC?=
- =?utf-8?B?UkJRZWxrUEFxeExyVzlrRzBmRXNPS04wWHVNYkVIcTBocEg1NDFtZnpWSklr?=
- =?utf-8?B?OTBTLzVPT2todVp0OWtEc0ZmcEtlQzBheXFIYWE5Y1N0aVZoNVB4ZlBjRzN2?=
- =?utf-8?B?RmJpRzMwTURLNDBwSzlvS1NvT09hLzc4cEYvQzJpZVAybmNvTW5DSkw0bEZi?=
- =?utf-8?B?MjJ3M1E3ZUNVdUJDU3hWQy9iU2J6RnBIZm9DNUg3NUZyRUM0VkJYWnk0NStO?=
- =?utf-8?B?eW1HREdpbXpuako5allwNUlvOWFhMkVXOUlUcmZTTXdDRi9lWWNjNWlrVWo3?=
- =?utf-8?B?alJvakRIY0dSTXJvbnJuNWFYM3VZeVh6N1k3QS9zdU9mblJ5QVhseFhrTVpU?=
- =?utf-8?B?L2FWQWlVZ3RXdExiOG0zZUZBR1pUYktxczdOcHNpS01GUEZUQXR2a3RwT3Yz?=
- =?utf-8?B?TDhRRHhRem0wdzdiODVVYkQ4U3lzNnYxUC85QytjWkJjK1lMQkZhbjhnejFF?=
- =?utf-8?B?dTRoRlN5YUc0ODE0Q1FhaHVDeWRpMGJnZHc0bHVEZk9ENU1EMlZkZ1hzMUk2?=
- =?utf-8?Q?CVD3cy6hk5K8QpmVjUVQ+wMxw?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA05E1A38F0;
+	Thu, 29 Aug 2024 12:33:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1724934785; cv=none; b=Wq6fql1DZcKZ2/7/i/0/z/MuHmw0/H4yAW2o1tN0ShzQuP7v8S5tq0gKiGz21iKUhcM/RardOcAAAmSLVbSpv36AnKgZYVrQDNdcVfhXZOCvfKrTDifkE7nUAuORemB+n5w4JIJD3vtuXhmC8tnPPaFzaPdXHMAo6D8sN0FdynI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1724934785; c=relaxed/simple;
+	bh=xut1B75Copn1UQMc3oOTgZsdXNP6Xy8ddJQStmm+73U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=m+t54aTMpxUYU0NEdczaf5rpYdjev8z8lgNcBQoZZ/rnZfZL2i3GPRBsWHMAxvk00elNpfauKeLaW+d6+J4k2nTJyxlSxg8x+rYzcCwv00JMCa+S/lbejaA4a7FoqniC1v5+ykEpqjcgEam23KwtSk8YVaocAzb1SEY03I9nzFU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6c130ffa0adso6323567b3.3;
+        Thu, 29 Aug 2024 05:33:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724934782; x=1725539582;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fBoF3+XOHG34nWFsOj1vD6Tq0LtW/x7+eoI1HvREX4A=;
+        b=VBsmrcgycDa1uxzAsQZqwNRbI5fCKZEJvb6wFNabzi768gBGKdV+8ubYtWpb4NdZdJ
+         2qAXkVHsSNEvtGOx93Y2TBxHrslrNkXXRWaTog37Wn3ZFT75EUaX3bvIGBCy5Lmq6q4w
+         lYcQ1JHNS0kaNZouK3k2Rh3OcEsPA6eFWhffxMJjbnyfnmYUWjg9Ff2Xw6k16REW07bz
+         qWtp3c84BbcLRU1d8zuPp0PnCmkibJ6HQfgdy9AW9qJJAsGWOekiW+OKEv4g7UUF0b7x
+         lGj8MCice/cND/U0Sl2smJqrvywhIliuwDcXtgj3aNsgqnnaj/rB7slV4TN+jWlEYyeS
+         2X9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCURgnorinCplGHSN+FHQRIBgnQXLDYKUibmdgGJzSbUVOO5mCDewp5RqDDSFRJw+KdWzs0ivfNXqZrknljdykc=@vger.kernel.org, AJvYcCUZxa07shkFQ/aOZeeU8J6IgXA0nBDM4IMi9E+G6cqOPgnOMWZBb6uUV7ZjiAwUuDGMRX/J+Q30xBU=@vger.kernel.org, AJvYcCWHmcBClnhmoqMQyiMc+QsOW0A7Y3Jwm0BPSXYOBDO2da+PlC5Hl026rJpMxR4718evcfS4jBOy6kRl/MGkgAD3ors=@vger.kernel.org, AJvYcCWoqqVcKKv0Xv8SIlE9tnQHy/Kvl+KhNW18PAONBilHxsY41w4L795HeGUpCGJOCqHdNjWDfJBLthmvPsN0@vger.kernel.org, AJvYcCXiXPBoXPgOPH+tTgqD1PdVQIjpRzJ0s69eQTYPD00aOHJHxBNmXvLyIEOZVOoI+WeObU8qT/If7Nw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzStHEQXMwxTyPnOBrNgfCI4WNwU8wu/SXyYns8Iwo0BQOd/XuI
+	Z5nlNOiDty37SJWqo2/FNXeTXZ6oc0HunG7TPCehfz8SgdAbUdTHH23FZ/t2
+X-Google-Smtp-Source: AGHT+IGTG6xYFya3Nt+/gww/itAi9HETKsLFYYu4TFE47IKn3Vh9Y9BZ1reE+e8HjyLFDamv3UxAug==
+X-Received: by 2002:a05:690c:6903:b0:6b2:7c54:51d with SMTP id 00721157ae682-6d2769e1f05mr31492557b3.23.1724934782487;
+        Thu, 29 Aug 2024 05:33:02 -0700 (PDT)
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com. [209.85.128.169])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6d2d40a7427sm2246717b3.56.2024.08.29.05.33.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 29 Aug 2024 05:33:02 -0700 (PDT)
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6c3f1939d12so5664657b3.2;
+        Thu, 29 Aug 2024 05:33:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUV92UKyoPn+oOjdSX9nv72Yrx1eTxQZ06wX5ykVFJV0VwQTNjrM2Uux4VFEURwpCAiJZyoL2nOhnKE86xtz9RbQa4=@vger.kernel.org, AJvYcCVKIiK2YztirlsLFYGYkc5vPfaHeXOERDsTu04p+o7MkzO2qUw8nBjRRLLtVLVSCklq3sY8N4UqXtQ=@vger.kernel.org, AJvYcCVPsyJ9Od0ebkXbzS4gtSQRL/LMfc3G5bSMmLZWMsX4fRjuriVYsQriw6LoZMxw33uejn1PRPNBzCthEOTCtSs=@vger.kernel.org, AJvYcCVgDCVlOgrROZ1me8BTj0aRmzXNV9WOVLoS1yjtu2yVesbUwaEHmvCHT9QX9nyh/NlXExEdBp8qrwc=@vger.kernel.org, AJvYcCXL3KOa38KvSqREbcEyd4eGG+SkUw0/1shInMbo1gX/MXQ4dTZI3ZCkswN4BKtn+eF1hsBerpBt3NWzurQ3@vger.kernel.org
+X-Received: by 2002:a05:690c:338f:b0:6b1:3bf8:c161 with SMTP id
+ 00721157ae682-6d276404cd2mr31558997b3.13.1724934782077; Thu, 29 Aug 2024
+ 05:33:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: starfivetech.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: NTZPR01MB0956.CHNPR01.prod.partner.outlook.cn
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4d9c8f19-7d4f-47a6-e5bf-08dcc7ed679c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 29 Aug 2024 05:42:43.8648
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: dg0DhAlIc1EpvfvlD/3cXaRVDPujDvIHMs9KBpza06b9keGHxFmULqzesxUW2F2DU4aU+RgLyakd1zi3ZcIcJvQKNP909lwviWd5CoQ/7Ho=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: NTZPR01MB1067
+References: <20240828140602.1006438-1-claudiu.beznea.uj@bp.renesas.com> <20240828140602.1006438-2-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20240828140602.1006438-2-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 29 Aug 2024 14:32:49 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdX+Q99MvQRZcwGbk8F8SiAUzRU_t2QmRuO_6etAqqXskg@mail.gmail.com>
+Message-ID: <CAMuHMdX+Q99MvQRZcwGbk8F8SiAUzRU_t2QmRuO_6etAqqXskg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] clk: renesas: rzg2l-cpg: Use GENPD_FLAG_* flags
+ instead of local ones
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, wim@linux-watchdog.org, 
+	linux@roeck-us.net, ulf.hansson@linaro.org, linux-renesas-soc@vger.kernel.org, 
+	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, linux-pm@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-T24gMjkvMDgvMjAyNCAwNDoxOSwgU3RlcGhlbiBCb3lkIHdyb3RlOg0KPiANCj4gUXVvdGluZyBY
-aW5neXUgV3UgKDIwMjQtMDgtMjYgMDE6MDQ6MjkpDQo+ID4gQWRkIG5vdGlmaWVyIGZ1bmN0aW9u
-IGZvciBQTEwwIGNsb2NrLiBJbiB0aGUgZnVuY3Rpb24sIHRoZSBjcHVfcm9vdA0KPiA+IGNsb2Nr
-IHNob3VsZCBiZSBvcGVyYXRlZCBieSBzYXZpbmcgaXRzIGN1cnJlbnQgcGFyZW50IGFuZCBzZXR0
-aW5nIGENCj4gPiBuZXcgc2FmZSBwYXJlbnQgKG9zYyBjbG9jaykgYmVmb3JlIHNldHRpbmcgdGhl
-IFBMTDAgY2xvY2sgcmF0ZS4gQWZ0ZXINCj4gPiBzZXR0aW5nIFBMTDAgcmF0ZSwgaXQgc2hvdWxk
-IGJlIHN3aXRjaGVkIGJhY2sgdG8gdGhlIG9yaWdpbmFsIHBhcmVudCBjbG9jay4NCj4gPg0KPiA+
-IEZpeGVzOiBlMmM1MTBkNmQ2MzAgKCJyaXNjdjogZHRzOiBzdGFyZml2ZTogQWRkIGNwdSBzY2Fs
-aW5nIGZvciBKSDcxMTANCj4gPiBTb0MiKQ0KPiA+IFJldmlld2VkLWJ5OiBFbWlsIFJlbm5lciBC
-ZXJ0aGluZyA8ZW1pbC5yZW5uZXIuYmVydGhpbmdAY2Fub25pY2FsLmNvbT4NCj4gPiBTaWduZWQt
-b2ZmLWJ5OiBYaW5neXUgV3UgPHhpbmd5dS53dUBzdGFyZml2ZXRlY2guY29tPg0KPiA+IC0tLQ0K
-PiANCj4gV2hhdCBpcyB0aGUgdXJnZW5jeSBvZiB0aGlzIHBhdGNoPyBJIGNhbid0IHRlbGwgZnJv
-bSB0aGUgY29tbWl0IHRleHQsIHNvIEknbQ0KPiBhc3N1bWluZyBpdCBjYW4gYmFrZSBpbiBjbGst
-bmV4dCBmb3IgYSBmZXcgd2Vla3MuDQoNCkhpIFN0ZXBoZW4sDQoNClRoaXMgaXMgdXJnZW50LiBX
-aXRob3V0IHRoaXMgcGF0Y2gsIENwdWZyZXEgZG9lcyBub3Qgd29yayBhbmQgdGhlIENQVSBjYW4n
-dCB3b3JrIGluIHRoZSBiZXN0IGZyZXF1ZW5jeSBvZiAxLjVHSHouIFRoaXMgcGF0Y2ggY2FuIGlt
-cHJvdmUgdGhlIHBlcmZvcm1hbmNlIG9mIHRoZSB2aXNpb25maXZlLTIgYm9hcmQuDQoNCkJlc3Qg
-cmVnYXJkcywNClhpbmd5dSBXdQ0K
+Hi Claudiu,
+
+On Wed, Aug 28, 2024 at 4:06=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
+wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> For watchdog PM domain it is necessary to provide GENPD_FLAG_IRQ_SAFE fla=
+g
+> to be able to power on the watchdog PM domain from atomic context. For
+> this, adjust the current infrastructure to be able to provide GENPD_FLAG_=
+*
+> for individual PM domains.
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+
+Thanks for your patch!
+
+> --- a/drivers/clk/renesas/rzg2l-cpg.c
+> +++ b/drivers/clk/renesas/rzg2l-cpg.c
+> @@ -1680,11 +1680,13 @@ static int rzg2l_cpg_power_off(struct generic_pm_=
+domain *domain)
+>         return 0;
+>  }
+>
+> -static int __init rzg2l_cpg_pd_setup(struct rzg2l_cpg_pd *pd, bool alway=
+s_on)
+> +static int __init rzg2l_cpg_pd_setup(struct rzg2l_cpg_pd *pd, u32 genpd_=
+flags,
+> +                                    bool always_on)
+
+You don't need always_on, as that should already be reflected in
+genpd_flags.
+
+Also, you could do without passing genpd_flags, if the caller would have
+initialized pd->genpd.flags (it already initializes pd->genpd.name).
+
+>  {
+>         struct dev_power_governor *governor;
+>
+> -       pd->genpd.flags |=3D GENPD_FLAG_PM_CLK | GENPD_FLAG_ACTIVE_WAKEUP=
+;
+> +       pd->genpd.flags |=3D GENPD_FLAG_PM_CLK | GENPD_FLAG_ACTIVE_WAKEUP=
+ |
+> +                          genpd_flags;
+
+Change not needed if the caller would have initialized flags.
+
+>         pd->genpd.attach_dev =3D rzg2l_cpg_attach_dev;
+>         pd->genpd.detach_dev =3D rzg2l_cpg_detach_dev;
+>         if (always_on) {
+
+The next line is
+
+    pd->genpd.flags |=3D GENPD_FLAG_ALWAYS_ON;
+
+which should already be the case if always_on is true, so it can
+be removed.
+
+> @@ -1712,7 +1714,7 @@ static int __init rzg2l_cpg_add_clk_domain(struct r=
+zg2l_cpg_priv *priv)
+>
+>         pd->genpd.name =3D np->name;
+
+pd->genpd.flags =3D GENPD_FLAG_ALWAYS_ON;
+
+>         pd->priv =3D priv;
+> -       ret =3D rzg2l_cpg_pd_setup(pd, true);
+> +       ret =3D rzg2l_cpg_pd_setup(pd, 0, true);
+
+s/0/GENPD_FLAG_ALWAYS_ON/, FWIW ;-)
+
+>         if (ret)
+>                 return ret;
+>
+> @@ -1777,7 +1779,8 @@ static int __init rzg2l_cpg_add_pm_domains(struct r=
+zg2l_cpg_priv *priv)
+>                 return ret;
+>
+>         for (unsigned int i =3D 0; i < info->num_pm_domains; i++) {
+> -               bool always_on =3D !!(info->pm_domains[i].flags & RZG2L_P=
+D_F_ALWAYS_ON);
+> +               u32 genpd_flags =3D info->pm_domains[i].genpd_flags;
+> +               bool always_on =3D !!(genpd_flags & GENPD_FLAG_ALWAYS_ON)=
+;
+>                 struct rzg2l_cpg_pd *pd;
+>
+>                 pd =3D devm_kzalloc(dev, sizeof(*pd), GFP_KERNEL);
+> @@ -1789,7 +1792,7 @@ static int __init rzg2l_cpg_add_pm_domains(struct r=
+zg2l_cpg_priv *priv)
+
+You can add
+
+    pd->genpd.flags =3D info->pm_domains[i].genpd_flags;
+
+above.
+
+>                 pd->id =3D info->pm_domains[i].id;
+>                 pd->priv =3D priv;
+>
+> -               ret =3D rzg2l_cpg_pd_setup(pd, always_on);
+> +               ret =3D rzg2l_cpg_pd_setup(pd, genpd_flags, always_on);
+>                 if (ret)
+>                         return ret;
+
+What about moving the conditional call to rzg2l_cpg_power_on()
+below to rzg2l_cpg_pd_setup()? Then this function no longer needs
+the always_on flag.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
