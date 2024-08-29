@@ -1,140 +1,106 @@
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 432241B86E2;
-	Thu, 29 Aug 2024 12:45:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A758C446D1;
+	Thu, 29 Aug 2024 13:04:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724935516; cv=none; b=XjTwGwR9MqKDDrGu+QqTxiGwDuPRdcRQpXwwcwaSf8XQQIO97taKgisCfL1oz3R8ZH+MCK02EVaWKLwKR1JMG1uBO60ZCvi5iKYu5fez0lHJqC1RjPYdFI83DnkHDnox64FqjeUkBIrXcwRHVQTV8aDPw08wez0LupAZj/1EH5o=
+	t=1724936698; cv=none; b=dJSUo7KekPmAAAEY+FIfRKJSvjRlDFjd57/6JpydPzcSUOMKgIdZZTc0CmvAHqGmHFLwy1gKU+M0XSTVb++yAFvpqIGgJ8M+Foa7eBXeTMftu9om0q7wfpL2GNRBp78MxCtJrShlVfWhR5J8rejHNQrjF81fhKYHmvA98M4hN4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724935516; c=relaxed/simple;
-	bh=+LwzQuOMskdYCQNrSv2N8XSkkE9ud0IF6wQLEtd6zEI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S1z0z01CxJ68bbILITEWcZ3jnIdyjYzR7jxLdNunK+jEtXvr4eY2HzVWQfNRNjfkmsrHDBbP17tYech0vM6NWnJquWnhvBFpMRhGaCM4eiHwhTf24lzgbRZMfnEm08s7gtxWHsxnFQXar33wLT9oLyaD535Fjz2W5OZPZhLFMrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6b44dd520ceso6144917b3.0;
-        Thu, 29 Aug 2024 05:45:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724935513; x=1725540313;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FUjTeXLSWnZkbY07LBWpQrBCxuH3GeKukadOEJ6jzwk=;
-        b=vyjUe4OkIk2GTJnx906gfWHqvrtkq+Y+JGthwrsEfCYwE+VQRrqKCJ/0uLXG6/XCBf
-         xzkagx34jL9I04tPaqUMx9U78IartBee7MkSXAxBNX5C+3sGOln0wm96wscYvO0/9wi5
-         1cxLgDi3kFuxK8XRrlCbHHsvQb6am5ikCx6vIslcOCwGrjsUHZcA1CCjvUzHhyl+XNJ6
-         VMrCCig6qahkt5JBVhhhBM7IBwXqJKLPJN03v4GR8fp08+X8tAWLGspla0bzLJmioCl3
-         VkFqr9tSs0OlfboePn4LGNa9gCKrIxacfbFzrWlzUUFlBKypUWFJkjBfrfvsWRQ1P10k
-         bRsw==
-X-Forwarded-Encrypted: i=1; AJvYcCUQTWyLnmkwG1xfQr2txqJCpQuwA2icvp9M2xKbhUxtorBQPRthMvDAH/hw1znKNV5HTBcVpM1pGDPJUs6J@vger.kernel.org, AJvYcCUZ2gtzm26QBLvSDcsDXf2gIqwys/V6cSQXhmQ86ElyAXcVWs9nDo+SbOTDrnyfwROIrumrLkFdcZY=@vger.kernel.org, AJvYcCV3apZ6EPvMwliVH7CejwY0WPmLxLSNRUV/LWf7VXxNKX96p7BV2gGwo4+Cc6gBDhfsGzVpoKdC+eLhMy8bNh4=@vger.kernel.org, AJvYcCVyM8qbxkxyELp7bcDZ+p7ALF0r0DqQpAwg4vBHP3NcKz+crf6M2BAg/esOYKk2yZcslUPPicD0UYo=@vger.kernel.org, AJvYcCW2781C6aljG4CKgz2TGgNuKMmBcUcWGB1284y2qW3dvWTYEUKn5ZvCCyB1ML2wAHXV94Qygcgi85FwzXbWlTzlN2g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiWGeXmNIV0OzPdugm9ONtpF58PARNvjZdBjE1PMmpzK0nsseU
-	+QzZP0RbT86E0aj2wrsuyJfBG6SrPlBtfSXMIGmzZPBc4rCCjW2C2fOkmTgj
-X-Google-Smtp-Source: AGHT+IFAUogVjLo5+Zp77g4oRb2MIRnJj1pAtGZjSCI45VAEcUBNrrEcqVTZ6GHyebCbxY4AzWC+8g==
-X-Received: by 2002:a05:690c:d0f:b0:65f:cdc6:e25d with SMTP id 00721157ae682-6d277f514c7mr26523757b3.45.1724935512917;
-        Thu, 29 Aug 2024 05:45:12 -0700 (PDT)
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com. [209.85.219.175])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6d2d39c8c93sm2245847b3.28.2024.08.29.05.45.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 29 Aug 2024 05:45:12 -0700 (PDT)
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e115c8aa51fso673409276.1;
-        Thu, 29 Aug 2024 05:45:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU0/1Vfys8UijhdRthkzC3PLqnXF88YcngRpeVFyERj4+37oDbwS1HWiHbixh5laCVgQv0RcrduUfKEDdM1vkNRFVw=@vger.kernel.org, AJvYcCUEK2+MkUCenraSKZKsPxT6DSQMPHboY4pmjn66LOIOM0ziOfUJZFUuh9C/J9V7IihIur4He2JyArx5sPOK@vger.kernel.org, AJvYcCUHHbq1tfolJidAoW06SpTFQk2Bxp/UG+npzQsVN6xI4ckXlUEvHcMpzBWFpBrc/UgVipHHD0J7wOn0yQLpRZw=@vger.kernel.org, AJvYcCWTVqIVjj4x1jQunyb9Xomf5+cOupHfJ9J53ZhSTGWY+G6SwUrXdqEiBf2VfdhydcD1/2gV5TDyFZM=@vger.kernel.org, AJvYcCXniaAFKPeMtJBfoJtUuUBfRqgQOy8N+ahngXKyatGOgXKPOgsnWgtHa/L1LCPD0L5jr7TjmR9M4A0=@vger.kernel.org
-X-Received: by 2002:a05:6902:2b0f:b0:e11:6f62:2290 with SMTP id
- 3f1490d57ef6-e1a5ab89aafmr3001251276.24.1724935512448; Thu, 29 Aug 2024
- 05:45:12 -0700 (PDT)
+	s=arc-20240116; t=1724936698; c=relaxed/simple;
+	bh=UhDaGLB/mOLNG4B8tNonftJ2ypq5RcsXKjJ98PC4GPw=;
+	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TyZVit4C17xvSwI9AGppBYv7dh/TZhuY+1wEOEbIYACW76J54RIy1MLaEgDtHooRXGaJ7aGhGUJTvCQ+tuWaoS8RJtFUGwCUTGKYmXAx/K4AMaq8qDbMh8gNUsmPw01FwbYqTJ7V6JE+7LDuFjRtrGP1OrVHxM0AQ2v7V8B6DZ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=EWDG+Ss2; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="EWDG+Ss2"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:To:From:Date:From:Sender:Reply-To:Subject:Date:
+	Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=eXdqGdpHqqcHz+9A73eYJ6/htjXVJkDwZRRfnYO2WdA=; b=EWDG+Ss2a1WYH/bQYF4m4LmmQV
+	ZY+30gV6mB7Y2SDxBz5+yaU7dIgV026VnMituKYjYkKEVXw+KAtNS7lzWWvmmS+qPbLo+bTxtstlX
+	GTM3YQBnn4tZUnN6XsoKqGEdl9VMXl4Q7PZ6Bxe0wSNlfMII2DxQcJ2Am7/YM/xM/byw=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sjepJ-0062Kk-33; Thu, 29 Aug 2024 15:04:37 +0200
+Date: Thu, 29 Aug 2024 15:04:37 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Stefan Wahren <wahrenst@gmx.net>
+Subject: Re: [PATCH 00/11] Add support for RaspberryPi RP1 PCI device using a
+ DT overlay
+Message-ID: <e6e6c230-370f-4b04-8cb7-4158dd51efdc@lunn.ch>
+References: <cover.1724159867.git.andrea.porta@suse.com>
+ <14990d25-40a2-46c0-bf94-25800f379a30@kernel.org>
+ <Zsb_ZeczWd-gQ5po@apocalypse>
+ <45a41ed9-2e42-4fd5-a1d5-35de93ce0512@lunn.ch>
+ <ZtBjMpMGtA4WfDij@apocalypse>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240828140602.1006438-1-claudiu.beznea.uj@bp.renesas.com> <20240828140602.1006438-3-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20240828140602.1006438-3-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 29 Aug 2024 14:45:00 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUcstyRDfaQ0Y=1NHgBYuRWjC0vuJj2j8USCTsEE1qKVA@mail.gmail.com>
-Message-ID: <CAMuHMdUcstyRDfaQ0Y=1NHgBYuRWjC0vuJj2j8USCTsEE1qKVA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] clk: renesas: r9a08g045: Mark the watchdog and
- always-on PM domains as IRQ safe
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, wim@linux-watchdog.org, 
-	linux@roeck-us.net, ulf.hansson@linaro.org, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, linux-pm@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZtBjMpMGtA4WfDij@apocalypse>
 
-Hi Claudiu,
+> > > WARNING: externs should be avoided in .c files
+> > > #331: FILE: drivers/misc/rp1/rp1-pci.c:58:
+> > > +extern char __dtbo_rp1_pci_begin[];
+> > > 
+> > > True, but in this case we don't have a symbol that should be exported to other
+> > > translation units, it just needs to be referenced inside the driver and
+> > > consumed locally. Hence it would be better to place the extern in .c file.
+> >  
+> > Did you try making it static.
+> 
+> The dtso is compiled into an obj and linked with the driver which is in
+> a different transaltion unit. I'm not aware on other ways to include that
+> symbol without declaring it extern (the exception being some hackery 
+> trick that compile the dtso into a .c file to be included into the driver
+> main source file). 
+> Or probably I'm not seeing what you are proposing, could you please elaborate
+> on that?
 
-On Wed, Aug 28, 2024 at 4:06=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
-wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> If the watchdog is part of a dedicated power domain (as it may be on
-> RZ/G3S) the watchdog PM domain need to be powered on in the watchdog
-> restart handler. Currently, only the clocks are enabled in the watchdog
-> restart handler. To be able to also power on the PM domain we need to
-> call pm_runtime_resume_and_get() on the watchdog restart handler, mark
-> the watchdog device as IRQ safe and register the watchdog PM domain
-> with GENPD_FLAG_IRQ_SAFE.
->
-> Register watchdog PM domain as IRQ safe. Along with it the always-on
-> PM domain (parent of the watchdog domain) was marked as IRQ safe.
->
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> ---
->
-> Changes in v2:
-> - changed patch title; it was "clk: renesas: rzg2l-cpg: Mark
->   watchdog and always-on PM domains as IRQ safe"
+Sorry, i jumped to the wrong conclusion. Often it is missing static
+keyword which causes warnings. However, you say it needs to be global
+scope.
 
-Thanks for the update!
+Reading the warning again:
 
-> --- a/drivers/clk/renesas/r9a08g045-cpg.c
-> +++ b/drivers/clk/renesas/r9a08g045-cpg.c
-> @@ -259,7 +259,7 @@ static const struct rzg2l_cpg_pm_domain_init_data r9a=
-08g045_pm_domains[] =3D {
->         /* Keep always-on domain on the first position for proper domains=
- registration. */
->         DEF_PD("always-on",     R9A08G045_PD_ALWAYS_ON,
->                                 DEF_REG_CONF(0, 0),
-> -                               GENPD_FLAG_ALWAYS_ON),
-> +                               GENPD_FLAG_ALWAYS_ON | GENPD_FLAG_IRQ_SAF=
-E),
->         DEF_PD("gic",           R9A08G045_PD_GIC,
->                                 DEF_REG_CONF(CPG_BUS_ACPU_MSTOP, BIT(3)),
->                                 GENPD_FLAG_ALWAYS_ON),
-> @@ -270,7 +270,8 @@ static const struct rzg2l_cpg_pm_domain_init_data r9a=
-08g045_pm_domains[] =3D {
->                                 DEF_REG_CONF(CPG_BUS_REG1_MSTOP, GENMASK(=
-3, 0)),
->                                 GENPD_FLAG_ALWAYS_ON),
->         DEF_PD("wdt0",          R9A08G045_PD_WDT0,
-> -                               DEF_REG_CONF(CPG_BUS_REG0_MSTOP, BIT(0)),=
- 0),
-> +                               DEF_REG_CONF(CPG_BUS_REG0_MSTOP, BIT(0)),
-> +                               GENPD_FLAG_IRQ_SAFE),
->         DEF_PD("sdhi0",         R9A08G045_PD_SDHI0,
->                                 DEF_REG_CONF(CPG_BUS_PERI_COM_MSTOP, BIT(=
-0)), 0),
->         DEF_PD("sdhi1",         R9A08G045_PD_SDHI1,
+> > > WARNING: externs should be avoided in .c files
 
-Can't you just do this for all domains (e.g. in rzg2l_cpg_pd_setup()),
-instead of limiting this to the wdt0 and always-on domains?
+It is wanting you to put it in a .h file, which then gets
+included by the two users.
 
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+	Andrew
