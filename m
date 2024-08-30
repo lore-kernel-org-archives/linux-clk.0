@@ -1,169 +1,177 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 230A14683;
-	Fri, 30 Aug 2024 05:33:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B58EF4690;
+	Fri, 30 Aug 2024 06:16:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724996027; cv=none; b=Y5T2gPMf0bLUTgrhfZ7ztUPOgfBQGu/iwqMeC3x/VTRtSdPF64JsErHcH2BZTfezs7wQkhKUZdlPf1ITKlUKSTnqE9dV+4ERP76iODzlf2OtnzbyumrxSwWRVy/zxwxvgEdwvD5Ja/DuRYXlDSInJfQ8/Hm5hYMRKCQxPndiEQ0=
+	t=1724998604; cv=none; b=Q1qHVBHzZEaXhgxt70QyvoXFZa/lo1kfjncHhEkIbLWNSGFBmrMFGEqe9o+dYKXLwi8WMYZ+f+nxi9LwmOf0VaFj6G5GvH8jyGYk+kG9JDkUwfHO/M7Kaf1opnP5VKXVCAyct8g17g8gP3YOWBnVQ/QB6uQxfl25+lQI+I9sFVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724996027; c=relaxed/simple;
-	bh=uH/QXZ1ShnBfSigfOU0NfgWvT4LyHWjRNkfITdpUUrI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=I+dr68dtOZUJcl3s8GTLZenSxNV6qF41sd1PSEYXr1YaoXyUF5k8CEBvz5/HNhkInuTN4ZtByCjS9RsLNFdpmlrWvOE/0fmzadcYb/LPYSPgWMHk9/5/4N+2wQ82qijj6LEDdVFp1WA36HmJKrDYAfSDGk7qoHXaVs6YPn45LYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=WSFF4LfP; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1724998604; c=relaxed/simple;
+	bh=kwLU0Qllp0uF3RpaZ6YdoRsAKpBOlqE4OortN2zxMOg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=g1rTOU1nfzGkbB5Xd2i+LcztVTevU1OroY5xbgVAi4IbMNu52KQ2n5uGwEkAKkbiyU4YFkZgmOBlCfgeOx9dueZgiGocSKroUSfwvXpK9v3SZX0EDTVHy5bhr0d592F9WBensJ0Sv2fe4vQQJLVGYA+v0qSrR687wwrFiv6SOQk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AeOyT73k; arc=none smtp.client-ip=209.85.210.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="WSFF4LfP"
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47TLdCnw022454;
-	Fri, 30 Aug 2024 05:33:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	lqt0GTMJXrg68exn2tfw4JoLeT0jbP6921l/Km1KjPY=; b=WSFF4LfPQVxLVJ2M
-	Wl1QtHXLWcuRDZO/0QGt8i/rhr1honQqMALQJf+ygbCV5387CKDj/LmRIUombW55
-	cwdCJvAl/YkK3yG5RuMcr1Et0hYKx9b5hOSahYwB6etJykIMTP2ouoxV9EQnw6H0
-	doLW+8XeAF4+Kbm4obRuOD54MgqvYG6L2cocgs/p+SgqOa1nITobfcYbx6Q1UM7u
-	splOQisDdYRfl+43TFnzX+o27fZWDx8PHUk9ml4Z7ImE2tXr7DE67rhtkgX7zOMj
-	R/q6m3BV6ODVs245z3bzeI7iWHYzQw3StblE+sa3Q6IPnFWIb6IDg7kmrAAmMOMl
-	ZbxplQ==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419pv0qmqr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 30 Aug 2024 05:33:37 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47U5XaHA026117
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 30 Aug 2024 05:33:36 GMT
-Received: from [10.110.47.58] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 29 Aug
- 2024 22:33:31 -0700
-Message-ID: <a995743c-f208-4afc-95da-449fdc7fab2b@quicinc.com>
-Date: Fri, 30 Aug 2024 11:03:28 +0530
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AeOyT73k"
+Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-70b3b62025dso988608a34.0;
+        Thu, 29 Aug 2024 23:16:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1724998601; x=1725603401; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yFCh/eP/aoZWHU1KKEtdLzMx+5SadMmNDlFlgmEdxY4=;
+        b=AeOyT73kR5UZVmfri3/pwikXoSoTic6SITF8BInt9JBpERsfTcN/v2TsMdoVMd3nto
+         8fSzxBhLkRzkuBYcA7J+50cD143P6wE8ThezJrYlz0pBm59GM6QcZOYSgsKj7hABf7N7
+         h85Jcs3C512xhEBv8xb9lk6dns1oLrD0m3QjctBgD6Fv0zbsva4r2AvqrFsScApKAhnj
+         DJ0vO9sHVCzfMopMsXFyyF/M+xBH6Uhw5PVw5kik9WQESc7DDazXoUxbIf0eLsk5POR4
+         hGiE1iBTAPGD7ZsNKJpqmjwzfveM6RaV0LUqCEbQfpOf67UF7vNr2S5H2s3+DNRBrHbP
+         wmrQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1724998601; x=1725603401;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yFCh/eP/aoZWHU1KKEtdLzMx+5SadMmNDlFlgmEdxY4=;
+        b=XQnaYJWMg+Oi/5VWa+mYpcAtoH4Th6qL66qxdi6JDbCjgveoSXL2FbsVrJnVCt1I9n
+         LaXfsmntF2idKphFnr/rxfZ1371HilGtkepnIzb0vVgqdyMRalPDzUoBjy/mLgC+SogS
+         04kefizZnK7bsBzse1DnrbVgDmRV7kImGLm4i+uAbS5LE5JGzmizai7eBjPotL42xmfy
+         T0yihRiwdONE0GRV164Erq58IS84SnAOFkvNzzooDOlthD8PZ2QsYN9lkstwwpKtNsEg
+         24tR4uTnrhA4+NPzESxbvYAS3vHAxrtWcKuhgzPnaxdaQyOPCoSMnbGofTv4XkeSRvp/
+         hUcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXXJRa/Ln+v0F/6NXtF0Am7LTcK1F19vEJE8gL9mdyXBGg+jmWPmLZpXU1J8jWunk1swOvISv1vVsWYZrI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9krjP/5GX/uBGVe6NocFLesQ/wFC/YkVYKf0DdcevV6pwUcmj
+	eFvwX6iU1uhnvpStBXCFtd1uG6sQFOGYG9QqTOIR9Ry7FeG4Ix37zGbLtOzw
+X-Google-Smtp-Source: AGHT+IFgKBpHg+xSJgTxxKhUWmz77q6DAIGQhGHthR81ua2RC6ZBy6ko+TUP7YVAxE+We6YS8paT4Q==
+X-Received: by 2002:a05:6358:9044:b0:1b1:a8b7:2d03 with SMTP id e5c5f4694b2df-1b603c3f977mr667916855d.13.1724998600746;
+        Thu, 29 Aug 2024 23:16:40 -0700 (PDT)
+Received: from m91p.airy.home ([172.92.174.232])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d22e742c74sm2237014a12.4.2024.08.29.23.16.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 29 Aug 2024 23:16:40 -0700 (PDT)
+From: Bo Gan <ganboing@gmail.com>
+To: linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	sboyd@kernel.org
+Cc: samuel.holland@sifive.com,
+	emil.renner.berthing@canonical.com,
+	mturquette@baylibre.com,
+	paul.walmsley@sifive.com
+Subject: [PATCH v2] clk: analogbits: Fix incorrect calculation of vco rate delta
+Date: Thu, 29 Aug 2024 23:16:39 -0700
+Message-Id: <20240830061639.2316-1-ganboing@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: qcom: clk-alpha-pll: Replace divide operator with
- comparison
-To: Jon Hunter <jonathanh@nvidia.com>,
-        Vladimir Zapolskiy
-	<vladimir.zapolskiy@linaro.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Ajit Pandey <quic_ajipan@quicinc.com>,
-        "Imran
- Shaik" <quic_imrashai@quicinc.com>,
-        Taniya Das <quic_tdas@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        kernel test robot <lkp@intel.com>,
-        Dan Carpenter <dan.carpenter@linaro.org>,
-        "linux-tegra@vger.kernel.org"
-	<linux-tegra@vger.kernel.org>
-References: <20240813094035.974317-1-quic_skakitap@quicinc.com>
- <4d314b61-7483-4ceb-ac72-10dbd7e4522a@linaro.org>
- <7733a4ca-330b-4127-af12-33f376fbbc47@nvidia.com>
-Content-Language: en-US
-From: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
-In-Reply-To: <7733a4ca-330b-4127-af12-33f376fbbc47@nvidia.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ZRfG_hWHbEHAKf0pXJUfT4ADTnjskJ71
-X-Proofpoint-ORIG-GUID: ZRfG_hWHbEHAKf0pXJUfT4ADTnjskJ71
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
- definitions=2024-08-30_02,2024-08-29_02,2024-05-17_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- mlxlogscore=999 bulkscore=0 impostorscore=0 phishscore=0 clxscore=1011
- mlxscore=0 spamscore=0 suspectscore=0 malwarescore=0 adultscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2407110000 definitions=main-2408300039
 
-Hi Jon,
+In function `wrpll_configure_for_rate`, we try to determine the best PLL
+configuration for a target rate. However, in the loop where we try values
+of R, we should compare the derived `vco` with `target_vco_rate`. However,
+we were in fact comparing it with `target_rate`, which is actually after
+Q shift. This is incorrect, and sometimes can result in suboptimal clock
+rates. This patch fixes it.
 
+Fixes: 7b9487a9a5c4 ("clk: analogbits: add Wide-Range PLL library")
+Signed-off-by: Bo Gan <ganboing@gmail.com>
+---
+v1 -> v2: Add Fixes tag
 
-On 8/28/2024 7:17 PM, Jon Hunter wrote:
-> Hi Satya, Vladimir,
->
-> On 13/08/2024 21:01, Vladimir Zapolskiy wrote:
->> On 8/13/24 12:40, Satya Priya Kakitapalli wrote:
->>> In zonda_pll_adjust_l_val() replace the divide operator with comparison
->>> operator since comparisons are faster than divisions.
->>>
->>> Fixes: f4973130d255 ("clk: qcom: clk-alpha-pll: Update set_rate for 
->>> Zonda PLL")
->>
->> Apparently the change is not a fix, therefore I believe the Fixes tag
->> shall be removed.
->
->
-> From the commit message it is not clear that this is a fix, but I
-> believe that it is. With the current -next I am seeing the following
-> build error (with GCC 7.3.1) on ARM ...
->
-> drivers/clk/qcom/clk-alpha-pll.o: In function `clk_zonda_pll_set_rate':
-> clk-alpha-pll.c:(.text+0x45dc): undefined reference to `__aeabi_uldivmod'
->
->>> Reported-by: kernel test robot <lkp@intel.com>
->>> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
->>> Closes: https://lore.kernel.org/r/202408110724.8pqbpDiD-lkp@intel.com/
->
-> There is also the above smatch warning that was reported.
->
->>> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
->>> ---
->>>   drivers/clk/qcom/clk-alpha-pll.c | 2 +-
->>>   1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/clk/qcom/clk-alpha-pll.c 
->>> b/drivers/clk/qcom/clk-alpha-pll.c
->>> index 2f620ccb41cb..fd8a82bb3690 100644
->>> --- a/drivers/clk/qcom/clk-alpha-pll.c
->>> +++ b/drivers/clk/qcom/clk-alpha-pll.c
->>> @@ -2126,7 +2126,7 @@ static void zonda_pll_adjust_l_val(unsigned 
->>> long rate, unsigned long prate, u32
->>>       remainder = do_div(quotient, prate);
->>>       *l = quotient;
->>
->> Since it's not a fix, but a simplification, you may wish to remove
->> an unnecessary 'quotient' local variable:
->>
->> remainder = do_div(rate, prate);
->>
->>> -    if ((remainder * 2) / prate)
->>> +    if ((remainder * 2) >= prate)
->>>           *l = *l + 1;
->>
->> *l = rate + (u32)(remainder * 2 >= prate);
->
->
-> The above change does fix this build error for me.
->
-> Satya, did you intend this to be a fix? Can we get this into -next?
->
+ drivers/clk/analogbits/wrpll-cln28hpc.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Yes, I have posted a v2 for this last week, but there are few open 
-comments on that, I'll address them and post V3 including the build 
-error you reported in commit-text.
-
-
-[v2] 
-https://lore.kernel.org/linux-clk/20240814102005.33493-1-quic_skakitap@quicinc.com/
-
-
-Thanks,
-
-Satya Priya
+diff --git a/drivers/clk/analogbits/wrpll-cln28hpc.c b/drivers/clk/analogbits/wrpll-cln28hpc.c
+index 65d422a588e1..9d178afc73bd 100644
+--- a/drivers/clk/analogbits/wrpll-cln28hpc.c
++++ b/drivers/clk/analogbits/wrpll-cln28hpc.c
+@@ -255,81 +255,81 @@ int wrpll_configure_for_rate(struct wrpll_cfg *c, u32 target_rate,
+ 	}
+ 
+ 	c->flags &= ~WRPLL_FLAGS_BYPASS_MASK;
+ 
+ 	/* Calculate the Q shift and target VCO rate */
+ 	divq = __wrpll_calc_divq(target_rate, &target_vco_rate);
+ 	if (!divq)
+ 		return -1;
+ 	c->divq = divq;
+ 
+ 	/* Precalculate the pre-Q divider target ratio */
+ 	ratio = div64_u64((target_vco_rate << ROUND_SHIFT), parent_rate);
+ 
+ 	fbdiv = __wrpll_calc_fbdiv(c);
+ 	best_r = 0;
+ 	best_f = 0;
+ 	best_delta = MAX_VCO_FREQ;
+ 
+ 	/*
+ 	 * Consider all values for R which land within
+ 	 * [MIN_POST_DIVR_FREQ, MAX_POST_DIVR_FREQ]; prefer smaller R
+ 	 */
+ 	for (r = c->init_r; r <= c->max_r; ++r) {
+ 		f_pre_div = ratio * r;
+ 		f = (f_pre_div + (1 << ROUND_SHIFT)) >> ROUND_SHIFT;
+ 		f >>= (fbdiv - 1);
+ 
+ 		post_divr_freq = div_u64(parent_rate, r);
+ 		vco_pre = fbdiv * post_divr_freq;
+ 		vco = vco_pre * f;
+ 
+ 		/* Ensure rounding didn't take us out of range */
+ 		if (vco > target_vco_rate) {
+ 			--f;
+ 			vco = vco_pre * f;
+ 		} else if (vco < MIN_VCO_FREQ) {
+ 			++f;
+ 			vco = vco_pre * f;
+ 		}
+ 
+-		delta = abs(target_rate - vco);
++		delta = abs(target_vco_rate - vco);
+ 		if (delta < best_delta) {
+ 			best_delta = delta;
+ 			best_r = r;
+ 			best_f = f;
+ 		}
+ 	}
+ 
+ 	c->divr = best_r - 1;
+ 	c->divf = best_f - 1;
+ 
+ 	post_divr_freq = div_u64(parent_rate, best_r);
+ 
+ 	/* Pick the best PLL jitter filter */
+ 	range = __wrpll_calc_filter_range(post_divr_freq);
+ 	if (range < 0)
+ 		return range;
+ 	c->range = range;
+ 
+ 	return 0;
+ }
+ EXPORT_SYMBOL_GPL(wrpll_configure_for_rate);
+ 
+ /**
+  * wrpll_calc_output_rate() - calculate the PLL's target output rate
+  * @c: ptr to a struct wrpll_cfg record to read from
+  * @parent_rate: PLL refclk rate
+  *
+  * Given a pointer to the PLL's current input configuration @c and the
+  * PLL's input reference clock rate @parent_rate (before the R
+  * pre-divider), calculate the PLL's output clock rate (after the Q
+  * post-divider).
+  *
+  * Context: Any context.  Caller must protect the memory pointed to by @c
+  *          from simultaneous modification.
+  *
+  * Return: the PLL's output clock rate, in Hz.  The return value from
+  *         this function is intended to be convenient to pass directly
+  *         to the Linux clock framework; thus there is no explicit
+  *         error return value.
+  */
+-- 
+2.34.1
 
