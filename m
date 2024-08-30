@@ -1,154 +1,146 @@
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89EE61B1D64;
-	Fri, 30 Aug 2024 14:27:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C0A718FDA7
+	for <linux-clk@vger.kernel.org>; Fri, 30 Aug 2024 14:36:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725028025; cv=none; b=HQLfwnatq0OVwUQfTwews1VYBkJB9yJC3BawVR/jt6iRz1EqvfqqRRaqmD4qKNoOyDYR83jEXhFPoLTGx85pIy4vSclgVRQvYn7NEHOoOh2eSD7Rd/Jlk0jM3U96jPGjJ2d3ycuSym1IKUVd10obsaLF5p9+IsjgB+aHStwC47Q=
+	t=1725028586; cv=none; b=tAhbys9LwIzod1/Xdwu5H9USiV34tZbSZJKn9+/4kO7Uujx16YPUcckUNp0s/WbIPKrNci8+5UyC6WduV48YtcUda6YO13rqmeY0Y+3Dh4RxRbPTpPPECPqpE08nc2FYqbc/xQ4fH1uwALBxZC5NQxkBPQH/sQNVfEGq3QkpnQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725028025; c=relaxed/simple;
-	bh=riMSjBHT8MGmCirH6CadZd30drb78DFiCkhA3dOL1dw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CPWgmSYlANQCdnP50O6ncbE0t8IWpfRq+GjbUGoSCVCxqMxXGgdN9iYFZI4++zi9fHNNJpoluyl8DILbFaj9DBlQQGO6biQ8wpbUy0VhL3w0zoYxpEt+t8wJayTsmV6115Hk+IHKBvcdJ5q+RQjacP3Ko6oFuLppuhuFKHhD7J0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6b0c5b1adfaso17105777b3.0;
-        Fri, 30 Aug 2024 07:27:03 -0700 (PDT)
+	s=arc-20240116; t=1725028586; c=relaxed/simple;
+	bh=GFCUEkDPIjOI5rNwaSxQkAP+95sbEoW4PhLzke3aM6Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MJGT19R38j5N8OlmvJw7WGdAOSbHN2s/oahFma5clBf0Z2EgdpzzgAIpGBQtHMZGxAdfLGMgBLvZNloy5VZbqS5ajFSyVmo9vbDm9kmOFOm/nN8MWophvU8112bJB4uL/MiOoEdQ+LZn47iM9TyqqmRMkY5TTbTUnKBQIkYp7fY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=fcZh2k15; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="fcZh2k15"
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-371bb8322b2so1125459f8f.0
+        for <linux-clk@vger.kernel.org>; Fri, 30 Aug 2024 07:36:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1725028580; x=1725633380; darn=vger.kernel.org;
+        h=mime-version:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=UuSosbrnBUtyi4cgpddHW8blUXO18CxsgMRD2yInBj8=;
+        b=fcZh2k15RXLRbE8Mnec/XL/x16rUSrv0NKLO27x+QFPkAMqKuMG6zLsU5bUbYOvY89
+         NlIynt4OEwImLrCl2UZryot3+gbNkVo8piTyQI50a7INsySNkl9JB9YwtPbwQh4dqb2I
+         zpAZxPns1ZzJL+d3lFlvMSgo3JlVuRegrJM6lZ2ki49qx8b9ZRQi0Eh/GTAuK+eT3uV5
+         lRz2XmNrPY24fgjDV8FToju80Kq07Pku0gC8s0QXrX4lAkWwVX+tvAR9ysfsJsKmXQMG
+         zIEDaPaO4tekan4TcFEzAx+8MHGKuPYhDUZSXogF+AcHENxTku7nTxa0ZoQB+SWGj2Pj
+         su9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725028022; x=1725632822;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8yv7/8Lb7z0G9egQFnpRuXTa0llIYLHBeWyN9REUk68=;
-        b=VATzhQg2/tgkGQMqFtP3U+CwsI6K4ygTwQZckgHbRaNcRMEts7tjq8ZvOEI5Jlj2Lw
-         bRVgpJa2nZNrtDLryZMQnlwmJU/V/4/1kwNBm6CuucJr7z2iX8w9q5txYVPbHBGsOyDn
-         h9M2MQNJmUak4RAoo7gDhMAB7bdWsHxErGwXvP+aMY0KFCRi5w0Zq2OettIhuJZNlmV5
-         3rzFc4GutRdfOc73RXWN7fecMOfwVIPnyjLdFmNlrG1/YNO1MCUWaAPIQnNN0ok8qhPO
-         XdScw3s5OPToTOpKP+ogsvOIZ1dPHv6Hx7ZNTOTBWtG4FU39W+rgqQfgBkdcdQhb0jDF
-         Zy/A==
-X-Forwarded-Encrypted: i=1; AJvYcCUpBIz0hQNJaV4c5kRQFQrbmasAPz2crdzpzsot2uJDf8rC9sstFo4Giad2fykVN/6L0fl4G+rF1Co=@vger.kernel.org, AJvYcCVG+QgIF+q+z8ItjeqFZIV1FYpeqgj2MGgt9zJAj4aZiuRnKrq4UMB4VpXpltL8AqjUIzu3r/7jz/D8Oh0L@vger.kernel.org, AJvYcCVRTnoeyGTqPOBFUSuluSE1XxwQsLEiqyNSMqUcya8CCP1q7RqhcNy7TKAVgsno0WtFq8T3sovGfkAFEvF30+syh9k=@vger.kernel.org, AJvYcCWMlJedAMW0r3VM20Gex8RAh4R8h1H+AqOkflu8HcgjnKvJtgLA6rqPEQOjdjP6sIeSWey6zYV049pajRwb0qE=@vger.kernel.org, AJvYcCXb9cRZx50EZ22Md6BThqCZMDI8w9qcef38TWC3N7aIA9b/A04f8o5BeoCmxWN208SBcuEykaKbXYQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYVxXpEWIzq/efh08mGAb6WPa2vXFutLGL5VGD8SeGQWWCuE0R
-	O0Kl4MVS69t5Dl9xHt9yhCA5+/UGa7msoG7+HSt086NrSIgZVP4k8hxQxHiX
-X-Google-Smtp-Source: AGHT+IHsbWGEXzXDozk9Hyho8HC2Yqw2+uD41s2oiVJD8CsaHEhwXSTyvx2ujEj7a6xubqLMReYQCg==
-X-Received: by 2002:a05:690c:530c:b0:6b0:d571:353d with SMTP id 00721157ae682-6d411291332mr17172797b3.40.1725028021783;
-        Fri, 30 Aug 2024 07:27:01 -0700 (PDT)
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com. [209.85.128.181])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6d2d6198599sm6323027b3.141.2024.08.30.07.27.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 30 Aug 2024 07:27:01 -0700 (PDT)
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6d3f017f80eso7488067b3.1;
-        Fri, 30 Aug 2024 07:27:00 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUhEnyil/E7PnfLFFPdSD15ThIrxQVnSvJJ1MsSXvKF9ZTHGzu5fff1BSDhijBh5aD6hk9NCAxDdvo7l/d1@vger.kernel.org, AJvYcCUpERQKYWmkkNWwTrq8Im8u+7BPc7r9bDZKrQeKibXO0mS413Vc3HeidCIjczoKSWP6hcmZrK4cOgA47RoPg5ATDfs=@vger.kernel.org, AJvYcCW+5Kh3c2MtVXPaOYZ6sub1AVQ556hslpNz3BQeU86DCHTWoKO/bH6MBFsBU66jTJ9puaFiog4pXwkR7oZBoa4=@vger.kernel.org, AJvYcCWoo2dzPwQ5PowfNMX5BHHkLtPS279Sue8f06JhntunxFBDEcK3xLiUI0LfOH5X5goFCSbzp49EeA8=@vger.kernel.org, AJvYcCWqbJQU9v7MIAHkM9qiJ5EFcHk996h3LtcazQ1w4XOEilI+rEFQ9Iu/mP/kf7rDUjJEWrzYeBzEJTM=@vger.kernel.org
-X-Received: by 2002:a05:690c:2911:b0:6d4:d6de:3e0f with SMTP id
- 00721157ae682-6d4d6de421emr4517577b3.31.1725028019818; Fri, 30 Aug 2024
- 07:26:59 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1725028580; x=1725633380;
+        h=mime-version:message-id:date:subject:cc:to:from:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UuSosbrnBUtyi4cgpddHW8blUXO18CxsgMRD2yInBj8=;
+        b=hOQO773BLpuwc0/5SXhknJy7ZITwcK6sfo/OCJQ5yoaEGZ4NCzyhtie57I5auPyFBH
+         bTDn/giO/BTNyh/bTtq2NrxvTkXcDgzYBfNRkuxsIEGYqnRHuv5TFgSKXeuObCqY+Tq6
+         klR39FKBGTicbuI238f2Im+LK/o5kBMv+za6lDGxqOPxrc9pmZdf7fUDIBf70KE7KUg4
+         p4n/9CWDWAAJv1LXs7Pgs5KR1cBaV9R9Fv7ohEYJcg//1KAV6mZ3Mqy+UbbEoDkx1AtZ
+         ISxN59EIqidro5fYzyP2jbDqfYYh+6BH1sxkybOA3r1xR+/Ho07qO2ZKl3ahQ337aB8u
+         X4Yw==
+X-Gm-Message-State: AOJu0YwcSmQjQbsiaUYTQYYZrVbYWILm6MRdWEZ5dJIfdS6zpyPKR1NA
+	vo59ioGTEPHCax0szCB5DNWDaXjC2b/FWJz2T5uBF6lNa9HXe3U3wh1wZUxv02I=
+X-Google-Smtp-Source: AGHT+IGOY3gmUUaHWjnzPpOy6rYtfWsTIjelTWHpNqSgaEg8pikha9CveNRGLuxLyj8JxoMGmo1L+g==
+X-Received: by 2002:a5d:5d86:0:b0:374:adf1:9232 with SMTP id ffacd0b85a97d-374adf1936dmr1170510f8f.19.1725028579627;
+        Fri, 30 Aug 2024 07:36:19 -0700 (PDT)
+Received: from localhost ([2a01:e0a:3c5:5fb1:bd15:900f:f8f5:46f5])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749efafb30sm4177445f8f.94.2024.08.30.07.36.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 30 Aug 2024 07:36:19 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+To: Stephen Boyd <sboyd@kernel.org>
+Cc: "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "linux-amlogic@lists.infradead.org" <linux-amlogic@lists.infradead.org>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman
+ <khilman@baylibre.com>
+Subject: [GIT PULL] clk: meson: amlogic clock updates for v6.12 
+Date: Fri, 30 Aug 2024 16:36:18 +0200
+Message-ID: <1jjzfyrsbh.fsf@starbuckisacylon.baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240828140602.1006438-1-claudiu.beznea.uj@bp.renesas.com>
- <20240828140602.1006438-2-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdX+Q99MvQRZcwGbk8F8SiAUzRU_t2QmRuO_6etAqqXskg@mail.gmail.com>
- <8b6fc67d-5e07-4403-ac07-6ad0b9d61882@tuxon.dev> <CAMuHMdUqVcojRoPAEuZ8a9Y-iHm4b185StD73FpQoRFsEiZ8oQ@mail.gmail.com>
- <194e87f4-7eab-4bfb-833a-27fabd2d5205@tuxon.dev>
-In-Reply-To: <194e87f4-7eab-4bfb-833a-27fabd2d5205@tuxon.dev>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 30 Aug 2024 16:26:47 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWKVfUn5Xy+vxT3puNT+AKLZtm7o=QBysWxfjk434yUJA@mail.gmail.com>
-Message-ID: <CAMuHMdWKVfUn5Xy+vxT3puNT+AKLZtm7o=QBysWxfjk434yUJA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] clk: renesas: rzg2l-cpg: Use GENPD_FLAG_* flags
- instead of local ones
-To: claudiu beznea <claudiu.beznea@tuxon.dev>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, wim@linux-watchdog.org, 
-	linux@roeck-us.net, ulf.hansson@linaro.org, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, linux-pm@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-Hi Claudiu,
 
-On Fri, Aug 30, 2024 at 4:07=E2=80=AFPM claudiu beznea <claudiu.beznea@tuxo=
-n.dev> wrote:
-> On 30.08.2024 11:06, Geert Uytterhoeven wrote:
-> > On Fri, Aug 30, 2024 at 9:46=E2=80=AFAM claudiu beznea <claudiu.beznea@=
-tuxon.dev> wrote:
-> >> On 29.08.2024 15:32, Geert Uytterhoeven wrote:
-> >>> On Wed, Aug 28, 2024 at 4:06=E2=80=AFPM Claudiu <claudiu.beznea@tuxon=
-.dev> wrote:
-> >>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >>>>
-> >>>> For watchdog PM domain it is necessary to provide GENPD_FLAG_IRQ_SAF=
-E flag
-> >>>> to be able to power on the watchdog PM domain from atomic context. F=
-or
-> >>>> this, adjust the current infrastructure to be able to provide GENPD_=
-FLAG_*
-> >>>> for individual PM domains.
-> >>>>
-> >>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> >
-> >>>> --- a/drivers/clk/renesas/rzg2l-cpg.c
-> >>>> +++ b/drivers/clk/renesas/rzg2l-cpg.c
-> >
-> >>>
-> >>>>                 pd->id =3D info->pm_domains[i].id;
-> >>>>                 pd->priv =3D priv;
-> >>>>
-> >>>> -               ret =3D rzg2l_cpg_pd_setup(pd, always_on);
-> >>>> +               ret =3D rzg2l_cpg_pd_setup(pd, genpd_flags, always_o=
-n);
-> >>>>                 if (ret)
-> >>>>                         return ret;
-> >>>
-> >>> What about moving the conditional call to rzg2l_cpg_power_on()
-> >>> below to rzg2l_cpg_pd_setup()? Then this function no longer needs
-> >>> the always_on flag.
-> >>
-> >> That could be done but I think it will involve an extra power on/power=
- off
-> >> cycle for the unused domains.
-> >
-> > Still only to be done for the always-on domain, of course.
-> > Anyway, up to you.
->
-> I checked your proposal. If unconditional power on is going to be done fo=
-r
-> all the registered domains it may happen to register domains for which
-> there are no enabled nodes in device tree and thus the domains to remain =
-on
-> (because the driver enables it under the hood and the genpd core doesn't
-> know about it).
->
-> With unconditional power on and the current DTSes the following domains
-> remain on after booting with r9a08g045s33-smarc.dtb:
-> - sdhi2
-> - i2c2
-> - i2c3
->
-> as the domains are registered and powered (while registered) but the node=
-s
-> are not enabled in DT.
+Hi Stephen,
 
-To make it clear: I did not suggest doing an unconditional power-on.
-I merely suggested moving the conditional power-on from
-rzg2l_cpg_add_pm_domains() to rzg2l_cpg_pd_setup().
+Here is the Amlogic clock update for v6.12.
+Nothing out of the ordinary: adding some clocks and bit of clean-up.
+The only notable change might be the use symbol namespace for exported
+symbols specific to Amlogic clocks. Those won't pollute the global
+namespace anymore and will not be accessible to other modules that have
+reason to use them.
 
-Gr{oetje,eeting}s,
+Please pull.
+Cheers
 
-                        Geert
+Jerome
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
+
+are available in the Git repository at:
+
+  https://github.com/BayLibre/clk-meson.git tags/clk-meson-v6.12-1
+
+for you to fetch changes up to adac147c6a32e2919cb04555387e12e738991a19:
+
+  clk: meson: introduce symbol namespace for amlogic clocks (2024-07-29 16:47:33 +0200)
+
+----------------------------------------------------------------
+Amlogic clock changes for v6.12
+
+* Constify some structs clean-up
+* Add SM1 eARC clocks
+* Introduce a symbol namespace for Amlogic clock specific symbols
+
+----------------------------------------------------------------
+Javier Carrasco (6):
+      clk: meson: a1: peripherals: Constify struct regmap_config
+      clk: meson: a1: pll: Constify struct regmap_config
+      clk: meson: c3: peripherals: Constify struct regmap_config
+      clk: meson: c3: pll: Constify struct regmap_config
+      clk: meson: s4: peripherals: Constify struct regmap_config
+      clk: meson: s4: pll: Constify struct regmap_config
+
+Jerome Brunet (6):
+      Merge tag 'v6.11-rc1' into clk-meson-next
+      dt-bindings: clock: axg-audio: add earcrx clock ids
+      Merge branch 'v6.12/bindings' into clk-meson-next
+      clk: meson: axg-audio: setup regmap max_register based on the SoC
+      clk: meson: axg-audio: add sm1 earcrx clocks
+      clk: meson: introduce symbol namespace for amlogic clocks
+
+ drivers/clk/meson/a1-peripherals.c         |  3 ++-
+ drivers/clk/meson/a1-pll.c                 |  3 ++-
+ drivers/clk/meson/axg-aoclk.c              |  1 +
+ drivers/clk/meson/axg-audio.c              | 39 ++++++++++++++++++++++++++++--
+ drivers/clk/meson/axg-audio.h              |  2 ++
+ drivers/clk/meson/axg.c                    |  1 +
+ drivers/clk/meson/c3-peripherals.c         |  3 ++-
+ drivers/clk/meson/c3-pll.c                 |  3 ++-
+ drivers/clk/meson/clk-cpu-dyndiv.c         |  3 ++-
+ drivers/clk/meson/clk-dualdiv.c            |  5 ++--
+ drivers/clk/meson/clk-mpll.c               |  5 ++--
+ drivers/clk/meson/clk-phase.c              |  8 +++---
+ drivers/clk/meson/clk-pll.c                |  7 +++---
+ drivers/clk/meson/clk-regmap.c             | 13 +++++-----
+ drivers/clk/meson/g12a-aoclk.c             |  1 +
+ drivers/clk/meson/g12a.c                   |  1 +
+ drivers/clk/meson/gxbb-aoclk.c             |  1 +
+ drivers/clk/meson/gxbb.c                   |  1 +
+ drivers/clk/meson/meson-aoclk.c            |  3 ++-
+ drivers/clk/meson/meson-clkc-utils.c       |  3 ++-
+ drivers/clk/meson/meson-eeclk.c            |  3 ++-
+ drivers/clk/meson/s4-peripherals.c         |  3 ++-
+ drivers/clk/meson/s4-pll.c                 |  3 ++-
+ drivers/clk/meson/sclk-div.c               |  3 ++-
+ drivers/clk/meson/vclk.c                   |  5 ++--
+ drivers/clk/meson/vid-pll-div.c            |  3 ++-
+ include/dt-bindings/clock/axg-audio-clkc.h |  7 ++++++
+ 27 files changed, 100 insertions(+), 33 deletions(-)
