@@ -1,369 +1,148 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48F8E14A624;
-	Fri, 30 Aug 2024 05:26:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 328484683;
+	Fri, 30 Aug 2024 05:33:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724995571; cv=none; b=FQd60FXYcewqvB+BrimklfRq8F6I8+FZPJ8rm4W3NQ/SOIT+gYEr5UVSEDd+/DooO1/kV7M7xqbaazbCWCSLiSN8n9DuRHPVI0cyXfR86kmv5+CYBkODRRqj4gdtKq7Y9i5uKEv6BdLTs/XvGUp8lf+WLbJbRiVmIes/xEVpqjk=
+	t=1724996013; cv=none; b=O5D8GFykO1Q05rRmRytdFA+DPMnqhb2T83sNPyRA4mODWYzaT1RgTkJ34SNtX3xcY9wPJIZ2LQeZia4kZOLQZQPvgDb2Q8RmBtinSWMYkKiyfwAbvblPvQLJuL9Uahb3bZ6UxRGCYuAsoC5OPb2T0yljveDxZtZxQizT67fADwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724995571; c=relaxed/simple;
-	bh=QYKy3ItvpOU+P8gyuVySP8Mf4hzZhG36E4zOb4MYPcE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=bWkgiD/2Zgy9zCEyXZfNfxq3J4uV/dtQmAKbyYJhExXQJ7bXPezB9WKzM9pRLVb8oOfJsSEEfmTsgc69P/jXIR3zuYytZz5XpmC8EmVJvaCtkxAORBRV7hajFTBOBjVJmStjUV4whEeK11mjoMLueabbqDMJpih+YPpMvbuMZx8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BGkk74lB; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1724996013; c=relaxed/simple;
+	bh=VNOf6j5ZUBCKi9obJY1Zmq7j7F632V0LClIMJyNM8fA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=tP7DoqGgPMui/Py/nrRXwGsEu56FW8P6l5G3+vsZKM7ZnaoFxNLWxk5hkliThLTub0ypRGySpHXN3DvCHFNsgw5DIalpg5K2V2gebGdTx1fyVl7YSbuywVm17avcsGY2M2lcRHb7TpEVakPNOc/JdWOG2b+S8lof5oqHv61B16c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QxVg3yzd; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BGkk74lB"
-Received: by smtp.kernel.org (Postfix) with ESMTPS id DF66FC4CECB;
-	Fri, 30 Aug 2024 05:26:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1724995571;
-	bh=QYKy3ItvpOU+P8gyuVySP8Mf4hzZhG36E4zOb4MYPcE=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=BGkk74lB4kzXcZ0o/Ir7KkY7I94FTY8xD03bHcpEsEY5o6OSmaYyPOCoNdNOp5GH2
-	 5cyNmIRTg0RwBku4FFOUgbRMgTPcI7FUFf7PyHmzgEVWvz9zA7ExGJU9jWTJjsRVls
-	 kkDYtFO+RSsIYHfCEQ7ZgdLX5baiQ7eUv79BL2e/KPqtjw4q49dUSzmV+Jp07CnP5l
-	 eBbHnPenq1tDfjz7nZ498p0nr/kvYIRF2k7dr80MZks70Pnm5v4cslpYEU6q9ZhR/x
-	 ez7zCgH66HqifmTCJGo0JpmLSw9qD53hadSeUFtqmDlXyi9JcHH29B94TGg0wQYcXO
-	 m1QwaNJ+xQIiQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDC6CCA0EE5;
-	Fri, 30 Aug 2024 05:26:10 +0000 (UTC)
-From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
-Date: Fri, 30 Aug 2024 13:26:10 +0800
-Subject: [PATCH v4 3/3] arm64: dts: amlogic: add C3 AW419 board
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QxVg3yzd"
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 47THtf5x000497;
+	Fri, 30 Aug 2024 05:33:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	f8nd0IF8HRkM3vKk40PK9L4eUxNnMz2TqBydN7t3/Bs=; b=QxVg3yzd3Plt91IX
+	dGxuNsUiDZ/byy1PBFYg9d+Oxf0FLPEy2jnzarvtB9L5lKqEWsYJKQssTlu7+h2+
+	/fcDdU6eo7IoFcR6TlX9sA+WOXF+Eaf77bLdeBTXVRs0z4uDAbvfE3jD2LIM7y/D
+	bMUUC89TE5QppZz63yQjVIqldZrKtAnYbsBZAwd/5/a6Kif2cKClj0PgQ3G2rBup
+	8toF7hbL7Va9YfTvVQit6rSVgEwsibL3D66OaVWdl8HJiIncxJYdVw3B2H81Ri0Q
+	r9LRzDbkmo2enskmACdj/N5gITJrbZ37Q065YeMXgNBgcoPKb+OcYPG2VYp1KNv5
+	NXOc0g==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 419puw7jh8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 30 Aug 2024 05:33:23 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 47U5XMaS001673
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 30 Aug 2024 05:33:22 GMT
+Received: from [10.110.47.58] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 29 Aug
+ 2024 22:33:17 -0700
+Message-ID: <87876873-1aa7-4435-90c1-02bc2e8d7316@quicinc.com>
+Date: Fri, 30 Aug 2024 11:03:14 +0530
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2] clk: qcom: clk-alpha-pll: Simplify the
+ zonda_pll_adjust_l_val()
+To: Bjorn Andersson <andersson@kernel.org>
+CC: Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+	<sboyd@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Ajit Pandey
+	<quic_ajipan@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        "Taniya
+ Das" <quic_tdas@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        "kernel test robot" <lkp@intel.com>,
+        Dan Carpenter
+	<dan.carpenter@linaro.org>,
+        Vladimir Zapolskiy
+	<vladimir.zapolskiy@linaro.org>
+References: <20240814102005.33493-1-quic_skakitap@quicinc.com>
+ <om5c5wmziw5wywzwp3qirruaaxjughcneupkyzl4hi3jzfuhhg@f5cfsjwabday>
+Content-Language: en-US
+From: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+In-Reply-To: <om5c5wmziw5wywzwp3qirruaaxjughcneupkyzl4hi3jzfuhhg@f5cfsjwabday>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20240830-c3_add_node-v4-3-b56c0511e9dc@amlogic.com>
-References: <20240830-c3_add_node-v4-0-b56c0511e9dc@amlogic.com>
-In-Reply-To: <20240830-c3_add_node-v4-0-b56c0511e9dc@amlogic.com>
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Jerome Brunet <jbrunet@baylibre.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Chuan Liu <chuan.liu@amlogic.com>, 
- Kevin Hilman <khilman@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, 
- Xianwei Zhao <xianwei.zhao@amlogic.com>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1724995568; l=7260;
- i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
- bh=1+fROI9qhU3i8mzqXqlDx8fCppD9gx8vfbGG6R9DkD0=;
- b=32BJhq7XYF0uz7YddyDWXEkepfaRAuEYvEWC7bnrfeJ+mcWTd9i8TKomAxuevgKI3ssz5p9S9
- ai+QkzKLwk2A5zpc7lWCaBqEIANT6lvAJdd13TzPCkdW8aDS+1hyf/G
-X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
- pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
-X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
- auth_id=107
-X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
-Reply-To: xianwei.zhao@amlogic.com
-
-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
-
-Add Amlogic C3 C308L AW419 board. The corresponding binding
-has been applied, therefore, this series does not need to
-add a binding corresponding to the AW419 board.
-
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
-Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
----
- arch/arm64/boot/dts/amlogic/Makefile               |   1 +
- .../boot/dts/amlogic/amlogic-c3-c308l-aw419.dts    | 262 +++++++++++++++++++++
- 2 files changed, 263 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/amlogic/Makefile b/arch/arm64/boot/dts/amlogic/Makefile
-index 9708abdadd7c..8db42f26c1e6 100644
---- a/arch/arm64/boot/dts/amlogic/Makefile
-+++ b/arch/arm64/boot/dts/amlogic/Makefile
-@@ -2,6 +2,7 @@
- dtb-$(CONFIG_ARCH_MESON) += amlogic-a4-a113l2-ba400.dtb
- dtb-$(CONFIG_ARCH_MESON) += amlogic-a5-a113x2-av400.dtb
- dtb-$(CONFIG_ARCH_MESON) += amlogic-c3-c302x-aw409.dtb
-+dtb-$(CONFIG_ARCH_MESON) += amlogic-c3-c308l-aw419.dtb
- dtb-$(CONFIG_ARCH_MESON) += amlogic-t7-a311d2-an400.dtb
- dtb-$(CONFIG_ARCH_MESON) += amlogic-t7-a311d2-khadas-vim4.dtb
- dtb-$(CONFIG_ARCH_MESON) += meson-a1-ad401.dtb
-diff --git a/arch/arm64/boot/dts/amlogic/amlogic-c3-c308l-aw419.dts b/arch/arm64/boot/dts/amlogic/amlogic-c3-c308l-aw419.dts
-new file mode 100644
-index 000000000000..4477a2659e27
---- /dev/null
-+++ b/arch/arm64/boot/dts/amlogic/amlogic-c3-c308l-aw419.dts
-@@ -0,0 +1,262 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+/*
-+ * Copyright (c) 2024 Amlogic, Inc. All rights reserved.
-+ */
-+
-+/dts-v1/;
-+
-+#include "amlogic-c3.dtsi"
-+
-+/ {
-+	model = "Amlogic C308l aw419 Development Board";
-+	compatible = "amlogic,aw419", "amlogic,c3";
-+	interrupt-parent = <&gic>;
-+	#address-cells = <2>;
-+	#size-cells = <2>;
-+
-+	aliases {
-+		serial0 = &uart_b;
-+		spi0 = &spifc;
-+	};
-+
-+	memory@0 {
-+		device_type = "memory";
-+		reg = <0x0 0x0 0x0 0x80000000>;
-+	};
-+
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		/* 9 MiB reserved for ARM Trusted Firmware */
-+		secmon_reserved: secmon@7f00000 {
-+			compatible = "shared-dma-pool";
-+			reg = <0x0 0x07f00000 0x0 0x900000>;
-+			no-map;
-+		};
-+	};
-+
-+	main_12v: regulator-main-12v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "12V";
-+		regulator-min-microvolt = <12000000>;
-+		regulator-max-microvolt = <12000000>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	vcc_5v: regulator-vcc-5v {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VCC5V";
-+		regulator-min-microvolt = <5000000>;
-+		regulator-max-microvolt = <5000000>;
-+		vin-supply = <&main_12v>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	vddq: regulator-vddq {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VDDQ";
-+		regulator-min-microvolt = <1200000>;
-+		regulator-max-microvolt = <1200000>;
-+		vin-supply = <&main_12v>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	vddao_3v3: regulator-vddao-3v3 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VDDAO3V3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		vin-supply = <&main_12v>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	vddao_1v8: regulator-vddao-1v8 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VDDAO1V8";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		vin-supply = <&vddao_3v3>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	ddr4_2v5: regulator-ddr4-2v5 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "DDR4_2V5";
-+		regulator-min-microvolt = <2500000>;
-+		regulator-max-microvolt = <2500000>;
-+		vin-supply = <&vddao_3v3>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	vcc_3v3: regulator-vcc-3v3 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VCC3V3";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		vin-supply = <&vddao_3v3>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	vcc_1v8: regulator-vcc-1v8 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VCC1V8";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		vin-supply = <&vcc_3v3>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	vdd_1v8: regulator-vdd-1v8 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VDD1V8_BOOT";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		vin-supply = <&vcc_3v3>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	vddio_b: regulator-vddio-3v3-b {
-+		compatible = "regulator-fixed";
-+		regulator-name = "VDDIO_B";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		vin-supply = <&vcc_3v3>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	sdcard: regulator-sdcard {
-+		compatible = "regulator-fixed";
-+		regulator-name = "SDCARD_POWER";
-+		regulator-min-microvolt = <3300000>;
-+		regulator-max-microvolt = <3300000>;
-+		vin-supply = <&vddao_3v3>;
-+		gpio = <&gpio GPIOA_4 GPIO_ACTIVE_LOW>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+};
-+
-+&uart_b {
-+	status = "okay";
-+};
-+
-+&nand {
-+	status = "okay";
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	pinctrl-0 = <&nand_pins>;
-+	pinctrl-names = "default";
-+
-+	nand@0 {
-+		reg = <0>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		nand-on-flash-bbt;
-+
-+		partition@0 {
-+			label = "boot";
-+			reg = <0x0 0x00200000>;
-+		};
-+		partition@200000 {
-+			label = "env";
-+			reg = <0x00200000 0x00400000>;
-+		};
-+		partition@600000 {
-+			label = "system";
-+			reg = <0x00600000 0x00a00000>;
-+		};
-+		partition@1000000 {
-+			label = "rootfs";
-+			reg = <0x01000000 0x03000000>;
-+		};
-+		partition@4000000 {
-+			label = "media";
-+			reg = <0x04000000 0x8000000>;
-+		};
-+	};
-+};
-+
-+&ethmac {
-+	status = "okay";
-+	phy-handle = <&internal_ephy>;
-+	phy-mode = "rmii";
-+};
-+
-+&spifc {
-+	#address-cells = <1>;
-+	#size-cells = <0>;
-+
-+	pinctrl-0 = <&spifc_pins>;
-+	pinctrl-names = "default";
-+
-+	nand@0 {
-+		compatible = "spi-nand";
-+		reg = <0>;
-+		spi-max-frequency = <83000000>;
-+		spi-tx-bus-width = <4>;
-+		spi-rx-bus-width = <4>;
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		status = "disabled";
-+
-+		partitions {
-+			compatible = "fixed-partitions";
-+			#address-cells = <1>;
-+			#size-cells = <1>;
-+
-+			partition@0 {
-+				label = "boot";
-+				reg = <0 0x200000>;
-+			};
-+
-+			partition@200000 {
-+				label = "env";
-+				reg = <0x200000 0x400000>;
-+			};
-+
-+			partition@600000 {
-+				label = "system";
-+				reg = <0x600000 0xa00000>;
-+			};
-+
-+			partition@1000000 {
-+				label = "rootfs";
-+				reg = <0x1000000 0x3000000>;
-+			};
-+
-+			partition@4000000 {
-+				label = "data";
-+				reg = <0x4000000 0x8000000>;
-+			};
-+		};
-+	};
-+};
-+
-+&sd {
-+	status = "okay";
-+	pinctrl-0 = <&sdcard_pins>;
-+	pinctrl-1 = <&sdcard_clk_gate_pins>;
-+	pinctrl-names = "default","clk-gate";
-+
-+	bus-width = <4>;
-+	cap-sd-highspeed;
-+	max-frequency = <50000000>;
-+	disable-wp;
-+
-+	cd-gpios = <&gpio GPIOC_6 GPIO_ACTIVE_LOW>;
-+	vmmc-supply = <&sdcard>;
-+	vqmmc-supply = <&sdcard>;
-+};
-
--- 
-2.37.1
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: xQdWJM58_CHElqgULBGAaeNaXS5GWREi
+X-Proofpoint-GUID: xQdWJM58_CHElqgULBGAaeNaXS5GWREi
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.28.16
+ definitions=2024-08-30_02,2024-08-29_02,2024-05-17_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011
+ priorityscore=1501 malwarescore=0 bulkscore=0 mlxscore=0
+ lowpriorityscore=0 phishscore=0 mlxlogscore=999 suspectscore=0
+ adultscore=0 spamscore=0 impostorscore=0 classifier=spam adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2407110000
+ definitions=main-2408300039
 
 
+On 8/16/2024 3:00 AM, Bjorn Andersson wrote:
+> On Wed, Aug 14, 2024 at 03:50:05PM GMT, Satya Priya Kakitapalli wrote:
+>> In zonda_pll_adjust_l_val() replace the divide operator with comparison
+>> operator since comparisons are faster than divisions. Also, simplify the
+>> logic and remove the unnecessary 'quotient' local variable.
+>>
+>> Reported-by: kernel test robot <lkp@intel.com>
+>> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+>> Closes: https://lore.kernel.org/r/202408110724.8pqbpDiD-lkp@intel.com/
+>> Signed-off-by: Satya Priya Kakitapalli <quic_skakitap@quicinc.com>
+>> Reviewed-by: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>
+>> ---
+>> Changes in V2:
+>>   - Simplify the logic and remove unnecessary quotient variable.
+>>   - Remove Fixes tag as this is just a simplification.
+>>
+>>   drivers/clk/qcom/clk-alpha-pll.c | 9 +++------
+>>   1 file changed, 3 insertions(+), 6 deletions(-)
+>>
+>> diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+>> index 2f620ccb41cb..4ce3347beb39 100644
+>> --- a/drivers/clk/qcom/clk-alpha-pll.c
+>> +++ b/drivers/clk/qcom/clk-alpha-pll.c
+>> @@ -2120,14 +2120,11 @@ static void clk_zonda_pll_disable(struct clk_hw *hw)
+>>   
+>>   static void zonda_pll_adjust_l_val(unsigned long rate, unsigned long prate, u32 *l)
+>>   {
+>> -	u64 remainder, quotient;
+>> +	u64 remainder;
+>>   
+>> -	quotient = rate;
+>> -	remainder = do_div(quotient, prate);
+>> -	*l = quotient;
+>> +	remainder = do_div(rate, prate);
+> This does not compile on arm32 target.
+
+
+Could you please confirm if it is because of the do_div? I see the 
+do_div() API is used at multiple places in the same driver already.
+
+
+> Regards,
+> Bjorn
+>
+>>   
+>> -	if ((remainder * 2) / prate)
+>> -		*l = *l + 1;
+>> +	*l = rate + (u32)(remainder * 2 >= prate);
+>>   }
+>>   
+>>   static int clk_zonda_pll_set_rate(struct clk_hw *hw, unsigned long rate,
+>> -- 
+>> 2.25.1
+>>
