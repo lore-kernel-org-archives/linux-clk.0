@@ -1,103 +1,93 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22CD21B3B20;
-	Fri, 30 Aug 2024 15:13:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFFF0EEC9;
+	Fri, 30 Aug 2024 15:44:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725030809; cv=none; b=VgEa6L8NAcFw+9uSY3sbqXQlAn5PUH56zT0G1afBTZBuNIcDFEAU5zvbHxwA3SrLo5brwG05bTX3CKwh+UgrLqTqswSvtWZE5eFxKXcbolJVjobZPGyicicygXL++lLlQOhh6DNTthzWwtQ/QiWVD1jG3VVexcyjuF1QAAfbmKc=
+	t=1725032647; cv=none; b=iHqLgOmPqHeF/Jw2+Y8oTc//69UigQlwwJJCWl//RHKUmD53aPqPUMW53lcG/67sYecFFustIsYkfDjtj4ktNypWjI6AiFMvixuAIiVjIufd467iBcI+hBHrcx+CosygfVwQne7iGEjcmTy/VsDLEulmlSQdbpftzg3A8wqY4vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725030809; c=relaxed/simple;
-	bh=XN6UamdVy5YZ7poGi5VH5lYzP21Tv4XcrJEiiDjeTd4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dddlgzzl1A60qwA0V4mo/lrlGnZUWs0G4pwpU3oKFDZoukVHa/djLGuKQmhTxJFS4wuan7EWVsHoBcXzTvCaOkwLzqXNFe00NHTFmFu5O00oVIJn4JmE1W3bcntd0lrGp2VHupkePnBBNXKYatAo2huv2mH0Cl5l8Z2Oit9vlnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=X79uT/JW; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+	s=arc-20240116; t=1725032647; c=relaxed/simple;
+	bh=VkZDandq3JSMzzDGwRJwhrbaal1xkOQ+HGnJE8SjBsM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nGthhWUH0Mq/XQ0w6r9Y+d2AjwBGXdGOgtNeiblUuszVW+FlnCsuib9AqkQUZKArW0i+Cn9qmldrM1UY7FBIRzcVcNKMLgJQEC7K2icCm6L9iLe7yHdGzrQdqhGyUhfD0xOCIkG4BrxEH6FFs3LUQquLrCE6sDb/Go8HXoGt/oE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tVAtELA0; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="X79uT/JW"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=mKoAUCPLIx2u8bDuKHDW2AwZSGh12y/DJxrGx1xVQAs=; b=X79uT/JWFVwscl4U2i8M02fhoP
-	kD3xNG8y1qE0GGmzAvTBZepPRr8LTp2O8vaC5ebYelXYmImEXCSoDzhqyC3e1rcrUZVON8gVYMcYq
-	OGajtNQ7E0qM1dJJxLWQSARZ528qEu/IupAKSC5d4lmEOhMrGZfhDxwYRhNAt45GWHyebuAcaXexC
-	MQHwrlxWafQYd0Szhsuv9UNczv8ud539gs4rkBtfQ9pMcEi0uG8eHkvlg4ob+WllA2acKrvpPMZY2
-	ZFbLh8L83boy2B+9urT+fIWN1hUYU4AXaFPlucJ66N8GdK+GQM5TpXtphWeC+IkO1WJgXpIqSpFDh
-	EdYTC1ZQ==;
-Received: from i5e861921.versanet.de ([94.134.25.33] helo=phil.lan)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1sk3JG-0004MP-Iy; Fri, 30 Aug 2024 17:13:10 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: Sebastian Reichel <sebastian.reichel@collabora.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	linux-clk@vger.kernel.org,
-	Michael Turquette <mturquette@baylibre.com>,
-	Detlev Casanova <detlev.casanova@collabora.com>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	andy.yan@rock-chips.com,
-	Michal Tomek <mtdev79b@gmail.com>,
-	huangtao@rock-chips.com,
-	Elaine Zhang <zhangqing@rock-chips.com>,
-	linux-rockchip@lists.infradead.org,
-	Chad LeClair <leclair@gmail.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Kever Yang <kever.yang@rock-chips.com>,
-	kernel@collabora.com,
-	Ilya K <me@0upti.me>
-Subject: Re: (subset) [PATCH v9 0/7] rockchip: clk: add GATE_LINK support
-Date: Fri, 30 Aug 2024 17:13:05 +0200
-Message-ID: <172503062006.1956268.2661371879547817382.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20240325193609.237182-1-sebastian.reichel@collabora.com>
-References: <20240325193609.237182-1-sebastian.reichel@collabora.com>
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tVAtELA0"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5152AC4CEC2;
+	Fri, 30 Aug 2024 15:44:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725032646;
+	bh=VkZDandq3JSMzzDGwRJwhrbaal1xkOQ+HGnJE8SjBsM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tVAtELA0KeGQegt8ntHg1wiWQe7Yv26xq5TPF9n0MGbMbz0OjOvp/IEvp42gC7FMt
+	 M2w1ikHzeSKcH4HY4PGnn3ITcMVi1HSNOVeWBTdj0OwFgwapDVRBt07X4HZrrobXsM
+	 X6YkkTfa8VFe0f4EBgqnSC59+9AVv9wNWLDzIJ2Fpm9LsjnJ0YZZPnYZmEHGnOCQzI
+	 o1RUx06J0fkqlIpIrw/uKoZ0x/HAlviXUlVCYOVZVqYpaEtDiq5P283J0LHCnEjGU6
+	 cj18RjP/lmR2MuIcNX7Tl6OPQRuBPgHdbZukp94IyESyQ3vydIFWnLCtIN00gSyAet
+	 Poy6op0SOty0w==
+Date: Fri, 30 Aug 2024 10:44:04 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: linux-rtc@vger.kernel.org, p.zabel@pengutronix.de, krzk+dt@kernel.org,
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, geert+renesas@glider.be,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	mturquette@baylibre.com, magnus.damm@gmail.com, conor+dt@kernel.org,
+	sboyd@kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, alexandre.belloni@bootlin.com
+Subject: Re: [PATCH v3 05/12] dt-bindings: rtc: renesas,rzg3s-rtc: Document
+ the Renesas RTCA-3 IP
+Message-ID: <172503263744.44904.9725810011067270873.robh@kernel.org>
+References: <20240830130218.3377060-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240830130218.3377060-6-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240830130218.3377060-6-claudiu.beznea.uj@bp.renesas.com>
 
-On Mon, 25 Mar 2024 20:33:31 +0100, Sebastian Reichel wrote:
-> This implements proper GATE_LINK support following the suggestion from Stephen
-> Boyd to use clk PM operations by creating MFD dynamically. This required some
-> restructuring, since CLK_OF_DECLARE() is called before devices are available.
+
+On Fri, 30 Aug 2024 16:02:11 +0300, Claudiu wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 > 
-> Apart from improved power consumption, this fixes the runtime errors from the
-> pmdomain driver (failed to set idle on domain '%s').
+> Document the RTC IP (RTCA-3) available on the Renesas RZ/G3S SoC.
+> The RTC IP available on Renesas RZ/V2H is almost identical with the
+> one found on Renesas RZ/G3S (it misses the time capture functionality
+> which is not yet implemented on proposed driver). For this, added also a
+> generic compatible that will be used at the moment as fallback for both
+> RZ/G3S and RZ/V2H.
 > 
-> [...]
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+> ---
+> 
+> Changes in v3:
+> - added RTC bus clock, reset and power-domain; it has been detected
+>   by reverse engineering that RTC and VBATTB clock, reset and power
+>   domain are shared; HW manual doesn't mention it
+> - updated example with these and with assigned-clock properties
+>   needed to configure the VBATTCLK MUX with proper parent
+> - updated example section with dt-bindings/clock/r9a08g045-cpg.h
+>   and dt-bindings/clock/r9a08g045-vbattb.h includes
+> - for all these, dropped Conor's Rb tag
+> 
+> Changes in v2:
+> - updated patch description and title
+> - included reference to rtc.yaml
+> - updated compatible list with a generic compatible as explained in
+>   patch description; with this the node in examples section has also been
+>   updated
+> - used items to describe interrupts, interrupt-names, clock, clock-names
+> - updated title section
+> 
+>  .../bindings/rtc/renesas,rz-rtca3.yaml        | 86 +++++++++++++++++++
+>  1 file changed, 86 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/rtc/renesas,rz-rtca3.yaml
+> 
 
-Applied, thanks!
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-[1/7] clk: rockchip: rk3588: drop unused code
-      commit: 2e7b3daa8cb1ebd17e6a7f417ef5e6553203035c
-
-@Detlev: I think the rk3576 driver I added days ago, might also want
-that change? Can you take a look please?
-[I don't have rk3576 hardware, so can't check myself ;-) ]
-
-
-[5/7] clk: rockchip: fix error for unknown clocks
-      commit: 12fd64babaca4dc09d072f63eda76ba44119816a
-
-I've added a fixes that to that, looks like overlooked that issue
-way back in 2014 ... pure nostalgia.
-
-
-Anyway, rest of the series hopefully later today.
-
-
-Best regards,
--- 
-Heiko Stuebner <heiko@sntech.de>
