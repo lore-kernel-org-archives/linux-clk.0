@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09FBF16EB42;
-	Fri, 30 Aug 2024 11:46:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C580D1A2C35;
+	Fri, 30 Aug 2024 12:24:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725018401; cv=none; b=SscwgBYsfj+Atl5SybNxq2YXoo66Dh7zh5sL/aF+iv0RQ/KV3d59YgntY0eSjQtVbQhZFB4AMFSnlINhYq/fTRLym28ap7NptlFJUf4XZhIB9cARD9CsJUkxNPVZLzo15RWEYHpPicKZgcRhSPuLGzJi8sv8gAMNP+TV1/g9GTc=
+	t=1725020667; cv=none; b=u0S2aKY0X03QMsdilL2ateaIvprz3bqc1Grz8k9sLxrsfQYH4B1ewoqPk8nPnzPQQf+Xf0SuSzcxwTcg2EeljIQT+w1aOh6Gyl4Quoqu5wLDz143RsKjs5m5fxiBE6HzFJ3ClQempshQUBbrUARzL2a6+LlW4lsC8o6uM654gko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725018401; c=relaxed/simple;
-	bh=s/VkjtgxTFQbSHfauzE7Qxke78j8kqoSK12Sz7gMxIc=;
+	s=arc-20240116; t=1725020667; c=relaxed/simple;
+	bh=Fye5UJaT5Z6qElniiFFVhG1gjqZp/bvz7JiyCKZVrEI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ua2etqO4icLLBAyH7x89Owo66vv/bSFQh1qxD8epR8ZIcTz55WvqtfUAZ6Szf1ofEeTqocVSYH9cusSFFqBGjU8olRr/b999jhIiEBQ1N9dvpYmI4WrYTALpg8Nk4e2qg+XdW36/aW2H7+mLq8gkAD1YXl7YpI/kkKS0a3B/SoY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d51iEnvv; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=dkRgXAe/Nr0SCTrd65mAQk3OyblWIsiVH+UpbkbrXjjF6WH8KA+9LU8kAnfk7xOdkKX3HWcclPNtAAMjosJDBlPNzwZiDxuUvKOwbPVFldaxyDJmS/1RafRMuAks+omJN+BjpyZtnfPz5RVS54J1sckRN2Cw1Jaukm5NX/0+VSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WEQpzjRR; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d51iEnvv"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50D2EC4CEC2;
-	Fri, 30 Aug 2024 11:46:30 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WEQpzjRR"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0E41C4CEC2;
+	Fri, 30 Aug 2024 12:24:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725018400;
-	bh=s/VkjtgxTFQbSHfauzE7Qxke78j8kqoSK12Sz7gMxIc=;
+	s=k20201202; t=1725020667;
+	bh=Fye5UJaT5Z6qElniiFFVhG1gjqZp/bvz7JiyCKZVrEI=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=d51iEnvvrGvL2l/XtbY10HLhDXxltAWvPJGI9/8zf+/dDWUl2gS8+drLEMkMxP6ir
-	 llVe4NrANBzust24JIUFuDbS8TN2uNwx6zPlXZTNex61M8WO5cvjhuWwGtP9uiueEJ
-	 z71sxA2k1tPk1eDBkOGLafUMCV2Sr2zvEl0ojJTtwci8ue13IsCidsBZ53+qHiQsv1
-	 sCiZTZb3PUwsYtQDtyNSz8u1g8wL12LZWbJZVQHptF8jzqFcHFLTrdTh1bNZeO6F25
-	 WAvzi00b7FPwjXlmMfQaYZU5K4dk1pYXB/QGegjl80iGHDXaLX0qEWVuBQNf3rgkY2
-	 5CzfmklABTxnQ==
-Message-ID: <e05705c1-95dc-4d77-8a0d-8c2a785b0b05@kernel.org>
-Date: Fri, 30 Aug 2024 13:46:27 +0200
+	b=WEQpzjRRxsJ0GlLTZibav07DzRRwi2ebpa8UfEv89WyXteZpRuofmiRoWTqIXB/zK
+	 T/YA5u+bBkBO6e6B1iJSB77IywTdwunsHiYWm7hJhvYPqmXTKASGEVkorgsFNBebyT
+	 gjp7XUz7VyyOjLrm3VjiRN4LVvHCIpHu+Pye1sS5SgjdCmoIl0BYzPm+L+NsA3hegy
+	 v2MNuo396r/F0MJRYoeu+/ZNkX6VHu9+50RBlvjdXXW9MR1DjG93cFx8d9hgQAohaY
+	 8EYQZOyjVK8TulhQxU0g1ZyQb0YfkgGur0tA33h0wfohkCts3jRoG+fxf76s+SQVY+
+	 QdOEwcXx1oGLA==
+Message-ID: <1edc1fdb-ccf9-4dec-9669-d8c33511c7b0@kernel.org>
+Date: Fri, 30 Aug 2024 14:24:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,125 +35,72 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 02/11] dt-bindings: pinctrl: Add RaspberryPi RP1
- gpio/pinctrl/pinmux bindings
-To: Andrea della Porta <andrea.porta@suse.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
- Linus Walleij <linus.walleij@linaro.org>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Derek Kiernan <derek.kiernan@amd.com>, Dragan Cvetic
- <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Nicolas Ferre <nicolas.ferre@microchip.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Saravana Kannan <saravanak@google.com>, Bjorn Helgaas <bhelgaas@google.com>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
- netdev@vger.kernel.org, linux-pci@vger.kernel.org,
- linux-arch@vger.kernel.org, Lee Jones <lee@kernel.org>,
- Andrew Lunn <andrew@lunn.ch>, Stefan Wahren <wahrenst@gmx.net>
-References: <cover.1724159867.git.andrea.porta@suse.com>
- <82d57814075ed1bc76bf17bde124c5c83925ac59.1724159867.git.andrea.porta@suse.com>
- <5zlaxts46utk66k2n2uxeqr6umppfasnqoxhwdzah44hcmyfnp@euwjda6zk5rh>
- <ZtGdTjZPYtm3EGM0@apocalypse>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH 2/2] clk: qcom: gcc-sm8550: Don't park the USB RCG at
+ registration time
+To: Stephen Boyd <swboyd@chromium.org>, Bjorn Andersson
+ <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>,
+ Stephen Boyd <sboyd@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ patches@lists.linux.dev, linux-clk@vger.kernel.org,
+ Konrad Dybcio <konradybcio@kernel.org>, Taniya Das <quic_tdas@quicinc.com>,
+ Amit Pundir <amit.pundir@linaro.org>
+References: <20240819233628.2074654-1-swboyd@chromium.org>
+ <20240819233628.2074654-3-swboyd@chromium.org>
+ <CAE-0n52rYVs81jtnFHyfc+K4wECvyCKmnHu2w9JhPNqvMYEeOA@mail.gmail.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <ZtGdTjZPYtm3EGM0@apocalypse>
+From: Konrad Dybcio <konradybcio@kernel.org>
+In-Reply-To: <CAE-0n52rYVs81jtnFHyfc+K4wECvyCKmnHu2w9JhPNqvMYEeOA@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 30/08/2024 12:22, Andrea della Porta wrote:
-> Hi Krzysztof,
-> 
-
-...
-
->>> +#define RP1_USBHOST0_AXIS_BASE 0x200000
->>> +#define RP1_USBHOST1_AXIS_BASE 0x300000
->>> +#define RP1_EXAC_BASE 0x400000
->>> +
->>> +/* Interrupts */
->>> +
->>> +#define RP1_INT_IO_BANK0 0
->>> +#define RP1_INT_IO_BANK1 1
+On 27.08.2024 8:12 PM, Stephen Boyd wrote:
+> Quoting Stephen Boyd (2024-08-19 16:36:27)
+>> Amit Pundir reports that audio and USB-C host mode stops working if the
+>> gcc_usb30_prim_master_clk_src clk is registered and
+>> clk_rcg2_shared_init() parks it on XO. Skip parking this clk at
+>> registration time to fix those issues.
 >>
->> Also no, interrupt numbers are not considered bindings. That's too much
->> churn. Otherwise, please point me to driver code using the define
->> (directly! that's the requirement).
+>> Partially revert commit 01a0a6cc8cfd ("clk: qcom: Park shared RCGs upon
+>> registration") by skipping the parking bit for this clk, but keep the
+>> part where we cache the config register. That's still necessary to
+>> figure out the true parent of the clk at registration time.
+>>
+>> Fixes: 01a0a6cc8cfd ("clk: qcom: Park shared RCGs upon registration")
+>> Fixes: 929c75d57566 ("clk: qcom: gcc-sm8550: Mark RCGs shared where applicable")
+>> Cc: Konrad Dybcio <konradybcio@kernel.org>
+>> Cc: Bjorn Andersson <andersson@kernel.org>
+>> Cc: Taniya Das <quic_tdas@quicinc.com>
+>> Reported-by: Amit Pundir <amit.pundir@linaro.org>
+>> Closes: https://lore.kernel.org/CAMi1Hd1KQBE4kKUdAn8E5FV+BiKzuv+8FoyWQrrTHPDoYTuhgA@mail.gmail.com
+>> Signed-off-by: Stephen Boyd <swboyd@chromium.org>
+>> ---
+>>  drivers/clk/qcom/clk-rcg.h    |  1 +
+>>  drivers/clk/qcom/clk-rcg2.c   | 30 ++++++++++++++++++++++++++++++
+>>  drivers/clk/qcom/gcc-sm8550.c |  2 +-
+>>  3 files changed, 32 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/clk/qcom/clk-rcg.h b/drivers/clk/qcom/clk-rcg.h
+>> index d7414361e432..8e0f3372dc7a 100644
+>> --- a/drivers/clk/qcom/clk-rcg.h
+>> +++ b/drivers/clk/qcom/clk-rcg.h
+>> @@ -198,6 +198,7 @@ extern const struct clk_ops clk_byte2_ops;
+>>  extern const struct clk_ops clk_pixel_ops;
+>>  extern const struct clk_ops clk_gfx3d_ops;
+>>  extern const struct clk_ops clk_rcg2_shared_ops;
+>> +extern const struct clk_ops clk_rcg2_shared_no_init_park_ops;
 > 
-> As mentioned above, RP1_INT_END is used in rp1-pci.c. To get rid of all those
+> I'm considering inverting these two rcg2_shared clk_ops so that only a
+> few clks are parked at clk registration time, to minimize the impact of
+> commit 01a0a6cc8cfd ("clk: qcom: Park shared RCGs upon registration").
+> We're up to three or four band-aids, that we can probably wait on
+> applying if we make all the shared RCGs determine the correct parent at
+> registration time but skip the parking, except for the display clks on
+> sc7180 where that exposes another problem with shared parents getting
+> turned off during probe. It's possible that other SoCs will want to park
+> their display clks as well to avoid that secondary problem, but it can
+> be an opt-in case instead of a change to all shared RCGs.
 
-Number of interrupts is not a binding, either. Does not appear in the DTS.
+Are all cases that need the parking obvious like it was the case on 7180,
+i.e. some downstream branch is stuck and there's complaining in dmesg?
 
-> macroes from dt-binding would mean to hardcode the interrupt number in both
-> the binding example and in dtso, from this:
-> 
-> interrupts = <RP1_INT_IO_BANK0 IRQ_TYPE_LEVEL_HIGH>,
->              <RP1_INT_IO_BANK1 IRQ_TYPE_LEVEL_HIGH>,
->              <RP1_INT_IO_BANK2 IRQ_TYPE_LEVEL_HIGH>;
-> 
-> to this:
-> 
-> interrupts = <0 IRQ_TYPE_LEVEL_HIGH>,
-> 	     <1 IRQ_TYPE_LEVEL_HIGH>,
->              <2 IRQ_TYPE_LEVEL_HIGH>;
-> 
-> is this what you are proposing?
-
-Yes, just like every DTS does. I think the hard-coding of numbers is not
-a problem.
-
-Best regards,
-Krzysztof
-
+Konrad
