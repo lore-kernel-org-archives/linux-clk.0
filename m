@@ -1,122 +1,177 @@
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE0416D4D4
-	for <linux-clk@vger.kernel.org>; Fri, 30 Aug 2024 08:15:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 393B81667ED
+	for <linux-clk@vger.kernel.org>; Fri, 30 Aug 2024 08:22:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725005705; cv=none; b=QwVxqhjuMVxctE8d8eluTPZa4dW4j9dQbQwWhi/SYrPOTRW5negD5fy9muqDuYTqb4AyH0iHFBFB4YU6sMALWWGKkX5oIdNlVvWiqwSnJxscTQLfbsDfzw+TNH/Nk18NeQnrinkluLw7Tp8b6KYy2wsRoi2/EeZOMVQqfR4tCjc=
+	t=1725006167; cv=none; b=ex8MyKgkss4FqqqERQ5P1quN5TxNn6Q6xVrvlsTLRhTl8JTCyaUTQi7DBZYJFP1/saZ32jPxBbQjZZ7SgDWqJ40/xwBd/PM3Knhx1lB49PBvMwxFax1cq1toz3MwY3MDoh4ZywGTGaucPQX9bl56NCBRdnpfxn8H6JY6IJ1Rb5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725005705; c=relaxed/simple;
-	bh=bJJEH8RtsAcOHW2xNGOEfQbMncbmYjIgC6YnxDXglC0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=hDwwrUNIJMN3Cz2fbam04QOnem/KciI2jd0PjpGu8zrqB1BEdQlXskpLIRUKKF0yhM/cDl0u2gj8ac8TmP2X9NZMfRClgSwLScElZqrnnDYm8lVQFQMDzp5LYLT8yb5m/pg9RpateKXztUqmehxTjy/xkrlMk5b3lecnotlf250=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=W2anGV1k; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1725006167; c=relaxed/simple;
+	bh=lg2a5Or0gfd5Bku8PfxGPt1GgB3ed0TVDFLBpQJIMg4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eCPTz9EB27cyssNhrpvVQBbEDINCI8sg0vXWmNjSnZzUEZXCNcs0BFcWgI9eZo0L99Mqy4KQsc5XKED4FOlhSnioui6n66e/qwmdHuDEhD/ZidRjzaQ5LSuAuhItw4M52EatgZfXjUsNx7hwbotuloS1a5joZCtEH5OsUR1j/UU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=PdX55yCj; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="W2anGV1k"
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-42bbbff40bbso3045225e9.2
-        for <linux-clk@vger.kernel.org>; Fri, 30 Aug 2024 01:15:03 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="PdX55yCj"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-428243f928fso17178495e9.0
+        for <linux-clk@vger.kernel.org>; Fri, 30 Aug 2024 01:22:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725005702; x=1725610502; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TwEbYTlIGuEKRIfnYKcbOmgEE1eULYFkwpGJpyvLzJI=;
-        b=W2anGV1kVSVXYP4gDuV3yO7CtUxJHvoP8LUp0a9ig6moYIX8kWn/hpPPcX1dv8Q/WK
-         ZPey4AMPoqPsBWZgpZ9MdcaP6rxVLg/AqDGeuIHoViu9eyb+eorSxfFVLGxSNux+p2V1
-         t1bwFcn1xO4GiXkbgxUjb2wHdD6lY3NXu19BsotwItQKmJ+pu7YctK4v1XHXwot2zjw6
-         mQh24xKfMQU9Qpein6xnbegk/WeoUygsqAdeobHOV93iqUblc3jJFGkIl3grDAQwaHqi
-         ULKEZByz+W7TYopYlgGHDsRHF1rKfK+W/+R2IaeVRBKkfErVcNViMg3m1C3vnko7s9qs
-         +cGw==
+        d=tuxon.dev; s=google; t=1725006164; x=1725610964; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=zchK+tZfRdJr/B0VNKRrEBtLoJmeJfsr2YpFzQ08IdE=;
+        b=PdX55yCjayxLU3a0HuryCmcojZbcsP1de6j68M6ebp45drf94iA8NvQ3vsQjHDYp5n
+         P8yVFUuidLKGgIn94toZdJ8Hez/KX4ijJvG3obykwA8N6EFCXEfuV0jL5hfAVLH9n2FT
+         JDgtvtEv2wNPr5PRcw7s1+jaMBUU/ydxJV/5vXjkSb4A6Hx/WLesh7ismzSRiwg1c8oU
+         hs4k49jr+zfamjjjl1mOB2Jsvq2B1n/itmC73c4rO1JTg7oZOIHiq05+A5mpJ6OPVLqD
+         zUantHtRV6mHWHqKBVgjPqry3UzYkH1R5EeiZOey60NAit5f9lGIWVAf7MkpNyPle08y
+         M+fQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725005702; x=1725610502;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TwEbYTlIGuEKRIfnYKcbOmgEE1eULYFkwpGJpyvLzJI=;
-        b=BNwJjU65uKWi4VHQs/S3r3sAgIaSol8Bqtlq+M9ZwR3RTbwmaKVvgmuOjH0alJQsel
-         UHVGBT7Ws4vRvh4tATD9ZBAWPKaryBVjTsLt5aySIInZZIt4qow9QrCN99NsIiOw6Jd8
-         Aurj9bznfBJ+tfbXEbgJl5vpBJSZbcXFPhiuBi8kMpvqYXwjHtRicYN3Snds54YskrjW
-         /DPpuJ/+cBl3r0Gs7cKSa+8WkE9bKGOBMNoAatWLIYaUq2MKIY1/2ebTV6wdThKAAstu
-         4BnW7g+AjAVKkgTRq/EJsQP9ncd1SHrlMN0Gbuuv5JmBhGGmeF8IKP49Vi4JRx/bpXf3
-         P7jQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUmxtxcM2pL4YlpN8tQhOziezV7nUZ0KppjtChLvJAk7qDnCL10qxxoURsnGLNLWiuPtiufuNRbBOs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwWg/LPMOctUAAkpj8PZAoanwuaryqiX4xWidT/yOh+AAWq3EOv
-	6MHyR84AiVKQJCteOSVuf44TyEt/vZ9VDKUm9KMu/S2VBKlO8R0MkqQXQm6TB40=
-X-Google-Smtp-Source: AGHT+IGlVWCwctNLM1H849kElS12n9ORO2J3+8cTg/CDN3AGEVqfp3UvIq1xbGyrpDfqOXMmx4PQYw==
-X-Received: by 2002:a05:600c:3b93:b0:426:5e0b:5823 with SMTP id 5b1f17b1804b1-42bbb44114emr11034305e9.34.1725005701276;
-        Fri, 30 Aug 2024 01:15:01 -0700 (PDT)
-Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3749ef8113asm3269284f8f.89.2024.08.30.01.15.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2024 01:15:00 -0700 (PDT)
-From: Neil Armstrong <neil.armstrong@linaro.org>
-To: Jerome Brunet <jbrunet@baylibre.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Chuan Liu <chuan.liu@amlogic.com>, 
- Kevin Hilman <khilman@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Xianwei Zhao <xianwei.zhao@amlogic.com>
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
- linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org
-In-Reply-To: <20240830-c3_add_node-v4-0-b56c0511e9dc@amlogic.com>
-References: <20240830-c3_add_node-v4-0-b56c0511e9dc@amlogic.com>
-Subject: Re: [PATCH v4 0/3] add some node for amlogic c3
-Message-Id: <172500570043.143584.9400880712807220818.b4-ty@linaro.org>
-Date: Fri, 30 Aug 2024 10:15:00 +0200
+        d=1e100.net; s=20230601; t=1725006164; x=1725610964;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zchK+tZfRdJr/B0VNKRrEBtLoJmeJfsr2YpFzQ08IdE=;
+        b=eqjqVPMiADbK2pTfzpXLemLtRzNGeHj9gyyTKAPSvzAhSeijDcWUljdsu0F03uoULw
+         4rsoBmXHNquvZLotse2IYyMJTjUp7mJMArC19bpl2rj2l4kfac953+K4pR2m5L8gS/qp
+         1SlFN62xVW7mUH4q/uXIh9/ueHpa0+akwjldLpeK06WBD8Ys4KL5HEswlq9J6KDYIIof
+         IN5Tg2tT+zApDm/FKjZ9FQXls7q/CuIqMGT3/ydAdXv+CA24Vejz4rkYsh6WjDRBjxPe
+         jzSTfVfdq1dNTKmhsU2JHyRlhd0y3FZtYDdbyIyKaBo9nsPxqH5Q7FzkHeBZLVleJ9Ix
+         LJTw==
+X-Forwarded-Encrypted: i=1; AJvYcCWQfu9vaG5+GLfaXiec4XLbhik8USSF0t3vX4kkLZBUAgJ0BKcUHWAfEdTDAg5pyLd4r8hdEDzO08Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5soX/SytadJ7JL6fgq2lxLHn+cQdqfnJN114LZqw/nSMqxSs9
+	xxNPjgMsh8QHDOmRzXgEhA8owsVwSuWvNarSzmoicOozpFXrbSkPnkYDLOF+0m8=
+X-Google-Smtp-Source: AGHT+IF8ZkJGKUmuglZKyShKgzTB0GuKfWBu6xay0mGYscvHuYinOaW5h5J83vGVNlCFB6KS0zIxvQ==
+X-Received: by 2002:a05:600c:3ca2:b0:426:5520:b835 with SMTP id 5b1f17b1804b1-42bb01ae206mr53646705e9.5.1725006164296;
+        Fri, 30 Aug 2024 01:22:44 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.144])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb87f7fccsm31864805e9.46.2024.08.30.01.22.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 30 Aug 2024 01:22:43 -0700 (PDT)
+Message-ID: <99bef301-9f6c-4797-b47e-c83e56dfbda9@tuxon.dev>
+Date: Fri, 30 Aug 2024 11:22:41 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/16] Add initial USB support for the Renesas RZ/G3S SoC
+Content-Language: en-US
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, p.zabel@pengutronix.de, geert+renesas@glider.be,
+ magnus.damm@gmail.com, gregkh@linuxfoundation.org, mturquette@baylibre.com,
+ sboyd@kernel.org, yoshihiro.shimoda.uh@renesas.com,
+ biju.das.jz@bp.renesas.com, linux-phy@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, linux-usb@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-pm@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
+ <CAPDyKFrS4Dhd7DZa2zz=oPro1TiTJFix0awzzzp8Qatm-8Z2Ug@mail.gmail.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <CAPDyKFrS4Dhd7DZa2zz=oPro1TiTJFix0awzzzp8Qatm-8Z2Ug@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.1
 
-Hi,
+Hi, Ulf,
 
-On Fri, 30 Aug 2024 13:26:07 +0800, Xianwei Zhao wrote:
-> Add some node for board AW409 and support board C308l AW419.
+On 29.08.2024 18:26, Ulf Hansson wrote:
+> On Thu, 22 Aug 2024 at 17:28, Claudiu <claudiu.beznea@tuxon.dev> wrote:
+>>
+>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>
+>> Hi,
+>>
+>> Series adds initial USB support for the Renesas RZ/G3S SoC.
+>>
+>> Series is split as follows:
+>>
+>> - patch 01/16           - add clock reset and power domain support for USB
+>> - patch 02-04/16        - add reset control support for a USB signal
+>>                           that need to be controlled before/after
+>>                           the power to USB area is turned on/off.
+>>
+>>                           Philipp, Ulf, Geert, all,
+>>
+>>                           I detailed my approach for this in patch
+>>                           04/16, please have a look and let me know
+>>                           your input.
 > 
+> I have looked briefly. Your suggested approach may work, but I have a
+> few thoughts, see below.
 > 
+> If I understand correctly, it is the consumer driver for the device
+> that is attached to the USB power domain that becomes responsible for
+> asserting/de-asserting this new signal. Right?
 
-Thanks, Applied to https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git (v6.12/arm64-dt)
+Right!
 
-[1/3] dt-bindings: clock: fix C3 PLL input parameter
-      https://git.kernel.org/amlogic/c/4ccba8cb2c5ca573d9bbf366e7d9d5e9761518c0
-[2/3] arm64: dts: amlogic: add some device nodes for C3
-      https://git.kernel.org/amlogic/c/520b792e83171efc8ec0b004412b44dabc044de0
-[3/3] arm64: dts: amlogic: add C3 AW419 board
-      https://git.kernel.org/amlogic/c/d4bd8f3023b68f72431e05ec6cbc793519b449cf
+> 
+> In this regard, please note that the consumer driver doesn't really
+> know when the power domain really gets powered-on/off. Calling
+> pm_runtime_get|put*() is dealing with the reference counting. For
+> example, a call to pm_runtime_get*() just makes sure that the PM
+> domain gets-or-remains powered-on. Could this be a problem from the
+> reset-signal point of view?
 
-These changes has been applied on the intermediate git tree [1].
+It should be safe. From the HW manual I understand the hardware block is
+something like the following:
 
-The v6.12/arm64-dt branch will then be sent via a formal Pull Request to the Linux SoC maintainers
-for inclusion in their intermediate git branches in order to be sent to Linus during
-the next merge window, or sooner if it's a set of fixes.
 
-In the cases of fixes, those will be merged in the current release candidate
-kernel and as soon they appear on the Linux master branch they will be
-backported to the previous Stable and Long-Stable kernels [2].
+                  USB area
+         +-------------------------+
+         |                         |
+         | PHY --->USB controller  |
+SYSC --> |  ^                      |
+         |  |                      |
+         | PHY reset               |
+         +-------------------------+
 
-The intermediate git branches are merged daily in the linux-next tree [3],
-people are encouraged testing these pre-release kernels and report issues on the
-relevant mailing-lists.
+Where:
+- SYSC is the system controller that controls the new signal for which
+  I'm requesting opinions in this series
+- PHY reset: is the block controlling the PHYs
+- PHY: is the block controlling the USB PHYs
+- USB controller: is the USB controller
 
-If problems are discovered on those changes, please submit a signed-off-by revert
-patch followed by a corrective changeset.
+Currently, I passed the SYSC signal handling to the PHY reset driver; w/o
+PHY reset the rest of the USB logic cannot work (neither PHY block nor USB
+controller).
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/amlogic/linux.git
-[2] https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux.git
-[3] https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
+Currently, the PHY reset driver call pm_runtime_resume_and_get() in probe
+and pm_runtime_put() in remove. The struct reset_control_ops::{assert,
+deassert} only set specific bits in registers (no pm_runtime* calls).
 
--- 
-Neil
+The PHY driver is taking its PHY reset in probe and release it in remove().
+With this approach the newly introduced SYSC signal will be
+de-asserted/asserted only in the PHY reset probe/remove (either if it is
+handled though PM domain or reset control signal).
 
+If the SYSC signal would be passed to all the blocks in the USB area (and
+it would be handled though PM domains) it should be no problem either,
+AFAICT, because of reference counting the pm_runtime_get|put*() is taking
+care of. As the PHY reset is the root node the in the devices node tree for
+USB the reference counting should work, too (I may miss something though,
+please correct me if I'm wrong).
+
+If the SYSC signal would be handled though a reset control driver (as
+proposed in this series) and we want to pass this reference to all the
+blocks in the USB area then we can request the reset signal as shared and,
+AFAIK, this is also reference counted. The devices node tree should help
+with the order, too, if I'm not wrong.
+
+Thank you for looking at this,
+Claudiu Beznea
+
+> 
+> [...]
+> 
+> Kind regards
+> Uffe
