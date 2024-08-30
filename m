@@ -1,144 +1,96 @@
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B1F01B1D40
-	for <linux-clk@vger.kernel.org>; Fri, 30 Aug 2024 14:07:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39B2D1AF4F8;
+	Fri, 30 Aug 2024 14:10:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725026881; cv=none; b=dFDqV4ILWKkB7pHSQ7ii4+rdJSkUoP+fLFCz8HolyrPlFsjBCQWDldBiREOlzsuPXzZXX4DfYzoPgdg7mXJTmKmqwDNQEmh3564c+vFFfTcqKNqK/VUAOoXb9Pq6fbF4Dka8vxx4jhGg4Qyc3iqdV/b3RTuLBQLJnnbbbQlvbXY=
+	t=1725027051; cv=none; b=WwcKJFIlFpbA0CkPdQJVT9b5txmR78mpiaPQKCLnts7yMKAdIkeTYn+yrVSO8YNpk14/4bXrQXLQCHco+oA1c1KNAE/Uyjj2c5SI3Ebl5/9eSQc0V+VoMxv/CZdCMseSwG2wgeAIq+8KR/PODS2M8FF0wCJWceoubcUBbVN136I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725026881; c=relaxed/simple;
-	bh=I5aIqy/UEUXMFE8Rh7I4MruLQD76lvWIbdNAtEzLSTY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HO8JeZ3PpePQz8p2+nT0NR+2k87Ptxrm35tdZ3lNoctMeTUOYvuc5jd5EOg251/4PSjpJ2p9jhEQ9iM/BjSxxinhAml0a4RXSjtQrYRXhpwiqX9Qc2RAy+zC/UaCKLrdA+rHIdPIFjdOVEQ2UmT9gO28QWkz2mtOKsaS25trrwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=QHAQMDDh; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1725027051; c=relaxed/simple;
+	bh=s4ofsPLllTgoEZz5zcK/aCOTMmpqFnd/GqJpSB5kJaM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ha1U3BLkzqNOteFXI8o33OYn6b4g5JwQZegN0RSUnYlebdj3Qd0/B63ZsQeeW/ST9ZQKDheAdwApGsZB1IljjAai7Du/zaOH0SQvKtZOXB5fnKKjrvtoaM+89IT/9aTfkMOdgwvKcr4+BZdUmJK3fJYSqmPvwfcEP1RTtoU1+/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=haLZ8908; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="QHAQMDDh"
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-428101fa30aso16994335e9.3
-        for <linux-clk@vger.kernel.org>; Fri, 30 Aug 2024 07:07:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1725026876; x=1725631676; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gUsIK727D/kMhMjVhqwKF/thJUrDUXU728kGFQYDRt0=;
-        b=QHAQMDDh9sP7oU/yicPk+N7M9Q/ILeBwyqXHcz5uD30yyveV1zoLC3xDTwet+IgXLh
-         rfSxkfrLuGLM7O3Dte4gfXq7eiUh7+by8rtCxXTaaVCYi4HYAEksQwkNXSfZYxokz4XI
-         ak0cCHS+8xiBv8zNUWRzGujsw8THsUlNZZFn3GqdZL44C0YBbIXPn3rG6k14Cob0f4iy
-         xFpSzE2c/r+Ny2ZV4twSVK+KqPal0fJzXoiaPWRGe7Qa8GOdZHi/2g28ForJVUGmM/I1
-         NwqGjqTkWcykGt1+fgMp3IsgGfp3KmgmHWhUu/UTYYadq2kjViOaZ2iq7Ro174RfawUL
-         7Tpw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725026876; x=1725631676;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gUsIK727D/kMhMjVhqwKF/thJUrDUXU728kGFQYDRt0=;
-        b=m1bt5XX+NcEfgxCcIFL1qn3G7OdyGuj0OEiOXIdrfAkv+NjQzFTpSCl0cRfFL1Owkg
-         2ViA/Ee+hNLfYXWQHDWa8kfb95c3BME1bsf3kWR0kSr6r9S611IQZacQRNU9/l+5EuvV
-         76O9dRA07+5chE+69j35EpgkeVk/fJA+RTMxuyUygj20s66ZfckHlI2whw8uZO4g6St7
-         Jfn6Knxxyhea7Q3B5dd31A33dA2ud184GFXIsGcHpIzKBkRAic/7axTSpl84+8QZZR+P
-         gejoLl1DlrlBbUPw7lL+aUPoTAaiI9v77E97WlKtBMow2qa7QzVyoS1X+WM/qa/JB/tF
-         SbVA==
-X-Forwarded-Encrypted: i=1; AJvYcCXiWHjo3lXt14UYsnsIkkZMoQ7bAbU6kA/iF2QAZpihu5x0weRJU1wKxLXjcy9Ehl2kI05jQIQBOJE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfELEk+Znnk2bFkuYluntynWO8ebXOJdOhtWXDu3mq9dcdrMKZ
-	Qb+LkpdzXQAlq6cZolGTRkd4bGcaYXVOe9sKi2CpBVxQglUPmF+XvYEXWT6v3iU=
-X-Google-Smtp-Source: AGHT+IHsi38bxWb3DH0GTQLefA8NeqM/+Q0cudI7v+QLxZSUlm4s1VrNogfvm84TLbAlA8m3jS0TQA==
-X-Received: by 2002:a05:600c:699b:b0:426:5269:9824 with SMTP id 5b1f17b1804b1-42bb0229f05mr55125795e9.0.1725026876131;
-        Fri, 30 Aug 2024 07:07:56 -0700 (PDT)
-Received: from [192.168.50.4] ([82.78.167.144])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ba63965dbsm82864085e9.6.2024.08.30.07.07.54
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 30 Aug 2024 07:07:55 -0700 (PDT)
-Message-ID: <194e87f4-7eab-4bfb-833a-27fabd2d5205@tuxon.dev>
-Date: Fri, 30 Aug 2024 17:07:54 +0300
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="haLZ8908"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=uDcaebjvS3BGJm2mNwOKtW7qt1HOm0LrXI8UJBsCjr4=; b=haLZ8908g6RDC+VOGOw83NdP89
+	CeMPQLDvAK1hacZ5Q+EEj1yIsZ0PaIMoSfgNYOvLOOaN27XdqMy1bcvmuVBG9AD3sycn7kPSdsGk0
+	RpiOOZLgoac+3bM3ztwfjZr04JbHp+Wh6jTzzcYEBpmYIy8VRneE9X7tOYOkBojC8bBU=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1sk2KZ-0068J6-EH; Fri, 30 Aug 2024 16:10:27 +0200
+Date: Fri, 30 Aug 2024 16:10:27 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Andrea della Porta <andrea.porta@suse.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Stefan Wahren <wahrenst@gmx.net>
+Subject: Re: [PATCH 00/11] Add support for RaspberryPi RP1 PCI device using a
+ DT overlay
+Message-ID: <334b382a-c9ab-47e4-b860-b8477f04c3fb@lunn.ch>
+References: <cover.1724159867.git.andrea.porta@suse.com>
+ <14990d25-40a2-46c0-bf94-25800f379a30@kernel.org>
+ <Zsb_ZeczWd-gQ5po@apocalypse>
+ <45a41ed9-2e42-4fd5-a1d5-35de93ce0512@lunn.ch>
+ <ZtBjMpMGtA4WfDij@apocalypse>
+ <e6e6c230-370f-4b04-8cb7-4158dd51efdc@lunn.ch>
+ <ZtFWyAX_7OR5yYDS@apocalypse>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] clk: renesas: rzg2l-cpg: Use GENPD_FLAG_* flags
- instead of local ones
-Content-Language: en-US
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, wim@linux-watchdog.org,
- linux@roeck-us.net, ulf.hansson@linaro.org,
- linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-watchdog@vger.kernel.org,
- linux-pm@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20240828140602.1006438-1-claudiu.beznea.uj@bp.renesas.com>
- <20240828140602.1006438-2-claudiu.beznea.uj@bp.renesas.com>
- <CAMuHMdX+Q99MvQRZcwGbk8F8SiAUzRU_t2QmRuO_6etAqqXskg@mail.gmail.com>
- <8b6fc67d-5e07-4403-ac07-6ad0b9d61882@tuxon.dev>
- <CAMuHMdUqVcojRoPAEuZ8a9Y-iHm4b185StD73FpQoRFsEiZ8oQ@mail.gmail.com>
-From: claudiu beznea <claudiu.beznea@tuxon.dev>
-In-Reply-To: <CAMuHMdUqVcojRoPAEuZ8a9Y-iHm4b185StD73FpQoRFsEiZ8oQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZtFWyAX_7OR5yYDS@apocalypse>
 
-Hi, Geert,
+> On a second thought, are you really sure we want to proceed with the header file?
+> After all the only line in it would be the extern declaration and the only one to
+> include it would be rp1-dev.c. Moreover, an header file would convey the false
+> premise that you can include it and use that symbol while in fact it should be
+> only used inside the driver.
+> OTOH, not creating that header file will continue to trigger the warning...
 
-On 30.08.2024 11:06, Geert Uytterhoeven wrote:
-> Hi Claudiu,
-> 
-> On Fri, Aug 30, 2024 at 9:46 AM claudiu beznea <claudiu.beznea@tuxon.dev> wrote:
->> On 29.08.2024 15:32, Geert Uytterhoeven wrote:
->>> On Wed, Aug 28, 2024 at 4:06 PM Claudiu <claudiu.beznea@tuxon.dev> wrote:
->>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->>>>
->>>> For watchdog PM domain it is necessary to provide GENPD_FLAG_IRQ_SAFE flag
->>>> to be able to power on the watchdog PM domain from atomic context. For
->>>> this, adjust the current infrastructure to be able to provide GENPD_FLAG_*
->>>> for individual PM domains.
->>>>
->>>> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> 
->>>> --- a/drivers/clk/renesas/rzg2l-cpg.c
->>>> +++ b/drivers/clk/renesas/rzg2l-cpg.c
-> 
->>>
->>>>                 pd->id = info->pm_domains[i].id;
->>>>                 pd->priv = priv;
->>>>
->>>> -               ret = rzg2l_cpg_pd_setup(pd, always_on);
->>>> +               ret = rzg2l_cpg_pd_setup(pd, genpd_flags, always_on);
->>>>                 if (ret)
->>>>                         return ret;
->>>
->>> What about moving the conditional call to rzg2l_cpg_power_on()
->>> below to rzg2l_cpg_pd_setup()? Then this function no longer needs
->>> the always_on flag.
->>
->> That could be done but I think it will involve an extra power on/power off
->> cycle for the unused domains.
-> 
-> Still only to be done for the always-on domain, of course.
-> Anyway, up to you.
+The header file does not need to be in global scope. It could be in
+the driver source directory. As such, nothing outside of the driver
+can use it.
 
-I checked your proposal. If unconditional power on is going to be done for
-all the registered domains it may happen to register domains for which
-there are no enabled nodes in device tree and thus the domains to remain on
-(because the driver enables it under the hood and the genpd core doesn't
-know about it).
+Headers like this have multiple proposes. One is they make a symbol
+visible to the linker. But having two different .c files include the
+header enables type checking, which for long term maintenance is just
+as important. So a one line header is fine.
 
-With unconditional power on and the current DTSes the following domains
-remain on after booting with r9a08g045s33-smarc.dtb:
-- sdhi2
-- i2c2
-- i2c3
+	Andrew
 
-as the domains are registered and powered (while registered) but the nodes
-are not enabled in DT.
-
-Thank you,
-Claudiu Beznea
-
-> 
-> Gr{oetje,eeting}s,
-> 
->                         Geert
-> 
