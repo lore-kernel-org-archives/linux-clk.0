@@ -1,99 +1,180 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0E731C1ADD;
-	Fri, 30 Aug 2024 22:24:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C535136337;
+	Fri, 30 Aug 2024 22:25:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725056661; cv=none; b=lgcYUr+PmFCE4Iajus0qJUHyDx3b4xd3Wuvuu0RiGruonI+DdowUyA+gnX+ttaVfQ8hpwpTLGIaHxfKeqwXGPbj87ys7LMGrIQF7y1Gw6aAaU+X6w5jax7Q7PqgNRaBCMAh1l9X1fFqRZeEWRtjH3rRBV/5QmDNIj2fiZB60A58=
+	t=1725056754; cv=none; b=jfdNJGJcWyjQFAol7Uf7phTSisBLfHfhcYZeLYxuMxrTJ65WRk+pDfOoASgixRD+Jxs0QvpIRD5RHUXu08LiULLNxC+lUuh45gCHfSJTWUbQ8ITPBHHFGIpPbBcvZu/YeilyZ/1EtBANjiWpb2GLyKbBHTSjAjo3ZRP6VMQYCmk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725056661; c=relaxed/simple;
-	bh=tWP459tjU7LJnpj72if5jNzojTE3v+xzK/7UHnew5Po=;
-	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
-	 Subject:From:Cc:To:Date; b=OYHmDNIB4a9u+V06SexJWTg3RfpMXej1LmPj6YKtcTThPwYkyHKpyAGkDiEkQ4RjkYnMQVbg0PwabcU+MbcEW4caPuUQvjJSRspQveS0f2a9L37D2vak4gH+eEWsH+z0eysc60QY+jBgj6xlvplsioY+F9mHxX7Z94IWp+uRxQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oYxrm/Nm; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1725056754; c=relaxed/simple;
+	bh=f2XKavdW1vhVPPhblS1ZTY7s6BzocYVLygaWMIG4E8U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mlkc5q9sjlwhLU4TF54e9ghj3XkIteoOH+EPC4KcbN8ENKh6rR4/Hx0dXnT3vkXYmhR3Sx6NAsC3WC6ZmkkLASBflbRohLE67AXcIaI4Z/xtzL9YRLhOTwg5LqT20NB2bSadZVIVOlw0ZpNEc9ksmlDjHhLNzR6UIZhY7687TmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=i6DCz8Df; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oYxrm/Nm"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 283C9C4CEC2;
-	Fri, 30 Aug 2024 22:24:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725056661;
-	bh=tWP459tjU7LJnpj72if5jNzojTE3v+xzK/7UHnew5Po=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=oYxrm/NmgImPQzJHr75X/xK20n+JKF4sHrKYO+yw+OCg7F+YD0W5UiNHViN9id+H7
-	 xUTxUrL8PfoisNFAjePH4JebEMf4VbdofvQB+OpV8q7/UC3qItx7JLtUhTi3bMhy0C
-	 V2vgaL7d2xNmfZtvy7RsV44OCLm0t7/3FwpdZc8nd17dOvdjGdzBhl+LH+KrcV2sY4
-	 rb0S9y1RSO8sQIxogl1pvBFmWMZtD+4rzcQrdfC5vUu4C5fubXSLxLUAXNIsTYT3K0
-	 tCLFY3nCZGlHF/wsQOgl5ONFzUv5XQ3vPMv+AvjS3K5bUV+Hh4k2vIpNljOGldFbtT
-	 z/l1MscwAjobw==
-Message-ID: <04944b77ce6327ba5f4ec96348a9cda2.sboyd@kernel.org>
-Content-Type: text/plain; charset="utf-8"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="i6DCz8Df"
+Received: by mail.gandi.net (Postfix) with ESMTPSA id E80FAE0002;
+	Fri, 30 Aug 2024 22:25:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1725056743;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bdFbgMzvJfpDhPePQ3r4tXcwVqtf83V3DSLfXhWmeh4=;
+	b=i6DCz8Df3DS85Yq0zFUf7EEIoONfr6gr2r9oB4Ay9Kx3Tm9eLlszQ+nmQlYYQyozSnV/lO
+	I8wvFRcRbAyBxV+1jgT86KlYUS4JjTbYQpzZnFUmViYmBnLVU9vp7jaLmZoAgCbNIEYlEw
+	riRw3LDrJ2HDtXPfTaCcctoG+IO2iQDWHDDs69PlHf08cLLZ344FCtXR3ydIEv6/X90c2w
+	tL051qgA6Hlu8O235aadAdFtrsdsmh44Gp0UBwOl/jnVtta922z5lpmODpAIcUT+suPbP5
+	YGk/HJn7ZE8+ogAoSLmnIi1AP2BN+2FPtIfOZVzCi+lmWWEspAWRUpNYJTyCjA==
+Date: Sat, 31 Aug 2024 00:25:41 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: geert+renesas@glider.be, mturquette@baylibre.com, sboyd@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	magnus.damm@gmail.com, p.zabel@pengutronix.de,
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>,
+	kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH v3 06/12] rtc: renesas-rtca3: Add driver for RTCA-3
+ available on Renesas RZ/G3S SoC
+Message-ID: <202408302225417622f1e7@mail.local>
+References: <20240830130218.3377060-1-claudiu.beznea.uj@bp.renesas.com>
+ <20240830130218.3377060-7-claudiu.beznea.uj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <7736d0d0-634d-403d-b70f-f33b7402456c@quicinc.com>
-References: <20240827-qcom_ipq_cmnpll-v3-0-8e009cece8b2@quicinc.com> <20240827-qcom_ipq_cmnpll-v3-2-8e009cece8b2@quicinc.com> <d7b374670eb2f6d442f351106ab1221a.sboyd@kernel.org> <7f4d41a0-b1b9-4b63-8590-63f4fcf1a359@quicinc.com> <7736d0d0-634d-403d-b70f-f33b7402456c@quicinc.com>
-Subject: Re: [PATCH v3 2/4] clk: qcom: Add CMN PLL clock controller driver for IPQ SoC
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, quic_kkumarcs@quicinc.com, quic_suruchia@quicinc.com, quic_pavir@quicinc.com, quic_linchen@quicinc.com, quic_leiwei@quicinc.com, bartosz.golaszewski@linaro.org, srinivas.kandagatla@linaro.org
-To: Bjorn Andersson <andersson@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, Conor Dooley <conor+dt@kernel.org>, Jie Luo <quic_luoj@quicinc.com>, Konrad Dybcio <konradybcio@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Will Deacon <will@kernel.org>
-Date: Fri, 30 Aug 2024 15:24:19 -0700
-User-Agent: alot/0.10
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240830130218.3377060-7-claudiu.beznea.uj@bp.renesas.com>
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-Quoting Jie Luo (2024-08-30 09:14:28)
-> Hi Stephen,
-> Please find below a minor update to my earlier message on clk_ops usage.
+On 30/08/2024 16:02:12+0300, Claudiu wrote:
+> +	priv->rtc_dev->range_min = mktime64(2000, 1, 1, 0, 0, 0);
 
-Ok. Next time you can trim the reply to save me time.
+RTC_TIMESTAMP_BEGIN_2000
 
-> On 8/28/2024 1:44 PM, Jie Luo wrote:
-> > On 8/28/2024 7:50 AM, Stephen Boyd wrote:
-> >> Quoting Luo Jie (2024-08-27 05:46:00)
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 case 48000000:
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 val |=3D FIELD_PREP(CMN_PLL_REFCLK_INDEX, 7);
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 break;
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 case 50000000:
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 val |=3D FIELD_PREP(CMN_PLL_REFCLK_INDEX, 8);
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 break;
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 case 96000000:
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 val |=3D FIELD_PREP(CMN_PLL_REFCLK_INDEX, 7);
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 val &=3D ~CMN_PLL_REFCLK_DIV;
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 val |=3D FIELD_PREP(CMN_PLL_REFCLK_DIV, 2);
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 break;
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 default:
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 return -EINVAL;
-> >>> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
-> >>
-> >> Why isn't this done with struct clk_ops::set_rate() or clk_ops::init()?
-> >=20
-> > OK, I will move this code into the clk_ops::init().
->=20
-> This code is expected to be executed once for initializing the CMN PLL
-> to enable output clocks, and requires the parent clock rate to be
-> available. However the parent clock rate is not available in the
-> clk_ops::init(). Hence clk_ops::set_rate() seems to be the right option
-> for this. Please let us know if this approach is fine. Thanks.
+> +	priv->rtc_dev->range_max = mktime64(2099, 12, 31, 23, 59, 59);
 
-Sure. It actually sounds like the PLL has a mux to select different
-reference clks. Is that right? If so, it seems like there should be
-multiple 'clocks' for the DT property and many parents possible. If
-that's the case then it should be possible to have something like
+RTC_TIMESTAMP_END_2099
 
-	clocks =3D <0>, <&refclk>, <0>;
+> +
+> +	return devm_rtc_register_device(priv->rtc_dev);
+> +}
+> +
+> +static void rtca3_remove(struct platform_device *pdev)
+> +{
+> +	struct rtca3_priv *priv = platform_get_drvdata(pdev);
+> +
+> +	guard(spinlock_irqsave)(&priv->lock);
+> +
+> +	/* Disable alarm, periodic interrupts. */
+> +	rtca3_alarm_irq_set_helper(priv, RTCA3_RCR1_AIE | RTCA3_RCR1_PIE, 0);
 
-in the DT node and then have clk_set_rate() from the consumer actually
-set the parent index in hardware. If that's all static then it can be
-done with assigned-clock-parents or assigned-clock-rates.
+Why do you disable alarms on driver remove? I think you need to add a
+comment if this is because it can't system up, else this is a bad
+practice.
+
+> +
+> +static int rtca3_clean_alarm(struct rtca3_priv *priv)
+> +{
+> +	struct rtc_device *rtc_dev = priv->rtc_dev;
+> +	time64_t alarm_time, now;
+> +	struct rtc_wkalrm alarm;
+> +	struct rtc_time tm;
+> +	u8 pending;
+> +	int ret;
+> +
+> +	ret = rtc_read_alarm(rtc_dev, &alarm);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (!alarm.enabled)
+> +		return 0;
+> +
+> +	ret = rtc_read_time(rtc_dev, &tm);
+> +	if (ret)
+> +		return ret;
+> +
+> +	alarm_time = rtc_tm_to_time64(&alarm.time);
+> +	now = rtc_tm_to_time64(&tm);
+> +	if (alarm_time >= now)
+> +		return 0;
+> +
+> +	/*
+> +	 * Heuristically, it has been determined that when returning from deep
+> +	 * sleep state the RTCA3_RSR.AF is zero even though the alarm expired.
+> +	 * Call again the rtc_update_irq() if alarm helper detects this.
+> +	 */
+> +
+> +	guard(spinlock_irqsave)(&priv->lock);
+> +
+> +	pending = rtca3_alarm_handler_helper(priv);
+> +	if (!pending)
+> +		rtc_update_irq(priv->rtc_dev, 1, RTC_AF | RTC_IRQF);
+> +
+> +	return 0;
+> +}
+> +
+> +static int rtca3_resume(struct device *dev)
+> +{
+> +	struct rtca3_priv *priv = dev_get_drvdata(dev);
+> +
+> +	if (!device_may_wakeup(dev))
+> +		return 0;
+> +
+> +	disable_irq_wake(priv->wakeup_irq);
+> +
+> +	/*
+> +	 * According to the HW manual (section 22.6.4 Notes on writing to
+> +	 * and reading from registers) we need to wait 1/128 seconds while
+> +	 * RCR2.START = 1 to be able to read the counters after a return from low
+> +	 * power consumption state.
+> +	 */
+> +	mdelay(8);
+> +
+> +	/*
+> +	 * The alarm cannot wake the system from deep sleep states. In case
+> +	 * we return from deep sleep states and the alarm expired we need
+> +	 * to disable it to avoid failures when setting another alarm.
+> +	 */
+> +	return rtca3_clean_alarm(priv);
+> +}
+> +
+> +static DEFINE_SIMPLE_DEV_PM_OPS(rtca3_pm_ops, rtca3_suspend, rtca3_resume);
+> +
+> +static const struct of_device_id rtca3_of_match[] = {
+> +	{ .compatible = "renesas,rz-rtca3", },
+> +	{ /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(of, rtca3_of_match);
+> +
+> +static struct platform_driver rtca3_platform_driver = {
+> +	.driver = {
+> +		.name = "rtc-rtca3",
+> +		.pm = pm_ptr(&rtca3_pm_ops),
+> +		.of_match_table = rtca3_of_match,
+> +	},
+> +	.probe = rtca3_probe,
+> +	.remove_new = rtca3_remove,
+> +};
+> +module_platform_driver(rtca3_platform_driver);
+> +
+> +MODULE_DESCRIPTION("Renesas RTCA-3 RTC driver");
+> +MODULE_AUTHOR("Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>");
+> +MODULE_LICENSE("GPL");
+> -- 
+> 2.39.2
+> 
+
+-- 
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
