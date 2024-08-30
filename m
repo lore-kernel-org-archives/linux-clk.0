@@ -1,106 +1,186 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2073.outbound.protection.outlook.com [40.107.117.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C513166F19;
-	Fri, 30 Aug 2024 08:02:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725004978; cv=none; b=YYPbMsOEyydNhTdKKVW1iFAkgWpxQzCrsAIAXyYR43cvtR0UUuapj174VyHmSmytPipGAu5ISn6//Zj+2S6j49UC+ntWKw0wpC3VdrOAbhT3yTYmRtDVgF7s2JpRWc9wqA1b4nJl9Kyh5ikg6XLD+/v3GyTrNqwfLa+sJS3Y19U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725004978; c=relaxed/simple;
-	bh=V5JLcyP1XZThVqKP2FLK8yZHQp7BSEs//17dfoHaEaI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bzyFW2t+kAxktfQm/lmIYa/0tL8UXsPMICNmFFpO1Mrn/m55bYavZuPbCYO1H+JIric1Fpcul4/odeRNv9uPpjgKTn/YIQd7bmqlR2IK1Dmw5SiY6KvgfMNk1OzI8j3QtQkE8tgMvoPZGgKLj3DFyd7kJ3FJoCSGcSP0j/g1n8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Htr/ljZ4; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57EC71531D5;
+	Fri, 30 Aug 2024 08:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.73
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725005054; cv=fail; b=bUWoVZtEq6Zafz9JIOZeDWeUEZDQrZlmHjNiEkR+D8ugMo6s9+RPdY02XzFNH6cwbF9aaEIZL9Lx3HmW77tmbAtt0+BDpIzPazsmo2Lsfor75PhUIZcBXJ0BtLnbkJyUJzO5dKwvFd8dBmEXy63w+irRMr9U/iT/CTofVQnoPuk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725005054; c=relaxed/simple;
+	bh=LjCwgEScOvAbj0GrzJazkZfA2d8BHmBkdrB/mcUp35M=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=T1kMBR38o7DImcR5L0lWB8pDINOFhq8rlNIg5aIpCSkNdubJ1baCJFQLoM29yl4wmsNfRJlqm6phuymKlkColRGx4+EtwuGUOV5k6Zd5JmjXI5bQNFyTy0jYnPUsXkokI9xb2YHuBQoQkWymKjVDH7d+EBfKhopTC5osG0BIsuE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=L1rulOsA; arc=fail smtp.client-ip=40.107.117.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Htr/ljZ4"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3028C4CEC8;
-	Fri, 30 Aug 2024 08:02:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725004978;
-	bh=V5JLcyP1XZThVqKP2FLK8yZHQp7BSEs//17dfoHaEaI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Htr/ljZ4bcbC+qH3hiz+ps1PACcNUaMjDmNVw57mwJ336MuYU9kJC4HeWUQo0nfZm
-	 /6gCNWrVzTDl64iW0D5MCCWXyVYMHdDIbZ7r3RarSP+gpdaVdn4mxWQeoHo9II9chF
-	 lC8E2JhDQK6X3nWyOoiwIV3k2yAi+Za+6aH/edwFJTwYCxMy9IxCbvd4P+4Cfze41J
-	 HCHUPeSdRxVhWy6OZO8YPG9ugnv+YuqyeTbtSpmdME3Fvcl21x2hUhj3O1aP46a4lg
-	 Pt+iBmqP6HmO+4Bmu0UuIy2ZXxpaO26aRTna2oav0kll4jc6QilhpdphuN+Iz1nf/6
-	 MPfaAD68BgEJg==
-Date: Fri, 30 Aug 2024 13:32:54 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: "Claudiu.Beznea" <claudiu.beznea@tuxon.dev>,
-	"kishon@kernel.org" <kishon@kernel.org>,
-	"robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
-	"geert+renesas@glider.be" <geert+renesas@glider.be>,
-	"magnus.damm@gmail.com" <magnus.damm@gmail.com>,
-	"gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-	"mturquette@baylibre.com" <mturquette@baylibre.com>,
-	"sboyd@kernel.org" <sboyd@kernel.org>,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	"ulf.hansson@linaro.org" <ulf.hansson@linaro.org>,
-	"linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
-	"linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: Re: [PATCH 10/16] phy: renesas: rcar-gen3-usb2: Add support to
- initialize the bus
-Message-ID: <ZtF8rtI7e/7cK4BR@vaman>
-References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
- <20240822152801.602318-11-claudiu.beznea.uj@bp.renesas.com>
- <TY3PR01MB113468A6CA4ADBCA577670AD486882@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <8faa6b6d-a013-4a71-a8b7-af02ac92d94b@tuxon.dev>
- <TY3PR01MB11346FBA77256F2156D374ECF86882@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="L1rulOsA"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fk1aRxfVor6TOYP03hiebdujzUhvmzGU1xhJYA1atmv1W9+CDIifNU1r6RJKk3JE1zao9KFlneZNK1m5UdVJgkD5rvAUZiXBXkG1Don0tr+sSyl6kNHduwpyTHLsVfkNtkncQ4feoxnuAzI5p1uRDiv7O/J79yBuPDSTC5CHeE5L+Zi2u2cIi1p0gGCwNISLQehn1kOVvuEvN8YwfOMLHk1z13SFcOVqD6zWb05bTPX03kVwlJ6fK7Wrd43ELL0f3lav/OVCnOBKnX98efgd2Cgnj341IaTwX3RuWm1pVjPm9DGRqg2QxtsrMVOV5xvbvEW2llqEB25KgGYKbaOgtg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0XZq6n0Dv4iLZQWkJkQKPGNPoR/wYUtrmeOz3rvopVk=;
+ b=LvwNOtLiVNaWFY3B0/NDSTHUnuTZH1Y2+QAdBXgtBeRh3EyqxfZnAC4HAxLfcQh6JmiunRNA6RiB8T1QSpNqSMm3KRamd65rh2Iha+tIYr8hJCBDfA8bGPCNiMbqE6EApthIK4acXNlDig2T4awcSS/o+0T1vaNnIlBg68stuOgufYl7mEpsr1WRet0IIqQfLe8/e/XbuaFL5BZz/0likONqDLbZ4Qsy5sUpeuBpnoJ4IAk6r6o6wEzsf7IVp5nOsV52yGprxgV7UKlkYydhKpNN4ybpYbDwCoXX4YPFu/OFTAScCWb8OKZw98qqcCAHpKt0uPqOkhwlx8pwxbFvxQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0XZq6n0Dv4iLZQWkJkQKPGNPoR/wYUtrmeOz3rvopVk=;
+ b=L1rulOsAxO/NhsNptqUpDsTgMRiBHs/jy+wV32Noz9kL/6uXwqAXNWPDHg65XyoBMIJ/1QZGn/tkyC2cgLDp8XAEM4XNUljSww958lPJMxMS7QQRFSdXem8CkDcYCEwa2g32WegC7rd8uCPuTMb8xXbP0F9qU0qOc007G8lO1t65E+FijQicXCeK/3lsYCtvOy/c0bGBD1riT4IIOD4v+SHLGJ3s3e29VGYhIoIqtppVCXX4Vj1bCWw8xO3W8SOPQtGR6bshnkO5w4QD5AWB0uvuVZVUo1iX+llqzs0tQkMlvULTvV7p3G7UA5JkmRC40jTElV6rrkwL+xYUwB++jw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from KL1PR0601MB5487.apcprd06.prod.outlook.com
+ (2603:1096:820:bf::14) by PUZPR06MB6068.apcprd06.prod.outlook.com
+ (2603:1096:301:112::16) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.20; Fri, 30 Aug
+ 2024 08:04:08 +0000
+Received: from KL1PR0601MB5487.apcprd06.prod.outlook.com
+ ([fe80::2129:59e5:6c67:311f]) by KL1PR0601MB5487.apcprd06.prod.outlook.com
+ ([fe80::2129:59e5:6c67:311f%7]) with mapi id 15.20.7897.027; Fri, 30 Aug 2024
+ 08:04:08 +0000
+From: Chen Yufan <chenyufan@vivo.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	linux-amlogic@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: opensource.kernel@vivo.com,
+	Chen Yufan <chenyufan@vivo.com>
+Subject: [PATCH v1] clk: meson: axg-audio: Use dev_err_probe() to simplfy code
+Date: Fri, 30 Aug 2024 16:01:03 +0800
+Message-Id: <20240830080103.12811-1-chenyufan@vivo.com>
+X-Mailer: git-send-email 2.39.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR02CA0123.apcprd02.prod.outlook.com
+ (2603:1096:4:188::22) To KL1PR0601MB5487.apcprd06.prod.outlook.com
+ (2603:1096:820:bf::14)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <TY3PR01MB11346FBA77256F2156D374ECF86882@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: KL1PR0601MB5487:EE_|PUZPR06MB6068:EE_
+X-MS-Office365-Filtering-Correlation-Id: 778a5000-be46-43a5-4492-08dcc8ca52f5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|52116014|366016|376014|1800799024|921020|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?KgWRT2m+b8C/ima6GZEZXzYRjuL/V2yJxNulSKSqaqUk6Oq/CR6eH3r8z87c?=
+ =?us-ascii?Q?aUC7OoZgcD95UkdB/cgDQgyKd1rj36mHgpAaHzIOj6wfF/CTxRwa3FV2zxg2?=
+ =?us-ascii?Q?9qACMCLo23KPr36J/8FpSTxV4R6gWjKgvPD8UwLCa8/eOp4/UInVEsPu3Lpy?=
+ =?us-ascii?Q?jmihBTy7reBKPtwI4zzI/LmwvpwE42Kti3luHSonFXoCKOUvDJofWt0zKD5s?=
+ =?us-ascii?Q?OIxcrPHwWudwR8PD+xzTFsmMsE/o35jZj1CHiMN57EV58rYWNShZtbDcrKwP?=
+ =?us-ascii?Q?b+W4Z/VxGIH72OuEgZnnJh7FDAe7Yril5ffRkwgoT4dw39wAHcg8mfYXSuXU?=
+ =?us-ascii?Q?y9b1MRwikDgLkzLtZNHMMEKAb3NDAleJvJSu+7GlLL8asT0zDD+uYt9Det+j?=
+ =?us-ascii?Q?Gnhlg5h90UOJJyNSCOa4fqckzVGUSqtINSnitv/NJ+I0omO9XLq20kTWivEc?=
+ =?us-ascii?Q?LnIwcaHD34UmL+4AOSgTBnam5hcy/P8CAKl7mLY4gPndg6G1xbpGSZiBgCAG?=
+ =?us-ascii?Q?LJlFfPhxdYlE+I6uUo2Y4pNfmIqfr8Mj0tFLLiuqYjzVz0tHqp5z+wWg/x+m?=
+ =?us-ascii?Q?jW4STG5btMdpVuz5yyMXByqTlvP+gGPgfId2sA9Uxfu/bOApSY6So5mm0tkG?=
+ =?us-ascii?Q?1aH4a+2mlUrWkI2GWsfQN4bzJ2MEYFSPHKXkwAxP10b1eHUSkYd2DrBBZ7Vo?=
+ =?us-ascii?Q?NYXL23/tU0rmeEVMWl8ZkB7ShlvpXEo7kNQqqVyZq3pxNxHUDeGPAcdhe7Ma?=
+ =?us-ascii?Q?CMb1v4sIPrpx+JBn4FVjhWaNWY/Djs7u0RaIfmWVDiE6yHHbludqtAHtRye6?=
+ =?us-ascii?Q?SlCGVs+SpLBTUMhhxETUz+uCd2BeD9ueuyY1OTmKuMBs6NqWyz/rIo3uZgVK?=
+ =?us-ascii?Q?ykOg1uWiR5pDdy7ldp6IBg9zygKbdM6qpGUJps9cZIMm1wW4OPqrjo5Yai0v?=
+ =?us-ascii?Q?jwju/IHR1IDxN2A7GeLwecbF9Xj68wPDacb3KS/5pffk/zLCCeHNlr3F4Yp1?=
+ =?us-ascii?Q?P3jdHfKGiQnyBgt9N0ouorZM4DcDhJYwLgv3jvUeSAFTmKj3Zr9ZeavsJqXc?=
+ =?us-ascii?Q?cIMXWGSfTDkPPx5AzTMUJ197nWYSQr5YKc8ccy0JnCB+o6zd6xWnIKFCMRHq?=
+ =?us-ascii?Q?ZofHXICT/FfKDiEy4kXg3qgbMQ6/7FERQ8Do8xMt9xaKxK8bGY0E1XJfD9U5?=
+ =?us-ascii?Q?IkeKUcxB+EjzOAM2d0jNmMWh1jzzlY/4dR6QkFljePo+oP0YlxKOiImYfdgC?=
+ =?us-ascii?Q?urFrxaBNok19V4Bzexn+E7QF2eL45z/+NX3IX0aBAQ4XdU7+E+w1dURH7B2R?=
+ =?us-ascii?Q?xx2FsbtqOP7NPQr6yWipN12JmQds5SefDkQ93hBnM2L0ZLO+GR+0Vsy6iHGL?=
+ =?us-ascii?Q?mX6kyFTLcopPc2WY5YBBxi5URNCzhbUeicebkEDGnrBCegNg8jXWsyjkP2NI?=
+ =?us-ascii?Q?bzduOMJNiq8=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR0601MB5487.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(52116014)(366016)(376014)(1800799024)(921020)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?b3BpCobcvDdPrJZAkygXKOLr5VLLOKTC2fxvtPM+8ugy/ZZvEgeo0ySoFWLs?=
+ =?us-ascii?Q?7l8VbYuavp5nFyLnpKDC2qrSayDbEIpzohUOc37CEEEgDytv6lKi1smrGeQa?=
+ =?us-ascii?Q?7D5Rpcj/8LPN7gFN7/mnS2w+IRSDTvfkpa/LJv9+7+BlVOD6aSgfDJcWW3Oi?=
+ =?us-ascii?Q?Bw7crzcZCixIlm70mPN2DNkKBdI1OpbJoG9lpqkv09lC+MFpUq/pX0mZFZIs?=
+ =?us-ascii?Q?qcrAYCcya1+Fdj7MNgftC9mKW81gLlAvm2JwrV1ATGALjHBWVTxbjXmcItEH?=
+ =?us-ascii?Q?zJr16batelZ6AasVpLBwgeyhSztQBNurlwvnSwB1ldRS88Lj1hbgmi5qZ6Z7?=
+ =?us-ascii?Q?YJtqNJ1kGq4dAm4cYbVECgnmgdR1KxFLecvU38A41lGLfQoAMGWX+tt0INbV?=
+ =?us-ascii?Q?OEL1ibXXIUuwL0LUBQE/deBpOd8HQsJh3E3WrJLSkdWzPwV8r2ICtyznM3iB?=
+ =?us-ascii?Q?oLK6wbn2H5khTVqf9zTfUy6bWqQuPcue7sKGL6GahlBxvaOEfWxWO1j01i7L?=
+ =?us-ascii?Q?wiOuGmEN3lPMrwJP7B+bauIz4EOksR6D46gOgKbOjVKtiYC7dd6qZpBDIYSU?=
+ =?us-ascii?Q?b5ai3QepJVI7JDqx6RDITMhNnXeqrQ6R+2zHgBJ+irUtHiiD9nwctzlEYwcq?=
+ =?us-ascii?Q?Gb6LVETaxGdVmlgdOeTZ45dG2GRwkqmoFsqVdxI23u7xLdB12x6EX9pF8KwC?=
+ =?us-ascii?Q?RwMp08cuINrBprlRBQWj62CyJYs8UdY2skjzEv6k92cXTcY0X3Rn5RzmZ/65?=
+ =?us-ascii?Q?0HBV+xvU8oeYEQeG8mPk51np5yFiCQBdVOzTPWjO4JPUddBksO+/MOG0q0Wn?=
+ =?us-ascii?Q?vKCXH8F2U2WOyPt5oE67WoYxCThHyGsP+cCzFavDe4WH/nWZhT9CUzOVf1jM?=
+ =?us-ascii?Q?QjL7LmvODGGsT4KuYVUsxMpImjRAfPm7SCgKecK3hZofs1eagoWPZTPB7XAU?=
+ =?us-ascii?Q?83aZEf0bWnOyuwyTxFuCjapPaxq6qvEUHCeybiryCgJe96mBjmmPd33SUFiF?=
+ =?us-ascii?Q?/OpA41dtKCx2OM+khH4PJ4vwd4bk1mifEw/iUf5y2lOeNRZJQcUljle62U0X?=
+ =?us-ascii?Q?Vwvw6v8llkj/E8u+HrYRjZl5iLOK+p711UdQFxdW+heLOqxOVcCzkInnPVU2?=
+ =?us-ascii?Q?5JYkSYtAVwA10D1eiMY7Up9DJhkBpxQh+cao4Pg6Y4Zv6RmM3mW1OcJIH55d?=
+ =?us-ascii?Q?G/Vk8kIQ1VowcwOXYVU6JaJBmukll1lQ9KGZRcNX3NDlKAYTXan3tVhofMLe?=
+ =?us-ascii?Q?LQ20umxZGHZQ/DCBBKy1OMNVDoXrJSELWJPFMfZJlWw4ssMySuUOqheQLGZ9?=
+ =?us-ascii?Q?Pwg7VYkfxtjfIBGjkuEUjF6SMG4IpTRsdQsSnz6zk6pHZ84kEU5FiCe4+7Jk?=
+ =?us-ascii?Q?WF+gDIlahIZfOy9LFYO5HW65PsIHu4USlyvVpmlvHaQw3kmNv6A4ya4ra6Oy?=
+ =?us-ascii?Q?GP9Q+1HGPccRwf422SKHQNoT75OoFl0c9aGRbDJLHpnFNwpx/QuM9e65s7Ju?=
+ =?us-ascii?Q?ytkhKuBiqD42m8DfgrUV2zvKD8RbhYzb+d6q3xVTc8szhDQVHttC7ugJedWX?=
+ =?us-ascii?Q?3zGQR7dBYJC4hiwECbeg1/VntjdMhYz3EEELmKiu?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 778a5000-be46-43a5-4492-08dcc8ca52f5
+X-MS-Exchange-CrossTenant-AuthSource: KL1PR0601MB5487.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Aug 2024 08:04:08.2186
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: gok9zHtn0TyPLUHaN3pNwijzm8W3U38lx5mS+wAXSJRmW14xDeerj87NLE1fSvBicdkp6APDClHK9YahCXIulA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR06MB6068
 
-On 23-08-24, 09:01, Biju Das wrote:
-> > >> The Renesas RZ/G3S need to initialize the USB BUS before transferring data due to hardware
-> > limitation.
-> > >> As the register that need to be touched for this is in the address
-> > >> space of the USB PHY, and the UBS PHY need to be initialized before
-> > >> any other USB drivers handling data transfer, add support to initialize the USB BUS.
-> > >>
-> > >> As the USB PHY is probed before any other USB drivers that enables
-> > >> clocks and de-assert the reset signals and the BUS initialization is
-> > >> done in the probe phase, we need to add code to de-assert reset signal and runtime resume the
-> > device (which enables its clocks) before accessing the registers.
-> > >>
-> > >> As the reset signals are not required by the USB PHY driver for the
-> > >> other USB PHY hardware variants, the reset signals and runtime PM was handled only in the function
-> > that initialize the USB BUS.
-> > >>
-> > >> The PHY initialization was done right after runtime PM enable to have
-> > >> all in place when the PHYs are registered.
-> > >
-> > > There is no user for this patch. The first user is RZ/G3S and you
-> > > should merge this patch with next one.
-> > 
-> > I think this is a matter of taste... This is how I usually format the patches (for scenarios like
-> > this) and got no request for squashing.
-> 
-> That is strange for trivial patches like this.
+Use dev_err_probe() can make code a bit simpler.
 
-Splitting is better, this patch does one thing whereas the next one uses
-it adds in new device, i would say quite a clean approach
+Signed-off-by: Chen Yufan <chenyufan@vivo.com>
+---
+ drivers/clk/meson/axg-audio.c | 12 ++++--------
+ 1 file changed, 4 insertions(+), 8 deletions(-)
 
-NOTE: Don't quote the not required context while replying, it is good
-mail list hygiene
-
+diff --git a/drivers/clk/meson/axg-audio.c b/drivers/clk/meson/axg-audio.c
+index e03a5bf899c0..0637b05a4c89 100644
+--- a/drivers/clk/meson/axg-audio.c
++++ b/drivers/clk/meson/axg-audio.c
+@@ -1761,10 +1761,8 @@ static int axg_audio_clkc_probe(struct platform_device *pdev)
+ 		return PTR_ERR(regs);
+ 
+ 	map = devm_regmap_init_mmio(dev, regs, &axg_audio_regmap_cfg);
+-	if (IS_ERR(map)) {
+-		dev_err(dev, "failed to init regmap: %ld\n", PTR_ERR(map));
+-		return PTR_ERR(map);
+-	}
++	if (IS_ERR(map))
++		return dev_err_probe(dev, PTR_ERR(map), "failed to init regmap: %ld\n");
+ 
+ 	/* Get the mandatory peripheral clock */
+ 	clk = devm_clk_get_enabled(dev, "pclk");
+@@ -1772,10 +1770,8 @@ static int axg_audio_clkc_probe(struct platform_device *pdev)
+ 		return PTR_ERR(clk);
+ 
+ 	ret = device_reset(dev);
+-	if (ret) {
+-		dev_err_probe(dev, ret, "failed to reset device\n");
+-		return ret;
+-	}
++	if (ret)
++		return dev_err_probe(dev, ret, "failed to reset device\n");
+ 
+ 	/* Populate regmap for the regmap backed clocks */
+ 	for (i = 0; i < data->regmap_clk_num; i++)
 -- 
-~Vinod
+2.39.0
+
