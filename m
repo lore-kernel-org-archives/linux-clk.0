@@ -1,177 +1,173 @@
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from APC01-PSA-obe.outbound.protection.outlook.com (mail-psaapc01on2072.outbound.protection.outlook.com [40.107.255.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B58EF4690;
-	Fri, 30 Aug 2024 06:16:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1724998604; cv=none; b=Q1qHVBHzZEaXhgxt70QyvoXFZa/lo1kfjncHhEkIbLWNSGFBmrMFGEqe9o+dYKXLwi8WMYZ+f+nxi9LwmOf0VaFj6G5GvH8jyGYk+kG9JDkUwfHO/M7Kaf1opnP5VKXVCAyct8g17g8gP3YOWBnVQ/QB6uQxfl25+lQI+I9sFVY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1724998604; c=relaxed/simple;
-	bh=kwLU0Qllp0uF3RpaZ6YdoRsAKpBOlqE4OortN2zxMOg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=g1rTOU1nfzGkbB5Xd2i+LcztVTevU1OroY5xbgVAi4IbMNu52KQ2n5uGwEkAKkbiyU4YFkZgmOBlCfgeOx9dueZgiGocSKroUSfwvXpK9v3SZX0EDTVHy5bhr0d592F9WBensJ0Sv2fe4vQQJLVGYA+v0qSrR687wwrFiv6SOQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AeOyT73k; arc=none smtp.client-ip=209.85.210.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96E63158554;
+	Fri, 30 Aug 2024 07:28:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.255.72
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725002931; cv=fail; b=YoCjUnvTOeD1qsc8HETrSOHsbrvQECdkbqRY3v1SiQtBMZw/6vyNtoJYl3knJg8IvBJNrxHQ2JQva1n4XrXBZdk+bAPOEfj4WkZR5dXap2wg0ImKf+uScWnrSVBWZLuvQgP/b86q44kiDTtYoaWoXk4dJ7P0iRhOJgpTxtS+qG4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725002931; c=relaxed/simple;
+	bh=u3Ro8r+I/E/zf9NJVEX8bN/Yovtdi0VNuyB3/P/jn6E=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=pdHMjVFpK4SfMv7e6QG4rrvZ61t2BhJiQIUTpFaD+7FSGw8vdwBjPLX1bh9yPq42IxG1RJiEGiNwy+myh93oNNjrn47K6RJ7caM8KMu4rEmyKiM6iDeOwQfIbZSJKP0AeCnXJTLPjKlZ52CkWYUkOvr/bK1I34VNGHUNZ2AgVlQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=g0d8rHEj; arc=fail smtp.client-ip=40.107.255.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AeOyT73k"
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-70b3b62025dso988608a34.0;
-        Thu, 29 Aug 2024 23:16:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1724998601; x=1725603401; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yFCh/eP/aoZWHU1KKEtdLzMx+5SadMmNDlFlgmEdxY4=;
-        b=AeOyT73kR5UZVmfri3/pwikXoSoTic6SITF8BInt9JBpERsfTcN/v2TsMdoVMd3nto
-         8fSzxBhLkRzkuBYcA7J+50cD143P6wE8ThezJrYlz0pBm59GM6QcZOYSgsKj7hABf7N7
-         h85Jcs3C512xhEBv8xb9lk6dns1oLrD0m3QjctBgD6Fv0zbsva4r2AvqrFsScApKAhnj
-         DJ0vO9sHVCzfMopMsXFyyF/M+xBH6Uhw5PVw5kik9WQESc7DDazXoUxbIf0eLsk5POR4
-         hGiE1iBTAPGD7ZsNKJpqmjwzfveM6RaV0LUqCEbQfpOf67UF7vNr2S5H2s3+DNRBrHbP
-         wmrQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1724998601; x=1725603401;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yFCh/eP/aoZWHU1KKEtdLzMx+5SadMmNDlFlgmEdxY4=;
-        b=XQnaYJWMg+Oi/5VWa+mYpcAtoH4Th6qL66qxdi6JDbCjgveoSXL2FbsVrJnVCt1I9n
-         LaXfsmntF2idKphFnr/rxfZ1371HilGtkepnIzb0vVgqdyMRalPDzUoBjy/mLgC+SogS
-         04kefizZnK7bsBzse1DnrbVgDmRV7kImGLm4i+uAbS5LE5JGzmizai7eBjPotL42xmfy
-         T0yihRiwdONE0GRV164Erq58IS84SnAOFkvNzzooDOlthD8PZ2QsYN9lkstwwpKtNsEg
-         24tR4uTnrhA4+NPzESxbvYAS3vHAxrtWcKuhgzPnaxdaQyOPCoSMnbGofTv4XkeSRvp/
-         hUcQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXXJRa/Ln+v0F/6NXtF0Am7LTcK1F19vEJE8gL9mdyXBGg+jmWPmLZpXU1J8jWunk1swOvISv1vVsWYZrI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9krjP/5GX/uBGVe6NocFLesQ/wFC/YkVYKf0DdcevV6pwUcmj
-	eFvwX6iU1uhnvpStBXCFtd1uG6sQFOGYG9QqTOIR9Ry7FeG4Ix37zGbLtOzw
-X-Google-Smtp-Source: AGHT+IFgKBpHg+xSJgTxxKhUWmz77q6DAIGQhGHthR81ua2RC6ZBy6ko+TUP7YVAxE+We6YS8paT4Q==
-X-Received: by 2002:a05:6358:9044:b0:1b1:a8b7:2d03 with SMTP id e5c5f4694b2df-1b603c3f977mr667916855d.13.1724998600746;
-        Thu, 29 Aug 2024 23:16:40 -0700 (PDT)
-Received: from m91p.airy.home ([172.92.174.232])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7d22e742c74sm2237014a12.4.2024.08.29.23.16.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 29 Aug 2024 23:16:40 -0700 (PDT)
-From: Bo Gan <ganboing@gmail.com>
-To: linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	sboyd@kernel.org
-Cc: samuel.holland@sifive.com,
-	emil.renner.berthing@canonical.com,
-	mturquette@baylibre.com,
-	paul.walmsley@sifive.com
-Subject: [PATCH v2] clk: analogbits: Fix incorrect calculation of vco rate delta
-Date: Thu, 29 Aug 2024 23:16:39 -0700
-Message-Id: <20240830061639.2316-1-ganboing@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="g0d8rHEj"
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=y4iH+qW8E59n0f57lRj06IIwVT/9K1ijDwSVcGCJEY8M70Qj2xGG1DNexN62U/qHNCo906aa7Uzj12VI83U5qn1dEWfAzniKyih4GoRlDQDAD6p0jrh1HdR01zxx8iwjGFZ7BqBsmeXmzE8POsroJkrXQQubXRtM2DK1IgPqCnrIXYv+4viSpdCpVvI7FMbh132FI/5mICBLaU1XHjJyfBs6F5Dp4LFgmXVvwpTEKsmTCiW+kUKyzlkQtfuhvujMawV82dmW65JT/bZL822mhXO77q/D9PE/9AgG8Y4sH4ItkzUNdsL2mUuBAyTPdb7HEImUcI5W2knEIqnKTQwStg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=qyYL06JpEE4EgEdruPC6xYYO1yJyMeMp1dUMmDwtVYg=;
+ b=PPi1vxbhDkGCu5WaWuwOfXOQpuw6TO7YC9dTd+XJ9I0Y/Rtr54/t95I74y0yJ5+PCVZODPDB9LTLbxFCXV3nCBcieCT4jlusO88+0FYj5/bH3IoKmRirgDeoobQqyB8mpYAwdpeHEzPJwivK9sQLiix6o0o7HEzmqh+KpOwU34iqkmz8X+Qt36vugZG5JgC4DQ2HWoSwcFu/KRGRU54bhC9oIv12tfjQQTJt5HeLv62cK18AeQO34PcoEzObCwHt+gHCUCqdERMAsYGYH4J7rwD7g2PElu5GhxTRQa6aLASZC4b0FYlDYXoQ/DqaRd7Yqmy2ZBL4/2ZSVd2kcWymRQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=qyYL06JpEE4EgEdruPC6xYYO1yJyMeMp1dUMmDwtVYg=;
+ b=g0d8rHEjFLb0kMq5BEQCa5tpFwUuE0feoHR/ZEnWdpGXycJGBBAwv9IcznC4MAkyMT8BUBjSgWV1o/pxD3t6tvDBea7871RVG2wu7r/HEWXMnFPjx6R9LkCZG3zVfdigF/Fpnh7zbvkVQY/ZcbjDceTuOqRIQ4jx0ank7fDg5fatBC7qvKSD+gnM+h4tFZV/Nx5tloCGMiJAlJuo6464UboTp7Qgi6x+9HYNDZRP9W3dzXV8U07H9U6Gba64aowIqpXqoRB6E1w4VKwKda1X1JKSY3YyD+KcDx6aE9ZyolJXTs0VYm7KEZcdQK/ZJAef7cEV2c55WB0kIv7DJrxj/Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from KL1PR0601MB5487.apcprd06.prod.outlook.com
+ (2603:1096:820:bf::14) by KL1PR06MB6274.apcprd06.prod.outlook.com
+ (2603:1096:820:e5::10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7897.28; Fri, 30 Aug
+ 2024 07:28:45 +0000
+Received: from KL1PR0601MB5487.apcprd06.prod.outlook.com
+ ([fe80::2129:59e5:6c67:311f]) by KL1PR0601MB5487.apcprd06.prod.outlook.com
+ ([fe80::2129:59e5:6c67:311f%7]) with mapi id 15.20.7897.027; Fri, 30 Aug 2024
+ 07:28:45 +0000
+From: Chen Yufan <chenyufan@vivo.com>
+To: =?UTF-8?q?Emilio=20L=C3=B3pez?= <emilio@elopez.com.ar>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Chen-Yu Tsai <wens@csie.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>,
+	linux-clk@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: opensource.kernel@vivo.com,
+	Chen Yufan <chenyufan@vivo.com>
+Subject: [PATCH v1] clk: sunxi: sun9i-mmc: Use dev_err_probe() to simplfy code
+Date: Fri, 30 Aug 2024 15:27:47 +0800
+Message-Id: <20240830072747.11032-1-chenyufan@vivo.com>
+X-Mailer: git-send-email 2.39.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYWPR01CA0047.jpnprd01.prod.outlook.com
+ (2603:1096:400:17f::12) To KL1PR0601MB5487.apcprd06.prod.outlook.com
+ (2603:1096:820:bf::14)
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: KL1PR0601MB5487:EE_|KL1PR06MB6274:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9e027bfc-979e-4683-6281-08dcc8c5612b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|7416014|52116014|376014|921020|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?xs60jA5ICs4KzULqqrHoxq0mnh2GFg0pBfYb8H+GXCtETee9StL/Dly9qqwY?=
+ =?us-ascii?Q?xecBtMINmaZxlXoKGd0st/77CE2i01x/Rxe6nydL+Ry8bHSr88tfOkHmX4Qm?=
+ =?us-ascii?Q?dDRuSjX+rDa6xXoDAPJ/61Erce2PrP1YESnLMr3hJYCw2SwIzXMo92BWMfJB?=
+ =?us-ascii?Q?dgJVnf53BF1uzfLEE5ZFVDosSEg0jcPDRHv0TV0lueAi1kGqA+f9jqcIVNMh?=
+ =?us-ascii?Q?ohu8XVJSlorIie8n/fZp4em9gOEKew3SSge/3gSIniDY20LzuanzDiMLQucd?=
+ =?us-ascii?Q?IoobnwHWjHM6Fp4YgotYU1XtmEYm3pJNdOMnNuzjYwLY8NsiO5CZql4Fb4ww?=
+ =?us-ascii?Q?DjE7EroTNfNCMaIIyAXCtY3a+N71ynpIeKty4XfQNKnxFmoLnIHbbe8QX5Mv?=
+ =?us-ascii?Q?QPdSNBHFUyzVU+Uu3a5Uaiipm+WI3uJZhuifmIPH9ZLSttjEw30dlMdPzhov?=
+ =?us-ascii?Q?zPzYJXkQWIi7l+azsubORr5sGazwxBodPFTa57eAaKlhZMyvPJ6kcHYL9xLk?=
+ =?us-ascii?Q?KhaY9wRuZgD3DizeD5PTtuAoUj5CmgLwapoF5sgYZb6IgMSf0Z0QiACjkX3s?=
+ =?us-ascii?Q?bsut+lsriGvjxpPZYwDIMZ6ExWP+AzxS6i5h7Q6oQiYxqEZkkk8Xj+8UWLH4?=
+ =?us-ascii?Q?bUhMbX8vlhKEAWGlbs8d59+ZH+YcFsubfQ6F08b0+CcVuOrmVZM0ry5sruw9?=
+ =?us-ascii?Q?EoYQ4ZKSiQMcG4b+snjcsk/oy5FR1/YwhV1jlCCQuSovVw6tZMYk0XI6k5Ot?=
+ =?us-ascii?Q?DTU2Jc2GnHzgqYDHa7TSeIgDP0qDuT6quu82nQ0LNiSS4y7StKF0Psxzttkt?=
+ =?us-ascii?Q?DLvIkEkEbX1RVV92uDv3apl1d8+v4qOUDvTpfsh1NqYP+gdnuPH7F8jGgDy3?=
+ =?us-ascii?Q?IaWrcchxZiLn0JlekIRVMECMHdUEaCVW6qX8rT5APkGl4W6y3n+LWUAYPXEH?=
+ =?us-ascii?Q?R0BAV5rRF07h9b15Sg5ScyU8Kw3zKW85PK99Ze9OR0+E+1ef4jorq1ymVR3K?=
+ =?us-ascii?Q?emUMGjxF3bM7c+4UHqN4t/YyavTYnGOd9hXlB8xYr8ek3fcaer/FKRKN+qjW?=
+ =?us-ascii?Q?hrp/3K/rOs85YEWHpd/B1wD6OVLBqVQGNimgCgFYsgc8Yyf4z7FRRAvBHUps?=
+ =?us-ascii?Q?OmTn4zdcFjq+eML2UbVVTfGJPL0o+fCLpKYF0jqoDP28TM9izXv9njskDaSx?=
+ =?us-ascii?Q?vMw34CoiutJvQkib4k3dZJJ3Gi2RHf5NGEcd/SM3zVqnC+umxNIFafzpTJah?=
+ =?us-ascii?Q?XUzg5slxzD3zxJvakOMJ/quIrDrECRQ09yX0/tXmaLts16BzOlF+JXslzlti?=
+ =?us-ascii?Q?UjSNfXMwUW3vxneLApYXOdz6JXjc3pmNZpHk4CVrYmQg+tx561XmDArI3xcO?=
+ =?us-ascii?Q?OSXmwrbKFYmD4Xmi8lOtL0/I8CpRwFZdsOSwMte9/Px09/PcicTd1kJTiUOS?=
+ =?us-ascii?Q?HwTqY9TJddE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR0601MB5487.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(52116014)(376014)(921020)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?5rrGqoHN7DjAv6VbF/p/H7uRKXJjLlk7cAU0PZ568qlqYp0ALxPFWOam2RHF?=
+ =?us-ascii?Q?BneRGCYBj4hU1idc54STYLCvBJRECSiCm/COJrL6v0T6w3/nkB87/3Dr4oDh?=
+ =?us-ascii?Q?tdC+UwrYQp0o+d1oqjZeD+gC7F0c6/NMfrG2clEhn9bY2DmMebW+duw5pyj4?=
+ =?us-ascii?Q?OTDfwTuD9vqAsEUV3MKtxBaL33ZrtBwPPxgqFJMTuCtNiKgFn1tS9tvqONl/?=
+ =?us-ascii?Q?vP9KNkdoVeolVNz220zloOa8Qh25OPDn4z96WmCKwWusDBK7E2+ISQKsv7gX?=
+ =?us-ascii?Q?jHNk/h06dd320O1yCSfBhV0LSzOsgogApjxu/f7CPISDtnMNzFK4wxC9R2vL?=
+ =?us-ascii?Q?Hv3exhJRm4ZUIyRz96Knl8YSu1fQ95SWxzPbIK28uopaPLNbwHG8pFm3l/v1?=
+ =?us-ascii?Q?9OHwj+sfdIk+0+PHerhgVZHZbZPKbed71f78Q+kiW0K7w4OFoXgffhFjAtpD?=
+ =?us-ascii?Q?d642fZ6wkOoOgmObK2aahYxdbefiIuQ8Y180ej/du6jL1Ndudex6FkNXv8k9?=
+ =?us-ascii?Q?NDtpmiVqFVvfJTghu5j7Rb5fHbFSwW09YwYxFc9erkcr+2V+EoSpMpXW7MO4?=
+ =?us-ascii?Q?sYxLPynS9KDPJ7VD66deTBkxav/7phqCiylXQOu4U7POdUt9dC1MGkWpeLvF?=
+ =?us-ascii?Q?kHVJvkiiqhKYEmC3BK/PuLNm2OUKRY0HIYBNATiDyK97Z0MXvhUeNvcA6poP?=
+ =?us-ascii?Q?W0V+AljQFfNkMhFrYu/SyPhwHZgUaDoE2x/kraio5V1/Po9Aw0L/iDYmiLI8?=
+ =?us-ascii?Q?2kCr6HPilGYFl7LjUPpFEu6WaqXqqppPsBaa6gOvn//fQetty47w4ExsnAtc?=
+ =?us-ascii?Q?qKc+anNAaiTPc5HEMd487sTkhpCCdcoB8TZQAqAqfO07NO0Bbj/vfq+gIIZ7?=
+ =?us-ascii?Q?/3S11J3owj3b8TN2+33YSuax3pELNkB/1eCdw9tqEgdrk9gWse82UDL7oYim?=
+ =?us-ascii?Q?yfuFGy5l2KGQb+g7IZxZT5NRwOb33gJnrngBwPxaSiT8orfJVvtbJHNEdgJD?=
+ =?us-ascii?Q?KOJEyM3znKPSzfhgXqf2hR9O5YvJCOgeeV5mXQ+5u87VbjhPsIv9tCW6vuZ6?=
+ =?us-ascii?Q?ONVqx/behHApoGD1BinKneo9Dblo1zuCIbCpNuFWT+lkHxH6koA1Xt6rpikk?=
+ =?us-ascii?Q?mV7FED0LUC2WYsMyQMsmO+Hv50W4Z9NXj/NHuA7QTpqr6+yZ8F8QiA+bOl/F?=
+ =?us-ascii?Q?LafPYMgpkSkV41fG1SdoSoWj1PmaS3BL8G9K8GVEBKAFDZw66FWWb1KfXKL0?=
+ =?us-ascii?Q?gANqYgGD42ox1Kyw3ONiW74v3XVLRMfERAdndJ2eOmox2AjgVVn0RXvBhj6Y?=
+ =?us-ascii?Q?Q6zKQfrO7AmQ3jAxDuOcRwoitzvYWhZ2r0/HMlRsk3jec7kJd3ygLwRKS26y?=
+ =?us-ascii?Q?K3Q/BEJTPQZMmRiv6uFp/QjpM87I93c4m2nNK6MFK5ya2ccsVGf8Yzwn3S4V?=
+ =?us-ascii?Q?9IzX3Swm4GmNLbVcmNZ1cueStF1H8lNzlPOE4GRYXwUsfiu63rCL13xt/BUz?=
+ =?us-ascii?Q?TG61PvHgane9ItiDSGRHtR1KXPgMowChVp8mBX+EOEIt/f/z5FQzwOFitab5?=
+ =?us-ascii?Q?YiBVXwjyU7rSReQrIBZBpXLXKNlnc8Q8gTUC0PUN?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9e027bfc-979e-4683-6281-08dcc8c5612b
+X-MS-Exchange-CrossTenant-AuthSource: KL1PR0601MB5487.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 30 Aug 2024 07:28:45.0469
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Jy3/YggptzM6KTq6NoJ0t7zLQmKTUCCzycrPMiF4DJdzaZ9IJpjMh5+nZHN+HWWk8Q3lLa7qtU18IR+h9GMetA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB6274
 
-In function `wrpll_configure_for_rate`, we try to determine the best PLL
-configuration for a target rate. However, in the loop where we try values
-of R, we should compare the derived `vco` with `target_vco_rate`. However,
-we were in fact comparing it with `target_rate`, which is actually after
-Q shift. This is incorrect, and sometimes can result in suboptimal clock
-rates. This patch fixes it.
+Use dev_err_probe() can make code a bit simpler.
 
-Fixes: 7b9487a9a5c4 ("clk: analogbits: add Wide-Range PLL library")
-Signed-off-by: Bo Gan <ganboing@gmail.com>
+Signed-off-by: Chen Yufan <chenyufan@vivo.com>
 ---
-v1 -> v2: Add Fixes tag
+ drivers/clk/sunxi/clk-sun9i-mmc.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
- drivers/clk/analogbits/wrpll-cln28hpc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/clk/analogbits/wrpll-cln28hpc.c b/drivers/clk/analogbits/wrpll-cln28hpc.c
-index 65d422a588e1..9d178afc73bd 100644
---- a/drivers/clk/analogbits/wrpll-cln28hpc.c
-+++ b/drivers/clk/analogbits/wrpll-cln28hpc.c
-@@ -255,81 +255,81 @@ int wrpll_configure_for_rate(struct wrpll_cfg *c, u32 target_rate,
+diff --git a/drivers/clk/sunxi/clk-sun9i-mmc.c b/drivers/clk/sunxi/clk-sun9i-mmc.c
+index 91074017c04f..e6b62e421936 100644
+--- a/drivers/clk/sunxi/clk-sun9i-mmc.c
++++ b/drivers/clk/sunxi/clk-sun9i-mmc.c
+@@ -134,10 +134,8 @@ static int sun9i_a80_mmc_config_clk_probe(struct platform_device *pdev)
  	}
  
- 	c->flags &= ~WRPLL_FLAGS_BYPASS_MASK;
+ 	ret = reset_control_deassert(data->reset);
+-	if (ret) {
+-		dev_err(&pdev->dev, "Reset deassert err %d\n", ret);
+-		return ret;
+-	}
++	if (ret)
++		return dev_err_probe(&pdev->dev, ret, "Reset deassert err %d\n");
  
- 	/* Calculate the Q shift and target VCO rate */
- 	divq = __wrpll_calc_divq(target_rate, &target_vco_rate);
- 	if (!divq)
- 		return -1;
- 	c->divq = divq;
- 
- 	/* Precalculate the pre-Q divider target ratio */
- 	ratio = div64_u64((target_vco_rate << ROUND_SHIFT), parent_rate);
- 
- 	fbdiv = __wrpll_calc_fbdiv(c);
- 	best_r = 0;
- 	best_f = 0;
- 	best_delta = MAX_VCO_FREQ;
- 
- 	/*
- 	 * Consider all values for R which land within
- 	 * [MIN_POST_DIVR_FREQ, MAX_POST_DIVR_FREQ]; prefer smaller R
- 	 */
- 	for (r = c->init_r; r <= c->max_r; ++r) {
- 		f_pre_div = ratio * r;
- 		f = (f_pre_div + (1 << ROUND_SHIFT)) >> ROUND_SHIFT;
- 		f >>= (fbdiv - 1);
- 
- 		post_divr_freq = div_u64(parent_rate, r);
- 		vco_pre = fbdiv * post_divr_freq;
- 		vco = vco_pre * f;
- 
- 		/* Ensure rounding didn't take us out of range */
- 		if (vco > target_vco_rate) {
- 			--f;
- 			vco = vco_pre * f;
- 		} else if (vco < MIN_VCO_FREQ) {
- 			++f;
- 			vco = vco_pre * f;
- 		}
- 
--		delta = abs(target_rate - vco);
-+		delta = abs(target_vco_rate - vco);
- 		if (delta < best_delta) {
- 			best_delta = delta;
- 			best_r = r;
- 			best_f = f;
- 		}
- 	}
- 
- 	c->divr = best_r - 1;
- 	c->divf = best_f - 1;
- 
- 	post_divr_freq = div_u64(parent_rate, best_r);
- 
- 	/* Pick the best PLL jitter filter */
- 	range = __wrpll_calc_filter_range(post_divr_freq);
- 	if (range < 0)
- 		return range;
- 	c->range = range;
- 
- 	return 0;
- }
- EXPORT_SYMBOL_GPL(wrpll_configure_for_rate);
- 
- /**
-  * wrpll_calc_output_rate() - calculate the PLL's target output rate
-  * @c: ptr to a struct wrpll_cfg record to read from
-  * @parent_rate: PLL refclk rate
-  *
-  * Given a pointer to the PLL's current input configuration @c and the
-  * PLL's input reference clock rate @parent_rate (before the R
-  * pre-divider), calculate the PLL's output clock rate (after the Q
-  * post-divider).
-  *
-  * Context: Any context.  Caller must protect the memory pointed to by @c
-  *          from simultaneous modification.
-  *
-  * Return: the PLL's output clock rate, in Hz.  The return value from
-  *         this function is intended to be convenient to pass directly
-  *         to the Linux clock framework; thus there is no explicit
-  *         error return value.
-  */
+ 	clk_parent = __clk_get_name(data->clk);
+ 	for (i = 0; i < count; i++) {
 -- 
-2.34.1
+2.39.0
 
