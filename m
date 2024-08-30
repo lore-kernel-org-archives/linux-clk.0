@@ -1,118 +1,276 @@
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+Received: from mail-lf1-f67.google.com (mail-lf1-f67.google.com [209.85.167.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 549A11ACDF2
-	for <linux-clk@vger.kernel.org>; Fri, 30 Aug 2024 13:02:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3819218B46F
+	for <linux-clk@vger.kernel.org>; Fri, 30 Aug 2024 13:49:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.67
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725022980; cv=none; b=mj/jIEMsKokosT2nmHhbJtP9j/w0nRRIRaXvs5yYBJtssTltnGIeOHiFLQxiYyxxgj9zMEozbYNrdaawFqR9zmZ6bMJ9iup9z8WGoBKpW6PNLIopOk6dtxu0e5+CVTNPlvrAn+U3j6dlTissjicwJE/W4Hy/ud7+f+r0c4nZWSQ=
+	t=1725025744; cv=none; b=qwi1scibapVaLLUIpls4hT46e+B1eUvOFsBojNORVsKTqchMattlRyTMiLQUy/kzR85C+dcaraOW9n0GlVLxp7bcxEir0YSOqJaqhrnzTBg4aL2AcOQi5f93rIW7ZOe3kbOFN64/tQvLi70w1+4Bm/7RiMoUCTPZbItrLpT0U8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725022980; c=relaxed/simple;
-	bh=d8WVePSthW+dxNncbWzycUowwJpITS4AMD6P6eg6HFU=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=FOHGGFUxBUwO1jzMW/KutFN7cJKjb/iuN6KnW4I9j9XRFXzDwxG213ArehTsl4qkBwbSIQwJjncnJCGtiWe4xuJPK7Abevc1I0wxjvFgQgZ1egxNv7kfb0UZGU9UXjkGNaF2Hsmny+1Nte1i65PfFMy/XXkw8nQS8RNQcIGRJNI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=cESEC9vG; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1725025744; c=relaxed/simple;
+	bh=9UIDn+zRPs2233Ey/wAks0cZbBTGHswiziDn3qxUXnM=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DTL+8b50ewoKwetxdfWF4UIj9gK1J19fvlDmJ1iqhXOoTpKKgy+BUM766NJndDcrMPk2cgukwAgs/rp/Gv61AWjcRe6vLAhLkTAZznKDs3dJBeMX0sm1ZLLEgYw+zxsf/t0t9MpyfASisXzZi5F8WAq7ttnFiZ/96Z1pfEn/KVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=PDuS2BzV; arc=none smtp.client-ip=209.85.167.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="cESEC9vG"
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4281d812d3eso20040905e9.3
-        for <linux-clk@vger.kernel.org>; Fri, 30 Aug 2024 06:02:57 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="PDuS2BzV"
+Received: by mail-lf1-f67.google.com with SMTP id 2adb3069b0e04-53349ee42a9so2545821e87.3
+        for <linux-clk@vger.kernel.org>; Fri, 30 Aug 2024 06:49:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1725022976; x=1725627776; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iop8qqO9jUR8G5l7F3wNru9rj99Z66kVWofgsuIec1s=;
-        b=cESEC9vGQf1G6itm3a/lOG0+UjmBw0Nk1SegWTZQ7FTJf+/g+HKpiDnxAtQeWRfbUC
-         CT9kjOIOG3BzZrAqqy3X0cwrdqsj51KWa+W0SgHTpbR+l8mCk1sOT6LwShlwGLI3zGnW
-         vY83neW2T9V76ghaqUmte3jwKue9NW+f5LpE6Pp34tpWGe7WjfQnQNY6htOJfhxO11kB
-         PL81/0s44UsRGg5zyXPtiRYAEti8CYMFYbofSrLqAKaLy/Gp8WZJs2eFgnXVrvLROulp
-         Jszert7N+MEJ3TZZ6vMJStCSP/63uAU/f/TO2q62/PMmh/Vnf1FKTLMvB70f5Kiju0Qo
-         u+vA==
+        d=suse.com; s=google; t=1725025740; x=1725630540; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=j3jLKDfv9G/F1hAhLjOmCz8z3HV7wHNtLsdpyhwWqPo=;
+        b=PDuS2BzVfxchFZMyByYEGwyuKZRjmhIXr67oiuwxqdKame7MEY5qOATnH7IHb4aj5L
+         wZqp7f/HQM0dLneKyaI59P7vc1CQkk3LrS1VkLcP1wKl2+rUYGy25E9rk//nFbjECcLU
+         nBuq+WDwXFhX9xuE2pc4Mss7xDR0rkj19UTOrdDIRxugvhvpT1caR5U3IX+03n9DiSmU
+         NNqX24qYfExAirqGvjVbRf7wGzi3kY5d0SLDm8v23nCoygrzGQKdPpZQJwib2qAKWTAr
+         TiphpUpBag8TxY7oqY6eWNA6WCToqXe93d3MEYu6T3zzLr/fjx0oK/ATibKJHJ6Osx+P
+         YrjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725022976; x=1725627776;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iop8qqO9jUR8G5l7F3wNru9rj99Z66kVWofgsuIec1s=;
-        b=Q55f+yo0Pi0hVrC8mWbGG24J0ltTBc/n1dzLunaHJMpJEFZ9aM8mRtZ94UUEE3vDdp
-         v+DSYdjZVIq0V8gTMrxBwd5Z5tGbxUISqxZLE6sHvbGBtyqkgYKXb1epIDXfSZNXSbqT
-         MWWtIVUFRm+XIyHig2MVAhEfNe/9PZUiBrd51dABvvLX9y/JTdAkhF7x7k4CZzugD0tJ
-         gI5B7hcxti1cNWww3HQ3nZxkQ4XrH5MACprXENqMUyHufzcUVYqhqNw/lXdFL56Fi2A8
-         jzHOmBy9w0fEzdGspKltJcHstwxaRdf086Y10S2juVRfodGsbKeGxDptBnHH+BpEj0lW
-         1Oug==
-X-Forwarded-Encrypted: i=1; AJvYcCVBqukowWvaB25qctfGs+lZ543Wkk3Ko8NJvTS8NyMWcNk95tezo3go8aBkSw94fq7cLAIBHQozx1E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxj1rueiDSyUd+RNMoYlYdQTE3xb3QbTWPC/ygt2VMCcCiPh39p
-	yZ7v4eSRvnyf/5xbbg04keNexSBBb/uTzIjiq32u2Z60VwmezCHVWxKsz7myOkQ=
-X-Google-Smtp-Source: AGHT+IFISbcD0awVc8lknv+LxPpsY6H/AUOiGEDJsMkyVLmTSYhBZOirNNAhX9KU4dogrvwFZ9Xx1Q==
-X-Received: by 2002:a5d:5351:0:b0:374:ba2b:4d1c with SMTP id ffacd0b85a97d-374ba2b4ea9mr332013f8f.31.1725022975647;
-        Fri, 30 Aug 2024 06:02:55 -0700 (PDT)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.144])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ba642594dsm80361785e9.47.2024.08.30.06.02.53
+        d=1e100.net; s=20230601; t=1725025740; x=1725630540;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=j3jLKDfv9G/F1hAhLjOmCz8z3HV7wHNtLsdpyhwWqPo=;
+        b=p0fVu+CFjuVS3aiy4PPYLbJqjoVwM+/4vyb7m4DoQAgFySi44l5/IfG30lNLT2SBec
+         qYQWOzFuwxcBdjW8I4KFTrh0wpwJIaOsR4AUSDWflT0VR38iGxO/HkiCFDKN4//RDsf4
+         KJHr8X3t/aujVUYabpqsjHdTO1ztWj+MSkkmeGBovSIQbxDmpQZBAyrQI32XENz8a4+W
+         QUaK7m8oW0qmSWiE1NPVvSV8/FZ4R4+r9por/ZOUsYc+aZNyiWHlSc3gssTAGVbSe3TN
+         3QWi5kWzNw9KeLmiQY4X/SgjVXIXT6amdIhsNqHoyWwILoTK2irrrO6Vj3LU9fgztpxl
+         nSnA==
+X-Forwarded-Encrypted: i=1; AJvYcCVH9fjJ9bR6nE9K7s3THkGtatm3AX2JzG+dSM4nriO1H1KbMVVE0ouXWHcdya8Y3/t/B7z2Iv5WpOc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsxkRIP0hHLZgAORKbP6mzeajljSwPJsw/3NFxse2qI/bfQ+ha
+	wEQT+8UldWMU2DiNf4d9UcN8GJ3Ki42/zJZvVGlUEgvoACgtb/RnCx9jmmEv2w0=
+X-Google-Smtp-Source: AGHT+IGg9M4Rtabw2zg4qqU8iskz42/lxuttsuGGIjXpiaV4rVUp+9fovEZeeF3bRXArRqzbS0RuVw==
+X-Received: by 2002:a05:6512:3b8c:b0:52f:159:2dc5 with SMTP id 2adb3069b0e04-53546ba9fd4mr1622050e87.42.1725025739816;
+        Fri, 30 Aug 2024 06:48:59 -0700 (PDT)
+Received: from localhost (host-80-182-198-72.pool80182.interbusiness.it. [80.182.198.72])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a8988feb072sm217505266b.28.2024.08.30.06.48.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 30 Aug 2024 06:02:55 -0700 (PDT)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: geert+renesas@glider.be,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	alexandre.belloni@bootlin.com,
-	magnus.damm@gmail.com,
-	p.zabel@pengutronix.de
-Cc: claudiu.beznea@tuxon.dev,
-	linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-rtc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH v3 12/12] arm64: defconfig: Enable Renesas RTCA-3 flag
-Date: Fri, 30 Aug 2024 16:02:18 +0300
-Message-Id: <20240830130218.3377060-13-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240830130218.3377060-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20240830130218.3377060-1-claudiu.beznea.uj@bp.renesas.com>
+        Fri, 30 Aug 2024 06:48:59 -0700 (PDT)
+From: Andrea della Porta <andrea.porta@suse.com>
+X-Google-Original-From: Andrea della Porta <aporta@suse.de>
+Date: Fri, 30 Aug 2024 15:49:04 +0200
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Nicolas Ferre <nicolas.ferre@microchip.com>,
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, netdev@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
+	Lee Jones <lee@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	Stefan Wahren <wahrenst@gmx.net>
+Subject: Re: [PATCH 08/11] misc: rp1: RaspberryPi RP1 misc driver
+Message-ID: <ZtHN0B8VEGZFXs95@apocalypse>
+References: <cover.1724159867.git.andrea.porta@suse.com>
+ <5954e4dccc0e158cf434d2c281ad57120538409b.1724159867.git.andrea.porta@suse.com>
+ <lrv7cpbt2n7eidog5ydhrbyo5se5l2j23n7ljxvojclnhykqs2@nfeu4wpi2d76>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <lrv7cpbt2n7eidog5ydhrbyo5se5l2j23n7ljxvojclnhykqs2@nfeu4wpi2d76>
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Hi Krzysztof,
 
-Enable Renesas RTCA-3 flag for the Renesas RZ/G3S SoC.
+On 10:38 Wed 21 Aug     , Krzysztof Kozlowski wrote:
+> On Tue, Aug 20, 2024 at 04:36:10PM +0200, Andrea della Porta wrote:
+> > The RaspberryPi RP1 is ia PCI multi function device containing
+> > peripherals ranging from Ethernet to USB controller, I2C, SPI
+> > and others.
+> > Implement a bare minimum driver to operate the RP1, leveraging
+> > actual OF based driver implementations for the on-borad peripherals
+> > by loading a devicetree overlay during driver probe.
+> > The peripherals are accessed by mapping MMIO registers starting
+> > from PCI BAR1 region.
+> > As a minimum driver, the peripherals will not be added to the
+> > dtbo here, but in following patches.
+> > 
+> > Link: https://datasheets.raspberrypi.com/rp1/rp1-peripherals.pdf
+> > Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
+> > ---
+> >  MAINTAINERS                           |   2 +
+> >  arch/arm64/boot/dts/broadcom/rp1.dtso | 152 ++++++++++++
+> 
+> Do not mix DTS with drivers.
+> 
+> These MUST be separate.
 
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
+Separating the dtso from the driver in two different patches would mean
+that the dtso patch would be ordered before the driver one. This is because
+the driver embeds the dtbo binary blob inside itself, at build time. So
+in order to build the driver, the dtso needs to be there also. This is not
+the standard approach used with 'normal' dtb/dtbo, where the dtb patch is
+ordered last wrt the driver it refers to.
+Are you sure you want to proceed in this way?
 
-Changes in v3:
-- none
+> 
+> >  drivers/misc/Kconfig                  |   1 +
+> >  drivers/misc/Makefile                 |   1 +
+> >  drivers/misc/rp1/Kconfig              |  20 ++
+> >  drivers/misc/rp1/Makefile             |   3 +
+> >  drivers/misc/rp1/rp1-pci.c            | 333 ++++++++++++++++++++++++++
+> >  drivers/misc/rp1/rp1-pci.dtso         |   8 +
+> >  drivers/pci/quirks.c                  |   1 +
+> >  include/linux/pci_ids.h               |   3 +
+> >  10 files changed, 524 insertions(+)
+> >  create mode 100644 arch/arm64/boot/dts/broadcom/rp1.dtso
+> >  create mode 100644 drivers/misc/rp1/Kconfig
+> >  create mode 100644 drivers/misc/rp1/Makefile
+> >  create mode 100644 drivers/misc/rp1/rp1-pci.c
+> >  create mode 100644 drivers/misc/rp1/rp1-pci.dtso
+> > 
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 67f460c36ea1..1359538b76e8 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -19119,9 +19119,11 @@ F:	include/uapi/linux/media/raspberrypi/
+> >  RASPBERRY PI RP1 PCI DRIVER
+> >  M:	Andrea della Porta <andrea.porta@suse.com>
+> >  S:	Maintained
+> > +F:	arch/arm64/boot/dts/broadcom/rp1.dtso
+> >  F:	Documentation/devicetree/bindings/clock/raspberrypi,rp1-clocks.yaml
+> >  F:	Documentation/devicetree/bindings/pinctrl/raspberrypi,rp1-gpio.yaml
+> >  F:	drivers/clk/clk-rp1.c
+> > +F:	drivers/misc/rp1/
+> >  F:	drivers/pinctrl/pinctrl-rp1.c
+> >  F:	include/dt-bindings/clock/rp1.h
+> >  F:	include/dt-bindings/misc/rp1.h
+> > diff --git a/arch/arm64/boot/dts/broadcom/rp1.dtso b/arch/arm64/boot/dts/broadcom/rp1.dtso
+> > new file mode 100644
+> > index 000000000000..d80178a278ee
+> > --- /dev/null
+> > +++ b/arch/arm64/boot/dts/broadcom/rp1.dtso
+> > @@ -0,0 +1,152 @@
+> > +// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+> > +
+> > +#include <dt-bindings/gpio/gpio.h>
+> > +#include <dt-bindings/interrupt-controller/irq.h>
+> > +#include <dt-bindings/clock/rp1.h>
+> > +#include <dt-bindings/misc/rp1.h>
+> > +
+> > +/dts-v1/;
+> > +/plugin/;
+> > +
+> > +/ {
+> > +	fragment@0 {
+> > +		target-path="";
+> > +		__overlay__ {
+> > +			#address-cells = <3>;
+> > +			#size-cells = <2>;
+> > +
+> > +			rp1: rp1@0 {
+> > +				compatible = "simple-bus";
+> > +				#address-cells = <2>;
+> > +				#size-cells = <2>;
+> > +				interrupt-controller;
+> > +				interrupt-parent = <&rp1>;
+> > +				#interrupt-cells = <2>;
+> > +
+> > +				// ranges and dma-ranges must be provided by the includer
+> > +				ranges = <0xc0 0x40000000
+> > +					  0x01/*0x02000000*/ 0x00 0x00000000
+> > +					  0x00 0x00400000>;
+> 
+> Are you 100% sure you do not have here dtc W=1 warnings?
 
-Changes in v2:
-- none
+the W=1 warnings are:
 
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+arch/arm64/boot/dts/broadcom/rp1.dtso:37.24-42.7: Warning (simple_bus_reg): /fragment@0/__overlay__/rp1@0/clk_xosc: missing or empty reg/ranges property
+arch/arm64/boot/dts/broadcom/rp1.dtso:44.26-49.7: Warning (simple_bus_reg): /fragment@0/__overlay__/rp1@0/macb_pclk: missing or empty reg/ranges property
+arch/arm64/boot/dts/broadcom/rp1.dtso:51.26-56.7: Warning (simple_bus_reg): /fragment@0/__overlay__/rp1@0/macb_hclk: missing or empty reg/ranges property
+arch/arm64/boot/dts/broadcom/rp1.dtso:14.15-173.5: Warning (avoid_unnecessary_addr_size): /fragment@0/__overlay__: unnecessary #address-cells/#size-cells without "ranges", "dma-ranges" or child "reg" property
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index 465b70a06c33..40165e06c98f 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -1215,6 +1215,7 @@ CONFIG_RTC_DRV_IMX_SC=m
- CONFIG_RTC_DRV_MT6397=m
- CONFIG_RTC_DRV_XGENE=y
- CONFIG_RTC_DRV_TI_K3=m
-+CONFIG_RTC_DRV_RENESAS_RTCA3=y
- CONFIG_DMADEVICES=y
- CONFIG_DMA_BCM2835=y
- CONFIG_DMA_SUN6I=m
--- 
-2.39.2
+I don't see anything related to the ranges line you mentioned.
 
+> 
+> > +
+> > +				dma-ranges =
+> > +				// inbound RP1 1x_xxxxxxxx -> PCIe 1x_xxxxxxxx
+> > +					     <0x10 0x00000000
+> > +					      0x43000000 0x10 0x00000000
+> > +					      0x10 0x00000000>;
+> > +
+> > +				clk_xosc: clk_xosc {
+> 
+> Nope, switch to DTS coding style.
+
+Ack.
+
+> 
+> > +					compatible = "fixed-clock";
+> > +					#clock-cells = <0>;
+> > +					clock-output-names = "xosc";
+> > +					clock-frequency = <50000000>;
+> > +				};
+> > +
+> > +				macb_pclk: macb_pclk {
+> > +					compatible = "fixed-clock";
+> > +					#clock-cells = <0>;
+> > +					clock-output-names = "pclk";
+> > +					clock-frequency = <200000000>;
+> > +				};
+> > +
+> > +				macb_hclk: macb_hclk {
+> > +					compatible = "fixed-clock";
+> > +					#clock-cells = <0>;
+> > +					clock-output-names = "hclk";
+> > +					clock-frequency = <200000000>;
+> > +				};
+> > +
+> > +				rp1_clocks: clocks@c040018000 {
+> 
+> Why do you mix MMIO with non-MMIO nodes? This really does not look
+> correct.
+>
+
+Right. This is already under discussion here:
+https://lore.kernel.org/all/ZtBzis5CzQMm8loh@apocalypse/
+
+IIUC you proposed to instantiate the non-MMIO nodes (the three clocks) by
+using CLK_OF_DECLARE.
+ 
+> > +					compatible = "raspberrypi,rp1-clocks";
+> > +					#clock-cells = <1>;
+> > +					reg = <0xc0 0x40018000 0x0 0x10038>;
+> 
+> Wrong order of properties - see DTS coding style.
+
+Ack.
+
+Many thanks,
+Andrea
+
+> 
+> > +					clocks = <&clk_xosc>;
+> > +					clock-names = "xosc";
+> 
+> Best regards,
+> Krzysztof
+> 
