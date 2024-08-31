@@ -1,33 +1,33 @@
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C79701097B;
-	Sat, 31 Aug 2024 13:37:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 290765227;
+	Sat, 31 Aug 2024 13:39:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725111445; cv=none; b=M37qM7pqdiR8K34kqfFxPq+qpzuLHRJg91rUH+5BEgrS1R1yTlqdDtluMQ/4JMrn/TEVwo3EY4h6yFL8LiewIJ6wO6Dx8BNk/QU1vy8z9Yl81JbN9n1n83+9af1r9dn6uV8b59gMC7qSeupI8RTcrpfex++NpaE78361GOgxEXM=
+	t=1725111588; cv=none; b=DUasdhRTsHrtTl5gZRoBiQm850KvAWkt6JHeUyx0efOY2b4ATi/kBp9e5wMxxajdxvYzf52hlAgzHhLI1KW5GPFv0Y9OyPkyjlxq5fDAndteXeuebOGRoQvnYhW+tsaUs4EnxY9e2HD4TUPFJIXfJOX6z28Gcbbo9djG/0Slny8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725111445; c=relaxed/simple;
-	bh=mzhjecXQkqqIE9h3kjQVKrKvIjg9fWP+2Ys8fQpdb1w=;
+	s=arc-20240116; t=1725111588; c=relaxed/simple;
+	bh=van4tTdcIFIgu7RthN3qncoCCZAubLKGTpYt/BCiw38=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=txixQrWaAH8HF8qUw25uv7Hh+bOKP1vTeGLzzWH2d9SMoapWqmokF0p3XiQLZLHYZqBsKa2+0Di9pfrfy51yPGtepf4TWOv9WiIqHsXAQP8joG2fHmb/tYlx5pefdY/Q6HhD+6JWRupUauh/RsCQJXHJTbL889E0aJU5L8eJPiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bsCrY11d; arc=none smtp.client-ip=10.30.226.201
+	 In-Reply-To:Content-Type; b=lsXAizoVcWsAWTwonFF3cktZaL/sPv51lUW2OC9oXd2dLd1VbumJQnVdq4ZwAAK3+QQL6mdJ1D9oA0SS2aI7gM1MzkGcG7isfeRzcNxWqwsKduzXaEQ1lgo/+hOuWMvPJgMvTgiV4K4QhqNZqqBq/TM34ENeCAxAJBM0sIjui8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vL7ZgIxh; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bsCrY11d"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C68FFC4CEC0;
-	Sat, 31 Aug 2024 13:37:20 +0000 (UTC)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vL7ZgIxh"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83961C4CEC0;
+	Sat, 31 Aug 2024 13:39:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725111445;
-	bh=mzhjecXQkqqIE9h3kjQVKrKvIjg9fWP+2Ys8fQpdb1w=;
+	s=k20201202; t=1725111588;
+	bh=van4tTdcIFIgu7RthN3qncoCCZAubLKGTpYt/BCiw38=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=bsCrY11dk9kBjXqn4dhKq1JH+CaBiyff7l3qcUjEJLNbbzgsymdZhuFRvmLVhjy+a
-	 VAH62d6yCJYvC2i6TJkuiDH6KmOER7WihL1MkyJYayaxTJ93xa720BQrkJvg7g8Woh
-	 POvR2jvpISX1zFl/pNqtrREqxc6eDUuB6QfB/TDMWSQn+QbGHpqYDzJIIzH1e1FHgk
-	 phSlGuyJSPsIkeEKG/a2GveVAIecQz81aJwj6WhldxviP9TakLRNrIPR9Zj66bovNO
-	 96CZB8cmCJsJwj6ucIYeZFCf9ro4VEtblAyKu1iUHlsQBCl7fz/TWI75UxvgFxEGY6
-	 e+mE/YKchsOgg==
-Message-ID: <995f57b0-d164-4ad8-a409-80bdd876caa8@kernel.org>
-Date: Sat, 31 Aug 2024 15:37:17 +0200
+	b=vL7ZgIxhdZQs3TDYXqGYvjpN9yzrwtLLyvGmgAFZhWWTdZx6pkSpj2OQ8tdE9Wk4q
+	 4FHG9bJlS4EkRCYwAR5vRMOB1wTDpWGeGFY1VlTchL+cxnh8QGW7IY/ruHmGpzz344
+	 Nl9Ws9aY8mZdyz7lCWVBRRk+20BatbtVOniytX0Hrcc0DrQkj2EpStQReBC0B8+U0w
+	 xjao79AzOPAUFcBjIlUIS6khIKqoBraKWkWvcgV7Sg+ookC7vvk1Gsut4+ou6/0ph/
+	 vh9NDZPZNoxtImzfeamYvYcGvzIdNwtTI4eyyAgQ5h5DigwFB5y+FyR9oYPwpoAa+W
+	 0onOTQ955lgGQ==
+Message-ID: <4962c133-50e7-4d3f-998a-b8d853ab1425@kernel.org>
+Date: Sat, 31 Aug 2024 15:39:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
@@ -35,21 +35,19 @@ List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: clock: Add SAMA7D65 PMC compatible string
-To: Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Dharma Balasubiramani <dharma.b@microchip.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+Subject: Re: [PATCH] dt-bindings: clocks: atmel,at91sam9x5-sckc: add sama7d65
+To: Dharma Balasubiramani <dharma.b@microchip.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ <conor+dt@kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20240829-sama7d65-next-v1-1-53d4e50b550d@microchip.com>
- <20240829141003278e9ec2@mail.local>
- <744af115-3cfe-4d3a-9bf7-e6ac0cd12378@microchip.com>
-Content-Language: en-US
+References: <20240829-sama7d65-sck-v1-1-3e7b19e3cbf9@microchip.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -93,30 +91,35 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <744af115-3cfe-4d3a-9bf7-e6ac0cd12378@microchip.com>
+In-Reply-To: <20240829-sama7d65-sck-v1-1-3e7b19e3cbf9@microchip.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 29/08/2024 16:42, Nicolas Ferre wrote:
-> Alexandre,
+On 29/08/2024 12:54, Dharma Balasubiramani wrote:
+> Add bindings for SAMA7D65's slow clock controller.
 > 
-> On 29/08/2024 at 16:10, Alexandre Belloni wrote:
->> On 29/08/2024 15:08:45+0530, Dharma Balasubiramani wrote:
->>> Add the `microchip,sama7d65-pmc` compatible string to the existing binding,
->>> since the SAMA7D65 PMC shares the same properties and clock requirements
->>> as the SAMA7G5.
->>
->> Shouldn't you rather use a fallback if you currently have no driver
->> change?
+> Signed-off-by: Dharma Balasubiramani <dharma.b@microchip.com>
+> ---
+>  Documentation/devicetree/bindings/clock/atmel,at91sam9x5-sckc.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 > 
-> The clock/pmc driver is (will be) different. Only the binding of the PMC 
-> uses the same properties and clocks specification as our recent SoCs (so 
-> can be added to the "enum").
+> diff --git a/Documentation/devicetree/bindings/clock/atmel,at91sam9x5-sckc.yaml b/Documentation/devicetree/bindings/clock/atmel,at91sam9x5-sckc.yaml
+> index c2283cd07f05..d4cf8ae2961e 100644
+> --- a/Documentation/devicetree/bindings/clock/atmel,at91sam9x5-sckc.yaml
+> +++ b/Documentation/devicetree/bindings/clock/atmel,at91sam9x5-sckc.yaml
+> @@ -20,6 +20,7 @@ properties:
+>        - items:
+>            - enum:
+>                - microchip,sam9x7-sckc
+> +              - microchip,sama7d65-sckc
+>                - microchip,sama7g5-sckc
+>            - const: microchip,sam9x60-sckc
 
-I don't understand this patch. The binding without any users makes no
-sense. For bindings without drivers, I understand you send it in
-parallel from the DTS. But this one here will have a driver, right? In
-such case IT MUST GO with the driver.
+I have doubts about this as well. For example "microchip,sam9x7-sckc"
+was added, but there are no users.
+
+Stop adding bindings without users. Before you keep posting more of this
+stuff, post your DTS in parallel.
 
 Best regards,
 Krzysztof
