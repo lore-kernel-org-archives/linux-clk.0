@@ -1,108 +1,85 @@
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+Received: from mail-0201.mail-europe.com (mail-0201.mail-europe.com [51.77.79.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021921BC39;
-	Sat, 31 Aug 2024 10:47:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EE7F54279
+	for <linux-clk@vger.kernel.org>; Sat, 31 Aug 2024 11:12:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=51.77.79.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725101260; cv=none; b=uyii+TzcHmIDBxKGAhPPqOAi1oc5Q+6LHiNDG8CU0kTzRRkHUnyjjlvPqdO9CJxQ8siC5z6Lb/OU8e1VHEISaFHzxahEt6X2LbI8XQ6OMsE2TQvdOk66K2XUyhKgrbzA2LGfB7u2CG/A+mK6znYbCAH7HUA9mGu3N1H+Jik1/JA=
+	t=1725102777; cv=none; b=dFiwDwarJ/VsXU5bucdPFBaIs7fYp1xVsVBxFkcPYiBubkItsjLOlbJ1BVb3nXTCZAqAI/pY+hVuWdn4FqS19cmJ2bqL0wpEmQaO92gLbWF/+B0Wz2nBun66UJDfwl2pizvwclKgaLPtr4yH3JpWISDjS4sIsWPwSXugu2CU3M0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725101260; c=relaxed/simple;
-	bh=kiivoI+Gg3Yauqhf1p5rlFAeUkG50p5IxgGsSDPsX3k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HK5wHE4ac2+XgCQr1LQmxC4+X1sM4/EdnFhgtf/iRsPZe4VoUxvrXkK3jkk9tI8LFQOW+uf2Ay0PPhz3II6PxG/d7Ns+wyYsJpweldh7aSMedTcF7rvZ3h4xjbL/Ksnu5Enm2Zj71kGBCC8x2V0/Tqlw4+jdvBEdbbnEbnUT3OI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=dTrpm3qR; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+	s=arc-20240116; t=1725102777; c=relaxed/simple;
+	bh=4ISkToId8X+ha5nIzzORWuecwVvKZZ2gSCD1N62vRi0=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=u/YPRGx191+s8B1+SRgIO5KolDNkWiQPsg5TBjqTKikslt5NZxpwo/Y2/vHpzVD+gnVHdmVIm0LluM0wrUcBQws2NK/MsLUNjqvtK1qWR7Pp1zkZfXBMWpKgtUuL9jcOA3lgVS7fHTKddAPCQMoEZzQFYR5KMgf4ZOVcuVa3JYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=e7rdhy7y; arc=none smtp.client-ip=51.77.79.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="dTrpm3qR"
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=IM9d6UMpZ5gjX3hzI1jszjTrPvmLv8VkOEdEYbhUEYg=; b=dTrpm3qRvmfG9mvD434IzmZFCR
-	NomrNe9Tz+wJCs1zU+zvcFj+QJjIn03C4BERDDQxtbrgwzZYSnXC+tsz6LdRkRxMcz2tsgPfWddgG
-	ha2oABJPK0bbI8R5snHdi3YlYu/fZdAWTgXHjRzb6fjjghBGXUXCRwrNilBPcn5q2gbxdmtRfQk6P
-	LuRdnNf0YHVmrnQZWwx54n4tFnJfkNHQ6F4zuw+mbiUgqoH1z+2eO7SrfqkUbc6AFvdIn16f6Yxas
-	M96a07RJOg/+GP9pPPV0l7VdsGnJeM9jFtRpPPYtZu8dfOIEVYQEvJoAUutqSD0HXXDB3ZN6A1c2g
-	dIBT2AQw==;
-Received: from i53875be3.versanet.de ([83.135.91.227] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1skLdf-0002ra-GW; Sat, 31 Aug 2024 12:47:27 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
- Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: Elaine Zhang <zhangqing@rock-chips.com>,
- Kever Yang <kever.yang@rock-chips.com>, Rob Herring <robh+dt@kernel.org>,
- Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
- Conor Dooley <conor+dt@kernel.org>, huangtao@rock-chips.com,
- andy.yan@rock-chips.com, Michal Tomek <mtdev79b@gmail.com>,
- Ilya K <me@0upti.me>, Chad LeClair <leclair@gmail.com>,
- devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org,
- Sebastian Reichel <sebastian.reichel@collabora.com>, kernel@collabora.com
-Subject:
- Re: [PATCH v9 2/7] clk: rockchip: handle missing clocks with -EPROBE_DEFER
-Date: Sat, 31 Aug 2024 12:48:54 +0200
-Message-ID: <2405227.9fHWaBTJ5E@diego>
-In-Reply-To: <20240325193609.237182-3-sebastian.reichel@collabora.com>
-References:
- <20240325193609.237182-1-sebastian.reichel@collabora.com>
- <20240325193609.237182-3-sebastian.reichel@collabora.com>
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="e7rdhy7y"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1725102765; x=1725361965;
+	bh=Dols8a+z76GM/RLMd5BUNqT9/WON4qjk7rpO6N/5q0M=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=e7rdhy7yK1V4GQuAs0e9ZrPvKzJ82M1QXMdRs2aFPeGztEOsyxJxtUi/tabHKpOlV
+	 4/F9Z3mrM5Cr+Vw6eJDQzjK1VvUY13xrbUMo1YBV6rFefYzxZt1K1/jlhqnmQA9fcv
+	 XCYiirYxY0mdEMX2CNwmosrz419G6+tsoiV9Z5gkDegHcJQieXB3DsuZeKnLWCUT6O
+	 DNhoNSu8nCLN7enwunNyZjmmoM0IF89p6c+PqQEwzfGo0L/aawoUvWmLQqWAK9w2TC
+	 neOFmQIEkQ4jtRSY1PvgwIq7G2wjEgRGR9DkM4vsrSyzAc4S1dI2IrFK01sQxN5r7X
+	 DfFzme22S4E9A==
+Date: Sat, 31 Aug 2024 11:12:42 +0000
+To: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Michal Simek <michal.simek@amd.com>
+From: Harry Austen <hpausten@protonmail.com>
+Cc: Shubhrajyoti Datta <shubhrajyoti.datta@amd.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, Harry Austen <hpausten@protonmail.com>
+Subject: [PATCH 0/6] clk: clocking-wizard: modernize probe
+Message-ID: <20240831111056.3864-1-hpausten@protonmail.com>
+Feedback-ID: 53116287:user:proton
+X-Pm-Message-ID: 6bb30e44e4ae9f6e2fe7232420e2983d9a9c7846
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
 
-Am Montag, 25. M=E4rz 2024, 20:33:33 CEST schrieb Sebastian Reichel:
-> In the future some clocks will be registered using CLK_OF_DECLARE
-> and some are registered later from the driver probe routine. Any
-> clock handled by the probe routine should return -EPROBE_DEFER
-> until that routine has been called.
+Improve utilised clk/notifier APIs, making use of device managed versions
+of functions and make dynamic reconfiguration support optional (because it =
+is
+in hardware).
 
-So this changes the behaviour for misconfigured systems/devicetrees.
-Before a driver would get the ENOENT if they requested a clock from an
-empty lookup field, but now they will just defer forever.
+This is currently untested on hardware, so any help testing this would be
+much appreciated!
 
-Can we do some rockchip_clk_finalize() that runs after _all_ clocks are
-registered (in the CLK_OF_DECLARE function for most drivers, at the end
-of probe for i.e. rk3588) that takes all lookup entries that are still
-EPROBE_DEFER and set it to ENOENT again please?
+This patchset is based on a previous one [1] ([PATCH v3 0/9] clk:
+clocking-wizard: add user clock monitor support), whereby I was attempting =
+to
+add support for the user clock monitor functionality. Those three patches (=
+DT
+binding, clk driver and UIO driver) have now been removed, with the intenti=
+on of
+getting these simpler tidyup changes merged first, while reworking the desi=
+gn of
+the user clock monitor support. These remaining six patches are unchanged f=
+rom
+the aforementioned patchset.
 
+[1] https://lore.kernel.org/20240826123602.1872-1-hpausten@protonmail.com
 
-Thanks
-Heiko
+Harry Austen (6):
+  clk: clocking-wizard: simplify probe/remove with devres helpers
+  clk: clocking-wizard: use newer clk_hw API
+  clk: clocking-wizard: use devres versions of clk_hw API
+  clk: clocking-wizard: move clock registration to separate function
+  dt-bindings: clock: xilinx: describe whether dynamic reconfig is
+    enabled
+  clk: clocking-wizard: move dynamic reconfig setup behind flag
 
+ .../bindings/clock/xlnx,clocking-wizard.yaml  |   7 +
+ drivers/clk/xilinx/clk-xlnx-clock-wizard.c    | 281 ++++++++----------
+ 2 files changed, 128 insertions(+), 160 deletions(-)
 
-> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-> ---
->  drivers/clk/rockchip/clk.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
-> index 73d2cbdc716b..31b7cc243d82 100644
-> --- a/drivers/clk/rockchip/clk.c
-> +++ b/drivers/clk/rockchip/clk.c
-> @@ -376,7 +376,7 @@ struct rockchip_clk_provider *rockchip_clk_init(struc=
-t device_node *np,
->  		goto err_free;
-> =20
->  	for (i =3D 0; i < nr_clks; ++i)
-> -		clk_table[i] =3D ERR_PTR(-ENOENT);
-> +		clk_table[i] =3D ERR_PTR(-EPROBE_DEFER);
-> =20
->  	ctx->reg_base =3D base;
->  	ctx->clk_data.clks =3D clk_table;
->=20
-
-
+--=20
+2.46.0
 
 
