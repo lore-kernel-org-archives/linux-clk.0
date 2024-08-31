@@ -1,186 +1,108 @@
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF901779BB
-	for <linux-clk@vger.kernel.org>; Sat, 31 Aug 2024 10:32:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021921BC39;
+	Sat, 31 Aug 2024 10:47:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725100362; cv=none; b=B1CvXh/aHpwceo+oPiSu1LmzZFpeu/Gc9IduOFpYoLt6MeOgO02OVBz/vMjU5w+j5GswN+AvLGSkoL0aVAo8JlEaNKYCmEZTbX4LSawoQ4W3h9yc+5eLeYnPFR99cDMZWGmChWFuYD1+hz5j+zlqoqvhEncIF/T5wYl9vzefBSQ=
+	t=1725101260; cv=none; b=uyii+TzcHmIDBxKGAhPPqOAi1oc5Q+6LHiNDG8CU0kTzRRkHUnyjjlvPqdO9CJxQ8siC5z6Lb/OU8e1VHEISaFHzxahEt6X2LbI8XQ6OMsE2TQvdOk66K2XUyhKgrbzA2LGfB7u2CG/A+mK6znYbCAH7HUA9mGu3N1H+Jik1/JA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725100362; c=relaxed/simple;
-	bh=LS7JjNLNOai5U4tKMxi9bIxoMnNaywIh2Nz/2XzTViE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S8gED11WUDv/HFlteFge7UEuqMxHAwKQiLJfdFUxopFlqWQz/v5T9AqOp+GmnDsoR9wPkKJIMwZC3BkHiGaCble0XqByRJWQGeh5AXJvkvuwS1cyVQKCWShO5q4UYMHgQmGg/g50a3VrdhHpuTdonFYysZ3rrrcGYeLIDhq9Obo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=K79//bN8; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+	s=arc-20240116; t=1725101260; c=relaxed/simple;
+	bh=kiivoI+Gg3Yauqhf1p5rlFAeUkG50p5IxgGsSDPsX3k=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HK5wHE4ac2+XgCQr1LQmxC4+X1sM4/EdnFhgtf/iRsPZe4VoUxvrXkK3jkk9tI8LFQOW+uf2Ay0PPhz3II6PxG/d7Ns+wyYsJpweldh7aSMedTcF7rvZ3h4xjbL/Ksnu5Enm2Zj71kGBCC8x2V0/Tqlw4+jdvBEdbbnEbnUT3OI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=dTrpm3qR; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K79//bN8"
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-dff1ccdc17bso2837886276.0
-        for <linux-clk@vger.kernel.org>; Sat, 31 Aug 2024 03:32:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1725100360; x=1725705160; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=tKxIacQXeZ2qcUvNmDUUVII5ysi793GfJwtJp8UupOo=;
-        b=K79//bN8cXBhdsmHCleEkY4jKCZWc7vZw5bVpr+9ezF/Tq9yh1+AQko2aps9jV6Nra
-         L3nUQSBVdDPzzAsctwyEh26AqNfkQnXhfTKx0aojqdEI8gv5BjVAuA2+xBBr1rH1wAtc
-         yiWEUy1EZCGryL4OB5YQUkSL5aAXA3sGcD85ZAL4shyVE7asTxQMohCD4zVZ0qcqazA+
-         b53sCQ6XKu59mdeupIEFnm/dF5Ob8dzrs1MmEDemLvq5f8/ydxpoIgty/SaFvRDwTE85
-         iFPmNSWBYjRCQXEJXCFHh80/KOlBz+bZXN+Kne31Q2Xfyrmax4lC7xpTONo/KgnTjNEo
-         +BGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725100360; x=1725705160;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tKxIacQXeZ2qcUvNmDUUVII5ysi793GfJwtJp8UupOo=;
-        b=NVWiUvgLauHv+XhlJrK70GIOQcPsI2M5FQgK3+dTRRJ7Xf4zpOARGow8XOSnk3IsV9
-         EBTwICxgGC+co32kuiTDojhkfmAyRq6TH6VwTFXxmRJobv/6E/6wIDNr5Q+oKGhZfRH4
-         /4drTb0ljcJ1bDCGNIe54ujYDZF7WYzrg6ssoIyNpKte5y5cC7hJCzulpgwKNRF1Ukn8
-         4Py0bdLHj9B8AZQmVgdjPm8IiIZssRCfbZOaJwOdXGQWJkRi0+lJXW5vd/GOjSz0+xCs
-         5vVFM38tcvrkyp172okeuhTG1ZOQqv5D4vPO7iyg3HJG0HQ2dYKPOkVJ8fTRsxFpkMFK
-         teUw==
-X-Forwarded-Encrypted: i=1; AJvYcCX7ARikHMjblUuKQCU1VllBcRBeN87HxzjcB1qO1cwGLObjp/fyDABQjWb6/uKyaAd6vo0rIo50vhk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZ3ZqKE578paUB/tH3N5IGDCNoFKM3BGbrLfBOaTeXIlVV78D1
-	fp2ArapdPKAoJLNH337WnveJvdbm/PxDcJqcJ9lw5NcNeX8ftMqRM4Ow53zweZAUffwt/sEUXYP
-	rskGI6IbegdB64xRPEaWb7oe7WWBC7aLObulsrw==
-X-Google-Smtp-Source: AGHT+IH8Eb7EYXiidD/DrNNChHQ2lwNk48tFSRFBB77aRxIJWoIIPagMeOtludSNPt8BV9FsjbJZVJT8vUY8xBCkml0=
-X-Received: by 2002:a05:6902:1145:b0:e0b:a7c1:9dcc with SMTP id
- 3f1490d57ef6-e1a7a019106mr5308764276.20.1725100360016; Sat, 31 Aug 2024
- 03:32:40 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="dTrpm3qR"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=IM9d6UMpZ5gjX3hzI1jszjTrPvmLv8VkOEdEYbhUEYg=; b=dTrpm3qRvmfG9mvD434IzmZFCR
+	NomrNe9Tz+wJCs1zU+zvcFj+QJjIn03C4BERDDQxtbrgwzZYSnXC+tsz6LdRkRxMcz2tsgPfWddgG
+	ha2oABJPK0bbI8R5snHdi3YlYu/fZdAWTgXHjRzb6fjjghBGXUXCRwrNilBPcn5q2gbxdmtRfQk6P
+	LuRdnNf0YHVmrnQZWwx54n4tFnJfkNHQ6F4zuw+mbiUgqoH1z+2eO7SrfqkUbc6AFvdIn16f6Yxas
+	M96a07RJOg/+GP9pPPV0l7VdsGnJeM9jFtRpPPYtZu8dfOIEVYQEvJoAUutqSD0HXXDB3ZN6A1c2g
+	dIBT2AQw==;
+Received: from i53875be3.versanet.de ([83.135.91.227] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1skLdf-0002ra-GW; Sat, 31 Aug 2024 12:47:27 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+ Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: Elaine Zhang <zhangqing@rock-chips.com>,
+ Kever Yang <kever.yang@rock-chips.com>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, huangtao@rock-chips.com,
+ andy.yan@rock-chips.com, Michal Tomek <mtdev79b@gmail.com>,
+ Ilya K <me@0upti.me>, Chad LeClair <leclair@gmail.com>,
+ devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ Sebastian Reichel <sebastian.reichel@collabora.com>, kernel@collabora.com
+Subject:
+ Re: [PATCH v9 2/7] clk: rockchip: handle missing clocks with -EPROBE_DEFER
+Date: Sat, 31 Aug 2024 12:48:54 +0200
+Message-ID: <2405227.9fHWaBTJ5E@diego>
+In-Reply-To: <20240325193609.237182-3-sebastian.reichel@collabora.com>
+References:
+ <20240325193609.237182-1-sebastian.reichel@collabora.com>
+ <20240325193609.237182-3-sebastian.reichel@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
- <CAPDyKFrS4Dhd7DZa2zz=oPro1TiTJFix0awzzzp8Qatm-8Z2Ug@mail.gmail.com>
- <99bef301-9f6c-4797-b47e-c83e56dfbda9@tuxon.dev> <CAPDyKFrVS2vpsJqTvjKCJ7ADqXc4D4k2eeCBsaK4T+=pXDnKUA@mail.gmail.com>
- <fa9b3449-ea3e-4482-b7eb-96999445cea5@tuxon.dev>
-In-Reply-To: <fa9b3449-ea3e-4482-b7eb-96999445cea5@tuxon.dev>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Sat, 31 Aug 2024 12:32:02 +0200
-Message-ID: <CAPDyKFrkkASq7rfRN=9sEet-p8T8t+f__PdnSNRN3bMNipnNNw@mail.gmail.com>
-Subject: Re: [PATCH 00/16] Add initial USB support for the Renesas RZ/G3S SoC
-To: claudiu beznea <claudiu.beznea@tuxon.dev>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
-	conor+dt@kernel.org, p.zabel@pengutronix.de, geert+renesas@glider.be, 
-	magnus.damm@gmail.com, gregkh@linuxfoundation.org, mturquette@baylibre.com, 
-	sboyd@kernel.org, yoshihiro.shimoda.uh@renesas.com, 
-	biju.das.jz@bp.renesas.com, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-usb@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, 
-	linux-pm@vger.kernel.org, Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 
-[...]
+Am Montag, 25. M=E4rz 2024, 20:33:33 CEST schrieb Sebastian Reichel:
+> In the future some clocks will be registered using CLK_OF_DECLARE
+> and some are registered later from the driver probe routine. Any
+> clock handled by the probe routine should return -EPROBE_DEFER
+> until that routine has been called.
 
-> >
-> > If not, there are two other options that can be considered I think.
-> > *) Using the genpd on/off notifiers, to really allow the consumer
-> > driver of the reset-control to know when the PM domain gets turned
-> > on/off.
-> > **) Move the entire reset handling into the PM domain provider, as it
-> > obviously knows when the domain is getting turned on/off.
->
-> This option is what I've explored, tested on my side.
->
-> I explored it in 2 ways:
->
-> 1/ SYSC modeled as an individual PM domain provider (this is more
->    appropriate to how HW manual described the hardware) with this the PHY
->    reset DT node would have to get 2 PM domains handlers (one for the
->    current PM domain provider and the other one for SYSC):
->
-> +               phyrst: usbphy-ctrl@11e00000 {
-> +                       compatible = "renesas,r9a08g045-usbphy-ctrl";
-> +                       reg = <0 0x11e00000 0 0x10000>;
-> +                       clocks = <&cpg CPG_MOD R9A08G045_USB_PCLK>;
-> +                       resets = <&cpg R9A08G045_USB_PRESETN>;
-> +                       power-domain-names = "cpg", "sysc";
-> +                       power-domains = <&cpg R9A08G045_PD_USB_PHY>, <&sysc
-> R9A08G045_SYSC_PD_USB>;
-> +                       #reset-cells = <1>;
-> +                       status = "disabled";
-> +
-> +                       usb0_vbus_otg: regulator-vbus {
-> +                               regulator-name = "vbus";
-> +                       };
-> +               };
-> +
+So this changes the behaviour for misconfigured systems/devicetrees.
+Before a driver would get the ENOENT if they requested a clock from an
+empty lookup field, but now they will just defer forever.
 
-According to what you have described earlier/above, modelling the SYSC
-as a PM domain provider seems like a better description of the HW to
-me. Although, as I said earlier, if you prefer the reset approach, I
-would not object to that.
+Can we do some rockchip_clk_finalize() that runs after _all_ clocks are
+registered (in the CLK_OF_DECLARE function for most drivers, at the end
+of probe for i.e. rk3588) that takes all lookup entries that are still
+EPROBE_DEFER and set it to ENOENT again please?
 
->
-> and the PHY reset driver will get bulky with powering on/off both of these,
-> at least with my current implementation, something like (and the following
-> code is in probe()):
->
-> +       if (priv->set_power) {
-> +               priv->cpg_genpd_dev = dev_pm_domain_attach_by_name(dev, "cpg");
-> +               if (IS_ERR(priv->cpg_genpd_dev)) {
-> +                       dev_err_probe(dev, error, "Failed to attach CPG PM
-> domain!");
-> +                       error = PTR_ERR(priv->cpg_genpd_dev);
-> +                       goto err_pm_runtime_put;
-> +               }
-> +
-> +               priv->sysc_genpd_dev = dev_pm_domain_attach_by_name(dev,
-> "sysc");
-> +               if (IS_ERR(priv->sysc_genpd_dev)) {
-> +                       dev_err_probe(dev, error, "Failed to attach sysc PM
-> domain!");
-> +                       error = PTR_ERR(priv->sysc_genpd_dev);
-> +                       goto err_genpd_cpg_detach;
-> +               }
-> +
-> +               priv->cpg_genpd_dl = device_link_add(dev, priv->cpg_genpd_dev,
-> +                                                    DL_FLAG_PM_RUNTIME |
-> +                                                    DL_FLAG_STATELESS);
-> +               if (!priv->cpg_genpd_dl) {
-> +                       dev_err_probe(dev, -ENOMEM, "Failed to add CPG
-> genpd device link!");
-> +                       goto err_genpd_sysc_detach;
-> +               }
-> +
-> +               priv->sysc_genpd_dl = device_link_add(dev,
-> priv->sysc_genpd_dev,
-> +                                                     DL_FLAG_PM_RUNTIME |
-> +                                                     DL_FLAG_STATELESS);
-> +               if (!priv->sysc_genpd_dl) {
-> +                       dev_err_probe(dev, -ENOMEM, "Failed to add sysc
-> genpd device link!");
-> +                       goto err_genpd_cpg_dl_del;
-> +               }
-> +
-> +
-> +               error = pm_runtime_resume_and_get(priv->cpg_genpd_dev);
-> +               if (error) {
-> +                       dev_err_probe(dev, error, "Failed to runtime resume
-> cpg PM domain!");
-> +                       goto err_genpd_sysc_dl_del;
-> +               }
-> +
-> +               error = pm_runtime_resume_and_get(priv->sysc_genpd_dev);
-> +               if (error) {
-> +                       dev_err_probe(dev, error, "Failed to runtime resume
-> sysc PM domain!");
-> +                       goto err_genpd_cpg_off;
-> +               }
-> +       }
 
-Indeed, the code above looks bulky.
+Thanks
+Heiko
 
-Fortunately, we now have dev|devm_pm_domain_attach_list(), which
-replaces all of the code above.
 
-[...]
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
+> ---
+>  drivers/clk/rockchip/clk.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
+> index 73d2cbdc716b..31b7cc243d82 100644
+> --- a/drivers/clk/rockchip/clk.c
+> +++ b/drivers/clk/rockchip/clk.c
+> @@ -376,7 +376,7 @@ struct rockchip_clk_provider *rockchip_clk_init(struc=
+t device_node *np,
+>  		goto err_free;
+> =20
+>  	for (i =3D 0; i < nr_clks; ++i)
+> -		clk_table[i] =3D ERR_PTR(-ENOENT);
+> +		clk_table[i] =3D ERR_PTR(-EPROBE_DEFER);
+> =20
+>  	ctx->reg_base =3D base;
+>  	ctx->clk_data.clks =3D clk_table;
+>=20
 
-Kind regards
-Uffe
+
+
+
