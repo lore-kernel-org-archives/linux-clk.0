@@ -1,147 +1,226 @@
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55DC014E2FD
-	for <linux-clk@vger.kernel.org>; Sun,  1 Sep 2024 10:49:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 091051F951;
+	Sun,  1 Sep 2024 10:55:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725187789; cv=none; b=sm1FcgYEu1fBA7DdEeZ2zNNY3uKkSdpPcE5xtLhRxK3gRb3d/QJ5NRC52CixU0p1KxXn7HKpW2xB2yT/0VoHqDIgSFaTcgPzUbFbc3o3oSjTZLFxXDX03INs9/iHEdXRcQkFz833pcoj6deP0nuMEetw2YS7xb8422IFUdXGrWI=
+	t=1725188126; cv=none; b=UXLcl5nFu+4uCP6sRnOs1+C0j0GHJhINXW6J68A9xbMidqzqKvJBe3pXEIOyqnb/mxuJqIgyKCT8MLzu/VaHOr2+EYSolTmubd1a0T5WkR1QMzTDd9nVimOiX4gf2HbRZvu7AHb1z0InfqCsMbMoTY0LBAWMmlIK1QRgsZyoqF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725187789; c=relaxed/simple;
-	bh=4nwnklqqvsAc7MlMb9SGAUN0SLGRpyLpiVNTSWhiEsQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n+SB+OAxcOVtpR3OqY/96fFyo1lM/RmHBQNAghZkHiX4BTOAUfn9aTo1N29SAOuSIOzhDED5LE3SL02D/Se27MJRngWskzNpPcdqFN+bJKwumYj88D64qVdSP5VQ05FTyjQRmNj0DAWCFQeUwLlFgtBeXifpHj+Xdbg5qDyRiak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kali.org; spf=pass smtp.mailfrom=kali.org; dkim=pass (2048-bit key) header.d=kali.org header.i=@kali.org header.b=UK7WbqZg; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kali.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kali.org
+	s=arc-20240116; t=1725188126; c=relaxed/simple;
+	bh=plraTNt54P+K1V16ayCFlHbsakgVBMkJL+ftRk9B3+w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LO3VqJc6U4fDToir2uO/N/lfkOhm1gsKFz4utsP1oM4np2fR3zVDxSLd7OYuNpSNZ/qdYNobo8QzQc6G9YE+pFRKUhMd7nO48hilKXz3i131PGNtic4yt01XW6/C3cbX5QD3rAK7fZunnzioFRWbkWkdJhJE2iFjpocTtMSNghI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=snIbC2cI; arc=none smtp.client-ip=10.30.226.201
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kali.org header.i=@kali.org header.b="UK7WbqZg"
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5c218866849so3464868a12.0
-        for <linux-clk@vger.kernel.org>; Sun, 01 Sep 2024 03:49:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kali.org; s=google; t=1725187786; x=1725792586; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OhlOtzk6ka1oIdqe+onUSXvd3zsuH7hAUMYt+5lHzME=;
-        b=UK7WbqZg6gjbhMMQDiu64lCfR1lupvljoKXesMQIP9yiqm+EWGqK0sI8ByX9CeZvgS
-         /yIstKVWglrOOkWGJHqVf9glVv4TKBxxxZk3JqeRtaJUWrcto5pYZXZFvGFwj/O7NZJv
-         qjaVqWcDO7xfBoj180Z72xc4Wog8xhqhTkmiTrs7Ly4kFHUw5twKBria7FQg18W3m8im
-         4PUooQgHpbe+a84sUgXC2m7nC8F15ZnI/pTcEsC7gwnBxqhezJhpEyDeVUMPWVpBoGk6
-         Uo3/j+3h7K1Yg5ddQVjtMet+qFIkaVYxTijan/04yM9Y6BitnJdkfneF0EPRumjflnfF
-         ZIZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725187786; x=1725792586;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OhlOtzk6ka1oIdqe+onUSXvd3zsuH7hAUMYt+5lHzME=;
-        b=hwi7DOwQjLfiF8DexSyf+hz2WcPcStyCuoFeAYoQ/zVXdGrblx23mAkI6TI6HNm2ml
-         Zw/vesDGj3NLdmoCZcDQDCgzu8Ssh6LORSWtFwjGt8kh7Wjn18+rX6Mo86jmsYg+0c9q
-         Dvh1LImlroHBsfteOkQ+r4kyj5u1xdjF+c1X0yJbyaX/4bW0LUtf9CrmV1mX1OiXBoWI
-         IVjvYmFmIr1AlzHWUok9xgAP0ZaQLiytMUexPGhRdnstWUD2xv5CKpyRIAEgzpRetszu
-         9CYtWy5g6qXBr26C0sfMc1SqyGfphYX2slvAi+8A6rSBnsECa6sIXC6cEU9QEqZuVBMK
-         50RQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWZN/nxbxKVLCzQPK6iMqHEjmV8Mywg6icsNztYNGQlp3FjsjG+zRcVneso9Jc895pJwJDKdpTvZqk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpQ9+iCX9RusNaL/gWwMOBjjv4aakRr0IWtFhm8aX/RoRfCmyG
-	yC4pAHnkdVwbOCZk+/11o6srsGymzdXZpALRhtGmuPT1dwmwLiJ0cgR0fyGJuhoPZQi5oCLJ4Fr
-	uoHzg0Mh1W63oOelypAPtyyc4AgITZ6jg7773wg==
-X-Google-Smtp-Source: AGHT+IFwKp0NUUT00gkpVQ/Lgb5F42y9K4+DR9h8gGYvnQkPv2xwPRh8qm1SYQIv+iTl5XbdqKQgRJgi5DX3dMDLWss=
-X-Received: by 2002:a05:6402:1e8c:b0:5c1:6abb:423c with SMTP id
- 4fb4d7f45d1cf-5c242350df7mr2935480a12.2.1725187785486; Sun, 01 Sep 2024
- 03:49:45 -0700 (PDT)
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="snIbC2cI"
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63F9AC4CEC3;
+	Sun,  1 Sep 2024 10:55:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1725188125;
+	bh=plraTNt54P+K1V16ayCFlHbsakgVBMkJL+ftRk9B3+w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=snIbC2cItHQrF3rilQGwIjmsM/tQ25x+Ri3zNnhnnBDQRkEHOfsTzX5M5UoSV67QV
+	 yV5XL1CCK52Uc0ZNMNpA3GxJIf+4t2I+3juws8FfCPJ6xoB4TgUOf0y8Hl9UBBVyv+
+	 6DV0zddiF9EZ7yQtUPrLo2TEJThHrsAZciy6i6eEKscPV6dOfuy9Bmxzu8DCXtLMTz
+	 VRhhz/taDkiJXqqMJ3X77imli91Q17F46QDv0O/NatHBjP0xrxVsnsaePJfbOm5Gf4
+	 +L/Z6F4WTN5bV/HvJhE1agzfAT35OisK69BJzxXa4sTowXjUsKUhZfW3oUL6FPAEt9
+	 JAwLH4VI3MCrw==
+Date: Sun, 1 Sep 2024 12:55:21 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Haylen Chu <heylenay@outlook.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: clock: spacemit: Add clock controlers
+ of Spacemit K1 SoC
+Message-ID: <w4alphet2d56ojfpm5ibgxdkleb54uvvfsrw5iktzph7xsg3zj@ybofz6uo7qd4>
+References: <SEYPR01MB4221B3178F5233EAB5149E41D7902@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
+ <SEYPR01MB4221019943A7F5361957811FD7902@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240901093024.18841-1-johan+linaro@kernel.org>
-In-Reply-To: <20240901093024.18841-1-johan+linaro@kernel.org>
-From: Steev Klimaszewski <steev@kali.org>
-Date: Sun, 1 Sep 2024 05:49:33 -0500
-Message-ID: <CAKXuJqgZhyyAP2vpSnyygcC0k+BzXU+Gq-O5NnFRWWebfSLD5Q@mail.gmail.com>
-Subject: Re: [PATCH] clk: qcom: videocc-sm8350: use HW_CTRL_TRIGGER for vcodec GDSCs
-To: Johan Hovold <johan+linaro@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>, linux-arm-msm@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jagadeesh Kona <quic_jkona@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>, 
-	Abel Vesa <abel.vesa@linaro.org>, Konrad Dybcio <konradybcio@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <SEYPR01MB4221019943A7F5361957811FD7902@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
 
-Hi Johan,
-
-On Sun, Sep 1, 2024 at 4:31=E2=80=AFAM Johan Hovold <johan+linaro@kernel.or=
-g> wrote:
->
-> A recent change in the venus driver results in a stuck clock on the
-> Lenovo ThinkPad X13s, for example, when streaming video in firefox:
->
->         video_cc_mvs0_clk status stuck at 'off'
->         WARNING: CPU: 6 PID: 2885 at drivers/clk/qcom/clk-branch.c:87 clk=
-_branch_wait+0x144/0x15c
->         ...
->         Call trace:
->          clk_branch_wait+0x144/0x15c
->          clk_branch2_enable+0x30/0x40
->          clk_core_enable+0xd8/0x29c
->          clk_enable+0x2c/0x4c
->          vcodec_clks_enable.isra.0+0x94/0xd8 [venus_core]
->          coreid_power_v4+0x464/0x628 [venus_core]
->          vdec_start_streaming+0xc4/0x510 [venus_dec]
->          vb2_start_streaming+0x6c/0x180 [videobuf2_common]
->          vb2_core_streamon+0x120/0x1dc [videobuf2_common]
->          vb2_streamon+0x1c/0x6c [videobuf2_v4l2]
->          v4l2_m2m_ioctl_streamon+0x30/0x80 [v4l2_mem2mem]
->          v4l_streamon+0x24/0x30 [videodev]
->
-> using the out-of-tree sm8350/sc8280xp venus support. [1]
->
-> Update also the sm8350/sc8280xp GDSC definitions so that the hw control
-> mode can be changed at runtime as the venus driver now requires.
->
-> Fixes: ec9a652e5149 ("venus: pm_helpers: Use dev_pm_genpd_set_hwmode to s=
-witch GDSC mode on V6")
-> Link: https://lore.kernel.org/lkml/20230731-topic-8280_venus-v1-0-8c8bbe1=
-983a5@linaro.org/ # [1]
-> Cc: Jagadeesh Kona <quic_jkona@quicinc.com>
-> Cc: Taniya Das <quic_tdas@quicinc.com>
-> Cc: Abel Vesa <abel.vesa@linaro.org>
-> Cc: Konrad Dybcio <konradybcio@kernel.org>
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+On Sat, Aug 31, 2024 at 03:47:12PM +0000, Haylen Chu wrote:
+> Add definition for the clock controllers of Spacemit K1 SoC. The clock
+> tree is managed by several SoC parts, thus different compatible strings
+> are added for each.
+> 
+> Signed-off-by: Haylen Chu <heylenay@outlook.com>
 > ---
->  drivers/clk/qcom/videocc-sm8350.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/clk/qcom/videocc-sm8350.c b/drivers/clk/qcom/videocc=
--sm8350.c
-> index 5bd6fe3e1298..874d4da95ff8 100644
-> --- a/drivers/clk/qcom/videocc-sm8350.c
-> +++ b/drivers/clk/qcom/videocc-sm8350.c
-> @@ -452,7 +452,7 @@ static struct gdsc mvs0_gdsc =3D {
->         .pd =3D {
->                 .name =3D "mvs0_gdsc",
->         },
-> -       .flags =3D HW_CTRL | RETAIN_FF_ENABLE,
-> +       .flags =3D HW_CTRL_TRIGGER | RETAIN_FF_ENABLE,
->         .pwrsts =3D PWRSTS_OFF_ON,
->  };
->
-> @@ -461,7 +461,7 @@ static struct gdsc mvs1_gdsc =3D {
->         .pd =3D {
->                 .name =3D "mvs1_gdsc",
->         },
-> -       .flags =3D HW_CTRL | RETAIN_FF_ENABLE,
-> +       .flags =3D HW_CTRL_TRIGGER | RETAIN_FF_ENABLE,
->         .pwrsts =3D PWRSTS_OFF_ON,
->  };
->
-> --
-> 2.44.2
->
->
-Being as I saw this as well locally, I've now tested with this patch
-on top of 6.11-rc6 and can confirm that I don't see the splat anymore.
-Tested-by: Steev Klimaszewski <steev@kali.org>
+
+This wasn't ever tested...
+
+>  .../bindings/clock/spacemit,ccu.yaml          | 116 +++++++++++
+>  include/dt-bindings/clock/spacemit,ccu.h      | 197 ++++++++++++++++++
+>  2 files changed, 313 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/spacemit,ccu.yaml
+>  create mode 100644 include/dt-bindings/clock/spacemit,ccu.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/spacemit,ccu.yaml b/Documentation/devicetree/bindings/clock/spacemit,ccu.yaml
+> new file mode 100644
+> index 000000000000..90ddfc5e2a2f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/spacemit,ccu.yaml
+> @@ -0,0 +1,116 @@
+> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/spacemit,ccu.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Spacemit SoC Clock Controller
+
+What's the SoC name?
+
+> +
+> +maintainers:
+> +  - Haylen Chu <heylenay@outlook.com>
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - spacemit,ccu-apbs
+> +      - spacemit,ccu-mpmu
+> +      - spacemit,ccu-apbc
+> +      - spacemit,ccu-apmu
+> +
+> +  clocks: true
+
+No, this must be specific. min/maxItems
+
+> +
+> +  clock-names: true
+
+No, this must be specific. min/maxItems
+
+> +
+> +  spacemit,mpmu:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +    description:
+> +      Phandle to the syscon managing "Main PMU (MPMU)" registers
+
+Explain what for.
+
+
+> +
+> +  "#clock-cells":
+> +    const: 1
+> +    description:
+> +      See <dt-bindings/clock/spacemit,ccu.h> for valid indices.
+> +
+> +required:
+> +  - compatible
+> +  - "#clock-cells"
+> +
+> +additionalProperties: false
+
+This goes after allOf block.
+
+> +
+> +allOf:
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: spacemit,ccu-apbs
+> +    then:
+> +      properties:
+> +        clocks:
+> +          maxItems: 1
+> +
+> +        clock-names:
+> +          const: pll1_2457p6_vco
+
+Don't use some weird, fake names. That's pll or vco or whatever the
+input is called.
+
+> +
+> +      required:
+> +        - compatible
+> +        - clocks
+> +        - clock-names
+> +        - "#clock-cells"
+> +        - spacemit,mpmu
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: spacemit,ccu-apbc
+> +    then:
+> +      properties:
+> +        clocks:
+> +          maxItems: 4
+> +
+> +        clock-names:
+> +          items:
+> +            - const: clk_32k
+> +            - const: vctcxo_1
+> +            - const: vctcxo_24
+> +            - const: vctcxo_3
+> +
+> +      required:
+> +        - compatible
+> +        - clocks
+> +        - clock-names
+> +        - "#clock-cells"
+> +
+> +  - if:
+> +      properties:
+> +        compatible:
+> +          contains:
+> +            const: spacemit,ccu-apmu
+> +    then:
+> +      properties:
+> +        clocks:
+> +          maxItems: 1
+> +
+> +        clock-names:
+> +          const: vctcxo_24
+> +
+> +      required:
+> +        - compatible
+> +        - clocks
+> +        - clock-names
+> +        - "#clock-cells"
+> +
+> +examples:
+> +  - |
+> +    syscon_apbs: system-control@d4090000 {
+> +        compatible = "spacemit,mpmu-syscon", "syscon",
+> +        "simple-mfd";
+
+Messed indentation.
+
+Anyway, parent device nodes should have complete example.
+
+> +        reg = <0x0 0xd4090000 0x0 0x1000>;
+> +
+> +        clk_apbs: clock-controller {
+> +            compatible = "spacemit,ccu-apbs";
+> +            clocks = <&pll1_2457p6_vco>;
+> +            clock-names = "pll1_2457p6_vco";
+> +            #clock-cells = <1>;
+> +            spacemit,mpmu = <&syscon_mpmu>;
+> +        };
+> +    };
+> diff --git a/include/dt-bindings/clock/spacemit,ccu.h b/include/dt-bindings/clock/spacemit,ccu.h
+> new file mode 100644
+> index 000000000000..ce84690684ff
+> --- /dev/null
+> +++ b/include/dt-bindings/clock/spacemit,ccu.h
+> @@ -0,0 +1,197 @@
+> +/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
+
+Use the same license. (one pointed out by checkpatch)
+
+Best regards,
+Krzysztof
+
