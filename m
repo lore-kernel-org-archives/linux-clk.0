@@ -1,226 +1,118 @@
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 091051F951;
-	Sun,  1 Sep 2024 10:55:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F664748A
+	for <linux-clk@vger.kernel.org>; Sun,  1 Sep 2024 13:34:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725188126; cv=none; b=UXLcl5nFu+4uCP6sRnOs1+C0j0GHJhINXW6J68A9xbMidqzqKvJBe3pXEIOyqnb/mxuJqIgyKCT8MLzu/VaHOr2+EYSolTmubd1a0T5WkR1QMzTDd9nVimOiX4gf2HbRZvu7AHb1z0InfqCsMbMoTY0LBAWMmlIK1QRgsZyoqF4=
+	t=1725197671; cv=none; b=L1trpNnwIBm/6hK35BW5+hf3waWUiFHoVWK+dzLrVXK4aT31Mv4LyyjbYo9+wdoeC8CZ/G+x+prs/a+s7KpRAEejLzHhJAXUm9BggBGfTnipsUvybJBbtw0EXHyfbwsx9pfZM5cPjdd6/4ve9XpNiu5LJg1Ufi6nnioEh+BLeiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725188126; c=relaxed/simple;
-	bh=plraTNt54P+K1V16ayCFlHbsakgVBMkJL+ftRk9B3+w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LO3VqJc6U4fDToir2uO/N/lfkOhm1gsKFz4utsP1oM4np2fR3zVDxSLd7OYuNpSNZ/qdYNobo8QzQc6G9YE+pFRKUhMd7nO48hilKXz3i131PGNtic4yt01XW6/C3cbX5QD3rAK7fZunnzioFRWbkWkdJhJE2iFjpocTtMSNghI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=snIbC2cI; arc=none smtp.client-ip=10.30.226.201
+	s=arc-20240116; t=1725197671; c=relaxed/simple;
+	bh=29nqfuxgUPXjJldXSjE8UVM6yH7smgs4TIPiI6dnvCY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EmgZxI0C5aWrF5pLZLQBBYPgHRyuSHZSlQ2beuGO/9n1WfkyhmWYqM4iho6KP76RjFywyCEbM0MrBV7NorFSyE7cTTtqPiIVcIF0NmyfVwTbcqE7k2/vOJaO2anQstsxz32UF55i+RZUT/IdvhGXFMWMomMxlPUstXsoSyDN92g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=MwKguGpp; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="snIbC2cI"
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 63F9AC4CEC3;
-	Sun,  1 Sep 2024 10:55:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1725188125;
-	bh=plraTNt54P+K1V16ayCFlHbsakgVBMkJL+ftRk9B3+w=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=snIbC2cItHQrF3rilQGwIjmsM/tQ25x+Ri3zNnhnnBDQRkEHOfsTzX5M5UoSV67QV
-	 yV5XL1CCK52Uc0ZNMNpA3GxJIf+4t2I+3juws8FfCPJ6xoB4TgUOf0y8Hl9UBBVyv+
-	 6DV0zddiF9EZ7yQtUPrLo2TEJThHrsAZciy6i6eEKscPV6dOfuy9Bmxzu8DCXtLMTz
-	 VRhhz/taDkiJXqqMJ3X77imli91Q17F46QDv0O/NatHBjP0xrxVsnsaePJfbOm5Gf4
-	 +L/Z6F4WTN5bV/HvJhE1agzfAT35OisK69BJzxXa4sTowXjUsKUhZfW3oUL6FPAEt9
-	 JAwLH4VI3MCrw==
-Date: Sun, 1 Sep 2024 12:55:21 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Haylen Chu <heylenay@outlook.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: clock: spacemit: Add clock controlers
- of Spacemit K1 SoC
-Message-ID: <w4alphet2d56ojfpm5ibgxdkleb54uvvfsrw5iktzph7xsg3zj@ybofz6uo7qd4>
-References: <SEYPR01MB4221B3178F5233EAB5149E41D7902@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
- <SEYPR01MB4221019943A7F5361957811FD7902@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="MwKguGpp"
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42c7a49152aso11245765e9.2
+        for <linux-clk@vger.kernel.org>; Sun, 01 Sep 2024 06:34:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1725197668; x=1725802468; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=RZuJNkTMEmyG1Y1u0ZHMR50xU+ptA191TJOnx8xsYdQ=;
+        b=MwKguGppQ6TJlawFTOs4KByFEDPfLO/sAGXzRcTiN1gSxl+RFxgH9t64vu30uRUqeE
+         wjrlbs0Ov2jjreLwWQhJDL+uPkrEFBziBV+0LLvqcyPg/IydFhKdp8qYKZF0cW9eWbD4
+         0VHgIPPxRL4TntOnMN7xMAq5+BOgUlbkQKpQWSrWGDqzHegNSYI/919OsGx98tXQxE+s
+         YSI79Kuv+g6sHEONMPg/4FZ7+LXUmu9it4uFV9AWQCBRUK73MeO4DsEP5MI3kUUFNiHa
+         QmZKY7xYNC/RCUeaXRJyYl3LGQShRj+hXWwMqRJzo5YzCxkNhT5k4K4m5Lq21uP9JxW8
+         u7nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725197668; x=1725802468;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RZuJNkTMEmyG1Y1u0ZHMR50xU+ptA191TJOnx8xsYdQ=;
+        b=XwkdglGeKcKhg2DRxTGB63aLLITQOZgiV/DwPzCo8ZoCnoPsLgoQIGnCOJRjh/98XD
+         EjtLqtSwPS2G+Kr8SFxf38iOCrlPgoYhIboIMx2pFmVN6gwNgWAVTLwCabm+VhPm13TW
+         xzlgvuTIqlADqdNimuVLGbsMVo7i5ohIu+x9O3C9Q0sAx+SlEgDiNeNtonfG9+6dBoAH
+         b0BrzpKk8FCQLxYVLErPBPRuppdZdXcOuIAwshp1AKXRkxIdFYv2okovRE+e7YtNGFnS
+         nZMq8CMmETW9RV/k3ZUv8rvFd1yzVTp61FR1mq5JLK4pJn1epljiVyYCVwOrM3SHLDZw
+         0FRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUh9S7sOQcT+JbX6YIIJy7Xfjtt15057bN0Y26ICyhrRLPzFAWXOZqHcGP5aThGBMVWvN7u/LMbj28=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsW31q/fS6BeYPZItJZTdy/MWME7TYLWubU1bjDFXTYlFd5+5F
+	aoYOHQxO9dhpwE65Qez/eVFsXB2mVxfYTeplJmvP++JWpv6NK0Siu56vZ4fhLBI=
+X-Google-Smtp-Source: AGHT+IHqJKYShZyhgkzjmZ/VkTaqE5kXVQXcvRu0tlWx8/cN/vhrQZ1wIBudXxW6llG53PYDGIacYA==
+X-Received: by 2002:a05:600c:3b10:b0:426:6ed5:fcb with SMTP id 5b1f17b1804b1-42bb01ae1fbmr116878695e9.4.1725197667547;
+        Sun, 01 Sep 2024 06:34:27 -0700 (PDT)
+Received: from claudiu-X670E-Pro-RS.. ([82.78.167.144])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42bb6e36626sm106574155e9.47.2024.09.01.06.34.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 01 Sep 2024 06:34:27 -0700 (PDT)
+From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
+To: sboyd@kernel.org,
+	linux-clk@vger.kernel.org
+Cc: nicolas.ferre@microchip.com,
+	alexandre.belloni@bootlin.com,
+	claudiu.beznea@tuxon.dev
+Subject: [GIT PULL] Microchip clock updates for v6.12
+Date: Sun,  1 Sep 2024 16:34:25 +0300
+Message-Id: <20240901133425.2039071-1-claudiu.beznea@tuxon.dev>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <SEYPR01MB4221019943A7F5361957811FD7902@SEYPR01MB4221.apcprd01.prod.exchangelabs.com>
+Content-Transfer-Encoding: 8bit
 
-On Sat, Aug 31, 2024 at 03:47:12PM +0000, Haylen Chu wrote:
-> Add definition for the clock controllers of Spacemit K1 SoC. The clock
-> tree is managed by several SoC parts, thus different compatible strings
-> are added for each.
-> 
-> Signed-off-by: Haylen Chu <heylenay@outlook.com>
-> ---
+The following changes since commit 8400291e289ee6b2bf9779ff1c83a291501f017b:
 
-This wasn't ever tested...
+  Linux 6.11-rc1 (2024-07-28 14:19:55 -0700)
 
->  .../bindings/clock/spacemit,ccu.yaml          | 116 +++++++++++
->  include/dt-bindings/clock/spacemit,ccu.h      | 197 ++++++++++++++++++
->  2 files changed, 313 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/clock/spacemit,ccu.yaml
->  create mode 100644 include/dt-bindings/clock/spacemit,ccu.h
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/spacemit,ccu.yaml b/Documentation/devicetree/bindings/clock/spacemit,ccu.yaml
-> new file mode 100644
-> index 000000000000..90ddfc5e2a2f
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/clock/spacemit,ccu.yaml
-> @@ -0,0 +1,116 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/clock/spacemit,ccu.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Spacemit SoC Clock Controller
+are available in the Git repository at:
 
-What's the SoC name?
+  https://git.kernel.org/pub/scm/linux/kernel/git/at91/linux.git tags/clk-microchip-6.12
 
-> +
-> +maintainers:
-> +  - Haylen Chu <heylenay@outlook.com>
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - spacemit,ccu-apbs
-> +      - spacemit,ccu-mpmu
-> +      - spacemit,ccu-apbc
-> +      - spacemit,ccu-apmu
-> +
-> +  clocks: true
+for you to fetch changes up to 2d6e9ee7cb3e79b1713783c633b13af9aeffc90c:
 
-No, this must be specific. min/maxItems
+  clk: at91: sama7g5: Allocate only the needed amount of memory for PLLs (2024-08-24 17:44:11 +0300)
 
-> +
-> +  clock-names: true
+----------------------------------------------------------------
+Microchip clock updates for v6.12
 
-No, this must be specific. min/maxItems
+It contains:
+- support for the Microchip SAM9X7 SoC as follows:
+-- updates on the PLL drivers
+-- a new clock driver was added for SAM9X7
+-- dt-binding documentation updates (for the new clock driver and for
+   the slow clock controller that SAM9X7 is using)
+- a fix for the Microchip SAMA7G5 clock driver to avoid allocating mode
+  than necessary memory
 
-> +
-> +  spacemit,mpmu:
-> +    $ref: /schemas/types.yaml#/definitions/phandle
-> +    description:
-> +      Phandle to the syscon managing "Main PMU (MPMU)" registers
+----------------------------------------------------------------
+Claudiu Beznea (1):
+      clk: at91: sama7g5: Allocate only the needed amount of memory for PLLs
 
-Explain what for.
+Varshini Rajendran (7):
+      dt-bindings: clocks: atmel,at91sam9x5-sckc: add sam9x7
+      dt-bindings: clocks: atmel,at91rm9200-pmc: add sam9x7 clock controller
+      clk: at91: clk-sam9x60-pll: re-factor to support individual core freq outputs
+      clk: at91: sam9x7: add support for HW PLL freq dividers
+      clk: at91: sama7g5: move mux table macros to header file
+      dt-bindings: clock: at91: Allow PLLs to be exported and referenced in DT
+      clk: at91: sam9x7: add sam9x7 pmc driver
 
-
-> +
-> +  "#clock-cells":
-> +    const: 1
-> +    description:
-> +      See <dt-bindings/clock/spacemit,ccu.h> for valid indices.
-> +
-> +required:
-> +  - compatible
-> +  - "#clock-cells"
-> +
-> +additionalProperties: false
-
-This goes after allOf block.
-
-> +
-> +allOf:
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: spacemit,ccu-apbs
-> +    then:
-> +      properties:
-> +        clocks:
-> +          maxItems: 1
-> +
-> +        clock-names:
-> +          const: pll1_2457p6_vco
-
-Don't use some weird, fake names. That's pll or vco or whatever the
-input is called.
-
-> +
-> +      required:
-> +        - compatible
-> +        - clocks
-> +        - clock-names
-> +        - "#clock-cells"
-> +        - spacemit,mpmu
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: spacemit,ccu-apbc
-> +    then:
-> +      properties:
-> +        clocks:
-> +          maxItems: 4
-> +
-> +        clock-names:
-> +          items:
-> +            - const: clk_32k
-> +            - const: vctcxo_1
-> +            - const: vctcxo_24
-> +            - const: vctcxo_3
-> +
-> +      required:
-> +        - compatible
-> +        - clocks
-> +        - clock-names
-> +        - "#clock-cells"
-> +
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            const: spacemit,ccu-apmu
-> +    then:
-> +      properties:
-> +        clocks:
-> +          maxItems: 1
-> +
-> +        clock-names:
-> +          const: vctcxo_24
-> +
-> +      required:
-> +        - compatible
-> +        - clocks
-> +        - clock-names
-> +        - "#clock-cells"
-> +
-> +examples:
-> +  - |
-> +    syscon_apbs: system-control@d4090000 {
-> +        compatible = "spacemit,mpmu-syscon", "syscon",
-> +        "simple-mfd";
-
-Messed indentation.
-
-Anyway, parent device nodes should have complete example.
-
-> +        reg = <0x0 0xd4090000 0x0 0x1000>;
-> +
-> +        clk_apbs: clock-controller {
-> +            compatible = "spacemit,ccu-apbs";
-> +            clocks = <&pll1_2457p6_vco>;
-> +            clock-names = "pll1_2457p6_vco";
-> +            #clock-cells = <1>;
-> +            spacemit,mpmu = <&syscon_mpmu>;
-> +        };
-> +    };
-> diff --git a/include/dt-bindings/clock/spacemit,ccu.h b/include/dt-bindings/clock/spacemit,ccu.h
-> new file mode 100644
-> index 000000000000..ce84690684ff
-> --- /dev/null
-> +++ b/include/dt-bindings/clock/spacemit,ccu.h
-> @@ -0,0 +1,197 @@
-> +/* SPDX-License-Identifier: (GPL-2.0-only OR MIT) */
-
-Use the same license. (one pointed out by checkpatch)
-
-Best regards,
-Krzysztof
-
+ .../bindings/clock/atmel,at91rm9200-pmc.yaml       |   2 +
+ .../bindings/clock/atmel,at91sam9x5-sckc.yaml      |   4 +-
+ drivers/clk/at91/Makefile                          |   1 +
+ drivers/clk/at91/clk-sam9x60-pll.c                 |  42 +-
+ drivers/clk/at91/pmc.h                             |  18 +
+ drivers/clk/at91/sam9x60.c                         |   7 +
+ drivers/clk/at91/sam9x7.c                          | 946 +++++++++++++++++++++
+ drivers/clk/at91/sama7g5.c                         |  47 +-
+ include/dt-bindings/clock/at91.h                   |   4 +
+ 9 files changed, 1035 insertions(+), 36 deletions(-)
+ create mode 100644 drivers/clk/at91/sam9x7.c
