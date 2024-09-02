@@ -1,120 +1,114 @@
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B494D19C556;
-	Mon,  2 Sep 2024 13:53:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F6B219E98B;
+	Mon,  2 Sep 2024 14:02:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725285202; cv=none; b=N6wLu0wNOQdrO079WxNWgqikyk+md4NamcQmGk7SBs18Uk0xSjRrVQAb/um4jxlXeklfCrt3QJnbs1v+wCLBoJA6qgMNeH3QKs0Q+QGiLIyIapGAp5hZi6cuneyIxvuERE5aGdji8bLubsBUCqV2Wp2CA75G7ODLT2EbAyP2NeU=
+	t=1725285755; cv=none; b=T4SvwlM8rwQTXSiIydIxt+L7oxOWPQx0DpGlBQzK+WR3cVdNY5zdalOIUM4R9vJg8n46Y6BOmkE1PA3PsYEEEZLVQAm5KApcaIlG4pSNUeeLWmAPLMMsS36BEdrRg9+EW72M2P2r8Dv1A6WLLS9OUoV7IbllusDj8KKNsfajcFU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725285202; c=relaxed/simple;
-	bh=eoC7Vo0Z8zGYb7p6xxvVkvrh1N8gQvobck3gC48jZxk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z+eki2PjGCspqK2FFDwThQdI9/FffmiOlRsCg3OkTjEtjjlZuEuW7N3He9yGhSzkC1H8eludTlD03Hlbe99JlIBxurr2ajWbpFrCEuV1wQNVuKfiHgZwnpefLJ3xB9XoT+mYJSoJ+2RcePbK7AlDUd7isDmTIvrMM70YcS1oOgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6c3f1939d12so35897897b3.2;
-        Mon, 02 Sep 2024 06:53:20 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725285199; x=1725889999;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eIVZ4SCF9RhVKGpVGbpDiZIJZpiVYxTpgIR0F0Tjc0g=;
-        b=Gq3lhEgV2gHv5x3UsaQGP3LCiOCIgC5FX7PAN/ey9W8SuTROykQbL7U2Hd46gOZrCM
-         rihVvQomhkr/mmjMPT2i3RYDn3iY/zYxaCVcu2PAYpd/6JMnGgfI4wcTHwUCD9OkvAoD
-         n3PyqsB25Oms0Cd4c/NI2UNl7hk1tL1MhLs2ZzC3bu3uSi9LSD0cqPCNOh1Sy0v3P3Iq
-         0krGd2FI0fuqED3EYBGk7HhyoombRY/06HbPbxS0VrZlX3WM2S+bfT6yYuLpLolzD2TW
-         5SOuDGPLoj1ThtX/qjQBi2XleuoeFdx10eBB30vSZuLKEte7yTdWzhCNngKfh9MeKWUU
-         XuZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUd8UM3urYyUSCfDQju3J2xDd2ong0FSwLW66tkR3Wj3mIcUMfY9dl6FwW3QMQgjT00OPVEvpuI9+c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqhSA0pPpVbmzONn6QpkphZPpLCoRbvQZrKAq/hGMfBpotHqxv
-	CTy0FtUpPkeOC9vXC/9Dg0InhAEYb71fPrWfbUXrbrKqnIVzZx4XxPZ3oy7V
-X-Google-Smtp-Source: AGHT+IF+zgsXPww+le7nFQbuDLh2YNFcpLI6l/qgnzpfIiNrJZCkUAks9LVy+c0RytQm86QEDScdmg==
-X-Received: by 2002:a05:690c:610c:b0:664:8646:4d02 with SMTP id 00721157ae682-6d40dd720bdmr116457217b3.12.1725285199355;
-        Mon, 02 Sep 2024 06:53:19 -0700 (PDT)
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com. [209.85.128.169])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6d7938268dbsm3586647b3.126.2024.09.02.06.53.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 02 Sep 2024 06:53:19 -0700 (PDT)
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6d6e2b2fbc4so10436877b3.0;
-        Mon, 02 Sep 2024 06:53:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWLbogqu6wYRxD9xChVi08O722KYRRUuT+hznosy7FU4hwMF03e+QFrDYKLcC3WNKMUbwi+dkCvx1E=@vger.kernel.org
-X-Received: by 2002:a05:690c:fca:b0:6d3:f51b:38c3 with SMTP id
- 00721157ae682-6d40d88d522mr133229097b3.7.1725285198923; Mon, 02 Sep 2024
- 06:53:18 -0700 (PDT)
+	s=arc-20240116; t=1725285755; c=relaxed/simple;
+	bh=dGr0hmtqgEG2bKigM03F+K7XEGLbxyVTsJM6AuXa2o0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ClTksdNUXjPOL86eQDWemTdHykQkHMuJ8G4+v4og4aQCCVY/rp3rfOIjStOE6iAyVnsSsVSUsr/09gPLFWTd9VWwX4KBisr5RiU8W4Kx2+NPRKRUk8ErLHMjBjdWIZz2Cf85o+lNgBE779xQ6VMTG+AgDa8PSf2ETqUo342n9nA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=gg2EymqO; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="gg2EymqO"
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Q5kDo072oqXPIANlSuSJ0omtBEVMG7dk+/GwwjwoW+w=; b=gg2EymqOeUoXG4PwS/2Ul/RuXY
+	yhOW3w+ES5SGi+fp1XpY9szPDM0lRbquthZ7K10Rwv9MnyjlJhWZSdSEB5IAz71AixgeujUEF5Wnw
+	B2uE14oAuMhHmuw4B4wxK7FvuZMjMzDk3o7sJNNo+RKNSx2Sn5mxfxo4gsodVNlNW5XxOqdhAz9KL
+	nsMexdPcvQ6MyNSLejNfQJrt38bgroQF4xO8mfKgKiNnA6FwKGmUfe5A+EdQvzB7LJLbs7Y2pkl3o
+	/NFQKyHvx9of7CFcOKcLzwpUX3w2o/dU9Sl0id9k/6dO3VVAMCBiq6AiUrSLEMKZQurGmijKxp5XU
+	5BYxlsxQ==;
+Received: from i5e860d00.versanet.de ([94.134.13.0] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sl7dM-0002as-Px; Mon, 02 Sep 2024 16:02:20 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+ Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: Elaine Zhang <zhangqing@rock-chips.com>,
+ Kever Yang <kever.yang@rock-chips.com>, Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, huangtao@rock-chips.com,
+ andy.yan@rock-chips.com, Michal Tomek <mtdev79b@gmail.com>,
+ Ilya K <me@0upti.me>, Chad LeClair <leclair@gmail.com>,
+ devicetree@vger.kernel.org, linux-rockchip@lists.infradead.org,
+ Sebastian Reichel <sebastian.reichel@collabora.com>, kernel@collabora.com
+Subject: Re: [PATCH v9 6/7] clk: rockchip: implement linked gate clock support
+Date: Mon, 02 Sep 2024 16:03:56 +0200
+Message-ID: <2299897.AOvM4ru3NT@diego>
+In-Reply-To: <20240325193609.237182-7-sebastian.reichel@collabora.com>
+References:
+ <20240325193609.237182-1-sebastian.reichel@collabora.com>
+ <20240325193609.237182-7-sebastian.reichel@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240603234139.280629b2@aktux>
-In-Reply-To: <20240603234139.280629b2@aktux>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 2 Sep 2024 15:53:07 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWU74DsWEZtZQJctQQog=9UCG_1LZu5yWvyxx0Zw4LQow@mail.gmail.com>
-Message-ID: <CAMuHMdWU74DsWEZtZQJctQQog=9UCG_1LZu5yWvyxx0Zw4LQow@mail.gmail.com>
-Subject: Re: clk mess on omap4460 with mpu clock
-To: Andreas Kemnade <andreas@kemnade.info>
-Cc: linux-omap@vger.kernel.org, linux-clk@vger.kernel.org, 
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>, Paul Walmsley <paul@pwsan.com>, 
-	Tony Lindgren <tony@atomide.com>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
 
-Hi Andreas,
+Am Montag, 25. M=E4rz 2024, 20:33:37 CEST schrieb Sebastian Reichel:
+> Recent Rockchip SoCs have a new hardware block called Native Interface
+> Unit (NIU), which gates clocks to devices behind them. These clock
+> gates will only have a running output clock when all of the following
+> conditions are met:
+>=20
+> 1. the parent clock is enabled
+> 2. the enable bit is set correctly
+> 3. the linked clock is enabled
+>=20
+> To handle them this code registers them as a normal gate type clock,
+> which takes care of condition 1 + 2. The linked clock is handled by
+> using runtime PM clocks. Handling it via runtime PM requires setting
+> up a struct device for each of these clocks with a driver attached
+> to use the correct runtime PM operations. Thus the complete handling
+> of these clocks has been moved into its own driver.
+>=20
+> Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
 
-On Mon, Jun 3, 2024 at 11:41=E2=80=AFPM Andreas Kemnade <andreas@kemnade.in=
-fo> wrote:
-> just stumbled across this on 6.10-rc1:
->
-> [    1.475830] ocp:target-module@48210000:mpu:fck: device ID is greater t=
-han 24
-> [    1.483154] ti-sysc ocp:target-module@48210000: could not add child cl=
-ock fck: -12
+> +static void rk_clk_gate_link_remove(struct platform_device *pdev)
+> +{
+> +	struct rockchip_gate_link_platdata *pdata;
+> +	struct device *dev =3D &pdev->dev;
+> +	struct clk *clk, *linked_clk;
+> +
+> +	pdata =3D dev_get_platdata(dev);
+> +	clk =3D rockchip_clk_get_lookup(pdata->ctx, pdata->clkbr->id);
+> +	linked_clk =3D rockchip_clk_get_lookup(pdata->ctx, pdata->clkbr->linked=
+_clk_id);
+> +	rockchip_clk_set_lookup(pdata->ctx, ERR_PTR(-ENODEV), pdata->clkbr->id);
+> +	clk_unregister_gate(clk);
+> +	pm_clk_remove_clk(dev, linked_clk);
+> +}
+> +
+> +static const struct dev_pm_ops rk_clk_gate_link_pm_ops =3D {
+> +	SET_RUNTIME_PM_OPS(pm_clk_suspend, pm_clk_resume, NULL)
+> +};
+> +
+> +struct platform_driver rk_clk_gate_link_driver =3D {
+> +	.probe		=3D rk_clk_gate_link_probe,
+> +	.remove_new	=3D rk_clk_gate_link_remove,
 
-And on boneblack:
+what's the use-case for remove?
 
-48000000.interconnect:segment@200000:target-module@0:mpu@0:fck: device
-ID is greater than 24
-target-module@4b000000:target-module@140000:pmu@0:fck: device ID is
-greater than 24
+We don't allow the main clock driver to be unbound, so I guess we might
+want to do the same here? On a system-level they're getting registered
+automatically but never unregistered, so the only case here would be
+a manual unbind - but I'd think that would cause mayhem anyway?
 
-> Maybe
->         /*
->          * Use clkdev_add() instead of clkdev_alloc() to avoid the MAX_DE=
-V_ID
->          * limit for clk_get(). If cl ever needs to be freed, it should b=
-e done
->          * with clkdev_drop().
->          */
-> in ti-sysc.c does not work anymore?
->
-> The offending clock definition is in omap4.dtsi
->
-> clocks =3D <&mpuss_clkctrl OMAP4_MPU_CLKCTRL 0>;
->
-> Did not bisect that yet.
 
-Commit 8d532528ff6a6b1b ("clkdev: report over-sized strings when
-creating clkdev entries") in v6.10-rc1, with follow-up commit
-616501eccb58615f ("clkdev: don't fail clkdev_alloc() if over-sized")
-in v6.10-rc4.
 
-I have no idea if these clkdev registrations are still necessary/used.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
