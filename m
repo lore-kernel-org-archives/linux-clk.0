@@ -1,158 +1,155 @@
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02CDA1CB514;
-	Mon,  2 Sep 2024 15:34:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1333F19CC11
+	for <linux-clk@vger.kernel.org>; Mon,  2 Sep 2024 18:39:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725291261; cv=none; b=WgugJZyr6Q5xVSL5Ck+mzgE+MLrvLnPvWStdT8AEuYE+6TGgpWkZCc5TOchqWH5h3yzfF4/mwRZ6kAyDvrCpSDXGvBbpsfkfWAQ3UzlJOr2bffwu64hxhI7xhIP96/JGtsKMlIJxkquw0+h3x9yE420tXVd01fW2XFIboG9kqvU=
+	t=1725302347; cv=none; b=saIU2jTHsP1Q+cyFhCK9QH6FqiYXG8LbUIKmvtIulRhMUVJ5nZt2ddpsnKZt3gsOZh8IEdFKTBY8Zc4z/9suHJefiAv+U2zyZWm9BNSSpc5kq5c+O6YXVmWn6f11y+rM8bjhgpsaFVZeFDHPA2ffWjczboT3Ipk4lJTiZBGyXjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725291261; c=relaxed/simple;
-	bh=vCcQ9NB0LiNRbZ//WE2/zEZ6PWxPEAu7O9GOLgqE/2M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=GcsWzt8NMHrxObSdYgcpyoEdrJvOk+BZh7vvQGBypUdNywZkBy12yUz1CvopBoPgHeloLF5fWOkn/pQ5U7opcyVTon+CLG4B8oUgZ7NlnAxNYPVgCcb5hwpgZQqRffZ2JfxNXRyKaTtyHOul4wpJeLh6yVZqoXbmQQVo+cDnJgg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Yop8Mwho; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+	s=arc-20240116; t=1725302347; c=relaxed/simple;
+	bh=f7ioOsOW2UtBJTh4Jn8E/jdh27RM+0q2IQHJKOuj6co=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T0/UDK3ZDuo4N5UGPtGsEid16QaNLs1RyOhEtapa9D6VI4qPjll7Hw8bgMcqX4HjK7qpp1oY+hQqNb+pUu1aoOVvx7PO6Jdz9HTNZCAqsPcBnIMlU+DrOyIXQQwT4gIjntUv2WK4nKyDzKsNw0TzEIU8U4prMszoiLPmstR1JOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Jip7UI1w; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Yop8Mwho"
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 482AxvoR010042;
-	Mon, 2 Sep 2024 15:34:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	3DLs52+iwcPCDzJQJkKgEQL73datcOJ1QKKlau+klrM=; b=Yop8MwhoXjwAYRkd
-	kAL1JRcXzLEXfYS16Xp5nymjiHtPVB8WHat+ppYhsWr3+nue1aB1zBKto3AfXrZg
-	MLO5Od0tPot0ZAS+RHBVBLKRADm49m8wf+PUZkNWetYaj6TvTTvx8WmcWz6x7kkN
-	rrnwqul7BUbX2OH2bU1BfbzSo9Wa+goB9GuYc0ns7c+gwPJr3lthsL5U3SoMqKze
-	NhPxgEsxqZrW0HBGx6ESbzx/qyslg6rRPpsJEgi8YPuFdh/qT/O0T4GXmTlMPwsp
-	pdmlNGXv7hF2yVD356V2nrRWc4v+GZdefi4P2fCMr3A9kwMot6CrNZvawk8YGTeE
-	VXBTQw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 41brhndckg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 02 Sep 2024 15:34:06 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 482FY4MQ026945
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 2 Sep 2024 15:34:04 GMT
-Received: from [10.253.79.111] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 2 Sep 2024
- 08:34:00 -0700
-Message-ID: <ecc34401-68c2-463f-b630-6a81ad95625e@quicinc.com>
-Date: Mon, 2 Sep 2024 23:33:57 +0800
-Precedence: bulk
-X-Mailing-List: linux-clk@vger.kernel.org
-List-Id: <linux-clk.vger.kernel.org>
-List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
-List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/4] clk: qcom: Add CMN PLL clock controller driver for
- IPQ SoC
-To: Stephen Boyd <sboyd@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        "Krzysztof
- Kozlowski" <krzk+dt@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Rob Herring <robh@kernel.org>, Will Deacon <will@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <quic_kkumarcs@quicinc.com>,
-        <quic_suruchia@quicinc.com>, <quic_pavir@quicinc.com>,
-        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>,
-        <bartosz.golaszewski@linaro.org>, <srinivas.kandagatla@linaro.org>
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jip7UI1w"
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-53438aa64a4so5421733e87.3
+        for <linux-clk@vger.kernel.org>; Mon, 02 Sep 2024 11:39:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1725302344; x=1725907144; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=L7ewTdA6TBog3FUoYxRWQ9HefvGnnlDeA05UsrKzpao=;
+        b=Jip7UI1wzQeaGIR3kPV9KD0X/dgi5PTFGmb41CNlnJXsvqkCLlGWATPns7J1xW54nw
+         OCo8RY0KLyfD7+zv5vbivdwBYJth282KQXCCn3S8aMsmJFKAEZgwqrwOEQfPjcIEu+qi
+         2QFWxojOlYlCASs03IC7dv/LCxhyfVwWLyaFBsM3l8l4tchu05FjiHijDdTe1Igg6ufj
+         dZCTzN0HATGtNcSEtYLX6BKcbzDy9vqOQF+p2SqU4x35qdRv4vGH/bQ9GacjA/pZYXRl
+         QopTdXAGXt9fnePdyWXv86wr5PgVPwmSn53XthX/FJVNVw6bH/+sZVeLyEbSG8FJ31YC
+         5rMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725302344; x=1725907144;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=L7ewTdA6TBog3FUoYxRWQ9HefvGnnlDeA05UsrKzpao=;
+        b=kO5rbCaePmQz7AfkHjKst0sPlDUkgNQU1Wi+MEPtYhhNRVdcXNC4J1G6J/R1Kyx8DC
+         B+rEuABM3IdghdEuXeBlagIuGotxH7OOuAoXB5y+Y9rWtUPIYD5ZgYJNkacg9UpfLYE2
+         wmKUgrsvPJfDOnu3xQEueYZaOYjmf/pzz55cvx+XmYF0Mkp5Nzj+B2ScRDkJsRuJZ4/e
+         p/3MX/UArzSRDkqTCRF9tWfodYYSFfEk3sT8/n4dfB/kmOgiB/tGgwo6dzHU5fKL6erk
+         L2UgNIvI6gRLES109dxw/qd6dQ5kFnXsWW2rrhR+lupFSCeD1VN7Jm79r3qOgvHHDFbr
+         MKgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW3mdRyUHytPDqaIUmKdqSyFubsU1+and+CqrSQ2K3R0YYEtUEjf7Lu2hLmG2nQllwEhWkwOP2CNjU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4/nf5aGGRbrCPNRQQactP/ljUOPaU6oNrDGmwTS/B3CJaOtcD
+	wjLUY+0GCFpSPFZ9FYlLzECfqRTErG91rgoMu2kYIAbRYg9QD3B0cijKEU3f+GU=
+X-Google-Smtp-Source: AGHT+IHYdWkXe+rncah+Q/xuDmfgfYg5nYo/bbQbYrDw8rot5x8UI6W5jir4npXXEJXjP7ha7D6T/Q==
+X-Received: by 2002:a05:6512:31d2:b0:533:3268:b971 with SMTP id 2adb3069b0e04-53546b0454fmr7257721e87.18.1725302343576;
+        Mon, 02 Sep 2024 11:39:03 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-535407b8727sm1704749e87.119.2024.09.02.11.39.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 02 Sep 2024 11:39:03 -0700 (PDT)
+Date: Mon, 2 Sep 2024 21:39:01 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Jie Luo <quic_luoj@quicinc.com>
+Cc: Stephen Boyd <sboyd@kernel.org>, 
+	Bjorn Andersson <andersson@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Rob Herring <robh@kernel.org>, Will Deacon <will@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, quic_kkumarcs@quicinc.com, quic_suruchia@quicinc.com, 
+	quic_pavir@quicinc.com, quic_linchen@quicinc.com, quic_leiwei@quicinc.com, 
+	bartosz.golaszewski@linaro.org, srinivas.kandagatla@linaro.org
+Subject: Re: [PATCH v3 2/4] clk: qcom: Add CMN PLL clock controller driver
+ for IPQ SoC
+Message-ID: <6sk7sx4pz2gnne2tg3d5lsphmnp6vqjj2tjogqcop7fwn3yk3r@ftevsz77w6pt>
 References: <20240827-qcom_ipq_cmnpll-v3-0-8e009cece8b2@quicinc.com>
  <20240827-qcom_ipq_cmnpll-v3-2-8e009cece8b2@quicinc.com>
  <d7b374670eb2f6d442f351106ab1221a.sboyd@kernel.org>
  <7f4d41a0-b1b9-4b63-8590-63f4fcf1a359@quicinc.com>
  <7736d0d0-634d-403d-b70f-f33b7402456c@quicinc.com>
  <04944b77ce6327ba5f4ec96348a9cda2.sboyd@kernel.org>
-Content-Language: en-US
-From: Jie Luo <quic_luoj@quicinc.com>
-In-Reply-To: <04944b77ce6327ba5f4ec96348a9cda2.sboyd@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+ <ecc34401-68c2-463f-b630-6a81ad95625e@quicinc.com>
+Precedence: bulk
+X-Mailing-List: linux-clk@vger.kernel.org
+List-Id: <linux-clk.vger.kernel.org>
+List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
+List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: bOj18FDAbeH-jVO2mgGuJ2irMu9A5k__
-X-Proofpoint-ORIG-GUID: bOj18FDAbeH-jVO2mgGuJ2irMu9A5k__
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-02_04,2024-09-02_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=999
- spamscore=0 impostorscore=0 lowpriorityscore=0 suspectscore=0 phishscore=0
- adultscore=0 priorityscore=1501 clxscore=1015 mlxscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2407110000
- definitions=main-2409020123
+In-Reply-To: <ecc34401-68c2-463f-b630-6a81ad95625e@quicinc.com>
 
-
-
-On 8/31/2024 6:24 AM, Stephen Boyd wrote:
-> Quoting Jie Luo (2024-08-30 09:14:28)
->> Hi Stephen,
->> Please find below a minor update to my earlier message on clk_ops usage.
+On Mon, Sep 02, 2024 at 11:33:57PM GMT, Jie Luo wrote:
 > 
-> Ok. Next time you can trim the reply to save me time.
-
-OK.
-
 > 
->> On 8/28/2024 1:44 PM, Jie Luo wrote:
->>> On 8/28/2024 7:50 AM, Stephen Boyd wrote:
->>>> Quoting Luo Jie (2024-08-27 05:46:00)
->>>>> +Â Â Â Â Â Â  case 48000000:
->>>>> +Â Â Â Â Â Â Â Â Â Â Â Â Â Â  val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 7);
->>>>> +Â Â Â Â Â Â Â Â Â Â Â Â Â Â  break;
->>>>> +Â Â Â Â Â Â  case 50000000:
->>>>> +Â Â Â Â Â Â Â Â Â Â Â Â Â Â  val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 8);
->>>>> +Â Â Â Â Â Â Â Â Â Â Â Â Â Â  break;
->>>>> +Â Â Â Â Â Â  case 96000000:
->>>>> +Â Â Â Â Â Â Â Â Â Â Â Â Â Â  val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 7);
->>>>> +Â Â Â Â Â Â Â Â Â Â Â Â Â Â  val &= ~CMN_PLL_REFCLK_DIV;
->>>>> +Â Â Â Â Â Â Â Â Â Â Â Â Â Â  val |= FIELD_PREP(CMN_PLL_REFCLK_DIV, 2);
->>>>> +Â Â Â Â Â Â Â Â Â Â Â Â Â Â  break;
->>>>> +Â Â Â Â Â Â  default:
->>>>> +Â Â Â Â Â Â Â Â Â Â Â Â Â Â  return -EINVAL;
->>>>> +Â Â Â Â Â Â  }
->>>>
->>>> Why isn't this done with struct clk_ops::set_rate() or clk_ops::init()?
->>>
->>> OK, I will move this code into the clk_ops::init().
->>
->> This code is expected to be executed once for initializing the CMN PLL
->> to enable output clocks, and requires the parent clock rate to be
->> available. However the parent clock rate is not available in the
->> clk_ops::init(). Hence clk_ops::set_rate() seems to be the right option
->> for this. Please let us know if this approach is fine. Thanks.
+> On 8/31/2024 6:24 AM, Stephen Boyd wrote:
+> > Quoting Jie Luo (2024-08-30 09:14:28)
+> > > Hi Stephen,
+> > > Please find below a minor update to my earlier message on clk_ops usage.
+> > 
+> > Ok. Next time you can trim the reply to save me time.
 > 
-> Sure. It actually sounds like the PLL has a mux to select different
-> reference clks. Is that right? If so, it seems like there should be
-> multiple 'clocks' for the DT property and many parents possible. If
-> that's the case then it should be possible to have something like
+> OK.
 > 
-> 	clocks = <0>, <&refclk>, <0>;
+> > 
+> > > On 8/28/2024 1:44 PM, Jie Luo wrote:
+> > > > On 8/28/2024 7:50 AM, Stephen Boyd wrote:
+> > > > > Quoting Luo Jie (2024-08-27 05:46:00)
+> > > > > > +       case 48000000:
+> > > > > > +               val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 7);
+> > > > > > +               break;
+> > > > > > +       case 50000000:
+> > > > > > +               val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 8);
+> > > > > > +               break;
+> > > > > > +       case 96000000:
+> > > > > > +               val |= FIELD_PREP(CMN_PLL_REFCLK_INDEX, 7);
+> > > > > > +               val &= ~CMN_PLL_REFCLK_DIV;
+> > > > > > +               val |= FIELD_PREP(CMN_PLL_REFCLK_DIV, 2);
+> > > > > > +               break;
+> > > > > > +       default:
+> > > > > > +               return -EINVAL;
+> > > > > > +       }
+> > > > > 
+> > > > > Why isn't this done with struct clk_ops::set_rate() or clk_ops::init()?
+> > > > 
+> > > > OK, I will move this code into the clk_ops::init().
+> > > 
+> > > This code is expected to be executed once for initializing the CMN PLL
+> > > to enable output clocks, and requires the parent clock rate to be
+> > > available. However the parent clock rate is not available in the
+> > > clk_ops::init(). Hence clk_ops::set_rate() seems to be the right option
+> > > for this. Please let us know if this approach is fine. Thanks.
+> > 
+> > Sure. It actually sounds like the PLL has a mux to select different
+> > reference clks. Is that right? If so, it seems like there should be
+> > multiple 'clocks' for the DT property and many parents possible. If
+> > that's the case then it should be possible to have something like
+> > 
+> > 	clocks = <0>, <&refclk>, <0>;
+> > 
+> > in the DT node and then have clk_set_rate() from the consumer actually
+> > set the parent index in hardware. If that's all static then it can be
+> > done with assigned-clock-parents or assigned-clock-rates.
 > 
-> in the DT node and then have clk_set_rate() from the consumer actually
-> set the parent index in hardware. If that's all static then it can be
-> done with assigned-clock-parents or assigned-clock-rates.
+> Thanks Stephen. The CMN PLL block always uses a single input reference
+> clock pin on any given IPQ SoC, however its rate may be different on
+> different IPQ SoC. For example, its rate is 48MHZ on IPQ9574 and 96MHZ
+> on IPQ5018.
+> 
+> Your second suggestion seems more apt for this device. I can define the
+> DT property 'assigned-clock-parents' to configure the clock parent of
+> CMN PLL. The code for reference clock selection will be added in
+> clk_ops::set_parent(). Please let us know if this approach is fine.
 
-Thanks Stephen. The CMN PLL block always uses a single input reference
-clock pin on any given IPQ SoC, however its rate may be different on
-different IPQ SoC. For example, its rate is 48MHZ on IPQ9574 and 96MHZ
-on IPQ5018.
+What is the source of this clock? Can you call clk_get_rate() on this
+input?
 
-Your second suggestion seems more apt for this device. I can define the
-DT property 'assigned-clock-parents' to configure the clock parent of
-CMN PLL. The code for reference clock selection will be added in
-clk_ops::set_parent(). Please let us know if this approach is fine.
-
-
-
+-- 
+With best wishes
+Dmitry
