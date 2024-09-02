@@ -1,232 +1,249 @@
-Received: from mail.sensor-technik.de (mail.sensor-technik.de [80.150.181.156])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88C34187330;
-	Mon,  2 Sep 2024 09:08:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=80.150.181.156
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725268140; cv=fail; b=JACXNFfxebJQjuEANpLsqhgI28967B8Xfu1YLoUvqdiGKI8C4zH8lKoU6tXW7cRWGeI3Gl6fzZHbmiJzOgB6PsmHAAd333z5i9XVsJ3zHPgxm4OO8xbKi14bLikXetDuN2oXa9XIwivBCxGlbTx9K3gWreyToANIMjA6mfNMvaY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725268140; c=relaxed/simple;
-	bh=Emsx5fuhjCsZqL49Yv3Rd4K4gQxYYadi762mC9AZ/y0=;
-	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=STvLNSxwPbn8eDuSG4HZpXQf87fSIPmPTBdl5MJvJADnISsugy7N5fSd/Tyn7WbZAKde1VcQnfp3mQsRwq/NSPIbIWDrF9Md2rwXu/TNfx8F/TkK/215Zt6nxS229Sqt93wVA1VMZf+9TJqtRs0p5txIXkn4u/DgaB4FO6z5x14=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wiedemann-group.com; spf=pass smtp.mailfrom=wiedemann-group.com; dkim=pass (1024-bit key) header.d=stwmm.onmicrosoft.com header.i=@stwmm.onmicrosoft.com header.b=WlqStIjE; arc=fail smtp.client-ip=80.150.181.156
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wiedemann-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wiedemann-group.com
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE34C76035
+	for <linux-clk@vger.kernel.org>; Mon,  2 Sep 2024 09:14:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1725268466; cv=none; b=jS9JteNCcKqE0TJNNB0+DoDHc9ZjL/Sf9ZVIUjK8yaXhOy6dnrQGWoreTrIjdTny3O22rMPtqVrqvd5zqm6DaPcQBR9yNvCLdOAAV+Jmwy/TYmeFnIRPLMowhXiN9SuodXigs0ifq+1LzLUS5QOKA5W4svdVQOmlKQxmdZqEJ6I=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1725268466; c=relaxed/simple;
+	bh=CLwwzU4EIQlZ/s3tGaoRgNrXmfYqXFVD7MkN0Tco0bU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gFzIsa7S3FVOUOh5m2yxg1CSGEWlS6Yj/cbtOcoLldq4hqY4s/iVQBzx5wHyjvxgnk5p8ZuucGqqT5/5ckNdXxxcGNHGIMhScODIBPGYYZAEBB1tzgEm7SEwBCs9a7k7O4y+Hcwpll15h997iUqSI6b9K5FbV7Y9QDeKq4Z8I/8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=kErcGdlw; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=stwmm.onmicrosoft.com header.i=@stwmm.onmicrosoft.com header.b="WlqStIjE"
-X-CSE-ConnectionGUID: DkXE4p7GRq6oOM6Yy2KbgQ==
-X-CSE-MsgGUID: 4Yc8WVK5R0+yftqs5tKV8w==
-Received: from stwz1.stww2k.local (HELO stwz1.wiedemann-group.com) ([172.25.209.3])
-  by mail.sensor-technik.de with ESMTP; 02 Sep 2024 11:07:40 +0200
-Received: from stwz1.stww2k.local (localhost [127.0.0.1])
-	by stwz1.wiedemann-group.com (Postfix) with ESMTP id 5ECBEB5A8A;
-	Mon,  2 Sep 2024 11:07:40 +0200 (CEST)
-Received: from mail.wiedemann-group.com (stwexm.stww2k.local [172.25.2.110])
-	by stwz1.wiedemann-group.com (Postfix) with ESMTP id 55885B5A87;
-	Mon,  2 Sep 2024 11:06:03 +0200 (CEST)
-Received: from stwexm.stww2k.local (172.25.2.110) by stwexm.stww2k.local
- (172.25.2.110) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Mon, 2 Sep
- 2024 11:06:03 +0200
-Received: from EUR02-AM0-obe.outbound.protection.outlook.com (104.47.11.238)
- by stwexm.stww2k.local (172.25.2.110) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.37 via Frontend Transport; Mon, 2 Sep 2024 11:06:03 +0200
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=hbV/3ynaan+ZPljuIrnbK/EaSpTSZ3fif9oWTVZB9E0kpi4uST9q6jwFb/TiDgKj5mrN5T9LipgxiIhFqfX7M+t+lR6XbIGw+4aVUhZ9itJ2nn8o7XvqrUikjcXCl1ckK2HaXSeA0gcuta+3WLHBaBWtcDz0n1oV6u1wWLODDGHzxiRrHDCdYXXe6QhE120V1jTu8IqlW0Ybjg3AIPEvnFDrPUoydQ+AOJvb6c0n+4aXnwkLmAufH1REqAwm9Pa6mT2bRtJUFMrUZoYYir6Yi80TttyYTh++asHVmIccgh2JC8h7GEYGM4vvjEDGkTppIrWffW1/XiX5mBh0ExlERA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=A0bAWbMTsCNn80mmc1VytjP3yJc+HZLqzERTw4UxNGw=;
- b=b8mbVctH845pUlwLzrr8ieNtq9LyJntVphtBbiLJbY0NOqWclG+JCCNzV0W9P2RbIiJpJtmTkvMsOUAaGgXfiBHhdmPwVAXvTeV0mXOG6WpemopIIGsc03xGLF96Cfw8mgdl9jk+tFRXWLXnW5EUfToJaESraDt25sBy1xIJO0D1kddsRPDwUThy6yDM2+anHDwC2zphVvNxTMUzlZM5ZTQTc/NH3IBDmOcqTMYlEHHSNv5E7sp+criyOblekMjZ+6nEWB7aG7Sz7acVIKFllGizDEJku8iAe/MVAYH1P0ZSRpZDGZ23mmNbgtpfK6y4gPtc26nkK4iPWfhMQrQ3Fg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=wiedemann-group.com; dmarc=pass action=none
- header.from=wiedemann-group.com; dkim=pass header.d=wiedemann-group.com;
- arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stwmm.onmicrosoft.com;
- s=selector1-stwmm-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=A0bAWbMTsCNn80mmc1VytjP3yJc+HZLqzERTw4UxNGw=;
- b=WlqStIjE5H/mDHjtD4BTOL/HydOM7xyYGdVrx810b2mccrenRjNcAUFe8489B68xTcb5S7maMkzy4xRq3KaItswwHRzhjFZZrH/+uZSd5Oc0GXk/nb0YFiB5k7NHOTv8haW+ZJCSO+Ta04yQBf0VHIUgm0h3/5lmiGKjO4N/Juo=
-Received: from AS1P250MB0608.EURP250.PROD.OUTLOOK.COM (2603:10a6:20b:48d::22)
- by PAXP250MB0424.EURP250.PROD.OUTLOOK.COM (2603:10a6:102:287::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.7918.23; Mon, 2 Sep
- 2024 09:05:54 +0000
-Received: from AS1P250MB0608.EURP250.PROD.OUTLOOK.COM
- ([fe80::b4a:3a:227e:8da2]) by AS1P250MB0608.EURP250.PROD.OUTLOOK.COM
- ([fe80::b4a:3a:227e:8da2%4]) with mapi id 15.20.7918.024; Mon, 2 Sep 2024
- 09:05:54 +0000
-From: Michel Alex <Alex.Michel@wiedemann-group.com>
-To: "robh+dt@kernel.org" <robh+dt@kernel.org>,
-	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, "Abel
- Vesa" <abelvesa@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, "richardcochran@gmail.com"
-	<richardcochran@gmail.com>
-CC: "o.rempel@pengutronix.de" <o.rempel@pengutronix.de>, "lee@kernel.org"
-	<lee@kernel.org>, "abel.vesa@linaro.org" <abel.vesa@linaro.org>, "Pengutronix
- Kernel Team" <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
-	"NXP Linux Team" <linux-imx@nxp.com>, "linux@armlinux.org.uk"
-	<linux@armlinux.org.uk>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>, Waibel Georg <Georg.Waibel@wiedemann-group.com>,
-	Appelt Andreas <Andreas.Appelt@wiedemann-group.com>, Michel Alex
-	<Alex.Michel@wiedemann-group.com>
-Subject: [PATCH 1/1] clk: imx6ul: fix clock parent for
- IMX6UL_CLK_ENETx_REF_SEL
-Thread-Topic: [PATCH 1/1] clk: imx6ul: fix clock parent for
- IMX6UL_CLK_ENETx_REF_SEL
-Thread-Index: Adr9EzHKHzzDMWF3TX6ldy1WNJe8vA==
-Date: Mon, 2 Sep 2024 09:05:53 +0000
-Message-ID: <AS1P250MB0608F9CE4009DCE65C61EEDEA9922@AS1P250MB0608.EURP250.PROD.OUTLOOK.COM>
-Accept-Language: de-DE, en-US
-Content-Language: de-DE
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=wiedemann-group.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AS1P250MB0608:EE_|PAXP250MB0424:EE_
-x-ms-office365-filtering-correlation-id: 02c195f8-a1bc-4157-5d57-08dccb2e7322
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?CFDX0xXtQp9WNs2dVqBxxUPRC1XrtwKNK+9czPOEiU0duEU34CWdghH5LiQ3?=
- =?us-ascii?Q?FKe69VmGgiY/YFRUffSJDcxX5QelCKCRiiIIEQJ0pPDnpAbmbgIf+yyhMKHW?=
- =?us-ascii?Q?1GJO2H6aK/isnteNNqw1R3VqE++ooUoETgKSSEdtLvXFQBduTUemAO7wttwl?=
- =?us-ascii?Q?meK323ivOMR6Xw9t7f1aPr9+4DMz+pgiUmYr4wVTyg7DVi2nNlxg8T9bi5no?=
- =?us-ascii?Q?gegnPo4JPIfYUvBIp1JWwhlHqrbyAhhJZ+HcoxHOyOD1wBfBs6ju5A9ZdtMO?=
- =?us-ascii?Q?SB09Gtm9N75lv/Y/cpg0mgWbEXfU4zDtiD1v5VdYfi0izBXraLPBCqj/wV0c?=
- =?us-ascii?Q?5BoAnr3lxikjp7RYPOKolJgN7gCZcSuW7E0YPfvQu9BzoLEDMJqQjgV+cLd8?=
- =?us-ascii?Q?qjudO6eoOKk3n/Lwy1PaeA9DtfaNrO2Yn/lBig5glDZ86EvGIiqgH5o8NP9s?=
- =?us-ascii?Q?DfJ91V1KdDNKNAEm09h0Q18aeIR8kPaxPgZ2fYC98zJDqguxshVSvTx458q+?=
- =?us-ascii?Q?ng2tWKQYTQKRZtK1nO5LqN8sO/WCE9wBa10Duk9QzkJ4/QpYJnHLL2DAABZM?=
- =?us-ascii?Q?ujulDeeU2FmiLq/93bFutKwlUZ7ULoqOdAnG72mPIFm2psdrA66o2BW9pimU?=
- =?us-ascii?Q?J3GYWkCuAzgdYhMAHZ7va5L93T0h7PZN6sxUq3Qhfg8BBP5minQaqE+ktOHm?=
- =?us-ascii?Q?d2VpqruCg9PZO9jNLIcJfx/zM/fMCxS8X4BTgDclvb6zTPlrP7x0Z9x0FVOp?=
- =?us-ascii?Q?+lbOMHrdH/X9ckpwIccqbWyfqK/9VhDTax73y44ZUtYLwjip6wfUXmm9EPh6?=
- =?us-ascii?Q?qgDp1ptJyKFjVSQ0csTO2zPhlbGPprwlp9kf5KuVPqNMdKvaZvPLFBKVWXMc?=
- =?us-ascii?Q?wy0qQo/WVyURTt3kDEaloT3QeS/tG4g5hupG6qD4vU8zX6zokWENJq6qCuk/?=
- =?us-ascii?Q?jlWowqo7/3YGMywQDZ2CdxuLsgSpX2i0Y+teuXVmfa3ysV6F25s6ygGcjE9T?=
- =?us-ascii?Q?NBUquoDkR0qVZy407B+ssURWJDlet+MongIksxRS8XOhD+9oETmbXb+566Wm?=
- =?us-ascii?Q?UVbppJRQafwR1n+MfrSQYVd9KJhlKvDcB8cfWQr1+14pdseLx5gA2Y7sVsnn?=
- =?us-ascii?Q?MoWdlkoOzx93Df3oqMe99to9vrbkpPDv/zy8yE2caGcitx0PPv6rTtby4V1Y?=
- =?us-ascii?Q?H+NK8l2ZUTDPAZd2kMtoxe/lpjnUBM+FA9PehCUco17HsbebAowBL5NhupYZ?=
- =?us-ascii?Q?CHAl0BVGTUUFu/CIae1MS0061zK/1YfmQf5kaGQCiVysdF+I+ctk63zLb2H9?=
- =?us-ascii?Q?o5ZfDmQWKkWKNJWZAmu1ElMg1xXBttSffH6mTSu7d7igMaEhqXfgOtimJ70w?=
- =?us-ascii?Q?10Rqc4271D4ysVO7QWRwDkEv7mYv4epNcCJl8QvXEJQskp8uxw=3D=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS1P250MB0608.EURP250.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?7bUTsNj1U5MjHu0AF3iu78DNK/C9mOp9X0wv6oiuJ0LIh7AJE8q/XAUdqLtD?=
- =?us-ascii?Q?/52t4EUhvAtcgJ0+fS3VG0ZbfL2EZicFqxDphCrlDZsLMAV6BLabBzGMvob7?=
- =?us-ascii?Q?s1Q1TRIObbjYrzg0BP8XKygRMwLNAKvTHyjG8mNJFbxFzSLw0RH0OvQUcQHE?=
- =?us-ascii?Q?kuQZYFZtSs5O6smv3K8UsHON2NCr6EJGCMQ+RJg8R+n9UfmmoJdI4nJBeUim?=
- =?us-ascii?Q?LXM3HziZ4rTgRLLw2APEt1xealbYMiGfWhJzR2uWwHJ1V6Kpht3t+INnWXpi?=
- =?us-ascii?Q?EA5DfN8vp14gCyU8jmV6vCPtgWNo6j1ux5IluKLG7R/9klCsPFYbCo/hyrXq?=
- =?us-ascii?Q?/08pbE+j+H9c7/6o3n4FGkAtTHNujHN2mISUt46jadSHillKIWfnJzhjVHjG?=
- =?us-ascii?Q?xXpOEHMVUk0BMHsiIrmm98ElVeqsYebhBQs5ZMWGJf9yUjFYSKTtMdgGM1sG?=
- =?us-ascii?Q?Qat22LIdkWZkb3YMKNE87Jhv9x3LYFih8OsKPAXRn+6UsHz0j9OnU3WCid+E?=
- =?us-ascii?Q?EtBNruRfOuGlZ0tMApQKX1rTTv5CvOJf+kfRSjmc752NHRKqFkPVrj2rldfx?=
- =?us-ascii?Q?B0mA1I1B5JqqWijLud5p9PDihpTKysBiayPyi5FRlAvMCNkjhcwHnhODjuRP?=
- =?us-ascii?Q?MvNrT9FsoYN73V9Fbq35lxUkpaZFictlll7PFrZGaqeESHZ9P0dIthEguDEq?=
- =?us-ascii?Q?kqoK7+FBbQEbRhmRlpbtgw9kTQl4lkV8fv2ZODpQyZ+SWuh8rKOZwUtWSMMJ?=
- =?us-ascii?Q?kpfADgD9sV4/Pgx2Nle35HJFTB+2yjEgtX8mhPqftMSi6xzAu0n1kr7k3VMn?=
- =?us-ascii?Q?f/9FwvtmNECBLZZX1g8OaqvQY8JD3SbQ5trQPRENngqIv99BiwSvUhoed+An?=
- =?us-ascii?Q?l4vXIX355OauCXzNAeWPnn+7e9HJtFr7u+ZaybkR9BcGu/tu0lL4S2lblTI0?=
- =?us-ascii?Q?HNi2LlnAKqCy2+WFNQnylgdlnltEKMawkxL6zLSw+3d1RutWQ3bXYqYSmlQM?=
- =?us-ascii?Q?LljPhiEQTsJM0w+ohkcFuFZVyEn4yJJrp0dFtwOEoW5vH+AORuyIWAyYSHwm?=
- =?us-ascii?Q?bBXrVmMGPBtpYeq9RV2iBI+/uq1r/zFAf+cE35+MbEzOIwMu2IKk44cpdAdq?=
- =?us-ascii?Q?KdRB5m5Q/IrZzARmMxykKoCdZI484j3Ano6gs4cyo7hQjxmR8pgDAmxUusyo?=
- =?us-ascii?Q?P+4ohxtTwuXilpZWejwBKz83akuFYZ1J02htZ5svYYjLr/3s9wPYVC4d0qZU?=
- =?us-ascii?Q?KsZKALEufEX7khhPFLxPhJXmZlXornE1xXKL7B4k9L/ZLqQR2daCFeKTgWlf?=
- =?us-ascii?Q?vBBx/vlOvNnY68Jc6FM/vEqvTB5RI544chm5E3KBXJqadgvE9g2TsOZR4VvL?=
- =?us-ascii?Q?5uUAXU6ybRNHJz8stHfvLCrH30HhFuzcuJoDeoXDMh2XZ56UL/m7MSoGFaQH?=
- =?us-ascii?Q?UZgBxcmSBcmzSS+GxjrhvmODm6y2ebKFsiMUxxp2ewh90AYvUgt3JcJtpH1r?=
- =?us-ascii?Q?hrpe+IVBEen/mdKg9xD1NBa9o2Y9rjx8jTwxBgx73RM8haJMnFgOLq4D7Ddr?=
- =?us-ascii?Q?nI+5Cu2odYoL4ylwXDEnXqtF0Dme6Be/dDDVRIxLtbqdsYOK9TdYF6Rh3DoP?=
- =?us-ascii?Q?xg=3D=3D?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="kErcGdlw"
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-42bbdf7f860so24044095e9.3
+        for <linux-clk@vger.kernel.org>; Mon, 02 Sep 2024 02:14:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1725268463; x=1725873263; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nxdkU1+pKbf+a+BRtbY5Z+XETmzZGfYnOH/WQtAWWcE=;
+        b=kErcGdlwBXms3NDjleCTi3JtXdziwrf3MO0eeSXN3oySNxdfSNBs9ATZeLov0A0ZDe
+         JJFPM4bARTxHqXbP/ybcRJUhkJm5gWeir7QMeZiJGQ7/VZUXIkM4HGWFH68oiHZXjjGq
+         pgb5VQyLTg47HcSkh6UawlcC+nJ89ZuCZnxfIWR1m+C9QTWtJORYcckj9Mk1ANJUiWmr
+         tZRIbXxVzeOrYb1vzAbjQQnKzyOb27bWcKMcaWLevq90usLJDN9iGZ5VCdujm9ZPpBOi
+         vMwHDza4Ft+WBaumVHojJpe+CNpZ100+lOvX/CosL/iMZbhoZR2byjnnMxtoGeb3rIru
+         J7qw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725268463; x=1725873263;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=nxdkU1+pKbf+a+BRtbY5Z+XETmzZGfYnOH/WQtAWWcE=;
+        b=NF4GAQEHA3IcJvO3ixKZTRzJLkDheoODSa2q2W4OSzXoYonaRhAzOwrtJC6bPz1xck
+         2rGJTIBwVcUqxlZo84LZS/hpkGbDkcDSBfiCcWRqQY0VgL41Yjf9E2nPwFCeRgsdXFBQ
+         EwZgIivcF7L/iu0QP8EIC4E8wYSlGmwNSu+hKak4kSciSjj6y0l+3ldgWukYS1q2vJ4w
+         R8pt4yOsDvPZXy2tjp6wmLCcbJIbElrRdoOCqi0JMtYWFCV8Rq7n3GoaROuZ2/bPbcew
+         2cKIrMSrecgizFdHsduZuuSb2EDIlTquNY7J55XbCaz/BxV9cDsJAhR4y+Htu2sLqLRg
+         9Qrg==
+X-Forwarded-Encrypted: i=1; AJvYcCVHw9dVo73HLsrrMPAdpgoUkXEeWmPlVbK1ZVnRwhVeT1lzwg5cXsIdlZwBYIxoXJdsMUQleiP9bUM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yze6aUs4lS/mlQhMUn0TfaG59OFL7iHNJz++jfaqgOcOs8WVYot
+	9B+Pvdi0qFGx+wJ4skeZlJoXwQEEEtj6B9ZOe85BdwTdF4GU6L06SFXRApOjrlw=
+X-Google-Smtp-Source: AGHT+IE4d+OITY2JYSs2Z+/iUXJp9r4lxRIltWsPs5zH8YLw57OCbZp1adMKBrEY/Z1/VuppZIl79Q==
+X-Received: by 2002:a05:600c:46c5:b0:429:c771:f32f with SMTP id 5b1f17b1804b1-42bb01fd939mr82161175e9.36.1725268462974;
+        Mon, 02 Sep 2024 02:14:22 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.144])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-42ba639643esm167916045e9.1.2024.09.02.02.14.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Sep 2024 02:14:22 -0700 (PDT)
+Message-ID: <590a4fb2-24b2-432b-92db-534c5a52ed0b@tuxon.dev>
+Date: Mon, 2 Sep 2024 12:14:20 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0: 3bFcVrf3n/KUAcs3SIgYoVMXstueFITRmwlCWKaEct2TYv8U4uViuMPZlWhLuI5sIIotzqf4zwOWtGk+Mc0iuO+yNrKsySAkc8TUUh96tvvvuKeqLumhit6z4GiZ2+1pa9MaXT/dJ7ZU0t7HosoEz8/HeB0hfV8OujdROWfPbkTnesd/mM1wV8qgOYLpFZTU0xutcsU3W+mk1ZrmjroLBDi3kz3tOfzmJ5ZSTFxqDmytCK4oNuQsPWBj3haxuhjpfSTO7b3vN9w4Nz3wKzJaEExQizDKPqF0ulOt1PdSWZmPm28FRm3MF3uS6PfDjpassm71xRP2UHiS1gkRicBDt637G2n52dcBk8XryDP0MRECLrv2lY+eYejixlVw4wsOI5OKVZQVVus01zSk1+Kyi4qVfrAm7t5FRvAsWpRSJTuVYXla+B6IC57jOtMMCIsBGFdjj/8+NkCCNHt0HlzTcKF5nAw2M1Mwiq6rn5IrF0G32RjM580a7+lmLtjcN+VA2KF8ttpEszZHuVPOSwnOV9LilWSV7dDoNw2qd/BSgQ81wzzjHskKziSsT0d3rSNUbxx/FxYXzwuDrJlOxg1gmQ==
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AS1P250MB0608.EURP250.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 02c195f8-a1bc-4157-5d57-08dccb2e7322
-X-MS-Exchange-CrossTenant-originalarrivaltime: 02 Sep 2024 09:05:54.0039
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: f92d38a3-9c84-427f-afc3-aef091509c71
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: mN34U4XJLyEnZwvFEJSvwnWYVpZr/sReuqMZg7gUgtNE5srkAOqfB6VpIPybZF4ImxGZLpkIMSPLS7CkRPO33x1mc00xi7vhVcTnJXrUuK0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXP250MB0424
-X-C2ProcessedOrg: 71f8fb5e-29e9-40bb-a2d4-613e155b19df
-X-TBoneOriginalFrom: Michel Alex <Alex.Michel@wiedemann-group.com>
-X-TBoneOriginalTo: "robh+dt@kernel.org" <robh+dt@kernel.org>,
-	"krzysztof.kozlowski+dt@linaro.org" <krzysztof.kozlowski+dt@linaro.org>,
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, "Abel
- Vesa" <abelvesa@kernel.org>, Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, "richardcochran@gmail.com"
-	<richardcochran@gmail.com>
-X-TBoneOriginalCC: "o.rempel@pengutronix.de" <o.rempel@pengutronix.de>, "lee@kernel.org"
-	<lee@kernel.org>, "abel.vesa@linaro.org" <abel.vesa@linaro.org>, "Pengutronix
- Kernel Team" <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
-	"NXP Linux Team" <linux-imx@nxp.com>, "linux@armlinux.org.uk"
-	<linux@armlinux.org.uk>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-clk@vger.kernel.org"
-	<linux-clk@vger.kernel.org>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>, Waibel Georg <Georg.Waibel@wiedemann-group.com>,
-	Appelt Andreas <Andreas.Appelt@wiedemann-group.com>, Michel Alex
-	<Alex.Michel@wiedemann-group.com>
-X-TBoneDomainSigned: false
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/16] Add initial USB support for the Renesas RZ/G3S SoC
+Content-Language: en-US
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "vkoul@kernel.org" <vkoul@kernel.org>,
+ "kishon@kernel.org" <kishon@kernel.org>, "robh@kernel.org"
+ <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ "geert+renesas@glider.be" <geert+renesas@glider.be>,
+ "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
+ "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "sboyd@kernel.org" <sboyd@kernel.org>,
+ Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+ "linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
+ <CAPDyKFrS4Dhd7DZa2zz=oPro1TiTJFix0awzzzp8Qatm-8Z2Ug@mail.gmail.com>
+ <99bef301-9f6c-4797-b47e-c83e56dfbda9@tuxon.dev>
+ <TY3PR01MB1134652F9587CFA0ADE851CA486902@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <TY3PR01MB113467275C519B729FCAB1ACB86922@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <5556d176-cca7-492c-ba21-48256d5d6338@tuxon.dev>
+ <TY3PR01MB113464D53083F4C8A5DBBA36586922@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <TY3PR01MB113464D53083F4C8A5DBBA36586922@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Commit 4e197ee880c24ecb63f7fe17449b3653bc64b03c ("clk: imx6ul: add
-ethernet refclock mux support") sets the internal clock as default
-ethernet clock.
 
-Since IMX6UL_CLK_ENET_REF cannot be parent for IMX6UL_CLK_ENET1_REF_SEL,
-the call to clk_set_parent() fails. IMX6UL_CLK_ENET1_REF_125M is the correc=
-t
-parent and shall be used instead.
-Same applies for IMX6UL_CLK_ENET2_REF_SEL, for which IMX6UL_CLK_ENET2_REF_1=
-25M
-is the correct parent.
 
-Cc: stable@vger.kernel.org
-Signed-off-by: Alex Michel <alex.michel@wiedemann-group.com>
----
- drivers/clk/imx/clk-imx6ul.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+On 02.09.2024 11:53, Biju Das wrote:
+> Hi Claudiu,
+> 
+>> -----Original Message-----
+>> From: claudiu beznea <claudiu.beznea@tuxon.dev>
+>> Sent: Monday, September 2, 2024 9:47 AM
+>> Subject: Re: [PATCH 00/16] Add initial USB support for the Renesas RZ/G3S SoC
+>>
+>> Hi, Biju,
+>>
+>> On 02.09.2024 10:54, Biju Das wrote:
+>>> Hi Claudiu,
+>>>
+>>>> -----Original Message-----
+>>>> From: Biju Das
+>>>> Sent: Saturday, August 31, 2024 6:14 AM
+>>>> Subject: RE: [PATCH 00/16] Add initial USB support for the Renesas
+>>>> RZ/G3S SoC
+>>>>
+>>>> Hi Claudiu,
+>>>>
+>>>>> -----Original Message-----
+>>>>> From: claudiu beznea <claudiu.beznea@tuxon.dev>
+>>>>> Sent: Friday, August 30, 2024 9:23 AM
+>>>>> Subject: Re: [PATCH 00/16] Add initial USB support for the Renesas
+>>>>> RZ/G3S SoC
+>>>>>
+>>>>> Hi, Ulf,
+>>>>>
+>>>>> On 29.08.2024 18:26, Ulf Hansson wrote:
+>>>>>> On Thu, 22 Aug 2024 at 17:28, Claudiu <claudiu.beznea@tuxon.dev> wrote:
+>>>>>>>
+>>>>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>>>>>
+>>>>>>> Hi,
+>>>>>>>
+>>>>>>> Series adds initial USB support for the Renesas RZ/G3S SoC.
+>>>>>>>
+>>>>>>> Series is split as follows:
+>>>>>>>
+>>>>>>> - patch 01/16           - add clock reset and power domain support for USB
+>>>>>>> - patch 02-04/16        - add reset control support for a USB signal
+>>>>>>>                           that need to be controlled before/after
+>>>>>>>                           the power to USB area is turned on/off.
+>>>>>>>
+>>>>>>>                           Philipp, Ulf, Geert, all,
+>>>>>>>
+>>>>>>>                           I detailed my approach for this in patch
+>>>>>>>                           04/16, please have a look and let me know
+>>>>>>>                           your input.
+>>>>>>
+>>>>>> I have looked briefly. Your suggested approach may work, but I have
+>>>>>> a few thoughts, see below.
+>>>>>>
+>>>>>> If I understand correctly, it is the consumer driver for the device
+>>>>>> that is attached to the USB power domain that becomes responsible
+>>>>>> for asserting/de-asserting this new signal. Right?
+>>>>>
+>>>>> Right!
+>>>>>
+>>>>>>
+>>>>>> In this regard, please note that the consumer driver doesn't really
+>>>>>> know when the power domain really gets powered-on/off. Calling
+>>>>>> pm_runtime_get|put*() is dealing with the reference counting. For
+>>>>>> example, a call to pm_runtime_get*() just makes sure that the PM
+>>>>>> domain gets-or-remains powered-on. Could this be a problem from the
+>>>>>> reset-signal point of view?
+>>>>>
+>>>>> It should be safe. From the HW manual I understand the hardware
+>>>>> block is something like the
+>>>> following:
+>>>>>
+>>>>>
+>>>>>                   USB area
+>>>>>          +-------------------------+
+>>>>>          |                         |
+>>>>>          | PHY --->USB controller  |
+>>>>> SYSC --> |  ^                      |
+>>>>>          |  |                      |
+>>>>>          | PHY reset               |
+>>>>>          +-------------------------+
+>>>>
+>>>> How USB PWRRDY signal is connected to USB?
+>>>>
+>>>> USB block consists of PHY control, PHY, USB HOST and USB OTG Controller IPs.
+>>>>
+>>>> Is it connected to top level block or connected to each IP's for turning off the USB region power?
+>>>>
+>>>> ? Or Just PHY (HW manual mentions for AWO, the USB PWRRDY signal->USB PHY PWRRDY signal control)?
+>>>
+>>> As per the update from HW team,
+>>>
+>>> "SYS_USB_PWRRDY and SYS_PCIE_RST_RSM_B are used when transition from ALL_ON to AWO (or from AWO to
+>> ALL_ON).
+>>>
+>>> Refer to step 8,9 in Table 41.10 Example Transition Flow Outline from ALL_ON Mode to AWO Mode.
+>>> Refer to step 9,10 in Table 41.11 Example Transition Flow Outline from AWO Mode to ALL_ON Mode.
+>>
+>> All this is not new information.
+>>
+>> From experiments, we need to control these signals also when booting as intermediary booting
+>> application may control and leave it in improper state. W/o having SYSC signals configured properly
+>> there is no chance for USB to work (it should be the same for PCIe but I haven't explored it yet).
+>>
+>>>
+>>> When turning off USB PHY and PCIe PHY, if they are not controlled, PHY may break."
+>>
+>> From experiments, I know this, as this is the reason the SYSC USB PWRRDY has been implemented in Linux
+>> and proposed in this series.
+> 
+> You mean you call reset assert for USB PWRRDY signal for system transition (AWO Mode to ALL_ON Mode)??
 
-diff --git a/drivers/clk/imx/clk-imx6ul.c b/drivers/clk/imx/clk-imx6ul.c
-index f9394e94f69d..05c7a82b751f 100644
---- a/drivers/clk/imx/clk-imx6ul.c
-+++ b/drivers/clk/imx/clk-imx6ul.c
-@@ -542,8 +542,8 @@ static void __init imx6ul_clocks_init(struct device_nod=
-e *ccm_node)
-=20
- 	clk_set_parent(hws[IMX6UL_CLK_ENFC_SEL]->clk, hws[IMX6UL_CLK_PLL2_PFD2]->=
-clk);
-=20
--	clk_set_parent(hws[IMX6UL_CLK_ENET1_REF_SEL]->clk, hws[IMX6UL_CLK_ENET_RE=
-F]->clk);
--	clk_set_parent(hws[IMX6UL_CLK_ENET2_REF_SEL]->clk, hws[IMX6UL_CLK_ENET2_R=
-EF]->clk);
-+	clk_set_parent(hws[IMX6UL_CLK_ENET1_REF_SEL]->clk, hws[IMX6UL_CLK_ENET1_R=
-EF_125M]->clk);
-+	clk_set_parent(hws[IMX6UL_CLK_ENET2_REF_SEL]->clk, hws[IMX6UL_CLK_ENET2_R=
-EF_125M]->clk);
-=20
- 	imx_register_uart_clocks();
- }
---=20
-2.43.0
+reset assert on suspend, reset de-assert on resume.
 
+And pm_runtime_put()/pm_runtime_resume_and_get() on the version where USB
+PHYRDY is provided by SYSC as a PM domain. As I mentioned in the thread
+with Ulf, this is something I explored locally.
+
+All these are internal, not published in this version. This version just
+adds initial bring-up support.
+
+> 
+> 
+>  
+>>>
+>>> Do you have any plan to control this power transitions(ALL_ON to AWO and vice versa) in linux?
+>>
+>> As you know, the RZ/G3S USB PM code is already prepared. This is also configuring these signals when
+>> going to suspend/exiting from resume. W/o configuring properly these signals the USB is not working
+>> after a suspend/resume cycle.
+> 
+> One option is to handle SYSC USB PWRRDY signal in TF-A, if you plan to handle system transitions there??
+
+As I mentioned, the settings in these registers may be changed by
+intermediary booting applications. Depending on that, Linux need to control
+it also on probe for USB to work (it should be the same with PCIe, these
+signals seems similar from HW manual description).
+
+Thank you,
+Claudiu Beznea
+
+> 
+> Cheers,
+> Biju
+> 
+> 
+> 
