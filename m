@@ -1,159 +1,239 @@
-Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4FDC17C9B3;
-	Mon,  2 Sep 2024 08:24:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50F15186E39
+	for <linux-clk@vger.kernel.org>; Mon,  2 Sep 2024 08:28:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725265475; cv=none; b=TCpxif9OdclCtOCW9aky3LU9CUKPco2TMe8GrTR3Q78ywRyi7DiH/utj8ZXZsd1C+cv/JgL5eeDCmpV/4SUesvPBiIw+EGsEGR8EoM3It0QVmSV/RCzp9no34C3Q94bR9e4WIEX2+k9X5skW5TiucHcaaM87nUa9f0ANrXAmSRI=
+	t=1725265712; cv=none; b=OwHfMPslNodTEqSt9W0swzFuJwXE+CsiYiZLSIEiGnhj6QsNypJ2Woq+gnv3hsNYIs7MpXe4LOtWWgvwnwNROvanA0aC4ot8MqStSiKPYyh2wFpd45pGDaD7bVPaDXzB4hjn4Rd7oMng17E0vTvT6+LQQLoTeZESB2CFPEf0Wfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725265475; c=relaxed/simple;
-	bh=pslQU41FGdhkmaUkEZ9dQ5WuxgEanAdXBKZB2w5Nqto=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V4UkS4zFb1QGeyvoxwONeZqMY07136mnS5VTGjs+bUBr8ksYwgXjUZ8Cq4FVIfMNZ87lEYICUj+GsBC/tGD9ktQB4QqJ52wK9JBiYwL6t08P5QVC2siOvPX1yf6PZgkUWV6pSQV7xtI5ykGaR3PzJ5p+fJPzHmjkZUH8RQ2wIMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=bmOzbG9n; arc=none smtp.client-ip=217.92.40.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
+	s=arc-20240116; t=1725265712; c=relaxed/simple;
+	bh=rnpVTjL4kf4dMqWQgikUzL9UOIZNjCvBFJeMtodla3M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tgMoLNWj4aIPx+ZJnNKU+5qgDEglmMp+9/eEyFcNPik2PcWzSQmT9B8Lhl/zieGUJMN1WmZLVdq1XQfntKLK4bSykCFDcYEr4iAOatHDG0jqyeHVir14OpkIAuB5G5aQW/12YM2mJiu5lh0PNQ3+ZCBxu24V/rdgwgjuxd2xMmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=qd4FSUXZ; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="bmOzbG9n"
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id A41431482FA3;
-	Mon,  2 Sep 2024 10:24:28 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
-	t=1725265469; h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=mI8+uZ1zQ3Whmswrx6WrAOVyRCcCM9kOZQ5ZCv9PtoM=;
-	b=bmOzbG9nfpXqW241QxHnQpysQs92hEsCBDpVAemdevUnuADsnuP8DDJ7VUr19ROHB128MF
-	g8i+m+1bBW71+0sfziI07Z/4gRkDxGvb2x7fALwVp7LwmDOBuOtp0UZX4H/+aZLnUvBOLF
-	ImwWPbKL1B/gH4cHQbBXut9l9sg/XXPIQDQ7Lgx91KOozm8vm1x/Jbp7NreTJDdzDmfily
-	5/cMO7Svv3FX3hatFKQ00JCcjH1QcsPuG2mNgbzs/p8bB+7Cp7nAuadJIukBJ5iOuBlIsu
-	xt8GL9yrZOA/AuCUZZnGJ29ATKOBsHCCJbEI7lSGUwIhkagPPs8eKQIbuzBHZw==
-Date: Mon, 2 Sep 2024 10:24:27 +0200
-From: Alexander Dahl <ada@thorsis.com>
-To: claudiu beznea <claudiu.beznea@tuxon.dev>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Nicolas Ferre <nicolas.ferre@microchip.com>
-Subject: Re: get, prepare, enable a clock not in DT?
-Message-ID: <20240902-machinist-straggler-cce44ffa4a7c@thorsis.com>
-Mail-Followup-To: claudiu beznea <claudiu.beznea@tuxon.dev>,
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Nicolas Ferre <nicolas.ferre@microchip.com>
-References: <20240816-ludicrous-lagging-65e750c57ab4@thorsis.com>
- <384919bc-7d45-445a-bc85-630c599d43ef@tuxon.dev>
- <20240820-grandpa-down-fec4231f971c@thorsis.com>
- <e7f69aa3-20a7-4233-96c7-0fa5fe67bbdc@tuxon.dev>
- <20240828-gainfully-cringing-2f420d8882bd@thorsis.com>
- <6cd18742-7ba8-4b0c-aff9-7065bccd4095@tuxon.dev>
+	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="qd4FSUXZ"
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5bf009cf4c0so3901248a12.1
+        for <linux-clk@vger.kernel.org>; Mon, 02 Sep 2024 01:28:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tuxon.dev; s=google; t=1725265709; x=1725870509; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=xuSIAX3TkFJwp4EKqR8txlbKQ8ME5wdxgrNK5MzVZqo=;
+        b=qd4FSUXZHwG0Meg+YbcvpkGXy7BFowdm/+/mRSu3CwvviIkAudmc3/odkCcT/3rOxu
+         xdFZQeNTSgwvajA/STsjKwT0fhmc2jSr15blVwcbrO0vLi6zUWDEND1R02poiy8roeg2
+         NWzad0p30kb9lpel2EdSOduw12Y12uU6tDldAghbbmjwqRfUM7zwCzGtv6ZI2KRSlwg8
+         /RpOPHinZpTeTYFmWY1a4Iq42KooB6lSpaqBsHjfZkE4DRf0g69wfA9FPdguAOnqiB4G
+         etW6BtHR9LQmaqUvORGK0H9DfC9QOMHqa1GZnRsxsZW/FBKZH09Mf1AelNi+sruHjmbi
+         XQPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1725265709; x=1725870509;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xuSIAX3TkFJwp4EKqR8txlbKQ8ME5wdxgrNK5MzVZqo=;
+        b=tqUubk/aeiz0VWoIRokvyIiUYdJQv8KNPyeL+DcEHVIOqEt/1VkLHNpMY8deaK/XxB
+         jIm/txrRIKZ0BrqAiNdaVbSdmEFwYpCyqvKFxfdm/7Au/4L0KQx0mkMjijcfLXiFo8wO
+         PXQmyY8dVKsvUWJJItfyK1rpCOLrVp1zAaW4nDcjTV9+VDiarEuxNAcO3x6oBdUt9VUK
+         KSa/fnkfTU1n0ZBfQyNdynSGJgXQCDSSnHcptGBRfyeFnPuaWpmqSoHF85T03frkAdSD
+         d6K5xZg+qvfnuF0/Ngms7/OhARWSRbyYMxkIYAOO3k7BWqsXqJq34fAXoMS9XB+S98k/
+         3vIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUcgrGR3EvP44SQjnA3MqKTAnzHGK8efcUFGccdM+IsDd/TW4/fBZRE6sS9f32h38+tDGghsxQU0TE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwR48aUTVlH9Nr1kFQ62T1JTHy0k/JQWz3hGPJmLb/3itWRsNdh
+	CF5mJJU1haXN35KE2yv0T0mEs7UA2QctptojERRslIaenLYlv9mqp7WOsRfelKs=
+X-Google-Smtp-Source: AGHT+IFnSS3AyZyXwK3tX+2059zJpEoBIuXq5dRlOW8dSAq2eAxT17MymZumSDwZSnEQaWTkK5CbQg==
+X-Received: by 2002:a17:907:944c:b0:a7a:97ca:3058 with SMTP id a640c23a62f3a-a897f7910e8mr1024209166b.5.1725265708448;
+        Mon, 02 Sep 2024 01:28:28 -0700 (PDT)
+Received: from [192.168.50.4] ([82.78.167.144])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a89891d6f87sm522330766b.158.2024.09.02.01.28.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 02 Sep 2024 01:28:28 -0700 (PDT)
+Message-ID: <90df82c1-bb09-4c91-ba7f-af328066bd43@tuxon.dev>
+Date: Mon, 2 Sep 2024 11:28:25 +0300
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <6cd18742-7ba8-4b0c-aff9-7065bccd4095@tuxon.dev>
-User-Agent: Mutt/2.2.12 (2023-09-09)
-X-Last-TLS-Session-Version: TLSv1.3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 00/16] Add initial USB support for the Renesas RZ/G3S SoC
+Content-Language: en-US
+To: Biju Das <biju.das.jz@bp.renesas.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>
+Cc: "vkoul@kernel.org" <vkoul@kernel.org>,
+ "kishon@kernel.org" <kishon@kernel.org>, "robh@kernel.org"
+ <robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ "geert+renesas@glider.be" <geert+renesas@glider.be>,
+ "magnus.damm@gmail.com" <magnus.damm@gmail.com>,
+ "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+ "mturquette@baylibre.com" <mturquette@baylibre.com>,
+ "sboyd@kernel.org" <sboyd@kernel.org>,
+ Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+ "linux-phy@lists.infradead.org" <linux-phy@lists.infradead.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>,
+ "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+ "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+ Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+References: <20240822152801.602318-1-claudiu.beznea.uj@bp.renesas.com>
+ <CAPDyKFrS4Dhd7DZa2zz=oPro1TiTJFix0awzzzp8Qatm-8Z2Ug@mail.gmail.com>
+ <99bef301-9f6c-4797-b47e-c83e56dfbda9@tuxon.dev>
+ <TY3PR01MB1134652F9587CFA0ADE851CA486902@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: claudiu beznea <claudiu.beznea@tuxon.dev>
+In-Reply-To: <TY3PR01MB1134652F9587CFA0ADE851CA486902@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hello Claudiu,
 
-Am Sat, Aug 31, 2024 at 06:49:59PM +0300 schrieb claudiu beznea:
-> Hi, Alexander,
+
+On 31.08.2024 08:13, Biju Das wrote:
+> Hi Claudiu,
 > 
-> On 28.08.2024 09:55, Alexander Dahl wrote:
-> > Hello Claudiu,
-> > 
-> > Am Fri, Aug 23, 2024 at 05:29:44PM +0300 schrieb claudiu beznea:
-> >>
-> >>
-> >> On 20.08.2024 15:17, Alexander Dahl wrote:
-> >>> By chance: I don't have a sama7g5 based board at hand for testing.
-> >>> The datasheet says the same as for sam9x60.
-> >>> Does the nvmem_microchip_otpc driver actually work without timeout on
-> >>> sama7g5?
-> >>
-> >> Yes! This should be because system bus is clocked from MCK0 (as mentioned
-> >> in peripheral identifiers table) which is enabled by bootloader.
-> > 
-> > Not sure I can follow.  Citing the SAMA7G5 datasheet section 30.4
-> > (OTPC Product Dependencies):
-> > 
-> >     "The OTPC is clocked through the Power Management Controller
-> >     (PMC). The user must power on the main RC oscillator and enable
-> >     the peripheral clock of the OTPC prior to reading or writing the
-> >     OTP memory."
+>> -----Original Message-----
+>> From: claudiu beznea <claudiu.beznea@tuxon.dev>
+>> Sent: Friday, August 30, 2024 9:23 AM
+>> Subject: Re: [PATCH 00/16] Add initial USB support for the Renesas RZ/G3S SoC
+>>
+>> Hi, Ulf,
+>>
+>> On 29.08.2024 18:26, Ulf Hansson wrote:
+>>> On Thu, 22 Aug 2024 at 17:28, Claudiu <claudiu.beznea@tuxon.dev> wrote:
+>>>>
+>>>> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>>>>
+>>>> Hi,
+>>>>
+>>>> Series adds initial USB support for the Renesas RZ/G3S SoC.
+>>>>
+>>>> Series is split as follows:
+>>>>
+>>>> - patch 01/16           - add clock reset and power domain support for USB
+>>>> - patch 02-04/16        - add reset control support for a USB signal
+>>>>                           that need to be controlled before/after
+>>>>                           the power to USB area is turned on/off.
+>>>>
+>>>>                           Philipp, Ulf, Geert, all,
+>>>>
+>>>>                           I detailed my approach for this in patch
+>>>>                           04/16, please have a look and let me know
+>>>>                           your input.
+>>>
+>>> I have looked briefly. Your suggested approach may work, but I have a
+>>> few thoughts, see below.
+>>>
+>>> If I understand correctly, it is the consumer driver for the device
+>>> that is attached to the USB power domain that becomes responsible for
+>>> asserting/de-asserting this new signal. Right?
+>>
+>> Right!
+>>
+>>>
+>>> In this regard, please note that the consumer driver doesn't really
+>>> know when the power domain really gets powered-on/off. Calling
+>>> pm_runtime_get|put*() is dealing with the reference counting. For
+>>> example, a call to pm_runtime_get*() just makes sure that the PM
+>>> domain gets-or-remains powered-on. Could this be a problem from the
+>>> reset-signal point of view?
+>>
+>> It should be safe. From the HW manual I understand the hardware block is something like the following:
+>>
+>>
+>>                   USB area
+>>          +-------------------------+
+>>          |                         |
+>>          | PHY --->USB controller  |
+>> SYSC --> |  ^                      |
+>>          |  |                      |
+>>          | PHY reset               |
+>>          +-------------------------+
 > 
-> I don't see this in [1]. Only:
-> 
-> "The OTPC is clocked through the Power Management Controller (PMC), so the
-> programmer must first to configure the PMC."
-> 
-> From this I got that it is about the MCK0 listed in table Table 8-11.
-> Peripheral Identifiers.
-> 
-> [1]
-> https://ww1.microchip.com/downloads/aemDocuments/documents/MPU32/ProductDocuments/DataSheets/SAMA7G5-Series-Data-Sheet-DS60001765A.pdf
+> How USB PWRRDY signal is connected to USB? 
 
-Well, this seems to be an older version revision A from 03/2022.
-I have DS60001765B (revision B) from 12/2023 and got this here (note
-the missing 'A' in the filename):
+HW manual mentions this in the chapter describing the SYS_USB_PWRRDY register:
 
-https://ww1.microchip.com/downloads/aemDocuments/documents/MPU32/ProductDocuments/DataSheets/SAMA7G5-Series-Data-Sheet-DS60001765.pdf
+Controls PWRRDY terminal of USB
 
-Linked here:
+0: PWRRDY
 
-https://www.microchip.com/en-us/product/sama7g54
+1: PWRRDY down
 
-The revision history is not very specific, it only says "Updated Power
-Management".  Errata sheet has nothing interesting on that topic.
+When turning off the *USB region* power, set this bit to 1.
 
-We both cited what we saw in the datasheets.  Revision A has the
-section you cited, revision B has the section I cited.
+When turning on the *USB region* power, set this bit to 0
 
-> > Table from section 8.5 (Peripheral Clocks …) has no check mark at "PMC
-> > clock control" but indeed lists MCK0 as main system bus clock.
-> 
-> This is what I was taking about.
-> 
-> >  If it
-> > works on SAMA7G5 without explicitly enabling main RC oscillator, then
-> > either that clock is on accidentally, or the datasheet is wrong in the
-> > OTPC section.
-> 
-> Might be.
+By USB region I get the that it is related to the SoC area where resides
+all the USB IPs. I cannot tell more than what is in the hardware manual.
 
-I don't have a SAMA7G5 at hand.  Someone who has could test if OTPC
-works with/without MCK0, and with/without main RC osc, all possible
-combinations would be most helpful: with none of those, with only one,
-only the other, both.
-
-Hope we get this clock stuff sorted out?!
-
-Greets
-Alex
 
 > 
-> Thank you,
-> Claudiu Beznea
+> USB block consists of PHY control, PHY, USB HOST and USB OTG Controller IPs.
 > 
-> > 
-> > Personally I find the "clocked through PMC" part in the OTPC
-> > section suspicious, because in the peripheral identifiers table OTPC
-> > has no "PMC Clock Control" mark.
-> > 
-> > Not sure what's the difference between SAM9X60 and SAMA7G5 internally,
-> > though.  From a user's POV it's possible one of them requires the
-> > main RC osc, and the other does not, but currently you can't tell from
-> > the datasheets.
-> > 
-> >> Here is a snapshot of reading the NVMEM on a SAMA7G5 with bootconfig and
-> >> thermal calibration packets:
-> >> https://www.linux4sam.org/bin/view/Linux4SAM/ThermalFaq
-> > 
-> > Greets
-> > Alex
-> > 
+> Is it connected to top level block or connected to each IP's for turning off the USB region power?
+
+I cannot tell more than it is in the hardware manual.
+
 > 
+> ? Or Just PHY (HW manual mentions for AWO, the USB PWRRDY signal->USB PHY PWRRDY signal control)?
+> 
+> If the USBPWRRDY signal is connected across modules with this reset signal approach
+> then you may need to update bindings [1] with that reset signal
+> 
+> [1] https://patchwork.kernel.org/project/linux-renesas-soc/patch/20240822152801.602318-12-claudiu.beznea.uj@bp.renesas.com/
+
+If that is true, then this signal may need to be routed to the PHY for
+better hardware description.
+
+>  
+> 
+> Cheers,
+> Biju
+> 
+>>
+>> Where:
+>> - SYSC is the system controller that controls the new signal for which
+>>   I'm requesting opinions in this series
+>> - PHY reset: is the block controlling the PHYs
+>> - PHY: is the block controlling the USB PHYs
+>> - USB controller: is the USB controller
+>>
+>> Currently, I passed the SYSC signal handling to the PHY reset driver; w/o PHY reset the rest of the
+>> USB logic cannot work (neither PHY block nor USB controller).
+>>
+>> Currently, the PHY reset driver call pm_runtime_resume_and_get() in probe and pm_runtime_put() in
+>> remove. The struct reset_control_ops::{assert, deassert} only set specific bits in registers (no
+>> pm_runtime* calls).
+>>
+>> The PHY driver is taking its PHY reset in probe and release it in remove().
+>> With this approach the newly introduced SYSC signal will be de-asserted/asserted only in the PHY reset
+>> probe/remove (either if it is handled though PM domain or reset control signal).
+>>
+>> If the SYSC signal would be passed to all the blocks in the USB area (and it would be handled though
+>> PM domains) it should be no problem either, AFAICT, because of reference counting the
+>> pm_runtime_get|put*() is taking care of. As the PHY reset is the root node the in the devices node
+>> tree for USB the reference counting should work, too (I may miss something though, please correct me
+>> if I'm wrong).
+>>
+>> If the SYSC signal would be handled though a reset control driver (as proposed in this series) and we
+>> want to pass this reference to all the blocks in the USB area then we can request the reset signal as
+>> shared and, AFAIK, this is also reference counted. The devices node tree should help with the order,
+>> too, if I'm not wrong.
+>>
+>> Thank you for looking at this,
+>> Claudiu Beznea
+>>
+>>>
+>>> [...]
+>>>
+>>> Kind regards
+>>> Uffe
