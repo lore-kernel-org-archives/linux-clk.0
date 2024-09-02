@@ -1,185 +1,125 @@
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from forward500b.mail.yandex.net (forward500b.mail.yandex.net [178.154.239.144])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C06AD20FA82
-	for <linux-clk@vger.kernel.org>; Mon,  2 Sep 2024 13:24:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A0242139D7;
+	Mon,  2 Sep 2024 13:32:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.154.239.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1725283464; cv=none; b=ms9+wDRtjeDUfZoZlXu880LnfW9Q6enyQBCv66kkiMOlGY4RLTWQBAKg1C86ZS6UaJNAzcchoC+IZX3kgkLeyqNio4OFMMbtbKIUV0xhoRujR6xpEUIZgFWcJVbVnSk8CNH1iiYnsMOQuv8d8Msj2r9ZkiBINJWDyapfsm6INU4=
+	t=1725283934; cv=none; b=rgjM8uhk0BZje+/CoZLPJfLZdAMHxwR0ob0ujAoSEb2HjaAAeIP6dKtPDnSrCIC+tMULwEUL60Wq2dT5I1d0AllWg39GLC1H1vc2ePIECxBmvEgF/tZxvj490ZoD6BmQid/Pi7XB00PGv6/b5aiwL9VRbqSy88T0MPBS2/wXctM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1725283464; c=relaxed/simple;
-	bh=gdX4LY/4yU+mlWy8gCvvEjSlGF+vBwCodsPP82Gby4k=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=dMh82Fnv2aqOJNIxl9WkCxsijgYYNFXe4+moBEV+4fWd+yT5m2B9Y1kIwnMTUFyKoJcNrhksQ+jqTx7SY4ciaoZiZmJF85GcORXY/9hXGSwo/7LAD5vwJtHzLZRmGr3tLUH9Qd2rYcyz0Ep4M78owvjax8Rx1MpVpP+Vez+hO/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=XrS6UD7c; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
+	s=arc-20240116; t=1725283934; c=relaxed/simple;
+	bh=RxBAlD4Bmy7Hb1bcAu9RLBPtaYpWhDz4yd1KvfnADhY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=N7GeS56dtasWhVyp2JTIHmv4FYHR+ZweEcL9tNOZ9dqkTn7hVPo3uFUlxhKozUKag6AhEbqaipR0qwf91sGwW5gVzP3opvOLk5ZDYGbYz0bsCm+xNFhn9qktIDZNDzwWjRIFHJtXLLUWAVltb1r0O17GZgU8uaorsmzJt0hGXXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me; spf=pass smtp.mailfrom=maquefel.me; dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b=qHQCAU+G; arc=none smtp.client-ip=178.154.239.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maquefel.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=maquefel.me
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="XrS6UD7c"
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a86910caf9cso908270066b.1
-        for <linux-clk@vger.kernel.org>; Mon, 02 Sep 2024 06:24:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1725283461; x=1725888261; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=im5aw856OWg4/fogGw4xCv7sKGPQlBRJhw+64YokHEM=;
-        b=XrS6UD7cTGntujm37rG/rpAio1+nqOmhyPRnEJvndjOg07ItKP7qPzuBNB7G1KSIXH
-         tCHPydILi5NfB4AiAe4ma0OYO4o8CrRUW9875h74aDk41Vlo+h8G6sZBPijIGr7a9hjl
-         cno3JHLXagxg7cSZQmj1Mi2UtUNqObSq5FKB6HX+nsATrzZ9B+j4fs9nlud52reQTu/n
-         1CUztKQ7S7E1ISuEXdk3m1L7gFmcvkgH+haEQwaZspchBdq4qwRsysgmBtdpaawoIHl5
-         x0SgT7hANpmrYZgB50cqWkapGj4vRpQZdOcpmNieA0+3C+13z2KW5a/XyJC66gGoTAx2
-         xXlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1725283461; x=1725888261;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=im5aw856OWg4/fogGw4xCv7sKGPQlBRJhw+64YokHEM=;
-        b=Lv296LprrPbYwb2rPrc0mN8KzxTDSojgWvJxsHQCspuaESgRcHPxt/bV67+0XJOOsX
-         rmrt5JQE3PqG6q8jDLUf13rm22ezgZ6AGT1OUf2b0n0VaomH9mwHCDQTnMDmBSOt/Utq
-         UrhK5Qvpvr9Cn5UIjTmrxbYsI62Jw3YyiAREF7gtfEyoGvsj9vLl9iFGYvo/5yK7o92i
-         EdNL8wcY101IIQ8xC2YW2bTJWCT8PrQPPfuINhZywMyHmuT4s/nTZFcj9NpmA+hyvhkj
-         6ggNragBOw5ZjgMiDR0GGtRogmyy9LwgmPkZ3GJpqsv67qnlHIVeU4iMK4+vpKgt7LqS
-         tT+w==
-X-Forwarded-Encrypted: i=1; AJvYcCV/RSB+R4oA4mdzybozN5/xe50MIHw0iBPP8/weUxL5XRYkL9FejSHIdGaZ8gbBa9dnq539SIH7KKQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEZJ3tGjCKpaRbY/FlPXDKkXMjZZQlMmJgbUIfGJ4HMFjauWS0
-	uLP9LZ2XJC/lEvX5nM3ZWZCZshgHYV9ERY0b0aKz7LilRNYxfUNsaoR0JJGMEj4=
-X-Google-Smtp-Source: AGHT+IHWgodDTCMpY6sAaF4OeL9wHVBwlEZaCHhwCHZIzlirti4fLX+yVhPcOLQSsTLCiVff+6iwfw==
-X-Received: by 2002:a17:907:6d25:b0:a86:94cd:97f0 with SMTP id a640c23a62f3a-a89a26bfcb7mr1167450566b.19.1725283460815;
-        Mon, 02 Sep 2024 06:24:20 -0700 (PDT)
-Received: from claudiu-X670E-Pro-RS.. ([82.78.167.144])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a898900f6e0sm556060266b.77.2024.09.02.06.24.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 02 Sep 2024 06:24:20 -0700 (PDT)
-From: Claudiu <claudiu.beznea@tuxon.dev>
-X-Google-Original-From: Claudiu <claudiu.beznea.uj@bp.renesas.com>
-To: geert+renesas@glider.be,
-	mturquette@baylibre.com,
-	sboyd@kernel.org,
-	wim@linux-watchdog.org,
-	linux@roeck-us.net,
-	ulf.hansson@linaro.org
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-clk@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-watchdog@vger.kernel.org,
-	claudiu.beznea@tuxon.dev,
-	linux-pm@vger.kernel.org,
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Subject: [PATCH v3 4/4] watchdog: rzg2l_wdt: Power on the watchdog domain in the restart handler
-Date: Mon,  2 Sep 2024 16:24:02 +0300
-Message-Id: <20240902132402.2628900-5-claudiu.beznea.uj@bp.renesas.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20240902132402.2628900-1-claudiu.beznea.uj@bp.renesas.com>
-References: <20240902132402.2628900-1-claudiu.beznea.uj@bp.renesas.com>
+	dkim=pass (1024-bit key) header.d=maquefel.me header.i=@maquefel.me header.b="qHQCAU+G"
+Received: from mail-nwsmtp-smtp-production-main-10.sas.yp-c.yandex.net (mail-nwsmtp-smtp-production-main-10.sas.yp-c.yandex.net [IPv6:2a02:6b8:c10:2222:0:640:c513:0])
+	by forward500b.mail.yandex.net (Yandex) with ESMTPS id 801FF614BA;
+	Mon,  2 Sep 2024 16:32:00 +0300 (MSK)
+Received: by mail-nwsmtp-smtp-production-main-10.sas.yp-c.yandex.net (smtp/Yandex) with ESMTPSA id xVaJQFSb2Sw0-lrFnftlD;
+	Mon, 02 Sep 2024 16:31:59 +0300
+X-Yandex-Fwd: 1
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=maquefel.me; s=mail;
+	t=1725283919; bh=RxBAlD4Bmy7Hb1bcAu9RLBPtaYpWhDz4yd1KvfnADhY=;
+	h=References:Date:In-Reply-To:Cc:To:From:Subject:Message-ID;
+	b=qHQCAU+GMDC2B5xoDTjogKJ5OtVR4HVOSqypeP5rbl65yW1S4r1y2lILiRlDuOf5X
+	 H0DQ/9a4e2USKKzRMhnVgEVnpwGERYoJHNZJrkCv/nYV7E8RyNE7YY3qKEsjoBBcnn
+	 Vpz+c7e+K24K/9AwneB37oi7AQUlCR2+REMk7N2Y=
+Authentication-Results: mail-nwsmtp-smtp-production-main-10.sas.yp-c.yandex.net; dkim=pass header.i=@maquefel.me
+Message-ID: <cf18eef44460da71db7e125d91da22f0a78c0375.camel@maquefel.me>
+Subject: Re: [PATCH v11 03/38] clk: ep93xx: add DT support for Cirrus EP93xx
+From: Nikita Shubin <nikita.shubin@maquefel.me>
+To: Stephen Boyd <sboyd@kernel.org>, Michael Turquette
+ <mturquette@baylibre.com>,  Nikita Shubin via B4 Relay
+ <devnull+nikita.shubin.maquefel.me@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+Date: Mon, 02 Sep 2024 16:31:59 +0300
+In-Reply-To: <79cb209c6c5a14ae4d6a015f714c58d4.sboyd@kernel.org>
+References: <20240715-ep93xx-v11-0-4e924efda795@maquefel.me>
+	 <20240715-ep93xx-v11-3-4e924efda795@maquefel.me>
+	 <020c15c9939c1c4cfac925942a582cee.sboyd@kernel.org>
+	 <a87f99e02f3e9c40c8b9638a8a5a9c5b55aca68c.camel@maquefel.me>
+	 <79cb209c6c5a14ae4d6a015f714c58d4.sboyd@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.48.4 
 Precedence: bulk
 X-Mailing-List: linux-clk@vger.kernel.org
 List-Id: <linux-clk.vger.kernel.org>
 List-Subscribe: <mailto:linux-clk+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-clk+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+On Fri, 2024-08-30 at 15:27 -0700, Stephen Boyd wrote:
+> Quoting Nikita Shubin (2024-08-30 02:23:12)
+> > Hello Stephen!
+> >=20
+> > On Wed, 2024-08-28 at 13:44 -0700, Stephen Boyd wrote:
+> > > Quoting Nikita Shubin via B4 Relay (2024-07-15 01:38:07)
+> > > > diff --git a/drivers/clk/Kconfig b/drivers/clk/Kconfig
+> > > > index 3e9099504fad..234b0a8b7650 100644
+> > > > --- a/drivers/clk/Kconfig
+> > > > +++ b/drivers/clk/Kconfig
+> > > > @@ -218,6 +218,14 @@ config COMMON_CLK_EN7523
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 This driver =
+provides the fixed clocks and gates
+> > > > present
+> > > > on Airoha
+> > > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ARM silicon.
+> > > > =C2=A0
+> > > > +config COMMON_CLK_EP93XX
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 bool "Clock driver for Cirrus=
+ Logic ep93xx SoC"
+> > >=20
+> > > tristate?
+> > >=20
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 depends on ARCH_EP93XX || COM=
+PILE_TEST
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 select MFD_SYSCON
+> > >=20
+> > > Why is this selecting syscon?
+> > >=20
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 select REGMAP
+> > >=20
+> > > Is this needed either?
+> >=20
+> > Indeed REGMAP is selected by COMMON_CLK, MFD_SYSCON not required,
+> > but
+> > it needs AUXILIARY_BUS.
+>=20
+> I don't see REGMAP selected by COMMON_CLK. Did I miss something?
 
-On RZ/G3S the watchdog can be part of a software-controlled PM domain. In
-this case, the watchdog device need to be powered on in
-struct watchdog_ops::restart API. This can be done though
-pm_runtime_resume_and_get() API if the watchdog PM domain and watchdog
-device are marked as IRQ safe. We mark the watchdog PM domain as IRQ safe
-with GENPD_FLAG_IRQ_SAFE when the watchdog PM domain is registered and the
-watchdog device though pm_runtime_irq_safe().
+Indeed REGMAP is selected by COMMON_CLK_MESON_REGMAP not COMMON_CLK on
+make tinyconfig + COMPILE_TEST.
 
-Before commit e4cf89596c1f ("watchdog: rzg2l_wdt: Fix 'BUG: Invalid wait
-context'") pm_runtime_get_sync() was used in watchdog restart handler
-(which is similar to pm_runtime_resume_and_get() except the later one
-handles the runtime resume errors).
+Then we require REGMAP because we are using regmap_read() in clk
+driver.
 
-Commit e4cf89596c1f ("watchdog: rzg2l_wdt: Fix 'BUG: Invalid wait
-context'") dropped the pm_runtime_get_sync() and replaced it with
-clk_prepare_enable() to avoid invalid wait context due to genpd_lock()
-in genpd_runtime_resume() being called from atomic context. But
-clk_prepare_enable() doesn't fit for this either (as reported by
-Ulf Hansson) as clk_prepare() can also sleep (it just not throw invalid
-wait context warning as it is not written for this).
+>=20
+> >=20
+> > > > +#define
+> > > > devm_ep93xx_clk_hw_register_fixed_rate_parent_data(dev,
+> > > > name, parent_data, flags, fixed_rate)=C2=A0 \
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 __clk_hw_register_fixed_rate(=
+(dev), NULL, (name), NULL,
+> > > > NULL, \
+> > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 (pare=
+nt_data), (flags),
+> > > > (fixed_rate), 0, 0, true)
+> > >=20
+> > > Is this to workaround a missing
+> > > devm_clk_hw_register_fixed_rate_parent_data() macro?
+> >=20
+> > Yes, if it's okay - i'll fire next revision, all other comments are
+> > acknowledged.
+> >=20
+>=20
+> Can you add the macro so others can use it in another patch?
 
-Because the watchdog device is marked now as IRQ safe (though this patch)
-the irq_safe_dev_in_sleep_domain() call from genpd_runtime_resume() returns
-1 for devices not registering an IRQ safe PM domain for watchdog (as the
-watchdog device is IRQ safe, PM domain is not and watchdog PM domain is
-always-on), this being the case for RZ/G3S with old device trees and
-the rest of the SoCs that use this driver, we can now drop also the
-clk_prepare_enable() calls in restart handler and rely on
-pm_runtime_resume_and_get().
-
-Thus, drop clk_prepare_enable() and use pm_runtime_resume_and_get() in
-watchdog restart handler.
-
-Acked-by: Guenter Roeck <linux@roeck-us.net>
-Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
-Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
----
-
-Changes in v4:
-- collected Ulf's tag
-
-Changes in v2:
-- adjusted patch description and comment from code
-- collected tags
-
-Changes since RFC:
-- use pm_runtime_resume_and_get() and pm_runtime_irq_safe()
-- drop clock prepare in probe
-
- drivers/watchdog/rzg2l_wdt.c | 20 ++++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/watchdog/rzg2l_wdt.c b/drivers/watchdog/rzg2l_wdt.c
-index 2a35f890a288..11bbe48160ec 100644
---- a/drivers/watchdog/rzg2l_wdt.c
-+++ b/drivers/watchdog/rzg2l_wdt.c
-@@ -12,6 +12,7 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/platform_device.h>
-+#include <linux/pm_domain.h>
- #include <linux/pm_runtime.h>
- #include <linux/reset.h>
- #include <linux/units.h>
-@@ -166,8 +167,22 @@ static int rzg2l_wdt_restart(struct watchdog_device *wdev,
- 	struct rzg2l_wdt_priv *priv = watchdog_get_drvdata(wdev);
- 	int ret;
- 
--	clk_prepare_enable(priv->pclk);
--	clk_prepare_enable(priv->osc_clk);
-+	/*
-+	 * In case of RZ/G3S the watchdog device may be part of an IRQ safe power
-+	 * domain that is currently powered off. In this case we need to power
-+	 * it on before accessing registers. Along with this the clocks will be
-+	 * enabled. We don't undo the pm_runtime_resume_and_get() as the device
-+	 * need to be on for the reboot to happen.
-+	 *
-+	 * For the rest of SoCs not registering a watchdog IRQ safe power
-+	 * domain it is safe to call pm_runtime_resume_and_get() as the
-+	 * irq_safe_dev_in_sleep_domain() call in genpd_runtime_resume()
-+	 * returns non zero value and the genpd_lock() is avoided, thus, there
-+	 * will be no invalid wait context reported by lockdep.
-+	 */
-+	ret = pm_runtime_resume_and_get(wdev->parent);
-+	if (ret)
-+		return ret;
- 
- 	if (priv->devtype == WDT_RZG2L) {
- 		ret = reset_control_deassert(priv->rstc);
-@@ -275,6 +290,7 @@ static int rzg2l_wdt_probe(struct platform_device *pdev)
- 
- 	priv->devtype = (uintptr_t)of_device_get_match_data(dev);
- 
-+	pm_runtime_irq_safe(&pdev->dev);
- 	pm_runtime_enable(&pdev->dev);
- 
- 	priv->wdev.info = &rzg2l_wdt_ident;
--- 
-2.39.2
+Sure.
 
